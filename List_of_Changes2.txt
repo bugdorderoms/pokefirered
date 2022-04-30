@@ -1,0 +1,147 @@
+// REVISION = 1
+Game Freak Presents Intro Fix
+Pokedex Glitch Fix 
+
+// Others
+// Can't Be Turned On/Off
+eggs hatch at level 1
+EV's and vitamins cap to 252
+Triple-Layer Blocks (Sierraffinity) //how to use: https://www.pokecommunity.com/showthread.php?p=9767701
+Constant Hidden Power - Power: 60 (Zeturic)
+Sound Moves Bypass Substitute (Zeturic)
+UnHidden Power (Zeturic)
+Running Indoors (HackMew)
+Physical/Special/Status Split And Icons (DoesntKnowHowToPlay, Spherical Ice And BlackUser)
+Pokemon Stats Replacing Weight Comparision Screen (DoesntKnowHowToPlay and Squeetz)
+Hail Weather Fix (daniilS And Samu)
+Movement Type Hidden (0C) Fix (Dreamaker)
+Faster HP Drain (Fyreire)
+Bw Repel System With A Multichoice Window (DizzyEgg)
+Reusable TM's (FBI)
+Ability Pop-Up Box (DizzyEgg, CFRU And BlackUser)
+Day And Night System (Prime-Dialga, Samu, Eing And BlackUser) // to edit which color will be litning go to src > palette.c and edit sLightingColours to your liking.
+Trainers With Nature|Ivs|Evs (DoesntKnowHowToPlay And BlackUser) // to edit/add entries in the table go to src > battle_main.c and edit gTrainerEvsTable to your liking. It will be able to suport up to 65536 entries.
+Class Based Poke Balls (Buffel Saft And BlackUser) // to edit the ball for each class go to src > battle_main.c and edit gTrainerMoneyAndBallTable to your liking.
+Learn Moves Upon Evolution (Zeturic)
+LGPE Style Bonus Premier Balls (Spherical Ice And BuffelSaft)
+Time Box On Start Menu (Pokemon_XY And BlackUser)
+Mart Items By Badge Count (Ghoulslash)
+Chain Fishing (Ghoulslash)
+Show Item Image On Add To Bag (BlackUser)
+Trainer Message In Battle (CFRU, PKMN EM Expansion And BlackUser)
+Scrolling Multi-Choice Boxes (FBI And BlackUser)
+Functional Pokerus (Zeturic And BlackUser)
+Metric System Update (BlackUser)
+Nickname Your Pokemons From The Party Screen (Shinny456, Ghoulslash, TheXaman And Lunos)
+Gen 6 Exp Share (Lunos)
+Bag Sorting (ghoulslash)
+Inheting Nature From Day Care
+Extra 116 Bytes In SaveBlock2, 464 Bytes In SaveBlock1, And 1044 Bytes In PokemonStorage (Hiram Anderson)
+
+// Can Be Turned On/Off
+// To Define Which Hacks Will Be Inserted In The Rom Go To include/constants > inserts.h
+Exp Block By Badge (blackUser)
+HP Bars Disappearing During Attack Animations (blackUser)
+Automatic Swap Page On Naming Screen (blackUser And Jaizu)
+Display Move Effectiveness In Battle (blackUser And PokemonCrazy)
+Display Party Mon Icons On Trainer Card (Eaas)
+No Healing Eggs (Zeturic)
+Poison Survival (daniilS)
+Nature Colors (Spherical Ice And BlackUser)
+Iv's In The Summary Screen (DoesntKnowHowToPlay And BlackUser)
+Disable Badge Stat Boost (SP458)
+Sleep Update (BlackUser)
+Paralysis Update (Delta231)
+Burn Update (Delta231)
+Confusion Update (DizzyEgg)
+Deletable HM's (Jpan)
+Don't Replenish Move PP (Paccy, ExpoSeed, Surskitty, FieryMewtwo And Lunos)
+Remove Flashbacks (Sierra)
+Full Exp For Participating In A Battle (DoesntKnowHowToPlay)
+Emerald Style Gender Select Intro (Meister_anon~Master_o f_None)
+Shuckle Makes Berry Juice (AsparagusEduardo)
+Volt Tackle By Breeding
+
+//Abilities Added and completed
+Adaptability
+Aftermath
+Anger Point
+Anticipation
+Bad Dreams
+Download
+Dry Skin
+Filter
+Frisk
+Heatproof
+Honey Gather
+Hydration
+Ice Body
+Klutz
+Leaf Guard
+Magic guard
+Motor drive
+No guard
+poison heal
+rivalry
+scrappy
+simple
+skill link
+snow cloak
+snow warning
+solar power
+quick feet
+solid rock
+stall
+steadfast
+super luck
+tangled feet
+technician
+tinted lens
+unaware
+pickpocket
+unnerve
+
+// WARNING
+Klutz don't affect prize money, experience, effort values or friendship.
+The Speed drop from the Macho Brace, and Power items (such as the Power Bracer) is not negated by Klutz.
+Klutz cannot negate form-changing effects of items.
+Klutz does not prevent Pokémon with this Ability from Mega Evolving with a Mega Stone, undergoing Primal Reversion with the Red Orb or Blue Orb or from using a Z-Move with a Z-Crystal.
+remove slow start and unburden counters when ability change or supression
+
+// Needing put in
+make all multitype and storm drain effect(its only set in the defines, need make its code)
+make slow start and contrary special iteration with z-moves 
+make sheer force and contrary special iteration with max moves and sheer force affect other effects
+make flower gift form change
+make from immunity to down ability pop up scripts
+probabily add an inverse battle check in anticipation type calc
+end update of moves data
+add the new moves in getforewarnmovepower, sIronFistTable, sRecklessTable, gnochangetypemoves and gSheerForceBoostedMoves
+add berries in isitemaffectedbygluttony
+add abilities in mold breaker ignorable abilities table
+Leaf guard prevents the Flame Orb and Toxic Orb
+Magic guard prevents damage from abilities(and probabily for items), spikes and stealth rocks, mind blown, life orb and gulp missile(but does not prevent the Defense drop or paralysis from it)
+
+// puting
+evolve without national dex
+critical hit probability
+text speed - fast / sound - stereo
+mew obey fix @next
+roaming pokemon iv fix
+really tall grass e micro grass fix
+wild pokemon use AI scripts @next
+binding moves update @next
+disable update @next
+spite update @next
+protection moves fix/update @next
+encore update @next
+taunt update @next
+blizzard update @next
+effects update
+light ball update
+altering cave
+exp on catch a mon
+ev reducing berries
+pc boxes use more wallpapers @next
+gen 6 shiny base rate
+mart price lenght increase
