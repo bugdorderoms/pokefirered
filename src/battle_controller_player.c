@@ -1398,7 +1398,7 @@ static void MoveSelectionDisplayPpNumber(void)
     BattlePutTextOnWindow(gDisplayedStringBattle, 9);
 }
 
-const u16 sEffectivenessColours[] =
+static const u16 sEffectivenessColours[] =
 {
     // super effective colors
     RGB(18, 30, 18), 
