@@ -83,7 +83,8 @@ struct BagMenuAlloc
     u8 itemOriginalLocation;
     u8 pocketSwitchMode:4;
     u8 itemMenuIcon:2;
-    u8 inhibitItemDescriptionPrint:2;
+    u8 inhibitItemDescriptionPrint:1;
+    u8 inhibitPocketSwitchArrowLoad:1;
     u16 contextMenuSelectedItem;
     u8 pocketScrollArrowsTask;
     u8 pocketSwitchArrowsTask;
@@ -884,6 +885,7 @@ void GoToBagMenu(u8 location, u8 pocket, MainCallback bagCallback)
         sBagMenuDisplay->itemOriginalLocation = 0xFF;
         sBagMenuDisplay->itemMenuIcon = 0;
         sBagMenuDisplay->inhibitItemDescriptionPrint = FALSE;
+	sBagMenuDisplay->inhibitPocketSwitchArrowLoad = FALSE;
         sBagMenuDisplay->pocketScrollArrowsTask = 0xFF;
         sBagMenuDisplay->pocketSwitchArrowsTask = 0xFF;
         if (location == ITEMMENULOCATION_ITEMPC)
@@ -1334,10 +1336,11 @@ static void CreatePocketScrollArrowPair(void)
 
 static void CreatePocketSwitchArrowPair(void)
 {
-    if (sBagMenuDisplay->pocketSwitchMode != 1)
+    if (sBagMenuDisplay->pocketSwitchMode != 1 && !sBagMenuDisplay->inhibitPocketSwitchArrowLoad)
     {
         sBagMenuDisplay->pocketSwitchArrowsTask = AddScrollIndicatorArrowPair(&sPocketSwitchArrowPairTemplate, &gBagMenuState.pocket);
     }
+    sBagMenuDisplay->inhibitPocketSwitchArrowLoad = FALSE;
 }
 
 static void CreatePocketScrollArrowPair_SellQuantity(void)
@@ -1618,9 +1621,10 @@ static void Task_BagMenu_HandleInput(u8 taskId)
         SwitchPockets(taskId,  1, FALSE);
         return;
     default:
+	ListMenuGetScrollAndRow(data[0], &cursorPos, &itemsAbove);	    
+		    
         if (JOY_NEW(SELECT_BUTTON) && gBagMenuState.location == ITEMMENULOCATION_FIELD)
         {
-            ListMenuGetScrollAndRow(data[0], &cursorPos, &itemsAbove);
             if (cursorPos + itemsAbove != sBagMenuDisplay->nItems[gBagMenuState.pocket])
             {
                 PlaySE(SE_SELECT);
@@ -1633,6 +1637,7 @@ static void Task_BagMenu_HandleInput(u8 taskId)
             if ((sBagMenuDisplay->nItems[gBagMenuState.pocket]) <= 1)
             {
                 PlaySE(SE_FAILURE);
+		sBagMenuDisplay->inhibitPocketSwitchArrowLoad = TRUE;
                 DisplayItemMessageInBag(taskId, 2, sText_NothingToSort, Task_WaitAButtonAndCloseContextMenu);
                 break;
             }
@@ -1640,20 +1645,18 @@ static void Task_BagMenu_HandleInput(u8 taskId)
             data[2] = BagGetQuantityByPocketPosition(gBagMenuState.pocket + 1, data[1]);
             
             if (cursorPos + itemsAbove != sBagMenuDisplay->nItems[gBagMenuState.pocket])
-                gSpecialVar_ItemId = BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, data[1]);
-            else
-                break;
-
-            PlaySE(SE_SELECT);
-            BagDestroyPocketScrollArrowPair();
-            bag_menu_print_cursor_(data[0], 2);
-            ListMenuGetScrollAndRow(data[0], &cursorPos, &itemsAbove);
-            gTasks[taskId].func = Task_LoadBagSortOptions;
+	    {
+		    gSpecialVar_ItemId = BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, data[1]);
+		    PlaySE(SE_SELECT);
+		    BagDestroyPocketScrollArrowPair();
+		    bag_menu_print_cursor_(data[0], 2);
+		    gTasks[taskId].func = Task_LoadBagSortOptions;
+		    return;
+	    }
         }
         else
         {
             input = ListMenu_ProcessInput(data[0]);
-            ListMenuGetScrollAndRow(data[0], &cursorPos, &itemsAbove);
             
             switch (input)
             {
@@ -1678,6 +1681,7 @@ static void Task_BagMenu_HandleInput(u8 taskId)
     }
     input = ListMenu_ProcessInput(data[0]);
     ListMenuGetScrollAndRow(data[0], &gBagMenuState.cursorPos[gBagMenuState.pocket], &gBagMenuState.itemsAbove[gBagMenuState.pocket]);
+	
     switch (input)
     {
     case LIST_NOTHING_CHOSEN:
