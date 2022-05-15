@@ -374,14 +374,16 @@ static const u8 sBagMenuSortKeyItems[] =
 {
     ITEMMENUACTION_BY_NAME,
     ITEMMENUACTION_CANCEL,
+    ITEMMENUACTION_DUMMY,
+    ITEMMENUACTION_DUMMY,
 };
 
 static const u8 sBagMenuSortPokeBalls[] =
 {
     ITEMMENUACTION_BY_NAME,
     ITEMMENUACTION_BY_AMOUNT,
-    ITEMMENUACTION_DUMMY,
     ITEMMENUACTION_CANCEL,
+    ITEMMENUACTION_DUMMY,
 };
 
 static const u8 sBagMenuSortTMBerries[] =
@@ -1653,29 +1655,6 @@ static void Task_BagMenu_HandleInput(u8 taskId)
 		    gTasks[taskId].func = Task_LoadBagSortOptions;
 		    return;
 	    }
-        }
-        else
-        {
-            input = ListMenu_ProcessInput(data[0]);
-            
-            switch (input)
-            {
-                case LIST_NOTHING_CHOSEN:
-                    return;
-                case LIST_CANCEL:
-                    PlaySE(SE_SELECT);
-                    gSpecialVar_ItemId = ITEM_NONE;
-                    gTasks[taskId].func = ItemMenu_StartFadeToExitCallback;
-                default:
-                    PlaySE(SE_SELECT);
-                    BagDestroyPocketScrollArrowPair();
-                    bag_menu_print_cursor_(data[0], 2);
-                    data[1] = input;
-                    data[2] = BagGetQuantityByPocketPosition(gBagMenuState.pocket + 1, input);
-                    gSpecialVar_ItemId = BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, input);
-                    gTasks[taskId].func = Task_ItemContextMenuByLocation;
-                    break;
-            }
         }
         break;
     }
@@ -3020,23 +2999,23 @@ static void AddBagSortSubMenu(void)
         case POCKET_KEY_ITEMS:
             sContextMenuItemsPtr = sBagMenuSortKeyItems;
             memcpy(&sContextMenuItemsBuffer, &sBagMenuSortKeyItems, NELEMS(sBagMenuSortKeyItems));
-            sContextMenuNumItems = NELEMS(sBagMenuSortKeyItems);
+            sContextMenuNumItems = 2;
             break;
         case POCKET_POKE_BALLS:
             sContextMenuItemsPtr = sBagMenuSortPokeBalls;
             memcpy(&sContextMenuItemsBuffer, &sBagMenuSortPokeBalls, NELEMS(sBagMenuSortPokeBalls));
-            sContextMenuNumItems = NELEMS(sBagMenuSortPokeBalls);
+            sContextMenuNumItems = 3;
             break;
         case POCKET_BERRY_POUCH:
         case POCKET_TM_CASE:
             sContextMenuItemsPtr = sBagMenuSortTMBerries;
             memcpy(&sContextMenuItemsBuffer, &sBagMenuSortTMBerries, NELEMS(sBagMenuSortTMBerries));
-            sContextMenuNumItems = NELEMS(sBagMenuSortTMBerries);
+            sContextMenuNumItems = 4;
             break;
         default:
             sContextMenuItemsPtr = sBagMenuSortItems;
             memcpy(&sContextMenuItemsBuffer, &sBagMenuSortItems, NELEMS(sBagMenuSortItems));
-            sContextMenuNumItems = NELEMS(sBagMenuSortItems);
+            sContextMenuNumItems = 4;
             break;
     }
 
@@ -3059,25 +3038,21 @@ static void Task_LoadBagSortOptions(u8 taskId)
 static void ItemMenu_SortByName(u8 taskId)
 {
     gTasks[taskId].tSortType = SORT_ALPHABETICALLY;
-    StringCopy(gStringVar1, sSortTypeStrings[SORT_ALPHABETICALLY]);
     gTasks[taskId].func = SortBagItems;
 }
 static void ItemMenu_SortByType(u8 taskId)
 {
     gTasks[taskId].tSortType = SORT_BY_TYPE;
-    StringCopy(gStringVar1, sSortTypeStrings[SORT_BY_TYPE]);
     gTasks[taskId].func = SortBagItems;
 }
 static void ItemMenu_SortByAmount(u8 taskId)
 {
     gTasks[taskId].tSortType = SORT_BY_AMOUNT; //greatest->least
-    StringCopy(gStringVar1, sSortTypeStrings[SORT_BY_AMOUNT]);
     gTasks[taskId].func = SortBagItems;
 }
 static void ItemMenu_SortByNumber(u8 taskId)
 {
     gTasks[taskId].tSortType = SORT_BY_NUMBER; //by itemID
-    StringCopy(gStringVar1, sSortTypeStrings[SORT_BY_NUMBER]);
     gTasks[taskId].func = SortBagItems;
 }
 
@@ -3095,7 +3070,7 @@ static void Task_SortFinish(u8 taskId)
 {
     s16* data = gTasks[taskId].data;
 
-    if (gMain.newKeys & (A_BUTTON | B_BUTTON))
+    if (JOY_NEW(A_BUTTON | B_BUTTON))
     {
         SortItemsInBag(gBagMenuState.pocket, tSortType);
         PlaySE(SE_SELECT);
