@@ -283,10 +283,10 @@ static const struct MenuAction sItemMenuContextActions[] = {
     [ITEMMENUACTION_OPEN_BERRIES] = {gOtherText_Open, {.void_u8 = Task_ItemMenuAction_BattleUse}},
     [ITEMMENUACTION_WALK] =         {gOtherText_Walk, {.void_u8 = Task_ItemMenuAction_Use}},
     [ITEMMENUACTION_DESELECT] =     {gOtherText_Deselect, {.void_u8 = Task_ItemMenuAction_ToggleSelect}},
-    [ITEMMENUACTION_BY_NAME] =      {sMenuText_ByName, ItemMenu_SortByName},
-    [ITEMMENUACTION_BY_TYPE] =      {sMenuText_ByType, ItemMenu_SortByType},
-    [ITEMMENUACTION_BY_AMOUNT] =    {sMenuText_ByAmount, ItemMenu_SortByAmount},
-    [ITEMMENUACTION_BY_NUMBER] =    {sMenuText_ByNumber, ItemMenu_SortByNumber},
+    [ITEMMENUACTION_BY_NAME] =      {sMenuText_ByName, {.void_u8 = ItemMenu_SortByName}},
+    [ITEMMENUACTION_BY_TYPE] =      {sMenuText_ByType, {.void_u8 = ItemMenu_SortByType}},
+    [ITEMMENUACTION_BY_AMOUNT] =    {sMenuText_ByAmount, {.void_u8 = ItemMenu_SortByAmount}},
+    [ITEMMENUACTION_BY_NUMBER] =    {sMenuText_ByNumber, {.void_u8 = ItemMenu_SortByNumber}},
     [ITEMMENUACTION_DUMMY] =        {gString_Dummy, {.void_u8 = NULL}}
 };
 
