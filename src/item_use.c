@@ -69,8 +69,8 @@ static void sub_80A1D58(void);
 static void sub_80A1D68(u8 taskId);
 static void Task_BattleUse_StatBooster_DelayAndPrint(u8 taskId);
 static void Task_BattleUse_StatBooster_WaitButton_ReturnToBattle(u8 taskId);
-static void FieldUseFunc_HoneyCallBack1(u8 taskId);
-static void FieldUseFunc_HoneyCallBack2(u8 taskId);
+static void FieldUseFunc_HoneyCB1(u8 taskId);
+static void FieldUseFunc_HoneyCB2(u8 taskId);
 
 // No clue what this is
 static const u8 sUnref_83E27B4[] = {
