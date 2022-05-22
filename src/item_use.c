@@ -50,6 +50,7 @@ static void sub_80A1208(void);
 static void ItemUseOnFieldCB_Bicycle(u8 taskId);
 static bool8 ItemUseCheckFunc_Rod(void);
 static void ItemUseOnFieldCB_Rod(u8 taskId);
+static void ItemUseOnFieldCB_Honey(u8 taskId);
 static void sub_80A1648(u8 taskId);
 static void sub_80A1674(u8 taskId);
 static void InitTMCaseFromBag(void);
@@ -69,8 +70,7 @@ static void sub_80A1D58(void);
 static void sub_80A1D68(u8 taskId);
 static void Task_BattleUse_StatBooster_DelayAndPrint(u8 taskId);
 static void Task_BattleUse_StatBooster_WaitButton_ReturnToBattle(u8 taskId);
-static void FieldUseFunc_HoneyCB1(u8 taskId);
-static void FieldUseFunc_HoneyCB2(u8 taskId);
+static void FieldUseFunc_HoneyCB(u8 taskId);
 
 // No clue what this is
 static const u8 sUnref_83E27B4[] = {
@@ -732,24 +732,24 @@ void FieldUseFunc_VsSeeker(u8 taskId)
     }
 }
 
-static void FieldUseFunc_HoneyCB2(u8 taskId)
-{
-    ScriptContext1_SetupScript(EventScript_Honey);
-    DestroyTask(taskId);
-}
-
-static void FieldUseFunc_HoneyCB1(u8 taskId)
-{
-    sub_80A1A44();
-    gTasks[taskId].data[0] = 0;
-    DisplayItemMessageOnField(taskId, 2, gUnknown_841658C, FieldUseFunc_HoneyCB2);
-}
-
 void FieldUseFunc_Honey(u8 taskId)
 {
     ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, NULL, gSpecialVar_ItemId, 0xFFFF);
-    sItemUseOnFieldCB = FieldUseFunc_HoneyCB1;
+    sItemUseOnFieldCB = ItemUseOnFieldCB_Honey;
     sub_80A103C(taskId);
+}
+
+static void ItemUseOnFieldCB_Honey(u8 taskId)
+{
+    sub_80A1A44();
+    gTasks[taskId].data[0] = 0;
+    DisplayItemMessageOnField(taskId, 2, gUnknown_841658C, FieldUseFunc_HoneyCB);
+}
+
+static void FieldUseFunc_HoneyCB(u8 taskId)
+{
+    ScriptContext1_SetupScript(EventScript_Honey);
+    DestroyTask(taskId);
 }
 
 void FieldUseFunc_ExpShare(u8 taskId)
