@@ -4543,4 +4543,9 @@ extern const u16 gUnknown_8E9C418[];
 extern const u16 gDexScreen_TopMenuIconPals_AtoZ[];
 extern const u32 gDexScreen_TopMenuIconTiles_AtoZ[];
 
+// registered_item
+extern const u8 gRegisteredItemBoxSpriteGfx[];
+extern const u16 gRegisteredItemBoxSpritePal[];
+extern const u8 gRegisteredItemCursorSpriteGfx[];
+
 #endif //GUARD_GRAPHICS_H
