@@ -110,9 +110,9 @@ static const struct SpriteSheet sCursorSpriteSheet =
 };
 
 static const union AffineAnimCmd sAffineAnim_RegisteredItemLoad[] = {
-    AFFINEANIMCMD_FRAME(16, 16, 0, 0),
+	AFFINEANIMCMD_FRAME(16, 16, 0, 0),
 	AFFINEANIMCMD_FRAME(16, 16, 0, 15),
-    AFFINEANIMCMD_END
+	AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd sAffineAnim_RegisteredItemUnload[] = {
@@ -122,26 +122,26 @@ static const union AffineAnimCmd sAffineAnim_RegisteredItemUnload[] = {
 
 static const union AffineAnimCmd sAffineAnim_RegisteredItemCursorUp[] = {
 	AFFINEANIMCMD_FRAME(0, 0, 0x00, 1),
-    AFFINEANIMCMD_END
+	AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd sAffineAnim_RegisteredItemCursorDown[] = {
 	AFFINEANIMCMD_FRAME(0, 0, 0x80, 1),
-    AFFINEANIMCMD_END
+	AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd sAffineAnim_RegisteredItemCursorRight[] = {
 	AFFINEANIMCMD_FRAME(0, 0, 0xC0, 1),
-    AFFINEANIMCMD_END
+	AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd sAffineAnim_RegisteredItemCursorLeft[] = {
 	AFFINEANIMCMD_FRAME(0, 0, 0x40, 1),
-    AFFINEANIMCMD_END
+	AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd *const sAffineAnimTable_RegisteredItem[] = {
-    sAffineAnim_RegisteredItemLoad,
+	sAffineAnim_RegisteredItemLoad,
 	sAffineAnim_RegisteredItemUnload
 };
 
