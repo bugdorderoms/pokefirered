@@ -154,30 +154,30 @@ static const union AffineAnimCmd *const sAffineAnimTable_RegisteredItemCursor[] 
 
 static const struct OamData gOamData_RegisteredItem =
 {
-    .y = 0,
-    .affineMode = ST_OAM_AFFINE_NORMAL,
-    .objMode = ST_OAM_OBJ_NORMAL,
-    .bpp = ST_OAM_4BPP,
-    .shape = SPRITE_SHAPE(32x32),
-    .x = 0,
-    .size = SPRITE_SIZE(32x32),
-    .tileNum = 0,
-    .priority = 0,
-    .paletteNum = 0,
+	.y = 0,
+	.affineMode = ST_OAM_AFFINE_NORMAL,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.bpp = ST_OAM_4BPP,
+	.shape = SPRITE_SHAPE(32x32),
+	.x = 0,
+	.size = SPRITE_SIZE(32x32),
+	.tileNum = 0,
+	.priority = 0,
+	.paletteNum = 0,
 };
 
 static const struct OamData gOamData_RegisteredItemCursor =
 {
 	.y = 0,
-    .affineMode = ST_OAM_AFFINE_NORMAL,
-    .objMode = ST_OAM_OBJ_NORMAL,
-    .bpp = ST_OAM_4BPP,
-    .shape = SPRITE_SHAPE(16x16),
-    .x = 0,
-    .size = SPRITE_SIZE(16x16),
-    .tileNum = 0,
-    .priority = 0,
-    .paletteNum = 0,
+	.affineMode = ST_OAM_AFFINE_NORMAL,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.bpp = ST_OAM_4BPP,
+	.shape = SPRITE_SHAPE(16x16),
+	.x = 0,
+	.size = SPRITE_SIZE(16x16),
+	.tileNum = 0,
+	.priority = 0,
+	.paletteNum = 0,
 };
 
 static const struct SpriteTemplate sSelectItem_Cursor =
@@ -219,7 +219,7 @@ bool8 IsAllRegisteredItemSlotsFree(void)
 {
 	u8 i;
 
-    TryRemoveRegisteredItems();
+	TryRemoveRegisteredItems();
 	
 	for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
 	{
@@ -462,7 +462,7 @@ static void SpriteCB_WaitAffinAnimsAndSwitchItems(struct Sprite *sprite)
 	u8 spriteId, firstItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorDirection, FALSE), secondItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorToSwitch, FALSE);
 	u16 temp;
 	
-	if ((firstItem && gSprites[firstItem].affineAnimEnded) || (secondItem && gSprites[secondItem].affineAnimEnded)) // espera a animação terminar
+	if ((firstItem && gSprites[firstItem].affineAnimEnded) || (secondItem && gSprites[secondItem].affineAnimEnded)) // wait anim ends to continue
 	{
 		temp = gSaveBlock1Ptr->registeredItem[sprite->sCursorDirection];
 		gSaveBlock1Ptr->registeredItem[sprite->sCursorDirection] = gSaveBlock1Ptr->registeredItem[sprite->sCursorToSwitch];
@@ -509,7 +509,7 @@ static void SpriteCB_WaitAffinAnimsAndReturnToInput(struct Sprite *sprite)
 {
 	u8 firstItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorDirection, FALSE), secondItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorToSwitch, FALSE);
 	
-	if ((firstItem && gSprites[firstItem].affineAnimEnded) || (secondItem && gSprites[secondItem].affineAnimEnded)) // espera a animação terminar
+	if ((firstItem && gSprites[firstItem].affineAnimEnded) || (secondItem && gSprites[secondItem].affineAnimEnded)) // wait anim ends to continue
 		sprite->callback = SpriteCB_SelectItem_HandleInput;
 }
 
@@ -540,19 +540,19 @@ static void SetDataToSlideAnim(struct Sprite *sprite, u8 direction)
 	{
 		case CURSORDIRECTION_UP:
 		    addY = -1;
-			break;
+	            break;
 		case CURSORDIRECTION_RIGT:
 		    addX = 1;
-			break;
+		    break;
 		case CURSORDIRECTION_DOWN:
 		    addY = 1;
-			break;
+		    break;
 		case CURSORDIRECTION_LEFT:
 		    addX = -1;
-			break;
+		    break;
 	}
 	sprite->sAddToX = addX;
-    sprite->sAddToY = addY;
+	sprite->sAddToY = addY;
 	sprite->sNumFramesToAdd = numFramesToAdd;
 	
 	itemSpriteId = sprite->sItemSpriteId;
