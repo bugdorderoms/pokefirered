@@ -29,6 +29,7 @@
 #include "berry_powder.h"
 #include "pokemon_jump.h"
 #include "event_scripts.h"
+#include "registered_item.h"
 
 // this file's functions
 static void ResetMiniGamesResults(void);
@@ -105,7 +106,7 @@ void ResetMenuAndMonGlobals(void)
 
 void NewGameInitData(void)
 {
-    u8 rivalName[PLAYER_NAME_LENGTH + 1];
+    u8 i, rivalName[PLAYER_NAME_LENGTH + 1];
 
     StringCopy(rivalName, gSaveBlock1Ptr->rivalName);
     gDifferentSaveFile = TRUE;
@@ -133,7 +134,8 @@ void NewGameInitData(void)
     ZeroPlayerPartyMons();
     ResetPokemonStorageSystem();
     ClearRoamerData();
-    gSaveBlock1Ptr->registeredItem = 0;
+    for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
+        gSaveBlock1Ptr->registeredItem[i] = 0;
     ClearBag();
     NewGameInitPCItems();
     ClearEnigmaBerries();
