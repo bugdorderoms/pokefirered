@@ -2624,17 +2624,13 @@ bool8 UseRegisteredKeyItemOnField(void)
     DismissMapNamePopup();
     ChangeBgY(0, 0, 0);
 	
-    if (gSaveBlock1Ptr->registeredItem != ITEM_NONE)
+    if (!IsAllRegisteredItemSlotsFree())
     {
-        if (!IsAllRegisteredItemSlotsFree())
-        {
-            FreezeObjectEvents();
-            HandleEnforcedLookDirectionOnPlayerStopMoving();
+	    FreezeObjectEvents();
+	    HandleEnforcedLookDirectionOnPlayerStopMoving();
             StopPlayerAvatar();
             InitRegisteredItemsToChoose();
             return TRUE;
-        }
-        gSaveBlock1Ptr->registeredItem = ITEM_NONE;
     }
     ScriptContext1_SetupScript(EventScript_BagItemCanBeRegistered);
     return TRUE;
