@@ -25,6 +25,7 @@
 #include "overworld.h"
 #include "party_menu.h"
 #include "pokemon_storage_system.h"
+#include "registered_item.h"
 #include "scanline_effect.h"
 #include "script.h"
 #include "shop.h"
@@ -100,7 +101,7 @@ struct BagSlots
     struct ItemSlot bagPocket_PokeBalls[BAG_POKEBALLS_COUNT];
     u16 itemsAbove[3];
     u16 cursorPos[3];
-    u16 registeredItem;
+    u16 registeredItem[REGISTERED_ITEMS_COUNT];
     u16 pocket;
 };
 
@@ -904,6 +905,7 @@ void GoToBagMenu(u8 location, u8 pocket, MainCallback bagCallback)
             gBagMenuState.pocket = pocket;
         gTextFlags.autoScroll = FALSE;
         gSpecialVar_ItemId = ITEM_NONE;
+	TryRemoveRegisteredItems();
         SetMainCallback2(CB2_OpenBagMenu);
     }
 }
@@ -1281,7 +1283,7 @@ static void BagListMenuItemPrintFunc(u8 windowId, u32 itemId, u8 y)
             StringExpandPlaceholders(gStringVar4, gText_TimesStrVar1);
             BagPrintTextOnWindow(windowId, 0, gStringVar4, 0x6e, y, 0, 0, 0xFF, 1);
         }
-        else if (gSaveBlock1Ptr->registeredItem != ITEM_NONE && gSaveBlock1Ptr->registeredItem == bagItemId)
+        else if (IsItemRegistered(bagItemId))
         {
             BlitBitmapToWindow(windowId, sBlit_SelectButton, 0x70, y, 0x18, 0x10);
         }
@@ -1987,7 +1989,7 @@ static void OpenContextMenu(u8 taskId)
                 sContextMenuItemsPtr = sContextMenuItemsBuffer;
                 sContextMenuNumItems = 3;
                 sContextMenuItemsBuffer[2] = ITEMMENUACTION_CANCEL;
-                if (gSaveBlock1Ptr->registeredItem == gSpecialVar_ItemId)
+                if (IsItemRegistered(gSpecialVar_ItemId))
                     sContextMenuItemsBuffer[1] = ITEMMENUACTION_DESELECT;
                 else
                     sContextMenuItemsBuffer[1] = ITEMMENUACTION_REGISTER;
@@ -2174,10 +2176,16 @@ static void Task_ItemMenuAction_ToggleSelect(u8 taskId)
     u16 itemId;
     s16 *data = gTasks[taskId].data;
     itemId = BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, data[1]);
-    if (gSaveBlock1Ptr->registeredItem == itemId)
-        gSaveBlock1Ptr->registeredItem = ITEM_NONE;
+	
+    if (IsItemRegistered(itemId))
+        gSaveBlock1Ptr->registeredItem[FindRegisteredItemSlot(itemId)] = ITEM_NONE;
     else
-        gSaveBlock1Ptr->registeredItem = itemId;
+    {
+	    if (FindFirstFreeSlot() != REGISTERED_ITEMS_COUNT)
+		    gSaveBlock1Ptr->registeredItem[FindFirstFreeSlot()] = itemId;
+	    else // replaces last registered item
+		    gSaveBlock1Ptr->registeredItem[REGISTERED_ITEMS_COUNT - 1] = itemId;
+    }
 
     DestroyListMenuTask(data[0], &gBagMenuState.cursorPos[gBagMenuState.pocket], &gBagMenuState.itemsAbove[gBagMenuState.pocket]);
     Bag_BuildListMenuTemplate(gBagMenuState.pocket);
@@ -2615,17 +2623,15 @@ bool8 UseRegisteredKeyItemOnField(void)
         return FALSE;
     DismissMapNamePopup();
     ChangeBgY(0, 0, 0);
+	
     if (gSaveBlock1Ptr->registeredItem != ITEM_NONE)
     {
-        if (CheckBagHasItem(gSaveBlock1Ptr->registeredItem, 1) == TRUE)
+        if (!IsAllRegisteredItemSlotsFree())
         {
-            ScriptContext2_Enable();
             FreezeObjectEvents();
             HandleEnforcedLookDirectionOnPlayerStopMoving();
             StopPlayerAvatar();
-            gSpecialVar_ItemId = gSaveBlock1Ptr->registeredItem;
-            taskId = CreateTask(ItemId_GetFieldFunc(gSaveBlock1Ptr->registeredItem), 8);
-            gTasks[taskId].data[3] = 1;
+            InitRegisteredItemsToChoose();
             return TRUE;
         }
         gSaveBlock1Ptr->registeredItem = ITEM_NONE;
