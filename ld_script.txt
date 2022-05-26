@@ -312,6 +312,7 @@ SECTIONS {
         src/berry_fix_program.o(.text);
         src/dns.o(.text);
         src/trainer_slide.o(.text);
+        src/registered_item.o(.text);
     } =0
 
     script_data :
@@ -615,6 +616,7 @@ SECTIONS {
         src/move_descriptions.o(.rodata);
         src/dns.o(.rodata);
         src/trainer_slide.o(.rodata);
+        src/registered_item.o(.rodata);
 
         /* These should not be moved to C files */
         src/mystery_event_msg.o(.rodata);
