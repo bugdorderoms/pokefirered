@@ -2656,7 +2656,10 @@ static void BackUpPlayerBag(void)
     memcpy(sBackupPlayerBag->bagPocket_Items, gSaveBlock1Ptr->bagPocket_Items, BAG_ITEMS_COUNT * sizeof(struct ItemSlot));
     memcpy(sBackupPlayerBag->bagPocket_KeyItems, gSaveBlock1Ptr->bagPocket_KeyItems, BAG_KEYITEMS_COUNT * sizeof(struct ItemSlot));
     memcpy(sBackupPlayerBag->bagPocket_PokeBalls, gSaveBlock1Ptr->bagPocket_PokeBalls, BAG_POKEBALLS_COUNT * sizeof(struct ItemSlot));
-    sBackupPlayerBag->registeredItem = gSaveBlock1Ptr->registeredItem;
+	
+    for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
+	    sBackupPlayerBag->registeredItem[i] = gSaveBlock1Ptr->registeredItem[i];
+	
     sBackupPlayerBag->pocket = gBagMenuState.pocket;
     for (i = 0; i < 3; i++)
     {
@@ -2666,7 +2669,10 @@ static void BackUpPlayerBag(void)
     ClearItemSlots(gSaveBlock1Ptr->bagPocket_Items, BAG_ITEMS_COUNT);
     ClearItemSlots(gSaveBlock1Ptr->bagPocket_KeyItems, BAG_KEYITEMS_COUNT);
     ClearItemSlots(gSaveBlock1Ptr->bagPocket_PokeBalls, BAG_POKEBALLS_COUNT);
-    gSaveBlock1Ptr->registeredItem = ITEM_NONE;
+	
+    for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
+	    gSaveBlock1Ptr->registeredItem[i] = ITEM_NONE;
+	
     ResetBagCursorPositions();
 }
 
@@ -2676,7 +2682,10 @@ static void RestorePlayerBag(void)
     memcpy(gSaveBlock1Ptr->bagPocket_Items, sBackupPlayerBag->bagPocket_Items, BAG_ITEMS_COUNT * sizeof(struct ItemSlot));
     memcpy(gSaveBlock1Ptr->bagPocket_KeyItems, sBackupPlayerBag->bagPocket_KeyItems, BAG_KEYITEMS_COUNT * sizeof(struct ItemSlot));
     memcpy(gSaveBlock1Ptr->bagPocket_PokeBalls, sBackupPlayerBag->bagPocket_PokeBalls, BAG_POKEBALLS_COUNT * sizeof(struct ItemSlot));
-    gSaveBlock1Ptr->registeredItem = sBackupPlayerBag->registeredItem;
+	
+    for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
+	    gSaveBlock1Ptr->registeredItem[i] = sBackupPlayerBag->registeredItem[i];
+	
     gBagMenuState.pocket = sBackupPlayerBag->pocket;
     for (i = 0; i < 3; i++)
     {
@@ -2820,7 +2829,7 @@ static void Task_Bag_TeachyTvRegister(u8 taskId)
             break;
         case 408:
             PlaySE(SE_SELECT);
-            gSaveBlock1Ptr->registeredItem = gSpecialVar_ItemId;
+            gSaveBlock1Ptr->registeredItem[0] = gSpecialVar_ItemId;
             HideBagWindow(10);
             HideBagWindow(6);
             PutWindowTilemap(0);
