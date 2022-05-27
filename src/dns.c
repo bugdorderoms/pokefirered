@@ -6,6 +6,7 @@
 #include "palette.h"
 #include "battle_main.h"
 #include "battle_interface.h"
+#include "registered_item.h"
 #include "item_menu_icons.h"
 #include "constants/map_types.h"
 
@@ -287,6 +288,12 @@ static const u16 sPaletteTagExceptions[] =
 	TAG_STATUS_SUMMARY_BAR_PAL, //0xD710
 	TAG_STATUS_SUMMARY_BALLS_PAL, //0xD712
 	ITEMICON_TAG, //0x0066
+	CURSOR_TAG, //0x1075
+	BOX_TAG, //0x1078
+	ITEMICON_INITIAL_TAG + 0, //0x1088
+	ITEMICON_INITIAL_TAG + 1, //0x1089
+	ITEMICON_INITIAL_TAG + 2, //0x108A
+	ITEMICON_INITIAL_TAG + 3, //0x108B
 };
 
 /***********************************************
