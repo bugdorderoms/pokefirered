@@ -83,15 +83,15 @@ bool8 ScrCmd_givecustommon(struct ScriptContext * ctx)
     bool8 shiny, hiddenAbility;
 
     for (i = 0; i < NUM_STATS; i++)
-		ivs[i] = ScriptReadByte(ctx);
+	    ivs[i] = ScriptReadByte(ctx);
 
     shiny = ScriptReadByte(ctx);
-	if (shiny)
-		FlagSet(FLAG_CREATE_SHINY_MON);
+    if (shiny)
+	    FlagSet(FLAG_CREATE_SHINY_MON);
     
-	hiddenAbility = ScriptReadByte(ctx);
-	if (hiddenAbility)
-		FlagSet(FLAG_HIDDEN_ABILITY_MON);
+    hiddenAbility = ScriptReadByte(ctx);
+    if (hiddenAbility)
+	    FlagSet(FLAG_HIDDEN_ABILITY_MON);
 
     ball = ScriptReadHalfword(ctx);
 
