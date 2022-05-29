@@ -5929,7 +5929,7 @@ static void atk76_various(void)
             byte = GetMonData(&gEnemyParty[i], MON_DATA_ABILITY_NUM);
             status = GetMonData(&gEnemyParty[i], MON_DATA_STATUS);
 
-            if (species != SPECIES_NONE && species != SPECIES_EGG && status & AILMENT_FNT && GetAbilityBySpecies(species, byte) != ABILITY_SOUNDPROOF)
+            if (species != SPECIES_NONE && species != SPECIES_EGG && status & AILMENT_FNT && GetAbilityBySpecies(species, byte, GetMonData(&gEnemyParty[i], MON_DATA_ABILITY_HIDDEN)) != ABILITY_SOUNDPROOF)
                 monToCheck |= (1 << i);
         }
         if (monToCheck)
