@@ -228,7 +228,7 @@ u8 FindMonAbilityInBattle(u8 battler)
 		if (gNewBattleStruct.IgnoredAbilities[battler])
 			return gNewBattleStruct.IgnoredAbilities[battler];
 		else
-			return GetAbilityBySpecies(gBattleMons[battler].species, gBattleMons[battler].abilityNum);
+			return GetAbilityBySpecies(gBattleMons[battler].species, gBattleMons[battler].abilityNum, gBattleMons[battler].abilityHidden);
 	}
 	else
 		return gBattleMons[battler].ability;
