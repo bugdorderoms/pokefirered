@@ -35,8 +35,8 @@
 #define FLAG_TEMP_1E             0x01E
 #define FLAG_TEMP_1F             0x01F
 
-#define FLAG_0x020               0x020
-#define FLAG_0x021               0x021
+#define FLAG_CREATE_SHINY_MON    0x020
+#define FLAG_HIDDEN_ABILITY_MON  0x021
 #define FLAG_0x022               0x022
 #define FLAG_0x023               0x023
 #define FLAG_0x024               0x024
