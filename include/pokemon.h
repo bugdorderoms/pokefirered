@@ -73,8 +73,9 @@ struct PokemonSubstruct3
  /* 0x0B */ u32 nationalRibbon:1;
  /* 0x0B */ u32 earthRibbon:1;
  /* 0x0B */ u32 worldRibbon:1; // distributed during Pokémon Festa '04 and '05 to tournament winners
- /* 0x0B */ u32 filler:4;
+ /* 0x0B */ u32 abilityHidden:1;
  /* 0x0B */ u32 eventLegal:1; // controls Mew & Deoxys obedience; if set, Pokémon is a fateful encounter in FRLG & Gen 4+ summary screens; set for in-game event island legendaries, some distributed events, and Pokémon from XD: Gale of Darkness.
+ /* 0x0B */ u32 filler:3;
 };
 
 union PokemonSubstruct
@@ -151,7 +152,7 @@ struct BattleTowerPokemon
              u32 speedIV:5;
              u32 spAttackIV:5;
              u32 spDefenseIV:5;
-             u32 gap:1;
+             u32 abilityHidden:1;
              u32 abilityNum:1;
     /*0x1C*/ u32 personality;
     /*0x20*/ u8 nickname[11];
@@ -175,7 +176,7 @@ struct BattlePokemon
     /*0x15*/ u32 speedIV:5;
     /*0x16*/ u32 spAttackIV:5;
     /*0x17*/ u32 spDefenseIV:5;
-    /*0x17*/ u32 isEgg:1;
+    /*0x17*/ u32 abilityHidden:1;
     /*0x17*/ u32 abilityNum:1;
     /*0x18*/ s8 statStages[BATTLE_STATS_NO];
     /*0x20*/ u8 ability;
@@ -228,6 +229,7 @@ struct BaseStats
  /* 0x18 */ u8 safariZoneFleeRate;
  /* 0x19 */ u8 bodyColor : 7;
             u8 noFlip : 1;
+ /* 0x1A */ u8 hiddenAbility;
 };
 
 struct BattleMove
@@ -395,7 +397,7 @@ u8 GiveMonToPlayer(struct Pokemon *mon);
 u8 CalculatePlayerPartyCount(void);
 u8 CalculateEnemyPartyCount(void);
 u8 GetMonsStateToDoubles(void);
-u8 GetAbilityBySpecies(u16 species, bool8 abilityNum);
+u8 GetAbilityBySpecies(u16 species, bool8 abilityNum, bool8 abilityHidden);
 u8 GetMonAbility(struct Pokemon *mon);
 u8 GetSecretBaseTrainerPicIndex(void);
 u8 GetSecretBaseTrainerNameIndex(void);
