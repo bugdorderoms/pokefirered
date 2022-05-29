@@ -1803,11 +1803,23 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
 		    | (gSaveBlock2Ptr->playerTrainerId[1] << 8)
 		    | (gSaveBlock2Ptr->playerTrainerId[2] << 16)
 		    | (gSaveBlock2Ptr->playerTrainerId[3] << 24);
+	    
 	    rolls = 0;
 	    shinyRolls = 0;
 	    if (gIsFishingEncounter)
 		    shinyRolls += 1 + 2 * gChainFishingStreak;
-	    if (shinyRolls)
+	    
+	    if (FlagGet(FLAG_CREATE_SHINY_MON))
+	    {
+		    FlagClear(FLAG_CREATE_SHINY_MON);
+		    
+		    do
+		    {
+			    personality = Random32();
+			    shinyValue = HIHALF(value) ^ LOHALF(value) ^ HIHALF(personality) ^ LOHALF(personality);
+		    }while (shinyValue >= SHINY_ODDS)
+	    }
+	    else if (shinyRolls)
 	    {
 		    do
 		    {
