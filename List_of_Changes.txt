@@ -35,6 +35,8 @@ Metric System Update (BlackUser)
 Nickname Your Pokemons From The Party Screen (Shinny456, Ghoulslash, TheXaman And Lunos)
 Gen 6 Exp Share (Lunos)
 Bag Sorting (ghoulslash And BlackUser)
+New Resgister Items System (BlackUser)
+Hidden Abilities (BlackUser)
 Inheting Nature From Day Care
 Extra 116 Bytes In SaveBlock2, 464 Bytes In SaveBlock1, And 1044 Bytes In PokemonStorage (Hiram Anderson)
 
@@ -116,6 +118,7 @@ make flower gift form change
 make from immunity to down ability pop up scripts
 probabily add an inverse battle check in anticipation type calc
 end update of moves data
+add hidden abilities in poke base stats
 add the new moves in getforewarnmovepower, sIronFistTable, sRecklessTable, gnochangetypemoves and gSheerForceBoostedMoves
 add berries in isitemaffectedbygluttony
 add abilities in mold breaker ignorable abilities table
