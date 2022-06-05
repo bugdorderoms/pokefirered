@@ -58,8 +58,6 @@ void SetUpBattleVars(void)
     ClearBattleAnimationVars();
     ClearBattleMonForms();
     BattleAI_HandleItemUseBeforeAISetup();
-    gUnknown_2022B54 = 0;
-    gUnknown_2023DDC = 0;
 }
 
 void InitBtlControllers(void)
