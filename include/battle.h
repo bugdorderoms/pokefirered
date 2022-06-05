@@ -293,10 +293,10 @@ struct UsedMoves
 struct BattleHistory
 {
     /*0x00*/ u16 usedMoves[2][8]; // 0xFFFF means move not used (confuse self hit, etc)
-    /*0x20*/ u8 abilities[MAX_BATTLERS_COUNT / 2];
-    /*0x22*/ u8 itemEffects[MAX_BATTLERS_COUNT / 2];
-    /*0x24*/ u16 trainerItems[MAX_BATTLERS_COUNT];
-    /*0x2C*/ u8 itemsNo;
+    /*0x20*/ u16 abilities[MAX_BATTLERS_COUNT / 2];
+    /*0x24*/ u8 itemEffects[MAX_BATTLERS_COUNT / 2];
+    /*0x26*/ u16 trainerItems[MAX_BATTLERS_COUNT];
+    /*0x2E*/ u8 itemsNo;
 };
 
 struct BattleScriptsStack
@@ -372,12 +372,10 @@ struct BattleStruct
 {
     u8 turnEffectsTracker;
     u8 turnEffectsBattlerId;
-    u8 filler2; // unused
     u8 turnCountersTracker;
     u8 wrappedMove[MAX_BATTLERS_COUNT * 2]; // Leftover from Ruby's ewram access.
     u8 moveTarget[MAX_BATTLERS_COUNT];
     u8 expGetterMonId;
-    u8 field_11; // unused
     u8 wildVictorySong;
     u8 dynamicMoveType;
     u8 wrappedBy[MAX_BATTLERS_COUNT];
@@ -399,7 +397,6 @@ struct BattleStruct
     u8 battlerPartyOrders[MAX_BATTLERS_COUNT][3];
     u8 runTries;
     u8 caughtMonNick[POKEMON_NAME_LENGTH + 1];
-    u8 field_78; // unused
     u8 safariGoNearCounter;
     u8 safariPkblThrowCounter;
     u8 safariEscapeFactor;
@@ -409,21 +406,15 @@ struct BattleStruct
     u8 formToChangeInto;
     u8 chosenMovePositions[MAX_BATTLERS_COUNT];
     u8 stateIdAfterSelScript[MAX_BATTLERS_COUNT];
-    u8 field_88; // unused
-    u8 field_89; // unused
-    u8 field_8A; // unused
     u8 playerPartyIdx;
-    u8 field_8C; // unused
-    u8 field_8D; // unused
     u8 stringMoveType;
     u8 expGetterBattlerId;
-    u8 field_90; // unused
     u8 absentBattlerFlags;
     u8 AI_monToSwitchIntoId[2];
     u8 simulatedInputState[4];  // used by Oak/Old Man/Pokedude controllers
     u8 lastTakenMove[MAX_BATTLERS_COUNT * 2 * 2]; // ask gamefreak why they declared it that way
     u16 hpOnSwitchout[2];
-    u8 abilityPreventingSwitchout;
+    u16 abilityPreventingSwitchout;
     u8 hpScale;
     u16 savedBattleTypeFlags;
     void (*savedCallback)(void);
@@ -441,7 +432,6 @@ struct BattleStruct
     u8 switchInItemsCounter;
     u8 field_DA; // battle tower related
     u8 turnSideTracker;
-    u8 fillerDC[0xDF-0xDC];
     u8 givenExpMons;
     u8 lastTakenMoveFrom[MAX_BATTLERS_COUNT * MAX_BATTLERS_COUNT * 2];
     u16 castformPalette[MAX_BATTLERS_COUNT][16];
@@ -453,14 +443,13 @@ struct BattleStruct
         struct LinkPartnerHeader linkPartnerHeader;
         struct MultiBattlePokemonTx multiBattleMons[3];
     } multiBuffer;
-    u8 padding_1E4[0x1C];
-}; // size == 0x200 bytes
+};
 
 struct NewBattleStruct
 {
-    u8 IgnoredAbilities[MAX_BATTLERS_COUNT];
-    u8 SlowStartTimers[MAX_BATTLERS_COUNT];
-    u8 UnburdenBoostBits;
+/*0x00*/ u16 IgnoredAbilities[MAX_BATTLERS_COUNT];
+/*0x08*/ u8 SlowStartTimers[MAX_BATTLERS_COUNT];
+/*0x0C*/ u8 UnburdenBoostBits;
 };
 
 extern struct BattleStruct *gBattleStruct;
@@ -664,7 +653,7 @@ extern u16 gChosenMove;
 extern u16 gCalledMove;
 extern u8 gCritMultiplier;
 extern u16 gBattleWeather;
-extern u8 gLastUsedAbility;
+extern u16 gLastUsedAbility;
 extern u8 gBattlerInMenuId;
 extern u8 gPotentialItemEffectBattler;
 extern u8 gBattlersCount;
