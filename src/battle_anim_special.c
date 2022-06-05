@@ -2386,8 +2386,9 @@ static void AbilityPopUpPrinter(const u8 * str, u8 * tiledata, u32 x, u32 y, u32
 static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 arg1, u8 arg2)
 {
     int i;
-    u8 ability, pokemonName[POKEMON_NAME_LENGTH + 3] = {0};
+    u8 pokemonName[POKEMON_NAME_LENGTH + 3] = {0};
     u8 *textPtr;
+    u16 ability;
     
     for (i = 0; i < POKEMON_NAME_LENGTH; i++)
     {
