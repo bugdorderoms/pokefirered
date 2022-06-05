@@ -221,7 +221,7 @@ bool8 WasUnableToUseMove(u8 battler)
         return FALSE;
 }
 
-u8 FindMonAbilityInBattle(u8 battler)
+u16 FindMonAbilityInBattle(u8 battler)
 {
 	if (!gBattleMons[battler].ability)
 	{
@@ -1681,7 +1681,7 @@ u8 CastformDataTypeChange(u8 battler)
     return formChange;
 }
 
-u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveArg)
+u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 moveArg)
 {
     u8 effect = 0;
     struct Pokemon *pokeAtk;
@@ -2613,7 +2613,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
             }
             break;
         }
-        if (effect && caseID < ABILITYEFFECT_CHECK_OTHER_SIDE && gLastUsedAbility != 0xFF)
+        if (effect && caseID < ABILITYEFFECT_CHECK_OTHER_SIDE && gLastUsedAbility != 0xFFFF)
             RecordAbilityBattle(battler, gLastUsedAbility);
     }
     return effect;
