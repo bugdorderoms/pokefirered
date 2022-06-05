@@ -1652,7 +1652,7 @@ u8 TypeCalc(u16 move, u8 attacker, u8 defender)
     return flags;
 }
 
-u8 AI_TypeCalc(u16 move, u16 targetSpecies, u8 targetAbility)
+u8 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility)
 {
     s32 i = 0;
     u8 flags = 0;
@@ -2997,7 +2997,7 @@ static void atk1D_jumpifstatus2(void)
 static void atk1E_jumpifability(void)
 {
     u8 battlerId;
-    u8 ability = gBattlescriptCurrInstr[2];
+    u16 ability = gBattlescriptCurrInstr[2];
     const u8 *jumpPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
 
     if (gBattlescriptCurrInstr[1] == BS_ATTACKER_SIDE)
@@ -7554,8 +7554,8 @@ static void atkAD_tryspiteppreduce(void)
 
 static void atkAE_healpartystatus(void)
 {
-    u8 ability, abilityNum, toHeal = 0;
-    u16 species;
+    u8 abilityNum, toHeal = 0;
+    u16 species, ability;
     u32 zero = 0;
     s32 i;
 	
@@ -8415,7 +8415,7 @@ static void atkD9_scaledamagebyhealthratio(void)
 
 static void atkDA_tryswapabilities(void) // skill swap
 {
-    u8 abilityAtk;
+    u16 abilityAtk;
 	
     if ((gBattleMons[gBattlerAttacker].ability == 0 && gBattleMons[gBattlerTarget].ability == 0) || gBattleMons[gBattlerAttacker].ability == ABILITY_WONDER_GUARD
 	|| gBattleMons[gBattlerTarget].ability == ABILITY_WONDER_GUARD || gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
@@ -8645,8 +8645,8 @@ static void atkE4_getsecretpowereffect(void)
 
 static void atkE5_pickup(void)
 {
-    u8 level, chance, levelmax, ability;
-    u16 species, heldItem;
+    u8 level, chance, levelmax;
+    u16 species, heldItem, ability;
     u32 j;
     s32 i, random;
 
@@ -9302,7 +9302,7 @@ static void atkFC_loadabilitypopup(void)
 
 static void atkFD_jumpifweatherandability(void)
 {
-	u8 ability = gBattlescriptCurrInstr[2];
+	u16 ability = gBattlescriptCurrInstr[2];
 	u16 weather = T1_READ_16(gBattlescriptCurrInstr + 3);
 	
 	if (WEATHER_HAS_EFFECT && gBattleWeather & weather && gBattleMons[GetBattlerForBattleScript(gBattlescriptCurrInstr[1])].ability == ability)
