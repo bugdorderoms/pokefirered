@@ -677,8 +677,6 @@ extern u8 *gBattleAnimMons_BgTilesBuffer;
 extern u8 *gBattleAnimMons_BgTilemapBuffer;
 extern void (*gBattleMainFunc)(void);
 extern u8 gMoveSelectionCursor[MAX_BATTLERS_COUNT];
-extern u32 gUnknown_2022B54;
-extern u8 gUnknown_2023DDC;
 extern u8 gBattlerAttacker;
 extern u8 gEffectBattler;
 extern u8 gMultiHitCounter;
