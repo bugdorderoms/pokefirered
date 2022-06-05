@@ -465,7 +465,7 @@ static void RecordLastUsedMoveByTarget(void)
     }
 }
 
-void RecordAbilityBattle(u8 battlerId, u8 abilityId)
+void RecordAbilityBattle(u8 battlerId, u16 abilityId)
 {
     if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
         BATTLE_HISTORY->abilities[GET_BATTLER_SIDE(battlerId)] = abilityId;
