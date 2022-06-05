@@ -2151,14 +2151,9 @@ static void BufferMonInfo(void)
 
 static void BufferMonSkills(void)
 {
-    u8 tempStr[20];
-    u8 i, level;
-    u16 type;
-    u16 species;
-    u16 hp;
-    u16 statValue;
-    u32 exp;
-    u32 expToNextLevel;
+    u8 i, level, tempStr[20];
+    u16 type, species, hp, statValue;
+    u32 exp, expToNextLevel;
 
     hp = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP);
     ConvertIntToDecimalStringN(sMonSummaryScreen->summary.curHpStrBuf, hp, STR_CONV_MODE_LEFT_ALIGN, 3);
