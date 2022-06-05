@@ -143,7 +143,7 @@
 	.macro jumpifability param0:req, ability:req, ptr:req
 	.byte 0x1e
 	.byte \param0
-	.byte \ability
+	.2byte \ability
 	.4byte \ptr
 	.endm
 
@@ -365,7 +365,7 @@
 
 	.macro jumpifabilitypresent ability:req, ptr:req
 	.byte 0x43
-	.byte \ability
+	.2byte \ability
 	.4byte \ptr
 	.endm
 
@@ -1270,13 +1270,13 @@
 	.byte 0xfc
 	.byte \value
 	.byte \battler
-	.byte \ability
+	.2byte \ability
 	.endm
 	
 	.macro jumpifweatherandability battler:req, ability:req, weather:req, ptr:req
 	.byte 0xfd
 	.byte \battler
-	.byte \ability
+	.2byte \ability
 	.2byte \weather
 	.4byte \ptr
 	.endm
