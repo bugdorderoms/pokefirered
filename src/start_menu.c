@@ -271,12 +271,12 @@ static void DrawTimeBox(void)
         StringExpandPlaceholders(gStringVar4, gUnknown_84162A9);
         AddTextPrinterParameterized(sSafariZoneStatsWindowId, 2, gStringVar4, 4, 18, 0xFF, NULL);
     }
-    gSpecialVar_0x8004 = CreateTask(Task_PutTimeInTimeBox, 2);
+    CreateTask(Task_PutTimeInTimeBox, 2);
 }
 
 static void DestroySafariZoneStatsWindow(void)
 {
-    DestroyTask(gSpecialVar_0x8004);
+    DestroyTask(FindTaskIdByFunc(Task_PutTimeInTimeBox));
     ClearStdWindowAndFrameToTransparent(sSafariZoneStatsWindowId, FALSE);
     CopyWindowToVram(sSafariZoneStatsWindowId, COPYWIN_GFX);
     RemoveWindow(sSafariZoneStatsWindowId);
@@ -524,7 +524,7 @@ static bool8 StartMenuPlayerCallback(void)
 
 static bool8 StartMenuSaveCallback(void)
 {
-    DestroyTask(gSpecialVar_0x8004);
+    DestroyTask(FindTaskIdByFunc(Task_PutTimeInTimeBox));
     sStartMenuCallback = StartCB_Save1;
     return FALSE;
 }
