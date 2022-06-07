@@ -177,9 +177,6 @@ const struct SpriteTemplate gFallingFeatherSpriteTemplate =
     .callback = AnimFallingFeather,
 };
 
-// not used
-static const u16 gUnknown_83E6C18[] = INCBIN_U16("graphics/battle_anims/unk_83E6C18.gbapal");
-
 const struct SpriteTemplate gUnknown_83E6C38 =
 {
     .tileTag = ANIM_TAG_SMALL_BUBBLES,
