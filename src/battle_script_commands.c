@@ -7272,8 +7272,7 @@ static void atkA3_disablelastusedattack(void)
     {
         PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[gBattlerTarget].moves[i])
         gDisableStructs[gBattlerTarget].disabledMove = gBattleMons[gBattlerTarget].moves[i];
-        gDisableStructs[gBattlerTarget].disableTimer = (Random() & 3) + 2;
-        gDisableStructs[gBattlerTarget].disableTimerStartValue = gDisableStructs[gBattlerTarget].disableTimer; // used to save the random amount of turns?
+        gDisableStructs[gBattlerTarget].disableTimer = 4;
         gBattlescriptCurrInstr += 5;
     }
     else
@@ -7293,8 +7292,7 @@ static void atkA4_trysetencore(void)
     {
         gDisableStructs[gBattlerTarget].encoredMove = gBattleMons[gBattlerTarget].moves[i];
         gDisableStructs[gBattlerTarget].encoredMovePos = i;
-        gDisableStructs[gBattlerTarget].encoreTimer = (Random() & 3) + 3;
-        gDisableStructs[gBattlerTarget].encoreTimerStartValue = gDisableStructs[gBattlerTarget].encoreTimer;
+        gDisableStructs[gBattlerTarget].encoreTimer = 3;
         gBattlescriptCurrInstr += 5;
     }
     else
@@ -7684,7 +7682,6 @@ static void atkB2_trysetperishsong(void)
         {
             gStatuses3[i] |= STATUS3_PERISH_SONG;
             gDisableStructs[i].perishSongTimer = 3;
-            gDisableStructs[i].perishSongTimerStartValue = 3;
         }
     }
     PressurePPLoseOnUsingPerishSong(gBattlerAttacker);
@@ -8188,7 +8185,6 @@ static void atkCB_setcharge(void)
 {
     gStatuses3[gBattlerAttacker] |= STATUS3_CHARGED_UP;
     gDisableStructs[gBattlerAttacker].chargeTimer = 2;
-    gDisableStructs[gBattlerAttacker].chargeTimerStartValue = 2;
     ++gBattlescriptCurrInstr;
 }
 
@@ -8230,7 +8226,6 @@ static void atkD0_settaunt(void)
     if (gDisableStructs[gBattlerTarget].tauntTimer == 0)
     {
         gDisableStructs[gBattlerTarget].tauntTimer = 2;
-        gDisableStructs[gBattlerTarget].tauntTimer2 = 2;
         gBattlescriptCurrInstr += 5;
     }
     else
