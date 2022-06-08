@@ -971,8 +971,6 @@ void FreeMonSpritesGfx(void)
         return;
     if (gMonSpritesGfxPtr->multiUseBuffer != NULL)
         FREE_AND_SET_NULL(gMonSpritesGfxPtr->multiUseBuffer);
-    if (gMonSpritesGfxPtr->field_178 != NULL)
-        FREE_AND_SET_NULL(gMonSpritesGfxPtr->field_178);
     FREE_AND_SET_NULL(gMonSpritesGfxPtr->barFontGfx);
     FREE_AND_SET_NULL(gMonSpritesGfxPtr->firstDecompressed);
     gMonSpritesGfxPtr->sprites[0] = NULL;
