@@ -70,11 +70,9 @@ struct Weather
     u8 lightenedFogSpritePalsCount;
     bool8 fogHSpritesCreated;
     u16 ashBaseSpritesX;
-    u16 unknown_6FE;
     bool8 ashSpritesCreated;
     u32 sandstormXOffset;
     u32 sandstormYOffset;
-    u8 filler_70C[2];
     u16 sandstormBaseSpritesX;
     u16 sandstormPosY;
     u16 sandstormWaveIndex;
@@ -104,7 +102,6 @@ struct Weather
     s16 droughtLastBrightnessStage;
     s16 droughtTimer;
     s16 droughtState;
-    u8 filler_744[0xD-4];
     s8 loadDroughtPalsIndex;
     u8 loadDroughtPalsOffset;
 };
