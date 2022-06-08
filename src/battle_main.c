@@ -2833,7 +2833,6 @@ void FaintClearSetData(void)
     gProtectStructs[gActiveBattler].helpingHand = FALSE;
     gProtectStructs[gActiveBattler].bounceMove = FALSE;
     gProtectStructs[gActiveBattler].stealMove = FALSE;
-    gProtectStructs[gActiveBattler].flag0Unknown = FALSE;
     gProtectStructs[gActiveBattler].prlzImmobility = FALSE;
     gProtectStructs[gActiveBattler].confusionSelfDmg = FALSE;
     gProtectStructs[gActiveBattler].targetNotAffected = FALSE;
@@ -2843,7 +2842,6 @@ void FaintClearSetData(void)
     gProtectStructs[gActiveBattler].loveImmobility = FALSE;
     gProtectStructs[gActiveBattler].usedDisabledMove = FALSE;
     gProtectStructs[gActiveBattler].usedTauntedMove = FALSE;
-    gProtectStructs[gActiveBattler].flag2Unknown = FALSE;
     gProtectStructs[gActiveBattler].flinchImmobility = FALSE;
     gProtectStructs[gActiveBattler].notFirstStrike = FALSE;
     gDisableStructs[gActiveBattler].isFirstTurn = 2;
