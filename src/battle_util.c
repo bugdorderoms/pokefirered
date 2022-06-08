@@ -213,7 +213,6 @@ bool8 WasUnableToUseMove(u8 battler)
      || gProtectStructs[battler].loveImmobility
      || gProtectStructs[battler].usedDisabledMove
      || gProtectStructs[battler].usedTauntedMove
-     || gProtectStructs[battler].flag2Unknown
      || gProtectStructs[battler].flinchImmobility
      || gProtectStructs[battler].confusionSelfDmg)
         return TRUE;
