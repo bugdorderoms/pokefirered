@@ -210,14 +210,11 @@ struct SpecialStatus
     u8 ppNotAffectedByPressure : 1;
     u8 flag40 : 1;
     u8 focusBanded : 1;
-    u8 field1[3];
     s32 dmg;
     s32 physicalDmg;
     s32 specialDmg;
     u8 physicalBattlerId;
     u8 specialBattlerId;
-    u8 field12;
-    u8 field13;
 };
 
 extern struct SpecialStatus gSpecialStatuses[MAX_BATTLERS_COUNT];
@@ -235,7 +232,6 @@ struct SideTimer
     /*0x08*/ u8 followmeTimer;
     /*0x09*/ u8 followmeTarget;
     /*0x0A*/ u8 spikesAmount;
-    /*0x0B*/ u8 fieldB;
 };
 
 extern struct SideTimer gSideTimers[];
@@ -262,10 +258,9 @@ struct AI_ThinkingStruct
     s8 score[4];
     u32 funcResult;
     u32 aiFlags;
+    u8 simulatedRNG[4];
     u8 aiAction;
     u8 aiLogicId;
-    u8 filler12[6];
-    u8 simulatedRNG[4];
 };
 
 extern u8 gActiveBattler;
@@ -273,12 +268,6 @@ extern u8 gBattlerTarget;
 extern u8 gAbsentBattlerFlags;
 
 extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];
-
-struct UsedMoves
-{
-    u16 moves[MAX_BATTLERS_COUNT];
-    u16 unknown[MAX_BATTLERS_COUNT];
-};
 
 struct BattleHistory
 {
@@ -331,7 +320,7 @@ struct BattleResults
     u8 usedMasterBall:1;      // 0x5
     u8 caughtMonBall:4;       // 0x5
     u8 shinyWildMon:1;        // 0x5
-    u8 unk5_7:1;              // 0x5
+    u8 unused:1;              // 0x5
     u16 playerMon1Species;    // 0x6
     u8 playerMon1Name[11];    // 0x8
     u8 battleTurnCounter;     // 0x13
@@ -343,8 +332,7 @@ struct BattleResults
     u16 playerMon2Species;    // 0x26
     u16 caughtMonSpecies;     // 0x28
     u8 caughtMonNick[10];     // 0x2A
-    u8 filler34[2];
-    u8 catchAttempts[11];     // 0x36
+    u8 catchAttempts[11];     // 0x34
 };
 
 extern struct BattleResults gBattleResults;
@@ -602,9 +590,7 @@ struct MonSpritesGfx
     void* sprites[MAX_BATTLERS_COUNT];
     struct SpriteTemplate templates[MAX_BATTLERS_COUNT];
     struct SpriteFrameImage images[MAX_BATTLERS_COUNT][4];
-    u8 field_F4[0x80]; // unused
     u8 *barFontGfx;
-    void *field_178; // freed but never allocated
     u16 *multiUseBuffer;
 };
 
