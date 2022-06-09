@@ -278,7 +278,7 @@ static void atkC9_jumpifattackandspecialattackcannotfall(void);
 static void atkCA_setforcedtarget(void);
 static void atkCB_setcharge(void);
 static void atkCC_callterrainattack(void);
-static void atkCD_nop(void);
+static void atkCD_multihitresultmessage(void);
 static void atkCE_settorment(void);
 static void atkCF_jumpifnodamage(void);
 static void atkD0_settaunt(void);
@@ -327,6 +327,7 @@ static void atkFA_setword(void);
 static void atkFB_jumpifsubstituteblocks(void);
 static void atkFC_loadabilitypopup(void);
 static void atkFD_jumpifweatherandability(void);
+static void atkFE_sethalfword(void);
 
 void (* const gBattleScriptingCommandsTable[])(void) =
 {
@@ -535,7 +536,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkCA_setforcedtarget,
     atkCB_setcharge,
     atkCC_callterrainattack,
-    atkCD_nop,
+    atkCD_multihitresultmessage,
     atkCE_settorment,
     atkCF_jumpifnodamage,
     atkD0_settaunt,
@@ -584,6 +585,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkFB_jumpifsubstituteblocks,
     atkFC_loadabilitypopup,
     atkFD_jumpifweatherandability,
+    atkFE_sethalfword,
 };
 
 struct StatFractions
@@ -8197,9 +8199,33 @@ static void atkCC_callterrainattack(void) // nature power
     ++gBattlescriptCurrInstr;
 }
 
-static void atkCD_nop(void) // old refresh command
+static void atkCD_multihitresultmessage(void)
 {
-    ++gBattlescriptCurrInstr;
+	if (!gBattleControllerExecFlags)
+	{
+		if (!(gMoveResultFlags & MOVE_RESULT_FAILED) && !(gMoveResultFlags & MOVE_RESULT_FOE_ENDURED))
+		{
+			if (gMoveResultFlags & MOVE_RESULT_FOE_STURDIED)
+			{
+				gMoveResultFlags &= ~(MOVE_RESULT_FOE_STURDIED | MOVE_RESULT_FOE_HUNG_ON);
+				gSpecialStatuses[gBattlerTarget].sturdied = 0;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_SturdiedMsg;
+				return;
+			}
+			else if (gMoveResultFlags & MOVE_RESULT_FOE_HUNG_ON)
+			{
+				gLastUsedItem = gBattleMons[gBattlerTarget].item;
+				gPotentialItemEffectBattler = gBattlerTarget;
+				gMoveResultFlags &= ~(MOVE_RESULT_FOE_STURDIED | MOVE_RESULT_FOE_HUNG_ON);
+				gSpecialStatuses[gBattlerTarget].focusBanded = 0;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_HangedOnMsg;
+				return;
+			}
+		}
+		++gBattlescriptCurrInstr;
+	}
 }
 
 static void atkCE_settorment(void)
@@ -9306,6 +9332,14 @@ static void atkFD_jumpifweatherandability(void)
 		gBattlescriptCurrInstr += 9;
 }
 
+static void atkFE_sethalfword(void)
+{
+	u8 *memByte = T2_READ_PTR(gBattlescriptCurrInstr + 1);
+
+	*memByte = T1_READ_16(gBattlescriptCurrInstr + 5);
+	gBattlescriptCurrInstr += 7;
+}
+
 //callasm command asm's
 static bool8 AnticipationTypeCalc(u8 battler)
 {
@@ -9511,7 +9545,3 @@ void TryFriskSecondTarget(void)
 	else
 		gBattlescriptCurrInstr = BattleScript_AnticipationReturn;
 }
-	
-	
-	
-	
