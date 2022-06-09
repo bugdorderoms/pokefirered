@@ -829,7 +829,6 @@ void GetBattleAnimBgData(struct BattleAnimBgData *animBgData, u32 bgId)
         animBgData->paletteId = 9;
         animBgData->bgId = 2;
         animBgData->tilesOffset = 0x300;
-        animBgData->unused = 0;
     }
 }
 
