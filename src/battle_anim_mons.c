@@ -814,7 +814,6 @@ void GetBattleAnimBg1Data(struct BattleAnimBgData *animBgData)
     animBgData->paletteId = 8;
     animBgData->bgId = 1;
     animBgData->tilesOffset = 0x200;
-    animBgData->unused = 0;
 }
 
 void GetBattleAnimBgData(struct BattleAnimBgData *animBgData, u32 bgId)
@@ -843,14 +842,12 @@ void GetBattleAnimBgDataByPriorityRank(struct BattleAnimBgData *animBgData, u8 u
         animBgData->paletteId = 8;
         animBgData->bgId = 1;
         animBgData->tilesOffset = 0x200;
-        animBgData->unused = 0;
     }
     else
     {
         animBgData->paletteId = 9;
         animBgData->bgId = 2;
         animBgData->tilesOffset = 0x300;
-        animBgData->unused = 0;
     }
 }
 
