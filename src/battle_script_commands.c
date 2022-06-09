@@ -1766,7 +1766,12 @@ static void atk07_adjustnormaldamage(void)
             gLastUsedItem = gBattleMons[gBattlerTarget].item;
         }
 	else if (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY)
-	    gProtectStructs[gBattlerTarget].enduredBySturdy = TRUE;
+	{
+		RecordAbilityBattle(gBattlerTarget, ABILITY_STURDY);
+		gSpecialStatuses[gBattlerTarget].sturdied = 1;
+		gLastUsedAbility = ABILITY_STURDY;
+		gMoveResultFlags |= MOVE_RESULT_FOE_STURDIED;
+	}
     }
     ++gBattlescriptCurrInstr;
 }
@@ -1808,7 +1813,12 @@ static void atk08_adjustnormaldamage2(void)
             gLastUsedItem = gBattleMons[gBattlerTarget].item;
         }
 	else if (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY)
-	    gProtectStructs[gBattlerTarget].enduredBySturdy = TRUE;
+	{
+		RecordAbilityBattle(gBattlerTarget, ABILITY_STURDY);
+		gSpecialStatuses[gBattlerTarget].sturdied = 1;
+		gLastUsedAbility = ABILITY_STURDY;
+		gMoveResultFlags |= MOVE_RESULT_FOE_STURDIED;
+	}
     }
     ++gBattlescriptCurrInstr;
 }
@@ -2069,6 +2079,7 @@ static void atk0E_effectivenesssound(void)
             case MOVE_RESULT_FOE_ENDURED:
             case MOVE_RESULT_ONE_HIT_KO:
             case MOVE_RESULT_FOE_HUNG_ON:
+	    case MOVE_RESULT_FOE_STURDIED:
             default:
                 if (gMoveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
                 {
@@ -2106,7 +2117,7 @@ static void atk0F_resultmessage(void)
         else
         {
             gBattleCommunication[MSG_DISPLAY] = 1;
-            switch (gMoveResultFlags & (u8)(~(MOVE_RESULT_MISSED)))
+            switch (gMoveResultFlags & (~MOVE_RESULT_MISSED))
             {
             case MOVE_RESULT_SUPER_EFFECTIVE:
                 stringId = STRINGID_SUPEREFFECTIVE;
@@ -2144,6 +2155,14 @@ static void atk0F_resultmessage(void)
                     gBattlescriptCurrInstr = BattleScript_OneHitKOMsg;
                     return;
                 }
+	        else if (gMoveResultFlags & MOVE_RESULT_FOE_STURDIED)
+		{
+			gMoveResultFlags &= ~(MOVE_RESULT_FOE_STURDIED | MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
+			gSpecialStatuses[gBattlerTarget].sturdied = 0;
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_SturdiedMsg;
+			return;
+		}
                 else if (gMoveResultFlags & MOVE_RESULT_FOE_ENDURED)
                 {
                     gMoveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
@@ -2160,13 +2179,6 @@ static void atk0F_resultmessage(void)
                     gBattlescriptCurrInstr = BattleScript_HangedOnMsg;
                     return;
                 }
-	        else if (gProtectStructs[gBattlerTarget].enduredBySturdy)
-		{
-			gProtectStructs[gBattlerTarget].enduredBySturdy = FALSE;
-			BattleScriptPushCursor();
-			gBattlescriptCurrInstr = BattleScript_EnduredBySturdyMsg;
-			return;
-		}
                 else
                     gBattleCommunication[MSG_DISPLAY] = 0;
             }
