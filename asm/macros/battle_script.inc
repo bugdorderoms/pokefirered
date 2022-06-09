@@ -1281,6 +1281,12 @@
 	.4byte \ptr
 	.endm
 	
+	.macro sethalfword ptr:req, param1:req
+	.byte 0xfe
+	.4byte \ptr
+	.2byte \param1
+	.endm
+	
 @ various command changed to more readable macros
 	.macro cancelmultiturnmoves battler:req
 	various \battler, VARIOUS_CANCEL_MULTI_TURN_MOVES
