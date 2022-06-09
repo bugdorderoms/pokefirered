@@ -3689,7 +3689,7 @@ BattleScript_EnduredMsg::
 	waitmessage 0x40
 	return
 
-BattleScript_EnduredBySturdyMsg::
+BattleScript_SturdiedMsg::
         loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, ABILITY_STURDY
         printstring STRINGID_PKMNENDUREDHIT
 	waitmessage 0x40
