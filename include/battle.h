@@ -207,9 +207,11 @@ struct SpecialStatus
     u8 restoredBattlerSprite: 1;    // 0x4
     u8 intimidatedMon : 1;          // 0x8
     u8 traced : 1;                  // 0x10
-    u8 ppNotAffectedByPressure : 1;
-    u8 flag40 : 1;
-    u8 focusBanded : 1;
+    u8 ppNotAffectedByPressure : 1; // 0x20
+    u8 flag40 : 1;                  // 0x40
+    u8 focusBanded : 1;             // 0x80
+    u8 sturdied : 1;                // 0x1
+    u8 unused : 7;                  // 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80
     s32 dmg;
     s32 physicalDmg;
     s32 specialDmg;
