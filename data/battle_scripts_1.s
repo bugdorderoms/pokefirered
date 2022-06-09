@@ -636,6 +636,7 @@ BattleScript_DoMultiHit::
 	datahpupdate BS_TARGET
 	critmessage
 	waitmessage 0x40
+	multihitresultmessage
 	printstring STRINGID_EMPTYSTRING3
 	waitmessage 1
 	addbyte gBattleScripting + 12, 1
