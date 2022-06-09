@@ -6829,7 +6829,7 @@ static void atk93_tryKO(void)
 
     if (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY)
     {
-        gMoveResultFlags |= MOVE_RESULT_MISSED;
+        gMoveResultFlags |= MOVE_RESULT_FOE_STURDIED;
         gLastUsedAbility = ABILITY_STURDY;
         gBattlescriptCurrInstr = BattleScript_SturdyPreventsOHKO;
         RecordAbilityBattle(gBattlerTarget, ABILITY_STURDY);
