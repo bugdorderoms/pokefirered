@@ -129,6 +129,7 @@ static const u8 sUnnerveDescription[] =      _("Makes the foe nervous to eat ber
 static const u8 sDefiantDescription[] =      _("Ups Attack when stats lowered.");
 static const u8 sDefeatistDescription[] =    _("Halves stats if low HP.");
 static const u8 sCursedBodyDescription[] =   _("May disable the foe's move.");
+static const u8 sHealerDescription[] =       _("May heal an ally's status.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
@@ -263,6 +264,7 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_DEFIANT] = sDefiantDescription,
     [ABILITY_DEFEATIST] = sDefeatistDescription,
     [ABILITY_CURSED_BODY] = sCursedBodyDescription,
+    [ABILITY_HEALER] = sHealerDescription,
 };
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
@@ -398,4 +400,5 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_DEFIANT] = _("Defiant"),
     [ABILITY_DEFEATIST] = _("Defeatist"),
     [ABILITY_CURSED_BODY] = _("Cursed Body"),
+    [ABILITY_HEALER] = _("Healer"),
 };
