@@ -2252,6 +2252,14 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				    ++effect;
 			    }
 			    break;
+		    case ABILITY_CURSED_BODY:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED && (Random() % 3) == 0
+				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE))
+			    {
+				    BattleScriptPushCursor();
+				    gBattlescriptCurrInstr = BattleScript_CursedBodyActivation;
+				    ++effect;
+			    }
 	    }
 	    break;
         case ABILITYEFFECT_IMMUNITY: // 5
