@@ -7289,21 +7289,22 @@ static void atkA2_mirrorcoatdamagecalculator(void)
 static void atkA3_disablelastusedattack(void)
 {
     s32 i;
+    u8 battler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 
     for (i = 0; i < MAX_MON_MOVES; ++i)
     {
-        if (gBattleMons[gBattlerTarget].moves[i] == gLastMoves[gBattlerTarget])
+        if (gBattleMons[battler].moves[i] == gLastMoves[battler])
             break;
     }
-    if (gDisableStructs[gBattlerTarget].disabledMove == MOVE_NONE && i != MAX_MON_MOVES && gBattleMons[gBattlerTarget].pp[i] != 0)
+    if (gDisableStructs[battler].disabledMove == MOVE_NONE && i != MAX_MON_MOVES && gBattleMons[battler].pp[i] != 0)
     {
-        PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[gBattlerTarget].moves[i])
-        gDisableStructs[gBattlerTarget].disabledMove = gBattleMons[gBattlerTarget].moves[i];
-        gDisableStructs[gBattlerTarget].disableTimer = 4;
-        gBattlescriptCurrInstr += 5;
+        PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[battler].moves[i])
+        gDisableStructs[battler].disabledMove = gBattleMons[battler].moves[i];
+        gDisableStructs[battler].disableTimer = 4;
+        gBattlescriptCurrInstr += 6;
     }
     else
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 }
 
 static void atkA4_trysetencore(void)
