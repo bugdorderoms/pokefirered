@@ -2383,7 +2383,7 @@ static void AbilityPopUpPrinter(const u8 * str, u8 * tiledata, u32 x, u32 y, u32
     RemoveWindow(WindowId);
 }
 
-static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 arg1, u8 arg2)
+static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 arg1, u16 arg2)
 {
     int i;
     u8 pokemonName[POKEMON_NAME_LENGTH + 3] = {0};
@@ -2464,7 +2464,7 @@ static void AnimTask_FreeAbilityPopUp(u8 taskId)
 
 void AnimTask_CreateAbilityPopUp(u8 taskId)
 {
-    u8 spriteId1, spriteId2, destroyTaskId, battler = GetBattlerForBattleScript(gBattlescriptCurrInstr[-2]);
+    u8 spriteId1, spriteId2, destroyTaskId, battler = GetBattlerForBattleScript(gBattlescriptCurrInstr[-3]);
     u16 posX, posY;
     
     LoadSpriteSheet((const struct SpriteSheet*) &gBattleAnimPicTable[GET_TRUE_SPRITE_INDEX(ANIM_TAG_ABILITY_POP_UP)]);
@@ -2505,14 +2505,14 @@ void AnimTask_CreateAbilityPopUp(u8 taskId)
     StartSpriteAnim(&gSprites[spriteId1], 0);
     StartSpriteAnim(&gSprites[spriteId2], 0);
     
-    PrintBattlerAndAbilityOnAbilityPopUp(battler, spriteId1, gBattlescriptCurrInstr[-3], gBattlescriptCurrInstr[-1]);
+    PrintBattlerAndAbilityOnAbilityPopUp(battler, spriteId1, gBattlescriptCurrInstr[-4], gBattlescriptCurrInstr[-2]);
     RestoreOverwrittenPixels((void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * TILE_SIZE_4BPP));
     DestroyAnimVisualTask(taskId);
 }
 
 void AnimTask_DestroyAbilityPopUp(u8 taskId)
 {
-    gSprites[gAbilityPopUpIds[GetBattlerForBattleScript(gBattlescriptCurrInstr[-2])][0]].tFrames = 0;
-    gSprites[gAbilityPopUpIds[GetBattlerForBattleScript(gBattlescriptCurrInstr[-2])][1]].tFrames = 0;
+    gSprites[gAbilityPopUpIds[GetBattlerForBattleScript(gBattlescriptCurrInstr[-3])][0]].tFrames = 0;
+    gSprites[gAbilityPopUpIds[GetBattlerForBattleScript(gBattlescriptCurrInstr[-3])][1]].tFrames = 0;
     DestroyAnimVisualTask(taskId);
 }
