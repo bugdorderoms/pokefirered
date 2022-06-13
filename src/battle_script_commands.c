@@ -3025,7 +3025,7 @@ static void atk1E_jumpifability(void)
 {
     u8 battlerId;
     u16 ability = gBattlescriptCurrInstr[2];
-    const u8 *jumpPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
+    const u8 *jumpPtr = T2_READ_PTR(gBattlescriptCurrInstr + 4);
 
     if (gBattlescriptCurrInstr[1] == BS_ATTACKER_SIDE)
     {
@@ -3039,7 +3039,7 @@ static void atk1E_jumpifability(void)
             gBattleScripting.battlerWithAbility = battlerId - 1;
         }
         else
-            gBattlescriptCurrInstr += 7;
+            gBattlescriptCurrInstr += 8;
     }
     else if (gBattlescriptCurrInstr[1] == BS_NOT_ATTACKER_SIDE)
     {
@@ -3053,7 +3053,7 @@ static void atk1E_jumpifability(void)
             gBattleScripting.battlerWithAbility = battlerId - 1;
         }
         else
-            gBattlescriptCurrInstr += 7;
+            gBattlescriptCurrInstr += 8;
     }
     else
     {
@@ -3067,7 +3067,7 @@ static void atk1E_jumpifability(void)
             gBattleScripting.battlerWithAbility = battlerId;
         }
         else
-            gBattlescriptCurrInstr += 7;
+            gBattlescriptCurrInstr += 8;
     }
 }
 
@@ -3853,9 +3853,9 @@ static void atk42_jumpiftype2(void)
 static void atk43_jumpifabilitypresent(void)
 {
     if (AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, gBattlescriptCurrInstr[1], 0, 0))
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
     else
-        gBattlescriptCurrInstr += 6;
+        gBattlescriptCurrInstr += 7;
 }
 
 static void atk44_endselectionscript(void)
@@ -5752,7 +5752,7 @@ static void atk70_recordlastability(void)
 {
     gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
     RecordAbilityBattle(gActiveBattler, gLastUsedAbility);
-    gBattlescriptCurrInstr += 1; // UB: Should be + 2, one byte for command and one byte for battlerId argument.
+    gBattlescriptCurrInstr += 2;
 }
 
 void BufferMoveToLearnIntoBattleTextBuff2(void)
@@ -9302,13 +9302,10 @@ static void atkF9_cureprimarystatus(void)
 {
 	u8 bank = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	
-	if (gBattleMons[bank].status1) 
+	if (gBattleMons[bank].status1 & STATUS1_ANY) 
 	{
-		gBattleMons[bank].status1 = 0;
+		ClearBattlerStatus(bank);
 		gBattlescriptCurrInstr += 6;
-		gActiveBattler = bank;
-		BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
-                MarkBattlerForControllerExec(gActiveBattler);
 	}
 	else
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
@@ -9344,18 +9341,18 @@ static void atkFC_loadabilitypopup(void)
 	
 	BtlController_EmitBattleAnimation(0, animId, *argumentPtr);
 	MarkBattlerForControllerExec(gActiveBattler);
-	gBattlescriptCurrInstr += 4;
+	gBattlescriptCurrInstr += 5;
 }
 
 static void atkFD_jumpifweatherandability(void)
 {
-	u16 ability = gBattlescriptCurrInstr[2];
-	u16 weather = T1_READ_16(gBattlescriptCurrInstr + 3);
+	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 2);
+	u16 weather = T1_READ_16(gBattlescriptCurrInstr + 4);
 	
 	if (WEATHER_HAS_EFFECT && gBattleWeather & weather && gBattleMons[GetBattlerForBattleScript(gBattlescriptCurrInstr[1])].ability == ability)
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 5);
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
 	else
-		gBattlescriptCurrInstr += 9;
+		gBattlescriptCurrInstr += 10;
 }
 
 static void atkFE_sethalfword(void)
