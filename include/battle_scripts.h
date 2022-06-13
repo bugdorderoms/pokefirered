@@ -252,6 +252,7 @@ extern const u8 BattleScript_AirLock[];
 extern const u8 BattleScript_SturdiedMsg[];
 extern const u8 BattleScript_TrainerSlideMsgEnd2[];
 extern const u8 BattleScript_TrainerSlideMsg[];
+static const u8 BattleScript_DefiantCompetitive[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];
