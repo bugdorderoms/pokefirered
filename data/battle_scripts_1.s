@@ -4650,6 +4650,14 @@ BattleScript_DefiantCompetitive::
 	setgraphicalstatchangevalues
 	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
 	printfromtable gStatUpStringIds
-        waitmessage 64
+        waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	return
+	
+BattleScript_CursedBodyActivation::
+        disablelastusedattack BS_ATTACKER, BattleScript_AnticipationReturn
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, ABILITY_CURSED_BODY
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
 	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	return
