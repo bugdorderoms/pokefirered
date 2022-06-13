@@ -126,6 +126,8 @@ static const u8 sPickpocketDescription[] =   _("Steal item on contact.");
 static const u8 sSheerForceDescription[] =   _("Removes added effects to up damage.");
 static const u8 sContraryDescription[] =     _("Inverts stat change effects.");
 static const u8 sUnnerveDescription[] =      _("Makes the foe nervous to eat berries.");
+static const u8 sDefiantDescription[] =      _("Ups Attack when stats lowered.");
+static const u8 sDefeatistDescription[] =    _("Halves stats if low HP.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
@@ -257,6 +259,8 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_SHEER_FORCE] = sSheerForceDescription,
     [ABILITY_CONTRARY] = sContraryDescription,
     [ABILITY_UNNERVE] = sUnnerveDescription,
+    [ABILITY_DEFIANT] = sDefiantDescription,
+    [ABILITY_DEFEATIST] = sDefeatistDescription,
 };
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
@@ -389,4 +393,6 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_SHEER_FORCE] = _("Sheer Force"),
     [ABILITY_CONTRARY] = _("Contrary"),
     [ABILITY_UNNERVE] = _("Unnerve"),
+    [ABILITY_DEFIANT] = _("Defiant"),
+    [ABILITY_DEFEATIST] = _("Defeatist"),
 };
