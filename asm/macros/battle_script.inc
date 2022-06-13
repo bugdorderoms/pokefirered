@@ -856,9 +856,10 @@
 	.4byte \param0
 	.endm
 
-	.macro disablelastusedattack param0:req
+	.macro disablelastusedattack bank:req, param1:req
 	.byte 0xa3
-	.4byte \param0
+	.byte \bank
+	.4byte \param1
 	.endm
 
 	.macro trysetencore param0:req
