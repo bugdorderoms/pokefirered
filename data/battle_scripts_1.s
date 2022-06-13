@@ -4640,3 +4640,16 @@ BattleScript_PickpocketActivation::
 	seteffectsecondary
 	swapattackerwithtarget
         return
+
+BattleScript_DefiantCompetitive::
+        statbuffchange STAT_CHANGE_BS_PTR, BattleScript_AnticipationReturn
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 2, BattleScript_AnticipationReturn
+	pause 0x20
+	setbyte sSTAT_ANIM_PLAYED, 0
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	setgraphicalstatchangevalues
+	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printfromtable gStatUpStringIds
+        waitmessage 64
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	return
