@@ -2531,7 +2531,6 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			    spDefense = (110 * spDefense) / 100;
 	    }
 #endif
-
 	    for (i = 0; i < NELEMS(sHoldEffectToType); i++)
 	    {
 		    if (attackerHoldEffect == sHoldEffectToType[i][0] && type == sHoldEffectToType[i][1])
@@ -2541,7 +2540,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			    break;
 		    }
 	    }
-	// attacker items check
+	    // attacker items check
 	    switch (attackerHoldEffect)
 	    {
 		    case HOLD_EFFECT_CHOICE_BAND:
@@ -2564,7 +2563,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 				    attack *= 2;
 			    break;
 	    }
-	// defender items check
+	    // defender items check
 	    switch (defenderHoldEffect)
 	    {
 		    case HOLD_EFFECT_SOUL_DEW:
@@ -2580,7 +2579,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 				    defense *= 2;
 			    break;
 	    }
-	// attacker abilities check
+	    // attacker abilities check
 	    switch (attacker->ability)
 	    {
 		    case ABILITY_HUGE_POWER:
@@ -2674,7 +2673,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			    }
 			    break;
 	    }
-	// defender abilities check
+	    // defender abilities check
 	    switch (defender->ability)
 	    {
 		    case ABILITY_THICK_FAT:
@@ -2705,8 +2704,20 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 				    gBattleMovePower = (gBattleMovePower * 75) / 100;
 			    break;
 	    }
+	    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	    {
+		    // defender's ally abilities check
+		    if (gBattleMons[battlerIdDef ^ BIT_FLANK].hp != 0)
+		    {
+			    switch (gBattleMons[battlerIdDef ^ BIT_FLANK].ability)
+			    {
+				    case ABILITY_FRIEND_GUARD:
+					gBattleMovePower = (gBattleMovePower * 75) / 100;
+					break;
+			    }
+		    }
+	    }
     }
-	
     if (type == TYPE_ELECTRIC && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, 0xFD, 0))
         gBattleMovePower /= 2;
     if (type == TYPE_FIRE && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, 0xFE, 0))
