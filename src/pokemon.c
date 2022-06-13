@@ -2666,6 +2666,13 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			    if (IsMoveInTable(gSheerForceBoostedMoves, move))
 				    gBattleMovePower = (gBattleMovePower * 12) / 10;
 			    break;
+		    case ABILITY_DEFEATIST:
+			    if (attacker->hp <= (attacker->maxHP / 2))
+			    {
+				    spAttack /= 2;
+				    attack /= 2;
+			    }
+			    break;
 	    }
 	// defender abilities check
 	    switch (defender->ability)
