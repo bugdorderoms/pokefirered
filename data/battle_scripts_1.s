@@ -1193,7 +1193,7 @@ BattleScript_EffectDisable::
 	attackstring
 	ppreduce
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
-	disablelastusedattack BattleScript_ButItFailed
+	disablelastusedattack BS_TARGET, BattleScript_ButItFailed
 	attackanimation
 	waitanimation
 	printstring STRINGID_PKMNMOVEWASDISABLED
