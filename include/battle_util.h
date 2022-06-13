@@ -93,5 +93,6 @@ u8 GetHiddenPowerType(struct Pokemon *mon);
 bool8 IsItemAffectedByGluttony(u16 Item);
 void TryGiveUnburdenBoostToMon(u8 battler);
 void ResetVarsForAbilityChange(u8 battler);
+void ClearBattlerStatus(u8 battler);
 
 #endif // GUARD_BATTLE_UTIL_H
