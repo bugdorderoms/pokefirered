@@ -103,6 +103,8 @@ tinted lens
 unaware
 pickpocket
 unnerve
+defiant
+defeatist
 
 // WARNING
 Klutz don't affect prize money, experience, effort values or friendship.
