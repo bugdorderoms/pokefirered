@@ -105,6 +105,7 @@ pickpocket
 unnerve
 defiant
 defeatist
+cursed body
 
 // WARNING
 Klutz don't affect prize money, experience, effort values or friendship.
