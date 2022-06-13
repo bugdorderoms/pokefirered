@@ -128,6 +128,7 @@ static const u8 sContraryDescription[] =     _("Inverts stat change effects.");
 static const u8 sUnnerveDescription[] =      _("Makes the foe nervous to eat berries.");
 static const u8 sDefiantDescription[] =      _("Ups Attack when stats lowered.");
 static const u8 sDefeatistDescription[] =    _("Halves stats if low HP.");
+static const u8 sCursedBodyDescription[] =   _("May disable the foe's move.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
@@ -261,6 +262,7 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_UNNERVE] = sUnnerveDescription,
     [ABILITY_DEFIANT] = sDefiantDescription,
     [ABILITY_DEFEATIST] = sDefeatistDescription,
+    [ABILITY_CURSED_BODY] = sCursedBodyDescription,
 };
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
@@ -395,4 +397,5 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_UNNERVE] = _("Unnerve"),
     [ABILITY_DEFIANT] = _("Defiant"),
     [ABILITY_DEFEATIST] = _("Defeatist"),
+    [ABILITY_CURSED_BODY] = _("Cursed Body"),
 };
