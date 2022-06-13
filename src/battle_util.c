@@ -42,6 +42,7 @@ static const u8 sSnowWarningString[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_S
 static const u8 sSteadfastString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\nraised its Speed!");
 static const u8 sUnnerveString[] = _("{B_DEF_SIDE_NAME} is too\nnervous to eat berries!");
 static const u8 sAirLockString[] = _("The effects of weather\ndisappeared!");
+static const u8 sCursedBodyString[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ndisabled {B_ATK_NAME_WITH_PREFIX}'s\l{B_BUFF1}!");
 
 u8 GetBattlerForBattleScript(u8 caseId)
 {
@@ -2256,6 +2257,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED && (Random() % 3) == 0
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE))
 			    {
+				    gSetWordLoc = sCursedBodyString;
 				    BattleScriptPushCursor();
 				    gBattlescriptCurrInstr = BattleScript_CursedBodyActivation;
 				    ++effect;
