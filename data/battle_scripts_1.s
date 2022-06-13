@@ -4661,3 +4661,11 @@ BattleScript_CursedBodyActivation::
 	waitmessage 0x40
 	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	return
+
+BattleScript_HealerActivates::
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, ABILITY_HEALER
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
+	updatestatusicon BS_EFFECT_BATTLER
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	return
