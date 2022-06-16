@@ -171,10 +171,11 @@
 	.4byte \ptr
 	.endm
 
-	.macro jumpiftype battler:req, type:req, ptr:req
-	.byte 0x22
+        .macro jumpbasedontype battler:req, type:req, case:req, ptr:req
+        .byte 0x22
 	.byte \battler
 	.byte \type
+	.byte \case
 	.4byte \ptr
 	.endm
 
@@ -356,11 +357,8 @@
 	.4byte \ptr
 	.endm
 
-	.macro jumpiftype2 battler:req, type:req, ptr:req
+	.macro nop42
 	.byte 0x42
-	.byte \battler
-	.byte \type
-	.4byte \ptr
 	.endm
 
 	.macro jumpifabilitypresent ability:req, ptr:req
@@ -1282,10 +1280,8 @@
 	.4byte \ptr
 	.endm
 	
-	.macro sethalfword ptr:req, param1:req
+	.macro nopfe
 	.byte 0xfe
-	.4byte \ptr
-	.2byte \param1
 	.endm
 	
 @ various command changed to more readable macros
@@ -1413,6 +1409,14 @@
 
 	.macro jumpifnostatus3 battler:req, status:req, jumpptr:req
 	jumpifstatus3condition \battler, \status, 0x1, \jumpptr
+	.endm
+
+        .macro jumpiftype battler:req, type:req, jumpptr:req
+	jumpbasedontype \battler, \type, 0x0, \jumpptr
+	.endm
+	
+	.macro jumpifnotype battler:req, type:req, jumpptr:req
+	jumpbasedontype \battler, \type, 0x1, \jumpptr
 	.endm
 
 	.macro jumpifmovehadnoeffect jumpptr:req
