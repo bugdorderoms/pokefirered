@@ -1493,7 +1493,7 @@ BattleScript_EffectMinimize::
 	goto BattleScript_EffectStatUpAfterAtkCanceler
 
 BattleScript_EffectCurse::
-	jumpiftype2 BS_ATTACKER, TYPE_GHOST, BattleScript_GhostCurse
+	jumpiftype BS_ATTACKER, TYPE_GHOST, BattleScript_GhostCurse
 	attackcanceler
 	attackstring
 	ppreduce
@@ -3545,16 +3545,16 @@ BattleScript_DoFutureAttackHit::
 BattleScript_FutureAttackEnd::
 	moveendcase ATK49_RAGE
 	moveendfromto ATK49_ITEM_EFFECTS_ALL, ATK49_UPDATE_LAST_MOVES
-	sethalfword gMoveResultFlags, 0
+	sethword gMoveResultFlags, 0
 	end2
 
 BattleScript_FutureAttackMiss::
 	pause 0x20
-	sethalfword gMoveResultFlags, 0
+	sethword gMoveResultFlags, 0
 	orhalfword gMoveResultFlags, MOVE_RESULT_FAILED
 	resultmessage
 	waitmessage 0x40
-	sethalfword gMoveResultFlags, 0
+	sethword gMoveResultFlags, 0
 	end2
 
 BattleScript_NoMovesLeft::
