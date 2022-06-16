@@ -683,7 +683,6 @@ AI_CheckViability:: @ 81DA445
 	if_effect EFFECT_RAZOR_WIND, AI_CV_ChargeUpMove
 	if_effect EFFECT_SUPER_FANG, AI_CV_SuperFang
 	if_effect EFFECT_TRAP, AI_CV_Trap
-	if_effect EFFECT_HIGH_CRITICAL, AI_CV_HighCrit
 	if_effect EFFECT_CONFUSE, AI_CV_Confuse
 	if_effect EFFECT_ATTACK_UP_2, AI_CV_AttackUp
 	if_effect EFFECT_DEFENSE_UP_2, AI_CV_DefenseUp
@@ -763,16 +762,15 @@ AI_CheckViability:: @ 81DA445
 	if_effect EFFECT_IMPRISON, AI_CV_Imprison
 	if_effect EFFECT_REFRESH, AI_CV_Refresh
 	if_effect EFFECT_SNATCH, AI_CV_Snatch
-	if_effect EFFECT_BLAZE_KICK, AI_CV_HighCrit
 	if_effect EFFECT_MUD_SPORT, AI_CV_MudSport
 	if_effect EFFECT_OVERHEAT, AI_CV_Overheat
 	if_effect EFFECT_TICKLE, AI_CV_DefenseDown
 	if_effect EFFECT_COSMIC_POWER, AI_CV_SpDefUp
 	if_effect EFFECT_BULK_UP, AI_CV_DefenseUp
-	if_effect EFFECT_POISON_TAIL, AI_CV_HighCrit
 	if_effect EFFECT_WATER_SPORT, AI_CV_WaterSport
 	if_effect EFFECT_CALM_MIND, AI_CV_SpDefUp
 	if_effect EFFECT_DRAGON_DANCE, AI_CV_DragonDance
+	if_move_flag FLAG_HIGH_CRIT, AI_CV_HighCrit
 	end
 
 AI_CV_Sleep:: @ 81DA71C
