@@ -3162,7 +3162,7 @@ static void atk21_jumpifstatus3condition(void)
     }
 }
 
-static void atk22_jumpiftype(void)
+static void atk22_jumpbasedontype(void)
 {
     u8 battlerId = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
     u8 type = gBattlescriptCurrInstr[2];
@@ -3850,14 +3850,9 @@ static void atk41_call(void)
     gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 }
 
-static void atk42_jumpiftype2(void)
+static void atk42_nop(void)
 {
-    u8 battlerId = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
-
-    if (gBattlescriptCurrInstr[2] == gBattleMons[battlerId].type1 || gBattlescriptCurrInstr[2] == gBattleMons[battlerId].type2)
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-    else
-        gBattlescriptCurrInstr += 7;
+	++gBattlescriptCurrInstr;
 }
 
 static void atk43_jumpifabilitypresent(void)
