@@ -1202,7 +1202,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_RAZOR_LEAF] =
     {
-        .effect = EFFECT_NONE,
+        .effect = EFFECT_HIT,
         .power = 55,
         .type = TYPE_GRASS,
         .accuracy = 95,
@@ -2434,7 +2434,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CRABHAMMER] =
     {
-        .effect = EFFECT_NONE,
+        .effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_WATER,
         .accuracy = 90,
@@ -2610,7 +2610,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SLASH] =
     {
-        .effect = EFFECT_NONE,
+        .effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -2834,7 +2834,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_AEROBLAST] =
     {
-        .effect = EFFECT_NONE,
+        .effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_FLYING,
         .accuracy = 95,
@@ -3810,7 +3810,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CROSS_CHOP] =
     {
-        .effect = EFFECT_NONE,
+        .effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_FIGHTING,
         .accuracy = 80,
@@ -5026,7 +5026,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_AIR_CUTTER] =
     {
-        .effect = EFFECT_NONE,
+        .effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_FLYING,
         .accuracy = 95,
@@ -5570,7 +5570,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_LEAF_BLADE] =
     {
-        .effect = EFFECT_NONE,
+        .effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_GRASS,
         .accuracy = 100,
