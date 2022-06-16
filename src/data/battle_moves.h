@@ -4786,7 +4786,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_BLAZE_KICK] =
     {
-        .effect = EFFECT_BLAZE_KICK,
+        .effect = EFFECT_BURN_HIT,
         .power = 85,
         .type = TYPE_FIRE,
         .accuracy = 90,
@@ -5474,7 +5474,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_POISON_TAIL] =
     {
-        .effect = EFFECT_POISON_TAIL,
+        .effect = EFFECT_POISON_HIT,
         .power = 50,
         .type = TYPE_POISON,
         .accuracy = 100,
