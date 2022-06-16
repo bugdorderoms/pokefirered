@@ -107,7 +107,7 @@ static void atk1E_jumpifability(void);
 static void atk1F_jumpifsideaffecting(void);
 static void atk20_jumpifstat(void);
 static void atk21_jumpifstatus3condition(void);
-static void atk22_jumpiftype(void);
+static void atk22_jumpbasedontype(void);
 static void atk23_getexp(void);
 static void atk24(void);
 static void atk25_movevaluescleanup(void);
@@ -139,7 +139,7 @@ static void atk3E_end2(void);
 static void atk3F_end3(void);
 static void atk40_jumpifaffectedbyprotect(void);
 static void atk41_call(void);
-static void atk42_jumpiftype2(void);
+static void atk42_nop(void);
 static void atk43_jumpifabilitypresent(void);
 static void atk44_endselectionscript(void);
 static void atk45_playanimation(void);
@@ -327,7 +327,7 @@ static void atkFA_setword(void);
 static void atkFB_jumpifsubstituteblocks(void);
 static void atkFC_loadabilitypopup(void);
 static void atkFD_jumpifweatherandability(void);
-static void atkFE_sethalfword(void);
+static void atkFE_nop(void);
 
 void (* const gBattleScriptingCommandsTable[])(void) =
 {
@@ -365,7 +365,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk1F_jumpifsideaffecting,
     atk20_jumpifstat,
     atk21_jumpifstatus3condition,
-    atk22_jumpiftype,
+    atk22_jumpbasedontype,
     atk23_getexp,
     atk24,
     atk25_movevaluescleanup,
@@ -397,7 +397,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk3F_end3,
     atk40_jumpifaffectedbyprotect,
     atk41_call,
-    atk42_jumpiftype2,
+    atk42_nop,
     atk43_jumpifabilitypresent,
     atk44_endselectionscript,
     atk45_playanimation,
@@ -585,7 +585,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkFB_jumpifsubstituteblocks,
     atkFC_loadabilitypopup,
     atkFD_jumpifweatherandability,
-    atkFE_sethalfword,
+    atkFE_nop,
 };
 
 struct StatFractions
@@ -3166,12 +3166,22 @@ static void atk22_jumpiftype(void)
 {
     u8 battlerId = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
     u8 type = gBattlescriptCurrInstr[2];
-    const u8 *jumpPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
+    const u8 *jumpPtr = T2_READ_PTR(gBattlescriptCurrInstr + 4);
 
-    if (IS_BATTLER_OF_TYPE(battlerId, type))
-        gBattlescriptCurrInstr = jumpPtr;
-    else
-        gBattlescriptCurrInstr += 7;
+    if (!gBattlescriptCurrInstr[3]) // jumpiftype
+    {
+	    if (IS_BATTLER_OF_TYPE(battlerId, type))
+		    gBattlescriptCurrInstr = jumpPtr;
+	    else
+		    gBattlescriptCurrInstr += 8;
+    }
+    else // jumpifnotype
+    {
+	    if (!IS_BATTLER_OF_TYPE(battlerId, type))
+		    gBattlescriptCurrInstr = jumpPtr;
+	    else
+		    gBattlescriptCurrInstr += 8;
+    }
 }
 
 static void atk23_getexp(void)
@@ -9355,12 +9365,9 @@ static void atkFD_jumpifweatherandability(void)
 		gBattlescriptCurrInstr += 10;
 }
 
-static void atkFE_sethalfword(void)
+static void atkFE_nop(void)
 {
-	u8 *memByte = T2_READ_PTR(gBattlescriptCurrInstr + 1);
-
-	*memByte = T1_READ_16(gBattlescriptCurrInstr + 5);
-	gBattlescriptCurrInstr += 7;
+	++gBattlescriptCurrInstr;
 }
 
 //callasm command asm's
