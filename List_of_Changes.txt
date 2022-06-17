@@ -106,6 +106,8 @@ unnerve
 defiant
 defeatist
 cursed body
+healer
+friend guard
 storm drain
 
 // WARNING
