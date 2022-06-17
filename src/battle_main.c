@@ -4377,7 +4377,7 @@ static void HandleAction_UseMove(void)
     else if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && gSideTimers[side].followmeTimer == 0 && (gBattleMoves[gCurrentMove].power != 0
           || gBattleMoves[gCurrentMove].target != MOVE_TARGET_USER) && ((gBattleMons[*(gBattleStruct->moveTarget + gBattlerAttacker)].ability != ABILITY_LIGHTNING_ROD
           && gBattleMoves[gCurrentMove].type == TYPE_ELECTRIC) || (gBattleMons[*(gBattleStruct->moveTarget + gBattlerAttacker)].ability != ABILITY_STORM_DRAIN
-	  && gBattleMoves[gCurrentMove].type == TYPE_WATER))
+	  && gBattleMoves[gCurrentMove].type == TYPE_WATER)))
     {
         side = GetBattlerSide(gBattlerAttacker);
         for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
