@@ -4656,7 +4656,6 @@ BattleScript_DefiantCompetitive::
 	return
 	
 BattleScript_CursedBodyActivation::
-        disablelastusedattack BS_ATTACKER, BattleScript_AnticipationReturn
 	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, ABILITY_CURSED_BODY
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
