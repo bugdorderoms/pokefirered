@@ -254,9 +254,10 @@
 	.4byte \ptr
 	.endm
 
-	@ nullsub
-	.macro ai_2a
+	.macro if_move_flag flag:req, ptr:req
 	.byte 0x2a
+	.2byte \flag
+	.4byte \ptr
 	.endm
 
 	@ nullsub
