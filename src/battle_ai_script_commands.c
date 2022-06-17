@@ -84,7 +84,7 @@ static void Cmd_if_equal_(void);
 static void Cmd_if_not_equal_(void);
 static void Cmd_if_would_go_first(void);
 static void Cmd_if_would_not_go_first(void);
-static void Cmd_nullsub_2A(void);
+static void Cmd_if_move_flag(void);
 static void Cmd_nullsub_2B(void);
 static void Cmd_count_alive_pokemon(void);
 static void Cmd_get_considered_move(void);
@@ -188,7 +188,7 @@ static const BattleAICmdFunc sBattleAICmdTable[] =
     Cmd_if_not_equal_,                    // 0x27
     Cmd_if_would_go_first,                // 0x28
     Cmd_if_would_not_go_first,            // 0x29
-    Cmd_nullsub_2A,                       // 0x2A
+    Cmd_if_move_flag,                     // 0x2A
     Cmd_nullsub_2B,                       // 0x2B
     Cmd_count_alive_pokemon,              // 0x2C
     Cmd_get_considered_move,              // 0x2D
@@ -1054,8 +1054,14 @@ static void Cmd_if_would_not_go_first(void)
         sAIScriptPtr += 6;
 }
 
-static void Cmd_nullsub_2A(void)
+static void Cmd_if_move_flag(void)
 {
+    u16 flag = T1_READ_16(sAIScriptPtr + 1);
+    
+    if (gBattleMoves[AI_THINKING_STRUCT->moveConsidered].flags & flag)
+        sAIScriptPtr = T1_READ_PTR(sAIScriptPtr + 3);
+    else
+        sAIScriptPtr += 7;
 }
 
 static void Cmd_nullsub_2B(void)
