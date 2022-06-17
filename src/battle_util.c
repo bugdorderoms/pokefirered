@@ -42,7 +42,7 @@ static const u8 sSnowWarningString[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_S
 static const u8 sSteadfastString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\nraised its Speed!");
 static const u8 sUnnerveString[] = _("{B_DEF_SIDE_NAME} is too\nnervous to eat berries!");
 static const u8 sAirLockString[] = _("The effects of weather\ndisappeared!");
-static const u8 sCursedBodyString[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ndisabled {B_ATK_NAME_WITH_PREFIX}'s\l{B_BUFF1}!");
+static const u8 sCursedBodyString[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ndisabled {B_ATK_NAME_WITH_PREFIX}'s\l{B_CURRENT_MOVE}!");
 static const u8 sHealerString[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncured {B_EFF_NAME_WITH_PREFIX}'s\l{B_BUFF1} problem!");
 
 u8 GetBattlerForBattleScript(u8 caseId)
@@ -2258,8 +2258,11 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    break;
 		    case ABILITY_CURSED_BODY:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED && (Random() % 3) == 0
-				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE))
+				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
+			        && !gDisableStructs[gBattlerAttacker].disabledMove && gBattleMons[gBattlerAttacker].pp[gCurrMovePos])
 			    {
+				    gDisableStructs[gBattlerAttacker].disabledMove = moveArg;
+				    gDisableStructs[gBattlerAttacker].disableTimer = 4;
 				    gSetWordLoc = sCursedBodyString;
 				    BattleScriptPushCursor();
 				    gBattlescriptCurrInstr = BattleScript_CursedBodyActivation;
