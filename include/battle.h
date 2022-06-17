@@ -211,7 +211,8 @@ struct SpecialStatus
     u8 flag40 : 1;                  // 0x40
     u8 focusBanded : 1;             // 0x80
     u8 sturdied : 1;                // 0x1
-    u8 unused : 7;                  // 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80
+    u8 stormDrainRedirected : 1;    // 0x2
+    u8 unused : 6;                  // 0x4, 0x8, 0x10, 0x20, 0x40, 0x80
     s32 dmg;
     s32 physicalDmg;
     s32 specialDmg;
