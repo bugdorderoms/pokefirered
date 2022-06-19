@@ -2268,6 +2268,17 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				    gBattlescriptCurrInstr = BattleScript_CursedBodyActivation;
 				    ++effect;
 			    }
+			    break;
+		    case ABILITY_WEAK_ARMOR:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && IS_TYPE_PHYSICAL(gBattleMoves[moveArg].split)
+				&& (gBattleMons[gBattlerAttacker].statStages[STAT_SPEED] < 0xC || gBattleMons[gBattlerAttacker].statStages[STAT_DEF] > 0) 
+				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && TARGET_TURN_DAMAGED)
+			    {
+				    BattleScriptPushCursor();
+				    gBattlescriptCurrInstr = BattleScript_WeakArmorActivation;
+				    ++effect;
+			    }
+			    break;
 	    }
 	    break;
         case ABILITYEFFECT_IMMUNITY: // 5
