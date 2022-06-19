@@ -1903,135 +1903,173 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
                 gBattlerAttacker = battler;
                 switch (gLastUsedAbility)
                 {
-                case ABILITY_RAIN_DISH:
-                    if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY)
-			&& gBattleMons[battler].maxHP > gBattleMons[battler].hp)
-                    {
-                        BattleScriptPushCursorAndCallback(BattleScript_RainDishActivates);
-                        gBattleMoveDamage = gBattleMons[battler].maxHP / 16;
-                        if (gBattleMoveDamage == 0)
-                            gBattleMoveDamage = 1;
-                        gBattleMoveDamage *= -1;
-                        ++effect;
-                    }
-                    break;
-		case ABILITY_ICE_BODY:
-		     if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_HAIL_ANY)
-			 && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
-		     {
-			     BattleScriptPushCursorAndCallback(BattleScript_RainDishActivates);
-			     gBattleMoveDamage = gBattleMons[battler].maxHP / 16;
-			     if (gBattleMoveDamage == 0)
-				     gBattleMoveDamage = 1;
-			     gBattleMoveDamage *= -1;
-			     ++effect;
-		     }
-		     break;
-		case ABILITY_POISON_HEAL:
-		     if (gBattleMons[battler].status1 & STATUS1_PSN_ANY && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
-		     {
-			     BattleScriptPushCursorAndCallback(BattleScript_RainDishActivates);
-			     gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
-			     if (gBattleMoveDamage == 0)
-				     gBattleMoveDamage = 1;
-			     gBattleMoveDamage *= -1;
-			     ++effect;
-		     }
-		     break;	
-		case ABILITY_DRY_SKIN:
-		    if (WEATHER_HAS_EFFECT)
-		    {
-			    if (gBattleWeather & WEATHER_RAIN_ANY && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
-			    {
-				    gSetWordLoc = sDrySkinRainString;
-				    BattleScriptPushCursorAndCallback(BattleScript_DrySkinRainActivates);
-				    gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
-                                    if (gBattleMoveDamage == 0)
-					    gBattleMoveDamage = 1;
-                                    gBattleMoveDamage *= -1;
-                                    ++effect;
-			    }
-			    else if (gBattleWeather & WEATHER_SUN_ANY)
-			    {
-				    gSetWordLoc = sDrySkinSunString;
-				    BattleScriptPushCursorAndCallback(BattleScript_DrySkinSunActivates);
-				    gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
-                                    if (gBattleMoveDamage == 0)
-					    gBattleMoveDamage = 1;
-				    ++effect;
-			    }
-		    }
-		    break;
-		case ABILITY_SOLAR_POWER:
-                    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
-		    {
-			    gSetWordLoc = sDrySkinSunString;
-			    BattleScriptPushCursorAndCallback(BattleScript_DrySkinSunActivates);
-			    gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
-			    if (gBattleMoveDamage == 0)
-				    gBattleMoveDamage = 1;
-			    ++effect;
-		    }
-		    break;
-                case ABILITY_SHED_SKIN:
-                    if ((gBattleMons[battler].status1 & STATUS1_ANY) && (Random() % 3) == 0)
-                    {
-			ClearBattlerStatus(battler);
-			BattleScriptPushCursorAndCallback(BattleScript_ShedSkinActivates);
-			++effect;
-                    }
-                    break;
-		case ABILITY_HYDRATION:
-		    if ((gBattleMons[battler].status1 & STATUS1_ANY) && WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_RAIN_ANY)
-		    {
-			    ClearBattlerStatus(battler);
-			    BattleScriptPushCursorAndCallback(BattleScript_ShedSkinActivates);
-			    ++effect;
-		    }
-		    break;
-		case ABILITY_HEALER:
-		    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMons[battler ^ BIT_FLANK].hp != 0 && gBattleMons[battler ^ BIT_FLANK].status1 & STATUS1_ANY && (Random() % 3) == 0)
-		    {
-			    gEffectBattler = battler ^ BIT_FLANK;
-			    ClearBattlerStatus(gEffectBattler);
-			    gSetWordLoc = sHealerString;
-			    BattleScriptPushCursorAndCallback(BattleScript_HealerActivates);
-			    ++effect;
-		    }
-		    break;
-                case ABILITY_SPEED_BOOST:
-                    if (gBattleMons[battler].statStages[STAT_SPEED] < 0xC && gDisableStructs[battler].isFirstTurn != 2)
-                    {
-                        ++gBattleMons[battler].statStages[STAT_SPEED];
-                        gBattleScripting.animArg1 = 0x11;
-                        gBattleScripting.animArg2 = 0;
-                        BattleScriptPushCursorAndCallback(BattleScript_SpeedBoostActivates);
-                        gBattleScripting.battler = battler;
-                        ++effect;
-                    }
-                    break;
-                case ABILITY_TRUANT:
-                    gDisableStructs[gBattlerAttacker].truantCounter ^= 1;
-                    break;
-		case ABILITY_SLOW_START:
-		    if (gNewBattleStruct.SlowStartTimers[battler] != 0 && --gNewBattleStruct.SlowStartTimers[battler] == 0)
-		    {
-			    gSetWordLoc = sSlowStartEndString;
-			    BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
-			    ++effect;
-		    }
-		    break;
-		case ABILITY_HARVEST:
-		    if (((WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY) || (Random() % 2) == 0) && !gBattleMons[battler].item
-		        && !gBattleStruct->changedItems[battler] && ItemId_GetPocket(gBattleStruct->usedHeldItems[battler]) == POCKET_BERRY_POUCH)
-		    {
-			    gLastUsedItem = gBattleStruct->changedItems[battler] = gBattleStruct->usedHeldItems[battler];
-			    gBattleStruct->usedHeldItems[battler] = ITEM_NONE;
-			    gSetWordLoc = sHarvestString;
-			    BattleScriptPushCursorAndCallback(BattleScript_HarvestActivates);
-			    effect++;
-		    }
-		    break;
+			case ABILITY_RAIN_DISH:
+				if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
+				{
+					BattleScriptPushCursorAndCallback(BattleScript_RainDishActivates);
+					gBattleMoveDamage = gBattleMons[battler].maxHP / 16;
+					if (gBattleMoveDamage == 0)
+						gBattleMoveDamage = 1;
+					gBattleMoveDamage *= -1;
+					++effect;
+				}
+				break;
+			case ABILITY_ICE_BODY:
+				if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_HAIL_ANY) && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
+				{
+					BattleScriptPushCursorAndCallback(BattleScript_RainDishActivates);
+					gBattleMoveDamage = gBattleMons[battler].maxHP / 16;
+					if (gBattleMoveDamage == 0)
+						gBattleMoveDamage = 1;
+					gBattleMoveDamage *= -1;
+					++effect;
+				}
+				break;
+			case ABILITY_POISON_HEAL:
+				if (gBattleMons[battler].status1 & STATUS1_PSN_ANY && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
+				{
+					BattleScriptPushCursorAndCallback(BattleScript_RainDishActivates);
+					gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
+					if (gBattleMoveDamage == 0)
+						gBattleMoveDamage = 1;
+					gBattleMoveDamage *= -1;
+					++effect;
+				}
+				break;	
+			case ABILITY_DRY_SKIN:
+				if (WEATHER_HAS_EFFECT)
+				{
+					if (gBattleWeather & WEATHER_RAIN_ANY && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
+					{
+						gSetWordLoc = sDrySkinRainString;
+						BattleScriptPushCursorAndCallback(BattleScript_DrySkinRainActivates);
+						gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
+						if (gBattleMoveDamage == 0)
+							gBattleMoveDamage = 1;
+						gBattleMoveDamage *= -1;
+						++effect;
+					}
+					else if (gBattleWeather & WEATHER_SUN_ANY)
+					{
+						gSetWordLoc = sDrySkinSunString;
+						BattleScriptPushCursorAndCallback(BattleScript_DrySkinSunActivates);
+						gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
+						if (gBattleMoveDamage == 0)
+							gBattleMoveDamage = 1;
+						++effect;
+					}
+				}
+				break;
+			case ABILITY_SOLAR_POWER:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				{
+					gSetWordLoc = sDrySkinSunString;
+					BattleScriptPushCursorAndCallback(BattleScript_DrySkinSunActivates);
+					gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
+					if (gBattleMoveDamage == 0)
+						gBattleMoveDamage = 1;
+					++effect;
+				}
+				break;
+			case ABILITY_SHED_SKIN:
+				if ((gBattleMons[battler].status1 & STATUS1_ANY) && (Random() % 3) == 0)
+				{
+					ClearBattlerStatus(battler);
+					BattleScriptPushCursorAndCallback(BattleScript_ShedSkinActivates);
+					++effect;
+				}
+				break;
+			case ABILITY_HYDRATION:
+				if ((gBattleMons[battler].status1 & STATUS1_ANY) && WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_RAIN_ANY)
+				{
+					ClearBattlerStatus(battler);
+					BattleScriptPushCursorAndCallback(BattleScript_ShedSkinActivates);
+					++effect;
+				}
+				break;
+			case ABILITY_HEALER:
+				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMons[battler ^ BIT_FLANK].hp != 0 
+				    && gBattleMons[battler ^ BIT_FLANK].status1 & STATUS1_ANY && (Random() % 3) == 0)
+				{
+					gEffectBattler = battler ^ BIT_FLANK;
+					ClearBattlerStatus(gEffectBattler);
+					gSetWordLoc = sHealerString;
+					BattleScriptPushCursorAndCallback(BattleScript_HealerActivates);
+					++effect;
+				}
+				break;
+			case ABILITY_SPEED_BOOST:
+				if (gBattleMons[battler].statStages[STAT_SPEED] < 0xC && gDisableStructs[battler].isFirstTurn != 2)
+				{
+					++gBattleMons[battler].statStages[STAT_SPEED];
+					gBattleScripting.animArg1 = 0x11;
+					gBattleScripting.animArg2 = 0;
+					BattleScriptPushCursorAndCallback(BattleScript_SpeedBoostActivates);
+					gBattleScripting.battler = battler;
+					++effect;
+				}
+				break;
+			case ABILITY_TRUANT:
+				gDisableStructs[gBattlerAttacker].truantCounter ^= 1;
+				break;
+			case ABILITY_SLOW_START:
+				if (gNewBattleStruct.SlowStartTimers[battler] != 0 && --gNewBattleStruct.SlowStartTimers[battler] == 0)
+				{
+					gSetWordLoc = sSlowStartEndString;
+					BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+					++effect;
+				}
+				break;
+			case ABILITY_HARVEST:
+				if (((WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY) || (Random() % 2) == 0) && !gBattleMons[battler].item
+				    && !gBattleStruct->changedItems[battler] && ItemId_GetPocket(gBattleStruct->usedHeldItems[battler]) == POCKET_BERRY_POUCH)
+				{
+					gLastUsedItem = gBattleStruct->changedItems[battler] = gBattleStruct->usedHeldItems[battler];
+					gBattleStruct->usedHeldItems[battler] = ITEM_NONE;
+					gSetWordLoc = sHarvestString;
+					BattleScriptPushCursorAndCallback(BattleScript_HarvestActivates);
+					effect++;
+				}
+				break;
+			case ABILITY_MOODY:
+				if (gDisableStructs[battler].isFirstTurn != 2)
+				{
+					u32 validToRaise = 0, validToLower = 0;
+					
+					for (i = STAT_ATK; i < NUM_STATS; i++)
+					{
+						if (gBattleMons[battler].statStages[i] > 0)
+							validToLower |= gBitTable[i];
+						
+						if (gBattleMons[battler].statStages[i] < 0xC)
+							validToRaise |= gBitTable[i];
+					}
+					
+					if (validToRaise || validToLower)
+					{
+						if (validToLower)
+						{
+							do
+							{
+								i = (Random() % NUM_STATS) + STAT_ATK;
+							} while (!(validToLower & gBitTable[i]));
+							SET_STATCHANGER(i, 1, TRUE);
+							gBattleCommunication[MOVE_EFFECT_BYTE] = gBattleScripting.statChanger; // save it in move effect byte
+							validToRaise &= ~(gBitTable[i]); // cannot raise the same stat
+						}
+						if (validToRaise)
+						{
+							do
+							{
+								i = (Random() % NUM_STATS) + STAT_ATK;
+							} while (!(validToRaise & gBitTable[i]));
+							SET_STATCHANGER(i, 2, FALSE);
+						}
+						BattleScriptPushCursorAndCallback(BattleScript_MoodyActivates);
+						effect++;
+					}
+				}
+				break;
 		}
 	    }
 	    break;
