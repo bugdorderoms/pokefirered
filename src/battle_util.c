@@ -1284,6 +1284,7 @@ enum
     CANCELLER_IN_LOVE,
     CANCELLER_BIDE,
     CANCELLER_THAW,
+    CANCELLER_POWDER_MOVE,
     CANCELLER_END,
 };
 
@@ -1562,6 +1563,14 @@ u8 AtkCanceller_UnableToUseMove(void)
             }
             ++gBattleStruct->atkCancellerTracker;
             break;
+	case CANCELLER_POWDER_MOVE:
+	    if (gBattlerAttacker != gBattlerTarget && (IsMoveInTable(gPowderAndSporeMoves, gCurrentMove) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_GRASS)))
+	    {
+		    gBattlescriptCurrInstr = BattleScript_PowderMoveNoEffect;
+		    effect = 1;
+	    }
+	    ++gBattleStruct->atkCancellerTracker;
+	    break;
         case CANCELLER_END:
             break;
         }
