@@ -1717,14 +1717,7 @@ static inline void ApplyRandomDmgMultiplier(void)
 
 bool8 MakesSound(u16 move)
 {
-    s32 i;
-	
-    for (i = 0; gSoundMovesTable[i] != TABLE_END; ++i) 
-    {
-        if (gSoundMovesTable[i] == move) 
-            return TRUE;
-    }
-    return FALSE;
+	return IsMoveInTable(gSoundMovesTable, move);
 }
 
 bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move) 
