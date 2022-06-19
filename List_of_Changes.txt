@@ -118,6 +118,7 @@ flare boost
 harvest
 telepathy
 moody
+overcoat
 
 // WARNING
 Klutz don't affect prize money, experience, effort values or friendship.
