@@ -6950,8 +6950,8 @@ static void atk96_weatherdamage(void)
         {
             if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ROCK) && !IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_STEEL)
 		&& !IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_GROUND) && gBattleMons[gBattlerAttacker].ability != ABILITY_SAND_VEIL
-		&& gBattleMons[gBattlerAttacker].ability != ABILITY_MAGIC_GUARD && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERGROUND)
-		&& !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERWATER))
+		&& gBattleMons[gBattlerAttacker].ability != ABILITY_MAGIC_GUARD && gBattleMons[gBattlerAttacker].ability != ABILITY_OVERCOAT
+		&& !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERGROUND) && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERWATER))
             {
                 gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
                 if (gBattleMoveDamage == 0)
@@ -6964,7 +6964,8 @@ static void atk96_weatherdamage(void)
         {
             if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ICE) && gBattleMons[gBattlerAttacker].ability != ABILITY_ICE_BODY
 		&& gBattleMons[gBattlerAttacker].ability != ABILITY_MAGIC_GUARD && gBattleMons[gBattlerAttacker].ability != ABILITY_SNOW_CLOAK
-		&& !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERGROUND) && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERWATER))
+		&& gBattleMons[gBattlerAttacker].ability != ABILITY_OVERCOAT && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERGROUND)
+		&& !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERWATER))
             {
                 gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
                 if (gBattleMoveDamage == 0)
