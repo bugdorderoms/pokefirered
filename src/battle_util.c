@@ -2103,7 +2103,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				    effect = 1;
 			    break;
 		    case ABILITY_TELEPATHY:
-			    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattlerAttacker == battler ^ BIT_FLANK)
+			    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattlerAttacker == (battler ^ BIT_FLANK))
 				    effect = 1;
 			    break;
 	    }
