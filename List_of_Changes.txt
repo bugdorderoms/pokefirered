@@ -115,6 +115,7 @@ light metal
 multiscale
 toxic boost
 flare boost
+harvest
 
 // WARNING
 Klutz don't affect prize money, experience, effort values or friendship.
