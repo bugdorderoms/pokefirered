@@ -258,6 +258,7 @@ static const u8 BattleScript_HealerActivates[];
 static const u8 BattleScript_WeakArmorActivation[];
 static const u8 BattleScript_HarvestActivates[];
 static const u8 BattleScript_MoodyActivates[];
+static const u8 BattleScript_PowderMoveNoEffect[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];
