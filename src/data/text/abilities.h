@@ -139,6 +139,7 @@ static const u8 sToxicBoostDescription[] =   _("Powers up when poisoned.");
 static const u8 sFlareBoostDescription[] =   _("Powers up when burned.");
 static const u8 sHarvestDescription[] =      _("May Create another berry.");
 static const u8 sTelepathyDescription[] =    _("Dodges an ally's attack.");
+static const u8 sMoodyDescription[] =        _("Raises one stat and lowers another.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
@@ -283,6 +284,7 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_FLARE_BOOST] = sFlareBoostDescription,
     [ABILITY_HARVEST] = sHarvestDescription,
     [ABILITY_TELEPATHY] = sTelepathyDescription,
+    [ABILITY_MOODY] = sMoodyDescription,
 };
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
@@ -428,4 +430,5 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_FLARE_BOOST] = _("Flare Boost"),
     [ABILITY_HARVEST] = _("Harvest"),
     [ABILITY_TELEPATHY] = _("Telepathy"),
+    [ABILITY_MOODY] = _("Moody"),
 };
