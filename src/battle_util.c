@@ -2036,14 +2036,25 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 	    }
 	    break;
         case ABILITYEFFECT_MOVES_BLOCK: // 2
-            if (gLastUsedAbility == ABILITY_SOUNDPROOF && MakesSound(moveArg))
-            {
+	    switch (gLastUsedAbility)
+	    {
+		    case ABILITY_SOUNDPROOF:
+			    if (MakesSound(moveArg))
+				    effect = 1;
+			    break;
+		    case ABILITY_TELEPATHY:
+			    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattlerAttacker == battler ^ BIT_FLANK)
+				    effect = 1;
+			    break;
+	    }
+			
+	    if (effect)
+	    {
 		    if (gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS)
 			    gHitMarker |= HITMARKER_NO_PPDEDUCT;
 		    gBattlescriptCurrInstr = BattleScript_SoundproofProtected;
-		    effect = 1;
-            }
-            break;
+	    }
+	    break;
         case ABILITYEFFECT_ABSORBING: // 3
             if (moveArg)
             {
