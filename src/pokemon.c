@@ -2673,7 +2673,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			    }
 			    break;
 		    case ABILITY_TOXIC_BOOST:
-			    if (attacker->status1 & (STATUS1_POISON | STATUS1_TOXIC_POISON) && IS_TYPE_PHYSICAL(split))
+			    if (attacker->status1 & STATUS1_PSN_ANY && IS_TYPE_PHYSICAL(split))
 				    gBattleMovePower = (15 * gBattleMovePower) / 10;
 			    break;
 		    case ABILITY_FLARE_BOOST:
