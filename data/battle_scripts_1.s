@@ -4696,3 +4696,11 @@ BattleScript_WeakArmorRaisesSpeed::
 	printfromtable gStatUpStringIds
 	waitmessage 0x40
 	goto BattleScript_CursedBodyReturn
+
+BattleScript_HarvestActivates::
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, ABILITY_HARVEST
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	return
+	
