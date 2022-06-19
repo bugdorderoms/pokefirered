@@ -46,6 +46,16 @@ static const u8 sCursedBodyString[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILI
 static const u8 sHealerString[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncured {B_EFF_NAME_WITH_PREFIX}'s\l{B_BUFF1} problem!");
 static const u8 sHarvestString[] = _("{B_ATK_NAME_WITH_PREFIX} harvested\nits {B_LAST_ITEM}!");
 
+static const u16 sPowderAndSporeMoves[] =
+{
+	MOVE_COTTON_SPORE,
+	MOVE_POISON_POWDER,
+	MOVE_SLEEP_POWDER,
+	MOVE_SPORE,
+	MOVE_STUN_SPORE,
+	TABLE_END,
+}
+
 u8 GetBattlerForBattleScript(u8 caseId)
 {
     u32 ret = 0;
@@ -1564,7 +1574,8 @@ u8 AtkCanceller_UnableToUseMove(void)
             ++gBattleStruct->atkCancellerTracker;
             break;
 	case CANCELLER_POWDER_MOVE:
-	    if (gBattlerAttacker != gBattlerTarget && (IsMoveInTable(gPowderAndSporeMoves, gCurrentMove) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_GRASS)))
+	    if (gBattlerAttacker != gBattlerTarget && IsMoveInTable(sPowderAndSporeMoves, gCurrentMove)
+		&& (gBattleMons[gBattlerTarget].ability == ABILITY_OVERCOAT || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_GRASS)))
 	    {
 		    gBattlescriptCurrInstr = BattleScript_PowderMoveNoEffect;
 		    effect = 1;
