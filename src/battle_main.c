@@ -224,7 +224,7 @@ u8 gMultiUsePlayerCursor;
 u8 gNumberOfMovesToChoose;
 u8 gBattleControllerData[MAX_BATTLERS_COUNT];
 
-const bool8 gIgnorableAbilities[ABILITIES_COUNT] =
+static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
 {
     [ABILITY_BATTLE_ARMOR] = TRUE,
     [ABILITY_CLEAR_BODY] = TRUE,
@@ -4307,7 +4307,7 @@ static void HandleAction_UseMove(void)
     {
         for (i = 0; i < gBattlersCount; i++)
         {
-            if (gBattlerAttacker != i && gIgnorableAbilities[gBattleMons[i].ability])
+            if (gBattlerAttacker != i && sIgnorableAbilities[gBattleMons[i].ability])
             {
                 gNewBattleStruct.IgnoredAbilities[i] = gBattleMons[i].ability;
                 gBattleMons[i].ability = ABILITY_NONE;
