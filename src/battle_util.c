@@ -44,6 +44,7 @@ static const u8 sUnnerveString[] = _("{B_DEF_SIDE_NAME} is too\nnervous to eat b
 static const u8 sAirLockString[] = _("The effects of weather\ndisappeared!");
 static const u8 sCursedBodyString[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ndisabled {B_ATK_NAME_WITH_PREFIX}'s\l{B_CURRENT_MOVE}!");
 static const u8 sHealerString[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncured {B_EFF_NAME_WITH_PREFIX}'s\l{B_BUFF1} problem!");
+static const u8 sHarvestString[] = _("{B_ATK_NAME_WITH_PREFIX} harvested\nits {B_LAST_ITEM}!");
 
 u8 GetBattlerForBattleScript(u8 caseId)
 {
@@ -2018,6 +2019,17 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    gSetWordLoc = sSlowStartEndString;
 			    BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 			    ++effect;
+		    }
+		    break;
+		case ABILITY_HARVEST:
+		    if (((WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY) || (Random() % 2) == 0) && !gBattleMons[battler].item
+		        && !gBattleStruct->changedItems[battler] && ItemId_GetPocket(gBattleStruct->usedHeldItems[battler]) == POCKET_BERRY_POUCH)
+		    {
+			    gLastUsedItem = gBattleStruct->changedItems[battler] = gBattleStruct->usedHeldItems[battler];
+			    gBattleStruct->usedHeldItems[battler] = ITEM_NONE;
+			    gSetWordLoc = sHarvestString;
+			    BattleScriptPushCursorAndCallback(BattleScript_HarvestActivates);
+			    effect++;
 		    }
 		    break;
 		}
