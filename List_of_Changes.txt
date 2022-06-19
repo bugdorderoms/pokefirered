@@ -116,6 +116,8 @@ multiscale
 toxic boost
 flare boost
 harvest
+telepathy
+moody
 
 // WARNING
 Klutz don't affect prize money, experience, effort values or friendship.
