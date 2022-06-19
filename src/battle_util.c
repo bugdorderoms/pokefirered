@@ -2047,6 +2047,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 					
 					if (validToRaise || validToLower)
 					{
+						gBattleCommunication[MOVE_EFFECT_BYTE] = gBattleScripting.statChanger = 0;
+						
 						if (validToLower)
 						{
 							do
