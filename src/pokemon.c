@@ -2672,6 +2672,15 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 				    attack /= 2;
 			    }
 			    break;
+		    case ABILITY_TOXIC_BOOST:
+			    if (attacker->status1 & (STATUS1_POISON | STATUS1_TOXIC_POISON) && IS_TYPE_PHYSICAL(split))
+				    gBattleMovePower = (15 * gBattleMovePower) / 10;
+			    break;
+		    case ABILITY_FLARE_BOOST:
+			    if (attacker->status1 & STATUS1_BURN && IS_TYPE_SPECIAL(split))
+				    gBattleMovePower = (15 * gBattleMovePower) / 10;
+			    break;
+				    
 	    }
 	    // defender abilities check
 	    switch (defender->ability)
@@ -2702,6 +2711,10 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 		    case ABILITY_SOLID_ROCK:
 			    if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
 				    gBattleMovePower = (gBattleMovePower * 75) / 100;
+			    break;
+		    case ABILITY_MULTISCALE:
+			    if (defender->hp == defender->maxHP)
+				    gBattleMovePower /= 2;
 			    break;
 	    }
 	    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
