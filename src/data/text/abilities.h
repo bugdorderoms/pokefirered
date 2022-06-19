@@ -131,6 +131,7 @@ static const u8 sDefeatistDescription[] =    _("Halves stats if low HP.");
 static const u8 sCursedBodyDescription[] =   _("May disable the foe's move.");
 static const u8 sHealerDescription[] =       _("May heal an ally's status.");
 static const u8 sFriendGuardDescription[] =  _("Reduces damage done to allies.");
+static const u8 sWeakArmorDescription[] =    _("Hits raises Speed but lowers Defense.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
@@ -267,6 +268,7 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_CURSED_BODY] = sCursedBodyDescription,
     [ABILITY_HEALER] = sHealerDescription,
     [ABILITY_FRIEND_GUARD] = sFriendGuardDescription,
+    [ABILITY_WEAK_ARMOR] = sWeakArmorDescription,
 };
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
@@ -404,4 +406,5 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_CURSED_BODY] = _("Cursed Body"),
     [ABILITY_HEALER] = _("Healer"),
     [ABILITY_FRIEND_GUARD] = _("Friend Guard"),
+    [ABILITY_WEAK_ARMOR] = _("Weak Armor"),
 };
