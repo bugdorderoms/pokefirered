@@ -71,18 +71,18 @@
 #define BATTLE_TYPE_WILD_SCRIPTED    0x20000
 #define BATTLE_TYPE_LEGENDARY_FRLG   0x40000
 #define BATTLE_TYPE_TRAINER_TOWER    0x80000
-#define BATTLE_TYPE_x100000          0x100000
-#define BATTLE_TYPE_x200000          0x200000
-#define BATTLE_TYPE_INGAME_PARTNER   0x400000
-#define BATTLE_TYPE_x800000          0x800000
-#define BATTLE_TYPE_RECORDED         0x1000000
-#define BATTLE_TYPE_x2000000         0x2000000
-#define BATTLE_TYPE_x4000000         0x4000000
-#define BATTLE_TYPE_SECRET_BASE      0x8000000
-#define BATTLE_TYPE_GROUDON          0x10000000
-#define BATTLE_TYPE_KYOGRE           0x20000000
-#define BATTLE_TYPE_RAYQUAZA         0x40000000
-#define BATTLE_TYPE_x80000000        0x80000000
+#define BATTLE_TYPE_x100000          0x100000   // unused
+#define BATTLE_TYPE_x200000          0x200000   // unused
+#define BATTLE_TYPE_INGAME_PARTNER   0x400000   // unused
+#define BATTLE_TYPE_x800000          0x800000   // unused
+#define BATTLE_TYPE_RECORDED         0x1000000  // unused
+#define BATTLE_TYPE_x2000000         0x2000000  // unused
+#define BATTLE_TYPE_x4000000         0x4000000  // unused
+#define BATTLE_TYPE_SECRET_BASE      0x8000000  // unused
+#define BATTLE_TYPE_GROUDON          0x10000000 // unused
+#define BATTLE_TYPE_KYOGRE           0x20000000 // unused
+#define BATTLE_TYPE_RAYQUAZA         0x40000000 // unused
+#define BATTLE_TYPE_x80000000        0x80000000 // unused
 
 #define IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE(flags) ((flags) & BATTLE_TYPE_GHOST && !((flags) & BATTLE_TYPE_GHOST_UNVEILED))
 #define IS_BATTLE_TYPE_GHOST_WITH_SCOPE(flags) ((flags) & BATTLE_TYPE_GHOST && (flags) & BATTLE_TYPE_GHOST_UNVEILED)
