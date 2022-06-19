@@ -109,6 +109,12 @@ cursed body
 healer
 friend guard
 storm drain
+weak armor
+heavy metal
+light metal
+multiscale
+toxic boost
+flare boost
 
 // WARNING
 Klutz don't affect prize money, experience, effort values or friendship.
