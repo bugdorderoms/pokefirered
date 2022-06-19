@@ -2248,7 +2248,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		    case ABILITY_EFFECT_SPORE:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 10) == 0
-				&& !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg))
+				&& !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg) && gBattleMons[gBattlerTarget].ability != ABILITY_OVERCOAT)
 			    {
 				    do
 					    gBattleCommunication[MOVE_EFFECT_BYTE] = Random() & 3;
