@@ -137,6 +137,7 @@ static const u8 sLightMetalDescription[] =   _("Halves weight.");
 static const u8 sMultiscaleDescription[] =   _("Reduces damage at full HP.");
 static const u8 sToxicBoostDescription[] =   _("Powers up when poisoned.");
 static const u8 sFlareBoostDescription[] =   _("Powers up when burned.");
+static const u8 sHarvestDescription[] =      _("May Create another berry.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
@@ -279,6 +280,7 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_MULTISCALE] = sMultiscaleDescription,
     [ABILITY_TOXIC_BOOST] = sToxicBoostDescription,
     [ABILITY_FLARE_BOOST] = sFlareBoostDescription,
+    [ABILITY_HARVEST] = sHarvestDescription,
 };
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
@@ -422,4 +424,5 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_MULTISCALE] = _("Multiscale"),
     [ABILITY_TOXIC_BOOST] = _("Toxic Boost"),
     [ABILITY_FLARE_BOOST] = _("Flare Boost"),
+    [ABILITY_HARVEST] = _("Harvest"),
 };
