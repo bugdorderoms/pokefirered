@@ -4659,6 +4659,8 @@ BattleScript_CursedBodyActivation::
 	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, ABILITY_CURSED_BODY
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
+	
+BattleScript_CursedBodyReturn::
 	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	return
 
@@ -4669,3 +4671,28 @@ BattleScript_HealerActivates::
 	updatestatusicon BS_EFFECT_BATTLER
 	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	return
+
+BattleScript_WeakArmorActivation::
+        jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_DEF, 0, BattleScript_WeakArmorLowerDef
+	jumpifstat BS_TARGET, CMP_EQUAL, STAT_SPEED, 12, BattleScript_AnticipationReturn
+	
+BattleScript_WeakArmorLowerDef::
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, ABILITY_WEAK_ARMOR
+	setstatchanger STAT_DEF, 1, TRUE
+	statbuffchange MOVE_EFFECT_CERTAIN, BattleScript_WeakArmorRaisesSpeed
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 2, BattleScript_WeakArmorRaisesSpeed
+	setgraphicalstatchangevalues
+	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printfromtable gStatDownStringIds
+	waitmessage 0x40
+	
+BattleScript_WeakArmorRaisesSpeed::
+        jumpifstat BS_TARGET, CMP_EQUAL, STAT_SPEED, 12, BattleScript_CursedBodyReturn
+	setstatchanger STAT_SPEED, 2, FALSE
+	statbuffchange MOVE_EFFECT_CERTAIN, BattleScript_CursedBodyReturn
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 2, BattleScript_CursedBodyReturn
+	setgraphicalstatchangevalues
+	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printfromtable gStatUpStringIds
+	waitmessage 0x40
+	goto BattleScript_CursedBodyReturn
