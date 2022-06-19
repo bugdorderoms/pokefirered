@@ -54,7 +54,7 @@ static const u16 sPowderAndSporeMoves[] =
 	MOVE_SPORE,
 	MOVE_STUN_SPORE,
 	TABLE_END,
-}
+};
 
 u8 GetBattlerForBattleScript(u8 caseId)
 {
