@@ -70,7 +70,6 @@ extern const struct TrainerMoneyBall gTrainerMoneyAndBallTable[];
 extern const struct TrainerEvs gTrainerEvsTable[];
 extern const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT];
 extern const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1];
-extern const bool8 gIgnorableAbilities[ABILITIES_COUNT];
 
 void CB2_InitBattle(void);
 void BattleMainCB2(void);
