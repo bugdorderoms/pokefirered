@@ -4730,3 +4730,19 @@ BattleScript_MoodyEnd::
         loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
         end3
 	
+BattleScript_PowderMoveNoEffect::
+        attackstring
+	ppreduce
+	pause 0x20
+	jumpiftype BS_TARGET, TYPE_GRASS, BattleScript_PowderMoveNoEffectPrint
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, ABILITY_OVERCOAT
+	
+BattleScript_PowderMoveNoEffectPrint::
+	printstring STRINGID_ITDOESNTAFFECT
+	waitmessage 0x40
+	cancelmultiturnmoves BS_ATTACKER
+	sethword gMoveResultFlags, MOVE_RESULT_FAILED
+	jumpiftype BS_TARGET, TYPE_GRASS, BattleScript_MoveEnd
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	goto BattleScript_MoveEnd
+	
