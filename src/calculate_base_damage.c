@@ -39,6 +39,7 @@
 #include "constants/inserts.h"
 
 static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move);
+static u32 CalcBattlerWeight(u8 battler);
 
 static const u8 sFlailHpScaleToPowerTable[] =
 {
@@ -59,6 +60,18 @@ static const u16 sWeightToDamageTable[] =
     2000, 100,
     0xFFFF, 0xFFFF
 };
+
+static u32 GetBattlerWeight(u8 battler)
+{
+	u32 weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[battler].species), 1);
+	
+	if (gBattleMons[battler].ability == ABILITY_HEAVY_METAL)
+		weight *= 2;
+	else if (gBattleMons[battler].ability == ABILITY_LIGHT_METAL)
+		weight /= 2;
+	
+	return weight;
+}
 
 static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 {
@@ -123,7 +136,7 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 				power = 1;
 			break;
 		case EFFECT_LOW_KICK:
-			data = GetModifiedMonWeight(battlerIdDef);
+			data = GetBattlerWeight(battlerIdDef);
 			
 			for (i = 0; sWeightToDamageTable[i] != 0xFFFF; i += 2)
 			{
