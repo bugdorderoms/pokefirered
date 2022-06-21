@@ -6347,7 +6347,7 @@ static void atk86_stockpiletobasedamage(void)
         if (gBattleCommunication[6] != 1)
         {
             gBattleMoveDamage = CalculateBaseDamage(&gBattleMons[gBattlerAttacker], &gBattleMons[gBattlerTarget], gCurrentMove,
-                                                    gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)], 0,
+                                                    gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)],
                                                     FALSE, gBattlerAttacker, gBattlerTarget);
             gBattleScripting.animTurn = gDisableStructs[gBattlerAttacker].stockpileCounter;
 
@@ -8008,7 +8008,6 @@ static void atkC3_trysetfutureattack(void)
                                                                               &gBattleMons[gBattlerTarget],
                                                                               gCurrentMove,
                                                                               gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)],
-                                                                              0,
                                                                               FALSE,
                                                                               gBattlerAttacker,
                                                                               gBattlerTarget);
