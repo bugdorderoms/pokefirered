@@ -1102,7 +1102,7 @@
 	.4byte \param0
 	.endm
 
-	.macro scaledamagebyhealthratio
+	.macro nopd9
 	.byte 0xd9
 	.endm
 
