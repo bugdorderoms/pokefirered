@@ -418,6 +418,7 @@ struct BattleStruct
     u16 castformPalette[MAX_BATTLERS_COUNT][16];
     u8 wishPerishSongState;
     u8 wishPerishSongBattlerId;
+    u8 magnitudeBasePower;
     u8 field_182;
     // align 4
     union {
