@@ -8733,8 +8733,6 @@ static void atkE9_setweatherballtype(void)
 {
     if (WEATHER_HAS_EFFECT)
     {
-        if (gBattleWeather & WEATHER_ANY)
-            gBattleScripting.dmgMultiplier = 2;
         if (gBattleWeather & WEATHER_RAIN_ANY)
             *(&gBattleStruct->dynamicMoveType) = TYPE_WATER;
         else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
