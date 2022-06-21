@@ -443,9 +443,9 @@ extern struct BattleStruct *gBattleStruct;
 
 #define TABLE_END 0xFFFF
 
-#define IS_TYPE_PHYSICAL(moveSplit)(moveSplit == MOVE_PHYSICAL)
-#define IS_TYPE_SPECIAL(moveSplit)(moveSplit == MOVE_SPECIAL)
-#define IS_TYPE_STATUS(moveSplit)(moveSplit == MOVE_STATUS)
+#define IS_MOVE_PHYSICAL(move)(gBattleMoves[move].split == MOVE_PHYSICAL)
+#define IS_MOVE_SPECIAL(move)(gBattleMoves[move].split == MOVE_SPECIAL)
+#define IS_MOVE_STATUS(move)(gBattleMoves[move].split == MOVE_STATUS)
 #define RECEIVE_SHEER_FORCE_BOOST(battler, move)((gBattleMons[battler].ability == ABILITY_SHEER_FORCE) && (IsMoveInTable(gSheerForceBoostedMoves, move)))
 #define STAT_CAN_RAISE(battlerId, statId)((gBattleMons[battlerId].statStages[statId] < 12 && gBattleMons[battlerId].ability != ABILITY_CONTRARY) || (gBattleMons[battlerId].statStages[statId] > 0 && gBattleMons[battlerId].ability == ABILITY_CONTRARY))
 #define STAT_CAN_FALL(battlerId, statId)((gBattleMons[battlerId].statStages[statId] > 0 && gBattleMons[battlerId].ability != ABILITY_CONTRARY) || (gBattleMons[battlerId].statStages[statId] < 12 && gBattleMons[battlerId].ability == ABILITY_CONTRARY))
