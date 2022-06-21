@@ -210,7 +210,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectYawn
 	.4byte BattleScript_EffectKnockOff
 	.4byte BattleScript_EffectEndeavor
-	.4byte BattleScript_EffectEruption
+	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectSkillSwap
 	.4byte BattleScript_EffectImprison
 	.4byte BattleScript_EffectRefresh
@@ -2487,10 +2487,6 @@ BattleScript_EffectEndeavor::
 	copyword gBattleMoveDamage, gHpDealt
 	adjustsetdamage
 	goto BattleScript_HitFromAtkAnimation
-
-BattleScript_EffectEruption::
-	scaledamagebyhealthratio
-	goto BattleScript_EffectHit
 
 BattleScript_EffectSkillSwap::
 	attackcanceler
