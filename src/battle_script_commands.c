@@ -7760,7 +7760,7 @@ static void atkB7_presentcalc(void)
 		    gBattlescriptCurrInstr = BattleScript_PresentHealTarget;
     }
     else
-	    gBattlescriptCurrInstr = BattleScript_EffectHit;
+	    gBattlescriptCurrInstr = BattleScript_HitFromCritCalc;
 }
 
 static void atkB8_setsafeguard(void)
