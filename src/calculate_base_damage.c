@@ -38,6 +38,8 @@
 #include "constants/battle_move_effects.h"
 #include "constants/inserts.h"
 
+static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move);
+
 static const u8 sFlailHpScaleToPowerTable[] =
 {
     1, 200,
@@ -58,9 +60,9 @@ static const u16 sWeightToDamageTable[] =
     0xFFFF, 0xFFFF
 };
 
-u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move, s32 *returnSomething)
+static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 {
-	s32 i, data = 0;
+	s32 i, data;
 	struct BattlePokemon *attacker = gBattleMons[battlerIdAtk];
 	struct BattlePokemon *defender = gBattleMons[battlerIdDef];
 	u16 power = gBattleMoves[move].power;
@@ -108,43 +110,10 @@ u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move, s32 *return
 				power = 120;
 			break;
 		case EFFECT_MAGNITUDE:
-			data = Random() % 100;
-			
-			if (data < 5)
-			{
-				power = 10;
-				data = 4;
-			}
-			else if (data < 15)
-			{
-				power = 30;
-				data = 5;
-			}
-			else if (data < 35)
-			{
-				power = 50;
-				data = 6;
-			}
-			else if (data < 65)
-			{
-				power = 70;
-				data = 7;
-			}
-			else if (data < 85)
-			{
-				power = 90;
-				data = 8;
-			}
-			else if (data < 95)
-			{
-				power = 110;
-				data = 9;
-			}
-			else
-			{
-				power = 150;
-				data = 10;
-			}
+			power = gBattleStruct->magnitudeBasePower;
+			break;
+		case EFFECT_TRIPLE_KICK:
+			power = gBattleScripting.tripleKickPower;
 			break;
 		case EFFECT_ERUPTION:
 			power = attacker->hp * power / attacker->maxHP;
@@ -169,7 +138,6 @@ u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move, s32 *return
 		default:
 			break;
 	}
-	*returnSomething = data;
 	
 	return power;
 }
@@ -193,7 +161,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 	if (isConfusionDmg)
 		gBattleStruct->dynamicMoveType = statiD1;
 	
-	gBattleMovePower = GetModifiedMovePower(battlerIdAtk, battlerIdDef, move, &j);
+	gBattleMovePower = GetModifiedMovePower(battlerIdAtk, battlerIdDef, move);
 	
 	attack = attacker->attack;
 	defense = defender->defense;
