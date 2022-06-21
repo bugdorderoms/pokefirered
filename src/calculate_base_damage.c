@@ -76,14 +76,14 @@ static u32 GetBattlerWeight(u8 battler)
 static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 {
 	s32 i, data;
-	struct BattlePokemon *attacker = gBattleMons[battlerIdAtk];
-	struct BattlePokemon *defender = gBattleMons[battlerIdDef];
+	struct BattlePokemon attacker = gBattleMons[battlerIdAtk];
+	struct BattlePokemon defender = gBattleMons[battlerIdDef];
 	u16 power = gBattleMoves[move].power;
 	
 	switch (gBattleMoves[move].effect)
 	{
 		case EFFECT_FLAIL:
-			data = GetScaledHPFraction(attacker->hp, attacker->maxHP, 48);
+			data = GetScaledHPFraction(attacker.hp, attacker.maxHP, 48);
 			
 			for (i = 0; i < (s32)sizeof(sFlailHpScaleToPowerTable); i += 2)
 			{
@@ -96,7 +96,7 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 			for (i = 1; i < (5 - gDisableStructs[battlerIdAtk].rolloutTimer); i++)
 				power *= 2;
 			
-			if (attacker->status2 & STATUS2_DEFENSE_CURL)
+			if (attacker.status2 & STATUS2_DEFENSE_CURL)
 				power *= 2;
 			break;
 		case EFFECT_FURY_CUTTER:
@@ -104,10 +104,10 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 				power *= 2;
 			break;
 		case EFFECT_RETURN:
-			power = 10 * (attacker->friendship) / 25;
+			power = 10 * (attacker.friendship) / 25;
 			break;
 		case EFFECT_FRUSTRATION:
-			power = 10 * (255 - attacker->friendship) / 25;
+			power = 10 * (255 - attacker.friendship) / 25;
 			break;
 		case EFFECT_PRESENT:
 			do
@@ -130,7 +130,7 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 			gBattleScripting.tripleKickPower += 10;
 			break;
 		case EFFECT_ERUPTION:
-			power = attacker->hp * power / attacker->maxHP;
+			power = attacker.hp * power / attacker.maxHP;
 			
 			if (power == 0)
 				power = 1;
@@ -161,7 +161,7 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 				power *= 2;
 			break;
 		case EFFECT_SMELLINGSALT:
-			if (!SubsBlockMove(battlerIdAtk, battlerIdDef, move) && defender->status1 & STATUS1_PARALYSIS)
+			if (!SubsBlockMove(battlerIdAtk, battlerIdDef, move) && defender.status1 & STATUS1_PARALYSIS)
 				power *= 2;
 			break;
 		case EFFECT_GUST:
