@@ -1430,9 +1430,9 @@ static void MoveSelectionDisplayMoveType(void)
 {
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
     u8 *txtPtr;
-    u8 type, target = B_POSITION_OPPONENT_LEFT, effect = 0;
+    u8 type, target, effect;
     u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
-    s32 i = 0;
+    s32 i;
     
     if (gBattleMoves[move].effect != EFFECT_HIDDEN_POWER)
         type = gBattleMoves[move].type;
@@ -1446,14 +1446,17 @@ static void MoveSelectionDisplayMoveType(void)
    
 #if EFFECTIVENESS_ON_MENU 
     
-    //necessary define this for get the correctly effectiveness
+    // necessary define this for get the correctly effectiveness
     gMoveResultFlags = 0;
     gCurrentMove = move;
     
-    //check if move is stab
-    if (!IS_TYPE_STATUS(gBattleMoves[gCurrentMove].split) && IS_BATTLER_OF_TYPE(gActiveBattler, type))
+    target = B_POSITION_OPPONENT_LEFT; // default target
+    effect = 0;
+    
+    // check if move is stab
+    if (!IS_MOVE_STATUS(gCurrentMove) && IS_BATTLER_OF_TYPE(gActiveBattler, type))
         effect = 2;
-    //try change move target in double
+    // try change move target in double
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
     {
         if (gBattlerControllerFuncs[gActiveBattler] == HandleInputChooseTarget)
@@ -1461,7 +1464,10 @@ static void MoveSelectionDisplayMoveType(void)
         else if (gBattleMons[target].hp == 0)
             target = B_POSITION_OPPONENT_RIGHT;
     }
-    //get move effectiveness
+    // get move effectiveness
+    
+    i = 0;
+    
     while (TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE)
     {
         if (TYPE_EFFECT_ATK_TYPE(i) == type)
@@ -1476,7 +1482,7 @@ static void MoveSelectionDisplayMoveType(void)
         }
         i += 3;
     }
-    //set respective colours
+    // set respective colours
     if (gMoveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
     {
         gPlttBufferUnfaded[88] = sEffectivenessColours[effect];
