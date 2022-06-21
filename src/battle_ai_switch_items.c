@@ -498,7 +498,6 @@ u8 GetMostSuitableMonToSwitchInto(void)
             invalidMons = 0x3F; // No viable mon to switch.
         }
     }
-    gDynamicBasePower = 0;
     gBattleScripting.dmgMultiplier = 1;
     gMoveResultFlags = 0;
     gCritMultiplier = 1;
