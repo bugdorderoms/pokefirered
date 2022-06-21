@@ -1166,7 +1166,7 @@ static bool8 AccuracyCalcHelper(u16 move)
 
 static void atk01_accuracycheck(void)
 {
-    u8 acc, type, moveAcc, holdEffect, param, movesplit;
+    u8 acc, type, moveAcc, holdEffect, param;
     s8 buff;
     u16 calc, move = T2_READ_16(gBattlescriptCurrInstr + 5);
     
@@ -1200,7 +1200,6 @@ static void atk01_accuracycheck(void)
 		return;
 	}
         type = gBattleStruct->dynamicMoveType;
-        movesplit = gBattleMoves[move].split;
 	moveAcc = gBattleMoves[move].accuracy;
 	    
         if (JumpIfMoveAffectedByProtect(move) || AccuracyCalcHelper(move))
@@ -1229,7 +1228,7 @@ static void atk01_accuracycheck(void)
 	    
         if (gBattleMons[gBattlerAttacker].ability == ABILITY_COMPOUND_EYES)
             calc = (calc * 130) / 100; // 1.3 compound eyes boost
-	if (gBattleMons[gBattlerAttacker].ability == ABILITY_HUSTLE && IS_TYPE_PHYSICAL(movesplit))
+	if (gBattleMons[gBattlerAttacker].ability == ABILITY_HUSTLE && IS_MOVE_PHYSICAL(move))
             calc = (calc * 80) / 100; // 1.2 hustle loss
 	if (gBattleMons[gBattlerTarget].ability == ABILITY_TANGLED_FEET && gBattleMons[gBattlerTarget].status2 & STATUS2_CONFUSION)
 	    calc /= 2; // tangled feet halved
@@ -1923,12 +1922,11 @@ static void atk0B_healthbarupdate(void)
 
 static void atk0C_datahpupdate(void)
 {
-    u8 moveType, movesplit;
+    u8 moveType;
     
     if (!gBattleControllerExecFlags)
     {
             moveType = gBattleStruct->dynamicMoveType;
-            movesplit = gBattleMoves[gCurrentMove].split;
 	    gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	    
         if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
@@ -1993,7 +1991,7 @@ static void atk0C_datahpupdate(void)
                     }
                     if (!gSpecialStatuses[gActiveBattler].dmg && !(gHitMarker & HITMARKER_PASSIVE_DAMAGE))
                         gSpecialStatuses[gActiveBattler].dmg = gHpDealt;
-                    if (IS_TYPE_PHYSICAL(movesplit) && !(gHitMarker & HITMARKER_PASSIVE_DAMAGE) && gCurrentMove != MOVE_PAIN_SPLIT)
+                    if (IS_MOVE_PHYSICAL(gCurrentMove) && !(gHitMarker & HITMARKER_PASSIVE_DAMAGE) && gCurrentMove != MOVE_PAIN_SPLIT)
                     {
                         gProtectStructs[gActiveBattler].physicalDmg = gHpDealt;
                         gSpecialStatuses[gActiveBattler].physicalDmg = gHpDealt;
@@ -2009,7 +2007,7 @@ static void atk0C_datahpupdate(void)
                             gSpecialStatuses[gActiveBattler].physicalBattlerId = gBattlerTarget;
                         }
                     }
-                    else if (IS_TYPE_SPECIAL(movesplit) && !(gHitMarker & HITMARKER_PASSIVE_DAMAGE))
+                    else if (IS_MOVE_SPECIAL(gCurrentMove) && !(gHitMarker & HITMARKER_PASSIVE_DAMAGE))
                     {
                         gProtectStructs[gActiveBattler].specialDmg = gHpDealt;
                         gSpecialStatuses[gActiveBattler].specialDmg = gHpDealt;
