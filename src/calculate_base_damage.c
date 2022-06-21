@@ -39,7 +39,7 @@
 #include "constants/inserts.h"
 
 static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move);
-static u32 CalcBattlerWeight(u8 battler);
+static u32 GetBattlerWeight(u8 battler);
 
 static const u8 sFlailHpScaleToPowerTable[] =
 {
