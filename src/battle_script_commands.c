@@ -24,6 +24,7 @@
 #include "battle_anim.h"
 #include "battle_main.h"
 #include "battle_ai_script_commands.h"
+#include "calculate_base_damage.h"
 #include "battle_scripts.h"
 #include "trainer_slide.h"
 #include "battle_string_ids.h"
@@ -290,7 +291,7 @@ static void atkD5_trysetroots(void);
 static void atkD6_nop(void);
 static void atkD7_setyawn(void);
 static void atkD8_setdamagetohealthdifference(void);
-static void atkD9_scaledamagebyhealthratio(void);
+static void atkD9_nop(void);
 static void atkDA_tryswapabilities(void);
 static void atkDB_tryimprison(void);
 static void atkDC_trysetgrudge(void);
@@ -548,7 +549,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkD6_nop,
     atkD7_setyawn,
     atkD8_setdamagetohealthdifference,
-    atkD9_scaledamagebyhealthratio,
+    atkD9_nop,
     atkDA_tryswapabilities,
     atkDB_tryimprison,
     atkDC_trysetgrudge,
@@ -8391,18 +8392,8 @@ static void atkD8_setdamagetohealthdifference(void)
     }
 }
 
-static void atkD9_scaledamagebyhealthratio(void)
+static void atkD9_nop(void)
 {
-    u8 power;
-	
-    if (gDynamicBasePower == 0)
-    {
-        power = gBattleMoves[gCurrentMove].power;
-        gDynamicBasePower = gBattleMons[gBattlerAttacker].hp * power / gBattleMons[gBattlerAttacker].maxHP;
-	    
-        if (gDynamicBasePower == 0)
-            gDynamicBasePower = 1;
-    }
     ++gBattlescriptCurrInstr;
 }
 
