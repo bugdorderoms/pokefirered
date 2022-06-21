@@ -119,7 +119,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectSleepTalk
 	.4byte BattleScript_EffectDestinyBond
-	.4byte BattleScript_EffectFlail
+	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectSpite
 	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectHealBell
@@ -216,7 +216,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectRefresh
 	.4byte BattleScript_EffectGrudge
 	.4byte BattleScript_EffectSnatch
-	.4byte BattleScript_EffectLowKick
+	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectSecretPower
 	.4byte BattleScript_EffectDoubleEdge
 	.4byte BattleScript_EffectTeeterDance
@@ -1352,10 +1352,6 @@ BattleScript_EffectDestinyBond::
 	printstring STRINGID_PKMNTRYINGTOTAKEFOE
 	waitmessage 0x40
 	goto BattleScript_MoveEnd
-
-BattleScript_EffectFlail::
-	remaininghptopower
-	goto BattleScript_EffectHit
 
 BattleScript_EffectSpite::
 	attackcanceler
@@ -2573,14 +2569,6 @@ BattleScript_EffectSnatch::
 	printstring STRINGID_PKMNWAITSFORTARGET
 	waitmessage 0x40
 	goto BattleScript_MoveEnd
-
-BattleScript_EffectLowKick::
-	attackcanceler
-	attackstring
-	ppreduce
-	weightdamagecalculation
-	accuracycheck BattleScript_MoveMissedPause, ACC_CURR_MOVE
-	goto BattleScript_HitFromCritCalc
 
 BattleScript_EffectSecretPower::
 	getsecretpowereffect
