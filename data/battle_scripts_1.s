@@ -205,7 +205,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectSuperpower
 	.4byte BattleScript_EffectMagicCoat
 	.4byte BattleScript_EffectRecycle
-	.4byte BattleScript_EffectRevenge
+	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectBrickBreak
 	.4byte BattleScript_EffectYawn
 	.4byte BattleScript_EffectKnockOff
@@ -2416,10 +2416,6 @@ BattleScript_EffectRecycle::
 	printstring STRINGID_XFOUNDONEY
 	waitmessage 0x40
 	goto BattleScript_MoveEnd
-
-BattleScript_EffectRevenge::
-	doubledamagedealtifdamaged
-	goto BattleScript_EffectHit
 
 BattleScript_EffectBrickBreak::
 	attackcanceler
