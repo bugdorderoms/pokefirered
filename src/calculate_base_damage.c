@@ -16,6 +16,7 @@
 #include "evolution_scene.h"
 #include "battle_message.h"
 #include "battle_util.h"
+#include "battle_interface.h"
 #include "battle_script_commands.h"
 #include "calculate_base_damage.h"
 #include "link.h"
