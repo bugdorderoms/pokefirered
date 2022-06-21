@@ -136,6 +136,26 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 			else
 				power = 120;
 			break;
+		case EFFECT_SPIT_UP:
+			power = 100 * gDisableStructs[battlerIdAtk].stockpileCounter;
+			break;
+		case EFFECT_REVENGE:
+			if ((gProtectStructs[battlerIdAtk].physicalDmg != 0 && gProtectStructs[battlerIdAtk].physicalBattlerId == battlerIdDef)
+			    || (gProtectStructs[battlerIdAtk].specialDmg != 0 && gProtectStructs[battlerIdAtk].specialBattlerId == battlerIdDef))
+				power *= 2;
+		case EFFECT_WEATHER_BALL:
+			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_ANY)
+				power *= 2;
+			break;
+		case EFFECT_SMELLINGSALT:
+			if (defender->status1 & STATUS1_PARALYSIS)
+				power *= 2;
+			break;
+		case EFFECT_GUST:
+		case EFFECT_TWISTER:
+			if (gStatuses3[battlerIdDef] & STATUS3_ON_AIR)
+				power *= 2;
+			break;
 		default:
 			break;
 	}
