@@ -38,7 +38,142 @@
 #include "constants/battle_move_effects.h"
 #include "constants/inserts.h"
 
-s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u16 move, u16 sideStatus, u16 powerOverride, bool8 isConfusionDmg, u8 battlerIdAtk, u8 battlerIdDef)
+static const u8 sFlailHpScaleToPowerTable[] =
+{
+    1, 200,
+    4, 150,
+    9, 100,
+    16, 80,
+    32, 40,
+    48, 20
+};
+
+static const u16 sWeightToDamageTable[] =
+{
+    100, 20,
+    250, 40,
+    500, 60,
+    1000, 80,
+    2000, 100,
+    0xFFFF, 0xFFFF
+};
+
+u16 GetModifiedMovePower(u8 battler, u16 move, s32 *returnSomething)
+{
+	s32 i, data = 0;
+	struct BattlePokemon *attacker = gBattleMons[battler];
+	u16 power = gBattleMoves[move].power;
+	
+	switch (gBattleMoves[move].effect)
+	{
+		case EFFECT_FLAIL:
+			data = GetScaledHPFraction(attacker->hp, attacker->maxHP, 48);
+			
+			for (i = 0; i < (s32)sizeof(sFlailHpScaleToPowerTable); i += 2)
+			{
+				if (data <= sFlailHpScaleToPowerTable[i])
+					break;
+			}
+			power = sFlailHpScaleToPowerTable[i + 1];
+			break;
+		case EFFECT_ROLLOUT:
+			for (i = 1; i < (5 - gDisableStructs[battler].rolloutTimer); i++)
+				power *= 2;
+			
+			if (attacker->status2 & STATUS2_DEFENSE_CURL)
+				power *= 2;
+			break;
+		case EFFECT_FURY_CUTTER:
+			for (i = 1; i < gDisableStructs[battler].furyCutterCounter; i++)
+				power *= 2;
+			break;
+		case EFFECT_RETURN:
+			power = 10 * (attacker->friendship) / 25;
+			break;
+		case EFFECT_FRUSTRATION:
+			power = 10 * (255 - attacker->friendship) / 25;
+			break;
+		case EFFECT_PRESENT:
+			do
+			{
+				data = Random() & 0xFF;
+			} while (data >= 204);
+			
+			if (data < 102)
+				power = 40;
+			else if (data < 178)
+				power = 80;
+			else
+				power = 120;
+			break;
+		case EFFECT_MAGNITUDE:
+			data = Random() % 100;
+			
+			if (data < 5)
+			{
+				power = 10;
+				data = 4;
+			}
+			else if (data < 15)
+			{
+				power = 30;
+				data = 5;
+			}
+			else if (data < 35)
+			{
+				power = 50;
+				data = 6;
+			}
+			else if (data < 65)
+			{
+				power = 70;
+				data = 7;
+			}
+			else if (data < 85)
+			{
+				power = 90;
+				data = 8;
+			}
+			else if (data < 95)
+			{
+				power = 110;
+				data = 9;
+			}
+			else
+			{
+				power = 150;
+				data = 10;
+			}
+			break;
+		case EFFECT_ERUPTION:
+			power = attacker->hp * power / attacker->maxHP;
+			
+			if (power == 0)
+				power = 1;
+			break;
+		case EFFECT_LOW_KICK:
+			data = GetModifiedMonWeight(battler);
+			
+			for (i = 0; sWeightToDamageTable[i] != 0xFFFF; i += 2)
+			{
+				if (sWeightToDamageTable[i] > data)
+					break;
+			}
+			
+			if (sWeightToDamageTable[i] != 0xFFFF)
+				power = sWeightToDamageTable[i + 1];
+			else
+				power = 120;
+			break;
+		default:
+			break;
+	}
+	*returnSomething = data;
+	
+	return power;
+}
+
+s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u16 move, u16 sideStatus, bool8 isConfusionDmg, u8 battlerIdAtk, u8 battlerIdDef)
 {
 	u8 type, flags, statiD1, statiD2, attackerGender, defenderGender;
 	u8 attackerHoldEffect, attackerHoldEffectParam, defenderHoldEffect, defenderHoldEffectParam;
@@ -57,11 +192,8 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 	if (isConfusionDmg)
 		gBattleStruct->dynamicMoveType = statiD1;
 	
-	if (!powerOverride)
-		gBattleMovePower = gBattleMoves[move].power;
-	else
-		gBattleMovePower = powerOverride;
-    
+	gBattleMovePower = GetModifiedMovePower(battlerIdAtk, move, &j);
+	
 	attack = attacker->attack;
 	defense = defender->defense;
 	spAttack = attacker->spAttack;
