@@ -929,7 +929,7 @@
 	.4byte \param0
 	.endm
 
-	.macro rolloutdamagecalculation
+	.macro handlerollout
 	.byte 0xb3
 	.endm
 
@@ -939,15 +939,15 @@
 	.4byte \ptr
 	.endm
 
-	.macro furycuttercalc
+	.macro handlefurycutter
 	.byte 0xb5
 	.endm
 
-	.macro happinesstodamagecalculation
+	.macro nopb6
 	.byte 0xb6
 	.endm
 
-	.macro presentdamagecalculation
+	.macro presentcalc
 	.byte 0xb7
 	.endm
 
