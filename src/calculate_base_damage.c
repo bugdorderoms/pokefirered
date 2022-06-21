@@ -355,7 +355,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 					spAttack = (15 * spAttack) / 10;
 				break;
 			case ABILITY_GUTS:
-				if (attacker->status1)
+				if (attacker->status1 & STATUS1_ANY)
 					attack = (15 * attack) / 10;
 				break;
 			case ABILITY_OVERGROW:
@@ -450,7 +450,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 				}
 				break;
 			case ABILITY_MARVEL_SCALE:
-				if (defender->status1)
+				if (defender->status1 & STATUS1_ANY)
 					defense = (15 * defense) / 10;
 				break;
 			case ABILITY_HEATPROOF:
