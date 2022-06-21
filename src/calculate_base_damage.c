@@ -58,10 +58,11 @@ static const u16 sWeightToDamageTable[] =
     0xFFFF, 0xFFFF
 };
 
-u16 GetModifiedMovePower(u8 battler, u16 move, s32 *returnSomething)
+u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move, s32 *returnSomething)
 {
 	s32 i, data = 0;
-	struct BattlePokemon *attacker = gBattleMons[battler];
+	struct BattlePokemon *attacker = gBattleMons[battlerIdAtk];
+	struct BattlePokemon *defender = gBattleMons[battlerIdDef];
 	u16 power = gBattleMoves[move].power;
 	
 	switch (gBattleMoves[move].effect)
@@ -77,14 +78,14 @@ u16 GetModifiedMovePower(u8 battler, u16 move, s32 *returnSomething)
 			power = sFlailHpScaleToPowerTable[i + 1];
 			break;
 		case EFFECT_ROLLOUT:
-			for (i = 1; i < (5 - gDisableStructs[battler].rolloutTimer); i++)
+			for (i = 1; i < (5 - gDisableStructs[battlerIdAtk].rolloutTimer); i++)
 				power *= 2;
 			
 			if (attacker->status2 & STATUS2_DEFENSE_CURL)
 				power *= 2;
 			break;
 		case EFFECT_FURY_CUTTER:
-			for (i = 1; i < gDisableStructs[battler].furyCutterCounter; i++)
+			for (i = 1; i < gDisableStructs[battlerIdAtk].furyCutterCounter; i++)
 				power *= 2;
 			break;
 		case EFFECT_RETURN:
@@ -152,7 +153,7 @@ u16 GetModifiedMovePower(u8 battler, u16 move, s32 *returnSomething)
 				power = 1;
 			break;
 		case EFFECT_LOW_KICK:
-			data = GetModifiedMonWeight(battler);
+			data = GetModifiedMonWeight(battlerIdDef);
 			
 			for (i = 0; sWeightToDamageTable[i] != 0xFFFF; i += 2)
 			{
@@ -192,7 +193,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 	if (isConfusionDmg)
 		gBattleStruct->dynamicMoveType = statiD1;
 	
-	gBattleMovePower = GetModifiedMovePower(battlerIdAtk, move, &j);
+	gBattleMovePower = GetModifiedMovePower(battlerIdAtk, battlerIdDef, move, &j);
 	
 	attack = attacker->attack;
 	defense = defender->defense;
