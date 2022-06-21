@@ -2274,11 +2274,6 @@ BattleScript_EffectFocusPunch::
 BattleScript_EffectSmellingsalt::
 	jumpifsubstituteblocks BattleScript_EffectHit
 	setmoveeffect MOVE_EFFECT_REMOVE_PARALYSIS | MOVE_EFFECT_CERTAIN
-	jumpifstatus BS_TARGET, STATUS1_PARALYSIS, BattleScript_SmellingSaltBuff
-	goto BattleScript_EffectHit
-
-BattleScript_SmellingSaltBuff::
-	setbyte sDMG_MULTIPLIER, 2
 	goto BattleScript_EffectHit
 
 BattleScript_EffectFollowMe::
