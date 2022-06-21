@@ -141,9 +141,9 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectSwagger
 	.4byte BattleScript_EffectFuryCutter
 	.4byte BattleScript_EffectAttract
-	.4byte BattleScript_EffectReturn
+	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectPresent
-	.4byte BattleScript_EffectReturn
+	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectSafeguard
 	.4byte BattleScript_EffectThawHit
 	.4byte BattleScript_EffectMagnitude
@@ -1404,9 +1404,7 @@ BattleScript_TripleKickLoop::
 BattleScript_DoTripleKickAttack::
 	accuracycheck BattleScript_TripleKickNoMoreHits, ACC_CURR_MOVE
 	movevaluescleanup
-	addbyte sTRIPLE_KICK_POWER, 10
 	addbyte gBattleScripting + 12, 1
-	copyhword gDynamicBasePower, sTRIPLE_KICK_POWER
 	critcalc
 	damagecalc
 	typecalc
@@ -1612,7 +1610,7 @@ BattleScript_RolloutCheckAccuracy::
 	accuracycheck BattleScript_RolloutHit, ACC_CURR_MOVE
 BattleScript_RolloutHit::
 	typecalc2
-	rolloutdamagecalculation
+	handlerollout
 	goto BattleScript_HitFromCritCalc
 
 BattleScript_EffectSwagger::
@@ -1644,7 +1642,7 @@ BattleScript_EffectFuryCutter::
 	ppreduce
 	accuracycheck BattleScript_FuryCutterHit, ACC_CURR_MOVE
 BattleScript_FuryCutterHit::
-	furycuttercalc
+	handlefurycutter
 	critcalc
 	damagecalc
 	typecalc
@@ -1664,19 +1662,14 @@ BattleScript_EffectAttract::
 	waitmessage 0x40
 	goto BattleScript_MoveEnd
 
-BattleScript_EffectReturn::
-	attackcanceler
-	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
-	happinesstodamagecalculation
-	goto BattleScript_HitFromAtkString
-
 BattleScript_EffectPresent::
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
 	ppreduce
 	typecalc
-	presentdamagecalculation
+	presentcalc
+	
 BattleScript_EffectSafeguard::
 	attackcanceler
 	attackstring
