@@ -113,7 +113,8 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 			power = gBattleStruct->magnitudeBasePower;
 			break;
 		case EFFECT_TRIPLE_KICK:
-			power = gBattleScripting.tripleKickPower;
+			power += gBattleScripting.tripleKickPower;
+			gBattleScripting.tripleKickPower += 10;
 			break;
 		case EFFECT_ERUPTION:
 			power = attacker->hp * power / attacker->maxHP;
