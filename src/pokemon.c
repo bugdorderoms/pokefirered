@@ -2463,7 +2463,7 @@ bool8 IsMoveInTable(const u16 table[], u16 moveId)
 
 s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u32 move, u16 sideStatus, u16 powerOverride, bool8 isConfusionDmg, u8 battlerIdAtk, u8 battlerIdDef)
 {
-    u8 split, type, flags, statiD1, statiD2, attackerGender, defenderGender;
+    u8 type, flags, statiD1, statiD2, attackerGender, defenderGender;
     u8 attackerHoldEffect, attackerHoldEffectParam, defenderHoldEffect, defenderHoldEffectParam;
     u16 attack, defense, spAttack, spDefense;
     u32 i;
@@ -2471,7 +2471,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 
     if (isConfusionDmg)
     {
-	    split = gBattleStruct->dynamicMoveType; // temporary used as an backup of move type
+	    statiD1 = gBattleStruct->dynamicMoveType; // temporary used as an backup of move type
 	    gBattleStruct->dynamicMoveType = TYPE_NORMAL;
     }
     type = gBattleStruct->dynamicMoveType;
@@ -2479,14 +2479,12 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     flags = TypeCalc(move, battlerIdAtk, battlerIdDef);
 	
     if (isConfusionDmg)
-	    gBattleStruct->dynamicMoveType = split;
+	    gBattleStruct->dynamicMoveType = statiD1;
 	
     if (!powerOverride)
         gBattleMovePower = gBattleMoves[move].power;
     else
         gBattleMovePower = powerOverride;
-
-    split = gBattleMoves[move].split;
     
     attack = attacker->attack;
     defense = defender->defense;
@@ -2518,8 +2516,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     if (!isConfusionDmg) // makes confusion damage not affected by effects of items, abilities or boosts granted by badges
     {
 #if BADGE_BOOST
-	    // In FRLG, the Battle Tower and opponent checks are stubbed here.
-	    if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | /*BATTLE_TYPE_BATTLE_TOWER |*/ BATTLE_TYPE_EREADER_TRAINER)))
+	    if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER)))
 	    {
 		    if (FlagGet(FLAG_BADGE01_GET) && GetBattlerSide(battlerIdAtk) == B_SIDE_PLAYER)
 			    attack = (110 * attack) / 100;
@@ -2673,11 +2670,11 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			    }
 			    break;
 		    case ABILITY_TOXIC_BOOST:
-			    if (attacker->status1 & STATUS1_PSN_ANY && IS_TYPE_PHYSICAL(split))
+			    if (attacker->status1 & STATUS1_PSN_ANY && IS_MOVE_PHYSICAL(move))
 				    gBattleMovePower = (15 * gBattleMovePower) / 10;
 			    break;
 		    case ABILITY_FLARE_BOOST:
-			    if (attacker->status1 & STATUS1_BURN && IS_TYPE_SPECIAL(split))
+			    if (attacker->status1 & STATUS1_BURN && IS_MOVE_SPECIAL(move))
 				    gBattleMovePower = (15 * gBattleMovePower) / 10;
 			    break;
 				    
@@ -2764,7 +2761,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     if ((attacker->status1 & STATUS1_BURN) && attacker->ability != ABILITY_GUTS && !isConfusionDmg)
             attack /= 2;
    
-	if (IS_TYPE_PHYSICAL(split))
+	if (IS_MOVE_PHYSICAL(move))
 	{
 		damage = attack;
 		damageHelper = defense;
@@ -2808,7 +2805,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 	damage /= 50;
 	
 	// reflect and light screen check
-    if ((sideStatus & (split + 1)) && gCritMultiplier == 1)
+    if ((sideStatus & (gBattleMoves[move].split + 1)) && gCritMultiplier == 1)
     {
         if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
             damage = 2 * (damage / 3);
@@ -2816,7 +2813,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
             damage /= 2;
     }
        
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMoves[move].target == 8 && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) > 1) 
+    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMoves[move].target == MOVE_TARGET_BOTH && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) > 1) 
 	    damage -= damage / 4;
 	
     // are effects of weather negated with cloud nine or air lock
