@@ -287,7 +287,7 @@ static void atkD2_tryswapitems(void);
 static void atkD3_trycopyability(void);
 static void atkD4_trywish(void);
 static void atkD5_trysetroots(void);
-static void atkD6_doubledamagedealtifdamaged(void);
+static void atkD6_nop(void);
 static void atkD7_setyawn(void);
 static void atkD8_setdamagetohealthdifference(void);
 static void atkD9_scaledamagebyhealthratio(void);
@@ -545,7 +545,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkD3_trycopyability,
     atkD4_trywish,
     atkD5_trysetroots,
-    atkD6_doubledamagedealtifdamaged,
+    atkD6_nop,
     atkD7_setyawn,
     atkD8_setdamagetohealthdifference,
     atkD9_scaledamagebyhealthratio,
@@ -8364,11 +8364,8 @@ static void atkD5_trysetroots(void) // ingrain
     }
 }
 
-static void atkD6_doubledamagedealtifdamaged(void)
+static void atkD6_nop(void)
 {
-    if ((gProtectStructs[gBattlerAttacker].physicalDmg != 0 && gProtectStructs[gBattlerAttacker].physicalBattlerId == gBattlerTarget)
-	|| (gProtectStructs[gBattlerAttacker].specialDmg != 0 && gProtectStructs[gBattlerAttacker].specialBattlerId == gBattlerTarget))
-        gBattleScripting.dmgMultiplier = 2;
     ++gBattlescriptCurrInstr;
 }
 
