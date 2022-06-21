@@ -1368,7 +1368,6 @@ static void atk05_damagecalc(void)
                                             &gBattleMons[gBattlerTarget],
                                             gCurrentMove,
                                             sideStatus,
-                                            gDynamicBasePower,
                                             FALSE,
                                             gBattlerAttacker,
                                             gBattlerTarget);
@@ -1390,12 +1389,10 @@ void AI_CalcDmg(u8 attacker, u8 defender)
                                             &gBattleMons[defender],
                                             gCurrentMove,
                                             sideStatus,
-                                            gDynamicBasePower,
                                             FALSE,
                                             attacker,
                                             defender);
 	
-    gDynamicBasePower = 0;
     gBattleMoveDamage = gBattleMoveDamage * gCritMultiplier * gBattleScripting.dmgMultiplier;
 	
     if (gStatuses3[attacker] & STATUS3_CHARGED_UP && gBattleMoves[gCurrentMove].type == TYPE_ELECTRIC)
