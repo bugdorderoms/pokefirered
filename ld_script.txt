@@ -313,7 +313,7 @@ SECTIONS {
         src/dns.o(.text);
         src/trainer_slide.o(.text);
         src/registered_item.o(.text);
-        src/calculate_base_damage(.text);
+        src/calculate_base_damage.o(.text);
     } =0
 
     script_data :
@@ -618,7 +618,7 @@ SECTIONS {
         src/dns.o(.rodata);
         src/trainer_slide.o(.rodata);
         src/registered_item.o(.rodata);
-        src/calculate_base_damage(.rodata);
+        src/calculate_base_damage.o(.rodata);
 
         /* These should not be moved to C files */
         src/mystery_event_msg.o(.rodata);
