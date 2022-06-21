@@ -2353,7 +2353,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    }
 			    break;
 		    case ABILITY_WEAK_ARMOR:
-			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerTarget].hp != 0 && IS_TYPE_PHYSICAL(gBattleMoves[moveArg].split)
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerTarget].hp != 0 && IS_MOVE_PHYSICAL(moveArg)
 				&& (gBattleMons[gBattlerTarget].statStages[STAT_SPEED] < 0xC || gBattleMons[gBattlerTarget].statStages[STAT_DEF] > 0) 
 				&& TARGET_TURN_DAMAGED)
 			    {
