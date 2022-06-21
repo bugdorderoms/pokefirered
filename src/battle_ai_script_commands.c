@@ -959,10 +959,8 @@ static void Cmd_get_how_powerful_move_is(void)
             break;
     }
 
-    if (gBattleMoves[AI_THINKING_STRUCT->moveConsidered].power > 1
-        && sDiscouragedPowerfulMoveEffects[i] == TABLE_END)
+    if (gBattleMoves[AI_THINKING_STRUCT->moveConsidered].power > 1 && sDiscouragedPowerfulMoveEffects[i] == TABLE_END)
     {
-        gDynamicBasePower = 0;
         gBattleScripting.dmgMultiplier = 1;
         gMoveResultFlags = 0;
         gCritMultiplier = 1;
@@ -975,8 +973,7 @@ static void Cmd_get_how_powerful_move_is(void)
                     break;
             }
 
-            if (gBattleMons[gBattlerAttacker].moves[checkedMove] != MOVE_NONE
-                && sDiscouragedPowerfulMoveEffects[i] == TABLE_END
+            if (gBattleMons[gBattlerAttacker].moves[checkedMove] != MOVE_NONE && sDiscouragedPowerfulMoveEffects[i] == TABLE_END
                 && gBattleMoves[gBattleMons[gBattlerAttacker].moves[checkedMove]].power > 1)
             {
                 gCurrentMove = gBattleMons[gBattlerAttacker].moves[checkedMove];
@@ -1183,7 +1180,6 @@ static void Cmd_get_highest_type_effectiveness(void)
     s32 i;
     u8 *dynamicMoveType;
 
-    gDynamicBasePower = 0;
     dynamicMoveType = &gBattleStruct->dynamicMoveType;
     gBattleScripting.dmgMultiplier = 1;
     gMoveResultFlags = 0;
@@ -1224,7 +1220,6 @@ static void Cmd_if_type_effectiveness(void)
 {
     u8 damageVar;
 
-    gDynamicBasePower = 0;
     gBattleScripting.dmgMultiplier = 1;
     gMoveResultFlags = 0;
     gCritMultiplier = 1;
@@ -1448,7 +1443,6 @@ static void Cmd_if_can_faint(void)
         return;
     }
 
-    gDynamicBasePower = 0;
     gBattleScripting.dmgMultiplier = 1;
     gMoveResultFlags = 0;
     gCritMultiplier = 1;
@@ -1477,7 +1471,6 @@ static void Cmd_if_cant_faint(void)
         return;
     }
 
-    gDynamicBasePower = 0;
     gBattleScripting.dmgMultiplier = 1;
     gMoveResultFlags = 0;
     gCritMultiplier = 1;
