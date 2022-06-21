@@ -6347,8 +6347,7 @@ static void atk86_stockpiletobasedamage(void)
         {
             gBattleMoveDamage = CalculateBaseDamage(&gBattleMons[gBattlerAttacker], &gBattleMons[gBattlerTarget], gCurrentMove,
                                                     gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)], 0,
-                                                    FALSE, gBattlerAttacker, gBattlerTarget)
-                                * gDisableStructs[gBattlerAttacker].stockpileCounter;
+                                                    FALSE, gBattlerAttacker, gBattlerTarget);
             gBattleScripting.animTurn = gDisableStructs[gBattlerAttacker].stockpileCounter;
 
             if (gProtectStructs[gBattlerAttacker].helpingHand)
