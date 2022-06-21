@@ -148,7 +148,7 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 				power *= 2;
 			break;
 		case EFFECT_SMELLINGSALT:
-			if (defender->status1 & STATUS1_PARALYSIS)
+			if (!SubsBlockMove(battlerIdAtk, battlerIdDef, move) && defender->status1 & STATUS1_PARALYSIS)
 				power *= 2;
 			break;
 		case EFFECT_GUST:
