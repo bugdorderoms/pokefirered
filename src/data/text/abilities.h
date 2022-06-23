@@ -141,7 +141,7 @@ static const u8 sHarvestDescription[] =      _("May create another berry.");
 static const u8 sTelepathyDescription[] =    _("Dodges an ally's attack.");
 static const u8 sMoodyDescription[] =        _("Raises one stat and lowers another.");
 static const u8 sOvercoatDescription[] =     _("Prevents “powder” and “spore” moves.");
-static const u8 sPoisonTouchDescription[] =  _("Poisons the target on contact.");
+static const u8 sPoisonTouchDescription[] =  _("Poisons the foe on contact.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
