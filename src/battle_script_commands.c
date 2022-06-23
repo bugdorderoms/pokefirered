@@ -206,7 +206,7 @@ static void atk80_manipulatedamage(void);
 static void atk81_trysetrest(void);
 static void atk82_jumpifnotfirstturn(void);
 static void atk83_handletrainerslidecase(void);
-static void atk84_jumpifcantmakeasleep(void);
+static void atk84_nop(void);
 static void atk85_stockpile(void);
 static void atk86_stockpiletobasedamage(void);
 static void atk87_stockpiletohpheal(void);
@@ -327,7 +327,7 @@ static void atkF9_cureprimarystatus(void);
 static void atkFA_setword(void);
 static void atkFB_jumpifsubstituteblocks(void);
 static void atkFC_loadabilitypopup(void);
-static void atkFD_jumpifweatherandability(void);
+static void atkFD_nop(void);
 static void atkFE_nop(void);
 
 void (* const gBattleScriptingCommandsTable[])(void) =
@@ -464,7 +464,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk81_trysetrest,
     atk82_jumpifnotfirstturn,
     atk83_handletrainerslidecase,
-    atk84_jumpifcantmakeasleep,
+    atk84_nop,
     atk85_stockpile,
     atk86_stockpiletobasedamage,
     atk87_stockpiletohpheal,
@@ -585,7 +585,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkFA_setword,
     atkFB_jumpifsubstituteblocks,
     atkFC_loadabilitypopup,
-    atkFD_jumpifweatherandability,
+    atkFD_nop,
     atkFE_nop,
 };
 
@@ -6171,22 +6171,9 @@ bool8 UproarWakeUpCheck(u8 battlerId)
         return TRUE;
 }
 
-static void atk84_jumpifcantmakeasleep(void)
+static void atk84_nop(void)
 {
-    const u8 *jumpPtr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-
-    if (UproarWakeUpCheck(gBattlerTarget))
-        gBattlescriptCurrInstr = jumpPtr;
-    else if (gBattleMons[gBattlerTarget].ability == ABILITY_INSOMNIA || gBattleMons[gBattlerTarget].ability == ABILITY_VITAL_SPIRIT
-	    || (gBattleMons[gBattlerTarget].ability == ABILITY_LEAF_GUARD && WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY))
-    {
-        gLastUsedAbility = gBattleMons[gBattlerTarget].ability;
-        gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-        gBattlescriptCurrInstr = jumpPtr;
-        RecordAbilityBattle(gBattlerTarget, gLastUsedAbility);
-    }
-    else
-        gBattlescriptCurrInstr += 5;
+        ++gBattlescriptCurrInstr;
 }
 
 static void atk85_stockpile(void)
@@ -9136,15 +9123,9 @@ static void atkFC_loadabilitypopup(void)
 	gBattlescriptCurrInstr += 5;
 }
 
-static void atkFD_jumpifweatherandability(void)
+static void atkFD_nop(void)
 {
-	u16 ability = T1_READ_16(gBattlescriptCurrInstr + 2);
-	u16 weather = T1_READ_16(gBattlescriptCurrInstr + 4);
-	
-	if (WEATHER_HAS_EFFECT && gBattleWeather & weather && gBattleMons[GetBattlerForBattleScript(gBattlescriptCurrInstr[1])].ability == ability)
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
-	else
-		gBattlescriptCurrInstr += 10;
+	++gBattlescriptCurrInstr;
 }
 
 static void atkFE_nop(void)
