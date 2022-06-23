@@ -289,32 +289,17 @@ BattleScript_EffectSleep::
 	attackstring
 	ppreduce
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	jumpifstatus BS_TARGET, STATUS1_SLEEP, BattleScript_AlreadyAsleep
-	jumpifcantmakeasleep BattleScript_CantMakeAsleep
-	jumpifstatus BS_TARGET, STATUS1_ANY, BattleScript_ButItFailed
+	trysetsleep BS_TARGET, BattleScript_StatusMoveFail
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
-	jumpifsideaffecting BS_TARGET, SIDE_STATUS_SAFEGUARD, BattleScript_SafeguardProtected
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_SLEEP
 	seteffectprimary
 	goto BattleScript_MoveEnd
 
-BattleScript_AlreadyAsleep::
-	pause 0x20
-	printstring STRINGID_PKMNALREADYASLEEP
-	waitmessage 0x40
-	goto BattleScript_MoveEnd
-
 BattleScript_WasntAffected::
 	pause 0x20
 	printstring STRINGID_PKMNWASNTAFFECTED
-	waitmessage 0x40
-	goto BattleScript_MoveEnd
-
-BattleScript_CantMakeAsleep::
-	pause 0x20
-	printfromtable gUproarAwakeStringIds
 	waitmessage 0x40
 	goto BattleScript_MoveEnd
 
@@ -695,33 +680,15 @@ BattleScript_EffectToxic::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifweatherandability BS_TARGET, ABILITY_LEAF_GUARD, 0x60, BattleScript_ImmunityProtected
-	jumpifability BS_TARGET, ABILITY_IMMUNITY, BattleScript_ImmunityProtected
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	jumpifstatus BS_TARGET, STATUS1_POISON | STATUS1_TOXIC_POISON, BattleScript_AlreadyPoisoned
-	jumpifstatus BS_TARGET, STATUS1_ANY, BattleScript_ButItFailed
-	jumpiftype BS_TARGET, TYPE_POISON, BattleScript_NotAffected
-	jumpiftype BS_TARGET, TYPE_STEEL, BattleScript_NotAffected
+	trysetpoison BS_TARGET BattleScript_StatusMoveFail
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
-	jumpifsideaffecting BS_TARGET, SIDE_STATUS_SAFEGUARD, BattleScript_SafeguardProtected
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_TOXIC
 	seteffectprimary
 	resultmessage
 	waitmessage 0x40
-	goto BattleScript_MoveEnd
-
-BattleScript_AlreadyPoisoned::
-	pause 0x40
-	printstring STRINGID_PKMNALREADYPOISONED
-	waitmessage 0x40
-	goto BattleScript_MoveEnd
-
-BattleScript_ImmunityProtected::
-	copybyte gEffectBattler, gBattlerTarget
-	setbyte cMULTISTRING_CHOOSER, 0
-	call BattleScript_PSNPrevention
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectPayDay::
@@ -1016,33 +983,15 @@ BattleScript_EffectParalyze::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifweatherandability BS_TARGET, ABILITY_LEAF_GUARD, 0x60, BattleScript_LimberProtected
-	jumpifability BS_TARGET, ABILITY_LIMBER, BattleScript_LimberProtected
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	typecalc
-	jumpifmovehadnoeffect BattleScript_ButItFailed
-	jumpifstatus BS_TARGET, STATUS1_PARALYSIS, BattleScript_AlreadyParalyzed
-	jumpifstatus BS_TARGET, STATUS1_ANY, BattleScript_ButItFailed
+	trysetparalyze BS_TARGET, BattleScript_StatusMoveFail
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
-	jumpifsideaffecting BS_TARGET, SIDE_STATUS_SAFEGUARD, BattleScript_SafeguardProtected
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	seteffectprimary
 	resultmessage
 	waitmessage 0x40
-	goto BattleScript_MoveEnd
-
-BattleScript_AlreadyParalyzed::
-	pause 0x20
-	printstring STRINGID_PKMNISALREADYPARALYZED
-	waitmessage 0x40
-	goto BattleScript_MoveEnd
-
-BattleScript_LimberProtected::
-	copybyte gEffectBattler, gBattlerTarget
-	setbyte cMULTISTRING_CHOOSER, 0
-	call BattleScript_PRLZPrevention
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectAttackDownHit::
@@ -2182,23 +2131,12 @@ BattleScript_EffectWillOWisp::
 	attackstring
 	ppreduce
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	jumpifstatus BS_TARGET, STATUS1_BURN, BattleScript_AlreadyBurned
-	jumpiftype BS_TARGET, TYPE_FIRE, BattleScript_NotAffected
-	jumpifweatherandability BS_TARGET, ABILITY_LEAF_GUARD, 0x60, BattleScript_WaterVeilPrevents
-	jumpifability BS_TARGET, ABILITY_WATER_VEIL, BattleScript_WaterVeilPrevents
-	jumpifstatus BS_TARGET, STATUS1_ANY, BattleScript_ButItFailed
+	trysetburn BS_TARGET, BattleScript_StatusMoveFail
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
-	jumpifsideaffecting BS_TARGET, SIDE_STATUS_SAFEGUARD, BattleScript_SafeguardProtected
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_BURN
 	seteffectprimary
-	goto BattleScript_MoveEnd
-
-BattleScript_WaterVeilPrevents::
-	copybyte gEffectBattler, gBattlerTarget
-	setbyte cMULTISTRING_CHOOSER, 0
-	call BattleScript_BRNPrevention
 	goto BattleScript_MoveEnd
 
 BattleScript_AlreadyBurned::
@@ -3218,12 +3156,6 @@ BattleScript_SideStatusWoreOff::
 	waitmessage 0x40
 	end2
 
-BattleScript_SafeguardProtected::
-	pause 0x20
-	printstring STRINGID_PKMNUSEDSAFEGUARD
-	waitmessage 0x40
-	end2
-
 BattleScript_SafeguardEnds::
 	pause 0x20
 	printstring STRINGID_PKMNSAFEGUARDEXPIRED
@@ -4146,24 +4078,6 @@ BattleScript_AbilityNoStatLoss::
 	printstring STRINGID_PKMNPREVENTSSTATLOSSWITH
 	waitmessage 0x40
 	loadabilitypopup REMOVE_POP_UP, BS_SCRIPTING, LOAD_ABILITY_FROM_BUFFER
-	return
-
-BattleScript_BRNPrevention::
-	pause 0x20
-	printfromtable gBRNPreventionStringIds
-	waitmessage 0x40
-	return
-
-BattleScript_PRLZPrevention::
-	pause 0x20
-	printfromtable gPRLZPreventionStringIds
-	waitmessage 0x40
-	return
-
-BattleScript_PSNPrevention::
-	pause 0x20
-	printfromtable gPSNPreventionStringIds
-	waitmessage 0x40
 	return
 
 BattleScript_ObliviousPreventsAttraction::
