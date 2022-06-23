@@ -716,9 +716,8 @@
 	.byte \caseId
 	.endm
 
-	.macro jumpifcantmakeasleep param0:req
+	.macro nop84
 	.byte 0x84
-	.4byte \param0
 	.endm
 
 	.macro stockpile
@@ -1272,12 +1271,8 @@
 	.2byte \ability
 	.endm
 	
-	.macro jumpifweatherandability battler:req, ability:req, weather:req, ptr:req
+	.macro nopfd
 	.byte 0xfd
-	.byte \battler
-	.2byte \ability
-	.2byte \weather
-	.4byte \ptr
 	.endm
 	
 	.macro nopfe
