@@ -711,7 +711,6 @@ BattleScript_EffectRest::
 	attackstring
 	ppreduce
 	jumpifstatus BS_ATTACKER, STATUS1_SLEEP, BattleScript_RestIsAlreadyAsleep
-	jumpifcantmakeasleep BattleScript_RestCantSleep
 	trysetrest BattleScript_AlreadyAtFullHp
 	pause 0x20
 	printfromtable gRestUsedStringIds
@@ -719,12 +718,6 @@ BattleScript_EffectRest::
 	updatestatusicon BS_ATTACKER
 	waitstate
 	goto BattleScript_PresentHealTarget
-
-BattleScript_RestCantSleep::
-	pause 0x40
-	printfromtable gUproarAwakeStringIds
-	waitmessage 0x40
-	goto BattleScript_MoveEnd
 
 BattleScript_RestIsAlreadyAsleep::
 	pause 0x20
