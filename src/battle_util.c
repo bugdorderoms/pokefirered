@@ -57,6 +57,111 @@ static const u16 sPowderAndSporeMoves[] =
 	TABLE_END,
 };
 
+static bool8 CanBeStatused(u8 bank)
+{
+	if (gBattleMons[bank].status1 & STATUS1_ANY)
+		return FALSE;
+	
+	switch (gBattleMons[bank].ability)
+	{
+		case ABILITY_LEAF_GUARD:
+			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				return FALSE;
+			break;
+	}
+	
+	if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+		return FALSE;
+	
+	return TRUE;
+}
+
+bool8 CanBePutToSleep(u8 bank)
+{
+	if (!CanBeStatused(bank))
+		return FALSE;
+	
+	switch (gBattleMons[bank].ability)
+	{
+		case ABILITY_INSOMNIA:
+		case ABILITY_VITAL_SPIRIT:
+			return FALSE;
+	}
+	
+	return TRUE;
+}
+
+bool8 CanBePoisoned(u8 bankDef, u8 bankAtk)
+{
+	if (!CanBeStatused(bankDef))
+		return FALSE;
+	
+	switch (gBattleMons[bankDef].ability)
+	{
+		case ABILITY_IMMUNITY:
+			return FALSE;
+	}
+	
+	if (IS_BATTLER_OF_TYPE(bankDef, TYPE_POISON) || IS_BATTLER_OF_TYPE(bankDef, TYPE_STEEL))
+		return FALSE;
+	
+	return TRUE;
+}
+
+bool8 CanBeBurned(u8 bank)
+{
+	if (!CanBeStatused(bank))
+		return FALSE;
+	
+	switch (gBattleMons[bank].ability)
+	{
+		case ABILITY_WATER_VEIL:
+			return FALSE;
+	}
+	
+	if (IS_BATTLER_OF_TYPE(bank, TYPE_FIRE))
+		return FALSE;
+	
+	return TRUE;
+}
+
+bool8 CanBeFrozen(u8 bank)
+{
+	if (!CanBeStatused(bank))
+		return FALSE;
+	
+	switch (gBattleMons[bank].ability)
+	{
+		case ABILITY_MAGMA_ARMOR:
+			return FALSE;
+	}
+	
+	if (IS_BATTLER_OF_TYPE(bank, TYPE_ICE))
+		return FALSE;
+	
+	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+		return FALSE;
+	
+	return TRUE;
+}
+
+bool8 CanBeParalyzed(u8 bank)
+{
+	if (!CanBeStatused(bank))
+		return FALSE;
+	
+	switch (gBattleMons[bank].ability)
+	{
+		case ABILITY_LIMBER:
+			return FALSE;
+	}
+	
+	if (IS_BATTLER_OF_TYPE(bank, TYPE_ELECTRIC))
+		return FALSE;
+	
+	return TRUE;
+}
+
 u8 GetBattlerForBattleScript(u8 caseId)
 {
     u32 ret = 0;
