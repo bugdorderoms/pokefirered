@@ -95,6 +95,10 @@ bool8 IsItemAffectedByGluttony(u16 Item);
 void TryGiveUnburdenBoostToMon(u8 battler);
 void ResetVarsForAbilityChange(u8 battler);
 void ClearBattlerStatus(u8 battler);
+bool8 CanBePutToSleep(u8 bank);
 bool8 CanBePoisoned(u8 bankDef, u8 bankAtk);
+bool8 CanBeBurned(u8 bank);
+bool8 CanBeFrozen(u8 bank);
+bool8 CanBeParalyzed(u8 bank);
 
 #endif // GUARD_BATTLE_UTIL_H
