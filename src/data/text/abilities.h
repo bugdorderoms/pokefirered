@@ -141,6 +141,7 @@ static const u8 sHarvestDescription[] =      _("May create another berry.");
 static const u8 sTelepathyDescription[] =    _("Dodges an ally's attack.");
 static const u8 sMoodyDescription[] =        _("Raises one stat and lowers another.");
 static const u8 sOvercoatDescription[] =     _("Prevents “powder” and “spore” moves.");
+static const u8 sPoisonTouchDescription[] =  _("Poisons the target on contact.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
@@ -287,6 +288,7 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_TELEPATHY] = sTelepathyDescription,
     [ABILITY_MOODY] = sMoodyDescription,
     [ABILITY_OVERCOAT] = sOvercoatDescription,
+    [ABILITY_POISON_TOUCH] = sPoisonTouchDescription,
 };
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
@@ -434,4 +436,5 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_TELEPATHY] = _("Telepathy"),
     [ABILITY_MOODY] = _("Moody"),
     [ABILITY_OVERCOAT] = _("Overcoat"),
+    [ABILITY_POISON_TOUCH] = _("Poison Touch"),
 };
