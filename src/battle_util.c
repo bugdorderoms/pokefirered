@@ -2354,25 +2354,41 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		    case ABILITY_EFFECT_SPORE:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 10) == 0
-				&& !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg) && gBattleMons[gBattlerTarget].ability != ABILITY_OVERCOAT)
+				&& !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg) && gBattleMons[gBattlerAttacker].ability != ABILITY_OVERCOAT)
 			    {
 				    do
 					    gBattleCommunication[MOVE_EFFECT_BYTE] = Random() & 3;
 				    while (gBattleCommunication[MOVE_EFFECT_BYTE] == 0);
 
-				    if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_BURN)
-					    gBattleCommunication[MOVE_EFFECT_BYTE] += 2; // 5 MOVE_EFFECT_PARALYSIS
-				    gBattleCommunication[MOVE_EFFECT_BYTE] += MOVE_EFFECT_AFFECTS_USER;
-				    BattleScriptPushCursor();
-				    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
-				    gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
-				    ++effect;
+				    switch (gBattleCommunication[MOVE_EFFECT_BYTE])
+				    {
+					    case MOVE_EFFECT_SLEEP:
+						    if (CanBePutToSleep(gBattlerAttacker))
+							    ++effect;
+						    break;
+					    case MOVE_EFFECT_POISON:
+						    if (CanBePoisoned(gBattlerAttacker, battler))
+							    ++effect;
+						    break;
+					    case MOVE_EFFECT_BURN:
+						    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
+						    if (CanBeParalyzed(gBattlerAttacker))
+							    ++effect;
+						    break;
+				    }
+				    if (effect)
+				    {
+					    gBattleCommunication[MOVE_EFFECT_BYTE] |= MOVE_EFFECT_AFFECTS_USER;
+					    BattleScriptPushCursor();
+					    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+					    gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
+				    }
 			    }
 			    break;
 		    case ABILITY_POISON_POINT:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 3) == 0
-				&& !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg))
+				&& CanBePoisoned(gBattlerAttacker, battler) && !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg))
 			    {
 				    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_POISON;
 				    BattleScriptPushCursor();
@@ -2384,7 +2400,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		    case ABILITY_STATIC:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 3) == 0
-				&& !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg))
+				&& CanBeParalyzed(gBattlerAttacker) && !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg))
 			    {
 				    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_PARALYSIS;
 				    BattleScriptPushCursor();
@@ -2396,7 +2412,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		    case ABILITY_FLAME_BODY:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 3) == 0
-				&& !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg))
+				&& CanBeBurned(gBattlerAttacker) !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg))
 			    {
 				    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_BURN;
 				    BattleScriptPushCursor();
