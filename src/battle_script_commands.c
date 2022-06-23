@@ -4101,6 +4101,11 @@ static void atk49_moveend(void)
                 effect = TRUE;
             ++gBattleScripting.atk49_state;
             break;
+	case ATK49_MOVE_END_ABILITIES_ATTACKER: // Same as above, but for attacker(Poison Touch and Stench).
+	    if (AbilityBattleEffects(ABILITYEFFECT_MOVE_END_ATTACKER, gBattlerAttacker, 0, 0, 0))
+		effect = TRUE;
+	    ++gBattleScripting.atk49_state;
+            break;
         case ATK49_STATUS_IMMUNITY_ABILITIES: // status immunities
             if (AbilityBattleEffects(ABILITYEFFECT_IMMUNITY, 0, 0, 0, 0))
                 effect = TRUE; // it loops through all battlers, so we increment after its done with all battlers
