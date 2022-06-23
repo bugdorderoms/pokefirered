@@ -2133,12 +2133,6 @@ BattleScript_EffectWillOWisp::
 	seteffectprimary
 	goto BattleScript_MoveEnd
 
-BattleScript_AlreadyBurned::
-	pause 0x20
-	printstring STRINGID_PKMNALREADYHASBURN
-	waitmessage 0x40
-	goto BattleScript_MoveEnd
-
 BattleScript_EffectMemento::
 	attackcanceler
 	jumpifbyte CMP_EQUAL, gBattleCommunication + 6, 1, BattleScript_MementoNoReduceStats
@@ -2380,13 +2374,9 @@ BattleScript_EffectYawn::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifweatherandability BS_TARGET, ABILITY_LEAF_GUARD, 0x60, BattleScript_PrintBankAbilityMadeIneffective
-	jumpifability BS_TARGET, ABILITY_VITAL_SPIRIT, BattleScript_PrintBankAbilityMadeIneffective
-	jumpifability BS_TARGET, ABILITY_INSOMNIA, BattleScript_PrintBankAbilityMadeIneffective
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	jumpifsideaffecting BS_TARGET, SIDE_STATUS_SAFEGUARD, BattleScript_SafeguardProtected
+	trysetsleep BS_TARGET, BattleScript_StatusMoveFail
 	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC_CHECK_LOCK_ON
-	jumpifcantmakeasleep BattleScript_ButItFailed
 	setyawn BattleScript_ButItFailed
 	attackanimation
 	waitanimation
