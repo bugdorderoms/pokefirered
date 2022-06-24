@@ -256,6 +256,13 @@ static const u8 BattleScript_WeakArmorActivation[];
 static const u8 BattleScript_HarvestActivates[];
 static const u8 BattleScript_MoodyActivates[];
 static const u8 BattleScript_PowderMoveNoEffect[];
+static const u8 BattleScript_AlreadyAsleep[];
+static const u8 BattleScript_AlreadyPoisoned[];
+static const u8 BattleScript_AlreadyBurned[];
+static const u8 BattleScript_AlreadyParalyzed[];
+static const u8 BattleScript_WaterVeilPrevents[];
+static const u8 BattleScript_ImmunityProtected[];
+static const u8 BattleScript_LimberProtected[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];
