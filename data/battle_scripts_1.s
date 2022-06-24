@@ -289,7 +289,7 @@ BattleScript_EffectSleep::
 	attackstring
 	ppreduce
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	trysetsleep BS_TARGET, BattleScript_StatusMoveFail
+	trysetsleep BS_TARGET, BattleScript_CantMakeAsleep
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	attackanimation
 	waitanimation
@@ -681,7 +681,7 @@ BattleScript_EffectToxic::
 	attackstring
 	ppreduce
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	trysetpoison BS_TARGET BattleScript_StatusMoveFail
+	trysetpoison BS_TARGET
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	attackanimation
 	waitanimation
@@ -956,7 +956,7 @@ BattleScript_EffectPoison::
 	attackstring
 	ppreduce
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	trysetpoison BS_TARGET, BattleScript_StatusMoveFail
+	trysetpoison BS_TARGET
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	attackanimation
 	waitanimation
@@ -971,7 +971,9 @@ BattleScript_EffectParalyze::
 	attackstring
 	ppreduce
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	trysetparalyze BS_TARGET, BattleScript_StatusMoveFail
+	typecalc
+	jumpifmovehadnoeffect BattleScript_ButItFailed
+	trysetparalyze BS_TARGET
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	attackanimation
 	waitanimation
@@ -2118,7 +2120,7 @@ BattleScript_EffectWillOWisp::
 	attackstring
 	ppreduce
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	trysetburn BS_TARGET, BattleScript_StatusMoveFail
+	trysetburn BS_TARGET
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	attackanimation
 	waitanimation
@@ -2368,7 +2370,7 @@ BattleScript_EffectYawn::
 	attackstring
 	ppreduce
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	trysetsleep BS_TARGET, BattleScript_StatusMoveFail
+	trysetsleep BS_TARGET, BattleScript_ButItFailed
 	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC_CHECK_LOCK_ON
 	setyawn BattleScript_ButItFailed
 	attackanimation
