@@ -119,6 +119,9 @@ harvest
 telepathy
 moody
 overcoat
+poison touch
+regenerator
+big pecks
 
 // WARNING
 Klutz don't affect prize money, experience, effort values or friendship.
