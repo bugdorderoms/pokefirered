@@ -140,7 +140,7 @@ static void atk3E_end2(void);
 static void atk3F_end3(void);
 static void atk40_jumpifaffectedbyprotect(void);
 static void atk41_call(void);
-static void atk42_nop(void);
+static void atk42_trysetsleep(void);
 static void atk43_jumpifabilitypresent(void);
 static void atk44_endselectionscript(void);
 static void atk45_playanimation(void);
@@ -206,7 +206,7 @@ static void atk80_manipulatedamage(void);
 static void atk81_trysetrest(void);
 static void atk82_jumpifnotfirstturn(void);
 static void atk83_handletrainerslidecase(void);
-static void atk84_nop(void);
+static void atk84_trysetpoison(void);
 static void atk85_stockpile(void);
 static void atk86_stockpiletobasedamage(void);
 static void atk87_stockpiletohpheal(void);
@@ -246,7 +246,7 @@ static void atkA8_copymovepermanently(void);
 static void atkA9_trychoosesleeptalkmove(void);
 static void atkAA_setdestinybond(void);
 static void atkAB_trysetdestinybondtohappen(void);
-static void atkAC_nop(void);
+static void atkAC_trysetburn(void);
 static void atkAD_tryspiteppreduce(void);
 static void atkAE_healpartystatus(void);
 static void atkAF_cursetarget(void);
@@ -256,7 +256,7 @@ static void atkB2_trysetperishsong(void);
 static void atkB3_handlerollout(void);
 static void atkB4_jumpifconfusedandstatmaxed(void);
 static void atkB5_handlefurycutter(void);
-static void atkB6_nop(void);
+static void atkB6_trysetparalyze(void);
 static void atkB7_presentcalc(void);
 static void atkB8_setsafeguard(void);
 static void atkB9_magnitudedamagecalculation(void);
@@ -398,7 +398,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk3F_end3,
     atk40_jumpifaffectedbyprotect,
     atk41_call,
-    atk42_nop,
+    atk42_trysetsleep,
     atk43_jumpifabilitypresent,
     atk44_endselectionscript,
     atk45_playanimation,
@@ -464,7 +464,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk81_trysetrest,
     atk82_jumpifnotfirstturn,
     atk83_handletrainerslidecase,
-    atk84_nop,
+    atk84_trysetpoison,
     atk85_stockpile,
     atk86_stockpiletobasedamage,
     atk87_stockpiletohpheal,
@@ -504,7 +504,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkA9_trychoosesleeptalkmove,
     atkAA_setdestinybond,
     atkAB_trysetdestinybondtohappen,
-    atkAC_nop,
+    atkAC_trysetburn,
     atkAD_tryspiteppreduce,
     atkAE_healpartystatus,
     atkAF_cursetarget,
@@ -514,7 +514,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkB3_handlerollout,
     atkB4_jumpifconfusedandstatmaxed,
     atkB5_handlefurycutter,
-    atkB6_nop,
+    atkB6_trysetparalyze,
     atkB7_presentcalc,
     atkB8_setsafeguard,
     atkB9_magnitudedamagecalculation,
@@ -3688,9 +3688,54 @@ static void atk41_call(void)
     gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 }
 
-static void atk42_nop(void)
+static void atk42_trysetsleep(void)
 {
-	++gBattlescriptCurrInstr;
+	u8 bank = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+	const u8 *jumpPtr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	
+	if (gBattleMons[bank].status1 & STATUS1_SLEEP)
+	{
+		gBattlescriptCurrInstr = BattleScript_AlreadyAsleep;
+		return;
+	}
+	else if (gBattleMons[bank].status1 & STATUS1_ANY)
+	{
+		gBattlescriptCurrInstr = BattleScript_ButItFailed;
+		return;
+	}
+	else if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	{
+		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
+		return;
+	}
+	else if (UproarWakeUpCheck(bank))
+	{
+		gBattlescriptCurrInstr = jumpPtr;
+		return;
+	}
+	else
+	{
+		switch (gBattleMons[bank].ability)
+		{
+			case ABILITY_INSOMNIA:
+			case ABILITY_VITAL_SPIRIT:
+				gLastUsedAbility = gBattleMons[bank].ability;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+				gBattlescriptCurrInstr = jumpPtr;
+				RecordAbilityBattle(bank, gLastUsedAbility);
+				return;
+			case ABILITY_LEAF_GUARD:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				{
+					gLastUsedAbility = gBattleMons[bank].ability;
+					gBattlescriptCurrInstr = BattleScript_NotAffected;
+					RecordAbilityBattle(bank, gLastUsedAbility);
+					return;
+				}
+				break;
+		}
+	}
+	gBattlescriptCurrInstr += 6;
 }
 
 static void atk43_jumpifabilitypresent(void)
@@ -6171,9 +6216,47 @@ bool8 UproarWakeUpCheck(u8 battlerId)
         return TRUE;
 }
 
-static void atk84_nop(void)
+static void atk84_trysetpoison(void)
 {
-        ++gBattlescriptCurrInstr;
+	u8 bank = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+	
+	if (gBattleMons[bank].status1 & STATUS1_PSN_ANY)
+	{
+		gBattlescriptCurrInstr = BattleScript_AlreadyPoisoned;
+		return;
+	}
+	else if (gBattleMons[bank].status1 & STATUS1_ANY)
+	{
+		gBattlescriptCurrInstr = BattleScript_ButItFailed;
+		return;
+	}
+	else if (IS_BATTLER_OF_TYPE(bank, TYPE_POISON) || IS_BATTLER_OF_TYPE(bank, TYPE_STEEL))
+	{
+		gBattlescriptCurrInstr = BattleScript_NotAffected;
+		return;
+	}
+	else if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	{
+		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
+		return;
+	}
+	else
+	{
+		switch (gBattleMons[bank].ability)
+		{
+			case ABILITY_IMMUNITY:
+				gBattlescriptCurrInstr = BattleScript_ImmunityProtected;
+				return;
+			case ABILITY_LEAF_GUARD:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				{
+					gBattlescriptCurrInstr = BattleScript_ImmunityProtected;
+					return;
+				}
+				break;
+		}
+	}
+	gBattlescriptCurrInstr += 2;
 }
 
 static void atk85_stockpile(void)
@@ -7364,9 +7447,47 @@ static void atkAB_trysetdestinybondtohappen(void)
     ++gBattlescriptCurrInstr;
 }
 
-static void atkAC_nop(void)
+static void atkAC_trysetburn(void)
 {
-    ++gBattlescriptCurrInstr;
+	u8 bank = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+	
+	if (gBattleMons[bank].status1 & STATUS1_BURN)
+	{
+		gBattlescriptCurrInstr = BattleScript_AlreadyBurned;
+		return;
+	}
+	else if (gBattleMons[bank].status1 & STATUS1_ANY)
+	{
+		gBattlescriptCurrInstr = BattleScript_ButItFailed;
+		return;
+	}
+	else if (IS_BATTLER_OF_TYPE(bank, TYPE_FIRE))
+	{
+		gBattlescriptCurrInstr = BattleScript_NotAffected;
+		return;
+	}
+	else if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	{
+		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
+		return;
+	}
+	else
+	{
+		switch (gBattleMons[bank].ability)
+		{
+			case ABILITY_WATER_VEIL:
+				gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
+				return;
+			case ABILITY_LEAF_GUARD:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				{
+					gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
+					return;
+				}
+				break;
+		}
+	}
+	gBattlescriptCurrInstr += 2;
 }
 
 static void atkAD_tryspiteppreduce(void)
@@ -7594,9 +7715,47 @@ static void atkB5_handlefurycutter(void)
     }
 }
 
-static void atkB6_nop(void)
+static void atkB6_trysetparalyze(void)
 {
-    ++gBattlescriptCurrInstr;
+	u8 bank = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+	
+	if (gBattleMons[bank].status1 & STATUS1_PARALYSIS)
+	{
+		gBattlescriptCurrInstr = BattleScript_AlreadyParalyzed;
+		return;
+	}
+	else if (gBattleMons[bank].status1 & STATUS1_ANY)
+	{
+		gBattlescriptCurrInstr = BattleScript_ButItFailed;
+		return;
+	}
+	else if (IS_BATTLER_OF_TYPE(bank, TYPE_ELECTRIC))
+	{
+		gBattlescriptCurrInstr = BattleScript_NotAffected;
+		return;
+	}
+	else if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	{
+		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
+		return;
+	}
+	else
+	{
+		switch (gBattleMons[bank].ability)
+		{
+			case ABILITY_LIMBER:
+				gBattlescriptCurrInstr = BattleScript_LimberProtected;
+				return;
+			case ABILITY_LEAF_GUARD:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				{
+					gBattlescriptCurrInstr = BattleScript_LimberProtected;
+					return;
+				}
+				break;
+		}
+	}
+	gBattlescriptCurrInstr += 2;
 }
 
 static void atkB7_presentcalc(void)
