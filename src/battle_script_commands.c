@@ -3728,7 +3728,8 @@ static void atk42_trysetsleep(void)
 				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 				{
 					gLastUsedAbility = gBattleMons[bank].ability;
-					gBattlescriptCurrInstr = BattleScript_NotAffected;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+					gBattlescriptCurrInstr = jumpPtr;
 					RecordAbilityBattle(bank, gLastUsedAbility);
 					return;
 				}
@@ -6245,11 +6246,13 @@ static void atk84_trysetpoison(void)
 		switch (gBattleMons[bank].ability)
 		{
 			case ABILITY_IMMUNITY:
+				gLastUsedAbility = gBattleMons[bank].ability;
 				gBattlescriptCurrInstr = BattleScript_ImmunityProtected;
 				return;
 			case ABILITY_LEAF_GUARD:
 				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 				{
+					gLastUsedAbility = gBattleMons[bank].ability;
 					gBattlescriptCurrInstr = BattleScript_ImmunityProtected;
 					return;
 				}
@@ -7476,11 +7479,13 @@ static void atkAC_trysetburn(void)
 		switch (gBattleMons[bank].ability)
 		{
 			case ABILITY_WATER_VEIL:
+				gLastUsedAbility = gBattleMons[bank].ability;
 				gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
 				return;
 			case ABILITY_LEAF_GUARD:
 				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 				{
+					gLastUsedAbility = gBattleMons[bank].ability;
 					gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
 					return;
 				}
@@ -7744,11 +7749,13 @@ static void atkB6_trysetparalyze(void)
 		switch (gBattleMons[bank].ability)
 		{
 			case ABILITY_LIMBER:
+				gLastUsedAbility = gBattleMons[bank].ability;
 				gBattlescriptCurrInstr = BattleScript_LimberProtected;
 				return;
 			case ABILITY_LEAF_GUARD:
 				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 				{
+					gLastUsedAbility = gBattleMons[bank].ability;
 					gBattlescriptCurrInstr = BattleScript_LimberProtected;
 					return;
 				}
