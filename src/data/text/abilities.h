@@ -144,6 +144,9 @@ static const u8 sOvercoatDescription[] =     _("Prevents “powder” and “spo
 static const u8 sPoisonTouchDescription[] =  _("Poisons the foe on contact.");
 static const u8 sRegeneratorDescription[] =  _("Slight HP recovery if switches out.");
 static const u8 sBigPecksDescription[] =     _("Prevents loss of Defense.");
+static const u8 sSandRushDescription[] =     _("Ups Speed in sandstorm.");
+static const u8 sWonderSkinDescription[] =   _("Ups status move evasion.");
+static const u8 sAnalyticDescription[] =     _("Powers up if moves last.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
@@ -293,6 +296,9 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_POISON_TOUCH] = sPoisonTouchDescription,
     [ABILITY_REGENERATOR] = sRegeneratorDescription,
     [ABILITY_BIG_PECKS] = sBigPecksDescription,
+    [ABILITY_SAND_RUSH] = sSandRushDescription,
+    [ABILITY_WONDER_SKIN] = sWonderSkinDescription,
+    [ABILITY_ANALYTIC] = sAnalyticDescription,
 };
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
@@ -443,4 +449,7 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_POISON_TOUCH] = _("Poison Touch"),
     [ABILITY_REGENERATOR] = _("Regenerator"),
     [ABILITY_BIG_PECKS] = _("Big Pecks"),
+    [ABILITY_SAND_RUSH] = _("Sand Rush"),
+    [ABILITY_WONDER_SKIN] = _("Wonder Skin"),
+    [ABILITY_ANALYTIC] = _("Analytic"),
 };
