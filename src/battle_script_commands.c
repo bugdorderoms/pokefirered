@@ -3890,7 +3890,8 @@ static void atk48_playstatchangeanimation(void)
                 else if (!gSideTimers[GET_BATTLER_SIDE(gActiveBattler)].mistTimer && gBattleMons[gActiveBattler].ability != ABILITY_CLEAR_BODY
 			 && gBattleMons[gActiveBattler].ability != ABILITY_WHITE_SMOKE 
 			 && !(gBattleMons[gActiveBattler].ability == ABILITY_KEEN_EYE && currStat == STAT_ACC)
-			 && !(gBattleMons[gActiveBattler].ability == ABILITY_HYPER_CUTTER && currStat == STAT_ATK))
+			 && !(gBattleMons[gActiveBattler].ability == ABILITY_HYPER_CUTTER && currStat == STAT_ATK)
+			 && !(gBattleMons[gActiveBattler].ability == ABILITY_BIG_PECKS && currStat == STAT_DEF)
                 {
                     if (gBattleMons[gActiveBattler].statStages[currStat] > 0)
                     {
@@ -6403,19 +6404,9 @@ static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
             }
             return STAT_CHANGE_DIDNT_WORK;
         }
-        else if (gBattleMons[gActiveBattler].ability == ABILITY_KEEN_EYE && !certain && statId == STAT_ACC)
-        {
-            if (flags == STAT_CHANGE_BS_PTR)
-            {
-                BattleScriptPush(BS_ptr);
-                gBattleScripting.battler = gActiveBattler;
-                gBattlescriptCurrInstr = BattleScript_AbilityNoSpecificStatLoss;
-                gLastUsedAbility = gBattleMons[gActiveBattler].ability;
-                RecordAbilityBattle(gActiveBattler, gLastUsedAbility);
-            }
-            return STAT_CHANGE_DIDNT_WORK;
-        }
-        else if (gBattleMons[gActiveBattler].ability == ABILITY_HYPER_CUTTER && !certain && statId == STAT_ATK)
+        else if (!certain && (gBattleMons[gActiveBattler].ability == ABILITY_KEEN_EYE && statId == STAT_ACC)
+		|| (gBattleMons[gActiveBattler].ability == ABILITY_HYPER_CUTTER && statId == STAT_ATK)
+		|| (gBattleMons[gActiveBattler].ability == ABILITY_BIG_PECKS && statId == STAT_DEF))
         {
             if (flags == STAT_CHANGE_BS_PTR)
             {
