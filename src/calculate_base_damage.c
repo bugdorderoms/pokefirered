@@ -437,7 +437,10 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 				if (attacker->status1 & STATUS1_BURN && IS_MOVE_SPECIAL(move))
 					gBattleMovePower = (15 * gBattleMovePower) / 10;
 				break;
-				    
+			case ABILITY_ANALYTIC:
+				if (GetBattlerTurnOrderNum(battlerIdAtk) == gBattlersCount - 1)
+					gBattleMovePower = (13 * gBattleMovePower) / 10;
+				break;
 		}
 		// defender abilities check
 		switch (defender->ability)
