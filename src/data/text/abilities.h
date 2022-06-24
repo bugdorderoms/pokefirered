@@ -142,6 +142,7 @@ static const u8 sTelepathyDescription[] =    _("Dodges an ally's attack.");
 static const u8 sMoodyDescription[] =        _("Raises one stat and lowers another.");
 static const u8 sOvercoatDescription[] =     _("Prevents “powder” and “spore” moves.");
 static const u8 sPoisonTouchDescription[] =  _("Poisons the foe on contact.");
+static const u8 sRegeneratorDescription[] =  _("Slight HP recovery if switches out.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
@@ -289,6 +290,7 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_MOODY] = sMoodyDescription,
     [ABILITY_OVERCOAT] = sOvercoatDescription,
     [ABILITY_POISON_TOUCH] = sPoisonTouchDescription,
+    [ABILITY_REGENERATOR] = sRegeneratorDescription,
 };
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
@@ -437,4 +439,5 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_MOODY] = _("Moody"),
     [ABILITY_OVERCOAT] = _("Overcoat"),
     [ABILITY_POISON_TOUCH] = _("Poison Touch"),
+    [ABILITY_REGENERATOR] = _("Regenerator"),
 };
