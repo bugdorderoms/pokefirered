@@ -297,9 +297,21 @@ BattleScript_EffectSleep::
 	seteffectprimary
 	goto BattleScript_MoveEnd
 
+BattleScript_AlreadyAsleep::
+        pause 0x20
+	printstring STRINGID_PKMNALREADYASLEEP
+	waitmessage 0x40
+	goto BattleScript_MoveEnd
+	
 BattleScript_WasntAffected::
 	pause 0x20
 	printstring STRINGID_PKMNWASNTAFFECTED
+	waitmessage 0x40
+	goto BattleScript_MoveEnd
+
+BattleScript_CantMakeAsleep::
+        pause 0x20
+	printfromtable gUproarAwakeStringIds
 	waitmessage 0x40
 	goto BattleScript_MoveEnd
 
@@ -691,6 +703,21 @@ BattleScript_EffectToxic::
 	waitmessage 0x40
 	goto BattleScript_MoveEnd
 
+BattleScript_AlreadyPoisoned::
+        pause 0x40
+	printstring STRINGID_PKMNALREADYPOISONED
+	waitmessage 0x40
+	goto BattleScript_MoveEnd
+
+BattleScript_ImmunityProtected::
+        pause 0x40
+	copybyte gEffectBattler, gBattlerTarget
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_PKMNPREVENTSPOISONINGWITH
+	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	goto BattleScript_MoveEnd
+
 BattleScript_EffectPayDay::
 	setmoveeffect MOVE_EFFECT_PAYDAY
 	goto BattleScript_EffectHit
@@ -981,6 +1008,21 @@ BattleScript_EffectParalyze::
 	seteffectprimary
 	resultmessage
 	waitmessage 0x40
+	goto BattleScript_MoveEnd
+
+BattleScript_AlreadyParalyzed::
+	pause 0x20
+	printstring STRINGID_PKMNISALREADYPARALYZED
+	waitmessage 0x40
+	goto BattleScript_MoveEnd
+	
+BattleScript_LimberProtected::
+        pause 0x40
+	copybyte gEffectBattler, gBattlerTarget
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_PKMNPREVENTSPARALYSISWITH
+	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectAttackDownHit::
@@ -2126,6 +2168,21 @@ BattleScript_EffectWillOWisp::
 	waitanimation
 	setmoveeffect MOVE_EFFECT_BURN
 	seteffectprimary
+	goto BattleScript_MoveEnd
+
+BattleScript_AlreadyBurned::
+	pause 0x20
+	printstring STRINGID_PKMNALREADYHASBURN
+	waitmessage 0x40
+	goto BattleScript_MoveEnd
+	
+BattleScript_WaterVeilPrevents::
+        pause 0x40
+	copybyte gEffectBattler, gBattlerTarget
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_PKMNSXPREVENTSBURNS
+	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectMemento::
