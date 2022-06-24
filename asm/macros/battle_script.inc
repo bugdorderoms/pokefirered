@@ -357,8 +357,10 @@
 	.4byte \ptr
 	.endm
 
-	.macro nop42
+	.macro trysetsleep battler:req, ptr:req
 	.byte 0x42
+	.byte \battler
+	.4byte \ptr
 	.endm
 
 	.macro jumpifabilitypresent ability:req, ptr:req
@@ -716,8 +718,9 @@
 	.byte \caseId
 	.endm
 
-	.macro nop84
+	.macro trysetpoison battler:req
 	.byte 0x84
+	.byte \battler
 	.endm
 
 	.macro stockpile
@@ -896,8 +899,9 @@
 	.byte 0xab
 	.endm
 
-	.macro nopac
+	.macro trysetburn battler:req
 	.byte 0xac
+	.byte \battler
 	.endm
 
 	.macro tryspiteppreduce param0:req
@@ -942,8 +946,9 @@
 	.byte 0xb5
 	.endm
 
-	.macro nopb6
+	.macro trysetparalyze battler:req
 	.byte 0xb6
+	.byte \battler
 	.endm
 
 	.macro presentcalc
