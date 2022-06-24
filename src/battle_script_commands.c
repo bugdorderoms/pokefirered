@@ -8579,15 +8579,23 @@ static void atkE1_trygetintimidatetarget(void)
 
 static void atkE2_switchoutabilities(void)
 {
-    gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	
-    switch (gBattleMons[gActiveBattler].ability)
-    {
-    case ABILITY_NATURAL_CURE:
-        gBattleMons[gActiveBattler].status1 = 0;
-        BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, gBitTable[*(gBattleStruct->battlerPartyIndexes + gActiveBattler)], 4, &gBattleMons[gActiveBattler].status1);
-        MarkBattlerForControllerExec(gActiveBattler);
-        break;
+	switch (gBattleMons[gActiveBattler].ability)
+	{
+		case ABILITY_NATURAL_CURE:
+			gBattleMons[gActiveBattler].status1 = 0;
+			BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, gBitTable[*(gBattleStruct->battlerPartyIndexes + gActiveBattler)], 4, &gBattleMons[gActiveBattler].status1);
+			MarkBattlerForControllerExec(gActiveBattler);
+			break;
+		case ABILITY_REGENERATOR:
+			gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 3;
+			gBattleMoveDamage += gBattleMons[gActiveBattler].hp;
+			if (gBattleMoveDamage > gBattleMons[gActiveBattler].maxHP)
+				gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP;
+			BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, gBitTable[*(gBattleStruct->battlerPartyIndexes + gActiveBattler)], 2, &gBattleMoveDamage);
+			MarkBattlerForControllerExec(gActiveBattler);
+			break;
     }
     gBattlescriptCurrInstr += 2;
 }
