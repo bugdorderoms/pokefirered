@@ -1247,6 +1247,8 @@ bool8 HandleWishPerishSongOnTurnEnd(void)
                 else
                     gBattleCommunication[MULTISTRING_CHOOSER] = 1;
                 PREPARE_MOVE_BUFFER(gBattleTextBuff1, gWishFutureKnock.futureSightMove[gActiveBattler]);
+		gCurrentMove = gWishFutureKnock.futureSightMove[gActiveBattler];
+		gBattleStruct->dynamicMoveType = gBattleMoves[gCurrentMove].type;
                 gBattlerTarget = gActiveBattler;
                 gBattlerAttacker = gWishFutureKnock.futureSightAttacker[gActiveBattler];
                 gBattleMoveDamage = gWishFutureKnock.futureSightDmg[gActiveBattler];
