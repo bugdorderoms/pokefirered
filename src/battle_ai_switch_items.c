@@ -485,7 +485,7 @@ u8 GetMostSuitableMonToSwitchInto(void)
             {
                 move = GetMonData(&gEnemyParty[bestMonId], MON_DATA_MOVE1 + i);
                 gBattleStruct->dynamicMoveType = gBattleMoves[move].type;
-                if (move != MOVE_NONE && TypeCalc(move, gActiveBattler, opposingBattler) & MOVE_RESULT_SUPER_EFFECTIVE)
+                if (move != MOVE_NONE && TypeCalc(move, gActiveBattler, opposingBattler, FALSE) & MOVE_RESULT_SUPER_EFFECTIVE)
                     break;
             }
             if (i != MAX_MON_MOVES)
@@ -521,7 +521,7 @@ u8 GetMostSuitableMonToSwitchInto(void)
             if (move != MOVE_NONE && gBattleMoves[move].power != 1)
             {
                 AI_CalcDmg(gActiveBattler, opposingBattler);
-                TypeCalc(move, gActiveBattler, opposingBattler);
+                TypeCalc(move, gActiveBattler, opposingBattler, FALSE);
             }
             if (bestDmg < gBattleMoveDamage)
             {
