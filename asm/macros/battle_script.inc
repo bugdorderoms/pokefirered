@@ -29,11 +29,12 @@
 	.byte 0x6
 	.endm
 
-	.macro adjustnormaldamage
+        .macro adjustdamage param0:req
 	.byte 0x7
+	.byte \param0
 	.endm
 
-	.macro adjustnormaldamage2
+	.macro nop8
 	.byte 0x8
 	.endm
 
@@ -1429,4 +1430,12 @@
 
 	.macro jumpifnotbattletype flags:req, jumpptr:req
 	jumpifword CMP_NO_COMMON_BITS, gBattleTypeFlags, \flags, \jumpptr
+	.endm
+	
+	.macro adjustnormaldamage
+	adjustdamage 0x0
+	.endm
+	
+	.macro adjustnormaldamage2
+	adjustdamage 0x1
 	.endm
