@@ -437,7 +437,7 @@
 	moveend 2, \to
 	.endm
 
-	.macro typecalc2
+	.macro nop4a
 	.byte 0x4a
 	.endm
 
