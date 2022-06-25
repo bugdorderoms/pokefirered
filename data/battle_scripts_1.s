@@ -818,7 +818,7 @@ BattleScript_EffectDragonRage::
 	typecalc
 	bichalfword gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	setword gBattleMoveDamage, 40
-	adjustsetdamage
+	adjustnormaldamage
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectTrap::
@@ -1189,7 +1189,7 @@ BattleScript_EffectLevelDamage::
 	typecalc
 	bichalfword gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	dmgtolevel
-	adjustsetdamage
+	adjustnormaldamage
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectPsywave::
@@ -1200,7 +1200,7 @@ BattleScript_EffectPsywave::
 	typecalc
 	bichalfword gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	psywavedamageeffect
-	adjustsetdamage
+	adjustnormaldamage
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectCounter::
@@ -1210,7 +1210,7 @@ BattleScript_EffectCounter::
 	attackstring
 	ppreduce
 	typecalc
-	adjustsetdamage
+	adjustnormaldamage
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectEncore::
@@ -1705,7 +1705,7 @@ BattleScript_EffectSonicboom::
 	typecalc
 	bichalfword gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	setword gBattleMoveDamage, 20
-	adjustsetdamage
+	adjustnormaldamage
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectMorningSun::
@@ -1791,7 +1791,7 @@ BattleScript_EffectMirrorCoat::
 	attackstring
 	ppreduce
 	typecalc
-	adjustsetdamage
+	adjustnormaldamage
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectSkullBash::
@@ -2084,7 +2084,7 @@ BattleScript_EffectSpitUp::
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	stockpiletobasedamage BattleScript_SpitUpFail
 	typecalc
-	adjustsetdamage
+	adjustnormaldamage
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_SpitUpFail::
@@ -2457,7 +2457,7 @@ BattleScript_EffectEndeavor::
 	jumpifmovehadnoeffect BattleScript_HitFromAtkAnimation
 	bichalfword gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	copyword gBattleMoveDamage, gHpDealt
-	adjustsetdamage
+	adjustnormaldamage
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectSkillSwap::
@@ -3234,7 +3234,7 @@ BattleScript_BideAttack::
 	typecalc
 	bichalfword gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	copyword gBattleMoveDamage, sBIDE_DMG
-	adjustsetdamage
+	adjustnormaldamage
 	setbyte sB_ANIM_TURN, 1
 	attackanimation
 	waitanimation
