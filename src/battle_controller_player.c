@@ -1430,9 +1430,8 @@ static void MoveSelectionDisplayMoveType(void)
 {
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
     u8 *txtPtr;
-    u8 type, target, effect;
+    u8 type, target, effect, flags;
     u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
-    s32 i;
     
     if (gBattleMoves[move].effect != EFFECT_HIDDEN_POWER)
         type = gBattleMoves[move].type;
@@ -1446,15 +1445,11 @@ static void MoveSelectionDisplayMoveType(void)
    
 #if EFFECTIVENESS_ON_MENU 
     
-    // necessary define this for get the correctly effectiveness
-    gMoveResultFlags = 0;
-    gCurrentMove = move;
-    
     target = B_POSITION_OPPONENT_LEFT; // default target
     effect = 0;
     
     // check if move is stab
-    if (!IS_MOVE_STATUS(gCurrentMove) && IS_BATTLER_OF_TYPE(gActiveBattler, type))
+    if (!IS_MOVE_STATUS(move) && IS_BATTLER_OF_TYPE(gActiveBattler, type))
         effect = 2;
     // try change move target in double
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
@@ -1464,36 +1459,20 @@ static void MoveSelectionDisplayMoveType(void)
         else if (gBattleMons[target].hp == 0)
             target = B_POSITION_OPPONENT_RIGHT;
     }
-    // get move effectiveness
+    flags = TypeCalc(move, gActiveBattler, target, FALSE);
     
-    i = 0;
-    
-    while (TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE)
-    {
-        if (TYPE_EFFECT_ATK_TYPE(i) == type)
-        {
-                // check type1
-            if (TYPE_EFFECT_DEF_TYPE(i) == gBattleMons[target].type1)
-                ModulateDmgByType(TYPE_EFFECT_MULTIPLIER(i));
-                // check type2
-            if (TYPE_EFFECT_DEF_TYPE(i) == gBattleMons[target].type2 &&
-                gBattleMons[target].type1 != gBattleMons[target].type2)
-                ModulateDmgByType(TYPE_EFFECT_MULTIPLIER(i));
-        }
-        i += 3;
-    }
     // set respective colours
-    if (gMoveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
+    if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
     {
         gPlttBufferUnfaded[88] = sEffectivenessColours[effect];
         gPlttBufferUnfaded[89] = sEffectivenessColours[effect + 1];
     }
-    else if (gMoveResultFlags & MOVE_RESULT_NOT_VERY_EFFECTIVE)
+    else if (flags & MOVE_RESULT_NOT_VERY_EFFECTIVE)
     {
         gPlttBufferUnfaded[88] = sEffectivenessColours[effect + 4];
         gPlttBufferUnfaded[89] = sEffectivenessColours[effect + 5];
     }
-    else if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
+    else if (!(flags & MOVE_RESULT_NO_EFFECT))
     {
         gPlttBufferUnfaded[88] = sEffectivenessColours[effect + 12];
         gPlttBufferUnfaded[89] = sEffectivenessColours[effect + 13];
