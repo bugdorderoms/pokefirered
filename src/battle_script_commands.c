@@ -81,8 +81,8 @@ static void atk03_ppreduce(void);
 static void atk04_critcalc(void);
 static void atk05_damagecalc(void);
 static void atk06_typecalc(void);
-static void atk07_adjustnormaldamage(void);
-static void atk08_adjustnormaldamage2(void);
+static void atk07_adjustdamage(void);
+static void atk08_nop(void);
 static void atk09_attackanimation(void);
 static void atk0A_waitanimation(void);
 static void atk0B_healthbarupdate(void);
@@ -339,8 +339,8 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk04_critcalc,
     atk05_damagecalc,
     atk06_typecalc,
-    atk07_adjustnormaldamage,
-    atk08_adjustnormaldamage2,
+    atk07_adjustdamage,
+    atk08_nop,
     atk09_attackanimation,
     atk0A_waitanimation,
     atk0B_healthbarupdate,
@@ -1708,8 +1708,9 @@ bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move)
 		return TRUE;
 }
 
-static void atk07_adjustnormaldamage(void)
+static void atk07_adjustdamage(void)
 {
+    u8 arg1 = gBattlescriptCurrInstr[1];
     u8 holdEffect, param;
 
     ApplyRandomDmgMultiplier();
@@ -1730,9 +1731,10 @@ static void atk07_adjustnormaldamage(void)
         RecordItemEffectBattle(gBattlerTarget, holdEffect);
         gSpecialStatuses[gBattlerTarget].focusBanded = 1;
     }
-    if (!SubsBlockMove(gBattlerAttacker, gBattlerTarget, gCurrentMove) && ((gBattleMoves[gCurrentMove].effect == EFFECT_FALSE_SWIPE 
-        || gProtectStructs[gBattlerTarget].endured || gSpecialStatuses[gBattlerTarget].focusBanded) || (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY
-        && gBattleMons[gBattlerTarget].hp == gBattleMons[gBattlerTarget].maxHP)) && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
+    if (gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
+	(((!arg1 && gBattleMoves[gCurrentMove].effect == EFFECT_FALSE_SWIPE) || gProtectStructs[gBattlerTarget].endured
+	  || gSpecialStatuses[gBattlerTarget].focusBanded) || (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY
+          && gBattleMons[gBattlerTarget].hp == gBattleMons[gBattlerTarget].maxHP)))
     {
         gBattleMoveDamage = gBattleMons[gBattlerTarget].hp - 1;
 	    
@@ -1751,54 +1753,12 @@ static void atk07_adjustnormaldamage(void)
 		gMoveResultFlags |= MOVE_RESULT_FOE_STURDIED;
 	}
     }
-    ++gBattlescriptCurrInstr;
+    gBattlescriptCurrInstr += 2;
 }
 
-// The same as 0x7 except it doesn't check for false swipe move effect.
-static void atk08_adjustnormaldamage2(void)
+static void atk08_nop(void)
 {
-    u8 holdEffect, param;
-	
-    ApplyRandomDmgMultiplier();
-    gPotentialItemEffectBattler = gBattlerTarget;
-	
-    if (gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY)
-    {
-        holdEffect = gEnigmaBerries[gBattlerTarget].holdEffect;
-        param = gEnigmaBerries[gBattlerTarget].holdEffectParam;
-    }
-    else
-    {
-        holdEffect = ItemId_GetHoldEffect(gBattleMons[gBattlerTarget].item, gBattlerTarget, TRUE);
-        param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
-    }
-    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
-    {
-        RecordItemEffectBattle(gBattlerTarget, holdEffect);
-        gSpecialStatuses[gBattlerTarget].focusBanded = 1;
-    }
-    if (!(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
-     && ((gProtectStructs[gBattlerTarget].endured || gSpecialStatuses[gBattlerTarget].focusBanded) || (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY
-     && gBattleMons[gBattlerTarget].hp == gBattleMons[gBattlerTarget].maxHP)) && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
-    {
-        gBattleMoveDamage = gBattleMons[gBattlerTarget].hp - 1;
-	    
-	if (gProtectStructs[gBattlerTarget].endured)
-            gMoveResultFlags |= MOVE_RESULT_FOE_ENDURED;
-        else if (gSpecialStatuses[gBattlerTarget].focusBanded)
-        {
-            gMoveResultFlags |= MOVE_RESULT_FOE_HUNG_ON;
-            gLastUsedItem = gBattleMons[gBattlerTarget].item;
-        }
-	else if (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY)
-	{
-		RecordAbilityBattle(gBattlerTarget, ABILITY_STURDY);
-		gSpecialStatuses[gBattlerTarget].sturdied = 1;
-		gLastUsedAbility = ABILITY_STURDY;
-		gMoveResultFlags |= MOVE_RESULT_FOE_STURDIED;
-	}
-    }
-    ++gBattlescriptCurrInstr;
+	++gBattlescriptCurrInstr;
 }
 
 static void atk09_attackanimation(void)
