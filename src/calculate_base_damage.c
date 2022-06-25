@@ -239,7 +239,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 		gBattleStruct->dynamicMoveType = TYPE_NORMAL;
 	}
 	type = gBattleStruct->dynamicMoveType;
-	flags = TypeCalc(move, battlerIdAtk, battlerIdDef);
+	flags = TypeCalc(move, battlerIdAtk, battlerIdDef, FALSE);
 	
 	if (isConfusionDmg)
 		gBattleStruct->dynamicMoveType = statiD1;
