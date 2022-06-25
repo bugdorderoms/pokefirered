@@ -1443,8 +1443,8 @@ static void MoveSelectionDisplayMoveType(void)
     *txtPtr++ = 6;
     *txtPtr++ = 1;
    
-#if EFFECTIVENESS_ON_MENU 
-    
+#if EFFECTIVENESS_ON_MENU
+    gBattleStruct->dynamicMoveType = type;
     target = B_POSITION_OPPONENT_LEFT; // default target
     effect = 0;
     
