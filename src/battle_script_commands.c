@@ -1387,66 +1387,13 @@ void AI_CalcDmg(u8 attacker, u8 defender)
 
 static void atk06_typecalc(void)
 {
-    u8 moveType = gBattleStruct->dynamicMoveType;
-    s32 i = 0;
-
     if (gCurrentMove == MOVE_STRUGGLE)
     {
         ++gBattlescriptCurrInstr;
         return;
     }
-    // check stab
-    if (IS_BATTLER_OF_TYPE(gBattlerAttacker, moveType))
-    {
-        if (gBattleMons[gBattlerAttacker].ability == ABILITY_ADAPTABILITY)
-		gBattleMoveDamage *= 2;
-	else
-		gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
-    }
-
-    if (moveType == TYPE_GROUND && gBattleMons[gBattlerTarget].ability == ABILITY_LEVITATE)
-    {
-	gLastUsedAbility = gBattleMons[gBattlerTarget].ability;
-	gLastLandedMoves[gBattlerTarget] = 0;
-        gLastHitByType[gBattlerTarget] = 0;
-        gBattleCommunication[6] = moveType;
-        gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
-        RecordAbilityBattle(gBattlerTarget, gLastUsedAbility);
-    }
-    else
-    {
-        while (TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE)
-        {
-            if (TYPE_EFFECT_ATK_TYPE(i) == TYPE_FORESIGHT)
-            {
-                if (gBattleMons[gBattlerTarget].status2 & STATUS2_FORESIGHT || gBattleMons[gBattlerAttacker].ability == ABILITY_SCRAPPY)
-                    break;
-                i += 3;
-                continue;
-            }
-            else if (TYPE_EFFECT_ATK_TYPE(i) == moveType)
-            {
-                // check type1
-                if (TYPE_EFFECT_DEF_TYPE(i) == gBattleMons[gBattlerTarget].type1)
-                    ModulateDmgByType(TYPE_EFFECT_MULTIPLIER(i));
-                // check type2
-                if (TYPE_EFFECT_DEF_TYPE(i) == gBattleMons[gBattlerTarget].type2 &&
-                    gBattleMons[gBattlerTarget].type1 != gBattleMons[gBattlerTarget].type2)
-                    ModulateDmgByType(TYPE_EFFECT_MULTIPLIER(i));
-            }
-            i += 3;
-        }
-    }
-    if (gBattleMons[gBattlerTarget].ability == ABILITY_WONDER_GUARD && gBattleMoves[gCurrentMove].power && AttacksThisTurn(gBattlerAttacker, gCurrentMove) == 2
-     && (!(gMoveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE) || ((gMoveResultFlags & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE))))
-    {
-        gLastUsedAbility = ABILITY_WONDER_GUARD;
-        gMoveResultFlags |= MOVE_RESULT_MISSED;
-        gLastLandedMoves[gBattlerTarget] = 0;
-        gLastHitByType[gBattlerTarget] = 0;
-        gBattleCommunication[6] = 3;
-        RecordAbilityBattle(gBattlerTarget, gLastUsedAbility);
-    }
+    gMoveResultFlags = TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget, TRUE);
+	
     if (gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE)
 	    gProtectStructs[gBattlerAttacker].targetNotAffected = 1;
     ++gBattlescriptCurrInstr;
@@ -1552,55 +1499,79 @@ static void ModulateDmgByType(u8 multiplier, u16 move, u8 *flags)
     }
 }
 
-u8 TypeCalc(u16 move, u8 attacker, u8 defender)
+u8 TypeCalc(u16 move, u8 attacker, u8 defender, bool8 recordAbilities)
 {
-    s32 i = 0;
-    u8 flags = 0, moveType = gBattleStruct->dynamicMoveType;
-
-    if (move == MOVE_STRUGGLE)
-        return 0;
+	s32 i = 0;
+	u8 type1, type2, moveType, flags = 0;
 	
-    // check stab
-    if (IS_BATTLER_OF_TYPE(attacker, moveType))
-    {
-        if (gBattleMons[attacker].ability == ABILITY_ADAPTABILITY)
-		gBattleMoveDamage *= 2;
-        else 
-		gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
-    }
-
-    if (gBattleMons[defender].ability == ABILITY_LEVITATE && moveType == TYPE_GROUND)
-        flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
-    else
-    {
-        while (TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE)
-        {
-            if (TYPE_EFFECT_ATK_TYPE(i) == TYPE_FORESIGHT)
-            {
-                if (gBattleMons[defender].status2 & STATUS2_FORESIGHT || gBattleMons[attacker].ability == ABILITY_SCRAPPY)
-                    break;
-                i += 3;
-                continue;
-            }
-            else if (TYPE_EFFECT_ATK_TYPE(i) == moveType)
-            {
-                // check type1
-                if (TYPE_EFFECT_DEF_TYPE(i) == gBattleMons[defender].type1)
-                    ModulateDmgByType(TYPE_EFFECT_MULTIPLIER(i), move, &flags);
-                // check type2
-                if (TYPE_EFFECT_DEF_TYPE(i) == gBattleMons[defender].type2 &&
-                    gBattleMons[defender].type1 != gBattleMons[defender].type2)
-                    ModulateDmgByType(TYPE_EFFECT_MULTIPLIER(i), move, &flags);
-            }
-            i += 3;
-        }
-    }
-    if (gBattleMons[defender].ability == ABILITY_WONDER_GUARD && AttacksThisTurn(attacker, move) == 2
-     && gBattleMoves[move].power && !(flags & MOVE_RESULT_MISSED)
-     && (!(flags & MOVE_RESULT_SUPER_EFFECTIVE) || ((flags & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE))))
-        flags |= MOVE_RESULT_MISSED;
+	if (move == MOVE_STRUGGLE)
+		return flags;
 	
-    return flags;
+	type1 = gBattleMons[defender].type1;
+	type2 = gBattleMons[defender].type2;
+	moveType = gBattleStruct->dynamicMoveType;
+	
+	// check stab
+	if (IS_BATTLER_OF_TYPE(attacker, moveType))
+	{
+		if (gBattleMons[attacker].ability == ABILITY_ADAPTABILITY)
+			gBattleMoveDamage *= 2;
+		else 
+			gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
+	}
+
+	if (gBattleMons[defender].ability == ABILITY_LEVITATE && moveType == TYPE_GROUND)
+	{
+		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+		
+		if (recordAbilities)
+		{
+			gLastUsedAbility = gBattleMons[defender].ability;
+			gLastLandedMoves[defender] = 0;
+			gLastHitByType[defender] = 0;
+			gBattleCommunication[6] = moveType;
+			RecordAbilityBattle(defender, gLastUsedAbility);
+		}
+	}
+	else
+	{
+		while (TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE)
+		{
+			if (TYPE_EFFECT_ATK_TYPE(i) == TYPE_FORESIGHT)
+			{
+				if (gBattleMons[defender].status2 & STATUS2_FORESIGHT || gBattleMons[attacker].ability == ABILITY_SCRAPPY)
+					break;
+				i += 3;
+				continue;
+			}
+			else if (TYPE_EFFECT_ATK_TYPE(i) == moveType)
+			{
+				// check type1
+				if (TYPE_EFFECT_DEF_TYPE(i) == type1)
+					ModulateDmgByType(TYPE_EFFECT_MULTIPLIER(i), move, &flags);
+				// check type2
+				if (TYPE_EFFECT_DEF_TYPE(i) == type2 && type1 != type2)
+					ModulateDmgByType(TYPE_EFFECT_MULTIPLIER(i), move, &flags);
+			}
+			i += 3;
+		}
+	}
+	if (gBattleMons[defender].ability == ABILITY_WONDER_GUARD && AttacksThisTurn(attacker, move) == 2 && gBattleMoves[move].power && !(flags & MOVE_RESULT_MISSED)
+	    && (!(flags & MOVE_RESULT_SUPER_EFFECTIVE) || ((flags & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE))))
+	{
+		flags |= MOVE_RESULT_MISSED;
+		
+		if (recordAbilities)
+		{
+			gLastUsedAbility = ABILITY_WONDER_GUARD;
+			gLastLandedMoves[defender] = 0;
+			gLastHitByType[defender] = 0;
+			gBattleCommunication[6] = 3;
+			RecordAbilityBattle(defender, gLastUsedAbility);
+		}
+	}
+	
+	return flags;
 }
 
 u8 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility)
@@ -9230,36 +9201,33 @@ static void atkFE_nop(void)
 static bool8 AnticipationTypeCalc(u8 battler)
 {
 	struct Pokemon *party;
-	u8 i, movetype;
-	u16 moveid;
-	s32 i2 = 0;
+	u8 i, moveType;
+	u16 moveId;
 	
-	//probabily need inverse battle check
-	
-	for (i = 0; i < MAX_MON_MOVES; i++, i2 = 0)
+        for (i = 0; i < MAX_MON_MOVES; i++)
 	{
-		moveid = gBattleMons[battler].moves[i];
+		moveId = gBattleMons[battler].moves[i];
 		
-		if (gBattleMoves[moveid].effect == EFFECT_HIDDEN_POWER)
+		if (moveId != MOVE_NONE)
 		{
-			if (GetBattlerSide(battler) == B_SIDE_PLAYER)
-				party = gPlayerParty;
-			else
-				party = gEnemyParty;
-			movetype = GetHiddenPowerType(&party[gBattlerPartyIndexes[battler]]);
-		}
-		else
-			movetype = gBattleMoves[moveid].type;
-		
-		if (moveid != MOVE_NONE && gBattleMoves[moveid].power)
-		{
-			while (TYPE_EFFECT_ATK_TYPE(i2) != TYPE_ENDTABLE)
+			if (gBattleMoves[moveId].effect == EFFECT_OHKO)
+				return TRUE;
+			
+			if (gBattleMoves[moveId].effect == EFFECT_HIDDEN_POWER)
 			{
-				if (gBattleMoves[moveid].effect == EFFECT_OHKO || (TYPE_EFFECT_ATK_TYPE(i2) == movetype 
-                                    && IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_EFFECT_DEF_TYPE(i2)) && TYPE_EFFECT_MULTIPLIER(i2) == TYPE_MUL_SUPER_EFFECTIVE))
-					return TRUE;
-				i2 += 3;
+				if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+					party = gPlayerParty;
+				else
+					party = gEnemyParty;
+				moveType = GetHiddenPowerType(&party[gBattlerPartyIndexes[battler]]);
 			}
+			else
+				moveType = gBattleMoves[moveId].type;
+		
+			gBattleStruct->dynamicMoveType = moveType;
+			
+			if (gBattleMoves[moveId].power && TypeCalc(moveId, battler, gBattlerAttacker, FALSE) & TYPE_MUL_SUPER_EFFECTIVE)
+				return TRUE;
 		}
 	}
 	return FALSE;
