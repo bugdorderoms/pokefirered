@@ -595,7 +595,7 @@
 	.byte 0x68
 	.endm
 
-	.macro adjustsetdamage
+	.macro nop69
 	.byte 0x69
 	.endm
 
