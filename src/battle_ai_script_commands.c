@@ -979,7 +979,7 @@ static void Cmd_get_how_powerful_move_is(void)
                 gCurrentMove = gBattleMons[gBattlerAttacker].moves[checkedMove];
                 gBattleStruct->dynamicMoveType = gBattleMoves[gCurrentMove].type;
                 AI_CalcDmg(gBattlerAttacker, gBattlerTarget);
-                TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget);
+                TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget, FALSE);
                 moveDmgs[checkedMove] = gBattleMoveDamage * AI_THINKING_STRUCT->simulatedRNG[checkedMove] / 100;
                 if (moveDmgs[checkedMove] == 0)
                     moveDmgs[checkedMove] = 1;
@@ -1194,7 +1194,7 @@ static void Cmd_get_highest_type_effectiveness(void)
         
         if (gCurrentMove != MOVE_NONE)
         {
-            TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget);
+            TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget, FALSE);
 
             if (gBattleMoveDamage == 120) // Super effective STAB.
                 gBattleMoveDamage = AI_EFFECTIVENESS_x2;
@@ -1228,7 +1228,7 @@ static void Cmd_if_type_effectiveness(void)
     gCurrentMove = AI_THINKING_STRUCT->moveConsidered;
     gBattleStruct->dynamicMoveType = gBattleMoves[gCurrentMove].type;
     
-    TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget);
+    TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget, FALSE);
 
     if (gBattleMoveDamage == 120) // Super effective STAB.
         gBattleMoveDamage = AI_EFFECTIVENESS_x2;
@@ -1449,7 +1449,7 @@ static void Cmd_if_can_faint(void)
     gCurrentMove = AI_THINKING_STRUCT->moveConsidered;
     gBattleStruct->dynamicMoveType = gBattleMoves[gCurrentMove].type;
     AI_CalcDmg(gBattlerAttacker, gBattlerTarget);
-    TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget);
+    TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget, FALSE);
 
     gBattleMoveDamage = gBattleMoveDamage * AI_THINKING_STRUCT->simulatedRNG[AI_THINKING_STRUCT->movesetIndex] / 100;
 
@@ -1477,7 +1477,7 @@ static void Cmd_if_cant_faint(void)
     gCurrentMove = AI_THINKING_STRUCT->moveConsidered;
     gBattleStruct->dynamicMoveType = gBattleMoves[gCurrentMove].type;
     AI_CalcDmg(gBattlerAttacker, gBattlerTarget);
-    TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget);
+    TypeCalc(gCurrentMove, gBattlerAttacker, gBattlerTarget, FALSE);
 
     gBattleMoveDamage = gBattleMoveDamage * AI_THINKING_STRUCT->simulatedRNG[AI_THINKING_STRUCT->movesetIndex] / 100;
 
