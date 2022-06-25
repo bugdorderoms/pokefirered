@@ -179,7 +179,7 @@ static void atk65_status2animation(void);
 static void atk66_chosenstatusanimation(void);
 static void atk67_yesnobox(void);
 static void atk68_cancelallactions(void);
-static void atk69_adjustsetdamage(void);
+static void atk69_nop(void);
 static void atk6A_removeitem(void);
 static void atk6B_atknameinbuff1(void);
 static void atk6C_drawlvlupbox(void);
@@ -437,7 +437,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk66_chosenstatusanimation,
     atk67_yesnobox,
     atk68_cancelallactions,
-    atk69_adjustsetdamage,
+    atk69_nop,
     atk6A_removeitem,
     atk6B_atknameinbuff1,
     atk6C_drawlvlupbox,
@@ -1620,8 +1620,14 @@ static void atk07_adjustdamage(void)
 {
     u8 arg1 = gBattlescriptCurrInstr[1];
     u8 holdEffect, param;
-
-    ApplyRandomDmgMultiplier();
+    u8 moveEffect = gBattleMoves[gCurrentMove].effect;
+    bool8 specialEffect = (moveEffect == EFFECT_DRAGON_RAGE || moveEffect == EFFECT_LEVEL_DAMAGE || moveEffect == EFFECT_PSYWAVE || moveEffect == EFFECT_COUNTER
+			   || moveEffect == EFFECT_SONICBOOM || moveEffect == EFFECT_MIRROR_COAT || moveEffect == EFFECT_SPIT_UP || moveEffect == EFFECT_ENDEAVOR
+			   || moveEffect == EFFECT_BIDE);
+	
+	if (!specialEffect)
+		ApplyRandomDmgMultiplier();
+	
     gPotentialItemEffectBattler = gBattlerTarget;
 	
     if (gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY)
@@ -1640,7 +1646,7 @@ static void atk07_adjustdamage(void)
         gSpecialStatuses[gBattlerTarget].focusBanded = 1;
     }
     if (gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
-	(((!arg1 && gBattleMoves[gCurrentMove].effect == EFFECT_FALSE_SWIPE) || gProtectStructs[gBattlerTarget].endured
+	(((!arg1 && moveEffect == EFFECT_FALSE_SWIPE) || gProtectStructs[gBattlerTarget].endured
 	  || gSpecialStatuses[gBattlerTarget].focusBanded) || (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY
           && gBattleMons[gBattlerTarget].hp == gBattleMons[gBattlerTarget].maxHP)))
     {
@@ -5129,41 +5135,8 @@ static void atk68_cancelallactions(void)
     ++gBattlescriptCurrInstr;
 }
 
-// The same as 0x7, except there's no random damage multiplier.
-static void atk69_adjustsetdamage(void)
+static void atk69_nop(void)
 {
-    u8 holdEffect, param;
-
-    gPotentialItemEffectBattler = gBattlerTarget;
-	
-    if (gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY)
-    {
-        holdEffect = gEnigmaBerries[gBattlerTarget].holdEffect;
-        param = gEnigmaBerries[gBattlerTarget].holdEffectParam;
-    }
-    else
-    {
-        holdEffect = ItemId_GetHoldEffect(gBattleMons[gBattlerTarget].item, gBattlerTarget, TRUE);
-        param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
-    }
-    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
-    {
-        RecordItemEffectBattle(gBattlerTarget, holdEffect);
-        gSpecialStatuses[gBattlerTarget].focusBanded = 1;
-    }
-    if (!SubsBlockMove(gBattlerAttacker, gBattlerTarget, gCurrentMove) && (gBattleMoves[gCurrentMove].effect == EFFECT_FALSE_SWIPE 
-        || gProtectStructs[gBattlerTarget].endured || gSpecialStatuses[gBattlerTarget].focusBanded) && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
-    {
-        gBattleMoveDamage = gBattleMons[gBattlerTarget].hp - 1;
-	    
-        if (gProtectStructs[gBattlerTarget].endured)
-            gMoveResultFlags |= MOVE_RESULT_FOE_ENDURED;
-        else if (gSpecialStatuses[gBattlerTarget].focusBanded)
-        {
-            gMoveResultFlags |= MOVE_RESULT_FOE_HUNG_ON;
-            gLastUsedItem = gBattleMons[gBattlerTarget].item;
-        }
-    }
     ++gBattlescriptCurrInstr;
 }
 
