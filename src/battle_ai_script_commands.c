@@ -1718,7 +1718,7 @@ static void Cmd_get_hold_effect(void)
         AI_THINKING_STRUCT->funcResult = BATTLE_HISTORY->itemEffects[side];
     }
     else
-        AI_THINKING_STRUCT->funcResult = ItemId_GetHoldEffect(gBattleMons[battlerId].item, battlerId, TRUE);
+        AI_THINKING_STRUCT->funcResult = GetBattlerItemHoldEffect(battlerId, TRUE);
 
     sAIScriptPtr += 2;
 }
