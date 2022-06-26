@@ -264,6 +264,7 @@ extern const u8 BattleScript_WaterVeilPrevents[];
 extern const u8 BattleScript_ImmunityProtected[];
 extern const u8 BattleScript_LimberProtected[];
 extern const u8 BattleScript_NotAffected[];
+extern const u8 BattleScript_PoisonTouchActivation[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];
