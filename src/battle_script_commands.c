@@ -1646,9 +1646,9 @@ static void atk07_adjustdamage(void)
         gSpecialStatuses[gBattlerTarget].focusBanded = 1;
     }
     if (gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
-	(((!arg1 && moveEffect == EFFECT_FALSE_SWIPE) || gProtectStructs[gBattlerTarget].endured
-	  || gSpecialStatuses[gBattlerTarget].focusBanded) || (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY
-          && gBattleMons[gBattlerTarget].hp == gBattleMons[gBattlerTarget].maxHP)))
+	&& (((!arg1 && moveEffect == EFFECT_FALSE_SWIPE) || gProtectStructs[gBattlerTarget].endured
+	|| gSpecialStatuses[gBattlerTarget].focusBanded) || (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY
+	&& gBattleMons[gBattlerTarget].hp == gBattleMons[gBattlerTarget].maxHP)))
     {
         gBattleMoveDamage = gBattleMons[gBattlerTarget].hp - 1;
 	    
@@ -3768,7 +3768,7 @@ static void atk48_playstatchangeanimation(void)
 			 && gBattleMons[gActiveBattler].ability != ABILITY_WHITE_SMOKE 
 			 && !(gBattleMons[gActiveBattler].ability == ABILITY_KEEN_EYE && currStat == STAT_ACC)
 			 && !(gBattleMons[gActiveBattler].ability == ABILITY_HYPER_CUTTER && currStat == STAT_ATK)
-			 && !(gBattleMons[gActiveBattler].ability == ABILITY_BIG_PECKS && currStat == STAT_DEF)
+			 && !(gBattleMons[gActiveBattler].ability == ABILITY_BIG_PECKS && currStat == STAT_DEF))
                 {
                     if (gBattleMons[gActiveBattler].statStages[currStat] > 0)
                     {
@@ -6179,9 +6179,9 @@ static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
             }
             return STAT_CHANGE_DIDNT_WORK;
         }
-        else if (!certain && (gBattleMons[gActiveBattler].ability == ABILITY_KEEN_EYE && statId == STAT_ACC)
+        else if (!certain && ((gBattleMons[gActiveBattler].ability == ABILITY_KEEN_EYE && statId == STAT_ACC)
 		|| (gBattleMons[gActiveBattler].ability == ABILITY_HYPER_CUTTER && statId == STAT_ATK)
-		|| (gBattleMons[gActiveBattler].ability == ABILITY_BIG_PECKS && statId == STAT_DEF))
+		|| (gBattleMons[gActiveBattler].ability == ABILITY_BIG_PECKS && statId == STAT_DEF)))
         {
             if (flags == STAT_CHANGE_BS_PTR)
             {
