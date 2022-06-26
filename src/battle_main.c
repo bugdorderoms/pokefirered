@@ -3337,7 +3337,7 @@ u8 IsRunningFromBattleImpossible(void)
     if (gBattleMons[gActiveBattler].item == ITEM_ENIGMA_BERRY)
         holdEffect = gEnigmaBerries[gActiveBattler].holdEffect;
     else
-        holdEffect = ItemId_GetHoldEffect(gBattleMons[gActiveBattler].item, gActiveBattler, TRUE);
+        holdEffect = GetBattlerItemHoldEffect(gActiveBattler, TRUE);
     gPotentialItemEffectBattler = gActiveBattler;
     if (holdEffect == HOLD_EFFECT_CAN_ALWAYS_RUN
      || (gBattleTypeFlags & BATTLE_TYPE_LINK)
@@ -3797,17 +3797,17 @@ s8 CalculateMonPriority(u8 battler)
 s32 CalculateMonBracket(u8 battler)
 {
     u8 holdEffect, holdEffectParam;
-    u16 itemid = gBattleMons[battler].item;
+    u16 itemId = gBattleMons[battler].item;
     
-    if (itemid == ITEM_ENIGMA_BERRY)
+    if (itemId == ITEM_ENIGMA_BERRY)
     {
         holdEffect = gEnigmaBerries[battler].holdEffect;
         holdEffectParam = gEnigmaBerries[battler].holdEffectParam;
     }
     else
     {
-        holdEffect = ItemId_GetHoldEffect(itemid, battler, TRUE);
-        holdEffectParam = ItemId_GetHoldEffectParam(itemid);
+        holdEffect = GetBattlerItemHoldEffect(battler, TRUE);
+        holdEffectParam = ItemId_GetHoldEffectParam(itemId);
     }
     
     if (holdEffect == HOLD_EFFECT_QUICK_CLAW && gRandomTurnNumber < (0xFFFF * holdEffectParam) / 100)
@@ -3846,10 +3846,10 @@ u32 CalculateMonSpeed(u8 battler)
     if (gBattleMons[battler].item == ITEM_ENIGMA_BERRY)
         HoldEffect = gEnigmaBerries[battler].holdEffect;
     else
-        HoldEffect = ItemId_GetHoldEffect(gBattleMons[battler].item, battler, TRUE);
+        HoldEffect = GetBattlerItemHoldEffect(battler, TRUE);
         */
     
-    if (ItemId_GetHoldEffect(gBattleMons[battler].item, 0, FALSE) == HOLD_EFFECT_MACHO_BRACE)
+    if (GetBattlerItemHoldEffect(battler, FALSE) == HOLD_EFFECT_MACHO_BRACE)
         monspeed /= 2;
     
     if (gBattleMons[battler].status1 & STATUS1_PARALYSIS && gBattleMons[battler].ability != ABILITY_QUICK_FEET)
@@ -4578,7 +4578,7 @@ bool8 TryRunFromBattle(u8 battler)
     if (gBattleMons[battler].item == ITEM_ENIGMA_BERRY)
         holdEffect = gEnigmaBerries[battler].holdEffect;
     else
-        holdEffect = ItemId_GetHoldEffect(gBattleMons[battler].item, battler, TRUE);
+        holdEffect = GetBattlerItemHoldEffect(battler, TRUE);
     gPotentialItemEffectBattler = battler;
     if (holdEffect == HOLD_EFFECT_CAN_ALWAYS_RUN)
     {
