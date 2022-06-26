@@ -4181,6 +4181,13 @@ BattleScript_ApplySecondaryEffect::
 	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	return
 
+BattleScript_PoisonTouchActivation::
+        waitstate
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	seteffectsecondary
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	return
+
 BattleScript_SynchronizeActivates::
 	waitstate
 	loadabilitypopup LOAD_ABILITY_NORMAL, BS_SCRIPTING, LOAD_ABILITY_FROM_BUFFER
