@@ -122,6 +122,9 @@ overcoat
 poison touch
 regenerator
 big pecks
+sand rush
+wonder skin
+analytic
 
 // WARNING
 Klutz don't affect prize money, experience, effort values or friendship.
