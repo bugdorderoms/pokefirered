@@ -2414,7 +2414,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		    case ABILITY_FLAME_BODY:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 3) == 0
-				&& CanBeBurned(gBattlerAttacker) !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg))
+				&& CanBeBurned(gBattlerAttacker) && !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg))
 			    {
 				    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_BURN;
 				    BattleScriptPushCursor();
