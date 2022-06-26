@@ -109,6 +109,7 @@ static void FreeResetData_ReturnToOvOrDoEvolutions(void);
 static void ReturnFromBattleToOverworld(void);
 static void TryEvolvePokemon(void);
 static void WaitForEvoSceneToFinish(void);
+static void SetTypeBeforeUsingMove(u16 move, u8 battler);
 
 EWRAM_DATA u16 gBattle_BG0_X = 0;
 EWRAM_DATA u16 gBattle_BG0_Y = 0;
@@ -4290,6 +4291,48 @@ void RunBattleScriptCommands(void)
         gBattleScriptingCommandsTable[gBattlescriptCurrInstr[0]]();
 }
 
+static void SetTypeBeforeUsingMove(u16 move, u8 battler)
+{
+	struct Pokemon *party;
+	u16 ability;
+	u8 moveEffect;
+	
+	gBattleStruct->dynamicMoveType = gBattleMoves[move].type;
+	
+	if (move == MOVE_STRUGGLE)
+		return;
+	
+	moveEffect = gBattleMoves[move].effect;
+	
+	switch (moveEffect)
+	{
+		case EFFECT_WEATHER_BALL:
+			if (WEATHER_HAS_EFFECT)
+			{
+				if (gBattleWeather & WEATHER_RAIN_ANY)
+					gBattleStruct->dynamicMoveType = TYPE_WATER;
+				else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
+					gBattleStruct->dynamicMoveType = TYPE_ROCK;
+				else if (gBattleWeather & WEATHER_SUN_ANY)
+					gBattleStruct->dynamicMoveType = TYPE_FIRE;
+				else if (gBattleWeather & WEATHER_HAIL_ANY)
+					gBattleStruct->dynamicMoveType = TYPE_ICE;
+			}
+			break;
+		case EFFECT_HIDDEN_POWER:
+			if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+				party = gPlayerParty;
+			else
+				party = gEnemyParty;
+			gBattleStruct->dynamicMoveType = GetHiddenPowerType(&party[gBattlerPartyIndexes[battler]]);
+			break;
+	}
+	ability = gBattleMons[battler].ability;
+	
+	if (ability == ABILITY_NORMALIZE && gBattleStruct->dynamicMoveType != TYPE_NORMAL && moveEffect != EFFECT_WEATHER_BALL && moveEffect != EFFECT_HIDDEN_POWER)
+		gBattleStruct->dynamicMoveType = TYPE_NORMAL;
+}
+
 static void HandleAction_UseMove(void)
 {
     u8 side, i, var = 4;
@@ -4471,7 +4514,7 @@ static void HandleAction_UseMove(void)
         }
     }
     gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
-    gBattleStruct->dynamicMoveType = gBattleMoves[gCurrentMove].type;
+    SetTypeBeforeUsingMove(gCurrentMove, gBattlerAttacker);
     gCurrentActionFuncId = B_ACTION_EXEC_SCRIPT;
 }
 
