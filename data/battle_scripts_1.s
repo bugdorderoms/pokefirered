@@ -4038,8 +4038,10 @@ BattleScript_DroughtActivates::
 BattleScript_TookAttack::
 	attackstring
 	pause 0x20
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	printstring STRINGID_PKMNSXTOOKATTACK
 	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	orword gHitMarker, HITMARKER_ATTACKSTRING_PRINTED
 	return
 
