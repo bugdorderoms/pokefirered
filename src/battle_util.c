@@ -488,7 +488,7 @@ u8 TrySetCantSelectMoveBattleScript(void)
     if (gBattleMons[gActiveBattler].item == ITEM_ENIGMA_BERRY)
         holdEffect = gEnigmaBerries[gActiveBattler].holdEffect;
     else
-        holdEffect = ItemId_GetHoldEffect(gBattleMons[gActiveBattler].item, gActiveBattler, TRUE);
+        holdEffect = GetBattlerItemHoldEffect(gActiveBattler, TRUE);
     gPotentialItemEffectBattler = gActiveBattler;
     if (holdEffect == HOLD_EFFECT_CHOICE_BAND && *choicedMove && *choicedMove != 0xFFFF && *choicedMove != move)
     {
@@ -514,7 +514,7 @@ u8 CheckMoveLimitations(u8 battlerId, u8 unusableMoves, u8 check)
     if (gBattleMons[battlerId].item == ITEM_ENIGMA_BERRY)
         holdEffect = gEnigmaBerries[battlerId].holdEffect;
     else
-        holdEffect = ItemId_GetHoldEffect(gBattleMons[battlerId].item, battlerId, TRUE);
+        holdEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
     gPotentialItemEffectBattler = battlerId;
 
     for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -2935,7 +2935,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
     int i = 0;
     u8 effect = ITEM_NO_EFFECT;
     u8 changedPP = 0;
-    u8 battlerHoldEffect, defHoldEffect, battlerHoldEffectNoKlutz, defHoldEffectNoKlutz;
+    u8 battlerHoldEffect, defHoldEffect;
     u8 battlerHoldEffectParam, defHoldEffectParam;
     u16 defItem;
 
@@ -2943,13 +2943,11 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
     if (gLastUsedItem == ITEM_ENIGMA_BERRY)
     {
         battlerHoldEffect = gEnigmaBerries[battlerId].holdEffect;
-	battlerHoldEffectNoKlutz = battlerHoldEffect;
         battlerHoldEffectParam = gEnigmaBerries[battlerId].holdEffectParam;
     }
     else
     {
-        battlerHoldEffect = ItemId_GetHoldEffect(gLastUsedItem, battlerId, TRUE);
-	battlerHoldEffectNoKlutz = ItemId_GetHoldEffect(gLastUsedItem, 0, FALSE);
+        battlerHoldEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
         battlerHoldEffectParam = ItemId_GetHoldEffectParam(gLastUsedItem);
     }
     if (gBattleMons[battlerId].ability == ABILITY_GLUTTONY && IsItemAffectedByGluttony(gLastUsedItem))
@@ -2957,13 +2955,12 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
     if (ABILITY_ON_OPPOSING_FIELD(battlerId, ABILITY_UNNERVE) && IS_ITEM_BERRY(gLastUsedItem))
     {
 	    battlerHoldEffect = 0;
-	    battlerHoldEffectNoKlutz = 0;
 	    battlerHoldEffectParam = 0;
     }
     switch (caseID)
     {
     case ITEMEFFECT_ON_SWITCH_IN:
-        if (battlerHoldEffectNoKlutz == HOLD_EFFECT_DOUBLE_PRIZE)
+        if (GetBattlerItemHoldEffect(battlerId, FALSE) == HOLD_EFFECT_DOUBLE_PRIZE)
             gBattleStruct->moneyMultiplier = 2;
         else if (battlerHoldEffect == HOLD_EFFECT_RESTORE_STATS)
 	{
@@ -3383,8 +3380,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
             }
             else
             {
-		battlerHoldEffect = ItemId_GetHoldEffect(gLastUsedItem, battlerId, TRUE);
-                battlerHoldEffectNoKlutz = ItemId_GetHoldEffect(gLastUsedItem, 0, FALSE);
+		battlerHoldEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
                 battlerHoldEffectParam = ItemId_GetHoldEffectParam(gLastUsedItem);
             }
             switch (battlerHoldEffect)
