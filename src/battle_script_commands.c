@@ -944,13 +944,6 @@ const u16 gSheerForceBoostedMoves[] =
 	TABLE_END,
 };
 
-const u16 gNoChangeTypeMoves[] =
-{
-	MOVE_HIDDEN_POWER,
-	MOVE_WEATHER_BALL,
-	TABLE_END,
-};
-
 static void atk00_attackcanceler(void)
 {
     s32 i;
