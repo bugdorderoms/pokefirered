@@ -142,7 +142,7 @@ make from immunity to down ability pop up scripts
 probabily add an inverse battle check in anticipation type calc
 end update of moves data
 add hidden abilities in poke base stats
-add the new moves in getforewarnmovepower, sIronFistTable, sRecklessTable, sPowderAndSporeMoves, gnochangetypemoves and gSheerForceBoostedMoves
+add the new moves in getforewarnmovepower, sIronFistTable, sRecklessTable, sPowderAndSporeMoves and gSheerForceBoostedMoves
 add berries in isitemaffectedbygluttony
 add abilities in mold breaker ignorable abilities table
 Leaf guard prevents the Flame Orb and Toxic Orb
