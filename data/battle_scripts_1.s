@@ -4578,7 +4578,7 @@ BattleScript_HealerActivates::
 	waitmessage 0x40
 	updatestatusicon BS_EFFECT_BATTLER
 	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
-	return
+	end3
 
 BattleScript_WeakArmorActivation::
         jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_DEF, 0, BattleScript_WeakArmorLowerDef
@@ -4610,7 +4610,7 @@ BattleScript_HarvestActivates::
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
 	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
-	return
+	end3
 	
 BattleScript_MoodyActivates::
         loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, ABILITY_MOODY
