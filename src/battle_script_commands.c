@@ -267,7 +267,7 @@ static void atkBD_copyfoestats(void);
 static void atkBE_rapidspinfree(void);
 static void atkBF_setdefensecurlbit(void);
 static void atkC0_recoverbasedonsunlight(void);
-static void atkC1_hiddenpowercalc(void);
+static void atkC1_nop(void);
 static void atkC2_selectfirstvalidtarget(void);
 static void atkC3_trysetfutureattack(void);
 static void atkC4_trydobeatup(void);
@@ -307,7 +307,7 @@ static void atkE5_pickup(void);
 static void atkE6_docastformchangeanimation(void);
 static void atkE7_trycastformdatachange(void);
 static void atkE8_settypebasedhalvers(void);
-static void atkE9_setweatherballtype(void);
+static void atkE9_nop(void);
 static void atkEA_tryrecycleitem(void);
 static void atkEB_settypetoterrain(void);
 static void atkEC_pursuitrelated(void);
@@ -525,7 +525,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkBE_rapidspinfree,
     atkBF_setdefensecurlbit,
     atkC0_recoverbasedonsunlight,
-    atkC1_hiddenpowercalc,
+    atkC1_nop,
     atkC2_selectfirstvalidtarget,
     atkC3_trysetfutureattack,
     atkC4_trydobeatup,
@@ -565,7 +565,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkE6_docastformchangeanimation,
     atkE7_trycastformdatachange,
     atkE8_settypebasedhalvers,
-    atkE9_setweatherballtype,
+    atkE9_nop,
     atkEA_tryrecycleitem,
     atkEB_settypetoterrain,
     atkEC_pursuitrelated,
@@ -7739,15 +7739,8 @@ static void atkC0_recoverbasedonsunlight(void)
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 }
 
-static void atkC1_hiddenpowercalc(void)
+static void atkC1_nop(void)
 {
-	struct Pokemon *party;
-    
-	if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
-		party = gPlayerParty;
-	else
-		party = gEnemyParty;
-	gBattleStruct->dynamicMoveType = GetHiddenPowerType(&party[gBattlerPartyIndexes[gBattlerAttacker]]);
         ++gBattlescriptCurrInstr;
 }
 
@@ -8491,22 +8484,9 @@ static void atkE8_settypebasedhalvers(void) // water and mud sport
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 }
 
-static void atkE9_setweatherballtype(void)
+static void atkE9_nop(void)
 {
-    if (WEATHER_HAS_EFFECT)
-    {
-        if (gBattleWeather & WEATHER_RAIN_ANY)
-            *(&gBattleStruct->dynamicMoveType) = TYPE_WATER;
-        else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
-            *(&gBattleStruct->dynamicMoveType) = TYPE_ROCK;
-        else if (gBattleWeather & WEATHER_SUN_ANY)
-            *(&gBattleStruct->dynamicMoveType) = TYPE_FIRE;
-        else if (gBattleWeather & WEATHER_HAIL_ANY)
-            *(&gBattleStruct->dynamicMoveType) = TYPE_ICE;
-        else
-            *(&gBattleStruct->dynamicMoveType) = TYPE_NORMAL;
-    }
-    ++gBattlescriptCurrInstr;
+	++gBattlescriptCurrInstr;
 }
 
 static void atkEA_tryrecycleitem(void)
