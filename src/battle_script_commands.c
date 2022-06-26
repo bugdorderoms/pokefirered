@@ -951,27 +951,9 @@ const u16 gNoChangeTypeMoves[] =
 	TABLE_END,
 };
 
-u8 TryChangeMoveType(u8 battler, u8 type, u16 move)
-{
-    u8 MoveType = type;
-	
-    if (!IsMoveInTable(gNoChangeTypeMoves, move))
-    {
-	    switch (gBattleMons[battler].ability)
-	    {
-		    case ABILITY_NORMALIZE:
-			 if (MoveType != TYPE_NORMAL)
-				 MoveType = TYPE_NORMAL;
-			 break;
-	    }
-    }
-    return MoveType;
-}
-
 static void atk00_attackcanceler(void)
 {
     s32 i;
-    gBattleStruct->dynamicMoveType = TryChangeMoveType(gBattlerAttacker, gBattleStruct->dynamicMoveType, gCurrentMove);
 	
     if (gBattleOutcome)
     {
