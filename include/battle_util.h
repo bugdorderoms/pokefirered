@@ -100,5 +100,6 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk);
 bool8 CanBeBurned(u8 bank);
 bool8 CanBeFrozen(u8 bank);
 bool8 CanBeParalyzed(u8 bank);
+u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating);
 
 #endif // GUARD_BATTLE_UTIL_H
