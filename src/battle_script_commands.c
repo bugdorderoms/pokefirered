@@ -1229,7 +1229,7 @@ static void atk01_accuracycheck(void)
         }
         else
         {
-            holdEffect = ItemId_GetHoldEffect(gBattleMons[gBattlerTarget].item, gBattlerTarget, TRUE);
+            holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE);
             param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
         }
         gPotentialItemEffectBattler = gBattlerTarget;
@@ -1320,7 +1320,7 @@ static void atk04_critcalc(void)
     if (item == ITEM_ENIGMA_BERRY)
         holdEffect = gEnigmaBerries[gBattlerAttacker].holdEffect;
     else
-        holdEffect = ItemId_GetHoldEffect(item, gBattlerAttacker, TRUE);
+        holdEffect = GetBattlerItemHoldEffect(gBattlerAttacker, TRUE);
 	
     critChance  = 2 * ((gBattleMons[gBattlerAttacker].status2 & STATUS2_FOCUS_ENERGY) != 0)
 	        + (gBattleMons[gBattlerAttacker].ability == ABILITY_SUPER_LUCK)
@@ -1637,7 +1637,7 @@ static void atk07_adjustdamage(void)
     }
     else
     {
-        holdEffect = ItemId_GetHoldEffect(gBattleMons[gBattlerTarget].item, gBattlerTarget, TRUE);
+        holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE);
         param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
     }
     if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
@@ -2971,7 +2971,7 @@ static void atk23_getexp(void)
             if (item == ITEM_ENIGMA_BERRY)
                 holdEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
             else
-                holdEffect = ItemId_GetHoldEffect(item, 0, FALSE);
+                holdEffect = ItemId_GetHoldEffect(item);
             if (!gSaveBlock2Ptr->expShare && !(gBattleStruct->sentInPokes & 1))
             {
                 *(&gBattleStruct->sentInPokes) >>= 1;
@@ -3846,7 +3846,7 @@ static void atk49_moveend(void)
     if (gBattleMons[gBattlerAttacker].item == ITEM_ENIGMA_BERRY)
         holdEffectAtk = gEnigmaBerries[gBattlerAttacker].holdEffect;
     else
-        holdEffectAtk = ItemId_GetHoldEffect(gBattleMons[gBattlerAttacker].item, gBattlerAttacker, TRUE);
+        holdEffectAtk = GetBattlerItemHoldEffect(gBattlerAttacker, TRUE);
 	
     choicedMoveAtk = &gBattleStruct->choicedMove[gBattlerAttacker];
     
@@ -6516,7 +6516,7 @@ static void atk93_tryKO(void)
     }
     else
     {
-        holdEffect = ItemId_GetHoldEffect(gBattleMons[gBattlerTarget].item, gBattlerTarget, TRUE);
+        holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE);
         param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
     }
     gPotentialItemEffectBattler = gBattlerTarget;
