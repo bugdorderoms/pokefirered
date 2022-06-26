@@ -3181,6 +3181,12 @@ BattleScript_SideStatusWoreOff::
 	waitmessage 0x40
 	end2
 
+BattleScript_SafeguardProtected::
+	pause 0x20
+	printstring STRINGID_PKMNUSEDSAFEGUARD
+	waitmessage 0x40
+	end2
+
 BattleScript_SafeguardEnds::
 	pause 0x20
 	printstring STRINGID_PKMNSAFEGUARDEXPIRED
