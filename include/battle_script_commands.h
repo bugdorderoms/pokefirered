@@ -31,7 +31,6 @@ void GetStrongestMoveForewarn(void);
 void TryFriskFirstTarget(void);
 void TryFriskSecondTarget(void);
 
-extern const u16 gNoChangeTypeMoves[];
 extern const u16 gSheerForceBoostedMoves[];
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
