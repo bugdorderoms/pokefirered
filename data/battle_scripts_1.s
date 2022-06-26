@@ -155,7 +155,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectMorningSun
 	.4byte BattleScript_EffectMorningSun
 	.4byte BattleScript_EffectMorningSun
-	.4byte BattleScript_EffectHiddenPower
+	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectRainDance
 	.4byte BattleScript_EffectSunnyDay
 	.4byte BattleScript_EffectDefenseUpHit
@@ -223,7 +223,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_Unused
 	.4byte BattleScript_EffectMudSport
 	.4byte BattleScript_EffectPoisonFang
-	.4byte BattleScript_EffectWeatherBall
+	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectOverheat
 	.4byte BattleScript_EffectTickle
 	.4byte BattleScript_EffectCosmicPower
@@ -1715,11 +1715,6 @@ BattleScript_EffectMorningSun::
 	recoverbasedonsunlight BattleScript_AlreadyAtFullHp
 	goto BattleScript_PresentHealTarget
 
-BattleScript_EffectHiddenPower::
-	attackcanceler
-	hiddenpowercalc
-	goto BattleScript_HitFromAccCheck
-
 BattleScript_EffectRainDance::
 	attackcanceler
 	attackstring
@@ -2596,10 +2591,6 @@ BattleScript_EffectMudSport::
 
 BattleScript_EffectPoisonFang::
 	setmoveeffect MOVE_EFFECT_TOXIC
-	goto BattleScript_EffectHit
-
-BattleScript_EffectWeatherBall::
-	setweatherballtype
 	goto BattleScript_EffectHit
 
 BattleScript_EffectOverheat::
