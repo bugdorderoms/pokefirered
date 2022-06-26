@@ -263,6 +263,7 @@ static const u8 BattleScript_AlreadyParalyzed[];
 static const u8 BattleScript_WaterVeilPrevents[];
 static const u8 BattleScript_ImmunityProtected[];
 static const u8 BattleScript_LimberProtected[];
+static const u8 BattleScript_NotAffected[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];
