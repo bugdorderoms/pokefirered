@@ -3757,7 +3757,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
     }
     else
     {
-        holdEffect = ItemId_GetHoldEffect(heldItem, 0, FALSE);
+        holdEffect = ItemId_GetHoldEffect(heldItem);
     }
 
     gPotentialItemEffectBattler = gBattlerInMenuId;
@@ -4279,7 +4279,7 @@ bool8 PokemonItemUseNoEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mo
     }
     else
     {
-        holdEffect = ItemId_GetHoldEffect(heldItem, 0, FALSE);
+        holdEffect = ItemId_GetHoldEffect(heldItem);
     }
     gPotentialItemEffectBattler = gBattlerInMenuId;
     if (gMain.inBattle)
@@ -4724,7 +4724,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem)
     if (heldItem == ITEM_ENIGMA_BERRY)
         holdEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
     else
-        holdEffect = ItemId_GetHoldEffect(heldItem, 0, FALSE);
+        holdEffect = ItemId_GetHoldEffect(heldItem);
 
     if (holdEffect == HOLD_EFFECT_PREVENT_EVOLVE && type != EVO_MODE_ITEM_CHECK)
         return 0;
@@ -5071,7 +5071,7 @@ void AdjustFriendship(struct Pokemon *mon, u8 event)
     }
     else
     {
-        holdEffect = ItemId_GetHoldEffect(heldItem, 0, FALSE);
+        holdEffect = ItemId_GetHoldEffect(heldItem);
     }
 
     if (species && species != SPECIES_EGG)
@@ -5192,7 +5192,7 @@ void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
         }
         else
         {
-            holdEffect = ItemId_GetHoldEffect(heldItem, 0, FALSE);
+            holdEffect = ItemId_GetHoldEffect(heldItem);
         }
 
         if (holdEffect == HOLD_EFFECT_MACHO_BRACE)
