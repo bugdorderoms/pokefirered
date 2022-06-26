@@ -2513,7 +2513,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 					    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON;
 					    PREPARE_ABILITY_BUFFER(gBattleTextBuff1, gLastUsedAbility);
 					    BattleScriptPushCursor();
-					    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+					    gBattlescriptCurrInstr = BattleScript_PoisonTouchActivation;
 					    gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
 					    ++effect;
 				    }
