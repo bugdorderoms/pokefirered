@@ -4583,26 +4583,33 @@ BattleScript_HealerActivates::
 	end3
 
 BattleScript_WeakArmorActivation::
-        jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_DEF, 0, BattleScript_WeakArmorLowerDef
-	jumpifstat BS_TARGET, CMP_EQUAL, STAT_SPEED, 12, BattleScript_AnticipationReturn
-	
-BattleScript_WeakArmorLowerDef::
         loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, ABILITY_WEAK_ARMOR
 	setstatchanger STAT_DEF, 1, TRUE
-	statbuffchange MOVE_EFFECT_CERTAIN, BattleScript_WeakArmorRaisesSpeed
-	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 2, BattleScript_WeakArmorRaisesSpeed
+	statbuffchange STAT_CHANGE_BS_PTR, BattleScript_WeakArmorRaisesSpeed
+	jumpifbyte CMP_LESS_THAN, cMULTISTRING_CHOOSER, 2, BattleScript_WeakArmorDefAnim
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 3, BattleScript_WeakArmorRaisesSpeed
+	pause 0x20
+	goto BattleScript_WeakArmorDefDownPrintString
+	
+BattleScript_WeakArmorDefAnim::
 	setgraphicalstatchangevalues
 	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+BattleScript_WeakArmorDefDownPrintString::
 	printfromtable gStatDownStringIds
 	waitmessage 0x40
 	
 BattleScript_WeakArmorRaisesSpeed::
-        jumpifstat BS_TARGET, CMP_EQUAL, STAT_SPEED, 12, BattleScript_CursedBodyReturn
 	setstatchanger STAT_SPEED, 2, FALSE
-	statbuffchange MOVE_EFFECT_CERTAIN, BattleScript_CursedBodyReturn
-	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 2, BattleScript_CursedBodyReturn
+	statbuffchange STAT_CHANGE_BS_PTR, BattleScript_CursedBodyReturn
+	jumpifbyte CMP_LESS_THAN, cMULTISTRING_CHOOSER, 2, BattleScript_WeakArmorSpeedAnim
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 3, BattleScript_CursedBodyReturn
+	pause 0x20
+	goto BattleScript_WeakArmorSpeedUpPrintString
+	
+BattleScript_WeakArmorSpeedAnim::
 	setgraphicalstatchangevalues
 	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+BattleScript_WeakArmorSpeedUpPrintString::
 	printfromtable gStatUpStringIds
 	waitmessage 0x40
 	goto BattleScript_CursedBodyReturn
