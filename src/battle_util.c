@@ -374,6 +374,18 @@ void TryGiveUnburdenBoostToMon(u8 battler)
 		TryRemoveMonUnburdenBoost(battler);
 }
 
+u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating)
+{
+	u8 holdEffect = ItemId_GetHoldEffect(gBattleMons[battler].item);
+	
+	if (checkNegating)
+	{
+		if (gBattleMons[battler].ability == ABILITY_KLUTZ)
+			holdEffect = HOLD_EFFECT_NONE;
+	}
+	return holdEffect;
+}
+
 void PrepareStringBattle(u16 stringId, u8 battler)
 {
     gActiveBattler = battler;
