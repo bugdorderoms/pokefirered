@@ -189,7 +189,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectFlatter
 	.4byte BattleScript_EffectWillOWisp
 	.4byte BattleScript_EffectMemento
-	.4byte BattleScript_EffectFacade
+	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectFocusPunch
 	.4byte BattleScript_EffectSmellingsalt
 	.4byte BattleScript_EffectFollowMe
@@ -2226,14 +2226,6 @@ BattleScript_MementoNoReduceStatsEnd::
 	waitmessage 0x40
 	tryfaintmon BS_ATTACKER, 0, NULL
 	goto BattleScript_MoveEnd
-
-BattleScript_EffectFacade::
-	jumpifstatus BS_ATTACKER, STATUS1_POISON | STATUS1_PARALYSIS | STATUS1_BURN | STATUS1_TOXIC_POISON, BattleScript_FacadeDoubleDmg
-	goto BattleScript_EffectHit
-
-BattleScript_FacadeDoubleDmg::
-	setbyte sDMG_MULTIPLIER, 2
-	goto BattleScript_EffectHit
 
 BattleScript_EffectFocusPunch::
 	attackcanceler
