@@ -218,6 +218,10 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 			if (gStatuses3[battlerIdDef] & STATUS3_ON_AIR)
 				power *= 2;
 			break;
+		case EFFECT_FACADE:
+			if (attacker.status1 & (STATUS1_PARALYSIS | STATUS1_BURN | STATUS1_PSN_ANY))
+				power *= 2;
+			break;
 		default:
 			break;
 	}
