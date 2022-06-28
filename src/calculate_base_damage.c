@@ -610,11 +610,19 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			}
 		}
 		// any weather except sun weakens solar beam
-		if ((gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL)) && gCurrentMove == MOVE_SOLAR_BEAM)
+		if ((gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL)) && move == MOVE_SOLAR_BEAM)
 			damage /= 2;
 	}
 	// flash fire triggered
 	if ((gBattleResources->flags->flags[battlerIdAtk] & RESOURCE_FLAG_FLASH_FIRE) && type == TYPE_FIRE)
+		damage = (15 * damage) / 10;
+	
+	// charge up
+	if (gStatuses3[battlerIdAtk] & STATUS3_CHARGED_UP && type == TYPE_ELECTRIC)
+		damage *= 2;
+	
+	// helping hand check
+	if (gProtectStructs[battlerIdAtk].helpingHand)
 		damage = (15 * damage) / 10;
     
 	return damage + 2;     
