@@ -1333,10 +1333,6 @@ static void atk05_damagecalc(void)
 	
     gBattleMoveDamage = gBattleMoveDamage * gCritMultiplier * gBattleScripting.dmgMultiplier;
 	
-    if (gStatuses3[gBattlerAttacker] & STATUS3_CHARGED_UP && gBattleMoves[gCurrentMove].type == TYPE_ELECTRIC)
-        gBattleMoveDamage *= 2;
-    if (gProtectStructs[gBattlerAttacker].helpingHand)
-        gBattleMoveDamage = gBattleMoveDamage * 15 / 10;
     ++gBattlescriptCurrInstr;
 }
 
@@ -1353,11 +1349,6 @@ void AI_CalcDmg(u8 attacker, u8 defender)
                                             defender);
 	
     gBattleMoveDamage = gBattleMoveDamage * gCritMultiplier * gBattleScripting.dmgMultiplier;
-	
-    if (gStatuses3[attacker] & STATUS3_CHARGED_UP && gBattleMoves[gCurrentMove].type == TYPE_ELECTRIC)
-        gBattleMoveDamage *= 2;
-    if (gProtectStructs[attacker].helpingHand)
-        gBattleMoveDamage = gBattleMoveDamage * 15 / 10;
 }
 
 static void atk06_typecalc(void)
@@ -6043,9 +6034,6 @@ static void atk86_stockpiletobasedamage(void)
                                                     gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)],
                                                     FALSE, gBattlerAttacker, gBattlerTarget);
             gBattleScripting.animTurn = gDisableStructs[gBattlerAttacker].stockpileCounter;
-
-            if (gProtectStructs[gBattlerAttacker].helpingHand)
-                gBattleMoveDamage = gBattleMoveDamage * 15 / 10;
         }
         gDisableStructs[gBattlerAttacker].stockpileCounter = 0;
         gBattlescriptCurrInstr += 5;
@@ -7768,8 +7756,6 @@ static void atkC3_trysetfutureattack(void)
                                                                               FALSE,
                                                                               gBattlerAttacker,
                                                                               gBattlerTarget);
-        if (gProtectStructs[gBattlerAttacker].helpingHand)
-            gWishFutureKnock.futureSightDmg[gBattlerTarget] = gWishFutureKnock.futureSightDmg[gBattlerTarget] * 15 / 10;
         if (gCurrentMove == MOVE_DOOM_DESIRE)
             gBattleCommunication[MULTISTRING_CHOOSER] = 1;
         else
