@@ -229,7 +229,8 @@ static const u8 sDarkGrayTextColor[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK
 // task defines
 #define tCurrMonId    data[0]
 #define tHandSpriteId data[1]
-#define tCallbackStep data[2]
+#define tOnInit       data[2]
+#define tCallbackStep data[3]
 
 void ShowEvIvDisplay(MainCallback exitCallback)
 {
@@ -251,6 +252,7 @@ void ShowEvIvDisplay(MainCallback exitCallback)
 		taskId = CreateTask(Task_LoadEvIvDisplay, 0);
 		gTasks[taskId].tCurrMonId = 0;
 		gTasks[taskId].tCallbackStep = 0;
+		gTasks[taskId].tOnInit = TRUE; // for don't play the mon cry on open the system
 		SetMainCallback2(CB2_EvIvDisplay);
 	}
 }
@@ -399,6 +401,7 @@ static void Task_LoadEvIvDisplay(u8 taskId)
 		case 20:
 		    if (gPaletteFade.active)
 			    return;
+		    gTasks[taskId].tOnInit = FALSE;
 		    gTasks[taskId].func = Task_EvIvDisplay_HandleInput;
 	}
 	tCallbackStep++;
@@ -531,7 +534,7 @@ static void PrintMonStats(u8 taskId)
 		AddTextPrinterParameterized3(WIN_STATS, 2, EV_IV_STATS_PRINTER_X_POS + 30, GET_STAT_PRINTER_Y_POS(i), sWhiteTextColor, 0, gStringVar4);
 	}
 	// Play The Mon Cry
-	if (!isEgg)
+	if (!isEgg && !tOnInit)
 		PlayCry7(GetMonData(&gPlayerParty[tCurrMonId], MON_DATA_SPECIES), 0);
 	
 	PutWindowTilemap(WIN_HIDDEN_POWER_TYPE);
