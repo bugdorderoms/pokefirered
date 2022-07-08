@@ -4548,4 +4548,8 @@ extern const u8 gRegisteredItemBoxSpriteGfx[];
 extern const u16 gRegisteredItemBoxSpritePal[];
 extern const u8 gRegisteredItemCursorSpriteGfx[];
 
+// ev_iv_display
+extern const u16 sHandCursorTiles[];
+extern const u16 gUnknown_83CE7F0[];
+
 #endif //GUARD_GRAPHICS_H
