@@ -139,3 +139,4 @@
 	.include "src/trainer_tower.o"
 	.include "src/berry_powder.o"
 	.include "src/dns.o"
+	.include "src/ev_iv_display.o"
