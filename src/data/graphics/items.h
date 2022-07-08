@@ -673,3 +673,6 @@ const u32 gFile_graphics_items_icon_palettes_sapphire_palette[] = INCBIN_U32("gr
 
 const u32 gFile_graphics_items_icons_honey_sheet[] = INCBIN_U32("graphics/items/icons/honey.4bpp.lz");
 const u32 gFile_graphics_items_icon_palettes_honey_palette[] = INCBIN_U32("graphics/items/icons/honey.gbapal.lz");
+
+const u32 gFile_graphics_items_icons_eviv_display_sheet[] = INCBIN_U32("graphics/items/icons/eviv_display.4bpp.lz");
+const u32 gFile_graphics_items_icon_palettes_eviv_display_palette[] = INCBIN_U32("graphics/items/icons/eviv_display.gbapal.lz");
