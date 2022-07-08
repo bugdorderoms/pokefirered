@@ -36,7 +36,7 @@ enum
 	WIN_EVIV_TEXT,
 	WIN_POKEMON_NAME,
 	WIN_STAT_NAMES,
-    WIN_STATS,
+	WIN_STATS,
 };
 
 struct EvIvDisplay
@@ -87,85 +87,86 @@ static const struct UCoords16 sHandSpritePos[PARTY_SIZE] =
 	}
 };
 
-static const struct BgTemplate sEvIvBgTemplates[] = {
+static const struct BgTemplate sEvIvBgTemplates[] = 
+{
 	{ // diploma bg
-        .bg = 0,
-        .charBaseIndex = 1,
-        .mapBaseIndex = 29,
-        .screenSize = 0,
-        .paletteMode = 0,
-        .priority = 1,
-        .baseTile = 0,
-    },{ // texts
-        .bg = 3,
-        .charBaseIndex = 0,
-        .mapBaseIndex = 31,
-        .screenSize = 0,
-        .paletteMode = 0,
-        .priority = 0,
-        .baseTile = 1,
-    }
+		.bg = 0,
+		.charBaseIndex = 1,
+		.mapBaseIndex = 29,
+		.screenSize = 0,
+		.paletteMode = 0,
+		.priority = 1,
+		.baseTile = 0,
+	},{ // texts
+		.bg = 3,
+		.charBaseIndex = 0,
+		.mapBaseIndex = 31,
+		.screenSize = 0,
+		.paletteMode = 0,
+		.priority = 0,
+		.baseTile = 1,
+	}
 };
 
 static const struct WindowTemplate sEvIvWinTemplates[] = 
 {
 	{ // instructions bar
 		.bg = 3,
-        .tilemapLeft = 19,
-        .tilemapTop = 0,
-        .width = 11,
-        .height = 2,
-        .paletteNum = 15,
-        .baseBlock = 0x000
+		.tilemapLeft = 19,
+		.tilemapTop = 0,
+		.width = 11,
+		.height = 2,
+		.paletteNum = 15,
+		.baseBlock = 0x000
 	},{ // title text
-        .bg = 3,
-        .tilemapLeft = 10,
-        .tilemapTop = 2,
-        .width = 10,
-        .height = 2,
-        .paletteNum = 15,
-        .baseBlock = 0x016
-    },{ // hidden power type
 		.bg = 3,
-        .tilemapLeft = 0,
-        .tilemapTop = 5,
-        .width = 5,
-        .height = 2,
-        .paletteNum = 1,
-        .baseBlock = 0x02A
+		.tilemapLeft = 10,
+		.tilemapTop = 2,
+		.width = 10,
+		.height = 2,
+		.paletteNum = 15,
+		.baseBlock = 0x016
+	},{ // hidden power type
+		.bg = 3,
+		.tilemapLeft = 0,
+		.tilemapTop = 5,
+		.width = 5,
+		.height = 2,
+		.paletteNum = 1,
+		.baseBlock = 0x02A
 	},{ // ev iv text
 		.bg = 3,
-        .tilemapLeft = 8,
-        .tilemapTop = 5,
-        .width = 6,
-        .height = 2,
-        .paletteNum = 15,
-        .baseBlock = 0x034
-	},{ // pokemon name
-        .bg = 3,
-        .tilemapLeft = 16,
-        .tilemapTop = 5,
-        .width = 14,
-        .height = 2,
-        .paletteNum = 15,
-        .baseBlock = 0x040
-    },{ // stat names
+		.tilemapLeft = 8,
+		.tilemapTop = 5,
+		.width = 6,
+		.height = 2,
+		.paletteNum = 15,
+		.baseBlock = 0x034
+	},{ // pokemon name and party num
 		.bg = 3,
-        .tilemapLeft = 0,
-        .tilemapTop = 7,
-        .width = 8,
-        .height = 11,
-        .paletteNum = 15,
-        .baseBlock = 0x05C
+		.tilemapLeft = 16,
+		.tilemapTop = 5,
+		.width = 14,
+		.height = 2,
+		.paletteNum = 15,
+		.baseBlock = 0x040
+	},{ // stat names
+		.bg = 3,
+		.tilemapLeft = 0,
+		.tilemapTop = 7,
+		.width = 8,
+		.height = 11,
+		.paletteNum = 15,
+		.baseBlock = 0x05C
 	},{ // stats
-        .bg = 3,
-        .tilemapLeft = 8,
-        .tilemapTop = 7,
-        .width = 6,
-        .height = 11,
-        .paletteNum = 15,
-        .baseBlock = 0x0B4
-    }, DUMMY_WIN_TEMPLATE
+		.bg = 3,
+		.tilemapLeft = 8,
+		.tilemapTop = 7,
+		.width = 6,
+		.height = 11,
+		.paletteNum = 15,
+		.baseBlock = 0x0B4
+	}, DUMMY_WIN_TEMPLATE
 };
 
 static const struct SpriteSheet sEvIvHandSpriteSheet = 
@@ -265,8 +266,8 @@ static void CB2_EvIvDisplay(void)
 static void VBlank_EvIvDisplay(void)
 {
 	LoadOam();
-    ProcessSpriteCopyRequests();
-    TransferPlttBuffer();
+	ProcessSpriteCopyRequests();
+	TransferPlttBuffer();
 }
 
 static void CreateShadowBox(void)
@@ -284,8 +285,10 @@ static void CreateShadowBox(void)
 	SetGpuReg(REG_OFFSET_BLDY, BLDCNT_TGT1_BG0 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG1);
 	SetGpuReg(REG_OFFSET_WININ, 0x3939);
 	SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ);
+	// first box
 	SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(40, 144));
 	SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(8, 112));
+	// second box
 	SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(40, 144));
 	SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(128, 112));
 	SetDispCnt(0, FALSE);
@@ -299,104 +302,104 @@ static void Task_LoadEvIvDisplay(u8 taskId)
 	{
 		case 0:
 		    SetVBlankCallback(NULL);
-			break;
+		    break;
 		case 1:
 		    DmaClearLarge16(3, (void *)VRAM, VRAM_SIZE, 0x1000);
-			DmaClear32(3, (void *)OAM, OAM_SIZE);
-			DmaClear16(3, (void *)PLTT, PLTT_SIZE);
-			SetGpuReg(REG_OFFSET_DISPCNT, 0);
-			SetGpuReg(REG_OFFSET_BG0CNT, 0);
-			SetGpuReg(REG_OFFSET_BG0HOFS, 0);
-			SetGpuReg(REG_OFFSET_BG0VOFS, 0);
-			SetGpuReg(REG_OFFSET_BG1CNT, 0);
-			SetGpuReg(REG_OFFSET_BG1HOFS, 0);
-			SetGpuReg(REG_OFFSET_BG1VOFS, 0);
-			SetGpuReg(REG_OFFSET_BG2CNT, 0);
-			SetGpuReg(REG_OFFSET_BG2HOFS, 0);
-			SetGpuReg(REG_OFFSET_BG2VOFS, 0);
-			SetGpuReg(REG_OFFSET_BG3CNT, 0);
-			SetGpuReg(REG_OFFSET_BG3HOFS, 0);
-			SetGpuReg(REG_OFFSET_BG3VOFS, 0);
-			break;
+		    DmaClear32(3, (void *)OAM, OAM_SIZE);
+		    DmaClear16(3, (void *)PLTT, PLTT_SIZE);
+		    SetGpuReg(REG_OFFSET_DISPCNT, 0);
+		    SetGpuReg(REG_OFFSET_BG0CNT, 0);
+		    SetGpuReg(REG_OFFSET_BG0HOFS, 0);
+		    SetGpuReg(REG_OFFSET_BG0VOFS, 0);
+		    SetGpuReg(REG_OFFSET_BG1CNT, 0);
+		    SetGpuReg(REG_OFFSET_BG1HOFS, 0);
+		    SetGpuReg(REG_OFFSET_BG1VOFS, 0);
+		    SetGpuReg(REG_OFFSET_BG2CNT, 0);
+		    SetGpuReg(REG_OFFSET_BG2HOFS, 0);
+		    SetGpuReg(REG_OFFSET_BG2VOFS, 0);
+		    SetGpuReg(REG_OFFSET_BG3CNT, 0);
+		    SetGpuReg(REG_OFFSET_BG3HOFS, 0);
+		    SetGpuReg(REG_OFFSET_BG3VOFS, 0);
+		    break;
 		case 2:
-			ResetBgsAndClearDma3BusyFlags(0);
-			InitBgsFromTemplates(0, sEvIvBgTemplates, 2);
-			ChangeBgX(0, 0, 0);
-			ChangeBgY(0, 0, 0);
-			ChangeBgX(1, 0, 0);
-			ChangeBgY(1, 0, 0);
-			ChangeBgX(2, 0, 0);
-			ChangeBgY(2, 0, 0);
-			ChangeBgX(3, 0, 0);
-			ChangeBgY(3, 0, 0);
-			break;
+		    ResetBgsAndClearDma3BusyFlags(0);
+		    InitBgsFromTemplates(0, sEvIvBgTemplates, 2);
+		    ChangeBgX(0, 0, 0);
+		    ChangeBgY(0, 0, 0);
+		    ChangeBgX(1, 0, 0);
+		    ChangeBgY(1, 0, 0);
+		    ChangeBgX(2, 0, 0);
+		    ChangeBgY(2, 0, 0);
+		    ChangeBgX(3, 0, 0);
+		    ChangeBgY(3, 0, 0);
+		    break;
 		case 3:
 		    InitWindows(sEvIvWinTemplates);
-			DeactivateAllTextPrinters();
-			break;
+		    DeactivateAllTextPrinters();
+		    break;
 		case 4:
 		    SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON);
-			break;
+		    break;
 		case 5:
-			SetBgTilemapBuffer(0, sEvIvDisplay->tilemapBuffer);
-			break;
+		    SetBgTilemapBuffer(0, sEvIvDisplay->tilemapBuffer);
+		    break;
 		case 6:
-			CreateShadowBox();
-			break;
+		    CreateShadowBox();
+		    break;
 		case 7:
-			ShowBg(0);
-			ShowBg(3);
-			break;
+		    ShowBg(0);
+		    ShowBg(3);
+		    break;
 		case 8:
-			FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, 30, 20);
-			FillBgTilemapBufferRect_Palette0(3, 0, 0, 0, 30, 20);
-			break;
+		    FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, 30, 20);
+		    FillBgTilemapBufferRect_Palette0(3, 0, 0, 0, 30, 20);
+		    break;
 		case 9:
 		    ResetTempTileDataBuffers();
-			DecompressAndCopyTileDataToVram(0, sDiplomaGfx, 0, 0, 0);
-			break;
+		    DecompressAndCopyTileDataToVram(0, sDiplomaGfx, 0, 0, 0);
+		    break;
 		case 10:
 		    if (!(FreeTempTileDataBuffersIfPossible() == 1))
-				break;
-			return;
+			    break;
+		    return;
 		case 11:
 		    LoadPalette(sDiplomaPal, 0, 0x20);
-			ListMenuLoadStdPalAt(0x10, 1);
-			break;
+		    ListMenuLoadStdPalAt(0x10, 1);
+		    break;
 		case 12:
 		    CopyToBgTilemapBuffer(0, sDiplomaTilemap, 0, 0);
-			break;
+		    break;
 		case 13:
 		    SetGpuReg(REG_OFFSET_BG3HOFS, 0);
-			break;
+		    break;
 		case 14:
 		    LoadMonIconPalettes();
-			break;
+		    break;
 		case 15:
 #if PIKACHU_ICON
 		    CreatePikaOrGrassPlatformSpriteAndLinkToCurrentTask(taskId, 0);
 #endif
-			CreateHandSprite(taskId);
-			CreateMonIconSprites();
-			break;
+		    CreateHandSprite(taskId);
+		    CreateMonIconSprites();
+		    break;
 		case 16:
-			PrintInfoText();
-			PrintMonStats(taskId);
-			break;
+		    PrintInfoText();
+		    PrintMonStats(taskId);
+		    break;
 		case 17:
 		    CopyBgTilemapBufferToVram(0);
-			CopyBgTilemapBufferToVram(3);
-			break;
+		    CopyBgTilemapBufferToVram(3);
+		    break;
 		case 18:
 		    BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
-			break;
+		    break;
 		case 19:
 		    SetVBlankCallback(VBlank_EvIvDisplay);
-			break;
+		    break;
 		case 20:
 		    if (gPaletteFade.active)
-				return;
-			gTasks[taskId].func = Task_EvIvDisplay_HandleInput;
+			    return;
+		    gTasks[taskId].func = Task_EvIvDisplay_HandleInput;
 	}
 	tCallbackStep++;
 }
@@ -488,15 +491,15 @@ static void PrintInfoText(void)
 static void PrintMonStats(u8 taskId)
 {
 	s16 *data = gTasks[taskId].data;
-    u8 i, EVs[NUM_STATS] = {0}, IVs[NUM_STATS] = {0};
+	u8 i, EVs[NUM_STATS] = {0}, IVs[NUM_STATS] = {0};
 	bool8 isEgg = GetMonData(&gPlayerParty[tCurrMonId], MON_DATA_IS_EGG);
 	
 	FillWindowPixelBuffer(WIN_HIDDEN_POWER_TYPE, PIXEL_FILL(0));
 	FillWindowPixelBuffer(WIN_POKEMON_NAME, PIXEL_FILL(0));
-    FillWindowPixelBuffer(WIN_STATS, PIXEL_FILL(0));
+	FillWindowPixelBuffer(WIN_STATS, PIXEL_FILL(0));
 	
 #if HIDDEN_POWER_TYPE
-    // Print The Hidden Power Type
+	// Print The Hidden Power Type
 	if (!isEgg)
 		BlitMoveInfoIcon(WIN_HIDDEN_POWER_TYPE, GetHiddenPowerType(&gPlayerParty[tCurrMonId]) + 1, HIDDEN_POWER_PRINTER_X_POS, PRINTER_Y_POS);
 #endif
