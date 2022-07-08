@@ -7,6 +7,7 @@
 #include "coins.h"
 #include "event_data.h"
 #include "event_scripts.h"
+#include "ev_iv_display.h"
 #include "field_effect.h"
 #include "field_fadetransition.h"
 #include "event_object_movement.h"
@@ -777,6 +778,36 @@ void FieldUseFunc_ExpShare(u8 taskId)
 	gSaveBlock2Ptr->expShare = !gSaveBlock2Ptr->expShare;
 }
 
+static void OpenEvIvDisplayFromBag(void)
+{
+	ShowEvIvDisplay(CB2_BagMenuFromStartMenu);
+}
+
+static void Task_OpenEvIvDisplayFromField(u8 taskId)
+{
+	if (!gPaletteFade.active)
+	{
+		CleanupOverworldWindowsAndTilemaps();
+		sub_80A1184();
+		ShowEvIvDisplay(CB2_ReturnToField);
+		DestroyTask(taskId);
+	}
+}
+
+void FieldUseFunc_EvIvDisplay(u8 taskId)
+{
+	if (gTasks[taskId].data[3] == 0)
+	{
+		ItemMenu_SetExitCallback(OpenEvIvDisplayFromBag);
+		ItemMenu_StartFadeToExitCallback(taskId);
+	}
+	else
+	{
+		StopPokemonLeagueLightingEffectTask();
+		FadeScreen(FADE_TO_BLACK, 0);
+		gTasks[taskId].func = Task_OpenEvIvDisplayFromField;
+	}
+}
 
 void Task_ItemUse_CloseMessageBoxAndReturnToField_VsSeeker(u8 taskId)
 {
