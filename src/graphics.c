@@ -1419,3 +1419,7 @@ const u16 gRegisteredItemBoxSpritePal[] = INCBIN_U16("graphics/new/registered_it
 
 const u16 sHandCursorTiles[] = INCBIN_U16("graphics/interface/pss_unk_83D2BEC.4bpp");
 const u16 gUnknown_83CE7F0[] = INCBIN_U16("graphics/interface/pss_unk_83CE810.gbapal");
+
+const u32 sDiplomaGfx[] = INCBIN_U32("graphics/diploma/diploma.4bpp.lz");
+const u32 sDiplomaTilemap[] = INCBIN_U32("graphics/diploma/diploma.bin.lz");
+const u16 sDiplomaPal[] = INCBIN_U16("graphics/diploma/diploma.gbapal");
