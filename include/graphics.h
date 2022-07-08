@@ -4552,4 +4552,9 @@ extern const u8 gRegisteredItemCursorSpriteGfx[];
 extern const u16 sHandCursorTiles[];
 extern const u16 gUnknown_83CE7F0[];
 
+// diploma
+extern const u32 sDiplomaGfx[];
+extern const u32 sDiplomaTilemap[];
+extern const u16 sDiplomaPal[];
+
 #endif //GUARD_GRAPHICS_H
