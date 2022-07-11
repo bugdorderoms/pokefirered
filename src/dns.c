@@ -4,6 +4,7 @@
 #include "dns.h"
 #include "overworld.h"
 #include "palette.h"
+#include "pokedex_screen.h"
 #include "battle_main.h"
 #include "battle_interface.h"
 #include "registered_item.h"
@@ -311,7 +312,7 @@ static u16 DNSApplyProportionalFilterToColour(u16 colour, u16 filter);
 ALIGNED(4) EWRAM_DATA static u16 sDNSPaletteDmaBuffer[PLTT_BUFFER_SIZE] = {0};
 
 #define IN_OVERWORLD ((gMain.callback2 == CB2_Overworld || gMain.callback2 == CB2_OverworldBasic))
-#define IN_BATTLE ((gMain.callback2 == BattleMainCB2))
+#define IN_BATTLE ((gMain.callback2 == BattleMainCB2 && gMain.vblankCallback != VBlankCB && !(gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)))
 
 /* **************************************************** *
  * **************** D&N for pokefirered *************** *
