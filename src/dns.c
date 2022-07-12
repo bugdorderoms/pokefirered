@@ -2,6 +2,7 @@
 #include "task.h"
 #include "main.h"
 #include "dns.h"
+#include "fieldmap.h"
 #include "overworld.h"
 #include "palette.h"
 #include "pokedex_screen.h"
