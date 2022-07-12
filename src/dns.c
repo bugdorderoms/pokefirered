@@ -36,6 +36,56 @@ enum
     TIME_NIGHT
 };
 
+/* This array contains the colours used for the windows or other    *
+ * tiles that have to be illuminated at night.                      *
+ * You can add or remove light slots as you whish, each entry       *
+ * requires the paletteNum and the colourNum of each colour slot,   *
+ * as well as the RGB 15 bit colour that's gonna be used as         *
+ * "light colour".                                                  */
+static const struct lightingColour sLightingColours[] =
+{
+    {
+        .paletteNum = 0,
+        .colourNum = 1,
+        .lightColour = RGB2(30, 30, 5),
+    },
+    {
+        .paletteNum = 0,
+        .colourNum = 2,
+        .lightColour = RGB2(26, 25, 4),
+    },
+    {
+        .paletteNum = 0,
+        .colourNum = 3,
+        .lightColour = RGB2(22, 21, 3),
+    },
+    {
+        .paletteNum = 1,
+        .colourNum = 1,
+        .lightColour = RGB2(30, 30, 5),
+    },
+    {
+        .paletteNum = 1,
+        .colourNum = 2,
+        .lightColour = RGB2(26, 25, 4),
+    },
+    {
+        .paletteNum = 6,
+        .colourNum = 1,
+        .lightColour = RGB2(30, 30, 5),
+    },
+    {
+        .paletteNum = 6,
+        .colourNum = 2,
+        .lightColour = RGB2(26, 25, 4),
+    },
+    {
+        .paletteNum = 6,
+        .colourNum = 3,
+        .lightColour = RGB2(22, 21, 3),
+    },
+};
+
 /* Maptypes that are not affected by DNS */
 static const u8 sDNSMapExceptions[] =
 {
@@ -307,12 +357,16 @@ static bool8 IsSpritePaletteTagDNSException(u8 palNum);
 static u8 GetDNSTimeLapse(u8 hour);
 static u16 GetDNSFilter(void);
 static u16 DNSApplyProportionalFilterToColour(u16 colour, u16 filter);
+static void DoDNSLightningWindowsEffect(void);
 
 // DNS palette buffer in EWRAM
 ALIGNED(4) EWRAM_DATA static u16 sDNSPaletteDmaBuffer[PLTT_BUFFER_SIZE] = {0};
+// used to help with the lit up windows system
+EWRAM_DATA static bool8 sTilesetPaletteReloaded = FALSE;
 
 #define IN_OVERWORLD ((gMain.callback2 == CB2_Overworld || gMain.callback2 == CB2_OverworldBasic))
 #define IN_BATTLE ((gMain.callback2 == BattleMainCB2 && gMain.vblankCallback != VBlankCB && !(gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)))
+#define LIT_UP_TIME ((gRtcLocation.hour < MORNING_OF_DAY_START || gRtcLocation.hour >= NIGHT_OF_DAY_START))
 
 /* **************************************************** *
  * **************** D&N for pokefirered *************** *
@@ -330,6 +384,10 @@ void DNSTransferPlttBuffer(void *src, void *dest)
 	if (IN_OVERWORLD && !IsMapDNSException())
 #endif
 	{
+#if LIT_UP_WINDOWS
+		if (!gMain.inBattle)
+			DoDNSLightningWindowsEffect();
+#endif
 		DmaCopy16(3, sDNSPaletteDmaBuffer, dest, PLTT_SIZE);
 	}
 	else
@@ -391,6 +449,35 @@ void DNSApplyFilters(void)
 				sDNSPaletteDmaBuffer[colourSlot] = gPlttBufferFaded[colourSlot];
 			}
 		}
+	}
+}
+
+static void DoDNSLightningWindowsEffect(void)
+{
+	u8 i;
+	u16 colourSlot;
+	bool8 fadeActive = gPaletteFade.active;
+	
+	if (LIT_UP_TIME)
+	{
+		for (i = 0; i < NELEMS(sLightingColours); i++)
+		{
+			colourSlot = sLightingColours[i].paletteNum * 16 + sLightingColours[i].colourNum;
+			
+			if (fadeActive || gPlttBufferUnfaded[colourSlot] != 0x0000)
+			{
+				sDNSPaletteDmaBuffer[colourSlot] = gPlttBufferFaded[colourSlot];
+				gPlttBufferUnfaded[colourSlot] = sLightingColours[i].lightColour;
+			}
+			else
+				sDNSPaletteDmaBuffer[colourSlot] = sLightingColours[i].lightColour;
+		}
+		sTilesetPaletteReloaded = FALSE;
+	}
+	else if (!fadeActive && !sTilesetPaletteReloaded)
+	{
+		LoadMapTilesetPalettes(gMapHeader.mapLayout);
+		sTilesetPaletteReloaded = TRUE;
 	}
 }
 
