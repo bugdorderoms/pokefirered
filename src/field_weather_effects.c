@@ -4,12 +4,17 @@
 #include "event_object_movement.h"
 #include "field_weather.h"
 #include "field_weather_effects.h"
+#include "graphics.h"
 #include "random.h"
 #include "script.h"
 #include "constants/weather.h"
 #include "constants/songs.h"
 #include "task.h"
 #include "trig.h"
+
+const struct SpritePalette sSpritePalette_Weather0 = {gDefaultWeatherSpritePalette, 0x1201};
+const struct SpritePalette sCloudsSpritePalette = {gCloudsWeatherPalette, 0x1201};
+const struct SpritePalette sSandstormSpritePalette = {gSandstormWeatherPalette, 0x1201};
 
 //------------------------------------------------------------------------------
 // WEATHER_SUNNY_CLOUDS
@@ -156,7 +161,7 @@ static void CreateCloudSprites(void)
         return;
 
     LoadSpriteSheet(&sCloudSpriteSheet);
-    LoadCustomWeatherSpritePalette(gCloudsWeatherPalette);
+    LoadCustomWeatherSpritePalette(&sCloudsSpritePalette);
     for (i = 0; i < NUM_CLOUD_SPRITES; i++)
     {
         spriteId = CreateSprite(&sCloudSpriteTemplate, 0, 0, 0xFF);
@@ -1391,6 +1396,7 @@ static void CreateFogHorizontalSprites(void)
                 sprite->x = (i % 5) * 64 + 32;
                 sprite->y = (i / 5) * 64 + 32;
                 gWeatherPtr->sprites.s2.fogHSprites[i] = sprite;
+				sprite->oam.paletteNum = gWeatherPtr->altGammaSpritePalIndex;
             }
             else
             {
@@ -1538,7 +1544,7 @@ static const union AnimCmd *const sAshSpriteAnimCmds[] = {
 
 static const struct SpriteTemplate sAshSpriteTemplate = {
     .tileTag = 0x1202,
-    .paletteTag = 0x1200,
+    .paletteTag = 0x1201,
     .oam = &sAshSpriteOamData,
     .anims = sAshSpriteAnimCmds,
     .images = NULL,
@@ -1559,6 +1565,8 @@ static void CreateAshSprites(void)
 
     if (!gWeatherPtr->ashSpritesCreated)
     {
+		LoadCustomWeatherSpritePalette(&sSpritePalette_Weather0);
+		
         for (i = 0; i < NUM_ASH_SPRITES; i++)
         {
             spriteId = CreateSpriteAtEnd(&sAshSpriteTemplate, 0, 0, 0x4E);
@@ -1750,7 +1758,7 @@ static const union AnimCmd *const sFogDiagonalSpriteAnimCmds[] = {
 
 static const struct SpriteTemplate sFogDiagonalSpriteTemplate = {
     .tileTag = 0x1203,
-    .paletteTag = 0x1200,
+    .paletteTag = 0x1201,
     .oam = &sFogDiagonalSpriteOamData,
     .anims = sFogDiagonalSpriteAnimCmds,
     .images = NULL,
@@ -1772,6 +1780,7 @@ static void CreateFogDiagonalSprites(void)
     {
         fogDiagonalSpriteSheet = gFogDiagonalSpriteSheet;
         LoadSpriteSheet(&fogDiagonalSpriteSheet);
+		LoadCustomWeatherSpritePalette(&sSpritePalette_Weather0);
         for (i = 0; i < NUM_FOG_DIAGONAL_SPRITES; i++)
         {
             spriteId = CreateSpriteAtEnd(&sFogDiagonalSpriteTemplate, 0, (i / 5) * 64, 0xFF);
@@ -2024,7 +2033,7 @@ static void CreateSandstormSprites(void)
     if (!gWeatherPtr->sandstormSpritesCreated)
     {
         LoadSpriteSheet(&sSandstormSpriteSheet);
-        LoadCustomWeatherSpritePalette(gSandstormWeatherPalette);
+        LoadCustomWeatherSpritePalette(&sSandstormSpritePalette);
         for (i = 0; i < NUM_SANDSTORM_SPRITES; i++)
         {
             spriteId = CreateSpriteAtEnd(&sSandstormSpriteTemplate, 0, (i / 5) * 64, 1);
