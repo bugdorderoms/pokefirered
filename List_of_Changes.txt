@@ -6,6 +6,7 @@ Pokedex Glitch Fix
 // Can't Be Turned On/Off
 eggs hatch at level 1
 EV's and vitamins cap to 252
+Inheting Nature From Day Care
 Triple-Layer Blocks (Sierraffinity) //how to use: https://www.pokecommunity.com/showthread.php?p=9767701
 Constant Hidden Power - Power: 60 (Zeturic)
 Sound Moves Bypass Substitute (Zeturic)
@@ -14,7 +15,7 @@ Running Indoors (HackMew)
 Physical/Special/Status Split And Icons (DoesntKnowHowToPlay, Spherical Ice And BlackUser)
 Pokemon Stats Replacing Weight Comparision Screen (DoesntKnowHowToPlay and Squeetz)
 Hail Weather Fix (daniilS And Samu)
-Movement Type Hidden (0C) Fix (Dreamaker)
+Movement Type Hidden 0x0C Fix (Dreamaker)
 Faster HP Drain (Fyreire)
 Bw Repel System With A Multichoice Window (DizzyEgg)
 Reusable TM's (FBI)
@@ -35,15 +36,16 @@ Metric System Update (BlackUser)
 Nickname Your Pokemons From The Party Screen (Shinny456, Ghoulslash, TheXaman And Lunos)
 Gen 6 Exp Share (Lunos)
 Bag Sorting (ghoulslash And BlackUser)
-New Resgister Items System (BlackUser)
+Extra 116 Bytes In SaveBlock2, 464 Bytes In SaveBlock1, And 1044 Bytes In PokemonStorage (Hiram Anderson)
+ORAS Resgister Items System (BlackUser)
 Hidden Abilities (BlackUser)
 Custom Give Mon Command (BlackUser)
-Inheting Nature From Day Care
 Ev-Iv Display (Acimut And BlackUser)
-Extra 116 Bytes In SaveBlock2, 464 Bytes In SaveBlock1, And 1044 Bytes In PokemonStorage (Hiram Anderson)
+Dynamic OW Pals (Slawter666 And BlackUser)
 
 // Can Be Turned On/Off
 // To Define Which Hacks Will Be Inserted In The Rom Go To include/constants > inserts.h
+Volt Tackle By Breeding
 Exp Block By Badge (blackUser)
 HP Bars Disappearing During Attack Animations (blackUser)
 Automatic Swap Page On Naming Screen (blackUser And Jaizu)
@@ -64,7 +66,6 @@ Remove Flashbacks (Sierra)
 Full Exp For Participating In A Battle (DoesntKnowHowToPlay)
 Emerald Style Gender Select Intro (Meister_anon~Master_o f_None)
 Shuckle Makes Berry Juice (AsparagusEduardo)
-Volt Tackle By Breeding
 
 //Abilities Added and completed
 Adaptability
