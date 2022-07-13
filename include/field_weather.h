@@ -4,6 +4,13 @@
 #include "global.h"
 #include "constants/field_weather.h"
 
+enum
+{
+    GAMMA_NONE,
+    GAMMA_NORMAL,
+    GAMMA_ALT,
+};
+
 struct Weather
 {
     union
@@ -131,7 +138,7 @@ void SetCurrentAndNextWeather(u8 weather);
 void Weather_SetBlendCoeffs(u8 eva, u8 evb);
 void Weather_SetTargetBlendCoeffs(u8 eva, u8 evb, int delay);
 bool8 Weather_UpdateBlend(void);
-void LoadCustomWeatherSpritePalette(const u16 *palette);
+void LoadCustomWeatherSpritePalette(const struct SpritePalette *palette);
 void ResetDroughtWeatherPaletteLoading(void);
 bool8 LoadDroughtWeatherPalettes(void);
 void DroughtStateInit(void);
@@ -143,6 +150,7 @@ void ApplyWeatherGammaShiftToPal(u8 paletteIndex);
 void StartWeather(void);
 void ResumePausedWeather(void);
 void FadeSelectedPals(u8 mode, s8 delay, u32 selectedPalettes);
+void UpdatePaletteGammaType(u8 index, u8 gammaType);
 
 extern const u16 gCloudsWeatherPalette[];
 extern const u16 gSandstormWeatherPalette[];
