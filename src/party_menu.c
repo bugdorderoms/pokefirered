@@ -138,6 +138,7 @@ static void CursorCB_Cancel1(u8 taskId);
 static void CursorCB_Item(u8 taskId);
 static void CursorCB_Give(u8 taskId);
 static void CursorCB_TakeItem(u8 taskId);
+static void CursorCB_Move(u8 taskId);
 static void CursorCB_Mail(u8 taskId);
 static void CursorCB_Read(u8 taskId);
 static void CursorCB_TakeMail(u8 taskId);
@@ -3663,6 +3664,88 @@ static void CursorCB_TakeItem(u8 taskId)
     }
     ScheduleBgCopyTilemapToVram(2);
     gTasks[taskId].func = Task_UpdateHeldItemSprite;
+}
+
+static void Task_MoveItem(u8 taskId)
+{
+    s8 *slotPtr;
+    u8 buffer[100];
+    u16 item1, item2;
+	
+    if (gPaletteFade.active || sub_80BF748())
+        return;
+	
+    slotPtr = GetCurrentPartySlotPtr();
+	
+    switch (PartyMenuButtonHandler(slotPtr))
+    {
+    case 1: // Selected mon
+        if (GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_IS_EGG) || gPartyMenu.slotId == gPartyMenu.slotId2)
+	{
+	     PlaySE(SE_FAILURE);
+	     return;
+	}
+	PlaySE(SE_SELECT);
+	
+	gPartyMenu.action = PARTY_ACTION_CHOOSE_MON;
+	item1 = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_HELD_ITEM);
+	item2 = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_HELD_ITEM);
+	
+	SetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_HELD_ITEM, &item2);
+	SetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_HELD_ITEM, &item1);
+	
+	UpdatePartyMonHeldItemSprite(&gPlayerParty[gPartyMenu.slotId], &sPartyMenuBoxes[gPartyMenu.slotId]);
+	UpdatePartyMonHeldItemSprite(&gPlayerParty[gPartyMenu.slotId2], &sPartyMenuBoxes[gPartyMenu.slotId2]);
+	
+	if (!item2)
+	    DisplayGaveHeldItemMessage(&gPlayerParty[gPartyMenu.slotId2], item1, TRUE, FALSE);
+	else
+	{
+	    GetMonNickname(&gPlayerParty[gPartyMenu.slotId], gStringVar1);
+	    CopyItemName(item1, gStringVar2);
+	    StringExpandPlaceholders(buffer, gText_XsYAnd);
+	    StringAppend(buffer, gText_XsYWereSwapped);
+	    GetMonNickname(&gPlayerParty[gPartyMenu.slotId2], gStringVar1);
+	    CopyItemName(item2, gStringVar2);
+	    StringExpandPlaceholders(gStringVar4, buffer);
+	    DisplayPartyMenuMessage(gStringVar4, TRUE);
+	    ScheduleBgCopyTilemapToVram(2);
+	}
+	AnimatePartySlot(gPartyMenu.slotId2, 0);
+	AnimatePartySlot(gPartyMenu.slotId, 1);
+	
+	gTasks[taskId].func = Task_UpdateHeldItemSprite;
+	break;
+    case 2: // Selected Cancel
+        HandleChooseMonCancel(taskId, slotPtr);
+	break;
+    }
+}
+
+static void CursorCB_Move(u8 taskId)
+{
+    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+    
+    PlaySE(SE_SELECT);
+    PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
+    PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
+    
+    if (GetMonData(mon, MON_DATA_HELD_ITEM))
+    {
+        gPartyMenu.action = PARTY_ACTION_SWITCH;
+	DisplayPartyMenuStdMessage(PARTY_MSG_MOVE_TO_WHERE);
+	AnimatePartySlot(gPartyMenu.slotId, 1);
+	gPartyMenu.slotId2 = gPartyMenu.slotId;
+	gTasks[taskId].func = Task_MoveItem;
+    }
+    else
+    {
+        GetMonNickname(mon, gStringVar1);
+	StringExpandPlaceholders(gStringVar4, gText_PkmnNotHolding);
+	DisplayPartyMenuMessage(gStringVar4, TRUE);
+	ScheduleBgCopyTilemapToVram(2);
+	gTasks[taskId].func = Task_UpdateHeldItemSprite;
+    }
 }
 
 static void CursorCB_Mail(u8 taskId)
