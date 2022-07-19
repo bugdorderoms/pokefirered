@@ -8,6 +8,7 @@
 #include "link.h"
 #include "oak_speech.h"
 #include "overworld.h"
+#include "pokemon_icon.h"
 #include "quest_log.h"
 #include "mystery_gift_menu.h"
 #include "strings.h"
@@ -17,6 +18,7 @@
 #include "text_window.h"
 #include "text_window_graphics.h"
 #include "constants/songs.h"
+#include "constants/inserts.h"
 
 enum MainMenuType
 {
@@ -63,6 +65,7 @@ static void PrintPlayerName(void);
 static void PrintPlayTime(void);
 static void PrintDexCount(void);
 static void PrintBadgeCount(void);
+static void DrawPartyMonIcons(void);
 static void LoadUserFrameToBg(u8 bgId);
 static void SetStdFrame0OnBg(u8 bgId);
 static void MainMenu_DrawWindow(const struct WindowTemplate * template);
@@ -132,8 +135,31 @@ static const struct BgTemplate sBgTemplate[] = {
         .bg = 0,
         .charBaseIndex = 0,
         .mapBaseIndex = 30,
-        .priority = 0
+        .priority = 1
     }
+};
+
+static const struct UCoords16 sIconsPosition[PARTY_SIZE] =
+{
+    {
+		.x = 145,
+		.y = 40,
+	},{
+		.x = 175,
+		.y = 40,
+	},{
+		.x = 205,
+		.y = 40,
+	},{
+		.x = 145,
+		.y = 70,
+	},{
+		.x = 175,
+		.y = 70,
+	},{
+		.x = 205,
+		.y = 70,
+	}
 };
 
 static const u8 sMenuCursorYMax[] = { 0, 1, 2 };
@@ -224,8 +250,8 @@ static void Task_SetWin0BldRegsAndCheckSaveFile(u8 taskId)
     {
         SetGpuReg(REG_OFFSET_WIN0H, 0);
         SetGpuReg(REG_OFFSET_WIN0V, 0);
-        SetGpuReg(REG_OFFSET_WININ, 0x0001);
-        SetGpuReg(REG_OFFSET_WINOUT, 0x0021);
+        SetGpuReg(REG_OFFSET_WININ, 0x0011);
+        SetGpuReg(REG_OFFSET_WINOUT, 0x0031);
         SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG0 | BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ | BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN);
         SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 0));
         SetGpuReg(REG_OFFSET_BLDY, 7);
@@ -309,8 +335,8 @@ static void Task_SetWin0BldRegsNoSaveFileCheck(u8 taskId)
     {
         SetGpuReg(REG_OFFSET_WIN0H, 0);
         SetGpuReg(REG_OFFSET_WIN0V, 0);
-        SetGpuReg(REG_OFFSET_WININ, 0x0001);
-        SetGpuReg(REG_OFFSET_WINOUT, 0x0021);
+        SetGpuReg(REG_OFFSET_WININ, 0x0011);
+        SetGpuReg(REG_OFFSET_WINOUT, 0x0031);
         SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG0 | BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ | BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN);
         SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 0));
         SetGpuReg(REG_OFFSET_BLDY, 7);
@@ -334,8 +360,8 @@ static void Task_PrintMainMenuText(u8 taskId)
     u16 pal;
     SetGpuReg(REG_OFFSET_WIN0H, 0);
     SetGpuReg(REG_OFFSET_WIN0V, 0);
-    SetGpuReg(REG_OFFSET_WININ, 0x0001);
-    SetGpuReg(REG_OFFSET_WINOUT, 0x0021);
+    SetGpuReg(REG_OFFSET_WININ, 0x0011);
+    SetGpuReg(REG_OFFSET_WINOUT, 0x0031);
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG0 | BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ | BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 0));
     SetGpuReg(REG_OFFSET_BLDY, 7);
@@ -613,6 +639,9 @@ static void PrintContinueStats(void)
     PrintDexCount();
     PrintPlayTime();
     PrintBadgeCount();
+#if MON_ICON_ON_CONTINUE_SCREEN
+    DrawPartyMonIcons();
+#endif
 }
 
 static void PrintPlayerName(void)
@@ -666,6 +695,23 @@ static void PrintBadgeCount(void)
     ptr = ConvertIntToDecimalStringN(strbuf, GetNumOfBadges(), STR_CONV_MODE_LEADING_ZEROS, 1);
     StringAppend(ptr, gTextJPDummy_Ko);
     AddTextPrinterParameterized3(MAIN_MENU_WINDOW_CONTINUE, 2, 62, 66, sTextColor2, -1, strbuf);
+}
+
+static void DrawPartyMonIcons(void)
+{
+    u8 i;
+    u16 species;
+	u32 personality;
+	
+	LoadMonIconPalettes();
+	
+	for (i = 0; i < gPlayerPartyCount; i++)
+	{
+		species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
+		personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY);
+		
+		CreateMonIcon(species, SpriteCallbackDummy, sIconsPosition[i].x, sIconsPosition[i].y, 0, personality, TRUE);
+	}
 }
 
 static void LoadUserFrameToBg(u8 bgId)
