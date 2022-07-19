@@ -141,7 +141,7 @@ static const struct BgTemplate sBgTemplate[] = {
 
 static const struct UCoords16 sIconsPosition[PARTY_SIZE] =
 {
-    {
+	{
 		.x = 145,
 		.y = 40,
 	},{
@@ -699,8 +699,8 @@ static void PrintBadgeCount(void)
 
 static void DrawPartyMonIcons(void)
 {
-    u8 i;
-    u16 species;
+	u8 i;
+	u16 species;
 	u32 personality;
 	
 	LoadMonIconPalettes();
