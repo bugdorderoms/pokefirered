@@ -114,11 +114,15 @@ static u32 GetBattlerWeight(u8 battler)
 {
 	u32 weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[battler].species), 1);
 	
-	if (gBattleMons[battler].ability == ABILITY_HEAVY_METAL)
-		weight *= 2;
-	else if (gBattleMons[battler].ability == ABILITY_LIGHT_METAL)
-		weight /= 2;
-	
+	switch (GetBattlerAbility(battler))
+	{
+		case ABILITY_HEAVY_METAL:
+			weight *= 2;
+			break;
+		case ABILITY_LIGHT_METAL:
+			weight /= 2;
+			break;
+	}
 	return weight;
 }
 
@@ -341,7 +345,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 				break;
 		}
 		// attacker abilities check
-		switch (attacker->ability)
+		switch (GetBattlerAbility(battlerIdAtk))
 		{
 			case ABILITY_HUGE_POWER:
 			case ABILITY_PURE_POWER:
@@ -448,7 +452,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 				break;
 		}
 		// defender abilities check
-		switch (defender->ability)
+		switch (GetBattlerAbility(battlerIdDef))
 		{
 			case ABILITY_THICK_FAT:
 				if (type == TYPE_FIRE || type == TYPE_ICE)
@@ -487,7 +491,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			// defender's ally abilities check
 			if (gBattleMons[battlerIdDef ^ BIT_FLANK].hp != 0)
 			{
-				switch (gBattleMons[battlerIdDef ^ BIT_FLANK].ability)
+				switch (GetBattlerAbility(battlerIdDef ^ BIT_FLANK))
 				{
 					case ABILITY_FRIEND_GUARD:
 						gBattleMovePower = (gBattleMovePower * 75) / 100;
@@ -512,22 +516,22 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 	    
 		if (gBattleWeather & WEATHER_SUN_ANY && !isConfusionDmg)
 		{
-			if (attacker->ability == ABILITY_FLOWER_GIFT)
+			if (GetBattlerAbility(battlerIdAtk) == ABILITY_FLOWER_GIFT)
 				attack = (15 * attack) / 10;
-			if (defender->ability == ABILITY_FLOWER_GIFT)
+			if (GetBattlerAbility(battlerIdDef) == ABILITY_FLOWER_GIFT)
 				spDefense = (15 * spDefense) / 10;
 			
 			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 			{
-				if (gBattleMons[battlerIdAtk ^ BIT_FLANK].ability == ABILITY_FLOWER_GIFT && gBattleMons[battlerIdAtk ^ BIT_FLANK].hp != 0)
+				if (GetBattlerAbility(battlerIdAtk ^ BIT_FLANK) == ABILITY_FLOWER_GIFT && gBattleMons[battlerIdAtk ^ BIT_FLANK].hp != 0)
 					attack = (15 * attack) / 10;
-				if (gBattleMons[battlerIdDef ^ BIT_FLANK].ability == ABILITY_FLOWER_GIFT && gBattleMons[battlerIdDef ^ BIT_FLANK].hp != 0)
+				if (GetBattlerAbility(battlerIdDef ^ BIT_FLANK) == ABILITY_FLOWER_GIFT && gBattleMons[battlerIdDef ^ BIT_FLANK].hp != 0)
 					spDefense = (15 * spDefense) / 10;
 			}
 		}
 	}
 	// burn attack drop
-	if ((attacker->status1 & STATUS1_BURN) && attacker->ability != ABILITY_GUTS && !isConfusionDmg)
+	if ((attacker->status1 & STATUS1_BURN) && GetBattlerAbility(battlerIdAtk) != ABILITY_GUTS && !isConfusionDmg)
 		attack /= 2;
    
 	if (IS_MOVE_PHYSICAL(move))
@@ -546,7 +550,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 	}
 	
 	// attacker buffs
-	if (defender->ability != ABILITY_UNAWARE)
+	if (GetBattlerAbility(battlerIdDef) != ABILITY_UNAWARE)
 	{
 		if (gCritMultiplier == 2)
 		{
@@ -557,7 +561,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			APPLY_STAT_MOD(damage, attacker, damage, statiD1)
 	}
 	// defender buffs
-	if (attacker->ability != ABILITY_UNAWARE)
+	if (GetBattlerAbility(battlerIdAtk) != ABILITY_UNAWARE)
 	{
 		if (gCritMultiplier == 2)
 		{
