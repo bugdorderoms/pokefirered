@@ -3547,10 +3547,8 @@ u16 GetAbilityBySpecies(u16 species, bool8 abilityNum, bool8 abilityHidden)
 {
 	if (abilityHidden && gBaseStats[species].hiddenAbility)
 		gLastUsedAbility = gBaseStats[species].hiddenAbility;
-	else if (abilityNum)
-		gLastUsedAbility = gBaseStats[species].abilities[1];
 	else
-		gLastUsedAbility = gBaseStats[species].abilities[0];
+		gLastUsedAbility = gBaseStats[species].abilities[abilityNum];
 
 	return gLastUsedAbility;
 }
