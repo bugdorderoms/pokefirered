@@ -1,6 +1,7 @@
 #include "global.h"
 #include "battle.h"
 #include "battle_anim.h"
+#include "battle_util.h"
 #include "util.h"
 #include "item.h"
 #include "random.h"
@@ -1144,9 +1145,9 @@ static void Cmd_get_ability(void)
         }
 
         // abilities that prevent fleeing.
-        if (gBattleMons[battlerId].ability == ABILITY_SHADOW_TAG
-        || gBattleMons[battlerId].ability == ABILITY_MAGNET_PULL
-        || gBattleMons[battlerId].ability == ABILITY_ARENA_TRAP)
+        if (GetBattlerAbility(battlerId) == ABILITY_SHADOW_TAG
+        || GetBattlerAbility(battlerId) == ABILITY_MAGNET_PULL
+        || GetBattlerAbility(battlerId) == ABILITY_ARENA_TRAP)
         {
             AI_THINKING_STRUCT->funcResult = gBattleMons[battlerId].ability;
             sAIScriptPtr += 2;
