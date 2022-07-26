@@ -429,9 +429,9 @@ struct BattleStruct
 
 struct NewBattleStruct
 {
-/*0x00*/ u16 IgnoredAbilities[MAX_BATTLERS_COUNT];
-/*0x08*/ u8 SlowStartTimers[MAX_BATTLERS_COUNT];
-/*0x0C*/ u8 UnburdenBoostBits;
+/*0x00*/ u8 SlowStartTimers[MAX_BATTLERS_COUNT];
+/*0x04*/ u8 IgnoredAbilities;
+/*0x05*/ u8 UnburdenBoostBits;
 };
 
 extern struct BattleStruct *gBattleStruct;
@@ -447,9 +447,9 @@ extern struct BattleStruct *gBattleStruct;
 #define IS_MOVE_PHYSICAL(move)(gBattleMoves[move].split == MOVE_PHYSICAL)
 #define IS_MOVE_SPECIAL(move)(gBattleMoves[move].split == MOVE_SPECIAL)
 #define IS_MOVE_STATUS(move)(gBattleMoves[move].split == MOVE_STATUS)
-#define RECEIVE_SHEER_FORCE_BOOST(battler, move)((gBattleMons[battler].ability == ABILITY_SHEER_FORCE) && (IsMoveInTable(gSheerForceBoostedMoves, move)))
-#define STAT_CAN_RAISE(battlerId, statId)((gBattleMons[battlerId].statStages[statId] < 12 && gBattleMons[battlerId].ability != ABILITY_CONTRARY) || (gBattleMons[battlerId].statStages[statId] > 0 && gBattleMons[battlerId].ability == ABILITY_CONTRARY))
-#define STAT_CAN_FALL(battlerId, statId)((gBattleMons[battlerId].statStages[statId] > 0 && gBattleMons[battlerId].ability != ABILITY_CONTRARY) || (gBattleMons[battlerId].statStages[statId] < 12 && gBattleMons[battlerId].ability == ABILITY_CONTRARY))
+#define RECEIVE_SHEER_FORCE_BOOST(battler, move)((GetBattlerAbility(battler) == ABILITY_SHEER_FORCE) && (IsMoveInTable(gSheerForceBoostedMoves, move)))
+#define STAT_CAN_RAISE(battlerId, statId)((gBattleMons[battlerId].statStages[statId] < 12 && GetBattlerAbility(battlerId) != ABILITY_CONTRARY) || (gBattleMons[battlerId].statStages[statId] > 0 && GetBattlerAbility(battlerId) == ABILITY_CONTRARY))
+#define STAT_CAN_FALL(battlerId, statId)((gBattleMons[battlerId].statStages[statId] > 0 && GetBattlerAbility(battlerId) != ABILITY_CONTRARY) || (gBattleMons[battlerId].statStages[statId] < 12 && GetBattlerAbility(battlerId) == ABILITY_CONTRARY))
 #define TARGET_TURN_DAMAGED ((gSpecialStatuses[gBattlerTarget].physicalDmg != 0 || gSpecialStatuses[gBattlerTarget].specialDmg != 0))
 #define IS_BATTLER_OF_TYPE(battlerId, type)((gBattleMons[battlerId].type1 == type || gBattleMons[battlerId].type2 == type))
 #define SET_BATTLER_TYPE(battlerId, type)   \
