@@ -9147,3 +9147,26 @@ static void DoRippleFieldEffect(struct ObjectEvent *objectEvent, struct Sprite *
     gFieldEffectArguments[3] = 3;
     FieldEffectStart(FLDEFF_RIPPLE);
 }
+
+// used in the fame checker
+void InitObjectEventPalettes(u8 palSlot)
+{
+        // palSlot is unused for now
+
+        FreeAllSpritePalettes();
+	
+	u16 palSet[] = {
+		OBJ_EVENT_PAL_TAG_PLAYER_RED,
+		OBJ_EVENT_PAL_TAG_PLAYER_RED_REFLECTION,
+		OBJ_EVENT_PAL_TAG_NPC_BLUE,
+		OBJ_EVENT_PAL_TAG_NPC_PINK,
+		OBJ_EVENT_PAL_TAG_NPC_GREEN,
+		OBJ_EVENT_PAL_TAG_NPC_WHITE,
+		OBJ_EVENT_PAL_TAG_NPC_BLUE_REFLECTION,
+		OBJ_EVENT_PAL_TAG_NPC_PINK_REFLECTION,
+		OBJ_EVENT_PAL_TAG_NPC_GREEN_REFLECTION,
+		OBJ_EVENT_PAL_TAG_NPC_WHITE_REFLECTION
+	};
+	
+	PatchObjectPaletteRange(palSet, 0, 10);
+}
