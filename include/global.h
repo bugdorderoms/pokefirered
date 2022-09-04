@@ -10,6 +10,7 @@
 #include "constants/vars.h"
 #include "constants/species.h"
 #include "constants/easy_chat.h"
+#include "constants/items.h"
 
 // Prevent cross-jump optimization.
 #define BLOCK_CROSS_JUMP asm("");
@@ -336,7 +337,8 @@ struct SaveBlock2
     /*0xAF4*/ struct PokemonJumpRecords pokeJump;
     /*0xB04*/ struct BerryPickingResults berryPick;
     /*0xB14*/ u32 encryptionKey;
-}; // size: 0xB18
+    /*0xB18*/ u8 itemFlags[DIV_ROUND_UP(ITEMS_COUNT, 8)];
+};
 
 extern struct SaveBlock2 *gSaveBlock2Ptr;
 
