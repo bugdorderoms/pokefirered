@@ -9,7 +9,7 @@ typedef void (*ItemUseFunc)(u8);
 enum
 {
 	FLAG_GET_OBTAINED,
-    FLAG_SET_OBTAINED,
+	FLAG_SET_OBTAINED,
 };
 
 struct Item
