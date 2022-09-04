@@ -6,6 +6,12 @@
 
 typedef void (*ItemUseFunc)(u8);
 
+enum
+{
+	FLAG_GET_OBTAINED,
+    FLAG_SET_OBTAINED,
+};
+
 struct Item
 {
     u8 name[ITEM_NAME_LENGTH];
@@ -80,5 +86,7 @@ void SortAndCompactBagPocket(struct BagPocket * pocket);
 u8 CountItemsInPC(void);
 void ApplyNewEncryptionKeyToBagItems_(u32 newKey);
 bool8 HasAtLeastOneBerry(void);
+
+bool8 GetSetItemObtained(u16 item, u8 caseId);
 
 #endif // GUARD_ITEM_H
