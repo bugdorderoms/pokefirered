@@ -505,6 +505,20 @@ static const u16 sOverwrittenPixelsTable[] =
 	PIXEL_COORDS_TO_OFFSET(12, 46),
 };
 
+static const s16 sAbilityPopUpCoordsDoubles[MAX_BATTLERS_COUNT][2] =
+{
+	{29, 80}, // player left
+	{186, 19}, // opponent left
+	{29, 97}, // player right
+	{186, 36}, // opponent right
+};
+
+static const s16 sAbilityPopUpCoordsSingles[MAX_BATTLERS_COUNT][2] =
+{
+	{29, 97}, // player
+	{186, 57}, // opponent
+};
+
 void DoLoadHealthboxPalsForLevelUp(u8 *paletteId1, u8 *paletteId2, u8 battler)
 {
     u8 healthBoxSpriteId;
@@ -2464,31 +2478,32 @@ static void AnimTask_FreeAbilityPopUp(u8 taskId)
 
 void AnimTask_CreateAbilityPopUp(u8 taskId)
 {
-    u8 spriteId1, spriteId2, destroyTaskId, battler = GetBattlerForBattleScript(gBattlescriptCurrInstr[-3]);
-    u16 posX, posY;
+    const s16 (*coords)[2];
+    u8 spriteId1, spriteId2, destroyTaskId, battler = GetBattlerForBattleScript(gBattlescriptCurrInstr[-3]), battlerPosition = GetBattlerPosition(battler);
     
     LoadSpriteSheet((const struct SpriteSheet*) &gBattleAnimPicTable[GET_TRUE_SPRITE_INDEX(ANIM_TAG_ABILITY_POP_UP)]);
     LoadSpritePalette((const struct SpritePalette*) &gBattleAnimPaletteTable[GET_TRUE_SPRITE_INDEX(ANIM_TAG_ABILITY_POP_UP)]);
     
     gActiveAbilityPopUps |= gBitTable[battler];
     
+    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	    coords = sAbilityPopUpCoordsDoubles;
+    else
+	    coords = sAbilityPopUpCoordsSingles;
+	
     if (GetBattlerSide(battler) == B_SIDE_PLAYER)
     {
-        posX = 29;
-        posY = 97;
-        spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp, posX - ABILITY_POP_UP_POS_X_SLIDE, posY, 0);
-        spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp2, posX - ABILITY_POP_UP_POS_X_SLIDE + ABILITY_POP_UP_POS_X_DIFF, posY, 0);
+        spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp, coords[battlerPosition][0] - ABILITY_POP_UP_POS_X_SLIDE, coords[battlerPosition][1], 0);
+        spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp2, coords[battlerPosition][0] - ABILITY_POP_UP_POS_X_SLIDE + ABILITY_POP_UP_POS_X_DIFF, coords[battlerPosition][1], 0);
     }
     else
     {
-	posX = 186;
-        posY = 57;
-        spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp, posX + ABILITY_POP_UP_POS_X_SLIDE, posY, 0);
-	spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp2, posX + ABILITY_POP_UP_POS_X_SLIDE + ABILITY_POP_UP_POS_X_DIFF, posY, 0);
+        spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp, coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_SLIDE, coords[battlerPosition][1], 0);
+	spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp2, coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_SLIDE + ABILITY_POP_UP_POS_X_DIFF, coords[battlerPosition][1], 0);
     }
     
-    gSprites[spriteId1].tOriginalX = posX;
-    gSprites[spriteId2].tOriginalX = posX + ABILITY_POP_UP_POS_X_DIFF;
+    gSprites[spriteId1].tOriginalX = coords[battlerPosition][0];
+    gSprites[spriteId2].tOriginalX = coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_DIFF;
 
     gAbilityPopUpIds[battler][0] = spriteId1;
     gAbilityPopUpIds[battler][1] = spriteId2;
