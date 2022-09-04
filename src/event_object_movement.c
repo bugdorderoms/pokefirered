@@ -9149,12 +9149,8 @@ static void DoRippleFieldEffect(struct ObjectEvent *objectEvent, struct Sprite *
 }
 
 // used in the fame checker
-void InitObjectEventPalettes(u8 palSlot)
+void InitObjectEventPalettes(u8 palSlot) // palSlot is unused for now
 {
-        // palSlot is unused for now
-
-        FreeAllSpritePalettes();
-	
 	u16 palSet[] = {
 		OBJ_EVENT_PAL_TAG_PLAYER_RED,
 		OBJ_EVENT_PAL_TAG_PLAYER_RED_REFLECTION,
@@ -9167,6 +9163,6 @@ void InitObjectEventPalettes(u8 palSlot)
 		OBJ_EVENT_PAL_TAG_NPC_GREEN_REFLECTION,
 		OBJ_EVENT_PAL_TAG_NPC_WHITE_REFLECTION
 	};
-	
+	FreeAllSpritePalettes();
 	PatchObjectPaletteRange(palSet, 0, 10);
 }
