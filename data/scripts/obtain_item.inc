@@ -10,6 +10,7 @@ EventScript_RestorePrevTextColor:: @ 81A6675
 Std_ObtainItem:: @ 81A667B
 	copyvar VAR_PREV_TEXT_COLOR, VAR_TEXT_COLOR
 	textcolor 3
+	copyvar VAR_0x8009, VAR_0x8000
 	additem VAR_0x8000, VAR_0x8001
 	copyvar VAR_0x8007, VAR_RESULT
 	call EventScript_ObtainItemMessage
@@ -67,9 +68,12 @@ EventScript_BufferBerryPouch:: @ 81A6739
 
 EventScript_ObtainedItem:: @ 81A6749
 	message Text_ObtainedTheX
+	delay 10
+	callnative CreateItemIconOnFindMessage
 	waitfanfare
 	waitmessage
 	msgbox Text_PutItemAway
+	callnative DestroyItemIconOnFindMessage
 	setvar VAR_RESULT, 1
 	return
 
@@ -116,6 +120,7 @@ Std_FindItem:: @ 81A67B3
 	lock
 	faceplayer
 	waitse
+	copyvar VAR_0x8009, VAR_0x8000
 	copyvar VAR_0x8004, VAR_0x8000
 	copyvar VAR_0x8005, VAR_0x8001
 	checkitemspace VAR_0x8000, VAR_0x8001
@@ -132,14 +137,16 @@ Std_FindItem:: @ 81A67B3
 
 EventScript_PickUpItem:: @ 81A67EE
 	removeobject VAR_LAST_TALKED
+	additem VAR_0x8004, VAR_0x8005
+	copyvar VAR_0x8009, VAR_0x8004
 	specialvar VAR_RESULT, BufferTMHMMoveName
 	copyvar VAR_0x8008, VAR_RESULT
 	compare VAR_0x8008, TRUE
 	call_if_eq EventScript_FoundTMHM
 	compare VAR_0x8008, FALSE
 	call_if_eq EventScript_FoundItem
+	delay 10
 	callnative CreateItemIconOnFindMessage
-	additem VAR_0x8004, VAR_0x8005
 	waitfanfare
 	waitmessage
 	msgbox Text_PutItemAway
@@ -164,6 +171,7 @@ EventScript_HiddenItemScript:: @ 81A6843
 	lockall
 	textcolor 3
 	waitse
+	copyvar VAR_0x8009, VAR_0x8005
 	compare VAR_0x8005, 0
 	goto_if_eq EventScript_TryPickUpHiddenCoins
 	call EventScript_TryPickUpHiddenItem
@@ -182,6 +190,8 @@ EventScript_TryPickUpHiddenItem::
 	return
 
 EventScript_PickedUpHiddenItem::
+        delay 10
+	callnative CreateItemIconOnFindMessage
 	compare VAR_0x8006, 1
 	call_if_eq EventScript_FoundSingleItem
 	compare VAR_0x8006, 1
@@ -189,6 +199,7 @@ EventScript_PickedUpHiddenItem::
 	waitfanfare
 	waitmessage
 	msgbox Text_PutItemAway
+	callnative DestroyItemIconOnFindMessage
 	special SetHiddenItemFlag
 	releaseall
 	end
