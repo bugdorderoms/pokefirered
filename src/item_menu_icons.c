@@ -7,6 +7,7 @@
 #include "item_menu_icons.h"
 #include "event_data.h"
 #include "new_menu_helpers.h"
+#include "overworld.h"
 #include "constants/items.h"
 
 static EWRAM_DATA u8 sItemMenuIconSpriteIds[12] = {0};
@@ -178,25 +179,21 @@ static const struct SpriteTemplate sSpriteTemplate_ItemIcon = {
     SpriteCallbackDummy
 };
 
-static const struct SpriteTemplate sItemFindTemplate = {
-    ITEMICON_TAG,
-    ITEMICON_TAG,
-    &sOamData_ItemIconFind,
-    sAnimTable_ItemIcon,
-    NULL,
-    gDummySpriteAffineAnimTable,
-    SpriteCallbackDummy
+static const union AffineAnimCmd sSpriteAffineAnim_KeyItemTM[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, 128, 1), //Start rotated left
+	AFFINEANIMCMD_FRAME(16, 16, -8, 16), //Double sprite size + rotate right
+	AFFINEANIMCMD_FRAME(0, 0, -3, 8), //End at right 24
+	AFFINEANIMCMD_FRAME(0, 0, 3, 16), //End at left 24
+	AFFINEANIMCMD_FRAME(0, 0, -3, 16), //End at right 24
+	AFFINEANIMCMD_FRAME(0, 0, 3, 16), //End at left 24
+	AFFINEANIMCMD_FRAME(0, 0, -3, 8), //End at 0
+	AFFINEANIMCMD_END,
 };
 
-static const struct WindowTemplate sItemDescWindowTemplate =
+static const union AffineAnimCmd* const sSpriteAffineAnimTable_KeyItemTM[] =
 {
-	.bg = 0,
-	.tilemapLeft = 1,
-	.tilemapTop = 1,
-	.width = 28,
-	.height = 6,
-	.paletteNum = 15,
-	.baseBlock = 0x008,
+	sSpriteAffineAnim_KeyItemTM,
 };
 
 static const void *const sItemIconGfxPtrs[][2] = {
@@ -819,50 +816,205 @@ void sub_80989A0(u16 itemId, u8 idx)
     }
 }
 
-void CreateItemIconOnFindMessage(void)
+static u8 ReformatItemDescription(u16 item, u8* dest, u8 maxChars)
 {
-	s16 posX, posY;
-	bool8 HasItem = CheckBagHasItem(gSpecialVar_0x8004, 1);
-	u8 windowId, spriteId = AddItemIconObjectWithCustomObjectTemplate(&sItemFindTemplate, ITEMICON_TAG, ITEMICON_TAG, gSpecialVar_0x8004);
-    
-	if (HasItem)
+	u8 count = 0, numLines = 1, k = 0;
+	u8 buffer[150];
+	u8 *desc = (u8 *)ItemId_GetDescription(item);
+	u8* lineStart;
+
+	memset(dest, 0xFF, 500);
+
+	lineStart = dest;
+	
+	StringExpandPlaceholders(buffer, desc);
+	
+	while (buffer[k] != EOS)
 	{
-		// if has the item only show it in the message box
-		posX = 208;
-		posY = 140;
+		if (GetStringWidth(0, lineStart, 0) >= maxChars)
+		{
+			do
+			{
+				dest--;
+				k--;
+			} while (buffer[k] != CHAR_SPACE && buffer[k] != CHAR_NEWLINE);
+			
+			if (buffer[k + 1] != EOS)
+			{
+				*dest = CHAR_NEWLINE;
+				numLines++;
+			}
+			count = 0;
+			dest++;
+			k++;
+			lineStart = dest;
+			continue;
+		}
+		*dest = buffer[k];
+		
+		if (buffer[k] == CHAR_NEWLINE)
+		{
+			if (buffer[k - 1] != CHAR_SPACE)
+				*dest = CHAR_SPACE;
+			else
+				dest--;
+		}
+		dest++;
+		k++;
+		count++;
+	}
+	*dest = EOS;
+
+	return numLines;
+}
+
+#define ITEM_ICON_X 26
+#define ITEM_ICON_Y 24
+
+#define IS_KEY_ITEM_TM(pocket) ((pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE))
+
+static u8 ShowObtainedItemDescription(u16 item)
+{
+	struct WindowTemplate template;
+	s16 textX, textY, maxWidth, windowHeight, numLines;
+	u8 buffer[500], windowId;
+	
+	if (IS_KEY_ITEM_TM(ItemId_GetPocket(item)))
+	{
+		textX = 1;
+		maxWidth = 222;
 	}
 	else
 	{
-		// otherwise create a window for it's description
-		windowId = AddWindow(&sItemDescWindowTemplate);
-		PutWindowTilemap(windowId);
-		DrawStdWindowFrame(windowId, FALSE);
-		AddTextPrinterParameterized(windowId, 2, ItemId_GetDescription(gSpecialVar_0x8004), 22, 0, 0xFF, 0);
-		CopyWindowToVram(windowId, COPYWIN_GFX);
-		posX = 22;
-		posY = 34;
-		gSprites[spriteId].data[1] = windowId;
+		textX = ITEM_ICON_X + 2;
+		maxWidth = 195;
 	}
-	gSprites[spriteId].data[0] = HasItem;
-	gSprites[spriteId].x = posX;
-	gSprites[spriteId].y = posY;
-	gSpecialVar_0x8006 = spriteId; // save sprite id for use later
+	numLines = ReformatItemDescription(item, buffer, maxWidth);
+	
+	if (numLines == 1)
+	{
+		textY = 4;
+		windowHeight = 3;
+	}
+	else if (numLines >= 3)
+	{
+		textY = 0;
+		windowHeight = 5;
+	}
+	else
+	{
+		textY = 0;
+		windowHeight = 4;
+	}
+	template = SetWindowTemplateFields(0, 1, 1, 28, windowHeight, 14, 0x20);
+	windowId = AddWindow(&template);
+	FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
+	DrawStdFrameWithCustomTileAndPalette(windowId, FALSE, 0x214, 14);
+	PutWindowTilemap(windowId);
+	CopyWindowToVram(windowId, COPYWIN_BOTH);
+	AddTextPrinterParameterized(windowId, 0, buffer, textX, textY, 0, NULL);
+	GetSetItemObtained(item, FLAG_SET_OBTAINED);
+	
+	return windowId;
+}
+
+void CreateItemIconOnFindMessage(void)
+{
+	struct Sprite * sprite;
+	u16 reg1 = GetGpuReg(REG_OFFSET_DISPCNT), reg2 = GetGpuReg(REG_OFFSET_WINOUT), itemId = gSpecialVar_0x8009;
+	s16 x, y;
+	u8 spriteId, spriteId2 = MAX_SPRITES, windowId = 0xFF;
+	
+	spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
+	
+	if (Overworld_GetFlashLevel())
+	{
+		SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
+		SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
+		
+		spriteId2 = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
+	}
+	if (spriteId != MAX_SPRITES)
+	{
+		sprite = &gSprites[spriteId];
+		
+		if (IS_KEY_ITEM_TM(ItemId_GetPocket(itemId)))
+		{
+			x = 112;
+			y = 64;
+			
+			sprite->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
+			sprite->oam.matrixNum = AllocOamMatrix();
+			sprite->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
+			
+			StartSpriteAffineAnim(sprite, 0);
+			
+			if (!GetSetItemObtained(itemId, FLAG_GET_OBTAINED))
+				windowId = ShowObtainedItemDescription(itemId);
+		}
+		else
+		{
+			if (GetSetItemObtained(itemId, FLAG_GET_OBTAINED))
+			{
+				x = 213;
+				y = 140;
+			}
+			else
+			{
+				x = ITEM_ICON_X;
+				y = ITEM_ICON_Y;
+				
+				windowId = ShowObtainedItemDescription(itemId);
+			}
+		}
+		sprite->x2 = x;
+		sprite->y2 = y;
+		sprite->oam.priority = 0;
+		sprite->data[0] = windowId;
+		sprite->data[1] = reg1;
+		sprite->data[2] = reg2;
+		sprite->data[3] = spriteId2;
+	}
+	if (spriteId2 != MAX_SPRITES)
+	{
+		sprite = &gSprites[spriteId2];
+		
+		sprite->x2 = x;
+		sprite->y2 = y;
+		sprite->oam.priority = 0;
+		sprite->oam.objMode = ST_OAM_OBJ_WINDOW;
+	}
+	gSpecialVar_0x8009 = spriteId; // save sprite id for use later
 }
 
 void DestroyItemIconOnFindMessage(void)
 {
-	bool8 HasItem = gSprites[gSpecialVar_0x8006].data[0];
-	u8 WindowId = gSprites[gSpecialVar_0x8006].data[1];
+	u8 windowId, spriteId2, spriteId = gSpecialVar_0x8009;
+	u16 reg1, reg2;
+	struct Sprite * sprite = &gSprites[spriteId];
 	
-	DestroySprite(&gSprites[gSpecialVar_0x8006]);
-	gSpecialVar_0x8006 = 0;
+	windowId = sprite->data[0];
+	reg1 = sprite->data[1];
+	reg2 = sprite->data[2];
+	spriteId2 = sprite->data[3];
+	
 	FreeSpriteTilesByTag(ITEMICON_TAG);
 	FreeSpritePaletteByTag(ITEMICON_TAG);
+	FreeSpriteOamMatrix(sprite);
+	DestroySprite(sprite);
 	
-	if (!HasItem)
+	if (spriteId2 != MAX_SPRITES)
 	{
-		ClearStdWindowAndFrameToTransparent(WindowId, FALSE);
-		CopyWindowToVram(WindowId, COPYWIN_GFX);
-		RemoveWindow(WindowId);
+		SetGpuReg(REG_OFFSET_DISPCNT, reg1);
+		SetGpuReg(REG_OFFSET_WINOUT, reg2);
+		
+		FreeSpriteTilesByTag(ITEMICON_TAG);
+		FreeSpritePaletteByTag(ITEMICON_TAG);
+		DestroySprite(&gSprites[spriteId2]);
+	}
+	if (windowId != 0xFF)
+	{
+		ClearDialogWindowAndFrame(windowId, TRUE);
+		RemoveWindow(windowId);
 	}
 }
