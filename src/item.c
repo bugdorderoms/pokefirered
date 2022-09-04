@@ -678,3 +678,22 @@ u8 ItemId_GetSecondaryId(u16 itemId)
 {
     return gItems[SanitizeItemId(itemId)].secondaryId;
 }
+
+bool8 GetSetItemObtained(u16 item, u8 caseId)
+{
+    u8 index, bit, mask;
+
+    index = item / 8;
+    bit = item % 8;
+    mask = 1 << bit;
+	
+    switch (caseId)
+    {
+		case FLAG_GET_OBTAINED:
+		    return gSaveBlock2Ptr->itemFlags[index] & mask;
+		case FLAG_SET_OBTAINED:
+			gSaveBlock2Ptr->itemFlags[index] |= mask;
+			return TRUE;
+    }
+    return FALSE;
+}
