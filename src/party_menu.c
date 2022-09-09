@@ -3691,8 +3691,11 @@ static void Task_MoveItem(u8 taskId)
 	item1 = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_HELD_ITEM);
 	item2 = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_HELD_ITEM);
 	
-	SetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_HELD_ITEM, &item2);
-	SetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_HELD_ITEM, &item1);
+	if (ItemIsMail(item2))
+		TakeMailFromMon(&gPlayerParty[gPartyMenu.slotId2]);
+		    
+	GiveItemToMon(&gPlayerParty[gPartyMenu.slotId], item2);
+	GiveItemToMon(&gPlayerParty[gPartyMenu.slotId2], item1);
 	
 	UpdatePartyMonHeldItemSprite(&gPlayerParty[gPartyMenu.slotId], &sPartyMenuBoxes[gPartyMenu.slotId]);
 	UpdatePartyMonHeldItemSprite(&gPlayerParty[gPartyMenu.slotId2], &sPartyMenuBoxes[gPartyMenu.slotId2]);
@@ -3712,9 +3715,9 @@ static void Task_MoveItem(u8 taskId)
 	    ScheduleBgCopyTilemapToVram(2);
 	}
 	AnimatePartySlot(gPartyMenu.slotId2, 0);
-	AnimatePartySlot(gPartyMenu.slotId, 1);
-	
-	gTasks[taskId].func = Task_UpdateHeldItemSprite;
+        AnimatePartySlot(gPartyMenu.slotId, 1);
+		    
+	gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
 	break;
     case 2: // Selected Cancel
         HandleChooseMonCancel(taskId, slotPtr);
