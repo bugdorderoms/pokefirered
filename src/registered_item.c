@@ -464,9 +464,7 @@ static void SpriteCB_WaitAffinAnimsAndSwitchItems(struct Sprite *sprite)
 	
 	if ((firstItem && gSprites[firstItem].affineAnimEnded) || (secondItem && gSprites[secondItem].affineAnimEnded)) // wait anim ends to continue
 	{
-		temp = gSaveBlock1Ptr->registeredItem[sprite->sCursorDirection];
-		gSaveBlock1Ptr->registeredItem[sprite->sCursorDirection] = gSaveBlock1Ptr->registeredItem[sprite->sCursorToSwitch];
-		gSaveBlock1Ptr->registeredItem[sprite->sCursorToSwitch] = temp;
+		SWAP(gSaveBlock1Ptr->registeredItem[sprite->sCursorDirection], gSaveBlock1Ptr->registeredItem[sprite->sCursorToSwitch], temp);
 			
 		gSprites[sprite->sBoxSpriteIds(sprite->sCursorDirection)].sItemSpriteId = secondItem;
 		gSprites[sprite->sBoxSpriteIds(sprite->sCursorToSwitch)].sItemSpriteId = firstItem;
@@ -475,12 +473,8 @@ static void SpriteCB_WaitAffinAnimsAndSwitchItems(struct Sprite *sprite)
 		
 		if (firstItem && secondItem)
 		{
-			temp = gSprites[firstItem].x;
-			gSprites[firstItem].x = gSprites[secondItem].x;
-			gSprites[secondItem].x = temp;
-			temp = gSprites[firstItem].y;
-			gSprites[firstItem].y = gSprites[secondItem].y;
-			gSprites[secondItem].y = temp;
+			SWAP(gSprites[firstItem].x, gSprites[secondItem].x, temp);
+			SWAP(gSprites[firstItem].y, gSprites[secondItem].y, temp);
 		}
 		else if (firstItem)
 		{
