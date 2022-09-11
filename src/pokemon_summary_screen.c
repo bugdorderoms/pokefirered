@@ -2466,7 +2466,7 @@ const u8 sStatsPosY[] =
 
 static u8 GetStatColor(u8 statiD)
 {
-	switch (gNatureStatTable[GetNature(&sMonSummaryScreen->currentMon)][statiD])
+	switch (gNatureStatTable[GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_NATURE, NULL)][statiD])
 	{
 		case 0: // stat unmodified
 			return 0; // no color
@@ -2607,7 +2607,7 @@ static void PokeSum_PrintTrainerMemo_Mon_HeldByOT(void)
     u8 natureMetOrHatchedAtLevelStr[152];
 
     DynamicPlaceholderTextUtil_Reset();
-    nature = GetNature(&sMonSummaryScreen->currentMon);
+    nature = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_NATURE);
     DynamicPlaceholderTextUtil_SetPlaceholderPtr(0, gNatureNamePointers[nature]);
     level = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MET_LEVEL);
 
@@ -2681,7 +2681,7 @@ static void PokeSum_PrintTrainerMemo_Mon_NotHeldByOT(void)
     u8 natureMetOrHatchedAtLevelStr[152];
 
     DynamicPlaceholderTextUtil_Reset();
-    nature = GetNature(&sMonSummaryScreen->currentMon);
+    nature = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_NATURE);
     DynamicPlaceholderTextUtil_SetPlaceholderPtr(0, gNatureNamePointers[nature]);
 
     level = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MET_LEVEL);
