@@ -1779,6 +1779,8 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
 	    }
     }
     SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
+    value = GetNatureFromPersonality(personality);
+    SetBoxMonData(boxMon, MON_DATA_NATURE, &value);
     SetBoxMonData(boxMon, MON_DATA_OT_ID, &value);
     GetSpeciesName(speciesName, species);
     SetBoxMonData(boxMon, MON_DATA_NICKNAME, speciesName);
@@ -1842,15 +1844,8 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
 
 void CreateMonWithNature(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 nature)
 {
-    u32 personality;
-
-    do
-    {
-        personality = Random32();
-    }
-    while (nature != GetNatureFromPersonality(personality));
-
-    CreateMon(mon, species, level, fixedIV, 1, personality, OT_ID_PLAYER_ID, 0);
+    CreateMon(mon, species, level, fixedIV, 1, Random32(), OT_ID_PLAYER_ID, 0);
+    SetMonData(mon, MON_DATA_NATURE, &nature);
 }
 
 void CreateMonWithGenderNatureLetter(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 gender, u8 nature, u8 unownLetter)
@@ -1866,9 +1861,7 @@ void CreateMonWithGenderNatureLetter(struct Pokemon *mon, u16 species, u8 level,
             personality = Random32();
             actualLetter = ((((personality & 0x3000000) >> 18) | ((personality & 0x30000) >> 12) | ((personality & 0x300) >> 6) | (personality & 0x3)) % 28);
         }
-        while (nature != GetNatureFromPersonality(personality)
-            || gender != GetGenderFromSpeciesAndPersonality(species, personality)
-            || actualLetter != unownLetter - 1);
+        while (gender != GetGenderFromSpeciesAndPersonality(species, personality) || actualLetter != unownLetter - 1);
     }
     else
     {
@@ -1876,11 +1869,11 @@ void CreateMonWithGenderNatureLetter(struct Pokemon *mon, u16 species, u8 level,
         {
             personality = Random32();
         }
-        while (nature != GetNatureFromPersonality(personality)
-            || gender != GetGenderFromSpeciesAndPersonality(species, personality));
+        while (gender != GetGenderFromSpeciesAndPersonality(species, personality));
     }
 
     CreateMon(mon, species, level, fixedIV, 1, personality, OT_ID_PLAYER_ID, 0);
+    SetMonData(mon, MON_DATA_NATURE, &nature);
 }
 
 // Used to create the Old Man's Weedle?
@@ -2052,7 +2045,7 @@ void ConvertPokemonToBattleTowerPokemon(struct Pokemon *mon, struct BattleTowerP
 {                                                               \
     u8 baseStat = gBaseStats[species].base;                     \
     s32 n = (((2 * baseStat + iv + ev / 4) * level) / 100) + 5; \
-    u8 nature = GetNature(mon);                                 \
+    u8 nature = GetMonData(mon, MON_DATA_NATURE, NULL);         \
     n = ModifyStatByNature(nature, n, statIndex);               \
     SetMonData(mon, field, &n);                                 \
 }
@@ -2716,6 +2709,9 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
     case MON_DATA_FRIENDSHIP:
         retVal = substruct0->friendship;
         break;
+    case MON_DATA_NATURE:
+        retVal = substruct0->nature;
+	break;
     case MON_DATA_MOVE1:
     case MON_DATA_MOVE2:
     case MON_DATA_MOVE3:
@@ -3257,6 +3253,9 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
     case MON_DATA_EVENT_LEGAL:
         SET8(substruct3->eventLegal);
         break;
+    case MON_DATA_NATURE:
+        SET8(substruct0->nature);
+	break;
     case MON_DATA_IVS:
     {
 #ifdef BUGFIX_SETMONIVS
@@ -4540,11 +4539,6 @@ const u8 *Battle_PrintStatBoosterEffectMessage(u16 itemId)
     return gDisplayedStringBattle;
 }
 
-u8 GetNature(struct Pokemon *mon)
-{
-    return GetMonData(mon, MON_DATA_PERSONALITY, NULL) % 25;
-}
-
 u8 GetNatureFromPersonality(u32 personality)
 {
     return personality % 25;
@@ -5491,13 +5485,7 @@ bool8 IsPokeSpriteNotFlipped(u16 species)
 
 static s8 GetMonFlavorRelation(struct Pokemon *mon, u8 flavor)
 {
-    u8 nature = GetNature(mon);
-    return sPokeblockFlavorCompatibilityTable[nature * 5 + flavor];
-}
-
-s8 GetFlavorRelationByPersonality(u32 personality, u8 flavor)
-{
-    u8 nature = GetNatureFromPersonality(personality);
+    u8 nature = GetMonData(mon, MON_DATA_NATUE, NULL);
     return sPokeblockFlavorCompatibilityTable[nature * 5 + flavor];
 }
 
@@ -5706,7 +5694,7 @@ static u16 GetDeoxysStat(struct Pokemon *mon, s32 statId)
         ivVal = GetMonData(mon, MON_DATA_HP_IV + statId, NULL);
         evVal = GetMonData(mon, MON_DATA_HP_EV + statId, NULL);
         statValue = ((sDeoxysBaseStats[statId] * 2 + ivVal + evVal / 4) * mon->level) / 100 + 5;
-        nature = GetNature(mon);
+        nature = GetMonData(mon, MON_DATA_NATURE, NULL);
         statValue = ModifyStatByNature(nature, statValue, (u8)statId);
     }
     return statValue;
