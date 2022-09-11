@@ -2055,20 +2055,13 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
                 for (j = 0; gSpeciesNames[partyData[i].species][j] != EOS; ++j)
                     nameHash += gSpeciesNames[partyData[i].species][j];
                 fixedIV = partyData[i].iv;
-                if (gTrainerEvsTable[fixedIV].nature != 0)
-                {
-                    do
-                    {
-                        personalityValue = Random32();
-                    }
-                    while (gTrainerEvsTable[fixedIV].nature != GetNatureFromPersonality(personalityValue));
-                }
-                else
-                    personalityValue += nameHash << 8;
+		personalityValue += nameHash << 8;
                 CreateMon(&party[i], partyData[i].species, partyData[i].lvl, gTrainerEvsTable[fixedIV].ivs, TRUE, personalityValue, OT_ID_RANDOM_NO_SHINY, 0);
                 SetMonData(&party[i], MON_DATA_HELD_ITEM, &partyData[i].heldItem);
                 for (j = 0; j < NUM_STATS; j++)
                     SetMonData(&party[i], MON_DATA_HP_EV + j, &gTrainerEvsTable[fixedIV].Evs[j]);
+		if (gTrainerEvsTable[fixedIV].nature != 0)
+		    SetMonData(&party[i], MON_DATA_NATURE, &gTrainerEvsTable[fixedIV].nature);
                 CalculateMonStats(&party[i]);
                 for (j = 0; j < MAX_MON_MOVES; ++j)
                 {
