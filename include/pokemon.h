@@ -387,6 +387,7 @@ u8 GiveMonToPlayer(struct Pokemon *mon);
 u8 CalculatePlayerPartyCount(void);
 u8 CalculateEnemyPartyCount(void);
 u8 GetMonsStateToDoubles(void);
+u8 GetNatureFromPersonality(u32 personality);
 u16 GetAbilityBySpecies(u16 species, bool8 abilityNum, bool8 abilityHidden);
 u16 GetMonAbility(struct Pokemon *mon);
 u8 GetSecretBaseTrainerPicIndex(void);
