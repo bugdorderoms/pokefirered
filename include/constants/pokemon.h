@@ -92,6 +92,7 @@
 #define MON_DATA_SPATK2            87
 #define MON_DATA_SPDEF2            88
 #define MON_DATA_ABILITY_HIDDEN    89
+#define MON_DATA_NATURE            90
 
 #define FLAG_MAKES_CONTACT          0x1
 #define FLAG_PROTECT_AFFECTED       0x2
