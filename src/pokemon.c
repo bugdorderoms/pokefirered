@@ -5485,7 +5485,7 @@ bool8 IsPokeSpriteNotFlipped(u16 species)
 
 static s8 GetMonFlavorRelation(struct Pokemon *mon, u8 flavor)
 {
-    u8 nature = GetMonData(mon, MON_DATA_NATUE, NULL);
+    u8 nature = GetMonData(mon, MON_DATA_NATURE, NULL);
     return sPokeblockFlavorCompatibilityTable[nature * 5 + flavor];
 }
 
