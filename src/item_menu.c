@@ -1590,40 +1590,43 @@ static void Task_BagMenu_HandleInput(u8 taskId)
         SwitchPockets(taskId,  1, FALSE);
         return;
     default:
-        if (JOY_NEW(SELECT_BUTTON) && gBagMenuState.location == ITEMMENULOCATION_FIELD)
-        {
-	    ListMenuGetScrollAndRow(data[0], &cursorPos, &itemsAbove);
-	
-            if (cursorPos + itemsAbove != sBagMenuDisplay->nItems[gBagMenuState.pocket])
-            {
-                PlaySE(SE_SELECT);
-                BeginMovingItemInPocket(taskId, cursorPos + itemsAbove);
-                return;
-            }
-        }
-        else if (JOY_NEW(START_BUTTON))
-        {
-            if (sBagMenuDisplay->nItems[gBagMenuState.pocket] <= 1)
-            {
-                PlaySE(SE_FAILURE);
-		BagDestroyPocketSwitchArrowPair();
-                DisplayItemMessageInBag(taskId, 2, sText_NothingToSort, Task_WaitAButtonAndCloseContextMenu);
-                return;
-            }
-            ListMenuGetScrollAndRow(data[0], &cursorPos, &itemsAbove);
-	    
-            if (cursorPos + itemsAbove != sBagMenuDisplay->nItems[gBagMenuState.pocket])
-	    {
-	            PlaySE(SE_SELECT);
-		    BagDestroyPocketScrollArrowPair();
-		    bag_menu_print_cursor_(data[0], 2);
-	            data[1] = ListMenu_ProcessInput(data[0]);
-		    data[2] = BagGetQuantityByPocketPosition(gBagMenuState.pocket + 1, data[1]);
-		    gSpecialVar_ItemId = BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, data[1]);
-		    gTasks[taskId].func = Task_LoadBagSortOptions;
-		    return;
-	    }
-        }
+	if (gBagMenuState.location == ITEMMENULOCATION_FIELD)
+	{
+		if (JOY_NEW(SELECT_BUTTON))
+		{
+			ListMenuGetScrollAndRow(data[0], &cursorPos, &itemsAbove);
+			
+			if (cursorPos + itemsAbove != sBagMenuDisplay->nItems[gBagMenuState.pocket])
+			{
+				PlaySE(SE_SELECT);
+				BeginMovingItemInPocket(taskId, cursorPos + itemsAbove);
+				return;
+			}
+		}
+		else if (JOY_NEW(START_BUTTON))
+		{
+			if (sBagMenuDisplay->nItems[gBagMenuState.pocket] <= 1)
+			{
+				PlaySE(SE_FAILURE);
+				BagDestroyPocketSwitchArrowPair();
+				DisplayItemMessageInBag(taskId, 2, sText_NothingToSort, Task_WaitAButtonAndCloseContextMenu);
+				return;
+			}
+			ListMenuGetScrollAndRow(data[0], &cursorPos, &itemsAbove);
+			
+			if (cursorPos + itemsAbove != sBagMenuDisplay->nItems[gBagMenuState.pocket])
+			{
+				PlaySE(SE_SELECT);
+				BagDestroyPocketScrollArrowPair();
+				bag_menu_print_cursor_(data[0], 2);
+				data[1] = ListMenu_ProcessInput(data[0]);
+				data[2] = BagGetQuantityByPocketPosition(gBagMenuState.pocket + 1, data[1]);
+				gSpecialVar_ItemId = BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, data[1]);
+				gTasks[taskId].func = Task_LoadBagSortOptions;
+				return;
+			}
+		}
+	}
         break;
     }
     input = ListMenu_ProcessInput(data[0]);
