@@ -296,3 +296,17 @@ EventScript_FailSweetScent:: @ 81BE564
 
 Text_LooksLikeNothingHere:: @ 81BE56D
 	.string "Looks like there's nothing here…$"
+
+EventScript_DisableAutoRun::
+        msgbox Text_AutoRunDisabled MSGBOX_SIGN
+	end
+	
+Text_AutoRunDisabled::
+        .string "Auto run disabled.$"
+	
+EventScript_EnableAutoRun::
+        msgbox Text_AutoRunEnabled MSGBOX_SIGN
+	end
+	
+Text_AutoRunEnabled::
+        .string "Auto run enabled.$"
