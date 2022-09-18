@@ -6,7 +6,6 @@
 #include "m4a.h"
 #include "random.h"
 #include "gba/flash_internal.h"
-#include "help_system.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
 #include "pokemon.h"
@@ -148,7 +147,6 @@ void AgbMain()
     SetDefaultFontsPointer();
 
     gSoftResetDisabled = FALSE;
-    gHelpSystemEnabled = FALSE;
 
     SetNotInSaveFailedScreen();
 
@@ -237,7 +235,7 @@ static void InitMainCallbacks(void)
 
 static void CallCallbacks(void)
 {
-    if (!RunSaveFailedScreen() && !RunHelpSystemCallback())
+    if (!RunSaveFailedScreen())
     {
         if (gMain.callback1)
             gMain.callback1();
@@ -296,11 +294,7 @@ static void ReadKeys(void)
     gMain.newKeysRaw = keyInput & ~gMain.heldKeysRaw;
     gMain.newKeys = gMain.newKeysRaw;
     gMain.newAndRepeatedKeys = gMain.newKeysRaw;
-
-    // BUG: Key repeat won't work when pressing L using L=A button mode
-    // because it compares the raw key input with the remapped held keys.
-    // Note that newAndRepeatedKeys is never remapped either.
-
+    
     if (keyInput != 0 && gMain.heldKeys == keyInput)
     {
         gMain.keyRepeatCounter--;
@@ -319,16 +313,6 @@ static void ReadKeys(void)
 
     gMain.heldKeysRaw = keyInput;
     gMain.heldKeys = gMain.heldKeysRaw;
-
-    // Remap L to A if the L=A option is enabled.
-    if (gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A)
-    {
-        if (JOY_NEW(L_BUTTON))
-            gMain.newKeys |= A_BUTTON;
-
-        if (JOY_HELD(L_BUTTON))
-            gMain.heldKeys |= A_BUTTON;
-    }
 
     if (JOY_NEW(gMain.watchedKeysMask))
         gMain.watchedKeysPressed = TRUE;
