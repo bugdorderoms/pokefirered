@@ -20,7 +20,6 @@
 #include "battle_controllers.h"
 #include "global.fieldmap.h"
 #include "teachy_tv.h"
-#include "help_system.h"
 #include "overworld.h"
 #include "graphics.h"
 #include "fieldmap.h"
@@ -493,7 +492,6 @@ static void TeachyTvMainCallback(void)
         ScheduleBgCopyTilemapToVram(1);
         ScheduleBgCopyTilemapToVram(2);
         ScheduleBgCopyTilemapToVram(3);
-        SetHelpContextDontCheckBattle(HELPCONTEXT_BAG);
         BlendPalettes(0xFFFFFFFF, 0x10, 0);
         BeginNormalPaletteFade(0xFFFFFFFF, 0, 0x10, 0, 0);
         SetVBlankCallback(TeachyTvVblankHandler);
