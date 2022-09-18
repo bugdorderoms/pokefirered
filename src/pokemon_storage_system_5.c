@@ -1269,13 +1269,11 @@ static u8 InBoxInput_Normal(void)
         if (JOY_NEW(B_BUTTON))
             return 19;
 
-        if (gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_LR)
-        {
-            if (JOY_HELD(L_BUTTON))
-                return 10;
-            if (JOY_HELD(R_BUTTON))
-                return 9;
-        }
+        if (JOY_HELD(L_BUTTON))
+            return 10;
+        
+        if (JOY_HELD(R_BUTTON))
+            return 9;
 
         if (JOY_NEW(SELECT_BUTTON))
         {
@@ -1437,14 +1435,12 @@ static u8 InBoxInput_MovingMultiple(void)
     }
     else
     {
-        if (gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_LR)
-        {
-            if (JOY_HELD(L_BUTTON))
-                return 10;
-            if (JOY_HELD(R_BUTTON))
-                return 9;
-        }
-
+        if (JOY_HELD(L_BUTTON))
+            return 10;
+            
+        if (JOY_HELD(R_BUTTON))
+            return 9;
+            
         return 0;
     }
 }
@@ -1600,18 +1596,10 @@ static u8 HandleInput_OnBox(void)
             break;
         }
 
-        if (JOY_HELD(DPAD_LEFT))
+        if (JOY_HELD(DPAD_LEFT | L_BUTTON))
             return 10;
-        if (JOY_HELD(DPAD_RIGHT))
+        if (JOY_HELD(DPAD_RIGHT | R_BUTTON))
             return 9;
-
-        if (gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_LR)
-        {
-            if (JOY_HELD(L_BUTTON))
-                return 10;
-            if (JOY_HELD(R_BUTTON))
-                return 9;
-        }
 
         if (JOY_NEW(A_BUTTON))
         {
