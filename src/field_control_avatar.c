@@ -68,6 +68,7 @@ static s8 GetWarpEventAtMapPosition(struct MapHeader * mapHeader, struct MapPosi
 static bool8 TryDoorWarp(struct MapPosition * position, u16 metatileBehavior, u8 playerDirection);
 static s8 GetWarpEventAtPosition(struct MapHeader * mapHeader, u16 x, u16 y, u8 z);
 static const u8 *GetCoordEventScriptAtPosition(struct MapHeader * mapHeader, u16 x, u16 y, u8 z);
+static bool8 ToggleAutoRun(void);
 
 struct FieldInput gInputToStoreInQuestLogMaybe;
 
@@ -292,6 +293,8 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
         gInputToStoreInQuestLogMaybe.pressedSelectButton = TRUE;
         return TRUE;
     }
+    if (input->pressedRButton && ToggleAutoRun())
+		return TRUE;
 
     return FALSE;
 }
@@ -1159,4 +1162,21 @@ int SetCableClubWarp(void)
     MapGridGetMetatileBehaviorAt(position.x, position.y);  // unnecessary
     SetupWarp(&gMapHeader, GetWarpEventAtMapPosition(&gMapHeader, &position), &position);
     return 0;
+}
+
+static bool8 ToggleAutoRun(void)
+{
+	if (!FlagGet(FLAG_SYS_B_DASH))
+		return FALSE;
+	
+	PlaySE(SE_SELECT);
+	
+	if (gSaveBlock2Ptr->autoRun)
+		ScriptContext1_SetupScript(EventScript_DisableAutoRun);
+	else
+		ScriptContext1_SetupScript(EventScript_EnableAutoRun);
+	
+	gSaveBlock2Ptr->autoRun = !gSaveBlock2Ptr->autoRun;
+	
+	return TRUE;
 }
