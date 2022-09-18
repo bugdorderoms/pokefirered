@@ -1,5 +1,7 @@
 #include "global.h"
 #include "gflib.h"
+#include "event_data.h"
+#include "strings.h"
 #include "m4a.h"
 #include "quest_log.h"
 #include "graphics.h"
