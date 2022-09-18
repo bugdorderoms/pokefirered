@@ -912,4 +912,7 @@ extern const u8 TradeCenter_TerminateLink[];
 
 extern const u8 EventScript_Honey[];
 
+extern const u8 EventScript_EnableAutoRun[];
+extern const u8 EventScript_DisableAutoRun[];
+
 #endif //GUARD_EVENT_SCRIPTS_H
