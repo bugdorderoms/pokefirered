@@ -879,7 +879,6 @@ const u8 gText_TextSpeed[] = _("Text Speed");
 const u8 gText_BattleScene[] = _("Battle Scene");
 const u8 gText_BattleStyle[] = _("Battle Style");
 const u8 gText_Sound[] = _("Sound");
-const u8 gText_ButtonMode[] = _("Button Mode");
 const u8 gText_Frame[] = _("Frame");
 const u8 gText_OptionMenuCancel[] = _("Cancel");
 const u8 gText_TextSpeedSlow[] = _("Slow");
@@ -892,9 +891,6 @@ const u8 gText_BattleStyleSet[] = _("Set");
 const u8 gText_SoundMono[] = _("Mono");
 const u8 gText_SoundStereo[] = _("Stereo");
 const u8 gTextJP_Type[] = _("タイプ");
-const u8 gText_ButtonTypeHelp[] = _("Help");
-const u8 gText_ButtonTypeLEqualsA[] = _("L=A");
-const u8 gText_ButtonTypeLR[] = _("LR");
 const u8 gText_FrameType[] = _("Type");
 const u8 gText_PickSwitchCancel[] = _("{DPAD_UPDOWN}Pick {DPAD_LEFTRIGHT}Switch {A_BUTTON}{B_BUTTON}Cancel");
 const u8 gUnknown_8419E72[] = _("RTCを リセットします\nAで けってい Bで キャンセル");
@@ -907,16 +903,6 @@ const u8 gUnknown_8419EF9[] = _("レポ-トの かきこみに\nしっぱい し
 const u8 gUnknown_8419F10[] = _("レポ-トが ないので\nじかんの せっていは できません!");
 const u8 gUnknown_8419F2D[] = _("ゲ-ムない じかんの しゅうせい システムが\nつかえる ように なりました!");
 const u8 gText_SavingDontTurnOffThePower2[] = _("Saving…\nDon't turn off the power.");
-
-// Start menu option descriptions
-const u8 gStartMenuDesc_Pokedex[] = _("A device that records POKéMON secrets\nupon meeting or catching them.");
-const u8 gStartMenuDesc_Pokemon[] = _("Check and organize POKéMON that are\ntraveling with you in your party.");
-const u8 gStartMenuDesc_Bag[] = _("Equipped with pockets for storing items\nyou bought, received, or found.");
-const u8 gStartMenuDesc_Player[] = _("Check your money and other game data.");
-const u8 gStartMenuDesc_Save[] = _("Save your game with a complete record\nof your progress to take a break.");
-const u8 gStartMenuDesc_Option[] = _("Adjust various game settings such as text\nspeed, game rules, etc.");
-const u8 gStartMenuDesc_Exit[] = _("Close this Menu window.");
-const u8 gStartMenuDesc_Retire[] = _("Retire from the Safari Game and return to\nthe registration counter.");
 
 #include "data/text/quest_log.h"
 
