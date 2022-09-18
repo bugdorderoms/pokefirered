@@ -8,7 +8,6 @@
 #include "event_object_movement.h"
 #include "field_player_avatar.h"
 #include "graphics.h"
-#include "help_system.h"
 #include "item.h"
 #include "item_menu.h"
 #include "item_menu_icons.h"
@@ -1024,10 +1023,6 @@ static bool8 LoadBagMenuGraphics(void)
         gMain.state++;
         break;
     case 19:
-        if (gBagMenuState.location == ITEMMENULOCATION_ITEMPC)
-            SetHelpContext(HELPCONTEXT_PLAYERS_PC_ITEMS);
-        else
-            SetHelpContext(HELPCONTEXT_BAG);
         gPaletteFade.bufferTransferDisabled = FALSE;
         gMain.state++;
         break;
@@ -1685,18 +1680,16 @@ static void Bag_FillMessageBoxWithPalette(u32 a0)
 
 static u8 ProcessPocketSwitchInput(u8 taskId, u8 pocketId)
 {
-    u8 lrState;
     if (sBagMenuDisplay->pocketSwitchMode != 0)
         return 0;
-    lrState = GetLRKeysState();
-    if (JOY_NEW(DPAD_LEFT) || lrState == 1)
+    if (JOY_NEW(DPAD_LEFT | L_BUTTON))
     {
         if (pocketId == POCKET_ITEMS - 1)
             return 0;
         PlaySE(SE_BAG_POCKET);
         return 1;
     }
-    if (JOY_NEW(DPAD_RIGHT) || lrState == 2)
+    if (JOY_NEW(DPAD_RIGHT | R_BUTTON))
     {
         if (pocketId >= POCKET_POKE_BALLS - 1)
             return 0;
