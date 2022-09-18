@@ -13,7 +13,6 @@
 #include "mystery_gift_menu.h"
 #include "strings.h"
 #include "title_screen.h"
-#include "help_system.h"
 #include "pokedex.h"
 #include "text_window.h"
 #include "text_window_graphics.h"
@@ -508,7 +507,6 @@ static void Task_ExecuteMainMenuSelection(u8 taskId)
             break;
         case MAIN_MENU_MYSTERYGIFT:
             SetMainCallback2(c2_mystery_gift);
-            HelpSystem_Disable();
             FreeAllWindowBuffers();
             DestroyTask(taskId);
             break;
