@@ -15,7 +15,6 @@
 #include "event_data.h"
 #include "mevent_server.h"
 #include "menews_jisan.h"
-#include "help_system.h"
 #include "strings.h"
 #include "constants/songs.h"
 #include "constants/union_room.h"
@@ -1668,7 +1667,6 @@ void task00_mystery_gift(u8 taskId)
         break;
     case 37:
         CloseLink();
-        HelpSystem_Enable();
         Free(data->buffer);
         DestroyTask(taskId);
         SetMainCallback2(MainCB_FreeAllBuffersAndReturnToInitTitleScreen);
