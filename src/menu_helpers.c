@@ -67,30 +67,6 @@ void CreateYesNoMenuWithCallbacks(u8 taskId, const struct WindowTemplate *templa
     gTasks[taskId].func = Task_CallYesOrNoCallback;
 }
 
-u8 GetLRKeysState(void)
-{
-    if (gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_LR)
-    {
-        if (JOY_NEW(L_BUTTON))
-            return 1;
-        if (JOY_NEW(R_BUTTON))
-            return 2;
-    }
-    return 0;
-}
-
-u8 GetLRKeysPressedAndHeld(void)
-{
-    if (gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_LR)
-    {
-        if (JOY_REPT(L_BUTTON))
-            return 1;
-        if (JOY_REPT(R_BUTTON))
-            return 2;
-    }
-    return 0;
-}
-
 bool8 itemid_link_can_give_berry(u16 itemId)
 {
     if (itemId != ITEM_ENIGMA_BERRY)
