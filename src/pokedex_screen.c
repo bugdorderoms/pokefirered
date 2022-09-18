@@ -7,7 +7,7 @@
 #include "task.h"
 #include "new_menu_helpers.h"
 #include "event_data.h"
-#include "help_system.h"
+#include "list_menu.h"
 #include "menu_indicators.h"
 #include "overworld.h"
 #include "strings.h"
@@ -908,7 +908,6 @@ void DexScreen_LoadResources(void)
     sPokedexScreenData->numOwnedNational = DexScreen_GetDexCount(FLAG_GET_CAUGHT, 1);
     sPokedexScreenData->numSeenKanto = DexScreen_GetDexCount(FLAG_GET_SEEN, 0);
     sPokedexScreenData->numOwnedKanto = DexScreen_GetDexCount(FLAG_GET_CAUGHT, 0);
-    SetBGMVolume_SuppressHelpSystemReduction(0x80);
     ChangeBgX(0, 0, 0);
     ChangeBgY(0, 0, 0);
     ChangeBgX(1, 0, 0);
@@ -938,7 +937,6 @@ void CB2_OpenPokedexFromStartMenu(void)
     SetGpuReg(REG_OFFSET_BLDALPHA, 0);
     SetGpuReg(REG_OFFSET_BLDY, 0);
     SetMainCallback2(CB2_PokedexScreen);
-    SetHelpContext(HELPCONTEXT_POKEDEX);
 }
 
 #define FREE_IF_NOT_NULL(ptr0) ({ void * ptr = (ptr0); if (ptr) Free(ptr); })
@@ -965,7 +963,6 @@ bool8 DoClosePokedex(void)
         FREE_IF_NOT_NULL(GetBgTilemapBuffer(1));
         FREE_IF_NOT_NULL(GetBgTilemapBuffer(2));
         FREE_IF_NOT_NULL(GetBgTilemapBuffer(3));
-        BGMVolumeMax_EnableHelpSystemReduction();
         break;
     }
     return TRUE;
@@ -1879,27 +1876,12 @@ static u8 DexScreen_CreateCategoryMenuScrollArrows(void)
  */
 static int DexScreen_InputHandler_GetShoulderInput(void)
 {
-    switch (gSaveBlock2Ptr->optionsButtonMode)
-    {
-    case OPTIONS_BUTTON_MODE_L_EQUALS_A:
-        // Using the JOY_HELD and JOY_NEW macros here does not match!
-        if ((gMain.heldKeys & R_BUTTON) && (gMain.newKeys & DPAD_LEFT))
-            return 1;
-        else if ((gMain.heldKeys & R_BUTTON) && (gMain.newKeys & DPAD_RIGHT))
-            return 2;
-        else
-            return 0;
-    case OPTIONS_BUTTON_MODE_LR:
-        if (gMain.newKeys & L_BUTTON)
-            return 1;
-        else if (gMain.newKeys & R_BUTTON)
-            return 2;
-        else
-            return 0;
-    case OPTIONS_BUTTON_MODE_HELP:
-    default:
+    if (gMain.newKeys & L_BUTTON)
+        return 1;
+    else if (gMain.newKeys & R_BUTTON)
+        return 2;
+    else
         return 0;
-    }
 }
 
 static void Task_DexScreen_ShowMonPage(u8 taskId)
