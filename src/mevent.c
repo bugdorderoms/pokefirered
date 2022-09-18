@@ -15,7 +15,6 @@
 #include "menews_jisan.h"
 #include "cereader_tool.h"
 #include "mystery_gift_menu.h"
-#include "help_system.h"
 #include "mevent.h"
 #include "strings.h"
 
@@ -467,7 +466,6 @@ static void Task_EReaderComm(u8 taskId)
                 data->state = 0;
             break;
         case 26:
-            HelpSystem_Enable();
             Free(data->t10);
             DestroyTask(taskId);
             SetMainCallback2(MainCB_FreeAllBuffersAndReturnToInitTitleScreen);
