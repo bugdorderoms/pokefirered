@@ -897,6 +897,186 @@ u16 RenderText(struct TextPrinter *textPrinter)
     return 1;
 }
 
+static void DecompressAndRenderGlyph(u8 fontId, u16 glyph, struct Bitmap *srcBlit, struct Bitmap *destBlit, u8 *destBuffer, u8 x, u8 y, u8 width, u8 height)
+{
+    if (fontId == 0)
+        DecompressGlyphFont0(glyph, FALSE);
+    else if (fontId == 5)
+        DecompressGlyphFont5(glyph, FALSE);
+    else
+        DecompressGlyphFont2(glyph, FALSE);
+    srcBlit->pixels = gGlyphInfo.pixels;
+    srcBlit->width = 16;
+    srcBlit->height = 16;
+    destBlit->pixels = destBuffer;
+    destBlit->width = width * 8;
+    destBlit->height = height * 8;
+    BlitBitmapRect4Bit(srcBlit, destBlit, 0, 0, x, y, gGlyphInfo.width, gGlyphInfo.height, 0);
+}
+
+void RenderSaveFailedScreenText(u8 fontId, u8 * dest, const u8 * src, u8 x, u8 y, u8 width, u8 height)
+{
+	// fontId -> sp+24
+    // dest -> sp+28
+    // src -> r9
+    // x -> sp+34
+    // y -> r10
+    // width -> sp+2C
+    // height -> sp+30
+    struct Bitmap srcBlit;
+    struct Bitmap destBlit;
+    u8 orig_x = x;
+    u8 i = 0;
+    s32 clearPixels = 0;
+
+    while (1)
+    {
+        u16 curChar = *src;
+        src++;
+        switch (curChar)
+        {
+        case EOS:
+            return;
+        case CHAR_NEWLINE:
+            x = orig_x;
+            y += gGlyphInfo.height + 1;
+            break;
+        case PLACEHOLDER_BEGIN:
+            curChar = *src;
+            src++;
+            if (curChar == PLACEHOLDER_ID_PLAYER)
+            {
+                for (i = 0; i < 10; i++)
+                {
+                    if (gSaveBlock2Ptr->playerName[i] == EOS)
+                    {
+                        break;
+                    }
+                    DecompressAndRenderGlyph(fontId, gSaveBlock2Ptr->playerName[i], &srcBlit, &destBlit, dest, x, y, width, height);
+					x += gGlyphInfo.width;
+                }
+            }
+            else if (curChar == PLACEHOLDER_ID_STRING_VAR_1)
+            {
+                for (i = 0; ; i++)
+                {
+                    if (FlagGet(FLAG_SYS_NOT_SOMEONES_PC) == TRUE)
+                    {
+                        if (gString_Bill[i] == EOS)
+                        {
+                            break;
+                        }
+                        DecompressAndRenderGlyph(fontId, gString_Bill[i], &srcBlit, &destBlit, dest, x, y, width, height);
+                    }
+                    else
+                    {
+                        if (gString_Someone[i] == EOS)
+                        {
+                            break;
+                        }
+                        DecompressAndRenderGlyph(fontId, gString_Someone[i], &srcBlit, &destBlit, dest, x, y, width, height);
+                    }
+					x += gGlyphInfo.width;
+                }
+            }
+            break;
+        case CHAR_PROMPT_SCROLL:
+        case CHAR_PROMPT_CLEAR:
+            x = orig_x;
+            y += gGlyphInfo.height + 1;
+            break;
+        case EXT_CTRL_CODE_BEGIN:
+            curChar = *src;
+            src++;
+            switch (curChar)
+            {
+            case EXT_CTRL_CODE_COLOR_HIGHLIGHT_SHADOW:
+                src++;
+                //fallthrough
+            case EXT_CTRL_CODE_PLAY_BGM:
+            case EXT_CTRL_CODE_PLAY_SE:
+                src++;
+                //fallthrough
+            case EXT_CTRL_CODE_COLOR:
+            case EXT_CTRL_CODE_HIGHLIGHT:
+            case EXT_CTRL_CODE_SHADOW:
+            case EXT_CTRL_CODE_PALETTE:
+            case EXT_CTRL_CODE_FONT:
+            case EXT_CTRL_CODE_PAUSE:
+            case EXT_CTRL_CODE_ESCAPE:
+            case EXT_CTRL_CODE_SHIFT_RIGHT:
+            case EXT_CTRL_CODE_SHIFT_DOWN:
+                src++;
+            case EXT_CTRL_CODE_RESET_FONT:
+            case EXT_CTRL_CODE_WAIT_BUTTON:
+            case EXT_CTRL_CODE_WAIT_SE:
+            case EXT_CTRL_CODE_FILL_WINDOW:
+                break;
+            case EXT_CTRL_CODE_CLEAR:
+            case EXT_CTRL_CODE_SKIP:
+                src++;
+                break;
+            case EXT_CTRL_CODE_CLEAR_TO:
+            {
+                clearPixels = *src + orig_x - x;
+
+                if (clearPixels > 0)
+                {
+                    destBlit.pixels = dest;
+                    destBlit.width = width * 8;
+                    destBlit.height = height * 8;
+                    FillBitmapRect4Bit(&destBlit, x, y, clearPixels, GetFontAttribute(fontId, FONTATTR_MAX_LETTER_HEIGHT), 0);
+                    x += clearPixels;
+                }
+                src++;
+                break;
+            }
+            case EXT_CTRL_CODE_MIN_LETTER_SPACING:
+                src++;
+                break;
+            case EXT_CTRL_CODE_JPN:
+            case EXT_CTRL_CODE_ENG:
+                break;
+            }
+            break;
+        case CHAR_KEYPAD_ICON:
+            curChar = *src;
+            src++;
+            srcBlit.pixels = (u8 *)&gKeypadIconTiles[0x20 * GetKeypadIconTileOffset(curChar)];
+            srcBlit.width = 0x80;
+            srcBlit.height = 0x80;
+            destBlit.pixels = dest;
+            destBlit.width = width * 8;
+            destBlit.height = height * 8;
+            BlitBitmapRect4Bit(&srcBlit, &destBlit, 0, 0, x, y, GetKeypadIconWidth(curChar), GetKeypadIconHeight(curChar), 0);
+            x += GetKeypadIconWidth(curChar);
+            break;
+        case CHAR_EXTRA_EMOJI:
+            curChar = *src + 0x100;
+            src++;
+            //fallthrough
+        default:
+            if (curChar == CHAR_SPACE)
+            {
+                if (fontId == 0)
+                {
+                    x += 5;
+                }
+                else
+                {
+                    x += 4;
+                }
+            }
+            else
+            {
+                DecompressAndRenderGlyph(fontId, curChar, &srcBlit, &destBlit, dest, x, y, width, height);
+				x += gGlyphInfo.width;
+            }
+            break;
+        }
+    }
+}
+
 s32 GetStringWidthFixedWidthFont(const u8 *str, u8 fontId, u8 letterSpacing)
 {
     int i;
