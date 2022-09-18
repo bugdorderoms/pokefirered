@@ -12,7 +12,6 @@
 #include "task.h"
 #include "constants/songs.h"
 #include "constants/field_weather.h"
-#include "constants/help_system.h"
 
 struct PSS_MenuStringPtrs
 {
