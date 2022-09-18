@@ -71,7 +71,6 @@ EventScript_AccessHallOfFame:: @ 81A6A56
 	playse SE_PC_LOGIN
 	special HallOfFamePCBeginFade
 	waitstate
-	special RestoreHelpContext
 	goto EventScript_ChoosePCMenu
 	end
 
