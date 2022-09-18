@@ -22,7 +22,6 @@
 #include "text_window.h"
 #include "trig.h"
 #include "constants/items.h"
-#include "constants/help_system.h"
 #include "constants/songs.h"
 
 EWRAM_DATA struct PokemonStorageSystemData *gPSSData = NULL;
