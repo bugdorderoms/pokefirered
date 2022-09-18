@@ -3,7 +3,6 @@
 #include "data.h"
 #include "decompress.h"
 #include "graphics.h"
-#include "help_system.h"
 #include "item.h"
 #include "item_menu.h"
 #include "item_menu_icons.h"
@@ -355,17 +354,13 @@ static bool8 ItemPc_DoGfxSetup(void)
         gMain.state++;
         break;
     case 17:
-        SetHelpContext(HELPCONTEXT_PLAYERS_PC_ITEMS);
-        gMain.state++;
-        break;
-    case 18:
         if (sListMenuState.initialized == 1)
         {
             BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
         }
         gMain.state++;
         break;
-    case 19:
+    case 18:
         if (sListMenuState.initialized == 1)
         {
             BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
@@ -378,7 +373,7 @@ static bool8 ItemPc_DoGfxSetup(void)
         }
         gMain.state++;
         break;
-    case 20:
+    case 19:
         if (MenuHelpers_CallLinkSomething() != TRUE)
             gMain.state++;
         break;
