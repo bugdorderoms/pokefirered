@@ -13,7 +13,6 @@
 #include "pokedex.h"
 #include "pokemon_icon.h"
 #include "graphics.h"
-#include "help_system.h"
 #include "trainer_pokemon_sprites.h"
 #include "new_menu_helpers.h"
 #include "constants/songs.h"
@@ -103,7 +102,6 @@ static void sub_8089C5C(void);
 static void sub_8089C80(void);
 static void sub_8089CA4(void);
 static void InitBgsAndWindows(void);
-static void SetTrainerCardCB2(void);
 static void SetUpTrainerCardTask(void);
 static bool8 PrintAllOnCardFront(void);
 static bool8 PrintAllOnCardBack(void);
@@ -559,7 +557,6 @@ static void Task_TrainerCard(u8 taskId)
 
         if (JOY_NEW(A_BUTTON))
         {
-            SetHelpContext(HELPCONTEXT_TRAINER_CARD_BACK);
             FlipTrainerCard();
             PlaySE(SE_CARD_FLIP);
             sTrainerCardDataPtr->mainState = STATE_WAIT_FLIP_TO_BACK;
@@ -598,7 +595,6 @@ static void Task_TrainerCard(u8 taskId)
             }
             else
             {
-                SetHelpContext(HELPCONTEXT_TRAINER_CARD_FRONT);
                 FlipTrainerCard();
                 sTrainerCardDataPtr->mainState = STATE_WAIT_FLIP_TO_FRONT;
                 PlaySE(SE_CARD_FLIP);
@@ -760,7 +756,7 @@ static void CB2_InitTrainerCard(void)
         gMain.state++;
         break;
     default:
-        SetTrainerCardCB2();
+        SetMainCallback2(CB2_TrainerCard);
         break;
     }
 }
@@ -1024,12 +1020,6 @@ static void InitBgsAndWindows(void)
     ChangeBgY(3, 0, 0);
     InitWindows(sTrainerCardWindowTemplates);
     DeactivateAllTextPrinters();
-}
-
-static void SetTrainerCardCB2(void)
-{
-    SetMainCallback2(CB2_TrainerCard);
-    SetHelpContext(HELPCONTEXT_TRAINER_CARD_FRONT);
 }
 
 static void SetUpTrainerCardTask(void)
