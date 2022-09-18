@@ -389,9 +389,9 @@ gSpecials:: @ 815FD60
 	def_special TakePokemonFromRoute5Daycare
 	def_special DoSeagallopFerryScene
 	def_special DoesPlayerPartyContainSpecies
-	def_special Script_SetHelpContext
-	def_special BackupHelpContext
-	def_special RestoreHelpContext
+	def_special NullFieldSpecial
+	def_special NullFieldSpecial
+	def_special NullFieldSpecial
 	def_special ValidateReceivedWonderCard
 	def_special SetUnlockedPokedexFlags
 	def_special InitUnionRoom
@@ -408,7 +408,7 @@ gSpecials:: @ 815FD60
 	def_special ChooseMonForMoveTutor
 	def_special ChooseMonForWirelessMinigame
 	def_special SetBattledTrainerFlag
-	def_special SetHelpContextForMap
+	def_special NullFieldSpecial
 	def_special DoSSAnneDepartureCutscene
 	def_special IsPokemonJumpSpeciesInParty
 	def_special IsNationalPokedexEnabled
@@ -416,8 +416,8 @@ gSpecials:: @ 815FD60
 	def_special ShowPokemonJumpRecords
 	def_special BufferTMHMMoveName
 	def_special DaisyMassageServices
-	def_special HelpSystem_Disable
-	def_special HelpSystem_Enable
+	def_special NullFieldSpecial
+	def_special NullFieldSpecial
 	def_special SetPostgameFlags
 	def_special HasAtLeastOneBerry
 	def_special DisplayBerryPowderVendorMenu
