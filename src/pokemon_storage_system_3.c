@@ -6,7 +6,6 @@
 #include "dynamic_placeholder_text_util.h"
 #include "event_data.h"
 #include "graphics.h"
-#include "help_system.h"
 #include "item.h"
 #include "item_menu.h"
 #include "mail_data.h"
@@ -377,7 +376,6 @@ void Cb2_EnterPSS(u8 boxOption)
         gUnknown_20397BA = 0;
         gPSSData->state = 0;
         gPSSData->taskId = CreateTask(Cb_InitPSS, 3);
-        SetHelpContext(HELPCONTEXT_BILLS_PC);
         sLastUsedBox = StorageGetCurrentBox();
         SetMainCallback2(Cb2_PSS);
     }
@@ -395,7 +393,6 @@ void Cb2_ReturnToPSS(void)
         gPSSData->isReshowingPSS = TRUE;
         gPSSData->state = 0;
         gPSSData->taskId = CreateTask(Cb_InitPSS, 3);
-        SetHelpContext(HELPCONTEXT_BILLS_PC);
         SetMainCallback2(Cb2_PSS);
     }
 }
