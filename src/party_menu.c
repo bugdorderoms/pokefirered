@@ -20,7 +20,6 @@
 #include "fldeff.h"
 #include "graphics.h"
 #include "help_message.h"
-#include "help_system.h"
 #include "item.h"
 #include "item_menu.h"
 #include "item_use.h"
@@ -571,19 +570,15 @@ static bool8 ShowPartyMenu(void)
         ++gMain.state;
         break;
     case 19:
-        SetHelpContext(HELPCONTEXT_PARTY_MENU);
-        ++gMain.state;
-        break;
-    case 20:
         CreateTask(sPartyMenuInternal->task, 0);
         DisplayPartyMenuStdMessage(sPartyMenuInternal->messageId);
         ++gMain.state;
         break;
-    case 21:
+    case 20:
         BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
         ++gMain.state;
         break;
-    case 22:
+    case 21:
         BeginNormalPaletteFade(0xFFFFFFFF, -2, 16, 0, RGB_BLACK);
         gPaletteFade.bufferTransferDisabled = FALSE;
         ++gMain.state;
@@ -1301,9 +1296,11 @@ static u16 PartyMenuButtonHandler(s8 *slotPtr)
     switch (gMain.newAndRepeatedKeys)
     {
     case DPAD_UP:
+    case L_BUTTON:
         movementDir = MENU_DIR_UP;
         break;
     case DPAD_DOWN:
+    case R_BUTTON:
         movementDir = MENU_DIR_DOWN;
         break;
     case DPAD_LEFT:
@@ -1313,19 +1310,8 @@ static u16 PartyMenuButtonHandler(s8 *slotPtr)
         movementDir = MENU_DIR_RIGHT;
         break;
     default:
-        switch (GetLRKeysPressedAndHeld())
-        {
-        case MENU_L_PRESSED:
-            movementDir = MENU_DIR_UP;
-            break;
-        case MENU_R_PRESSED:
-            movementDir = MENU_DIR_DOWN;
-            break;
-        default:
-            movementDir = 0;
-            break;
-        }
-        break;
+        movementDir = 0;
+	break;
     }
     if (JOY_NEW(START_BUTTON))
         return 8;
