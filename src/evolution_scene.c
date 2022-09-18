@@ -4,7 +4,6 @@
 #include "battle_message.h"
 #include "data.h"
 #include "decompress.h"
-#include "help_system.h"
 #include "evolution_scene.h"
 #include "evolution_graphics.h"
 #include "link.h"
@@ -289,7 +288,6 @@ void EvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, bool8 canStopEvo, 
     SetHBlankCallback(EvoDummyFunc);
     SetVBlankCallback(VBlankCB_EvolutionScene);
     m4aMPlayAllStop();
-    HelpSystem_Disable();
     SetMainCallback2(CB2_EvolutionSceneUpdate);
 }
 
@@ -722,7 +720,6 @@ static void Task_EvolutionScene(u8 taskId)
     case 15: // check if it wants to learn a new move
         if (!IsTextPrinterActive(0))
         {
-            HelpSystem_Enable();
             var = MonTryLearningNewMoveAfterEvolution(mon, gTasks[taskId].tLearnsFirstMove);
             if (var != 0 && !gTasks[taskId].tEvoWasStopped)
             {
