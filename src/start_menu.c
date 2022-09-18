@@ -8,7 +8,6 @@
 #include "party_menu.h"
 #include "save.h"
 #include "link_rfu.h"
-#include "help_message.h"
 #include "event_data.h"
 #include "fieldmap.h"
 #include "safari_zone.h"
@@ -123,18 +122,6 @@ static const struct MenuAction sStartMenuActionTable[] = {
     { gStartMenuText_Exit, {.u8_void = StartMenuExitCallback} },
     { gStartMenuText_Retire, {.u8_void = StartMenuSafariZoneRetireCallback} },
     { gStartMenuText_Player, {.u8_void = StartMenuLinkPlayerCallback} }
-};
-
-static const u8 *const sStartMenuDescPointers[] = {
-    gStartMenuDesc_Pokedex,
-    gStartMenuDesc_Pokemon,
-    gStartMenuDesc_Bag,
-    gStartMenuDesc_Player,
-    gStartMenuDesc_Save,
-    gStartMenuDesc_Option,
-    gStartMenuDesc_Exit,
-    gStartMenuDesc_Retire,
-    gStartMenuDesc_Player
 };
 
 static const struct BgTemplate sBGTemplates_AfterLinkSaveMessage[] = {
@@ -333,10 +320,6 @@ static s8 DoDrawStartMenu(void)
         break;
     case 5:
         sStartMenuCursorPos = Menu_InitCursor(GetStartMenuWindowId(), 2, 0, 0, 15, sNumStartMenuItems, sStartMenuCursorPos);
-        if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
-        {
-            DrawHelpMessageWindowWithText(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]]);
-        }
         CopyWindowToVram(GetStartMenuWindowId(), COPYWIN_MAP);
         return TRUE;
     }
@@ -417,19 +400,11 @@ static bool8 StartCB_HandleInput(void)
     {
         PlaySE(SE_SELECT);
         sStartMenuCursorPos = Menu_MoveCursor(-1);
-        if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
-        {
-            PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]], 2);
-        }
     }
     if (JOY_NEW(DPAD_DOWN))
     {
         PlaySE(SE_SELECT);
         sStartMenuCursorPos = Menu_MoveCursor(+1);
-        if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
-        {
-            PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]], 2);
-        }
     }
     if (JOY_NEW(A_BUTTON))
     {
@@ -575,8 +550,6 @@ static bool8 StartMenuLinkPlayerCallback(void)
 
 static bool8 StartCB_Save1(void)
 {
-    BackupHelpContext();
-    SetHelpContext(HELPCONTEXT_SAVE);
     StartMenu_PrepareForSave();
     sStartMenuCallback = StartCB_Save2;
     return FALSE;
@@ -592,19 +565,16 @@ static bool8 StartCB_Save2(void)
         ClearDialogWindowAndFrameToTransparent(0, TRUE);
         ClearPlayerHeldMovementAndUnfreezeObjectEvents();
         ScriptContext2_Disable();
-        RestoreHelpContext();
         return TRUE;
     case SAVECB_RETURN_CANCEL:
         ClearDialogWindowAndFrameToTransparent(0, FALSE);
         DrawStartMenuInOneGo();
-        RestoreHelpContext();
         sStartMenuCallback = StartCB_HandleInput;
         break;
     case SAVECB_RETURN_ERROR:
         ClearDialogWindowAndFrameToTransparent(0, TRUE);
         ClearPlayerHeldMovementAndUnfreezeObjectEvents();
         ScriptContext2_Disable();
-        RestoreHelpContext();
         return TRUE;
     }
     return FALSE;
@@ -627,8 +597,6 @@ static u8 RunSaveDialogCB(void)
 
 void Field_AskSaveTheGame(void)
 {
-    BackupHelpContext();
-    SetHelpContext(HELPCONTEXT_SAVE);
     StartMenu_PrepareForSave();
     CreateTask(task50_save_game, 80);
 }
@@ -658,7 +626,6 @@ static void task50_save_game(u8 taskId)
     }
     DestroyTask(taskId);
     EnableBothScriptContexts();
-    RestoreHelpContext();
 }
 
 static void CloseSaveMessageWindow(void)
@@ -718,7 +685,6 @@ static u8 SaveDialogCB_PrintAskSaveText(void)
 {
     ClearStdWindowAndFrame(GetStartMenuWindowId(), FALSE);
     RemoveStartMenuWindow();
-    DestroyHelpMessageWindow(0);
     PrintSaveStats();
     PrintSaveTextWithFollowupFunc(gText_WouldYouLikeToSaveTheGame, SaveDialogCB_AskSavePrintYesNoMenu);
     return SAVECB_RETURN_CONTINUE;
