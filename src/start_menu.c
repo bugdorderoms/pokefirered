@@ -32,7 +32,6 @@
 #include "trainer_card.h"
 #include "option_menu.h"
 #include "save_menu_util.h"
-#include "help_system.h"
 #include "constants/songs.h"
 #include "constants/field_weather.h"
 #include "constants/inserts.h"
