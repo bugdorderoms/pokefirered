@@ -6,7 +6,6 @@
 #include "sprite.h"
 #include "task.h"
 #include "scanline_effect.h"
-#include "help_system.h"
 #include "m4a.h"
 
 // Static RAM declarations
@@ -81,7 +80,6 @@ void mb_berry_fix_serve(void) // noreturn
     ResetSpriteData();
     ResetTasks();
     ScanlineEffect_Stop();
-    gHelpSystemEnabled = FALSE;
     taskId = CreateTask(mb_berry_fix_task, 0);
     gTasks[taskId].data[0] = 0;
     SetMainCallback2(mb_berry_fix_maincb);
