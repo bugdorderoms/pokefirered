@@ -326,6 +326,7 @@ struct SaveBlock2
               u16 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
               u16 optionsBattleSceneOff:1; // whether battle animations are disabled
               u16 expShare:1; // whether exp share is on
+              u16 autoRun:1; // whether auto run is on
     /*0x018*/ struct Pokedex pokedex;
     /*0x090*/ struct Time localTimeOffset;
     /*0x098*/ struct Time lastBerryTreeUpdate;
