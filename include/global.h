@@ -292,6 +292,7 @@ struct BattleTowerData // Leftover from R/S
     /*0x03E4, 0x0494*/ u8 firstMonNickname[POKEMON_NAME_LENGTH]; // nickname of the first pokemon in the player's battle tower party
     /*0x03F0, 0x04A0*/ struct BattleTowerEReaderTrainer ereaderTrainer;
     /*0x04AC, 0x055C*/ u8 battleTowerLevelType:1; // 0 = level 50; 1 = level 100
+    /*0x04AC, 0x055C*/ u8 lastStreakLevelType:1; // 0 = level 50, 1 = level 100.  level type of the last streak. Used by tv to report the level mode.
     /*0x04AC, 0x055C*/ u8 unk_554:1;
     /*0x04AD, 0x055D*/ u8 battleOutcome;
     /*0x04AE, 0x055E*/ u8 var_4AE[2];
@@ -305,8 +306,6 @@ struct BattleTowerData // Leftover from R/S
     /*0x04C8, 0x0578*/ u16 totalBattleTowerWins;
     /*0x04CA, 0x057A*/ u16 bestBattleTowerWinStreak;
     /*0x04CC, 0x057C*/ u16 currentWinStreaks[2];
-    /*0x04D0, 0x0580*/ u8 lastStreakLevelType; // 0 = level 50, 1 = level 100.  level type of the last streak. Used by tv to report the level mode.
-    /*0x04D1, 0x0581*/ u8 filler_4D1[0x317];
 }; /* size = 0x7E8 */
 
 struct SaveBlock2
