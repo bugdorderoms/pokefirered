@@ -22,6 +22,7 @@
 #include "trig.h"
 #include "random.h"
 #include "graphics.h"
+#include "constants/global.h"
 #include "constants/songs.h"
 #include "constants/maps.h"
 
@@ -31,7 +32,7 @@ struct HallofFameMon
     u32 personality;
     u16 species;
     u8 lvl;
-    u8 nick[10];
+    u8 nick[POKEMON_NAME_LENGTH];
 };
 
 struct HallofFameTeam
