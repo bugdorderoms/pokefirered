@@ -467,42 +467,42 @@ static const struct SpriteTemplate sSpriteTemplate_AbilityPopUp2 =
 	.callback = SpriteCB_AbilityPopUp
 };
 
-static const u16 sOverwrittenPixelsTable[] =
+static const u16 sOverwrittenPixelsTable[][2] =
 {
 	// first row of img
-	PIXEL_COORDS_TO_OFFSET(16, 13),
-	PIXEL_COORDS_TO_OFFSET(20, 13),
-	PIXEL_COORDS_TO_OFFSET(24, 13),
-	PIXEL_COORDS_TO_OFFSET(28, 13),
-	PIXEL_COORDS_TO_OFFSET(32, 13),
-	PIXEL_COORDS_TO_OFFSET(36, 13),
-	PIXEL_COORDS_TO_OFFSET(40, 13),
-	PIXEL_COORDS_TO_OFFSET(44, 13),
-	PIXEL_COORDS_TO_OFFSET(48, 13),
-	PIXEL_COORDS_TO_OFFSET(52, 13),
-	PIXEL_COORDS_TO_OFFSET(56, 13),
-	PIXEL_COORDS_TO_OFFSET(60, 13),
-	PIXEL_COORDS_TO_OFFSET(16, 14),
-	PIXEL_COORDS_TO_OFFSET(20, 14),
-	PIXEL_COORDS_TO_OFFSET(24, 14),
-	PIXEL_COORDS_TO_OFFSET(28, 14),
-	PIXEL_COORDS_TO_OFFSET(32, 14),
-	PIXEL_COORDS_TO_OFFSET(36, 14),
-	PIXEL_COORDS_TO_OFFSET(40, 14),
-	PIXEL_COORDS_TO_OFFSET(44, 14),
-	PIXEL_COORDS_TO_OFFSET(48, 14),
-	PIXEL_COORDS_TO_OFFSET(52, 14),
-	PIXEL_COORDS_TO_OFFSET(56, 14),
-	PIXEL_COORDS_TO_OFFSET(60, 14),
+	{PIXEL_COORDS_TO_OFFSET(0, 4), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 5), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 6), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 7), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 8), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 9), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 10), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 11), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 12), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(8, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(16, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(24, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(32, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(40, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(48, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(56, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(0, 15), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 16), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 17), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 18), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 19), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 20), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 21), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 22), 2},
+	{PIXEL_COORDS_TO_OFFSET(0, 23), 2},
 	// second row of img
-	PIXEL_COORDS_TO_OFFSET(0, 45),
-	PIXEL_COORDS_TO_OFFSET(4, 45),
-	PIXEL_COORDS_TO_OFFSET(8, 45),
-	PIXEL_COORDS_TO_OFFSET(12, 45),
-	PIXEL_COORDS_TO_OFFSET(0, 46),
-	PIXEL_COORDS_TO_OFFSET(4, 46),
-	PIXEL_COORDS_TO_OFFSET(8, 46),
-	PIXEL_COORDS_TO_OFFSET(12, 46),
+	{PIXEL_COORDS_TO_OFFSET(0, 45), 8},
+	{PIXEL_COORDS_TO_OFFSET(8, 45), 8},
+	{PIXEL_COORDS_TO_OFFSET(16, 45), 8},
+	{PIXEL_COORDS_TO_OFFSET(0, 46), 8},
+	{PIXEL_COORDS_TO_OFFSET(8, 46), 8},
+	{PIXEL_COORDS_TO_OFFSET(16, 46), 8},
 };
 
 static const s16 sAbilityPopUpCoordsDoubles[MAX_BATTLERS_COUNT][2] =
@@ -2328,18 +2328,23 @@ void AnimTask_GetBattlersFromArg(u8 taskId)
 
 static void RestoreOverwrittenPixels(u8 * tiles)
 {
-	u32 i;
-	u8 *buffer, *img;
-	void *PopUpImg = (u8 *)gBattleAnimSpriteGfx_AbilityPopUp;
+	u32 i, i2, pixelCount;
+	const u8 *src, *PopUpImg = (u8 *)gBattleAnimSpriteGfx_AbilityPopUp;
+	u8 *dest, *buffer = AllocZeroed(0x800);
+	
+	CpuCopy32(tiles, buffer, 0x800);
 	
 	for (i = 0; i < NELEMS(sOverwrittenPixelsTable); i++)
 	{
-		buffer = tiles + sOverwrittenPixelsTable[i];
-		img = PopUpImg + sOverwrittenPixelsTable[i];
-		*buffer = *img;
+		dest = buffer + sOverwrittenPixelsTable[i][0];
+		src = PopUpImg + sOverwrittenPixelsTable[i][0];
+		pixelCount = sOverwrittenPixelsTable[i][1];
 		
-		CpuCopy16(buffer, tiles, 1);
+		for (i2 = 0; i2 < pixelCount; i2++)
+			dest[i2] = src[i2];
 	}
+	CpuCopy32(buffer, tiles, 0x800);
+	Free(buffer);
 }
 
 static u8* AddTextPrinterAndCreateWindowOnAbilityPopUp(const u8* str, u32 x, u32 y, u32 bgColor, u32 fgColor, u32 shadowColor, u32* WindowId)
@@ -2376,28 +2381,43 @@ static void PutTextInAbilityPopUp(void * dest, u8 * WindowTile, s32 arg2, bool32
 	}
 }
 
-static void AbilityPopUpPrinter(const u8 * str, u8 * tiledata, u32 x, u32 y, u32 bgColor, u32 fgColor, u32 shadowColor)
+static void AbilityPopUpPrinter(const u8 * str, u8 * tiledata, u8 * tiledata2, u32 x1, u32 x2, u32 y, u32 bgColor, u32 fgColor, u32 shadowColor)
 {
-    u8 *WindowTile;
-    u32 WindowId, i;
-    u8 text[MAX_CHAR_PRINTED];
-    
-    for (i = 0; i < MAX_CHAR_PRINTED; i++)
-    {
-        text[i] = str[i];
-        
-        if (text[i] == EOS)
-            break;
-    }
-    text[i] = EOS;
-    
-    WindowTile = AddTextPrinterAndCreateWindowOnAbilityPopUp(str, x, y, bgColor, fgColor, shadowColor, &WindowId);
-    PutTextInAbilityPopUp(tiledata, WindowTile, 6, (y == 0));
-    PutTextInAbilityPopUp(tiledata + 0x3C0, WindowTile + 0xC0, 2, (y == 0));
-    RemoveWindow(WindowId);
+	u8 *WindowTile;
+	u32 WindowId, i;
+	u8 text1[MAX_CHAR_PRINTED], text2[MAX_CHAR_PRINTED];
+	
+	for (i = 0; i < MAX_CHAR_PRINTED; i++)
+	{
+		text1[i] = str[i];
+		
+		if (text1[i] == EOS)
+			break;
+	}
+	text1[i] = EOS;
+	
+	WindowTile = AddTextPrinterAndCreateWindowOnAbilityPopUp(text1, x1, y, bgColor, fgColor, shadowColor, &WindowId);
+	PutTextInAbilityPopUp(tiledata, WindowTile, 8, (y == 0));
+	RemoveWindow(WindowId);
+	
+	if (i == MAX_CHAR_PRINTED)
+	{
+		for (i = 0; i < MAX_CHAR_PRINTED; i++)
+		{
+			text2[i] = str[MAX_CHAR_PRINTED + i];
+			
+			if (text2[i] == EOS)
+				break;
+		}
+		text2[i] = EOS;
+		
+		WindowTile = AddTextPrinterAndCreateWindowOnAbilityPopUp(text2, x2, y, bgColor, fgColor, shadowColor, &WindowId);
+		PutTextInAbilityPopUp(tiledata2, WindowTile, 3, (y == 0));
+		RemoveWindow(WindowId);
+	}
 }
 
-static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 arg1, u16 arg2)
+static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprite2, u8 arg1, u16 arg2)
 {
     int i;
     u8 pokemonName[POKEMON_NAME_LENGTH + 3] = {0};
@@ -2420,7 +2440,8 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 arg1,
     textPtr[1] = CHAR_s;
     textPtr[2] = EOS;
     
-    AbilityPopUpPrinter((const u8*) pokemonName, (void*)(OBJ_VRAM0) + ((gSprites[sprite].oam.tileNum + 2) * TILE_SIZE_4BPP), 0, 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_WHITE);
+    AbilityPopUpPrinter((const u8*) pokemonName, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP),
+			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP), 4, 0, 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_WHITE);
     
     if (arg1 == LOAD_ABILITY_FROM_SECOND_BANK)
         ability = gBattleMons[GetBattlerForBattleScript(arg2)].ability;
@@ -2429,7 +2450,8 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 arg1,
     else
         ability = arg2;
     
-    AbilityPopUpPrinter(gAbilityNames[ability], (void*)(OBJ_VRAM0) + ((gSprites[sprite].oam.tileNum + 2) * TILE_SIZE_4BPP) + 256, 0, 4, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_LIGHT_BLUE, TEXT_COLOR_WHITE);
+    AbilityPopUpPrinter(gAbilityNames[ability], (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP) + 256,
+			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP) + 256, 4, 1, 4, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_LIGHT_BLUE, TEXT_COLOR_WHITE);
 }
 
 static void SpriteCB_AbilityPopUp(struct Sprite * sprite)
@@ -2520,7 +2542,7 @@ void AnimTask_CreateAbilityPopUp(u8 taskId)
     StartSpriteAnim(&gSprites[spriteId1], 0);
     StartSpriteAnim(&gSprites[spriteId2], 0);
     
-    PrintBattlerAndAbilityOnAbilityPopUp(battler, spriteId1, gBattlescriptCurrInstr[-4], gBattlescriptCurrInstr[-2]);
+    PrintBattlerAndAbilityOnAbilityPopUp(battler, spriteId1, spriteId2, gBattlescriptCurrInstr[-4], gBattlescriptCurrInstr[-2]);
     RestoreOverwrittenPixels((void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * TILE_SIZE_4BPP));
     DestroyAnimVisualTask(taskId);
 }
