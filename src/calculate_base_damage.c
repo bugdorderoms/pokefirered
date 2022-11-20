@@ -235,11 +235,11 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 
 s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u16 move, u16 sideStatus, bool8 isConfusionDmg, u8 battlerIdAtk, u8 battlerIdDef)
 {
-	u8 type, flags, statiD1, statiD2, attackerGender, defenderGender;
+	u8 type, flags, attackerGender, defenderGender;
 	u8 attackerHoldEffect, attackerHoldEffectParam, defenderHoldEffect, defenderHoldEffectParam;
-	u16 attack, defense, spAttack, spDefense;
+	u16 attack, defense, spAttack, spDefense, atkStat, atkStage, defStat, defStage;
 	u32 i;
-	s32 j, damage, damageHelper;
+	s32 j, damage;
 
 	if (isConfusionDmg)
 	{
@@ -355,11 +355,9 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 				attack = (15 * attack) / 10;
 				break;
 			case ABILITY_PLUS:
-				if (ABILITY_ON_FIELD2(ABILITY_MINUS))
-					spAttack = (15 * spAttack) / 10;
-				break;
 			case ABILITY_MINUS:
-				if (ABILITY_ON_FIELD2(ABILITY_PLUS))
+				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && gBattleMons[battlerIdAtk ^ BIT_FLANK].hp
+				    && (GetBattlerAbility(battlerIdAtk ^ BIT_FLANK) == ABILITY_PLUS || GetBattlerAbility(battlerIdAtk ^ BIT_FLANK) == ABILITY_MINUS))
 					spAttack = (15 * spAttack) / 10;
 				break;
 			case ABILITY_GUTS:
@@ -536,55 +534,57 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
    
 	if (IS_MOVE_PHYSICAL(move))
 	{
-		damage = attack;
-		damageHelper = defense;
-		statiD1 = STAT_ATK;
-		statiD2 = STAT_DEF;
+		atkStat = attack;
+		atkStage = attacker->statStages[STAT_ATK];
+		defStat = defense;
+		defStage = defender->statStages[STAT_DEF];
 	}
 	else
 	{
-		damage = spAttack;
-		damageHelper = spDefense;
-		statiD1 = STAT_SPATK;
-		statiD2 = STAT_SPDEF;
+		atkStat = spAttack;
+		atkStage = attacker->statStages[STAT_SPATK];
+		defStat = spDefense;
+		defStage = defender->statStages[STAT_SPDEF];
 	}
+	if ((gCritMultiplier == 2 && atkStage < 6) || GetBattlerAbility(battlerIdDef) == ABILITY_UNAWARE)
+		atkStage = 6;
+	if ((gCritMultiplier == 2 && defStage > 6) || GetBattlerAbility(battlerIdAtk) == ABILITY_UNAWARE)
+		defStage = 6;
 	
-	// attacker buffs
-	if (GetBattlerAbility(battlerIdDef) != ABILITY_UNAWARE)
-	{
-		if (gCritMultiplier == 2)
-		{
-			if (attacker->statStages[statiD1] > 6)
-				APPLY_STAT_MOD(damage, attacker, damage, statiD1)
-		}
-		else
-			APPLY_STAT_MOD(damage, attacker, damage, statiD1)
-	}
-	// defender buffs
-	if (GetBattlerAbility(battlerIdAtk) != ABILITY_UNAWARE)
-	{
-		if (gCritMultiplier == 2)
-		{
-			if (defender->statStages[statiD2] < 6)
-				APPLY_STAT_MOD(damageHelper, defender, damageHelper, statiD2)
-		}
-		else
-			APPLY_STAT_MOD(damageHelper, defender, damageHelper, statiD2)
-	}
-	damage = damage * gBattleMovePower;
+	atkStat *= gStatStageRatios[atkStage][0];
+	atkStat /= gStatStageRatios[atkStage][1];
+	
+	defStat *= gStatStageRatios[defStage][0];
+	defStat /= gStatStageRatios[defStage][1];
+	
+	damage = atkStat * gBattleMovePower;
 	damage *= (2 * attacker->level / 5 + 2);
-	damage = (damage / damageHelper);
+	damage = (damage / defStat);
 	damage /= 50;
 	
-	// reflect and light screen check
-	if ((sideStatus & (gBattleMoves[move].split + 1)) && gCritMultiplier == 1)
+	if (gCritMultiplier == 1)
 	{
-		if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
-			damage = 2 * (damage / 3);
-		else
-			damage /= 2;
+		i = FALSE;
+		
+		switch (gBattleMoves[move].split)
+		{
+			case MOVE_PHYSICAL:
+			    if (sideStatus & SIDE_STATUS_REFLECT)
+				    i = TRUE;
+			    break;
+		        case MOVE_SPECIAL:
+			    if (sideStatus & SIDE_STATUS_LIGHT_SCREEN)
+				    i = TRUE;
+			    break;
+		}
+		if (i)
+		{
+			if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
+				damage = 2 * (damage / 3);
+			else
+				damage /= 2;
+		}
 	}
-       
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMoves[move].target == MOVE_TARGET_BOTH && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) > 1) 
 		damage -= damage / 4;
 	
