@@ -2324,8 +2324,6 @@ void AnimTask_GetBattlersFromArg(u8 taskId)
 #define tSpriteId1       data[6]
 #define tSpriteId2       data[7]
 
-#define MAX_CHAR_PRINTED 12
-
 static void RestoreOverwrittenPixels(u8 * tiles)
 {
 	u32 i, i2, pixelCount;
@@ -2349,16 +2347,26 @@ static void RestoreOverwrittenPixels(u8 * tiles)
 
 static u8* AddTextPrinterAndCreateWindowOnAbilityPopUp(const u8* str, u32 x, u32 y, u32 bgColor, u32 fgColor, u32 shadowColor, u32* WindowId)
 {
-	u8 colours[3] = {bgColor, fgColor, shadowColor};
+	u8 *tiledata, *buffer = AllocZeroed(16);
+	u8 i, colours[3] = {bgColor, fgColor, shadowColor};
 	struct WindowTemplate Template = {0};
-	Template.width = 8;
+	Template.width = 16;
 	Template.height = 2;
 	
 	*WindowId = AddWindow(&Template);
+	tiledata = (u8*)(GetWindowAttribute(*WindowId, WINDOW_TILE_DATA));
 	FillWindowPixelBuffer(*WindowId, PIXEL_FILL(bgColor));
 	AddTextPrinterParameterized4(*WindowId, 0, x, y, 0, 0, colours, 0xFF, str);
 	
-	return (u8*)(GetWindowAttribute(*WindowId, WINDOW_TILE_DATA));
+	for (i = 0; i < 16; i++)
+	{
+		CpuCopy32(tiledata + 0x200 + (i * 16), buffer, 16);
+		CpuCopy32(tiledata + 0x100 + (i * 16), tiledata + 0x200 + (i * 16), 16);
+		CpuCopy32(buffer, tiledata + 0x100 + (i * 16), 16);
+	}
+	Free(buffer);
+	
+	return tiledata;
 }
 
 static void PutTextInAbilityPopUp(void * dest, u8 * WindowTile, s32 arg2, bool32 arg3)
@@ -2381,40 +2389,15 @@ static void PutTextInAbilityPopUp(void * dest, u8 * WindowTile, s32 arg2, bool32
 	}
 }
 
-static void AbilityPopUpPrinter(const u8 * str, u8 * tiledata, u8 * tiledata2, u32 x1, u32 x2, u32 y, u32 bgColor, u32 fgColor, u32 shadowColor)
+static void AbilityPopUpPrinter(const u8 * str, u8 * tiledata, u8 * tiledata2, u32 y, u32 bgColor, u32 fgColor, u32 shadowColor)
 {
-	u8 *WindowTile;
-	u32 WindowId, i;
-	u8 text1[MAX_CHAR_PRINTED], text2[MAX_CHAR_PRINTED];
+        u8 *WindowTile;
+	u32 WindowId;
 	
-	for (i = 0; i < MAX_CHAR_PRINTED; i++)
-	{
-		text1[i] = str[i];
-		
-		if (text1[i] == EOS)
-			break;
-	}
-	text1[i] = EOS;
-	
-	WindowTile = AddTextPrinterAndCreateWindowOnAbilityPopUp(text1, x1, y, bgColor, fgColor, shadowColor, &WindowId);
+	WindowTile = AddTextPrinterAndCreateWindowOnAbilityPopUp(str, 4, y, bgColor, fgColor, shadowColor, &WindowId);
 	PutTextInAbilityPopUp(tiledata, WindowTile, 8, (y == 0));
+	PutTextInAbilityPopUp(tiledata2, WindowTile + 0x200, 3, (y == 0));
 	RemoveWindow(WindowId);
-	
-	if (i == MAX_CHAR_PRINTED)
-	{
-		for (i = 0; i < MAX_CHAR_PRINTED; i++)
-		{
-			text2[i] = str[MAX_CHAR_PRINTED + i];
-			
-			if (text2[i] == EOS)
-				break;
-		}
-		text2[i] = EOS;
-		
-		WindowTile = AddTextPrinterAndCreateWindowOnAbilityPopUp(text2, x2, y, bgColor, fgColor, shadowColor, &WindowId);
-		PutTextInAbilityPopUp(tiledata2, WindowTile, 3, (y == 0));
-		RemoveWindow(WindowId);
-	}
 }
 
 static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprite2, u8 arg1, u16 arg2)
@@ -2441,7 +2424,7 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprit
     textPtr[2] = EOS;
     
     AbilityPopUpPrinter((const u8*) pokemonName, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP),
-			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP), 4, 0, 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_WHITE);
+			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP), 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_WHITE);
     
     if (arg1 == LOAD_ABILITY_FROM_SECOND_BANK)
         ability = gBattleMons[GetBattlerForBattleScript(arg2)].ability;
@@ -2451,7 +2434,7 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprit
         ability = arg2;
     
     AbilityPopUpPrinter(gAbilityNames[ability], (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP) + 256,
-			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP) + 256, 4, 1, 4, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_LIGHT_BLUE, TEXT_COLOR_WHITE);
+			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP) + 256, 4, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_LIGHT_BLUE, TEXT_COLOR_WHITE);
 }
 
 static void SpriteCB_AbilityPopUp(struct Sprite * sprite)
