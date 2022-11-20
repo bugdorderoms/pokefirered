@@ -1532,8 +1532,6 @@ extern const u8 gText_PokeSum_ApparentlyFatefulEncounterHatched_BoldGentleGramma
 extern const u8 gText_PokeSum_ApparentlyFatefulEncounterHatched[];
 extern const u8 gText_PokeSum_ApparentlyMet[];
 extern const u8 gText_PokeSum_ApparentlyMet_BoldGentleGrammar[];
-extern const u8 gText_PokeSum_ExpPoints[];
-extern const u8 gText_PokeSum_NextLv[];
 extern const u8 gText_PokeSum_PageName_PokemonInfo[];
 extern const u8 gText_PokeSum_Controls_PageCancel[];
 extern const u8 gText_PokeSum_Controls_Cancel[];
