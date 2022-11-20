@@ -111,7 +111,7 @@ static void PrintSkillsPage(void);
 static void PrintMovesPage(void);
 static void PokeSum_PrintMoveName(u8 i);
 static void PokeSum_PrintTrainerMemo(void);
-static void PokeSum_PrintExpPoints_NextLv(void);
+static void PokeSum_PrintExpPoints(void);
 static void PokeSum_PrintSelectedMoveStats(void);
 static void PokeSum_PrintTrainerMemo_Mon(void);
 static void PokeSum_PrintTrainerMemo_Egg(void);
@@ -184,10 +184,9 @@ struct PokemonSummaryScreenData
         u8 ALIGNED(4) moveAccuracyStrBufs[5][5];
 
         u8 ALIGNED(4) expPointsStrBuf[9];
-        u8 ALIGNED(4) expToNextLevelStrBuf[9];
 
-        u8 ALIGNED(4) abilityNameStrBuf[13];
-        u8 ALIGNED(4) abilityDescStrBuf[52];
+        u8 ALIGNED(4) abilityNameStrBuf[ABILITY_NAME_LENGTH + 1];
+        u8 ALIGNED(4) abilityDescStrBuf[100];
     } summary;
 
     u8 ALIGNED(4) isEgg; /* 0x3200 */
@@ -251,8 +250,6 @@ struct Struct203B144
     u16 unk00;
     u16 curHpStr;
     u16 statsStr[5];
-    u16 expStr;
-    u16 toNextLevel;
 
     u16 curPp[5];
     u16 maxPp[5];
@@ -834,9 +831,9 @@ static const struct WindowTemplate sWindowTemplates_Skills[] =
     [POKESUM_WIN_SKILLS_5 - 3] = {
         .bg = 0,
         .tilemapLeft = 1,
-        .tilemapTop = 16,
+        .tilemapTop = 15,
         .width = 29,
-        .height = 4,
+        .height = 5,
         .paletteNum = 6,
         .baseBlock = 0x00c5
     },
@@ -2134,9 +2131,9 @@ static void BufferMonInfo(void)
 
 static void BufferMonSkills(void)
 {
-    u8 i, level, tempStr[20];
+    u8 i, tempStr[20];
     u16 type, species, hp, statValue;
-    u32 exp, expToNextLevel;
+    u32 exp;
 
     hp = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP);
     ConvertIntToDecimalStringN(sMonSummaryScreen->summary.curHpStrBuf, hp, STR_CONV_MODE_LEFT_ALIGN, 3);
@@ -2159,20 +2156,9 @@ static void BufferMonSkills(void)
     }
     exp = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_EXP);
     ConvertIntToDecimalStringN(sMonSummaryScreen->summary.expPointsStrBuf, exp, STR_CONV_MODE_LEFT_ALIGN, 7);
-    sMonSkillsPrinterXpos->expStr = GetNumberRightAlign63(sMonSummaryScreen->summary.expPointsStrBuf);
-
-    level = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_LEVEL);
-    expToNextLevel = 0;
-    if (level < MAX_LEVEL)
-    {
-        species = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES);
-        expToNextLevel = gExperienceTables[gBaseStats[species].growthRate][level + 1] - exp;
-    }
-
-    ConvertIntToDecimalStringN(sMonSummaryScreen->summary.expToNextLevelStrBuf, expToNextLevel, STR_CONV_MODE_LEFT_ALIGN, 7);
-    sMonSkillsPrinterXpos->toNextLevel = GetNumberRightAlign63(sMonSummaryScreen->summary.expToNextLevelStrBuf);
-
-    type = GetAbilityBySpecies(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES), GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_ABILITY_NUM), GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_ABILITY_HIDDEN));
+    
+    species = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES);
+    type = GetAbilityBySpecies(species, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_ABILITY_NUM), GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_ABILITY_HIDDEN));
     StringCopy(sMonSummaryScreen->summary.abilityNameStrBuf, gAbilityNames[type]);
     StringCopy(sMonSummaryScreen->summary.abilityDescStrBuf, gAbilityDescriptionPointers[type]);
 
@@ -2444,7 +2430,7 @@ static void PrintInfoPage(void)
 
 const u8 sStatsPosY[] =
 {
-22, 35, 74, 48, 61,
+	22, 35, 74, 48, 61,
 };
 
 static u8 GetStatColor(u8 statiD)
@@ -2477,8 +2463,6 @@ static void PrintSkillsPage(void)
 					 sLevelNickTextColors[0], TEXT_SPEED_FF, sMonSummaryScreen->summary.statValueStrBufs[i]);
 #endif
     }
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 15 + sMonSkillsPrinterXpos->expStr, 87, sLevelNickTextColors[0], TEXT_SPEED_FF, sMonSummaryScreen->summary.expPointsStrBuf);
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 15 + sMonSkillsPrinterXpos->toNextLevel, 100, sLevelNickTextColors[0], TEXT_SPEED_FF, sMonSummaryScreen->summary.expToNextLevelStrBuf);
 }
 
 #define GetMoveNamePrinterYpos(x) ((x) * 28 + 5)
@@ -2560,7 +2544,7 @@ static void PokeSum_PrintBottomPaneText(void)
         PokeSum_PrintTrainerMemo();
         break;
     case PSS_PAGE_SKILLS:
-        PokeSum_PrintExpPoints_NextLv();
+        PokeSum_PrintExpPoints();
         break;
     case PSS_PAGE_MOVES_INFO:
         PokeSum_PrintSelectedMoveStats();
@@ -2812,17 +2796,12 @@ static void PokeSum_PrintTrainerMemo_Egg(void)
     AddTextPrinterParameterized4(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2, 0, 3, 0, 0, sLevelNickTextColors[0], TEXT_SPEED_FF, sEggOriginTexts[chosenStrIndex]);
 }
 
-static void PokeSum_PrintExpPoints_NextLv(void)
+static void PokeSum_PrintExpPoints(void)
 {
     AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2,
-                                 26, 7,
+                                 26, 10,
                                  sLevelNickTextColors[0], TEXT_SPEED_FF,
-                                 gText_PokeSum_ExpPoints);
-
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2,
-                                 26, 20,
-                                 sLevelNickTextColors[0], TEXT_SPEED_FF,
-                                 gText_PokeSum_NextLv);
+                                 sMonSummaryScreen->summary.expPointsStrBuf);
 }
 
 static void PokeSum_PrintSelectedMoveStats(void)
@@ -2897,8 +2876,8 @@ static void PokeSum_PrintAbilityNameAndDesc(void)
     AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[5], 2,
                                  66, 1, sLevelNickTextColors[0], TEXT_SPEED_FF, sMonSummaryScreen->summary.abilityNameStrBuf);
 
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[5], 2,
-                                 2, 15, sLevelNickTextColors[0], TEXT_SPEED_FF,
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[5], 0,
+                                 2, 12, sLevelNickTextColors[0], TEXT_SPEED_FF,
                                  sMonSummaryScreen->summary.abilityDescStrBuf);
 
 }
@@ -4566,7 +4545,7 @@ static void CreateExpBarObjs(u16 tileTag, u16 palTag)
         };
 
         sExpBarObjs->xpos[i] = i * 8 + 156;
-        spriteId = CreateSprite(&template, sExpBarObjs->xpos[i], 132, 0);
+        spriteId = CreateSprite(&template, sExpBarObjs->xpos[i], 113, 0);
         sExpBarObjs->sprites[i] = &gSprites[spriteId];
         sExpBarObjs->sprites[i]->oam.priority = 2;
         sExpBarObjs->tileTag = tileTag;
