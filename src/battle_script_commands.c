@@ -3597,7 +3597,7 @@ static void atk45_playanimation(void)
     argumentPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
 	
     if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE || gBattlescriptCurrInstr[2] == B_ANIM_SNATCH_MOVE || gBattlescriptCurrInstr[2] == B_ANIM_SUBSTITUTE_FADE
-     || gBattlescriptCurrInstr[2] == B_ANIM_SILPH_SCOPED)
+     || gBattlescriptCurrInstr[2] == B_ANIM_SILPH_SCOPED || gBattlescriptCurrInstr[2] == B_ANIM_ILLUSION_OFF)
     {
         BtlController_EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
         MarkBattlerForControllerExec(gActiveBattler);
@@ -5634,6 +5634,24 @@ static void atk76_various(void)
 		return;
 	}
 	break;
+    case VARIOUS_UPDATE_NICK:
+        if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
+	    mon = &gPlayerParty[gBattlerPartyIndexes[gActiveBattler]];
+        else
+            mon = &gEnemyParty[gBattlerPartyIndexes[gActiveBattler]];
+	UpdateHealthboxAttribute(gHealthboxSpriteIds[gActiveBattler], mon, HEALTHBOX_NICK);
+	break;
+    case VARIOUS_SET_SPRITEIGNORE0HP:
+        gBattleStruct->spriteIgnore0Hp ^= 1;
+        break;
+    case VARIOUS_TRY_REMOVE_ILLUSION:
+        gBattlescriptCurrInstr += 3;
+	TryRemoveIllusion(gActiveBattler);
+	return;
+    case VARIOUS_PLAY_TRANSFORM_ANIMATION:
+        BtlController_EmitMoveAnimation(0, MOVE_TRANSFORM, 0, 1, 1, 0xFF, &gDisableStructs[gActiveBattler]);
+	MarkBattlerForControllerExec(gActiveBattler);
+	break;
     }
     gBattlescriptCurrInstr += 3;
 }
@@ -6738,7 +6756,7 @@ static void atk9B_transformdataexecution(void)
     gChosenMove = 0xFFFF;
     ++gBattlescriptCurrInstr;
 	
-    if (gBattleMons[gBattlerTarget].status2 & STATUS2_TRANSFORMED || gStatuses3[gBattlerTarget] & STATUS3_SEMI_INVULNERABLE)
+    if (gBattleMons[gBattlerTarget].status2 & STATUS2_TRANSFORMED || gStatuses3[gBattlerTarget] & STATUS3_SEMI_INVULNERABLE || gNewBattleStruct.illusion[gBattlerTarget].on)
     {
         gMoveResultFlags |= MOVE_RESULT_FAILED;
         gBattleCommunication[MULTISTRING_CHOOSER] = 1;
