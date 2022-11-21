@@ -564,20 +564,16 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 	
 	if (gCritMultiplier == 1)
 	{
-		i = FALSE;
-		
 		switch (gBattleMoves[move].split)
 		{
 			case MOVE_PHYSICAL:
-			    if (sideStatus & SIDE_STATUS_REFLECT)
-				    i = TRUE;
+			    i = SIDE_STATUS_REFLECT;
 			    break;
 		        case MOVE_SPECIAL:
-			    if (sideStatus & SIDE_STATUS_LIGHTSCREEN)
-				    i = TRUE;
+			    i = SIDE_STATUS_LIGHTSCREEN;
 			    break;
 		}
-		if (i)
+		if (sideStatus & i)
 		{
 			if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
 				damage = 2 * (damage / 3);
