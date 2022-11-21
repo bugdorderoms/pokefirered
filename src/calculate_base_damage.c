@@ -573,7 +573,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			    i = SIDE_STATUS_LIGHTSCREEN;
 			    break;
 		}
-		if (sideStatus & i)
+		if ((sideStatus & i) && GetBattlerAbility(battlerIdAtk) != ABILITY_INFILTRATOR)
 		{
 			if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
 				damage = 2 * (damage / 3);
