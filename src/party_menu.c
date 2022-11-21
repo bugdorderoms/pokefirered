@@ -895,7 +895,6 @@ static void DisplayPartyPokemonDataForMultiBattle(u8 slot)
     {
         menuBox->infoRects->blitFunc(menuBox->windowId, 0, 0, 0, 0, FALSE);
         StringCopy(gStringVar1, gMultiPartnerParty[actualSlot].nickname);
-        StringGetEnd10(gStringVar1);
         if (StringLength(gStringVar1) <= 5)
             ConvertInternationalString(gStringVar1, 1);
         DisplayPartyPokemonBarDetail(menuBox->windowId, gStringVar1, 0, menuBox->infoRects->dimensions);
@@ -1521,7 +1520,7 @@ static s8 GetNewSlotDoubleLayout(s8 slotId, s8 movementDir)
 u8 *GetMonNickname(struct Pokemon *mon, u8 *dest)
 {
     GetMonData(mon, MON_DATA_NICKNAME, dest);
-    return StringGetEnd10(dest);
+    return dest;
 }
 
 #define tKeepOpen  data[0]
