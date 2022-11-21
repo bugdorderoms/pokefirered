@@ -46,6 +46,7 @@ static const u8 sAirLockString[] = _("The effects of weather\ndisappeared!");
 static const u8 sCursedBodyString[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ndisabled {B_ATK_NAME_WITH_PREFIX}'s\l{B_CURRENT_MOVE}!");
 static const u8 sHealerString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\ncured {B_EFF_NAME_WITH_PREFIX}'s\l{B_BUFF1} problem!");
 static const u8 sHarvestString[] = _("{B_ATK_NAME_WITH_PREFIX} harvested\nits {B_LAST_ITEM}!");
+static const u8 sIllusionOffString[] = _("{B_DEF_NAME_WITH_PREFIX}'s illusion wore off!");
 
 static const u16 sPowderAndSporeMoves[] =
 {
@@ -2490,6 +2491,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				    ++effect;
 			    }
 			    break;
+		    case ABILITY_ILLUSION:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && TryRemoveIllusion(gBattlerTarget))
+				    ++effect;
+			    break;
 	    }
 	    break;
 	case ABILITYEFFECT_MOVE_END_ATTACKER:
@@ -3761,4 +3766,76 @@ u8 GetHiddenPowerType(struct Pokemon *mon)
 	if (type >= TYPE_MYSTERY)
 		++type;
 	return type;
+}
+
+static void SetIllusionMon(struct Pokemon *mon, u8 battler)
+{
+	struct Pokemon *party, *partnerMon;
+	s8 i, id;
+	
+	gNewBattleStruct.illusion[battler].set = TRUE;
+	
+	if (GetMonAbility(mon) == ABILITY_ILLUSION)
+	{
+		if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+			party = gPlayerParty;
+		else
+			party = gEnemyParty;
+		
+		if (gBattleMons[battler ^ BIT_FLANK].hp)
+			partnerMon = &party[gBattlerPartyIndexes[battler ^ BIT_FLANK]];
+		else
+			partnerMon = mon;
+		
+		// find last alive non-egg pokemon
+		for (i = PARTY_SIZE - 1; i >= 0; i--)
+		{
+			id = i;
+			
+			if (GetMonData(&party[id], MON_DATA_SANITY_HAS_SPECIES) && GetMonData(&party[id], MON_DATA_HP) && !GetMonData(&party[id], MON_DATA_IS_EGG)
+			    && &party[id] != mon && &party[id] != partnerMon)
+			{
+				gNewBattleStruct.illusion[battler].on = TRUE;
+				gNewBattleStruct.illusion[battler].broken = FALSE;
+				gNewBattleStruct.illusion[battler].partyId = id;
+				gNewBattleStruct.illusion[battler].mon = &party[id];
+				return;
+			}
+		}
+	}
+}
+
+struct Pokemon *GetIllusionMonPtr(u8 battler)
+{
+	if (gNewBattleStruct.illusion[battler].broken)
+		return NULL;
+	
+	if (!gNewBattleStruct.illusion[battler].set)
+	{
+		if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+			SetIllusionMon(&gPlayerParty[gBattlerPartyIndexes[battler]], battler);
+		else
+			SetIllusionMon(&gEnemyParty[gBattlerPartyIndexes[battler]], battler);
+	}
+	if (!gNewBattleStruct.illusion[battler].on)
+		return NULL;
+	
+	return gNewBattleStruct.illusion[battler].mon;
+}
+
+void ClearIllusionMon(u8 battler)
+{
+	memset(&gNewBattleStruct.illusion[battler], 0, sizeof(gNewBattleStruct.illusion[battler]));
+}
+
+bool8 TryRemoveIllusion(u8 battler)
+{
+	if (GetIllusionMonPtr(battler) != NULL)
+	{
+		gSetWordLoc = sIllusionOffString;
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_IllusionOff;
+		return TRUE;
+	}
+	return FALSE;
 }
