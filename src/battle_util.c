@@ -1883,7 +1883,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 	  || gLastUsedAbility == ABILITY_DOWNLOAD
 	  || gLastUsedAbility == ABILITY_FOREWARN
 	  || gLastUsedAbility == ABILITY_FRISK
-	  || gLastUsedAbility == ABILITY_UNNERVE))
+	  || gLastUsedAbility == ABILITY_UNNERVE
+	  || gLastUsedAbility == ABILITY_IMPOSTER))
             return effect;
         switch (caseID)
         {
@@ -2027,7 +2028,19 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 	        gSetWordLoc = sUnnerveString;
 		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 		++effect;
-		break;	    
+		break;
+	    case ABILITY_IMPOSTER:
+		target1 = battler ^ BIT_SIDE;
+			    
+		if (gBattleMons[target1].hp && !(gBattleMons[target1].status2 & (STATUS2_TRANSFORMED | STATUS2_SUBSTITUTE)) && !(gStatuses3[target1] & STATUS3_SEMI_INVULNERABLE)
+		    && !gNewBattleStruct.illusion[target1].on && !(gBattleMons[battler].status2 & STATUS2_TRANSFORMED))
+		{
+			gBattlerAttacker = battler;
+			gBattlerTarget = target1;
+			BattleScriptPushCursorAndCallback(BattleScript_ImposterActivates);
+			effect++;
+		}
+		break;
             }
             break;
         case ABILITYEFFECT_ENDTURN: // 1
