@@ -3542,7 +3542,7 @@ static void atk42_trysetsleep(void)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed;
 		return;
 	}
-	else if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if ((gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR && gBattlerAttacker != bank)
 	{
 		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
 		return;
@@ -5990,7 +5990,7 @@ static void atk84_trysetpoison(void)
 		gBattlescriptCurrInstr = BattleScript_NotAffected;
 		return;
 	}
-	else if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if ((gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
 	{
 		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
 		return;
@@ -7211,7 +7211,7 @@ static void atkAC_trysetburn(void)
 		gBattlescriptCurrInstr = BattleScript_NotAffected;
 		return;
 	}
-	else if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if ((gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
 	{
 		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
 		return;
@@ -7481,7 +7481,7 @@ static void atkB6_trysetparalyze(void)
 		gBattlescriptCurrInstr = BattleScript_NotAffected;
 		return;
 	}
-	else if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if ((gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
 	{
 		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
 		return;
