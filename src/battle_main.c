@@ -2602,6 +2602,7 @@ static void BattleStartClearSetData(void)
         gBattleResources->flags->flags[i] = 0;
         gNewBattleStruct.SlowStartTimers[i] = 0;
         gNewBattleStruct.UnburdenBoostBits &= ~(gBitTable[i]);
+	ClearIllusionMon(i);
     }
     for (i = 0; i < 2; ++i)
     {
@@ -2687,6 +2688,8 @@ void SwitchInClearSetData(void)
     struct DisableStruct disableStructCopy = gDisableStructs[gActiveBattler];
     s32 i;
     u8 *ptr;
+
+    ClearIllusionMon(gActiveBattler);
 
     if (gBattleMoves[gCurrentMove].effect != EFFECT_BATON_PASS)
     {
