@@ -5466,6 +5466,7 @@ static void atk76_various(void)
     u16 species, *choicedMove;
     u32 monToCheck, status;
     s32 i;
+    struct Pokemon *mon;
 
     gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 
