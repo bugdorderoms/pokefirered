@@ -39,7 +39,6 @@ static void FaintFromFieldPoison(u8 partyIdx)
 #endif
     SetMonData(pokemon, MON_DATA_STATUS, &status);
     GetMonData(pokemon, MON_DATA_NICKNAME, gStringVar1);
-    StringGetEnd10(gStringVar1);
 }
 
 static bool32 MonFaintedFromPoison(u8 partyIdx)
