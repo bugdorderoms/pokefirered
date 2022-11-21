@@ -1601,7 +1601,7 @@ static const u8* TryGetStatusString(u8 *src)
 
 static void GetBattlerNick(u8 battlerId, u8 *dst)
 {
-	struct Pokemon *mon, *illusionMon;
+    struct Pokemon *mon, *illusionMon;
 
     if (GET_BATTLER_SIDE(battlerId) == B_SIDE_PLAYER)
         mon = &gPlayerParty[gBattlerPartyIndexes[battlerId]];
@@ -1614,6 +1614,7 @@ static void GetBattlerNick(u8 battlerId, u8 *dst)
         mon = illusionMon;
 	
     GetMonData(mon, MON_DATA_NICKNAME, dst);
+    StringGet_Nickname(dest);
 }
 
 #define HANDLE_NICKNAME_STRING_CASE(battlerId, monIndex)                \
@@ -1975,6 +1976,7 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
                     GetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_NICKNAME, text);
                 else
                     GetMonData(&gEnemyParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_NICKNAME, text);
+	        StringGet_Nickname(text);
                 toCpy = text;
                 break;
             }
@@ -2034,6 +2036,7 @@ static void IllusionNickHack(u8 battlerId, u8 partyId, u8 *dst)
 		}
 	}
 	GetMonData(mon, MON_DATA_NICKNAME, dst);
+	StringGet_Nickname(dst);
 }
 
 static void ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst)
@@ -2091,6 +2094,7 @@ static void ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst)
 
                 GetMonData(&gEnemyParty[src[srcId + 2]], MON_DATA_NICKNAME, text);
             }
+	    StringGet_Nickname(text);
             StringAppend(dst, text);
             srcId += 3;
             break;
@@ -2104,19 +2108,21 @@ static void ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst)
             break;
         case B_BUFF_MON_NICK: // poke nick without prefix
             if (src[srcId + 2] == gBattlerPartyIndexes[src[srcId + 1]])
-				GetBattlerNick(src[srcId + 1], dst);
-			else if (gBattleScripting.illusionNickHack) // for STRINGID_ENEMYABOUTTOSWITCHPKMN
-			{
-				gBattleScripting.illusionNickHack = FALSE;
-				IllusionNickHack(src[srcId + 1], src[srcId + 2], dst);
-			}
-			else
-			{
-				if (GetBattlerSide(src[srcId + 1]) == B_SIDE_PLAYER)
-					GetMonData(&gPlayerParty[src[srcId + 2]], MON_DATA_NICKNAME, dst);
-				else
-					GetMonData(&gEnemyParty[src[srcId + 2]], MON_DATA_NICKNAME, dst);
-			}
+		GetBattlerNick(src[srcId + 1], dst);
+	    else if (gBattleScripting.illusionNickHack) // for STRINGID_ENEMYABOUTTOSWITCHPKMN
+	    {
+		gBattleScripting.illusionNickHack = FALSE;
+		IllusionNickHack(src[srcId + 1], src[srcId + 2], dst);
+	    }
+	    else
+	    {
+		if (GetBattlerSide(src[srcId + 1]) == B_SIDE_PLAYER)
+		    GetMonData(&gPlayerParty[src[srcId + 2]], MON_DATA_NICKNAME, dst);
+		else
+		    GetMonData(&gEnemyParty[src[srcId + 2]], MON_DATA_NICKNAME, dst);
+		    
+		StringGet_Nickname(dst);
+	    }
             srcId += 3;
             break;
         case B_BUFF_NEGATIVE_FLAVOR: // flavor table
