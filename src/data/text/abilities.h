@@ -146,6 +146,7 @@ static const u8 sWonderSkinDescription[] =   _("Makes status moves more likely t
 static const u8 sAnalyticDescription[] =     _("Boosts move power when the POKéMON moves\nlast.");
 static const u8 sIllusionDescription[] =     _("Comes out disguised as the POKéMON in the\nparty's last spot.");
 static const u8 sImposterDescription[] =     _("The POKéMON transforms itself into the POKéMON\nit's facing.");
+static const u8 sInfiltratorDescription[] =  _("The POKéMON's moves are unaffected by the\ntarget's barriers, substitutes, and the like.");
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
 {
@@ -300,6 +301,7 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_ANALYTIC] = sAnalyticDescription,
     [ABILITY_ILLUSION] = sIllusionDescription,
     [ABILITY_IMPOSTER] = sImposterDescription,
+    [ABILITY_INFILTRATOR] = sInfiltratorDescription,
 };
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
@@ -455,4 +457,5 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_ANALYTIC] = _("Analytic"),
     [ABILITY_ILLUSION] = _("Illusion"),
     [ABILITY_IMPOSTER] = _("Imposter"),
+    [ABILITY_INFILTRATOR] = _("Infiltrator"),
 };
