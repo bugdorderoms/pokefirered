@@ -1576,7 +1576,7 @@ bool8 MakesSound(u16 move)
 
 bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move) 
 {
-	if (!(gBattleMons[defender].status2 & STATUS2_SUBSTITUTE) || MakesSound(move)) //add check for infiltrator here
+	if (!((gBattleMons[defender].status2 & STATUS2_SUBSTITUTE) || MakesSound(move) || (GetBattlerAbility(attacker) == ABILITY_INFILTRATOR && move != MOVE_TRANSFORM))) // add Sky Drop check here
 		return FALSE;
 	else
 		return TRUE;
@@ -2126,7 +2126,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
         return;
     }
     if (gSideStatuses[GET_BATTLER_SIDE(gEffectBattler)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
-     && !primary && gBattleCommunication[MOVE_EFFECT_BYTE] <= 7)
+     && !primary && gBattleCommunication[MOVE_EFFECT_BYTE] <= 7 && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
     {
         ++gBattlescriptCurrInstr;
         return;
@@ -2755,16 +2755,18 @@ static void atk1E_jumpifability(void)
 static void atk1F_jumpifsideaffecting(void)
 {
     u8 side;
-    u16 flags;
-    const u8 *jumpPtr;
+    u16 flags = T2_READ_16(gBattlescriptCurrInstr + 2);
+    const u8 *jumpPtr = T2_READ_PTR(gBattlescriptCurrInstr + 4);
 
     if (gBattlescriptCurrInstr[1] == BS_ATTACKER)
         side = GET_BATTLER_SIDE(gBattlerAttacker);
     else
+    {
         side = GET_BATTLER_SIDE(gBattlerTarget);
-
-    flags = T2_READ_16(gBattlescriptCurrInstr + 2);
-    jumpPtr = T2_READ_PTR(gBattlescriptCurrInstr + 4);
+	
+        if (GetBattlerAbility(gBattlerTarget) == ABILITY_INFILTRATOR)
+	    flags &= ~(SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST);
+    }
 
     if (gSideStatuses[side] & flags)
         gBattlescriptCurrInstr = jumpPtr;
@@ -6112,7 +6114,7 @@ static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
     if ((statValue >= 0 && GetBattlerAbility(gActiveBattler) == ABILITY_CONTRARY) || (statValue <= -1 && GetBattlerAbility(gActiveBattler) != ABILITY_CONTRARY)) 
     {   
 	// Stat decrease.
-        if (gSideTimers[GET_BATTLER_SIDE(gActiveBattler)].mistTimer && !certain && gCurrentMove != MOVE_CURSE)
+        if (gSideTimers[GET_BATTLER_SIDE(gActiveBattler)].mistTimer && !certain && gCurrentMove != MOVE_CURSE && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
         {
             if (flags == STAT_CHANGE_BS_PTR)
             {
