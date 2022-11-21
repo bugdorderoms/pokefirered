@@ -5786,12 +5786,12 @@ void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality)
 
 bool8 CheckBattleTypeGhost(struct Pokemon *mon, u8 battlerId)
 {
-    u8 buffer[12];
+    u8 buffer[POKEMON_NAME_LENGTH + 1];
 
     if (gBattleTypeFlags & BATTLE_TYPE_GHOST && GetBattlerSide(battlerId) != B_SIDE_PLAYER)
     {
         GetMonData(mon, MON_DATA_NICKNAME, buffer);
-        StringGetEnd10(buffer);
+        StringGet_Nickname(buffer);
         if (!StringCompare(buffer, gText_Ghost))
             return TRUE;
     }
