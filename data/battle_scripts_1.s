@@ -2747,6 +2747,7 @@ BattleScript_EffectCamouflage::
 	goto BattleScript_MoveEnd
 
 BattleScript_FaintAttacker::
+        tryremoveillusion BS_ATTACKER
 	playfaintcry BS_ATTACKER
 	pause 0x40
 	dofaintanimation BS_ATTACKER
@@ -2757,6 +2758,7 @@ BattleScript_FaintAttacker::
 	return
 
 BattleScript_FaintTarget::
+        tryremoveillusion BS_TARGET
 	playfaintcry BS_TARGET
 	pause 0x40
 	dofaintanimation BS_TARGET
@@ -2805,6 +2807,7 @@ BattleScript_FaintedMonTryChooseAnother::
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_PLAYER_FAINTED, BattleScript_FaintedMonChooseAnother
 	jumpifbyte CMP_EQUAL, sBATTLE_STYLE, 1, BattleScript_FaintedMonChooseAnother
 	jumpifcantswitch BS_PLAYER1, BattleScript_FaintedMonChooseAnother
+	setbyte sILLUSION_NICK_HACK, 1
 	printstring STRINGID_ENEMYABOUTTOSWITCHPKMN
 	setbyte gBattleCommunication, 0
 	yesnobox
@@ -4660,3 +4663,25 @@ BattleScript_PowderMoveNoEffectPrint::
 	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	goto BattleScript_MoveEnd
 	
+BattleScript_IllusionOff::
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, ABILITY_ILLUSION
+        spriteignore0hp
+	playanimation BS_TARGET, B_ANIM_ILLUSION_OFF, 0
+	waitanimation
+	updatenick BS_TARGET
+	waitstate
+	spriteignore0hp
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	return
+
+BattleScript_ImposterActivates::
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+        transformdataexecution
+	playtransformanimation BS_ATTACKER
+	waitanimation
+	printfromtable gTransformUsedStringIds
+	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+        end3
