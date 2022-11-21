@@ -131,6 +131,8 @@ big pecks
 sand rush
 wonder skin
 analytic
+illusion
+imposter
 
 // WARNING
 Klutz don't affect prize money, experience, effort values or friendship.
