@@ -2406,10 +2406,16 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprit
     u8 pokemonName[POKEMON_NAME_LENGTH + 3] = {0};
     u8 *textPtr;
     u16 ability;
+    struct Pokemon *illusionMon = GetIllusionMonPtr(battler);
+	
+    if (illusionMon != NULL)
+	GetMonData(illusionMon, MON_DATA_NICKNAME, gStringVar1);
+    else
+	StringCopy(gStringVar1, gBattleMons[battler].nickname);
     
     for (i = 0; i < POKEMON_NAME_LENGTH; i++)
     {
-        pokemonName[i] = gBattleMons[battler].nickname[i];
+        pokemonName[i] = gStringVar1[i];
         
         if (pokemonName[i] == EOS || i + 1 == POKEMON_NAME_LENGTH)
             break;
