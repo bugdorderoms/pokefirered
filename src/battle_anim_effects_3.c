@@ -2191,7 +2191,7 @@ void AnimTask_TransformMon(u8 taskId)
         }
         break;
     case 2:
-        HandleSpeciesGfxDataChange(gBattleAnimAttacker, gBattleAnimTarget, gTasks[taskId].data[10]);
+        HandleSpeciesGfxDataChange(gBattleAnimAttacker, gBattleAnimTarget, gTasks[taskId].data[10], gBattleAnimArgs[1]);
         GetBattleAnimBgDataByPriorityRank(&animBg, gBattleAnimAttacker);
         position = GetBattlerPosition(gBattleAnimAttacker);
         src = gMonSpritesGfxPtr->sprites[position] + (gBattleMonForms[gBattleAnimAttacker] << 11);
@@ -2237,7 +2237,7 @@ void AnimTask_IsMonInvisible(u8 taskId)
 
 void AnimTask_CastformGfxChange(u8 taskId)
 {
-    HandleSpeciesGfxDataChange(gBattleAnimAttacker, gBattleAnimTarget, TRUE);
+    HandleSpeciesGfxDataChange(gBattleAnimAttacker, gBattleAnimTarget, TRUE, FALSE);
     DestroyAnimVisualTask(taskId);
 }
 
