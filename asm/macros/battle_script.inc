@@ -1354,6 +1354,22 @@
 	various \battler, VARIOUS_TRAINER_SLIDE_LAST_MON
         .endm
 
+        .macro updatenick battler:req
+	various \battler, VARIOUS_UPDATE_NICK
+	.endm
+	
+	.macro spriteignore0hp
+	various BS_ATTACKER, VARIOUS_SET_SPRITEIGNORE0HP
+	.endm
+	
+	.macro tryremoveillusion battler:req
+	various \battler, VARIOUS_TRY_REMOVE_ILLUSION
+	.endm
+	
+	.macro playtransformanimation battler:req
+	various \battler, VARIOUS_PLAY_TRANSFORM_ANIMATION
+	.endm
+
 @ helpful macros
 	.macro setstatchanger stat:req, stages:req, down:req
 	setbyte sSTATCHANGER \stat | \stages << 4 | \down << 7
