@@ -37,36 +37,6 @@ extern u8 gExpandedPlaceholder_Groudon[];
 extern u8 gExpandedPlaceholder_Red[];
 extern u8 gExpandedPlaceholder_Green[];
 
-u8 *StringCopy10(u8 *dest, const u8 *src)
-{
-    u8 i;
-    u32 limit = 10;
-
-    for (i = 0; i < limit; i++)
-    {
-        dest[i] = src[i];
-
-        if (dest[i] == EOS)
-            return &dest[i];
-    }
-
-    dest[i] = EOS;
-    return &dest[i];
-}
-
-u8 *StringGetEnd10(u8 *str)
-{
-    u8 i;
-    u32 limit = 10;
-
-    for (i = 0; i < limit; i++)
-        if (str[i] == EOS)
-            return &str[i];
-
-    str[i] = EOS;
-    return &str[i];
-}
-
 u8 *StringCopy7(u8 *dest, const u8 *src)
 {
     s32 i;
