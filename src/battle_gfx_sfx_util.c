@@ -307,7 +307,7 @@ bool8 IsBattleSEPlaying(u8 battlerId)
 
 static void BattleLoadMonSpriteGfx(struct Pokemon *mon, u8 battlerId, bool8 opponent)
 {
-	u32 monsPersonality, currentPersonality, otId;
+    u32 monsPersonality, currentPersonality, otId;
     u16 species;
     u8 position;
     u16 paletteOffset;
@@ -334,23 +334,15 @@ static void BattleLoadMonSpriteGfx(struct Pokemon *mon, u8 battlerId, bool8 oppo
     otId = GetMonData(mon, MON_DATA_OT_ID);
     position = GetBattlerPosition(battlerId);
 	
-	if (opponent)
-	{
-		HandleLoadSpecialPokePic_DontHandleDeoxys(&gMonFrontPicTable[species],
-                                              gMonSpritesGfxPtr->sprites[position],
-                                              species, currentPersonality);
-	}
+    if (opponent)
+	HandleLoadSpecialPokePic_DontHandleDeoxys(&gMonFrontPicTable[species], gMonSpritesGfxPtr->sprites[position], species, currentPersonality);
+    else
+    {
+	if (ShouldIgnoreDeoxysForm(DEOXYS_CHECK_BATTLE_SPRITE, battlerId) == TRUE || gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies != SPECIES_NONE)
+	    HandleLoadSpecialPokePic_DontHandleDeoxys(&gMonBackPicTable[species], gMonSpritesGfxPtr->sprites[position], species, currentPersonality);
 	else
-	{
-		if (ShouldIgnoreDeoxysForm(DEOXYS_CHECK_BATTLE_SPRITE, battlerId) == TRUE || gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies != SPECIES_NONE)
-			HandleLoadSpecialPokePic_DontHandleDeoxys(&gMonBackPicTable[species],
-                                                  gMonSpritesGfxPtr->sprites[position],
-                                                  species, currentPersonality);
-		else
-			HandleLoadSpecialPokePic(&gMonBackPicTable[species],
-                                gMonSpritesGfxPtr->sprites[position],
-                                species, currentPersonality);
-	}
+	    HandleLoadSpecialPokePic(&gMonBackPicTable[species], gMonSpritesGfxPtr->sprites[position], species, currentPersonality);
+    }
     paletteOffset = 0x100 + battlerId * 16;
 	
     if (gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies == SPECIES_NONE)
@@ -377,6 +369,7 @@ static void BattleLoadMonSpriteGfx(struct Pokemon *mon, u8 battlerId, bool8 oppo
         BlendPalette(paletteOffset, 16, 6, RGB_WHITE);
         CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
     }
+}
 
 void BattleLoadOpponentMonSpriteGfx(struct Pokemon *mon, u8 battlerId)
 {
