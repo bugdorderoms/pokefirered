@@ -26,9 +26,7 @@
 #define sRESHOW_MAIN_STATE gBattleScripting + 0x21
 #define sRESHOW_HELPER_STATE gBattleScripting + 0x22
 #define sFIELD_23 gBattleScripting + 0x23
-#define sWINDOWS_TYPE gBattleScripting + 0x24
-#define sMULTIPLAYER_ID gBattleScripting + 0x25
-#define sSPECIAL_TRAINER_BATTLE_TYPE gBattleScripting + 0x26
+#define sILLUSION_NICK_HACK gBattleScripting + 0x24
 
 #define cEFFECT_CHOOSER gBattleCommunication + 3
 #define cMULTISTRING_CHOOSER gBattleCommunication + 5
@@ -85,6 +83,10 @@
 #define VARIOUS_TRY_DO_AFTERMATH_DAMAGE          14
 #define VARIOUS_TRAINER_SLIDE_FIRST_MON_DOWN     15
 #define VARIOUS_TRAINER_SLIDE_LAST_MON           16
+#define VARIOUS_UPDATE_NICK                      17
+#define VARIOUS_SET_SPRITEIGNORE0HP              18
+#define VARIOUS_TRY_REMOVE_ILLUSION              19
+#define VARIOUS_PLAY_TRANSFORM_ANIMATION         20
 
 // atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN                               0
