@@ -92,7 +92,7 @@ struct BoxPokemon
 {
     u32 personality;
     u32 otId;
-    u8 nickname[POKEMON_NAME_LENGTH];
+    u8 nickname[POKEMON_NAME_LENGTH + 1];
     u8 language;
     u8 isBadEgg:1;
     u8 hasSpecies:1;
