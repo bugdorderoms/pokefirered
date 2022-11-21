@@ -419,6 +419,7 @@ struct BattleStruct
     u8 wishPerishSongState;
     u8 wishPerishSongBattlerId;
     u8 magnitudeBasePower;
+    bool8 spriteIgnore0Hp;
     u8 field_182;
     // align 4
     union {
@@ -427,11 +428,22 @@ struct BattleStruct
     } multiBuffer;
 };
 
+struct Illusion
+{
+	u8 on;
+	u8 set;
+	u8 broken;
+	u8 partyId;
+	struct Pokemon *mon;
+};
+
 struct NewBattleStruct
 {
-/*0x00*/ u8 SlowStartTimers[MAX_BATTLERS_COUNT];
-/*0x04*/ u8 IgnoredAbilities;
-/*0x05*/ u8 UnburdenBoostBits;
+    u8 SlowStartTimers[MAX_BATTLERS_COUNT];
+    u8 IgnoredAbilities;
+    u8 UnburdenBoostBits;
+    u16 unused;
+    struct Illusion illusion[MAX_BATTLERS_COUNT];
 };
 
 extern struct BattleStruct *gBattleStruct;
@@ -493,6 +505,7 @@ struct BattleScripting
     u8 reshowMainState;
     u8 reshowHelperState;
     u8 field_23;
+    bool8 illusionNickHack;
 };
 
 enum
