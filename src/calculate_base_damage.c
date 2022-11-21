@@ -573,7 +573,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 				    i = TRUE;
 			    break;
 		        case MOVE_SPECIAL:
-			    if (sideStatus & SIDE_STATUS_LIGHT_SCREEN)
+			    if (sideStatus & SIDE_STATUS_LIGHTSCREEN)
 				    i = TRUE;
 			    break;
 		}
