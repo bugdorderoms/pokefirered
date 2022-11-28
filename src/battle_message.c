@@ -1614,7 +1614,7 @@ static void GetBattlerNick(u8 battlerId, u8 *dst)
         mon = illusionMon;
 	
     GetMonData(mon, MON_DATA_NICKNAME, dst);
-    StringGet_Nickname(dest);
+    StringGet_Nickname(dst);
 }
 
 #define HANDLE_NICKNAME_STRING_CASE(battlerId, monIndex)                \
