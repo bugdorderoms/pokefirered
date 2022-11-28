@@ -381,8 +381,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 					gBattleMovePower = (15 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_NORMALIZE:
-				if (gBattleStruct->dynamicMoveType == TYPE_NORMAL && gBattleMoves[move].effect != EFFECT_HIDDEN_POWER 
-				    && gBattleMoves[move].effect != EFFECT_WEATHER_BALL)
+				if (type == TYPE_NORMAL && gBattleMoves[move].effect != EFFECT_HIDDEN_POWER && gBattleMoves[move].effect != EFFECT_WEATHER_BALL)
 					gBattleMovePower = (12 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_IRON_FIST:
