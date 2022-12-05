@@ -1779,9 +1779,9 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
 	    }
     }
     SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
+    SetBoxMonData(boxMon, MON_DATA_OT_ID, &value);
     value = GetNatureFromPersonality(personality);
     SetBoxMonData(boxMon, MON_DATA_NATURE, &value);
-    SetBoxMonData(boxMon, MON_DATA_OT_ID, &value);
     GetSpeciesName(speciesName, species);
     SetBoxMonData(boxMon, MON_DATA_NICKNAME, speciesName);
     SetBoxMonData(boxMon, MON_DATA_LANGUAGE, &gGameLanguage);
