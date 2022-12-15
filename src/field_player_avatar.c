@@ -565,7 +565,7 @@ static u8 CheckForPlayerAvatarCollision(u8 direction)
     x = playerObjEvent->currentCoords.x;
     y = playerObjEvent->currentCoords.y;
     if (IsDirectionalStairWarpMetatileBehavior(MapGridGetMetatileBehaviorAt(x, y), direction))
-        return 8;
+        return COLLISION_ROTATING_GATE;
     MoveCoords(direction, &x, &y);
     return CheckForObjectEventCollision(playerObjEvent, x, y, direction, MapGridGetMetatileBehaviorAt(x, y));
 }
