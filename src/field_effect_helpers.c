@@ -28,10 +28,9 @@ static void SynchroniseSurfPosition(struct ObjectEvent * objectEvent, struct Spr
 static void CreateBobbingEffect(struct ObjectEvent * objectEvent, struct Sprite * linkedSprite, struct Sprite * sprite);
 static void SpriteCB_UnderwaterSurfBlob(struct Sprite * sprite);
 static u32 ShowDisguiseFieldEffect(u8 fldEff, u8 templateIdx);
+void LoadSpecialReflectionPalette(struct Sprite *sprite);
 
-void LoadSpecialReflectionPalette(struct Sprite *sprite); // added this
-
-extern u16 gReflectionPaletteBuffer[]; // added this
+extern u16 gReflectionPaletteBuffer[];
 
 void SetUpReflection(struct ObjectEvent * objectEvent, struct Sprite * sprite, bool8 stillReflection)
 {
