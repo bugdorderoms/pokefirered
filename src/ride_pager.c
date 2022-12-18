@@ -83,8 +83,8 @@ static const u8 sCharizardRideDesc[] = _("This Charizard flies you\nto other pla
 static const struct MenuAction sPokeRideActionTable[NUM_RIDE_POKEMON] = {
     [RIDE_TAUROS]  = { sTaurosCharge, TaurosChargeCallback },
     [RIDE_STOUTLAND] = { sStoutlandSearch, StoutlandSearchCallback },
-	[RIDE_MUDSDALE] = { sMudsdaleGallop, MudsdaleGallopCallback },
-	[RIDE_MACHAMP] = { sMachampShove, MachampShoveCallback },
+    [RIDE_MUDSDALE] = { sMudsdaleGallop, MudsdaleGallopCallback },
+    [RIDE_MACHAMP] = { sMachampShove, MachampShoveCallback },
     [RIDE_SHARPEDO] = { sSharpedoPaddle, SharpedoPaddleCallback },
     [RIDE_CHARIZARD] = { sCharizardGlide, CharizardGlideCallback }
 };
@@ -95,7 +95,7 @@ static const struct RideSpeciesAndDesc sRideToSpeciesAndDesc[NUM_RIDE_POKEMON] =
 		.species = SPECIES_TAUROS,
 		.desc = sTaurosRideDesc,
 	},
-    [RIDE_STOUTLAND] = {
+	[RIDE_STOUTLAND] = {
 		.species = SPECIES_TAUROS, // SPECIES_STOUTLAND
 		.desc = sStoutlandRideDesc,
 	},
@@ -107,7 +107,7 @@ static const struct RideSpeciesAndDesc sRideToSpeciesAndDesc[NUM_RIDE_POKEMON] =
 		.species = SPECIES_MACHAMP,
 		.desc = sMachampRideDesc,
 	},
-    [RIDE_SHARPEDO] = {
+	[RIDE_SHARPEDO] = {
 		.species = SPECIES_SHARPEDO,
 		.desc = sSharpedoRideDesc,
 	},
@@ -144,8 +144,7 @@ u16 RideToSpeciesId(u8 ride)
 
 bool8 TryDismountPokeRide(void)
 {
-	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE | PLAYER_AVATAR_FLAG_STOUTLAND_RIDE | PLAYER_AVATAR_FLAG_MUDSDALE_RIDE
-	| PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
+	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE | PLAYER_AVATAR_FLAG_STOUTLAND_RIDE | PLAYER_AVATAR_FLAG_MUDSDALE_RIDE | PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
 	{
 		if (CheckPlayerInGroundRocks())
 			return FALSE;
@@ -303,9 +302,9 @@ static void Task_RidePagerHandleInput(u8 taskId)
 			return;
 		}
 		PlaySE(SE_FAILURE);
-    }
-    else if (JOY_NEW(DPAD_DOWN))
-    {
+	}
+	else if (JOY_NEW(DPAD_DOWN))
+	{
 		if (tCount > 1)
 		{
 			PlaySE(SE_SELECT);
@@ -314,10 +313,10 @@ static void Task_RidePagerHandleInput(u8 taskId)
 			return;
 		}
 		PlaySE(SE_FAILURE);
-    }
-    else if (JOY_NEW(A_BUTTON))
+	}
+	else if (JOY_NEW(A_BUTTON))
 		DestroyRidePagerWindow(taskId, TRUE);
-    else if (JOY_NEW(B_BUTTON))
+	else if (JOY_NEW(B_BUTTON))
 		DestroyRidePagerWindow(taskId, FALSE);
 }
 
@@ -350,10 +349,10 @@ static void Task_StartPlayerToPokeRideEffect(u8 taskId)
 	u8 behavior;
 	
 	PlayerGetDestCoords(&x, &y);
-    behavior = MapGridGetMetatileBehaviorAt(x, y);
+	behavior = MapGridGetMetatileBehaviorAt(x, y);
 	
 	if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER | PLAYER_AVATAR_FLAG_SURFING) && !InUnionRoom() && !FlagGet(FLAG_SYS_ON_CYCLING_ROAD)
-		&& !MetatileBehavior_IsVerticalRail(behavior) && !MetatileBehavior_IsHorizontalRail(behavior) && !MetatileBehavior_IsIsolatedVerticalRail(behavior)
+	    && !MetatileBehavior_IsVerticalRail(behavior) && !MetatileBehavior_IsHorizontalRail(behavior) && !MetatileBehavior_IsIsolatedVerticalRail(behavior)
 	    && !MetatileBehavior_IsIsolatedHorizontalRail(behavior) && !MetatileBehavior_IsGroundRocks(behavior) && Overworld_IsBikingAllowed())
 	{
 		gBikeCameraAheadPanback = FALSE;
@@ -533,9 +532,9 @@ static u8 GetRideMovementInput(u8 *newDirection)
 
 static u8 RideInputHandler_Normal(u8 *newDirection)
 {
-    u8 direction = GetPlayerMovementDirection();
+	u8 direction = GetPlayerMovementDirection();
 
-    gPlayerAvatar.bikeFrameCounter = 0;
+	gPlayerAvatar.bikeFrameCounter = 0;
 	
 	if (*newDirection == DIR_NONE)
 	{
@@ -548,8 +547,8 @@ static u8 RideInputHandler_Normal(u8 *newDirection)
 		if (*newDirection != direction && gPlayerAvatar.runningState != MOVING)
 		{
 			gPlayerAvatar.acroBikeState = BIKE_STATE_TURNING;
-            gPlayerAvatar.newDirBackup = *newDirection;
-            gPlayerAvatar.runningState = NOT_MOVING;
+			gPlayerAvatar.newDirBackup = *newDirection;
+			gPlayerAvatar.runningState = NOT_MOVING;
 			return GetRideMovementInput(newDirection);
 		}
 		else
@@ -563,10 +562,10 @@ static u8 RideInputHandler_Normal(u8 *newDirection)
 static u8 RideInputHandler_Turning(u8 *newDirection)
 {
 	*newDirection = gPlayerAvatar.newDirBackup;
-    gPlayerAvatar.runningState = TURN_DIRECTION;
-    gPlayerAvatar.acroBikeState = BIKE_STATE_NORMAL;
+	gPlayerAvatar.runningState = TURN_DIRECTION;
+	gPlayerAvatar.acroBikeState = BIKE_STATE_NORMAL;
 	gPlayerAvatar.bikeFrameCounter = 0;
-    gPlayerAvatar.bikeSpeed = SPEED_STANDING;
+	gPlayerAvatar.bikeSpeed = SPEED_STANDING;
 	return BIKE_TRANS_TURNING;
 }
 
@@ -585,7 +584,7 @@ static void RideTransition_MoveDirection(u8 direction, u16 heldKeys)
 			PlayerJumpLedge(direction);
 		else if (collision != COLLISION_STOP_SURFING && collision != COLLISION_LEDGE_JUMP && collision != COLLISION_PUSHED_BOULDER && collision != COLLISION_ROTATING_GATE)
 			PlayerOnBikeCollide(direction);
-    }
+	}
 	else
 	{
 		if (collision == COLLISION_GROUND_ROCKS)
@@ -613,11 +612,11 @@ static void UpdateStoutlandSearchAndTaurosCharge(u16 heldKeys)
 		taskId = FindTaskIdByFunc(Task_StoutlandSearch);
 		
 		if (heldKeys & B_BUTTON)
-        {
+		{
 			if (taskId == 0xFF)
 				gTasks[CreateTask(Task_StoutlandSearch, 80)].data[7] = MAX_SPRITES;
 		}
-        else
+		else
 		{
 			if (taskId != 0xFF)
 				gTasks[taskId].data[8] = TRUE;
