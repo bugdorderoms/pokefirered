@@ -37,12 +37,12 @@
 
 #define FLAG_CREATE_SHINY_MON    0x020
 #define FLAG_HIDDEN_ABILITY_MON  0x021
-#define FLAG_0x022               0x022
-#define FLAG_0x023               0x023
-#define FLAG_0x024               0x024
-#define FLAG_0x025               0x025
-#define FLAG_0x026               0x026
-#define FLAG_0x027               0x027
+#define FLAG_TAUROS_RIDE_GET     0x022
+#define FLAG_STOUTLAND_RIDE_GET  0x023
+#define FLAG_MUDSDALE_RIDE_GET   0x024
+#define FLAG_MACHAMP_RIDE_GET    0x025
+#define FLAG_SHARPEDO_RIDE_GET   0x026
+#define FLAG_CHARIZARD_RIDE_GET  0x027
 
 // Hide/show flags
 #define FLAG_HIDE_BULBASAUR_BALL                           0x028
