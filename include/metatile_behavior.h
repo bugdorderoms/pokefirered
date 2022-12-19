@@ -58,7 +58,7 @@ bool8 MetatileBehavior_ReturnFalse_4(u8 metatileBehavior);
 bool8 MetatileBehavior_IsFootprints(u8 metatileBehavior);
 bool8 MetatileBehavior_IsBridge(u8 metatileBehavior);
 bool8 MetatileBehavior_GetBridgeType(u8 metatileBehavior);
-bool8 MetatileBehavior_UnusedIsMB_01(u8 metatileBehavior);
+bool8 MetatileBehavior_IsGroundRocks(u8 metatileBehavior);
 bool8 MetatileBehavior_UnusedIsTallGrass(u8 metatileBehavior);
 bool8 MetatileBehavior_IsIndoorEncounter(u8 metatileBehavior);
 bool8 MetatileBehavior_IsMountain(u8 metatileBehavior);
