@@ -610,9 +610,7 @@ static const u8 sQuestLogSurfDismountActionIds[] = {
 
 static bool8 CanStopSurfing(s16 x, s16 y, u8 direction)
 {
-    if ((gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
-        && MapGridGetZCoordAt(x, y) == 3
-        && GetObjectEventIdByXYZ(x, y, 3) == OBJECT_EVENTS_COUNT && !MetatileBehavior_IsGroundRocks(MapGridGetMetatileBehaviorAt(x, y))
+    if ((gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING) && MapGridGetZCoordAt(x, y) == 3 && GetObjectEventIdByXYZ(x, y, 3) == OBJECT_EVENTS_COUNT && !MetatileBehavior_IsGroundRocks(MapGridGetMetatileBehaviorAt(x, y)))
     {
         QuestLogRecordPlayerAvatarGfxTransitionWithDuration(sQuestLogSurfDismountActionIds[direction], 16);
         CreateStopSurfingTask(direction);
@@ -634,8 +632,8 @@ static bool8 ShouldJumpLedge(s16 x, s16 y, u8 z)
 
 static bool8 TryPushBoulder(s16 x, s16 y, u8 direction)
 {
-    u8 objectEventId;
-    u8 direction_ = direction;
+    u8 objectEventId, behavior, direction_ = direction;
+	
     if (!FlagGet(FLAG_SYS_USE_STRENGTH))
         return FALSE;
 
@@ -649,7 +647,8 @@ static bool8 TryPushBoulder(s16 x, s16 y, u8 direction)
     x = gObjectEvents[objectEventId].currentCoords.x;
     y = gObjectEvents[objectEventId].currentCoords.y;
     MoveCoords(direction_, &x, &y);
-    if (MapGridGetMetatileBehaviorAt(x, y) == MB_FALL_WARP || (GetCollisionAtCoords(&gObjectEvents[objectEventId], x, y, direction_) == COLLISION_NONE && !MetatileBehavior_IsNonAnimDoor(MapGridGetMetatileBehaviorAt(x, y)) && !MetatileBehavior_IsGroundRocks(behavior)))
+    behavior = MapGridGetMetatileBehaviorAt(x, y);
+    if (behavior == MB_FALL_WARP || (GetCollisionAtCoords(&gObjectEvents[objectEventId], x, y, direction_) == COLLISION_NONE && !MetatileBehavior_IsNonAnimDoor(behavior) && !MetatileBehavior_IsGroundRocks(behavior)))
     {
         StartStrengthAnim(objectEventId, direction_);
         return TRUE;
