@@ -652,8 +652,6 @@ static const u8 *const sActionStringTable[] =
     [PARTY_MSG_USE_ON_WHICH_MON]       = gText_UseOnWhichPokemon,
     [PARTY_MSG_GIVE_TO_WHICH_MON]      = gText_GiveToWhichPokemon,
     [PARTY_MSG_NOTHING_TO_CUT]         = gText_NothingToCut,
-    [PARTY_MSG_CANT_SURF_HERE]         = gText_CantSurfHere,
-    [PARTY_MSG_ALREADY_SURFING]        = gText_AlreadySurfing,
     [PARTY_MSG_CURRENT_TOO_FAST]       = gText_CurrentIsTooFast,
     [PARTY_MSG_ENJOY_CYCLING]          = gText_EnjoyCycling,
     [PARTY_MSG_ALREADY_IN_USE]         = gText_InUseAlready_PM,
@@ -689,18 +687,14 @@ static const u8 *const sDescriptionStringTable[] =
 
 static const u8 *const sHMDescriptionTable[] =
 {
-    gText_LightUpDarkness,
-    gText_CutATreeOrGrass,
-    gText_FlyToAKnownTown,
-    gText_MoveHeavyBoulders,
-    gText_TravelOnWater,
-    gText_ShatterACrackedRock,
-    gText_ClimbAWaterfall,
-    gText_ReturnToAHealingSpot,
-    gText_EscapeFromHere,
-    gText_ShareHp,
-    gText_ShareHp,
-    gText_LureWildPokemon,
+    [FIELD_MOVE_FLASH]       = gText_LightUpDarkness,
+    [FIELD_MOVE_CUT]         = gText_CutATreeOrGrass,
+    [FIELD_MOVE_WATERFALL]   = gText_ClimbAWaterfall,
+    [FIELD_MOVE_TELEPORT]    = gText_ReturnToAHealingSpot,
+    [FIELD_MOVE_DIG]         = gText_EscapeFromHere,
+    [FIELD_MOVE_MILK_DRINK]  = gText_ShareHp,
+    [FIELD_MOVE_SOFT_BOILED] = gText_ShareHp,
+    [FIELD_MOVE_SWEET_SCENT] = gText_LureWildPokemon,
 };
 
 static const u32 sHeldItemGfx[] = INCBIN_U32("graphics/interface/hold_icons.4bpp");
@@ -1124,10 +1118,6 @@ static struct
     [MENU_TRADE2] = {gText_Trade4, CursorCB_Trade2},
     [MENU_FIELD_MOVES + FIELD_MOVE_FLASH] = {gMoveNames[MOVE_FLASH], CursorCB_FieldMove},
     [MENU_FIELD_MOVES + FIELD_MOVE_CUT] = {gMoveNames[MOVE_CUT], CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_FLY] = {gMoveNames[MOVE_FLY], CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_STRENGTH] = {gMoveNames[MOVE_STRENGTH], CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_SURF] = {gMoveNames[MOVE_SURF], CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_ROCK_SMASH] = {gMoveNames[MOVE_ROCK_SMASH], CursorCB_FieldMove},
     [MENU_FIELD_MOVES + FIELD_MOVE_WATERFALL] = {gMoveNames[MOVE_WATERFALL], CursorCB_FieldMove},
     [MENU_FIELD_MOVES + FIELD_MOVE_TELEPORT] = {gMoveNames[MOVE_TELEPORT], CursorCB_FieldMove},
     [MENU_FIELD_MOVES + FIELD_MOVE_DIG] = {gMoveNames[MOVE_DIG], CursorCB_FieldMove},
@@ -1203,8 +1193,7 @@ static const u8 sPartyMenuActionCounts[] =
 
 static const u16 sFieldMoves[] =
 {
-    MOVE_FLASH, MOVE_CUT, MOVE_FLY, MOVE_STRENGTH, MOVE_SURF, MOVE_ROCK_SMASH, MOVE_WATERFALL, MOVE_TELEPORT,
-    MOVE_DIG, MOVE_MILK_DRINK, MOVE_SOFT_BOILED, MOVE_SWEET_SCENT, FIELD_MOVE_END // this may be misuse of enum. same in emerald
+    MOVE_FLASH, MOVE_CUT, MOVE_WATERFALL, MOVE_TELEPORT, MOVE_DIG, MOVE_MILK_DRINK, MOVE_SOFT_BOILED, MOVE_SWEET_SCENT, FIELD_MOVE_END // this may be misuse of enum. same in emerald
 };
 
 static struct
