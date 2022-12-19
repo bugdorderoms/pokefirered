@@ -1603,7 +1603,8 @@ static void Task_BagMenu_HandleInput(u8 taskId)
 			if (sBagMenuDisplay->nItems[gBagMenuState.pocket] <= 1)
 			{
 				PlaySE(SE_FAILURE);
-				BagDestroyPocketSwitchArrowPair();
+				BagDestroyPocketScrollArrowPair();
+				Bag_FillMessageBoxWithPalette(1);
 				DisplayItemMessageInBag(taskId, 2, sText_NothingToSort, Task_WaitAButtonAndCloseContextMenu);
 				return;
 			}
