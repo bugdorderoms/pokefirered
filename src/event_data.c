@@ -2,6 +2,7 @@
 #include "event_data.h"
 #include "item_menu.h"
 #include "quest_log.h"
+#include "field_player_avatar.h"
 
 static bool8 IsFlagOrVarStoredInQuestLog(u16 idx, u8 a1);
 
@@ -44,7 +45,8 @@ void ClearTempFieldEventData(void)
     memset(gSaveBlock1Ptr->vars, 0, 16 * 2);
     FlagClear(FLAG_SYS_WHITE_FLUTE_ACTIVE);
     FlagClear(FLAG_SYS_BLACK_FLUTE_ACTIVE);
-    FlagClear(FLAG_SYS_USE_STRENGTH);
+    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
+        FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_SPECIAL_WILD_BATTLE);
     FlagClear(FLAG_SYS_INFORMED_OF_LOCAL_WIRELESS_PLAYER);
 }
