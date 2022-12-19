@@ -61,7 +61,6 @@ Text_TreeCanBeCutDown:: @ 81BDFE3
 EventScript_RockSmash:: @ 81BE00C
 	goto_if_questlog EventScript_ReleaseEnd
 	lockall
-	goto_if_unset FLAG_TAUROS_RIDE_GET, EventScript_CantSmashRock
 	msgbox Text_UseRockSmash, MSGBOX_SIGN
 	releaseall
 	end
@@ -85,35 +84,18 @@ Movement_BreakRock:: @ 81BE08F
 	rock_smash_break
 	step_end
 
-EventScript_CantSmashRock:: @ 81BE091
-	msgbox Text_MonMaySmashRock, MSGBOX_SIGN
-	end
-
 Text_UseRockSmash:: @ 81BE09D
-	.string "This rock appears to be breakable.\n"
-	.string "Would you like to use ROCK SMASH?$"
-
-Text_MonMaySmashRock:: @ 81BE0E2
 	.string "It's a rugged rock, but a POKéMON\n"
 	.string "may be able to smash it.$"
 
 EventScript_StrengthBoulder:: @ 81BE11D
 	goto_if_questlog EventScript_ReleaseEnd
 	lockall
-	goto_if_unset FLAG_MACHAMP_RIDE_GET, EventScript_CantMoveBoulder
 	msgbox Text_UseStrength, MSGBOX_SIGN
 	releaseall
 	end
 
-EventScript_CantMoveBoulder:: @ 81BE185
-	msgbox Text_MonMayPushBoulder, MSGBOX_SIGN
-	end
-
 Text_UseStrength:: @ 81BE19A
-	.string "It's a big boulder, but a POKéMON\n"
-	.string "may be able to push it aside.$"
-
-Text_MonMayPushBoulder:: @ 81BE244
 	.string "It's a big boulder, but a POKéMON\n"
 	.string "may be able to push it aside.$"
 
