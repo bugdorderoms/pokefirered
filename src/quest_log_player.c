@@ -37,9 +37,9 @@ static void (*const sQLGfxTransitions[])(void) = {
     [QL_PLAYER_GFX_STOP_SURF_E] = QL_GfxTransition_StopSurfEast,
     [QL_PLAYER_GFX_VSSEEKER]    = QL_GfxTransition_VSSeeker,
     [QL_PLAYER_GFX_TAUROS_RIDE] = QL_GfxTransition_Tauros,
-	[QL_PLAYER_GFX_STOUTLAND_RIDE] = QL_GfxTransition_Stoutland,
-	[QL_PLAYER_GFX_MUDSDALE_RIDE] = QL_GfxTransition_Mudsdale,
-	[QL_PLAYER_GFX_MACHAMP_RIDE] = QL_GfxTransition_Machamp,
+    [QL_PLAYER_GFX_STOUTLAND_RIDE] = QL_GfxTransition_Stoutland,
+    [QL_PLAYER_GFX_MUDSDALE_RIDE] = QL_GfxTransition_Mudsdale,
+    [QL_PLAYER_GFX_MACHAMP_RIDE] = QL_GfxTransition_Machamp,
 };
 
 void QuestLogUpdatePlayerSprite(u8 state)
@@ -206,7 +206,7 @@ static void QL_GfxTransition_StopSurfEast(void)
 
 static void QL_GfxTransition_Tauros(void)
 {
-	struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
     QL_SetObjectGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_TAUROS_RIDE));
     ObjectEventTurn(objectEvent, objectEvent->movementDirection);
     SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_TAUROS_RIDE);
@@ -215,7 +215,7 @@ static void QL_GfxTransition_Tauros(void)
 
 static void QL_GfxTransition_Stoutland(void)
 {
-	struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
     QL_SetObjectGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_STOUTLAND_RIDE));
     ObjectEventTurn(objectEvent, objectEvent->movementDirection);
     SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE);
@@ -224,7 +224,7 @@ static void QL_GfxTransition_Stoutland(void)
 
 static void QL_GfxTransition_Mudsdale(void)
 {
-	struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
     QL_SetObjectGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_MUDSDALE_RIDE));
     ObjectEventTurn(objectEvent, objectEvent->movementDirection);
     SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_MUDSDALE_RIDE);
@@ -233,7 +233,7 @@ static void QL_GfxTransition_Mudsdale(void)
 
 static void QL_GfxTransition_Machamp(void)
 {
-	struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
     QL_SetObjectGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_MACHAMP_RIDE));
     ObjectEventTurn(objectEvent, objectEvent->movementDirection);
     SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_MACHAMP_RIDE);
