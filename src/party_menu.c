@@ -46,6 +46,7 @@
 #include "quest_log.h"
 #include "region_map.h"
 #include "reshow_battle_screen.h"
+#include "ride_pager.h"
 #include "scanline_effect.h"
 #include "script.h"
 #include "start_menu.h"
