@@ -12,6 +12,10 @@
 #define QL_PLAYER_GFX_STOP_SURF_W     6
 #define QL_PLAYER_GFX_STOP_SURF_E     7
 #define QL_PLAYER_GFX_VSSEEKER        8
+#define QL_PLAYER_GFX_TAUROS_RIDE     9
+#define QL_PLAYER_GFX_STOUTLAND_RIDE  10
+#define QL_PLAYER_GFX_MUDSDALE_RIDE   11
+#define QL_PLAYER_GFX_MACHAMP_RIDE    12
 
 void QuestLogUpdatePlayerSprite(u8 state);
 bool32 QuestLogTryRecordPlayerAvatarGfxTransition(u8 state);
