@@ -25,20 +25,12 @@ bool8 SetUpFieldMove_Cut(void);
 bool8 SetUpFieldMove_Dig(void);
 bool8 FldEff_UseDig(void);
 
-// rocksmash
-bool8 SetUpFieldMove_RockSmash(void);
-bool8 FldEff_UseRockSmash(void);
-
 // berrytree
 void nullsub_56(void);
 
 // poison
 void FldEffPoison_Start(void);
 bool32 FldEffPoison_IsActive(void);
-
-// strength
-bool8 SetUpFieldMove_Strength(void);
-bool8 FldEff_UseStrength(void);
 
 // teleport
 bool8 SetUpFieldMove_Teleport(void);

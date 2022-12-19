@@ -188,7 +188,6 @@ SECTIONS {
         src/region_map.o(.text);
         src/image_processing_effects.o(.text);
         src/battle_ai_script_commands.o(.text);
-        src/fldeff_rocksmash.o(.text);
         src/fldeff_dig.o(.text);
         src/fldeff_flash.o(.text);
         src/post_battle_event_funcs.o(.text);
@@ -198,7 +197,6 @@ SECTIONS {
         src/battle_records.o(.text);
         src/evolution_scene.o(.text);
         src/coins.o(.text);
-        src/fldeff_strength.o(.text);
         src/battle_transition.o(.text);
         src/battle_controller_link_partner.o(.text);
         src/battle_message.o(.text);
@@ -313,6 +311,7 @@ SECTIONS {
         src/registered_item.o(.text);
         src/calculate_base_damage.o(.text);
         src/ev_iv_display.o(.text);
+        src/ride_pager.o(.text);
     } =0
 
     script_data :
@@ -617,6 +616,7 @@ SECTIONS {
         src/registered_item.o(.rodata);
         src/calculate_base_damage.o(.rodata);
         src/ev_iv_display.o(.rodata);
+        src/ride_pager.o(.rodata);
 
         /* These should not be moved to C files */
         src/mystery_event_msg.o(.rodata);

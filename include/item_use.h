@@ -30,6 +30,7 @@ void FieldUseFunc_VsSeeker(u8 taskId);
 void FieldUseFunc_Honey(u8 taskId);
 void FieldUseFunc_ExpShare(u8 taskId);
 void FieldUseFunc_EvIvDisplay(u8 taskId);
+void FieldUseFunc_RidePager(u8 taskId);
 void BattleUseFunc_PokeBallEtc(u8 taskId);
 void BattleUseFunc_PokeFlute(u8 taskId);
 void BattleUseFunc_GuardSpec(u8 taskId);

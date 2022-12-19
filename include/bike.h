@@ -48,5 +48,6 @@ bool32 IsRunningDisallowed(u8 metatileBehavior);
 void Bike_HandleBumpySlopeJump(void);
 void Bike_UpdateBikeCounterSpeed(u8 counter);
 bool8 IsPlayerNotUsingAcroBikeOnBumpySlope(void);
+u8 GetBikeCollision(u8);
 
 #endif //GUARD_BIKE_H

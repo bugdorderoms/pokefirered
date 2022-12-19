@@ -35,6 +35,7 @@
 #include "quest_log_objects.h"
 #include "random.h"
 #include "renewable_hidden_items.h"
+#include "ride_pager.h"
 #include "roamer.h"
 #include "safari_zone.h"
 #include "save_location.h"
@@ -70,7 +71,7 @@ typedef u16 (*KeyInterCB)(u32 key);
 
 struct InitialPlayerAvatarState
 {
-    u8 transitionFlags;
+    u16 transitionFlags;
     u8 direction;
     bool8 unk2;
 };
@@ -124,8 +125,8 @@ static u8 sRfuKeepAliveTimer;
 static u8 CountBadgesForOverworldWhiteOutLossCalculation(void);
 static void Overworld_ResetStateAfterWhitingOut(void);
 static void Overworld_SetWhiteoutRespawnPoint(void);
-static u8 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *playerStruct, u16 metatileBehavior, u8 mapType);
-static u8 GetAdjustedInitialDirection(struct InitialPlayerAvatarState *playerStruct, u8 transitionFlags, u16 metatileBehavior, u8 mapType);
+static u16 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *playerStruct, u16 metatileBehavior, u8 mapType);
+static u8 GetAdjustedInitialDirection(struct InitialPlayerAvatarState *playerStruct, u16 transitionFlags, u16 metatileBehavior, u8 mapType);
 static u16 GetCenterScreenMetatileBehavior(void);
 static void SetDefaultFlashLevel(void);
 static void Overworld_TryMapConnectionMusicTransition(void);
@@ -846,6 +847,14 @@ void StoreInitialPlayerAvatarState(void)
         sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_MACH_BIKE;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_ACRO_BIKE))
         sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_ACRO_BIKE;
+    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE))
+	sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_TAUROS_RIDE;
+    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE))
+	sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_STOUTLAND_RIDE;
+    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MUDSDALE_RIDE))
+        sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_MUDSDALE_RIDE;
+    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
+	sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_MACHAMP_RIDE;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
         sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_SURFING;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER))
@@ -860,7 +869,7 @@ struct InitialPlayerAvatarState *GetInitialPlayerAvatarState(void)
     struct InitialPlayerAvatarState playerStruct;
     u8 mapType = GetCurrentMapType();
     u16 metatileBehavior = GetCenterScreenMetatileBehavior();
-    u8 transitionFlags = GetAdjustedInitialTransitionFlags(&sInitialPlayerAvatarState, metatileBehavior, mapType);
+    u16 transitionFlags = GetAdjustedInitialTransitionFlags(&sInitialPlayerAvatarState, metatileBehavior, mapType);
     playerStruct.transitionFlags = transitionFlags;
     playerStruct.direction = GetAdjustedInitialDirection(&sInitialPlayerAvatarState, transitionFlags, metatileBehavior, mapType);
     playerStruct.unk2 = FALSE;
@@ -868,7 +877,7 @@ struct InitialPlayerAvatarState *GetInitialPlayerAvatarState(void)
     return &sInitialPlayerAvatarState;
 }
 
-static u8 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *playerStruct, u16 metatileBehavior, u8 mapType)
+static u16 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *playerStruct, u16 metatileBehavior, u8 mapType)
 {
     if (mapType != MAP_TYPE_INDOOR && FlagGet(FLAG_SYS_CRUISE_MODE))
         return PLAYER_AVATAR_FLAG_ON_FOOT;
@@ -882,10 +891,18 @@ static u8 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *pla
         return PLAYER_AVATAR_FLAG_ON_FOOT;
     else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_MACH_BIKE)
         return PLAYER_AVATAR_FLAG_MACH_BIKE;
-    else if (playerStruct->transitionFlags != PLAYER_AVATAR_FLAG_ACRO_BIKE)
-        return PLAYER_AVATAR_FLAG_ON_FOOT;
-    else
+    else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_ACRO_BIKE)
         return PLAYER_AVATAR_FLAG_ACRO_BIKE;
+    else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_TAUROS_RIDE)
+        return PLAYER_AVATAR_FLAG_TAUROS_RIDE;
+    else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_STOUTLAND_RIDE)
+        return PLAYER_AVATAR_FLAG_STOUTLAND_RIDE;
+    else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_MUDSDALE_RIDE)
+        return PLAYER_AVATAR_FLAG_MUDSDALE_RIDE;
+    else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_MACHAMP_RIDE)
+        return PLAYER_AVATAR_FLAG_MACHAMP_RIDE;
+    else
+        return PLAYER_AVATAR_FLAG_ON_FOOT;
 }
 
 bool8 sub_8055B38(u16 metatileBehavior)
@@ -898,7 +915,7 @@ bool8 sub_8055B38(u16 metatileBehavior)
     return FALSE;
 }
 
-static u8 GetAdjustedInitialDirection(struct InitialPlayerAvatarState *playerStruct, u8 transitionFlags, u16 metatileBehavior, u8 mapType)
+static u8 GetAdjustedInitialDirection(struct InitialPlayerAvatarState *playerStruct, u16 transitionFlags, u16 metatileBehavior, u8 mapType)
 {
     if (FlagGet(FLAG_SYS_CRUISE_MODE) && mapType == MAP_TYPE_OCEAN_ROUTE)
         return DIR_EAST;
@@ -1648,6 +1665,13 @@ void CB2_ReturnToFieldWithOpenMenu(void)
 {
     FieldClearVBlankHBlankCallbacks();
     gFieldCallback2 = FieldCB_ReturnToFieldOpenStartMenu;
+    CB2_ReturnToField();
+}
+
+void CB2_ReturnToFieldAndUseRidePager(void)
+{
+    FieldClearVBlankHBlankCallbacks();
+    gFieldCallback2 = FieldCB_ReturnToFieldUseRidePager;
     CB2_ReturnToField();
 }
 

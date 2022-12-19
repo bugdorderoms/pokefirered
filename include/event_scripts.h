@@ -772,9 +772,7 @@ extern const u8 gOakText_ConfirmRivalName[];
 extern const u8 gOakText_RememberRivalName[];
 extern const u8 gOakText_LegendAboutToUnfold[];
 
-extern const u8 EventScript_FldEffStrength[];
 extern const u8 EventScript_FailSweetScent[];
-extern const u8 EventScript_FldEffRockSmash[];
 
 extern const u8 SafariZone_EventScript_TimesUp[];
 extern const u8 SafariZone_EventScript_RetirePrompt[];
@@ -914,5 +912,9 @@ extern const u8 EventScript_Honey[];
 
 extern const u8 EventScript_EnableAutoRun[];
 extern const u8 EventScript_DisableAutoRun[];
+
+extern const u8 EventScript_CantUseRideHere[];
+extern const u8 EventScript_CantUseRideToSurfHere[];
+extern const u8 EventScript_UseRockSmash[];
 
 #endif //GUARD_EVENT_SCRIPTS_H

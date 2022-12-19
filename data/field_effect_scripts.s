@@ -39,10 +39,10 @@ gFieldEffectScriptPointers:: @ 81D96AC
 	.4byte gFldEffScript_FeetInFlowingWater
 	.4byte gFldEffScript_BikeTireTracks
 	.4byte gFldEffScript_SandDisguise
-	.4byte gFldEffScript_UseRockSmash
+	.4byte gFldEffScript_UseRockSmash @ unused
 	.4byte gFldEffScript_UseDig
 	.4byte gFldEffScript_SandPile
-	.4byte gFldEffScript_UseStrength
+	.4byte gFldEffScript_UseStrength @ unused
 	.4byte gFldEffScript_ShortGrass
 	.4byte gFldEffScript_HotSpringsWater
 	.4byte gFldEffScript_UseWaterfall
@@ -220,11 +220,9 @@ gFldEffScript_SandDisguise:: @ 81D98DE
 	end 
 
 gFldEffScript_UseRockSmash:: @ 81D98E4
-	callnative FldEff_UseRockSmash
 	end 
 
 gFldEffScript_UseStrength:: @ 81D98EA
-	callnative FldEff_UseStrength
 	end 
 
 gFldEffScript_UseDig:: @ 81D98F0

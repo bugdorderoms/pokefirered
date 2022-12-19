@@ -442,9 +442,9 @@ bool8 MetatileBehavior_IsFootprints(u8 metatileBehavior) { return FALSE; }
 bool8 MetatileBehavior_IsBridge(u8 metatileBehavior) { return FALSE; }
 bool8 MetatileBehavior_GetBridgeType(u8 metatileBehavior) { return FALSE; }
 
-bool8 MetatileBehavior_UnusedIsMB_01(u8 metatileBehavior)
+bool8 MetatileBehavior_IsGroundRocks(u8 metatileBehavior)
 {
-    if(metatileBehavior == MB_01)
+    if(metatileBehavior == MB_GROUND_ROCKS)
         return TRUE;
     else
         return FALSE;

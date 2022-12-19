@@ -46,6 +46,7 @@
 #include "quest_log.h"
 #include "region_map.h"
 #include "reshow_battle_screen.h"
+#include "ride_pager.h"
 #include "scanline_effect.h"
 #include "script.h"
 #include "start_menu.h"
@@ -65,6 +66,7 @@
 #include "constants/maps.h"
 #include "constants/moves.h"
 #include "constants/pokemon.h"
+#include "constants/poke_ride.h"
 #include "constants/quest_log.h"
 #include "constants/songs.h"
 #include "constants/inserts.h"
@@ -150,9 +152,7 @@ static void CursorCB_Register(u8 taskId);
 static void CursorCB_Trade1(u8 taskId);
 static void CursorCB_Trade2(u8 taskId);
 static void CursorCB_FieldMove(u8 taskId);
-static bool8 SetUpFieldMove_Fly(void);
 static bool8 SetUpFieldMove_Waterfall(void);
-static bool8 SetUpFieldMove_Surf(void);
 static void CB2_InitPartyMenu(void);
 static void ResetPartyMenu(void);
 static bool8 ShowPartyMenu(void);
@@ -289,7 +289,6 @@ static void Task_LoseMailMessageYesNo(u8 taskId);
 static void Task_HandleLoseMailMessageYesNoInput(u8 taskId);
 static bool8 TrySwitchInPokemon(void);
 static void DisplayCantUseFlashMessage(void);
-static void DisplayCantUseSurfMessage(void);
 static void Task_CancelAfterAorBPress(u8 taskId);
 static void DisplayFieldMoveExitAreaMessage(u8 taskId);
 static void Task_FieldMoveExitAreaYesNo(u8 taskId);
@@ -4047,7 +4046,7 @@ static void CursorCB_FieldMove(u8 taskId)
     else
     {
         // All field moves before WATERFALL are HMs.
-        if (fieldMove <= FIELD_MOVE_WATERFALL && FlagGet(FLAG_BADGE01_GET + fieldMove) != TRUE)
+        if (fieldMove < FIELD_MOVE_WATERFALL && FlagGet(FLAG_BADGE01_GET + fieldMove) != TRUE)
         {
             DisplayPartyMenuMessage(gText_CantUseUntilNewBadge, TRUE);
             gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
@@ -4074,10 +4073,6 @@ static void CursorCB_FieldMove(u8 taskId)
                 DisplayFieldMoveExitAreaMessage(taskId);
                 sPartyMenuInternal->data[0] = fieldMove;
                 break;
-            case FIELD_MOVE_FLY:
-                gPartyMenu.exitCallback = CB2_OpenFlyMap;
-                Task_ClosePartyMenu(taskId);
-                break;
             default:
                 gPartyMenu.exitCallback = CB2_ReturnToField;
                 SetUsedFieldMoveQuestLogEvent(&gPlayerParty[GetCursorSelectionMonId()], fieldMove);
@@ -4090,9 +4085,6 @@ static void CursorCB_FieldMove(u8 taskId)
         {
             switch (fieldMove)
             {
-            case FIELD_MOVE_SURF:
-                DisplayCantUseSurfMessage();
-                break;
             case FIELD_MOVE_FLASH:
                 DisplayCantUseFlashMessage();
                 break;
@@ -4174,58 +4166,6 @@ static void DisplayCantUseFlashMessage(void)
         DisplayPartyMenuStdMessage(PARTY_MSG_ALREADY_IN_USE);
     else
         DisplayPartyMenuStdMessage(PARTY_MSG_CANT_USE_HERE);
-}
-
-static void FieldCallback_Surf(void)
-{
-    gFieldEffectArguments[0] = GetCursorSelectionMonId();
-    FieldEffectStart(FLDEFF_USE_SURF);
-}
-
-static bool8 SetUpFieldMove_Surf(void)
-{
-    s16 x, y;
-    
-    GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
-    if (MetatileBehavior_IsSemiDeepWater(MapGridGetMetatileBehaviorAt(x, y)) != TRUE
-     && PartyHasMonWithSurf() == TRUE
-     && IsPlayerFacingSurfableFishableWater() == TRUE)
-    {
-        gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
-        gPostMenuFieldCallback = FieldCallback_Surf;
-        return TRUE;
-    }
-    return FALSE;
-}
-
-static void DisplayCantUseSurfMessage(void)
-{
-    s16 x, y;
-    
-    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
-    {
-        DisplayPartyMenuStdMessage(PARTY_MSG_ALREADY_SURFING);
-    }
-    else
-    {
-        GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
-        if (MetatileBehavior_IsSemiDeepWater(MapGridGetMetatileBehaviorAt(x, y)) == TRUE)
-            DisplayPartyMenuStdMessage(PARTY_MSG_CURRENT_TOO_FAST);
-        else if ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ROUTE17))
-              && ((gSaveBlock1Ptr->location.mapNum == MAP_NUM(ROUTE17))
-                 || (gSaveBlock1Ptr->location.mapNum == MAP_NUM(ROUTE18))))
-            DisplayPartyMenuStdMessage(PARTY_MSG_ENJOY_CYCLING);
-        else
-            DisplayPartyMenuStdMessage(PARTY_MSG_CANT_SURF_HERE);
-    }
-}
-
-static bool8 SetUpFieldMove_Fly(void)
-{
-    if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE)
-        return TRUE;
-    else
-        return FALSE;
 }
 
 void CB2_ReturnToPartyMenuFromFlyMap(void)
@@ -4311,7 +4251,10 @@ void SetUsedFlyQuestLogEvent(const u8 *healLocCtrlData)
     mapHeader = Overworld_GetMapHeaderByGroupAndId(ptr->mapGroup, ptr->mapNum);
     Free(ptr);
     ptr2 = Alloc(4);
-    ptr2->species = GetMonData(&gPlayerParty[GetCursorSelectionMonId()], MON_DATA_SPECIES2);
+    if (gUsingRideMon == RIDE_CHARIZARD)
+	    ptr2->species = RideToSpeciesId(gUsingRideMon);
+    else
+	    ptr2->species = GetMonData(&gPlayerParty[GetCursorSelectionMonId()], MON_DATA_SPECIES2);
     ptr2->fieldMove = FIELD_MOVE_FLY;
     ptr2->regionMapSectionId = mapHeader->regionMapSectionId;
     SetQuestLogEvent(QL_EVENT_USED_FIELD_MOVE, (u16 *)ptr2);

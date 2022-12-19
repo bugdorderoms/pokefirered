@@ -61,28 +61,8 @@ Text_TreeCanBeCutDown:: @ 81BDFE3
 EventScript_RockSmash:: @ 81BE00C
 	goto_if_questlog EventScript_ReleaseEnd
 	lockall
-	goto_if_unset FLAG_BADGE06_GET, EventScript_CantSmashRock
-	checkpartymove MOVE_ROCK_SMASH
-	compare VAR_RESULT, PARTY_SIZE
-	goto_if_eq EventScript_CantSmashRock
-	setfieldeffectarg 0, VAR_RESULT
-	getpartymonname 0, VAR_RESULT
-	getmovename 1, MOVE_ROCK_SMASH
-	msgbox Text_UseRockSmash, MSGBOX_YESNO
-	compare VAR_RESULT, NO
-	goto_if_eq EventScript_DontSmashRock
-	msgbox Text_MonUsedMove
-	closemessage
-	dofieldeffect FLDEFF_USE_ROCK_SMASH
-	waitstate
-	goto EventScript_UseRockSmash
-	end
-
-EventScript_FldEffRockSmash:: @ 81BE064
-	lockall
-	dofieldeffect FLDEFF_USE_ROCK_SMASH
-	waitstate
-	goto EventScript_UseRockSmash
+	msgbox Text_UseRockSmash, MSGBOX_SIGN
+	releaseall
 	end
 
 EventScript_UseRockSmash:: @ 81BE06F
@@ -104,83 +84,32 @@ Movement_BreakRock:: @ 81BE08F
 	rock_smash_break
 	step_end
 
-EventScript_CantSmashRock:: @ 81BE091
-	msgbox Text_MonMaySmashRock, MSGBOX_SIGN
-	end
-
-EventScript_DontSmashRock:: @ 81BE09A
-	closemessage
-	releaseall
-	end
-
 Text_UseRockSmash:: @ 81BE09D
-	.string "This rock appears to be breakable.\n"
-	.string "Would you like to use ROCK SMASH?$"
-
-Text_MonMaySmashRock:: @ 81BE0E2
 	.string "It's a rugged rock, but a POKéMON\n"
 	.string "may be able to smash it.$"
 
 EventScript_StrengthBoulder:: @ 81BE11D
 	goto_if_questlog EventScript_ReleaseEnd
 	lockall
-	goto_if_unset FLAG_BADGE04_GET, EventScript_CantMoveBoulder
-	goto_if_set FLAG_SYS_USE_STRENGTH, EventScript_AlreadyUsedStrength
-	checkpartymove MOVE_STRENGTH
-	compare VAR_RESULT, PARTY_SIZE
-	goto_if_eq EventScript_CantMoveBoulder
-	setfieldeffectarg 0, VAR_RESULT
-	msgbox Text_UseStrength, MSGBOX_YESNO
-	compare VAR_RESULT, NO
-	goto_if_eq EventScript_DontUseStrength
-	closemessage
-	dofieldeffect FLDEFF_USE_STRENGTH
-	waitstate
-	goto EventScript_UseStrength
-	end
-
-EventScript_FldEffStrength:: @ 81BE16E
-	lockall
-	dofieldeffect FLDEFF_USE_STRENGTH
-	waitstate
-	goto EventScript_UseStrength
-	end
-
-EventScript_UseStrength:: @ 81BE179
-	setflag FLAG_SYS_USE_STRENGTH
-	msgbox Text_MonUsedStrengthCanMoveBoulders, MSGBOX_SIGN
-	end
-
-EventScript_CantMoveBoulder:: @ 81BE185
-	msgbox Text_MonMayPushBoulder, MSGBOX_SIGN
-	end
-
-EventScript_AlreadyUsedStrength:: @ 81BE18E
-	msgbox Text_StrengthMadeMovingBouldersPossible, MSGBOX_SIGN
-	end
-
-EventScript_DontUseStrength:: @ 81BE197
-	closemessage
+	msgbox Text_UseStrength, MSGBOX_SIGN
 	releaseall
 	end
 
 Text_UseStrength:: @ 81BE19A
 	.string "It's a big boulder, but a POKéMON\n"
-	.string "may be able to push it aside.\p"
-	.string "Would you like to use STRENGTH?$"
-
-Text_MonUsedStrengthCanMoveBoulders:: @ 81BE1FA
-	.string "{STR_VAR_1} used STRENGTH!\p"
-	.string "{STR_VAR_1}'s STRENGTH made it\n"
-	.string "possible to move boulders around!$"
-
-Text_MonMayPushBoulder:: @ 81BE244
-	.string "It's a big boulder, but a POKéMON\n"
 	.string "may be able to push it aside.$"
 
-Text_StrengthMadeMovingBouldersPossible:: @ 81BE284
-	.string "STRENGTH made it possible to move\n"
-	.string "boulders around.$"
+EventScript_CantUseRideHere::
+        lockall
+	msgbox gText_CantUseHere
+	releaseall
+	end
+	
+EventScript_CantUseRideToSurfHere::
+        lockall
+	msgbox gText_CantSurfHere
+	releaseall
+	end
 
 EventScript_Waterfall:: @ 81BE2B7
 	goto_if_questlog EventScript_ReleaseEnd

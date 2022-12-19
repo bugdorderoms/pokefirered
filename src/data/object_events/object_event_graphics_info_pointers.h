@@ -151,4 +151,12 @@ const struct ObjectEventGraphicsInfo *const gObjectEventGraphicsInfoPointers[NUM
     [OBJ_EVENT_GFX_DEOXYS_A]                 = &gObjectEventGraphicsInfo_DeoxysA,
     [OBJ_EVENT_GFX_DEOXYS_N]                 = &gObjectEventGraphicsInfo_DeoxysN,
     [OBJ_EVENT_GFX_SS_ANNE]                  = &gObjectEventGraphicsInfo_SSAnne,
+    [OBJ_EVENT_GFX_RED_TAUROS]               = &gObjectEventGraphicsInfo_RedTauros,
+    [OBJ_EVENT_GFX_RED_STOUTLAND]            = &gObjectEventGraphicsInfo_RedStoutland,
+    [OBJ_EVENT_GFX_RED_MUDSDALE]             = &gObjectEventGraphicsInfo_RedMudsdale,
+    [OBJ_EVENT_GFX_RED_MACHAMP]              = &gObjectEventGraphicsInfo_RedMachamp,
+    [OBJ_EVENT_GFX_GREEN_TAUROS]             = &gObjectEventGraphicsInfo_GreenTauros,
+    [OBJ_EVENT_GFX_GREEN_STOUTLAND]          = &gObjectEventGraphicsInfo_GreenStoutland,
+    [OBJ_EVENT_GFX_GREEN_MUDSDALE]           = &gObjectEventGraphicsInfo_GreenMudsdale,
+    [OBJ_EVENT_GFX_GREEN_MACHAMP]            = &gObjectEventGraphicsInfo_GreenMachamp,
 };

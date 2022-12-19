@@ -18,6 +18,7 @@
 #include "metatile_behavior.h"
 #include "overworld.h"
 #include "renewable_hidden_items.h"
+#include "ride_pager.h"
 #include "quest_log.h"
 #include "safari_zone.h"
 #include "script.h"
@@ -601,9 +602,11 @@ static const u8 *GetInteractedMetatileScript(struct MapPosition *position, u8 me
 
 static const u8 *GetInteractedWaterScript(struct MapPosition *unused1, u8 metatileBehavior, u8 direction)
 {
-    if (MetatileBehavior_IsSemiDeepWater(metatileBehavior) == TRUE &&PartyHasMonWithSurf() == TRUE)
+    if (CheckPlayerInGroundRocks())
+	return NULL;
+    if (MetatileBehavior_IsSemiDeepWater(metatileBehavior) == TRUE && PlayerHasObtainedSharpedoPaddle() == TRUE)
         return EventScript_CurrentTooFast;
-    if (FlagGet(FLAG_BADGE05_GET) == TRUE && PartyHasMonWithSurf() == TRUE && IsPlayerFacingSurfableFishableWater() == TRUE)
+    if (PlayerHasObtainedSharpedoPaddle() == TRUE && IsPlayerFacingSurfableFishableWater() == TRUE)
         return EventScript_UseSurf;
 
     if (MetatileBehavior_IsWaterfall(metatileBehavior) == TRUE)
@@ -822,7 +825,7 @@ static bool8 TryArrowWarp(struct MapPosition *position, u16 metatileBehavior, u8
         else if (IsDirectionalStairWarpMetatileBehavior(metatileBehavior, direction) == TRUE)
         {
             delay = 0;
-            if (gPlayerAvatar.flags & (PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
+            if (gPlayerAvatar.flags & (PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE | PLAYER_AVATAR_FLAG_TAUROS_RIDE | PLAYER_AVATAR_FLAG_STOUTLAND_RIDE | PLAYER_AVATAR_FLAG_MUDSDALE_RIDE | PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
             {
                 SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);
                 delay = 12;

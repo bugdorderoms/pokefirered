@@ -3,7 +3,8 @@ Text_WantToSurf:: @ 81A556E
 	.string "Would you like to SURF?$"
 
 Text_UsedSurf:: @ 81A55A5
-	.string "{STR_VAR_1} used SURF!$"
+	.string "{PLAYER} used the\n"
+	.string "Sharpedo Paddle to SURF!$"
 
 Text_CurrentTooFast:: @ 81A55B3
 	.string "The current is much too fast!\n"

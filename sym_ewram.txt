@@ -64,7 +64,6 @@
 	.include "src/menu_helpers.o"
 	.include "src/region_map.o"
 	.include "src/battle_ai_script_commands.o"
-	.include "src/fldeff_rocksmash.o"
 	.include "src/field_specials.o"
 	.include "src/battle_records.o"
 	.include "src/evolution_scene.o"
@@ -138,3 +137,4 @@
 	.include "src/berry_powder.o"
 	.include "src/dns.o"
 	.include "src/ev_iv_display.o"
+	.include "src/ride_pager.o"

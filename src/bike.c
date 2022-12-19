@@ -12,7 +12,6 @@
 static u8 GetBikeTransitionId(u8 *, u16, u16);
 static void Bike_SetBikeStill(void);
 static u8 CanBikeFaceDirectionOnRail(u8 direction, u8 metatileBehavior);
-static u8 GetBikeCollision(u8);
 static u8 GetBikeCollisionAt(struct ObjectEvent *playerObjEvent, s16 x, s16 y, u8 direction, u8 metatileBehavior);
 static bool8 MetatileBehaviorForbidsBiking(u8);
 static void BikeTransition_FaceDirection(u8);
@@ -182,10 +181,9 @@ static void BikeTransition_MoveDirection(u8 direction)
         }
         else
         {
-            
-            if (collision == COLLISION_COUNT)
-                PlayerGoSpeed2(direction);
-            else if (PlayerIsMovingOnRockStairs(direction))
+            if (collision == COLLISION_GROUND_ROCKS)
+		PlayerOnBikeCollide(direction);
+            else if (collision == COLLISION_COUNT || PlayerIsMovingOnRockStairs(direction))
                 PlayerGoSpeed2(direction);
             else
                 PlayerRideWaterCurrent(direction);
@@ -209,7 +207,7 @@ static void BikeTransition_Uphill(u8 direction)
         PlayerGoSpeed1(direction);
 }
 
-static u8 GetBikeCollision(u8 direction)
+u8 GetBikeCollision(u8 direction)
 {
     struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
     s16 x, y;
@@ -349,7 +347,7 @@ s16 GetPlayerSpeed(void)
 
     if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_MACH_BIKE)
         return machBikeSpeeds[gPlayerAvatar.bikeFrameCounter];
-    else if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_ACRO_BIKE)
+    else if (gPlayerAvatar.flags & (PLAYER_AVATAR_FLAG_ACRO_BIKE | PLAYER_AVATAR_FLAG_TAUROS_RIDE | PLAYER_AVATAR_FLAG_STOUTLAND_RIDE | PLAYER_AVATAR_FLAG_MUDSDALE_RIDE | PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
         return SPEED_FASTER;
     else if (gPlayerAvatar.flags & (PLAYER_AVATAR_FLAG_SURFING | PLAYER_AVATAR_FLAG_DASH))
         return SPEED_FAST;

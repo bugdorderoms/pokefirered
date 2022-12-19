@@ -27,6 +27,7 @@
 #include "party_menu.h"
 #include "quest_log.h"
 #include "region_map.h"
+#include "ride_pager.h"
 #include "script.h"
 #include "strings.h"
 #include "task.h"
@@ -265,7 +266,8 @@ void FieldUseFunc_MachBike(u8 taskId)
      || MetatileBehavior_IsVerticalRail(behavior) == TRUE
      || MetatileBehavior_IsHorizontalRail(behavior) == TRUE
      || MetatileBehavior_IsIsolatedVerticalRail(behavior) == TRUE
-     || MetatileBehavior_IsIsolatedHorizontalRail(behavior) == TRUE)
+     || MetatileBehavior_IsIsolatedHorizontalRail(behavior) == TRUE
+     || MetatileBehavior_IsGroundRocks(behavior) == TRUE)
         DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, gUnknown_8416451);
     else if (Overworld_IsBikingAllowed() == TRUE && !IsBikingDisallowedByPlayer())
     {
@@ -305,7 +307,7 @@ static bool8 ItemUseCheckFunc_Rod(void)
     GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
     behavior = MapGridGetMetatileBehaviorAt(x, y);
 
-    if (MetatileBehavior_IsWaterfall(behavior))
+    if (MetatileBehavior_IsWaterfall(behavior) || CheckPlayerInGroundRocks())
         return FALSE;
     if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER))
         return FALSE;
@@ -806,6 +808,17 @@ void FieldUseFunc_EvIvDisplay(u8 taskId)
 		StopPokemonLeagueLightingEffectTask();
 		FadeScreen(FADE_TO_BLACK, 0);
 		gTasks[taskId].func = Task_OpenEvIvDisplayFromField;
+	}
+}
+
+void FieldUseFunc_RidePager(u8 taskId)
+{
+	if (!CountObtainedPokeRides())
+		PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
+	else
+	{
+		sItemUseOnFieldCB = Task_InitRidePager;
+		sub_80A103C(taskId);
 	}
 }
 

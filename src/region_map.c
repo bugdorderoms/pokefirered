@@ -12,10 +12,12 @@
 #include "menu.h"
 #include "strings.h"
 #include "map_preview_screen.h"
+#include "ride_pager.h"
 #include "constants/songs.h"
 #include "constants/region_map_sections.h"
 #include "constants/heal_locations.h"
 #include "constants/maps.h"
+#include "constants/poke_ride.h"
 
 #define MAP_WIDTH 22
 #define MAP_HEIGHT 15
@@ -4456,7 +4458,15 @@ static void FreeFlyMap(u8 taskId)
     if (sFlyMap->selectedDestination == TRUE)
         SetMainCallback2(CB2_ReturnToField);
     else
-        SetMainCallback2(CB2_ReturnToPartyMenuFromFlyMap);
+    {
+        if (gUsingRideMon == RIDE_CHARIZARD)
+        {
+            gUsingRideMon == RIDE_NONE;
+	    SetMainCallback2(CB2_ReturnToFieldAndUseRidePager);
+        }
+        else
+            SetMainCallback2(CB2_ReturnToPartyMenuFromFlyMap);
+    }
     FREE_IF_NOT_NULL(sFlyMap);
 }
 

@@ -48,6 +48,7 @@ static void GetGroundEffectFlags_Puddle(struct ObjectEvent*, u32*);
 static void GetGroundEffectFlags_Ripple(struct ObjectEvent*, u32*);
 static void GetGroundEffectFlags_Seaweed(struct ObjectEvent*, u32*);
 static void GetGroundEffectFlags_JumpLanding(struct ObjectEvent*, u32*);
+static void GetGroundEffectFlags_GroundRocks(struct ObjectEvent*, u32*);
 static u8 ObjectEventCheckForReflectiveSurface(struct ObjectEvent*);
 static u8 GetReflectionTypeByMetatileBehavior(u32);
 static void InitObjectPriorityByZCoord(struct Sprite *sprite, u8 z);
@@ -7788,6 +7789,7 @@ static void GetAllGroundEffectFlags_OnFinishStep(struct ObjectEvent *objEvent, u
     GetGroundEffectFlags_HotSprings(objEvent, flags);
     GetGroundEffectFlags_Seaweed(objEvent, flags);
     GetGroundEffectFlags_JumpLanding(objEvent, flags);
+    GetGroundEffectFlags_GroundRocks(objEvent, flags);
 }
 
 static void ObjectEventUpdateMetatileBehaviors(struct ObjectEvent *objEvent)
@@ -7983,6 +7985,12 @@ static void GetGroundEffectFlags_JumpLanding(struct ObjectEvent *objEvent, u32 *
             }
         }
     }
+}
+
+static void GetGroundEffectFlags_GroundRocks(struct ObjectEvent *objEvent, u32 *flags)
+{
+	if (MetatileBehavior_IsGroundRocks(objEvent->currentMetatileBehavior) || (objEvent->localId == OBJ_EVENT_ID_PLAYER && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE) && JOY_HELD(B_BUTTON)))
+		*flags |= GROUND_EFFECT_FLAG_LAND_ON_NORMAL_GROUND;
 }
 
 static u8 ObjectEventCheckForReflectiveSurface(struct ObjectEvent *objEvent)

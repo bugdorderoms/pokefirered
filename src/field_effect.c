@@ -17,6 +17,8 @@
 #include "overworld.h"
 #include "party_menu.h"
 #include "quest_log.h"
+#include "random.h"
+#include "ride_pager.h"
 #include "script.h"
 #include "special_field_anim.h"
 #include "task.h"
@@ -25,6 +27,7 @@
 #include "util.h"
 #include "constants/event_object_movement.h"
 #include "constants/metatile_behaviors.h"
+#include "constants/poke_ride.h"
 #include "constants/songs.h"
 #include "pokemon_storage_system.h"
 #include "constants/inserts.h"
@@ -37,6 +40,7 @@ extern const struct CompressedSpriteSheet gTrainerFrontPicTable[];
 
 EWRAM_DATA u32 gFieldEffectArguments[8] = {0};
 EWRAM_DATA u16 gReflectionPaletteBuffer[0x10] = {0};
+EWRAM_DATA struct MapPosition gPlayerFacingPosition = {};
 
 static u8 sFieldEffectActiveList[FIELD_EFFECT_COUNT];
 
@@ -962,7 +966,10 @@ static void Task_FlyOut(u8 taskId)
     {
         if (!IsWeatherNotFadingIn())
             return;
-        gFieldEffectArguments[0] = GetCursorSelectionMonId();
+	if (gUsingRideMon == RIDE_CHARIZARD)
+		gFieldEffectArguments[0] = 0;
+	else
+		gFieldEffectArguments[0] = GetCursorSelectionMonId();
         if ((int)gFieldEffectArguments[0] >= PARTY_SIZE)
             gFieldEffectArguments[0] = 0;
         FieldEffectStart(FLDEFF_USE_FLY);
@@ -2423,9 +2430,20 @@ u32 FldEff_FieldMoveShowMonInit(void)
 {
     u32 r6 = gFieldEffectArguments[0] & 0x80000000;
     u8 partyIdx = gFieldEffectArguments[0];
-    gFieldEffectArguments[0] = GetMonData(&gPlayerParty[partyIdx], MON_DATA_SPECIES);
-    gFieldEffectArguments[1] = GetMonData(&gPlayerParty[partyIdx], MON_DATA_OT_ID);
-    gFieldEffectArguments[2] = GetMonData(&gPlayerParty[partyIdx], MON_DATA_PERSONALITY);
+	
+    if (gUsingRideMon == RIDE_NONE)
+    {
+	    gFieldEffectArguments[0] = GetMonData(&gPlayerParty[partyIdx], MON_DATA_SPECIES);
+	    gFieldEffectArguments[1] = GetMonData(&gPlayerParty[partyIdx], MON_DATA_OT_ID);
+	    gFieldEffectArguments[2] = GetMonData(&gPlayerParty[partyIdx], MON_DATA_PERSONALITY);
+    }
+    else
+    {
+	    gFieldEffectArguments[0] = RideToSpeciesId(gUsingRideMon);
+	    gFieldEffectArguments[1] = gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8) | (gSaveBlock2Ptr->playerTrainerId[2] << 16) | (gSaveBlock2Ptr->playerTrainerId[3] << 24);
+	    gFieldEffectArguments[2] = Random32();
+	    gUsingRideMon = RIDE_NONE;
+    }
     gFieldEffectArguments[0] |= r6;
     FieldEffectStart(FLDEFF_FIELD_MOVE_SHOW_MON);
     FieldEffectActiveListRemove(FLDEFF_FIELD_MOVE_SHOW_MON_INIT);
@@ -3838,4 +3856,17 @@ void FldEff_Unk45(void)
     BlendPalettes(0xFFFFFFFF, 0x10, RGB_WHITE);
     BeginNormalPaletteFade(0xFFFFFFFF, -1, 0x0F, 0x00, RGB_WHITE);
     CreateTask(Task_FldEffUnk45, 90);
+}
+
+bool8 CheckObjectGraphicsInFrontOfPlayer(u8 graphicsId)
+{
+    u8 mapObjId;
+
+    GetXYCoordsOneStepInFrontOfPlayer(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
+    gPlayerFacingPosition.height = PlayerGetZCoord();
+    mapObjId = GetObjectEventIdByXYZ(gPlayerFacingPosition.x, gPlayerFacingPosition.y, gPlayerFacingPosition.height);
+    if (gObjectEvents[mapObjId].graphicsId != graphicsId)
+        return FALSE;
+    gSpecialVar_LastTalked = gObjectEvents[mapObjId].localId;
+    return TRUE;
 }
