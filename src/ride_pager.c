@@ -111,7 +111,7 @@ static const struct RideSpeciesAndDesc sRideToSpeciesAndDesc[NUM_RIDE_POKEMON] =
 		.species = SPECIES_SHARPEDO,
 		.desc = sSharpedoRideDesc,
 	},
-    [RIDE_CHARIZARD] = {
+	[RIDE_CHARIZARD] = {
 		.species = SPECIES_CHARIZARD,
 		.desc = sCharizardRideDesc,
 	}
