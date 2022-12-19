@@ -848,13 +848,13 @@ void StoreInitialPlayerAvatarState(void)
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_ACRO_BIKE))
         sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_ACRO_BIKE;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE))
-		sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_TAUROS_RIDE;
-	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE))
-		sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_STOUTLAND_RIDE;
-	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MUDSDALE_RIDE))
-		sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_MUDSDALE_RIDE;
-	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
-		sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_MACHAMP_RIDE;
+	sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_TAUROS_RIDE;
+    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE))
+	sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_STOUTLAND_RIDE;
+    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MUDSDALE_RIDE))
+        sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_MUDSDALE_RIDE;
+    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
+	sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_MACHAMP_RIDE;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
         sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_SURFING;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER))
@@ -895,11 +895,11 @@ static u16 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *pl
         return PLAYER_AVATAR_FLAG_ACRO_BIKE;
     else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_TAUROS_RIDE)
         return PLAYER_AVATAR_FLAG_TAUROS_RIDE;
-	else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_STOUTLAND_RIDE)
+    else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_STOUTLAND_RIDE)
         return PLAYER_AVATAR_FLAG_STOUTLAND_RIDE;
-	else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_MUDSDALE_RIDE)
+    else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_MUDSDALE_RIDE)
         return PLAYER_AVATAR_FLAG_MUDSDALE_RIDE;
-	else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_MACHAMP_RIDE)
+    else if (playerStruct->transitionFlags == PLAYER_AVATAR_FLAG_MACHAMP_RIDE)
         return PLAYER_AVATAR_FLAG_MACHAMP_RIDE;
     else
         return PLAYER_AVATAR_FLAG_ON_FOOT;
@@ -1670,8 +1670,8 @@ void CB2_ReturnToFieldWithOpenMenu(void)
 
 void CB2_ReturnToFieldAndUseRidePager(void)
 {
-	FieldClearVBlankHBlankCallbacks();
-	gFieldCallback2 = FieldCB_ReturnToFieldUseRidePager;
+    FieldClearVBlankHBlankCallbacks();
+    gFieldCallback2 = FieldCB_ReturnToFieldUseRidePager;
     CB2_ReturnToField();
 }
 
