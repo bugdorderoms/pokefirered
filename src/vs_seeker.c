@@ -19,6 +19,8 @@
 #include "random.h"
 #include "field_player_avatar.h"
 #include "vs_seeker.h"
+#include "ride_pager.h"
+#include "strings.h"
 #include "constants/event_object_movement.h"
 #include "constants/event_objects.h"
 #include "constants/maps.h"
@@ -755,6 +757,12 @@ void Task_VsSeeker_0(u8 taskId)
     }
     else if (respval == VSSEEKER_CAN_USE)
     {
+       if (!TryDismountPokeRide())
+       {
+          Free(sVsSeeker);
+          DisplayItemMessageOnField(taskId, 2, gText_OakForbidsUseOfItemHere, Task_ItemUse_CloseMessageBoxAndReturnToField_VsSeeker);
+          return;
+       }
         ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, 0, gSpecialVar_ItemId, 0xffff);
         FieldEffectStart(FLDEFF_USE_VS_SEEKER);
         gTasks[taskId].func = Task_VsSeeker_1;
