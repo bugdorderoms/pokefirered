@@ -33,6 +33,8 @@ static void SpriteCallback_DestroyArrow(struct Sprite * sprite);
 static u8 CreateStarSprite(void);
 static void SpriteCallback_Star(struct Sprite * sprite);
 static void SpriteCallback_DestroyStar(struct Sprite * sprite);
+static u8 CreateStoutlandSearchArrowSprite(void);
+static u8 DirectionToArrowAnimNum(u8 direction);
 
 #define ARROW_TILE_TAG 2000
 
@@ -502,6 +504,69 @@ static void Task_ItemfinderUnderfootDigUpItem(u8 taskId)
     DestroyTask(taskId);
     ScriptContext1_SetupScript(EventScript_ItemfinderDigUpUnderfootItem);
     ScriptContext2_Enable();
+}
+
+void Task_StoutlandSearch(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+	u8 direction;
+	
+	if (data[8] || ScriptContext2_IsEnabled() || !TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE))
+	{
+		if (tStartSpriteId != MAX_SPRITES)
+		{
+			DestroyArrowAndStarTiles();
+			DestroySprite(&gSprites[tStartSpriteId]);
+		}
+		DestroyTask(taskId);
+		return;
+	}
+	if (tStartSpriteId == MAX_SPRITES)
+	{
+		LoadArrowAndStarTiles();
+		tStartSpriteId = CreateStoutlandSearchArrowSprite();
+	}
+	if (HiddenItemIsWithinRangeOfPlayer(gMapHeader.events, taskId))
+	{
+		direction = GetPlayerDirectionTowardsHiddenItem(tItemX, tItemY);
+		
+		if (tUnderfoot || direction == DIR_NONE)
+		{
+			StartSpriteAnim(&gSprites[tStartSpriteId], 4);
+			StartSpriteAffineAnim(&gSprites[tStartSpriteId], 0);
+		}
+		else
+		{
+			StartSpriteAnim(&gSprites[tStartSpriteId], 0);
+			StartSpriteAffineAnim(&gSprites[tStartSpriteId], DirectionToArrowAnimNum(direction));
+		}
+		gSprites[tStartSpriteId].invisible = FALSE;
+	}
+	else
+		gSprites[tStartSpriteId].invisible = TRUE;
+}
+
+static u8 CreateStoutlandSearchArrowSprite(void)
+{
+	u8 spriteId = CreateSprite(&gUnknown_84647E4, 10, 10, 0);
+	gSprites[spriteId].oam.paletteNum = 0;
+	gSprites[spriteId].invisible = TRUE;
+	gSprites[spriteId].callback = SpriteCallbackDummy;
+}
+
+static u8 DirectionToArrowAnimNum(u8 direction)
+{
+	switch (direction)
+	{
+		case DIR_WEST:
+		    return 1;
+		case DIR_EAST:
+		    return 0;
+		case DIR_NORTH:
+		    return 2;
+		case DIR_SOUTH:
+		    return 3;
+	}
 }
 
 #undef tStartSpriteId
