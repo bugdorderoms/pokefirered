@@ -182,7 +182,7 @@ static void BikeTransition_MoveDirection(u8 direction)
         else
         {
             if (collision == COLLISION_GROUND_ROCKS)
-				PlayerOnBikeCollide(direction);
+		PlayerOnBikeCollide(direction);
             else if (collision == COLLISION_COUNT || PlayerIsMovingOnRockStairs(direction))
                 PlayerGoSpeed2(direction);
             else
