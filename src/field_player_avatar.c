@@ -16,6 +16,7 @@
 #include "quest_log.h"
 #include "quest_log_player.h"
 #include "random.h"
+#include "ride_pager.h"
 #include "script.h"
 #include "strings.h"
 #include "wild_encounter.h"
@@ -68,6 +69,7 @@ static bool8 CanStopSurfing(s16 x, s16 y, u8 direction);
 static bool8 ShouldJumpLedge(s16 x, s16 y, u8 direction);
 static bool8 TryPushBoulder(s16 x, s16 y, u8 direction);
 static void CheckAcroBikeCollision(s16 x, s16 y, u8 metatileBehavior, u8 *collision);
+static void CheckGroundRocksCollision(u8 metatileBehavior, u8 *collision);
 static void DoPlayerAvatarTransition(void);
 static void PlayerAvatarTransition_Dummy(struct ObjectEvent * playerObject);
 static void PlayerAvatarTransition_Normal(struct ObjectEvent * playerObject);
@@ -75,6 +77,10 @@ static void PlayerAvatarTransition_Bike(struct ObjectEvent * playerObject);
 static void PlayerAvatarTransition_Surfing(struct ObjectEvent * playerObject);
 static void PlayerAvatarTransition_Underwater(struct ObjectEvent * playerObject);
 static void PlayerAvatarTransition_ReturnToField(struct ObjectEvent * playerObject);
+static void PlayerAvatarTransition_TaurosRide(struct ObjectEvent * playerObject);
+static void PlayerAvatarTransition_StoutlandRide(struct ObjectEvent * playerObject);
+static void PlayerAvatarTransition_MudsdaleRide(struct ObjectEvent * playerObject);
+static void PlayerAvatarTransition_MachampRide(struct ObjectEvent * playerObject);
 static bool8 PlayerIsAnimActive(void);
 static bool8 PlayerCheckIfAnimFinishedOrInactive(void);
 static bool8 PlayerAnimIsMultiFrameStationary(void);
@@ -184,9 +190,10 @@ static void npc_clear_strange_bits(struct ObjectEvent *objEvent)
 
 static void MovePlayerAvatarUsingKeypadInput(u8 direction, u16 newKeys, u16 heldKeys)
 {
-    if ((gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_MACH_BIKE)
-        || (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_ACRO_BIKE))
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
         MovePlayerOnBike(direction, newKeys, heldKeys);
+    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE | PLAYER_AVATAR_FLAG_STOUTLAND_RIDE | PLAYER_AVATAR_FLAG_MUDSDALE_RIDE | PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
+	MovePlayerOnRide(direction, heldKeys);
     else
         MovePlayerNotOnBike(direction, heldKeys);
 }
@@ -588,6 +595,8 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     {
         CheckAcroBikeCollision(x, y, metatileBehavior, &collision);
     }
+    if (collision == COLLISION_NONE)
+	    CheckGroundRocksCollision(metatileBehavior, &collision);
     return collision;
 }
 
@@ -603,7 +612,7 @@ static bool8 CanStopSurfing(s16 x, s16 y, u8 direction)
 {
     if ((gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
         && MapGridGetZCoordAt(x, y) == 3
-        && GetObjectEventIdByXYZ(x, y, 3) == OBJECT_EVENTS_COUNT)
+        && GetObjectEventIdByXYZ(x, y, 3) == OBJECT_EVENTS_COUNT && !MetatileBehavior_IsGroundRocks(MapGridGetMetatileBehaviorAt(x, y))
     {
         QuestLogRecordPlayerAvatarGfxTransitionWithDuration(sQuestLogSurfDismountActionIds[direction], 16);
         CreateStopSurfingTask(direction);
@@ -640,7 +649,7 @@ static bool8 TryPushBoulder(s16 x, s16 y, u8 direction)
     x = gObjectEvents[objectEventId].currentCoords.x;
     y = gObjectEvents[objectEventId].currentCoords.y;
     MoveCoords(direction_, &x, &y);
-    if (MapGridGetMetatileBehaviorAt(x, y) == MB_FALL_WARP || (GetCollisionAtCoords(&gObjectEvents[objectEventId], x, y, direction_) == COLLISION_NONE && !MetatileBehavior_IsNonAnimDoor(MapGridGetMetatileBehaviorAt(x, y))))
+    if (MapGridGetMetatileBehaviorAt(x, y) == MB_FALL_WARP || (GetCollisionAtCoords(&gObjectEvents[objectEventId], x, y, direction_) == COLLISION_NONE && !MetatileBehavior_IsNonAnimDoor(MapGridGetMetatileBehaviorAt(x, y)) && !MetatileBehavior_IsGroundRocks(behavior)))
     {
         StartStrengthAnim(objectEventId, direction_);
         return TRUE;
@@ -681,6 +690,12 @@ static void CheckAcroBikeCollision(s16 x, s16 y, u8 metatileBehavior, u8 *collis
     }
 }
 
+static void CheckGroundRocksCollision(u8 metatileBehavior, u8 *collision)
+{
+	if (MetatileBehavior_IsGroundRocks(metatileBehavior))
+		*collision = COLLISION_GROUND_ROCKS;
+}	
+	
 void SetPlayerAvatarTransitionFlags(u16 flags)
 {
     gPlayerAvatar.transitionFlags |= flags;
@@ -695,13 +710,17 @@ static void (*const sPlayerAvatarTransitionFuncs[])(struct ObjectEvent *) = {
     [PLAYER_AVATAR_STATE_UNDERWATER]   = PlayerAvatarTransition_Underwater,
     [PLAYER_AVATAR_STATE_CONTROLLABLE] = PlayerAvatarTransition_ReturnToField,
     [PLAYER_AVATAR_STATE_FORCED]       = PlayerAvatarTransition_Dummy,
-    [PLAYER_AVATAR_STATE_DASH]         = PlayerAvatarTransition_Dummy
+    [PLAYER_AVATAR_STATE_DASH]         = PlayerAvatarTransition_Dummy,
+    [PLAYER_AVATAR_STATE_TAUROS_RIDE]  = PlayerAvatarTransition_TaurosRide,
+    [PLAYER_AVATAR_STATE_STOUTLAND_RIDE] = PlayerAvatarTransition_StoutlandRide,
+    [PLAYER_AVATAR_STATE_MUDSDALE_RIDE] = PlayerAvatarTransition_MudsdaleRide,
+    [PLAYER_AVATAR_STATE_MACHAMP_RIDE] = PlayerAvatarTransition_MachampRide
 };
 
 static void DoPlayerAvatarTransition(void)
 {
     u8 i;
-    u8 flags = gPlayerAvatar.transitionFlags;
+    u16 flags = gPlayerAvatar.transitionFlags;
 
     if (flags != 0)
     {
@@ -748,6 +767,34 @@ static void PlayerAvatarTransition_ReturnToField(struct ObjectEvent * playerObjE
     gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_CONTROLLABLE;
 }
 
+static void PlayerAvatarTransition_TaurosRide(struct ObjectEvent * playerObject)
+{
+	QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_TAUROS_RIDE);
+	QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_TAUROS_RIDE);
+	BikeClearState(0, 0);
+}
+
+static void PlayerAvatarTransition_StoutlandRide(struct ObjectEvent * playerObject)
+{
+	QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_STOUTLAND_RIDE);
+	QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_STOUTLAND_RIDE);
+	BikeClearState(0, 0);
+}
+
+static void PlayerAvatarTransition_MudsdaleRide(struct ObjectEvent * playerObject)
+{
+	QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_MUDSDALE_RIDE);
+	QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_MUDSDALE_RIDE);
+	BikeClearState(0, 0);
+}
+
+static void PlayerAvatarTransition_MachampRide(struct ObjectEvent * playerObject)
+{
+	QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_MACHAMP_RIDE);
+	QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_MACHAMP_RIDE);
+	BikeClearState(0, 0);
+}
+	
 void UpdatePlayerAvatarTransitionState(void)
 {
     gPlayerAvatar.tileTransitionState = T_NOT_MOVING;
@@ -1103,12 +1150,15 @@ void MovePlayerToMapCoords(s16 x, s16 y)
     MoveObjectEventToMapCoords(&gObjectEvents[gPlayerAvatar.objectEventId], x, y);
 }
 
-u8 TestPlayerAvatarFlags(u8 bm)
+u8 TestPlayerAvatarFlags(u16 bm)
 {
-    return gPlayerAvatar.flags & bm;
+	if (gPlayerAvatar.flags & bm)
+		return TRUE;
+	else
+		return FALSE;
 }
 
-u8 GetPlayerAvatarFlags(void)
+u16 GetPlayerAvatarFlags(void)
 {
     return gPlayerAvatar.flags;
 }
@@ -1143,6 +1193,10 @@ static const u8 sPlayerAvatarGfxIds[][GENDER_COUNT] = {
     [PLAYER_AVATAR_GFX_FIELD_MOVE] = {OBJ_EVENT_GFX_RED_FIELD_MOVE, OBJ_EVENT_GFX_GREEN_FIELD_MOVE},
     [PLAYER_AVATAR_GFX_FISH]       = {OBJ_EVENT_GFX_RED_FISH,       OBJ_EVENT_GFX_GREEN_FISH},
     [PLAYER_AVATAR_GFX_VSSEEKER]   = {OBJ_EVENT_GFX_RED_VS_SEEKER,  OBJ_EVENT_GFX_GREEN_VS_SEEKER},
+    [PLAYER_AVATAR_GFX_TAUROS_RIDE] = {OBJ_EVENT_GFX_RED_TAUROS, OBJ_EVENT_GFX_GREEN_TAUROS},
+    [PLAYER_AVATAR_GFX_STOUTLAND_RIDE] = {OBJ_EVENT_GFX_RED_STOUTLAND, OBJ_EVENT_GFX_GREEN_STOUTLAND},
+    [PLAYER_AVATAR_GFX_MUDSDALE_RIDE] = {OBJ_EVENT_GFX_RED_MUDSDALE, OBJ_EVENT_GFX_GREEN_MUDSDALE},
+    [PLAYER_AVATAR_GFX_MACHAMP_RIDE] = {OBJ_EVENT_GFX_RED_MACHAMP, OBJ_EVENT_GFX_GREEN_MACHAMP},
 };
 
 static const u8 sHoennLinkPartnerGfxIds[] = {
@@ -1179,27 +1233,14 @@ u8 GetPlayerAvatarGenderByGraphicsId(u8 gfxId)
     case OBJ_EVENT_GFX_GREEN_SURF:
     case OBJ_EVENT_GFX_GREEN_FIELD_MOVE:
     case OBJ_EVENT_GFX_GREEN_FISH:
+    case OBJ_EVENT_GFX_GREEN_TAUROS:
+    case OBJ_EVENT_GFX_GREEN_STOUTLAND:
+    case OBJ_EVENT_GFX_GREEN_MUDSDALE:
+    case OBJ_EVENT_GFX_GREEN_MACHAMP:
         return FEMALE;
     default:
         return MALE;
     }
-}
-
-bool8 PartyHasMonWithSurf(void)
-{
-    u8 i;
-
-    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
-    {
-        for (i = 0; i < PARTY_SIZE; i++)
-        {
-            if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) == SPECIES_NONE)
-                break;
-            if (MonKnowsMove(&gPlayerParty[i], MOVE_SURF))
-                return TRUE;
-        }
-    }
-    return FALSE;
 }
 
 bool8 IsPlayerSurfingNorth(void)
@@ -1235,26 +1276,34 @@ void ClearPlayerAvatarInfo(void)
     gPlayerAvatar = (struct PlayerAvatar){};
 }
 
-void SetPlayerAvatarStateMask(u8 flags)
+void SetPlayerAvatarStateMask(u16 flags)
 {
     gPlayerAvatar.flags &= (PLAYER_AVATAR_FLAG_DASH | PLAYER_AVATAR_FLAG_FORCED | PLAYER_AVATAR_FLAG_CONTROLLABLE);
     gPlayerAvatar.flags |= flags;
 }
 
-static const u8 sPlayerAvatarGfxToStateFlag[][3][GENDER_COUNT] = {
+static const u16 sPlayerAvatarGfxToStateFlag[][7][GENDER_COUNT] = {
     [MALE] = {
         {OBJ_EVENT_GFX_RED_NORMAL, PLAYER_AVATAR_FLAG_ON_FOOT},
         {OBJ_EVENT_GFX_RED_BIKE,   PLAYER_AVATAR_FLAG_MACH_BIKE},
         {OBJ_EVENT_GFX_RED_SURF,   PLAYER_AVATAR_FLAG_SURFING},
+	{OBJ_EVENT_GFX_RED_TAUROS, PLAYER_AVATAR_FLAG_TAUROS_RIDE},
+	{OBJ_EVENT_GFX_RED_STOUTLAND, PLAYER_AVATAR_FLAG_STOUTLAND_RIDE},
+	{OBJ_EVENT_GFX_RED_MUDSDALE, PLAYER_AVATAR_FLAG_MUDSDALE_RIDE},
+	{OBJ_EVENT_GFX_RED_MACHAMP, PLAYER_AVATAR_FLAG_MACHAMP_RIDE}
     },
     [FEMALE] = {
         {OBJ_EVENT_GFX_GREEN_NORMAL, PLAYER_AVATAR_FLAG_ON_FOOT},
         {OBJ_EVENT_GFX_GREEN_BIKE,   PLAYER_AVATAR_FLAG_MACH_BIKE},
         {OBJ_EVENT_GFX_GREEN_SURF,   PLAYER_AVATAR_FLAG_SURFING},
+	{OBJ_EVENT_GFX_GREEN_TAUROS, PLAYER_AVATAR_FLAG_TAUROS_RIDE},
+	{OBJ_EVENT_GFX_GREEN_STOUTLAND, PLAYER_AVATAR_FLAG_STOUTLAND_RIDE},
+	{OBJ_EVENT_GFX_GREEN_MUDSDALE, PLAYER_AVATAR_FLAG_MUDSDALE_RIDE},
+	{OBJ_EVENT_GFX_GREEN_MACHAMP, PLAYER_AVATAR_FLAG_MACHAMP_RIDE}
     }
 };
 
-u8 GetPlayerAvatarStateTransitionByGraphicsId(u8 graphicsId, u8 gender)
+u16 GetPlayerAvatarStateTransitionByGraphicsId(u8 graphicsId, u8 gender)
 {
     u8 i;
 
@@ -1269,7 +1318,7 @@ u8 GetPlayerAvatarStateTransitionByGraphicsId(u8 graphicsId, u8 gender)
 u8 GetPlayerAvatarGraphicsIdByCurrentState(void)
 {
     u8 i;
-    u8 flags = gPlayerAvatar.flags;
+    u16 flags = gPlayerAvatar.flags;
 
     for (i = 0; i < NELEMS(*sPlayerAvatarGfxToStateFlag); i++)
     {
@@ -1281,7 +1330,7 @@ u8 GetPlayerAvatarGraphicsIdByCurrentState(void)
 
 void SetPlayerAvatarExtraStateTransition(u8 graphicsId, u8 extras)
 {
-    u8 unk = GetPlayerAvatarStateTransitionByGraphicsId(graphicsId, gPlayerAvatar.gender);
+    u16 unk = GetPlayerAvatarStateTransitionByGraphicsId(graphicsId, gPlayerAvatar.gender);
 
     gPlayerAvatar.transitionFlags |= unk | extras;
     DoPlayerAvatarTransition();
