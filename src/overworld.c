@@ -915,7 +915,7 @@ bool8 sub_8055B38(u16 metatileBehavior)
     return FALSE;
 }
 
-static u8 GetAdjustedInitialDirection(struct InitialPlayerAvatarState *playerStruct, u8 transitionFlags, u16 metatileBehavior, u8 mapType)
+static u8 GetAdjustedInitialDirection(struct InitialPlayerAvatarState *playerStruct, u16 transitionFlags, u16 metatileBehavior, u8 mapType)
 {
     if (FlagGet(FLAG_SYS_CRUISE_MODE) && mapType == MAP_TYPE_OCEAN_ROUTE)
         return DIR_EAST;
