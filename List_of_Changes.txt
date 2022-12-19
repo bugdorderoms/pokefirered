@@ -45,6 +45,7 @@ Ev-Iv Display (Acimut And BlackUser)
 Dynamic OW Palettes (Slawter666 And BlackUser)
 Move Items Betwen Pokemons (Zeturic And BlackUser)
 Auto Run (ghoulslash And BlackUser)
+Ride Pager (BlackUser)
 
 // Can Be Turned On/Off
 // To Define Which Hacks Will Be Inserted In The Rom Go To include/constants > inserts.h
