@@ -30,6 +30,7 @@
 #define KBEVENT_PRESSED_B 6
 #define KBEVENT_PRESSED_SELECT 8
 #define KBEVENT_PRESSED_START 9
+#define KBEVENT_PRESSED_L 10
 
 #define KBROW_COUNT 4
 
@@ -199,6 +200,7 @@ static void NamingScreen_InitDisplayMode(void);
 static void VBlankCB_NamingScreen(void);
 static void ShowAllBgs(void);
 static bool8 IsLetter(u8 character);
+static void ChangeCharacterCase(void);
 
 // Forward declarations
 
@@ -1315,7 +1317,7 @@ static void NamingScreen_CreateMonIcon(void)
     u8 spriteId;
 
     LoadMonIconPalettes();
-    spriteId = CreateMonIcon(sNamingScreenData->monSpecies, SpriteCallbackDummy, 0x38, 0x28, 0, sNamingScreenData->monPersonality, 1);
+    spriteId = CreateMonIcon(sNamingScreenData->monSpecies, SpriteCB_MonIcon, 0x38, 0x28, 0, sNamingScreenData->monPersonality, 1);
     gSprites[spriteId].oam.priority = 3;
 }
 
@@ -1379,6 +1381,11 @@ static bool8 HandleKeyboardEvent(void)
     {
         MoveCursorToOKButton();
         return FALSE;
+    }
+    else if (event == KBEVENT_PRESSED_L)
+    {
+        ChangeCharacterCase();
+		return FALSE;
     }
     else
     {
@@ -1505,6 +1512,8 @@ static void InputState_Enabled(struct Task *task)
         task->tKeyboardEvent = KBEVENT_PRESSED_SELECT;
     else if (JOY_NEW(START_BUTTON))
         task->tKeyboardEvent = KBEVENT_PRESSED_START;
+    else if (JOY_NEW(L_BUTTON))
+        task->tKeyboardEvent = KBEVENT_PRESSED_L;
     else
         HandleDpadMovement(task);
 }
@@ -1715,6 +1724,20 @@ static void DeleteTextCharacter(void)
     if (var2 == KEY_ROLE_CHAR || var2 == KEY_ROLE_BACKSPACE)
         sub_809E518(1, 0, 1);
     PlaySE(SE_BALL);
+}
+
+static void ChangeCharacterCase(void)
+{
+	u8 index = GetPreviousTextCaretPosition();
+	
+	if (sNamingScreenData->textBuffer[index] >= CHAR_A && sNamingScreenData->textBuffer[index] <= CHAR_Z)
+		sNamingScreenData->textBuffer[index] += 0x1A;
+	else if (sNamingScreenData->textBuffer[index] >= CHAR_a && sNamingScreenData->textBuffer[index] <= CHAR_z)
+		sNamingScreenData->textBuffer[index] -= 0x1A;
+	
+	PrintBufferCharactersOnScreen();
+	CopyBgTilemapBufferToVram(3);
+	PlaySE(SE_SELECT);
 }
 
 static bool8 AppendCharToBuffer_CheckBufferFull(void)
