@@ -465,7 +465,7 @@ static void DoDNSLightningWindowsEffect(void)
 		{
 			colourSlot = sLightingColours[i].paletteNum * 16 + sLightingColours[i].colourNum;
 			
-			if (fadeActive || gPlttBufferUnfaded[colourSlot] != 0x0000)
+			if (fadeActive || (gPlttBufferUnfaded[colourSlot] != 0x0000 && gPlttBufferFaded[colourSlot] == 0x0000))
 			{
 				sDNSPaletteDmaBuffer[colourSlot] = gPlttBufferFaded[colourSlot];
 				gPlttBufferUnfaded[colourSlot] = sLightingColours[i].lightColour;
