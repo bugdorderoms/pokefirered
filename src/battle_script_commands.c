@@ -1576,7 +1576,7 @@ bool8 MakesSound(u16 move)
 
 bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move) 
 {
-	if (!((gBattleMons[defender].status2 & STATUS2_SUBSTITUTE) || MakesSound(move) || (GetBattlerAbility(attacker) == ABILITY_INFILTRATOR && move != MOVE_TRANSFORM))) // add Sky Drop check here
+	if ((!(gBattleMons[defender].status2 & STATUS2_SUBSTITUTE) || MakesSound(move) || (GetBattlerAbility(attacker) == ABILITY_INFILTRATOR && move != MOVE_TRANSFORM))) // add Sky Drop check here
 		return FALSE;
 	else
 		return TRUE;
