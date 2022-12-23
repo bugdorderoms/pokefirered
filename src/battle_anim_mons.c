@@ -9,13 +9,6 @@
 #include "util.h"
 #include "constants/battle_anim.h"
 
-#define GET_UNOWN_LETTER(personality) ((        \
-      (((personality & 0x03000000) >> 24) << 6) \
-    | (((personality & 0x00030000) >> 16) << 4) \
-    | (((personality & 0x00000300) >> 8) << 2)  \
-    | (((personality & 0x00000003) >> 0) << 0)  \
-) % 28)
-
 #define IS_DOUBLE_BATTLE() (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 
 static u8 GetBattlerSpriteFinal_Y(u8 battlerId, u16 species, bool8 a3);
@@ -150,7 +143,6 @@ u8 GetBattlerSpriteCoord(u8 battlerId, u8 coordType)
 
 static u8 GetBattlerYDelta(u8 battlerId, u16 species)
 {
-    u16 letter;
     u32 personality;
     struct BattleSpriteInfo *spriteInfo;
     u8 ret;
@@ -165,11 +157,8 @@ static u8 GetBattlerYDelta(u8 battlerId, u16 species)
                 personality = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerId]], MON_DATA_PERSONALITY);
             else
                 personality = gTransformedPersonalities[battlerId];
-            letter = GET_UNOWN_LETTER(personality);
-            if (!letter)
-                coordSpecies = species;
-            else
-                coordSpecies = letter + SPECIES_UNOWN_B - 1;
+			
+            coordSpecies = GetUnownSpeciesId(personality);
             ret = gMonBackPicCoords[coordSpecies].y_offset;
         }
         else if (species == SPECIES_CASTFORM)
@@ -194,11 +183,8 @@ static u8 GetBattlerYDelta(u8 battlerId, u16 species)
                 personality = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_PERSONALITY);
             else
                 personality = gTransformedPersonalities[battlerId];
-            letter = GET_UNOWN_LETTER(personality);
-            if (!letter)
-                coordSpecies = species;
-            else
-                coordSpecies = letter + SPECIES_UNOWN_B - 1;
+			
+            coordSpecies = GetUnownSpeciesId(personality);
             ret = gMonFrontPicCoords[coordSpecies].y_offset;
         }
         else if (species == SPECIES_CASTFORM)
@@ -1879,7 +1865,6 @@ s16 GetBattlerSpriteCoordAttr(u8 battlerId, u8 attr)
 {
     u16 species;
     u32 personality;
-    u16 letter;
     u16 unownSpecies;
     s32 ret;
     const struct MonCoords *coords;
@@ -1900,11 +1885,7 @@ s16 GetBattlerSpriteCoordAttr(u8 battlerId, u8 attr)
         }
         if (species == SPECIES_UNOWN)
         {
-            letter = GET_UNOWN_LETTER(personality);
-            if (!letter)
-                unownSpecies = SPECIES_UNOWN;
-            else
-                unownSpecies = letter + SPECIES_UNOWN_B - 1;
+            unownSpecies = GetUnownSpeciesId(personality);
             coords = &gMonBackPicCoords[unownSpecies];
         }
         else if (species > NUM_SPECIES)
@@ -1932,11 +1913,7 @@ s16 GetBattlerSpriteCoordAttr(u8 battlerId, u8 attr)
 
         if (species == SPECIES_UNOWN)
         {
-            letter = GET_UNOWN_LETTER(personality);
-            if (!letter)
-                unownSpecies = SPECIES_UNOWN;
-            else
-                unownSpecies = letter + SPECIES_UNOWN_B - 1;
+            unownSpecies = GetUnownSpeciesId(personality);
             coords = &gMonFrontPicCoords[unownSpecies];
         }
         else if (species == SPECIES_CASTFORM)
