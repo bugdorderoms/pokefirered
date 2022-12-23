@@ -405,8 +405,6 @@ const u8 *Battle_PrintStatBoosterEffectMessage(u16 itemId);
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem);
 u16 NationalPokedexNumToSpecies(u16 nationalNum);
 u16 SpeciesToNationalPokedexNum(u16 species);
-u16 HoennToNationalOrder(u16 hoennNum);
-u16 SpeciesToCryId(u16 species);
 void DrawSpindaSpots(u16 species, u32 personality, u8 *dest, bool8 isFrontPic);
 void EvolutionRenameMon(struct Pokemon *mon, u16 oldSpecies, u16 newSpecies);
 bool8 GetPlayerFlankId(void);
@@ -459,5 +457,6 @@ void OakSpeechNidoranFFreeResources(void);
 void *OakSpeechNidoranFGetBuffer(u8 bufferId);
 bool8 IsMoveInTable(const u16 table[], u16 moveId);
 u8 GetNumOfBadges(void);
+u16 GetUnownSpeciesId(u32 personality);
 
 #endif // GUARD_POKEMON_H
