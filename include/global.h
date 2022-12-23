@@ -8,6 +8,7 @@
 #include "constants/global.h"
 #include "constants/flags.h"
 #include "constants/vars.h"
+#include "constants/pokedex.h"
 #include "constants/species.h"
 #include "constants/easy_chat.h"
 #include "constants/items.h"
