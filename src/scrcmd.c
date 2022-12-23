@@ -1764,7 +1764,10 @@ bool8 ScrCmd_givemon(struct ScriptContext * ctx)
     u16 species = VarGet(ScriptReadHalfword(ctx));
     u8 level = ScriptReadByte(ctx);
     u16 item = VarGet(ScriptReadHalfword(ctx));
-    u8 ivs[NUM_STATS] = {USE_RANDOM_IVS};
+    u8 i, ivs[NUM_STATS] = {0};
+    
+    for (i = 0; i < NUM_STATS; i++)
+        ivs[i] = USE_RANDOM_IVS;
     
     gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ITEM_NONE);
     return FALSE;
