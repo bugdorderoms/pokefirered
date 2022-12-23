@@ -28,7 +28,6 @@
 #include "field_specials.h"
 #include "constants/items.h"
 #include "constants/item_effects.h"
-#include "constants/hoenn_cries.h"
 #include "constants/pokemon.h"
 #include "constants/abilities.h"
 #include "constants/moves.h"
