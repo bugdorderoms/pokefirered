@@ -11,9 +11,10 @@
 
 void SetMoveEffect(bool8 primary, u8 certain);
 bool8 UproarWakeUpCheck(u8 battlerId);
-u8 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility);
-u8 TypeCalc(u16 move, u8 attacker, u8 defender, bool8 recordAbilities);
-void AI_CalcDmg(u8 attacker, u8 defender);
+u8 GetTypeModifier(u8 atkType, u8 defType);
+u16 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility);
+u8 TypeCalc(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 recordAbilities, bool8 resetFlags, u16 *flags);
+void AI_CalcDmg(u8 attacker, u8 defender, u16 move);
 bool32 IsMonGettingExpSentOut(void);
 void BattleCreateYesNoCursorAt(void);
 void BattleDestroyYesNoCursorAt(void);
