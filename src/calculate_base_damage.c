@@ -232,26 +232,18 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 	return power;
 }
 
-s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u16 move, u16 sideStatus, bool8 isConfusionDmg, u8 battlerIdAtk, u8 battlerIdDef)
+s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, bool8 isConfusionDmg, bool8 isCrit, bool8 randomFactor)
 {
-	u8 type, flags, attackerGender, defenderGender;
+	u8 attackerGender, defenderGender;
 	u8 attackerHoldEffect, attackerHoldEffectParam, defenderHoldEffect, defenderHoldEffectParam;
-	u16 attack, defense, spAttack, spDefense, atkStat, atkStage, defStat, defStage;
+	u16 attack, defense, spAttack, spDefense, atkStat, atkStage, defStat, defStage, flags = 0;
 	u32 i;
 	s32 j, damage;
+	struct BattlePokemon *attacker = &gBattleMons[battlerIdAtk];
+	struct BattlePokemon *defender = &gBattleMons[battlerIdDef];
 
-	if (isConfusionDmg)
-	{
-		i = gBattleStruct->dynamicMoveType;
-		gBattleStruct->dynamicMoveType = TYPE_NORMAL;
-	}
-	type = gBattleStruct->dynamicMoveType;
-	flags = TypeCalc(move, battlerIdAtk, battlerIdDef, FALSE);
-	
-	if (isConfusionDmg)
-		gBattleStruct->dynamicMoveType = i;
-	
-	gBattleMovePower = GetModifiedMovePower(battlerIdAtk, battlerIdDef, move);
+    gBattleMovePower = GetModifiedMovePower(battlerIdAtk, battlerIdDef, move);
+    TypeCalc(move, type, battlerIdAtk, battlerIdDef, FALSE, FALSE, &flags);
 	
 	attack = attacker->attack;
 	defense = defender->defense;
@@ -408,7 +400,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 					attack /= 2;
 				break;
 			case ABILITY_SNIPER:
-				if (gCritMultiplier == 2)
+				if (isCrit)
 					gBattleMovePower = (gBattleMovePower * 15) / 10;
 				break;
 			case ABILITY_SOLAR_POWER:
@@ -544,9 +536,9 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 		defStat = spDefense;
 		defStage = defender->statStages[STAT_SPDEF];
 	}
-	if ((gCritMultiplier == 2 && atkStage < 6) || GetBattlerAbility(battlerIdDef) == ABILITY_UNAWARE)
+	if ((isCrit && atkStage < 6) || GetBattlerAbility(battlerIdDef) == ABILITY_UNAWARE)
 		atkStage = 6;
-	if ((gCritMultiplier == 2 && defStage > 6) || GetBattlerAbility(battlerIdAtk) == ABILITY_UNAWARE)
+	if ((isCrit && defStage > 6) || GetBattlerAbility(battlerIdAtk) == ABILITY_UNAWARE)
 		defStage = 6;
 	
 	atkStat *= gStatStageRatios[atkStage][0];
@@ -560,7 +552,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 	damage = (damage / defStat);
 	damage /= 50;
 	
-	if (gCritMultiplier == 1)
+	if (!isCrit)
 	{
 		switch (gBattleMoves[move].split)
 		{
@@ -571,7 +563,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 			    i = SIDE_STATUS_LIGHTSCREEN;
 			    break;
 		}
-		if ((sideStatus & i) && GetBattlerAbility(battlerIdAtk) != ABILITY_INFILTRATOR)
+		if ((gSideStatuses[GET_BATTLER_SIDE(battlerIdDef)] & i) && GetBattlerAbility(battlerIdAtk) != ABILITY_INFILTRATOR && !isConfusionDmg)
 		{
 			if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
 				damage = 2 * (damage / 3);
@@ -627,5 +619,30 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 	if (gProtectStructs[battlerIdAtk].helpingHand)
 		damage = (15 * damage) / 10;
     
-	return damage + 2;     
+	damage += 2;
+	
+	if (isCrit)
+		damage *= 2;
+	
+	damage *= gBattleScripting.dmgMultiplier;
+	
+	if (randomFactor)
+	{
+		damage *= 100 - (Random() % 16);
+		damage /= 100;
+	}
+	
+	// check stab
+	if (IS_BATTLER_OF_TYPE(battlerIdAtk, type) && !isConfusionDmg)
+	{
+		if (GetBattlerAbility(battlerIdAtk) == ABILITY_ADAPTABILITY)
+			damage *= 2;
+		else
+			damage = (damage * 15) / 10;
+	}
+	
+	if (damage == 0)
+		damage = 1;
+	
+	return damage;     
 }
