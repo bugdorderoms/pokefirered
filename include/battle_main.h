@@ -35,20 +35,11 @@ struct MultiBattlePokemonTx
 #define TYPE_NAME_LENGTH 6
 #define ABILITY_NAME_LENGTH 16
 
-// defines for the u8 array gTypeEffectiveness
-#define TYPE_EFFECT_ATK_TYPE(i)((gTypeEffectiveness[i + 0]))
-#define TYPE_EFFECT_DEF_TYPE(i)((gTypeEffectiveness[i + 1]))
-#define TYPE_EFFECT_MULTIPLIER(i)((gTypeEffectiveness[i + 2]))
-
 // defines for the gTypeEffectiveness multipliers
 #define TYPE_MUL_NO_EFFECT          0
 #define TYPE_MUL_NOT_EFFECTIVE      5
 #define TYPE_MUL_NORMAL             10
 #define TYPE_MUL_SUPER_EFFECTIVE    20
-
-// special type table Ids
-#define TYPE_FORESIGHT  0xFE
-#define TYPE_ENDTABLE   0xFF
 
 // defines for the 'DoBounceEffect' function
 #define BOUNCE_MON          0x0
@@ -65,7 +56,7 @@ extern const u8 gStatusConditionString_IceJpn[8];
 extern const u8 gStatusConditionString_ConfusionJpn[8];
 extern const u8 gStatusConditionString_LoveJpn[8];
 extern const u8 *const gStatusConditionStringsTable[7][2];
-extern const u8 gTypeEffectiveness[336];
+extern const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
 extern const struct TrainerMoneyBall gTrainerMoneyAndBallTable[];
 extern const struct TrainerEvs gTrainerEvsTable[];
 extern const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT];
