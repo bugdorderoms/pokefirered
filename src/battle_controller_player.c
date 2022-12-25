@@ -1430,8 +1430,8 @@ static void MoveSelectionDisplayMoveType(void)
 {
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
     u8 *txtPtr;
-    u8 type, target, effect, flags;
-    u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
+    u8 type, target, effect;
+    u16 flags = 0, move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
     
     if (gBattleMoves[move].effect != EFFECT_HIDDEN_POWER)
         type = gBattleMoves[move].type;
@@ -1444,7 +1444,6 @@ static void MoveSelectionDisplayMoveType(void)
     *txtPtr++ = 1;
    
 #if EFFECTIVENESS_ON_MENU
-    gBattleStruct->dynamicMoveType = type;
     target = B_POSITION_OPPONENT_LEFT; // default target
     effect = 0;
     
@@ -1459,7 +1458,7 @@ static void MoveSelectionDisplayMoveType(void)
         else if (gBattleMons[target].hp == 0)
             target = B_POSITION_OPPONENT_RIGHT;
     }
-    flags = TypeCalc(move, gActiveBattler, target, FALSE);
+    TypeCalc(move, type, gActiveBattler, target, FALSE, FALSE, &flags);
     
     // set respective colours
     if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
