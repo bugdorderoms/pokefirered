@@ -33,9 +33,8 @@ static bool8 ShouldSwitchIfPerishSong(void)
 static bool8 ShouldSwitchIfWonderGuard(void)
 {
     u8 opposingBattler;
-    u8 moveFlags;
     s32 i, j;
-    u16 move;
+    u16 move, moveFlags;
 
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
         return FALSE;
@@ -173,8 +172,7 @@ static bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng)
 {
     u8 opposingBattler;
     s32 i;
-    u8 moveFlags;
-    u16 move;
+    u16 move, moveFlags;
 
     opposingBattler = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
     if (!(gAbsentBattlerFlags & gBitTable[opposingBattler]))
@@ -233,8 +231,7 @@ static bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
 {
     u8 battlerIn1, battlerIn2;
     s32 i, j;
-    u16 move;
-    u8 moveFlags;
+    u16 move, moveFlags;
 
     if (gLastLandedMoves[gActiveBattler] == 0)
         return FALSE;
@@ -394,26 +391,10 @@ void AI_TrySwitchOrUseItem(void)
 
 static void ModulateByTypeEffectiveness(u8 atkType, u8 defType1, u8 defType2, u8 *var)
 {
-    s32 i = 0;
-
-    while (TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE)
-    {
-        if (TYPE_EFFECT_ATK_TYPE(i) == TYPE_FORESIGHT)
-        {
-            i += 3;
-            continue;
-        }
-        else if (TYPE_EFFECT_ATK_TYPE(i) == atkType)
-        {
-            // Check type1.
-            if (TYPE_EFFECT_DEF_TYPE(i) == defType1)
-                *var = (*var * TYPE_EFFECT_MULTIPLIER(i)) / 10;
-            // Check type2.
-            if (TYPE_EFFECT_DEF_TYPE(i) == defType2 && defType1 != defType2)
-                *var = (*var * TYPE_EFFECT_MULTIPLIER(i)) / 10;
-        }
-        i += 3;
-    }
+    *var *= GetTypeModifier(atkType, defType1);
+	
+	if (defType1 != defType2)
+		*var *= GetTypeModifier(atkType, defType2);
 }
 
 u8 GetMostSuitableMonToSwitchInto(void)
@@ -424,7 +405,7 @@ u8 GetMostSuitableMonToSwitchInto(void)
     u8 battlerIn1, battlerIn2;
     s32 i, j;
     u8 invalidMons;
-    u16 move;
+    u16 move, flags;
 
     if (*(gBattleStruct->monToSwitchIntoId + gActiveBattler) != PARTY_SIZE)
         return *(gBattleStruct->monToSwitchIntoId + gActiveBattler);
@@ -484,10 +465,15 @@ u8 GetMostSuitableMonToSwitchInto(void)
         {
             for (i = 0; i < MAX_MON_MOVES; ++i)
             {
-                move = GetMonData(&gEnemyParty[bestMonId], MON_DATA_MOVE1 + i);
-                gBattleStruct->dynamicMoveType = gBattleMoves[move].type;
-                if (move != MOVE_NONE && TypeCalc(move, gActiveBattler, opposingBattler, FALSE) & MOVE_RESULT_SUPER_EFFECTIVE)
-                    break;
+				move = GetMonData(&gEnemyParty[bestMonId], MON_DATA_MOVE1 + i);
+				
+				if (move != MOVE_NONE)
+				{
+					TypeCalc(move, gBattleMoves[move].type, gActiveBattler, opposingBattler, FALSE, FALSE, &flags);
+					
+					if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
+						break;
+				}
             }
             if (i != MAX_MON_MOVES)
                 return bestMonId; // Has both the typing and at least one super effective move.
@@ -499,9 +485,6 @@ u8 GetMostSuitableMonToSwitchInto(void)
             invalidMons = 0x3F; // No viable mon to switch.
         }
     }
-    gBattleScripting.dmgMultiplier = 1;
-    gMoveResultFlags = 0;
-    gCritMultiplier = 1;
     bestDmg = 0;
     bestMonId = 6;
     // If we couldn't find the best mon in terms of typing, find the one that deals most damage.
@@ -517,13 +500,10 @@ u8 GetMostSuitableMonToSwitchInto(void)
         for (j = 0; j < MAX_MON_MOVES; ++j)
         {
             move = GetMonData(&gEnemyParty[i], MON_DATA_MOVE1 + j);
-            gBattleStruct->dynamicMoveType = gBattleMoves[move].type;
-            gBattleMoveDamage = 0;
+			
             if (move != MOVE_NONE && gBattleMoves[move].power != 1)
-            {
-                AI_CalcDmg(gActiveBattler, opposingBattler);
-                TypeCalc(move, gActiveBattler, opposingBattler, FALSE);
-            }
+                AI_CalcDmg(gActiveBattler, opposingBattler, move);
+			
             if (bestDmg < gBattleMoveDamage)
             {
                 bestDmg = gBattleMoveDamage;
