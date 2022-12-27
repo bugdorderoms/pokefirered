@@ -641,22 +641,13 @@ void PSA_CreateMonSpriteAtCloseness(u8 closeness)
     struct Pokemon * pokemon = PSA_GetPokemon();
     u16 species = GetMonData(pokemon, MON_DATA_SPECIES);
     u32 personality = GetMonData(pokemon, MON_DATA_PERSONALITY);
-    u8 r1 = Menu2_GetMonSpriteAnchorCoord(species, personality, 2);
     void * r6;
     void * r9;
     void * r4;
     u8 spriteId;
-
-    if (r1 != 0xFF)
-    {
-        scene->monSpriteY1 = 0x48;
-        scene->monSpriteY2 = r1 + 0x30;
-    }
-    else
-    {
-        scene->monSpriteY1 = 0x48;
-        scene->monSpriteY2 = 0x60;
-    }
+	
+	scene->monSpriteY1 = 0x48;
+	scene->monSpriteY2 = 0x68;
 
     r6 = Alloc(0x2000);
     r9 = Alloc(0x2000);
@@ -1038,7 +1029,7 @@ void PSA_UseItem_CleanUpForCancel(void)
 
 static void InitItemIconSpriteState(struct PokemonSpecialAnimScene * scene, struct Sprite * sprite, u8 closeness)
 {
-    u16 species, x, y;
+    u16 species;
     u32 personality;
     if (closeness == 3)
     {
@@ -1058,26 +1049,14 @@ static void InitItemIconSpriteState(struct PokemonSpecialAnimScene * scene, stru
     {
         case 4:
         {
-            x = Menu2_GetMonSpriteAnchorCoord(species, personality, 0);
-            y = Menu2_GetMonSpriteAnchorCoord(species, personality, 1);
-            if (x == 0xFF)
-                x = 0;
-            if (y == 0xFF)
-                y = 0;
-            sprite->data[6] = x;
-            sprite->data[7] = y;
+            sprite->data[6] = 0x14;
+            sprite->data[7] = 0xF;
             break;
         }
         default:
         {
-            x = Menu2_GetMonSpriteAnchorCoord(species, personality, 3);
-            y = Menu2_GetMonSpriteAnchorCoord(species, personality, 4);
-            if (x == 0xFF)
-                x = 0;
-            if (y == 0xFF)
-                y = 0;
-            sprite->data[6] = x;
-            sprite->data[7] = y;
+            sprite->data[6] = 0x13;
+            sprite->data[7] = 0x1E;
             break;
         }
     }
@@ -1194,8 +1173,8 @@ static void CreateStarSprites(struct PokemonSpecialAnimScene * scene)
             personality = PSA_GetMonPersonality();
             gSprites[spriteId].data[3] = sStarCoordOffsets[i][0] * 8;
             gSprites[spriteId].data[4] = sStarCoordOffsets[i][1] * 8;
-            gSprites[spriteId].x += GetSpriteOffsetByScale(Menu2_GetMonSpriteAnchorCoordMinusx20(species, personality, 0), 3);
-            gSprites[spriteId].y += GetSpriteOffsetByScale(Menu2_GetMonSpriteAnchorCoordMinusx20(species, personality, 1), 3);
+            gSprites[spriteId].x += GetSpriteOffsetByScale(-0xC, 3);
+            gSprites[spriteId].y += GetSpriteOffsetByScale(-0x11, 3);
             scene->field_0002++;
         }
     }
