@@ -205,6 +205,10 @@ _nextcheck5:
     mov r0, sp
     ldrb r0, [r0, 1]
     bl _check9
+    push {r0}
+    ldrb r1, [r5, 2]
+    bl RtcUpdatePerMonthEvents
+    pop {r0}
     strb r0, [r5, 2]
     mov r0, sp
     ldrb r1, [r0, 2]
@@ -212,6 +216,10 @@ _nextcheck5:
     movs r0, r4
     ands r0, r1
     bl _check9
+    push {r0}
+    ldrb r1, [r5, 3]
+    bl RtcUpdatePerDayEvents
+    pop {r0}
     strb r0, [r5, 3]
     mov r0, sp
     ldrb r1, [r0, 3]
@@ -224,10 +232,15 @@ _nextcheck5:
     ands r4, r0
     movs r0, r4
     bl _check9
+    movs r4, r0
+    ldrb r1, [r5, 5]
+    mov r8, r1
     strb r0, [r5, 5]
     mov r0, sp
     ldrb r0, [r0, 5]
     bl _check9
+    ldrb r1, [r5, 6]
+    mov r9, r1
     strb r0, [r5, 6]
     mov r0, sp
     ldrb r0, [r0, 6]
@@ -238,18 +251,31 @@ _nextcheck5:
     ldrb r0, [r2, 2]
     adds r1, r3, r0
     strb r1, [r5, 6]
+    mov r10, r1
     lsls r0, r1, 24
     lsrs r0, 24
     cmp r0, 59
     bls _next2check5
     movs r0, r1
+    mov r9, r0
     subs r0, 60
     strb r0, [r5, 6]
+    mov r10, r0
     ldrb r0, [r5, 5]
+    mov r8, r0
     adds r0, 1
     strb r0, [r5, 5]
+    movs r4, r0
     
 _next2check5:
+    push {r2}
+    movs r0, r4
+    mov r1, r8
+    bl RtcUpdatePerHourEvents
+    mov r0, r10
+    mov r1, r9
+    bl RtcUpdatePerMinuteEvents
+    pop {r2}
     ldrb r3, [r5, 5]
     ldrb r0, [r2, 1]
     adds r1, r3, r0
