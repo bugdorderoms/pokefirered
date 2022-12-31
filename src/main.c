@@ -93,7 +93,6 @@ static void ReadKeys(void);
 void InitIntrHandlers(void);
 static void WaitForVBlank(void);
 void EnableVCountIntrAtLine150(void);
-static void DoRTCEvents(void);
 
 #define B_START_SELECT (B_BUTTON | START_BUTTON | SELECT_BUTTON)
 
@@ -162,7 +161,7 @@ void AgbMain()
     for (;;)
     {
         ReadKeys();
-        DoRTCEvents();
+        RTCStart(&gRtcCheckLocation, &gRtcLocationDecimal, &gRtcLocation);
             
         if (gSoftResetDisabled == FALSE
          && (gMain.heldKeysRaw & A_BUTTON)
@@ -198,21 +197,6 @@ void AgbMain()
         MapMusicMain();
         WaitForVBlank();
     }
-}
-
-static void DoPerDayBasedEvents(void)
-{
-    UpdatePartyPokerusTime();
-}
-
-static void DoRTCEvents(void)
-{
-    u8 dayBeforeUpdate = gRtcLocation.day;
-    
-    RTCStart(&gRtcCheckLocation, &gRtcLocationDecimal, &gRtcLocation);
-    
-    if (gRtcLocation.day != dayBeforeUpdate)
-        DoPerDayBasedEvents();
 }
 
 static void UpdateLinkAndCallCallbacks(void)
