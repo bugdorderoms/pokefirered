@@ -312,6 +312,7 @@ SECTIONS {
         src/calculate_base_damage.o(.text);
         src/ev_iv_display.o(.text);
         src/ride_pager.o(.text);
+        src/rtc_events.o(.text);
     } =0
 
     script_data :
@@ -617,6 +618,7 @@ SECTIONS {
         src/calculate_base_damage.o(.rodata);
         src/ev_iv_display.o(.rodata);
         src/ride_pager.o(.rodata);
+        src/rtc_events.o(.rodata);
 
         /* These should not be moved to C files */
         src/mystery_event_msg.o(.rodata);
