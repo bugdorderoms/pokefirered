@@ -8,6 +8,11 @@
 #define ROCK_WILD_COUNT     5
 #define FISH_WILD_COUNT     10
 
+#define WILD_HEADER_LAND       0
+#define WILD_HEADER_WATER      1
+#define WILD_HEADER_ROCK_SMASH 2
+#define WILD_HEADER_FISH       3
+
 struct WildPokemon
 {
     u8 minLevel;
@@ -29,6 +34,10 @@ struct WildPokemonHeader
     const struct WildPokemonInfo *waterMonsInfo;
     const struct WildPokemonInfo *rockSmashMonsInfo;
     const struct WildPokemonInfo *fishingMonsInfo;
+	const struct WildPokemonInfo *landMonsInfoNight;
+	const struct WildPokemonInfo *waterMonsInfoNight;
+	const struct WildPokemonInfo *rockSmashMonsInfoNight;
+	const struct WildPokemonInfo *fishingMonsInfoNight;
 };
 
 extern const struct WildPokemonHeader gWildMonHeaders[];
@@ -49,5 +58,6 @@ bool8 SweetScentWildEncounter(void);
 void SeedWildEncounterRng(u16 randVal);
 void ResetEncounterRateModifiers(void);
 bool8 TryStandardWildEncounter(u32 currMetatileAttrs);
+const struct WildPokemonInfo *GetWildPokemonInfoByHeaderType(u16 headerId, u8 type);
 
 #endif // GUARD_WILD_ENCOUNTER_H

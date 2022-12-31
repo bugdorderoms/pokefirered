@@ -7,6 +7,14 @@
 #define DNS_PAL_EXCEPTION   FALSE
 #define DNS_PAL_ACTIVE      TRUE
 
+enum
+{
+	SEASON_SUMMER,
+	SEASON_AUTUMN,
+	SEASON_WINTER,
+	SEASON_SPRING
+};
+
 struct lightingColour
 {
     u8 paletteNum;
@@ -21,5 +29,6 @@ struct DNSPalExceptions
 
 void DNSTransferPlttBuffer(void *src, void *dest);
 void DNSApplyFilters(void);
+bool8 GetDNSTimeLapseIsNight(void);
 
 #endif // GUARD_DNS_UTILS_H

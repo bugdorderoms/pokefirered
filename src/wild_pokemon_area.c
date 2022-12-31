@@ -260,13 +260,21 @@ static s32 CountRoamerNests(u16 species, struct Subsprite * subsprites)
 
 static bool32 PokemonInAnyEncounterTableInMap(const struct WildPokemonHeader * data, s32 species)
 {
-    if (PokemonInEncounterTable(data->landMonsInfo, species, 12))
+    if (PokemonInEncounterTable(data->landMonsInfo, species, LAND_WILD_COUNT))
         return TRUE;
-    if (PokemonInEncounterTable(data->waterMonsInfo, species, 5))
+    if (PokemonInEncounterTable(data->waterMonsInfo, species, WATER_WILD_COUNT))
         return TRUE;
-    if (PokemonInEncounterTable(data->fishingMonsInfo, species, 12)) // 10
+    if (PokemonInEncounterTable(data->fishingMonsInfo, species, FISH_WILD_COUNT))
         return TRUE;
-    if (PokemonInEncounterTable(data->rockSmashMonsInfo, species, 5))
+    if (PokemonInEncounterTable(data->rockSmashMonsInfo, species, ROCK_WILD_COUNT))
+        return TRUE;
+	if (PokemonInEncounterTable(data->landMonsInfoNight, species, LAND_WILD_COUNT))
+        return TRUE;
+    if (PokemonInEncounterTable(data->waterMonsInfoNight, species, WATER_WILD_COUNT))
+        return TRUE;
+    if (PokemonInEncounterTable(data->fishingMonsInfoNight, species, FISH_WILD_COUNT))
+        return TRUE;
+    if (PokemonInEncounterTable(data->rockSmashMonsInfoNight, species, ROCK_WILD_COUNT))
         return TRUE;
 
     return FALSE;

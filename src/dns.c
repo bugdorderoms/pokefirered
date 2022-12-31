@@ -532,3 +532,16 @@ static u8 GetDNSTimeLapse(u8 hour)
     else 
         return TIME_NIGHT;
 }
+
+bool8 GetDNSTimeLapseIsNight(void)
+{
+	switch (GetDNSTimeLapse(gRtcLocation.hour))
+	{
+		case TIME_MIDNIGHT:
+		case TIME_NIGHTFALL:
+		case TIME_NIGHT:
+		    return TRUE;
+		default:
+			return FALSE;
+	}
+}
