@@ -96,11 +96,11 @@ static const struct RideSpeciesAndDesc sRideToSpeciesAndDesc[NUM_RIDE_POKEMON] =
 		.desc = sTaurosRideDesc,
 	},
 	[RIDE_STOUTLAND] = {
-		.species = SPECIES_TAUROS, // SPECIES_STOUTLAND
+		.species = SPECIES_STOUTLAND,
 		.desc = sStoutlandRideDesc,
 	},
 	[RIDE_MUDSDALE] = {
-		.species = SPECIES_TAUROS, // SPECIES_MUDSDALE
+		.species = SPECIES_MUDSDALE,
 		.desc = sMudsdaleRideDesc,
 	},
 	[RIDE_MACHAMP] = {
