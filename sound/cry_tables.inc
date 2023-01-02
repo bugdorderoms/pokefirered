@@ -1,3 +1,4 @@
+    .align 2
 gCryTable:: @ 848C914
 	cry Cry_Bulbasaur
 	cry Cry_Ivysaur
@@ -1280,6 +1281,7 @@ gCryTable:: @ 848C914
 	cry Cry_CalyrexIceRider
 	cry Cry_CalyrexShadowRider
 
+    .align 2
 gCryTable2:: @ 848DB44
 	cry2 Cry_Bulbasaur
 	cry2 Cry_Ivysaur

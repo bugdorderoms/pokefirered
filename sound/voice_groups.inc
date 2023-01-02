@@ -993,6 +993,8 @@ voicegroup128:: @ 848C314
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0 @ 848C8FC
 	voice_noise_alt 60, 0, 0, 0, 1, 12, 0 @ 848C908
 
+.include "sound/cry_tables.inc"
+
 	.align 2
 voicegroup129:: @ 848ED74
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0 @ 848ED74
