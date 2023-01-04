@@ -120,7 +120,7 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
                         input->pressedBButton = TRUE;
                     if (newKeys & R_BUTTON)
                         input->pressedRButton = TRUE;
-					if (newKeys & L_BUTTON && !IsDexNavSearchActive())
+		    if (newKeys & L_BUTTON && !IsDexNavSearchActive())
                         input->pressedLButton = TRUE;
                 }
             }
@@ -298,8 +298,8 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
         return TRUE;
     }
     if (input->pressedRButton && ToggleAutoRun())
-		return TRUE;
-	if (input->pressedLButton && TryStartDexnavSearch())
+	return TRUE;
+    if (input->pressedLButton && TryStartDexnavSearch())
         return TRUE;
 
     return FALSE;
