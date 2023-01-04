@@ -94,7 +94,7 @@ void SetGpuReg(u8 regOffset, u16 value)
 
 void SetGpuReg_ForcedBlank(u8 regOffset, u16 value)
 {
-	if (regOffset < GPU_REG_BUF_SIZE)
+    if (regOffset < GPU_REG_BUF_SIZE)
     {
         GPU_REG_BUF(regOffset) = value;
 
