@@ -1,12 +1,12 @@
 EventScript_StartDexNavBattle::
-	lock
-	playse SE_PIN
-	applymovement OBJ_EVENT_ID_PLAYER Movement_ExclamationMark
-	waitmovement 0
-	waitse
-	dowildbattle    
-	release
-	end
+    lock
+    playse SE_PIN
+    applymovement OBJ_EVENT_ID_PLAYER Movement_ExclamationMark
+    waitmovement 0
+    waitse
+    dowildbattle    
+    release
+    end
 
 EventScript_NotFoundNearby::
     msgbox sText_NotFoundNearby, MSGBOX_SIGN
@@ -30,7 +30,7 @@ EventScript_MovedTooFast::
 
 sText_NotFoundNearby:
     .string "It couldn't be found nearby.\n"
-	.string "Try looking in a different area!$"
+    .string "Try looking in a different area!$"
 
 sText_PokemonGotAway:
     .string "The Pokémon got away!$"
@@ -44,4 +44,4 @@ sText_TooDark:
 	
 sText_TryMovingSlower:
     .string "The Pokémon got away!\n"
-	.string "Try moving more slowly.$"
+    .string "Try moving more slowly.$"
