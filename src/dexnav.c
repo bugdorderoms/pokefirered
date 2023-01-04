@@ -392,7 +392,7 @@ static void AddSearchWindow(void)
 static void AddSearchWindowText(u16 species, u8 proximity, u8 searchLevel)
 {
     u8 windowId = sDexNavSearchDataPtr->windowId;
-    u16 ability
+    u16 ability;
 	    
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
 	
