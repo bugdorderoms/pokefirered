@@ -3,6 +3,8 @@
 
 #include "global.h"
 
+#define POKE_ICON_BASE_PAL_TAG 56000
+
 extern const u16 gMonIconPalettes[][16];
 extern const u8 gMonIconPaletteIndices[];
 

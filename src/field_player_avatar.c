@@ -1,6 +1,7 @@
 #include "global.h"
 #include "gflib.h"
 #include "bike.h"
+#include "dexnav.h"
 #include "event_data.h"
 #include "event_object_movement.h"
 #include "fieldmap.h"
@@ -508,11 +509,17 @@ static void PlayerNotOnBikeMoving(u8 direction, u16 heldKeys)
         }
         return;
     }
+    gPlayerAvatar.creeping = FALSE;
 
     if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
     {
-        // speed 2 is fast, same speed as running
-        PlayerGoSpeed2(direction);
+		if (IsDexNavSearchActive() && (heldKeys & A_BUTTON))
+		{
+			gPlayerAvatar.creeping = TRUE;
+			PlayerGoSlow(direction);
+		}
+		else // speed 2 is fast, same speed as running
+		    PlayerGoSpeed2(direction);
         return;
     }
 
@@ -535,6 +542,11 @@ static void PlayerNotOnBikeMoving(u8 direction, u16 heldKeys)
         gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_DASH;
         return;
     }
+	else if (IsDexNavSearchActive() && (heldKeys & A_BUTTON))
+	{
+		gPlayerAvatar.creeping = TRUE;
+		PlayerGoSlow(direction);
+	}
     else
     {
         if (PlayerIsMovingOnRockStairs(direction))

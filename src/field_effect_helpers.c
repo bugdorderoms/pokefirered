@@ -787,7 +787,7 @@ void UpdateHotSpringsWaterFieldEffect(struct Sprite * sprite)
     }
 }
 
-u32 FldEff_Unknown19(void)
+u32 FldEff_ShakingGrass(void)
 {
     u8 spriteId;
     struct Sprite * sprite;
@@ -799,12 +799,12 @@ u32 FldEff_Unknown19(void)
         sprite = &gSprites[spriteId];
         sprite->coordOffsetEnabled = TRUE;
         sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = FLDEFF_UNKNOWN_19;
+        sprite->data[0] = FLDEFF_SHAKING_GRASS;
     }
-    return 0;
+    return spriteId;
 }
 
-u32 FldEff_Unknown20(void)
+u32 FldEff_ShakingGrass2(void)
 {
     u8 spriteId;
     struct Sprite * sprite;
@@ -816,12 +816,12 @@ u32 FldEff_Unknown20(void)
         sprite = &gSprites[spriteId];
         sprite->coordOffsetEnabled = TRUE;
         sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = FLDEFF_UNKNOWN_20;
+        sprite->data[0] = FLDEFF_SHAKING_LONG_GRASS;
     }
-    return 0;
+    return spriteId;
 }
 
-u32 FldEff_Unknown21(void)
+u32 FldEff_SandHole(void)
 {
     u8 spriteId;
     struct Sprite * sprite;
@@ -833,12 +833,12 @@ u32 FldEff_Unknown21(void)
         sprite = &gSprites[spriteId];
         sprite->coordOffsetEnabled = TRUE;
         sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = FLDEFF_UNKNOWN_21;
+        sprite->data[0] = FLDEFF_SAND_HOLE;
     }
-    return 0;
+    return spriteId;
 }
 
-u32 FldEff_Unknown22(void)
+u32 FldEff_WaterSurfacing(void)
 {
     u8 spriteId;
     struct Sprite * sprite;
@@ -850,9 +850,9 @@ u32 FldEff_Unknown22(void)
         sprite = &gSprites[spriteId];
         sprite->coordOffsetEnabled = TRUE;
         sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = FLDEFF_UNKNOWN_22;
+        sprite->data[0] = FLDEFF_WATER_SURFACING;
     }
-    return 0;
+    return spriteId;
 }
 
 void StartAshFieldEffect(s16 x, s16 y, u16 metatileId, s16 d)
@@ -1192,7 +1192,7 @@ void UpdateBubblesFieldEffect(struct Sprite * sprite)
 
 u32 FldEff_BerryTreeGrowthSparkle(void)
 {
-    /*u8 spriteId;
+    u8 spriteId;
     struct Sprite * sprite;
 
     SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 4);
@@ -1204,7 +1204,7 @@ u32 FldEff_BerryTreeGrowthSparkle(void)
         sprite->coordOffsetEnabled = TRUE;
         sprite->oam.priority = gFieldEffectArguments[3];
         sprite->data[0] = FLDEFF_BERRY_TREE_GROWTH_SPARKLE;
-    }*/
+    }
     return 0;
 }
 

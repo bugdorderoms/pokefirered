@@ -164,3 +164,9 @@ const u16 *stdpal_get(u8 id)
 
     return (const u16 *)(gUnknown_8471DEC) + id;
 }
+
+void LoadDexNavWindowGfx(u8 windowId, u16 destOffset, u8 palOffset)
+{
+    LoadBgTiles(GetWindowAttribute(windowId, WINDOW_BG), gUnknown_84566A8, 0x280, destOffset);
+	LoadPalette(&gTextWindowDexnavFrame, palOffset, 32);
+}

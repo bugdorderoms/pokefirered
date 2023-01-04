@@ -20,10 +20,10 @@
 #define FLDEFF_JUMP_SMALL_SPLASH         16
 #define FLDEFF_LONG_GRASS                17
 #define FLDEFF_JUMP_LONG_GRASS           18
-#define FLDEFF_UNKNOWN_19                19
-#define FLDEFF_UNKNOWN_20                20
-#define FLDEFF_UNKNOWN_21                21
-#define FLDEFF_UNKNOWN_22                22
+#define FLDEFF_SHAKING_GRASS             19
+#define FLDEFF_SHAKING_LONG_GRASS        20
+#define FLDEFF_SAND_HOLE                 21
+#define FLDEFF_WATER_SURFACING           22
 #define FLDEFF_BERRY_TREE_GROWTH_SPARKLE 23
 #define FLDEFF_DEEP_SAND_FOOTPRINTS      24
 #define FLDEFF_POKECENTER_HEAL           25
@@ -48,7 +48,7 @@
 #define FLDEFF_USE_DIVE                  44
 #define FLDEFF_POKEBALL                  45
 #define FLDEFF_X_ICON                    46
-#define FLDEFF_NOP_47                    47
+#define FLDEFF_CAVE_DUST                 47
 #define FLDEFF_NOP_48                    48
 #define FLDEFF_POP_OUT_OF_ASH            49
 #define FLDEFF_LAVARIDGE_GYM_WARP        50
@@ -76,6 +76,7 @@
 #define FLDEFF_PAL_TAG_GENERAL_1          0x1005
 #define FLDEFF_PAL_TAG_ASH                0x100D
 #define FLDEFF_PAL_TAG_SMALL_SPARKLE      0x100F
+#define FLDEFF_PAL_TAG_CAVE_DUST          0x1010
 
 #define FLDEFFOBJ_SHADOW_S                  0
 #define FLDEFFOBJ_SHADOW_M                  1
@@ -113,5 +114,6 @@
 #define FLDEFFOBJ_ASH_LAUNCH               33
 #define FLDEFFOBJ_BUBBLES                  34
 #define FLDEFFOBJ_SMALL_SPARKLE            35
+#define FLDEFFOBJ_CAVE_DUST                36
 
 #endif // GUARD_CONSTANTS_FIELD_EFFECTS_H

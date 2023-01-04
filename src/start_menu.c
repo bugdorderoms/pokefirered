@@ -4,6 +4,7 @@
 #include "overworld.h"
 #include "link.h"
 #include "pokedex.h"
+#include "dexnav.h"
 #include "item_menu.h"
 #include "party_menu.h"
 #include "save.h"
@@ -38,7 +39,8 @@
 
 enum StartMenuOption
 {
-    STARTMENU_POKEDEX = 0,
+	STARTMENU_DEXNAV = 0,
+    STARTMENU_POKEDEX,
     STARTMENU_POKEMON,
     STARTMENU_BAG,
     STARTMENU_PLAYER,
@@ -77,6 +79,7 @@ static void SetUpStartMenu_NormalField(void);
 static bool8 StartCB_HandleInput(void);
 static void StartMenu_FadeScreenIfLeavingOverworld(void);
 static bool8 StartMenuPokedexSanityCheck(void);
+static bool8 StartMenuDexnavCallback(void);
 static bool8 StartMenuPokedexCallback(void);
 static bool8 StartMenuPokemonCallback(void);
 static bool8 StartMenuBagCallback(void);
@@ -112,6 +115,7 @@ static void CloseSaveStatsWindow(void);
 static void CloseStartMenu(void);
 
 static const struct MenuAction sStartMenuActionTable[] = {
+	{ gStartMenuText_Dexnav, {.u8_void = StartMenuDexnavCallback} },
     { gStartMenuText_Pokedex, {.u8_void = StartMenuPokedexCallback} },
     { gStartMenuText_Pokemon, {.u8_void = StartMenuPokemonCallback} },
     { gStartMenuText_Bag, {.u8_void = StartMenuBagCallback} },
@@ -181,6 +185,8 @@ static void AppendToStartMenuItems(u8 newEntry)
 
 static void SetUpStartMenu_NormalField(void)
 {
+	if (FlagGet(FLAG_SYS_DEXNAV_GET) == TRUE)
+		AppendToStartMenuItems(STARTMENU_DEXNAV);
     if (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE)
         AppendToStartMenuItems(STARTMENU_POKEDEX);
     if (FlagGet(FLAG_SYS_POKEMON_GET) == TRUE)
@@ -431,6 +437,19 @@ static void StartMenu_FadeScreenIfLeavingOverworld(void)
         StopPokemonLeagueLightingEffectTask();
         FadeScreen(FADE_TO_BLACK, 0);
     }
+}
+
+static bool8 StartMenuDexnavCallback(void)
+{
+	if (!gPaletteFade.active)
+	{
+		PlayRainStoppingSoundEffect();
+        DestroySafariZoneStatsWindow();
+        CleanupOverworldWindowsAndTilemaps();
+		DexNavGuiInit(CB2_ReturnToFieldWithOpenMenu);
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static bool8 StartMenuPokedexSanityCheck(void)

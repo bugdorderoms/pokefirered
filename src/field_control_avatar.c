@@ -4,6 +4,7 @@
 #include "coord_event_weather.h"
 #include "daycare.h"
 #include "event_data.h"
+#include "dexnav.h"
 #include "event_object_movement.h"
 #include "event_scripts.h"
 #include "fieldmap.h"
@@ -84,7 +85,7 @@ void FieldClearPlayerInput(struct FieldInput *input)
     input->tookStep = FALSE;
     input->pressedBButton = FALSE;
     input->pressedRButton = FALSE;
-    input->input_field_1_0 = FALSE;
+    input->pressedLButton = FALSE;
     input->input_field_1_1 = FALSE;
     input->input_field_1_2 = FALSE;
     input->input_field_1_3 = FALSE;
@@ -119,6 +120,8 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
                         input->pressedBButton = TRUE;
                     if (newKeys & R_BUTTON)
                         input->pressedRButton = TRUE;
+					if (newKeys & L_BUTTON && !IsDexNavSearchActive())
+                        input->pressedLButton = TRUE;
                 }
             }
         }
@@ -296,6 +299,8 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     }
     if (input->pressedRButton && ToggleAutoRun())
 		return TRUE;
+	if (input->pressedLButton && TryStartDexnavSearch())
+        return TRUE;
 
     return FALSE;
 }

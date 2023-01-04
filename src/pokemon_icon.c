@@ -4,8 +4,6 @@
 #include "pokemon_icon.h"
 #include "graphics.h"
 
-#define POKE_ICON_BASE_PAL_TAG 56000
-
 struct MonIconSpriteTemplate
 {
     const struct OamData * oam;

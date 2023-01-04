@@ -3,6 +3,7 @@
 #include "bg_regs.h"
 #include "cable_club.h"
 #include "credits.h"
+#include "dexnav.h"
 #include "event_data.h"
 #include "event_object_movement.h"
 #include "event_scripts.h"
@@ -744,7 +745,6 @@ bool8 SetDiveWarpDive(u16 x, u16 y)
 }
 
 // Map loaders
-
 void LoadMapFromCameraTransition(u8 mapGroup, u8 mapNum)
 {
     int paletteIndex;
@@ -756,6 +756,7 @@ void LoadMapFromCameraTransition(u8 mapGroup, u8 mapNum)
     LoadObjEventTemplatesFromHeader();
     TrySetMapSaveWarpStatus();
     ClearTempFieldEventData();
+	ResetDexNavSearch();
     RestartWildEncounterImmunitySteps();
     MapResetTrainerRematches(mapGroup, mapNum);
     SetSav1WeatherFromCurrMapHeader();
@@ -790,6 +791,7 @@ static void mli0_load_map(bool32 a1)
 
     TrySetMapSaveWarpStatus();
     ClearTempFieldEventData();
+	ResetDexNavSearch();
     RestartWildEncounterImmunitySteps();
     MapResetTrainerRematches(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum);
     SetSav1WeatherFromCurrMapHeader();
