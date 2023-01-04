@@ -4076,7 +4076,7 @@ static void FreeResetData_ReturnToOvOrDoEvolutions(void)
             FreeBattleSpritesData();
             FreeBattleResources();
         }
-		if (gDexnavBattle && (gBattleOutcome == B_OUTCOME_WON || gBattleOutcome == B_OUTCOME_CAUGHT))
+	if (gDexnavBattle && (gBattleOutcome == B_OUTCOME_WON || gBattleOutcome == B_OUTCOME_CAUGHT))
             IncrementDexNavChain();
         else
             gSaveBlock1Ptr->dexNavChain = 0;
