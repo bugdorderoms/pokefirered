@@ -705,7 +705,7 @@ u32 ChangeBgY(u8 bg, u32 value, u8 op)
 
 u32 ChangeBgY_ScreenOff(u8 bg, u32 value, u8 op)
 {
-	u8 mode;
+    u8 mode;
     u16 temp1;
     u16 temp2;
 
