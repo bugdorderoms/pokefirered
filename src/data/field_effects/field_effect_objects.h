@@ -931,7 +931,7 @@ const struct SpriteTemplate gFieldEffectObjectTemplate_ReflectionDistortion =
     .callback = SpriteCallbackDummy,
 };
 
-/*
+
 static const struct SpriteFrameImage sPicTable_Sparkle[] = {
     overworld_frame(gFieldEffectObjectPic_Sparkle, 2, 2, 0),
     overworld_frame(gFieldEffectObjectPic_Sparkle, 2, 2, 1),
@@ -980,7 +980,6 @@ const struct SpriteTemplate gFieldEffectObjectTemplate_Sparkle = {
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = WaitFieldEffectSpriteAnim,
 };
-*/
 
 static const struct SpriteFrameImage sPicTable_TreeDisguise[] =
 {
@@ -1355,3 +1354,23 @@ const struct SpriteTemplate gFieldEffectObjectTemplate_SmallSparkle =
 };
 
 const struct SpritePalette gSpritePalette_SmallSparkle = { .data = gFieldEffectPal_SmallSparkle, .tag = FLDEFF_PAL_TAG_SMALL_SPARKLE };
+
+static const struct SpriteFrameImage sPicTable_CaveDust[] = 
+{
+    overworld_frame(gFieldEffectObjectPic_CaveDust, 2, 2, 0),
+    overworld_frame(gFieldEffectObjectPic_CaveDust, 2, 2, 1),
+    overworld_frame(gFieldEffectObjectPic_CaveDust, 2, 2, 2),
+    overworld_frame(gFieldEffectObjectPic_CaveDust, 2, 2, 3),
+};
+
+const struct SpriteTemplate gFieldEffectObjectTemplate_CaveDust = {
+    .tileTag = SPRITE_INVALID_TAG,
+    .paletteTag = FLDEFF_PAL_TAG_CAVE_DUST,
+    .oam = &gObjectEventBaseOam_16x16,
+    .anims = sAnimTable_WaterSurfacing,
+    .images = sPicTable_CaveDust,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = WaitFieldEffectSpriteAnim,
+};
+
+const struct SpritePalette gSpritePalette_CaveDust = { .data = gFieldEffectObjectPalette_CaveDust, .tag = FLDEFF_PAL_TAG_CAVE_DUST };

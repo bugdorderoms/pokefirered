@@ -11,6 +11,7 @@
 #include "item.h"
 #include "event_data.h"
 #include "util.h"
+#include "dexnav.h"
 #include "wild_encounter.h"
 #include "pokemon_icon.h"
 #include "pokemon_storage_system.h"
@@ -4649,7 +4650,7 @@ void SetMonPreventsSwitchingString(void)
 
 void SetWildMonHeldItem(void)
 {
-    if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LEGENDARY | BATTLE_TYPE_TRAINER)))
+    if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LEGENDARY | BATTLE_TYPE_TRAINER)) && !gDexnavBattle)
     {
         u16 rnd = Random() % 100;
         u16 species = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES, NULL);
@@ -4862,6 +4863,8 @@ void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality)
         if (NationalPokedexNumToSpecies(nationalNum) == SPECIES_SPINDA)
             gSaveBlock2Ptr->pokedex.spindaPersonality = personality;
     }
+    if (caseId == FLAG_SET_SEEN)
+        TryIncrementSpeciesSearchLevel(nationalNum);
 }
 
 bool8 CheckBattleTypeGhost(struct Pokemon *mon, u8 battlerId)

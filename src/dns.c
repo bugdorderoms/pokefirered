@@ -6,6 +6,8 @@
 #include "overworld.h"
 #include "palette.h"
 #include "pokedex_screen.h"
+#include "pokemon_icon.h"
+#include "dexnav.h"
 #include "battle_main.h"
 #include "battle_interface.h"
 #include "registered_item.h"
@@ -339,13 +341,20 @@ static const u16 sPaletteTagExceptions[] =
 	TAG_HEALTHBAR_PAL, //0xD704
 	TAG_STATUS_SUMMARY_BAR_PAL, //0xD710
 	TAG_STATUS_SUMMARY_BALLS_PAL, //0xD712
-	ITEMICON_TAG, //0x0066
+	OWNED_ICON_TAG, //0x0066
+	ITEMICON_TAG, //0xD750
 	CURSOR_TAG, //0x1075
 	BOX_TAG, //0x1078
 	ITEMICON_INITIAL_TAG + 0, //0x1088
 	ITEMICON_INITIAL_TAG + 1, //0x1089
 	ITEMICON_INITIAL_TAG + 2, //0x108A
 	ITEMICON_INITIAL_TAG + 3, //0x108B
+	POKE_ICON_BASE_PAL_TAG + 0, //0xDAC0
+	POKE_ICON_BASE_PAL_TAG + 1, //0xDAC1
+	POKE_ICON_BASE_PAL_TAG + 2, //0xDAC2
+	POKE_ICON_BASE_PAL_TAG + 3, //0xDAC3
+	POKE_ICON_BASE_PAL_TAG + 4, //0xDAC4
+	POKE_ICON_BASE_PAL_TAG + 5, //0xDAC5
 };
 
 /***********************************************

@@ -13,6 +13,7 @@
 #include "berry.h"
 #include "data.h"
 #include "dns.h"
+#include "dexnav.h"
 #include "decompress.h"
 #include "event_data.h"
 #include "evolution_scene.h"
@@ -4075,6 +4076,10 @@ static void FreeResetData_ReturnToOvOrDoEvolutions(void)
             FreeBattleSpritesData();
             FreeBattleResources();
         }
+	if (gDexnavBattle && (gBattleOutcome == B_OUTCOME_WON || gBattleOutcome == B_OUTCOME_CAUGHT))
+            IncrementDexNavChain();
+        else
+            gSaveBlock1Ptr->dexNavChain = 0;
     }
 }
 

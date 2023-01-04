@@ -1362,3 +1362,4 @@ Text_TestMsg:: @ 81ACD45
 	.include "data/text/save.inc"
 	.include "data/text/new_game_intro.inc"
 	.include "data/text/pokedude.inc"
+	.include "data/scripts/dexnav.inc"

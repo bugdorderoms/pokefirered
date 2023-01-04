@@ -14,6 +14,7 @@
 #include "fieldmap.h"
 #include "metatile_behavior.h"
 #include "new_menu_helpers.h"
+#include "pokemon_icon.h"
 #include "overworld.h"
 #include "party_menu.h"
 #include "quest_log.h"
@@ -1925,6 +1926,21 @@ static bool8 LavaridgeGym1FWarpEffect_5(struct Task * task, struct ObjectEvent *
         DestroyTask(FindTaskIdByFunc(Task_LavaridgeGym1FWarp));
     }
     return FALSE;
+}
+
+u8 FldEff_CaveDust(void)
+{
+    u8 spriteId;
+	
+    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
+    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_CAVE_DUST], gFieldEffectArguments[0], gFieldEffectArguments[1], 0xFF);
+    if (spriteId != MAX_SPRITES)
+    {
+        gSprites[spriteId].coordOffsetEnabled = TRUE;
+        gSprites[spriteId].data[0] = 22;
+    }
+
+    return spriteId;
 }
 
 u8 FldEff_PopOutOfAsh(void)

@@ -238,3 +238,6 @@ const u16 gObjectEventPic_GreenTauros[] = INCBIN_U16("graphics/object_events/pic
 const u16 gObjectEventPic_GreenStoutland[] = INCBIN_U16("graphics/object_events/pics/people/green_stoutland.4bpp");
 const u16 gObjectEventPic_GreenMudsdale[] = INCBIN_U16("graphics/object_events/pics/people/green_mudsdale.4bpp");
 const u16 gObjectEventPic_GreenMachamp[] = INCBIN_U16("graphics/object_events/pics/people/green_machamp.4bpp");
+const u32 gFieldEffectObjectPic_Sparkle[] = INCBIN_U32("graphics/field_effects/pics/sparkle.4bpp");
+const u32 gFieldEffectObjectPic_CaveDust[] = INCBIN_U32("graphics/field_effects/pics/cave_dust.4bpp");
+const u16 gFieldEffectObjectPalette_CaveDust[] = INCBIN_U16("graphics/field_effects/palettes/cave_dust.gbapal");

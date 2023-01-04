@@ -180,7 +180,7 @@ static u8 ChooseWildMonLevel(const struct WildPokemon * info)
     return lo + res;
 }
 
-static u16 GetCurrentMapWildMonHeaderId(void)
+u16 GetCurrentMapWildMonHeaderId(void)
 {
     u16 i;
 
@@ -230,7 +230,7 @@ static bool8 UnlockedTanobyOrAreNotInTanoby(void)
     return FALSE;
 }
 
-static void GenerateWildMon(u16 species, u8 level, u8 slot)
+void GenerateWildMon(u16 species, u8 level, u8 slot)
 {
     u32 personality;
     s8 chamber;

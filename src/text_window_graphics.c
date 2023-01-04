@@ -29,6 +29,7 @@ static const u16 gUnknown_8471A2C[] = INCBIN_U16("graphics/text_window/unk_84717
 
 const u16 gStdFrame0[] = INCBIN_U16("graphics/text_window/unk_8471A4C.4bpp");
 const u16 gStdFrame1[] = INCBIN_U16("graphics/text_window/unk_8471B6C.4bpp");
+const u16 gTextWindowDexnavFrame[] = INCBIN_U16("graphics/text_window/dexnav_pal.gbapal");
 
 const u16 gUnknown_8471DEC[][16] = {
     INCBIN_U16("graphics/text_window/stdpal_0.gbapal"),

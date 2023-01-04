@@ -1,6 +1,7 @@
 #include "global.h"
 #include "gflib.h"
 #include "bike.h"
+#include "dexnav.h"
 #include "event_data.h"
 #include "event_object_movement.h"
 #include "fieldmap.h"
@@ -508,32 +509,43 @@ static void PlayerNotOnBikeMoving(u8 direction, u16 heldKeys)
         }
         return;
     }
+    gPlayerAvatar.creeping = FALSE;
 
     if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
     {
-        // speed 2 is fast, same speed as running
-        PlayerGoSpeed2(direction);
+	if (IsDexNavSearchActive() && (heldKeys & A_BUTTON))
+	{
+	    gPlayerAvatar.creeping = TRUE;
+	    PlayerGoSlow(direction);
+	}
+	else // speed 2 is fast, same speed as running
+	    PlayerGoSpeed2(direction);
         return;
     }
 
     if ((heldKeys & B_BUTTON || gSaveBlock2Ptr->autoRun) && FlagGet(FLAG_SYS_B_DASH) && !IsRunningDisallowed(gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior))
     {
         if (PlayerIsMovingOnRockStairs(direction))
-		{
-			if (heldKeys & B_BUTTON && gSaveBlock2Ptr->autoRun)
-				PlayerGoSlow(direction);
-			else
-				PlayerRunSlow(direction);
-		}
+	{
+		if (heldKeys & B_BUTTON && gSaveBlock2Ptr->autoRun)
+			PlayerGoSlow(direction);
+		else
+			PlayerRunSlow(direction);
+	}
         else
-		{
-			if (heldKeys & B_BUTTON && gSaveBlock2Ptr->autoRun)
-				PlayerGoSpeed1(direction);
-			else
-				PlayerRun(direction);
-		}
+	{
+		if (heldKeys & B_BUTTON && gSaveBlock2Ptr->autoRun)
+			PlayerGoSpeed1(direction);
+		else
+			PlayerRun(direction);
+	}
         gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_DASH;
         return;
+    }
+    else if (IsDexNavSearchActive() && (heldKeys & A_BUTTON))
+    {
+	    gPlayerAvatar.creeping = TRUE;
+	    PlayerGoSlow(direction);
     }
     else
     {

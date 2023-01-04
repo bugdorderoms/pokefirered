@@ -59,5 +59,7 @@ void SeedWildEncounterRng(u16 randVal);
 void ResetEncounterRateModifiers(void);
 bool8 TryStandardWildEncounter(u32 currMetatileAttrs);
 const struct WildPokemonInfo *GetWildPokemonInfoByHeaderType(u16 headerId, u8 type);
+void GenerateWildMon(u16 species, u8 level, u8 slot);
+u16 GetCurrentMapWildMonHeaderId(void);
 
 #endif // GUARD_WILD_ENCOUNTER_H
