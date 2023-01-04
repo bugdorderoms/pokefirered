@@ -1930,9 +1930,9 @@ static bool8 LavaridgeGym1FWarpEffect_5(struct Task * task, struct ObjectEvent *
 
 u8 FldEff_CaveDust(void)
 {
-	u8 spriteId;
+    u8 spriteId;
 	
-	SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
+    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
     spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_CAVE_DUST], gFieldEffectArguments[0], gFieldEffectArguments[1], 0xFF);
     if (spriteId != MAX_SPRITES)
     {
