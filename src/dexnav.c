@@ -1732,7 +1732,7 @@ static void PrintDexNavInstructions(void)
 }
 
 static void PrintDexNavMessage(u8 msgId)
-
+{
 	const u8 *str;
 	
 	FillWindowPixelBuffer(WINDOW_MESSAGE, PIXEL_FILL(0));
