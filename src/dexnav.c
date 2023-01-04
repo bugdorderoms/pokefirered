@@ -1918,7 +1918,7 @@ static void Task_DexNavMain(u8 taskId)
         {
             switch (sDexNavUiDataPtr->cursorRow)
             {
-		    case ROW_WATER
+		    case ROW_WATER:
 			sDexNavUiDataPtr->cursorCol = COL_WATER_MAX;
 			break;
 		    default:
