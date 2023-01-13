@@ -17,17 +17,11 @@ enum
 
 struct PokedexEntry
 {
-    /*0x00*/ u8 categoryName[12];
+    /*0x00*/ u8 categoryName[13];
     /*0x0C*/ u16 height; //in decimeters
     /*0x0E*/ u16 weight; //in hectograms
     /*0x10*/ const u8 *description;
-    /*0x14*/ const u8 *unusedDescription;
-    /*0x18*/ u16 unused;
-    /*0x1A*/ u16 pokemonScale;
-    /*0x1C*/ u16 pokemonOffset;
-    /*0x1E*/ u16 trainerScale;
-    /*0x20*/ u16 trainerOffset;
-};  /*size = 0x24*/
+};  /*size = 0x14*/
 
 void ResetPokedex(void);
 void CopyMonCategoryText(u16 species, u8 *dst);
