@@ -679,7 +679,7 @@ static void PrintDexCount(void)
         else
             dexcount = GetKantoPokedexCount(FLAG_GET_CAUGHT);
         AddTextPrinterParameterized3(MAIN_MENU_WINDOW_CONTINUE, 2, 2, 50, sTextColor2, -1, gText_Pokedex);
-        ptr = ConvertIntToDecimalStringN(strbuf, dexcount, STR_CONV_MODE_LEFT_ALIGN, 3);
+        ptr = ConvertIntToDecimalStringN(strbuf, dexcount, STR_CONV_MODE_LEFT_ALIGN, 4);
         StringAppend(ptr, gTextJPDummy_Hiki);
         AddTextPrinterParameterized3(MAIN_MENU_WINDOW_CONTINUE, 2, 62, 50, sTextColor2, -1, strbuf);
     }
