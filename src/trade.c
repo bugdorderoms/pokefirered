@@ -850,8 +850,7 @@ static void CB2_ReturnFromLinkTrade2(void)
                                                                 (sTradeMonSpriteCoords[i][0] * 8) + 14,
                                                                 (sTradeMonSpriteCoords[i][1] * 8) - 12,
                                                                 1,
-                                                                GetMonData(mon, MON_DATA_PERSONALITY),
-                                                                TRUE);
+                                                                GetMonData(mon, MON_DATA_PERSONALITY));
         }
 
         for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[1]; i++)
@@ -862,8 +861,7 @@ static void CB2_ReturnFromLinkTrade2(void)
                                                                 (sTradeMonSpriteCoords[i + PARTY_SIZE][0] * 8) + 14,
                                                                 (sTradeMonSpriteCoords[i + PARTY_SIZE][1] * 8) - 12,
                                                                 1,
-                                                                GetMonData(mon, MON_DATA_PERSONALITY),
-                                                                FALSE);
+                                                                GetMonData(mon, MON_DATA_PERSONALITY));
         }
         gMain.state++;
         break;
@@ -1042,9 +1040,7 @@ void CB2_ReturnToTradeMenuFromSummary(void)
                 sTradeMonSpriteCoords[i][0] * 8 + 14,
                 sTradeMonSpriteCoords[i][1] * 8 - 12,
                 1,
-                GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY),
-                TRUE
-            );
+                GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY));
         }
         for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[1]; i++)
         {
@@ -1054,9 +1050,7 @@ void CB2_ReturnToTradeMenuFromSummary(void)
                 sTradeMonSpriteCoords[i + 6][0] * 8 + 14,
                 sTradeMonSpriteCoords[i + 6][1] * 8 - 12,
                 1,
-                GetMonData(&gEnemyParty[i], MON_DATA_PERSONALITY),
-                FALSE
-            );
+                GetMonData(&gEnemyParty[i], MON_DATA_PERSONALITY));
         }
         gMain.state++;
         break;

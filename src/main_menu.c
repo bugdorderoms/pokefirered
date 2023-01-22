@@ -708,7 +708,7 @@ static void DrawPartyMonIcons(void)
 		species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
 		personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY);
 		
-		CreateMonIcon(species, SpriteCallbackDummy, sIconsPosition[i].x, sIconsPosition[i].y, 0, personality, TRUE);
+		CreateMonIcon(species, SpriteCallbackDummy, sIconsPosition[i].x, sIconsPosition[i].y, 0, personality);
 	}
 }
 

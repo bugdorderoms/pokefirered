@@ -1419,7 +1419,7 @@ static void LoadMonIconGfx(void)
     LoadPalette(sTrainerCardDataPtr->monIconPals, 80, 192);
     for (i = 0; i < PARTY_SIZE; i++)
     {
-        LoadBgTiles(3, GetMonIconTiles(sTrainerCardDataPtr->trainerCard.monSpecies[i], 0), 512, 16 * i + 32);
+        LoadBgTiles(3, GetMonIconTiles(sTrainerCardDataPtr->trainerCard.monSpecies[i]), 512, 16 * i + 32);
     }
 }
 

@@ -1317,7 +1317,7 @@ static void NamingScreen_CreateMonIcon(void)
     u8 spriteId;
 
     LoadMonIconPalettes();
-    spriteId = CreateMonIcon(sNamingScreenData->monSpecies, SpriteCB_MonIcon, 0x38, 0x28, 0, sNamingScreenData->monPersonality, 1);
+    spriteId = CreateMonIcon(sNamingScreenData->monSpecies, SpriteCB_MonIcon, 0x38, 0x28, 0, sNamingScreenData->monPersonality);
     gSprites[spriteId].oam.priority = 3;
 }
 

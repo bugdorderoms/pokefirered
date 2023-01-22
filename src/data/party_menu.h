@@ -992,17 +992,6 @@ static const struct SpriteTemplate sSpriteTemplate_StatusIcons =
     .callback = SpriteCallbackDummy,
 };
 
-static const bool8 sMultiBattlePartnersPartyMask[PARTY_SIZE + 2] = 
-{
-    FALSE, 
-    TRUE, 
-    FALSE, 
-    FALSE, 
-    TRUE, 
-    TRUE, 
-    FALSE,
-};
-
 static const u16 sTMHMMoves_Duplicate[] =
 {
     MOVE_FOCUS_PUNCH,

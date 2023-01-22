@@ -591,11 +591,11 @@ static bool8 DoInitMailView(void)
         {
         case MAIL_ICON_BEAD:
             LoadMonIconPalette(iconId);
-            sMailViewResources->monIconSpriteId = CreateMonIcon_HandleDeoxys(iconId, SpriteCallbackDummy, 0x60, 0x80, 0, FALSE);
+            sMailViewResources->monIconSpriteId = CreateMonIcon(iconId, SpriteCallbackDummy, 0x60, 0x80, 0, 0);
             break;
         case MAIL_ICON_DREAM:
             LoadMonIconPalette(iconId);
-            sMailViewResources->monIconSpriteId = CreateMonIcon_HandleDeoxys(iconId, SpriteCallbackDummy, 0x28, 0x80, 0, FALSE);
+            sMailViewResources->monIconSpriteId = CreateMonIcon(iconId, SpriteCallbackDummy, 0x28, 0x80, 0, 0);
             break;
         }
         break;

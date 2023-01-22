@@ -429,7 +429,7 @@ static void CreateMonIconSprites(void)
 		x = sHandSpritePos[i].x;
 		y = sHandSpritePos[i].y + 10; // a bit below the hand sprite
 		
-		CreateMonIcon(species, SpriteCB_MonIcon, x, y, 1, personality, TRUE);
+		CreateMonIcon(species, SpriteCB_MonIcon, x, y, 1, personality);
 	}
 }
 

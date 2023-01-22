@@ -5251,7 +5251,7 @@ static void PutMonIconOnLvlUpBox(void)
     struct SpritePalette iconPalSheet;
     u16 species = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_SPECIES);
     u32 personality = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_PERSONALITY);
-    const u8 *iconPtr = GetMonIconPtr(species, personality, 1);
+    const u8 *iconPtr = GetMonIconPtr(species, personality);
 
     iconSheet.data = iconPtr;
     iconSheet.size = 0x200;

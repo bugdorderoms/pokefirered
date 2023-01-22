@@ -405,7 +405,7 @@ static void sub_8146060(void)
     sMEventScreenData->monIconId = 0xFF;
     if (sMEventScreenData->buff3430Sub.iconSpecies != SPECIES_NONE)
     {
-        sMEventScreenData->monIconId = CreateMonIcon_HandleDeoxys(MailSpeciesToIconSpecies(sMEventScreenData->buff3430Sub.iconSpecies), SpriteCallbackDummy, 0xDC, 0x14, 0, FALSE);
+        sMEventScreenData->monIconId = CreateMonIcon(MailSpeciesToIconSpecies(sMEventScreenData->buff3430Sub.iconSpecies), SpriteCallbackDummy, 0xDC, 0x14, 0, 0);
         gSprites[sMEventScreenData->monIconId].oam.priority = 2;
     }
     if (sMEventScreenData->wonderCard.maxStamps != 0 && sMEventScreenData->wonderCard.type == 1)
@@ -419,7 +419,7 @@ static void sub_8146060(void)
             sMEventScreenData->cardIconAndShadowSprites[r7][0] = CreateSprite(&sShadowSpriteTemplate, 0xd8 - 32 * r7, 0x90, 8);
             if (sMEventScreenData->buff3430Sub.stampData[0][r7] != 0)
             {
-                sMEventScreenData->cardIconAndShadowSprites[r7][1] = CreateMonIcon_HandleDeoxys(MailSpeciesToIconSpecies(sMEventScreenData->buff3430Sub.stampData[0][r7]), SpriteCallbackDummy, 0xd8 - 32 * r7, 0x88, 0, 0);
+                sMEventScreenData->cardIconAndShadowSprites[r7][1] = CreateMonIcon(MailSpeciesToIconSpecies(sMEventScreenData->buff3430Sub.stampData[0][r7]), SpriteCallbackDummy, 0xd8 - 32 * r7, 0x88, 0, 0);
                 gSprites[sMEventScreenData->cardIconAndShadowSprites[r7][1]].oam.priority = 2;
             }
         }

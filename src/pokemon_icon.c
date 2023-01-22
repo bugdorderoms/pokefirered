@@ -2577,13 +2577,13 @@ static const u16 sSpriteImageSizes[][4] = {
     },
 };
 
-u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subpriority, u32 personality, bool32 extra)
+u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subpriority, u32 personality)
 {
     u8 spriteId;
     struct MonIconSpriteTemplate iconTemplate =
         {
             .oam = &sMonIconOamData,
-            .image = GetMonIconPtr(species, personality, extra),
+            .image = GetMonIconPtr(species, personality),
             .anims = sMonIconAnims,
             .affineAnims = sMonIconAffineAnims,
             .callback = callback,
@@ -2593,27 +2593,6 @@ u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subprior
     if (species > NUM_SPECIES)
         iconTemplate.paletteTag = POKE_ICON_BASE_PAL_TAG;
 
-    spriteId = CreateMonIconSprite(&iconTemplate, x, y, subpriority);
-
-    UpdateMonIconFrame(&gSprites[spriteId]);
-
-    return spriteId;
-}
-
-u8 CreateMonIcon_HandleDeoxys(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subpriority, bool32 extra)
-{
-    u8 spriteId;
-    struct MonIconSpriteTemplate iconTemplate =
-        {
-            .oam = &sMonIconOamData,
-            .image = NULL,
-            .anims = sMonIconAnims,
-            .affineAnims = sMonIconAffineAnims,
-            .callback = callback,
-            .paletteTag = POKE_ICON_BASE_PAL_TAG + gMonIconPaletteIndices[species],
-        };
-
-    iconTemplate.image = GetMonIconTiles(species, extra);
     spriteId = CreateMonIconSprite(&iconTemplate, x, y, subpriority);
 
     UpdateMonIconFrame(&gSprites[spriteId]);
@@ -2673,17 +2652,15 @@ u16 MailSpeciesToIconSpecies(u16 species)
     }
 }
 
-const u8 *GetMonIconTiles(u16 species, bool32 extra)
+const u8 *GetMonIconTiles(u16 species)
 {
     const u8 *iconSprite = gMonIconTable[species];
-    if (species == SPECIES_DEOXYS && extra == TRUE)
-        iconSprite += 0x400;
     return iconSprite;
 }
 
-const u8 *GetMonIconPtr(u16 species, u32 personality, bool32 extra)
+const u8 *GetMonIconPtr(u16 species, u32 personality)
 {
-    return GetMonIconTiles(GetIconSpecies(species, personality), extra);
+    return GetMonIconTiles(GetIconSpecies(species, personality));
 }
 
 void DestroyMonIcon(struct Sprite * sprite)

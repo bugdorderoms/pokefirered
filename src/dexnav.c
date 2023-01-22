@@ -363,7 +363,7 @@ static void DrawDexNavSearchMonIcon(u16 species, u8 *dst, bool8 caught)
 {
     LoadMonIconPalette(species);
 	
-    *dst = CreateMonIcon(species, SpriteCB_MonIcon, SPECIES_ICON_X - 6, GetSearchWindowY() + 12, 0, 0xFFFFFFFF, 0);
+    *dst = CreateMonIcon(species, SpriteCB_MonIcon, SPECIES_ICON_X - 6, GetSearchWindowY() + 12, 0, 0xFFFFFFFF);
     gSprites[*dst].oam.priority = 0;
 
     if (caught)
@@ -1609,9 +1609,9 @@ static void TryDrawIconInSlot(u16 species, s16 x, s16 y)
     if (!species || species > NUM_SPECIES)
         CreateNoDataIcon(x, y);   // 'X' in slot
     else if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
-        CreateMonIcon(SPECIES_NONE, SpriteCB_MonIcon, x, y, 0, 0xFFFFFFFF, 0); // question mark
+        CreateMonIcon(SPECIES_NONE, SpriteCB_MonIcon, x, y, 0, 0xFFFFFFFF); // question mark
     else
-        CreateMonIcon(species, SpriteCB_MonIcon, x, y, 0, 0xFFFFFFFF, 0);
+        CreateMonIcon(species, SpriteCB_MonIcon, x, y, 0, 0xFFFFFFFF);
 }
 
 static void DrawSpeciesIcons(void)
