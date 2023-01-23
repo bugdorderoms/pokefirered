@@ -1812,7 +1812,7 @@ u8 GetBattlerSpriteBGPriorityRank(u8 battlerId)
         return 1;
 }
 
-u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, u8 templateId, s16 x, s16 y, u8 subpriority, u32 personality, u32 trainerId, u32 battlerId, bool32 ignoreDeoxys)
+u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, u8 templateId, s16 x, s16 y, u8 subpriority, u32 personality, u32 trainerId, u32 battlerId)
 {
     u8 spriteId;
     u16 sheet = LoadSpriteSheet(&sMoveAnimAdtlSprSheets[templateId]);
@@ -1820,38 +1820,13 @@ u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, u8 templat
 
     if (gMonSpritesGfxPtr != NULL && gMonSpritesGfxPtr->multiUseBuffer == NULL)
         gMonSpritesGfxPtr->multiUseBuffer = AllocZeroed(0x2000);
+	
+	LoadCompressedPalette(GetMonSpritePalFromSpeciesAndPersonality(species, trainerId, personality), (palette * 0x10) + 0x100, 0x20);
+	
     if (!isBackpic)
-    {
-        LoadCompressedPalette(GetMonSpritePalFromSpeciesAndPersonality(species, trainerId, personality), (palette * 0x10) + 0x100, 0x20);
-        if (ignoreDeoxys == TRUE || gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies != 0)
-            LoadSpecialPokePic_DontHandleDeoxys(&gMonFrontPicTable[species],
-                                                gMonSpritesGfxPtr->multiUseBuffer,
-                                                species,
-                                                personality,
-                                                TRUE);
-        else
-            LoadSpecialPokePic(&gMonFrontPicTable[species],
-                               gMonSpritesGfxPtr->multiUseBuffer,
-                               species,
-                               personality,
-                               TRUE);
-    }
+		LoadSpecialPokePic(&gMonFrontPicTable[species], gMonSpritesGfxPtr->multiUseBuffer, species, personality, TRUE);
     else
-    {
-        LoadCompressedPalette(GetMonSpritePalFromSpeciesAndPersonality(species, trainerId, personality), (palette * 0x10) + 0x100, 0x20);
-        if (ignoreDeoxys == TRUE || gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies != 0)
-            LoadSpecialPokePic_DontHandleDeoxys(&gMonBackPicTable[species],
-                                                gMonSpritesGfxPtr->multiUseBuffer,
-                                                species,
-                                                personality,
-                                                FALSE);
-        else
-            LoadSpecialPokePic(&gMonBackPicTable[species],
-                               gMonSpritesGfxPtr->multiUseBuffer,
-                               species,
-                               personality,
-                               FALSE);
-    }
+		LoadSpecialPokePic(&gMonBackPicTable[species], gMonSpritesGfxPtr->multiUseBuffer, species, personality, FALSE);
     RequestDma3Copy(gMonSpritesGfxPtr->multiUseBuffer, (void *)(OBJ_VRAM0 + (sheet * 0x20)), 0x800, 1);
     FREE_AND_SET_NULL(gMonSpritesGfxPtr->multiUseBuffer);
     if (!isBackpic)

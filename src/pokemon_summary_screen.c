@@ -3977,19 +3977,7 @@ static void PokeSum_CreateMonPicSprite(void)
     species = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES2);
     personality = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PERSONALITY);
     trainerId = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_OT_ID);
-
-    if (sMonSummaryScreen->savedCallback == CB2_ReturnToTradeMenuFromSummary)
-    {
-        if (sMonSummaryScreen->isEnemyParty == TRUE)
-            spriteId = CreateMonPicSprite(species, trainerId, personality, TRUE, 60, 65, 12, 0xffff, TRUE);
-        else
-            spriteId = CreateMonPicSprite_HandleDeoxys(species, trainerId, personality, TRUE, 60, 65, 12, 0xffff);
-    }
-    else
-    {
-		spriteId = CreateMonPicSprite_HandleDeoxys(species, trainerId, personality, TRUE, 60, 65, 12, 0xffff);
-    }
-
+	spriteId = CreateMonPicSprite(species, trainerId, personality, TRUE, 60, 65, 12, 0xffff);
     FreeSpriteOamMatrix(&gSprites[spriteId]);
 
     if (!IsPokeSpriteNotFlipped(species))
