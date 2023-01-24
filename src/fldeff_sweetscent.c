@@ -14,7 +14,6 @@
 static EWRAM_DATA u8 *sPlttBufferBak = NULL;
 
 static void FieldCallback_SweetScent(void);
-static void StartSweetScentFieldEffect(void);
 static void TrySweetScentEncounter(u8 taskId);
 static void FailSweetScentEncounter(u8 taskId);
 
@@ -41,7 +40,9 @@ bool8 FldEff_SweetScent(void)
     return FALSE;
 }
 
-static void StartSweetScentFieldEffect(void)
+#define SWEET_SCENT_AFFECTED_PALETTES ~(1 << (gSprites[GetPlayerAvatarObjectId()].oam.paletteNum + 16) | (1 << 13) | (1 << 14) | (1 << 15))
+
+void StartSweetScentFieldEffect(void)
 {
     u8 taskId;
 
@@ -49,7 +50,7 @@ static void StartSweetScentFieldEffect(void)
     sPlttBufferBak = (u8 *)Alloc(PLTT_SIZE);
     CpuFastCopy(gPlttBufferUnfaded, sPlttBufferBak, PLTT_SIZE);
     CpuFastCopy(gPlttBufferFaded, gPlttBufferUnfaded, PLTT_SIZE);
-    BeginNormalPaletteFade(~(1 << (gSprites[GetPlayerAvatarObjectId()].oam.paletteNum + 16)), 4, 0, 8, RGB(31, 0, 0));
+    BeginNormalPaletteFade(SWEET_SCENT_AFFECTED_PALETTES, 4, 0, 8, RGB(31, 0, 0));
     taskId = CreateTask(TrySweetScentEncounter, 0);
     gTasks[taskId].data[0] = 0;
     FieldEffectActiveListRemove(FLDEFF_SWEET_SCENT);
@@ -72,7 +73,7 @@ static void TrySweetScentEncounter(u8 taskId)
             else
             {
                 gTasks[taskId].func = FailSweetScentEncounter;
-                BeginNormalPaletteFade(~(1 << (gSprites[GetPlayerAvatarObjectId()].oam.paletteNum + 16)), 4, 8, 0, RGB(31, 0, 0));
+                BeginNormalPaletteFade(SWEET_SCENT_AFFECTED_PALETTES, 4, 8, 0, RGB(31, 0, 0));
             }
         }
         else
@@ -92,10 +93,4 @@ static void FailSweetScentEncounter(u8 taskId)
         ScriptContext1_SetupScript(EventScript_FailSweetScent);
         DestroyTask(taskId);
     }
-}
-
-// item honey func
-bool8 FldEff_TryStartWildBattle(void)
-{
-	gSpecialVar_0x8000 = SweetScentWildEncounter();
 }
