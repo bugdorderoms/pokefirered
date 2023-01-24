@@ -29,20 +29,8 @@ EventScript_RepelWoreOff_Chose:
 EventScript_RepelWoreOff_End::
 	end
 
-EventScript_Honey::
-        callnative FldEff_TryStartWildBattle
-	compare VAR_0x8000, FALSE
-	goto_if_ne EventScript_HoneyEnd
-	msgbox Text_NoMonHere, MSGBOX_AUTOCLOSE
-EventScript_HoneyEnd::
-	release
-	end
-
 Text_RepelWoreOff:: @ 81BFB6E
 	.string "REPEL's effect wore off…$"
 	
 Text_RepelAskAnother::
 	.string "Would you like to use another one?$"
-	
-Text_NoMonHere::
-        .string "Theres no mon in this place…$"
