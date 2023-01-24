@@ -20,6 +20,7 @@
 #include "item_use.h"
 #include "itemfinder.h"
 #include "mail.h"
+#include "fldeff.h"
 #include "event_object_lock.h"
 #include "metatile_behavior.h"
 #include "new_menu_helpers.h"
@@ -751,7 +752,8 @@ static void ItemUseOnFieldCB_Honey(u8 taskId)
 
 static void FieldUseFunc_HoneyCB(u8 taskId)
 {
-    ScriptContext1_SetupScript(EventScript_Honey);
+    SetWeatherScreenFadeOut();
+    StartSweetScentFieldEffect();
     DestroyTask(taskId);
 }
 
