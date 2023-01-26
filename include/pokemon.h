@@ -288,21 +288,48 @@ enum
     BODY_COLOR_PINK
 };
 
-#define EVO_FRIENDSHIP       0x0001 // Pokémon levels up with friendship ≥ 220
-#define EVO_FRIENDSHIP_DAY   0x0002 // Pokémon levels up during the day with friendship ≥ 220
-#define EVO_FRIENDSHIP_NIGHT 0x0003 // Pokémon levels up at night with friendship ≥ 220
-#define EVO_LEVEL            0x0004 // Pokémon reaches the specified level
-#define EVO_TRADE            0x0005 // Pokémon is traded
-#define EVO_TRADE_ITEM       0x0006 // Pokémon is traded while it's holding the specified item
-#define EVO_ITEM             0x0007 // specified item is used on Pokémon
-#define EVO_LEVEL_ATK_GT_DEF 0x0008 // Pokémon reaches the specified level with attack > defense
-#define EVO_LEVEL_ATK_EQ_DEF 0x0009 // Pokémon reaches the specified level with attack = defense
-#define EVO_LEVEL_ATK_LT_DEF 0x000a // Pokémon reaches the specified level with attack < defense
-#define EVO_LEVEL_SILCOON    0x000b // Pokémon reaches the specified level with a Silcoon personality value
-#define EVO_LEVEL_CASCOON    0x000c // Pokémon reaches the specified level with a Cascoon personality value
-#define EVO_LEVEL_NINJASK    0x000d // Pokémon reaches the specified level (special value for Ninjask)
-#define EVO_LEVEL_SHEDINJA   0x000e // Pokémon reaches the specified level (special value for Shedinja)
-#define EVO_BEAUTY           0x000f // Pokémon levels up with beauty ≥ specified value
+#define EVO_FRIENDSHIP                    0x0001 // Pokémon levels up with friendship ≥ 220
+#define EVO_FRIENDSHIP_DAY                0x0002 // Pokémon levels up during the day with friendship ≥ 220
+#define EVO_FRIENDSHIP_NIGHT              0x0003 // Pokémon levels up at night with friendship ≥ 220
+#define EVO_LEVEL                         0x0004 // Pokémon reaches the specified level
+#define EVO_TRADE                         0x0005 // Pokémon is traded
+#define EVO_TRADE_ITEM                    0x0006 // Pokémon is traded while it's holding the specified item
+#define EVO_ITEM                          0x0007 // specified item is used on Pokémon
+#define EVO_LEVEL_ATK_GT_DEF              0x0008 // Pokémon reaches the specified level with attack > defense
+#define EVO_LEVEL_ATK_EQ_DEF              0x0009 // Pokémon reaches the specified level with attack = defense
+#define EVO_LEVEL_ATK_LT_DEF              0x000a // Pokémon reaches the specified level with attack < defense
+#define EVO_LEVEL_SILCOON                 0x000b // Pokémon reaches the specified level with a Silcoon personality value
+#define EVO_LEVEL_CASCOON                 0x000c // Pokémon reaches the specified level with a Cascoon personality value
+#define EVO_LEVEL_NINJASK                 0x000d // Pokémon reaches the specified level (special value for Ninjask)
+#define EVO_LEVEL_SHEDINJA                0x000e // Pokémon reaches the specified level (special value for Shedinja)
+#define EVO_BEAUTY                        0x000f // Pokémon levels up with beauty ≥ specified value
+#define EVO_LEVEL_FEMALE                  0x0010 // Pokémon reaches the specified level, is female
+#define EVO_LEVEL_MALE                    0x0011 // Pokémon reaches the specified level, is male
+#define EVO_LEVEL_NIGHT                   0x0012 // Pokémon reaches the specified level, is night
+#define EVO_LEVEL_DAY                     0x0013 // Pokémon reaches the specified level, is day
+#define EVO_LEVEL_DUSK                    0x0014 // Pokémon reaches the specified level, is dusk (5-6 P.M)
+#define EVO_ITEM_HOLD_DAY                 0x0015 // Pokémon levels up, holds specified item at day
+#define EVO_ITEM_HOLD_NIGHT               0x0016 // Pokémon levels up, holds specified item at night
+#define EVO_MOVE                          0x0017 // Pokémon levels up, knows specified move
+#define EVO_MOVE_TYPE                     0x0018 // Pokémon levels up, knows move with specified type
+#define EVO_MAPSEC                        0x0019 // Pokémon levels up on specified mapsec
+#define EVO_ITEM_MALE                     0x001a // specified item is used on a male Pokémon
+#define EVO_ITEM_FEMALE                   0x001b // specified item is used on a female Pokémon
+#define EVO_LEVEL_RAIN                    0x001c // Pokémon reaches the specified level while it's raining
+#define EVO_SPECIFIC_MON_IN_PARTY         0x001d // Pokémon levels up with a specified Pokémon in party
+#define EVO_LEVEL_DARK_TYPE_MON_IN_PARTY  0x001e // Pokémon reaches the specified level with a Dark Type Pokémon in party
+#define EVO_TRADE_SPECIFIC_MON            0x001f // Pokémon is traded for a specified Pokémon
+#define EVO_SPECIFIC_MAP                  0x0020 // Pokémon levels up on specified map
+#define EVO_LEVEL_NATURE_AMPED            0x0021 // Pokémon reaches the specified level, it has a Hardy, Brave, Adamant, Naughty, Docile, Impish, Lax, Hasty, Jolly, Naive, Rash, Sassy, or Quirky nature.
+#define EVO_LEVEL_NATURE_LOW_KEY          0x0022 // Pokémon reaches the specified level, it has a Lonely, Bold, Relaxed, Timid, Serious, Modest, Mild, Quiet, Bashful, Calm, Gentle, or Careful nature.
+#define EVO_CRITICAL_HITS                 0x0023 // Pokémon performs specified number of critical hits in one battle
+#define EVO_SCRIPT_TRIGGER_DMG            0x0024 // Pokémon has specified HP below max, then player interacts trigger
+#define EVO_DARK_SCROLL                   0x0025 // interacts with Scroll of Darkness
+#define EVO_WATER_SCROLL                  0x0026 // interacts with Scroll of Waters
+
+#define EVO_PRIMAL_REVERSION              0xfffd // Not an actual evolution, used to undergo primal reversion in battle.
+#define EVO_MOVE_MEGA_EVOLUTION           0xfffe // Mega Evolution that checks for a move instead of held item.
+#define EVO_MEGA_EVOLUTION                0xffff // Not an actual evolution, used to temporarily mega evolve in battle.
 
 struct Evolution
 {
@@ -311,7 +338,7 @@ struct Evolution
     u16 targetSpecies;
 };
 
-#define EVOS_PER_MON 5
+#define EVOS_PER_MON 10
 
 extern u8 gPlayerPartyCount;
 extern struct Pokemon gPlayerParty[PARTY_SIZE];
