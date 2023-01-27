@@ -356,7 +356,7 @@ const u8 gMoveDescription_WaterPulse[] = _("An attack with a\npulsing blast of\n
 const u8 gMoveDescription_DoomDesire[] = _("A move that attacks\nthe foe with a\nblast of light two\nturns after use.");
 const u8 gMoveDescription_PsychoBoost[] = _("An intense attack\nthat also sharply\nreduces the user's\nSP. ATK stat.");
 
-const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] = {
+const u8 *const gMoveDescriptionPointers[MOVES_COUNT_GMAX - 1] = {
     [MOVE_POUND         - 1] = gMoveDescription_Pound,
     [MOVE_KARATE_CHOP   - 1] = gMoveDescription_KarateChop,
     [MOVE_DOUBLE_SLAP   - 1] = gMoveDescription_DoubleSlap,
