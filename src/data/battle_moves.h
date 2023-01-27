@@ -1,4 +1,4 @@
-const struct BattleMove gBattleMoves[MOVES_COUNT] =
+const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 {
     [MOVE_NONE] =
     {
