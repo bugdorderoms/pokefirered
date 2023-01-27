@@ -2882,7 +2882,7 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
             u16 *moves = (u16 *)data;
             s32 i = 0;
 
-            while (moves[i] != MOVES_COUNT)
+            while (moves[i] != MOVES_COUNT_GMAX)
             {
                 u16 move = moves[i];
                 if (substruct1->moves[0] == move
