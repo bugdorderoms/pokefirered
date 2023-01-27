@@ -6789,7 +6789,7 @@ static void atk9E_metronome(void)
     {
         gCurrentMove = (Random() & 0x1FF) + 1;
 	    
-        if (gCurrentMove >= MOVES_COUNT)
+        if (gCurrentMove >= MOVES_COUNT_GMAX)
             continue;
         for (i = 0; i < MAX_MON_MOVES; ++i); // redundant
         i = -1;
