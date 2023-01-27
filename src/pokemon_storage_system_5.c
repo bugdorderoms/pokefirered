@@ -749,7 +749,7 @@ void InitCanReleaseMonVars(void)
     gPSSData->isDiveMon = FALSE;
     gPSSData->field_2176[0] = MOVE_SURF;
     gPSSData->field_2176[1] = MOVE_DIVE;
-    gPSSData->field_2176[2] = MOVES_COUNT;
+    gPSSData->field_2176[2] = MOVES_COUNT_GMAX;
     knownIdx = GetMonData(&gPSSData->field_2108, MON_DATA_KNOWN_MOVES, (u8*)gPSSData->field_2176);
     gPSSData->isSurfMon = knownIdx & 1;
     gPSSData->isDiveMon = (knownIdx >> 1) & 1;
