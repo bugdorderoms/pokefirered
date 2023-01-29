@@ -2289,7 +2289,7 @@ u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove)
 u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool8 firstMove)
 {
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u8 movelevel, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
+	u8 moveLevel, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
 	
 	// since you can learn more than one move per level
 	// the game needs to know whether you decided to
