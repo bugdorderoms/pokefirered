@@ -2919,21 +2919,44 @@ enum
     ITEM_STATS_CHANGE,
 };
 
-bool8 IsItemAffectedByGluttony(u16 Item)
+static u8 ConfusionBerries(u8 battlerId, u8 flavor, bool8 moveTurn)
 {
-	switch (Item)
-	{
-		case ITEM_LIECHI_BERRY:
-		case ITEM_GANLON_BERRY:
-		case ITEM_SALAC_BERRY:
-		case ITEM_PETAYA_BERRY:
-		case ITEM_APICOT_BERRY:
-		case ITEM_LANSAT_BERRY:
-		case ITEM_STARF_BERRY:
-			return TRUE;
-		default:
-			return FALSE;
-	}
+    u8 effect = 0;
+    
+    if (CheckPinchBerryActivate(battlerId) && !moveTurn)
+    {
+        PREPARE_FLAVOR_BUFFER(gBattleTextBuff1, flavor);
+	gBattleMoveDamage = gBattleMons[battlerId].maxHP / 2;
+	if (gBattleMoveDamage == 0)
+	    gBattleMoveDamage = 1;
+	if (gBattleMons[battlerId].hp + gBattleMoveDamage > gBattleMons[battlerId].maxHP)
+	    gBattleMoveDamage = gBattleMons[battlerId].maxHP - gBattleMons[battlerId].hp;
+	gBattleMoveDamage *= -1;
+	if (GetFlavorRelation(battlerId, flavor) < 0)
+	    BattleScriptExecute(BattleScript_BerryConfuseHealEnd2);
+	else
+	    BattleScriptExecute(BattleScript_ItemHealHP_RemoveItem);
+	effect = ITEM_HP_CHANGE;
+    }
+    return effect;
+}
+
+static u8 StatRaiseBerries(u8 battlerId, u8 statId, bool8 moveTurn)
+{
+    u8 effect = 0;
+
+    if (CheckPinchBerryActivate(battlerId) && !moveTurn && gBattleMons[battlerId].statStages[statId] < 0xC)
+    {
+        PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
+	PREPARE_STRING_BUFFER(gBattleTextBuff2, STRINGID_STATROSE);
+	gEffectBattler = battlerId;
+	SET_STATCHANGER(statId, 1, FALSE);
+	gBattleScripting.animArg1 = 0xE + statId;
+	gBattleScripting.animArg2 = 0;
+	BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
+	effect = ITEM_STATS_CHANGE;
+    }
+    return effect;
 }
 
 u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
@@ -2956,8 +2979,6 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
         battlerHoldEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
         battlerHoldEffectParam = ItemId_GetHoldEffectParam(gLastUsedItem);
     }
-    if (GetBattlerAbility(battlerId) == ABILITY_GLUTTONY && IsItemAffectedByGluttony(gLastUsedItem))
-	battlerHoldEffectParam /= 2;
     if (ABILITY_ON_OPPOSING_FIELD(battlerId, ABILITY_UNNERVE) && IS_ITEM_BERRY(gLastUsedItem))
     {
 	    battlerHoldEffect = 0;
@@ -3069,153 +3090,37 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                 }
                 break;
             case HOLD_EFFECT_CONFUSE_SPICY:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / 2 && !moveTurn)
-                {
-                    PREPARE_FLAVOR_BUFFER(gBattleTextBuff1, FLAVOR_SPICY);
-                    gBattleMoveDamage = gBattleMons[battlerId].maxHP / battlerHoldEffectParam;
-                    if (gBattleMoveDamage == 0)
-                        gBattleMoveDamage = 1;
-                    if (gBattleMons[battlerId].hp + gBattleMoveDamage > gBattleMons[battlerId].maxHP)
-                        gBattleMoveDamage = gBattleMons[battlerId].maxHP - gBattleMons[battlerId].hp;
-                    gBattleMoveDamage *= -1;
-                    if (GetFlavorRelation(battlerId, FLAVOR_SPICY) < 0)
-                        BattleScriptExecute(BattleScript_BerryConfuseHealEnd2);
-                    else
-                        BattleScriptExecute(BattleScript_ItemHealHP_RemoveItem);
-                    effect = ITEM_HP_CHANGE;
-                }
+	        effect = ConfusionBerries(battlerId, FLAVOR_SPICY, moveTurn);
                 break;
             case HOLD_EFFECT_CONFUSE_DRY:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / 2 && !moveTurn)
-                {
-                    PREPARE_FLAVOR_BUFFER(gBattleTextBuff1, FLAVOR_DRY);
-                    gBattleMoveDamage = gBattleMons[battlerId].maxHP / battlerHoldEffectParam;
-                    if (gBattleMoveDamage == 0)
-                        gBattleMoveDamage = 1;
-                    if (gBattleMons[battlerId].hp + gBattleMoveDamage > gBattleMons[battlerId].maxHP)
-                        gBattleMoveDamage = gBattleMons[battlerId].maxHP - gBattleMons[battlerId].hp;
-                    gBattleMoveDamage *= -1;
-                    if (GetFlavorRelation(battlerId, FLAVOR_DRY) < 0)
-                        BattleScriptExecute(BattleScript_BerryConfuseHealEnd2);
-                    else
-                        BattleScriptExecute(BattleScript_ItemHealHP_RemoveItem);
-                    effect = ITEM_HP_CHANGE;
-                }
+	        effect = ConfusionBerries(battlerId, FLAVOR_DRY, moveTurn);
                 break;
             case HOLD_EFFECT_CONFUSE_SWEET:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / 2 && !moveTurn)
-                {
-                    PREPARE_FLAVOR_BUFFER(gBattleTextBuff1, FLAVOR_SWEET);
-                    gBattleMoveDamage = gBattleMons[battlerId].maxHP / battlerHoldEffectParam;
-                    if (gBattleMoveDamage == 0)
-                        gBattleMoveDamage = 1;
-                    if (gBattleMons[battlerId].hp + gBattleMoveDamage > gBattleMons[battlerId].maxHP)
-                        gBattleMoveDamage = gBattleMons[battlerId].maxHP - gBattleMons[battlerId].hp;
-                    gBattleMoveDamage *= -1;
-                    if (GetFlavorRelation(battlerId, FLAVOR_SWEET) < 0)
-                        BattleScriptExecute(BattleScript_BerryConfuseHealEnd2);
-                    else
-                        BattleScriptExecute(BattleScript_ItemHealHP_RemoveItem);
-                    effect = ITEM_HP_CHANGE;
-                }
+	        effect = ConfusionBerries(battlerId, FLAVOR_SWEET, moveTurn);
                 break;
             case HOLD_EFFECT_CONFUSE_BITTER:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / 2 && !moveTurn)
-                {
-                    PREPARE_FLAVOR_BUFFER(gBattleTextBuff1, FLAVOR_BITTER);
-                    gBattleMoveDamage = gBattleMons[battlerId].maxHP / battlerHoldEffectParam;
-                    if (gBattleMoveDamage == 0)
-                        gBattleMoveDamage = 1;
-                    if (gBattleMons[battlerId].hp + gBattleMoveDamage > gBattleMons[battlerId].maxHP)
-                        gBattleMoveDamage = gBattleMons[battlerId].maxHP - gBattleMons[battlerId].hp;
-                    gBattleMoveDamage *= -1;
-                    if (GetFlavorRelation(battlerId, FLAVOR_BITTER) < 0)
-                        BattleScriptExecute(BattleScript_BerryConfuseHealEnd2);
-                    else
-                        BattleScriptExecute(BattleScript_ItemHealHP_RemoveItem);
-                    effect = ITEM_HP_CHANGE;
-                }
+	        effect = ConfusionBerries(battlerId, FLAVOR_BITTER, moveTurn);
                 break;
             case HOLD_EFFECT_CONFUSE_SOUR:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / 2 && !moveTurn)
-                {
-                    PREPARE_FLAVOR_BUFFER(gBattleTextBuff1, FLAVOR_SOUR);
-                    gBattleMoveDamage = gBattleMons[battlerId].maxHP / battlerHoldEffectParam;
-                    if (gBattleMoveDamage == 0)
-                        gBattleMoveDamage = 1;
-                    if (gBattleMons[battlerId].hp + gBattleMoveDamage > gBattleMons[battlerId].maxHP)
-                        gBattleMoveDamage = gBattleMons[battlerId].maxHP - gBattleMons[battlerId].hp;
-                    gBattleMoveDamage *= -1;
-                    if (GetFlavorRelation(battlerId, FLAVOR_SOUR) < 0)
-                        BattleScriptExecute(BattleScript_BerryConfuseHealEnd2);
-                    else
-                        BattleScriptExecute(BattleScript_ItemHealHP_RemoveItem);
-                    effect = ITEM_HP_CHANGE;
-                }
+	        effect = ConfusionBerries(battlerId, FLAVOR_SOUR, moveTurn);
                 break;
             case HOLD_EFFECT_ATTACK_UP:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / battlerHoldEffectParam && !moveTurn && gBattleMons[battlerId].statStages[STAT_ATK] < 0xC)
-                {
-                    PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_ATK);
-                    PREPARE_STRING_BUFFER(gBattleTextBuff2, STRINGID_STATROSE);
-                    gEffectBattler = battlerId;
-                    SET_STATCHANGER(STAT_ATK, 1, FALSE);
-                    gBattleScripting.animArg1 = 0xE + STAT_ATK;
-                    gBattleScripting.animArg2 = 0;
-                    BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
-                    effect = ITEM_STATS_CHANGE;
-                }
+	        effect = StatRaiseBerries(battlerId, STAT_ATK, moveTurn);
                 break;
             case HOLD_EFFECT_DEFENSE_UP:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / battlerHoldEffectParam && !moveTurn && gBattleMons[battlerId].statStages[STAT_DEF] < 0xC)
-                {
-                    PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_DEF);
-                    gEffectBattler = battlerId;
-                    SET_STATCHANGER(STAT_DEF, 1, FALSE);
-                    gBattleScripting.animArg1 = 0xE + STAT_DEF;
-                    gBattleScripting.animArg2 = 0;
-                    BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
-                    effect = ITEM_STATS_CHANGE;
-                }
+	        effect = StatRaiseBerries(battlerId, STAT_DEF, moveTurn);
                 break;
             case HOLD_EFFECT_SPEED_UP:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / battlerHoldEffectParam && !moveTurn && gBattleMons[battlerId].statStages[STAT_SPEED] < 0xC)
-                {
-                    PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_SPEED);
-                    gEffectBattler = battlerId;
-                    SET_STATCHANGER(STAT_SPEED, 1, FALSE);
-                    gBattleScripting.animArg1 = 0xE + STAT_SPEED;
-                    gBattleScripting.animArg2 = 0;
-                    BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
-                    effect = ITEM_STATS_CHANGE;
-                }
+	        effect = StatRaiseBerries(battlerId, STAT_SPEED, moveTurn);
                 break;
             case HOLD_EFFECT_SP_ATTACK_UP:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / battlerHoldEffectParam && !moveTurn && gBattleMons[battlerId].statStages[STAT_SPATK] < 0xC)
-                {
-                    PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_SPATK);
-                    gEffectBattler = battlerId;
-                    SET_STATCHANGER(STAT_SPATK, 1, FALSE);
-                    gBattleScripting.animArg1 = 0xE + STAT_SPATK;
-                    gBattleScripting.animArg2 = 0;
-                    BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
-                    effect = ITEM_STATS_CHANGE;
-                }
+	        effect = StatRaiseBerries(battlerId, STAT_SPATK, moveTurn);
                 break;
             case HOLD_EFFECT_SP_DEFENSE_UP:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / battlerHoldEffectParam && !moveTurn && gBattleMons[battlerId].statStages[STAT_SPDEF] < 0xC)
-                {
-                    PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_SPDEF);
-                    gEffectBattler = battlerId;
-                    SET_STATCHANGER(STAT_SPDEF, 1, FALSE);
-                    gBattleScripting.animArg1 = 0xE + STAT_SPDEF;
-                    gBattleScripting.animArg2 = 0;
-                    BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
-                    effect = ITEM_STATS_CHANGE;
-                }
+	        effect = StatRaiseBerries(battlerId, STAT_SPDEF, moveTurn);
                 break;
             case HOLD_EFFECT_CRITICAL_UP:
-                if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / battlerHoldEffectParam && !moveTurn && !(gBattleMons[battlerId].status2 & STATUS2_FOCUS_ENERGY))
+                if (CheckPinchBerryActivate(battlerId) && !moveTurn && !(gBattleMons[battlerId].status2 & STATUS2_FOCUS_ENERGY))
                 {
                     gBattleMons[battlerId].status2 |= STATUS2_FOCUS_ENERGY;
                     BattleScriptExecute(BattleScript_BerryFocusEnergyEnd2);
@@ -3223,7 +3128,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                 }
                 break;
             case HOLD_EFFECT_RANDOM_STAT_UP:
-                if (!moveTurn && gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / battlerHoldEffectParam)
+                if (!moveTurn && CheckPinchBerryActivate(battlerId))
                 {
                     for (i = 0; i < 5 && !STAT_CAN_RAISE(battlerId, STAT_ATK + i); ++i);
                     if (i != 5)
@@ -3566,6 +3471,13 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
         break;
     }
     return effect;
+}
+
+bool8 CheckPinchBerryActivate(u8 battler)
+{
+    if (gBattleMons[battler].hp <= gBattleMons[battler].maxHP / 4 || (GetBattlerAbility(battler) == ABILITY_GLUTTONY && gBattleMons[battler].hp <= gBattleMons[battler].maxHP / 2))
+        return TRUE;
+    return FALSE;
 }
 
 void ClearFuryCutterDestinyBondGrudge(u8 battlerId)
