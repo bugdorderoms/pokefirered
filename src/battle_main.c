@@ -3662,7 +3662,7 @@ s8 CalculateMonPriority(u8 battler)
     else
         move = gBattleMons[battler].moves[*(gBattleStruct->chosenMovePositions + battler)];
     
-    return priority += gBattleMoves[move].priority;
+    return priority + gBattleMoves[move].priority;
 }
 
 s32 CalculateMonBracket(u8 battler)
@@ -3685,6 +3685,7 @@ s32 CalculateMonBracket(u8 battler)
         return 1;
     if (GetBattlerAbility(battler) == ABILITY_STALL)
         return -1;
+    return 0;
 }
 
 u32 CalculateMonSpeed(u8 battler)
