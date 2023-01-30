@@ -91,7 +91,7 @@ u8 GetMoveTarget(u16 move, u8 setTarget);
 u8 IsMonDisobedient(void);
 bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move);
 u8 GetHiddenPowerType(struct Pokemon *mon);
-bool8 IsItemAffectedByGluttony(u16 Item);
+bool8 CheckPinchBerryActivate(u8 battler);
 void TryGiveUnburdenBoostToMon(u8 battler);
 void ResetVarsForAbilityChange(u8 battler);
 void ClearBattlerStatus(u8 battler);
