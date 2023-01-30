@@ -4421,24 +4421,25 @@ BattleScript_AngerPointActivation::
         setstatchanger STAT_ATK, 1, FALSE
 	setgraphicalstatchangevalues
 	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
-	
-BattleScript_PrintStringAndReturn::
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
         printstring STRINGID_SETWORDSTRING
         waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
         return
 	
 BattleScript_Anticipation::
         call BattleScript_AnticipationActivation
 	end3
-BattleScript_AnticipationReturn::
-	return
 	
 BattleScript_AnticipationActivation::
         pause 0x20
 	setbyte gBattlerTarget, 0
 	trygetintimidatetarget BattleScript_AnticipationReturn
         callasm TryDoAnticipationShudder
-	goto BattleScript_PrintStringAndReturn
+        printstring STRINGID_SETWORDSTRING
+        waitmessage 0x40
+BattleScript_AnticipationReturn::
+	return
 	
 BattleScript_BadDreamsTurnDmg::
 	printstring STRINGID_SETWORDSTRING
