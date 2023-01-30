@@ -4474,8 +4474,10 @@ BattleScript_DownloadRaiseSpAttack::
 BattleScript_DownloadRaiseStat::
 	statbuffchange STAT_CHANGE_BS_PTR | MOVE_EFFECT_AFFECTS_USER, BattleScript_DownloadReturn
 	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 2, BattleScript_DownloadReturn
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 BattleScript_DownloadReturn::
 	return
 
