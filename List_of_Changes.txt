@@ -136,11 +136,7 @@ analytic
 illusion
 imposter
 
-// WARNING
-Klutz don't affect prize money, experience, effort values or friendship.
-The Speed drop from the Macho Brace, and Power items (such as the Power Bracer) is not negated by Klutz.
-Klutz cannot negate form-changing effects of items.
-Klutz does not prevent Pokémon with this Ability from Mega Evolving with a Mega Stone, undergoing Primal Reversion with the Red Orb or Blue Orb or from using a Z-Move with a Z-Crystal.
+// Warning
 remove slow start and unburden counters when ability change or supression
 
 // Needing put in
@@ -149,11 +145,8 @@ make slow start and contrary special iteration with z-moves
 make sheer force and contrary special iteration with max moves and sheer force affect other effects
 make flower gift form change
 make from immunity to down ability pop up scripts
-probabily add an inverse battle check in anticipation type calc
 end update of moves data
-add hidden abilities in poke base stats
 add the new moves in getforewarnmovepower, sIronFistTable, sRecklessTable, sPowderAndSporeMoves and gSheerForceBoostedMoves
-add berries in isitemaffectedbygluttony
 add abilities in mold breaker ignorable abilities table
 Leaf guard prevents the Flame Orb and Toxic Orb
 Magic guard prevents damage from abilities(and probabily for items), spikes and stealth rocks, mind blown, life orb and gulp missile(but does not prevent the Defense drop or paralysis from it)
