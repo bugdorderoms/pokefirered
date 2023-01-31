@@ -1343,7 +1343,7 @@ static void atk06_typecalc(void)
         ++gBattlescriptCurrInstr;
         return;
     }
-    TypeCalc(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, TRUE, TRUE, &gMoveResultFlags);
+    TypeCalc(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, TRUE, &gMoveResultFlags);
     
     if (gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE)
         gProtectStructs[gBattlerAttacker].targetNotAffected = 1;
@@ -1363,7 +1363,7 @@ static void CheckWonderGuardAndLevitate(void)
     if (gCurrentMove == MOVE_STRUGGLE || !gBattleMoves[gCurrentMove].power)
         return;
 	
-    affectedBy = TypeCalc(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, TRUE, FALSE, &flags);
+    affectedBy = TypeCalc(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, FALSE, &flags);
     gBattleMoveDamage = saved;
     
     if (affectedBy & TYPE_AFFECTED_LEVITATE)
