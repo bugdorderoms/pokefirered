@@ -3935,8 +3935,10 @@ BattleScript_TraceActivates::
 	end3
 
 BattleScript_RainDishActivates::
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	printstring STRINGID_PKMNSXRESTOREDHPALITTLE2
 	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 BattleScript_RainDishActivatesEnd::
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
 	healthbarupdate BS_ATTACKER
@@ -4483,13 +4485,17 @@ BattleScript_DownloadReturn::
 	return
 
 BattleScript_DrySkinRainActivates::
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
         printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	goto BattleScript_RainDishActivatesEnd
 	
 BattleScript_DrySkinSunActivates::
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
         printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
