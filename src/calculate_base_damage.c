@@ -41,22 +41,6 @@
 static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move);
 static u32 GetBattlerWeight(u8 battler);
 
-static const u16 sIronFistTable[] =
-{
-    MOVE_COMET_PUNCH,
-    MOVE_DIZZY_PUNCH,
-    MOVE_DYNAMIC_PUNCH,
-    MOVE_FIRE_PUNCH,
-    MOVE_FOCUS_PUNCH,
-    MOVE_ICE_PUNCH,
-    MOVE_MACH_PUNCH,
-    MOVE_MEGA_PUNCH,
-    MOVE_SHADOW_PUNCH,
-    MOVE_SKY_UPPERCUT,
-    MOVE_THUNDER_PUNCH,
-    TABLE_END,
-};
-
 static const u16 sRecklessTable[] =
 {
     MOVE_DOUBLE_EDGE,
@@ -376,7 +360,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower = (12 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_IRON_FIST:
-				if (IsMoveInTable(sIronFistTable, move))
+				if (gBattleMoves[move].flags & FLAG_IRON_FIST_BOOST)
 					gBattleMovePower = (12 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_RECKLESS:
