@@ -356,7 +356,9 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower = (15 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_NORMALIZE:
-				if (type == TYPE_NORMAL && gBattleMoves[move].effect != EFFECT_HIDDEN_POWER && gBattleMoves[move].effect != EFFECT_WEATHER_BALL)
+				if (type == TYPE_NORMAL && gBattleMoves[move].effect != EFFECT_HIDDEN_POWER && gBattleMoves[move].effect != EFFECT_WEATHER_BALL
+				    && gBattleMoves[move].effect != EFFECT_NATURAL_GIFT && gBattleMoves[move].effect != EFFECT_CHANGE_TYPE_ON_ITEM
+				    && gBattleMoves[move].effect != EFFECT_TERRAIN_PULSE)
 					gBattleMovePower = (12 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_IRON_FIST:
