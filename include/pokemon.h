@@ -236,18 +236,19 @@ struct BaseStats
 
 struct BattleMove
 {
-    u8 effect;
-    u8 power;
+    u16 effect;
+    u16 power;  //higher than 255 for z moves
     u8 type;
     u8 accuracy;
     u8 pp;
     u8 secondaryEffectChance;
-    u8 target;
+    u16 target;
     s8 priority;
-    u8 flags;
-    u8 unused1;
+    u32 flags;
     u8 split;
-    u8 unused2;
+    u8 argument;
+    u8 zMovePower;
+    u8 zMoveEffect;
 };
 
 extern const struct BattleMove gBattleMoves[];

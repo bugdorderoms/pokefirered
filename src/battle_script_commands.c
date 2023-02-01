@@ -70,7 +70,7 @@ static bool8 sub_8026648(void);
 static void PutMonIconOnLvlUpBox(void);
 static void PutLevelAndGenderOnLvlUpBox(void);
 static bool8 AnticipationTypeCalc(u8 battler);
-static u8 GetForewarnMovePower(u16 move);
+static u16 GetForewarnMovePower(u16 move);
 
 static void SpriteCB_MonIconOnLvlUpBox(struct Sprite *sprite);
 
@@ -9025,43 +9025,28 @@ void GetStatRaiseDownload(void)
 		gBattlescriptCurrInstr = BattleScript_DownloadRaiseSpAttack;
 }
 
-static u8 GetForewarnMovePower(u16 move)
+static u16 GetForewarnMovePower(u16 move)
 {
-	if (gBattleMoves[move].effect == EFFECT_OHKO)
-		return 150;
-	switch (move)
+	switch (gBattleMoves[move].effect)
 	{
-		case MOVE_ERUPTION:
-		case MOVE_WATER_SPOUT:
-			return 150;
-		case MOVE_COUNTER: //need metal burst add
-		case MOVE_MIRROR_COAT:
+		case EFFECT_OHKO:
+		    return 150;
+		case EFFECT_COUNTER:
+		case EFFECT_MIRROR_COAT:
+		case EFFECT_METAL_BURST:
 			return 120;
-		case MOVE_DRAGON_RAGE: //need crush grip, electro ball, final gambit, fling, grass knot, gyro ball, heat crash, heavy slam, natural gift, punishment, trump card and wring out add 
-		case MOVE_ENDEAVOR:
-		case MOVE_FLAIL:
-		case MOVE_FRUSTRATION:
-		case MOVE_HIDDEN_POWER:
-		case MOVE_LOW_KICK:
-		case MOVE_NIGHT_SHADE:
-		case MOVE_PRESENT:
-		case MOVE_PSYWAVE:
-		case MOVE_RETURN:
-		case MOVE_REVERSAL:
-		case MOVE_SEISMIC_TOSS:
-		case MOVE_SONIC_BOOM:
-		case MOVE_SPIT_UP:
-		case MOVE_SUPER_FANG:
-			return 80;
-			//need stored power and power trip add
+		default:
+		    if (gBattleMoves[move].power == 1)
+				return 80;
+			else
+				return gBattleMoves[move].power;
 	}
-	return gBattleMoves[move].power;
 }
 
 void GetStrongestMoveForewarn(void)
 {
-	u8 power, strongesttarget, i, maxpower = 0, bank2 = gBattlerTarget ^ BIT_FLANK;
-	u16 move, strongestmove = MOVE_NONE;
+	u8 strongesttarget, i, bank2 = gBattlerTarget ^ BIT_FLANK;
+	u16 move, strongestmove = MOVE_NONE, power, maxpower = 0;
 	
 	for (i = 0; i < MAX_MON_MOVES; i++)
 	{

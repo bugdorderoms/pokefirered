@@ -40,6 +40,7 @@
 #include "constants/hold_effects.h"
 #include "constants/battle_move_effects.h"
 #include "constants/inserts.h"
+#include "constants/z_move_effects.h"
 
 #define SPECIES_TO_NATIONAL(name)   [SPECIES_##name - 1] = NATIONAL_DEX_##name
 
