@@ -145,11 +145,7 @@ make slow start and contrary special iteration with z-moves
 make sheer force and contrary special iteration with max moves and sheer force affect other effects
 make flower gift form change
 make from immunity to down ability pop up scripts
-end update of moves data
-add the new moves in getforewarnmovepower, sIronFistTable, sRecklessTable, sPowderAndSporeMoves and gSheerForceBoostedMoves
-add abilities in mold breaker ignorable abilities table
-Leaf guard prevents the Flame Orb and Toxic Orb
-Magic guard prevents damage from abilities(and probabily for items), spikes and stealth rocks, mind blown, life orb and gulp missile(but does not prevent the Defense drop or paralysis from it)
+add the new moves in getforewarnmovepower, sRecklessTable, sPowderAndSporeMoves and gSheerForceBoostedMoves
 
 // put in
 evolve without national dex
