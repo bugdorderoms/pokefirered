@@ -50,7 +50,6 @@
 extern const u8 *const gBattleScriptsForMoveEffects[];
 
 //used strings
-static const u8 sAftermathString[] = _("{B_ATK_NAME_WITH_PREFIX} is hurt!");
 static const u8 sAnticipationString[] = _("{B_ATK_NAME_WITH_PREFIX} shuddered!");
 static const u8 sDownloadString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\nraised its {B_BUFF1}!");
 static const u8 sForewarnString[] = _("It was alerted to\n{B_DEF_NAME_WITH_PREFIX}'s {B_BUFF1}!");
@@ -5533,16 +5532,6 @@ static void atk76_various(void)
 		gNewBattleStruct.IgnoredAbilities &= ~(gBitTable[gActiveBattler]);
         break;
     case VARIOUS_TRY_DO_AFTERMATH_DAMAGE:
-	if (GetBattlerAbility(gActiveBattler) == ABILITY_AFTERMATH && gBattleMoves[gCurrentMove].flags & FLAG_MAKES_CONTACT) 
-	{
-		gSetWordLoc = sAftermathString;
-		gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 4;
-		if (gBattleMoveDamage == 0)
-			gBattleMoveDamage = 1;
-		BattleScriptPush(gBattlescriptCurrInstr + 3);
-		gBattlescriptCurrInstr = BattleScript_DoAftermathDamage;
-		return;
-	}
 	break;
     case VARIOUS_TRAINER_SLIDE_FIRST_MON_DOWN:
 	if (ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_A, TRAINER_SLIDE_FIRST_MON_DOWN))

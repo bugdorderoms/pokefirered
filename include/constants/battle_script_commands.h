@@ -80,7 +80,7 @@
 #define VARIOUS_CHECK_POKEFLUTE                  11
 #define VARIOUS_WAIT_FANFARE                     12
 #define VARIOUS_RESTORE_ABILITY_ON_SWITCH        13
-#define VARIOUS_TRY_DO_AFTERMATH_DAMAGE          14
+#define VARIOUS_TRY_DO_AFTERMATH_DAMAGE          14 // unused
 #define VARIOUS_TRAINER_SLIDE_FIRST_MON_DOWN     15
 #define VARIOUS_TRAINER_SLIDE_LAST_MON           16
 #define VARIOUS_UPDATE_NICK                      17
