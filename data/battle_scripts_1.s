@@ -4536,8 +4536,10 @@ BattleScript_TryFriskSecondTarget::
 	return
 	
 BattleScript_DisplaySwitchInMsg::
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
         printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	end3
 	
 BattleScript_MoveStatRaise_PPLoss::
