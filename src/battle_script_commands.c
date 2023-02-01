@@ -3424,14 +3424,10 @@ static void atk3C_return(void)
 
 static void atk3D_end(void)
 {
-    u8 i;
-	
-    for (i = 0; i < gBattlersCount; ++i)
-	    gNewBattleStruct.IgnoredAbilities &= ~(gBitTable[i]);
-	
     gMoveResultFlags = 0;
     gActiveBattler = 0;
     gCurrentActionFuncId = B_ACTION_TRY_FINISH;
+    gNewBattleStruct.IgnoredAbilities = 0;
 }
 
 static void atk3E_end2(void)
