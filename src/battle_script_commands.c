@@ -8935,19 +8935,19 @@ static bool8 AnticipationTypeCalc(u8 battler)
 			if (gBattleMoves[moveId].effect == EFFECT_OHKO)
 				return TRUE;
 			
-			if (gBattleMoves[moveId].effect == EFFECT_HIDDEN_POWER)
-			{
-				if (GetBattlerSide(battler) == B_SIDE_PLAYER)
-					party = gPlayerParty;
-				else
-					party = gEnemyParty;
-				moveType = GetHiddenPowerType(&party[gBattlerPartyIndexes[battler]]);
-			}
-			else
-				moveType = gBattleMoves[moveId].type;
-		
 			if (gBattleMoves[moveId].power)
 			{
+				if (gBattleMoves[moveId].effect == EFFECT_HIDDEN_POWER)
+				{
+					if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+						party = gPlayerParty;
+					else
+						party = gEnemyParty;
+					moveType = GetHiddenPowerType(&party[gBattlerPartyIndexes[battler]]);
+				}
+				else
+					moveType = gBattleMoves[moveId].type;
+				
 				TypeCalc(moveId, moveType, battler, gBattlerAttacker, FALSE, FALSE, &flags);
 				
 				if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
@@ -8960,8 +8960,7 @@ static bool8 AnticipationTypeCalc(u8 battler)
 
 void TryDoAnticipationShudder(void)
 {
-	if (AnticipationTypeCalc(gBattlerTarget) || (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMons[gBattlerTarget ^ BIT_FLANK].hp != 0 
-            && AnticipationTypeCalc(gBattlerTarget ^ BIT_FLANK)))
+	if (AnticipationTypeCalc(gBattlerTarget) || (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMons[gBattlerTarget ^ BIT_FLANK].hp != 0 && AnticipationTypeCalc(gBattlerTarget ^ BIT_FLANK)))
 		gSetWordLoc = sAnticipationString;
 	else
 		gBattlescriptCurrInstr = BattleScript_AnticipationReturn;
