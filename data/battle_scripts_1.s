@@ -4429,8 +4429,10 @@ BattleScript_AnticipationActivation::
 	setbyte gBattlerTarget, 0
 	trygetintimidatetarget BattleScript_AnticipationReturn
         callasm TryDoAnticipationShudder
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
         printstring STRINGID_SETWORDSTRING
         waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 BattleScript_AnticipationReturn::
 	return
 	
