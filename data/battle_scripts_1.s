@@ -4551,9 +4551,11 @@ BattleScript_MoveStatRaiseDoStatUp::
 
 BattleScript_SnowWarningActivates::
         pause 0x20
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_SCRIPTING, LOAD_ABILITY_FROM_BUFFER
 	printstring STRINGID_SETWORDSTRING
 	waitstate
 	playanimation BS_BATTLER_0, B_ANIM_HAIL_CONTINUES, NULL
+	loadabilitypopup REMOVE_POP_UP, BS_SCRIPTING, LOAD_ABILITY_FROM_BUFFER
 	call BattleScript_HandleWeatherFormChanges
 	end3
 	
