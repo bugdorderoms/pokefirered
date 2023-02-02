@@ -41,17 +41,6 @@
 static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move);
 static u32 GetBattlerWeight(u8 battler);
 
-static const u16 sRecklessTable[] =
-{
-    MOVE_DOUBLE_EDGE,
-    MOVE_HI_JUMP_KICK,
-    MOVE_JUMP_KICK,
-    MOVE_SUBMISSION,
-    MOVE_TAKE_DOWN,
-    MOVE_VOLT_TACKLE,
-    TABLE_END,
-};
-
 static const u8 sFlailHpScaleToPowerTable[] =
 {
     1, 200,
@@ -366,7 +355,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower = (12 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_RECKLESS:
-				if (IsMoveInTable(sRecklessTable, move))
+				if (gBattleMoves[move].flags & FLAG_RECKLESS_BOOST)
 					gBattleMovePower = (12 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_RIVALRY:
