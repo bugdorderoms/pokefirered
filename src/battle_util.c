@@ -2224,7 +2224,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 	    switch (gLastUsedAbility)
 	    {
 		    case ABILITY_SOUNDPROOF:
-			    if (MakesSound(moveArg))
+			    if (gBattleMoves[moveArg].flags & FLAG_SOUND)
 				    effect = 1;
 			    break;
 		    case ABILITY_TELEPATHY:
