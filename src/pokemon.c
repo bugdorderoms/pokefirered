@@ -26,6 +26,7 @@
 #include "pokedex.h"
 #include "strings.h"
 #include "overworld.h"
+#include "form_change.h"
 #include "party_menu.h"
 #include "field_specials.h"
 #include "constants/items.h"
@@ -3090,6 +3091,7 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
     }
     case MON_DATA_HELD_ITEM:
         SET16(substruct0->heldItem);
+		HoldItemFormChange((struct Pokemon*) boxMon, substruct0->heldItem);
         break;
     case MON_DATA_EXP:
         SET32(substruct0->experience);
