@@ -1503,14 +1503,9 @@ u16 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility)
 	return flags;
 }
 
-bool8 MakesSound(u16 move)
-{
-	return IsMoveInTable(gSoundMovesTable, move);
-}
-
 bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move) 
 {
-	if ((!(gBattleMons[defender].status2 & STATUS2_SUBSTITUTE) || MakesSound(move) || (GetBattlerAbility(attacker) == ABILITY_INFILTRATOR && move != MOVE_TRANSFORM))) // add Sky Drop check here
+	if ((!(gBattleMons[defender].status2 & STATUS2_SUBSTITUTE) || gBattleMoves[move].flags & FLAG_SOUND || (GetBattlerAbility(attacker) == ABILITY_INFILTRATOR && move != MOVE_TRANSFORM && move != MOVE_SKY_DROP)))
 		return FALSE;
 	else
 		return TRUE;
