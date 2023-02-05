@@ -10,6 +10,7 @@
 #include "field_player_avatar.h"
 #include "field_specials.h"
 #include "fieldmap.h"
+#include "map_name_popup.h"
 #include "constants/songs.h"
 
 static void Task_NoResponse_CleanUp(u8 taskId);
@@ -511,11 +512,12 @@ void Task_StoutlandSearch(u8 taskId)
 	s16 *data = gTasks[taskId].data;
 	u8 direction;
 	
-	if (data[8] || ScriptContext2_IsEnabled() || !TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE))
+	if (data[8] || ScriptContext2_IsEnabled() || !TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE) || IsMapNamePopupTaskActive())
 	{
 		if (tStartSpriteId != MAX_SPRITES)
 		{
 			DestroyArrowAndStarTiles();
+			FreeSpriteOamMatrix(&gSprites[tStartSpriteId]);
 			DestroySprite(&gSprites[tStartSpriteId]);
 		}
 		DestroyTask(taskId);

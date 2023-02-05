@@ -15,6 +15,7 @@
 #include "item_use.h"
 #include "item_menu.h"
 #include "link.h"
+#include "map_name_popup.h"
 #include "menu.h"
 #include "metatile_behavior.h"
 #include "new_menu_helpers.h"
@@ -613,7 +614,7 @@ static void UpdateStoutlandSearchAndTaurosCharge(u16 heldKeys)
 		
 		if (heldKeys & B_BUTTON)
 		{
-			if (taskId == 0xFF)
+			if (taskId == 0xFF && !IsMapNamePopupTaskActive())
 				gTasks[CreateTask(Task_StoutlandSearch, 80)].data[7] = MAX_SPRITES;
 		}
 		else
