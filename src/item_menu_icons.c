@@ -152,14 +152,6 @@ static const struct OamData sOamData_ItemIcon = {
     .paletteNum = 2
 };
 
-static const struct OamData sOamData_ItemIconFind = {
-	.affineMode = ST_OAM_AFFINE_OFF,
-	.shape = ST_OAM_SQUARE,
-	.size = 2,
-	.priority = 0,
-	.paletteNum = 2
-};
-
 static const union AnimCmd sAnim_ItemIcon_0[] = {
     ANIMCMD_FRAME(0, 0),
     ANIMCMD_END
