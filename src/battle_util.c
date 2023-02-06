@@ -1770,47 +1770,66 @@ bool8 HasNoMonsToSwitch(u8 battler, u8 partyIdBattlerOn1, u8 partyIdBattlerOn2)
     }
 }
 
-enum
-{
-    CASTFORM_NO_CHANGE,
-    CASTFORM_TO_NORMAL,
-    CASTFORM_TO_FIRE,
-    CASTFORM_TO_WATER,
-    CASTFORM_TO_ICE,
-};
+#define CASTFORM_NO_CHANGE  0
+#define CASTFORM_TO_NORMAL  1
+#define CASTFORM_TO_FIRE    2
+#define CASTFORM_TO_WATER   3
+#define CASTFORM_TO_ICE     4
+
+#define CHERRIM_TO_OVERCAST 1
+#define CHERRIM_TO_SUNSHINE 2
 
 u8 CastformDataTypeChange(u8 battler)
 {
     u8 formChange = 0;
-    if (gBattleMons[battler].species != SPECIES_CASTFORM || GetBattlerAbility(battler) != ABILITY_FORECAST || gBattleMons[battler].hp == 0)
-        return CASTFORM_NO_CHANGE;
-    if (!WEATHER_HAS_EFFECT && !IS_BATTLER_OF_TYPE(battler, TYPE_NORMAL))
-    {
-        SET_BATTLER_TYPE(battler, TYPE_NORMAL);
-        return CASTFORM_TO_NORMAL;
-    }
-    if (!WEATHER_HAS_EFFECT)
-        return CASTFORM_NO_CHANGE;
-    if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SUN_ANY | WEATHER_HAIL_ANY)) && !IS_BATTLER_OF_TYPE(battler, TYPE_NORMAL))
-    {
-        SET_BATTLER_TYPE(battler, TYPE_NORMAL);
-        formChange = CASTFORM_TO_NORMAL;
-    }
-    if (gBattleWeather & WEATHER_SUN_ANY && !IS_BATTLER_OF_TYPE(battler, TYPE_FIRE))
-    {
-        SET_BATTLER_TYPE(battler, TYPE_FIRE);
-        formChange = CASTFORM_TO_FIRE;
-    }
-    if (gBattleWeather & WEATHER_RAIN_ANY && !IS_BATTLER_OF_TYPE(battler, TYPE_WATER))
-    {
-        SET_BATTLER_TYPE(battler, TYPE_WATER);
-        formChange = CASTFORM_TO_WATER;
-    }
-    if (gBattleWeather & WEATHER_HAIL_ANY && !IS_BATTLER_OF_TYPE(battler, TYPE_ICE))
-    {
-        SET_BATTLER_TYPE(battler, TYPE_ICE);
-        formChange = CASTFORM_TO_ICE;
-    }
+	bool8 weatherHasEffect = WEATHER_HAS_EFFECT;
+	u16 ability = GetBattlerAbility(battler);
+	
+	if (gBattleMons[battler].hp == 0)
+		return CASTFORM_NO_CHANGE;
+	
+	if (gBattleMons[battler].species == SPECIES_CASTFORM)
+	{
+		if (ability != ABILITY_FORECAST)
+			return CASTFORM_NO_CHANGE;
+		if (!weatherHasEffect && !IS_BATTLER_OF_TYPE(battler, TYPE_NORMAL))
+		{
+			SET_BATTLER_TYPE(battler, TYPE_NORMAL);
+			formChange = CASTFORM_TO_NORMAL;
+		}
+		if (!weatherHasEffect)
+			return CASTFORM_NO_CHANGE;
+		if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SUN_ANY | WEATHER_HAIL_ANY)) && !IS_BATTLER_OF_TYPE(battler, TYPE_NORMAL))
+		{
+			SET_BATTLER_TYPE(battler, TYPE_NORMAL);
+			formChange = CASTFORM_TO_NORMAL;
+		}
+		if (gBattleWeather & WEATHER_SUN_ANY && !IS_BATTLER_OF_TYPE(battler, TYPE_FIRE))
+		{
+			SET_BATTLER_TYPE(battler, TYPE_FIRE);
+			formChange = CASTFORM_TO_FIRE;
+		}
+		if (gBattleWeather & WEATHER_RAIN_ANY && !IS_BATTLER_OF_TYPE(battler, TYPE_WATER))
+		{
+			SET_BATTLER_TYPE(battler, TYPE_WATER);
+			formChange = CASTFORM_TO_WATER;
+		}
+		if (gBattleWeather & WEATHER_HAIL_ANY && !IS_BATTLER_OF_TYPE(battler, TYPE_ICE))
+		{
+			SET_BATTLER_TYPE(battler, TYPE_ICE);
+			formChange = CASTFORM_TO_ICE;
+		}
+	}
+	else if (gBattleMons[battler].species == SPECIES_CHERRIM)
+	{
+		if (ability != ABILITY_FLOWER_GIFT)
+			return CASTFORM_NO_CHANGE;
+		else if (!gBattleMonForms[battler] && weatherHasEffect && gBattleWeather & WEATHER_SUN_ANY)
+			formChange = CHERRIM_TO_SUNSHINE;
+		else if (gBattleMonForms[battler] && (!weatherHasEffect || !(gBattleWeather & WEATHER_SUN_ANY)))
+			formChange = CHERRIM_TO_OVERCAST;
+	}
+	gLastUsedAbility = ability;
     return formChange;
 }
 
@@ -1989,6 +2008,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
                 }
                 break;
             case ABILITY_FORECAST:
+			case ABILITY_FLOWER_GIFT:
                 effect = CastformDataTypeChange(battler);
                 if (effect != 0)
                 {
@@ -2628,7 +2648,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
         case ABILITYEFFECT_FORECAST: // 6
             for (battler = 0; battler < gBattlersCount; ++battler)
             {
-                if (GetBattlerAbility(battler) == ABILITY_FORECAST)
+                if (GetBattlerAbility(battler) == ABILITY_FORECAST || GetBattlerAbility(battler) == ABILITY_FLOWER_GIFT)
                 {
                     effect = CastformDataTypeChange(battler);
                     if (effect)

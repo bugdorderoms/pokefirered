@@ -57,6 +57,23 @@ $(CASTFORMGFXDIR)/shiny.gbapal: $(CASTFORMGFXDIR)/normal/shiny.gbapal \
 									$(CASTFORMGFXDIR)/snowy/shiny.gbapal
 	@cat $^ >$@
 
+CHERRIMGFXDIR := graphics/pokemon/cherrim
+$(CHERRIMGFXDIR)/front.4bpp: $(CHERRIMGFXDIR)/normal/front.4bpp \
+                              $(CHERRIMGFXDIR)/sunshine/front.4bpp
+	@cat $^ >$@
+
+$(CHERRIMGFXDIR)/back.4bpp: $(CHERRIMGFXDIR)/normal/back.4bpp \
+                              $(CHERRIMGFXDIR)/sunshine/back.4bpp
+	@cat $^ >$@
+
+$(CHERRIMGFXDIR)/normal.gbapal: $(CHERRIMGFXDIR)/normal/normal.gbapal \
+                              $(CHERRIMGFXDIR)/sunshine/normal.gbapal
+	@cat $^ >$@
+
+$(CHERRIMGFXDIR)/shiny.gbapal: $(CHERRIMGFXDIR)/normal/shiny.gbapal \
+                              $(CHERRIMGFXDIR)/sunshine/shiny.gbapal
+	@cat $^ >$@
+
 $(FONTGFXDIR)/font0_latin.latfont: $(FONTGFXDIR)/font0_latin.png
 	$(GFX) $< $@
 
