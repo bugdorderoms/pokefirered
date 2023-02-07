@@ -24,7 +24,6 @@ void BufferMoveToLearnIntoBattleTextBuff2(void);
 
 //callasm functions declaration
 void TryDoAnticipationShudder(void);
-void TryBadDreamsSecondDamage(void);
 void GetStatRaiseDownload(void);
 void GetStrongestMoveForewarn(void);
 void TryFriskFirstTarget(void);

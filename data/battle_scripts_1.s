@@ -4436,17 +4436,28 @@ BattleScript_AnticipationActivation::
 BattleScript_AnticipationReturn::
 	return
 	
-BattleScript_BadDreamsTurnDmg::
+BattleScript_BadDreamsActivates::
+    loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	setbyte gBattlerTarget, 0
+BattleScript_BadDreamsLoop::
+    jumpiftargetally BattleScript_BadDreamsNextTarget
+    jumpifability BS_TARGET, ABILITY_MAGIC_GUARD, BattleScript_BadDreamsNextTarget
+	jumpifability BS_TARGET, ABILITY_COMATOSE, BattleScript_BadDreamsDmg
+	jumpifstatus BS_TARGET, STATUS1_SLEEP, BattleScript_BadDreamsDmg
+	goto BattleScript_BadDreamsNextTarget
+BattleScript_BadDreamsDmg::
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
+	manipulatedamage ATK80_DMG_1_8_MAX_HP
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE
-	healthbarupdate BS_ATTACKER
-	datahpupdate BS_ATTACKER
-	tryfaintmon BS_ATTACKER, 0, NULL
-	callasm TryBadDreamsSecondDamage
-	printstring STRINGID_SETWORDSTRING
-	waitmessage 0x40
-        goto BattleScript_DoTurnDmg
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	tryfaintmon BS_TARGET, 0, NULL
+BattleScript_BadDreamsNextTarget::
+	addbyte gBattlerTarget, 1
+	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_BadDreamsLoop
+    loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	end3
 
 BattleScript_Download::
         call BattleScript_DownloadActivation

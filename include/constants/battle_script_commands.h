@@ -80,7 +80,7 @@
 #define VARIOUS_CHECK_POKEFLUTE                  11
 #define VARIOUS_WAIT_FANFARE                     12
 #define VARIOUS_RESTORE_ABILITY_ON_SWITCH        13
-#define VARIOUS_TRY_DO_AFTERMATH_DAMAGE          14 // unused
+#define VARIOUS_JUMP_IF_TARGET_ALLY              14
 #define VARIOUS_TRAINER_SLIDE_FIRST_MON_DOWN     15
 #define VARIOUS_TRAINER_SLIDE_LAST_MON           16
 #define VARIOUS_UPDATE_NICK                      17
@@ -92,6 +92,7 @@
 #define ATK80_DMG_CHANGE_SIGN                               0
 #define ATK80_DMG_HALF_BY_TWO_NOT_MORE_THAN_HALF_MAX_HP     1
 #define ATK80_DMG_DOUBLED                                   2
+#define ATK80_DMG_1_8_MAX_HP                                3
 
 // atk4F, a flag used for the jumpifcantswitch command
 #define ATK4F_DONT_CHECK_STATUSES   0x80

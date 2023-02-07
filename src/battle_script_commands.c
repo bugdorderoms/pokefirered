@@ -5525,8 +5525,12 @@ static void atk76_various(void)
 	if (gNewBattleStruct.IgnoredAbilities & gBitTable[gActiveBattler])
 		gNewBattleStruct.IgnoredAbilities &= ~(gBitTable[gActiveBattler]);
         break;
-    case VARIOUS_TRY_DO_AFTERMATH_DAMAGE:
-	break;
+    case VARIOUS_JUMP_IF_TARGET_ALLY:
+	if (GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
+		gBattlescriptCurrInstr += 7;
+	else
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+	return;
     case VARIOUS_TRAINER_SLIDE_FIRST_MON_DOWN:
 	if (ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_A, TRAINER_SLIDE_FIRST_MON_DOWN))
 	{
@@ -5557,7 +5561,7 @@ static void atk76_various(void)
         gBattlescriptCurrInstr += 3;
 	TryRemoveIllusion(gActiveBattler);
 	return;
-    case VARIOUS_PLAY_TRANSFORM_ANIMATION:
+	case VARIOUS_PLAY_TRANSFORM_ANIMATION:
         BtlController_EmitMoveAnimation(0, MOVE_TRANSFORM, 0, 1, 1, 0xFF, &gDisableStructs[gActiveBattler]);
 	MarkBattlerForControllerExec(gActiveBattler);
 	break;
@@ -5791,6 +5795,11 @@ static void atk80_manipulatedamage(void)
     case ATK80_DMG_DOUBLED:
         gBattleMoveDamage *= 2;
         break;
+	case ATK80_DMG_1_8_MAX_HP:
+	    gBattleMoveDamage = gBattleMons[gBattlerTarget].maxHP / 8;
+		if (gBattleMoveDamage == 0)
+            gBattleMoveDamage = 1;
+		break;
     }
     gBattlescriptCurrInstr += 2;
 }
@@ -8958,22 +8967,6 @@ void TryDoAnticipationShudder(void)
 		gSetWordLoc = sAnticipationString;
 	else
 		gBattlescriptCurrInstr = BattleScript_AnticipationReturn;
-}
-
-void TryBadDreamsSecondDamage(void)
-{
-	u8 bank2 = gBattlerTarget ^ BIT_FLANK;
-	
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMons[bank2].hp != 0 && GetBattlerAbility(bank2) == ABILITY_BAD_DREAMS)
-	{
-		gLastUsedAbility = ABILITY_BAD_DREAMS;
-                gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
-                if (gBattleMoveDamage == 0)
-			gBattleMoveDamage = 1;
-		gBattlerTarget = bank2;
-	}
-	else
-		gBattlescriptCurrInstr = BattleScript_DoTurnDmgEnd;
 }
 
 void GetStatRaiseDownload(void)

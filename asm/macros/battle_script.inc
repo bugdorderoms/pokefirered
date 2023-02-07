@@ -1368,6 +1368,11 @@
 	.macro playtransformanimation battler:req
 	various \battler, VARIOUS_PLAY_TRANSFORM_ANIMATION
 	.endm
+	
+	.macro jumpiftargetally ptr:req
+	various BS_ATTACKER, VARIOUS_JUMP_IF_TARGET_ALLY
+	.4byte \ptr
+	.endm
 
 @ helpful macros
 	.macro setstatchanger stat:req, stages:req, down:req

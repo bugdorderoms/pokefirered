@@ -30,7 +30,7 @@
 #include "constants/inserts.h"
 
 //used strings
-static const u8 sBadDreamsString[] = _("{B_ATK_NAME_WITH_PREFIX} is\ntormented!");
+static const u8 sBadDreamsString[] = _("{B_DEF_NAME_WITH_PREFIX} is\ntormented!");
 static const u8 sDrySkinRainString[] = _("{B_ATK_NAME_WITH_PREFIX} gain some\nof its HP!");
 static const u8 sDrySkinSunString[] = _("{B_ATK_NAME_WITH_PREFIX} lost some\nof its HP!");
 static const u8 sMoldBreakerString[] = _("{B_ATK_NAME_WITH_PREFIX} breaks the mold!");
@@ -835,7 +835,6 @@ enum
 {
     ENDTURN_INGRAIN,
     ENDTURN_ABILITIES,
-    ENDTURN_BAD_DREAMS,
     ENDTURN_ITEMS1,
     ENDTURN_LEECH_SEED,
     ENDTURN_POISON,
@@ -891,32 +890,6 @@ u8 DoBattlerEndTurnEffects(void)
                     ++effect;
                 ++gBattleStruct->turnEffectsTracker;
                 break;
-            case ENDTURN_BAD_DREAMS:
-                if ((gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP) && gBattleMons[gActiveBattler].hp != 0 
-		   && ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_BAD_DREAMS))
-		{
-			u8 i, side = GetBattlerSide(gActiveBattler);
-		        bool8 hasability = FALSE;
-					
-			for (i = 0; i < gBattlersCount; ++i)
-			{
-				if (!(hasability) && GetBattlerSide(i) != side && GetBattlerAbility(i) == ABILITY_BAD_DREAMS)
-				{
-					gBattlerTarget = i;
-				        gLastUsedAbility = ABILITY_BAD_DREAMS;
-					gSetWordLoc = sBadDreamsString;
-				        gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
-					if (gBattleMoveDamage == 0)
-						gBattleMoveDamage = 1;
-					hasability = TRUE;
-					BattleScriptExecute(BattleScript_BadDreamsTurnDmg);
-				}
-			}    
-			if (hasability)
-				++effect;
-		}
-			    ++gBattleStruct->turnEffectsTracker;
-			    break;
             case ENDTURN_ITEMS1:  // item effects
                 if (ItemBattleEffects(1, gActiveBattler, FALSE))
                     ++effect;
@@ -2183,6 +2156,11 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 					BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 					++effect;
 				}
+				break;
+			case ABILITY_BAD_DREAMS:
+			    gSetWordLoc = sBadDreamsString;
+			    BattleScriptPushCursorAndCallback(BattleScript_BadDreamsActivates);
+				++effect;
 				break;
 			case ABILITY_HARVEST:
 				if (((WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY) || (Random() % 2) == 0) && !gBattleMons[battler].item
