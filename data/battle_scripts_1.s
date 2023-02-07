@@ -4437,7 +4437,6 @@ BattleScript_AnticipationReturn::
 	return
 	
 BattleScript_BadDreamsActivates::
-    loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	setbyte gBattlerTarget, 0
 BattleScript_BadDreamsLoop::
     jumpiftargetally BattleScript_BadDreamsNextTarget
@@ -4446,6 +4445,8 @@ BattleScript_BadDreamsLoop::
 	jumpifstatus BS_TARGET, STATUS1_SLEEP, BattleScript_BadDreamsDmg
 	goto BattleScript_BadDreamsNextTarget
 BattleScript_BadDreamsDmg::
+    loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	setbyte sFIXED_ABILITY_POPUP, TRUE
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
 	manipulatedamage ATK80_DMG_1_8_MAX_HP
@@ -4457,6 +4458,7 @@ BattleScript_BadDreamsNextTarget::
 	addbyte gBattlerTarget, 1
 	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_BadDreamsLoop
     loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	setbyte sFIXED_ABILITY_POPUP, FALSE
 	end3
 
 BattleScript_Download::

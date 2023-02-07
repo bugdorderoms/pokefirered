@@ -508,6 +508,7 @@ struct BattleScripting
     u8 reshowHelperState;
     u8 field_23;
     bool8 illusionNickHack;
+	bool8 fixedAbilityPopUp;
 };
 
 enum

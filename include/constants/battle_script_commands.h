@@ -27,6 +27,7 @@
 #define sRESHOW_HELPER_STATE gBattleScripting + 0x22
 #define sFIELD_23 gBattleScripting + 0x23
 #define sILLUSION_NICK_HACK gBattleScripting + 0x24
+#define sFIXED_ABILITY_POPUP gBattleScripting + 0x25
 
 #define cEFFECT_CHOOSER gBattleCommunication + 3
 #define cMULTISTRING_CHOOSER gBattleCommunication + 5

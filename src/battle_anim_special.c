@@ -2518,7 +2518,7 @@ void AnimTask_CreateAbilityPopUp(u8 taskId)
 
     gAbilityPopUpIds[battler][0] = spriteId1;
     gAbilityPopUpIds[battler][1] = spriteId2;
-    
+	
     destroyTaskId = CreateTask(AnimTask_FreeAbilityPopUp, 5);
     
     gTasks[destroyTaskId].tSpriteId1 = spriteId1;
@@ -2527,7 +2527,7 @@ void AnimTask_CreateAbilityPopUp(u8 taskId)
     gSprites[spriteId1].tIsMain = TRUE;
     gSprites[spriteId1].tBattler = battler;
     gSprites[spriteId2].tBattler = battler;
-    
+	
     StartSpriteAnim(&gSprites[spriteId1], 0);
     StartSpriteAnim(&gSprites[spriteId2], 0);
     

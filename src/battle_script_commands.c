@@ -8903,7 +8903,14 @@ static void atkFC_loadabilitypopup(void)
 	gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[2]);
 	
 	if (gBattlescriptCurrInstr[1] != REMOVE_POP_UP)
+	{
+		if (gBattleScripting.fixedAbilityPopUp)
+		{
+			gBattlescriptCurrInstr += 5;
+			return;
+		}
 		animId = B_ANIM_LOAD_ABILITY_POP_UP;
+	}
 	else
 		animId = B_ANIM_REMOVE_ABILITY_POP_UP;
 	
