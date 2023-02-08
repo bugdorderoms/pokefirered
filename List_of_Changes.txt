@@ -137,11 +137,7 @@ illusion
 imposter
 
 // Needing put in
-make slow start and contrary special iteration with z-moves 
-make sheer force and contrary special iteration with max moves and sheer force affect other effects
-make flower gift form change
-make from immunity to down ability pop up scripts
-add the new moves in sPowderAndSporeMoves and gSheerForceBoostedMoves
+add the new moves in sPowderAndSporeMoves
 
 // put in
 evolve without national dex
