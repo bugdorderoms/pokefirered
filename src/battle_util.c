@@ -3804,3 +3804,19 @@ bool8 IsUnnerveOnOpposingField(u8 battler)
 		return TRUE;
 	return FALSE;
 }
+
+void TryActivateDefiant(u16 stringId)
+{
+	if (stringId == STRINGID_PKMNSSTATCHANGED4 && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
+	{
+		switch (GetBattlerAbility(gBattlerTarget))
+		{
+			case ABILITY_DEFIANT:
+			    gLastUsedAbility = ABILITY_DEFIANT;
+			    SET_STATCHANGER(STAT_ATK, 2, FALSE);
+			    BattleScriptPushCursor();
+			    gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
+			    break;
+		}
+	}
+}
