@@ -4592,7 +4592,7 @@ BattleScript_DefiantCompetitive::
 	return
 	
 BattleScript_CursedBodyActivation::
-	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, ABILITY_CURSED_BODY
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
 	
@@ -4601,7 +4601,7 @@ BattleScript_CursedBodyReturn::
 	return
 
 BattleScript_HealerActivates::
-        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, ABILITY_HEALER
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
 	updatestatusicon BS_EFFECT_BATTLER
