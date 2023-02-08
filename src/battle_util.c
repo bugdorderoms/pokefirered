@@ -2493,7 +2493,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    break;
 		    case ABILITY_CURSED_BODY:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED && (Random() % 3) == 0
-				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
+				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE) && moveArg != MOVE_STRUGGLE
 			        && !gDisableStructs[gBattlerAttacker].disabledMove && gBattleMons[gBattlerAttacker].pp[gCurrMovePos])
 			    {
 				    gDisableStructs[gBattlerAttacker].disabledMove = moveArg;
