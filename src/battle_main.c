@@ -2587,7 +2587,6 @@ static void BattleStartClearSetData(void)
     for (i = 0; i < 8; ++i)
     {
         *((u8 *)gBattleStruct->lastTakenMove + i) = MOVE_NONE;
-        *((u8 *)gBattleStruct->usedHeldItems + i) = ITEM_NONE;
         *((u8 *)gBattleStruct->choicedMove + i) = MOVE_NONE;
         *((u8 *)gBattleStruct->changedItems + i) = ITEM_NONE;
         *(i + 0 * 8 + (u8 *)(gBattleStruct->lastTakenMoveFrom) + 0) = 0;
@@ -2595,6 +2594,11 @@ static void BattleStartClearSetData(void)
         *(i + 2 * 8 + (u8 *)(gBattleStruct->lastTakenMoveFrom) + 0) = 0;
         *(i + 3 * 8 + (u8 *)(gBattleStruct->lastTakenMoveFrom) + 0) = 0;
     }
+	for (i = 0; i < PARTY_SIZE; i++)
+	{
+		gBattleStruct->usedHeldItems[i][B_SIDE_PLAYER] = ITEM_NONE;
+		gBattleStruct->usedHeldItems[i][B_SIDE_OPPONENT] = ITEM_NONE;
+	}
     *(gBattleStruct->AI_monToSwitchIntoId + 0) = PARTY_SIZE;
     *(gBattleStruct->AI_monToSwitchIntoId + 1) = PARTY_SIZE;
     *(&gBattleStruct->givenExpMons) = 0;

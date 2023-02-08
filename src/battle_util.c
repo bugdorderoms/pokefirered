@@ -2164,10 +2164,9 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				break;
 			case ABILITY_HARVEST:
 				if (((WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY) || (Random() % 2) == 0) && !gBattleMons[battler].item
-				    && !gBattleStruct->changedItems[battler] && ItemId_GetPocket(gBattleStruct->usedHeldItems[battler]) == POCKET_BERRY_POUCH)
+				    && !gBattleStruct->changedItems[battler] && ItemId_GetPocket(GetUsedHeldItem(battler)) == POCKET_BERRY_POUCH)
 				{
-					gLastUsedItem = gBattleStruct->changedItems[battler] = gBattleStruct->usedHeldItems[battler];
-					gBattleStruct->usedHeldItems[battler] = ITEM_NONE;
+					gLastUsedItem = GetUsedHeldItem(battler);
 					gSetWordLoc = sHarvestString;
 					BattleScriptPushCursorAndCallback(BattleScript_HarvestActivates);
 					effect++;
@@ -2225,7 +2224,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				    effect = 1;
 			    break;
 		    case ABILITY_TELEPATHY:
-			    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattlerAttacker == (battler ^ BIT_FLANK))
+			    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattlerAttacker == (battler ^ BIT_FLANK) && !IS_MOVE_STATUS(moveArg))
 				    effect = 1;
 			    break;
 	    }
@@ -3819,4 +3818,9 @@ void TryActivateDefiant(u16 stringId)
 			    break;
 		}
 	}
+}
+
+u16 GetUsedHeldItem(u8 battler)
+{
+	return gBattleStruct->usedHeldItems[gBattlerPartyIndexes[battler]][GetBattlerSide(battler)];
 }

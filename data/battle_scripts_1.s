@@ -4641,10 +4641,13 @@ BattleScript_WeakArmorSpeedUpPrintString::
 	goto BattleScript_CursedBodyReturn
 
 BattleScript_HarvestActivates::
-        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, ABILITY_HARVEST
+    pause 5
+	tryrecycleitem BattleScript_HarvestEnd
+    loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
 	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+BattleScript_HarvestEnd::
 	end3
 	
 BattleScript_MoodyActivates::

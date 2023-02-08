@@ -110,5 +110,6 @@ bool8 BattlerStatCanRaise(u8 battler, u8 statId);
 bool8 BattlerStatCanFall(u8 battler, u8 statId);
 bool8 IsUnnerveOnOpposingField(u8 battler);
 void TryActivateDefiant(u16 stringId);
+u16 GetUsedHeldItem(u8 battler);
 
 #endif // GUARD_BATTLE_UTIL_H
