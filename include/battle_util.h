@@ -109,5 +109,6 @@ bool8 ReceiveSheerForceBoost(u8 battler, u16 move);
 bool8 BattlerStatCanRaise(u8 battler, u8 statId);
 bool8 BattlerStatCanFall(u8 battler, u8 statId);
 bool8 IsUnnerveOnOpposingField(u8 battler);
+void TryActivateDefiant(u16 stringId);
 
 #endif // GUARD_BATTLE_UTIL_H
