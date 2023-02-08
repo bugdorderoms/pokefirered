@@ -1896,19 +1896,7 @@ static void atk13_printfromtable(void)
         PrepareStringBattle(*ptr, gBattlerAttacker);
         gBattlescriptCurrInstr += 5;
         gBattleCommunication[MSG_DISPLAY] = 1;
-	    
-	if (*ptr == STRINGID_PKMNSSTATCHANGED4 && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
-	{
-		switch (GetBattlerAbility(gBattlerTarget))
-		{
-			case ABILITY_DEFIANT:
-				gLastUsedAbility = ABILITY_DEFIANT;
-				SET_STATCHANGER(STAT_ATK, 2, FALSE);
-				BattleScriptPushCursor();
-				gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
-				break;
-		}
-	}
+	TryActivateDefiant(*ptr);
     }
 }
 
