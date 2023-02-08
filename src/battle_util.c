@@ -2933,7 +2933,7 @@ static u8 ConfusionBerries(u8 battlerId, u8 flavor, bool8 moveTurn)
 {
     u8 effect = 0;
     
-    if (CheckPinchBerryActivate(battlerId) && !moveTurn)
+    if (CheckPinchBerryActivate(battlerId, gLastUsedItem) && !moveTurn)
     {
         PREPARE_FLAVOR_BUFFER(gBattleTextBuff1, flavor);
 	gBattleMoveDamage = gBattleMons[battlerId].maxHP / 2;
@@ -2955,7 +2955,7 @@ static u8 StatRaiseBerries(u8 battlerId, u8 statId, bool8 moveTurn)
 {
     u8 effect = 0;
 
-    if (CheckPinchBerryActivate(battlerId) && !moveTurn && gBattleMons[battlerId].statStages[statId] < 0xC)
+    if (CheckPinchBerryActivate(battlerId, gLastUsedItem) && !moveTurn && BattlerStatCanRaise(battlerId, statId))
     {
         PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
 	PREPARE_STRING_BUFFER(gBattleTextBuff2, STRINGID_STATROSE);
@@ -2989,7 +2989,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
         battlerHoldEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
         battlerHoldEffectParam = ItemId_GetHoldEffectParam(gLastUsedItem);
     }
-    if (ABILITY_ON_OPPOSING_FIELD(battlerId, ABILITY_UNNERVE) && IS_ITEM_BERRY(gLastUsedItem))
+    if (IsUnnerveOnOpposingField(battlerId) && IS_ITEM_BERRY(gLastUsedItem))
     {
 	    battlerHoldEffect = 0;
 	    battlerHoldEffectParam = 0;
@@ -3130,7 +3130,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
 	        effect = StatRaiseBerries(battlerId, STAT_SPDEF, moveTurn);
                 break;
             case HOLD_EFFECT_CRITICAL_UP:
-                if (CheckPinchBerryActivate(battlerId) && !moveTurn && !(gBattleMons[battlerId].status2 & STATUS2_FOCUS_ENERGY))
+                if (CheckPinchBerryActivate(battlerId, gLastUsedItem) && !moveTurn && !(gBattleMons[battlerId].status2 & STATUS2_FOCUS_ENERGY))
                 {
                     gBattleMons[battlerId].status2 |= STATUS2_FOCUS_ENERGY;
                     BattleScriptExecute(BattleScript_BerryFocusEnergyEnd2);
@@ -3138,7 +3138,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                 }
                 break;
             case HOLD_EFFECT_RANDOM_STAT_UP:
-                if (!moveTurn && CheckPinchBerryActivate(battlerId))
+                if (!moveTurn && CheckPinchBerryActivate(battlerId, gLastUsedItem))
                 {
                     for (i = 0; i < 5 && !BattlerStatCanRaise(battlerId, STAT_ATK + i); ++i);
                     if (i != 5)
@@ -3483,8 +3483,10 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
     return effect;
 }
 
-bool8 CheckPinchBerryActivate(u8 battler)
+bool8 CheckPinchBerryActivate(u8 battler, u16 item)
 {
+    if (IsUnnerveOnOpposingField(battler) && ItemId_GetPocket(item) == POCKET_BERRY_POUCH)
+	return FALSE;
     if (gBattleMons[battler].hp <= gBattleMons[battler].maxHP / 4 || (GetBattlerAbility(battler) == ABILITY_GLUTTONY && gBattleMons[battler].hp <= gBattleMons[battler].maxHP / 2))
         return TRUE;
     return FALSE;
@@ -3794,4 +3796,11 @@ bool8 BattlerStatCanFall(u8 battler, u8 statId)
 	bool8 hasContrary = GetBattlerAbility(battler) == ABILITY_CONTRARY;
 	
 	return ((statStage > 0 && !hasContrary) || (statStage < 12 && hasContrary));
+}
+
+bool8 IsUnnerveOnOpposingField(u8 battler)
+{
+	if (ABILITY_ON_OPPOSING_FIELD(battler, ABILITY_UNNERVE) || ABILITY_ON_OPPOSING_FIELD(battler, ABILITY_AS_ONE_ICE_RIDER) || ABILITY_ON_OPPOSING_FIELD(battler, ABILITY_AS_ONE_SHADOW_RIDER))
+		return TRUE;
+	return FALSE;
 }
