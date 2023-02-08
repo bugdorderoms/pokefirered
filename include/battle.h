@@ -461,7 +461,6 @@ extern struct BattleStruct *gBattleStruct;
 #define IS_MOVE_PHYSICAL(move)(gBattleMoves[move].split == MOVE_PHYSICAL)
 #define IS_MOVE_SPECIAL(move)(gBattleMoves[move].split == MOVE_SPECIAL)
 #define IS_MOVE_STATUS(move)(gBattleMoves[move].split == MOVE_STATUS)
-#define RECEIVE_SHEER_FORCE_BOOST(battler, move)((GetBattlerAbility(battler) == ABILITY_SHEER_FORCE) && (IsMoveInTable(gSheerForceBoostedMoves, move)))
 #define STAT_CAN_RAISE(battlerId, statId)((gBattleMons[battlerId].statStages[statId] < 12 && GetBattlerAbility(battlerId) != ABILITY_CONTRARY) || (gBattleMons[battlerId].statStages[statId] > 0 && GetBattlerAbility(battlerId) == ABILITY_CONTRARY))
 #define STAT_CAN_FALL(battlerId, statId)((gBattleMons[battlerId].statStages[statId] > 0 && GetBattlerAbility(battlerId) != ABILITY_CONTRARY) || (gBattleMons[battlerId].statStages[statId] < 12 && GetBattlerAbility(battlerId) == ABILITY_CONTRARY))
 #define TARGET_TURN_DAMAGED ((gSpecialStatuses[gBattlerTarget].physicalDmg != 0 || gSpecialStatuses[gBattlerTarget].specialDmg != 0))

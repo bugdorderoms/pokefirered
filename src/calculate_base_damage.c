@@ -391,7 +391,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower *= 2;
 				break;
 			case ABILITY_SHEER_FORCE:
-				if (IsMoveInTable(gSheerForceBoostedMoves, move))
+				if (gBattleMoves[move].flags & FLAG_SHEER_FORCE_BOOST)
 					gBattleMovePower = (gBattleMovePower * 12) / 10;
 				break;
 			case ABILITY_DEFEATIST:

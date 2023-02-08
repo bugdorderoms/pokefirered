@@ -105,5 +105,8 @@ u16 GetBattlerAbility(u8 battler);
 struct Pokemon *GetIllusionMonPtr(u8 battler);
 void ClearIllusionMon(u8 battler);
 bool8 TryRemoveIllusion(u8 battler);
+bool8 ReceiveSheerForceBoost(u8 battler, u16 move);
+bool8 BattlerStatCanRaise(u8 battler, u8 statId);
+bool8 BattlerStatCanFall(u8 battler, u8 statId);
 
 #endif // GUARD_BATTLE_UTIL_H

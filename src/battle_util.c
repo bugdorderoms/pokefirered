@@ -2316,7 +2316,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
                 }
 	        else if (effect == 3)
 		{
-			if (STAT_CAN_RAISE(battler, StatId))
+			if (BattlerStatCanRaise(battler, StatId))
 			{
 				PREPARE_STAT_BUFFER(gBattleTextBuff1, StatId);
 				SET_STATCHANGER(StatId, 1, FALSE);
@@ -2340,7 +2340,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
             }
             break;
         case ABILITYEFFECT_MOVE_END: // Think contact abilities.
-		    if (RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, moveArg) && gLastUsedAbility != ABILITY_ILLUSION)
+		    if (ReceiveSheerForceBoost(gBattlerAttacker, moveArg) && gLastUsedAbility != ABILITY_ILLUSION)
 				break;
 			
             switch (gLastUsedAbility)
@@ -3140,12 +3140,12 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
             case HOLD_EFFECT_RANDOM_STAT_UP:
                 if (!moveTurn && CheckPinchBerryActivate(battlerId))
                 {
-                    for (i = 0; i < 5 && !STAT_CAN_RAISE(battlerId, STAT_ATK + i); ++i);
+                    for (i = 0; i < 5 && !BattlerStatCanRaise(battlerId, STAT_ATK + i); ++i);
                     if (i != 5)
                     {
                         do
                             i = Random() % 5;
-                        while (!STAT_CAN_RAISE(battlerId, STAT_ATK + i));
+                        while (!BattlerStatCanRaise(battlerId, STAT_ATK + i));
                         PREPARE_STAT_BUFFER(gBattleTextBuff1, i + 1);
                         gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
                         gBattleTextBuff2[1] = B_BUFF_STRING;
@@ -3439,7 +3439,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
         }
         break;
     case ITEMEFFECT_KINGSROCK_SHELLBELL:
-        if (gBattleMoveDamage && !RECEIVE_SHEER_FORCE_BOOST(battlerId, gCurrentMove))
+        if (gBattleMoveDamage && !ReceiveSheerForceBoost(battlerId, gCurrentMove))
         {
             switch (battlerHoldEffect)
             {
@@ -3773,4 +3773,25 @@ bool8 TryRemoveIllusion(u8 battler)
 		return TRUE;
 	}
 	return FALSE;
+}
+
+bool8 ReceiveSheerForceBoost(u8 battler, u16 move)
+{
+	return (GetBattlerAbility(battler) == ABILITY_SHEER_FORCE && (gBattleMoves[move].flags & FLAG_SHEER_FORCE_BOOST));
+}
+
+bool8 BattlerStatCanRaise(u8 battler, u8 statId)
+{
+	u8 statStage = gBattleMons[battler].statStages[statId];
+	bool8 hasContrary = GetBattlerAbility(battler) == ABILITY_CONTRARY;
+	
+	return ((statStage < 12 && !hasContrary) || (statStage > 0 && hasContrary));
+}
+
+bool8 BattlerStatCanFall(u8 battler, u8 statId)
+{
+	u8 statStage = gBattleMons[battler].statStages[statId];
+	bool8 hasContrary = GetBattlerAbility(battler) == ABILITY_CONTRARY;
+	
+	return ((statStage > 0 && !hasContrary) || (statStage < 12 && hasContrary));
 }

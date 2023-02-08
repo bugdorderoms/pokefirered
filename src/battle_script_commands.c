@@ -861,87 +861,6 @@ static const u8 sBallCatchBonuses[] =
     20, 15, 10, 15 // Ultra, Great, Poke, Safari
 };
 
-const u16 gSheerForceBoostedMoves[] =
-{
-	MOVE_ANCIENT_POWER,
-	MOVE_ASTONISH,
-	MOVE_BITE,
-	MOVE_BLIZZARD,
-	MOVE_BODY_SLAM,
-	MOVE_BUBBLE,
-	MOVE_BUBBLE_BEAM,
-	MOVE_CONFUSION,
-	MOVE_CRUNCH,
-	MOVE_CRUSH_CLAW,
-	MOVE_DRAGON_BREATH,
-	MOVE_DYNAMIC_PUNCH,
-	MOVE_EMBER,
-	MOVE_EXTRASENSORY,
-	MOVE_FAKE_OUT,
-	MOVE_FIRE_BLAST,
-	MOVE_FIRE_PUNCH,
-	MOVE_FLAME_WHEEL,
-	MOVE_FLAMETHROWER,
-	MOVE_HEADBUTT,
-	MOVE_HEAT_WAVE,
-	MOVE_ICE_BEAM,
-	MOVE_ICE_PUNCH,
-	MOVE_ICY_WIND,
-	MOVE_IRON_TAIL,
-	MOVE_METAL_CLAW,
-	MOVE_MUD_SHOT,
-	MOVE_MUD_SLAP,
-	MOVE_POISON_FANG,
-	MOVE_POISON_STING,
-	MOVE_POISON_TAIL,
-	MOVE_PSYCHIC,
-	MOVE_ROCK_SLIDE,
-	MOVE_ROCK_SMASH,
-	MOVE_ROCK_TOMB,
-	MOVE_SECRET_POWER,
-	MOVE_SHADOW_BALL,
-	MOVE_SKY_ATTACK,
-	MOVE_SLUDGE_BOMB,
-	MOVE_SNORE,
-	MOVE_STEEL_WING,
-	MOVE_STOMP,
-	MOVE_THUNDER,
-	MOVE_THUNDERBOLT,
-	MOVE_THUNDER_PUNCH,
-	MOVE_TWISTER,
-	MOVE_WATER_PULSE,
-	MOVE_WATERFALL,
-	MOVE_ZAP_CANNON,
-	MOVE_ACID,
-	MOVE_AURORA_BEAM,
-	MOVE_BLAZE_KICK,
-	MOVE_BONE_CLUB,
-	MOVE_BOUNCE,
-	MOVE_CONSTRICT,
-	MOVE_DIZZY_PUNCH,
-	MOVE_HYPER_FANG,
-	MOVE_LICK,
-	MOVE_LUSTER_PURGE,
-	MOVE_METEOR_MASH,
-	MOVE_MIST_BALL,
-	MOVE_MUDDY_WATER,
-	MOVE_NEEDLE_ARM,
-	MOVE_OCTAZOOKA,
-	MOVE_POWDER_SNOW,
-	MOVE_PSYBEAM,
-	MOVE_ROLLING_KICK,
-	MOVE_SACRED_FIRE,
-	MOVE_SILVER_WIND,
-	MOVE_SLUDGE,
-	MOVE_SMOG,
-	MOVE_SPARK,
-	MOVE_THUNDER_SHOCK,
-	MOVE_TRI_ATTACK,
-	MOVE_TWINEEDLE,
-	MOVE_VOLT_TACKLE,
-	TABLE_END,
-};
-
 static void atk00_attackcanceler(void)
 {
     s32 i;
@@ -2450,7 +2369,7 @@ static void atk15_seteffectwithchance(void)
     if (GetBattlerAbility(gBattlerAttacker) == ABILITY_SERENE_GRACE)
         percentChance *= 2;
     
-    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && !RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, gCurrentMove))
+    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && !ReceiveSheerForceBoost(gBattlerAttacker, gCurrentMove))
     {
 	    if (gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_CERTAIN)
 	    {
@@ -3733,7 +3652,7 @@ static void atk49_moveend(void)
         switch (gBattleScripting.atk49_state)
         {
         case ATK49_RAGE: // rage check
-            if (gBattleMons[gBattlerTarget].status2 & STATUS2_RAGE && gBattleMons[gBattlerTarget].hp != 0 && STAT_CAN_RAISE(gBattlerTarget, STAT_ATK)
+            if (gBattleMons[gBattlerTarget].status2 & STATUS2_RAGE && gBattleMons[gBattlerTarget].hp != 0 && BattlerStatCanRaise(gBattlerTarget, STAT_ATK)
 		&& gBattlerAttacker != gBattlerTarget && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget) && TARGET_TURN_DAMAGED
 		&& !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMoves[gCurrentMove].power)
             {
@@ -6081,7 +6000,7 @@ static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
             }
             return STAT_CHANGE_DIDNT_WORK;
         }
-        else if ((GetBattlerAbility(gActiveBattler) == ABILITY_SHIELD_DUST || RECEIVE_SHEER_FORCE_BOOST(gBattlerAttacker, gCurrentMove)) && !flags)
+        else if ((GetBattlerAbility(gActiveBattler) == ABILITY_SHIELD_DUST || ReceiveSheerForceBoost(gBattlerAttacker, gCurrentMove)) && !flags)
             return STAT_CHANGE_DIDNT_WORK;
         else // try to decrease
         {
@@ -7348,7 +7267,7 @@ static void atkB3_handlerollout(void)
 
 static void atkB4_jumpifconfusedandstatmaxed(void)
 {
-    if (gBattleMons[gBattlerTarget].status2 & STATUS2_CONFUSION && !STAT_CAN_RAISE(gBattlerTarget, gBattlescriptCurrInstr[1]))
+    if (gBattleMons[gBattlerTarget].status2 & STATUS2_CONFUSION && !BattlerStatCanRaise(gBattlerTarget, gBattlescriptCurrInstr[1]))
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
     else
         gBattlescriptCurrInstr += 6;
@@ -7559,7 +7478,7 @@ static void atkBC_maxattackhalvehp(void) // belly drum
 
     if (halfHp == 0)
         halfHp = 1;
-    if (STAT_CAN_RAISE(gBattlerAttacker, STAT_ATK) && gBattleMons[gBattlerAttacker].hp > halfHp)
+    if (BattlerStatCanRaise(gBattlerAttacker, STAT_ATK) && gBattleMons[gBattlerAttacker].hp > halfHp)
     {
 	if (GetBattlerAbility(gBattlerAttacker) != ABILITY_CONTRARY)
 		gBattleMons[gBattlerAttacker].statStages[STAT_ATK] = 12;
@@ -7797,7 +7716,7 @@ static void atkC8_sethail(void)
 
 static void atkC9_jumpifattackandspecialattackcannotfall(void) // memento
 {
-    if (!STAT_CAN_FALL(gBattlerTarget, STAT_ATK) && !STAT_CAN_FALL(gBattlerTarget, STAT_SPATK) && gBattleCommunication[6] != 1)
+    if (!BattlerStatCanFall(gBattlerTarget, STAT_ATK) && !BattlerStatCanFall(gBattlerTarget, STAT_SPATK) && gBattleCommunication[6] != 1)
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
     else
     {
