@@ -91,7 +91,7 @@ u8 GetMoveTarget(u16 move, u8 setTarget);
 u8 IsMonDisobedient(void);
 bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move);
 u8 GetHiddenPowerType(struct Pokemon *mon);
-bool8 CheckPinchBerryActivate(u8 battler);
+bool8 CheckPinchBerryActivate(u8 battler, u16 item);
 void TryGiveUnburdenBoostToMon(u8 battler);
 void ResetVarsForAbilityChange(u8 battler);
 void ClearBattlerStatus(u8 battler);
@@ -108,5 +108,6 @@ bool8 TryRemoveIllusion(u8 battler);
 bool8 ReceiveSheerForceBoost(u8 battler, u16 move);
 bool8 BattlerStatCanRaise(u8 battler, u8 statId);
 bool8 BattlerStatCanFall(u8 battler, u8 statId);
+bool8 IsUnnerveOnOpposingField(u8 battler);
 
 #endif // GUARD_BATTLE_UTIL_H
