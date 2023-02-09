@@ -456,8 +456,6 @@ extern struct BattleStruct *gBattleStruct;
     (var) /= (gStatStageRatios)[(mon)->statStages[(statIndex)]][1];                 \
 }
 
-#define TABLE_END 0xFFFF
-
 #define IS_MOVE_PHYSICAL(move)(gBattleMoves[move].split == MOVE_PHYSICAL)
 #define IS_MOVE_SPECIAL(move)(gBattleMoves[move].split == MOVE_SPECIAL)
 #define IS_MOVE_STATUS(move)(gBattleMoves[move].split == MOVE_STATUS)
