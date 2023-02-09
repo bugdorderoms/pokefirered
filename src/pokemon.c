@@ -2380,18 +2380,6 @@ u8 GetNumOfBadges(void)
 	}
 	return NumOfBadges;
 }
-
-bool8 IsMoveInTable(const u16 table[], u16 moveId)
-{
-    u32 i;
-    
-    for (i = 0; table[i] != TABLE_END; i++)
-    {
-        if (moveId == table[i])
-            return TRUE;
-    }
-    return FALSE;
-}
  
 u8 CountAliveMonsInBattle(u8 caseId)
 {
