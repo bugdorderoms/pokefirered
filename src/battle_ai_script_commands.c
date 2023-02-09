@@ -257,7 +257,7 @@ static const u16 sDiscouragedPowerfulMoveEffects[] =
     EFFECT_SUPERPOWER,
     EFFECT_ERUPTION,
     EFFECT_OVERHEAT,
-    TABLE_END
+    0xFFFF
 };
 
 void BattleAI_HandleItemUseBeforeAISetup(void)
@@ -854,7 +854,7 @@ static void Cmd_if_in_hwords(void)
 {
     const u16 *ptr = (const u16 *)T1_READ_PTR(sAIScriptPtr + 1);
 
-    while (*ptr != TABLE_END)
+    while (*ptr != 0xFFFF)
     {
         if (AI_THINKING_STRUCT->funcResult == *ptr)
         {
@@ -870,7 +870,7 @@ static void Cmd_if_not_in_hwords(void)
 {
     const u16 *ptr = (const u16 *)T1_READ_PTR(sAIScriptPtr + 1);
 
-    while (*ptr != TABLE_END)
+    while (*ptr != 0xFFFF)
     {
         if (AI_THINKING_STRUCT->funcResult == *ptr)
         {
@@ -954,23 +954,23 @@ static void Cmd_get_how_powerful_move_is(void)
     s32 i, checkedMove;
     s32 moveDmgs[MAX_MON_MOVES];
 
-    for (i = 0; sDiscouragedPowerfulMoveEffects[i] != TABLE_END; i++)
+    for (i = 0; sDiscouragedPowerfulMoveEffects[i] != 0xFFFF; i++)
     {
         if (gBattleMoves[AI_THINKING_STRUCT->moveConsidered].effect == sDiscouragedPowerfulMoveEffects[i])
             break;
     }
 
-    if (gBattleMoves[AI_THINKING_STRUCT->moveConsidered].power > 1 && sDiscouragedPowerfulMoveEffects[i] == TABLE_END)
+    if (gBattleMoves[AI_THINKING_STRUCT->moveConsidered].power > 1 && sDiscouragedPowerfulMoveEffects[i] == 0xFFFF)
     {
         for (checkedMove = 0; checkedMove < MAX_MON_MOVES; checkedMove++)
         {
-            for (i = 0; sDiscouragedPowerfulMoveEffects[i] != TABLE_END; i++)
+            for (i = 0; sDiscouragedPowerfulMoveEffects[i] != 0xFFFF; i++)
             {
                 if (gBattleMoves[gBattleMons[gBattlerAttacker].moves[checkedMove]].effect == sDiscouragedPowerfulMoveEffects[i])
                     break;
             }
 
-            if (gBattleMons[gBattlerAttacker].moves[checkedMove] != MOVE_NONE && sDiscouragedPowerfulMoveEffects[i] == TABLE_END
+            if (gBattleMons[gBattlerAttacker].moves[checkedMove] != MOVE_NONE && sDiscouragedPowerfulMoveEffects[i] == 0xFFFF
                 && gBattleMoves[gBattleMons[gBattlerAttacker].moves[checkedMove]].power > 1)
             {
                 AI_CalcDmg(gBattlerAttacker, gBattlerTarget, gBattleMons[gBattlerAttacker].moves[checkedMove]);
