@@ -136,9 +136,6 @@ analytic
 illusion
 imposter
 
-// Needing put in
-add the new moves in sPowderAndSporeMoves
-
 // put in
 evolve without national dex
 critical hit probability
