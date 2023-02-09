@@ -47,16 +47,6 @@ static const u8 sHealerString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\
 static const u8 sHarvestString[] = _("{B_ATK_NAME_WITH_PREFIX} harvested\nits {B_LAST_ITEM}!");
 static const u8 sIllusionOffString[] = _("{B_DEF_NAME_WITH_PREFIX}'s illusion wore off!");
 
-static const u16 sPowderAndSporeMoves[] =
-{
-	MOVE_COTTON_SPORE,
-	MOVE_POISON_POWDER,
-	MOVE_SLEEP_POWDER,
-	MOVE_SPORE,
-	MOVE_STUN_SPORE,
-	TABLE_END,
-};
-
 static bool8 CanBeStatused(u8 bank)
 {
 	if (gBattleMons[bank].status1 & STATUS1_ANY)
@@ -1658,7 +1648,7 @@ u8 AtkCanceller_UnableToUseMove(void)
             ++gBattleStruct->atkCancellerTracker;
             break;
 	case CANCELLER_POWDER_MOVE:
-	    if (gBattlerAttacker != gBattlerTarget && IsMoveInTable(sPowderAndSporeMoves, gCurrentMove)
+	    if (gBattlerAttacker != gBattlerTarget && gBattleMoves[gCurrentMove].flags & FLAG_POWDER
 		&& (GetBattlerAbility(gBattlerTarget) == ABILITY_OVERCOAT || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_GRASS)))
 	    {
 		    gBattlescriptCurrInstr = BattleScript_PowderMoveNoEffect;
