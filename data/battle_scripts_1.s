@@ -4601,7 +4601,7 @@ BattleScript_CursedBodyReturn::
 	return
 
 BattleScript_HealerActivates::
-        loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+        loadabilitypopup LOAD_ABILITY_FROM_SECOND_BANK, BS_ATTACKER, BS_ATTACKER
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
 	updatestatusicon BS_EFFECT_BATTLER
@@ -4609,7 +4609,7 @@ BattleScript_HealerActivates::
 	end3
 
 BattleScript_WeakArmorActivation::
-        loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, ABILITY_WEAK_ARMOR
+        loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	setstatchanger STAT_DEF, 1, TRUE
 	statbuffchange STAT_CHANGE_BS_PTR, BattleScript_WeakArmorRaisesSpeed
 	jumpifbyte CMP_LESS_THAN, cMULTISTRING_CHOOSER, 2, BattleScript_WeakArmorDefAnim
@@ -4641,9 +4641,9 @@ BattleScript_WeakArmorSpeedUpPrintString::
 	goto BattleScript_CursedBodyReturn
 
 BattleScript_HarvestActivates::
-    pause 5
+        pause 5
 	tryrecycleitem BattleScript_HarvestEnd
-    loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+        loadabilitypopup LOAD_ABILITY_FROM_SECOND_BANK, BS_ATTACKER, BS_ATTACKER
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
 	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
