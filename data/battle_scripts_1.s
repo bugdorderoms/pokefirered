@@ -4729,3 +4729,18 @@ BattleScript_ImposterActivates::
 	waitmessage 0x40
 	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
         end3
+
+BattleScript_MummyActivates::
+    loadabilitypopup LOAD_ABILITY_FROM_SECOND_BANK, BS_TARGET, BS_TARGET
+	pause 0x20
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	pause 0x20
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	pause 0x20
+	loadabilitypopup LOAD_ABILITY_FROM_SECOND_BANK, BS_ATTACKER, BS_ATTACKER
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	pause 0x20
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	return

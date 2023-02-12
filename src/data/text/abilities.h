@@ -745,4 +745,5 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_ILLUSION] = _("Illusion"),
     [ABILITY_IMPOSTER] = _("Imposter"),
     [ABILITY_INFILTRATOR] = _("Infiltrator"),
+	[ABILITY_MUMMY] = _("Mummy"),
 };

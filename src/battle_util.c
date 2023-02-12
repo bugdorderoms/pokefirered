@@ -46,6 +46,7 @@ static const u8 sCursedBodyString[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILI
 static const u8 sHealerString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\ncured {B_EFF_NAME_WITH_PREFIX}'s\l{B_BUFF1} problem!");
 static const u8 sHarvestString[] = _("{B_ATK_NAME_WITH_PREFIX} harvested\nits {B_LAST_ITEM}!");
 static const u8 sIllusionOffString[] = _("{B_DEF_NAME_WITH_PREFIX}'s illusion wore off!");
+static const u8 sMummyString[] = _("{B_ATK_NAME_WITH_PREFIX}'s ability became\n{B_ATK_ABILITY}!");
 
 static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
 {
@@ -2592,6 +2593,42 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && TryRemoveIllusion(gBattlerTarget))
 				    ++effect;
 			    break;
+			case ABILITY_MUMMY:
+			case ABILITY_LINGERING_AROMA:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gBattleMons[gBattlerAttacker].hp != 0 && TARGET_TURN_DAMAGED && gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT)
+				{
+					switch (gBattleMons[gBattlerAttacker].ability)
+					{
+						case ABILITY_MULTITYPE:
+						case ABILITY_ZEN_MODE:
+						case ABILITY_STANCE_CHANGE:
+						case ABILITY_SHIELDS_DOWN:
+						case ABILITY_SCHOOLING:
+						case ABILITY_DISGUISE:
+						case ABILITY_BATTLE_BOND:
+						case ABILITY_POWER_CONSTRUCT:
+						case ABILITY_COMATOSE:
+						case ABILITY_RKS_SYSTEM:
+						case ABILITY_AS_ONE_ICE_RIDER:
+						case ABILITY_AS_ONE_SHADOW_RIDER:
+						case ABILITY_ZERO_TO_HERO:
+						case ABILITY_COMMANDER:
+						case ABILITY_LINGERING_AROMA:
+						case ABILITY_MUMMY:
+						    break;
+						default:
+						    gLastUsedAbility = gBattleMons[gBattlerAttacker].ability;
+							gBattleMons[gBattlerAttacker].ability = gBattleMons[gBattlerTarget].ability;
+							ResetVarsForAbilityChange(gBattlerAttacker);
+							gSetWordLoc = sMummyString;
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_MummyActivates;
+							RecordAbilityBattle(battler, gBattleMons[gBattlerTarget].ability);
+							effect++;
+							return effect;
+					}
+				}
+				break;
 	    }
 	    break;
 	case ABILITYEFFECT_MOVE_END_ATTACKER:

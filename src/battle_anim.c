@@ -1396,13 +1396,16 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_Protect, 0x0800, ANIM_TAG_PROTECT},
     {gBattleAnimSpriteGfx_DirtMound, 0x0200, ANIM_TAG_DIRT_MOUND},
     {gBattleAnimSpriteGfx_Shock3, 0x0600, ANIM_TAG_SHOCK_3},
-    {gBattleAnimSpriteGfx_WeatherBall, 0x0200, ANIM_TAG_WEATHER_BALL},
+	{gBattleAnimSpriteGfx_WeatherBall, 0x0200, ANIM_TAG_WEATHER_BALL},
     {gBattleAnimSpriteGfx_Bird, 0x0800, ANIM_TAG_BIRD},
     {gBattleAnimSpriteGfx_CrossImpact, 0x0200, ANIM_TAG_CROSS_IMPACT},
     {gBattleAnimSpriteGfx_Slash, 0x0800, ANIM_TAG_SLASH_2},
     {gBattleAnimSpriteGfx_SlamHit, 0x1000, ANIM_TAG_WHIP_HIT},
     {gBattleAnimSpriteGfx_GoldRing, 0x0100, ANIM_TAG_BLUE_RING_2},
-    {gBattleAnimSpriteGfx_AbilityPopUp, 0x0800, ANIM_TAG_ABILITY_POP_UP},
+	{gBattleAnimSpriteGfx_AbilityPopUp, 0x0800, ANIM_TAG_ABILITY_POP_UP},
+	{gBattleAnimSpriteGfx_AbilityPopUp, 0x0800, ANIM_TAG_ABILITY_POP_UP2},
+	{gBattleAnimSpriteGfx_AbilityPopUp, 0x0800, ANIM_TAG_ABILITY_POP_UP3},
+	{gBattleAnimSpriteGfx_AbilityPopUp, 0x0800, ANIM_TAG_ABILITY_POP_UP4},
 };
 
 const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
@@ -1690,13 +1693,16 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_Protect, ANIM_TAG_PROTECT},
     {gBattleAnimSpritePal_DirtMound, ANIM_TAG_DIRT_MOUND},
     {gBattleAnimSpritePal_Shock3, ANIM_TAG_SHOCK_3},
-    {gBattleAnimSpritePal_WeatherBall, ANIM_TAG_WEATHER_BALL},
+	{gBattleAnimSpritePal_WeatherBall, ANIM_TAG_WEATHER_BALL},
     {gBattleAnimSpritePal_Bird, ANIM_TAG_BIRD},
     {gBattleAnimSpritePal_CrossImpact, ANIM_TAG_CROSS_IMPACT},
     {gBattleAnimSpritePal_Slash2, ANIM_TAG_SLASH_2},
     {gBattleAnimSpritePal_WhipHit, ANIM_TAG_WHIP_HIT},
     {gBattleAnimSpritePal_BlueRing2, ANIM_TAG_BLUE_RING_2},
-    {gBattleAnimSpritePal_AbilityPopUp, ANIM_TAG_ABILITY_POP_UP},
+	{gBattleAnimSpritePal_AbilityPopUp, ANIM_TAG_ABILITY_POP_UP},
+	{gBattleAnimSpritePal_AbilityPopUp, ANIM_TAG_ABILITY_POP_UP},
+	{gBattleAnimSpritePal_AbilityPopUp, ANIM_TAG_ABILITY_POP_UP},
+	{gBattleAnimSpritePal_AbilityPopUp, ANIM_TAG_ABILITY_POP_UP},
 };
 
 const struct BattleAnimBackground gBattleAnimBackgroundTable[] =
