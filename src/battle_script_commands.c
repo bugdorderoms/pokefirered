@@ -1986,11 +1986,64 @@ void SetMoveEffect(bool8 primary, u8 certain)
             statusChanged = TRUE;
             break;
         case STATUS1_POISON:
-	case STATUS1_TOXIC_POISON:
+	    if ((GetBattlerAbility(gEffectBattler) == ABILITY_IMMUNITY || GetBattlerAbility(gEffectBattler) == ABILITY_PASTEL_VEIL) && (primary == TRUE || certain == MOVE_EFFECT_CERTAIN))
+	    {
+		    gLastUsedAbility = GetBattlerAbility(gEffectBattler);
+		    RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+		    BattleScriptPush(gBattlescriptCurrInstr + 1);
+		    gBattlescriptCurrInstr = BattleScript_PSNPrevention;
+		    
+		    if (gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
+		    {
+			    gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+			    gHitMarker &= ~(HITMARKER_IGNORE_SAFEGUARD);
+		    }
+		    else
+			    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+		    return;
+	    }
 	    if (CanBePoisoned(gEffectBattler, gBattlerAttacker))
 		    statusChanged = TRUE;
             break;
+	case STATUS1_TOXIC_POISON:
+	    if ((GetBattlerAbility(gEffectBattler) == ABILITY_IMMUNITY || GetBattlerAbility(gEffectBattler) == ABILITY_PASTEL_VEIL) && (primary == TRUE || certain == MOVE_EFFECT_CERTAIN))
+	    {
+		    gLastUsedAbility = GetBattlerAbility(gEffectBattler);
+		    RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+		    BattleScriptPush(gBattlescriptCurrInstr + 1);
+		    gBattlescriptCurrInstr = BattleScript_PSNPrevention;
+		    
+		    if (gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
+		    {
+			    gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+			    gHitMarker &= ~(HITMARKER_IGNORE_SAFEGUARD);
+		    }
+		    else
+			    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+		    return;
+	    }
+	    if (CanBePoisoned(gEffectBattler, gBattlerAttacker))
+		    statusChanged = TRUE;
+	    else
+		    gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+	    break;
         case STATUS1_BURN:
+	    if ((GetBattlerAbility(gEffectBattler) == ABILITY_WATER_VEIL || GetBattlerAbility(gEffectBattler) == ABILITY_WATER_BUBBLE) && (primary == TRUE || certain == MOVE_EFFECT_CERTAIN))
+	    {
+		    gLastUsedAbility = GetBattlerAbility(gEffectBattler);
+		    RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+		    BattleScriptPush(gBattlescriptCurrInstr + 1);
+		    gBattlescriptCurrInstr = BattleScript_BRNPrevention;
+		    
+		    if (gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
+		    {
+			    gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+			    gHitMarker &= ~(HITMARKER_IGNORE_SAFEGUARD);
+		    }
+		    else
+			    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+		    return;
+	    }
 	    if (CanBeBurned(gEffectBattler))
 		    statusChanged = TRUE;
             break;
@@ -2002,6 +2055,27 @@ void SetMoveEffect(bool8 primary, u8 certain)
 	    }
             break;
         case STATUS1_PARALYSIS:
+	    if (GetBattlerAbility(gEffectBattler) == ABILITY_LIMBER)
+	    {
+		    if (primary == TRUE || certain == MOVE_EFFECT_CERTAIN)
+		    {
+			    gLastUsedAbility = GetBattlerAbility(gEffectBattler);
+			    RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+			    BattleScriptPush(gBattlescriptCurrInstr + 1);
+			    gBattlescriptCurrInstr = BattleScript_PRLZPrevention;
+			    
+			    if (gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
+			    {
+				    gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+				    gHitMarker &= ~(HITMARKER_IGNORE_SAFEGUARD);
+			    }
+			    else
+				    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+			    return;
+		    }
+		    else
+			    break;
+	    }
             if (CanBeParalyzed(gEffectBattler))
 		    statusChanged = TRUE;
             break;
