@@ -264,6 +264,9 @@ extern const u8 BattleScript_NotAffected[];
 extern const u8 BattleScript_PoisonTouchActivation[];
 extern const u8 BattleScript_IllusionOff[];
 extern const u8 BattleScript_ImposterActivates[];
+extern const u8 BattleScript_PSNPrevention[];
+extern const u8 BattleScript_BRNPrevention[];
+extern const u8 BattleScript_PRLZPrevention[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];
