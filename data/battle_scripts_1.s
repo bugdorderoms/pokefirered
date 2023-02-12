@@ -712,11 +712,17 @@ BattleScript_AlreadyPoisoned::
 BattleScript_ImmunityProtected::
         pause 0x40
 	copybyte gEffectBattler, gBattlerTarget
+	setbyte cMULTISTRING_CHOOSER, 0
 	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
-	printstring STRINGID_PKMNPREVENTSPOISONINGWITH
-	waitmessage 0x40
+	call BattleScript_PSNPrevention
 	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	goto BattleScript_MoveEnd
+
+BattleScript_PSNPrevention::
+        pause 0x20
+	printfromtable gPSNPreventionStringIds
+	waitmessage 0x40
+	return
 
 BattleScript_EffectPayDay::
 	setmoveeffect MOVE_EFFECT_PAYDAY
@@ -1019,11 +1025,17 @@ BattleScript_AlreadyParalyzed::
 BattleScript_LimberProtected::
         pause 0x40
 	copybyte gEffectBattler, gBattlerTarget
+	setbyte cMULTISTRING_CHOOSER, 0
 	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
-	printstring STRINGID_PKMNPREVENTSPARALYSISWITH
-	waitmessage 0x40
+	call BattleScript_PRLZPrevention
 	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	goto BattleScript_MoveEnd
+
+BattleScript_PRLZPrevention::
+        pause 0x20
+	printfromtable gPRLZPreventionStringIds
+	waitmessage 0x40
+	return
 
 BattleScript_EffectAttackDownHit::
 	setmoveeffect MOVE_EFFECT_ATK_MINUS_1
@@ -2174,11 +2186,17 @@ BattleScript_AlreadyBurned::
 BattleScript_WaterVeilPrevents::
         pause 0x40
 	copybyte gEffectBattler, gBattlerTarget
+	setbyte cMULTISTRING_CHOOSER, 0
 	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
-	printstring STRINGID_PKMNSXPREVENTSBURNS
-	waitmessage 0x40
+	call BattleScript_BRNPrevention
 	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	goto BattleScript_MoveEnd
+
+BattleScript_BRNPrevention::
+       pause 0x20
+       printfromtable gBRNPreventionStringIds
+       waitmessage 0x40
+       return
 
 BattleScript_EffectMemento::
 	attackcanceler
