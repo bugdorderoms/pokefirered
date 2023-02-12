@@ -442,8 +442,8 @@ struct Illusion
 struct NewBattleStruct
 {
     u8 SlowStartTimers[MAX_BATTLERS_COUNT];
-    u8 IgnoredAbilities;
     u8 UnburdenBoostBits;
+	u8 unused2;
     u16 unused;
     struct Illusion illusion[MAX_BATTLERS_COUNT];
 };

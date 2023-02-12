@@ -1337,10 +1337,6 @@
 	various \battler, 12
 	.endm
 	
-	.macro restoreabilityonswitch battler:req
-	various \battler, VARIOUS_RESTORE_ABILITY_ON_SWITCH
-        .endm
-
         .macro trydoaftermathdamage battler:req
 	various \battler, VARIOUS_TRY_DO_AFTERMATH_DAMAGE
 	.endm

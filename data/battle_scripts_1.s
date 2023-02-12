@@ -3268,7 +3268,6 @@ BattleScript_TrainerBattleForceOut::
 	switchinanim BS_TARGET, 0
 	waitstate
 	printstring STRINGID_PKMNWASDRAGGEDOUT
-	restoreabilityonswitch BS_TARGET
 	switchineffects BS_TARGET
 	goto BattleScript_MoveEnd
 

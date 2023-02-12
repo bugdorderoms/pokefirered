@@ -224,85 +224,6 @@ u8 gMultiUsePlayerCursor;
 u8 gNumberOfMovesToChoose;
 u8 gBattleControllerData[MAX_BATTLERS_COUNT];
 
-static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
-{
-    [ABILITY_BATTLE_ARMOR] = TRUE,
-    [ABILITY_CLEAR_BODY] = TRUE,
-    [ABILITY_DAMP] = TRUE,
-    [ABILITY_DRY_SKIN] = TRUE,
-    [ABILITY_FILTER] = TRUE,
-    [ABILITY_FLASH_FIRE] = TRUE,
-    [ABILITY_FLOWER_GIFT] = TRUE,
-    [ABILITY_HEATPROOF] = TRUE,
-    [ABILITY_HYPER_CUTTER] = TRUE,
-    [ABILITY_IMMUNITY] = TRUE,
-    [ABILITY_INNER_FOCUS] = TRUE,
-    [ABILITY_INSOMNIA] = TRUE,
-    [ABILITY_KEEN_EYE] = TRUE,
-    [ABILITY_LEAF_GUARD] = TRUE,
-    [ABILITY_LEVITATE] = TRUE,
-    [ABILITY_LIGHTNING_ROD] = TRUE,
-    [ABILITY_LIMBER] = TRUE,
-    [ABILITY_MAGMA_ARMOR] = TRUE,
-    [ABILITY_MARVEL_SCALE] = TRUE,
-    [ABILITY_MOTOR_DRIVE] = TRUE,
-    [ABILITY_OBLIVIOUS] = TRUE,
-    [ABILITY_OWN_TEMPO] = TRUE,
-    [ABILITY_SAND_VEIL] = TRUE,
-    [ABILITY_SHELL_ARMOR] = TRUE,
-    [ABILITY_SHIELD_DUST] = TRUE,
-    [ABILITY_SIMPLE] = TRUE,
-    [ABILITY_SNOW_CLOAK] = TRUE,
-    [ABILITY_SOLID_ROCK] = TRUE,
-    [ABILITY_SOUNDPROOF] = TRUE,
-    [ABILITY_STICKY_HOLD] = TRUE,
-    [ABILITY_STORM_DRAIN] = TRUE,
-    [ABILITY_STURDY] = TRUE,
-    [ABILITY_SUCTION_CUPS] = TRUE,
-    [ABILITY_TANGLED_FEET] = TRUE,
-    [ABILITY_THICK_FAT] = TRUE,
-    [ABILITY_UNAWARE] = TRUE,
-    [ABILITY_VITAL_SPIRIT] = TRUE,
-    [ABILITY_VOLT_ABSORB] = TRUE,
-    [ABILITY_WATER_ABSORB] = TRUE,
-    [ABILITY_WATER_VEIL] = TRUE,
-    [ABILITY_WHITE_SMOKE] = TRUE,
-    [ABILITY_WONDER_GUARD] = TRUE,
-    [ABILITY_BIG_PECKS] = TRUE,
-    [ABILITY_CONTRARY] = TRUE,
-    [ABILITY_FRIEND_GUARD] = TRUE,
-    [ABILITY_HEAVY_METAL] = TRUE,
-    [ABILITY_LIGHT_METAL] = TRUE,
-    [ABILITY_MAGIC_BOUNCE] = TRUE,
-    [ABILITY_MULTISCALE] = TRUE,
-    [ABILITY_SAP_SIPPER] = TRUE,
-    [ABILITY_TELEPATHY] = TRUE,
-    [ABILITY_WONDER_SKIN] = TRUE,
-    [ABILITY_AURA_BREAK] = TRUE,
-    [ABILITY_AROMA_VEIL] = TRUE,
-    [ABILITY_BULLETPROOF] = TRUE,
-    [ABILITY_FLOWER_VEIL] = TRUE,
-    [ABILITY_FUR_COAT] = TRUE,
-    [ABILITY_OVERCOAT] = TRUE,
-    [ABILITY_SWEET_VEIL] = TRUE,
-    [ABILITY_DAZZLING] = TRUE,
-    [ABILITY_DISGUISE] = TRUE,
-    [ABILITY_FLUFFY] = TRUE,
-    [ABILITY_QUEENLY_MAJESTY] = TRUE,
-    [ABILITY_WATER_BUBBLE] = TRUE,
-    [ABILITY_ICE_SCALES] = TRUE,
-    [ABILITY_ICE_FACE] = TRUE,
-    [ABILITY_MIRROR_ARMOR] = TRUE,
-    [ABILITY_PASTEL_VEIL] = TRUE,
-    [ABILITY_PUNK_ROCK] = TRUE,
-    [ABILITY_ARMOR_TAIL] = TRUE,
-    [ABILITY_EARTH_EATER] = TRUE,
-    [ABILITY_GOOD_AS_GOLD] = TRUE,
-    [ABILITY_PURIFYING_SALT] = TRUE,
-    [ABILITY_WELL_BAKED_BODY] = TRUE,
-    [ABILITY_WIND_RIDER] = TRUE,
-};
-
 static const struct ScanlineEffectParams sIntroScanlineParams16Bit =
 {
     &REG_BG3HOFS, SCANLINE_EFFECT_DMACNT_16BIT, 1
@@ -4258,16 +4179,6 @@ static void HandleAction_UseMove(void)
     {
         gCurrentActionFuncId = B_ACTION_FINISHED;
         return;
-    }
-    // removes all ignorable abilities
-    gNewBattleStruct.IgnoredAbilities = 0;
-    if (GetBattlerAbility(gBattlerAttacker) == ABILITY_MOLD_BREAKER)
-    {
-        for (i = 0; i < gBattlersCount; i++)
-        {
-            if (gBattlerAttacker != i && sIgnorableAbilities[gBattleMons[i].ability])
-                gNewBattleStruct.IgnoredAbilities |= gBitTable[i];
-        }
     }
     gCritMultiplier = 1;
     gBattleScripting.dmgMultiplier = 1;

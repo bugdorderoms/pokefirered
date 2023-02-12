@@ -3401,7 +3401,6 @@ static void atk3D_end(void)
     gMoveResultFlags = 0;
     gActiveBattler = 0;
     gCurrentActionFuncId = B_ACTION_TRY_FINISH;
-    gNewBattleStruct.IgnoredAbilities = 0;
 }
 
 static void atk3E_end2(void)
@@ -5503,9 +5502,7 @@ static void atk76_various(void)
             return;
         break;
     case VARIOUS_RESTORE_ABILITY_ON_SWITCH:
-	if (gNewBattleStruct.IgnoredAbilities & gBitTable[gActiveBattler])
-		gNewBattleStruct.IgnoredAbilities &= ~(gBitTable[gActiveBattler]);
-        break;
+	    break;
     case VARIOUS_JUMP_IF_TARGET_ALLY:
 	if (GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
 		gBattlescriptCurrInstr += 7;
