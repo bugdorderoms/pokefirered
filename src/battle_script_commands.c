@@ -1861,8 +1861,8 @@ static void atk10_printstring(void)
     {
         u16 var = T2_READ_16(gBattlescriptCurrInstr + 1);
 
-        PrepareStringBattle(var, gBattlerAttacker);
         gBattlescriptCurrInstr += 3;
+        PrepareStringBattle(var, gBattlerAttacker);
         gBattleCommunication[MSG_DISPLAY] = 1;
     }
 }
@@ -1901,12 +1901,11 @@ static void atk13_printfromtable(void)
     if (!gBattleControllerExecFlags)
     {
         const u16 *ptr = (const u16 *) T1_READ_PTR(gBattlescriptCurrInstr + 1);
-
         ptr += gBattleCommunication[MULTISTRING_CHOOSER];
+		
+		gBattlescriptCurrInstr += 5;
         PrepareStringBattle(*ptr, gBattlerAttacker);
-        gBattlescriptCurrInstr += 5;
         gBattleCommunication[MSG_DISPLAY] = 1;
-	TryActivateDefiant(*ptr);
     }
 }
 
@@ -6024,6 +6023,8 @@ static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
         gActiveBattler = gBattlerAttacker;
     else
         gActiveBattler = gBattlerTarget;
+	
+	gSpecialStatuses[gActiveBattler].changedStatsBattlerId = gBattlerAttacker;
 	
     flags &= ~(MOVE_EFFECT_AFFECTS_USER);
     if (flags & MOVE_EFFECT_CERTAIN)

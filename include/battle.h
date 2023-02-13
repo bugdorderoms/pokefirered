@@ -220,6 +220,7 @@ struct SpecialStatus
     s32 specialDmg;
     u8 physicalBattlerId;
     u8 specialBattlerId;
+	u8 changedStatsBattlerId;
 };
 
 extern struct SpecialStatus gSpecialStatuses[MAX_BATTLERS_COUNT];

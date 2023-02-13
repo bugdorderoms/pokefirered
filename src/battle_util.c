@@ -459,8 +459,36 @@ u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating)
 	return holdEffect;
 }
 
+static void TryActivateDefiant(u16 stringId)
+{
+	if ((stringId == STRINGID_PKMNSSTATCHANGED4 || stringId == STRINGID_PKMNCUTSATTACKWITH) && (gSpecialStatuses[gBattlerTarget].changedStatsBattlerId != (gBattlerTarget ^ BIT_FLANK))
+	&& gSpecialStatuses[gBattlerTarget].changedStatsBattlerId != gBattlerTarget)
+	{
+		switch (GetBattlerAbility(gBattlerTarget))
+		{
+			case ABILITY_DEFIANT:
+			    if (gBattleMons[gBattlerTarget].statStages[STAT_ATK] < 0xC)
+				{
+					gLastUsedAbility = ABILITY_DEFIANT;
+					SET_STATCHANGER(STAT_ATK, 2, FALSE);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
+				}
+			    break;
+		}
+	}
+	if (stringId == STRINGID_PKMNCUTSATTACKWITH && GetBattlerAbility(gBattlerTarget) == ABILITY_RATTLED && gBattleMons[gBattlerTarget].statStages[STAT_SPEED] < 0xC)
+	{
+		gLastUsedAbility = ABILITY_RATTLED;
+		SET_STATCHANGER(STAT_SPEED, 1, FALSE);
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
+	}
+}
+
 void PrepareStringBattle(u16 stringId, u8 battler)
 {
+	TryActivateDefiant(stringId);
     gActiveBattler = battler;
     BtlController_EmitPrintString(0, stringId);
     MarkBattlerForControllerExec(gActiveBattler);
@@ -2629,6 +2657,28 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 					}
 				}
 				break;
+			case ABILITY_JUSTIFIED:
+				if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && gBattleMons[gBattlerTarget].hp != 0 && gBattleMons[gBattlerTarget].statStages[STAT_ATK] < 0xC
+				&& moveType == TYPE_DARK)
+				{
+					gEffectBattler = gBattlerTarget;
+					SET_STATCHANGER(STAT_ATK, 1, FALSE);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaiseRet;
+					effect++;
+				}
+				break;
+			case ABILITY_RATTLED:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && gBattleMons[gBattlerTarget].hp != 0 && gBattleMons[gBattlerTarget].statStages[STAT_SPEED] < 0xC
+				&& (moveType == TYPE_BUG || moveType == TYPE_DARK || moveType == TYPE_GHOST))
+				{
+					gEffectBattler = gBattlerTarget;
+					SET_STATCHANGER(STAT_SPEED, 1, FALSE);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaiseRet;
+					effect++;
+				}
+				break;
 	    }
 	    break;
 	case ABILITYEFFECT_MOVE_END_ATTACKER:
@@ -3910,22 +3960,6 @@ bool8 IsUnnerveOnOpposingField(u8 battler)
 	if (ABILITY_ON_OPPOSING_FIELD(battler, ABILITY_UNNERVE) || ABILITY_ON_OPPOSING_FIELD(battler, ABILITY_AS_ONE_ICE_RIDER) || ABILITY_ON_OPPOSING_FIELD(battler, ABILITY_AS_ONE_SHADOW_RIDER))
 		return TRUE;
 	return FALSE;
-}
-
-void TryActivateDefiant(u16 stringId)
-{
-	if (stringId == STRINGID_PKMNSSTATCHANGED4 && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
-	{
-		switch (GetBattlerAbility(gBattlerTarget))
-		{
-			case ABILITY_DEFIANT:
-			    gLastUsedAbility = ABILITY_DEFIANT;
-			    SET_STATCHANGER(STAT_ATK, 2, FALSE);
-			    BattleScriptPushCursor();
-			    gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
-			    break;
-		}
-	}
 }
 
 u16 GetUsedHeldItem(u8 battler)

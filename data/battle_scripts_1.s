@@ -4014,7 +4014,7 @@ BattleScript_IntimidateActivationAnimLoop::
 	jumpifbyte CMP_GREATER_THAN, cMULTISTRING_CHOOSER, 1, BattleScript_IntimidateFail
 	setgraphicalstatchangevalues
 	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
-	printfromtable gStatUpStringIds
+	printstring STRINGID_PKMNCUTSATTACKWITH
 	waitmessage 0x40
 BattleScript_IntimidateFail::
 	addbyte gBattlerTarget, 1
@@ -4597,15 +4597,13 @@ BattleScript_PickpocketActivation::
         return
 
 BattleScript_DefiantCompetitive::
-        statbuffchange STAT_CHANGE_BS_PTR, BattleScript_AnticipationReturn
-	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 2, BattleScript_AnticipationReturn
-	pause 0x20
-	setbyte sSTAT_ANIM_PLAYED, 0
+    pause 0x20
 	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	statbuffchange 0, NULL
 	setgraphicalstatchangevalues
 	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
-	printfromtable gStatUpStringIds
-        waitmessage 0x40
+	printstring STRINGID_PKMNSSTATCHANGED2
+    waitmessage 0x40
 	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
 	return
 	
@@ -4755,3 +4753,13 @@ BattleScript_RaiseStatOnFaintingTarget::
 	waitmessage 0x40
 	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	return
+
+BattleScript_TargetAbilityStatRaiseRet::
+    copybyte gBattlerAttacker, gBattlerTarget
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, BattleScript_TargetAbilityStatRaiseRet_End
+	setgraphicalstatchangevalues
+	call BattleScript_StatUp
+BattleScript_TargetAbilityStatRaiseRet_End::
+    loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+    return
