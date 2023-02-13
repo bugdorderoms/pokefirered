@@ -268,6 +268,7 @@ extern const u8 BattleScript_PSNPrevention[];
 extern const u8 BattleScript_BRNPrevention[];
 extern const u8 BattleScript_PRLZPrevention[];
 extern const u8 BattleScript_MummyActivates[];
+extern const u8 BattleScript_RaiseStatOnFaintingTarget[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];

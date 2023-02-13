@@ -80,7 +80,7 @@
 #define VARIOUS_RETURN_OPPONENT_MON2             10
 #define VARIOUS_CHECK_POKEFLUTE                  11
 #define VARIOUS_WAIT_FANFARE                     12
-#define VARIOUS_RESTORE_ABILITY_ON_SWITCH        13 // unused
+#define VARIOUS_TRY_ACTIVATE_MOXIE               13
 #define VARIOUS_JUMP_IF_TARGET_ALLY              14
 #define VARIOUS_TRAINER_SLIDE_FIRST_MON_DOWN     15
 #define VARIOUS_TRAINER_SLIDE_LAST_MON           16
@@ -88,6 +88,7 @@
 #define VARIOUS_SET_SPRITEIGNORE0HP              18
 #define VARIOUS_TRY_REMOVE_ILLUSION              19
 #define VARIOUS_PLAY_TRANSFORM_ANIMATION         20
+#define JUMP_IF_BATTLE_END                       21
 
 // atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN                               0

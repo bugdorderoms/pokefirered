@@ -2783,6 +2783,7 @@ BattleScript_FaintTarget::
 	cleareffectsonfaint BS_TARGET
 	printstring STRINGID_TARGETFAINTED
 	printstring STRINGID_EMPTYSTRING3
+	tryactivatemoxie BS_ATTACKER
         tryfirstmondowntrainerslide BS_TARGET
 	return
 
@@ -4743,4 +4744,14 @@ BattleScript_MummyActivates::
 	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	pause 0x20
 	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	return
+
+BattleScript_RaiseStatOnFaintingTarget::
+    loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	setgraphicalstatchangevalues
+	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	waitanimation
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
 	return

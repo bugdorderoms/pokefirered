@@ -111,5 +111,8 @@ bool8 BattlerStatCanFall(u8 battler, u8 statId);
 bool8 IsUnnerveOnOpposingField(u8 battler);
 void TryActivateDefiant(u16 stringId);
 u16 GetUsedHeldItem(u8 battler);
+bool8 NoAliveMonsForPlayer(void);
+bool8 NoAliveMonsForOpponent(void);
+bool8 NoAliveMonsForEitherParty(void);
 
 #endif // GUARD_BATTLE_UTIL_H

@@ -1337,8 +1337,8 @@
 	various \battler, 12
 	.endm
 	
-        .macro trydoaftermathdamage battler:req
-	various \battler, VARIOUS_TRY_DO_AFTERMATH_DAMAGE
+        .macro tryactivatemoxie battler:req
+	various \battler, VARIOUS_TRY_ACTIVATE_MOXIE
 	.endm
 
         .macro tryfirstmondowntrainerslide battler:req
