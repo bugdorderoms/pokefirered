@@ -2659,7 +2659,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				break;
 			case ABILITY_JUSTIFIED:
 				if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && gBattleMons[gBattlerTarget].hp != 0 && gBattleMons[gBattlerTarget].statStages[STAT_ATK] < 0xC
-				&& moveType == TYPE_DARK)
+				&& moveType == TYPE_DARK && !SubsBlockMove(gBattlerAttacker, gBattlerTarget, moveArg))
 				{
 					gEffectBattler = gBattlerTarget;
 					SET_STATCHANGER(STAT_ATK, 1, FALSE);
