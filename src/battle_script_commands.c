@@ -54,6 +54,7 @@ static const u8 sDownloadString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY
 static const u8 sForewarnString[] = _("It was alerted to\n{B_DEF_NAME_WITH_PREFIX}'s {B_BUFF1}!");
 static const u8 sFriskString[] = _("{B_ATK_NAME_WITH_PREFIX} frisked {B_DEF_NAME_WITH_PREFIX}\nand found its {B_LAST_ITEM}!");
 static const u8 sBellyDrumContraryString[] = _("{B_ATK_NAME_WITH_PREFIX} cut its own HP\nand minimized Attack!");
+static const u8 sMagicBounceString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_CURRENT_MOVE} was\nbounced back by {B_DEF_NAME_WITH_PREFIX}'s\l{B_DEF_ABILITY}!");
 
 static bool8 IsTwoTurnsMove(u16 move);
 static void TrySetDestinyBondToHappen(void);
@@ -913,14 +914,26 @@ static void atk00_attackcanceler(void)
         }
     }
     gHitMarker |= HITMARKER_OBEYS;
-    if (gBattleMoves[gCurrentMove].flags & FLAG_MAGICCOAT_AFFECTED && gProtectStructs[gBattlerTarget].bounceMove)
-    {
-	gProtectStructs[gBattlerTarget].bounceMove = FALSE;
-        PressurePPLose(gBattlerAttacker, gBattlerTarget, MOVE_MAGIC_COAT);
-        BattleScriptPushCursor();
-        gBattlescriptCurrInstr = BattleScript_MagicCoatBounce;
-        return;
-    }
+	if (gBattleMoves[gCurrentMove].flags & FLAG_MAGICCOAT_AFFECTED && !gProtectStructs[gBattlerAttacker].usesBouncedMove)
+	{
+		if (gProtectStructs[gBattlerTarget].bounceMove)
+		{
+			gProtectStructs[gBattlerTarget].usesBouncedMove = TRUE;
+			PressurePPLose(gBattlerAttacker, gBattlerTarget, MOVE_MAGIC_COAT);
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_MagicCoatBounce;
+			return;
+		}
+		else if (GetBattlerAbility(gBattlerTarget) == ABILITY_MAGIC_BOUNCE && !(gStatuses3[gBattlerTarget] & STATUS3_SEMI_INVULNERABLE))
+		{
+			RecordAbilityBattle(gBattlerTarget, ABILITY_MAGIC_BOUNCE);
+			gProtectStructs[gBattlerTarget].usesBouncedMove = TRUE;
+			gSetWordLoc = sMagicBounceString;
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_MagicBounce;
+			return;
+		}
+	}
     for (i = 0; i < gBattlersCount; ++i)
     {
         if (gBattleMoves[gCurrentMove].flags & FLAG_SNATCH_AFFECTED && (gProtectStructs[gBattlerByTurnOrder[i]].stealMove))
@@ -3941,6 +3954,7 @@ static void atk49_moveend(void)
             ++gBattleScripting.atk49_state;
             break;
         case ATK49_COUNT:
+		    gProtectStructs[gBattlerAttacker].usesBouncedMove = FALSE;
             break;
         }
         if (arg1 == 1 && effect == FALSE)
@@ -5387,6 +5401,7 @@ static void atk76_various(void)
         CancelMultiTurnMoves(gActiveBattler);
         break;
     case VARIOUS_SET_MAGIC_COAT_TARGET:
+	    gBattleStruct->attackerBeforeBounce = gActiveBattler;
         gBattlerAttacker = gBattlerTarget;
         byte = GetBattlerSide(gBattlerAttacker) ^ BIT_SIDE;
 		    

@@ -2685,6 +2685,7 @@ void FaintClearSetData(void)
     gProtectStructs[gActiveBattler].usedTauntedMove = FALSE;
     gProtectStructs[gActiveBattler].flinchImmobility = FALSE;
     gProtectStructs[gActiveBattler].notFirstStrike = FALSE;
+	gProtectStructs[gActiveBattler].usesBouncedMove = FALSE;
     gDisableStructs[gActiveBattler].isFirstTurn = 2;
     gNewBattleStruct.SlowStartTimers[gActiveBattler] = 0;
     gNewBattleStruct.UnburdenBoostBits &= ~(gBitTable[gActiveBattler]);

@@ -3598,6 +3598,18 @@ BattleScript_MagicCoatBounce::
 	setmagiccoattarget BS_ATTACKER
 	return
 
+BattleScript_MagicBounce::
+    attackstring
+	ppreduce
+	pause 0x20
+	loadabilitypopup LOAD_ABILITY_FROM_SECOND_BANK, BS_TARGET, BS_TARGET
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
+	loadabilitypopup REMOVE_POP_UP, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	orword gHitMarker, HITMARKER_ATTACKSTRING_PRINTED | HITMARKER_NO_PPDEDUCT | HITMARKER_x800000
+	setmagiccoattarget BS_ATTACKER
+	return
+
 BattleScript_SnatchedMove::
 	attackstring
 	ppreduce

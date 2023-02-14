@@ -186,7 +186,7 @@ struct ProtectStruct
     /* field_2 */
     u32 usedTauntedMove:1;      // 0x1
     u32 flinchImmobility:1;     // 0x2
-    u32 flag_x4 : 1;            // 0x4
+    u32 usesBouncedMove:1;      // 0x4
     u32 flag_x8 : 1;            // 0x8
     u32 flag_x10 : 1;           // 0x10
     u32 flag_x20 : 1;           // 0x20
@@ -214,7 +214,7 @@ struct SpecialStatus
     u8 focusBanded : 1;             // 0x80
     u8 sturdied : 1;                // 0x1
     u8 stormDrainRedirected : 1;    // 0x2
-    u8 unused : 6;                  // 0x4, 0x8, 0x10, 0x20, 0x40, 0x80
+	u8 unused : 6;                  // 0x4, 0x8, 0x10, 0x20, 0x40, 0x80
     s32 dmg;
     s32 physicalDmg;
     s32 specialDmg;
@@ -423,6 +423,7 @@ struct BattleStruct
     u8 wishPerishSongBattlerId;
     u8 magnitudeBasePower;
     bool8 spriteIgnore0Hp;
+	u8 attackerBeforeBounce;
     u8 field_182;
     // align 4
     union {
