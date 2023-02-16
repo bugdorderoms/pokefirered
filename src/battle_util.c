@@ -435,7 +435,7 @@ void TryRemoveMonUnburdenBoost(u8 battler)
 void ResetVarsForAbilityChange(u8 battler)
 {
 	TryRemoveMonUnburdenBoost(battler);
-	gNewBattleStruct.SlowStartTimers[battler] = 0;
+	gNewBattleStruct.SlowStartTimers[battler] = 5;
 }
 
 void TryGiveUnburdenBoostToMon(u8 battler)
@@ -488,7 +488,7 @@ static void TryActivateDefiant(u16 stringId)
 
 void PrepareStringBattle(u16 stringId, u8 battler)
 {
-	TryActivateDefiant(stringId);
+    TryActivateDefiant(stringId);
     gActiveBattler = battler;
     BtlController_EmitPrintString(0, stringId);
     MarkBattlerForControllerExec(gActiveBattler);
