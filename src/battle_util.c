@@ -2375,6 +2375,13 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			   effect = 3;
 		   }
 		    break;
+		case ABILITY_SAP_SIPPER:
+		    if (moveType == TYPE_GRASS && gBattleMoves[moveArg].power != 0)
+			{
+				StatId = STAT_ATK;
+				effect = 3;
+			}
+			break;
                 case ABILITY_FLASH_FIRE:
                     if (moveType == TYPE_FIRE && !(gBattleMons[battler].status1 & STATUS1_FREEZE))
                     {
