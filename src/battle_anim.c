@@ -2204,7 +2204,7 @@ static void ScriptCmd_monbg(void)
         sMonAnimTaskIdArray[0] = taskId;
     }
 
-    battlerId ^= BIT_FLANK;
+    battlerId = BATTLE_PARTNER(battlerId);
     if (animBattler > ANIM_TARGET && IsBattlerSpriteVisible(battlerId))
     {
         position = GetBattlerPosition(battlerId);
@@ -2406,7 +2406,7 @@ static void ScriptCmd_clearmonbg(void)
     if (sMonAnimTaskIdArray[0] != 0xFF)
         gSprites[gBattlerSpriteIds[battlerId]].invisible = FALSE;
     if (animBattlerId > ANIM_TARGET && sMonAnimTaskIdArray[1] != 0xFF)
-        gSprites[gBattlerSpriteIds[battlerId ^ BIT_FLANK]].invisible = FALSE;
+        gSprites[gBattlerSpriteIds[BATTLE_PARTNER(battlerId)]].invisible = FALSE;
     else
         animBattlerId = ANIM_ATTACKER;
 
@@ -2478,7 +2478,7 @@ static void ScriptCmd_monbg_22(void)
         gSprites[gBattlerSpriteIds[battlerId]].invisible = FALSE;
     }
 
-    battlerId ^= BIT_FLANK;
+    battlerId = BATTLE_PARTNER(battlerId);
     if (animBattlerId > ANIM_TARGET && IsBattlerSpriteVisible(battlerId))
     {
         position = GetBattlerPosition(battlerId);
@@ -2515,8 +2515,8 @@ static void ScriptCmd_clearmonbg_23(void)
 
     if (IsBattlerSpriteVisible(battlerId))
         gSprites[gBattlerSpriteIds[battlerId]].invisible = FALSE;
-    if (animBattlerId > ANIM_TARGET && IsBattlerSpriteVisible(battlerId ^ BIT_FLANK))
-        gSprites[gBattlerSpriteIds[battlerId ^ BIT_FLANK]].invisible = FALSE;
+    if (animBattlerId > ANIM_TARGET && IsBattlerSpriteVisible(BATTLE_PARTNER(battlerId)))
+        gSprites[gBattlerSpriteIds[BATTLE_PARTNER(battlerId)]].invisible = FALSE;
     else
         animBattlerId = ANIM_ATTACKER;
 
@@ -2547,7 +2547,7 @@ static void sub_8073558(u8 taskId)
         if (IsBattlerSpriteVisible(battlerId))
             ResetBattleAnimBg(toBG_2);
         
-        if (gTasks[taskId].data[0] > 1 && IsBattlerSpriteVisible(battlerId ^ BIT_FLANK))
+        if (gTasks[taskId].data[0] > 1 && IsBattlerSpriteVisible(BATTLE_PARTNER(battlerId)))
             ResetBattleAnimBg(toBG_2 ^ 1);
 
         DestroyTask(taskId);

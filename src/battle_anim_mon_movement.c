@@ -631,20 +631,20 @@ void AnimTask_SlideOffScreen(u8 taskId)
         spriteId = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
         break;
     case 2:
-        if (!IsBattlerSpriteVisible(gBattleAnimAttacker ^ BIT_FLANK))
+        if (!IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)))
         {
             DestroyAnimVisualTask(taskId);
             return;
         }
-        spriteId = gBattlerSpriteIds[gBattleAnimAttacker ^ BIT_FLANK];
+        spriteId = gBattlerSpriteIds[BATTLE_PARTNER(gBattleAnimAttacker)];
         break;
     case 3:
-        if (!IsBattlerSpriteVisible(gBattleAnimTarget ^ BIT_FLANK))
+        if (!IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimTarget)))
         {
             DestroyAnimVisualTask(taskId);
             return;
         }
-        spriteId = gBattlerSpriteIds[gBattleAnimTarget ^ BIT_FLANK];
+        spriteId = gBattlerSpriteIds[BATTLE_PARTNER(gBattleAnimTarget)];
         break;
     default:
         DestroyAnimVisualTask(taskId);

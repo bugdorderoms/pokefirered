@@ -316,12 +316,12 @@ void BattleAI_SetupAIData(void)
         gBattlerTarget = (Random() & BIT_FLANK);
 
         if (gAbsentBattlerFlags & gBitTable[gBattlerTarget])
-            gBattlerTarget ^= BIT_FLANK;
+            gBattlerTarget = BATTLE_PARTNER(gBattlerTarget);
     }
     // There's only one choice in single battles.
     else
     {
-        gBattlerTarget = gBattlerAttacker ^ BIT_SIDE;
+        gBattlerTarget = BATTLE_OPPOSITE(gBattlerAttacker);
     }
 
     // Choose proper trainer ai scripts.
@@ -1082,7 +1082,7 @@ static void Cmd_count_alive_pokemon(void)
     {
         u32 position;
         battlerOnField1 = gBattlerPartyIndexes[battlerId];
-        position = GetBattlerPosition(battlerId) ^ BIT_FLANK;
+        position = BATTLE_PARTNER(GetBattlerPosition(battlerId));
         battlerOnField2 = gBattlerPartyIndexes[GetBattlerAtPosition(position)];
     }
     else // In singles there's only one battlerId by side.

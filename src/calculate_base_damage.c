@@ -320,8 +320,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				break;
 			case ABILITY_PLUS:
 			case ABILITY_MINUS:
-				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && gBattleMons[battlerIdAtk ^ BIT_FLANK].hp
-				    && (GetBattlerAbility(battlerIdAtk ^ BIT_FLANK) == ABILITY_PLUS || GetBattlerAbility(battlerIdAtk ^ BIT_FLANK) == ABILITY_MINUS))
+				if (IsBattlerAlive(BATTLE_PARTNER(battlerIdAtk)) && (GetBattlerAbility(BATTLE_PARTNER(battlerIdAtk) == ABILITY_PLUS || GetBattlerAbility(BATTLE_PARTNER(battlerIdAtk)) == ABILITY_MINUS))
 					spAttack = (15 * spAttack) / 10;
 				break;
 			case ABILITY_GUTS:
@@ -449,17 +448,14 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower /= 2;
 				break;
 		}
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		// defender's ally abilities check
+		if (IsBattlerAlive(BATTLE_PARTNER(battlerIdDef)))
 		{
-			// defender's ally abilities check
-			if (gBattleMons[battlerIdDef ^ BIT_FLANK].hp != 0)
+			switch (GetBattlerAbility(BATTLE_PARTNER(battlerIdDef)))
 			{
-				switch (GetBattlerAbility(battlerIdDef ^ BIT_FLANK))
-				{
-					case ABILITY_FRIEND_GUARD:
-						gBattleMovePower = (gBattleMovePower * 75) / 100;
-						break;
-				}
+				case ABILITY_FRIEND_GUARD:
+				    gBattleMovePower = (gBattleMovePower * 75) / 100;
+					break;
 			}
 		}
 	}
@@ -483,14 +479,10 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				attack = (15 * attack) / 10;
 			if (GetBattlerAbility(battlerIdDef) == ABILITY_FLOWER_GIFT)
 				spDefense = (15 * spDefense) / 10;
-			
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-			{
-				if (GetBattlerAbility(battlerIdAtk ^ BIT_FLANK) == ABILITY_FLOWER_GIFT && gBattleMons[battlerIdAtk ^ BIT_FLANK].hp != 0)
-					attack = (15 * attack) / 10;
-				if (GetBattlerAbility(battlerIdDef ^ BIT_FLANK) == ABILITY_FLOWER_GIFT && gBattleMons[battlerIdDef ^ BIT_FLANK].hp != 0)
-					spDefense = (15 * spDefense) / 10;
-			}
+			if (IsBattlerAlive(BATTLE_PARTNER(battlerIdAtk)) && GetBattlerAbility(BATTLE_PARTNER(battlerIdAtk)) == ABILITY_FLOWER_GIFT)
+				attack = (15 * attack) / 10;
+			if (IsBattlerAlive(BATTLE_PARTNER(battlerIdDef)) && GetBattlerAbility(BATTLE_PARTNER(battlerIdDef)) == ABILITY_FLOWER_GIFT)
+				spDefense = (15 * spDefense) / 10;
 		}
 	}
 	// burn attack drop

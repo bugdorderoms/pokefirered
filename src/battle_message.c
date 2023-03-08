@@ -1860,7 +1860,7 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
                 }
                 if (gTrainerBattleOpponent_A == TRAINER_OPPONENT_C00)
                 {
-                    toCpy = gLinkPlayers[multiplayerId ^ BIT_SIDE].name;
+                    toCpy = gLinkPlayers[BATTLE_OPPOSITE(multiplayerId)].name;
                 }
                 else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
                 {
@@ -2033,8 +2033,8 @@ static void IllusionNickHack(u8 battlerId, u8 partyId, u8 *dst)
 	
 	if (GetMonAbility(mon) == ABILITY_ILLUSION)
 	{
-		if (gBattleMons[battlerId ^ BIT_FLANK].hp)
-			partnerMon = &gEnemyParty[gBattlerPartyIndexes[battlerId ^ BIT_FLANK]];
+		if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
+			partnerMon = &gEnemyParty[gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)]];
 		else
 			partnerMon = mon;
 		

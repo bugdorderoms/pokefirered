@@ -853,7 +853,7 @@ void InitLinkBattleVsScreen(u8 taskId)
         else
         {
             u8 playerId = gBattleStruct->multiplayerId;
-            u8 opponentId = playerId ^ BIT_SIDE;
+            u8 opponentId = BATTLE_OPPOSITE(playerId);
             u8 opponentId_copy = opponentId;
 
             if (gLinkPlayers[playerId].id != 0)
