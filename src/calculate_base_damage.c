@@ -320,7 +320,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				break;
 			case ABILITY_PLUS:
 			case ABILITY_MINUS:
-				if (IsBattlerAlive(BATTLE_PARTNER(battlerIdAtk)) && (GetBattlerAbility(BATTLE_PARTNER(battlerIdAtk) == ABILITY_PLUS || GetBattlerAbility(BATTLE_PARTNER(battlerIdAtk)) == ABILITY_MINUS))
+				if (IsBattlerAlive(BATTLE_PARTNER(battlerIdAtk)) && (GetBattlerAbility(BATTLE_PARTNER(battlerIdAtk)) == ABILITY_PLUS || GetBattlerAbility(BATTLE_PARTNER(battlerIdAtk)) == ABILITY_MINUS))
 					spAttack = (15 * spAttack) / 10;
 				break;
 			case ABILITY_GUTS:

@@ -461,7 +461,7 @@ u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating)
 
 static void TryActivateDefiant(u16 stringId)
 {
-	if ((stringId == STRINGID_PKMNSSTATCHANGED4 || stringId == STRINGID_PKMNCUTSATTACKWITH) && (gSpecialStatuses[gBattlerTarget].changedStatsBattlerId != BATTLE_PARTNER(gBattlerTarget)))
+	if ((stringId == STRINGID_PKMNSSTATCHANGED4 || stringId == STRINGID_PKMNCUTSATTACKWITH) && gSpecialStatuses[gBattlerTarget].changedStatsBattlerId != BATTLE_PARTNER(gBattlerTarget)
 	&& gSpecialStatuses[gBattlerTarget].changedStatsBattlerId != gBattlerTarget)
 	{
 		switch (GetBattlerAbility(gBattlerTarget))

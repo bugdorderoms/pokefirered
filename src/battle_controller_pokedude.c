@@ -2474,7 +2474,7 @@ static void PokedudeSimulateInputChooseMove(void)
         gPokedudeBattlerStates[gActiveBattler]->timer = 0;
         BtlController_EmitTwoReturnValues(1,
                                           B_ACTION_EXEC_SCRIPT,
-                                          script_p[gPokedudeBattlerStates[gActiveBattler]->move_idx].cursorPos[gActiveBattler] | (BATTLE_OPPOSITE(gActiveBattler)) << 8));
+                                          script_p[gPokedudeBattlerStates[gActiveBattler]->move_idx].cursorPos[gActiveBattler] | ((BATTLE_OPPOSITE(gActiveBattler)) << 8));
         PokedudeBufferExecCompleted();
         ++gPokedudeBattlerStates[gActiveBattler]->move_idx;
         if (script_p[gPokedudeBattlerStates[gActiveBattler]->move_idx].cursorPos[gActiveBattler] == 255)
