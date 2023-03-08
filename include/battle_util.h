@@ -114,5 +114,6 @@ bool8 NoAliveMonsForPlayer(void);
 bool8 NoAliveMonsForOpponent(void);
 bool8 NoAliveMonsForEitherParty(void);
 bool8 IsBattlerAlive(u8 battlerId);
+struct Pokemon *GetBattlerPartyIndexPtr(u8 battler);
 
 #endif // GUARD_BATTLE_UTIL_H

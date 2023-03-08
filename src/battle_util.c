@@ -1942,16 +1942,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 
     if (gBattlerAttacker >= gBattlersCount)
         gBattlerAttacker = battler;
-    if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
-        pokeAtk = &gPlayerParty[gBattlerPartyIndexes[gBattlerAttacker]];
-    else
-        pokeAtk = &gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker]];
+	pokeAtk = GetBattlerPartyIndexPtr(gBattlerAttacker);
     if (gBattlerTarget >= gBattlersCount)
         gBattlerTarget = battler;
-    if (GetBattlerSide(gBattlerTarget) == B_SIDE_PLAYER)
-        pokeDef = &gPlayerParty[gBattlerPartyIndexes[gBattlerTarget]];
-    else
-        pokeDef = &gEnemyParty[gBattlerPartyIndexes[gBattlerTarget]];
+    pokeDef = GetBattlerPartyIndexPtr(gBattlerTarget);
     speciesAtk = GetMonData(pokeAtk, MON_DATA_SPECIES);
     pidAtk = GetMonData(pokeAtk, MON_DATA_PERSONALITY);
     speciesDef = GetMonData(pokeDef, MON_DATA_SPECIES);
@@ -3198,14 +3192,10 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
             case HOLD_EFFECT_RESTORE_PP:
                 if (!moveTurn)
                 {
-                    struct Pokemon *mon;
+                    struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
                     u8 ppBonuses;
                     u16 move;
 
-                    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-                        mon = &gPlayerParty[gBattlerPartyIndexes[battlerId]];
-                    else
-                        mon = &gEnemyParty[gBattlerPartyIndexes[battlerId]];
                     for (i = 0; i < MAX_MON_MOVES; ++i)
                     {
                         move = GetMonData(mon, MON_DATA_MOVE1 + i);
@@ -3909,12 +3899,8 @@ struct Pokemon *GetIllusionMonPtr(u8 battler)
 		return NULL;
 	
 	if (!gNewBattleStruct.illusion[battler].set)
-	{
-		if (GetBattlerSide(battler) == B_SIDE_PLAYER)
-			SetIllusionMon(&gPlayerParty[gBattlerPartyIndexes[battler]], battler);
-		else
-			SetIllusionMon(&gEnemyParty[gBattlerPartyIndexes[battler]], battler);
-	}
+		SetIllusionMon(GetBattlerPartyIndexPtr(battler), battler);
+	
 	if (!gNewBattleStruct.illusion[battler].on)
 		return NULL;
 	
@@ -4007,4 +3993,16 @@ bool8 IsBattlerAlive(u8 battlerId)
 	if (gBattleMons[battlerId].hp == 0 || battlerId >= gBattlersCount || gAbsentBattlerFlags & gBitTable[battlerId])
 		return FALSE;
 	return TRUE;
+}
+
+struct Pokemon *GetBattlerPartyIndexPtr(u8 battler)
+{
+	struct Pokemon *mon;
+	
+	if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+		mon = gPlayerParty;
+	else
+		mon = gEnemyParty;
+	
+	return &mon[gBattlerPartyIndexes[battler]];
 }

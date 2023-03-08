@@ -4131,7 +4131,6 @@ void RunBattleScriptCommands(void)
 
 static void SetTypeBeforeUsingMove(u16 move, u8 battler)
 {
-	struct Pokemon *party;
 	u16 ability, moveEffect;
 	
 	gBattleStruct->dynamicMoveType = gBattleMoves[move].type;
@@ -4157,11 +4156,7 @@ static void SetTypeBeforeUsingMove(u16 move, u8 battler)
 			}
 			break;
 		case EFFECT_HIDDEN_POWER:
-			if (GetBattlerSide(battler) == B_SIDE_PLAYER)
-				party = gPlayerParty;
-			else
-				party = gEnemyParty;
-			gBattleStruct->dynamicMoveType = GetHiddenPowerType(&party[gBattlerPartyIndexes[battler]]);
+			gBattleStruct->dynamicMoveType = GetHiddenPowerType(GetBattlerPartyIndexPtr(battler));
 			break;
 	}
 	ability = GetBattlerAbility(battler);

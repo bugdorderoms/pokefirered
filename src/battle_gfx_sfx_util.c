@@ -630,15 +630,12 @@ void HandleSpeciesGfxDataChange(u8 battlerAtk, u8 battlerDef, u8 notTransform, b
         void *dst;
 
         position = GetBattlerPosition(battlerAtk);
-        if (GetBattlerSide(battlerDef) == B_SIDE_OPPONENT)
-            targetSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerDef]], MON_DATA_SPECIES);
-        else
-            targetSpecies = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerDef]], MON_DATA_SPECIES);
+		targetSpecies = GetMonData(GetBattlerPartyIndexPtr(battlerDef), MON_DATA_SPECIES);
+		personalityValue = GetMonData(GetBattlerPartyIndexPtr(battlerAtk), MON_DATA_PERSONALITY);
+		otId = GetMonData(GetBattlerPartyIndexPtr(battlerAtk), MON_DATA_OT_ID);
+		
         if (GetBattlerSide(battlerAtk) == B_SIDE_PLAYER)
         {
-            personalityValue = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerAtk]], MON_DATA_PERSONALITY);
-            otId = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerAtk]], MON_DATA_OT_ID);
-
             HandleLoadSpecialPokePic(&gMonBackPicTable[targetSpecies],
                                                       gMonSpritesGfxPtr->sprites[position],
                                                       targetSpecies,
@@ -646,9 +643,6 @@ void HandleSpeciesGfxDataChange(u8 battlerAtk, u8 battlerDef, u8 notTransform, b
         }
         else
         {
-            personalityValue = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerAtk]], MON_DATA_PERSONALITY);
-            otId = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerAtk]], MON_DATA_OT_ID);
-
             HandleLoadSpecialPokePic(&gMonFrontPicTable[targetSpecies],
                                                       gMonSpritesGfxPtr->sprites[position],
                                                       targetSpecies,

@@ -115,11 +115,7 @@ u8 GetBattlerSpriteCoord(u8 battlerId, u8 coordType)
     case BATTLER_COORD_Y_PIC_OFFSET:
     case BATTLER_COORD_Y_PIC_OFFSET_DEFAULT:
     default:
-        if (GetBattlerSide(battlerId) != B_SIDE_PLAYER)
-            mon = &gEnemyParty[gBattlerPartyIndexes[battlerId]];
-        else
-            mon = &gPlayerParty[gBattlerPartyIndexes[battlerId]];
-        
+	    mon = GetBattlerPartyIndexPtr(battlerId);
         illusionMon = GetIllusionMonPtr(battlerId);
         
         if (illusionMon != NULL)
@@ -778,16 +774,8 @@ bool8 IsBattlerSpritePresent(u8 battlerId)
     
     if (!gBattleStruct->spriteIgnore0Hp)
     {
-        if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT)
-        {
-            if (GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_HP) == 0)
-                return FALSE;
-        }
-        else
-        {
-            if (GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerId]], MON_DATA_HP) == 0)
-                return FALSE;
-        }
+		if (GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_HP) == 0)
+			return FALSE;
     }
     return TRUE;
 }

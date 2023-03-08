@@ -5561,11 +5561,7 @@ static void atk76_various(void)
 	}
 	break;
     case VARIOUS_UPDATE_NICK:
-        if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
-	    mon = &gPlayerParty[gBattlerPartyIndexes[gActiveBattler]];
-        else
-            mon = &gEnemyParty[gBattlerPartyIndexes[gActiveBattler]];
-	UpdateHealthboxAttribute(gHealthboxSpriteIds[gActiveBattler], mon, HEALTHBOX_NICK);
+	UpdateHealthboxAttribute(gHealthboxSpriteIds[gActiveBattler], GetBattlerPartyIndexPtr(gActiveBattler), HEALTHBOX_NICK);
 	break;
     case VARIOUS_SET_SPRITEIGNORE0HP:
         gBattleStruct->spriteIgnore0Hp ^= 1;
@@ -6298,7 +6294,7 @@ static void atk8F_forcerandomswitch(void)
                     else
                         i = val;
                 }
-                while (i == gBattlerPartyIndexes[gBattlerTarget] || i == gBattlerPartyIndexes[gBattlerTarget ^ 2] || !MON_CAN_BATTLE(&party[i]));
+                while (i == gBattlerPartyIndexes[gBattlerTarget] || i == gBattlerPartyIndexes[BATTLE_PARTNER(gBattlerTarget)] || !MON_CAN_BATTLE(&party[i]));
             }
             else
             {
@@ -6308,7 +6304,7 @@ static void atk8F_forcerandomswitch(void)
                     {
                         i = Random() % 6;
                     }
-                    while (i == gBattlerPartyIndexes[gBattlerTarget] || i == gBattlerPartyIndexes[gBattlerTarget ^ 2] || !MON_CAN_BATTLE(&party[i]));
+                    while (i == gBattlerPartyIndexes[gBattlerTarget] || i == gBattlerPartyIndexes[BATTLE_PARTNER(gBattlerTarget)] || !MON_CAN_BATTLE(&party[i]));
                 }
                 else
                 {
@@ -6574,14 +6570,8 @@ static void atk97_tryinfatuating(void)
     u16 speciesAttacker, speciesTarget;
     u32 personalityAttacker, personalityTarget;
 
-    if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
-        monAttacker = &gPlayerParty[gBattlerPartyIndexes[gBattlerAttacker]];
-    else
-        monAttacker = &gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker]];
-    if (GetBattlerSide(gBattlerTarget) == B_SIDE_PLAYER)
-        monTarget = &gPlayerParty[gBattlerPartyIndexes[gBattlerTarget]];
-    else
-        monTarget = &gEnemyParty[gBattlerPartyIndexes[gBattlerTarget]];
+    monAttacker = GetBattlerPartyIndexPtr(gBattlerAttacker);
+	monTarget = GetBattlerPartyIndexPtr(gBattlerTarget);
     speciesAttacker = GetMonData(monAttacker, MON_DATA_SPECIES);
     personalityAttacker = GetMonData(monAttacker, MON_DATA_PERSONALITY);
     speciesTarget = GetMonData(monTarget, MON_DATA_SPECIES);
@@ -8953,7 +8943,6 @@ static void atkFE_nop(void)
 //callasm command asm's
 static bool8 AnticipationTypeCalc(u8 battler)
 {
-	struct Pokemon *party;
 	u8 i, moveType;
 	u16 moveId, flags = 0;
 	
@@ -8969,13 +8958,7 @@ static bool8 AnticipationTypeCalc(u8 battler)
 			if (gBattleMoves[moveId].power)
 			{
 				if (gBattleMoves[moveId].effect == EFFECT_HIDDEN_POWER)
-				{
-					if (GetBattlerSide(battler) == B_SIDE_PLAYER)
-						party = gPlayerParty;
-					else
-						party = gEnemyParty;
-					moveType = GetHiddenPowerType(&party[gBattlerPartyIndexes[battler]]);
-				}
+					moveType = GetHiddenPowerType(GetBattlerPartyIndexPtr(battler));
 				else
 					moveType = gBattleMoves[moveId].type;
 				

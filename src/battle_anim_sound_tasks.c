@@ -137,10 +137,7 @@ void SoundTask_PlayCryHighPitch(u8 taskId)
         DestroyAnimVisualTask(taskId);
         return;
     }
-    if (GetBattlerSide(battlerId) != B_SIDE_PLAYER)
-        species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
-    else
-        species = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
+	species = GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES);
     if (species != SPECIES_NONE)
         PlayCry3(species, pan, 3);
     DestroyAnimVisualTask(taskId);
@@ -168,10 +165,7 @@ void SoundTask_PlayDoubleCry(u8 taskId)
         DestroyAnimVisualTask(taskId);
         return;
     }
-    if (GetBattlerSide(battlerId) != B_SIDE_PLAYER)
-        species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
-    else
-        species = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
+    species = GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES);
     gTasks[taskId].data[0] = gBattleAnimArgs[1];
     gTasks[taskId].data[1] = species;
     gTasks[taskId].data[2] = pan;

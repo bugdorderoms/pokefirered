@@ -5429,13 +5429,7 @@ static s8 GetMonFlavorRelation(struct Pokemon *mon, u8 flavor)
 
 s8 GetFlavorRelation(u8 battlerId, u8 flavor)
 {
-    struct Pokemon *mon;
-	
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-	    mon = gPlayerParty;
-    else
-	    mon = gEnemyParty;
-    return GetMonFlavorRelation(&mon[gBattlerPartyIndexes[battlerId]], flavor);
+    return GetMonFlavorRelation(GetBattlerPartyIndexPtr(battlerId), flavor);
 }
 
 bool8 IsTradedMon(struct Pokemon *mon)

@@ -323,10 +323,7 @@ void AnimTask_SetUpCurseBackground(u8 taskId)
             }
         }
     }
-    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
-        species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattleAnimAttacker]], MON_DATA_SPECIES);
-    else
-        species = GetMonData(&gPlayerParty[gBattlerPartyIndexes[gBattleAnimAttacker]], MON_DATA_SPECIES);
+	species = GetMonData(GetBattlerPartyIndexPtr(gBattleAnimAttacker), MON_DATA_SPECIES);
     spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
     newSpriteId = CreateCloneOfSpriteInWindowMode(spriteId, species);
     GetBattleAnimBg1Data(&animBgData);
@@ -423,10 +420,7 @@ static void StatsChangeAnimation_Step1(u8 taskId)
             }
         }
     }
-    if (GetBattlerSide(sAnimStatsChangeData->battler1) != B_SIDE_PLAYER)
-        sAnimStatsChangeData->species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[sAnimStatsChangeData->battler1]], MON_DATA_SPECIES);
-    else
-        sAnimStatsChangeData->species = GetMonData(&gPlayerParty[gBattlerPartyIndexes[sAnimStatsChangeData->battler1]], MON_DATA_SPECIES);
+	sAnimStatsChangeData->species = GetMonData(GetBattlerPartyIndexPtr(sAnimStatsChangeData->battler1), MON_DATA_SPECIES);
     gTasks[taskId].func = StatsChangeAnimation_Step2;
 }
 
@@ -736,10 +730,7 @@ void StartMonScrollingBgMask(u8 taskId, u16 arg2, u8 battler1, u8 arg4, u8 arg5,
     ((vBgCnt *)&bg1Cnt)->areaOverflowMode = 1;
     ((vBgCnt *)&bg1Cnt)->charBaseBlock = 1;
     SetGpuReg(REG_OFFSET_BG1CNT, bg1Cnt);
-    if (GetBattlerSide(battler1) != B_SIDE_PLAYER)
-        species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler1]], MON_DATA_SPECIES);
-    else
-        species = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler1]], MON_DATA_SPECIES);
+	species = GetMonData(GetBattlerPartyIndexPtr(battler1), MON_DATA_SPECIES);
     spriteId = CreateCloneOfSpriteInWindowMode(gBattlerSpriteIds[battler1], species);
     if (arg4)
         newSpriteId = CreateCloneOfSpriteInWindowMode(gBattlerSpriteIds[battler2], species);

@@ -780,10 +780,7 @@ void AnimTask_MetallicShine(u8 taskId)
             }
         }
     }
-    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
-        species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattleAnimAttacker]], MON_DATA_SPECIES);
-    else
-        species = GetMonData(&gPlayerParty[gBattlerPartyIndexes[gBattleAnimAttacker]], MON_DATA_SPECIES);
+	species = GetMonData(GetBattlerPartyIndexPtr(gBattleAnimAttacker), MON_DATA_SPECIES);
     spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
     newSpriteId = CreateCloneOfSpriteInWindowMode(spriteId, species);
     GetBattleAnimBg1Data(&animBg);

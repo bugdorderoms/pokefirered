@@ -1115,28 +1115,11 @@ static void AnimTask_WaterSpoutLaunch_Step(u8 taskId)
 // A higher number results in more water sprites during the Water Spout animation
 static u8 GetWaterSpoutPowerForAnim(void)
 {
+	struct Pokemon *mon = GetBattlerPartyIndexPtr(gBattleAnimAttacker);
     u8 i;
-    u16 hp;
-    u16 maxhp;
-    u16 partyIndex;
-    struct Pokemon *slot;
+    u16 hp = GetMonData(mon, MON_DATA_MAX_HP);
+    u16 maxhp = GetMonData(mon, MON_DATA_MAX_HP) / 4;
 
-    if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_PLAYER)
-    {
-        partyIndex = gBattlerPartyIndexes[gBattleAnimAttacker];
-        slot =  &gPlayerParty[partyIndex];
-        maxhp = GetMonData(slot, MON_DATA_MAX_HP);
-        hp = GetMonData(slot, MON_DATA_HP);
-        maxhp /= 4;
-    }
-    else
-    {
-        partyIndex = gBattlerPartyIndexes[gBattleAnimAttacker];
-        slot =  &gEnemyParty[partyIndex];
-        maxhp = GetMonData(slot, MON_DATA_MAX_HP);
-        hp = GetMonData(slot, MON_DATA_HP);
-        maxhp /= 4;
-    }
     for (i = 0; i < 3; i++)
     {
         if (hp < maxhp * (i + 1))

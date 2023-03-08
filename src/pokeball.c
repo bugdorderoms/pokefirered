@@ -339,7 +339,7 @@ static void Task_DoPokeballSendOutAnim(u8 taskId)
 {
     u16 throwCaseId;
     u8 battlerId;
-    u16 itemId, ballId;
+    u16 ballId;
     u8 ballSpriteId;
     bool8 notSendOut = FALSE;
     s16 x, y;
@@ -353,13 +353,7 @@ static void Task_DoPokeballSendOutAnim(u8 taskId)
 
     throwCaseId = gTasks[taskId].tThrowId;
     battlerId = gTasks[taskId].tBattler;
-
-    if (GetBattlerSide(battlerId) != B_SIDE_PLAYER)
-        itemId = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_POKEBALL);
-    else
-        itemId = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerId]], MON_DATA_POKEBALL);
-
-    ballId = ItemIdToBallId(itemId);
+    ballId = ItemIdToBallId(GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_POKEBALL));
     LoadBallGfx(ballId);
     
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
@@ -1269,14 +1263,7 @@ void FreeBallGfx(u8 ballId)
 
 static u16 GetBattlerPokeballItemId(u8 battlerId)
 {
-    struct Pokemon *mon, *illusionMon;
-	
-	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-        mon = &gPlayerParty[gBattlerPartyIndexes[battlerId]];
-    else
-        mon = &gEnemyParty[gBattlerPartyIndexes[battlerId]];
-	
-	illusionMon = GetIllusionMonPtr(battlerId);
+    struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId), *illusionMon = GetIllusionMonPtr(battlerId);
 	
 	if (illusionMon != NULL)
 		mon = illusionMon;

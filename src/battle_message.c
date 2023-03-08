@@ -1616,15 +1616,8 @@ static const u8* TryGetStatusString(u8 *src)
 
 static void GetBattlerNick(u8 battlerId, u8 *dst)
 {
-    struct Pokemon *mon, *illusionMon;
-
-    if (GET_BATTLER_SIDE(battlerId) == B_SIDE_PLAYER)
-        mon = &gPlayerParty[gBattlerPartyIndexes[battlerId]];
-    else
-        mon = &gEnemyParty[gBattlerPartyIndexes[battlerId]];
-
-    illusionMon = GetIllusionMonPtr(battlerId);
-	
+    struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId), *illusionMon = GetIllusionMonPtr(battlerId);
+    
     if (illusionMon != NULL)
         mon = illusionMon;
 	
@@ -1987,10 +1980,7 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
                     toCpy = sText_TheOpposingTeamPrefix;
                 break;
             case B_TXT_ACTIVE_NAME_NO_ILLUSION:
-                if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
-                    GetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_NICKNAME, text);
-                else
-                    GetMonData(&gEnemyParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_NICKNAME, text);
+			    GetMonData(GetBattlerPartyIndexPtr(gActiveBattler), MON_DATA_NICKNAME, text);
 	        StringGet_Nickname(text);
                 toCpy = text;
                 break;

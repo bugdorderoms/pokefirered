@@ -623,19 +623,14 @@ void AnimTask_SwitchOutShrinkMon(u8 taskId)
 void AnimTask_SwitchOutBallEffect(u8 taskId)
 {
     u8 spriteId;
-    u16 ball;
     u8 ballId;
     u8 x, y;
     u8 priority, subpriority;
     u32 selectedPalettes;
 
     spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
-    if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_PLAYER)
-        ball = GetMonData(&gPlayerParty[gBattlerPartyIndexes[gBattleAnimAttacker]], MON_DATA_POKEBALL);
-    else
-        ball = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattleAnimAttacker]], MON_DATA_POKEBALL);
-
-    ballId = ItemIdToBallId(ball);
+    ballId = ItemIdToBallId(GetMonData(GetBattlerPartyIndexPtr(gBattleAnimAttacker), MON_DATA_POKEBALL));
+	
     switch (gTasks[taskId].data[0])
     {
     case 0:
