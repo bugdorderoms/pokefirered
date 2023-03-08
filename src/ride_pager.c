@@ -145,7 +145,7 @@ u16 RideToSpeciesId(u8 ride)
 
 bool8 TryDismountPokeRide(void)
 {
-	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE | PLAYER_AVATAR_FLAG_STOUTLAND_RIDE | PLAYER_AVATAR_FLAG_MUDSDALE_RIDE | PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
+	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_RIDE_ANY))
 	{
 		if (CheckPlayerInGroundRocks())
 			return FALSE;

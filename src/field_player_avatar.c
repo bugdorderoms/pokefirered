@@ -193,7 +193,7 @@ static void MovePlayerAvatarUsingKeypadInput(u8 direction, u16 newKeys, u16 held
 {
     if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
         MovePlayerOnBike(direction, newKeys, heldKeys);
-    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE | PLAYER_AVATAR_FLAG_STOUTLAND_RIDE | PLAYER_AVATAR_FLAG_MUDSDALE_RIDE | PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
+    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_RIDE_ANY))
 	MovePlayerOnRide(direction, heldKeys);
     else
         MovePlayerNotOnBike(direction, heldKeys);
