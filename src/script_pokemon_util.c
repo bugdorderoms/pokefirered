@@ -57,12 +57,9 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall)
     heldItem[1] = item >> 8;
     SetMonData(mon, MON_DATA_HELD_ITEM, heldItem);
     
-    if (pokeBall)
-    {
-        heldItem[0] = pokeBall;
-        heldItem[1] = pokeBall >> 8;
-        SetMonData(mon, MON_DATA_POKEBALL, heldItem);
-    }
+	heldItem[0] = pokeBall;
+	heldItem[1] = pokeBall >> 8;
+	SetMonData(mon, MON_DATA_POKEBALL, heldItem);
     
     for (i = 0; i < NUM_STATS; i++)
     {

@@ -74,31 +74,6 @@ bool8 ScrCmd_nop(struct ScriptContext * ctx)
     return FALSE;
 }
 
-bool8 ScrCmd_givecustommon(struct ScriptContext * ctx)
-{
-    u16 species = VarGet(ScriptReadHalfword(ctx));
-    u8 level = ScriptReadByte(ctx);
-    u16 ball, item = VarGet(ScriptReadHalfword(ctx));
-    u8 i, ivs[NUM_STATS] = {0};
-    bool8 shiny, hiddenAbility;
-
-    for (i = 0; i < NUM_STATS; i++)
-	    ivs[i] = ScriptReadByte(ctx);
-
-    shiny = ScriptReadByte(ctx);
-    if (shiny)
-	    FlagSet(FLAG_CREATE_SHINY_MON);
-    
-    hiddenAbility = ScriptReadByte(ctx);
-    if (hiddenAbility)
-	    FlagSet(FLAG_HIDDEN_ABILITY_MON);
-
-    ball = ScriptReadHalfword(ctx);
-
-    gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ball);
-    return FALSE;
-}
-
 bool8 ScrCmd_end(struct ScriptContext * ctx)
 {
     StopScript(ctx);
@@ -1763,13 +1738,21 @@ bool8 ScrCmd_givemon(struct ScriptContext * ctx)
 {
     u16 species = VarGet(ScriptReadHalfword(ctx));
     u8 level = ScriptReadByte(ctx);
-    u16 item = VarGet(ScriptReadHalfword(ctx));
+    u16 ball, item = VarGet(ScriptReadHalfword(ctx));
     u8 i, ivs[NUM_STATS] = {0};
     
     for (i = 0; i < NUM_STATS; i++)
-        ivs[i] = USE_RANDOM_IVS;
+        ivs[i] = ScriptReadByte(ctx);
+	
+    if (ScriptReadByte(ctx))
+	    FlagSet(FLAG_CREATE_SHINY_MON);
     
-    gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ITEM_NONE);
+    if (ScriptReadByte(ctx))
+	    FlagSet(FLAG_HIDDEN_ABILITY_MON);
+    
+	ball = ScriptReadHalfword(ctx);
+	
+    gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ball);
     return FALSE;
 }
 

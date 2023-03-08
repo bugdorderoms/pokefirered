@@ -3,21 +3,9 @@
 	.byte 0x00
 	.endm
 
-	@ Gives the player one of the specified (species) Pokemon at level level, holding item, with the specified Ivs, shiny or not, with hidden ability or not at ball.
-	.macro givecustommon species:req, level:req, item:req, hpiv:req, atkiv:req, defiv:req, speediv:req, spatkiv:req, spdefiv:req, shiny:req, hiddenability:req, ball:req
+    @ Does nothing
+	.macro nop2
 	.byte 0x01
-	.2byte \species
-	.byte \level
-	.2byte \item
-	.byte \hpiv
-	.byte \atkiv
-	.byte \defiv
-	.byte \speediv
-	.byte \spatkiv
-	.byte \spdefiv
-	.byte \shiny
-	.byte \hiddenability
-	.2byte \ball
 	.endm
 
 	@ Terminates script execution.
@@ -884,11 +872,20 @@
 	.endm
 
 	@ Gives the player one of the specified (species) Pokemon at level level holding item.
-	.macro givemon species:req, level:req, item:req
+	.macro givemon species:req, level:req, item:req, hpIv=USE_RANDOM_IVS, atkIv=USE_RANDOM_IVS, defIv=USE_RANDOM_IVS, speedIv=USE_RANDOM_IVS, spAtkIv=USE_RANDOM_IVS, spDefIv=USE_RANDOM_IVS, shiny=FALSE, hiddenAbility=FALSE, ball=ITEM_POKE_BALL
 	.byte 0x79
 	.2byte \species
 	.byte \level
 	.2byte \item
+	.byte \hpIv
+	.byte \atkIv
+	.byte \defIv
+	.byte \speedIv
+	.byte \spAtkIv
+	.byte \spDefIv
+	.byte \shiny
+	.byte \hiddenAbility
+	.2byte \ball
 	.endm
 
 	.macro giveegg species:req
