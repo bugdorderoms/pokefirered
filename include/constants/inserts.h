@@ -10,8 +10,9 @@
 #define DELETABLE_HMS TRUE // if true all HM moves will be deleteable like any other TM.
 #define REMOVE_FLASHBACKS TRUE // if true it removes the flashbacks when load a saved game.
 #define FULL_EXP_FOR_PARTICIPATING TRUE // if true it gives full exp for the participating in the battle.
-#define SHUCKLE_MAKES_BERRY_JUICE TRUE // if true at the end of each battle a shuckle on the party may can make a berry juice if holding a berry, like in gen2.
 #define VOLT_TACKLE_BY_BREEDING TRUE // if true when a pichu egg is hatched it will come with the volt tackle move.
+#define WILD_HIDDEN_ABILITY_CHANCE 5 // % chance that a wild pokemon has to appears with it's hidden ability, if it has one. If 0 it will't appears with it's hidden ability.
+#define SHUCKLE_MAKES_BERRY_JUICE_CHANCE 25 // % chance that a Shuckle on the player's party makes a Berry Juice from it's held berry at the end of each battle, like in gen2. If 0 it will't crete a Berry Juice.
 
 // grafical changes
 #define PAGE_SWAP TRUE // if true it auttomaticaly swap the naming screen page to lower case on write the first caracter.

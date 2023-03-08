@@ -8342,8 +8342,8 @@ static void atkE5_pickup(void)
 			}
 		}
 	}
-#if SHUCKLE_MAKES_BERRY_JUICE
-	else if (species == SPECIES_SHUCKLE && heldItem >= FIRST_BERRY_INDEX && heldItem <= LAST_BERRY_INDEX && !(Random() % 16)) // you can edit this chance (1/16)
+#if SHUCKLE_MAKES_BERRY_JUICE_CHANCE != 0
+	else if (species == SPECIES_SHUCKLE && heldItem >= FIRST_BERRY_INDEX && heldItem <= LAST_BERRY_INDEX && Random() % 100 < SHUCKLE_MAKES_BERRY_JUICE_CHANCE)
 	{
 		heldItem = ITEM_BERRY_JUICE;
 		SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &heldItem);

@@ -1851,7 +1851,11 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
         value = personality & 1;
         SetBoxMonData(boxMon, MON_DATA_ABILITY_NUM, &value);
     }
-    if (FlagGet(FLAG_HIDDEN_ABILITY_MON) || (Random() % 100 < 5)) // 5% chance a pokemon being with this hidden ability
+#if WILD_HIDDEN_ABILITY_CHANCE != 0
+    if (FlagGet(FLAG_HIDDEN_ABILITY_MON) || (Random() % 100 < WILD_HIDDEN_ABILITY_CHANCE))
+#else
+	if (FlagGet(FLAG_HIDDEN_ABILITY_MON)
+#endif
     {
 	    FlagClear(FLAG_HIDDEN_ABILITY_MON);
 	    value = TRUE;
