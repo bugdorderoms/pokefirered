@@ -40,7 +40,6 @@ static void SpriteCB_MoveItem_HandleInput(struct Sprite *sprite);
 static void SpriteCB_HandleUseSelectedItem(struct Sprite *sprite);
 static void SpriteCB_MoveSpriteToSwitchMode(struct Sprite *sprite);
 static u8 DirectionToAnimNum(u8 direction);
-static u8 InvertCursorDirection(u8 direction);
 static u8 GetItemSpriteIdByDirection(struct Sprite *sprite, u8 direction, bool8 GetOriginal);
 static void SetDataToSlideAnim(struct Sprite *sprite, u8 direction);
 static void GeneralCursorMovement(struct Sprite *sprite);
@@ -362,7 +361,7 @@ static void SpriteCB_SelectItem_HandleInput(struct Sprite *sprite)
 		// when press START init slot swap input
 		SetDataToSlideAnim(&gSprites[sprite->sBoxSpriteIds(direction)], direction);
 		sprite->sCursorToSwitch = direction;
-		HandleSelectItemAction(sprite, InvertCursorDirection(direction));
+		HandleSelectItemAction(sprite, direction ^ 2); // ^ 2 inverts the cursor direction for quickly acess the opposite slot
 		sprite->callback = SpriteCB_MoveItem_HandleInput;
 	}
 	else // general cursor movement
@@ -381,7 +380,7 @@ static void SpriteCB_MoveItem_HandleInput(struct Sprite *sprite)
 		if (JOY_NEW(A_BUTTON))
 		{
 			// when press A init the swap action
-			SetDataToSlideAnim(&gSprites[sprite->sBoxSpriteIds(direction)], InvertCursorDirection(direction));
+			SetDataToSlideAnim(&gSprites[sprite->sBoxSpriteIds(direction)], direction ^ 2); // inverts the cursor direction for the box moving anim
 			
 			// fails if choose the same slot or two free slots
 			if (firstItem == secondItem || (firstItem == MAX_SPRITES && secondItem == MAX_SPRITES))
@@ -405,7 +404,7 @@ static void SpriteCB_MoveItem_HandleInput(struct Sprite *sprite)
 		else if (JOY_NEW(B_BUTTON))
 		{
 			// when press B calcel slot swap action
-			SetDataToSlideAnim(&gSprites[sprite->sBoxSpriteIds(direction)], InvertCursorDirection(direction));
+			SetDataToSlideAnim(&gSprites[sprite->sBoxSpriteIds(direction)], direction ^ 2); // inverts the cursor direction for the box return for it's original position
 			HandleSelectItemAction(sprite, sprite->sCursorToSwitch);
 			sprite->callback = SpriteCB_WaitSlideAnimAndReturnToInput;
 		}
@@ -615,30 +614,8 @@ static u8 GetItemSpriteIdByDirection(struct Sprite *sprite, u8 direction, bool8 
 
 static u8 DirectionToAnimNum(u8 direction)
 {
-	switch (direction)
-	{
-		case CURSORDIRECTION_UP:
-		    return 0;
-		case CURSORDIRECTION_DOWN:
-		    return 1;
-		case CURSORDIRECTION_RIGT:
-		    return 2;
-		case CURSORDIRECTION_LEFT:
-		    return 3;
-	}
-}
-
-static u8 InvertCursorDirection(u8 direction)
-{
-	switch (direction)
-	{
-		case CURSORDIRECTION_UP:
-		    return CURSORDIRECTION_DOWN;
-		case CURSORDIRECTION_RIGT:
-		    return CURSORDIRECTION_LEFT;
-		case CURSORDIRECTION_DOWN:
-		    return CURSORDIRECTION_UP;
-		case CURSORDIRECTION_LEFT:
-		    return CURSORDIRECTION_RIGT;
-	}
+	if (direction == CURSORDIRECTION_RIGT || direction == CURSORDIRECTION_DOWN)
+		direction ^= 3;
+	
+	return direction;
 }
