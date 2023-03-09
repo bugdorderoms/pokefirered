@@ -135,6 +135,13 @@ wonder skin
 analytic
 illusion
 imposter
+infiltrator
+mummy
+moxie
+justified
+rattled
+magic bounce
+sap sipper
 
 // put in
 evolve without national dex
