@@ -3957,35 +3957,22 @@ u16 GetUsedHeldItem(u8 battler)
 	return gBattleStruct->usedHeldItems[gBattlerPartyIndexes[battler]][GetBattlerSide(battler)];
 }
 
-bool8 NoAliveMonsForPlayer(void)
+bool8 NoAliveMonsForParty(struct Pokemon *party)
 {
 	u8 i;
 	u32 HP_count = 0;
 	
 	for (i = 0; i < PARTY_SIZE; i++)
 	{
-		if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG))
-			HP_count += GetMonData(&gPlayerParty[i], MON_DATA_HP);
-	}
-	return (HP_count == 0);
-}
-
-bool8 NoAliveMonsForOpponent(void)
-{
-	u8 i;
-	u32 HP_count = 0;
-	
-	for (i = 0; i < PARTY_SIZE; i++)
-	{
-		if (GetMonData(&gEnemyParty[i], MON_DATA_SPECIES) && !GetMonData(&gEnemyParty[i], MON_DATA_IS_EGG))
-            HP_count += GetMonData(&gEnemyParty[i], MON_DATA_HP);
+		if (GetMonData(&party[i], MON_DATA_SPECIES) && !GetMonData(&party[i], MON_DATA_IS_EGG))
+			HP_count += GetMonData(&party[i], MON_DATA_HP);
 	}
 	return (HP_count == 0);
 }
 
 bool8 NoAliveMonsForEitherParty(void)
 {
-	return (NoAliveMonsForPlayer() || NoAliveMonsForOpponent());
+	return (NoAliveMonsForParty(&gPlayerParty) || NoAliveMonsForParty(&gEnemyParty));
 }
 
 bool8 IsBattlerAlive(u8 battlerId)
