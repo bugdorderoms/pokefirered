@@ -152,7 +152,7 @@ static const union AffineAnimCmd *const sAffineAnimTable_RegisteredItemCursor[] 
 	sAffineAnim_RegisteredItemCursorLeft
 };
 
-static const struct OamData gOamData_RegisteredItem =
+static const struct OamData sOamData_RegisteredItem =
 {
 	.y = 0,
 	.affineMode = ST_OAM_AFFINE_NORMAL,
@@ -166,7 +166,7 @@ static const struct OamData gOamData_RegisteredItem =
 	.paletteNum = 0,
 };
 
-static const struct OamData gOamData_RegisteredItemCursor =
+static const struct OamData sOamData_RegisteredItemCursor =
 {
 	.y = 0,
 	.affineMode = ST_OAM_AFFINE_NORMAL,
@@ -184,7 +184,7 @@ static const struct SpriteTemplate sSelectItem_Cursor =
 {
 	.tileTag = CURSOR_TAG,
 	.paletteTag = BOX_TAG,
-	.oam = &gOamData_RegisteredItemCursor,
+	.oam = &sOamData_RegisteredItemCursor,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
 	.affineAnims = sAffineAnimTable_RegisteredItemCursor,
@@ -195,7 +195,7 @@ static const struct SpriteTemplate sBoxTemplate =
 {
 	.tileTag = BOX_TAG,
 	.paletteTag = BOX_TAG,
-	.oam = &gOamData_RegisteredItem,
+	.oam = &sOamData_RegisteredItem,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
 	.affineAnims = sAffineAnimTable_RegisteredItem,
@@ -275,24 +275,20 @@ void TryRemoveRegisteredItems(void)
 // cursor defines
 #define sCursorDirection         data[0]
 #define sCursorToSwitch          data[1]
-#define sSavedSomething          data[2]
-#define sBoxSpriteIds(direction) data[direction + 3]
+#define sBoxSpriteIds(direction) data[direction + 2]
 
 void InitRegisteredItemsToChoose(void)
 {
 	struct SpriteTemplate itemTemplate = {
-		.oam = &gOamData_RegisteredItem,
+		.oam = &sOamData_RegisteredItem,
 		.anims = gDummySpriteAnimTable,
 		.images = NULL,
 		.affineAnims = sAffineAnimTable_RegisteredItem,
 		.callback = SpriteCallbackDummy
 	};
 	
-	u8 i, spriteId, spriteId2, cursorSpriteId, save, itemSpriteIds[REGISTERED_ITEMS_COUNT] = {0}, boxSpriteIds[REGISTERED_ITEMS_COUNT] = {0};
+	u8 i, spriteId, spriteId2, cursorSpriteId, itemSpriteIds[REGISTERED_ITEMS_COUNT] = {0}, boxSpriteIds[REGISTERED_ITEMS_COUNT] = {0};
 	u16 tag;
-	
-	save = gReservedSpritePaletteCount;
-	gReservedSpritePaletteCount = 10;
 	
 	LoadSpriteSheet(&sBoxSpriteSheet);
 	LoadSpritePalette(&sBoxAndCursorSpritePalette);
@@ -304,6 +300,7 @@ void InitRegisteredItemsToChoose(void)
 		itemTemplate.paletteTag = tag;
 		
 		boxSpriteIds[i] = spriteId2 = CreateSprite(&sBoxTemplate, sRegisteredBoxesIconsPositions[i].x, sRegisteredBoxesIconsPositions[i].y, 0);
+		itemSpriteIds[i] = MAX_SPRITES;
 		
 		if (gSaveBlock1Ptr->registeredItem[i])
 		{
@@ -323,7 +320,6 @@ void InitRegisteredItemsToChoose(void)
 	
 	gSprites[cursorSpriteId].invisible = TRUE;
 	gSprites[cursorSpriteId].sCursorDirection = CURSORDIRECTION_UP;
-	gSprites[cursorSpriteId].sSavedSomething = save;
 	
 	for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
 		gSprites[cursorSpriteId].sBoxSpriteIds(i) = boxSpriteIds[i];
@@ -388,18 +384,18 @@ static void SpriteCB_MoveItem_HandleInput(struct Sprite *sprite)
 			SetDataToSlideAnim(&gSprites[sprite->sBoxSpriteIds(direction)], InvertCursorDirection(direction));
 			
 			// fails if choose the same slot or two free slots
-			if (firstItem == secondItem || (!firstItem && !secondItem))
+			if (firstItem == secondItem || (firstItem == MAX_SPRITES && secondItem == MAX_SPRITES))
 			{
 				PlaySE(SE_FAILURE);
 				sprite->callback = SpriteCB_WaitSlideAnimAndReturnToInput;
 			}
 			else
 			{
-				if (firstItem)
+				if (firstItem != MAX_SPRITES)
 				{
 					StartSpriteAffineAnim(&gSprites[firstItem], 1);
 				}
-				if (secondItem)
+				if (secondItem != MAX_SPRITES)
 				{
 					StartSpriteAffineAnim(&gSprites[secondItem], 1);
 				}
@@ -428,19 +424,20 @@ static void SpriteCB_HandleUseSelectedItem(struct Sprite *sprite)
 		{
 			spriteId = GetItemSpriteIdByDirection(sprite, i, TRUE);
 			
-			if (spriteId)
+			if (spriteId != MAX_SPRITES)
 			{
-				DestroyAnimSprite(&gSprites[spriteId]);
+				FreeSpriteOamMatrix(&gSprites[spriteId]);
+				DestroySprite(&gSprites[spriteId]);
 				FreeSpriteTilesByTag(ITEMICON_INITIAL_TAG + i);
 				FreeSpritePaletteByTag(ITEMICON_INITIAL_TAG + i);
 			}
-			DestroyAnimSprite(&gSprites[sprite->sBoxSpriteIds(i)]);
+			FreeSpriteOamMatrix(&gSprites[sprite->sBoxSpriteIds(i)]);
+			DestroySprite(&gSprites[sprite->sBoxSpriteIds(i)]);
 			FreeSpriteTilesByTag(BOX_TAG);
 			FreeSpritePaletteByTag(BOX_TAG);
 		}
-		gReservedSpritePaletteCount = sprite->sSavedSomething;
-		
-		DestroyAnimSprite(sprite);
+		FreeSpriteOamMatrix(sprite);
+		DestroySprite(sprite);
 		FreeSpriteTilesByTag(CURSOR_TAG);
 		FreeSpritePaletteByTag(BOX_TAG);
 		
@@ -462,7 +459,7 @@ static void SpriteCB_WaitAffinAnimsAndSwitchItems(struct Sprite *sprite)
 	u8 spriteId, firstItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorDirection, FALSE), secondItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorToSwitch, FALSE);
 	u16 temp;
 	
-	if ((firstItem && gSprites[firstItem].affineAnimEnded) || (secondItem && gSprites[secondItem].affineAnimEnded)) // wait anim ends to continue
+	if ((firstItem != MAX_SPRITES && gSprites[firstItem].affineAnimEnded) || (secondItem != MAX_SPRITES && gSprites[secondItem].affineAnimEnded)) // wait anim ends to continue
 	{
 		SWAP(gSaveBlock1Ptr->registeredItem[sprite->sCursorDirection], gSaveBlock1Ptr->registeredItem[sprite->sCursorToSwitch], temp);
 			
@@ -471,12 +468,12 @@ static void SpriteCB_WaitAffinAnimsAndSwitchItems(struct Sprite *sprite)
 		
 		PlaySE(SE_SWITCH);
 		
-		if (firstItem && secondItem)
+		if (firstItem != MAX_SPRITES && secondItem != MAX_SPRITES)
 		{
 			SWAP(gSprites[firstItem].x, gSprites[secondItem].x, temp);
 			SWAP(gSprites[firstItem].y, gSprites[secondItem].y, temp);
 		}
-		else if (firstItem)
+		else if (firstItem != MAX_SPRITES)
 		{
 			gSprites[firstItem].x = sRegisteredBoxesIconsPositions[sprite->sCursorToSwitch].x + 4;
 			gSprites[firstItem].y = sRegisteredBoxesIconsPositions[sprite->sCursorToSwitch].y + 4;
@@ -487,11 +484,11 @@ static void SpriteCB_WaitAffinAnimsAndSwitchItems(struct Sprite *sprite)
 			gSprites[secondItem].y = sRegisteredBoxesIconsPositions[sprite->sCursorDirection].y + 4;
 		}
 		
-		if (firstItem)
+		if (firstItem != MAX_SPRITES)
 		{
 			StartSpriteAffineAnim(&gSprites[firstItem], 0);
 		}
-		if (secondItem)
+		if (secondItem != MAX_SPRITES)
 		{
 			StartSpriteAffineAnim(&gSprites[secondItem], 0);
 		}
@@ -503,7 +500,7 @@ static void SpriteCB_WaitAffinAnimsAndReturnToInput(struct Sprite *sprite)
 {
 	u8 firstItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorDirection, FALSE), secondItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorToSwitch, FALSE);
 	
-	if ((firstItem && gSprites[firstItem].affineAnimEnded) || (secondItem && gSprites[secondItem].affineAnimEnded)) // wait anim ends to continue
+	if ((firstItem != MAX_SPRITES && gSprites[firstItem].affineAnimEnded) || (secondItem != MAX_SPRITES && gSprites[secondItem].affineAnimEnded)) // wait anim ends to continue
 		sprite->callback = SpriteCB_SelectItem_HandleInput;
 }
 
@@ -551,7 +548,7 @@ static void SetDataToSlideAnim(struct Sprite *sprite, u8 direction)
 	
 	itemSpriteId = sprite->sItemSpriteId;
 	
-	if (itemSpriteId)
+	if (itemSpriteId != MAX_SPRITES)
 	{
 		gSprites[itemSpriteId].sAddToX = addX;
 		gSprites[itemSpriteId].sAddToY = addY;
@@ -569,7 +566,7 @@ static void InitAffinAnimsAndUseItem(struct Sprite *sprite)
 	{
 		spriteId = GetItemSpriteIdByDirection(sprite, i, FALSE);
 		
-		if (spriteId)
+		if (spriteId != MAX_SPRITES)
 			StartSpriteAffineAnim(&gSprites[spriteId], 1);
 		StartSpriteAffineAnim(&gSprites[sprite->sBoxSpriteIds(i)], 1);
 	}
