@@ -110,7 +110,7 @@ bool8 BattlerStatCanRaise(u8 battler, u8 statId);
 bool8 BattlerStatCanFall(u8 battler, u8 statId);
 bool8 IsUnnerveOnOpposingField(u8 battler);
 u16 GetUsedHeldItem(u8 battler);
-bool8 NoAliveMonsForParty(struct Pokemon *mon);
+bool8 NoAliveMonsForParty(struct Pokemon *party);
 bool8 NoAliveMonsForEitherParty(void);
 bool8 IsBattlerAlive(u8 battlerId);
 struct Pokemon *GetBattlerPartyIndexPtr(u8 battler);
