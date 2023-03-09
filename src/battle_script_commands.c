@@ -3043,10 +3043,10 @@ static void atk24(void)
 
     if (!gBattleControllerExecFlags)
     {
-        if (NoAliveMonsForPlayer())
+        if (NoAliveMonsForParty(gPlayerParty))
             gBattleOutcome |= B_OUTCOME_LOST;
 		
-        if (NoAliveMonsForOpponent())
+        if (NoAliveMonsForParty(gEnemyParty))
             gBattleOutcome |= B_OUTCOME_WON;
 		
         if (gBattleOutcome == 0 && (gBattleTypeFlags & BATTLE_TYPE_LINK))
