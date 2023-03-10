@@ -223,27 +223,11 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 	spAttack = attacker->spAttack;
 	spDefense = defender->spDefense;
 
-	if (attacker->item == ITEM_ENIGMA_BERRY)
-	{
-		attackerHoldEffect = gEnigmaBerries[battlerIdAtk].holdEffect;
-		attackerHoldEffectParam = gEnigmaBerries[battlerIdAtk].holdEffectParam;
-	}
-	else
-	{
-		attackerHoldEffect = GetBattlerItemHoldEffect(battlerIdAtk, TRUE);
-		attackerHoldEffectParam = ItemId_GetHoldEffectParam(attacker->item);
-	}
-
-	if (defender->item == ITEM_ENIGMA_BERRY)
-	{
-		defenderHoldEffect = gEnigmaBerries[battlerIdDef].holdEffect;
-		defenderHoldEffectParam = gEnigmaBerries[battlerIdDef].holdEffectParam;
-	}
-	else
-	{
-		defenderHoldEffect = GetBattlerItemHoldEffect(battlerIdDef, TRUE);
-		defenderHoldEffectParam = ItemId_GetHoldEffectParam(defender->item);
-	}
+	attackerHoldEffect = GetBattlerItemHoldEffect(battlerIdAtk, TRUE);
+	attackerHoldEffectParam = GetBattlerHoldEffectParam(battlerIdAtk);
+	
+	defenderHoldEffect = GetBattlerItemHoldEffect(battlerIdDef, TRUE);
+	defenderHoldEffectParam = GetBattlerHoldEffectParam(battlerIdDef);
 
 	if (!isConfusionDmg) // makes confusion damage not affected by effects of items, abilities or boosts granted by badges
 	{

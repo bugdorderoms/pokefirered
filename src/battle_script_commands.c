@@ -1086,26 +1086,26 @@ static void atk01_accuracycheck(void)
     }
     else
     {
-	if (move == MOVE_NONE)
-		move = gCurrentMove;  
+		if (move == MOVE_NONE)
+			move = gCurrentMove;  
 	    
-	if ((gBattleMoves[move].effect == EFFECT_MULTI_HIT || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK)
-	    && GetBattlerAbility(gBattlerAttacker) == ABILITY_SKILL_LINK)
-	{
-		gBattlescriptCurrInstr += 7;
-		return;
-	}
+		if ((gBattleMoves[move].effect == EFFECT_MULTI_HIT || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK)
+			&& GetBattlerAbility(gBattlerAttacker) == ABILITY_SKILL_LINK)
+		{
+			gBattlescriptCurrInstr += 7;
+			return;
+		}
         type = gBattleStruct->dynamicMoveType;
-	moveAcc = gBattleMoves[move].accuracy;
+		moveAcc = gBattleMoves[move].accuracy;
 	    
         if (JumpIfMoveAffectedByProtect(move) || AccuracyCalcHelper(move))
             return;
-	 
-	acc = gBattleMons[gBattlerAttacker].statStages[STAT_ACC];
-	
-	if (GetBattlerAbility(gBattlerTarget) == ABILITY_UNAWARE)
-	    acc = 6;
-        if (gBattleMons[gBattlerTarget].status2 & STATUS2_FORESIGHT || GetBattlerAbility(gBattlerAttacker) == ABILITY_UNAWARE)
+		
+		acc = gBattleMons[gBattlerAttacker].statStages[STAT_ACC];
+		
+		if (GetBattlerAbility(gBattlerTarget) == ABILITY_UNAWARE)
+			acc = 6;
+		if (gBattleMons[gBattlerTarget].status2 & STATUS2_FORESIGHT || GetBattlerAbility(gBattlerAttacker) == ABILITY_UNAWARE)
             buff = acc;
         else
             buff = acc + 6 - gBattleMons[gBattlerTarget].statStages[STAT_EVASION];
@@ -1117,53 +1117,45 @@ static void atk01_accuracycheck(void)
 	    
         // check Thunder on sunny weather
         if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && gBattleMoves[move].effect == EFFECT_THUNDER)
-		moveAcc = 50;
-	    
-	if (GetBattlerAbility(gBattlerTarget) == ABILITY_WONDER_SKIN && IS_MOVE_STATUS(move) && moveAcc > 50)
-		moveAcc = 50;
+			moveAcc = 50;
+		
+		if (GetBattlerAbility(gBattlerTarget) == ABILITY_WONDER_SKIN && IS_MOVE_STATUS(move) && moveAcc > 50)
+			moveAcc = 50;
 	    
         calc = sAccuracyStageRatios[buff].dividend * moveAcc;
         calc /= sAccuracyStageRatios[buff].divisor;
 	    
         if (GetBattlerAbility(gBattlerAttacker) == ABILITY_COMPOUND_EYES)
             calc = (calc * 130) / 100; // 1.3 compound eyes boost
-	if (GetBattlerAbility(gBattlerAttacker) == ABILITY_HUSTLE && IS_MOVE_PHYSICAL(move))
+		if (GetBattlerAbility(gBattlerAttacker) == ABILITY_HUSTLE && IS_MOVE_PHYSICAL(move))
             calc = (calc * 80) / 100; // 1.2 hustle loss
-	if (GetBattlerAbility(gBattlerTarget) == ABILITY_TANGLED_FEET && gBattleMons[gBattlerTarget].status2 & STATUS2_CONFUSION)
-	    calc /= 2; // tangled feet halved
-	if (WEATHER_HAS_EFFECT)
-	{
-		if ((gBattleWeather & WEATHER_SANDSTORM_ANY && GetBattlerAbility(gBattlerTarget) == ABILITY_SAND_VEIL) 
-		    || (gBattleWeather & WEATHER_HAIL_ANY && GetBattlerAbility(gBattlerTarget) == ABILITY_SNOW_CLOAK))
-			calc = (calc * 80) / 100; // 1.2 sand veil and snow cloak loss
-	}
-        if (gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY)
-        {
-            holdEffect = gEnigmaBerries[gBattlerTarget].holdEffect;
-            param = gEnigmaBerries[gBattlerTarget].holdEffectParam;
-        }
-        else
-        {
-            holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE);
-            param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
-        }
-        gPotentialItemEffectBattler = gBattlerTarget;
-
-        if (holdEffect == HOLD_EFFECT_EVASION_UP)
-            calc = (calc * (100 - param)) / 100;
-        // final calculation
-        if ((Random() % 100 + 1) > calc)
-        {
-            gMoveResultFlags |= MOVE_RESULT_MISSED;
+		if (GetBattlerAbility(gBattlerTarget) == ABILITY_TANGLED_FEET && gBattleMons[gBattlerTarget].status2 & STATUS2_CONFUSION)
+			calc /= 2; // tangled feet halved
+		if (WEATHER_HAS_EFFECT)
+		{
+			if ((gBattleWeather & WEATHER_SANDSTORM_ANY && GetBattlerAbility(gBattlerTarget) == ABILITY_SAND_VEIL) 
+				|| (gBattleWeather & WEATHER_HAIL_ANY && GetBattlerAbility(gBattlerTarget) == ABILITY_SNOW_CLOAK))
+			    calc = (calc * 80) / 100; // 1.2 sand veil and snow cloak loss
+		}
+		holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE);
+		param = GetBattlerHoldEffectParam(gBattlerTarget);
 		
-            if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE 
-             && (gBattleMoves[move].target == MOVE_TARGET_BOTH || gBattleMoves[move].target == MOVE_TARGET_FOES_AND_ALLY))
-                gBattleCommunication[6] = 2;
-            else
-                gBattleCommunication[6] = 0;
-            CheckWonderGuardAndLevitate();
-        }
-        JumpIfMoveFailed(7, move);
+		gPotentialItemEffectBattler = gBattlerTarget;
+		
+		if (holdEffect == HOLD_EFFECT_EVASION_UP)
+			calc = (calc * (100 - param)) / 100;
+		// final calculation
+		if ((Random() % 100 + 1) > calc)
+		{
+			gMoveResultFlags |= MOVE_RESULT_MISSED;
+			
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && (gBattleMoves[move].target == MOVE_TARGET_BOTH || gBattleMoves[move].target == MOVE_TARGET_FOES_AND_ALLY))
+				gBattleCommunication[6] = 2;
+			else
+				gBattleCommunication[6] = 0;
+			CheckWonderGuardAndLevitate();
+		}
+		JumpIfMoveFailed(7, move);
     }
 }
 
@@ -1228,14 +1220,9 @@ static void atk02_attackstring(void)
 
 static void atk04_critcalc(void)
 {
-    u8 holdEffect;
-    u16 critChance, item = gBattleMons[gBattlerAttacker].item;
+    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerAttacker, TRUE);
+    u16 critChance;
     gPotentialItemEffectBattler = gBattlerAttacker;
-	
-    if (item == ITEM_ENIGMA_BERRY)
-        holdEffect = gEnigmaBerries[gBattlerAttacker].holdEffect;
-    else
-        holdEffect = GetBattlerItemHoldEffect(gBattlerAttacker, TRUE);
 	
     critChance  = 2 * ((gBattleMons[gBattlerAttacker].status2 & STATUS2_FOCUS_ENERGY) != 0)
 	        + (GetBattlerAbility(gBattlerAttacker) == ABILITY_SUPER_LUCK)
@@ -1454,18 +1441,8 @@ bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move)
 
 static void atk07_adjustdamage(void)
 {
-    u8 holdEffect, param;
+    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = GetBattlerHoldEffectParam(gBattlerTarget);
 	
-    if (gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY)
-    {
-        holdEffect = gEnigmaBerries[gBattlerTarget].holdEffect;
-        param = gEnigmaBerries[gBattlerTarget].holdEffectParam;
-    }
-    else
-    {
-        holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE);
-        param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
-    }
     gPotentialItemEffectBattler = gBattlerTarget;
 	
     if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
@@ -3722,12 +3699,7 @@ static void atk49_moveend(void)
 	
     arg1 = gBattlescriptCurrInstr[1];
     arg2 = gBattlescriptCurrInstr[2];
-	
-    if (gBattleMons[gBattlerAttacker].item == ITEM_ENIGMA_BERRY)
-        holdEffectAtk = gEnigmaBerries[gBattlerAttacker].holdEffect;
-    else
-        holdEffectAtk = GetBattlerItemHoldEffect(gBattlerAttacker, TRUE);
-	
+	holdEffectAtk = GetBattlerItemHoldEffect(gBattlerAttacker, TRUE);
     choicedMoveAtk = &gBattleStruct->choicedMove[gBattlerAttacker];
     
     do
@@ -6411,20 +6383,11 @@ static void atk92_setlightscreen(void)
 
 static void atk93_tryKO(void)
 {
-    u8 holdEffect, param;
+    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = GetBattlerHoldEffectParam(gBattlerTarget);
     u16 chance;
-
-    if (gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY)
-    {
-       holdEffect = gEnigmaBerries[gBattlerTarget].holdEffect;
-       param = gEnigmaBerries[gBattlerTarget].holdEffectParam;
-    }
-    else
-    {
-        holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE);
-        param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
-    }
+    
     gPotentialItemEffectBattler = gBattlerTarget;
+	
     if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
     {
         RecordItemEffectBattle(gBattlerTarget, HOLD_EFFECT_FOCUS_BAND);

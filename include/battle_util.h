@@ -101,6 +101,7 @@ bool8 CanBeBurned(u8 bank);
 bool8 CanBeFrozen(u8 bank);
 bool8 CanBeParalyzed(u8 bank);
 u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating);
+u8 GetBattlerHoldEffectParam(u8 battlerId);
 u16 GetBattlerAbility(u8 battler);
 struct Pokemon *GetIllusionMonPtr(u8 battler);
 void ClearIllusionMon(u8 battler);

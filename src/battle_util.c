@@ -449,7 +449,12 @@ void TryGiveUnburdenBoostToMon(u8 battler)
 
 u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating)
 {
-	u8 holdEffect = ItemId_GetHoldEffect(gBattleMons[battler].item);
+	u8 holdEffect;
+
+    if (gBattleMons[battler].item == ITEM_ENIGMA_BERRY)
+		holdEffect = gEnigmaBerries[battler].holdEffect;
+	else	
+		holdEffect = ItemId_GetHoldEffect(gBattleMons[battler].item);
 	
 	if (checkNegating)
 	{
@@ -457,6 +462,18 @@ u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating)
 			holdEffect = HOLD_EFFECT_NONE;
 	}
 	return holdEffect;
+}
+
+u8 GetBattlerHoldEffectParam(u8 battlerId)
+{
+	u8 holdEffectParam;
+
+    if (gBattleMons[battlerId].item == ITEM_ENIGMA_BERRY)
+		holdEffectParam = gEnigmaBerries[battlerId].holdEffectParam;
+	else	
+		holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battlerId].item);
+	
+	return holdEffectParam;
 }
 
 static void TryActivateDefiant(u16 stringId)
@@ -586,10 +603,7 @@ u8 TrySetCantSelectMoveBattleScript(void)
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingImprisonedMove;
         ++limitations;
     }
-    if (gBattleMons[gActiveBattler].item == ITEM_ENIGMA_BERRY)
-        holdEffect = gEnigmaBerries[gActiveBattler].holdEffect;
-    else
-        holdEffect = GetBattlerItemHoldEffect(gActiveBattler, TRUE);
+	holdEffect = GetBattlerItemHoldEffect(gActiveBattler, TRUE);
     gPotentialItemEffectBattler = gActiveBattler;
     if (holdEffect == HOLD_EFFECT_CHOICE_BAND && *choicedMove && *choicedMove != 0xFFFF && *choicedMove != move)
     {
@@ -608,14 +622,10 @@ u8 TrySetCantSelectMoveBattleScript(void)
 
 u8 CheckMoveLimitations(u8 battlerId, u8 unusableMoves, u8 check)
 {
-    u8 holdEffect;
+    u8 holdEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
     u16 *choicedMove = &gBattleStruct->choicedMove[battlerId];
     s32 i;
 
-    if (gBattleMons[battlerId].item == ITEM_ENIGMA_BERRY)
-        holdEffect = gEnigmaBerries[battlerId].holdEffect;
-    else
-        holdEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
     gPotentialItemEffectBattler = battlerId;
 
     for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -3129,21 +3139,12 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
     int i = 0;
     u8 effect = ITEM_NO_EFFECT;
     u8 changedPP = 0;
-    u8 battlerHoldEffect, defHoldEffect;
-    u8 battlerHoldEffectParam, defHoldEffectParam;
+    u8 battlerHoldEffect = GetBattlerItemHoldEffect(battlerId, TRUE), defHoldEffect;
+    u8 battlerHoldEffectParam = GetBattlerHoldEffectParam(battlerId), defHoldEffectParam;
     u16 defItem;
 
     gLastUsedItem = gBattleMons[battlerId].item;
-    if (gLastUsedItem == ITEM_ENIGMA_BERRY)
-    {
-        battlerHoldEffect = gEnigmaBerries[battlerId].holdEffect;
-        battlerHoldEffectParam = gEnigmaBerries[battlerId].holdEffectParam;
-    }
-    else
-    {
-        battlerHoldEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
-        battlerHoldEffectParam = ItemId_GetHoldEffectParam(gLastUsedItem);
-    }
+	
     if (IsUnnerveOnOpposingField(battlerId) && IS_ITEM_BERRY(gLastUsedItem))
     {
 	    battlerHoldEffect = 0;
@@ -3445,16 +3446,9 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
         for (battlerId = 0; battlerId < gBattlersCount; ++battlerId)
         {
             gLastUsedItem = gBattleMons[battlerId].item;
-            if (gBattleMons[battlerId].item == ITEM_ENIGMA_BERRY)
-            {
-                battlerHoldEffect = gEnigmaBerries[battlerId].holdEffect;
-                battlerHoldEffectParam = gEnigmaBerries[battlerId].holdEffectParam;
-            }
-            else
-            {
-		battlerHoldEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
-                battlerHoldEffectParam = ItemId_GetHoldEffectParam(gLastUsedItem);
-            }
+			battlerHoldEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
+            battlerHoldEffectParam = GetBattlerHoldEffectParam(battlerId);
+			
             switch (battlerHoldEffect)
             {
             case HOLD_EFFECT_CURE_PAR:
@@ -3972,7 +3966,7 @@ bool8 NoAliveMonsForParty(struct Pokemon *party)
 
 bool8 NoAliveMonsForEitherParty(void)
 {
-	return (NoAliveMonsForParty(&gPlayerParty) || NoAliveMonsForParty(&gEnemyParty));
+	return (NoAliveMonsForParty(gPlayerParty) || NoAliveMonsForParty(gEnemyParty));
 }
 
 bool8 IsBattlerAlive(u8 battlerId)
