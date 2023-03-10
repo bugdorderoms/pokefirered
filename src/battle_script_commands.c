@@ -6495,8 +6495,8 @@ static void atk96_weatherdamage(void)
             if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ROCK) && !IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_STEEL)
 		&& !IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_GROUND) && GetBattlerAbility(gBattlerAttacker) != ABILITY_SAND_VEIL
 		&& GetBattlerAbility(gBattlerAttacker) != ABILITY_MAGIC_GUARD && GetBattlerAbility(gBattlerAttacker) != ABILITY_OVERCOAT
-		&& GetBattlerAbility(gBattlerAttacker) != ABILITY_SAND_RUSH && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERGROUND)
-		&& !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERWATER))
+		&& GetBattlerAbility(gBattlerAttacker) != ABILITY_SAND_RUSH && GetBattlerAbility(gBattlerAttacker) != ABILITY_SAND_FORCE
+		&& !(gStatuses3[gBattlerAttacker] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER)))
             {
                 gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
                 if (gBattleMoveDamage == 0)

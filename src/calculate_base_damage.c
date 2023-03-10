@@ -365,6 +365,10 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 					spAttack = (15 * spAttack) / 10;
 				break;
+			case ABILITY_FLOWER_GIFT:
+			    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+					attack = (15 * attack) / 10;
+				break;
 			case ABILITY_TECHNICIAN:
 				if (gBattleMovePower <= 60)
 					gBattleMovePower = (gBattleMovePower * 15) / 10;
@@ -396,6 +400,21 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				if (GetBattlerTurnOrderNum(battlerIdAtk) == gBattlersCount - 1)
 					gBattleMovePower = (13 * gBattleMovePower) / 10;
 				break;
+			case ABILITY_SAND_FORCE:
+			    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SANDSTORM_ANY && (type == TYPE_ROCK || type == TYPE_GROUND || type == TYPE_STEEL))
+					gBattleMovePower = (13 * gBattleMovePower) / 10;
+				break;
+		}
+		// attacker's ally abilities check
+		if (IsBattlerAlive(BATTLE_PARTNER(battlerIdAtk)))
+		{
+			switch (GetBattlerAbility(BATTLE_PARTNER(battlerIdAtk)))
+			{
+				case ABILITY_FLOWER_GIFT:
+				    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+						attack = (15 * attack) / 10;
+					break;
+			}
 		}
 		// defender abilities check
 		switch (GetBattlerAbility(battlerIdDef))
@@ -431,12 +450,20 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				if (defender->hp == defender->maxHP)
 					gBattleMovePower /= 2;
 				break;
+			case ABILITY_FLOWER_GIFT:
+			    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+					spDefense = (15 * spDefense) / 10;
+				break;
 		}
 		// defender's ally abilities check
 		if (IsBattlerAlive(BATTLE_PARTNER(battlerIdDef)))
 		{
 			switch (GetBattlerAbility(BATTLE_PARTNER(battlerIdDef)))
 			{
+				case ABILITY_FLOWER_GIFT:
+				    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+						spDefense = (15 * spDefense) / 10;
+					break;
 				case ABILITY_FRIEND_GUARD:
 				    gBattleMovePower = (gBattleMovePower * 75) / 100;
 					break;
@@ -455,18 +482,6 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 		{
 			spDefense += spDefense / 2;
 			spAttack = (10 * spAttack) / 15;
-		}
-	    
-		if (gBattleWeather & WEATHER_SUN_ANY && !isConfusionDmg)
-		{
-			if (GetBattlerAbility(battlerIdAtk) == ABILITY_FLOWER_GIFT)
-				attack = (15 * attack) / 10;
-			if (GetBattlerAbility(battlerIdDef) == ABILITY_FLOWER_GIFT)
-				spDefense = (15 * spDefense) / 10;
-			if (IsBattlerAlive(BATTLE_PARTNER(battlerIdAtk)) && GetBattlerAbility(BATTLE_PARTNER(battlerIdAtk)) == ABILITY_FLOWER_GIFT)
-				attack = (15 * attack) / 10;
-			if (IsBattlerAlive(BATTLE_PARTNER(battlerIdDef)) && GetBattlerAbility(BATTLE_PARTNER(battlerIdDef)) == ABILITY_FLOWER_GIFT)
-				spDefense = (15 * spDefense) / 10;
 		}
 	}
 	// burn attack drop

@@ -2468,11 +2468,12 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    }
 			    break;
 		    case ABILITY_ROUGH_SKIN:
+			case ABILITY_IRON_BARBS:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT)
 				&& GetBattlerAbility(gBattlerAttacker) != ABILITY_MAGIC_GUARD)
 			    {
-				    gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
+				    gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 8;
 				    if (gBattleMoveDamage == 0)
 					    gBattleMoveDamage = 1;
 				    BattleScriptPushCursor();
