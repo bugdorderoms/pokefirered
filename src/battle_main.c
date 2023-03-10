@@ -3568,17 +3568,32 @@ enum
 	SPEED_TIE,
 };
 
+static s8 GetChosenMovePriority(u8 battler)
+{
+	u16 move;
+	
+	if (gProtectStructs[battler].noValidMoves)
+        move = MOVE_STRUGGLE;
+    else
+        move = gBattleMons[battler].moves[*(gBattleStruct->chosenMovePositions + battler)];
+	
+	return GetMovePriority(battler, move);
+}
+
 u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
 {
-    s8 battler1Priority, battler2Priority;
+    s8 battler1Priority = 0, battler2Priority = 0;
     s32 battler1Bracket, battler2Bracket;
     u32 battler1Speed, battler2Speed;
   
     // priority check
     if (!ignoreChosenMoves) 
     {
-        battler1Priority = CalculateMonPriority(battler1);
-        battler2Priority = CalculateMonPriority(battler2);
+		if (gChosenActionByBattler[battler1] == B_ACTION_USE_MOVE)
+			battler1Priority = GetChosenMovePriority(battler1);
+		
+		if (gChosenActionByBattler[battler2] == B_ACTION_USE_MOVE)
+			battler2Priority = GetChosenMovePriority(battler2);
         
         if (battler1Priority > battler2Priority) 
             return ATTACKER_STRIKES_FIRST;
@@ -3587,8 +3602,8 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
     }
     
     // bracket check
-    battler1Bracket = CalculateMonBracket(battler1);
-    battler2Bracket = CalculateMonBracket(battler2);
+    battler1Bracket = GetBattlerBracket(battler1);
+    battler2Bracket = GetBattlerBracket(battler2);
     
     if (battler1Bracket > battler2Bracket) 
         return ATTACKER_STRIKES_FIRST;
@@ -3596,8 +3611,8 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
         return DEFENDER_STRIKES_FIRST;
     
     // speed check
-    battler1Speed = CalculateMonSpeed(battler1);
-    battler2Speed = CalculateMonSpeed(battler2);
+    battler1Speed = GetBattlerTotalSpeed(battler1);
+    battler2Speed = GetBattlerTotalSpeed(battler2);
     
     if (battler1Speed > battler2Speed)
         return ATTACKER_STRIKES_FIRST;
@@ -3612,23 +3627,18 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
     }
 }
     
-s8 CalculateMonPriority(u8 battler)
+s8 GetMovePriority(u8 battler, u16 move)
 {
-    u32 priority = 0;
-    u16 move;
-    
-    if (gChosenActionByBattler[battler] != B_ACTION_USE_MOVE)
-        return priority;
-    
-    if (gProtectStructs[battler].noValidMoves)
-        move = MOVE_STRUGGLE;
-    else
-        move = gBattleMons[battler].moves[*(gBattleStruct->chosenMovePositions + battler)];
-    
-    return priority + gBattleMoves[move].priority;
+    s8 priority = gBattleMoves[move].priority;
+	
+	// Prankster check
+	if (GetBattlerAbility(battler) == ABILITY_PRANKSTER && IS_MOVE_STATUS(move))
+		++priority;
+	
+    return priority;
 }
 
-s32 CalculateMonBracket(u8 battler)
+s32 GetBattlerBracket(u8 battler)
 {
     u8 holdEffect = GetBattlerItemHoldEffect(battler, TRUE), holdEffectParam = GetBattlerHoldEffectParam(battler);
     
@@ -3639,7 +3649,7 @@ s32 CalculateMonBracket(u8 battler)
     return 0;
 }
 
-u32 CalculateMonSpeed(u8 battler)
+u32 GetBattlerTotalSpeed(u8 battler)
 {
     u8 HoldEffect;
     u32 monspeed = (gBattleMons[battler].speed * gStatStageRatios[gBattleMons[battler].statStages[STAT_SPEED]][0])
