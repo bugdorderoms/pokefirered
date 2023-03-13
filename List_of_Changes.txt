@@ -145,6 +145,9 @@ sap sipper
 sand force
 iron barbs
 zen mode
+victory star
+turboblaze
+teravolt
 
 // put in
 evolve without national dex
