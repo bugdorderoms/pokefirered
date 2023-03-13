@@ -1185,6 +1185,7 @@ BattleScript_EffectDisable::
 	attackcanceler
 	attackstring
 	ppreduce
+	jumpifability BS_NOT_ATTACKER_SIDE, BattleScript_AromaVeilProtects
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	disablelastusedattack BS_TARGET, BattleScript_ButItFailed
 	attackanimation
@@ -1230,6 +1231,7 @@ BattleScript_EffectEncore::
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
 	ppreduce
+	jumpifability BS_NOT_ATTACKER_SIDE, BattleScript_AromaVeilProtects
 	trysetencore BattleScript_ButItFailed
 	attackanimation
 	waitanimation
@@ -1646,6 +1648,7 @@ BattleScript_EffectAttract::
 	attackcanceler
 	attackstring
 	ppreduce
+	jumpifability BS_NOT_ATTACKER_SIDE, BattleScript_AromaVeilProtects
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	tryinfatuating BattleScript_ButItFailed
 	attackanimation
@@ -2133,6 +2136,7 @@ BattleScript_EffectTorment::
 	attackcanceler
 	attackstring
 	ppreduce
+	jumpifability BS_NOT_ATTACKER_SIDE, BattleScript_AromaVeilProtects
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	settorment BattleScript_ButItFailed
 	attackanimation
@@ -2293,6 +2297,7 @@ BattleScript_EffectTaunt::
 	attackcanceler
 	attackstring
 	ppreduce
+	jumpifability BS_NOT_ATTACKER_SIDE, BattleScript_AromaVeilProtects
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	settaunt BattleScript_ButItFailed
 	attackanimation
@@ -4784,3 +4789,12 @@ BattleScript_ZenModeActivates::
 	waitmessage 0x40
 	removeabilitypopup BS_ATTACKER
 	end3
+
+BattleScript_AromaVeilProtects::
+    pause 0x20
+	orhalfword gMoveResultFlags, MOVE_RESULT_FAILED
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_AROMAVEILPROTECTED
+	waitmessage 0x40
+	removeabilitypopup BS_TARGET
+	goto BattleScript_MoveEnd
