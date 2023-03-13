@@ -148,6 +148,7 @@ zen mode
 victory star
 turboblaze
 teravolt
+aroma veil
 
 // put in
 evolve without national dex
