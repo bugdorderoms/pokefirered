@@ -1185,7 +1185,7 @@ BattleScript_EffectDisable::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifability BS_NOT_ATTACKER_SIDE, BattleScript_AromaVeilProtects
+	jumpifability BS_NOT_ATTACKER_SIDE, ABILITY_AROMA_VEIL, BattleScript_AromaVeilProtects
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	disablelastusedattack BS_TARGET, BattleScript_ButItFailed
 	attackanimation
@@ -1231,7 +1231,7 @@ BattleScript_EffectEncore::
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
 	ppreduce
-	jumpifability BS_NOT_ATTACKER_SIDE, BattleScript_AromaVeilProtects
+	jumpifability BS_NOT_ATTACKER_SIDE, ABILITY_AROMA_VEIL, BattleScript_AromaVeilProtects
 	trysetencore BattleScript_ButItFailed
 	attackanimation
 	waitanimation
@@ -1648,7 +1648,7 @@ BattleScript_EffectAttract::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifability BS_NOT_ATTACKER_SIDE, BattleScript_AromaVeilProtects
+	jumpifability BS_NOT_ATTACKER_SIDE, ABILITY_AROMA_VEIL, BattleScript_AromaVeilProtects
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	tryinfatuating BattleScript_ButItFailed
 	attackanimation
@@ -2136,7 +2136,7 @@ BattleScript_EffectTorment::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifability BS_NOT_ATTACKER_SIDE, BattleScript_AromaVeilProtects
+	jumpifability BS_NOT_ATTACKER_SIDE, ABILITY_AROMA_VEIL, BattleScript_AromaVeilProtects
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	settorment BattleScript_ButItFailed
 	attackanimation
@@ -2297,7 +2297,7 @@ BattleScript_EffectTaunt::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifability BS_NOT_ATTACKER_SIDE, BattleScript_AromaVeilProtects
+	jumpifability BS_NOT_ATTACKER_SIDE, ABILITY_AROMA_VEIL, BattleScript_AromaVeilProtects
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	settaunt BattleScript_ButItFailed
 	attackanimation
