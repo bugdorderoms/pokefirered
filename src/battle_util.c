@@ -49,6 +49,8 @@ static const u8 sHarvestString[] = _("{B_ATK_NAME_WITH_PREFIX} harvested\nits {B
 static const u8 sIllusionOffString[] = _("{B_DEF_NAME_WITH_PREFIX}'s illusion wore off!");
 static const u8 sMummyString[] = _("{B_ATK_NAME_WITH_PREFIX}'s ability became\n{B_ATK_ABILITY}!");
 static const u8 sZenModeString[] = _("{B_ATK_ABILITY} triggered!");
+static const u8 sTurboblazeString[] = _("{B_ATK_NAME_WITH_PREFIX} is radiating\na blazing aura!");
+static const u8 sTeravoltString[] = _("{B_ATK_NAME_WITH_PREFIX} is radiating\na bursting aura!");
 
 static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
 {
@@ -2139,6 +2141,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			BattleScriptPushCursorAndCallback(BattleScript_ImposterActivates);
 			effect++;
 		}
+		break;
+		case ABILITY_TURBOBLAZE:
+		    gSetWordLoc = sTurboblazeString;
+		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+		++effect;
+		break;
+		case ABILITY_TERAVOLT:
+		    gSetWordLoc = sTeravoltString;
+		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+		++effect;
 		break;
             }
             break;

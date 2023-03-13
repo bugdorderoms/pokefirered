@@ -1128,6 +1128,10 @@ static void atk01_accuracycheck(void)
 	    
         if (GetBattlerAbility(gBattlerAttacker) == ABILITY_COMPOUND_EYES)
             calc = (calc * 130) / 100; // 1.3 compound eyes boost
+		if (GetBattlerAbility(gBattlerAttacker) == ABILITY_VICTORY_STAR)
+			calc = (calc * 110) / 100; // 1.1 victory star boost
+		if (IsBattlerAlive(BATTLE_PARTNER(gBattlerAttacker)) && GetBattlerAbility(BATTLE_PARTNER(gBattlerAttacker)) == ABILITY_VICTORY_STAR)
+			calc = (calc * 110) / 100; // 1.1 ally's victory star boost
 		if (GetBattlerAbility(gBattlerAttacker) == ABILITY_HUSTLE && IS_MOVE_PHYSICAL(move))
             calc = (calc * 80) / 100; // 1.2 hustle loss
 		if (GetBattlerAbility(gBattlerTarget) == ABILITY_TANGLED_FEET && gBattleMons[gBattlerTarget].status2 & STATUS2_CONFUSION)
