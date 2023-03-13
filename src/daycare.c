@@ -4,6 +4,7 @@
 #include "battle.h"
 #include "constants/items.h"
 #include "mail_data.h"
+#include "form_change.h"
 #include "pokemon_storage_system.h"
 #include "event_data.h"
 #include "random.h"
@@ -50,7 +51,7 @@ struct EggHatchData
 
 // this file's functions
 static void ClearDaycareMonMail(struct DayCareMail *mail);
-static void SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare);
+static u16 SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare);
 static u8 GetDaycareCompatibilityScore(struct DayCare *daycare);
 static void DaycarePrintMonInfo(u8 windowId, u32 daycareSlotId, u8 y);
 
@@ -1056,7 +1057,7 @@ static void _GiveEggFromDaycare(struct DayCare *daycare)
 
     species = DetermineEggSpeciesAndParentSlots(daycare, parentSlots);
     AlterEggSpeciesWithIncenseItem(&species, daycare);
-    SetInitialEggData(&egg, species, daycare);
+    species = SetInitialEggData(&egg, species, daycare);
     InheritIVs(&egg, daycare);
     BuildEggMoveset(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
 
@@ -1082,6 +1083,8 @@ void CreateEgg(struct Pokemon *mon, u16 species, bool8 setHotSpringsLocation)
     u8 isEgg;
 
     CreateMon(mon, species, EGG_HATCH_LEVEL, USE_RANDOM_IVS, FALSE, 0, OT_ID_PLAYER_ID, 0);
+	species = DoOverworldFormChange(mon, OVERWORLD_FORM_CHANGE_WILD_ENCOUNTER);
+	
     metLevel = 0;
     ball = ITEM_POKE_BALL;
     language = LANGUAGE_JAPANESE;
@@ -1100,7 +1103,7 @@ void CreateEgg(struct Pokemon *mon, u16 species, bool8 setHotSpringsLocation)
     SetMonData(mon, MON_DATA_IS_EGG, &isEgg);
 }
 
-static void SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare)
+static u16 SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare)
 {
     u32 personality;
     u16 ball;
@@ -1109,6 +1112,7 @@ static void SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *
 
     personality = daycare->offspringPersonality | (Random() << 16);
     CreateMon(mon, species, EGG_HATCH_LEVEL, USE_RANDOM_IVS, TRUE, personality, OT_ID_PLAYER_ID, 0);
+	species = DoOverworldFormChange(mon, OVERWORLD_FORM_CHANGE_WILD_ENCOUNTER);
     metLevel = 0;
     ball = ITEM_POKE_BALL;
     language = LANGUAGE_JAPANESE;
@@ -1117,6 +1121,8 @@ static void SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *
     SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);
     SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
     SetMonData(mon, MON_DATA_LANGUAGE, &language);
+	
+	return species;
 }
 
 void GiveEggFromDaycare(void)
@@ -1877,7 +1883,6 @@ static void CB2_EggHatch_1(void)
 {
     u16 species;
     u8 gender;
-    u32 personality;
 
     switch (sEggHatchData->CB2_state)
     {
@@ -1955,8 +1960,7 @@ static void CB2_EggHatch_1(void)
             DayCare_GetMonNickname(&gPlayerParty[sEggHatchData->eggPartyID], gStringVar3);
             species = GetMonData(&gPlayerParty[sEggHatchData->eggPartyID], MON_DATA_SPECIES);
             gender = GetMonGender(&gPlayerParty[sEggHatchData->eggPartyID]);
-            personality = GetMonData(&gPlayerParty[sEggHatchData->eggPartyID], MON_DATA_PERSONALITY, 0);
-            DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar3, species, gender, personality, EggHatchSetMonNickname);
+            DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar3, species, gender, EggHatchSetMonNickname);
             break;
         case 1:
         case -1:

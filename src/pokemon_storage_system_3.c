@@ -2058,7 +2058,7 @@ static void Cb_ChangeScreen(u8 taskId)
         break;
     case SCREEN_CHANGE_NAME_BOX:
         FreePSSData();
-        DoNamingScreen(NAMING_SCREEN_BOX, GetBoxNamePtr(StorageGetCurrentBox()), 0, 0, 0, Cb2_ReturnToPSS);
+        DoNamingScreen(NAMING_SCREEN_BOX, GetBoxNamePtr(StorageGetCurrentBox()), 0, 0, Cb2_ReturnToPSS);
         break;
     case SCREEN_CHANGE_ITEM_FROM_BAG:
         FreePSSData();

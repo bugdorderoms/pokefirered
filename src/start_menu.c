@@ -502,6 +502,8 @@ static bool8 StartMenuBagCallback(void)
 static bool8 StartMenuPlayerCallback(void)
 {
 #if MON_ICON_ON_TRAINER_CARD
+    gSpecialVar_0x8004 = MON_ICON_TINT_NORMAL;
+	
     UpdateTrainerCardPhotoIcons();
 #endif
     if (!gPaletteFade.active)

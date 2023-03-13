@@ -30,5 +30,6 @@ struct DNSPalExceptions
 void DNSTransferPlttBuffer(void *src, void *dest);
 void DNSApplyFilters(void);
 bool8 GetDNSTimeLapseIsNight(void);
+u8 DNSGetCurrentSeason(void);
 
 #endif // GUARD_DNS_UTILS_H

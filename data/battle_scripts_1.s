@@ -4775,3 +4775,12 @@ BattleScript_TargetAbilityStatRaiseRet::
 BattleScript_TargetAbilityStatRaiseRet_End::
     removeabilitypopup BS_TARGET
     return
+
+BattleScript_ZenModeActivates::
+    loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	playanimation BS_ATTACKER, B_ANIM_FORM_CHANGE, NULL
+	waitanimation
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
+	removeabilitypopup BS_ATTACKER
+	end3

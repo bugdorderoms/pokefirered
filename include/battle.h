@@ -478,6 +478,14 @@ extern struct BattleStruct *gBattleStruct;
 
 #define SET_STATCHANGER(statId, stage, goesDown)(gBattleScripting.statChanger = (statId) + (stage << 4) + (goesDown << 7))
 
+#define HANDLE_POWER_TRICK_SWAP(battlerId)                                         \
+{                                                                                  \
+	u16 temp;                                                                      \
+	                                                                               \
+	if (gStatuses3[battlerId] & STATUS3_POWER_TRICK)                               \
+		SWAP(gBattleMons[battlerId].attack, gBattleMons[battlerId].defense, temp); \
+}
+
 struct BattleScripting
 {
     s32 painSplitHp;

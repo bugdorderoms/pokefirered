@@ -438,7 +438,6 @@ static const struct MailAttrStruct sMessageLayouts_5x2[] = {
 
 void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool8 messageExists)
 {
-    u16 sp0;
     u16 species;
     sMailViewResources = AllocZeroed(sizeof(struct MailViewResources));
     sMailViewResources->unused = 2;
@@ -464,7 +463,6 @@ void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool8 messageExis
         sMailViewResources->messageLayout = &sMessageLayouts_5x2[sMailViewResources->mailType];
         break;
     }
-    species = MailSpeciesToSpecies(mail->species, &sp0);
     if (species != SPECIES_NONE && species < NUM_SPECIES)
     {
         switch (sMailViewResources->mailType)
@@ -586,16 +584,16 @@ static bool8 DoInitMailView(void)
         gPaletteFade.bufferTransferDisabled = TRUE;
         break;
     case 17:
-        iconId = MailSpeciesToIconSpecies(sMailViewResources->mail->species);
+        iconId = GetIconSpecies(sMailViewResources->mail->species);
         switch (sMailViewResources->monIconType)
         {
         case MAIL_ICON_BEAD:
             LoadMonIconPalette(iconId);
-            sMailViewResources->monIconSpriteId = CreateMonIcon(iconId, SpriteCallbackDummy, 0x60, 0x80, 0, 0);
+            sMailViewResources->monIconSpriteId = CreateMonIcon(iconId, SpriteCallbackDummy, 0x60, 0x80, 0);
             break;
         case MAIL_ICON_DREAM:
             LoadMonIconPalette(iconId);
-            sMailViewResources->monIconSpriteId = CreateMonIcon(iconId, SpriteCallbackDummy, 0x28, 0x80, 0, 0);
+            sMailViewResources->monIconSpriteId = CreateMonIcon(iconId, SpriteCallbackDummy, 0x28, 0x80, 0);
             break;
         }
         break;
@@ -716,7 +714,7 @@ static void ShowMailCB_Teardown(void)
         {
         case MAIL_ICON_BEAD:
         case MAIL_ICON_DREAM:
-            FreeMonIconPalette(MailSpeciesToIconSpecies(sMailViewResources->mail->species));
+            FreeMonIconPalette(GetIconSpecies(sMailViewResources->mail->species));
             DestroyMonIcon(&gSprites[sMailViewResources->monIconSpriteId]);
             break;
         }

@@ -848,9 +848,7 @@ static void CB2_ReturnFromLinkTrade2(void)
             sTradeMenuResourcesPtr->partyIcons[0][i] = CreateMonIcon(GetMonData(mon, MON_DATA_SPECIES2),
                                                                 SpriteCB_MonIcon,
                                                                 (sTradeMonSpriteCoords[i][0] * 8) + 14,
-                                                                (sTradeMonSpriteCoords[i][1] * 8) - 12,
-                                                                1,
-                                                                GetMonData(mon, MON_DATA_PERSONALITY));
+                                                                (sTradeMonSpriteCoords[i][1] * 8) - 12, 1);
         }
 
         for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[1]; i++)
@@ -859,9 +857,7 @@ static void CB2_ReturnFromLinkTrade2(void)
             sTradeMenuResourcesPtr->partyIcons[1][i] = CreateMonIcon(GetMonData(mon, MON_DATA_SPECIES2, NULL),
                                                                 SpriteCB_MonIcon,
                                                                 (sTradeMonSpriteCoords[i + PARTY_SIZE][0] * 8) + 14,
-                                                                (sTradeMonSpriteCoords[i + PARTY_SIZE][1] * 8) - 12,
-                                                                1,
-                                                                GetMonData(mon, MON_DATA_PERSONALITY));
+                                                                (sTradeMonSpriteCoords[i + PARTY_SIZE][1] * 8) - 12, 1);
         }
         gMain.state++;
         break;
@@ -1038,9 +1034,7 @@ void CB2_ReturnToTradeMenuFromSummary(void)
                 GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL),
                 SpriteCB_MonIcon,
                 sTradeMonSpriteCoords[i][0] * 8 + 14,
-                sTradeMonSpriteCoords[i][1] * 8 - 12,
-                1,
-                GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY));
+                sTradeMonSpriteCoords[i][1] * 8 - 12, 1);
         }
         for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[1]; i++)
         {
@@ -1048,9 +1042,7 @@ void CB2_ReturnToTradeMenuFromSummary(void)
                 GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2, NULL),
                 SpriteCB_MonIcon,
                 sTradeMonSpriteCoords[i + 6][0] * 8 + 14,
-                sTradeMonSpriteCoords[i + 6][1] * 8 - 12,
-                1,
-                GetMonData(&gEnemyParty[i], MON_DATA_PERSONALITY));
+                sTradeMonSpriteCoords[i + 6][1] * 8 - 12, 1);
         }
         gMain.state++;
         break;

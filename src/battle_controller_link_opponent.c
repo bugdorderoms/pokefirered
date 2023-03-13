@@ -969,6 +969,21 @@ static void SetLinkOpponentMonData(u8 monId)
     case REQUEST_TOUGH_RIBBON_BATTLE:
         SetMonData(&gEnemyParty[monId], MON_DATA_TOUGH_RIBBON, &gBattleBufferA[gActiveBattler][3]);
         break;
+	case REQUEST_FORM_CHANGE_BATTLE:
+	{
+		u16 speciesToSave = GetMonData(&gEnemyParty[monId], MON_DATA_SPECIES);
+		
+	    SetMonData(&gEnemyParty[monId], MON_DATA_SPECIES_BACKUP, &speciesToSave);
+	    SetMonData(&gEnemyParty[monId], MON_DATA_SPECIES, &battlePokemon->species);
+		SetMonData(&gEnemyParty[monId], MON_DATA_ATK, &battlePokemon->attack);
+		SetMonData(&gEnemyParty[monId], MON_DATA_DEF, &battlePokemon->defense);
+		SetMonData(&gEnemyParty[monId], MON_DATA_SPEED, &battlePokemon->speed);
+		SetMonData(&gEnemyParty[monId], MON_DATA_SPATK, &battlePokemon->spAttack);
+		SetMonData(&gEnemyParty[monId], MON_DATA_SPDEF, &battlePokemon->spDefense);
+		SetMonData(&gEnemyParty[monId], MON_DATA_HP, &battlePokemon->hp);
+		SetMonData(&gEnemyParty[monId], MON_DATA_MAX_HP, &battlePokemon->maxHP);
+	}
+		break;
     }
 }
 

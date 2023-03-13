@@ -420,16 +420,14 @@ static void CreateMonIconSprites(void)
 {
 	u16 x, y, species;
 	u8 i;
-	u32 personality;
 	
 	for (i = 0; i < gPlayerPartyCount; i++)
 	{
-		personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY);
 		species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
 		x = sHandSpritePos[i].x;
 		y = sHandSpritePos[i].y + 10; // a bit below the hand sprite
 		
-		CreateMonIcon(species, SpriteCB_MonIcon, x, y, 1, personality);
+		CreateMonIcon(species, SpriteCB_MonIcon, x, y, 1);
 	}
 }
 

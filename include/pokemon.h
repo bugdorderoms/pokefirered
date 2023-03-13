@@ -11,6 +11,7 @@ struct PokemonSubstruct0
     u16 species;
     u16 heldItem;
     u32 experience;
+	u16 species2; // for battle form change
     u8 ppBonuses;
     u8 friendship;
     u8 nature;
@@ -483,6 +484,5 @@ struct OakSpeechNidoranFStruct *OakSpeechNidoranFSetup(u8 battlePosition, bool8 
 void OakSpeechNidoranFFreeResources(void);
 void *OakSpeechNidoranFGetBuffer(u8 bufferId);
 u8 GetNumOfBadges(void);
-u16 GetUnownSpeciesId(u32 personality);
 
 #endif // GUARD_POKEMON_H

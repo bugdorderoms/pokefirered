@@ -119,7 +119,6 @@ struct DexNavGUI
     u8 cursorSpriteId;
     u8 cursorRow;
     u8 cursorCol;
-    u8 slot;
 };
 
 // Function Declarations
@@ -130,13 +129,13 @@ static void DexNavUpdateSelection(void);
 static void PrintDexNavMessage(u8 msgId);
 // SEARCH
 static bool8 TryStartHiddenMonFieldEffect(u8 environment, u8 xSize, u8 ySize);
-static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveDst, u8 slot);
+static u16 DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveDst);
 static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
 static bool8 DexNavGetAbilityNum(u16 species, u8 searchLevel);
 static u8 DexNavGeneratePotential(u8 searchLevel);
 static u8 DexNavTryGenerateMonLevel(u16 species, u8 environment);
 static u8 GetEncounterLevelFromMapData(u16 species, u8 environment);
-static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityNum, u8 abilityHidden, u16 item, u16* moves, u8 index);
+static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityNum, u8 abilityHidden, u16 item, u16* moves);
 static u8 GetPlayerDistance(s16 x, s16 y);
 static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize);
 static void DexNavProximityUpdate(void);
@@ -363,7 +362,7 @@ static void DrawDexNavSearchMonIcon(u16 species, u8 *dst, bool8 caught)
 {
     LoadMonIconPalette(species);
 	
-    *dst = CreateMonIcon(species, SpriteCB_MonIcon, SPECIES_ICON_X - 6, GetSearchWindowY() + 12, 0, 0xFFFFFFFF);
+    *dst = CreateMonIcon(species, SpriteCB_MonIcon, SPECIES_ICON_X - 6, GetSearchWindowY() + 12, 0);
     gSprites[*dst].oam.priority = 0;
 
     if (caught)
@@ -664,13 +663,11 @@ static void LoadSearchIconData(void)
 #define tFrameCount  data[1]
 #define tSpecies     data[2]
 #define tEnvironment data[3]
-#define tSlot        data[4]
 
 static void Task_SetUpDexNavSearch(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
-    u16 species = sDexNavSearchDataPtr->species;
-    u8 i, searchLevel = gSaveBlock1Ptr->dexNavSearchLevels[SpeciesToNationalPokedexNum(species)], environment = sDexNavSearchDataPtr->environment;
+    u8 i, searchLevel = gSaveBlock1Ptr->dexNavSearchLevels[SpeciesToNationalPokedexNum(sDexNavSearchDataPtr->species)], environment = sDexNavSearchDataPtr->environment;
 
     // init sprites
     sDexNavSearchDataPtr->iconSpriteId = MAX_SPRITES;
@@ -681,9 +678,9 @@ static void Task_SetUpDexNavSearch(u8 taskId)
 		sDexNavSearchDataPtr->starSpriteIds[i] = MAX_SPRITES;
     
     sDexNavSearchDataPtr->searchLevel = searchLevel;
-    DexNavGenerateMoveset(species, searchLevel, sDexNavSearchDataPtr->monLevel, &sDexNavSearchDataPtr->moves[0], task->tSlot);
-    sDexNavSearchDataPtr->heldItem = DexNavGenerateHeldItem(species, searchLevel);
-    sDexNavSearchDataPtr->abilityHidden = DexNavGetAbilityNum(species, searchLevel);
+    sDexNavSearchDataPtr->species = DexNavGenerateMoveset(sDexNavSearchDataPtr->species, searchLevel, sDexNavSearchDataPtr->monLevel, &sDexNavSearchDataPtr->moves[0]);
+    sDexNavSearchDataPtr->heldItem = DexNavGenerateHeldItem(sDexNavSearchDataPtr->species, searchLevel);
+    sDexNavSearchDataPtr->abilityHidden = DexNavGetAbilityNum(sDexNavSearchDataPtr->species, searchLevel);
     sDexNavSearchDataPtr->potential = DexNavGeneratePotential(searchLevel);
     
     DexNavProximityUpdate();
@@ -810,7 +807,6 @@ bool8 TryStartDexnavSearch(void)
     taskId = CreateTask(Task_InitDexNavSearch, 0);
     gTasks[taskId].tSpecies = val;
     gTasks[taskId].tEnvironment = VarGet(VAR_DEXNAV_ENVIRONMENT);
-    gTasks[taskId].tSlot = VarGet(VAR_DEXNAV_SLOT);
 	
     PlaySE(SE_DEX_SEARCH);
 	
@@ -887,7 +883,7 @@ static void Task_DexNavSearch(u8 taskId)
 
     if (sDexNavSearchDataPtr->proximity < 1)
     {
-	CreateDexNavWildMon(sDexNavSearchDataPtr->species, sDexNavSearchDataPtr->potential, sDexNavSearchDataPtr->monLevel, sDexNavSearchDataPtr->abilityNum, sDexNavSearchDataPtr->abilityHidden, sDexNavSearchDataPtr->heldItem, sDexNavSearchDataPtr->moves, tSlot);
+	CreateDexNavWildMon(sDexNavSearchDataPtr->species, sDexNavSearchDataPtr->potential, sDexNavSearchDataPtr->monLevel, sDexNavSearchDataPtr->abilityNum, sDexNavSearchDataPtr->abilityHidden, sDexNavSearchDataPtr->heldItem, sDexNavSearchDataPtr->moves);
 
         gDexnavBattle = TRUE;        
         ScriptContext1_SetupScript(EventScript_StartDexNavBattle);
@@ -992,7 +988,7 @@ static bool8 DexNavTryMakeShinyMon(void)
     return FALSE;
 }
 
-static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityNum, u8 abilityHidden, u16 item, u16* moves, u8 index)
+static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityNum, u8 abilityHidden, u16 item, u16* moves)
 {
     struct Pokemon* mon = &gEnemyParty[0];
     u8 i, perfectIv = MAX_PER_STAT_IVS, iv[3] = {0};
@@ -1000,7 +996,7 @@ static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityN
     if (DexNavTryMakeShinyMon())
         FlagSet(FLAG_CREATE_SHINY_MON); // just easier this way
 
-    GenerateWildMon(species, level, index);  // shiny rate bonus handled in CreateBoxMon
+    GenerateWildMon(species, level);  // shiny rate bonus handled in CreateBoxMon
 
     // Pick random, unique IVs to set to 31. The number of perfect IVs that are assigned is equal to the potential
     iv[0] = Random() % NUM_STATS;               // choose 1st perfect stat
@@ -1050,10 +1046,10 @@ static u8 DexNavTryGenerateMonLevel(u16 species, u8 environment)
         return levelBase + levelBonus;
 }
 
-static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveDst, u8 slot)
+static u16 DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveDst)
 {
     bool8 genMove = FALSE;
-    u16 numEggMoves, randVal = Random() % 100, eggMoveBuffer[EGG_MOVES_ARRAY_COUNT];
+    u16 newSpecies, numEggMoves, randVal = Random() % 100, eggMoveBuffer[EGG_MOVES_ARRAY_COUNT];
     u8 i;
 
     // see if first move slot should be an egg move
@@ -1101,7 +1097,7 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
     }
 
     // Generate a wild mon just to get the initial moveset (later overwritten by CreateDexNavWildMon)
-    GenerateWildMon(species, encounterLevel, slot);
+    newSpecies = GenerateWildMon(species, encounterLevel);
 
     // Store generated mon moves into Dex Nav Struct
     for (i = 0; i < MAX_MON_MOVES; i++)
@@ -1115,6 +1111,7 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
         if (numEggMoves)
             moveDst[0] = eggMoveBuffer[Random() % numEggMoves];
     }
+	return newSpecies;
 }
 
 static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel)
@@ -1373,17 +1370,6 @@ static void DexNav_MainCB(void)
     UpdatePaletteFade();
 }
 
-static u8 DexNavGetSlot(void)
-{
-	switch (sDexNavUiDataPtr->cursorRow)
-	{
-		case ROW_LAND_BOT:
-		    return sDexNavUiDataPtr->cursorCol + COL_LAND_COUNT;
-		default:
-		    return sDexNavUiDataPtr->cursorCol;
-	}
-}
-
 static void UpdateCursorPosition(void)
 {
     u16 x, y;
@@ -1411,7 +1397,6 @@ static void UpdateCursorPosition(void)
     gSprites[sDexNavUiDataPtr->cursorSpriteId].x = x;
     gSprites[sDexNavUiDataPtr->cursorSpriteId].y = y;
 
-    sDexNavUiDataPtr->slot = DexNavGetSlot();
     PrintCurrentSpeciesInfo();
 }
 
@@ -1518,7 +1503,6 @@ static void CB1_InitDexNavSearch(void)
         taskId = CreateTask(Task_InitDexNavSearch, 0);
         gTasks[taskId].tSpecies = gSpecialVar_0x8000;
         gTasks[taskId].tEnvironment = gSpecialVar_0x8001;
-	gTasks[taskId].tSlot = gSpecialVar_0x8002;
     }
 }
 
@@ -1609,9 +1593,9 @@ static void TryDrawIconInSlot(u16 species, s16 x, s16 y)
     if (!species || species > NUM_SPECIES)
         CreateNoDataIcon(x, y);   // 'X' in slot
     else if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
-        CreateMonIcon(SPECIES_NONE, SpriteCB_MonIcon, x, y, 0, 0xFFFFFFFF); // question mark
+        CreateMonIcon(SPECIES_NONE, SpriteCB_MonIcon, x, y, 0); // question mark
     else
-        CreateMonIcon(species, SpriteCB_MonIcon, x, y, 0, 0xFFFFFFFF);
+        CreateMonIcon(species, SpriteCB_MonIcon, x, y, 0);
 }
 
 static void DrawSpeciesIcons(void)
@@ -1644,18 +1628,17 @@ static void DrawSpeciesIcons(void)
 static u16 DexNavGetSpecies(void)
 {
     u16 species;
-    u8 slot = DexNavGetSlot();
 
     switch (sDexNavUiDataPtr->cursorRow)
     {
 		case ROW_WATER:
-		    species = sDexNavUiDataPtr->waterSpecies[slot];
+		    species = sDexNavUiDataPtr->waterSpecies[sDexNavUiDataPtr->cursorCol];
 		    break;
 		case ROW_LAND_TOP:
-		    species = sDexNavUiDataPtr->landSpecies[slot];
+		    species = sDexNavUiDataPtr->landSpecies[sDexNavUiDataPtr->cursorCol];
 		    break;
 		case ROW_LAND_BOT:
-		    species = sDexNavUiDataPtr->landSpecies[slot];
+		    species = sDexNavUiDataPtr->landSpecies[sDexNavUiDataPtr->cursorCol + COL_LAND_COUNT];
 		    break;
 		default:
 		    return SPECIES_NONE;
@@ -1958,7 +1941,6 @@ static void Task_DexNavMain(u8 taskId)
         {      
             VarSet(VAR_DEXNAV_SPECIES, species);
 	    VarSet(VAR_DEXNAV_ENVIRONMENT, sDexNavUiDataPtr->environment);
-	    VarSet(VAR_DEXNAV_SLOT, sDexNavUiDataPtr->slot);
             PrintDexNavMessage(DEXNAV_MSG_SEARCH_POKEMON);
             PlayCry7(species, 0);
 	    return;
@@ -1974,7 +1956,6 @@ static void Task_DexNavMain(u8 taskId)
 	{
 	    gSpecialVar_0x8000 = species;
             gSpecialVar_0x8001 = sDexNavUiDataPtr->environment;
-	    gSpecialVar_0x8002 = sDexNavUiDataPtr->slot;
             PlaySE(SE_DEX_SEARCH);
             BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
             task->func = Task_DexNavExitAndSearch;

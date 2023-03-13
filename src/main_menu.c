@@ -698,18 +698,11 @@ static void PrintBadgeCount(void)
 static void DrawPartyMonIcons(void)
 {
 	u8 i;
-	u16 species;
-	u32 personality;
 	
 	LoadMonIconPalettes();
 	
 	for (i = 0; i < gPlayerPartyCount; i++)
-	{
-		species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
-		personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY);
-		
-		CreateMonIcon(species, SpriteCallbackDummy, sIconsPosition[i].x, sIconsPosition[i].y, 0, personality);
-	}
+		CreateMonIcon(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2), SpriteCallbackDummy, sIconsPosition[i].x, sIconsPosition[i].y, 0);
 }
 
 static void LoadUserFrameToBg(u8 bgId)

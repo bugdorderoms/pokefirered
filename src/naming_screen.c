@@ -105,7 +105,6 @@ struct NamingScreenData
     /*0x1E30*/ u8 *destBuffer;
     /*0x1E34*/ u16 monSpecies;
     /*0x1E36*/ u16 monGender;
-    /*0x1E38*/ u32 monPersonality;
     /*0x1E3C*/ MainCallback returnCallback;
 };
 
@@ -375,7 +374,7 @@ static const u8 gUnknown_83E2333[][8] = {
 
 static const struct NamingScreenTemplate *const sNamingScreenTemplates[];
 
-void DoNamingScreen(u8 templateNum, u8 *destBuffer, u16 monSpecies, u16 monGender, u32 monPersonality, MainCallback returnCallback)
+void DoNamingScreen(u8 templateNum, u8 *destBuffer, u16 monSpecies, u16 monGender, MainCallback returnCallback)
 {
     sNamingScreenData = Alloc(sizeof(struct NamingScreenData));
     if (!sNamingScreenData)
@@ -387,7 +386,6 @@ void DoNamingScreen(u8 templateNum, u8 *destBuffer, u16 monSpecies, u16 monGende
         sNamingScreenData->templateNum = templateNum;
         sNamingScreenData->monSpecies = monSpecies;
         sNamingScreenData->monGender = monGender;
-        sNamingScreenData->monPersonality = monPersonality;
         sNamingScreenData->destBuffer = destBuffer;
         sNamingScreenData->returnCallback = returnCallback;
 
@@ -1317,7 +1315,7 @@ static void NamingScreen_CreateMonIcon(void)
     u8 spriteId;
 
     LoadMonIconPalettes();
-    spriteId = CreateMonIcon(sNamingScreenData->monSpecies, SpriteCB_MonIcon, 0x38, 0x28, 0, sNamingScreenData->monPersonality);
+    spriteId = CreateMonIcon(sNamingScreenData->monSpecies, SpriteCB_MonIcon, 0x38, 0x28, 0);
     gSprites[spriteId].oam.priority = 3;
 }
 
@@ -1971,27 +1969,27 @@ static bool8 IsLetter(u8 character)
 
 static void Debug_DoNamingScreen_Player(void)
 {
-    DoNamingScreen(NAMING_SCREEN_PLAYER, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, 0, CB2_ReturnToFieldWithOpenMenu);
+    DoNamingScreen(NAMING_SCREEN_PLAYER, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, CB2_ReturnToFieldWithOpenMenu);
 }
 
 static void Debug_DoNamingScreen_Box(void)
 {
-    DoNamingScreen(NAMING_SCREEN_BOX, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, 0, CB2_ReturnToFieldWithOpenMenu);
+    DoNamingScreen(NAMING_SCREEN_BOX, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, CB2_ReturnToFieldWithOpenMenu);
 }
 
 static void Debug_DoNamingScreen_CaughtMon(void)
 {
-    DoNamingScreen(NAMING_SCREEN_CAUGHT_MON, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, 0, CB2_ReturnToFieldWithOpenMenu);
+    DoNamingScreen(NAMING_SCREEN_CAUGHT_MON, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, CB2_ReturnToFieldWithOpenMenu);
 }
 
 static void Debug_DoNamingScreen_NameRater(void)
 {
-    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, 0, CB2_ReturnToFieldWithOpenMenu);
+    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, CB2_ReturnToFieldWithOpenMenu);
 }
 
 static void Debug_DoNamingScreen_Rival(void)
 {
-    DoNamingScreen(NAMING_SCREEN_RIVAL, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, 0, CB2_ReturnToFieldWithOpenMenu);
+    DoNamingScreen(NAMING_SCREEN_RIVAL, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, CB2_ReturnToFieldWithOpenMenu);
 }
 
 //--------------------------------------------------

@@ -278,11 +278,10 @@ static u8 sub_8090058(void)
 
 void CreateMovingMonIcon(void)
 {
-    u32 personality = GetMonData(&gPSSData->movingMon, MON_DATA_PERSONALITY);
     u16 species = GetMonData(&gPSSData->movingMon, MON_DATA_SPECIES2);
     u8 priority = sub_8090058();
 
-    gPSSData->movingMonSprite = CreateMonIconSprite(species, personality, 0, 0, priority, 7);
+    gPSSData->movingMonSprite = CreateMonIconSprite(species, 0, 0, priority, 7);
     gPSSData->movingMonSprite->callback = sub_80911B0;
 }
 
@@ -291,7 +290,6 @@ static void sub_80900D4(u8 boxId)
     u8 boxPosition;
     u16 i, j, count;
     u16 species;
-    u32 personality;
 
     count = 0;
     boxPosition = 0;
@@ -302,8 +300,7 @@ static void sub_80900D4(u8 boxId)
             species = GetBoxMonDataAt(boxId, boxPosition, MON_DATA_SPECIES2);
             if (species != SPECIES_NONE)
             {
-                personality = GetBoxMonDataAt(boxId, boxPosition, MON_DATA_PERSONALITY);
-                gPSSData->boxMonsSprites[count] = CreateMonIconSprite(species, personality, 8 * (3 * j) + 100, 8 * (3 * i) + 44, 2, 19 - j);
+                gPSSData->boxMonsSprites[count] = CreateMonIconSprite(species, 8 * (3 * j) + 100, 8 * (3 * i) + 44, 2, 19 - j);
             }
             else
             {
@@ -332,9 +329,8 @@ void sub_80901EC(u8 boxPosition)
     {
         s16 x = 8 * (3 * (boxPosition % IN_BOX_ROWS)) + 100;
         s16 y = 8 * (3 * (boxPosition / IN_BOX_ROWS)) + 44;
-        u32 personality = GetCurrentBoxMonData(boxPosition, MON_DATA_PERSONALITY);
 
-        gPSSData->boxMonsSprites[boxPosition] = CreateMonIconSprite(species, personality, x, y, 2, 19 - (boxPosition % IN_BOX_ROWS));
+        gPSSData->boxMonsSprites[boxPosition] = CreateMonIconSprite(species, x, y, 2, 19 - (boxPosition % IN_BOX_ROWS));
         if (gPSSData->boxOption == BOX_OPTION_MOVE_ITEMS)
             gPSSData->boxMonsSprites[boxPosition]->oam.objMode = ST_OAM_OBJ_BLEND;
     }
@@ -418,7 +414,6 @@ static u8 sub_80903A4(u8 row, u16 times, s16 xDelta)
             if (gPSSData->boxSpecies[boxPosition] != SPECIES_NONE)
             {
                 gPSSData->boxMonsSprites[boxPosition] = CreateMonIconSprite(gPSSData->boxSpecies[boxPosition],
-                                                                            gPSSData->boxPersonalities[boxPosition],
                                                                             x, y, 2, subpriority);
                 if (gPSSData->boxMonsSprites[boxPosition] != NULL)
                 {
@@ -440,7 +435,6 @@ static u8 sub_80903A4(u8 row, u16 times, s16 xDelta)
             if (gPSSData->boxSpecies[boxPosition] != SPECIES_NONE)
             {
                 gPSSData->boxMonsSprites[boxPosition] = CreateMonIconSprite(gPSSData->boxSpecies[boxPosition],
-                                                                            gPSSData->boxPersonalities[boxPosition],
                                                                             x, y, 2, subpriority);
                 if (gPSSData->boxMonsSprites[boxPosition] != NULL)
                 {
@@ -533,8 +527,6 @@ static void SetBoxSpeciesAndPersonalities(u8 boxId)
         for (j = 0; j < IN_BOX_ROWS; j++)
         {
             gPSSData->boxSpecies[boxPosition] = GetBoxMonDataAt(boxId, boxPosition, MON_DATA_SPECIES2);
-            if (gPSSData->boxSpecies[boxPosition] != SPECIES_NONE)
-                gPSSData->boxPersonalities[boxPosition] = GetBoxMonDataAt(boxId, boxPosition, MON_DATA_PERSONALITY);
             boxPosition++;
         }
     }
@@ -563,17 +555,15 @@ void CreatePartyMonsSprites(bool8 arg0)
 {
     u16 i, count;
     u16 species = GetMonData(&gPlayerParty[0], MON_DATA_SPECIES2);
-    u32 personality = GetMonData(&gPlayerParty[0], MON_DATA_PERSONALITY);
 
-    gPSSData->partySprites[0] = CreateMonIconSprite(species, personality, 104, 64, 1, 12);
+    gPSSData->partySprites[0] = CreateMonIconSprite(species, 104, 64, 1, 12);
     count = 1;
     for (i = 1; i < PARTY_SIZE; i++)
     {
         species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
         if (species != SPECIES_NONE)
         {
-            personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY);
-            gPSSData->partySprites[i] = CreateMonIconSprite(species, personality, 152,  8 * (3 * (i - 1)) + 16, 1, 12);
+            gPSSData->partySprites[i] = CreateMonIconSprite(species, 152,  8 * (3 * (i - 1)) + 16, 1, 12);
             count++;
         }
         else
@@ -941,13 +931,13 @@ static void sub_8091290(u16 species)
     }
 }
 
-struct Sprite *CreateMonIconSprite(u16 species, u32 personality, s16 x, s16 y, u8 oamPriority, u8 subpriority)
+struct Sprite *CreateMonIconSprite(u16 species, s16 x, s16 y, u8 oamPriority, u8 subpriority)
 {
     u16 tileNum;
     u8 spriteId;
     struct SpriteTemplate template = gUnknown_83CEBF0;
 
-    species = GetIconSpecies(species, personality);
+    species = GetIconSpecies(species);
     template.paletteTag = 0xDAC0 + gMonIconPaletteIndices[species];
     tileNum = sub_80911D4(species);
     if (tileNum == 0xFFFF)

@@ -2934,6 +2934,9 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
                 | (substruct3->worldRibbon << 26);
         }
         break;
+	case MON_DATA_SPECIES_BACKUP:
+	    retVal = substruct0->species2;
+		break;
     default:
         break;
     }
@@ -3083,7 +3086,7 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
     }
     case MON_DATA_HELD_ITEM:
         SET16(substruct0->heldItem);
-		HoldItemFormChange((struct Pokemon*) boxMon, substruct0->heldItem);
+		DoOverworldFormChange((struct Pokemon*) boxMon, OVERWORLD_FORM_CHANGE_HOLD_ITEM);
         break;
     case MON_DATA_EXP:
         SET32(substruct0->experience);
@@ -3272,6 +3275,9 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
         substruct3->spDefenseIV = (ivs >> 25) & 0x1F;
         break;
     }
+	case MON_DATA_SPECIES_BACKUP:
+	    SET16(substruct0->species2);
+		break;
     default:
         break;
     }
@@ -3286,6 +3292,7 @@ u8 GiveMonToPlayer(struct Pokemon *mon)
 {
     s32 i;
 
+    DoOverworldFormChange(mon, OVERWORLD_FORM_CHANGE_END_BATTLE);
     SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2Ptr->playerName);
     SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2Ptr->playerGender);
     SetMonData(mon, MON_DATA_OT_ID, gSaveBlock2Ptr->playerTrainerId);
@@ -5609,8 +5616,7 @@ void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality)
     if (!GetSetPokedexFlag(nationalNum, getFlagCaseId))
     {
         GetSetPokedexFlag(nationalNum, caseId);
-        if (NationalPokedexNumToSpecies(nationalNum) == SPECIES_UNOWN)
-            gSaveBlock2Ptr->pokedex.unownPersonality = personality;
+		
         if (NationalPokedexNumToSpecies(nationalNum) == SPECIES_SPINDA)
             gSaveBlock2Ptr->pokedex.spindaPersonality = personality;
     }
@@ -5819,14 +5825,4 @@ void *OakSpeechNidoranFGetBuffer(u8 bufferId)
             bufferId = 0;
         return sOakSpeechNidoranResources->bufferPtrs[bufferId];
     }
-}
-
-u16 GetUnownSpeciesId(u32 personality)
-{
-    u16 unownLetter = GetUnownLetterByPersonality(personality);
-    
-    if (unownLetter == 0)
-        return SPECIES_UNOWN;
-	
-    return unownLetter + SPECIES_UNOWN_B - 1;
 }

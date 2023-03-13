@@ -357,6 +357,23 @@ static const u16 sPaletteTagExceptions[] =
 	POKE_ICON_BASE_PAL_TAG + 5, //0xDAC5
 };
 
+// The season for each month of the year
+static const u8 sSeasonsByMonth[] =
+{
+	SEASON_SUMMER, // January
+	SEASON_SUMMER, // February
+	SEASON_SUMMER, // March
+	SEASON_AUTUMN, // April
+	SEASON_AUTUMN, // May
+	SEASON_AUTUMN, // June
+	SEASON_WINTER, // July
+	SEASON_WINTER, // August
+	SEASON_WINTER, // September
+	SEASON_SPRING, // October
+	SEASON_SPRING, // November
+	SEASON_SPRING, // December
+};
+
 /***********************************************
  * --------- DNS CONFIGURATION END ----------- *
  * ******************************************* */
@@ -553,4 +570,9 @@ bool8 GetDNSTimeLapseIsNight(void)
 		default:
 			return FALSE;
 	}
+}
+
+u8 DNSGetCurrentSeason(void)
+{
+	return sSeasonsByMonth[gRtcLocation.month];
 }

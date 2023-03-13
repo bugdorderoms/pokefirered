@@ -445,7 +445,8 @@ gBattleAnims_General::
 	.4byte General_SafariReaction
 	.4byte General_LoadAbilityPopUp
 	.4byte General_RemoveAbilityPopUp
-	.4byte General_IllusionOff
+	.4byte General_FormChange @ illusion off
+	.4byte General_FormChange
 
 gBattleAnims_Special::
 	.4byte Special_LevelUp
@@ -10961,8 +10962,8 @@ General_RemoveAbilityPopUp::
 	delay 32
 	end
 
-General_IllusionOff::
-        monbg ANIM_TARGET
+General_FormChange::
+    monbg ANIM_TARGET
 	createvisualtask AnimTask_TransformMon, 2, 0, 1
 	waitforvisualfinish
 	clearmonbg ANIM_TARGET

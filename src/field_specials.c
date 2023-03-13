@@ -1558,15 +1558,12 @@ void ChangeBoxPokemonNickname(void)
     struct BoxPokemon * pokemon = GetBoxedMonPtr(gSpecialVar_MonBoxId, gSpecialVar_MonBoxPos);
     u16 species;
     u8 gender;
-    u32 personality;
-
 
     GetBoxMonData(pokemon, MON_DATA_NICKNAME, gStringVar3);
     GetBoxMonData(pokemon, MON_DATA_NICKNAME, gStringVar2);
     species = GetBoxMonData(pokemon, MON_DATA_SPECIES, NULL);
     gender = GetBoxMonGender(pokemon);
-    personality = GetBoxMonData(pokemon, MON_DATA_PERSONALITY, NULL);
-    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar2, species, gender, personality, ChangeBoxPokemonNickname_CB);
+    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar2, species, gender, ChangeBoxPokemonNickname_CB);
 }
 
 static void ChangeBoxPokemonNickname_CB(void)
@@ -1579,14 +1576,12 @@ void ChangePokemonNickname(void)
 {
     u16 species;
     u8 gender;
-    u32 personality;
 
     GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_NICKNAME, gStringVar3);
     GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_NICKNAME, gStringVar2);
     species = GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_SPECIES, NULL);
     gender = GetMonGender(&gPlayerParty[gSpecialVar_0x8004]);
-    personality = GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_PERSONALITY, NULL);
-    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar2, species, gender, personality, ChangePokemonNickname_CB);
+    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar2, species, gender, ChangePokemonNickname_CB);
 }
 
 static void ChangePokemonNickname_CB(void)
@@ -1636,21 +1631,11 @@ u8 GetUnlockedSeviiAreas(void)
 
 void UpdateTrainerCardPhotoIcons(void)
 {
-    u16 species[PARTY_SIZE] = {SPECIES_NONE};
-    u32 personality[PARTY_SIZE];
     u8 i, partyCount = CalculatePlayerPartyCount();
 
     for (i = 0; i < partyCount; i++)
-    {
-        species[i] = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
-        personality[i] = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY, NULL);
-    }
-    VarSet(VAR_TRAINER_CARD_MON_ICON_1, SpeciesToMailSpecies(species[0], personality[0]));
-    VarSet(VAR_TRAINER_CARD_MON_ICON_2, SpeciesToMailSpecies(species[1], personality[1]));
-    VarSet(VAR_TRAINER_CARD_MON_ICON_3, SpeciesToMailSpecies(species[2], personality[2]));
-    VarSet(VAR_TRAINER_CARD_MON_ICON_4, SpeciesToMailSpecies(species[3], personality[3]));
-    VarSet(VAR_TRAINER_CARD_MON_ICON_5, SpeciesToMailSpecies(species[4], personality[4]));
-    VarSet(VAR_TRAINER_CARD_MON_ICON_6, SpeciesToMailSpecies(species[5], personality[5]));
+		VarSet(VAR_TRAINER_CARD_MON_ICON_1 + i, GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL));
+	
     VarSet(VAR_TRAINER_CARD_MON_ICON_TINT_IDX, gSpecialVar_0x8004);
 }
 

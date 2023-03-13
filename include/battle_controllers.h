@@ -66,6 +66,7 @@ enum
     REQUEST_CUTE_RIBBON_BATTLE,
     REQUEST_SMART_RIBBON_BATTLE,
     REQUEST_TOUGH_RIBBON_BATTLE,
+	REQUEST_FORM_CHANGE_BATTLE,
 };
 
 #define RESET_ACTION_MOVE_SELECTION     0
@@ -191,6 +192,7 @@ void PrepareBufferDataTransferLink(u8 bufferId, u16 size, u8 *data);
 // emitters
 void BtlController_EmitGetMonData(u8 bufferId, u8 requestId, u8 monToCheck);
 void BtlController_EmitSetMonData(u8 bufferId, u8 requestId, u8 monToCheck, u8 bytes, void *data);
+void BtlController_EmitSetRawMonData(u8 bufferId, u8 monId, u8 bytes, void *data);
 void BtlController_EmitLoadMonSprite(u8 bufferId);
 void BtlController_EmitSwitchInAnim(u8 bufferId, u8 partyId, bool8 dontClearSubstituteBit);
 void BtlController_EmitReturnMonToBall(u8 bufferId, u8 arg1);

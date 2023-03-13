@@ -588,8 +588,7 @@ void BtlController_EmitSetMonData(u8 bufferId, u8 requestId, u8 monToCheck, u8 b
     PrepareBufferDataTransfer(bufferId, sBattleBuffersTransferData, 3 + bytes);
 }
 
-// not used
-static void BtlController_EmitSetRawMonData(u8 bufferId, u8 monId, u8 bytes, void *data)
+void BtlController_EmitSetRawMonData(u8 bufferId, u8 monId, u8 bytes, void *data)
 {
     s32 i;
 

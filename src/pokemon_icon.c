@@ -2577,13 +2577,13 @@ static const u16 sSpriteImageSizes[][4] = {
     },
 };
 
-u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subpriority, u32 personality)
+u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subpriority)
 {
     u8 spriteId;
     struct MonIconSpriteTemplate iconTemplate =
         {
             .oam = &sMonIconOamData,
-            .image = GetMonIconPtr(species, personality),
+            .image = GetMonIconPtr(species),
             .anims = sMonIconAnims,
             .affineAnims = sMonIconAffineAnims,
             .callback = callback,
@@ -2600,56 +2600,16 @@ u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subprior
     return spriteId;
 }
 
-u16 GetIconSpecies(u16 species, u32 personality)
+u16 GetIconSpecies(u16 species)
 {
     u16 result;
-
-    if (species == SPECIES_UNOWN)
-    {
-        u16 letter = GetUnownLetterByPersonality(personality);
-        if (letter == 0)
-            letter = SPECIES_UNOWN;
-        else
-            letter += (SPECIES_UNOWN_B - 1);
-        result = letter;
-    }
-    else
-    {
-        if (species > NUM_SPECIES)
-            result = SPECIES_NONE;
-        else
-            result = species;
-    }
+	
+	if (species > NUM_SPECIES)
+		result = SPECIES_NONE;
+	else
+		result = species;
 
     return result;
-}
-
-u16 GetUnownLetterByPersonality(u32 personality)
-{
-    if (!personality)
-        return 0;
-    else
-        return (((personality & 0x3000000) >> 18) | ((personality & 0x30000) >> 12) | ((personality & 0x300) >> 6) | (personality & 0x3)) % 0x1C;
-}
-
-u16 MailSpeciesToIconSpecies(u16 species)
-{
-    u16 value;
-
-    if (MailSpeciesToSpecies(species, &value) == SPECIES_UNOWN)
-    {
-        if (value == 0)
-            value += SPECIES_UNOWN;
-        else
-            value += (SPECIES_UNOWN_B - 1);
-        return value;
-    }
-    else
-    {
-        if (species > (SPECIES_UNOWN_B - 1))
-            species = SPECIES_NONE;
-        return GetIconSpecies(species, 0);
-    }
 }
 
 const u8 *GetMonIconTiles(u16 species)
@@ -2658,9 +2618,9 @@ const u8 *GetMonIconTiles(u16 species)
     return iconSprite;
 }
 
-const u8 *GetMonIconPtr(u16 species, u32 personality)
+const u8 *GetMonIconPtr(u16 species)
 {
-    return GetMonIconTiles(GetIconSpecies(species, personality));
+    return GetMonIconTiles(GetIconSpecies(species));
 }
 
 void DestroyMonIcon(struct Sprite * sprite)

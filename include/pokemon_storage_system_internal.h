@@ -287,7 +287,6 @@ struct PokemonStorageSystemData
     /* 0b04 */ u16 field_B08[MAX_MON_ICONS];
     /* 0b54 */ u16 field_B58[MAX_MON_ICONS];
     /* 0ba4 */ u16 boxSpecies[IN_BOX_COUNT];
-    /* 0be0 */ u32 boxPersonalities[IN_BOX_COUNT];
     /* 0c58 */ u8 field_C5C;
     /* 0c59 */ u8 field_C5D;
     /* 0c5a */ u8 field_C5E;
@@ -475,7 +474,7 @@ bool8 IsCursorOnBox(void);
 bool8 IsCursorInBox(void);
 
 void sub_808FFAC(void);
-struct Sprite * CreateMonIconSprite(u16 species, u32 pid, s16 x, s16 y, u8 priority, u8 subpriority);
+struct Sprite * CreateMonIconSprite(u16 species, s16 x, s16 y, u8 priority, u8 subpriority);
 void CreatePartyMonsSprites(bool8 species);
 void sub_80909F4(void);
 bool8 sub_8090A60(void);

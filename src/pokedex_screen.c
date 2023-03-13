@@ -2193,14 +2193,12 @@ static void DexScreen_PrintNum4RightAlign(u8 windowId, u8 fontId, u16 num, u8 x,
     DexScreen_AddTextPrinterParameterized(windowId, fontId, buff, x, y, colorIdx);
 }
 
-static u32 DexScreen_GetDefaultPersonality(int species)
+static u32 DexScreen_GetDefaultPersonality(u16 species)
 {
     switch (species)
     {
     case SPECIES_SPINDA:
         return gSaveBlock2Ptr->pokedex.spindaPersonality;
-    case SPECIES_UNOWN:
-        return gSaveBlock2Ptr->pokedex.unownPersonality;
     default:
         return 0;
     }
@@ -2977,7 +2975,7 @@ u8 DexScreen_DrawMonAreaPage(void)
     // Draw the mon icon
     FillWindowPixelBuffer(sPokedexScreenData->windowIds[11], PIXEL_FILL(0));
     ListMenu_LoadMonIconPalette(160, species);
-    ListMenu_DrawMonIconGraphics(sPokedexScreenData->windowIds[11], species, DexScreen_GetDefaultPersonality(species), 0, 0);
+    ListMenu_DrawMonIconGraphics(sPokedexScreenData->windowIds[11], species, 0, 0);
     PutWindowTilemap(sPokedexScreenData->windowIds[11]);
     CopyWindowToVram(sPokedexScreenData->windowIds[11], COPYWIN_GFX);
 
@@ -3082,7 +3080,7 @@ u8 DexScreen_DestroyAreaScreenResources(void)
     return 0;
 }
 
-static int DexScreen_CanShowMonInDex(u16 species)
+static bool8 DexScreen_CanShowMonInDex(u16 species)
 {
     if (IsNationalPokedexEnabled() == TRUE)
         return TRUE;

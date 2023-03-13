@@ -8,6 +8,7 @@
 #include "pokemon.h"
 #include "string_util.h"
 #include "field_weather.h"
+#include "form_change.h"
 #include "event_data.h"
 #include "battle.h"
 #include "battle_anim.h"
@@ -47,6 +48,7 @@ static const u8 sHealerString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\
 static const u8 sHarvestString[] = _("{B_ATK_NAME_WITH_PREFIX} harvested\nits {B_LAST_ITEM}!");
 static const u8 sIllusionOffString[] = _("{B_DEF_NAME_WITH_PREFIX}'s illusion wore off!");
 static const u8 sMummyString[] = _("{B_ATK_NAME_WITH_PREFIX}'s ability became\n{B_ATK_ABILITY}!");
+static const u8 sZenModeString[] = _("{B_ATK_ABILITY} triggered!");
 
 static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
 {
@@ -2314,6 +2316,19 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 							SET_STATCHANGER(i, 2, FALSE);
 						}
 						BattleScriptPushCursorAndCallback(BattleScript_MoodyActivates);
+						effect++;
+					}
+				}
+				break;
+			case ABILITY_ZEN_MODE:
+			    {
+					u16 newSpecies = TryDoBattleFormChange(battler, BATTLE_FORM_CHANGE_LOW_HP);
+					
+					if (newSpecies)
+					{
+						DoBattleFormChange(battler, newSpecies, TRUE, TRUE, TRUE);
+						gSetWordLoc = sZenModeString;
+						BattleScriptPushCursorAndCallback(BattleScript_ZenModeActivates);
 						effect++;
 					}
 				}

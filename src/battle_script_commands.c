@@ -15,6 +15,7 @@
 #include "task.h"
 #include "naming_screen.h"
 #include "overworld.h"
+#include "form_change.h"
 #include "party_menu.h"
 #include "trainer_pokemon_sprites.h"
 #include "field_specials.h"
@@ -2579,6 +2580,7 @@ static void atk1B_cleareffectsonfaint(void)
         BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 0x4, &gBattleMons[gActiveBattler].status1);
         MarkBattlerForControllerExec(gActiveBattler);
         FaintClearSetData(); // Effects like attractions, trapping, etc.
+		TryDoBattleFormChange(gActiveBattler, BATTLE_FORM_CHANGE_FAINT);
         gBattlescriptCurrInstr += 2;
     }
 }
@@ -3494,7 +3496,7 @@ static void atk45_playanimation(void)
     argumentPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
 	
     if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE || gBattlescriptCurrInstr[2] == B_ANIM_SNATCH_MOVE || gBattlescriptCurrInstr[2] == B_ANIM_SUBSTITUTE_FADE
-     || gBattlescriptCurrInstr[2] == B_ANIM_SILPH_SCOPED || gBattlescriptCurrInstr[2] == B_ANIM_ILLUSION_OFF)
+     || gBattlescriptCurrInstr[2] == B_ANIM_SILPH_SCOPED || gBattlescriptCurrInstr[2] == B_ANIM_ILLUSION_OFF || gBattlescriptCurrInstr[2] == B_ANIM_FORM_CHANGE)
     {
         BtlController_EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
         MarkBattlerForControllerExec(gActiveBattler);
@@ -5214,8 +5216,7 @@ static void PutMonIconOnLvlUpBox(void)
     struct SpriteSheet iconSheet;
     struct SpritePalette iconPalSheet;
     u16 species = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_SPECIES);
-    u32 personality = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_PERSONALITY);
-    const u8 *iconPtr = GetMonIconPtr(species, personality);
+    const u8 *iconPtr = GetMonIconPtr(species);
 
     iconSheet.data = iconPtr;
     iconSheet.size = 0x200;
@@ -8206,6 +8207,8 @@ static void atkE2_switchoutabilities(void)
 			MarkBattlerForControllerExec(gActiveBattler);
 			break;
     }
+	TryDoBattleFormChange(gActiveBattler, BATTLE_FORM_CHANGE_SWITCH_OUT);
+	
     gBattlescriptCurrInstr += 2;
 }
 
@@ -8788,9 +8791,7 @@ static void atkF3_trygivecaughtmonnick(void)
             FreeAllWindowBuffers();
             DoNamingScreen(NAMING_SCREEN_CAUGHT_MON, gBattleStruct->caughtMonNick,
                            GetMonData(&gEnemyParty[gBattlerPartyIndexes[BATTLE_OPPOSITE(gBattlerAttacker)]], MON_DATA_SPECIES),
-                           GetMonGender(&gEnemyParty[gBattlerPartyIndexes[BATTLE_OPPOSITE(gBattlerAttacker)]]),
-                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[BATTLE_OPPOSITE(gBattlerAttacker)]], MON_DATA_PERSONALITY, NULL),
-                           BattleMainCB2);
+                           GetMonGender(&gEnemyParty[gBattlerPartyIndexes[BATTLE_OPPOSITE(gBattlerAttacker)]]), BattleMainCB2);
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;

@@ -93,6 +93,7 @@
 #define MON_DATA_SPDEF2            88
 #define MON_DATA_ABILITY_HIDDEN    89
 #define MON_DATA_NATURE            90
+#define MON_DATA_SPECIES_BACKUP    91 // for battle form change
 
 #define FLAG_MAKES_CONTACT                        (1 << 0)
 #define FLAG_PROTECT_AFFECTED                     (1 << 1)

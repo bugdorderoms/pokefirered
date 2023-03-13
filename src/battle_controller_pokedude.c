@@ -1286,6 +1286,21 @@ static void SetPokedudeMonData(u8 monId)
     case REQUEST_TOUGH_RIBBON_BATTLE:
         SetMonData(mon, MON_DATA_TOUGH_RIBBON, &gBattleBufferA[gActiveBattler][3]);
         break;
+	case REQUEST_FORM_CHANGE_BATTLE:
+	{
+		u16 speciesToSave = GetMonData(mon, MON_DATA_SPECIES);
+		
+	    SetMonData(mon, MON_DATA_SPECIES_BACKUP, &speciesToSave);
+	    SetMonData(mon, MON_DATA_SPECIES, &battlePokemon->species);
+		SetMonData(mon, MON_DATA_ATK, &battlePokemon->attack);
+		SetMonData(mon, MON_DATA_DEF, &battlePokemon->defense);
+		SetMonData(mon, MON_DATA_SPEED, &battlePokemon->speed);
+		SetMonData(mon, MON_DATA_SPATK, &battlePokemon->spAttack);
+		SetMonData(mon, MON_DATA_SPDEF, &battlePokemon->spDefense);
+		SetMonData(mon, MON_DATA_HP, &battlePokemon->hp);
+		SetMonData(mon, MON_DATA_MAX_HP, &battlePokemon->maxHP);
+	}
+		break;
     }
     HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], gActiveBattler);
 }

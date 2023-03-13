@@ -4083,14 +4083,10 @@ static void DestroyBallIconObj(void)
 
 static void PokeSum_CreateMonIconSprite(void)
 {
-    u16 species;
-    u32 personality;
-
-    species = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES2);
-    personality = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PERSONALITY);
+    u16 species = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES2);
 
     SafeLoadMonIconPalette(species);
-	sMonSummaryScreen->monIconSpriteId = CreateMonIcon(species, SpriteCallbackDummy, 24, 32, 0, personality);
+	sMonSummaryScreen->monIconSpriteId = CreateMonIcon(species, SpriteCallbackDummy, 24, 32, 0);
 
     if (!IsPokeSpriteNotFlipped(species))
         gSprites[sMonSummaryScreen->monIconSpriteId].hFlip = TRUE;
