@@ -142,6 +142,9 @@ justified
 rattled
 magic bounce
 sap sipper
+sand force
+iron barbs
+zen mode
 
 // put in
 evolve without national dex
