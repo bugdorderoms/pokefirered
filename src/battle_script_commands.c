@@ -876,6 +876,7 @@ static bool8 HasAttackerFaintedTarget(void)
 static void atk00_attackcanceler(void)
 {
     s32 i;
+	u8 moveType = gBattleStruct->dynamicMoveType;
 	
     if (gBattleOutcome)
     {
@@ -888,8 +889,24 @@ static void atk00_attackcanceler(void)
         gBattlescriptCurrInstr = BattleScript_MoveEnd;
         return;
     }
-    if (AtkCanceller_UnableToUseMove() || AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBattlerTarget, 0, 0, 0))
+    if (AtkCanceller_UnableToUseMove())
         return;
+	
+	if (gCurrentMove != MOVE_STRUGGLE && !IS_BATTLER_OF_TYPE(gBattlerAttacker, moveType) && gBattleMons[gBattlerAttacker].type3 != TYPE_MYSTERY
+	&& gDisableStructs[gBattlerAttacker].canProteanActivate && (GetBattlerAbility(gBattlerAttacker) == ABILITY_PROTEAN || GetBattlerAbility(gBattlerAttacker) == ABILITY_LIBERO))
+	{
+		gLastUsedAbility = GetBattlerAbility(gBattlerAttacker);
+		gDisableStructs[gBattlerAttacker].canProteanActivate = FALSE;
+		SET_BATTLER_TYPE(gBattlerAttacker, moveType);
+		PREPARE_TYPE_BUFFER(gBattlerAttacker, moveType);
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_ProteanActivates;
+        return;
+	}
+	
+	if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBattlerTarget, 0, 0, 0))
+		return;
+	
     if (!gBattleMons[gBattlerAttacker].pp[gCurrMovePos] && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS) 
 	&& gCurrentMove != MOVE_STRUGGLE && !(gHitMarker & (HITMARKER_x800000 | HITMARKER_NO_ATTACKSTRING)))
     {
@@ -1980,7 +1997,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
             else
                 gActiveBattler = gBattlersCount;
 			
-            if (gActiveBattler != gBattlersCount || !CanBePutToSleep(gEffectBattler))
+            if (gActiveBattler != gBattlersCount || !CanBePutToSleep(gEffectBattler, FALSE))
                 break;
             CancelMultiTurnMoves(gEffectBattler);
             statusChanged = TRUE;
@@ -2002,7 +2019,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 		    return;
 	    }
-	    if (CanBePoisoned(gEffectBattler, gBattlerAttacker))
+	    if (CanBePoisoned(gEffectBattler, gBattlerAttacker, FALSE))
 		    statusChanged = TRUE;
             break;
 	case STATUS1_TOXIC_POISON:
@@ -2022,7 +2039,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 		    return;
 	    }
-	    if (CanBePoisoned(gEffectBattler, gBattlerAttacker))
+	    if (CanBePoisoned(gEffectBattler, gBattlerAttacker, FALSE))
 		    statusChanged = TRUE;
 	    else
 		    gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
@@ -2044,11 +2061,11 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 		    return;
 	    }
-	    if (CanBeBurned(gEffectBattler))
+	    if (CanBeBurned(gEffectBattler, FALSE))
 		    statusChanged = TRUE;
             break;
         case STATUS1_FREEZE:
-            if (CanBeFrozen(gEffectBattler))
+            if (CanBeFrozen(gEffectBattler, FALSE))
 	    {
 		    CancelMultiTurnMoves(gEffectBattler);
 		    statusChanged = TRUE;
@@ -2076,7 +2093,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		    else
 			    break;
 	    }
-            if (CanBeParalyzed(gEffectBattler))
+            if (CanBeParalyzed(gEffectBattler, FALSE))
 		    statusChanged = TRUE;
             break;
         }
@@ -3474,6 +3491,22 @@ static void atk42_trysetsleep(void)
 					return;
 				}
 				break;
+			case ABILITY_FLOWER_VEIL:
+			    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+				{
+					gLastUsedAbility = gBattleMons[bank].ability;
+					gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+					RecordAbilityBattle(bank, gLastUsedAbility);
+					return;
+				}
+				break;
+		}
+		if (IsBattlerAlive(BATTLE_PARTNER(bank)) && GetBattlerAbility(BATTLE_PARTNER(bank)) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+		{
+			gLastUsedAbility = gBattleMons[BATTLE_PARTNER(bank)].ability;
+			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+			RecordAbilityBattle(BATTLE_PARTNER(bank), gLastUsedAbility);
+			return;
 		}
 	}
 	gBattlescriptCurrInstr += 6;
@@ -3631,7 +3664,9 @@ static void atk48_playstatchangeanimation(void)
 			 && GetBattlerAbility(gActiveBattler) != ABILITY_WHITE_SMOKE 
 			 && !(GetBattlerAbility(gActiveBattler) == ABILITY_KEEN_EYE && currStat == STAT_ACC)
 			 && !(GetBattlerAbility(gActiveBattler) == ABILITY_HYPER_CUTTER && currStat == STAT_ATK)
-			 && !(GetBattlerAbility(gActiveBattler) == ABILITY_BIG_PECKS && currStat == STAT_DEF))
+			 && !(GetBattlerAbility(gActiveBattler) == ABILITY_BIG_PECKS && currStat == STAT_DEF)
+			 && !(GetBattlerAbility(gActiveBattler) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_GRASS))
+			 && !(IsBattlerAlive(BATTLE_PARTNER(gActiveBattler)) && GetBattlerAbility(BATTLE_PARTNER(gActiveBattler)) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_GRASS)))
                 {
                     if (gBattleMons[gActiveBattler].statStages[currStat] > 0)
                     {
@@ -5918,6 +5953,20 @@ static void atk84_trysetpoison(void)
 					return;
 				}
 				break;
+			case ABILITY_FLOWER_VEIL:
+			    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+				{
+					gLastUsedAbility = gBattleMons[bank].ability;
+					gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+					return;
+				}
+				break;
+		}
+		if (IsBattlerAlive(BATTLE_PARTNER(bank)) && GetBattlerAbility(BATTLE_PARTNER(bank)) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+		{
+			gLastUsedAbility = gBattleMons[BATTLE_PARTNER(bank)].ability;
+			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+			return;
 		}
 	}
 	gBattlescriptCurrInstr += 2;
@@ -6042,7 +6091,8 @@ static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
             gBattlescriptCurrInstr = BattleScript_ButItFailed;
             return STAT_CHANGE_DIDNT_WORK;
         }
-        else if ((GetBattlerAbility(gActiveBattler) == ABILITY_CLEAR_BODY || GetBattlerAbility(gActiveBattler) == ABILITY_WHITE_SMOKE)
+        else if ((GetBattlerAbility(gActiveBattler) == ABILITY_CLEAR_BODY || GetBattlerAbility(gActiveBattler) == ABILITY_WHITE_SMOKE
+		 || (GetBattlerAbility(gActiveBattler) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_GRASS)))
 		 && !certain && gCurrentMove != MOVE_CURSE)
         {
             if (flags == STAT_CHANGE_BS_PTR)
@@ -6061,6 +6111,25 @@ static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
             }
             return STAT_CHANGE_DIDNT_WORK;
         }
+		else if (IsBattlerAlive(BATTLE_PARTNER(gActiveBattler)) && GetBattlerAbility(BATTLE_PARTNER(gActiveBattler)) == ABILITY_FLOWER_VEIL
+		&& IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_GRASS) && !certain && gCurrentMove != MOVE_CURSE)
+		{
+			if (flags == STAT_CHANGE_BS_PTR)
+            {
+                if (gSpecialStatuses[gActiveBattler].statLowered)
+                    gBattlescriptCurrInstr = BS_ptr;
+                else
+                {
+                    BattleScriptPush(BS_ptr);
+                    gBattleScripting.battler = BATTLE_PARTNER(gActiveBattler);
+                    gBattlescriptCurrInstr = BattleScript_AbilityNoStatLoss;
+                    gLastUsedAbility = gBattleMons[BATTLE_PARTNER(gActiveBattler)].ability;
+                    RecordAbilityBattle(BATTLE_PARTNER(gActiveBattler), gLastUsedAbility);
+                    gSpecialStatuses[gActiveBattler].statLowered = 1;
+                }
+            }
+            return STAT_CHANGE_DIDNT_WORK;
+		}
         else if (!certain && ((GetBattlerAbility(gActiveBattler) == ABILITY_KEEN_EYE && statId == STAT_ACC)
 		|| (GetBattlerAbility(gActiveBattler) == ABILITY_HYPER_CUTTER && statId == STAT_ATK)
 		|| (GetBattlerAbility(gActiveBattler) == ABILITY_BIG_PECKS && statId == STAT_DEF)))
@@ -7120,6 +7189,20 @@ static void atkAC_trysetburn(void)
 					return;
 				}
 				break;
+			case ABILITY_FLOWER_VEIL:
+			    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+				{
+					gLastUsedAbility = gBattleMons[bank].ability;
+					gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+					return;
+				}
+				break;
+		}
+		if (IsBattlerAlive(BATTLE_PARTNER(bank)) && GetBattlerAbility(BATTLE_PARTNER(bank)) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+		{
+			gLastUsedAbility = gBattleMons[BATTLE_PARTNER(bank)].ability;
+			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+			return;
 		}
 	}
 	gBattlescriptCurrInstr += 2;
@@ -7390,6 +7473,20 @@ static void atkB6_trysetparalyze(void)
 					return;
 				}
 				break;
+			case ABILITY_FLOWER_VEIL:
+			    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+				{
+					gLastUsedAbility = gBattleMons[bank].ability;
+					gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+					return;
+				}
+				break;
+		}
+		if (IsBattlerAlive(BATTLE_PARTNER(bank)) && GetBattlerAbility(BATTLE_PARTNER(bank)) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+		{
+			gLastUsedAbility = gBattleMons[BATTLE_PARTNER(bank)].ability;
+			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+			return;
 		}
 	}
 	gBattlescriptCurrInstr += 2;

@@ -131,7 +131,7 @@ static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
     [ABILITY_WIND_RIDER] = TRUE,
 };
 
-static bool8 CanBeStatused(u8 bank)
+static bool8 CanBeStatused(u8 bank, bool8 checkFlowerVeil)
 {
 	if (gBattleMons[bank].status1 & STATUS1_ANY)
 		return FALSE;
@@ -142,17 +142,25 @@ static bool8 CanBeStatused(u8 bank)
 			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 				return FALSE;
 			break;
+		case ABILITY_FLOWER_VEIL:
+		    if (checkFlowerVeil && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+				return FALSE;
+			break;
 	}
-	
-	if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
-		return FALSE;
-	
+	if (!(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+	{
+		if (checkFlowerVeil && IsBattlerAlive(BATTLE_PARTNER(bank)) && GetBattlerAbility(BATTLE_PARTNER(bank)) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+			return FALSE;
+		
+		if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+			return FALSE;
+	}
 	return TRUE;
 }
 
-bool8 CanBePutToSleep(u8 bank)
+bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
 {
-	if (!CanBeStatused(bank))
+	if (!CanBeStatused(bank, checkFlowerVeil))
 		return FALSE;
 	
 	switch (GetBattlerAbility(bank))
@@ -165,9 +173,9 @@ bool8 CanBePutToSleep(u8 bank)
 	return TRUE;
 }
 
-bool8 CanBePoisoned(u8 bankDef, u8 bankAtk)
+bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	if (!CanBeStatused(bankDef))
+	if (!CanBeStatused(bankDef, checkFlowerVeil))
 		return FALSE;
 	
 	switch (GetBattlerAbility(bankDef))
@@ -182,9 +190,9 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk)
 	return TRUE;
 }
 
-bool8 CanBeBurned(u8 bank)
+bool8 CanBeBurned(u8 bank, bool8 checkFlowerVeil)
 {
-	if (!CanBeStatused(bank))
+	if (!CanBeStatused(bank, checkFlowerVeil))
 		return FALSE;
 	
 	switch (GetBattlerAbility(bank))
@@ -199,9 +207,9 @@ bool8 CanBeBurned(u8 bank)
 	return TRUE;
 }
 
-bool8 CanBeFrozen(u8 bank)
+bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil)
 {
-	if (!CanBeStatused(bank))
+	if (!CanBeStatused(bank, checkFlowerVeil))
 		return FALSE;
 	
 	switch (GetBattlerAbility(bank))
@@ -219,9 +227,9 @@ bool8 CanBeFrozen(u8 bank)
 	return TRUE;
 }
 
-bool8 CanBeParalyzed(u8 bank)
+bool8 CanBeParalyzed(u8 bank, bool8 checkFlowerVeil)
 {
-	if (!CanBeStatused(bank))
+	if (!CanBeStatused(bank, checkFlowerVeil))
 		return FALSE;
 	
 	switch (GetBattlerAbility(bank))
@@ -2152,6 +2160,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 		++effect;
 		break;
+		case ABILITY_PROTEAN:
+		case ABILITY_LIBERO:
+		    gDisableStructs[battler].canProteanActivate = TRUE;
+		break;
             }
             break;
         case ABILITYEFFECT_ENDTURN: // 1
@@ -2520,16 +2532,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				    switch (gBattleCommunication[MOVE_EFFECT_BYTE])
 				    {
 					    case MOVE_EFFECT_SLEEP:
-						    if (CanBePutToSleep(gBattlerAttacker))
+						    if (CanBePutToSleep(gBattlerAttacker, TRUE))
 							    ++effect;
 						    break;
 					    case MOVE_EFFECT_POISON:
-						    if (CanBePoisoned(gBattlerAttacker, battler))
+						    if (CanBePoisoned(gBattlerAttacker, battler, TRUE))
 							    ++effect;
 						    break;
 					    case MOVE_EFFECT_BURN:
 						    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
-						    if (CanBeParalyzed(gBattlerAttacker))
+						    if (CanBeParalyzed(gBattlerAttacker, TRUE))
 							    ++effect;
 						    break;
 				    }
@@ -2545,7 +2557,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		    case ABILITY_POISON_POINT:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 3) == 0
-				&& CanBePoisoned(gBattlerAttacker, battler))
+				&& CanBePoisoned(gBattlerAttacker, battler, TRUE))
 			    {
 				    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_POISON;
 				    BattleScriptPushCursor();
@@ -2557,7 +2569,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		    case ABILITY_STATIC:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 3) == 0
-				&& CanBeParalyzed(gBattlerAttacker))
+				&& CanBeParalyzed(gBattlerAttacker, TRUE))
 			    {
 				    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_PARALYSIS;
 				    BattleScriptPushCursor();
@@ -2569,7 +2581,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		    case ABILITY_FLAME_BODY:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED
 				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 3) == 0
-				&& CanBeBurned(gBattlerAttacker))
+				&& CanBeBurned(gBattlerAttacker, TRUE))
 			    {
 				    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_BURN;
 				    BattleScriptPushCursor();
@@ -2723,7 +2735,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 	    {
 		    case ABILITY_POISON_TOUCH:
 			if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerTarget) && !gProtectStructs[gBattlerAttacker].confusionSelfDmg
-			   && CanBePoisoned(gBattlerTarget, gBattlerAttacker) && gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT && TARGET_TURN_DAMAGED && (Random() % 3) == 0)
+			   && CanBePoisoned(gBattlerTarget, gBattlerAttacker, TRUE) && gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT && TARGET_TURN_DAMAGED && (Random() % 3) == 0)
 			{
 				gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON;
 				PREPARE_ABILITY_BUFFER(gBattleTextBuff1, gLastUsedAbility);

@@ -155,7 +155,8 @@ struct DisableStruct
     /*0x0C*/ u16 rolloutTimerStartValue:3;
     /*0x0E*/ u8 encoredMovePos;
     /*0x0F*/ u8 mimickedMoves:4;
-    /*0x0F*/ u8 unused:4;
+	/*0x0F*/ u8 canProteanActivate:1;
+    /*0x0F*/ u8 unused:3;
     /*0x10*/ u8 battlerPreventingEscape;
     /*0x11*/ u8 battlerWithSureHit;
     /*0x12*/ u8 isFirstTurn;

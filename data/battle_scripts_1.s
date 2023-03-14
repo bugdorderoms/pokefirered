@@ -4798,3 +4798,20 @@ BattleScript_AromaVeilProtects::
 	waitmessage 0x40
 	removeabilitypopup BS_TARGET
 	goto BattleScript_MoveEnd
+
+BattleScript_TeamProtectedByFlowerVeil::
+    pause 0x20
+	orhalfword gMoveResultFlags, MOVE_RESULT_FAILED
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_FLOWERVEILPROTECTED
+	waitmessage 0x40
+	removeabilitypopup BS_TARGET
+	goto BattleScript_MoveEnd
+
+BattleScript_ProteanActivates::
+    pause 0x20
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_PKMNCHANGEDTYPE
+	waitmessage 0x40
+    removeabilitypopup BS_ATTACKER
+    return

@@ -415,6 +415,7 @@ static const u8 sText_YourTeamPrefix[] = _("Your team");
 static const u8 sText_TheOpposingTeamPrefix[] = _("The opposing team");
 static const u8 sText_AttackerUsedX[] = _("{B_ATK_NAME_WITH_PREFIX} used\n{B_BUFF2}!");
 static const u8 sText_AromaVeilProtected[] = _("{B_DEF_NAME_WITH_PREFIX} is protected\nby an aromatic veil!");
+static const u8 sText_FlowerVeilProtected[] = _("{B_DEF_NAME_WITH_PREFIX} surrounded\nitself with a veil of petals!");
 
 static const u8 sText_HP2[] = _("HP");
 static const u8 sText_Attack2[] = _("Attack");
@@ -880,7 +881,8 @@ const u8 *const gBattleStringsTable[] = {
     [STRINGID_TRAINER1WINTEXT - 12]               = sText_Trainer1WinText,
     [STRINGID_TRAINER1MON2COMEBACK - 12]          = sText_Trainer1RecallPkmn2,
     [STRINGID_TRAINER1MON1AND2COMEBACK - 12]      = sText_Trainer1RecallBoth,
-	[STRINGID_AROMAVEILPROTECTED - 12]            = sText_AromaVeilProtected
+	[STRINGID_AROMAVEILPROTECTED - 12]            = sText_AromaVeilProtected,
+	[STRINGID_FLOWERVEILPROTECTED - 12]           = sText_FlowerVeilProtected
 };
 
 const u16 gMissStringIds[] = {

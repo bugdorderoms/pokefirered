@@ -272,6 +272,8 @@ extern const u8 BattleScript_RaiseStatOnFaintingTarget[];
 extern const u8 BattleScript_TargetAbilityStatRaiseRet[];
 extern const u8 BattleScript_MagicBounce[];
 extern const u8 BattleScript_ZenModeActivates[];
+extern const u8 BattleScript_TeamProtectedByFlowerVeil[];
+extern const u8 BattleScript_ProteanActivates[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];

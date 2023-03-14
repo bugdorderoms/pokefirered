@@ -454,6 +454,9 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 					spDefense = (15 * spDefense) / 10;
 				break;
+			case ABILITY_FUR_COAT:
+			    defense *= 2;
+				break;
 		}
 		// defender's ally abilities check
 		if (IsBattlerAlive(BATTLE_PARTNER(battlerIdDef)))
