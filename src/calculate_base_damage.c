@@ -328,10 +328,14 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower = (15 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_NORMALIZE:
-				if (type == TYPE_NORMAL && gBattleMoves[move].effect != EFFECT_HIDDEN_POWER && gBattleMoves[move].effect != EFFECT_WEATHER_BALL
-				    && gBattleMoves[move].effect != EFFECT_NATURAL_GIFT && gBattleMoves[move].effect != EFFECT_CHANGE_TYPE_ON_ITEM
-				    && gBattleMoves[move].effect != EFFECT_TERRAIN_PULSE)
-					gBattleMovePower = (12 * gBattleMovePower) / 10;
+				if (type == TYPE_NORMAL)
+				{
+					NORMALIZE_CHECK:
+					if (gBattleMoves[move].effect != EFFECT_HIDDEN_POWER && gBattleMoves[move].effect != EFFECT_WEATHER_BALL
+					&& gBattleMoves[move].effect != EFFECT_NATURAL_GIFT && gBattleMoves[move].effect != EFFECT_CHANGE_TYPE_ON_ITEM
+					&& gBattleMoves[move].effect != EFFECT_TERRAIN_PULSE)
+					    gBattleMovePower = (12 * gBattleMovePower) / 10;
+				}
 				break;
 			case ABILITY_IRON_FIST:
 				if (gBattleMoves[move].flags & FLAG_IRON_FIST_BOOST)
@@ -403,6 +407,14 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			case ABILITY_SAND_FORCE:
 			    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SANDSTORM_ANY && (type == TYPE_ROCK || type == TYPE_GROUND || type == TYPE_STEEL))
 					gBattleMovePower = (13 * gBattleMovePower) / 10;
+				break;
+			case ABILITY_STRONG_JAW:
+			    if (gBattleMoves[move].flags & FLAG_STRONG_JAW_BOOST)
+					gBattleMovePower = (15 * gBattleMovePower) / 10;
+				break;
+			case ABILITY_REFRIGERATE:
+			    if (type == TYPE_ICE)
+					goto NORMALIZE_CHECK;
 				break;
 		}
 		// attacker's ally abilities check

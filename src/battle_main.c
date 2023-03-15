@@ -4120,7 +4120,7 @@ void RunBattleScriptCommands(void)
 
 static void SetTypeBeforeUsingMove(u16 move, u8 battler)
 {
-	u16 ability, moveEffect;
+	u16 moveEffect;
 	
 	gBattleStruct->dynamicMoveType = gBattleMoves[move].type;
 	
@@ -4148,11 +4148,21 @@ static void SetTypeBeforeUsingMove(u16 move, u8 battler)
 			gBattleStruct->dynamicMoveType = GetHiddenPowerType(GetBattlerPartyIndexPtr(battler));
 			break;
 	}
-	ability = GetBattlerAbility(battler);
-	
-	if (ability == ABILITY_NORMALIZE && gBattleStruct->dynamicMoveType != TYPE_NORMAL && moveEffect != EFFECT_WEATHER_BALL && moveEffect != EFFECT_HIDDEN_POWER
-	   && moveEffect != EFFECT_NATURAL_GIFT && moveEffect != EFFECT_CHANGE_TYPE_ON_ITEM && moveEffect != EFFECT_TERRAIN_PULSE)
-		gBattleStruct->dynamicMoveType = TYPE_NORMAL;
+	if (moveEffect != EFFECT_WEATHER_BALL && moveEffect != EFFECT_HIDDEN_POWER && moveEffect != EFFECT_NATURAL_GIFT && moveEffect != EFFECT_CHANGE_TYPE_ON_ITEM
+	&& moveEffect != EFFECT_TERRAIN_PULSE)
+	{
+		switch (GetBattlerAbility(battler))
+		{
+			case ABILITY_NORMALIZE:
+			    if (gBattleStruct->dynamicMoveType != TYPE_NORMAL)
+					gBattleStruct->dynamicMoveType = TYPE_NORMAL;
+				break;
+			case ABILITY_REFRIGERATE:
+			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
+					gBattleStruct->dynamicMoveType == TYPE_ICE;
+				break;
+		}
+	}
 }
 
 static void HandleAction_UseMove(void)

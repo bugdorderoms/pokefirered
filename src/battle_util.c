@@ -504,6 +504,15 @@ static void TryActivateDefiant(u16 stringId)
 					gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
 				}
 			    break;
+			case ABILITY_COMPETITIVE:
+			    if (gBattleMons[gBattlerTarget].statStages[STAT_SPATK] < 0xC)
+				{
+					gLastUsedAbility = ABILITY_COMPETITIVE;
+					SET_STATCHANGER(STAT_SPATK, 2, FALSE);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
+				}
+			    break;
 		}
 	}
 	if (stringId == STRINGID_PKMNCUTSATTACKWITH && GetBattlerAbility(gBattlerTarget) == ABILITY_RATTLED && gBattleMons[gBattlerTarget].statStages[STAT_SPEED] < 0xC)
@@ -2368,9 +2377,13 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				    effect = 1;
 			    break;
 		    case ABILITY_TELEPATHY:
-			    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattlerAttacker == BATTLE_PARTNER(battler) && !IS_MOVE_STATUS(moveArg))
+			    if (IsBattlerAlive(BATTLE_PARTNER(battler)) && gBattlerAttacker == BATTLE_PARTNER(battler) && !IS_MOVE_STATUS(moveArg))
 				    effect = 1;
 			    break;
+			case ABILITY_BULLETPROOF:
+			    if (gBattleMoves[moveArg].flags & FLAG_BALLISTIC)
+					effect = 1;
+				break;
 	    }
 			
 	    if (effect)
