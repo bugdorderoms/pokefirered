@@ -167,8 +167,11 @@ bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
 	{
 		case ABILITY_INSOMNIA:
 		case ABILITY_VITAL_SPIRIT:
+		case ABILITY_SWEET_VEIL:
 			return FALSE;
 	}
+	if (IsBattlerAlive(BATTLE_PARTNER(bank)) && GetBattlerAbility(BATTLE_PARTNER(bank)) == ABILITY_SWEET_VEIL)
+		return FALSE;
 	
 	return TRUE;
 }

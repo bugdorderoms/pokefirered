@@ -509,6 +509,7 @@ static const u16 sEndBattleBannedRevertSpecies[] =
 {
 	SPECIES_DARMANITAN_ZEN_MODE,
 	SPECIES_DARMANITAN_ZEN_MODE_GALARIAN,
+	SPECIES_AEGISLASH_BLADE,
 };
 
 void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 reloadStats, bool8 reloadAbility)
@@ -564,6 +565,9 @@ u16 TryDoBattleFormChange(u8 battlerId, u8 formChangeType)
 					break;
 				case SPECIES_DARMANITAN_ZEN_MODE_GALARIAN:
 				    newSpecies = SPECIES_DARMANITAN_GALARIAN;
+					break;
+				case SPECIES_AEGISLASH_BLADE:
+				    newSpecies = SPECIES_AEGISLASH;
 					break;
 			}
 			

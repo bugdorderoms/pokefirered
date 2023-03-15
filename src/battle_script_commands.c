@@ -56,6 +56,8 @@ static const u8 sForewarnString[] = _("It was alerted to\n{B_DEF_NAME_WITH_PREFI
 static const u8 sFriskString[] = _("{B_ATK_NAME_WITH_PREFIX} frisked {B_DEF_NAME_WITH_PREFIX}\nand found its {B_LAST_ITEM}!");
 static const u8 sBellyDrumContraryString[] = _("{B_ATK_NAME_WITH_PREFIX} cut its own HP\nand minimized Attack!");
 static const u8 sMagicBounceString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_CURRENT_MOVE} was\nbounced back by {B_DEF_NAME_WITH_PREFIX}'s\l{B_DEF_ABILITY}!");
+static const u8 sStanceChangeToShieldString[] = _("Changed to Shield Forme!");
+static const u8 sStanceChangeToBladeString[] = _("Changed to Blade Forme!");
 
 static bool8 IsTwoTurnsMove(u16 move);
 static void TrySetDestinyBondToHappen(void);
@@ -898,7 +900,7 @@ static void atk00_attackcanceler(void)
 		gLastUsedAbility = GetBattlerAbility(gBattlerAttacker);
 		gDisableStructs[gBattlerAttacker].canProteanActivate = FALSE;
 		SET_BATTLER_TYPE(gBattlerAttacker, moveType);
-		PREPARE_TYPE_BUFFER(gBattlerAttacker, moveType);
+		PREPARE_TYPE_BUFFER(gBattleTextBuff1, moveType);
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_ProteanActivates;
         return;
@@ -914,7 +916,36 @@ static void atk00_attackcanceler(void)
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         return;
     }
-    gHitMarker &= ~(HITMARKER_x800000);
+	gHitMarker &= ~(HITMARKER_x800000);
+	
+	if (GetBattlerAbility(gBattlerAttacker) == ABILITY_STANCE_CHANGE && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_TRANSFORMED))
+	{
+		switch (gBattleMons[gBattlerAttacker].species)
+		{
+			case SPECIES_AEGISLASH:
+			    if (!IS_MOVE_STATUS(gCurrentMove))
+				{
+					DoBattleFormChange(gBattlerAttacker, SPECIES_AEGISLASH_BLADE, FALSE, TRUE, FALSE);
+					gSetWordLoc = sStanceChangeToBladeString;
+					gLastUsedAbility = ABILITY_STANCE_CHANGE;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_AttackerFormChange;
+					return;
+				}
+				break;
+			case SPECIES_AEGISLASH_BLADE:
+			    if (gCurrentMove == MOVE_KINGS_SHIELD)
+				{
+					DoBattleFormChange(gBattlerAttacker, SPECIES_AEGISLASH, FALSE, TRUE, FALSE);
+					gSetWordLoc = sStanceChangeToShieldString;
+					gLastUsedAbility = ABILITY_STANCE_CHANGE;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_AttackerFormChange;
+					return;
+				}
+				break;
+		}
+	}
     if (!(gHitMarker & HITMARKER_OBEYS) && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS))
     {
         i = IsMonDisobedient();
@@ -3500,13 +3531,31 @@ static void atk42_trysetsleep(void)
 					return;
 				}
 				break;
+			case ABILITY_SWEET_VEIL:
+			    gLastUsedAbility = gBattleMons[bank].ability;
+				gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+				RecordAbilityBattle(bank, gLastUsedAbility);
+				return;
 		}
-		if (IsBattlerAlive(BATTLE_PARTNER(bank)) && GetBattlerAbility(BATTLE_PARTNER(bank)) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+		if (IsBattlerAlive(BATTLE_PARTNER(bank)))
 		{
-			gLastUsedAbility = gBattleMons[BATTLE_PARTNER(bank)].ability;
-			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
-			RecordAbilityBattle(BATTLE_PARTNER(bank), gLastUsedAbility);
-			return;
+			switch (GetBattlerAbility(BATTLE_PARTNER(bank)))
+			{
+				case ABILITY_FLOWER_VEIL:
+				    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
+					{
+						gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+						gLastUsedAbility = gBattleMons[BATTLE_PARTNER(bank)].ability;
+						RecordAbilityBattle(BATTLE_PARTNER(bank), gLastUsedAbility);
+						return;
+					}
+					break;
+				case ABILITY_SWEET_VEIL:
+				    gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
+					gLastUsedAbility = gBattleMons[BATTLE_PARTNER(bank)].ability;
+					RecordAbilityBattle(BATTLE_PARTNER(bank), gLastUsedAbility);
+					return;
+			}
 		}
 	}
 	gBattlescriptCurrInstr += 6;

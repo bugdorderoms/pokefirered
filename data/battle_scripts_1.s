@@ -4815,3 +4815,22 @@ BattleScript_ProteanActivates::
 	waitmessage 0x40
     removeabilitypopup BS_ATTACKER
     return
+
+BattleScript_TeamProtectedBySweetVeil::
+    pause 0x20
+	orhalfword gMoveResultFlags, MOVE_RESULT_FAILED
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_SWEETVEILPROTECTED
+	waitmessage 0x40
+	removeabilitypopup BS_TARGET
+	goto BattleScript_MoveEnd
+
+BattleScript_AttackerFormChange::
+    pause 0x20
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	playanimation BS_ATTACKER, B_ANIM_FORM_CHANGE, NULL
+	waitanimation
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
+	removeabilitypopup BS_ATTACKER
+	return

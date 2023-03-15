@@ -416,6 +416,18 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			    if (type == TYPE_ICE)
 					goto NORMALIZE_CHECK;
 				break;
+			case ABILITY_MEGA_LAUNCHER:
+			    if (gBattleMoves[move].flags & FLAG_MEGA_LAUNCHER_BOOST)
+					gBattleMovePower = (15 * gBattleMovePower) / 10;
+				break;
+			case ABILITY_TOUGH_CLAWS:
+			    if (gBattleMoves[move].flags & FLAG_MAKES_CONTACT)
+					gBattleMovePower = (13 * gBattleMovePower) / 10;
+				break;
+			case ABILITY_PIXILATE:
+			    if (type == TYPE_FAIRY)
+					goto NORMALIZE_CHECK;
+				break;
 		}
 		// attacker's ally abilities check
 		if (IsBattlerAlive(BATTLE_PARTNER(battlerIdAtk)))

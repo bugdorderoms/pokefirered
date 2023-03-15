@@ -3627,8 +3627,9 @@ s8 GetMovePriority(u8 battler, u16 move)
 {
     s8 priority = gBattleMoves[move].priority;
 	
-	// Prankster check
-	if (GetBattlerAbility(battler) == ABILITY_PRANKSTER && IS_MOVE_STATUS(move))
+	if (GetBattlerAbility(battler) == ABILITY_PRANKSTER && IS_MOVE_STATUS(move)) // Prankster check
+		++priority;
+	if (GetBattlerAbility(battler) == ABILITY_GALE_WINGS && gBattleMoves[move].type == TYPE_FLYING && gBattleMons[battler].hp == gBattleMons[battler].maxHP) // Gale Wings check
 		++priority;
 	
     return priority;
@@ -4160,6 +4161,10 @@ static void SetTypeBeforeUsingMove(u16 move, u8 battler)
 			case ABILITY_REFRIGERATE:
 			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
 					gBattleStruct->dynamicMoveType == TYPE_ICE;
+				break;
+			case ABILITY_PIXILATE:
+			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
+					gBattleStruct->dynamicMoveType == TYPE_FAIRY;
 				break;
 		}
 	}
