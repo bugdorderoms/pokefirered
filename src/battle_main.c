@@ -4160,11 +4160,11 @@ static void SetTypeBeforeUsingMove(u16 move, u8 battler)
 				break;
 			case ABILITY_REFRIGERATE:
 			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
-					gBattleStruct->dynamicMoveType == TYPE_ICE;
+					gBattleStruct->dynamicMoveType = TYPE_ICE;
 				break;
 			case ABILITY_PIXILATE:
 			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
-					gBattleStruct->dynamicMoveType == TYPE_FAIRY;
+					gBattleStruct->dynamicMoveType = TYPE_FAIRY;
 				break;
 		}
 	}
