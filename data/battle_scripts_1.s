@@ -4836,3 +4836,12 @@ BattleScript_AttackerFormChange::
 	waitmessage 0x40
 	removeabilitypopup BS_ATTACKER
 	return
+
+BattleScript_GooeyActivates::
+    waitstate
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_TARGET, LOAD_ABILITY_FROM_BUFFER
+	swapattackerwithtarget
+	seteffectsecondary
+	swapattackerwithtarget
+	removeabilitypopup BS_TARGET
+	return

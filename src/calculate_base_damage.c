@@ -428,6 +428,10 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			    if (type == TYPE_FAIRY)
 					goto NORMALIZE_CHECK;
 				break;
+			case ABILITY_AERILATE:
+			    if (type == TYPE_FLYING)
+					goto NORMALIZE_CHECK;
+				break;
 		}
 		// attacker's ally abilities check
 		if (IsBattlerAlive(BATTLE_PARTNER(battlerIdAtk)))

@@ -2744,6 +2744,20 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 					effect++;
 				}
 				break;
+			case ABILITY_GOOEY:
+			case ABILITY_TANGLING_HAIR:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && IsBattlerAlive(gBattlerAttacker) && gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT
+				&& gBattleMons[gBattlerAttacker].statStages[STAT_SPEED] > 0)
+				{
+					SET_STATCHANGER(STAT_SPEED, 1, TRUE);
+					gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_SPD_MINUS_1;
+					PREPARE_ABILITY_BUFFER(gBattleTextBuff1, gLastUsedAbility);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_GooeyActivates;
+					gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
+					effect++;
+				}
+				break;
 	    }
 	    break;
 	case ABILITYEFFECT_MOVE_END_ATTACKER:

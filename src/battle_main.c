@@ -4166,6 +4166,10 @@ static void SetTypeBeforeUsingMove(u16 move, u8 battler)
 			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
 					gBattleStruct->dynamicMoveType = TYPE_FAIRY;
 				break;
+			case ABILITY_AERILATE:
+			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
+					gBattleStruct->dynamicMoveType = TYPE_FLYING;
+				break;
 		}
 	}
 }
