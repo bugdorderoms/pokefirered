@@ -2345,7 +2345,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 						*(gBattleStruct->wrappedMove + gEffectBattler * 2 + 0) = gCurrentMove;
 						*(gBattleStruct->wrappedMove + gEffectBattler * 2 + 1) = gCurrentMove >> 8;
 						*(gBattleStruct->wrappedBy + gEffectBattler) = gBattlerAttacker;
-						BattleScriptPush(gBattlescriptCurrInstr + 1)
+						BattleScriptPush(gBattlescriptCurrInstr + 1);
 						gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
 						
 						for (gBattleCommunication[MULTISTRING_CHOOSER] = 0; ; ++gBattleCommunication[MULTISTRING_CHOOSER])
@@ -2362,7 +2362,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 						gBattleMoveDamage = 1;
 					
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
-					gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]]
+					gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
 					break;
 				case MOVE_EFFECT_ATK_PLUS_1:
 				case MOVE_EFFECT_DEF_PLUS_1:
@@ -3039,7 +3039,7 @@ static void atk23_getexp(void)
 						if (gSaveBlock2Ptr->expShare)
 							gBattleMoveDamage += gExpShareExp;
 						if (holdEffect == HOLD_EFFECT_LUCKY_EGG)
-							gBattleMoveDamage = (gBattleMoveDamage * 150) / 100
+							gBattleMoveDamage = (gBattleMoveDamage * 150) / 100;
 						if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 							gBattleMoveDamage = (gBattleMoveDamage * 150) / 100;
 						if (IsTradedMon(&gPlayerParty[gBattleStruct->expGetterMonId]) && !(gBattleTypeFlags & BATTLE_TYPE_POKEDUDE))
@@ -3056,7 +3056,7 @@ static void atk23_getexp(void)
 								gBattleStruct->expGetterBattlerId = 2;
 							else
 							{
-								if (!(gAbsentBattlerFlags & gBitTable[0])
+								if (!(gAbsentBattlerFlags & gBitTable[0]))
 									gBattleStruct->expGetterBattlerId = 0;
 								else
 									gBattleStruct->expGetterBattlerId = 2;
