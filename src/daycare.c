@@ -1083,7 +1083,7 @@ void CreateEgg(struct Pokemon *mon, u16 species, bool8 setHotSpringsLocation)
     u8 isEgg;
 
     CreateMon(mon, species, EGG_HATCH_LEVEL, USE_RANDOM_IVS, FALSE, 0, OT_ID_PLAYER_ID, 0);
-	species = DoOverworldFormChange(mon, OVERWORLD_FORM_CHANGE_WILD_ENCOUNTER);
+	species = DoWildEncounterFormChange(mon);
 	
     metLevel = 0;
     ball = ITEM_POKE_BALL;
@@ -1112,7 +1112,7 @@ static u16 SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *d
 
     personality = daycare->offspringPersonality | (Random() << 16);
     CreateMon(mon, species, EGG_HATCH_LEVEL, USE_RANDOM_IVS, TRUE, personality, OT_ID_PLAYER_ID, 0);
-	species = DoOverworldFormChange(mon, OVERWORLD_FORM_CHANGE_WILD_ENCOUNTER);
+	species = DoWildEncounterFormChange(mon);
     metLevel = 0;
     ball = ITEM_POKE_BALL;
     language = LANGUAGE_JAPANESE;

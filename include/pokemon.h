@@ -381,6 +381,7 @@ void SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot);
 void SetBattleMonMoveSlot(struct BattlePokemon *mon, u16 move, u8 slot);
 u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove);
 u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool8 firstMove);
+void GiveMonInitialMoveset(struct Pokemon *mon);
 void DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move);
 
 #define BATTLE_ALIVE_EXCEPT_ACTIVE  0

@@ -13,6 +13,7 @@
 
 // overworld form change
 u16 DoOverworldFormChange(struct Pokemon *mon, u32 formChangeType);
+u16 DoWildEncounterFormChange(struct Pokemon *mon);
 void DoPlayerPartyEndBattleFormChange(void);
 
 // battle form change types

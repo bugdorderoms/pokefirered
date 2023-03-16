@@ -218,7 +218,7 @@ u16 GenerateWildMon(u16 species, u8 level)
     ZeroEnemyPartyMons();
 	CreateMonWithNature(&gEnemyParty[0], species, level, USE_RANDOM_IVS, Random() % 25);
 	
-	return DoOverworldFormChange(&gEnemyParty[0], OVERWORLD_FORM_CHANGE_WILD_ENCOUNTER);
+	return DoWildEncounterFormChange(&gEnemyParty[0]);
 }
 
 enum

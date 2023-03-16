@@ -2230,8 +2230,16 @@ void SetBattleMonMoveSlot(struct BattlePokemon *mon, u16 move, u8 slot)
     mon->pp[slot] = gBattleMoves[move].pp;
 }
 
-static void GiveMonInitialMoveset(struct Pokemon *mon)
+void GiveMonInitialMoveset(struct Pokemon *mon)
 {
+	u8 i;
+	u16 zero = 0;
+	
+	for (i = 0; i < MAX_MON_MOVES; i++)
+	{
+		SetMonData(mon, MON_DATA_MOVE1 + i, &zero);
+		setMonData(mon, MON_DATA_PP1 + i, &zero);
+	}
     GiveBoxMonInitialMoveset(&mon->box);
 }
 

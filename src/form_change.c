@@ -491,6 +491,14 @@ void DoPlayerPartyEndBattleFormChange(void)
 	}
 }
 
+u16 DoWildEncounterFormChange(struct Pokemon *mon)
+{
+	DoOverworldFormChange(mon, OVERWORLD_FORM_CHANGE_WILD_ENCOUNTER);
+	GiveMonInitialMoveset(mon); // Other forms may have diferent movesets
+	
+	return GetMonData(mon, MON_DATA_SPECIES);
+}
+
 ////////////////////////
 // BATTLE FORM CHANGE //
 ////////////////////////

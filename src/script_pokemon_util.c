@@ -54,8 +54,8 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall)
     struct Pokemon *mon = AllocZeroed(sizeof(struct Pokemon));
 
     CreateMon(mon, species, level, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
-	species = DoOverworldFormChange(mon, OVERWORLD_FORM_CHANGE_WILD_ENCOUNTER);
-	
+    species = DoWildEncounterFormChange(mon);
+    
     heldItem[0] = item;
     heldItem[1] = item >> 8;
     SetMonData(mon, MON_DATA_HELD_ITEM, heldItem);
