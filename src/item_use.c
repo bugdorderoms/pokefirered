@@ -760,26 +760,23 @@ static void FieldUseFunc_HoneyCB(u8 taskId)
 void FieldUseFunc_ExpShare(u8 taskId)
 {
 	const u8 *txt;
-	u16 SE;
+	
+	gSaveBlock2Ptr->expShare ^= TRUE;
     
-	if (!gSaveBlock2Ptr->expShare)
+	if (gSaveBlock2Ptr->expShare)
 	{
-		SE = SE_EXP_MAX;
 		txt = gText_ExpShareOn;
+		PlaySE(SE_EXP_MAX);
 	}
 	else
 	{
-		SE = SE_PC_OFF;
 		txt = gText_ExpShareOff;
+		PlaySE(SE_PC_OFF);
 	}
-	PlaySE(SE);
-	
-	if (gTasks[taskId].data[3]) // to account for pressing select in the overworld
+	if (gTasks[taskId].data[3])
 		DisplayItemMessageOnField(taskId, 2, txt, Task_ItemUse_CloseMessageBoxAndReturnToField);
 	else
 		DisplayItemMessageInBag(taskId, 2, txt, Task_ReturnToBagFromContextMenu);
-	
-	gSaveBlock2Ptr->expShare = !gSaveBlock2Ptr->expShare;
 }
 
 static void OpenEvIvDisplayFromBag(void)
