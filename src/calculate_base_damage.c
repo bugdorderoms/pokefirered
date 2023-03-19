@@ -433,6 +433,14 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					goto NORMALIZE_CHECK;
 				break;
 		}
+		// Aura abilities
+		if ((ABILITY_ON_FIELD(ABILITY_DARK_AURA) && type == TYPE_DARK) || (ABILITY_ON_FIELD(ABILITY_FAIRY_AURA) && type == TYPE_FAIRY))
+		{
+			if (ABILITY_ON_FIELD(ABILITY_AURA_BREAK))
+				gBattleMovePower = (75 * gBattleMovePower) / 100;
+			else
+				gBattleMovePower = (4 * gBattleMovePower) / 3;
+		}
 		// attacker's ally abilities check
 		if (IsBattlerAlive(BATTLE_PARTNER(battlerIdAtk)))
 		{

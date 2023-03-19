@@ -51,6 +51,9 @@ static const u8 sMummyString[] = _("{B_ATK_NAME_WITH_PREFIX}'s ability became\n{
 static const u8 sZenModeString[] = _("{B_ATK_ABILITY} triggered!");
 static const u8 sTurboblazeString[] = _("{B_ATK_NAME_WITH_PREFIX} is radiating\na blazing aura!");
 static const u8 sTeravoltString[] = _("{B_ATK_NAME_WITH_PREFIX} is radiating\na bursting aura!");
+static const u8 sDarkAuraString[] = _("{B_ATK_NAME_WITH_PREFIX} is radiating\na dark aura!");
+static const u8 sFairyAuraString[] = _("{B_ATK_NAME_WITH_PREFIX} is radiating\na fairy aura!");
+static const u8 sAuraBreakString[] = _("{B_ATK_NAME_WITH_PREFIX} reversed all\nother Pokémon's auras!");
 
 static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
 {
@@ -2175,6 +2178,21 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		case ABILITY_PROTEAN:
 		case ABILITY_LIBERO:
 		    gDisableStructs[battler].canProteanActivate = TRUE;
+		break;
+		case ABILITY_DARK_AURA:
+		    gSetWordLoc = sDarkAuraString;
+		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+		++effect;
+		break;
+		case ABILITY_FAIRY_AURA:
+		    gSetWordLoc = sFairyAuraString;
+		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+		++effect;
+		break;
+		case ABILITY_AURA_BREAK:
+		    gSetWordLoc = sAuraBreakString;
+		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+		++effect;
 		break;
             }
             break;
