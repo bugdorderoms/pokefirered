@@ -6727,7 +6727,7 @@ static void atk96_weatherdamage(void)
             else
                 gBattleMoveDamage = 0;
         }
-        if (gBattleWeather & WEATHER_HAIL)
+        if (gBattleWeather & WEATHER_HAIL_ANY)
         {
             if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ICE) && GetBattlerAbility(gBattlerAttacker) != ABILITY_ICE_BODY
 		&& GetBattlerAbility(gBattlerAttacker) != ABILITY_MAGIC_GUARD && GetBattlerAbility(gBattlerAttacker) != ABILITY_SNOW_CLOAK
@@ -7981,7 +7981,7 @@ static void atkC8_sethail(void)
     }
     else
     {
-        gBattleWeather = WEATHER_HAIL;
+        gBattleWeather = WEATHER_HAIL_TEMPORARY;
         gBattleCommunication[MULTISTRING_CHOOSER] = 5;
         gWishFutureKnock.weatherDuration = 5;
     }

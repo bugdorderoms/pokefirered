@@ -887,8 +887,7 @@ u8 DoFieldEndTurnEffects(void)
                 {
                     if (--gWishFutureKnock.weatherDuration == 0)
                     {
-                        gBattleWeather &= ~WEATHER_RAIN_TEMPORARY;
-                        gBattleWeather &= ~WEATHER_RAIN_DOWNPOUR;
+                        gBattleWeather &= ~(WEATHER_RAIN_TEMPORARY | WEATHER_RAIN_DOWNPOUR);
                         gBattleCommunication[MULTISTRING_CHOOSER] = 2;
                     }
                     else if (gBattleWeather & WEATHER_RAIN_DOWNPOUR)
@@ -948,9 +947,9 @@ u8 DoFieldEndTurnEffects(void)
         case ENDTURN_HAIL:
             if (gBattleWeather & WEATHER_HAIL_ANY)
             {
-                if (--gWishFutureKnock.weatherDuration == 0)
+                if (!(gBattleWeather & WEATHER_HAIL_PERMANENT) && --gWishFutureKnock.weatherDuration == 0)
                 {
-                    gBattleWeather &= ~WEATHER_HAIL;
+                    gBattleWeather &= ~WEATHER_HAIL_TEMPORARY;
                     gBattlescriptCurrInstr = BattleScript_SandStormHailEnds;
                 }
                 else
@@ -2053,7 +2052,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		case WEATHER_SNOW:
                     if (!(gBattleWeather & WEATHER_HAIL_ANY))
 		    {
-			    gBattleWeather = WEATHER_HAIL_ANY;
+			    gBattleWeather = (WEATHER_HAIL_PERMANENT | WEATHER_HAIL_TEMPORARY);
 			    gBattleScripting.animArg1 = B_ANIM_HAIL_CONTINUES;
 			    gBattleScripting.battler = battler;
 			    ++effect;
@@ -2098,7 +2097,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		{
 		    gSetWordLoc = sSnowWarningString;
 		    gWishFutureKnock.weatherDuration = 5;
-		    gBattleWeather = WEATHER_HAIL;
+		    gBattleWeather = WEATHER_HAIL_TEMPORARY;
 		    BattleScriptPushCursorAndCallback(BattleScript_SnowWarningActivates);
 		    gBattleScripting.battler = battler;
                     ++effect;

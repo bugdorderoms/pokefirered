@@ -609,7 +609,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			}
 		}
 		// any weather except sun weakens solar beam
-		if ((gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL)) && move == MOVE_SOLAR_BEAM)
+		if ((gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY)) && move == MOVE_SOLAR_BEAM)
 			damage /= 2;
 	}
 	// flash fire triggered

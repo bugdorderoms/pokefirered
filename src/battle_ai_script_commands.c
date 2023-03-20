@@ -1345,7 +1345,7 @@ static void Cmd_get_weather(void)
         AI_THINKING_STRUCT->funcResult = WEATHER_TYPE_SANDSTORM;
     if (gBattleWeather & WEATHER_SUN_ANY)
         AI_THINKING_STRUCT->funcResult = WEATHER_TYPE_SUNNY;
-    if (gBattleWeather & WEATHER_HAIL)
+    if (gBattleWeather & WEATHER_HAIL_ANY)
         AI_THINKING_STRUCT->funcResult = WEATHER_TYPE_HAIL;
 
     sAIScriptPtr += 1;
