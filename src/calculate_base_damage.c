@@ -182,7 +182,7 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 			    || (gProtectStructs[battlerIdAtk].specialDmg != 0 && gProtectStructs[battlerIdAtk].specialBattlerId == battlerIdDef))
 				power *= 2;
 		case EFFECT_WEATHER_BALL:
-			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_ANY)
+			if (IsBattlerWeatherAffected(battlerIdAtk, WEATHER_ANY))
 				power *= 2;
 			break;
 		case EFFECT_SMELLINGSALT:
@@ -366,11 +366,11 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower = (gBattleMovePower * 15) / 10;
 				break;
 			case ABILITY_SOLAR_POWER:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				if (IsBattlerWeatherAffected(battlerIdAtk, WEATHER_SUN_ANY))
 					spAttack = (15 * spAttack) / 10;
 				break;
 			case ABILITY_FLOWER_GIFT:
-			    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+			    if (IsBattlerWeatherAffected(battlerIdAtk, WEATHER_SUN_ANY))
 					attack = (15 * attack) / 10;
 				break;
 			case ABILITY_TECHNICIAN:
@@ -405,7 +405,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower = (13 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_SAND_FORCE:
-			    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SANDSTORM_ANY && (type == TYPE_ROCK || type == TYPE_GROUND || type == TYPE_STEEL))
+			    if (IsBattlerWeatherAffected(battlerIdAtk, WEATHER_SANDSTORM_ANY) && (type == TYPE_ROCK || type == TYPE_GROUND || type == TYPE_STEEL))
 					gBattleMovePower = (13 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_STRONG_JAW:
@@ -447,7 +447,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			switch (GetBattlerAbility(BATTLE_PARTNER(battlerIdAtk)))
 			{
 				case ABILITY_FLOWER_GIFT:
-				    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				    if (IsBattlerWeatherAffected(battlerIdAtk, WEATHER_SUN_ANY))
 						attack = (15 * attack) / 10;
 					break;
 			}
@@ -487,7 +487,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower /= 2;
 				break;
 			case ABILITY_FLOWER_GIFT:
-			    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+			    if (IsBattlerWeatherAffected(battlerIdDef, WEATHER_SUN_ANY))
 					spDefense = (15 * spDefense) / 10;
 				break;
 			case ABILITY_FUR_COAT:
@@ -500,7 +500,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			switch (GetBattlerAbility(BATTLE_PARTNER(battlerIdDef)))
 			{
 				case ABILITY_FLOWER_GIFT:
-				    if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				    if (IsBattlerWeatherAffected(battlerIdDef, WEATHER_SUN_ANY))
 						spDefense = (15 * spDefense) / 10;
 					break;
 				case ABILITY_FRIEND_GUARD:
@@ -514,14 +514,11 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 	if (type == TYPE_FIRE && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, 0xFE, 0))
 		gBattleMovePower /= 2;
     
-	if (WEATHER_HAS_EFFECT)
+	// sandstorm stats boost
+	if (IsBattlerWeatherAffected(battlerIdDef, WEATHER_SANDSTORM_ANY) && IS_BATTLER_OF_TYPE(battlerIdDef, TYPE_ROCK))
 	{
-		// sandstorm stats boost
-		if (gBattleWeather & WEATHER_SANDSTORM_ANY && IS_BATTLER_OF_TYPE(battlerIdDef, TYPE_ROCK))
-		{
-			spDefense += spDefense / 2;
-			spAttack = (10 * spAttack) / 15;
-		}
+		spDefense += spDefense / 2;
+		spAttack = (10 * spAttack) / 15;
 	}
 	// burn attack drop
 	if ((attacker->status1 & STATUS1_BURN) && GetBattlerAbility(battlerIdAtk) != ABILITY_GUTS && !isConfusionDmg)
@@ -579,39 +576,34 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMoves[move].target == MOVE_TARGET_BOTH && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) > 1) 
 		damage -= damage / 4;
 	
-	// are effects of weather negated with cloud nine or air lock
-	if (WEATHER_HAS_EFFECT2)
+	if (IsBattlerWeatherAffected(battlerIdAtk, WEATHER_RAIN_ANY))
 	{
-		// rain
-		if (gBattleWeather & WEATHER_RAIN_ANY)
+		switch (type)
 		{
-			switch (type)
-			{
-				case TYPE_FIRE:
-					damage /= 2;
-					break;
-				case TYPE_WATER:
-					damage = (15 * damage) / 10;
-					break;
-			}
+			case TYPE_FIRE:
+			    damage /= 2;
+				break;
+			case TYPE_WATER:
+			    damage = (15 * damage) / 10;
+				break;
 		}
-		// sunny
-		if (gBattleWeather & WEATHER_SUN_ANY)
-		{
-			switch (type)
-			{
-				case TYPE_FIRE:
-					damage = (15 * damage) / 10;
-					break;
-				case TYPE_WATER:
-					damage /= 2;
-					break;
-			}
-		}
-		// any weather except sun weakens solar beam
-		if ((gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY)) && move == MOVE_SOLAR_BEAM)
-			damage /= 2;
 	}
+	else if (IsBattlerWeatherAffected(battlerIdAtk, WEATHER_SUN_ANY))
+	{
+		switch (type)
+		{
+			case TYPE_FIRE:
+			    damage = (15 * damage) / 10;
+				break;
+			case TYPE_WATER:
+			    damage /= 2;
+				break;
+		}
+	}
+	// any weather except sun weakens solar beam
+	if (IsBattlerWeatherAffected(battlerIdAtk, (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY)) && move == MOVE_SOLAR_BEAM)
+		damage /= 2;
+	
 	// flash fire triggered
 	if ((gBattleResources->flags->flags[battlerIdAtk] & RESOURCE_FLAG_FLASH_FIRE) && type == TYPE_FIRE)
 		damage = (15 * damage) / 10;

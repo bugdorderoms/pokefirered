@@ -142,7 +142,7 @@ static bool8 CanBeStatused(u8 bank, bool8 checkFlowerVeil)
 	switch (GetBattlerAbility(bank))
 	{
 		case ABILITY_LEAF_GUARD:
-			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+			if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
 				return FALSE;
 			break;
 		case ABILITY_FLOWER_VEIL:
@@ -227,7 +227,7 @@ bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil)
 	if (IS_BATTLER_OF_TYPE(bank, TYPE_ICE))
 		return FALSE;
 	
-	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+	if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
 		return FALSE;
 	
 	return TRUE;
@@ -1306,7 +1306,7 @@ u8 DoBattlerEndTurnEffects(void)
                     if (!(gStatuses3[gActiveBattler] & STATUS3_YAWN) && !UproarWakeUpCheck(gActiveBattler) && !(gBattleMons[gActiveBattler].status1 & STATUS1_ANY))
 		    {
 			    if (GetBattlerAbility(gActiveBattler) == ABILITY_VITAL_SPIRIT || GetBattlerAbility(gActiveBattler) == ABILITY_INSOMNIA
-			       || (GetBattlerAbility(gActiveBattler) == ABILITY_LEAF_GUARD && WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY))
+			       || (GetBattlerAbility(gActiveBattler) == ABILITY_LEAF_GUARD && IsBattlerWeatherAffected(gActiveBattler, WEATHER_SUN_ANY)))
 			    {
 				    ++gBattleStruct->turnEffectsTracker;
 				    break;
@@ -1912,22 +1912,22 @@ u8 CastformDataTypeChange(u8 battler)
 		}
 		if (!weatherHasEffect)
 			return CASTFORM_NO_CHANGE;
-		if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SUN_ANY | WEATHER_HAIL_ANY)) && !IS_BATTLER_OF_TYPE(battler, TYPE_NORMAL))
+		if (!IsBattlerWeatherAffected(battler, (WEATHER_RAIN_ANY | WEATHER_SUN_ANY | WEATHER_HAIL_ANY)) && !IS_BATTLER_OF_TYPE(battler, TYPE_NORMAL))
 		{
 			SET_BATTLER_TYPE(battler, TYPE_NORMAL);
 			formChange = CASTFORM_TO_NORMAL;
 		}
-		if (gBattleWeather & WEATHER_SUN_ANY && !IS_BATTLER_OF_TYPE(battler, TYPE_FIRE))
+		if (IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY) && !IS_BATTLER_OF_TYPE(battler, TYPE_FIRE))
 		{
 			SET_BATTLER_TYPE(battler, TYPE_FIRE);
 			formChange = CASTFORM_TO_FIRE;
 		}
-		if (gBattleWeather & WEATHER_RAIN_ANY && !IS_BATTLER_OF_TYPE(battler, TYPE_WATER))
+		if (IsBattlerWeatherAffected(battler, WEATHER_RAIN_ANY) && !IS_BATTLER_OF_TYPE(battler, TYPE_WATER))
 		{
 			SET_BATTLER_TYPE(battler, TYPE_WATER);
 			formChange = CASTFORM_TO_WATER;
 		}
-		if (gBattleWeather & WEATHER_HAIL_ANY && !IS_BATTLER_OF_TYPE(battler, TYPE_ICE))
+		if (IsBattlerWeatherAffected(battler, WEATHER_HAIL_ANY) && !IS_BATTLER_OF_TYPE(battler, TYPE_ICE))
 		{
 			SET_BATTLER_TYPE(battler, TYPE_ICE);
 			formChange = CASTFORM_TO_ICE;
@@ -1937,9 +1937,9 @@ u8 CastformDataTypeChange(u8 battler)
 	{
 		if (ability != ABILITY_FLOWER_GIFT)
 			return CASTFORM_NO_CHANGE;
-		else if (!gBattleMonForms[battler] && weatherHasEffect && gBattleWeather & WEATHER_SUN_ANY)
+		else if (!gBattleMonForms[battler] && IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY))
 			formChange = CHERRIM_TO_SUNSHINE;
-		else if (gBattleMonForms[battler] && (!weatherHasEffect || !(gBattleWeather & WEATHER_SUN_ANY)))
+		else if (gBattleMonForms[battler] && !IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY))
 			formChange = CHERRIM_TO_OVERCAST;
 	}
 	gLastUsedAbility = ability;
@@ -2202,7 +2202,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
                 switch (gLastUsedAbility)
                 {
 			case ABILITY_RAIN_DISH:
-				if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
+				if (IsBattlerWeatherAffected(battler, WEATHER_RAIN_ANY) && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
 				{
 					BattleScriptPushCursorAndCallback(BattleScript_RainDishActivates);
 					gBattleMoveDamage = gBattleMons[battler].maxHP / 16;
@@ -2213,7 +2213,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				}
 				break;
 			case ABILITY_ICE_BODY:
-				if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_HAIL_ANY) && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
+				if (IsBattlerWeatherAffected(battler, WEATHER_HAIL_ANY) && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
 				{
 					BattleScriptPushCursorAndCallback(BattleScript_RainDishActivates);
 					gBattleMoveDamage = gBattleMons[battler].maxHP / 16;
@@ -2235,31 +2235,28 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				}
 				break;	
 			case ABILITY_DRY_SKIN:
-				if (WEATHER_HAS_EFFECT)
+			    if (IsBattlerWeatherAffected(battler, WEATHER_RAIN_ANY) && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
 				{
-					if (gBattleWeather & WEATHER_RAIN_ANY && gBattleMons[battler].maxHP > gBattleMons[battler].hp)
-					{
-						gSetWordLoc = sDrySkinRainString;
-						BattleScriptPushCursorAndCallback(BattleScript_DrySkinRainActivates);
-						gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
-						if (gBattleMoveDamage == 0)
-							gBattleMoveDamage = 1;
-						gBattleMoveDamage *= -1;
-						++effect;
-					}
-					else if (gBattleWeather & WEATHER_SUN_ANY)
-					{
-						gSetWordLoc = sDrySkinSunString;
-						BattleScriptPushCursorAndCallback(BattleScript_DrySkinSunActivates);
-						gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
-						if (gBattleMoveDamage == 0)
-							gBattleMoveDamage = 1;
-						++effect;
-					}
+					gSetWordLoc = sDrySkinRainString;
+					BattleScriptPushCursorAndCallback(BattleScript_DrySkinRainActivates);
+					gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
+					if (gBattleMoveDamage == 0)
+						gBattleMoveDamage = 1;
+					gBattleMoveDamage *= -1;
+					++effect;
+				}
+				else if (IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY))
+				{
+					gSetWordLoc = sDrySkinSunString;
+					BattleScriptPushCursorAndCallback(BattleScript_DrySkinSunActivates);
+					gBattleMoveDamage = gBattleMons[battler].maxHP / 8;
+					if (gBattleMoveDamage == 0)
+						gBattleMoveDamage = 1;
+					++effect;
 				}
 				break;
 			case ABILITY_SOLAR_POWER:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				if (IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY))
 				{
 					gSetWordLoc = sDrySkinSunString;
 					BattleScriptPushCursorAndCallback(BattleScript_DrySkinSunActivates);
@@ -2278,7 +2275,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				}
 				break;
 			case ABILITY_HYDRATION:
-				if ((gBattleMons[battler].status1 & STATUS1_ANY) && WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_RAIN_ANY)
+				if ((gBattleMons[battler].status1 & STATUS1_ANY) && IsBattlerWeatherAffected(battler, WEATHER_RAIN_ANY))
 				{
 					ClearBattlerStatus(battler);
 					BattleScriptPushCursorAndCallback(BattleScript_ShedSkinActivates);
@@ -2323,7 +2320,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				++effect;
 				break;
 			case ABILITY_HARVEST:
-				if (((WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY) || (Random() % 2) == 0) && !gBattleMons[battler].item
+				if ((IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY) || (Random() % 2) == 0) && !gBattleMons[battler].item
 				    && !gBattleStruct->changedItems[battler] && ItemId_GetPocket(GetUsedHeldItem(battler)) == POCKET_BERRY_POUCH)
 				{
 					gLastUsedItem = GetUsedHeldItem(battler);
@@ -4074,4 +4071,13 @@ struct Pokemon *GetBattlerPartyIndexPtr(u8 battler)
 		mon = gEnemyParty;
 	
 	return &mon[gBattlerPartyIndexes[battler]];
+}
+
+bool8 IsBattlerWeatherAffected(u8 battlerId, u16 weatherFlags)
+{
+	if (WEATHER_HAS_EFFECT && gBattleWeather & weatherFlags)
+	{
+		return TRUE;
+	}
+	return FALSE;
 }

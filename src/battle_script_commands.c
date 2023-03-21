@@ -1197,7 +1197,7 @@ static bool8 AccuracyCalcHelper(u16 move)
 	    gHitMarker &= ~(HITMARKER_IGNORE_UNDERWATER);
 		
 		// Check Thunder on rain and moves that never miss
-	    if ((WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && gBattleMoves[move].effect == EFFECT_THUNDER) || (gBattleMoves[move].accuracy == 0))
+	    if ((IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_RAIN_ANY) && gBattleMoves[move].effect == EFFECT_THUNDER) || (gBattleMoves[move].accuracy == 0))
 	    {
 		    JumpIfMoveFailed(7, move);
 		    return TRUE;
@@ -1260,7 +1260,7 @@ static void atk01_accuracycheck(void)
             buff = 0xC; // Buff can't be higer than 0xC
 	    
         // Check Thunder on sunny
-        if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && gBattleMoves[move].effect == EFFECT_THUNDER)
+        if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_SUN_ANY) && gBattleMoves[move].effect == EFFECT_THUNDER)
 			moveAcc = 50;
 		// Check Wonder Skin
 		if (GetBattlerAbility(gBattlerTarget) == ABILITY_WONDER_SKIN && IS_MOVE_STATUS(move) && moveAcc > 50)
@@ -1281,12 +1281,11 @@ static void atk01_accuracycheck(void)
             calc = (calc * 80) / 100; // 1.2 Hustle loss
 		if (GetBattlerAbility(gBattlerTarget) == ABILITY_TANGLED_FEET && gBattleMons[gBattlerTarget].status2 & STATUS2_CONFUSION)
 			calc /= 2; // Tangled Feet halved
-		if (WEATHER_HAS_EFFECT)
-		{
-			if ((gBattleWeather & WEATHER_SANDSTORM_ANY && GetBattlerAbility(gBattlerTarget) == ABILITY_SAND_VEIL) 
-				|| (gBattleWeather & WEATHER_HAIL_ANY && GetBattlerAbility(gBattlerTarget) == ABILITY_SNOW_CLOAK))
-			    calc = (calc * 80) / 100; // 1.2 Sand Veil and Snow Cloak loss
-		}
+		if (IsBattlerWeatherAffected(gBattlerTarget, WEATHER_SANDSTORM_ANY) && GetBattlerAbility(gBattlerTarget) == ABILITY_SAND_VEIL)
+			calc = (calc * 80) / 100; // 1.2 Sand Veil loss
+		if (IsBattlerWeatherAffected(gBattlerTarget, WEATHER_HAIL_ANY) && GetBattlerAbility(gBattlerTarget) == ABILITY_SNOW_CLOAK)
+			calc = (calc * 80) / 100; // 1.2 Snow Cloak loss
+		
 		holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE);
 		param = GetBattlerHoldEffectParam(gBattlerTarget);
 		
@@ -3617,7 +3616,7 @@ static void atk42_trysetsleep(void)
 				RecordAbilityBattle(bank, gLastUsedAbility);
 				return;
 			case ABILITY_LEAF_GUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
 				{
 					gLastUsedAbility = gBattleMons[bank].ability;
 					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
@@ -6094,7 +6093,7 @@ static void atk84_trysetpoison(void)
 				gBattlescriptCurrInstr = BattleScript_ImmunityProtected;
 				return;
 			case ABILITY_LEAF_GUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
 				{
 					gLastUsedAbility = gBattleMons[bank].ability;
 					gBattlescriptCurrInstr = BattleScript_ImmunityProtected;
@@ -6710,15 +6709,12 @@ static void atk96_weatherdamage(void)
         ++gBattlescriptCurrInstr;
         return;
     }
-    if (WEATHER_HAS_EFFECT)
-    {
-        if (gBattleWeather & WEATHER_SANDSTORM_ANY)
-        {
-            if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ROCK) && !IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_STEEL)
-		&& !IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_GROUND) && GetBattlerAbility(gBattlerAttacker) != ABILITY_SAND_VEIL
-		&& GetBattlerAbility(gBattlerAttacker) != ABILITY_MAGIC_GUARD && GetBattlerAbility(gBattlerAttacker) != ABILITY_OVERCOAT
-		&& GetBattlerAbility(gBattlerAttacker) != ABILITY_SAND_RUSH && GetBattlerAbility(gBattlerAttacker) != ABILITY_SAND_FORCE
-		&& !(gStatuses3[gBattlerAttacker] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER)))
+	if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_SANDSTORM_ANY))
+	{
+		if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ROCK) && !IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_STEEL) && !IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_GROUND)
+			&& GetBattlerAbility(gBattlerAttacker) != ABILITY_SAND_VEIL && GetBattlerAbility(gBattlerAttacker) != ABILITY_MAGIC_GUARD && GetBattlerAbility(gBattlerAttacker) != ABILITY_OVERCOAT
+		    && GetBattlerAbility(gBattlerAttacker) != ABILITY_SAND_RUSH && GetBattlerAbility(gBattlerAttacker) != ABILITY_SAND_FORCE
+			&& !(gStatuses3[gBattlerAttacker] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER)))
             {
                 gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
                 if (gBattleMoveDamage == 0)
@@ -6726,13 +6722,11 @@ static void atk96_weatherdamage(void)
             }
             else
                 gBattleMoveDamage = 0;
-        }
-        if (gBattleWeather & WEATHER_HAIL_ANY)
-        {
-            if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ICE) && GetBattlerAbility(gBattlerAttacker) != ABILITY_ICE_BODY
-		&& GetBattlerAbility(gBattlerAttacker) != ABILITY_MAGIC_GUARD && GetBattlerAbility(gBattlerAttacker) != ABILITY_SNOW_CLOAK
-		&& GetBattlerAbility(gBattlerAttacker) != ABILITY_OVERCOAT && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERGROUND)
-		&& !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERWATER))
+	}
+	else if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_HAIL_ANY))
+	{
+		if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ICE) && GetBattlerAbility(gBattlerAttacker) != ABILITY_ICE_BODY && GetBattlerAbility(gBattlerAttacker) != ABILITY_MAGIC_GUARD
+		    && GetBattlerAbility(gBattlerAttacker) != ABILITY_SNOW_CLOAK && GetBattlerAbility(gBattlerAttacker) != ABILITY_OVERCOAT && !(gStatuses3[gBattlerAttacker] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER)))
             {
                 gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
                 if (gBattleMoveDamage == 0)
@@ -6740,10 +6734,10 @@ static void atk96_weatherdamage(void)
             }
             else
                 gBattleMoveDamage = 0;
-        }
-    }
+	}
     else
         gBattleMoveDamage = 0;
+	
     if (gAbsentBattlerFlags & gBitTable[gBattlerAttacker])
         gBattleMoveDamage = 0;
     ++gBattlescriptCurrInstr;
@@ -7203,8 +7197,7 @@ static bool8 IsTwoTurnsMove(u16 move)
 
 static u8 AttacksThisTurn(u8 battlerId, u16 move) // Note: returns 1 if it's a charging turn, otherwise 2
 {
-    // first argument is unused
-    if (gBattleMoves[move].effect == EFFECT_SOLARBEAM && (gBattleWeather & WEATHER_SUN_ANY))
+    if (gBattleMoves[move].effect == EFFECT_SOLARBEAM && IsBattlerWeatherAffected(battlerId, WEATHER_SUN_ANY))
         return 2;
     if (gBattleMoves[move].effect == EFFECT_SKULL_BASH
 	|| gBattleMoves[move].effect == EFFECT_RAZOR_WIND
@@ -7299,7 +7292,7 @@ static void atkAC_trysetburn(void)
 				gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
 				return;
 			case ABILITY_LEAF_GUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
 				{
 					gLastUsedAbility = gBattleMons[bank].ability;
 					gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
@@ -7583,7 +7576,7 @@ static void atkB6_trysetparalyze(void)
 				gBattlescriptCurrInstr = BattleScript_LimberProtected;
 				return;
 			case ABILITY_LEAF_GUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY)
 				{
 					gLastUsedAbility = gBattleMons[bank].ability;
 					gBattlescriptCurrInstr = BattleScript_LimberProtected;
@@ -7824,9 +7817,9 @@ static void atkC0_recoverbasedonsunlight(void)
 	
     if (gBattleMons[gBattlerAttacker].hp != gBattleMons[gBattlerAttacker].maxHP)
     {
-        if (gBattleWeather == 0 || !WEATHER_HAS_EFFECT)
+        if (!IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_ANY))
             gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 2;
-        else if (gBattleWeather & WEATHER_SUN_ANY)
+        else if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_SUN_ANY))
             gBattleMoveDamage = 20 * gBattleMons[gBattlerAttacker].maxHP / 30;
         else // not sunny weather
             gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 4;

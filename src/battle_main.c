@@ -128,7 +128,6 @@ EWRAM_DATA u8 gDisplayedStringBattle[300] = {0};
 EWRAM_DATA u8 gBattleTextBuff1[TEXT_BUFF_ARRAY_COUNT] = {0};
 EWRAM_DATA u8 gBattleTextBuff2[TEXT_BUFF_ARRAY_COUNT] = {0};
 EWRAM_DATA u8 gBattleTextBuff3[TEXT_BUFF_ARRAY_COUNT] = {0};
-static EWRAM_DATA u32 gUnknown_2022AE8[25] = {0}; // Note: This shouldn't be removed without adjusting the size of gDisplayedStringBattle.
 EWRAM_DATA u32 gBattleTypeFlags = 0;
 EWRAM_DATA u8 gBattleTerrain = 0;
 EWRAM_DATA struct MultiBattlePokemonTx gMultiPartnerParty[3] = {0};
@@ -3652,13 +3651,12 @@ u32 GetBattlerTotalSpeed(u8 battler)
     u32 monspeed = (gBattleMons[battler].speed * gStatStageRatios[gBattleMons[battler].statStages[STAT_SPEED]][0])
                     / gStatStageRatios[gBattleMons[battler].statStages[STAT_SPEED]][1];
     
-    if (WEATHER_HAS_EFFECT)
-    {
-        if ((GetBattlerAbility(battler) == ABILITY_SWIFT_SWIM && gBattleWeather & WEATHER_RAIN_ANY)
-	    || (GetBattlerAbility(battler) == ABILITY_CHLOROPHYLL && gBattleWeather & WEATHER_SUN_ANY)
-	    || (GetBattlerAbility(battler) == ABILITY_SAND_RUSH && gBattleWeather & WEATHER_SANDSTORM_ANY))
-            monspeed *= 2;
-    }
+	if (IsBattlerWeatherAffected(battler, WEATHER_RAIN_ANY) && GetBattlerAbility(battler) == ABILITY_SWIFT_SWIM)
+		monspeed *= 2;
+	if (IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY) && GetBattlerAbility(battler) == ABILITY_CHLOROPHYLL)
+		monspeed *= 2;
+	if (IsBattlerWeatherAffected(battler, WEATHER_SANDSTORM_ANY) && GetBattlerAbility(battler) == ABILITY_SAND_RUSH)
+		monspeed *= 2;
     if (GetBattlerAbility(battler) == ABILITY_QUICK_FEET && gBattleMons[battler].status1 & STATUS1_ANY)
         monspeed *= 2;
     if (GetBattlerAbility(battler) == ABILITY_SLOW_START && gNewBattleStruct.SlowStartTimers[battler] != 0)
@@ -4133,17 +4131,14 @@ static void SetTypeBeforeUsingMove(u16 move, u8 battler)
 	switch (moveEffect)
 	{
 		case EFFECT_WEATHER_BALL:
-			if (WEATHER_HAS_EFFECT)
-			{
-				if (gBattleWeather & WEATHER_RAIN_ANY)
-					gBattleStruct->dynamicMoveType = TYPE_WATER;
-				else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
-					gBattleStruct->dynamicMoveType = TYPE_ROCK;
-				else if (gBattleWeather & WEATHER_SUN_ANY)
-					gBattleStruct->dynamicMoveType = TYPE_FIRE;
-				else if (gBattleWeather & WEATHER_HAIL_ANY)
-					gBattleStruct->dynamicMoveType = TYPE_ICE;
-			}
+		    if (IsBattlerWeatherAffected(battler, WEATHER_RAIN_ANY))
+				gBattleStruct->dynamicMoveType = TYPE_WATER;
+			else if (IsBattlerWeatherAffected(battler, WEATHER_SANDSTORM_ANY))
+				gBattleStruct->dynamicMoveType = TYPE_ROCK;
+			else if (IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY))
+				gBattleStruct->dynamicMoveType = TYPE_FIRE;
+			else if (IsBattlerWeatherAffected(battler, WEATHER_HAIL_ANY))
+				gBattleStruct->dynamicMoveType = TYPE_ICE;
 			break;
 		case EFFECT_HIDDEN_POWER:
 			gBattleStruct->dynamicMoveType = GetHiddenPowerType(GetBattlerPartyIndexPtr(battler));
