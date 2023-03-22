@@ -54,6 +54,9 @@ static const u8 sTeravoltString[] = _("{B_ATK_NAME_WITH_PREFIX} is radiating\na 
 static const u8 sDarkAuraString[] = _("{B_ATK_NAME_WITH_PREFIX} is radiating\na dark aura!");
 static const u8 sFairyAuraString[] = _("{B_ATK_NAME_WITH_PREFIX} is radiating\na fairy aura!");
 static const u8 sAuraBreakString[] = _("{B_ATK_NAME_WITH_PREFIX} reversed all\nother Pokémon's auras!");
+static const u8 sPrimordialSeaString[] = _("A heavy rain began to fall!");
+static const u8 sDesolateLandString[] = _("The sunlight turned\nextremely harsh!");
+static const u8 sDeltaStreamString[] = _("A mysterious air current is\nprotecting Flying-type Pokémon!");
 
 static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
 {
@@ -132,6 +135,17 @@ static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
     [ABILITY_PURIFYING_SALT] = TRUE,
     [ABILITY_WELL_BAKED_BODY] = TRUE,
     [ABILITY_WIND_RIDER] = TRUE,
+};
+
+static const u16 sWeatherFlagsInfo[][2] =
+{
+	[ENUM_WEATHER_RAIN] = {WEATHER_RAIN_TEMPORARY, WEATHER_RAIN_PERMANENT},
+	[ENUM_WEATHER_RAIN_PRIMAL] = {WEATHER_RAIN_PRIMAL, WEATHER_RAIN_PRIMAL},
+	[ENUM_WEATHER_SUN] = {WEATHER_SUN_TEMPORARY, WEATHER_SUN_PERMANENT},
+	[ENUM_WEATHER_SUN_PRIMAL] = {WEATHER_SUN_PRIMAL, WEATHER_SUN_PRIMAL},
+	[ENUM_WEATHER_SANDSTORM] = {WEATHER_SANDSTORM_TEMPORARY, WEATHER_SANDSTORM_PERMANENT},
+	[ENUM_WEATHER_HAIL] = {WEATHER_HAIL_TEMPORARY, WEATHER_HAIL_PERMANENT},
+	[ENUM_WEATHER_STRONG_WINDS] = {WEATHER_STRONG_WINDS, WEATHER_STRONG_WINDS},
 };
 
 static bool8 CanBeStatused(u8 bank, bool8 checkFlowerVeil)
@@ -883,7 +897,7 @@ u8 DoFieldEndTurnEffects(void)
         case ENDTURN_RAIN:
             if (gBattleWeather & WEATHER_RAIN_ANY)
             {
-                if (!(gBattleWeather & WEATHER_RAIN_PERMANENT))
+                if (!(gBattleWeather & (WEATHER_RAIN_PERMANENT | WEATHER_RAIN_PRIMAL)))
                 {
                     if (--gWishFutureKnock.weatherDuration == 0)
                     {
@@ -930,7 +944,7 @@ u8 DoFieldEndTurnEffects(void)
         case ENDTURN_SUN:
             if (gBattleWeather & WEATHER_SUN_ANY)
             {
-                if (!(gBattleWeather & WEATHER_SUN_PERMANENT) && --gWishFutureKnock.weatherDuration == 0)
+                if (!(gBattleWeather & (WEATHER_SUN_PERMANENT | WEATHER_SUN_PRIMAL)) && --gWishFutureKnock.weatherDuration == 0)
                 {
                     gBattleWeather &= ~WEATHER_SUN_TEMPORARY;
                     gBattlescriptCurrInstr = BattleScript_SunlightFaded;
@@ -2066,43 +2080,68 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
                 }
                 break;
             case ABILITY_DRIZZLE:
-                if (!(gBattleWeather & WEATHER_RAIN_PERMANENT))
+                if (TryChangeBattleWeather(battler, ENUM_WEATHER_RAIN))
                 {
-                    gBattleWeather = (WEATHER_RAIN_PERMANENT | WEATHER_RAIN_TEMPORARY);
+                    gBattleWeather |= WEATHER_RAIN_PERMANENT;
                     BattleScriptPushCursorAndCallback(BattleScript_DrizzleActivates);
                     gBattleScripting.battler = battler;
                     ++effect;
                 }
                 break;
             case ABILITY_SAND_STREAM:
-                if (!(gBattleWeather & WEATHER_SANDSTORM_PERMANENT))
+                if (TryChangeBattleWeather(battler, ENUM_WEATHER_SANDSTORM))
                 {
-                    gBattleWeather = (WEATHER_SANDSTORM_PERMANENT | WEATHER_SANDSTORM_TEMPORARY);
+                    gBattleWeather |= WEATHER_SANDSTORM_PERMANENT;
                     BattleScriptPushCursorAndCallback(BattleScript_SandstreamActivates);
                     gBattleScripting.battler = battler;
                     ++effect;
                 }
                 break;
             case ABILITY_DROUGHT:
-                if (!(gBattleWeather & WEATHER_SUN_PERMANENT))
+                if (TryChangeBattleWeather(battler, ENUM_WEATHER_SUN))
                 {
-                    gBattleWeather = (WEATHER_SUN_PERMANENT | WEATHER_SUN_TEMPORARY);
+                    gBattleWeather |= WEATHER_SUN_PERMANENT;
                     BattleScriptPushCursorAndCallback(BattleScript_DroughtActivates);
                     gBattleScripting.battler = battler;
                     ++effect;
                 }
                 break;
 	    case ABILITY_SNOW_WARNING:
-		if (!(gBattleWeather & WEATHER_HAIL_ANY))
+		if (TryChangeBattleWeather(battler, ENUM_WEATHER_HAIL))
 		{
 		    gSetWordLoc = sSnowWarningString;
-		    gWishFutureKnock.weatherDuration = 5;
-		    gBattleWeather = WEATHER_HAIL_TEMPORARY;
 		    BattleScriptPushCursorAndCallback(BattleScript_SnowWarningActivates);
 		    gBattleScripting.battler = battler;
                     ++effect;
 		}
                 break;
+		case ABILITY_PRIMORDIAL_SEA:
+		if (TryChangeBattleWeather(battler, ENUM_WEATHER_RAIN_PRIMAL))
+		{
+			gSetWordLoc = sPrimordialSeaString;
+		    BattleScriptPushCursorAndCallback(BattleScript_PrimordialSeaActivates);
+		    gBattleScripting.battler = battler;
+                    ++effect;
+		}
+		break;
+		case ABILITY_DESOLATE_LAND:
+		if (TryChangeBattleWeather(battler, ENUM_WEATHER_SUN_PRIMAL))
+		{
+			gSetWordLoc = sDesolateLandString;
+		    BattleScriptPushCursorAndCallback(BattleScript_DesolateLandActivates);
+		    gBattleScripting.battler = battler;
+                    ++effect;
+		}
+		break;
+		case ABILITY_DELTA_STREAM:
+		if (TryChangeBattleWeather(battler, ENUM_WEATHER_STRONG_WINDS))
+		{
+			gSetWordLoc = sDeltaStreamString;
+		    BattleScriptPushCursorAndCallback(BattleScript_DeltaStreamActivates);
+		    gBattleScripting.battler = battler;
+                    ++effect;
+		}
+		break;
 	    case ABILITY_INTIMIDATE:
 	    case ABILITY_ANTICIPATION:
 	    case ABILITY_DOWNLOAD:
@@ -4077,6 +4116,21 @@ bool8 IsBattlerWeatherAffected(u8 battlerId, u16 weatherFlags)
 {
 	if (WEATHER_HAS_EFFECT && gBattleWeather & weatherFlags)
 	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
+bool8 TryChangeBattleWeather(u8 battlerId, u8 weatherEnumId)
+{
+	u16 ability = GetBattlerAbility(battlerId);
+	
+	if (gBattleWeather & WEATHER_PRIMAL_ANY && ability != ABILITY_PRIMORDIAL_SEA && ability != ABILITY_DESOLATE_LAND && ability != ABILITY_DELTA_STREAM)
+		return FALSE;
+	else if (!(gBattleWeather & (sWeatherFlagsInfo[weatherEnumId][0] | sWeatherFlagsInfo[weatherEnumId][1])))
+	{
+		gBattleWeather = sWeatherFlagsInfo[weatherEnumId][0];
+		gWishFutureKnock.weatherDuration = 5;
 		return TRUE;
 	}
 	return FALSE;

@@ -277,6 +277,11 @@ extern const u8 BattleScript_ProteanActivates[];
 extern const u8 BattleScript_TeamProtectedBySweetVeil[];
 extern const u8 BattleScript_AttackerFormChange[];
 extern const u8 BattleScript_GooeyActivates[];
+extern const u8 BattleScript_PrimordialSeaActivates[];
+extern const u8 BattleScript_DesolateLandActivates[];
+extern const u8 BattleScript_DeltaStreamActivates[];
+extern const u8 BattleScript_PrimordialSeaFizzlesOutFireTypeMoves[];
+extern const u8 BattleScript_DesolateLandEvaporatesWaterTypeMoves[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];

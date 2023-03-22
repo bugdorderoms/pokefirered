@@ -949,6 +949,9 @@ BattleScript_EffectTransform::
 	attackcanceler
 	attackstring
 	ppreduce
+	tryremoveprimalweather
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
 	transformdataexecution
 	attackanimation
 	waitanimation
@@ -1702,6 +1705,9 @@ BattleScript_EffectBatonPass::
 	getswitchedmondata BS_ATTACKER
 	switchindataupdate BS_ATTACKER
 	hpthresholds BS_ATTACKER
+	tryremoveprimalweather
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
 	printstring STRINGID_SWITCHINMON
 	switchinanim BS_ATTACKER, 1
 	waitstate
@@ -2839,6 +2845,9 @@ BattleScript_FaintedMonTryChooseAnother::
 	getswitchedmondata BS_ATTACKER
 	switchindataupdate BS_ATTACKER
 	hpthresholds BS_ATTACKER
+	tryremoveprimalweather
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
 	printstring STRINGID_SWITCHINMON
 	hidepartystatussummary BS_ATTACKER
 	switchinanim BS_ATTACKER, 0
@@ -2850,6 +2859,9 @@ BattleScript_FaintedMonChooseAnother::
 	getswitchedmondata BS_FAINTED
 	switchindataupdate BS_FAINTED
 	hpthresholds BS_FAINTED
+	tryremoveprimalweather
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
 	printstring STRINGID_SWITCHINMON
 	hidepartystatussummary BS_FAINTED
 	switchinanim BS_FAINTED, 0
@@ -2874,6 +2886,9 @@ BattleScript_LinkBattleFaintedMonLoop::
 	getswitchedmondata BS_FAINTED
 	switchindataupdate BS_FAINTED
 	hpthresholds BS_FAINTED
+	tryremoveprimalweather
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
 	printstring STRINGID_SWITCHINMON
 	hidepartystatussummary BS_FAINTED
 	switchinanim BS_FAINTED, 0
@@ -3045,6 +3060,9 @@ BattleScript_DoSwitchOut::
 	getswitchedmondata BS_ATTACKER
 	switchindataupdate BS_ATTACKER
 	hpthresholds BS_ATTACKER
+	tryremoveprimalweather
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
 	printstring STRINGID_SWITCHINMON
 	hidepartystatussummary BS_ATTACKER
 	switchinanim BS_ATTACKER, 0
@@ -3271,6 +3289,9 @@ BattleScript_SuccessForceOut::
 BattleScript_TrainerBattleForceOut::
 	getswitchedmondata BS_TARGET
 	switchindataupdate BS_TARGET
+	tryremoveprimalweather
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
 	switchinanim BS_TARGET, 0
 	waitstate
 	printstring STRINGID_PKMNWASDRAGGEDOUT
@@ -4845,3 +4866,50 @@ BattleScript_GooeyActivates::
 	swapattackerwithtarget
 	removeabilitypopup BS_TARGET
 	return
+
+BattleScript_PrimordialSeaActivates::
+    pause 0x20
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_SCRIPTING, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_SETWORDSTRING
+	waitstate
+	playanimation BS_BATTLER_0, B_ANIM_RAIN_CONTINUES, NULL
+	removeabilitypopup BS_SCRIPTING
+	call BattleScript_HandleWeatherFormChanges
+	end3
+
+BattleScript_DesolateLandActivates::
+    pause 0x20
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_SCRIPTING, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_SETWORDSTRING
+	waitstate
+	playanimation BS_BATTLER_0, B_ANIM_SUN_CONTINUES, NULL
+	removeabilitypopup BS_SCRIPTING
+	call BattleScript_HandleWeatherFormChanges
+	end3
+
+BattleScript_DeltaStreamActivates::
+    pause 0x20
+	loadabilitypopup LOAD_ABILITY_NORMAL, BS_SCRIPTING, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_SETWORDSTRING
+	waitstate
+	removeabilitypopup BS_SCRIPTING
+	call BattleScript_HandleWeatherFormChanges
+	end3
+
+BattleScript_PrimordialSeaFizzlesOutFireTypeMoves::
+    accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	pause 0x20
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
+	goto BattleScript_MoveEnd
+	
+BattleScript_DesolateLandEvaporatesWaterTypeMoves::
+    accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	pause 0x20
+	printstring STRINGID_SETWORDSTRING
+	waitmessage 0x40
+	goto BattleScript_MoveEnd

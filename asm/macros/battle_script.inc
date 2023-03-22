@@ -1370,6 +1370,15 @@
 	.4byte \ptr
 	.endm
 
+    .macro jumpifbattleend ptr:req
+	various BS_ATTACKER, VARIOUS_JUMP_IF_BATTLE_END
+	.4byte \ptr
+	.endm
+	
+	.macro tryremoveprimalweather
+	various BS_ATTACKER, VARIOUS_TRY_REMOVE_PRIMAL_WEATHER
+	.endm
+
 @ helpful macros
 	.macro setstatchanger stat:req, stages:req, down:req
 	setbyte sSTATCHANGER \stat | \stages << 4 | \down << 7

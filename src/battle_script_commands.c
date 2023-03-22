@@ -58,6 +58,8 @@ static const u8 sBellyDrumContraryString[] = _("{B_ATK_NAME_WITH_PREFIX} cut its
 static const u8 sMagicBounceString[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_CURRENT_MOVE} was\nbounced back by {B_DEF_NAME_WITH_PREFIX}'s\l{B_DEF_ABILITY}!");
 static const u8 sStanceChangeToShieldString[] = _("Changed to Shield Forme!");
 static const u8 sStanceChangeToBladeString[] = _("Changed to Blade Forme!");
+static const u8 sFizzlesFireTypeString[] = _("The Fire-type attack fizzled out\nin the heavy rain!");
+static const u8 sEvaporateWaterTypeString[] = _("The Water-type attack evaporated\nin the harsh sunlight!");
 
 static bool8 IsTwoTurnsMove(u16 move);
 static void TrySetDestinyBondToHappen(void);
@@ -986,6 +988,31 @@ static void atk00_attackcanceler(void)
         gBattlescriptCurrInstr = BattleScript_MoveEnd;
         return;
     }
+	// Check primal weather
+	if (!IS_MOVE_STATUS(gCurrentMove))
+	{
+		switch (moveType)
+		{
+			case TYPE_FIRE:
+			    if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_RAIN_PRIMAL))
+				{
+					BattleScriptPushCursor();
+					gSetWordLoc = sFizzlesFireTypeString;
+					gBattlescriptCurrInstr = BattleScript_PrimordialSeaFizzlesOutFireTypeMoves;
+					return;
+				}
+				break;
+			case TYPE_WATER:
+			    if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_SUN_PRIMAL))
+				{
+					BattleScriptPushCursor();
+					gSetWordLoc = sEvaporateWaterTypeString;
+					gBattlescriptCurrInstr = BattleScript_DesolateLandEvaporatesWaterTypeMoves;
+					return;
+				}
+				break;
+		}
+	}
 	// Check effects like flinch, freeze, etc.
     if (AtkCanceller_UnableToUseMove())
         return;
@@ -1507,7 +1534,11 @@ static void MulByTypeEffectiveness(u16 move, u8 moveType, u8 attacker, u8 defend
 	if ((moveType == TYPE_FIGHTING || moveType == TYPE_NORMAL) && defenderType == TYPE_GHOST && mod == TYPE_MUL_NO_EFFECT
 	&& (gBattleMons[defender].status2 & STATUS2_FORESIGHT || GetBattlerAbility(attacker) == ABILITY_SCRAPPY)) // Check Foresight and Scrappy on Ghost types
 	    mod = TYPE_MUL_NORMAL;
-		
+	
+	// Check strong winds
+	if (IsBattlerWeatherAffected(defender, WEATHER_STRONG_WINDS) && defenderType == TYPE_FLYING && mod == TYPE_MUL_SUPER_EFFECTIVE)
+		mod = TYPE_MUL_NORMAL;
+	
 	ModulateDmgByType(mod, move, flags);
 }
 
@@ -5733,12 +5764,45 @@ static void atk76_various(void)
         BtlController_EmitMoveAnimation(0, MOVE_TRANSFORM, 0, 1, 1, 0xFF, &gDisableStructs[gActiveBattler]);
 	MarkBattlerForControllerExec(gActiveBattler);
 	break;
-	case JUMP_IF_BATTLE_END:
+	case VARIOUS_JUMP_IF_BATTLE_END:
 	    if (NoAliveMonsForEitherParty())
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 		else
 			gBattlescriptCurrInstr += 7;
 		return;
+	case VARIOUS_TRY_REMOVE_PRIMAL_WEATHER:
+	{
+		bool8 shouldNotClear = FALSE;
+		
+		for (i = 0; i < gBattlersCount; i++)
+		{
+			if (IsBattlerAlive(i) && ((gBattleWeather & WEATHER_RAIN_PRIMAL && GetBattlerAbility(i) == ABILITY_PRIMORDIAL_SEA) || (gBattleWeather & WEATHER_SUN_PRIMAL
+			&& GetBattlerAbility(i) == ABILITY_DESOLATE_LAND) || (gBattleWeather & WEATHER_STRONG_WINDS && GetBattlerAbility(i) == ABILITY_DELTA_STREAM)))
+			    shouldNotClear = TRUE;
+		}
+		if (!shouldNotClear)
+		{
+			if (gBattleWeather & WEATHER_RAIN_PRIMAL)
+			{
+				gBattleWeather &= ~(WEATHER_RAIN_PRIMAL);
+				PrepareStringBattle(STRINGID_HEAVYRAINLIFTED, gActiveBattler);
+				gBattleCommunication[MSG_DISPLAY] = 1;
+			}
+			else if (gBattleWeather & WEATHER_SUN_PRIMAL)
+			{
+				gBattleWeather &= ~(WEATHER_SUN_PRIMAL);
+				PrepareStringBattle(STRINGID_EXTREMESUNLIGHTFADED, gActiveBattler);
+				gBattleCommunication[MSG_DISPLAY] = 1;
+			}
+			else if (gBattleWeather & WEATHER_STRONG_WINDS)
+			{
+				gBattleWeather &= ~(WEATHER_STRONG_WINDS);
+				PrepareStringBattle(STRINGID_STRONGWINDSDISSIPATED, gActiveBattler);
+				gBattleCommunication[MSG_DISPLAY] = 1;
+			}
+		}
+		break;
+	}
     }
     gBattlescriptCurrInstr += 3;
 }
@@ -5896,17 +5960,14 @@ static void atk7C_trymirrormove(void)
 
 static void atk7D_setrain(void)
 {
-    if (gBattleWeather & WEATHER_RAIN_ANY)
+    if (!TryChangeBattleWeather(gBattlerAttacker, ENUM_WEATHER_RAIN))
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         gBattleCommunication[MULTISTRING_CHOOSER] = 2;
     }
     else
-    {
-        gBattleWeather = WEATHER_RAIN_TEMPORARY;
         gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-        gWishFutureKnock.weatherDuration = 5;
-    }
+	
     ++gBattlescriptCurrInstr;
 }
 
@@ -6687,17 +6748,14 @@ static void atk94_damagetohalftargethp(void) // super fang
 
 static void atk95_setsandstorm(void)
 {
-    if (gBattleWeather & WEATHER_SANDSTORM_ANY)
+    if (!TryChangeBattleWeather(gBattlerAttacker, ENUM_WEATHER_SANDSTORM))
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         gBattleCommunication[MULTISTRING_CHOOSER] = 2;
     }
     else
-    {
-        gBattleWeather = WEATHER_SANDSTORM_TEMPORARY;
         gBattleCommunication[MULTISTRING_CHOOSER] = 3;
-        gWishFutureKnock.weatherDuration = 5;
-    }
+	
     ++gBattlescriptCurrInstr;
 }
 
@@ -7576,7 +7634,7 @@ static void atkB6_trysetparalyze(void)
 				gBattlescriptCurrInstr = BattleScript_LimberProtected;
 				return;
 			case ABILITY_LEAF_GUARD:
-				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY)
+				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
 				{
 					gLastUsedAbility = gBattleMons[bank].ability;
 					gBattlescriptCurrInstr = BattleScript_LimberProtected;
@@ -7725,17 +7783,14 @@ static void atkBA_jumpifnopursuitswitchdmg(void)
 
 static void atkBB_setsunny(void)
 {
-    if (gBattleWeather & WEATHER_SUN_ANY)
+    if (!TryChangeBattleWeather(gBattlerAttacker, ENUM_WEATHER_SUN))
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         gBattleCommunication[MULTISTRING_CHOOSER] = 2;
     }
     else
-    {
-        gBattleWeather = WEATHER_SUN_TEMPORARY;
         gBattleCommunication[MULTISTRING_CHOOSER] = 4;
-        gWishFutureKnock.weatherDuration = 5;
-    }
+	
     ++gBattlescriptCurrInstr;
 }
 
@@ -7967,17 +8022,14 @@ static void atkC7_setminimize(void)
 
 static void atkC8_sethail(void)
 {
-    if (gBattleWeather & WEATHER_HAIL_ANY)
+    if (!TryChangeBattleWeather(gBattlerAttacker, ENUM_WEATHER_HAIL))
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         gBattleCommunication[MULTISTRING_CHOOSER] = 2;
     }
     else
-    {
-        gBattleWeather = WEATHER_HAIL_TEMPORARY;
         gBattleCommunication[MULTISTRING_CHOOSER] = 5;
-        gWishFutureKnock.weatherDuration = 5;
-    }
+	
     ++gBattlescriptCurrInstr;
 }
 

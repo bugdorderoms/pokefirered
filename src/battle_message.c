@@ -417,6 +417,9 @@ static const u8 sText_AttackerUsedX[] = _("{B_ATK_NAME_WITH_PREFIX} used\n{B_BUF
 static const u8 sText_AromaVeilProtected[] = _("{B_DEF_NAME_WITH_PREFIX} is protected\nby an aromatic veil!");
 static const u8 sText_FlowerVeilProtected[] = _("{B_DEF_NAME_WITH_PREFIX} surrounded\nitself with a veil of petals!");
 static const u8 sText_SweetVeilProtected[] = _("{B_DEF_NAME_WITH_PREFIX} surrounded\nitself with a veil of sweetness!");
+static const u8 sText_HeavyRainLifted[] = _("The heavy rain has lifted!{PAUSE 64}");
+static const u8 sText_ExtremeSunlightFaded[] = _("The extreme sunlight faded.{PAUSE 64}");
+static const u8 sText_StrongWindsDissipated[] = _("The mysterious strong winds\nhave dissipated!{PAUSE 64}");
 
 static const u8 sText_HP2[] = _("HP");
 static const u8 sText_Attack2[] = _("Attack");
@@ -885,6 +888,9 @@ const u8 *const gBattleStringsTable[] = {
 	[STRINGID_AROMAVEILPROTECTED - 12]            = sText_AromaVeilProtected,
 	[STRINGID_FLOWERVEILPROTECTED - 12]           = sText_FlowerVeilProtected,
 	[STRINGID_SWEETVEILPROTECTED - 12]            = sText_SweetVeilProtected,
+	[STRINGID_HEAVYRAINLIFTED - 12]               = sText_HeavyRainLifted,
+	[STRINGID_EXTREMESUNLIGHTFADED - 12]          = sText_ExtremeSunlightFaded,
+	[STRINGID_STRONGWINDSDISSIPATED - 12]         = sText_StrongWindsDissipated,
 };
 
 const u16 gMissStringIds[] = {

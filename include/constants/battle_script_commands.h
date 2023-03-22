@@ -88,7 +88,8 @@
 #define VARIOUS_SET_SPRITEIGNORE0HP              18
 #define VARIOUS_TRY_REMOVE_ILLUSION              19
 #define VARIOUS_PLAY_TRANSFORM_ANIMATION         20
-#define JUMP_IF_BATTLE_END                       21
+#define VARIOUS_JUMP_IF_BATTLE_END               21
+#define VARIOUS_TRY_REMOVE_PRIMAL_WEATHER        22
 
 // atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN                               0
