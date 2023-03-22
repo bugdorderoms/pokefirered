@@ -149,6 +149,28 @@ victory star
 turboblaze
 teravolt
 aroma veil
+flower veil
+protean
+fur coat
+bulletproof
+competitive
+strong jaw
+refrigerate
+sweet veil
+stance change
+gale wings
+mega launcher
+tough claws
+pixilate
+gooey
+aerilate
+dark aura
+fairy aura
+aura break
+primordial sea
+desolate land
+delta stream
+stamina
 
 // put in
 evolve without national dex
