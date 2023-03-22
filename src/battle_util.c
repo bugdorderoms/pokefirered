@@ -2811,6 +2811,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 					effect++;
 				}
 				break;
+			case ABILITY_STAMINA:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && IsBattlerAlive(gBattlerTarget) && gBattleMons[gBattlerTarget].statStages[STAT_DEF] < 0xC)
+				{
+					gEffectBattler = gBattlerTarget;
+					SET_STATCHANGER(STAT_DEF, 1, FALSE);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaiseRet;
+					effect++;
+				}
+				break;
 	    }
 	    break;
 	case ABILITYEFFECT_MOVE_END_ATTACKER:
