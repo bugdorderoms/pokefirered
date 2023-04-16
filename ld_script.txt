@@ -315,6 +315,7 @@ SECTIONS {
         src/rtc_events.o(.text);
 		src/dexnav.o(.text);
 		src/form_change.o(.text);
+		src/fldeff_defog.o(.text);
     } =0
 
     script_data :
@@ -623,6 +624,7 @@ SECTIONS {
         src/rtc_events.o(.rodata);
         src/dexnav.o(.rodata);
 		src/form_change.o(.rodata);
+		src/fldeff_defog.o(.rodata);
 
         /* These should not be moved to C files */
         src/mystery_event_msg.o(.rodata);

@@ -460,7 +460,7 @@ void DNSApplyFilters(void)
 #endif
 	for (palNum = 0; palNum < 32; palNum++)
 	{
-		if (palExceptionFlags.pal[palNum] && (palNum < 15 || !IsSpritePaletteTagDNSException(palNum - 16)))
+		if (palExceptionFlags.pal[palNum] && (palNum < 16 || !IsSpritePaletteTagDNSException(palNum - 16)))
 		{
 			for (colNum = 0; colNum < 16; colNum++)
 			{

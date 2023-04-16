@@ -4233,7 +4233,8 @@ static void SetUsedFieldMoveQuestLogEvent(struct Pokemon *mon, u8 fieldMove)
 
 void SetUsedFlyQuestLogEvent(const u8 *healLocCtrlData)
 {
-    const struct MapHeader *mapHeader;
+    /* nop out
+	const struct MapHeader *mapHeader;
     struct FieldMoveWarpParams *ptr2;
     struct
     {
@@ -4254,7 +4255,7 @@ void SetUsedFlyQuestLogEvent(const u8 *healLocCtrlData)
     ptr2->fieldMove = FIELD_MOVE_FLY;
     ptr2->regionMapSectionId = mapHeader->regionMapSectionId;
     SetQuestLogEvent(QL_EVENT_USED_FIELD_MOVE, (u16 *)ptr2);
-    Free(ptr2);
+    Free(ptr2);*/
 }
 
 void CB2_ShowPartyMenuForItemUse(void)

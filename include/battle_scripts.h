@@ -282,6 +282,8 @@ extern const u8 BattleScript_DesolateLandActivates[];
 extern const u8 BattleScript_DeltaStreamActivates[];
 extern const u8 BattleScript_PrimordialSeaFizzlesOutFireTypeMoves[];
 extern const u8 BattleScript_DesolateLandEvaporatesWaterTypeMoves[];
+extern const u8 BattleScript_FogContinues[];
+extern const u8 BattleScript_FogEnded[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];

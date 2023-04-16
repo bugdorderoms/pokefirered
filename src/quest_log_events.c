@@ -1833,7 +1833,6 @@ static const u8 *const sUsedFieldMoveTexts[] =
     {
         [FIELD_MOVE_FLASH]       = gText_QuestLog_UsedFlash,
         [FIELD_MOVE_CUT]         = gText_QuestLog_UsedCut,
-        [FIELD_MOVE_FLY]         = gText_QuestLog_UsedFly,
         [FIELD_MOVE_WATERFALL]   = gText_QuestLog_UsedWaterfall,
         [FIELD_MOVE_TELEPORT]    = gText_QuestLog_UsedTeleportToLocation,
         [FIELD_MOVE_DIG]         = gText_QuestLog_UsedDigInLocation,

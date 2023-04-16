@@ -839,6 +839,9 @@ extern const u8 CableClub_Text_PleaseWaitBCancel[];
 // fldeff_flash
 extern const u8 EventScript_FldEffFlash[];
 
+// fldeff_defog
+extern const u8 EventScript_FldEffDefog[];
+
 // field_control_avatar
 extern const u8 EventScript_CancelMessageBox[];
 extern const u8 PalletTown_PlayersHouse_2F_EventScript_PC[];

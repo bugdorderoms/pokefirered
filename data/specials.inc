@@ -325,7 +325,7 @@ gSpecials:: @ 815FD60
 	def_special SetUpTrainerMovement
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
-	def_special StartDroughtWeatherBlend
+	def_special NullFieldSpecial
 	def_special DoDiveWarp
 	def_special DoFallWarp
 	def_special NullFieldSpecial

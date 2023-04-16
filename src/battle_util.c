@@ -146,6 +146,7 @@ static const u16 sWeatherFlagsInfo[][2] =
 	[ENUM_WEATHER_SANDSTORM] = {WEATHER_SANDSTORM_TEMPORARY, WEATHER_SANDSTORM_PERMANENT},
 	[ENUM_WEATHER_HAIL] = {WEATHER_HAIL_TEMPORARY, WEATHER_HAIL_PERMANENT},
 	[ENUM_WEATHER_STRONG_WINDS] = {WEATHER_STRONG_WINDS, WEATHER_STRONG_WINDS},
+	[ENUM_WEATHER_FOG] = {WEATHER_FOG_TEMPORARY, WEATHER_FOG_PERMANENT},
 };
 
 static bool8 CanBeStatused(u8 bank, bool8 checkFlowerVeil)
@@ -743,6 +744,7 @@ enum
     ENDTURN_SANDSTORM,
     ENDTURN_SUN,
     ENDTURN_HAIL,
+	ENDTURN_FOG,
     ENDTURN_FIELD_COUNT,
 };
 
@@ -977,6 +979,23 @@ u8 DoFieldEndTurnEffects(void)
             }
             ++gBattleStruct->turnCountersTracker;
             break;
+		case ENDTURN_FOG:
+		    if (gBattleWeather & WEATHER_FOG_ANY)
+			{
+				if (!(gBattleWeather & WEATHER_FOG_PERMANENT) && --gWishFutureKnock.weatherDuration == 0)
+                {
+                    gBattleWeather &= ~WEATHER_FOG_TEMPORARY;
+                    gBattlescriptCurrInstr = BattleScript_FogEnded;
+                }
+                else
+                {
+                    gBattlescriptCurrInstr = BattleScript_FogContinues;
+                }
+                BattleScriptExecute(gBattlescriptCurrInstr);
+                ++effect;
+			}
+			++gBattleStruct->turnCountersTracker;
+			break;
         case ENDTURN_FIELD_COUNT:
             ++effect;
             break;
@@ -2054,15 +2073,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
                         ++effect;
                     }
                     break;
-                case WEATHER_DROUGHT:
-                    if (!(gBattleWeather & WEATHER_SUN_ANY))
-                    {
-                        gBattleWeather = (WEATHER_SUN_PERMANENT | WEATHER_SUN_TEMPORARY);
-                        gBattleScripting.animArg1 = B_ANIM_SUN_CONTINUES;
-                        gBattleScripting.battler = battler;
-                        ++effect;
-                    }
-                    break;
 		case WEATHER_SNOW:
                     if (!(gBattleWeather & WEATHER_HAIL_ANY))
 		    {
@@ -2072,6 +2082,18 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    ++effect;
 		    }
 		    break;
+#if FOG_IN_BATTLE
+                case WEATHER_FOG_HORIZONTAL:
+				case WEATHER_FOG_DIAGONAL:
+				    if (!(gBattleWeather & WEATHER_FOG_ANY))
+					{
+						gBattleWeather = (WEATHER_FOG_PERMANENT | WEATHER_FOG_TEMPORARY);
+						gBattleScripting.animArg1 = B_ANIM_FOG_CONTINUES;
+						gBattleScripting.battler = battler;
+						++effect;
+					}
+					break;
+#endif
                 }
                 if (effect)
                 {

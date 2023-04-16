@@ -425,6 +425,7 @@ struct BattleStruct
     u8 magnitudeBasePower;
     bool8 spriteIgnore0Hp;
 	u8 attackerBeforeBounce;
+	u8 weatherIconSpriteId;
     u8 field_182;
     // align 4
     union {

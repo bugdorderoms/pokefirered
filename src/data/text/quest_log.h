@@ -59,7 +59,6 @@ const u8 gText_QuestLog_DefeatedWildMonsAndCaughtWildMons[] = _("Defeated {DYNAM
 const u8 gText_QuestLog_GaveMonHeldItem[] = _("Made {STR_VAR_1} hold the item\n{STR_VAR_2}.");
 const u8 gText_QuestLog_GaveMonHeldItem2[] = _("{PLAYER} made {STR_VAR_1} hold the item\n{STR_VAR_2}.");
 const u8 gText_QuestLog_UsedCut[] = _("{STR_VAR_1} used the Hidden Move\nCUT here.");
-const u8 gText_QuestLog_UsedFly[] = _("{STR_VAR_1} used the Charizard\nGlide and flew to {STR_VAR_2}.");
 const u8 gText_QuestLog_UsedFlash[] = _("{STR_VAR_1} used the Hidden Move\nFLASH and illuminated a pitch-black\ncave.");
 const u8 gText_QuestLog_UsedWaterfall[] = _("{STR_VAR_1} used the Hidden Move\nWATERFALL to scale a raging torrent."); // Unused
 const u8 gText_QuestLog_UsedDive[] = _("{STR_VAR_1}は　ふかい　ところを　めざし\nひでんわざ\nダイビングを　つかった！");

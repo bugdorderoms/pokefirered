@@ -173,6 +173,20 @@ static void sub_804A510(struct TestingBar *barInfo, s32 *currValue, u8 bg, u8 x,
 static void SafariTextIntoHealthboxObject(void *dest, u8 *windowTileData, u32 windowWidth);
 static u8 *AddTextPrinterAndCreateWindowOnHealthbox(const u8 *str, u32 x, u32 y, u32 *windowId);
 static void TextIntoHealthboxObject(void *dest, u8 *windowTileData, s32 windowWidth);
+static void SpriteCB_WeatherAnimIcon(struct Sprite *sprite);
+
+static const u8 sWeatherIconRainGfx[] = INCBIN_U8("graphics/battle_interface/weather_icon_rain.4bpp");
+static const u8 sWeatherIconSunGfx[] = INCBIN_U8("graphics/battle_interface/weather_icon_sun.4bpp");
+static const u8 sWeatherIconHailGfx[] = INCBIN_U8("graphics/battle_interface/weather_icon_hail.4bpp");
+static const u8 sWeatherIconSandstormGfx[] = INCBIN_U8("graphics/battle_interface/weather_icon_sandstorm.4bpp");
+static const u8 sWeatherIconFogGfx[] = INCBIN_U8("graphics/battle_interface/weather_icon_fog.4bpp");
+static const u8 sWeatherIconStrongWinds[] = INCBIN_U8("graphics/battle_interface/weather_icon_strong_winds.4bpp");
+
+static const u16 sWeatherIconRainPal[] = INCBIN_U16("graphics/battle_interface/weather_icon_rain.gbapal");
+static const u16 sWeatherIconSunPal[] = INCBIN_U16("graphics/battle_interface/weather_icon_sun.gbapal");
+static const u16 sWeatherIconHailPal[] = INCBIN_U16("graphics/battle_interface/weather_icon_hail.gbapal");
+static const u16 sWeatherIconSandstormPal[] = INCBIN_U16("graphics/battle_interface/weather_icon_sandstorm.gbapal");
+static const u16 sWeatherIconFogPal[] = INCBIN_U16("graphics/battle_interface/weather_icon_fog.gbapal");
 
 static const struct OamData gOamData_8260270 = {
     .shape = SPRITE_SHAPE(64x32),
@@ -406,6 +420,59 @@ static const struct SpriteTemplate sStatusSummaryBallsSpriteTemplates[] = {
         .affineAnims = gDummySpriteAffineAnimTable,
         .callback = SpriteCB_StatusSummaryBallsOnBattleStart
     }
+};
+
+static const struct SpriteSheet sSpriteSheet_WeatherStatusIcons[] =
+{
+	[ENUM_WEATHER_RAIN] = {sWeatherIconRainGfx, sizeof(sWeatherIconRainGfx), TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_SUN] = {sWeatherIconSunGfx, sizeof(sWeatherIconSunGfx), TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_SANDSTORM] = {sWeatherIconSandstormGfx, sizeof(sWeatherIconSandstormGfx), TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_HAIL] = {sWeatherIconHailGfx, sizeof(sWeatherIconHailGfx), TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_FOG] = {sWeatherIconFogGfx, sizeof(sWeatherIconFogGfx), TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_STRONG_WINDS] = {sWeatherIconStrongWinds, sizeof(sWeatherIconStrongWinds), TAG_WEATHER_ICON_GFX}
+};
+
+static const struct SpritePalette sSpritePalette_WeatherStatusIcons[] =
+{
+	[ENUM_WEATHER_RAIN] = {sWeatherIconRainPal, TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_SUN] = {sWeatherIconSunPal, TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_SANDSTORM] = {sWeatherIconSandstormPal, TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_HAIL] = {sWeatherIconHailPal, TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_FOG] = {sWeatherIconFogPal, TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_STRONG_WINDS] = {sWeatherIconFogPal, TAG_WEATHER_ICON_GFX}, // same palette as fog
+};
+
+static const union AnimCmd sAnim_WeatherIcon[] =
+{
+    ANIMCMD_FRAME(0, 40),
+	ANIMCMD_FRAME(16, 40),
+	ANIMCMD_FRAME(32, 40),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd * const sAnims_WeatherIcon[] =
+{
+	sAnim_WeatherIcon,
+};
+
+static const struct OamData sOam_WeatherIcon =
+{
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x16),
+    .size = SPRITE_SIZE(32x16),
+};
+
+static const struct SpriteTemplate sSpriteTemplate_WeatherIcon =
+{
+	.tileTag = TAG_WEATHER_ICON_GFX,
+    .paletteTag = TAG_WEATHER_ICON_GFX,
+    .oam = &sOam_WeatherIcon,
+    .anims = sAnims_WeatherIcon,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCB_WeatherAnimIcon
 };
 
 static void sub_8047B0C(s16 number, u16 *dest, bool8 unk)
@@ -2185,3 +2252,69 @@ static void SafariTextIntoHealthboxObject(void *dest, u8 *windowTileData, u32 wi
     CpuCopy32(windowTileData, dest, windowWidth * TILE_SIZE_4BPP);
     CpuCopy32(windowTileData + 256, dest + 256, windowWidth * TILE_SIZE_4BPP);
 }
+
+#define sHide   data[0]
+#define sFinalX data[1]
+
+#define WEATHER_ICON_X_POS   256
+#define WEATHER_ICON_Y_POS   15
+#define WEATHER_ICON_X_SLIDE 32
+
+void TryCreateWeatherAnimIcon(void)
+{
+	u8 iconAnimId;
+	
+	if (gBattleWeather & WEATHER_ANY)
+	{
+		if (GetSpriteTileStartByTag(TAG_WEATHER_ICON_GFX) == 0xFFFF)
+		{
+			// get current weather enum id
+			if (gBattleWeather & WEATHER_RAIN_ANY)
+				iconAnimId = ENUM_WEATHER_RAIN;
+			else if (gBattleWeather & WEATHER_SUN_ANY)
+				iconAnimId = ENUM_WEATHER_SUN;
+			else if (gBattleWeather & WEATHER_SANDSTORM_ANY) 
+				iconAnimId = ENUM_WEATHER_SANDSTORM;
+			else if (gBattleWeather & WEATHER_HAIL_ANY)
+				iconAnimId = ENUM_WEATHER_HAIL;
+			else if (gBattleWeather & WEATHER_FOG_ANY)
+				iconAnimId = ENUM_WEATHER_FOG;
+			else
+				iconAnimId = ENUM_WEATHER_STRONG_WINDS;
+			
+			LoadSpriteSheet(&sSpriteSheet_WeatherStatusIcons[iconAnimId]);
+			LoadSpritePalette(&sSpritePalette_WeatherStatusIcons[iconAnimId]);
+			gBattleStruct->weatherIconSpriteId = CreateSprite(&sSpriteTemplate_WeatherIcon, WEATHER_ICON_X_POS, WEATHER_ICON_Y_POS, 0);
+			gSprites[gBattleStruct->weatherIconSpriteId].sFinalX = WEATHER_ICON_X_POS - WEATHER_ICON_X_SLIDE;
+		}
+		ShowOrHideWeatherAnimIcon(FALSE); // show icon
+	}
+}
+
+void ShowOrHideWeatherAnimIcon(bool8 hide)
+{
+	gSprites[gBattleStruct->weatherIconSpriteId].sHide = hide;
+}
+
+static void SpriteCB_WeatherAnimIcon(struct Sprite *sprite)
+{
+	if (sprite->sHide)
+	{
+		if (sprite->x != WEATHER_ICON_X_POS) // slide out
+			++sprite->x;
+		else // destroy sprite
+		{
+			FreeSpriteTilesByTag(TAG_WEATHER_ICON_GFX);
+			FreeSpritePaletteByTag(TAG_WEATHER_ICON_GFX);
+			DestroySprite(sprite);
+		}
+	}
+	else
+	{
+		if (sprite->x != sprite->sFinalX) // slide in
+			--sprite->x;
+	}
+}
+
+#undef sHide
+#undef sFinalX

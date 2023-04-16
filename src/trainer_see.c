@@ -656,7 +656,6 @@ u8 FldEff_ExclamationMarkIcon1(void)
     u8 spriteId;
 
     LoadObjectEventPalette(0x1100);
-	UpdatePaletteGammaType(IndexOfSpritePaletteTag(0x1100), GAMMA_ALT);
     UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(0x1100));
 	
 	spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x53);
@@ -672,7 +671,6 @@ u8 FldEff_DoubleExclMarkIcon(void)
     u8 spriteId;
     
 	LoadObjectEventPalette(0x1100);
-    UpdatePaletteGammaType(IndexOfSpritePaletteTag(0x1100), GAMMA_ALT);
     UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(0x1100));
 
 	spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x52);
@@ -688,7 +686,6 @@ u8 FldEff_XIcon(void)
     u8 spriteId;
 
     LoadObjectEventPalette(0x1100);
-    UpdatePaletteGammaType(IndexOfSpritePaletteTag(0x1100), GAMMA_ALT);
     UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(0x1100));
 	
 	spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x52);
@@ -704,7 +701,6 @@ u8 FldEff_SmileyFaceIcon(void)
     u8 spriteId;
 
     LoadObjectEventPalette(0x1100);
-    UpdatePaletteGammaType(IndexOfSpritePaletteTag(0x1100), GAMMA_ALT);
     UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(0x1100));
 	
 	spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x52);
@@ -720,7 +716,6 @@ u8 FldEff_QuestionMarkIcon(void)
     u8 spriteId;
 
     LoadObjectEventPalette(0x1100);
-    UpdatePaletteGammaType(IndexOfSpritePaletteTag(0x1100), GAMMA_ALT);
     UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(0x1100));
 	
 	spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x52);

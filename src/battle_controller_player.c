@@ -223,6 +223,9 @@ static void HandleInputChooseAction(void)
     if (JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
+#if WEATHER_ICON_IN_BATTLE
+        ShowOrHideWeatherAnimIcon(TRUE); // hide icon
+#endif
 
         switch (gActionSelectionCursor[gActiveBattler])
         {
@@ -2484,6 +2487,9 @@ static void HandleChooseActionAfterDma3(void)
     {
         gBattle_BG0_X = 0;
         gBattle_BG0_Y = 160;
+#if WEATHER_ICON_IN_BATTLE
+		TryCreateWeatherAnimIcon();
+#endif
         gBattlerControllerFuncs[gActiveBattler] = HandleInputChooseAction;
     }
 }

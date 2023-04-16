@@ -363,6 +363,7 @@ const u8 gText_ClimbAWaterfall[] = _("Climb a waterfall.");
 const u8 gUnknown_84175C1[] = _("すいちゅうに もぐる");
 const u8 gText_EscapeFromHere[] = _("Escape from here.");
 const u8 gText_LureWildPokemon[] = _("Lure wild POKéMON.");
+const u8 gText_BlewAwayFog[] = _("Blew away fog.");
 const u8 gText_ShareHp[] = _("Share HP.");
 const u8 gText_ReturnToAHealingSpot[] = _("Return to a healing spot.");
 const u8 gText_EscapeFromHereAndReturnTo[] = _("Want to escape from here and return\nto {STR_VAR_1}?");

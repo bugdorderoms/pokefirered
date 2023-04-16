@@ -3194,6 +3194,17 @@ BattleScript_SunlightFaded::
 	waitmessage 0x40
 	end2
 
+BattleScript_FogContinues::
+    printstring STRINGID_DEEPFOG
+	waitmessage 0x40
+	playanimation BS_ATTACKER, B_ANIM_FOG_CONTINUES, NULL
+	end2
+
+BattleScript_FogEnded::
+    printstring STRINGID_FOGENDED
+	waitmessage 0x40
+	end2
+
 BattleScript_OverworldWeatherStarts::
 	printfromtable gWeatherContinuesStringIds
 	waitmessage 0x40

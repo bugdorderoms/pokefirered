@@ -1,8 +1,8 @@
 #ifndef GUARD_CONSTANTS_FIELD_WEATHER_H
 #define GUARD_CONSTANTS_FIELD_WEATHER_H
 
-#define MAX_RAIN_SPRITES             24
-#define NUM_CLOUD_SPRITES            3
+#define NUM_RAIN_SPRITES             24
+#define NUM_SNOWFLAKE_SPRITES        101
 #define NUM_FOG_HORIZONTAL_SPRITES   20
 #define NUM_ASH_SPRITES              20
 #define NUM_FOG_DIAGONAL_SPRITES     20

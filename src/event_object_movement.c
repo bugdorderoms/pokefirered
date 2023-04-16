@@ -1377,10 +1377,7 @@ static u8 TrySetupObjectEventSprite(struct ObjectEventTemplate *objectEventTempl
     graphicsInfo = GetObjectEventGraphicsInfo(objectEvent->graphicsId);
 	
 	if (spriteTemplate->paletteTag != SPRITE_INVALID_TAG)
-	{
 		LoadObjectEventPalette(spriteTemplate->paletteTag);
-		UpdatePaletteGammaType(IndexOfSpritePaletteTag(spriteTemplate->paletteTag), GAMMA_ALT);
-	}
 
     if (objectEvent->movementType == MOVEMENT_TYPE_INVISIBLE)
         objectEvent->invisible = TRUE;
@@ -1705,10 +1702,7 @@ static void ReloadMapObjectWithOffset(u8 objectEventId, s16 x, s16 y)
     spriteTemplate.images = &spriteFrameImage;
 	
 	if (spriteTemplate.paletteTag != SPRITE_INVALID_TAG)
-	{
 		LoadObjectEventPalette(spriteTemplate.paletteTag);
-		UpdatePaletteGammaType(IndexOfSpritePaletteTag(spriteTemplate.paletteTag), GAMMA_ALT);
-	}
     
     spriteId = CreateSprite(&spriteTemplate, 0, 0, 0);
     if (spriteId != MAX_SPRITES)

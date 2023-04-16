@@ -45,6 +45,8 @@ enum
 #define TAG_STATUS_SUMMARY_BAR_PAL      0xD710
 #define TAG_STATUS_SUMMARY_BALLS_PAL    0xD712
 
+#define TAG_WEATHER_ICON_GFX            0xD777
+
 enum
 {
     HEALTHBOX_ALL,
@@ -79,5 +81,7 @@ u8 GetHPBarLevel(s16 hp, s16 maxhp);
 void UpdateNickInHealthbox(u8 spriteId, struct Pokemon *mon);
 void TryAddPokeballIconToHealthbox(u8 spriteId, u8);
 s32 MoveBattleBar(u8 battler, u8 healthboxSpriteId, u8 whichBar, u8 arg3);
+void TryCreateWeatherAnimIcon(void);
+void ShowOrHideWeatherAnimIcon(bool8 hide);
 
 #endif // GUARD_BATTLE_INTERFACE_H

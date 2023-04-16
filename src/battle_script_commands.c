@@ -1322,6 +1322,10 @@ static void atk01_accuracycheck(void)
 		if (holdEffect == HOLD_EFFECT_EVASION_UP)
 			calc = (calc * (100 - param)) / 100;
 		
+		// Check fog weather
+		if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_FOG_ANY))
+			calc = (calc * 60) / 100; // 0.6 fog loss
+		
 		// final calculation, determines if the move misses
 		if ((Random() % 100 + 1) > calc)
 		{
@@ -3728,7 +3732,8 @@ static void atk45_playanimation(void)
         gBattlescriptCurrInstr = BattleScript_Pausex20;
     }
     else if (gBattlescriptCurrInstr[2] == B_ANIM_RAIN_CONTINUES || gBattlescriptCurrInstr[2] == B_ANIM_SUN_CONTINUES
-	     || gBattlescriptCurrInstr[2] == B_ANIM_SANDSTORM_CONTINUES || gBattlescriptCurrInstr[2] == B_ANIM_HAIL_CONTINUES)
+	     || gBattlescriptCurrInstr[2] == B_ANIM_SANDSTORM_CONTINUES || gBattlescriptCurrInstr[2] == B_ANIM_HAIL_CONTINUES
+		 || gBattlescriptCurrInstr[2] == B_ANIM_FOG_CONTINUES)
     {
         BtlController_EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
         MarkBattlerForControllerExec(gActiveBattler);
@@ -3762,7 +3767,7 @@ static void atk46_playanimation2(void) // Animation Id is stored in the first po
     else if (gHitMarker & HITMARKER_NO_ANIMATIONS)
         gBattlescriptCurrInstr += 10;
     else if (*animationIdPtr == B_ANIM_RAIN_CONTINUES || *animationIdPtr == B_ANIM_SUN_CONTINUES || *animationIdPtr == B_ANIM_SANDSTORM_CONTINUES
-	     || *animationIdPtr == B_ANIM_HAIL_CONTINUES)
+	     || *animationIdPtr == B_ANIM_HAIL_CONTINUES || *animationIdPtr == B_ANIM_FOG_CONTINUES)
     {
         BtlController_EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
         MarkBattlerForControllerExec(gActiveBattler);

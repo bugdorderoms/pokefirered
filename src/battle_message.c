@@ -19,6 +19,7 @@
 #include "constants/moves.h"
 #include "constants/items.h"
 #include "constants/trainers.h"
+#include "constants/weather.h"
 
 struct BattleWindowText
 {
@@ -347,6 +348,8 @@ static const u8 sText_SunlightFaded[] = _("The sunlight faded.");
 static const u8 sText_StartedHail[] = _("It started to hail!");
 static const u8 sText_HailContinues[] = _("Hail continues to fall.");
 static const u8 sText_HailStopped[] = _("The hail stopped.");
+static const u8 sText_FogIsDeep[] = _("The fog is deep…");
+static const u8 sText_FogEnded[] = _("The fog disappeared.");
 static const u8 sText_FailedToSpitUp[] = _("But it failed to Spit Up\na thing!");
 static const u8 sText_FailedToSwallow[] = _("But it failed to Swallow\na thing!");
 static const u8 sText_WindBecameHeatWave[] = _("The wind turned into a\nHeat Wave!");
@@ -891,6 +894,8 @@ const u8 *const gBattleStringsTable[] = {
 	[STRINGID_HEAVYRAINLIFTED - 12]               = sText_HeavyRainLifted,
 	[STRINGID_EXTREMESUNLIGHTFADED - 12]          = sText_ExtremeSunlightFaded,
 	[STRINGID_STRONGWINDSDISSIPATED - 12]         = sText_StrongWindsDissipated,
+	[STRINGID_DEEPFOG - 12]                       = sText_FogIsDeep,
+	[STRINGID_FOGENDED - 12]                      = sText_FogEnded,
 };
 
 const u16 gMissStringIds[] = {
@@ -1135,22 +1140,13 @@ const u16 gBallEscapeStringIds[] = {
 };
 
 const u16 gWeatherContinuesStringIds[] = {
-    STRINGID_ITISRAINING,
-    STRINGID_ITISRAINING,
-    STRINGID_ITISRAINING,
-    STRINGID_ITISRAINING,
-    STRINGID_STARTEDHAIL,
-    STRINGID_ITISRAINING,
-    STRINGID_ITISRAINING,
-    STRINGID_ITISRAINING,
-    STRINGID_SANDSTORMISRAGING,
-    STRINGID_ITISRAINING,
-    STRINGID_ITISRAINING,
-    STRINGID_ITISRAINING,
-    STRINGID_SUNLIGHTSTRONG,
-    STRINGID_ITISRAINING,
-    STRINGID_ITISRAINING,
-    STRINGID_ITISRAINING
+    [WEATHER_RAIN] = STRINGID_ITISRAINING,
+    [WEATHER_SNOW] = STRINGID_STARTEDHAIL,
+    [WEATHER_RAIN_THUNDERSTORM] = STRINGID_ITISRAINING,
+    [WEATHER_FOG_HORIZONTAL] = STRINGID_DEEPFOG,
+    [WEATHER_SANDSTORM] = STRINGID_SANDSTORMISRAGING,
+    [WEATHER_FOG_DIAGONAL] = STRINGID_DEEPFOG,
+    [WEATHER_DOWNPOUR] = STRINGID_ITISRAINING,
 };
 
 const u16 gInobedientStringIds[] = {

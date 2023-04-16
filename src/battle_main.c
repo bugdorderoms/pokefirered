@@ -3668,7 +3668,17 @@ u32 GetBattlerTotalSpeed(u8 battler)
     if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) && FlagGet(FLAG_BADGE03_GET) && GetBattlerSide(battler) == B_SIDE_PLAYER)
         monspeed = (monspeed * 110) / 100;
 #endif
-    
+
+#if SUN_BOOST_SPEED
+    if (IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY) && IS_BATTLER_OF_TYPE(battler, TYPE_GRASS))
+		monspeed += (monspeed / 3);
+#endif
+
+#if HAIL_BOOST_SPEED
+	if (IsBattlerWeatherAffected(battler, WEATHER_HAIL_ANY) && IS_BATTLER_OF_TYPE(battler, TYPE_ICE))
+		monspeed += (monspeed / 3);
+#endif
+
     // not used for now
 	/* HoldEffect = GetBattlerItemHoldEffect(battler, TRUE); */
     

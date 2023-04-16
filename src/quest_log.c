@@ -1216,10 +1216,10 @@ static void QL_SlightlyDarkenSomePals(void)
 {
     u16 *buffer = Alloc(PLTT_SIZE);
     CpuCopy16(sPalettesBackup, buffer, PLTT_SIZE);
-    SlightlyDarkenPalsInWeather(sPalettesBackup, sPalettesBackup, 13 * 16);
-    SlightlyDarkenPalsInWeather(sPalettesBackup + 17 * 16, sPalettesBackup + 17 * 16, 1 * 16);
-    SlightlyDarkenPalsInWeather(sPalettesBackup + 22 * 16, sPalettesBackup + 22 * 16, 4 * 16);
-    SlightlyDarkenPalsInWeather(sPalettesBackup + 27 * 16, sPalettesBackup + 27 * 16, 5 * 16);
+    SlightlyDarkenPalsInWeather(sPalettesBackup, 13 * 16);
+    SlightlyDarkenPalsInWeather(sPalettesBackup + 17 * 16, 1 * 16);
+    SlightlyDarkenPalsInWeather(sPalettesBackup + 22 * 16, 4 * 16);
+    SlightlyDarkenPalsInWeather(sPalettesBackup + 27 * 16, 5 * 16);
     CpuCopy16(sPalettesBackup, gPlttBufferUnfaded, PLTT_SIZE);
     CpuCopy16(buffer, sPalettesBackup, PLTT_SIZE);
     Free(buffer);

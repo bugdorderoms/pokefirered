@@ -447,6 +447,7 @@ gBattleAnims_General::
 	.4byte General_RemoveAbilityPopUp
 	.4byte General_FormChange @ illusion off
 	.4byte General_FormChange
+	.4byte General_Fog
 
 gBattleAnims_Special::
 	.4byte Special_LevelUp
@@ -10692,6 +10693,9 @@ General_Sandstorm:: @ 81D5FDD
 
 General_Hail:: @ 81D5FE2
 	goto Move_HAIL
+
+General_Fog::
+    goto Move_HAZE
 
 General_LeechSeedDrain:: @ 81D5FE7
 	createvisualtask AnimTask_GetBattlersFromArg, 5, 

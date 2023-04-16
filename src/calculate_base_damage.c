@@ -520,6 +520,11 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 		spDefense += spDefense / 2;
 		spAttack = (10 * spAttack) / 15;
 	}
+#if HAIL_BOOST_DEFENSE
+	// hail stat boost
+	if (IsBattlerWeatherAffected(battlerIdDef, WEATHER_HAIL_ANY) && IS_BATTLER_OF_TYPE(battlerIdDef, TYPE_ICE))
+		defense += (defense / 2);
+#endif
 	// burn attack drop
 	if ((attacker->status1 & STATUS1_BURN) && GetBattlerAbility(battlerIdAtk) != ABILITY_GUTS && !isConfusionDmg)
 		attack /= 2;

@@ -46,4 +46,7 @@ bool8 SetUpFieldMove_SweetScent(void);
 bool8 FldEff_SweetScent(void);
 void StartSweetScentFieldEffect(void);
 
+// defog
+bool8 SetUpFieldMove_Defog(void);
+
 #endif // GUARD_FLDEFF_H

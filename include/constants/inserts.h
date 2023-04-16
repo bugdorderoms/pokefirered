@@ -13,6 +13,10 @@
 #define VOLT_TACKLE_BY_BREEDING TRUE // if true when a pichu egg is hatched it will come with the volt tackle move.
 #define WILD_HIDDEN_ABILITY_CHANCE 5 // % chance that a wild pokemon has to appears with it's hidden ability, if it has one. If 0 it will't appears with it's hidden ability.
 #define SHUCKLE_MAKES_BERRY_JUICE_CHANCE 25 // % chance that a Shuckle on the player's party makes a Berry Juice from it's held berry at the end of each battle, like in gen2. If 0 it will't crete a Berry Juice.
+#define SUN_BOOST_SPEED TRUE // if true the sunny weathers boost the speed of grass type pokemons in battle by 33%, like legends Arceus.
+#define HAIL_BOOST_SPEED TRUE // if true the hail weather boost the speed of ice type pokemons in battle by 33%, like SV.
+#define HAIL_BOOST_DEFENSE TRUE // if true the hail weather boost the defense of ice type pokemons in battle by 50%, like legends Arceus.
+#define FOG_IN_BATTLE TRUE // if true the overworld weathers WEATHER_FOG_HORIZONTAL and WEATHER_FOG_DIAGONAL will start weather fog in battle, like rain and snow.
 
 // grafical changes
 #define PAGE_SWAP TRUE // if true it auttomaticaly swap the naming screen page to lower case on write the first caracter.
@@ -24,3 +28,4 @@
 #define DISAPPEAR_HP_BAR_DURING_ANIMS TRUE // if true the hp bars disppears when a move anim is displayed.
 #define EM_STYLE_GENDER_SELECT_INTRO TRUE // if true giving the player name if you cancel it the game will returns to choose the player gender instead of the name again.
 #define MON_ICON_ON_CONTINUE_SCREEN TRUE // if true it draw the party mon icons on the continue saved game screen.
+#define WEATHER_ICON_IN_BATTLE TRUE // if true it create an icon in battle showing the current weather it is in.

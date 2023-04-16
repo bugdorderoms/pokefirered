@@ -73,7 +73,6 @@ static void LoadObjectReflectionPalette(struct ObjectEvent * objectEvent, struct
         sprite->data[2] = bridgeReflectionVerticalOffsets[bridgeType - 1];
 		LoadObjectEventPalette(OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION);
         sprite->oam.paletteNum = IndexOfSpritePaletteTag(OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION);
-        UpdatePaletteGammaType(sprite->oam.paletteNum, GAMMA_NORMAL);
         UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
     }
     else
@@ -92,7 +91,6 @@ void LoadSpecialReflectionPalette(struct Sprite *sprite)
     reflectionPalette.tag = GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum) + 0x1000;
     LoadSpritePalette(&reflectionPalette);
     sprite->oam.paletteNum = IndexOfSpritePaletteTag(reflectionPalette.tag);
-    UpdatePaletteGammaType(sprite->oam.paletteNum, GAMMA_ALT);
     UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
 }
 
@@ -1370,10 +1368,7 @@ void LoadFieldEffectPalette(u8 fieldEffect)
 
     spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffect];
     if (spriteTemplate->paletteTag != 0xFFFF)
-    {
         LoadObjectEventPalette(spriteTemplate->paletteTag);
-        UpdatePaletteGammaType(IndexOfSpritePaletteTag(spriteTemplate->paletteTag), GAMMA_NORMAL);
-    }
 }
 
 static void UpdateGrassFieldEffectSubpriority(struct Sprite * sprite, u8 z, u8 offset)

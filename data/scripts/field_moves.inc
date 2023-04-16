@@ -226,6 +226,22 @@ EventScript_FailSweetScent:: @ 81BE564
 Text_LooksLikeNothingHere:: @ 81BE56D
 	.string "Looks like there's nothing here…$"
 
+EventScript_FldEffDefog::
+    getpartymonname 0, VAR_RESULT
+	getmovename 1, MOVE_DEFOG
+	playse SE_FLEE
+	setweather 0
+	doweather
+	waitse
+	msgbox Text_DefogBlewAway
+	closemessage
+	releaseall
+	end
+
+Text_DefogBlewAway::
+    .string "{STR_VAR_1} blew away the\n"
+	.string "deep fog with {STR_VAR_2}!$"
+
 EventScript_DisableAutoRun::
         msgbox Text_AutoRunDisabled MSGBOX_SIGN
 	end
