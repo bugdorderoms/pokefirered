@@ -421,7 +421,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower = (15 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_TOUGH_CLAWS:
-			    if (gBattleMoves[move].flags & FLAG_MAKES_CONTACT)
+			    if (IsMoveMakingContact(battlerIdAtk, move))
 					gBattleMovePower = (13 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_PIXILATE:
@@ -430,6 +430,25 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				break;
 			case ABILITY_AERILATE:
 			    if (type == TYPE_FLYING)
+					goto NORMALIZE_CHECK;
+				break;
+			case ABILITY_STAKEOUT:
+			    if (gDisableStructs[battlerIdDef].isFirstTurn == 2)
+					gBattleMovePower *= 2;
+				break;
+			case ABILITY_WATER_BUBBLE:
+			    if (type == TYPE_WATER)
+					gBattleMovePower *= 2;
+				break;
+			case ABILITY_STEELWORKER:
+			    if (type == TYPE_STEEL)
+				{
+					attack += (attack / 2);
+					spAttack += (spAttack / 2);
+				}
+				break;
+			case ABILITY_GALVANIZE:
+			    if (type == TYPE_ELECTRIC)
 					goto NORMALIZE_CHECK;
 				break;
 		}
@@ -492,6 +511,10 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				break;
 			case ABILITY_FUR_COAT:
 			    defense *= 2;
+				break;
+			case ABILITY_WATER_BUBBLE:
+			    if (type == TYPE_FIRE)
+					gBattleMovePower /= 2;
 				break;
 		}
 		// defender's ally abilities check

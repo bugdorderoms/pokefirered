@@ -7390,6 +7390,7 @@ static void atkAC_trysetburn(void)
 		switch (GetBattlerAbility(bank))
 		{
 			case ABILITY_WATER_VEIL:
+			case ABILITY_WATER_BUBBLE:
 				gLastUsedAbility = gBattleMons[bank].ability;
 				gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
 				return;

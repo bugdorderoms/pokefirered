@@ -426,6 +426,7 @@ struct BattleStruct
     bool8 spriteIgnore0Hp;
 	u8 attackerBeforeBounce;
 	u8 weatherIconSpriteId;
+	u16 hpBefore[MAX_BATTLERS_COUNT]; // hp before use move, for Berserk and Emergency Exit
     u8 field_182;
     // align 4
     union {

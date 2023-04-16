@@ -226,6 +226,7 @@ bool8 CanBeBurned(u8 bank, bool8 checkFlowerVeil)
 	switch (GetBattlerAbility(bank))
 	{
 		case ABILITY_WATER_VEIL:
+		case ABILITY_WATER_BUBBLE:
 			return FALSE;
 	}
 	
@@ -2607,7 +2608,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		    case ABILITY_ROUGH_SKIN:
 			case ABILITY_IRON_BARBS:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED
-				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT)
+				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg)
 				&& GetBattlerAbility(gBattlerAttacker) != ABILITY_MAGIC_GUARD)
 			    {
 				    gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 8;
@@ -2620,7 +2621,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    break;
 		    case ABILITY_EFFECT_SPORE:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED
-				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 10) == 0
+				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg) && (Random() % 10) == 0
 				&& GetBattlerAbility(gBattlerAttacker) != ABILITY_OVERCOAT)
 			    {
 				    do
@@ -2654,7 +2655,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    break;
 		    case ABILITY_POISON_POINT:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED
-				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 3) == 0
+				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg) && (Random() % 3) == 0
 				&& CanBePoisoned(gBattlerAttacker, battler, TRUE))
 			    {
 				    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_POISON;
@@ -2666,7 +2667,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    break;
 		    case ABILITY_STATIC:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED
-				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 3) == 0
+				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg) && (Random() % 3) == 0
 				&& CanBeParalyzed(gBattlerAttacker, TRUE))
 			    {
 				    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_PARALYSIS;
@@ -2678,7 +2679,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    break;
 		    case ABILITY_FLAME_BODY:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED
-				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && (Random() % 3) == 0
+				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg) && (Random() % 3) == 0
 				&& CanBeBurned(gBattlerAttacker, TRUE))
 			    {
 				    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_BURN;
@@ -2690,7 +2691,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    break;
 		    case ABILITY_CUTE_CHARM:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED
-				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT)
+				&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg)
 				&& IsBattlerAlive(gBattlerTarget) && GetBattlerAbility(gBattlerAttacker) != ABILITY_OBLIVIOUS
 				&& !(gBattleMons[gBattlerAttacker].status2 & STATUS2_INFATUATION) && (Random() % 3) == 0
 				&& GetGenderFromSpeciesAndPersonality(speciesAtk, pidAtk) != GetGenderFromSpeciesAndPersonality(speciesDef, pidDef)
@@ -2717,7 +2718,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    break;
 			case ABILITY_AFTERMATH:
 				if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && IsBattlerAlive(gBattlerAttacker)
-				&& GetBattlerAbility(gBattlerAttacker) != ABILITY_MAGIC_GUARD && gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT
+				&& GetBattlerAbility(gBattlerAttacker) != ABILITY_MAGIC_GUARD && IsMoveMakingContact(gBattlerAttacker, moveArg)
 				&& !IsBattlerAlive(gBattlerTarget) && !AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, ABILITY_DAMP, 0, 0))
 				{
 					gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 4;
@@ -2730,7 +2731,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				break;
 		    case ABILITY_PICKPOCKET:
 			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && !gProtectStructs[gBattlerAttacker].confusionSelfDmg && TARGET_TURN_DAMAGED
-				&& (gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT) && !SubsBlockMove(gBattlerAttacker, gBattlerTarget, moveArg)
+				&& IsMoveMakingContact(gBattlerAttacker, moveArg) && !SubsBlockMove(gBattlerAttacker, gBattlerTarget, moveArg)
 				&& !gBattleMons[gBattlerTarget].item && IsBattlerAlive(gBattlerTarget) && GetBattlerAbility(gBattlerAttacker) != ABILITY_STICKY_HOLD
 				&& gBattleMons[gBattlerAttacker].item)
 			    {
@@ -2770,7 +2771,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    break;
 			case ABILITY_MUMMY:
 			case ABILITY_LINGERING_AROMA:
-			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED && gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT)
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && TARGET_TURN_DAMAGED && IsMoveMakingContact(gBattlerAttacker, moveArg))
 				{
 					switch (gBattleMons[gBattlerAttacker].ability)
 					{
@@ -2828,7 +2829,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				break;
 			case ABILITY_GOOEY:
 			case ABILITY_TANGLING_HAIR:
-			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && IsBattlerAlive(gBattlerAttacker) && gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, moveArg)
 				&& gBattleMons[gBattlerAttacker].statStages[STAT_SPEED] > 0)
 				{
 					SET_STATCHANGER(STAT_SPEED, 1, TRUE);
@@ -2861,6 +2862,18 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 					effect++;
 				}
 				break;
+			case ABILITY_BERSERK:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && IsBattlerAlive(gBattlerTarget) && gBattleStruct->hpBefore[gBattlerTarget] >= gBattleMons[gBattlerTarget].maxHP / 2
+				&& gBattleMons[gBattlerTarget].hp < gBattleMons[gBattlerTarget].maxHP / 2 && (gMultiHitCounter == 0 || gMultiHitCounter == 1) && !ReceiveSheerForceBoost(gBattlerAttacker, gCurrentMove)
+				&& gBattleMons[gBattlerTarget].statStages[STAT_SPATK] < 0xC)
+				{
+					gEffectBattler = gBattlerTarget;
+					SET_STATCHANGER(STAT_SPATK, 1, FALSE);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaiseRet;
+					effect++;
+				}
+				break;
 	    }
 	    break;
 	case ABILITYEFFECT_MOVE_END_ATTACKER:
@@ -2868,7 +2881,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 	    {
 		    case ABILITY_POISON_TOUCH:
 			if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerTarget) && !gProtectStructs[gBattlerAttacker].confusionSelfDmg
-			   && CanBePoisoned(gBattlerTarget, gBattlerAttacker, TRUE) && gBattleMoves[moveArg].flags & FLAG_MAKES_CONTACT && TARGET_TURN_DAMAGED && (Random() % 3) == 0)
+			   && CanBePoisoned(gBattlerTarget, gBattlerAttacker, TRUE) && IsMoveMakingContact(gBattlerAttacker, moveArg) && TARGET_TURN_DAMAGED && (Random() % 3) == 0)
 			{
 				gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON;
 				PREPARE_ABILITY_BUFFER(gBattleTextBuff1, gLastUsedAbility);
@@ -2916,6 +2929,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
                     }
                     break;
                 case ABILITY_WATER_VEIL:
+				case ABILITY_WATER_BUBBLE:
                     if (gBattleMons[battler].status1 & STATUS1_BURN)
                     {
                         StringCopy(gBattleTextBuff1, gStatusConditionString_BurnJpn);
@@ -4183,5 +4197,12 @@ bool8 TryChangeBattleWeather(u8 battlerId, u8 weatherEnumId)
 		gWishFutureKnock.weatherDuration = 5;
 		return TRUE;
 	}
+	return FALSE;
+}
+
+bool8 IsMoveMakingContact(u8 battler, u16 move)
+{
+	if (GetBattlerAbility(battler) != ABILITY_LONG_REACH && gBattleMoves[move].flags & FLAG_MAKES_CONTACT)
+		return TRUE;
 	return FALSE;
 }

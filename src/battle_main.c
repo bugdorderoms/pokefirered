@@ -3630,6 +3630,26 @@ s8 GetMovePriority(u8 battler, u16 move)
 		++priority;
 	if (GetBattlerAbility(battler) == ABILITY_GALE_WINGS && gBattleMoves[move].type == TYPE_FLYING && gBattleMons[battler].hp == gBattleMons[battler].maxHP) // Gale Wings check
 		++priority;
+	if (GetBattlerAbility(battler) == ABILITY_TRIAGE)
+	{
+		switch (gBattleMoves[move].effect)
+		{
+			case EFFECT_RESTORE_HP:
+			case EFFECT_REST:
+			case EFFECT_MORNING_SUN:
+			case EFFECT_MOONLIGHT:
+			case EFFECT_SYNTHESIS:
+			case EFFECT_HEAL_PULSE:
+			case EFFECT_HEALING_WISH:
+			case EFFECT_SWALLOW:
+			case EFFECT_WISH:
+			case EFFECT_SOFTBOILED:
+			case EFFECT_ABSORB:
+			case EFFECT_ROOST:
+			    priority += 3;
+				break;
+		}
+	}
 	
     return priority;
 }
@@ -3656,6 +3676,8 @@ u32 GetBattlerTotalSpeed(u8 battler)
 	if (IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY) && GetBattlerAbility(battler) == ABILITY_CHLOROPHYLL)
 		monspeed *= 2;
 	if (IsBattlerWeatherAffected(battler, WEATHER_SANDSTORM_ANY) && GetBattlerAbility(battler) == ABILITY_SAND_RUSH)
+		monspeed *= 2;
+	if (IsBattlerWeatherAffected(battler, WEATHER_HAIL_ANY) && GetBattlerAbility(battler) == ABILITY_SLUSH_RUSH)
 		monspeed *= 2;
     if (GetBattlerAbility(battler) == ABILITY_QUICK_FEET && gBattleMons[battler].status1 & STATUS1_ANY)
         monspeed *= 2;
@@ -4175,8 +4197,14 @@ static void SetTypeBeforeUsingMove(u16 move, u8 battler)
 			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
 					gBattleStruct->dynamicMoveType = TYPE_FLYING;
 				break;
+			case ABILITY_GALVANIZE:
+			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
+					gBattleStruct->dynamicMoveType = TYPE_ELECTRIC;
+				break;
 		}
 	}
+	else if (gBattleMoves[move].flags & FLAG_SOUND && GetBattlerAbility(battler) == ABILITY_LIQUID_VOICE)
+		gBattleStruct->dynamicMoveType = TYPE_WATER;
 }
 
 static void HandleAction_UseMove(void)
@@ -4240,6 +4268,8 @@ static void HandleAction_UseMove(void)
         gBattleResults.lastUsedMovePlayer = gCurrentMove;
     else
         gBattleResults.lastUsedMoveOpponent = gCurrentMove;
+	// Set dynamic move type.
+	SetTypeBeforeUsingMove(gCurrentMove, gBattlerAttacker);
     // choose target
     side = BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker));
     if (gSideTimers[side].followmeTimer != 0
@@ -4347,8 +4377,9 @@ static void HandleAction_UseMove(void)
             }
         }
     }
+	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+		gBattleStruct->hpBefore[i] = gBattleMons[i].hp;
     gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
-    SetTypeBeforeUsingMove(gCurrentMove, gBattlerAttacker);
     gCurrentActionFuncId = B_ACTION_EXEC_SCRIPT;
 }
 
