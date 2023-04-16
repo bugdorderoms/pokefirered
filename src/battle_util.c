@@ -205,9 +205,16 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 			return FALSE;
 	}
 	
-	if (IS_BATTLER_OF_TYPE(bankDef, TYPE_POISON) || IS_BATTLER_OF_TYPE(bankDef, TYPE_STEEL))
+	if (!CanPoisonType(bankAtk, bankDef))
 		return FALSE;
 	
+	return TRUE;
+}
+
+bool8 CanPoisonType(u8 bankAtk, u8 bankDef)
+{
+	if (IS_BATTLER_OF_TYPE(bankDef, TYPE_POISON) || IS_BATTLER_OF_TYPE(bankDef, TYPE_STEEL))
+		return FALSE;
 	return TRUE;
 }
 

@@ -2212,6 +2212,13 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					SAFEGUARD_CHECK;
 					return;
 				}
+				if (!CanPoisonType(gBattleScripting.battler, gEffectBattler) && gHitMarker & HITMARKER_IGNORE_SAFEGUARD && (primary == TRUE || certain == MOVE_EFFECT_CERTAIN))
+				{
+					BattleScriptPush(gBattlescriptCurrInstr + 1);
+					gBattlescriptCurrInstr = BattleScript_PSNPrevention;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+					return;
+				}
 				if (CanBePoisoned(gEffectBattler, gBattlerAttacker, FALSE))
 					statusChanged = TRUE;
 				break;
@@ -2226,6 +2233,15 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					SAFEGUARD_CHECK;
 					return;
 				}
+				if (!CanPoisonType(gBattleScripting.battler, gEffectBattler) && gHitMarker & HITMARKER_IGNORE_SAFEGUARD && (primary == TRUE || certain == MOVE_EFFECT_CERTAIN))
+				{
+					BattleScriptPush(gBattlescriptCurrInstr + 1);
+					gBattlescriptCurrInstr = BattleScript_PSNPrevention;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+					return;
+				}
+				if (gBattleMons[gEffectBattler].status1)
+					break;
 				if (CanBePoisoned(gEffectBattler, gBattlerAttacker, FALSE))
 					statusChanged = TRUE;
 				else
@@ -2240,6 +2256,13 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_BRNPrevention;
 					SAFEGUARD_CHECK;
+					return;
+				}
+				if (IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_FIRE) && gHitMarker & HITMARKER_IGNORE_SAFEGUARD && (primary == TRUE || certain == MOVE_EFFECT_CERTAIN))
+				{
+					BattleScriptPush(gBattlescriptCurrInstr + 1);
+					gBattlescriptCurrInstr = BattleScript_BRNPrevention;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 					return;
 				}
 				if (CanBeBurned(gEffectBattler, FALSE))
@@ -2268,6 +2291,13 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					else
 						break;
 				}
+				if (!IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_ELECTRIC) && gHitMarker & HITMARKER_IGNORE_SAFEGUARD && (primary == TRUE || certain == MOVE_EFFECT_CERTAIN))
+				{
+					BattleScriptPush(gBattlescriptCurrInstr + 1);
+					gBattlescriptCurrInstr = BattleScript_PRLZPrevention;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+					return;
+				}
 				if (CanBeParalyzed(gEffectBattler, FALSE))
 					statusChanged = TRUE;
 				break;
@@ -2289,6 +2319,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
             gActiveBattler = gEffectBattler;
             BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gEffectBattler].status1);
             MarkBattlerForControllerExec(gActiveBattler);
+			SAFEGUARD_CHECK;
             // For synchronize
             if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_POISON
              || gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_TOXIC

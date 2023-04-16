@@ -97,6 +97,7 @@ void ResetVarsForAbilityChange(u8 battler);
 void ClearBattlerStatus(u8 battler);
 bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil);
 bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil);
+bool8 CanPoisonType(u8 bankAtk, u8 bankDef);
 bool8 CanBeBurned(u8 bank, bool8 checkFlowerVeil);
 bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil);
 bool8 CanBeParalyzed(u8 bank, bool8 checkFlowerVeil);
