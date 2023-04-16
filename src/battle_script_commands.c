@@ -1404,38 +1404,46 @@ static void atk02_attackstring(void)
 
 static void atk04_critcalc(void)
 {
-    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerAttacker, TRUE);
-    u16 critChance;
-    gPotentialItemEffectBattler = gBattlerAttacker;
+	s16 critChance = CalcMoveCritChance(gBattlerAttacker, gBattlerTarget, gCurrentMove);
 	
-	// Check all effects that increases the crit chance
-    critChance  = 2 * ((gBattleMons[gBattlerAttacker].status2 & STATUS2_FOCUS_ENERGY) != 0) // Focus Energy
-	        + (GetBattlerAbility(gBattlerAttacker) == ABILITY_SUPER_LUCK) // Super Luck
-                + ((gBattleMoves[gCurrentMove].flags & FLAG_HIGH_CRIT) != 0) // High Crit move
-                + (holdEffect == HOLD_EFFECT_SCOPE_LENS) // Scope Lens
-                + 2 * (holdEffect == HOLD_EFFECT_LUCKY_PUNCH && gBattleMons[gBattlerAttacker].species == SPECIES_CHANSEY) // Lucky Punch
-                + 2 * (holdEffect == HOLD_EFFECT_STICK && gBattleMons[gBattlerAttacker].species == SPECIES_FARFETCHD); // Stick
+	gPotentialItemEffectBattler = gBattlerAttacker;
 	
-    if (critChance >= NELEMS(sCriticalHitChance))
-        critChance = NELEMS(sCriticalHitChance) - 1; // Crit chance can't be higer than table's lenght
+	if (gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_FIRST_BATTLE) || !BtlCtrl_OakOldMan_TestState2Flag(1) || critChance == -1)
+		gIsCriticalHit = FALSE;
+	else if (critChance == -2 || !(Random() % sCriticalHitChance[critChance]))
+		gIsCriticalHit = TRUE;
 	
-	// Check if can be crit
-    if (!(Random() % sCriticalHitChance[critChance])
-	&& (GetBattlerAbility(gBattlerTarget) != ABILITY_BATTLE_ARMOR && GetBattlerAbility(gBattlerTarget) != ABILITY_SHELL_ARMOR)
-	&& !(gStatuses3[gBattlerAttacker] & STATUS3_CANT_SCORE_A_CRIT)
-	&& !(gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
-	&& !(gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
-	&& (!(gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) || BtlCtrl_OakOldMan_TestState2Flag(1)))
-        gCritMultiplier = 2;
-    else
-        gCritMultiplier = 1;
-    ++gBattlescriptCurrInstr;
+	++gBattlescriptCurrInstr;
+}
+
+s16 CalcMoveCritChance(u8 battlerAtk, u8 battlerDef, u16 move)
+{
+	u8 holdEffect = GetBattlerItemHoldEffect(battlerAtk, TRUE);
+    s16 critChance;
+	
+	if (gStatuses3[battlerAtk] & STATUS3_CANT_SCORE_A_CRIT || GetBattlerAbility(battlerDef) == ABILITY_BATTLE_ARMOR || GetBattlerAbility(battlerDef) == ABILITY_SHELL_ARMOR)
+		critChance = -1;
+	else if (GetBattlerAbility(battlerAtk) == ABILITY_MERCILESS && gBattleMons[battlerDef].status1 & STATUS1_PSN_ANY)
+		critChance = -2;
+	else
+	{
+		critChance = 2 * ((gBattleMons[battlerAtk].status2 & STATUS2_FOCUS_ENERGY) != 0) // Focus Energy
+		             + (GetBattlerAbility(battlerAtk) == ABILITY_SUPER_LUCK) // Super Luck
+                     + ((gBattleMoves[move].flags & FLAG_HIGH_CRIT) != 0) // High Crit move
+                     + (holdEffect == HOLD_EFFECT_SCOPE_LENS) // Scope Lens
+                     + 2 * (holdEffect == HOLD_EFFECT_LUCKY_PUNCH && gBattleMons[battlerAtk].species == SPECIES_CHANSEY) // Lucky Punch
+                     + 2 * (holdEffect == HOLD_EFFECT_STICK && gBattleMons[battlerAtk].species == SPECIES_FARFETCHD); // Stick
+					 
+		if (critChance >= NELEMS(sCriticalHitChance))
+			critChance = NELEMS(sCriticalHitChance) - 1; // Crit chance can't be higer than table's lenght
+	}
+	return critChance;
 }
 
 static void atk05_damagecalc(void)
 {
 	// Calculate move damage
-    gBattleMoveDamage = CalculateBaseDamage(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, FALSE, gCritMultiplier == 2 ? TRUE : FALSE, TRUE);
+    gBattleMoveDamage = CalculateBaseDamage(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, FALSE, gIsCriticalHit, TRUE);
     ++gBattlescriptCurrInstr;
 }
 
@@ -1894,7 +1902,7 @@ static void atk0D_critmessage(void)
 {
     if (!gBattleControllerExecFlags)
     {
-        if (gCritMultiplier == 2 && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
+        if (gIsCriticalHit && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
         {
             PrepareStringBattle(STRINGID_CRITICALHIT, gBattlerAttacker);
             gBattleCommunication[MSG_DISPLAY] = 1;
@@ -3259,7 +3267,7 @@ static void MoveValuesCleanUp(void)
 {
     gMoveResultFlags = 0;
     gBattleScripting.dmgMultiplier = 1;
-    gCritMultiplier = 1;
+    gIsCriticalHit = FALSE;
     gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
     gBattleCommunication[6] = 0;
     gHitMarker &= ~(HITMARKER_DESTINYBOND);
@@ -7936,7 +7944,7 @@ static void atkC4_trydobeatup(void)
         party = gEnemyParty;
     if (!IsBattlerAlive(gBattlerTarget))
     {
-	gCritMultiplier = 1;
+	gIsCriticalHit = FALSE;
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
     }
     else
@@ -7958,11 +7966,12 @@ static void atkC4_trydobeatup(void)
             gBattleMoveDamage *= gBattleMoves[gCurrentMove].power;
             gBattleMoveDamage *= (GetMonData(&party[gBattleCommunication[0]], MON_DATA_LEVEL) * 2 / 5 + 2);
             gBattleMoveDamage /= gBaseStats[gBattleMons[gBattlerTarget].species].baseDefense;
-	    gBattleMoveDamage *= gCritMultiplier;
+			if (gIsCriticalHit)
+				gBattleMoveDamage *= 2;
 		
 	    AbilityNum = GetMonData(&party[gBattleCommunication[0]], MON_DATA_ABILITY_NUM);
 		
-	    if (GetAbilityBySpecies(GetMonData(&party[gBattleCommunication[0]], MON_DATA_SPECIES), AbilityNum, GetMonData(&party[gBattleCommunication[0]], MON_DATA_ABILITY_HIDDEN)) == ABILITY_SNIPER && gCritMultiplier == 2)
+	    if (GetAbilityBySpecies(GetMonData(&party[gBattleCommunication[0]], MON_DATA_SPECIES), AbilityNum, GetMonData(&party[gBattleCommunication[0]], MON_DATA_ABILITY_HIDDEN)) == ABILITY_SNIPER && gIsCriticalHit)
 		    gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
             gBattleMoveDamage = (gBattleMoveDamage / 50) + 2;
             if (gProtectStructs[gBattlerAttacker].helpingHand)
@@ -7971,12 +7980,12 @@ static void atkC4_trydobeatup(void)
         }
         else if (beforeLoop != 0)
 	{
-	    gCritMultiplier = 1;
+	    gIsCriticalHit = FALSE;
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	}
         else
 	{
-	    gCritMultiplier = 1;
+	    gIsCriticalHit = FALSE;
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 5);
 	}
     }

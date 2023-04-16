@@ -1176,7 +1176,7 @@ static void Cmd_get_highest_type_effectiveness(void)
 	
     gBattleScripting.dmgMultiplier = 1;
     gMoveResultFlags = 0;
-    gCritMultiplier = 1;
+    gIsCriticalHit = FALSE;
     AI_THINKING_STRUCT->funcResult = 0;
 
     for (i = 0; i < MAX_MON_MOVES; i++)
@@ -1215,7 +1215,7 @@ static void Cmd_if_type_effectiveness(void)
 
     gBattleScripting.dmgMultiplier = 1;
     gMoveResultFlags = 0;
-    gCritMultiplier = 1;
+    gIsCriticalHit = FALSE;
 
     gBattleMoveDamage = AI_EFFECTIVENESS_x1;
     gCurrentMove = AI_THINKING_STRUCT->moveConsidered;

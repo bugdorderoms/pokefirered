@@ -117,5 +117,6 @@ bool8 IsBattlerAlive(u8 battlerId);
 struct Pokemon *GetBattlerPartyIndexPtr(u8 battler);
 bool8 IsBattlerWeatherAffected(u8 battlerId, u16 weatherFlags);
 bool8 TryChangeBattleWeather(u8 battlerId, u8 weatherEnumId);
+s16 CalcMoveCritChance(u8 battlerAtk, u8 battlerDef, u16 move);
 
 #endif // GUARD_BATTLE_UTIL_H

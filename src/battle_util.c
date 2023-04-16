@@ -2697,7 +2697,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    }
 			    break;
 		    case ABILITY_ANGER_POINT:
-			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && gCritMultiplier == 2
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && gIsCriticalHit
 				&& IsBattlerAlive(gBattlerTarget) && !SubsBlockMove(gBattlerAttacker, gBattlerTarget, moveArg)
 				&& gBattleMons[gBattlerTarget].statStages[STAT_ATK] < 0xC)
 			    {
@@ -2838,6 +2838,17 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				{
 					gEffectBattler = gBattlerTarget;
 					SET_STATCHANGER(STAT_DEF, 1, FALSE);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaiseRet;
+					effect++;
+				}
+				break;
+			case ABILITY_WATER_COMPACTION:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && IsBattlerAlive(gBattlerTarget) && gBattleMons[gBattlerTarget].statStages[STAT_DEF] < 0xC
+				&& moveType == TYPE_WATER)
+				{
+					gEffectBattler = gBattlerTarget;
+					SET_STATCHANGER(STAT_DEF, 2, FALSE);
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaiseRet;
 					effect++;
