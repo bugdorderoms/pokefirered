@@ -9186,7 +9186,7 @@ static void atkFC_loadabilitypopup(void)
 	
 	if (gBattlescriptCurrInstr[1] != REMOVE_POP_UP)
 	{
-		if (gBattleScripting.fixedAbilityPopUp)
+		if (gBattleScripting.fixedAbilityPopUp && gActiveAbilityPopUps & gBitTable[gActiveBattler])
 		{
 			gBattlescriptCurrInstr += 5;
 			return;

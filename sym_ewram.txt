@@ -139,3 +139,4 @@
 	.include "src/ev_iv_display.o"
 	.include "src/ride_pager.o"
 	.include "src/dexnav.o"
+	.include "src/battle_anim_special.o"
