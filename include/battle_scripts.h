@@ -284,6 +284,7 @@ extern const u8 BattleScript_PrimordialSeaFizzlesOutFireTypeMoves[];
 extern const u8 BattleScript_DesolateLandEvaporatesWaterTypeMoves[];
 extern const u8 BattleScript_FogContinues[];
 extern const u8 BattleScript_FogEnded[];
+extern const u8 BattleScript_DazzlingProtected[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForBallThrow[];

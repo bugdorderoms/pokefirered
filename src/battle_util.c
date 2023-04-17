@@ -57,6 +57,8 @@ static const u8 sAuraBreakString[] = _("{B_ATK_NAME_WITH_PREFIX} reversed all\no
 static const u8 sPrimordialSeaString[] = _("A heavy rain began to fall!");
 static const u8 sDesolateLandString[] = _("The sunlight turned\nextremely harsh!");
 static const u8 sDeltaStreamString[] = _("A mysterious air current is\nprotecting Flying-type Pokémon!");
+static const u8 sComatoseString[] = _("{B_ATK_NAME_WITH_PREFIX} is drowsing!");
+static const u8 sDazzlingString[] = _("{B_ATK_NAME_WITH_PREFIX} cannot\nuse {B_CURRENT_MOVE}!");
 
 static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
 {
@@ -164,6 +166,8 @@ static bool8 CanBeStatused(u8 bank, bool8 checkFlowerVeil)
 		    if (checkFlowerVeil && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
 				return FALSE;
 			break;
+		case ABILITY_COMATOSE:
+		    return FALSE;
 	}
 	if (!(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
 	{
@@ -213,9 +217,9 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 
 bool8 CanPoisonType(u8 bankAtk, u8 bankDef)
 {
-	if (IS_BATTLER_OF_TYPE(bankDef, TYPE_POISON) || IS_BATTLER_OF_TYPE(bankDef, TYPE_STEEL))
-		return FALSE;
-	return TRUE;
+	if ((GetBattlerAbility(bankAtk) == ABILITY_CORROSION && IS_MOVE_STATUS(gCurrentMove)) || !(IS_BATTLER_OF_TYPE(bankDef, TYPE_POISON) || IS_BATTLER_OF_TYPE(bankDef, TYPE_STEEL)))
+		return TRUE;
+	return FALSE;
 }
 
 bool8 CanBeBurned(u8 bank, bool8 checkFlowerVeil)
@@ -2262,6 +2266,11 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 		++effect;
 		break;
+		case ABILITY_COMATOSE:
+		    gSetWordLoc = sComatoseString;
+		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+		++effect;
+		break;
             }
             break;
         case ABILITYEFFECT_ENDTURN: // 1
@@ -2470,13 +2479,25 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 			    if (gBattleMoves[moveArg].flags & FLAG_BALLISTIC)
 					effect = 1;
 				break;
+			case ABILITY_QUEENLY_MAJESTY:
+			case ABILITY_DAZZLING:
+			case ABILITY_ARMOR_TAIL:
+			    if (GetChosenMovePriority(gBattlerAttacker) > 0 && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(battler))
+				{
+					gSetWordLoc = sDazzlingString;
+					effect = 2;
+				}
+				break;
 	    }
 			
 	    if (effect)
 	    {
 		    if (gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS)
 			    gHitMarker |= HITMARKER_NO_PPDEDUCT;
-		    gBattlescriptCurrInstr = BattleScript_SoundproofProtected;
+			if (effect == 1)
+				gBattlescriptCurrInstr = BattleScript_SoundproofProtected;
+			else
+				gBattlescriptCurrInstr = BattleScript_DazzlingProtected;
 	    }
 	    break;
         case ABILITYEFFECT_ABSORBING: // 3
@@ -2872,6 +2893,15 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaiseRet;
 					effect++;
+				}
+				break;
+			case ABILITY_INNARDS_OUT:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && !IsBattlerAlive(gBattlerTarget) && IsBattlerAlive(gBattlerAttacker))
+				{
+					gBattleMoveDamage = gSpecialStatuses[gBattlerTarget].dmg;
+					BattleScriptPushCursor();
+				    gBattlescriptCurrInstr = BattleScript_RoughSkinActivates;
+				    ++effect;
 				}
 				break;
 	    }

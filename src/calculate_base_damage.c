@@ -451,6 +451,10 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			    if (type == TYPE_ELECTRIC)
 					goto NORMALIZE_CHECK;
 				break;
+			case ABILITY_NEUROFORCE:
+			    if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
+					gBattleMovePower += gBattleMovePower / 4;
+				break;
 		}
 		// Aura abilities
 		if ((ABILITY_ON_FIELD(ABILITY_DARK_AURA) && type == TYPE_DARK) || (ABILITY_ON_FIELD(ABILITY_FAIRY_AURA) && type == TYPE_FAIRY))
@@ -468,6 +472,10 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				case ABILITY_FLOWER_GIFT:
 				    if (IsBattlerWeatherAffected(battlerIdAtk, WEATHER_SUN_ANY))
 						attack = (15 * attack) / 10;
+					break;
+				case ABILITY_BATTERY:
+				    if (IS_MOVE_SPECIAL(move))
+						gBattleMovePower = (gBattleMovePower * 13) / 10;
 					break;
 			}
 		}
@@ -498,10 +506,12 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				break;
 			case ABILITY_FILTER:
 			case ABILITY_SOLID_ROCK:
+			case ABILITY_PRISM_ARMOR:
 				if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
 					gBattleMovePower = (gBattleMovePower * 75) / 100;
 				break;
 			case ABILITY_MULTISCALE:
+			case ABILITY_SHADOW_SHIELD:
 				if (defender->hp == defender->maxHP)
 					gBattleMovePower /= 2;
 				break;
@@ -515,6 +525,12 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			case ABILITY_WATER_BUBBLE:
 			    if (type == TYPE_FIRE)
 					gBattleMovePower /= 2;
+				break;
+			case ABILITY_FLUFFY:
+			    if (IsMoveMakingContact(battlerIdAtk, move))
+					gBattleMovePower /= 2;
+				if (type == TYPE_FIRE)
+					gBattleMovePower *= 2;
 				break;
 		}
 		// defender's ally abilities check

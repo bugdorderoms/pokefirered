@@ -3563,18 +3563,6 @@ enum
 	SPEED_TIE,
 };
 
-static s8 GetChosenMovePriority(u8 battler)
-{
-	u16 move;
-	
-	if (gProtectStructs[battler].noValidMoves)
-        move = MOVE_STRUGGLE;
-    else
-        move = gBattleMons[battler].moves[*(gBattleStruct->chosenMovePositions + battler)];
-	
-	return GetMovePriority(battler, move);
-}
-
 u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
 {
     s8 battler1Priority = 0, battler2Priority = 0;
@@ -3621,7 +3609,19 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
             return SPEED_TIE;
     }
 }
-    
+
+s8 GetChosenMovePriority(u8 battler)
+{
+	u16 move;
+	
+	if (gProtectStructs[battler].noValidMoves)
+        move = MOVE_STRUGGLE;
+    else
+        move = gBattleMons[battler].moves[*(gBattleStruct->chosenMovePositions + battler)];
+	
+	return GetMovePriority(battler, move);
+}
+
 s8 GetMovePriority(u8 battler, u16 move)
 {
     s8 priority = gBattleMoves[move].priority;
@@ -3630,7 +3630,7 @@ s8 GetMovePriority(u8 battler, u16 move)
 		++priority;
 	if (GetBattlerAbility(battler) == ABILITY_GALE_WINGS && gBattleMoves[move].type == TYPE_FLYING && gBattleMons[battler].hp == gBattleMons[battler].maxHP) // Gale Wings check
 		++priority;
-	if (GetBattlerAbility(battler) == ABILITY_TRIAGE)
+	if (GetBattlerAbility(battler) == ABILITY_TRIAGE) // Triage check
 	{
 		switch (gBattleMoves[move].effect)
 		{

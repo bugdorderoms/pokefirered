@@ -3684,16 +3684,16 @@ static void atk42_trysetsleep(void)
 		{
 			case ABILITY_INSOMNIA:
 			case ABILITY_VITAL_SPIRIT:
+			    gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 				gLastUsedAbility = gBattleMons[bank].ability;
-				gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 				gBattlescriptCurrInstr = jumpPtr;
 				RecordAbilityBattle(bank, gLastUsedAbility);
 				return;
 			case ABILITY_LEAF_GUARD:
 				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
 				{
-					gLastUsedAbility = gBattleMons[bank].ability;
 					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+					gLastUsedAbility = gBattleMons[bank].ability;
 					gBattlescriptCurrInstr = jumpPtr;
 					RecordAbilityBattle(bank, gLastUsedAbility);
 					return;
@@ -3711,6 +3711,12 @@ static void atk42_trysetsleep(void)
 			case ABILITY_SWEET_VEIL:
 			    gLastUsedAbility = gBattleMons[bank].ability;
 				gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+				RecordAbilityBattle(bank, gLastUsedAbility);
+				return;
+			case ABILITY_COMATOSE:
+			    gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+			    gLastUsedAbility = gBattleMons[bank].ability;
+				gBattlescriptCurrInstr = jumpPtr;
 				RecordAbilityBattle(bank, gLastUsedAbility);
 				return;
 		}
@@ -3883,7 +3889,7 @@ static void atk48_playstatchangeanimation(void)
                     }
                 }
                 else if (!gSideTimers[GET_BATTLER_SIDE(gActiveBattler)].mistTimer && GetBattlerAbility(gActiveBattler) != ABILITY_CLEAR_BODY
-			 && GetBattlerAbility(gActiveBattler) != ABILITY_WHITE_SMOKE 
+			 && GetBattlerAbility(gActiveBattler) != ABILITY_WHITE_SMOKE && GetBattlerAbility(gActiveBattler) != ABILITY_FULL_METAL_BODY
 			 && !(GetBattlerAbility(gActiveBattler) == ABILITY_KEEN_EYE && currStat == STAT_ACC)
 			 && !(GetBattlerAbility(gActiveBattler) == ABILITY_HYPER_CUTTER && currStat == STAT_ATK)
 			 && !(GetBattlerAbility(gActiveBattler) == ABILITY_BIG_PECKS && currStat == STAT_DEF)
@@ -6179,7 +6185,7 @@ static void atk84_trysetpoison(void)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed;
 		return;
 	}
-	else if (IS_BATTLER_OF_TYPE(bank, TYPE_POISON) || IS_BATTLER_OF_TYPE(bank, TYPE_STEEL))
+	else if (!CanPoisonType(gBattlerAttacker, bank))
 	{
 		gBattlescriptCurrInstr = BattleScript_NotAffected;
 		return;
@@ -6194,6 +6200,7 @@ static void atk84_trysetpoison(void)
 		switch (GetBattlerAbility(bank))
 		{
 			case ABILITY_IMMUNITY:
+			case ABILITY_COMATOSE:
 				gLastUsedAbility = gBattleMons[bank].ability;
 				gBattlescriptCurrInstr = BattleScript_ImmunityProtected;
 				return;
@@ -6344,8 +6351,8 @@ static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
             return STAT_CHANGE_DIDNT_WORK;
         }
         else if ((GetBattlerAbility(gActiveBattler) == ABILITY_CLEAR_BODY || GetBattlerAbility(gActiveBattler) == ABILITY_WHITE_SMOKE
-		 || (GetBattlerAbility(gActiveBattler) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_GRASS)))
-		 && !certain && gCurrentMove != MOVE_CURSE)
+		 || GetBattlerAbility(gActiveBattler) == ABILITY_FULL_METAL_BODY || (GetBattlerAbility(gActiveBattler) == ABILITY_FLOWER_VEIL
+		 && IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_GRASS))) && !certain && gCurrentMove != MOVE_CURSE)
         {
             if (flags == STAT_CHANGE_BS_PTR)
             {
@@ -7391,6 +7398,7 @@ static void atkAC_trysetburn(void)
 		{
 			case ABILITY_WATER_VEIL:
 			case ABILITY_WATER_BUBBLE:
+			case ABILITY_COMATOSE:
 				gLastUsedAbility = gBattleMons[bank].ability;
 				gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
 				return;
@@ -7675,6 +7683,7 @@ static void atkB6_trysetparalyze(void)
 		switch (GetBattlerAbility(bank))
 		{
 			case ABILITY_LIMBER:
+			case ABILITY_COMATOSE:
 				gLastUsedAbility = gBattleMons[bank].ability;
 				gBattlescriptCurrInstr = BattleScript_LimberProtected;
 				return;
