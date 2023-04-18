@@ -397,7 +397,7 @@ struct BattleStruct
     u8 absentBattlerFlags;
     u8 AI_monToSwitchIntoId[2];
     u8 simulatedInputState[4];  // used by Oak/Old Man/Pokedude controllers
-    u8 lastTakenMove[MAX_BATTLERS_COUNT * 2 * 2]; // ask gamefreak why they declared it that way
+    u16 lastTakenMove[MAX_BATTLERS_COUNT];
     u16 hpOnSwitchout[2];
     u16 abilityPreventingSwitchout;
     u8 hpScale;
@@ -418,7 +418,7 @@ struct BattleStruct
     u8 field_DA; // battle tower related
     u8 turnSideTracker;
     u8 givenExpMons;
-    u8 lastTakenMoveFrom[MAX_BATTLERS_COUNT * MAX_BATTLERS_COUNT * 2];
+    u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT];
     u16 castformPalette[MAX_BATTLERS_COUNT][16];
     u8 wishPerishSongState;
     u8 wishPerishSongBattlerId;
