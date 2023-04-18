@@ -47,6 +47,7 @@ Auto Run (ghoulslash And BlackUser)
 Ride Pager (BlackUser)
 Naming Screen Case Swap Button (セケツ)
 Day And Night Encounters (BlackUser)
+Triple-Layer Metatiles
 
 // Can Be Turned On/Off
 // To Define Which Hacks Will Be Inserted In The Rom Go To include/constants > inserts.h
@@ -72,105 +73,6 @@ Full Exp For Participating In A Battle (DoesntKnowHowToPlay)
 Emerald Style Gender Select Intro (Meister_anon~Master_o f_None)
 Shuckle Makes Berry Juice (AsparagusEduardo)
 Display Party Mon Icons On Continue Screen (BlackUser)
-
-//Abilities Added and completed
-Adaptability
-Aftermath
-Anger Point
-Anticipation
-Bad Dreams
-Download
-Dry Skin
-Filter
-Frisk
-Heatproof
-Honey Gather
-Hydration
-Ice Body
-Klutz
-Leaf Guard
-Magic guard
-Motor drive
-No guard
-poison heal
-rivalry
-scrappy
-simple
-skill link
-snow cloak
-snow warning
-solar power
-quick feet
-solid rock
-stall
-steadfast
-super luck
-tangled feet
-technician
-tinted lens
-unaware
-pickpocket
-unnerve
-defiant
-defeatist
-cursed body
-healer
-friend guard
-storm drain
-weak armor
-heavy metal
-light metal
-multiscale
-toxic boost
-flare boost
-harvest
-telepathy
-moody
-overcoat
-poison touch
-regenerator
-big pecks
-sand rush
-wonder skin
-analytic
-illusion
-imposter
-infiltrator
-mummy
-moxie
-justified
-rattled
-magic bounce
-sap sipper
-sand force
-iron barbs
-zen mode
-victory star
-turboblaze
-teravolt
-aroma veil
-flower veil
-protean
-fur coat
-bulletproof
-competitive
-strong jaw
-refrigerate
-sweet veil
-stance change
-gale wings
-mega launcher
-tough claws
-pixilate
-gooey
-aerilate
-dark aura
-fairy aura
-aura break
-primordial sea
-desolate land
-delta stream
-stamina
 
 // put in
 evolve without national dex
