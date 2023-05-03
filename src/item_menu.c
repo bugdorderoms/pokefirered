@@ -44,6 +44,7 @@ enum BagSortOptions
     SORT_BY_AMOUNT, //greatest->least
     SORT_BY_NUMBER, //by itemID
 };
+
 enum ItemSortType
 {
 	ITEM_TYPE_FIELD_USE,
@@ -350,7 +351,8 @@ static const TaskFunc sItemContextTaskFuncs[] = {
     [ITEMMENULOCATION_ITEMPC] = Task_ItemContext_Deposit,
     [ITEMMENULOCATION_PCBOX]  = Task_ItemContext_PcBoxGive,
     [ITEMMENULOCATION_BATTLE] = Task_ItemContext_FieldOrBattle,
-    [ITEMMENULOCATION_OLD_MAN] = NULL
+    [ITEMMENULOCATION_OLD_MAN] = NULL,
+	[ITEMMENULOCATION_CHOOSE_ITEM] = ItemMenu_StartFadeToExitCallback,
 };
 
 static const u8 *const sSortTypeStrings[] = 

@@ -8,7 +8,8 @@ enum TmCaseType
     TMCASE_FROMMARTSELL,
     TMCASE_FROMPOKEMONSTORAGEPC,
     TMCASE_FROMBATTLE,
-    TMCASE_NA
+    TMCASE_NA,
+	TMCASE_CHOOSE_ITEM
 };
 
 void InitTMCase(u8 a0, void (* a1)(void), u8 a2);

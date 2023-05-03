@@ -7705,36 +7705,41 @@ static void CalcWhetherObjectIsOffscreen(struct ObjectEvent *objectEvent, struct
     s16 var;
 
     objectEvent->offScreen = FALSE;
-    graphicsInfo = GetObjectEventGraphicsInfo(objectEvent->graphicsId);
-    if (sprite->coordOffsetEnabled)
-    {
-        x = sprite->x + sprite->x2 + sprite->centerToCornerVecX + gSpriteCoordOffsetX;
-        y = sprite->y + sprite->y2 + sprite->centerToCornerVecY + gSpriteCoordOffsetY;
-    }
-    else
-    {
-        x = sprite->x + sprite->x2 + sprite->centerToCornerVecX;
-        y = sprite->y + sprite->y2 + sprite->centerToCornerVecY;
-    }
-    x2 = graphicsInfo->width + (s16)x;
-    y2 = graphicsInfo->height + (s16)y;
-    
-    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SSANNE_EXTERIOR) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(SSANNE_EXTERIOR) && objectEvent->localId == 1)
-    {
-        var = -32;
-    }
-    else
-    {
-        var = -16;
-    }
-    if ((s16)x >= 256 || (s16)x2 < var)
-    {
-        objectEvent->offScreen = TRUE;
-    }
-    if ((s16)y >= 176 || (s16)y2 < -16)
-    {
-        objectEvent->offScreen = TRUE;
-    }
+	
+	if (!FlagGet(FLAG_LOAD_OFFSCREEN_OBJ))
+	{
+		graphicsInfo = GetObjectEventGraphicsInfo(objectEvent->graphicsId);
+		
+		if (sprite->coordOffsetEnabled)
+		{
+			x = sprite->x + sprite->x2 + sprite->centerToCornerVecX + gSpriteCoordOffsetX;
+			y = sprite->y + sprite->y2 + sprite->centerToCornerVecY + gSpriteCoordOffsetY;
+		}
+		else
+		{
+			x = sprite->x + sprite->x2 + sprite->centerToCornerVecX;
+			y = sprite->y + sprite->y2 + sprite->centerToCornerVecY;
+		}
+		x2 = graphicsInfo->width + (s16)x;
+		y2 = graphicsInfo->height + (s16)y;
+		
+		if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SSANNE_EXTERIOR) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(SSANNE_EXTERIOR) && objectEvent->localId == 1)
+		{
+			var = -32;
+		}
+		else
+		{
+			var = -16;
+		}
+		if ((s16)x >= 256 || (s16)x2 < var)
+		{
+			objectEvent->offScreen = TRUE;
+		}
+		if ((s16)y >= 176 || (s16)y2 < -16)
+		{
+			objectEvent->offScreen = TRUE;
+		}
+	}
 }
 
 static void UpdateObjEventSpriteVisibility(struct ObjectEvent *objectEvent, struct Sprite *sprite)

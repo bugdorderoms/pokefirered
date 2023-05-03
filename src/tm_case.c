@@ -95,6 +95,7 @@ static void Subtask_CloseContextMenuAndReturnToMain(u8 taskId);
 static void TMHMContextMenuAction_Exit(u8 taskId);
 static void Task_SelectTMAction_Type1(u8 taskId);
 static void Task_SelectTMAction_Type3(u8 taskId);
+static void Task_BeginFadeOutFromTMCase(u8 taskId);
 static void Task_SelectTMAction_FromSellMenu(u8 taskId);
 static void Task_AskConfirmSaleWithAmount(u8 taskId);
 static void Task_PlaceYesNoBox(u8 taskId);
@@ -160,7 +161,10 @@ static void (*const sSelectTMActionTasks[])(u8 taskId) = {
     Task_SelectTMAction_FromFieldBag,
     Task_SelectTMAction_Type1,
     Task_SelectTMAction_FromSellMenu,
-    Task_SelectTMAction_Type3
+    Task_SelectTMAction_Type3,
+	NULL,
+	NULL,
+	Task_BeginFadeOutFromTMCase,
 };
 
 static const struct MenuAction sMenuActions_UseGiveExit[] = {

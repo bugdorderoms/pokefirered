@@ -15,11 +15,14 @@
 #include "region_map.h"
 #include "task.h"
 #include "battle_tower.h"
+#include "berry_pouch.h"
 #include "field_camera.h"
 #include "field_effect.h"
 #include "event_object_movement.h"
 #include "menu_indicators.h"
 #include "random.h"
+#include "tm_case.h"
+#include "item_menu.h"
 #include "mail_data.h"
 #include "pokemon_storage_system.h"
 #include "script_menu.h"
@@ -34,6 +37,7 @@
 #include "new_menu_helpers.h"
 #include "constants/pokemon.h"
 #include "constants/songs.h"
+#include "constants/item_menu.h"
 #include "constants/items.h"
 #include "constants/maps.h"
 #include "constants/region_map_sections.h"
@@ -2465,4 +2469,22 @@ static void Task_WingFlapSound(u8 taskId)
     }
     if (data[0] == gSpecialVar_0x8004 - 1)
         DestroyTask(taskId);
+}
+
+void ChooseItemFromBag(void)
+{
+	u8 pocket = VarGet(VAR_TEMP_0);
+	
+	switch (pocket)
+	{
+		case POCKET_TM_CASE:
+		    InitTMCase(TMCASE_CHOOSE_ITEM, CB2_ReturnToFieldContinueScript, 0);
+			break;
+		case POCKET_BERRY_POUCH:
+		    InitBerryPouch(BERRYPOUCH_CHOOSE_ITEM, CB2_ReturnToFieldContinueScript, 0);
+			break;
+		default:
+		    GoToBagMenu(ITEMMENULOCATION_CHOOSE_ITEM, pocket - 1, CB2_ReturnToFieldContinueScript);
+			break;
+	}
 }
