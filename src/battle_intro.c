@@ -467,11 +467,9 @@ static void BattleIntroSlideLink(u8 taskId)
 
 void CopyBattlerSpriteToBg(s32 bgId, u8 x, u8 y, u8 battlerPosition, u8 palno, u8 *tilesDest, u16 *tilemapDest, u16 tilesOffset)
 {
-    s32 i, j;
-    u8 battler = GetBattlerAtPosition(battlerPosition);
-    s32 offset = tilesOffset;
+    s32 i, j, offset = tilesOffset;
 
-    CpuCopy16(gMonSpritesGfxPtr->sprites[battlerPosition] + BG_SCREEN_SIZE * gBattleMonForms[battler], tilesDest, BG_SCREEN_SIZE);
+    CpuCopy16(gMonSpritesGfxPtr->sprites[battlerPosition] + BG_SCREEN_SIZE * 0, tilesDest, BG_SCREEN_SIZE);
     LoadBgTiles(bgId, tilesDest, 0x1000, tilesOffset);
     for (i = y; i < y + 8; ++i)
         for (j = x; j < x + 8; ++j)

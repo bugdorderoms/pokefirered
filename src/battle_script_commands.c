@@ -35,6 +35,7 @@
 #include "constants/battle_anim.h"
 #include "constants/battle_move_effects.h"
 #include "constants/battle_script_commands.h"
+#include "constants/form_change.h"
 #include "constants/items.h"
 #include "constants/hold_effects.h"
 #include "constants/songs.h"
@@ -153,7 +154,7 @@ static void atk46_playanimation2(void);
 static void atk47_setgraphicalstatchangevalues(void);
 static void atk48_playstatchangeanimation(void);
 static void atk49_moveend(void);
-static void atk4A_nop(void);
+static void atk4A_formchange(void);
 static void atk4B_returnatktoball(void);
 static void atk4C_getswitchedmondata(void);
 static void atk4D_switchindataupdate(void);
@@ -309,7 +310,7 @@ static void atkE2_switchoutabilities(void);
 static void atkE3_jumpifhasnohp(void);
 static void atkE4_getsecretpowereffect(void);
 static void atkE5_pickup(void);
-static void atkE6_docastformchangeanimation(void);
+static void atkE6_nop(void);
 static void atkE7_trycastformdatachange(void);
 static void atkE8_settypebasedhalvers(void);
 static void atkE9_nop(void);
@@ -411,7 +412,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk47_setgraphicalstatchangevalues,
     atk48_playstatchangeanimation,
     atk49_moveend,
-    atk4A_nop,
+    atk4A_formchange,
     atk4B_returnatktoball,
     atk4C_getswitchedmondata,
     atk4D_switchindataupdate,
@@ -567,7 +568,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkE3_jumpifhasnohp,
     atkE4_getsecretpowereffect,
     atkE5_pickup,
-    atkE6_docastformchangeanimation,
+    atkE6_nop,
     atkE7_trycastformdatachange,
     atkE8_settypebasedhalvers,
     atkE9_nop,
@@ -1049,7 +1050,7 @@ static void atk00_attackcanceler(void)
 			case SPECIES_AEGISLASH:
 			    if (!IS_MOVE_STATUS(gCurrentMove))
 				{
-					DoBattleFormChange(gBattlerAttacker, SPECIES_AEGISLASH_BLADE, FALSE, TRUE, FALSE);
+					DoBattleFormChange(gBattlerAttacker, SPECIES_AEGISLASH_BLADE, FALSE, FALSE);
 					gSetWordLoc = sStanceChangeToBladeString;
 					gLastUsedAbility = ABILITY_STANCE_CHANGE;
 					BattleScriptPushCursor();
@@ -1060,7 +1061,7 @@ static void atk00_attackcanceler(void)
 			case SPECIES_AEGISLASH_BLADE:
 			    if (gCurrentMove == MOVE_KINGS_SHIELD)
 				{
-					DoBattleFormChange(gBattlerAttacker, SPECIES_AEGISLASH, FALSE, TRUE, FALSE);
+					DoBattleFormChange(gBattlerAttacker, SPECIES_AEGISLASH, FALSE, FALSE);
 					gSetWordLoc = sStanceChangeToShieldString;
 					gLastUsedAbility = ABILITY_STANCE_CHANGE;
 					BattleScriptPushCursor();
@@ -1408,10 +1409,16 @@ static void atk04_critcalc(void)
 	
 	gPotentialItemEffectBattler = gBattlerAttacker;
 	
-	if (gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_FIRST_BATTLE) || !BtlCtrl_OakOldMan_TestState2Flag(1) || critChance == -1)
+	if (gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_POKEDUDE) || (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE && !BtlCtrl_OakOldMan_TestState2Flag(1)) || critChance == -1)
 		gIsCriticalHit = FALSE;
 	else if (critChance == -2 || !(Random() % sCriticalHitChance[critChance]))
+	{
 		gIsCriticalHit = TRUE;
+		
+		// counter for EVO_CRITICAL_HITS
+		if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER && gPartyCriticalHits[gBattlerPartyIndexes[gBattlerAttacker]] < 255)
+			++gPartyCriticalHits[gBattlerPartyIndexes[gBattlerAttacker]];
+	}
 	
 	++gBattlescriptCurrInstr;
 }
@@ -1419,7 +1426,7 @@ static void atk04_critcalc(void)
 s16 CalcMoveCritChance(u8 battlerAtk, u8 battlerDef, u16 move)
 {
 	u8 holdEffect = GetBattlerItemHoldEffect(battlerAtk, TRUE);
-    s16 critChance;
+    s16 critChance = 0;
 	
 	if (gStatuses3[battlerAtk] & STATUS3_CANT_SCORE_A_CRIT || GetBattlerAbility(battlerDef) == ABILITY_BATTLE_ARMOR || GetBattlerAbility(battlerDef) == ABILITY_SHELL_ARMOR)
 		critChance = -1;
@@ -2807,7 +2814,7 @@ static void atk1B_cleareffectsonfaint(void)
         BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 0x4, &gBattleMons[gActiveBattler].status1);
         MarkBattlerForControllerExec(gActiveBattler);
         FaintClearSetData(); // Effects like attractions, trapping, etc.
-		TryDoBattleFormChange(gActiveBattler, BATTLE_FORM_CHANGE_FAINT);
+		DoSpecialFormChange(gActiveBattler, gBattlerPartyIndexes[gActiveBattler], FORM_CHANGE_FAINT);
         gBattlescriptCurrInstr += 2;
     }
 }
@@ -4200,9 +4207,22 @@ static void atk49_moveend(void)
         gBattlescriptCurrInstr += 3;
 }
 
-static void atk4A_nop(void)
+static void atk4A_formchange(void)
 {
-    ++gBattlescriptCurrInstr;
+	u8 battlerId;
+	
+	if (!gBattleControllerExecFlags)
+	{
+		battlerId = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+		
+		if (!IsBattlerAlive(battlerId) || gBattleMons[battlerId].species != T1_READ_16(gBattlescriptCurrInstr + 2))
+			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 8);
+		else
+		{
+			DoBattleFormChange(battlerId, T1_READ_16(gBattlescriptCurrInstr + 4), T1_READ_8(gBattlescriptCurrInstr + 6), T1_READ_8(gBattlescriptCurrInstr + 7));
+			gBattlescriptCurrInstr += 12;
+		}
+	}
 }
 
 static void atk4B_returnatktoball(void)
@@ -4685,6 +4705,9 @@ static void atk52_switchineffects(void)
     UpdateSentPokesToOpponentValue(gActiveBattler);
     gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
     gSpecialStatuses[gActiveBattler].flag40 = 0;
+	
+	if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
+		gBattleStruct->appearedInBattle |= gBitTable[gBattlerPartyIndexes[gActiveBattler]];
 	
     if (!(gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_SPIKES_DAMAGED) && (gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_SPIKES)
 	&& !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_FLYING) && GetBattlerAbility(gActiveBattler) != ABILITY_LEVITATE)
@@ -8499,13 +8522,17 @@ static void atkE1_trygetintimidatetarget(void)
 
 static void atkE2_switchoutabilities(void)
 {
+	u16 temp;
+	
 	gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+	
+	SWAP(gBattlerPartyIndexes[gActiveBattler], *(gBattleStruct->battlerPartyIndexes + gActiveBattler), temp);
 	
 	switch (GetBattlerAbility(gActiveBattler))
 	{
 		case ABILITY_NATURAL_CURE:
 			gBattleMons[gActiveBattler].status1 = 0;
-			BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, gBitTable[*(gBattleStruct->battlerPartyIndexes + gActiveBattler)], 4, &gBattleMons[gActiveBattler].status1);
+			BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, gBitTable[gBattlerPartyIndexes[gActiveBattler]], 4, &gBattleMons[gActiveBattler].status1);
 			MarkBattlerForControllerExec(gActiveBattler);
 			break;
 		case ABILITY_REGENERATOR:
@@ -8513,11 +8540,25 @@ static void atkE2_switchoutabilities(void)
 			gBattleMoveDamage += gBattleMons[gActiveBattler].hp;
 			if (gBattleMoveDamage > gBattleMons[gActiveBattler].maxHP)
 				gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP;
-			BtlController_EmitSetMonData(0, REQUEST_HP_BATTLE, gBitTable[*(gBattleStruct->battlerPartyIndexes + gActiveBattler)], 2, &gBattleMoveDamage);
+			BtlController_EmitSetMonData(0, REQUEST_HP_BATTLE, gBitTable[gBattlerPartyIndexes[gActiveBattler]], 2, &gBattleMoveDamage);
 			MarkBattlerForControllerExec(gActiveBattler);
 			break;
+		case ABILITY_ZERO_TO_HERO:
+		    if (gBattleMons[gActiveBattler].species == SPECIES_PALAFIN)
+			{
+				u16 newSpecies = TryDoBattleFormChange(gActiveBattler, FORM_CHANGE_SWITCH_OUT);
+				
+				if (newSpecies)
+				{
+					DoBattleFormChange(gActiveBattler, newSpecies, FALSE, FALSE);
+					gBattleStruct->zeroToHeroActivated[gBattlerPartyIndexes[gActiveBattler]][GetBattlerSide(gActiveBattler)] = TRUE; // for switch in message activate
+				}
+			}
+			break;
     }
-	TryDoBattleFormChange(gActiveBattler, BATTLE_FORM_CHANGE_SWITCH_OUT);
+	DoSpecialFormChange(gActiveBattler, gBattlerPartyIndexes[gActiveBattler], FORM_CHANGE_SWITCH_OUT);
+	
+	SWAP(gBattlerPartyIndexes[gActiveBattler], *(gBattleStruct->battlerPartyIndexes + gActiveBattler), temp);
 	
     gBattlescriptCurrInstr += 2;
 }
@@ -8619,28 +8660,27 @@ static void atkE5_pickup(void)
     ++gBattlescriptCurrInstr;
 }
 
-static void atkE6_docastformchangeanimation(void)
+static void atkE6_nop(void)
 {
-    gActiveBattler = gBattleScripting.battler;
-	
-    if (gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE)
-        *(&gBattleStruct->formToChangeInto) |= 0x80;
-    BtlController_EmitBattleAnimation(0, B_ANIM_CASTFORM_CHANGE, gBattleStruct->formToChangeInto);
-    MarkBattlerForControllerExec(gActiveBattler);
     ++gBattlescriptCurrInstr;
 }
 
 static void atkE7_trycastformdatachange(void)
 {
-    u8 form;
-
-    ++gBattlescriptCurrInstr;
-    form = CastformDataTypeChange(gBattleScripting.battler);
-    if (form)
-    {
-        BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
-        *(&gBattleStruct->formToChangeInto) = form - 1;
-    }
+	u8 battler = gBattleScripting.battler;
+    u16 newSpecies = SPECIES_NONE;
+	
+	if (GetBattlerAbility(battler) == ABILITY_FORECAST || GetBattlerAbility(battler) == ABILITY_FLOWER_GIFT)
+		newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_WEATHER);
+	
+	++gBattlescriptCurrInstr;
+	
+    if (newSpecies)
+	{
+		DoBattleFormChange(battler, newSpecies, TRUE, TRUE);
+		gLastUsedAbility = GetBattlerAbility(battler);
+		BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
+	}
 }
 
 static void atkE8_settypebasedhalvers(void) // water and mud sport
@@ -8897,6 +8937,8 @@ static void atkEF_handleballthrow(void)
 
 static void atkF0_givecaughtmon(void)
 {
+	DoSpecialFormChange(BATTLE_OPPOSITE(gBattlerAttacker), gBattlerPartyIndexes[BATTLE_OPPOSITE(gBattlerAttacker)], FORM_CHANGE_END_BATTLE);
+	
     if (GiveMonToPlayer(&gEnemyParty[gBattlerPartyIndexes[BATTLE_OPPOSITE(gBattlerAttacker)]]) != MON_GIVEN_TO_PARTY)
     {
         if (!ShouldShowBoxWasFullMessage())

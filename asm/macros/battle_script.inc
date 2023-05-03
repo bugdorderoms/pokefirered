@@ -436,8 +436,14 @@
 	moveend 2, \to
 	.endm
 
-	.macro nop4a
+	.macro formchange battler:req, basespecies:req, targetspecies:req, reloadtypes:req, reloadability:req, ptr:req
 	.byte 0x4a
+	.byte \battler
+	.2byte \basespecies
+	.2byte \targetspecies
+	.byte \reloadtypes
+	.byte \reloadability
+	.4byte \ptr
 	.endm
 
 	.macro returnatktoball
@@ -1168,7 +1174,7 @@
 	.byte 0xe5
 	.endm
 
-	.macro docastformchangeanimation
+	.macro nope6
 	.byte 0xe6
 	.endm
 

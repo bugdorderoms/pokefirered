@@ -11,7 +11,6 @@ struct PokemonSubstruct0
     u16 species;
     u16 heldItem;
     u32 experience;
-	u16 species2; // for battle form change
     u8 ppBonuses;
     u8 friendship;
     u8 nature;
@@ -161,8 +160,6 @@ struct BattleTowerPokemon
     /*0x2B*/ u8 friendship;
 };
 
-#define BATTLE_STATS_NO 8
-
 struct BattlePokemon
 {
     /*0x00*/ u16 species;
@@ -180,7 +177,7 @@ struct BattlePokemon
     /*0x17*/ u32 spDefenseIV:5;
     /*0x17*/ u32 abilityHidden:1;
     /*0x17*/ u32 abilityNum:1;
-    /*0x18*/ s8 statStages[BATTLE_STATS_NO];
+    /*0x18*/ s8 statStages[NUM_BATTLE_STATS];
     /*0x20*/ u16 ability;
     /*0x22*/ u8 type1;
     /*0x23*/ u8 type2;
@@ -317,21 +314,16 @@ enum
 #define EVO_MAPSEC                        0x0019 // Pokémon levels up on specified mapsec
 #define EVO_ITEM_MALE                     0x001a // specified item is used on a male Pokémon
 #define EVO_ITEM_FEMALE                   0x001b // specified item is used on a female Pokémon
-#define EVO_LEVEL_RAIN                    0x001c // Pokémon reaches the specified level while it's raining
+#define EVO_LEVEL_RAIN_OR_FOG             0x001c // Pokémon reaches the specified level while it's raining or fog
 #define EVO_SPECIFIC_MON_IN_PARTY         0x001d // Pokémon levels up with a specified Pokémon in party
 #define EVO_LEVEL_DARK_TYPE_MON_IN_PARTY  0x001e // Pokémon reaches the specified level with a Dark Type Pokémon in party
 #define EVO_TRADE_SPECIFIC_MON            0x001f // Pokémon is traded for a specified Pokémon
-#define EVO_SPECIFIC_MAP                  0x0020 // Pokémon levels up on specified map
-#define EVO_LEVEL_NATURE_AMPED            0x0021 // Pokémon reaches the specified level, it has a Hardy, Brave, Adamant, Naughty, Docile, Impish, Lax, Hasty, Jolly, Naive, Rash, Sassy, or Quirky nature.
-#define EVO_LEVEL_NATURE_LOW_KEY          0x0022 // Pokémon reaches the specified level, it has a Lonely, Bold, Relaxed, Timid, Serious, Modest, Mild, Quiet, Bashful, Calm, Gentle, or Careful nature.
-#define EVO_CRITICAL_HITS                 0x0023 // Pokémon performs specified number of critical hits in one battle
-#define EVO_SCRIPT_TRIGGER_DMG            0x0024 // Pokémon has specified HP below max, then player interacts trigger
-#define EVO_DARK_SCROLL                   0x0025 // interacts with Scroll of Darkness
-#define EVO_WATER_SCROLL                  0x0026 // interacts with Scroll of Waters
-
-#define EVO_PRIMAL_REVERSION              0xfffd // Not an actual evolution, used to undergo primal reversion in battle.
-#define EVO_MOVE_MEGA_EVOLUTION           0xfffe // Mega Evolution that checks for a move instead of held item.
-#define EVO_MEGA_EVOLUTION                0xffff // Not an actual evolution, used to temporarily mega evolve in battle.
+#define EVO_LEVEL_NATURE                  0x0020 // Pokémon reaches the specified level, nature forms are handled by form change
+#define EVO_CRITICAL_HITS                 0x0021 // Pokémon performs specified number of critical hits in one battle
+#define EVO_SCRIPT_TRIGGER_DMG            0x0022 // Pokémon has specified HP below max, then player interacts trigger
+#define EVO_DARK_SCROLL                   0x0023 // interacts with Scroll of Darkness
+#define EVO_WATER_SCROLL                  0x0024 // interacts with Scroll of Waters
+#define EVO_LEVEL_PERSONALITY             0x0025 // Pokémon reaches the specified level, personality forms are handled by form change
 
 struct Evolution
 {
@@ -432,7 +424,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 bool8 PokemonItemUseNoEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
 u8 GetItemEffectParamOffset(u16 itemId, u8 effectByte, u8 effectBit);
 const u8 *Battle_PrintStatBoosterEffectMessage(u16 itemId);
-u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem);
+u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem, struct Pokemon *tradePartner);
 u16 NationalPokedexNumToSpecies(u16 nationalNum);
 u16 SpeciesToNationalPokedexNum(u16 species);
 void DrawSpindaSpots(u16 species, u32 personality, u8 *dest, bool8 isFrontPic);
@@ -455,7 +447,6 @@ u8 GetMoveRelearnerMoves(struct Pokemon *mon, u16 *moves);
 u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves);
 u8 GetNumberOfRelearnableMoves(struct Pokemon *mon);
 u16 SpeciesToPokedexNum(u16 species);
-void ClearBattleMonForms(void);
 void PlayBattleBGM(void);
 void PlayMapChosenOrBattleBGM(u16 songId);
 const u32 *GetMonFrontSpritePal(struct Pokemon *mon);
@@ -485,5 +476,6 @@ struct OakSpeechNidoranFStruct *OakSpeechNidoranFSetup(u8 battlePosition, bool8 
 void OakSpeechNidoranFFreeResources(void);
 void *OakSpeechNidoranFGetBuffer(u8 bufferId);
 u8 GetNumOfBadges(void);
+void DeleteMonMove(struct Pokemon *mon, u8 movePos);
 
 #endif // GUARD_POKEMON_H

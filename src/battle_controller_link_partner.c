@@ -923,21 +923,6 @@ static void SetLinkPartnerMonData(u8 monId)
     case REQUEST_TOUGH_RIBBON_BATTLE:
         SetMonData(&gPlayerParty[monId], MON_DATA_TOUGH_RIBBON, &gBattleBufferA[gActiveBattler][3]);
         break;
-	case REQUEST_FORM_CHANGE_BATTLE:
-	{
-		u16 speciesToSave = GetMonData(&gPlayerParty[monId], MON_DATA_SPECIES);
-		
-	    SetMonData(&gPlayerParty[monId], MON_DATA_SPECIES_BACKUP, &speciesToSave);
-	    SetMonData(&gPlayerParty[monId], MON_DATA_SPECIES, &battlePokemon->species);
-		SetMonData(&gPlayerParty[monId], MON_DATA_ATK, &battlePokemon->attack);
-		SetMonData(&gPlayerParty[monId], MON_DATA_DEF, &battlePokemon->defense);
-		SetMonData(&gPlayerParty[monId], MON_DATA_SPEED, &battlePokemon->speed);
-		SetMonData(&gPlayerParty[monId], MON_DATA_SPATK, &battlePokemon->spAttack);
-		SetMonData(&gPlayerParty[monId], MON_DATA_SPDEF, &battlePokemon->spDefense);
-		SetMonData(&gPlayerParty[monId], MON_DATA_HP, &battlePokemon->hp);
-		SetMonData(&gPlayerParty[monId], MON_DATA_MAX_HP, &battlePokemon->maxHP);
-	}
-		break;
     }
     HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], gActiveBattler);
 }
@@ -966,7 +951,7 @@ static void LinkPartnerHandleLoadMonSprite(void)
     gSprites[gBattlerSpriteIds[gActiveBattler]].x2 = -240;
     gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = gActiveBattler;
     gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
-    StartSpriteAnim(&gSprites[gBattlerSpriteIds[gActiveBattler]], gBattleMonForms[gActiveBattler]);
+    StartSpriteAnim(&gSprites[gBattlerSpriteIds[gActiveBattler]], 0);
     gBattlerControllerFuncs[gActiveBattler] = WaitForMonAnimAfterLoad;
 }
 
@@ -996,7 +981,7 @@ static void StartSendOutAnim(u8 battlerId, bool8 dontClearSubstituteBit)
     gSprites[gBattlerSpriteIds[battlerId]].data[0] = battlerId;
     gSprites[gBattlerSpriteIds[battlerId]].data[2] = species;
     gSprites[gBattlerSpriteIds[battlerId]].oam.paletteNum = battlerId;
-    StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerId]], gBattleMonForms[battlerId]);
+    StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerId]], 0);
     gSprites[gBattlerSpriteIds[battlerId]].invisible = TRUE;
     gSprites[gBattlerSpriteIds[battlerId]].callback = SpriteCallbackDummy;
     gSprites[gBattleControllerData[battlerId]].data[0] = DoPokeballSendOutAnimation(0, POKEBALL_PLAYER_SENDOUT);

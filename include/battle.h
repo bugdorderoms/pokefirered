@@ -388,7 +388,6 @@ struct BattleStruct
     u8 safariCatchFactor;
     u8 linkBattleVsSpriteId_V;
     u8 linkBattleVsSpriteId_S;
-    u8 formToChangeInto;
     u8 chosenMovePositions[MAX_BATTLERS_COUNT];
     u8 stateIdAfterSelScript[MAX_BATTLERS_COUNT];
     u8 playerPartyIdx;
@@ -419,7 +418,6 @@ struct BattleStruct
     u8 turnSideTracker;
     u8 givenExpMons;
     u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT];
-    u16 castformPalette[MAX_BATTLERS_COUNT][16];
     u8 wishPerishSongState;
     u8 wishPerishSongBattlerId;
     u8 magnitudeBasePower;
@@ -427,6 +425,8 @@ struct BattleStruct
 	u8 attackerBeforeBounce;
 	u8 weatherIconSpriteId;
 	u16 hpBefore[MAX_BATTLERS_COUNT]; // hp before use move, for Berserk and Emergency Exit
+	u8 appearedInBattle;
+	bool8 zeroToHeroActivated[PARTY_SIZE][2];
     u8 field_182;
     // align 4
     union {
@@ -668,7 +668,7 @@ extern u32 gTransformedPersonalities[MAX_BATTLERS_COUNT];
 extern u8 gBattlerPositions[MAX_BATTLERS_COUNT];
 extern u8 gHealthboxSpriteIds[MAX_BATTLERS_COUNT];
 extern u8 gBattleOutcome;
-extern u8 gBattleMonForms[MAX_BATTLERS_COUNT];
+extern u16 gBattleMonForms[PARTY_SIZE][2];
 extern void (*gBattlerControllerFuncs[MAX_BATTLERS_COUNT])(void);
 extern u32 gBattleControllerExecFlags;
 extern u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200];
@@ -725,5 +725,6 @@ extern struct MultiBattlePokemonTx gMultiPartnerParty[3];
 extern u16 gRandomTurnNumber;
 extern const u8 *gSetWordLoc;
 extern struct NewBattleStruct gNewBattleStruct;
+extern u8 gPartyCriticalHits[PARTY_SIZE];
 
 #endif // GUARD_BATTLE_H

@@ -353,7 +353,6 @@ enum
 void LaunchStatusAnimation(u8 battlerId, u8 statusAnimId);
 
 // battle_anim_mons.c
-extern const struct MonCoords gCastformFrontSpriteCoords[];
 u8 GetBattlerSpriteCoord(u8 battlerId, u8 coordType);
 u8 GetBattlerSpriteCoord2(u8 battlerId, u8 coordType);
 u8 GetBattlerSpriteDefault_Y(u8 battlerId);

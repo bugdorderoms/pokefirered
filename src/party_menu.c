@@ -9,6 +9,7 @@
 #include "berry_pouch.h"
 #include "data.h"
 #include "decompress.h"
+#include "dns.h"
 #include "easy_chat.h"
 #include "event_data.h"
 #include "evolution_scene.h"
@@ -18,6 +19,7 @@
 #include "field_weather.h"
 #include "fieldmap.h"
 #include "fldeff.h"
+#include "form_change.h"
 #include "graphics.h"
 #include "help_message.h"
 #include "item.h"
@@ -61,6 +63,7 @@
 #include "constants/battle.h"
 #include "constants/easy_chat.h"
 #include "constants/field_effects.h"
+#include "constants/form_change.h"
 #include "constants/item_effects.h"
 #include "constants/items.h"
 #include "constants/maps.h"
@@ -255,6 +258,7 @@ static void SpriteCB_UpdatePartyMonIcon(struct Sprite *sprite);
 static void SpriteCB_BouncePartyMonIcon(struct Sprite *sprite);
 static void SpriteCB_HeldItem(struct Sprite *sprite);
 static void UpdatePartyMonHeldItemSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox);
+static void UpdatePartyMonIconSpecies(struct PartyMenuBox *menuBox, u16 species);
 static void ShowOrHideHeldItemSprite(u16 item, struct PartyMenuBox *menuBox);
 static void CreateHeldItemSpriteForTrade(u8 spriteId, bool8 isMail);
 static void SetPartyMonAilmentGfx(struct Pokemon *mon, struct PartyMenuBox *menuBox);
@@ -441,6 +445,7 @@ void InitPartyMenu(u8 menuType, u8 layout, u8 partyAction, bool8 keepCursorPos, 
         gTextFlags.autoScroll = FALSE;
         CalculatePlayerPartyCount();
         SetMainCallback2(CB2_InitPartyMenu);
+		gMain.inParty = TRUE;
     }
 }
 
@@ -855,7 +860,7 @@ static bool8 DisplayPartyPokemonDataForMoveTutorOrEvolutionItem(u8 slot)
             DisplayPartyPokemonDataToTeachMove(slot, item, 0);
             break;
         case 2: // Evolution stone
-            if (!GetMonData(currentPokemon, MON_DATA_IS_EGG) && GetEvolutionTargetSpecies(currentPokemon, EVO_MODE_ITEM_CHECK, item) != SPECIES_NONE)
+            if (!GetMonData(currentPokemon, MON_DATA_IS_EGG) && GetEvolutionTargetSpecies(currentPokemon, EVO_MODE_ITEM_CHECK, item, NULL) != SPECIES_NONE)
                 return FALSE;
             DisplayPartyPokemonDescriptionData(slot, PARTYBOX_DESC_NO_USE);
             break;
@@ -1093,6 +1098,7 @@ static void Task_ClosePartyMenuAndSetCB2(u8 taskId)
             SetMainCallback2(gPartyMenu.exitCallback);
         FreePartyPointers();
         DestroyTask(taskId);
+		gMain.inParty = FALSE;
     }
 }
 
@@ -3651,7 +3657,7 @@ static void Task_MoveItem(u8 taskId)
 {
     s8 *slotPtr;
     u8 buffer[100];
-    u16 item1, item2;
+    u16 species, newSpecies, item1, item2;
 	
     if (gPaletteFade.active || sub_80BF748())
         return;
@@ -3671,12 +3677,20 @@ static void Task_MoveItem(u8 taskId)
 	gPartyMenu.action = PARTY_ACTION_CHOOSE_MON;
 	item1 = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_HELD_ITEM);
 	item2 = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_HELD_ITEM);
+	species = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_SPECIES);
 	
 	if (ItemIsMail(item2))
 		TakeMailFromMon(&gPlayerParty[gPartyMenu.slotId2]);
 		    
 	GiveItemToMon(&gPlayerParty[gPartyMenu.slotId], item2);
+	gMain.inParty = FALSE; // temporary disable for second mon sprite icon reload
 	GiveItemToMon(&gPlayerParty[gPartyMenu.slotId2], item1);
+	newSpecies = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_SPECIES);
+	
+	if (newSpecies != species)
+		UpdatePartyMonIconSpecies(&sPartyMenuBoxes[gPartyMenu.slotId2], newSpecies); // update second mon species
+	
+	gMain.inParty = TRUE;
 	
 	UpdatePartyMonHeldItemSprite(&gPlayerParty[gPartyMenu.slotId], &sPartyMenuBoxes[gPartyMenu.slotId]);
 	UpdatePartyMonHeldItemSprite(&gPlayerParty[gPartyMenu.slotId2], &sPartyMenuBoxes[gPartyMenu.slotId2]);
@@ -5240,7 +5254,7 @@ static void Task_TryLearningNextMove(u8 taskId)
 static void PartyMenuTryEvolution(u8 taskId)
 {
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    u16 targetSpecies = GetEvolutionTargetSpecies(mon, EVO_MODE_NORMAL, 0);
+    u16 targetSpecies = GetEvolutionTargetSpecies(mon, EVO_MODE_NORMAL, 0, NULL);
 
     if (targetSpecies != SPECIES_NONE)
     {
@@ -5396,7 +5410,7 @@ static void sub_8126BD4(void)
 static bool8 MonCanEvolve(void)
 {
     if (!IsNationalPokedexEnabled()
-     && GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId], EVO_MODE_ITEM_USE, gSpecialVar_ItemId) > KANTO_DEX_COUNT)
+     && GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId], EVO_MODE_ITEM_USE, gSpecialVar_ItemId, NULL) > KANTO_DEX_COUNT)
         return FALSE;
     else
         return TRUE;
@@ -6413,4 +6427,325 @@ static void Task_PartyMenuWaitForFade(u8 taskId)
         ScriptContext2_Disable();
         EnableBothScriptContexts();
     }
+}
+
+static void UpdatePartyMonIconSpecies(struct PartyMenuBox *menuBox, u16 species)
+{
+	DestroyMonIcon(&gSprites[menuBox->monSpriteId]);
+	CreatePartyMonIconSpriteParameterized(species, menuBox, 1);
+	PlayCry1(species, 0);
+}
+
+void UpdateCurrentPartyMonIconSpecies(u16 species)
+{
+	UpdatePartyMonIconSpecies(&sPartyMenuBoxes[gPartyMenu.slotId], species);
+}
+
+static void Task_TryLearnPostFormeChangeMove(u8 taskId)
+{
+	u8 movePos;
+	struct Pokemon *mon;
+	u16 replaceMove, replaceMove2;
+	
+	if (!IsPartyMenuTextPrinterActive())
+	{
+		mon = &gPlayerParty[gPartyMenu.slotId];
+		replaceMove = MOVE_NONE;
+		replaceMove2 = MOVE_NONE;
+		gMoveToLearn = MOVE_NONE;
+		
+		switch (GetMonData(mon, MON_DATA_SPECIES))
+		{
+			case SPECIES_KYUREM:
+			    gMoveToLearn = MOVE_GLACIATE;
+				replaceMove = MOVE_FUSION_BOLT;
+				replaceMove2 = MOVE_FUSION_FLARE;
+				break;
+			case SPECIES_KYUREM_WHITE:
+				gMoveToLearn = MOVE_FUSION_FLARE;
+				replaceMove = MOVE_GLACIATE;
+				break;
+			case SPECIES_KYUREM_BLACK:
+				gMoveToLearn = MOVE_FUSION_BOLT;
+				replaceMove = MOVE_GLACIATE;
+				break;
+			case SPECIES_NECROZMA:
+				replaceMove = MOVE_SUNSTEEL_STRIKE;
+				replaceMove2 = MOVE_MOONGEIST_BEAM;
+				break;
+			case SPECIES_NECROZMA_DUSK_MANE:
+				gMoveToLearn = MOVE_SUNSTEEL_STRIKE;
+				break;
+			case SPECIES_NECROZMA_DAWN_WINGS:
+				gMoveToLearn = MOVE_MOONGEIST_BEAM;
+				break;
+			case SPECIES_CALYREX:
+			    replaceMove = MOVE_GLACIAL_LANCE;
+				replaceMove2 = MOVE_ASTRAL_BARRAGE;
+				break;
+			case SPECIES_CALYREX_ICE_RIDER:
+			    gMoveToLearn = MOVE_GLACIAL_LANCE;
+				break;
+			case SPECIES_CALYREX_SHADOW_RIDER:
+			    gMoveToLearn = MOVE_ASTRAL_BARRAGE;
+				break;
+		}
+		if (gMoveToLearn)
+		{
+			if (replaceMove)
+			{
+				for (movePos = 0; movePos < MAX_MON_MOVES; movePos++)
+				{
+					if (GetMonData(mon, MON_DATA_MOVE1 + movePos) == replaceMove)
+						break;
+				}
+				if (movePos < MAX_MON_MOVES)
+				{
+					SetMonMoveSlot(mon, gMoveToLearn, movePos);
+					DisplayMonLearnedMove(taskId, gMoveToLearn);
+					return;
+				}
+			}
+			if (replaceMove2)
+			{
+				for (movePos = 0; movePos < MAX_MON_MOVES; movePos++)
+				{
+					if (GetMonData(mon, MON_DATA_MOVE1 + movePos) == replaceMove2)
+						break;
+				}
+				if (movePos < MAX_MON_MOVES)
+				{
+					SetMonMoveSlot(mon, gMoveToLearn, movePos);
+					DisplayMonLearnedMove(taskId, gMoveToLearn);
+					return;
+				}
+			}
+			for (movePos = 0; movePos < MAX_MON_MOVES; movePos++)
+			{
+				if (!GetMonData(mon, MON_DATA_MOVE1 + movePos))
+					break;
+			}
+			if (movePos < MAX_MON_MOVES)
+			{
+				SetMonMoveSlot(mon, gMoveToLearn, movePos);
+				DisplayMonLearnedMove(taskId, gMoveToLearn);
+				return;
+			}
+			DisplayMonNeedsToReplaceMove(taskId);
+		}
+		else
+		{
+			if (replaceMove)
+			{
+				for (movePos = 0; movePos < MAX_MON_MOVES; movePos++)
+				{
+					if (GetMonData(mon, MON_DATA_MOVE1 + movePos) == replaceMove)
+						break;
+				}
+				if (movePos < MAX_MON_MOVES)
+					DeleteMonMove(mon, movePos);
+			}
+			if (replaceMove2)
+			{
+				for (movePos = 0; movePos < MAX_MON_MOVES; movePos++)
+				{
+					if (GetMonData(mon, MON_DATA_MOVE1 + movePos) == replaceMove2)
+						break;
+				}
+				if (movePos < MAX_MON_MOVES)
+					DeleteMonMove(mon, movePos);
+			}
+			Task_ClosePartyMenuAfterText(taskId);
+		}
+	}
+}
+
+static void DoItemUseFormChange(struct Pokemon *mon)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES);
+	
+	UpdateCurrentPartyMonIconSpecies(species);
+	GetMonNickname(mon, gStringVar1);
+	StringExpandPlaceholders(gStringVar4, gText_FormChangeItem);
+	DisplayPartyMenuMessage(gStringVar4, TRUE);
+	ScheduleBgCopyTilemapToVram(2);	
+}
+
+void ItemUseCB_FormChange(u8 taskId, TaskFunc func)
+{
+	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+    u16 newSpecies, species = GetMonData(mon, MON_DATA_SPECIES);
+	
+	PlaySE(SE_SELECT);
+	
+	if (!GetMonData(mon, MON_DATA_IS_EGG))
+	{
+		newSpecies = GetMonFormChangeSpecies(mon, FORM_CHANGE_USE_ITEM);
+		
+		if (newSpecies != species)
+		{
+			if (!ItemId_GetSecondaryId(gSpecialVar_ItemId) || !GetDNSTimeLapseIsNight())
+			{
+				SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
+				CalculateMonStats(mon);
+				DoItemUseFormChange(mon);
+				gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
+				return;
+			}
+		}
+	}
+	gPartyMenuUseExitCallback = FALSE;
+	DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+	ScheduleBgCopyTilemapToVram(2);
+	gTasks[taskId].func = func;
+}
+
+static struct Pokemon* GetBaseMonForFusedSpecies(u16 fusionSpecies)
+{
+	switch (fusionSpecies)
+	{
+		case SPECIES_KYUREM_WHITE:
+		    return &gSaveBlock1Ptr->fusedReshiram;
+		case SPECIES_KYUREM_BLACK:
+		    return &gSaveBlock1Ptr->fusedZekrom;
+		case SPECIES_NECROZMA_DUSK_MANE:
+		    return &gSaveBlock1Ptr->fusedSolgaleo;
+		case SPECIES_NECROZMA_DAWN_WINGS:
+		    return &gSaveBlock1Ptr->fusedLunala;
+		case SPECIES_CALYREX_ICE_RIDER:
+		    return &gSaveBlock1Ptr->fusedGlastrier;
+		case SPECIES_CALYREX_SHADOW_RIDER:
+		    return &gSaveBlock1Ptr->fusedSpectrier;
+	}
+	return NULL;
+}
+
+static bool8 CheckMonAlreadyFusedWithSpecies(u16 masterSpecies, u16 otherSpecies, u16 fusionSpecies)
+{
+	struct Pokemon *mon = GetBaseMonForFusedSpecies(fusionSpecies);
+	
+	if (mon != NULL && GetMonData(mon, MON_DATA_SPECIES))
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		GetSpeciesName(gStringVar1, masterSpecies);
+		GetSpeciesName(gStringVar2, otherSpecies);
+		StringExpandPlaceholders(gStringVar4, gText_AlreadyHaveFused);
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static void Task_FusionItemStep(u8 taskId)
+{
+	s8 *slotPtr;
+	u16 masterSpecies, otherSpecies, newSpecies;
+	struct Pokemon *mon;
+	
+	if (!gPaletteFade.active && !sub_80BF748())
+	{
+		slotPtr = GetCurrentPartySlotPtr();
+		
+		switch (PartyMenuButtonHandler(slotPtr))
+		{
+			case 1:
+				PlaySE(SE_SELECT);
+				gSpecialVar_0x8000 = SPECIES_NONE;
+				gPartyMenu.action = PARTY_ACTION_CHOOSE_MON;
+				AnimatePartySlot(gPartyMenu.slotId, 1);
+				AnimatePartySlot(gPartyMenu.slotId2, 0);
+				newSpecies = GetMonFormChangeSpecies(&gPlayerParty[gPartyMenu.slotId2], FORM_CHANGE_FUSION_ITEM);
+				masterSpecies = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_SPECIES);
+				
+				if (!GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_IS_EGG) && gSpecialVar_0x8000 == masterSpecies)
+				{
+					otherSpecies = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_SPECIES);
+					
+					if (!CheckMonAlreadyFusedWithSpecies(masterSpecies, otherSpecies, newSpecies))
+					{
+						mon = &gPlayerParty[gPartyMenu.slotId];
+						SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
+						CalculateMonStats(mon);
+						DoItemUseFormChange(mon);
+						// set mon is fused
+						*GetBaseMonForFusedSpecies(newSpecies) = gPlayerParty[gPartyMenu.slotId2];
+						ZeroMonData(&gPlayerParty[gPartyMenu.slotId2]);
+						FillWindowPixelBuffer(sPartyMenuBoxes[gPartyMenu.slotId2].windowId, PIXEL_FILL(0));
+						CopyWindowToVram(sPartyMenuBoxes[gPartyMenu.slotId2].windowId, COPYWIN_BOTH);
+						PutWindowTilemap(sPartyMenuBoxes[gPartyMenu.slotId2].windowId);
+						RenderPartyMenuBox(gPartyMenu.slotId2);
+						DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].pokeballSpriteId]);
+						DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].itemSpriteId]);
+						DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].monSpriteId]);
+						DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].statusSpriteId]);
+						CompactPartySlots();
+						gPartyMenuUseExitCallback = FALSE;
+						gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
+						return;
+					}
+				}
+				else
+				{
+					gPartyMenuUseExitCallback = FALSE;
+					DisplayPartyMenuMessage(gText_CantFuseWithPokemon, TRUE);
+					ScheduleBgCopyTilemapToVram(2);
+				}
+				// fallthrough
+			case 2:
+			    gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+				break;
+		}
+	}
+}
+
+void ItemUseCB_Fusion(u8 taskId, TaskFunc func)
+{
+	struct Pokemon *baseMon, *mon = &gPlayerParty[gPartyMenu.slotId];
+	u16 newSpecies, species = GetMonData(mon, MON_DATA_SPECIES);
+	
+	PlaySE(SE_SELECT);
+	newSpecies = GetMonFormChangeSpecies(mon, FORM_CHANGE_FUSION_MASTER);
+	
+	if (!GetMonData(mon, MON_DATA_IS_EGG) && newSpecies)
+	{
+		if (species == newSpecies) // try fuse
+		{
+			gPartyMenu.action = PARTY_ACTION_SWITCH;
+			DisplayPartyMenuStdMessage(PARTY_MSG_FUSE_WITH_WHICH);
+			AnimatePartySlot(gPartyMenu.slotId, 1);
+			gPartyMenu.slotId2 = gPartyMenu.slotId;
+			gTasks[taskId].func = Task_FusionItemStep;
+		}
+		else // try defuse
+		{
+			if (!GetMonData(GetBaseMonForFusedSpecies(species), MON_DATA_SPECIES))
+			{
+				gPartyMenuUseExitCallback = FALSE;
+				DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+				ScheduleBgCopyTilemapToVram(2);
+				gTasks[taskId].func = func;
+			}
+			else if (gPlayerPartyCount == PARTY_SIZE)
+			{
+				GetMonNickname(mon, gStringVar1);
+				StringExpandPlaceholders(gStringVar4, gText_NoSpaceForDefuse);
+				DisplayPartyMenuMessage(gStringVar4, TRUE);
+				ScheduleBgCopyTilemapToVram(2);
+				gTasks[taskId].func = func;
+			}
+			else
+			{
+				baseMon = GetBaseMonForFusedSpecies(species);
+				gPlayerParty[gPlayerPartyCount] = *baseMon;
+				memset(baseMon, 0, sizeof(*baseMon));
+				CreatePartyMonSprites(gPlayerPartyCount);
+				RenderPartyMenuBox(gPlayerPartyCount);
+				SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
+				CalculateMonStats(mon);
+				DoItemUseFormChange(mon);
+				gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
+			}
+		}
+	}
 }

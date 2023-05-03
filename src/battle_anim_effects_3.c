@@ -2194,7 +2194,7 @@ void AnimTask_TransformMon(u8 taskId)
         HandleSpeciesGfxDataChange(gBattleAnimAttacker, gBattleAnimTarget, gTasks[taskId].data[10], gBattleAnimArgs[1]);
         GetBattleAnimBgDataByPriorityRank(&animBg, gBattleAnimAttacker);
         position = GetBattlerPosition(gBattleAnimAttacker);
-        src = gMonSpritesGfxPtr->sprites[position] + (gBattleMonForms[gBattleAnimAttacker] << 11);
+        src = gMonSpritesGfxPtr->sprites[position];
         dest = animBg.bgTiles;
         CpuCopy32(src, dest, 0x800);
         LoadBgTiles(1, animBg.bgTiles, 0x800, animBg.tilesOffset);
@@ -2227,18 +2227,6 @@ void AnimTask_TransformMon(u8 taskId)
         DestroyAnimVisualTask(taskId);
         break;
     }
-}
-
-void AnimTask_IsMonInvisible(u8 taskId)
-{
-    gBattleAnimArgs[7] = gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].invisible;
-    DestroyAnimVisualTask(taskId);
-}
-
-void AnimTask_CastformGfxChange(u8 taskId)
-{
-    HandleSpeciesGfxDataChange(gBattleAnimAttacker, gBattleAnimTarget, TRUE, FALSE);
-    DestroyAnimVisualTask(taskId);
 }
 
 void AnimTask_MorningSunLightBeam(u8 taskId)

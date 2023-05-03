@@ -20,6 +20,7 @@
 #include "battle_ai_script_commands.h"
 #include "calculate_base_damage.h"
 #include "constants/battle.h"
+#include "constants/form_change.h"
 #include "constants/moves.h"
 #include "constants/items.h"
 #include "constants/weather.h"
@@ -59,6 +60,7 @@ static const u8 sDesolateLandString[] = _("The sunlight turned\nextremely harsh!
 static const u8 sDeltaStreamString[] = _("A mysterious air current is\nprotecting Flying-type Pokémon!");
 static const u8 sComatoseString[] = _("{B_ATK_NAME_WITH_PREFIX} is drowsing!");
 static const u8 sDazzlingString[] = _("{B_ATK_NAME_WITH_PREFIX} cannot\nuse {B_CURRENT_MOVE}!");
+static const u8 sZeroToHeroString[] = _("{B_ATK_NAME_WITH_PREFIX} underwent\na heroic transformation!");
 
 static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
 {
@@ -458,26 +460,22 @@ u16 GetBattlerAbility(u8 battler)
 {
 	u16 ability = gBattleMons[battler].ability;
 	
-	if ((gBattleMons[gBattlerAttacker].ability == ABILITY_MOLD_BREAKER
-	    || gBattleMons[gBattlerAttacker].ability == ABILITY_TERAVOLT
-		|| gBattleMons[gBattlerAttacker].ability == ABILITY_TURBOBLAZE)
-		&& sIgnorableAbilities[gBattleMons[battler].ability]
-		&& gBattlerByTurnOrder[gCurrentTurnActionNumber] == gBattlerAttacker
-		&& gActionsByTurnOrder[gBattlerByTurnOrder[gBattlerAttacker]] == B_ACTION_USE_MOVE
+	if ((gBattleMons[gBattlerAttacker].ability == ABILITY_MOLD_BREAKER || gBattleMons[gBattlerAttacker].ability == ABILITY_TERAVOLT
+		|| gBattleMons[gBattlerAttacker].ability == ABILITY_TURBOBLAZE) && sIgnorableAbilities[ability] == TRUE
+		&& gBattlerByTurnOrder[gCurrentTurnActionNumber] == gBattlerAttacker && gActionsByTurnOrder[gBattlerByTurnOrder[gBattlerAttacker]] == B_ACTION_USE_MOVE
 		&& gCurrentTurnActionNumber < gBattlersCount)
 		ability = ABILITY_NONE;
 	
 	return ability;
 }
 
-void TryRemoveMonUnburdenBoost(u8 battler)
+static void TryRemoveMonUnburdenBoost(u8 battler)
 {
-	// used in abilities change
 	if (GetBattlerAbility(battler) != ABILITY_UNBURDEN || gBattleMons[battler].item)
 		gNewBattleStruct.UnburdenBoostBits &= ~(gBitTable[battler]);
 }
 
-void ResetVarsForAbilityChange(u8 battler)
+void ResetVarsForAbilityChange(u8 battler) // used in abilities change
 {
 	TryRemoveMonUnburdenBoost(battler);
 	gNewBattleStruct.SlowStartTimers[battler] = 5;
@@ -1928,69 +1926,6 @@ bool8 HasNoMonsToSwitch(u8 battler, u8 partyIdBattlerOn1, u8 partyIdBattlerOn2)
     }
 }
 
-#define CASTFORM_NO_CHANGE  0
-#define CASTFORM_TO_NORMAL  1
-#define CASTFORM_TO_FIRE    2
-#define CASTFORM_TO_WATER   3
-#define CASTFORM_TO_ICE     4
-
-#define CHERRIM_TO_OVERCAST 1
-#define CHERRIM_TO_SUNSHINE 2
-
-u8 CastformDataTypeChange(u8 battler)
-{
-    u8 formChange = 0;
-	bool8 weatherHasEffect = WEATHER_HAS_EFFECT;
-	u16 ability = GetBattlerAbility(battler);
-	
-	if (!IsBattlerAlive(battler))
-		return CASTFORM_NO_CHANGE;
-	
-	if (gBattleMons[battler].species == SPECIES_CASTFORM)
-	{
-		if (ability != ABILITY_FORECAST)
-			return CASTFORM_NO_CHANGE;
-		if (!weatherHasEffect && !IS_BATTLER_OF_TYPE(battler, TYPE_NORMAL))
-		{
-			SET_BATTLER_TYPE(battler, TYPE_NORMAL);
-			formChange = CASTFORM_TO_NORMAL;
-		}
-		if (!weatherHasEffect)
-			return CASTFORM_NO_CHANGE;
-		if (!IsBattlerWeatherAffected(battler, (WEATHER_RAIN_ANY | WEATHER_SUN_ANY | WEATHER_HAIL_ANY)) && !IS_BATTLER_OF_TYPE(battler, TYPE_NORMAL))
-		{
-			SET_BATTLER_TYPE(battler, TYPE_NORMAL);
-			formChange = CASTFORM_TO_NORMAL;
-		}
-		if (IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY) && !IS_BATTLER_OF_TYPE(battler, TYPE_FIRE))
-		{
-			SET_BATTLER_TYPE(battler, TYPE_FIRE);
-			formChange = CASTFORM_TO_FIRE;
-		}
-		if (IsBattlerWeatherAffected(battler, WEATHER_RAIN_ANY) && !IS_BATTLER_OF_TYPE(battler, TYPE_WATER))
-		{
-			SET_BATTLER_TYPE(battler, TYPE_WATER);
-			formChange = CASTFORM_TO_WATER;
-		}
-		if (IsBattlerWeatherAffected(battler, WEATHER_HAIL_ANY) && !IS_BATTLER_OF_TYPE(battler, TYPE_ICE))
-		{
-			SET_BATTLER_TYPE(battler, TYPE_ICE);
-			formChange = CASTFORM_TO_ICE;
-		}
-	}
-	else if (gBattleMons[battler].species == SPECIES_CHERRIM)
-	{
-		if (ability != ABILITY_FLOWER_GIFT)
-			return CASTFORM_NO_CHANGE;
-		else if (!gBattleMonForms[battler] && IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY))
-			formChange = CHERRIM_TO_SUNSHINE;
-		else if (gBattleMonForms[battler] && !IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY))
-			formChange = CHERRIM_TO_OVERCAST;
-	}
-	gLastUsedAbility = ability;
-    return formChange;
-}
-
 void ClearBattlerStatus(u8 battler)
 {
 	if (gBattleMons[battler].status1 & (STATUS1_POISON | STATUS1_TOXIC_POISON))
@@ -2189,13 +2124,17 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
                 break;
             case ABILITY_FORECAST:
 			case ABILITY_FLOWER_GIFT:
-                effect = CastformDataTypeChange(battler);
-                if (effect != 0)
-                {
-                    BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
-                    gBattleScripting.battler = battler;
-                    *(&gBattleStruct->formToChangeInto) = effect - 1;
-                }
+			    {
+					u16 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_WEATHER);
+					
+					if (newSpecies)
+					{
+						DoBattleFormChange(battler, newSpecies, TRUE, TRUE);
+						BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
+						gBattleScripting.battler = battler;
+						++effect;
+					}
+			    }
                 break;
             case ABILITY_TRACE:
                 if (!(gSpecialStatuses[battler].traced))
@@ -2271,6 +2210,28 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 		++effect;
 		break;
+		case ABILITY_ZERO_TO_HERO:
+		    if (gBattleStruct->zeroToHeroActivated[gBattlerPartyIndexes[battler]][GetBattlerSide(battler)])
+			{
+				gBattleStruct->zeroToHeroActivated[gBattlerPartyIndexes[battler]][GetBattlerSide(battler)] = FALSE;
+				gSetWordLoc = sZeroToHeroString;
+				BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+				++effect;
+			}
+			break;
+		case ABILITY_ZEN_MODE:
+		{
+			u16 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_HP);
+			
+			if (newSpecies)
+			{
+				DoBattleFormChange(battler, newSpecies, TRUE, TRUE);
+				gSetWordLoc = sZenModeString;
+				BattleScriptPushCursorAndCallback(BattleScript_ZenModeActivates);
+				++effect;
+			}
+			break;
+		}
             }
             break;
         case ABILITYEFFECT_ENDTURN: // 1
@@ -2450,11 +2411,11 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				break;
 			case ABILITY_ZEN_MODE:
 			    {
-					u16 newSpecies = TryDoBattleFormChange(battler, BATTLE_FORM_CHANGE_LOW_HP);
+					u16 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_HP);
 					
 					if (newSpecies)
 					{
-						DoBattleFormChange(battler, newSpecies, TRUE, TRUE, TRUE);
+						DoBattleFormChange(battler, newSpecies, TRUE, TRUE);
 						gSetWordLoc = sZenModeString;
 						BattleScriptPushCursorAndCallback(BattleScript_ZenModeActivates);
 						effect++;
@@ -3009,17 +2970,19 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
         case ABILITYEFFECT_FORECAST: // 6
             for (battler = 0; battler < gBattlersCount; ++battler)
             {
-                if (GetBattlerAbility(battler) == ABILITY_FORECAST || GetBattlerAbility(battler) == ABILITY_FLOWER_GIFT)
-                {
-                    effect = CastformDataTypeChange(battler);
-                    if (effect)
-                    {
-                        BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
-                        gBattleScripting.battler = battler;
-                        *(&gBattleStruct->formToChangeInto) = effect - 1;
-                        return effect;
-                    }
-                }
+				if (GetBattlerAbility(battler) == ABILITY_FORECAST || GetBattlerAbility(battler) == ABILITY_FLOWER_GIFT)
+				{
+					u16 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_WEATHER);
+					
+					if (newSpecies)
+					{
+						DoBattleFormChange(battler, newSpecies, TRUE, TRUE);
+						gLastUsedAbility = GetBattlerAbility(battler);
+						BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
+						gBattleScripting.battler = battler;
+						++effect;
+					}
+				}
             }
             break;
         case ABILITYEFFECT_SYNCHRONIZE: // 7

@@ -13,6 +13,7 @@
 #include "util.h"
 #include "dexnav.h"
 #include "wild_encounter.h"
+#include "field_weather.h"
 #include "pokemon_icon.h"
 #include "pokemon_storage_system.h"
 #include "battle_gfx_sfx_util.h"
@@ -26,11 +27,13 @@
 #include "pokedex.h"
 #include "strings.h"
 #include "overworld.h"
+#include "dns.h"
 #include "form_change.h"
 #include "party_menu.h"
 #include "field_specials.h"
 #include "constants/items.h"
 #include "constants/item_effects.h"
+#include "constants/form_change.h"
 #include "constants/pokedex.h"
 #include "constants/pokemon.h"
 #include "constants/abilities.h"
@@ -41,6 +44,7 @@
 #include "constants/hold_effects.h"
 #include "constants/battle_move_effects.h"
 #include "constants/inserts.h"
+#include "constants/weather.h"
 #include "constants/z_move_effects.h"
 
 #define SPECIES_TO_NATIONAL(name)   [SPECIES_##name - 1] = NATIONAL_DEX_##name
@@ -1428,6 +1432,8 @@ const s8 gNatureStatTable[][5] =
 #include "data/pokemon/level_up_learnsets.h"
 #include "data/pokemon/evolution.h"
 #include "data/pokemon/level_up_learnset_pointers.h"
+#include "data/pokemon/form_change_tables.h"
+#include "data/pokemon/form_change_table_pointers.h"
 
 static const s8 sPokeblockFlavorCompatibilityTable[] =
 {
@@ -2183,16 +2189,23 @@ u16 GiveMoveToMon(struct Pokemon *mon, u16 move)
     return GiveMoveToBoxMon(&mon->box, move);
 }
 
+static void SetBoxMonMoveSlot(struct BoxPokemon *boxMon, u16 move, u8 slot)
+{
+	SetBoxMonData(boxMon, MON_DATA_MOVE1 + slot, &move);
+	SetBoxMonData(boxMon, MON_DATA_PP1 + slot, &gBattleMoves[move].pp);
+	DoOverworldFormChange((struct Pokemon*)boxMon, FORM_CHANGE_KNOW_MOVE);
+}
+
 static u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move)
 {
     s32 i;
+	
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
         u16 existingMove = GetBoxMonData(boxMon, MON_DATA_MOVE1 + i, NULL);
         if (!existingMove)
         {
-            SetBoxMonData(boxMon, MON_DATA_MOVE1 + i, &move);
-            SetBoxMonData(boxMon, MON_DATA_PP1 + i, &gBattleMoves[move].pp);
+			SetBoxMonMoveSlot(boxMon, move, i);
             return move;
         }
         if (existingMove == move)
@@ -2220,8 +2233,7 @@ u16 GiveMoveToBattleMon(struct BattlePokemon *mon, u16 move)
 
 void SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot)
 {
-    SetMonData(mon, MON_DATA_MOVE1 + slot, &move);
-    SetMonData(mon, MON_DATA_PP1 + slot, &gBattleMoves[move].pp);
+	SetBoxMonMoveSlot(&mon->box, move, slot);
 }
 
 void SetBattleMonMoveSlot(struct BattlePokemon *mon, u16 move, u8 slot)
@@ -2942,9 +2954,6 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
                 | (substruct3->worldRibbon << 26);
         }
         break;
-	case MON_DATA_SPECIES_BACKUP:
-	    retVal = substruct0->species2;
-		break;
     default:
         break;
     }
@@ -2998,25 +3007,6 @@ void SetMonData(struct Pokemon *mon, s32 field, const void *dataArg)
         break;
     case MON_DATA_SPECIES2:
         break;
-    // why did FRLG go out of its way to specify all of these for default?
-    case MON_DATA_IVS:
-    case MON_DATA_CHAMPION_RIBBON:
-    case MON_DATA_WINNING_RIBBON:
-    case MON_DATA_VICTORY_RIBBON:
-    case MON_DATA_ARTIST_RIBBON:
-    case MON_DATA_EFFORT_RIBBON:
-    case MON_DATA_MARINE_RIBBON:
-    case MON_DATA_LAND_RIBBON:
-    case MON_DATA_SKY_RIBBON:
-    case MON_DATA_COUNTRY_RIBBON:
-    case MON_DATA_NATIONAL_RIBBON:
-    case MON_DATA_EARTH_RIBBON:
-    case MON_DATA_WORLD_RIBBON:
-    case MON_DATA_FILLER:
-    case MON_DATA_EVENT_LEGAL:
-    case MON_DATA_KNOWN_MOVES:
-    case MON_DATA_RIBBON_COUNT:
-    case MON_DATA_RIBBONS:
     default:
         SetBoxMonData(&mon->box, field, data);
         break;
@@ -3093,9 +3083,9 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
         break;
     }
     case MON_DATA_HELD_ITEM:
-        SET16(substruct0->heldItem);
-		DoOverworldFormChange((struct Pokemon*) boxMon, OVERWORLD_FORM_CHANGE_HOLD_ITEM);
-        break;
+	    SET16(substruct0->heldItem);
+		DoOverworldFormChange((struct Pokemon*)boxMon, FORM_CHANGE_HOLD_ITEM);
+	    break;
     case MON_DATA_EXP:
         SET32(substruct0->experience);
         break;
@@ -3283,9 +3273,6 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
         substruct3->spDefenseIV = (ivs >> 25) & 0x1F;
         break;
     }
-	case MON_DATA_SPECIES_BACKUP:
-	    SET16(substruct0->species2);
-		break;
     default:
         break;
     }
@@ -3300,7 +3287,6 @@ u8 GiveMonToPlayer(struct Pokemon *mon)
 {
     s32 i;
 
-    DoOverworldFormChange(mon, OVERWORLD_FORM_CHANGE_END_BATTLE);
     SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2Ptr->playerName);
     SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2Ptr->playerGender);
     SetMonData(mon, MON_DATA_OT_ID, gSaveBlock2Ptr->playerTrainerId);
@@ -3942,7 +3928,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
                         break;
                     case 7: // EVO_STONE
                         {
-                            u16 targetSpecies = GetEvolutionTargetSpecies(mon, EVO_MODE_ITEM_USE, item);
+                            u16 targetSpecies = GetEvolutionTargetSpecies(mon, EVO_MODE_ITEM_USE, item, NULL);
 
                             if (targetSpecies != SPECIES_NONE)
                             {
@@ -4306,7 +4292,7 @@ bool8 PokemonItemUseNoEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mo
                         }
                         break;
                     case 7:
-                        if (GetEvolutionTargetSpecies(mon, EVO_MODE_ITEM_USE, item) != SPECIES_NONE)
+                        if (GetEvolutionTargetSpecies(mon, EVO_MODE_ITEM_USE, item, NULL) != SPECIES_NONE)
                             return FALSE;
                         break;
                     }
@@ -4560,18 +4546,25 @@ u8 GetNatureFromPersonality(u32 personality)
     return personality % 25;
 }
 
-u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem)
+u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem, struct Pokemon *tradePartner)
 {
-    int i;
-    u16 targetSpecies = 0;
-    u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-    u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
-    u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
-    u8 level;
-    u16 friendship;
-    u8 beauty = GetMonData(mon, MON_DATA_BEAUTY, NULL);
-    u16 upperPersonality = personality >> 16;
-    u8 holdEffect;
+    int i, j;
+	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+    u16 data, friendship, targetSpecies = SPECIES_NONE;
+    u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL), heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL), upperPersonality = personality >> 16;
+	u16 partnerSpecies = SPECIES_NONE, partnerHeldItem = ITEM_NONE;
+    u8 partnerHoldEffect = HOLD_EFFECT_NONE, holdEffect, weather, level, beauty = GetMonData(mon, MON_DATA_BEAUTY, NULL);
+	
+	if (tradePartner != NULL)
+	{
+		partnerSpecies = GetMonData(tradePartner, MON_DATA_SPECIES, NULL);
+		partnerHeldItem = GetMonData(tradePartner, MON_DATA_HELD_ITEM, NULL);
+		
+		if (partnerHeldItem == ITEM_ENIGMA_BERRY)
+			partnerHoldEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
+		else
+			partnerHoldEffect = ItemId_GetHoldEffect(partnerHeldItem);
+	}
 
     if (heldItem == ITEM_ENIGMA_BERRY)
         holdEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
@@ -4579,7 +4572,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem)
         holdEffect = ItemId_GetHoldEffect(heldItem);
 
     if (holdEffect == HOLD_EFFECT_PREVENT_EVOLVE && type != EVO_MODE_ITEM_CHECK)
-        return 0;
+        return targetSpecies;
 
     switch (type)
     {
@@ -4587,7 +4580,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem)
         level = GetMonData(mon, MON_DATA_LEVEL, NULL);
         friendship = GetMonData(mon, MON_DATA_FRIENDSHIP, NULL);
 
-        for (i = 0; i < 5; i++)
+        for (i = 0; i < EVOS_PER_MON; i++)
         {
             switch (gEvolutionTable[species][i].method)
             {
@@ -4596,31 +4589,29 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             case EVO_FRIENDSHIP_DAY:
-                if (gRtcLocation.hour >= DAWN_OF_DAY_START && gRtcLocation.hour <= AFTERNOON_OF_DAY_START && friendship >= 220)
+                if (!GetDNSTimeLapseIsNight() && friendship >= 220)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             case EVO_FRIENDSHIP_NIGHT:
-                if ((gRtcLocation.hour > AFTERNOON_OF_DAY_START || gRtcLocation.hour < DAWN_OF_DAY_START) && friendship >= 220)
+                if (GetDNSTimeLapseIsNight() && friendship >= 220)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             case EVO_LEVEL:
+			case EVO_LEVEL_NINJASK:
                 if (gEvolutionTable[species][i].param <= level)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             case EVO_LEVEL_ATK_GT_DEF:
-                if (gEvolutionTable[species][i].param <= level)
-                    if (GetMonData(mon, MON_DATA_ATK, NULL) > GetMonData(mon, MON_DATA_DEF, NULL))
-                        targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                if (gEvolutionTable[species][i].param <= level && GetMonData(mon, MON_DATA_ATK, NULL) > GetMonData(mon, MON_DATA_DEF, NULL))
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             case EVO_LEVEL_ATK_EQ_DEF:
-                if (gEvolutionTable[species][i].param <= level)
-                    if (GetMonData(mon, MON_DATA_ATK, NULL) == GetMonData(mon, MON_DATA_DEF, NULL))
-                        targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                if (gEvolutionTable[species][i].param <= level && GetMonData(mon, MON_DATA_ATK, NULL) == GetMonData(mon, MON_DATA_DEF, NULL))
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             case EVO_LEVEL_ATK_LT_DEF:
-                if (gEvolutionTable[species][i].param <= level)
-                    if (GetMonData(mon, MON_DATA_ATK, NULL) < GetMonData(mon, MON_DATA_DEF, NULL))
-                        targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                if (gEvolutionTable[species][i].param <= level && GetMonData(mon, MON_DATA_ATK, NULL) < GetMonData(mon, MON_DATA_DEF, NULL))
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             case EVO_LEVEL_SILCOON:
                 if (gEvolutionTable[species][i].param <= level && (upperPersonality % 10) <= 4)
@@ -4630,19 +4621,110 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem)
                 if (gEvolutionTable[species][i].param <= level && (upperPersonality % 10) > 4)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
-            case EVO_LEVEL_NINJASK:
-                if (gEvolutionTable[species][i].param <= level)
-                    targetSpecies = gEvolutionTable[species][i].targetSpecies;
-                break;
             case EVO_BEAUTY:
                 if (gEvolutionTable[species][i].param <= beauty)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
+			case EVO_LEVEL_FEMALE:
+			    if (gEvolutionTable[species][i].param <= level && GetMonGender(mon) == MON_FEMALE)
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				break;
+			case EVO_LEVEL_MALE:
+			    if (gEvolutionTable[species][i].param <= level && GetMonGender(mon) == MON_MALE)
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				break;
+			case EVO_LEVEL_NIGHT:
+			    if (gEvolutionTable[species][i].param <= level && GetDNSTimeLapseIsNight())
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				break;
+			case EVO_LEVEL_DAY:
+			    if (gEvolutionTable[species][i].param <= level && !GetDNSTimeLapseIsNight())
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				break;
+			case EVO_LEVEL_DUSK:
+			    if (gEvolutionTable[species][i].param <= level && gRtcLocation.hour >= AFTERNOON_OF_DAY_START && gRtcLocation.hour < AFTERNOON_OF_DAY_START + 1)
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				break;
+			case EVO_ITEM_HOLD_DAY:
+			    if (heldItem == gEvolutionTable[species][i].param && !GetDNSTimeLapseIsNight())
+				{
+					heldItem = ITEM_NONE;
+					SetMonData(mon, MON_DATA_HELD_ITEM, &heldItem);
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				}
+				break;
+			case EVO_ITEM_HOLD_NIGHT:
+			    if (heldItem == gEvolutionTable[species][i].param && GetDNSTimeLapseIsNight())
+				{
+					heldItem = ITEM_NONE;
+					SetMonData(mon, MON_DATA_HELD_ITEM, &heldItem);
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				}
+				break;
+			case EVO_MOVE:
+			    if (MonKnowsMove(mon, gEvolutionTable[species][i].param))
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				break;
+			case EVO_MOVE_TYPE:
+			    for (j = 0; j < MAX_MON_MOVES; j++)
+				{
+					if (gBattleMoves[GetMonData(mon, MON_DATA_MOVE1 + j, NULL)].type == gEvolutionTable[species][i].param)
+					{
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+						break;
+					}
+				}
+				break;
+			case EVO_MAPSEC:
+			    if (GetCurrentRegionMapSectionId() == gEvolutionTable[species][i].param)
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				break;
+			case EVO_LEVEL_RAIN_OR_FOG:
+			    weather = GetCurrentWeather();
+			
+			    if ((weather == WEATHER_RAIN || weather == WEATHER_RAIN_THUNDERSTORM || weather == WEATHER_DOWNPOUR || weather == WEATHER_FOG_HORIZONTAL
+				|| weather == WEATHER_FOG_DIAGONAL) && gEvolutionTable[species][i].param <= level)
+				    targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				break;
+			case EVO_SPECIFIC_MON_IN_PARTY:
+			    for (j = 0; j < PARTY_SIZE; j++)
+				{
+					if (GetMonData(mon, MON_DATA_SPECIES, NULL) == gEvolutionTable[species][i].param)
+					{
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+						break;
+					}
+				}
+				break;
+			case EVO_LEVEL_DARK_TYPE_MON_IN_PARTY:
+			    if (gEvolutionTable[species][i].param <= level)
+				{
+					for (j = 0; j < PARTY_SIZE; j++)
+					{
+						data = GetMonData(mon, MON_DATA_SPECIES, NULL);
+						
+						if (gBaseStats[data].type1 == TYPE_DARK || gBaseStats[data].type2 == TYPE_DARK)
+						{
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+							break;
+						}
+					}
+				}
+				break;
+			case EVO_LEVEL_NATURE:
+			    data = FORM_CHANGE_NATURE;
+				goto EVOLUTIONS_FORM_CHANGE;
+			case EVO_LEVEL_PERSONALITY:
+			    data = FORM_CHANGE_PERSONALITY;
+				
+				EVOLUTIONS_FORM_CHANGE:
+				targetSpecies = GetSpeciesFormChange(data, gEvolutionTable[species][i].targetSpecies, personality, GetMonAbility(mon), heldItem, 0, FALSE);
+				break;
             }
         }
         break;
     case EVO_MODE_TRADE:
-        for (i = 0; i < 5; i++)
+        for (i = 0; i < EVOS_PER_MON; i++)
         {
             switch (gEvolutionTable[species][i].method)
             {
@@ -4652,30 +4734,70 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem)
             case EVO_TRADE_ITEM:
                 if (gEvolutionTable[species][i].param == heldItem)
                 {
+					heldItem = ITEM_NONE;
+					SetMonData(mon, MON_DATA_HELD_ITEM, &heldItem);
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
-                    if (IsNationalPokedexEnabled() || targetSpecies <= 151)
-                    {
-                        heldItem = 0;
-                        SetMonData(mon, MON_DATA_HELD_ITEM, &heldItem);
-                        targetSpecies = gEvolutionTable[species][i].targetSpecies;
-                    }
                 }
                 break;
+			case EVO_TRADE_SPECIFIC_MON:
+			    if (gEvolutionTable[species][i].param == partnerSpecies && partnerHoldEffect != HOLD_EFFECT_PREVENT_EVOLVE)
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
+				break;
             }
         }
         break;
     case EVO_MODE_ITEM_USE:
     case EVO_MODE_ITEM_CHECK:
-        for (i = 0; i < 5; i++)
+        for (i = 0; i < EVOS_PER_MON; i++)
         {
-            if (gEvolutionTable[species][i].method == EVO_ITEM
-             && gEvolutionTable[species][i].param == evolutionItem)
-            {
-                targetSpecies = gEvolutionTable[species][i].targetSpecies;
-                break;
-            }
+			switch (gEvolutionTable[species][i].method)
+			{
+				case EVO_ITEM:
+				    if (gEvolutionTable[species][i].param == evolutionItem)
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+				case EVO_ITEM_MALE:
+				    if (gEvolutionTable[species][i].param == evolutionItem && GetMonGender(mon) == MON_MALE)
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+				case EVO_ITEM_FEMALE:
+				    if (gEvolutionTable[species][i].param == evolutionItem && GetMonGender(mon) == MON_FEMALE)
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+			}
         }
         break;
+	case EVO_MODE_BATTLE_SPECIAL: // Battle evolution without leveling
+	    for (i = 0; i < EVOS_PER_MON; i++)
+		{
+			switch (gEvolutionTable[species][i].method)
+			{
+				case EVO_CRITICAL_HITS:
+				    if (gPartyCriticalHits[evolutionItem] >= gEvolutionTable[species][i].param) // party slot is being passed into the evolutionItem arg
+					    targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+			}
+		}
+		break;
+	case EVO_MODE_OVERWORLD_SPECIAL: // Overworld evolution without leveling
+	    for (i = 0; i < EVOS_PER_MON; i++)
+		{
+			switch (gEvolutionTable[species][i].method) // evolution method is being passed into the evolutionItem arg
+			{
+				case EVO_SCRIPT_TRIGGER_DMG:
+				    data = GetMonData(mon, MON_DATA_HP, NULL);
+					
+					if (evolutionItem == gEvolutionTable[species][i].method && data && (GetMonData(mon, MON_DATA_MAX_HP, NULL) - data >= gEvolutionTable[species][i].param))
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+				case EVO_DARK_SCROLL:
+				case EVO_WATER_SCROLL:
+				    if (evolutionItem == gEvolutionTable[species][i].method)
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+			}
+		}
+		break;
     }
 
     return targetSpecies;
@@ -5320,13 +5442,6 @@ u16 SpeciesToPokedexNum(u16 species)
     if (!IsNationalPokedexEnabled() && species > 151)
         return 0xFFFF;
     return species;
-}
-
-void ClearBattleMonForms(void)
-{
-    int i;
-    for (i = 0; i < 4; i++)
-        gBattleMonForms[i] = 0;
 }
 
 static u16 GetBattleBGM(void)

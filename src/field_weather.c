@@ -150,7 +150,6 @@ void SetNextWeather(u8 weather)
     gWeatherPtr->finishStep = 0;
 }
 
-
 void SetCurrentAndNextWeather(u8 weather)
 {
     PlayRainStoppingSoundEffect();

@@ -32,48 +32,6 @@ HALLOFFAMEGFXDIR := graphics/hall_of_fame
 types := normal fight flying poison ground rock bug ghost steel mystery fire water grass electric psychic ice dragon dark
 contest_types := cool beauty cute smart tough
 
-CASTFORMGFXDIR := graphics/pokemon/castform
-$(CASTFORMGFXDIR)/front.4bpp: $(CASTFORMGFXDIR)/normal/front.4bpp \
-											$(CASTFORMGFXDIR)/sunny/front.4bpp \
-											$(CASTFORMGFXDIR)/rainy/front.4bpp \
-											$(CASTFORMGFXDIR)/snowy/front.4bpp
-	@cat $^ >$@
-
-$(CASTFORMGFXDIR)/back.4bpp: $(CASTFORMGFXDIR)/normal/back.4bpp \
-									 $(CASTFORMGFXDIR)/sunny/back.4bpp \
-									 $(CASTFORMGFXDIR)/rainy/back.4bpp \
-									 $(CASTFORMGFXDIR)/snowy/back.4bpp
-	@cat $^ >$@
-
-$(CASTFORMGFXDIR)/normal.gbapal: $(CASTFORMGFXDIR)/normal/normal.gbapal \
-									 $(CASTFORMGFXDIR)/sunny/normal.gbapal \
-									 $(CASTFORMGFXDIR)/rainy/normal.gbapal \
-									 $(CASTFORMGFXDIR)/snowy/normal.gbapal
-	@cat $^ >$@
-
-$(CASTFORMGFXDIR)/shiny.gbapal: $(CASTFORMGFXDIR)/normal/shiny.gbapal \
-									$(CASTFORMGFXDIR)/sunny/shiny.gbapal \
-									$(CASTFORMGFXDIR)/rainy/shiny.gbapal \
-									$(CASTFORMGFXDIR)/snowy/shiny.gbapal
-	@cat $^ >$@
-
-CHERRIMGFXDIR := graphics/pokemon/cherrim
-$(CHERRIMGFXDIR)/front.4bpp: $(CHERRIMGFXDIR)/normal/front.4bpp \
-                              $(CHERRIMGFXDIR)/sunshine/front.4bpp
-	@cat $^ >$@
-
-$(CHERRIMGFXDIR)/back.4bpp: $(CHERRIMGFXDIR)/normal/back.4bpp \
-                              $(CHERRIMGFXDIR)/sunshine/back.4bpp
-	@cat $^ >$@
-
-$(CHERRIMGFXDIR)/normal.gbapal: $(CHERRIMGFXDIR)/normal/normal.gbapal \
-                              $(CHERRIMGFXDIR)/sunshine/normal.gbapal
-	@cat $^ >$@
-
-$(CHERRIMGFXDIR)/shiny.gbapal: $(CHERRIMGFXDIR)/normal/shiny.gbapal \
-                              $(CHERRIMGFXDIR)/sunshine/shiny.gbapal
-	@cat $^ >$@
-
 $(FONTGFXDIR)/font0_latin.latfont: $(FONTGFXDIR)/font0_latin.png
 	$(GFX) $< $@
 

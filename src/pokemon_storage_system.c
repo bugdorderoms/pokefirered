@@ -1,6 +1,8 @@
 #include "global.h"
+#include "form_change.h"
 #include "gflib.h"
 #include "pokemon_storage_system_internal.h"
+#include "constants/form_change.h"
 
 void BackupPokemonStorage(struct PokemonStorage * dest)
 {
@@ -73,7 +75,10 @@ u32 GetAndCopyBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request, void *dst)
 void SetBoxMonAt(u8 boxId, u8 boxPosition, struct BoxPokemon * src)
 {
     if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	{
+		DoOverworldFormChange((struct Pokemon*)src, FORM_CHANGE_WITHDRAW);
         gPokemonStoragePtr->boxes[boxId][boxPosition] = *src;
+	}
 }
 
 void CopyBoxMonAt(u8 boxId, u8 boxPosition, struct BoxPokemon * dst)

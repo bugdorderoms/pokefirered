@@ -197,12 +197,7 @@ bool8 TryHandleLaunchBattleTableAnimation(u8 activeBattler, u8 atkBattler, u8 de
 {
     u8 taskId;
 
-    if (tableId == B_ANIM_CASTFORM_CHANGE && (argument & 0x80))
-    {
-        gBattleMonForms[activeBattler] = (argument & ~(0x80));
-        return TRUE;
-    }
-    else if (gBattleSpritesDataPtr->battlerData[activeBattler].behindSubstitute
+    if (gBattleSpritesDataPtr->battlerData[activeBattler].behindSubstitute
           && !ShouldAnimBeDoneRegardlessOfSubsitute(tableId))
     {
         return TRUE;
@@ -352,13 +347,6 @@ static void BattleLoadMonSpriteGfx(struct Pokemon *mon, u8 battlerId, bool8 oppo
     LoadPalette(buffer, paletteOffset, 0x20);
     LoadPalette(buffer, 0x80 + battlerId * 16, 0x20);
     Free(buffer);
-	
-    if (species == SPECIES_CASTFORM || species == SPECIES_CHERRIM)
-    {
-        paletteOffset = 0x100 + battlerId * 16;
-        LZDecompressWram(lzPaletteData, gBattleStruct->castformPalette[0]);
-        LoadPalette(gBattleStruct->castformPalette[gBattleMonForms[battlerId]], paletteOffset, 0x20);
-    }
 	
     // transform's pink color
     if (gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies != SPECIES_NONE)
@@ -607,23 +595,14 @@ void HandleSpeciesGfxDataChange(u8 battlerAtk, u8 battlerDef, u8 notTransform, b
         LoadPalette(buffer, paletteOffset, 32);
         Free(buffer);
         gSprites[gBattlerSpriteIds[battlerAtk]].y = GetBattlerSpriteDefault_Y(battlerAtk);
-        StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerAtk]], gBattleMonForms[battlerAtk]);
+        StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerAtk]], 0);
         SetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerAtk]], MON_DATA_NICKNAME, gSpeciesNames[targetSpecies]);
         UpdateNickInHealthbox(gHealthboxSpriteIds[battlerAtk], &gEnemyParty[gBattlerPartyIndexes[battlerAtk]]);
         TryAddPokeballIconToHealthbox(gHealthboxSpriteIds[battlerAtk], 1);
     }
     else if (notTransform)
     {
-        StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerAtk]], gBattleSpritesDataPtr->animationData->animArg);
-        paletteOffset = 0x100 + battlerAtk * 16;
-        LoadPalette(gBattleStruct->castformPalette[gBattleSpritesDataPtr->animationData->animArg], paletteOffset, 32);
-        gBattleMonForms[battlerAtk] = gBattleSpritesDataPtr->animationData->animArg;
-        if (gBattleSpritesDataPtr->battlerData[battlerAtk].transformSpecies != SPECIES_NONE)
-        {
-            BlendPalette(paletteOffset, 16, 6, RGB_WHITE);
-            CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
-        }
-        gSprites[gBattlerSpriteIds[battlerAtk]].y = GetBattlerSpriteDefault_Y(battlerAtk);
+        // old castform code
     }
     else
     {
@@ -658,20 +637,14 @@ void HandleSpeciesGfxDataChange(u8 battlerAtk, u8 battlerDef, u8 notTransform, b
         LZDecompressWram(lzPaletteData, buffer);
         LoadPalette(buffer, paletteOffset, 32);
         Free(buffer);
-        if (targetSpecies == SPECIES_CASTFORM || targetSpecies == SPECIES_CHERRIM)
-        {
-            LZDecompressWram(lzPaletteData, gBattleStruct->castformPalette[0]);
-            LoadPalette(gBattleStruct->castformPalette[0] + gBattleMonForms[battlerDef] * 16, paletteOffset, 32);
-        }
         if (!noTransformPalFade)
         {
             BlendPalette(paletteOffset, 16, 6, RGB_WHITE);
             CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
             gBattleSpritesDataPtr->battlerData[battlerAtk].transformSpecies = targetSpecies;
-            gBattleMonForms[battlerAtk] = gBattleMonForms[battlerDef];
         }
         gSprites[gBattlerSpriteIds[battlerAtk]].y = GetBattlerSpriteDefault_Y(battlerAtk);
-        StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerAtk]], gBattleMonForms[battlerAtk]);
+        StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerAtk]], 0);
     }
 }
 
@@ -711,7 +684,7 @@ void BattleLoadSubstituteOrMonSpriteGfx(u8 battlerId, bool8 loadMonSprite)
 void LoadBattleMonGfxAndAnimate(u8 battlerId, bool8 loadMonSprite, u8 spriteId)
 {
     BattleLoadSubstituteOrMonSpriteGfx(battlerId, loadMonSprite);
-    StartSpriteAnim(&gSprites[spriteId], gBattleMonForms[battlerId]);
+    StartSpriteAnim(&gSprites[spriteId], 0);
     if (!loadMonSprite)
         gSprites[spriteId].y = GetSubstituteSpriteDefault_Y(battlerId);
     else
@@ -910,7 +883,6 @@ void BattleInterfaceSetWindowPals(void)
 void ClearTemporarySpeciesSpriteData(u8 battlerId, bool8 dontClearSubstitute)
 {
     gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies = SPECIES_NONE;
-    gBattleMonForms[battlerId] = 0;
     if (!dontClearSubstitute)
         ClearBehindSubstituteBit(battlerId);
 }

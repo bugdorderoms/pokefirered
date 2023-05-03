@@ -105,7 +105,7 @@ void ResetMenuAndMonGlobals(void)
 
 void NewGameInitData(void)
 {
-    u8 i, rivalName[PLAYER_NAME_LENGTH + 1];
+    u8 rivalName[PLAYER_NAME_LENGTH + 1];
 
     StringCopy(rivalName, gSaveBlock1Ptr->rivalName);
     gDifferentSaveFile = TRUE;
@@ -134,8 +134,7 @@ void NewGameInitData(void)
     ZeroPlayerPartyMons();
     ResetPokemonStorageSystem();
     ClearRoamerData();
-    for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
-        gSaveBlock1Ptr->registeredItem[i] = 0;
+	memset(&gSaveBlock1Ptr->registeredItem, 0, sizeof(gSaveBlock1Ptr->registeredItem));
     ClearBag();
     NewGameInitPCItems();
     ClearEnigmaBerries();
@@ -152,6 +151,12 @@ void NewGameInitData(void)
     memset(&gSaveBlock2Ptr->itemFlags, 0, sizeof(gSaveBlock2Ptr->itemFlags));
     memset(gSaveBlock1Ptr->dexNavSearchLevels, 0, sizeof(gSaveBlock1Ptr->dexNavSearchLevels));
     gSaveBlock1Ptr->dexNavChain = 0;
+	memset(&gSaveBlock1Ptr->fusedReshiram, 0, sizeof(struct Pokemon));
+	memset(&gSaveBlock1Ptr->fusedZekrom, 0, sizeof(struct Pokemon));
+	memset(&gSaveBlock1Ptr->fusedSolgaleo, 0, sizeof(struct Pokemon));
+	memset(&gSaveBlock1Ptr->fusedLunala, 0, sizeof(struct Pokemon));
+	memset(&gSaveBlock1Ptr->fusedGlastrier, 0, sizeof(struct Pokemon));
+	memset(&gSaveBlock1Ptr->fusedSpectrier, 0, sizeof(struct Pokemon));
 }
 
 static void ResetMiniGamesResults(void)

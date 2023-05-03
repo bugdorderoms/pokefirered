@@ -3915,7 +3915,17 @@ BattleScript_MoveEffectFreeze::
 	statusanimation BS_EFFECT_BATTLER
 	printfromtable gGotFrozenStringIds
 	waitmessage 0x40
-	goto BattleScript_UpdateEffectStatusIconRet
+	updatestatusicon BS_EFFECT_BATTLER
+	waitstate
+	formchange BS_EFFECT_BATTLER, SPECIES_SHAYMIN_SKY, SPECIES_SHAYMIN, TRUE, TRUE, BattleScript_MoveEffectFreezeReturn
+	copybyte sBATTLER, gEffectBattler
+    playanimation BS_EFFECT_BATTLER, B_ANIM_FORM_CHANGE, NULL
+	waitanimation
+	printstring STRINGID_PKMNTRANSFORMED
+	waitmessage 0x40
+
+BattleScript_MoveEffectFreezeReturn::
+    return
 
 BattleScript_MoveEffectParalysis::
 	statusanimation BS_EFFECT_BATTLER
@@ -4034,9 +4044,9 @@ BattleScript_CastformChange::
 	end3
 
 BattleScript_DoCastformChangeAnim::
-	docastformchangeanimation
-	waitstate
 	loadabilitypopup LOAD_ABILITY_NORMAL, BS_SCRIPTING, LOAD_ABILITY_FROM_BUFFER
+	playanimation BS_SCRIPTING, B_ANIM_FORM_CHANGE, NULL
+	waitanimation
 	printstring STRINGID_PKMNTRANSFORMED
 	waitmessage 0x40
 	removeabilitypopup BS_SCRIPTING

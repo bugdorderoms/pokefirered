@@ -56,7 +56,6 @@ void SetUpBattleVars(void)
     HandleLinkBattleSetup();
     gBattleControllerExecFlags = 0;
     ClearBattleAnimationVars();
-    ClearBattleMonForms();
     BattleAI_HandleItemUseBeforeAISetup();
 }
 

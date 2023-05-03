@@ -609,12 +609,15 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			    i = SIDE_STATUS_LIGHTSCREEN;
 			    break;
 		}
-		if ((gSideStatuses[GET_BATTLER_SIDE(battlerIdDef)] & i) && GetBattlerAbility(battlerIdAtk) != ABILITY_INFILTRATOR && !isConfusionDmg)
+		if (!IS_MOVE_STATUS(move))
 		{
-			if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
-				damage = 2 * (damage / 3);
-			else
-				damage /= 2;
+			if ((gSideStatuses[GET_BATTLER_SIDE(battlerIdDef)] & i) && GetBattlerAbility(battlerIdAtk) != ABILITY_INFILTRATOR && !isConfusionDmg)
+			{
+				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
+					damage = 2 * (damage / 3);
+				else
+					damage /= 2;
+			}
 		}
 	}
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMoves[move].target == MOVE_TARGET_BOTH && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) > 1) 
@@ -645,7 +648,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 		}
 	}
 	// any weather except sun weakens solar beam
-	if (IsBattlerWeatherAffected(battlerIdAtk, (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY)) && move == MOVE_SOLAR_BEAM)
+	if (IsBattlerWeatherAffected(battlerIdAtk, (WEATHER_ANY | ~(WEATHER_SUN_ANY))) && move == MOVE_SOLAR_BEAM)
 		damage /= 2;
 	
 	// flash fire triggered

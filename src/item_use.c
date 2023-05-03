@@ -821,6 +821,43 @@ void FieldUseFunc_RidePager(u8 taskId)
 	}
 }
 
+static void FormChangeItem_ShowPartyMenuFromField(u8 taskId)
+{
+	if (!gPaletteFade.active)
+	{
+		CleanupOverworldWindowsAndTilemaps();
+		sub_80A1184();
+		InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_USE_ITEM, TRUE, PARTY_MSG_USE_ON_WHICH_MON, Task_HandleChooseMonInput, CB2_ReturnToFieldContinueScript);
+		DestroyTask(taskId);
+	}
+}
+
+void FieldUseFunc_FormChangeItem(u8 taskId)
+{
+	gItemUseCB = ItemUseCB_FormChange;
+	
+	if (gTasks[taskId].data[3] == 0)
+		sub_80A16D0(taskId);
+	else
+	{
+		FadeScreen(FADE_TO_BLACK, 0);
+		gTasks[taskId].func = FormChangeItem_ShowPartyMenuFromField;
+	}
+}
+
+void FieldUseFunc_FusionItem(u8 taskId)
+{
+	gItemUseCB = ItemUseCB_Fusion;
+	
+	if (gTasks[taskId].data[3] == 0)
+		sub_80A16D0(taskId);
+	else
+	{
+		FadeScreen(FADE_TO_BLACK, 0);
+		gTasks[taskId].func = FormChangeItem_ShowPartyMenuFromField;
+	}
+}
+
 void Task_ItemUse_CloseMessageBoxAndReturnToField_VsSeeker(u8 taskId)
 {
     Task_ItemUse_CloseMessageBoxAndReturnToField(taskId);

@@ -93,7 +93,6 @@
 #define MON_DATA_SPDEF2            88
 #define MON_DATA_ABILITY_HIDDEN    89
 #define MON_DATA_NATURE            90
-#define MON_DATA_SPECIES_BACKUP    91 // for battle form change
 
 #define FLAG_MAKES_CONTACT                        (1 << 0)
 #define FLAG_PROTECT_AFFECTED                     (1 << 1)
@@ -249,16 +248,17 @@
 #define MAX_PER_STAT_IVS 31
 #define USE_RANDOM_IVS (MAX_PER_STAT_IVS + 1)
 #define MAX_PER_STAT_EVS 252
-#define MAX_PER_VITAMIN_EVS 252
+#define MAX_PER_VITAMIN_EVS MAX_PER_STAT_EVS
 
 #define PARTY_SIZE 6
 #define MAX_TOTAL_EVS 504
-#define UNOWN_FORM_COUNT 28
 #define BOX_NAME_LENGTH 8
 
-#define EVO_MODE_NORMAL     0
-#define EVO_MODE_TRADE      1
-#define EVO_MODE_ITEM_USE   2
-#define EVO_MODE_ITEM_CHECK 3 // If an Everstone is being held, still want to show that the stone *could* be used on that Pokémon to evolve
+#define EVO_MODE_NORMAL            0
+#define EVO_MODE_TRADE             1
+#define EVO_MODE_ITEM_USE          2
+#define EVO_MODE_ITEM_CHECK        3 // If an Everstone is being held, still want to show that the stone *could* be used on that Pokémon to evolve
+#define EVO_MODE_BATTLE_SPECIAL    4
+#define EVO_MODE_OVERWORLD_SPECIAL 5
 
 #endif // GUARD_CONSTANTS_POKEMON_H

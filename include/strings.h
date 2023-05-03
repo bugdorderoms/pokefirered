@@ -188,6 +188,7 @@ extern const u8 gText_WontHaveEffect[];
 extern const u8 gUnknown_841623D[];
 extern const u8 gUnknown_84162BD[];
 extern const u8 gText_Ghost[];
+extern const u8 gText_FormChangeItem[];
 
 // pokemon
 extern const u8 gBattleText_Rose[];
@@ -297,6 +298,10 @@ extern const u8 gText_RestoreWhichMove[];
 extern const u8 gText_BoostPp[];
 extern const u8 gText_DoWhatWithItem[];
 extern const u8 gText_DoWhatWithMail[];
+extern const u8 gText_FuseWithWhich[];
+extern const u8 gText_NoSpaceForDefuse[];
+extern const u8 gText_CantFuseWithPokemon[];
+extern const u8 gText_AlreadyHaveFused[];
 extern const u8 gText_NoUse[];
 extern const u8 gText_Able[];
 extern const u8 gText_First_PM[];

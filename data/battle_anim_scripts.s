@@ -415,7 +415,7 @@ gBattleAnims_StatusConditions::
 	.4byte Status_Nightmare
 
 gBattleAnims_General::
-	.4byte General_CastformChange
+	.4byte General_FormChange
 	.4byte General_StatsChange
 	.4byte General_SubstituteFade
 	.4byte General_SubstituteAppear
@@ -446,7 +446,6 @@ gBattleAnims_General::
 	.4byte General_LoadAbilityPopUp
 	.4byte General_RemoveAbilityPopUp
 	.4byte General_FormChange @ illusion off
-	.4byte General_FormChange
 	.4byte General_Fog
 
 gBattleAnims_Special::
@@ -10461,24 +10460,6 @@ Status_Nightmare:: @ 81D5B63
 	createvisualtask AnimTask_ShakeMon2, 2, 1, 2, 0, 14, 1
 	waitforvisualfinish
 	clearmonbg ANIM_DEF_PARTNER
-	end
-
-General_CastformChange:: @ 81D5B88
-	createvisualtask AnimTask_IsMonInvisible, 2, 
-	jumpargeq 7, 1, CastformChangeSkipAnim
-	goto CastformChangeContinue
-
-CastformChangeContinue:: @ 81D5B9C
-	monbg ANIM_ATTACKER
-	playsewithpan SE_M_TELEPORT, 192
-	waitplaysewithpan SE_M_MINIMIZE, 192, 48
-	createvisualtask AnimTask_TransformMon, 2, 1
-	waitforvisualfinish
-	clearmonbg ANIM_ATTACKER
-	end
-
-CastformChangeSkipAnim:: @ 81D5BB4
-	createvisualtask AnimTask_CastformGfxChange, 2, 1
 	end
 
 General_StatsChange:: @ 81D5BBE

@@ -204,6 +204,8 @@ void Item_FromMonToMoving(u8 cursorArea, u8 cursorPos)
     sub_80964B8(id, 3);
     sub_80964E8(id, 1, cursorArea, cursorPos);
     sub_80962F0(id, 2, 0);
+	gPSSData->movingItem = gPSSData->cursorMonItem;
+	
     if (cursorArea  == CURSOR_AREA_IN_BOX)
     {
         SetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM, &item);
@@ -214,8 +216,6 @@ void Item_FromMonToMoving(u8 cursorArea, u8 cursorPos)
         SetMonData(&gPlayerParty[cursorPos], MON_DATA_HELD_ITEM, &item);
         SetPartyMonIconObjMode(cursorPos, ST_OAM_OBJ_BLEND);
     }
-
-    gPSSData->movingItem = gPSSData->cursorMonItem;
 }
 
 void sub_8095E2C(u16 item)
@@ -281,6 +281,7 @@ void Item_GiveMovingToMon(u8 cursorArea, u8 cursorPos)
         SetMonData(&gPlayerParty[cursorPos], MON_DATA_HELD_ITEM, &gPSSData->movingItem);
         SetPartyMonIconObjMode(cursorPos, ST_OAM_OBJ_NORMAL);
     }
+	gPSSData->movingItem = ITEM_NONE;
 }
 
 void Item_TakeMons(u8 cursorArea, u8 cursorPos)
@@ -297,14 +298,17 @@ void Item_TakeMons(u8 cursorArea, u8 cursorPos)
     sub_80964E8(id, 0, cursorArea, cursorPos);
     if (cursorArea  == CURSOR_AREA_IN_BOX)
     {
+		gPSSData->movingItem = GetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM);
         SetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM, &item);
         SetBoxMonIconObjMode(cursorPos, ST_OAM_OBJ_BLEND);
     }
     else
     {
+		gPSSData->movingItem = GetMonData(&gPlayerParty[cursorPos], MON_DATA_HELD_ITEM);
         SetMonData(&gPlayerParty[cursorPos], MON_DATA_HELD_ITEM, &item);
         SetPartyMonIconObjMode(cursorPos, ST_OAM_OBJ_BLEND);
     }
+	gPSSData->movingItem = ITEM_NONE;
 }
 
 void sub_8096088(void)

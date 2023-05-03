@@ -476,6 +476,7 @@ bool8 IsCursorInBox(void);
 void sub_808FFAC(void);
 struct Sprite * CreateMonIconSprite(u16 species, s16 x, s16 y, u8 priority, u8 subpriority);
 void CreatePartyMonsSprites(bool8 species);
+void CreatePcPartyMonIconSprite(u8 partyId, u16 species);
 void sub_80909F4(void);
 bool8 sub_8090A60(void);
 void sub_8090B98(s16 yDelta);

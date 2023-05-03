@@ -91,12 +91,7 @@ static void ShiftMoveSlot(struct Pokemon *mon, u8 slotTo, u8 slotFrom)
 
 void MoveDeleterForgetMove(void)
 {
-    u16 i;
-
-    SetMonMoveSlot(&gPlayerParty[gSpecialVar_0x8004], MOVE_NONE, gSpecialVar_0x8005);
-    RemoveMonPPBonus(&gPlayerParty[gSpecialVar_0x8004], gSpecialVar_0x8005);
-    for (i = gSpecialVar_0x8005; i < MAX_MON_MOVES - 1; ++i)
-        ShiftMoveSlot(&gPlayerParty[gSpecialVar_0x8004], i, i + 1);
+    DeleteMonMove(&gPlayerParty[gSpecialVar_0x8004], gSpecialVar_0x8005);
 }
 
 void IsSelectedMonEgg(void)
@@ -105,4 +100,15 @@ void IsSelectedMonEgg(void)
         gSpecialVar_Result = TRUE;
     else
         gSpecialVar_Result = FALSE;
+}
+
+void DeleteMonMove(struct Pokemon *mon, u8 movePos)
+{
+	u8 i;
+	
+	SetMonMoveSlot(mon, MOVE_NONE, movePos);
+	RemoveMonPPBonus(mon, movePos);
+	
+	for (i = movePos; i < MAX_MON_MOVES - 1; ++i)
+		ShiftMoveSlot(mon, i, i + 1);
 }

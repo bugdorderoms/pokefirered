@@ -857,7 +857,7 @@ static void Task_DexNavSearch(u8 taskId)
         return;
     }
     // running/biking too close
-    if (sDexNavSearchDataPtr->proximity <= SNEAKING_PROXIMITY && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH | PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE | PLAYER_AVATAR_FLAG_TAUROS_RIDE | PLAYER_AVATAR_FLAG_STOUTLAND_RIDE | PLAYER_AVATAR_FLAG_MUDSDALE_RIDE | PLAYER_AVATAR_FLAG_MACHAMP_RIDE)) 
+    if (sDexNavSearchDataPtr->proximity <= SNEAKING_PROXIMITY && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH | PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE | PLAYER_AVATAR_FLAG_RIDE_ANY)) 
     {
         EndDexNavSearchSetupScript(EventScript_MovedTooFast, taskId);
         return;
@@ -1779,7 +1779,7 @@ static void DexNav_RunSetup(void)
 	break;
     case 4:
 	SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON);
-        SetGpuReg(REG_OFFSET_BLDCNT , 0);
+        SetGpuReg(REG_OFFSET_BLDCNT, 0);
 	break;
     case 5:
 	ShowBg(0);

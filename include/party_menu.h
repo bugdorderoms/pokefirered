@@ -83,5 +83,8 @@ u8 GetPartyIdFromBattlePartyId(u8 battlePartyId);
 void ShowPartyMenuToShowcaseMultiBattleParty(void);
 void ChooseMonForDaycare(void);
 void ChoosePartyMonByMenuType(u8 menuType);
+void ItemUseCB_FormChange(u8 taskId, TaskFunc func);
+void ItemUseCB_Fusion(u8 taskId, TaskFunc func);
+void UpdateCurrentPartyMonIconSpecies(u16 species);
 
 #endif // GUARD_PARTY_MENU_H

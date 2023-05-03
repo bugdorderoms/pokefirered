@@ -387,6 +387,7 @@ void Cb2_ExitPSS(void)
     sPreviousBoxOption = GetCurrentBoxOption();
     gFieldCallback = FieldCb_ReturnToPcMenu;
     SetMainCallback2(CB2_ReturnToField);
+	gMain.inPc = FALSE;
 }
 
 void ResetPokemonStorageSystem(void)

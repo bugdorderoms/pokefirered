@@ -42,32 +42,6 @@ static const struct UCoords8 sBattlerCoords[][4] =
     },
 };
 
-// One entry for each of the four Castform forms.
-const struct MonCoords gCastformFrontSpriteCoords[] =
-{
-    { .size = 0x44, .y_offset = 17 }, // NORMAL
-    { .size = 0x66, .y_offset =  9 }, // SUN
-    { .size = 0x46, .y_offset =  9 }, // RAIN
-    { .size = 0x86, .y_offset =  8 }, // HAIL
-};
-
-static const u8 sCastformElevations[] =
-{
-    13, // NORMAL
-    14, // SUN
-    13, // RAIN
-    13, // HAIL
-};
-
-// Y position of the backsprite for each of the four Castform forms.
-static const u8 sCastformBackSpriteYCoords[] =
-{
-    0, // NORMAL
-    0, // SUN
-    0, // RAIN
-    0, // HAIL
-};
-
 static const struct SpriteTemplate sSpriteTemplates_AdditionalForAnim[] =
 {
     {
@@ -143,11 +117,7 @@ static u8 GetBattlerYDelta(u8 battlerId, u16 species)
 
     if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
     {
-		if (species == SPECIES_CASTFORM)
-        {
-            ret = sCastformBackSpriteYCoords[gBattleMonForms[battlerId]];
-        }
-        else if (species > NUM_SPECIES)
+		if (species > NUM_SPECIES)
         {
             ret = gMonBackPicCoords[0].y_offset;
         }
@@ -158,11 +128,7 @@ static u8 GetBattlerYDelta(u8 battlerId, u16 species)
     }
     else
     {
-        if (species == SPECIES_CASTFORM)
-        {
-            ret = gCastformFrontSpriteCoords[gBattleMonForms[battlerId]].y_offset;
-        }
-        else if (species > NUM_SPECIES)
+        if (species > NUM_SPECIES)
         {
             ret = gMonFrontPicCoords[0].y_offset;
         }
@@ -180,9 +146,7 @@ static u8 GetBattlerElevation(u8 battlerId, u16 species)
 
     if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT)
     {
-        if (species == SPECIES_CASTFORM)
-            ret = sCastformElevations[gBattleMonForms[battlerId]];
-        else if (species > NUM_SPECIES)
+        if (species > NUM_SPECIES)
             ret = gEnemyMonElevation[0];
         else
             ret = gEnemyMonElevation[species];
@@ -1842,11 +1806,7 @@ s16 GetBattlerSpriteCoordAttr(u8 battlerId, u8 attr)
             species = spriteInfo[battlerId].transformSpecies;
             personality = gTransformedPersonalities[battlerId];
         }
-		if (species == SPECIES_CASTFORM)
-        {
-            coords = &gCastformFrontSpriteCoords[gBattleMonForms[battlerId]];
-        }
-        else if (species > NUM_SPECIES)
+		if (species > NUM_SPECIES)
         {
             coords = &gMonFrontPicCoords[0];
         }

@@ -558,14 +558,16 @@ void CreatePartyMonsSprites(bool8 arg0)
 
     gPSSData->partySprites[0] = CreateMonIconSprite(species, 104, 64, 1, 12);
     count = 1;
+
     for (i = 1; i < PARTY_SIZE; i++)
     {
         species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
-        if (species != SPECIES_NONE)
-        {
-            gPSSData->partySprites[i] = CreateMonIconSprite(species, 152,  8 * (3 * (i - 1)) + 16, 1, 12);
-            count++;
-        }
+		
+		if (species != SPECIES_NONE)
+		{
+			CreatePcPartyMonIconSprite(i, species);
+			count++;
+		}
         else
         {
             gPSSData->partySprites[i] = NULL;
@@ -585,10 +587,25 @@ void CreatePartyMonsSprites(bool8 arg0)
     {
         for (i = 0; i < PARTY_SIZE; i++)
         {
-            if (gPSSData->partySprites[i] != NULL && GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM) == 0)
+            if (gPSSData->partySprites[i] != NULL && !GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM))
                 gPSSData->partySprites[i]->oam.objMode = ST_OAM_OBJ_BLEND;
         }
     }
+}
+
+void CreatePcPartyMonIconSprite(u8 partyId, u16 species)
+{
+	struct Sprite *sprite;
+	
+	if (partyId)
+		sprite = CreateMonIconSprite(species, 152,  8 * (3 * (partyId - 1)) + 16, 1, 12);
+	else
+		sprite = CreateMonIconSprite(species, 104, 64, 1, 12);
+	
+	gPSSData->partySprites[partyId] = sprite;
+	
+	if (gPSSData->partySprites[partyId] != NULL && !GetMonData(&gPlayerParty[partyId], MON_DATA_HELD_ITEM))
+		gPSSData->partySprites[partyId]->oam.objMode = ST_OAM_OBJ_BLEND;
 }
 
 void sub_80909F4(void)

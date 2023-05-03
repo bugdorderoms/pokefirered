@@ -346,7 +346,7 @@
 #define BG_SOLARBEAM_PLAYER 21
 
 // table ids for general animations
-#define B_ANIM_CASTFORM_CHANGE          0x0
+#define B_ANIM_FORM_CHANGE              0x0
 #define B_ANIM_STATS_CHANGE             0x1
 #define B_ANIM_SUBSTITUTE_FADE          0x2
 #define B_ANIM_SUBSTITUTE_APPEAR        0x3
@@ -377,8 +377,7 @@
 #define B_ANIM_LOAD_ABILITY_POP_UP      0x1C
 #define B_ANIM_REMOVE_ABILITY_POP_UP    0x1D
 #define B_ANIM_ILLUSION_OFF             0x1E
-#define B_ANIM_FORM_CHANGE              0x1F
-#define B_ANIM_FOG_CONTINUES            0x20
+#define B_ANIM_FOG_CONTINUES            0x1F
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0

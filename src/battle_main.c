@@ -41,6 +41,7 @@
 #include "constants/abilities.h"
 #include "constants/battle_move_effects.h"
 #include "constants/battle_setup.h"
+#include "constants/form_change.h"
 #include "constants/hold_effects.h"
 #include "constants/items.h"
 #include "constants/moves.h"
@@ -109,6 +110,7 @@ static void HandleEndTurn_FinishBattle(void);
 static void FreeResetData_ReturnToOvOrDoEvolutions(void);
 static void ReturnFromBattleToOverworld(void);
 static void TryEvolvePokemon(void);
+static void TrySpecialEvolution(void);
 static void WaitForEvoSceneToFinish(void);
 static void SetTypeBeforeUsingMove(u16 move, u8 battler);
 
@@ -210,9 +212,11 @@ EWRAM_DATA struct BattleSpriteData *gBattleSpritesDataPtr = NULL;
 EWRAM_DATA struct MonSpritesGfx *gMonSpritesGfxPtr = NULL;
 EWRAM_DATA u16 gBattleMovePower = 0;
 EWRAM_DATA u16 gMoveToLearn = 0;
-EWRAM_DATA u8 gBattleMonForms[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA u16 gBattleMonForms[PARTY_SIZE][2] = {0};
 EWRAM_DATA const u8 *gSetWordLoc = NULL;
 EWRAM_DATA struct NewBattleStruct gNewBattleStruct = {0};
+EWRAM_DATA u8 gPartyCriticalHits[PARTY_SIZE] = {0};
+EWRAM_DATA static u8 sTriedEvolving = 0;
 
 void (*gPreBattleCallback1)(void);
 void (*gBattleMainFunc)(void);
@@ -2209,11 +2213,7 @@ void SpriteCB_FaintOpponentMon(struct Sprite *sprite)
     else
         species = sprite->sSpeciesId;
 	
-    if (species == SPECIES_CASTFORM)
-    {
-        yOffset = gCastformFrontSpriteCoords[gBattleMonForms[battler]].y_offset;
-    }
-    else if (species > NUM_SPECIES)
+    if (species > NUM_SPECIES)
     {
         yOffset = gMonFrontPicCoords[SPECIES_NONE].y_offset;
     }
@@ -2241,11 +2241,11 @@ static void SpriteCB_AnimFaintOpponent(struct Sprite *sprite)
         }
         else // Erase bottom part of the sprite to create a smooth illusion of mon falling down.
         {
-            u8 *dst = (u8 *)gMonSpritesGfxPtr->sprites[GetBattlerPosition(sprite->sBattler)] + (gBattleMonForms[sprite->sBattler] << 11) + (sprite->data[3] << 8);
+            u8 *dst = (u8 *)gMonSpritesGfxPtr->sprites[GetBattlerPosition(sprite->sBattler)] + (sprite->data[3] << 8);
 
             for (i = 0; i < 0x100; ++i)
                 *(dst++) = 0;
-            StartSpriteAnim(sprite, gBattleMonForms[sprite->sBattler]);
+            StartSpriteAnim(sprite, 0);
         }
     }
 }
@@ -2504,11 +2504,15 @@ static void BattleStartClearSetData(void)
 	
     gBattleStruct->wildVictorySong = 0;
     gBattleStruct->moneyMultiplier = 1;
+	gBattleStruct->appearedInBattle = 0;
 	
 	for (i = 0; i < PARTY_SIZE; i++)
 	{
 		gBattleStruct->usedHeldItems[i][B_SIDE_PLAYER] = ITEM_NONE;
 		gBattleStruct->usedHeldItems[i][B_SIDE_OPPONENT] = ITEM_NONE;
+		gBattleStruct->zeroToHeroActivated[i][B_SIDE_PLAYER] = FALSE;
+		gBattleStruct->zeroToHeroActivated[i][B_SIDE_OPPONENT] = FALSE;
+		gPartyCriticalHits[i] = 0;
 	}
     *(gBattleStruct->AI_monToSwitchIntoId + 0) = PARTY_SIZE;
     *(gBattleStruct->AI_monToSwitchIntoId + 1) = PARTY_SIZE;
@@ -2784,6 +2788,18 @@ static void BattleIntroDrawTrainersOrMonsSprites(void)
                 MarkBattlerForControllerExec(gActiveBattler);
             }
         }
+		for (i = 0; i < PARTY_SIZE; i++)
+		{
+			// try revert shaymin
+			DoOverworldFormChange(&gPlayerParty[i], FORM_CHANGE_TIME);
+			DoOverworldFormChange(&gEnemyParty[i], FORM_CHANGE_TIME);
+			// save original species for battle form changes
+			gBattleMonForms[i][B_SIDE_PLAYER] = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES);
+			gBattleMonForms[i][B_SIDE_OPPONENT] = GetMonData(&gEnemyParty[i], MON_DATA_SPECIES);
+			// transform xerneas into active form
+			DoOverworldFormChange(&gPlayerParty[i], FORM_CHANGE_START_BATTLE);
+			DoOverworldFormChange(&gEnemyParty[i], FORM_CHANGE_START_BATTLE);
+		}
         gBattleMainFunc = BattleIntroDrawPartySummaryScreens;
     }
 }
@@ -3015,6 +3031,8 @@ static void TryDoEventsBeforeFirstTurn(void)
             *(gBattleStruct->monToSwitchIntoId + i) = PARTY_SIZE;
             gChosenActionByBattler[i] = B_ACTION_NONE;
             gChosenMoveByBattler[i] = MOVE_NONE;
+			if (IsBattlerAlive(i) && GetBattlerSide(i) == B_SIDE_PLAYER)
+				gBattleStruct->appearedInBattle |= gBitTable[gBattlerPartyIndexes[i]];
         }
         TurnValuesCleanUp(FALSE);
         SpecialStatusesClear();
@@ -3954,8 +3972,6 @@ static void HandleEndTurn_MonFled(void)
 
 static void HandleEndTurn_FinishBattle(void)
 {
-	u8 i;
-	
     if (gCurrentActionFuncId == B_ACTION_TRY_FINISH || gCurrentActionFuncId == B_ACTION_FINISHED)
     {
         if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_SAFARI | BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_LINK)))
@@ -3983,6 +3999,7 @@ static void HandleEndTurn_FinishBattle(void)
         BeginFastPaletteFade(3);
         FadeOutMapMusic(5);
 		DoPlayerPartyEndBattleFormChange();
+		memset(&gBattleMonForms, 0, sizeof(gBattleMonForms));
         gBattleMainFunc = FreeResetData_ReturnToOvOrDoEvolutions;
         gCB2_AfterEvolution = BattleMainCB2;
     }
@@ -3998,10 +4015,10 @@ static void FreeResetData_ReturnToOvOrDoEvolutions(void)
     {
         gIsFishingEncounter = FALSE;
         ResetSpriteData();
-        if (gLeveledUpInBattle == 0 || gBattleOutcome != B_OUTCOME_WON)
+        if (gBattleOutcome != B_OUTCOME_WON)
             gBattleMainFunc = ReturnFromBattleToOverworld;
         else
-            gBattleMainFunc = TryEvolvePokemon;
+            gBattleMainFunc = TrySpecialEvolution;
         FreeAllWindowBuffers();
         if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
         {
@@ -4031,7 +4048,7 @@ static void TryEvolvePokemon(void)
 
                 levelUpBits &= ~(gBitTable[i]);
                 gLeveledUpInBattle = levelUpBits;
-                species = GetEvolutionTargetSpecies(&gPlayerParty[i], EVO_MODE_NORMAL, levelUpBits);
+                species = GetEvolutionTargetSpecies(&gPlayerParty[i], EVO_MODE_NORMAL, levelUpBits, NULL);
                 if (species != SPECIES_NONE)
                 {
                     gBattleMainFunc = WaitForEvoSceneToFinish;
@@ -4044,10 +4061,30 @@ static void TryEvolvePokemon(void)
     gBattleMainFunc = ReturnFromBattleToOverworld;
 }
 
+static void TrySpecialEvolution(void) // Attempts to perform non-level related battle evolutions
+{
+	s32 i;
+	
+	for (i = 0; i < PARTY_SIZE; i++)
+	{
+		u16 species = GetEvolutionTargetSpecies(&gPlayerParty[i], EVO_MODE_BATTLE_SPECIAL, i, NULL);
+		
+		if (species != SPECIES_NONE && !(sTriedEvolving & gBitTable[i]))
+		{
+			sTriedEvolving |= gBitTable[i];
+			gBattleMainFunc = WaitForEvoSceneToFinish;
+			EvolutionScene(&gPlayerParty[i], species, 0x81, i);
+			return;
+		}
+	}
+	sTriedEvolving = 0;
+	gBattleMainFunc = TryEvolvePokemon;
+}
+
 static void WaitForEvoSceneToFinish(void)
 {
     if (gMain.callback2 == BattleMainCB2)
-        gBattleMainFunc = TryEvolvePokemon;
+        gBattleMainFunc = TrySpecialEvolution;
 }
 
 static void ReturnFromBattleToOverworld(void)

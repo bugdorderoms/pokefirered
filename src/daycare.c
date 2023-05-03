@@ -27,6 +27,7 @@
 #include "naming_screen.h"
 #include "field_fadetransition.h"
 #include "trade.h"
+#include "constants/form_change.h"
 #include "constants/inserts.h"
 #include "constants/daycare.h"
 #include "constants/region_map_sections.h"
@@ -510,8 +511,8 @@ static u16 TakeSelectedPokemonFromDaycare(struct DaycareMon *daycareMon)
     struct Pokemon pokemon;
 
     DayCare_GetBoxMonNickname(&daycareMon->mon, gStringVar1);
-    species = GetBoxMonData(&daycareMon->mon, MON_DATA_SPECIES);
     BoxMonToMon(&daycareMon->mon, &pokemon);
+    species = DoOverworldFormChange(&pokemon, FORM_CHANGE_WITHDRAW);
 
     if (GetMonData(&pokemon, MON_DATA_LEVEL) != MAX_LEVEL)
     {
@@ -1007,36 +1008,73 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u8 *parent
 {
     u16 i;
     u16 species[DAYCARE_MON_COUNT];
-    u16 eggSpecies;
+    u16 motherSpecies, eggSpecies;
+
+    for (i = 0; i < DAYCARE_MON_COUNT; ++i)
+		species[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_SPECIES);
 
     // Determine which of the daycare mons is the mother and father of the egg.
     // The 0th index of the parentSlots array is considered the mother slot, and the
     // 1st index is the father slot.
-    for (i = 0; i < DAYCARE_MON_COUNT; i++)
+    for (i = 0, motherSpecies = SPECIES_NONE; i < DAYCARE_MON_COUNT; i++)
     {
-        species[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_SPECIES);
         if (species[i] == SPECIES_DITTO)
         {
+			motherSpecies = species[i ^ 1];
             parentSlots[0] = i ^ 1;
             parentSlots[1] = i;
         }
         else if (GetBoxMonGender(&daycare->mons[i].mon) == MON_FEMALE)
         {
+			motherSpecies = species[i];
+			
+			if (species[i] != species[i ^ 1])
+			{
+				if (SpeciesToNationalPokedexNum(species[i]) == SpeciesToNationalPokedexNum(species[i ^ 1]))
+				{
+					if (GetBoxMonData(&daycare->mons[i].mon, MON_DATA_HELD_ITEM) != ITEM_EVERSTONE && GetBoxMonData(&daycare->mons[i ^ 1].mon, MON_DATA_HELD_ITEM) == ITEM_EVERSTONE)
+						motherSpecies = species[i ^ 1];
+				}
+			}
             parentSlots[0] = i;
             parentSlots[1] = i ^ 1;
         }
     }
 
-    eggSpecies = GetEggSpecies(species[parentSlots[0]]);
-    if (eggSpecies == SPECIES_NIDORAN_F && daycare->offspringPersonality & EGG_GENDER_MALE)
-    {
-        eggSpecies = SPECIES_NIDORAN_M;
-    }
-    if (eggSpecies == SPECIES_ILLUMISE && daycare->offspringPersonality & EGG_GENDER_MALE)
-    {
-        eggSpecies = SPECIES_VOLBEAT;
-    }
-
+    eggSpecies = GetEggSpecies(motherSpecies);
+	
+	switch (SpeciesToNationalPokedexNum(eggSpecies))
+	{
+		case NATIONAL_DEX_NIDORAN_F:
+		    if (daycare->offspringPersonality & EGG_GENDER_MALE)
+				eggSpecies = SPECIES_NIDORAN_M;
+			break;
+		case NATIONAL_DEX_PIKACHU:
+		    eggSpecies = SPECIES_PICHU;
+			break;
+		case NATIONAL_DEX_ILLUMISE:
+		    if (daycare->offspringPersonality & EGG_GENDER_MALE)
+				eggSpecies = SPECIES_VOLBEAT;
+			break;
+		case NATIONAL_DEX_MANAPHY:
+		    eggSpecies = SPECIES_PHIONE;
+			break;
+		case NATIONAL_DEX_ROTOM:
+		    eggSpecies = SPECIES_ROTOM;
+			break;
+		case NATIONAL_DEX_VIVILLON:
+		    eggSpecies = SPECIES_SCATTERBUG;
+			break;
+		case NATIONAL_DEX_FURFROU:
+		    eggSpecies = SPECIES_FURFROU;
+			break;
+		case NATIONAL_DEX_TOXTRICITY:
+		    eggSpecies = SPECIES_TOXEL;
+			break;
+		case NATIONAL_DEX_ALCREMIE:
+		    eggSpecies = SPECIES_MILCERY;
+			break;
+	}
     // Make Ditto the "mother" slot if the other daycare mon is male.
     if (species[parentSlots[1]] == SPECIES_DITTO && GetBoxMonGender(&daycare->mons[parentSlots[0]].mon) != MON_FEMALE)
     {

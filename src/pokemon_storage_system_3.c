@@ -453,6 +453,7 @@ static void Cb_InitPSS(u8 taskId)
     switch (gPSSData->state)
     {
     case 0:
+	    gMain.inPc = TRUE;
         SetVBlankCallback(NULL);
         SetGpuReg(REG_OFFSET_DISPCNT, 0);
         sub_808CF10();
@@ -2769,4 +2770,27 @@ static void sub_808FF70(void)
         FlagClear(FLAG_SHOWN_BOX_WAS_FULL_MESSAGE);
         VarSet(VAR_PC_BOX_TO_SEND_MON, StorageGetCurrentBox());
     }
+}
+
+void UpdatePcMonIconSpecies(void)
+{
+	u8 cursorPos;
+	
+	if (gPSSData->movingItem)
+	{
+		cursorPos = GetBoxCursorPosition();
+		
+		if (sInPartyMenu)
+		{
+			DestroyPartyMonIcon(cursorPos);
+			CreatePcPartyMonIconSprite(cursorPos, GetMonData(&gPlayerParty[cursorPos], MON_DATA_SPECIES2));
+		}
+		else
+		{
+			DestroyBoxMonIconAtPosition(cursorPos);
+			sub_80901EC(cursorPos);
+		}
+		sub_8092F54();
+		RefreshCursorMonData();
+	}
 }
