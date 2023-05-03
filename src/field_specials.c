@@ -6,6 +6,7 @@
 #include "script.h"
 #include "field_player_avatar.h"
 #include "overworld.h"
+#include "field_weather.h"
 #include "field_message_box.h"
 #include "event_data.h"
 #include "strings.h"
@@ -2474,6 +2475,8 @@ static void Task_WingFlapSound(u8 taskId)
 void ChooseItemFromBag(void)
 {
 	u8 pocket = VarGet(VAR_TEMP_0);
+	
+	PlayRainStoppingSoundEffect();
 	
 	switch (pocket)
 	{
