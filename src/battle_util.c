@@ -2421,6 +2421,29 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 					}
 				}
 				break;
+			case ABILITY_HUNGER_SWITCH:
+			    if (!(gBattleMons[battler].status2 & STATUS2_TRANSFORMED))
+				{
+					u16 newSpecies = SPECIES_NONE;
+					
+					switch (gBattleMons[battler].species)
+					{
+						case SPECIES_MORPEKO:
+						    newSpecies = SPECIES_MORPEKO_HANGRY;
+							break;
+						case SPECIES_MORPEKO_HANGRY:
+						    newSpecies = SPECIES_MORPEKO;
+							break;
+					}
+					if (newSpecies)
+					{
+						gBattleScripting.battler = battler;
+						DoBattleFormChange(battler, newSpecies, FALSE, FALSE);
+						BattleScriptPushCursorAndCallback(BattleScript_HungerSwitchActivated);
+						effect++;
+					}
+				}
+				break;
 		}
 	    }
 	    break;

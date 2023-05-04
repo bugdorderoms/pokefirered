@@ -4949,4 +4949,12 @@ BattleScript_SandSpitActivated::
 	removeabilitypopup BS_ATTACKER
 	call BattleScript_HandleWeatherFormChanges
 	return
-	
+
+BattleScript_HungerSwitchActivated::
+    loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	playanimation BS_ATTACKER, B_ANIM_FORM_CHANGE, NULL
+	waitanimation
+	printstring STRINGID_PKMNTRANSFORMED
+	waitmessage 0x40
+	removeabilitypopup BS_ATTACKER
+	end3
