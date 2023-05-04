@@ -4939,3 +4939,14 @@ BattleScript_DesolateLandEvaporatesWaterTypeMoves::
 	printstring STRINGID_SETWORDSTRING
 	waitmessage 0x40
 	goto BattleScript_MoveEnd
+
+BattleScript_SandSpitActivated::
+    pause 0x20
+    loadabilitypopup LOAD_ABILITY_NORMAL, BS_ATTACKER, LOAD_ABILITY_FROM_BUFFER
+	printstring STRINGID_ASANDSTORMKICKEDUP
+	waitmessage 0x40
+	playanimation BS_BATTLER_0, B_ANIM_SANDSTORM_CONTINUES, NULL
+	removeabilitypopup BS_ATTACKER
+	call BattleScript_HandleWeatherFormChanges
+	return
+	

@@ -423,6 +423,7 @@ static const u8 sText_SweetVeilProtected[] = _("{B_DEF_NAME_WITH_PREFIX} surroun
 static const u8 sText_HeavyRainLifted[] = _("The heavy rain has lifted!{PAUSE 64}");
 static const u8 sText_ExtremeSunlightFaded[] = _("The extreme sunlight faded.{PAUSE 64}");
 static const u8 sText_StrongWindsDissipated[] = _("The mysterious strong winds\nhave dissipated!{PAUSE 64}");
+static const u8 sText_SandstormKickedUp[] = _("A sandstorm kicked up!");
 
 static const u8 sText_HP2[] = _("HP");
 static const u8 sText_Attack2[] = _("Attack");
@@ -896,6 +897,7 @@ const u8 *const gBattleStringsTable[] = {
 	[STRINGID_STRONGWINDSDISSIPATED - 12]         = sText_StrongWindsDissipated,
 	[STRINGID_DEEPFOG - 12]                       = sText_FogIsDeep,
 	[STRINGID_FOGENDED - 12]                      = sText_FogEnded,
+	[STRINGID_ASANDSTORMKICKEDUP - 12]            = sText_SandstormKickedUp,
 };
 
 const u16 gMissStringIds[] = {

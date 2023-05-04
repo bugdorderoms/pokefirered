@@ -46,8 +46,6 @@
 #include "constants/inserts.h"
 #include "constants/battle_move_effects.h"
 
-#define DEFENDER_IS_PROTECTED ((gProtectStructs[gBattlerTarget].protected) && (gBattleMoves[gCurrentMove].flags & FLAG_PROTECT_AFFECTED))
-
 extern const u8 *const gBattleScriptsForMoveEffects[];
 
 //used strings
@@ -1141,7 +1139,7 @@ static void atk00_attackcanceler(void)
         gBattlescriptCurrInstr = BattleScript_TookAttack;
         RecordAbilityBattle(gBattlerTarget, gLastUsedAbility);
     }
-    else if (DEFENDER_IS_PROTECTED && (gCurrentMove != MOVE_CURSE || IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_GHOST))
+    else if (IsBattlerProtected(gBattlerTarget, gCurrentMove) && (gCurrentMove != MOVE_CURSE || IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_GHOST))
           && ((!IsTwoTurnsMove(gCurrentMove) || (gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS))))
     {
         CancelMultiTurnMoves(gBattlerAttacker);
@@ -1178,7 +1176,7 @@ static bool8 JumpIfMoveAffectedByProtect(u16 move)
 {
     bool8 affected = FALSE;
 
-    if (DEFENDER_IS_PROTECTED)
+    if (IsBattlerProtected(gBattlerTarget, move))
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         JumpIfMoveFailed(7, move);
@@ -3245,7 +3243,6 @@ static void atk23_getexp(void)
 
 static void atk24(void)
 {
-    u32 hitMarkerUnk;
     s32 i, foundPlayer, foundOpponent;
 
     if (!gBattleControllerExecFlags)
@@ -3258,19 +3255,16 @@ static void atk24(void)
 		
         if (gBattleOutcome == 0 && (gBattleTypeFlags & BATTLE_TYPE_LINK))
         {
-			u32 *ptr = &gHitMarker;
-            hitMarkerUnk = 0x10000000;
-		
             for (foundPlayer = 0, i = 0; i < gBattlersCount; i += 2)
             {
                 ++i, --i;
 				
-                if ((hitMarkerUnk << i) & *ptr && !gSpecialStatuses[i].flag40)
+                if (!gSpecialStatuses[i].flag40)
                     ++foundPlayer;
             }
             for (foundOpponent = 0, i = 1; i < gBattlersCount; i += 2)
             {
-                if ((hitMarkerUnk << i) & *ptr && !gSpecialStatuses[i].flag40)
+                if (!gSpecialStatuses[i].flag40)
                     ++foundOpponent;
             }
             if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
@@ -3636,7 +3630,7 @@ static void atk3F_end3(void) // pops the main function stack
 
 static void atk40_jumpifaffectedbyprotect(void)
 {
-    if (DEFENDER_IS_PROTECTED)
+    if (IsBattlerProtected(gBattlerTarget, gCurrentMove))
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         JumpIfMoveFailed(5, 0);

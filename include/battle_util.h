@@ -119,5 +119,6 @@ bool8 IsBattlerWeatherAffected(u8 battlerId, u16 weatherFlags);
 bool8 TryChangeBattleWeather(u8 battlerId, u8 weatherEnumId);
 s16 CalcMoveCritChance(u8 battlerAtk, u8 battlerDef, u16 move);
 bool8 IsMoveMakingContact(u8 battler, u16 move);
+bool8 IsBattlerProtected(u8 battlerId, u16 move);
 
 #endif // GUARD_BATTLE_UTIL_H

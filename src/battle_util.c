@@ -2864,6 +2864,15 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				    ++effect;
 				}
 				break;
+			case ABILITY_SAND_SPIT:
+			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TARGET_TURN_DAMAGED && !gProtectStructs[gBattlerAttacker].confusionSelfDmg && TryChangeBattleWeather(gBattlerAttacker, ENUM_WEATHER_SANDSTORM))
+				{
+					gBattleScripting.battler = gActiveBattler = battler;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_SandSpitActivated;
+					effect++;
+				}
+				break;
 	    }
 	    break;
 	case ABILITYEFFECT_MOVE_END_ATTACKER:
@@ -4194,6 +4203,15 @@ bool8 TryChangeBattleWeather(u8 battlerId, u8 weatherEnumId)
 bool8 IsMoveMakingContact(u8 battler, u16 move)
 {
 	if (GetBattlerAbility(battler) != ABILITY_LONG_REACH && gBattleMoves[move].flags & FLAG_MAKES_CONTACT)
+		return TRUE;
+	return FALSE;
+}
+
+bool8 IsBattlerProtected(u8 battlerId, u16 move)
+{
+	if (GetBattlerAbility(gBattlerAttacker) == ABILITY_UNSEEN_FIST && IsMoveMakingContact(gBattlerAttacker, move))
+		return FALSE;
+	if (gProtectStructs[battlerId].protected && gBattleMoves[move].flags & FLAG_PROTECT_AFFECTED)
 		return TRUE;
 	return FALSE;
 }
