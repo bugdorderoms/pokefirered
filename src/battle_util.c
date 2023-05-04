@@ -478,7 +478,6 @@ static void TryRemoveMonUnburdenBoost(u8 battler)
 void ResetVarsForAbilityChange(u8 battler) // used in abilities change
 {
 	TryRemoveMonUnburdenBoost(battler);
-	gNewBattleStruct.SlowStartTimers[battler] = 5;
 }
 
 void TryGiveUnburdenBoostToMon(u8 battler)
@@ -2155,7 +2154,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 		++effect;
 		break;
 	    case ABILITY_SLOW_START:
-	        gNewBattleStruct.SlowStartTimers[battler] = 5;
+	        gDisableStructs[battler].slowStartTimer = 5;
 		gSetWordLoc = sSlowStartStartString;
 		BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 		++effect;
@@ -2346,7 +2345,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u16 ability, u8 special, u16 move
 				gDisableStructs[gBattlerAttacker].truantCounter ^= 1;
 				break;
 			case ABILITY_SLOW_START:
-				if (gNewBattleStruct.SlowStartTimers[battler] != 0 && --gNewBattleStruct.SlowStartTimers[battler] == 0)
+				if (gDisableStructs[battler].slowStartTimer && --gDisableStructs[battler].slowStartTimer == 0)
 				{
 					gSetWordLoc = sSlowStartEndString;
 					BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);

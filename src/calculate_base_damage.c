@@ -358,7 +358,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				}
 				break;
 			case ABILITY_SLOW_START:
-				if (gNewBattleStruct.SlowStartTimers[battlerIdAtk] != 0)
+				if (gDisableStructs[battlerIdAtk].slowStartTimer)
 					attack /= 2;
 				break;
 			case ABILITY_SNIPER:

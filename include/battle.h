@@ -148,7 +148,8 @@ struct DisableStruct
     /*0x0B*/ u8 disableTimer:3;
     /*0x0B*/ u8 encoreTimer:2;
     /*0x0B*/ u8 chargeTimer:2;
-    /*0x0C*/ u16 perishSongTimer:4;
+    /*0x0C*/ u16 perishSongTimer:2;
+	/*0x0C*/ u16 isFirstTurn:2;
     /*0x0C*/ u16 tauntTimer:3;
     /*0x0C*/ u16 furyCutterCounter:3;
     /*0x0C*/ u16 rolloutTimer:3;
@@ -156,11 +157,10 @@ struct DisableStruct
     /*0x0E*/ u8 encoredMovePos;
     /*0x0F*/ u8 mimickedMoves:4;
 	/*0x0F*/ u8 canProteanActivate:1;
-    /*0x0F*/ u8 unused:3;
+    /*0x0F*/ u8 slowStartTimer:3;
     /*0x10*/ u8 battlerPreventingEscape;
     /*0x11*/ u8 battlerWithSureHit;
-    /*0x12*/ u8 isFirstTurn;
-    /*0x13*/ u8 rechargeTimer;
+    /*0x12*/ u8 rechargeTimer;
 };
 
 extern struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT];
@@ -446,10 +446,7 @@ struct Illusion
 
 struct NewBattleStruct
 {
-    u8 SlowStartTimers[MAX_BATTLERS_COUNT];
     u8 UnburdenBoostBits;
-	u8 unused2;
-    u16 unused;
     struct Illusion illusion[MAX_BATTLERS_COUNT];
 };
 

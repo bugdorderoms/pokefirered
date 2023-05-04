@@ -2463,7 +2463,6 @@ static void BattleStartClearSetData(void)
         gBattleStruct->lastTakenMoveFrom[i][1] = MOVE_NONE;
         gBattleStruct->lastTakenMoveFrom[i][2] = MOVE_NONE;
         gBattleStruct->lastTakenMoveFrom[i][3] = MOVE_NONE;
-        gNewBattleStruct.SlowStartTimers[i] = 0;
         gNewBattleStruct.UnburdenBoostBits &= ~(gBitTable[i]);
 		ClearIllusionMon(i);
     }
@@ -2580,7 +2579,6 @@ void SwitchInClearSetData(void)
     }
     gMoveResultFlags = 0;
     gDisableStructs[gActiveBattler].isFirstTurn = 2;
-    gNewBattleStruct.SlowStartTimers[gActiveBattler] = 0;
     gNewBattleStruct.UnburdenBoostBits &= ~(gBitTable[gActiveBattler]);
     gLastMoves[gActiveBattler] = MOVE_NONE;
     gLastLandedMoves[gActiveBattler] = MOVE_NONE;
@@ -2644,7 +2642,6 @@ void FaintClearSetData(void)
     gProtectStructs[gActiveBattler].notFirstStrike = FALSE;
 	gProtectStructs[gActiveBattler].usesBouncedMove = FALSE;
     gDisableStructs[gActiveBattler].isFirstTurn = 2;
-    gNewBattleStruct.SlowStartTimers[gActiveBattler] = 0;
     gNewBattleStruct.UnburdenBoostBits &= ~(gBitTable[gActiveBattler]);
     gLastMoves[gActiveBattler] = MOVE_NONE;
     gLastLandedMoves[gActiveBattler] = MOVE_NONE;
@@ -3645,7 +3642,7 @@ u32 GetBattlerTotalSpeed(u8 battler)
 		monspeed *= 2;
     if (GetBattlerAbility(battler) == ABILITY_QUICK_FEET && gBattleMons[battler].status1 & STATUS1_ANY)
         monspeed *= 2;
-    if (GetBattlerAbility(battler) == ABILITY_SLOW_START && gNewBattleStruct.SlowStartTimers[battler] != 0)
+    if (GetBattlerAbility(battler) == ABILITY_SLOW_START && gDisableStructs[battler].slowStartTimer)
         monspeed /= 2;
     if (GetBattlerAbility(battler) == ABILITY_UNBURDEN && !gBattleMons[battler].item && gNewBattleStruct.UnburdenBoostBits & gBitTable[battler])
         monspeed *= 2;
