@@ -1034,13 +1034,13 @@ static void atk00_attackcanceler(void)
 		return;
 	// Check no PP for move
     if (!gBattleMons[gBattlerAttacker].pp[gCurrMovePos] && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS) 
-	&& gCurrentMove != MOVE_STRUGGLE && !(gHitMarker & (HITMARKER_x800000 | HITMARKER_NO_ATTACKSTRING)))
+	&& gCurrentMove != MOVE_STRUGGLE && !(gHitMarker & (HITMARKER_ALLOW_NO_PP | HITMARKER_NO_ATTACKSTRING)))
     {
         gBattlescriptCurrInstr = BattleScript_NoPPForMove;
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         return;
     }
-	gHitMarker &= ~(HITMARKER_x800000);
+	gHitMarker &= ~(HITMARKER_ALLOW_NO_PP);
 	
 	// Try activate Stance Change
 	if (GetBattlerAbility(gBattlerAttacker) == ABILITY_STANCE_CHANGE && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_TRANSFORMED))
@@ -1200,30 +1200,24 @@ static bool8 AccuracyCalcHelper(u16 move)
     if (GetBattlerAbility(gBattlerAttacker) != ABILITY_NO_GUARD && GetBattlerAbility(gBattlerTarget) != ABILITY_NO_GUARD)
     {
 		// Check if semi-invulnerable
-	    if (!(gHitMarker & HITMARKER_IGNORE_ON_AIR) && gStatuses3[gBattlerTarget] & STATUS3_ON_AIR)
+	    if (!(gBattleMoves[move].flags & (FLAG_DMG_2X_IN_AIR | FLAG_DMG_IN_AIR)) && gStatuses3[gBattlerTarget] & STATUS3_ON_AIR)
 	    {
 		    gMoveResultFlags |= MOVE_RESULT_MISSED;
 		    JumpIfMoveFailed(7, move);
 		    return TRUE;
 	    }
-	    gHitMarker &= ~(HITMARKER_IGNORE_ON_AIR);
-		
-	    if (!(gHitMarker & HITMARKER_IGNORE_UNDERGROUND) && gStatuses3[gBattlerTarget] & STATUS3_UNDERGROUND)
+	    if (!(gBattleMoves[move].flags & FLAG_DMG_UNDERGROUND) && gStatuses3[gBattlerTarget] & STATUS3_UNDERGROUND)
 	    {
 		    gMoveResultFlags |= MOVE_RESULT_MISSED;
 		    JumpIfMoveFailed(7, move);
 		    return TRUE;
 	    }
-	    gHitMarker &= ~(HITMARKER_IGNORE_UNDERGROUND);
-		
-	    if (!(gHitMarker & HITMARKER_IGNORE_UNDERWATER) && gStatuses3[gBattlerTarget] & STATUS3_UNDERWATER)
+	    if (!(gBattleMoves[move].flags & FLAG_DMG_UNDERWATER) && gStatuses3[gBattlerTarget] & STATUS3_UNDERWATER)
 	    {
 		    gMoveResultFlags |= MOVE_RESULT_MISSED;
 		    JumpIfMoveFailed(7, move);
 		    return TRUE;
 	    }
-	    gHitMarker &= ~(HITMARKER_IGNORE_UNDERWATER);
-		
 		// Check Thunder on rain and moves that never miss
 	    if ((IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_RAIN_ANY) && gBattleMoves[move].effect == EFFECT_THUNDER) || (gBattleMoves[move].accuracy == 0))
 	    {
@@ -1835,8 +1829,8 @@ static void atk0C_datahpupdate(void)
                 }
                 else // HP goes down
                 {
-					if (gHitMarker & HITMARKER_x20)
-                        gHitMarker &= ~(HITMARKER_x20);
+					if (gHitMarker & HITMARKER_SKIP_DMG_TRACK)
+                        gHitMarker &= ~(HITMARKER_SKIP_DMG_TRACK);
                     else
                     {
                         gTakenDmg[gActiveBattler] += gBattleMoveDamage;
