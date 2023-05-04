@@ -455,6 +455,39 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			    if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
 					gBattleMovePower += gBattleMovePower / 4;
 				break;
+			case ABILITY_PUNK_ROCK:
+			    if (gBattleMoves[move].flags & FLAG_SOUND)
+					gBattleMovePower = (13 * gBattleMovePower) / 10;
+				break;
+			case ABILITY_STEELY_SPIRIT:
+			    if (type == TYPE_STEEL)
+					gBattleMovePower = (15 * gBattleMovePower) / 10;
+				break;
+			case ABILITY_TRANSISTOR:
+			    if (type == TYPE_ELECTRIC)
+				{
+					attack += (attack / 2);
+					spAttack += (spAttack / 2);
+				}
+				break;
+			case ABILITY_DRAGONS_MAW:
+			    if (type == TYPE_DRAGON)
+				{
+					attack += (attack / 2);
+					spAttack += (spAttack / 2);
+				}
+				break;
+			case ABILITY_ROCKY_PAYLOAD:
+			    if (type == TYPE_ROCK)
+				{
+					attack += (attack / 2);
+					spAttack += (spAttack / 2);
+				}
+				break;
+			case ABILITY_SHARPNESS:
+			    if (gBattleMoves[move].flags & FLAG_SLICING)
+					gBattleMovePower = (15 * gBattleMovePower) / 10;
+				break;
 		}
 		// Aura abilities
 		if ((ABILITY_ON_FIELD(ABILITY_DARK_AURA) && type == TYPE_DARK) || (ABILITY_ON_FIELD(ABILITY_FAIRY_AURA) && type == TYPE_FAIRY))
@@ -476,6 +509,13 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				case ABILITY_BATTERY:
 				    if (IS_MOVE_SPECIAL(move))
 						gBattleMovePower = (gBattleMovePower * 13) / 10;
+					break;
+				case ABILITY_POWER_SPOT:
+				    gBattleMovePower = (gBattleMovePower * 13) / 10;
+					break;
+				case ABILITY_STEELY_SPIRIT:
+				    if (type == TYPE_STEEL)
+						gBattleMovePower = (15 * gBattleMovePower) / 10;
 					break;
 			}
 		}
@@ -531,6 +571,14 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower /= 2;
 				if (type == TYPE_FIRE)
 					gBattleMovePower *= 2;
+				break;
+			case ABILITY_PUNK_ROCK:
+			    if (gBattleMoves[move].flags & FLAG_SOUND)
+					gBattleMovePower /= 2;
+				break;
+			case ABILITY_ICE_SCALES:
+			    if (IS_MOVE_SPECIAL(move))
+					gBattleMovePower /= 2;
 				break;
 		}
 		// defender's ally abilities check
