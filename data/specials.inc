@@ -319,9 +319,9 @@ gSpecials:: @ 815FD60
 	def_special IsPokerusInParty
 	def_special SetIcefallCaveCrackedIceMetatiles
 	def_special ShakeScreen
-	def_special StartGroudonKyogreBattle
+	def_special NullFieldSpecial
 	def_special StartLegendaryBattle
-	def_special StartRegiBattle
+	def_special NullFieldSpecial
 	def_special SetUpTrainerMovement
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
@@ -331,7 +331,7 @@ gSpecials:: @ 815FD60
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special SetEReaderTrainerGfxId
-	def_special StartSouthernIslandBattle
+	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial

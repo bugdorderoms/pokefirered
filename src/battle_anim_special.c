@@ -13,6 +13,7 @@
 #include "trig.h"
 #include "util.h"
 #include "menu.h"
+#include "constants/battle_script_commands.h"
 #include "constants/items.h"
 #include "constants/moves.h"
 #include "constants/songs.h"
@@ -1180,7 +1181,7 @@ static void SpriteCB_ThrowBall_DoClick(struct Sprite *sprite)
     else if (sprite->data[4] == 95)
     {
         gDoingBattleAnim = FALSE;
-        UpdateOamPriorityInAllHealthboxes(1);
+        UpdateOamPriorityInAllHealthboxes(1, FALSE);
         m4aMPlayAllStop();
         PlaySE(MUS_CAUGHT_INTRO);
     }
@@ -1334,7 +1335,7 @@ static void SpriteCB_ThrowBall_RunBreakOut(struct Sprite *sprite)
         sprite->data[0] = 0;
         sprite->callback = BattleAnimObj_SignalEnd;
         gDoingBattleAnim = FALSE;
-        UpdateOamPriorityInAllHealthboxes(1);
+        UpdateOamPriorityInAllHealthboxes(1, FALSE);
     }
 }
 
@@ -1366,7 +1367,7 @@ static void TrainerBallBlock2(struct Sprite *sprite)
         sprite->data[0] = 0;
         sprite->callback = BattleAnimObj_SignalEnd;
         gDoingBattleAnim = FALSE;
-        UpdateOamPriorityInAllHealthboxes(1);
+        UpdateOamPriorityInAllHealthboxes(1, FALSE);
     }
 }
 
@@ -1397,7 +1398,7 @@ static void GhostBallDodge2(struct Sprite *sprite)
     sprite->data[0] = 0;
     sprite->callback = BattleAnimObj_SignalEnd;
     gDoingBattleAnim = FALSE;
-    UpdateOamPriorityInAllHealthboxes(1);
+    UpdateOamPriorityInAllHealthboxes(1, FALSE);
 }
 
 static void LoadBallParticleGfx(u8 ballId)
@@ -2028,6 +2029,10 @@ void TryShinyAnimation(u8 battler, struct Pokemon *mon)
     u32 otId, personality;
     u32 shinyValue;
     u8 taskId1, taskId2;
+	struct Pokemon *illusionMon = GetIllusionMonPtr(battler);
+
+    if (illusionMon != NULL)
+		mon = illusionMon;
 
     isShiny = FALSE;
     gBattleSpritesDataPtr->healthBoxesData[battler].triedShinyMonAnim = TRUE;
@@ -2371,7 +2376,7 @@ static void AbilityPopUpPrinter(const u8 * str, u8 * tiledata, u8 * tiledata2, u
 	RemoveWindow(WindowId);
 }
 
-static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprite2, u8 arg1, u16 arg2)
+static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprite2)
 {
     int i;
     u8 pokemonName[POKEMON_NAME_LENGTH + 3] = {0};
@@ -2403,12 +2408,13 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprit
     AbilityPopUpPrinter((const u8*) pokemonName, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP),
 			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP), 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_WHITE);
     
-    if (arg1 == LOAD_ABILITY_FROM_SECOND_BANK)
-        ability = gBattleMons[GetBattlerForBattleScript(arg2)].ability;
-    else if (arg2 == LOAD_ABILITY_FROM_BUFFER)
-        ability = gLastUsedAbility;
-    else
-        ability = arg2;
+	if (gBattleStruct->abilityOverride[battler])
+	{
+		ability = gBattleStruct->abilityOverride[battler];
+		gBattleStruct->abilityOverride[battler] = ABILITY_NONE;
+	}
+	else
+		ability = gBattleMons[battler].ability;
     
     AbilityPopUpPrinter(gAbilityNames[ability], (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP) + 256,
 			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP) + 256, 4, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_LIGHT_BLUE, TEXT_COLOR_WHITE);
@@ -2449,7 +2455,7 @@ static void SpriteCB_AbilityPopUp(struct Sprite * sprite)
 void AnimTask_CreateAbilityPopUp(u8 taskId)
 {
     const s16 (*coords)[2];
-    u8 spriteId1, spriteId2, battler = GetBattlerForBattleScript(gBattlescriptCurrInstr[-3]), battlerPosition = GetBattlerPosition(battler);
+    u8 spriteId1, spriteId2, battler = GetBattlerForBattleScript(gBattlescriptCurrInstr[-1] & ~(ATKFC_REMOVE_POP_UP)), battlerPosition = GetBattlerPosition(battler);
 	const struct SpriteTemplate sSpriteTemplate_AbilityPopUp =
 	{
 		.tileTag = ANIM_TAG_ABILITY_POP_UP + battler,
@@ -2504,14 +2510,19 @@ void AnimTask_CreateAbilityPopUp(u8 taskId)
     StartSpriteAnim(&gSprites[spriteId1], 0);
     StartSpriteAnim(&gSprites[spriteId2], 0);
     
-    PrintBattlerAndAbilityOnAbilityPopUp(battler, spriteId1, spriteId2, gBattlescriptCurrInstr[-4], gBattlescriptCurrInstr[-2]);
+    PrintBattlerAndAbilityOnAbilityPopUp(battler, spriteId1, spriteId2);
     RestoreOverwrittenPixels((void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * TILE_SIZE_4BPP));
     DestroyAnimVisualTask(taskId);
 }
 
 void AnimTask_DestroyAbilityPopUp(u8 taskId)
 {
-    gSprites[gAbilityPopUpIds[GetBattlerForBattleScript(gBattlescriptCurrInstr[-3])][0]].tFrames = 0;
-    gSprites[gAbilityPopUpIds[GetBattlerForBattleScript(gBattlescriptCurrInstr[-3])][1]].tFrames = 0;
+	u8 battler = GetBattlerForBattleScript(gBattlescriptCurrInstr[-1] & ~(ATKFC_REMOVE_POP_UP));
+	
+	if (gActiveAbilityPopUps & gBitTable[battler])
+	{
+		gSprites[gAbilityPopUpIds[battler][0]].tFrames = 0;
+		gSprites[gAbilityPopUpIds[battler][1]].tFrames = 0;
+	}
     DestroyAnimVisualTask(taskId);
 }

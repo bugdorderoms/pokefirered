@@ -78,12 +78,6 @@ enum {
     MAPPERM_COUNT
 };
 
-#define FREE_IF_NOT_NULL(ptr) ({ \
-    if (ptr) {                   \
-        FREE_AND_SET_NULL(ptr);  \
-    }                            \
-})
-
 struct RegionMap
 {
     u8 mapName[19];

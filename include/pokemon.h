@@ -227,26 +227,73 @@ struct BaseStats
  /* 0x15 */ u8 eggGroup2;
  /* 0x16 */ u16 abilities[2];
  /* 0x1A */ u8 safariZoneFleeRate;
- /* 0x1B */ u8 bodyColor : 7;
-            u8 noFlip : 1;
+ /* 0x1B */ u8 bodyColor:7;
+            u8 noFlip:1;
  /* 0x1C */ u16 hiddenAbility;
+};
+
+struct MoveFlags
+{
+	u32 makesContact:1; // A move with this flag will makes contact.
+	u32 danceMove:1; // A move with this flag can be affected by Dancer.
+	u32 magicCoatAffected:1; // A move with this flag can be reflected by Magic Coat.
+	u32 snatchAffected:1; // A move with this flag can be stealed by Snatch.
+	u32 thawUser:1; // A move with this flag will thaw the user when used.
+	u32 kingsRockAffected:1; // A move with this flag can be affected by Kings Rock.
+	u32 highCritChance:1; // A move with this flag have a high chance to be critical.
+	u32 forbiddenProtect:1; // A move with this flag will ignore the target's protect effects.
+	// end of byte
+	u32 punchMove:1; // A move with this flag can be affected by Iron Fist.
+	u32 secondaryEffectMove:1; // A move with this flag can be affected by Sheer Force.
+	u32 bitingMove:1; // A move with this flag can be affected by Strong Jaw.
+	u32 pulseMove:1; // A move with this flag can be affected by Mega Launcher.
+	u32 targetStatStagesIgnored:1; // A move with this flag will ignore the target Defense and Evasion stat stages.
+	u32 forbiddenMimic:1; // A move with this flag can't be copied by Mimic.
+	u32 hitUnderground:1; // If target is undergrounded, can hit.
+	u32 hitUnderwater:1; // If target is in underwater, can hit.
+	// end of byte
+	u32 soundMove:1; // A move with this flag will makes sound.
+	u32 ballisticMove:1; // A move with this flag will be blocked by Bulletproof.
+	u32 protectionMove:1; // A move with this flag can set a protect like effect.
+	u32 powderMove:1; // A move with this flag can be blocked by Overcoat, etc.
+	u32 ignoreAbilities:1; // A move with this flag will ignore all ignoreable abilities.
+	u32 twoStrikes:1; // A move with this flag will strike twice, and may apply its effect on each hit.
+	u32 hitInAir:1; // If target is in the air, can hit.
+	u32 hitInAirDoubleDmg:1; // If target is in the air, can hit and deal double damage.
+	// end of byte
+	u32 makeGrounded:1; // A move with this flag makes Ground type moves do 1x damage to flying and levitating targets.
+	u32 hitSubstitute:1; // A move with this flag will ignore the target's Substitute.
+	u32 slicingMove:1; // A move with this flag can be affected by Sharpness.
+	u32 windMove:1; // A move with this flag can be affected by Wind Rider, etc.
+	u32 threeStrikes:1; // A move with this flag will strike three times, and may apply its effect on each hit.
+	u32 forbiddenMirrorMove:1; // A move with this flag can't be affected by Mirror Move.
+	u32 forbiddenMetronome:1; // A move with this flag can't be called by Metronome.
+	u32 forbiddenAssist:1; // A move with this flag can't be executed by Assist.
+	// end of byte
+	u32 forbiddenSleepTalk:1; // A move with this flag can't be executed by Sleep Talk.
+	u32 forbiddenCopycat:1; // A move with this flag can't be copied by Copycat.
+	u32 forbiddenInstruct:1; // A move with this flag can't be executed by Instruct.
+	u32 forbiddenParentalBond:1; // A move with this flag can't become a multi-hit move due to Parental Bond.
+	u32 affectsUserSide:1; // Tipycally used to show the entire side on choose the move, but it's still used to determine protect like effects.
+	u32 dmgMinimize:1; // A move with this flag will deal double damage and aways hit the target if it was used Minimize.
+	u32 callAnotherMove:1; // Used by "moves that call other moves", will cause Protean to activate only when the called move is executed.
+	u32 unused:25;
 };
 
 struct BattleMove
 {
-    u16 effect;
-    u16 power;  //higher than 255 for z moves
-    u8 type;
-    u8 accuracy;
-    u8 pp;
-    u8 secondaryEffectChance;
-    u16 target;
-    s8 priority;
-    u32 flags;
-    u8 split;
-    u8 argument;
-    u8 zMovePower;
-    u8 zMoveEffect;
+    /*0x00*/ u16 effect;
+    /*0x02*/ u16 power;  //higher than 255 for z moves
+    /*0x04*/ u8 type;
+    /*0x05*/ u8 accuracy;
+    /*0x06*/ u8 pp;
+    /*0x07*/ u8 secondaryEffectChance;
+    /*0x08*/ u8 target;
+    /*0x09*/ s8 priority;
+    /*0x0A*/ u8 split;
+    /*0x0B*/ u8 argument;
+	/*0x0C*/ struct MoveFlags flags;
+    /*0x14*/ u8 zMoveEffect;
 };
 
 extern const struct BattleMove gBattleMoves[];
@@ -376,9 +423,10 @@ u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool8 firstMove);
 void GiveMonInitialMoveset(struct Pokemon *mon);
 void DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move);
 
-#define BATTLE_ALIVE_EXCEPT_ACTIVE  0
-#define BATTLE_ALIVE_ATK_SIDE       1
-#define BATTLE_ALIVE_DEF_SIDE       2
+#define BATTLE_ALIVE_EXCEPT_ACTIVE   0
+#define BATTLE_ALIVE_ATK_SIDE        1
+#define BATTLE_ALIVE_DEF_SIDE        2
+#define BATTLE_ALIVE_EXCEPT_ATTACKER 3
 
 u8 CountAliveMonsInBattle(u8 caseId);
 
@@ -461,7 +509,7 @@ bool8 IsOtherTrainer(u32 otId, u8 *otName);
 void MonRestorePP(struct Pokemon *mon);
 void BoxMonRestorePP(struct BoxPokemon *boxMon);
 void SetMonPreventsSwitchingString(void);
-void SetWildMonHeldItem(void);
+void SetWildMonHeldItem(struct Pokemon *mon);
 bool8 IsMonShiny(struct Pokemon *mon);
 u8 *GetTrainerPartnerName(void);
 u8 GetPlayerPartyHighestLevel(void);

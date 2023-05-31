@@ -948,17 +948,6 @@ void DrawBattleEntryBackground(void)
     {
         LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_BUILDING);
     }
-    else if (gBattleTypeFlags & BATTLE_TYPE_KYOGRE_GROUDON)
-    {
-        if (gGameVersion == VERSION_FIRE_RED)
-        {
-            LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_CAVE);
-        }
-        else
-        {
-            LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_WATER);
-        }
-    }
     else
     {
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)

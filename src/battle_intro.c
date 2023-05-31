@@ -97,18 +97,10 @@ void HandleIntroSlide(u8 terrain)
     u8 taskId;
 
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-    {
         taskId = CreateTask(BattleIntroSlideLink, 0);
-    }
-    else if ((gBattleTypeFlags & BATTLE_TYPE_KYOGRE_GROUDON) && gGameVersion != VERSION_RUBY)
-    {
-        terrain = BATTLE_TERRAIN_UNDERWATER;
-        taskId = CreateTask(BattleIntroSlide2, 0);
-    }
     else
-    {
         taskId = CreateTask(sBattleIntroSlideFuncs[terrain], 0);
-    }
+
     gTasks[taskId].data[0] = 0;
     gTasks[taskId].data[1] = terrain;
     gTasks[taskId].data[2] = 0;

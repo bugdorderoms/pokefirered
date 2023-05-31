@@ -924,3 +924,9 @@ static void sub_80BC19C(u8 taskId)
         DestroyTask(taskId);
     }
 }
+
+void AnimTask_SetInvisible(u8 taskId)
+{
+	gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible = gBattleSpritesDataPtr->battlerData[gBattleAnimTarget].invisible = TRUE;
+    DestroyAnimVisualTask(taskId);
+}

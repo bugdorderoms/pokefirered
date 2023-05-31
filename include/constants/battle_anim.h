@@ -378,6 +378,7 @@
 #define B_ANIM_REMOVE_ABILITY_POP_UP    0x1D
 #define B_ANIM_ILLUSION_OFF             0x1E
 #define B_ANIM_FOG_CONTINUES            0x1F
+#define B_ANIM_SLIDE_OUT_OFFSCREEN      0X20
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0
@@ -445,6 +446,5 @@
 #define BACK_ANIM_FADE_RED_WITH_SHAKE          0x17
 #define BACK_ANIM_FADE_GREEN_WITH_SHAKE        0x18
 #define BACK_ANIM_FADE_BLUE_WITH_SHAKE         0x19
-
 
 #endif // GUARD_CONSTANTS_BATTLE_ANIM_H

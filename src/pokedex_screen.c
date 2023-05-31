@@ -940,10 +940,11 @@ void CB2_OpenPokedexFromStartMenu(void)
     SetMainCallback2(CB2_PokedexScreen);
 }
 
-#define FREE_IF_NOT_NULL(ptr0) ({ void * ptr = (ptr0); if (ptr) Free(ptr); })
-
 bool8 DoClosePokedex(void)
 {
+	u8 i;
+	void *bgbuff;
+	
     switch (gMain.state)
     {
     case 0:
@@ -960,10 +961,11 @@ bool8 DoClosePokedex(void)
         FREE_IF_NOT_NULL(sPokedexScreenData->listItems);
         FREE_IF_NOT_NULL(sPokedexScreenData);
         FreeAllWindowBuffers();
-        FREE_IF_NOT_NULL(GetBgTilemapBuffer(0));
-        FREE_IF_NOT_NULL(GetBgTilemapBuffer(1));
-        FREE_IF_NOT_NULL(GetBgTilemapBuffer(2));
-        FREE_IF_NOT_NULL(GetBgTilemapBuffer(3));
+		for (i = 0; i < 4; i++)
+		{
+			bgbuff = GetBgTilemapBuffer(i);
+			FREE_IF_NOT_NULL(bgbuff);
+		}
         break;
     }
     return TRUE;

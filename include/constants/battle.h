@@ -56,18 +56,16 @@
 #define BATTLE_TYPE_OLD_MAN_TUTORIAL (1 << 9)
 #define BATTLE_TYPE_ROAMER           (1 << 10)
 #define BATTLE_TYPE_EREADER_TRAINER  (1 << 11)
-#define BATTLE_TYPE_KYOGRE_GROUDON   (1 << 12)
-#define BATTLE_TYPE_LEGENDARY        (1 << 13)
-#define BATTLE_TYPE_GHOST_UNVEILED   (1 << 13) // Re-use of BATTLE_TYPE_LEGENDARY, when combined with BATTLE_TYPE_GHOST
-#define BATTLE_TYPE_REGI             (1 << 14)
-#define BATTLE_TYPE_GHOST            (1 << 15)
-#define BATTLE_TYPE_POKEDUDE         (1 << 16)
-#define BATTLE_TYPE_WILD_SCRIPTED    (1 << 17)
-#define BATTLE_TYPE_LEGENDARY_FRLG   (1 << 18)
-#define BATTLE_TYPE_TRAINER_TOWER    (1 << 19)
+#define BATTLE_TYPE_LEGENDARY        (1 << 12)
+#define BATTLE_TYPE_GHOST_UNVEILED   (1 << 12) // Re-use of BATTLE_TYPE_LEGENDARY, when combined with BATTLE_TYPE_GHOST
+#define BATTLE_TYPE_GHOST            (1 << 13)
+#define BATTLE_TYPE_POKEDUDE         (1 << 14)
+#define BATTLE_TYPE_WILD_SCRIPTED    (1 << 15)
+#define BATTLE_TYPE_TRAINER_TOWER    (1 << 16)
 
-#define IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE(flags) ((flags) & BATTLE_TYPE_GHOST && !((flags) & BATTLE_TYPE_GHOST_UNVEILED))
-#define IS_BATTLE_TYPE_GHOST_WITH_SCOPE(flags) ((flags) & BATTLE_TYPE_GHOST && (flags) & BATTLE_TYPE_GHOST_UNVEILED)
+#define IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE() (gBattleTypeFlags & BATTLE_TYPE_GHOST && !(gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
+#define IS_BATTLE_TYPE_GHOST_WITH_SCOPE() (gBattleTypeFlags & BATTLE_TYPE_GHOST && gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED)
+#define IS_DOUBLE_WILD_BATTLE() (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 
 #define RIVAL_BATTLE_HEAL_AFTER  1
 #define RIVAL_BATTLE_TUTORIAL    3
@@ -139,9 +137,7 @@
 #define STATUS3_MUDSPORT                (1 << 16)
 #define STATUS3_WATERSPORT              (1 << 17)
 #define STATUS3_UNDERWATER              (1 << 18)
-#define STATUS3_INTIMIDATE_POKES        (1 << 19)
-#define STATUS3_TRACE                   (1 << 20)
-#define STATUS3_POWER_TRICK             (1 << 21)
+#define STATUS3_POWER_TRICK             (1 << 19)
 #define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
 
 // Not really sure what a "hitmarker" is.
@@ -163,7 +159,9 @@
 #define HITMARKER_GRUDGE                (1 << 15)
 #define HITMARKER_OBEYS                 (1 << 16)
 #define HITMARKER_CHARGING              (1 << 17)
-#define HITMARKER_FAINTED(battler)      (gBitTable[battler] << 18) // four bits
+#define HITMARKER_IGNORE_DISGUISE       (1 << 18)
+#define HITMARKER_FAINTED(battler)      (gBitTable[battler] << 28)
+#define HITMARKER_FAINTED2(battler)     ((1 << 28) << battler) // apparently is unused, but ???
 
 // Per-side statuses that affect an entire party
 #define SIDE_STATUS_REFLECT          (1 << 0)
@@ -219,77 +217,6 @@
 #define ENUM_WEATHER_RAIN_PRIMAL  6
 #define ENUM_WEATHER_SUN_PRIMAL   7
 
-// Move Effects
-#define MOVE_EFFECT_NOTHING_0           0x0
-#define MOVE_EFFECT_SLEEP               0x1
-#define MOVE_EFFECT_POISON              0x2
-#define MOVE_EFFECT_BURN                0x3
-#define MOVE_EFFECT_FREEZE              0x4
-#define MOVE_EFFECT_PARALYSIS           0x5
-#define MOVE_EFFECT_TOXIC               0x6
-#define MOVE_EFFECT_CONFUSION           0x7
-#define MOVE_EFFECT_FLINCH              0x8
-#define MOVE_EFFECT_TRI_ATTACK          0x9
-#define MOVE_EFFECT_UPROAR              0xA
-#define MOVE_EFFECT_PAYDAY              0xB
-#define MOVE_EFFECT_CHARGING            0xC
-#define MOVE_EFFECT_WRAP                0xD
-#define MOVE_EFFECT_RECOIL_25           0xE
-#define MOVE_EFFECT_ATK_PLUS_1          0xF
-#define MOVE_EFFECT_DEF_PLUS_1          0x10
-#define MOVE_EFFECT_SPD_PLUS_1          0x11
-#define MOVE_EFFECT_SP_ATK_PLUS_1       0x12
-#define MOVE_EFFECT_SP_DEF_PLUS_1       0x13
-#define MOVE_EFFECT_ACC_PLUS_1          0x14
-#define MOVE_EFFECT_EVS_PLUS_1          0x15
-#define MOVE_EFFECT_ATK_MINUS_1         0x16
-#define MOVE_EFFECT_DEF_MINUS_1         0x17
-#define MOVE_EFFECT_SPD_MINUS_1         0x18
-#define MOVE_EFFECT_SP_ATK_MINUS_1      0x19
-#define MOVE_EFFECT_SP_DEF_MINUS_1      0x1A
-#define MOVE_EFFECT_ACC_MINUS_1         0x1B
-#define MOVE_EFFECT_EVS_MINUS_1         0x1C
-#define MOVE_EFFECT_RECHARGE            0x1D
-#define MOVE_EFFECT_RAGE                0x1E
-#define MOVE_EFFECT_STEAL_ITEM          0x1F
-#define MOVE_EFFECT_PREVENT_ESCAPE      0x20
-#define MOVE_EFFECT_NIGHTMARE           0x21
-#define MOVE_EFFECT_ALL_STATS_UP        0x22
-#define MOVE_EFFECT_RAPIDSPIN           0x23
-#define MOVE_EFFECT_REMOVE_PARALYSIS    0x24
-#define MOVE_EFFECT_ATK_DEF_DOWN        0x25
-#define MOVE_EFFECT_RECOIL_33           0x26
-#define MOVE_EFFECT_ATK_PLUS_2          0x27
-#define MOVE_EFFECT_DEF_PLUS_2          0x28
-#define MOVE_EFFECT_SPD_PLUS_2          0x29
-#define MOVE_EFFECT_SP_ATK_PLUS_2       0x2A
-#define MOVE_EFFECT_SP_DEF_PLUS_2       0x2B
-#define MOVE_EFFECT_ACC_PLUS_2          0x2C
-#define MOVE_EFFECT_EVS_PLUS_2          0x2D
-#define MOVE_EFFECT_ATK_MINUS_2         0x2E
-#define MOVE_EFFECT_DEF_MINUS_2         0x2F
-#define MOVE_EFFECT_SPD_MINUS_2         0x30
-#define MOVE_EFFECT_SP_ATK_MINUS_2      0x31
-#define MOVE_EFFECT_SP_DEF_MINUS_2      0x32
-#define MOVE_EFFECT_ACC_MINUS_2         0x33
-#define MOVE_EFFECT_EVS_MINUS_2         0x34
-#define MOVE_EFFECT_THRASH              0x35
-#define MOVE_EFFECT_KNOCK_OFF           0x36
-#define MOVE_EFFECT_FEINT               0x37
-#define MOVE_EFFECT_NOTHING_38          0x38
-#define MOVE_EFFECT_NOTHING_39          0x39
-#define MOVE_EFFECT_NOTHING_3A          0x3A
-#define MOVE_EFFECT_SP_ATK_TWO_DOWN     0x3B
-#define MOVE_EFFECT_NOTHING_3C          0x3C
-#define MOVE_EFFECT_NOTHING_3D          0x3D
-#define MOVE_EFFECT_NOTHING_3E          0x3E
-#define MOVE_EFFECT_NOTHING_3F          0x3F
-
-#define NUM_MOVE_EFFECTS MOVE_EFFECT_NOTHING_3F + 1
-
-#define MOVE_EFFECT_AFFECTS_USER        0x40
-#define MOVE_EFFECT_CERTAIN             0x80
-
 // Battle terrain defines for gBattleTerrain.
 #define BATTLE_TERRAIN_GRASS        0
 #define BATTLE_TERRAIN_LONG_GRASS   1
@@ -316,11 +243,5 @@
 #define BATTLE_RUN_SUCCESS        0
 #define BATTLE_RUN_FORBIDDEN      1
 #define BATTLE_RUN_FAILURE        2
-
-// Macros for loadabilitypopupcommand
-#define REMOVE_POP_UP 0
-#define LOAD_ABILITY_FROM_BUFFER 0
-#define LOAD_ABILITY_NORMAL 1
-#define LOAD_ABILITY_FROM_SECOND_BANK 2
 
 #endif // GUARD_CONSTANTS_BATTLE_H

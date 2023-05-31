@@ -10,6 +10,7 @@
 #include "m4a.h"
 #include "task.h"
 #include "constants/battle_anim.h"
+#include "constants/moves.h"
 
 #define ANIM_SPRITE_INDEX_COUNT 8
 
@@ -1819,48 +1820,75 @@ void DoMoveAnim(u16 move)
 {
     gBattleAnimAttacker = gBattlerAttacker;
     gBattleAnimTarget = gBattlerTarget;
-    LaunchBattleAnimation(gBattleAnims_Moves, move, TRUE);
+    LaunchBattleAnimation(ANIM_TYPE_MOVE, move);
 }
 
-void LaunchBattleAnimation(const u8 *const animsTable[], u16 tableId, bool8 isMoveAnim)
+void LaunchBattleAnimation(u8 animType, u16 animId)
 {
+	const u8 *const *animsTable;
     s32 i;
-
+	bool8 hideHpBoxes = FALSE;
+	
+	sAnimMoveIndex = MOVE_NONE;
+	
+	switch (animType)
+	{
+		case ANIM_TYPE_STATUS:
+		    animsTable = gBattleAnims_StatusConditions;
+			break;
+		case ANIM_TYPE_SPECIAL:
+		    animsTable = gBattleAnims_Special;
+			break;
+		case ANIM_TYPE_GENERAL:
+		    animsTable = gBattleAnims_General;
+			
+			switch (animId)
+			{
+				case B_ANIM_TURN_TRAP:
+				case B_ANIM_LEECH_SEED_DRAIN:
+				case B_ANIM_MON_HIT:
+				case B_ANIM_SNATCH_MOVE:
+				case B_ANIM_FUTURE_SIGHT_HIT:
+				case B_ANIM_DOOM_DESIRE_HIT:
+				case B_ANIM_WISH_HEAL:
+				    hideHpBoxes = TRUE;
+			}
+			break;
+		case ANIM_TYPE_MOVE:
+		    animsTable = gBattleAnims_Moves;
+			sAnimMoveIndex = animId;
+			
+			if (animId != MOVE_TRANSFORM)
+				hideHpBoxes = TRUE;
+			
+			for (i = 0; gMovesWithQuietBGM[i] != 0xFFFF; i++)
+			{
+				if (animId == gMovesWithQuietBGM[i])
+				{
+					m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 128);
+					break;
+				}
+			}
+			break;
+	}
     ResetSpritePriorityOfAllVisibleBattlers();
-    UpdateOamPriorityInAllHealthboxes(0);
+    UpdateOamPriorityInAllHealthboxes(0, hideHpBoxes);
+	
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         gAnimBattlerSpecies[i] = GetMonData(GetBattlerPartyIndexPtr(i), MON_DATA_SPECIES);
-
-    if (!isMoveAnim)
-        sAnimMoveIndex = 0;
-    else
-        sAnimMoveIndex = tableId;
-
-    for (i = 0; i < ANIM_ARGS_COUNT; i++)
+	
+	for (i = 0; i < ANIM_ARGS_COUNT; i++)
         gBattleAnimArgs[i] = 0;
-
+	
+	for (i = 0; i < ANIM_SPRITE_INDEX_COUNT; i++)
+        sAnimSpriteIndexArray[i] = 0xFFFF;
+	
     sMonAnimTaskIdArray[0] = 0xFF;
     sMonAnimTaskIdArray[1] = (s8)-1;
-    sBattleAnimScriptPtr = animsTable[tableId];
+    sBattleAnimScriptPtr = animsTable[animId];
     gAnimScriptActive = TRUE;
     sAnimFramesToWait = 0;
     gAnimScriptCallback = RunAnimScriptCommand;
-
-    for (i = 0; i < ANIM_SPRITE_INDEX_COUNT; i++)
-        sAnimSpriteIndexArray[i] = 0xFFFF;
-
-    if (isMoveAnim)
-    {
-        for (i = 0; gMovesWithQuietBGM[i] != 0xFFFF; i++)
-        {
-            if (tableId == gMovesWithQuietBGM[i])
-            {
-                m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 128);
-                break;
-            }
-        }
-    }
-
     gBattle_WIN0H = 0;
     gBattle_WIN0V = 0;
     gBattle_WIN1H = 0;
@@ -2127,7 +2155,7 @@ static void ScriptCmd_end(void)
     {
         m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 256);
         ResetSpritePriorityOfAllVisibleBattlers();
-        UpdateOamPriorityInAllHealthboxes(1);
+        UpdateOamPriorityInAllHealthboxes(1, FALSE);
         gAnimScriptActive = FALSE;
     }
 }

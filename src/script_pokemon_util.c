@@ -139,18 +139,24 @@ bool8 DoesPartyHaveEnigmaBerry(void)
     return hasItem;
 }
 
-void CreateScriptedWildMon(u16 species, u8 level, u16 item)
+void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 level2, u16 item2)
 {
     u8 heldItem[2];
 
     ZeroEnemyPartyMons();
+	
     CreateMon(&gEnemyParty[0], species, level, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
-    if (item)
-    {
-        heldItem[0] = item;
-        heldItem[1] = item >> 8;
-        SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, heldItem);
-    }
+	heldItem[0] = item;
+	heldItem[1] = item >> 8;
+	SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, heldItem);
+	
+	if (species2)
+	{
+		CreateMon(&gEnemyParty[1], species2, level2, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
+		heldItem[0] = item2;
+		heldItem[1] = item2 >> 8;
+		SetMonData(&gEnemyParty[1], MON_DATA_HELD_ITEM, heldItem);
+	}
 }
 
 void ScriptSetMonMoveSlot(u8 monIndex, u16 move, u8 slot)

@@ -447,6 +447,7 @@ gBattleAnims_General::
 	.4byte General_RemoveAbilityPopUp
 	.4byte General_FormChange @ illusion off
 	.4byte General_Fog
+	.4byte General_SlideOutOffscreen
 
 gBattleAnims_Special::
 	.4byte Special_LevelUp
@@ -10677,6 +10678,13 @@ General_Hail:: @ 81D5FE2
 
 General_Fog::
     goto Move_HAZE
+
+General_SlideOutOffscreen::
+    createvisualtask AnimTask_SlideOffScreen, 5, 1, 3
+    waitforvisualfinish
+	createvisualtask AnimTask_SetInvisible, 1, 1
+	waitforvisualfinish
+	end
 
 General_LeechSeedDrain:: @ 81D5FE7
 	createvisualtask AnimTask_GetBattlersFromArg, 5, 

@@ -750,22 +750,11 @@ static void SpriteCB_ReleaseMonFromBall(struct Sprite *sprite)
 
     if (gMain.inBattle)
     {
-        struct Pokemon *mon, *illusionMon;
+        struct Pokemon *illusionMon, *mon = GetBattlerPartyIndexPtr(battlerId);
+		s8 pan = GetBattlerSide(battlerId) != B_SIDE_PLAYER ? 25 : -25;
         u16 species;
-        s8 pan;
         u16 wantedCryCase;
         u8 taskId;
-
-        if (GetBattlerSide(battlerId) != B_SIDE_PLAYER)
-        {
-            mon = &gEnemyParty[gBattlerPartyIndexes[battlerId]];
-            pan = 25;
-        }
-        else
-        {
-            mon = &gPlayerParty[gBattlerPartyIndexes[battlerId]];
-            pan = -25;
-        }
 
         if ((battlerId == GetBattlerAtPosition(B_POSITION_PLAYER_LEFT) || battlerId == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
          && IsDoubleBattle() && gBattleSpritesDataPtr->animationData->healthboxSlideInStarted)

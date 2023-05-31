@@ -43,8 +43,8 @@ static EWRAM_DATA u16 *sEvoMovingBgPtr = NULL;
 // IWRAM common
 void (*gCB2_AfterEvolution)(void);
 
-#define sEvoCursorPos           gBattleCommunication[1] // when learning a new move
-#define sEvoGraphicsTaskId      gBattleCommunication[2]
+#define sEvoCursorPos           gBattleCommunication[CURSOR_POSITION] // when learning a new move
+#define sEvoGraphicsTaskId      gBattleCommunication[SPRITES_INIT_STATE2]
 
 // this file's functions
 static void Task_EvolutionScene(u8 taskId);

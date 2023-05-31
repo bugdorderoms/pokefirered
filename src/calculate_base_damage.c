@@ -21,11 +21,11 @@
 #include "calculate_base_damage.h"
 #include "link.h"
 #include "m4a.h"
-#include "pokedex.h"
 #include "strings.h"
 #include "overworld.h"
 #include "party_menu.h"
 #include "field_specials.h"
+#include "constants/battle_script_commands.h"
 #include "constants/items.h"
 #include "constants/item_effects.h"
 #include "constants/pokemon.h"
@@ -37,9 +37,6 @@
 #include "constants/hold_effects.h"
 #include "constants/battle_move_effects.h"
 #include "constants/inserts.h"
-
-static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move);
-static u32 GetBattlerWeight(u8 battler);
 
 static const u8 sFlailHpScaleToPowerTable[] =
 {
@@ -82,20 +79,25 @@ static const u8 sHoldEffectToType[][2] =
     {HOLD_EFFECT_NORMAL_POWER, TYPE_NORMAL},
 };
 
-static u32 GetBattlerWeight(u8 battler)
+static u8 CalcBeatUpPower(u8 battler)
 {
-	u32 weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[battler].species), 1);
+	struct Pokemon *party = GetBattlerParty(battler);
 	
-	switch (GetBattlerAbility(battler))
+	return (gBaseStats[GetMonData(&party[gBattleCommunication[0] - 1], MON_DATA_SPECIES)].baseAttack / 10) + 5;
+}
+
+static bool8 MoveHasRecoilDamage(u16 move)
+{
+	switch (gBattleMoves[move].effect)
 	{
-		case ABILITY_HEAVY_METAL:
-			weight *= 2;
-			break;
-		case ABILITY_LIGHT_METAL:
-			weight /= 2;
-			break;
+		case EFFECT_RECOIL_IF_MISS:
+		case EFFECT_RECOIL_25:
+		case EFFECT_DOUBLE_EDGE:
+		case EFFECT_RECOIL_33_STATUS:
+		case EFFECT_RECOIL_50:
+		    return TRUE;
 	}
-	return weight;
+	return FALSE;
 }
 
 static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
@@ -135,24 +137,13 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 			power = 10 * (255 - attacker.friendship) / 25;
 			break;
 		case EFFECT_PRESENT:
-			do
-			{
-				data = Random() & 0xFF;
-			} while (data >= 204);
-			
-			if (data < 102)
-				power = 40;
-			else if (data < 178)
-				power = 80;
-			else
-				power = 120;
+		    power = gBattleStruct->presentBasePower;
 			break;
 		case EFFECT_MAGNITUDE:
 			power = gBattleStruct->magnitudeBasePower;
 			break;
 		case EFFECT_TRIPLE_KICK:
-			power += gBattleScripting.tripleKickPower;
-			gBattleScripting.tripleKickPower += 10;
+			power = gBattleScripting.tripleKickPower;
 			break;
 		case EFFECT_ERUPTION:
 			power = attacker.hp * power / attacker.maxHP;
@@ -198,25 +189,32 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 			if (attacker.status1 & (STATUS1_PARALYSIS | STATUS1_BURN | STATUS1_PSN_ANY))
 				power *= 2;
 			break;
-		default:
+		case EFFECT_BEAT_UP:
+		    power = CalcBeatUpPower(battlerIdAtk);
 			break;
 	}
-	
 	return power;
 }
 
-s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, bool8 isConfusionDmg, bool8 isCrit, bool8 randomFactor)
+s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, bool8 isCrit, bool8 randomFactor)
 {
-	u8 attackerGender, defenderGender;
-	u8 attackerHoldEffect, attackerHoldEffectParam, defenderHoldEffect, defenderHoldEffectParam;
-	u16 attack, defense, spAttack, spDefense, atkStat, atkStage, defStat, defStage, flags = 0;
+	u8 attackerHoldEffect, attackerHoldEffectParam, defenderHoldEffect, defenderHoldEffectParam, affectedBy = 0;
+	u16 attack, defense, spAttack, spDefense, atkStat, atkStage, defStat, defStage, flags;
 	u32 i;
+	bool8 isConfusionDmg = FALSE;
 	s32 j, damage;
 	struct BattlePokemon *attacker = &gBattleMons[battlerIdAtk];
 	struct BattlePokemon *defender = &gBattleMons[battlerIdDef];
-
-    gBattleMovePower = GetModifiedMovePower(battlerIdAtk, battlerIdDef, move);
-    TypeCalc(move, type, battlerIdAtk, battlerIdDef, FALSE, FALSE, &flags);
+	
+	if (move == MOVE_NONE)
+	{
+		isConfusionDmg = TRUE;
+		gBattleMovePower = 40; // confusion damage power
+	}
+	else
+		gBattleMovePower = GetModifiedMovePower(battlerIdAtk, battlerIdDef, move);
+	
+    flags = TypeCalc(move, type, battlerIdAtk, battlerIdDef, FALSE, FALSE, &affectedBy);
 	
 	attack = attacker->attack;
 	defense = defender->defense;
@@ -338,20 +336,17 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				}
 				break;
 			case ABILITY_IRON_FIST:
-				if (gBattleMoves[move].flags & FLAG_IRON_FIST_BOOST)
+				if (gBattleMoves[move].flags.punchMove)
 					gBattleMovePower = (12 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_RECKLESS:
-				if (gBattleMoves[move].flags & FLAG_RECKLESS_BOOST)
+				if (MoveHasRecoilDamage(move))
 					gBattleMovePower = (12 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_RIVALRY:
-				attackerGender = GetGenderFromSpeciesAndPersonality(attacker->species, attacker->personality);
-				defenderGender = GetGenderFromSpeciesAndPersonality(defender->species, defender->personality);
-		    
-				if (attackerGender != MON_GENDERLESS && defenderGender != MON_GENDERLESS)
+			    if (GetBattlerGender(battlerIdAtk) != MON_GENDERLESS && GetBattlerGender(battlerIdDef) != MON_GENDERLESS)
 				{
-					if (attackerGender == defenderGender)
+					if (ARE_BATTLERS_OF_SAME_GENDER(battlerIdAtk, battlerIdDef))
 						gBattleMovePower += gBattleMovePower / 4;
 					else
 						gBattleMovePower -= gBattleMovePower / 4;
@@ -382,7 +377,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower *= 2;
 				break;
 			case ABILITY_SHEER_FORCE:
-				if (gBattleMoves[move].flags & FLAG_SHEER_FORCE_BOOST)
+				if (gBattleMoves[move].flags.secondaryEffectMove)
 					gBattleMovePower = (gBattleMovePower * 12) / 10;
 				break;
 			case ABILITY_DEFEATIST:
@@ -409,7 +404,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower = (13 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_STRONG_JAW:
-			    if (gBattleMoves[move].flags & FLAG_STRONG_JAW_BOOST)
+			    if (gBattleMoves[move].flags.bitingMove)
 					gBattleMovePower = (15 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_REFRIGERATE:
@@ -417,7 +412,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					goto NORMALIZE_CHECK;
 				break;
 			case ABILITY_MEGA_LAUNCHER:
-			    if (gBattleMoves[move].flags & FLAG_MEGA_LAUNCHER_BOOST)
+			    if (gBattleMoves[move].flags.pulseMove)
 					gBattleMovePower = (15 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_TOUGH_CLAWS:
@@ -456,7 +451,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower += gBattleMovePower / 4;
 				break;
 			case ABILITY_PUNK_ROCK:
-			    if (gBattleMoves[move].flags & FLAG_SOUND)
+			    if (gBattleMoves[move].flags.soundMove)
 					gBattleMovePower = (13 * gBattleMovePower) / 10;
 				break;
 			case ABILITY_STEELY_SPIRIT:
@@ -485,17 +480,18 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				}
 				break;
 			case ABILITY_SHARPNESS:
-			    if (gBattleMoves[move].flags & FLAG_SLICING)
+			    if (gBattleMoves[move].flags.slicingMove)
 					gBattleMovePower = (15 * gBattleMovePower) / 10;
 				break;
-		}
-		// Aura abilities
-		if ((ABILITY_ON_FIELD(ABILITY_DARK_AURA) && type == TYPE_DARK) || (ABILITY_ON_FIELD(ABILITY_FAIRY_AURA) && type == TYPE_FAIRY))
-		{
-			if (ABILITY_ON_FIELD(ABILITY_AURA_BREAK))
-				gBattleMovePower = (75 * gBattleMovePower) / 100;
-			else
-				gBattleMovePower = (4 * gBattleMovePower) / 3;
+			case ABILITY_SUPREME_OVERLORD:
+			    if (gBattleStruct->supremeOverlordBoosts[battlerIdAtk])
+				{
+					for (i = 0, j = 0; i < gBattleStruct->supremeOverlordBoosts[battlerIdAtk]; i++)
+						j += 10;
+					
+					gBattleMovePower = (gBattleMovePower * (j + 100)) / 100;
+				}
+				break;
 		}
 		// attacker's ally abilities check
 		if (IsBattlerAlive(BATTLE_PARTNER(battlerIdAtk)))
@@ -573,12 +569,19 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower *= 2;
 				break;
 			case ABILITY_PUNK_ROCK:
-			    if (gBattleMoves[move].flags & FLAG_SOUND)
+			    if (gBattleMoves[move].flags.soundMove)
 					gBattleMovePower /= 2;
 				break;
 			case ABILITY_ICE_SCALES:
 			    if (IS_MOVE_SPECIAL(move))
 					gBattleMovePower /= 2;
+				break;
+			case ABILITY_PURIFYING_SALT:
+			    if (type == TYPE_GHOST)
+				{
+					spAttack /= 2;
+					attack /= 2;
+				}
 				break;
 		}
 		// defender's ally abilities check
@@ -595,11 +598,44 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					break;
 			}
 		}
+		// Aura abilities
+		if ((ABILITY_ON_FIELD(ABILITY_DARK_AURA) && type == TYPE_DARK) || (ABILITY_ON_FIELD(ABILITY_FAIRY_AURA) && type == TYPE_FAIRY))
+		{
+			if (ABILITY_ON_FIELD(ABILITY_AURA_BREAK))
+				gBattleMovePower = (75 * gBattleMovePower) / 100;
+			else
+				gBattleMovePower = (4 * gBattleMovePower) / 3;
+		}
+		// Ruin abilities
+		if (ABILITY_ON_FIELD_EXCPET_BATTLER(battlerIdAtk, ABILITY_VESSEL_OF_RUIN) && GetBattlerAbility(battlerIdAtk) != ABILITY_VESSEL_OF_RUIN)
+			spAttack = (spAttack * 75) / 100;
+		if (ABILITY_ON_FIELD_EXCPET_BATTLER(battlerIdAtk, ABILITY_TABLETS_OF_RUIN) && GetBattlerAbility(battlerIdAtk) != ABILITY_TABLETS_OF_RUIN)
+			attack = (attack * 75) / 100;
+		if (ABILITY_ON_FIELD_EXCPET_BATTLER(battlerIdDef, ABILITY_SWORD_OF_RUIN) && GetBattlerAbility(battlerIdDef) != ABILITY_SWORD_OF_RUIN)
+			defense = (defense * 75) / 100;
+		if (ABILITY_ON_FIELD_EXCPET_BATTLER(battlerIdDef, ABILITY_BEADS_OF_RUIN) && GetBattlerAbility(battlerIdDef) != ABILITY_BEADS_OF_RUIN)
+			spDefense = (spDefense * 75) / 100;
 	}
-	if (type == TYPE_ELECTRIC && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, 0xFD, 0))
-		gBattleMovePower /= 2;
-	if (type == TYPE_FIRE && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, 0xFE, 0))
-		gBattleMovePower /= 2;
+	if (type == TYPE_ELECTRIC)
+	{
+		for (i = 0, j = 0; i < gBattlersCount; i++)
+		{
+			if (gStatuses3[i] & STATUS3_MUDSPORT)
+				j = 1;
+		}
+		if (j)
+			gBattleMovePower /= 2;
+	}
+	if (type == TYPE_FIRE)
+	{
+		for (i = 0, j = 0; i < gBattlersCount; i++)
+		{
+			if (gStatuses3[i] & STATUS3_WATERSPORT)
+				j = 1;
+		}
+		if (j)
+			gBattleMovePower /= 2;
+	}
     
 	// sandstorm stats boost
 	if (IsBattlerWeatherAffected(battlerIdDef, WEATHER_SANDSTORM_ANY) && IS_BATTLER_OF_TYPE(battlerIdDef, TYPE_ROCK))
@@ -612,10 +648,6 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 	if (IsBattlerWeatherAffected(battlerIdDef, WEATHER_HAIL_ANY) && IS_BATTLER_OF_TYPE(battlerIdDef, TYPE_ICE))
 		defense += (defense / 2);
 #endif
-	// burn attack drop
-	if ((attacker->status1 & STATUS1_BURN) && GetBattlerAbility(battlerIdAtk) != ABILITY_GUTS && !isConfusionDmg)
-		attack /= 2;
-   
 	if (IS_MOVE_PHYSICAL(move))
 	{
 		atkStat = attack;
@@ -641,35 +673,14 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 	defStat *= gStatStageRatios[defStage][0];
 	defStat /= gStatStageRatios[defStage][1];
 	
-	damage = atkStat * gBattleMovePower;
-	damage *= (2 * attacker->level / 5 + 2);
-	damage = (damage / defStat);
+	damage = (2 * attacker->level / 5 + 2);
+	damage *= gBattleMovePower;
+	damage *= (atkStat / defStat);
 	damage /= 50;
+	damage += 2;
 	
-	if (!isCrit)
-	{
-		switch (gBattleMoves[move].split)
-		{
-			case MOVE_PHYSICAL:
-			    i = SIDE_STATUS_REFLECT;
-			    break;
-		        case MOVE_SPECIAL:
-			    i = SIDE_STATUS_LIGHTSCREEN;
-			    break;
-		}
-		if (!IS_MOVE_STATUS(move))
-		{
-			if ((gSideStatuses[GET_BATTLER_SIDE(battlerIdDef)] & i) && GetBattlerAbility(battlerIdAtk) != ABILITY_INFILTRATOR && !isConfusionDmg)
-			{
-				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
-					damage = 2 * (damage / 3);
-				else
-					damage /= 2;
-			}
-		}
-	}
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMoves[move].target == MOVE_TARGET_BOTH && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) > 1) 
-		damage -= damage / 4;
+	if (gSpecialStatuses[battlerIdAtk].parentalBondState == PARENTAL_BOND_2ND_HIT)
+		damage /= 4;
 	
 	if (IsBattlerWeatherAffected(battlerIdAtk, WEATHER_RAIN_ANY))
 	{
@@ -695,28 +706,9 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				break;
 		}
 	}
-	// any weather except sun weakens solar beam
-	if (IsBattlerWeatherAffected(battlerIdAtk, (WEATHER_ANY | ~(WEATHER_SUN_ANY))) && move == MOVE_SOLAR_BEAM)
-		damage /= 2;
-	
-	// flash fire triggered
-	if ((gBattleResources->flags->flags[battlerIdAtk] & RESOURCE_FLAG_FLASH_FIRE) && type == TYPE_FIRE)
-		damage = (15 * damage) / 10;
-	
-	// charge up
-	if (gStatuses3[battlerIdAtk] & STATUS3_CHARGED_UP && type == TYPE_ELECTRIC)
-		damage *= 2;
-	
-	// helping hand check
-	if (gProtectStructs[battlerIdAtk].helpingHand)
-		damage = (15 * damage) / 10;
-    
-	damage += 2;
 	
 	if (isCrit)
-		damage *= 2;
-	
-	damage *= gBattleScripting.dmgMultiplier;
+		damage += (damage / 2);
 	
 	if (randomFactor)
 	{
@@ -732,6 +724,53 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 		else
 			damage = (damage * 15) / 10;
 	}
+	
+	// burn damage drop
+	if ((attacker->status1 & STATUS1_BURN) && GetBattlerAbility(battlerIdAtk) != ABILITY_GUTS && IS_MOVE_PHYSICAL(move) && move != MOVE_FACADE && !isConfusionDmg)
+		damage /= 2;
+	
+	if (!isCrit && !isConfusionDmg)
+	{
+		switch (gBattleMoves[move].split)
+		{
+			case SPLIT_PHYSICAL:
+			    i = SIDE_STATUS_REFLECT;
+			    break;
+			case SPLIT_SPECIAL:
+			    i = SIDE_STATUS_LIGHTSCREEN;
+			    break;
+		}
+		if (!IS_MOVE_STATUS(move))
+		{
+			if ((gSideStatuses[GET_BATTLER_SIDE(battlerIdDef)] & i) && GetBattlerAbility(battlerIdAtk) != ABILITY_INFILTRATOR && !isConfusionDmg)
+			{
+				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
+					damage = 2 * (damage / 3);
+				else
+					damage /= 2;
+			}
+		}
+	}
+	if (!isConfusionDmg && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && GetBattlerMoveTargetType(battlerIdAtk, move) == MOVE_TARGET_BOTH && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) > 1) 
+		damage -= damage / 4;
+	
+	// flash fire triggered
+	if ((gBattleResources->flags->flags[battlerIdAtk] & RESOURCE_FLAG_FLASH_FIRE) && type == TYPE_FIRE)
+		damage = (15 * damage) / 10;
+	
+	// charge up
+	if (gStatuses3[battlerIdAtk] & STATUS3_CHARGED_UP && type == TYPE_ELECTRIC)
+		damage *= 2;
+	
+	// helping hand check
+	if (gProtectStructs[battlerIdAtk].helpingHand && !isConfusionDmg)
+		damage = (15 * damage) / 10;
+	
+	// any weather except sun weakens solar beam
+	if (IsBattlerWeatherAffected(battlerIdAtk, (WEATHER_ANY & ~(WEATHER_SUN_ANY))) && move == MOVE_SOLAR_BEAM)
+		damage /= 2;
+	
+	damage *= gBattleScripting.dmgMultiplier;
 	
 	if (damage == 0)
 		damage = 1;

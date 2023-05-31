@@ -210,16 +210,16 @@ bool8 TryHandleLaunchBattleTableAnimation(u8 activeBattler, u8 atkBattler, u8 de
         ClearBehindSubstituteBit(activeBattler);
         return TRUE;
     }
-    if (tableId == B_ANIM_ILLUSION_OFF)
+    else if (tableId == B_ANIM_ILLUSION_OFF)
     {
-        gNewBattleStruct.illusion[activeBattler].broken = TRUE;
-		gNewBattleStruct.illusion[activeBattler].on = FALSE;
+        gBattleStruct->illusion[activeBattler].broken = TRUE;
+		gBattleStruct->illusion[activeBattler].on = FALSE;
     }
     
     gBattleAnimAttacker = atkBattler;
     gBattleAnimTarget = defBattler;
     gBattleSpritesDataPtr->animationData->animArg = argument;
-    LaunchBattleAnimation(gBattleAnims_General, tableId, FALSE);
+    LaunchBattleAnimation(ANIM_TYPE_GENERAL, tableId);
     taskId = CreateTask(Task_ClearBitWhenBattleTableAnimDone, 10);
     gTasks[taskId].tBattlerId = activeBattler;
     gBattleSpritesDataPtr->healthBoxesData[gTasks[taskId].tBattlerId].animFromTableActive = 1;
@@ -259,7 +259,7 @@ void InitAndLaunchSpecialAnimation(u8 activeBattler, u8 atkBattler, u8 defBattle
 
     gBattleAnimAttacker = atkBattler;
     gBattleAnimTarget = defBattler;
-    LaunchBattleAnimation(gBattleAnims_Special, tableId, FALSE);
+    LaunchBattleAnimation(ANIM_TYPE_SPECIAL, tableId);
     taskId = CreateTask(Task_ClearBitWhenSpecialAnimDone, 10);
     gTasks[taskId].tBattlerId = activeBattler;
     gBattleSpritesDataPtr->healthBoxesData[gTasks[taskId].tBattlerId].specialAnimActive = 1;

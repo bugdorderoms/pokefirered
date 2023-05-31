@@ -1629,12 +1629,8 @@ static void PokedudeHandleCmd23(void)
 static void PokedudeHandleHealthBarUpdate(void)
 {
     s16 hpVal;
-    struct Pokemon *mon;
-
-    if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
-        mon = &gPlayerParty[gBattlerPartyIndexes[gActiveBattler]];
-    else
-        mon = &gEnemyParty[gBattlerPartyIndexes[gActiveBattler]];
+    struct Pokemon *mon = GetBattlerPartyIndexPtr(gActiveBattler);
+    
     LoadBattleBarGfx();
     hpVal = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 8);
     if (hpVal != INSTANT_HP_BAR_DROP)
@@ -1683,12 +1679,8 @@ static void PokedudeHandleStatusIconUpdate(void)
     if (!IsBattleSEPlaying(gActiveBattler))
     {
         u8 battlerId;
-        struct Pokemon *mon;
+        struct Pokemon *mon = GetBattlerPartyIndexPtr(gActiveBattler);
 
-        if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
-            mon = &gPlayerParty[gBattlerPartyIndexes[gActiveBattler]];
-        else
-            mon = &gEnemyParty[gBattlerPartyIndexes[gActiveBattler]];
         UpdateHealthboxAttribute(gHealthboxSpriteIds[gActiveBattler], mon, HEALTHBOX_STATUS_ICON);
         battlerId = gActiveBattler;
         gBattleSpritesDataPtr->healthBoxesData[battlerId].statusAnimActive = FALSE;
@@ -1708,14 +1700,9 @@ static void PokedudeHandleStatusAnimation(void)
 
 static void PokedudeHandleStatusXor(void)
 {
-    struct Pokemon *mon;
-    u8 val;
-
-    if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
-        mon = &gPlayerParty[gBattlerPartyIndexes[gActiveBattler]];
-    else
-        mon = &gEnemyParty[gBattlerPartyIndexes[gActiveBattler]];
-    val = GetMonData(mon, MON_DATA_STATUS) ^ gBattleBufferA[gActiveBattler][1];
+    struct Pokemon *mon = GetBattlerPartyIndexPtr(gActiveBattler);
+    u8 val = GetMonData(mon, MON_DATA_STATUS) ^ gBattleBufferA[gActiveBattler][1];
+	
     SetMonData(mon, MON_DATA_STATUS, &val);
     PokedudeBufferExecCompleted();
 }
@@ -1814,14 +1801,9 @@ static void PokedudeHandlePlayFanfare(void)
 
 static void PokedudeHandleFaintingCry(void)
 {
-    struct Pokemon *mon;
-    u16 species;
-
-    if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
-        mon = &gPlayerParty[gBattlerPartyIndexes[gActiveBattler]];
-    else
-        mon = &gEnemyParty[gBattlerPartyIndexes[gActiveBattler]];
-    species = GetMonData(mon, MON_DATA_SPECIES);
+    struct Pokemon *mon = GetBattlerPartyIndexPtr(gActiveBattler);
+    u16 species = GetMonData(mon, MON_DATA_SPECIES);
+	
     PlayCry1(species, 25);
     PokedudeBufferExecCompleted();
 }
@@ -1901,8 +1883,7 @@ static void Task_StartSendOutAnim(u8 taskId)
 
 static void PokedudeHandleDrawPartyStatusSummary(void)
 {
-    if (gBattleBufferA[gActiveBattler][1] != 0
-        && GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
+    if (gBattleBufferA[gActiveBattler][1] != 0 && GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
     {
         PokedudeBufferExecCompleted();
     }

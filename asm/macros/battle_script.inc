@@ -3,10 +3,10 @@
 	.byte 0x0
 	.endm
 
-	.macro accuracycheck param0:req, param1:req
+	.macro accuracycheck ptr:req, param1=ACC_CURR_MOVE
 	.byte 0x1
-	.4byte \param0
-	.2byte \param1
+	.4byte \ptr
+	.byte \param1
 	.endm
 
 	.macro attackstring
@@ -33,15 +33,17 @@
 	.byte 0x7
 	.endm
 
-	.macro nop8
+	.macro jumpifparentalbondcounter counter:req, ptr:req
 	.byte 0x8
+	.byte \counter
+	.4byte \ptr
 	.endm
 
 	.macro attackanimation
 	.byte 0x9
 	.endm
 
-	.macro waitanimation
+	.macro nop0a
 	.byte 0xa
 	.endm
 
@@ -91,7 +93,7 @@
 	.byte 0x14
 	.4byte \ptr
 	.endm
-
+	
 	.macro seteffectwithchance
 	.byte 0x15
 	.endm
@@ -109,11 +111,9 @@
 	.byte \battler
 	.endm
 
-	.macro tryfaintmon battler:req, fromMove:req, ptr:req
+	.macro tryfaintmon battler:req
 	.byte 0x19
 	.byte \battler
-	.byte \fromMove
-	.4byte \ptr
 	.endm
 
 	.macro dofaintanimation battler:req
@@ -184,7 +184,7 @@
 	.byte \battler
 	.endm
 
-	.macro atk24 ptr:req
+	.macro checkteamslot ptr:req
 	.byte 0x24
 	.4byte \ptr
 	.endm
@@ -193,14 +193,15 @@
 	.byte 0x25
 	.endm
 
-	.macro setmultihit value:req
+	.macro setmoveeffect effect:req, affectsUser=FALSE, certain=FALSE
 	.byte 0x26
-	.byte \value
+	.byte \effect
+	.byte \affectsUser
+	.byte \certain
 	.endm
 
-	.macro decrementmultihit value:req
+	.macro nop27
 	.byte 0x27
-	.4byte \value
 	.endm
 
 	.macro goto ptr:req
@@ -273,12 +274,8 @@
 	.byte \param2
 	.endm
 
-	.macro copyarraywithindex param0:req, param1:req, param2:req, param3:req
+	.macro nop32
 	.byte 0x32
-	.4byte \param0
-	.4byte \param1
-	.4byte \param2
-	.byte \param3
 	.endm
 
 	.macro orbyte ptr:req, param1:req
@@ -326,9 +323,8 @@
 	.byte 0x3a
 	.endm
 
-	.macro healthbar_update battler:req
+	.macro nop3b
 	.byte 0x3b
-	.byte \battler
 	.endm
 
 	.macro return
@@ -409,31 +405,31 @@
 	@ All cases
 	.macro moveendall
 	setbyte sMOVEEND_STATE, 0
-	moveend 0, 0
+	moveend ATK49_MOVEEND_ALL, 0
 	.endm
 
 	@ Chosen case
 	.macro moveendcase case:req
 	setbyte sMOVEEND_STATE, \case
-	moveend 1, 0
+	moveend ATK49_MOVEEND_CASE, 0
 	.endm
 
 	@ All cases from (inclusive)
 	.macro moveendfrom from:req
 	setbyte sMOVEEND_STATE, \from
-	moveend 0, 0
+	moveend ATK49_MOVEEND_ALL, 0
 	.endm
 
 	@ All cases from 0 to (not inclusive)
 	.macro moveendto to:req
 	setbyte sMOVEEND_STATE, 0
-	moveend 2, \to
+	moveend ATK49_MOVEEND_TO, \to
 	.endm
 
 	@ Cases from (inclusive) to (not inclusive)
 	.macro moveendfromto from:req, to:req
 	setbyte sMOVEEND_STATE, \from
-	moveend 2, \to
+	moveend ATK49_MOVEEND_TO, \to
 	.endm
 
 	.macro formchange battler:req, basespecies:req, targetspecies:req, reloadtypes:req, reloadability:req, ptr:req
@@ -489,9 +485,8 @@
 	.byte \battler
 	.endm
 
-	.macro trainerslide battler:req
+	.macro nop53
 	.byte 0x53
-	.byte \battler
 	.endm
 
 	.macro playse song:req
@@ -509,7 +504,7 @@
 	.byte \battler
 	.endm
 
-	.macro atk57
+	.macro endlinkbattle
 	.byte 0x57
 	.endm
 
@@ -545,9 +540,8 @@
 	.4byte \addr
 	.endm
 
-	.macro atk5E battler:req
+	.macro nop5e
 	.byte 0x5e
-	.byte \battler
 	.endm
 
 	.macro swapattackerwithtarget
@@ -609,7 +603,7 @@
 	.byte \battler
 	.endm
 
-	.macro atknameinbuff1
+	.macro nop6b
 	.byte 0x6b
 	.endm
 
@@ -617,11 +611,11 @@
 	.byte 0x6c
 	.endm
 
-	.macro resetsentmonsvalue
+	.macro nop6d
 	.byte 0x6d
 	.endm
 
-	.macro setatktoplayer0
+	.macro nop6e
 	.byte 0x6e
 	.endm
 
@@ -635,7 +629,7 @@
 	.byte \battler
 	.endm
 
-	.macro buffermovetolearn
+	.macro nop71
 	.byte 0x71
 	.endm
 
@@ -668,7 +662,7 @@
 	.byte 0x77
 	.endm
 
-	.macro faintifabilitynotdamp
+	.macro instanthpdrop
 	.byte 0x78
 	.endm
 
@@ -676,9 +670,8 @@
 	.byte 0x79
 	.endm
 
-	.macro jumpifnexttargetvalid ptr:req
+	.macro nop7a
 	.byte 0x7a
-	.4byte \ptr
 	.endm
 
 	.macro tryhealhalfhealth param0:req, battler:req
@@ -743,7 +736,7 @@
 	.4byte \param0
 	.endm
 
-	.macro negativedamage
+	.macro nop88
 	.byte 0x88
 	.endm
 
@@ -761,16 +754,15 @@
 	.byte 0x8b
 	.endm
 
-	.macro confuseifrepeatingattackends
+	.macro nop8c
 	.byte 0x8c
 	.endm
 
-	.macro setmultihitcounter param0:req
+	.macro nop8d
 	.byte 0x8d
-	.byte \param0
 	.endm
 
-	.macro initmultihitstring
+	.macro nop8e
 	.byte 0x8e
 	.endm
 
@@ -797,7 +789,7 @@
 	.4byte \param0
 	.endm
 
-	.macro damagetohalftargethp
+	.macro nop94
 	.byte 0x94
 	.endm
 
@@ -844,7 +836,7 @@
 	.byte 0x9e
 	.endm
 
-	.macro dmgtolevel
+	.macro nop9f
 	.byte 0x9f
 	.endm
 
@@ -983,9 +975,8 @@
 	.4byte \param0
 	.endm
 
-	.macro copyfoestats param0:req
+	.macro copyfoestats
 	.byte 0xbd
-	.4byte \param0
 	.endm
 
 	.macro rapidspinfree
@@ -1053,7 +1044,7 @@
 	.byte 0xcc
 	.endm
 
-	.macro multihitresultmessage
+	.macro nopcd
 	.byte 0xcd
 	.endm
 
@@ -1082,9 +1073,10 @@
 	.4byte \param0
 	.endm
 
-	.macro trycopyability param0:req
+	.macro copyability attacker:req, target:req
 	.byte 0xd3
-	.4byte \param0
+	.byte \attacker
+	.byte \target
 	.endm
 
 	.macro trywish param0:req, param1:req
@@ -1116,9 +1108,8 @@
 	.byte 0xd9
 	.endm
 
-	.macro tryswapabilities param0:req
+	.macro swapabilities
 	.byte 0xda
-	.4byte \param0
 	.endm
 
 	.macro tryimprison param0:req
@@ -1150,9 +1141,8 @@
 	.4byte \param0
 	.endm
 
-	.macro trygetintimidatetarget param0:req
+	.macro nope1
 	.byte 0xe1
-	.4byte \param0
 	.endm
 
 	.macro switchoutabilities battler:req
@@ -1160,10 +1150,8 @@
 	.byte \battler
 	.endm
 
-	.macro jumpifhasnohp battler:req, param1:req
+	.macro nope3
 	.byte 0xe3
-	.byte \battler
-	.4byte \param1
 	.endm
 
 	.macro getsecretpowereffect
@@ -1178,7 +1166,7 @@
 	.byte 0xe6
 	.endm
 
-	.macro trycastformdatachange
+	.macro nope7
 	.byte 0xe7
 	.endm
 
@@ -1236,11 +1224,11 @@
 	.4byte \param0
 	.endm
 
-	.macro subattackerhpbydmg
+	.macro nopf4
 	.byte 0xf4
 	.endm
 
-	.macro removeattackerstatus1
+	.macro nopf5
 	.byte 0xf5
 	.endm
 
@@ -1253,7 +1241,7 @@
 	.endm
 
 @new commands
-        .macro callasm ptr:req
+        .macro callfunction ptr:req
 	.byte 0xf8
 	.4byte \ptr
 	.endm
@@ -1275,11 +1263,9 @@
 	.4byte \ptr
 	.endm
 	
-	.macro loadabilitypopup value:req, battler:req, ability:req
+	.macro handleabilitypopup battler:req
 	.byte 0xfc
-	.byte \value
 	.byte \battler
-	.2byte \ability
 	.endm
 	
 	.macro nopfd
@@ -1307,8 +1293,8 @@
 	various \battler, VARIOUS_GET_MOVE_TARGET
 	.endm
 
-	.macro various4 battler:req
-	various \battler, 4
+	.macro getbattlerfainted battler:req
+	various \battler, VARIOUS_GET_BATTLER_FAINTED
 	.endm
 
 	.macro resetintimidatetracebits battler:req
@@ -1319,12 +1305,12 @@
 	various \battler, VARIOUS_UPDATE_CHOICE_MOVE_ON_LVL_UP
 	.endm
 
-	.macro various7 battler:req
-	various \battler, 7
+	.macro resetplayerfainted
+	various BS_ATTACKER, VARIOUS_RESET_PLAYER_FAINTED_FLAG
 	.endm
 
-	.macro various8 battler:req
-	various \battler, 8
+	.macro getbattlersforrecall
+	various BS_ATTACKER, VARIOUS_GET_BATTLERS_FOR_RECALL
 	.endm
 
 	.macro returnopponentmon1toball battler:req
@@ -1345,6 +1331,22 @@
 	
         .macro tryactivatemoxie battler:req
 	various \battler, VARIOUS_TRY_ACTIVATE_MOXIE
+	.endm
+	
+	.macro tryactivategrimneigh battler:req
+	various \battler, VARIOUS_TRY_ACTIVATE_GRIM_NEIGH
+	.endm
+	
+	.macro tryactivatesoulheart
+	various BS_ATTACKER, VARIOUS_TRY_ACTIVATE_SOUL_HEART
+	.endm
+	
+	.macro tryactivatereceiver battler:req
+	various \battler, VARIOUS_TRY_ACTIVATE_RECEIVER
+	.endm
+	
+	.macro tryactivatebeastboost battler:req
+	various \battler, VARIOUS_TRY_ACTIVATE_BEAST_BOOST
 	.endm
 
         .macro tryfirstmondowntrainerslide battler:req
@@ -1381,17 +1383,71 @@
 	.4byte \ptr
 	.endm
 	
-	.macro tryremoveprimalweather
-	various BS_ATTACKER, VARIOUS_TRY_REMOVE_PRIMAL_WEATHER
+	.macro tryremoveprimalweather battler:req
+	various \battler, VARIOUS_TRY_REMOVE_PRIMAL_WEATHER
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
+	.endm
+	
+	.macro jumpifabsent battler:req, ptr:req
+	various \battler, VARIOUS_JUMP_IF_NOT_ALIVE
+	.4byte \ptr
+	.endm
+
+    .macro tryfrisktarget ptr:req
+	various BS_TARGET, VARIOUS_TRY_FRISK_TARGET
+    .4byte \ptr
+    .endm
+
+    .macro switchinabilities battler:req
+	various \battler, VARIOUS_SWITCHIN_ABILITIES
+	.endm
+
+    .macro tryendneutralizinggas battler:req
+	various \battler, VARIOUS_TRY_END_NEUTRALIZING_GAS
+	.endm
+	
+	.macro activateendturnitems battler:req
+	various \battler, VARIOUS_ACTIVATE_END_TURN_ITEMS
+	.endm
+
+    .macro setteleportoutcome battler:req
+	various \battler, VARIOUS_SET_TELEPORT_OUTCOME
+	.endm
+	
+	.macro tryfaintonspikesdamage battler:req, ptr:req
+	various \battler, VARIOUS_TRY_FAINT_ON_SPIKES_DAMAGE
+	.4byte \ptr
+	.endm
+	
+	.macro atknameinbuff1
+	various BS_ACTIVE, VARIOUS_ATKNAME_IN_BUFF1
+	.endm
+	
+	.macro resetsentmonsvalue
+	various BS_ACTIVE, VARIOUS_RESET_SENT_MONS_VALUE
+	.endm
+	
+	.macro setatktoplayer0
+	various BS_ACTIVE, VARIOUS_SET_ATK_TO_PLAYER0
+	.endm
+	
+	.macro buffermovetolearn
+	various BS_ACTIVE, VARIOUS_BUFFER_MOVE_TO_LEARN
+	.endm
+	
+	.macro activateweatherchangeabilities
+	various BS_SCRIPTING, VARIOUS_ACTIVATE_WEATHER_ABILITIES
+	.endm
+	
+	.macro tryneutralizinggassuppression battler:req, ptr:req
+	various \battler, VARIOUS_TRY_NEUTRALIZING_GAS_SUPPRESSION
+	.4byte \ptr
 	.endm
 
 @ helpful macros
 	.macro setstatchanger stat:req, stages:req, down:req
 	setbyte sSTATCHANGER \stat | \stages << 4 | \down << 7
-	.endm
-
-	.macro setmoveeffect effect:req
-	setbyte cEFFECT_CHOOSER \effect
 	.endm
 
 	.macro chosenstatus1animation battler:req, status:req
@@ -1463,6 +1519,25 @@
 	jumpifword CMP_NO_COMMON_BITS, gBattleTypeFlags, \flags, \jumpptr
 	.endm
 
+    .macro loadabilitypopup battler:req
+	handleabilitypopup \battler
+	.endm
+
     .macro removeabilitypopup battler:req
-	loadabilitypopup REMOVE_POP_UP, \battler, LOAD_ABILITY_FROM_BUFFER
+	handleabilitypopup ATKFC_REMOVE_POP_UP | \battler
+	.endm
+	
+	.macro instantfaintattacker
+	instanthpdrop
+	setatkhptozero
+	.endm
+	
+	.macro tryendeffectonabilitychange battler:req
+	tryendneutralizinggas \battler @ switch in abilities still show it's pop ups
+	setbyte sBYPASS_ABILITY_POP_UP, TRUE @ don't show ability pop up. I'm not sure if it's show or not, but added this bc yes...
+	tryremoveprimalweather \battler
+	tryremoveillusion \battler
+	copybyte sBATTLER, \battler
+	activateweatherchangeabilities
+	setbyte sBYPASS_ABILITY_POP_UP, FALSE
 	.endm

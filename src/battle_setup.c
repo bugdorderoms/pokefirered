@@ -51,7 +51,7 @@ struct TrainerBattleParameter
 
 static void DoSafariBattle(void);
 static void DoGhostBattle(void);
-static void DoStandardWildBattle(void);
+static void DoStandardWildBattle(bool8 isDouble);
 static void CB2_EndWildBattle(void);
 static u8 GetWildBattleTransition(void);
 static u8 GetTrainerBattleTransition(void);
@@ -222,16 +222,21 @@ void StartWildBattle(void)
     else if (CheckSilphScopeInPokemonTower(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum))
         DoGhostBattle();
     else
-        DoStandardWildBattle();
+        DoStandardWildBattle(FALSE);
 }
 
-static void DoStandardWildBattle(void)
+void StartDoubleWildBattle(void)
+{
+	DoStandardWildBattle(TRUE);
+}
+
+static void DoStandardWildBattle(bool8 isDouble)
 {
     ScriptContext2_Enable();
     FreezeObjectEvents();
     StopPlayerAvatar();
     gMain.savedCallback = CB2_EndWildBattle;
-    gBattleTypeFlags = 0;
+    gBattleTypeFlags = isDouble ? BATTLE_TYPE_DOUBLE : 0;
     CreateBattleStartTask(GetWildBattleTransition(), 0);
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
@@ -292,7 +297,9 @@ void StartScriptedWildBattle(void)
 {
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
-    gBattleTypeFlags = BATTLE_TYPE_WILD_SCRIPTED;
+	gBattleTypeFlags = BATTLE_TYPE_WILD_SCRIPTED;
+	if (GetMonData(&gEnemyParty[1], MON_DATA_SPECIES)) // if have a second mon turn into double battle
+		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
     CreateBattleStartTask(GetWildBattleTransition(), 0);
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
@@ -317,63 +324,39 @@ void StartMarowakBattle(void)
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
 }
 
-void StartSouthernIslandBattle(void)
-{
-    ScriptContext2_Enable();
-    gMain.savedCallback = CB2_EndScriptedWildBattle;
-    gBattleTypeFlags = BATTLE_TYPE_LEGENDARY;
-    CreateBattleStartTask(GetWildBattleTransition(), 0);
-    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
-    IncrementGameStat(GAME_STAT_WILD_BATTLES);
-}
-
 void StartLegendaryBattle(void)
 {
-    u16 species;
+	u8 transition = B_TRANSITION_BLUR;
+    u16 species = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES), mus;
     
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
-    gBattleTypeFlags = BATTLE_TYPE_LEGENDARY | BATTLE_TYPE_LEGENDARY_FRLG;
-    species = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES);
+    gBattleTypeFlags = BATTLE_TYPE_LEGENDARY;
+	
     switch (species)
     {
-    case SPECIES_MEWTWO:
-        CreateBattleStartTask(B_TRANSITION_BLUR, MUS_VS_MEWTWO);
-        break;
-    case SPECIES_DEOXYS:
-        CreateBattleStartTask(B_TRANSITION_BLUR, MUS_VS_DEOXYS);
-        break;
-    case SPECIES_MOLTRES:
-    case SPECIES_ARTICUNO:
-    case SPECIES_ZAPDOS:
-    case SPECIES_HO_OH:
-    case SPECIES_LUGIA:
-        CreateBattleStartTask(B_TRANSITION_BLUR, MUS_VS_LEGEND);
-        break;
-    default:
-        CreateBattleStartTask(B_TRANSITION_BLUR, MUS_RS_VS_TRAINER);
-        break;
+		case SPECIES_MEWTWO:
+			mus = MUS_VS_MEWTWO;
+			break;
+		case SPECIES_DEOXYS:
+			mus = MUS_VS_DEOXYS;
+			break;
+		case SPECIES_MOLTRES:
+		case SPECIES_ARTICUNO:
+		case SPECIES_ZAPDOS:
+		case SPECIES_HO_OH:
+		case SPECIES_LUGIA:
+			mus = MUS_VS_LEGEND;
+			break;
+		case SPECIES_GROUDON:
+		    transition = B_TRANSITION_BLACK_DOODLES;
+			mus = MUS_RS_VS_TRAINER;
+			break;
+		default:
+            mus = MUS_RS_VS_TRAINER;
+			break;
     }
-    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
-    IncrementGameStat(GAME_STAT_WILD_BATTLES);
-}
-
-void StartGroudonKyogreBattle(void)
-{
-    ScriptContext2_Enable();
-    gMain.savedCallback = CB2_EndScriptedWildBattle;
-    gBattleTypeFlags = BATTLE_TYPE_LEGENDARY | BATTLE_TYPE_KYOGRE_GROUDON;
-    CreateBattleStartTask(B_TRANSITION_BLACK_DOODLES, MUS_RS_VS_TRAINER);
-    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
-    IncrementGameStat(GAME_STAT_WILD_BATTLES);
-}
-
-void StartRegiBattle(void)
-{
-    ScriptContext2_Enable();
-    gMain.savedCallback = CB2_EndScriptedWildBattle;
-    gBattleTypeFlags = BATTLE_TYPE_LEGENDARY | BATTLE_TYPE_REGI;
-    CreateBattleStartTask(B_TRANSITION_BLUR, MUS_RS_VS_TRAINER);
+	CreateBattleStartTask(transition, mus);
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
 }

@@ -1,6 +1,7 @@
 #ifndef GUARD_CONSTANTS_BATTLE_MOVE_EFFECTS_H
 #define GUARD_CONSTANTS_BATTLE_MOVE_EFFECTS_H
 
+// Move effects
 #define EFFECT_HIT 0
 #define EFFECT_SLEEP 1
 #define EFFECT_POISON_HIT 2
@@ -405,5 +406,97 @@
 #define EFFECT_WORRY_SEED 401
 #define EFFECT_HIT_ESCAPE 402
 #define EFFECT_PLACEHOLDER 0
+
+// Move effect bytes
+#define MOVE_EFFECT_NONE                0x0
+#define MOVE_EFFECT_SLEEP               0x1
+#define MOVE_EFFECT_POISON              0x2
+#define MOVE_EFFECT_BURN                0x3
+#define MOVE_EFFECT_FREEZE              0x4
+#define MOVE_EFFECT_PARALYSIS           0x5
+#define MOVE_EFFECT_TOXIC               0x6
+#define MOVE_EFFECT_CONFUSION           0x7
+#define MOVE_EFFECT_FLINCH              0x8
+#define MOVE_EFFECT_TRI_ATTACK          0x9
+#define MOVE_EFFECT_UPROAR              0xA
+#define MOVE_EFFECT_PAYDAY              0xB
+#define MOVE_EFFECT_CHARGING            0xC
+#define MOVE_EFFECT_WRAP                0xD
+#define MOVE_EFFECT_INCINERATE          0xE
+#define MOVE_EFFECT_ATK_PLUS_1          0xF
+#define MOVE_EFFECT_DEF_PLUS_1          0x10
+#define MOVE_EFFECT_SPD_PLUS_1          0x11
+#define MOVE_EFFECT_SP_ATK_PLUS_1       0x12
+#define MOVE_EFFECT_SP_DEF_PLUS_1       0x13
+#define MOVE_EFFECT_ACC_PLUS_1          0x14
+#define MOVE_EFFECT_EVS_PLUS_1          0x15
+#define MOVE_EFFECT_ATK_MINUS_1         0x16
+#define MOVE_EFFECT_DEF_MINUS_1         0x17
+#define MOVE_EFFECT_SPD_MINUS_1         0x18
+#define MOVE_EFFECT_SP_ATK_MINUS_1      0x19
+#define MOVE_EFFECT_SP_DEF_MINUS_1      0x1A
+#define MOVE_EFFECT_ACC_MINUS_1         0x1B
+#define MOVE_EFFECT_EVS_MINUS_1         0x1C
+#define MOVE_EFFECT_RECHARGE            0x1D
+#define MOVE_EFFECT_RAGE                0x1E
+#define MOVE_EFFECT_STEAL_ITEM          0x1F
+#define MOVE_EFFECT_PREVENT_ESCAPE      0x20
+#define MOVE_EFFECT_NIGHTMARE           0x21
+#define MOVE_EFFECT_ALL_STATS_UP        0x22
+#define MOVE_EFFECT_RAPIDSPIN           0x23
+#define MOVE_EFFECT_REMOVE_PARALYSIS    0x24
+#define MOVE_EFFECT_ATK_DEF_DOWN        0x25
+#define MOVE_EFFECT_BUG_BITE            0x26
+#define MOVE_EFFECT_ATK_PLUS_2          0x27
+#define MOVE_EFFECT_DEF_PLUS_2          0x28
+#define MOVE_EFFECT_SPD_PLUS_2          0x29
+#define MOVE_EFFECT_SP_ATK_PLUS_2       0x2A
+#define MOVE_EFFECT_SP_DEF_PLUS_2       0x2B
+#define MOVE_EFFECT_ACC_PLUS_2          0x2C
+#define MOVE_EFFECT_EVS_PLUS_2          0x2D
+#define MOVE_EFFECT_ATK_MINUS_2         0x2E
+#define MOVE_EFFECT_DEF_MINUS_2         0x2F
+#define MOVE_EFFECT_SPD_MINUS_2         0x30
+#define MOVE_EFFECT_SP_ATK_MINUS_2      0x31
+#define MOVE_EFFECT_SP_DEF_MINUS_2      0x32
+#define MOVE_EFFECT_ACC_MINUS_2         0x33
+#define MOVE_EFFECT_EVS_MINUS_2         0x34
+#define MOVE_EFFECT_THRASH              0x35
+#define MOVE_EFFECT_KNOCK_OFF           0x36
+#define MOVE_EFFECT_FEINT               0x37
+
+#define MOVE_EFFECT_AFFECTS_USER        0x40
+#define MOVE_EFFECT_CERTAIN             0x80
+
+// Z-Move effect bytes
+#define Z_EFFECT_NONE                   0
+#define Z_EFFECT_RESET_STATS            1
+#define Z_EFFECT_ALL_STATS_UP_1         2
+#define Z_EFFECT_BOOST_CRITS            3
+#define Z_EFFECT_FOLLOW_ME              4
+#define Z_EFFECT_CURSE                  5
+#define Z_EFFECT_RECOVER_HP             6
+#define Z_EFFECT_RESTORE_REPLACEMENT_HP 7
+#define Z_EFFECT_ATK_UP_1               8
+#define Z_EFFECT_DEF_UP_1               9
+#define Z_EFFECT_SPD_UP_1               10
+#define Z_EFFECT_SPATK_UP_1             11
+#define Z_EFFECT_SPDEF_UP_1             12
+#define Z_EFFECT_ACC_UP_1               13
+#define Z_EFFECT_EVSN_UP_1              14
+#define Z_EFFECT_ATK_UP_2               15
+#define Z_EFFECT_DEF_UP_2               16
+#define Z_EFFECT_SPD_UP_2               17
+#define Z_EFFECT_SPATK_UP_2             18
+#define Z_EFFECT_SPDEF_UP_2             19
+#define Z_EFFECT_ACC_UP_2               20
+#define Z_EFFECT_EVSN_UP_2              21
+#define Z_EFFECT_ATK_UP_3               22
+#define Z_EFFECT_DEF_UP_3               23
+#define Z_EFFECT_SPD_UP_3               24
+#define Z_EFFECT_SPATK_UP_3             25
+#define Z_EFFECT_SPDEF_UP_3             26
+#define Z_EFFECT_ACC_UP_3               27
+#define Z_EFFECT_EVSN_UP_3              28
 
 #endif  // GUARD_CONSTANTS_BATTLE_MOVE_EFFECTS_H

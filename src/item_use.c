@@ -1,6 +1,7 @@
 #include "global.h"
 #include "gflib.h"
 #include "battle.h"
+#include "battle_anim.h"
 #include "berry_pouch.h"
 #include "berry_powder.h"
 #include "bike.h"
@@ -863,18 +864,52 @@ void Task_ItemUse_CloseMessageBoxAndReturnToField_VsSeeker(u8 taskId)
     Task_ItemUse_CloseMessageBoxAndReturnToField(taskId);
 }
 
+#define BALL_THROW_SUCCESS                  0
+#define BALL_THROW_UNABLE_TWO_MONS          1
+#define BALL_THROW_UNABLE_SECOND_MON        2
+#define BALL_THROW_UNABLE_NO_ROOM           3
+#define BALL_THROW_UNABLE_SEMI_INVULNERABLE 4
+
+static u8 GetBallThrowableState(void)
+{
+	if (IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
+		return BALL_THROW_UNABLE_TWO_MONS;
+	else if (gBattlerInMenuId == GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT))
+		return BALL_THROW_UNABLE_SECOND_MON;
+	else if (IsPlayerPartyAndPokemonStorageFull())
+		return BALL_THROW_UNABLE_NO_ROOM;
+	else if (gStatuses3[GetCatchingBattler()] & STATUS3_SEMI_INVULNERABLE)
+		return BALL_THROW_UNABLE_SEMI_INVULNERABLE;
+	else
+		return BALL_THROW_SUCCESS;
+}
+
+static const u8 sText_Test[] = _("Cannot throw a ball!\p");
+
 void BattleUseFunc_PokeBallEtc(u8 taskId)
 {
-    if (!IsPlayerPartyAndPokemonStorageFull())
-    {
-        RemoveBagItem(gSpecialVar_ItemId, 1);
-        Bag_BeginCloseWin0Animation();
-        ItemMenu_StartFadeToExitCallback(taskId);
-    }
-    else
-    {
-        DisplayItemMessageInBag(taskId, 2, gUnknown_8416631, Task_ReturnToBagFromContextMenu);
-    }
+	const u8 *str;
+	
+	switch (GetBallThrowableState())
+	{
+		case BALL_THROW_SUCCESS:
+		    RemoveBagItem(gSpecialVar_ItemId, 1);
+			Bag_BeginCloseWin0Animation();
+			ItemMenu_StartFadeToExitCallback(taskId);
+			return;
+		case BALL_THROW_UNABLE_TWO_MONS:
+		    str = gText_CantThrowPokeBall_TwoMons;
+			break;
+		case BALL_THROW_UNABLE_SECOND_MON:
+		    str = sText_Test;
+		case BALL_THROW_UNABLE_NO_ROOM:
+		    str = gUnknown_8416631;
+			break;
+		case BALL_THROW_UNABLE_SEMI_INVULNERABLE:
+		    str = gText_CantThrowPokeBall_SemiInvulnerable;
+			break;
+	}
+	DisplayItemMessageInBag(taskId, 2, str, Task_ReturnToBagFromContextMenu);
 }
 
 void BattleUseFunc_PokeFlute(u8 taskId)

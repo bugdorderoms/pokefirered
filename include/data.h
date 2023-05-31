@@ -42,9 +42,6 @@ extern const struct SpriteTemplate gSpriteTemplate_EnemyShadow;
 
 extern const u8 gEnemyMonElevation[NUM_SPECIES];
 
-extern const u8 *const gBattleAnims_General[];
-extern const u8 *const gBattleAnims_Special[];
-
 extern const struct OamData gUnknown_824F010;
 extern const struct OamData gUnknown_824F018;
 extern const union AnimCmd *const gSpriteAnimTable_82349BC[];

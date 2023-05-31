@@ -336,16 +336,11 @@ void BattleAI_SetupAIData(void)
         AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_ROAMING;
         return;
     }
-    else if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER)) && (gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT))
+    else if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_LEGENDARY)) && (gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT))
     {
         if (gBattleTypeFlags & BATTLE_TYPE_WILD_SCRIPTED)
         {
             AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_CHECK_BAD_MOVE;
-            return;
-        }
-        else if (gBattleTypeFlags & BATTLE_TYPE_LEGENDARY_FRLG)
-        {
-            AI_THINKING_STRUCT->aiFlags = (AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_TRY_TO_FAINT | AI_SCRIPT_CHECK_VIABILITY);
             return;
         }
     }
@@ -1049,7 +1044,7 @@ static void Cmd_if_move_flag(void)
 {
     u16 flag = T1_READ_16(sAIScriptPtr + 1);
     
-    if (gBattleMoves[AI_THINKING_STRUCT->moveConsidered].flags & flag)
+    if (gBattleMoves[AI_THINKING_STRUCT->moveConsidered].flags.makesContact) // noped out for now
         sAIScriptPtr = T1_READ_PTR(sAIScriptPtr + 3);
     else
         sAIScriptPtr += 7;
@@ -1061,22 +1056,12 @@ static void Cmd_nullsub_2B(void)
 
 static void Cmd_count_alive_pokemon(void)
 {
-    u8 battlerId;
+    u8 battlerId = sAIScriptPtr[1] == AI_USER ? gBattlerAttacker : gBattlerTarget;
     u8 battlerOnField1, battlerOnField2;
-    struct Pokemon *party;
+    struct Pokemon *party = GetBattlerParty(battlerId);
     s32 i;
 
     AI_THINKING_STRUCT->funcResult = 0;
-
-    if (sAIScriptPtr[1] == AI_USER)
-        battlerId = gBattlerAttacker;
-    else
-        battlerId = gBattlerTarget;
-
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-        party = gPlayerParty;
-    else
-        party = gEnemyParty;
 
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
     {
@@ -1171,6 +1156,7 @@ static void Cmd_get_ability(void)
 
 static void Cmd_get_highest_type_effectiveness(void)
 {
+	u8 affectedBy = 0;
 	u16 flags;
     s32 i;
 	
@@ -1186,7 +1172,7 @@ static void Cmd_get_highest_type_effectiveness(void)
         
         if (gCurrentMove != MOVE_NONE)
         {
-            TypeCalc(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, FALSE, &flags);
+            flags = TypeCalc(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, FALSE, &affectedBy);
 
             if (gBattleMoveDamage == 120) // Super effective STAB.
                 gBattleMoveDamage = AI_EFFECTIVENESS_x2;
@@ -1210,7 +1196,7 @@ static void Cmd_get_highest_type_effectiveness(void)
 
 static void Cmd_if_type_effectiveness(void)
 {
-    u8 damageVar;
+    u8 damageVar, affectedBy = 0;
 	u16 flags;
 
     gBattleScripting.dmgMultiplier = 1;
@@ -1220,7 +1206,7 @@ static void Cmd_if_type_effectiveness(void)
     gBattleMoveDamage = AI_EFFECTIVENESS_x1;
     gCurrentMove = AI_THINKING_STRUCT->moveConsidered;
     
-    TypeCalc(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, FALSE, &flags);
+    flags = TypeCalc(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, FALSE, &affectedBy);
 
     if (gBattleMoveDamage == 120) // Super effective STAB.
         gBattleMoveDamage = AI_EFFECTIVENESS_x2;
@@ -1268,7 +1254,7 @@ static void Cmd_if_status_in_party(void)
         break;
     }
     
-    party = (GetBattlerSide(battlerId) == B_SIDE_PLAYER) ? gPlayerParty : gEnemyParty;
+    party = GetBattlerParty(battlerId);
 
     statusToCompareTo = T1_READ_32(sAIScriptPtr + 2);
 
@@ -1710,7 +1696,7 @@ static void Cmd_get_gender(void)
     else
         battlerId = gBattlerTarget;
 
-    AI_THINKING_STRUCT->funcResult = GetGenderFromSpeciesAndPersonality(gBattleMons[battlerId].species, gBattleMons[battlerId].personality);
+    AI_THINKING_STRUCT->funcResult = GetBattlerGender(battlerId);
 
     sAIScriptPtr += 2;
 }

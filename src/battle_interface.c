@@ -10,6 +10,7 @@
 #include "pokemon_summary_screen.h"
 #include "safari_zone.h"
 #include "constants/songs.h"
+#include "constants/inserts.h"
 
 #define GetStringRightAlignXOffset(fontId, string, destWidth) ({ \
     s32 w = GetStringWidth(fontId, string, 0);                   \
@@ -740,7 +741,7 @@ void DestoryHealthboxSprite(u8 healthboxSpriteId)
     DestroySprite(&gSprites[healthboxSpriteId]);
 }
 
-void UpdateOamPriorityInAllHealthboxes(u8 priority)
+void UpdateOamPriorityInAllHealthboxes(u8 priority, bool8 hideHpBoxes)
 {
     s32 i;
 
@@ -753,6 +754,16 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
         gSprites[healthboxLeftSpriteId].oam.priority = priority;
         gSprites[healthboxRightSpriteId].oam.priority = priority;
         gSprites[healthbarSpriteId].oam.priority = priority;
+
+#if DISAPPEAR_HP_BAR_DURING_ANIMS
+		if (IsBattlerAlive(i))
+		{
+			if (hideHpBoxes)
+				SetHealthboxSpriteInvisible(healthboxLeftSpriteId);
+			else
+				SetHealthboxSpriteVisible(healthboxLeftSpriteId);
+		}
+#endif
     }
 }
 

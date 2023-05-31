@@ -770,7 +770,6 @@ AI_CheckViability:: @ 81DA445
 	if_effect EFFECT_WATER_SPORT, AI_CV_WaterSport
 	if_effect EFFECT_CALM_MIND, AI_CV_SpDefUp
 	if_effect EFFECT_DRAGON_DANCE, AI_CV_DragonDance
-	if_move_flag FLAG_HIGH_CRIT, AI_CV_HighCrit
 	end
 
 AI_CV_Sleep:: @ 81DA71C

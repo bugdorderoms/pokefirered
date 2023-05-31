@@ -4,14 +4,12 @@
 #include "global.h"
 
 void StartWildBattle(void);
+void StartDoubleWildBattle(void);
 void StartRoamerBattle(void);
 void StartOldManTutorialBattle(void);
 void StartScriptedWildBattle(void);
 void StartMarowakBattle(void);
-void StartSouthernIslandBattle(void);
 void StartLegendaryBattle(void);
-void StartGroudonKyogreBattle(void);
-void StartRegiBattle(void);
 u8 BattleSetup_GetTerrainId(void);
 u8 BattleSetup_GetBattleTowerBattleTransition(void);
 const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data);

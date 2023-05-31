@@ -14,6 +14,13 @@
     ptr = NULL;                         \
 }
 
+#define FREE_IF_NOT_NULL(ptr)    \
+{                                \
+    if (ptr) {                   \
+        FREE_AND_SET_NULL(ptr);  \
+    }                            \
+}
+
 extern u8 gHeap[];
 void *Alloc(u32 size);
 void *AllocZeroed(u32 size);

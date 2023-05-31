@@ -9,6 +9,7 @@
 #include "field_player_avatar.h"
 #include "battle_setup.h"
 #include "overworld.h"
+#include "safari_zone.h"
 #include "metatile_behavior.h"
 #include "event_scripts.h"
 #include "script.h"
@@ -43,6 +44,7 @@ static void ApplyCleanseTagEncounterRateMod(u32 *rate);
 static bool8 IsLeadMonHoldingCleanseTag(void);
 static u16 WildEncounterRandom(void);
 static void AddToWildEncounterRateBuff(u8 encouterRate);
+static bool8 TryDoDoubleWildBattle(void);
 
 #include "data/wild_encounters.h"
 
@@ -361,7 +363,17 @@ bool8 StandardWildEncounter(u32 currMetatileAttrs, u16 previousMetatileBehavior)
                 // try a regular wild land encounter
                 if (TryGenerateWildMon(monInfo, WILD_AREA_LAND, WILD_CHECK_REPEL) == TRUE)
                 {
-                    StartWildBattle();
+					if (TryDoDoubleWildBattle())
+					{
+						struct Pokemon mon1;
+						CopyMon(&mon1, &gEnemyParty[0], sizeof(struct Pokemon));
+						TryGenerateWildMon(monInfo, WILD_AREA_LAND, 0);
+						CopyMon(&gEnemyParty[1], &mon1, sizeof(struct Pokemon));
+						StartDoubleWildBattle();
+					}
+					else
+						StartWildBattle();
+					
                     return TRUE;
                 }
                 else
@@ -400,7 +412,17 @@ bool8 StandardWildEncounter(u32 currMetatileAttrs, u16 previousMetatileBehavior)
             {
                 if (TryGenerateWildMon(monInfo, WILD_AREA_WATER, WILD_CHECK_REPEL) == TRUE)
                 {
-                    StartWildBattle();
+					if (TryDoDoubleWildBattle())
+					{
+						struct Pokemon mon1;
+						CopyMon(&mon1, &gEnemyParty[0], sizeof(struct Pokemon));
+						TryGenerateWildMon(monInfo, WILD_AREA_WATER, 0);
+						CopyMon(&gEnemyParty[1], &mon1, sizeof(struct Pokemon));
+						StartDoubleWildBattle();
+					}
+					else
+						StartWildBattle();
+					
                     return TRUE;
                 }
                 else
@@ -799,4 +821,23 @@ const struct WildPokemonInfo *GetWildPokemonInfoByHeaderType(u16 headerId, u8 ty
 		    GET_WILD_INFO(gWildMonHeaders[headerId].fishingMonsInfo, Night);
 			break;
 	}
+}
+
+static bool8 TryDoDoubleWildBattle(void)
+{
+	if (GetSafariZoneFlag() || GetMonsStateToDoubles() != PLAYER_HAS_TWO_USABLE_MONS)
+		return FALSE;
+	else if (FlagGet(FLAG_DOUBLE_WILD_BATTLE))
+	{
+		FlagClear(FLAG_DOUBLE_WILD_BATTLE);
+		return TRUE;
+	}
+	else
+	{
+#if DOUBLE_WILD_BATTLE_CHANCE != 0
+        if (Random() % 100 < DOUBLE_WILD_BATTLE_CHANCE)
+			return TRUE;
+#endif
+	    return FALSE;
+    }
 }

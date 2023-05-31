@@ -45,7 +45,6 @@
 #include "constants/battle_move_effects.h"
 #include "constants/inserts.h"
 #include "constants/weather.h"
-#include "constants/z_move_effects.h"
 
 #define SPECIES_TO_NATIONAL(name)   [SPECIES_##name - 1] = NATIONAL_DEX_##name
 
@@ -2430,6 +2429,13 @@ u8 CountAliveMonsInBattle(u8 caseId)
         for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         {
             if (GetBattlerSide(i) == GetBattlerSide(gBattlerTarget) && !(gAbsentBattlerFlags & gBitTable[i]))
+                retVal++;
+        }
+        break;
+	case BATTLE_ALIVE_EXCEPT_ATTACKER:
+	    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+        {
+            if (i != gBattlerAttacker && !(gAbsentBattlerFlags & gBitTable[i]))
                 retVal++;
         }
         break;
@@ -5446,10 +5452,6 @@ u16 SpeciesToPokedexNum(u16 species)
 
 static u16 GetBattleBGM(void)
 {
-    if (gBattleTypeFlags & BATTLE_TYPE_KYOGRE_GROUDON)
-        return MUS_VS_WILD;
-    if (gBattleTypeFlags & BATTLE_TYPE_REGI)
-        return MUS_RS_VS_TRAINER;
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
         return MUS_RS_VS_TRAINER;
     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
@@ -5629,24 +5631,24 @@ void SetMonPreventsSwitchingString(void)
     BattleStringExpandPlaceholders(gText_PkmnsXPreventsSwitching, gStringVar4);
 }
 
-void SetWildMonHeldItem(void)
+void SetWildMonHeldItem(struct Pokemon *mon)
 {
     if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LEGENDARY | BATTLE_TYPE_TRAINER)) && !gDexnavBattle)
     {
         u16 rnd = Random() % 100;
-        u16 species = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES, NULL);
+        u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
         if (gBaseStats[species].item1 == gBaseStats[species].item2)
         {
-            SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
+            SetMonData(mon, MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
             return;
         }
 
         if (rnd > 44)
         {
             if (rnd <= 94)
-                SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
+                SetMonData(mon, MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
             else
-                SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item2);
+                SetMonData(mon, MON_DATA_HELD_ITEM, &gBaseStats[species].item2);
         }
     }
 }

@@ -8,6 +8,14 @@
 
 enum
 {
+	ANIM_TYPE_GENERAL,
+	ANIM_TYPE_MOVE,
+	ANIM_TYPE_STATUS,
+	ANIM_TYPE_SPECIAL,
+};
+
+enum
+{
     BG_ANIM_SCREEN_SIZE,
     BG_ANIM_AREA_OVERFLOW_MODE,
     BG_ANIM_MOSAIC,
@@ -141,7 +149,7 @@ void MoveBattlerSpriteToBG(u8 battlerId, u8);
 void ResetBattleAnimBg(u8);
 void ClearBattleAnimationVars(void);
 void DoMoveAnim(u16 move);
-void LaunchBattleAnimation(const u8 *const animsTable[], u16 tableId, bool8 isMoveAnim);
+void LaunchBattleAnimation(u8 animType, u16 animId);
 void DestroyAnimSprite(struct Sprite *sprite);
 void DestroyAnimVisualTask(u8 taskId);
 void DestroyAnimSoundTask(u8 taskId);
@@ -598,10 +606,13 @@ void AnimTask_IsTargetSameSide(u8 taskId);
 void AnimTask_SetAnimTargetToBattlerTarget(u8 taskId);
 void AnimTask_SetAnimAttackerAndTargetForEffectAtk(u8 taskId);
 void AnimTask_SetAttackerInvisibleWaitForSignal(u8 taskId);
+void AnimTask_SetInvisible(u8 taskId);
 
 // battle_anim_scripts.s
-extern const u8 *const gBattleAnims_StatusConditions[];
 extern const u16 gMovesWithQuietBGM[];
+extern const u8 *const gBattleAnims_General[];
 extern const u8 *const gBattleAnims_Moves[];
+extern const u8 *const gBattleAnims_StatusConditions[];
+extern const u8 *const gBattleAnims_Special[];
 
 #endif // GUARD_BATTLE_ANIM_H

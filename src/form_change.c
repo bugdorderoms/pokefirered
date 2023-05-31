@@ -68,6 +68,11 @@ u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 a
 						}
 						break;
 					case FORM_CHANGE_WEATHER:
+					    if (formsTable[i].param2)
+						{
+							if (formsTable[i].param2 != ability && !gSpecialStatuses[battlerId].removedWeatherChangeAbility)
+								break;
+						}
 					    if ((!param && !gBattleWeather) || IsBattlerWeatherAffected(battlerId, param))
 							targetSpecies = formsTable[i].targetSpecies;
 						break;

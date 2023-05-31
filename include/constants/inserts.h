@@ -17,6 +17,8 @@
 #define HAIL_BOOST_SPEED TRUE // if true the hail weather boost the speed of ice type pokemons in battle by 33%, like SV.
 #define HAIL_BOOST_DEFENSE TRUE // if true the hail weather boost the defense of ice type pokemons in battle by 50%, like legends Arceus.
 #define FOG_IN_BATTLE TRUE // if true the overworld weathers WEATHER_FOG_HORIZONTAL and WEATHER_FOG_DIAGONAL will start weather fog in battle, like rain and snow.
+#define DOUBLE_WILD_BATTLE_CHANCE 5 // % chance that a wild battle become into a wild double battle. If 0 it will never start a wild double battle, unless it's called by an scripted wild battle.
+#define DOUBLE_WILD_ATTACK_NATURAL_ENEMY TRUE // if true when a double wild battle occours with two natural enemys, it will attack it's enemy instead of the player's pokemon.
 
 // grafical changes
 #define PAGE_SWAP TRUE // if true it auttomaticaly swap the naming screen page to lower case on write the first caracter.

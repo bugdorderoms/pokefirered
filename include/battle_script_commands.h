@@ -3,31 +3,50 @@
 
 #include "global.h"
 
+enum
+{
+    CANCELLER_FLAGS,
+    CANCELLER_ASLEEP,
+    CANCELLER_FROZEN,
+    CANCELLER_TRUANT,
+    CANCELLER_RECHARGE,
+    CANCELLER_FLINCH,
+    CANCELLER_DISABLED,
+    CANCELLER_TAUNTED,
+    CANCELLER_IMPRISONED,
+    CANCELLER_CONFUSED,
+    CANCELLER_PARALYSED,
+    CANCELLER_GHOST,
+    CANCELLER_IN_LOVE,
+    CANCELLER_BIDE,
+    CANCELLER_THAW,
+	// from here to down are all recalled when a move calls another. like Metronome calls a multi-hit move, it will need pass by CANCELLER_MULTIHIT_MOVE
+	// for attack multiples times.
+	CANCELLER_PRIMAL_WEATHER,
+    CANCELLER_SPORE_MOVE,
+	CANCELLER_DAMP,
+	CANCELLER_MULTIHIT_MOVE,
+    CANCELLER_END,
+};
+
+#define CANCELLER_RECALL_CASEID CANCELLER_PRIMAL_WEATHER
+
 #define STAT_CHANGE_WORKED      0
 #define STAT_CHANGE_DIDNT_WORK  1
 
 #define WINDOW_CLEAR            0x1
 #define WINDOW_x80              0x80
 
-void SetMoveEffect(bool8 primary, u8 certain);
-bool8 UproarWakeUpCheck(u8 battlerId);
+bool8 UproarWakeUpCheck(void);
 u8 GetTypeModifier(u8 atkType, u8 defType);
 u16 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility);
-u8 TypeCalc(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 recordAbilities, bool8 resetFlags, u16 *flags);
+u16 TypeCalc(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 recordAbilities, bool8 resetFlags, u8 *affectedBy);
 void AI_CalcDmg(u8 attacker, u8 defender, u16 move);
 bool32 IsMonGettingExpSentOut(void);
 void BattleCreateYesNoCursorAt(void);
 void BattleDestroyYesNoCursorAt(void);
 void HandleBattleWindow(u8 xStart, u8 yStart, u8 xEnd, u8 yEnd, u8 flags);
-u8 GetBattlerTurnOrderNum(u8 battlerId);
 void BufferMoveToLearnIntoBattleTextBuff2(void);
-
-//callasm functions declaration
-void TryDoAnticipationShudder(void);
-void GetStatRaiseDownload(void);
-void GetStrongestMoveForewarn(void);
-void TryFriskFirstTarget(void);
-void TryFriskSecondTarget(void);
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 

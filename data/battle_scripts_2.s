@@ -78,12 +78,12 @@ BattleScript_SafariNoIncGameStat::
 	trysetcaughtmondexflags BattleScript_CaughtPokemonSkipNewDex
 	printstring STRINGID_PKMNDATAADDEDTODEX
 	waitstate
-	setbyte gBattleCommunication, 0
+	setbyte sMULTIUSE_STATE, 0
 	displaydexinfo
 BattleScript_CaughtPokemonSkipNewDex::
 	printstring STRINGID_GIVENICKNAMECAPTURED
 	waitstate
-	setbyte gBattleCommunication, 0
+	setbyte sMULTIUSE_STATE, 0
 	trygivecaughtmonnick BattleScript_CaughtPokemonSkipNickname
 	givecaughtmon
 	printfromtable gCaughtMonStringIds
@@ -99,7 +99,7 @@ BattleScript_CaughtPokemonDone::
 BattleScript_OldMan_Pokedude_CaughtMessage::
 	printstring STRINGID_GOTCHAPKMNCAUGHT2
 	setbyte gBattleOutcome, B_OUTCOME_CAUGHT
-	atk57
+	endlinkbattle
 	finishturn
 
 BattleScript_ShakeBallThrow::
@@ -138,7 +138,7 @@ BattleScript_AIUseFullRestoreOrHpHeal::
 	printstring STRINGID_TRAINER1USEDITEM
 	waitmessage 64
 	useitemonopponent
-	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	printstring STRINGID_PKMNSITEMRESTOREDHEALTH
@@ -191,7 +191,7 @@ BattleScript_UseFluffyTail::
 
 BattleScript_UsePokeFlute::
 	checkpokeflute BS_ATTACKER
-	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 1, BattleScript_PokeFluteWakeUp
+	jumpifbyte CMP_EQUAL, sMULTISTRING_CHOOSER, 1, BattleScript_PokeFluteWakeUp
 	printstring STRINGID_POKEFLUTECATCHY
 	waitmessage 64
 	goto BattleScript_PokeFluteEnd
@@ -231,7 +231,7 @@ BattleScript_LeftoverWallyPrepToThrow::
 	waitmessage 64
 	returnatktoball
 	waitstate
-	trainerslide BS_TARGET
+	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK83_TRAINER_SLIDE_CASE_SLIDE_IN
 	waitstate
 	printstring STRINGID_YOUTHROWABALLNOWRIGHT
 	waitmessage 64

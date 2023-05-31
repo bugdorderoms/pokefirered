@@ -175,7 +175,7 @@ static bool8 LoadBattlerSpriteGfx(u8 battler)
     {
         if (GetBattlerSide(battler) != B_SIDE_PLAYER)
         {
-            if (IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE(gBattleTypeFlags))
+            if (IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE())
                 DecompressGhostFrontPic(&gEnemyParty[gBattlerPartyIndexes[battler]], battler);
             else if (!gBattleSpritesDataPtr->battlerData[battler].behindSubstitute)
                 BattleLoadOpponentMonSpriteGfx(&gEnemyParty[gBattlerPartyIndexes[battler]], battler);
@@ -201,7 +201,7 @@ static void CreateBattlerSprite(u8 battler)
     {
         u8 posY;
 
-        if (IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE(gBattleTypeFlags))
+        if (IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE())
             posY = GetGhostSpriteDefault_Y(battler);
         else if (gBattleSpritesDataPtr->battlerData[battler].behindSubstitute)
             posY = GetSubstituteSpriteDefault_Y(battler);

@@ -259,9 +259,9 @@ static const u8 sText_PkmnCantUseMoveTorment[] = _("{B_ACTIVE_NAME_WITH_PREFIX} 
 static const u8 sText_PkmnCantUseMoveTaunt[] = _("{B_ACTIVE_NAME_WITH_PREFIX} can't use\n{B_CURRENT_MOVE} after the Taunt!\p");
 static const u8 sText_PkmnCantUseMoveSealed[] = _("{B_ACTIVE_NAME_WITH_PREFIX} can't use the\nsealed {B_CURRENT_MOVE}!\p");
 static const u8 sText_PkmnMadeItRain[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nmade it rain!");
-static const u8 sText_PkmnRaisedSpeed[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nraised its Speed!");
+static const u8 sText_PkmnRaisedSpeed[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\nraised its Speed!");
 static const u8 sText_PkmnProtectedBy[] = _("{B_DEF_NAME_WITH_PREFIX} was protected\nby {B_DEF_ABILITY}!");
-static const u8 sText_PkmnPreventsUsage[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nprevents {B_ATK_NAME_WITH_PREFIX}\lfrom using {B_CURRENT_MOVE}!");
+static const u8 sText_PkmnPreventsUsage[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nprevents {B_ATK_NAME_WITH_PREFIX}\lfrom using {B_CURRENT_MOVE}!");
 static const u8 sText_PkmnRestoredHPUsing[] = _("{B_DEF_NAME_WITH_PREFIX} restored HP\nusing its {B_DEF_ABILITY}!");
 static const u8 sText_PkmnsXMadeYUseless[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nmade {B_CURRENT_MOVE} useless!");
 static const u8 sText_PkmnChangedTypeWith[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nmade it the {B_BUFF1} type!");
@@ -274,7 +274,7 @@ static const u8 sText_PkmnAnchorsItselfWith[] = _("{B_DEF_NAME_WITH_PREFIX} anch
 static const u8 sText_PkmnCutsAttackWith[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncuts {B_DEF_NAME_WITH_PREFIX}'s Attack!");
 static const u8 sText_PkmnPreventsStatLossWith[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nprevents stat loss!");
 static const u8 sText_PkmnHurtsWith[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nhurt {B_ATK_NAME_WITH_PREFIX}!");
-static const u8 sText_PkmnTraced[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} Traced\n{B_BUFF1}'s {B_BUFF2}!");
+static const u8 sText_PkmnTraced[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} Traced\n{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}!");
 static const u8 sText_PkmnsXPreventsBurns[] = _("{B_EFF_NAME_WITH_PREFIX}'s {B_EFF_ABILITY}\nprevents burns!");
 static const u8 sText_PkmnsXBlocksY[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nblocks {B_CURRENT_MOVE}!");
 static const u8 sText_PkmnsXBlocksY2[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nblocks {B_CURRENT_MOVE}!");
@@ -285,13 +285,13 @@ static const u8 sText_PkmnsXPreventsYLoss[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}
 static const u8 sText_PkmnsXInfatuatedY[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ninfatuated {B_ATK_NAME_WITH_PREFIX}!");
 static const u8 sText_PkmnsXMadeYIneffective[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nmade {B_CURRENT_MOVE} ineffective!");
 static const u8 sText_PkmnsXCuredYProblem[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncured its {B_BUFF1} problem!");
-static const u8 sText_ItSuckedLiquidOoze[] = _("It sucked up the\nLiquid Ooze!");
+static const u8 sText_ItSuckedLiquidOoze[] = _("It sucked up the\n{B_DEF_ABILITY}!");
 static const u8 sText_PkmnTransformed[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} transformed!");
 static const u8 sText_PkmnsXTookAttack[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ntook the attack!");
 const u8 gText_PkmnsXPreventsSwitching[] = _("{B_BUFF1}'s {B_LAST_ABILITY}\nprevents switching!\p");
 static const u8 sText_PreventedFromWorking[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nprevented {B_SCR_ACTIVE_NAME_WITH_PREFIX}'s\l{B_BUFF1} from working!");
 static const u8 sText_PkmnsXMadeItIneffective[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nmade it ineffective!");
-static const u8 sText_PkmnsXPreventsFlinching[] = _("{B_EFF_NAME_WITH_PREFIX}'s {B_EFF_ABILITY}\nprevents flinching!");
+static const u8 sText_PkmnsXPreventsFlinching[] = _("{B_EFF_NAME_WITH_PREFIX}'s won't flinch\nbecause of its {B_EFF_ABILITY}!");
 static const u8 sText_PkmnsXPreventsYsZ[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\nprevents {B_DEF_NAME_WITH_PREFIX}'s\l{B_DEF_ABILITY} from working!"); // unused
 static const u8 sText_PkmnsXCuredItsYProblem[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncured its {B_BUFF1} problem!");
 static const u8 sText_PkmnsXHadNoEffectOnY[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nhad no effect on {B_EFF_NAME_WITH_PREFIX}!"); // unused
@@ -424,6 +424,65 @@ static const u8 sText_HeavyRainLifted[] = _("The heavy rain has lifted!{PAUSE 64
 static const u8 sText_ExtremeSunlightFaded[] = _("The extreme sunlight faded.{PAUSE 64}");
 static const u8 sText_StrongWindsDissipated[] = _("The mysterious strong winds\nhave dissipated!{PAUSE 64}");
 static const u8 sText_SandstormKickedUp[] = _("A sandstorm kicked up!");
+static const u8 sText_PkmnXMadeItHail[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nmade it hail!");
+static const u8 sText_HeavyRainBeganFall[] = _("A heavy rain began to fall!");
+static const u8 sText_SunlightTurnedHarsh[] = _("The sunlight turned\nextremely harsh!");
+static const u8 sText_MysteriousAirProtectingPkmn[] = _("A mysterious air current is\nprotecting Flying-type POKéMON!");
+static const u8 sText_WeatherEffectsDisappeared[] = _("The effects of weather\ndisappeared!");
+static const u8 sText_PkmnBreaksTheMold[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} breaks the mold!");
+static const u8 sText_PkmnCantGetGoing[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} can't\nget it going!");
+static const u8 sText_TooNervousToEatBerries[] = _("{B_DEF_SIDE_NAME} is too\nnervous to eat berries!");
+static const u8 sText_RadiatingABlazingAura[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} is radiating\na blazing aura!");
+static const u8 sText_RadiatingABurstingAura[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} is radiating\na bursting aura!");
+static const u8 sText_RadiatingADarkAura[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} is radiating\na dark aura!");
+static const u8 sText_RadiatingAFairyAura[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} is radiating\na fairy aura!");
+static const u8 sText_PkmnReversedAuras[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} reversed all\nother POKéMON's auras!");
+static const u8 sText_PkmnIsDrowsing[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} is drowsing!");
+static const u8 sText_PkmnUnderwentATransformation[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} underwent\na heroic transformation!");
+static const u8 sText_AbilityTriggered[] = _("{B_SCR_ACTIVE_ABILITY} triggered!");
+static const u8 sText_PkmnGainSomeOfHp[] = _("{B_ATK_NAME_WITH_PREFIX} gain some\nof its HP!");
+static const u8 sText_PkmnLostSomeOfHp[] = _("{B_ATK_NAME_WITH_PREFIX} lost some\nof its HP!");
+static const u8 sText_AtkAblCuredEffProblem[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\ncured {B_EFF_NAME_WITH_PREFIX}'s\l{B_BUFF1} problem!");
+static const u8 sText_PkmnGotItsActTogether[] = _("{B_ATK_NAME_WITH_PREFIX} got its\nact together!");
+static const u8 sText_DefIsTormented[] = _("{B_DEF_NAME_WITH_PREFIX} is\ntormented!");
+static const u8 sText_AtkHarvestedItsLastItem[] = _("{B_ATK_NAME_WITH_PREFIX} harvested\nits {B_LAST_ITEM}!");
+static const u8 sText_AtkCantUseCurrMove[] = _("{B_ATK_NAME_WITH_PREFIX} cannot\nuse {B_CURRENT_MOVE}!");
+static const u8 sText_DefLastAblRaisedItsBuff1[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_LAST_ABILITY}\nraised its {B_BUFF1}!");
+static const u8 sText_DefMaxedItsAttack[] = _("{B_DEF_NAME_WITH_PREFIX} maxed its\nAttack!");
+static const u8 sText_DefAblDisabledAtkCurrMove[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ndisabled {B_ATK_NAME_WITH_PREFIX}'s\l{B_CURRENT_MOVE}!");
+static const u8 sText_PkmnIllusionOff[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s illusion wore off!");
+static const u8 sText_AtkAbilityBecameAbl[] = _("{B_ATK_NAME_WITH_PREFIX}'s ability became\n{B_ATK_ABILITY}!");
+static const u8 sText_PkmnShuddered[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} shuddered!");
+static const u8 sText_AttackerAbilityRaisedStat[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\nraised its {B_BUFF1}!");
+static const u8 sText_AlertedToDefBuff1[] = _("It was alerted to\n{B_DEF_NAME_WITH_PREFIX}'s {B_BUFF1}!");
+static const u8 sText_AtkFriskedFoundLastItem[] = _("{B_ATK_NAME_WITH_PREFIX} frisked {B_DEF_NAME_WITH_PREFIX}\nand found its {B_LAST_ITEM}!");
+static const u8 sText_AtkCutHpMinimizedAttack[] = _("{B_ATK_NAME_WITH_PREFIX} cut its own HP\nand minimized Attack!");
+static const u8 sText_AtkAblRaisedItsSpeed[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\nraised its Speed!");
+static const u8 sText_AllScreensCleansed[] = _("All screens on the field were\ncleansed!");
+static const u8 sText_PerishInThree[] = _("Both POKéMON will perish\nin three turns!");
+static const u8 sText_DefStatChangesWereReset[] = _("{B_DEF_NAME_WITH_PREFIX}'s\nstat changes were reset!");
+static const u8 sText_CurrMoveChargedDefPower[] = _("Being hit by {B_CURRENT_MOVE}\ncharged {B_DEF_NAME_WITH_PREFIX} with power!");
+static const u8 sText_NeutralizingGasOver[] = _("The effects of\n{B_BUFF1} wore off!");
+static const u8 sText_PkmnAblFilledTheArea[] = _("{B_SCR_ACTIVE_ABILITY} filled the area!");
+static const u8 sText_PastelVeilProtected[] = _("{B_DEF_NAME_WITH_PREFIX} is protected\nby a pastel veil!");
+static const u8 sText_PastelVeilCuredStatus[] = _("{B_DEF_NAME_WITH_PREFIX} was cured\nof its poisoning!");
+static const u8 sText_StartedSchooling[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} formed\na school!");
+static const u8 sText_StoppedSchooling[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} stopped\nschooling!");
+static const u8 sText_DisguiseServedAsDecoy[] = _("Its disguise served it as\na decoy!");
+static const u8 sText_DisguiseBusted[] = _("{B_DEF_NAME_WITH_PREFIX}'s disguise\nwas busted!");
+static const u8 sText_PkmnGotOverInfatuation[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} got over\nits infatuation!");
+static const u8 sText_PkmnShookOffTaunt[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} shook off\nthe taunt!");
+static const u8 sText_pkmnExertingPressure[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} is exerting\nits {B_SCR_ACTIVE_ABILITY}!");
+static const u8 sText_FizzlesFireTypeAttack[] = _("The Fire-type attack fizzled out\nin the heavy rain!");
+static const u8 sText_EvaporateWaterTypeAttack[] = _("The Water-type attack evaporated\nin the harsh sunlight!");
+static const u8 sText_MoveWasBauncedBackByAbl[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_CURRENT_MOVE} was\nbounced back by {B_DEF_NAME_WITH_PREFIX}'s\l{B_DEF_ABILITY}!");
+static const u8 sText_ChangedToBlade[] = _("Changed to Blade Forme!");
+static const u8 sText_ChangedToShield[] = _("Changed to Shield Forme!");
+static const u8 sText_PkmnGainedStrength[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} gained\nstrength from the fallen!");
+static const u8 sText_PkmnAblWeakenedBuff1OfAllPkmn[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nweakened the {B_BUFF1} of all\lsurrounding POKéMON!");
+static const u8 sText_AtkFoundOneLastItem[] = _("{B_ATK_NAME_WITH_PREFIX}'s found\none {B_LAST_ITEM}!");
+static const u8 sText_PkmnHasTwoAbilities[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} has two\nabilities!");
+static const u8 sText_PkmnAblWasTakenOver[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nwas taken over!");
 
 static const u8 sText_HP2[] = _("HP");
 static const u8 sText_Attack2[] = _("Attack");
@@ -472,13 +531,13 @@ static const u8 sText_ItAppearedCaught[] = _("Aww!\nIt appeared to be caught!");
 static const u8 sText_AarghAlmostHadIt[] = _("Aargh!\nAlmost had it!");
 static const u8 sText_ShootSoClose[] = _("Shoot!\nIt was so close, too!");
 const u8 gUnknown_83FD78A[] = _("よけられた!\nこいつは つかまりそうにないぞ!");
-static const u8 sText_GotchaPkmnCaught[] = _("Gotcha!\n{B_OPPONENT_MON1_NAME} was caught!{WAIT_SE}{PLAY_BGM MUS_CAUGHT}\p");
+static const u8 sText_GotchaPkmnCaught[] = _("Gotcha!\n{B_DEF_NAME} was caught!{WAIT_SE}{PLAY_BGM MUS_CAUGHT}\p");
 static const u8 sText_GotchaPkmnCaught2[] = _("Gotcha!\n{B_OPPONENT_MON1_NAME} was caught!{WAIT_SE}{PLAY_BGM MUS_CAUGHT}{PAUSE 127}");
-static const u8 sText_GiveNicknameCaptured[] = _("Give a nickname to the\ncaptured {B_OPPONENT_MON1_NAME}?");
-static const u8 sText_PkmnSentToPC[] = _("{B_OPPONENT_MON1_NAME} was sent to\n{B_PC_CREATOR_NAME} PC.");
+static const u8 sText_GiveNicknameCaptured[] = _("Give a nickname to the\ncaptured {B_DEF_NAME}?");
+static const u8 sText_PkmnSentToPC[] = _("{B_DEF_NAME} was sent to\n{B_PC_CREATOR_NAME} PC.");
 static const u8 sText_Someones[] = _("someone's");
 static const u8 sText_Bills[] = _("Bill's");
-static const u8 sText_PkmnDataAddedToDex[] = _("{B_OPPONENT_MON1_NAME}'s data was\nadded to the Pokédex.\p");
+static const u8 sText_PkmnDataAddedToDex[] = _("{B_DEF_NAME}'s data was\nadded to the Pokédex.\p");
 static const u8 sText_ItIsRaining[] = _("It is raining."); // used only in RSE when a battle starts in a rainy area
 static const u8 sText_SandstormIsRaging[] = _("A sandstorm is raging.");
 static const u8 sText_BoxIsFull[] = _("The Box is full!\nYou can't catch any more!\p");
@@ -898,6 +957,65 @@ const u8 *const gBattleStringsTable[] = {
 	[STRINGID_DEEPFOG - 12]                       = sText_FogIsDeep,
 	[STRINGID_FOGENDED - 12]                      = sText_FogEnded,
 	[STRINGID_ASANDSTORMKICKEDUP - 12]            = sText_SandstormKickedUp,
+	[STRINGID_PKMNSXMADEITHAIL - 12]              = sText_PkmnXMadeItHail,
+	[STRINGID_HEAVYRAINBEGANFALL - 12]            = sText_HeavyRainBeganFall,
+	[STRINGID_EXTREHARSHSUNLIGHT - 12]            = sText_SunlightTurnedHarsh,
+	[STRINGID_MYSTERIOUSAIRPROTECTINGPKMN - 12]   = sText_MysteriousAirProtectingPkmn,
+	[STRINGID_WEATHEREFFECTSDISAPPEARED - 12]     = sText_WeatherEffectsDisappeared,
+	[STRINGID_PKMNBREAKSTHEMOLD - 12]             = sText_PkmnBreaksTheMold,
+	[STRINGID_PKMNCANTGETGOING - 12]              = sText_PkmnCantGetGoing,
+	[STRINGID_PARTYTOONERVOUS - 12]               = sText_TooNervousToEatBerries,
+	[STRINGID_RADIATINGABLAZINGAURA - 12]         = sText_RadiatingABlazingAura,
+	[STRINGID_RADIATINGABURSTINGAURA - 12]        = sText_RadiatingABurstingAura,
+	[STRINGID_RADIATINGADARKAURA - 12]            = sText_RadiatingADarkAura,
+	[STRINGID_RADIATINGAFAIRYAURA - 12]           = sText_RadiatingAFairyAura,
+	[STRINGID_REVERSEDALLOTHERAURAS - 12]         = sText_PkmnReversedAuras,
+	[STRINGID_PKMNISDROWSING - 12]                = sText_PkmnIsDrowsing,
+	[STRINGID_PKMNUNDERWENTTRANSFORMATION - 12]   = sText_PkmnUnderwentATransformation,
+	[STRINGID_ABILITYTRIGGERED - 12]              = sText_AbilityTriggered,
+	[STRINGID_PKMNGAINSOMEOFHP - 12]              = sText_PkmnGainSomeOfHp,
+	[STRINGID_PKMNLOSTSOMEOFHP - 12]              = sText_PkmnLostSomeOfHp,
+	[STRINGID_ATKABLCUREDEFFPROBLEM - 12]         = sText_AtkAblCuredEffProblem,
+	[STRINGID_PKMNGOTITSACT - 12]                 = sText_PkmnGotItsActTogether,
+	[STRINGID_DEFISTORMENTED - 12]                = sText_DefIsTormented,
+	[STRINGID_ATKHARVESTEDITSITEM - 12]           = sText_AtkHarvestedItsLastItem,
+	[STRINGID_ATKCANTUSECURRMOVE - 12]            = sText_AtkCantUseCurrMove,
+	[STRINGID_DEFLASTABLRAISEDBUFF1 - 12]         = sText_DefLastAblRaisedItsBuff1,
+	[STRINGID_DEFMAXEDATTACK - 12]                = sText_DefMaxedItsAttack,
+	[STRINGID_DEFABLDISABLEDATKCURRMOVE - 12]     = sText_DefAblDisabledAtkCurrMove,
+	[STRINGID_PKMNILLUSIONOFF - 12]               = sText_PkmnIllusionOff,
+	[STRINGID_ATKABILITYBECAMEABL - 12]           = sText_AtkAbilityBecameAbl,
+	[STRINGID_PKMNSHUDDERED - 12]                 = sText_PkmnShuddered,
+	[STRINGID_ATTACKERABILITYSTATRAISE - 12]      = sText_AttackerAbilityRaisedStat,
+	[STRINGID_ALERTEDTODEFBUFF1 - 12]             = sText_AlertedToDefBuff1,
+	[STRINGID_ATKFRISKEDDEFFOUNDLASTITEM - 12]    = sText_AtkFriskedFoundLastItem,
+	[STRINGID_ATKCUTHPMINIMIZEDATTACK - 12]       = sText_AtkCutHpMinimizedAttack,
+	[STRINGID_ATKABLRAISEDITSSPEED - 12]          = sText_AtkAblRaisedItsSpeed,
+	[STRINGID_ALLSCREENSCLEANSED - 12]            = sText_AllScreensCleansed,
+	[STRINGID_BOTHWILLPERISHIN3TURNS - 12]        = sText_PerishInThree,
+	[STRINGID_DEFSTATCHANGESWERERESET - 12]       = sText_DefStatChangesWereReset,
+	[STRINGID_CURRMOVECHARGEDDEFPOWER - 12]       = sText_CurrMoveChargedDefPower,
+	[STRINGID_NEUTRALIZINGGASOVER - 12]           = sText_NeutralizingGasOver,
+	[STRINGID_PKMNABLFILLEDTHEAREA - 12]          = sText_PkmnAblFilledTheArea,
+	[STRINGID_PASTELVEILPROTECTED - 12]           = sText_PastelVeilProtected,
+	[STRINGID_PASTELVEILCUREDSTATUS - 12]         = sText_PastelVeilCuredStatus,
+	[STRINGID_STARTEDSCHOOLING - 12]              = sText_StartedSchooling,
+	[STRINGID_STOPPEDSCHOOLING - 12]              = sText_StoppedSchooling,
+	[STRINGID_DISGUISESERVEDASDECOY - 12]         = sText_DisguiseServedAsDecoy,
+	[STRINGID_DISGUISEBUSTED - 12]                = sText_DisguiseBusted,
+	[STRINGID_PKMNGOTOVERINFATUATION - 12]        = sText_PkmnGotOverInfatuation,
+	[STRINGID_PKMNSHOOKOFFTAUNT - 12]             = sText_PkmnShookOffTaunt,
+	[STRINGID_PKMNEXERTINGPRESSURE - 12]          = sText_pkmnExertingPressure,
+	[STRINGID_FIZZLESFIRETYPEATTACK - 12]         = sText_FizzlesFireTypeAttack,
+	[STRINGID_EVAPORATEWATERTYPEATTACK - 12]      = sText_EvaporateWaterTypeAttack,
+	[STRINGID_MOVEBOUNCEDBACKBYABILITY - 12]      = sText_MoveWasBauncedBackByAbl,
+	[STRINGID_CHANGEDTOBLADE - 12]                = sText_ChangedToBlade,
+	[STRINGID_CHANGEDTOSHIELD - 12]               = sText_ChangedToShield,
+	[STRINGID_PKMNGAINEDSTRENGTH - 12]            = sText_PkmnGainedStrength,
+	[STRINGID_PKMNABLWEAKENEDBUFF1 - 12]          = sText_PkmnAblWeakenedBuff1OfAllPkmn,
+	[STRINGID_ATKFOUNDLASTITEM - 12]              = sText_AtkFoundOneLastItem,
+	[STRINGID_PKMNHASTWOABILITIES - 12]           = sText_PkmnHasTwoAbilities,
+	[STRINGID_PKMNABLWASTAKENOVER - 12]           = sText_PkmnAblWasTakenOver,
 };
 
 const u16 gMissStringIds[] = {
@@ -965,8 +1083,6 @@ const u16 gLeechSeedStringIds[] = {
     STRINGID_PKMNSEEDED,
     STRINGID_PKMNEVADEDATTACK,
     STRINGID_ITDOESNTAFFECT,
-    STRINGID_PKMNSAPPEDBYLEECHSEED,
-    STRINGID_ITSUCKEDLIQUIDOOZE
 };
 
 const u16 gRestUsedStringIds[] = {
@@ -1097,11 +1213,6 @@ const u16 gAttractUsedStringIds[] = {
     STRINGID_PKMNSXINFATUATEDY
 };
 
-const u16 gLeechSeedDrainStringIds[] = {
-    STRINGID_PKMNENERGYDRAINED,
-    STRINGID_ITSUCKEDLIQUIDOOZE
-};
-
 const u16 gSportsUsedStringIds[] = {
     STRINGID_ELECTRICITYWEAKENED,
     STRINGID_FIREWEAKENED
@@ -1215,6 +1326,61 @@ const u16 gTrappingMoves[] = {
     MOVE_WHIRLPOOL,
     MOVE_SAND_TOMB,
     0xFFFF
+};
+
+const u16 gSwitchInWeatherAbilitiesStrings[] = {
+	STRINGID_PKMNMADEITRAIN,
+	STRINGID_PKMNSXWHIPPEDUPSANDSTORM,
+	STRINGID_PKMNSXINTENSIFIEDSUN,
+	STRINGID_PKMNSXMADEITHAIL,
+	STRINGID_HEAVYRAINBEGANFALL,
+	STRINGID_EXTREHARSHSUNLIGHT,
+	STRINGID_MYSTERIOUSAIRPROTECTINGPKMN
+};
+
+const u16 gSwitchInAbilitiesMsgStringIds[] = {
+	STRINGID_PKMNBREAKSTHEMOLD,
+	STRINGID_PKMNCANTGETGOING,
+	STRINGID_PARTYTOONERVOUS,
+	STRINGID_RADIATINGABLAZINGAURA,
+	STRINGID_RADIATINGABURSTINGAURA,
+	STRINGID_RADIATINGADARKAURA,
+	STRINGID_RADIATINGAFAIRYAURA,
+	STRINGID_REVERSEDALLOTHERAURAS,
+	STRINGID_PKMNISDROWSING,
+	STRINGID_PKMNUNDERWENTTRANSFORMATION,
+	STRINGID_PKMNSHUDDERED,
+	STRINGID_ALERTEDTODEFBUFF1,
+	STRINGID_ALLSCREENSCLEANSED,
+	STRINGID_DEFSTATCHANGESWERERESET,
+	STRINGID_PKMNCOPIEDSTATCHANGES,
+	STRINGID_PKMNHASTWOABILITIES,
+	STRINGID_PKMNEXERTINGPRESSURE,
+	STRINGID_PKMNGAINEDSTRENGTH,
+	STRINGID_PKMNABLWEAKENEDBUFF1,
+};
+
+const u16 gRainDishStringIds[] = {
+	STRINGID_PKMNSXRESTOREDHPALITTLE2,
+	STRINGID_PKMNGAINSOMEOFHP,
+};
+
+const u16 gFormChangeAbilitiesStrings[] = {
+	STRINGID_ABILITYTRIGGERED,
+	STRINGID_PKMNTRANSFORMED,
+	STRINGID_CHANGEDTOBLADE,
+	STRINGID_CHANGEDTOSHIELD,
+};
+
+const u16 gStartedSchoolingStringIds[] = {
+	STRINGID_STARTEDSCHOOLING,
+	STRINGID_STOPPEDSCHOOLING,
+};
+
+const u16 gAbilityStatusCureStringIds[] = {
+	STRINGID_PKMNSXCUREDITSYPROBLEM,
+	STRINGID_PKMNGOTOVERINFATUATION,
+	STRINGID_PKMNSHOOKOFFTAUNT,
 };
 
 const u8 gText_PkmnIsEvolving[] = _("What?\n{STR_VAR_1} is evolving!");
@@ -1397,7 +1563,7 @@ void BufferStringBattle(u16 stringId)
             }
             else if (gBattleTypeFlags & BATTLE_TYPE_LEGENDARY)
                 stringPtr = sText_WildPkmnAppeared2;
-            else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) // interesting, looks like they had something planned for wild double battles
+            else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
                 stringPtr = sText_TwoWildPkmnAppeared;
             else if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
                 stringPtr = sText_WildPkmnAppearedPause;
@@ -1573,21 +1739,17 @@ void BufferStringBattle(u16 stringId)
             }
         }
         break;
+	case STRINGID_TRAINERSLIDE:
+	    stringPtr = gBattleStruct->trainerSlideMsg;
+		break;
     default: // load a string from the table
-        if (stringId >= BATTLESTRINGS_COUNT + BATTLESTRINGS_ID_ADDER)
+        if (stringId >= BATTLESTRINGS_COUNT)
         {
-            if (stringId == STRINGID_SETWORDSTRING)
-                stringPtr = gSetWordLoc;
-            else
-            {
             gDisplayedStringBattle[0] = EOS;
             return;
-            }
         }
         else
-        {
             stringPtr = gBattleStringsTable[stringId - BATTLESTRINGS_ID_ADDER];
-        }
         break;
     }
 
@@ -1996,6 +2158,10 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
             case B_TXT_ACTIVE_NAME_NO_ILLUSION:
 			    GetMonData(GetBattlerPartyIndexPtr(gActiveBattler), MON_DATA_NICKNAME, text);
 	        StringGet_Nickname(text);
+                toCpy = text;
+                break;
+			case B_TXT_DEF_NAME:
+			    GetBattlerNick(gBattlerTarget, text);
                 toCpy = text;
                 break;
             }
