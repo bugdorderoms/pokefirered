@@ -2038,8 +2038,8 @@ bool8 HasNoMonsToSwitch(u8 battler, u8 partyIdBattlerOn1, u8 partyIdBattlerOn2)
                  && GetMonData(&party[i], MON_DATA_SPECIES2) != SPECIES_EGG
                  && i != partyIdBattlerOn1
                  && i != partyIdBattlerOn2
-                 && i != gBattleStruct->monToSwitchIntoId[playerId]
-                 && i != flankId[gBattleStruct->monToSwitchIntoId])
+                 && i != gBattleStruct->monToSwitchIntoId[flankId]
+                 && i != playerId[gBattleStruct->monToSwitchIntoId])
                     break;
             }
             return (i == PARTY_SIZE);
