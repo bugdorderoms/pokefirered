@@ -231,7 +231,7 @@ BattleScript_LeftoverWallyPrepToThrow::
 	waitmessage 64
 	returnatktoball
 	waitstate
-	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK83_TRAINER_SLIDE_CASE_SLIDE_IN
+	handletrainerslidecase B_POSITION_PLAYER_LEFT, ATK83_TRAINER_SLIDE_CASE_SLIDE_IN
 	waitstate
 	printstring STRINGID_YOUTHROWABALLNOWRIGHT
 	waitmessage 64
