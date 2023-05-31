@@ -1406,10 +1406,6 @@
     .macro tryendneutralizinggas battler:req
 	various \battler, VARIOUS_TRY_END_NEUTRALIZING_GAS
 	.endm
-	
-	.macro activateendturnitems battler:req
-	various \battler, VARIOUS_ACTIVATE_END_TURN_ITEMS
-	.endm
 
     .macro setteleportoutcome battler:req
 	various \battler, VARIOUS_SET_TELEPORT_OUTCOME

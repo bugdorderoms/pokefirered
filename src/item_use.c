@@ -866,16 +866,13 @@ void Task_ItemUse_CloseMessageBoxAndReturnToField_VsSeeker(u8 taskId)
 
 #define BALL_THROW_SUCCESS                  0
 #define BALL_THROW_UNABLE_TWO_MONS          1
-#define BALL_THROW_UNABLE_SECOND_MON        2
-#define BALL_THROW_UNABLE_NO_ROOM           3
-#define BALL_THROW_UNABLE_SEMI_INVULNERABLE 4
+#define BALL_THROW_UNABLE_NO_ROOM           2
+#define BALL_THROW_UNABLE_SEMI_INVULNERABLE 3
 
 static u8 GetBallThrowableState(void)
 {
 	if (IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
 		return BALL_THROW_UNABLE_TWO_MONS;
-	else if (gBattlerInMenuId == GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT))
-		return BALL_THROW_UNABLE_SECOND_MON;
 	else if (IsPlayerPartyAndPokemonStorageFull())
 		return BALL_THROW_UNABLE_NO_ROOM;
 	else if (gStatuses3[GetCatchingBattler()] & STATUS3_SEMI_INVULNERABLE)
@@ -883,8 +880,6 @@ static u8 GetBallThrowableState(void)
 	else
 		return BALL_THROW_SUCCESS;
 }
-
-static const u8 sText_Test[] = _("Cannot throw a ball!\p");
 
 void BattleUseFunc_PokeBallEtc(u8 taskId)
 {
@@ -900,8 +895,6 @@ void BattleUseFunc_PokeBallEtc(u8 taskId)
 		case BALL_THROW_UNABLE_TWO_MONS:
 		    str = gText_CantThrowPokeBall_TwoMons;
 			break;
-		case BALL_THROW_UNABLE_SECOND_MON:
-		    str = sText_Test;
 		case BALL_THROW_UNABLE_NO_ROOM:
 		    str = gUnknown_8416631;
 			break;

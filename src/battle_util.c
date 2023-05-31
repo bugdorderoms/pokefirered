@@ -2346,14 +2346,6 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 							++effect;
 						}
 						break;
-					case ABILITY_PROTEAN: // don't record ability
-					case ABILITY_LIBERO:
-					    if (!gSpecialStatuses[battler].switchInAbilityDone)
-						{
-							gDisableStructs[battler].canProteanActivate = TRUE;
-							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-						}
-						break;
 					case ABILITY_DARK_AURA:
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
@@ -3725,19 +3717,6 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 			
 			    switch (gLastUsedAbility)
 				{
-					case ABILITY_FORECAST:
-					case ABILITY_FLOWER_GIFT:
-					    {
-							u16 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_WEATHER);
-							
-							if (newSpecies)
-							{
-								DoBattleFormChange(battler, newSpecies, TRUE, TRUE);
-								BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
-								++effect;
-							}
-					    }
-						break;
 					case ABILITY_ICE_FACE:
 					    if (gBattleStruct->allowedToChangeFormInWeather[GetBattlerSide(battler)] & gBitTable[gBattlerPartyIndexes[battler]])
 						{

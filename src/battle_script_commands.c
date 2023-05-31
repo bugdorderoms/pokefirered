@@ -4949,9 +4949,7 @@ void BufferMoveToLearnIntoBattleTextBuff2(void)
 static void atk76_various(void)
 {
 	s32 i, data;
-	
     u32 status;
-    struct Pokemon *mon;
 
     gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 
@@ -5053,7 +5051,7 @@ static void atk76_various(void)
 			}
 			if (data)
 			{
-				u32 status = 0;
+				status = 0;
 				gActiveBattler = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 				BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, data, 4, &status);
 				MarkBattlerForControllerExec(gActiveBattler);
@@ -5069,7 +5067,7 @@ static void atk76_various(void)
 			}
 			if (data)
 			{
-				u32 status = 0;
+				status = 0;
 				gActiveBattler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 				BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, data, 4, &status);
 				MarkBattlerForControllerExec(gActiveBattler);
@@ -7715,7 +7713,7 @@ static void atkD6_nop(void)
 
 static void atkD7_setyawn(void)
 {
-    if (gStatuses3[gBattlerTarget] & (STATUS3_YAWN | STATUS1_ANY))
+    if (gStatuses3[gBattlerTarget] & STATUS3_YAWN || gBattleMons[gBattlerTarget].status1 & STATUS1_ANY)
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
     else
     {

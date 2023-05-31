@@ -1935,7 +1935,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
             }
             SetMonData(&party[i], MON_DATA_POKEBALL, &gTrainerMoneyAndBallTable[j].ballId);
         }
-        gBattleTypeFlags |= gTrainers[trainerNum].doubleBattle;
+		if (gTrainers[trainerNum].doubleBattle)
+			gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
     }
     return gTrainers[trainerNum].partySize;
 }
@@ -2618,6 +2619,7 @@ void SwitchInClearSetData(void)
     }
     gMoveResultFlags = 0;
     gDisableStructs[gActiveBattler].isFirstTurn = 2;
+	gDisableStructs[gActiveBattler].canProteanActivate = TRUE;
     gLastMoves[gActiveBattler] = MOVE_NONE;
     gLastLandedMoves[gActiveBattler] = MOVE_NONE;
     gLastHitByType[gActiveBattler] = 0;
@@ -3366,7 +3368,7 @@ static void HandleTurnActionSelectionState(void)
                     }
 					else if (IsAbilityPreventingSwitchOut(gActiveBattler))
 					{
-						BtlController_EmitChoosePokemon(0, ((i - 1) << 4) | PARTY_ACTION_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->battlerPartyOrders[gActiveBattler]);
+						BtlController_EmitChoosePokemon(0, ((IsAbilityPreventingSwitchOut(gActiveBattler) - 1) << 4) | PARTY_ACTION_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 					}
                     else
                     {
