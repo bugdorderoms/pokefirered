@@ -5146,6 +5146,9 @@ bool8 TryRecycleBattlerItem(u8 battlerRecycler, u8 battlerItem)
 		
 		gBattleResources->flags->flags[battlerRecycler] &= ~(RESOURCE_FLAG_UNBURDEN_BOOST);
 		
+		if (battlerRecycler != battlerItem)
+			CheckSetBattlerUnburden(battlerItem);
+		
 		gActiveBattler = battlerRecycler;
 		BtlController_EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
         MarkBattlerForControllerExec(gActiveBattler);

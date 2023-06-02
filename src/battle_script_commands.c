@@ -1073,7 +1073,7 @@ static bool8 JumpIfMoveAffectedByProtect(void)
     if (IsBattlerProtected(gBattlerTarget, gCurrentMove))
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
-        JumpIfMoveFailed(7);
+        JumpIfMoveFailed(6);
         gBattleCommunication[MISS_TYPE] = 1;
         return TRUE;
     }
@@ -1213,18 +1213,21 @@ static void atk01_accuracycheck(void)
 		gBattlescriptCurrInstr += 6;
 	else if (JumpIfMoveAffectedByProtect() || AccuracyCalcHelper()) // Check Protect and effects that cause the move to aways hit
 	    return;
-    else if ((Random() % 100 + 1) > CalcMoveTotalAccuracy(gCurrentMove, gBattlerAttacker, gBattlerTarget)) // final calculation, determines if the move misses
+    else
     {
-		gMoveResultFlags |= MOVE_RESULT_MISSED;
-		
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && (moveTarget == MOVE_TARGET_BOTH || moveTarget == MOVE_TARGET_FOES_AND_ALLY))
-			gBattleCommunication[MISS_TYPE] = 2;
-		else
-			gBattleCommunication[MISS_TYPE] = 0;
-		
-		CheckWonderGuardAndLevitate();
+		if ((Random() % 100 + 1) > CalcMoveTotalAccuracy(gCurrentMove, gBattlerAttacker, gBattlerTarget)) // final calculation, determines if the move misses
+		{
+			gMoveResultFlags |= MOVE_RESULT_MISSED;
+			
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && (moveTarget == MOVE_TARGET_BOTH || moveTarget == MOVE_TARGET_FOES_AND_ALLY))
+				gBattleCommunication[MISS_TYPE] = 2;
+			else
+				gBattleCommunication[MISS_TYPE] = 0;
+			
+			CheckWonderGuardAndLevitate();
+		}
+		JumpIfMoveFailed(6);
     }
-	JumpIfMoveFailed(6);
 }
 
 static void atk02_attackstring(void)
@@ -4177,7 +4180,7 @@ static void atk57_endlinkbattle(void)
     gActiveBattler = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
     BtlController_EmitCmd55(0, gBattleOutcome);
     MarkBattlerForControllerExec(gActiveBattler);
-    gBattlescriptCurrInstr += 1;
+    ++gBattlescriptCurrInstr;
 }
 
 static void atk58_returntoball(void)

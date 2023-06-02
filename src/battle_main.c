@@ -4257,6 +4257,7 @@ static void HandleAction_UseMove(void)
     u8 side, i, var = 4, moveTarget, moveType;
     
     gBattlerAttacker = gBattlerByTurnOrder[gCurrentTurnActionNumber];
+	
     if (gBattleStruct->absentBattlerFlags & gBitTable[gBattlerAttacker] || !IsBattlerAlive(gBattlerAttacker))
     {
         gCurrentActionFuncId = B_ACTION_FINISHED;

@@ -4421,6 +4421,7 @@ BattleScript_BadDreamsDmg::
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
 	tryfaintmon BS_TARGET
+	checkteamslot BattleScript_BadDreamsNextTarget
 BattleScript_BadDreamsNextTarget::
 	addbyte gBattlerTarget, 1
 	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_BadDreamsLoop

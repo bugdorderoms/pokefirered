@@ -1393,7 +1393,7 @@ static void OpponentHandleChooseMove(void)
         else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 		{
 			target = GetBattlerAtPosition(Random() & 2);
-			
+		
 #if DOUBLE_WILD_ATTACK_NATURAL_ENEMY
 			if (!(gBattleMoves[move].target & MOVE_TARGET_BOTH))
 			{
@@ -1402,7 +1402,7 @@ static void OpponentHandleChooseMove(void)
 				
 				for (i = 0; i < NELEMS(sNaturalEnemySpecies); i++)
 				{
-					if (speciesAttacker == sNaturalEnemySpecies[i][0] && speciesAttacker == sNaturalEnemySpecies[i][1])
+					if (speciesAttacker == sNaturalEnemySpecies[i][0] && speciesAttackerPartner == sNaturalEnemySpecies[i][1])
 					{
 						target = GetBattlerAtPosition(BATTLE_PARTNER(gActiveBattler));
 						break;
