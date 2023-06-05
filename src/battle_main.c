@@ -3148,7 +3148,7 @@ void BattleTurnPassed(void)
     gBattleScripting.atk49_state = 0;
     gBattleMoveDamage = 0;
     gMoveResultFlags = 0;
-    for (i = 0; i < MULTISTRING_CHOOSER; ++i)
+    for (i = 0; i < 5; ++i)
         gBattleCommunication[i] = 0;
     if (gBattleOutcome != 0)
     {

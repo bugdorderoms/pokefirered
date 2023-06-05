@@ -26,16 +26,17 @@
 #define sBYPASS_ABILITY_POP_UP gBattleScripting + 0x27
 
 // array entries for battle communication
-#define MULTIUSE_STATE                      0x0
-#define CURSOR_POSITION                     0x1
-#define TASK_ID                             0x1 // task Id and cursor position share the same field
-#define SPRITES_INIT_STATE1                 0x1 // shares the Id as well
-#define SPRITES_INIT_STATE2                 0x2
-#define ACTIONS_CONFIRMED_COUNT             0x3
-#define MULTISTRING_CHOOSER                 0x4
-#define MSG_DISPLAY                         0x5
-#define MISS_TYPE                           0x6
-#define BATTLE_COMMUNICATION_ENTRIES_COUNT  0x7
+#define MULTIUSE_STATE                      0
+#define CURSOR_POSITION                     1
+#define TASK_ID                             1 // task Id and cursor position share the same field
+#define SPRITES_INIT_STATE1                 1 // shares the Id as well
+#define SPRITES_INIT_STATE2                 2
+#define MOVE_EFFECT_BYTE                    3 // unused
+#define ACTIONS_CONFIRMED_COUNT             4
+#define MULTISTRING_CHOOSER                 5
+#define MISS_TYPE                           6
+#define MSG_DISPLAY                         7
+#define BATTLE_COMMUNICATION_ENTRIES_COUNT  8
 
 // BattleCommunication addresses
 #define sMULTIUSE_STATE gBattleCommunication + MULTIUSE_STATE
