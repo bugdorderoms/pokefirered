@@ -185,9 +185,9 @@ static const struct WindowTemplate sDexNavGuiWindowTemplates[] =
     [WINDOW_INFO] =
     {
         .bg = 0,
-        .tilemapLeft = 21,
+        .tilemapLeft = 20,
         .tilemapTop = 6,
-        .width = 9,
+        .width = 10,
         .height = 12,
         .paletteNum = 15,
         .baseBlock = 1,
@@ -200,7 +200,7 @@ static const struct WindowTemplate sDexNavGuiWindowTemplates[] =
         .width = 30,
         .height = 2,
         .paletteNum = 15,
-        .baseBlock = 109,
+        .baseBlock = 121,
     },
     [WINDOW_MESSAGE] =
     {
@@ -210,7 +210,7 @@ static const struct WindowTemplate sDexNavGuiWindowTemplates[] =
         .width = 30,
         .height = 2,
         .paletteNum = 15,
-        .baseBlock = 169,
+        .baseBlock = 181,
     },
     DUMMY_WIN_TEMPLATE
 };
