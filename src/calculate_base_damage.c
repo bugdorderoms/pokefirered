@@ -461,15 +461,15 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 			case ABILITY_TRANSISTOR:
 			    if (type == TYPE_ELECTRIC)
 				{
-					attack += (attack / 2);
-					spAttack += (spAttack / 2);
+					attack = (13 * attack) / 10;
+					spAttack = (13 * spAttack) / 10;
 				}
 				break;
 			case ABILITY_DRAGONS_MAW:
 			    if (type == TYPE_DRAGON)
 				{
-					attack += (attack / 2);
-					spAttack += (spAttack / 2);
+					attack = (attack * 15) / 10;
+					spAttack = (spAttack * 15) / 10;
 				}
 				break;
 			case ABILITY_ROCKY_PAYLOAD:
