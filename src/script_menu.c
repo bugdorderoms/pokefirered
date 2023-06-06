@@ -1118,6 +1118,28 @@ void PicboxCancel(void)
     }
 }
 
+void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y, u8 toWait)
+{
+	u8 spriteId, taskId = FindTaskIdByFunc(Task_ScriptShowMonPic);
+	u32 i;
+	struct Task * task;
+	
+	if (taskId != 0xFF)
+	{
+		task = &gTasks[taskId];
+		
+		FreeResourcesAndDestroySprite(&gSprites[task->data[2]], task->data[2]);
+		
+		if (toWait) // Optionally passed to wait the amount of seconds given until load the new pic
+			for (i = 0; i < (toWait * 64); i++) {};
+		
+		spriteId = CreateMonSprite_PicBox(species, 8 * x + 40, 8 * y + 40, FALSE);
+		
+		task->data[1] = species;
+		task->data[2] = spriteId;
+	}
+}
+
 void Task_WaitMuseumFossilPic(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];

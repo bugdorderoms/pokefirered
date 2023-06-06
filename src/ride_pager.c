@@ -46,9 +46,11 @@ struct RideSpeciesAndDesc
 	const u8 *desc;
 };
 
+#define RIDE_PAGER_MON_PIC_X 18
+#define RIDE_PAGER_MON_PIC_Y 1
+
 static u8 DrawRidePagerMultichoiceWindow(s16 *windowId, s16 *cursorPos, s16 *order);
 static u8 CreateRidePagerMultichoiceWindow(void);
-static void LoadRidePagerMonPic(u8 ride);
 static void UpdateRidePagerMonPic(u8 ride);
 static void PrintRideDescInMessageWindow(u8 ride);
 static void Task_WaitFadeAndGoToRidePagerInput(u8 taskId);
@@ -241,7 +243,7 @@ static u8 DrawRidePagerMultichoiceWindow(s16 *windowId, s16 *cursorPos, s16 *ord
 	}
 	*cursorPos = Menu_InitCursor(*windowId, 2, 0, 0, 16, count, *cursorPos);
 	CopyWindowToVram(*windowId, COPYWIN_MAP);
-	LoadRidePagerMonPic(order[*cursorPos]);
+	ScriptMenu_ShowPokemonPic(RideToSpeciesId(order[*cursorPos]), RIDE_PAGER_MON_PIC_X, RIDE_PAGER_MON_PIC_Y);
 	sub_80F7768(0, TRUE);
 	PrintRideDescInMessageWindow(order[*cursorPos]);
 	
@@ -259,20 +261,9 @@ static u8 CreateRidePagerMultichoiceWindow(void)
 	return windowId;
 }
 
-static void LoadRidePagerMonPic(u8 ride)
-{
-	ScriptMenu_ShowPokemonPic(RideToSpeciesId(ride), 18, 1);
-}
-
 static void UpdateRidePagerMonPicAndDesc(u8 ride)
 {
-	u8 i, seconds = 2;
-	
-	PicboxCancel();
-	
-	for (i = 0; i < (seconds * 64); i++) {} // wait two seconds before show the next ride mon sprite
-	
-	LoadRidePagerMonPic(ride);
+	UpdatePokemonSpeciesOnPicbox(RideToSpeciesId(ride), RIDE_PAGER_MON_PIC_X, RIDE_PAGER_MON_PIC_Y, 2);
 	PrintRideDescInMessageWindow(ride);
 }
 

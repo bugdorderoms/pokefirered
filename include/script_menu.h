@@ -18,5 +18,6 @@ void HandleRepelUseAnother(void);
 bool8 (*ScriptMenu_GetPicboxWaitFunc(void))(void);
 void QLPlaybackCB_DestroyScriptMenuMonPicSprites(void);
 void PicboxCancel(void);
+void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y, u8 toWait);
 
 #endif //GUARD_SCRIPT_MENU_H
