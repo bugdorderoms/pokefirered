@@ -276,8 +276,7 @@ struct MoveFlags
 	u32 forbiddenParentalBond:1; // A move with this flag can't become a multi-hit move due to Parental Bond.
 	u32 affectsUserSide:1; // Tipycally used to show the entire side on choose the move, but it's still used to determine protect like effects.
 	u32 dmgMinimize:1; // A move with this flag will deal double damage and aways hit the target if it was used Minimize.
-	u32 callAnotherMove:1; // Used by "moves that call other moves", will cause Protean to activate only when the called move is executed.
-	u32 unused:25;
+	u32 unused:26;
 };
 
 struct BattleMove
@@ -292,7 +291,7 @@ struct BattleMove
     /*0x09*/ s8 priority;
     /*0x0A*/ u8 split;
     /*0x0B*/ u8 argument;
-	/*0x0C*/ struct MoveFlags flags;
+    /*0x0C*/ struct MoveFlags flags;
     /*0x14*/ u8 zMoveEffect;
 };
 
