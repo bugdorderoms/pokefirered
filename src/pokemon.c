@@ -1731,7 +1731,6 @@ void CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFix
 	// Get tera type
 	arg = (Random() & 1) ? gBaseStats[species].type1 : gBaseStats[species].type2;
 	SetMonData(mon, MON_DATA_TERA_TYPE, &arg);
-    SetMonData(mon, MON_DATA_MAIL, &arg);
     CalculateMonStats(mon);
 }
 

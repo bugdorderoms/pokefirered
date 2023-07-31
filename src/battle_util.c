@@ -5236,7 +5236,7 @@ u8 GetItemUseBattler(u8 battlerId)
 bool8 IsItemUseBlockedByBattleEffect(void)
 {
 	bool8 blocked = FALSE;
-	u8 playerLeft = B_POSITION_PLAYER_LEFT, playerRight = B_POSITION_PLAYER_RIGHT;
+	u8 playerLeft = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), playerRight = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 	
 	if (gPartyMenu.slotId == 0) // player left mon effects check
 	{
