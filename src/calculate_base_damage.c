@@ -58,32 +58,9 @@ static const u16 sWeightToDamageTable[] =
     0xFFFF, 0xFFFF
 };
 
-static const u8 sHoldEffectToType[][2] = 
-{
-    {HOLD_EFFECT_BUG_POWER, TYPE_BUG},
-    {HOLD_EFFECT_STEEL_POWER, TYPE_STEEL},
-    {HOLD_EFFECT_GROUND_POWER, TYPE_GROUND},
-    {HOLD_EFFECT_ROCK_POWER, TYPE_ROCK},
-    {HOLD_EFFECT_GRASS_POWER, TYPE_GRASS},
-    {HOLD_EFFECT_DARK_POWER, TYPE_DARK},
-    {HOLD_EFFECT_FIGHTING_POWER, TYPE_FIGHTING},
-    {HOLD_EFFECT_ELECTRIC_POWER, TYPE_ELECTRIC},
-    {HOLD_EFFECT_WATER_POWER, TYPE_WATER},
-    {HOLD_EFFECT_FLYING_POWER, TYPE_FLYING},
-    {HOLD_EFFECT_POISON_POWER, TYPE_POISON},
-    {HOLD_EFFECT_ICE_POWER, TYPE_ICE},
-    {HOLD_EFFECT_GHOST_POWER, TYPE_GHOST},
-    {HOLD_EFFECT_PSYCHIC_POWER, TYPE_PSYCHIC},
-    {HOLD_EFFECT_FIRE_POWER, TYPE_FIRE},
-    {HOLD_EFFECT_DRAGON_POWER, TYPE_DRAGON},
-    {HOLD_EFFECT_NORMAL_POWER, TYPE_NORMAL},
-};
-
 static u8 CalcBeatUpPower(u8 battler)
 {
-	struct Pokemon *party = GetBattlerParty(battler);
-	
-	return (gBaseStats[GetMonData(&party[gBattleCommunication[0] - 1], MON_DATA_SPECIES)].baseAttack / 10) + 5;
+	return (gBaseStats[GetMonData(&GetBattlerParty(battler)[gBattleCommunication[0] - 1], MON_DATA_SPECIES)].baseAttack / 10) + 5;
 }
 
 static bool8 MoveHasRecoilDamage(u16 move)
@@ -242,51 +219,64 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				spDefense = (110 * spDefense) / 100;
 		}
 #endif
-		for (i = 0; i < NELEMS(sHoldEffectToType); i++)
-		{
-			if (attackerHoldEffect == sHoldEffectToType[i][0] && type == sHoldEffectToType[i][1])
-			{
-				attack = (attack * (attackerHoldEffectParam + 100)) / 100;
-				spAttack = (spAttack * (attackerHoldEffectParam + 100)) / 100;
-				break;
-			}
-		}
 		// attacker items check
 		switch (attackerHoldEffect)
 		{
-			case HOLD_EFFECT_CHOICE_BAND:
-				attack = (15 * attack) / 10;
+			case HOLD_EFFECT_CHOICE_ITEM:
+			    if (attackerHoldEffectParam == STAT_ATK)
+					attack = (15 * attack) / 10;
+				else if (attackerHoldEffectParam == STAT_SPATK)
+					spAttack = (15 * spAttack) / 10;
+				break;
+			case HOLD_EFFECT_TYPE_POWER:
+			    if (type == attackerHoldEffectParam)
+				{
+					attack = (attack * 120) / 100;
+					spAttack = (spAttack * 120) / 100;
+				}
 				break;
 			case HOLD_EFFECT_SOUL_DEW:
-				if (!(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER)) && (attacker->species == SPECIES_LATIAS || attacker->species == SPECIES_LATIOS))
-					spAttack = (15 * spAttack) / 10;
+				if (!(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER)) && (attacker->species == SPECIES_LATIAS || attacker->species == SPECIES_LATIOS)
+					&& (type == TYPE_PSYCHIC || type == TYPE_DRAGON))
+					gBattleMovePower = (gBattleMovePower * 120) / 100;
 				break;
 			case HOLD_EFFECT_DEEP_SEA_TOOTH:
 				if (attacker->species == SPECIES_CLAMPERL)
 					spAttack *= 2;
 				break;
 			case HOLD_EFFECT_LIGHT_BALL:
-				if (attacker->species == SPECIES_PIKACHU)
+				if (SpeciesToNationalPokedexNum(attacker->species) == NATIONAL_DEX_PIKACHU)
+				{
+					attack *= 2;
 					spAttack *= 2;
+				}
 				break;
 			case HOLD_EFFECT_THICK_CLUB:
-				if (attacker->species == SPECIES_CUBONE || attacker->species == SPECIES_MAROWAK)
+				if (attacker->species == SPECIES_CUBONE || SpeciesToNationalPokedexNum(attacker->species) == NATIONAL_DEX_MAROWAK)
 					attack *= 2;
+				break;
+			case HOLD_EFFECT_ADAMANT_ORB:
+			    if (SpeciesToNationalPokedexNum(attacker->species) == NATIONAL_DEX_DIALGA && (type == TYPE_DRAGON || type == TYPE_STEEL))
+					gBattleMovePower = (gBattleMovePower * 120) / 100;
+				break;
+			case HOLD_EFFECT_LUSTROUS_ORB:
+			    if (SpeciesToNationalPokedexNum(attacker->species) == NATIONAL_DEX_PALKIA && (type == TYPE_DRAGON || type == TYPE_WATER))
+					gBattleMovePower = (gBattleMovePower * 120) / 100;
+				break;
+			case HOLD_EFFECT_GRISEOUS_ORB:
+			    if (SpeciesToNationalPokedexNum(attacker->species) == NATIONAL_DEX_GIRATINA && (type == TYPE_DRAGON || type == TYPE_GHOST))
+					gBattleMovePower = (gBattleMovePower * 120) / 100;
 				break;
 		}
 		// defender items check
 		switch (defenderHoldEffect)
 		{
-			case HOLD_EFFECT_SOUL_DEW:
-				if (!(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER)) && (defender->species == SPECIES_LATIAS || defender->species == SPECIES_LATIOS))
-					spDefense = (15 * spDefense) / 10;
-				break;
 			case HOLD_EFFECT_DEEP_SEA_SCALE:
 				if (defender->species == SPECIES_CLAMPERL)
 					spDefense *= 2;
 				break;
 			case HOLD_EFFECT_METAL_POWDER:
-				if (defender->species == SPECIES_DITTO)
+				if (defender->species == SPECIES_DITTO && !(defender->status2 & STATUS2_TRANSFORMED) && defenderHoldEffectParam == STAT_DEF)
 					defense *= 2;
 				break;
 		}

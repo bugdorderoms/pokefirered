@@ -10,7 +10,9 @@
 #include "data.h"
 #include "decompress.h"
 #include "dns.h"
+#include "script_menu.h"
 #include "easy_chat.h"
+#include "util.h"
 #include "event_data.h"
 #include "evolution_scene.h"
 #include "field_effect.h"
@@ -64,10 +66,12 @@
 #include "constants/easy_chat.h"
 #include "constants/field_effects.h"
 #include "constants/form_change.h"
+#include "constants/hold_effects.h"
 #include "constants/item_effects.h"
 #include "constants/items.h"
 #include "constants/maps.h"
 #include "constants/moves.h"
+#include "constants/menu.h"
 #include "constants/pokemon.h"
 #include "constants/poke_ride.h"
 #include "constants/quest_log.h"
@@ -94,6 +98,39 @@ enum
     CANNOT_LEARN_MOVE,
     ALREADY_KNOWS_MOVE,
     CANNOT_LEARN_MOVE_IS_EGG
+};
+
+enum
+{
+	ITEMUSE_STRING_NOTHING, // don't print message
+	ITEMUSE_STRING_PP_RESTORED,
+	ITEMUSE_STRING_POISON_CURED,
+	ITEMUSE_STRING_BURN_HEALED,
+	ITEMUSE_STRING_THAWED,
+	ITEMUSE_STRING_WOKE_UP,
+	ITEMUSE_STRING_SNAPPED_CONFUSION,
+	ITEMUSE_STRING_OVER_INFATUATION,
+	ITEMUSE_STRING_BECAME_HEALTHY,
+	ITEMUSE_STRING_RAISE_DYNAMAX_LEVEL,
+	ITEMUSE_STRING_STAT_CHANGED,
+	ITEMUSE_STRING_PARALYSIS_CURED,
+	ITEMUSE_STRING_LEVELED_UP,
+	ITEMUSE_STRING_GAINED_EXP,
+	ITEMUSE_STRING_GAINED_EXP_LEVELED_UP,
+	ITEMUSE_STRING_PP_INCREASED,
+	ITEMUSE_STRING_CHANGE_GMAX_FACTOR,
+	ITEMUSE_STRING_CHANGED_TERA_TYPE,
+	ITEMUSE_STRING_FRIENDSHIP_CHANGED
+};
+
+enum
+{
+	ITEMUSE_COPY_NOTHING, // don't copy anything
+	ITEMUSE_COPY_STAT_NAME,
+	ITEMUSE_COPY_EXP_AND_LEVEL,
+	ITEMUSE_COPY_GAINED_OR_LOSES,
+	ITEMUSE_COPY_TYPE_NAME,
+	ITEMUSE_COPY_INCREASED_OR_DECREASED
 };
 
 struct PartyMenuBoxInfoRects
@@ -131,6 +168,17 @@ struct PartyMenuBox
     u8 itemSpriteId;
     u8 pokeballSpriteId;
     u8 statusSpriteId;
+};
+
+struct ItemUseData
+{
+	u16 stringToPrintId;
+	u8 specialStringCopyId;
+	u8 itemEffectsDone:1;
+	u8 messagePrinted:1;
+	u8 dataCopied:1;
+	u8 unused:5;
+	u32 stringCopyData;
 };
 
 static void BlitBitmapToPartyWindow_LeftColumn(u8 windowId, u8 x, u8 y, u8 width, u8 height, bool8 isEgg);
@@ -261,6 +309,7 @@ static void UpdatePartyMonHeldItemSprite(struct Pokemon *mon, struct PartyMenuBo
 static void UpdatePartyMonIconSpecies(struct PartyMenuBox *menuBox, u16 species);
 static void ShowOrHideHeldItemSprite(u16 item, struct PartyMenuBox *menuBox);
 static void CreateHeldItemSpriteForTrade(u8 spriteId, bool8 isMail);
+static void UpdatePartyPokemonAilmentGfxAndLevelCheck(struct Pokemon *mon, u8 slot);
 static void SetPartyMonAilmentGfx(struct Pokemon *mon, struct PartyMenuBox *menuBox);
 static void UpdatePartyMonAilmentGfx(u8 status, struct PartyMenuBox *menuBox);
 static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId);
@@ -304,9 +353,8 @@ static void Task_SetSacredAshCB(u8 taskId);
 static void CB2_ReturnToBagMenu(void);
 static u8 GetPartyIdFromBattleSlot(u8 slot);
 static void Task_DisplayHPRestoredMessage(u8 taskId);
-static void SetSelectedMoveForPPItem(u8 taskId);
+static void SetSelectedMoveForItem(u8 taskId);
 static void ReturnToUseOnWhichMon(u8 taskId);
-static void TryUsePPItem(u8 taskId);
 static void ItemUseCB_LearnedMove(u8 taskId, UNUSED TaskFunc func);
 static void Task_LearnedMove(u8 taskId);
 static void Task_ReplaceMoveYesNo(u8 taskId);
@@ -324,7 +372,6 @@ static void Task_PartyMenuReplaceMove(u8 taskId);
 static void Task_StopLearningMoveYesNo(u8 taskId);
 static void Task_HandleStopLearningMoveYesNoInput(u8 taskId);
 static void Task_TryLearningNextMoveAfterText(u8 taskId);
-static void ItemUseCB_RareCandyStep(u8 taskId, UNUSED TaskFunc func);
 static void Task_DisplayLevelUpStatsPg1(u8 taskId);
 static void Task_DisplayLevelUpStatsPg2(u8 taskId);
 static void UpdateMonDisplayInfoAfterRareCandy(u8 slot, struct Pokemon *mon);
@@ -382,12 +429,10 @@ static void SetSwitchedPartyOrderQuestLogEvent(void);
 static void SetUsedFieldMoveQuestLogEvent(struct Pokemon *mon, u8 fieldMove);
 static void sub_8124DE0(void);
 static void sub_8124E48(void);
-static void sub_812580C(u8 taskId);
-static void sub_8125898(u8 taskId, UNUSED TaskFunc func);
 static void sub_8125F4C(u8 taskId, UNUSED TaskFunc func);
 static void sub_8125F5C(u8 taskId);
-static void sub_8126BD4(void);
-static bool8 MonCanEvolve(void);
+static void Task_Medicine(u8 taskId);
+static void SetMedicineItemFunc(u8 taskId, u16 item);
 
 static EWRAM_DATA struct PartyMenuInternal *sPartyMenuInternal = NULL;
 EWRAM_DATA struct PartyMenu gPartyMenu = {0};
@@ -403,11 +448,45 @@ static EWRAM_DATA struct Pokemon *sSacredAshQuestLogMonBackup = NULL;
 EWRAM_DATA u8 gSelectedOrderFromParty[3] = {0};
 static EWRAM_DATA u16 sPartyMenuItemId = ITEM_NONE;
 ALIGNED(4) EWRAM_DATA u8 gBattlePartyCurrentOrder[PARTY_SIZE / 2] = {0}; // bits 0-3 are the current pos of Slot 1, 4-7 are Slot 2, and so on
+static EWRAM_DATA u8 sInitialLevel = 0;
+static EWRAM_DATA u8 sFinalLevel = 0;
 
 void (*gItemUseCB)(u8, TaskFunc);
 
 #include "data/pokemon/tutor_learnsets.h"
 #include "data/party_menu.h"
+
+static const u8 *const sItemUseStrings[] =
+{
+	[ITEMUSE_STRING_PP_RESTORED - 1] = gText_PPWasRestored,
+	[ITEMUSE_STRING_POISON_CURED - 1] = gText_PkmnCuredOfPoison,
+	[ITEMUSE_STRING_BURN_HEALED - 1] = gText_PkmnBurnHealed,
+	[ITEMUSE_STRING_THAWED - 1] = gText_PkmnThawedOut,
+	[ITEMUSE_STRING_WOKE_UP - 1] = gText_PkmnWokeUp2,
+	[ITEMUSE_STRING_SNAPPED_CONFUSION - 1] = gText_PkmnSnappedOutOfConfusion,
+	[ITEMUSE_STRING_OVER_INFATUATION - 1] = gText_PkmnGotOverInfatuation,
+	[ITEMUSE_STRING_BECAME_HEALTHY - 1] = gText_PkmnBecameHealthy,
+	[ITEMUSE_STRING_RAISE_DYNAMAX_LEVEL - 1] = gText_PkmnDynamaxLevelRaised,
+	[ITEMUSE_STRING_STAT_CHANGED - 1] = gText_PkmnBaseVar2StatVar3,
+	[ITEMUSE_STRING_PARALYSIS_CURED - 1] = gText_PkmnCuredOfParalysis,
+	[ITEMUSE_STRING_LEVELED_UP - 1] = gText_PkmnElevatedToLvVar2,
+	[ITEMUSE_STRING_GAINED_EXP - 1] = gText_PkmnGainedVar3ExpPoints,
+	[ITEMUSE_STRING_GAINED_EXP_LEVELED_UP - 1] = gText_PkmnGainedVar3ExpPointsRaisedToLvVar2,
+	[ITEMUSE_STRING_PP_INCREASED - 1] = gText_MovesPPIncreased,
+	[ITEMUSE_STRING_CHANGE_GMAX_FACTOR - 1] = gText_PkmnVar2TheGMaxFactor,
+	[ITEMUSE_STRING_CHANGED_TERA_TYPE - 1] = gText_PkmnTeraTypeBecameVar2,
+	[ITEMUSE_STRING_FRIENDSHIP_CHANGED - 1] = gText_PkmnFriendshipWasVar2,
+};
+
+static const u8 *const sEvItemUseStatNames[] =
+{
+	gText_HP3,
+	gText_Attack3,
+	gText_Defense3,
+	gText_Speed2,
+	gText_SpAtk3,
+	gText_SpDef3,
+};
 
 void InitPartyMenu(u8 menuType, u8 layout, u8 partyAction, bool8 keepCursorPos, u8 messageId, TaskFunc task, MainCallback callback)
 {
@@ -2236,11 +2315,11 @@ static void DrawEmptySlot(u8 windowId)
     BlitBitmapToPartyWindow(windowId, sEmptySlotTileNums, 18, 0, 0, 18, 3);
 }
 
-#define LOAD_PARTY_BOX_PAL(paletteIds, paletteOffsets)                                    \
-{                                                                                         \
-    LoadPalette(GetPartyMenuPalBufferPtr(paletteIds[0]), paletteOffsets[0] + palNum, 2);  \
-    LoadPalette(GetPartyMenuPalBufferPtr(paletteIds[1]), paletteOffsets[1] + palNum, 2);  \
-    LoadPalette(GetPartyMenuPalBufferPtr(paletteIds[2]), paletteOffsets[2] + palNum, 2);  \
+static void LoadPartyBoxPaletteLoader(const u8 *paletteIds, const u8 *paletteOffsets, u8 palNum)
+{
+	LoadPalette(GetPartyMenuPalBufferPtr(paletteIds[0]), paletteOffsets[0] + palNum, 2);
+	LoadPalette(GetPartyMenuPalBufferPtr(paletteIds[1]), paletteOffsets[1] + palNum, 2);
+	LoadPalette(GetPartyMenuPalBufferPtr(paletteIds[2]), paletteOffsets[2] + palNum, 2);
 }
 
 static void LoadPartyBoxPalette(struct PartyMenuBox *menuBox, u8 palFlags)
@@ -2251,68 +2330,68 @@ static void LoadPartyBoxPalette(struct PartyMenuBox *menuBox, u8 palFlags)
     {
         if (palFlags & PARTY_PAL_SELECTED)
         {
-            LOAD_PARTY_BOX_PAL(sPartyBoxSelectedForActionPalIds1, sPartyBoxPalOffsets1);
-            LOAD_PARTY_BOX_PAL(sPartyBoxCurrSelectionPalIds2, sPartyBoxPalOffsets2);
+            LoadPartyBoxPaletteLoader(sPartyBoxSelectedForActionPalIds1, sPartyBoxPalOffsets1, palNum);
+            LoadPartyBoxPaletteLoader(sPartyBoxCurrSelectionPalIds2, sPartyBoxPalOffsets2, palNum);
         }
         else
         {
-            LOAD_PARTY_BOX_PAL(sPartyBoxSelectedForActionPalIds1, sPartyBoxPalOffsets1);
-            LOAD_PARTY_BOX_PAL(sPartyBoxSelectedForActionPalIds2, sPartyBoxPalOffsets2);
+            LoadPartyBoxPaletteLoader(sPartyBoxSelectedForActionPalIds1, sPartyBoxPalOffsets1, palNum);
+            LoadPartyBoxPaletteLoader(sPartyBoxSelectedForActionPalIds2, sPartyBoxPalOffsets2, palNum);
         }
     }
     else if (palFlags & PARTY_PAL_SWITCHING)
     {
-        LOAD_PARTY_BOX_PAL(sPartyBoxSelectedForActionPalIds1, sPartyBoxPalOffsets1);
-        LOAD_PARTY_BOX_PAL(sPartyBoxSelectedForActionPalIds2, sPartyBoxPalOffsets2);
+        LoadPartyBoxPaletteLoader(sPartyBoxSelectedForActionPalIds1, sPartyBoxPalOffsets1, palNum);
+        LoadPartyBoxPaletteLoader(sPartyBoxSelectedForActionPalIds2, sPartyBoxPalOffsets2, palNum);
     }
     else if (palFlags & PARTY_PAL_TO_SWITCH)
     {
         if (palFlags & PARTY_PAL_SELECTED)
         {
-            LOAD_PARTY_BOX_PAL(sPartyBoxSelectedForActionPalIds1, sPartyBoxPalOffsets1);
-            LOAD_PARTY_BOX_PAL(sPartyBoxCurrSelectionPalIds2, sPartyBoxPalOffsets2);
+            LoadPartyBoxPaletteLoader(sPartyBoxSelectedForActionPalIds1, sPartyBoxPalOffsets1, palNum);
+            LoadPartyBoxPaletteLoader(sPartyBoxCurrSelectionPalIds2, sPartyBoxPalOffsets2, palNum);
         }
         else
         {
-            LOAD_PARTY_BOX_PAL(sPartyBoxSelectedForActionPalIds1, sPartyBoxPalOffsets1);
-            LOAD_PARTY_BOX_PAL(sPartyBoxSelectedForActionPalIds2, sPartyBoxPalOffsets2);
+            LoadPartyBoxPaletteLoader(sPartyBoxSelectedForActionPalIds1, sPartyBoxPalOffsets1, palNum);
+            LoadPartyBoxPaletteLoader(sPartyBoxSelectedForActionPalIds2, sPartyBoxPalOffsets2, palNum);
         }
     }
     else if (palFlags & PARTY_PAL_FAINTED)
     {
         if (palFlags & PARTY_PAL_SELECTED)
         {
-            LOAD_PARTY_BOX_PAL(sPartyBoxCurrSelectionFaintedPalIds, sPartyBoxPalOffsets1);
-            LOAD_PARTY_BOX_PAL(sPartyBoxCurrSelectionPalIds2, sPartyBoxPalOffsets2);
+            LoadPartyBoxPaletteLoader(sPartyBoxCurrSelectionFaintedPalIds, sPartyBoxPalOffsets1, palNum);
+            LoadPartyBoxPaletteLoader(sPartyBoxCurrSelectionPalIds2, sPartyBoxPalOffsets2, palNum);
         }
         else
         {
-            LOAD_PARTY_BOX_PAL(sPartyBoxFaintedPalIds1, sPartyBoxPalOffsets1);
-            LOAD_PARTY_BOX_PAL(sPartyBoxFaintedPalIds2, sPartyBoxPalOffsets2);
+            LoadPartyBoxPaletteLoader(sPartyBoxFaintedPalIds1, sPartyBoxPalOffsets1, palNum);
+            LoadPartyBoxPaletteLoader(sPartyBoxFaintedPalIds2, sPartyBoxPalOffsets2, palNum);
         }
     }
     else if (palFlags & PARTY_PAL_MULTI_ALT)
     {
         if (palFlags & PARTY_PAL_SELECTED)
         {
-            LOAD_PARTY_BOX_PAL(sPartyBoxCurrSelectionMultiPalIds, sPartyBoxPalOffsets1);
-            LOAD_PARTY_BOX_PAL(sPartyBoxCurrSelectionPalIds2, sPartyBoxPalOffsets2);
+            LoadPartyBoxPaletteLoader(sPartyBoxCurrSelectionMultiPalIds, sPartyBoxPalOffsets1, palNum);
+            LoadPartyBoxPaletteLoader(sPartyBoxCurrSelectionPalIds2, sPartyBoxPalOffsets2, palNum);
         }
         else
         {
-            LOAD_PARTY_BOX_PAL(sPartyBoxMultiPalIds1, sPartyBoxPalOffsets1);
-            LOAD_PARTY_BOX_PAL(sPartyBoxMultiPalIds2, sPartyBoxPalOffsets2);
+            LoadPartyBoxPaletteLoader(sPartyBoxMultiPalIds1, sPartyBoxPalOffsets1, palNum);
+            LoadPartyBoxPaletteLoader(sPartyBoxMultiPalIds2, sPartyBoxPalOffsets2, palNum);
         }
     }
     else if (palFlags & PARTY_PAL_SELECTED)
     {
-        LOAD_PARTY_BOX_PAL(sPartyBoxCurrSelectionPalIds1, sPartyBoxPalOffsets1);
-        LOAD_PARTY_BOX_PAL(sPartyBoxCurrSelectionPalIds2, sPartyBoxPalOffsets2);
+        LoadPartyBoxPaletteLoader(sPartyBoxCurrSelectionPalIds1, sPartyBoxPalOffsets1, palNum);
+        LoadPartyBoxPaletteLoader(sPartyBoxCurrSelectionPalIds2, sPartyBoxPalOffsets2, palNum);
     }
     else
     {
-        LOAD_PARTY_BOX_PAL(sPartyBoxEmptySlotPalIds1, sPartyBoxPalOffsets1);
-        LOAD_PARTY_BOX_PAL(sPartyBoxEmptySlotPalIds2, sPartyBoxPalOffsets2);
+        LoadPartyBoxPaletteLoader(sPartyBoxEmptySlotPalIds1, sPartyBoxPalOffsets1, palNum);
+        LoadPartyBoxPaletteLoader(sPartyBoxEmptySlotPalIds2, sPartyBoxPalOffsets2, palNum);
     }
 }
 
@@ -2933,6 +3012,16 @@ static void CreatePartyMonStatusSpriteParameterized(u16 species, u8 status, stru
         UpdatePartyMonAilmentGfx(status, menuBox);
         gSprites[menuBox->statusSpriteId].oam.priority = 0;
     }
+}
+
+static void UpdatePartyPokemonAilmentGfxAndLevelCheck(struct Pokemon *mon, u8 slot)
+{
+	struct PartyMenuBox *menuBox = &sPartyMenuBoxes[slot];
+	
+	SetPartyMonAilmentGfx(mon, menuBox);
+	
+	if (gSprites[menuBox->statusSpriteId].invisible)
+		DisplayPartyPokemonLevelCheck(mon, menuBox, 1);
 }
 
 static void SetPartyMonAilmentGfx(struct Pokemon *mon, struct PartyMenuBox *menuBox)
@@ -4292,7 +4381,7 @@ void CB2_ShowPartyMenuForItemUse(void)
         partyLayout = PARTY_LAYOUT_SINGLE;
     }
 
-    if (GetItemEffectType(gSpecialVar_ItemId) == ITEM_EFFECT_SACRED_ASH)
+    if (ItemId_GetFieldFunc(gSpecialVar_ItemId) == FieldUseFunc_SacredAsh)
     {
         gPartyMenu.slotId = 0;
         for (i = 0; i < PARTY_SIZE; ++i)
@@ -4303,14 +4392,14 @@ void CB2_ShowPartyMenuForItemUse(void)
                 break;
             }
         }
-        if (GetPocketByItemId(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
+        if (ItemId_GetPocket(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
             callback = CB2_ReturnToBerryPouchMenu;
         task = Task_SetSacredAshCB;
         msgId = PARTY_MSG_NONE;
     }
     else
     {
-        switch (GetPocketByItemId(gSpecialVar_ItemId))
+        switch (ItemId_GetPocket(gSpecialVar_ItemId))
         {
         default:
             msgId = PARTY_MSG_USE_ON_WHICH_MON;
@@ -4352,17 +4441,7 @@ static void sub_8124DC0(u8 taskId)
 
 static void sub_8124DE0(void)
 {
-    if (CheckIfItemIsTMHMOrEvolutionStone(gSpecialVar_ItemId) == 2) // Evolution stone
-    {
-        if (MonCanEvolve() == TRUE)
-            StartUseItemAnim_Normal(gPartyMenu.slotId, gSpecialVar_ItemId, sub_8126BD4);
-        else
-            StartUseItemAnim_CantEvolve(gPartyMenu.slotId, gSpecialVar_ItemId, gPartyMenu.exitCallback);
-    }
-    else
-    {
-        StartUseItemAnim_Normal(gPartyMenu.slotId, gSpecialVar_ItemId, sub_8124E48);
-    }
+	StartUseItemAnim_Normal(gPartyMenu.slotId, gSpecialVar_ItemId, sub_8124E48);
 }
 
 static void sub_8124E48(void)
@@ -4409,205 +4488,610 @@ static void Task_SetSacredAshCB(u8 taskId)
     }
 }
 
-static bool8 IsHPRecoveryItem(u16 item)
+// play sound and comsume item
+static bool8 DoEffectsOnItemUse(bool8 noSound, struct Pokemon *mon, u16 item, bool8 alreadyDone)
 {
-    const u8 *effect;
-
-    if (item == ITEM_ENIGMA_BERRY)
-        effect = gSaveBlock1Ptr->enigmaBerry.itemEffect;
-    else
-        effect = gItemEffectTable[item - ITEM_POTION];
-    if (effect[4] & ITEM4_HEAL_HP)
-        return TRUE;
-    else
-        return FALSE;
+	if (!alreadyDone)
+	{
+		// battle sound and message are handled separated
+		if (!gMain.inBattle)
+		{
+			if (!noSound)
+			{
+				if (item == ITEM_BLUE_FLUTE || item == ITEM_RED_FLUTE || item == ITEM_YELLOW_FLUTE)
+					PlaySE(SE_GLASS_FLUTE);
+				else
+					PlaySE(SE_USE_ITEM);
+			}
+			if (gPartyMenu.action != PARTY_ACTION_REUSABLE_ITEM)
+				RemoveBagItem(item, 1);
+		}
+		ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, mon, item, 0xFFFF);
+		alreadyDone = TRUE;
+	}
+	return alreadyDone;
 }
 
-static void GetMedicineItemEffectMessage(u16 item)
+// restore mon's HP
+static bool8 ItemUseDoHPHeal(struct Pokemon *mon, u8 partyIndex, u16 oldHP, u16 newHP, u16 healAmount, u16 item, u8 battleMon, bool8 alreadyDone)
 {
-    switch (GetItemEffectType(item))
-    {
-    case ITEM_EFFECT_CURE_POISON:
-        StringExpandPlaceholders(gStringVar4, gText_PkmnCuredOfPoison);
-        break;
-    case ITEM_EFFECT_CURE_SLEEP:
-        StringExpandPlaceholders(gStringVar4, gText_PkmnWokeUp2);
-        break;
-    case ITEM_EFFECT_CURE_BURN:
-        StringExpandPlaceholders(gStringVar4, gText_PkmnBurnHealed);
-        break;
-    case ITEM_EFFECT_CURE_FREEZE:
-        StringExpandPlaceholders(gStringVar4, gText_PkmnThawedOut);
-        break;
-    case ITEM_EFFECT_CURE_PARALYSIS:
-        StringExpandPlaceholders(gStringVar4, gText_PkmnCuredOfParalysis);
-        break;
-    case ITEM_EFFECT_CURE_CONFUSION:
-        StringExpandPlaceholders(gStringVar4, gText_PkmnSnappedOutOfConfusion);
-        break;
-    case ITEM_EFFECT_CURE_INFATUATION:
-        StringExpandPlaceholders(gStringVar4, gText_PkmnGotOverInfatuation);
-        break;
-    case ITEM_EFFECT_CURE_ALL_STATUS:
-        StringExpandPlaceholders(gStringVar4, gText_PkmnBecameHealthy);
-        break;
-    case ITEM_EFFECT_HP_EV:
-        StringCopy(gStringVar2, gText_HP3);
-        StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
-        break;
-    case ITEM_EFFECT_ATK_EV:
-        StringCopy(gStringVar2, gText_Attack3);
-        StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
-        break;
-    case ITEM_EFFECT_DEF_EV:
-        StringCopy(gStringVar2, gText_Defense3);
-        StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
-        break;
-    case ITEM_EFFECT_SPEED_EV:
-        StringCopy(gStringVar2, gText_Speed2);
-        StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
-        break;
-    case ITEM_EFFECT_SPATK_EV:
-        StringCopy(gStringVar2, gText_SpAtk3);
-        StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
-        break;
-    case ITEM_EFFECT_SPDEF_EV:
-        StringCopy(gStringVar2, gText_SpDef3);
-        StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
-        break;
-    case ITEM_EFFECT_PP_UP:
-    case ITEM_EFFECT_PP_MAX:
-        StringExpandPlaceholders(gStringVar4, gText_MovesPPIncreased);
-        break;
-    case ITEM_EFFECT_HEAL_PP:
-        StringExpandPlaceholders(gStringVar4, gText_PPWasRestored);
-        break;
-    default:
-        StringExpandPlaceholders(gStringVar4, gText_WontHaveEffect);
-        break;
-    }
+	u8 taskId;
+	
+	if (newHP > GetMonData(mon, MON_DATA_MAX_HP))
+		newHP = GetMonData(mon, MON_DATA_MAX_HP);
+	
+	if (gMain.inBattle && battleMon != MAX_BATTLERS_COUNT)
+	{
+		if (GetBattlerSide(battleMon) == B_SIDE_PLAYER && gBattleResults.numHealingItemsUsed < 255)
+			++gBattleResults.numHealingItemsUsed;
+		
+		gBattleMoveDamage = -healAmount;
+	}
+	else
+	{
+		SetMonData(mon, MON_DATA_HP, &newHP);
+		
+		taskId = FindTaskIdByFunc(Task_Medicine);
+		
+		if (taskId != 0xFF && !gMain.inBattle)
+		{
+			alreadyDone = DoEffectsOnItemUse(FALSE, mon, item, alreadyDone);
+			UpdatePartyPokemonAilmentGfxAndLevelCheck(mon, partyIndex);
+			
+			if (oldHP == 0)
+				AnimatePartySlot(partyIndex, 1);
+			
+			PartyMenuModifyHP(taskId, partyIndex, 1, GetMonData(mon, MON_DATA_HP) - oldHP, Task_DisplayHPRestoredMessage);
+			ResetHPTaskData(taskId, 0, oldHP);
+		}
+	}
+	return alreadyDone;
 }
 
-static bool8 NotUsingHPEVItemOnShedinja(struct Pokemon *mon, u16 item)
+// change mon's friendship
+static bool8 ItemUseModifyMonFriendship(struct Pokemon *mon, s8 friendshipDelta)
 {
-    if (GetItemEffectType(item) == ITEM_EFFECT_HP_EV && GetMonData(mon, MON_DATA_SPECIES) == SPECIES_SHEDINJA)
-        return FALSE;
-    return TRUE;
+	u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM);
+	s16 friendship = GetMonData(mon, MON_DATA_FRIENDSHIP);
+	u8 holdEffect;
+	
+	if ((friendshipDelta > 0 && friendship < 255) || (friendshipDelta < 0 && friendship > 0))
+	{
+		if (heldItem != ITEM_ENIGMA_BERRY)
+			holdEffect = ItemId_GetHoldEffect(heldItem);
+		else
+		{
+			if (gMain.inBattle)
+				holdEffect = gEnigmaBerries[gBattlerInMenuId].holdEffect;
+			else
+				holdEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
+		}
+		if (friendshipDelta > 0 && holdEffect == HOLD_EFFECT_HAPPINESS_UP)
+			friendship += 150 * friendshipDelta / 100;
+		else
+			friendship += friendshipDelta;
+	
+		if (friendshipDelta > 0)
+		{
+			if (GetMonData(mon, MON_DATA_POKEBALL) == ITEM_LUXURY_BALL)
+				friendship++;
+			if (GetMonData(mon, MON_DATA_MET_LOCATION) == GetCurrentRegionMapSectionId())
+				friendship++;
+		}
+		if (friendship < 0)
+			friendship = 0;
+		else if (friendship > 255)
+			friendship = 255;
+		SetMonData(mon, MON_DATA_FRIENDSHIP, &friendship);
+		
+		return TRUE;
+	}
+	return FALSE;
 }
 
-static bool8 IsItemFlute(u16 item)
+// restore mon's move PP
+static bool8 ItemUseRestoreMovePP(struct Pokemon *mon, u8 moveIndex, u8 amount, u8 battleMon)
 {
-    if (item == ITEM_BLUE_FLUTE || item == ITEM_RED_FLUTE || item == ITEM_YELLOW_FLUTE)
-        return TRUE;
-    return FALSE;
+	u16 move = GetMonData(mon, MON_DATA_MOVE1 + moveIndex);
+	u8 pp = GetMonData(mon, MON_DATA_PP1 + moveIndex), ppWithBonus = CalculatePPWithBonus(move, GetMonData(mon, MON_DATA_PP_BONUSES), moveIndex);
+	
+	if (pp != ppWithBonus)
+	{
+		pp += amount;
+		if (pp > ppWithBonus)
+			pp = ppWithBonus;
+		
+		SetMonData(mon, MON_DATA_PP1 + moveIndex, &pp);
+		
+		if (gMain.inBattle && battleMon != MAX_BATTLERS_COUNT && !(gBattleMons[battleMon].status2 & STATUS2_TRANSFORMED)
+			&& !(gDisableStructs[battleMon].mimickedMoves & gBitTable[moveIndex]))
+		    gBattleMons[battleMon].pp[moveIndex] = pp;
+		
+		return TRUE;
+	}
+	return FALSE;
 }
 
-static bool8 ExecuteTableBasedItemEffect_(u8 partyMonIndex, u16 item, u8 monMoveIndex)
+#define ITEM_USE_PLAY_SOUND_AND_CONSUME(onlySound)                                                 \
+{                                                                                                  \
+	itemUse->itemEffectsDone = DoEffectsOnItemUse(onlySound, mon, item, itemUse->itemEffectsDone); \
+}
+
+#define SET_STRING_TO_PRINT(stringId)        \
+	if (itemUse->messagePrinted == FALSE)    \
+	{                                        \
+		itemUse->messagePrinted = TRUE;      \
+		itemUse->stringToPrintId = stringId; \
+	}
+
+#define SET_STRING_TO_COPY_DATA(stringId, data)  \
+	if (itemUse->dataCopied == FALSE)            \
+	{                                            \
+		itemUse->dataCopied = TRUE;              \
+		itemUse->specialStringCopyId = stringId; \
+		itemUse->stringCopyData = data;          \
+	}
+
+bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex, u8 battleMonId)
 {
-    if (gMain.inBattle)
-        return ExecuteTableBasedItemEffect(&gPlayerParty[partyMonIndex], item, GetPartyIdFromBattleSlot(partyMonIndex), monMoveIndex);
-    else
-        return ExecuteTableBasedItemEffect(&gPlayerParty[partyMonIndex], item, partyMonIndex, monMoveIndex);
+	struct ItemUseData *itemUse = AllocZeroed(sizeof(struct ItemUseData));
+	const u8 *effectTable = GetItemEffect(item);
+	u8 i, holdEffectParam;
+	u16 hp;
+	bool8 increaseStat, caseWorked, failed = TRUE;
+	// datas for general purpose
+	u8 byte;
+	u16 hword;
+	u32 word;
+	s8 signedbyte;
+	s16 signedhword;
+	s32 signedword;
+	
+	if (effectTable != NULL)
+	{
+		holdEffectParam = ItemId_GetHoldEffectParam(item);
+		
+		for (i = 0; effectTable[i] != ITEMEFFECT_END; i++)
+		{
+			hp = GetMonData(mon, MON_DATA_HP);
+			caseWorked = FALSE; // general purpose case flag
+			
+			switch (effectTable[i])
+			{
+				case ITEMEFFECT_HEAL_HP:
+					if (hp && hp != GetMonData(mon, MON_DATA_MAX_HP))
+					{
+						switch (holdEffectParam)
+						{
+							case 0xFF: // restore full HP
+							    word = hword = GetMonData(mon, MON_DATA_MAX_HP);
+								break;
+							default: // restore HP amount
+							    hword = holdEffectParam;
+								word = hp + hword;
+								break;
+						}
+						itemUse->itemEffectsDone = ItemUseDoHPHeal(mon, partyIndex, hp, word, hword, item, battleMonId, itemUse->itemEffectsDone);
+						itemUse->messagePrinted = TRUE; // string are handled separated
+						failed = FALSE;
+					}
+					break;
+				case ITEMEFFECT_HEAL_HP_PERCENT:
+				    if (hp && hp != GetMonData(mon, MON_DATA_MAX_HP))
+					{
+						// percent HP amount
+						hword = (GetMonData(mon, MON_DATA_MAX_HP) * holdEffectParam) / 100;
+						if (hword == 0)
+							hword = 1;
+						
+						itemUse->itemEffectsDone = ItemUseDoHPHeal(mon, partyIndex, hp, hp + hword, hword, item, battleMonId, itemUse->itemEffectsDone);
+						itemUse->messagePrinted = TRUE; // string are handled separated
+						failed = FALSE;
+					}
+					break;
+				case ITEMEFFECT_REVIVE:
+				    if (!hp)
+					{
+						if (gMain.inBattle && battleMonId != MAX_BATTLERS_COUNT)
+						{
+							if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+								gBattleStruct->usedReviveItemBattler |= gBitTable[gBattlerInMenuId]; // for revive mon in battle
+							
+							if (GetBattlerSide(battleMonId) == B_SIDE_PLAYER && gBattleResults.numRevivesUsed < 255)
+								++gBattleResults.numRevivesUsed;
+						}
+						hword = GetMonData(mon, MON_DATA_MAX_HP) / holdEffectParam;
+						if (hword == 0)
+							hword = 1;
+						
+						itemUse->itemEffectsDone = ItemUseDoHPHeal(mon, partyIndex, hp, hword, hword, item, battleMonId, itemUse->itemEffectsDone);
+						itemUse->messagePrinted = TRUE; // string are handled separated
+						failed = FALSE;
+					}
+					break;
+				case ITEMEFFECT_CURE_STATUS:
+				    i++;
+					byte = effectTable[i]; // status flag to cure
+					
+					// stored as bit flags to be able to cure diferent status at a time
+					if ((byte & ITEMEFFECT_STATUS_POISON) && !HealStatusConditions(mon, (STATUS1_PSN_ANY | STATUS1_TOXIC_COUNTER), battleMonId))
+					{
+						hword = ITEMUSE_STRING_POISON_CURED;
+						caseWorked = TRUE;
+					}
+					if ((byte & ITEMEFFECT_STATUS_BURN) && !HealStatusConditions(mon, STATUS1_BURN, battleMonId))
+					{
+						hword = ITEMUSE_STRING_BURN_HEALED;
+						caseWorked = TRUE;
+					}
+					if ((byte & ITEMEFFECT_STATUS_FREEZE) && !HealStatusConditions(mon, STATUS1_FREEZE, battleMonId))
+					{
+						hword = ITEMUSE_STRING_THAWED;
+						caseWorked = TRUE;
+					}
+					if ((byte & ITEMEFFECT_STATUS_SLEEP) && !HealStatusConditions(mon, STATUS1_SLEEP, battleMonId))
+					{
+						if (gMain.inBattle && battleMonId != MAX_BATTLERS_COUNT)
+							gBattleMons[battleMonId].status2 &= ~(STATUS2_NIGHTMARE);
+						
+						hword = ITEMUSE_STRING_WOKE_UP;
+						caseWorked = TRUE;
+					}
+					if ((byte & ITEMEFFECT_STATUS_PARALYSIS) && !HealStatusConditions(mon, STATUS1_PARALYSIS, battleMonId))
+					{
+						hword = ITEMUSE_STRING_PARALYSIS_CURED;
+						caseWorked = TRUE;
+					}
+					// battle status cure effects
+					if (gMain.inBattle && battleMonId != MAX_BATTLERS_COUNT)
+					{
+						if ((byte & ITEMEFFECT_STATUS_CONFUSION) && (gBattleMons[battleMonId].status2 & STATUS2_CONFUSION))
+						{
+							gBattleMons[battleMonId].status2 &= ~(STATUS2_CONFUSION);
+							hword = ITEMUSE_STRING_SNAPPED_CONFUSION;
+							caseWorked = TRUE;
+						}
+						if ((byte & ITEMEFFECT_STATUS_LOVE) && (gBattleMons[battleMonId].status2 & STATUS2_INFATUATION))
+						{
+							gBattleMons[battleMonId].status2 &= ~(STATUS2_INFATUATION);
+							hword = ITEMUSE_STRING_OVER_INFATUATION;
+							caseWorked = TRUE;
+						}
+					}
+					if (byte == ITEMEFFECT_STATUS_ALL) // print diferent string if tries to cure all main status + confusion at a time
+					    hword = ITEMUSE_STRING_BECAME_HEALTHY;
+					
+					if (caseWorked)
+					{
+						if (!gMain.inBattle)
+							UpdatePartyPokemonAilmentGfxAndLevelCheck(mon, partyIndex);
+						
+						ITEM_USE_PLAY_SOUND_AND_CONSUME(FALSE);
+						SET_STRING_TO_PRINT(hword);
+						failed = FALSE;
+					}
+					break;
+				case ITEMEFFECT_CHANGE_FRIENDSHIP:
+				    i++;
+					byte = effectTable[i];
+					hword = (byte & ITEMEFFECT_FRIENDSHIP_MAIN); // if it's main use
+					
+					if (!gMain.inBattle && (hword || !failed)) // if it's use ins't the main use(like the Pomeg Berry), only apply it's effect if was't failed
+					{
+						if ((byte & ITEMEFFECT_FRIENDSHIP_LOW) && GetMonData(mon, MON_DATA_FRIENDSHIP) < 100
+						&& ItemUseModifyMonFriendship(mon, (signedbyte = effectTable[i + 1])))
+							caseWorked = TRUE;
+						else if ((byte & ITEMEFFECT_FRIENDSHIP_MID) && GetMonData(mon, MON_DATA_FRIENDSHIP) >= 100
+						&& ItemUseModifyMonFriendship(mon, (signedbyte = effectTable[i + 2])))
+							caseWorked = TRUE;
+						else if ((byte & ITEMEFFECT_FRIENDSHIP_HIGH) && GetMonData(mon, MON_DATA_FRIENDSHIP) >= 200
+						&& ItemUseModifyMonFriendship(mon, (signedbyte = effectTable[i + 3])))
+							caseWorked = TRUE;
+							
+						if (caseWorked && hword)
+						{
+							ITEM_USE_PLAY_SOUND_AND_CONSUME(FALSE);
+							SET_STRING_TO_PRINT(ITEMUSE_STRING_FRIENDSHIP_CHANGED);
+							SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_INCREASED_OR_DECREASED, signedbyte > 0 ? TRUE : FALSE);
+							failed = FALSE;
+						}
+					}
+					i += 3;
+					break;
+				case ITEMEFFECT_RESTORE_PP:
+				    i++;
+					
+					if (effectTable[i]) // Restore all moves PP
+					{
+						for (byte = 0; byte < MAX_MON_MOVES; byte++)
+						{
+							if (ItemUseRestoreMovePP(mon, byte, holdEffectParam, battleMonId))
+								caseWorked = TRUE;
+						}
+					}
+					else if (ItemUseRestoreMovePP(mon, moveIndex, holdEffectParam, battleMonId)) // restore one move PP
+						caseWorked = TRUE;
+					
+					if (caseWorked)
+					{
+						ITEM_USE_PLAY_SOUND_AND_CONSUME(FALSE);
+						SET_STRING_TO_PRINT(ITEMUSE_STRING_PP_RESTORED);
+						failed = FALSE;
+					}
+					break;
+				case ITEMEFFECT_UP_DYNAMAX_LEVEL:
+				    byte = GetMonData(mon, MON_DATA_DYNAMAX_LEVEL);
+				
+				    if (byte < MAX_DYNAMAX_LEVEL)
+					{
+						byte += holdEffectParam;
+						if (byte > MAX_DYNAMAX_LEVEL)
+							byte = MAX_DYNAMAX_LEVEL;
+						SetMonData(mon, MON_DATA_DYNAMAX_LEVEL, &byte);
+						
+						ITEM_USE_PLAY_SOUND_AND_CONSUME(FALSE);
+						SET_STRING_TO_PRINT(ITEMUSE_STRING_RAISE_DYNAMAX_LEVEL);
+						failed = FALSE;
+					}
+					break;
+				case ITEMEFFECT_CHANGE_EV:
+				    i++;
+					signedhword = effectTable[i]; // amount
+					hword = GetMonEVCount(mon); // total Evs mon has
+					
+					if (gMain.inBattle || hword >= MAX_TOTAL_EVS || (holdEffectParam == STAT_HP && GetMonData(mon, MON_DATA_SPECIES) == SPECIES_SHEDINJA))
+						break;
+					
+					byte = GetMonData(mon, MON_DATA_HP_EV + holdEffectParam);
+					
+					if (byte < MAX_PER_VITAMIN_EVS)
+					{
+						if (byte + signedhword > MAX_PER_VITAMIN_EVS)
+							word = MAX_PER_VITAMIN_EVS - (byte + signedhword) + signedhword;
+						else
+							word = signedhword;
+						
+						if (hword + word > MAX_TOTAL_EVS)
+							word += MAX_TOTAL_EVS - (hword + word);
+						
+						byte += word;
+						SetMonData(mon, MON_DATA_HP_EV + holdEffectParam, &byte);
+						CalculateMonStats(mon);
+						
+						ITEM_USE_PLAY_SOUND_AND_CONSUME(FALSE);
+						SET_STRING_TO_PRINT(ITEMUSE_STRING_STAT_CHANGED);
+						SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_STAT_NAME, holdEffectParam);
+						increaseStat = (signedhword > 0);
+						failed = FALSE;
+					}
+					break;
+				case ITEMEFFECT_GIVE_EXPERIENCE:
+				    i++;
+					hword = T1_READ_16(effectTable + i); // exp amount
+					
+					if (sInitialLevel != MAX_LEVEL)
+					{
+						// save the mon old stats
+						GetMonLevelUpWindowStats(mon, sPartyMenuInternal->data);
+						
+						if (hword == 0) // level up
+						{
+							signedword = ITEMUSE_STRING_LEVELED_UP;
+							word = gExperienceTables[gBaseStats[GetMonData(mon, MON_DATA_SPECIES)].growthRate][sInitialLevel + 1];
+						}
+						else // add amount of exp
+						{
+							signedword = ITEMUSE_STRING_GAINED_EXP;
+							
+							word = GetMonData(mon, MON_DATA_EXP) + hword;
+							if (word > gExperienceTables[gBaseStats[GetMonData(mon, MON_DATA_SPECIES)].growthRate][MAX_LEVEL])
+								word = gExperienceTables[gBaseStats[GetMonData(mon, MON_DATA_SPECIES)].growthRate][MAX_LEVEL];
+						}
+						SetMonData(mon, MON_DATA_EXP, &word);
+						CalculateMonStats(mon);
+						
+						// leveled up
+						if (sInitialLevel != GetMonData(mon, MON_DATA_LEVEL))
+						{
+							sFinalLevel = GetMonData(mon, MON_DATA_LEVEL);
+							
+							// if leveled up gaining a fixed amount of exp, print a diferent string
+							if (hword != 0)
+								signedword = ITEMUSE_STRING_GAINED_EXP_LEVELED_UP;
+							
+							GetMonLevelUpWindowStats(mon, &sPartyMenuInternal->data[NUM_STATS]);
+							PlayFanfareByFanfareNum(0);
+							UpdateMonDisplayInfoAfterRareCandy(partyIndex, mon);
+							
+							caseWorked = TRUE; // used to don't play item use sound bc the fanfare is played instead
+						}
+						ITEM_USE_PLAY_SOUND_AND_CONSUME(caseWorked);
+						SET_STRING_TO_PRINT(signedword);
+						SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_EXP_AND_LEVEL, hword);
+						failed = FALSE;
+					}
+					i++;
+					break;
+				case ITEMEFFECT_INCREASE_PP:
+				    i++;
+					signedbyte = GetMonData(mon, MON_DATA_PP_BONUSES);
+					word = (signedbyte & gPPUpGetMask[moveIndex]) >> (moveIndex * 2);
+					hword = GetMonData(mon, MON_DATA_MOVE1 + moveIndex); // move id
+					byte = CalculatePPWithBonus(hword, signedbyte, moveIndex);
+					
+					if (effectTable[i]) // PP max
+					{
+						if (word < 3)
+						{
+							word = (signedbyte & gPPUpSetMask[moveIndex]);
+							word += gPPUpAddMask[moveIndex] * 3;
+							caseWorked = TRUE;
+						}
+					}
+					else // PP up
+					{
+						if (word < 3 && byte > 4)
+						{
+							word = signedbyte + gPPUpAddMask[moveIndex];
+							caseWorked = TRUE;
+						}
+					}
+					if (caseWorked)
+					{
+						SetMonData(mon, MON_DATA_PP_BONUSES, &word);
+						word = (CalculatePPWithBonus(hword, word, moveIndex) - byte) + GetMonData(mon, MON_DATA_PP1 + moveIndex);
+						SetMonData(mon, MON_DATA_PP1 + moveIndex, &word);
+						
+						ITEM_USE_PLAY_SOUND_AND_CONSUME(FALSE);
+						SET_STRING_TO_PRINT(ITEMUSE_STRING_PP_INCREASED);
+						failed = FALSE;
+					}
+					break;
+				case ITEMEFFECT_GIVE_GMAX_FACTOR:
+					caseWorked = GetMonData(mon, MON_DATA_HAS_GMAX_FACTOR) ^ TRUE; // switch g max factor bit
+					SetMonData(mon, MON_DATA_HAS_GMAX_FACTOR, &caseWorked);
+					ITEM_USE_PLAY_SOUND_AND_CONSUME(FALSE);
+					SET_STRING_TO_PRINT(ITEMUSE_STRING_CHANGE_GMAX_FACTOR);
+					SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_GAINED_OR_LOSES, caseWorked);
+					failed = FALSE;
+					break;
+				case ITEMEFFECT_EVOLUTION:
+				    hword = GetEvolutionTargetSpecies(mon, EVO_MODE_ITEM_USE, item, NULL);
+					
+					if (hword)
+					{
+						gCB2_AfterEvolution = gPartyMenu.exitCallback;
+						BeginEvolutionScene(mon, hword, 0, partyIndex);
+						// no sound or message
+						failed = FALSE;
+					}
+					break;
+				case ITEMEFFECT_SET_TERA_TYPE:
+				    if (GetMonData(mon, MON_DATA_TERA_TYPE) != holdEffectParam)
+					{
+						SetMonData(mon, MON_DATA_TERA_TYPE, &holdEffectParam);
+						ITEM_USE_PLAY_SOUND_AND_CONSUME(FALSE);
+						SET_STRING_TO_PRINT(ITEMUSE_STRING_CHANGED_TERA_TYPE);
+						SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_TYPE_NAME, holdEffectParam);
+						failed = FALSE;
+					}
+					break;
+			}
+		}
+	}
+	if (!gMain.inBattle && itemUse->stringToPrintId != ITEMUSE_STRING_NOTHING)
+	{
+		switch (itemUse->specialStringCopyId)
+		{
+			case ITEMUSE_COPY_STAT_NAME: // copy stat id name
+			    StringCopy(gStringVar2, sEvItemUseStatNames[itemUse->stringCopyData]);
+				StringCopy(gStringVar3, increaseStat ? gText_Increased : gText_Decreased);
+				break;
+			case ITEMUSE_COPY_EXP_AND_LEVEL: // copy exp amount and level
+			    ConvertIntToDecimalStringN(gStringVar2, sFinalLevel, STR_CONV_MODE_LEFT_ALIGN, 3);
+				ConvertIntToDecimalStringN(gStringVar3, itemUse->stringCopyData, STR_CONV_MODE_LEFT_ALIGN, 5);
+				break;
+			case ITEMUSE_COPY_GAINED_OR_LOSES: // copy "gained" or "loses"
+			    StringCopy(gStringVar2, itemUse->stringCopyData ? gText_Gained : gText_Loses);
+				break;
+			case ITEMUSE_COPY_TYPE_NAME: // copy type name
+			    StringCopy(gStringVar2, gTypeNames[itemUse->stringCopyData]);
+				break;
+			case ITEMUSE_COPY_INCREASED_OR_DECREASED:
+			    StringCopy(gStringVar2, itemUse->stringCopyData ? gText_Increased : gText_Decreased);
+				break;
+		}
+		GetMonNickname(mon, gStringVar1);
+		StringExpandPlaceholders(gStringVar4, sItemUseStrings[itemUse->stringToPrintId - 1]);
+	}
+	Free(itemUse);
+	
+	return failed;
+}
+
+static void Task_Medicine(u8 taskId)
+{
+	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+    u16 item = gSpecialVar_ItemId;
+	
+	sInitialLevel = GetMonData(mon, MON_DATA_LEVEL);
+	
+	if (ExecuteTableBasedItemEffect(gPartyMenu.slotId, item, gTasks[taskId].data[0]))
+	{
+		sInitialLevel = sFinalLevel = 0;
+		PlaySE(SE_SELECT);
+		gPartyMenuUseExitCallback = FALSE;
+        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+	}
+	else
+	{
+		if (gMain.inBattle)
+			SetBattlerUsedItemForBattleScript(item);
+		
+		if (ItemId_GetUsageType(item) != ITEM_TYPE_HEALTH_RECOVERY)
+		{
+			gPartyMenuUseExitCallback = TRUE;
+			
+			if (!gMain.inBattle)
+			{
+				DisplayPartyMenuMessage(gStringVar4, TRUE);
+				ScheduleBgCopyTilemapToVram(2);
+				
+				if (sInitialLevel != GetMonData(mon, MON_DATA_LEVEL))
+				{
+					gTasks[taskId].func = Task_DisplayLevelUpStatsPg1;
+					return;
+				}
+			}
+		}
+		else
+			return;
+	}
+	SetMedicineItemFunc(taskId, item);
 }
 
 void ItemUseCB_Medicine(u8 taskId, TaskFunc func)
 {
-    u16 hp;
-    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    u16 item = gSpecialVar_ItemId;
-    bool8 canHeal;
-
-    if (!NotUsingHPEVItemOnShedinja(mon, item))
-    {
-        canHeal = TRUE;
-    }
-    else
-    {
-        if (IsHPRecoveryItem(item) == TRUE)
-        {
-            hp = GetMonData(mon, MON_DATA_HP);
-            if (hp == GetMonData(mon, MON_DATA_MAX_HP))
-                canHeal = FALSE;
-        }
-        canHeal = PokemonItemUseNoEffect(mon, item, gPartyMenu.slotId, 0);
-    }
-    PlaySE(SE_SELECT);
-    if (canHeal)
-    {
-        gPartyMenuUseExitCallback = FALSE;
-        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
-        ScheduleBgCopyTilemapToVram(2);
-        gTasks[taskId].func = func;
-    }
-    else
-    {
-        ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, mon, item, 0xFFFF);
-        sub_8124DC0(taskId);
-        gItemUseCB = ItemUseCB_MedicineStep;
-    }
+	gTasks[taskId].data[0] = 0;
+	gTasks[taskId].func = Task_Medicine;
 }
 
-void ItemUseCB_MedicineStep(u8 taskId, TaskFunc func)
+static void SetMedicineItemFunc(u8 taskId, u16 item)
 {
-    u16 hp = 0;
-    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    u16 item = gSpecialVar_ItemId;
-    bool8 canHeal;
+#if REPEATED_MEDICINE_USE
+	if (gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(item, 1))
+		gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
+	else
+#endif
+		gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+}
 
-    if (NotUsingHPEVItemOnShedinja(mon, item))
-    {
-        canHeal = IsHPRecoveryItem(item);
-        if (canHeal == TRUE)
-        {
-            hp = GetMonData(mon, MON_DATA_HP);
-            if (hp == GetMonData(mon, MON_DATA_MAX_HP))
-                canHeal = FALSE;
-        }
-        if (ExecuteTableBasedItemEffect_(gPartyMenu.slotId, item, 0))
-        {
-        WONT_HAVE_EFFECT:
-            gPartyMenuUseExitCallback = FALSE;
-            PlaySE(SE_SELECT);
-            DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
-            ScheduleBgCopyTilemapToVram(2);
-            gTasks[taskId].func = func;
-            return;
-        }
-    }
-    else
-    {
-        goto WONT_HAVE_EFFECT; // even loop wrap won't work
-    }
-    gPartyMenuUseExitCallback = TRUE;
-    if (!IsItemFlute(item))
-    {
-        PlaySE(SE_USE_ITEM);
-        if (gPartyMenu.action != PARTY_ACTION_REUSABLE_ITEM)
-            RemoveBagItem(item, 1);
-    }
-    else
-    {
-        PlaySE(SE_GLASS_FLUTE);
-    }
-    SetPartyMonAilmentGfx(mon, &sPartyMenuBoxes[gPartyMenu.slotId]);
-    if (gSprites[sPartyMenuBoxes[gPartyMenu.slotId].statusSpriteId].invisible)
-        DisplayPartyPokemonLevelCheck(mon, &sPartyMenuBoxes[gPartyMenu.slotId], 1);
-    if (canHeal == TRUE)
-    {
-        if (hp == 0)
-            AnimatePartySlot(gPartyMenu.slotId, 1);
-        PartyMenuModifyHP(taskId, gPartyMenu.slotId, 1, GetMonData(mon, MON_DATA_HP) - hp, Task_DisplayHPRestoredMessage);
-        ResetHPTaskData(taskId, 0, hp);
-        return;
-    }
-    else
-    {
-        GetMonNickname(mon, gStringVar1);
-        GetMedicineItemEffectMessage(item);
-        DisplayPartyMenuMessage(gStringVar4, TRUE);
-        ScheduleBgCopyTilemapToVram(2);
-        gTasks[taskId].func = func;
-    }
+// Battle scripts called in HandleAction_UseItem
+void ItemUseCB_BattleScript(u8 taskId, TaskFunc func)
+{
+	u16 itemId = gSpecialVar_ItemId;
+	
+	PlaySE(SE_SELECT);
+	
+	if (!CanUseItemInBattle(gPartyMenu.slotId, itemId))
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+	}
+	else
+	{
+		SetBattlerUsedItemForBattleScript(itemId);
+		gPartyMenuUseExitCallback = TRUE;
+	}
+	gTasks[taskId].func = func;
+}
+
+void SetBattlerUsedItemForBattleScript(u16 item)
+{
+	gBattleStruct->itemPartyIndex[gBattlerInMenuId] = GetPartyIdFromBattleSlot(gPartyMenu.slotId);
+	RemoveBagItem(item, 1);
 }
 
 static void Task_DisplayHPRestoredMessage(u8 taskId)
@@ -4617,7 +5101,7 @@ static void Task_DisplayHPRestoredMessage(u8 taskId)
     DisplayPartyMenuMessage(gStringVar4, FALSE);
     ScheduleBgCopyTilemapToVram(2);
     HandleBattleLowHpMusicChange();
-    gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+	SetMedicineItemFunc(taskId, gSpecialVar_ItemId);
 }
 
 static void Task_ClosePartyMenuAfterText(u8 taskId)
@@ -4668,46 +5152,30 @@ static void Task_HandleWhichMoveInput(u8 taskId)
         }
         else
         {
-            SetSelectedMoveForPPItem(taskId);
+            SetSelectedMoveForItem(taskId);
         }
     }
 }
 
-void ItemUseCB_PPRecovery(u8 taskId, UNUSED TaskFunc func)
+void ItemUseCB_PPRecoveryOneMove(u8 taskId, UNUSED TaskFunc func)
 {
-    const u8 *effect;
-    u16 item = gSpecialVar_ItemId;
-
-    if (item == ITEM_ENIGMA_BERRY)
-        effect = gSaveBlock1Ptr->enigmaBerry.itemEffect;
-    else
-        effect = gItemEffectTable[item - ITEM_POTION];
-
-    if (!(effect[4] & ITEM4_HEAL_PP_ONE))
-    {
-        gPartyMenu.data1 = 0;
-        if (gPartyMenu.menuType == PARTY_MENU_TYPE_IN_BATTLE)
-            TryUsePPItem(taskId);
-        else
-            sub_812580C(taskId);
-    }
-    else
-    {
-        PlaySE(SE_SELECT);
-        DisplayPartyMenuStdMessage(PARTY_MSG_RESTORE_WHICH_MOVE);
-        ShowMoveSelectWindow(gPartyMenu.slotId);
-        gTasks[taskId].func = Task_HandleWhichMoveInput;
-    }
+	PlaySE(SE_SELECT);
+	DisplayPartyMenuStdMessage(PARTY_MSG_RESTORE_WHICH_MOVE);
+	ShowMoveSelectWindow(gPartyMenu.slotId);
+	gTasks[taskId].func = Task_HandleWhichMoveInput;
 }
 
-static void SetSelectedMoveForPPItem(u8 taskId)
+void ItemUseCB_PPRecoveryAllMoves(u8 taskId, UNUSED TaskFunc func)
+{
+	gTasks[taskId].data[0] = gPartyMenu.data1 = 0;
+	gTasks[taskId].func = Task_Medicine;
+}
+
+static void SetSelectedMoveForItem(u8 taskId)
 {
     PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
-    gPartyMenu.data1 = Menu_GetCursorPos();
-    if (gPartyMenu.menuType == PARTY_MENU_TYPE_IN_BATTLE)
-        TryUsePPItem(taskId);
-    else
-        sub_812580C(taskId);
+	gTasks[taskId].data[0] = gPartyMenu.data1 = Menu_GetCursorPos();
+	gTasks[taskId].func = Task_Medicine;
 }
 
 static void ReturnToUseOnWhichMon(u8 taskId)
@@ -4716,77 +5184,6 @@ static void ReturnToUseOnWhichMon(u8 taskId)
     sPartyMenuInternal->exitCallback = NULL;
     PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
     DisplayPartyMenuStdMessage(PARTY_MSG_USE_ON_WHICH_MON);
-}
-
-static void sub_812580C(u8 taskId)
-{
-    bool8 noEffect = PokemonItemUseNoEffect(&gPlayerParty[gPartyMenu.slotId],
-                                            gSpecialVar_ItemId,
-                                            gPartyMenu.slotId,
-                                            gPartyMenu.data1);
-    PlaySE(SE_SELECT);
-    if (noEffect)
-    {
-        gPartyMenuUseExitCallback = FALSE;
-        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
-        ScheduleBgCopyTilemapToVram(2);
-        gTasks[taskId].func = Task_ClosePartyMenuAfterText;
-    }
-    else
-    {
-        sub_8124DC0(taskId);
-        gItemUseCB = sub_8125898;
-    }
-}
-
-static void sub_8125898(u8 taskId, UNUSED TaskFunc func)
-{
-    u16 move;
-    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-
-    ExecuteTableBasedItemEffect_(gPartyMenu.slotId, gSpecialVar_ItemId, (u8)gPartyMenu.data1);
-    gPartyMenuUseExitCallback = TRUE;
-    ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, mon, gSpecialVar_ItemId, 0xFFFF);
-    PlaySE(SE_USE_ITEM);
-    RemoveBagItem(gSpecialVar_ItemId, 1);
-    move = GetMonData(mon, gPartyMenu.data1 + MON_DATA_MOVE1);
-    StringCopy(gStringVar1, gMoveNames[move]);
-    GetMedicineItemEffectMessage(gSpecialVar_ItemId);
-    DisplayPartyMenuMessage(gStringVar4, 1);
-    ScheduleBgCopyTilemapToVram(2);
-    gTasks[taskId].func = Task_ClosePartyMenuAfterText;
-}
-
-static void TryUsePPItem(u8 taskId)
-{
-    u16 move = MOVE_NONE;
-    s16 *moveSlot = &gPartyMenu.data1;
-    u16 item = gSpecialVar_ItemId;
-    struct PartyMenu *ptr = &gPartyMenu;
-    struct Pokemon *mon;
-
-    if (ExecuteTableBasedItemEffect_(ptr->slotId, item, *moveSlot))
-    {
-        gPartyMenuUseExitCallback = FALSE;
-        PlaySE(SE_SELECT);
-        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
-        ScheduleBgCopyTilemapToVram(2);
-        gTasks[taskId].func = Task_ClosePartyMenuAfterText;
-    }
-    else
-    {
-        gPartyMenuUseExitCallback = TRUE;
-        mon = &gPlayerParty[ptr->slotId];
-        ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, mon, item, 0xFFFF);
-        PlaySE(SE_USE_ITEM);
-        RemoveBagItem(item, 1);
-        move = GetMonData(mon, MON_DATA_MOVE1 + *moveSlot);
-        StringCopy(gStringVar1, gMoveNames[move]);
-        GetMedicineItemEffectMessage(item);
-        DisplayPartyMenuMessage(gStringVar4, TRUE);
-        ScheduleBgCopyTilemapToVram(2);
-        gTasks[taskId].func = Task_ClosePartyMenuAfterText;
-    }
 }
 
 void ItemUseCB_PPUp(u8 taskId, UNUSED TaskFunc func)
@@ -4799,23 +5196,7 @@ void ItemUseCB_PPUp(u8 taskId, UNUSED TaskFunc func)
 
 u16 ItemIdToBattleMoveId(u16 item)
 {
-    u16 tmNumber = item - ITEM_TM01;
-
-    return sTMHMMoves[tmNumber];
-}
-
-bool8 IsMoveHm(u16 move)
-{
-#if DELETABLE_HMS
-    return FALSE;
-#else
-    u8 i;
-
-    for (i = 0; i < NUM_HIDDEN_MACHINES - 1; ++i) // no dive
-        if (sTMHMMoves[i + NUM_TECHNICAL_MACHINES] == move)
-            return TRUE;
-    return FALSE;
-#endif
+    return sTMHMMoves[item - ITEM_TM01];
 }
 
 bool8 MonKnowsMove(struct Pokemon *mon, u16 move)
@@ -4969,7 +5350,9 @@ static void CB2_ReturnToPartyMenuWhileLearningMove(void)
     u8 moveIdx = GetMoveSlotToReplace();
     u16 move;
     s32 learnMoveState = gPartyMenu.learnMoveState;
-
+	
+	SetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_LEVEL, &sFinalLevel);
+	
     if (learnMoveState == 0 && moveIdx != MAX_MON_MOVES)
     {
         move = GetMonData(&gPlayerParty[gPartyMenu.slotId], moveIdx + MON_DATA_MOVE1);
@@ -5028,18 +5411,19 @@ static void Task_PartyMenuReplaceMove(u8 taskId)
 {
     struct Pokemon *mon;
     u16 move;
-    u8 oldPP;
+    u8 oldPP, moveSlot;
 
     if (IsPartyMenuTextPrinterActive() != TRUE)
     {
         mon = &gPlayerParty[gPartyMenu.slotId];
-        RemoveMonPPBonus(mon, GetMoveSlotToReplace());
-        oldPP = GetMonData(mon, MON_DATA_PP1 + GetMoveSlotToReplace(), NULL);
+		moveSlot = GetMoveSlotToReplace();
+        RemoveMonPPBonus(mon, moveSlot);
+        oldPP = GetMonData(mon, MON_DATA_PP1 + moveSlot, NULL);
         move = gPartyMenu.data1;
-        SetMonMoveSlot(mon, move, GetMoveSlotToReplace());
+        SetMonMoveSlot(mon, move, moveSlot);
 #if DONT_REPLENISH_MOVE_PP
-        if (GetMonData(mon, MON_DATA_PP1 + GetMoveSlotToReplace(), NULL) > oldPP)
-            SetMonData(mon, MON_DATA_PP1 + GetMoveSlotToReplace(), &oldPP);
+        if (GetMonData(mon, MON_DATA_PP1 + moveSlot, NULL) > oldPP)
+            SetMonData(mon, MON_DATA_PP1 + moveSlot, &oldPP);
 #endif
         Task_LearnedMove(taskId);
     }
@@ -5103,60 +5487,9 @@ static void Task_TryLearningNextMoveAfterText(u8 taskId)
         Task_TryLearningNextMove(taskId);
 }
 
-void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
-{
-    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    u16 item = gSpecialVar_ItemId;
-    bool8 noEffect;
-
-    if (GetMonData(mon, MON_DATA_LEVEL) != MAX_LEVEL)
-        noEffect = PokemonItemUseNoEffect(mon, item, gPartyMenu.slotId, 0);
-    else
-        noEffect = TRUE;
-    PlaySE(SE_SELECT);
-    if (noEffect)
-    {
-        gPartyMenuUseExitCallback = FALSE;
-        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
-        ScheduleBgCopyTilemapToVram(2);
-        gTasks[taskId].func = func;
-    }
-    else
-    {
-        sub_8124DC0(taskId);
-        gItemUseCB = ItemUseCB_RareCandyStep;
-    }
-}
-
-static void ItemUseCB_RareCandyStep(u8 taskId, UNUSED TaskFunc func)
-{
-    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    struct PartyMenuInternal *ptr = sPartyMenuInternal;
-    s16 *arrayPtr = ptr->data;
-    u8 level;
-
-    GetMonLevelUpWindowStats(mon, arrayPtr);
-    ExecuteTableBasedItemEffect_(gPartyMenu.slotId, gSpecialVar_ItemId, 0);
-    GetMonLevelUpWindowStats(mon, &ptr->data[NUM_STATS]);
-    gPartyMenuUseExitCallback = TRUE;
-    ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, mon, gSpecialVar_ItemId, 0xFFFF);
-    PlayFanfareByFanfareNum(0);
-    UpdateMonDisplayInfoAfterRareCandy(gPartyMenu.slotId, mon);
-    RemoveBagItem(gSpecialVar_ItemId, 1);
-    GetMonNickname(mon, gStringVar1);
-    level = GetMonData(mon, MON_DATA_LEVEL);
-    ConvertIntToDecimalStringN(gStringVar2, level, STR_CONV_MODE_LEFT_ALIGN, 3);
-    StringExpandPlaceholders(gStringVar4, gText_PkmnElevatedToLvVar2);
-    DisplayPartyMenuMessage(gStringVar4, TRUE);
-    ScheduleBgCopyTilemapToVram(2);
-    gTasks[taskId].func = Task_DisplayLevelUpStatsPg1;
-}
-
 static void UpdateMonDisplayInfoAfterRareCandy(u8 slot, struct Pokemon *mon)
 {
-    SetPartyMonAilmentGfx(mon, &sPartyMenuBoxes[slot]);
-    if (gSprites[sPartyMenuBoxes[slot].statusSpriteId].invisible)
-        DisplayPartyPokemonLevelCheck(mon, &sPartyMenuBoxes[slot], 1);
+	UpdatePartyPokemonAilmentGfxAndLevelCheck(mon, slot);
     DisplayPartyPokemonHPCheck(mon, &sPartyMenuBoxes[slot], 1);
     DisplayPartyPokemonMaxHPCheck(mon, &sPartyMenuBoxes[slot], 1);
     DisplayPartyPokemonHPBarCheck(mon, &sPartyMenuBoxes[slot]);
@@ -5181,6 +5514,7 @@ static void Task_DisplayLevelUpStatsPg2(u8 taskId)
     {
         PlaySE(SE_SELECT);
         DisplayLevelUpStatsPg2(taskId);
+		++sInitialLevel;
         gTasks[taskId].func = Task_TryLearnNewMoves;
     }
 }
@@ -5211,51 +5545,72 @@ static void Task_TryLearnNewMoves(u8 taskId)
     if (WaitFanfare(0) && (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON)))
     {
         RemoveLevelUpStatsWindow();
-        learnMove = MonTryLearningNewMove(&gPlayerParty[gPartyMenu.slotId], TRUE);
-        gPartyMenu.learnMoveState = 1;
-        switch (learnMove)
-        {
-        case 0: // No moves to learn
-            PartyMenuTryEvolution(taskId);
-            break;
-        case MON_HAS_MAX_MOVES:
-            DisplayMonNeedsToReplaceMove(taskId);
-            break;
-        case MON_ALREADY_KNOWS_MOVE:
-            gTasks[taskId].func = Task_TryLearningNextMove;
-            break;
-        default:
-            DisplayMonLearnedMove(taskId, learnMove);
-            break;
-        }
+		
+		for (; sInitialLevel <= sFinalLevel; sInitialLevel++)
+		{
+			SetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_LEVEL, &sInitialLevel);
+			learnMove = MonTryLearningNewMove(&gPlayerParty[gPartyMenu.slotId], TRUE);
+			gPartyMenu.learnMoveState = 1;
+			
+			switch (learnMove)
+			{
+				case 0:
+				    if (sInitialLevel >= sFinalLevel)
+						PartyMenuTryEvolution(taskId);
+					break;
+				case MON_HAS_MAX_MOVES:
+				    DisplayMonNeedsToReplaceMove(taskId);
+					break;
+				case MON_ALREADY_KNOWS_MOVE:
+				    gTasks[taskId].func = Task_TryLearningNextMove;
+					break;
+				default:
+				    DisplayMonLearnedMove(taskId, learnMove);
+					break;
+			}
+			if (learnMove)
+				break;
+		}
     }
 }
 
 static void Task_TryLearningNextMove(u8 taskId)
 {
-    u16 result = MonTryLearningNewMove(&gPlayerParty[gPartyMenu.slotId], FALSE);
-
-    switch (result)
-    {
-    case 0: // No moves to learn
-        PartyMenuTryEvolution(taskId);
-        break;
-    case MON_HAS_MAX_MOVES:
-        DisplayMonNeedsToReplaceMove(taskId);
-        break;
-    case MON_ALREADY_KNOWS_MOVE:
-        return;
-    default:
-        DisplayMonLearnedMove(taskId, result);
-        break;
-    }
+    u16 result;
+	
+	for (; sInitialLevel <= sFinalLevel; sInitialLevel++)
+	{
+		SetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_LEVEL, &sInitialLevel);
+		result = MonTryLearningNewMove(&gPlayerParty[gPartyMenu.slotId], FALSE);
+		
+		switch (result)
+		{
+			case 0:
+			    if (sInitialLevel >= sFinalLevel)
+					PartyMenuTryEvolution(taskId);
+			    break;
+			case MON_HAS_MAX_MOVES:
+			    DisplayMonNeedsToReplaceMove(taskId);
+				break;
+			case MON_ALREADY_KNOWS_MOVE:
+			    gTasks[taskId].func = Task_TryLearningNextMove;
+			    return;
+			default:
+			    DisplayMonLearnedMove(taskId, result);
+				break;
+		}
+		if (result)
+			break;
+	}
 }
 
 static void PartyMenuTryEvolution(u8 taskId)
 {
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
     u16 targetSpecies = GetEvolutionTargetSpecies(mon, EVO_MODE_NORMAL, 0, NULL);
-
+	
+	sInitialLevel = sFinalLevel = 0;
+	
     if (targetSpecies != SPECIES_NONE)
     {
         FreePartyPointers();
@@ -5265,7 +5620,7 @@ static void PartyMenuTryEvolution(u8 taskId)
     }
     else
     {
-        gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+		SetMedicineItemFunc(taskId, gSpecialVar_ItemId);
     }
 }
 
@@ -5314,7 +5669,7 @@ static void UseSacredAsh(u8 taskId)
         return;
     }
     hp = GetMonData(mon, MON_DATA_HP);
-    if (ExecuteTableBasedItemEffect_(gPartyMenu.slotId, gSpecialVar_ItemId, 0))
+    if (PokemonUseItemEffects(mon, gSpecialVar_ItemId, gPartyMenu.slotId, 0, MAX_BATTLERS_COUNT))
     {
         gTasks[taskId].func = Task_SacredAshLoop;
         return;
@@ -5322,9 +5677,7 @@ static void UseSacredAsh(u8 taskId)
     PlaySE(SE_USE_ITEM);
     if (sPartyMenuInternal->tHadEffect == 0)
         sSacredAshQuestLogMonBackup = mon;
-    SetPartyMonAilmentGfx(mon, &sPartyMenuBoxes[gPartyMenu.slotId]);
-    if (gSprites[sPartyMenuBoxes[gPartyMenu.slotId].statusSpriteId].invisible)
-        DisplayPartyPokemonLevelCheck(mon, &sPartyMenuBoxes[gPartyMenu.slotId], 1);
+	UpdatePartyPokemonAilmentGfxAndLevelCheck(mon, gPartyMenu.slotId);
     AnimatePartySlot(sPartyMenuInternal->tLastSlotUsed, 0);
     AnimatePartySlot(gPartyMenu.slotId, 1);
     PartyMenuModifyHP(taskId, gPartyMenu.slotId, 1, GetMonData(mon, MON_DATA_HP) - hp, Task_SacredAshDisplayHPRestored);
@@ -5382,11 +5735,9 @@ static void Task_SacredAshDisplayHPRestored(u8 taskId)
 
 void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc func)
 {
-    bool8 noEffect;
-
     PlaySE(SE_SELECT);
-    noEffect = PokemonItemUseNoEffect(&gPlayerParty[gPartyMenu.slotId], gSpecialVar_ItemId, gPartyMenu.slotId, 0);
-    if (noEffect)
+	
+    if (PokemonUseItemEffects(&gPlayerParty[gPartyMenu.slotId], gSpecialVar_ItemId, gPartyMenu.slotId, 0, MAX_BATTLERS_COUNT))
     {
         gPartyMenuUseExitCallback = FALSE;
         DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
@@ -5394,90 +5745,11 @@ void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc func)
         gTasks[taskId].func = func;
     }
     else
-    {
-        sub_8124DC0(taskId);
-    }
-}
-
-static void sub_8126BD4(void)
-{
-    gCB2_AfterEvolution = gPartyMenu.exitCallback;
-    ExecuteTableBasedItemEffect_(gPartyMenu.slotId, gSpecialVar_ItemId, 0);
-    ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, &gPlayerParty[gPartyMenu.slotId], gSpecialVar_ItemId, 0xFFFF);
-    RemoveBagItem(gSpecialVar_ItemId, 1);
-}
-
-static bool8 MonCanEvolve(void)
-{
-    if (!IsNationalPokedexEnabled()
-     && GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId], EVO_MODE_ITEM_USE, gSpecialVar_ItemId, NULL) > KANTO_DEX_COUNT)
-        return FALSE;
-    else
-        return TRUE;
-}
-
-u8 GetItemEffectType(u16 item)
-{
-    const u8 *itemEffect;
-    u32 statusCure;
-
-    if (!IS_POKEMON_ITEM(item))
-        return ITEM_EFFECT_NONE;
-    // Read the item's effect properties.
-    if (item == ITEM_ENIGMA_BERRY)
-        itemEffect = gSaveBlock1Ptr->enigmaBerry.itemEffect;
-    else
-        itemEffect = gItemEffectTable[item - ITEM_POTION];
-    if ((itemEffect[0] & (ITEM0_HIGH_CRIT | ITEM0_X_ATTACK)) || itemEffect[1] || itemEffect[2] || (itemEffect[3] & ITEM3_MIST))
-        return ITEM_EFFECT_X_ITEM;
-    else if (itemEffect[0] & ITEM0_SACRED_ASH)
-        return ITEM_EFFECT_SACRED_ASH;
-    else if (itemEffect[3] & ITEM3_LEVEL_UP)
-        return ITEM_EFFECT_RAISE_LEVEL;
-    statusCure = itemEffect[3] & ITEM3_STATUS_ALL;
-    if (statusCure || (itemEffect[0] >> 7))
-    {
-        if (statusCure == ITEM3_SLEEP)
-            return ITEM_EFFECT_CURE_SLEEP;
-        else if (statusCure == ITEM3_POISON)
-            return ITEM_EFFECT_CURE_POISON;
-        else if (statusCure == ITEM3_BURN)
-            return ITEM_EFFECT_CURE_BURN;
-        else if (statusCure == ITEM3_FREEZE)
-            return ITEM_EFFECT_CURE_FREEZE;
-        else if (statusCure == ITEM3_PARALYSIS)
-            return ITEM_EFFECT_CURE_PARALYSIS;
-        else if (statusCure == ITEM3_CONFUSION)
-            return ITEM_EFFECT_CURE_CONFUSION;
-        else if (itemEffect[0] >> 7 && !statusCure)
-            return ITEM_EFFECT_CURE_INFATUATION;
-        else
-            return ITEM_EFFECT_CURE_ALL_STATUS;
-    }
-    if (itemEffect[4] & (ITEM4_REVIVE | ITEM4_HEAL_HP))
-        return ITEM_EFFECT_HEAL_HP;
-    else if (itemEffect[4] & ITEM4_EV_ATK)
-        return ITEM_EFFECT_ATK_EV;
-    else if (itemEffect[4] & ITEM4_EV_HP)
-        return ITEM_EFFECT_HP_EV;
-    else if (itemEffect[5] & ITEM5_EV_SPATK)
-        return ITEM_EFFECT_SPATK_EV;
-    else if (itemEffect[5] & ITEM5_EV_SPDEF)
-        return ITEM_EFFECT_SPDEF_EV;
-    else if (itemEffect[5] & ITEM5_EV_SPEED)
-        return ITEM_EFFECT_SPEED_EV;
-    else if (itemEffect[5] & ITEM5_EV_DEF)
-        return ITEM_EFFECT_DEF_EV;
-    else if (itemEffect[4] & ITEM4_EVO_STONE)
-        return ITEM_EFFECT_EVO_STONE;
-    else if (itemEffect[4] & ITEM4_PP_UP)
-        return ITEM_EFFECT_PP_UP;
-    else if (itemEffect[5] & ITEM5_PP_MAX)
-        return ITEM_EFFECT_PP_MAX;
-    else if (itemEffect[4] & (ITEM4_HEAL_PP_ALL | ITEM4_HEAL_PP_ONE))
-        return ITEM_EFFECT_HEAL_PP;
-    else
-        return ITEM_EFFECT_NONE;
+	{
+		ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, &gPlayerParty[gPartyMenu.slotId], gSpecialVar_ItemId, 0xFFFF);
+		RemoveBagItem(gSpecialVar_ItemId, 1);
+        Task_ClosePartyMenu(taskId);
+	}
 }
 
 static void TryTutorSelectedMon(u8 taskId)
@@ -5525,7 +5797,7 @@ void CB2_ChooseMonToGiveItem(void)
 {
     MainCallback callback;
 
-    switch (GetPocketByItemId(gSpecialVar_ItemId))
+    switch (ItemId_GetPocket(gSpecialVar_ItemId))
     {
     default:
         callback = CB2_ReturnToBagMenu;
@@ -5975,7 +6247,7 @@ void EnterPartyFromItemMenuInBattle(void)
     {
         MainCallback callback;
 
-        if (GetPocketByItemId(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
+        if (ItemId_GetPocket(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
             callback = CB2_ReturnToBerryPouchMenu;
         else
             callback = CB2_BagMenuFromBattle;
@@ -6454,8 +6726,28 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 		replaceMove2 = MOVE_NONE;
 		gMoveToLearn = MOVE_NONE;
 		
+		gPartyMenuUseExitCallback = FALSE;
+		
 		switch (GetMonData(mon, MON_DATA_SPECIES))
 		{
+			case SPECIES_ROTOM:
+			    gMoveToLearn = MOVE_THUNDER_SHOCK;
+				break;
+			case SPECIES_ROTOM_HEAT:
+			    gMoveToLearn = MOVE_OVERHEAT;
+				break;
+			case SPECIES_ROTOM_WASH:
+			    gMoveToLearn = MOVE_HYDRO_PUMP;
+				break;
+			case SPECIES_ROTOM_FROST:
+			    gMoveToLearn = MOVE_BLIZZARD;
+				break;
+			case SPECIES_ROTOM_FAN:
+			    gMoveToLearn = MOVE_AIR_SLASH;
+				break;
+			case SPECIES_ROTOM_MOW:
+			    gMoveToLearn = MOVE_LEAF_STORM;
+				break;
 			case SPECIES_KYUREM:
 			    gMoveToLearn = MOVE_GLACIATE;
 				replaceMove = MOVE_FUSION_BOLT;
@@ -6562,9 +6854,7 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 
 static void DoItemUseFormChange(struct Pokemon *mon)
 {
-	u16 species = GetMonData(mon, MON_DATA_SPECIES);
-	
-	UpdateCurrentPartyMonIconSpecies(species);
+	UpdateCurrentPartyMonIconSpecies(GetMonData(mon, MON_DATA_SPECIES));
 	GetMonNickname(mon, gStringVar1);
 	StringExpandPlaceholders(gStringVar4, gText_FormChangeItem);
 	DisplayPartyMenuMessage(gStringVar4, TRUE);
@@ -6574,30 +6864,118 @@ static void DoItemUseFormChange(struct Pokemon *mon)
 void ItemUseCB_FormChange(u8 taskId, TaskFunc func)
 {
 	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    u16 newSpecies, species = GetMonData(mon, MON_DATA_SPECIES);
+    u16 species = GetMonData(mon, MON_DATA_SPECIES), newSpecies = GetMonFormChangeSpecies(mon, FORM_CHANGE_USE_ITEM);
 	
 	PlaySE(SE_SELECT);
 	
-	if (!GetMonData(mon, MON_DATA_IS_EGG))
+	if (newSpecies != species)
 	{
-		newSpecies = GetMonFormChangeSpecies(mon, FORM_CHANGE_USE_ITEM);
-		
-		if (newSpecies != species)
+		switch (gSpecialVar_ItemId)
 		{
-			if (!ItemId_GetSecondaryId(gSpecialVar_ItemId) || !GetDNSTimeLapseIsNight())
-			{
-				SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
-				CalculateMonStats(mon);
-				DoItemUseFormChange(mon);
-				gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
-				return;
-			}
+			case ITEM_GRACIDEA:
+			    if (GetDNSTimeLapseIsNight() || GetMonData(mon, MON_DATA_STATUS) & STATUS1_FREEZE)
+					goto NO_EFFECT;
+				break;
 		}
+		SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
+		CalculateMonStats(mon);
+		DoItemUseFormChange(mon);
+		
+		if (ItemId_GetPocket(gSpecialVar_ItemId) != POCKET_KEY_ITEMS) // comsume items that are not key items, like nectars
+			RemoveBagItem(gSpecialVar_ItemId, 1);
+		
+		gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
+		return;
 	}
+	NO_EFFECT:
 	gPartyMenuUseExitCallback = FALSE;
 	DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
 	ScheduleBgCopyTilemapToVram(2);
 	gTasks[taskId].func = func;
+}
+
+static void Task_FormChangeListMenu_HandleInput(u8 taskId)
+{
+	s32 input = ListMenu_ProcessInput(gTasks[taskId].data[14]);
+	
+    switch (input)
+    {
+    case -1:
+        break;
+    case -2:
+	    input = 0x7F;
+		// fallthrough
+	default:
+	    gSpecialVar_Result = input;
+	    PlaySE(SE_SELECT);
+		Task_DestroyListMenu(taskId, FALSE);
+        break;
+    }
+}
+
+static void Task_FormChangeListMenu(u8 taskId)
+{
+	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+	u16 newSpecies;
+	u8 listId = ItemId_GetHoldEffectParam(gSpecialVar_ItemId);
+	
+	switch (gTasks[taskId].data[0])
+	{
+		case 0:
+		    PlaySE(SE_SELECT);
+			
+			if (GetMonFormChangeSpecies(mon, FORM_CHANGE_USE_ITEM))
+			{
+				gPartyMenuUseExitCallback = TRUE;
+				GetMonNickname(mon, gStringVar1);
+				StringExpandPlaceholders(gStringVar4, gText_ChooseForm);
+				DisplayPartyMenuMessage(gStringVar4, TRUE);
+				ScheduleBgCopyTilemapToVram(2);
+				++gTasks[taskId].data[0];
+				return;
+			}
+			break;
+		case 1:
+		    if (!IsPartyMenuTextPrinterActive())
+			{
+				gTasks[InitFormChangeListMenu(listId)].func = Task_FormChangeListMenu_HandleInput;
+				++gTasks[taskId].data[0];
+			}
+			return;
+		case 2:
+		    if (FuncIsActiveTask(Task_FormChangeListMenu_HandleInput))
+				return;
+			
+			switch (gSpecialVar_Result)
+			{
+				case 0x7F:
+				    Task_ReturnToChooseMonAfterText(taskId);
+				    return;
+				default:
+				    newSpecies = GetFormChangeListMenuSpecies(listId);
+					
+					if (GetMonData(mon, MON_DATA_SPECIES) != newSpecies)
+					{
+						SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
+						CalculateMonStats(mon);
+						DoItemUseFormChange(mon);
+						gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
+						return;
+					}
+					break;
+			}
+			break;
+	}
+	gPartyMenuUseExitCallback = FALSE;
+	DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+	ScheduleBgCopyTilemapToVram(2);
+	gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
+}
+
+void ItemUseCB_FormChangeListMenu(u8 taskId, TaskFunc func)
+{
+	gTasks[taskId].data[0] = 0;
+	gTasks[taskId].func = Task_FormChangeListMenu;
 }
 
 static struct Pokemon* GetBaseMonForFusedSpecies(u16 fusionSpecies)
@@ -6680,7 +7058,6 @@ static void Task_FusionItemStep(u8 taskId)
 						DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].monSpriteId]);
 						DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].statusSpriteId]);
 						CompactPartySlots();
-						gPartyMenuUseExitCallback = FALSE;
 						gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
 						return;
 					}
@@ -6702,12 +7079,11 @@ static void Task_FusionItemStep(u8 taskId)
 void ItemUseCB_Fusion(u8 taskId, TaskFunc func)
 {
 	struct Pokemon *baseMon, *mon = &gPlayerParty[gPartyMenu.slotId];
-	u16 newSpecies, species = GetMonData(mon, MON_DATA_SPECIES);
+	u16 species = GetMonData(mon, MON_DATA_SPECIES), newSpecies = GetMonFormChangeSpecies(mon, FORM_CHANGE_FUSION_MASTER);
 	
 	PlaySE(SE_SELECT);
-	newSpecies = GetMonFormChangeSpecies(mon, FORM_CHANGE_FUSION_MASTER);
 	
-	if (!GetMonData(mon, MON_DATA_IS_EGG) && newSpecies)
+	if (newSpecies)
 	{
 		if (species == newSpecies) // try fuse
 		{
@@ -6748,4 +7124,147 @@ void ItemUseCB_Fusion(u8 taskId, TaskFunc func)
 			}
 		}
 	}
+}
+
+static void Task_AbilityChange(u8 taskId)
+{
+	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+	u8 abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM), newAbilityNum = abilityNum ^ 1;
+	u16 species;
+	bool8 failed, toHidden = ItemId_GetHoldEffectParam(gSpecialVar_ItemId), isHidden = GetMonData(mon, MON_DATA_ABILITY_HIDDEN);
+	
+	switch (gTasks[taskId].data[0])
+	{
+		case 0:
+		    PlaySE(SE_SELECT);
+			failed = FALSE;
+			species = GetMonData(mon, MON_DATA_SPECIES);
+			
+			if (!toHidden && (gBaseStats[species].abilities[0] == gBaseStats[species].abilities[1] || gBaseStats[species].abilities[1] == ABILITY_NONE))
+				failed = TRUE; // Ability Capsule fail check
+			else if (toHidden && gBaseStats[species].hiddenAbility == ABILITY_NONE)
+				failed = TRUE; // Ability Patch fail check
+			
+			if (failed)
+			{
+				gPartyMenuUseExitCallback = FALSE;
+				DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+				gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
+			}
+			else
+			{
+				gPartyMenuUseExitCallback = TRUE;
+				GetMonNickname(mon, gStringVar1);
+				StringCopy(gStringVar2, gAbilityNames[GetAbilityBySpecies(species, toHidden ? (isHidden ? 0 : abilityNum) : newAbilityNum, toHidden ? isHidden ^ TRUE : FALSE)]);
+				StringExpandPlaceholders(gStringVar4, gText_ChangeAbility);
+				DisplayPartyMenuMessage(gStringVar4, TRUE);
+				++gTasks[taskId].data[0];
+			}
+			ScheduleBgCopyTilemapToVram(2);
+			break;
+		case 1:
+		    if (!IsPartyMenuTextPrinterActive())
+			{
+				PartyMenuDisplayYesNoMenu();
+				++gTasks[taskId].data[0];
+			}
+			break;
+		case 2:
+		    switch (Menu_ProcessInputNoWrapClearOnChoose())
+			{
+				case 0:
+				    PlaySE(SE_USE_ITEM);
+					StringExpandPlaceholders(gStringVar4, gText_AbilityChanged);
+					DisplayPartyMenuMessage(gStringVar4, TRUE);
+					ScheduleBgCopyTilemapToVram(2);
+					ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, mon, gSpecialVar_ItemId, 0xFFFF);
+					RemoveBagItem(gSpecialVar_ItemId, 1);
+					gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+				    if (toHidden) // Toggle betwen ability hidden and first slot
+					{
+						isHidden ^= TRUE;
+						SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &isHidden);
+						newAbilityNum = 0; // If changed from hidden, set ability num to 0 by default
+						
+						if (isHidden)
+							return;
+					}
+					SetMonData(mon, MON_DATA_ABILITY_NUM, &newAbilityNum);
+					break;
+				case 1:
+				case MENU_B_PRESSED:
+				    Task_ReturnToChooseMonAfterText(taskId);
+					break;
+			}
+			break;
+	}
+}
+
+void ItemUseCB_ChangeAbility(u8 taskId, TaskFunc func)
+{
+	gTasks[taskId].data[0] = 0;
+	gTasks[taskId].func = Task_AbilityChange;
+}
+
+static void Task_NatureMint(u8 taskId)
+{
+	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+	u8 newNature = ItemId_GetHoldEffectParam(gSpecialVar_ItemId);
+	
+	switch (gTasks[taskId].data[0])
+	{
+		case 0:
+		    PlaySE(SE_SELECT);
+		
+		    if (GetMonData(mon, MON_DATA_NATURE) == newNature)
+			{
+				gPartyMenuUseExitCallback = FALSE;
+				DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+				gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
+			}
+			else
+			{
+				gPartyMenuUseExitCallback = TRUE;
+				GetMonNickname(mon, gStringVar1);
+				StringCopy(gStringVar2, gNatureNamePointers[newNature]);
+				StringExpandPlaceholders(gStringVar4, gText_ChangeNature);
+				DisplayPartyMenuMessage(gStringVar4, TRUE);
+				++gTasks[taskId].data[0];
+			}
+			ScheduleBgCopyTilemapToVram(2);
+			break;
+		case 1:
+		    if (!IsPartyMenuTextPrinterActive())
+			{
+				PartyMenuDisplayYesNoMenu();
+				++gTasks[taskId].data[0];
+			}
+			break;
+		case 2:
+		    switch (Menu_ProcessInputNoWrapClearOnChoose())
+			{
+				case 0:
+				    PlaySE(SE_USE_ITEM);
+					StringExpandPlaceholders(gStringVar4, gText_NatureChanged);
+					DisplayPartyMenuMessage(gStringVar4, TRUE);
+					ScheduleBgCopyTilemapToVram(2);
+				    ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, mon, gSpecialVar_ItemId, 0xFFFF);
+					RemoveBagItem(gSpecialVar_ItemId, 1);
+					SetMonData(mon, MON_DATA_NATURE, &newNature);
+					CalculateMonStats(mon);
+					gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+					break;
+				case 1:
+				case MENU_B_PRESSED:
+				    Task_ReturnToChooseMonAfterText(taskId);
+					break;
+			}
+			break;
+	}
+}
+
+void ItemUseCB_Mint(u8 taskId, TaskFunc func)
+{
+	gTasks[taskId].data[0] = 0;
+	gTasks[taskId].func = Task_NatureMint;
 }

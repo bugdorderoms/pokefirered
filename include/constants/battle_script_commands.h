@@ -150,7 +150,7 @@
 #define VARIOUS_UPDATE_NICK                         17
 #define VARIOUS_SET_SPRITEIGNORE0HP                 18
 #define VARIOUS_TRY_REMOVE_ILLUSION                 19
-#define VARIOUS_PLAY_TRANSFORM_ANIMATION            20
+#define VARIOUS_PLAY_MOVE_ANIMATION                 20
 #define VARIOUS_JUMP_IF_BATTLE_END                  21
 #define VARIOUS_TRY_REMOVE_PRIMAL_WEATHER           22
 #define VARIOUS_JUMP_IF_NOT_ALIVE                   23
@@ -169,6 +169,7 @@
 #define VARIOUS_TRY_ACTIVATE_RECEIVER               36
 #define VARIOUS_TRY_ACTIVATE_BEAST_BOOST            37
 #define VARIOUS_TRY_NEUTRALIZING_GAS_SUPPRESSION    38
+#define VARIOUS_JUMP_IF_BATTLER_REVIVED             39
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN                               0

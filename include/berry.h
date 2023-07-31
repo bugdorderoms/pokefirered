@@ -23,8 +23,6 @@ enum
     FLAVOR_COUNT
 };
 
-#define NUM_BERRIES 44
-
 void ClearEnigmaBerries(void);
 void SetEnigmaBerry(u8 *src);
 bool32 IsEnigmaBerryValid(void);

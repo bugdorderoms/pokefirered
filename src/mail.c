@@ -6,6 +6,7 @@
 #include "easy_chat.h"
 #include "mail.h"
 #include "task.h"
+#include "item.h"
 #include "menu.h"
 #include "mail_data.h"
 #include "player_pc.h"
@@ -438,15 +439,14 @@ static const struct MailAttrStruct sMessageLayouts_5x2[] = {
 
 void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool8 messageExists)
 {
-    u16 species;
     sMailViewResources = AllocZeroed(sizeof(struct MailViewResources));
     sMailViewResources->unused = 2;
     sMailViewResources->mailArrangementType = 1;
     sMailViewResources->copyEasyChatWord = CopyEasyChatWord;
     sMailViewResources->convertEasyChatWordsToString = ConvertEasyChatWordsToString;
-    if (IS_ITEM_MAIL(mail->itemId))
+    if (ItemIsMail(mail->itemId))
     {
-        sMailViewResources->mailType = ITEM_TO_MAIL(mail->itemId);
+        sMailViewResources->mailType = ItemId_GetHoldEffectParam(mail->itemId);
     }
     else
     {
@@ -463,7 +463,7 @@ void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool8 messageExis
         sMailViewResources->messageLayout = &sMessageLayouts_5x2[sMailViewResources->mailType];
         break;
     }
-    if (species != SPECIES_NONE && species < NUM_SPECIES)
+    if (mail->species != SPECIES_NONE && mail->species < NUM_SPECIES)
     {
         switch (sMailViewResources->mailType)
         {

@@ -35,11 +35,10 @@ static EWRAM_DATA bool8 sWildEncountersDisabled = FALSE;
 static EWRAM_DATA u16 sLastFishingSpecies = 0;
 EWRAM_DATA u8 gChainFishingStreak = 0;
 EWRAM_DATA bool8 gIsFishingEncounter = FALSE;
+EWRAM_DATA bool8 gIsSurfingEncounter = FALSE;
 
 static bool8 UnlockedTanobyOrAreNotInTanoby(void);
 static bool8 IsWildLevelAllowedByRepel(u8 level);
-static void ApplyFluteEncounterRateMod(u32 *rate);
-static u8 GetFluteEncounterRateModType(void);
 static void ApplyCleanseTagEncounterRateMod(u32 *rate);
 static bool8 IsLeadMonHoldingCleanseTag(void);
 static u16 WildEncounterRandom(void);
@@ -146,10 +145,8 @@ static u8 ChooseWildMonIndex_Fishing(u8 rod)
 
 static u8 ChooseWildMonLevel(const struct WildPokemon * info)
 {
-    u8 lo;
-    u8 hi;
-    u8 mod;
-    u8 res;
+    u8 lo, hi, res;
+	
     if (info->maxLevel >= info->minLevel)
     {
         lo = info->minLevel;
@@ -160,9 +157,14 @@ static u8 ChooseWildMonLevel(const struct WildPokemon * info)
         lo = info->maxLevel;
         hi = info->minLevel;
     }
-    mod = hi - lo + 1;
-    res = Random() % mod;
-    return lo + res;
+    res = lo + (Random() % (hi - lo + 1));
+	
+	if (FlagGet(FLAG_SYS_BLACK_FLUTE_ACTIVE))
+		res += ((Random() & 3) + 1);
+	else if (FlagGet(FLAG_SYS_WHITE_FLUTE_ACTIVE))
+		res -= ((Random() & 3) + 1);
+	
+    return min(MAX_LEVEL, res);
 }
 
 u16 GetCurrentMapWildMonHeaderId(void)
@@ -280,7 +282,6 @@ static bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility)
     if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
         encounterRate = encounterRate * 80 / 100;
     encounterRate += sWildEncounterData.encounterRateBuff * 16 / 200;
-    ApplyFluteEncounterRateMod(&encounterRate);
     ApplyCleanseTagEncounterRateMod(&encounterRate);
     if (!ignoreAbility)
     {
@@ -412,6 +413,8 @@ bool8 StandardWildEncounter(u32 currMetatileAttrs, u16 previousMetatileBehavior)
             {
                 if (TryGenerateWildMon(monInfo, WILD_AREA_WATER, WILD_CHECK_REPEL) == TRUE)
                 {
+					gIsSurfingEncounter = TRUE;
+					
 					if (TryDoDoubleWildBattle())
 					{
 						struct Pokemon mon1;
@@ -636,29 +639,6 @@ static bool8 IsWildLevelAllowedByRepel(u8 wildLevel)
     return FALSE;
 }
 
-static void ApplyFluteEncounterRateMod(u32 *encounterRate)
-{
-    switch (GetFluteEncounterRateModType())
-    {
-    case 1:
-        *encounterRate += *encounterRate / 2;
-        break;
-    case 2:
-        *encounterRate = *encounterRate / 2;
-        break;
-    }
-}
-
-static u8 GetFluteEncounterRateModType(void)
-{
-    if (FlagGet(FLAG_SYS_WHITE_FLUTE_ACTIVE) == TRUE)
-        return 1;
-    else if (FlagGet(FLAG_SYS_BLACK_FLUTE_ACTIVE) == TRUE)
-        return 2;
-    else
-        return 0;
-}
-
 static void ApplyCleanseTagEncounterRateMod(u32 *encounterRate)
 {
     if (IsLeadMonHoldingCleanseTag())
@@ -727,17 +707,6 @@ static bool8 HandleWildEncounterCooldown(u32 currMetatileAttrs)
         return FALSE;
     minSteps *= 256;
     encRate = 5 * 256;
-    switch (GetFluteEncounterRateModType())
-    {
-    case 1:
-        minSteps -= minSteps / 2;
-        encRate += encRate / 2;
-        break;
-    case 2:
-        minSteps *= 2;
-        encRate /= 2;
-        break;
-    }
     sWildEncounterData.leadMonHeldItem = GetMonData(&gPlayerParty[0], MON_DATA_HELD_ITEM);
     if (IsLeadMonHoldingCleanseTag() == TRUE)
     {

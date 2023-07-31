@@ -2,19 +2,30 @@
 #define GUARD_SCRIPT_MENU_H
 
 #include "global.h"
+#include "menu.h"
 
 extern const u8 *const gStdStringPtrs[];
 
-bool8 ScriptMenu_Multichoice(u8 left, u8 top, u8 var3, u8 var4);
-bool8 ScriptMenu_MultichoiceWithDefault(u8 left, u8 top, u8 var3, u8 var4, u8 var5);
-bool8 ScriptMenu_YesNo(u8 var1, u8 var2);
-bool8 ScriptMenu_MultichoiceGrid(u8 left, u8 top, u8 multichoiceId, u8 a4, u8 columnCount);
-bool8 ScriptMenu_ShowPokemonPic(u16 var1, u8 var2, u8 var3);
+#define MULTICHOICE_DEFAULT_BASE_BLOCK 0x038
+
+// Multichoice
+u8 InitMultichoice(const struct MenuAction * items, u8 count, u8 bg, u8 x, u8 y, bool8 ignoreBPress, u8 defaultOpt, u8 perRowItems, u16 baseBlock, u8 palNum);
+bool8 ScriptMenu_Multichoice(u8 x, u8 y, u8 mcId, bool8 ignoreBPress, u8 defaultOpt, u8 perRowItems);
 bool8 CreatePCMenu(void);
 void ScriptMenu_DisplayPCStartupPrompt(void);
 void DrawRepelMultichoiseMenu(void);
 void HandleRepelUseAnother(void);
 
+// List Menu
+u8 InitFormChangeListMenu(u8 listId);
+u16 GetFormChangeListMenuSpecies(u8 listId);
+void Task_DestroyListMenu(u8 taskId, bool8 enableScripts);
+
+// Yes No menu
+bool8 ScriptMenu_YesNo(u8 var1, u8 var2);
+
+// Pokemon pic
+bool8 ScriptMenu_ShowPokemonPic(u16 var1, u8 var2, u8 var3);
 bool8 (*ScriptMenu_GetPicboxWaitFunc(void))(void);
 void QLPlaybackCB_DestroyScriptMenuMonPicSprites(void);
 void PicboxCancel(void);

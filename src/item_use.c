@@ -6,6 +6,7 @@
 #include "berry_powder.h"
 #include "bike.h"
 #include "coins.h"
+#include "util.h"
 #include "event_data.h"
 #include "event_scripts.h"
 #include "ev_iv_display.h"
@@ -17,6 +18,7 @@
 #include "field_weather.h"
 #include "fieldmap.h"
 #include "item.h"
+#include "script_menu.h"
 #include "item_menu.h"
 #include "item_use.h"
 #include "itemfinder.h"
@@ -47,7 +49,6 @@ static EWRAM_DATA void (*sItemUseOnFieldCB)(u8 taskId) = NULL;
 
 static void FieldCB_FadeInFromBlack(void);
 static void Task_WaitFadeIn_CallItemUseOnFieldCB(u8 taskId);
-static void Task_ItemUse_CloseMessageBoxAndReturnToField(u8 taskId);
 static void sub_80A11C0(u8 taskId);
 static bool8 sub_80A1194(void);
 static void sub_80A1208(void);
@@ -72,71 +73,13 @@ static void sub_80A1CAC(void);
 static void sub_80A1CC0(u8 taskId);
 static void sub_80A1D58(void);
 static void sub_80A1D68(u8 taskId);
-static void Task_BattleUse_StatBooster_DelayAndPrint(u8 taskId);
-static void Task_BattleUse_StatBooster_WaitButton_ReturnToBattle(u8 taskId);
 static void FieldUseFunc_HoneyCB(u8 taskId);
-
-// No clue what this is
-static const u8 sUnref_83E27B4[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x13, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x40, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x20, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x04, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x10, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x20, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x43, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x20, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x21, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x40, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x40, 0x02, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x40, 0x21, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x30, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x01, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x40, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x23, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x10, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x1f, 0x00, 0xe0, 0x03, 0x00, 0x7c,
-    0xff, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
 
 static void (*const sExitCallbackByItemType[])(void) = {
     CB2_ShowPartyMenuForItemUse,
     CB2_ReturnToField,
     NULL,
-    NULL
+	CB2_ShowPartyMenuForItemUse
 };
 
 static void Task_FadeOuFromBackToField(u8 taskId)
@@ -146,7 +89,7 @@ static void Task_FadeOuFromBackToField(u8 taskId)
         itemType = gTasks[taskId].data[4] - 1;
     else
         itemType = ItemId_GetType(gSpecialVar_ItemId) - 1;
-    if (GetPocketByItemId(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
+    if (ItemId_GetPocket(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
     {
         BerryPouch_SetExitCallback(sExitCallbackByItemType[itemType]);
         BerryPouch_StartFadeToExitCallback(taskId);
@@ -154,7 +97,7 @@ static void Task_FadeOuFromBackToField(u8 taskId)
     else
     {
         ItemMenu_SetExitCallback(sExitCallbackByItemType[itemType]);
-        if (itemType == 1)
+        if (itemType == ITEM_TYPE_FIELD - 1)
             Bag_BeginCloseWin0Animation();
         ItemMenu_StartFadeToExitCallback(taskId);
     }
@@ -199,7 +142,7 @@ static void PrintNotTheTimeToUseThat(u8 taskId, bool8 inField)
     DisplayItemMessageInCurrentContext(taskId, inField, 4, gText_OakForbidsUseOfItemHere);
 }
 
-static void Task_ItemUse_CloseMessageBoxAndReturnToField(u8 taskId)
+void Task_ItemUse_CloseMessageBoxAndReturnToField(u8 taskId)
 {
     ClearDialogWindowAndFrame(0, 1);
     DestroyTask(taskId);
@@ -330,7 +273,7 @@ static bool8 ItemUseCheckFunc_Rod(void)
 
 static void ItemUseOnFieldCB_Rod(u8 taskId)
 {
-    StartFishing(ItemId_GetSecondaryId(gSpecialVar_ItemId));
+    StartFishing(ItemId_GetHoldEffectParam(gSpecialVar_ItemId));
     DestroyTask(taskId);
 }
 
@@ -367,16 +310,18 @@ void FieldUseFunc_PokeFlute(u8 taskId)
 {
     bool8 wokeSomeoneUp = FALSE;
     u8 i;
-
+	
+	RemoveBagItem(gSpecialVar_ItemId, 1);
+	
     for (i = 0; i < CalculatePlayerPartyCount(); i++)
     {
-        if (!ExecuteTableBasedItemEffect(&gPlayerParty[i], ITEM_AWAKENING, i, MOVE_NONE))
+        if (!HealStatusConditions(&gPlayerParty[i], STATUS1_SLEEP, MAX_BATTLERS_COUNT))
             wokeSomeoneUp = TRUE;
     }
-
     if (wokeSomeoneUp)
     {
-        ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, NULL, gSpecialVar_ItemId, 0xFFFF);
+		ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, &gPlayerParty[0], gSpecialVar_ItemId, 0xFFFF);
+		
         if (gTasks[taskId].data[3] == 0)
             DisplayItemMessageInBag(taskId, 2, gUnknown_8416690, sub_80A1648);
         else
@@ -409,39 +354,34 @@ static void sub_80A1674(u8 taskId)
     }
 }
 
-static void sub_80A16D0(u8 taskId)
-{
-    Task_FadeOuFromBackToField(taskId);
-}
-
 void FieldUseFunc_Medicine(u8 taskId)
 {
     gItemUseCB = ItemUseCB_Medicine;
-    sub_80A16D0(taskId);
+    Task_FadeOuFromBackToField(taskId);
 }
 
 void FieldUseFunc_Ether(u8 taskId)
 {
-    gItemUseCB = ItemUseCB_PPRecovery;
-    sub_80A16D0(taskId);
+    gItemUseCB = ItemUseCB_PPRecoveryOneMove;
+    Task_FadeOuFromBackToField(taskId);
+}
+
+void FieldUseFunc_Elixir(u8 taskId)
+{
+	gItemUseCB = ItemUseCB_PPRecoveryAllMoves;
+	Task_FadeOuFromBackToField(taskId);
 }
 
 void FieldUseFunc_PpUp(u8 taskId)
 {
     gItemUseCB = ItemUseCB_PPUp;
-    sub_80A16D0(taskId);
-}
-
-void FieldUseFunc_RareCandy(u8 taskId)
-{
-    gItemUseCB = ItemUseCB_RareCandy;
-    sub_80A16D0(taskId);
+    Task_FadeOuFromBackToField(taskId);
 }
 
 void FieldUseFunc_EvoItem(u8 taskId)
 {
     gItemUseCB = ItemUseCB_EvolutionStone;
-    sub_80A16D0(taskId);
+    Task_FadeOuFromBackToField(taskId);
 }
 
 void FieldUseFunc_SacredAsh(u8 taskId)
@@ -590,24 +530,23 @@ static void sub_80A1A44(void)
 void FieldUseFunc_BlackFlute(u8 taskId)
 {
     ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, NULL, gSpecialVar_ItemId, 0xFFFF);
-    if (gSpecialVar_ItemId == ITEM_WHITE_FLUTE)
-    {
-        FlagSet(FLAG_SYS_WHITE_FLUTE_ACTIVE);
-        FlagClear(FLAG_SYS_BLACK_FLUTE_ACTIVE);
-        CopyItemName(gSpecialVar_ItemId, gStringVar2);
-        StringExpandPlaceholders(gStringVar4, gUnknown_84165D2);
-        gTasks[taskId].func = sub_80A1B48;
-        gTasks[taskId].data[8] = 0;
-    }
-    else if (gSpecialVar_ItemId == ITEM_BLACK_FLUTE)
-    {
-        FlagSet(FLAG_SYS_BLACK_FLUTE_ACTIVE);
-        FlagClear(FLAG_SYS_WHITE_FLUTE_ACTIVE);
-        CopyItemName(gSpecialVar_ItemId, gStringVar2);
-        StringExpandPlaceholders(gStringVar4, gUnknown_8416600);
-        gTasks[taskId].func = sub_80A1B48;
-        gTasks[taskId].data[8] = 0;
-    }
+    
+	switch (gSpecialVar_ItemId)
+	{
+		case ITEM_WHITE_FLUTE:
+		    FlagSet(FLAG_SYS_WHITE_FLUTE_ACTIVE);
+			FlagClear(FLAG_SYS_BLACK_FLUTE_ACTIVE);
+			StringExpandPlaceholders(gStringVar4, gUnknown_84165D2);
+			break;
+		case ITEM_BLACK_FLUTE:
+		    FlagSet(FLAG_SYS_BLACK_FLUTE_ACTIVE);
+			FlagClear(FLAG_SYS_WHITE_FLUTE_ACTIVE);
+			StringExpandPlaceholders(gStringVar4, gUnknown_8416600);
+			break;
+	}
+	CopyItemName(gSpecialVar_ItemId, gStringVar2);
+	gTasks[taskId].func = sub_80A1B48;
+	gTasks[taskId].data[8] = 0;
 }
 
 static void sub_80A1B48(u8 taskId)
@@ -774,10 +713,7 @@ void FieldUseFunc_ExpShare(u8 taskId)
 		txt = gText_ExpShareOff;
 		PlaySE(SE_PC_OFF);
 	}
-	if (gTasks[taskId].data[3])
-		DisplayItemMessageOnField(taskId, 2, txt, Task_ItemUse_CloseMessageBoxAndReturnToField);
-	else
-		DisplayItemMessageInBag(taskId, 2, txt, Task_ReturnToBagFromContextMenu);
+	DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, txt);
 }
 
 static void OpenEvIvDisplayFromBag(void)
@@ -838,7 +774,20 @@ void FieldUseFunc_FormChangeItem(u8 taskId)
 	gItemUseCB = ItemUseCB_FormChange;
 	
 	if (gTasks[taskId].data[3] == 0)
-		sub_80A16D0(taskId);
+		Task_FadeOuFromBackToField(taskId);
+	else
+	{
+		FadeScreen(FADE_TO_BLACK, 0);
+		gTasks[taskId].func = FormChangeItem_ShowPartyMenuFromField;
+	}
+}
+
+void FieldUseFunc_FormChangeItemListMenu(u8 taskId)
+{
+	gItemUseCB = ItemUseCB_FormChangeListMenu;
+	
+	if (gTasks[taskId].data[3] == 0)
+		Task_FadeOuFromBackToField(taskId);
 	else
 	{
 		FadeScreen(FADE_TO_BLACK, 0);
@@ -851,7 +800,7 @@ void FieldUseFunc_FusionItem(u8 taskId)
 	gItemUseCB = ItemUseCB_Fusion;
 	
 	if (gTasks[taskId].data[3] == 0)
-		sub_80A16D0(taskId);
+		Task_FadeOuFromBackToField(taskId);
 	else
 	{
 		FadeScreen(FADE_TO_BLACK, 0);
@@ -859,96 +808,21 @@ void FieldUseFunc_FusionItem(u8 taskId)
 	}
 }
 
-void Task_ItemUse_CloseMessageBoxAndReturnToField_VsSeeker(u8 taskId)
+void FieldUseFunc_ChangeAbility(u8 taskId)
 {
-    Task_ItemUse_CloseMessageBoxAndReturnToField(taskId);
+	gItemUseCB = ItemUseCB_ChangeAbility;
+    Task_FadeOuFromBackToField(taskId);
 }
 
-#define BALL_THROW_SUCCESS                  0
-#define BALL_THROW_UNABLE_TWO_MONS          1
-#define BALL_THROW_UNABLE_NO_ROOM           2
-#define BALL_THROW_UNABLE_SEMI_INVULNERABLE 3
-
-static u8 GetBallThrowableState(void)
+void FieldUseFunc_Mint(u8 taskId)
 {
-	if (IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
-		return BALL_THROW_UNABLE_TWO_MONS;
-	else if (IsPlayerPartyAndPokemonStorageFull())
-		return BALL_THROW_UNABLE_NO_ROOM;
-	else if (gStatuses3[GetCatchingBattler()] & STATUS3_SEMI_INVULNERABLE)
-		return BALL_THROW_UNABLE_SEMI_INVULNERABLE;
-	else
-		return BALL_THROW_SUCCESS;
-}
-
-void BattleUseFunc_PokeBallEtc(u8 taskId)
-{
-	const u8 *str;
-	
-	switch (GetBallThrowableState())
-	{
-		case BALL_THROW_SUCCESS:
-		    RemoveBagItem(gSpecialVar_ItemId, 1);
-			Bag_BeginCloseWin0Animation();
-			ItemMenu_StartFadeToExitCallback(taskId);
-			return;
-		case BALL_THROW_UNABLE_TWO_MONS:
-		    str = gText_CantThrowPokeBall_TwoMons;
-			break;
-		case BALL_THROW_UNABLE_NO_ROOM:
-		    str = gUnknown_8416631;
-			break;
-		case BALL_THROW_UNABLE_SEMI_INVULNERABLE:
-		    str = gText_CantThrowPokeBall_SemiInvulnerable;
-			break;
-	}
-	DisplayItemMessageInBag(taskId, 2, str, Task_ReturnToBagFromContextMenu);
-}
-
-void BattleUseFunc_PokeFlute(u8 taskId)
-{
-    Bag_BeginCloseWin0Animation();
-    ItemMenu_StartFadeToExitCallback(taskId);
-}
-
-void BattleUseFunc_GuardSpec(u8 taskId)
-{
-    if (ExecuteTableBasedItemEffect(&gPlayerParty[gBattlerPartyIndexes[gBattlerInMenuId]], gSpecialVar_ItemId, gBattlerPartyIndexes[gBattlerInMenuId], 0))
-    {
-        DisplayItemMessageInBag(taskId, 2, gText_WontHaveEffect, Task_ReturnToBagFromContextMenu);
-    }
-    else
-    {
-        gTasks[taskId].data[8] = 0;
-        gTasks[taskId].func = Task_BattleUse_StatBooster_DelayAndPrint;
-    }
-}
-
-static void Task_BattleUse_StatBooster_DelayAndPrint(u8 taskId)
-{
-    s16 * data = gTasks[taskId].data;
-
-    if (++data[8] > 7)
-    {
-        u16 itemId = gSpecialVar_ItemId;
-        PlaySE(SE_USE_ITEM);
-        RemoveBagItem(itemId, 1);
-        DisplayItemMessageInBag(taskId, 2, Battle_PrintStatBoosterEffectMessage(itemId), Task_BattleUse_StatBooster_WaitButton_ReturnToBattle);
-    }
-}
-
-static void Task_BattleUse_StatBooster_WaitButton_ReturnToBattle(u8 taskId)
-{
-    if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
-    {
-        Bag_BeginCloseWin0Animation();
-        ItemMenu_StartFadeToExitCallback(taskId);
-    }
+	gItemUseCB = ItemUseCB_Mint;
+    Task_FadeOuFromBackToField(taskId);
 }
 
 static void ItemUse_SwitchToPartyMenuInBattle(u8 taskId)
 {
-    if (GetPocketByItemId(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
+    if (ItemId_GetPocket(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
     {
         BerryPouch_SetExitCallback(EnterPartyFromItemMenuInBattle);
         BerryPouch_StartFadeToExitCallback(taskId);
@@ -960,108 +834,34 @@ static void ItemUse_SwitchToPartyMenuInBattle(u8 taskId)
     }
 }
 
-void BattleUseFunc_Medicine(u8 taskId)
+void ItemUseInBattle_PartyMenu(u8 taskId)
 {
-    gItemUseCB = ItemUseCB_MedicineStep;
+    gItemUseCB = ItemUseCB_BattleScript;
     ItemUse_SwitchToPartyMenuInBattle(taskId);
 }
 
-static void sub_80A1FD8(u8 taskId)
+void ItemUseInBattle_PartyMenuChooseMove(u8 taskId)
 {
-    gItemUseCB = ItemUseCB_SacredAsh;
+    gItemUseCB = ItemUseCB_PPRecoveryOneMove;
     ItemUse_SwitchToPartyMenuInBattle(taskId);
 }
 
-void BattleUseFunc_Ether(u8 taskId)
+void ItemUseInBattle_BagMenu(u8 taskId)
 {
-    gItemUseCB = ItemUseCB_PPRecovery;
-    ItemUse_SwitchToPartyMenuInBattle(taskId);
-}
-
-void BattleUseFunc_PokeDoll(u8 taskId)
-{
-    if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
-    {
-        sub_80A1A44();
-        ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, 0, gSpecialVar_ItemId, 0xFFFF);
-        DisplayItemMessageInBag(taskId, 2, gStringVar4, ItemMenu_StartFadeToExitCallback);
-    }
-    else
-        PrintNotTheTimeToUseThat(taskId, 0);
-}
-
-void ItemUseOutOfBattle_EnigmaBerry(u8 taskId)
-{
-    switch (GetItemEffectType(gSpecialVar_ItemId) - 1)
-    {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 10:
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-    case 15:
-    case 16:
-        gTasks[taskId].data[4] = 1;
-        FieldUseFunc_Medicine(taskId);
-        break;
-    case 9:
-        gTasks[taskId].data[4] = 1;
-        FieldUseFunc_SacredAsh(taskId);
-        break;
-    case 0:
-        gTasks[taskId].data[4] = 1;
-        FieldUseFunc_RareCandy(taskId);
-        break;
-    case 18:
-    case 19:
-        gTasks[taskId].data[4] = 1;
-        FieldUseFunc_PpUp(taskId);
-        break;
-    case 20:
-        gTasks[taskId].data[4] = 1;
-        FieldUseFunc_Ether(taskId);
-        break;
-    default:
-        gTasks[taskId].data[4] = 4;
-        FieldUseFunc_OakStopsYou(taskId);
-    }
-}
-
-void ItemUseInBattle_EnigmaBerry(u8 taskId)
-{
-    switch (GetItemEffectType(gSpecialVar_ItemId))
-    {
-    case 0:
-        BattleUseFunc_GuardSpec(taskId);
-        break;
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-    case 11:
-        BattleUseFunc_Medicine(taskId);
-        break;
-    case 21:
-        BattleUseFunc_Ether(taskId);
-        break;
-    default:
-        FieldUseFunc_OakStopsYou(taskId);
-    }
+	PlaySE(SE_SELECT);
+	
+	if (!CanUseItemInBattle(PARTY_SIZE, gSpecialVar_ItemId))
+		DisplayItemMessageInBag(taskId, 2, gStringVar4, Task_ReturnToBagFromContextMenu);
+	else
+	{
+		SetBattlerUsedItemForBattleScript(gSpecialVar_ItemId);
+		gTasks[taskId].func = ItemMenu_StartFadeToExitCallback;
+	}
 }
 
 void FieldUseFunc_OakStopsYou(u8 taskId)
 {
-    if (GetPocketByItemId(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
+    if (ItemId_GetPocket(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
     {
         StringExpandPlaceholders(gStringVar4, gText_OakForbidsUseOfItemHere);
         DisplayItemMessageInBerryPouch(taskId, 4, gStringVar4, Task_BerryPouch_DestroyDialogueWindowAndRefreshListMenu);
@@ -1088,4 +888,35 @@ void ItemUse_SetQuestLogEvent(u8 eventId, struct Pokemon * pokemon, u16 itemId, 
         questLog->species = 0xFFFF;
     SetQuestLogEvent(eventId, (void *)questLog);
     Free(questLog);
+}
+
+bool8 ExecuteTableBasedItemEffect(u8 partyMonIndex, u16 item, u8 monMoveIndex)
+{
+	if (gMain.inBattle)
+		gBattleStruct->usedReviveItemBattler &= ~(gBitTable[gBattlerInMenuId]);
+	
+	return PokemonUseItemEffects(&gPlayerParty[partyMonIndex], item, partyMonIndex, monMoveIndex, GetBattleMonForItemUse(partyMonIndex));
+}
+
+bool8 CanUseItemInBattle(u8 partyIdx, u16 itemId)
+{
+	bool8 canUse = FALSE;
+	const u8* failStr = NULL;
+	
+	if (!IsItemUseBlockedByBattleEffect())
+	{
+		if (partyIdx != PARTY_SIZE) // use it on a party mon
+		{
+			if (!ExecuteTableBasedItemEffect(partyIdx, itemId, 0))
+				canUse = TRUE;
+		}
+		else // use it in battle
+			failStr = PokemonUseItemEffectsBattle(gBattlerInMenuId, itemId, &canUse);
+	}
+	if (failStr != NULL)
+		StringExpandPlaceholders(gStringVar4, failStr);
+	else
+		StringExpandPlaceholders(gStringVar4, gText_WontHaveEffect);
+	
+	return canUse;
 }

@@ -416,6 +416,7 @@ B_BUFF3 = FD 34
 B_DEF_SIDE_NAME = FD 35
 B_ACTIVE_NAME_NO_ILLUSION = FD 36
 B_DEF_NAME = FD 37
+B_ITEM_USE_SPECIES_NAME = FD 38
 
 @ indicates the end of a town/city name (before " TOWN" or " CITY")
 NAME_END = FC 00

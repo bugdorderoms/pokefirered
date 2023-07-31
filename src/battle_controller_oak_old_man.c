@@ -258,13 +258,7 @@ static void HandleInputChooseAction(void)
          && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
         {
             if (gBattleBufferA[gActiveBattler][1] == B_ACTION_USE_ITEM)
-            {
-                // Add item to bag if it is a ball
-                if (itemId <= ITEM_PREMIER_BALL)
-                    AddBagItem(itemId, 1);
-                else
-                    return;
-            }
+				AddBagItem(itemId, 1);
             PlaySE(SE_SELECT);
             BtlController_EmitTwoReturnValues(1, B_ACTION_CANCEL_PARTNER, 0);
             OakOldManBufferExecCompleted();
@@ -1669,7 +1663,7 @@ static void OakOldManHandleSuccessBallThrowAnim(void)
 static void OakOldManHandleBallThrowAnim(void)
 {
     u8 ballThrowCaseId = gBattleBufferA[gActiveBattler][1];
-
+	
     gBattleSpritesDataPtr->animationData->ballThrowCaseId = ballThrowCaseId;
     gDoingBattleAnim = TRUE;
     InitAndLaunchSpecialAnimation(gActiveBattler, gActiveBattler, GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), B_ANIM_SAFARI_BALL_THROW);
@@ -1864,8 +1858,9 @@ static void OakOldManHandleChooseMove(void)
 static void OakOldManHandleChooseItem(void)
 {
     s32 i;
-
+	
     BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+	gBattleStruct->itemPartyIndex[gActiveBattler] = 0;
     gBattlerControllerFuncs[gActiveBattler] = OpenBagAndChooseItem;
     gBattlerInMenuId = gActiveBattler;
     for (i = 0; i < 3; ++i)

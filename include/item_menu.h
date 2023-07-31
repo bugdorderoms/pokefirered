@@ -40,5 +40,6 @@ void Pocket_CalculateNItemsAndMaxShowed(u8 pocketId);
 void PocketCalculateInitialCursorPosAndItemsAbove(u8 pocketId);
 void GoToBagMenu(u8 menuType, u8 pocket, MainCallback callback);
 bool8 UseRegisteredKeyItemOnField(void);
+void ItemUseInBattle(u8 taskId);
 
 #endif //GUARD_ITEM_MENU_H

@@ -483,6 +483,9 @@ static const u8 sText_PkmnAblWeakenedBuff1OfAllPkmn[] = _("{B_SCR_ACTIVE_NAME_WI
 static const u8 sText_AtkFoundOneLastItem[] = _("{B_ATK_NAME_WITH_PREFIX}'s found\none {B_LAST_ITEM}!");
 static const u8 sText_PkmnHasTwoAbilities[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} has two\nabilities!");
 static const u8 sText_PkmnAblWasTakenOver[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nwas taken over!");
+static const u8 sText_ItemRestoredAtkHealth[] = _("{B_ITEM_USE_SPECIES_NAME} had its\nHP restored!");
+static const u8 sText_ItemCuredAtkStatus[] = _("{B_ITEM_USE_SPECIES_NAME} had\nits status healed!");
+static const u8 sText_ItemRestoredAtkPP[] = _("{B_ITEM_USE_SPECIES_NAME} had its\nPP restored!");
 
 static const u8 sText_HP2[] = _("HP");
 static const u8 sText_Attack2[] = _("Attack");
@@ -518,7 +521,7 @@ const u8 *const gPokeblockWasTooXStringTable[] = {
     sText_PokeblockWasTooSour
 };
 
-static const u8 sText_PlayerUsedItem[] = _("{B_PLAYER_NAME} used\n{B_LAST_ITEM}!");
+static const u8 sText_PlayerUsedItem[] = _("You used\n{B_LAST_ITEM}!");
 static const u8 sText_OldManUsedItem[] = _("The old man used\n{B_LAST_ITEM}!");
 static const u8 sText_PokedudeUsedItem[] = _("The Poké Dude used\n{B_LAST_ITEM}!");
 static const u8 sText_Trainer1UsedItem[] = _("{B_TRAINER1_CLASS} {B_TRAINER1_NAME}\nused {B_LAST_ITEM}!");
@@ -1016,6 +1019,9 @@ const u8 *const gBattleStringsTable[] = {
 	[STRINGID_ATKFOUNDLASTITEM - 12]              = sText_AtkFoundOneLastItem,
 	[STRINGID_PKMNHASTWOABILITIES - 12]           = sText_PkmnHasTwoAbilities,
 	[STRINGID_PKMNABLWASTAKENOVER - 12]           = sText_PkmnAblWasTakenOver,
+	[STRINGID_ITEMRESTOREDSPECIESHEALTH - 12]     = sText_ItemRestoredAtkHealth,
+	[STRINGID_ITEMCUREDSPECIESSTATUS - 12]        = sText_ItemCuredAtkStatus,
+	[STRINGID_ITEMRESTOREDSPECIESPP - 12]         = sText_ItemRestoredAtkPP,
 };
 
 const u16 gMissStringIds[] = {
@@ -1277,15 +1283,6 @@ const u16 gSafariPokeblockResultStringIds[] = {
     STRINGID_PKMNWATCHINGCAREFULLY,
     STRINGID_PKMNANGRY,
     STRINGID_PKMNEATING
-};
-
-const u16 gTrainerItemCuredStatusStringIds[] = {
-    STRINGID_PKMNSITEMSNAPPEDOUT,
-    STRINGID_PKMNSITEMCUREDPARALYSIS,
-    STRINGID_PKMNSITEMDEFROSTEDIT,
-    STRINGID_PKMNSITEMHEALEDBURN,
-    STRINGID_PKMNSITEMCUREDPOISON,
-    STRINGID_PKMNSITEMWOKEIT
 };
 
 const u16 gBerryEffectStringIds[] = {
@@ -1742,6 +1739,12 @@ void BufferStringBattle(u16 stringId)
 	case STRINGID_TRAINERSLIDE:
 	    stringPtr = gBattleStruct->trainerSlideMsg;
 		break;
+	case STRINGID_TRAINERUSEDITEM:
+	    if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
+			stringPtr = sText_PokedudeUsedItem;
+		else
+			stringPtr = GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER ? sText_PlayerUsedItem : sText_Trainer1UsedItem;
+		break;
     default: // load a string from the table
         if (stringId >= BATTLESTRINGS_COUNT)
         {
@@ -2164,6 +2167,21 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
 			    GetBattlerNick(gBattlerTarget, text);
                 toCpy = text;
                 break;
+			case B_TXT_ITEM_USE_SPECIES_NAME:
+			   {
+				   u8 battler = GetItemUseBattler(gBattlerAttacker);
+				   
+				   // Used in a battler, handle Illusion mon name
+				   if (battler != MAX_BATTLERS_COUNT)
+					   GetBattlerNick(battler, text);
+				   else
+				   {
+					   GetMonData(&GetBattlerParty(gBattlerAttacker)[gBattleStruct->itemPartyIndex[gBattlerAttacker]], MON_DATA_NICKNAME, text);
+					   StringGet_Nickname(text);
+				   }
+				   toCpy = text;
+				   break;
+			   }
             }
 
             // missing if (toCpy != NULL) check

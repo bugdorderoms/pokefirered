@@ -22,8 +22,6 @@ void ResetPokeJumpResults(void)
     pokeJump->bestJumpScore = 0;
     pokeJump->excellentsInRow = 0;
     pokeJump->gamesWithMaxPlayers = 0;
-    pokeJump->unused2 = 0;
-    pokeJump->unused1 = 0;
 }
 
 bool32 sub_814B494(u32 jumpScore, u16 jumpsInRow, u16 excellentsInRow)

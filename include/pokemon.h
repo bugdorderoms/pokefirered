@@ -14,6 +14,7 @@ struct PokemonSubstruct0
     u8 ppBonuses;
     u8 friendship;
     u8 nature;
+	u8 pokeball;
 };
 
 struct PokemonSubstruct1
@@ -45,7 +46,7 @@ struct PokemonSubstruct3
 
  /* 0x02 */ u16 metLevel:7;
  /* 0x02 */ u16 metGame:4;
- /* 0x03 */ u16 pokeball:4;
+ /* 0x03 */ u16 dynamaxLevel:4;
  /* 0x03 */ u16 otGender:1;
 
  /* 0x04 */ u32 hpIV:5;
@@ -76,7 +77,8 @@ struct PokemonSubstruct3
  /* 0x0B */ u32 worldRibbon:1; // distributed during Pokémon Festa '04 and '05 to tournament winners
  /* 0x0B */ u32 abilityHidden:1;
  /* 0x0B */ u32 eventLegal:1; // controls Mew & Deoxys obedience; if set, Pokémon is a fateful encounter in FRLG & Gen 4+ summary screens; set for in-game event island legendaries, some distributed events, and Pokémon from XD: Gale of Darkness.
- /* 0x0B */ u32 filler:3;
+ /* 0x0B */ u32 gMaxFactor:1;
+ /* 0x0B */ u32 filler:2;
 };
 
 union PokemonSubstruct
@@ -123,6 +125,7 @@ struct Pokemon
     u16 speed;
     u16 spAttack;
     u16 spDefense;
+	u8 teraType;
 };
 
 struct PokemonStorage
@@ -282,17 +285,17 @@ struct MoveFlags
 struct BattleMove
 {
     /*0x00*/ u16 effect;
-    /*0x02*/ u16 power;  //higher than 255 for z moves
-    /*0x04*/ u8 type;
-    /*0x05*/ u8 accuracy;
-    /*0x06*/ u8 pp;
-    /*0x07*/ u8 secondaryEffectChance;
-    /*0x08*/ u8 target;
-    /*0x09*/ s8 priority;
-    /*0x0A*/ u8 split;
-    /*0x0B*/ u8 argument;
+    /*0x02*/ u8 power;
+    /*0x03*/ u8 type;
+    /*0x04*/ u8 accuracy;
+    /*0x05*/ u8 pp;
+    /*0x06*/ u8 secondaryEffectChance;
+    /*0x07*/ u8 target;
+    /*0x08*/ s8 priority;
+    /*0x09*/ u8 split;
+    /*0x0A*/ u8 argument;
+	/*0x0B*/ u8 zMoveEffect;
     /*0x0C*/ struct MoveFlags flags;
-    /*0x14*/ u8 zMoveEffect;
 };
 
 extern const struct BattleMove gBattleMoves[];
@@ -337,39 +340,35 @@ enum
 #define EVO_FRIENDSHIP_DAY                0x0002 // Pokémon levels up during the day with friendship ≥ 220
 #define EVO_FRIENDSHIP_NIGHT              0x0003 // Pokémon levels up at night with friendship ≥ 220
 #define EVO_LEVEL                         0x0004 // Pokémon reaches the specified level
-#define EVO_TRADE                         0x0005 // Pokémon is traded
-#define EVO_TRADE_ITEM                    0x0006 // Pokémon is traded while it's holding the specified item
-#define EVO_ITEM                          0x0007 // specified item is used on Pokémon
-#define EVO_LEVEL_ATK_GT_DEF              0x0008 // Pokémon reaches the specified level with attack > defense
-#define EVO_LEVEL_ATK_EQ_DEF              0x0009 // Pokémon reaches the specified level with attack = defense
-#define EVO_LEVEL_ATK_LT_DEF              0x000a // Pokémon reaches the specified level with attack < defense
-#define EVO_LEVEL_SILCOON                 0x000b // Pokémon reaches the specified level with a Silcoon personality value
-#define EVO_LEVEL_CASCOON                 0x000c // Pokémon reaches the specified level with a Cascoon personality value
-#define EVO_LEVEL_NINJASK                 0x000d // Pokémon reaches the specified level (special value for Ninjask)
-#define EVO_LEVEL_SHEDINJA                0x000e // Pokémon reaches the specified level (special value for Shedinja)
-#define EVO_BEAUTY                        0x000f // Pokémon levels up with beauty ≥ specified value
-#define EVO_LEVEL_FEMALE                  0x0010 // Pokémon reaches the specified level, is female
-#define EVO_LEVEL_MALE                    0x0011 // Pokémon reaches the specified level, is male
-#define EVO_LEVEL_NIGHT                   0x0012 // Pokémon reaches the specified level, is night
-#define EVO_LEVEL_DAY                     0x0013 // Pokémon reaches the specified level, is day
-#define EVO_LEVEL_DUSK                    0x0014 // Pokémon reaches the specified level, is dusk (5-6 P.M)
-#define EVO_ITEM_HOLD_DAY                 0x0015 // Pokémon levels up, holds specified item at day
-#define EVO_ITEM_HOLD_NIGHT               0x0016 // Pokémon levels up, holds specified item at night
-#define EVO_MOVE                          0x0017 // Pokémon levels up, knows specified move
-#define EVO_MOVE_TYPE                     0x0018 // Pokémon levels up, knows move with specified type
-#define EVO_MAPSEC                        0x0019 // Pokémon levels up on specified mapsec
-#define EVO_ITEM_MALE                     0x001a // specified item is used on a male Pokémon
-#define EVO_ITEM_FEMALE                   0x001b // specified item is used on a female Pokémon
-#define EVO_LEVEL_RAIN_OR_FOG             0x001c // Pokémon reaches the specified level while it's raining or fog
-#define EVO_SPECIFIC_MON_IN_PARTY         0x001d // Pokémon levels up with a specified Pokémon in party
-#define EVO_LEVEL_DARK_TYPE_MON_IN_PARTY  0x001e // Pokémon reaches the specified level with a Dark Type Pokémon in party
-#define EVO_TRADE_SPECIFIC_MON            0x001f // Pokémon is traded for a specified Pokémon
-#define EVO_LEVEL_NATURE                  0x0020 // Pokémon reaches the specified level, nature forms are handled by form change
-#define EVO_CRITICAL_HITS                 0x0021 // Pokémon performs specified number of critical hits in one battle
-#define EVO_SCRIPT_TRIGGER_DMG            0x0022 // Pokémon has specified HP below max, then player interacts trigger
-#define EVO_DARK_SCROLL                   0x0023 // interacts with Scroll of Darkness
-#define EVO_WATER_SCROLL                  0x0024 // interacts with Scroll of Waters
-#define EVO_LEVEL_PERSONALITY             0x0025 // Pokémon reaches the specified level, personality forms are handled by form change
+#define EVO_ITEM                          0x0005 // specified item is used on Pokémon
+#define EVO_LEVEL_ATK_GT_DEF              0x0006 // Pokémon reaches the specified level with attack > defense
+#define EVO_LEVEL_ATK_EQ_DEF              0x0007 // Pokémon reaches the specified level with attack = defense
+#define EVO_LEVEL_ATK_LT_DEF              0x0008 // Pokémon reaches the specified level with attack < defense
+#define EVO_LEVEL_SILCOON                 0x0009 // Pokémon reaches the specified level with a Silcoon personality value
+#define EVO_LEVEL_CASCOON                 0x000A // Pokémon reaches the specified level with a Cascoon personality value
+#define EVO_LEVEL_NINJASK                 0x000B // Pokémon reaches the specified level (special value for Ninjask)
+#define EVO_LEVEL_SHEDINJA                0x000C // Pokémon reaches the specified level (special value for Shedinja)
+#define EVO_BEAUTY                        0x000D // Pokémon levels up with beauty ≥ specified value
+#define EVO_LEVEL_FEMALE                  0x000E // Pokémon reaches the specified level, is female
+#define EVO_LEVEL_MALE                    0x000F // Pokémon reaches the specified level, is male
+#define EVO_LEVEL_NIGHT                   0x0010 // Pokémon reaches the specified level, is night
+#define EVO_LEVEL_DAY                     0x0011 // Pokémon reaches the specified level, is day
+#define EVO_LEVEL_DUSK                    0x0012 // Pokémon reaches the specified level, is dusk (5-6 P.M)
+#define EVO_ITEM_HOLD_DAY                 0x0013 // Pokémon levels up, holds specified item at day
+#define EVO_ITEM_HOLD_NIGHT               0x0014 // Pokémon levels up, holds specified item at night
+#define EVO_MOVE                          0x0015 // Pokémon levels up, knows specified move
+#define EVO_MOVE_TYPE                     0x0016 // Pokémon levels up, knows move with specified type
+#define EVO_MAPSEC                        0x0017 // Pokémon levels up on specified mapsec
+#define EVO_ITEM_MALE                     0x0018 // specified item is used on a male Pokémon
+#define EVO_ITEM_FEMALE                   0x0019 // specified item is used on a female Pokémon
+#define EVO_LEVEL_RAIN_OR_FOG             0x001A // Pokémon reaches the specified level while it's raining or fog
+#define EVO_SPECIFIC_MON_IN_PARTY         0x001B // Pokémon levels up with a specified Pokémon in party
+#define EVO_LEVEL_DARK_TYPE_MON_IN_PARTY  0x001C // Pokémon reaches the specified level with a Dark Type Pokémon in party
+#define EVO_TRADE_SPECIFIC_MON            0x001D // Pokémon is traded for a specified Pokémon
+#define EVO_LEVEL_NATURE                  0x001E // Pokémon reaches the specified level, nature forms are handled by form change
+#define EVO_CRITICAL_HITS                 0x001F // Pokémon performs specified number of critical hits in one battle
+#define EVO_SCRIPT_TRIGGER_DMG            0x0020 // Pokémon has specified HP below max, then player interacts trigger
+#define EVO_LEVEL_PERSONALITY             0x0021 // Pokémon reaches the specified level, personality forms are handled by form change
 
 struct Evolution
 {
@@ -396,6 +395,10 @@ extern const u8 gFacilityClassToTrainerClass[];
 extern const struct SpriteTemplate gSpriteTemplates_Battlers[];
 extern const u8 gPPUpGetMask[];
 extern const s8 gNatureStatTable[][5];
+extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
+extern const u8 gPPUpGetMask[];
+extern const u8 gPPUpSetMask[];
+extern const u8 gPPUpAddMask[];
 
 void ZeroBoxMonData(struct BoxPokemon *boxMon);
 void ZeroMonData(struct Pokemon *mon);
@@ -466,11 +469,7 @@ void GetSpeciesName(u8 *name, u16 species);
 u8 CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 void RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
 void RemoveBattleMonPPBonus(struct BattlePokemon *mon, u8 moveIndex);
-bool8 ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
-bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex, u8 e);
-bool8 PokemonItemUseNoEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
-u8 GetItemEffectParamOffset(u16 itemId, u8 effectByte, u8 effectBit);
-const u8 *Battle_PrintStatBoosterEffectMessage(u16 itemId);
+bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex, u8 battleMonId);
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem, struct Pokemon *tradePartner);
 u16 NationalPokedexNumToSpecies(u16 nationalNum);
 u16 SpeciesToNationalPokedexNum(u16 species);
@@ -489,7 +488,7 @@ u8 CheckPartyHasHadPokerus(struct Pokemon *party, u8 selection);
 void UpdatePartyPokerusTime(void);
 void PartySpreadPokerus(struct Pokemon *party);
 bool8 TryIncrementMonLevel(struct Pokemon *mon);
-u32 CanMonLearnTMHM(struct Pokemon *mon, u8 tm);
+bool8 CanMonLearnTMHM(struct Pokemon *mon, u8 tm);
 u8 GetMoveRelearnerMoves(struct Pokemon *mon, u16 *moves);
 u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves);
 u8 GetNumberOfRelearnableMoves(struct Pokemon *mon);
@@ -500,7 +499,6 @@ const u32 *GetMonFrontSpritePal(struct Pokemon *mon);
 const u32 *GetMonSpritePalFromSpeciesAndPersonality(u16 species, u32 otId, u32 personality);
 const struct CompressedSpritePalette *GetMonSpritePalStruct(struct Pokemon *mon);
 const struct CompressedSpritePalette *GetMonSpritePalStructFromOtIdPersonality(u16 species, u32 otId , u32 personality);
-bool32 IsHMMove2(u16 move);
 bool8 IsPokeSpriteNotFlipped(u16 species);
 s8 GetFlavorRelation(u8 battlerId, u8 flavor);
 bool8 IsTradedMon(struct Pokemon *mon);
@@ -524,5 +522,8 @@ void OakSpeechNidoranFFreeResources(void);
 void *OakSpeechNidoranFGetBuffer(u8 bufferId);
 u8 GetNumOfBadges(void);
 void DeleteMonMove(struct Pokemon *mon, u8 movePos);
+void ClearAllFusedMonSpecies(void);
+bool8 HealStatusConditions(struct Pokemon *mon, u32 healMask, u8 battleId);
+const u8* GetItemEffect(u16 item);
 
 #endif // GUARD_POKEMON_H

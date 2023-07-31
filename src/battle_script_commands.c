@@ -7,13 +7,16 @@
 #include "money.h"
 #include "pokemon_icon.h"
 #include "mail.h"
+#include "mail_data.h"
 #include "event_data.h"
 #include "strings.h"
+#include "wild_encounter.h"
 #include "pokemon_special_anim.h"
 #include "pokemon_storage_system.h"
 #include "pokemon_summary_screen.h"
 #include "task.h"
 #include "naming_screen.h"
+#include "dns.h"
 #include "overworld.h"
 #include "form_change.h"
 #include "party_menu.h"
@@ -135,7 +138,7 @@ static void atk37_bichalfword(void);
 static void atk38_bicword(void);
 static void atk39_pause(void);
 static void atk3A_waitstate(void);
-static void atk3B_nop(void);
+static void atk3B_itemincreasestat(void);
 static void atk3C_return(void);
 static void atk3D_end(void);
 static void atk3E_end2(void);
@@ -193,7 +196,7 @@ static void atk71_nop(void);
 static void atk72_jumpifplayerran(void);
 static void atk73_hpthresholds(void);
 static void atk74_hpthresholds2(void);
-static void atk75_useitemonopponent(void);
+static void atk75_nop(void);
 static void atk76_various(void);
 static void atk77_setprotectlike(void);
 static void atk78_instanthpdrop(void);
@@ -394,7 +397,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk38_bicword,
     atk39_pause,
     atk3A_waitstate,
-    atk3B_nop,
+    atk3B_itemincreasestat,
     atk3C_return,
     atk3D_end,
     atk3E_end2,
@@ -452,7 +455,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk72_jumpifplayerran,
     atk73_hpthresholds,
     atk74_hpthresholds2,
-    atk75_useitemonopponent,
+    atk75_nop,
     atk76_various,
     atk77_setprotectlike,
     atk78_instanthpdrop,
@@ -2870,8 +2873,22 @@ static void atk3A_waitstate(void)
         ++gBattlescriptCurrInstr;
 }
 
-static void atk3B_nop(void)
+static void atk3B_itemincreasestat(void)
 {
+	u8 stages = 1;
+	
+	switch (gLastUsedItem)
+	{
+		case ITEM_X_ATTACK:
+		case ITEM_X_DEFEND:
+		case ITEM_X_SPEED:
+		case ITEM_X_ACCURACY:
+		case ITEM_X_SPECIAL:
+		case ITEM_X_SPECIAL_DEFENSE:
+		    stages = 2;
+			break;
+	}
+	SET_STATCHANGER(ItemId_GetHoldEffectParam(gLastUsedItem), stages, FALSE);
     ++gBattlescriptCurrInstr;
 }
 
@@ -3271,7 +3288,7 @@ static void atk49_moveend(void)
 			case ATK49_CHOICE_MOVE: // update Choice Band move
 			    ++gBattleScripting.atk49_state;
 			
-			    if (gHitMarker & HITMARKER_OBEYS && GetBattlerItemHoldEffect(gBattlerAttacker, TRUE) == HOLD_EFFECT_CHOICE_BAND && gChosenMove != MOVE_STRUGGLE
+			    if (gHitMarker & HITMARKER_OBEYS && GetBattlerItemHoldEffect(gBattlerAttacker, TRUE) == HOLD_EFFECT_CHOICE_ITEM && gChosenMove != MOVE_STRUGGLE
 				&& (!gBattleStruct->choicedMove[gBattlerAttacker] || gBattleStruct->choicedMove[gBattlerAttacker] == 0xFFFF))
 				{
 					if (gChosenMove == MOVE_BATON_PASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
@@ -4222,7 +4239,6 @@ static void atk59_handlelearnnewmove(void)
 static void atk5A_yesnoboxlearnmove(void)
 {
     u8 movePosition;
-    u16 moveId;
 	
     gActiveBattler = 0;
 
@@ -4285,33 +4301,23 @@ static void atk5A_yesnoboxlearnmove(void)
                 gBattleScripting.learnMoveState = 4;
             else
             {
-                moveId = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_MOVE1 + movePosition);
-                
-                if (IsHMMove2(moveId))
-                {
-                    PrepareStringBattle(STRINGID_HMMOVESCANTBEFORGOTTEN, gActiveBattler);
-                    gBattleScripting.learnMoveState = 5;
-                }
-                else
-                {
-                    gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-                    PREPARE_MOVE_BUFFER(gBattleTextBuff2, moveId)
-                    RemoveMonPPBonus(&gPlayerParty[gBattleStruct->expGetterMonId], movePosition);
-                    SetMonMoveSlot(&gPlayerParty[gBattleStruct->expGetterMonId], gMoveToLearn, movePosition);
-					
-                    if (gBattlerPartyIndexes[0] == gBattleStruct->expGetterMonId && !(gBattleMons[0].status2 & STATUS2_TRANSFORMED)
-					&& !(gDisableStructs[0].mimickedMoves & gBitTable[movePosition]))
-                    {
-                        RemoveBattleMonPPBonus(&gBattleMons[0], movePosition);
-                        SetBattleMonMoveSlot(&gBattleMons[0], gMoveToLearn, movePosition);
-                    }
-                    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattlerPartyIndexes[2] == gBattleStruct->expGetterMonId
-					&& !(gBattleMons[2].status2 & STATUS2_TRANSFORMED) && !(gDisableStructs[2].mimickedMoves & gBitTable[movePosition]))
-                    {
-                        RemoveBattleMonPPBonus(&gBattleMons[2], movePosition);
-                        SetBattleMonMoveSlot(&gBattleMons[2], gMoveToLearn, movePosition);
-                    }
-                }
+                gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+				PREPARE_MOVE_BUFFER(gBattleTextBuff2, GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_MOVE1 + movePosition))
+				RemoveMonPPBonus(&gPlayerParty[gBattleStruct->expGetterMonId], movePosition);
+				SetMonMoveSlot(&gPlayerParty[gBattleStruct->expGetterMonId], gMoveToLearn, movePosition);
+				
+				if (gBattlerPartyIndexes[0] == gBattleStruct->expGetterMonId && !(gBattleMons[0].status2 & STATUS2_TRANSFORMED)
+				&& !(gDisableStructs[0].mimickedMoves & gBitTable[movePosition]))
+				{
+					RemoveBattleMonPPBonus(&gBattleMons[0], movePosition);
+					SetBattleMonMoveSlot(&gBattleMons[0], gMoveToLearn, movePosition);
+				}
+				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattlerPartyIndexes[2] == gBattleStruct->expGetterMonId
+				&& !(gBattleMons[2].status2 & STATUS2_TRANSFORMED) && !(gDisableStructs[2].mimickedMoves & gBitTable[movePosition]))
+				{
+					RemoveBattleMonPPBonus(&gBattleMons[2], movePosition);
+					SetBattleMonMoveSlot(&gBattleMons[2], gMoveToLearn, movePosition);
+				}
             }
         }
         break;
@@ -4608,7 +4614,7 @@ static void atk6A_removeitem(void)
     gBattleStruct->usedHeldItems[gBattlerPartyIndexes[gActiveBattler]][GetBattlerSide(gActiveBattler)] = gBattleMons[gActiveBattler].item;
     gBattleMons[gActiveBattler].item = ITEM_NONE;
 	CheckSetBattlerUnburden(gActiveBattler);
-	AddBattlerToPickupStack(gActiveBattler);
+	RemoveOrAddBattlerOnPickupStack(gActiveBattler, TRUE);
     BtlController_EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
     MarkBattlerForControllerExec(gActiveBattler);
     gBattlescriptCurrInstr += 2;
@@ -4937,10 +4943,8 @@ static void atk74_hpthresholds2(void)
     gBattlescriptCurrInstr += 2;
 }
 
-static void atk75_useitemonopponent(void)
+static void atk75_nop(void)
 {
-    gBattlerInMenuId = gBattlerAttacker;
-    PokemonUseItemEffects(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker]], gLastUsedItem, gBattlerPartyIndexes[gBattlerAttacker], 0, 1);
     ++gBattlescriptCurrInstr;
 }
 
@@ -5038,13 +5042,13 @@ static void atk76_various(void)
 			break;
 		case VARIOUS_CHECK_POKEFLUTE:
 			gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-			
-			// Cure player's party
+			// Cure all battlers
 			for (i = 0; i < gBattlersCount; ++i)
 			{
 				if (GetBattlerAbility(i) != ABILITY_SOUNDPROOF && gBattleMons[i].status1 & STATUS1_SLEEP)
 					ClearBattlerStatus(i);
 			}
+			// Cure player's party
 			for (i = 0, data = 0; i < PARTY_SIZE; ++i)
 			{
 				u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
@@ -5216,10 +5220,11 @@ static void atk76_various(void)
 			gBattlescriptCurrInstr += 3;
 			TryRemoveIllusion(gActiveBattler);
 			return;
-		case VARIOUS_PLAY_TRANSFORM_ANIMATION:
-			BtlController_EmitMoveAnimation(0, MOVE_TRANSFORM, 0, 1, 1, 0xFF, &gDisableStructs[gActiveBattler]);
+		case VARIOUS_PLAY_MOVE_ANIMATION:
+			BtlController_EmitMoveAnimation(0, T1_READ_16(gBattlescriptCurrInstr + 3), gBattleScripting.animTurn, 0, 0, gBattleMons[gActiveBattler].friendship, &gDisableStructs[gActiveBattler]);
 			MarkBattlerForControllerExec(gActiveBattler);
-			break;
+			gBattlescriptCurrInstr += 5;
+			return;
 		case VARIOUS_JUMP_IF_BATTLE_END:
 			if (NoAliveMonsForEitherParty())
 				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
@@ -5349,6 +5354,16 @@ static void atk76_various(void)
 			}
 			else
 				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+			return;
+		case VARIOUS_JUMP_IF_BATTLER_REVIVED:
+		    if (gBattleStruct->usedReviveItemBattler & gBitTable[gActiveBattler])
+			{
+				gBattleStruct->usedReviveItemBattler &= ~(gBitTable[gActiveBattler]);
+				gAbsentBattlerFlags &= ~(gBitTable[gBattleScripting.battler]);
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+			}
+			else
+				gBattlescriptCurrInstr += 7;
 			return;
     }
     gBattlescriptCurrInstr += 3;
@@ -7613,8 +7628,8 @@ static void atkD2_tryswapitems(void) // trick
         // can't swap if two pokemon don't have an item
         // or if either of them is an enigma berry or a mail
         else if ((gBattleMons[gBattlerAttacker].item == 0 && gBattleMons[gBattlerTarget].item == 0) || gBattleMons[gBattlerAttacker].item == ITEM_ENIGMA_BERRY
-		 || gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY || IS_ITEM_MAIL(gBattleMons[gBattlerAttacker].item)
-		 || IS_ITEM_MAIL(gBattleMons[gBattlerTarget].item))
+		 || gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY || ItemIsMail(gBattleMons[gBattlerAttacker].item)
+		 || ItemIsMail(gBattleMons[gBattlerTarget].item))
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
         // check if ability prevents swapping
         else if (GetBattlerAbility(gBattlerTarget) == ABILITY_STICKY_HOLD)
@@ -8013,7 +8028,7 @@ static void atkE5_pickup(void)
 				}
 			}
 #if SHUCKLE_MAKES_BERRY_JUICE_CHANCE != 0
-			else if (species == SPECIES_SHUCKLE && heldItem >= FIRST_BERRY_INDEX && heldItem <= LAST_BERRY_INDEX && Random() % 100 < SHUCKLE_MAKES_BERRY_JUICE_CHANCE)
+			else if (species == SPECIES_SHUCKLE && ItemId_GetPocket(heldItem) == POCKET_BERRY_POUCH && Random() % 100 < SHUCKLE_MAKES_BERRY_JUICE_CHANCE)
 			{
 				heldItem = ITEM_BERRY_JUICE;
 				SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &heldItem);
@@ -8135,29 +8150,61 @@ u8 GetCatchingBattler(void)
 		return GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 }
 
+static void DoMonCaughtEffects(void)
+{
+	u8 friendBallFriendship = 150;
+	struct Pokemon *mon = GetBattlerPartyIndexPtr(gBattlerTarget);
+	
+	if (CalculatePlayerPartyCount() == PARTY_SIZE)
+		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+	else
+		gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+	
+	SetMonData(mon, MON_DATA_POKEBALL, &gLastUsedItem);
+	
+	switch (gLastUsedItem)
+	{
+		case ITEM_HEAL_BALL:
+		    MonRestorePP(mon);
+			HealStatusConditions(mon, STATUS1_ANY, gBattlerTarget);
+			gBattleMons[gBattlerTarget].hp = gBattleMons[gBattlerTarget].maxHP;
+			SetMonData(mon, MON_DATA_HP, &gBattleMons[gBattlerTarget].hp);
+			break;
+		case ITEM_FRIEND_BALL:
+		    SetMonData(mon, MON_DATA_FRIENDSHIP, &friendBallFriendship);
+			break;
+	}
+	gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
+}
+
 static void atkEF_handleballthrow(void)
 {
-    u8 shakes, catchRate, ballMultiplier = 0;
-    u32 odds;
+    u8 shakes, catchRate;
+	s8 ballAdition;
+	s32 ballMultiplier;
+    u32 i, odds, weight;
 
     if (!gBattleControllerExecFlags)
     {
         gActiveBattler = gBattlerAttacker;
         gBattlerTarget = GetCatchingBattler();
 	    
-        if (gBattleTypeFlags & BATTLE_TYPE_GHOST)
+        if (gBattleTypeFlags & BATTLE_TYPE_GHOST) // Can't throw ball in ghost battle
         {
             BtlController_EmitBallThrowAnim(0, BALL_GHOST_DODGE);
             MarkBattlerForControllerExec(gActiveBattler);
             gBattlescriptCurrInstr = BattleScript_GhostBallDodge;
         }
-        else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+        else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) // Can't throw ball in trainer battles
         {
+#if RESTORE_BALL_TRAINER_BLOCK
+			AddBagItem(gLastUsedItem, 1);
+#endif
             BtlController_EmitBallThrowAnim(0, BALL_TRAINER_BLOCK);
             MarkBattlerForControllerExec(gActiveBattler);
             gBattlescriptCurrInstr = BattleScript_TrainerBallBlock;
         }
-        else if (gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_OLD_MAN_TUTORIAL))
+        else if (gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_OLD_MAN_TUTORIAL)) // Poke Dude and Old Man battles aways success the ball throw
         {
             BtlController_EmitBallThrowAnim(0, BALL_3_SHAKES_SUCCESS);
             MarkBattlerForControllerExec(gActiveBattler);
@@ -8165,101 +8212,160 @@ static void atkEF_handleballthrow(void)
         }
         else
         {
-            if (gLastUsedItem == ITEM_SAFARI_BALL)
-                catchRate = gBattleStruct->safariCatchFactor * 1275 / 100;
-            else
-                catchRate = gBaseStats[gBattleMons[gBattlerTarget].species].catchRate;
-            if (gLastUsedItem > ITEM_SAFARI_BALL)
-            {
-                switch (gLastUsedItem)
-                {
-                case ITEM_NET_BALL:
-                    if (IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_WATER) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_BUG))
-                        ballMultiplier = 30;
-                    else
-                        ballMultiplier = 10;
+			ballAdition = 0;
+			
+			// Get ball catch Rate
+			if (gLastUsedItem == ITEM_SAFARI_BALL)
+				catchRate = gBattleStruct->safariCatchFactor * 1275 / 100;
+			else
+			{
+				catchRate = gBaseStats[gBattleMons[gBattlerTarget].species].catchRate;
+				
+				if (gLastUsedItem != ITEM_MASTER_BALL)
+				{
+					if (gBattleResults.catchAttempts[gLastUsedItem - 1] < 0xFF)
+						++gBattleResults.catchAttempts[gLastUsedItem - 1];
+				}
+				else
+					gBattleResults.usedMasterBall = TRUE;
+			}
+			
+			// Get ball catch multiplier
+			ballMultiplier = 100; // default multiplier x1.0
+			
+			switch (gLastUsedItem)
+			{
+				case ITEM_ULTRA_BALL:
+				    ballMultiplier = 200;
+					break;
+				case ITEM_GREAT_BALL:
+				case ITEM_SAFARI_BALL:
+				    ballMultiplier = 150;
+					break;
+				case ITEM_NET_BALL:
+				    if (IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_WATER) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_BUG))
+						ballMultiplier = 350;
+					break;
+				case ITEM_DIVE_BALL:
+				    if (GetCurrentMapType() == MAP_TYPE_UNDERWATER || gIsFishingEncounter || gIsSurfingEncounter)
+						ballMultiplier = 350;
+					break;
+				case ITEM_NEST_BALL:
+				    if (gBattleMons[gBattlerTarget].level < 30)
+						ballMultiplier = 410 - (gBattleMons[gBattlerTarget].level * 10);
+					break;
+				case ITEM_REPEAT_BALL:
+				    if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[gBattlerTarget].species), FLAG_GET_CAUGHT))
+						ballMultiplier = 350;
+					break;
+				case ITEM_TIMER_BALL:
+				    ballMultiplier = (gBattleResults.battleTurnCounter * 30) + 100;
+                    if (ballMultiplier > 400)
+                        ballMultiplier = 400;
                     break;
-                case ITEM_DIVE_BALL:
-                    if (GetCurrentMapType() == MAP_TYPE_UNDERWATER)
-                        ballMultiplier = 35;
-                    else
-                        ballMultiplier = 10;
+				case ITEM_DUSK_BALL:
+				    if (gMapHeader.cave || GetCurrentMapType() == MAP_TYPE_UNDERGROUND || GetDNSTimeLapseIsNight())
+						ballMultiplier = 300;
+					break;
+				case ITEM_QUICK_BALL:
+				    if (gBattleResults.battleTurnCounter == 0)
+						ballMultiplier = 500;
+					break;
+				case ITEM_FAST_BALL:
+				    if (gBaseStats[gBattleMons[gBattlerTarget].species].baseSpeed >= 100)
+						ballMultiplier = 400;
+					break;
+				case ITEM_LEVEL_BALL:
+				    if (gBattleMons[gBattlerAttacker].level >= 4 * gBattleMons[gBattlerTarget].level)
+                        ballMultiplier = 800;
+                    else if (gBattleMons[gBattlerAttacker].level > 2 * gBattleMons[gBattlerTarget].level)
+                        ballMultiplier = 400;
+                    else if (gBattleMons[gBattlerAttacker].level > gBattleMons[gBattlerTarget].level)
+                        ballMultiplier = 200;
                     break;
-                case ITEM_NEST_BALL:
-                    if (gBattleMons[gBattlerTarget].level < 40)
-                    {
-                        ballMultiplier = 40 - gBattleMons[gBattlerTarget].level;
-                        if (ballMultiplier <= 9)
-                            ballMultiplier = 10;
-                    }
-                    else
-                        ballMultiplier = 10;
-                    break;
-                case ITEM_REPEAT_BALL:
-                    if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[gBattlerTarget].species), FLAG_GET_CAUGHT))
-                        ballMultiplier = 30;
-                    else
-                        ballMultiplier = 10;
-                    break;
-                case ITEM_TIMER_BALL:
-                    ballMultiplier = gBattleResults.battleTurnCounter + 10;
-                    if (ballMultiplier > 40)
-                        ballMultiplier = 40;
-                    break;
-                case ITEM_LUXURY_BALL:
-                case ITEM_PREMIER_BALL:
-                    ballMultiplier = 10;
-                    break;
-                }
-            }
-            else
-                ballMultiplier = sBallCatchBonuses[gLastUsedItem - 2];
-            odds = (catchRate * ballMultiplier / 10)
-                    * (gBattleMons[gBattlerTarget].maxHP * 3 - gBattleMons[gBattlerTarget].hp * 2)
-                    / (3 * gBattleMons[gBattlerTarget].maxHP);
+				case ITEM_LURE_BALL:
+				    if (gIsFishingEncounter)
+						ballMultiplier = 500;
+					break;
+				case ITEM_HEAVY_BALL:
+				    weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[gBattlerTarget].species), 1);
+				
+				    if (weight < 1000)
+						ballAdition = -20;
+					else if (weight < 2000)
+						ballAdition = 0;
+					else if (weight < 3000)
+						ballAdition = 20;
+					else
+						ballAdition = 30;
+					break;
+				case ITEM_LOVE_BALL:
+				    if (gBattleMons[gBattlerAttacker].species == gBattleMons[gBattlerTarget].species)
+					{
+						if (GetBattlerGender(gBattlerAttacker) != MON_GENDERLESS && GetBattlerGender(gBattlerTarget) != MON_GENDERLESS
+						&& !ARE_BATTLERS_OF_SAME_GENDER(gBattlerAttacker, gBattlerTarget))
+						    ballMultiplier = 800;
+					}
+					break;
+				case ITEM_MOON_BALL:
+				    for (i = 0; i < EVOS_PER_MON; i++)
+					{
+						if (gEvolutionTable[gBattleMons[gBattlerTarget].species][i].method == EVO_ITEM
+						&& gEvolutionTable[gBattleMons[gBattlerTarget].species][i].param == ITEM_MOON_STONE)
+						    ballMultiplier = 400;
+					}
+					break;
+				case ITEM_BEAST_BALL:
+				    ballMultiplier = 10;
+					break;
+				case ITEM_DREAM_BALL:
+				    if (gBattleMons[gBattlerTarget].status1 & STATUS1_SLEEP || GetBattlerAbility(gBattlerTarget) == ABILITY_COMATOSE)
+						ballMultiplier = 40;
+					break;
+			}
+			// Check Ultra Beast
+			if (IS_SPECIES_ULTRA_BEAST(gBattleMons[gBattlerTarget].species))
+			{
+				if (gLastUsedItem == ITEM_BEAST_BALL)
+					ballMultiplier = 500;
+				else
+					ballMultiplier = 10;
+			}
+			// catchRate is unsigned, which means that it may potentially overflow if sum is applied directly.
+			if (catchRate < 21 && ballAdition == -20)
+				catchRate = 1;
+			else
+				catchRate += ballAdition;
+			
+			odds = (catchRate * ballMultiplier / 100) * (gBattleMons[gBattlerTarget].maxHP * 3 - gBattleMons[gBattlerTarget].hp * 2)
+			/ (3 * gBattleMons[gBattlerTarget].maxHP);
+			
             if (gBattleMons[gBattlerTarget].status1 & (STATUS1_SLEEP | STATUS1_FREEZE))
                 odds *= 2;
-            if (gBattleMons[gBattlerTarget].status1 & (STATUS1_POISON | STATUS1_BURN | STATUS1_PARALYSIS | STATUS1_TOXIC_POISON))
+            if (gBattleMons[gBattlerTarget].status1 & (STATUS1_PSN_ANY | STATUS1_BURN | STATUS1_PARALYSIS))
                 odds = (odds * 15) / 10;
-            if (gLastUsedItem != ITEM_SAFARI_BALL)
-            {
-                if (gLastUsedItem == ITEM_MASTER_BALL)
-                    gBattleResults.usedMasterBall = TRUE;
-                else
-                {
-                    if (gBattleResults.catchAttempts[gLastUsedItem - ITEM_ULTRA_BALL] < 0xFF)
-                        ++gBattleResults.catchAttempts[gLastUsedItem - ITEM_ULTRA_BALL];
-                }
-            }
+			
             if (odds > 254) // mon caught
-            {
-                BtlController_EmitBallThrowAnim(0, BALL_3_SHAKES_SUCCESS);
+			{
+				BtlController_EmitBallThrowAnim(0, BALL_3_SHAKES_SUCCESS);
                 MarkBattlerForControllerExec(gActiveBattler);
-                gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
-                SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerTarget]], MON_DATA_POKEBALL, &gLastUsedItem);
-                if (CalculatePlayerPartyCount() == 6)
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-                else
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+			    DoMonCaughtEffects();
             }
             else // mon may be caught, calculate shakes
             {
                 odds = Sqrt(Sqrt(16711680 / odds));
                 odds = 1048560 / odds;
-                for (shakes = 0; shakes < 4 && Random() < odds; ++shakes);
-                if (gLastUsedItem == ITEM_MASTER_BALL)
-                    shakes = BALL_3_SHAKES_SUCCESS; // why calculate the shakes before that check?
+				
+				if (gLastUsedItem == ITEM_MASTER_BALL)
+					shakes = BALL_3_SHAKES_SUCCESS;
+				else
+					for (shakes = 0; shakes < 4 && Random() < odds; ++shakes);
+				
                 BtlController_EmitBallThrowAnim(0, shakes);
                 MarkBattlerForControllerExec(gActiveBattler);
-                if (shakes == BALL_3_SHAKES_SUCCESS) // mon caught, copy of the code above
-                {
-                    gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
-                    SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerTarget]], MON_DATA_POKEBALL, &gLastUsedItem);
-                    if (CalculatePlayerPartyCount() == 6)
-                        gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-                    else
-                        gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-                }
+				
+				if (shakes == BALL_3_SHAKES_SUCCESS) // mon caught
+					DoMonCaughtEffects();
                 else // not caught
                 {
                     gBattleCommunication[MULTISTRING_CHOOSER] = shakes;

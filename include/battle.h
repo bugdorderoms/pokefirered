@@ -35,7 +35,7 @@
 #define B_ACTION_RUN                       3
 #define B_ACTION_SAFARI_WATCH_CAREFULLY    4
 #define B_ACTION_SAFARI_BALL               5
-#define B_ACTION_SAFARI_BAIT          6
+#define B_ACTION_SAFARI_BAIT               6
 #define B_ACTION_SAFARI_GO_NEAR            7
 #define B_ACTION_SAFARI_RUN                8
 #define B_ACTION_OLDMAN_THROW              9
@@ -439,14 +439,15 @@ struct BattleStruct
 	/*0x05B*/ u8 multiplayerId;
     /*0x05C*/ u16 abilityPreventingSwitchout;
 	/*0x05E*/ u8 simulatedInputState[4];  // used by Oak/Old Man/Pokedude controllers
-	/*0x063*/ u8 turnSideTracker;
+	/*0x062*/ u8 turnSideTracker;
+	/*0x063*/ u8 moveEffectByte; // move effect byte, like knock off, etc.
 	/*0x064*/ u16 savedBattleTypeFlags;
-	/*0x066*/ u8 moveEffectByte; // move effect byte, like knock off, etc.
-	/*0x067*/ u8 synchronizeMoveEffect;
-	/*0x068*/ u8 switchInItemsCounter;
-	/*0x069*/ u8 givenExpMons;
-	/*0x06A*/ u8 wishPerishSongState;
-    /*0x06B*/ u8 wishPerishSongBattlerId;
+	/*0x066*/ u8 synchronizeMoveEffect;
+	/*0x067*/ u8 switchInItemsCounter;
+	/*0x068*/ u8 givenExpMons;
+	/*0x069*/ u8 wishPerishSongState;
+    /*0x06A*/ u8 wishPerishSongBattlerId;
+	/*0x06B*/ u8 field_182; // quest log related
 	/*0x06C*/ u16 lastTakenMove[MAX_BATTLERS_COUNT];
 	/*0x074*/ u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT];
 	/*0x094*/ u16 choicedMove[MAX_BATTLERS_COUNT];
@@ -454,7 +455,7 @@ struct BattleStruct
 	/*0x0A4*/ u8 magnitudeBasePower;
 	/*0x0A5*/ u8 presentBasePower;
 	/*0x0A6*/ u8 weatherIconSpriteId;
-	/*0x0A7*/ u8 field_182; // quest log related
+	/*0x0A7*/ u8 field_DA; // battle tower related
 	/*0x0A8*/ void (*savedCallback)(void);
 	/*0x0AC*/ u16 usedHeldItems[PARTY_SIZE][2];
 	/*0x0C4*/ u16 hpBefore[MAX_BATTLERS_COUNT]; // hp before use move, for Berserk and Emergency Exit
@@ -463,16 +464,15 @@ struct BattleStruct
 	/*0x0D0*/ u16 chosenItem[MAX_BATTLERS_COUNT]; // AI related
 	/*0x0D8*/ const u8 *trainerSlideMsg;
 	/*0x0DC*/ u8 AI_monToSwitchIntoId[2]; // AI related
-	/*0x0DE*/ u8 AI_itemType[2]; // AI related
-    /*0x0E0*/ u8 AI_itemFlags[2]; // AI related
+	/*0x0DE*/ u8 itemPartyIndex[MAX_BATTLERS_COUNT]; // for item use
 	/*0x0E2*/ u8 targetsDone[MAX_BATTLERS_COUNT]; // for moves hiting multiples pokemon, as flag using gBitTable
-	/*0x0E6*/ u8 field_DA; // battle tower related
+	/*0x0E6*/ u8 unused;
 	/*0x0E7*/ u8 firstCritcalHitTakenMsgState:2;
 	/*0x0E7*/ u8 zMoveMsgDone:1;
 	/*0x0E7*/ u8 dynamaxMsgDone:1;
 	/*0x0E7*/ u8 terastalMsgDone:1;
 	/*0x0E7*/ u8 throwingPokeBall:1;
-	/*0x0E7*/ u8 unused:2;
+	/*0x0E7*/ u8 filler:2;
 	/*0x0E8*/ u8 intrepidSwordActivated[2]; // as flag using gBitTable
 	/*0x0EA*/ u8 dauntlessShieldActivated[2]; // as flag using gBitTable
 	/*0x0EC*/ u16 abilityOverride[MAX_BATTLERS_COUNT]; // Used to override the ability on pop up by this value
@@ -480,7 +480,7 @@ struct BattleStruct
 	/*0x0F6*/ u8 supremeOverlordBoosts[MAX_BATTLERS_COUNT];
 	/*0x0FA*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // for Pickup gen5 effect
 	/*0x0FE*/ u8 soulHeartBattlerId;
-	/*0x0FF*/ u8 unused2;
+	/*0x0FF*/ u8 usedReviveItemBattler; // for revive battle usage, as flag using gBitTable
 	/*0x100*/ struct Illusion illusion[MAX_BATTLERS_COUNT];
     union {
         struct LinkPartnerHeader linkPartnerHeader;

@@ -323,7 +323,7 @@
 	.byte 0x3a
 	.endm
 
-	.macro nop3b
+	.macro itemincreasestat
 	.byte 0x3b
 	.endm
 
@@ -648,7 +648,7 @@
 	.byte \battler
 	.endm
 
-	.macro useitemonopponent
+	.macro nop75
 	.byte 0x75
 	.endm
 
@@ -1369,8 +1369,9 @@
 	various \battler, VARIOUS_TRY_REMOVE_ILLUSION
 	.endm
 	
-	.macro playtransformanimation battler:req
-	various \battler, VARIOUS_PLAY_TRANSFORM_ANIMATION
+	.macro playmoveanimation battler:req, move:req
+	various \battler, VARIOUS_PLAY_MOVE_ANIMATION
+	.2byte \move
 	.endm
 	
 	.macro jumpiftargetally ptr:req
@@ -1440,7 +1441,12 @@
 	various \battler, VARIOUS_TRY_NEUTRALIZING_GAS_SUPPRESSION
 	.4byte \ptr
 	.endm
-
+	
+	.macro jumpifrevived ptr:req
+	various BS_ATTACKER, VARIOUS_JUMP_IF_BATTLER_REVIVED
+	.4byte \ptr
+	.endm
+	
 @ helpful macros
 	.macro setstatchanger stat:req, stages:req, down:req
 	setbyte sSTATCHANGER \stat | \stages << 4 | \down << 7

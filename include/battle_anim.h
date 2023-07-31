@@ -449,6 +449,7 @@ void AnimTask_GetFrustrationPowerLevel(u8 taskId);
 void ResetSpritePriorityOfAllVisibleBattlers(void);
 u8 GetBattlerSpriteSubpriority(u8 battlerId);
 u8 GetBattlerSpriteBGPriority(u8 battlerId);
+void AnimThrowProjectile_Step(struct Sprite *sprite);
 
 // Returns 2 if player left or opp right
 // Returns 1 if player right or opp left

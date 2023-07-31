@@ -17,9 +17,26 @@ enum
     BALL_TIMER,
     BALL_LUXURY,
     BALL_PREMIER,
+	BALL_LEVEL,
+    BALL_LURE,
+    BALL_MOON,
+    BALL_FRIEND,
+    BALL_LOVE,
+    BALL_HEAVY,
+    BALL_FAST,
+    BALL_SPORT,
+    BALL_DUSK,
+    BALL_QUICK,
+    BALL_HEAL,
+    BALL_CHERISH,
+    BALL_PARK,
+    BALL_DREAM,
+    BALL_BEAST,
     POKEBALL_COUNT
 };
 
+extern const struct CompressedSpriteSheet gBallSpriteSheets[POKEBALL_COUNT];
+extern const struct CompressedSpritePalette gBallSpritePalettes[POKEBALL_COUNT];
 extern const struct SpriteTemplate gBallSpriteTemplates[];
 
 #define POKEBALL_PLAYER_SENDOUT     0xFF

@@ -11,7 +11,10 @@
 #include "form_change.h"
 #include "event_data.h"
 #include "mail.h"
+#include "mail_data.h"
+#include "party_menu.h"
 #include "pokedex.h"
+#include "strings.h"
 #include "malloc.h"
 #include "battle.h"
 #include "battle_anim.h"
@@ -694,7 +697,7 @@ u8 TrySetCantSelectMoveBattleScript(void)
     }
 	holdEffect = GetBattlerItemHoldEffect(gActiveBattler, TRUE);
     gPotentialItemEffectBattler = gActiveBattler;
-    if (holdEffect == HOLD_EFFECT_CHOICE_BAND && *choicedMove && *choicedMove != 0xFFFF && *choicedMove != move)
+    if (holdEffect == HOLD_EFFECT_CHOICE_ITEM && *choicedMove && *choicedMove != 0xFFFF && *choicedMove != move)
     {
         gCurrentMove = *choicedMove;
         gLastUsedItem = gBattleMons[gActiveBattler].item;
@@ -733,7 +736,7 @@ u8 CheckMoveLimitations(u8 battlerId, u8 unusableMoves, u8 check)
             unusableMoves |= gBitTable[i];
         if (gDisableStructs[battlerId].encoreTimer && gDisableStructs[battlerId].encoredMove != gBattleMons[battlerId].moves[i])
             unusableMoves |= gBitTable[i];
-        if (holdEffect == HOLD_EFFECT_CHOICE_BAND && *choicedMove != 0 && *choicedMove != 0xFFFF && *choicedMove != gBattleMons[battlerId].moves[i])
+        if (holdEffect == HOLD_EFFECT_CHOICE_ITEM && *choicedMove != 0 && *choicedMove != 0xFFFF && *choicedMove != gBattleMons[battlerId].moves[i])
             unusableMoves |= gBitTable[i];
     }
     return unusableMoves;
@@ -3785,8 +3788,6 @@ void BattleScriptPushCursorAndCallback(const u8 *BS_ptr)
     gBattleMainFunc = RunBattleScriptCommands;
 }
 
-#define IS_ITEM_BERRY(itemId)((itemId >= FIRST_BERRY_INDEX && itemId <= LAST_BERRY_INDEX))
-
 enum
 {
     ITEM_NO_EFFECT,
@@ -3804,7 +3805,7 @@ static u8 ConfusionBerries(u8 battlerId, u8 flavor, bool8 moveTurn)
     if (CheckPinchBerryActivate(battlerId, gLastUsedItem) && !moveTurn)
     {
         PREPARE_FLAVOR_BUFFER(gBattleTextBuff1, flavor);
-	gBattleMoveDamage = gBattleMons[battlerId].maxHP / 2;
+	gBattleMoveDamage = gBattleMons[battlerId].maxHP / 3;
 	if (gBattleMoveDamage == 0)
 	    gBattleMoveDamage = 1;
 	if (gBattleMons[battlerId].hp + gBattleMoveDamage > gBattleMons[battlerId].maxHP)
@@ -3848,7 +3849,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
 
     gLastUsedItem = gBattleMons[battlerId].item;
 	
-    if (IsUnnerveOnOpposingField(battlerId) && IS_ITEM_BERRY(gLastUsedItem))
+    if (IsUnnerveOnOpposingField(battlerId) && ItemId_GetPocket(gLastUsedItem) == POCKET_BERRY_POUCH)
     {
 	    battlerHoldEffect = 0;
 	    battlerHoldEffectParam = 0;
@@ -3893,6 +3894,15 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                     effect = 4;
                 }
                 break;
+			case HOLD_EFFECT_RESTORE_HP_PERCENTAGE:
+			    if (gBattleMons[battlerId].hp <= gBattleMons[battlerId].maxHP / 2 && !moveTurn)
+				{
+					gBattleMoveDamage = (gBattleMons[battlerId].maxHP * battlerHoldEffectParam) / 100;
+					gBattleMoveDamage *= -1;
+                    BattleScriptExecute(BattleScript_ItemHealHP_RemoveItem);
+                    effect = 4;
+				}
+				break;
             case HOLD_EFFECT_RESTORE_PP:
                 if (!moveTurn)
                 {
@@ -3943,7 +3953,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
             case HOLD_EFFECT_LEFTOVERS:
                 if (gBattleMons[battlerId].hp < gBattleMons[battlerId].maxHP && !moveTurn)
                 {
-                    gBattleMoveDamage = gBattleMons[battlerId].maxHP / 16;
+                    gBattleMoveDamage = gBattleMons[battlerId].maxHP / battlerHoldEffectParam;
                     if (gBattleMoveDamage == 0)
                         gBattleMoveDamage = 1;
                     if (gBattleMons[battlerId].hp + gBattleMoveDamage > gBattleMons[battlerId].maxHP)
@@ -3954,36 +3964,12 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                     RecordItemEffectBattle(battlerId, battlerHoldEffect);
                 }
                 break;
-            case HOLD_EFFECT_CONFUSE_SPICY:
-	        effect = ConfusionBerries(battlerId, FLAVOR_SPICY, moveTurn);
-                break;
-            case HOLD_EFFECT_CONFUSE_DRY:
-	        effect = ConfusionBerries(battlerId, FLAVOR_DRY, moveTurn);
-                break;
-            case HOLD_EFFECT_CONFUSE_SWEET:
-	        effect = ConfusionBerries(battlerId, FLAVOR_SWEET, moveTurn);
-                break;
-            case HOLD_EFFECT_CONFUSE_BITTER:
-	        effect = ConfusionBerries(battlerId, FLAVOR_BITTER, moveTurn);
-                break;
-            case HOLD_EFFECT_CONFUSE_SOUR:
-	        effect = ConfusionBerries(battlerId, FLAVOR_SOUR, moveTurn);
-                break;
-            case HOLD_EFFECT_ATTACK_UP:
-	        effect = StatRaiseBerries(battlerId, STAT_ATK, moveTurn);
-                break;
-            case HOLD_EFFECT_DEFENSE_UP:
-	        effect = StatRaiseBerries(battlerId, STAT_DEF, moveTurn);
-                break;
-            case HOLD_EFFECT_SPEED_UP:
-	        effect = StatRaiseBerries(battlerId, STAT_SPEED, moveTurn);
-                break;
-            case HOLD_EFFECT_SP_ATTACK_UP:
-	        effect = StatRaiseBerries(battlerId, STAT_SPATK, moveTurn);
-                break;
-            case HOLD_EFFECT_SP_DEFENSE_UP:
-	        effect = StatRaiseBerries(battlerId, STAT_SPDEF, moveTurn);
-                break;
+            case HOLD_EFFECT_CONFUSE_FLAVOR:
+			    effect = ConfusionBerries(battlerId, battlerHoldEffectParam, moveTurn);
+				break;
+            case HOLD_EFFECT_STAT_UP:
+	            effect = StatRaiseBerries(battlerId, battlerHoldEffectParam, moveTurn);
+				break;
             case HOLD_EFFECT_CRITICAL_UP:
                 if (CheckPinchBerryActivate(battlerId, gLastUsedItem) && !moveTurn && !(gBattleMons[battlerId].status2 & STATUS2_FOCUS_ENERGY))
                 {
@@ -4113,7 +4099,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                     effect = ITEM_STATUS_CHANGE;
                 }
                 break;
-            case HOLD_EFFECT_CURE_ATTRACT:
+            case HOLD_EFFECT_MENTAL_HERB:
                 if (gBattleMons[battlerId].status2 & STATUS2_INFATUATION)
                 {
                     gBattleMons[battlerId].status2 &= ~(STATUS2_INFATUATION);
@@ -4209,7 +4195,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                     effect = ITEM_EFFECT_OTHER;
                 }
                 break;
-            case HOLD_EFFECT_CURE_ATTRACT:
+            case HOLD_EFFECT_MENTAL_HERB:
                 if (gBattleMons[battlerId].status2 & STATUS2_INFATUATION)
                 {
                     gBattleMons[battlerId].status2 &= ~(STATUS2_INFATUATION);
@@ -4678,7 +4664,7 @@ bool8 NoAliveMonsForEitherParty(void)
 
 bool8 IsBattlerAlive(u8 battlerId)
 {
-	if (gBattleMons[battlerId].hp == 0 || battlerId >= gBattlersCount || gAbsentBattlerFlags & gBitTable[battlerId])
+	if (battlerId >= gBattlersCount || gBattleMons[battlerId].hp == 0 || gAbsentBattlerFlags & gBitTable[battlerId])
 		return FALSE;
 	return TRUE;
 }
@@ -4690,9 +4676,7 @@ struct Pokemon *GetBattlerParty(u8 battlerId)
 
 struct Pokemon *GetBattlerPartyIndexPtr(u8 battler)
 {
-	struct Pokemon *party = GetBattlerParty(battler);
-	
-	return &party[gBattlerPartyIndexes[battler]];
+	return &GetBattlerParty(battler)[gBattlerPartyIndexes[battler]];
 }
 
 bool8 IsBattlerWeatherAffected(u8 battlerId, u16 weatherFlags)
@@ -4821,7 +4805,7 @@ static bool8 CanBattlerGetOrLoseItem(u8 battlerId, u16 itemId)
 	u16 ability = GetBattlerAbility(battlerId), species = gBattleMons[battlerId].species;
 	u32 personality = gBattleMons[battlerId].personality;
 	
-	if (GetBattlerItemHoldEffect(battlerId, FALSE) == HOLD_EFFECT_Z_CRYSTAL || itemId == ITEM_ENIGMA_BERRY || IS_ITEM_MAIL(itemId)
+	if (GetBattlerItemHoldEffect(battlerId, FALSE) == HOLD_EFFECT_Z_CRYSTAL || itemId == ITEM_ENIGMA_BERRY || ItemIsMail(itemId)
 	|| GetSpeciesFormChange(FORM_CHANGE_HOLD_ITEM, species, personality, ability, itemId, 0, FALSE)
 	|| GetSpeciesFormChange(FORM_CHANGE_MEGA_EVO, species, personality, ability, itemId, 0, FALSE)
 	|| GetSpeciesFormChange(FORM_CHANGE_PRIMAL, species, personality, ability, itemId, 0, FALSE)
@@ -5078,7 +5062,7 @@ bool8 IsBattlerAffectedBySpore(u8 battlerId)
 	return TRUE;
 }
 
-void AddBattlerToPickupStack(u8 battlerId)
+void RemoveOrAddBattlerOnPickupStack(u8 battlerId, bool8 addToStack)
 {
 	u8 i, j, newStack[MAX_BATTLERS_COUNT];
 	
@@ -5087,24 +5071,9 @@ void AddBattlerToPickupStack(u8 battlerId)
 		if (gBattleStruct->pickupStack[i] != 0xFF && gBattleStruct->pickupStack[i] != battlerId)
 			newStack[j++] = gBattleStruct->pickupStack[i];
 	}
-	newStack[j++] = battlerId;
+	if (addToStack)
+		newStack[j++] = battlerId;
 	
-	while (j < gBattlersCount)
-		newStack[j++] = 0xFF;
-	
-	for (i = 0; i < gBattlersCount; i++)
-		gBattleStruct->pickupStack[i] = newStack[i];
-}
-
-void RemoveBattlerFromPickupStack(u8 battlerId)
-{
-	u8 i, j, newStack[MAX_BATTLERS_COUNT];
-	
-	for (i = 0, j = 0; i < gBattlersCount; i++)
-	{
-		if (gBattleStruct->pickupStack[i] != 0xFF && gBattleStruct->pickupStack[i] != battlerId)
-			newStack[j++] = gBattleStruct->pickupStack[i];
-	}
 	while (j < gBattlersCount)
 		newStack[j++] = 0xFF;
 	
@@ -5142,7 +5111,7 @@ bool8 TryRecycleBattlerItem(u8 battlerRecycler, u8 battlerItem)
 		
 		gBattleMons[battlerRecycler].item = gLastUsedItem;
 		
-		RemoveBattlerFromPickupStack(battlerItem);
+		RemoveOrAddBattlerOnPickupStack(battlerItem, FALSE);
 		
 		gBattleResources->flags->flags[battlerRecycler] &= ~(RESOURCE_FLAG_UNBURDEN_BOOST);
 		
@@ -5160,27 +5129,30 @@ bool8 TryRecycleBattlerItem(u8 battlerRecycler, u8 battlerItem)
 // Protosynthesis count stat stages, but Beast Boost not. Probably if it be available in SV it will be changed to count too, so just count it...
 u8 GetBattlerHighestStatId(u8 battlerId)
 {
-	u8 i, highestStatId = STAT_ATK;
-	u16 *statVal, temp, stats[NUM_STATS], highestStat = gBattleMons[battlerId].attack;
+	u8 i, temp2, statIds[NUM_STATS], highestStatId;
+	u16 *statVal, temp, stats[NUM_STATS], highestStat;
 	
-	// Put the stats into the array
+	// Put the stats and ids into the array
 	for (i = STAT_ATK; i < NUM_STATS; i++)
 	{
 		statVal = &gBattleMons[battlerId].attack + ((i - 1) * 2); // -1 bc STAT_ATK is 1, and not 0
 		APPLY_STAT_MOD(stats[i], &gBattleMons[battlerId], *statVal, i);
+		statIds[i] = i;
 	}
 	// Put stats in order of Attack, Defense, Sp. Atk, Sp. Def and Speed
 	// without this the order will be Attack, Defense, Speed, Sp. Atk and Sp. Def. What this loop does is only move the Speed to the end of the array
 	for (i = STAT_SPEED; i < NUM_STATS - 1; i++)
-		SWAP(stats[i], stats[i + 1], temp);
-	
-	// Get the highest stat id
-	for (i = STAT_ATK; i < NUM_STATS; i++)
 	{
-		if (highestStat < stats[i])
+		SWAP(stats[i], stats[i + 1], temp);
+		SWAP(statIds[i], statIds[i + 1], temp2);
+	}
+	// Get the highest stat id
+	for (i = highestStatId = STAT_ATK, highestStat = gBattleMons[battlerId].attack; i < NUM_STATS; i++)
+	{
+		if (highestStat < stats[statIds[i]])
 		{
-			highestStat = stats[i];
-			highestStatId = i;
+			highestStat = stats[statIds[i]];
+			highestStatId = statIds[i];
 		}
 	}
 	return highestStatId;
@@ -5240,4 +5212,112 @@ bool8 IsAbilityBlockedByNeutralizingGas(u16 ability)
 		    return FALSE;
 	}
 	return TRUE;
+}
+
+u8 GetBattleMonForItemUse(u8 partyIndex)
+{
+	u8 battleMonId = MAX_BATTLERS_COUNT;
+	
+	if (gMain.inBattle)
+	{
+		if (partyIndex == gBattlerPartyIndexes[gBattlerAttacker])
+			battleMonId = gBattlerAttacker;
+		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && partyIndex == gBattlerPartyIndexes[BATTLE_PARTNER(gBattlerAttacker)])
+			battleMonId = BATTLE_PARTNER(gBattlerAttacker);
+	}
+	return battleMonId;
+}
+
+u8 GetItemUseBattler(u8 battlerId)
+{
+	return GetBattleMonForItemUse(gBattleStruct->itemPartyIndex[battlerId]);
+}
+
+bool8 IsItemUseBlockedByBattleEffect(void)
+{
+	bool8 blocked = FALSE;
+	u8 playerLeft = B_POSITION_PLAYER_LEFT, playerRight = B_POSITION_PLAYER_RIGHT;
+	
+	if (gPartyMenu.slotId == 0) // player left mon effects check
+	{
+		if ((gStatuses3[playerLeft] & STATUS3_EMBARGO))
+			blocked = TRUE;
+	}
+	else if (gPartyMenu.slotId == 1) // player right mon effects check
+	{
+		if ((gStatuses3[playerRight] & STATUS3_EMBARGO))
+			blocked = TRUE;
+	}
+	return blocked;
+}
+
+#define BALL_THROW_SUCCESS                  0
+#define BALL_THROW_UNABLE_TWO_MONS          1
+#define BALL_THROW_UNABLE_NO_ROOM           2
+#define BALL_THROW_UNABLE_SEMI_INVULNERABLE 3
+
+static u8 GetBallThrowableState(void)
+{
+	if (IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
+		return BALL_THROW_UNABLE_TWO_MONS;
+	else if (IsPlayerPartyAndPokemonStorageFull())
+		return BALL_THROW_UNABLE_NO_ROOM;
+	else if (gStatuses3[GetCatchingBattler()] & STATUS3_SEMI_INVULNERABLE)
+		return BALL_THROW_UNABLE_SEMI_INVULNERABLE;
+	else
+		return BALL_THROW_SUCCESS;
+}
+
+const u8 *PokemonUseItemEffectsBattle(u8 battlerId, u16 itemId, bool8 *canUse)
+{
+	const u8 *failStr = NULL;
+	u8 i, holdEffectParam = ItemId_GetHoldEffectParam(itemId);
+	
+	switch (ItemId_GetBattleUsage(itemId))
+	{
+		case EFFECT_ITEM_INCREASE_STAT:
+		    if (CompareStat(battlerId, holdEffectParam, 12, CMP_LESS_THAN))
+				*canUse = TRUE;
+			break;
+		case EFFECT_ITEM_SET_FOCUS_ENERGY:
+		    if (!(gBattleMons[battlerId].status2 & STATUS2_FOCUS_ENERGY))
+				*canUse = TRUE;
+			break;
+		case EFFECT_ITEM_SET_MIST:
+		    if (!(gSideStatuses[GetBattlerSide(battlerId)] & SIDE_STATUS_MIST))
+				*canUse = TRUE;
+			break;
+		case EFFECT_ITEM_ESCAPE:
+		    if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+				*canUse = TRUE;
+			break;
+		case EFFECT_ITEM_THROW_BALL:
+		    switch (GetBallThrowableState())
+			{
+				case BALL_THROW_SUCCESS:
+					*canUse = TRUE;
+					break;
+				case BALL_THROW_UNABLE_TWO_MONS:
+				    failStr = gText_CantThrowPokeBall_TwoMons;
+					break;
+				case BALL_THROW_UNABLE_NO_ROOM:
+				    failStr = gUnknown_8416631;
+					break;
+				case BALL_THROW_UNABLE_SEMI_INVULNERABLE:
+				    failStr = gText_CantThrowPokeBall_SemiInvulnerable;
+					break;
+			}
+			break;
+		case EFFECT_ITEM_INCREASE_ALL_STATS:
+		    for (i = STAT_ATK; i < NUM_STATS; i++)
+			{
+				if (CompareStat(battlerId, i, 12, CMP_LESS_THAN))
+					*canUse = TRUE;
+			}
+			break;
+		case EFFECT_ITEM_POKE_FLUTE:
+			*canUse = TRUE; // Always can be used
+			break;
+	}
+	return failStr;
 }

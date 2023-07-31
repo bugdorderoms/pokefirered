@@ -1597,8 +1597,9 @@ static void PokedudeHandleChooseMove(void)
 static void PokedudeHandleChooseItem(void)
 {
     s32 i;
-
+	
     BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+	gBattleStruct->itemPartyIndex[gActiveBattler] = 0;
     gBattlerControllerFuncs[gActiveBattler] = OpenBagAndChooseItem;
     gBattlerInMenuId = gActiveBattler;
     for (i = 0; i < 3; ++i)

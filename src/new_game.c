@@ -2,22 +2,23 @@
 #include "gflib.h"
 #include "random.h"
 #include "overworld.h"
-#include "constants/maps.h"
 #include "load_save.h"
 #include "item_menu.h"
 #include "tm_case.h"
-#include "berry_pouch.h"
 #include "quest_log.h"
+#include "berry_pouch.h"
 #include "wild_encounter.h"
 #include "event_data.h"
 #include "mail_data.h"
 #include "play_time.h"
 #include "money.h"
+#include "dexnav.h"
 #include "battle_records.h"
 #include "pokemon_size_record.h"
 #include "pokemon_storage_system.h"
 #include "roamer.h"
 #include "item.h"
+#include "pokedex.h"
 #include "player_pc.h"
 #include "berry.h"
 #include "easy_chat.h"
@@ -30,6 +31,8 @@
 #include "pokemon_jump.h"
 #include "event_scripts.h"
 #include "registered_item.h"
+#include "constants/maps.h"
+#include "constants/pokedex.h"
 
 // this file's functions
 static void ResetMiniGamesResults(void);
@@ -98,9 +101,27 @@ void ResetMenuAndMonGlobals(void)
     ResetBagCursorPositions();
     ResetTMCaseCursorPos();
     BerryPouch_CursorResetToTop();
-    ResetQuestLog();
     SeedWildEncounterRng(Random());
     ResetSpecialVars();
+}
+
+static void Debug_NewGameGiveAllItems(void)
+{
+	u16 i;
+	
+	for (i = ITEM_NONE + 1; i < ITEMS_COUNT; i++)
+		AddBagItem(i, 1);
+}
+
+static void Debug_NewGameFillPokedex(void)
+{
+	u16 i;
+	
+	for (i = NATIONAL_DEX_NONE + 1; i <= NATIONAL_DEX_COUNT; i++)
+	{
+		GetSetPokedexFlag(i, FLAG_SET_SEEN);
+		GetSetPokedexFlag(i, FLAG_SET_CAUGHT);
+	}
 }
 
 void NewGameInitData(void)
@@ -122,6 +143,7 @@ void NewGameInitData(void)
     InitPlayerTrainerId();
     PlayTimeCounter_Reset();
     ClearPokedexFlags();
+	// Debug_NewGameFillPokedex();
     InitEventData();
     ResetFameChecker();
     SetMoney(&gSaveBlock1Ptr->money, 3000);
@@ -138,6 +160,7 @@ void NewGameInitData(void)
     ClearBag();
     NewGameInitPCItems();
     ClearEnigmaBerries();
+	// Debug_NewGameGiveAllItems();
     InitEasyChatPhrases();
     ResetTrainerFanClub();
     UnionRoomChat_InitializeRegisteredTexts();
@@ -148,15 +171,8 @@ void NewGameInitData(void)
     ScriptContext2_RunNewScript(EventScript_ResetAllMapFlags);
     StringCopy(gSaveBlock1Ptr->rivalName, rivalName);
     ResetTrainerTowerResults();
-    memset(&gSaveBlock2Ptr->itemFlags, 0, sizeof(gSaveBlock2Ptr->itemFlags));
-    memset(gSaveBlock1Ptr->dexNavSearchLevels, 0, sizeof(gSaveBlock1Ptr->dexNavSearchLevels));
-    gSaveBlock1Ptr->dexNavChain = 0;
-	memset(&gSaveBlock1Ptr->fusedReshiram, 0, sizeof(struct Pokemon));
-	memset(&gSaveBlock1Ptr->fusedZekrom, 0, sizeof(struct Pokemon));
-	memset(&gSaveBlock1Ptr->fusedSolgaleo, 0, sizeof(struct Pokemon));
-	memset(&gSaveBlock1Ptr->fusedLunala, 0, sizeof(struct Pokemon));
-	memset(&gSaveBlock1Ptr->fusedGlastrier, 0, sizeof(struct Pokemon));
-	memset(&gSaveBlock1Ptr->fusedSpectrier, 0, sizeof(struct Pokemon));
+	ResetItemFlags();
+    ClearAllFusedMonSpecies();
 }
 
 static void ResetMiniGamesResults(void)

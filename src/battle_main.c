@@ -3297,6 +3297,7 @@ static void HandleTurnActionSelectionState(void)
 					}
                     else
                     {
+						gBattleStruct->itemPartyIndex[gActiveBattler] = PARTY_SIZE;
                         BtlController_EmitChooseAction(0, gChosenActionByBattler[0], gBattleBufferB[0][1] | (gBattleBufferB[0][2] << 8));
                         MarkBattlerForControllerExec(gActiveBattler);
                         ++gBattleCommunication[gActiveBattler];
@@ -3680,7 +3681,7 @@ s32 GetBattlerBracket(u8 battler)
 
 u32 GetBattlerTotalSpeed(u8 battler)
 {
-    u8 holdEffect;
+    u8 holdEffect, holdEffectParam;
     u32 monSpeed;
 	
 	APPLY_STAT_MOD(monSpeed, &gBattleMons[battler], gBattleMons[battler].speed, STAT_SPEED);
@@ -3733,9 +3734,20 @@ u32 GetBattlerTotalSpeed(u8 battler)
 		monSpeed += (monSpeed / 3);
 #endif
 
-    // not used for now
-	/* holdEffect = GetBattlerItemHoldEffect(battler, TRUE); */
+    holdEffect = GetBattlerItemHoldEffect(battler, TRUE);
+	holdEffectParam = GetBattlerHoldEffectParam(battler);
     
+	switch (holdEffect)
+	{
+		case HOLD_EFFECT_METAL_POWDER:
+		    if (gBattleMons[battler].species == SPECIES_DITTO && !(gBattleMons[battler].status2 & STATUS2_TRANSFORMED) && holdEffectParam == STAT_SPEED)
+				monSpeed *= 2;
+			break;
+		case HOLD_EFFECT_CHOICE_ITEM:
+		    if (holdEffectParam == STAT_SPEED)
+				monSpeed = (15 * monSpeed) / 10;
+			break;
+	}
     if (GetBattlerItemHoldEffect(battler, FALSE) == HOLD_EFFECT_MACHO_BRACE)
         monSpeed /= 2;
     
@@ -4076,6 +4088,7 @@ static void FreeResetData_ReturnToOvOrDoEvolutions(void)
     if (!gPaletteFade.active)
     {
         gIsFishingEncounter = FALSE;
+		gIsSurfingEncounter = FALSE;
         ResetSpriteData();
         if (gBattleOutcome != B_OUTCOME_WON)
             gBattleMainFunc = ReturnFromBattleToOverworld;
@@ -4088,10 +4101,7 @@ static void FreeResetData_ReturnToOvOrDoEvolutions(void)
             FreeBattleSpritesData();
             FreeBattleResources();
         }
-	if (gDexnavBattle && (gBattleOutcome == B_OUTCOME_WON || gBattleOutcome == B_OUTCOME_CAUGHT))
-            IncrementDexNavChain();
-        else
-            gSaveBlock1Ptr->dexNavChain = 0;
+		IncrementOrResetDexNavChain(gDexnavBattle && (gBattleOutcome == B_OUTCOME_WON || gBattleOutcome == B_OUTCOME_CAUGHT));
     }
 }
 
@@ -4444,80 +4454,18 @@ static void HandleAction_Switch(void)
 
 static void HandleAction_UseItem(void)
 {
-    gBattlerAttacker = gBattlerTarget = gBattlerByTurnOrder[gCurrentTurnActionNumber];
+	gBattlerAttacker = gActiveBattler = gBattlerByTurnOrder[gCurrentTurnActionNumber];
+	gBattleScripting.battler = GetItemUseBattler(gBattlerAttacker);
     gBattle_BG0_X = 0;
-    gBattle_BG0_Y = 0;
+	gBattle_BG0_Y = 0;
     ClearFuryCutterDestinyBondGrudge(gBattlerAttacker);
     gLastUsedItem = gBattleBufferB[gBattlerAttacker][1] | (gBattleBufferB[gBattlerAttacker][2] << 8);
-    if (gLastUsedItem <= ITEM_PREMIER_BALL) // is ball
-    {
-        gBattlescriptCurrInstr = gBattlescriptsForBallThrow[gLastUsedItem];
-    }
-    else if (gLastUsedItem == ITEM_POKE_DOLL || gLastUsedItem == ITEM_FLUFFY_TAIL)
-    {
-        gBattlescriptCurrInstr = gBattlescriptsForRunningByItem[0];
-    }
-    else if (gLastUsedItem == ITEM_POKE_FLUTE)
-    {
-        gBattlescriptCurrInstr = gBattlescriptsForRunningByItem[1];
-    }
-    else if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
-    {
-        gBattlescriptCurrInstr = gBattlescriptsForUsingItem[0];
-    }
-    else
-    {
-        gBattleScripting.battler = gBattlerAttacker;
-        switch (*(gBattleStruct->AI_itemType + (gBattlerAttacker >> 1)))
-        {
-        case AI_ITEM_FULL_RESTORE:
-        case AI_ITEM_HEAL_HP:
-            break;
-        case AI_ITEM_CURE_CONDITION:
-            gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-            if (*(gBattleStruct->AI_itemFlags + gBattlerAttacker / 2) & 1)
-            {
-                if (*(gBattleStruct->AI_itemFlags + gBattlerAttacker / 2) & 0x3E)
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 5;
-            }
-            else
-            {
-                while (!(*(gBattleStruct->AI_itemFlags + gBattlerAttacker / 2) & 1))
-                {
-                    *(gBattleStruct->AI_itemFlags + gBattlerAttacker / 2) >>= 1;
-                    ++gBattleCommunication[MULTISTRING_CHOOSER];
-                }
-            }
-            break;
-        case AI_ITEM_X_STAT:
-            gBattleCommunication[MULTISTRING_CHOOSER] = 4;
-            if (*(gBattleStruct->AI_itemFlags + (gBattlerAttacker >> 1)) & 0x80)
-            {
-                gBattleCommunication[MULTISTRING_CHOOSER] = 5;
-            }
-            else
-            {
-                PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_ATK);
-                PREPARE_STRING_BUFFER(gBattleTextBuff2, CHAR_X);
-                while (!((*(gBattleStruct->AI_itemFlags + (gBattlerAttacker >> 1))) & 1))
-                {
-                    *(gBattleStruct->AI_itemFlags + gBattlerAttacker / 2) >>= 1;
-                    ++gBattleTextBuff1[2];
-                }
-                gBattleScripting.animArg1 = gBattleTextBuff1[2] + 14;
-                gBattleScripting.animArg2 = 0;
-            }
-            break;
-        case AI_ITEM_GUARD_SPECS:
-            if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-                gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-            else
-                gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-            break;
-        }
-
-        gBattlescriptCurrInstr = gBattlescriptsForUsingItem[*(gBattleStruct->AI_itemType + gBattlerAttacker / 2)];
-    }
+	
+	if (gBattleScripting.battler == MAX_BATTLERS_COUNT) // if the item ins't used on a battler only plays the message and sound.
+		gBattlescriptCurrInstr = BattleScript_ItemUseMessageEnd;
+	else // otherwise execute the item's script, wich plays the message and sound too.
+		gBattlescriptCurrInstr = gBattlescriptsForUsingItem[ItemId_GetBattleUsage(gLastUsedItem) - 1];
+	
     gCurrentActionFuncId = B_ACTION_EXEC_SCRIPT;
 }
 
@@ -4672,7 +4620,7 @@ static void HandleAction_SafariZoneBallThrow(void)
     gBattle_BG0_Y = 0;
     --gNumSafariBalls;
     gLastUsedItem = ITEM_SAFARI_BALL;
-    gBattlescriptCurrInstr = gBattlescriptsForBallThrow[ITEM_SAFARI_BALL];
+    gBattlescriptCurrInstr = BattleScript_ThrowSafariBall;
     gCurrentActionFuncId = B_ACTION_EXEC_SCRIPT;
 }
 
@@ -4747,6 +4695,7 @@ static void HandleAction_NothingIsFainted(void)
 
 static void HandleAction_ActionFinished(void)
 {
+	gSelectedMonPartyId = PARTY_SIZE;
     ++gCurrentTurnActionNumber;
     gCurrentActionFuncId = gActionsByTurnOrder[gCurrentTurnActionNumber];
     SpecialStatusesClear();

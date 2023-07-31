@@ -1520,4 +1520,6 @@
 
 #define NUM_SPECIES SPECIES_EGG
 
+#define IS_SPECIES_ULTRA_BEAST(species) ((species >= SPECIES_NIHILEGO && species <= SPECIES_GUZZLORD) || (species >= SPECIES_POIPOLE && species <= SPECIES_BLACEPHALON))
+
 #endif  // GUARD_CONSTANTS_SPECIES_H

@@ -380,6 +380,12 @@ static const struct FormChange sRayquazaFormChangeTable[] =
 	FORM_CHANGE_END,
 };
 
+static const struct FormChange sDeoxysFormChangeTable[] =
+{
+	FORM_CHANGE(FORM_CHANGE_USE_ITEM, SPECIES_DEOXYS, ITEM_METEORITE, 0), // forms are handled by multichoice
+	FORM_CHANGE_END,
+};
+
 static const struct FormChange sBurmyFormChangeTable[] =
 {
 	FORM_CHANGE(FORM_CHANGE_TERRAIN, SPECIES_BURMY, BATTLE_TERRAIN_GRASS, 0),
@@ -455,17 +461,23 @@ static const struct FormChange sGalladeFormChangeTable[] =
 	FORM_CHANGE_END,
 };
 
+static const struct FormChange sRotomFormChangeTable[] =
+{
+	FORM_CHANGE(FORM_CHANGE_USE_ITEM, SPECIES_ROTOM, ITEM_ROTOM_CATALOG, 0), // forms are handled by multichoice
+	FORM_CHANGE_END,
+};
+
 static const struct FormChange sDialgaFormChangeTable[] =
 {
 	FORM_CHANGE(FORM_CHANGE_HOLD_ITEM, SPECIES_DIALGA, ITEM_NONE, 0),
-	FORM_CHANGE(FORM_CHANGE_HOLD_ITEM, SPECIES_DIALGA_ORIGIN, ITEM_ADAMANT_CRYSTAL, 0),
+	FORM_CHANGE(FORM_CHANGE_HOLD_ITEM, SPECIES_DIALGA_ORIGIN, ITEM_ADAMANT_ORB, 0),
 	FORM_CHANGE_END,
 };
 
 static const struct FormChange sPalkiaFormChangeTable[] =
 {
 	FORM_CHANGE(FORM_CHANGE_HOLD_ITEM, SPECIES_PALKIA, ITEM_NONE, 0),
-	FORM_CHANGE(FORM_CHANGE_HOLD_ITEM, SPECIES_PALKIA_ORIGIN, ITEM_LUSTROUS_GLOBE, 0),
+	FORM_CHANGE(FORM_CHANGE_HOLD_ITEM, SPECIES_PALKIA_ORIGIN, ITEM_LUSTROUS_ORB, 0),
 	FORM_CHANGE_END,
 };
 

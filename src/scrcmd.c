@@ -493,7 +493,7 @@ bool8 ScrCmd_checkitemtype(struct ScriptContext * ctx)
 {
     u16 itemId = VarGet(ScriptReadHalfword(ctx));
 
-    gSpecialVar_Result = GetPocketByItemId(itemId);
+    gSpecialVar_Result = ItemId_GetPocket(itemId);
     return FALSE;
 }
 
@@ -1420,39 +1420,19 @@ bool8 ScrCmd_yesnobox(struct ScriptContext * ctx)
 
 bool8 ScrCmd_multichoice(struct ScriptContext * ctx)
 {
-    u8 left = ScriptReadByte(ctx);
-    u8 top = ScriptReadByte(ctx);
+    u8 x = ScriptReadByte(ctx);
+    u8 y = ScriptReadByte(ctx);
     u8 multichoiceId = ScriptReadByte(ctx);
-    u8 ignoreBPress = ScriptReadByte(ctx);
+    bool8 ignoreBPress = ScriptReadByte(ctx);
+	u8 defaultOpt = ScriptReadByte(ctx);
+	u8 perRowItems = ScriptReadByte(ctx);
 
-    if (ScriptMenu_Multichoice(left, top, multichoiceId, ignoreBPress) == TRUE)
+    if (ScriptMenu_Multichoice(x, y, multichoiceId, ignoreBPress, defaultOpt, perRowItems))
     {
         ScriptContext1_Stop();
         return TRUE;
     }
-    else
-    {
-        return FALSE;
-    }
-}
-
-bool8 ScrCmd_multichoicedefault(struct ScriptContext * ctx)
-{
-    u8 left = ScriptReadByte(ctx);
-    u8 top = ScriptReadByte(ctx);
-    u8 multichoiceId = ScriptReadByte(ctx);
-    u8 defaultChoice = ScriptReadByte(ctx);
-    u8 ignoreBPress = ScriptReadByte(ctx);
-
-    if (ScriptMenu_MultichoiceWithDefault(left, top, multichoiceId, ignoreBPress, defaultChoice) == TRUE)
-    {
-        ScriptContext1_Stop();
-        return TRUE;
-    }
-    else
-    {
-        return FALSE;
-    }
+	return FALSE;
 }
 
 bool8 ScrCmd_drawbox(struct ScriptContext * ctx)
@@ -1464,25 +1444,6 @@ bool8 ScrCmd_drawbox(struct ScriptContext * ctx)
 
     MenuDrawTextWindow(left, top, right, bottom);*/
     return FALSE;
-}
-
-bool8 ScrCmd_multichoicegrid(struct ScriptContext * ctx)
-{
-    u8 left = ScriptReadByte(ctx);
-    u8 top = ScriptReadByte(ctx);
-    u8 multichoiceId = ScriptReadByte(ctx);
-    u8 numColumns = ScriptReadByte(ctx);
-    u8 ignoreBPress = ScriptReadByte(ctx);
-
-    if (ScriptMenu_MultichoiceGrid(left, top, multichoiceId, ignoreBPress, numColumns) == TRUE)
-    {
-        ScriptContext1_Stop();
-        return TRUE;
-    }
-    else
-    {
-        return FALSE;
-    }
 }
 
 bool8 ScrCmd_erasebox(struct ScriptContext * ctx)
@@ -1635,7 +1596,7 @@ bool8 ScrCmd_bufferitemnameplural(struct ScriptContext * ctx)
     CopyItemName(itemId, sScriptStringVars[stringVarIndex]);
     if (itemId == ITEM_POKE_BALL && quantity >= 2)
         StringAppend(sScriptStringVars[stringVarIndex], gUnknown_83A72A0);
-    else if (itemId >= ITEM_CHERI_BERRY && itemId < ITEM_ENIGMA_BERRY && quantity >= 2)
+    else if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH && itemId != ITEM_ENIGMA_BERRY && quantity >= 2)
     {
         u16 strlength = StringLength(sScriptStringVars[stringVarIndex]);
         if (strlength != 0)

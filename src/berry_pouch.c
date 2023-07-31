@@ -634,7 +634,7 @@ static bool8 BerryPouchLoadGfx(void)
 
 static bool8 AllocateListMenuBuffers(void)
 {
-    sListMenuItems = Alloc(NUM_BERRIES * sizeof(struct ListMenuItem));
+    sListMenuItems = Alloc((BAG_BERRIES_COUNT + 1) * sizeof(struct ListMenuItem));
     if (sListMenuItems == NULL)
         return FALSE;
     sListMenuStrbuf = Alloc(sResources->listMenuNumItems * 27);
@@ -682,7 +682,7 @@ static void GetBerryNameAndIndexForMenu(u8 * dest, u16 itemId)
 {
     StringCopy(gStringVar4, gText_FontSize0);
     StringAppend(gStringVar4, gOtherText_UnkF9_08_Clear_01);
-    ConvertIntToDecimalStringN(gStringVar1, itemId - FIRST_BERRY_INDEX + 1, STR_CONV_MODE_LEADING_ZEROS, 2);
+    ConvertIntToDecimalStringN(gStringVar1, ITEM_TO_BERRY(itemId), STR_CONV_MODE_LEADING_ZEROS, 2);
     StringAppend(gStringVar4, gStringVar1);
     CopyItemName(itemId, gStringVar1);
     StringAppend(gStringVar4, sText_Space);
@@ -714,13 +714,9 @@ static void BerryPouchMoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMen
 
 static void BerryPouchItemPrintFunc(u8 windowId, u32 itemId, u8 y)
 {
-    u16 unused;
-    u16 itemQuantity;
     if (itemId != -2 && sResources->listMenuNumItems != itemId)
     {
-        unused = BagGetItemIdByPocketPosition(POCKET_BERRY_POUCH, itemId);
-        itemQuantity = BagGetQuantityByPocketPosition(POCKET_BERRY_POUCH, itemId);
-        ConvertIntToDecimalStringN(gStringVar1, itemQuantity, STR_CONV_MODE_RIGHT_ALIGN, 3);
+        ConvertIntToDecimalStringN(gStringVar1, BagGetQuantityByPocketPosition(POCKET_BERRY_POUCH, itemId), STR_CONV_MODE_RIGHT_ALIGN, 3);
         StringExpandPlaceholders(gStringVar4, gText_TimesStrVar1);
         BerryPouchPrint(windowId, 0, gStringVar4, 110, y, 0, 0, 0xFF, 1);
     }
@@ -1065,12 +1061,12 @@ static void Task_BerryPouch_Use(u8 taskId)
     ScheduleBgCopyTilemapToVram(2);
     if (sStaticCnt.type == BERRYPOUCH_FROMBATTLE)
     {
-        if (ItemId_GetBattleFunc(gSpecialVar_ItemId) == NULL)
-            FieldUseFunc_OakStopsYou(taskId);
-        else
-            ItemId_GetBattleFunc(gSpecialVar_ItemId)(taskId);
+		if (ItemId_GetBattleUsage(gSpecialVar_ItemId))
+			ItemUseInBattle(taskId);
+		else
+			FieldUseFunc_OakStopsYou(taskId);
     }
-    else if (CalculatePlayerPartyCount() == 0 && ItemId_GetType(gSpecialVar_ItemId) == 1)
+    else if (CalculatePlayerPartyCount() == 0 && ItemId_GetType(gSpecialVar_ItemId) == ITEM_TYPE_PARTY_MENU)
         Task_Give_PrintThereIsNoPokemon(taskId);
     else
         ItemId_GetFieldFunc(gSpecialVar_ItemId)(taskId);

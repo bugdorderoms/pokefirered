@@ -4610,7 +4610,7 @@ BattleScript_IllusionOff::
 BattleScript_ImposterActivates::
         loadabilitypopup BS_ATTACKER
         transformdataexecution
-	playtransformanimation BS_ATTACKER
+	playmoveanimation BS_ATTACKER, MOVE_TRANSFORM
 	waitstate
 	printfromtable gTransformUsedStringIds
 	waitmessage 0x40

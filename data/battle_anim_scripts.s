@@ -448,6 +448,7 @@ gBattleAnims_General::
 	.4byte General_FormChange @ illusion off
 	.4byte General_Fog
 	.4byte General_SlideOutOffscreen
+	.4byte General_ItemThrow
 
 gBattleAnims_Special::
 	.4byte Special_LevelUp
@@ -10683,6 +10684,16 @@ General_SlideOutOffscreen::
     createvisualtask AnimTask_SlideOffScreen, 5, 1, 3
     waitforvisualfinish
 	createvisualtask AnimTask_SetInvisible, 1, 1
+	waitforvisualfinish
+	end
+
+General_ItemThrow::
+    loadspritegfx ANIM_TAG_THIN_RING
+    createvisualtask AnimTask_ItemThrow, 2
+	waitforvisualfinish
+	delay 20
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, 2, 3, 7, 0, 26609
+	createsprite gThinRingExpandingSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, 0, 0
 	waitforvisualfinish
 	end
 

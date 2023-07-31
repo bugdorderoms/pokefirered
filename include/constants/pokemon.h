@@ -93,6 +93,9 @@
 #define MON_DATA_SPDEF2            88
 #define MON_DATA_ABILITY_HIDDEN    89
 #define MON_DATA_NATURE            90
+#define MON_DATA_DYNAMAX_LEVEL     91
+#define MON_DATA_HAS_GMAX_FACTOR   92
+#define MON_DATA_TERA_TYPE         93
 
 #define SPLIT_PHYSICAL               0x0
 #define SPLIT_SPECIAL                0x1
@@ -220,9 +223,10 @@
 #define USE_RANDOM_IVS (MAX_PER_STAT_IVS + 1)
 #define MAX_PER_STAT_EVS 252
 #define MAX_PER_VITAMIN_EVS MAX_PER_STAT_EVS
+#define MAX_TOTAL_EVS 504
+#define MAX_DYNAMAX_LEVEL 10 // can suport up to 15 level
 
 #define PARTY_SIZE 6
-#define MAX_TOTAL_EVS 504
 #define BOX_NAME_LENGTH 8
 
 #define EVO_MODE_NORMAL            0

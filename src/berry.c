@@ -1003,7 +1003,7 @@ const struct Berry * GetBerryInfo(u8 berryIdx)
 
 u8 ItemIdToBerryType(u16 itemId)
 {
-    if (itemId - FIRST_BERRY_INDEX < 0 || itemId - FIRST_BERRY_INDEX > ITEM_ENIGMA_BERRY - FIRST_BERRY_INDEX)
+    if (itemId - FIRST_BERRY_INDEX < 0 || itemId - FIRST_BERRY_INDEX > LAST_BERRY_INDEX - FIRST_BERRY_INDEX)
         return 1;
 
     return ITEM_TO_BERRY(itemId);
@@ -1011,7 +1011,7 @@ u8 ItemIdToBerryType(u16 itemId)
 
 u16 BerryTypeToItemId(u16 berryType)
 {
-    if (berryType - 1 < 0 || berryType - 1 > ITEM_ENIGMA_BERRY - FIRST_BERRY_INDEX)
+    if (berryType - 1 < 0 || berryType - 1 > LAST_BERRY_INDEX - FIRST_BERRY_INDEX)
         return FIRST_BERRY_INDEX;
 
     return berryType + FIRST_BERRY_INDEX - 1;

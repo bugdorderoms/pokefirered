@@ -12,6 +12,7 @@
 #include "strings.h"
 #include "battle.h"
 #include "fieldmap.h"
+#include "item.h"
 #include "field_specials.h"
 #include "region_map.h"
 #include "task.h"
@@ -47,6 +48,21 @@
 #include "constants/event_objects.h"
 #include "constants/metatile_labels.h"
 
+struct FieldSpecialListMenu
+{
+	u8 count;
+	u8 bgId;
+	u8 x;
+	u8 y;
+	u8 maxShowed;
+	u8 unknown; // if 0 close menu when choose, otherwise only suspend it
+	u8 cursorPos;
+	u8 itemsAbove;
+	u16 baseBlock;
+	u8 palNum;
+	u8 windowTileNum;
+};
+
 struct ListMenuLabels
 {
 	const u8 *text;
@@ -55,6 +71,13 @@ struct ListMenuLabels
 struct ListMenuActions
 {
 	const struct ListMenuLabels * list;
+};
+
+struct FormChangeListMenuActions
+{
+	const struct ListMenuLabels * list;
+	const u16 *forms;
+	u8 count;
 };
 
 static EWRAM_DATA u8 sElevatorCurrentFloorWindowId = 0;
@@ -77,11 +100,9 @@ static u16 SampleResortGorgeousReward(void);
 static void Task_ElevatorShake(u8 taskId);
 static void AnimateElevatorWindowView(u16 nfloors, bool8 direction);
 static void Task_AnimateElevatorWindowView(u8 taskId);
-static void Task_CreateScriptListMenu(u8 taskId);
 static void CreateScriptListMenu(void);
 static void ScriptListMenuMoveCursorFunction(s32 nothing, bool8 is, struct ListMenu * used);
 static void Task_ListMenuHandleInput(u8 taskId);
-static void Task_DestroyListMenu(u8 taskId);
 static void Task_SuspendListMenu(u8 taskId);
 static void Task_RedrawScrollArrowsAndWaitInput(u8 taskId);
 static void Task_CreateMenuRemoveScrollIndicatorArrowPair(u8 taskId);
@@ -1128,99 +1149,6 @@ static void Task_AnimateElevatorWindowView(u8 taskId)
     data[1]++;
 }
 
-void ListMenu(void)
-{
-    u8 taskId;
-    struct Task * task;
-    if (QuestLog_SchedulePlaybackCB(QLPlaybackCB_DestroyScriptMenuMonPicSprites) != TRUE)
-    {
-        taskId = CreateTask(Task_CreateScriptListMenu, 8);
-        task = &gTasks[taskId];
-        
-	switch (gSpecialVar_0x8004)
-	{
-	case 0:
-            task->data[0] = 4;
-            task->data[1] = 9;
-            task->data[2] = 1;
-            task->data[3] = 1;
-            task->data[4] = 12;
-            task->data[5] = 7;
-            task->data[6] = 1;
-            task->data[15] = taskId;
-            break;
-        case 1:
-            task->data[0] = 7;
-            task->data[1] = 12;
-            task->data[2] = 1;
-            task->data[3] = 1;
-            task->data[4] = 8;
-            task->data[5] = 12;
-            task->data[6] = 0;
-            task->data[15] = taskId;
-            task->data[7] = sElevatorScroll;
-            task->data[8] = sElevatorCursorPos;
-            break;
-        case 2: // Multichoice used instead
-            task->data[0] = 4;
-            task->data[1] = 4;
-            task->data[2] = 1;
-            task->data[3] = 1;
-            task->data[4] = 8;
-            task->data[5] = 8;
-            task->data[6] = 0;
-            task->data[15] = taskId;
-            break;
-        case 3: // Multichoice used instead
-            task->data[0] = 4;
-            task->data[1] = 6;
-            task->data[2] = 1;
-            task->data[3] = 1;
-            task->data[4] = 8;
-            task->data[5] = 8;
-            task->data[6] = 0;
-            task->data[15] = taskId;
-            break;
-        case 4: // Multichoice used instead
-            task->data[0] = 4;
-            task->data[1] = 4;
-            task->data[2] = 1;
-            task->data[3] = 1;
-            task->data[4] = 17;
-            task->data[5] = 8;
-            task->data[6] = 1;
-            task->data[15] = taskId;
-            break;
-        case LISTMENU_BERRY_POWDER:
-            task->data[0] = 7;
-            task->data[1] = 12;
-            task->data[2] = 16;
-            task->data[3] = 1;
-            task->data[4] = 17;
-            task->data[5] = 12;
-            task->data[6] = 0;
-            task->data[15] = taskId;
-            break;
-        case 6: // Mulitchoice used instead
-            task->data[0] = 3;
-            task->data[1] = 3;
-            task->data[2] = 1;
-            task->data[3] = 1;
-            task->data[4] = 8;
-            task->data[5] = 6;
-            task->data[6] = 0;
-            task->data[15] = taskId;
-            break;
-        case 99:
-            break;
-        default:
-            gSpecialVar_Result = 0x7F;
-            DestroyTask(taskId);
-            break;
-        }
-    }
-}
-
 static const struct ListMenuLabels sBadgesListMenu[] = {
 	{ gText_BoulderBadge },
 	{ gText_CascadeBadge },
@@ -1269,44 +1197,157 @@ static const struct ListMenuActions sListMenuLabels[] = {
     [LISTMENU_BERRY_POWDER] = {sBerryPowderListMenu},
 };
 
-static void Task_CreateScriptListMenu(u8 taskId)
+static const struct ListMenuLabels sDeoxysListMenu[] = {
+	{ gText_DeoxysFormAttack },
+	{ gText_DeoxysFormDefense },
+	{ gText_DeoxysFormSpeed },
+	{ gOtherText_DefaultForm }
+};
+
+static const u16 sDeoxysForms[] =
 {
-    struct WindowTemplate template;
-    u8 i;
-    s32 width;
-    s32 mwidth;
-    struct Task * task = &gTasks[taskId];
-    u8 windowId;
-    ScriptContext2_Enable();
-    if (gSpecialVar_0x8004 == LISTMENU_SILPHCO_FLOORS)
-        sListMenuLastScrollPosition = sElevatorScroll;
-    else
-        sListMenuLastScrollPosition = 0;
-    task->data[1] = gSpecialVar_0x8001;
-    sListMenuItems = AllocZeroed(task->data[1] * sizeof(struct ListMenuItem));
+	SPECIES_DEOXYS_ATTACK,
+	SPECIES_DEOXYS_DEFENSE,
+	SPECIES_DEOXYS_SPEED,
+	SPECIES_DEOXYS
+};
+
+static const struct ListMenuLabels sRotomListMenu[] = {
+	{ gText_RotomFormHeat },
+	{ gText_RotomFormWash },
+	{ gText_RotomFormFrost },
+	{ gText_RotomFormFan },
+	{ gText_RotomFormMow },
+	{ gOtherText_DefaultForm }
+};
+
+static const u16 sRotomForms[] =
+{
+	SPECIES_ROTOM_HEAT,
+	SPECIES_ROTOM_WASH,
+	SPECIES_ROTOM_FROST,
+	SPECIES_ROTOM_FAN,
+	SPECIES_ROTOM_MOW,
+	SPECIES_ROTOM
+};
+
+static const struct FormChangeListMenuActions sFormChangeMenuLabels[] = {
+	{sDeoxysListMenu, sDeoxysForms, NELEMS(sDeoxysListMenu)},
+	{sRotomListMenu, sRotomForms, NELEMS(sRotomListMenu)},
+};
+
+static u8 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const struct FieldSpecialListMenu *menuListTemplate)
+{
+	u8 i, width, mwidth, windowHeight, taskId = CreateTask(Task_ListMenuHandleInput, 8);
+	struct Task * task = &gTasks[taskId];
+	struct WindowTemplate template;
+	
+	task->data[0] = menuListTemplate->maxShowed > menuListTemplate->count ? menuListTemplate->count : menuListTemplate->maxShowed;
+	task->data[1] = menuListTemplate->count;
+	task->data[2] = menuListTemplate->x;
+	task->data[3] = menuListTemplate->y;
+	task->data[6] = menuListTemplate->unknown;
+	task->data[7] = menuListTemplate->cursorPos;
+	task->data[8] = menuListTemplate->itemsAbove;
+	task->data[5] = (task->data[0] * 2);
+	windowHeight = task->data[5] - 1;
+	if (task->data[5] >= 14)
+	{
+		task->data[5] -= 2;
+		--windowHeight;
+	}
+	sListMenuItems = AllocZeroed(task->data[1] * sizeof(struct ListMenuItem));
     CreateScriptListMenu();
-    for (i = 0, mwidth = 0; i < task->data[1]; i++)
+	
+	for (i = 0, mwidth = 0; i < task->data[1]; i++)
     {
-        sListMenuItems[i].label = sListMenuLabels[gSpecialVar_0x8000].list[i].text;
+        sListMenuItems[i].label = list[i].text;
         sListMenuItems[i].index = i;
+		
         width = GetStringWidth(2, sListMenuItems[i].label, 0);
-        if (width > mwidth)
+        if (mwidth < width)
             mwidth = width;
     }
-    task->data[4] = (mwidth + 9) / 8 + 1;
+	task->data[4] = (mwidth + 9) / 8 + 1;
     if (task->data[2] + task->data[4] > 29)
         task->data[2] = 29 - task->data[4];
-    template = SetWindowTemplateFields(0, task->data[2], task->data[3], task->data[4], task->data[5], 15, 0x038);
-    task->data[13] = windowId = AddWindow(&template);
-    SetStdWindowBorderStyle(task->data[13], 0);
+	
+	template = SetWindowTemplateFields(menuListTemplate->bgId, task->data[2], task->data[3], task->data[4], windowHeight, menuListTemplate->palNum, menuListTemplate->baseBlock);
+	task->data[13] = AddWindow(&template);
+	
+	if (menuListTemplate->windowTileNum == 0)
+		SetStdWindowBorderStyle(task->data[13], 0);
+	else
+		DrawStdFrameWithCustomTileAndPalette(task->data[13], FALSE, menuListTemplate->windowTileNum, menuListTemplate->palNum);
+	
     sFieldSpecialsListMenuTemplate.totalItems = task->data[1];
     sFieldSpecialsListMenuTemplate.maxShowed = task->data[0];
     sFieldSpecialsListMenuTemplate.windowId = task->data[13];
     Task_CreateMenuRemoveScrollIndicatorArrowPair(taskId);
     task->data[14] = ListMenuInit(&sFieldSpecialsListMenuTemplate, task->data[7], task->data[8]);
-    PutWindowTilemap(task->data[13]);
+	PutWindowTilemap(task->data[13]);
     CopyWindowToVram(task->data[13], COPYWIN_BOTH);
-    gTasks[taskId].func = Task_ListMenuHandleInput;
+	
+	task->data[15] = taskId;
+	
+	return taskId;
+}
+
+void ListMenu(void)
+{
+	struct FieldSpecialListMenu menuList;
+	u8 itemsAbove, unknown;
+	
+	if (!QuestLog_SchedulePlaybackCB(QLPlaybackCB_DestroyScriptMenuMonPicSprites))
+	{
+		ScriptContext2_Enable();
+		
+		if (gSpecialVar_0x8000 == LISTMENU_SILPHCO_FLOORS)
+		{
+			sListMenuLastScrollPosition = sElevatorScroll;
+			itemsAbove = sElevatorCursorPos;
+			unknown = 0;
+		}
+		else
+		{
+			itemsAbove = sListMenuLastScrollPosition = 0;
+			unknown = 1;
+		}
+		menuList.count = gSpecialVar_0x8001;
+		menuList.bgId = 0;
+		menuList.x = gSpecialVar_0x8003;
+		menuList.y = gSpecialVar_0x8004;
+		menuList.maxShowed = gSpecialVar_0x8002;
+		menuList.unknown = unknown;
+		menuList.cursorPos = sListMenuLastScrollPosition;
+		menuList.itemsAbove = itemsAbove;
+		menuList.baseBlock = MULTICHOICE_DEFAULT_BASE_BLOCK;
+		menuList.palNum = 15;
+		InitFieldSpecialListMenu(sListMenuLabels[gSpecialVar_0x8000].list, &menuList);
+	}
+}
+
+u8 InitFormChangeListMenu(u8 listId)
+{
+	struct FieldSpecialListMenu menuList =
+	{
+		.count = sFormChangeMenuLabels[listId].count,
+		.bgId = 2,
+		.x = 19,
+		.y = 1,
+		.maxShowed = 7,
+		.cursorPos = 0,
+		.itemsAbove = 0,
+		.baseBlock = 0x280,
+		.palNum = 13,
+		.windowTileNum = 0x4F,
+	};
+	return InitFieldSpecialListMenu(sFormChangeMenuLabels[listId].list, &menuList);
+}
+
+u16 GetFormChangeListMenuSpecies(u8 listId)
+{
+	return sFormChangeMenuLabels[listId].forms[gSpecialVar_Result];
 }
 
 static void CreateScriptListMenu(void)
@@ -1360,14 +1401,14 @@ static void Task_ListMenuHandleInput(u8 taskId)
     case -2:
         gSpecialVar_Result = 0x7F;
         PlaySE(SE_SELECT);
-        Task_DestroyListMenu(taskId);
+        Task_DestroyListMenu(taskId, TRUE);
         break;
     default:
         gSpecialVar_Result = input;
         PlaySE(SE_SELECT);
         if (task->data[6] == 0 || input == task->data[1] - 1)
         {
-            Task_DestroyListMenu(taskId);
+            Task_DestroyListMenu(taskId, TRUE);
         }
         else
         {
@@ -1379,7 +1420,7 @@ static void Task_ListMenuHandleInput(u8 taskId)
     }
 }
 
-static void Task_DestroyListMenu(u8 taskId)
+void Task_DestroyListMenu(u8 taskId, bool8 enableScripts)
 {
     struct Task * task = &gTasks[taskId];
     Task_ListMenuRemoveScrollIndicatorArrowPair(taskId);
@@ -1391,7 +1432,9 @@ static void Task_DestroyListMenu(u8 taskId)
     CopyWindowToVram(task->data[13], COPYWIN_GFX);
     RemoveWindow(task->data[13]);
     DestroyTask(taskId);
-    EnableBothScriptContexts();
+	
+	if (enableScripts)
+		EnableBothScriptContexts();
 }
 
 static void Task_SuspendListMenu(u8 taskId)
@@ -1970,13 +2013,12 @@ bool8 UsedPokemonCenterWarp(void)
 bool8 BufferTMHMMoveName(void)
 {
     // 8004 = item ID
-    if (gSpecialVar_0x8004 >= ITEM_TM01 && gSpecialVar_0x8004 <= ITEM_HM08)
+    if (ItemId_GetPocket(gSpecialVar_0x8004) == POCKET_TM_CASE)
     {
         StringCopy(gStringVar1, gMoveNames[ItemIdToBattleMoveId(gSpecialVar_0x8004)]);
         return TRUE;
-    }
-    else
-        return FALSE;
+	}
+	return FALSE;
 }
 
 void RunMassageCooldownStepCounter(void)

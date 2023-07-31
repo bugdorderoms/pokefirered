@@ -144,13 +144,16 @@ u8 GetBattlerGender(u8 battlerId);
 bool8 CanBeInfatuatedBy(u8 battlerIdAtk, u8 battlerIdDef);
 u32 GetBattlerWeight(u8 battlerId);
 bool8 IsBattlerAffectedBySpore(u8 battlerId);
-void AddBattlerToPickupStack(u8 battlerId);
-void RemoveBattlerFromPickupStack(u8 battlerId);
+void RemoveOrAddBattlerOnPickupStack(u8 battlerId, bool8 addToStack);
 u8 GetBattlerOnTopOfPickupStack(u8 battlerId);
 bool8 TryRecycleBattlerItem(u8 battlerRecycler, u8 battlerItem);
 u8 GetBattlerHighestStatId(u8 battlerId);
 bool8 MoveHasHealingEffect(u16 move);
 bool8 IsBattlerAffectedByFollowMe(u8 battlerId, u8 opposingSide, u16 move);
 bool8 IsAbilityBlockedByNeutralizingGas(u16 ability);
+u8 GetItemUseBattler(u8 battlerId);
+u8 GetBattleMonForItemUse(u8 partyIndex);
+bool8 IsItemUseBlockedByBattleEffect(void);
+const u8 *PokemonUseItemEffectsBattle(u8 battlerId, u16 itemId, bool8 *canUse);
 
 #endif // GUARD_BATTLE_UTIL_H

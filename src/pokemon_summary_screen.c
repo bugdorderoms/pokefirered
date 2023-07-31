@@ -3724,18 +3724,6 @@ static void UpdateCurrentMonBufferFromPartyOrBox(struct Pokemon * mon)
     }
 }
 
-static u8 PokeSum_CanForgetSelectedMove(void)
-{
-    u16 move;
-
-    move = GetMonMoveBySlotId(&sMonSummaryScreen->currentMon, sMoveSelectionCursorPos);
-
-    if (IsMoveHm(move) == TRUE && sMonSummaryScreen->mode != PSS_MODE_FORGET_MOVE)
-        return FALSE;
-
-    return TRUE;
-}
-
 static void Task_InputHandler_SelectOrForgetMove(u8 taskId)
 {
     u8 i;
@@ -3813,24 +3801,16 @@ static void Task_InputHandler_SelectOrForgetMove(u8 taskId)
         }
         else if (JOY_NEW(A_BUTTON))
         {
-            if (PokeSum_CanForgetSelectedMove() == TRUE || sMoveSelectionCursorPos == 4)
-            {
-                PlaySE(SE_SELECT);
-                sMoveSwapCursorPos = sMoveSelectionCursorPos;
-                gSpecialVar_0x8005 = sMoveSwapCursorPos;
-                sMonSummaryScreen->selectMoveInputHandlerState = 6;
-            }
-            else
-            {
-                PlaySE(SE_FAILURE);
-                sMonSummaryScreen->selectMoveInputHandlerState = 5;
-            }
+			PlaySE(SE_SELECT);
+			sMoveSwapCursorPos = sMoveSelectionCursorPos;
+			gSpecialVar_0x8005 = sMoveSwapCursorPos;
+			sMonSummaryScreen->selectMoveInputHandlerState = 5;
         }
         else if (JOY_NEW(B_BUTTON))
         {
             sMoveSwapCursorPos = 4;
             gSpecialVar_0x8005 = (u16)sMoveSwapCursorPos;
-            sMonSummaryScreen->selectMoveInputHandlerState = 6;
+            sMonSummaryScreen->selectMoveInputHandlerState = 5;
         }
         break;
     case 3:
@@ -3852,18 +3832,6 @@ static void Task_InputHandler_SelectOrForgetMove(u8 taskId)
         sMonSummaryScreen->selectMoveInputHandlerState = 2;
         break;
     case 5:
-        FillWindowPixelBuffer(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 0);
-        AddTextPrinterParameterized4(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2,
-                                     7, 42,
-                                     0, 0,
-                                     sLevelNickTextColors[0], TEXT_SPEED_FF,
-                                     gText_PokeSum_HmMovesCantBeForgotten);
-        CopyWindowToVram(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2);
-        CopyBgTilemapBufferToVram(0);
-        CopyBgTilemapBufferToVram(3);
-        sMonSummaryScreen->selectMoveInputHandlerState = 2;
-        break;
-    case 6:
         BeginNormalPaletteFade(0xffffffff, 0, 0, 16, 0);
         sMonSummaryScreen->selectMoveInputHandlerState++;
         break;

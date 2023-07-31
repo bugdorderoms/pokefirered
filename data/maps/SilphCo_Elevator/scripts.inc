@@ -11,7 +11,9 @@ SilphCo_Elevator_EventScript_FloorSelect:: @ 8161F6F
 	waitmessage
 	setvar VAR_0x8000, LISTMENU_SILPHCO_FLOORS
 	setvar VAR_0x8001, 12 @ 12 options
-	setvar VAR_0x8004, LISTMENU_SILPHCO_FLOORS
+	setvar VAR_0x8002, 7 @ max showed
+	setvar VAR_0x8003, 1 @ x pos
+	setvar VAR_0x8004, 1 @ y pos
 	specialvar VAR_RESULT, InitElevatorFloorSelectMenuPos
 	special ListMenu
 	waitstate

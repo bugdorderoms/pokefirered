@@ -138,6 +138,7 @@
 #define STATUS3_WATERSPORT              (1 << 17)
 #define STATUS3_UNDERWATER              (1 << 18)
 #define STATUS3_POWER_TRICK             (1 << 19)
+#define STATUS3_EMBARGO                 (1 << 20)
 #define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
 
 // Not really sure what a "hitmarker" is.

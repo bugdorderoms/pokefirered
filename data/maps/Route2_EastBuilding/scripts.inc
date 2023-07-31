@@ -18,10 +18,10 @@ Route2_EastBuilding_EventScript_Aide:: @ 816F67F
 	compare VAR_0x8006, REQUIRED_SEEN_MONS
 	goto_if_lt Aide_EventScript_HaventCaughtEnough
 	msgbox Route2_EastBuilding_Text_GreatHereYouGo
-	checkitemspace ITEM_HM05, 1
+	checkitemspace ITEM_TM99, 1
 	compare VAR_RESULT, FALSE
 	goto_if_eq Aide_EventScript_NoRoomForItem
-	giveitem_msg Route2_EastBuilding_Text_ReceivedHM05FromAide, ITEM_HM05
+	giveitem_msg Route2_EastBuilding_Text_ReceivedHM05FromAide, ITEM_TM99
 	setflag FLAG_GOT_HM05
 	msgbox Route2_EastBuilding_Text_ExplainHM05
 	release
@@ -34,7 +34,7 @@ Route2_EastBuilding_EventScript_AlreadyGotHM05:: @ 816F701
 
 Route2_EastBuilding_EventScript_GetAideRequestInfo:: @ 816F70B
 	getnumberstring 0, REQUIRED_SEEN_MONS
-	getitemname 1, ITEM_HM05
+	getitemname 1, ITEM_TM99
 	return
 
 Route2_EastBuilding_EventScript_Rocker:: @ 816F714

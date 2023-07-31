@@ -6,10 +6,10 @@ Route16_House_EventScript_Woman:: @ 817014F
 	faceplayer
 	goto_if_set FLAG_GOT_HM02, Route16_House_EventScript_AlreadyGotHM02
 	msgbox Route16_House_Text_FoundMySecretRetreat
-	checkitemspace ITEM_HM02, 1
+	checkitemspace ITEM_TM98, 1
 	compare VAR_RESULT, FALSE
 	goto_if_eq Route16_House_EventScript_NoRoomForHM02
-	giveitem_msg Route16_House_Text_ReceivedHM02FromGirl, ITEM_HM02
+	giveitem_msg Route16_House_Text_ReceivedHM02FromGirl, ITEM_TM98
 	msgbox Route16_House_Text_ExplainHM02
 	setflag FLAG_GOT_HM02
 	release

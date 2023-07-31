@@ -4,6 +4,12 @@
 #include "save.h"
 #include "cereader_tool.h"
 
+#define SEC30_SIZE  (offsetof(struct EReaderTrainerTowerSet, floors[4]))
+#define SEC31_SIZE  (sizeof(struct EReaderTrainerTowerSet) - SEC30_SIZE)
+
+// The trainer tower data exceeds SECTOR_DATA_SIZE. They're allowed to use the full save sector up to the counter field.
+STATIC_ASSERT(SEC30_SIZE + SEC31_SIZE <= 0x1FF8 * 2, EReaderTrainerTowerSetFreeSpace);
+
 u8 sub_815D654(void)
 {
     return (gSaveBlock1Ptr->trainerTower[0].unk9 + 1) % 256;
@@ -35,9 +41,6 @@ bool32 ValidateTrainerTowerData(struct EReaderTrainerTowerSet * ttdata)
         return FALSE;
     return TRUE;
 }
-
-#define SEC30_SIZE  (offsetof(struct EReaderTrainerTowerSet, floors[4]))
-#define SEC31_SIZE  (sizeof(struct EReaderTrainerTowerSet) - SEC30_SIZE)
 
 static bool32 CEReaderTool_SaveTrainerTower_r(struct EReaderTrainerTowerSet * ttdata, u8 * buffer)
 {

@@ -615,7 +615,7 @@ FourIsland_IcefallCave_1F_EventScript_ItemUltraBall:: @ 81BED53
 	end
 
 FourIsland_IcefallCave_1F_EventScript_ItemHM07:: @ 81BED60
-	finditem ITEM_HM07
+	finditem ITEM_TM70
 	end
 
 FourIsland_IcefallCave_B1F_EventScript_ItemFullRestore:: @ 81BED6D

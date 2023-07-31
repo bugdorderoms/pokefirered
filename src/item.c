@@ -14,11 +14,6 @@
 
 EWRAM_DATA struct BagPocket gBagPockets[NUM_BAG_POCKETS] = {};
 
-void SortAndCompactBagPocket(struct BagPocket * pocket);
-
-// Item descriptions and data
-#include "data/items.h"
-
 u16 GetBagItemQuantity(u16 * ptr)
 {
     return gSaveBlock2Ptr->encryptionKey ^ *ptr;
@@ -50,11 +45,6 @@ void ApplyNewEncryptionKeyToBagItems(u32 key)
             ApplyNewEncryptionKeyToHword(&gBagPockets[i].itemSlots[j].quantity, key);
         }
     }
-}
-
-void ApplyNewEncryptionKeyToBagItems_(u32 key)
-{
-    ApplyNewEncryptionKeyToBagItems(key);
 }
 
 void SetBagPocketsPointers(void)
@@ -301,11 +291,6 @@ bool8 RemoveBagItem(u16 itemId, u16 count)
     return FALSE;
 }
 
-u8 GetPocketByItemId(u16 itemId)
-{
-    return ItemId_GetPocket(itemId); // wow such important
-}
-
 void ClearItemSlots(struct ItemSlot * slots, u8 capacity)
 {
     u16 i;
@@ -498,17 +483,7 @@ void SortPocketAndPlaceHMsFirst(struct BagPocket * pocket)
     {
         if (pocket->itemSlots[i].itemId == ITEM_NONE && GetBagItemQuantity(&pocket->itemSlots[i].quantity) == 0)
             return;
-        if (pocket->itemSlots[i].itemId >= ITEM_HM01 && GetBagItemQuantity(&pocket->itemSlots[i].quantity) != 0)
-        {
-            for (j = i + 1; j < pocket->capacity; j++)
-            {
-                if (pocket->itemSlots[j].itemId == ITEM_NONE && GetBagItemQuantity(&pocket->itemSlots[j].quantity) == 0)
-                    break;
-            }
-            break;
-        }
     }
-
     for (k = 0; k < pocket->capacity; k++)
         pocket->itemSlots[k].quantity = GetBagItemQuantity(&pocket->itemSlots[k].quantity);
     buff = AllocZeroed(pocket->capacity * sizeof(struct ItemSlot));
@@ -614,11 +589,6 @@ const u8 * ItemId_GetName(u16 itemId)
     return gItems[SanitizeItemId(itemId)].name;
 }
 
-u16 itemid_get_number(u16 itemId)
-{
-    return gItems[SanitizeItemId(itemId)].itemId;
-}
-
 u16 itemid_get_market_price(u16 itemId)
 {
     return gItems[SanitizeItemId(itemId)].price;
@@ -639,16 +609,6 @@ const u8 * ItemId_GetDescription(u16 itemId)
     return gItems[SanitizeItemId(itemId)].description;
 }
 
-bool8 itemid_is_unique(u16 itemId)
-{
-    return gItems[SanitizeItemId(itemId)].importance;
-}
-
-u8 itemid_get_x19(u16 itemId)
-{
-    return gItems[SanitizeItemId(itemId)].exitsBagOnUse;
-}
-
 u8 ItemId_GetPocket(u16 itemId)
 {
     return gItems[SanitizeItemId(itemId)].pocket;
@@ -664,19 +624,47 @@ ItemUseFunc ItemId_GetFieldFunc(u16 itemId)
     return gItems[SanitizeItemId(itemId)].fieldUseFunc;
 }
 
-bool8 ItemId_GetBattleUsage(u16 itemId)
+u8 ItemId_GetBattleUsage(u16 itemId)
 {
     return gItems[SanitizeItemId(itemId)].battleUsage;
 }
 
-ItemUseFunc ItemId_GetBattleFunc(u16 itemId)
+u8 ItemId_GetFlingPower(u16 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].battleUseFunc;
+    return gItems[SanitizeItemId(itemId)].flingPower;
 }
 
-u8 ItemId_GetSecondaryId(u16 itemId)
+u8 ItemId_GetUsageType(u16 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].secondaryId;
+	return gItems[SanitizeItemId(itemId)].usageType;
+}
+
+u8 ItemId_GetBattleEffectUsageType(u16 itemId)
+{
+	u8 type = ITEM_TYPE_NONE, battleUsage = ItemId_GetBattleUsage(itemId);
+	
+	if (battleUsage)
+	{
+		switch (battleUsage)
+		{
+			case EFFECT_ITEM_RESTORE_HP:
+			case EFFECT_ITEM_CURE_STATUS:
+			    type = ITEM_TYPE_PARTY_MENU;
+				break;
+			case EFFECT_ITEM_RESTORE_PP:
+			    type = ITEM_TYPE_PARTY_MENU_MOVES;
+				break;
+			default:
+			    type = ITEM_TYPE_BAG_MENU; // used direct on the battler
+				break;
+		}
+	}
+	return type;
+}
+
+void ResetItemFlags(void)
+{
+	memset(&gSaveBlock2Ptr->itemFlags, 0, sizeof(gSaveBlock2Ptr->itemFlags));
 }
 
 bool8 GetSetItemObtained(u16 item, u8 caseId)

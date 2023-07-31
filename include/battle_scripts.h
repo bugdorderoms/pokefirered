@@ -296,10 +296,11 @@ extern const u8 BattleScript_Pickup[];
 extern const u8 BattleScript_ReceiverActivates[];
 extern const u8 BattleScript_NeutralizingGasActivates[];
 extern const u8 BattleScript_NeutralizingGasActivatesRet[];
+extern const u8 BattleScript_ThrowBall[];
+extern const u8 BattleScript_ThrowSafariBall[];
+extern const u8 BattleScript_ItemUseMessageEnd[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
-extern const u8 *const gBattlescriptsForBallThrow[];
-extern const u8 *const gBattlescriptsForRunningByItem[];
 extern const u8 *const gBattlescriptsForUsingItem[];
 extern const u8 *const gBattlescriptsForSafariActions[];
 

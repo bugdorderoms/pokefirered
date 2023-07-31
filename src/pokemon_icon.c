@@ -2602,14 +2602,7 @@ u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subprior
 
 u16 GetIconSpecies(u16 species)
 {
-    u16 result;
-	
-	if (species > NUM_SPECIES)
-		result = SPECIES_NONE;
-	else
-		result = species;
-
-    return result;
+    return species > NUM_SPECIES ? SPECIES_NONE : species;
 }
 
 const u8 *GetMonIconTiles(u16 species)

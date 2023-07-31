@@ -2921,7 +2921,7 @@ static void PrintResultsText(struct BerryCrushGame * game, u8 command, u8 x, u8 
             linkPlayerId = i;
             linkIdToPrint = i;
             j = game->players[i].berryId;
-            if (j >= LAST_BERRY_INDEX - FIRST_BERRY_INDEX + 2)
+            if (j >= ITEM_TO_BERRY(LAST_BERRY_INDEX) + 1)
                 j = 0;
             StringCopy(gStringVar1, gBerries[j].name);
             StringExpandPlaceholders(gStringVar4, sBCRankingHeaders[command]);

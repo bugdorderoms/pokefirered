@@ -25,8 +25,6 @@
 #include "constants/songs.h"
 #include "constants/pokemon.h"
 
-extern struct Evolution gEvolutionTable[][EVOS_PER_MON];
-
 struct EvoInfo
 {
     u8 preEvoSpriteId;
@@ -906,21 +904,10 @@ static void Task_EvolutionScene(u8 taskId)
                 }
                 else
                 {
-                    u16 move = GetMonData(mon, var + MON_DATA_MOVE1);
-                    if (IsHMMove2(move))
-                    {
-                        BattleStringExpandPlaceholdersToDisplayedString(gBattleStringsTable[STRINGID_HMMOVESCANTBEFORGOTTEN - BATTLESTRINGS_ID_ADDER]);
-                        BattlePutTextOnWindow(gDisplayedStringBattle, 0);
-                        gTasks[taskId].tLearnMoveState = 12;
-                    }
-                    else
-                    {
-                        PREPARE_MOVE_BUFFER(gBattleTextBuff2, move)
-
-                        RemoveMonPPBonus(mon, var);
-                        SetMonMoveSlot(mon, gMoveToLearn, var);
-                        gTasks[taskId].tLearnMoveState++;
-                    }
+                    PREPARE_MOVE_BUFFER(gBattleTextBuff2, GetMonData(mon, var + MON_DATA_MOVE1))
+					RemoveMonPPBonus(mon, var);
+					SetMonMoveSlot(mon, gMoveToLearn, var);
+					gTasks[taskId].tLearnMoveState++;
                 }
             }
             break;
@@ -1259,23 +1246,12 @@ static void Task_TradeEvolutionScene(u8 taskId)
                 }
                 else
                 {
-                    u16 move = GetMonData(mon, var + MON_DATA_MOVE1);
-                    if (IsHMMove2(move))
-                    {
-                        BattleStringExpandPlaceholdersToDisplayedString(gBattleStringsTable[STRINGID_HMMOVESCANTBEFORGOTTEN - BATTLESTRINGS_ID_ADDER]);
-                        DrawTextOnTradeWindow(0, gDisplayedStringBattle, 1);
-                        gTasks[taskId].tLearnMoveState = 11;
-                    }
-                    else
-                    {
-                        PREPARE_MOVE_BUFFER(gBattleTextBuff2, move)
-
-                        RemoveMonPPBonus(mon, var);
-                        SetMonMoveSlot(mon, gMoveToLearn, var);
-                        BattleStringExpandPlaceholdersToDisplayedString(gBattleStringsTable[STRINGID_123POOF - BATTLESTRINGS_ID_ADDER]);
-                        DrawTextOnTradeWindow(0, gDisplayedStringBattle, 1);
-                        gTasks[taskId].tLearnMoveState++;
-                    }
+                    PREPARE_MOVE_BUFFER(gBattleTextBuff2, GetMonData(mon, var + MON_DATA_MOVE1))
+					RemoveMonPPBonus(mon, var);
+					SetMonMoveSlot(mon, gMoveToLearn, var);
+					BattleStringExpandPlaceholdersToDisplayedString(gBattleStringsTable[STRINGID_123POOF - BATTLESTRINGS_ID_ADDER]);
+					DrawTextOnTradeWindow(0, gDisplayedStringBattle, 1);
+					gTasks[taskId].tLearnMoveState++;
                 }
             }
             break;

@@ -14,7 +14,6 @@
 static u8 GetBattlerSpriteFinal_Y(u8 battlerId, u16 species, bool8 a3);
 static void PlayerThrowBall_RunLinearTranslation_ThenceSetCBtoStoredInData6(struct Sprite *sprite);
 static void SpriteCB_RunAnimFastLinearTranslation(struct Sprite *sprite);
-static void AnimThrowProjectile_Step(struct Sprite *sprite);
 static void AnimTask_AlphaFadeIn_Step(u8 taskId);
 static void AnimTask_BlendMonInAndOutSetup(struct Task *task);
 static void AnimTask_BlendMonInAndOutStep(u8 taskId);
@@ -1286,7 +1285,7 @@ void AnimThrowProjectile(struct Sprite *sprite)
     sprite->callback = AnimThrowProjectile_Step;
 }
 
-static void AnimThrowProjectile_Step(struct Sprite *sprite)
+void AnimThrowProjectile_Step(struct Sprite *sprite)
 {
     if (TranslateAnimHorizontalArc(sprite))
         DestroyAnimSprite(sprite);

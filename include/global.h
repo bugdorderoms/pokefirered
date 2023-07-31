@@ -130,7 +130,10 @@ extern u8 gStringVar4[];
 
 #define DEX_FLAGS_NO ROUND_BITS_TO_BYTES(NUM_SPECIES)
 #define NUM_FLAG_BYTES ROUND_BITS_TO_BYTES(FLAGS_COUNT)
-#define NUM_ADDITIONAL_PHRASE_BYTES ROUND_BITS_TO_BYTES(NUM_ADDITIONAL_PHRASES)
+
+// This produces an error at compile-time if expr is zero.
+// It looks like file.c:line: size of array `id' is negative
+#define STATIC_ASSERT(expr, id) typedef char id[(expr) ? 1 : -1];
 
 struct Coords8
 {
@@ -178,24 +181,20 @@ struct Time
 
 struct Pokedex
 {
-    /*0x00*/ u8 order;
-    /*0x01*/ u8 mode;
-    /*0x02*/ u8 nationalMagic; // must equal 0xDA in order to have National mode
-    /*0x03*/ u8 unknown2; // set to 0xB9 when national dex is first enabled
-    /*0x08*/ u32 spindaPersonality; // set when you first see Spinda
-    /*0x0C*/ u32 unknown3;
-    /*0x10*/ u8 owned[DEX_FLAGS_NO];
-    /*0x44*/ u8 seen[DEX_FLAGS_NO];
+	u32 spindaPersonality; // set when you first see Spinda
+    u8 order;
+    u8 mode;
+    u8 nationalMagic; // must equal 0xDA in order to have National mode
+    u8 owned[DEX_FLAGS_NO];
+    u8 seen[DEX_FLAGS_NO];
 };
 
 struct PokemonJumpRecords
 {
     u16 jumpsInRow;
-    u16 unused1; // Set to 0, never read
     u16 excellentsInRow;
+	u32 bestJumpScore;
     u16 gamesWithMaxPlayers;
-    u32 unused2; // Set to 0, never read
-    u32 bestJumpScore;
 };
 
 struct BerryPickingResults // possibly used in the game itself? Size may be wrong as well
@@ -301,29 +300,30 @@ struct SaveBlock2
     /*0x009*/ u8 specialSaveWarpFlags;
     /*0x00A*/ u8 playerTrainerId[TRAINER_ID_LENGTH];
     /*0x00E*/ u16 playTimeHours;
-    /*0x010*/ u8 playTimeMinutes;
-    /*0x011*/ u8 playTimeSeconds;
-    /*0x012*/ u8 playTimeVBlanks;
-    /*0x013*/ u8 unused;
-    /*0x014*/ u16 optionsTextSpeed:3; // OPTIONS_TEXT_SPEED_[SLOW/MID/FAST]
-              u16 optionsWindowFrameType:5; // Specifies one of the 20 decorative borders for text boxes
-    /*0x015*/ u16 optionsSound:1; // OPTIONS_SOUND_[MONO/STEREO]
-              u16 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
-              u16 optionsBattleSceneOff:1; // whether battle animations are disabled
-              u16 expShare:1; // whether exp share is on
-              u16 autoRun:1; // whether auto run is on
-    /*0x018*/ struct Pokedex pokedex;
-    /*0x090*/ struct Time localTimeOffset;
-    /*0x098*/ struct Time lastBerryTreeUpdate;
-    /*0x0A0*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
-    /*0x0A4*/ struct BattleTowerData battleTower;
-    /*0x88C*/ u16 mapView[0x100];
-    /*0xA8C*/ struct LinkBattleRecords linkBattleRecords;
-    /*0xAE4*/ struct BerryCrush berryCrush;
-    /*0xAF4*/ struct PokemonJumpRecords pokeJump;
-    /*0xB04*/ struct BerryPickingResults berryPick;
-    /*0xB14*/ u32 encryptionKey;
-    /*0xB18*/ u8 itemFlags[DIV_ROUND_UP(ITEMS_COUNT, 8)];
+	/*0x010*/ u32 optionsTextSpeed:3; // OPTIONS_TEXT_SPEED_[SLOW/MID/FAST]
+	/*0x010*/ u32 optionsWindowFrameType:5; // Specifies one of the 20 decorative borders for text boxes
+	/*0x010*/ u32 optionsSound:1; // OPTIONS_SOUND_[MONO/STEREO]
+	/*0x010*/ u32 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
+	/*0x010*/ u32 optionsBattleSceneOff:1; // whether battle animations are disabled
+	/*0x010*/ u32 expShare:1; // whether exp share is on
+	/*0x010*/ u32 autoRun:1; // whether auto run is on
+	/*0x010*/ u32 unused:19;
+	/*0x014*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
+	/*0x018*/ u32 encryptionKey;
+	/*0x01C*/ u16 mapView[0x100];
+	/*0x21C*/ u8 playTimeMinutes;
+	/*0x21D*/ u8 playTimeSeconds;
+	/*0x21E*/ u8 playTimeVBlanks;
+	          // from here to down are the structs and data that can be vary in size
+	          u8 itemFlags[ROUND_BITS_TO_BYTES(ITEMS_COUNT)];
+              struct Pokedex pokedex;
+              struct Time localTimeOffset;
+              struct Time lastBerryTreeUpdate;
+              struct BattleTowerData battleTower;
+              struct LinkBattleRecords linkBattleRecords;
+              struct BerryCrush berryCrush;
+              struct PokemonJumpRecords pokeJump;
+              struct BerryPickingResults berryPick;
 };
 
 extern struct SaveBlock2 *gSaveBlock2Ptr;
@@ -724,59 +724,55 @@ struct SaveBlock1
     /*0x0024*/ struct WarpData escapeWarp;
     /*0x002C*/ u16 savedMusic;
     /*0x002E*/ u8 weather;
-    /*0x0030*/ u8 flashLevel;
-    /*0x0032*/ u16 mapLayoutId;
-    /*0x0034*/ u8 playerPartyCount;
-    /*0x0038*/ struct Pokemon playerParty[PARTY_SIZE];
-    /*0x0290*/ u32 money;
-    /*0x0294*/ u16 coins;
-    /*0x0296*/ u16 registeredItem[REGISTERED_ITEMS_COUNT]; // registered for use with SELECT button
-    /*0x0298*/ struct ItemSlot pcItems[PC_ITEMS_COUNT];
-    /*0x0310*/ struct ItemSlot bagPocket_Items[BAG_ITEMS_COUNT];
-    /*0x03b8*/ struct ItemSlot bagPocket_KeyItems[BAG_KEYITEMS_COUNT];
-    /*0x0430*/ struct ItemSlot bagPocket_PokeBalls[BAG_POKEBALLS_COUNT];
-    /*0x0464*/ struct ItemSlot bagPocket_TMHM[BAG_TMHM_COUNT];
-    /*0x054c*/ struct ItemSlot bagPocket_Berries[BAG_BERRIES_COUNT];
-    /*0x05F8*/ u8 seen1[DEX_FLAGS_NO];
-    /*0x0638*/ u16 trainerRematchStepCounter;
-    /*0x063A*/ u8 ALIGNED(2) trainerRematches[MAX_REMATCH_ENTRIES];
-    /*0x06A0*/ struct ObjectEvent objectEvents[OBJECT_EVENTS_COUNT];
-    /*0x08E0*/ struct ObjectEventTemplate objectEventTemplates[OBJECT_EVENT_TEMPLATES_COUNT];
-    /*0x0EE0*/ u8 flags[NUM_FLAG_BYTES];
-    /*0x1000*/ u16 vars[VARS_COUNT];
-    /*0x1200*/ u32 gameStats[NUM_GAME_STATS];
-    /*0x1300*/ struct QuestLog questLog[QUEST_LOG_SCENE_COUNT];
-    /*0x2CA0*/ u16 easyChatProfile[EASY_CHAT_BATTLE_WORDS_COUNT];
-    /*0x2CAC*/ u16 easyChatBattleStart[EASY_CHAT_BATTLE_WORDS_COUNT];
-    /*0x2CB8*/ u16 easyChatBattleWon[EASY_CHAT_BATTLE_WORDS_COUNT];
-    /*0x2CC4*/ u16 easyChatBattleLost[EASY_CHAT_BATTLE_WORDS_COUNT];
-    /*0x2CD0*/ struct Mail mail[MAIL_COUNT];
-    /*0x2F10*/ u8 additionalPhrases[NUM_ADDITIONAL_PHRASE_BYTES];
-    /*0x2F80*/ struct DayCare daycare;
-    /*0x309C*/ u8 giftRibbons[GIFT_RIBBONS_COUNT];
-    /*0x30A7*/ struct ExternalEventData externalEventData;
-    /*0x30BB*/ struct ExternalEventFlags externalEventFlags;
-    /*0x30D0*/ struct Roamer roamer;
-    /*0x30EC*/ struct EnigmaBerry enigmaBerry;
-    /*0x3120*/ struct MysteryGiftSave mysteryGift;
-    /*0x361C*/ struct RamScript ramScript;
-    /*0x3A18*/ u8 seen2[DEX_FLAGS_NO];
-    /*0x3A4C*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
-    /*0x3A54*/ struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
-    /*0x3AD4*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
-    /*0x3BA8*/ struct TrainerNameRecord trainerNameRecords[20];
-    /*0x3C98*/ struct DaycareMon route5DayCareMon;
-    /*0x3D34*/ u32 towerChallengeId;
-    /*0x3D38*/ struct TrainerTower trainerTower[NUM_TOWER_CHALLENGE_TYPES];
-	       u8 dexNavSearchLevels[NUM_SPECIES];
-               u8 dexNavChain;
+    /*0x002F*/ u8 flashLevel;
+    /*0x0030*/ u16 mapLayoutId;
+	/*0x0032*/ u16 coins;
+	/*0x0034*/ u32 money;
+	/*0x0038*/ u16 registeredItem[REGISTERED_ITEMS_COUNT]; // registered for use with SELECT button
+	/*0x0040*/ u32 gameStats[NUM_GAME_STATS];
+	/*0x0080*/ u16 trainerRematchStepCounter;
+	/*0x0082*/ u16 easyChatProfile[EASY_CHAT_BATTLE_WORDS_COUNT];
+	/*0x008E*/ u16 easyChatBattleStart[EASY_CHAT_BATTLE_WORDS_COUNT];
+	/*0x009A*/ u16 easyChatBattleWon[EASY_CHAT_BATTLE_WORDS_COUNT];
+	/*0x00A6*/ u16 easyChatBattleLost[EASY_CHAT_BATTLE_WORDS_COUNT];
+	/*0x00B2*/ u8 trainerRematches[MAX_REMATCH_ENTRIES];
+	/*0x0116*/ u8 additionalPhrases[ROUND_BITS_TO_BYTES(NUM_ADDITIONAL_PHRASES)];
+	/*0x011B*/ u8 playerPartyCount;
+	/*0x011C*/ u32 towerChallengeId;
+	/*0x0120*/ u8 giftRibbons[GIFT_RIBBONS_COUNT];
+	/*0x012B*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
+	/*0x0133*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
+	           u8 flags[NUM_FLAG_BYTES]; // size of 0x120 bytes
+			   u16 vars[VARS_COUNT]; // size of 0x200 bytes
+			   struct Pokemon playerParty[PARTY_SIZE];
+			   struct ItemSlot pcItems[PC_ITEMS_COUNT];
+			   struct ItemSlot bagPocket_Items[BAG_ITEMS_COUNT];
+			   struct ItemSlot bagPocket_KeyItems[BAG_KEYITEMS_COUNT];
+			   struct ItemSlot bagPocket_PokeBalls[BAG_POKEBALLS_COUNT];
+			   struct ItemSlot bagPocket_TMHM[BAG_TMHM_COUNT];
+			   struct ItemSlot bagPocket_Berries[BAG_BERRIES_COUNT];
+			   struct ObjectEvent objectEvents[OBJECT_EVENTS_COUNT];
+			   struct ObjectEventTemplate objectEventTemplates[OBJECT_EVENT_TEMPLATES_COUNT];
+			   struct QuestLog questLog[QUEST_LOG_SCENE_COUNT];
+			   struct Mail mail[MAIL_COUNT];
+			   struct DayCare daycare;
+			   struct ExternalEventData externalEventData;
+			   struct ExternalEventFlags externalEventFlags;
+			   struct Roamer roamer;
+			   struct EnigmaBerry enigmaBerry;
+			   struct MysteryGiftSave mysteryGift;
+			   struct RamScript ramScript;
+			   struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
+			   struct TrainerNameRecord trainerNameRecords[20];
+			   struct DaycareMon route5DayCareMon;
+			   struct TrainerTower trainerTower[NUM_TOWER_CHALLENGE_TYPES];
 			   struct Pokemon fusedReshiram;
 			   struct Pokemon fusedZekrom;
 			   struct Pokemon fusedSolgaleo;
 			   struct Pokemon fusedLunala;
 			   struct Pokemon fusedGlastrier;
 			   struct Pokemon fusedSpectrier;
-}; // size: 0x3D68
+};
 
 struct MapPosition
 {

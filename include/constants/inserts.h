@@ -7,7 +7,6 @@
 #define CONFUSION_UPDATE TRUE // if true the chance that the pokemon will be damaged by confusion becames 33% instead of 50%.
 #define BADGE_BOOST TRUE // if true it applies the boosts given by each badge.
 #define DONT_REPLENISH_MOVE_PP TRUE // if true when you overwrite a move with another with higher PP the actual PP will Remains.
-#define DELETABLE_HMS TRUE // if true all HM moves will be deleteable like any other TM.
 #define REMOVE_FLASHBACKS TRUE // if true it removes the flashbacks when load a saved game.
 #define FULL_EXP_FOR_PARTICIPATING TRUE // if true it gives full exp for the participating in the battle.
 #define VOLT_TACKLE_BY_BREEDING TRUE // if true when a pichu egg is hatched it will come with the volt tackle move.
@@ -19,6 +18,8 @@
 #define FOG_IN_BATTLE TRUE // if true the overworld weathers WEATHER_FOG_HORIZONTAL and WEATHER_FOG_DIAGONAL will start weather fog in battle, like rain and snow.
 #define DOUBLE_WILD_BATTLE_CHANCE 5 // % chance that a wild battle become into a wild double battle. If 0 it will never start a wild double battle, unless it's called by an scripted wild battle.
 #define DOUBLE_WILD_ATTACK_NATURAL_ENEMY TRUE // if true when a double wild battle occours with two natural enemys, it will attack it's enemy instead of the player's pokemon.
+#define RESTORE_BALL_TRAINER_BLOCK TRUE // if true when a pokemon's trainer blocks a poke ball the item will not be lost and will return to its bag, like in gen4 onwards.
+#define REPEATED_MEDICINE_USE TRUE // if true when using a medicine item on a pokemon it will stay in the party menu instead returning to the bag.
 
 // grafical changes
 #define PAGE_SWAP TRUE // if true it auttomaticaly swap the naming screen page to lower case on write the first caracter.

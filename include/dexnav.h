@@ -93,10 +93,9 @@
 // funcs
 void DexNavGuiInit(MainCallback callback);
 bool8 TryStartDexnavSearch(void);
-void TryIncrementSpeciesSearchLevel(u16 dexNum);
 bool8 IsDexNavSearchActive(void);
 void ResetDexNavSearch(void);
-void IncrementDexNavChain(void);
+void IncrementOrResetDexNavChain(bool8 increment);
 
 // ewram
 extern bool8 gDexnavBattle;

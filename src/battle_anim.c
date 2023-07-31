@@ -1851,6 +1851,7 @@ void LaunchBattleAnimation(u8 animType, u16 animId)
 				case B_ANIM_FUTURE_SIGHT_HIT:
 				case B_ANIM_DOOM_DESIRE_HIT:
 				case B_ANIM_WISH_HEAL:
+				case B_ANIM_ITEM_THROW:
 				    hideHpBoxes = TRUE;
 			}
 			break;

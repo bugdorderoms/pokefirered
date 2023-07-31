@@ -5,6 +5,7 @@
 #include "pokemon_special_anim_internal.h"
 #include "item_use.h"
 #include "task.h"
+#include "item.h"
 #include "constants/songs.h"
 #include "constants/items.h"
 
@@ -616,7 +617,7 @@ static u16 GetAnimTypeByItemId(u16 itemId)
             return gUnknown_8459634[i].animType;
     }
 
-    if (itemId >= ITEM_TM01 && itemId <= ITEM_HM08)
+    if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
     {
         return 4;
     }

@@ -61,29 +61,17 @@ void sub_806E190(void)
 
 void DisableNationalPokedex(void)
 {
-    u16 *nationalDexVar = GetVarPointer(VAR_NATIONAL_DEX);
-    gSaveBlock2Ptr->pokedex.unknown2 = 0;
-    *nationalDexVar = 0;
     FlagClear(FLAG_SYS_NATIONAL_DEX);
 }
 
 void EnableNationalPokedex(void)
 {
-    u16 *nationalDexVar = GetVarPointer(VAR_NATIONAL_DEX);
-    gSaveBlock2Ptr->pokedex.unknown2 = 0xB9;
-    *nationalDexVar = 0x6258;
     FlagSet(FLAG_SYS_NATIONAL_DEX);
 }
 
 bool32 IsNationalPokedexEnabled(void)
 {
-    if (gSaveBlock2Ptr->pokedex.unknown2 != 0xB9)
-        return FALSE;
-    if (VarGet(VAR_NATIONAL_DEX) != 0x6258)
-        return FALSE;
-    if (!FlagGet(FLAG_SYS_NATIONAL_DEX))
-        return FALSE;
-    return TRUE;
+    return FlagGet(FLAG_SYS_NATIONAL_DEX);
 }
 
 void DisableMysteryGift(void)

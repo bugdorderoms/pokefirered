@@ -3,6 +3,7 @@
 #include "constants/battle_move_effects.h"
 #include "constants/battle_script_commands.h"
 #include "constants/battle_anim.h"
+#include "constants/moves.h"
 #include "constants/items.h"
 #include "constants/abilities.h"
 #include "constants/species.h"
@@ -18,38 +19,105 @@
 	.section script_data, "aw", %progbits
 	.align 2
 
-gBattlescriptsForBallThrow::
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowSafariBall
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowBall
-	.4byte BattleScript_ThrowBall
-
 gBattlescriptsForUsingItem::
-	.4byte BattleScript_PlayerUseItem
-	.4byte BattleScript_AIUseFullRestoreOrHpHeal
-	.4byte BattleScript_AIUseFullRestoreOrHpHeal
-	.4byte BattleScript_AIUseStatRestore
-	.4byte BattleScript_AIUseXstat
-	.4byte BattleScript_AIUseGuardSpec
-
-gBattlescriptsForRunningByItem::
-	.4byte BattleScript_UseFluffyTail
-	.4byte BattleScript_UsePokeFlute
+	.4byte BattleScript_ItemRestoreHP                @ EFFECT_ITEM_RESTORE_HP
+    .4byte BattleScript_ItemCureStatus               @ EFFECT_ITEM_CURE_STATUS
+    .4byte BattleScript_ItemIncreaseStat             @ EFFECT_ITEM_INCREASE_STAT
+    .4byte BattleScript_ItemSetMist                  @ EFFECT_ITEM_SET_MIST
+    .4byte BattleScript_ItemSetFocusEnergy           @ EFFECT_ITEM_SET_FOCUS_ENERGY
+    .4byte BattleScript_RunByUsingItem               @ EFFECT_ITEM_ESCAPE
+    .4byte BattleScript_ThrowBall                    @ EFFECT_ITEM_THROW_BALL
+    .4byte BattleScript_ItemRestorePP                @ EFFECT_ITEM_RESTORE_PP
+    .4byte BattleScript_ItemIncreaseAllStats         @ EFFECT_ITEM_INCREASE_ALL_STATS
+	.4byte BattleScript_UsePokeFlute                 @ EFFECT_ITEM_POKE_FLUTE
 
 gBattlescriptsForSafariActions::
 	.4byte BattleScript_WatchesCarefully
 	.4byte BattleScript_ThrowRock
 	.4byte BattleScript_ThrowBait
 	.4byte BattleScript_LeftoverWallyPrepToThrow
+
+BattleScript_ItemUseMessageEnd::
+    call BattleScript_UseItemMessage
+
+BattleScript_ItemEnd::
+    end
+
+BattleScript_UseItemMessage::
+    printstring STRINGID_EMPTYSTRING3
+    pause 0x30
+	printstring STRINGID_TRAINERUSEDITEM
+    waitmessage 0x40
+	jumpifabsent BS_SCRIPTING, BattleScript_UseItemMessageReturn
+	playanimation BS_SCRIPTING, B_ANIM_ITEM_THROW, NULL
+	waitstate
+BattleScript_UseItemMessageReturn::
+    playse SE_USE_ITEM
+    return
+
+BattleScript_ItemRestoreHP::
+    call BattleScript_UseItemMessage
+	jumpifrevived BattleScript_ItemRestoreHP_SendOutRevivedBattler @ used revive
+    bichalfword gMoveResultFlags, MOVE_RESULT_NO_EFFECT
+    orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
+    healthbarupdate BS_SCRIPTING
+    datahpupdate BS_SCRIPTING
+    updatestatusicon BS_SCRIPTING
+	printstring STRINGID_ITEMRESTOREDSPECIESHEALTH
+    waitmessage 0x40
+    end
+
+BattleScript_ItemRestoreHP_SendOutRevivedBattler::
+    switchinanim BS_SCRIPTING, FALSE
+    waitstate
+    switchineffects BS_SCRIPTING
+    end
+
+BattleScript_ItemCureStatus::
+    call BattleScript_UseItemMessage
+	updatestatusicon BS_SCRIPTING
+    printstring STRINGID_ITEMCUREDSPECIESSTATUS
+    waitmessage 0x40
+    end
+	
+BattleScript_ItemIncreaseStat::
+    call BattleScript_UseItemMessage
+	itemincreasestat
+    statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_NOT_PROTECT_AFFECTED | STAT_CHANGE_BS_PTR, BattleScript_ItemEnd
+    setgraphicalstatchangevalues
+    playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+    printfromtable gStatUpStringIds
+    waitmessage 0x40
+    end
+
+BattleScript_ItemSetMist::
+    call BattleScript_UseItemMessage
+    setmist
+    playmoveanimation BS_ATTACKER, MOVE_MIST
+	waitstate
+    printstring STRINGID_PKMNSHROUDEDINMIST
+    waitmessage 0x40
+    end
+
+BattleScript_ItemSetFocusEnergy::
+    call BattleScript_UseItemMessage
+    setfocusenergy
+    playmoveanimation BS_ATTACKER, MOVE_FOCUS_ENERGY
+	waitstate
+    printstring STRINGID_PKMNGETTINGPUMPED
+    waitmessage 0x40
+    end
+
+BattleScript_ItemRestorePP::
+    call BattleScript_UseItemMessage
+    printstring STRINGID_ITEMRESTOREDSPECIESPP
+    waitmessage 0x40
+    end
+
+BattleScript_ItemIncreaseAllStats::
+    call BattleScript_UseItemMessage
+    call BattleScript_AllStatsUp
+    end
 
 BattleScript_ThrowBall::
 	jumpifbattletype BATTLE_TYPE_OLD_MAN_TUTORIAL, BattleScript_OldManThrowBall
@@ -127,64 +195,7 @@ BattleScript_GhostBallDodge::
 	waitmessage 64
 	finishaction
 
-BattleScript_PlayerUseItem::
-	moveendcase 15
-	end
-
-BattleScript_AIUseFullRestoreOrHpHeal::
-	printstring STRINGID_EMPTYSTRING3
-	pause 48
-	playse SE_USE_ITEM
-	printstring STRINGID_TRAINER1USEDITEM
-	waitmessage 64
-	useitemonopponent
-	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
-	healthbarupdate BS_ATTACKER
-	datahpupdate BS_ATTACKER
-	printstring STRINGID_PKMNSITEMRESTOREDHEALTH
-	waitmessage 64
-	updatestatusicon BS_ATTACKER
-	moveendcase 15
-	finishaction
-
-BattleScript_AIUseStatRestore::
-	printstring STRINGID_EMPTYSTRING3
-	pause 48
-	playse SE_USE_ITEM
-	printstring STRINGID_TRAINER1USEDITEM
-	waitmessage 64
-	useitemonopponent
-	printfromtable gTrainerItemCuredStatusStringIds
-	waitmessage 64
-	updatestatusicon BS_ATTACKER
-	moveendcase 15
-	finishaction
-
-BattleScript_AIUseXstat::
-	printstring STRINGID_EMPTYSTRING3
-	pause 48
-	playse SE_USE_ITEM
-	printstring STRINGID_TRAINER1USEDITEM
-	waitmessage 64
-	useitemonopponent
-	printfromtable gStatUpStringIds
-	waitmessage 64
-	moveendcase 15
-	finishaction
-
-BattleScript_AIUseGuardSpec::
-	printstring STRINGID_EMPTYSTRING3
-	pause 48
-	playse SE_USE_ITEM
-	printstring STRINGID_TRAINER1USEDITEM
-	waitmessage 64
-	useitemonopponent
-	printfromtable gMistUsedStringIds
-	waitmessage 64
-	moveendcase 15
-	finishaction
-
-BattleScript_UseFluffyTail::
+BattleScript_RunByUsingItem::
 	playse SE_FLEE
 	setbyte gBattleOutcome, B_OUTCOME_RAN
 	finishturn
@@ -193,16 +204,16 @@ BattleScript_UsePokeFlute::
 	checkpokeflute BS_ATTACKER
 	jumpifbyte CMP_EQUAL, sMULTISTRING_CHOOSER, 1, BattleScript_PokeFluteWakeUp
 	printstring STRINGID_POKEFLUTECATCHY
-	waitmessage 64
+	waitmessage 0x40
 	goto BattleScript_PokeFluteEnd
 
 BattleScript_PokeFluteWakeUp::
 	printstring STRINGID_POKEFLUTE
-	waitmessage 64
+	waitmessage 0x40
 	fanfare MUS_POKE_FLUTE
 	waitfanfare BS_ATTACKER
 	printstring STRINGID_MONHEARINGFLUTEAWOKE
-	waitmessage 64
+	waitmessage 0x40
 	updatestatusicon BS_PLAYER2
 	waitstate
 BattleScript_PokeFluteEnd::
