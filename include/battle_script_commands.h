@@ -47,6 +47,7 @@ void BattleCreateYesNoCursorAt(void);
 void BattleDestroyYesNoCursorAt(void);
 void HandleBattleWindow(u8 xStart, u8 yStart, u8 xEnd, u8 yEnd, u8 flags);
 void BufferMoveToLearnIntoBattleTextBuff2(void);
+u8 GetCurrentLevelCapLevel(void);
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 

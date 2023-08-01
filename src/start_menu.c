@@ -20,12 +20,14 @@
 #include "text_window.h"
 #include "field_fadetransition.h"
 #include "field_player_avatar.h"
+#include "battle_script_commands.h"
 #include "new_menu_helpers.h"
 #include "event_object_movement.h"
 #include "event_object_lock.h"
 #include "script.h"
 #include "quest_log.h"
 #include "new_game.h"
+#include "help_message.h"
 #include "event_scripts.h"
 #include "field_weather.h"
 #include "field_specials.h"
@@ -229,41 +231,47 @@ static void SetUpStartMenu_UnionRoom(void)
 
 static void Task_PutTimeInTimeBox(u8 taskId)
 {
-    ConvertIntToDecimalStringN(gStringVar1, gRtcLocation.hour, STR_CONV_MODE_LEADING_ZEROS, 2);
-    ConvertIntToDecimalStringN(gStringVar2, gRtcLocation.minute, STR_CONV_MODE_LEADING_ZEROS, 2);
-    ConvertIntToDecimalStringN(gStringVar3, gRtcLocation.second, STR_CONV_MODE_LEADING_ZEROS, 2);
-    StringExpandPlaceholders(gStringVar4, gStartMenu_TimeBoxClock);
-    AddTextPrinterParameterized(sSafariZoneStatsWindowId, 2, gStringVar4, 4, 3, 0xFF, NULL);
+	StringCopy(gStringVar4, gStartMenu_TimeBoxClock);
+	ConvertIntToDecimalStringN(gStringVar1, gRtcLocation.hour, STR_CONV_MODE_LEADING_ZEROS, 2);
+	StringAppend(gStringVar4, gStringVar1);
+	StringAppend(gStringVar4, gText_Font2Colon);
+	ConvertIntToDecimalStringN(gStringVar1, gRtcLocation.minute, STR_CONV_MODE_LEADING_ZEROS, 2);
+	StringAppend(gStringVar4, gStringVar1);
+	StringAppend(gStringVar4, gTasks[taskId].data[1] ? gText_Font2Colon : gText_Space);
+	ConvertIntToDecimalStringN(gStringVar1, gRtcLocation.second, STR_CONV_MODE_LEADING_ZEROS, 2);
+	StringAppend(gStringVar4, gStringVar1);
+    AddTextPrinterParameterized(sSafariZoneStatsWindowId, 0, gStringVar4, 4, 0, 0xFF, NULL);
     CopyWindowToVram(sSafariZoneStatsWindowId, COPYWIN_GFX);
+	
+	if (++gTasks[taskId].data[0] >= 30) // Show colon every half second
+	{
+		gTasks[taskId].data[0] = 0; // Reset Timer for next update
+		gTasks[taskId].data[1] ^= TRUE; // Invert it. If the current Timer show it, the next don't
+	}
 }
 
 static void DrawTimeBox(void)
 {
-    bool32 inSafariZone = GetSafariZoneFlag();
+	u8 taskId;
+    struct WindowTemplate template = SetWindowTemplateFields(0, 1, 1, 10, GetSafariZoneFlag() ? 5 : 2, 15, 0x008);
     
-    struct WindowTemplate TimeBoxWindowTemplate = {0};
-    TimeBoxWindowTemplate.tilemapLeft = 1;
-    TimeBoxWindowTemplate.tilemapTop = 1;
-    TimeBoxWindowTemplate.width = 10;
-    if (!inSafariZone)
-        TimeBoxWindowTemplate.height = 2;
-    else
-        TimeBoxWindowTemplate.height = 6;
-    TimeBoxWindowTemplate.paletteNum = 15;
-    TimeBoxWindowTemplate.baseBlock = 0x008;
-    
-    sSafariZoneStatsWindowId = AddWindow(&TimeBoxWindowTemplate);
-    PutWindowTilemap(sSafariZoneStatsWindowId);
+    sSafariZoneStatsWindowId = AddWindow(&template);
+	PutWindowTilemap(sSafariZoneStatsWindowId);
     DrawStdWindowFrame(sSafariZoneStatsWindowId, FALSE);
-    if (inSafariZone)
+	
+    if (GetSafariZoneFlag())
     {
-        ConvertIntToDecimalStringN(gStringVar1, gSafariZoneStepCounter, STR_CONV_MODE_RIGHT_ALIGN, 3);
-        ConvertIntToDecimalStringN(gStringVar2, 600, STR_CONV_MODE_RIGHT_ALIGN, 3);
-        ConvertIntToDecimalStringN(gStringVar3, gNumSafariBalls, STR_CONV_MODE_RIGHT_ALIGN, 2);
+        ConvertIntToDecimalStringN(gStringVar1, gSafariZoneStepCounter, STR_CONV_MODE_LEFT_ALIGN, 3);
+        ConvertIntToDecimalStringN(gStringVar2, 600, STR_CONV_MODE_LEFT_ALIGN, 3);
+        ConvertIntToDecimalStringN(gStringVar3, gNumSafariBalls, STR_CONV_MODE_LEFT_ALIGN, 2);
         StringExpandPlaceholders(gStringVar4, gUnknown_84162A9);
-        AddTextPrinterParameterized(sSafariZoneStatsWindowId, 2, gStringVar4, 4, 18, 0xFF, NULL);
+        AddTextPrinterParameterized(sSafariZoneStatsWindowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
     }
-    CreateTask(Task_PutTimeInTimeBox, 2);
+	CopyWindowToVram(sSafariZoneStatsWindowId, COPYWIN_GFX);
+	
+	taskId = CreateTask(Task_PutTimeInTimeBox, 90);
+	gTasks[taskId].data[0] = 0; // Timer
+	gTasks[taskId].data[1] = TRUE; // Show seconds ":"
 }
 
 static void DestroySafariZoneStatsWindow(void)
@@ -299,6 +307,22 @@ static s8 PrintStartMenuItems(s8 *cursor_p, u8 nitems)
     return FALSE;
 }
 
+static void PrintStartMenuLevelCap(void)
+{
+	const u8 *str;
+	u8 levelCap = GetCurrentLevelCapLevel();
+	
+	if (levelCap == MAX_LEVEL)
+		str = gText_HasNoLevelCap;
+	else
+	{
+		str = gText_CurrentLevelCap;
+		ConvertIntToDecimalStringN(gStringVar1, levelCap, STR_CONV_MODE_LEFT_ALIGN, 3);
+	}
+	StringExpandPlaceholders(gStringVar4, str);
+	DrawHelpMessageWindowWithText(gStringVar4);
+}
+
 static s8 DoDrawStartMenu(void)
 {
     switch (sDrawStartMenuState[0])
@@ -316,16 +340,20 @@ static s8 DoDrawStartMenu(void)
         sDrawStartMenuState[0]++;
         break;
     case 3:
-        DrawTimeBox();
-        sDrawStartMenuState[0]++;
-        break;
-    case 4:
-        if (PrintStartMenuItems(&sDrawStartMenuState[1], 2) == TRUE)
+		DrawTimeBox();
+		sDrawStartMenuState[0]++;
+		break;
+	case 4:
+		if (PrintStartMenuItems(&sDrawStartMenuState[1], 2) == TRUE)
             sDrawStartMenuState[0]++;
-        break;
+		break;
     case 5:
         sStartMenuCursorPos = Menu_InitCursor(GetStartMenuWindowId(), 2, 0, 0, 15, sNumStartMenuItems, sStartMenuCursorPos);
-        CopyWindowToVram(GetStartMenuWindowId(), COPYWIN_MAP);
+#if EXP_BLOCK
+        if (!MenuHelpers_LinkSomething() && !InUnionRoom() && FlagGet(FLAG_SYS_POKEMON_GET) && !GetSafariZoneFlag())
+			PrintStartMenuLevelCap();
+#endif
+		CopyWindowToVram(GetStartMenuWindowId(), COPYWIN_MAP);
         return TRUE;
     }
     return FALSE;
@@ -705,6 +733,7 @@ static u8 SaveDialogCB_PrintAskSaveText(void)
 {
     ClearStdWindowAndFrame(GetStartMenuWindowId(), FALSE);
     RemoveStartMenuWindow();
+	DestroyHelpMessageWindow(0);
     PrintSaveStats();
     PrintSaveTextWithFollowupFunc(gText_WouldYouLikeToSaveTheGame, SaveDialogCB_AskSavePrintYesNoMenu);
     return SAVECB_RETURN_CONTINUE;

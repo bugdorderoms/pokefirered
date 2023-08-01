@@ -722,6 +722,13 @@ static const u8 sBallCatchBonuses[] =
     20, 15, 10, 15 // Ultra, Great, Poke, Safari
 };
 
+u8 GetCurrentLevelCapLevel(void)
+{
+	u8 numBadges = GetNumOfBadges();
+	
+	return numBadges == NUM_BADGES ? MAX_LEVEL : sExpBlockLevels[numBadges];
+}
+
 static bool8 IsTwoTurnsMove(u16 move)
 {
     if (gBattleMoves[move].effect == EFFECT_SKULL_BASH
@@ -2421,7 +2428,7 @@ static void atk23_getexp(void)
 		case 2: // Set exp value to the poke in expgetter_id and print message
 			if (!gBattleControllerExecFlags)
 			{
-				u8 level = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_LEVEL);
+				u8 level = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_LEVEL), levelCap = GetCurrentLevelCapLevel();
 				item = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_HELD_ITEM);
 				
 				if (item == ITEM_ENIGMA_BERRY)
@@ -2442,13 +2449,13 @@ static void atk23_getexp(void)
 					gBattleMoveDamage = 0; // Used for exp
 				}
 #if EXP_BLOCK
-                else if (GetNumOfBadges() != NUM_BADGES && level >= sExpBlockLevels[GetNumOfBadges()])
+                else if (levelCap != MAX_LEVEL && level >= levelCap)
 				{
 					*(&gBattleStruct->sentInPokes) >>= 1;
 					gBattleScripting.atk23_state = 5;
 					gBattleMoveDamage = 0; // Used for exp
 				}
-#endif    
+#endif
                 else
 				{
 					// Music change in wild battle after fainting a poke

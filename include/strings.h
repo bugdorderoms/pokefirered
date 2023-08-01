@@ -653,6 +653,8 @@ extern const u8 gText_MailReturnedToBagMessageErased[];
 
 // start_menu
 extern const u8 gStartMenu_TimeBoxClock[];
+extern const u8 gText_Font2Colon[];
+extern const u8 gText_Space[];
 extern const u8 gStartMenuText_Dexnav[];
 extern const u8 gStartMenuText_Pokedex[];
 extern const u8 gStartMenuText_Bag[];
@@ -662,6 +664,8 @@ extern const u8 gStartMenuText_Option[];
 extern const u8 gStartMenuText_Exit[];
 extern const u8 gStartMenuText_Retire[];
 extern const u8 gUnknown_84162A9[];
+extern const u8 gText_HasNoLevelCap[];
+extern const u8 gText_CurrentLevelCap[];
 extern const u8 gText_SaveError_PleaseExchangeBackupMemory[];
 extern const u8 gText_SavingDontTurnOffThePower2[];
 extern const u8 gSaveStatName_Player[];
