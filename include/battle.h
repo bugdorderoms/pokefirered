@@ -272,7 +272,7 @@ struct WishFutureKnock
     u8 wishCounter[MAX_BATTLERS_COUNT];
     u8 wishMonId[MAX_BATTLERS_COUNT];
     u8 weatherDuration;
-    u8 knockedOffMons[2]; // as bit using gBitTable
+    u8 knockedOffMons[B_SIDE_COUNT]; // as bit using gBitTable
 };
 
 extern struct WishFutureKnock gWishFutureKnock;
@@ -457,10 +457,10 @@ struct BattleStruct
 	/*0x0A6*/ u8 weatherIconSpriteId;
 	/*0x0A7*/ u8 field_DA; // battle tower related
 	/*0x0A8*/ void (*savedCallback)(void);
-	/*0x0AC*/ u16 usedHeldItems[PARTY_SIZE][2];
+	/*0x0AC*/ u16 usedHeldItems[PARTY_SIZE][B_SIDE_COUNT];
 	/*0x0C4*/ u16 hpBefore[MAX_BATTLERS_COUNT]; // hp before use move, for Berserk and Emergency Exit
-	/*0x0CC*/ u8 zeroToHeroActivated[2]; // as flag using gBitTable
-	/*0x0CE*/ u8 allowedToChangeFormInWeather[2]; // for Ice Face, as flag using gBitTable
+	/*0x0CC*/ u8 zeroToHeroActivated[B_SIDE_COUNT]; // as flag using gBitTable
+	/*0x0CE*/ u8 allowedToChangeFormInWeather[B_SIDE_COUNT]; // for Ice Face, as flag using gBitTable
 	/*0x0D0*/ u16 chosenItem[MAX_BATTLERS_COUNT]; // AI related
 	/*0x0D8*/ const u8 *trainerSlideMsg;
 	/*0x0DC*/ u8 AI_monToSwitchIntoId[2]; // AI related
@@ -473,10 +473,10 @@ struct BattleStruct
 	/*0x0E7*/ u8 terastalMsgDone:1;
 	/*0x0E7*/ u8 throwingPokeBall:1;
 	/*0x0E7*/ u8 filler:2;
-	/*0x0E8*/ u8 intrepidSwordActivated[2]; // as flag using gBitTable
-	/*0x0EA*/ u8 dauntlessShieldActivated[2]; // as flag using gBitTable
+	/*0x0E8*/ u8 intrepidSwordActivated[B_SIDE_COUNT]; // as flag using gBitTable
+	/*0x0EA*/ u8 dauntlessShieldActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x0EC*/ u16 abilityOverride[MAX_BATTLERS_COUNT]; // Used to override the ability on pop up by this value
-	/*0x0F4*/ u8 faintCounter[2]; // for Supreme Overlord, caps at 100 faints per side
+	/*0x0F4*/ u8 faintCounter[B_SIDE_COUNT]; // for Supreme Overlord, caps at 100 faints per side
 	/*0x0F6*/ u8 supremeOverlordBoosts[MAX_BATTLERS_COUNT];
 	/*0x0FA*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // for Pickup gen5 effect
 	/*0x0FE*/ u8 soulHeartBattlerId;
@@ -706,7 +706,7 @@ extern u32 gTransformedPersonalities[MAX_BATTLERS_COUNT];
 extern u8 gBattlerPositions[MAX_BATTLERS_COUNT];
 extern u8 gHealthboxSpriteIds[MAX_BATTLERS_COUNT];
 extern u8 gBattleOutcome;
-extern u16 gBattleMonForms[PARTY_SIZE][2];
+extern u16 gBattleMonForms[PARTY_SIZE][B_SIDE_COUNT];
 extern void (*gBattlerControllerFuncs[MAX_BATTLERS_COUNT])(void);
 extern u32 gBattleControllerExecFlags;
 extern u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200];
@@ -731,7 +731,7 @@ extern const u8 *gSelectionBattleScripts[MAX_BATTLERS_COUNT];
 extern u16 gLastMoves[MAX_BATTLERS_COUNT];
 extern u8 gBattlerByTurnOrder[MAX_BATTLERS_COUNT];
 extern u8 gBattleCommunication[BATTLE_COMMUNICATION_ENTRIES_COUNT];
-extern u16 gSideStatuses[2];
+extern u16 gSideStatuses[B_SIDE_COUNT];
 extern u32 gHitMarker;
 extern u16 gChosenMoveByBattler[MAX_BATTLERS_COUNT];
 extern u16 gMoveResultFlags;

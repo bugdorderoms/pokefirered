@@ -23,25 +23,25 @@
  *   +---------------------------+
  */
 
-#define MAX_BATTLERS_COUNT  4
-
-#define B_POSITION_PLAYER_LEFT        0
-#define B_POSITION_OPPONENT_LEFT      1
-#define B_POSITION_PLAYER_RIGHT       2
-#define B_POSITION_OPPONENT_RIGHT     3
+#define B_POSITION_PLAYER_LEFT    0
+#define B_POSITION_OPPONENT_LEFT  1
+#define B_POSITION_PLAYER_RIGHT   2
+#define B_POSITION_OPPONENT_RIGHT 3
+#define MAX_BATTLERS_COUNT        4
 
 // These macros can be used with either battler ID or positions to get the partner or the opposite mon
 #define BATTLE_OPPOSITE(id) ((id) ^ BIT_SIDE)
 #define BATTLE_PARTNER(id) ((id) ^ BIT_FLANK)
 
-#define B_SIDE_PLAYER     0
-#define B_SIDE_OPPONENT   1
+#define B_SIDE_PLAYER   0
+#define B_SIDE_OPPONENT 1
+#define B_SIDE_COUNT    2
 
-#define B_FLANK_LEFT 0
+#define B_FLANK_LEFT  0
 #define B_FLANK_RIGHT 1
 
-#define BIT_SIDE        1
-#define BIT_FLANK       2
+#define BIT_SIDE  1
+#define BIT_FLANK 2
 
 // Battle Type Flags
 #define BATTLE_TYPE_DOUBLE           (1 << 0)
@@ -67,21 +67,21 @@
 #define IS_BATTLE_TYPE_GHOST_WITH_SCOPE() (gBattleTypeFlags & BATTLE_TYPE_GHOST && gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED)
 #define IS_DOUBLE_WILD_BATTLE() (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 
-#define RIVAL_BATTLE_HEAL_AFTER  1
-#define RIVAL_BATTLE_TUTORIAL    3
+#define RIVAL_BATTLE_HEAL_AFTER 1
+#define RIVAL_BATTLE_TUTORIAL   3
 
 // Battle Outcome defines
-#define B_OUTCOME_WON                  0x1
-#define B_OUTCOME_LOST                 0x2
-#define B_OUTCOME_DREW                 0x3
-#define B_OUTCOME_RAN                  0x4
-#define B_OUTCOME_PLAYER_TELEPORTED    0x5
-#define B_OUTCOME_MON_FLED             0x6
-#define B_OUTCOME_CAUGHT               0x7
-#define B_OUTCOME_NO_SAFARI_BALLS      0x8
-#define B_OUTCOME_FORFEITED            0x9
-#define B_OUTCOME_MON_TELEPORTED       0xA
-#define B_OUTCOME_LINK_BATTLE_RAN      0x80
+#define B_OUTCOME_WON               0x1
+#define B_OUTCOME_LOST              0x2
+#define B_OUTCOME_DREW              0x3
+#define B_OUTCOME_RAN               0x4
+#define B_OUTCOME_PLAYER_TELEPORTED 0x5
+#define B_OUTCOME_MON_FLED          0x6
+#define B_OUTCOME_CAUGHT            0x7
+#define B_OUTCOME_NO_SAFARI_BALLS   0x8
+#define B_OUTCOME_FORFEITED         0x9
+#define B_OUTCOME_MON_TELEPORTED    0xA
+#define B_OUTCOME_LINK_BATTLE_RAN   0x80
 
 // Non-volatile status conditions
 // These persist remain outside of battle and after switching out

@@ -181,8 +181,8 @@ EWRAM_DATA u16 gChosenMoveByBattler[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gMoveResultFlags = 0;
 EWRAM_DATA u32 gHitMarker = 0;
 EWRAM_DATA u8 gTakenDmgByBattler[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u16 gSideStatuses[2] = {0};
-EWRAM_DATA struct SideTimer gSideTimers[2] = {0};
+EWRAM_DATA u16 gSideStatuses[B_SIDE_COUNT] = {0};
+EWRAM_DATA struct SideTimer gSideTimers[B_SIDE_COUNT] = {0};
 EWRAM_DATA u32 gStatuses3[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gPauseCounterBattle = 0;
@@ -213,7 +213,7 @@ EWRAM_DATA struct BattleSpriteData *gBattleSpritesDataPtr = NULL;
 EWRAM_DATA struct MonSpritesGfx *gMonSpritesGfxPtr = NULL;
 EWRAM_DATA u16 gBattleMovePower = 0;
 EWRAM_DATA u16 gMoveToLearn = 0;
-EWRAM_DATA u16 gBattleMonForms[PARTY_SIZE][2] = {0};
+EWRAM_DATA u16 gBattleMonForms[PARTY_SIZE][B_SIDE_COUNT] = {0};
 EWRAM_DATA u8 gPartyCriticalHits[PARTY_SIZE] = {0};
 EWRAM_DATA static u8 sTriedEvolving = 0;
 
@@ -2487,7 +2487,7 @@ static void BattleStartClearSetData(void)
 		gBattleStruct->pickupStack[i] = 0xFF;
 		ClearIllusionMon(i);
     }
-	for (i = 0; i < 2; i++)
+	for (i = 0; i < B_SIDE_COUNT; i++)
 	{
 		gBattleStruct->intrepidSwordActivated[i] = 0;
 		gBattleStruct->dauntlessShieldActivated[i] = 0;

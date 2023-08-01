@@ -830,7 +830,7 @@ u8 DoFieldEndTurnEffects(void)
             }
             // fall through
         case ENDTURN_REFLECT:
-            while (gBattleStruct->turnSideTracker < 2)
+            while (gBattleStruct->turnSideTracker < B_SIDE_COUNT)
             {
                 side = gBattleStruct->turnSideTracker;
                 gActiveBattler = gBattlerAttacker = gSideTimers[side].reflectBattlerId;
@@ -855,7 +855,7 @@ u8 DoFieldEndTurnEffects(void)
             }
             break;
         case ENDTURN_LIGHT_SCREEN:
-            while (gBattleStruct->turnSideTracker < 2)
+            while (gBattleStruct->turnSideTracker < B_SIDE_COUNT)
             {
                 side = gBattleStruct->turnSideTracker;
                 gActiveBattler = gBattlerAttacker = gSideTimers[side].lightscreenBattlerId;
@@ -881,7 +881,7 @@ u8 DoFieldEndTurnEffects(void)
             }
             break;
         case ENDTURN_MIST:
-            while (gBattleStruct->turnSideTracker < 2)
+            while (gBattleStruct->turnSideTracker < B_SIDE_COUNT)
             {
                 side = gBattleStruct->turnSideTracker;
                 gActiveBattler = gBattlerAttacker = gSideTimers[side].mistBattlerId;
@@ -904,7 +904,7 @@ u8 DoFieldEndTurnEffects(void)
             }
             break;
         case ENDTURN_SAFEGUARD:
-            while (gBattleStruct->turnSideTracker < 2)
+            while (gBattleStruct->turnSideTracker < B_SIDE_COUNT)
             {
                 side = gBattleStruct->turnSideTracker;
                 gActiveBattler = gBattlerAttacker = gSideTimers[side].safeguardBattlerId;
@@ -2512,7 +2512,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 							u8 statId, opposingBattler = BATTLE_OPPOSITE(battler);
 							u32 def = 0, spDef = 0, var;
 							
-							for (i = 0; i < 2; i++, opposingBattler = BATTLE_PARTNER(opposingBattler))
+							for (i = 0; i < (MAX_BATTLERS_COUNT / 2); i++, opposingBattler = BATTLE_PARTNER(opposingBattler))
 							{
 								if (IsBattlerAlive(opposingBattler))
 								{
