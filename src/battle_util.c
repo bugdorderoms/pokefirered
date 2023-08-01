@@ -2132,7 +2132,7 @@ static bool8 MoveHasFlinchChance(u16 move)
 	return FALSE;
 }
 
-#define IS_MULTIHIT_FINAL_STRIKE (gMultiHitCounter == 0 || gMultiHitCounter == 1)
+#define IS_MULTIHIT_FINAL_STRIKE (gMultiHitCounter <= 1)
 
 u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 {
@@ -2483,15 +2483,16 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 									{
 										moveArg = gBattleMons[i].moves[j];
 										
-										if (moveArg && !IS_MOVE_STATUS(moveArg))
+										if (gBattleMoves[moveArg].effect == EFFECT_OHKO)
+											++effect;
+										else if (moveArg && !IS_MOVE_STATUS(moveArg))
 										{
 											if (gBattleMoves[moveArg].effect == EFFECT_HIDDEN_POWER)
 												moveType = GetHiddenPowerType(GetBattlerPartyIndexPtr(i));
 											else
 												moveType = gBattleMoves[moveArg].type;
 											
-											if (TypeCalc(moveArg, moveType, i, battler, FALSE, FALSE, &affectedBy) & MOVE_RESULT_SUPER_EFFECTIVE
-											|| gBattleMoves[moveArg].effect == EFFECT_OHKO)
+											if (TypeCalc(moveArg, moveType, i, battler, FALSE, FALSE, &affectedBy) & MOVE_RESULT_SUPER_EFFECTIVE)
 												++effect;
 										}
 									}
@@ -2985,10 +2986,14 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 							}
 							break;
 						case ABILITY_PICKUP:
-							if (GetBattlerOnTopOfPickupStack(battler) != 0xFF && TryRecycleBattlerItem(battler, GetBattlerOnTopOfPickupStack(battler)))
 							{
-								BattleScriptPushCursorAndCallback(BattleScript_Pickup);
-								++effect;
+								u8 pickupBattler = GetBattlerOnTopOfPickupStack(battler);
+								
+								if (pickupBattler != 0xFF && TryRecycleBattlerItem(battler, pickupBattler))
+								{
+									BattleScriptPushCursorAndCallback(BattleScript_Pickup);
+									++effect;
+								}
 							}
 							break;
 					}
@@ -4550,9 +4555,9 @@ u8 GetHiddenPowerType(struct Pokemon *mon)
 	return type;
 }
 
-static void SetIllusionMon(struct Pokemon *mon, u8 battler)
+static void SetIllusionMon(u8 battler)
 {
-	struct Pokemon *party, *partnerMon;
+	struct Pokemon *party, *partnerMon, *mon = GetBattlerPartyIndexPtr(battler);
 	u8 partyCount;
 	s8 i, id;
 	
@@ -4602,7 +4607,7 @@ struct Pokemon *GetIllusionMonPtr(u8 battler)
 		return NULL;
 	
 	if (!gBattleStruct->illusion[battler].set)
-		SetIllusionMon(GetBattlerPartyIndexPtr(battler), battler);
+		SetIllusionMon(battler);
 	
 	if (!gBattleStruct->illusion[battler].on)
 		return NULL;
@@ -5320,4 +5325,11 @@ const u8 *PokemonUseItemEffectsBattle(u8 battlerId, u16 itemId, bool8 *canUse)
 			break;
 	}
 	return failStr;
+}
+
+bool8 IsBattleAnimationsOn(void)
+{
+	if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKEDUDE)) && gSaveBlock2Ptr->optionsBattleSceneOff)
+		return FALSE;
+	return TRUE;
 }

@@ -155,5 +155,6 @@ u8 GetItemUseBattler(u8 battlerId);
 u8 GetBattleMonForItemUse(u8 partyIndex);
 bool8 IsItemUseBlockedByBattleEffect(void);
 const u8 *PokemonUseItemEffectsBattle(u8 battlerId, u16 itemId, bool8 *canUse);
+bool8 IsBattleAnimationsOn(void);
 
 #endif // GUARD_BATTLE_UTIL_H

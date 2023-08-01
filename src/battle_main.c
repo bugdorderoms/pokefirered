@@ -2499,9 +2499,6 @@ static void BattleStartClearSetData(void)
     gBattleWeather = 0;
     gHitMarker = 0;
 	
-    if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKEDUDE)) && gSaveBlock2Ptr->optionsBattleSceneOff)
-        gHitMarker |= HITMARKER_NO_ANIMATIONS;
-	
     gBattleScripting.battleStyle = gSaveBlock2Ptr->optionsBattleStyle;
     gMultiHitCounter = 0;
 	gBattleScripting.savedDmg = 0;

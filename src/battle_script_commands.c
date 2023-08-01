@@ -1579,7 +1579,7 @@ static void atk09_attackanimation(void)
 	
     if (!gBattleControllerExecFlags)
     {
-        if ((gHitMarker & HITMARKER_NO_ANIMATIONS) && (gCurrentMove != MOVE_TRANSFORM && gCurrentMove != MOVE_SUBSTITUTE))
+        if (!IsBattleAnimationsOn() && (gCurrentMove != MOVE_TRANSFORM && gCurrentMove != MOVE_SUBSTITUTE))
         {
             BattleScriptPush(gBattlescriptCurrInstr + 1);
             gBattlescriptCurrInstr = BattleScript_Pausex20;
@@ -3057,7 +3057,7 @@ static void PlayAnimationInternal(u8 animId, u16 argument, u8 addr)
         MarkBattlerForControllerExec(gActiveBattler);
         gBattlescriptCurrInstr += addr;
     }
-    else if (gHitMarker & HITMARKER_NO_ANIMATIONS)
+    else if (!IsBattleAnimationsOn())
     {
 		BattleScriptPush(gBattlescriptCurrInstr + addr);
 		gBattlescriptCurrInstr = BattleScript_Pausex20;
@@ -3306,7 +3306,7 @@ static void atk49_moveend(void)
 			case ATK49_ATTACKER_INVISIBLE: // Make attacker sprite invisible
 			    ++gBattleScripting.atk49_state;
 			
-			    if (gStatuses3[gBattlerAttacker] & STATUS3_SEMI_INVULNERABLE && gHitMarker & HITMARKER_NO_ANIMATIONS)
+			    if (gStatuses3[gBattlerAttacker] & STATUS3_SEMI_INVULNERABLE && !IsBattleAnimationsOn())
 				{
 					gActiveBattler = gBattlerAttacker;
 					BtlController_EmitSpriteInvisibility(0, TRUE);
@@ -4511,7 +4511,7 @@ static void atk64_statusanimation(void)
     {
         gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	    
-        if (!(gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE) && gDisableStructs[gActiveBattler].substituteHP == 0 && !(gHitMarker & HITMARKER_NO_ANIMATIONS))
+        if (!(gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE) && gDisableStructs[gActiveBattler].substituteHP == 0 && IsBattleAnimationsOn())
         {
             BtlController_EmitStatusAnimation(0, FALSE, gBattleMons[gActiveBattler].status1);
             MarkBattlerForControllerExec(gActiveBattler);
@@ -4526,7 +4526,7 @@ static void atk65_status2animation(void)
     {
         gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	    
-        if (!(gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE) && gDisableStructs[gActiveBattler].substituteHP == 0 && !(gHitMarker & HITMARKER_NO_ANIMATIONS))
+        if (!(gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE) && gDisableStructs[gActiveBattler].substituteHP == 0 && IsBattleAnimationsOn())
         {
             BtlController_EmitStatusAnimation(0, TRUE, gBattleMons[gActiveBattler].status2 & T1_READ_32(gBattlescriptCurrInstr + 2));
             MarkBattlerForControllerExec(gActiveBattler);
@@ -4541,7 +4541,7 @@ static void atk66_chosenstatusanimation(void)
     {
         gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	    
-        if (!(gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE) && gDisableStructs[gActiveBattler].substituteHP == 0 && !(gHitMarker & HITMARKER_NO_ANIMATIONS))
+        if (!(gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE) && gDisableStructs[gActiveBattler].substituteHP == 0 && IsBattleAnimationsOn())
         {
             BtlController_EmitStatusAnimation(0, gBattlescriptCurrInstr[2], T1_READ_32(gBattlescriptCurrInstr + 3));
             MarkBattlerForControllerExec(gActiveBattler);
