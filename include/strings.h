@@ -664,7 +664,6 @@ extern const u8 gStartMenuText_Option[];
 extern const u8 gStartMenuText_Exit[];
 extern const u8 gStartMenuText_Retire[];
 extern const u8 gUnknown_84162A9[];
-extern const u8 gText_HasNoLevelCap[];
 extern const u8 gText_CurrentLevelCap[];
 extern const u8 gText_SaveError_PleaseExchangeBackupMemory[];
 extern const u8 gText_SavingDontTurnOffThePower2[];

@@ -27,7 +27,6 @@
 #include "script.h"
 #include "quest_log.h"
 #include "new_game.h"
-#include "help_message.h"
 #include "event_scripts.h"
 #include "field_weather.h"
 #include "field_specials.h"
@@ -229,6 +228,15 @@ static void SetUpStartMenu_UnionRoom(void)
     AppendToStartMenuItems(STARTMENU_EXIT);
 }
 
+static bool8 CanShowCurrentLevelCapOnTimeBox(void)
+{
+#if EXP_BLOCK
+	if (!MenuHelpers_LinkSomething() && !InUnionRoom() && FlagGet(FLAG_SYS_POKEMON_GET))
+		return TRUE;
+#endif
+	return FALSE;
+}
+
 static void Task_PutTimeInTimeBox(u8 taskId)
 {
 	StringCopy(gStringVar4, gStartMenu_TimeBoxClock);
@@ -253,13 +261,19 @@ static void Task_PutTimeInTimeBox(u8 taskId)
 static void DrawTimeBox(void)
 {
 	u8 taskId;
-    struct WindowTemplate template = SetWindowTemplateFields(0, 1, 1, 10, GetSafariZoneFlag() ? 5 : 2, 15, 0x008);
+	bool8 inSafari = GetSafariZoneFlag(), canShowLevelCap = CanShowCurrentLevelCapOnTimeBox();
+    struct WindowTemplate template = SetWindowTemplateFields(0, 1, 1, 10, 2, 15, 0x008);
     
+	if (inSafari)
+		template.height += 3;
+	else if (canShowLevelCap)
+		++template.height;
+	
     sSafariZoneStatsWindowId = AddWindow(&template);
 	PutWindowTilemap(sSafariZoneStatsWindowId);
     DrawStdWindowFrame(sSafariZoneStatsWindowId, FALSE);
 	
-    if (GetSafariZoneFlag())
+    if (inSafari)
     {
         ConvertIntToDecimalStringN(gStringVar1, gSafariZoneStepCounter, STR_CONV_MODE_LEFT_ALIGN, 3);
         ConvertIntToDecimalStringN(gStringVar2, 600, STR_CONV_MODE_LEFT_ALIGN, 3);
@@ -267,6 +281,12 @@ static void DrawTimeBox(void)
         StringExpandPlaceholders(gStringVar4, gUnknown_84162A9);
         AddTextPrinterParameterized(sSafariZoneStatsWindowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
     }
+	else if (canShowLevelCap)
+	{
+		ConvertIntToDecimalStringN(gStringVar1, GetCurrentLevelCapLevel(), STR_CONV_MODE_LEFT_ALIGN, 3);
+		StringExpandPlaceholders(gStringVar4, gText_CurrentLevelCap);
+		AddTextPrinterParameterized(sSafariZoneStatsWindowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
+	}
 	CopyWindowToVram(sSafariZoneStatsWindowId, COPYWIN_GFX);
 	
 	taskId = CreateTask(Task_PutTimeInTimeBox, 90);
@@ -307,22 +327,6 @@ static s8 PrintStartMenuItems(s8 *cursor_p, u8 nitems)
     return FALSE;
 }
 
-static void PrintStartMenuLevelCap(void)
-{
-	const u8 *str;
-	u8 levelCap = GetCurrentLevelCapLevel();
-	
-	if (levelCap == MAX_LEVEL)
-		str = gText_HasNoLevelCap;
-	else
-	{
-		str = gText_CurrentLevelCap;
-		ConvertIntToDecimalStringN(gStringVar1, levelCap, STR_CONV_MODE_LEFT_ALIGN, 3);
-	}
-	StringExpandPlaceholders(gStringVar4, str);
-	DrawHelpMessageWindowWithText(gStringVar4);
-}
-
 static s8 DoDrawStartMenu(void)
 {
     switch (sDrawStartMenuState[0])
@@ -349,10 +353,6 @@ static s8 DoDrawStartMenu(void)
 		break;
     case 5:
         sStartMenuCursorPos = Menu_InitCursor(GetStartMenuWindowId(), 2, 0, 0, 15, sNumStartMenuItems, sStartMenuCursorPos);
-#if EXP_BLOCK
-        if (!MenuHelpers_LinkSomething() && !InUnionRoom() && FlagGet(FLAG_SYS_POKEMON_GET) && !GetSafariZoneFlag())
-			PrintStartMenuLevelCap();
-#endif
 		CopyWindowToVram(GetStartMenuWindowId(), COPYWIN_MAP);
         return TRUE;
     }
@@ -451,7 +451,6 @@ static bool8 StartCB_HandleInput(void)
     if (JOY_NEW(B_BUTTON | START_BUTTON))
     {
         DestroySafariZoneStatsWindow();
-        DestroyHelpMessageWindow_();
         CloseStartMenu();
         return TRUE;
     }
@@ -569,7 +568,6 @@ static bool8 StartMenuOptionCallback(void)
 static bool8 StartMenuExitCallback(void)
 {
     DestroySafariZoneStatsWindow();
-    DestroyHelpMessageWindow_();
     CloseStartMenu();
     return TRUE;
 }
@@ -577,7 +575,6 @@ static bool8 StartMenuExitCallback(void)
 static bool8 StartMenuSafariZoneRetireCallback(void)
 {
     DestroySafariZoneStatsWindow();
-    DestroyHelpMessageWindow_();
     CloseStartMenu();
     SafariZoneRetirePrompt();
     return TRUE;
@@ -733,7 +730,6 @@ static u8 SaveDialogCB_PrintAskSaveText(void)
 {
     ClearStdWindowAndFrame(GetStartMenuWindowId(), FALSE);
     RemoveStartMenuWindow();
-	DestroyHelpMessageWindow(0);
     PrintSaveStats();
     PrintSaveTextWithFollowupFunc(gText_WouldYouLikeToSaveTheGame, SaveDialogCB_AskSavePrintYesNoMenu);
     return SAVECB_RETURN_CONTINUE;
