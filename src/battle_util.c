@@ -2328,7 +2328,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 							gBattlerAttacker = battler;
 							gBattlerTarget = BATTLE_OPPOSITE(battler);
 							BattleScriptPushCursorAndCallback(BattleScript_ImposterActivates);
-							effect++;
+							++effect;
 						}
 						break;
 					case ABILITY_TURBOBLAZE:
@@ -3015,17 +3015,17 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 								&& IsBattlerAbilityCopyableByTrace(target2))
 							{
 								gBattlerTarget = GetBattlerAtPosition(((Random() & 1) * 2) | opposingSide);
-								effect++;
+								++effect;
 							}
 							else if (IsBattlerAlive(target1) && IsBattlerAbilityCopyableByTrace(target1))
 							{
 								gBattlerTarget = target1;
-								effect++;
+								++effect;
 							}
 							else if (IsBattlerAlive(target2) && IsBattlerAbilityCopyableByTrace(target2))
 							{
 								gBattlerTarget = target2;
-								effect++;
+								++effect;
 							}
 						}
 						else
@@ -3033,7 +3033,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 							if (IsBattlerAlive(target1) && IsBattlerAbilityCopyableByTrace(target1))
 							{
 								gBattlerTarget = target1;
-								effect++;
+								++effect;
 							}
 						}
 						if (effect)
@@ -3467,7 +3467,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 										// for recording the correct ability
 										RecordAbilityBattle(gBattlerAttacker, gBattleMons[battler].ability); // same as target ability
 										RecordAbilityBattle(battler, gBattleMons[battler].ability);
-										return effect++;
+										return ++effect;
 								}
 							}
 							break;
@@ -3622,7 +3622,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 										RecordAbilityBattle(battler, gBattleMons[gBattlerAttacker].ability);
 										BattleScriptPushCursor();
 										gBattlescriptCurrInstr = BattleScript_WanderingSpiritActivates;
-										return effect++;
+										return ++effect;
 								}
 							}
 							break;

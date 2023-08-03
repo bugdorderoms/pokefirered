@@ -4710,8 +4710,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 					}
 					break;
 				case ITEMEFFECT_CURE_STATUS:
-				    i++;
-					byte = effectTable[i]; // status flag to cure
+					byte = effectTable[++i]; // status flag to cure
 					
 					// stored as bit flags to be able to cure diferent status at a time
 					if ((byte & ITEMEFFECT_STATUS_POISON) && !HealStatusConditions(mon, (STATUS1_PSN_ANY | STATUS1_TOXIC_COUNTER), battleMonId))
@@ -4772,8 +4771,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 					}
 					break;
 				case ITEMEFFECT_CHANGE_FRIENDSHIP:
-				    i++;
-					byte = effectTable[i];
+					byte = effectTable[++i];
 					hword = (byte & ITEMEFFECT_FRIENDSHIP_MAIN); // if it's main use
 					
 					if (!gMain.inBattle && (hword || !failed)) // if it's use ins't the main use(like the Pomeg Berry), only apply it's effect if was't failed
@@ -4799,9 +4797,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 					i += 3;
 					break;
 				case ITEMEFFECT_RESTORE_PP:
-				    i++;
-					
-					if (effectTable[i]) // Restore all moves PP
+					if (effectTable[++i]) // Restore all moves PP
 					{
 						for (byte = 0; byte < MAX_MON_MOVES; byte++)
 						{
@@ -4835,8 +4831,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 					}
 					break;
 				case ITEMEFFECT_CHANGE_EV:
-				    i++;
-					signedhword = effectTable[i]; // amount
+					signedhword = effectTable[++i]; // amount
 					hword = GetMonEVCount(mon); // total Evs mon has
 					
 					if (gMain.inBattle || hword >= MAX_TOTAL_EVS || (holdEffectParam == STAT_HP && GetMonData(mon, MON_DATA_SPECIES) == SPECIES_SHEDINJA))
@@ -4866,8 +4861,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 					}
 					break;
 				case ITEMEFFECT_GIVE_EXPERIENCE:
-				    i++;
-					hword = T1_READ_16(effectTable + i); // exp amount
+					hword = T1_READ_16(effectTable + i + 1); // exp amount
 					
 					if (sInitialLevel != MAX_LEVEL)
 					{
@@ -4910,16 +4904,15 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 						SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_EXP_AND_LEVEL, hword);
 						failed = FALSE;
 					}
-					i++;
+					i += 2;
 					break;
 				case ITEMEFFECT_INCREASE_PP:
-				    i++;
 					signedbyte = GetMonData(mon, MON_DATA_PP_BONUSES);
 					word = (signedbyte & gPPUpGetMask[moveIndex]) >> (moveIndex * 2);
 					hword = GetMonData(mon, MON_DATA_MOVE1 + moveIndex); // move id
 					byte = CalculatePPWithBonus(hword, signedbyte, moveIndex);
 					
-					if (effectTable[i]) // PP max
+					if (effectTable[++i]) // PP max
 					{
 						if (word < 3)
 						{
