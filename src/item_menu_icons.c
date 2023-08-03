@@ -1153,58 +1153,6 @@ void sub_80989A0(u16 itemId, u8 idx)
     }
 }
 
-static u8 ReformatItemDescription(u16 item, u8* dest, u8 maxChars)
-{
-	u8 count = 0, numLines = 1, k = 0;
-	u8 buffer[150];
-	u8 *desc = (u8 *)ItemId_GetDescription(item);
-	u8* lineStart;
-
-	memset(dest, 0xFF, 500);
-
-	lineStart = dest;
-	
-	StringExpandPlaceholders(buffer, desc);
-	
-	while (buffer[k] != EOS)
-	{
-		if (GetStringWidth(0, lineStart, 0) >= maxChars)
-		{
-			do
-			{
-				dest--;
-				k--;
-			} while (buffer[k] != CHAR_SPACE && buffer[k] != CHAR_NEWLINE);
-			
-			if (buffer[k + 1] != EOS)
-			{
-				*dest = CHAR_NEWLINE;
-				numLines++;
-			}
-			count = 0;
-			dest++;
-			k++;
-			lineStart = dest;
-			continue;
-		}
-		*dest = buffer[k];
-		
-		if (buffer[k] == CHAR_NEWLINE)
-		{
-			if (buffer[k - 1] != CHAR_SPACE)
-				*dest = CHAR_SPACE;
-			else
-				dest--;
-		}
-		dest++;
-		k++;
-		count++;
-	}
-	*dest = EOS;
-
-	return numLines;
-}
-
 #define ITEM_ICON_X 26
 #define ITEM_ICON_Y 24
 
@@ -1214,7 +1162,7 @@ static u8 ShowObtainedItemDescription(u16 item)
 {
 	struct WindowTemplate template;
 	s16 textX, textY, maxWidth, windowHeight, numLines;
-	u8 buffer[500], windowId;
+	u8 buffer[1000], windowId;
 	
 	if (IS_KEY_ITEM_TM(ItemId_GetPocket(item)))
 	{
@@ -1226,7 +1174,7 @@ static u8 ShowObtainedItemDescription(u16 item)
 		textX = ITEM_ICON_X + 2;
 		maxWidth = 195;
 	}
-	numLines = ReformatItemDescription(item, buffer, maxWidth);
+	numLines = ReformatStringToMaxChars(buffer, ItemId_GetDescription(item), 0, maxWidth, FALSE);
 	
 	if (numLines == 1)
 	{
