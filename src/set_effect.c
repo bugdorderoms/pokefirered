@@ -151,7 +151,7 @@ void DoMoveEffect(bool8 primary)
 		return;
 	}
 	// Check Safeguard
-	else if (gSideStatuses[GET_BATTLER_SIDE(gEffectBattler)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD) && !primary
+	else if (gSideStatuses[GetBattlerSide(gEffectBattler)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD) && !primary
 	&& moveEffect <= MOVE_EFFECT_CONFUSION && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
 	{
 		gBattlescriptCurrInstr = BS_Ptr;
@@ -355,7 +355,7 @@ void DoMoveEffect(bool8 primary)
 					}
 					break;
 				case MOVE_EFFECT_PAYDAY:
-				    if (GET_BATTLER_SIDE(gBattleScripting.battler) == B_SIDE_PLAYER && gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_2ND_HIT)
+				    if (GetBattlerSide(gBattleScripting.battler) == B_SIDE_PLAYER && gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_2ND_HIT)
 					{
 						u16 payDayMoney = gPaydayMoney + (gBattleMons[gBattleScripting.battler].level * 5);
 						

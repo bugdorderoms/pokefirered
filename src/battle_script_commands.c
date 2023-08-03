@@ -2290,7 +2290,7 @@ static void atk1F_jumpifsideaffecting(void)
 			flags &= ~(SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST);
 	}
 	
-    if (gSideStatuses[GET_BATTLER_SIDE(GetBattlerForBattleScript(gBattlescriptCurrInstr[1]))] & flags)
+    if (gSideStatuses[GetBattlerSide(GetBattlerForBattleScript(gBattlescriptCurrInstr[1]))] & flags)
         gBattlescriptCurrInstr = jumpPtr;
     else
         gBattlescriptCurrInstr += 8;
@@ -2958,7 +2958,7 @@ static void atk42_trysetsleep(void)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed;
 		return;
 	}
-	else if ((gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR && gBattlerAttacker != bank)
+	else if ((gSideStatuses[GetBattlerSide(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR && gBattlerAttacker != bank)
 	{
 		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
 		return;
@@ -3161,7 +3161,7 @@ static void atk48_playstatchangeanimation(void)
                         ++changeableStatsCount;
                     }
                 }
-                else if (!gSideTimers[GET_BATTLER_SIDE(gActiveBattler)].mistTimer && GetBattlerAbility(gActiveBattler) != ABILITY_CLEAR_BODY
+                else if (!gSideTimers[GetBattlerSide(gActiveBattler)].mistTimer && GetBattlerAbility(gActiveBattler) != ABILITY_CLEAR_BODY
 			 && GetBattlerAbility(gActiveBattler) != ABILITY_WHITE_SMOKE && GetBattlerAbility(gActiveBattler) != ABILITY_FULL_METAL_BODY
 			 && !(GetBattlerAbility(gActiveBattler) == ABILITY_KEEN_EYE && currStat == STAT_ACC)
 			 && !(GetBattlerAbility(gActiveBattler) == ABILITY_HYPER_CUTTER && currStat == STAT_ATK)
@@ -5503,16 +5503,16 @@ static void atk7D_setrain(void)
 
 static void atk7E_setreflect(void)
 {
-    if (gSideStatuses[GET_BATTLER_SIDE(gBattlerAttacker)] & SIDE_STATUS_REFLECT)
+    if (gSideStatuses[GetBattlerSide(gBattlerAttacker)] & SIDE_STATUS_REFLECT)
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         gBattleCommunication[MULTISTRING_CHOOSER] = 0;
     }
     else
     {
-        gSideStatuses[GET_BATTLER_SIDE(gBattlerAttacker)] |= SIDE_STATUS_REFLECT;
-        gSideTimers[GET_BATTLER_SIDE(gBattlerAttacker)].reflectTimer = 5;
-        gSideTimers[GET_BATTLER_SIDE(gBattlerAttacker)].reflectBattlerId = gBattlerAttacker;
+        gSideStatuses[GetBattlerSide(gBattlerAttacker)] |= SIDE_STATUS_REFLECT;
+        gSideTimers[GetBattlerSide(gBattlerAttacker)].reflectTimer = 5;
+        gSideTimers[GetBattlerSide(gBattlerAttacker)].reflectBattlerId = gBattlerAttacker;
 
         if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMonsInBattle(BATTLE_ALIVE_ATK_SIDE) == 2)
             gBattleCommunication[MULTISTRING_CHOOSER] = 2;
@@ -5678,7 +5678,7 @@ static void atk84_trysetpoison(void)
 		gBattlescriptCurrInstr = BattleScript_NotAffected;
 		return;
 	}
-	else if ((gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
+	else if ((gSideStatuses[GetBattlerSide(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
 	{
 		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
 		return;
@@ -5832,7 +5832,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
     if ((statValue >= 0 && GetBattlerAbility(gActiveBattler) == ABILITY_CONTRARY) || (statValue <= -1 && GetBattlerAbility(gActiveBattler) != ABILITY_CONTRARY)) 
     {   
 	// Stat decrease.
-        if (gSideTimers[GET_BATTLER_SIDE(gActiveBattler)].mistTimer && !certain && gCurrentMove != MOVE_CURSE && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
+        if (gSideTimers[GetBattlerSide(gActiveBattler)].mistTimer && !certain && gCurrentMove != MOVE_CURSE && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
         {
             if (flags == STAT_CHANGE_BS_PTR)
             {
@@ -6182,16 +6182,16 @@ static void atk91_givepaydaymoney(void)
 
 static void atk92_setlightscreen(void)
 {
-    if (gSideStatuses[GET_BATTLER_SIDE(gBattlerAttacker)] & SIDE_STATUS_LIGHTSCREEN)
+    if (gSideStatuses[GetBattlerSide(gBattlerAttacker)] & SIDE_STATUS_LIGHTSCREEN)
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         gBattleCommunication[MULTISTRING_CHOOSER] = 0;
     }
     else
     {
-        gSideStatuses[GET_BATTLER_SIDE(gBattlerAttacker)] |= SIDE_STATUS_LIGHTSCREEN;
-        gSideTimers[GET_BATTLER_SIDE(gBattlerAttacker)].lightscreenTimer = 5;
-        gSideTimers[GET_BATTLER_SIDE(gBattlerAttacker)].lightscreenBattlerId = gBattlerAttacker;
+        gSideStatuses[GetBattlerSide(gBattlerAttacker)] |= SIDE_STATUS_LIGHTSCREEN;
+        gSideTimers[GetBattlerSide(gBattlerAttacker)].lightscreenTimer = 5;
+        gSideTimers[GetBattlerSide(gBattlerAttacker)].lightscreenBattlerId = gBattlerAttacker;
         if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMonsInBattle(BATTLE_ALIVE_ATK_SIDE) == 2)
             gBattleCommunication[MULTISTRING_CHOOSER] = 4;
         else
@@ -6396,16 +6396,16 @@ static void atk98_updatestatusicon(void)
 
 static void atk99_setmist(void)
 {
-    if (gSideTimers[GET_BATTLER_SIDE(gBattlerAttacker)].mistTimer)
+    if (gSideTimers[GetBattlerSide(gBattlerAttacker)].mistTimer)
     {
         gMoveResultFlags |= MOVE_RESULT_FAILED;
         gBattleCommunication[MULTISTRING_CHOOSER] = 1;
     }
     else
     {
-        gSideTimers[GET_BATTLER_SIDE(gBattlerAttacker)].mistTimer = 5;
-        gSideTimers[GET_BATTLER_SIDE(gBattlerAttacker)].mistBattlerId = gBattlerAttacker;
-        gSideStatuses[GET_BATTLER_SIDE(gBattlerAttacker)] |= SIDE_STATUS_MIST;
+        gSideTimers[GetBattlerSide(gBattlerAttacker)].mistTimer = 5;
+        gSideTimers[GetBattlerSide(gBattlerAttacker)].mistBattlerId = gBattlerAttacker;
+        gSideStatuses[GetBattlerSide(gBattlerAttacker)] |= SIDE_STATUS_MIST;
         gBattleCommunication[MULTISTRING_CHOOSER] = 0;
     }
     ++gBattlescriptCurrInstr;
@@ -6814,7 +6814,7 @@ static void atkAC_trysetburn(void)
 		gBattlescriptCurrInstr = BattleScript_NotAffected;
 		return;
 	}
-	else if ((gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
+	else if ((gSideStatuses[GetBattlerSide(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
 	{
 		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
 		return;
@@ -7094,7 +7094,7 @@ static void atkB6_trysetparalyze(void)
 		gBattlescriptCurrInstr = BattleScript_NotAffected;
 		return;
 	}
-	else if ((gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
+	else if ((gSideStatuses[GetBattlerSide(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
 	{
 		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
 		return;
@@ -7169,16 +7169,16 @@ static void atkB7_presentcalc(void)
 
 static void atkB8_setsafeguard(void)
 {
-    if (gSideStatuses[GET_BATTLER_SIDE(gBattlerAttacker)] & SIDE_STATUS_SAFEGUARD)
+    if (gSideStatuses[GetBattlerSide(gBattlerAttacker)] & SIDE_STATUS_SAFEGUARD)
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         gBattleCommunication[MULTISTRING_CHOOSER] = 0;
     }
     else
     {
-        gSideStatuses[GET_BATTLER_SIDE(gBattlerAttacker)] |= SIDE_STATUS_SAFEGUARD;
-        gSideTimers[GET_BATTLER_SIDE(gBattlerAttacker)].safeguardTimer = 5;
-        gSideTimers[GET_BATTLER_SIDE(gBattlerAttacker)].safeguardBattlerId = gBattlerAttacker;
+        gSideStatuses[GetBattlerSide(gBattlerAttacker)] |= SIDE_STATUS_SAFEGUARD;
+        gSideTimers[GetBattlerSide(gBattlerAttacker)].safeguardTimer = 5;
+        gSideTimers[GetBattlerSide(gBattlerAttacker)].safeguardBattlerId = gBattlerAttacker;
         gBattleCommunication[MULTISTRING_CHOOSER] = 5;
     }
     ++gBattlescriptCurrInstr;
@@ -7832,10 +7832,7 @@ static void atkDE_assistattackselect(void)
 
     if (movesArray != NULL)
 	{
-		if (GET_BATTLER_SIDE(gBattlerAttacker) != B_SIDE_PLAYER)
-			party = gEnemyParty;
-		else
-			party = gPlayerParty;
+		party = GetBattlerParty(gBattlerAttacker);
 		
 		for (monId = 0; monId < PARTY_SIZE; ++monId)
 		{

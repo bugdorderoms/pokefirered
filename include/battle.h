@@ -20,10 +20,6 @@
     0x2 bit is responsible for the id of sent out pokemon. 0 means it's the first sent out pokemon, 1 it's the second one. (Triple battle didn't exist at the time yet.)
 */
 
-#define GET_BATTLER_POSITION(battler)((gBattlerPositions[battler]))
-#define GET_BATTLER_SIDE(battler)((GetBattlerPosition(battler) & BIT_SIDE))
-#define GET_BATTLER_SIDE2(battler)((GET_BATTLER_POSITION(battler) & BIT_SIDE))
-
 #define TRAINER_OPPONENT_3FE        0x3FE
 #define TRAINER_OPPONENT_C00        0xC00
 #define TRAINER_LINK_OPPONENT       0x800
@@ -762,5 +758,25 @@ extern u8 gBattleTerrain;
 extern struct MultiBattlePokemonTx gMultiPartnerParty[3];
 extern u16 gRandomTurnNumber;
 extern u8 gPartyCriticalHits[PARTY_SIZE];
+
+static inline u8 GetBattlerPosition(u8 battlerId)
+{
+    return gBattlerPositions[battlerId];
+}
+
+static inline u8 GetBattlerSide(u8 battlerId)
+{
+    return GetBattlerPosition(battlerId) & BIT_SIDE;
+}
+
+static inline struct Pokemon *GetBattlerParty(u8 battlerId)
+{
+	return GetBattlerSide(battlerId) == B_SIDE_PLAYER ? gPlayerParty : gEnemyParty;
+}
+
+static inline struct Pokemon *GetBattlerPartyIndexPtr(u8 battler)
+{
+	return &GetBattlerParty(battler)[gBattlerPartyIndexes[battler]];
+}
 
 #endif // GUARD_BATTLE_H

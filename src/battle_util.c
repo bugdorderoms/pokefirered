@@ -165,7 +165,7 @@ static bool8 CanBeStatused(u8 bank, bool8 checkFlowerVeil)
 						return FALSE;
 			}
 		}
-		if (gSideStatuses[GET_BATTLER_SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+		if (gSideStatuses[GetBattlerSide(bank)] & SIDE_STATUS_SAFEGUARD)
 			return FALSE;
 	}
 	return TRUE;
@@ -4672,16 +4672,6 @@ bool8 IsBattlerAlive(u8 battlerId)
 	if (battlerId >= gBattlersCount || gBattleMons[battlerId].hp == 0 || gAbsentBattlerFlags & gBitTable[battlerId])
 		return FALSE;
 	return TRUE;
-}
-
-struct Pokemon *GetBattlerParty(u8 battlerId)
-{
-	return GetBattlerSide(battlerId) == B_SIDE_PLAYER ? gPlayerParty : gEnemyParty;
-}
-
-struct Pokemon *GetBattlerPartyIndexPtr(u8 battler)
-{
-	return &GetBattlerParty(battler)[gBattlerPartyIndexes[battler]];
 }
 
 bool8 IsBattlerWeatherAffected(u8 battlerId, u16 weatherFlags)

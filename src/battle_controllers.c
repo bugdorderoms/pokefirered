@@ -263,6 +263,7 @@ static void InitLinkBtlControllers(void)
 static void SetBattlePartyIds(void)
 {
     s32 i, j;
+	struct Pokemon *party;
 
     if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
     {
@@ -270,57 +271,25 @@ static void SetBattlePartyIds(void)
         {
             for (j = 0; j < PARTY_SIZE; ++j)
             {
+				party = GetBattlerParty(i);
+				
                 if (i < 2)
                 {
-                    if (GET_BATTLER_SIDE2(i) == B_SIDE_PLAYER)
-                    {
-                        if (GetMonData(&gPlayerParty[j], MON_DATA_HP) != 0
-                         && GetMonData(&gPlayerParty[j], MON_DATA_SPECIES2) != SPECIES_NONE
-                         && GetMonData(&gPlayerParty[j], MON_DATA_SPECIES2) != SPECIES_EGG
-                         && !GetMonData(&gPlayerParty[j], MON_DATA_IS_EGG))
-                        {
-                            gBattlerPartyIndexes[i] = j;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        if (GetMonData(&gEnemyParty[j], MON_DATA_HP) != 0
-                         && GetMonData(&gEnemyParty[j], MON_DATA_SPECIES2) != SPECIES_NONE
-                         && GetMonData(&gEnemyParty[j], MON_DATA_SPECIES2) != SPECIES_EGG
-                         && !GetMonData(&gEnemyParty[j], MON_DATA_IS_EGG))
-                        {
-                            gBattlerPartyIndexes[i] = j;
-                            break;
-                        }
-                    }
+					if (GetMonData(&party[j], MON_DATA_HP) && GetMonData(&party[j], MON_DATA_SPECIES2) && GetMonData(&party[j], MON_DATA_SPECIES2) != SPECIES_EGG
+					&& !GetMonData(&party[j], MON_DATA_IS_EGG))
+					{
+						gBattlerPartyIndexes[i] = j;
+						break;
+					}
                 }
                 else
                 {
-                    if (GET_BATTLER_SIDE2(i) == B_SIDE_PLAYER)
-                    {
-                        if (GetMonData(&gPlayerParty[j], MON_DATA_HP) != 0
-                         && GetMonData(&gPlayerParty[j], MON_DATA_SPECIES) != SPECIES_NONE  // Probably a typo by Game Freak. The rest use SPECIES2.
-                         && GetMonData(&gPlayerParty[j], MON_DATA_SPECIES2) != SPECIES_EGG
-                         && !GetMonData(&gPlayerParty[j], MON_DATA_IS_EGG)
-                         && gBattlerPartyIndexes[i - 2] != j)
-                        {
-                            gBattlerPartyIndexes[i] = j;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        if (GetMonData(&gEnemyParty[j], MON_DATA_HP) != 0
-                         && GetMonData(&gEnemyParty[j], MON_DATA_SPECIES2) != SPECIES_NONE
-                         && GetMonData(&gEnemyParty[j], MON_DATA_SPECIES2) != SPECIES_EGG
-                         && !GetMonData(&gEnemyParty[j], MON_DATA_IS_EGG)
-                         && gBattlerPartyIndexes[i - 2] != j)
-                        {
-                            gBattlerPartyIndexes[i] = j;
-                            break;
-                        }
-                    }
+					if (GetMonData(&party[j], MON_DATA_HP) && GetMonData(&party[j], MON_DATA_SPECIES2) && GetMonData(&party[j], MON_DATA_SPECIES2) != SPECIES_EGG
+					&& !GetMonData(&party[j], MON_DATA_IS_EGG) && gBattlerPartyIndexes[i - 2] != j)
+					{
+						gBattlerPartyIndexes[i] = j;
+						break;
+					}
                 }
             }
         }

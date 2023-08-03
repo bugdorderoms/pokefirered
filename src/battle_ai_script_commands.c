@@ -464,13 +464,13 @@ static void RecordLastUsedMoveByTarget(void)
 void RecordAbilityBattle(u8 battlerId, u16 abilityId)
 {
     if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-        BATTLE_HISTORY->abilities[GET_BATTLER_SIDE(battlerId)] = abilityId;
+        BATTLE_HISTORY->abilities[GetBattlerSide(battlerId)] = abilityId;
 }
 
 void RecordItemEffectBattle(u8 battlerId, u8 itemEffect)
 {
     if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-        BATTLE_HISTORY->itemEffects[GET_BATTLER_SIDE(battlerId)] = itemEffect;
+        BATTLE_HISTORY->itemEffects[GetBattlerSide(battlerId)] = itemEffect;
 }
 
 static void Cmd_if_random_less_than(void)
@@ -693,7 +693,7 @@ static void Cmd_if_side_affecting(void)
     else
         battlerId = gBattlerTarget;
 
-    side = GET_BATTLER_SIDE(battlerId);
+    side = GetBattlerSide(battlerId);
     status = T1_READ_32(sAIScriptPtr + 2);
 
     if (gSideStatuses[side] & status)
@@ -712,7 +712,7 @@ static void Cmd_if_not_side_affecting(void)
     else
         battlerId = gBattlerTarget;
 
-    side = GET_BATTLER_SIDE(battlerId);
+    side = GetBattlerSide(battlerId);
     status = T1_READ_32(sAIScriptPtr + 2);
 
     if (!(gSideStatuses[side] & status))
@@ -1113,7 +1113,7 @@ static void Cmd_get_ability(void)
 
     if (GetBattlerSide(battlerId) == AI_TARGET)
     {
-        u16 side = GET_BATTLER_SIDE(battlerId);
+        u16 side = GetBattlerSide(battlerId);
 
         if (BATTLE_HISTORY->abilities[side] != 0)
         {
@@ -1678,7 +1678,7 @@ static void Cmd_get_hold_effect(void)
 
     if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
     {
-        side = GET_BATTLER_SIDE(battlerId);
+        side = GetBattlerSide(battlerId);
         AI_THINKING_STRUCT->funcResult = BATTLE_HISTORY->itemEffects[side];
     }
     else

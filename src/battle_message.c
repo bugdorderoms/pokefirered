@@ -1917,10 +1917,10 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
                 break;
             case B_TXT_ATK_NAME_WITH_PREFIX_MON1: // attacker name with prefix, only battlerId 0/1
                 HANDLE_NICKNAME_STRING_CASE(gBattlerAttacker,
-                                            gBattlerPartyIndexes[GetBattlerAtPosition(GET_BATTLER_SIDE(gBattlerAttacker))])
+                                            gBattlerPartyIndexes[GetBattlerAtPosition(GetBattlerSide(gBattlerAttacker))])
                 break;
             case B_TXT_ATK_PARTNER_NAME: // attacker partner name
-                GetBattlerNick(GetBattlerAtPosition(GET_BATTLER_SIDE(gBattlerAttacker)) + 2, text);
+                GetBattlerNick(GetBattlerAtPosition(GetBattlerSide(gBattlerAttacker)) + 2, text);
                 toCpy = text;
                 break;
             case B_TXT_ATK_NAME_WITH_PREFIX: // attacker name with prefix
