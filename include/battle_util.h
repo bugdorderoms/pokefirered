@@ -91,6 +91,7 @@ void HandleAction_RunBattleScript(void);
 u8 GetRandomTarget(u8 battlerId);
 u8 GetBattlerMoveTargetType(u8 battlerId, u16 move);
 u8 GetMoveTarget(u16 move, u8 setTarget);
+void CopyMoveTargetName(u8 *dest, u16 move);
 u8 IsMonDisobedient(void);
 bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move);
 u8 GetHiddenPowerType(struct Pokemon *mon);

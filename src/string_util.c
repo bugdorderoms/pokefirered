@@ -174,7 +174,12 @@ u8 *ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode,
 
     if (mode == STR_CONV_MODE_LEADING_ZEROS)
         state = WRITING_DIGITS;
-
+	
+	if (value < 0) // This will allows display negative numbers
+	{
+		*dest++ = CHAR_HYPHEN;
+		value *= -1;
+	}
     for (powerOfTen = largestPowerOfTen; powerOfTen > 0; powerOfTen /= 10)
     {
         u8 *out;

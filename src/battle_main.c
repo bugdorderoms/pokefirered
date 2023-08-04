@@ -294,27 +294,34 @@ const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES] =
 	{TYPE_MUL_NORMAL, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NOT_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NOT_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NOT_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL},
 };
 
-const u8 gTypeNames[][TYPE_NAME_LENGTH + 1] =
+const u8 gTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1] =
 {
-    _("Normal"),
-    _("Fight"),
-    _("Flying"),
-    _("Poison"),
-    _("Ground"),
-    _("Rock"),
-    _("Bug"),
-    _("Ghost"),
-    _("Steel"),
-    _("???"),
-    _("Fire"),
-    _("Water"),
-    _("Grass"),
-    _("Electr"),
-    _("Psychc"),
-    _("Ice"),
-    _("Dragon"),
-    _("Dark"),
-	_("Fairy"),
+    [TYPE_NORMAL]   = _("Normal"),
+    [TYPE_FIGHTING] = _("Fight"),
+    [TYPE_FLYING]   = _("Flying"),
+    [TYPE_POISON]   = _("Poison"),
+    [TYPE_GROUND]   = _("Ground"),
+    [TYPE_ROCK]     = _("Rock"),
+    [TYPE_BUG]      = _("Bug"),
+    [TYPE_GHOST]    = _("Ghost"),
+    [TYPE_STEEL]    = _("Steel"),
+    [TYPE_MYSTERY]  = _("???"),
+    [TYPE_FIRE]     = _("Fire"),
+    [TYPE_WATER]    = _("Water"),
+    [TYPE_GRASS]    = _("Grass"),
+    [TYPE_ELECTRIC] = _("Electr"),
+    [TYPE_PSYCHIC]  = _("Psychc"),
+    [TYPE_ICE]      = _("Ice"),
+    [TYPE_DRAGON]   = _("Dragon"),
+    [TYPE_DARK]     = _("Dark"),
+	[TYPE_FAIRY]    = _("Fairy"),
+};
+
+const u8 gCategoryNames[NUM_MOVE_SPLITS][8] =
+{
+	[SPLIT_PHYSICAL] = _("Physic"),
+	[SPLIT_SPECIAL]  = _("Special"),
+	[SPLIT_STATUS]   = _("Status"),
 };
 
 // This is a factor in how much money you get for beating a trainer and the poke ball for it.

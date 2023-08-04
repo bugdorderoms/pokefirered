@@ -12,9 +12,12 @@
 #include "task.h"
 #include "util.h"
 #include "battle.h"
+#include "menu.h"
+#include "menu_indicators.h"
 #include "battle_anim.h"
 #include "battle_controllers.h"
 #include "battle_interface.h"
+#include "pokemon_summary_screen.h"
 #include "battle_message.h"
 #include "battle_script_commands.h"
 #include "reshow_battle_screen.h"
@@ -91,6 +94,7 @@ static void MoveSelectionDisplayPpString(void);
 static void MoveSelectionDisplayMoveType(void);
 static void MoveSelectionDisplayMoveNames(void);
 static void HandleMoveSwitching(void);
+static void HandleInputMoveInfo(void);
 static void WaitForMonSelection(void);
 static void CompleteWhenChoseItem(void);
 static void Task_LaunchLvlUpAnim(u8 taskId);
@@ -111,6 +115,11 @@ static void Task_GiveExpWithExpBar(u8 taskId);
 static void Task_CreateLevelUpVerticalStripes(u8 taskId);
 static void StartSendOutAnim(u8 battlerId, bool8 dontClearSubstituteBit);
 static void EndDrawPartyStatusSummary(void);
+static void MoveInfoPrintMoveDescription(void);
+static void MoveInfoPrintSubmenuString(u8 stateId);
+static void MoveInfoPrintPowerAndAccuracy(u16 move);
+static void MoveInfoPrintPriorityAndCategory(u16 move);
+static void MoveInfoPrintMoveTarget(u16 move);
 
 static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(void) =
 {
@@ -171,6 +180,13 @@ static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(void) =
     PlayerHandleResetActionMoveSelection,
     PlayerHandleCmd55,
     PlayerCmdEnd,
+};
+
+static void (*const sMoveInfoSubmenuFuncs[NUM_MOVEINFO_SUBMENUS])(u16) =
+{
+	MoveInfoPrintPowerAndAccuracy,
+	MoveInfoPrintPriorityAndCategory,
+	MoveInfoPrintMoveTarget,
 };
 
 void PlayerDummy(void)
@@ -307,13 +323,6 @@ static void HandleInputChooseAction(void)
     }
 }
 
-UNUSED static void UnusedEndBounceEffect(void)
-{
-    EndBounceEffect(gActiveBattler, BOUNCE_HEALTHBOX);
-    EndBounceEffect(gActiveBattler, BOUNCE_MON);
-    gBattlerControllerFuncs[gActiveBattler] = HandleInputChooseTarget;
-}
-
 static void HandleInputChooseTarget(void)
 {
 	u16 move = GetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_MOVE1 + gMoveSelectionCursor[gActiveBattler]);
@@ -351,7 +360,7 @@ static void HandleInputChooseTarget(void)
         PlaySE(SE_SELECT);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 		
-		if (moveTarget == (MOVE_TARGET_USER | MOVE_TARGET_ALLY)) // Accupressure target
+		if (moveTarget == (MOVE_TARGET_USER | MOVE_TARGET_ALLY)) // Acupressure target
 			gMultiUsePlayerCursor = BATTLE_PARTNER(gMultiUsePlayerCursor);
 		else
 		{
@@ -401,7 +410,7 @@ static void HandleInputChooseTarget(void)
         PlaySE(SE_SELECT);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 		
-		if (moveTarget == (MOVE_TARGET_USER | MOVE_TARGET_ALLY)) // Accupressure target
+		if (moveTarget == (MOVE_TARGET_USER | MOVE_TARGET_ALLY)) // Acupressure target
 			gMultiUsePlayerCursor = BATTLE_PARTNER(gMultiUsePlayerCursor);
 		else
 		{
@@ -622,6 +631,17 @@ void HandleInputChooseMove(void)
             gBattlerControllerFuncs[gActiveBattler] = HandleMoveSwitching;
         }
     }
+#if BATTLE_MOVE_INFO
+	else if (JOY_NEW(L_BUTTON))
+	{
+		PlaySE(SE_SELECT);
+		MoveSelectionDestroyCursorAt(gMoveSelectionCursor[gActiveBattler]);
+		gBattleStruct->moveInfo.submenuState = 0; // Always initialize on first submenu
+		MoveInfoPrintMoveDescription();
+		MoveInfoPrintSubmenuString(gBattleStruct->moveInfo.submenuState);
+		gBattlerControllerFuncs[gActiveBattler] = HandleInputMoveInfo;
+	}
+#endif
 }
 
 // not used
@@ -3116,4 +3136,87 @@ static void HandleInputShowEntireFieldTargets(void)
         DoBounceEffect(gActiveBattler, BOUNCE_HEALTHBOX, 7, 1);
         DoBounceEffect(gActiveBattler, BOUNCE_MON, 7, 1);
     }
+}
+
+// Redrawn moves window
+static void HandleCloseMoveInfo_Step(void)
+{
+	DestroyBattleMoveInfoWindow();
+	InitMoveSelectionsVarsAndStrings();
+	gBattlerControllerFuncs[gActiveBattler] = HandleInputChooseMove;
+}
+
+static void HandleInputMoveInfo(void)
+{
+	if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON) || JOY_NEW(L_BUTTON))
+	{
+		PlaySE(SE_SELECT);
+		// To create a smooth animation when closing the move info, first the arrow pair is removed, and then in the next frame, the moves window is redrawn.
+		RemoveScrollIndicatorArrowPair(gBattleStruct->moveInfo.arrowTaskId);
+		gBattlerControllerFuncs[gActiveBattler] = HandleCloseMoveInfo_Step;
+	}
+	else if (JOY_NEW(DPAD_LEFT) && gBattleStruct->moveInfo.submenuState > 0)
+	{
+		PlaySE(SE_SELECT);
+		MoveInfoPrintSubmenuString(--gBattleStruct->moveInfo.submenuState);
+	}
+	else if (JOY_NEW(DPAD_RIGHT) && gBattleStruct->moveInfo.submenuState < (NUM_MOVEINFO_SUBMENUS - 1))
+	{
+		PlaySE(SE_SELECT);
+		MoveInfoPrintSubmenuString(++gBattleStruct->moveInfo.submenuState);
+	}
+}
+
+static void MoveInfoPrintMoveDescription(void)
+{
+	u8 buffer[1000];
+	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
+	u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
+	
+	// Move's description
+	ReformatStringToMaxChars(buffer, gMoveDescriptionPointers[move - 1], 0, 150, FALSE);
+	CreateBattleMoveInfoWindowAndArrows(buffer);
+}
+
+static void MoveInfoPrintSubmenuString(u8 stateId)
+{
+	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
+	sMoveInfoSubmenuFuncs[stateId](moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]);
+	BattlePutTextOnWindow(gDisplayedStringBattle, 0xB);
+}
+
+static void MoveInfoPrintPowerAndAccuracy(u16 move)
+{
+	// Move's power
+	if (gBattleMoves[move].power <= 1)
+		StringCopy(gBattleTextBuff1, gText_ThreeHyphens);
+	else
+		ConvertIntToDecimalStringN(gBattleTextBuff1, gBattleMoves[move].power, STR_CONV_MODE_LEFT_ALIGN, 3);
+	
+	// Move's accuracy
+	if (gBattleMoves[move].accuracy <= 1)
+		StringCopy(gBattleTextBuff2, gText_ThreeHyphens);
+	else
+		ConvertIntToDecimalStringN(gBattleTextBuff2, gBattleMoves[move].accuracy, STR_CONV_MODE_LEFT_ALIGN, 3);
+	
+	BattleStringExpandPlaceholdersToDisplayedString(gText_MoveInfoPowerAndAccuracy);
+}
+
+static void MoveInfoPrintPriorityAndCategory(u16 move)
+{
+	// Move's priority
+	ConvertIntToDecimalStringN(gBattleTextBuff1, gBattleMoves[move].priority, STR_CONV_MODE_LEFT_ALIGN, 2);
+	
+	// Move's category
+	StringCopy(gBattleTextBuff2, gCategoryNames[gBattleMoves[move].split]);
+	
+	BattleStringExpandPlaceholdersToDisplayedString(gText_MoveInfoPriorityAndCategory);
+}
+
+static void MoveInfoPrintMoveTarget(u16 move)
+{
+	// Move's target
+	CopyMoveTargetName(gBattleTextBuff1, move);
+	
+	BattleStringExpandPlaceholdersToDisplayedString(gText_MoveInfoTarget);
 }

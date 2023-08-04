@@ -232,9 +232,23 @@ extern const u8 gUnknown_83FE770[];
 extern const u8 gMoveEffectiveness[];
 extern const u8 gText_MoveInterfacePP[];
 extern const u8 gText_MoveInterfaceType[];
+extern const u8 gText_MoveInfoPowerAndAccuracy[];
+extern const u8 gText_MoveInfoPriorityAndCategory[];
+extern const u8 gText_MoveInfoTarget[];
 extern const u8 gText_LinkStandby[];
 extern const u8 gText_BattleMenu[];
 extern const u8 gText_WhatWillPkmnDo[];
+extern const u8 gText_MoveTargetSelected[];
+extern const u8 gText_MoveTargetDepends[];
+extern const u8 gText_MoveTargetUserOrSelected[];
+extern const u8 gText_MoveTargetRandom[];
+extern const u8 gText_MoveTargetOpponentsField[];
+extern const u8 gText_MoveTargetBoth[];
+extern const u8 gText_MoveTargetUser[];
+extern const u8 gText_MoveTargetAlly[];
+extern const u8 gText_MoveTargetFoesAndAlly[];
+extern const u8 gText_MoveTargetUserOrAlly[];
+extern const u8 gText_MoveTargetAllBattlers[];
 
 // battle_script_commands
 extern const u8 gText_BattleYesNoChoice[];

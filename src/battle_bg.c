@@ -6,13 +6,17 @@
 #include "decompress.h"
 #include "graphics.h"
 #include "link.h"
+#include "menu_indicators.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
 #include "text_window.h"
+#include "strings.h"
 #include "trig.h"
+#include "menu.h"
 #include "constants/maps.h"
 #include "constants/songs.h"
 #include "constants/trainers.h"
+#include "constants/inserts.h"
 
 #define TAG_VS_LETTERS 10000
 
@@ -338,6 +342,19 @@ static const struct WindowTemplate gUnknown_8248330[] = {
         .paletteNum = 7,
         .baseBlock = 0x090
     }, DUMMY_WIN_TEMPLATE
+};
+
+static const struct WindowTemplate sMoveInfoWindowTemplate[] =
+{
+	{ // Move's description
+        .bg = 0,
+        .tilemapLeft = 0,
+        .tilemapTop = 54,
+        .width = 20,
+        .height = 6,
+        .paletteNum = 1,
+        .baseBlock = 0x340
+    },
 };
 
 static const u32 sBattleTerrainPalette_Grass[] = INCBIN_U32("graphics/battle_terrain/grass/terrain.gbapal.lz");
@@ -1043,4 +1060,33 @@ bool8 LoadChosenBattleElement(u8 caseId)
         break;
     }
     return ret;
+}
+
+void CreateBattleMoveInfoWindowAndArrows(u8 *str)
+{
+	u8 colors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
+	
+	// Create window
+	gBattleStruct->moveInfo.windowId = AddWindow(sMoveInfoWindowTemplate);
+	FillWindowPixelBuffer(gBattleStruct->moveInfo.windowId, PIXEL_FILL(15));
+	AddTextPrinterParameterized3(gBattleStruct->moveInfo.windowId, 0, 4, 0, colors, 0xFF, str);
+	PutWindowTilemap(gBattleStruct->moveInfo.windowId);
+	CopyWindowToVram(gBattleStruct->moveInfo.windowId, COPYWIN_BOTH);
+	
+	// Create arrows
+	gBattleStruct->moveInfo.arrowTaskId = AddScrollIndicatorArrowPairParameterized(0, 137, 165, 235, NUM_MOVEINFO_SUBMENUS - 1, 110, 110, &gBattleStruct->moveInfo.submenuState);
+}
+
+void DestroyBattleMoveInfoWindow(void)
+{
+	// Destroy window
+	FillWindowPixelBuffer(gBattleStruct->moveInfo.windowId, PIXEL_FILL(15));
+	PutWindowTilemap(gBattleStruct->moveInfo.windowId);
+	CopyWindowToVram(gBattleStruct->moveInfo.windowId, COPYWIN_BOTH);
+	RemoveWindow(gBattleStruct->moveInfo.windowId);
+	
+	// Load moves box
+	CopyToBgTilemapBuffer(0, gBattleTextboxTilemap, 0, 0x000);
+    CopyBgTilemapBufferToVram(0);
+	BattleInterfaceSetWindowPals();
 }

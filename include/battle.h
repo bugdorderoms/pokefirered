@@ -46,7 +46,7 @@
 
 #define MOVE_TARGET_SELECTED          0
 #define MOVE_TARGET_DEPENDS           (1 << 0)
-#define MOVE_TARGET_USER_OR_SELECTED  (1 << 1)
+#define MOVE_TARGET_USER_OR_SELECTED  (1 << 1) // unused
 #define MOVE_TARGET_RANDOM            (1 << 2)
 #define MOVE_TARGET_OPPONENTS_FIELD   (1 << 3)
 #define MOVE_TARGET_BOTH              (1 << 4)
@@ -370,11 +370,18 @@ struct LinkPartnerHeader
 
 struct Illusion
 {
-	u8 partyId:5;
-	u8 on:1;
-	u8 set:1;
-	u8 broken:1;
+	u8 partyId;
+	u8 on;
+	u8 set;
+	u8 broken;
 	struct Pokemon *mon;
+};
+
+struct MoveInfo
+{
+	u8 windowId; // Move's description window Id
+	u8 arrowTaskId; // Submenu arrow task id
+	u16 submenuState; // Determine which string will be show on the submenu info
 };
 
 struct BattleStruct
@@ -478,6 +485,7 @@ struct BattleStruct
 	/*0x0FE*/ u8 soulHeartBattlerId;
 	/*0x0FF*/ u8 usedReviveItemBattler; // for revive battle usage, as flag using gBitTable
 	/*0x100*/ struct Illusion illusion[MAX_BATTLERS_COUNT];
+	          struct MoveInfo moveInfo;
     union {
         struct LinkPartnerHeader linkPartnerHeader;
         struct MultiBattlePokemonTx multiBattleMons[3];

@@ -4438,6 +4438,50 @@ u8 GetMoveTarget(u16 move, u8 setTarget)
     return targetBattler;
 }
 
+// This don't account for moves that can change target
+void CopyMoveTargetName(u8 *dest, u16 move)
+{
+	const u8 *str;
+	
+	switch (gBattleMoves[move].target)
+	{
+		case MOVE_TARGET_SELECTED:
+		    str = gText_MoveTargetSelected;
+			break;
+		case MOVE_TARGET_DEPENDS:
+		    str = gText_MoveTargetDepends;
+			break;
+		case MOVE_TARGET_USER_OR_SELECTED:
+		    str = gText_MoveTargetUserOrSelected;
+			break;
+		case MOVE_TARGET_RANDOM:
+		    str = gText_MoveTargetRandom;
+			break;
+		case MOVE_TARGET_OPPONENTS_FIELD:
+		    str = gText_MoveTargetOpponentsField;
+			break;
+		case MOVE_TARGET_BOTH:
+		    str = gText_MoveTargetBoth;
+			break;
+		case MOVE_TARGET_USER:
+		    str = gText_MoveTargetUser;
+			break;
+		case MOVE_TARGET_ALLY:
+		    str = gText_MoveTargetAlly;
+			break;
+		case MOVE_TARGET_FOES_AND_ALLY:
+		    str = gText_MoveTargetFoesAndAlly;
+			break;
+		case (MOVE_TARGET_USER | MOVE_TARGET_ALLY): // Acupressure's target
+			str = gText_MoveTargetUserOrAlly;
+			break;
+		case MOVE_TARGET_ALL_BATTLERS:
+		    str = gText_MoveTargetAllBattlers;
+			break;
+	}
+	StringCopyN(dest, str, 12);
+}
+
 static bool32 IsNotEventLegalMewOrDeoxys(u8 battlerId)
 {
     if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT

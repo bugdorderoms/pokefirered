@@ -100,6 +100,7 @@
 #define SPLIT_PHYSICAL               0x0
 #define SPLIT_SPECIAL                0x1
 #define SPLIT_STATUS                 0x2
+#define NUM_MOVE_SPLITS              0x3
 
 // Pokemon types
 #define TYPE_NORMAL   0x00
