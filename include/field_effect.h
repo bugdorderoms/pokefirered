@@ -14,7 +14,7 @@ void CreateTeleportFieldEffectTask(void);
 void FieldEffectActiveListRemove(u8 id);
 void StartEscapeRopeFieldEffect(void);
 void FieldEffectStop(struct Sprite *sprite, u8 id);
-u8 CreateTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpriority, u8 *buffer);
+u8 CreateTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpriority);
 void FieldCB_FallWarpExit(void);
 void StartEscalatorWarp(u8 metatileBehavior, u8 priority);
 void StartLavaridgeGymB1FWarp(u8 a0);

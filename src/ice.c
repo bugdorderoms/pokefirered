@@ -889,7 +889,7 @@ static void InitSwirlingFogAnim(struct Sprite *sprite)
         battler = gBattleAnimTarget;
     }
     sprite->data[7] = battler;
-    if (gBattleAnimArgs[5] == 0 || !IsDoubleBattle())
+    if (gBattleAnimArgs[5] == 0 || !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
         tempVar = 0x20;
     else
         tempVar = 0x40;

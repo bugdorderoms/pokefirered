@@ -138,7 +138,7 @@ s32 FadeToWonderNewsMenu(void)
             return 0;
         gPaletteFade.bufferTransferDisabled = TRUE;
         LoadPalette(sWork->bgSpec->pal, 0x10, 0x20);
-        LZ77UnCompWram(sWork->bgSpec->map, sWork->buffer_03A4);
+        LZDecompressWram(sWork->bgSpec->map, sWork->buffer_03A4);
         CopyRectToBgTilemapBufferRect(1, sWork->buffer_03A4, 0, 0, 30, 3, 0, 0, 30, 3, 1, 8, 0);
         CopyRectToBgTilemapBufferRect(3, sWork->buffer_03A4, 0, 3, 30, 23, 0, 3, 30, 23, 1, 8, 0);
         CopyBgTilemapBufferToVram(1);

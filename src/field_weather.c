@@ -1,6 +1,5 @@
 #include "global.h"
 #include "gflib.h"
-#include "blend_palette.h"
 #include "field_camera.h"
 #include "field_effect.h"
 #include "field_weather.h"

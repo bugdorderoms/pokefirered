@@ -4954,7 +4954,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 					if (hword)
 					{
 						gCB2_AfterEvolution = gPartyMenu.exitCallback;
-						BeginEvolutionScene(mon, hword, 0, partyIndex);
+						BeginEvolutionScene(mon, hword, FALSE, partyIndex);
 						// no sound or message
 						failed = FALSE;
 					}
@@ -5608,7 +5608,7 @@ static void PartyMenuTryEvolution(u8 taskId)
     {
         FreePartyPointers();
         gCB2_AfterEvolution = gPartyMenu.exitCallback;
-        BeginEvolutionScene(mon, targetSpecies, 1, gPartyMenu.slotId);
+        BeginEvolutionScene(mon, targetSpecies, TRUE, gPartyMenu.slotId);
         DestroyTask(taskId);
     }
     else
@@ -6175,7 +6175,7 @@ void ChooseMonForWirelessMinigame(void)
 
 static u8 GetPartyLayoutFromBattleType(void)
 {
-    if (IsDoubleBattle() == FALSE)
+    if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
         return PARTY_LAYOUT_SINGLE;
     if (IsMultiBattle() == TRUE)
         return PARTY_LAYOUT_MULTI;
@@ -6354,7 +6354,7 @@ static void BufferBattlePartyOrder(u8 *partyBattleOrder, u8 flankId)
         }
         return;
     }
-    else if (IsDoubleBattle() == FALSE)
+    else if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
     {
         j = 1;
         partyIds[0] = gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)];
@@ -6424,7 +6424,7 @@ static void BufferBattlePartyOrderBySide(u8 *partyBattleOrder, u8 flankId, u8 ba
         }
         return;
     }
-    else if (IsDoubleBattle() == FALSE)
+    else if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
     {
         j = 1;
         partyIndexes[0] = gBattlerPartyIndexes[leftBattler];

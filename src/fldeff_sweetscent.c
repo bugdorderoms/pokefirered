@@ -40,19 +40,16 @@ bool8 FldEff_SweetScent(void)
     return FALSE;
 }
 
-#define SWEET_SCENT_AFFECTED_PALETTES ~(1 << (gSprites[GetPlayerAvatarObjectId()].oam.paletteNum + 16) | (1 << 13) | (1 << 14) | (1 << 15))
+#define SWEET_SCENT_AFFECTED_PALETTES ~(1 << (gSprites[gPlayerAvatar.spriteId].oam.paletteNum + 16) | (1 << 13) | (1 << 14) | (1 << 15))
 
 void StartSweetScentFieldEffect(void)
 {
-    u8 taskId;
-
     PlaySE(SE_M_SWEET_SCENT);
     sPlttBufferBak = (u8 *)Alloc(PLTT_SIZE);
     CpuFastCopy(gPlttBufferUnfaded, sPlttBufferBak, PLTT_SIZE);
     CpuFastCopy(gPlttBufferFaded, gPlttBufferUnfaded, PLTT_SIZE);
     BeginNormalPaletteFade(SWEET_SCENT_AFFECTED_PALETTES, 4, 0, 8, RGB(31, 0, 0));
-    taskId = CreateTask(TrySweetScentEncounter, 0);
-    gTasks[taskId].data[0] = 0;
+    gTasks[CreateTask(TrySweetScentEncounter, 0)].data[0] = 0;
     FieldEffectActiveListRemove(FLDEFF_SWEET_SCENT);
 }
 

@@ -75,9 +75,6 @@ static void SpriteCB_ReleasedMonFlyOut(struct Sprite *sprite);
 static void SpriteCB_TradePokeball(struct Sprite *sprite);
 static void SpriteCB_TradePokeballSendOff(struct Sprite *sprite);
 static void SpriteCB_TradePokeballEnd(struct Sprite *sprite);
-static void SpriteCB_HealthboxSlideInDelayed(struct Sprite *sprite);
-static void SpriteCB_HealthboxSlideIn(struct Sprite *sprite);
-static void SpriteCB_HitAnimHealthoxEffect(struct Sprite *sprite);
 static u16 GetBattlerPokeballItemId(u8 battlerId);
 
 // Data
@@ -930,14 +927,13 @@ static void SpriteCB_ReleaseMonFromBall(struct Sprite *sprite)
 
     if (gMain.inBattle)
     {
-        struct Pokemon *illusionMon, *mon = GetBattlerPartyIndexPtr(battlerId);
+        struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
 		s8 pan = GetBattlerSide(battlerId) != B_SIDE_PLAYER ? 25 : -25;
-        u16 species;
         u16 wantedCryCase;
         u8 taskId;
 
         if ((battlerId == GetBattlerAtPosition(B_POSITION_PLAYER_LEFT) || battlerId == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
-         && IsDoubleBattle() && gBattleSpritesDataPtr->animationData->healthboxSlideInStarted)
+         && (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && gBattleSpritesDataPtr->animationData->healthboxSlideInStarted)
         {
             if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
             {
@@ -950,22 +946,15 @@ static void SpriteCB_ReleaseMonFromBall(struct Sprite *sprite)
             }
         }
 
-        if (!IsDoubleBattle() || !gBattleSpritesDataPtr->animationData->healthboxSlideInStarted)
+        if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) || !gBattleSpritesDataPtr->animationData->healthboxSlideInStarted)
             wantedCryCase = 0;
         else if (battlerId == GetBattlerAtPosition(B_POSITION_PLAYER_LEFT) || battlerId == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
             wantedCryCase = 1;
         else
             wantedCryCase = 2;
-        
-        illusionMon = GetIllusionMonPtr(battlerId);
 		
-		if (illusionMon != NULL)
-			species = GetMonData(illusionMon, MON_DATA_SPECIES);
-		else
-			species = GetMonData(mon, MON_DATA_SPECIES);
-        
         taskId = CreateTask(Task_PlayCryWhenReleasedFromBall, 3);
-        gTasks[taskId].tCryTaskSpecies = species;
+        gTasks[taskId].tCryTaskSpecies = GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_SPECIES);
         gTasks[taskId].tCryTaskPan = pan;
         gTasks[taskId].tCryTaskWantedCry = wantedCryCase;
         gTasks[taskId].tCryTaskMonPtr1 = (u32)(mon) >> 0x10;
@@ -1118,7 +1107,7 @@ static void SpriteCB_PlayerMonSendOut_2(struct Sprite *sprite)
             sprite->sBattler = sprite->oam.affineParam & 0xFF;
             sprite->data[0] = 0;
 
-            if (IsDoubleBattle() && gBattleSpritesDataPtr->animationData->healthboxSlideInStarted
+            if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && gBattleSpritesDataPtr->animationData->healthboxSlideInStarted
              && sprite->sBattler == GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT))
                 sprite->callback = SpriteCB_ReleaseMon2FromBall;
             else
@@ -1144,7 +1133,7 @@ static void SpriteCB_OpponentMonSendOut(struct Sprite *sprite)
     if (sprite->data[0] > 15)
     {
         sprite->data[0] = 0;
-        if (IsDoubleBattle() && gBattleSpritesDataPtr->animationData->healthboxSlideInStarted
+        if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleSpritesDataPtr->animationData->healthboxSlideInStarted
          && sprite->sBattler == GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))
             sprite->callback = SpriteCB_ReleaseMon2FromBall;
         else
@@ -1336,71 +1325,6 @@ void DestroySpriteAndFreeResources2(struct Sprite *sprite)
     DestroySpriteAndFreeResources(sprite);
 }
 
-void StartHealthboxSlideIn(u8 battlerId)
-{
-    struct Sprite *healthboxSprite = &gSprites[gHealthboxSpriteIds[battlerId]];
-
-    healthboxSprite->data[0] = 5;
-    healthboxSprite->data[1] = 0;
-    healthboxSprite->x2 = 0x73;
-    healthboxSprite->y2 = 0;
-    healthboxSprite->callback = SpriteCB_HealthboxSlideIn;
-    if (GetBattlerSide(battlerId) != B_SIDE_PLAYER)
-    {
-        healthboxSprite->data[0] = -healthboxSprite->data[0];
-        healthboxSprite->data[1] = -healthboxSprite->data[1];
-        healthboxSprite->x2 = -healthboxSprite->x2;
-        healthboxSprite->y2 = -healthboxSprite->y2;
-    }
-    
-    gSprites[healthboxSprite->data[5]].callback(&gSprites[healthboxSprite->data[5]]);
-    if (GetBattlerPosition(battlerId) == B_POSITION_PLAYER_RIGHT)
-        healthboxSprite->callback = SpriteCB_HealthboxSlideInDelayed;
-}
-
-static void SpriteCB_HealthboxSlideInDelayed(struct Sprite *sprite)
-{
-    sprite->data[1]++;
-    if (sprite->data[1] == 20)
-    {
-        sprite->data[1] = 0;
-        sprite->callback = SpriteCB_HealthboxSlideIn;
-    }
-}
-
-static void SpriteCB_HealthboxSlideIn(struct Sprite *sprite)
-{
-    sprite->x2 -= sprite->data[0];
-    sprite->y2 -= sprite->data[1];
-    if (sprite->x2 == 0 && sprite->y2 == 0)
-        sprite->callback = SpriteCallbackDummy;
-}
-
-void DoHitAnimHealthboxEffect(u8 battlerId)
-{
-    u8 spriteId;
-
-    spriteId = CreateInvisibleSpriteWithCallback(SpriteCB_HitAnimHealthoxEffect);
-    gSprites[spriteId].data[0] = 1;
-    gSprites[spriteId].data[1] = gHealthboxSpriteIds[battlerId];
-    gSprites[spriteId].callback = SpriteCB_HitAnimHealthoxEffect;
-}
-
-static void SpriteCB_HitAnimHealthoxEffect(struct Sprite *sprite)
-{
-    u8 r1 = sprite->data[1];
-
-    gSprites[r1].y2 = sprite->data[0];
-    sprite->data[0] = -sprite->data[0];
-    sprite->data[2]++;
-    if (sprite->data[2] == 21)
-    {
-        gSprites[r1].x2 = 0;
-        gSprites[r1].y2 = 0;
-        DestroySprite(sprite);
-    }
-}
-
 void LoadBallGfx(u8 ballId)
 {
     u16 var;
@@ -1433,11 +1357,6 @@ void FreeBallGfx(u8 ballId)
 
 static u16 GetBattlerPokeballItemId(u8 battlerId)
 {
-    struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId), *illusionMon = GetIllusionMonPtr(battlerId);
-	
-	if (illusionMon != NULL)
-		mon = illusionMon;
-	
-	return GetMonData(mon, MON_DATA_POKEBALL);
+	return GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_POKEBALL);
 }
 

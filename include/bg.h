@@ -16,27 +16,27 @@ struct BGCntrlBitfield // for the I/O registers
 enum
 {
     BG_CTRL_ATTR_VISIBLE = 1,
-    BG_CTRL_ATTR_CHARBASEINDEX = 2,
-    BG_CTRL_ATTR_MAPBASEINDEX = 3,
-    BG_CTRL_ATTR_SCREENSIZE = 4,
-    BG_CTRL_ATTR_PALETTEMODE = 5,
-    BG_CTRL_ATTR_PRIORITY = 6,
-    BG_CTRL_ATTR_MOSAIC = 7,
-    BG_CTRL_ATTR_WRAPAROUND = 8,
+    BG_CTRL_ATTR_CHARBASEINDEX,
+    BG_CTRL_ATTR_MAPBASEINDEX,
+    BG_CTRL_ATTR_SCREENSIZE,
+    BG_CTRL_ATTR_PALETTEMODE,
+    BG_CTRL_ATTR_PRIORITY,
+    BG_CTRL_ATTR_MOSAIC,
+    BG_CTRL_ATTR_WRAPAROUND,
 };
 
 enum
 {
     BG_ATTR_CHARBASEINDEX = 1,
-    BG_ATTR_MAPBASEINDEX = 2,
-    BG_ATTR_SCREENSIZE = 3,
-    BG_ATTR_PALETTEMODE = 4,
-    BG_ATTR_MOSAIC = 5,
-    BG_ATTR_WRAPAROUND = 6,
-    BG_ATTR_PRIORITY = 7,
-    BG_ATTR_MAPSIZE = 8,
-    BG_ATTR_BGTYPE = 9,
-    BG_ATTR_BASETILE = 10
+    BG_ATTR_MAPBASEINDEX,
+    BG_ATTR_SCREENSIZE,
+    BG_ATTR_PALETTEMODE,
+    BG_ATTR_MOSAIC,
+    BG_ATTR_WRAPAROUND,
+    BG_ATTR_PRIORITY,
+    BG_ATTR_MAPSIZE,
+    BG_ATTR_BGTYPE,
+    BG_ATTR_BASETILE
 };
 
 enum AdjustBgMosaicMode
@@ -69,17 +69,9 @@ struct BgTemplate
 };
 
 void ResetBgs(void);
-u8 GetBgMode(void);
-void ResetBgControlStructs(void);
-void SetBgControlAttributes(u8 bg, u8 charBaseIndex, u8 mapBaseIndex, u8 screenSize, u8 paletteMode, u8 priority, u8 mosaic, u8 wraparound);
-u16 GetBgControlAttribute(u8 bg, u8 attributeId);
-u8 LoadBgVram(u8 bg, const void *src, u16 size, u16 destOffset, u8 mode);
-void SetTextModeAndHideBgs(void);
-bool8 IsInvalidBg(u8 bg);
 int BgTileAllocOp(int bg, int offset, int count, int mode);
 void ResetBgsAndClearDma3BusyFlags(bool32 enableWindowTileAutoAlloc);
 void InitBgsFromTemplates(u8 bgMode, const struct BgTemplate *templates, u8 numTemplates);
-void InitBgFromTemplate(const struct BgTemplate *template);
 void SetBgMode(u8 bgMode);
 u16 LoadBgTiles(u8 bg, const void* src, u16 size, u16 destOffset);
 u16 LoadBgTilemap(u8 bg, const void *src, u16 size, u16 destOffset);
@@ -93,6 +85,7 @@ u32 GetBgX(u8 bg);
 u32 ChangeBgY(u8 bg, u32 value, u8 op);
 u32 ChangeBgY_ScreenOff(u8 bg, u32 value, u8 op);
 u32 GetBgY(u8 bg);
+void ResetAllBgsPos(void);
 void SetBgAffine(u8 bg, u32 srcCenterX, u32 srcCenterY, s16 dispCenterX, s16 dispCenterY, s16 scaleX, s16 scaleY, u16 rotationAngle);
 u8 AdjustBgMosaic(u8 value, u8 mode);
 void SetBgTilemapBuffer(u8 bg, void *tilemap);
@@ -106,13 +99,6 @@ void CopyRectToBgTilemapBufferRect(u8 bg, const void* src, u8 srcX, u8 srcY, u8 
 void FillBgTilemapBufferRect_Palette0(u8 bg, u16 tileNum, u8 x, u8 y, u8 width, u8 height);
 void FillBgTilemapBufferRect(u8 bg, u16 tileNum, u8 x, u8 y, u8 width, u8 height, u8 palette);
 void WriteSequenceToBgTilemapBuffer(u8 bg, u16 firstTileNum, u8 x, u8 y, u8 width, u8 height, u8 paletteSlot, s16 tileNumDelta);
-u16 GetBgMetricTextMode(u8 bg, u8 whichMetric);
-u32 GetBgMetricAffineMode(u8 bg, u8 whichMetric);
-u32 GetTileMapIndexFromCoords(s32 x, s32 y, s32 screenSize, u32 screenWidth, u32 screenHeight);
-void CopyTileMapEntry(const u16 *src, u16 *dest, s32 palette1, s32 tileOffset, s32 palette2);
-u32 GetBgType(u8 bg);
-bool32 IsInvalidBg32(u8 bg);
-bool32 IsTileMapOutsideWram(u8 bg);
 
 extern bool32 gWindowTileAutoAllocEnabled;
 

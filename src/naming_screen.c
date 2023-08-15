@@ -485,14 +485,7 @@ static void NamingScreen_InitBGs(void)
     ResetBgsAndClearDma3BusyFlags(FALSE);
     InitBgsFromTemplates(0, gUnknown_83E2290, NELEMS(gUnknown_83E2290));
 
-    ChangeBgX(0, 0, 0);
-    ChangeBgY(0, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(3, 0, 0);
+    ResetAllBgsPos();
 
     InitStandardTextBoxWindows();
     InitTextBoxGfxAndPrinters();
@@ -1295,7 +1288,7 @@ static void NamingScreen_CreatePlayerIcon(void)
     u8 rivalGfxId;
     u8 spriteId;
 
-    rivalGfxId = GetRivalAvatarGraphicsIdByStateIdAndGender(0, sNamingScreenData->monSpecies);
+    rivalGfxId = GetPlayerAvatarGraphicsIdByStateIdAndGender(0, sNamingScreenData->monSpecies);
     spriteId = AddPseudoObjectEvent(rivalGfxId, SpriteCallbackDummy, 0x38, 0x25, 0);
     gSprites[spriteId].oam.priority = 3;
     StartSpriteAnim(&gSprites[spriteId], 4);
@@ -1779,7 +1772,7 @@ static void CopyStringToDestBuffer(void)
 
 static void choose_name_or_words_screen_load_bg_tile_patterns(void)
 {
-    LZ77UnCompWram(gNamingScreenMenu_Gfx, sNamingScreenData->tileBuffer);
+    LZDecompressWram(gNamingScreenMenu_Gfx, sNamingScreenData->tileBuffer);
     LoadBgTiles(1, sNamingScreenData->tileBuffer, 0x600, 0);
     LoadBgTiles(2, sNamingScreenData->tileBuffer, 0x600, 0);
     LoadBgTiles(3, sNamingScreenData->tileBuffer, 0x600, 0);

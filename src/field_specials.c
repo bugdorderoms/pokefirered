@@ -94,7 +94,6 @@ u16 sFieldSpecialsListMenuScrollBuffer;
 static void Task_AnimatePcTurnOn(u8 taskId);
 static void PcTurnOnUpdateMetatileId(bool16 flag);
 static void Task_ShakeScreen(u8 taskId);
-static void Task_EndScreenShake(u8 taskId);
 static u16 SampleResortGorgeousMon(void);
 static u16 SampleResortGorgeousReward(void);
 static void Task_ElevatorShake(u8 taskId);
@@ -161,24 +160,17 @@ void GetPlayerXY(void)
 
 u8 GetPlayerTrainerIdOnesDigit(void)
 {
-    u16 playerId = (gSaveBlock2Ptr->playerTrainerId[1] << 8) | gSaveBlock2Ptr->playerTrainerId[0];
-    return playerId % 10;
+    return ((gSaveBlock2Ptr->playerTrainerId[1] << 8) | gSaveBlock2Ptr->playerTrainerId[0]) % 10;
 }
 
 void BufferBigGuyOrBigGirlString(void)
 {
-    if (gSaveBlock2Ptr->playerGender == MALE)
-        StringCopy(gStringVar1, gText_BigGuy);
-    else
-        StringCopy(gStringVar1, gText_BigGirl);
+	StringCopy(gStringVar1, gSaveBlock2Ptr->playerGender == MALE ? gText_BigGuy : gText_BigGirl);
 }
 
 void BufferSonOrDaughterString(void)
 {
-    if (gSaveBlock2Ptr->playerGender == MALE)
-        StringCopy(gStringVar1, gText_Daughter);
-    else
-        StringCopy(gStringVar1, gText_Son);
+	StringCopy(gStringVar1, gSaveBlock2Ptr->playerGender == MALE ? gText_Daughter : gText_Son);
 }
 
 u8 GetBattleOutcome(void)
@@ -194,6 +186,7 @@ void SetHiddenItemFlag(void)
 u8 GetLeadMonFriendship(void)
 {
     struct Pokemon * pokemon = &gPlayerParty[GetLeadMonIndex()];
+	
     if (GetMonData(pokemon, MON_DATA_FRIENDSHIP) == 255)
         return 6;
     else if (GetMonData(pokemon, MON_DATA_FRIENDSHIP) >= 200)
@@ -225,9 +218,7 @@ bool8 PlayerHasGrassPokemonInParty(void)
     for (i = 0; i < PARTY_SIZE; i++)
     {
         pokemon = &gPlayerParty[i];
-        if (GetMonData(pokemon, MON_DATA_SANITY_HAS_SPECIES)
-         && !GetMonData(pokemon, MON_DATA_IS_EGG)
-        )
+        if (GetMonData(pokemon, MON_DATA_SANITY_HAS_SPECIES) && !GetMonData(pokemon, MON_DATA_IS_EGG))
         {
             species = GetMonData(pokemon, MON_DATA_SPECIES);
             if (gBaseStats[species].type1 == TYPE_GRASS || gBaseStats[species].type2 == TYPE_GRASS)
@@ -261,8 +252,8 @@ static void Task_AnimatePcTurnOn(u8 taskId)
         PcTurnOnUpdateMetatileId(tState & 1);
         DrawWholeMapView();
         tTimer = 0;
-        tState++;
-        if (tState == 5)
+
+        if (++tState == 5)
             DestroyTask(taskId);
     }
     tTimer++;
@@ -276,9 +267,8 @@ static void PcTurnOnUpdateMetatileId(bool16 flickerOff)
     u16 metatileId = 0;
     s8 deltaX = 0;
     s8 deltaY = 0;
-    u8 direction = GetPlayerFacingDirection();
 
-    switch (direction)
+    switch (GetPlayerFacingDirection())
     {
     case DIR_NORTH:
         deltaX = 0;
@@ -314,14 +304,13 @@ static void PcTurnOnUpdateMetatileId(bool16 flickerOff)
     MapGridSetMetatileIdAt(gSaveBlock1Ptr->pos.x + deltaX + 7, gSaveBlock1Ptr->pos.y + deltaY + 7, metatileId | METATILE_COLLISION_MASK);
 }
 
-void AnimatePcTurnOff()
+void AnimatePcTurnOff(void)
 {
     u16 metatileId = 0;
     s8 deltaX = 0;
     s8 deltaY = 0;
-    u8 direction = GetPlayerFacingDirection();
 
-    switch (direction)
+    switch (GetPlayerFacingDirection())
     {
     case DIR_NORTH:
         deltaX = 0;
@@ -342,6 +331,7 @@ void AnimatePcTurnOff()
         metatileId = METATILE_GenericBuilding1_PlayersPCOff;
     else if (gSpecialVar_0x8004 == 2)
         metatileId = METATILE_GenericBuilding1_PlayersPCOff;
+	
     MapGridSetMetatileIdAt(gSaveBlock1Ptr->pos.x + deltaX + 7, gSaveBlock1Ptr->pos.y + deltaY + 7, metatileId | METATILE_COLLISION_MASK);
     DrawWholeMapView();
 }
@@ -355,7 +345,7 @@ void SpawnCameraObject(void)
 
 void RemoveCameraObject(void)
 {
-    CameraObjectSetFollowedObjectId(GetPlayerAvatarObjectId());
+    CameraObjectSetFollowedObjectId(gPlayerAvatar.spriteId);
     RemoveObjectEventByLocalIdAndMap(127, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
 }
 
@@ -391,42 +381,34 @@ static const u8 sSlotMachineIndices[] = {
 
 u8 GetRandomSlotMachineId(void)
 {
-    u16 rval = Random() % NELEMS(sSlotMachineIndices);
-    return sSlotMachineIndices[rval];
+    return sSlotMachineIndices[Random() % NELEMS(sSlotMachineIndices)];
 }
 
 bool8 LeadMonHasEffortRibbon(void)
 {
-    u8 leadMonIdx = GetLeadMonIndex();
-    return GetMonData(&gPlayerParty[leadMonIdx], MON_DATA_EFFORT_RIBBON, NULL);
+    return GetMonData(&gPlayerParty[GetLeadMonIndex()], MON_DATA_EFFORT_RIBBON, NULL);
 }
 
 void GiveLeadMonEffortRibbon(void)
 {
-    u8 leadMonIdx;
-    bool8 param;
+    bool8 param = TRUE;
+	
     IncrementGameStat(GAME_STAT_RECEIVED_RIBBONS);
     FlagSet(FLAG_SYS_RIBBON_GET);
-    param = TRUE;
-    leadMonIdx = GetLeadMonIndex();
-    SetMonData(&gPlayerParty[leadMonIdx], MON_DATA_EFFORT_RIBBON, &param);
+    SetMonData(&gPlayerParty[GetLeadMonIndex()], MON_DATA_EFFORT_RIBBON, &param);
 }
 
 bool8 AreLeadMonEVsMaxedOut(void)
 {
-    u8 leadMonIndex = GetLeadMonIndex();
-    if (GetMonEVCount(&gPlayerParty[leadMonIndex]) >= MAX_TOTAL_EVS)
-        return TRUE;
-    else
-        return FALSE;
+    return (GetMonEVCount(&gPlayerParty[GetLeadMonIndex()]) >= MAX_TOTAL_EVS);
 }
 
 bool8 IsStarterFirstStageInParty(void)
 {
     u16 species = GetStarterSpeciesById(VarGet(VAR_STARTER_MON));
-    u8 partyCount = CalculatePlayerPartyCount();
     u8 i;
-    for (i = 0; i < partyCount; i++)
+	
+    for (i = 0; i < CalculatePlayerPartyCount(); i++)
     {
         if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) == species)
             return TRUE;
@@ -436,8 +418,8 @@ bool8 IsStarterFirstStageInParty(void)
 
 bool8 IsThereRoomInAnyBoxForMorePokemon(void)
 {
-    u16 i;
-    u16 j;
+    u16 i, j;
+
     for (i = 0; i < TOTAL_BOXES_COUNT; i++)
     {
         for (j = 0; j < IN_BOX_COUNT; j++)
@@ -451,10 +433,7 @@ bool8 IsThereRoomInAnyBoxForMorePokemon(void)
 
 bool8 IsPokerusInParty(void)
 {
-    if (!CheckPartyPokerus(gPlayerParty, 0x3F))
-        return FALSE;
-    else
-        return TRUE;
+	return CheckPartyPokerus(gPlayerParty, 0x3F);
 }
 
 #define tXtrans   data[0]
@@ -484,8 +463,8 @@ void ShakeScreen(void)
 static void Task_ShakeScreen(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
-    tTimer++;
-    if (tTimer % tDuration == 0)
+
+    if (++tTimer % tDuration == 0)
     {
         tTimer = 0;
         tNremain--;
@@ -494,16 +473,11 @@ static void Task_ShakeScreen(u8 taskId)
         SetCameraPanning(tXtrans, tYtrans);
         if (tNremain == 0)
         {
-            Task_EndScreenShake(taskId);
+			DestroyTask(taskId);
+			EnableBothScriptContexts();
             InstallCameraPanAheadCallback();
         }
     }
-}
-
-static void Task_EndScreenShake(u8 taskId)
-{
-    DestroyTask(taskId);
-    EnableBothScriptContexts();
 }
 
 #undef tYtrans
@@ -514,13 +488,11 @@ static void Task_EndScreenShake(u8 taskId)
 
 u8 GetLeadMonIndex(void)
 {
-    u8 partyCount = CalculatePlayerPartyCount();
     u8 i;
-    struct Pokemon * pokemon;
-    for (i = 0; i < partyCount; i++)
+	
+    for (i = 0; i < CalculatePlayerPartyCount(); i++)
     {
-        pokemon = &gPlayerParty[i];
-        if (GetMonData(pokemon, MON_DATA_SPECIES2, NULL) != SPECIES_EGG && GetMonData(pokemon, MON_DATA_SPECIES2, NULL) != SPECIES_NONE)
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) != SPECIES_EGG && GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) != SPECIES_NONE)
             return i;
     }
     return 0;
@@ -665,38 +637,39 @@ static const u16 sResortGorgeousDeluxeRewards[] = {
 
 void IncrementResortGorgeousStepCounter(void)
 {
-    u16 var4035 = VarGet(VAR_RESORT_GOREGEOUS_STEP_COUNTER);
+    u16 var4035;
     if (VarGet(VAR_RESORT_GORGEOUS_REQUESTED_MON) != SPECIES_NONE)
     {
-        var4035++;
+        var4035 = VarGet(VAR_RESORT_GOREGEOUS_STEP_COUNTER) + 1;
+		
         if (var4035 >= 250)
         {
             VarSet(VAR_RESORT_GORGEOUS_REQUESTED_MON, 0xFFFF);
             VarSet(VAR_RESORT_GOREGEOUS_STEP_COUNTER, 0);
         }
         else
-        {
             VarSet(VAR_RESORT_GOREGEOUS_STEP_COUNTER, var4035);
-        }
     }
 }
 
 void SampleResortGorgeousMonAndReward(void)
 {
     u16 requestedSpecies = VarGet(VAR_RESORT_GORGEOUS_REQUESTED_MON);
+	
     if (requestedSpecies == SPECIES_NONE || requestedSpecies == 0xFFFF)
     {
         VarSet(VAR_RESORT_GORGEOUS_REQUESTED_MON, SampleResortGorgeousMon());
         VarSet(VAR_RESORT_GORGEOUS_REWARD, SampleResortGorgeousReward());
         VarSet(VAR_RESORT_GOREGEOUS_STEP_COUNTER, 0);
     }
-    StringCopy(gStringVar1, gSpeciesNames[VarGet(VAR_RESORT_GORGEOUS_REQUESTED_MON)]);
+    StringCopy(gStringVar1, gSpeciesNames[requestedSpecies]);
 }
 
 static u16 SampleResortGorgeousMon(void)
 {
     u16 i;
     u16 species;
+	
     for (i = 0; i < 100; i++)
     {
         species = (Random() % (NUM_SPECIES - 1)) + 1;
@@ -715,18 +688,12 @@ static u16 SampleResortGorgeousMon(void)
 
 static u16 SampleResortGorgeousReward(void)
 {
-    if ((Random() % 100) >= 30)
-        return ITEM_LUXURY_BALL;
-    else
-        return sResortGorgeousDeluxeRewards[Random() % NELEMS(sResortGorgeousDeluxeRewards)];
+	return (Random() % 100) >= 30 ? ITEM_LUXURY_BALL : sResortGorgeousDeluxeRewards[Random() % NELEMS(sResortGorgeousDeluxeRewards)];
 }
 
 bool8 CheckAddCoins(void)
 {
-    if (gSpecialVar_Result + gSpecialVar_0x8006 > 9999)
-        return FALSE;
-    else
-        return TRUE;
+	return (gSpecialVar_Result + gSpecialVar_0x8006 <= 9999);
 }
 
 static const struct WindowTemplate sElevatorCurrentFloorWindowTemplate = {

@@ -873,7 +873,7 @@ static void LoadMainTitleScreenPalsAndResetBgs(void)
     LoadPalette(gGraphics_TitleScreen_BoxArtMonPals, 0xD0, 0x20);
     LoadPalette(gGraphics_TitleScreen_BackgroundPals, 0xF0, 0x20);
     LoadPalette(gGraphics_TitleScreen_BackgroundPals, 0xE0, 0x20);
-    ResetBgPositions();
+    ResetAllBgsPos();
     ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON | DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON);
     ShowBg(1);
     ShowBg(2);

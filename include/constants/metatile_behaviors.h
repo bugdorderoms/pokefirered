@@ -17,7 +17,7 @@
 #define MB_PUDDLE 0x16
 #define MB_SHALLOW_WATER 0x17
 #define MB_UNDERWATER_BLOCKED_ABOVE 0x19
-#define MB_1A 0x1A
+#define MB_STRENGTH_HOLE 0x1A
 #define MB_1B 0x1B
 #define MB_STRENGTH_BUTTON 0x20
 #define MB_SAND 0x21

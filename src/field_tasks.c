@@ -26,11 +26,7 @@ static const TaskFunc sPerStepCallbacks[] =
 {
     [STEP_CB_DUMMY]             = DummyPerStepCallback,
     [STEP_CB_ASH]               = AshGrassPerStepCallback,
-    [STEP_CB_FORTREE_BRIDGE]    = DummyPerStepCallback,
-    [STEP_CB_PACIFIDLOG_BRIDGE] = DummyPerStepCallback,
     [STEP_CB_ICE]               = IcefallCaveIcePerStepCallback,
-    [STEP_CB_TRUCK]             = DummyPerStepCallback,
-    [STEP_CB_SECRET_BASE]       = DummyPerStepCallback,
     [STEP_CB_CRACKED_FLOOR]     = CrackedFloorPerStepCallback
 };
 
@@ -49,18 +45,18 @@ static const u8 sIcefallCaveIceTileCoords[][2] =
 
 static void Task_RunPerStepCallback(u8 taskId)
 {
-    int idx = gTasks[taskId].data[0];
-    sPerStepCallbacks[idx](taskId);
+    sPerStepCallbacks[gTasks[taskId].data[0]](taskId);
 }
 
 static void Task_RunTimeBasedEvents(u8 taskId)
 {
-    s16 *data = gTasks[taskId].data;
+    s16 *data;
 
     if (!ScriptContext2_IsEnabled())
     {
         if (!QL_IS_PLAYBACK_STATE)
         {
+			data = gTasks[taskId].data;
             UpdateAmbientCry(&data[1], &data[2]);
         }
     }
@@ -70,8 +66,7 @@ void SetUpFieldTasks(void)
 {
     if (!FuncIsActiveTask(Task_RunPerStepCallback))
     {
-        u8 taskId = CreateTask(Task_RunPerStepCallback, 0x50);
-        gTasks[taskId].data[0] = 0;
+        gTasks[CreateTask(Task_RunPerStepCallback, 0x50)].data[0] = 0;
     }
 
     if (!FuncIsActiveTask(Task_RunTimeBasedEvents))
@@ -88,15 +83,8 @@ void ActivatePerStepCallback(u8 callbackId)
 
         for (i = 0; i < 16; i++)
             data[i] = 0;
-
-        if (callbackId >= NELEMS(sPerStepCallbacks))
-        {
-            data[0] = 0;
-        }
-        else
-        {
-            data[0] = callbackId;
-        }
+		
+		data[0] = callbackId >= NELEMS(sPerStepCallbacks) ? 0 : callbackId;
     }
 }
 
@@ -125,8 +113,9 @@ static void DummyPerStepCallback(u8 taskId)
 
 static void MarkIcefallCaveCoordVisited(s16 x, s16 y)
 {
-    u8 i = 0;
-    for (; i < NELEMS(sIcefallCaveIceTileCoords); ++i)
+	u8 i;
+	
+    for (i = 0; i < NELEMS(sIcefallCaveIceTileCoords); ++i)
     {
         if (sIcefallCaveIceTileCoords[i][0] + 7 == x && sIcefallCaveIceTileCoords[i][1] + 7 == y)
         {
@@ -138,15 +127,12 @@ static void MarkIcefallCaveCoordVisited(s16 x, s16 y)
 
 void SetIcefallCaveCrackedIceMetatiles(void)
 {
-    u8 i = 0;
-    for (; i < NELEMS(sIcefallCaveIceTileCoords); ++i)
+	u8 i;
+	
+    for (i = 0; i < NELEMS(sIcefallCaveIceTileCoords); ++i)
     {
         if (FlagGet(i + 1) == TRUE)
-        {
-            int x = sIcefallCaveIceTileCoords[i][0] + 7;
-            int y = sIcefallCaveIceTileCoords[i][1] + 7;
-            MapGridSetMetatileIdAt(x, y, METATILE_SeafoamIslands_CrackedIce);
-        }
+            MapGridSetMetatileIdAt(sIcefallCaveIceTileCoords[i][0] + 7, sIcefallCaveIceTileCoords[i][1] + 7, METATILE_SeafoamIslands_CrackedIce);
     }
 }
 
@@ -190,9 +176,7 @@ static void IcefallCaveIcePerStepCallback(u8 taskId)
             break;
         case 2:
             if (data[6] != 0)
-            {
                 data[6]--;
-            }
             else
             {
                 x = data[4];
@@ -205,9 +189,7 @@ static void IcefallCaveIcePerStepCallback(u8 taskId)
             break;
         case 3:
             if (data[6] != 0)
-            {
                 data[6]--;
-            }
             else
             {
                 x = data[4];
@@ -234,12 +216,7 @@ static void AshGrassPerStepCallback(u8 taskId)
         data[1] = x;
         data[2] = y;
         if (MetatileBehavior_ReturnFalse_4((u8)MapGridGetMetatileBehaviorAt(x, y)))
-        {
-            if (MapGridGetMetatileIdAt(x, y) == 0x20a)
-                StartAshFieldEffect(x, y, 0x212, 4);
-            else
-                StartAshFieldEffect(x, y, 0x206, 4);
-        }
+			StartAshFieldEffect(x, y, MapGridGetMetatileIdAt(x, y) == 0x20a ? 0x212 : 0x206, 4);
     }
 }
 

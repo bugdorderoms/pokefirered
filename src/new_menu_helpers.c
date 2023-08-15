@@ -319,7 +319,7 @@ void *MallocAndDecompress(const void *src, u32 *size)
 
     ptr = Alloc(*size);
     if (ptr)
-        LZ77UnCompWram(src, ptr);
+        LZDecompressWram(src, ptr);
     return ptr;
 }
 
@@ -362,18 +362,6 @@ void CopyToBufferFromBgTilemap(u8 bgId, u16 *dest, u8 left, u8 top, u8 width, u8
             dest[(i * width) + j] = src[(i + top) * 32 + j + left];
         }
     }
-}
-
-void ResetBgPositions(void)
-{
-    ChangeBgX(0, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(0, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgY(3, 0, 0);
 }
 
 void InitStandardTextBoxWindows(void)

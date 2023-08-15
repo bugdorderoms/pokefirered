@@ -94,12 +94,7 @@ s32 GetAnimBgAttribute(u8 bgId, u8 attributeId)
 
 void HandleIntroSlide(u8 terrain)
 {
-    u8 taskId;
-
-    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-        taskId = CreateTask(BattleIntroSlideLink, 0);
-    else
-        taskId = CreateTask(sBattleIntroSlideFuncs[terrain], 0);
+    u8 taskId = CreateTask((gBattleTypeFlags & BATTLE_TYPE_LINK) ? BattleIntroSlideLink : sBattleIntroSlideFuncs[terrain], 0);
 
     gTasks[taskId].data[0] = 0;
     gTasks[taskId].data[1] = terrain;
@@ -132,16 +127,8 @@ static void BattleIntroSlide1(u8 taskId)
     switch (gTasks[taskId].data[0])
     {
     case 0:
-        if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-        {
-            gTasks[taskId].data[2] = 16;
-            ++gTasks[taskId].data[0];
-        }
-        else
-        {
-            gTasks[taskId].data[2] = 1;
-            ++gTasks[taskId].data[0];
-        }
+		gTasks[taskId].data[2] = (gBattleTypeFlags & BATTLE_TYPE_LINK) ? 16 : 1;
+		++gTasks[taskId].data[0];
         break;
     case 1:
         if (--gTasks[taskId].data[2] == 0)
@@ -231,16 +218,8 @@ static void BattleIntroSlide2(u8 taskId)
     {
     case 0:
         gTasks[taskId].data[4] = 16;
-        if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-        {
-            gTasks[taskId].data[2] = 16;
-            ++gTasks[taskId].data[0];
-        }
-        else
-        {
-            gTasks[taskId].data[2] = 1;
-            ++gTasks[taskId].data[0];
-        }
+		gTasks[taskId].data[2] = (gBattleTypeFlags & BATTLE_TYPE_LINK) ? 16 : 1;
+		++gTasks[taskId].data[0];
         break;
     case 1:
         if (--gTasks[taskId].data[2] == 0)
@@ -261,14 +240,11 @@ static void BattleIntroSlide2(u8 taskId)
         }
         break;
     case 3:
-        if (gTasks[taskId].data[3])
+        if (gTasks[taskId].data[3] && --gTasks[taskId].data[3] == 0)
         {
-            if (--gTasks[taskId].data[3] == 0)
-            {
-                SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ);
-                SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(15, 0));
-                SetGpuReg(REG_OFFSET_BLDY, 0);
-            }
+			SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ);
+			SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(15, 0));
+			SetGpuReg(REG_OFFSET_BLDY, 0);
         }
         else if ((gTasks[taskId].data[4] & 0x1F) && --gTasks[taskId].data[5] == 0)
         {
@@ -316,16 +292,8 @@ static void BattleIntroSlide3(u8 taskId)
         SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(8, 8));
         SetGpuReg(REG_OFFSET_BLDY, 0);
         gTasks[taskId].data[4] = BLDALPHA_BLEND(8, 8);
-        if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-        {
-            gTasks[taskId].data[2] = 16;
-            ++gTasks[taskId].data[0];
-        }
-        else
-        {
-            gTasks[taskId].data[2] = 1;
-            ++gTasks[taskId].data[0];
-        }
+		gTasks[taskId].data[2] = (gBattleTypeFlags & BATTLE_TYPE_LINK) ? 16 : 1;
+		++gTasks[taskId].data[0];
         break;
     case 1:
         if (--gTasks[taskId].data[2] == 0)
@@ -455,16 +423,4 @@ static void BattleIntroSlideLink(u8 taskId)
         BattleIntroSlideEnd(taskId);
         break;
     }
-}
-
-void CopyBattlerSpriteToBg(s32 bgId, u8 x, u8 y, u8 battlerPosition, u8 palno, u8 *tilesDest, u16 *tilemapDest, u16 tilesOffset)
-{
-    s32 i, j, offset = tilesOffset;
-
-    CpuCopy16(gMonSpritesGfxPtr->sprites[battlerPosition] + BG_SCREEN_SIZE * 0, tilesDest, BG_SCREEN_SIZE);
-    LoadBgTiles(bgId, tilesDest, 0x1000, tilesOffset);
-    for (i = y; i < y + 8; ++i)
-        for (j = x; j < x + 8; ++j)
-            tilemapDest[i * 32 + j] = offset++ | (palno << 12);
-    LoadBgTilemap(bgId, tilemapDest, BG_SCREEN_SIZE, 0);
 }

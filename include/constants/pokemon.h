@@ -184,6 +184,10 @@
 #define NUM_STATS 6
 #define NUM_BATTLE_STATS 8
 
+#define DEFAULT_STAT_STAGES 6
+#define MIN_STAT_STAGES     0
+#define MAX_STAT_STAGES     12
+
 // Shiny odds
 #define SHINY_ODDS 8 // Actual probability is SHINY_ODDS/65536
 

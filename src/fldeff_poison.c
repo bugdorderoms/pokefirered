@@ -10,13 +10,11 @@ static void Task_FieldPoisonEffect(u8 taskId)
     switch (data[0])
     {
     case 0:
-        data[1] += 1;
-        if (data[1] > 4)
+        if (++data[1] > 4)
             data[0]++;
         break;
     case 1:
-        data[1] -= 1;
-        if (data[1] == 0)
+        if (--data[1] == 0)
             data[0]++;
         break;
     case 2:

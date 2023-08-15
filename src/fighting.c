@@ -5,7 +5,6 @@
 #include "task.h"
 #include "trig.h"
 
-static void unc_080B08A0(struct Sprite *sprite);
 static void AnimSlideHandOrFootToTarget(struct Sprite *sprite);
 static void AnimBasicFistOrFoot(struct Sprite *sprite);
 static void AnimFistOrFootRandomPos(struct Sprite *sprite);
@@ -33,17 +32,6 @@ static void sub_80B1050(struct Sprite *sprite);
 static void sub_80B111C(struct Sprite *sprite);
 static void sub_80B11E4(struct Sprite *sprite);
 static void sub_80B12A4(struct Sprite *sprite);
-
-const struct SpriteTemplate gUnknown_83E668C =
-{
-    .tileTag = ANIM_TAG_HUMANOID_FOOT,
-    .paletteTag = ANIM_TAG_HUMANOID_FOOT,
-    .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = unc_080B08A0,
-};
 
 static const union AnimCmd sAnim_HandOrFoot[] =
 {
@@ -399,15 +387,6 @@ const struct SpriteTemplate gFocusPunchFistSpriteTemplate =
     .callback = AnimFocusPunchFist,
 };
 
-static void unc_080B08A0(struct Sprite *sprite)
-{
-    SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
-    sprite->y += gBattleAnimArgs[1];
-    sprite->data[0] = 15;
-    sprite->callback = WaitAnimForDuration;
-    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
-}
-
 static void AnimSlideHandOrFootToTarget(struct Sprite *sprite)
 {
     if (gBattleAnimArgs[7] == 1 && GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
@@ -441,34 +420,32 @@ static void AnimBasicFistOrFoot(struct Sprite *sprite)
 
 static void AnimFistOrFootRandomPos(struct Sprite *sprite)
 {
-    u8 battler;
-    s16 xMod, yMod;
+    u8 battler = gBattleAnimArgs[0] == 0 ? gBattleAnimAttacker : gBattleAnimTarget;
     s16 x, y;
-
-    if (gBattleAnimArgs[0] == 0)
-        battler = gBattleAnimAttacker;
-    else
-        battler = gBattleAnimTarget;
 
     if (gBattleAnimArgs[2] < 0)
         gBattleAnimArgs[2] = Random() % 5;
     StartSpriteAnim(sprite, gBattleAnimArgs[2]);
     sprite->x = GetBattlerSpriteCoord(battler, 2);
     sprite->y = GetBattlerSpriteCoord(battler, 3);
-    xMod = GetBattlerSpriteCoordAttr(battler, BATTLER_COORD_ATTR_WIDTH) / 2;
-    yMod = GetBattlerSpriteCoordAttr(battler, BATTLER_COORD_ATTR_HEIGHT) / 4;
-    x = Random() % xMod;
-    y = Random() % yMod;
+
+    x = Random() % (GetBattlerSpriteCoordAttr(battler, BATTLER_COORD_ATTR_WIDTH) / 2);
+    y = Random() % (GetBattlerSpriteCoordAttr(battler, BATTLER_COORD_ATTR_HEIGHT) / 4);
+	
     if (Random() & 1)
         x *= -1;
     if (Random() & 1)
         y *= -1;
+	
     if ((gBattlerPositions[battler] & BIT_SIDE) == B_SIDE_PLAYER)
         y += 0xFFF0;
+	
     sprite->x += x;
     sprite->y += y;
+	
     sprite->data[0] = gBattleAnimArgs[1];
     sprite->data[7] = CreateSprite(&gBasicHitSplatSpriteTemplate, sprite->x, sprite->y, sprite->subpriority + 1);
+	
     if (sprite->data[7] != 64)
     {
         StartSpriteAffineAnim(&gSprites[sprite->data[7]], 0);
@@ -489,9 +466,7 @@ static void sub_80B0B2C(struct Sprite *sprite)
         DestroyAnimSprite(sprite);
     }
     else
-    {
         --sprite->data[0];
-    }
 }
 
 static void AnimCrossChopHand(struct Sprite *sprite)
@@ -675,12 +650,8 @@ static void sub_80B0EF0(struct Sprite *sprite)
         {
             sprite->data[1] = 0;
             ++sprite->data[3];
-            if (sprite->data[3] & 1)
-                sprite->x2 = 2;
-            else
-                sprite->x2 = -2;
+			sprite->x2 = (sprite->data[3] & 1) ? 2 : -2;
         }
-
         if (--sprite->data[2] == 0)
             DestroyAnimSprite(sprite);
         break;
@@ -799,13 +770,8 @@ static void sub_80B11E4(struct Sprite *sprite)
     }
     else
     {
-        s16 pos0 = GetBattlerSpriteCoord(gBattleAnimAttacker, 2);
-        s16 pos1 = GetBattlerSpriteCoord(gBattleAnimAttacker, 3);
-        s16 pos2 = GetBattlerSpriteCoord(gBattleAnimTarget, 2);
-        s16 pos3 = GetBattlerSpriteCoord(gBattleAnimTarget, 3);
-
-        sprite->data[0] = pos2 - pos0;
-        sprite->data[1] = pos3 - pos1;
+        sprite->data[0] = GetBattlerSpriteCoord(gBattleAnimTarget, 2) - GetBattlerSpriteCoord(gBattleAnimAttacker, 2);
+        sprite->data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, 3) - GetBattlerSpriteCoord(gBattleAnimAttacker, 3);
         sprite->data[2] = sprite->x << 4;
         sprite->data[3] = sprite->y << 4;
         sprite->callback = sub_80B12A4;
@@ -814,14 +780,12 @@ static void sub_80B11E4(struct Sprite *sprite)
 
 static void sub_80B12A4(struct Sprite *sprite)
 {
-    u16 edgeX;
-
     sprite->data[2] += sprite->data[0];
     sprite->data[3] += sprite->data[1];
     sprite->x = sprite->data[2] >> 4;
     sprite->y = sprite->data[3] >> 4;
-    edgeX = sprite->x + 8;
-    if (edgeX > 256 || sprite->y < -8 || sprite->y > 120)
+
+    if ((u16)sprite->x + 8 > 256 || sprite->y < -8 || sprite->y > 120)
         DestroyAnimSprite(sprite);
 }
 
@@ -890,6 +854,7 @@ static void AnimRevengeScratch(struct Sprite *sprite)
         InitSpritePosToAnimAttacker(sprite, 0);
     else
         InitSpritePosToAnimTarget(sprite, FALSE);
+	
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         StartSpriteAnim(sprite, 1);
     sprite->callback = RunStoredCallbackWhenAnimEnds;

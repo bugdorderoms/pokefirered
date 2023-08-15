@@ -165,7 +165,6 @@ void SetAnimBgAttribute(u8 bgId, u8 attributeId, u8 value);
 s32 GetAnimBgAttribute(u8 bgId, u8 attributeId);
 void HandleIntroSlide(u8 terrain);
 void BattleIntroSlideEnd(u8 taskId);
-void CopyBattlerSpriteToBg(s32 bgId, u8 x, u8 y, u8 battlerPosition, u8 palno, u8 *tilesDest, u16 *tilemapDest, u16 tilesOffset);
 
 // battle_anim_effects_1.c
 extern const union AnimCmd *const gMusicNotesAnimTable[];
@@ -195,22 +194,17 @@ void AnimItemSteal(struct Sprite *);
 void AnimTrickBag(struct Sprite *);
 void AnimFlyingParticle(struct Sprite *);
 void AnimNeedleArmSpike(struct Sprite *);
-void AnimSlidingHit(struct Sprite *);
 void AnimWhipHit(struct Sprite *);
-void AnimFlickeringPunch(struct Sprite *);
 void AnimCuttingSlice(struct Sprite *);
 void AnimAirCutterSlice(struct Sprite *);
-void AnimCirclingMusicNote(struct Sprite *);
 void AnimProtect(struct Sprite *);
 void AnimMilkBottle(struct Sprite *);
 void AnimGrantingStars(struct Sprite *);
 void AnimSparkingStars(struct Sprite *);
-void AnimBubbleBurst(struct Sprite *);
 void AnimSleepLetterZ(struct Sprite *);
 void AnimLockOnTarget(struct Sprite *);
 void AnimLockOnMoveTarget(struct Sprite *);
 void AnimBowMon(struct Sprite *);
-void AnimTipMon(struct Sprite *);
 void AnimSlashSlice(struct Sprite *);
 void AnimFalseSwipeSlice(struct Sprite *);
 void AnimFalseSwipePositionedSlice(struct Sprite *);
@@ -235,10 +229,6 @@ void AnimTask_ShrinkTargetCopy(u8 taskId);
 
 // battle_anim_effects_2.c
 extern const union AffineAnimCmd *const gGrowingRingAffineAnimTable[];
-void AnimCirclingFinger(struct Sprite *);
-void AnimBouncingMusicNote(struct Sprite *);
-void AnimVibrateBattlerBack(struct Sprite *);
-void AnimMovingClamp(struct Sprite *);
 void Anim_KinesisZapEnergy(struct Sprite *);
 void Anim_SwordsDanceBlade(struct Sprite *);
 void AnimSonicBoomProjectile(struct Sprite *);
@@ -316,13 +306,11 @@ void AnimHelpingHandClap(struct Sprite *);
 void AnimForesightMagnifyingGlass(struct Sprite *);
 void AnimMeteorMashStar(struct Sprite *);
 void AnimBlockX(struct Sprite *);
-void AnimUnusedItemBagSteal(struct Sprite *);
-void AnimParticuleBurst(struct Sprite *);
 void AnimKnockOffStrike(struct Sprite *);
 void AnimRecycle(struct Sprite *);
 
 // battle_anim_special.c
-void TryShinyAnimation(u8 battler, struct Pokemon *mon);
+void TryShinyAnimation(u8 battler);
 u8 ItemIdToBallId(u16 itemId);
 u8 LaunchBallStarsTask(u8 x, u8 y, u8 priority, u8 subpriority, u8 ballId);
 u8 LaunchBallFadeMonTask(bool8 unFadeLater, u8 battlerId, u32 arg2, u8 ballId);
@@ -394,7 +382,6 @@ void InitSpritePosToAnimTarget(struct Sprite *sprite, bool8 respectMonPicOffsets
 void InitSpritePosToAnimAttacker(struct Sprite *sprite, bool8 respectMonPicOffsets);
 u8 GetBattlerAtPosition(u8 position);
 bool8 IsBattlerSpritePresent(u8 battlerId);
-bool8 IsDoubleBattle(void);
 void GetBattleAnimBg1Data(struct BattleAnimBgData *animBgData);
 void GetBattleAnimBgData(struct BattleAnimBgData *animBgData, u32 bgId);
 void GetBattleAnimBgDataByPriorityRank(struct BattleAnimBgData *animBgData, u8 unused);
@@ -452,12 +439,10 @@ void AnimThrowProjectile_Step(struct Sprite *sprite);
 // Returns 2 if player left or opp right
 // Returns 1 if player right or opp left
 u8 GetBattlerSpriteBGPriorityRank(u8 battlerId);
-u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, u8 templateId, s16 x, s16 y, u8 subpriority, u32 personality, u32 trainerId, u32 battlerId);
+u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, s16 x, s16 y, u8 subpriority, u32 personality, u32 trainerId);
 s16 GetBattlerSpriteCoordAttr(u8 battlerId, u8 attr);
 void SetAverageBattlerPositions(u8 battlerId, bool8 respectMonPicOffsets, s16 *x, s16 *y);
 u8 CreateCloneOfSpriteInWindowMode(u8 spriteId, s32 species);
-void SpriteCB_AnimTranslateSpriteLinearAndFlicker(struct Sprite *sprite);
-void SpriteCB_AnimTranslateSpriteLinearAndFlicker2(struct Sprite *sprite);
 void SpriteCB_TrackOffsetFromAttackerAndWaitAnim(struct Sprite *sprite);
 void AnimTask_AttackerPunchWithTrace(u8 taskId);
 void SpriteCB_WeatherBallUp(struct Sprite *sprite);

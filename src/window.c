@@ -366,7 +366,7 @@ void CopyToWindowPixelBuffer(u8 windowId, const void *src, u16 size, u16 tileOff
     if (size != 0)
         CpuCopy16(src, gWindows[windowId].tileData + (0x20 * tileOffset), size);
     else
-        LZ77UnCompWram(src, gWindows[windowId].tileData + (0x20 * tileOffset));
+        LZDecompressWram(src, gWindows[windowId].tileData + (0x20 * tileOffset));
 }
 
 void FillWindowPixelBuffer(u8 windowId, u8 fillValue)

@@ -89,7 +89,7 @@ EWRAM_DATA u16 (*gShopTilemapBuffer2)[0x400] = {0};
 EWRAM_DATA u16 (*gShopTilemapBuffer3)[0x400] = {0};
 EWRAM_DATA u16 (*gShopTilemapBuffer4)[0x400] = {0};
 EWRAM_DATA struct ListMenuItem *sShopMenuListMenu = {0};
-static EWRAM_DATA u8 (*sShopMenuItemStrings)[13] = {0};
+static EWRAM_DATA u8 (*sShopMenuItemStrings)[ITEM_NAME_LENGTH] = {0};
 EWRAM_DATA struct MartHistory gShopMenuHistory[2] = {0};
 
 //Function Declarations
@@ -685,7 +685,7 @@ static void BuyMenuDrawGraphics(void)
 {
     BuyMenuDrawMapView();
     BuyMenuCopyTilemapData();
-    BuyMenuDrawMoneyBox();
+    PrintMoneyAmountInMoneyBoxWithBorder(0, 0xA, 0xF, GetMoney(&gSaveBlock1Ptr->money));
     ScheduleBgCopyTilemapToVram(0);
     ScheduleBgCopyTilemapToVram(1);
     ScheduleBgCopyTilemapToVram(2);
@@ -1107,12 +1107,12 @@ static void Task_BuyHowManyDialogueInit(u8 taskId)
     u16 quantityInBag = BagGetQuantityByItemId(tItemId);
     u16 maxQuantity;
     
-    BuyMenuQuantityBoxThinBorder(1, 0);
+    DrawStdFrameWithCustomTileAndPalette(1, FALSE, 0xA, 0xF);
     ConvertIntToDecimalStringN(gStringVar1, quantityInBag, STR_CONV_MODE_RIGHT_ALIGN, 3);
     StringExpandPlaceholders(gStringVar4, gText_InBagVar1);
     BuyMenuPrint(1, 2, gStringVar4, 0, 2, 0, 0, 0, 1);
     tItemCount = 1;
-    BuyMenuQuantityBoxNormalBorder(3, 0);
+    DrawStdFrameWithCustomTileAndPalette(3, FALSE, 0x1, 0xD);
     BuyMenuPrintItemQuantityAndPrice(taskId);
     ScheduleBgCopyTilemapToVram(0);
     maxQuantity = GetMoney(&gSaveBlock1Ptr->money) / itemid_get_market_price(tItemId);

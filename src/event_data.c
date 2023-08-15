@@ -53,9 +53,8 @@ void ClearTempFieldEventData(void)
 
 void sub_806E190(void)
 {
-    u16 *ptr = GetVarPointer(VAR_0x403C);
     gSaveBlock2Ptr->pokedex.nationalMagic = 0xDA;
-    *ptr = 0x0302;
+    *GetVarPointer(VAR_0x403C) = 0x0302;
     FlagSet(FLAG_0x838);
 }
 
@@ -72,16 +71,6 @@ void EnableNationalPokedex(void)
 bool32 IsNationalPokedexEnabled(void)
 {
     return FlagGet(FLAG_SYS_NATIONAL_DEX);
-}
-
-void DisableMysteryGift(void)
-{
-    FlagClear(FLAG_SYS_MYSTERY_GIFT_ENABLED);
-}
-
-void EnableMysteryGift(void)
-{
-    FlagSet(FLAG_SYS_MYSTERY_GIFT_ENABLED);
 }
 
 bool32 IsMysteryGiftEnabled(void)
@@ -122,27 +111,6 @@ void ResetMysteryEventVars(void)
     VarSet(VAR_ALTERING_CAVE_WILD_SET, 0);
 }
 
-void DisableResetRTC(void)
-{
-    VarSet(VAR_0x4032, 0);
-    FlagClear(FLAG_0x837);
-}
-
-void EnableResetRTC(void)
-{
-    VarSet(VAR_0x4032, 0x0920);
-    FlagSet(FLAG_0x837);
-}
-
-bool32 CanResetRTC(void)
-{
-    if (!FlagGet(FLAG_0x837))
-        return FALSE;
-    if (VarGet(VAR_0x4032) != 0x0920)
-        return FALSE;
-    return TRUE;
-}
-
 u16 *GetVarPointer(u16 idx)
 {
     u16 *ptr;
@@ -177,16 +145,12 @@ static bool8 IsFlagOrVarStoredInQuestLog(u16 idx, bool8 isVar)
 {
     if (!isVar)
     {
-        if (idx < STORY_FLAGS_START)
-            return FALSE;
-        if (idx >= SYS_FLAGS && idx < PERMA_SYS_FLAGS_START)
+        if (idx < STORY_FLAGS_START || (idx >= SYS_FLAGS && idx < PERMA_SYS_FLAGS_START))
             return FALSE;
     }
     else
     {
-        if (idx < VAR_ICE_STEP_COUNT - VARS_START)
-            return FALSE;
-        if (idx >= VAR_MAP_SCENE_PALLET_TOWN_OAK - VARS_START && idx < VAR_PORTHOLE - VARS_START)
+        if (idx < VAR_ICE_STEP_COUNT - VARS_START || (idx >= VAR_MAP_SCENE_PALLET_TOWN_OAK - VARS_START && idx < VAR_PORTHOLE - VARS_START))
             return FALSE;
     }
     return TRUE;

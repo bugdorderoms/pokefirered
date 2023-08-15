@@ -1287,14 +1287,7 @@ static bool8 InitEasyChatGraphicsWork_Internal(void)
 
 static void SetGpuRegsForEasyChatInit(void)
 {
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(3, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgX(0, 0, 0);
-    ChangeBgY(0, 0, 0);
+    ResetAllBgsPos();
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
 }
 

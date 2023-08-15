@@ -182,8 +182,6 @@ static const u32 sBigPokeballTileset[] = INCBIN_U32("graphics/battle_transitions
 static const u32 sSlidingPokeballTilemap[] = INCBIN_U32("graphics/battle_transitions/sliding_pokeball_tilemap.bin");
 static const u8 sSpriteImage_SlidingPokeball[] = INCBIN_U8("graphics/battle_transitions/sliding_pokeball.4bpp");
 static const u32 sVsBarTileset[] = INCBIN_U32("graphics/battle_transitions/vsbar_tileset.4bpp");
-static const u8 sSpriteImage_UnusedBrendan[] = INCBIN_U8("graphics/battle_transitions/unused_brendan.4bpp");
-static const u8 sSpriteImage_UnusedLass[] = INCBIN_U8("graphics/battle_transitions/unused_lass.4bpp");
 static const u32 sGridSquareTileset[] = INCBIN_U32("graphics/battle_transitions/grid_square_tileset.4bpp");
 
 static const TaskFunc sBT_Phase1Tasks[] =
@@ -472,69 +470,6 @@ static const struct SpriteTemplate sSpriteTemplate_SlidingPokeball =
     .callback = SpriteCB_BT_Phase2SlidingPokeballs,
 };
 
-static const struct OamData sOamData_Unused =
-{
-    .y = 0,
-    .affineMode = 0,
-    .objMode = 0,
-    .mosaic = 0,
-    .bpp = 0,
-    .shape = SPRITE_SHAPE(64x64),
-    .x = 0,
-    .matrixNum = 0,
-    .size = SPRITE_SIZE(64x64),
-    .tileNum = 0,
-    .priority = 0,
-    .paletteNum = 0,
-    .affineParam = 0,
-};
-
-static const struct SpriteFrameImage sSpriteImageTable_UnusedBrendan[] =
-{
-    {
-        .data = sSpriteImage_UnusedBrendan,
-        .size = 0x800,
-    },
-};
-
-static const struct SpriteFrameImage sSpriteImageTable_UnusedLass[] =
-{
-    {
-        .data = sSpriteImage_UnusedLass,
-        .size = 0x800,
-    },
-};
-
-static const union AnimCmd sSpriteAnim_Unused[] =
-{
-    ANIMCMD_FRAME(0, 1),
-    ANIMCMD_END,
-};
-
-static const union AnimCmd *const sSpriteAnimTable_Unused[] = { sSpriteAnim_Unused };
-
-static const struct SpriteTemplate sSpriteTemplateTable_Unused[] =
-{
-    {
-        .tileTag = SPRITE_INVALID_TAG,
-        .paletteTag = 0x100A,
-        .oam = &sOamData_Unused,
-        .anims = sSpriteAnimTable_Unused,
-        .images = sSpriteImageTable_UnusedBrendan,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCB_BT_Phase2Mugshots,
-    },
-    {
-        .tileTag = SPRITE_INVALID_TAG,
-        .paletteTag = 0x100A,
-        .oam = &sOamData_Unused,
-        .anims = sSpriteAnimTable_Unused,
-        .images = sSpriteImageTable_UnusedLass,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCB_BT_Phase2Mugshots,
-    },
-};
-
 // this palette is shared by big pokeball and sliding pokeball
 static const u16 sSlidingPokeballBigPokeballPalette[] = INCBIN_U16("graphics/battle_transitions/sliding_pokeball.gbapal");
 
@@ -565,14 +500,6 @@ static const u16 *const sVsBarPlayerPalettes[] =
 {
     sVsBarMalePlayerPalette,
     sVsBarFemalePlayerPalette,
-};
-
-static const u16 sUnusedTrainerPalette[] = INCBIN_U16("graphics/battle_transitions/unused_trainer.gbapal");
-
-static const struct SpritePalette sSpritePalette_UnusedTrainer =
-{
-    .data = sUnusedTrainerPalette, 
-    .tag = 0x100A,
 };
 
 static const u16 sBigPokeballTilemap[] = INCBIN_U16("graphics/battle_transitions/big_pokeball_tilemap.bin");
@@ -607,8 +534,7 @@ bool8 BT_IsDone(void)
 
 static void BT_LaunchTask(u8 transitionId)
 {
-    u8 taskId = CreateTask(BT_TaskMain, 2);
-    gTasks[taskId].tTransitionId = transitionId;
+    gTasks[CreateTask(BT_TaskMain, 2)].tTransitionId = transitionId;
 }
 
 static void BT_TaskMain(u8 taskId)
@@ -655,9 +581,7 @@ static bool8 BT_Phase2LaunchAnimTask(struct Task *task)
 
 static bool8 BT_WaitForPhase2(struct Task *task)
 {
-    task->tTransitionDone = FALSE;
-    if (FindTaskIdByFunc(sBT_Phase2Tasks[task->tTransitionId]) == TAIL_SENTINEL)
-        task->tTransitionDone = TRUE;
+	task->tTransitionDone = (FindTaskIdByFunc(sBT_Phase2Tasks[task->tTransitionId]) == TAIL_SENTINEL);
     return FALSE;
 }
 
@@ -764,7 +688,6 @@ static void VBCB_BT_Phase2DistortedWave(void)
 static void HBCB_BT_Phase2DistortedWave(void)
 {
     s16 offset = gScanlineEffectRegBuffers[1][REG_VCOUNT];
-    
     REG_BG1HOFS = offset;
     REG_BG2HOFS = offset;
     REG_BG3HOFS = offset;
@@ -816,7 +739,6 @@ static void VBCB_BT_Phase2HorizontalCorrugate(void)
 static void HBCB_BT_Phase2HorizontalCorrugate(void)
 {
     s16 offset = gScanlineEffectRegBuffers[1][REG_VCOUNT];
-    
     REG_BG1VOFS = offset;
     REG_BG2VOFS = offset;
     REG_BG3VOFS = offset;
@@ -1391,7 +1313,6 @@ static void VBCB_BT_Phase2FullScreenWave(void)
 static void HBCB_BT_Phase2FullScreenWave(void)
 {
     s16 offset = gScanlineEffectRegBuffers[1][REG_VCOUNT];
-    
     REG_BG1VOFS = offset;
     REG_BG2VOFS = offset;
     REG_BG3VOFS = offset;
@@ -2024,10 +1945,7 @@ static void VBCB_BT_Phase2Mugshot2_WhiteFade(void)
 
 static void HBCB_BT_Phase2Mugshot(void)
 {
-    if (REG_VCOUNT < 80)
-        REG_BG0HOFS = sTransitionStructPtr->bg0HOfsOpponent;
-    else
-        REG_BG0HOFS = sTransitionStructPtr->bg0HOfsPlayer;
+	REG_BG0HOFS = REG_VCOUNT < 80 ? sTransitionStructPtr->bg0HOfsOpponent : sTransitionStructPtr->bg0HOfsPlayer;
 }
 
 
@@ -2038,8 +1956,8 @@ static void BT_Phase2Mugshots_CreateSprites(struct Task *task)
 
     gReservedSpritePaletteCount = 10;
     mugshotId = task->tWhichMugshot;
-    task->tOpponentSpriteId = CreateTrainerSprite(sMugshotsTrainerPicIDsTable[mugshotId], sMugshotsOpponentCoords[mugshotId][0] - 32, sMugshotsOpponentCoords[mugshotId][1] + 42, 0, gDecompressionBuffer);
-    task->tPlayerSpriteId = CreateTrainerSprite(PlayerGenderToFrontTrainerPicId_Debug(gSaveBlock2Ptr->playerGender, TRUE), 272, 106, 0, gDecompressionBuffer);
+    task->tOpponentSpriteId = CreateTrainerSprite(sMugshotsTrainerPicIDsTable[mugshotId], sMugshotsOpponentCoords[mugshotId][0] - 32, sMugshotsOpponentCoords[mugshotId][1] + 42, 0);
+    task->tPlayerSpriteId = CreateTrainerSprite(PlayerGenderToFrontTrainerPicId_Debug(gSaveBlock2Ptr->playerGender, TRUE), 272, 106, 0);
     gReservedSpritePaletteCount = 12;
     opponentSprite = &gSprites[task->tOpponentSpriteId];
     playerSprite = &gSprites[task->tPlayerSpriteId];
@@ -2233,7 +2151,6 @@ static void VBCB_BT_Phase2SlicedScreen(void)
 static void HBCB_BT_Phase2SlicedScreen(void)
 {
     s16 offset = gScanlineEffectRegBuffers[1][REG_VCOUNT];
-    
     REG_BG1HOFS = offset;
     REG_BG2HOFS = offset;
     REG_BG3HOFS = offset;
@@ -2359,13 +2276,12 @@ static void VBCB_BT_Phase2WhiteFadeInStripes2(void)
     SetGpuReg(REG_OFFSET_WIN0V, sTransitionStructPtr->win0V);
 }
 
-
 static void HBCB_BT_Phase2WhiteFadeInStripes(void)
 {
     vu16 index = REG_VCOUNT;
-
     if (index == 227)
         index = 0;
+	
     REG_BLDY = gScanlineEffectRegBuffers[1][index];
 }
 
@@ -2612,10 +2528,7 @@ static void BT_CreatePhase1SubTask(s16 fadeOutDelay, s16 fadeInDelay, s16 blinkT
 
 static bool8 BT_IsPhase1Done(void)
 {
-    if (FindTaskIdByFunc(BT_Phase1SubTask) == TAIL_SENTINEL)
-        return TRUE;
-    else
-        return FALSE;
+	return (FindTaskIdByFunc(BT_Phase1SubTask) == TAIL_SENTINEL);
 }
 
 static void BT_Phase1SubTask(u8 taskId)

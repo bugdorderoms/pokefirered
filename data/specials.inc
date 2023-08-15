@@ -15,8 +15,8 @@ gSpecials:: @ 815FD60
 	def_special CleanupLinkRoomState
 	def_special ExitLinkRoom
 	def_special ChooseItemFromBag
-	def_special NullFieldSpecial
-	def_special NullFieldSpecial
+	def_special DisableNationalPokedex
+	def_special IsMysteryGiftEnabled
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
@@ -102,7 +102,7 @@ gSpecials:: @ 815FD60
 	def_special NullFieldSpecial
 	def_special TryContestLinkup
 	def_special Field_AskSaveTheGame
-	def_special DoWateringBerryTreeAnim
+	def_special NullFieldSpecial
 	def_special ShowEasyChatScreen
 	def_special ShowEasyChatMessage
 	def_special NullFieldSpecial  @ Mauville Man specials
@@ -278,7 +278,7 @@ gSpecials:: @ 815FD60
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
-	def_special LookThroughPorthole
+	def_special NullFieldSpecial
 	def_special DoSoftReset
 	def_special EnterHallOfFame
 	def_special AnimateElevator
@@ -439,7 +439,7 @@ gSpecials:: @ 815FD60
 	def_special SetDeoxysTrianglePalette
 	def_special IsPlayerLeftOfVermilionSailor
 	def_special IsBadEggInParty
-	def_special ReadTrainerTowerAndValidate
+	def_special NullFieldSpecial
 	def_special HasAllMons
 	def_special IsPlayerNotInTrainerTowerLobby
 	def_special BrailleCursorToggle

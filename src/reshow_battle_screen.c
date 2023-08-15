@@ -127,7 +127,7 @@ static void CB2_ReshowBattleScreenAfterMenu(void)
         opponentBattler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
         species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[opponentBattler]], MON_DATA_SPECIES);
         SetBattlerShadowSpriteCallback(opponentBattler, species);
-        if (IsDoubleBattle())
+        if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
         {
             opponentBattler = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
             species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[opponentBattler]], MON_DATA_SPECIES);
@@ -176,9 +176,9 @@ static bool8 LoadBattlerSpriteGfx(u8 battler)
         if (GetBattlerSide(battler) != B_SIDE_PLAYER)
         {
             if (IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE())
-                DecompressGhostFrontPic(&gEnemyParty[gBattlerPartyIndexes[battler]], battler);
+                DecompressGhostFrontPic(battler);
             else if (!gBattleSpritesDataPtr->battlerData[battler].behindSubstitute)
-                BattleLoadOpponentMonSpriteGfx(&gEnemyParty[gBattlerPartyIndexes[battler]], battler);
+                BattleLoadMonSpriteGfx(battler);
             else
                 BattleLoadSubstituteOrMonSpriteGfx(battler, FALSE);
         }
@@ -187,7 +187,7 @@ static bool8 LoadBattlerSpriteGfx(u8 battler)
         else if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL && battler == B_POSITION_PLAYER_LEFT) // Should be checking position, not battler.
             DecompressTrainerBackPalette(BACK_PIC_OLDMAN, battler);
         else if (!gBattleSpritesDataPtr->battlerData[battler].behindSubstitute)
-            BattleLoadPlayerMonSpriteGfx(&gPlayerParty[gBattlerPartyIndexes[battler]], battler);
+            BattleLoadMonSpriteGfx(battler);
         else
             BattleLoadSubstituteOrMonSpriteGfx(battler, FALSE);
         gBattleScripting.reshowHelperState = 0;
@@ -272,12 +272,8 @@ static void CreateHealthboxSprite(u8 battler)
         gHealthboxSpriteIds[battler] = healthboxSpriteId;
         InitBattlerHealthboxCoords(battler);
         SetHealthboxSpriteVisible(healthboxSpriteId);
-        if (GetBattlerSide(battler) != B_SIDE_PLAYER)
-            UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &gEnemyParty[gBattlerPartyIndexes[battler]], HEALTHBOX_ALL);
-        else if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
-            UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &gPlayerParty[gBattlerPartyIndexes[battler]], HEALTHBOX_SAFARI_ALL_TEXT);
-        else
-            UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &gPlayerParty[gBattlerPartyIndexes[battler]], HEALTHBOX_ALL);
+		UpdateHealthboxAttribute(battler, (gBattleTypeFlags & BATTLE_TYPE_SAFARI) ? HEALTHBOX_SAFARI_ALL_TEXT : HEALTHBOX_ALL);
+		
         if (GetBattlerSide(battler) != B_SIDE_PLAYER)
         {
             if (GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_HP) == 0)

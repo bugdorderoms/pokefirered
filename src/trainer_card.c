@@ -647,45 +647,45 @@ static bool8 LoadCardGfx(void)
     {
     case 0:
         if (sTrainerCardDataPtr->cardType == CARD_TYPE_RSE)
-            LZ77UnCompWram(sHoennTrainerCardBg_Tilemap, sTrainerCardDataPtr->bgTilemap);
+            LZDecompressWram(sHoennTrainerCardBg_Tilemap, sTrainerCardDataPtr->bgTilemap);
         else
-            LZ77UnCompWram(sKantoTrainerCardBg_Tilemap, sTrainerCardDataPtr->bgTilemap);
+            LZDecompressWram(sKantoTrainerCardBg_Tilemap, sTrainerCardDataPtr->bgTilemap);
         break;
     case 1:
         if (sTrainerCardDataPtr->cardType == CARD_TYPE_RSE)
-            LZ77UnCompWram(sHoennTrainerCardBack_Tilemap, sTrainerCardDataPtr->backTilemap);
+            LZDecompressWram(sHoennTrainerCardBack_Tilemap, sTrainerCardDataPtr->backTilemap);
         else
-            LZ77UnCompWram(sKantoTrainerCardBack_Tilemap, sTrainerCardDataPtr->backTilemap);
+            LZDecompressWram(sKantoTrainerCardBack_Tilemap, sTrainerCardDataPtr->backTilemap);
         break;
     case 2:
         if (!sTrainerCardDataPtr->isLink)
         {
             if (sTrainerCardDataPtr->cardType == CARD_TYPE_RSE)
-                LZ77UnCompWram(sHoennTrainerCardFront_Tilemap, sTrainerCardDataPtr->frontTilemap);
+                LZDecompressWram(sHoennTrainerCardFront_Tilemap, sTrainerCardDataPtr->frontTilemap);
             else
-                LZ77UnCompWram(sKantoTrainerCardFront_Tilemap, sTrainerCardDataPtr->frontTilemap);
+                LZDecompressWram(sKantoTrainerCardFront_Tilemap, sTrainerCardDataPtr->frontTilemap);
         }
         else
         {
             if (sTrainerCardDataPtr->cardType == CARD_TYPE_RSE)
-                LZ77UnCompWram(sHoennTrainerCardFrontLink_Tilemap, sTrainerCardDataPtr->frontTilemap);
+                LZDecompressWram(sHoennTrainerCardFrontLink_Tilemap, sTrainerCardDataPtr->frontTilemap);
             else
-                LZ77UnCompWram(sKantoTrainerCardFrontLink_Tilemap, sTrainerCardDataPtr->frontTilemap);
+                LZDecompressWram(sKantoTrainerCardFrontLink_Tilemap, sTrainerCardDataPtr->frontTilemap);
         }
         break;
     case 3:
         // ? Doesnt check for RSE, sHoennTrainerCardBadges_Gfx goes unused
-        LZ77UnCompWram(sKantoTrainerCardBadges_Gfx, sTrainerCardDataPtr->badgeTiles);
+        LZDecompressWram(sKantoTrainerCardBadges_Gfx, sTrainerCardDataPtr->badgeTiles);
         break;
     case 4:
         if (sTrainerCardDataPtr->cardType == CARD_TYPE_RSE)
-            LZ77UnCompWram(gHoennTrainerCard_Gfx, &sTrainerCardDataPtr->cardTiles);
+            LZDecompressWram(gHoennTrainerCard_Gfx, &sTrainerCardDataPtr->cardTiles);
         else
-            LZ77UnCompWram(gKantoTrainerCard_Gfx, &sTrainerCardDataPtr->cardTiles);
+            LZDecompressWram(gKantoTrainerCard_Gfx, &sTrainerCardDataPtr->cardTiles);
         break;
     case 5:
         if (sTrainerCardDataPtr->cardType == CARD_TYPE_FRLG)
-            LZ77UnCompWram(sTrainerCardStickers_Gfx, sTrainerCardDataPtr->stickerTiles);
+            LZDecompressWram(sTrainerCardStickers_Gfx, sTrainerCardDataPtr->stickerTiles);
         break;
     default:
         sTrainerCardDataPtr->gfxLoadState = 0;
@@ -1006,14 +1006,7 @@ static void InitBgsAndWindows(void)
     ResetPaletteFade();
     ResetBgsAndClearDma3BusyFlags(0);
     InitBgsFromTemplates(0, sTrainerCardBgTemplates, NELEMS(sTrainerCardBgTemplates));
-    ChangeBgX(0, 0, 0);
-    ChangeBgY(0, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(3, 0, 0);
+    ResetAllBgsPos();
     InitWindows(sTrainerCardWindowTemplates);
     DeactivateAllTextPrinters();
 }

@@ -25,6 +25,7 @@
 #include "battle.h"
 #include "battle_transition.h"
 #include "battle_controllers.h"
+#include "wild_encounter.h"
 #include "constants/battle_setup.h"
 #include "constants/items.h"
 #include "constants/maps.h"
@@ -189,7 +190,7 @@ static void Task_BattleStart(u8 taskId)
         {
             CleanupOverworldWindowsAndTilemaps();
             SetMainCallback2(CB2_InitBattle);
-            RestartWildEncounterImmunitySteps();
+            ResetEncounterRateModifiers();
             ClearPoisonStepCounter();
             DestroyTask(taskId);
         }
@@ -199,9 +200,7 @@ static void Task_BattleStart(u8 taskId)
 
 static void CreateBattleStartTask(u8 transition, u16 song) // song == 0 means default music for current map
 {
-    u8 taskId = CreateTask(Task_BattleStart, 1);
-
-    gTasks[taskId].tTransition = transition;
+    gTasks[CreateTask(Task_BattleStart, 1)].tTransition = transition;
     PlayMapChosenOrBattleBGM(song);
 }
 
@@ -236,7 +235,9 @@ static void DoStandardWildBattle(bool8 isDouble)
     FreezeObjectEvents();
     StopPlayerAvatar();
     gMain.savedCallback = CB2_EndWildBattle;
-    gBattleTypeFlags = isDouble ? BATTLE_TYPE_DOUBLE : 0;
+    gBattleTypeFlags = 0;
+	if (isDouble)
+		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
     CreateBattleStartTask(GetWildBattleTransition(), 0);
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
@@ -327,13 +328,13 @@ void StartMarowakBattle(void)
 void StartLegendaryBattle(void)
 {
 	u8 transition = B_TRANSITION_BLUR;
-    u16 species = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES), mus;
+    u16 mus;
     
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
     gBattleTypeFlags = BATTLE_TYPE_LEGENDARY;
 	
-    switch (species)
+    switch (GetMonData(&gEnemyParty[0], MON_DATA_SPECIES))
     {
 		case SPECIES_MEWTWO:
 			mus = MUS_VS_MEWTWO;
@@ -397,10 +398,7 @@ static void CB2_EndMarowakBattle(void)
     else
     {
         // If result is TRUE player didnt defeat Marowak, force player back from stairs
-        if (gBattleOutcome == B_OUTCOME_WON)
-            gSpecialVar_Result = FALSE;
-        else
-            gSpecialVar_Result = TRUE;
+		gSpecialVar_Result = (gBattleOutcome != B_OUTCOME_WON);
         SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
     }
 }
@@ -552,22 +550,12 @@ static u8 GetSumOfEnemyPartyLevel(u16 opponentId, u8 numMons)
 
 static u8 GetWildBattleTransition(void)
 {
-    u8 transitionType = GetBattleTransitionTypeByMap();
-    u8 enemyLevel = GetMonData(&gEnemyParty[0], MON_DATA_LEVEL);
-    u8 playerLevel = GetSumOfPlayerPartyLevel(1);
-
-    if (enemyLevel < playerLevel)
-        return sBattleTransitionTable_Wild[transitionType][0];
-    else
-        return sBattleTransitionTable_Wild[transitionType][1];
+	return sBattleTransitionTable_Wild[GetBattleTransitionTypeByMap()][(GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel(1)) ? 0 : 1];
 }
 
 static u8 GetTrainerBattleTransition(void)
 {
     u8 minPartyCount;
-    u8 transitionType;
-    u8 enemyLevel;
-    u8 playerLevel;
 
     if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
         return B_TRANSITION_BLUE;
@@ -589,24 +577,14 @@ static u8 GetTrainerBattleTransition(void)
         minPartyCount = 2; // double battles always at least have 2 pokemon.
     else
         minPartyCount = 1;
-    transitionType = GetBattleTransitionTypeByMap();
-    enemyLevel = GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A, minPartyCount);
-    playerLevel = GetSumOfPlayerPartyLevel(minPartyCount);
-    if (enemyLevel < playerLevel)
-        return sBattleTransitionTable_Trainer[transitionType][0];
-    else
-        return sBattleTransitionTable_Trainer[transitionType][1];
+	
+	return sBattleTransitionTable_Trainer[GetBattleTransitionTypeByMap()]
+	[(GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A, minPartyCount) < GetSumOfPlayerPartyLevel(minPartyCount)) ? 0 : 1];
 }
 
 u8 BattleSetup_GetBattleTowerBattleTransition(void)
 {
-    u8 enemyLevel = GetMonData(&gEnemyParty[0], MON_DATA_LEVEL);
-    u8 playerLevel = GetSumOfPlayerPartyLevel(1);
-
-    if (enemyLevel < playerLevel)
-        return B_TRANSITION_SLIDING_POKEBALLS;
-    else
-        return B_TRANSITION_BIG_POKEBALL;
+	return (GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel(1)) ? B_TRANSITION_SLIDING_POKEBALLS : B_TRANSITION_BIG_POKEBALL;
 }
 
 static u16 GetTrainerAFlag(void)
@@ -621,12 +599,6 @@ static bool32 IsPlayerDefeated(u32 battleOutcome)
     case B_OUTCOME_LOST:
     case B_OUTCOME_DREW:
         return TRUE;
-    case B_OUTCOME_WON:
-    case B_OUTCOME_RAN:
-    case B_OUTCOME_PLAYER_TELEPORTED:
-    case B_OUTCOME_MON_FLED:
-    case B_OUTCOME_CAUGHT:
-        return FALSE;
     default:
         return FALSE;
     }
@@ -766,15 +738,12 @@ void ConfigureAndSetUpOneTrainerBattle(u8 trainerEventObjId, const u8 *trainerSc
 
 bool32 GetTrainerFlagFromScriptPointer(const u8 *data)
 {
-    u32 flag = T1_READ_16(data + 2);
-
-    return FlagGet(TRAINER_FLAGS_START + flag);
+    return FlagGet(TRAINER_FLAGS_START + T1_READ_16(data + 2));
 }
 
 void SetUpTrainerMovement(void)
 {
     struct ObjectEvent *objectEvent = &gObjectEvents[gSelectedObjectEvent];
-
     SetTrainerMovementType(objectEvent, GetTrainerFacingDirectionMovementType(objectEvent->facingDirection));
 }
 
@@ -905,18 +874,12 @@ void ShowTrainerIntroSpeech(void)
 
 const u8 *BattleSetup_GetScriptAddrAfterBattle(void)
 {
-    if (sTrainerBattleEndScript != NULL)
-        return sTrainerBattleEndScript;
-    else
-        return EventScript_TestSignpostMsg;
+	return sTrainerBattleEndScript != NULL ? sTrainerBattleEndScript : EventScript_TestSignpostMsg;
 }
 
 const u8 *BattleSetup_GetTrainerPostBattleScript(void)
 {
-    if (sTrainerABattleScriptRetAddr != NULL)
-        return sTrainerABattleScriptRetAddr;
-    else
-        return EventScript_TestSignpostMsg;
+	return sTrainerABattleScriptRetAddr != NULL ? sTrainerABattleScriptRetAddr : EventScript_TestSignpostMsg;
 }
 
 void ShowTrainerCantBattleSpeech(void)
@@ -928,9 +891,7 @@ void PlayTrainerEncounterMusic(void)
 {
     u16 music;
 
-    if (!QL_IS_PLAYBACK_STATE
-     && sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC
-     && sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC)
+    if (!QL_IS_PLAYBACK_STATE && sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC && sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC)
     {
         switch (GetTrainerEncounterMusicId(gTrainerBattleOpponent_A))
         {
@@ -959,17 +920,12 @@ void PlayTrainerEncounterMusic(void)
 
 static const u8 *ReturnEmptyStringIfNull(const u8 *string)
 {
-    if (string == NULL)
-        return gString_Dummy;
-    else
-        return string;
+	return string == NULL ? gString_Dummy : string;
 }
 
 const u8 *GetTrainerALoseText(void)
 {
-    const u8 *string = sTrainerADefeatSpeech;
-
-    StringExpandPlaceholders(gStringVar4, ReturnEmptyStringIfNull(string));
+    StringExpandPlaceholders(gStringVar4, ReturnEmptyStringIfNull(sTrainerADefeatSpeech));
     return gStringVar4;
 }
 

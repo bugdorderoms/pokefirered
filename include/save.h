@@ -21,6 +21,9 @@ enum
     SAVE_HALL_OF_FAME_ERASE_BEFORE, // unused
 };
 
+// Each 4 KiB flash sector contains 3968 bytes of actual data followed by a 128 byte footer
+#define SECTOR_DATA_SIZE 4084
+
 struct SaveBlockChunk
 {
     u8 *data;
@@ -29,7 +32,7 @@ struct SaveBlockChunk
 
 struct SaveSection
 {
-    u8 data[0xFF4];
+    u8 data[SECTOR_DATA_SIZE];
     u16 id;
     u16 checksum;
     u32 signature;
@@ -39,7 +42,7 @@ struct SaveSection
 // headless save section?
 struct UnkSaveSection
 {
-    u8 data[0xFF4];
+    u8 data[SECTOR_DATA_SIZE];
     u32 signature;
 }; // size is 0xFF8
 
@@ -51,8 +54,6 @@ struct SaveSectionOffsets
 
 // Emerald changes this definition to be the sectors per slot.
 #define NUM_SECTORS_PER_SAVE_SLOT 14  // Number of sectors occupied by a save slot
-
-#define UNKNOWN_CHECK_VALUE 0x8012025
 
 #define SECTOR_SAVE1(n)  (n)
 #define SECTOR_SAVE2(n)  ((n) + NUM_SECTORS_PER_SAVE_SLOT)
@@ -112,7 +113,6 @@ u8 sub_80DA434(void);
 u8 sub_80DA45C(void);
 bool8 sub_80DA4A0(void);
 u8 Save_LoadGameData(u8 saveType);
-u32 TryCopySpecialSaveSection(u8 sector, u8* dst);
 u32 TryWriteSpecialSaveSection(u8 sector, u8* src);
 void Task_LinkSave(u8 taskId);
 

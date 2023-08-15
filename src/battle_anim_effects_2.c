@@ -11,12 +11,8 @@
 #include "util.h"
 #include "constants/songs.h"
 
-static void AnimBouncingMusicNote_Step(struct Sprite *);
-static void AnimMovingClamp_Step(struct Sprite *);
-static void AnimMovingClamp_End(struct Sprite *);
 static void AnimTask_WithdrawStep(u8);
 static void AnimSwordsDanceBladeStep(struct Sprite *);
-static void AnimVoidLines_Step(struct Sprite *);
 static void AnimFallingCoin_Step(struct Sprite *);
 static void AnimBulletSeed_Step1(struct Sprite *);
 static void AnimBulletSeed_Step2(struct Sprite *);
@@ -60,103 +56,6 @@ static void AnimPerishSongMusicNote_Step1(struct Sprite *);
 static void AnimPerishSongMusicNote_Step2(struct Sprite *);
 
 // Data
-// Unused
-static const struct SpriteTemplate sUnknown_83E3ADC =
-{
-    .tileTag = ANIM_TAG_FINGER,
-    .paletteTag = ANIM_TAG_FINGER,
-    .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = AnimCirclingFinger,
-};
-
-static const union AnimCmd sUnknown_83E3AF4[] =
-{
-    ANIMCMD_FRAME(4, 1),
-    ANIMCMD_END,
-};
-
-static const union AnimCmd *const sUnknown_83E3AFC[] =
-{
-    sUnknown_83E3AF4,
-};
-
-// Unused
-static const struct SpriteTemplate sUnknown_83E3B00 =
-{
-    .tileTag = ANIM_TAG_MUSIC_NOTES,
-    .paletteTag = ANIM_TAG_MUSIC_NOTES,
-    .oam = &gOamData_AffineOff_ObjNormal_16x16,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = AnimBouncingMusicNote,
-};
-
-// Unused
-static const struct SpriteTemplate sUnknown_83E3B18 =
-{
-    .tileTag = 0,
-    .paletteTag = 0,
-    .oam = &gDummyOamData,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = AnimVibrateBattlerBack,
-};
-
-// Unused
-static const struct SpriteTemplate sUnknown_83E3B30 =
-{
-    .tileTag = ANIM_TAG_CLAMP,
-    .paletteTag = ANIM_TAG_CLAMP,
-    .oam = &gOamData_AffineNormal_ObjBlend_64x64,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gAffineAnims_Bite,
-    .callback = AnimMovingClamp,
-};
-
-static const union AnimCmd sUnknown_83E3B48[] =
-{
-    ANIMCMD_FRAME(0, 9),
-    ANIMCMD_FRAME(16, 3),
-    ANIMCMD_FRAME(32, 3),
-    ANIMCMD_FRAME(48, 3),
-    ANIMCMD_END,
-};
-
-static const union AnimCmd *const sUnknown_83E3B5C[] =
-{
-    sUnknown_83E3B48,
-};
-
-static const union AffineAnimCmd sUnknown_83E3B60[] =
-{
-    AFFINEANIMCMD_FRAME(80, 80, 0, 0),
-    AFFINEANIMCMD_FRAME(9, 9, 0, 18),
-    AFFINEANIMCMD_END,
-};
-
-static const union AffineAnimCmd *const sUnknown_83E3B78[] =
-{
-    sUnknown_83E3B60,
-};
-
-// Unused
-static const struct SpriteTemplate sUnknown_83E3B7C =
-{
-    .tileTag = ANIM_TAG_EXPLOSION_6,
-    .paletteTag = ANIM_TAG_EXPLOSION_6,
-    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
-    .anims = sUnknown_83E3B5C,
-    .images = NULL,
-    .affineAnims = sUnknown_83E3B78,
-    .callback = AnimSpriteOnMonPos,
-};
-
 static const union AnimCmd sKinesisZapEnergyAnimCmds[] =
 {
     ANIMCMD_FRAME(0, 3, .hFlip = TRUE),
@@ -314,17 +213,6 @@ const struct SpriteTemplate gEggThrowSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimThrowProjectile,
-};
-
-static const struct SpriteTemplate sUnknown_83E3D18 =
-{
-    .tileTag = ANIM_TAG_VOID_LINES,
-    .paletteTag = ANIM_TAG_VOID_LINES,
-    .oam = &gOamData_AffineOff_ObjBlend_64x64,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = AnimVoidLines,
 };
 
 static const union AnimCmd sCoinAnimCmds[] =
@@ -1210,117 +1098,6 @@ const struct SpriteTemplate gGuardRingSpriteTemplate =
 };
 
 // Functions
-void AnimCirclingFinger(struct Sprite *sprite)
-{
-    SetSpriteCoordsToAnimAttackerCoords(sprite);
-    SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
-    sprite->y += gBattleAnimArgs[1];
-    sprite->data[1] = gBattleAnimArgs[2];
-    sprite->data[2] = gBattleAnimArgs[4];
-    sprite->data[3] = gBattleAnimArgs[5];
-    sprite->data[4] = gBattleAnimArgs[3];
-    StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
-    sprite->callback = TranslateSpriteInEllipseOverDuration;
-    sprite->callback(sprite);
-}
-
-void AnimBouncingMusicNote(struct Sprite *sprite)
-{
-    u8 battler;
-    
-    if (gBattleAnimArgs[0] == 0)
-        battler = gBattleAnimAttacker;
-    else
-        battler = gBattleAnimTarget;
-
-    SetSpriteNextToMonHead(battler, sprite);
-    sprite->data[0] = 0;
-    sprite->data[1] = 0;
-    sprite->callback = AnimBouncingMusicNote_Step;
-}
-
-static void AnimBouncingMusicNote_Step(struct Sprite *sprite)
-{
-    switch (sprite->data[0])
-    {
-    case 0:
-        sprite->y2 -= 3;
-        if (++sprite->data[1] == 6)
-            sprite->data[0]++;
-        break;
-    case 1:
-        sprite->y2 += 3;
-        if (--sprite->data[1] == 0)
-            sprite->data[0]++;
-        break;
-    case 2:
-        if (++sprite->data[1] == 64)
-            DestroyAnimSprite(sprite);
-        break;
-    }
-}
-
-static void AnimVibrateBattlerBack_Step(struct Sprite *sprite)
-{
-    s16 temp;
-    gSprites[sprite->data[2]].x2 += sprite->data[1];
-    temp = sprite->data[1];
-    sprite->data[1] = -temp;
-    if (sprite->data[0] == 0)
-    {
-        gSprites[sprite->data[2]].x2 = 0;
-        DestroySpriteAndMatrix(sprite);
-    }
-
-    sprite->data[0]--;
-}
-
-void AnimVibrateBattlerBack(struct Sprite *sprite)
-{
-    u8 spriteId;
-    sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
-    sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
-    spriteId = gBattlerSpriteIds[gBattleAnimTarget];
-    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
-        sprite->x -= gBattleAnimArgs[0];
-    else
-        sprite->x += gBattleAnimArgs[0];
-
-    sprite->y += gBattleAnimArgs[1];
-    sprite->data[0] = gBattleAnimArgs[2];
-    sprite->data[1] = gBattleAnimArgs[3];
-    sprite->data[2] = spriteId;
-    sprite->callback = AnimVibrateBattlerBack_Step;
-    sprite->invisible = TRUE;
-}
-
-void AnimMovingClamp(struct Sprite *sprite)
-{
-    InitSpritePosToAnimAttacker(sprite, TRUE);
-    sprite->data[0] = gBattleAnimArgs[2];
-    sprite->data[1] = gBattleAnimArgs[3];
-    sprite->data[5] = gBattleAnimArgs[4];
-    sprite->callback = WaitAnimForDuration;
-    StoreSpriteCallbackInData6(sprite, AnimMovingClamp_Step);
-}
-
-static void AnimMovingClamp_Step(struct Sprite *sprite)
-{
-    sprite->data[0] = sprite->data[1];
-    sprite->data[2] = sprite->x;
-    sprite->data[4] = sprite->y + 15;
-    sprite->callback = StartAnimLinearTranslation;
-    StoreSpriteCallbackInData6(sprite, AnimMovingClamp_End);
-}
-
-static void AnimMovingClamp_End(struct Sprite *sprite)
-{
-    if (sprite->data[5] == 0)
-        DestroyAnimSprite(sprite);
-    else
-        sprite->data[5]--;
-}
-
 // Rotates the attacking mon sprite downwards and then back upwards to its original position.
 // No args.
 void AnimTask_Withdraw(u8 taskId)
@@ -1343,8 +1120,6 @@ static void AnimTask_WithdrawStep(u8 taskId)
     if (gTasks[taskId].data[1] == 0)
     {
         gTasks[taskId].data[0] += 0xB0;
-        // this y position update gets overwritten by SetBattlerSpriteYOffsetFromRotation()
-        gSprites[spriteId].y2++;
     }
     else if (gTasks[taskId].data[1] == 1)
     {
@@ -1356,8 +1131,6 @@ static void AnimTask_WithdrawStep(u8 taskId)
     else
     {
         gTasks[taskId].data[0] -= 0xB0;
-        // this y position update gets overwritten by SetBattlerSpriteYOffsetFromRotation()
-        gSprites[spriteId].y2--;
     }
 
     SetBattlerSpriteYOffsetFromRotation(spriteId);
@@ -1668,33 +1441,6 @@ void AnimTask_AirCutterProjectile(u8 taskId)
         gTasks[taskId].data[2] = 3;
 
     gTasks[taskId].func = AirCutterProjectileStep1;
-}
-
-void AnimVoidLines(struct Sprite *sprite)
-{
-    InitSpritePosToAnimAttacker(sprite, FALSE);
-    sprite->data[0] = 0x100 + (IndexOfSpritePaletteTag(sUnknown_83E3D18.paletteTag) << 4);
-    sprite->callback = AnimVoidLines_Step;
-}
-
-static void AnimVoidLines_Step(struct Sprite *sprite)
-{
-    u16 id, val;
-    int i;
-
-    if (++sprite->data[1] == 2)
-    {
-        sprite->data[1] = 0;
-        id = sprite->data[0];
-        val = gPlttBufferFaded[8 + id];
-        for (i = 8; i < 16; i++)
-            gPlttBufferFaded[i + id] = gPlttBufferFaded[i + id + 1];
-
-        gPlttBufferFaded[id + 15] = val;
-
-        if (++sprite->data[2] == 24)
-            DestroyAnimSprite(sprite);
-    }
 }
 
 void AnimCoinThrow(struct Sprite *sprite)
@@ -2499,7 +2245,7 @@ void AnimBlendThinRing(struct Sprite *sprite)
         battler = gBattleAnimTarget;
 
     r4 = gBattleAnimArgs[3] ^ 1;
-    if (IsDoubleBattle() && IsBattlerSpriteVisible(BATTLE_PARTNER(battler)))
+    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && IsBattlerSpriteVisible(BATTLE_PARTNER(battler)))
     {
         SetAverageBattlerPositions(battler, r4, &sp0, &sp1);
         if (r4 == 0)

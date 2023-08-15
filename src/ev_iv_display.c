@@ -61,10 +61,10 @@ static void Task_WaitFadeAndCloseEvIvDisplay(u8 taskId);
 
 static EWRAM_DATA struct EvIvDisplay *sEvIvDisplay = NULL;
 
-#define TAG_EV_IV_HAND 999
+#define TAG_EV_IV_HAND 9999
 
 // hand sprite pos for each member of the party
-static const struct UCoords16 sHandSpritePos[PARTY_SIZE] =
+static const struct UCoords8 sHandSpritePos[PARTY_SIZE] =
 {
 	{
 		.x = 145,
@@ -293,6 +293,7 @@ static void CreateShadowBox(void)
 	// second box
 	SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(40, 144));
 	SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(128, 112));
+	
 	SetDispCnt(0, FALSE);
 }
 
@@ -326,14 +327,7 @@ static void Task_LoadEvIvDisplay(u8 taskId)
 		case 2:
 		    ResetBgsAndClearDma3BusyFlags(0);
 		    InitBgsFromTemplates(0, sEvIvBgTemplates, 2);
-		    ChangeBgX(0, 0, 0);
-		    ChangeBgY(0, 0, 0);
-		    ChangeBgX(1, 0, 0);
-		    ChangeBgY(1, 0, 0);
-		    ChangeBgX(2, 0, 0);
-		    ChangeBgY(2, 0, 0);
-		    ChangeBgX(3, 0, 0);
-		    ChangeBgY(3, 0, 0);
+			ResetAllBgsPos();
 		    break;
 		case 3:
 		    InitWindows(sEvIvWinTemplates);
@@ -410,7 +404,6 @@ static void Task_LoadEvIvDisplay(u8 taskId)
 static void CreateHandSprite(u8 taskId)
 {
 	s16 *data = gTasks[taskId].data;
-	
 	LoadSpriteSheet(&sEvIvHandSpriteSheet);
 	LoadSpritePalette(&sEvIvHandSpritePalette);
 	tHandSpriteId = CreateSprite(&sEvIvHandSpriteTemplate, sHandSpritePos[tCurrMonId].x, sHandSpritePos[tCurrMonId].y, 0);
@@ -418,23 +411,15 @@ static void CreateHandSprite(u8 taskId)
 
 static void CreateMonIconSprites(void)
 {
-	u16 x, y, species;
 	u8 i;
 	
 	for (i = 0; i < gPlayerPartyCount; i++)
-	{
-		species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
-		x = sHandSpritePos[i].x;
-		y = sHandSpritePos[i].y + 10; // a bit below the hand sprite
-		
-		CreateMonIcon(species, SpriteCB_MonIcon, x, y, 1);
-	}
+		CreateMonIcon(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2), SpriteCB_MonIcon, sHandSpritePos[i].x, sHandSpritePos[i].y + 10, 1);
 }
 
 static void UpdateHandSpritePos(u8 taskId)
 {
 	s16 *data = gTasks[taskId].data;
-	
 	gSprites[tHandSpriteId].x = sHandSpritePos[tCurrMonId].x;
 	gSprites[tHandSpriteId].y = sHandSpritePos[tCurrMonId].y;
 }
@@ -492,8 +477,9 @@ static void PrintInfoText(void)
 static void PrintMonStats(u8 taskId)
 {
 	s16 *data = gTasks[taskId].data;
-	u8 i, EVs[NUM_STATS] = {0}, IVs[NUM_STATS] = {0};
-	bool8 isEgg = GetMonData(&gPlayerParty[tCurrMonId], MON_DATA_IS_EGG);
+	u8 i, ev, iv;
+	struct Pokemon *mon = &gPlayerParty[tCurrMonId];
+	bool8 isEgg = GetMonData(mon, MON_DATA_IS_EGG);
 	
 	FillWindowPixelBuffer(WIN_HIDDEN_POWER_TYPE, PIXEL_FILL(0));
 	FillWindowPixelBuffer(WIN_POKEMON_NAME, PIXEL_FILL(0));
@@ -502,11 +488,11 @@ static void PrintMonStats(u8 taskId)
 #if HIDDEN_POWER_TYPE
 	// Print The Hidden Power Type
 	if (!isEgg)
-		BlitMoveInfoIcon(WIN_HIDDEN_POWER_TYPE, GetHiddenPowerType(&gPlayerParty[tCurrMonId]) + 1, HIDDEN_POWER_PRINTER_X_POS, PRINTER_Y_POS);
+		BlitMoveInfoIcon(WIN_HIDDEN_POWER_TYPE, GetHiddenPowerType(mon) + 1, HIDDEN_POWER_PRINTER_X_POS, PRINTER_Y_POS);
 #endif
 	
 	// Print The Mon Nickname
-	GetMonNickname(&gPlayerParty[tCurrMonId], gStringVar4);
+	GetMonNickname(mon, gStringVar4);
 	AddTextPrinterParameterized3(WIN_POKEMON_NAME, 2, POKEMON_NAME_PRINTER_X_POS, PRINTER_Y_POS - 2, sWhiteTextColor, 0, gStringVar4);
 	
 	// Print The Current Mon Num
@@ -518,22 +504,24 @@ static void PrintMonStats(u8 taskId)
 	
 	for (i = 0; i < NUM_STATS; i++)
 	{
-		if (!isEgg)
+		if (isEgg)
+			ev = iv = 0;
+		else
 		{
-			EVs[i] = GetMonData(&gPlayerParty[tCurrMonId], MON_DATA_HP_EV + i);
-			IVs[i] = GetMonData(&gPlayerParty[tCurrMonId], MON_DATA_HP_IV + i);
+			ev = GetMonData(mon, MON_DATA_HP_EV + i);
+			iv = GetMonData(mon, MON_DATA_HP_IV + i);
 		}
 		// Print The Nº Ev
-		ConvertIntToDecimalStringN(gStringVar4, EVs[i], STR_CONV_MODE_LEFT_ALIGN, 3);
+		ConvertIntToDecimalStringN(gStringVar4, ev, STR_CONV_MODE_LEFT_ALIGN, 3);
 		AddTextPrinterParameterized3(WIN_STATS, 2, EV_IV_STATS_PRINTER_X_POS, GET_STAT_PRINTER_Y_POS(i), sWhiteTextColor, 0, gStringVar4);
 		
 		// Print The Nº Iv
-		ConvertIntToDecimalStringN(gStringVar4, IVs[i], STR_CONV_MODE_LEFT_ALIGN, 2);
+		ConvertIntToDecimalStringN(gStringVar4, iv, STR_CONV_MODE_LEFT_ALIGN, 2);
 		AddTextPrinterParameterized3(WIN_STATS, 2, EV_IV_STATS_PRINTER_X_POS + 30, GET_STAT_PRINTER_Y_POS(i), sWhiteTextColor, 0, gStringVar4);
 	}
 	// Play The Mon Cry
 	if (!isEgg && !tOnInit)
-		PlayCry7(GetMonData(&gPlayerParty[tCurrMonId], MON_DATA_SPECIES), 0);
+		PlayCry7(GetMonData(mon, MON_DATA_SPECIES), 0);
 	
 	PutWindowTilemap(WIN_HIDDEN_POWER_TYPE);
 	CopyWindowToVram(WIN_HIDDEN_POWER_TYPE, COPYWIN_GFX);

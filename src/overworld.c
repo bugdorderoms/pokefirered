@@ -1,6 +1,5 @@
 #include "global.h"
 #include "gflib.h"
-#include "bg_regs.h"
 #include "cable_club.h"
 #include "credits.h"
 #include "dexnav.h"
@@ -757,7 +756,7 @@ void LoadMapFromCameraTransition(u8 mapGroup, u8 mapNum)
     TrySetMapSaveWarpStatus();
     ClearTempFieldEventData();
     ResetDexNavSearch();
-    RestartWildEncounterImmunitySteps();
+    ResetEncounterRateModifiers();
     MapResetTrainerRematches(mapGroup, mapNum);
     SetSav1WeatherFromCurrMapHeader();
     ChooseAmbientCrySpecies();
@@ -792,7 +791,7 @@ static void mli0_load_map(bool32 a1)
     TrySetMapSaveWarpStatus();
     ClearTempFieldEventData();
     ResetDexNavSearch();
-    RestartWildEncounterImmunitySteps();
+    ResetEncounterRateModifiers();
     MapResetTrainerRematches(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum);
     SetSav1WeatherFromCurrMapHeader();
     ChooseAmbientCrySpecies();
@@ -2093,8 +2092,7 @@ static void InitOverworldGraphicsRegisters(void)
     SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(0, 255));
     SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(255, 255));
     SetGpuReg(REG_OFFSET_WIN1V, WIN_RANGE(255, 255));
-    SetGpuReg(REG_OFFSET_BLDCNT, gOverworldBackgroundLayerFlags[1] | gOverworldBackgroundLayerFlags[2] | gOverworldBackgroundLayerFlags[3]
-                                 | BLDCNT_TGT2_OBJ | BLDCNT_EFFECT_BLEND);
+    SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_EFFECT_BLEND);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(13, 7));
     ScheduleBgCopyTilemapToVram(1);
     ScheduleBgCopyTilemapToVram(2);
@@ -2104,14 +2102,7 @@ static void InitOverworldGraphicsRegisters(void)
     ShowBg(1);
     ShowBg(2);
     ShowBg(3);
-    ChangeBgX(0, 0, 0);
-    ChangeBgY(0, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(3, 0, 0);
+	ResetAllBgsPos();
 }
 
 static void ResumeMap(u32 a1)
@@ -3534,7 +3525,7 @@ static void CreateLinkPlayerSprite(u8 linkPlayerId, u8 gameVersion)
         if (gameVersion == VERSION_FIRE_RED || gameVersion == VERSION_LEAF_GREEN)
         {
             objEvent->spriteId = AddPseudoObjectEvent(
-                GetRivalAvatarGraphicsIdByStateIdAndGender(PLAYER_AVATAR_STATE_NORMAL, linkGender(objEvent)),
+                GetPlayerAvatarGraphicsIdByStateIdAndGender(PLAYER_AVATAR_STATE_NORMAL, linkGender(objEvent)),
                 SpriteCB_LinkPlayer, 0, 0, 0);
         }
         else

@@ -1956,7 +1956,7 @@ static bool8 SlotsTask_GraphicsInit(u8 * state, struct SlotMachineSetupTaskData 
         RequestDma3Fill(0, (void *)VRAM, 0x20, DMA3_32BIT);
         RequestDma3Fill(0, (void *)(VRAM + 0xC000), 0x20, DMA3_32BIT);
         SetGpuReg(REG_OFFSET_DISPCNT, 0);
-        ResetBgPositions();
+        ResetAllBgsPos();
         ResetBgsAndClearDma3BusyFlags(FALSE);
         InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
         InitWindows(sWindowTemplates);

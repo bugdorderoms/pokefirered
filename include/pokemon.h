@@ -516,7 +516,6 @@ u16 GetUnionRoomTrainerPic(void);
 u16 GetUnionRoomTrainerClass(void);
 void CreateEventLegalEnemyMon(void);
 void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality);
-bool8 CheckBattleTypeGhost(struct Pokemon *mon, u8 bank);
 struct OakSpeechNidoranFStruct *OakSpeechNidoranFSetup(u8 battlePosition, bool8 enable);
 void OakSpeechNidoranFFreeResources(void);
 void *OakSpeechNidoranFGetBuffer(u8 bufferId);
@@ -525,5 +524,10 @@ void DeleteMonMove(struct Pokemon *mon, u8 movePos);
 void ClearAllFusedMonSpecies(void);
 bool8 HealStatusConditions(struct Pokemon *mon, u32 healMask, u8 battleId);
 const u8* GetItemEffect(u16 item);
+
+static inline u16 SanitizeSpeciesId(u16 species)
+{
+	return species > NUM_SPECIES ? SPECIES_NONE : species;
+}
 
 #endif // GUARD_POKEMON_H

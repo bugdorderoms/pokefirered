@@ -1,13 +1,13 @@
 #include "global.h"
 #include "gflib.h"
 #include "bike.h"
-#include "coord_event_weather.h"
 #include "daycare.h"
 #include "event_data.h"
 #include "dexnav.h"
 #include "event_object_movement.h"
 #include "event_scripts.h"
 #include "fieldmap.h"
+#include "field_camera.h"
 #include "field_control_avatar.h"
 #include "field_fadetransition.h"
 #include "field_player_avatar.h"
@@ -32,13 +32,14 @@
 #include "constants/event_objects.h"
 #include "constants/maps.h"
 #include "constants/metatile_behaviors.h"
+#include "constants/metatile_labels.h"
 
 #define SIGNPOST_POKECENTER 0
-#define SIGNPOST_POKEMART 1
-#define SIGNPOST_INDIGO_1 2
-#define SIGNPOST_INDIGO_2 3
-#define SIGNPOST_SCRIPTED 240
-#define SIGNPOST_NA 255
+#define SIGNPOST_POKEMART   1
+#define SIGNPOST_INDIGO_1   2
+#define SIGNPOST_INDIGO_2   3
+#define SIGNPOST_SCRIPTED   240
+#define SIGNPOST_NA         255
 
 static void QuestLogOverrideJoyVars(struct FieldInput *input, u16 *newKeys, u16 *heldKeys);
 static void Task_QuestLogPlayback_OpenStartMenu(u8 taskId);
@@ -120,12 +121,11 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
                         input->pressedBButton = TRUE;
                     if (newKeys & R_BUTTON)
                         input->pressedRButton = TRUE;
-		    if (newKeys & L_BUTTON && !IsDexNavSearchActive())
+					if (newKeys & L_BUTTON && !IsDexNavSearchActive())
                         input->pressedLButton = TRUE;
                 }
             }
         }
-
         if (!QL_IS_PLAYBACK_STATE)
         {
             if (heldKeys & (DPAD_UP | DPAD_DOWN | DPAD_LEFT | DPAD_RIGHT))
@@ -209,10 +209,7 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     FieldClearPlayerInput(&gInputToStoreInQuestLogMaybe);
     gInputToStoreInQuestLogMaybe.dpadDirection = input->dpadDirection;
 
-    if (CheckForTrainersWantingBattle() == TRUE)
-        return TRUE;
-
-    if (TryRunOnFrameMapScript() == TRUE)
+    if (CheckForTrainersWantingBattle() || TryRunOnFrameMapScript())
         return TRUE;
 
     if (input->tookStep)
@@ -298,7 +295,8 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
         return TRUE;
     }
     if (input->pressedRButton && ToggleAutoRun())
-	return TRUE;
+		return TRUE;
+	
     if (input->pressedLButton && TryStartDexnavSearch())
         return TRUE;
 
@@ -317,6 +315,7 @@ void FieldInput_HandleCancelSignpost(struct FieldInput * input)
             {
                 if (IsMsgBoxWalkawayDisabled() == TRUE)
                     return;
+				
                 if (input->dpadDirection == DIR_NORTH)
                     RegisterQuestLogInput(QL_INPUT_UP);
                 else if (input->dpadDirection == DIR_SOUTH)
@@ -325,6 +324,7 @@ void FieldInput_HandleCancelSignpost(struct FieldInput * input)
                     RegisterQuestLogInput(QL_INPUT_LEFT);
                 else if (input->dpadDirection == DIR_EAST)
                     RegisterQuestLogInput(QL_INPUT_RIGHT);
+				
                 ScriptContext1_SetupScript(EventScript_CancelMessageBox);
                 ScriptContext2_Enable();
             }
@@ -361,10 +361,7 @@ static void GetInFrontOfPlayerPosition(struct MapPosition *position)
 
     GetXYCoordsOneStepInFrontOfPlayer(&position->x, &position->y);
     PlayerGetDestCoords(&x, &y);
-    if (MapGridGetZCoordAt(x, y) != 0)
-        position->height = PlayerGetZCoord();
-    else
-        position->height = 0;
+	position->height = MapGridGetZCoordAt(x, y) != 0 ? PlayerGetZCoord() : 0;
 }
 
 static u16 GetPlayerCurMetatileBehavior(void)
@@ -382,8 +379,7 @@ static bool8 TryStartInteractionScript(struct MapPosition *position, u16 metatil
         return FALSE;
 
     // Don't play interaction sound for certain scripts.
-    if (script != PalletTown_PlayersHouse_2F_EventScript_PC
-        && script != EventScript_PC)
+    if (script != PalletTown_PlayersHouse_2F_EventScript_PC && script != EventScript_PC)
         PlaySE(SE_SELECT);
 
     ScriptContext1_SetupScript(script);
@@ -439,7 +435,6 @@ const u8 *GetInteractedLinkPlayerScript(struct MapPosition *position, u8 metatil
 static const u8 *GetInteractedObjectEventScript(struct MapPosition *position, u8 metatileBehavior, u8 direction)
 {
     u8 objectEventId;
-    const u8 *script;
 
     objectEventId = GetObjectEventIdByXYZ(position->x, position->y, position->height);
     if (objectEventId == OBJECT_EVENTS_COUNT || gObjectEvents[objectEventId].localId == OBJ_EVENT_ID_PLAYER)
@@ -460,10 +455,7 @@ static const u8 *GetInteractedObjectEventScript(struct MapPosition *position, u8
     gSpecialVar_LastTalked = gObjectEvents[objectEventId].localId;
     gSpecialVar_Facing = direction;
 
-    script = GetObjectEventScriptPointerByObjectEventId(objectEventId);
-
-    script = GetRamScript(gSpecialVar_LastTalked, script);
-    return script;
+    return GetRamScript(gSpecialVar_LastTalked, GetObjectEventScriptPointerByObjectEventId(objectEventId));
 }
 
 static const u8 *GetInteractedBackgroundEventScript(struct MapPosition *position, u8 metatileBehavior, u8 direction)
@@ -608,7 +600,7 @@ static const u8 *GetInteractedMetatileScript(struct MapPosition *position, u8 me
 static const u8 *GetInteractedWaterScript(struct MapPosition *unused1, u8 metatileBehavior, u8 direction)
 {
     if (CheckPlayerInGroundRocks())
-	return NULL;
+		return NULL;
     if (MetatileBehavior_IsSemiDeepWater(metatileBehavior) == TRUE && PlayerHasObtainedSharpedoPaddle() == TRUE)
         return EventScript_CurrentTooFast;
     if (PlayerHasObtainedSharpedoPaddle() == TRUE && IsPlayerFacingSurfableFishableWater() == TRUE)
@@ -616,23 +608,15 @@ static const u8 *GetInteractedWaterScript(struct MapPosition *unused1, u8 metati
 
     if (MetatileBehavior_IsWaterfall(metatileBehavior) == TRUE)
     {
-        if (FlagGet(FLAG_BADGE07_GET) == TRUE && IsPlayerSurfingNorth() == TRUE)
-            return EventScript_Waterfall;
-        else
-            return EventScript_CantUseWaterfall;
+		return (FlagGet(FLAG_BADGE07_GET) && IsPlayerSurfingNorth()) ? EventScript_Waterfall : EventScript_CantUseWaterfall;
     }
     return NULL;
 }
 
 static bool8 TryStartStepBasedScript(struct MapPosition *position, u16 metatileBehavior, u16 direction)
 {
-    if (TryStartCoordEventScript(position) == TRUE)
-        return TRUE;
-    if (TryStartWarpEventScript(position, metatileBehavior) == TRUE)
-        return TRUE;
-    if (TryStartStepCountScript(metatileBehavior) == TRUE)
-        return TRUE;
-    if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior) && UpdateRepelCounter() == TRUE)
+    if (TryStartCoordEventScript(position) || TryStartWarpEventScript(position, metatileBehavior) || TryStartStepCountScript(metatileBehavior)
+		|| (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior) && UpdateRepelCounter()))
         return TRUE;
     return FALSE;
 }
@@ -649,11 +633,9 @@ static bool8 TryStartCoordEventScript(struct MapPosition *position)
 
 static bool8 TryStartStepCountScript(u16 metatileBehavior)
 {
-    if (InUnionRoom() == TRUE)
+    if (InUnionRoom() || gQuestLogState == QL_STATE_PLAYBACK)
         return FALSE;
-    if (gQuestLogState == QL_STATE_PLAYBACK)
-        return FALSE;
-
+	
     UpdateHappinessStepCounter();
 
     if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
@@ -689,12 +671,8 @@ static void UpdateHappinessStepCounter(void)
     (*ptr) %= 128;
     if (*ptr == 0)
     {
-        struct Pokemon *mon = gPlayerParty;
         for (i = 0; i < PARTY_SIZE; i++)
-        {
-            AdjustFriendship(mon, FRIENDSHIP_EVENT_WALKING);
-            mon++;
-        }
+            AdjustFriendship(&gPlayerParty[i], FRIENDSHIP_EVENT_WALKING);
     }
 }
 
@@ -716,21 +694,14 @@ static bool8 UpdatePoisonStepCounter(void)
         {
             switch (DoPoisonFieldEffect())
             {
-            case FLDPSN_NONE:
-                return FALSE;
-            case FLDPSN_PSN:
-                return FALSE;
             case FLDPSN_FNT:
                 return TRUE;
+			default:
+			    return FALSE;
             }
         }
     }
     return FALSE;
-}
-
-void RestartWildEncounterImmunitySteps(void)
-{
-    ResetEncounterRateModifiers();
 }
 
 static bool8 TrySetUpWalkIntoSignpostScript(struct MapPosition * position, u16 metatileBehavior, u8 playerDirection)
@@ -829,12 +800,14 @@ static bool8 TryArrowWarp(struct MapPosition *position, u16 metatileBehavior, u8
         }
         else if (IsDirectionalStairWarpMetatileBehavior(metatileBehavior, direction) == TRUE)
         {
-            delay = 0;
             if (gPlayerAvatar.flags & (PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE | PLAYER_AVATAR_FLAG_RIDE_ANY))
             {
                 SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);
                 delay = 12;
             }
+			else
+				delay = 0;
+			
             StoreInitialPlayerAvatarState();
             SetupWarp(&gMapHeader, warpEventId, position);
             DoStairWarp(metatileBehavior, delay);
@@ -917,15 +890,11 @@ bool8 IsDirectionalStairWarpMetatileBehavior(u16 metatileBehavior, u8 playerDire
     switch (playerDirection)
     {
     case DIR_WEST:
-        if (MetatileBehavior_IsDirectionalUpLeftStairWarp(metatileBehavior))
-            return TRUE;
-        if (MetatileBehavior_IsDirectionalDownLeftStairWarp(metatileBehavior))
+        if (MetatileBehavior_IsDirectionalUpLeftStairWarp(metatileBehavior) || MetatileBehavior_IsDirectionalDownLeftStairWarp(metatileBehavior))
             return TRUE;
         break;
     case DIR_EAST:
-        if (MetatileBehavior_IsDirectionalUpRightStairWarp(metatileBehavior))
-            return TRUE;
-        if (MetatileBehavior_IsDirectionalDownRightStairWarp(metatileBehavior))
+        if (MetatileBehavior_IsDirectionalUpRightStairWarp(metatileBehavior) || MetatileBehavior_IsDirectionalDownRightStairWarp(metatileBehavior))
             return TRUE;
         break;
     }
@@ -955,9 +924,7 @@ static s8 GetWarpEventAtMapPosition(struct MapHeader *mapHeader, struct MapPosit
 
 static void SetupWarp(struct MapHeader *unused, s8 warpEventId, struct MapPosition *position)
 {
-    const struct WarpEvent *warpEvent;
-
-    warpEvent = &gMapHeader.events->warps[warpEventId];
+    const struct WarpEvent *warpEvent = &gMapHeader.events->warps[warpEventId];
 
     if (warpEvent->mapNum == MAP_NUM(NONE))
     {
@@ -1000,9 +967,8 @@ static s8 GetWarpEventAtPosition(struct MapHeader *mapHeader, u16 x, u16 y, u8 e
 {
     s32 i;
     struct WarpEvent *warpEvent = mapHeader->events->warps;
-    u8 warpCount = mapHeader->events->warpCount;
 
-    for (i = 0; i < warpCount; i++, warpEvent++)
+    for (i = 0; i < mapHeader->events->warpCount; i++, warpEvent++)
     {
         if ((u16)warpEvent->x == x && (u16)warpEvent->y == y)
         {
@@ -1019,7 +985,6 @@ static const u8 *TryRunCoordEventScript(struct CoordEvent *coordEvent)
     {
         if (coordEvent->script == NULL)
         {
-            DoCoordEventWeather(coordEvent->trigger);
             return NULL;
         }
         if (coordEvent->trigger == 0)
@@ -1037,9 +1002,8 @@ static const u8 *GetCoordEventScriptAtPosition(struct MapHeader *mapHeader, u16 
 {
     s32 i;
     struct CoordEvent *coordEvents = mapHeader->events->coordEvents;
-    u8 coordEventCount = mapHeader->events->coordEventCount;
 
-    for (i = 0; i < coordEventCount; i++)
+    for (i = 0; i < mapHeader->events->coordEventCount; i++)
     {
         if ((u16)coordEvents[i].x == x && (u16)coordEvents[i].y == y)
         {
@@ -1054,14 +1018,25 @@ static const u8 *GetCoordEventScriptAtPosition(struct MapHeader *mapHeader, u16 
     return NULL;
 }
 
-void HandleBoulderFallThroughHole(struct ObjectEvent * object)
+void HandleBoulderFallThroughOrCoverHole(struct ObjectEvent * object)
 {
-    if (MapGridGetMetatileBehaviorAt(object->currentCoords.x, object->currentCoords.y) == MB_FALL_WARP)
+	s16 x = object->currentCoords.x, y = object->currentCoords.y;
+	u8 metatileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+	
+    if (metatileBehavior == MB_FALL_WARP)
     {
         PlaySE(SE_FALL);
         RemoveObjectEventByLocalIdAndMap(object->localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
         FlagClear(GetObjectEventFlagByLocalIdAndMap(object->localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup));
     }
+	else if (metatileBehavior == MB_STRENGTH_HOLE)
+	{
+		/* Find a apropriated metatile first
+		PlaySE(SE_M_ROCK_THROW);
+		RemoveObjectEventByLocalIdAndMap(object->localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
+		MapGridSetMetatileIdAt(x, y, METATILE_SeafoamIslands_CrackedIce);
+		CurrentMapDrawMetatileAt(x, y);*/
+	}
 }
 
 void HandleBoulderActivateVictoryRoadSwitch(u16 x, u16 y)
@@ -1093,9 +1068,8 @@ static const struct BgEvent *GetBackgroundEventAtPosition(struct MapHeader *mapH
 {
     u8 i;
     struct BgEvent *bgEvents = mapHeader->events->bgEvents;
-    u8 bgEventCount = mapHeader->events->bgEventCount;
 
-    for (i = 0; i < bgEventCount; i++)
+    for (i = 0; i < mapHeader->events->bgEventCount; i++)
     {
         if ((u16)bgEvents[i].x == x && (u16)bgEvents[i].y == y)
         {
@@ -1153,22 +1127,20 @@ static u8 TrySetDiveWarp(void)
 
 static const u8 *GetObjectEventScriptPointerPlayerFacing(void)
 {
-    u8 direction;
     struct MapPosition position;
 
-    direction = GetPlayerMovementDirection();
     GetInFrontOfPlayerPosition(&position);
-    return GetInteractedObjectEventScript(&position, MapGridGetMetatileBehaviorAt(position.x, position.y), direction);
+	
+    return GetInteractedObjectEventScript(&position, MapGridGetMetatileBehaviorAt(position.x, position.y), GetPlayerMovementDirection());
 }
 
 int SetCableClubWarp(void)
 {
     struct MapPosition position;
-
-    GetPlayerMovementDirection();  // unnecessary
+	
     GetPlayerPosition(&position);
-    MapGridGetMetatileBehaviorAt(position.x, position.y);  // unnecessary
     SetupWarp(&gMapHeader, GetWarpEventAtMapPosition(&gMapHeader, &position), &position);
+	
     return 0;
 }
 
@@ -1176,15 +1148,10 @@ static bool8 ToggleAutoRun(void)
 {
 	if (!FlagGet(FLAG_SYS_B_DASH))
 		return FALSE;
-	
+
 	PlaySE(SE_SELECT);
-	
-	if (gSaveBlock2Ptr->autoRun)
-		ScriptContext1_SetupScript(EventScript_DisableAutoRun);
-	else
-		ScriptContext1_SetupScript(EventScript_EnableAutoRun);
-	
-	gSaveBlock2Ptr->autoRun = !gSaveBlock2Ptr->autoRun;
-	
+	gSaveBlock2Ptr->autoRun ^= TRUE;
+	ScriptContext1_SetupScript(gSaveBlock2Ptr->autoRun ? EventScript_EnableAutoRun : EventScript_DisableAutoRun);
+
 	return TRUE;
 }

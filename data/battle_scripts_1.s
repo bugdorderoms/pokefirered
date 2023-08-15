@@ -255,7 +255,6 @@ BattleScript_HitFromAtkAnimation::
 	attackanimation
 	waitstate
 	effectivenesssound
-	hitanimation BS_TARGET
 	waitstate
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
@@ -329,7 +328,6 @@ BattleScript_EffectAbsorb::
 	attackanimation
 	waitstate
 	effectivenesssound
-	hitanimation BS_TARGET
 	waitstate
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
@@ -394,7 +392,6 @@ BattleScript_ExplosionLoop::
 	adjustdamage
 	accuracycheck BattleScript_ExplosionMissed
 	effectivenesssound
-	hitanimation BS_TARGET
 	waitstate
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
@@ -444,7 +441,6 @@ BattleScript_DreamEaterWorked::
 	attackanimation
 	waitstate
 	effectivenesssound
-	hitanimation BS_TARGET
 	waitstate
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
@@ -1744,7 +1740,6 @@ BattleScript_DoHitAllWithUndergroundBonus::
 	attackanimation
 	waitstate
 	effectivenesssound
-	hitanimation BS_TARGET
 	waitstate
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
@@ -2285,7 +2280,6 @@ BattleScript_BrickBreakAnim::
 BattleScript_BrickBreakDoHit::
 	typecalc
 	effectivenesssound
-	hitanimation BS_TARGET
 	waitstate
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
@@ -2933,7 +2927,6 @@ BattleScript_PursuitDmgOnSwitchOut::
 	attackanimation
 	waitstate
 	effectivenesssound
-	hitanimation BS_TARGET
 	waitstate
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
@@ -3014,7 +3007,6 @@ BattleScript_DamagingWeatherLoop::
 	waitmessage 0x40
 	orword gHitMarker, HITMARKER_SKIP_DMG_TRACK | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_GRUDGE | HITMARKER_IGNORE_DISGUISE
 	effectivenesssound
-	hitanimation BS_ATTACKER
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	tryfaintmon BS_ATTACKER
@@ -3124,7 +3116,6 @@ BattleScript_BideAttack::
 	attackanimation
 	waitstate
 	effectivenesssound
-	hitanimation BS_TARGET
 	waitstate
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
@@ -3347,7 +3338,6 @@ BattleScript_FutureHitAnimDoomDesire::
 	playanimation BS_ATTACKER, B_ANIM_DOOM_DESIRE_HIT, NULL
 BattleScript_DoFutureAttackHit::
 	effectivenesssound
-	hitanimation BS_TARGET
 	waitstate
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
@@ -3637,9 +3627,9 @@ BattleScript_DoSelfConfusionDmg::
 	printstring STRINGID_ITHURTCONFUSION
 	waitmessage 0x40
 	effectivenesssound
-	hitanimation BS_ATTACKER
-	waitstate
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE
+	playanimation BS_ATTACKER, B_ANIM_MON_HIT, NULL
+	waitstate
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	resultmessage

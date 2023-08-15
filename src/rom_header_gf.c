@@ -1,7 +1,6 @@
 #include "global.h"
 #include "data.h"
 #include "pokemon_icon.h"
-#include "decoration.h"
 #include "battle_main.h"
 #include "item.h"
 #include "pokeball.h"
@@ -105,7 +104,7 @@ static const struct GFRomHeader sGFRomHeader = {
     .monIconPalettes = gMonIconPaletteTable,
     .monSpeciesNames = gSpeciesNames,
     .moveNames = gMoveNames,
-    .decorations = gDecorations,
+    .decorations = NULL,
     .flagsOffset = offsetof(struct SaveBlock1, flags),
     .varsOffset = offsetof(struct SaveBlock1, vars),
     .pokedexOffset = offsetof(struct SaveBlock2, pokedex),

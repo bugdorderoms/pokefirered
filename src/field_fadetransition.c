@@ -25,7 +25,6 @@
 #include "constants/event_objects.h"
 #include "constants/field_weather.h"
 
-static void sub_807DF4C(u8 a0);
 static void sub_807DFBC(u8 taskId);
 static void task_map_chg_seq_0807E20C(u8 taskId);
 static void task_map_chg_seq_0807E2CC(u8 taskId);
@@ -34,21 +33,15 @@ static void Task_Teleport2Warp(u8 taskId);
 static void Task_TeleportWarp(u8 taskId);
 static void Task_DoorWarp(u8 taskId);
 static void Task_StairWarp(u8 taskId);
-static void sub_807EB64(u16, s16*, s16*);
 static void sub_807EBBC(u8 a0, s16 *a1, s16 *a2);
 static void sub_807EAC4(s16, s16, s16*, s16*, s16*);
 static void sub_807EC34(u8 taskId);
 static void sub_807ECBC(s16 *, s16 *, s16 *, s16 *, s16 *);
 static bool8 sub_807EDA0(s16 *, s16 *, s16 *, s16 *, s16 *);
 
-void palette_bg_faded_fill_white(void)
+static inline void palette_bg_faded_fill_white(void)
 {
     CpuFastFill16(RGB_WHITE, gPlttBufferFaded, 0x400);
-}
-
-void palette_bg_faded_fill_black(void)
-{
-    CpuFastFill16(RGB_BLACK, gPlttBufferFaded, 0x400);
 }
 
 void WarpFadeInScreen(void)
@@ -95,25 +88,11 @@ void FadeInFromBlack(void)
 void WarpFadeOutScreen(void)
 {
     const struct MapHeader *header = GetDestinationWarpMapHeader();
+	
     if (header->regionMapSectionId != gMapHeader.regionMapSectionId && MapHasPreviewScreen(header->regionMapSectionId, MPS_TYPE_CAVE))
         FadeScreen(FADE_TO_BLACK, 0);
     else
-    {
-        switch (MapTransitionIsEnter(GetCurrentMapType(), header->mapType))
-        {
-        case FALSE:
-            FadeScreen(FADE_TO_BLACK, 0);
-            break;
-        case TRUE:
-            FadeScreen(FADE_TO_WHITE, 0);
-            break;
-        }
-    }
-}
-
-static void SetPlayerVisibility(bool8 visible)
-{
-    SetPlayerInvisibility(!visible);
+		FadeScreen(MapTransitionIsEnter(GetCurrentMapType(), header->mapType) ? FADE_TO_WHITE : FADE_TO_BLACK, 0);
 }
 
 static void task0A_nop_for_a_while(u8 taskId)
@@ -231,44 +210,32 @@ static void sub_807DE78(bool8 a0)
 
     PlayerGetDestCoords(&x, &y);
     behavior = MapGridGetMetatileBehaviorAt(x, y);
+	
     if (MetatileBehavior_IsWarpDoor_2(behavior) == TRUE)
     {
         func = sub_807DFBC;
-        switch (MapTransitionIsExit(GetLastUsedWarpMapType(), GetCurrentMapType()))
-        {
-        case 0:
-            palette_bg_faded_fill_black();
-            break;
-        case 1:
-            palette_bg_faded_fill_white();
-            break;
-        }
+		
+		if (MapTransitionIsExit(GetLastUsedWarpMapType(), GetCurrentMapType()))
+			palette_bg_faded_fill_black();
+		else
+			palette_bg_faded_fill_white();
     }
     else
     {
-        sub_807DF4C(a0);
+        if (!a0)
+			WarpFadeInScreen();
+		else
+			FadeInFromBlack();
+	
         if (MetatileBehavior_IsNonAnimDoor(behavior) == TRUE)
             func = task_map_chg_seq_0807E20C;
         else if (MetatileBehavior_IsDirectionalStairWarp(behavior) == TRUE)
-        {
-            u8 tmp = gUnknown_2031DE0;
-            func = task_map_chg_seq_0807E2CC;
-            if (!tmp)
-                func = sub_807EC34;
-        }
+            func = gUnknown_2031DE0 ? task_map_chg_seq_0807E2CC : sub_807EC34;
         else
             func = task_map_chg_seq_0807E2CC;
     }
     gUnknown_2031DE0 = FALSE;
     CreateTask(func, 10);
-}
-
-static void sub_807DF4C(bool8 a0)
-{
-    if (!a0)
-        WarpFadeInScreen();
-    else
-        FadeInFromBlack();
 }
 
 void FieldCB_DefaultWarpExit(void)
@@ -308,15 +275,8 @@ static void sub_807DFBC(u8 taskId)
 
     switch (task->data[0])
     {
-    case 0: // Never reached
-        SetPlayerVisibility(0);
-        FreezeObjectEvents();
-        PlayerGetDestCoords(x, y);
-        FieldSetDoorOpened(*x, *y);
-        task->data[0] = 1;
-        break;
     case 5:
-        SetPlayerVisibility(0);
+        SetPlayerInvisibility(TRUE);
         FreezeObjectEvents();
         DoOutwardBarnDoorWipe();
         WarpFadeInScreenWithDelay();
@@ -336,14 +296,13 @@ static void sub_807DFBC(u8 taskId)
         if (!FieldIsDoorAnimationRunning())
         {
             PlayerGetDestCoords(&task->data[12], &task->data[13]);
-            SetPlayerVisibility(TRUE);
+            SetPlayerInvisibility(FALSE);
             ObjectEventSetHeldMovement(&gObjectEvents[GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0)], MOVEMENT_ACTION_WALK_NORMAL_DOWN);
             task->data[0] = 8;
         }
         break;
     case 8:
-        task->data[14]++;
-        if (task->data[14] == 14)
+        if (++task->data[14] == 14)
         {
             FieldAnimateDoorClose(task->data[12], task->data[13]);
             task->data[0] = 9;
@@ -360,7 +319,7 @@ static void sub_807DFBC(u8 taskId)
     case 1:
         if (FieldFadeTransitionBackgroundEffectIsFinished())
         {
-            SetPlayerVisibility(TRUE);
+            SetPlayerInvisibility(FALSE);
             ObjectEventSetHeldMovement(&gObjectEvents[GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0)], MOVEMENT_ACTION_WALK_NORMAL_DOWN);
             task->data[0] = 2;
         }
@@ -394,7 +353,7 @@ static void task_map_chg_seq_0807E20C(u8 taskId)
     switch (task->data[0])
     {
     case 0:
-        SetPlayerVisibility(0);
+        SetPlayerInvisibility(TRUE);
         FreezeObjectEvents();
         PlayerGetDestCoords(x, y);
         task->data[0] = 1;
@@ -402,7 +361,7 @@ static void task_map_chg_seq_0807E20C(u8 taskId)
     case 1:
         if (FieldFadeTransitionBackgroundEffectIsFinished())
         {
-            SetPlayerVisibility(TRUE);
+            SetPlayerInvisibility(FALSE);
             ObjectEventSetHeldMovement(&gObjectEvents[GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0)], GetWalkNormalMovementAction(GetPlayerFacingDirection()));
             task->data[0] = 2;
         }
@@ -504,10 +463,7 @@ void FieldCB_SafariZoneRanOutOfBalls(void)
 
 bool32 FieldFadeTransitionBackgroundEffectIsFinished(void)
 {
-    if (IsWeatherNotFadingIn() == TRUE && ForestMapPreviewScreenIsRunning())
-        return TRUE;
-    else
-        return FALSE;
+	return (IsWeatherNotFadingIn() && ForestMapPreviewScreenIsRunning());
 }
 
 void DoWarp(void)
@@ -590,14 +546,6 @@ void DoTeleportWarp(void)
     TryFadeOutOldMapMusic();
     CreateTask(Task_TeleportWarp, 10);
     gFieldCallback = FieldCB_TeleportWarpIn;
-}
-
-void sub_807E5C4(void)
-{
-    ScriptContext2_Enable();
-    WarpFadeOutScreen();
-    CreateTask(Task_Teleport2Warp, 10);
-    gFieldCallback = nullsub_60;
 }
 
 static void Task_CableClubWarp(u8 taskId)
@@ -745,7 +693,7 @@ static void Task_DoorWarp(u8 taskId)
         {
             task->data[1] = FieldAnimateDoorClose(*xp, *yp - 1);
             ObjectEventClearHeldMovementIfFinished(&gObjectEvents[GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0)]);
-            SetPlayerVisibility(FALSE);
+            SetPlayerInvisibility(TRUE);
             task->data[0] = 3;
         }
         break;
@@ -774,8 +722,8 @@ static void Task_DoorWarp(u8 taskId)
 static void Task_StairWarp(u8 taskId)
 {
     s16 * data = gTasks[taskId].data;
-    struct ObjectEvent *playerObj = &gObjectEvents[gPlayerAvatar.objectEventId];
-    struct Sprite *playerSpr = &gSprites[gPlayerAvatar.spriteId];
+    struct ObjectEvent *playerObj;
+	
     switch (data[0])
     {
     case 0:
@@ -785,6 +733,8 @@ static void Task_StairWarp(u8 taskId)
         data[0]++;
         break;
     case 1:
+		playerObj = &gObjectEvents[gPlayerAvatar.objectEventId];
+	
         if (!ObjectEventIsMovementOverridden(playerObj) || ObjectEventClearHeldMovementIfFinished(playerObj))
         {
             if (data[15] != 0)
@@ -793,8 +743,9 @@ static void Task_StairWarp(u8 taskId)
             {
                 TryFadeOutOldMapMusic();
                 PlayRainStoppingSoundEffect();
-                playerSpr->oam.priority = 1;
-                sub_807EB64(data[1], &data[2], &data[3]);
+                gSprites[gPlayerAvatar.spriteId].oam.priority = 1;
+				ObjectEventForceSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], GetWalkInPlaceNormalMovementAction(GetPlayerFacingDirection()));
+				sub_807EBBC((u8)data[1], &data[2], &data[3]);
                 PlaySE(SE_EXIT);
                 data[0]++;
             }
@@ -825,24 +776,15 @@ static void Task_StairWarp(u8 taskId)
 
 static void sub_807EAC4(s16 a0, s16 a1, s16 *a2, s16 *a3, s16 *a4)
 {
-    struct Sprite *playerSpr = &gSprites[gPlayerAvatar.spriteId];
-    struct ObjectEvent *playerObj = &gObjectEvents[gPlayerAvatar.objectEventId];
     if (a1 > 0 || *a4 > 6)
         *a3 += a1;
     *a2 += a0;
     (*a4)++;
-    playerSpr->x2 = *a2 >> 5;
-    playerSpr->y2 = *a3 >> 5;
-    if (playerObj->heldMovementFinished)
-    {
-        ObjectEventForceSetHeldMovement(playerObj, GetWalkInPlaceNormalMovementAction(GetPlayerFacingDirection()));
-    }
-}
-
-static void sub_807EB64(u16 a0, s16 *a1, s16 *a2)
-{
-    ObjectEventForceSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], GetWalkInPlaceNormalMovementAction(GetPlayerFacingDirection()));
-    sub_807EBBC(a0, a1, a2);
+    gSprites[gPlayerAvatar.spriteId].x2 = *a2 >> 5;
+    gSprites[gPlayerAvatar.spriteId].y2 = *a3 >> 5;
+	
+    if (gObjectEvents[gPlayerAvatar.objectEventId].heldMovementFinished)
+        ObjectEventForceSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], GetWalkInPlaceNormalMovementAction(GetPlayerFacingDirection()));
 }
 
 static void sub_807EBBC(u8 a0, s16 *a1, s16 *a2)
@@ -909,10 +851,7 @@ static void sub_807ECBC(s16 *a0, s16 *a1, s16 *a2, s16 *a3, s16 *a4)
     struct Sprite *sprite;
     PlayerGetDestCoords(&x, &y);
     behavior = MapGridGetMetatileBehaviorAt(x, y);
-    if (MetatileBehavior_IsDirectionalDownRightStairWarp(behavior) || MetatileBehavior_IsDirectionalUpRightStairWarp(behavior))
-        r1 = 3;
-    else
-        r1 = 4;
+	r1 = (MetatileBehavior_IsDirectionalDownRightStairWarp(behavior) || MetatileBehavior_IsDirectionalUpRightStairWarp(behavior)) ? 3 : 4;
     ObjectEventForceSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], GetWalkInPlaceSlowMovementAction(r1));
     sub_807EBBC(behavior, a0, a1);
     *a2 = *a0 * 16;
@@ -927,8 +866,8 @@ static void sub_807ECBC(s16 *a0, s16 *a1, s16 *a2, s16 *a3, s16 *a4)
 
 static bool8 sub_807EDA0(s16 *a0, s16 *a1, s16 *a2, s16 *a3, s16 *a4)
 {
-    struct Sprite *sprite;
-    sprite = &gSprites[gPlayerAvatar.spriteId];
+    struct Sprite *sprite = &gSprites[gPlayerAvatar.spriteId];
+	
     if (*a4 != 0)
     {
         *a2 += *a0;

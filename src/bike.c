@@ -13,7 +13,6 @@ static u8 GetBikeTransitionId(u8 *, u16, u16);
 static void Bike_SetBikeStill(void);
 static u8 CanBikeFaceDirectionOnRail(u8 direction, u8 metatileBehavior);
 static u8 GetBikeCollisionAt(struct ObjectEvent *playerObjEvent, s16 x, s16 y, u8 direction, u8 metatileBehavior);
-static bool8 MetatileBehaviorForbidsBiking(u8);
 static void BikeTransition_FaceDirection(u8);
 static void BikeTransition_TurnDirection(u8);
 static void BikeTransition_MoveDirection(u8);
@@ -61,10 +60,7 @@ static u8 BikeInputHandler_Normal(u8 *direction_p, u16 newKeys, u16 heldKeys)
         {
             gPlayerAvatar.acroBikeState = BIKE_STATE_SLOPE;
             gPlayerAvatar.runningState = MOVING;
-            if (*direction_p < DIR_NORTH)
-                return BIKE_TRANS_DOWNHILL;
-            else
-                return BIKE_TRANS_UPHILL;
+			return *direction_p < DIR_NORTH ? BIKE_TRANS_DOWNHILL : BIKE_TRANS_UPHILL;
         }
         else
         {
@@ -125,10 +121,7 @@ static u8 BikeInputHandler_Slope(u8 *direction_p, u16 newKeys, u16 heldKeys)
         {
             gPlayerAvatar.runningState = MOVING;
             gPlayerAvatar.acroBikeState = BIKE_STATE_SLOPE;
-            if (*direction_p < DIR_NORTH)
-                return BIKE_TRANS_DOWNHILL;
-            else
-                return BIKE_TRANS_UPHILL;
+			return *direction_p < DIR_NORTH ? BIKE_TRANS_DOWNHILL : BIKE_TRANS_UPHILL;
         }
     }
     gPlayerAvatar.acroBikeState = BIKE_STATE_NORMAL;
@@ -166,7 +159,7 @@ static void BikeTransition_MoveDirection(u8 direction)
     playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
     if (!CanBikeFaceDirectionOnRail(direction, playerObjEvent->currentMetatileBehavior))
     {
-        BikeTransition_FaceDirection(playerObjEvent->movementDirection);
+        PlayerFaceDirection(playerObjEvent->movementDirection);
     }
     else
     {
@@ -182,7 +175,7 @@ static void BikeTransition_MoveDirection(u8 direction)
         else
         {
             if (collision == COLLISION_GROUND_ROCKS)
-		PlayerOnBikeCollide(direction);
+				PlayerOnBikeCollide(direction);
             else if (collision == COLLISION_COUNT || PlayerIsMovingOnRockStairs(direction))
                 PlayerGoSpeed2(direction);
             else
@@ -210,13 +203,12 @@ static void BikeTransition_Uphill(u8 direction)
 u8 GetBikeCollision(u8 direction)
 {
     struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
-    s16 x, y;
+    s16 x = playerObjEvent->currentCoords.x, y = playerObjEvent->currentCoords.y;
     u8 metatileBehavior;
 
-    x = playerObjEvent->currentCoords.x;
-    y = playerObjEvent->currentCoords.y;
     MoveCoords(direction, &x, &y);
     metatileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+	
     return GetBikeCollisionAt(playerObjEvent, x, y, direction, metatileBehavior);
 }
 
@@ -226,30 +218,17 @@ static u8 GetBikeCollisionAt(struct ObjectEvent *playerObjEvent, s16 x, s16 y, u
 
     if (retVal <= COLLISION_OBJECT_EVENT)
     {
-        bool8 isCrackedIce = MetatileBehavior_IsCrackedIce(metatileBehavior);
-        if (isCrackedIce == TRUE)
-            return COLLISION_COUNT;
+        if (MetatileBehavior_IsCrackedIce(metatileBehavior))
+            retVal = COLLISION_COUNT;
         if (retVal == COLLISION_NONE && MetatileBehaviorForbidsBiking(metatileBehavior))
             retVal = COLLISION_IMPASSABLE;
     }
     return retVal;
 }
 
-bool32 IsRunningDisallowed(u8 metatileBehavior)
+bool8 MetatileBehaviorForbidsBiking(u8 metatileBehavior)
 {
-    if (MetatileBehaviorForbidsBiking(metatileBehavior) != TRUE)
-        return FALSE;
-    else
-        return TRUE;
-}
-
-static bool8 MetatileBehaviorForbidsBiking(u8 metatileBehavior)
-{
-    if (MetatileBehavior_IsRunningDisallowed(metatileBehavior))
-        return TRUE;
-    if (!MetatileBehavior_IsFortreeBridge(metatileBehavior))
-        return FALSE;
-    if (PlayerGetZCoord() & 1)
+    if (!MetatileBehavior_IsRunningDisallowed(metatileBehavior) && !MetatileBehavior_IsFortreeBridge(metatileBehavior) && (PlayerGetZCoord() & 1))
         return FALSE;
     return TRUE;
 }
@@ -286,11 +265,8 @@ bool8 IsBikingDisallowedByPlayer(void)
 
 bool8 IsPlayerNotUsingAcroBikeOnBumpySlope(void)
 {
-    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_ACRO_BIKE))
-    {
-        if (MetatileBehavior_IsBumpySlope(gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior))
-            return FALSE;
-    }
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_ACRO_BIKE) && MetatileBehavior_IsBumpySlope(gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior))
+		return FALSE;
     return TRUE;
 }
 

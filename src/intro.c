@@ -779,8 +779,8 @@ static void CB2_WaitFadeBeforeSetUpIntro(void)
 
 static void load_copyright_graphics(u16 charBase, u16 screenBase, u16 palOffset)
 {
-    LZ77UnCompVram(sCopyrightGraphicsTiles, (void *)BG_VRAM + charBase);
-    LZ77UnCompVram(sCopyrightGraphicsMap, (void *)BG_VRAM + screenBase);
+    LZDecompressVram(sCopyrightGraphicsTiles, (void *)BG_VRAM + charBase);
+    LZDecompressVram(sCopyrightGraphicsMap, (void *)BG_VRAM + screenBase);
     LoadPalette(sCopyrightGraphicsPal, palOffset, 0x20);
 }
 
@@ -985,8 +985,8 @@ static void IntroCB_Init(struct IntroSequenceData * this)
     {
     case 0:
         InitWindows(sWindowTemplate);
-        LZ77UnCompWram(sBlit_GameFreakText, this->gamefreakTextBitmap);
-        LZ77UnCompWram(sSpriteTiles_GameFreakLogoArt, this->gamefreakLogoArtSpriteTiles);
+        LZDecompressWram(sBlit_GameFreakText, this->gamefreakTextBitmap);
+        LZDecompressWram(sSpriteTiles_GameFreakLogoArt, this->gamefreakLogoArtSpriteTiles);
         FillBgTilemapBufferRect(2, 0x000, 0, 0, 32, 32, 0x11);
         FillWindowPixelBuffer(0, PIXEL_FILL(0));
         BlitBitmapToWindow(0, this->gamefreakTextBitmap, 0, 40, 144, 16);
@@ -1188,7 +1188,7 @@ static void IntroCB_FightScene(struct IntroSequenceData * this)
         {
             DecompressAndCopyTileDataToVram(0, sBg0Tiles_FightScene1, 0, 0, 0);
             DecompressAndCopyTileDataToVram(0, sBg0Map_FightScene1, 0, 0, 1);
-            ResetBgPositions();
+            ResetAllBgsPos();
             ShowBg(1);
             this->state++;
         }
@@ -1302,7 +1302,7 @@ static void IntroCB_FightScene2(struct IntroSequenceData * this)
             DecompressAndCopyTileDataToVram(1, sBg1Map_FightScene2, 0, 0, 1);
             DecompressAndCopyTileDataToVram(2, sBg2Tiles_FightScene2, 0, 0, 0);
             DecompressAndCopyTileDataToVram(2, sBg2Map_FightScene2, 0, 0, 1);
-            ResetBgPositions();
+            ResetAllBgsPos();
             ShowBg(0);
             HideBg(1);
             HideBg(2);
@@ -1414,7 +1414,7 @@ static void IntroCB_FightScene3(struct IntroSequenceData * this)
         HideBg(0);
         HideBg(2);
         HideBg(3);
-        ResetBgPositions();
+        ResetAllBgsPos();
         this->state++;
         SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON);
         SetGpuRegBits(REG_OFFSET_WININ, 0x12);

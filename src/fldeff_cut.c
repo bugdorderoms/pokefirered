@@ -125,7 +125,9 @@ bool8 SetUpFieldMove_Cut(void)
 {
     s16 x, y;
     u8 i, j;
+	
     sScheduleOpenDottedHole = FALSE;
+	
     if (CutMoveRuinValleyCheck() == TRUE)
     {
         sScheduleOpenDottedHole = TRUE;
@@ -209,7 +211,6 @@ bool8 FldEff_CutGrass(void)
     s16 x, y;
     u8 pos;
 
-    i = 0;
     PlaySE(SE_M_CUT);
     pos = gFieldEffectArguments[1] - 1;
     PlayerGetDestCoords(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
@@ -344,14 +345,21 @@ static void Task_FieldEffectShowMon_WaitFldeff(u8 taskId)
     if (!FieldEffectActiveListContains(FLDEFF_FIELD_MOVE_SHOW_MON))
     {
         gFieldEffectArguments[1] = GetPlayerFacingDirection();
-        if (gFieldEffectArguments[1] == DIR_SOUTH)
-            gFieldEffectArguments[2] = 0;
-        if (gFieldEffectArguments[1] == DIR_NORTH)
-            gFieldEffectArguments[2] = 1;
-        if (gFieldEffectArguments[1] == DIR_WEST)
-            gFieldEffectArguments[2] = 2;
-        if (gFieldEffectArguments[1] == DIR_EAST)
-            gFieldEffectArguments[2] = 3;
+		switch (gFieldEffectArguments[1])
+		{
+			case DIR_SOUTH:
+				gFieldEffectArguments[2] = 0;
+				break;
+			case DIR_NORTH:
+				gFieldEffectArguments[2] = 1;
+				break;
+			case DIR_WEST:
+				gFieldEffectArguments[2] = 2;
+				break;
+			case DIR_EAST:
+				gFieldEffectArguments[2] = 3;
+				break;
+		}
         ObjectEventSetGraphicsId(&gObjectEvents[gPlayerAvatar.objectEventId], GetPlayerAvatarGraphicsIdByCurrentState());
         StartSpriteAnim(&gSprites[gPlayerAvatar.spriteId], gFieldEffectArguments[2]);
         FieldEffectActiveListRemove(FLDEFF_FIELD_MOVE_SHOW_MON);

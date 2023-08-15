@@ -29,7 +29,6 @@ static void Task_Seagallop_3(void);
 static void ResetGPU(void);
 static void ResetAllAssets(void);
 static void SetDispcnt(void);
-static void ResetBGPos(void);
 static void LoadFerrySpriteResources(void);
 static void FreeFerrySpriteResources(void);
 static void CreateFerrySprite(void);
@@ -196,7 +195,7 @@ static void CB2_SetUpSeagallopScene(void)
         ResetBgsAndClearDma3BusyFlags(0);
         InitBgsFromTemplates(0, sBGTemplates, NELEMS(sBGTemplates));
         SetBgTilemapBuffer(3, *ptr);
-        ResetBGPos();
+        ResetAllBgsPos();
         gMain.state++;
         break;
     case 3:
@@ -365,18 +364,6 @@ static void ResetAllAssets(void)
 static void SetDispcnt(void)
 {
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
-}
-
-static void ResetBGPos(void)
-{
-    ChangeBgX(0, 0, 0);
-    ChangeBgY(0, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(3, 0, 0);
 }
 
 static void LoadFerrySpriteResources(void)

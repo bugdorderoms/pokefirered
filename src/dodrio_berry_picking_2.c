@@ -272,7 +272,7 @@ void sub_8153A9C(void)
     struct SpritePalette pal1 = {sDodrioBerryPkmnPal, 0};
     struct SpritePalette pal2 = {sDodrioBerryShinyPal, 1};
 
-    LZ77UnCompWram(sDodrioBerryPkmnGfx, ptr);
+    LZDecompressWram(sDodrioBerryPkmnGfx, ptr);
     // This check should be one line up.
     if (ptr != NULL)
     {
@@ -428,7 +428,7 @@ void sub_8153E28(void)
     void *ptr = AllocZeroed(0x180);
     struct SpritePalette spPal = {sDodrioBerryStatusPal, 2};
 
-    LZ77UnCompWram(sDodrioBerryStatusGfx, ptr);
+    LZDecompressWram(sDodrioBerryStatusGfx, ptr);
     // This check should be one line up.
     if (ptr != NULL)
     {
@@ -553,7 +553,7 @@ void sub_8154128(void)
     void *ptr = AllocZeroed(0x480);
     struct SpritePalette sprPal = {sDodrioBerrySpritesPal, 3};
 
-    LZ77UnCompWram(sDodrioBerrySpritesGfx, ptr);
+    LZDecompressWram(sDodrioBerrySpritesGfx, ptr);
     if (ptr != NULL) // This should be one line up
     {
         struct SpriteSheet sprSheet = {ptr, 0x480, 2};
@@ -696,7 +696,7 @@ void sub_8154438(void)
     void *ptr = AllocZeroed(0x400);
     struct SpritePalette sprPal = {sDodrioBerryPlatformPal, 6};
 
-    LZ77UnCompWram(sDodrioBerryPlatformGfx, ptr);
+    LZDecompressWram(sDodrioBerryPlatformGfx, ptr);
     if (ptr != NULL) // This should be one line up
     {
         struct SpriteSheet sprSheet = {ptr, 0x400, 5};
@@ -1561,14 +1561,7 @@ static void sub_8155EA0(void)
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
     ResetBgsAndClearDma3BusyFlags(FALSE);
     InitBgsFromTemplates(0, sUnknown_847565C, NELEMS(sUnknown_847565C));
-    ChangeBgX(0, 0, 0);
-    ChangeBgY(0, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(3, 0, 0);
+    ResetAllBgsPos();
     InitStandardTextBoxWindows();
     InitTextBoxGfxAndPrinters();
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_OBJ_1D_MAP);

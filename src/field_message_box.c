@@ -7,9 +7,6 @@
 
 static EWRAM_DATA u8 sMessageBoxType = 0;
 
-static void textbox_fdecode_auto_and_task_add(const u8 *str);
-static void textbox_auto_and_task_add(void);
-
 void InitFieldMessageBox(void)
 {
     sMessageBoxType = 0;
@@ -53,16 +50,11 @@ static void Task_RunFieldMessageBoxPrinter(u8 taskId)
     }
 }
 
-static void task_add_textbox(void)
+static void textbox_fdecode_auto_and_task_add(const u8 *str)
 {
+    StringExpandPlaceholders(gStringVar4, str);
+    AddTextPrinterDiffStyle(TRUE);
     CreateTask(Task_RunFieldMessageBoxPrinter, 80);
-}
-
-static void task_del_textbox(void)
-{
-    u8 taskId = FindTaskIdByFunc(Task_RunFieldMessageBoxPrinter);
-    if (taskId != 0xFF)
-        DestroyTask(taskId);
 }
 
 bool8 ShowFieldMessage(const u8 *str)
@@ -83,38 +75,11 @@ bool8 ShowFieldAutoScrollMessage(const u8 *str)
     return TRUE;
 }
 
-bool8 sub_806948C(const u8 *str)
-{
-    sMessageBoxType = 3;
-    textbox_fdecode_auto_and_task_add(str);
-    return TRUE;
-}
-
-bool8 sub_80694A4(const u8 *str)
-{
-    if (sMessageBoxType != 0)
-        return FALSE;
-    sMessageBoxType = 2;
-    textbox_auto_and_task_add();
-    return TRUE;
-}
-
-static void textbox_fdecode_auto_and_task_add(const u8 *str)
-{
-    StringExpandPlaceholders(gStringVar4, str);
-    AddTextPrinterDiffStyle(TRUE);
-    task_add_textbox();
-}
-
-static void textbox_auto_and_task_add(void)
-{
-    AddTextPrinterDiffStyle(TRUE);
-    task_add_textbox();
-}
-
 void HideFieldMessageBox(void)
 {
-    task_del_textbox();
+	u8 taskId = FindTaskIdByFunc(Task_RunFieldMessageBoxPrinter);
+    if (taskId != 0xFF)
+        DestroyTask(taskId);
     ClearDialogWindowAndFrame(0, TRUE);
     sMessageBoxType = 0;
 }
@@ -130,11 +95,4 @@ bool8 IsFieldMessageBoxHidden(void)
         return TRUE;
     else
         return FALSE;
-}
-
-void sub_8069538(void)
-{
-    task_del_textbox();
-    DrawStdWindowFrame(0, TRUE);
-    sMessageBoxType = 0;
 }

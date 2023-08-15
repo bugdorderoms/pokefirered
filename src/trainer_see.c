@@ -352,9 +352,8 @@ static bool8 TrainerSeeFunc_PrepareToEngage(u8 taskId, struct Task * task, struc
     if (ObjectEventIsMovementOverridden(playerObj) && !ObjectEventClearHeldMovementIfFinished(playerObj))
         return FALSE;
 
-    CancelPlayerForcedMovement();
-    // Uncomment to have player turn to face their opponent
-    // ObjectEventSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], GetFaceDirectionMovementAction(GetOppositeDirection(trainerObj->facingDirection)));
+    ForcedMovement_None(); // Cancel player forced movement
+    ObjectEventSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], GetFaceDirectionMovementAction(GetOppositeDirection(trainerObj->facingDirection)));
     task->tFuncId++;
     return FALSE;
 }
@@ -495,7 +494,7 @@ static bool8 TrainerSeeFunc_OffscreenAboveTrainerCameraObjMoveDown(u8 taskId, st
     }
     else
     {
-        CameraObjectSetFollowedObjectId(GetPlayerAvatarObjectId());
+        CameraObjectSetFollowedObjectId(gPlayerAvatar.spriteId);
         RemoveObjectEventByLocalIdAndMap(OBJ_EVENT_ID_CAMERA, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
         task->tData5 = 0;
         task->tFuncId = 2;

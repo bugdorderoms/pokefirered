@@ -40,12 +40,14 @@ static void SetFlashScanlineEffectWindowBoundary(u16 *dest, u32 y, s32 left, s32
     {
         if (left < 0)
             left = 0;
-        if (left > 255)
+        else if (left > 255)
             left = 255;
+		
         if (right < 0)
             right = 0;
-        if (right > 255)
+        else if (right > 255)
             right = 255;
+		
         dest[y] = (left << 8) | right;
     }
 }
@@ -175,12 +177,8 @@ static u8 sub_807EFC8(s32 centerX, s32 centerY, s32 initialFlashRadius, s32 dest
     tFlashCenterX = centerX;
     tFlashCenterY = centerY;
     tClearScanlineEffect = clearScanlineEffect;
-
-    if (initialFlashRadius < destFlashRadius)
-        tFlashRadiusDelta = delta;
-    else
-        tFlashRadiusDelta = -delta;
-
+	tFlashRadiusDelta = initialFlashRadius < destFlashRadius ? delta : -delta;
+    
     return taskId;
 }
 
@@ -192,11 +190,7 @@ static u8 sub_807EFC8(s32 centerX, s32 centerY, s32 initialFlashRadius, s32 dest
 
 void AnimateFlash(u8 flashLevel)
 {
-    u8 curFlashLevel = Overworld_GetFlashLevel();
-    bool32 value = FALSE;
-    if (!flashLevel)
-        value = TRUE;
-    sub_807EFC8(120, 80, sFlashLevelPixelRadii[curFlashLevel], sFlashLevelPixelRadii[flashLevel], value, 2);
+    sub_807EFC8(120, 80, sFlashLevelPixelRadii[Overworld_GetFlashLevel()], sFlashLevelPixelRadii[flashLevel], (flashLevel == 0), 2);
     sub_807EFA4();
     ScriptContext2_Enable();
 }
@@ -233,14 +227,12 @@ static void Task_EnableScriptAfterMusicFade(u8 taskId)
 
 static void DoInwardBarnDoorFade(void)
 {
-    u8 taskId = CreateTask(Task_BarnDoorWipe, 80);
-    gTasks[taskId].tDirection = DIR_WIPE_IN;
+    gTasks[CreateTask(Task_BarnDoorWipe, 80)].tDirection = DIR_WIPE_IN;
 }
 
 void DoOutwardBarnDoorWipe(void)
 {
-    u8 taskId = CreateTask(Task_BarnDoorWipe, 80);
-    gTasks[taskId].tDirection = DIR_WIPE_OUT;
+    gTasks[CreateTask(Task_BarnDoorWipe, 80)].tDirection = DIR_WIPE_OUT;
 }
 
 static void BarnDoorWipeSaveGpuRegs(u8 taskId)
@@ -318,9 +310,9 @@ void Task_BarnDoorWipe(u8 taskId)
 static void Task_BarnDoorWipeChild(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
-	u8 parentTaskId = FindTaskIdByFunc(Task_BarnDoorWipe);
     s16 lhs, rhs;
-    if (gTasks[parentTaskId].tDirection == DIR_WIPE_IN)
+	
+    if (gTasks[FindTaskIdByFunc(Task_BarnDoorWipe)].tDirection == DIR_WIPE_IN)
     {
         lhs = tChildOffset;
         rhs = 240 - tChildOffset;
@@ -398,11 +390,8 @@ static void Task_RushInjuredPokemonToCenter(u8 taskId)
         PutWindowTilemap(windowId);
         CopyWindowToVram(windowId, COPYWIN_BOTH);
         loc = GetHealLocation(1);
-        if (gSaveBlock1Ptr->lastHealLocation.mapGroup == loc->group
-         && gSaveBlock1Ptr->lastHealLocation.mapNum == loc->map
-         && gSaveBlock1Ptr->lastHealLocation.warpId == -1
-         && gSaveBlock1Ptr->lastHealLocation.x == loc->x
-         && gSaveBlock1Ptr->lastHealLocation.y == loc->y)
+        if (gSaveBlock1Ptr->lastHealLocation.mapGroup == loc->group && gSaveBlock1Ptr->lastHealLocation.mapNum == loc->map
+         && gSaveBlock1Ptr->lastHealLocation.warpId == -1 && gSaveBlock1Ptr->lastHealLocation.x == loc->x && gSaveBlock1Ptr->lastHealLocation.y == loc->y)
             gTasks[taskId].data[0] = 4;
         else
             gTasks[taskId].data[0] = 1;
@@ -450,10 +439,7 @@ static void Task_RushInjuredPokemonToCenter(u8 taskId)
 
 void FieldCB_RushInjuredPokemonToCenter(void)
 {
-    u8 taskId;
-
     ScriptContext2_Enable();
     palette_bg_faded_fill_black();
-    taskId = CreateTask(Task_RushInjuredPokemonToCenter, 10);
-    gTasks[taskId].data[0] = 0;
+    gTasks[CreateTask(Task_RushInjuredPokemonToCenter, 10)].data[0] = 0;
 }

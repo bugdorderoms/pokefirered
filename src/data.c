@@ -108,12 +108,6 @@ static const union AffineAnimCmd gSpriteAffineAnim_82347F8[] =
     AFFINEANIMCMD_END,
 };
 
-static const union AffineAnimCmd gSpriteAffineAnim_8234808[] =
-{
-    AFFINEANIMCMD_FRAME(0xff00, 0x0100, 0x00, 0x00),
-    AFFINEANIMCMD_END,
-};
-
 static const union AffineAnimCmd gSpriteAffineAnim_8234818[] =
 {
     AFFINEANIMCMD_FRAME(0x0028, 0x0028, 0x00, 0x00),
@@ -211,21 +205,6 @@ static const union AffineAnimCmd gSpriteAffineAnim_8234934[] =
 const union AffineAnimCmd *const gSpriteAffineAnimTable_BattlerOpponent[] =
 {
     gSpriteAffineAnim_82347F8,
-    gSpriteAffineAnim_8234818,
-    gSpriteAffineAnim_8234830,
-    gSpriteAffineAnim_8234848,
-    gSpriteAffineAnim_8234868,
-    gSpriteAffineAnim_8234878,
-    gSpriteAffineAnim_82348EC,
-    gSpriteAffineAnim_82348FC,
-    gSpriteAffineAnim_8234914,
-    gSpriteAffineAnim_8234888,
-    gSpriteAffineAnim_8234934,
-};
-
-const union AffineAnimCmd *const gSpriteAffineAnimTable_82349470[] =
-{
-    gSpriteAffineAnim_8234808,
     gSpriteAffineAnim_8234818,
     gSpriteAffineAnim_8234830,
     gSpriteAffineAnim_8234848,

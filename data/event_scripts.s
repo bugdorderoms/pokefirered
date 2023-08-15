@@ -2,7 +2,6 @@
 #include "constants/flags.h"
 #include "constants/event_objects.h"
 #include "constants/event_object_movement.h"
-#include "constants/decorations.h"
 #include "constants/items.h"
 #include "constants/layouts.h"
 #include "constants/maps.h"

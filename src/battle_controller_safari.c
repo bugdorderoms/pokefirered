@@ -483,7 +483,7 @@ static void SafariHandleExpUpdate(void)
 
 static void SafariHandleStatusIconUpdate(void)
 {
-    UpdateHealthboxAttribute(gHealthboxSpriteIds[gActiveBattler], &gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], HEALTHBOX_SAFARI_BALLS_TEXT);
+    UpdateHealthboxAttribute(gActiveBattler, HEALTHBOX_SAFARI_BALLS_TEXT);
     SafariBufferExecCompleted();
 }
 
@@ -602,7 +602,7 @@ static void SafariHandleIntroSlide(void)
 
 static void SafariHandleIntroTrainerBallThrow(void)
 {
-    UpdateHealthboxAttribute(gHealthboxSpriteIds[gActiveBattler], &gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], HEALTHBOX_SAFARI_ALL_TEXT);
+    UpdateHealthboxAttribute(gActiveBattler, HEALTHBOX_SAFARI_ALL_TEXT);
     StartHealthboxSlideIn(gActiveBattler);
     SetHealthboxSpriteVisible(gHealthboxSpriteIds[gActiveBattler]);
     gBattlerControllerFuncs[gActiveBattler] = CompleteOnHealthboxSpriteCallbackDummy;

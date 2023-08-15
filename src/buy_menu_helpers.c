@@ -157,10 +157,7 @@ static const u8 sShopBuyMenuTextColors[][3] =
 
 void BuyMenuInitWindows(bool32 isSellingTM)
 {
-    if (isSellingTM != TRUE)
-        InitWindows(sShopBuyMenuWindowTemplatesNormal);
-    else
-        InitWindows(sShopBuyMenuWindowTemplatesTM);
+	InitWindows(isSellingTM ? sShopBuyMenuWindowTemplatesTM : sShopBuyMenuWindowTemplatesNormal);
     DeactivateAllTextPrinters();
     TextWindow_SetUserSelectedFrame(0, 0x1, 0xD0);
     TextWindow_LoadResourcesStdFrame0(0, 0x13, 0xE0);
@@ -168,13 +165,9 @@ void BuyMenuInitWindows(bool32 isSellingTM)
     PutWindowTilemap(0);
     PutWindowTilemap(4);
     PutWindowTilemap(5);
-    if (isSellingTM == TRUE)
+	
+    if (isSellingTM)
         PutWindowTilemap(6);
-}
-
-void BuyMenuDrawMoneyBox(void)
-{
-    PrintMoneyAmountInMoneyBoxWithBorder(0, 0xA, 0xF, GetMoney(&gSaveBlock1Ptr->money));
 }
 
 void BuyMenuPrint(u8 windowId, u8 font, const u8 *text, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 color)
@@ -186,16 +179,6 @@ void BuyMenuDisplayMessage(u8 taskId, const u8 *text, TaskFunc callback)
 {
     DisplayMessageAndContinueTask(taskId, 2, 0x13, 0xE, GetMartUnk16_4(), GetTextSpeedSetting(), text, callback);
     ScheduleBgCopyTilemapToVram(0);
-}
-
-void BuyMenuQuantityBoxNormalBorder(u8 windowId, bool8 copyToVram)
-{
-    DrawStdFrameWithCustomTileAndPalette(windowId, copyToVram, 0x1, 0xD);
-}
-
-void BuyMenuQuantityBoxThinBorder(u8 windowId, bool8 copyToVram)
-{
-    DrawStdFrameWithCustomTileAndPalette(windowId, copyToVram, 0xA, 0xF);
 }
 
 void BuyMenuConfirmPurchase(u8 taskId, const struct YesNoFuncTable *yesNo)

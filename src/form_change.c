@@ -137,7 +137,7 @@ u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 a
 					    if (param == gSpecialVar_ItemId)
 						{
 							targetSpecies = formsTable[i].targetSpecies;
-								
+							
 							if (species == targetSpecies && formsTable[i].param2) // if already transformed revert to it's original form
 							    targetSpecies = formsTable[i].param2;
 						}

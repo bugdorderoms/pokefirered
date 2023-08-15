@@ -170,7 +170,6 @@ static void Task_CleanUpAndSoftReset(u8 taskId)
             FreeAllWindowBuffers();
             FREE_AND_SET_NULL(sClearSaveDataState);
             DoSoftReset();
-            // noreturn
         }
         break;
     }
@@ -193,14 +192,7 @@ static void SaveClearScreen_GpuInit(void)
     SetGpuReg(REG_OFFSET_BLDY, 0);
     ResetBgsAndClearDma3BusyFlags(FALSE);
     InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
-    ChangeBgX(0, 0, 0);
-    ChangeBgY(0, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(3, 0, 0);
+    ResetAllBgsPos();
     InitWindows(sWindowTemplates);
     DeactivateAllTextPrinters();
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON);

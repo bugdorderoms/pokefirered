@@ -8,7 +8,6 @@ static const bool8 sTileSurfable[METATILE_COUNT] = {
     [MB_DEEP_WATER] = TRUE,
     [MB_WATERFALL] = TRUE,
     [MB_OCEAN_WATER] = TRUE,
-    [MB_1A] = TRUE,
     [MB_1B] = TRUE,
     [MB_EASTWARD_CURRENT] = TRUE,
     [MB_WESTWARD_CURRENT] = TRUE,
@@ -91,7 +90,6 @@ bool8 MetatileBehavior_IsReflective(u8 metatileBehavior)
 {
     if(metatileBehavior == MB_POND_WATER
         || metatileBehavior == MB_PUDDLE
-        || metatileBehavior == MB_1A
         || metatileBehavior == MB_1B
         || metatileBehavior == MB_ICE)
         return TRUE;
@@ -523,9 +521,9 @@ bool8 MetatileBehavior_IsDeepSemiDeepOrSplashingWater(u8 metatileBehavior)
         return FALSE;
 }
 
-bool8 MetatileBehavior_UnusedIsMB1A(u8 metatileBehavior)
+bool8 MetatileBehavior_IsStrengthHole(u8 metatileBehavior)
 {
-    if(metatileBehavior == MB_1A)
+    if(metatileBehavior == MB_STRENGTH_HOLE)
         return TRUE;
     else
         return FALSE;

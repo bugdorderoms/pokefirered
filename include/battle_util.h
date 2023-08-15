@@ -108,7 +108,6 @@ u8 GetBattlerHoldEffectParam(u8 battlerId);
 u16 GetBattlerAbility(u8 battler);
 u16 SetBattlerAbility(u8 battlerId, u16 newAbility);
 u16 SuppressBattlerAbility(u8 battlerId);
-struct Pokemon *GetIllusionMonPtr(u8 battler);
 void ClearIllusionMon(u8 battler);
 bool8 TryRemoveIllusion(u8 battler);
 bool8 ReceiveSheerForceBoost(u8 battler, u16 move);
@@ -155,5 +154,8 @@ u8 GetBattleMonForItemUse(u8 partyIndex);
 bool8 IsItemUseBlockedByBattleEffect(void);
 const u8 *PokemonUseItemEffectsBattle(u8 battlerId, u16 itemId, bool8 *canUse);
 bool8 IsBattleAnimationsOn(void);
+struct Pokemon *GetBattlerParty(u8 battlerId);
+struct Pokemon *GetBattlerPartyIndexPtr(u8 battlerId);
+struct Pokemon *GetBattlerIllusionPartyIndexPtr(u8 battlerId);
 
 #endif // GUARD_BATTLE_UTIL_H

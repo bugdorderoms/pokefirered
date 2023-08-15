@@ -375,14 +375,7 @@ bool32 HandleMysteryGiftOrEReaderSetup(s32 mg_or_ereader)
         ResetBgsAndClearDma3BusyFlags(1);
 
         InitBgsFromTemplates(0, sBGTemplates, NELEMS(sBGTemplates));
-        ChangeBgX(0, 0, 0);
-        ChangeBgY(0, 0, 0);
-        ChangeBgX(1, 0, 0);
-        ChangeBgY(1, 0, 0);
-        ChangeBgX(2, 0, 0);
-        ChangeBgY(2, 0, 0);
-        ChangeBgX(3, 0, 0);
-        ChangeBgY(3, 0, 0);
+        ResetAllBgsPos();
 
         SetBgTilemapBuffer(3, Alloc(0x800));
         SetBgTilemapBuffer(2, Alloc(0x800));

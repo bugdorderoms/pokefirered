@@ -2103,7 +2103,7 @@ static void SetScrollingBackground(void)
 {
     SetGpuReg(REG_OFFSET_BG3CNT, BGCNT_PRIORITY(3) | BGCNT_CHARBASE(3) | BGCNT_16COLOR | BGCNT_SCREENBASE(31));
     DecompressAndLoadBgGfxUsingHeap(3, sPokemonStorageScrollingBGTileset, 0, 0, 0);
-    LZ77UnCompVram(sPokemonStorageScrollingBGTilemap, (void *)BG_SCREEN_ADDR(31));
+    LZDecompressVram(sPokemonStorageScrollingBGTilemap, (void *)BG_SCREEN_ADDR(31));
 }
 
 static void ScrollBackground(void)
@@ -2116,7 +2116,7 @@ static void LoadPSSMenuGfx(void)
 {
     InitBgsFromTemplates(0, gUnknown_83CEA50, NELEMS(gUnknown_83CEA50));
     DecompressAndLoadBgGfxUsingHeap(1, gPSSMenu_Gfx, 0, 0, 0);
-    LZ77UnCompWram(gUnknown_83CE5FC, gPSSData->field_5AC4);
+    LZDecompressWram(gUnknown_83CE5FC, gPSSData->field_5AC4);
     SetBgTilemapBuffer(1, gPSSData->field_5AC4);
     ShowBg(1);
     ScheduleBgCopyTilemapToVram(1);
@@ -2270,7 +2270,7 @@ static void LoadCursorMonGfx(u16 species, u32 pid)
     if (species != SPECIES_NONE)
     {
         HandleLoadSpecialPokePic(&gMonFrontPicTable[species], gPSSData->field_22C4, species, pid);
-        LZ77UnCompWram(gPSSData->cursorMonPalette, gPSSData->field_2244);
+        LZDecompressWram(gPSSData->cursorMonPalette, gPSSData->field_2244);
         CpuCopy32(gPSSData->field_22C4, gPSSData->field_223C, 0x800);
         LoadPalette(gPSSData->field_2244, gPSSData->field_223A, 0x20);
         gPSSData->cursorMonSprite->invisible = FALSE;
@@ -2338,7 +2338,7 @@ static void sub_808F5E8(void)
 
 static void sub_808F68C(void)
 {
-    LZ77UnCompWram(gUnknown_8E9CAEC, gPSSData->field_B0);
+    LZDecompressWram(gUnknown_8E9CAEC, gPSSData->field_B0);
     LoadPalette(gPSSMenu_Pal, 0x10, 0x20);
     SetBoxPartyPokemonDropdownMap2(1, 1, gPSSData->field_B0, 12, 22);
     SetBoxPartyPokemonDropdownMap2(2, 1, gUnknown_83CE778, 9, 4);

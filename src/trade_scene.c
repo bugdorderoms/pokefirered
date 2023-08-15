@@ -1147,7 +1147,7 @@ static void SetTradeSequenceBgGpuRegs(u8 state)
         if (!sTradeData->isCableTrade)
         {
             SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG1_ON | DISPCNT_OBJ_ON);
-            LZ77UnCompVram(sWirelessCloseupMap, (void *)BG_SCREEN_ADDR(5));
+            LZDecompressVram(sWirelessCloseupMap, (void *)BG_SCREEN_ADDR(5));
             BlendPalettes(0x000000008, 0x10, RGB_BLACK);
         }
         else
@@ -1159,8 +1159,8 @@ static void SetTradeSequenceBgGpuRegs(u8 state)
         break;
     case 3:
         LoadPalette(sWirelessSignalAnimPals_Off, 0x30, 0x20);
-        LZ77UnCompVram(sWirelessSignal4bpp, BG_CHAR_ADDR(1));
-        LZ77UnCompVram(sWirelessSignalTilemap, BG_SCREEN_ADDR(18));
+        LZDecompressVram(sWirelessSignal4bpp, BG_CHAR_ADDR(1));
+        LZDecompressVram(sWirelessSignalTilemap, BG_SCREEN_ADDR(18));
         sTradeData->bg2vofs = 0x50;
         SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
         break;

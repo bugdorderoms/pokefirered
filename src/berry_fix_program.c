@@ -61,8 +61,8 @@ static void mb_berry_fix_print(int scene)
     REG_BG0HOFS = 0;
     REG_BG0VOFS = 0;
     REG_BLDCNT = 0;
-    LZ77UnCompVram(gUnknown_847A890[scene][0], (void *)BG_CHAR_ADDR(0));
-    LZ77UnCompVram(gUnknown_847A890[scene][1], (void *)BG_SCREEN_ADDR(31));
+    LZDecompressVram(gUnknown_847A890[scene][0], (void *)BG_CHAR_ADDR(0));
+    LZDecompressVram(gUnknown_847A890[scene][1], (void *)BG_SCREEN_ADDR(31));
     CpuCopy16(gUnknown_847A890[scene][2], (void *)BG_PLTT, 0x200);
     REG_BG0CNT = BGCNT_PRIORITY(0) | BGCNT_CHARBASE(0) | BGCNT_16COLOR | BGCNT_SCREENBASE(31) | BGCNT_TXT256x256;
     REG_DISPCNT = DISPCNT_BG0_ON;

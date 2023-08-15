@@ -15,12 +15,6 @@
 #include "constants/maps.h"
 #include "constants/field_weather.h"
 
-#if defined(FIRERED)
-#define TITLE_TEXT gString_PokemonFireRed_Staff
-#elif defined(LEAFGREEN)
-#define TITLE_TEXT gString_PokemonLeafGreen_Staff
-#endif
-
 enum CreditsSceneIdx
 {
     CREDITSSCENE_INIT_WIN0 = 0,
@@ -732,7 +726,6 @@ static void CB2_Credits(void)
         gDisableMapMusicChangeOnMapLoad = MUSIC_DISABLE_OFF;
         Free(sCreditsMgr);
         SoftReset(RESET_ALL);
-        // noreturn
     }
 }
 
@@ -770,7 +763,7 @@ static void DestroyCreditsWindow(void)
     }
 }
 
-static bool32 DoOverworldMapScrollScene(UNUSED u8 unused)
+static bool32 DoOverworldMapScrollScene(void)
 {
     switch (sCreditsMgr->subseqno)
     {
@@ -850,7 +843,7 @@ static s32 RollCredits(void)
             
         }
         sCreditsMgr->timer = 360;
-        AddTextPrinterParameterized4(sCreditsMgr->windowId, 1, 0x08, 0x29, 1, 2, sTextColor_Header, 0, TITLE_TEXT);
+        AddTextPrinterParameterized4(sCreditsMgr->windowId, 1, 0x08, 0x29, 1, 2, sTextColor_Header, 0, gString_PokemonFireRed_Staff);
         sCreditsMgr->mainseqno = CREDITSSCENE_WAIT_TITLE_STAFF;
         return 0;
     case CREDITSSCENE_WAIT_TITLE_STAFF:
@@ -931,7 +924,7 @@ static s32 RollCredits(void)
         }
         return 0;
     case CREDITSSCENE_MAPNEXT_LOADMAP:
-        if (DoOverworldMapScrollScene(sCreditsMgr->whichMon))
+        if (DoOverworldMapScrollScene())
         {
             sCreditsMgr->canSpeedThrough = 1;
             sCreditsMgr->mainseqno = CREDITSSCENE_EXEC_CMD;
@@ -942,8 +935,8 @@ static s32 RollCredits(void)
         {
             DestroyCreditsWindow();
             sCreditsMgr->subseqno = 0;
-            while (!DoOverworldMapScrollScene(sCreditsMgr->whichMon))
-            {}
+            while (!DoOverworldMapScrollScene());
+			
             switch (sCreditsMgr->whichMon)
             {
             case 3:
@@ -1078,9 +1071,8 @@ static u16 GetCreditsMonSpecies(u8 whichMon)
         return SPECIES_BLASTOISE;
     case CREDITSMON_PIKACHU:
         return SPECIES_PIKACHU;
-    default:
-        return SPECIES_NONE;
     }
+	return SPECIES_NONE;
 }
 
 static bool32 DoCreditsMonScene(void)
@@ -1245,10 +1237,7 @@ static bool32 DoCopyrightOrTheEndGfxScene(void)
         break;
     case 2:
         ShowBg(0);
-        if (sCreditsMgr->whichMon != 0)
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0, RGB_BLACK);
-        else
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+		BeginNormalPaletteFade(0xFFFFFFFF, 0, sCreditsMgr->whichMon != 0 ? 0 : 16, 0, RGB_BLACK);
         sCreditsMgr->subseqno++;
         break;
     case 3:

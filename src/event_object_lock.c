@@ -8,10 +8,7 @@
 
 bool8 walkrun_is_standing_still(void)
 {
-    if (gPlayerAvatar.tileTransitionState == 1)
-        return FALSE;
-    else
-        return TRUE;
+	return (gPlayerAvatar.tileTransitionState != 1);
 }
 
 void Task_WaitPlayerStopMoving(u8 taskId)
@@ -94,11 +91,9 @@ void ClearPlayerHeldMovementAndUnfreezeObjectEvents(void)
 
 void UnionRoom_UnlockPlayerAndChatPartner(void)
 {
-    u8 objectEventId;
     if (gObjectEvents[gSelectedObjectEvent].active)
         ObjectEventClearHeldMovementIfFinished(&gObjectEvents[gSelectedObjectEvent]);
-    objectEventId = GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0);
-    ObjectEventClearHeldMovementIfFinished(&gObjectEvents[objectEventId]);
+    ObjectEventClearHeldMovementIfFinished(&gObjectEvents[GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0)]);
     ScriptMovement_UnfreezeObjectEvents();
     UnfreezeObjectEvents();
 }

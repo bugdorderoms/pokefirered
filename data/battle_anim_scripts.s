@@ -4,36 +4,12 @@
 #include "constants/moves.h"
 	.include "asm/macros.inc"
 	.include "asm/macros/battle_anim_script.inc"
-
-#define FALSE 0
-#define TRUE 1
+	.include "constants/constants.inc"
 
 #define RGB(r, g, b) ((r) | ((g) << 5) | ((b) << 10))
 #define RGB_BLACK 0x0000
 #define RGB_WHITE 0x7FFF
 #define RGB_WHITEALPHA 0xFFFF
-
-// BLDCNT
-// Bits 0-5 select layers for the 1st target
-#define BLDCNT_TGT1_BG0      (1 << 0)
-#define BLDCNT_TGT1_BG1      (1 << 1)
-#define BLDCNT_TGT1_BG2      (1 << 2)
-#define BLDCNT_TGT1_BG3      (1 << 3)
-#define BLDCNT_TGT1_OBJ      (1 << 4)
-#define BLDCNT_TGT1_BD       (1 << 5)
-// Bits 6-7 select the special effect
-#define BLDCNT_EFFECT_NONE      (0 << 6)   // no special effect
-#define BLDCNT_EFFECT_BLEND     (1 << 6)   // 1st+2nd targets mixed (controlled by BLDALPHA)
-#define BLDCNT_EFFECT_LIGHTEN   (2 << 6)   // 1st target becomes whiter (controlled by BLDY)
-#define BLDCNT_EFFECT_DARKEN    (3 << 6)   // 1st target becomes blacker (controlled by BLDY)
-// Bits 8-13 select layers for the 2nd target
-#define BLDCNT_TGT2_BG0      (1 << 8)
-#define BLDCNT_TGT2_BG1      (1 << 9)
-#define BLDCNT_TGT2_BG2      (1 << 10)
-#define BLDCNT_TGT2_BG3      (1 << 11)
-#define BLDCNT_TGT2_OBJ      (1 << 12)
-#define BLDCNT_TGT2_BD       (1 << 13)
-#define BLDCNT_TGT2_ALL      (BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD)
 
 	.section script_data, "aw", %progbits
 
@@ -8389,7 +8365,7 @@ Move_TRANSFORM:: @ 81D2811
 	monbg ANIM_ATTACKER
 	playsewithpan SE_M_TELEPORT, 192
 	waitplaysewithpan SE_M_MINIMIZE, 192, 48
-	createvisualtask AnimTask_TransformMon, 2, 0
+	createvisualtask AnimTask_TransformMon, 2, 
 	waitforvisualfinish
 	clearmonbg ANIM_ATTACKER
 	end
@@ -10893,7 +10869,7 @@ General_SilphScoped:: @ 81D637B
 	monbg ANIM_ATTACKER
 	playsewithpan SE_M_TELEPORT, 192
 	waitplaysewithpan SE_M_MINIMIZE, 192, 48
-	createvisualtask AnimTask_TransformMon, 2, 255
+	createvisualtask AnimTask_TransformMon, 2, SPECIESGFX_FLAG_IS_GHOST
 	waitsound
 	waitforvisualfinish
 	clearmonbg ANIM_ATTACKER
@@ -10968,7 +10944,7 @@ General_RemoveAbilityPopUp::
 
 General_FormChange::
     monbg ANIM_TARGET
-	createvisualtask AnimTask_TransformMon, 2, 0, 1
+	createvisualtask AnimTask_TransformMon, 2, SPECIESGFX_FLAG_NO_TRANSFORM_PALFADE
 	waitforvisualfinish
 	clearmonbg ANIM_TARGET
 	end

@@ -32,9 +32,6 @@ struct BPPD_Struct
 static EWRAM_DATA struct BPPD_Struct * sBoxPartyPokemonDropdownPtr = NULL;
 static EWRAM_DATA u16 sBoxPartyPokemonDropdownCount = 0;
 
-static void PushMap1(u8 idx);
-static void PushMap2(u8 idx);
-
 static const struct {
     u16 height;
     u16 width;
@@ -51,6 +48,26 @@ static const struct {
         {0x0400, 0x0400}
     }
 };
+
+static void PushMap1(u8 idx)
+{
+    int i;
+    int run = sBoxPartyPokemonDropdownPtr[idx].mapSize * sBoxPartyPokemonDropdownPtr[idx].src1Height;
+    const void * addr = sBoxPartyPokemonDropdownPtr[idx].src1 + run * sBoxPartyPokemonDropdownPtr[idx].map1Rect.destY2 + sBoxPartyPokemonDropdownPtr[idx].map1Rect.destX2 * sBoxPartyPokemonDropdownPtr[idx].mapSize;
+    
+	for (i = 0; i < sBoxPartyPokemonDropdownPtr[idx].map1Rect.height; i++, addr += run)
+        CopyToBgTilemapBufferRect(sBoxPartyPokemonDropdownPtr[idx].bgId, addr, sBoxPartyPokemonDropdownPtr[idx].map1Rect.destX2, sBoxPartyPokemonDropdownPtr[idx].map1Rect.destY2 + i, sBoxPartyPokemonDropdownPtr[idx].map1Rect.width, 1);
+}
+
+static void PushMap2(u8 idx)
+{
+    int i;
+    int run = sBoxPartyPokemonDropdownPtr[idx].mapSize * sBoxPartyPokemonDropdownPtr[idx].src2Width;
+    const void * addr = sBoxPartyPokemonDropdownPtr[idx].src2 + run * sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY + sBoxPartyPokemonDropdownPtr[idx].map2Rect.destX * sBoxPartyPokemonDropdownPtr[idx].mapSize;
+    
+	for (i = 0; i < sBoxPartyPokemonDropdownPtr[idx].map2Rect.height; i++, addr += run)
+        CopyToBgTilemapBufferRect(sBoxPartyPokemonDropdownPtr[idx].bgId, addr, sBoxPartyPokemonDropdownPtr[idx].map2Rect.destX2, sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY2 + i, sBoxPartyPokemonDropdownPtr[idx].map2Rect.width, 1);
+}
 
 void AllocBoxPartyPokemonDropdowns(u8 num)
 {
@@ -96,10 +113,7 @@ void SetBoxPartyPokemonDropdownMap2(u8 idx, u8 bgId, const void * src, u16 width
         bgType = GetBgAttribute(bgId, BG_ATTR_BGTYPE);
         sBoxPartyPokemonDropdownPtr[idx].src1Height = sBGdims[bgType][screenSize].height;
         sBoxPartyPokemonDropdownPtr[idx].src1Width = sBGdims[bgType][screenSize].width;
-        if (bgType != 0)
-            sBoxPartyPokemonDropdownPtr[idx].mapSize = 1;
-        else
-            sBoxPartyPokemonDropdownPtr[idx].mapSize = 2;
+		sBoxPartyPokemonDropdownPtr[idx].mapSize = bgType != 0 ? 1 : 2;
         sBoxPartyPokemonDropdownPtr[idx].bytesPerRow = width * sBoxPartyPokemonDropdownPtr[idx].mapSize;
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.width = width;
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.height = height;
@@ -184,29 +198,5 @@ void CopyBoxPartyPokemonDropdownToBgTilemapBuffer(u8 idx)
             PushMap1(idx);
         PushMap2(idx);
         sBoxPartyPokemonDropdownPtr[idx].map1Rect = sBoxPartyPokemonDropdownPtr[idx].map2Rect;
-    }
-}
-
-static void PushMap1(u8 idx)
-{
-    int i;
-    int run = sBoxPartyPokemonDropdownPtr[idx].mapSize * sBoxPartyPokemonDropdownPtr[idx].src1Height;
-    const void * addr = sBoxPartyPokemonDropdownPtr[idx].src1 + run * sBoxPartyPokemonDropdownPtr[idx].map1Rect.destY2 + sBoxPartyPokemonDropdownPtr[idx].map1Rect.destX2 * sBoxPartyPokemonDropdownPtr[idx].mapSize;
-    for (i = 0; i < sBoxPartyPokemonDropdownPtr[idx].map1Rect.height; i++)
-    {
-        CopyToBgTilemapBufferRect(sBoxPartyPokemonDropdownPtr[idx].bgId, addr, sBoxPartyPokemonDropdownPtr[idx].map1Rect.destX2, sBoxPartyPokemonDropdownPtr[idx].map1Rect.destY2 + i, sBoxPartyPokemonDropdownPtr[idx].map1Rect.width, 1);
-        addr += run;
-    }
-}
-
-static void PushMap2(u8 idx)
-{
-    int i;
-    int run = sBoxPartyPokemonDropdownPtr[idx].mapSize * sBoxPartyPokemonDropdownPtr[idx].src2Width;
-    const void * addr = sBoxPartyPokemonDropdownPtr[idx].src2 + run * sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY + sBoxPartyPokemonDropdownPtr[idx].map2Rect.destX * sBoxPartyPokemonDropdownPtr[idx].mapSize;
-    for (i = 0; i < sBoxPartyPokemonDropdownPtr[idx].map2Rect.height; i++)
-    {
-        CopyToBgTilemapBufferRect(sBoxPartyPokemonDropdownPtr[idx].bgId, addr, sBoxPartyPokemonDropdownPtr[idx].map2Rect.destX2, sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY2 + i, sBoxPartyPokemonDropdownPtr[idx].map2Rect.width, 1);
-        addr += run;
     }
 }

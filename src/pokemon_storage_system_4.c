@@ -1160,7 +1160,7 @@ static void LoadWallpaperGfx(u8 boxId, s8 direction)
 
     wallpaperId = GetBoxWallpaper(gPSSData->field_6FA);
     wallpaperGfx = &sWallpaperTable[wallpaperId];
-    LZ77UnCompWram(wallpaperGfx->tileMap, gPSSData->field_792);
+    LZDecompressWram(wallpaperGfx->tileMap, gPSSData->field_792);
     sub_8091984(gPSSData->field_4AC4, gPSSData->field_792, gPSSData->field_6FB, gPSSData->field_2D2);
 
     if (gPSSData->field_6FB != 0)

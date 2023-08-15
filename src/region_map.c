@@ -1569,19 +1569,19 @@ static bool8 LoadRegionMapGfx(void)
             return FALSE;
         break;
     case 5:
-        LZ77UnCompWram(sKanto_Tilemap, sRegionMap->layouts[REGIONMAP_KANTO]);
+        LZDecompressWram(sKanto_Tilemap, sRegionMap->layouts[REGIONMAP_KANTO]);
         break;
     case 6:
-        LZ77UnCompWram(sSevii123_Tilemap, sRegionMap->layouts[REGIONMAP_SEVII123]);
+        LZDecompressWram(sSevii123_Tilemap, sRegionMap->layouts[REGIONMAP_SEVII123]);
         break;
     case 7:
-        LZ77UnCompWram(sSevii45_Tilemap, sRegionMap->layouts[REGIONMAP_SEVII45]);
+        LZDecompressWram(sSevii45_Tilemap, sRegionMap->layouts[REGIONMAP_SEVII45]);
         break;
     case 8:
-        LZ77UnCompWram(sSevii67_Tilemap, sRegionMap->layouts[REGIONMAP_SEVII67]);
+        LZDecompressWram(sSevii67_Tilemap, sRegionMap->layouts[REGIONMAP_SEVII67]);
         break;
     default:
-        LZ77UnCompWram(sBackground_Tilemap, sRegionMap->layouts[REGIONMAP_COUNT]);
+        LZDecompressWram(sBackground_Tilemap, sRegionMap->layouts[REGIONMAP_COUNT]);
         return TRUE;
     }
     sRegionMap->loadGfxState++;
@@ -1810,14 +1810,7 @@ static void InitRegionMapBgs(void)
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
     ResetBgsAndClearDma3BusyFlags(FALSE);
     InitBgsFromTemplates(0, sRegionMapBgTemplates, NELEMS(sRegionMapBgTemplates));
-    ChangeBgX(0, 0, 0);
-    ChangeBgY(0, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(3, 0, 0);
+    ResetAllBgsPos();
     InitWindows(sRegionMapWindowTemplates);
     DeactivateAllTextPrinters();
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
@@ -2000,20 +1993,20 @@ static void InitSwitchMapMenu(u8 whichMap, u8 taskId, TaskFunc taskFunc)
     switch (sSwitchMapMenu->maxSelection)
     {
     case 1:
-        LZ77UnCompWram(sSwitchMap_KantoSevii123_Tilemap, sSwitchMapMenu->switchMapTilemap);
+        LZDecompressWram(sSwitchMap_KantoSevii123_Tilemap, sSwitchMapMenu->switchMapTilemap);
         sSwitchMapMenu->yOffset = 6;
         break;
     case 2: // never reached
-        LZ77UnCompWram(sSwitchMap_KantoSeviiAll2_Tilemap, sSwitchMapMenu->switchMapTilemap);
+        LZDecompressWram(sSwitchMap_KantoSeviiAll2_Tilemap, sSwitchMapMenu->switchMapTilemap);
         sSwitchMapMenu->yOffset = 4;
         break;
     case 3:
     default:
         sSwitchMapMenu->yOffset = 3;
-        LZ77UnCompWram(sSwitchMap_KantoSeviiAll_Tilemap, sSwitchMapMenu->switchMapTilemap);
+        LZDecompressWram(sSwitchMap_KantoSeviiAll_Tilemap, sSwitchMapMenu->switchMapTilemap);
         break;
     }
-    LZ77UnCompWram(sSwitchMapMenu_Gfx, sSwitchMapMenu->switchMapTiles);
+    LZDecompressWram(sSwitchMapMenu_Gfx, sSwitchMapMenu->switchMapTiles);
     sSwitchMapMenu->mainState = 0;
     sSwitchMapMenu->currentSelection = whichMap;
     sSwitchMapMenu->exitTask = taskFunc;
@@ -2282,10 +2275,10 @@ static bool8 CreateSwitchMapCursor(void)
     switch (sSwitchMapMenu->cursorLoadState)
     {
     case 0:
-        LZ77UnCompWram(sSwitchMapCursorLeft_Gfx, sSwitchMapMenu->cursorSubsprite[0].tiles);
+        LZDecompressWram(sSwitchMapCursorLeft_Gfx, sSwitchMapMenu->cursorSubsprite[0].tiles);
         break;
     case 1:
-        LZ77UnCompWram(sSwitchMapCursorRight_Gfx, sSwitchMapMenu->cursorSubsprite[1].tiles);
+        LZDecompressWram(sSwitchMapCursorRight_Gfx, sSwitchMapMenu->cursorSubsprite[1].tiles);
         break;
     case 2:
         CreateSwitchMapCursorSubsprite(0, 2, 2);
@@ -2398,10 +2391,10 @@ static bool8 LoadMapPreviewGfx(void)
     switch (sDungeonMapPreview->loadState)
     {
     case 0:
-        LZ77UnCompWram(sDungeonMapPreview->mapPreviewInfo->tilesptr, sDungeonMapPreview->tiles);
+        LZDecompressWram(sDungeonMapPreview->mapPreviewInfo->tilesptr, sDungeonMapPreview->tiles);
         break;
     case 1:
-        LZ77UnCompWram(sDungeonMapPreview->mapPreviewInfo->tilemapptr, sDungeonMapPreview->tilemap);
+        LZDecompressWram(sDungeonMapPreview->mapPreviewInfo->tilemapptr, sDungeonMapPreview->tilemap);
         break;
     case 2:
         LoadBgTiles(2, sDungeonMapPreview->tiles, sizeof(sDungeonMapPreview->tiles), 0);
@@ -2690,34 +2683,34 @@ static bool8 LoadMapEdgeGfx(void)
     switch (sMapOpenCloseAnim->loadGfxState)
     {
     case 0:
-        LZ77UnCompWram(sMapEdge_TopLeft, sMapOpenCloseAnim->mapEdges[0]->tiles);
+        LZDecompressWram(sMapEdge_TopLeft, sMapOpenCloseAnim->mapEdges[0]->tiles);
         CreateMapEdgeSprite(0, 4, 4);
         break;
     case 1:
-        LZ77UnCompWram(sMapEdge_MidLeft, sMapOpenCloseAnim->mapEdges[1]->tiles);
+        LZDecompressWram(sMapEdge_MidLeft, sMapOpenCloseAnim->mapEdges[1]->tiles);
         CreateMapEdgeSprite(1, 5, 5);
         break;
     case 2:
-        LZ77UnCompWram(sMapEdge_BottomLeft, sMapOpenCloseAnim->mapEdges[2]->tiles);
+        LZDecompressWram(sMapEdge_BottomLeft, sMapOpenCloseAnim->mapEdges[2]->tiles);
         CreateMapEdgeSprite(2, 6, 6);
         break;
     case 3:
-        LZ77UnCompWram(sMapEdge_TopRight, sMapOpenCloseAnim->mapEdges[3]->tiles);
+        LZDecompressWram(sMapEdge_TopRight, sMapOpenCloseAnim->mapEdges[3]->tiles);
         CreateMapEdgeSprite(3, 7, 7);
         break;
     case 4:
-        LZ77UnCompWram(sMapEdge_MidRight, sMapOpenCloseAnim->mapEdges[4]->tiles);
+        LZDecompressWram(sMapEdge_MidRight, sMapOpenCloseAnim->mapEdges[4]->tiles);
         CreateMapEdgeSprite(4, 8, 8);
         break;
     case 5:
-        LZ77UnCompWram(sMapEdge_BottomRight, sMapOpenCloseAnim->mapEdges[5]->tiles);
+        LZDecompressWram(sMapEdge_BottomRight, sMapOpenCloseAnim->mapEdges[5]->tiles);
         CreateMapEdgeSprite(5, 9, 9);
         break;
     case 6:
-        LZ77UnCompWram(sMapEdge_Gfx, sMapOpenCloseAnim->tiles);
+        LZDecompressWram(sMapEdge_Gfx, sMapOpenCloseAnim->tiles);
         break;
     case 7:
-        LZ77UnCompWram(sMapEdge_Tilemap, sMapOpenCloseAnim->tilemap);
+        LZDecompressWram(sMapEdge_Tilemap, sMapOpenCloseAnim->tilemap);
         break;
     case 8:
         LoadBgTiles(1, sMapOpenCloseAnim->tiles, BG_SCREEN_SIZE, 0);
@@ -3125,7 +3118,7 @@ static void SpriteCB_MapCursor(struct Sprite * sprite)
 static void CreateMapCursor(u16 tileTag, u16 palTag)
 {
     sMapCursor = AllocZeroed(sizeof(struct MapCursor));
-    LZ77UnCompWram(sMapCursor_Gfx, sMapCursor->tiles);
+    LZDecompressWram(sMapCursor_Gfx, sMapCursor->tiles);
     sMapCursor->tileTag = tileTag;
     sMapCursor->palTag = palTag;
     GetPlayerPositionOnRegionMap_HandleOverrides();
@@ -3808,9 +3801,9 @@ static void CreatePlayerIcon(u16 tileTag, u16 palTag)
 {
     sPlayerIcon = AllocZeroed(sizeof(struct PlayerIcon));
     if (gSaveBlock2Ptr->playerGender == FEMALE)
-        LZ77UnCompWram(sPlayerIcon_Leaf, sPlayerIcon->tiles);
+        LZDecompressWram(sPlayerIcon_Leaf, sPlayerIcon->tiles);
     else
-        LZ77UnCompWram(sPlayerIcon_Red, sPlayerIcon->tiles);
+        LZDecompressWram(sPlayerIcon_Red, sPlayerIcon->tiles);
     sPlayerIcon->tileTag = tileTag;
     sPlayerIcon->palTag = palTag;
     sPlayerIcon->x = GetMapCursorX();
@@ -3881,8 +3874,8 @@ static void InitMapIcons(u8 whichMap, u8 taskId, TaskFunc taskFunc)
     sMapIcons = AllocZeroed(sizeof(struct MapIcons));
     sMapIcons->exitTask = taskFunc;
     sMapIcons->region = whichMap;
-    LZ77UnCompWram(sDungeonIcon, sMapIcons->dungeonIconTiles);
-    LZ77UnCompWram(sFlyIcon, sMapIcons->flyIconTiles);
+    LZDecompressWram(sDungeonIcon, sMapIcons->dungeonIconTiles);
+    LZDecompressWram(sFlyIcon, sMapIcons->flyIconTiles);
     gTasks[taskId].func = LoadMapIcons;
 }
 

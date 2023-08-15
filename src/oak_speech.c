@@ -2,7 +2,6 @@
 #include "gflib.h"
 #include "decompress.h"
 #include "task.h"
-#include "blend_palette.h"
 #include "text_window.h"
 #include "menu.h"
 #include "new_menu_helpers.h"
@@ -1720,19 +1719,19 @@ static void LoadOaksSpeechTrainerPic(u16 whichPic, u16 tileOffset)
     {
     case MALE_PLAYER_PIC:
         LoadPalette(sOakSpeechGfx_RedPal, 0x40, 0x40);
-        LZ77UnCompVram(sOakSpeechGfx_RedPic, (void *)0x06000600 + tileOffset);
+        LZDecompressVram(sOakSpeechGfx_RedPic, (void *)0x06000600 + tileOffset);
         break;
     case FEMALE_PLAYER_PIC:
         LoadPalette(sOakSpeechGfx_LeafPal, 0x40, 0x40);
-        LZ77UnCompVram(sOakSpeechGfx_LeafPic, (void *)0x06000600 + tileOffset);
+        LZDecompressVram(sOakSpeechGfx_LeafPic, (void *)0x06000600 + tileOffset);
         break;
     case RIVAL_PIC:
         LoadPalette(sOakSpeechGfx_RivalPal, 0x60, 0x40);
-        LZ77UnCompVram(sOakSpeechGfx_RivalPic, (void *)0x06000600 + tileOffset);
+        LZDecompressVram(sOakSpeechGfx_RivalPic, (void *)0x06000600 + tileOffset);
         break;
     case OAK_PIC:
         LoadPalette(sOakSpeechGfx_OakPal, 0x60, 0x40);
-        LZ77UnCompVram(sOakSpeechGfx_OakPic, (void *)0x06000600 + tileOffset);
+        LZDecompressVram(sOakSpeechGfx_OakPic, (void *)0x06000600 + tileOffset);
         break;
     default:
         return;

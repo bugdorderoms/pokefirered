@@ -54,11 +54,7 @@ void AnimTask_BlendSelected(u8 taskId)
 {
     u32 selectedPalettes = UnpackSelectedBattleAnimPalettes(gBattleAnimArgs[0]);
     
-    selectedPalettes |= SelectBattlerSpritePalettes(
-        (gBattleAnimArgs[0] >>  7) & 1,
-        (gBattleAnimArgs[0] >>  8) & 1,
-        (gBattleAnimArgs[0] >>  9) & 1,
-        (gBattleAnimArgs[0] >> 10) & 1);
+    selectedPalettes |= SelectBattlerSpritePalettes((gBattleAnimArgs[0] >> 7) & 1, (gBattleAnimArgs[0] >> 8) & 1, (gBattleAnimArgs[0] >> 9) & 1, (gBattleAnimArgs[0] >> 10) & 1);
     StartBlendAnimSpriteColor(taskId, selectedPalettes);
 }
 
@@ -112,9 +108,7 @@ void AnimTask_BlendExcept(u8 taskId)
     }
     for (battler = 0; battler < MAX_BATTLERS_COUNT; ++battler)
     {
-        if (battler != animBattlers[0] 
-         && battler != animBattlers[1]
-         && IsBattlerSpriteVisible(battler))
+        if (battler != animBattlers[0] && battler != animBattlers[1] && IsBattlerSpriteVisible(battler))
             selectedPalettes |= 0x10000 << battler;
     }
     StartBlendAnimSpriteColor(taskId, selectedPalettes);
@@ -122,8 +116,6 @@ void AnimTask_BlendExcept(u8 taskId)
 
 void AnimTask_SetCamouflageBlend(u8 taskId)
 {
-    u32 selectedPalettes = UnpackSelectedBattleAnimPalettes(gBattleAnimArgs[0]);
-    
     switch (gBattleTerrain)
     {
     case BATTLE_TERRAIN_GRASS:
@@ -157,14 +149,12 @@ void AnimTask_SetCamouflageBlend(u8 taskId)
         gBattleAnimArgs[4] = RGB(31, 31, 31);
         break;
     }
-    StartBlendAnimSpriteColor(taskId, selectedPalettes);
+    StartBlendAnimSpriteColor(taskId, UnpackSelectedBattleAnimPalettes(gBattleAnimArgs[0]));
 }
 
 void AnimTask_BlendParticle(u8 taskId)
 {
-    u8 paletteIndex = IndexOfSpritePaletteTag(gBattleAnimArgs[0]);
-    u32 selectedPalettes = 1 << (paletteIndex + 16);
-
+    u32 selectedPalettes = 1 << (IndexOfSpritePaletteTag(gBattleAnimArgs[0]) + 16);
     StartBlendAnimSpriteColor(taskId, selectedPalettes);
 }
 
@@ -212,11 +202,7 @@ static void AnimTask_BlendSpriteColor_Step2(u8 taskId)
 
 void AnimTask_HardwarePaletteFade(u8 taskId)
 {
-    BeginHardwarePaletteFade(gBattleAnimArgs[0],
-                             gBattleAnimArgs[1],
-                             gBattleAnimArgs[2],
-                             gBattleAnimArgs[3],
-                             gBattleAnimArgs[4]);
+    BeginHardwarePaletteFade(gBattleAnimArgs[0], gBattleAnimArgs[1], gBattleAnimArgs[2], gBattleAnimArgs[3], gBattleAnimArgs[4]);
     gTasks[taskId].func = Task_WaitHardwarePaletteFade;
 }
 
@@ -285,7 +271,6 @@ static void Task_FinishCloneBattlerSpriteWithBlend(struct Sprite *sprite)
 
 void AnimTask_SetUpCurseBackground(u8 taskId)
 {
-    u16 species;
     s32 newSpriteId;
     u16 var0;
     u16 bg1Cnt;
@@ -295,8 +280,7 @@ void AnimTask_SetUpCurseBackground(u8 taskId)
     var0 = 0;
     gBattle_WIN0H = 0;
     gBattle_WIN0V = 0;
-    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR
-                              | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
     SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG0 | WINOUT_WIN01_BG2 | WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR
                                | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
@@ -309,10 +293,9 @@ void AnimTask_SetUpCurseBackground(u8 taskId)
     ((struct BgCnt *)&bg1Cnt)->charBaseBlock = 1;
     SetGpuReg(REG_OFFSET_BG1CNT, bg1Cnt);
     
-    if (IsDoubleBattle())
+    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
     {
-        if (GetBattlerPosition(gBattleAnimAttacker) == B_POSITION_OPPONENT_RIGHT
-         || GetBattlerPosition(gBattleAnimAttacker) == B_POSITION_PLAYER_LEFT)
+        if (GetBattlerPosition(gBattleAnimAttacker) == B_POSITION_OPPONENT_RIGHT || GetBattlerPosition(gBattleAnimAttacker) == B_POSITION_PLAYER_LEFT)
         {
             if (IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)) == TRUE)
             {
@@ -323,9 +306,8 @@ void AnimTask_SetUpCurseBackground(u8 taskId)
             }
         }
     }
-	species = GetMonData(GetBattlerPartyIndexPtr(gBattleAnimAttacker), MON_DATA_SPECIES);
     spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
-    newSpriteId = CreateCloneOfSpriteInWindowMode(spriteId, species);
+    newSpriteId = CreateCloneOfSpriteInWindowMode(spriteId, GetMonData(GetBattlerPartyIndexPtr(gBattleAnimAttacker), MON_DATA_SPECIES));
     GetBattleAnimBg1Data(&animBgData);
     AnimLoadCompressedBgTilemap(animBgData.bgId, gFile_graphics_battle_anims_masks_curse_tilemap);
     AnimLoadCompressedBgGfx(animBgData.bgId, gFile_graphics_battle_anims_masks_curse_sheet, animBgData.tilesOffset);
@@ -354,10 +336,8 @@ static void AnimTask_DrawFallingWhiteLinesOnAttacker_Step(u8 taskId)
             ResetBattleAnimBg(0);
             gBattle_WIN0H = 0;
             gBattle_WIN0V = 0;
-            SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR
-                                      | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
-            SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL  | WINOUT_WIN01_OBJ  | WINOUT_WIN01_CLR
-                                       | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+            SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+            SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL  | WINOUT_WIN01_OBJ  | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
             bg1Cnt = GetGpuReg(REG_OFFSET_BG1CNT);
             ((struct BgCnt *)&bg1Cnt)->charBaseBlock = 0;
             SetGpuReg(REG_OFFSET_BG1CNT, bg1Cnt);
@@ -397,8 +377,7 @@ static void StatsChangeAnimation_Step1(u8 taskId)
         sAnimStatsChangeData->data[3] = 0;
     gBattle_WIN0H = 0;
     gBattle_WIN0V = 0;
-    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR
-                              | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
     SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG0 | WINOUT_WIN01_BG2 | WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ  | WINOUT_WIN01_CLR
                                | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
@@ -407,10 +386,9 @@ static void StatsChangeAnimation_Step1(u8 taskId)
     SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 0);
     SetAnimBgAttribute(1, BG_ANIM_SCREEN_SIZE, 0);
     SetAnimBgAttribute(1, BG_ANIM_CHAR_BASE_BLOCK, 1);
-    if (IsDoubleBattle() && sAnimStatsChangeData->data[3] == 0)
+    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && sAnimStatsChangeData->data[3] == 0)
     {
-        if (GetBattlerPosition(sAnimStatsChangeData->battler1) == B_POSITION_OPPONENT_RIGHT
-         || GetBattlerPosition(sAnimStatsChangeData->battler1) == B_POSITION_PLAYER_LEFT)
+        if (GetBattlerPosition(sAnimStatsChangeData->battler1) == B_POSITION_OPPONENT_RIGHT || GetBattlerPosition(sAnimStatsChangeData->battler1) == B_POSITION_PLAYER_LEFT)
         {
             if (IsBattlerSpriteVisible(sAnimStatsChangeData->battler2) == TRUE)
             {
@@ -498,10 +476,7 @@ static void StatsChangeAnimation_Step2(u8 taskId)
     gTasks[taskId].data[6] = sAnimStatsChangeData->higherPriority;
     gTasks[taskId].data[7] = gBattlerSpriteIds[sAnimStatsChangeData->battler2];
     gTasks[taskId].func = StatsChangeAnimation_Step3;
-    if (sAnimStatsChangeData->data[0] == 0)
-        PlaySE12WithPanning(SE_M_STAT_INCREASE, BattleAnimAdjustPanning2(SOUND_PAN_ATTACKER));
-    else
-        PlaySE12WithPanning(SE_M_STAT_DECREASE, BattleAnimAdjustPanning2(SOUND_PAN_ATTACKER));
+	PlaySE12WithPanning(sAnimStatsChangeData->data[0] == 0 ? SE_M_STAT_INCREASE : SE_M_STAT_DECREASE, BattleAnimAdjustPanning2(SOUND_PAN_ATTACKER));
 }
 
 static void StatsChangeAnimation_Step3(u8 taskId)
@@ -540,10 +515,8 @@ static void StatsChangeAnimation_Step3(u8 taskId)
     case 3:
         gBattle_WIN0H = 0;
         gBattle_WIN0V = 0;
-        SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR
-                                  | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
-        SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL  | WINOUT_WIN01_OBJ  | WINOUT_WIN01_CLR
-                                   | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+        SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+        SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL  | WINOUT_WIN01_OBJ  | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
         SetAnimBgAttribute(1, BG_ANIM_CHAR_BASE_BLOCK, 0);
         SetGpuReg(REG_OFFSET_DISPCNT, GetGpuReg(REG_OFFSET_DISPCNT) ^ DISPCNT_OBJWIN_ON);
         SetGpuReg(REG_OFFSET_BLDCNT, 0);
@@ -700,8 +673,10 @@ void AnimTask_SetAllNonAttackersInvisiblity(u8 taskId)
     u16 battler;
 
     for (battler = 0; battler < MAX_BATTLERS_COUNT; ++battler)
+	{
         if (battler != gBattleAnimAttacker && IsBattlerSpriteVisible(battler))
             gSprites[gBattlerSpriteIds[battler]].invisible = gBattleAnimArgs[0];
+	}
     DestroyAnimVisualTask(taskId);
 }
 
@@ -717,8 +692,7 @@ void StartMonScrollingBgMask(u8 taskId, u16 arg2, u8 battler1, u8 arg4, u8 arg5,
         arg4 = 0;
     gBattle_WIN0H = 0;
     gBattle_WIN0V = 0;
-    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR
-                              | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
     SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG0 | WINOUT_WIN01_BG2 | WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ  | WINOUT_WIN01_CLR
                                | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
@@ -787,10 +761,8 @@ static void sub_80BBC2C(u8 taskId)
                 ResetBattleAnimBg(0);
                 gBattle_WIN0H = 0;
                 gBattle_WIN0V = 0;
-                SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR
-                                          | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
-                SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL  | WINOUT_WIN01_OBJ  | WINOUT_WIN01_CLR
-                                           | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+                SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+                SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL  | WINOUT_WIN01_OBJ  | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
                 bg1Cnt = GetGpuReg(REG_OFFSET_BG1CNT);
                 ((vBgCnt *)&bg1Cnt)->charBaseBlock = 0;
                 SetGpuReg(REG_OFFSET_BG1CNT, bg1Cnt);
@@ -888,10 +860,7 @@ void AnimTask_SetAnimAttackerAndTargetForEffectTgt(u8 taskId)
 
 void AnimTask_IsTargetSameSide(u8 taskId)
 {
-    if (GetBattlerSide(gBattleAnimAttacker) == GetBattlerSide(gBattleAnimTarget))
-        gBattleAnimArgs[7] = 1;
-    else
-        gBattleAnimArgs[7] = 0;
+	gBattleAnimArgs[7] = (GetBattlerSide(gBattleAnimAttacker) == GetBattlerSide(gBattleAnimTarget));
     DestroyAnimVisualTask(taskId);
 }
 

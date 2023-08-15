@@ -38,17 +38,17 @@ Div: @ 81E3B68
 	bx lr
 	thumb_func_end Div
 
-	thumb_func_start LZ77UnCompVram
-LZ77UnCompVram: @ 81E3B6C
+	thumb_func_start LZDecompressVram
+LZDecompressVram: @ 81E3B6C
 	svc 0x12
 	bx lr
-	thumb_func_end LZ77UnCompVram
+	thumb_func_end LZDecompressVram
 
-	thumb_func_start LZ77UnCompWram
-LZ77UnCompWram: @ 81E3B70
+	thumb_func_start LZDecompressWram
+LZDecompressWram: @ 81E3B70
 	svc 0x11
 	bx lr
-	thumb_func_end LZ77UnCompWram
+	thumb_func_end LZDecompressWram
 
 	thumb_func_start MultiBoot
 MultiBoot: @ 81E3B74

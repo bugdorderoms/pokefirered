@@ -202,7 +202,7 @@ static void sub_8149DC8(void)
         ResetBgsAndClearDma3BusyFlags(FALSE);
         InitBgsFromTemplates(0, gUnknown_846D8D4, NELEMS(gUnknown_846D8D4));
         InitWindows(gUnknown_846D8E4);
-        ResetBgPositions();
+        ResetAllBgsPos();
         ResetTempTileDataBuffers();
         sub_814AD6C(gUnknown_203F3D8);
         sub_814A9C8();

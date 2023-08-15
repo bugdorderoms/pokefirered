@@ -28,9 +28,7 @@ static void Task_DestroyAndReturnToField(u8 taskId);
 static void ClearWindowCommitAndRemove(u8 windowId);
 static void ResetGpu(void);
 static void StopAllRunningTasks(void);
-static void ResetBGPos(void);
 static void PrintBattleRecords(void);
-static void CommitWindow(u8 windowId);
 static void LoadFrameGfxOnBg(u8 bgId);
 
 static const u16 sTiles[] = INCBIN_U16("graphics/battle_records/bg_tiles.4bpp");
@@ -103,7 +101,7 @@ static void MainCB2_SetUp(void)
         ResetBgsAndClearDma3BusyFlags(0);
         InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
         SetBgTilemapBuffer(3, sBg3TilemapBuffer_p);
-        ResetBGPos();
+        ResetAllBgsPos();
         gMain.state++;
         break;
     case 3:
@@ -166,12 +164,10 @@ static void Task_WaitFadeIn(u8 taskId)
 
 static void Task_WaitButton(u8 taskId)
 {
-    struct Task * task = &gTasks[taskId];
-
     if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
     {
         PlaySE(SE_SELECT);
-        task->func = Task_FadeOut;
+        gTasks[taskId].func = Task_FadeOut;
     }
 }
 
@@ -253,18 +249,6 @@ static void StopAllRunningTasks(void)
     FreeAllSpritePalettes();
 }
 
-static void ResetBGPos(void)
-{
-    ChangeBgX(0, 0, 0);
-    ChangeBgY(0, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(3, 0, 0);
-}
-
 static void ClearLinkBattleRecord(struct LinkBattleRecord *record)
 {
     CpuFill16(0, record, sizeof(*record));
@@ -307,19 +291,14 @@ static s32 IndexOfOpponentLinkBattleRecord(struct LinkBattleRecords * records, c
 static void SortLinkBattleRecords(struct LinkBattleRecords * records)
 {
     struct LinkBattleRecord tmp;
-    s32 i;
-    s32 j;
+    s32 i, j;
 
     for (i = LINK_B_RECORDS_COUNT - 1; i > 0; i--)
     {
         for (j = i - 1; j >= 0; j--)
         {
             if (GetLinkBattleRecordTotalBattles(&records->entries[i]) > GetLinkBattleRecordTotalBattles(&records->entries[j]))
-            {
-                tmp = records->entries[i];
-                records->entries[i] = records->entries[j];
-                records->entries[j] = tmp;
-            }
+				SWAP(records->entries[i], records->entries[j], tmp);
         }
     }
 }
@@ -545,13 +524,9 @@ static void PrintBattleRecords(void)
     AddTextPrinterParameterized4(0, 2, 0x54, 0x30, 0, 2, sTextColor, 0, gString_BattleRecords_ColumnHeaders);
     for (i = 0; i < LINK_B_RECORDS_COUNT; i++)
         PrintOpponentBattleRecord(&gSaveBlock2Ptr->linkBattleRecords.entries[i], 0x3D + 14 * i);
-    CommitWindow(0);
-}
-
-static void CommitWindow(u8 windowId)
-{
-    PutWindowTilemap(windowId);
-    CopyWindowToVram(windowId, COPYWIN_BOTH);
+	
+	PutWindowTilemap(0);
+    CopyWindowToVram(0, COPYWIN_BOTH);
 }
 
 static void LoadFrameGfxOnBg(u8 bg)

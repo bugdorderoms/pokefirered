@@ -31,9 +31,8 @@ bool8 AddCoins(u16 toAdd)
             coins = MAX_COINS;
     }
     else
-    {
         coins = MAX_COINS;
-    }
+	
     SetCoins(coins);
     return TRUE;
 }
@@ -49,37 +48,17 @@ bool8 RemoveCoins(u16 toSub)
     return FALSE;
 }
 
-void PrintCoinsString_Parameterized(u8 windowId, u32 coinAmount, u8 x, u8 y, u8 speed)
-{
-    ConvertIntToDecimalStringN(gStringVar1, coinAmount, STR_CONV_MODE_RIGHT_ALIGN, 4);
-    StringExpandPlaceholders(gStringVar4, gText_Coins);
-    AddTextPrinterParameterized(windowId, 0, gStringVar4, x, y, speed, NULL);
-}
-
-void sub_80D0674(u8 windowId, u16 tileStart, u8 palette, u32 coinAmount)
-{
-    DrawStdFrameWithCustomTileAndPalette(windowId, FALSE, tileStart, palette);
-    AddTextPrinterParameterized(windowId, 2, gText_Coins_2, 0, 0, 0xFF, 0);
-    PrintCoinsString_Parameterized(windowId, coinAmount, 0x10, 0xC, 0);
-}
-
 void PrintCoinsString(u32 coinAmount)
 {
-    u8 windowId;
-    int width;
-
     ConvertIntToDecimalStringN(gStringVar1, coinAmount, STR_CONV_MODE_RIGHT_ALIGN, 4);
     StringExpandPlaceholders(gStringVar4, gText_Coins);
-    width = GetStringWidth(0, gStringVar4, 0);
-    windowId = sCoinsWindowId;
-    AddTextPrinterParameterized(windowId, 0, gStringVar4, 64 - width, 0xC, 0, NULL);
+    AddTextPrinterParameterized(sCoinsWindowId, 0, gStringVar4, 64 - GetStringWidth(0, gStringVar4, 0), 0xC, 0, NULL);
 }
 
 void ShowCoinsWindow(u32 coinAmount, u8 x, u8 y)
 {
-    struct WindowTemplate template;
+    struct WindowTemplate template = SetWindowTemplateFields(0, x + 1, y + 1, 8, 3, 0xF, 0x20);
 
-    template = SetWindowTemplateFields(0, x + 1, y + 1, 8, 3, 0xF, 0x20);
     sCoinsWindowId = AddWindow(&template);
     FillWindowPixelBuffer(sCoinsWindowId, 0);
     PutWindowTilemap(sCoinsWindowId);

@@ -736,11 +736,8 @@ static void DrawLinkBattleParticipantPokeballs(u8 taskId, u8 multiplayerId, u8 b
     }
     else
     {
-        if (multiplayerId == gBattleStruct->multiplayerId)
-            pokeballStatuses = gTasks[taskId].data[3];
-        else
-            pokeballStatuses = gTasks[taskId].data[4];
-
+		pokeballStatuses = multiplayerId == gBattleStruct->multiplayerId ? gTasks[taskId].data[3] : gTasks[taskId].data[4];
+		
         for (i = 0; i < 6; i++)
             tiles[i] = ((pokeballStatuses & (3 << (i * 2))) >> (i * 2)) + 0x6001;
 
@@ -762,18 +759,12 @@ static void DrawLinkBattleVsScreenOutcomeText(void)
             switch (gLinkPlayers[gBattleStruct->multiplayerId].id)
             {
             case 0:
+			case 2:
                 BattlePutTextOnWindow(gText_Win, 0x16);
                 BattlePutTextOnWindow(gText_Loss, 0x17);
                 break;
             case 1:
-                BattlePutTextOnWindow(gText_Win, 0x17);
-                BattlePutTextOnWindow(gText_Loss, 0x16);
-                break;
-            case 2:
-                BattlePutTextOnWindow(gText_Win, 0x16);
-                BattlePutTextOnWindow(gText_Loss, 0x17);
-                break;
-            case 3:
+			case 3:
                 BattlePutTextOnWindow(gText_Win, 0x17);
                 BattlePutTextOnWindow(gText_Loss, 0x16);
                 break;
@@ -784,18 +775,12 @@ static void DrawLinkBattleVsScreenOutcomeText(void)
             switch (gLinkPlayers[gBattleStruct->multiplayerId].id)
             {
             case 0:
+			case 2:
                 BattlePutTextOnWindow(gText_Win, 0x17);
                 BattlePutTextOnWindow(gText_Loss, 0x16);
                 break;
             case 1:
-                BattlePutTextOnWindow(gText_Win, 0x16);
-                BattlePutTextOnWindow(gText_Loss, 0x17);
-                break;
-            case 2:
-                BattlePutTextOnWindow(gText_Win, 0x17);
-                BattlePutTextOnWindow(gText_Loss, 0x16);
-                break;
-            case 3:
+			case 3:
                 BattlePutTextOnWindow(gText_Win, 0x16);
                 BattlePutTextOnWindow(gText_Loss, 0x17);
                 break;
@@ -869,12 +854,10 @@ void InitLinkBattleVsScreen(u8 taskId)
         }
         else
         {
-            u8 playerId = gBattleStruct->multiplayerId;
-            u8 opponentId = BATTLE_OPPOSITE(playerId);
-            u8 opponentId_copy = opponentId;
+            u8 temp, playerId = gBattleStruct->multiplayerId, opponentId = BATTLE_OPPOSITE(playerId);
 
             if (gLinkPlayers[playerId].id != 0)
-                opponentId = playerId, playerId = opponentId_copy;
+				SWAP(playerId, opponentId, temp);
 
             name = gLinkPlayers[playerId].name;
             BattlePutTextOnWindow(name, 0xF);
@@ -1022,44 +1005,6 @@ static u8 GetBattleTerrainOverride(void)
         return gBattleTerrain;
     }
     return GetBattleTerrainByMapScene(battleScene);
-}
-
-bool8 LoadChosenBattleElement(u8 caseId)
-{
-    bool8 ret = FALSE;
-    u8 battleScene;
-    switch (caseId)
-    {
-    case 0:
-        LZDecompressVram(gBattleTextboxTiles, (void *)BG_CHAR_ADDR(0));
-        break;
-    case 1:
-        CopyToBgTilemapBuffer(0, gBattleTextboxTilemap, 0, 0x000);
-        CopyBgTilemapBufferToVram(0);
-        break;
-    case 2:
-        LoadCompressedPalette(gBattleTextboxPalette, 0x00, 0x40);
-        break;
-    case 3:
-        battleScene = GetBattleTerrainOverride();
-        LZDecompressVram(sBattleTerrainTable[battleScene].tileset, (void *)BG_CHAR_ADDR(2));
-        // fallthrough
-    case 4:
-        battleScene = GetBattleTerrainOverride();
-        LZDecompressVram(sBattleTerrainTable[battleScene].tilemap, (void *)BG_SCREEN_ADDR(26));
-        break;
-    case 5:
-        battleScene = GetBattleTerrainOverride();
-        LoadCompressedPalette(sBattleTerrainTable[battleScene].palette, 0x20, 0x60);
-        break;
-    case 6:
-        LoadBattleMenuWindowGfx();
-        break;
-    default:
-        ret = TRUE;
-        break;
-    }
-    return ret;
 }
 
 void CreateBattleMoveInfoWindowAndArrows(u8 *str)

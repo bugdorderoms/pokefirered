@@ -12,9 +12,8 @@ static void DecompressGlyphFont6(u16);
 u16 Font6Func(struct TextPrinter *textPrinter)
 {
     u16 char_;
-    struct TextPrinterSubStruct *sub;
+    struct TextPrinterSubStruct *sub = &textPrinter->subUnion.sub;
 
-    sub = &textPrinter->subUnion.sub;
     switch (textPrinter->state)
     {
         case 0:

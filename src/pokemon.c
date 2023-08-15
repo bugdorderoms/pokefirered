@@ -4713,20 +4713,6 @@ void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality)
     }
 }
 
-bool8 CheckBattleTypeGhost(struct Pokemon *mon, u8 battlerId)
-{
-    u8 buffer[POKEMON_NAME_LENGTH + 1];
-
-    if (gBattleTypeFlags & BATTLE_TYPE_GHOST && GetBattlerSide(battlerId) != B_SIDE_PLAYER)
-    {
-        GetMonData(mon, MON_DATA_NICKNAME, buffer);
-        StringGet_Nickname(buffer);
-        if (!StringCompare(buffer, gText_Ghost))
-            return TRUE;
-    }
-    return FALSE;
-}
-
 static void OakSpeechNidoranFSetupTemplate(struct OakSpeechNidoranFStruct *structPtr, u8 battlePosition)
 {
     u16 i = 0, j = 0;

@@ -448,4 +448,8 @@
 #define BACK_ANIM_FADE_GREEN_WITH_SHAKE        0x18
 #define BACK_ANIM_FADE_BLUE_WITH_SHAKE         0x19
 
+// Flags for AnimTask_TransformMon and HandleSpeciesGfxDataChange
+#define SPECIESGFX_FLAG_IS_GHOST             (1 << 0)
+#define SPECIESGFX_FLAG_NO_TRANSFORM_PALFADE (1 << 1)
+
 #endif // GUARD_CONSTANTS_BATTLE_ANIM_H

@@ -3,6 +3,8 @@
 
 #include "global.h"
 
+#define OBJ_EVENT_PAL_TAG_NONE 0x11FF
+
 // Exported struct declarations
 
 enum SpinnerRunnerFollowPatterns
@@ -88,7 +90,6 @@ void ObjectEventTurnByLocalIdAndMap(u8, u8, u8, u8);
 void ObjectEventForceSetHeldMovement(struct ObjectEvent *, u8);
 const struct ObjectEventGraphicsInfo *GetObjectEventGraphicsInfo(u8);
 void ShowOrHideObjectByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup, u8 state);
-void FreeAndReserveObjectSpritePalettes(void);
 void SetObjectPositionByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup, s16 x, s16 y);
 void UnfixObjectPriorityByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup);
 void SetObjectPriorityByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup, u8 subpriority);
@@ -142,7 +143,6 @@ const u8 *GetObjectEventScriptPointerByObjectEventId(u8 objectEventId);
 u8 GetFirstInactiveObjectEventId(void);
 u8 GetCollisionFlagsAtCoords(struct ObjectEvent * objectEvent, s16 x, s16 y, u8 direction);
 void OverrideTemplateCoordsForObjectEvent(const struct ObjectEvent *objectEvent);
-void CancelPlayerForcedMovement(void);
 void FreezeObjectEvents(void);
 bool8 FreezeObjectEvent(struct ObjectEvent *);
 void UnfreezeObjectEvent(struct ObjectEvent *);
@@ -181,7 +181,6 @@ void DoShadowFieldEffect(struct ObjectEvent *);
 void SetSpriteDataForNormalStep4(struct Sprite *, u8);
 bool8 sub_8068CB4(struct Sprite *sprite);
 void SetAndStartSpriteAnim(struct Sprite *, u8, u8);
-bool8 SpriteAnimEnded(struct Sprite *);
 u8 ObjectEventGetHeldMovementActionId(struct ObjectEvent *objectEvent);
 u8 GetMoveDirectionAnimNum(u8 direction);
 
@@ -194,7 +193,6 @@ extern const struct OamData gObjectEventBaseOam_32x32;
 extern const u16 gUnknown_8398648[];
 extern const u16 gUnknown_8398688[];
 u8 GetLedgeJumpDirection(s16 x, s16 y, u8 z);
-u8 sub_8063FDC(u32 direction);
 u8 GetRideWaterCurrentMovementAction(u32 direction);
 u8 GetPlayerRunMovementAction(u32 direction);
 u8 GetPlayerRunSlowMovementAction(u32 direction);

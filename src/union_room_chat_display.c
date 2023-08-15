@@ -1219,14 +1219,7 @@ static void PrintTextOnWin0Colorized(u16 row, u8 *str, u8 colorIdx)
 
 static void ResetGpuBgState(void)
 {
-    ChangeBgX(0, 0, 0);
-    ChangeBgY(0, 0, 0);
-    ChangeBgX(1, 0, 0);
-    ChangeBgY(1, 0, 0);
-    ChangeBgX(2, 0, 0);
-    ChangeBgY(2, 0, 0);
-    ChangeBgX(3, 0, 0);
-    ChangeBgY(3, 0, 0);
+    ResetAllBgsPos();
     ShowBg(0);
     ShowBg(1);
     ShowBg(2);

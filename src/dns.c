@@ -13,6 +13,10 @@
 #include "registered_item.h"
 #include "item_menu_icons.h"
 #include "constants/map_types.h"
+#include "constants/inserts.h"
+
+#define DNS_PAL_EXCEPTION FALSE
+#define DNS_PAL_ACTIVE    TRUE
 
 /*******************************************************/
 /*********    Day and Night Configuration     **********/
@@ -153,8 +157,8 @@ static const struct DNSPalExceptions sCombatPalExceptions =
         DNS_PAL_EXCEPTION,  //5
         DNS_PAL_ACTIVE,     //6
         DNS_PAL_ACTIVE,     //7
-        DNS_PAL_ACTIVE,     //8
-        DNS_PAL_ACTIVE,     //9
+        DNS_PAL_EXCEPTION,  //8
+        DNS_PAL_EXCEPTION,  //9
         DNS_PAL_ACTIVE,     //10
         DNS_PAL_ACTIVE,     //11
         DNS_PAL_ACTIVE,     //12
@@ -335,26 +339,30 @@ static const u16 sNightFilter = RGB2(14, 14, 6);   //19CE
  * you will most likely want to use this system to avoid certain    *
  * palette tags to be "banned" from dns, as the palettes may get    *
  * loaded in different slots each time.                             */
-static const u16 sPaletteTagExceptions[] =
+static const u16 sPaletteTagExceptionsOw[] =
 {
-	TAG_HEALTHBOX_PAL, //0xD6FF
-	TAG_HEALTHBAR_PAL, //0xD704
-	TAG_STATUS_SUMMARY_BAR_PAL, //0xD710
-	TAG_STATUS_SUMMARY_BALLS_PAL, //0xD712
-	OWNED_ICON_TAG, //0x0066
-	ITEMICON_TAG, //0xD750
-	CURSOR_TAG, //0x1075
-	BOX_TAG, //0x1078
-	ITEMICON_INITIAL_TAG + 0, //0x1088
-	ITEMICON_INITIAL_TAG + 1, //0x1089
-	ITEMICON_INITIAL_TAG + 2, //0x108A
-	ITEMICON_INITIAL_TAG + 3, //0x108B
-	POKE_ICON_BASE_PAL_TAG + 0, //0xDAC0
-	POKE_ICON_BASE_PAL_TAG + 1, //0xDAC1
-	POKE_ICON_BASE_PAL_TAG + 2, //0xDAC2
-	POKE_ICON_BASE_PAL_TAG + 3, //0xDAC3
-	POKE_ICON_BASE_PAL_TAG + 4, //0xDAC4
-	POKE_ICON_BASE_PAL_TAG + 5, //0xDAC5
+	OWNED_ICON_TAG, // 0x0066
+	ITEMICON_TAG, // 0xD750
+	CURSOR_TAG, // 0x1075
+	BOX_TAG, // 0x1078
+	ITEMICON_INITIAL_TAG + 0, // 0x1088
+	ITEMICON_INITIAL_TAG + 1, // 0x1089
+	ITEMICON_INITIAL_TAG + 2, // 0x108A
+	ITEMICON_INITIAL_TAG + 3, // 0x108B
+	POKE_ICON_BASE_PAL_TAG + 0, // 0xDAC0
+	POKE_ICON_BASE_PAL_TAG + 1, // 0xDAC1
+	POKE_ICON_BASE_PAL_TAG + 2, // 0xDAC2
+};
+
+static const u16 sPaletteTagExceptionsCombat[] =
+{
+	TAG_HEALTHBOX_PAL, // 0xD6FF
+	TAG_HEALTHBAR_PAL, // 0xD705
+	TAG_PARTY_SUMMARY_BAR_PLAYER_PAL, // 0xD709
+	TAG_PARTY_SUMMARY_BAR_OPPONENT_PAL, // 0xD70A
+	TAG_PARTY_SUMMARY_BALL_PLAYER_PAL, // 0xD70B
+	TAG_PARTY_SUMMARY_BALL_OPPONENT_PAL, // 0xD70C
+	TAG_WEATHER_ICON_GFX, // 0xD70D
 };
 
 // The season for each month of the year
@@ -388,8 +396,6 @@ static void DoDNSLightningWindowsEffect(void);
 
 // DNS palette buffer in EWRAM
 ALIGNED(4) EWRAM_DATA static u16 sDNSPaletteDmaBuffer[PLTT_BUFFER_SIZE] = {0};
-// used to help with the lit up windows system
-EWRAM_DATA static bool8 sTilesetPaletteReloaded = FALSE;
 
 #define IN_OVERWORLD ((gMain.callback2 == CB2_Overworld || gMain.callback2 == CB2_OverworldBasic))
 #define IN_BATTLE ((gMain.callback2 == BattleMainCB2 && gMain.vblankCallback != VBlankCB && !(gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)))
@@ -439,10 +445,16 @@ static bool8 IsSpritePaletteTagDNSException(u8 palNum)
 {
 	u8 i;
 	u16 tag = GetSpritePaletteTagByPaletteNum(palNum);
+	const u16 *tagExceptions;
+#if USE_DNS_IN_BATTLE
+	tagExceptions = gMain.inBattle ? sPaletteTagExceptionsCombat : sPaletteTagExceptionsOw;
+#else
+	tagExceptions = sPaletteTagExceptionsOw;
+#endif
 	
-	for (i = 0; i < NELEMS(sPaletteTagExceptions); i++)
+	for (i = 0; i < NELEMS(tagExceptions); i++)
 	{
-		if (sPaletteTagExceptions[i] == tag)
+		if (tagExceptions[i] == tag)
 			return TRUE;
 	}
 	return FALSE;
@@ -458,6 +470,7 @@ void DNSApplyFilters(void)
 #else
 	palExceptionFlags = sOWPalExceptions;
 #endif
+	
 	for (palNum = 0; palNum < 32; palNum++)
 	{
 		if (palExceptionFlags.pal[palNum] && (palNum < 16 || !IsSpritePaletteTagDNSException(palNum - 16)))
@@ -499,12 +512,12 @@ static void DoDNSLightningWindowsEffect(void)
 			else
 				sDNSPaletteDmaBuffer[colourSlot] = sLightingColours[i].lightColour;
 		}
-		sTilesetPaletteReloaded = FALSE;
+		gMain.tilesetPaletteReloaded = FALSE;
 	}
-	else if (!fadeActive && !sTilesetPaletteReloaded)
+	else if (!fadeActive && !gMain.tilesetPaletteReloaded)
 	{
 		LoadMapTilesetPalettes(gMapHeader.mapLayout);
-		sTilesetPaletteReloaded = TRUE;
+		gMain.tilesetPaletteReloaded = TRUE;
 	}
 }
 
@@ -515,10 +528,7 @@ static u16 GetDNSFilter(void)
 	switch (GetDNSTimeLapse(hour))
 	{
 		case TIME_MIDNIGHT:
-		    if (hour < 1)
-			    return sMidnightFilters[minutes >> 3];            
-		    else
-			    return sMidnightFilters[7];
+			return sMidnightFilters[hour < 1 ? minutes >> 3 : 7];
 		case TIME_DAWN:
 		    return sDawnFilters[minutes >> 1];
 		case TIME_DAY:
@@ -528,7 +538,7 @@ static u16 GetDNSFilter(void)
 		case TIME_NIGHTFALL:
 		    return sNightfallFilters[minutes >> 1];
 		case TIME_NIGHT:
-	            return sNightFilter;
+	        return sNightFilter;
 	}
 }
 

@@ -93,9 +93,6 @@
 // If this setting is enabled, the icons of the party Pokémon will be displayed on the back of the trainer card.
 #define MON_ICON_ON_TRAINER_CARD TRUE
 
-// If this setting is enabled, the HP bars will disappear during some animations.
-#define DISAPPEAR_HP_BAR_DURING_ANIMS TRUE
-
 // If this setting is enabled, when choosing the player name, cancelling the selection will return the player to the gender selection screen
 // instead of the name selection screen.
 #define EM_STYLE_GENDER_SELECT_INTRO TRUE
@@ -105,3 +102,9 @@
 
 // If this setting is enabled, an icon will be created during battle to show the current weather condition.
 #define WEATHER_ICON_IN_BATTLE TRUE
+
+// If this setting is enabled, the day and night system will take affect in battles.
+#define USE_DNS_IN_BATTLE TRUE
+
+// If this setting is enabled, the windows of the house will light up at night time.
+#define LIT_UP_WINDOWS TRUE

@@ -1809,12 +1809,7 @@ static const u8* TryGetStatusString(u8 *src)
 
 static void GetBattlerNick(u8 battlerId, u8 *dst)
 {
-    struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId), *illusionMon = GetIllusionMonPtr(battlerId);
-    
-    if (illusionMon != NULL)
-        mon = illusionMon;
-	
-    GetMonData(mon, MON_DATA_NICKNAME, dst);
+    GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_NICKNAME, dst);
     StringGet_Nickname(dst);
 }
 

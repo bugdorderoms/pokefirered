@@ -23,7 +23,6 @@ void SetUpReflection(struct ObjectEvent*, struct Sprite*, u8);
 u32 StartFieldEffectForObjectEvent(u8, struct ObjectEvent*);
 u8 FindTallGrassFieldEffectSpriteId(u8 localId, u8 mapNum, u8 mapGroup, s16 x, s16 y);
 void ShowWarpArrowSprite(u8 spriteId, u8 direction, s16 x, s16 y);
-void SetSpriteInvisible(u8 spriteId);
 void SetSurfBlob_PlayerOffset(u8 spriteId, u8 hasOffset, s16 offset);
 void UpdateJumpImpactEffect(struct Sprite * sprite);
 void UpdateShadowFieldEffect(struct Sprite * sprite);

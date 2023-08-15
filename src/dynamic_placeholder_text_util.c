@@ -131,11 +131,5 @@ const u8 *DynamicPlaceholderTextUtil_GetPlaceholderPtr(u8 idx)
 
 u8 GetColorFromTextColorTable(u16 graphicId)
 {
-    u32 test = graphicId >> 1;
-    u32 shift = (graphicId & 1) << 2;
-
-    if (test >= NELEMS(sTextColorTable))
-        return 3;
-    else
-        return (sTextColorTable[graphicId >> 1] >> shift) & 0xF;
+    return graphicId >> 1 >= NELEMS(sTextColorTable) ? 3 : (sTextColorTable[graphicId >> 1] >> ((graphicId & 1) << 2)) & 0xF;
 }

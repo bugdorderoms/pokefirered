@@ -25,7 +25,6 @@ struct DoorGraphics
 };
 
 static void DrawDoorDefaultImage(const struct DoorGraphics * gfx, int x, int y);
-static void LoadDoorFrameTiles(const u8 *a0);
 static void SetDoorFramePalettes(const struct DoorGraphics * gfx, int x, int y, const u8 *a3);
 static void BufferDoorFrameTilesWithPalettes(u16 *a0, u16 a1, const u8 *a2);
 static bool32 PlayDoorAnimationFrame(const struct DoorGraphics * gfx, const struct DoorAnimFrame * frames, s16 *data);
@@ -74,82 +73,6 @@ static const u8 sDoorAnimTiles_HideoutElevator[] = INCBIN_U8("graphics/door_anim
 static const u16 sDoorNullPalette20[16] = {};
 static const u8 sDoorAnimTiles_SSAnne[] = INCBIN_U8("graphics/door_anims/ss_anne.4bpp");
 static const u16 sDoorNullPalette21[16] = {};
-
-// Doors from R/S dummied below
-static const u8 sDoorAnimTiles_Empty1[256 * 3] = {};
-static const u16 sDoorNullPalette22[16] = {};
-static const u8 sDoorAnimTiles_Empty2[256 * 3] = {};
-static const u16 sDoorNullPalette23[16] = {};
-static const u8 sDoorAnimTiles_Empty3[256 * 3] = {};
-static const u16 sDoorNullPalette24[16] = {};
-static const u8 sDoorAnimTiles_Empty4[256 * 3] = {};
-static const u16 sDoorNullPalette25[16] = {};
-static const u8 sDoorAnimTiles_Empty5[256 * 3] = {};
-static const u16 sDoorNullPalette26[16] = {};
-static const u8 sDoorAnimTiles_Empty6[256 * 3] = {};
-static const u16 sDoorNullPalette27[16] = {};
-static const u8 sDoorAnimTiles_Empty7[256 * 3] = {};
-static const u16 sDoorNullPalette28[16] = {};
-static const u8 sDoorAnimTiles_Empty8[128 * 3] = {};
-static const u16 sDoorNullPalette29[16] = {};
-static const u8 sDoorAnimTiles_Empty9[128 * 3] = {};
-static const u16 sDoorNullPalette30[16] = {};
-static const u8 sDoorAnimTiles_Empty10[128 * 3] = {};
-static const u16 sDoorNullPalette31[16] = {};
-static const u8 sDoorAnimTiles_Empty11[128 * 3] = {};
-static const u16 sDoorNullPalette32[16] = {};
-static const u8 sDoorAnimTiles_Empty12[128 * 3] = {};
-static const u16 sDoorNullPalette33[16] = {};
-static const u8 sDoorAnimTiles_Empty13[128 * 3] = {};
-static const u16 sDoorNullPalette34[16] = {};
-static const u8 sDoorAnimTiles_Empty14[128 * 3] = {};
-static const u16 sDoorNullPalette35[16] = {};
-static const u8 sDoorAnimTiles_Empty15[128 * 3] = {};
-static const u16 sDoorNullPalette36[16] = {};
-static const u8 sDoorAnimTiles_Empty16[128 * 3] = {};
-static const u16 sDoorNullPalette37[16] = {};
-static const u8 sDoorAnimTiles_Empty17[128 * 3] = {};
-static const u16 sDoorNullPalette38[16] = {};
-static const u8 sDoorAnimTiles_Empty18[128 * 3] = {};
-static const u16 sDoorNullPalette39[16] = {};
-static const u8 sDoorAnimTiles_Empty19[128 * 3] = {};
-static const u16 sDoorNullPalette40[16] = {};
-static const u8 sDoorAnimTiles_Empty20[128 * 3] = {};
-static const u16 sDoorNullPalette41[16] = {};
-static const u8 sDoorAnimTiles_Empty21[128 * 3] = {};
-static const u16 sDoorNullPalette42[16] = {};
-static const u8 sDoorAnimTiles_Empty22[128 * 3] = {};
-static const u16 sDoorNullPalette43[16] = {};
-static const u8 sDoorAnimTiles_Empty23[128 * 3] = {};
-static const u16 sDoorNullPalette44[16] = {};
-static const u8 sDoorAnimTiles_Empty24[128 * 3] = {};
-static const u16 sDoorNullPalette45[16] = {};
-static const u8 sDoorAnimTiles_Empty25[128 * 3] = {};
-static const u16 sDoorNullPalette46[16] = {};
-static const u8 sDoorAnimTiles_Empty26[128 * 3] = {};
-static const u16 sDoorNullPalette47[16] = {};
-static const u8 sDoorAnimTiles_Empty27[128 * 3] = {};
-static const u16 sDoorNullPalette48[16] = {};
-static const u8 sDoorAnimTiles_Empty28[128 * 3] = {};
-static const u16 sDoorNullPalette49[16] = {};
-static const u8 sDoorAnimTiles_Empty29[128 * 3] = {};
-static const u16 sDoorNullPalette50[16] = {};
-static const u8 sDoorAnimTiles_Empty30[128 * 3] = {};
-static const u16 sDoorNullPalette51[16] = {};
-static const u8 sDoorAnimTiles_Empty31[128 * 3] = {};
-static const u16 sDoorNullPalette52[16] = {};
-
-// Unused block of door tiles
-static const u8 sDoorAnimTiles_UnusedTop[] = INCBIN_U8("graphics/door_anims/unused_top.4bpp");
-static const u8 sDoorAnimTiles_Empty32[256] = {};
-static const u8 sDoorAnimTiles_UnusedMidTop[] = INCBIN_U8("graphics/door_anims/unused_midtop.4bpp");
-static const u8 sDoorAnimTiles_Empty33[256] = {};
-static const u8 sDoorAnimTiles_UnusedMidBottom[] = INCBIN_U8("graphics/door_anims/unused_midbottom.4bpp");
-static const u8 sDoorAnimTiles_Empty34[256] = {};
-static const u8 sDoorAnimTiles_UnusedBottom[] = INCBIN_U8("graphics/door_anims/unused_bottom.4bpp");
-static const u16 sDoorNullPalette53[16] = {};
-
-// Used FRLG doors resume
 static const u8 sDoorAnimTiles_SilphCoElevator[] = INCBIN_U8("graphics/door_anims/silph_co_elevator.4bpp");
 static const u16 sDoorNullPalette54[16] = {};
 static const u8 sDoorAnimTiles_Sevii123[] = INCBIN_U8("graphics/door_anims/sevii_123.4bpp");
@@ -282,7 +205,7 @@ static void UpdateDrawDoorFrame(const struct DoorGraphics * gfx, const struct Do
     }
     else
     {
-        LoadDoorFrameTiles(&gfx->tiles[frames->tile]);
+		CpuFastCopy(&gfx->tiles[frames->tile], (void *)(BG_VRAM + 0x7F00), 0x100);
         SetDoorFramePalettes(gfx, x, y, gfx->palettes);
     }
 }
@@ -298,11 +221,6 @@ static void DrawDoorDefaultImage(const struct DoorGraphics * gfx, int x, int y)
         CurrentMapDrawMetatileAt(x, y);
         CurrentMapDrawMetatileAt(x, y - 1);
     }
-}
-
-static void LoadDoorFrameTiles(const u8 *a0)
-{
-    CpuFastCopy(a0, (void *)(BG_VRAM + 0x7F00), 0x100);
 }
 
 static void SetDoorFramePalettes(const struct DoorGraphics * gfx, int x, int y, const u8 *a3)
@@ -340,9 +258,8 @@ static void BufferDoorFrameTilesWithPalettes(u16 *a0, u16 a1, const u8 *a2)
 static void Task_AnimateDoor(u8 taskId)
 {
     s16 *data = (void *)gTasks[taskId].data;
-    const struct DoorAnimFrame * frames = (const void *)(((u16)data[0] << 16) | (u16)data[1]);
-    const struct DoorGraphics * gfx = (const void *)(((u16)data[2] << 16) | (u16)data[3]);
-    if (!PlayDoorAnimationFrame(gfx, frames, data))
+	
+    if (!PlayDoorAnimationFrame((const void *)(((u16)data[2] << 16) | (u16)data[3]), (const void *)(((u16)data[0] << 16) | (u16)data[1]), data))
         DestroyTask(taskId);
 }
 
@@ -381,6 +298,7 @@ static s8 StartDoorAnimationTask(const struct DoorGraphics * gfx, const struct D
 {
     u8 taskId;
     s16 *data;
+	
     if (FuncIsActiveTask(Task_AnimateDoor) == TRUE)
         return -1;
 
@@ -415,12 +333,11 @@ static const struct DoorAnimFrame * SeekToEndOfDoorAnim(const struct DoorAnimFra
 static s8 AnimateDoorOpenInternal(const struct DoorGraphics * gfx, int x, int y)
 {
     gfx = GetDoorGraphics(gfx, MapGridGetMetatileIdAt(x, y));
+	
     if (gfx == NULL)
         return -1;
-    else if (gfx->size == 0)
-        return StartDoorAnimationTask(gfx, sDoorAnimFrames_OpenSmall, x, y);
     else
-        return StartDoorAnimationTask(gfx, sDoorAnimFrames_OpenLarge, x, y);
+        return StartDoorAnimationTask(gfx, gfx->size == 0 ? sDoorAnimFrames_OpenSmall : sDoorAnimFrames_OpenLarge, x, y);
 }
 
 static s8 AnimateDoorCloseInternal(const struct DoorGraphics * gfx, int x, int y)
@@ -428,10 +345,8 @@ static s8 AnimateDoorCloseInternal(const struct DoorGraphics * gfx, int x, int y
     gfx = GetDoorGraphics(gfx, MapGridGetMetatileIdAt(x, y));
     if (gfx == NULL)
         return -1;
-    else if (gfx->size == 0)
-        return StartDoorAnimationTask(gfx, sDoorAnimFrames_CloseSmall, x, y);
     else
-        return StartDoorAnimationTask(gfx, sDoorAnimFrames_CloseLarge, x, y);
+        return StartDoorAnimationTask(gfx, gfx->size == 0 ? sDoorAnimFrames_CloseSmall : sDoorAnimFrames_CloseLarge, x, y);
 }
 
 void FieldSetDoorOpened(int x, int y)
@@ -448,16 +363,12 @@ void FieldSetDoorClosed(int x, int y)
 
 s8 FieldAnimateDoorClose(int x, int y)
 {
-    if (!MetatileBehavior_IsWarpDoor_2(MapGridGetMetatileBehaviorAt((s16)x, (s16)y)))
-        return -1;
-    return AnimateDoorCloseInternal(sDoorGraphics, x, y);
+    return MetatileBehavior_IsWarpDoor_2(MapGridGetMetatileBehaviorAt((s16)x, (s16)y)) ? AnimateDoorCloseInternal(sDoorGraphics, x, y) : -1;
 }
 
 s8 FieldAnimateDoorOpen(int x, int y)
 {
-    if (!MetatileBehavior_IsWarpDoor_2(MapGridGetMetatileBehaviorAt((s16)x, (s16)y)))
-        return -1;
-    return AnimateDoorOpenInternal(sDoorGraphics, x, y);
+    return MetatileBehavior_IsWarpDoor_2(MapGridGetMetatileBehaviorAt((s16)x, (s16)y)) ? AnimateDoorOpenInternal(sDoorGraphics, x, y) : -1;
 }
 
 bool8 FieldIsDoorAnimationRunning(void)
@@ -467,10 +378,7 @@ bool8 FieldIsDoorAnimationRunning(void)
 
 u16 GetDoorSoundEffect(int x, int y)
 {
-    if (GetDoorSoundType(sDoorGraphics, x, y) == DOOR_SOUND_NORMAL)
-        return SE_DOOR;
-    else // DOOR_SOUND_SLIDING
-        return SE_SLIDING_DOOR;
+	return GetDoorSoundType(sDoorGraphics, x, y) == DOOR_SOUND_NORMAL ? SE_DOOR : SE_SLIDING_DOOR;
 }
 
 static s8 GetDoorSoundType(const struct DoorGraphics * gfx, int x, int y)

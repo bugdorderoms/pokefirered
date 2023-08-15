@@ -50,6 +50,7 @@ struct Main
     /*0x439*/ u8 inBattle:1;
     /*0x439*/ u8 inPc:1;
 	/*0x439*/ u8 inParty:1;
+	/*0x439*/ u8 tilesetPaletteReloaded:1; // For dns
 };
 
 struct RtcFuncStruct

@@ -234,27 +234,17 @@ static bool8 ShouldBattleEReaderTrainer(u8 levelType, u16 winStreak)
 
     if (gSpecialVar_Result != 0 || gSaveBlock2Ptr->battleTower.ereaderTrainer.winStreak != winStreak)
         return FALSE;
-
-    if (levelType != 0)
-        trainerTeamLevel = 100;
-    else
-        trainerTeamLevel = 50;
+	
+	trainerTeamLevel = levelType != 0 ? 100 : 50;
 
     for (i = 0; i < 3; i++)
     {
         monLevel = gSaveBlock2Ptr->battleTower.ereaderTrainer.party[i].level;
-        if (gSaveBlock2Ptr->battleTower.ereaderTrainer.party[i].level != trainerTeamLevel)
+        if (monLevel != trainerTeamLevel)
             return FALSE;
 
-        CheckMonBattleTowerBanlist(
-            gSaveBlock2Ptr->battleTower.ereaderTrainer.party[i].species,
-            gSaveBlock2Ptr->battleTower.ereaderTrainer.party[i].heldItem,
-            1,
-            levelType,
-            monLevel,
-            validPartySpecies,
-            validPartyHeldItems,
-            &numValid);
+        CheckMonBattleTowerBanlist(gSaveBlock2Ptr->battleTower.ereaderTrainer.party[i].species, gSaveBlock2Ptr->battleTower.ereaderTrainer.party[i].heldItem,
+            1, levelType, monLevel, validPartySpecies, validPartyHeldItems, &numValid);
     }
 
     return (numValid == 3);
@@ -265,7 +255,6 @@ static bool8 ChooseSpecialBattleTowerTrainer(void)
     s32 recordIndex, i;
     u8 battleTowerLevelType;
     u16 winStreak;
-    bool8 retVal;
     s32 numCandidates;
     u32 trainerIds[5];
 
@@ -276,7 +265,7 @@ static bool8 ChooseSpecialBattleTowerTrainer(void)
     if (ShouldBattleEReaderTrainer(battleTowerLevelType, winStreak))
     {
         gSaveBlock2Ptr->battleTower.battleTowerTrainerId = BATTLE_TOWER_EREADER_TRAINER_ID;
-        retVal = TRUE;
+        return TRUE;
     }
     else
     {
@@ -294,8 +283,7 @@ static bool8 ChooseSpecialBattleTowerTrainer(void)
             }
 
             if (gSaveBlock2Ptr->battleTower.records[recordIndex].winStreak == winStreak
-                && gSaveBlock2Ptr->battleTower.records[recordIndex].battleTowerLevelType == battleTowerLevelType
-                && recordHasData
+                && gSaveBlock2Ptr->battleTower.records[recordIndex].battleTowerLevelType == battleTowerLevelType && recordHasData
                 && gSaveBlock2Ptr->battleTower.records[recordIndex].checksum == checksum)
             {
                 trainerIds[numCandidates] = recordIndex;
@@ -305,16 +293,14 @@ static bool8 ChooseSpecialBattleTowerTrainer(void)
 
         if (numCandidates == 0)
         {
-            retVal = FALSE;
+            return FALSE;
         }
         else
         {
-            gSaveBlock2Ptr->battleTower.battleTowerTrainerId =
-                trainerIds[Random() % numCandidates] + BATTLE_TOWER_RECORD_MIXING_TRAINER_BASE_ID;
-            retVal = TRUE;
+            gSaveBlock2Ptr->battleTower.battleTowerTrainerId = trainerIds[Random() % numCandidates] + BATTLE_TOWER_RECORD_MIXING_TRAINER_BASE_ID;
+            return TRUE;
         }
     }
-    return retVal;
 }
 
 void ChooseNextBattleTowerTrainer(void)
@@ -588,15 +574,10 @@ static void FillBattleTowerTrainerParty(void)
             chosenMonIndices[partyIndex] = battleMonIndex;
 
             // Place the chosen pokemon into the trainer's party.
-            CreateMonWithEVSpread(
-                &gEnemyParty[partyIndex],
-                battleTowerMons[battleMonIndex].species,
-                level,
-                fixedIV,
-                battleTowerMons[battleMonIndex].evSpread);
+            CreateMonWithEVSpread(&gEnemyParty[partyIndex], battleTowerMons[battleMonIndex].species, level, fixedIV, battleTowerMons[battleMonIndex].evSpread);
 
             // Give the chosen pokemon its specified moves.
-            for (i = 0; i < 4; i++)
+            for (i = 0; i < MAX_MON_MOVES; i++)
             {
                 SetMonMoveSlot(&gEnemyParty[partyIndex], battleTowerMons[battleMonIndex].moves[i], i);
                 if (battleTowerMons[battleMonIndex].moves[i] == MOVE_FRUSTRATION)
@@ -617,10 +598,11 @@ static u8 AppendBattleTowerBannedSpeciesName(u16 species, u8 count)
 {
     if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
     {
-        if (count == 0)
+        if (count++ == 0)
             StringAppend(gStringVar1, gUnknown_83FE859);
-        count++;
+		
         StringAppend(gStringVar1, gSpeciesNames[species]);
+		
         switch (count)
         {
         case 2:
@@ -713,12 +695,8 @@ void CheckPartyBattleTowerBanlist(void)
         for (i = 0; gBattleTowerBannedSpecies[i] != 0xFFFF; i++)
             counter = AppendBattleTowerBannedSpeciesName(gBattleTowerBannedSpecies[i], counter);
 
-        i = StringLength(gStringVar1);
-        gStringVar1[i - 1] = EOS;
-        if (counter < 3)
-            StringAppend(gStringVar1, gUnknown_83FE860);
-        else
-            StringAppend(gStringVar1, gUnknown_83FE864);
+        gStringVar1[StringLength(gStringVar1) - 1] = EOS;
+		StringAppend(gStringVar1, counter < 3 ? gUnknown_83FE860 : gUnknown_83FE864);
     }
     else
     {

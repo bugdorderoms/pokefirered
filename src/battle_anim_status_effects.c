@@ -21,42 +21,6 @@ static void sub_807834C(struct Sprite *sprite);
 static void sub_8078380(struct Sprite *sprite);
 
 // Data
-static const union AnimCmd sUnknown_83BF3E0[] =
-{
-    ANIMCMD_FRAME(0, 3),
-    ANIMCMD_FRAME(4, 3),
-    ANIMCMD_FRAME(8, 3),
-    ANIMCMD_FRAME(12, 3),
-    ANIMCMD_JUMP(0)
-};
-
-static const union AnimCmd *const sSpriteAnimTable_83BF3F4[] =
-{
-    sUnknown_83BF3E0
-};
-
-const struct SpriteTemplate gSpriteTemplate_83BF3F8 =
-{
-    .tileTag = ANIM_TAG_ORB,
-    .paletteTag = ANIM_TAG_ORB,
-    .oam = &gOamData_AffineOff_ObjNormal_16x16,
-    .anims = sSpriteAnimTable_83BF3F4,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCB_AnimTranslateSpriteLinearAndFlicker2,
-};
-
-const struct SpriteTemplate gSpriteTemplate_83BF410 =
-{
-    .tileTag = ANIM_TAG_ORB,
-    .paletteTag = ANIM_TAG_ORB,
-    .oam = &gOamData_AffineOff_ObjNormal_16x16,
-    .anims = sSpriteAnimTable_83BF3F4,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCB_AnimTranslateSpriteLinearAndFlicker,
-};
-
 static const union AnimCmd sUnknown_83BF428[] =
 {
     ANIMCMD_FRAME(0, 3),
@@ -114,87 +78,6 @@ const struct SpriteTemplate gSpriteTemplate_83BF480 =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = SpriteCB_TrackOffsetFromAttackerAndWaitAnim,
-};
-
-const struct SpriteTemplate gSpriteTemplate_83BF498 =
-{
-    .tileTag = ANIM_TAG_MONSTER_FOOT,
-    .paletteTag = ANIM_TAG_MONSTER_FOOT,
-    .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCB_AnimTranslateSpriteLinearAndFlicker2,
-};
-
-static const union AnimCmd sUnknown_83BF4B0[] =
-{
-    ANIMCMD_FRAME(0, 5),
-    ANIMCMD_JUMP(0)
-};
-
-static const union AnimCmd sUnknown_83BF4B8[] =
-{
-    ANIMCMD_FRAME(0, 5),
-    ANIMCMD_JUMP(0)
-};
-
-static const union AnimCmd sUnknown_83BF4C0[] =
-{
-    ANIMCMD_FRAME(0, 5),
-    ANIMCMD_JUMP(0)
-};
-
-static const union AnimCmd *const sSpriteAniimTable_83BF4C8[] =
-{
-    sUnknown_83BF4B0,
-    sUnknown_83BF4B8,
-    sUnknown_83BF4C0
-};
-
-const struct SpriteTemplate gSpriteTemplate_83BF4D4 =
-{
-    .tileTag = ANIM_TAG_IMPACT,
-    .paletteTag = ANIM_TAG_IMPACT,
-    .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = sSpriteAniimTable_83BF4C8,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCB_AnimTranslateSpriteLinearAndFlicker2,
-};
-
-static const union AnimCmd sUnknown_83BF4EC[] =
-{
-    ANIMCMD_FRAME(0, 15),
-    ANIMCMD_JUMP(0)
-};
-
-static const union AnimCmd *const sSpriteAnimTable_83BF4F4[] =
-{
-    sUnknown_83BF4EC
-};
-
-static const union AffineAnimCmd sUnknown_83BF4F8[] =
-{
-    AFFINEANIMCMD_FRAME(96, 96, 0, 0),
-    AFFINEANIMCMD_FRAME(2, 2, 0, 1),
-    AFFINEANIMCMD_JUMP(1)
-};
-
-static const union AffineAnimCmd *const sSpriteAffineAnimTable_83BF510[] =
-{
-    sUnknown_83BF4F8
-};
-
-const struct SpriteTemplate gSpriteTemplate_83BF514 =
-{
-    .tileTag = ANIM_TAG_ORB,
-    .paletteTag = ANIM_TAG_ORB,
-    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
-    .anims = sSpriteAnimTable_83BF4F4,
-    .images = NULL,
-    .affineAnims = sSpriteAffineAnimTable_83BF510,
-    .callback = SpriteCB_AnimTranslateSpriteLinearAndFlicker,
 };
 
 static const struct Subsprite sSubsprites_83BF544[] =
@@ -445,18 +328,18 @@ static void sub_807862C(u8 taskId)
 void AnimTask_StatsChange(u8 taskId)
 {
     bool16 goesDown = FALSE;
-    s16 animStatId = 0;
+    s16 animStatId;
     bool16 sharply = FALSE;
 
     switch (gBattleSpritesDataPtr->animationData->animArg)
     {
-    CASE(PLUS1,  STAT_ATK):     goesDown = FALSE;  animStatId = 0;  break;
-    CASE(PLUS1,  STAT_DEF):     goesDown = FALSE;  animStatId = 1;  break;
-    CASE(PLUS1,  STAT_SPEED):   goesDown = FALSE;  animStatId = 3;  break;
-    CASE(PLUS1,  STAT_SPATK):   goesDown = FALSE;  animStatId = 5;  break;
-    CASE(PLUS1,  STAT_SPDEF):   goesDown = FALSE;  animStatId = 6;  break;
-    CASE(PLUS1,  STAT_ACC):     goesDown = FALSE;  animStatId = 2;  break;
-    CASE(PLUS1,  STAT_EVASION): goesDown = FALSE;  animStatId = 4;  break;
+    CASE(PLUS1,  STAT_ATK):     animStatId = 0;  break;
+    CASE(PLUS1,  STAT_DEF):     animStatId = 1;  break;
+    CASE(PLUS1,  STAT_SPEED):   animStatId = 3;  break;
+    CASE(PLUS1,  STAT_SPATK):   animStatId = 5;  break;
+    CASE(PLUS1,  STAT_SPDEF):   animStatId = 6;  break;
+    CASE(PLUS1,  STAT_ACC):     animStatId = 2;  break;
+    CASE(PLUS1,  STAT_EVASION): animStatId = 4;  break;
 
     CASE(MINUS1, STAT_ATK):     goesDown = TRUE;   animStatId = 0;  break;
     CASE(MINUS1, STAT_DEF):     goesDown = TRUE;   animStatId = 1;  break;
@@ -466,13 +349,13 @@ void AnimTask_StatsChange(u8 taskId)
     CASE(MINUS1, STAT_ACC):     goesDown = TRUE;   animStatId = 2;  break;
     CASE(MINUS1, STAT_EVASION): goesDown = TRUE;   animStatId = 4;  break;
 
-    CASE(PLUS2,  STAT_ATK):     goesDown = FALSE;  animStatId = 0;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_DEF):     goesDown = FALSE;  animStatId = 1;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_SPEED):   goesDown = FALSE;  animStatId = 3;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_SPATK):   goesDown = FALSE;  animStatId = 5;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_SPDEF):   goesDown = FALSE;  animStatId = 6;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_ACC):     goesDown = FALSE;  animStatId = 2;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_EVASION): goesDown = FALSE;  animStatId = 4;     sharply = TRUE;   break;
+    CASE(PLUS2,  STAT_ATK):     animStatId = 0;     sharply = TRUE;   break;
+    CASE(PLUS2,  STAT_DEF):     animStatId = 1;     sharply = TRUE;   break;
+    CASE(PLUS2,  STAT_SPEED):   animStatId = 3;     sharply = TRUE;   break;
+    CASE(PLUS2,  STAT_SPATK):   animStatId = 5;     sharply = TRUE;   break;
+    CASE(PLUS2,  STAT_SPDEF):   animStatId = 6;     sharply = TRUE;   break;
+    CASE(PLUS2,  STAT_ACC):     animStatId = 2;     sharply = TRUE;   break;
+    CASE(PLUS2,  STAT_EVASION): animStatId = 4;     sharply = TRUE;   break;
 
     CASE(MINUS2, STAT_ATK):     goesDown = TRUE;   animStatId = 0;     sharply = TRUE;   break;
     CASE(MINUS2, STAT_DEF):     goesDown = TRUE;   animStatId = 1;     sharply = TRUE;   break;
@@ -482,8 +365,8 @@ void AnimTask_StatsChange(u8 taskId)
     CASE(MINUS2, STAT_ACC):     goesDown = TRUE;   animStatId = 2;     sharply = TRUE;   break;
     CASE(MINUS2, STAT_EVASION): goesDown = TRUE;   animStatId = 4;     sharply = TRUE;   break;
 
-    case STAT_ANIM_MULTIPLE_PLUS1:  goesDown = FALSE;  animStatId = 0xFF;  sharply = FALSE;  break;
-    case STAT_ANIM_MULTIPLE_PLUS2:  goesDown = FALSE;  animStatId = 0xFF;  sharply = TRUE;   break;
+    case STAT_ANIM_MULTIPLE_PLUS1:  animStatId = 0xFF;  sharply = FALSE;  break;
+    case STAT_ANIM_MULTIPLE_PLUS2:  animStatId = 0xFF;  sharply = TRUE;   break;
     case STAT_ANIM_MULTIPLE_MINUS1: goesDown = TRUE;   animStatId = 0xFF;  sharply = FALSE;  break;
     case STAT_ANIM_MULTIPLE_MINUS2: goesDown = TRUE;   animStatId = 0xFF;  sharply = TRUE;   break;
 
@@ -505,13 +388,10 @@ void AnimTask_StatsChange(u8 taskId)
 
 void LaunchStatusAnimation(u8 battlerId, u8 statusAnimId)
 {
-    u8 taskId;
-
     gBattleAnimAttacker = battlerId;
     gBattleAnimTarget = battlerId;
     LaunchBattleAnimation(ANIM_TYPE_STATUS, statusAnimId);
-    taskId = CreateTask(Task_DoStatusAnimation, 10);
-    gTasks[taskId].data[0] = battlerId;
+    gTasks[CreateTask(Task_DoStatusAnimation, 10)].data[0] = battlerId;
 }
 
 static void Task_DoStatusAnimation(u8 taskId)

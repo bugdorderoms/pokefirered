@@ -4,6 +4,14 @@
 #include "constants/abilities.h"
 #include "constants/pokemon.h"
 
+// Return values of GetWhoStrikesFirst
+enum
+{
+	ATTACKER_STRIKES_FIRST,
+	DEFENDER_STRIKES_FIRST,
+	SPEED_TIE,
+};
+
 struct TrainerMoneyBall
 {
     u8 classId;

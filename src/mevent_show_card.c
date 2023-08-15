@@ -193,7 +193,7 @@ s32 FadeToWonderCardMenu(void)
                 return 0;
             gPaletteFade.bufferTransferDisabled = TRUE;
             LoadPalette(sMEventScreenData->bgSpec->pal, 0x10, 0x20);
-            LZ77UnCompWram(sMEventScreenData->bgSpec->map, sMEventScreenData->buffer_045C);
+            LZDecompressWram(sMEventScreenData->bgSpec->map, sMEventScreenData->buffer_045C);
             CopyRectToBgTilemapBufferRect(2, sMEventScreenData->buffer_045C, 0, 0, 30, 20, 0, 0, 30, 20, 1, 0x008, 0);
             CopyBgTilemapBufferToVram(2);
             break;

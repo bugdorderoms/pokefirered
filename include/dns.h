@@ -1,12 +1,6 @@
 #ifndef GUARD_DNS_UTILS_H
 #define GUARD_DNS_UTILS_H
 
-#define USE_DNS_IN_BATTLE   TRUE
-#define LIT_UP_WINDOWS      TRUE
-
-#define DNS_PAL_EXCEPTION   FALSE
-#define DNS_PAL_ACTIVE      TRUE
-
 enum
 {
 	SEASON_SUMMER,
@@ -22,7 +16,7 @@ struct lightingColour
     u16 lightColour;
 };
 
-struct DNSPalExceptions 
+struct DNSPalExceptions
 {
     bool8 pal[32];
 };

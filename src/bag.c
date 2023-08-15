@@ -193,11 +193,8 @@ static EWRAM_DATA u8 sOpenWindows[11] = {};
 void InitBagWindows(void)
 {
     u8 i;
-
-    if (gBagMenuState.location != 3)
-        InitWindows(sDefaultBagWindowsStd);
-    else
-        InitWindows(sDefaultBagWindowsDeposit);
+    
+	InitWindows(gBagMenuState.location == 3 ? sDefaultBagWindowsDeposit : sDefaultBagWindowsStd);
     DeactivateAllTextPrinters();
     TextWindow_SetUserSelectedFrame(0, 0x64, 0xE0);
     TextWindow_LoadResourcesStdFrame0(0, 0x6D, 0xD0);

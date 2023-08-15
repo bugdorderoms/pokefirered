@@ -482,12 +482,12 @@ static void sub_8096408(u8 id, const u32 *itemTiles, const u32 *itemPal)
         return;
 
     CpuFastFill(0, gPSSData->field_42C4, 0x200);
-    LZ77UnCompWram(itemTiles, gPSSData->field_22C4);
+    LZDecompressWram(itemTiles, gPSSData->field_22C4);
     for (i = 0; i < 3; i++)
         CpuFastCopy(gPSSData->field_22C4 + (i * 0x60), gPSSData->field_42C4 + (i * 0x80), 0x60);
 
     CpuFastCopy(gPSSData->field_42C4, gPSSData->itemIconSprites[id].tiles, 0x200);
-    LZ77UnCompWram(itemPal, gPSSData->field_42C4);
+    LZDecompressWram(itemPal, gPSSData->field_42C4);
     LoadPalette(gPSSData->field_42C4, gPSSData->itemIconSprites[id].palIndex, 0x20);
 }
 

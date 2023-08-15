@@ -777,14 +777,4 @@ static inline u8 GetBattlerSide(u8 battlerId)
     return GetBattlerPosition(battlerId) & BIT_SIDE;
 }
 
-static inline struct Pokemon *GetBattlerParty(u8 battlerId)
-{
-	return GetBattlerSide(battlerId) == B_SIDE_PLAYER ? gPlayerParty : gEnemyParty;
-}
-
-static inline struct Pokemon *GetBattlerPartyIndexPtr(u8 battler)
-{
-	return &GetBattlerParty(battler)[gBattlerPartyIndexes[battler]];
-}
-
 #endif // GUARD_BATTLE_H

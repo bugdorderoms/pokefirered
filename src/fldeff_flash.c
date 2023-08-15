@@ -162,10 +162,7 @@ static const u32 sCaveTransitionTiles[] = INCBIN_U32("graphics/field_effects/fla
 
 bool8 SetUpFieldMove_Flash(void)
 {
-    if (gMapHeader.cave != TRUE)
-        return FALSE;
-
-    if (FlagGet(FLAG_SYS_FLASH_ACTIVE))
+    if (!gMapHeader.cave || FlagGet(FLAG_SYS_FLASH_ACTIVE))
         return FALSE;
 
     gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
@@ -237,13 +234,14 @@ static bool8 TryDoMapTransition(void)
 {
     u8 fromType = GetLastUsedWarpMapType();
     u8 toType = GetCurrentMapType();
-    u8 i = 0;
+    u8 i;
+	
     if (GetLastUsedWarpMapSectionId() != gMapHeader.regionMapSectionId && MapHasPreviewScreen_HandleQLState2(gMapHeader.regionMapSectionId, MPS_TYPE_CAVE) == TRUE)
     {
         RunMapPreviewScreen(gMapHeader.regionMapSectionId);
         return TRUE;
     }
-    for (; sTransitionTypes[i].fromType != 0; i++)
+    for (i = 0; sTransitionTypes[i].fromType != 0; i++)
     {
         if (sTransitionTypes[i].fromType == fromType && sTransitionTypes[i].toType == toType)
         {
@@ -256,30 +254,24 @@ static bool8 TryDoMapTransition(void)
 
 bool8 MapTransitionIsEnter(u8 _fromType, u8 _toType)
 {
-    u8 fromType = _fromType;
-    u8 toType = _toType;
-    u8 i = 0;
-    for (; sTransitionTypes[i].fromType != 0; i++)
+    u8 i;
+	
+    for (i = 0; sTransitionTypes[i].fromType != 0; i++)
     {
-        if (sTransitionTypes[i].fromType == fromType && sTransitionTypes[i].toType == toType)
-        {
+        if (sTransitionTypes[i].fromType == _fromType && sTransitionTypes[i].toType == _toType)
             return sTransitionTypes[i].isEnter;
-        }
     }
     return FALSE;
 }
 
 bool8 MapTransitionIsExit(u8 _fromType, u8 _toType)
 {
-    u8 fromType = _fromType;
-    u8 toType = _toType;
-    u8 i = 0;
-    for (; sTransitionTypes[i].fromType != 0; i++)
+    u8 i;
+	
+    for (i = 0; sTransitionTypes[i].fromType != 0; i++)
     {
-        if (sTransitionTypes[i].fromType == fromType && sTransitionTypes[i].toType == toType)
-        {
+        if (sTransitionTypes[i].fromType == _fromType && sTransitionTypes[i].toType == _toType)
             return sTransitionTypes[i].isExit;
-        }
     }
     return FALSE;
 }
@@ -297,8 +289,8 @@ static void Task_FlashTransition_Exit_0(u8 taskId)
 static void Task_FlashTransition_Exit_1(u8 taskId)
 {
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
-    LZ77UnCompVram(sCaveTransitionTiles, (void *)BG_CHAR_ADDR(3));
-    LZ77UnCompVram(sCaveTransitionTilemap, (void *)BG_SCREEN_ADDR(31));
+    LZDecompressVram(sCaveTransitionTiles, (void *)BG_CHAR_ADDR(3));
+    LZDecompressVram(sCaveTransitionTilemap, (void *)BG_SCREEN_ADDR(31));
     LoadPalette(sCaveTransitionPalette_White, 0xE0, 0x20);
     LoadPalette(sCaveTransitionPalette_Gradient + 8, 0xE0, 0x10);
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD);
@@ -365,8 +357,8 @@ static void Task_FlashTransition_Enter_0(u8 taskId)
 static void Task_FlashTransition_Enter_1(u8 taskId)
 {
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
-    LZ77UnCompVram(sCaveTransitionTiles, (void *)BG_CHAR_ADDR(3));
-    LZ77UnCompVram(sCaveTransitionTilemap, (void *)BG_SCREEN_ADDR(31));
+    LZDecompressVram(sCaveTransitionTiles, (void *)BG_CHAR_ADDR(3));
+    LZDecompressVram(sCaveTransitionTilemap, (void *)BG_SCREEN_ADDR(31));
     SetGpuReg(REG_OFFSET_BLDCNT, 0);
     SetGpuReg(REG_OFFSET_BLDALPHA, 0);
     SetGpuReg(REG_OFFSET_BLDY, 0);
@@ -415,8 +407,7 @@ static void Task_FlashTransition_Enter_3(u8 taskId)
 
 static void RunMapPreviewScreen(u8 mapSecId)
 {
-    u8 taskId = CreateTask(Task_MapPreviewScreen_0, 0);
-    gTasks[taskId].data[3] = mapSecId;
+    gTasks[CreateTask(Task_MapPreviewScreen_0, 0)].data[3] = mapSecId;
 }
 
 static void Task_MapPreviewScreen_0(u8 taskId)

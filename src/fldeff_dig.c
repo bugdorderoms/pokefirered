@@ -38,9 +38,6 @@ bool8 FldEff_UseDig(void)
 
 static void sub_80C9AFC(void)
 {
-    u8 taskId;
-
     FieldEffectActiveListRemove(FLDEFF_USE_DIG);
-    taskId = CreateTask(sub_80A1C44, 8);
-    gTasks[taskId].data[0] = 0;
+    gTasks[CreateTask(sub_80A1C44, 8)].data[0] = 0;
 }

@@ -5,8 +5,6 @@
 #include "constants/songs.h"
 
 static void AnimLightning(struct Sprite *sprite);
-static void sub_80ADC58(struct Sprite *sprite);
-static void sub_80ADCB8(struct Sprite *sprite);
 static void sub_80ADD4C(struct Sprite *sprite);
 static void AnimZapCannonSpark(struct Sprite *sprite);
 static void AnimThunderboltOrb(struct Sprite *sprite);
@@ -21,7 +19,6 @@ static void AnimVoltTackleBolt(struct Sprite *sprite);
 static void AnimGrowingShockWaveOrb(struct Sprite *sprite);
 static void AnimShockWaveProgressingBolt(struct Sprite *sprite);
 static void sub_80ADC3C(struct Sprite *sprite);
-static void sub_80ADC9C(struct Sprite *sprite);
 static void sub_80ADF38(struct Sprite *sprite);
 static void sub_80AE130(struct Sprite *sprite);
 static void sub_80AE278(u8 taskId);
@@ -58,57 +55,6 @@ const struct SpriteTemplate gLightningSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimLightning,
-};
-
-static const union AffineAnimCmd gUnknown_83E5F50[] =
-{
-    AFFINEANIMCMD_FRAME(0x100, 0x100, 0, 0),
-    AFFINEANIMCMD_FRAME(0x0, 0x0, 0, 20),
-    AFFINEANIMCMD_FRAME(0x0, 0x0, -16, 60),
-    AFFINEANIMCMD_END,
-};
-
-static const union AffineAnimCmd *const gUnknown_83E5F70[] =
-{
-    gUnknown_83E5F50,
-};
-
-const struct SpriteTemplate gUnknown_83E5F74 =
-{
-    .tileTag = ANIM_TAG_HANDS_AND_FEET,
-    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
-    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gUnknown_83E5F70,
-    .callback = sub_80ADC58,
-};
-
-static const union AnimCmd gUnknown_83E5F8C[] =
-{
-    ANIMCMD_FRAME(0, 5),
-    ANIMCMD_FRAME(16, 5),
-    ANIMCMD_FRAME(32, 5),
-    ANIMCMD_FRAME(48, 5),
-    ANIMCMD_FRAME(64, 5),
-    ANIMCMD_FRAME(80, 5),
-    ANIMCMD_JUMP(0),
-};
-
-static const union AnimCmd *const gUnknown_83E5FA8[] =
-{
-    gUnknown_83E5F8C,
-};
-
-const struct SpriteTemplate gUnknown_83E5FAC =
-{
-    .tileTag = ANIM_TAG_SHOCK,
-    .paletteTag = ANIM_TAG_SHOCK,
-    .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = gUnknown_83E5FA8,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = sub_80ADCB8,
 };
 
 const struct SpriteTemplate gSparkElectricitySpriteTemplate =
@@ -467,43 +413,6 @@ static void sub_80ADC3C(struct Sprite *sprite)
         DestroyAnimSprite(sprite);
 }
 
-static void sub_80ADC58(struct Sprite *sprite)
-{
-    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
-        sprite->x -= gBattleAnimArgs[0];
-    else
-        sprite->x += gBattleAnimArgs[0];
-    sprite->callback = sub_80ADC9C;
-}
-
-static void sub_80ADC9C(struct Sprite *sprite)
-{
-    if (sprite->affineAnimEnded)
-        DestroySpriteAndMatrix(sprite);
-}
-
-static void sub_80ADCB8(struct Sprite *sprite)
-{
-    sprite->x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
-    sprite->y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
-    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
-    {
-        sprite->x -= gBattleAnimArgs[0];
-        sprite->y -= gBattleAnimArgs[1];
-    }
-    else
-    {
-        sprite->x += gBattleAnimArgs[0];
-        sprite->y += gBattleAnimArgs[1];
-    }
-    sprite->data[0] = 0;
-    sprite->data[1] = gBattleAnimArgs[2];
-    sprite->data[2] = gBattleAnimArgs[3];
-    sprite->data[3] = gBattleAnimArgs[4];
-    StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
-    sprite->callback = TranslateSpriteInCircleOverDuration;
-}
-
 static void sub_80ADD4C(struct Sprite *sprite)
 {
     u8 battler;
@@ -520,16 +429,10 @@ static void sub_80ADD4C(struct Sprite *sprite)
         battler = gBattleAnimTarget;
         break;
     case 2:
-        if (!IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)))
-            battler = gBattleAnimAttacker;
-        else
-            battler = BATTLE_PARTNER(gBattleAnimAttacker);
+		battler = IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)) ? BATTLE_PARTNER(gBattleAnimAttacker) : gBattleAnimAttacker;
         break;
     case 3:
-        if (IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)))
-            battler = BATTLE_PARTNER(gBattleAnimTarget);
-        else
-            battler = gBattleAnimTarget;
+		battler = IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)) ? BATTLE_PARTNER(gBattleAnimTarget) : gBattleAnimTarget;
         break;
     }
     if (gBattleAnimArgs[5] == 0)
@@ -613,13 +516,9 @@ static void AnimThunderboltOrb(struct Sprite *sprite)
 
 static void AnimSparkElectricityFlashing(struct Sprite *sprite)
 {
-    u8 battler;
+    u8 battler = (gBattleAnimArgs[7] & 0x8000) ? gBattleAnimTarget : gBattleAnimAttacker;
 
     sprite->data[0] = gBattleAnimArgs[3];
-    if (gBattleAnimArgs[7] & 0x8000)
-        battler = gBattleAnimTarget;
-    else
-        battler = gBattleAnimAttacker;
     if (GetBattlerSide(battler) == B_SIDE_PLAYER)
         gBattleAnimArgs[0] = -gBattleAnimArgs[0];
     sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X_2) + gBattleAnimArgs[0];
@@ -692,36 +591,33 @@ static void sub_80AE278(u8 taskId)
     {
     case 0:
         r12 *= 1;
-        spriteId = CreateSprite(&sElectricBoltSegmentSpriteTemplate, x, y + r12, 2);
         ++r7;
         break;
     case 2:
         r12 *= 2;
         r8 += r2;
-        spriteId = CreateSprite(&sElectricBoltSegmentSpriteTemplate, x, y + r12, 2);
         ++r7;
         break;
     case 4:
         r12 *= 3;
         r8 += r2 * 2;
-        spriteId = CreateSprite(&sElectricBoltSegmentSpriteTemplate, x, y + r12, 2);
         ++r7;
         break;
     case 6:
         r12 *= 4;
         r8 += r2 * 3;
-        spriteId = CreateSprite(&sElectricBoltSegmentSpriteTemplate, x, y + r12, 2);
         ++r7;
         break;
     case 8:
         r12 *= 5;
-        spriteId = CreateSprite(&sElectricBoltSegmentSpriteTemplate, x, y + r12, 2);
         ++r7;
         break;
     case 10:
         DestroyAnimVisualTask(taskId);
         return;
     }
+	spriteId = CreateSprite(&sElectricBoltSegmentSpriteTemplate, x, y + r12, 2);
+	
     if (r7)
     {
         gSprites[spriteId].oam.tileNum += r8;
@@ -1013,11 +909,8 @@ void AnimTask_VoltTackleBolt(u8 taskId)
             else
             {
                 u16 temp;
-
+				SWAP(task->data[3], task->data[4], temp);
                 task->data[5] = gBattleAnimArgs[0] * 10 + 40;
-                temp = task->data[3];
-                task->data[3] = task->data[4];
-                task->data[4] = temp;
             }
         }
         if (task->data[3] < task->data[4])
@@ -1060,11 +953,10 @@ static bool8 sub_80AEB98(struct Task *task, u8 taskId)
     task->data[6] += task->data[1];
     if (task->data[6] < 0)
         task->data[6] = 3;
-    if (task->data[6] > 3)
+    else if (task->data[6] > 3)
         task->data[6] = 0;
     task->data[3] += task->data[1] * 16;
-    if ((task->data[1] == 1 && task->data[3] >= task->data[4])
-     || (task->data[1] == -1 && task->data[3] <= task->data[4]))
+    if ((task->data[1] == 1 && task->data[3] >= task->data[4]) || (task->data[1] == -1 && task->data[3] <= task->data[4]))
         return TRUE;
     else
         return FALSE;
@@ -1192,8 +1084,7 @@ static bool8 sub_80AEE74(struct Task *task, u8 taskId)
         task->data[14] += task->data[15];
         PlaySE12WithPanning(SE_M_THUNDERBOLT, task->data[14]);
     }
-    if ((task->data[5] < 0 && task->data[7] <= task->data[8])
-     || (task->data[5] > 0 && task->data[7] >= task->data[8]))
+    if ((task->data[5] < 0 && task->data[7] <= task->data[8]) || (task->data[5] > 0 && task->data[7] >= task->data[8]))
     {
         ++task->data[2];
         task->data[6] += task->data[9];

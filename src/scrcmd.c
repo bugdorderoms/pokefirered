@@ -1615,7 +1615,6 @@ bool8 ScrCmd_bufferdecorationname(struct ScriptContext * ctx)
     u8 stringVarIndex = ScriptReadByte(ctx);
     u16 decorId = VarGet(ScriptReadHalfword(ctx));
 
-//    StringCopy(sScriptStringVars[stringVarIndex], gDecorations[decorId].name);
     return FALSE;
 }
 

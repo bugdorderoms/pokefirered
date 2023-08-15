@@ -530,9 +530,8 @@
 	.4byte \param0
 	.endm
 
-	.macro hitanimation battler:req
+	.macro nop5c
 	.byte 0x5c
-	.byte \battler
 	.endm
 
 	.macro getmoneyreward addr

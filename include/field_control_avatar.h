@@ -23,10 +23,9 @@ struct FieldInput
 
 extern struct FieldInput gInputToStoreInQuestLogMaybe;
 
-void RestartWildEncounterImmunitySteps(void);
 void ClearPoisonStepCounter(void);
 int SetCableClubWarp(void);
-void HandleBoulderFallThroughHole(struct ObjectEvent *);
+void HandleBoulderFallThroughOrCoverHole(struct ObjectEvent *);
 bool8 dive_warp(struct MapPosition * pos, u16 behavior);
 bool8 IsDirectionalStairWarpMetatileBehavior(u16 metatileBehavior, u8 playerDirection);
 const u8 *GetInteractedLinkPlayerScript(struct MapPosition *position, u8 metatileBehavior, u8 direction);

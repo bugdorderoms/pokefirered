@@ -2,7 +2,6 @@
 #include "gflib.h"
 #include "m4a.h"
 #include "scanline_effect.h"
-#include "bg_regs.h"
 #include "decompress.h"
 #include "save.h"
 #include "battle.h"
@@ -219,6 +218,14 @@ static const struct WindowTemplate sLinkErrorWindowTemplates[] = {
 
 static const u8 sLinkErrorTextColor[] = { 0x00, 0x01, 0x02 };
 
+static const u8 sBGControlRegOffsets[] =
+{
+    REG_OFFSET_BG0CNT,
+    REG_OFFSET_BG1CNT,
+    REG_OFFSET_BG2CNT,
+    REG_OFFSET_BG3CNT,
+};
+
 bool8 IsWirelessAdapterConnected(void)
 {
     if (QL_IS_PLAYBACK_STATE)
@@ -274,7 +281,7 @@ void sub_80095BC(u8 paletteNum, u8 bgNum, u8 screenBaseBlock, u8 charBaseBlock)
     gLinkTestBGInfo.screenBaseBlock = screenBaseBlock;
     gLinkTestBGInfo.paletteNum = paletteNum;
     gLinkTestBGInfo.dummy_8 = 0;
-    SetGpuReg(gBGControlRegOffsets[bgNum], BGCNT_SCREENBASE(screenBaseBlock) | BGCNT_CHARBASE(charBaseBlock));
+    SetGpuReg(sBGControlRegOffsets[bgNum], BGCNT_SCREENBASE(screenBaseBlock) | BGCNT_CHARBASE(charBaseBlock));
 }
 
 void LinkTestScreen(void)

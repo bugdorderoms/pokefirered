@@ -14,7 +14,7 @@ void AllocateBattleResources(void)
     {
         s32 i;
 
-        for (i = 0; i < 4; ++i)
+        for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
             gPokedudeBattlerStates[i] = AllocZeroed(sizeof(struct PokedudeBattlerState));
     }
     gBattleStruct = AllocZeroed(sizeof(*gBattleStruct));
@@ -43,7 +43,7 @@ void FreeBattleResources(void)
     {
         s32 i;
 
-        for (i = 0; i < 4; ++i)
+        for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
         {
             FREE_AND_SET_NULL(gPokedudeBattlerStates[i]);
         }
@@ -69,18 +69,13 @@ void FreeBattleResources(void)
 
 void AdjustFriendshipOnBattleFaint(u8 battlerId)
 {
-    u8 opposingBattlerId, opposingBattlerId2;
+    u8 opposingBattlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), opposingBattlerId2;
 
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
     {
-        opposingBattlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
         opposingBattlerId2 = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
         if (gBattleMons[opposingBattlerId2].level > gBattleMons[opposingBattlerId].level)
             opposingBattlerId = opposingBattlerId2;
-    }
-    else
-    {
-        opposingBattlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
     }
     if (gBattleMons[opposingBattlerId].level > gBattleMons[battlerId].level)
     {

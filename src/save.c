@@ -14,10 +14,6 @@
 #define TOTAL_FLASH_SECTORS 32
 
 // Divide save blocks into individual chunks to be written to flash sectors
-
-// Each 4 KiB flash sector contains 3968 bytes of actual data followed by a 128 byte footer
-#define SECTOR_DATA_SIZE 4084
-
 /*
  * Sector Layout:
  *
@@ -662,8 +658,8 @@ u8 HandleSavingData(u8 saveType)
         if (GetGameStat(GAME_STAT_ENTERED_HOF) < 999)
             IncrementGameStat(GAME_STAT_ENTERED_HOF);
         tempAddr = gDecompressionBuffer;
-        HandleWriteSectorNBytes(0x1C, tempAddr, 0xF80);
-        HandleWriteSectorNBytes(0x1D, tempAddr + 0xF80, 0xF80);
+        HandleWriteSectorNBytes(0x1C, tempAddr, SECTOR_DATA_SIZE);
+        HandleWriteSectorNBytes(0x1D, tempAddr + SECTOR_DATA_SIZE, SECTOR_DATA_SIZE);
         // fallthrough
     case SAVE_NORMAL: // normal save. also called by overwriting your own save.
     default:
@@ -797,33 +793,13 @@ u8 Save_LoadGameData(u8 saveType)
         gGameContinueCallback = 0;
         break;
     case SAVE_HALL_OF_FAME:
-        result = sub_80DA120(SECTOR_HOF(0), gDecompressionBuffer, 0xF80);
+        result = sub_80DA120(SECTOR_HOF(0), gDecompressionBuffer, SECTOR_DATA_SIZE);
         if (result == SAVE_STATUS_OK)
-            result = sub_80DA120(SECTOR_HOF(1), gDecompressionBuffer + 0xF80, 0xF80);
+            result = sub_80DA120(SECTOR_HOF(1), gDecompressionBuffer + SECTOR_DATA_SIZE, SECTOR_DATA_SIZE);
         break;
     }
 
     return result;
-}
-
-u32 TryCopySpecialSaveSection(u8 sector, u8* dst)
-{
-    s32 i;
-    s32 size;
-    u8* savData;
-
-    if (sector != SECTOR_TTOWER(0) && sector != SECTOR_TTOWER(1))
-        return 0xFF;
-    ReadFlash(sector, 0, (u8 *)&gSaveDataBuffer, sizeof(struct SaveSection));
-    if (*(u32*)(&gSaveDataBuffer.data[0]) != 0xB39D)
-        return 0xFF;
-    // copies whole save section except u32 counter
-    i = 0;
-    size = 0xFFB;
-    savData = &gSaveDataBuffer.data[4];
-    for (; i <= size; i++)
-        dst[i] = savData[i];
-    return 1;
 }
 
 u32 TryWriteSpecialSaveSection(u8 sector, u8* src)

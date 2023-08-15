@@ -40,9 +40,9 @@ void BgAffineSet(struct BgAffineSrcData *src, struct BgAffineDstData *dest, s32 
 
 void ObjAffineSet(struct ObjAffineSrcData *src, void *dest, s32 count, s32 offset);
 
-void LZ77UnCompWram(const void *src, void *dest);
+void LZDecompressWram(const void *src, void *dest);
 
-void LZ77UnCompVram(const void *src, void *dest);
+void LZDecompressVram(const void *src, void *dest);
 
 void RLUnCompWram(const void *src, void *dest);
 

@@ -285,8 +285,7 @@ static void EvoTask_WaitForPre1SparklesToGoUp(u8 taskId)
 
 u8 LaunchTask_PreEvoSparklesSet2(void)
 {
-    u8 taskId = CreateTask(EvoTask_PreEvoSparkleSet2Init, 0);
-    return taskId;
+    return CreateTask(EvoTask_PreEvoSparkleSet2Init, 0);
 }
 
 static void EvoTask_PreEvoSparkleSet2Init(u8 taskId)
@@ -317,8 +316,7 @@ static void EvoTask_CreatePreEvoSparklesSet2(u8 taskId)
 
 u8 LaunchTask_PostEvoSparklesSet1(void)
 {
-    u8 taskId = CreateTask(EvoTask_PostEvoSparklesSet1Init, 0);
-    return taskId;
+    return CreateTask(EvoTask_PostEvoSparklesSet1Init, 0);
 }
 
 static void EvoTask_PostEvoSparklesSet1Init(u8 taskId)
@@ -461,11 +459,10 @@ static void EvoTask_CreatePostEvoSparklesSet2Trade(u8 taskId)
 
 u8 LaunchTask_PrePostEvoMonSprites(u8 preEvoSpriteId, u8 postEvoSpriteId)
 {
-    u16 i;
     u8 taskId;
     u16 palette[16];
-    for (i = 0; i < 16; i++)
-        palette[i] = RGB_WHITE;
+	
+	memset(palette, RGB_WHITE, sizeof(palette));
     taskId = CreateTask(EvoTask_PrePostEvoMonSpritesInit, 0);
     gTasks[taskId].tPreEvoSpriteId = preEvoSpriteId;
     gTasks[taskId].tPostEvoSpriteId = postEvoSpriteId;

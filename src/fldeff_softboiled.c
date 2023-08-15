@@ -15,13 +15,8 @@ extern const u8 gText_PkmnHPRestoredByVar2[];
 
 bool8 SetUpFieldMove_SoftBoiled(void)
 {
-    u16 maxHp = GetMonData(&gPlayerParty[GetCursorSelectionMonId()], MON_DATA_MAX_HP);
-    u16 curHp = GetMonData(&gPlayerParty[GetCursorSelectionMonId()], MON_DATA_HP);
-
-    if (curHp > maxHp / 5)
-        return TRUE;
-    else
-        return FALSE;
+	u8 partyId = GetCursorSelectionMonId();
+	return (GetMonData(&gPlayerParty[partyId], MON_DATA_HP) > GetMonData(&gPlayerParty[partyId], MON_DATA_MAX_HP) / 5);
 }
 
 void ChooseMonForSoftboiled(u8 taskId)

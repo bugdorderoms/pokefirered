@@ -882,14 +882,7 @@ static void sub_815159C(void)
         }
         break;
     case 2:
-        ChangeBgX(0, 0, 0);
-        ChangeBgY(0, 0, 0);
-        ChangeBgX(1, 0, 0);
-        ChangeBgY(1, 0, 0);
-        ChangeBgX(2, 0, 0);
-        ChangeBgY(2, 0, 0);
-        ChangeBgX(3, 0, 0);
-        ChangeBgY(3, 0, 0);
+		ResetAllBgsPos();
         gUnknown_203F3E0->unk10++;
         break;
     case 3:

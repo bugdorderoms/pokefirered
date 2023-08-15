@@ -78,7 +78,6 @@ SECTIONS {
         src/trig.o(.text);
         src/random.o(.text);
         src/util.o(.text);
-        src/blend_palette.o(.text);
         src/daycare.o(.text);
         src/battle_interface.o(.text);
         src/smokescreen.o(.text);
@@ -102,7 +101,6 @@ SECTIONS {
         src/scrcmd.o(.text);
         src/field_control_avatar.o(.text);
         src/event_data.o(.text);
-        src/coord_event_weather.o(.text);
         src/field_tasks.o(.text);
         src/start_menu.o(.text);
         src/tileset_anims.o(.text);
@@ -157,8 +155,6 @@ SECTIONS {
         src/pokemon_size_record.o(.text);
         src/pc_screen_effect.o(.text);
         src/fldeff_poison.o(.text);
-        src/fldeff_berrytree.o(.text);
-        src/field_special_scene.o(.text);
         src/safari_zone.o(.text);
         src/item_use.o(.text);
         src/battle_anim_effects_1.o(.text);
@@ -204,7 +200,6 @@ SECTIONS {
         src/battle_message.o(.text);
         src/math_util.o(.text);
         src/roulette_util.o(.text);
-        src/cable_car_util.o(.text);
         src/save.o(.text);
         src/mystery_event_script.o(.text);
         src/field_effect_helpers.o(.text);
@@ -413,7 +408,6 @@ SECTIONS {
         src/window.o(.rodata);
         src/text.o(.rodata);
         src/sprite.o(.rodata);
-        src/bg_regs.o(.rodata);
         src/string_util.o(.rodata);
         src/link.o(.rodata);
         src/main_menu.o(.rodata);
@@ -444,7 +438,6 @@ SECTIONS {
         src/field_player_avatar.o(.rodata);
         src/event_object_movement.o(.rodata);
         src/scrcmd.o(.rodata);
-        src/coord_event_weather.o(.rodata);
         src/field_tasks.o(.rodata);
         src/start_menu.o(.rodata);
         src/tileset_anims.o(.rodata);
@@ -554,7 +547,6 @@ SECTIONS {
         src/vs_seeker.o(.rodata);
         src/item_pc.o(.rodata);
         src/mailbox_pc.o(.rodata);
-        src/decoration.o(.rodata);
         src/menu.o(.rodata);
         src/quest_log.o(.rodata);
         src/help_message.o(.rodata);

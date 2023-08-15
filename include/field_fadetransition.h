@@ -2,6 +2,7 @@
 #define GUARD_FIELD_FADETRANSITION_H
 
 #include "global.h"
+#include "palette.h"
 
 void FieldCB_RushInjuredPokemonToCenter(void);
 void DoWarp(void);
@@ -21,7 +22,6 @@ void WarpFadeInScreen(void);
 void FieldCB_ContinueScriptUnionRoom(void);
 
 bool32 FieldFadeTransitionBackgroundEffectIsFinished(void);
-void palette_bg_faded_fill_black(void);
 void DoStairWarp(u16 metatileBehavior, u16 delay);
 void DoEscalatorWarp(u8 a0);
 void DoLavaridgeGymB1FWarp(void);
@@ -34,5 +34,10 @@ bool8 FieldCB_ReturnToFieldOpenStartMenu(void);
 void FieldCB_ContinueScript(void);
 void FieldCB_ContinueScriptHandleMusic(void);
 void FieldCB_WarpExitFadeFromBlack(void);
+
+static inline void palette_bg_faded_fill_black(void)
+{
+    CpuFastFill16(RGB_BLACK, gPlttBufferFaded, 0x400);
+}
 
 #endif // GUARD_FIELD_FADETRANSITION_H
