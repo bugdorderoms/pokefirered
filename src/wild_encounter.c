@@ -220,8 +220,7 @@ static bool8 UnlockedTanobyOrAreNotInTanoby(void)
 u16 GenerateWildMon(u16 species, u8 level)
 {
     ZeroEnemyPartyMons();
-	CreateMonWithNature(&gEnemyParty[0], species, level, USE_RANDOM_IVS, Random() % 25);
-	
+	CreateMon(&gEnemyParty[0], species, level, USE_RANDOM_IVS, FALSE, 0, OT_ID_PLAYER_ID, 0);
 	return DoWildEncounterFormChange(&gEnemyParty[0]);
 }
 

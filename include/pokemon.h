@@ -379,6 +379,32 @@ struct Evolution
 
 #define EVOS_PER_MON 10
 
+enum
+{
+    PID_TYPE_NORMAL,
+    PID_TYPE_EGG
+};
+
+enum
+{
+    GENERATE_SHINY_NORMAL,
+    GENERATE_SHINY_LOCKED,
+    GENERATE_SHINY_FORCED
+};
+
+struct PIDParameters
+{
+    u16 species;
+    u16 pidType:2;
+	u16 shinyType:2;
+    u16 shinyRerolls:1;
+    u16 forceGender:1;
+	u16 forceOtId:1;
+	u16 unused:9;
+	u32 forcedOtId;
+    u8 forcedGender;
+};
+
 extern u8 gPlayerPartyCount;
 extern struct Pokemon gPlayerParty[PARTY_SIZE];
 extern u8 gEnemyPartyCount;
@@ -404,10 +430,10 @@ void ZeroBoxMonData(struct BoxPokemon *boxMon);
 void ZeroMonData(struct Pokemon *mon);
 void ZeroPlayerPartyMons(void);
 void ZeroEnemyPartyMons(void);
+u32 GeneratePIDMaster(struct PIDParameters parameters);
 void CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
-void CreateMonWithNature(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 nature);
-void CreateMonWithGenderNatureLetter(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 gender, u8 nature, u8 unownLetter);
+void CreateMonWithGender(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 gender);
 void CreateMaleMon(struct Pokemon *mon, u16 species, u8 level);
 void CreateMonWithIVsPersonality(struct Pokemon *mon, u16 species, u8 level, u32 ivs, u32 personality);
 void CreateMonWithEVSpread(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 evSpread);
@@ -424,6 +450,7 @@ u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove);
 u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool8 firstMove);
 void GiveMonInitialMoveset(struct Pokemon *mon);
 void DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move);
+u32 GetShinyRollsIncrease(void);
 
 #define BATTLE_ALIVE_EXCEPT_ACTIVE   0
 #define BATTLE_ALIVE_ATK_SIDE        1

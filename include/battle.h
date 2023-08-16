@@ -55,44 +55,24 @@
 #define MOVE_TARGET_FOES_AND_ALLY     (MOVE_TARGET_BOTH | MOVE_TARGET_ALLY)
 #define MOVE_TARGET_ALL_BATTLERS      (MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_USER)
 
-struct TrainerMonNoItemDefaultMoves
-{
-    u16 iv;
-    u8 lvl;
-    u16 species;
-};
+#define TRAINER_MON_MALE       1
+#define TRAINER_MON_FEMALE     2
+#define TRAINER_MON_GENDERLESS 3
 
-struct TrainerMonItemDefaultMoves
+struct TrainerMon
 {
-    u16 iv;
-    u8 lvl;
-    u16 species;
-    u16 heldItem;
-};
-
-struct TrainerMonNoItemCustomMoves
-{
-    u16 iv;
-    u8 lvl;
-    u16 species;
-    u16 moves[MAX_MON_MOVES];
-};
-
-struct TrainerMonItemCustomMoves
-{
-    u16 iv;
-    u8 lvl;
-    u16 species;
-    u16 heldItem;
-    u16 moves[MAX_MON_MOVES];
-};
-
-union TrainerMonPtr
-{
-    const struct TrainerMonNoItemDefaultMoves *NoItemDefaultMoves;
-    const struct TrainerMonNoItemCustomMoves *NoItemCustomMoves;
-    const struct TrainerMonItemDefaultMoves *ItemDefaultMoves;
-    const struct TrainerMonItemCustomMoves *ItemCustomMoves;
+	/*0x00*/ const u8 *nickname;
+	/*0x04*/ const u8 *ev;
+	/*0x08*/ u16 species;
+	/*0x0A*/ u16 heldItem;
+	/*0x0C*/ u16 moves[MAX_MON_MOVES];
+	/*0x14*/ u32 iv;
+	/*0x18*/ u8 lvl;
+	/*0x19*/ u8 abilityNum:2; // 0 = based on personality, 1 = first, 2 = second, 3 = hidden
+	         u8 nature:5; // 0 = based on personality. Up to 31 natures
+	         u8 isShiny:1;
+	/*0x1A*/ u8 ballId:6; // 0 = poke ball based on trainer's class. Up to 63 poke balls
+			 u8 gender:2; // 0 = based on personality, 1 = male, 2 = female, 3 = genderless
 };
 
 struct Trainer
@@ -104,9 +84,8 @@ struct Trainer
 	/*0x04*/ u8 trainerName[12];
     /*0x10*/ u16 items[MAX_TRAINER_ITEMS];
     /*0x18*/ u32 aiFlags;
-	/*0x1C*/ const union TrainerMonPtr party;
-	/*0x20*/ u8 partyFlags:7;
-	/*0x20*/ u8 doubleBattle:1;
+	/*0x1C*/ const struct TrainerMon *party;
+	/*0x20*/ bool8 doubleBattle;
 };
 
 struct TrainerSlide

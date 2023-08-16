@@ -430,534 +430,6 @@ const struct TrainerMoneyBall gTrainerMoneyAndBallTable[] =
     { 0xFF, 5, ITEM_NONE },
 };
 
-const struct TrainerEvs gTrainerEvsTable[] =
-{    // Evs = {HP, ATK, DEF, SPEED, SPATK, SPDEF}
-    {
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_DOCILE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_LONELY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_BRAVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_ADAMANT,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_NAUGHTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_BOLD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_RELAXED,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_IMPISH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_LAX,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_TIMID,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_HASTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_JOLLY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_NAIVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_MODEST,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_MILD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_QUIET,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_RASH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_CALM,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_GENTLE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_SASSY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_CAREFUL,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {MAX_PER_STAT_EVS, 0, 0, 0, 0, 0},
-    },{
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_DOCILE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_LONELY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_BRAVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_ADAMANT,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_NAUGHTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_BOLD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_RELAXED,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_IMPISH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_LAX,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_TIMID,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_HASTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_JOLLY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_NAIVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_MODEST,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_MILD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_QUIET,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_RASH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_CALM,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_GENTLE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_SASSY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .nature = NATURE_CAREFUL,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, MAX_PER_STAT_EVS, 0, 0, 0, 0},
-    },{
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_DOCILE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_LONELY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_BRAVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_ADAMANT,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_NAUGHTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_BOLD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_RELAXED,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_IMPISH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_LAX,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_TIMID,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_HASTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_JOLLY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_NAIVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_MODEST,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_MILD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_QUIET,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_RASH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_CALM,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_GENTLE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_SASSY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .nature = NATURE_CAREFUL,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, MAX_PER_STAT_EVS, 0, 0, 0},
-    },{
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_DOCILE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_LONELY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_BRAVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_ADAMANT,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_NAUGHTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_BOLD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_RELAXED,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_IMPISH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_LAX,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_TIMID,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_HASTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },
-    {
-        .nature = NATURE_JOLLY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_NAIVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_MODEST,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_MILD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_QUIET,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_RASH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_CALM,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_GENTLE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_SASSY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .nature = NATURE_CAREFUL,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, MAX_PER_STAT_EVS, 0},
-    },{
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_DOCILE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_LONELY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_BRAVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_ADAMANT,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_NAUGHTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_BOLD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_RELAXED,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_IMPISH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_LAX,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_TIMID,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_HASTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_JOLLY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_NAIVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_MODEST,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_MILD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_QUIET,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_RASH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_CALM,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_GENTLE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_SASSY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .nature = NATURE_CAREFUL,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, 0, 0, MAX_PER_STAT_EVS},
-    },{
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_DOCILE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_LONELY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_BRAVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_ADAMANT,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_NAUGHTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_BOLD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_RELAXED,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_IMPISH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_LAX,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_TIMID,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_HASTY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_JOLLY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_NAIVE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_MODEST,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_MILD,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_QUIET,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_RASH,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_CALM,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_GENTLE,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_SASSY,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },{
-        .nature = NATURE_CAREFUL,
-        .ivs = MAX_PER_STAT_IVS,
-        .Evs = {0, 0, 0, MAX_PER_STAT_EVS, 0, 0},
-    },
-};
-
 #include "data/text/abilities.h"
 
 static void (*const sTurnActionsFuncsTable[])(void) =
@@ -1828,106 +1300,128 @@ static void CB2_QuitPokedudeBattle(void)
     }
 }
 
+static u16 GetTrainerClassBallId(u8 trainerClass)
+{
+	u32 i;
+	
+	for (i = 0; gTrainerMoneyAndBallTable[i].classId != 0xFF; i++)
+	{
+		if (gTrainerMoneyAndBallTable[i].classId == trainerClass)
+			break;
+	}
+	return gTrainerMoneyAndBallTable[i].ballId;
+}
+
 static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 {
-    u32 nameHash = 0;
-    u32 personalityValue;
-    u8 fixedIV;
-    s32 i, j;
-
+    u32 i, j, otid;
+	const struct TrainerMon *partyData;
+	struct PIDParameters parameters;
+	
     if (trainerNum == TRAINER_SECRET_BASE)
         return 0;
-    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
-     && !(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)))
-    {
-        ZeroEnemyPartyMons();
-        for (i = 0; i < gTrainers[trainerNum].partySize; ++i)
-        {
+	else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && !(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)))
+	{
+		ZeroEnemyPartyMons();
+		
+		partyData = gTrainers[trainerNum].party;
+		
+		otid = Random32();
+		
+		parameters.pidType = PID_TYPE_NORMAL;
+		parameters.forceOtId = TRUE; // For the Pokémon don't be generated with the player otid
+		parameters.forcedOtId = otid;
+		
+		for (i = 0; i < gTrainers[trainerNum].partySize; i++)
+		{
+			parameters.species = partyData[i].species;
+			parameters.shinyType = partyData[i].isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_LOCKED;
+			
+			if (partyData[i].gender)
+			{
+				switch (partyData[i].gender)
+				{
+					case TRAINER_MON_MALE:
+						parameters.forcedGender = MON_MALE;
+						break;
+					case TRAINER_MON_FEMALE:
+						parameters.forcedGender = MON_FEMALE;
+						break;
+					case TRAINER_MON_GENDERLESS:
+						parameters.forcedGender = MON_GENDERLESS;
+						break;
+				}
+				parameters.forceGender = TRUE;
+			}
+			// Create mon
+			CreateMon(&party[i], partyData[i].species, partyData[i].lvl, USE_RANDOM_IVS, TRUE, GeneratePIDMaster(parameters), OT_ID_PRESET, otid);
+			
+			// Update form based on gender
+			DoOverworldFormChange(&party[i], FORM_CHANGE_GENDER);
+			
+			// Set held item
+			SetMonData(&party[i], MON_DATA_HELD_ITEM, &partyData[i].heldItem);
+			
+			// Give moves
+			for (j = 0; j < MAX_MON_MOVES; j++)
+			{
+				if (partyData[i].moves[j])
+					SetMonMoveSlot(&party[i], partyData[i].moves[j], j);
+			}
+			// Give nickname
+			if (partyData[i].nickname != NULL)
+				SetMonData(&party[i], MON_DATA_NICKNAME, partyData[i].nickname);
+			
+			// Set ivs
+			if (partyData[i].iv)
+				SetMonData(&party[i], MON_DATA_IVS, &partyData[i].iv);
+			
+			// Set evs
+			if (partyData[i].ev != NULL)
+			{
+				for (j = 0; j < NUM_STATS; j++)
+					SetMonData(&party[i], MON_DATA_HP_EV + j, &partyData[i].ev[j]);
+			}
+			// Set ability num or hidden
+			if (partyData[i].abilityNum)
+			{
+				// Set ability hidden
+				if (partyData[i].abilityNum == 3)
+				{
+					j = TRUE;
+					SetMonData(&party[i], MON_DATA_ABILITY_HIDDEN, &j);
+				}
+				else // Set ability num
+				{
+					j = partyData[i].abilityNum - 1;
+					SetMonData(&party[i], MON_DATA_ABILITY_NUM, &j);
+				}
+			}
+			// Give nature
+			if (partyData[i].nature)
+			{
+				j = partyData[i].nature - 1;
+				SetMonData(&party[i], MON_DATA_NATURE, &j);
+			}
+			// Calculate stats
+			CalculateMonStats(&party[i]);
+			
+			// Give the pokeball Id
+#if CLASS_BASED_BALLS
+            j = GetTrainerClassBallId(gTrainers[trainerNum].trainerClass);
+#else
+			if (partyData[i].ballId)
+				j = partyData[i].ballId;
+			else
+				j = GetTrainerClassBallId(gTrainers[trainerNum].trainerClass);
+#endif
 
-            if (gTrainers[trainerNum].doubleBattle == TRUE)
-                personalityValue = 0x80;
-            else if (gTrainers[trainerNum].encounterMusic_gender & 0x80)
-                personalityValue = 0x78;
-            else
-                personalityValue = 0x88;
-            for (j = 0; gTrainers[trainerNum].trainerName[j] != EOS; ++j)
-                nameHash += gTrainers[trainerNum].trainerName[j];
-            switch (gTrainers[trainerNum].partyFlags)
-            {
-            case 0:
-            {
-                const struct TrainerMonNoItemDefaultMoves *partyData = gTrainers[trainerNum].party.NoItemDefaultMoves;
-
-                for (j = 0; gSpeciesNames[partyData[i].species][j] != EOS; ++j)
-                    nameHash += gSpeciesNames[partyData[i].species][j];
-                personalityValue += nameHash << 8;
-                fixedIV = partyData[i].iv * 31 / 255;
-                CreateMon(&party[i], partyData[i].species, partyData[i].lvl, fixedIV, TRUE, personalityValue, OT_ID_RANDOM_NO_SHINY, 0);
-                break;
-            }
-            case F_TRAINER_PARTY_CUSTOM_MOVESET:
-            {
-                const struct TrainerMonNoItemCustomMoves *partyData = gTrainers[trainerNum].party.NoItemCustomMoves;
-
-                for (j = 0; gSpeciesNames[partyData[i].species][j] != EOS; ++j)
-                    nameHash += gSpeciesNames[partyData[i].species][j];
-                personalityValue += nameHash << 8;
-                fixedIV = partyData[i].iv * 31 / 255;
-                CreateMon(&party[i], partyData[i].species, partyData[i].lvl, fixedIV, TRUE, personalityValue, OT_ID_RANDOM_NO_SHINY, 0);
-                for (j = 0; j < MAX_MON_MOVES; ++j)
-                {
-                    SetMonData(&party[i], MON_DATA_MOVE1 + j, &partyData[i].moves[j]);
-                    SetMonData(&party[i], MON_DATA_PP1 + j, &gBattleMoves[partyData[i].moves[j]].pp);
-                }
-                break;
-            }
-            case F_TRAINER_PARTY_HELD_ITEM:
-            {
-                const struct TrainerMonItemDefaultMoves *partyData = gTrainers[trainerNum].party.ItemDefaultMoves;
-
-                for (j = 0; gSpeciesNames[partyData[i].species][j] != EOS; ++j)
-                    nameHash += gSpeciesNames[partyData[i].species][j];
-                personalityValue += nameHash << 8;
-                fixedIV = partyData[i].iv * 31 / 255;
-                CreateMon(&party[i], partyData[i].species, partyData[i].lvl, fixedIV, TRUE, personalityValue, OT_ID_RANDOM_NO_SHINY, 0);
-
-                SetMonData(&party[i], MON_DATA_HELD_ITEM, &partyData[i].heldItem);
-                break;
-            }
-            case F_TRAINER_PARTY_CUSTOM_MOVESET | F_TRAINER_PARTY_HELD_ITEM:
-            {
-                const struct TrainerMonItemCustomMoves *partyData = gTrainers[trainerNum].party.ItemCustomMoves;
-
-                for (j = 0; gSpeciesNames[partyData[i].species][j] != EOS; ++j)
-                    nameHash += gSpeciesNames[partyData[i].species][j];
-                fixedIV = partyData[i].iv;
-		personalityValue += nameHash << 8;
-                CreateMon(&party[i], partyData[i].species, partyData[i].lvl, gTrainerEvsTable[fixedIV].ivs, TRUE, personalityValue, OT_ID_RANDOM_NO_SHINY, 0);
-                SetMonData(&party[i], MON_DATA_HELD_ITEM, &partyData[i].heldItem);
-                for (j = 0; j < NUM_STATS; j++)
-                    SetMonData(&party[i], MON_DATA_HP_EV + j, &gTrainerEvsTable[fixedIV].Evs[j]);
-		if (gTrainerEvsTable[fixedIV].nature != 0)
-		    SetMonData(&party[i], MON_DATA_NATURE, &gTrainerEvsTable[fixedIV].nature);
-                CalculateMonStats(&party[i]);
-                for (j = 0; j < MAX_MON_MOVES; ++j)
-                {
-                    SetMonData(&party[i], MON_DATA_MOVE1 + j, &partyData[i].moves[j]);
-                    SetMonData(&party[i], MON_DATA_PP1 + j, &gBattleMoves[partyData[i].moves[j]].pp);
-                }
-                break;
-            }
-            }
-            for (j = 0; gTrainerMoneyAndBallTable[j].classId != 0xFF; j++)
-            {
-                if (gTrainerMoneyAndBallTable[j].classId == gTrainers[trainerNum].trainerClass)
-                    break;
-            }
-            SetMonData(&party[i], MON_DATA_POKEBALL, &gTrainerMoneyAndBallTable[j].ballId);
-        }
+			SetMonData(&party[i], MON_DATA_POKEBALL, &j);
+		}
 		if (gTrainers[trainerNum].doubleBattle)
 			gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
-    }
-    return gTrainers[trainerNum].partySize;
+	}
+	return gTrainers[trainerNum].partySize;
 }
 
 void VBlankCB_Battle(void)

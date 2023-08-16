@@ -934,13 +934,13 @@ static void DexNavUpdateSearchWindow(u8 proximity)
 //////////////////////////////
 static bool8 DexNavTryMakeShinyMon(void)
 {
-    u32 i, shinyRolls, chainBonus, rndBonus, charmBonus = 0, shinyRate = 0;
+    u32 i, shinyRolls, chainBonus, rndBonus, shinyRate = 0;
     u8 searchLevel = sDexNavSearchLevel;
     u8 chain = sCurrentDexNavChain;
 
     chainBonus = (chain == 50) ? 5 : (chain == 100) ? 10 : 0;
     rndBonus = (Random() % 100 < 4 ? 4 : 0);
-    shinyRolls = 1 + charmBonus + chainBonus + rndBonus;
+    shinyRolls = 1 + chainBonus + rndBonus + GetShinyRollsIncrease();
 
     if (searchLevel > 200)
     {

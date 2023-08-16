@@ -3164,13 +3164,12 @@ static void HandleInputMoveInfo(void)
 
 static void MoveInfoPrintMoveDescription(void)
 {
-	u8 buffer[1000];
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
 	u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
 	
 	// Move's description
-	ReformatStringToMaxChars(buffer, gMoveDescriptionPointers[move - 1], 0, 150, FALSE);
-	CreateBattleMoveInfoWindowAndArrows(buffer);
+	ReformatStringToMaxChars(gStringVar4, gMoveDescriptionPointers[move - 1], 0, 150, FALSE);
+	CreateBattleMoveInfoWindowAndArrows(gStringVar4);
 }
 
 static void MoveInfoPrintSubmenuString(u8 stateId)

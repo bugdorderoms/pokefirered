@@ -308,12 +308,16 @@ void StartScriptedWildBattle(void)
 
 void StartMarowakBattle(void)
 {
+	u8 nature;
+	
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndMarowakBattle;
     if (CheckBagHasItem(ITEM_SILPH_SCOPE, 1))
     {
         gBattleTypeFlags = BATTLE_TYPE_GHOST | BATTLE_TYPE_GHOST_UNVEILED;
-        CreateMonWithGenderNatureLetter(gEnemyParty, SPECIES_MAROWAK, 30, 31, MON_FEMALE, NATURE_SERIOUS, 0);
+        CreateMonWithGender(&gEnemyParty[0], SPECIES_MAROWAK, 30, MAX_PER_STAT_IVS, MON_FEMALE);
+		nature = NATURE_SERIOUS;
+		SetMonData(&gEnemyParty[0], MON_DATA_NATURE, &nature);
     }
     else
     {
@@ -478,14 +482,14 @@ static u8 GetBattleTransitionTypeByMap(void)
     return B_TRANSITION_BIG_POKEBALL;
 }
 
-static u16 GetSumOfPlayerPartyLevel(u8 numMons)
+static u32 GetSumOfPlayerPartyLevel(u8 numMons)
 {
-    u8 sum = 0;
+    u32 sum;
     s32 i;
 
-    for (i = 0; i < PARTY_SIZE; ++i)
+    for (i = 0, sum = 0; i < PARTY_SIZE; ++i)
     {
-        u32 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
+        u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
 
         if (species != SPECIES_EGG && species != SPECIES_NONE && GetMonData(&gPlayerParty[i], MON_DATA_HP) != 0)
         {
@@ -497,54 +501,18 @@ static u16 GetSumOfPlayerPartyLevel(u8 numMons)
     return sum;
 }
 
-static u8 GetSumOfEnemyPartyLevel(u16 opponentId, u8 numMons)
+static u32 GetSumOfEnemyPartyLevel(u16 opponentId, u8 numMons)
 {
     u8 i;
-    u8 sum;
-    u32 count = numMons;
+    u32 sum;
+	const struct TrainerMon *party = gTrainers[opponentId].party;
+	
+    if (gTrainers[opponentId].partySize < numMons)
+        numMons = gTrainers[opponentId].partySize;
+	
+	for (i = 0, sum = 0; i < numMons; i++)
+		sum += party[i].lvl;
 
-    if (gTrainers[opponentId].partySize < count)
-        count = gTrainers[opponentId].partySize;
-    sum = 0;
-    switch (gTrainers[opponentId].partyFlags)
-    {
-    case 0:
-        {
-            const struct TrainerMonNoItemDefaultMoves *party;
-
-            party = gTrainers[opponentId].party.NoItemDefaultMoves;
-            for (i = 0; i < count; ++i)
-                sum += party[i].lvl;
-        }
-        break;
-    case F_TRAINER_PARTY_CUSTOM_MOVESET:
-        {
-            const struct TrainerMonNoItemCustomMoves *party;
-
-            party = gTrainers[opponentId].party.NoItemCustomMoves;
-            for (i = 0; i < count; ++i)
-                sum += party[i].lvl;
-        }
-        break;
-    case F_TRAINER_PARTY_HELD_ITEM:
-        {
-            const struct TrainerMonItemDefaultMoves *party;
-
-            party = gTrainers[opponentId].party.ItemDefaultMoves;
-            for (i = 0; i < count; ++i)
-                sum += party[i].lvl;
-        }
-        break;
-    case F_TRAINER_PARTY_CUSTOM_MOVESET | F_TRAINER_PARTY_HELD_ITEM:
-        {
-            const struct TrainerMonItemCustomMoves *party;
-
-            party = gTrainers[opponentId].party.ItemCustomMoves;
-            for (i = 0; i < count; ++i)
-                sum += party[i].lvl;
-        }
-        break;
-    }
     return sum;
 }
 

@@ -108,3 +108,7 @@
 
 // If this setting is enabled, the windows of the house will light up at night time.
 #define LIT_UP_WINDOWS TRUE
+
+// If this setting is enabled, the captured Pokémon of trainers will have their Poké Ball based on their trainer class.
+// Otherwise, the Poké Ball will be customizable in the trainer data.
+#define CLASS_BASED_BALLS TRUE

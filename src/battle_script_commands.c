@@ -4378,7 +4378,7 @@ static void atk5C_nop(void)
 
 static void atk5D_getmoneyreward(void)
 { 
-    u8 lastMonLevel = 0;
+    u8 lastMonLevel;
     u32 moneyReward, i;
 
     if (gBattleOutcome == B_OUTCOME_WON)
@@ -4387,21 +4387,8 @@ static void atk5D_getmoneyreward(void)
             moneyReward = gBattleResources->secretBase->party.levels[0] * 20 * gBattleStruct->moneyMultiplier;
         else
         {
-            switch (gTrainers[gTrainerBattleOpponent_A].partyFlags)
-            {
-				case 0:
-                    lastMonLevel = gTrainers[gTrainerBattleOpponent_A].party.NoItemDefaultMoves[gTrainers[gTrainerBattleOpponent_A].partySize - 1].lvl;
-					break;
-				case F_TRAINER_PARTY_CUSTOM_MOVESET:
-                    lastMonLevel = gTrainers[gTrainerBattleOpponent_A].party.NoItemCustomMoves[gTrainers[gTrainerBattleOpponent_A].partySize - 1].lvl;
-					break;
-				case F_TRAINER_PARTY_HELD_ITEM:
-                    lastMonLevel = gTrainers[gTrainerBattleOpponent_A].party.ItemDefaultMoves[gTrainers[gTrainerBattleOpponent_A].partySize - 1].lvl;
-					break;
-				case (F_TRAINER_PARTY_CUSTOM_MOVESET | F_TRAINER_PARTY_HELD_ITEM):
-                    lastMonLevel = gTrainers[gTrainerBattleOpponent_A].party.ItemCustomMoves[gTrainers[gTrainerBattleOpponent_A].partySize - 1].lvl;
-					break;
-            }
+			lastMonLevel = gTrainers[gTrainerBattleOpponent_A].party[gTrainers[gTrainerBattleOpponent_A].partySize - 1].lvl;
+			
             for (i = 0; gTrainerMoneyAndBallTable[i].classId != 0xFF; i++)
             {
                 if (gTrainerMoneyAndBallTable[i].classId == gTrainers[gTrainerBattleOpponent_A].trainerClass)

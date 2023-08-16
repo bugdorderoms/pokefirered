@@ -1162,7 +1162,7 @@ static u8 ShowObtainedItemDescription(u16 item)
 {
 	struct WindowTemplate template;
 	s16 textX, textY, maxWidth, windowHeight, numLines;
-	u8 buffer[1000], windowId;
+	u8 windowId;
 	
 	if (IS_KEY_ITEM_TM(ItemId_GetPocket(item)))
 	{
@@ -1174,7 +1174,7 @@ static u8 ShowObtainedItemDescription(u16 item)
 		textX = ITEM_ICON_X + 2;
 		maxWidth = 195;
 	}
-	numLines = ReformatStringToMaxChars(buffer, ItemId_GetDescription(item), 0, maxWidth, FALSE);
+	numLines = ReformatStringToMaxChars(gStringVar4, ItemId_GetDescription(item), 0, maxWidth, FALSE);
 	
 	if (numLines == 1)
 	{
@@ -1194,10 +1194,9 @@ static u8 ShowObtainedItemDescription(u16 item)
 	template = SetWindowTemplateFields(0, 1, 1, 28, windowHeight, 14, 0x20);
 	windowId = AddWindow(&template);
 	FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
-	DrawStdFrameWithCustomTileAndPalette(windowId, FALSE, 0x214, 14);
 	PutWindowTilemap(windowId);
-	CopyWindowToVram(windowId, COPYWIN_BOTH);
-	AddTextPrinterParameterized(windowId, 0, buffer, textX, textY, 0, NULL);
+	DrawStdFrameWithCustomTileAndPalette(windowId, FALSE, 0x214, 14);
+	AddTextPrinterParameterized(windowId, 0, gStringVar4, textX, textY, 0, NULL);
 	GetSetItemObtained(item, FLAG_SET_OBTAINED);
 	
 	return windowId;
