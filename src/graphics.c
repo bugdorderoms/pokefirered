@@ -567,8 +567,8 @@ const u32 gBattleAnimSpritePal_WhirlwindLines[] = INCBIN_U32("graphics/battle_an
 const u32 gBattleAnimSpriteGfx_GoldRing[] = INCBIN_U32("graphics/battle_anims/sprites/gold_ring.4bpp.lz");
 const u32 gBattleAnimSpritePal_GoldRing[] = INCBIN_U32("graphics/battle_anims/sprites/gold_ring.gbapal.lz");
 
-const u32 gBattleAnimSpriteGfx_AbilityPopUp[] = INCBIN_U32("graphics/new/ability_pop_up.4bpp");
-const u32 gBattleAnimSpritePal_AbilityPopUp[] = INCBIN_U32("graphics/new/ability_pop_up.gbapal");
+const u32 gBattleAnimSpriteGfx_AbilityPopUp[] = INCBIN_U32("graphics/battle_interface/ability_pop_up.4bpp");
+const u32 gBattleAnimSpritePal_AbilityPopUp[] = INCBIN_U32("graphics/battle_interface/ability_pop_up.gbapal");
 
 const u32 gBattleAnimSpritePal_BlueRing2[] = INCBIN_U32("graphics/battle_anims/sprites/blue_ring_2.gbapal.lz");
 const u32 gBattleAnimSpritePal_PurpleRing[] = INCBIN_U32("graphics/battle_anims/sprites/purple_ring.gbapal.lz");
@@ -1411,9 +1411,9 @@ const u16 gUnknown_8EAFF60[] = INCBIN_U16("graphics/unknown/unknown_EAFF60.gbapa
 const u32 gBerryCrush_Crusher_Gfx[] = INCBIN_U32("graphics/berry_crush/berry_crush.4bpp.lz");
 const u32 gBerryCrush_Crusher_Tilemap[] = INCBIN_U32("graphics/berry_crush/data_EB0ADC.bin.lz");
 
-const u8 gRegisteredItemBoxSpriteGfx[] = INCBIN_U8("graphics/new/registered_item_box.4bpp");
-const u8 gRegisteredItemCursorSpriteGfx[] = INCBIN_U8("graphics/new/registered_item_cursor.4bpp");
-const u16 gRegisteredItemBoxSpritePal[] = INCBIN_U16("graphics/new/registered_item_box.gbapal");
+const u8 gRegisteredItemBoxSpriteGfx[] = INCBIN_U8("graphics/registered_items/box.4bpp");
+const u8 gRegisteredItemCursorSpriteGfx[] = INCBIN_U8("graphics/registered_items/cursor.4bpp");
+const u16 gRegisteredItemBoxSpritePal[] = INCBIN_U16("graphics/registered_items/box.gbapal");
 
 const u16 sHandCursorTiles[] = INCBIN_U16("graphics/interface/pss_unk_83D2BEC.4bpp");
 const u16 gUnknown_83CE7F0[] = INCBIN_U16("graphics/interface/pss_unk_83CE810.gbapal");
