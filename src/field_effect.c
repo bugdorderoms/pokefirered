@@ -520,13 +520,6 @@ static u8 AddNewGameBirchObject(s16 x, s16 y, u8 subpriority)
     return CreateSprite(&sNewGameOakObjectTemplate, x, y, subpriority);
 }
 
-u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y, u8 subpriority)
-{
-    u16 spriteId = CreateMonPicSprite(species, 0, 0x8000, TRUE, x, y, 0, gMonPaletteTable[species].tag);
-	
-	return spriteId == 0xFFFF ? MAX_SPRITES : spriteId;
-}
-
 static u8 CreateMonSprite_FieldMove(u16 species, u32 otId, u32 personality, s16 x, s16 y, u8 subpriority)
 {
     u16 spriteId = CreateMonPicSprite(species, otId, personality, 1, x, y, 0, GetMonSpritePalStructFromOtIdPersonality(species, otId, personality)->tag);

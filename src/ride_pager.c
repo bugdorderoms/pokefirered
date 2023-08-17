@@ -178,7 +178,8 @@ void TryRemoveStrengthFlag(void)
 #define tWindowId  data[0]
 #define tCursorPos data[1]
 #define tCount     data[2]
-#define tOrder(i)  data[i + 3]
+#define tState     data[3]
+#define tOrder(i)  data[i + 4]
 
 #define tRide data[0]
 #define tFlag data[1]
@@ -190,7 +191,7 @@ bool8 FieldCB_ReturnToFieldUseRidePager(void)
 	
 	count = DrawRidePagerMultichoiceWindow(&windowId, &cursorPos, order);
 	FadeInFromBlack();
-	data = gTasks[CreateTask(Task_WaitFadeAndGoToRidePagerInput, 80)].data;
+	data = gTasks[CreateTask(Task_WaitFadeAndGoToRidePagerInput, 8)].data;
 	tWindowId = windowId;
 	tCursorPos = cursorPos;
 	tCount = count;
@@ -261,12 +262,6 @@ static u8 CreateRidePagerMultichoiceWindow(void)
 	return windowId;
 }
 
-static void UpdateRidePagerMonPicAndDesc(u8 ride)
-{
-	UpdatePokemonSpeciesOnPicbox(RideToSpeciesId(ride), RIDE_PAGER_MON_PIC_X, RIDE_PAGER_MON_PIC_Y, 2);
-	PrintRideDescInMessageWindow(ride);
-}
-
 static void PrintRideDescInMessageWindow(u8 ride)
 {
 	StringExpandPlaceholders(gStringVar4, sRideToSpeciesAndDesc[ride].desc);
@@ -280,6 +275,24 @@ static void Task_WaitFadeAndGoToRidePagerInput(u8 taskId)
 		gTasks[taskId].func = Task_RidePagerHandleInput;
 }
 
+static void Task_RidePagerHandlePicboxUpdate(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+	
+	switch (tState)
+	{
+		case 0:
+			RemovePokemonSpeciesOnPicbox();
+			++tState;
+			break;
+		case 1:
+			UpdatePokemonSpeciesOnPicbox(RideToSpeciesId(tOrder(tCursorPos)), RIDE_PAGER_MON_PIC_X, RIDE_PAGER_MON_PIC_Y);
+		    PrintRideDescInMessageWindow(tOrder(tCursorPos));
+			gTasks[taskId].func = Task_RidePagerHandleInput;
+			break;
+	}
+}
+
 static void Task_RidePagerHandleInput(u8 taskId)
 {
 	s16 *data = gTasks[taskId].data;
@@ -290,7 +303,8 @@ static void Task_RidePagerHandleInput(u8 taskId)
 		{
 			PlaySE(SE_SELECT);
 			tCursorPos = Menu_MoveCursor(-1);
-			UpdateRidePagerMonPicAndDesc(tOrder(tCursorPos));
+			tState = 0;
+			gTasks[taskId].func = Task_RidePagerHandlePicboxUpdate;
 			return;
 		}
 		PlaySE(SE_FAILURE);
@@ -301,7 +315,8 @@ static void Task_RidePagerHandleInput(u8 taskId)
 		{
 			PlaySE(SE_SELECT);
 			tCursorPos = Menu_MoveCursor(+1);
-			UpdateRidePagerMonPicAndDesc(tOrder(tCursorPos));
+			tState = 0;
+			gTasks[taskId].func = Task_RidePagerHandlePicboxUpdate;
 			return;
 		}
 		PlaySE(SE_FAILURE);

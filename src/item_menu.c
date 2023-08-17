@@ -2133,22 +2133,25 @@ static void Task_TryDoItemDeposit(u8 taskId)
 
 bool8 UseRegisteredKeyItemOnField(void)
 {
-    u8 taskId;
-    if (InUnionRoom() == TRUE)
-        return FALSE;
-    DismissMapNamePopup();
-    ChangeBgY(0, 0, 0);
-	
-    if (!IsAllRegisteredItemSlotsFree())
-    {
-	    FreezeObjectEvents();
-	    HandleEnforcedLookDirectionOnPlayerStopMoving();
-            StopPlayerAvatar();
-            InitRegisteredItemsToChoose();
-            return TRUE;
-    }
-    ScriptContext1_SetupScript(EventScript_BagItemCanBeRegistered);
-    return TRUE;
+	if (!InUnionRoom())
+	{
+		DismissMapNamePopup();
+		ChangeBgY(0, 0, 0);
+		
+		if (IsAllRegisteredItemSlotsFree())
+			ScriptContext1_SetupScript(EventScript_BagItemCanBeRegistered);
+		else if (Overworld_GetFlashLevel() > 0)
+			ScriptContext1_SetupScript(EventScript_RegisteredItemsCantBeOpenedHere);
+		else
+		{
+			FreezeObjectEvents();
+			HandleEnforcedLookDirectionOnPlayerStopMoving();
+			StopPlayerAvatar();
+			InitRegisteredItemsToChoose();
+		}
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static bool8 BagIsTutorial(void)

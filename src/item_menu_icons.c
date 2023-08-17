@@ -1204,35 +1204,48 @@ static u8 ShowObtainedItemDescription(u16 item)
 
 void CreateItemIconOnFindMessage(void)
 {
-	struct Sprite * sprite;
+	struct Sprite *sprite1, *sprite2;
 	u16 reg1 = GetGpuReg(REG_OFFSET_DISPCNT), reg2 = GetGpuReg(REG_OFFSET_WINOUT), itemId = gSpecialVar_0x8009;
 	s16 x, y;
-	u8 spriteId, spriteId2 = MAX_SPRITES, windowId = 0xFF;
+	u8 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2, windowId = 0xFF;
 	
-	spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
-	
-	if (Overworld_GetFlashLevel())
+	// Handle flash
+	if (Overworld_GetFlashLevel() > 0)
 	{
 		SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
 		SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
 		
 		spriteId2 = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
 	}
+	else
+		spriteId2 = MAX_SPRITES;
+	
 	if (spriteId != MAX_SPRITES)
 	{
-		sprite = &gSprites[spriteId];
+		sprite1 = &gSprites[spriteId];
+		
+		if (spriteId2 != MAX_SPRITES)
+			sprite2 = &gSprites[spriteId2];
 		
 		if (IS_KEY_ITEM_TM(ItemId_GetPocket(itemId)))
 		{
 			x = 112;
 			y = 64;
 			
-			sprite->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
-			sprite->oam.matrixNum = AllocOamMatrix();
-			sprite->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
+			sprite1->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
+			sprite1->oam.matrixNum = AllocOamMatrix();
+			sprite1->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
 			
-			StartSpriteAffineAnim(sprite, 0);
+			StartSpriteAffineAnim(sprite1, 0);
 			
+			if (spriteId2 != MAX_SPRITES)
+			{
+				sprite2->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
+				sprite2->oam.matrixNum = AllocOamMatrix();
+				sprite2->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
+				
+				StartSpriteAffineAnim(sprite2, 0);
+			}
 			if (!GetSetItemObtained(itemId, FLAG_GET_OBTAINED))
 				windowId = ShowObtainedItemDescription(itemId);
 		}
@@ -1251,30 +1264,29 @@ void CreateItemIconOnFindMessage(void)
 				windowId = ShowObtainedItemDescription(itemId);
 			}
 		}
-		sprite->x2 = x;
-		sprite->y2 = y;
-		sprite->oam.priority = 0;
-		sprite->data[0] = windowId;
-		sprite->data[1] = reg1;
-		sprite->data[2] = reg2;
-		sprite->data[3] = spriteId2;
-	}
-	if (spriteId2 != MAX_SPRITES)
-	{
-		sprite = &gSprites[spriteId2];
+		sprite1->x2 = x;
+		sprite1->y2 = y;
+		sprite1->oam.priority = 0;
+		sprite1->data[0] = windowId;
+		sprite1->data[1] = reg1;
+		sprite1->data[2] = reg2;
+		sprite1->data[3] = spriteId2;
 		
-		sprite->x2 = x;
-		sprite->y2 = y;
-		sprite->oam.priority = 0;
-		sprite->oam.objMode = ST_OAM_OBJ_WINDOW;
+		if (spriteId2 != MAX_SPRITES)
+		{
+			sprite2->x2 = x;
+			sprite2->y2 = y;
+			sprite2->oam.priority = 0;
+			sprite2->oam.objMode = ST_OAM_OBJ_WINDOW;
+		}
 	}
 	gSpecialVar_0x8009 = spriteId; // save sprite id for use later
 }
 
 void DestroyItemIconOnFindMessage(void)
 {
-	u8 windowId, spriteId2, spriteId = gSpecialVar_0x8009;
 	u16 reg1, reg2;
+	u8 windowId, spriteId2, spriteId = gSpecialVar_0x8009;
 	struct Sprite * sprite = &gSprites[spriteId];
 	
 	windowId = sprite->data[0];
@@ -1294,6 +1306,7 @@ void DestroyItemIconOnFindMessage(void)
 		
 		FreeSpriteTilesByTag(ITEMICON_TAG);
 		FreeSpritePaletteByTag(ITEMICON_TAG);
+		FreeSpriteOamMatrix(&gSprites[spriteId2]);
 		DestroySprite(&gSprites[spriteId2]);
 	}
 	if (windowId != 0xFF)

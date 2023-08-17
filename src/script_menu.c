@@ -1,5 +1,6 @@
 #include "global.h"
 #include "gflib.h"
+#include "data.h"
 #include "menu.h"
 #include "task.h"
 #include "item.h"
@@ -8,8 +9,10 @@
 #include "new_menu_helpers.h"
 #include "event_data.h"
 #include "script.h"
+#include "trainer_pokemon_sprites.h"
 #include "strings.h"
 #include "field_effect.h"
+#include "overworld.h"
 #include "event_scripts.h"
 #include "constants/songs.h"
 #include "constants/seagallop.h"
@@ -975,25 +978,59 @@ static void Task_YesNoMenu_HandleInput(u8 taskId)
 	}
 }
 
+static u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y)
+{
+    return CreateMonPicSprite(species, 0, 0x8000, TRUE, 8 * x + 40, 8 * y + 40, 0, gMonPaletteTable[species].tag);
+}
+
 static u8 CreateMenuMonPic(u16 species, u8 x, u8 y)
 {
-	u8 spriteId = CreateMonSprite_PicBox(species, 8 * x + 40, 8 * y + 40, FALSE);
+	u16 reg1 = GetGpuReg(REG_OFFSET_DISPCNT), reg2 = GetGpuReg(REG_OFFSET_WINOUT);
+	u8 spriteId2 = MAX_SPRITES, spriteId = CreateMonSprite_PicBox(species, x, y);
 	
+	if (Overworld_GetFlashLevel() > 0)
+	{
+		SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
+		SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
+		
+		spriteId2 = CreateMonSprite_PicBox(species, x, y);
+		
+		if (spriteId2 != MAX_SPRITES)
+		{
+			gSprites[spriteId2].callback = SpriteCallbackDummy;
+			gSprites[spriteId2].oam.priority = 0;
+			gSprites[spriteId2].oam.objMode = ST_OAM_OBJ_WINDOW;
+		}
+	}
 	gSprites[spriteId].callback = SpriteCallbackDummy;
 	gSprites[spriteId].oam.priority = 0;
+	gSprites[spriteId].data[0] = reg1;
+	gSprites[spriteId].data[1] = reg2;
+	gSprites[spriteId].data[2] = spriteId2;
 	
 	return spriteId;
 }
 
 static void DestroyPicboxMonPic(bool8 isMuseumPic, u8 spriteId)
 {
+	struct Sprite *sprite = &gSprites[spriteId];
+	
 	if (isMuseumPic)
 	{
-		DestroySprite(&gSprites[spriteId]);
+		DestroySprite(sprite);
 		FreeSpriteTilesByTag(TAG_MUSEUM_FOSSIL_PIC);
 	}
 	else
-		FreeResourcesAndDestroySprite(&gSprites[spriteId], spriteId);
+	{
+		if (sprite->data[2] != MAX_SPRITES)
+		{
+			SetGpuReg(REG_OFFSET_DISPCNT, sprite->data[0]);
+			SetGpuReg(REG_OFFSET_WINOUT, sprite->data[1]);
+			
+			FreeResourcesAndDestroySprite(&gSprites[sprite->data[2]], sprite->data[2]);
+		}
+		FreeResourcesAndDestroySprite(sprite, spriteId);
+	}
 }
 
 #define tWindowId  data[0]
@@ -1004,7 +1041,6 @@ static void DestroyPicboxMonPic(bool8 isMuseumPic, u8 spriteId)
 void QLPlaybackCB_DestroyScriptMenuMonPicSprites(void)
 {
 	u8 taskId = FindTaskIdByFunc(Task_ScriptShowMonPic);
-	s16 *data;
 	
 	ScriptContext1_SetupScript(EventScript_ReleaseEnd);
 	
@@ -1101,23 +1137,20 @@ void PicboxCancel(void)
 	}
 }
 
-void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y, u8 toWait)
+void RemovePokemonSpeciesOnPicbox(void)
 {
 	u8 taskId = FindTaskIdByFunc(Task_ScriptShowMonPic);
-	s16 *data;
-	u32 i;
 	
 	if (taskId != 0xFF)
-	{
-		data = gTasks[taskId].data;
-		
-		FreeResourcesAndDestroySprite(&gSprites[tSpriteId], tSpriteId);
-		
-		if (toWait) // Optionally passed to wait the amount of seconds given until load the new pic
-			for (i = 0; i < (toWait * 60); i++);
-			
-		tSpriteId = CreateMenuMonPic(species, x, y);
-	}
+		DestroyPicboxMonPic(FALSE, gTasks[taskId].tSpriteId);
+}
+
+void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y)
+{
+	u8 taskId = FindTaskIdByFunc(Task_ScriptShowMonPic);
+	
+	if (taskId != 0xFF)
+		gTasks[taskId].tSpriteId = CreateMenuMonPic(species, x, y);
 }
 
 bool8 OpenMuseumFossilPic(void)

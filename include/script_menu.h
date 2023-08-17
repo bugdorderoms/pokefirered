@@ -29,6 +29,7 @@ bool8 ScriptMenu_ShowPokemonPic(u16 var1, u8 var2, u8 var3);
 bool8 (*ScriptMenu_GetPicboxWaitFunc(void))(void);
 void QLPlaybackCB_DestroyScriptMenuMonPicSprites(void);
 void PicboxCancel(void);
-void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y, u8 toWait);
+void RemovePokemonSpeciesOnPicbox(void);
+void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y);
 
 #endif //GUARD_SCRIPT_MENU_H

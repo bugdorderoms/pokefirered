@@ -67,6 +67,7 @@ EventScript_BufferBerryPouch:: @ 81A6739
 	return
 
 EventScript_ObtainedItem:: @ 81A6749
+	delay 10
 	callnative CreateItemIconOnFindMessage
 	message Text_ObtainedTheX
 	waitfanfare
@@ -139,6 +140,7 @@ EventScript_PickUpItem:: @ 81A67EE
 	additem VAR_0x8004, VAR_0x8005
 	copyvar VAR_0x8009, VAR_0x8004
 	specialvar VAR_RESULT, BufferTMHMMoveName
+	delay 10
 	callnative CreateItemIconOnFindMessage
 	copyvar VAR_0x8008, VAR_RESULT
 	compare VAR_0x8008, TRUE
@@ -188,6 +190,7 @@ EventScript_TryPickUpHiddenItem::
 	return
 
 EventScript_PickedUpHiddenItem::
+	delay 10
 	callnative CreateItemIconOnFindMessage
 	compare VAR_0x8006, 1
 	call_if_eq EventScript_FoundSingleItem

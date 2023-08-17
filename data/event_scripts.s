@@ -851,8 +851,12 @@ Text_WantWhichFloor:: @ 81A535C
 	.string "Which floor do you want?$"
 
 Text_BagItemCanBeRegistered:: @ 81A5375
-	.string "An item in the BAG can be\n"
-	.string "registered to SELECT for easy use.$"
+	.string "An item in the Bag can be\n"
+	.string "registered to Select for easy use.$"
+
+Text_RegisteredItemsCantBeOpened::
+	.string "The registered items cannot\n"
+	.string "be seen here, it is too dark...$"
 
 @ Unused (email from R/S Rivals computer)
 Text_TrainerSchoolEmail:: @ 81A53B2
@@ -1130,6 +1134,10 @@ EventScript_HandOverItem:: @ 81A74F2
 
 EventScript_BagItemCanBeRegistered:: @ 81A77A0
 	msgbox Text_BagItemCanBeRegistered, MSGBOX_SIGN
+	end
+
+EventScript_RegisteredItemsCantBeOpenedHere::
+	msgbox Text_RegisteredItemsCantBeOpened, MSGBOX_SIGN
 	end
 
 EventScript_Return:: @ 81A77A9
