@@ -1169,7 +1169,6 @@ static u32 CalcMoveTotalAccuracy(u16 move, u8 attacker, u8 defender)
 	// Check defender's items
 	holdEffect = GetBattlerItemHoldEffect(defender, TRUE);
 	holdEffectParam = GetBattlerHoldEffectParam(defender);
-	gPotentialItemEffectBattler = defender;
 	
 	switch (holdEffect)
 	{
@@ -1294,8 +1293,6 @@ static void atk02_attackstring(void)
 static void atk04_critcalc(void)
 {
 	s16 critChance = CalcMoveCritChance(gBattlerAttacker, gBattlerTarget, gCurrentMove);
-	
-	gPotentialItemEffectBattler = gBattlerAttacker;
 	
 	if (gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_POKEDUDE) || (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE && !BtlCtrl_OakOldMan_TestState2Flag(1)) || critChance == -1)
 		gIsCriticalHit = FALSE;
@@ -1522,8 +1519,6 @@ static void atk07_adjustdamage(void) // Check for effects that prevent the targe
 {
     u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = GetBattlerHoldEffectParam(gBattlerTarget);
 	
-    gPotentialItemEffectBattler = gBattlerTarget;
-	
 	// Check Focus Band
     if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
     {
@@ -1660,9 +1655,6 @@ static void atk0B_healthbarupdate(void)
 		    
                 BtlController_EmitHealthBarUpdate(0, healthValue);
                 MarkBattlerForControllerExec(gActiveBattler);
-		    
-                if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER && gBattleMoveDamage > 0)
-                    gBattleResults.playerMonWasDamaged = TRUE;
             }
         }
         gBattlescriptCurrInstr += 2;
@@ -1938,7 +1930,6 @@ static void atk0F_resultmessage(void)
 					break;
 				case MOVE_RESULT_FOE_HUNG_ON:
 				    gLastUsedItem = gBattleMons[gBattlerTarget].item;
-					gPotentialItemEffectBattler = gBattlerTarget;
 					gMoveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_HangedOnMsg;
@@ -1971,7 +1962,6 @@ static void atk0F_resultmessage(void)
 					else if (gMoveResultFlags & MOVE_RESULT_FOE_HUNG_ON)
 					{
 						gLastUsedItem = gBattleMons[gBattlerTarget].item;
-						gPotentialItemEffectBattler = gBattlerTarget;
 						gMoveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_HangedOnMsg;
@@ -2127,15 +2117,11 @@ static void atk19_tryfaintmon(void)
 		if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
 		{
 			gHitMarker |= HITMARKER_PLAYER_FAINTED;
-			if (gBattleResults.playerFaintCounter < 0xFF)
-				++gBattleResults.playerFaintCounter;
 			AdjustFriendshipOnBattleFaint(gActiveBattler);
 		}
 		else
 		{
-			if (gBattleResults.opponentFaintCounter < 0xFF)
-				++gBattleResults.opponentFaintCounter;
-			gBattleResults.lastOpponentSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_SPECIES);
+			gBattleStruct->lastOpponentSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_SPECIES);
 			*(u8 *)(&gBattleStruct->field_182) = gBattlerAttacker;
 		}
 		if ((gHitMarker & HITMARKER_DESTINYBOND) && IsBattlerAlive(gBattlerAttacker))
@@ -2355,7 +2341,7 @@ static void atk22_jumpbasedontype(void)
 static void atk23_getexp(void)
 {
     u8 battler, holdEffect, viaSentIn, i, viaExpShare, level;
-	u16 item, calculatedExp, stringId;
+	u16 calculatedExp, stringId;
 	s32 sentIn;
 	
     gBattlerFainted = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
@@ -2414,12 +2400,7 @@ static void atk23_getexp(void)
 			if (!gBattleControllerExecFlags)
 			{
 				u8 level = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_LEVEL), levelCap = GetCurrentLevelCapLevel();
-				item = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_HELD_ITEM);
-				
-				if (item == ITEM_ENIGMA_BERRY)
-					holdEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
-				else
-					holdEffect = ItemId_GetHoldEffect(item);
+				holdEffect = ItemId_GetHoldEffect(GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_HELD_ITEM));
 				
 				if (!gSaveBlock2Ptr->expShare && !(gBattleStruct->sentInPokes & 1))
 				{
@@ -3971,8 +3952,6 @@ static void atk50_openpartyscreen(void)
             BtlController_EmitChoosePokemon(0, hitmarkerFaintBits, gBattleStruct->monToSwitchIntoId[BATTLE_PARTNER(gActiveBattler)], 0, gBattleStruct->battlerPartyOrders[gActiveBattler]);
             MarkBattlerForControllerExec(gActiveBattler);
             gBattlescriptCurrInstr += 6;
-            if (GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_LEFT && gBattleResults.playerSwitchesCounter < 0xFF)
-                ++gBattleResults.playerSwitchesCounter;
 
             if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
             {
@@ -6168,8 +6147,6 @@ static void atk93_tryKO(void)
 {
     u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = GetBattlerHoldEffectParam(gBattlerTarget);
     u16 chance;
-    
-    gPotentialItemEffectBattler = gBattlerTarget;
 	
     if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
     {
@@ -8183,17 +8160,7 @@ static void atkEF_handleballthrow(void)
 			if (gLastUsedItem == ITEM_SAFARI_BALL)
 				catchRate = gBattleStruct->safariCatchFactor * 1275 / 100;
 			else
-			{
 				catchRate = gBaseStats[gBattleMons[gBattlerTarget].species].catchRate;
-				
-				if (gLastUsedItem != ITEM_MASTER_BALL)
-				{
-					if (gBattleResults.catchAttempts[gLastUsedItem - 1] < 0xFF)
-						++gBattleResults.catchAttempts[gLastUsedItem - 1];
-				}
-				else
-					gBattleResults.usedMasterBall = TRUE;
-			}
 			
 			// Get ball catch multiplier
 			ballMultiplier = 100; // default multiplier x1.0
@@ -8224,7 +8191,7 @@ static void atkEF_handleballthrow(void)
 						ballMultiplier = 350;
 					break;
 				case ITEM_TIMER_BALL:
-				    ballMultiplier = (gBattleResults.battleTurnCounter * 30) + 100;
+				    ballMultiplier = (gBattleStruct->battleTurnCounter * 30) + 100;
                     if (ballMultiplier > 400)
                         ballMultiplier = 400;
                     break;
@@ -8233,7 +8200,7 @@ static void atkEF_handleballthrow(void)
 						ballMultiplier = 300;
 					break;
 				case ITEM_QUICK_BALL:
-				    if (gBattleResults.battleTurnCounter == 0)
+				    if (gBattleStruct->battleTurnCounter == 0)
 						ballMultiplier = 500;
 					break;
 				case ITEM_FAST_BALL:
@@ -8365,8 +8332,6 @@ static void atkF0_givecaughtmon(void)
         if (FlagGet(FLAG_SYS_NOT_SOMEONES_PC))
             ++gBattleCommunication[MULTISTRING_CHOOSER];
     }
-    gBattleResults.caughtMonSpecies = gBattleMons[battler].species;
-    GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_NICKNAME, gBattleResults.caughtMonNick);
     ++gBattlescriptCurrInstr;
 }
 

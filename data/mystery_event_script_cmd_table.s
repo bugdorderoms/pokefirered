@@ -9,7 +9,7 @@ gMysteryEventScriptCmdTable:: @ 81DBCF0
 	.4byte MEScrCmd_setstatus
 	.4byte MEScrCmd_runscript
 	.4byte MEScrCmd_initramscript
-	.4byte MEScrCmd_setenigmaberry
+	.4byte MEScrCmd_nop
 	.4byte MEScrCmd_giveribbon
 	.4byte MEScrCmd_givenationaldex
 	.4byte MEScrCmd_addrareword

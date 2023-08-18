@@ -43,7 +43,7 @@ static struct BgConfig2 sGpuBgConfigs2[4];
 static u32 sDmaBusyBitfield[4];
 static u8 gpu_tile_allocation_map_bg[0x100];
 
-bool32 gWindowTileAutoAllocEnabled;
+bool8 gWindowTileAutoAllocEnabled;
 
 static const struct BgConfig sZeroedBgControlStruct = { 0 };
 
@@ -295,7 +295,7 @@ int BgTileAllocOp(int bg, int offset, int count, int mode)
     return 0;
 }
 
-void ResetBgsAndClearDma3BusyFlags(bool32 enableWindowTileAutoAlloc)
+void ResetBgsAndClearDma3BusyFlags(bool8 enableWindowTileAutoAlloc)
 {
     int i;
     ResetBgs();

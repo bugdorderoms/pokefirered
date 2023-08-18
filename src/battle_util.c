@@ -3,7 +3,6 @@
 #include "text.h"
 #include "util.h"
 #include "link.h"
-#include "berry.h"
 #include "random.h"
 #include "pokemon.h"
 #include "string_util.h"
@@ -541,13 +540,8 @@ void CheckSetBattlerUnburden(u8 battler)
 
 u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating)
 {
-	u8 holdEffect;
+	u8 holdEffect = ItemId_GetHoldEffect(gBattleMons[battler].item);
 
-    if (gBattleMons[battler].item == ITEM_ENIGMA_BERRY)
-		holdEffect = gEnigmaBerries[battler].holdEffect;
-	else	
-		holdEffect = ItemId_GetHoldEffect(gBattleMons[battler].item);
-	
 	if (checkNegating)
 	{
 		if (GetBattlerAbility(battler) == ABILITY_KLUTZ)
@@ -558,14 +552,7 @@ u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating)
 
 u8 GetBattlerHoldEffectParam(u8 battlerId)
 {
-	u8 holdEffectParam;
-
-    if (gBattleMons[battlerId].item == ITEM_ENIGMA_BERRY)
-		holdEffectParam = gEnigmaBerries[battlerId].holdEffectParam;
-	else	
-		holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battlerId].item);
-	
-	return holdEffectParam;
+	return ItemId_GetHoldEffectParam(gBattleMons[battlerId].item);
 }
 
 static void TryActivateDefiant(u16 stringId)
@@ -696,7 +683,6 @@ u8 TrySetCantSelectMoveBattleScript(void)
         ++limitations;
     }
 	holdEffect = GetBattlerItemHoldEffect(gActiveBattler, TRUE);
-    gPotentialItemEffectBattler = gActiveBattler;
     if (holdEffect == HOLD_EFFECT_CHOICE_ITEM && *choicedMove && *choicedMove != 0xFFFF && *choicedMove != move)
     {
         gCurrentMove = *choicedMove;
@@ -717,8 +703,6 @@ u8 CheckMoveLimitations(u8 battlerId, u8 unusableMoves, u8 check)
     u8 holdEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
     u16 *choicedMove = &gBattleStruct->choicedMove[battlerId];
     s32 i;
-
-    gPotentialItemEffectBattler = battlerId;
 
     for (i = 0; i < MAX_MON_MOVES; ++i)
     {
@@ -3878,7 +3862,6 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
         if (effect)
             {
                 gBattleScripting.battler = battlerId;
-                gPotentialItemEffectBattler = battlerId;
                 gActiveBattler = gBattlerAttacker = battlerId;
                 BattleScriptExecute(BattleScript_WhiteHerbEnd2);
             }
@@ -3950,7 +3933,6 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                 if (effect)
                 {
                     gBattleScripting.battler = battlerId;
-                    gPotentialItemEffectBattler = battlerId;
                     gActiveBattler = gBattlerAttacker = battlerId;
                     BattleScriptExecute(BattleScript_WhiteHerbEnd2);
                 }
@@ -4118,7 +4100,6 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
             if (effect)
             {
                 gBattleScripting.battler = battlerId;
-                gPotentialItemEffectBattler = battlerId;
                 gActiveBattler = gBattlerAttacker = battlerId;
                 switch (effect)
                 {
@@ -4259,7 +4240,6 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                 if (effect)
                 {
                     gBattleScripting.battler = battlerId;
-                    gPotentialItemEffectBattler = battlerId;
                     BattleScriptPushCursor();
                     gBattlescriptCurrInstr = BattleScript_WhiteHerbRet;
                     return effect;
@@ -4269,7 +4249,6 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
             if (effect)
             {
                 gBattleScripting.battler = battlerId;
-                gPotentialItemEffectBattler = battlerId;
                 gActiveBattler = battlerId;
                 BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
                 MarkBattlerForControllerExec(gActiveBattler);
@@ -4304,7 +4283,6 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                  && gBattleMons[battlerId].hp != gBattleMons[battlerId].maxHP
                  && IsBattlerAlive(battlerId))
                 {
-                    gPotentialItemEffectBattler = battlerId;
                     gBattleScripting.battler = battlerId;
                     gBattleMoveDamage = (gSpecialStatuses[gBattlerTarget].dmg / battlerHoldEffectParam) * -1;
                     if (gBattleMoveDamage == 0)

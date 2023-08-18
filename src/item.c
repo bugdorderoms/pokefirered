@@ -1,6 +1,5 @@
 #include "global.h"
 #include "gflib.h"
-#include "berry.h"
 #include "event_data.h"
 #include "item.h"
 #include "item_use.h"
@@ -63,15 +62,7 @@ void SetBagPocketsPointers(void)
 
 void CopyItemName(u16 itemId, u8 * dest)
 {
-    if (itemId == ITEM_ENIGMA_BERRY)
-    {
-        StringCopy(dest, GetBerryInfo(ITEM_TO_BERRY(ITEM_ENIGMA_BERRY))->name);
-        StringAppend(dest, gUnknown_84162BD);
-    }
-    else
-    {
-        StringCopy(dest, ItemId_GetName(itemId));
-    }
+	StringCopy(dest, ItemId_GetName(itemId));
 }
 
 s8 BagPocketGetFirstEmptySlot(u8 pocketId)
@@ -127,31 +118,6 @@ bool8 CheckBagHasItem(u16 itemId, u16 count)
                 return FALSE;
         }
     }
-    return FALSE;
-}
-
-bool8 HasAtLeastOneBerry(void)
-{
-    u8 itemId;
-    bool8 exists;
-
-    exists = CheckBagHasItem(ITEM_BERRY_POUCH, 1);
-    if (!exists)
-    {
-        gSpecialVar_Result = FALSE;
-        return FALSE;
-    }
-    for (itemId = FIRST_BERRY_INDEX; itemId <= LAST_BERRY_INDEX; itemId++)
-    {
-        exists = CheckBagHasItem(itemId, 1);
-        if (exists)
-        {
-            gSpecialVar_Result = TRUE;
-            return TRUE;
-        }
-    }
-
-    gSpecialVar_Result = FALSE;
     return FALSE;
 }
 
@@ -237,11 +203,7 @@ bool8 AddBagItem(u16 itemId, u16 count)
             return FALSE;
         gBagPockets[POCKET_KEY_ITEMS - 1].itemSlots[idx].itemId = ITEM_BERRY_POUCH;
         SetBagItemQuantity(&gBagPockets[POCKET_KEY_ITEMS - 1].itemSlots[idx].quantity, 1);
-        FlagSet(FLAG_SYS_GOT_BERRY_POUCH);
     }
-
-    if (itemId == ITEM_BERRY_POUCH)
-        FlagSet(FLAG_SYS_GOT_BERRY_POUCH);
 
     idx = BagPocketGetFirstEmptySlot(pocket);
     if (idx == -1)
@@ -561,7 +523,6 @@ void TrySetObtainedItemQuestLogEvent(u16 itemId)
      || itemId == ITEM_TEACHY_TV
      || itemId == ITEM_RAINBOW_PASS
      || itemId == ITEM_TEA
-     || itemId == ITEM_POWDER_JAR
      || itemId == ITEM_RUBY
      || itemId == ITEM_SAPPHIRE
     )

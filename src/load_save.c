@@ -6,7 +6,6 @@
 #include "random.h"
 #include "item.h"
 #include "save_location.h"
-#include "berry_powder.h"
 #include "overworld.h"
 #include "quest_log.h"
 
@@ -287,7 +286,6 @@ void ApplyNewEncryptionKeyToAllEncryptedData(u32 encryptionKey)
 
     ApplyNewEncryptionKeyToGameStats(encryptionKey);
     ApplyNewEncryptionKeyToBagItems(encryptionKey);
-    ApplyNewEncryptionKeyToBerryPowder(encryptionKey);
     ApplyNewEncryptionKeyToWord(&gSaveBlock1Ptr->money, encryptionKey);
     ApplyNewEncryptionKeyToHword(&gSaveBlock1Ptr->coins, encryptionKey);
 }

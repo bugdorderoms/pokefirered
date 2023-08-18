@@ -714,15 +714,14 @@
 #define ITEM_TEA                      (GENERAL_ITEMS_END + 48)
 #define ITEM_MYSTIC_TICKET            (GENERAL_ITEMS_END + 49)
 #define ITEM_AURORA_TICKET            (GENERAL_ITEMS_END + 50)
-#define ITEM_POWDER_JAR               (GENERAL_ITEMS_END + 51)
-#define ITEM_RUBY                     (GENERAL_ITEMS_END + 52)
-#define ITEM_SAPPHIRE                 (GENERAL_ITEMS_END + 53)
-#define ITEM_EV_IV_DISPLAY            (GENERAL_ITEMS_END + 54)
-#define ITEM_SHINY_CHARM              (GENERAL_ITEMS_END + 55)
-#define ITEM_RAINBOW_WING             (GENERAL_ITEMS_END + 56)
-#define ITEM_SILVER_WING              (GENERAL_ITEMS_END + 57)
+#define ITEM_RUBY                     (GENERAL_ITEMS_END + 51)
+#define ITEM_SAPPHIRE                 (GENERAL_ITEMS_END + 52)
+#define ITEM_EV_IV_DISPLAY            (GENERAL_ITEMS_END + 53)
+#define ITEM_SHINY_CHARM              (GENERAL_ITEMS_END + 54)
+#define ITEM_RAINBOW_WING             (GENERAL_ITEMS_END + 55)
+#define ITEM_SILVER_WING              (GENERAL_ITEMS_END + 56)
 
-#define NUM_KEY_ITEMS                 53
+#define NUM_KEY_ITEMS                 52
 
 // In case you want to add new key items, all the indexes below this will be updated with the corrected index
 #define KEY_ITEMS_END                 ITEM_SILVER_WING
@@ -935,7 +934,6 @@
 #define NUM_TECHNICAL_MACHINES        100
 
 #define FIRST_BERRY_INDEX             ITEM_CHERI_BERRY
-#define LAST_BERRY_INDEX              BERRY_ITEMS_END
 #define ITEM_TO_BERRY(itemId)         (itemId - FIRST_BERRY_INDEX + 1)
 
 #endif  // GUARD_CONSTANTS_ITEMS_H

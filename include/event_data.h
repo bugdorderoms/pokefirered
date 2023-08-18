@@ -25,27 +25,20 @@ extern u16 gSpecialVar_PrevTextColor;
 
 void InitEventData(void);
 void ClearTempFieldEventData(void);
-void ClearUpperFlags(void);
 void DisableNationalPokedex(void);
 void EnableNationalPokedex(void);
 bool32 IsNationalPokedexEnabled(void);
-void DisableMysteryEvent(void);
-void EnableMysteryEvent(void);
-bool32 IsMysteryEventEnabled(void);
 bool32 IsMysteryGiftEnabled(void);
 u16 *GetVarPointer(u16 id);
 u16 VarGet(u16 id);
 bool8 VarSet(u16 id, u16 value);
 u8 VarGetObjectEventGraphicsId(u8 id);
-u8 *GetFlagPointer(u16 id);
 u8 FlagSet(u16 id);
 u8 FlagClear(u16 id);
 bool8 FlagGet(u16 id);
-u16 * GetVarPointer(u16 id);
 void ResetSpecialVars(void);
 void ResetMysteryEventFlags(void);
 void ResetMysteryEventVars(void);
 void sub_806E190(void);
-void ClearTempFieldEventData(void);
 
 #endif // GUARD_EVENT_DATA_H

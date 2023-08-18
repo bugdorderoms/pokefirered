@@ -15,7 +15,6 @@ extern struct ListMenuTemplate gFameChecker_ListMenuTemplate;
 extern u8 gIconDescriptionBoxIsOpen;
 
 void ResetFameChecker(void);
-void FullyUnlockFameChecker(void);
 void UseFameChecker(MainCallback savedCallback);
 void SetFlavorTextFlagFromSpecialVars(void);
 void UpdatePickStateFromSpecialVar8005(void);

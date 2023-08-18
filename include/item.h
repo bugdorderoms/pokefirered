@@ -125,7 +125,6 @@ void RemovePCItem(u16 itemId, u16 quantity);
 void SortAndCompactBagPocket(struct BagPocket * pocket);
 u8 CountItemsInPC(void);
 void ApplyNewEncryptionKeyToBagItems(u32 key);
-bool8 HasAtLeastOneBerry(void);
 
 void ResetItemFlags(void);
 bool8 GetSetItemObtained(u16 item, u8 caseId);

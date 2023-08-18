@@ -911,7 +911,7 @@ static void Cmd_if_user_has_no_attacking_moves(void)
 
 static void Cmd_get_turn_count(void)
 {
-    AI_THINKING_STRUCT->funcResult = gBattleResults.battleTurnCounter;
+    AI_THINKING_STRUCT->funcResult = gBattleStruct->battleTurnCounter;
     sAIScriptPtr += 1;
 }
 
@@ -1304,10 +1304,8 @@ static void Cmd_if_status_not_in_party(void)
         // everytime the status is found, the AI's logic jumps further and further past its intended destination. this results in a broken AI macro and is probably why it is unused.
         if (species != SPECIES_NONE && species != SPECIES_EGG && hp != 0 && status == statusToCompareTo)
         {
-            sAIScriptPtr += 10; // doesnt return?
-            #ifdef UBFIX
+            sAIScriptPtr += 10;
             return;
-            #endif
         }
     }
     sAIScriptPtr = T1_READ_PTR(sAIScriptPtr + 6);

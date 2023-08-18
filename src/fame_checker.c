@@ -1103,19 +1103,6 @@ void ResetFameChecker(void)
     gSaveBlock1Ptr->fameChecker[FAMECHECKER_OAK].pickState = FCPICKSTATE_COLORED;
 }
 
-void FullyUnlockFameChecker(void)
-{
-    u8 i, j;
-    for (i = 0; i < NUM_FAMECHECKER_PERSONS; i++)
-    {
-        gSaveBlock1Ptr->fameChecker[i].pickState = FCPICKSTATE_COLORED;
-        for (j = 0; j < 6; j++)
-        {
-            gSaveBlock1Ptr->fameChecker[i].flavorTextFlags |= (1 << j);
-        }
-    }
-}
-
 static void FCSetup_ClearVideoRegisters(void)
 {
     void * vram = (void *)VRAM;

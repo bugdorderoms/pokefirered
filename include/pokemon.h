@@ -314,6 +314,16 @@ struct __attribute__((packed)) LevelUpMove
 
 enum
 {
+    FLAVOR_SPICY,
+    FLAVOR_DRY,
+    FLAVOR_SWEET,
+    FLAVOR_BITTER,
+    FLAVOR_SOUR,
+    FLAVOR_COUNT
+};
+
+enum
+{
     GROWTH_MEDIUM_FAST,
     GROWTH_ERRATIC,
     GROWTH_FLUCTUATING,

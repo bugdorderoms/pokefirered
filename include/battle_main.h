@@ -19,13 +19,6 @@ struct TrainerMoneyBall
     u16 ballId;
 };
 
-struct TrainerEvs
-{
-    u8 nature;
-    u8 ivs;
-    u8 Evs[NUM_STATS];
-};
-
 struct MultiBattlePokemonTx
 {
     /*0x00*/ u16 species;
@@ -40,7 +33,7 @@ struct MultiBattlePokemonTx
     /*0x1D*/ u8 language;
 };
 
-#define TYPE_NAME_LENGTH 6
+#define TYPE_NAME_LENGTH    6
 #define ABILITY_NAME_LENGTH 16
 
 // defines for the gTypeEffectiveness multipliers

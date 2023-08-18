@@ -25,9 +25,6 @@ bool8 SetUpFieldMove_Cut(void);
 bool8 SetUpFieldMove_Dig(void);
 bool8 FldEff_UseDig(void);
 
-// berrytree
-void nullsub_56(void);
-
 // poison
 void FldEffPoison_Start(void);
 bool32 FldEffPoison_IsActive(void);

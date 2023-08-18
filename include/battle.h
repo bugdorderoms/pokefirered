@@ -42,8 +42,6 @@
 #define B_ACTION_NOTHING_FAINTED           13 // when choosing an action
 #define B_ACTION_NONE                      0xFF
 
-#define MAX_TRAINER_ITEMS 4
-
 #define MOVE_TARGET_SELECTED          0
 #define MOVE_TARGET_DEPENDS           (1 << 0)
 #define MOVE_TARGET_USER_OR_SELECTED  (1 << 1) // unused
@@ -54,6 +52,8 @@
 #define MOVE_TARGET_ALLY              (1 << 6)
 #define MOVE_TARGET_FOES_AND_ALLY     (MOVE_TARGET_BOTH | MOVE_TARGET_ALLY)
 #define MOVE_TARGET_ALL_BATTLERS      (MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_USER)
+
+#define MAX_TRAINER_ITEMS 4
 
 #define TRAINER_MON_MALE       1
 #define TRAINER_MON_FEMALE     2
@@ -105,16 +105,16 @@ struct TrainerSlide
 extern const struct Trainer gTrainers[];
 extern const struct TrainerSlide gTrainerSlides[];
 
-struct ResourceFlags
-{
-    u32 flags[MAX_BATTLERS_COUNT];
-};
-
 #define RESOURCE_FLAG_FLASH_FIRE       (1 << 0)
 #define RESOURCE_FLAG_TRACED           (1 << 1)
 #define RESOURCE_FLAG_UNBURDEN_BOOST   (1 << 2)
 #define RESOURCE_FLAG_NEUTRALIZING_GAS (1 << 3)
 #define RESOURCE_FLAG_EMERGENCY_EXIT   (1 << 4)
+
+struct ResourceFlags
+{
+    u32 flags[MAX_BATTLERS_COUNT];
+};
 
 struct DisableStruct
 {
@@ -265,10 +265,6 @@ struct AI_ThinkingStruct
     u8 aiLogicId;
 };
 
-extern u8 gActiveBattler;
-extern u8 gBattlerTarget;
-extern u8 gAbsentBattlerFlags;
-
 extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];
 
 struct BattleHistory
@@ -311,40 +307,12 @@ struct BattleResources
 
 extern struct BattleResources *gBattleResources;
 
-struct BattleResults
-{
-    u8 playerFaintCounter;    // 0x0
-    u8 opponentFaintCounter;  // 0x1
-    u8 playerSwitchesCounter; // 0x2
-    u8 numHealingItemsUsed;   // 0x3
-    u8 numRevivesUsed;        // 0x4
-    u8 playerMonWasDamaged:1; // 0x5
-    u8 usedMasterBall:1;      // 0x5
-    u8 shinyWildMon:1;        // 0x5
-    u8 unused:5;              // 0x5
-    u16 playerMon1Species;    // 0x6
-    u8 playerMon1Name[11];    // 0x8
-    u8 battleTurnCounter;     // 0x13
-    u8 playerMon2Name[11];    // 0x14
-    u8 pokeblockThrows;       // 0x1F
-    u16 lastOpponentSpecies;  // 0x20
-    u16 lastUsedMovePlayer;   // 0x22
-    u16 lastUsedMoveOpponent; // 0x24
-    u16 playerMon2Species;    // 0x26
-    u16 caughtMonSpecies;     // 0x28
-    u8 caughtMonNick[10];     // 0x2A
-    u8 catchAttempts[11];     // 0x34
-};
-
-extern struct BattleResults gBattleResults;
-
 struct LinkPartnerHeader
 {
     u8 versionSignatureLo;
     u8 versionSignatureHi;
     u8 vsScreenHealthFlagsLo;
     u8 vsScreenHealthFlagsHi;
-    struct BattleEnigmaBerry battleEnigmaBerry;
 };
 
 struct Illusion
@@ -448,7 +416,7 @@ struct BattleStruct
 	/*0x0DC*/ u8 AI_monToSwitchIntoId[2]; // AI related
 	/*0x0DE*/ u8 itemPartyIndex[MAX_BATTLERS_COUNT]; // for item use
 	/*0x0E2*/ u8 targetsDone[MAX_BATTLERS_COUNT]; // for moves hiting multiples pokemon, as flag using gBitTable
-	/*0x0E6*/ u8 unused;
+	/*0x0E6*/ u8 battleTurnCounter;
 	/*0x0E7*/ u8 firstCritcalHitTakenMsgState:2;
 	/*0x0E7*/ u8 zMoveMsgDone:1;
 	/*0x0E7*/ u8 dynamaxMsgDone:1;
@@ -463,7 +431,8 @@ struct BattleStruct
 	/*0x0FA*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // for Pickup gen5 effect
 	/*0x0FE*/ u8 soulHeartBattlerId;
 	/*0x0FF*/ u8 usedReviveItemBattler; // for revive battle usage, as flag using gBitTable
-	/*0x100*/ struct Illusion illusion[MAX_BATTLERS_COUNT];
+	/*0x100*/ u16 lastOpponentSpecies; // quest log related
+	/*0x102*/ struct Illusion illusion[MAX_BATTLERS_COUNT];
 	          struct MoveInfo moveInfo;
     union {
         struct LinkPartnerHeader linkPartnerHeader;
@@ -562,47 +531,35 @@ struct BattleSpriteInfo
 
 struct BattleAnimationInfo
 {
-    u16 animArg; // to fill up later
-    u8 field_2;
-    u8 field_3;
-    u8 field_4;
-    u8 field_5;
-    u8 field_6;
-    u8 field_7;
-    u8 ballThrowCaseId;
-    u8 healthboxSlideInStarted : 1;
-    u8 field_9_x2 : 1;
-    u8 field_9_x1C : 3;
-    u8 field_9_x20 : 1;
-    u8 field_9_x40 : 1;
-    u8 field_9_x80 : 1;
-    u8 field_A;
-    u8 field_B;
-    s16 field_C;
-    u8 field_E;
-    u8 field_F;
+    /*0x0*/ u16 animArg; // to fill up later
+    /*0x2*/ u8 ballThrowCaseId;
+	/*0x3*/ u8 healthboxSlideInStarted:1;
+			u8 battlerSpriteVisibility:1;
+			u8 unused:6;
+	/*0x4*/ s16 ballShakeThing;
+    /*0x6*/ u8 particleCounter;
 };
 
 struct BattleHealthboxInfo
 {
-    u8 partyStatusSummaryShown : 1; // x1
-    u8 healthboxIsBouncing : 1; // x2
-    u8 battlerIsBouncing : 1; // x4
-    u8 ballAnimActive : 1; // 0x8
-    u8 statusAnimActive : 1; // x10
-    u8 animFromTableActive : 1; // x20
-    u8 specialAnimActive : 1; // x40
-    u8 triedShinyMonAnim : 1; // x80
-    u8 finishedShinyMonAnim : 1; // x1
-    u8 opponentDrawPartyStatusSummaryDelay : 5; // x2
-    u8 healthboxBounceSpriteId;
-    u8 battlerBounceSpriteId;
-    u8 animationState;
-    u8 partyStatusDelayTimer;
-    u8 matrixNum;
-    u8 shadowSpriteId;
-    u8 soundTimer;
-    u8 introEndDelay;
+    /*0x0*/ u8 partyStatusSummaryShown:1;
+			u8 healthboxIsBouncing:1;
+			u8 battlerIsBouncing:1;
+			u8 ballAnimActive:1;
+			u8 statusAnimActive:1;
+			u8 animFromTableActive:1;
+			u8 specialAnimActive:1;
+			u8 triedShinyMonAnim:1;
+    /*0x1*/ u8 finishedShinyMonAnim:1;
+			u8 opponentDrawPartyStatusSummaryDelay:5;
+			u8 animationState:2;
+	/*0x2*/ u8 healthboxBounceSpriteId;
+    /*0x3*/ u8 battlerBounceSpriteId;
+    /*0x4*/ u8 partyStatusDelayTimer;
+    /*0x5*/ u8 matrixNum;
+    /*0x6*/ u8 shadowSpriteId;
+    /*0x7*/ u8 soundTimer;
+    /*0x8*/ u8 introEndDelay;
 };
 
 struct BattleBarInfo
@@ -672,7 +629,6 @@ extern struct MonSpritesGfx *gMonSpritesGfxPtr;
 extern u16 gTrainerBattleOpponent_A;
 extern u16 gMoveToLearn;
 extern u16 gBattleMovePower;
-extern struct BattleEnigmaBerry gEnigmaBerries[MAX_BATTLERS_COUNT];
 extern u16 gCurrentMove;
 extern u16 gChosenMove;
 extern u16 gCalledMove;
@@ -680,7 +636,6 @@ extern bool8 gIsCriticalHit;
 extern u16 gBattleWeather;
 extern u16 gLastUsedAbility;
 extern u8 gBattlerInMenuId;
-extern u8 gPotentialItemEffectBattler;
 extern u8 gBattlersCount;
 extern u16 gBattlerPartyIndexes[MAX_BATTLERS_COUNT];
 extern s32 gBattleMoveDamage;
@@ -745,6 +700,9 @@ extern u8 gBattleTerrain;
 extern struct MultiBattlePokemonTx gMultiPartnerParty[3];
 extern u16 gRandomTurnNumber;
 extern u8 gPartyCriticalHits[PARTY_SIZE];
+extern u8 gActiveBattler;
+extern u8 gBattlerTarget;
+extern u8 gAbsentBattlerFlags;
 
 static inline u8 GetBattlerPosition(u8 battlerId)
 {

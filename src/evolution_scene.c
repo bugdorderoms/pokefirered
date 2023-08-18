@@ -1363,7 +1363,7 @@ static void InitMovingBackgroundTask(bool8 isLink)
     LaunchTask_MovingBackgroundPos(isLink);
 }
 
-void IsMovingBackgroundTaskRunning(void) // unused
+void IsMovingBackgroundTaskRunning(void)
 {
     u8 taskId = FindTaskIdByFunc(Task_MovingBackgroundPalettes);
 

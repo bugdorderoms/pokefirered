@@ -26,7 +26,6 @@ struct BPPD_Struct
     u16 bytesPerRow;
     u8 mapSize;
     u8 bgId;
-    bool8 bgUpdateScheduled;
 };
 
 static EWRAM_DATA struct BPPD_Struct * sBoxPartyPokemonDropdownPtr = NULL;
@@ -72,29 +71,17 @@ static void PushMap2(u8 idx)
 void AllocBoxPartyPokemonDropdowns(u8 num)
 {
     u16 i;
+	
     sBoxPartyPokemonDropdownPtr = Alloc(num * sizeof(struct BPPD_Struct));
     sBoxPartyPokemonDropdownCount = sBoxPartyPokemonDropdownPtr == NULL ? 0 : num;
-    for (i = 0; i < sBoxPartyPokemonDropdownCount; i++)
-    {
+    
+	for (i = 0; i < sBoxPartyPokemonDropdownCount; i++)
         sBoxPartyPokemonDropdownPtr[i].src1 = NULL;
-        sBoxPartyPokemonDropdownPtr[i].bgUpdateScheduled = FALSE;
-    }
 }
 
 void FreeBoxPartyPokemonDropdowns(void)
 {
     Free(sBoxPartyPokemonDropdownPtr);
-}
-
-void CopyAllBoxPartyPokemonDropdownsToVram(void)
-{
-    int i;
-
-    for (i = 0; i < sBoxPartyPokemonDropdownCount; i++)
-    {
-        if (sBoxPartyPokemonDropdownPtr[i].bgUpdateScheduled == TRUE)
-            CopyBoxPartyPokemonDropdownToBgTilemapBuffer(i);
-    }
 }
 
 void SetBoxPartyPokemonDropdownMap2(u8 idx, u8 bgId, const void * src, u16 width, u16 height)
@@ -122,16 +109,6 @@ void SetBoxPartyPokemonDropdownMap2(u8 idx, u8 bgId, const void * src, u16 width
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.destX2 = 0;
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY2 = 0;
         sBoxPartyPokemonDropdownPtr[idx].map1Rect = sBoxPartyPokemonDropdownPtr[idx].map2Rect;
-        sBoxPartyPokemonDropdownPtr[idx].bgUpdateScheduled = TRUE;
-    }
-}
-
-void SetBoxPartyPokemonDropdownMap1Tiles(u8 idx, const void * src)
-{
-    if (idx < sBoxPartyPokemonDropdownCount)
-    {
-        sBoxPartyPokemonDropdownPtr[idx].src1 = src;
-        sBoxPartyPokemonDropdownPtr[idx].bgUpdateScheduled = TRUE;
     }
 }
 
@@ -141,7 +118,6 @@ void SetBoxPartyPokemonDropdownMap2Pos(u8 idx, u16 x, u16 y)
     {
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.destX2 = x;
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY2 = y;
-        sBoxPartyPokemonDropdownPtr[idx].bgUpdateScheduled = TRUE;
     }
 }
 
@@ -153,7 +129,6 @@ void SetBoxPartyPokemonDropdownMap2Rect(u8 idx, u16 x, u16 y, u16 width, u16 hei
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY = y;
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.width = width;
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.height = height;
-        sBoxPartyPokemonDropdownPtr[idx].bgUpdateScheduled = TRUE;
     }
 }
 
@@ -186,7 +161,6 @@ void AdjustBoxPartyPokemonDropdownPos(u8 idx, u8 op, s8 param)
             sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY2 += param;
             break;
         }
-        sBoxPartyPokemonDropdownPtr[idx].bgUpdateScheduled = TRUE;
     }
 }
 

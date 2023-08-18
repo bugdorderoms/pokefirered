@@ -369,10 +369,10 @@ static const struct MenuAction sScriptMultiChoiceMenu_Island12[] = {
     { gOtherText_Exit }
 };
 
+// Unused
 static const struct MenuAction sScriptMultiChoiceMenu_TradeColosseumCrush[] = {
     { gText_TradeCenter },
     { gText_Colosseum_2 },
-    { gText_BerryCrush },
     { gOtherText_Exit }
 };
 
@@ -397,14 +397,6 @@ static const struct MenuAction sScriptMultiChoiceMenu_PokejumpDodrio[] = {
 static const struct MenuAction sScriptMultiChoiceMenu_Mushrooms[] = {
     { gText_2Tinymushrooms },
     { gText_1BigMushroom }
-};
-
-static const struct MenuAction sScriptMultiChoiceMenu_TradeColosseumBlankCrush[] = {
-    { gText_TradeCenter },
-    { gText_Colosseum_2 },
-    { gText_Dummy_8417E71 },
-    { gText_BerryCrush },
-    { gOtherText_Exit }
 };
 
 static const struct MenuAction sScriptMultiChoiceMenu_TradeColosseumBlank[] = {
@@ -543,7 +535,6 @@ const struct MultichoiceListStruct gScriptMultiChoiceMenus[] = {
     { sScriptMultiChoiceMenu_PokejumpDodrio, NELEMS(sScriptMultiChoiceMenu_PokejumpDodrio) },
     { sScriptMultiChoiceMenu_TradeColosseum_2, NELEMS(sScriptMultiChoiceMenu_TradeColosseum_2) },
     { sScriptMultiChoiceMenu_Mushrooms, NELEMS(sScriptMultiChoiceMenu_Mushrooms) },
-    { sScriptMultiChoiceMenu_TradeColosseumBlankCrush, NELEMS(sScriptMultiChoiceMenu_TradeColosseumBlankCrush) },
     { sScriptMultiChoiceMenu_TradeColosseumBlank, NELEMS(sScriptMultiChoiceMenu_TradeColosseumBlank) },
     { sScriptMultiChoiceMenu_SeviiNavel, NELEMS(sScriptMultiChoiceMenu_SeviiNavel) },
     { sScriptMultiChoiceMenu_SeviiBirth, NELEMS(sScriptMultiChoiceMenu_SeviiBirth) },

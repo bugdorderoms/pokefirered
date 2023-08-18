@@ -223,14 +223,6 @@ void BagPrintTextOnWin1CenteredColor0(const u8 * str)
     AddTextPrinterParameterized3(2, 1, x / 2, 1, sTextColors[0], 0, str);
 }
 
-void BagDrawDepositItemTextBox(void)
-{
-    u32 x;
-    DrawStdFrameWithCustomTileAndPalette(2, FALSE, 0x081, 0x0C);
-    x = 0x40 - GetStringWidth(0, gText_DepositItem, 0);
-    AddTextPrinterParameterized(2, 0, gText_DepositItem, x / 2, 1, 0, NULL);
-}
-
 u8 ShowBagWindow(u8 whichWindow, u8 nItems)
 {
     if (sOpenWindows[whichWindow] == 0xFF)

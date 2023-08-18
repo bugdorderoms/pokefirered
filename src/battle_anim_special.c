@@ -933,7 +933,7 @@ void AnimTask_ThrowBall(u8 taskId)
     gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
     gSprites[spriteId].data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y) - 16;
     gSprites[spriteId].callback = SpriteCB_ThrowBall_Init;
-    gBattleSpritesDataPtr->animationData->field_9_x2 = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible;
+    gBattleSpritesDataPtr->animationData->battlerSpriteVisibility = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible;
     gTasks[taskId].data[0] = spriteId;
     gTasks[taskId].func = AnimTask_ThrowBall_WaitAnimObjComplete;
 }
@@ -1192,7 +1192,7 @@ static void SpriteCB_ThrowBall_InitShake(struct Sprite *sprite)
         sprite->data[3] = 0;
         sprite->affineAnimPaused = TRUE;
         StartSpriteAffineAnim(sprite, 1);
-        gBattleSpritesDataPtr->animationData->field_C = 0;
+        gBattleSpritesDataPtr->animationData->ballShakeThing = 0;
         sprite->callback = SpriteCB_ThrowBall_DoShake;
         PlaySE(SE_BALL);
     }
@@ -1206,14 +1206,14 @@ static void SpriteCB_ThrowBall_DoShake(struct Sprite *sprite)
     switch (sprite->data[3] & 0xFF)
     {
     case 0:
-        if (gBattleSpritesDataPtr->animationData->field_C > 0xFF)
+        if (gBattleSpritesDataPtr->animationData->ballShakeThing > 0xFF)
         {
             sprite->x2 += sprite->data[4];
-            gBattleSpritesDataPtr->animationData->field_C &= 0xFF;
+            gBattleSpritesDataPtr->animationData->ballShakeThing &= 0xFF;
         }
         else
         {
-            gBattleSpritesDataPtr->animationData->field_C += 0xB0;
+            gBattleSpritesDataPtr->animationData->ballShakeThing += 0xB0;
         }
 
         sprite->data[5]++;
@@ -1221,7 +1221,7 @@ static void SpriteCB_ThrowBall_DoShake(struct Sprite *sprite)
         var0 = sprite->data[5] + 7;
         if (var0 > 14)
         {
-            gBattleSpritesDataPtr->animationData->field_C = 0;
+            gBattleSpritesDataPtr->animationData->ballShakeThing = 0;
             sprite->data[3]++;
             sprite->data[5] = 0;
         }
@@ -1241,14 +1241,14 @@ static void SpriteCB_ThrowBall_DoShake(struct Sprite *sprite)
         }
         break;
     case 2:
-        if (gBattleSpritesDataPtr->animationData->field_C > 0xFF)
+        if (gBattleSpritesDataPtr->animationData->ballShakeThing > 0xFF)
         {
             sprite->x2 += sprite->data[4];
-            gBattleSpritesDataPtr->animationData->field_C &= 0xFF;
+            gBattleSpritesDataPtr->animationData->ballShakeThing &= 0xFF;
         }
         else
         {
-            gBattleSpritesDataPtr->animationData->field_C += 0xB0;
+            gBattleSpritesDataPtr->animationData->ballShakeThing += 0xB0;
         }
 
         sprite->data[5]++;
@@ -1256,7 +1256,7 @@ static void SpriteCB_ThrowBall_DoShake(struct Sprite *sprite)
         var0 = sprite->data[5] + 12;
         if (var0 > 24)
         {
-            gBattleSpritesDataPtr->animationData->field_C = 0;
+            gBattleSpritesDataPtr->animationData->ballShakeThing = 0;
             sprite->data[3]++;
             sprite->data[5] = 0;
         }
@@ -1275,14 +1275,14 @@ static void SpriteCB_ThrowBall_DoShake(struct Sprite *sprite)
 		ChangeSpriteAffineAnim(sprite, sprite->data[4] < 0 ? 2 : 1);
         // fall through
     case 4:
-        if (gBattleSpritesDataPtr->animationData->field_C > 0xFF)
+        if (gBattleSpritesDataPtr->animationData->ballShakeThing > 0xFF)
         {
             sprite->x2 += sprite->data[4];
-            gBattleSpritesDataPtr->animationData->field_C &= 0xFF;
+            gBattleSpritesDataPtr->animationData->ballShakeThing &= 0xFF;
         }
         else
         {
-            gBattleSpritesDataPtr->animationData->field_C += 0xB0;
+            gBattleSpritesDataPtr->animationData->ballShakeThing += 0xB0;
         }
 
         sprite->data[5]++;
@@ -1290,7 +1290,7 @@ static void SpriteCB_ThrowBall_DoShake(struct Sprite *sprite)
         var0 = sprite->data[5] + 4;
         if (var0 > 8)
         {
-            gBattleSpritesDataPtr->animationData->field_C = 0;
+            gBattleSpritesDataPtr->animationData->ballShakeThing = 0;
             sprite->data[3]++;
             sprite->data[5] = 0;
             sprite->data[4] = -sprite->data[4];
@@ -1518,7 +1518,7 @@ static void SpriteCB_ThrowBall_RunBreakOut(struct Sprite *sprite)
     if (sprite->animEnded && next)
     {
         gSprites[gBattlerSpriteIds[gBattleAnimTarget]].y2 = 0;
-        gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible = gBattleSpritesDataPtr->animationData->field_9_x2;
+        gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible = gBattleSpritesDataPtr->animationData->battlerSpriteVisibility;
         sprite->data[0] = 0;
         sprite->callback = BattleAnimObj_SignalEnd;
         gDoingBattleAnim = FALSE;
@@ -1615,7 +1615,7 @@ u8 LaunchBallStarsTask(u8 x, u8 y, u8 priority, u8 subpriority, u8 ballId)
 static void IncrementBattleParticleCounter(void)
 {
     if (gMain.inBattle)
-        gBattleSpritesDataPtr->animationData->field_A++;
+        gBattleSpritesDataPtr->animationData->particleCounter++;
 }
 
 static void PokeBallOpenParticleAnimation(u8 taskId)
@@ -2017,7 +2017,7 @@ static void DestroyBallOpenAnimationParticle(struct Sprite *sprite)
     }
     else
     {
-        if (--gBattleSpritesDataPtr->animationData->field_A == 0)
+        if (--gBattleSpritesDataPtr->animationData->particleCounter == 0)
         {
             for (i = 0; i < POKEBALL_COUNT; i++)
             {
@@ -2260,7 +2260,7 @@ static void AnimTask_ShinySparkles(u8 taskId)
         return;
     }
 
-    if (gBattleSpritesDataPtr->animationData->field_A)
+    if (gBattleSpritesDataPtr->animationData->particleCounter)
         return;
 
     counter = gTasks[taskId].data[10]++;

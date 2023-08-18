@@ -117,7 +117,7 @@ void sub_815A61C(struct DodrioSubstruct_31A0 * arg0, struct DodrioSubstruct_31A0
     Rfu_SendPacket(&packet);
 }
 
-u32 sub_815A950(u32 unused, struct DodrioSubstruct_31A0 * arg0, struct DodrioSubstruct_31A0_2C * arg1, struct DodrioSubstruct_31A0_2C * arg2, struct DodrioSubstruct_31A0_2C * arg3, struct DodrioSubstruct_31A0_2C * arg4, struct DodrioSubstruct_31A0_2C * arg5, u8 *arg6, u32 *arg7, u32 *arg8)
+u32 sub_815A950(struct DodrioSubstruct_31A0 * arg0, struct DodrioSubstruct_31A0_2C * arg1, struct DodrioSubstruct_31A0_2C * arg2, struct DodrioSubstruct_31A0_2C * arg3, struct DodrioSubstruct_31A0_2C * arg4, struct DodrioSubstruct_31A0_2C * arg5, u8 *arg6, u32 *arg7, u32 *arg8)
 {
     struct UnkPacket2 * packet;
     struct DodrioSubstruct_31A0_14 * ptr = &arg0->unk14;

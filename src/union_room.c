@@ -1,7 +1,6 @@
 #include "global.h"
 #include "gflib.h"
 #include "battle.h"
-#include "berry_crush.h"
 #include "cable_club.h"
 #include "data.h"
 #include "decompress.h"
@@ -1628,11 +1627,7 @@ static bool32 IsPartnerActivityAcceptable(u32 activity, u32 group)
     if (group == 0xFF)
         return TRUE;
 
-    #ifndef UBFIX
-    if (group <= NELEMS(sAcceptedActivityIds)) // UB: <= may access data outside the array
-    #else
     if (group < NELEMS(sAcceptedActivityIds))
-    #endif
     {
         const u8 *bytes = sAcceptedActivityIds[group];
 
@@ -1992,9 +1987,6 @@ static void Task_StartActivity(u8 taskId)
         StartPokemonJump(GetCursorSelectionMonId(), CB2_LoadMap);
         break;
     case ACTIVITY_BCRUSH:
-        SetCableClubStateAndWarpCurrentMap(USING_BERRY_CRUSH, 9, 1);
-        StartBerryCrush(CB2_LoadMap);
-        break;
     case ACTIVITY_BPICK:
         SetCableClubStateAndWarpCurrentMap(USING_MINIGAME, 5, 1);
         StartDodrioBerryPicking(GetCursorSelectionMonId(), CB2_LoadMap);

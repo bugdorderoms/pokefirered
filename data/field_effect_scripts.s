@@ -250,7 +250,7 @@ gFldEffScript_UseDive:: @ 81D991A
 	end 
 
 gFldEffScript_Pokeball:: @ 81D9920
-	loadpal sSpritePalette_SlidingPokeball
+	loadpal gSpritePalette_SlidingPokeball
 	callnative FldEff_Pokeball
 	end 
 

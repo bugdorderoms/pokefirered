@@ -20,22 +20,17 @@
 #include "item.h"
 #include "pokedex.h"
 #include "player_pc.h"
-#include "berry.h"
 #include "easy_chat.h"
 #include "union_room_chat.h"
 #include "mevent.h"
 #include "renewable_hidden_items.h"
 #include "trainer_tower.h"
 #include "script.h"
-#include "berry_powder.h"
 #include "pokemon_jump.h"
 #include "event_scripts.h"
 #include "registered_item.h"
 #include "constants/maps.h"
 #include "constants/pokedex.h"
-
-// this file's functions
-static void ResetMiniGamesResults(void);
 
 // EWRAM vars
 EWRAM_DATA bool8 gDifferentSaveFile = FALSE;
@@ -148,7 +143,7 @@ void NewGameInitData(void)
     ResetFameChecker();
     SetMoney(&gSaveBlock1Ptr->money, 3000);
     ResetGameStats();
-    ClearPlayerLinkBattleRecords();
+    ClearLinkBattleRecords();
     InitHeracrossSizeRecord();
     InitMagikarpSizeRecord();
     sub_806E190();
@@ -159,12 +154,12 @@ void NewGameInitData(void)
 	memset(&gSaveBlock1Ptr->registeredItem, 0, sizeof(gSaveBlock1Ptr->registeredItem));
     ClearBag();
     NewGameInitPCItems();
-    ClearEnigmaBerries();
 	// Debug_NewGameGiveAllItems();
     InitEasyChatPhrases();
     ResetTrainerFanClub();
     UnionRoomChat_InitializeRegisteredTexts();
-    ResetMiniGamesResults();
+    ResetPokeJumpResults();
+    CpuFill16(0, &gSaveBlock2Ptr->berryPick, sizeof(struct BerryPickingResults));
     InitMEventData();
     SetAllRenewableItemFlags();
     WarpToPlayersRoom();
@@ -173,12 +168,4 @@ void NewGameInitData(void)
     ResetTrainerTowerResults();
 	ResetItemFlags();
     ClearAllFusedMonSpecies();
-}
-
-static void ResetMiniGamesResults(void)
-{
-    CpuFill16(0, &gSaveBlock2Ptr->berryCrush, sizeof(struct BerryCrush));
-    SetBerryPowder(&gSaveBlock2Ptr->berryCrush.berryPowderAmount, 0);
-    ResetPokeJumpResults();
-    CpuFill16(0, &gSaveBlock2Ptr->berryPick, sizeof(struct BerryPickingResults));
 }

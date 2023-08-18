@@ -25,6 +25,8 @@ static void MoveCoordsInDirection(u32, s16 *, s16 *, s16, s16);
 static bool8 ObjectEventExecSingleMovementAction(struct ObjectEvent *, struct Sprite *);
 static u8 GetCollisionInDirection(struct ObjectEvent *, u8);
 static u32 state_to_direction(u8, u32, u32);
+static bool8 sub_8068C18(struct Sprite *sprite);
+static bool8 sub_8068CB4(struct Sprite *sprite);
 static void TryEnableObjectEventAnim(struct ObjectEvent *, struct Sprite *);
 static void ObjectEventExecHeldMovementAction(struct ObjectEvent *, struct Sprite *);
 static void UpdateObjectEventSpriteAnimPause(struct ObjectEvent *, struct Sprite *);
@@ -2125,11 +2127,8 @@ const u8 *GetObjectEventScriptPointerByObjectEventId(u8 objectEventId)
 static u16 GetObjectEventFlagIdByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup)
 {
     struct ObjectEventTemplate *obj = GetObjectEventTemplateByLocalIdAndMap(localId, mapNum, mapGroup);
-#ifdef UBFIX
-    // BUG: The function may return NULL, and attempting to read from NULL may freeze the game using modern compilers.
     if (obj == NULL)
         return 0;
-#endif // UBFIX
     return obj->flagId;
 }
 
@@ -8157,7 +8156,7 @@ void SetSpriteDataForNormalStep3(struct Sprite *sprite, u8 direction)
     sprite->tStepNo = 0;
 }
 
-bool8 sub_8068C18(struct Sprite *sprite)
+static bool8 sub_8068C18(struct Sprite *sprite)
 {
     if (++sprite->tDelay < 3)
     {
@@ -8195,7 +8194,7 @@ void SetSpriteDataForNormalStep4(struct Sprite *sprite, u8 direction)
     sprite->tStepNo = 0;
 }
 
-bool8 sub_8068CB4(struct Sprite *sprite)
+static bool8 sub_8068CB4(struct Sprite *sprite)
 {
     if ((++sprite->tDelay) & 1)
     {

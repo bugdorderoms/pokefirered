@@ -869,7 +869,7 @@ void TrainerCard_GenerateCardForLinkPlayer(struct TrainerCard *trainerCard)
     trainerCard->berriesPicked = gSaveBlock2Ptr->berryPick.berriesPicked;
     trainerCard->jumpsInRow = gSaveBlock2Ptr->pokeJump.jumpsInRow;
 
-    trainerCard->berryCrushPoints = GetCappedGameStat(GAME_STAT_BERRY_CRUSH_POINTS, 0xFFFF);
+    trainerCard->berryCrushPoints = 0;
     trainerCard->unionRoomNum = GetCappedGameStat(GAME_STAT_NUM_UNION_ROOM_BATTLES, 0xFFFF);
     trainerCard->shouldDrawStickers = TRUE;
 

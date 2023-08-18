@@ -259,12 +259,12 @@ static void ClearLinkBattleRecord(struct LinkBattleRecord *record)
     record->draws = 0;
 }
 
-static void ClearLinkBattleRecords(struct LinkBattleRecords *records)
+void ClearLinkBattleRecords(void)
 {
     s32 i;
 
     for (i = 0; i < LINK_B_RECORDS_COUNT; i++)
-        ClearLinkBattleRecord(&records->entries[i]);
+        ClearLinkBattleRecord(&gSaveBlock2Ptr->linkBattleRecords.entries[i]);
     SetGameStat(GAME_STAT_LINK_BATTLE_WINS, 0);
     SetGameStat(GAME_STAT_LINK_BATTLE_LOSSES, 0);
     SetGameStat(GAME_STAT_LINK_BATTLE_DRAWS, 0);
@@ -375,11 +375,6 @@ static void AddOpponentLinkBattleRecord(struct LinkBattleRecords * records, cons
     }
     UpdateLinkBattleRecord(&records->entries[i], outcome);
     SortLinkBattleRecords(records);
-}
-
-void ClearPlayerLinkBattleRecords(void)
-{
-    ClearLinkBattleRecords(&gSaveBlock2Ptr->linkBattleRecords);
 }
 
 static void IncTrainerCardWinCount(s32 battlerId)

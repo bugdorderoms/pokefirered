@@ -242,7 +242,6 @@ void SetSuppressLinkErrorMessage(bool8);
 bool8 HasLinkErrorOccurred(void);
 void ResetSerial(void);
 u32 LinkMain1(u8 *, u16 *, u16[MAX_RFU_PLAYERS][CMD_LENGTH]);
-void RFUVSync(void);
 void Timer3Intr(void);
 void SerialCB(void);
 u8 GetLinkPlayerCount(void);

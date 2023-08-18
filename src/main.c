@@ -348,7 +348,7 @@ extern void ProcessDma3Requests(void);
 static void VBlankIntr(void)
 {
     if (gWirelessCommType)
-        RFUVSync();
+        rfu_LMAN_syncVBlank();
     else if (!gLinkVSyncDisabled)
         LinkVSync();
 

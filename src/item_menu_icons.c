@@ -802,7 +802,6 @@ static const void *const sItemIconGfxPtrs[][2] = {
     [ITEM_TEA] = {sItemIcon_Tea, sItemIconPalette_Tea},
     [ITEM_MYSTIC_TICKET] = {sItemIcon_MysticTicket, sItemIconPalette_MysticTicket},
     [ITEM_AURORA_TICKET] = {sItemIcon_AuroraTicket, sItemIconPalette_AuroraTicket},
-    [ITEM_POWDER_JAR] = {sItemIcon_PowderJar, sItemIconPalette_PowderJar},
     [ITEM_RUBY] = {sItemIcon_Ruby, sItemIconPalette_Ruby},
     [ITEM_SAPPHIRE] = {sItemIcon_Ruby, sItemIconPalette_Sapphire},
 	[ITEM_EV_IV_DISPLAY] = {sItemIcon_EvIvDisplay, sItemIconPalette_EvIvDisplay},

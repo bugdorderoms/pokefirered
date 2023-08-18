@@ -1000,7 +1000,7 @@ static void sub_815184C(void)
     u8 i;
     u8 r7 = gUnknown_203F3E0->unk24;
 
-    gUnknown_203F3E0->unk31A0[0].unk10 = sub_815A950(0, &gUnknown_203F3E0->unk31A0[0], &gUnknown_203F3E0->unk31A0[0].unk2C, &gUnknown_203F3E0->unk31A0[1].unk2C, &gUnknown_203F3E0->unk31A0[2].unk2C, &gUnknown_203F3E0->unk31A0[3].unk2C, &gUnknown_203F3E0->unk31A0[4].unk2C, &gUnknown_203F3E0->unk40, &gUnknown_203F3E0->unk120, &gUnknown_203F3E0->unk12C);
+    gUnknown_203F3E0->unk31A0[0].unk10 = sub_815A950(&gUnknown_203F3E0->unk31A0[0], &gUnknown_203F3E0->unk31A0[0].unk2C, &gUnknown_203F3E0->unk31A0[1].unk2C, &gUnknown_203F3E0->unk31A0[2].unk2C, &gUnknown_203F3E0->unk31A0[3].unk2C, &gUnknown_203F3E0->unk31A0[4].unk2C, &gUnknown_203F3E0->unk40, &gUnknown_203F3E0->unk120, &gUnknown_203F3E0->unk12C);
     gUnknown_203F3E0->unk128 = 1;
 
     for (i = 1; i < r7; i++)
@@ -1067,7 +1067,7 @@ static void sub_8151A5C(void)
     u8 i;
     u8 r6 = gUnknown_203F3E0->unk24;
 
-    gUnknown_203F3E0->unk31A0[0].unk10 = sub_815A950(0, &gUnknown_203F3E0->unk31A0[0], &gUnknown_203F3E0->unk31A0[0].unk2C, &gUnknown_203F3E0->unk31A0[1].unk2C, &gUnknown_203F3E0->unk31A0[2].unk2C, &gUnknown_203F3E0->unk31A0[3].unk2C, &gUnknown_203F3E0->unk31A0[4].unk2C, &gUnknown_203F3E0->unk40, &gUnknown_203F3E0->unk120, &gUnknown_203F3E0->unk12C);
+    gUnknown_203F3E0->unk31A0[0].unk10 = sub_815A950(&gUnknown_203F3E0->unk31A0[0], &gUnknown_203F3E0->unk31A0[0].unk2C, &gUnknown_203F3E0->unk31A0[1].unk2C, &gUnknown_203F3E0->unk31A0[2].unk2C, &gUnknown_203F3E0->unk31A0[3].unk2C, &gUnknown_203F3E0->unk31A0[4].unk2C, &gUnknown_203F3E0->unk40, &gUnknown_203F3E0->unk120, &gUnknown_203F3E0->unk12C);
     gUnknown_203F3E0->unk128 = 1;
 
     for (i = 1; i < r6; i++)
@@ -1131,10 +1131,10 @@ static void sub_8151C5C(void)
     switch (gUnknown_203F3E0->unk18)
     {
     case 4:
-        sub_815A950(gUnknown_203F3E0->multiplayerId, &gUnknown_203F3E0->unk31A0[gUnknown_203F3E0->multiplayerId], &gUnknown_203F3E0->unk31A0[0].unk2C, &gUnknown_203F3E0->unk31A0[1].unk2C, &gUnknown_203F3E0->unk31A0[2].unk2C, &gUnknown_203F3E0->unk31A0[3].unk2C, &gUnknown_203F3E0->unk31A0[4].unk2C, &gUnknown_203F3E0->unk40, &gUnknown_203F3E0->unk120, &gUnknown_203F3E0->unk12C);
+        sub_815A950(&gUnknown_203F3E0->unk31A0[gUnknown_203F3E0->multiplayerId], &gUnknown_203F3E0->unk31A0[0].unk2C, &gUnknown_203F3E0->unk31A0[1].unk2C, &gUnknown_203F3E0->unk31A0[2].unk2C, &gUnknown_203F3E0->unk31A0[3].unk2C, &gUnknown_203F3E0->unk31A0[4].unk2C, &gUnknown_203F3E0->unk40, &gUnknown_203F3E0->unk120, &gUnknown_203F3E0->unk12C);
         break;
     case 11:
-        sub_815A950(gUnknown_203F3E0->multiplayerId, &gUnknown_203F3E0->unk31A0[gUnknown_203F3E0->multiplayerId], &gUnknown_203F3E0->unk31A0[0].unk2C, &gUnknown_203F3E0->unk31A0[1].unk2C, &gUnknown_203F3E0->unk31A0[2].unk2C, &gUnknown_203F3E0->unk31A0[3].unk2C, &gUnknown_203F3E0->unk31A0[4].unk2C, &gUnknown_203F3E0->unk40, &gUnknown_203F3E0->unk120, &gUnknown_203F3E0->unk12C);
+        sub_815A950(&gUnknown_203F3E0->unk31A0[gUnknown_203F3E0->multiplayerId], &gUnknown_203F3E0->unk31A0[0].unk2C, &gUnknown_203F3E0->unk31A0[1].unk2C, &gUnknown_203F3E0->unk31A0[2].unk2C, &gUnknown_203F3E0->unk31A0[3].unk2C, &gUnknown_203F3E0->unk31A0[4].unk2C, &gUnknown_203F3E0->unk40, &gUnknown_203F3E0->unk120, &gUnknown_203F3E0->unk12C);
         break;
     }
 }

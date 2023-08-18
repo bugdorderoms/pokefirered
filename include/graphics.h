@@ -6403,26 +6403,6 @@ extern const u8 gUnknown_8E86BE8[];
 extern const u8 gUnknown_8E86D6C[];
 extern const u32 gUnknown_8E86F98[];
 
-// berry_fix_program
-extern const u8 gBerryFixGameboy_Gfx[];
-extern const u8 gBerryFixGameboy_Tilemap[];
-extern const u8 gBerryFixGameboy_Pal[];
-extern const u8 gBerryFixGameboyLogo_Gfx[];
-extern const u8 gBerryFixGameboyLogo_Tilemap[];
-extern const u8 gBerryFixGameboyLogo_Pal[];
-extern const u8 gBerryFixGbaTransfer_Gfx[];
-extern const u8 gBerryFixGbaTransfer_Tilemap[];
-extern const u8 gBerryFixGbaTransfer_Pal[];
-extern const u8 gBerryFixGbaTransferHighlight_Gfx[];
-extern const u8 gBerryFixGbaTransferHighlight_Tilemap[];
-extern const u8 gBerryFixGbaTransferHighlight_Pal[];
-extern const u8 gBerryFixGbaTransferError_Gfx[];
-extern const u8 gBerryFixGbaTransferError_Tilemap[];
-extern const u8 gBerryFixGbaTransferError_Pal[];
-extern const u8 gBerryFixWindow_Gfx[];
-extern const u8 gBerryFixWindow_Tilemap[];
-extern const u8 gBerryFixWindow_Pal[];
-
 // item_pc
 extern const u8 gItemPcTiles[];
 extern const u32 gItemPcBgPals[];
@@ -7646,11 +7626,6 @@ extern const u32 gFile_graphics_battle_transitions_vs_frame_sheet[];
 extern const u32 gVsLettersGfx[];
 extern const u32 gFile_graphics_battle_transitions_vs_frame_palette[];
 extern const u32 gFile_graphics_battle_transitions_vs_frame_tilemap[];
-
-// berry_crush
-extern const u16 gBerryCrush_Crusher_Pal[];
-extern const u32 gBerryCrush_Crusher_Gfx[];
-extern const u32 gBerryCrush_Crusher_Tilemap[];
 
 // easy_chat_3
 extern const u32 gEasyChatWindow_Gfx[];

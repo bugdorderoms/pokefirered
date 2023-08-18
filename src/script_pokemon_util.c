@@ -1,6 +1,5 @@
 #include "global.h"
 #include "gflib.h"
-#include "berry.h"
 #include "daycare.h"
 #include "event_data.h"
 #include "load_save.h"
@@ -128,15 +127,6 @@ static bool8 CheckPartyMonHasHeldItem(u16 item)
             return TRUE;
     }
     return FALSE;
-}
-
-bool8 DoesPartyHaveEnigmaBerry(void)
-{
-    bool8 hasItem = CheckPartyMonHasHeldItem(ITEM_ENIGMA_BERRY);
-    if (hasItem == TRUE)
-        GetBerryNameByBerryType(ItemIdToBerryType(ITEM_ENIGMA_BERRY), gStringVar1);
-
-    return hasItem;
 }
 
 void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 level2, u16 item2)

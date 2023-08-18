@@ -2147,7 +2147,7 @@ void AnimTask_TransformMon(u8 taskId)
         break;
     case 2:
         HandleSpeciesGfxDataChange(gBattleAnimAttacker, gBattleAnimTarget, gTasks[taskId].data[10]);
-        GetBattleAnimBgDataByPriorityRank(&animBg, gBattleAnimAttacker);
+        GetBattleAnimBgDataByPriorityRank(&animBg);
         CpuCopy32(gMonSpritesGfxPtr->sprites[GetBattlerPosition(gBattleAnimAttacker)], animBg.bgTiles, 0x800);
         LoadBgTiles(1, animBg.bgTiles, 0x800, animBg.tilesOffset);
         gTasks[taskId].data[0]++;

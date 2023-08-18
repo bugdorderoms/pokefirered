@@ -105,7 +105,7 @@ void HandleIntroSlide(u8 terrain)
     gTasks[taskId].data[6] = 0;
 }
 
-void BattleIntroSlideEnd(u8 taskId)
+static void BattleIntroSlideEnd(u8 taskId)
 {
     DestroyTask(taskId);
     gBattle_BG1_X = 0;

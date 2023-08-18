@@ -32,7 +32,7 @@ enum
 #define B_TRANSITION_BLUE 16
 #define B_TRANSITION_ANTI_CLOCKWISE_SPIRAL 17
 
-extern const struct SpritePalette sSpritePalette_SlidingPokeball;
+extern const struct SpritePalette gSpritePalette_SlidingPokeball;
 
 bool8 BT_IsDone(void);
 void BT_StartOnField(u8 transitionId);

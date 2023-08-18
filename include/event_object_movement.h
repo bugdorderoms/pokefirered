@@ -51,12 +51,6 @@ typedef void (*MovementAction)(u8 direction);
 #define GROUND_EFFECT_FLAG_HOT_SPRINGS           (1 << 18)
 #define GROUND_EFFECT_FLAG_SEAWEED               (1 << 19)
 
-struct PairedPalettes
-{
-    u16 tag;
-    const u16 *data;
-};
-
 // Exported RAM declarations
 
 // Exported ROM declarations
@@ -176,10 +170,8 @@ void SetSpriteDataForNormalStep(struct Sprite *, u8);
 void SetSpriteDataForNormalStep2(struct Sprite *, u8);
 bool8 UpdateWalkSlowAnim(struct Sprite *sprite);
 void SetSpriteDataForNormalStep3(struct Sprite *, u8);
-bool8 sub_8068C18(struct Sprite *sprite);
 void DoShadowFieldEffect(struct ObjectEvent *);
 void SetSpriteDataForNormalStep4(struct Sprite *, u8);
-bool8 sub_8068CB4(struct Sprite *sprite);
 void SetAndStartSpriteAnim(struct Sprite *, u8, u8);
 u8 ObjectEventGetHeldMovementActionId(struct ObjectEvent *objectEvent);
 u8 GetMoveDirectionAnimNum(u8 direction);

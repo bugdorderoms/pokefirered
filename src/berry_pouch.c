@@ -13,7 +13,6 @@
 #include "item_menu_icons.h"
 #include "list_menu.h"
 #include "graphics.h"
-#include "berry.h"
 #include "item.h"
 #include "item_use.h"
 #include "party_menu.h"
@@ -639,15 +638,6 @@ static bool8 AllocateListMenuBuffers(void)
     return TRUE;
 }
 
-static s32 BerryPouch_GetNumItems(void)
-{
-	s32 ret = sResources->listMenuNumItems;
-	if (sStaticCnt.type != BERRYPOUCH_FROMBERRYCRUSH)
-		++ret;
-	
-	return ret;
-}
-
 static void SetUpListMenuTemplate(void)
 {
     u16 i;
@@ -661,7 +651,7 @@ static void SetUpListMenuTemplate(void)
     sListMenuItems[i].label = gText_Close;
     sListMenuItems[i].index = i;
     gMultiuseListMenuTemplate.items = sListMenuItems;
-	gMultiuseListMenuTemplate.totalItems = BerryPouch_GetNumItems();
+	gMultiuseListMenuTemplate.totalItems = sResources->listMenuNumItems + 1;
     gMultiuseListMenuTemplate.windowId = 0;
     gMultiuseListMenuTemplate.header_X = 0;
     gMultiuseListMenuTemplate.item_X = 9;
@@ -754,7 +744,7 @@ static void SetDescriptionWindowBorderPalette(s32 pal)
 
 static void CreateScrollIndicatorArrows_BerryPouchList(void)
 {
-	sResources->indicatorTaskId = AddScrollIndicatorArrowPairParameterized(2, 160, 8, 120, BerryPouch_GetNumItems() - sResources->listMenuMaxShowed, 110, 110, &sStaticCnt.listMenuScrollOffset);
+	sResources->indicatorTaskId = AddScrollIndicatorArrowPairParameterized(2, 160, 8, 120, (sResources->listMenuNumItems + 1) - sResources->listMenuMaxShowed, 110, 110, &sStaticCnt.listMenuScrollOffset);
 }
 
 static void CreateScrollIndicatorArrows_TossQuantity(void)
@@ -792,7 +782,7 @@ void BerryPouch_CursorResetToTop(void)
 
 static void SanitizeListMenuSelectionParams(void)
 {
-    s32 numItems = BerryPouch_GetNumItems();
+    s32 numItems = sResources->listMenuNumItems + 1;
     
     if (sStaticCnt.listMenuScrollOffset != 0 && sStaticCnt.listMenuScrollOffset + sResources->listMenuMaxShowed > numItems)
         sStaticCnt.listMenuScrollOffset = numItems - sResources->listMenuMaxShowed;
@@ -803,7 +793,7 @@ static void SanitizeListMenuSelectionParams(void)
 
 static void UpdateListMenuScrollOffset(void)
 {
-    u8 lim = BerryPouch_GetNumItems();
+    u8 lim = sResources->listMenuNumItems + 1;
     u8 i;
 	
     if (sStaticCnt.listMenuSelectedRow > 4)
@@ -861,7 +851,7 @@ static void SortAndCountBerries(void)
         if (pocket->itemSlots[i].itemId == ITEM_NONE)
             break;
     }
-	r2 = BerryPouch_GetNumItems();
+	r2 = sResources->listMenuNumItems + 1;
 	sResources->listMenuMaxShowed = r2 > 7 ? 7 : r2;
 }
 
@@ -911,21 +901,13 @@ static void Task_BerryPouchMain(u8 taskId)
             case -1:
                 return;
             case -2:
-                if (sStaticCnt.type != BERRYPOUCH_FROMBERRYCRUSH)
-                {
-                    PlaySE(SE_SELECT);
-                    gSpecialVar_ItemId = 0;
-                    BerryPouch_StartFadeToExitCallback(taskId);
-                }
+				PlaySE(SE_SELECT);
+                gSpecialVar_ItemId = 0;
+				BerryPouch_StartFadeToExitCallback(taskId);
                 break;
             default:
                 PlaySE(SE_SELECT);
-                if (sStaticCnt.type == BERRYPOUCH_FROMBERRYCRUSH)
-                {
-                    gSpecialVar_ItemId = BagGetItemIdByPocketPosition(POCKET_BERRY_POUCH, menuInput);
-                    BerryPouch_StartFadeToExitCallback(taskId);
-                }
-                else if (menuInput == sResources->listMenuNumItems)
+                if (menuInput == sResources->listMenuNumItems)
                 {
                     gSpecialVar_ItemId = 0;
                     BerryPouch_StartFadeToExitCallback(taskId);

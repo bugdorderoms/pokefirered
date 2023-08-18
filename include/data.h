@@ -3,7 +3,6 @@
 
 #include "global.h"
 
-#define SPECIES_SHINY_TAG 500
 #define TRAINER_ENCOUNTER_MUSIC(trainer)((gTrainers[trainer].encounterMusic_gender & 0x7F))
 
 struct MonCoords
@@ -16,11 +15,6 @@ struct MonCoords
 
 extern const u8 gSpeciesNames[][POKEMON_NAME_LENGTH + 1];
 extern const u8 gMoveNames[][13];
-extern const u16 gUnknown_8251CB8[];
-extern const u16 gUnknown_8251FEE[];
-extern const u16 gUnknown_8252324[];
-extern const u16 gUnknown_82539D4[];
-
 extern const u8 gTrainerClassNames[][13];
 
 extern const struct MonCoords gMonFrontPicCoords[];
@@ -42,8 +36,6 @@ extern const struct SpriteTemplate gSpriteTemplate_EnemyShadow;
 
 extern const u8 gEnemyMonElevation[NUM_SPECIES];
 
-extern const struct OamData gUnknown_824F010;
-extern const struct OamData gUnknown_824F018;
 extern const union AnimCmd *const gSpriteAnimTable_82349BC[];
 extern const union AffineAnimCmd *const gSpriteAffineAnimTable_BattlerPlayer[];
 extern const union AffineAnimCmd *const gSpriteAffineAnimTable_BattlerOpponent[];

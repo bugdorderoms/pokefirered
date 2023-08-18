@@ -249,6 +249,8 @@ const union AnimCmd *const gSpriteAnimTable_82349BC[] =
     gSpriteAnim_82349B4,
 };
 
+#define SPECIES_SHINY_TAG 500
+
 #define SPECIES_SPRITE(species, sprite) [SPECIES_##species] = {sprite, 0x800, SPECIES_##species}
 #define SPECIES_PAL(species, pal) [SPECIES_##species] = {pal, SPECIES_##species}
 #define SPECIES_SHINY_PAL(species, pal) [SPECIES_##species] = {pal, SPECIES_##species + SPECIES_SHINY_TAG}

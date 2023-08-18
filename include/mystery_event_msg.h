@@ -3,9 +3,6 @@
 
 #include "gba/gba.h"
 
-extern const u8 gText_MysteryGiftBerry[];
-extern const u8 gText_MysteryGiftBerryTransform[];
-extern const u8 gText_MysteryGiftBerryObtained[];
 extern const u8 gText_MysteryGiftSpecialRibbon[];
 extern const u8 gText_MysteryGiftNationalDex[];
 extern const u8 gText_MysteryGiftRareWord[];

@@ -440,19 +440,11 @@ CableClub_EventScript_CheckPartyTradeRequirements:: @ 81BB79C
 	specialvar VAR_RESULT, CalculatePlayerPartyCount
 	compare VAR_RESULT, 2
 	goto_if_lt CableClub_EventScript_NeedTwoMonsToTrade
-	specialvar VAR_RESULT, DoesPartyHaveEnigmaBerry
-	compare VAR_RESULT, TRUE
-	goto_if_eq CableClub_EventScript_CantTradeEnigmaBerry
 	setvar VAR_RESULT, TRUE
 	return
 
 CableClub_EventScript_NeedTwoMonsToTrade:: @ 81BB7C2
 	msgbox CableClub_Text_NeedTwoMonsToTrade
-	setvar VAR_RESULT, FALSE
-	return
-
-CableClub_EventScript_CantTradeEnigmaBerry:: @ 81BB7D0
-	msgbox CableClub_Text_CantTradeEnigmaBerry
 	setvar VAR_RESULT, FALSE
 	return
 
@@ -830,19 +822,11 @@ CableClub_EventScript_CheckPartyUnionRoomRequirements:: @ 81BBB1E
 	specialvar VAR_RESULT, CountPartyNonEggMons
 	compare VAR_RESULT, 2
 	goto_if_lt CableClub_EventScript_NeedTwoMonsForUnionRoom
-	specialvar VAR_RESULT, DoesPartyHaveEnigmaBerry
-	compare VAR_RESULT, TRUE
-	goto_if_eq CableClub_EventScript_NoEnigmaBerryInUnionRoom
 	setvar VAR_RESULT, TRUE
 	return
 
 CableClub_EventScript_NeedTwoMonsForUnionRoom:: @ 81BBB44
 	msgbox CableClub_Text_NeedTwoMonsForUnionRoom
-	goto EventScript_SetResultFalse
-	end
-
-CableClub_EventScript_NoEnigmaBerryInUnionRoom:: @ 81BBB52
-	msgbox CableClub_Text_NoEnigmaBerryInUnionRoom
 	goto EventScript_SetResultFalse
 	end
 
@@ -882,18 +866,7 @@ CableClub_EventScript_DirectCornerAttendant:: @ 81BBB9C
 	message CableClub_Text_WelcomeWhichDirectCornerRoom
 	waitmessage
 	delay 15
-	goto CableClub_EventScript_DirectCornerSelectService
-	end
-
-CableClub_EventScript_DirectCornerSelectService:: @ 81BBBE7
-	goto_if_unset FLAG_GOT_POWDER_JAR, CableClub_EventScript_DirectCornerNoBerry
-	multichoice 0, 0, MULTICHOICE_TRADE_COLOSSEUM_CRUSH, FALSE
-	switch VAR_RESULT
-	case 0, CableClub_EventScript_WirelessTrade
-	case 1, CableClub_EventScript_WirelessBattleSelect
-	case 2, CableClub_EventScript_WirelessBerryCrush
-	case 3, CableClub_EventScript_AbortLink
-	case SCR_MENU_CANCEL, CableClub_EventScript_AbortLink
+	goto CableClub_EventScript_DirectCornerNoBerry
 	end
 
 CableClub_EventScript_DirectCornerNoBerry:: @ 81BBC32
@@ -955,22 +928,6 @@ CableClub_EventScript_WirelessMultiBattle:: @ 81BBD1C
 CableClub_EventScript_WirelessBattleInfo:: @ 81BBD27
 	msgbox CableClub_Text_ExplainBattleModes
 	goto CableClub_EventScript_WirelessBattleSelect
-	end
-
-CableClub_EventScript_WirelessBerryCrush:: @ 81BBD35
-	msgbox CableClub_Text_UseBerryCrush, MSGBOX_YESNO
-	compare VAR_RESULT, NO
-	goto_if_eq CableClub_EventScript_AbortLink
-	special HasAtLeastOneBerry
-	compare VAR_RESULT, FALSE
-	goto_if_eq CableClub_EventScript_NeedBerryForBerryCrush
-	setvar VAR_0x8004, LINK_GROUP_BERRY_CRUSH
-	goto CableClub_EventScript_SaveAndChooseLinkLeader
-	end
-
-CableClub_EventScript_NeedBerryForBerryCrush:: @ 81BBD61
-	msgbox CableClub_Text_NeedBerryForBerryCrush
-	goto CableClub_EventScript_DirectCornerSelectService
 	end
 
 CableClub_EventScript_SaveAndChooseLinkLeader:: @ 81BBD6F
@@ -1385,10 +1342,6 @@ CableClub_Text_NeedTwoMonsToTrade:: @ 81BC442
 	.string "For trading, you must have at\n"
 	.string "least two POKéMON with you.$"
 
-CableClub_Text_CantTradeEnigmaBerry:: @ 81BC47C
-	.string "A POKéMON holding the {STR_VAR_1}\n"
-	.string "BERRY can't be traded.$"
-
 CableClub_Text_PleaseWaitBCancel:: @ 81BC4AC
 	.string "Please wait.\n"
 	.string "… … B Button: Cancel$"
@@ -1552,17 +1505,9 @@ CableClub_Text_WhichBattleMode:: @ 81BCB62
 CableClub_Text_ReturnsToPreviousStep:: @ 81BCB73
 	.string "ひとつ　まえに　もどります$"
 
-CableClub_Text_NeedBerryForBerryCrush:: @ 81BCB81
-	.string "To use the BERRY CRUSH service,\n"
-	.string "you must have at least one BERRY.$"
-
 CableClub_Text_NeedTwoMonsForUnionRoom:: @ 81BCBC3
 	.string "To enter the UNION ROOM, you must\n"
 	.string "have at least two POKéMON.$"
-
-CableClub_Text_NoEnigmaBerryInUnionRoom:: @ 81BCC00
-	.string "No POKéMON holding the {STR_VAR_1}\n"
-	.string "BERRY may enter the UNION ROOM.$"
 
 CableClub_Text_UnionRoomAdapterNotConnected:: @ 81BCC3A
 	.string "This is the POKéMON WIRELESS CLUB\n"
@@ -1683,10 +1628,6 @@ CableClub_Text_TradePokemon:: @ 81BD317
 CableClub_Text_PlayWhichBattleMode:: @ 81BD338
 	.string "Which Battle Mode would you like\n"
 	.string "to play?$"
-
-CableClub_Text_UseBerryCrush:: @ 81BD362
-	.string "Would you like to use the\n"
-	.string "BERRY CRUSH System?$"
 
 CableClub_Text_ExplainBattleModes:: @ 81BD390
 	.string "There are three Battle Modes.\p"

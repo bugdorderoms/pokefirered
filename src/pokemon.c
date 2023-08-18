@@ -9,7 +9,6 @@
 #include "battle.h"
 #include "battle_anim.h"
 #include "item.h"
-#include "berry.h"
 #include "event_data.h"
 #include "util.h"
 #include "dexnav.h"
@@ -2069,12 +2068,9 @@ void CalculateMonStats(struct Pokemon *mon)
         if (currentHP == 0 && oldMaxHP == 0)
             currentHP = newMaxHP;
         else if (currentHP != 0) {
-            // BUG: currentHP is unintentionally able to become <= 0 after the instruction below.
             currentHP += newMaxHP - oldMaxHP;
-            #ifdef BUGFIX
             if (currentHP <= 0)
                 currentHP = 1;
-            #endif
         }
         else
             return;
@@ -3498,23 +3494,16 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem, s
     u16 data, friendship, targetSpecies = SPECIES_NONE;
     u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL), heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL), upperPersonality = personality >> 16;
 	u16 partnerSpecies = SPECIES_NONE, partnerHeldItem = ITEM_NONE;
-    u8 partnerHoldEffect = HOLD_EFFECT_NONE, holdEffect, weather, level, beauty = GetMonData(mon, MON_DATA_BEAUTY, NULL);
+    u8 partnerHoldEffect, holdEffect = ItemId_GetHoldEffect(heldItem), weather, level, beauty = GetMonData(mon, MON_DATA_BEAUTY, NULL);
 	
 	if (tradePartner != NULL)
 	{
 		partnerSpecies = GetMonData(tradePartner, MON_DATA_SPECIES, NULL);
 		partnerHeldItem = GetMonData(tradePartner, MON_DATA_HELD_ITEM, NULL);
-		
-		if (partnerHeldItem == ITEM_ENIGMA_BERRY)
-			partnerHoldEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
-		else
-			partnerHoldEffect = ItemId_GetHoldEffect(partnerHeldItem);
+		partnerHoldEffect = ItemId_GetHoldEffect(partnerHeldItem);
 	}
-
-    if (heldItem == ITEM_ENIGMA_BERRY)
-        holdEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
-    else
-        holdEffect = ItemId_GetHoldEffect(heldItem);
+	else
+		partnerHoldEffect = HOLD_EFFECT_NONE;
 
     if (holdEffect == HOLD_EFFECT_PREVENT_EVOLVE && type != EVO_MODE_ITEM_CHECK)
         return targetSpecies;
@@ -3900,19 +3889,7 @@ void AdjustFriendship(struct Pokemon *mon, u8 event)
 {
     u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
     u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
-    u8 holdEffect;
-
-    if (heldItem == ITEM_ENIGMA_BERRY)
-    {
-        if (gMain.inBattle)
-            holdEffect = gEnigmaBerries[0].holdEffect;
-        else
-            holdEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
-    }
-    else
-    {
-        holdEffect = ItemId_GetHoldEffect(heldItem);
-    }
+    u8 holdEffect = ItemId_GetHoldEffect(heldItem);
 
     if (species && species != SPECIES_EGG)
     {
@@ -4022,18 +3999,7 @@ void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
         }
 
         heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
-
-        if (heldItem == ITEM_ENIGMA_BERRY)
-        {
-            if (gMain.inBattle)
-                holdEffect = gEnigmaBerries[0].holdEffect;
-            else
-                holdEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
-        }
-        else
-        {
-            holdEffect = ItemId_GetHoldEffect(heldItem);
-        }
+		holdEffect = ItemId_GetHoldEffect(heldItem);
 
         if (holdEffect == HOLD_EFFECT_MACHO_BRACE)
             evIncrease *= 2;

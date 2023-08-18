@@ -2,62 +2,63 @@
 #define GUARD_BATTLE_MESSAGE_H
 
 #include "global.h"
+#include "constants/battle.h"
 
 // for 0xFD
 
-#define B_TXT_BUFF1 0x0
-#define B_TXT_BUFF2 0x1
-#define B_TXT_COPY_VAR_1 0x2
-#define B_TXT_COPY_VAR_2 0x3
-#define B_TXT_COPY_VAR_3 0x4
-#define B_TXT_PLAYER_MON1_NAME 0x5
-#define B_TXT_OPPONENT_MON1_NAME 0x6
-#define B_TXT_PLAYER_MON2_NAME 0x7
-#define B_TXT_OPPONENT_MON2_NAME 0x8
-#define B_TXT_LINK_PLAYER_MON1_NAME 0x9
-#define B_TXT_LINK_OPPONENT_MON1_NAME 0xA
-#define B_TXT_LINK_PLAYER_MON2_NAME 0xB
-#define B_TXT_LINK_OPPONENT_MON2_NAME 0xC
-#define B_TXT_ATK_NAME_WITH_PREFIX_MON1 0xD
-#define B_TXT_ATK_PARTNER_NAME 0xE
-#define B_TXT_ATK_NAME_WITH_PREFIX 0xF
-#define B_TXT_DEF_NAME_WITH_PREFIX 0x10
-#define B_TXT_EFF_NAME_WITH_PREFIX 0x11 // EFF = short for gEffectBank
-#define B_TXT_ACTIVE_NAME_WITH_PREFIX 0x12
+#define B_TXT_BUFF1                       0x0
+#define B_TXT_BUFF2                       0x1
+#define B_TXT_COPY_VAR_1                  0x2
+#define B_TXT_COPY_VAR_2                  0x3
+#define B_TXT_COPY_VAR_3                  0x4
+#define B_TXT_PLAYER_MON1_NAME            0x5
+#define B_TXT_OPPONENT_MON1_NAME          0x6
+#define B_TXT_PLAYER_MON2_NAME            0x7
+#define B_TXT_OPPONENT_MON2_NAME          0x8
+#define B_TXT_LINK_PLAYER_MON1_NAME       0x9
+#define B_TXT_LINK_OPPONENT_MON1_NAME     0xA
+#define B_TXT_LINK_PLAYER_MON2_NAME       0xB
+#define B_TXT_LINK_OPPONENT_MON2_NAME     0xC
+#define B_TXT_ATK_NAME_WITH_PREFIX_MON1   0xD
+#define B_TXT_ATK_PARTNER_NAME            0xE
+#define B_TXT_ATK_NAME_WITH_PREFIX        0xF
+#define B_TXT_DEF_NAME_WITH_PREFIX        0x10
+#define B_TXT_EFF_NAME_WITH_PREFIX        0x11 // EFF = short for gEffectBank
+#define B_TXT_ACTIVE_NAME_WITH_PREFIX     0x12
 #define B_TXT_SCR_ACTIVE_NAME_WITH_PREFIX 0x13
-#define B_TXT_CURRENT_MOVE 0x14
-#define B_TXT_LAST_MOVE 0x15
-#define B_TXT_LAST_ITEM 0x16
-#define B_TXT_LAST_ABILITY 0x17
-#define B_TXT_ATK_ABILITY 0x18
-#define B_TXT_DEF_ABILITY 0x19
-#define B_TXT_SCR_ACTIVE_ABILITY 0x1A
-#define B_TXT_EFF_ABILITY 0x1B
-#define B_TXT_TRAINER1_CLASS 0x1C
-#define B_TXT_TRAINER1_NAME 0x1D
-#define B_TXT_LINK_PLAYER_NAME 0x1E
-#define B_TXT_LINK_PARTNER_NAME 0x1F
-#define B_TXT_LINK_OPPONENT1_NAME 0x20
-#define B_TXT_LINK_OPPONENT2_NAME 0x21
-#define B_TXT_LINK_SCR_TRAINER_NAME 0x22
-#define B_TXT_PLAYER_NAME 0x23
-#define B_TXT_TRAINER1_LOSE_TEXT 0x24
-#define B_TXT_TRAINER1_WIN_TEXT 0x25
-#define B_TXT_26 0x26
-#define B_TXT_PC_CREATOR_NAME 0x27
-#define B_TXT_ATK_PREFIX1 0x28
-#define B_TXT_DEF_PREFIX1 0x29
-#define B_TXT_ATK_PREFIX2 0x2A
-#define B_TXT_DEF_PREFIX2 0x2B
-#define B_TXT_ATK_PREFIX3 0x2C
-#define B_TXT_DEF_PREFIX3 0x2D
-#define B_TXT_TRAINER2_LOSE_TEXT 0x2E
-#define B_TXT_TRAINER2_WIN_TEXT 0x2F
-#define B_TXT_BUFF3 0x30
-#define B_TXT_DEF_SIDE_NAME 0x35
-#define B_TXT_ACTIVE_NAME_NO_ILLUSION 0x36
-#define B_TXT_DEF_NAME 0x37
-#define B_TXT_ITEM_USE_SPECIES_NAME 0x38
+#define B_TXT_CURRENT_MOVE                0x14
+#define B_TXT_LAST_MOVE                   0x15
+#define B_TXT_LAST_ITEM                   0x16
+#define B_TXT_LAST_ABILITY                0x17
+#define B_TXT_ATK_ABILITY                 0x18
+#define B_TXT_DEF_ABILITY                 0x19
+#define B_TXT_SCR_ACTIVE_ABILITY          0x1A
+#define B_TXT_EFF_ABILITY                 0x1B
+#define B_TXT_TRAINER1_CLASS              0x1C
+#define B_TXT_TRAINER1_NAME               0x1D
+#define B_TXT_LINK_PLAYER_NAME            0x1E
+#define B_TXT_LINK_PARTNER_NAME           0x1F
+#define B_TXT_LINK_OPPONENT1_NAME         0x20
+#define B_TXT_LINK_OPPONENT2_NAME         0x21
+#define B_TXT_LINK_SCR_TRAINER_NAME       0x22
+#define B_TXT_PLAYER_NAME                 0x23
+#define B_TXT_TRAINER1_LOSE_TEXT          0x24
+#define B_TXT_TRAINER1_WIN_TEXT           0x25
+#define B_TXT_26                          0x26
+#define B_TXT_PC_CREATOR_NAME             0x27
+#define B_TXT_ATK_PREFIX1                 0x28
+#define B_TXT_DEF_PREFIX1                 0x29
+#define B_TXT_ATK_PREFIX2                 0x2A
+#define B_TXT_DEF_PREFIX2                 0x2B
+#define B_TXT_ATK_PREFIX3                 0x2C
+#define B_TXT_DEF_PREFIX3                 0x2D
+#define B_TXT_TRAINER2_LOSE_TEXT          0x2E
+#define B_TXT_TRAINER2_WIN_TEXT           0x2F
+#define B_TXT_BUFF3                       0x30
+#define B_TXT_DEF_SIDE_NAME               0x35
+#define B_TXT_ACTIVE_NAME_NO_ILLUSION     0x36
+#define B_TXT_DEF_NAME                    0x37
+#define B_TXT_ITEM_USE_SPECIES_NAME       0x38
 
 // for B_TXT_BUFF1, B_TXT_BUFF2 and B_TXT_BUFF3
 
@@ -208,16 +209,14 @@ struct BattleMsgData
     u8 scrActive;
     u8 bakScriptPartyIdx;
     u8 hpScale;
-    u8 itemEffectBattler;
     u8 moveType;
-    u16 abilities[4];
+    u16 abilities[MAX_BATTLERS_COUNT];
     u8 textBuffs[3][TEXT_BUFF_ARRAY_COUNT];
 };
 
 void BufferStringBattle(u16 stringID);
 u32 BattleStringExpandPlaceholdersToDisplayedString(const u8* src);
 u32 BattleStringExpandPlaceholders(const u8* src, u8* dst);
-void BattleHandleAddTextPrinter(const u8* text, u8 arg1);
 void SetPpNumbersPaletteInMoveSelection(void);
 u8 GetCurrentPpToMaxPpState(u8 currentPp, u8 maxPp);
 void BattlePutTextOnWindow(const u8* text, u8 windowId_flags);
@@ -233,8 +232,6 @@ extern u8 gBattleTextBuff3[TEXT_BUFF_ARRAY_COUNT];
 extern const u8* const gBattleStringsTable[];
 extern const u8* const gStatNamesTable[];
 extern const u8* const gPokeblockWasTooXStringTable[];
-extern const u8* const gRefereeStringsTable[];
-extern const u8* const gStatNamesTable2[];
 
 extern const u16 gMissStringIds[];
 extern const u16 gTrappingMoves[];

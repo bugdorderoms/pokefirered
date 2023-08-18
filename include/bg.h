@@ -70,9 +70,8 @@ struct BgTemplate
 
 void ResetBgs(void);
 int BgTileAllocOp(int bg, int offset, int count, int mode);
-void ResetBgsAndClearDma3BusyFlags(bool32 enableWindowTileAutoAlloc);
+void ResetBgsAndClearDma3BusyFlags(bool8 enableWindowTileAutoAlloc);
 void InitBgsFromTemplates(u8 bgMode, const struct BgTemplate *templates, u8 numTemplates);
-void SetBgMode(u8 bgMode);
 u16 LoadBgTiles(u8 bg, const void* src, u16 size, u16 destOffset);
 u16 LoadBgTilemap(u8 bg, const void *src, u16 size, u16 destOffset);
 bool8 IsDma3ManagerBusyWithBgCopy(void);
@@ -100,6 +99,6 @@ void FillBgTilemapBufferRect_Palette0(u8 bg, u16 tileNum, u8 x, u8 y, u8 width, 
 void FillBgTilemapBufferRect(u8 bg, u16 tileNum, u8 x, u8 y, u8 width, u8 height, u8 palette);
 void WriteSequenceToBgTilemapBuffer(u8 bg, u16 firstTileNum, u8 x, u8 y, u8 width, u8 height, u8 paletteSlot, s16 tileNumDelta);
 
-extern bool32 gWindowTileAutoAllocEnabled;
+extern bool8 gWindowTileAutoAllocEnabled;
 
 #endif // GUARD_BG_H

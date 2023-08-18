@@ -2443,11 +2443,6 @@ bool8 Rfu_IsMaster(void)
     return Rfu.parent_child;
 }
 
-void RFUVSync(void)
-{
-    rfu_LMAN_syncVBlank();
-}
-
 void ClearRecvCommands(void)
 {
     CpuFill32(0, gRecvCmds, sizeof(gRecvCmds));

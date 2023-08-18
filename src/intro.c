@@ -748,20 +748,13 @@ static const struct CompressedSpriteSheet sFightSceneSpriteSheets[] = {
 	{sSpriteTiles_NidorinoRecoilDust, 0x0200, 11}
 };
 
-// POTENTIAL UB
-// This array is passed to LoadSpritePalettes in LoadFightSceneSpriteTilesAndPals.
-// LoadSpritePalettes uses a {0} entry to signal end of array.
-// Because such an entry is absent in this case, the function
-// continues reading into the next .rodata section.
 static const struct SpritePalette sFightSceneSpritePalettes[] = {
 	{sSpritePals_Gengar, 6},
 	{sSpritePals_Nidorino, 7},
 	{sSpritePals_Grass, 8},
 	{sSpritePals_GengarSwipe, 10},
 	{sSpritePals_NidorinoRecoilDust, 11},
-#ifdef BUGFIX
     {0}
-#endif
 };
 
 static void VBlankCB_Copyright(void)

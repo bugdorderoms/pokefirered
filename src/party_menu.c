@@ -4521,12 +4521,7 @@ static bool8 ItemUseDoHPHeal(struct Pokemon *mon, u8 partyIndex, u16 oldHP, u16 
 		newHP = GetMonData(mon, MON_DATA_MAX_HP);
 	
 	if (gMain.inBattle && battleMon != MAX_BATTLERS_COUNT)
-	{
-		if (GetBattlerSide(battleMon) == B_SIDE_PLAYER && gBattleResults.numHealingItemsUsed < 255)
-			++gBattleResults.numHealingItemsUsed;
-		
 		gBattleMoveDamage = -healAmount;
-	}
 	else
 	{
 		SetMonData(mon, MON_DATA_HP, &newHP);
@@ -4557,15 +4552,8 @@ static bool8 ItemUseModifyMonFriendship(struct Pokemon *mon, s8 friendshipDelta)
 	
 	if ((friendshipDelta > 0 && friendship < 255) || (friendshipDelta < 0 && friendship > 0))
 	{
-		if (heldItem != ITEM_ENIGMA_BERRY)
-			holdEffect = ItemId_GetHoldEffect(heldItem);
-		else
-		{
-			if (gMain.inBattle)
-				holdEffect = gEnigmaBerries[gBattlerInMenuId].holdEffect;
-			else
-				holdEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
-		}
+		holdEffect = ItemId_GetHoldEffect(heldItem);
+		
 		if (friendshipDelta > 0 && holdEffect == HOLD_EFFECT_HAPPINESS_UP)
 			friendship += 150 * friendshipDelta / 100;
 		else
@@ -4696,9 +4684,6 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 						{
 							if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 								gBattleStruct->usedReviveItemBattler |= gBitTable[gBattlerInMenuId]; // for revive mon in battle
-							
-							if (GetBattlerSide(battleMonId) == B_SIDE_PLAYER && gBattleResults.numRevivesUsed < 255)
-								++gBattleResults.numRevivesUsed;
 						}
 						hword = GetMonData(mon, MON_DATA_MAX_HP) / holdEffectParam;
 						if (hword == 0)

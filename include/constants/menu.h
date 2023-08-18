@@ -51,24 +51,23 @@
 #define MULTICHOICE_ISLAND_23                                  44
 #define MULTICHOICE_ISLAND_13                                  45
 #define MULTICHOICE_ISLAND_12                                  46
-#define MULTICHOICE_TRADE_COLOSSEUM_CRUSH                      47
+#define MULTICHOICE_TRADE_COLOSSEUM_CRUSH                      47 // Unused
 #define MULTICHOICE_48                                         48
 #define MULTICHOICE_POKEJUMP_DODRIO                            49
 #define MULTICHOICE_TRADE_COLOSSEUM_2                          50
 #define MULTICHOICE_MUSHROOMS                                  51
-#define MULTICHOICE_TRADE_COLOSSEUM_BLANK_CRUSH                52
-#define MULTICHOICE_TRADE_COLOSSEUM_BLANK                      53
-#define MULTICHOICE_SEVII_NAVEL                                54
-#define MULTICHOICE_SEVII_BIRTH                                55
-#define MULTICHOICE_SEVII_NAVEL_BIRTH                          56
-#define MULTICHOICE_SEAGALLOP_123                              57
-#define MULTICHOICE_SEAGALLOP_V23                              58
-#define MULTICHOICE_SEAGALLOP_V13                              59
-#define MULTICHOICE_SEAGALLOP_V12                              60
-#define MULTICHOICE_SEAGALLOP_VERMILION                        61
-#define MULTICHOICE_62                                         62
-#define MULTICHOICE_JOIN_OR_LEAD                               63
-#define MULTICHOICE_TRAINER_TOWER_MODE                         64
+#define MULTICHOICE_TRADE_COLOSSEUM_BLANK                      52
+#define MULTICHOICE_SEVII_NAVEL                                53
+#define MULTICHOICE_SEVII_BIRTH                                54
+#define MULTICHOICE_SEVII_NAVEL_BIRTH                          55
+#define MULTICHOICE_SEAGALLOP_123                              56
+#define MULTICHOICE_SEAGALLOP_V23                              57
+#define MULTICHOICE_SEAGALLOP_V13                              58
+#define MULTICHOICE_SEAGALLOP_V12                              59
+#define MULTICHOICE_SEAGALLOP_VERMILION                        60
+#define MULTICHOICE_62                                         61
+#define MULTICHOICE_JOIN_OR_LEAD                               62
+#define MULTICHOICE_TRAINER_TOWER_MODE                         63
 
 // Don't change this unused spaces
 #define LISTMENU_BADGES                    0

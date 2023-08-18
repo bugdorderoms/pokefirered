@@ -538,7 +538,7 @@ void HandleSpeciesGfxDataChange(u8 battlerAtk, u8 battlerDef, u8 flags)
 	{
 		SetMonData(atkMon, MON_DATA_NICKNAME, gSpeciesNames[targetSpecies]);
         UpdateHealthboxAttribute(battlerAtk, HEALTHBOX_NICK);
-        TryAddPokeballIconToHealthbox(gHealthboxSpriteIds[battlerAtk], 1);
+        TryAddPokeballIconToHealthbox(gHealthboxSpriteIds[battlerAtk], TRUE);
 	}
 }
 

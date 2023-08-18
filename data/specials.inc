@@ -58,7 +58,7 @@ gSpecials:: @ 815FD60
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
-	def_special IsEnigmaBerryValid
+	def_special NullFieldSpecial
 	def_special GetTrainerBattleMode
 	def_special ShowTrainerIntroSpeech
 	def_special ShowTrainerCantBattleSpeech
@@ -201,7 +201,7 @@ gSpecials:: @ 815FD60
 	def_special GetNumLevelsGainedFromDaycare
 	def_special GetDaycareCost
 	def_special TakePokemonFromDaycare
-	def_special ScriptHatchMon
+	def_special NullFieldSpecial
 	def_special EggHatch
 	def_special DaycareMonReceivedMail
 	def_special ShowBattleRecords
@@ -347,7 +347,7 @@ gSpecials:: @ 815FD60
 	def_special IsMonOTNameNotPlayers
 	def_special NullFieldSpecial
 	def_special Dummy_TryEnableBravoTrainerBattleTower
-	def_special DoesPartyHaveEnigmaBerry
+	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special SetPostgameFlags
 	def_special StartMarowakBattle
@@ -419,14 +419,14 @@ gSpecials:: @ 815FD60
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special SetPostgameFlags
-	def_special HasAtLeastOneBerry
-	def_special DisplayBerryPowderVendorMenu
-	def_special RemoveBerryPowderVendorMenu
-	def_special Script_HasEnoughBerryPowder
-	def_special Script_TakeBerryPowder
-	def_special PrintPlayerBerryPowderAmount
+	def_special NullFieldSpecial
+	def_special NullFieldSpecial
+	def_special NullFieldSpecial
+	def_special NullFieldSpecial
+	def_special NullFieldSpecial
+	def_special NullFieldSpecial
 	def_special DoPokemonLeagueLightingEffect
-	def_special ShowBerryCrushRankings
+	def_special NullFieldSpecial
 	def_special CapeBrinkGetMoveToTeachLeadPokemon
 	def_special HasLearnedAllMovesFromCapeBrinkTutor
 	def_special DoCredits

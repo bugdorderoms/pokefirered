@@ -450,6 +450,13 @@ static void CB2_OpenBagMenu(void)
     }
 }
 
+static void DrawDepositItemTextBox(void)
+{
+    u32 x = 0x40 - GetStringWidth(0, gText_DepositItem, 0);
+    DrawStdFrameWithCustomTileAndPalette(2, FALSE, 0x081, 0x0C);
+    AddTextPrinterParameterized(2, 0, gText_DepositItem, x / 2, 1, 0, NULL);
+}
+
 static bool8 LoadBagMenuGraphics(void)
 {
     u8 taskId;
@@ -531,7 +538,7 @@ static bool8 LoadBagMenuGraphics(void)
         if (gBagMenuState.location != ITEMMENULOCATION_ITEMPC)
             PrintBagPocketName();
         else
-            BagDrawDepositItemTextBox();
+            DrawDepositItemTextBox();
         gMain.state++;
         break;
     case 14:

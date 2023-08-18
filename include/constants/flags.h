@@ -713,7 +713,7 @@
 #define FLAG_0x2B8                                       0x2B8
 #define FLAG_0x2B9                                       0x2B9
 #define FLAG_0x2BA                                       0x2BA
-#define FLAG_GOT_POWDER_JAR                              0x2BB
+#define FLAG_0x2BB                                       0x2BB
 #define FLAG_FOUGHT_MEWTWO                               0x2BC
 #define FLAG_FOUGHT_MOLTRES                              0x2BD
 #define FLAG_FOUGHT_ARTICUNO                             0x2BE
@@ -1393,7 +1393,7 @@
 #define FLAG_SYS_CAN_LINK_WITH_RS                                   (SYS_FLAGS + 0x44)
 #define FLAG_SYS_SEVII_MAP_123                                      (SYS_FLAGS + 0x45)
 #define FLAG_SYS_SEVII_MAP_4567                                     (SYS_FLAGS + 0x46)
-#define FLAG_SYS_GOT_BERRY_POUCH                                    (SYS_FLAGS + 0x47)
+#define FLAG_0x847                                                  (SYS_FLAGS + 0x47)
 #define FLAG_SYS_DEOXYS_AWAKENED                                    (SYS_FLAGS + 0x48)
 #define FLAG_SYS_UNLOCKED_TANOBY_RUINS                              (SYS_FLAGS + 0x49)
 #define FLAG_ENABLE_SHIP_NAVEL_ROCK                                 (SYS_FLAGS + 0x4A)

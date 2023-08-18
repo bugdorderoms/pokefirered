@@ -108,7 +108,7 @@ u8 CreatePartyStatusSummarySprites(u8 battlerId, struct HpAndStatus *partyInfo, 
 void UpdateHealthboxAttribute(u8 battlerId, u8 elementId);
 u8 GetScaledHPFraction(s16 hp, s16 maxhp, u8 scale);
 u8 GetHPBarLevel(s16 hp, s16 maxhp);
-void TryAddPokeballIconToHealthbox(u8 spriteId, u8);
+void TryAddPokeballIconToHealthbox(u8 spriteId, bool8 noStatus);
 s32 MoveBattleBar(u8 battler, u8 healthboxSpriteId, u8 whichBar);
 void StartHealthboxSlideIn(u8 battler);
 void TryCreateWeatherAnimIcon(void);

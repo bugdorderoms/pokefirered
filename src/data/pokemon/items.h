@@ -572,7 +572,6 @@ static const u8 sItemDesc_RainbowPass[]    = _("A pass for ferries between\nVerm
 static const u8 sItemDesc_Tea[]            = _("Aromatic tea that has a slightly\nbitter taste. It soothes a dry\nthroat.");
 static const u8 sItemDesc_MysticTicket[]   = _("A ticket required to board the ship\nto Navel Rock. It glows with a\nmystic light.");
 static const u8 sItemDesc_AuroraTicket[]   = _("A ticket required to board the ship\nto Birth Island. It glows\nbeautifully.");
-static const u8 sItemDesc_PowderJar[]      = _("A jar for storing Berry Powder made\nusing a Berry Crusher.");
 static const u8 sItemDesc_Ruby[]           = _("An exquisitely beautiful gem that\nhas a red glow. It symbolizes\npassion.");
 static const u8 sItemDesc_Sapphire[]       = _("An exquisitely beautiful gem that\nhas a blue glow. It symbolizes\nhonesty.");
 static const u8 sItemDesc_EVIVDisplay[]    = _("A device that enables you to view\nthe Evs and the Ivs of all the\nPokémon in your party.");
@@ -7478,14 +7477,6 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
-	},
-	[ITEM_POWDER_JAR] =
-	{
-		.name = _("Powder Jar"),
-		.description = sItemDesc_PowderJar,
-		.pocket = POCKET_KEY_ITEMS,
-		.type = ITEM_TYPE_BAG_MENU,
-		.fieldUseFunc = FieldUseFunc_PowderJar,
 	},
 	[ITEM_RUBY] =
 	{

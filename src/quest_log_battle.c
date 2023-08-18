@@ -55,7 +55,7 @@ void TrySetQuestLogBattleEvent(void)
             questLogTrainerBattleRecord->v0 = gTrainerBattleOpponent_A;
             if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
             {
-                questLogTrainerBattleRecord->v2 = gBattleResults.lastOpponentSpecies;
+                questLogTrainerBattleRecord->v2 = gBattleStruct->lastOpponentSpecies;
                 if (GetBattlerSide(gBattleStruct->field_182) == B_SIDE_PLAYER)
                     questLogTrainerBattleRecord->v4 = gBattleMons[gBattleStruct->field_182].species;
                 else if (gBattleMons[GetBattlerAtPosition(0)].hp != 0)
@@ -67,7 +67,7 @@ void TrySetQuestLogBattleEvent(void)
             }
             else
             {
-                questLogTrainerBattleRecord->v2 = gBattleResults.lastOpponentSpecies;
+                questLogTrainerBattleRecord->v2 = gBattleStruct->lastOpponentSpecies;
                 questLogTrainerBattleRecord->v4 = gBattleMons[GetBattlerAtPosition(0)].species;
                 playerEndingHP = gBattleMons[GetBattlerAtPosition(0)].hp;
                 playerMaxHP = gBattleMons[GetBattlerAtPosition(0)].maxHP;
