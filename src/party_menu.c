@@ -23,7 +23,6 @@
 #include "fldeff.h"
 #include "form_change.h"
 #include "graphics.h"
-#include "help_message.h"
 #include "item.h"
 #include "item_menu.h"
 #include "item_use.h"
@@ -2736,7 +2735,7 @@ static void sub_8122138(u8 action)
     {
         if (ptr->windowId[2] == 0xFF)
             ptr->windowId[2] = AddWindow(&gUnknown_845A178);
-        sub_8112F18(ptr->windowId[2]);
+        FillHelpMessageWindow(ptr->windowId[2]);
         attr = GetFontAttribute(2, FONTATTR_LETTER_SPACING);
         AddTextPrinterParameterized4(ptr->windowId[2], 2, 3, 6, attr, 0, sFontColorTable[5], 0, sHMDescriptionTable[action - MENU_FIELD_MOVES]);
         PutWindowTilemap(ptr->windowId[2]);
@@ -4846,7 +4845,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 					}
 					break;
 				case ITEMEFFECT_GIVE_EXPERIENCE:
-					hword = T1_READ_16(effectTable + i + 1); // exp amount
+					hword = READ_16(effectTable + i + 1); // exp amount
 					
 					if (sInitialLevel != MAX_LEVEL)
 					{

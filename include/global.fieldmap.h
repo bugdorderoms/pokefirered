@@ -261,7 +261,8 @@ struct ObjectEventGraphicsInfo
     /*0x20*/ const union AffineAnimCmd *const *affineAnims;
 };
 
-enum {
+enum
+{
     PLAYER_AVATAR_STATE_NORMAL,
     PLAYER_AVATAR_STATE_MACH_BIKE,
     PLAYER_AVATAR_STATE_ACRO_BIKE,
@@ -291,7 +292,8 @@ enum {
 
 #define PLAYER_AVATAR_FLAG_RIDE_ANY       (PLAYER_AVATAR_FLAG_TAUROS_RIDE | PLAYER_AVATAR_FLAG_STOUTLAND_RIDE | PLAYER_AVATAR_FLAG_MUDSDALE_RIDE | PLAYER_AVATAR_FLAG_MACHAMP_RIDE)
 
-enum {
+enum
+{
     PLAYER_AVATAR_GFX_NORMAL,
     PLAYER_AVATAR_GFX_BIKE,
     PLAYER_AVATAR_GFX_RIDE,
@@ -376,9 +378,9 @@ struct PlayerAvatar
 
 struct Camera
 {
-    bool8 active:1;
     s32 x;
     s32 y;
+	bool8 active;
 };
 
 extern struct ObjectEvent gObjectEvents[OBJECT_EVENTS_COUNT];

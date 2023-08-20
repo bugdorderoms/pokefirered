@@ -87,23 +87,10 @@
 // Extracts the lower 16 bits of a 32-bit number
 #define LOHALF(n) ((n) & 0xFFFF)
 
-// There are many quirks in the source code which have overarching behavioral differences from
-// a number of other files. For example, diploma.c seems to declare rodata before each use while
-// other files declare out of order and must be at the beginning. There are also a number of
-// macros which differ from one file to the next due to the method of obtaining the result, such
-// as these below. Because of this, there is a theory (Two Team Theory) that states that these
-// programming projects had more than 1 "programming team" which utilized different macros for
-// each of the files that were worked on.
-#define T1_READ_8(ptr)  ((ptr)[0])
-#define T1_READ_16(ptr) ((ptr)[0] | ((ptr)[1] << 8))
-#define T1_READ_32(ptr) ((ptr)[0] | ((ptr)[1] << 8) | ((ptr)[2] << 16) | ((ptr)[3] << 24))
-#define T1_READ_PTR(ptr) (u8*) T1_READ_32(ptr)
-
-// T2_READ_8 is a duplicate to remain consistent with each group.
-#define T2_READ_8(ptr)  ((ptr)[0])
-#define T2_READ_16(ptr) ((ptr)[0] + ((ptr)[1] << 8))
-#define T2_READ_32(ptr) ((ptr)[0] + ((ptr)[1] << 8) + ((ptr)[2] << 16) + ((ptr)[3] << 24))
-#define T2_READ_PTR(ptr) (void*) T2_READ_32(ptr)
+#define READ_16(ptr)   ((ptr)[0] | ((ptr)[1] << 8))
+#define READ_32(ptr)   ((ptr)[0] | ((ptr)[1] << 8) | ((ptr)[2] << 16) | ((ptr)[3] << 24))
+#define READ_PTR(ptr)  (u8*) READ_32(ptr)
+#define READ_PTR2(ptr) (void*) READ_32(ptr)
 
 // This macro is required to prevent the compiler from optimizing
 // a dpad up/down check in sub_812CAD8 (fame_checker.c).
@@ -178,7 +165,6 @@ struct Pokedex
 	u32 spindaPersonality; // set when you first see Spinda
     u8 order;
     u8 mode;
-    u8 nationalMagic; // must equal 0xDA in order to have National mode
     u8 owned[DEX_FLAGS_NO];
     u8 seen[DEX_FLAGS_NO];
 };
@@ -313,35 +299,6 @@ struct SaveBlock2
 
 extern struct SaveBlock2 *gSaveBlock2Ptr;
 
-struct SecretBaseParty
-{
-    u32 personality[PARTY_SIZE];
-    u16 moves[PARTY_SIZE * MAX_MON_MOVES];
-    u16 species[PARTY_SIZE];
-    u16 heldItems[PARTY_SIZE];
-    u8 levels[PARTY_SIZE];
-    u8 EVs[PARTY_SIZE];
-};
-
-// Leftover from R/S, still referenced in the unused function CreateSecretBaseEnemyParty
-struct SecretBaseRecord
-{
-    /*0x1A9C*/ u8 secretBaseId;
-    /*0x1A9D*/ u8 toRegister:4;
-    /*0x1A9D*/ u8 gender:1;
-    /*0x1A9D*/ u8 battledOwnerToday:1;
-    /*0x1A9D*/ u8 registryStatus:2;
-    /*0x1A9E*/ u8 trainerName[PLAYER_NAME_LENGTH];
-    /*0x1AA5*/ u8 trainerId[TRAINER_ID_LENGTH]; // byte 0 is used for determining trainer class
-    /*0x1AA9*/ u8 language;
-    /*0x1AAA*/ u16 numSecretBasesReceived;
-    /*0x1AAC*/ u8 numTimesEntered;
-    /*0x1AAD*/ u8 unused;
-    /*0x1AAE*/ u8 decorations[DECOR_MAX_SECRET_BASE];
-    /*0x1ABE*/ u8 decorationPos[DECOR_MAX_SECRET_BASE];
-    /*0x1AD0*/ struct SecretBaseParty party;
-};
-
 struct WarpData
 {
     s8 mapGroup;
@@ -354,17 +311,6 @@ struct ItemSlot
 {
     u16 itemId;
     u16 quantity;
-};
-
-struct Pokeblock
-{
-    u8 color;
-    u8 spicy;
-    u8 dry;
-    u8 sweet;
-    u8 bitter;
-    u8 sour;
-    u8 feel;
 };
 
 struct Roamer
@@ -397,70 +343,6 @@ struct RamScript
 {
     u32 checksum;
     struct RamScriptData data;
-};
-
-// Leftover from R/S
-struct DewfordTrend
-{
-    u16 trendiness:7;
-    u16 maxTrendiness:7;
-    u16 gainingTrendiness:1;
-    u16 rand;
-    u16 words[2];
-}; /*size = 0x8*/
-
-struct MauvilleManCommon
-{
-    u8 id;
-};
-
-struct MauvilleManBard
-{
-    /*0x00*/ u8 id;
-    /*0x02*/ u16 songLyrics[BARD_SONG_LENGTH];
-    /*0x0E*/ u16 temporaryLyrics[BARD_SONG_LENGTH];
-    /*0x1A*/ u8 playerName[PLAYER_NAME_LENGTH + 1];
-    /*0x22*/ u8 filler_2DB6[0x3];
-    /*0x25*/ u8 playerTrainerId[TRAINER_ID_LENGTH];
-    /*0x29*/ bool8 hasChangedSong;
-    /*0x2A*/ u8 language;
-}; /*size = 0x2C*/
-
-struct MauvilleManStoryteller
-{
-    u8 id;
-    bool8 alreadyRecorded;
-    u8 filler2[2];
-    u8 gameStatIDs[NUM_STORYTELLER_TALES];
-    u8 trainerNames[NUM_STORYTELLER_TALES][PLAYER_NAME_LENGTH];
-    u8 statValues[NUM_STORYTELLER_TALES][4];
-    u8 language[NUM_STORYTELLER_TALES];
-};
-
-struct MauvilleManGiddy
-{
-    /*0x00*/ u8 id;
-    /*0x01*/ u8 taleCounter;
-    /*0x02*/ u8 questionNum;
-    /*0x04*/ u16 randomWords[GIDDY_MAX_TALES];
-    /*0x18*/ u8 questionList[GIDDY_MAX_QUESTIONS];
-    /*0x20*/ u8 language;
-}; /*size = 0x2C*/
-
-struct MauvilleManHipster
-{
-    u8 id;
-    bool8 alreadySpoken;
-    u8 language;
-};
-
-struct MauvilleOldManTrader
-{
-    u8 id;
-    u8 decorIds[NUM_TRADER_ITEMS];
-    u8 playerNames[NUM_TRADER_ITEMS][11];
-    u8 alreadyTraded;
-    u8 language[NUM_TRADER_ITEMS];
 };
 
 struct Mail
@@ -645,52 +527,6 @@ struct TrainerNameRecord
     u8 trainerName[PLAYER_NAME_LENGTH + 1];
 };
 
-// For external event data storage. The majority of these may have never been used.
-// In FRLG, the only known used fields are the PokeCoupon and BoxRS ones, but hacking the distribution discs allows FRLG to receive events and set the others
-struct ExternalEventData
-{
-    u8 unknownExternalDataFields1[7]; // if actually used, may be broken up into different fields.
-    u32 unknownExternalDataFields2:8;
-    u32 currentPokeCoupons:24; // PokéCoupons stored by Pokémon Colosseum and XD from Mt. Battle runs. Earned PokéCoupons are also added to totalEarnedPokeCoupons. Colosseum/XD caps this at 9,999,999, but will read up to 16,777,215.
-    u32 gotGoldPokeCouponTitleReward:1; // Master Ball from Jp Colosseum Bonus Disc; for reaching 30,000 totalEarnedPokeCoupons
-    u32 gotSilverPokeCouponTitleReward:1; // Light Ball Pikachu from JP Colosseum Bonus Disc; for reaching 5000 totalEarnedPokeCoupons
-    u32 gotBronzePokeCouponTitleReward:1; // PP Max from JP Colosseum Bonus Disc; for reaching 2500 totalEarnedPokeCoupons
-    u32 receivedAgetoCelebi:1; // from JP Colosseum Bonus Disc
-    u32 unknownExternalDataFields3:4;
-    u32 totalEarnedPokeCoupons:24; // Used by the JP Colosseum bonus disc. Determines PokéCoupon rank to distribute rewards. Unread in International games. Colosseum/XD caps this at 9,999,999.
-    u8 unknownExternalDataFields4[5]; // if actually used, may be broken up into different fields.
-} __attribute__((packed)); /*size = 0x14*/
-
-// For external event flags. The majority of these may have never been used.
-// In FRLG, Jirachi cannot normally be received, but hacking the distribution discs allows FRLG to receive Jirachi and set the flag
-struct ExternalEventFlags
-{
-    u8 usedBoxRS:1; // Set by Pokémon Box: Ruby & Sapphire; denotes whether this save has connected to it and triggered the free False Swipe Swablu Egg giveaway.
-    u8 boxRSEggsUnlocked:2; // Set by Pokémon Box: Ruby & Sapphire; denotes the number of Eggs unlocked from deposits; 1 for ExtremeSpeed Zigzagoon (at 100 deposited), 2 for Pay Day Skitty (at 500 deposited), 3 for Surf Pichu (at 1499 deposited)
-    u8 padding:5;
-    u8 unknownFlag1;
-    u8 receivedGCNJirachi; // Both the US Colosseum Bonus Disc and PAL/AUS Pokémon Channel use this field. One cannot receive a WISHMKR Jirachi and CHANNEL Jirachi with the same savefile.
-    u8 unknownFlag3;
-    u8 unknownFlag4;
-    u8 unknownFlag5;
-    u8 unknownFlag6;
-    u8 unknownFlag7;
-    u8 unknownFlag8;
-    u8 unknownFlag9;
-    u8 unknownFlag10;
-    u8 unknownFlag11;
-    u8 unknownFlag12;
-    u8 unknownFlag13;
-    u8 unknownFlag14;
-    u8 unknownFlag15;
-    u8 unknownFlag16;
-    u8 unknownFlag17;
-    u8 unknownFlag18;
-    u8 unknownFlag19;
-    u8 unknownFlag20;
-
-} __attribute__((packed));/*size = 0x15*/
-
 struct SaveBlock1
 {
     /*0x0000*/ struct Coords16 pos;
@@ -733,8 +569,6 @@ struct SaveBlock1
 			   struct QuestLog questLog[QUEST_LOG_SCENE_COUNT];
 			   struct Mail mail[MAIL_COUNT];
 			   struct DayCare daycare;
-			   struct ExternalEventData externalEventData;
-			   struct ExternalEventFlags externalEventFlags;
 			   struct Roamer roamer;
 			   struct MysteryGiftSave mysteryGift;
 			   struct RamScript ramScript;

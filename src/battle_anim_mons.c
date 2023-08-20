@@ -591,29 +591,22 @@ bool8 IsBattlerSpritePresent(u8 battlerId)
     return TRUE;
 }
 
-void GetBattleAnimBg1Data(struct BattleAnimBgData *animBgData)
-{
-    animBgData->bgTiles = gBattleAnimMons_BgTilesBuffer;
-    animBgData->bgTilemap = (u16 *)gBattleAnimMons_BgTilemapBuffer;
-    animBgData->paletteId = 8;
-    animBgData->bgId = 1;
-    animBgData->tilesOffset = 0x200;
-}
-
 void GetBattleAnimBgData(struct BattleAnimBgData *animBgData, u32 bgId)
 {
     if (bgId == 1)
     {
-        GetBattleAnimBg1Data(animBgData);
+		animBgData->paletteId = 8;
+		animBgData->bgId = 1;
+		animBgData->tilesOffset = 0x200;
     }
     else
     {
-        animBgData->bgTiles = gBattleAnimMons_BgTilesBuffer;
-        animBgData->bgTilemap = (u16 *)gBattleAnimMons_BgTilemapBuffer;
         animBgData->paletteId = 9;
         animBgData->bgId = 2;
         animBgData->tilesOffset = 0x300;
     }
+	animBgData->bgTiles = gBattleAnimMons_BgTilesBuffer;
+	animBgData->bgTilemap = (u16 *)gBattleAnimMons_BgTilemapBuffer;
 }
 
 void GetBattleAnimBgDataByPriorityRank(struct BattleAnimBgData *animBgData)

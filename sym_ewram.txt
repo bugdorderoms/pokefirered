@@ -99,7 +99,6 @@
 	.include "src/mailbox_pc.o"
 	.include "src/menu.o"
 	.include "src/quest_log.o"
-	.include "src/help_message.o"
 	.include "src/quest_log_events.o"
 	.include "src/union_room.o"
 	.include "src/rfu_union_tool.o"

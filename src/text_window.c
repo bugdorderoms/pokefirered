@@ -3,6 +3,7 @@
 #include "text_window.h"
 #include "text_window_graphics.h"
 #include "quest_log.h"
+#include "graphics.h"
 
 extern const u16 gUnknown_841F1C8[];
 
@@ -46,12 +47,6 @@ void sub_814FDF4(u8 bgId, u8 frameType, u16 destOffset, u8 palIdx)
 void LoadUserWindowBorderGfx(u8 windowId, u16 destOffset, u8 palIdx)
 {
     LoadWindowGfx(windowId, gSaveBlock2Ptr->optionsWindowFrameType, destOffset, palIdx);
-}
-
-void sub_814FE6C(u8 windowId, u16 destOffset, u8 palIdx)
-{
-    LoadBgTiles(GetWindowAttribute(windowId, WINDOW_BG), gUnknown_84566A8, 0x280, destOffset);
-    LoadPalette(stdpal_get(2), palIdx, 32);
 }
 
 void TextWindow_LoadResourcesStdFrame0(u8 windowId, u16 destOffset, u8 palIdx)

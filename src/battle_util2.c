@@ -19,7 +19,6 @@ void AllocateBattleResources(void)
     }
     gBattleStruct = AllocZeroed(sizeof(*gBattleStruct));
     gBattleResources = AllocZeroed(sizeof(*gBattleResources));
-    gBattleResources->secretBase = AllocZeroed(sizeof(*gBattleResources->secretBase));
     gBattleResources->flags = AllocZeroed(sizeof(*gBattleResources->flags));
     gBattleResources->battleScriptsStack = AllocZeroed(sizeof(*gBattleResources->battleScriptsStack));
     gBattleResources->battleCallbackStack = AllocZeroed(sizeof(*gBattleResources->battleCallbackStack));
@@ -51,7 +50,6 @@ void FreeBattleResources(void)
     if (gBattleResources != NULL)
     {
         FREE_AND_SET_NULL(gBattleStruct);
-        FREE_AND_SET_NULL(gBattleResources->secretBase);
         FREE_AND_SET_NULL(gBattleResources->flags);
         FREE_AND_SET_NULL(gBattleResources->battleScriptsStack);
         FREE_AND_SET_NULL(gBattleResources->battleCallbackStack);

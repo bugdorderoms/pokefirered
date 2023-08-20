@@ -371,7 +371,7 @@ u8 *mapheader_get_tagged_pointer(u8 tag)
         if (*mapScripts == tag)
         {
             mapScripts++;
-            return T2_READ_PTR(mapScripts);
+            return READ_PTR(mapScripts);
         }
         mapScripts += 5;
     }

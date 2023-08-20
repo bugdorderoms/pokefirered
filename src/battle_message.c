@@ -1976,9 +1976,7 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
                 toCpy = gAbilityNames[sBattlerAbilities[gEffectBattler]];
                 break;
             case B_TXT_TRAINER1_CLASS: // trainer class name
-                if (gTrainerBattleOpponent_A == SECRET_BASE_OPPONENT)
-                    toCpy = gTrainerClassNames[GetSecretBaseTrainerNameIndex()];
-                else if (gTrainerBattleOpponent_A == TRAINER_OPPONENT_C00)
+                if (gTrainerBattleOpponent_A == TRAINER_OPPONENT_C00)
                     toCpy = gTrainerClassNames[GetUnionRoomTrainerClass()];
                 else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
                     toCpy = gTrainerClassNames[GetBattleTowerTrainerClassNameId()];
@@ -1990,13 +1988,6 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
                     toCpy = gTrainerClassNames[gTrainers[gTrainerBattleOpponent_A].trainerClass];
                 break;
             case B_TXT_TRAINER1_NAME: // trainer1 name
-                if (gTrainerBattleOpponent_A == SECRET_BASE_OPPONENT)
-                {
-                    for (i = 0; i < (s32)NELEMS(gBattleResources->secretBase->trainerName); i++)
-                        text[i] = gBattleResources->secretBase->trainerName[i];
-                    text[i] = EOS;
-                    toCpy = text;
-                }
                 if (gTrainerBattleOpponent_A == TRAINER_OPPONENT_C00)
                 {
                     toCpy = gLinkPlayers[BATTLE_OPPOSITE(multiplayerId)].name;
@@ -2222,7 +2213,7 @@ static void ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst)
         switch (src[srcId])
         {
         case B_BUFF_STRING: // battle string
-            hword = T1_READ_16(&src[srcId + 1]);
+            hword = READ_16(&src[srcId + 1]);
             StringAppend(dst, gBattleStringsTable[hword - BATTLESTRINGS_ID_ADDER]);
             srcId += 3;
             break;
@@ -2233,17 +2224,17 @@ static void ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst)
                 value = src[srcId + 3];
                 break;
             case 2:
-                value = T1_READ_16(&src[srcId + 3]);
+                value = READ_16(&src[srcId + 3]);
                 break;
             case 4:
-                value = T1_READ_32(&src[srcId + 3]);
+                value = READ_32(&src[srcId + 3]);
                 break;
             }
             ConvertIntToDecimalStringN(dst, value, STR_CONV_MODE_LEFT_ALIGN, src[srcId + 2]);
             srcId += src[srcId + 1] + 3;
             break;
         case B_BUFF_MOVE: // move name
-            StringAppend(dst, gMoveNames[T1_READ_16(&src[srcId + 1])]);
+            StringAppend(dst, gMoveNames[READ_16(&src[srcId + 1])]);
             srcId += 3;
             break;
         case B_BUFF_TYPE: // type name
@@ -2273,7 +2264,7 @@ static void ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst)
             srcId += 2;
             break;
         case B_BUFF_SPECIES: // species name
-            GetSpeciesName(dst, T1_READ_16(&src[srcId + 1]));
+            GetSpeciesName(dst, READ_16(&src[srcId + 1]));
             srcId += 3;
             break;
         case B_BUFF_MON_NICK: // poke nick without prefix
@@ -2300,11 +2291,11 @@ static void ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst)
             srcId += 2;
             break;
         case B_BUFF_ABILITY: // ability names
-            StringAppend(dst, gAbilityNames[T1_READ_16(&src[srcId + 1])]);
+            StringAppend(dst, gAbilityNames[READ_16(&src[srcId + 1])]);
             srcId += 3;
             break;
         case B_BUFF_ITEM: // item name
-            hword = T1_READ_16(&src[srcId + 1]);
+            hword = READ_16(&src[srcId + 1]);
 			CopyItemName(hword, dst);
             srcId += 3;
             break;

@@ -9988,11 +9988,11 @@ Move_WEATHER_BALL:: @ 81D515D
 	waitforvisualfinish
 	createvisualtask AnimTask_GetWeather, 2, 
 	delay 1
-	jumpargeq 7, 0, WeatherBallNormal
-	jumpargeq 7, 1, WeatherBallFire
-	jumpargeq 7, 2, WeatherBallWater
-	jumpargeq 7, 3, WeatherBallSandstorm
-	jumpargeq 7, 4, WeatherBallIce
+	jumpargeq 7, ENUM_WEATHER_NONE, WeatherBallNormal
+	jumpargeq 7, ENUM_WEATHER_SUN, WeatherBallFire
+	jumpargeq 7, ENUM_WEATHER_RAIN, WeatherBallWater
+	jumpargeq 7, ENUM_WEATHER_SANDSTORM, WeatherBallSandstorm
+	jumpargeq 7, ENUM_WEATHER_HAIL, WeatherBallIce
 
 WeatherBallNormal:: @ 81D51C8
 	loadspritegfx ANIM_TAG_IMPACT

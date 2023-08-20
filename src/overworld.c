@@ -124,7 +124,6 @@ static u8 sRfuKeepAliveTimer;
 
 static u8 CountBadgesForOverworldWhiteOutLossCalculation(void);
 static void Overworld_ResetStateAfterWhitingOut(void);
-static void Overworld_SetWhiteoutRespawnPoint(void);
 static u16 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *playerStruct, u16 metatileBehavior, u8 mapType);
 static u8 GetAdjustedInitialDirection(struct InitialPlayerAvatarState *playerStruct, u16 transitionFlags, u16 metatileBehavior, u8 mapType);
 static u16 GetCenterScreenMetatileBehavior(void);
@@ -144,7 +143,6 @@ static bool32 map_loading_iteration_3(u8 *state);
 static bool32 sub_8056CD8(u8 *state);
 static bool32 map_loading_iteration_2_link(u8 *state);
 static void do_load_map_stuff_loop(u8 *state);
-static void MoveSaveBlocks_ResetHeap_(void);
 static void sub_8056E80(void);
 static void sub_8056F08(void);
 static void InitOverworldGraphicsRegisters(void);
@@ -249,7 +247,7 @@ static void DoWhiteOut(void)
     RemoveMoney(&gSaveBlock1Ptr->money, ComputeWhiteOutMoneyLoss());
     HealPlayerParty();
     Overworld_ResetStateAfterWhitingOut();
-    Overworld_SetWhiteoutRespawnPoint();
+    SetWhiteoutRespawnWarpAndHealerNpc(&sWarpDestination);
     WarpIntoMap();
 }
 
@@ -618,11 +616,6 @@ void SetWarpDestinationToHealLocation(u8 healLocationId)
 void SetWarpDestinationToLastHealLocation(void)
 {
     sWarpDestination = gSaveBlock1Ptr->lastHealLocation;
-}
-
-static void Overworld_SetWhiteoutRespawnPoint(void)
-{
-    SetWhiteoutRespawnWarpAndHealerNpc(&sWarpDestination);
 }
 
 void SetLastHealLocationWarp(u8 healLocationId)
@@ -1347,7 +1340,7 @@ static const struct BgTemplate sOverworldBgTemplates[] = {
 
 static void InitOverworldBgs(void)
 {
-    MoveSaveBlocks_ResetHeap_();
+    MoveSaveBlocks_ResetHeap();
     sub_8056E80();
     ResetBgsAndClearDma3BusyFlags(FALSE);
     InitBgsFromTemplates(0, sOverworldBgTemplates, NELEMS(sOverworldBgTemplates));
@@ -2054,13 +2047,7 @@ static bool32 map_loading_iteration_2_link(u8 *state)
 
 static void do_load_map_stuff_loop(u8 *state)
 {
-    while (!load_map_stuff(state, FALSE))
-        ;
-}
-
-static void MoveSaveBlocks_ResetHeap_(void)
-{
-    MoveSaveBlocks_ResetHeap();
+    while (!load_map_stuff(state, FALSE));
 }
 
 static void sub_8056E80(void)

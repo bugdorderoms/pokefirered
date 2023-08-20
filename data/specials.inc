@@ -138,7 +138,7 @@ gSpecials:: @ 815FD60
 	def_special NullFieldSpecial
 	def_special BufferRandomHobbyOrLifestyleString
 	def_special NullFieldSpecial
-	def_special RegisteredItemHandleBikeSwap
+	def_special NullFieldSpecial
 	def_special CalculatePlayerPartyCount
 	def_special CountPartyNonEggMons
 	def_special CountPartyAliveNonEggMons_IgnoreVar0x8004Slot

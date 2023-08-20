@@ -281,13 +281,8 @@ static void AnimMudSportDirtFalling(struct Sprite *sprite)
 
 void AnimTask_DigDownMovement(u8 taskId)
 {
-    struct Task *task = &gTasks[taskId];
-
-    if (gBattleAnimArgs[0] == 0)
-        task->func = sub_80B8ED4;
-    else
-        task->func = sub_80B908C;
-    task->func(taskId);
+	gTasks[taskId].func = gBattleAnimArgs[0] == 0 ? sub_80B8ED4 : sub_80B908C;
+    gTasks[taskId].func(taskId);
 }
 
 static void sub_80B8ED4(u8 taskId)
@@ -374,14 +369,8 @@ static void sub_80B908C(u8 taskId)
 
 void AnimTask_DigUpMovement(u8 taskId)
 {
-    struct Task *task = &gTasks[taskId];
-
-    if (gBattleAnimArgs[0] == 0)
-        task->func = sub_80B912C;
-    else
-        task->func = sub_80B91B0;
-
-    task->func(taskId);
+    gTasks[taskId].func = gBattleAnimArgs[0] == 0 ? sub_80B912C : sub_80B91B0;
+    gTasks[taskId].func(taskId);
 }
 
 static void sub_80B912C(u8 taskId)
@@ -412,10 +401,7 @@ static void sub_80B91B0(u8 taskId)
     case 0:
         task->data[10] = GetAnimBattlerSpriteId(ANIM_ATTACKER);
         task->data[11] = GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker);
-        if (task->data[11] == 1)
-            task->data[12] = gBattle_BG1_X;
-        else
-            task->data[12] = gBattle_BG2_X;
+		task->data[12] = task->data[11] == 1 ? gBattle_BG1_X : gBattle_BG2_X;
         var0 = GetBattlerYCoordWithElevation(gBattleAnimAttacker);
         task->data[14] = var0 - 32;
         task->data[15] = var0 + 32;
@@ -487,14 +473,9 @@ static void sub_80B92B8(u8 useBG1, s16 y, s16 endY)
 // arg 5: duration
 static void AnimFissureDirtPlumeParticle(struct Sprite *sprite)
 {
-    s8 battler;
-    s16 xOffset;
+    s8 battler = gBattleAnimArgs[0] == 0 ? gBattleAnimAttacker : gBattleAnimTarget;
+    s16 xOffset = 24;
 
-    if (gBattleAnimArgs[0] == 0)
-        battler = gBattleAnimAttacker;
-    else
-        battler = gBattleAnimTarget;
-    xOffset = 24;
     if (gBattleAnimArgs[1] == 1)
     {
         xOffset *= -1;
@@ -524,12 +505,8 @@ static void AnimFissureDirtPlumeParticleStep(struct Sprite *sprite)
 // arg 2: duration
 static void AnimDigDirtMound(struct Sprite *sprite)
 {
-    s8 battler;
+    s8 battler = gBattleAnimArgs[0] == 0 ? gBattleAnimAttacker : gBattleAnimTarget;
 
-    if (gBattleAnimArgs[0] == 0)
-        battler = gBattleAnimAttacker;
-    else
-        battler = gBattleAnimTarget;
     sprite->x = GetBattlerSpriteCoord(battler, 0) - 16 + (gBattleAnimArgs[1] * 32);
     sprite->y = GetBattlerYCoordWithElevation(battler) + 32;
     sprite->oam.tileNum += gBattleAnimArgs[1] * 8;
@@ -578,7 +555,6 @@ void AnimTask_HorizontalShake(u8 taskId)
             task->data[13] = 1;
             task->func = sub_80B967C;
         }
-
         break;
     }
 }

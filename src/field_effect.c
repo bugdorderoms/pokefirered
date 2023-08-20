@@ -343,7 +343,7 @@ static bool8 FieldEffectCmd_loadfadedpal_callnative(const u8 **script, u32 *resu
 
 static u32 FieldEffectScript_ReadWord(const u8 **script)
 {
-    return T2_READ_32(*script);
+    return READ_32(*script);
 }
 
 static void FieldEffectScript_LoadTiles(const u8 **script)

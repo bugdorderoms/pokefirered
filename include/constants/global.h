@@ -71,8 +71,6 @@
 
 #define DAYCARE_MON_COUNT 2
 
-#define DECOR_MAX_SECRET_BASE 16
-
 #define MAX_REMATCH_ENTRIES 100
 
 #define UNION_ROOM_KB_ROW_COUNT 10
@@ -95,12 +93,6 @@
 #define MALE         0
 #define FEMALE       1
 #define GENDER_COUNT 2
-
-#define BARD_SONG_LENGTH       6
-#define NUM_STORYTELLER_TALES  4
-#define NUM_TRADER_ITEMS       4
-#define GIDDY_MAX_TALES        10
-#define GIDDY_MAX_QUESTIONS    8
 
 // Options defines
 #define OPTIONS_TEXT_SPEED_SLOW 0

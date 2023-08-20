@@ -295,7 +295,6 @@ struct StatsArray
 
 struct BattleResources
 {
-    struct SecretBaseRecord *secretBase;
     struct ResourceFlags *flags;
     struct BattleScriptsStack *battleScriptsStack;
     struct BattleCallbacksStack *battleCallbackStack;
