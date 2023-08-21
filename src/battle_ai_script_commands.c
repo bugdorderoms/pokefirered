@@ -269,8 +269,7 @@ void BattleAI_HandleItemUseBeforeAISetup(void)
         data[i] = 0;
 
     // Items are allowed to use in ONLY trainer battles.
-    if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && (gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT)
-        && !(gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_SAFARI | BATTLE_TYPE_LINK)))
+    if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && !(gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_SAFARI | BATTLE_TYPE_LINK)))
     {
         for (i = 0; i < MAX_TRAINER_ITEMS; i++)
         {
@@ -336,7 +335,7 @@ void BattleAI_SetupAIData(void)
         AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_ROAMING;
         return;
     }
-    else if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_LEGENDARY)) && (gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT))
+    else if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_LEGENDARY)))
     {
         if (gBattleTypeFlags & BATTLE_TYPE_WILD_SCRIPTED)
         {

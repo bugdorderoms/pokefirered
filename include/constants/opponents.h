@@ -666,4 +666,8 @@
 #define NUM_TRAINERS                               743
 #define MAX_TRAINERS_COUNT                         768
 
+// Special trainer Ids.
+#define TRAINER_UNION_ROOM          			   0xC00
+#define TRAINER_LINK_OPPONENT       			   0x800
+
 #endif  // GUARD_CONSTANTS_OPPONENTS_H

@@ -7555,14 +7555,13 @@ static void atkD2_tryswapitems(void) // trick
 	
     // opponent can't swap items with player in regular battles
     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER || (GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT
-        && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER))
-        && gTrainerBattleOpponent_A != TRAINER_SECRET_BASE))
+        && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER))))
         gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 1);
     else
     {
         // you can't swap items if they were knocked off in regular battles
         if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER))
-	    && gTrainerBattleOpponent_A != TRAINER_SECRET_BASE && (gWishFutureKnock.knockedOffMons[sideAttacker] & gBitTable[gBattlerPartyIndexes[gBattlerAttacker]]
+	    && (gWishFutureKnock.knockedOffMons[sideAttacker] & gBitTable[gBattlerPartyIndexes[gBattlerAttacker]]
             || gWishFutureKnock.knockedOffMons[sideTarget] & gBitTable[gBattlerPartyIndexes[gBattlerTarget]]))
             gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 1);
         // can't swap if two pokemon don't have an item
