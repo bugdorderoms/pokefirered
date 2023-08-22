@@ -549,11 +549,6 @@ u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating)
 	return holdEffect;
 }
 
-u8 GetBattlerHoldEffectParam(u8 battlerId)
-{
-	return ItemId_GetHoldEffectParam(gBattleMons[battlerId].item);
-}
-
 static void TryActivateDefiant(u16 stringId)
 {
 	if (stringId == STRINGID_PKMNSSTATCHANGED4 && gSpecialStatuses[gBattlerTarget].changedStatsBattlerId != BATTLE_PARTNER(gBattlerTarget)
@@ -2863,9 +2858,9 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 							break;
 						case ABILITY_HARVEST:
 						    if ((IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY) || (Random() % 2) == 0) && !gBattleMons[battler].item
-							&& !gBattleStruct->changedItems[battler] && ItemId_GetPocket(GetUsedHeldItem(battler)) == POCKET_BERRY_POUCH)
+							&& !gBattleStruct->changedItems[battler] && ItemId_GetPocket(*GetUsedHeldItemPtr(battler)) == POCKET_BERRY_POUCH)
 							{
-								gLastUsedItem = GetUsedHeldItem(battler);
+								gLastUsedItem = *GetUsedHeldItemPtr(battler);
 								BattleScriptPushCursorAndCallback(BattleScript_HarvestActivates);
 								++effect;
 							}
@@ -3832,7 +3827,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
     u8 effect = ITEM_NO_EFFECT;
     u8 changedPP = 0;
     u8 battlerHoldEffect = GetBattlerItemHoldEffect(battlerId, TRUE), defHoldEffect;
-    u8 battlerHoldEffectParam = GetBattlerHoldEffectParam(battlerId), defHoldEffectParam;
+    u8 battlerHoldEffectParam, defHoldEffectParam;
     u16 defItem;
 
     gLastUsedItem = gBattleMons[battlerId].item;
@@ -3842,6 +3837,9 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
 	    battlerHoldEffect = 0;
 	    battlerHoldEffectParam = 0;
     }
+	else
+		battlerHoldEffectParam = ItemId_GetHoldEffectParam(gLastUsedItem);
+	
     switch (caseID)
     {
     case ITEMEFFECT_ON_SWITCH_IN:
@@ -4121,7 +4119,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
         {
             gLastUsedItem = gBattleMons[battlerId].item;
 			battlerHoldEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
-            battlerHoldEffectParam = GetBattlerHoldEffectParam(battlerId);
+            battlerHoldEffectParam = ItemId_GetHoldEffectParam(gLastUsedItem);
 			
             switch (battlerHoldEffect)
             {
@@ -4665,9 +4663,9 @@ bool8 IsUnnerveOnOpposingField(u8 battler)
 	return FALSE;
 }
 
-u16 GetUsedHeldItem(u8 battler)
+u16 *GetUsedHeldItemPtr(u8 battler)
 {
-	return gBattleStruct->usedHeldItems[gBattlerPartyIndexes[battler]][GetBattlerSide(battler)];
+	return &gBattleStruct->usedHeldItems[gBattlerPartyIndexes[battler]][GetBattlerSide(battler)];
 }
 
 bool8 NoAliveMonsForParty(struct Pokemon *party)
@@ -5118,7 +5116,7 @@ u8 GetBattlerOnTopOfPickupStack(u8 battlerId)
 
 bool8 TryRecycleBattlerItem(u8 battlerRecycler, u8 battlerItem)
 {
-	u16 *usedHeldItem = &gBattleStruct->usedHeldItems[gBattlerPartyIndexes[battlerItem]][GetBattlerSide(battlerItem)];
+	u16 *usedHeldItem = GetUsedHeldItemPtr(battlerItem);
 	
 	if (*usedHeldItem && !gBattleMons[battlerRecycler].item)
 	{

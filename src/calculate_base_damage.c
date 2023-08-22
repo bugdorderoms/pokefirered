@@ -198,10 +198,10 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 	spDefense = defender->spDefense;
 
 	attackerHoldEffect = GetBattlerItemHoldEffect(battlerIdAtk, TRUE);
-	attackerHoldEffectParam = GetBattlerHoldEffectParam(battlerIdAtk);
+	attackerHoldEffectParam = ItemId_GetHoldEffectParam(attacker->item);
 	
 	defenderHoldEffect = GetBattlerItemHoldEffect(battlerIdDef, TRUE);
-	defenderHoldEffectParam = GetBattlerHoldEffectParam(battlerIdDef);
+	defenderHoldEffectParam = ItemId_GetHoldEffectParam(defender->item);
 
 	if (!isConfusionDmg) // makes confusion damage not affected by effects of items, abilities or boosts granted by badges
 	{

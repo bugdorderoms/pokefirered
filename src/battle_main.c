@@ -2936,7 +2936,7 @@ s8 GetMovePriority(u8 battler, u16 move)
 
 s32 GetBattlerBracket(u8 battler)
 {
-    u8 holdEffect = GetBattlerItemHoldEffect(battler, TRUE), holdEffectParam = GetBattlerHoldEffectParam(battler);
+    u8 holdEffect = GetBattlerItemHoldEffect(battler, TRUE), holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battler].item);
     s32 bracket = 0;
 	
 	gProtectStructs[battler].myceliumMightElevated = FALSE;
@@ -3009,7 +3009,7 @@ u32 GetBattlerTotalSpeed(u8 battler)
 #endif
 
     holdEffect = GetBattlerItemHoldEffect(battler, TRUE);
-	holdEffectParam = GetBattlerHoldEffectParam(battler);
+	holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battler].item);
     
 	switch (holdEffect)
 	{

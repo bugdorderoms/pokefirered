@@ -1167,7 +1167,7 @@ static u32 CalcMoveTotalAccuracy(u16 move, u8 attacker, u8 defender)
 	}
 	// Check defender's items
 	holdEffect = GetBattlerItemHoldEffect(defender, TRUE);
-	holdEffectParam = GetBattlerHoldEffectParam(defender);
+	holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[defender].item);
 	
 	switch (holdEffect)
 	{
@@ -1516,7 +1516,7 @@ bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move) // Check if substitute c
 
 static void atk07_adjustdamage(void) // Check for effects that prevent the target from faint
 {
-    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = GetBattlerHoldEffectParam(gBattlerTarget);
+    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
 	
 	// Check Focus Band
     if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
@@ -4560,7 +4560,7 @@ static void atk69_nop(void)
 static void atk6A_removeitem(void)
 {
     gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
-    gBattleStruct->usedHeldItems[gBattlerPartyIndexes[gActiveBattler]][GetBattlerSide(gActiveBattler)] = gBattleMons[gActiveBattler].item;
+	*GetUsedHeldItemPtr(gActiveBattler) = gBattleMons[gActiveBattler].item;
     gBattleMons[gActiveBattler].item = ITEM_NONE;
 	CheckSetBattlerUnburden(gActiveBattler);
 	RemoveOrAddBattlerOnPickupStack(gActiveBattler, TRUE);
@@ -6144,7 +6144,7 @@ static void atk92_setlightscreen(void)
 
 static void atk93_tryKO(void)
 {
-    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = GetBattlerHoldEffectParam(gBattlerTarget);
+    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
     u16 chance;
 	
     if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
@@ -7196,14 +7196,14 @@ static void atkBA_jumpifnopursuitswitchdmg(void)
 	
     if (gChosenActionByBattler[gBattlerTarget] == B_ACTION_USE_MOVE && gBattlerAttacker == gBattleStruct->moveTarget[gBattlerTarget]
 	&& !(gBattleMons[gBattlerTarget].status1 & (STATUS1_SLEEP | STATUS1_FREEZE)) && gBattleMons[gBattlerAttacker].hp
-	&& !gDisableStructs[gBattlerTarget].truantCounter && gChosenMoveByBattler[gBattlerTarget] == MOVE_PURSUIT)
+	&& !gDisableStructs[gBattlerTarget].truantCounter && gBattleMoves[gChosenMoveByBattler[gBattlerTarget]].effect == EFFECT_PURSUIT)
     {
         for (i = 0; i < gBattlersCount; ++i)
 		{
             if (gBattlerByTurnOrder[i] == gBattlerTarget)
                 gActionsByTurnOrder[i] = 11;
 		}
-        gCurrentMove = MOVE_PURSUIT;
+        gCurrentMove = gChosenMoveByBattler[gBattlerTarget];
         gCurrMovePos = gChosenMovePos = *(gBattleStruct->chosenMovePositions + gBattlerTarget);
         gBattleScripting.animTurn = 1;
         gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
