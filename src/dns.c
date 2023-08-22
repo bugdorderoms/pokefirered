@@ -338,7 +338,7 @@ static const u16 sNightFilter = RGB2(14, 14, 6);   //19CE
  * you will most likely want to use this system to avoid certain    *
  * palette tags to be "banned" from dns, as the palettes may get    *
  * loaded in different slots each time.                             */
-static const u16 sPaletteTagExceptionsOw[] =
+static const u16 sPaletteTagExceptions[] =
 {
 	OWNED_ICON_TAG, // 0x0066
 	ITEMICON_TAG, // 0xD750
@@ -351,17 +351,7 @@ static const u16 sPaletteTagExceptionsOw[] =
 	POKE_ICON_BASE_PAL_TAG + 0, // 0xDAC0
 	POKE_ICON_BASE_PAL_TAG + 1, // 0xDAC1
 	POKE_ICON_BASE_PAL_TAG + 2, // 0xDAC2
-};
-
-static const u16 sPaletteTagExceptionsCombat[] =
-{
-	TAG_HEALTHBOX_PAL, // 0xD6FF
-	TAG_HEALTHBAR_PAL, // 0xD705
-	TAG_PARTY_SUMMARY_BAR_PLAYER_PAL, // 0xD709
-	TAG_PARTY_SUMMARY_BAR_OPPONENT_PAL, // 0xD70A
-	TAG_PARTY_SUMMARY_BALL_PLAYER_PAL, // 0xD70B
-	TAG_PARTY_SUMMARY_BALL_OPPONENT_PAL, // 0xD70C
-	TAG_WEATHER_ICON_GFX, // 0xD70D
+	// Don't need define battle palette tag since none battle sprite was affected by dns.
 };
 
 // The season for each month of the year
@@ -444,16 +434,10 @@ static bool8 IsSpritePaletteTagDNSException(u8 palNum)
 {
 	u8 i;
 	u16 tag = GetSpritePaletteTagByPaletteNum(palNum);
-	const u16 *tagExceptions;
-#if USE_DNS_IN_BATTLE
-	tagExceptions = gMain.inBattle ? sPaletteTagExceptionsCombat : sPaletteTagExceptionsOw;
-#else
-	tagExceptions = sPaletteTagExceptionsOw;
-#endif
-	
-	for (i = 0; i < NELEMS(tagExceptions); i++)
+
+	for (i = 0; i < NELEMS(sPaletteTagExceptions); i++)
 	{
-		if (tagExceptions[i] == tag)
+		if (sPaletteTagExceptions[i] == tag)
 			return TRUE;
 	}
 	return FALSE;
