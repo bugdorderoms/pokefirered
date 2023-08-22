@@ -27,7 +27,7 @@ SilphCo_11F_Text_ThatsOurSecretPrototype:: @ 8176FEB
     .string "anywhere.\p"
     .string "It's our secret prototype MASTER\n"
     .string "BALL.\p"
-    .string "It will catch any POKéMON without\n"
+    .string "It will catch any Pokémon without\n"
     .string "fail!\p"
     .string "You should be quiet about using it,\n"
     .string "though.$"
@@ -59,7 +59,7 @@ SilphCo_11F_Text_GiovanniPostBattle:: @ 81771C2
     .string "You ruined our plans for SILPH!\p"
     .string "But, TEAM ROCKET will never fall!\p"
     .string "{PLAYER}! Never forget that all\n"
-    .string "POKéMON exist for TEAM ROCKET!\p"
+    .string "Pokémon exist for TEAM ROCKET!\p"
     .string "I must go, but I shall return!$"
 
 SilphCo_11F_Text_Grunt2Intro:: @ 817726A
@@ -83,10 +83,10 @@ SilphCo_11F_Text_Grunt1Defeat:: @ 81772E7
 
 SilphCo_11F_Text_Grunt1PostBattle:: @ 81772F9
     .string "Watch your step…\n"
-    .string "My BOSS likes his POKéMON tough!$"
+    .string "My BOSS likes his Pokémon tough!$"
 
 SilphCo_11F_Text_MonitorHasMonsOnIt:: @ 817732B
-    .string "The monitor has POKéMON on it!$"
+    .string "The monitor has Pokémon on it!$"
 
 SilphCo_11F_Text_FloorSign:: @ 817734A
     .string "SILPH CO. HEAD OFFICE\n"

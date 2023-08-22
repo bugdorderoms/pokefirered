@@ -12,7 +12,7 @@ Route3_Text_ColtonDefeat:: @ 8183509
     .string "You beat me again!$"
 
 Route3_Text_ColtonPostBattle:: @ 818351C
-    .string "There are other kinds of POKéMON\n"
+    .string "There are other kinds of Pokémon\n"
     .string "than the ones you find in forests.$"
 
 Route3_Text_BenIntro:: @ 8183560
@@ -25,10 +25,10 @@ Route3_Text_BenDefeat:: @ 81835A0
     .string "I don't believe it!$"
 
 Route3_Text_BenPostBattle:: @ 81835B4
-    .string "Are you using a POKéMON CENTER's\n"
-    .string "PC for storing your POKéMON?\p"
+    .string "Are you using a Pokémon CENTER's\n"
+    .string "PC for storing your Pokémon?\p"
     .string "Each BOX can hold up to\n"
-    .string "30 POKéMON.$"
+    .string "30 Pokémon.$"
 
 Route3_Text_JaniceIntro:: @ 8183616
     .string "Excuse me!\n"
@@ -46,11 +46,11 @@ Route3_Text_GregIntro:: @ 8183682
     .string "Let's get with it right away!$"
 
 Route3_Text_GregDefeat:: @ 81836B3
-    .string "If I had new POKéMON, I would've\n"
+    .string "If I had new Pokémon, I would've\n"
     .string "won!$"
 
 Route3_Text_GregPostBattle:: @ 81836D9
-    .string "If a POKéMON BOX on the PC gets\n"
+    .string "If a Pokémon BOX on the PC gets\n"
     .string "full, just switch to another BOX.$"
 
 Route3_Text_SallyIntro:: @ 818371B
@@ -77,14 +77,14 @@ Route3_Text_CalvinPostBattle:: @ 81837CF
     .string "winter. That's my policy.$"
 
 Route3_Text_JamesIntro:: @ 8183807
-    .string "I'll battle you with the POKéMON\n"
+    .string "I'll battle you with the Pokémon\n"
     .string "I just caught.$"
 
 Route3_Text_JamesDefeat:: @ 8183837
     .string "Done like dinner!$"
 
 Route3_Text_JamesPostBattle:: @ 8183849
-    .string "Trained POKéMON are stronger than\n"
+    .string "Trained Pokémon are stronger than\n"
     .string "the wild ones.$"
 
 Route3_Text_RobinIntro:: @ 818387A

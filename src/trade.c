@@ -446,13 +446,13 @@ static const struct MenuAction sMenuAction_SummaryTrade[] = {
 static const u8 *const sTradeErrorOrStatusMessagePtrs[] = {
     gUnknown_841E118, // Communication standby
     gUnknown_841E145, // The trade has been canceled.
-    gUnknown_841E16B, // That's your only POKéMON for battle
-    gUnknown_8417094, // That's your only POKéMON for battle
+    gUnknown_841E16B, // That's your only Pokémon for battle
+    gUnknown_8417094, // That's your only Pokémon for battle
     gUnknown_841E199, // Waiting for your friend to finish
-    gUnknown_841E1C5, // Your friend wants to trade POKéMON
-    gText_PkmnCantBeTradedNow, // That POKéMON can't be traded now
+    gUnknown_841E1C5, // Your friend wants to trade Pokémon
+    gText_PkmnCantBeTradedNow, // That Pokémon can't be traded now
     gText_EggCantBeTradedNow, // An EGG can't be traded now
-    gText_OtherTrainersPkmnCantBeTraded  // The other TRAINER's POKéMON can't be traded now
+    gText_OtherTrainersPkmnCantBeTraded  // The other TRAINER's Pokémon can't be traded now
 };
 
 static const u8 sTextColor_PartyMonNickname[] = { TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY };

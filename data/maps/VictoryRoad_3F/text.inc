@@ -12,12 +12,12 @@ Text_DoubleEdgeDeclined:: @ 8174ABC
     .string "anytime.$"
 
 Text_DoubleEdgeWhichMon:: @ 8174AE2
-    .string "Which POKéMON should I teach\n"
+    .string "Which Pokémon should I teach\n"
     .string "DOUBLE-EDGE?$"
 
 Text_DoubleEdgeTaught:: @ 8174B0C
     .string "Keep that drive going for the\n"
-    .string "POKéMON LEAGUE!\p"
+    .string "Pokémon LEAGUE!\p"
     .string "Take a run at them and knock 'em\n"
     .string "out!$"
 
@@ -62,7 +62,7 @@ VictoryRoad_3F_Text_ColbyDefeat:: @ 8174CA9
 
 VictoryRoad_3F_Text_ColbyPostBattle:: @ 8174CBD
     .string "All TRAINERS here are headed to\n"
-    .string "the POKéMON LEAGUE.\p"
+    .string "the Pokémon LEAGUE.\p"
     .string "Don't let down your guard.$"
 
 VictoryRoad_3F_Text_RayIntro:: @ 8174D0C
@@ -80,7 +80,7 @@ VictoryRoad_3F_Text_RayPostBattle:: @ 8174D64
 VictoryRoad_3F_Text_RayNotEnoughMons:: @ 8174D96
     .string "RAY: Together, the two of us are\n"
     .string "striving for the pinnacle.\p"
-    .string "We need you to bring two POKéMON\n"
+    .string "We need you to bring two Pokémon\n"
     .string "into battle with us.$"
 
 VictoryRoad_3F_Text_TyraIntro:: @ 8174E08
@@ -96,5 +96,5 @@ VictoryRoad_3F_Text_TyraPostBattle:: @ 8174E48
 
 VictoryRoad_3F_Text_TyraNotEnoughMons:: @ 8174E8D
     .string "TYRA: You can't battle with us if\n"
-    .string "you have only one POKéMON.$"
+    .string "you have only one Pokémon.$"
 

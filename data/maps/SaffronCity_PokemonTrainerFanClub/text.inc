@@ -124,13 +124,13 @@ SaffronCity_PokemonTrainerFanClub_Text_YouveStillAWaysToGo:: @ 819C9D5
     .string "You certainly do have the look of\n"
     .string "a winner.\p"
     .string "But for me to accept you as\n"
-    .string "a true POKéMON great…\p"
+    .string "a true Pokémon great…\p"
     .string "… …\p"
     .string "You've still a ways to go!$"
 
 SaffronCity_PokemonTrainerFanClub_Text_YoullBeTalkedAboutIfYouKeepWinning:: @ 819CA7C
     .string "All of us gathered here are fans\n"
-    .string "of POKéMON TRAINERS.\p"
+    .string "of Pokémon TRAINERS.\p"
     .string "The way they look in battle…\n"
     .string "They are the picture of coolness.\p"
     .string "Perhaps you will be talked about\n"

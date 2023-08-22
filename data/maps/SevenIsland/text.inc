@@ -10,7 +10,7 @@ Text_SwordsDanceDeclined:: @ 8182FC1
     .string "Well, that's fine, too.$"
 
 Text_SwordsDanceWhichMon:: @ 8182FD9
-    .string "All right, pick which POKéMON\n"
+    .string "All right, pick which Pokémon\n"
     .string "I should teach it to.$"
 
 Text_SwordsDanceTaught:: @ 818300D

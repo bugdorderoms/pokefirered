@@ -1,5 +1,5 @@
 SixIsland_OutcastIsland_Text_RocketIntro:: @ 818B35A
-    .string "There're no rare POKéMON around\n"
+    .string "There're no rare Pokémon around\n"
     .string "these parts! Not a one!\p"
     .string "That burns me up, man.\n"
     .string "I'll take it out on you!$"
@@ -9,7 +9,7 @@ SixIsland_OutcastIsland_Text_RocketDefeat:: @ 818B3C2
 
 SixIsland_OutcastIsland_Text_RocketPostBattle:: @ 818B3C8
     .string "So listen, you haven't seen any\n"
-    .string "rare POKéMON, have you?$"
+    .string "rare Pokémon, have you?$"
 
 SixIsland_OutcastIsland_Text_TylorIntro:: @ 818B400
     .string "I'm having no luck at all.\n"
@@ -36,7 +36,7 @@ SixIsland_OutcastIsland_Text_MymoPostBattle:: @ 818B4D1
     .string "I'm beat…$"
 
 SixIsland_OutcastIsland_Text_NicoleIntro:: @ 818B4FA
-    .string "It's not so easy sending POKéMON\n"
+    .string "It's not so easy sending Pokémon\n"
     .string "out while swimming, you know?$"
 
 SixIsland_OutcastIsland_Text_NicoleDefeat:: @ 818B539
@@ -64,7 +64,7 @@ SixIsland_OutcastIsland_Text_AvaPostBattle:: @ 818B62E
 SixIsland_OutcastIsland_Text_AvaNotEnoughMons:: @ 818B660
     .string "AVA: You're challenging us to\n"
     .string "a battle?\p"
-    .string "You'll need at least two POKéMON\n"
+    .string "You'll need at least two Pokémon\n"
     .string "if you want to do that.$"
 
 SixIsland_OutcastIsland_Text_GebIntro:: @ 818B6C1
@@ -82,4 +82,4 @@ SixIsland_OutcastIsland_Text_GebPostBattle:: @ 818B720
 SixIsland_OutcastIsland_Text_GebNotEnoughMons:: @ 818B762
     .string "GEB: Please battle against me and\n"
     .string "my sister!\p"
-    .string "…Oh, you don't have two POKéMON?$"
+    .string "…Oh, you don't have two Pokémon?$"

@@ -1,5 +1,5 @@
 Route9_Text_AliciaIntro:: @ 81847B7
-    .string "You have POKéMON with you!\n"
+    .string "You have Pokémon with you!\n"
     .string "You're mine!$"
 
 Route9_Text_AliciaDefeat:: @ 81847DF
@@ -13,7 +13,7 @@ Route9_Text_AliciaPostBattle:: @ 81847F0
 
 Route9_Text_ChrisIntro:: @ 8184844
     .string "Who's that walking there with those\n"
-    .string "good-looking POKéMON?$"
+    .string "good-looking Pokémon?$"
 
 Route9_Text_ChrisDefeat:: @ 818487E
     .string "Out like a light!$"
@@ -49,7 +49,7 @@ Route9_Text_JeremyIntro:: @ 818495E
 Route9_Text_JeremyDefeat:: @ 818497F
     .string "Keep it coming, eh!\p"
     .string "Oh wait.\n"
-    .string "I'm out of POKéMON!$"
+    .string "I'm out of Pokémon!$"
 
 Route9_Text_JeremyPostBattle:: @ 81849B0
     .string "You sure had guts standing up to\n"
@@ -68,7 +68,7 @@ Route9_Text_BricePostBattle:: @ 8184A11
 
 Route9_Text_BrentIntro:: @ 8184A2F
     .string "I got up early every day to raise\n"
-    .string "my POKéMON from cocoons!$"
+    .string "my Pokémon from cocoons!$"
 
 Route9_Text_BrentDefeat:: @ 8184A6A
     .string "WHAT?\p"
@@ -91,13 +91,13 @@ Route9_Text_AlanPostBattle:: @ 8184AF1
     .string "Us hearty guys always laugh!$"
 
 Route9_Text_ConnerIntro:: @ 8184B18
-    .string "Go, my super BUG POKéMON!$"
+    .string "Go, my super BUG Pokémon!$"
 
 Route9_Text_ConnerDefeat:: @ 8184B32
     .string "My bugs…$"
 
 Route9_Text_ConnerPostBattle:: @ 8184B3B
-    .string "If you don't like BUG POKéMON,\n"
+    .string "If you don't like BUG Pokémon,\n"
     .string "you bug me!$"
 
 Route9_Text_RouteSign:: @ 8184B66

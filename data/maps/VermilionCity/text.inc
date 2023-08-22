@@ -15,7 +15,7 @@ VermilionCity_Text_SSAnneHasDepartedForYear:: @ 817F7A6
 VermilionCity_Text_BuildingOnThisLand:: @ 817F7FD
     .string "I'm putting up a building on this\n"
     .string "plot of land. I own it all.\p"
-    .string "My POKéMON is tamping the land\n"
+    .string "My Pokémon is tamping the land\n"
     .string "to lay the foundation.$"
 
 VermilionCity_Text_Machop:: @ 817F871
@@ -36,17 +36,17 @@ VermilionCity_Text_CitySign:: @ 817F8FB
 VermilionCity_Text_SnorlaxBlockingRoute12:: @ 817F928
     .string "NOTICE!\p"
     .string "ROUTE 12 may be blocked off by a\n"
-    .string "sleeping POKéMON.\p"
+    .string "sleeping Pokémon.\p"
     .string "Detour through ROCK TUNNEL to\n"
     .string "LAVENDER TOWN.\p"
     .string "VERMILION POLICE$"
 
 VermilionCity_Text_PokemonFanClubSign:: @ 817F9A1
-    .string "POKéMON FAN CLUB\n"
-    .string "All POKéMON fans welcome!$"
+    .string "Pokémon FAN CLUB\n"
+    .string "All Pokémon fans welcome!$"
 
 VermilionCity_Text_GymSign:: @ 817F9CC
-    .string "VERMILION CITY POKéMON GYM\n"
+    .string "VERMILION CITY Pokémon GYM\n"
     .string "LEADER: LT. SURGE\l"
     .string "The Lightning American!$"
 

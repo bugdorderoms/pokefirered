@@ -1,5 +1,5 @@
 SaffronCity_PokemonCenter_1F_Text_GrowthRatesDifferBySpecies:: @ 819C023
-    .string "POKéMON growth rates differ from\n"
+    .string "Pokémon growth rates differ from\n"
     .string "species to species.$"
 
 SaffronCity_PokemonCenter_1F_Text_SilphCoVictimOfFame:: @ 819C058

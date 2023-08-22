@@ -17,11 +17,11 @@ OneIsland_PokemonCenter_1F_Text_ThisIsMyBuddyCelio:: @ 81A0D72
 
 OneIsland_PokemonCenter_1F_Text_PlayerIsRisingPokemonChamp:: @ 81A0DAC
     .string "CELIO, this is {PLAYER}, a rising\n"
-    .string "contender as the POKéMON CHAMP!$"
+    .string "contender as the Pokémon CHAMP!$"
 
 OneIsland_PokemonCenter_1F_Text_PlayerIsReigningPokemonChamp:: @ 81A0DE8
     .string "CELIO, this is {PLAYER}, the\n"
-    .string "reigning POKéMON CHAMP!$"
+    .string "reigning Pokémon CHAMP!$"
 
 OneIsland_PokemonCenter_1F_Text_CelioThatsReallyImpressive:: @ 81A0E17
     .string "CELIO: That's really impressive.\p"
@@ -163,7 +163,7 @@ OneIsland_PokemonCenter_1F_Text_CelioCaughtMoreMonMaybeICanBeUseful:: @ 81A169B
     .string "CELIO: {PLAYER}, how have things\n"
     .string "been for you?\p"
     .string "Oh, is that right?\n"
-    .string "You've caught more POKéMON.\p"
+    .string "You've caught more Pokémon.\p"
     .string "Do you know what?\n"
     .string "Maybe I can be useful to you.$"
 
@@ -173,7 +173,7 @@ OneIsland_PokemonCenter_1F_Text_YoullBeTradingFromTrainersFarAway:: @ 81A1723
     .string "I'm changing it so it can handle\n"
     .string "trades over long distances.\p"
     .string "When I get finished, you'll be\n"
-    .string "trading for exotic POKéMON from\l"
+    .string "trading for exotic Pokémon from\l"
     .string "TRAINERS far away.$"
 
 OneIsland_PokemonCenter_1F_Text_NeedsSpecialGemstone:: @ 81A17DF
@@ -278,7 +278,7 @@ OneIsland_PokemonCenter_1F_Text_WishYouBestOfLuck:: @ 81A1E39
     .string "I'm not crying.\p"
     .string "That's enough about me!\p"
     .string "{PLAYER}, you're going to keep\n"
-    .string "looking for exotic POKéMON, right?\p"
+    .string "looking for exotic Pokémon, right?\p"
     .string "I wish you the best of luck!$"
 
 OneIsland_PokemonCenter_1F_Text_CelioHearingRumorsAboutYou:: @ 81A1EBD
@@ -288,7 +288,7 @@ OneIsland_PokemonCenter_1F_Text_CelioHearingRumorsAboutYou:: @ 81A1EBD
 
 OneIsland_PokemonCenter_1F_Text_BillsFirstMonWasAbra:: @ 81A1EF3
     .string "{PLAYER}, what's your favorite kind\n"
-    .string "of POKéMON?\p"
+    .string "of Pokémon?\p"
     .string "BILL is a POKéMANIAC, so he loves\n"
     .string "every kind.\p"
     .string "Apparently, the first one he caught\n"
@@ -324,11 +324,11 @@ OneIsland_PokemonCenter_1F_Text_EnormousVolcanoOnIsland:: @ 81A212D
     .string "not enjoy a hike?$"
 
 OneIsland_PokemonCenter_1F_Text_WishICouldTradeWithBoyfriend:: @ 81A218D
-    .string "I wish I could trade POKéMON with\n"
+    .string "I wish I could trade Pokémon with\n"
     .string "my boyfriend who lives far away…$"
 
 OneIsland_PokemonCenter_1F_Text_TradedWithFarAwayBoyfriend:: @ 81A21D0
-    .string "I traded POKéMON with my boyfriend\n"
+    .string "I traded Pokémon with my boyfriend\n"
     .string "far away!\p"
     .string "Everyone's saying that we can\n"
     .string "thank you and CELIO.\p"
@@ -337,7 +337,7 @@ OneIsland_PokemonCenter_1F_Text_TradedWithFarAwayBoyfriend:: @ 81A21D0
 OneIsland_PokemonCenter_1F_Text_MachineUnderAdjustment:: @ 81A223F
     .string "Network Machine\n"
     .string "Link Level 0\p"
-    .string "…POKéMON Storage System under\n"
+    .string "…Pokémon Storage System under\n"
     .string "adjustment…$"
 
 OneIsland_PokemonCenter_1F_Text_MachineLinkedWithKanto:: @ 81A2286

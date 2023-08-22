@@ -9,7 +9,7 @@ LavenderTown_House1_Text_RocketsKilledCubonesMother:: @ 819397D
     .string "TEAM ROCKET.$"
 
 LavenderTown_House1_Text_GhostOfPokemonTowerIsGone:: @ 81939F8
-    .string "The ghost of POKéMON TOWER is\n"
+    .string "The ghost of Pokémon TOWER is\n"
     .string "gone!\p"
     .string "Someone must have soothed its\n"
     .string "restless spirit!$"

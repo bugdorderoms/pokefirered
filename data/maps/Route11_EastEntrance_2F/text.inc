@@ -8,11 +8,11 @@ Route11_EastEntrance_2F_Text_GiveItemfinderIfCaught30:: @ 819E9E5
     .string "{STR_VAR_2} for you.\p"
     .string "So, {PLAYER}, let me ask you.\p"
     .string "Have you gathered data on at least\n"
-    .string "{STR_VAR_1} kinds of POKéMON?$"
+    .string "{STR_VAR_1} kinds of Pokémon?$"
 
 Route11_EastEntrance_2F_Text_GreatHereYouGo:: @ 819EAE4
     .string "Great! You have caught or owned\n"
-    .string "{STR_VAR_3} kinds of POKéMON!\p"
+    .string "{STR_VAR_3} kinds of Pokémon!\p"
     .string "Congratulations!\n"
     .string "Here you go!$"
 
@@ -35,7 +35,7 @@ Route11_EastEntrance_2F_Text_ExplainItemfinder:: @ 819EB59
 Route11_EastEntrance_2F_Text_BigMonAsleepOnRoad:: @ 819EC8A
     .string "Let's see what the binoculars have\n"
     .string "to show…\p"
-    .string "A big POKéMON is asleep on a road!$"
+    .string "A big Pokémon is asleep on a road!$"
 
 Route11_EastEntrance_2F_Text_WhatABreathtakingView:: @ 819ECD9
     .string "Let's see what the binoculars have\n"

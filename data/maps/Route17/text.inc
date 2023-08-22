@@ -52,14 +52,14 @@ Route17_Text_NikolasPostBattle:: @ 8187333
     .string "POWER PLANT.$"
 
 Route17_Text_ZeekIntro:: @ 8187362
-    .string "I leveled up my POKéMON, but it\n"
+    .string "I leveled up my Pokémon, but it\n"
     .string "won't evolve. Why?$"
 
 Route17_Text_ZeekDefeat:: @ 8187395
     .string "Why, you!$"
 
 Route17_Text_ZeekPostBattle:: @ 818739F
-    .string "Maybe some POKéMON need element\n"
+    .string "Maybe some Pokémon need element\n"
     .string "STONES to evolve.$"
 
 Route17_Text_JamalIntro:: @ 81873D1
@@ -107,8 +107,8 @@ Route17_Text_WatchOutForDiscardedItems:: @ 81874E4
 
 Route17_Text_SameSpeciesGrowDifferentRates:: @ 8187512
     .string "TRAINER TIPS\p"
-    .string "All POKéMON are unique.\p"
-    .string "Even POKéMON of the same species\n"
+    .string "All Pokémon are unique.\p"
+    .string "Even Pokémon of the same species\n"
     .string "and level grow at different rates.$"
 
 Route17_Text_PressBToStayInPlace:: @ 818757B

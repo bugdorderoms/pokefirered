@@ -18,11 +18,11 @@ SilphCo_4F_Text_Grunt1PostBattle:: @ 8175A62
     .string "My BOSS has been after this place!$"
 
 SilphCo_4F_Text_RodneyIntro:: @ 8175A90
-    .string "My POKéMON is my loyal servant.$"
+    .string "My Pokémon is my loyal servant.$"
 
 SilphCo_4F_Text_RodneyDefeat:: @ 8175AB0
     .string "Darn!\n"
-    .string "You weak POKéMON!$"
+    .string "You weak Pokémon!$"
 
 SilphCo_4F_Text_RodneyPostBattle:: @ 8175AC8
     .string "The doors are electronically\n"

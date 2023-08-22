@@ -34,7 +34,7 @@ Route12_FishingHouse_Text_TryFishingBringMeMagikarp:: @ 819F217
     .string "Have you been fishing?\p"
     .string "Try fishing with the SUPER ROD in\n"
     .string "any body of water.\p"
-    .string "You'll find different POKéMON in\n"
+    .string "You'll find different Pokémon in\n"
     .string "different places.\p"
     .string "Oh, and don't forget to bring me\n"
     .string "gigantic MAGIKARP.$"

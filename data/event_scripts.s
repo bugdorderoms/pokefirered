@@ -816,17 +816,17 @@ Text_WeHopeToSeeYouAgain2:: @ 81A505B
 
 @ Unused
 Text_WelcomeTradeCenter:: @ 81A5103
-	.string "Welcome to the POKéMON CABLE CLUB\n"
+	.string "Welcome to the Pokémon CABLE CLUB\n"
 	.string "TRADE CENTER.$"
 
 @ Unused
 Text_WelcomeColosseum:: @ 81A5133
-	.string "Welcome to the POKéMON CABLE CLUB\n"
+	.string "Welcome to the Pokémon CABLE CLUB\n"
 	.string "COLOSSEUM.$"
 
 @ Unused
 Text_WelcomeTimeCapsule:: @ 81A5160
-	.string "Welcome to the POKéMON CABLE CLUB\n"
+	.string "Welcome to the Pokémon CABLE CLUB\n"
 	.string "TIME CAPSULE.$"
 
 Text_PleaseComeAgain:: @ 81A5190
@@ -891,12 +891,12 @@ gText_PkmnPoisonSurvived::
 	.string "$"
 
 Text_WelcomeWantToHealPkmn:: @ 81A5483
-	.string "Welcome to our POKéMON CENTER!\p"
+	.string "Welcome to our Pokémon CENTER!\p"
 	.string "Would you like me to heal your\n"
-	.string "POKéMON back to perfect health?$"
+	.string "Pokémon back to perfect health?$"
 
 Text_TakeYourPkmnForFewSeconds:: @ 81A54E1
-	.string "Okay, I'll take your POKéMON for a\n"
+	.string "Okay, I'll take your Pokémon for a\n"
 	.string "few seconds.$"
 
 Text_WeHopeToSeeYouAgain:: @ 81A5511
@@ -904,7 +904,7 @@ Text_WeHopeToSeeYouAgain:: @ 81A5511
 
 Text_RestoredPkmnToFullHealth:: @ 81A552B
 	.string "Thank you for waiting.\n"
-	.string "We've restored your POKéMON to\l"
+	.string "We've restored your Pokémon to\l"
 	.string "full health.$"
 
 	.include "data/text/surf.inc"
@@ -921,7 +921,7 @@ Text_BigHoleInTheWall:: @ 81A5606
 
 Text_WirelessClubUndergoingAdjustments:: @ 81A561A
 	.string "I'm terribly sorry.\n"
-	.string "The POKéMON WIRELESS CLUB is\l"
+	.string "The Pokémon WIRELESS CLUB is\l"
 	.string "undergoing adjustments now.$"
 
 Text_AppearsToBeUndergoingAdjustments:: @ 81A5667

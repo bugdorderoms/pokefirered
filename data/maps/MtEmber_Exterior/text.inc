@@ -12,7 +12,7 @@ Text_ExplosionDeclined:: @ 817A6ED
 
 Text_ExplosionWhichMon:: @ 817A717
     .string "You're terribly brave!\p"
-    .string "Which POKéMON should I teach\n"
+    .string "Which Pokémon should I teach\n"
     .string "EXPLOSION?$"
 
 Text_ExplosionTaught:: @ 817A756

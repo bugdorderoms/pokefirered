@@ -1,7 +1,7 @@
 IndigoPlateau_PokemonCenter_1F_Text_GymGuyAdvice:: @ 819A837
     .string "Yo!\n"
     .string "Champ in the making!\p"
-    .string "At the POKéMON LEAGUE, you will\n"
+    .string "At the Pokémon LEAGUE, you will\n"
     .string "face the ELITE FOUR all in a row.\p"
     .string "If you lose, you have to start all\n"
     .string "over again!\p"
@@ -19,13 +19,13 @@ IndigoPlateau_PokemonCenter_1F_Text_LoreleiIsAbsentClosedForTimeBeing:: @ 819A94
     .string "your time coming here.\p"
     .string "LORELEI of the ELITE FOUR is\n"
     .string "absent, you see.\p"
-    .string "As a result, the POKéMON LEAGUE is\n"
+    .string "As a result, the Pokémon LEAGUE is\n"
     .string "closed for the time being.$"
 
 IndigoPlateau_PokemonCenter_1F_Text_AgathaWhuppedUs:: @ 819A9E7
-    .string "AGATHA's GHOST-type POKéMON are\n"
+    .string "AGATHA's GHOST-type Pokémon are\n"
     .string "horrifically terrifying in toughness.\p"
-    .string "I took my FIGHTING-type POKéMON\n"
+    .string "I took my FIGHTING-type Pokémon\n"
     .string "and raised them to the max.\p"
     .string "I went at AGATHA feeling pretty\n"
     .string "confident, but she whupped us.\p"

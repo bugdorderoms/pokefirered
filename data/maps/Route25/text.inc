@@ -6,10 +6,10 @@ Route25_Text_JoeyDefeat:: @ 81890E6
     .string "You're decent.$"
 
 Route25_Text_JoeyPostBattle:: @ 81890F5
-    .string "All POKéMON have weaknesses.\n"
+    .string "All Pokémon have weaknesses.\n"
     .string "Even the strongest ones.\p"
     .string "That's why it's best to raise\n"
-    .string "POKéMON of different types.$"
+    .string "Pokémon of different types.$"
 
 Route25_Text_DanIntro:: @ 8189165
     .string "Dad took me to a great party on\n"
@@ -52,12 +52,12 @@ Route25_Text_ChadDefeat:: @ 81892D9
     .string "I knew I'd lose, too!$"
 
 Route25_Text_ChadPostBattle:: @ 81892EF
-    .string "If your POKéMON gets confused,\n"
+    .string "If your Pokémon gets confused,\n"
     .string "switch it out.\p"
     .string "That's a good tactic.$"
 
 Route25_Text_HaleyIntro:: @ 8189333
-    .string "My friend has many cute POKéMON.\n"
+    .string "My friend has many cute Pokémon.\n"
     .string "I'm so jealous!$"
 
 Route25_Text_HaleyDefeat:: @ 8189364
@@ -90,7 +90,7 @@ Route25_Text_NobPostBattle:: @ 818947E
     .string "The POKéMANIAC sure lives up to\n"
     .string "his name.\p"
     .string "His collection includes many rare\n"
-    .string "species of POKéMON.$"
+    .string "species of Pokémon.$"
 
 Route25_Text_WayneIntro:: @ 81894DE
     .string "You're going to see BILL?\n"

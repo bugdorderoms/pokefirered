@@ -5,7 +5,7 @@ PokemonLeague_LancesRoom_Text_Intro:: @ 8178764
     .string "You can call me LANCE the dragon\n"
     .string "TRAINER.\p"
     .string "You know that dragons are\n"
-    .string "mythical POKéMON.\p"
+    .string "mythical Pokémon.\p"
     .string "They're hard to catch and raise,\n"
     .string "but their powers are superior.\p"
     .string "They're virtually indestructible.\n"
@@ -21,7 +21,7 @@ PokemonLeague_LancesRoom_Text_RematchIntro:: @ 81788BD
     .string "You can call me LANCE the dragon\n"
     .string "TRAINER.\p"
     .string "You know that dragons are\n"
-    .string "mythical POKéMON.\p"
+    .string "mythical Pokémon.\p"
     .string "They're hard to catch and raise,\n"
     .string "but their powers are superior.\p"
     .string "They're virtually indestructible.\n"
@@ -33,12 +33,12 @@ PokemonLeague_LancesRoom_Text_RematchIntro:: @ 81788BD
 PokemonLeague_LancesRoom_Text_Defeat:: @ 8178A15
     .string "That's it!\p"
     .string "I hate to admit it, but you are a\n"
-    .string "POKéMON master!$"
+    .string "Pokémon master!$"
 
 PokemonLeague_LancesRoom_Text_PostBattle:: @ 8178A52
     .string "I still can't believe my dragons\n"
     .string "lost to you, {PLAYER}.\p"
-    .string "You are now the POKéMON LEAGUE\n"
+    .string "You are now the Pokémon LEAGUE\n"
     .string "CHAMPION!\p"
     .string "…Or, you would have been, but\n"
     .string "you have one more challenge left.\p"
@@ -47,6 +47,6 @@ PokemonLeague_LancesRoom_Text_PostBattle:: @ 8178A52
     .string "{RIVAL}!\p"
     .string "He beat the ELITE FOUR before\n"
     .string "you.\p"
-    .string "He is the real POKéMON LEAGUE\n"
+    .string "He is the real Pokémon LEAGUE\n"
     .string "CHAMPION.$"
 

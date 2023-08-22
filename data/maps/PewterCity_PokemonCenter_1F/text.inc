@@ -10,7 +10,7 @@ PewterCity_Museum_1F_Text_Jigglypuff:: @ 81916EA
 
 PewterCity_Museum_1F_Text_WhenJiggylypuffSingsMonsGetDrowsy:: @ 8191701
     .string "Yawn!\p"
-    .string "When JIGGLYPUFF sings, POKéMON get\n"
+    .string "When JIGGLYPUFF sings, Pokémon get\n"
     .string "drowsy…\p"
     .string "…Me, too…\n"
     .string "Snore…$"
@@ -20,7 +20,7 @@ PewterCity_Museum_1F_Text_TradingMyClefairyForPikachu:: @ 8191743
     .string "trading my CLEFAIRY for one.$"
 
 PewterCity_Museum_1F_Text_TradingPikachuWithKid:: @ 8191780
-    .string "I'm trading POKéMON with that kid\n"
+    .string "I'm trading Pokémon with that kid\n"
     .string "there.\p"
     .string "I had two PIKACHU, so I figured\n"
     .string "I might as well trade one.$"

@@ -294,8 +294,8 @@ const u8 *const gUnknown_8458230[][2][3] = {
     }
 };
 
-ALIGNED(4) const u8 gUnknown_8458260[] = _("Sorry! My POKéMON don't seem to\nbe feeling too well right now.\lLet me battle you another time.\p");
-ALIGNED(4) const u8 gUnknown_84582C0[] = _("I'm terribly sorry, but my POKéMON\naren't feeling well…\pLet's battle another time.\p");
+ALIGNED(4) const u8 gUnknown_8458260[] = _("Sorry! My Pokémon don't seem to\nbe feeling too well right now.\lLet me battle you another time.\p");
+ALIGNED(4) const u8 gUnknown_84582C0[] = _("I'm terribly sorry, but my Pokémon\naren't feeling well…\pLet's battle another time.\p");
 
 const u8 *const gUnknown_8458314[] = {
     gUnknown_8458260,
@@ -319,8 +319,8 @@ const u8 *const gUnknown_845842C[] = {
 };
 
 ALIGNED(4) const u8 gUnknown_8458434[] = _("Whoops! Sorry, but I have to do\nsomething else.\lAnother time, okay?\p");
-ALIGNED(4) const u8 gUnknown_845847C[] = _("If you want to battle, you need\ntwo POKéMON that are below\lLv. 30.\p");
-ALIGNED(4) const u8 gUnknown_84584C0[] = _("For a battle, you need two\nPOKéMON that are below Lv. 30.\p");
+ALIGNED(4) const u8 gUnknown_845847C[] = _("If you want to battle, you need\ntwo Pokémon that are below\lLv. 30.\p");
+ALIGNED(4) const u8 gUnknown_84584C0[] = _("For a battle, you need two\nPokémon that are below Lv. 30.\p");
 ALIGNED(4) const u8 gUnknown_84584FC[] = _("Oh, all right.\nCome see me anytime, okay?\p");
 ALIGNED(4) const u8 gUnknown_8458528[] = _("Oh…\nPlease come by anytime.\p");
 
@@ -340,11 +340,11 @@ const u8 *const gUnknown_84585E8[] = {
 ALIGNED(4) const u8 gUnknown_84585F0[] = _("Whoa!\nI can tell you're pretty tough!\p");
 ALIGNED(4) const u8 gUnknown_8458618[] = _("You used that move?\nThat's good strategy!\p");
 ALIGNED(4) const u8 gUnknown_8458644[] = _("Way to go!\nThat was an eye-opener!\p");
-ALIGNED(4) const u8 gUnknown_8458668[] = _("Oh! How could you use that\nPOKéMON in that situation?\p");
-ALIGNED(4) const u8 gUnknown_84586A0[] = _("That POKéMON…\nIt's been raised really well!\p");
+ALIGNED(4) const u8 gUnknown_8458668[] = _("Oh! How could you use that\nPokémon in that situation?\p");
+ALIGNED(4) const u8 gUnknown_84586A0[] = _("That Pokémon…\nIt's been raised really well!\p");
 ALIGNED(4) const u8 gUnknown_84586D0[] = _("That's it!\nThis is the right move now!\p");
 ALIGNED(4) const u8 gUnknown_84586F8[] = _("That's awesome!\nYou can battle that way?\p");
-ALIGNED(4) const u8 gUnknown_8458724[] = _("You have exquisite timing for\nswitching POKéMON!\p");
+ALIGNED(4) const u8 gUnknown_8458724[] = _("You have exquisite timing for\nswitching Pokémon!\p");
 
 const u8 *const gUnknown_8458758[][4] = {
     {
@@ -398,10 +398,10 @@ const u8 *const gUnknown_84589AC[][2] = {
     }
 };
 
-ALIGNED(4) const u8 gUnknown_84589BC[] = _("Yeahah!\nI really wanted this POKéMON!\p");
-ALIGNED(4) const u8 gUnknown_84589E4[] = _("Finally, a trade got me that\nPOKéMON I'd wanted a long time.\p");
-ALIGNED(4) const u8 gUnknown_8458A24[] = _("I'm trading POKéMON right now.\p");
-ALIGNED(4) const u8 gUnknown_8458A44[] = _("I finally got that POKéMON I\nwanted in a trade!\p");
+ALIGNED(4) const u8 gUnknown_84589BC[] = _("Yeahah!\nI really wanted this Pokémon!\p");
+ALIGNED(4) const u8 gUnknown_84589E4[] = _("Finally, a trade got me that\nPokémon I'd wanted a long time.\p");
+ALIGNED(4) const u8 gUnknown_8458A24[] = _("I'm trading Pokémon right now.\p");
+ALIGNED(4) const u8 gUnknown_8458A44[] = _("I finally got that Pokémon I\nwanted in a trade!\p");
 
 const u8 *const gUnknown_8458A78[][4] = {
     {
@@ -414,13 +414,13 @@ const u8 *const gUnknown_8458A78[][4] = {
 };
 
 const u8 gUnknown_8458A98[] = _("{STR_VAR_1} checked the\nTRADING BOARD.\p");
-ALIGNED(4) const u8 gUnknown_8458AB8[] = _("Welcome to the TRADING BOARD.\pYou may register your POKéMON\nand offer it up for a trade.\pWould you like to register one of\nyour POKéMON?");
-ALIGNED(4) const u8 gUnknown_8458B44[] = _("This TRADING BOARD is used for\noffering a POKéMON for a trade.\pAll you need to do is register a\nPOKéMON for a trade.\pAnother TRAINER may offer a party\nPOKéMON in return for the trade.\pWe hope you will register POKéMON\nand trade them with many, many\lother TRAINERS.\pWould you like to register one of\nyour POKéMON?");
+ALIGNED(4) const u8 gUnknown_8458AB8[] = _("Welcome to the TRADING BOARD.\pYou may register your Pokémon\nand offer it up for a trade.\pWould you like to register one of\nyour Pokémon?");
+ALIGNED(4) const u8 gUnknown_8458B44[] = _("This TRADING BOARD is used for\noffering a Pokémon for a trade.\pAll you need to do is register a\nPokémon for a trade.\pAnother TRAINER may offer a party\nPokémon in return for the trade.\pWe hope you will register Pokémon\nand trade them with many, many\lother TRAINERS.\pWould you like to register one of\nyour Pokémon?");
 ALIGNED(4) const u8 gUnref_ThankYouForComing_JP[] = _("こうかんけいじばん の とうろくが\nかんりょう しました\pごりよう ありがとう\nございました！\p");
 ALIGNED(4) const u8 gUnref_NoOneRegisteredMon[] = _("けいじばんに だれも ポケモンを\nとうろく していません\p\n");
 
-ALIGNED(4) const u8 gURText_PleaseChooseTypeOfMon[] = _("Please choose the type of POKéMON\nthat you would like in the trade.\n");
-ALIGNED(4) const u8 gUnknown_8458D1C[] = _("Which of your party POKéMON will\nyou offer in trade?\p");
+ALIGNED(4) const u8 gURText_PleaseChooseTypeOfMon[] = _("Please choose the type of Pokémon\nthat you would like in the trade.\n");
+ALIGNED(4) const u8 gUnknown_8458D1C[] = _("Which of your party Pokémon will\nyou offer in trade?\p");
 ALIGNED(4) const u8 gUnknown_8458D54[] = _("Registration has been canceled.\p");
 ALIGNED(4) const u8 gUnknown_8458D78[] = _("Registration has been completed.\p");
 ALIGNED(4) const u8 gUnknown_8458D9C[] = _("The trade has been canceled.\p");
@@ -432,10 +432,10 @@ ALIGNED(4) const u8 gUnref_PleaseChooseTrainerYouWant[] = _("こうかん した
 ALIGNED(4) const u8 gUnknown_8458E70[] = _("Would you like to ask {STR_VAR_1} to\nmake a trade?");
 ALIGNED(4) const u8 gUnref_ImWaitingForAnswer[] = _("……\nあいての へんじを まっています");
 ALIGNED(4) const u8 gUnref_MonSentOutIsNotRegistered[] = _("あなたが こうかんにだす\nポケモンが とうろくされていません\p");
-ALIGNED(4) const u8 gUnknown_8458ED0[] = _("You don't have a {STR_VAR_2}-type\nPOKéMON that {STR_VAR_1} wants.\p");
+ALIGNED(4) const u8 gUnknown_8458ED0[] = _("You don't have a {STR_VAR_2}-type\nPokémon that {STR_VAR_1} wants.\p");
 ALIGNED(4) const u8 gUnknown_8458F04[] = _("You don't have an EGG that\n{STR_VAR_1} wants.\p");
-ALIGNED(4) const u8 gUnknown_8458F2C[] = _("{STR_VAR_1} can't make a trade for\nyour POKéMON right now.\p");
-ALIGNED(4) const u8 gUnknown_8458F60[] = _("You can't make a trade for\n{STR_VAR_1}'s POKéMON right now.\p");
+ALIGNED(4) const u8 gUnknown_8458F2C[] = _("{STR_VAR_1} can't make a trade for\nyour Pokémon right now.\p");
+ALIGNED(4) const u8 gUnknown_8458F60[] = _("You can't make a trade for\n{STR_VAR_1}'s Pokémon right now.\p");
 
 const u8 *const gUnknown_8458F94[] = {
     gUnknown_8458F2C,
@@ -453,7 +453,7 @@ ALIGNED(4) const u8 gUnknown_8459060[] = _("Please choose the LEADER\nfor a MULT
 ALIGNED(4) const u8 gUnknown_8459090[] = _("Please choose the TRAINER to\ntrade with.");
 ALIGNED(4) const u8 gUnknown_84590BC[] = _("Please choose the TRAINER who is\nsharing WONDER CARDS.");
 ALIGNED(4) const u8 gUnknown_84590F4[] = _("Please choose the TRAINER who is\nsharing WONDER NEWS.");
-ALIGNED(4) const u8 gUnknown_845912C[] = _("Jump with mini POKéMON!\nPlease choose the LEADER.");
+ALIGNED(4) const u8 gUnknown_845912C[] = _("Jump with mini Pokémon!\nPlease choose the LEADER.");
 ALIGNED(4) const u8 gUnknown_8459160[] = _("BERRY CRUSH!\nPlease choose the LEADER.");
 ALIGNED(4) const u8 gUnknown_8459188[] = _("DODRIO BERRY-PICKING!\nPlease choose the LEADER.");
 
@@ -496,12 +496,12 @@ ALIGNED(4) const u8 gUnknown_8459378[] = _("NAME{CLEAR_TO 0x3C}WANTED{CLEAR_TO 0
 ALIGNED(4) const u8 gUnionRoomActivity_SingleBattle[] = _("SINGLE BATTLE");
 ALIGNED(4) const u8 gUnionRoomActivity_DoubleBattle[] = _("DOUBLE BATTLE");
 ALIGNED(4) const u8 gUnionRoomActivity_MultiBattle[] = _("MULTI BATTLE");
-ALIGNED(4) const u8 gUnionRoomActivity_PokemonTrades[] = _("POKéMON TRADES");
+ALIGNED(4) const u8 gUnionRoomActivity_PokemonTrades[] = _("Pokémon TRADES");
 ALIGNED(4) const u8 gUnionRoomActivity_Chat[] = _("CHAT");
 ALIGNED(4) const u8 gUnionRoomActivity_Cards[] = _("CARDS");
 ALIGNED(4) const u8 gUnionRoomActivity_WonderCards[] = _("WONDER CARDS");
 ALIGNED(4) const u8 gunionRoomActivity_WonderNews[] = _("WONDER NEWS");
-ALIGNED(4) const u8 gUnionRoomActivity_PokemonJump[] = _("POKéMON JUMP");
+ALIGNED(4) const u8 gUnionRoomActivity_PokemonJump[] = _("Pokémon JUMP");
 ALIGNED(4) const u8 gUnionRoomActivity_BerryCrush[] = _("BERRY CRUSH");
 ALIGNED(4) const u8 gUnionRoomActivity_BerryPicking[] = _("BERRY-PICKING");
 ALIGNED(4) const u8 gUnionRoomActivity_Search[] = _("SEARCH");

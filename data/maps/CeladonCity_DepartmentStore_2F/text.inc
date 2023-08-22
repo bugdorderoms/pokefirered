@@ -1,5 +1,5 @@
 CeladonCity_DepartmentStore_2F_Text_SuperRepelMorePowerfulRepel:: @ 81955C7
-    .string "SUPER REPEL keeps weak POKéMON at\n"
+    .string "SUPER REPEL keeps weak Pokémon at\n"
     .string "bay…\p"
     .string "Hmm, it's a more powerful REPEL.$"
 

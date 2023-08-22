@@ -13,7 +13,7 @@ FourIsland_Text_LoreleiMetLaprasAsChild:: @ 8182A75
     .string "to be the one she met as a child.\p"
     .string "I believe it was in ICEFALL CAVE\n"
     .string "that she caught it.\p"
-    .string "Perhaps that POKéMON has been with\n"
+    .string "Perhaps that Pokémon has been with\n"
     .string "her ever since.$"
 
 FourIsland_Text_RivalAlreadyGotEggBeSmellingYa:: @ 8182B37
@@ -23,10 +23,10 @@ FourIsland_Text_RivalAlreadyGotEggBeSmellingYa:: @ 8182B37
     .string "SEVII ISLANDS?\p"
     .string "You should quit copying me,\n"
     .string "you know?\p"
-    .string "Anyways, I already got my POKéMON\n"
+    .string "Anyways, I already got my Pokémon\n"
     .string "EGG, so I'm done with this island.\p"
     .string "Heh, I bet you don't even know\n"
-    .string "about POKéMON EGGS.\p"
+    .string "about Pokémon EGGS.\p"
     .string "You'll never fill your NATIONAL\n"
     .string "POKéDEX that way.\p"
     .string "By the way, I saw someone we both\n"

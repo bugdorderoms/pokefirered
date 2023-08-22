@@ -11,17 +11,17 @@ CinnabarIsland_Text_ScientistsExperimentInMansion:: @ 8180BA0
     .string "Scientists conduct experiments \n"
     .string "in the burned-out building.\p"
     .string "You know, the one they call the\n"
-    .string "POKéMON MANSION.$"
+    .string "Pokémon MANSION.$"
 
 CinnabarIsland_Text_IslandSign:: @ 8180C0D
     .string "CINNABAR ISLAND\n"
     .string "The Fiery Town of Burning Desire$"
 
 CinnabarIsland_Text_PokemonLab:: @ 8180C3E
-    .string "POKéMON LAB$"
+    .string "Pokémon LAB$"
 
 CinnabarIsland_Text_GymSign:: @ 8180C4A
-    .string "CINNABAR ISLAND POKéMON GYM\n"
+    .string "CINNABAR ISLAND Pokémon GYM\n"
     .string "LEADER: BLAINE\l"
     .string "The Hotheaded Quiz Master!$"
 
@@ -51,7 +51,7 @@ CinnabarIsland_Text_IllBeWaitingInPokeCenter:: @ 8180DF8
     .string "What, are you too busy?\p"
     .string "Well, all right.\n"
     .string "The boat hasn't arrived yet anyway.\p"
-    .string "I'll be waiting at the POKéMON\n"
+    .string "I'll be waiting at the Pokémon\n"
     .string "CENTER over there.\p"
     .string "Come see me when you're done with\n"
     .string "your business here.$"

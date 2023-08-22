@@ -40,10 +40,10 @@ MtMoon_1F_Text_JovanIntro:: @ 817290B
     .string "Don't sneak up on me!$"
 
 MtMoon_1F_Text_JovanDefeat:: @ 8172927
-    .string "My POKéMON won't do!$"
+    .string "My Pokémon won't do!$"
 
 MtMoon_1F_Text_JovanPostBattle:: @ 817293C
-    .string "I have to find stronger POKéMON.\n"
+    .string "I have to find stronger Pokémon.\n"
     .string "Where might they be?$"
 
 MtMoon_1F_Text_IrisIntro:: @ 8172972

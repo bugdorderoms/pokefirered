@@ -1,6 +1,6 @@
 CeladonCity_PokemonCenter_1F_Text_PokeFluteAwakensSleepingMons:: @ 819685B
     .string "A POKé FLUTE awakens sleeping\n"
-    .string "POKéMON. You know that.\p"
+    .string "Pokémon. You know that.\p"
     .string "It does so with a sound that only\n"
     .string "they can hear.$"
 

@@ -1,21 +1,21 @@
 VermilionCity_PokemonCenter_1F_Text_TrainerMonsStrongerThanWild:: @ 81940AF
     .string "Even if they are the same level,\n"
-    .string "POKéMON can have very different\l"
+    .string "Pokémon can have very different\l"
     .string "stats and abilities.\p"
-    .string "A POKéMON raised by a TRAINER is\n"
+    .string "A Pokémon raised by a TRAINER is\n"
     .string "stronger than one in the wild.$"
 
 VermilionCity_PokemonCenter_1F_Text_PoisonedMonFaintedWhileWalking:: @ 8194145
-    .string "My POKéMON was poisoned!\n"
+    .string "My Pokémon was poisoned!\n"
     .string "It fainted while we were walking!$"
 
 VermilionCity_PokemonCenter_1F_Text_AllMonWeakToSpecificTypes:: @ 8194180
     .string "It is true that a higher-level\n"
-    .string "POKéMON will be more powerful…\p"
-    .string "But, all POKéMON will have weak\n"
+    .string "Pokémon will be more powerful…\p"
+    .string "But, all Pokémon will have weak\n"
     .string "points against specific types.\p"
     .string "So, there appears to be no\n"
-    .string "universally strong POKéMON.$"
+    .string "universally strong Pokémon.$"
 
 VermilionCity_PokemonCenter_1F_Text_UrgeToBattleSomeoneAgain:: @ 8194234
     .string "The urge to battle with someone\n"

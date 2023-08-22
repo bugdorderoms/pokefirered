@@ -1,6 +1,6 @@
 CeladonCity_GameCorner_Text_TryPokemonPrinter:: @ 81B1D7D
-	.string "It's a POKéMON PRINTER!\p"
-	.string "It can put a print of your POKéMON\n"
+	.string "It's a Pokémon PRINTER!\p"
+	.string "It can put a print of your Pokémon\n"
 	.string "on the back of your TRAINER CARD.\p"
 	.string "It costs only ¥50.\n"
 	.string "Would you like to try it?$"
@@ -17,7 +17,7 @@ CeladonCity_GameCorner_Text_BigSmileForPhoto:: @ 81B1E42
 	.string "Flash!$"
 
 CeladonCity_GameCorner_Text_PrintIsReadyCheckTrainerCard:: @ 81B1E7D
-	.string "Your POKéMON print is ready!\n"
+	.string "Your Pokémon print is ready!\n"
 	.string "Check your TRAINER CARD.$"
 
 FourIsland_House2_Text_WishICouldShowOffStickers:: @ 81B1EB3
@@ -64,7 +64,7 @@ FourIsland_House2_Text_WowHoFHigh:: @ 81B2133
 	.string "Whoa! You've made it into the\n"
 	.string "HALL OF FAME that often?\l"
 	.string "That's seriously incredible, yup!\p"
-	.string "You own the POKéMON LEAGUE!\n"
+	.string "You own the Pokémon LEAGUE!\n"
 	.string "I'll give you one of these.$"
 
 FourIsland_House2_Text_WowHoFHighest:: @ 81B21C4
@@ -88,7 +88,7 @@ FourIsland_House2_Text_LivingLegendHoF:: @ 81B22B0
 	.string "I have no SITCKERS left to give.$"
 
 FourIsland_House2_Text_WowEggsLowest:: @ 81B2308
-	.string "Oh, wow, there are POKéMON EGGS?\n"
+	.string "Oh, wow, there are Pokémon EGGS?\n"
 	.string "I didn't know that!\p"
 	.string "That's pretty good, yup!\n"
 	.string "I'll give you one of these.$"

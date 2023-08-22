@@ -4,7 +4,7 @@ SilphCo_3F_Text_WhatAmIToDo:: @ 81758AD
 
 SilphCo_3F_Text_YouAndYourMonsSavedUs:: @ 81758D3
     .string "{PLAYER}!\n"
-    .string "You and your POKéMON saved us!$"
+    .string "You and your Pokémon saved us!$"
 
 SilphCo_3F_Text_GruntIntro:: @ 81758F6
     .string "Quit messing with us, kid!$"
@@ -26,7 +26,7 @@ SilphCo_3F_Text_JoseDefeat:: @ 817597D
 SilphCo_3F_Text_JosePostBattle:: @ 8175990
     .string "Humph…\p"
     .string "TEAM ROCKET said that if I helped\n"
-    .string "them, they'd let me study POKéMON.$"
+    .string "them, they'd let me study Pokémon.$"
 
 SilphCo_3F_Text_FloorSign:: @ 81759DC
     .string "SILPH CO. HEAD OFFICE\n"

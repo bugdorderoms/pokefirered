@@ -12,7 +12,7 @@ PokemonTower_7F_Text_Grunt2Intro:: @ 817A3CD
     .string "This old guy marched right up to\n"
     .string "our HIDEOUT.\p"
     .string "Then, he starts ranting about how\n"
-    .string "TEAM ROCKET's abusing POKéMON.\p"
+    .string "TEAM ROCKET's abusing Pokémon.\p"
     .string "So, we're just talking it over as\n"
     .string "adults.$"
 
@@ -21,7 +21,7 @@ PokemonTower_7F_Text_Grunt2Defeat:: @ 817A466
     .string "No more!$"
 
 PokemonTower_7F_Text_Grunt2PostBattle:: @ 817A477
-    .string "POKéMON are only good for making\n"
+    .string "Pokémon are only good for making\n"
     .string "money. Why not use them?\p"
     .string "You stay out of our business!$"
 
@@ -45,6 +45,6 @@ PokemonTower_7F_Text_MrFujiThankYouFollowMe:: @ 817A529
     .string "finally left us.\p"
     .string "I must thank you for your kind\n"
     .string "concern.\p"
-    .string "Follow me to my home, POKéMON\n"
+    .string "Follow me to my home, Pokémon\n"
     .string "HOUSE, at the foot of this tower.$"
 

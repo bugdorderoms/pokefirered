@@ -124,7 +124,7 @@ ThreeIsland_Text_PaxtonPostBattle:: @ 818271D
 ThreeIsland_Text_ThankYouOhYourMonGotHurt:: @ 818275A
     .string "Thank you! Those goons were\n"
     .string "nothing but bad trouble.\p"
-    .string "Oh, look, your POKéMON got hurt\n"
+    .string "Oh, look, your Pokémon got hurt\n"
     .string "on my account.$"
 
 ThreeIsland_Text_GivenFullRestore:: @ 81827BE
@@ -137,7 +137,7 @@ ThreeIsland_Text_OhYourBagIsFull:: @ 81827DB
 
 ThreeIsland_Text_YouveGotImpressiveMons:: @ 81827F1
     .string "You've got seriously impressive\n"
-    .string "POKéMON with you.$"
+    .string "Pokémon with you.$"
 
 ThreeIsland_Text_LostelleWentOffTowardsBondBridge:: @ 8182823
     .string "It'd be fantastic if someone as\n"

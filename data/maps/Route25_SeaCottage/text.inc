@@ -1,5 +1,5 @@
 Route25_SeaCottage_Text_ImBillHelpMeOutPal:: @ 819FDFA
-    .string "Hiya! I'm a POKéMON…\n"
+    .string "Hiya! I'm a Pokémon…\n"
     .string "…No I'm not!\p"
     .string "Call me BILL!\n"
     .string "I'm a true-blue POKéMANIAC!\p"
@@ -7,12 +7,12 @@ Route25_SeaCottage_Text_ImBillHelpMeOutPal:: @ 819FDFA
     .string "What's with that skeptical look?\p"
     .string "I'm not joshing you, pal.\p"
     .string "I screwed up an experiment and got\n"
-    .string "combined with a POKéMON!\p"
+    .string "combined with a Pokémon!\p"
     .string "So, how about it?\n"
     .string "Help me out here!$"
 
 Route25_SeaCottage_Text_ImBillHelpMeOutLady:: @ 819FEE6
-    .string "Hiya! I'm a POKéMON…\n"
+    .string "Hiya! I'm a Pokémon…\n"
     .string "…No I'm not!\p"
     .string "Call me BILL!\n"
     .string "I'm a true-blue POKéMANIAC!\p"
@@ -20,7 +20,7 @@ Route25_SeaCottage_Text_ImBillHelpMeOutLady:: @ 819FEE6
     .string "What's with that skeptical look?\p"
     .string "I'm not joshing you, lady.\p"
     .string "I screwed up an experiment and got\n"
-    .string "combined with a POKéMON!\p"
+    .string "combined with a Pokémon!\p"
     .string "So, how about it?\n"
     .string "Help me out here!$"
 
@@ -54,7 +54,7 @@ Route25_SeaCottage_Text_ThanksBudTakeThis:: @ 81A013B
     .string "BILL: Yeehah!\n"
     .string "Thanks, bud! I owe you one!\p"
     .string "So, did you come to see my\n"
-    .string "POKéMON collection?\p"
+    .string "Pokémon collection?\p"
     .string "You didn't?\n"
     .string "That's a bummer.\p"
     .string "I've got to thank you…\n"
@@ -64,7 +64,7 @@ Route25_SeaCottage_Text_ThanksLadyTakeThis:: @ 81A01E4
     .string "BILL: Yeehah!\n"
     .string "Thanks, lady! I owe you one!\p"
     .string "So, did you come to see my\n"
-    .string "POKéMON collection?\p"
+    .string "Pokémon collection?\p"
     .string "You didn't?\n"
     .string "That's a bummer.\p"
     .string "I've got to thank you…\n"
@@ -89,7 +89,7 @@ Route25_SeaCottage_Text_SSAnnePartyYouGoInstead:: @ 81A02CF
 
 Route25_SeaCottage_Text_CheckOutRareMonsOnPC:: @ 81A03AB
     .string "BILL: Feel like checking out some\n"
-    .string "of my rare POKéMON on my PC?\p"
+    .string "of my rare Pokémon on my PC?\p"
     .string "Go on, check out my PC.$"
 
 Route25_SeaCottage_Text_TeleporterIsDisplayed:: @ 81A0402
@@ -101,8 +101,8 @@ Route25_SeaCottage_Text_InitiatedTeleportersCellSeparator:: @ 81A042D
     .string "Cell Separator.$"
 
 Route25_SeaCottage_Text_BillsFavoriteMonList:: @ 81A045B
-    .string "BILL's favorite POKéMON list!$"
+    .string "BILL's favorite Pokémon list!$"
 
 Route25_SeaCottage_Text_SeeWhichMon:: @ 81A0479
-    .string "Which POKéMON do you want to see?$"
+    .string "Which Pokémon do you want to see?$"
 

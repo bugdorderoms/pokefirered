@@ -7,7 +7,7 @@ Route21_North_Text_RonaldDefeat:: @ 8188383
 
 Route21_North_Text_RonaldPostBattle:: @ 8188389
 	.string "I can't catch anything good.\n"
-	.string "Not one good POKéMON to be had!$"
+	.string "Not one good Pokémon to be had!$"
 
 Route21_North_Text_WadeIntro:: @ 81883C6
 	.string "I got a big haul!\n"

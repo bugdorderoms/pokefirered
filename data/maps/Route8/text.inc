@@ -1,5 +1,5 @@
 Route8_Text_AidanIntro:: @ 81840C5
-    .string "You look good at POKéMON, but how\n"
+    .string "You look good at Pokémon, but how\n"
     .string "is your chemistry grade?$"
 
 Route8_Text_AidanDefeat:: @ 8184100
@@ -39,11 +39,11 @@ Route8_Text_PaigeDefeat:: @ 8184210
     .string "Why??$"
 
 Route8_Text_PaigePostBattle:: @ 818421B
-    .string "When POKéMON grow up, they get\n"
+    .string "When Pokémon grow up, they get\n"
     .string "ugly! They shouldn't evolve.$"
 
 Route8_Text_LeslieIntro:: @ 8184257
-    .string "School is fun, but so are POKéMON.$"
+    .string "School is fun, but so are Pokémon.$"
 
 Route8_Text_LeslieDefeat:: @ 818427A
     .string "You made it clear to me that\n"
@@ -72,7 +72,7 @@ Route8_Text_MeganIntro:: @ 818437A
 
 Route8_Text_MeganDefeat:: @ 81843A6
     .string "Look what you did to my poor, cute\n"
-    .string "POKéMON!$"
+    .string "Pokémon!$"
 
 Route8_Text_MeganPostBattle:: @ 81843D2
     .string "SAFFRON's gatekeeper won't let us\n"
@@ -87,12 +87,12 @@ Route8_Text_RichDefeat:: @ 818444F
     .string "Missed the big chance!$"
 
 Route8_Text_RichPostBattle:: @ 8184466
-    .string "Playing games and POKéMON are like\n"
+    .string "Playing games and Pokémon are like\n"
     .string "eating peanuts! I just can't stop!$"
 
 Route8_Text_JuliaIntro:: @ 81844AC
     .string "What's a cute, round, and fluffy\n"
-    .string "POKéMON?$"
+    .string "Pokémon?$"
 
 Route8_Text_JuliaDefeat:: @ 81844D6
     .string "Stop!\p"
@@ -101,7 +101,7 @@ Route8_Text_JuliaDefeat:: @ 81844D6
 Route8_Text_JuliaPostBattle:: @ 81844FD
     .string "I read that CLEFAIRY evolves when\n"
     .string "it's exposed to a MOON STONE.\p"
-    .string "I read that in a POKéMON JOURNAL.\n"
+    .string "I read that in a Pokémon JOURNAL.\n"
     .string "I wonder if it's true?$"
 
 Route8_Text_UndergroundPathSign:: @ 8184576
@@ -117,12 +117,12 @@ Route8_Text_EliDefeat:: @ 81845D0
     .string "We used our twin power…$"
 
 Route8_Text_EliPostBattle:: @ 81845F2
-    .string "ELI: I caught my POKéMON with\n"
+    .string "ELI: I caught my Pokémon with\n"
     .string "ANNE!$"
 
 Route8_Text_EliNotEnoughMons:: @ 8184616
     .string "ELI: We can't battle if you don't\n"
-    .string "have two POKéMON.$"
+    .string "have two Pokémon.$"
 
 Route8_Text_AnneIntro:: @ 818464A
     .string "ANNE: We'll shock you with our twin\n"
@@ -132,12 +132,12 @@ Route8_Text_AnneDefeat:: @ 8184675
     .string "ANNE: Our twin power…$"
 
 Route8_Text_AnnePostBattle:: @ 818468B
-    .string "ANNE: I'm raising POKéMON with\n"
+    .string "ANNE: I'm raising Pokémon with\n"
     .string "ELI.$"
 
 Route8_Text_AnneNotEnoughMons:: @ 81846AF
     .string "ANNE: Hi, hi! Let's battle!\n"
-    .string "But bring two POKéMON.$"
+    .string "But bring two Pokémon.$"
 
 Route8_Text_RicardoIntro:: @ 81846E2
     .string "My bike's acting up, man.$"

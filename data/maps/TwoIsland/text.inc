@@ -71,13 +71,13 @@ TwoIsland_Text_BuyRareItemsHere:: @ 8181F28
 TwoIsland_Text_OldWomanLivesOutOnCape:: @ 8181F5D
     .string "There's an old woman who lives in\n"
     .string "a cottage out on the cape.\p"
-    .string "She gives the eye to POKéMON.\n"
+    .string "She gives the eye to Pokémon.\n"
     .string "It's a bit unnerving.$"
 
 TwoIsland_Text_HaveYouTriedJumpingGame:: @ 8181FCE
     .string "Boing! Boing!\n"
     .string "Have you tried the jumping game?\p"
-    .string "The POKéMON you can enter…\n"
+    .string "The Pokémon you can enter…\n"
     .string "Boing!\p"
     .string "Some go boing!\p"
     .string "And some go boooooooing!\p"

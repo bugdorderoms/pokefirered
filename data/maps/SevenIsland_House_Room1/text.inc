@@ -39,7 +39,7 @@ SevenIsland_House_Room1_Text_LimitThreeMonsPerSide:: @ 81A06AB
     .string "This hidden room is not built very\n"
     .string "sturdy.\p"
     .string "Can I get you to limit it to\n"
-    .string "battles of three POKéMON per side?$"
+    .string "battles of three Pokémon per side?$"
 
 SevenIsland_House_Room1_Text_SaveProgressBeforeBattle:: @ 81A0788
     .string "Fine! Before your battle, would\n"

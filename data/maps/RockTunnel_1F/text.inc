@@ -21,7 +21,7 @@ RockTunnel_1F_Text_OliverDefeat:: @ 817940E
     .string "Which way is out?$"
 
 RockTunnel_1F_Text_OliverPostBattle:: @ 817943A
-    .string "That sleeping POKéMON on ROUTE 12\n"
+    .string "That sleeping Pokémon on ROUTE 12\n"
     .string "forced me to take this detour.$"
 
 RockTunnel_1F_Text_LucasIntro:: @ 817947B
@@ -35,7 +35,7 @@ RockTunnel_1F_Text_LucasPostBattle:: @ 81794B4
     .string "You're talented enough to hike!$"
 
 RockTunnel_1F_Text_AshtonIntro:: @ 81794D4
-    .string "POKéMON fight!\n"
+    .string "Pokémon fight!\n"
     .string "Ready, go!$"
 
 RockTunnel_1F_Text_AshtonDefeat:: @ 81794EE
@@ -57,17 +57,17 @@ RockTunnel_1F_Text_LeahPostBattle:: @ 8179558
 
 RockTunnel_1F_Text_DanaIntro:: @ 8179577
     .string "I came this far looking for wild\n"
-    .string "POKéMON.$"
+    .string "Pokémon.$"
 
 RockTunnel_1F_Text_DanaDefeat:: @ 81795A1
-    .string "I'm out of POKéMON!$"
+    .string "I'm out of Pokémon!$"
 
 RockTunnel_1F_Text_DanaPostBattle:: @ 81795B5
     .string "You looked cute and harmless.\n"
     .string "Was I ever wrong!$"
 
 RockTunnel_1F_Text_ArianaIntro:: @ 81795E5
-    .string "You have POKéMON!\n"
+    .string "You have Pokémon!\n"
     .string "Let's start!$"
 
 RockTunnel_1F_Text_ArianaDefeat:: @ 8179604

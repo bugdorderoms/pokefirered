@@ -6,5 +6,5 @@ FuchsiaCity_Mart_Text_DontTheyHaveSafariZonePennants:: @ 81980BC
 
 FuchsiaCity_Mart_Text_DidYouTryXSpeed:: @ 8198134
     .string "Did you try X SPEED?\n"
-    .string "It speeds up a POKéMON in battle.$"
+    .string "It speeds up a Pokémon in battle.$"
 

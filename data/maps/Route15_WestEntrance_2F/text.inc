@@ -8,11 +8,11 @@ Route15_WestEntrance_2F_Text_GiveItemIfCaughtEnough:: @ 819F5AB
     .string "{STR_VAR_2} for you.\p"
     .string "So, {PLAYER}, let me ask you.\p"
     .string "Have you gathered data on at least\n"
-    .string "{STR_VAR_1} kinds of POKéMON?$"
+    .string "{STR_VAR_1} kinds of Pokémon?$"
 
 Route15_WestEntrance_2F_Text_GreatHereYouGo:: @ 819F6AA
     .string "Great! You have caught or owned\n"
-    .string "{STR_VAR_3} kinds of POKéMON!\p"
+    .string "{STR_VAR_3} kinds of Pokémon!\p"
     .string "Congratulations!\n"
     .string "Here you go!$"
 
@@ -22,8 +22,8 @@ Route15_WestEntrance_2F_Text_ReceivedItemFromAide:: @ 819F6FD
 
 Route15_WestEntrance_2F_Text_ExplainExpShare:: @ 819F71F
     .string "EXP. SHARE is an item to be held\n"
-    .string "by a POKéMON.\p"
-    .string "The POKéMON will receive a share\n"
+    .string "by a Pokémon.\p"
+    .string "The Pokémon will receive a share\n"
     .string "of the EXP. Points without having\l"
     .string "to battle.$"
 

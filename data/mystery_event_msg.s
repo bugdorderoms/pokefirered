@@ -105,15 +105,15 @@ SurfPichu_Slot5: @ 8488F50
 sText_MysteryGiftEgg: @ 8488F56
 	.string "Thank you for using the MYSTERY\n"
 	.string "GIFT System.\p"
-	.string "From the POKéMON CENTER we\n"
-	.string "have a gift - a POKéMON EGG!\p"
+	.string "From the Pokémon CENTER we\n"
+	.string "have a gift - a Pokémon EGG!\p"
 	.string "Please raise it with love and\n"
 	.string "kindness.$"
 
 sText_FullParty: @ 8488FE3
 	.string "Oh, your party appears to be full.\p"
 	.string "Please come see me after storing\n"
-	.string "a POKéMON on a PC.$"
+	.string "a Pokémon on a PC.$"
 
 MysteryEventScript_VisitingTrainer:: @ 848903A
 	setvaddress MysteryEventScript_VisitingTrainer
@@ -142,7 +142,7 @@ sText_MysteryGiftVisitingTrainer: @ 8489063
 	.string "GIFT System.\p"
 	.string "By holding this WONDER CARD, you\n"
 	.string "may take part in a survey at a\l"
-	.string "POKéMON MART.\p"
+	.string "Pokémon MART.\p"
 	.string "Use these surveys to invite\n"
 	.string "TRAINERS to the SEVII ISLANDS.\p"
 	.string "…Let me give you a secret\n"
@@ -352,7 +352,7 @@ sText_MysteryGiftAlteringCave: @ 8489887
 	.string "Thank you for using the MYSTERY\n"
 	.string "GIFT System.\p"
 	.string "Recently, there have been rumors\n"
-	.string "of rare POKéMON appearances.\p"
+	.string "of rare Pokémon appearances.\p"
 	.string "The rumors are about ALTERING\n"
 	.string "CAVE on OUTCAST ISLAND.\p"
 	.string "Why not visit there and check if\n"

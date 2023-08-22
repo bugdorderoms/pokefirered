@@ -1313,7 +1313,7 @@ TwoIsland_JoyfulGameCorner_EventScript_ShowDodrioBerryPickingRecords:: @ 81BC2FC
 	end
 
 CableClub_Text_WelcomeWhichCableClubService:: @ 81BC311
-	.string "Welcome to the POKéMON CABLE\n"
+	.string "Welcome to the Pokémon CABLE\n"
 	.string "CLUB.\p"
 	.string "Which of our services do you wish\n"
 	.string "to use?$"
@@ -1323,7 +1323,7 @@ CableClub_Text_WhichService:: @ 81BC35E
 	.string "to use?$"
 
 CableClub_Text_TradeMonsUsingLinkCable:: @ 81BC388
-	.string "Trade POKéMON with another player\n"
+	.string "Trade Pokémon with another player\n"
 	.string "using a GBA Game Link cable.$"
 
 CableClub_Text_BattleUsingLinkCable:: @ 81BC3C7
@@ -1336,11 +1336,11 @@ CableClub_Text_CloseThisMenu:: @ 81BC403
 
 CableClub_Text_NeedTwoMonsForDoubleBattle:: @ 81BC409
 	.string "For a DOUBLE BATTLE, you must\n"
-	.string "have at least two POKéMON.$"
+	.string "have at least two Pokémon.$"
 
 CableClub_Text_NeedTwoMonsToTrade:: @ 81BC442
 	.string "For trading, you must have at\n"
-	.string "least two POKéMON with you.$"
+	.string "least two Pokémon with you.$"
 
 CableClub_Text_PleaseWaitBCancel:: @ 81BC4AC
 	.string "Please wait.\n"
@@ -1458,7 +1458,7 @@ CableClub_Text_OtherTrainerNotReady:: @ 81BC9C0
 	.string "The other TRAINER is not ready.$"
 
 CableClub_Text_YouHaveAMonThatCantBeTaken:: @ 81BC9E0
-	.string "You have at least one POKéMON\n"
+	.string "You have at least one Pokémon\n"
 	.string "that can't be taken.$"
 
 CableClub_Text_AdapterNotConnected:: @ 81BCA13
@@ -1478,7 +1478,7 @@ CableClub_Text_PleaseWait:: @ 81BCA86
 	.string "しょうしょう　おまちください$"
 
 CableClub_Text_YouMayTradeHere:: @ 81BCA95
-	.string "You may trade your POKéMON here\n"
+	.string "You may trade your Pokémon here\n"
 	.string "with another TRAINER.$"
 
 CableClub_Text_YouMayBattleHere:: @ 81BCACB
@@ -1507,10 +1507,10 @@ CableClub_Text_ReturnsToPreviousStep:: @ 81BCB73
 
 CableClub_Text_NeedTwoMonsForUnionRoom:: @ 81BCBC3
 	.string "To enter the UNION ROOM, you must\n"
-	.string "have at least two POKéMON.$"
+	.string "have at least two Pokémon.$"
 
 CableClub_Text_UnionRoomAdapterNotConnected:: @ 81BCC3A
-	.string "This is the POKéMON WIRELESS CLUB\n"
+	.string "This is the Pokémon WIRELESS CLUB\n"
 	.string "UNION ROOM.\p"
 	.string "Unfortunately, your Wireless\n"
 	.string "Adapter is not connected properly.\p"
@@ -1532,14 +1532,14 @@ Text_DescribeWhichGame:: @ 81BCCFF
 	.string "Which game should I describe?$"
 
 Text_PokemonJumpInfo:: @ 81BCD4D
-	.string "“POKéMON JUMP”\p"
-	.string "Make your POKéMON skip the\n"
+	.string "“Pokémon JUMP”\p"
+	.string "Make your Pokémon skip the\n"
 	.string "VINE WHIP rope with the A Button.\p"
-	.string "Only mini POKéMON around 28 inches\n"
+	.string "Only mini Pokémon around 28 inches\n"
 	.string "or less may participate.\p"
-	.string "POKéMON that only swim, burrow, or\n"
+	.string "Pokémon that only swim, burrow, or\n"
 	.string "fly are not good at jumping.\p"
-	.string "As a result, those POKéMON may not\n"
+	.string "As a result, those Pokémon may not\n"
 	.string "participate.\p"
 	.string "Good things happen if everyone\n"
 	.string "jumps in time.$"
@@ -1576,7 +1576,7 @@ Text_PlayWhichGame:: @ 81BD02D
 	.string "to play?$"
 
 Text_EnterWhichPokemon:: @ 81BD059
-	.string "Which POKéMON would you like to\n"
+	.string "Which Pokémon would you like to\n"
 	.string "enter?$"
 
 Text_AllGoodToGo:: @ 81BD080
@@ -1590,16 +1590,16 @@ Text_LeavingDoComeAgain:: @ 81BD0BC
 
 EventScript_ExplainPokemonJumpRequirements:: @ 81BD0CF
 	.string "It doesn't look like you have any\n"
-	.string "POKéMON that you can enter…\p"
+	.string "Pokémon that you can enter…\p"
 	.string "Would you like me to explain what\n"
-	.string "kinds of POKéMON can enter?$"
+	.string "kinds of Pokémon can enter?$"
 
 Text_ShortJumpingPokemonAllowed:: @ 81BD14B
-	.string "“POKéMON JUMP” is open to POKéMON\n"
+	.string "“Pokémon JUMP” is open to Pokémon\n"
 	.string "around 28 inches or less.\p"
 	.string "What you can't enter are those\n"
-	.string "POKéMON that can't jump.\p"
-	.string "You know, like POKéMON that only\n"
+	.string "Pokémon that can't jump.\p"
+	.string "You know, like Pokémon that only\n"
 	.string "swim, burrow, or fly.\p"
 	.string "That's all you need to know.$"
 
@@ -1615,7 +1615,7 @@ Text_RetryFromStartPlease:: @ 81BD274
 	.string "やりなおして　みて　くれ$"
 
 CableClub_Text_WelcomeWhichDirectCornerRoom:: @ 81BD28D
-	.string "Welcome to the POKéMON WIRELESS\n"
+	.string "Welcome to the Pokémon WIRELESS\n"
 	.string "CLUB DIRECT CORNER.\p"
 	.string "You may interact directly with\n"
 	.string "your friends here.\p"
@@ -1623,7 +1623,7 @@ CableClub_Text_WelcomeWhichDirectCornerRoom:: @ 81BD28D
 	.string "enter?$"
 
 CableClub_Text_TradePokemon:: @ 81BD317
-	.string "Would you like to trade POKéMON?$"
+	.string "Would you like to trade Pokémon?$"
 
 CableClub_Text_PlayWhichBattleMode:: @ 81BD338
 	.string "Which Battle Mode would you like\n"
@@ -1632,16 +1632,16 @@ CableClub_Text_PlayWhichBattleMode:: @ 81BD338
 CableClub_Text_ExplainBattleModes:: @ 81BD390
 	.string "There are three Battle Modes.\p"
 	.string "SINGLE BATTLE is for two TRAINERS\n"
-	.string "with one or more POKéMON each.\p"
-	.string "Each TRAINER can have one POKéMON\n"
+	.string "with one or more Pokémon each.\p"
+	.string "Each TRAINER can have one Pokémon\n"
 	.string "in battle at a time.\p"
 	.string "DOUBLE BATTLE is for two TRAINERS\n"
-	.string "with two or more POKéMON each.\p"
+	.string "with two or more Pokémon each.\p"
 	.string "Each TRAINER will send out two\n"
-	.string "POKéMON in battle at a time.\p"
+	.string "Pokémon in battle at a time.\p"
 	.string "MULTI BATTLE is for four TRAINERS\n"
-	.string "with one or more POKéMON each.\p"
-	.string "Each TRAINER can have one POKéMON\n"
+	.string "with one or more Pokémon each.\p"
+	.string "Each TRAINER can have one Pokémon\n"
 	.string "in battle at a time.$"
 
 CableClub_Text_ChooseGroupLeaderOfTwo:: @ 81BD51B
@@ -1663,7 +1663,7 @@ CableClub_Text_ChooseGroupLeader:: @ 81BD5F1
 	.string "“JOIN GROUP.”$"
 
 CableClub_Text_WelcomeUnionRoomEnter:: @ 81BD65B
-	.string "Welcome to the POKéMON WIRELESS\n"
+	.string "Welcome to the Pokémon WIRELESS\n"
 	.string "CLUB UNION ROOM.\p"
 	.string "You may interact directly with\n"
 	.string "other TRAINERS here, some of\l"
@@ -1676,11 +1676,11 @@ CableClub_Text_UnionRoomInfo:: @ 81BD706
 	.string "who have also entered the ROOM.\p"
 	.string "You may do all sorts of things\n"
 	.string "here, such as exchanging greetings.\p"
-	.string "You may enter two POKéMON up to\n"
+	.string "You may enter two Pokémon up to\n"
 	.string "Lv. 30 for a one-on-one battle.\p"
 	.string "You may take part in a chat with\n"
 	.string "two to five people.\p"
-	.string "Or, you may register a POKéMON for\n"
+	.string "Or, you may register a Pokémon for\n"
 	.string "trade.\p"
 	.string "Would you like to enter the ROOM?$"
 
@@ -1696,7 +1696,7 @@ CableClub_Text_FirstTimeRightThisWay:: @ 81BD898
 	.string "I'll show you how the Wireless\n"
 	.string "Communication System works.\p"
 	.string "First, I need to show you this\n"
-	.string "floor of our POKéMON CENTER.\p"
+	.string "floor of our Pokémon CENTER.\p"
 	.string "Right this way, please.$"
 
 CableClub_Text_ExplainWirelessClubFirstTime:: @ 81BD966
@@ -1711,7 +1711,7 @@ CableClub_Text_ExplainWirelessClubFirstTime:: @ 81BD966
 	.string "chat, battle, and trade.\p"
 	.string "Second, the room on the right is\n"
 	.string "the DIRECT CORNER.\p"
-	.string "You may trade or battle POKéMON\n"
+	.string "You may trade or battle Pokémon\n"
 	.string "with your friends in this room.\p"
 	.string "If the Wireless Adapter isn't\n"
 	.string "connected, you may still link up\l"
@@ -1723,13 +1723,13 @@ CableClub_Text_ExplainWirelessClubFirstTime:: @ 81BD966
 
 CableClub_Text_AskAboutLinking:: @ 81BDB85
 	.string "Hello, {PLAYER}!\p"
-	.string "It's me, TEALA, the POKéMON\n"
+	.string "It's me, TEALA, the Pokémon\n"
 	.string "CENTER 2F attendant.\p"
 	.string "Is there something you needed to\n"
 	.string "ask me about linking?$"
 
 CableClub_Text_ExplainWirelessClub:: @ 81BDBF8
-	.string "Let me explain how the POKéMON\n"
+	.string "Let me explain how the Pokémon\n"
 	.string "WIRELESS CLUB works.\p"
 	.string "On this, the top floor, there are\n"
 	.string "two rooms.\p"
@@ -1742,7 +1742,7 @@ CableClub_Text_ExplainWirelessClub:: @ 81BDBF8
 	.string "chat, battle, and trade.\p"
 	.string "Second, the room on the right is\n"
 	.string "the DIRECT CORNER.\p"
-	.string "You may trade or battle POKéMON\n"
+	.string "You may trade or battle Pokémon\n"
 	.string "with your friends in this room.\p"
 	.string "Sometimes, you may not be able to\n"
 	.string "find your friends in the UNION ROOM\l"

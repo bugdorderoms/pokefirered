@@ -1,6 +1,6 @@
 FourIsland_IcefallCave_Back_Text_LoreleiKeepHandsOffMons:: @ 817B04F
     .string "LORELEI: Keep your filthy hands\n"
-    .string "off the POKéMON in the cave!\p"
+    .string "off the Pokémon in the cave!\p"
     .string "Do as I say, or you'll have me to\n"
     .string "answer to!$"
 
@@ -17,7 +17,7 @@ FourIsland_IcefallCave_Back_Text_LoreleiPlayerHelpMeKickPoachersOut:: @ 817B109
     .string "Right now, I need your help.\p"
     .string "Help me kick these poachers out\n"
     .string "before they do anything else.\p"
-    .string "They've been catching POKéMON\n"
+    .string "They've been catching Pokémon\n"
     .string "here, then selling them off!\p"
     .string "Are you ready?\n"
     .string "You take that one, please!$"
@@ -25,7 +25,7 @@ FourIsland_IcefallCave_Back_Text_LoreleiPlayerHelpMeKickPoachersOut:: @ 817B109
 FourIsland_IcefallCave_Back_Text_GruntIntro:: @ 817B20B
     .string "W-what?!\p"
     .string "Who says we can't do what we want\n"
-    .string "with the POKéMON we catch?$"
+    .string "with the Pokémon we catch?$"
 
 FourIsland_IcefallCave_Back_Text_GruntDefeat:: @ 817B251
     .string "We didn't plan on this!$"
@@ -36,7 +36,7 @@ FourIsland_IcefallCave_Back_Text_LoreleiWhereHaveYouTakenMons:: @ 817B269
     .string "You!\n"
     .string "Tell me!\p"
     .string "Where have you taken the captured\n"
-    .string "POKéMON?\p"
+    .string "Pokémon?\p"
     .string "I'm smashing your ring once and\n"
     .string "for all!$"
 
@@ -55,7 +55,7 @@ FourIsland_IcefallCave_Back_Text_LoreleiWellDeepFreezeYou:: @ 817B313
 FourIsland_IcefallCave_Back_Text_OkayRocketWareHouseFiveIsland:: @ 817B399
     .string "Wawaah! Okay!\n"
     .string "I'll talk!\p"
-    .string "The POKéMON are in the ROCKET\n"
+    .string "The Pokémon are in the ROCKET\n"
     .string "WAREHOUSE on FIVE ISLAND.\p"
     .string "There! I said it!\n"
     .string "We'll be going now!\p"

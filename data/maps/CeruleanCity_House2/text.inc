@@ -3,7 +3,7 @@ CeruleanCity_House2_Text_RocketsStoleTMForDig:: @ 8191E13
     .string "Look what they've done to my\n"
     .string "house!\p"
     .string "They stole a TM for teaching\n"
-    .string "POKéMON how to DIG holes!\p"
+    .string "Pokémon how to DIG holes!\p"
     .string "I was going to use it on a\n"
     .string "MANKEY or a SANDSHREW…\p"
     .string "That cost me a bundle, it did!$"

@@ -5,7 +5,7 @@ ViridianCity_House1_Text_NicknamingIsFun:: @ 818F292
     .string "names are easier to remember.$"
 
 ViridianCity_House1_Text_MyDaddyLovesMonsToo:: @ 818F30F
-    .string "My daddy loves POKéMON, too.$"
+    .string "My daddy loves Pokémon, too.$"
 
 ViridianCity_House1_Text_Speary:: @ 818F32C
     .string "SPEARY: Tetweet!$"

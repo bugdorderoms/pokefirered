@@ -11,7 +11,7 @@ SevenIsland_SevaultCanyon_Text_CyndyPostBattle:: @ 818C8C2
 
 SevenIsland_SevaultCanyon_Text_EvanIntro:: @ 818C8FD
     .string "It doesn't matter if you happen to\n"
-    .string "have the strongest POKéMON…\p"
+    .string "have the strongest Pokémon…\p"
     .string "It doesn't mean a thing if you don't\n"
     .string "know how to use them properly!$"
 
@@ -20,9 +20,9 @@ SevenIsland_SevaultCanyon_Text_EvanDefeat:: @ 818C980
 
 SevenIsland_SevaultCanyon_Text_EvanPostBattle:: @ 818C999
     .string "You see them every so often,\n"
-    .string "TRAINERS with awesome POKéMON\l"
+    .string "TRAINERS with awesome Pokémon\l"
     .string "who have no idea what to do.\p"
-    .string "Before training POKéMON, TRAINERS\n"
+    .string "Before training Pokémon, TRAINERS\n"
     .string "themselves need to grow up.$"
 
 SevenIsland_SevaultCanyon_Text_JacksonIntro:: @ 818CA2F

@@ -1,5 +1,5 @@
 CeladonCity_DepartmentStore_3F_Text_OTStandsForOriginalTrainer:: @ 81956E9
-    .string "Captured POKéMON are registered\n"
+    .string "Captured Pokémon are registered\n"
     .string "with an ID No. and the OT.\p"
     .string "OT stands for “Original TRAINER” -\n"
     .string "the TRAINER that caught it first.$"
@@ -15,10 +15,10 @@ CeladonCity_DepartmentStore_3F_Text_HaunterEvolvedOnTrade:: @ 81957B0
     .string "I collect them!\p"
     .string "Huh?\p"
     .string "HAUNTER turned into a different\n"
-    .string "POKéMON while being traded!$"
+    .string "Pokémon while being traded!$"
 
 CeladonCity_DepartmentStore_3F_Text_CanIdentifyTradeMonsByID:: @ 8195823
-    .string "You can identify POKéMON you get\n"
+    .string "You can identify Pokémon you get\n"
     .string "in trades by their ID Numbers.$"
 
 CeladonCity_DepartmentStore_3F_Text_ItsSuperNES:: @ 8195863
@@ -45,11 +45,11 @@ CeladonCity_DepartmentStore_3F_Text_TVGameShop:: @ 81958F6
 
 CeladonCity_DepartmentStore_3F_Text_RedGreenBothArePokemon:: @ 8195907
     .string "Red and Green!\n"
-    .string "Both are POKéMON!$"
+    .string "Both are Pokémon!$"
 
 Text_CounterTeach:: @ 8195928
     .string "Oh, hi!\n"
-    .string "I finally finished POKéMON.\p"
+    .string "I finally finished Pokémon.\p"
     .string "Not done yet? How about I teach\n"
     .string "you a good move?\p"
     .string "The move I have in mind is\n"
@@ -62,9 +62,9 @@ Text_CounterDeclined:: @ 81959CC
     .string "me if you change your mind.$"
 
 Text_CounterWhichMon:: @ 8195A08
-    .string "Which POKéMON should I teach\n"
+    .string "Which Pokémon should I teach\n"
     .string "COUNTER to?$"
 
 Text_CounterTaught:: @ 8195A31
     .string "Are you using that COUNTER move\n"
-    .string "I taught your POKéMON?$"
+    .string "I taught your Pokémon?$"

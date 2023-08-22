@@ -12,14 +12,14 @@ LavenderTown_Text_JustImaginingWhiteHand:: @ 817F568
 
 LavenderTown_Text_TownKnownAsMonGraveSite:: @ 817F5B6
     .string "This town is known as the grave\n"
-    .string "site of POKéMON.\p"
+    .string "site of Pokémon.\p"
     .string "Memorial services are held in\n"
-    .string "POKéMON TOWER.$"
+    .string "Pokémon TOWER.$"
 
 LavenderTown_Text_GhostsAppearedInTower:: @ 817F614
-    .string "Ghosts appeared in POKéMON TOWER.\p"
+    .string "Ghosts appeared in Pokémon TOWER.\p"
     .string "I think they're the spirits of\n"
-    .string "POKéMON that the ROCKETS killed.$"
+    .string "Pokémon that the ROCKETS killed.$"
 
 LavenderTown_Text_TownSign:: @ 817F676
     .string "LAVENDER TOWN\n"
@@ -32,9 +32,9 @@ LavenderTown_Text_SilphScopeNotice:: @ 817F69A
 
 LavenderTown_Text_VolunteerPokemonHouse:: @ 817F6D6
     .string "LAVENDER VOLUNTEER\n"
-    .string "POKéMON HOUSE$"
+    .string "Pokémon HOUSE$"
 
 LavenderTown_Text_PokemonTowerSign:: @ 817F6F7
-    .string "POKéMON TOWER\n"
-    .string "Becalm the Spirits of POKéMON$"
+    .string "Pokémon TOWER\n"
+    .string "Becalm the Spirits of Pokémon$"
 

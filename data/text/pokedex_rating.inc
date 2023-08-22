@@ -6,14 +6,14 @@ PokedexRating_Text_HowIsPokedexComingAlong:: @ 81A6C51
 PokedexRating_Text_SeenXOwnedY:: @ 81A6CA3
 	.string "The amount of progress you've made\n"
 	.string "on your POKéDEX is:\p"
-	.string "{STR_VAR_1} POKéMON seen and\n"
-	.string "{STR_VAR_2} POKéMON owned.\p"
+	.string "{STR_VAR_1} Pokémon seen and\n"
+	.string "{STR_VAR_2} Pokémon owned.\p"
 	.string "{SIZE}ÁPROF. OAK's rating:$"
 
 PokedexRating_Text_LessThan10:: @ 81A6D17
 	.string "You still have lots to do.\p"
 	.string "Go into every patch of grass you\n"
-	.string "see and look for POKéMON!$"
+	.string "see and look for Pokémon!$"
 
 PokedexRating_Text_LessThan20:: @ 81A6D6D
 	.string "It looks as if you're getting on\n"
@@ -25,7 +25,7 @@ PokedexRating_Text_LessThan30:: @ 81A6DDF
 	.string "Your POKéDEX could use a bit more\n"
 	.string "volume still!\p"
 	.string "Try to catch other species of\n"
-	.string "POKéMON!$"
+	.string "Pokémon!$"
 
 PokedexRating_Text_LessThan40:: @ 81A6E36
 	.string "Good, it's apparent that you're\n"
@@ -52,7 +52,7 @@ PokedexRating_Text_LessThan70:: @ 81A6F71
 PokedexRating_Text_LessThan80:: @ 81A6FAB
 	.string "Very good!\p"
 	.string "I think you'll collect even more\n"
-	.string "POKéMON by going fishing!$"
+	.string "Pokémon by going fishing!$"
 
 PokedexRating_Text_LessThan90:: @ 81A6FF1
 	.string "Wonderful! Let me guess… You\n"
@@ -68,7 +68,7 @@ PokedexRating_Text_LessThan110:: @ 81A7063
 
 PokedexRating_Text_LessThan120:: @ 81A70A5
 	.string "You even have the evolved forms\n"
-	.string "of POKéMON! Super!$"
+	.string "of Pokémon! Super!$"
 
 PokedexRating_Text_LessThan130:: @ 81A70D8
 	.string "Excellent! Trade with friends to\n"
@@ -80,7 +80,7 @@ PokedexRating_Text_LessThan140:: @ 81A7108
 
 PokedexRating_Text_LessThan150:: @ 81A7137
 	.string "I have nothing left to say!\n"
-	.string "You're the POKéMON PROFESSOR now!$"
+	.string "You're the Pokémon PROFESSOR now!$"
 
 PokedexRating_Text_Complete:: @ 81A7175
 	.string "Your POKéDEX is entirely complete!\n"
@@ -88,8 +88,8 @@ PokedexRating_Text_Complete:: @ 81A7175
 
 PokedexRating_Text_NationalDexSeenXOwnedY:: @ 81A71AA
 	.string "And your NATIONAL POKéDEX is:\p"
-	.string "{STR_VAR_1} POKéMON seen and\n"
-	.string "{STR_VAR_2} POKéMON owned.$"
+	.string "{STR_VAR_1} Pokémon seen and\n"
+	.string "{STR_VAR_2} Pokémon owned.$"
 
 PokedexRating_Text_LookForwardToFilledNationalDex:: @ 81A71EE
 	.string "I'll be looking forward to seeing\n"

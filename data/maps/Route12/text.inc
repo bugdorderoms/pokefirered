@@ -1,5 +1,5 @@
 Route12_Text_MonSprawledOutInSlumber:: @ 8185317
-    .string "A POKéMON is sprawled out in\n"
+    .string "A Pokémon is sprawled out in\n"
     .string "a deep and comfortable slumber.$"
 
 Text_SnorlaxWokeUp:: @ 8185354
@@ -38,7 +38,7 @@ Route12_Text_ChipDefeat:: @ 8185475
 
 Route12_Text_ChipPostBattle:: @ 8185488
     .string "With a better ROD, I could catch\n"
-    .string "better POKéMON…$"
+    .string "better Pokémon…$"
 
 Route12_Text_JustinIntro:: @ 81854B9
     .string "I'm searching for a MOON STONE.\n"
@@ -48,13 +48,13 @@ Route12_Text_JustinDefeat:: @ 81854ED
     .string "Oww!$"
 
 Route12_Text_JustinPostBattle:: @ 81854F2
-    .string "I could have made my POKéMON\n"
+    .string "I could have made my Pokémon\n"
     .string "evolve with a MOON STONE.\p"
     .string "I would have won then, I bet.$"
 
 Route12_Text_LucaIntro:: @ 8185547
     .string "Electricity is my specialty.\p"
-    .string "I don't know a thing about POKéMON\n"
+    .string "I don't know a thing about Pokémon\n"
     .string "of the sea, though.$"
 
 Route12_Text_LucaDefeat:: @ 818559B
@@ -62,10 +62,10 @@ Route12_Text_LucaDefeat:: @ 818559B
 
 Route12_Text_LucaPostBattle:: @ 81855A6
     .string "Water conducts electricity, so you\n"
-    .string "should zap sea POKéMON.$"
+    .string "should zap sea Pokémon.$"
 
 Route12_Text_HankIntro:: @ 81855E1
-    .string "The FISHING FOOL versus POKéMON\n"
+    .string "The FISHING FOOL versus Pokémon\n"
     .string "KID!$"
 
 Route12_Text_HankDefeat:: @ 8185606
@@ -74,7 +74,7 @@ Route12_Text_HankDefeat:: @ 8185606
 Route12_Text_HankPostBattle:: @ 8185616
     .string "I guess you get to be good at\n"
     .string "what you like.\p"
-    .string "Well, you beat me at POKéMON,\n"
+    .string "Well, you beat me at Pokémon,\n"
     .string "but you can't top me at fishing.$"
 
 Route12_Text_ElliotIntro:: @ 8185682
@@ -125,7 +125,7 @@ Route12_Text_JesNotEnoughMons:: @ 8185842
     .string "JES: GIA and I, we'll be\n"
     .string "together forever.\p"
     .string "We won't battle unless you have\n"
-    .string "two POKéMON of your own.$"
+    .string "two Pokémon of your own.$"
 
 Route12_Text_GiaIntro:: @ 81858A6
     .string "GIA: Hey, JES…\p"
@@ -141,4 +141,4 @@ Route12_Text_GiaPostBattle:: @ 81858E2
 Route12_Text_GiaNotEnoughMons:: @ 8185908
     .string "GIA: I can't bear to battle\n"
     .string "without my JES!\p"
-    .string "Don't you have one more POKéMON?$"
+    .string "Don't you have one more Pokémon?$"

@@ -22,7 +22,7 @@ SevenIsland_SevaultCanyon_Entrance_Text_MasonDefeat:: @ 818C473
 
 SevenIsland_SevaultCanyon_Entrance_Text_MasonPostBattle:: @ 818C4BA
     .string "Lalalah…\n"
-    .string "My POKéMON, I send them out,\l"
+    .string "My Pokémon, I send them out,\l"
     .string "all the girls scream and shout!$"
 
 SevenIsland_SevaultCanyon_Entrance_Text_NicolasIntro:: @ 818C500
@@ -40,14 +40,14 @@ SevenIsland_SevaultCanyon_Entrance_Text_NicolasPostBattle:: @ 818C54B
 
 SevenIsland_SevaultCanyon_Entrance_Text_MadelineIntro:: @ 818C5AA
     .string "I punish people who abuse\n"
-    .string "POKéMON!$"
+    .string "Pokémon!$"
 
 SevenIsland_SevaultCanyon_Entrance_Text_MadelineDefeat:: @ 818C5CD
     .string "You don't seem to be a problem\n"
     .string "TRAINER.$"
 
 SevenIsland_SevaultCanyon_Entrance_Text_MadelinePostBattle:: @ 818C5F5
-    .string "If you treat your POKéMON with\n"
+    .string "If you treat your Pokémon with\n"
     .string "kindness, they'll understand.$"
 
 SevenIsland_SevaultCanyon_Entrance_Text_EveIntro:: @ 818C632
@@ -65,7 +65,7 @@ SevenIsland_SevaultCanyon_Entrance_Text_EvePostBattle:: @ 818C683
 SevenIsland_SevaultCanyon_Entrance_Text_EveNotEnoughMons:: @ 818C6AB
     .string "EVE: I want to team up with JON\n"
     .string "when I battle you.\p"
-    .string "Come back with two POKéMON, okay?$"
+    .string "Come back with two Pokémon, okay?$"
 
 SevenIsland_SevaultCanyon_Entrance_Text_JonIntro:: @ 818C700
     .string "JON: When I'm with EVE, it feels\n"

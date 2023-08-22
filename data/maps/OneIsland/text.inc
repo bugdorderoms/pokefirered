@@ -49,8 +49,8 @@ OneIsland_Text_IslandSign:: @ 81819E1
     .string "Friends Gather at Knot Island$"
 
 OneIsland_Text_PokemonNetCenterSign:: @ 8181A0A
-    .string "Expanding the POKéMON World!\n"
-    .string "POKéMON NET CENTER$"
+    .string "Expanding the Pokémon World!\n"
+    .string "Pokémon NET CENTER$"
 
 @ Unused
 OneIsland_Text_ReturnToCinnabar:: @ 8181A3A

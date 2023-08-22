@@ -6,7 +6,7 @@ FiveIsland_ResortGorgeous_House_Text_PleaseHearMyWish:: @ 81A42A0
     .string "Please, hear my wish.$"
 
 FiveIsland_ResortGorgeous_House_Text_WishToSeeMonPlease:: @ 81A4315
-    .string "I wish to see a POKéMON.\n"
+    .string "I wish to see a Pokémon.\n"
     .string "A darling {STR_VAR_1}.\p"
     .string "I want to see one right away.\n"
     .string "Please, make my wish come true.$"

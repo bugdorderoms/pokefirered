@@ -54,18 +54,18 @@ SilphCo_5F_Text_Grunt2PostBattle:: @ 8175D59
     .string "KOFFING evolves into WEEZING!$"
 
 SilphCo_5F_Text_PorygonFirstVRMon:: @ 8175D89
-    .string "It's a POKéMON REPORT!\p"
-    .string "POKéMON LAB created PORYGON,\n"
-    .string "the first virtual-reality POKéMON.$"
+    .string "It's a Pokémon REPORT!\p"
+    .string "Pokémon LAB created PORYGON,\n"
+    .string "the first virtual-reality Pokémon.$"
 
 SilphCo_5F_Text_Over350TechniquesConfirmed:: @ 8175DE0
-    .string "It's a POKéMON REPORT!\p"
-    .string "Over 350 POKéMON techniques have\n"
+    .string "It's a Pokémon REPORT!\p"
+    .string "Over 350 Pokémon techniques have\n"
     .string "been confirmed.$"
 
 SilphCo_5F_Text_SomeMonsEvolveWhenTraded:: @ 8175E28
-    .string "It's a POKéMON REPORT!\p"
-    .string "Some POKéMON have been confirmed\n"
+    .string "It's a Pokémon REPORT!\p"
+    .string "Some Pokémon have been confirmed\n"
     .string "to evolve when they are traded.$"
 
 SilphCo_5F_Text_FloorSign:: @ 8175E80
@@ -76,6 +76,6 @@ SilphCo_5F_Text_RocketBossLookingForStrongMons:: @ 8175E99
     .string "Those thugs that took over our\n"
     .string "building…\p"
     .string "Their BOSS said he was looking for\n"
-    .string "strong POKéMON.\p"
+    .string "strong Pokémon.\p"
     .string "I hope our PRESIDENT managed to\n"
     .string "avoid trouble…$"

@@ -8,7 +8,7 @@ VictoryRoad_2F_Text_DawsonDefeat:: @ 817482C
 
 VictoryRoad_2F_Text_DawsonPostBattle:: @ 817483E
     .string "I can beat you when it comes to\n"
-    .string "knowledge about POKéMON!$"
+    .string "knowledge about Pokémon!$"
 
 VictoryRoad_2F_Text_DaisukeIntro:: @ 8174877
     .string "This here is VICTORY ROAD.\n"

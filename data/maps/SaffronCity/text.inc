@@ -23,7 +23,7 @@ SaffronCity_Text_WatchWhereYoureWalking:: @ 81810D5
 
 SaffronCity_Text_WeCanExploitMonsAroundWorld:: @ 81810F5
     .string "With SILPH under control, we can\n"
-    .string "exploit POKéMON around the world!\p"
+    .string "exploit Pokémon around the world!\p"
     .string "We'll get stinking rich, yeahah!$"
 
 SaffronCity_Text_YouBeatTeamRocket:: @ 8181159
@@ -70,9 +70,9 @@ SaffronCity_Text_FightingDojo:: @ 8181354
     .string "FIGHTING DOJO$"
 
 SaffronCity_Text_GymSign:: @ 8181362
-    .string "SAFFRON CITY POKéMON GYM\n"
+    .string "SAFFRON CITY Pokémon GYM\n"
     .string "LEADER: SABRINA\l"
-    .string "The Master of PSYCHIC POKéMON!$"
+    .string "The Master of PSYCHIC Pokémon!$"
 
 SaffronCity_Text_FullHealCuresStatus:: @ 81813AA
     .string "TRAINER TIPS\p"
@@ -87,7 +87,7 @@ SaffronCity_Text_GreatBallImprovedCatchRate:: @ 8181452
     .string "The new GREAT BALL offers improved\n"
     .string "catching rates.\p"
     .string "Try it on those hard-to-catch\n"
-    .string "POKéMON.$"
+    .string "Pokémon.$"
 
 SaffronCity_Text_SilphCoSign:: @ 81814B9
     .string "SILPH CO. OFFICE BUILDING$"
@@ -100,7 +100,7 @@ SaffronCity_Text_SilphsLatestProduct:: @ 81814E7
     .string "Release to be determined…$"
 
 SaffronCity_Text_TrainerFanClubSign:: @ 8181519
-    .string "POKéMON TRAINER FAN CLUB\p"
+    .string "Pokémon TRAINER FAN CLUB\p"
     .string "Many TRAINERS have scribbled their\n"
     .string "names on this sign.$"
 

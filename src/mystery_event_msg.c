@@ -1,6 +1,6 @@
 #include "global.h"
 
-const u8 gText_MysteryGiftSpecialRibbon[] = _("A special RIBBON was awarded to\nyour party POKéMON.");
+const u8 gText_MysteryGiftSpecialRibbon[] = _("A special RIBBON was awarded to\nyour party Pokémon.");
 const u8 gText_MysteryGiftNationalDex[] = _("The POKéDEX has been upgraded\nwith the NATIONAL MODE.");
 const u8 gText_MysteryGiftRareWord[] = _("A rare word has been added.");
 const u8 gText_MysteryGiftSentOver[] = _("{STR_VAR_1} was sent over!");

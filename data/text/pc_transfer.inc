@@ -34,6 +34,6 @@ Text_MonSentToBoxInPC:: @ 81A5E05
     .string "{STR_VAR_2}を　てんそうした！$"
 
 Text_NoMoreRoomForPokemon:: @ 81A5E31
-    .string "There's no more room for POKéMON!\p"
-    .string "The POKéMON BOXES are full and\n"
+    .string "There's no more room for Pokémon!\p"
+    .string "The Pokémon BOXES are full and\n"
     .string "can't accept any more!$"

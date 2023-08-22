@@ -19,7 +19,7 @@ SSAnne_Kitchen_Text_PeelSpudsEveryDay:: @ 81734A0
 SSAnne_Kitchen_Text_HearAboutSnorlaxItsAGlutton:: @ 81734D3
     .string "Did you hear about SNORLAX?\n"
     .string "It's a glutton.\p"
-    .string "No other POKéMON eats and sleeps\n"
+    .string "No other Pokémon eats and sleeps\n"
     .string "the way SNORLAX can and does!$"
 
 SSAnne_Kitchen_Text_OnlyGetToPeelOnions:: @ 817353E

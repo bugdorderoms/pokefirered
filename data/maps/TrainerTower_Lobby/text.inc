@@ -88,7 +88,7 @@ TrainerTower_Lobby_Text_HereAreTheResults:: @ 817CC69
 TrainerTower_Lobby_Text_NeedTwoMonsForDouble:: @ 817CC73
     .string "This is a two-on-two battle.\p"
     .string "You may not battle unless you have\n"
-    .string "at least two POKéMON.$"
+    .string "at least two Pokémon.$"
 
 TrainerTower_Lobby_Text_ExplainTrainerTower:: @ 817CCC9
     .string "Here at TRAINER TOWER, there is an\n"

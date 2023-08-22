@@ -41,7 +41,7 @@ Route6_Text_JeffDefeat:: @ 8183F24
     .string "I couldn't beat your challenge…$"
 
 Route6_Text_JeffPostBattle:: @ 8183F51
-    .string "I should bring more POKéMON with\n"
+    .string "I should bring more Pokémon with\n"
     .string "me. I'll feel safer that way.$"
 
 Route6_Text_IsabelleIntro:: @ 8183F90
@@ -63,7 +63,7 @@ Route6_Text_ElijahDefeat:: @ 818401A
     .string "You're too good!$"
 
 Route6_Text_ElijahPostBattle:: @ 818402B
-    .string "Are my POKéMON weak?\n"
+    .string "Are my Pokémon weak?\n"
     .string "Or, am I just bad?\l"
     .string "Which do you think?$"
 

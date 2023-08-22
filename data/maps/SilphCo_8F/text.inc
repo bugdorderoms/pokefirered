@@ -43,7 +43,7 @@ SilphCo_8F_Text_FloorSign:: @ 8176AB2
 SilphCo_8F_Text_ToRocketBossMonsAreTools:: @ 8176ACB
     .string "TEAM ROCKET's BOSS is terribly\n"
     .string "cruel!\p"
-    .string "To him, POKéMON are just tools to\n"
+    .string "To him, Pokémon are just tools to\n"
     .string "be used.\p"
     .string "What will happen if that tyrant\n"
     .string "takes over our company…$"

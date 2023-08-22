@@ -29,7 +29,7 @@ Route19_Text_MatthewDefeat:: @ 81878A5
     .string "Belly flop!$"
 
 Route19_Text_MatthewPostBattle:: @ 81878B1
-    .string "I can beat even marine POKéMON\n"
+    .string "I can beat even marine Pokémon\n"
     .string "at swimming.$"
 
 Route19_Text_DouglasIntro:: @ 81878DD
@@ -43,7 +43,7 @@ Route19_Text_DouglasPostBattle:: @ 81878FE
     .string "yonder!$"
 
 Route19_Text_DavidIntro:: @ 8187925
-    .string "I tried diving for POKéMON, but it\n"
+    .string "I tried diving for Pokémon, but it\n"
     .string "was a no-go.$"
 
 Route19_Text_DavidDefeat:: @ 8187955
@@ -51,7 +51,7 @@ Route19_Text_DavidDefeat:: @ 8187955
 
 Route19_Text_DavidPostBattle:: @ 818795B
     .string "I guess you have to fish for sea\n"
-    .string "POKéMON.$"
+    .string "Pokémon.$"
 
 Route19_Text_TonyIntro:: @ 8187985
     .string "I look at the sea to forget all\n"
@@ -108,7 +108,7 @@ Route19_Text_ConnieDefeat:: @ 8187B85
     .string "I'm exhausted…$"
 
 Route19_Text_ConniePostBattle:: @ 8187B94
-    .string "If I were to ride a POKéMON on\n"
+    .string "If I were to ride a Pokémon on\n"
     .string "the sea, I'd like a LAPRAS.\p"
     .string "LAPRAS is so big, I bet it\n"
     .string "would keep me dry on water.$"
@@ -134,11 +134,11 @@ Route19_Text_LiaPostBattle:: @ 8187C9E
 Route19_Text_LiaNotEnoughMons:: @ 8187CF2
     .string "LIA: I want to battle together\n"
     .string "with my little brother.\p"
-    .string "Don't you have two POKéMON?$"
+    .string "Don't you have two Pokémon?$"
 
 Route19_Text_LucIntro:: @ 8187D45
     .string "LUC: My big sis taught me how\n"
-    .string "to swim and train POKéMON.$"
+    .string "to swim and train Pokémon.$"
 
 Route19_Text_LucDefeat:: @ 8187D7E
     .string "LUC: Oh, wow!\n"
@@ -151,4 +151,4 @@ Route19_Text_LucPostBattle:: @ 8187DAD
 Route19_Text_LucNotEnoughMons:: @ 8187DE8
     .string "LUC: I don't want to if I can't\n"
     .string "battle you with my big sis.\p"
-    .string "Don't you have two POKéMON?$"
+    .string "Don't you have two Pokémon?$"

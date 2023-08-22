@@ -85,7 +85,7 @@ Movement_BreakRock:: @ 81BE08F
 	step_end
 
 Text_UseRockSmash:: @ 81BE09D
-	.string "It's a rugged rock, but a POKéMON\n"
+	.string "It's a rugged rock, but a Pokémon\n"
 	.string "may be able to smash it.$"
 
 EventScript_StrengthBoulder:: @ 81BE11D
@@ -96,7 +96,7 @@ EventScript_StrengthBoulder:: @ 81BE11D
 	end
 
 Text_UseStrength:: @ 81BE19A
-	.string "It's a big boulder, but a POKéMON\n"
+	.string "It's a big boulder, but a Pokémon\n"
 	.string "may be able to push it aside.$"
 
 EventScript_CantUseRideHere::
@@ -197,7 +197,7 @@ EventScript_EndSurface:
 	end
 
 Text_MonMayGoUnderwater:: @ 81BE42B
-	.string "The sea is deep here. A POKéMON\n"
+	.string "The sea is deep here. A Pokémon\n"
 	.string "may be able to go underwater.$"
 
 Text_SeaIsDeepUseDive:: @ 81BE469
@@ -209,7 +209,7 @@ Text_MonUsedDive:: @ 81BE49B
 
 Text_MonMaySurface:: @ 81BE4A9
 	.string "Light is filtering down from above.\n"
-	.string "A POKéMON may be able to surface.$"
+	.string "A Pokémon may be able to surface.$"
 
 Text_LightFilteringUseDive:: @ 81BE4EF
 	.string "Light is filtering down from above.\n"
