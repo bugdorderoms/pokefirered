@@ -18,7 +18,6 @@
 #include "constants/maps.h"
 #include "constants/abilities.h"
 #include "constants/items.h"
-#include "constants/inserts.h"
 
 struct WildEncounterData
 {

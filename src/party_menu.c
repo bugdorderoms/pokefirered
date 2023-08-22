@@ -76,7 +76,6 @@
 #include "constants/poke_ride.h"
 #include "constants/quest_log.h"
 #include "constants/songs.h"
-#include "constants/inserts.h"
 
 #define PARTY_PAL_SELECTED     (1 << 0)
 #define PARTY_PAL_FAINTED      (1 << 1)

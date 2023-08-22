@@ -13,7 +13,6 @@
 #include "registered_item.h"
 #include "item_menu_icons.h"
 #include "constants/map_types.h"
-#include "constants/inserts.h"
 
 #define DNS_PAL_EXCEPTION FALSE
 #define DNS_PAL_ACTIVE    TRUE

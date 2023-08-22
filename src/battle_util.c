@@ -35,7 +35,6 @@
 #include "constants/hold_effects.h"
 #include "constants/battle_move_effects.h"
 #include "constants/battle_script_commands.h"
-#include "constants/inserts.h"
 
 static const u8 sTargetPositions[][2] =
 {

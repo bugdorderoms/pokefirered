@@ -46,7 +46,7 @@ override CFLAGS += -mthumb -mthumb-interwork -O2 -mcpu=arm7tdmi -mabi=apcs-gnu -
 LIBPATH := -L $(shell dirname $(shell $(CC) --print-file-name=libgcc.a)) -L $(shell dirname $(shell $(CC) --print-file-name=libc.a))
 endif
 
-CPPFLAGS := -iquote include -D$(GAME_VERSION) -DREVISION=$(GAME_REVISION) -D$(GAME_LANGUAGE) -DMODERN=$(MODERN)
+CPPFLAGS := -iquote include -D$(GAME_VERSION) -DREVISION=$(GAME_REVISION) -D$(GAME_LANGUAGE) -DMODERN=$(MODERN) -include inserts.h
 ifeq ($(MODERN),0)
 CPPFLAGS += -I tools/agbcc -I tools/agbcc/include -nostdinc -undef
 endif

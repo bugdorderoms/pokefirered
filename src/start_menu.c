@@ -36,7 +36,6 @@
 #include "save_menu_util.h"
 #include "constants/songs.h"
 #include "constants/field_weather.h"
-#include "constants/inserts.h"
 
 enum StartMenuOption
 {

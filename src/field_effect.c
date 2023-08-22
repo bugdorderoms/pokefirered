@@ -32,7 +32,6 @@
 #include "constants/poke_ride.h"
 #include "constants/songs.h"
 #include "pokemon_storage_system.h"
-#include "constants/inserts.h"
 
 #define FIELD_EFFECT_COUNT 32
 

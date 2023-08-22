@@ -48,7 +48,6 @@
 #include "constants/pokemon.h"
 #include "constants/songs.h"
 #include "constants/trainers.h"
-#include "constants/inserts.h"
 
 static void HandleAction_UseMove(void);
 static void HandleAction_Switch(void);

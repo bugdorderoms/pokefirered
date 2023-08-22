@@ -47,7 +47,6 @@
 #include "constants/abilities.h"
 #include "constants/pokemon.h"
 #include "constants/maps.h"
-#include "constants/inserts.h"
 #include "constants/battle_move_effects.h"
 
 struct StatFractions

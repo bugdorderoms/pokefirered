@@ -19,7 +19,6 @@
 #include "constants/battle_anim.h"
 #include "constants/moves.h"
 #include "constants/songs.h"
-#include "constants/inserts.h"
 
 static void OpponentHandleGetMonData(void);
 static void OpponentHandleGetRawMonData(void);

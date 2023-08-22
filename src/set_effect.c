@@ -27,7 +27,6 @@
 #include "constants/item_effects.h"
 #include "constants/hold_effects.h"
 #include "constants/battle_move_effects.h"
-#include "constants/inserts.h"
 
 void SetMoveEffect(u8 moveEffect, bool8 affectsUser, bool8 certain)
 {

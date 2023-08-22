@@ -28,7 +28,6 @@
 #include "field_fadetransition.h"
 #include "trade.h"
 #include "constants/form_change.h"
-#include "constants/inserts.h"
 #include "constants/daycare.h"
 #include "constants/region_map_sections.h"
 #include "constants/global.h"

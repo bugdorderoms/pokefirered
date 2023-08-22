@@ -16,7 +16,6 @@
 #include "constants/maps.h"
 #include "constants/songs.h"
 #include "constants/trainers.h"
-#include "constants/inserts.h"
 
 #define TAG_VS_LETTERS 10000
 

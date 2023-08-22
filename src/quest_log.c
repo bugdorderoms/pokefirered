@@ -28,7 +28,6 @@
 #include "constants/quest_log.h"
 #include "constants/field_weather.h"
 #include "constants/event_object_movement.h"
-#include "constants/inserts.h"
 
 struct TrainerFanClub
 {

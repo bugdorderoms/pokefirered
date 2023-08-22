@@ -36,7 +36,6 @@
 #include "constants/trainers.h"
 #include "constants/hold_effects.h"
 #include "constants/battle_move_effects.h"
-#include "constants/inserts.h"
 
 static const u8 sFlailHpScaleToPowerTable[] =
 {
