@@ -104,8 +104,12 @@ static void sio32intr_clock_master(void)
 
     if (gSTWIStatus->state == 3) // master done ack
     {
-        if (gSTWIStatus->ackActiveCommand == (0x80 | ID_MS_CHANGE_REQ) || gSTWIStatus->ackActiveCommand == (0x80 | ID_DATA_TX_AND_CHANGE_REQ)
-         || gSTWIStatus->ackActiveCommand == (0x80 | ID_UNK35_REQ) || gSTWIStatus->ackActiveCommand == (0x80 | ID_RESUME_RETRANSMIT_AND_CHANGE_REQ))
+        if (
+            gSTWIStatus->ackActiveCommand == (0x80 | ID_MS_CHANGE_REQ)
+         || gSTWIStatus->ackActiveCommand == (0x80 | ID_DATA_TX_AND_CHANGE_REQ)
+         || gSTWIStatus->ackActiveCommand == (0x80 | ID_UNK35_REQ)
+         || gSTWIStatus->ackActiveCommand == (0x80 | ID_RESUME_RETRANSMIT_AND_CHANGE_REQ)
+        )
         {
 
             gSTWIStatus->msMode = AGB_CLK_SLAVE;
@@ -166,8 +170,12 @@ static void sio32intr_clock_slave(void)
             gSTWIStatus->reqActiveCommand = reqLen = (regSIODATA32 >> 0);
             if (gSTWIStatus->reqLength == 0)
             {
-                if (gSTWIStatus->reqActiveCommand == ID_MS_CHANGE_REQ || gSTWIStatus->reqActiveCommand == ID_DATA_READY_AND_CHANGE_REQ
-                 || gSTWIStatus->reqActiveCommand == ID_DISCONNECTED_AND_CHANGE_REQ || gSTWIStatus->reqActiveCommand == ID_UNK36_REQ)
+                if (
+                    gSTWIStatus->reqActiveCommand == ID_MS_CHANGE_REQ
+                 || gSTWIStatus->reqActiveCommand == ID_DATA_READY_AND_CHANGE_REQ
+                 || gSTWIStatus->reqActiveCommand == ID_DISCONNECTED_AND_CHANGE_REQ
+                 || gSTWIStatus->reqActiveCommand == ID_UNK36_REQ
+                )
                 {
                     gSTWIStatus->ackActiveCommand = gSTWIStatus->reqActiveCommand + 0x80;
                     ((u32*)gSTWIStatus->txPacket)[0] = 0x99660000 + gSTWIStatus->ackActiveCommand;
@@ -211,8 +219,11 @@ static void sio32intr_clock_slave(void)
         gSTWIStatus->reqNext++;
         if (gSTWIStatus->reqLength < gSTWIStatus->reqNext)
         {
-            if (gSTWIStatus->reqActiveCommand == ID_DATA_READY_AND_CHANGE_REQ || gSTWIStatus->reqActiveCommand == ID_DISCONNECTED_AND_CHANGE_REQ
-             || gSTWIStatus->reqActiveCommand == ID_UNK36_REQ)
+            if (
+                gSTWIStatus->reqActiveCommand == ID_DATA_READY_AND_CHANGE_REQ
+             || gSTWIStatus->reqActiveCommand == ID_DISCONNECTED_AND_CHANGE_REQ
+             || gSTWIStatus->reqActiveCommand == ID_UNK36_REQ
+            )
             {
                 gSTWIStatus->ackActiveCommand = gSTWIStatus->reqActiveCommand + 0x80;
                 ((u32*)gSTWIStatus->txPacket)[0] = 0x99660000 | gSTWIStatus->ackActiveCommand;

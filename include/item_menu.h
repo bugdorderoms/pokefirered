@@ -28,7 +28,7 @@ void CB2_SetUpReshowBattleScreenAfterMenu(void);
 void ResetBagCursorPositions(void);
 void InitPokedudeBag(u8);
 void CB2_BagMenuFromStartMenu(void);
-void MoveItemSlotInList(struct ItemSlot * itemSlots, u32 from, u32 to);
+void MoveItemSlotInList(struct ItemSlot * itemSlots_, u32 from, u32 to_);
 void ItemMenu_StartFadeToExitCallback(u8 taskId);
 void Bag_BeginCloseWin0Animation(void);
 void ItemMenu_SetExitCallback(void (*)(void));

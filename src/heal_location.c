@@ -4,6 +4,8 @@
 #include "constants/maps.h"
 #include "constants/heal_locations.h"
 
+static void SetWhiteoutRespawnHealerNpcAsLastTalked(u32 healLocationIdx);
+
 // Arrays described here because porymap will overrwrite the below data file
 
 // sSpawnPoints
@@ -28,17 +30,30 @@ static u32 GetHealLocationIndexFromMapGroupAndNum(u16 mapGroup, u16 mapNum)
 {
     u32 i;
 
-    for (i = 0; i < NELEMS(sSpawnPoints); i++)
-	{
+    for (i = 0; i < NELEMS(sSpawnPoints); i++) {
         if (sSpawnPoints[i].group == mapGroup && sSpawnPoints[i].map == mapNum)
+        {
             return i + 1;
+        }
     }
+
     return 0;
+}
+
+static const struct HealLocation * GetHealLocationPointerFromMapGroupAndNum(u16 mapGroup, u16 mapNum)
+{
+    u32 i = GetHealLocationIndexFromMapGroupAndNum(mapGroup, mapNum);
+    if (i == 0)
+        return NULL;
+
+    return &sSpawnPoints[i - 1];
 }
 
 const struct HealLocation * GetHealLocation(u32 idx)
 {
-    if (idx == 0 || idx > NELEMS(sSpawnPoints))
+    if (idx == 0)
+        return NULL;
+    if (idx > NELEMS(sSpawnPoints))
         return NULL;
     return &sSpawnPoints[idx - 1];
 }
@@ -91,6 +106,11 @@ void SetWhiteoutRespawnWarpAndHealerNpc(struct WarpData * warp)
             warp->x = 7;
             warp->y = 4;
         }
-		gSpecialVar_LastTalked = sWhiteoutRespawnHealerNpcIds[healLocationIdx - 1];
+        SetWhiteoutRespawnHealerNpcAsLastTalked(healLocationIdx);
     }
+}
+
+static void SetWhiteoutRespawnHealerNpcAsLastTalked(u32 healLocationIdx)
+{
+    gSpecialVar_LastTalked = sWhiteoutRespawnHealerNpcIds[healLocationIdx - 1];
 }

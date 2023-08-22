@@ -124,15 +124,14 @@ static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
 
 static const u16 sWeatherFlagsInfo[][2] =
 {
-	[ENUM_WEATHER_NONE]         = {0, 0},
-	[ENUM_WEATHER_RAIN]         = {WEATHER_RAIN_TEMPORARY, WEATHER_RAIN_PERMANENT},
-	[ENUM_WEATHER_RAIN_PRIMAL]  = {WEATHER_RAIN_PRIMAL, WEATHER_RAIN_PRIMAL},
-	[ENUM_WEATHER_SUN]          = {WEATHER_SUN_TEMPORARY, WEATHER_SUN_PERMANENT},
-	[ENUM_WEATHER_SUN_PRIMAL]   = {WEATHER_SUN_PRIMAL, WEATHER_SUN_PRIMAL},
-	[ENUM_WEATHER_SANDSTORM]    = {WEATHER_SANDSTORM_TEMPORARY, WEATHER_SANDSTORM_PERMANENT},
-	[ENUM_WEATHER_HAIL] 	    = {WEATHER_HAIL_TEMPORARY, WEATHER_HAIL_PERMANENT},
+	[ENUM_WEATHER_RAIN] = {WEATHER_RAIN_TEMPORARY, WEATHER_RAIN_PERMANENT},
+	[ENUM_WEATHER_RAIN_PRIMAL] = {WEATHER_RAIN_PRIMAL, WEATHER_RAIN_PRIMAL},
+	[ENUM_WEATHER_SUN] = {WEATHER_SUN_TEMPORARY, WEATHER_SUN_PERMANENT},
+	[ENUM_WEATHER_SUN_PRIMAL] = {WEATHER_SUN_PRIMAL, WEATHER_SUN_PRIMAL},
+	[ENUM_WEATHER_SANDSTORM] = {WEATHER_SANDSTORM_TEMPORARY, WEATHER_SANDSTORM_PERMANENT},
+	[ENUM_WEATHER_HAIL] = {WEATHER_HAIL_TEMPORARY, WEATHER_HAIL_PERMANENT},
 	[ENUM_WEATHER_STRONG_WINDS] = {WEATHER_STRONG_WINDS, WEATHER_STRONG_WINDS},
-	[ENUM_WEATHER_FOG] 			= {WEATHER_FOG_TEMPORARY, WEATHER_FOG_PERMANENT},
+	[ENUM_WEATHER_FOG] = {WEATHER_FOG_TEMPORARY, WEATHER_FOG_PERMANENT},
 };
 
 static bool8 CanBeStatused(u8 bank, bool8 checkFlowerVeil)
@@ -938,11 +937,17 @@ u8 DoFieldEndTurnEffects(void)
                 {
                     if (--gWishFutureKnock.weatherDuration == 0)
                     {
-                        gBattleWeather &= ~(WEATHER_RAIN_TEMPORARY);
+                        gBattleWeather &= ~(WEATHER_RAIN_TEMPORARY | WEATHER_RAIN_DOWNPOUR);
                         gBattleCommunication[MULTISTRING_CHOOSER] = 2;
                     }
+                    else if (gBattleWeather & WEATHER_RAIN_DOWNPOUR)
+                        gBattleCommunication[MULTISTRING_CHOOSER] = 1;
                     else
                         gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+                }
+                else if (gBattleWeather & WEATHER_RAIN_DOWNPOUR)
+                {
+                    gBattleCommunication[MULTISTRING_CHOOSER] = 1;
                 }
                 else
                 {
@@ -4817,7 +4822,7 @@ static bool8 CanBattlerGetOrLoseItem(u8 battlerId, u16 itemId)
 	u16 ability = GetBattlerAbility(battlerId), species = gBattleMons[battlerId].species;
 	u32 personality = gBattleMons[battlerId].personality;
 	
-	if (GetBattlerItemHoldEffect(battlerId, FALSE) == HOLD_EFFECT_Z_CRYSTAL || ItemIsMail(itemId)
+	if (GetBattlerItemHoldEffect(battlerId, FALSE) == HOLD_EFFECT_Z_CRYSTAL || itemId == ITEM_ENIGMA_BERRY || ItemIsMail(itemId)
 	|| GetSpeciesFormChange(FORM_CHANGE_HOLD_ITEM, species, personality, ability, itemId, 0, FALSE)
 	|| GetSpeciesFormChange(FORM_CHANGE_MEGA_EVO, species, personality, ability, itemId, 0, FALSE)
 	|| GetSpeciesFormChange(FORM_CHANGE_PRIMAL, species, personality, ability, itemId, 0, FALSE)

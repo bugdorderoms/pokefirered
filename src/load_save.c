@@ -35,7 +35,7 @@ EWRAM_DATA struct LoadedSaveData gLoadedSaveData = {0};
 EWRAM_DATA u32 gLastEncryptionKey = 0;
 
 // IWRAM common
-bool8 gFlashMemoryPresent;
+bool32 gFlashMemoryPresent;
 struct SaveBlock1 *gSaveBlock1Ptr;
 struct SaveBlock2 *gSaveBlock2Ptr;
 struct PokemonStorage *gPokemonStoragePtr;
@@ -65,9 +65,11 @@ void ClearSav1(void)
 
 void SetSaveBlocksPointers(void)
 {
-    u32 offset = (Random()) & ((SAVEBLOCK_MOVE_RANGE - 1) & ~3);
+    u32 offset;
     struct SaveBlock1** sav1_LocalVar = &gSaveBlock1Ptr;
     void *oldSave = (void *)gSaveBlock1Ptr;
+
+    offset = (Random()) & ((SAVEBLOCK_MOVE_RANGE - 1) & ~3);
 
     gSaveBlock2Ptr = (void*)(&gSaveBlock2) + offset;
     *sav1_LocalVar = (void*)(&gSaveBlock1) + offset;

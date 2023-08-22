@@ -2189,7 +2189,7 @@ void AnimTask_MorningSunLightBeam(u8 taskId)
         SetAnimBgAttribute(1, BG_ANIM_SCREEN_SIZE, 0);
         SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 1);
         SetAnimBgAttribute(1, BG_ANIM_CHAR_BASE_BLOCK, 1);
-        GetBattleAnimBgData(&animBg, 1);
+        GetBattleAnimBg1Data(&animBg);
         AnimLoadCompressedBgTilemap(animBg.bgId, gBattleAnim_MorningSunTilemap);
         AnimLoadCompressedBgGfx(animBg.bgId, gBattleAnim_MorningSunGfx, animBg.tilesOffset);
         LoadCompressedPalette(gBattleAnim_MorningSunPal, animBg.paletteId * 16, 32);
@@ -2235,7 +2235,7 @@ void AnimTask_MorningSunLightBeam(u8 taskId)
         }
         break;
     case 4:
-        GetBattleAnimBgData(&animBg, 1);
+        GetBattleAnimBg1Data(&animBg);
         InitBattleAnimBg(animBg.bgId);
         SetAnimBgAttribute(1, BG_ANIM_CHAR_BASE_BLOCK, 0);
         SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 1);
@@ -2352,7 +2352,7 @@ void AnimTask_DoomDesireLightBeam(u8 taskId)
         SetAnimBgAttribute(1, BG_ANIM_SCREEN_SIZE, 0);
         SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 1);
         SetAnimBgAttribute(1, BG_ANIM_CHAR_BASE_BLOCK, 1);
-        GetBattleAnimBgData(&animBg, 1);
+        GetBattleAnimBg1Data(&animBg);
         AnimLoadCompressedBgTilemap(animBg.bgId, gBattleAnim_MorningSunTilemap);
         AnimLoadCompressedBgGfx(animBg.bgId, gBattleAnim_MorningSunGfx, animBg.tilesOffset);
         LoadCompressedPalette(gBattleAnim_MorningSunPal, animBg.paletteId * 16, 32);
@@ -2420,7 +2420,7 @@ void AnimTask_DoomDesireLightBeam(u8 taskId)
             gTasks[taskId].data[0] = 1;
         break;
     case 5:
-        GetBattleAnimBgData(&animBg, 1);
+        GetBattleAnimBg1Data(&animBg);
         InitBattleAnimBg(animBg.bgId);
         SetAnimBgAttribute(1, BG_ANIM_CHAR_BASE_BLOCK, 0);
         SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 1);
@@ -5042,15 +5042,15 @@ static void AnimRecycleStep(struct Sprite *sprite)
 
 void AnimTask_GetWeather(u8 taskId)
 {
-    gBattleAnimArgs[7] = ENUM_WEATHER_NONE;
+    gBattleAnimArgs[7] = ANIM_WEATHER_NONE;
     if (gWeatherMoveAnim & WEATHER_SUN_ANY)
-        gBattleAnimArgs[7] = ENUM_WEATHER_SUN;
+        gBattleAnimArgs[7] = ANIM_WEATHER_SUN;
     else if (gWeatherMoveAnim & WEATHER_RAIN_ANY)
-        gBattleAnimArgs[7] = ENUM_WEATHER_RAIN;
+        gBattleAnimArgs[7] = ANIM_WEATHER_RAIN;
     else if (gWeatherMoveAnim & WEATHER_SANDSTORM_ANY)
-        gBattleAnimArgs[7] = ENUM_WEATHER_SANDSTORM;
+        gBattleAnimArgs[7] = ANIM_WEATHER_SANDSTORM;
     else if (gWeatherMoveAnim & WEATHER_HAIL_ANY)
-        gBattleAnimArgs[7] = ENUM_WEATHER_HAIL;
+        gBattleAnimArgs[7] = ANIM_WEATHER_HAIL;
 
     DestroyAnimVisualTask(taskId);
 }

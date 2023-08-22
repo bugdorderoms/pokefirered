@@ -80,7 +80,6 @@ u16 AddWindow8Bit(const struct WindowTemplate *template);
 void FillWindowPixelBuffer8Bit(u8 windowId, u8 fillValue);
 void FillWindowPixelRect8Bit(u8 windowId, u8 fillValue, u16 x, u16 y, u16 width, u16 height);
 void BlitBitmapRectToWindow4BitTo8Bit(u8 windowId, const u8 *pixels, u16 srcX, u16 srcY, u16 srcWidth, int srcHeight, u16 destX, u16 destY, u16 rectWidth, u16 rectHeight, u8 paletteNum);
-void FillHelpMessageWindow(u8 windowId);
 
 extern void *gWindowBgTilemapBuffers[];
 extern struct Window gWindows[];

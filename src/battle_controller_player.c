@@ -2652,7 +2652,7 @@ static void PlayerHandleExpUpdate(void)
 
         LoadBattleBarGfx();
         GetMonData(&gPlayerParty[monId], MON_DATA_SPECIES);  // Unused return value.
-        expPointsToGive = READ_16(&gBattleBufferA[gActiveBattler][2]);
+        expPointsToGive = T1_READ_16(&gBattleBufferA[gActiveBattler][2]);
         taskId = CreateTask(Task_GiveExpToMon, 10);
         gTasks[taskId].tExpTask_monId = monId;
         gTasks[taskId].tExpTask_gainedExp = expPointsToGive;
@@ -3188,7 +3188,7 @@ static void MoveInfoPrintPowerAndAccuracy(u16 move)
 		ConvertIntToDecimalStringN(gBattleTextBuff1, gBattleMoves[move].power, STR_CONV_MODE_LEFT_ALIGN, 3);
 	
 	// Move's accuracy
-	if (gBattleMoves[move].accuracy == 0)
+	if (gBattleMoves[move].accuracy <= 1)
 		StringCopy(gBattleTextBuff2, gText_ThreeHyphens);
 	else
 		ConvertIntToDecimalStringN(gBattleTextBuff2, gBattleMoves[move].accuracy, STR_CONV_MODE_LEFT_ALIGN, 3);

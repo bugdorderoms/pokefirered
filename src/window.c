@@ -1,6 +1,5 @@
 #include "global.h"
 #include "gflib.h"
-#include "graphics.h"
 
 u8 gWindowClearTile;
 void *gWindowBgTilemapBuffers[4];
@@ -511,32 +510,4 @@ static u8 GetNumActiveWindowsOnBg(u8 bgId)
             windowsNum++;
     }
     return windowsNum;
-}
-
-void FillHelpMessageWindow(u8 windowId)
-{
-    const u8* ptr = gUnknown_84566A8;
-	u8 width = (u8)GetWindowAttribute(windowId, WINDOW_WIDTH), height = (u8)GetWindowAttribute(windowId, WINDOW_HEIGHT);
-    u8* buffer = (u8 *)Alloc(32 * width * height);
-    u8 i, j, k;
-
-    if (buffer != NULL)
-    {
-        for (i = 0; i < height; i++)
-        {
-            for (j = 0; j < width; j++)
-            {
-                if (i == 0)
-                    k = 0;
-                else if (i == height - 1)
-                    k = 14;
-                else
-                    k = 5;
-				
-                CpuCopy32(&ptr[k * 0x20], &buffer[(i * width + j) * 0x20], 32);
-            }
-        }
-        CopyToWindowPixelBuffer(windowId, buffer, width * height * 32, 0);
-        Free(buffer);
-    }
 }

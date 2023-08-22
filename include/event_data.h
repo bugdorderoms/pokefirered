@@ -39,5 +39,6 @@ bool8 FlagGet(u16 id);
 void ResetSpecialVars(void);
 void ResetMysteryEventFlags(void);
 void ResetMysteryEventVars(void);
+void sub_806E190(void);
 
 #endif // GUARD_EVENT_DATA_H

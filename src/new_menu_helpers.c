@@ -1,5 +1,6 @@
 #include "global.h"
 #include "gflib.h"
+#include "help_message.h"
 #include "menu.h"
 #include "menu_helpers.h"
 #include "new_menu_helpers.h"
@@ -17,6 +18,8 @@ static EWRAM_DATA bool8 sScheduledBgCopiesToVram[4] = {FALSE};
 static EWRAM_DATA u16 sTempTileDataBufferCursor = {0};
 static EWRAM_DATA void *sTempTileDataBuffers[0x20] = {NULL};
 static EWRAM_DATA u8 sStartMenuWindowId = {0};
+
+static const u16 gUnknown_841EF48[] = INCBIN_U16("graphics/unknown/unk_841EF48.4bpp");
 
 const u16 gUnknown_841F1C8[] = INCBIN_U16("graphics/text_window/unk_841F1C8.4bpp");
 const u16 gTMCaseMainWindowPalette[] = INCBIN_U16("graphics/tm_case/unk_841F408.gbapal");
@@ -365,6 +368,7 @@ void InitStandardTextBoxWindows(void)
 {
     InitWindows(sStandardTextBox_WindowTemplates);
     sStartMenuWindowId = 0xFF;
+    MapNamePopupWindowIdSetDummy();
 }
 
 void FreeAllOverworldWindowBuffers(void)
@@ -682,6 +686,17 @@ static u16 GetDlgWindowBaseTileNum(void)
 u16 GetStdWindowBaseTileNum(void)
 {
     return STD_WINDOW_BASE_TILE_NUM;
+}
+
+void DrawHelpMessageWindowWithText(const u8 * text)
+{
+    sub_814FE6C(CreateHelpMessageWindow(), DLG_WINDOW_BASE_TILE_NUM, 0x10 * DLG_WINDOW_PALETTE_NUM);
+    PrintTextOnHelpMessageWindow(text, 2);
+}
+
+void DestroyHelpMessageWindow_(void)
+{
+    DestroyHelpMessageWindow(2);
 }
 
 void LoadSignPostWindowFrameGfx(void)

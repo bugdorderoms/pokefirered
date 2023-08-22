@@ -149,7 +149,7 @@ static const struct WindowTemplate sQuestLogHeaderWindowTemplates[3] = {
 
 static const u8 sTextColors[3] = {TEXT_DYNAMIC_COLOR_6, TEXT_COLOR_WHITE, TEXT_DYNAMIC_COLOR_3};
 
-static const u16 sUnknown_8456638[] = INCBIN_U16("graphics/interface/unknown_8456638.bin");
+static const u16 sUnknown_8456638[] = INCBIN_U16("graphics/unknown/unknown_8456638.bin");
 
 static const u8 sQuestLogTextLineYCoords[] = {17, 10, 3};
 

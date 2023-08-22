@@ -349,7 +349,7 @@ void AnimTask_MoveAttackerMementoShadow(u8 taskId)
     task->data[3] = GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker);
     if (task->data[3] == 1)
     {
-        GetBattleAnimBgData(&animBg, 1);
+        GetBattleAnimBg1Data(&animBg);
         task->data[10] = gBattle_BG1_Y;
         SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND | BLDCNT_TGT1_BG1);
         FillPalette(0, animBg.paletteId * 16, 32);
@@ -467,7 +467,7 @@ void AnimTask_MoveTargetMementoShadow(u8 taskId)
     case 1:
         if (task->data[3] == 1)
         {
-            GetBattleAnimBgData(&animBg, 1);
+            GetBattleAnimBg1Data(&animBg);
             task->data[10] = gBattle_BG1_Y;
             FillPalette(0, animBg.paletteId * 16, 32);
         }
@@ -713,7 +713,7 @@ void AnimTask_MetallicShine(u8 taskId)
     }
     spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
     newSpriteId = CreateCloneOfSpriteInWindowMode(spriteId, GetMonData(GetBattlerPartyIndexPtr(gBattleAnimAttacker), MON_DATA_SPECIES));
-    GetBattleAnimBgData(&animBg, 1);
+    GetBattleAnimBg1Data(&animBg);
     AnimLoadCompressedBgTilemap(animBg.bgId, gMetalShineTilemap);
     AnimLoadCompressedBgGfx(animBg.bgId, gMetalShineGfx, animBg.tilesOffset);
     LoadCompressedPalette(gMetalShinePalette, animBg.paletteId * 16, 32);
@@ -752,7 +752,7 @@ static void sub_80B8920(u8 taskId)
             if (gTasks[taskId].data[1] == 0)
                 SetGreyscaleOrOriginalPalette(paletteNum, 1);
             DestroySprite(&gSprites[gTasks[taskId].data[0]]);
-            GetBattleAnimBgData(&animBg, 1);
+            GetBattleAnimBg1Data(&animBg);
             InitBattleAnimBg(animBg.bgId);
             if (gTasks[taskId].data[6] == 1)
                 gSprites[gBattlerSpriteIds[BATTLE_PARTNER(gBattleAnimAttacker)]].oam.priority++;

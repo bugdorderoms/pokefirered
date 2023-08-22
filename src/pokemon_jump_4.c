@@ -507,7 +507,7 @@ void sub_814A468(u16 itemId, u16 quantity)
 {
     CopyItemName(itemId, gUnknown_203F3D8->txtBuff[0]);
     ConvertIntToDecimalStringN(gUnknown_203F3D8->txtBuff[1], quantity, STR_CONV_MODE_LEFT_ALIGN, 1);
-    if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH)
+    if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH && itemId != ITEM_ENIGMA_BERRY)
     {
         if (quantity > 1)
         {

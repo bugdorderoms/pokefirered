@@ -376,22 +376,22 @@ static const struct SpriteTemplate sStatusSummaryBallsSpriteTemplates[] = {
 
 static const struct SpriteSheet sSpriteSheet_WeatherStatusIcons[] =
 {
-	[ENUM_WEATHER_RAIN - 1] = {sWeatherIconRainGfx, sizeof(sWeatherIconRainGfx), TAG_WEATHER_ICON_GFX},
-	[ENUM_WEATHER_SUN - 1] = {sWeatherIconSunGfx, sizeof(sWeatherIconSunGfx), TAG_WEATHER_ICON_GFX},
-	[ENUM_WEATHER_SANDSTORM - 1] = {sWeatherIconSandstormGfx, sizeof(sWeatherIconSandstormGfx), TAG_WEATHER_ICON_GFX},
-	[ENUM_WEATHER_HAIL - 1] = {sWeatherIconHailGfx, sizeof(sWeatherIconHailGfx), TAG_WEATHER_ICON_GFX},
-	[ENUM_WEATHER_FOG - 1] = {sWeatherIconFogGfx, sizeof(sWeatherIconFogGfx), TAG_WEATHER_ICON_GFX},
-	[ENUM_WEATHER_STRONG_WINDS - 1] = {sWeatherIconStrongWinds, sizeof(sWeatherIconStrongWinds), TAG_WEATHER_ICON_GFX}
+	[ENUM_WEATHER_RAIN] = {sWeatherIconRainGfx, sizeof(sWeatherIconRainGfx), TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_SUN] = {sWeatherIconSunGfx, sizeof(sWeatherIconSunGfx), TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_SANDSTORM] = {sWeatherIconSandstormGfx, sizeof(sWeatherIconSandstormGfx), TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_HAIL] = {sWeatherIconHailGfx, sizeof(sWeatherIconHailGfx), TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_FOG] = {sWeatherIconFogGfx, sizeof(sWeatherIconFogGfx), TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_STRONG_WINDS] = {sWeatherIconStrongWinds, sizeof(sWeatherIconStrongWinds), TAG_WEATHER_ICON_GFX}
 };
 
 static const struct SpritePalette sSpritePalette_WeatherStatusIcons[] =
 {
-	[ENUM_WEATHER_RAIN - 1] = {sWeatherIconRainPal, TAG_WEATHER_ICON_GFX},
-	[ENUM_WEATHER_SUN - 1] = {sWeatherIconSunPal, TAG_WEATHER_ICON_GFX},
-	[ENUM_WEATHER_SANDSTORM - 1] = {sWeatherIconSandstormPal, TAG_WEATHER_ICON_GFX},
-	[ENUM_WEATHER_HAIL - 1] = {sWeatherIconHailPal, TAG_WEATHER_ICON_GFX},
-	[ENUM_WEATHER_FOG - 1] = {sWeatherIconFogPal, TAG_WEATHER_ICON_GFX},
-	[ENUM_WEATHER_STRONG_WINDS - 1] = {sWeatherIconFogPal, TAG_WEATHER_ICON_GFX}, // same palette as fog
+	[ENUM_WEATHER_RAIN] = {sWeatherIconRainPal, TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_SUN] = {sWeatherIconSunPal, TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_SANDSTORM] = {sWeatherIconSandstormPal, TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_HAIL] = {sWeatherIconHailPal, TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_FOG] = {sWeatherIconFogPal, TAG_WEATHER_ICON_GFX},
+	[ENUM_WEATHER_STRONG_WINDS] = {sWeatherIconFogPal, TAG_WEATHER_ICON_GFX}, // same palette as fog
 };
 
 static const union AnimCmd sAnim_WeatherIcon[] =
@@ -1955,8 +1955,8 @@ void TryCreateWeatherAnimIcon(void)
 			else
 				iconAnimId = ENUM_WEATHER_STRONG_WINDS;
 			
-			LoadSpriteSheet(&sSpriteSheet_WeatherStatusIcons[iconAnimId - 1]);
-			LoadSpritePalette(&sSpritePalette_WeatherStatusIcons[iconAnimId - 1]);
+			LoadSpriteSheet(&sSpriteSheet_WeatherStatusIcons[iconAnimId]);
+			LoadSpritePalette(&sSpritePalette_WeatherStatusIcons[iconAnimId]);
 			gBattleStruct->weatherIconSpriteId = CreateSprite(&sSpriteTemplate_WeatherIcon, WEATHER_ICON_X_POS, WEATHER_ICON_Y_POS, 0);
 			gSprites[gBattleStruct->weatherIconSpriteId].sFinalX = WEATHER_ICON_X_POS - WEATHER_ICON_X_SLIDE;
 		}

@@ -308,7 +308,7 @@ void AnimTask_SetUpCurseBackground(u8 taskId)
     }
     spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
     newSpriteId = CreateCloneOfSpriteInWindowMode(spriteId, GetMonData(GetBattlerPartyIndexPtr(gBattleAnimAttacker), MON_DATA_SPECIES));
-    GetBattleAnimBgData(&animBgData, 1);
+    GetBattleAnimBg1Data(&animBgData);
     AnimLoadCompressedBgTilemap(animBgData.bgId, gFile_graphics_battle_anims_masks_curse_tilemap);
     AnimLoadCompressedBgGfx(animBgData.bgId, gFile_graphics_battle_anims_masks_curse_sheet, animBgData.tilesOffset);
     LoadPalette(sRgbWhite, animBgData.paletteId * 16 + 1, 2);
@@ -346,7 +346,7 @@ static void AnimTask_DrawFallingWhiteLinesOnAttacker_Step(u8 taskId)
             SetGpuReg(REG_OFFSET_BLDALPHA, 0);
             sprite = &gSprites[gTasks[taskId].data[0]];
             DestroySprite(sprite);
-            GetBattleAnimBgData(&animBgData, 1);
+            GetBattleAnimBg1Data(&animBgData);
             InitBattleAnimBg(animBgData.bgId);
             if (gTasks[taskId].data[6] == 1)
                 ++gSprites[gBattlerSpriteIds[BATTLE_PARTNER(gBattleAnimAttacker)]].oam.priority;
@@ -415,7 +415,7 @@ static void StatsChangeAnimation_Step2(u8 taskId)
         battlerSpriteId = gBattlerSpriteIds[sAnimStatsChangeData->battler2];
         newSpriteId = CreateCloneOfSpriteInWindowMode(battlerSpriteId, sAnimStatsChangeData->species);
     }
-    GetBattleAnimBgData(&animBgData, 1);
+    GetBattleAnimBg1Data(&animBgData);
     if (sAnimStatsChangeData->data[0] == 0)
         AnimLoadCompressedBgTilemap(animBgData.bgId, gBattleStatMask1_Tilemap);
     else
@@ -708,7 +708,7 @@ void StartMonScrollingBgMask(u8 taskId, u16 arg2, u8 battler1, u8 arg4, u8 arg5,
     spriteId = CreateCloneOfSpriteInWindowMode(gBattlerSpriteIds[battler1], species);
     if (arg4)
         newSpriteId = CreateCloneOfSpriteInWindowMode(gBattlerSpriteIds[battler2], species);
-    GetBattleAnimBgData(&animBgData, 1);
+    GetBattleAnimBg1Data(&animBgData);
     AnimLoadCompressedBgTilemap(animBgData.bgId, tilemap);
     AnimLoadCompressedBgGfx(animBgData.bgId, gfx, animBgData.tilesOffset);
     LoadCompressedPalette(palette, animBgData.paletteId * 16, 32);

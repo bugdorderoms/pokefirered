@@ -989,7 +989,9 @@ void ItemMenuIcons_ToggleInsertIndicatorBarVisibility(bool8 invisible)
     u8 * ptr = &sItemMenuIconSpriteIds[1];
 
     for (i = 0; i < 9; i++)
+    {
         gSprites[ptr[i]].invisible = invisible;
+    }
 }
 
 void ItemMenuIcons_MoveInsertIndicatorBar(s16 x, u16 y)
@@ -1027,12 +1029,40 @@ void CopyItemIconPicTo4x4Buffer(const void * src, void * dest)
     u8 i;
 
     for (i = 0; i < 3; i++)
+    {
         CpuCopy16(src + 0x60 * i, dest + 0x80 * i, 0x60);
+    }
 }
 
 u8 AddItemIconObject(u16 tilesTag, u16 paletteTag, u16 itemId)
 {
-	return AddItemIconObjectWithCustomObjectTemplate(&sSpriteTemplate_ItemIcon, tilesTag, paletteTag, itemId);
+    struct SpriteTemplate template;
+    struct SpriteSheet spriteSheet;
+    struct CompressedSpritePalette spritePalette;
+    u8 spriteId;
+
+    if (!TryAllocItemIconTilesBuffers())
+        return MAX_SPRITES;
+
+    LZDecompressWram(GetItemIconGfxPtr(itemId, 0), sItemIconTilesBuffer);
+    CopyItemIconPicTo4x4Buffer(sItemIconTilesBuffer, sItemIconTilesBufferPadded);
+    spriteSheet.data = sItemIconTilesBufferPadded;
+    spriteSheet.size = 0x200;
+    spriteSheet.tag = tilesTag;
+    LoadSpriteSheet(&spriteSheet);
+
+    spritePalette.data = GetItemIconGfxPtr(itemId, 1);
+    spritePalette.tag = paletteTag;
+    LoadCompressedSpritePalette(&spritePalette);
+
+    CpuCopy16(&sSpriteTemplate_ItemIcon, &template, sizeof(struct SpriteTemplate));
+    template.tileTag = tilesTag;
+    template.paletteTag = paletteTag;
+    spriteId = CreateSprite(&template, 0, 0, 0);
+
+    Free(sItemIconTilesBuffer);
+    Free(sItemIconTilesBufferPadded);
+    return spriteId;
 }
 
 u8 AddItemIconObjectWithCustomObjectTemplate(const struct SpriteTemplate * origTemplate, u16 tilesTag, u16 paletteTag, u16 itemId)
@@ -1098,7 +1128,9 @@ void DestroyItemMenuIcon(u8 idx)
 
 const void * GetItemIconGfxPtr(u16 itemId, u8 attrId)
 {
-    return sItemIconGfxPtrs[itemId > ITEMS_COUNT ? ITEM_NONE : itemId][attrId];
+    if (itemId > ITEMS_COUNT)
+        itemId = ITEM_NONE;
+    return sItemIconGfxPtrs[itemId][attrId];
 }
 
 void sub_80989A0(u16 itemId, u8 idx)

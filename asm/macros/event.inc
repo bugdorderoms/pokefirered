@@ -1392,11 +1392,16 @@
 	.byte \color
 	.endm
 
-	.macro nopc8
+	@ The exact purpose of this command is unknown, but it is related to the blue help-text box that appears on the bottom of the screen when
+	@ the Main Menu is opened.
+	.macro loadhelp pointer:req
 	.byte 0xc8
+	.4byte \pointer
 	.endm
 
-	.macro nopc9
+	@ The exact purpose of this command is unknown, but it is related to the blue help-text box that appears on the bottom of the screen when
+	@ the Main Menu is opened.
+	.macro unloadhelp
 	.byte 0xc9
 	.endm
 

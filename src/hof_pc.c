@@ -6,6 +6,9 @@
 #include "script_menu.h"
 #include "task.h"
 
+static void ReshowPCMenuAfterHallOfFamePC(void);
+static void Task_WaitForPaletteFade(u8 taskId);
+
 static void Task_WaitFadeAndSetCallback(u8 taskId)
 {
     if (!gPaletteFade.active)
@@ -24,10 +27,10 @@ void HallOfFamePCBeginFade(void)
     CreateTask(Task_WaitFadeAndSetCallback, 0);
 }
 
-static void Task_WaitForPaletteFade(u8 taskId)
+void ReturnFromHallOfFamePC(void)
 {
-    if (!gPaletteFade.active)
-        DestroyTask(taskId);
+    SetMainCallback2(CB2_ReturnToField);
+    gFieldCallback = ReshowPCMenuAfterHallOfFamePC;
 }
 
 static void ReshowPCMenuAfterHallOfFamePC(void)
@@ -40,8 +43,8 @@ static void ReshowPCMenuAfterHallOfFamePC(void)
     CreateTask(Task_WaitForPaletteFade, 10);
 }
 
-void ReturnFromHallOfFamePC(void)
+static void Task_WaitForPaletteFade(u8 taskId)
 {
-    SetMainCallback2(CB2_ReturnToField);
-    gFieldCallback = ReshowPCMenuAfterHallOfFamePC;
+    if (!gPaletteFade.active)
+        DestroyTask(taskId);
 }

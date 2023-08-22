@@ -40,7 +40,9 @@ void ApplyNewEncryptionKeyToBagItems(u32 key)
     for (i = 0; i < NUM_BAG_POCKETS; i++)
     {
         for (j = 0; j < gBagPockets[i].capacity; j++)
+        {
             ApplyNewEncryptionKeyToHword(&gBagPockets[i].itemSlots[j].quantity, key);
+        }
     }
 }
 
@@ -72,6 +74,7 @@ s8 BagPocketGetFirstEmptySlot(u8 pocketId)
         if (gBagPockets[pocketId].itemSlots[i].itemId == ITEM_NONE)
             return i;
     }
+
     return -1;
 }
 
@@ -84,6 +87,7 @@ bool8 IsPocketNotEmpty(u8 pocketId)
         if (gBagPockets[pocketId - 1].itemSlots[i].itemId != ITEM_NONE)
             return TRUE;
     }
+
     return FALSE;
 }
 
@@ -144,6 +148,7 @@ bool8 CheckBagHasSpace(u16 itemId, u16 count)
                 return FALSE;
         }
     }
+
     if (BagPocketGetFirstEmptySlot(pocket) != -1)
         return TRUE;
 
@@ -274,8 +279,10 @@ void ClearBag(void)
 {
     u16 i;
 
-    for (i = 0; i < NUM_BAG_POCKETS; i++)
+    for (i = 0; i < 5; i++)
+    {
         ClearItemSlots(gBagPockets[i].itemSlots, gBagPockets[i].capacity);
+    }
 }
 
 s8 PCItemsGetFirstEmptySlot(void)
@@ -287,18 +294,21 @@ s8 PCItemsGetFirstEmptySlot(void)
         if (gSaveBlock1Ptr->pcItems[i].itemId == ITEM_NONE)
             return i;
     }
+
     return -1;
 }
 
 u8 CountItemsInPC(void)
 {
-    u8 i, count;
+    u8 count = 0;
+    u8 i;
 
-    for (i = 0, count = 0; i < PC_ITEMS_COUNT; i++)
+    for (i = 0; i < PC_ITEMS_COUNT; i++)
     {
         if (gSaveBlock1Ptr->pcItems[i].itemId != ITEM_NONE)
             count++;
     }
+
     return count;
 }
 
@@ -393,6 +403,11 @@ void ItemPcCompaction(void)
     }
 }
 
+void RegisteredItemHandleBikeSwap(void)
+{
+    // unused, it's noped out because the register item system.
+}
+
 void SwapItemSlots(struct ItemSlot * a, struct ItemSlot * b)
 {
     struct ItemSlot c;
@@ -410,7 +425,9 @@ void BagPocketCompaction(struct ItemSlot * slots, u8 capacity)
         for (j = i + 1; j < capacity; j++)
         {
             if (GetBagItemQuantity(&slots[i].quantity) == 0)
+            {
                 SwapItemSlots(&slots[i], &slots[j]);
+            }
         }
     }
 }
@@ -474,6 +491,7 @@ u16 BagGetQuantityByItemId(u16 itemId)
         if (pocket->itemSlots[i].itemId == itemId)
             return GetBagItemQuantity(&pocket->itemSlots[i].quantity);
     }
+
     return 0;
 }
 
@@ -520,9 +538,11 @@ void TrySetObtainedItemQuestLogEvent(u16 itemId)
     }
 }
 
-static inline u16 SanitizeItemId(u16 itemId)
+u16 SanitizeItemId(u16 itemId)
 {
-	return itemId >= ITEMS_COUNT ? ITEM_NONE : itemId;
+    if (itemId >= ITEMS_COUNT)
+        return ITEM_NONE;
+    return itemId;
 }
 
 const u8 * ItemId_GetName(u16 itemId)
@@ -610,7 +630,11 @@ void ResetItemFlags(void)
 
 bool8 GetSetItemObtained(u16 item, u8 caseId)
 {
-    u8 index = item / 8, bit = item % 8, mask = 1 << bit;
+    u8 index, bit, mask;
+
+    index = item / 8;
+    bit = item % 8;
+    mask = 1 << bit;
 	
     switch (caseId)
     {
