@@ -20,6 +20,11 @@
     0x2 bit is responsible for the id of sent out pokemon. 0 means it's the first sent out pokemon, 1 it's the second one. (Triple battle didn't exist at the time yet.)
 */
 
+#define TRAINER_OPPONENT_3FE        0x3FE
+#define TRAINER_OPPONENT_C00        0xC00
+#define TRAINER_LINK_OPPONENT       0x800
+#define SECRET_BASE_OPPONENT        0x400
+
 #define B_ACTION_USE_MOVE                  0
 #define B_ACTION_USE_ITEM                  1
 #define B_ACTION_SWITCH                    2
