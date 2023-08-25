@@ -112,3 +112,7 @@
 // If this setting is enabled, the captured Pokémon of trainers will have their Poké Ball based on their trainer class.
 // Otherwise, the Poké Ball will be customizable in the trainer data.
 #define CLASS_BASED_BALLS TRUE
+
+// If this setting is enabled, the captured Pokémon of trainers will have their level based on the player's party Pokémon with highest level.
+// Otherwise, the level will be customizable in the trainer data.
+#define DYNAMIC_LEVEL TRUE

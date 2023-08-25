@@ -2,6 +2,7 @@
 #define GUARD_BATTLE_SETUP_H
 
 #include "global.h"
+#include "battle.h"
 
 void StartWildBattle(void);
 void StartDoubleWildBattle(void);
@@ -31,5 +32,6 @@ void ShowTrainerCantBattleSpeech(void);
 void PlayTrainerEncounterMusic(void);
 const u8 *GetTrainerALoseText(void);
 const u8 *GetTrainerWonSpeech(void);
+u8 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx);
 
 #endif // GUARD_BATTLE_SETUP_H

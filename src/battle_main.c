@@ -1220,7 +1220,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 				parameters.forceGender = TRUE;
 			}
 			// Create mon
-			CreateMon(&party[i], partyData[i].species, partyData[i].lvl, USE_RANDOM_IVS, TRUE, GeneratePIDMaster(parameters), OT_ID_PRESET, otid);
+			CreateMon(&party[i], partyData[i].species, GetTrainerPartyMonLevel(partyData[i]), USE_RANDOM_IVS, TRUE, GeneratePIDMaster(parameters), OT_ID_PRESET, otid);
 			
 			// Update form based on gender
 			DoOverworldFormChange(&party[i], FORM_CHANGE_GENDER);

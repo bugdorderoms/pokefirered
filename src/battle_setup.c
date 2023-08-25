@@ -482,7 +482,7 @@ static u8 GetBattleTransitionTypeByMap(void)
     return B_TRANSITION_BIG_POKEBALL;
 }
 
-static u32 GetSumOfPlayerPartyLevel(u8 numMons)
+static u32 GetSumOfPlayerPartyLevel(void)
 {
     u32 sum;
     s32 i;
@@ -492,39 +492,53 @@ static u32 GetSumOfPlayerPartyLevel(u8 numMons)
         u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
 
         if (species != SPECIES_EGG && species != SPECIES_NONE && GetMonData(&gPlayerParty[i], MON_DATA_HP) != 0)
-        {
             sum += GetMonData(&gPlayerParty[i], MON_DATA_LEVEL);
-            if (--numMons == 0)
-                break;
-        }
     }
     return sum;
 }
 
-static u32 GetSumOfEnemyPartyLevel(u16 opponentId, u8 numMons)
+u8 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx)
 {
-    u8 i;
-    u32 sum;
-	const struct TrainerMon *party = gTrainers[opponentId].party;
+#if DYNAMIC_LEVEL
+	u8 i, highestLevel;
 	
-    if (gTrainers[opponentId].partySize < numMons)
-        numMons = gTrainers[opponentId].partySize;
+	for (i = 0, highestLevel = 0; i < PARTY_SIZE; i++)
+	{
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
+		
+		if (species != SPECIES_EGG && species != SPECIES_NONE && GetMonData(&gPlayerParty[i], MON_DATA_HP))
+		{
+			u8 level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL);
+			
+			if (level > highestLevel)
+				highestLevel = level;
+		}
+	}
+	if (highestLevel != 0) // Safety check
+		return highestLevel;
+#endif
+	return partyIdx.lvl;
+}
+
+static u32 GetSumOfEnemyPartyLevel(u16 opponentId)
+{
+	const struct TrainerMon *party = gTrainers[opponentId].party;
+    u8 i, numMons = gTrainers[opponentId].partySize;
+    u32 sum;
 	
 	for (i = 0, sum = 0; i < numMons; i++)
-		sum += party[i].lvl;
+		sum += GetTrainerPartyMonLevel(party[i]);
 
     return sum;
 }
 
 static u8 GetWildBattleTransition(void)
 {
-	return sBattleTransitionTable_Wild[GetBattleTransitionTypeByMap()][(GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel(1)) ? 0 : 1];
+	return sBattleTransitionTable_Wild[GetBattleTransitionTypeByMap()][(GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel()) ? 0 : 1];
 }
 
 static u8 GetTrainerBattleTransition(void)
 {
-    u8 minPartyCount;
-
     if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
         return B_TRANSITION_BLUE;
     if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_ELITE_FOUR)
@@ -541,18 +555,13 @@ static u8 GetTrainerBattleTransition(void)
     }
     if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_CHAMPION)
         return B_TRANSITION_BLUE;
-    if (gTrainers[gTrainerBattleOpponent_A].doubleBattle == TRUE)
-        minPartyCount = 2; // double battles always at least have 2 pokemon.
-    else
-        minPartyCount = 1;
 	
-	return sBattleTransitionTable_Trainer[GetBattleTransitionTypeByMap()]
-	[(GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A, minPartyCount) < GetSumOfPlayerPartyLevel(minPartyCount)) ? 0 : 1];
+	return sBattleTransitionTable_Trainer[GetBattleTransitionTypeByMap()][(GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A) < GetSumOfPlayerPartyLevel()) ? 0 : 1];
 }
 
 u8 BattleSetup_GetBattleTowerBattleTransition(void)
 {
-	return (GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel(1)) ? B_TRANSITION_SLIDING_POKEBALLS : B_TRANSITION_BIG_POKEBALL;
+	return (GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel()) ? B_TRANSITION_SLIDING_POKEBALLS : B_TRANSITION_BIG_POKEBALL;
 }
 
 static u16 GetTrainerAFlag(void)

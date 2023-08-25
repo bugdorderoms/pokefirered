@@ -5,6 +5,7 @@
 #include "random.h"
 #include "pokedex.h"
 #include "money.h"
+#include "battle_setup.h"
 #include "pokemon_icon.h"
 #include "mail.h"
 #include "mail_data.h"
@@ -4365,13 +4366,12 @@ static void atk5D_getmoneyreward(void)
             moneyReward = gBattleResources->secretBase->party.levels[0] * 20 * gBattleStruct->moneyMultiplier;
         else
         {
-			lastMonLevel = gTrainers[gTrainerBattleOpponent_A].party[gTrainers[gTrainerBattleOpponent_A].partySize - 1].lvl;
-			
             for (i = 0; gTrainerMoneyAndBallTable[i].classId != 0xFF; i++)
             {
                 if (gTrainerMoneyAndBallTable[i].classId == gTrainers[gTrainerBattleOpponent_A].trainerClass)
                     break;
             }
+			lastMonLevel = GetTrainerPartyMonLevel(gTrainers[gTrainerBattleOpponent_A].party[gTrainers[gTrainerBattleOpponent_A].partySize - 1]);
             moneyReward = 4 * lastMonLevel * gBattleStruct->moneyMultiplier * (gBattleTypeFlags & BATTLE_TYPE_DOUBLE ? 2 : 1) * gTrainerMoneyAndBallTable[i].value;
         }
         AddMoney(&gSaveBlock1Ptr->money, moneyReward);
