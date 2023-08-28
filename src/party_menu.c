@@ -26,6 +26,7 @@
 #include "help_message.h"
 #include "item.h"
 #include "item_menu.h"
+#include "item_menu_icons.h"
 #include "item_use.h"
 #include "link.h"
 #include "link_rfu.h"
@@ -246,11 +247,11 @@ static void DisplayPartyPokemonHP(u16 hp, struct PartyMenuBox *menuBox);
 static void DisplayPartyPokemonMaxHP(u16 maxhp, struct PartyMenuBox *menuBox);
 static void DisplayPartyPokemonHPBar(u16 hp, u16 maxhp, struct PartyMenuBox *menuBox);
 static void CreatePartyMonIconSpriteParameterized(u16 species, struct PartyMenuBox *menuBox, u8 priority);
-static void CreatePartyMonHeldItemSpriteParameterized(u16 species, u16 item, struct PartyMenuBox *menuBox);
+static void CreatePartyMonHeldItemSpriteParameterized(u8 slot, u16 species, u16 item, struct PartyMenuBox *menuBox, u8 priority);
 static void CreatePartyMonPokeballSpriteParameterized(u16 species, struct PartyMenuBox *menuBox);
 static void CreatePartyMonStatusSpriteParameterized(u16 species, u8 status, struct PartyMenuBox *menuBox);
 static void CreatePartyMonIconSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox, u32 slot);
-static void CreatePartyMonHeldItemSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox);
+static void CreatePartyMonHeldItemSprite(u8 slot, struct Pokemon *mon, struct PartyMenuBox *menuBox, u8 priority);
 static void CreatePartyMonPokeballSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox);
 static void CreatePartyMonStatusSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox);
 static void CreateCancelConfirmPokeballSprites(void);
@@ -304,9 +305,8 @@ static void UpdatePartyMonHPBar(u8 spriteId, struct Pokemon *mon);
 static void SpriteCB_UpdatePartyMonIcon(struct Sprite *sprite);
 static void SpriteCB_BouncePartyMonIcon(struct Sprite *sprite);
 static void SpriteCB_HeldItem(struct Sprite *sprite);
-static void UpdatePartyMonHeldItemSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox);
+static u8 DestroyPartyMonHeldItemSprite(u8 slot, struct PartyMenuBox *menuBox);
 static void UpdatePartyMonIconSpecies(struct PartyMenuBox *menuBox, u16 species);
-static void ShowOrHideHeldItemSprite(u16 item, struct PartyMenuBox *menuBox);
 static void CreateHeldItemSpriteForTrade(u8 spriteId, bool8 isMail);
 static void UpdatePartyPokemonAilmentGfxAndLevelCheck(struct Pokemon *mon, u8 slot);
 static void SetPartyMonAilmentGfx(struct Pokemon *mon, struct PartyMenuBox *menuBox);
@@ -328,6 +328,7 @@ static void CB2_WriteMailToGiveMon(void);
 static void Task_SwitchHoldItemsPrompt(u8 taskId);
 static void Task_GiveHoldItem(u8 taskId);
 static void Task_UpdateHeldItemSprite(u8 taskId);
+static void Task_UpdateHeldItemSpritesAfterMoveItems(u8 taskId);
 static void Task_HandleSwitchItemsYesNoInput(u8 taskId);
 static void Task_SwitchItemsYesNo(u8 taskId);
 static void Task_WriteMailToGiveMonAfterText(u8 taskId);
@@ -487,6 +488,34 @@ static const u8 *const sEvItemUseStatNames[] =
 	gText_SpDef3,
 };
 
+static const struct OamData sOamData_ItemIcon =
+{
+	.y = 0,
+    .affineMode = ST_OAM_AFFINE_NORMAL,
+    .objMode = 0,
+    .mosaic = 0,
+    .bpp = 0,
+    .shape = SPRITE_SHAPE(32x32),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(32x32),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+
+static const union AffineAnimCmd sAffineAnim_ItemIcon[] =
+{
+	AFFINEANIMCMD_FRAME(128, 128, 0, 0),
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd *const sSpriteAffineAnim_HeldItem[] =
+{
+	sAffineAnim_ItemIcon,
+};
+
 void InitPartyMenu(u8 menuType, u8 layout, u8 partyAction, bool8 keepCursorPos, u8 messageId, TaskFunc task, MainCallback callback)
 {
     u16 i;
@@ -614,7 +643,6 @@ static bool8 ShowPartyMenu(void)
         ++gMain.state;
         break;
     case 11:
-        LoadHeldItemIcons();
         ++gMain.state;
         break;
     case 12:
@@ -1015,7 +1043,7 @@ static void CreatePartyMonSprites(u8 slot)
         if (gMultiPartnerParty[actualSlot].species != SPECIES_NONE)
         {
             CreatePartyMonIconSpriteParameterized(gMultiPartnerParty[actualSlot].species, &sPartyMenuBoxes[slot], 0);
-            CreatePartyMonHeldItemSpriteParameterized(gMultiPartnerParty[actualSlot].species, gMultiPartnerParty[actualSlot].heldItem, &sPartyMenuBoxes[slot]);
+            CreatePartyMonHeldItemSpriteParameterized(slot, gMultiPartnerParty[actualSlot].species, gMultiPartnerParty[actualSlot].heldItem, &sPartyMenuBoxes[slot], 0);
             CreatePartyMonPokeballSpriteParameterized(gMultiPartnerParty[actualSlot].species, &sPartyMenuBoxes[slot]);
             if (gMultiPartnerParty[actualSlot].hp == 0)
                 status = AILMENT_FNT;
@@ -1027,7 +1055,7 @@ static void CreatePartyMonSprites(u8 slot)
     else if (GetMonData(&gPlayerParty[slot], MON_DATA_SPECIES) != SPECIES_NONE)
     {
         CreatePartyMonIconSprite(&gPlayerParty[slot], &sPartyMenuBoxes[slot], slot);
-        CreatePartyMonHeldItemSprite(&gPlayerParty[slot], &sPartyMenuBoxes[slot]);
+        CreatePartyMonHeldItemSprite(slot, &gPlayerParty[slot], &sPartyMenuBoxes[slot], 1);
         CreatePartyMonPokeballSprite(&gPlayerParty[slot], &sPartyMenuBoxes[slot]);
         CreatePartyMonStatusSprite(&gPlayerParty[slot], &sPartyMenuBoxes[slot]);
     }
@@ -2831,44 +2859,47 @@ static void SpriteCB_UpdatePartyMonIcon(struct Sprite *sprite)
     UpdateMonIconFrame(sprite);
 }
 
-static void CreatePartyMonHeldItemSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox)
+static void CreatePartyMonHeldItemSprite(u8 slot, struct Pokemon *mon, struct PartyMenuBox *menuBox, u8 priority)
 {
-    if (GetMonData(mon, MON_DATA_SPECIES) != SPECIES_NONE)
-    {
-        menuBox->itemSpriteId = CreateSprite(&sSpriteTemplate_HeldItem, menuBox->spriteCoords[2], menuBox->spriteCoords[3], 0);
-        UpdatePartyMonHeldItemSprite(mon, menuBox);
-    }
+	CreatePartyMonHeldItemSpriteParameterized(slot, GetMonData(mon, MON_DATA_SPECIES), GetMonData(mon, MON_DATA_HELD_ITEM), menuBox, priority);
 }
 
-static void CreatePartyMonHeldItemSpriteParameterized(u16 species, u16 item, struct PartyMenuBox *menuBox)
+#define GET_ITEM_SPRITE_TAG(slot) (0xD750 + slot)
+
+static void CreatePartyMonHeldItemSpriteParameterized(u8 slot, u16 species, u16 item, struct PartyMenuBox *menuBox, u8 priority)
 {
+	u16 tag = GET_ITEM_SPRITE_TAG(slot);
+	
+	struct SpriteTemplate sSpriteTemplate_ItemIcon =
+	{
+		tag,
+		tag,
+		&sOamData_ItemIcon,
+		gDummySpriteAnimTable,
+		NULL,
+		sSpriteAffineAnim_HeldItem,
+		SpriteCallbackDummy,
+	};
+	
     if (species != SPECIES_NONE)
     {
-        menuBox->itemSpriteId = CreateSprite(&sSpriteTemplate_HeldItem, menuBox->spriteCoords[2], menuBox->spriteCoords[3], 0);
-        gSprites[menuBox->itemSpriteId].oam.priority = 0;
-        ShowOrHideHeldItemSprite(item, menuBox);
+        menuBox->itemSpriteId = AddItemIconObjectWithCustomObjectTemplate(&sSpriteTemplate_ItemIcon, tag, tag, item);
+		gSprites[menuBox->itemSpriteId].x = menuBox->spriteCoords[2];
+		gSprites[menuBox->itemSpriteId].y = menuBox->spriteCoords[3];
+        gSprites[menuBox->itemSpriteId].oam.priority = priority;
+		gSprites[menuBox->itemSpriteId].invisible = (item == ITEM_NONE);
     }
 }
 
-static void UpdatePartyMonHeldItemSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox)
+static u8 DestroyPartyMonHeldItemSprite(u8 slot, struct PartyMenuBox *menuBox)
 {
-    ShowOrHideHeldItemSprite(GetMonData(mon, MON_DATA_HELD_ITEM), menuBox);
-}
-
-static void ShowOrHideHeldItemSprite(u16 item, struct PartyMenuBox *menuBox)
-{
-    if (item == ITEM_NONE)
-    {
-        gSprites[menuBox->itemSpriteId].invisible = TRUE;
-    }
-    else
-    {
-        if (ItemIsMail(item))
-            StartSpriteAnim(&gSprites[menuBox->itemSpriteId], 1);
-        else
-            StartSpriteAnim(&gSprites[menuBox->itemSpriteId], 0);
-        gSprites[menuBox->itemSpriteId].invisible = FALSE;
-    }
+	u8 priority = gSprites[menuBox->itemSpriteId].oam.priority;
+	
+	FreeSpriteTilesByTag(GET_ITEM_SPRITE_TAG(slot));
+	FreeSpritePaletteByTag(GET_ITEM_SPRITE_TAG(slot));
+	DestroySprite(&gSprites[menuBox->itemSpriteId]);
+	
+	return priority;
 }
 
 void LoadHeldItemIcons(void)
@@ -3703,16 +3734,59 @@ static void Task_DisplayGaveMailFromPartyMessage(u8 taskId)
     }
 }
 
+#define tClosePartyMenu data[0]
+#define tPriority       data[1]
+#define tPriority2      data[2]
+
+static void Task_UpdateHeldItemSprites_Step(u8 taskId)
+{
+	CreatePartyMonHeldItemSprite(gPartyMenu.slotId, &gPlayerParty[gPartyMenu.slotId], &sPartyMenuBoxes[gPartyMenu.slotId], gTasks[taskId].tPriority);
+	
+	if (gTasks[taskId].tPriority2 != 0xFF)
+		CreatePartyMonHeldItemSprite(gPartyMenu.slotId2, &gPlayerParty[gPartyMenu.slotId2], &sPartyMenuBoxes[gPartyMenu.slotId2], gTasks[taskId].tPriority2);
+	
+	if (gTasks[taskId].tClosePartyMenu)
+		Task_ClosePartyMenu(taskId);
+	else
+		Task_ReturnToChooseMonAfterText(taskId);
+}
+
 static void Task_UpdateHeldItemSprite(u8 taskId)
 {
-    s8 slotId = gPartyMenu.slotId;
-
     if (IsPartyMenuTextPrinterActive() != TRUE)
-    {
-        UpdatePartyMonHeldItemSprite(&gPlayerParty[slotId], &sPartyMenuBoxes[slotId]);
-        Task_ReturnToChooseMonAfterText(taskId);
+	{
+		gTasks[taskId].tPriority = DestroyPartyMonHeldItemSprite(gPartyMenu.slotId, &sPartyMenuBoxes[gPartyMenu.slotId]);
+		gTasks[taskId].tPriority2 = 0xFF;
+		gTasks[taskId].tClosePartyMenu = FALSE;
+		gTasks[taskId].func = Task_UpdateHeldItemSprites_Step;
     }
 }
+
+static void Task_UpdateHeldItemSpriteAndClosePartyMenu(u8 taskId)
+{
+    if (IsPartyMenuTextPrinterActive() != TRUE)
+    {
+		gTasks[taskId].tPriority = DestroyPartyMonHeldItemSprite(gPartyMenu.slotId, &sPartyMenuBoxes[gPartyMenu.slotId]);
+		gTasks[taskId].tPriority2 = 0xFF;
+		gTasks[taskId].tClosePartyMenu = TRUE;
+		gTasks[taskId].func = Task_UpdateHeldItemSprites_Step;
+    }
+}
+
+static void Task_UpdateHeldItemSpritesAfterMoveItems(u8 taskId)
+{
+	if (IsPartyMenuTextPrinterActive() != TRUE)
+	{
+		gTasks[taskId].tPriority = DestroyPartyMonHeldItemSprite(gPartyMenu.slotId, &sPartyMenuBoxes[gPartyMenu.slotId]);
+		gTasks[taskId].tPriority2 = DestroyPartyMonHeldItemSprite(gPartyMenu.slotId2, &sPartyMenuBoxes[gPartyMenu.slotId2]);
+		gTasks[taskId].tClosePartyMenu = FALSE;
+		gTasks[taskId].func = Task_UpdateHeldItemSprites_Step;
+    }
+}
+
+#undef tClosePartyMenu
+#undef tPriority
+#undef tPriority2
 
 static void CursorCB_TakeItem(u8 taskId)
 {
@@ -3756,55 +3830,53 @@ static void Task_MoveItem(u8 taskId)
     {
     case 1: // Selected mon
         if (GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_IS_EGG) || gPartyMenu.slotId == gPartyMenu.slotId2)
-	{
-	     PlaySE(SE_FAILURE);
-	     return;
-	}
-	PlaySE(SE_SELECT);
+		{
+			PlaySE(SE_FAILURE);
+			return;
+		}
+		PlaySE(SE_SELECT);
 	
-	gPartyMenu.action = PARTY_ACTION_CHOOSE_MON;
-	item1 = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_HELD_ITEM);
-	item2 = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_HELD_ITEM);
-	species = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_SPECIES);
+		gPartyMenu.action = PARTY_ACTION_CHOOSE_MON;
+		item1 = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_HELD_ITEM);
+		item2 = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_HELD_ITEM);
+		species = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_SPECIES);
 	
-	if (ItemIsMail(item2))
-		TakeMailFromMon(&gPlayerParty[gPartyMenu.slotId2]);
+		if (ItemIsMail(item2))
+			TakeMailFromMon(&gPlayerParty[gPartyMenu.slotId2]);
 		    
-	GiveItemToMon(&gPlayerParty[gPartyMenu.slotId], item2);
-	gMain.inParty = FALSE; // temporary disable for second mon sprite icon reload
-	GiveItemToMon(&gPlayerParty[gPartyMenu.slotId2], item1);
-	newSpecies = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_SPECIES);
+		GiveItemToMon(&gPlayerParty[gPartyMenu.slotId], item2);
+		gMain.inParty = FALSE; // temporary disable for second mon sprite icon reload
+		GiveItemToMon(&gPlayerParty[gPartyMenu.slotId2], item1);
+		newSpecies = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_SPECIES);
 	
-	if (newSpecies != species)
-		UpdatePartyMonIconSpecies(&sPartyMenuBoxes[gPartyMenu.slotId2], newSpecies); // update second mon species
+		if (newSpecies != species)
+			UpdatePartyMonIconSpecies(&sPartyMenuBoxes[gPartyMenu.slotId2], newSpecies); // update second mon species
 	
-	gMain.inParty = TRUE;
+		gMain.inParty = TRUE;
 	
-	UpdatePartyMonHeldItemSprite(&gPlayerParty[gPartyMenu.slotId], &sPartyMenuBoxes[gPartyMenu.slotId]);
-	UpdatePartyMonHeldItemSprite(&gPlayerParty[gPartyMenu.slotId2], &sPartyMenuBoxes[gPartyMenu.slotId2]);
-	
-	if (!item2)
-	    DisplayGaveHeldItemMessage(&gPlayerParty[gPartyMenu.slotId2], item1, TRUE, FALSE);
-	else
-	{
-	    GetMonNickname(&gPlayerParty[gPartyMenu.slotId], gStringVar1);
-	    CopyItemName(item1, gStringVar2);
-	    StringExpandPlaceholders(buffer, gText_XsYAnd);
-	    StringAppend(buffer, gText_XsYWereSwapped);
-	    GetMonNickname(&gPlayerParty[gPartyMenu.slotId2], gStringVar1);
-	    CopyItemName(item2, gStringVar2);
-	    StringExpandPlaceholders(gStringVar4, buffer);
-	    DisplayPartyMenuMessage(gStringVar4, TRUE);
-	    ScheduleBgCopyTilemapToVram(2);
-	}
-	AnimatePartySlot(gPartyMenu.slotId2, 0);
-        AnimatePartySlot(gPartyMenu.slotId, 1);
-		    
-	gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
-	break;
+		if (!item2)
+			DisplayGaveHeldItemMessage(&gPlayerParty[gPartyMenu.slotId2], item1, TRUE, FALSE);
+		else
+		{
+			GetMonNickname(&gPlayerParty[gPartyMenu.slotId], gStringVar1);
+			CopyItemName(item1, gStringVar2);
+			StringExpandPlaceholders(buffer, gText_XsYAnd);
+			StringAppend(buffer, gText_XsYWereSwapped);
+			GetMonNickname(&gPlayerParty[gPartyMenu.slotId2], gStringVar1);
+			CopyItemName(item2, gStringVar2);
+			StringExpandPlaceholders(gStringVar4, buffer);
+			DisplayPartyMenuMessage(gStringVar4, TRUE);
+			ScheduleBgCopyTilemapToVram(2);
+			AnimatePartySlot(gPartyMenu.slotId2, 0);
+			AnimatePartySlot(gPartyMenu.slotId, 1);
+		}
+		AnimatePartySlot(gPartyMenu.slotId2, 0);
+		AnimatePartySlot(gPartyMenu.slotId, 1);
+		gTasks[taskId].func = Task_UpdateHeldItemSpritesAfterMoveItems;
+		break;
     case 2: // Selected Cancel
         HandleChooseMonCancel(taskId, slotPtr);
-	break;
+		break;
     }
 }
 
@@ -5833,17 +5905,6 @@ static void GiveItemToSelectedMon(u8 taskId)
         GiveItemToMon(&gPlayerParty[gPartyMenu.slotId], item);
         RemoveItemToGiveFromBag(item);
         gTasks[taskId].func = Task_UpdateHeldItemSpriteAndClosePartyMenu;
-    }
-}
-
-static void Task_UpdateHeldItemSpriteAndClosePartyMenu(u8 taskId)
-{
-    s8 slot = gPartyMenu.slotId;
-
-    if (IsPartyMenuTextPrinterActive() != TRUE)
-    {
-        UpdatePartyMonHeldItemSprite(&gPlayerParty[slot], &sPartyMenuBoxes[slot]);
-        Task_ClosePartyMenu(taskId);
     }
 }
 
