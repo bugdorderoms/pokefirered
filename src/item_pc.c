@@ -265,7 +265,6 @@ static void ItemPc_RunSetup(void)
 
 static bool8 ItemPc_DoGfxSetup(void)
 {
-    u8 taskId;
     switch (gMain.state)
     {
     case 0:
@@ -345,8 +344,7 @@ static bool8 ItemPc_DoGfxSetup(void)
         gMain.state++;
         break;
     case 15:
-        taskId = CreateTask(Task_ItemPcMain, 0);
-        gTasks[taskId].data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sListMenuState.scroll, sListMenuState.row);
+        gTasks[CreateTask(Task_ItemPcMain, 0)].data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sListMenuState.scroll, sListMenuState.row);
         gMain.state++;
         break;
     case 16:
@@ -453,13 +451,13 @@ static bool8 ItemPc_LoadGraphics(void)
     return FALSE;
 }
 
-#define try_alloc(ptr__, size) ({ \
-    void ** ptr = (void **)&(ptr__);             \
+#define try_alloc(ptr__, size) ({ 		\
+    void ** ptr = (void **)&(ptr__);    \
     *ptr = Alloc(size);                 \
     if (*ptr == NULL)                   \
     {                                   \
-        ItemPc_FreeResources();                  \
-        ItemPc_FadeAndBail();                  \
+        ItemPc_FreeResources();         \
+        ItemPc_FadeAndBail();           \
         return FALSE;                   \
     }                                   \
 })
@@ -536,12 +534,8 @@ static void ItemPc_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *
 static void ItemPc_ItemPrintFunc(u8 windowId, u32 itemId, u8 y)
 {
     if (sStateDataPtr->moveModeOrigPos != 0xFF)
-    {
-        if (sStateDataPtr->moveModeOrigPos == (u8)itemId)
-            ItemPc_PrintOrRemoveCursorAt(y, 2);
-        else
-            ItemPc_PrintOrRemoveCursorAt(y, 0xFF);
-    }
+		ItemPc_PrintOrRemoveCursorAt(y, sStateDataPtr->moveModeOrigPos == (u8)itemId ? 2 : 0xFF);
+	
     if (itemId != -2)
     {
         u16 quantity = ItemPc_GetItemQuantityBySlotId(itemId);
@@ -559,15 +553,9 @@ static void ItemPc_PrintOrRemoveCursor(u8 listMenuId, u8 colorIdx)
 static void ItemPc_PrintOrRemoveCursorAt(u8 y, u8 colorIdx)
 {
     if (colorIdx == 0xFF)
-    {
-        u8 maxWidth = GetFontAttribute(2, FONTATTR_MAX_LETTER_WIDTH);
-        u8 maxHeight = GetFontAttribute(2, FONTATTR_MAX_LETTER_HEIGHT);
-        FillWindowPixelRect(0, 0, 0, y, maxWidth, maxHeight);
-    }
+        FillWindowPixelRect(0, 0, 0, y, GetFontAttribute(2, FONTATTR_MAX_LETTER_WIDTH), GetFontAttribute(2, FONTATTR_MAX_LETTER_HEIGHT));
     else
-    {
         ItemPc_AddTextPrinterParameterized(0, 2, gText_SelectorArrow2, 0, y, 0, 0, 0, colorIdx);
-    }
 }
 
 static void ItemPc_PrintWithdrawItem(void)
@@ -608,7 +596,7 @@ static void ItemPc_SetCursorPosition(void)
     }
 }
 
-#define try_free(ptr) ({        \
+#define try_free(ptr) ({        	   \
     void ** ptr__ = (void **)&(ptr);   \
     if (*ptr__ != NULL)                \
         Free(*ptr__);                  \
@@ -644,19 +632,11 @@ static void Task_ItemPcTurnOff2(u8 taskId)
     if (!gPaletteFade.active && !IsPCScreenEffectRunning_TurnOff())
     {
         DestroyListMenuTask(data[0], &sListMenuState.scroll, &sListMenuState.row);
-        if (sStateDataPtr->savedCallback != NULL)
-            SetMainCallback2(sStateDataPtr->savedCallback);
-        else
-            SetMainCallback2(sListMenuState.savedCallback);
+        SetMainCallback2(sStateDataPtr->savedCallback != NULL ? sStateDataPtr->savedCallback : sListMenuState.savedCallback);
         ItemPc_RemoveScrollIndicatorArrowPair();
         ItemPc_FreeResources();
         DestroyTask(taskId);
     }
-}
-
-static u8 ItemPc_GetCursorPosition(void)
-{
-    return sListMenuState.scroll + sListMenuState.row;
 }
 
 static u16 ItemPc_GetItemIdBySlotId(u16 idx)
@@ -887,7 +867,6 @@ static void ItemPc_DoWithdraw(u8 taskId)
 {
     s16 * data = gTasks[taskId].data;
     u16 itemId = ItemPc_GetItemIdBySlotId(data[1]);
-    u8 windowId;
 
     if (AddBagItem(itemId, data[8]) == TRUE)
     {
@@ -895,14 +874,12 @@ static void ItemPc_DoWithdraw(u8 taskId)
         CopyItemName(itemId, gStringVar1);
         ConvertIntToDecimalStringN(gStringVar2, data[8], STR_CONV_MODE_LEFT_ALIGN, 3);
         StringExpandPlaceholders(gStringVar4, gText_WithdrewQuantItem);
-        windowId = ItemPc_GetOrCreateSubwindow(2);
-        AddTextPrinterParameterized(windowId, 2, gStringVar4, 0, 2, 0, NULL);
+        AddTextPrinterParameterized(ItemPc_GetOrCreateSubwindow(2), 2, gStringVar4, 0, 2, 0, NULL);
         gTasks[taskId].func = Task_ItemPcWaitButtonAndFinishWithdrawMultiple;
     }
     else
     {
-        windowId = ItemPc_GetOrCreateSubwindow(2);
-        AddTextPrinterParameterized(windowId, 2, gText_NoMoreRoomInBag, 0, 2, 0, NULL);
+        AddTextPrinterParameterized(ItemPc_GetOrCreateSubwindow(2), 2, gText_NoMoreRoomInBag, 0, 2, 0, NULL);
         gTasks[taskId].func = Task_ItemPcWaitButtonWithdrawMultipleFailed;
     }
 }
@@ -910,13 +887,11 @@ static void ItemPc_DoWithdraw(u8 taskId)
 static void Task_ItemPcWaitButtonAndFinishWithdrawMultiple(u8 taskId)
 {
     s16 * data = gTasks[taskId].data;
-    u16 itemId;
 
     if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
     {
         PlaySE(SE_SELECT);
-        itemId = ItemPc_GetItemIdBySlotId(data[1]);
-        RemovePCItem(itemId, data[8]);
+        RemovePCItem(ItemPc_GetItemIdBySlotId(data[1]), data[8]);
         ItemPcCompaction();
         Task_ItemPcCleanUpWithdraw(taskId);
     }
@@ -948,9 +923,7 @@ static void Task_ItemPcCleanUpWithdraw(u8 taskId)
 
 static void ItemPc_WithdrawMultipleInitWindow(u16 slotId)
 {
-    u16 itemId = ItemPc_GetItemIdBySlotId(slotId);
-
-    CopyItemName(itemId, gStringVar1);
+    CopyItemName(ItemPc_GetItemIdBySlotId(slotId), gStringVar1);
     StringExpandPlaceholders(gStringVar4, gText_WithdrawHowMany);
     AddTextPrinterParameterized(ItemPc_GetOrCreateSubwindow(1), 2, gStringVar4, 0, 2, 0, NULL);
     ConvertIntToDecimalStringN(gStringVar1, 1, STR_CONV_MODE_LEADING_ZEROS, 3);
@@ -1020,7 +993,7 @@ static void Task_ItemPcGive(u8 taskId)
 static void ItemPc_CB2_SwitchToPartyMenu(void)
 {
     InitPartyMenu(0, 0, 6, 0, 6, Task_HandleChooseMonInput, ItemPc_CB2_ReturnFromPartyMenu);
-    gPartyMenu.bagItem = ItemPc_GetItemIdBySlotId(ItemPc_GetCursorPosition());
+    gPartyMenu.bagItem = ItemPc_GetItemIdBySlotId(sListMenuState.scroll + sListMenuState.row);
 }
 
 static void ItemPc_CB2_ReturnFromPartyMenu(void)
@@ -1079,26 +1052,6 @@ static void ItemPc_InitWindows(void)
         sSubmenuWindowIds[i] = 0xFF;
 }
 
-static void unused_ItemPc_AddTextPrinterParameterized(u8 windowId, const u8 * string, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed)
-{
-    struct TextPrinterTemplate template;
-
-    template.currentChar = string;
-    template.windowId = windowId;
-    template.fontId = 3;
-    template.x = x;
-    template.y = y;
-    template.currentX = x;
-    template.currentY = y;
-    template.fgColor = 2;
-    template.bgColor = 0;
-    template.shadowColor = 3;
-    template.unk = GetFontAttribute(3, FONTATTR_UNKNOWN);
-    template.letterSpacing = letterSpacing + GetFontAttribute(3, FONTATTR_LETTER_SPACING);
-    template.lineSpacing = lineSpacing + GetFontAttribute(3, FONTATTR_LINE_SPACING);
-    AddTextPrinter(&template, speed, NULL);
-}
-
 static void ItemPc_AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 * str, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 colorIdx)
 {
     AddTextPrinterParameterized4(windowId, fontId, x, y, letterSpacing, lineSpacing, sTextColors[colorIdx], speed, str);
@@ -1123,14 +1076,8 @@ static u8 ItemPc_GetOrCreateSubwindow(u8 idx)
 static void ItemPc_DestroySubwindow(u8 idx)
 {
     ClearStdWindowAndFrameToTransparent(sSubmenuWindowIds[idx], FALSE);
-    ClearWindowTilemap(sSubmenuWindowIds[idx]); // redundant
     RemoveWindow(sSubmenuWindowIds[idx]);
     sSubmenuWindowIds[idx] = 0xFF;
-}
-
-static u8 ItemPc_GetSubwindow(u8 idx)
-{
-    return sSubmenuWindowIds[idx];
 }
 
 static void ItemPc_PrintOnWindow5WithContinueTask(u8 taskId, const u8 * str, TaskFunc taskFunc)

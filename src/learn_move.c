@@ -113,41 +113,24 @@
 #define MENU_STATE_WAIT_FOR_FANFARE 32
 #define MENU_STATE_WAIT_FOR_A_BUTTON 33
 
-struct MoveTutorMoveInfoHeaders
-{
-    const u8 *text;
-    u8 left;
-    u8 right;
-    u8 index; // unused
-};
-
 struct LearnMoveGfxResources
 {
     u8 state;
-    u8 unk_01;
-    u8 unk_02;
     u8 spriteIds[2];
-    u8 filler_05[0x13];
-    u8 unk_18;
     u8 scrollPositionMaybe;
     u8 numLearnableMoves;
-    u8 unk_1B;
-    u8 unk_1C;
-    u8 unk_1D;
-    u8 unk_1E;
-    struct ListMenuItem listMenuItems[25];
-    u16 learnableMoves[25];
-    u8 listMenuStrbufs[25][13];
-    bool8 scheduleMoveInfoUpdate;
+	bool8 scheduleMoveInfoUpdate;
     u8 selectedPartyMember;
     u8 selectedMoveSlot;
-    u8 unk_262;
-    u8 listMenuTaskId;
-    u8 bg1TilemapBuffer[BG_SCREEN_SIZE]; // 264
-    u8 textColor[3]; // A64
-    u8 selectedIndex;
-    u16 listMenuScrollPos;
+	u16 listMenuScrollPos;
     u16 listMenuScrollRow;
+    u16 learnableMoves[25];
+    u8 listMenuStrbufs[25][13];
+    u8 listMenuTaskId;
+    u8 bg1TilemapBuffer[BG_SCREEN_SIZE];
+    u8 textColor[3];
+    u8 selectedIndex;
+	struct ListMenuItem listMenuItems[25];
 };
 
 static EWRAM_DATA struct LearnMoveGfxResources * sMoveRelearner = NULL;
@@ -171,37 +154,6 @@ static s8 YesNoMenuProcessInput(void);
 
 static const u16 sLearnMoveInterfaceSpritesPalette[] = INCBIN_U16("graphics/learn_move/interface_sprites.gbapal");
 static const u16 sLearnMoveInterfaceSpritesTiles[] = INCBIN_U16("graphics/learn_move/interface_sprites.4bpp");
-
-static const u8 sMoveTutorMenuWindowFrameDimensions[][4] =
-{
-    { 0,  0, 19, 13},
-    {20,  0, 29, 13},
-    { 2, 14, 27, 19}
-};
-
-static const u8 sJPText_TatakauWaza[] = _("たたかうわざ");
-static const u8 sJPText_Taipu[] = _("タイプ/");
-static const u8 sJPText_PP[] = _("PP/");
-static const u8 sJPText_Iryoku[] = _("いりょく/");
-static const u8 sJPText_Meichuu[] = _("めいちゅう/");
-
-static const struct MoveTutorMoveInfoHeaders sMoveTutorMoveInfoHeaders[][5] =
-{
-    {
-        {sJPText_TatakauWaza,  7, 1, 0},
-        {sJPText_Taipu,        1, 4, 1},
-        {sJPText_Iryoku,      11, 4, 2},
-        {sJPText_PP,           2, 6, 3},
-        {sJPText_Meichuu,     10, 6, 4},
-    },
-    {
-        {NULL,        0, 0, 0},
-        {NULL,        0, 0, 0},
-        {NULL,        0, 0, 0},
-        {NULL,        0, 0, 0},
-        {NULL,        0, 0, 0},
-    },
-};
 
 static const struct SpriteSheet sSpriteSheet_ListMenuScrollIndicators = {
     sLearnMoveInterfaceSpritesTiles, 0x180, 5525
@@ -697,14 +649,8 @@ static void InitMoveRelearnerStateVariables(void)
 {
     int i;
     sMoveRelearner->state = 0;
-    sMoveRelearner->unk_02 = 0;
     sMoveRelearner->scrollPositionMaybe = 0;
-    sMoveRelearner->unk_18 = 0;
-    sMoveRelearner->unk_1C = 0;
     sMoveRelearner->numLearnableMoves = 0;
-    sMoveRelearner->unk_1B = 0;
-    sMoveRelearner->unk_1D = 0;
-    sMoveRelearner->unk_1E = 0;
     sMoveRelearner->scheduleMoveInfoUpdate = FALSE;
     for (i = 0; i < 20; i++)
         sMoveRelearner->learnableMoves[i] = MOVE_NONE;
@@ -737,10 +683,9 @@ static void SpawnListMenuScrollIndicatorSprites(void)
     gSprites[sMoveRelearner->spriteIds[0]].data[0] = 2;
     gSprites[sMoveRelearner->spriteIds[0]].data[2] = -1;
 
-    // Bug: This should be using the second element of spriteIds.
-    sMoveRelearner->spriteIds[0] = CreateSprite(&sSpriteTemplate_MoveRelearnerListMenuScrollIndicators, 200, 108, 0);
-    gSprites[sMoveRelearner->spriteIds[0]].data[0] = 2;
-    gSprites[sMoveRelearner->spriteIds[0]].data[2] = 1;
+    sMoveRelearner->spriteIds[1] = CreateSprite(&sSpriteTemplate_MoveRelearnerListMenuScrollIndicators, 200, 108, 0);
+    gSprites[sMoveRelearner->spriteIds[1]].data[0] = 2;
+    gSprites[sMoveRelearner->spriteIds[1]].data[2] = 1;
     for (i = 0; i < 2; i++)
         gSprites[sMoveRelearner->spriteIds[i]].invisible = TRUE;
 }
@@ -751,14 +696,16 @@ static void MoveRelearnerInitListMenuBuffersEtc(void)
     s32 count;
     u8 nickname[POKEMON_NAME_LENGTH + 1];
 
-    sMoveRelearner->numLearnableMoves = GetMoveRelearnerMoves(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves);
-    count = GetMoveRelearnerMoves(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves);
+    count = sMoveRelearner->numLearnableMoves = GetMoveRelearnerMoves(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves);
+
     for (i = 0; i < sMoveRelearner->numLearnableMoves; i++)
         StringCopy(sMoveRelearner->listMenuStrbufs[i], gMoveNames[sMoveRelearner->learnableMoves[i]]);
+	
     GetMonData(&gPlayerParty[sMoveRelearner->selectedPartyMember], MON_DATA_NICKNAME, nickname);
     StringCopy_Nickname(gStringVar1, nickname);
     StringCopy(sMoveRelearner->listMenuStrbufs[sMoveRelearner->numLearnableMoves], gFameCheckerText_Cancel);
     sMoveRelearner->numLearnableMoves++;
+	
     for (i = 0; i < count; i++)
     {
         sMoveRelearner->listMenuItems[i].label = sMoveRelearner->listMenuStrbufs[i];

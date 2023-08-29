@@ -136,18 +136,14 @@ void ItemUseOnFieldCB_Itemfinder(u8 taskId)
     u8 i;
     for (i = 0; i < 16; i++)
         gTasks[taskId].data[i] = 0;
+	
     if (HiddenItemIsWithinRangeOfPlayer(gMapHeader.events, taskId) == TRUE)
     {
         LoadArrowAndStarTiles();
-        if (gTasks[taskId].tUnderfoot == TRUE)
-            gTasks[taskId].func = Task_ItemfinderUnderfootSoundsAndAnims;
-        else
-            gTasks[taskId].func = Task_ItemfinderResponseSoundsAndAnims;
+        gTasks[taskId].func = gTasks[taskId].tUnderfoot ? Task_ItemfinderUnderfootSoundsAndAnims : Task_ItemfinderResponseSoundsAndAnims;
     }
     else
-    {
         DisplayItemMessageOnField(taskId, 2, gText_NopeTheresNoResponse, Task_NoResponse_CleanUp);
-    }
 }
 
 static void Task_NoResponse_CleanUp(u8 taskId)
@@ -161,10 +157,9 @@ static void Task_NoResponse_CleanUp(u8 taskId)
 static void Task_ItemfinderResponseSoundsAndAnims(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
-    u8 direction;
+
     if (tDingTimer % 25 == 0)
     {
-        direction = GetPlayerDirectionTowardsHiddenItem(tItemX, tItemY);
         if (tNumDingsRemaining == 0)
         {
             gTasks[taskId].func = Task_ItemfinderResponsePrintMessage;
@@ -173,7 +168,7 @@ static void Task_ItemfinderResponseSoundsAndAnims(u8 taskId)
         else
         {
             PlaySE(SE_ITEMFINDER);
-            CreateArrowSprite(tDingNum, direction);
+            CreateArrowSprite(tDingNum, GetPlayerDirectionTowardsHiddenItem(tItemX, tItemY));
             tDingNum++;
             tNumDingsRemaining--;
         }
@@ -221,18 +216,12 @@ static bool8 HiddenItemIsWithinRangeOfPlayer(const struct MapEvents * events, u8
                     return TRUE;
                 }
             }
-            else if (
-                dx >= -7
-             && dx <=  7
-             && dy >= -5
-             && dy <=  5
-            )
-            {
+            else if (dx >= -7 && dx <=  7 && dy >= -5 && dy <=  5)
                 RegisterHiddenItemRelativeCoordsIfCloser(taskId, dx, dy);
-            }
         }
     }
     FindHiddenItemsInConnectedMaps(taskId);
+	
     if (gTasks[taskId].tHiddenItemFound == TRUE)
     {
         SetNormalHiddenItem(taskId);
@@ -296,11 +285,7 @@ static bool8 HiddenItemAtPos(const struct MapEvents * events, s16 x, s16 y)
 
     for (i = 0; i < bgEventCount; i++)
     {
-        if (
-            bgEvents[i].kind == 7
-         && x == bgEvents[i].x
-         && y == bgEvents[i].y
-        )
+        if (bgEvents[i].kind == 7 && x == bgEvents[i].x && y == bgEvents[i].y)
         {
             eventFlag = GetHiddenItemAttr(bgEvents[i].bgUnion.hiddenItem, HIDDEN_ITEM_FLAG);
             if (GetHiddenItemAttr(bgEvents[i].bgUnion.hiddenItem, HIDDEN_ITEM_UNDERFOOT) != TRUE && !FlagGet(eventFlag))
@@ -370,10 +355,7 @@ static void FindHiddenItemsInConnectedMaps(u8 taskId)
     {
         for (curY = y - 5; curY <= y + 5; curY++)
         {
-            if (var1 > curX
-                || curX >= width
-                || var2 > curY
-                || curY >= height)
+            if (var1 > curX || curX >= width || var2 > curY || curY >= height)
             {
                 struct MapConnection * conn = GetMapConnectionAtPos(curX, curY);
                 if (conn != NULL && HiddenItemInConnectedMapAtPos(conn, curX, curY) == TRUE)
@@ -661,15 +643,12 @@ static void CreateArrowSprite(u8 animNum, u8 direction)
 
 static void SpriteCallback_Arrow(struct Sprite * sprite)
 {
-    s16 x, y;
     sprite->spCurX += sprite->spDeltaX;
     sprite->spCurY += sprite->spDeltaY;
     sprite->x = sprite->spCenterX + (sprite->spCurX >> 8);
     sprite->y = sprite->spCenterY + (sprite->spCurY >> 8);
-    if (sprite->x <= 104
-     || sprite->x > 132
-     || sprite->y <= 60
-     || sprite->y > 88)
+	
+    if (sprite->x <= 104 || sprite->x > 132 || sprite->y <= 60 || sprite->y > 88)
         sprite->callback = SpriteCallback_DestroyArrow;
 }
 
@@ -698,15 +677,12 @@ static u8 CreateStarSprite(void)
 
 static void SpriteCallback_Star(struct Sprite * sprite)
 {
-    s16 x, y;
     sprite->spCurX += sprite->spDeltaX;
     sprite->spCurY += sprite->spDeltaY;
     sprite->x = sprite->spCenterX + (sprite->spCurX >> 8);
     sprite->y = sprite->spCenterY + (sprite->spCurY >> 8);
-    if (sprite->x <= 104
-        || sprite->x > 132
-        || sprite->y <= 60
-        || sprite->y > 88)
+	
+    if (sprite->x <= 104 || sprite->x > 132 || sprite->y <= 60 || sprite->y > 88)
         sprite->callback = SpriteCallback_DestroyStar;
 }
 

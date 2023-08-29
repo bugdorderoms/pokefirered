@@ -1589,25 +1589,6 @@ const struct SpriteTemplate gSpriteTemplates_TrainerBackpics[] =
     },
 };
 
-// Classes dummied out
-static const u8 sSecretBaseFacilityClasses[][5] = 
-{
-    [MALE] = {
-        FACILITY_CLASS_YOUNGSTER,
-        FACILITY_CLASS_YOUNGSTER,
-        FACILITY_CLASS_YOUNGSTER,
-        FACILITY_CLASS_YOUNGSTER,
-        FACILITY_CLASS_YOUNGSTER
-    },
-    [FEMALE] = {
-        FACILITY_CLASS_YOUNGSTER,
-        FACILITY_CLASS_YOUNGSTER,
-        FACILITY_CLASS_YOUNGSTER,
-        FACILITY_CLASS_YOUNGSTER,
-        FACILITY_CLASS_YOUNGSTER
-    },
-};
-
 static const s8 sFriendshipEventDeltas[][3] = 
 {
     [FRIENDSHIP_EVENT_GROW_LEVEL]           = { 5,  3,  2 },
@@ -1971,9 +1952,6 @@ void ConvertPokemonToBattleTowerPokemon(struct Pokemon *mon, struct BattleTowerP
 
     dest->species = GetMonData(mon, MON_DATA_SPECIES, NULL);
     heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
-
-    if (heldItem == ITEM_ENIGMA_BERRY)
-        heldItem = 0;
 
     dest->heldItem = heldItem;
 
@@ -3356,54 +3334,6 @@ u16 GetMonAbility(struct Pokemon *mon)
     u8 abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM, NULL);
     u8 abilityHidden = GetMonData(mon, MON_DATA_ABILITY_HIDDEN, NULL);
     return GetAbilityBySpecies(species, abilityNum, abilityHidden);
-}
-
-static void CreateSecretBaseEnemyParty(struct SecretBaseRecord *secretBaseRecord)
-{
-    s32 i, j;
-
-    ZeroEnemyPartyMons();
-    *gBattleResources->secretBase = *secretBaseRecord;
-
-    for (i = 0; i < PARTY_SIZE; i++)
-    {
-        if (gBattleResources->secretBase->party.species[i])
-        {
-            CreateMon(&gEnemyParty[i],
-                gBattleResources->secretBase->party.species[i],
-                gBattleResources->secretBase->party.levels[i],
-                15,
-                1,
-                gBattleResources->secretBase->party.personality[i],
-                2,
-                0);
-
-            SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &gBattleResources->secretBase->party.heldItems[i]);
-
-            for (j = 0; j < NUM_STATS; j++)
-                SetMonData(&gEnemyParty[i], MON_DATA_HP_EV + j, &gBattleResources->secretBase->party.EVs[i]);
-
-            for (j = 0; j < MAX_MON_MOVES; j++)
-            {
-                SetMonData(&gEnemyParty[i], MON_DATA_MOVE1 + j, &gBattleResources->secretBase->party.moves[i * 4 + j]);
-                SetMonData(&gEnemyParty[i], MON_DATA_PP1 + j, &gBattleMoves[gBattleResources->secretBase->party.moves[i * 4 + j]].pp);
-            }
-        }
-    }
-    gBattleTypeFlags = 8;
-    gTrainerBattleOpponent_A = SECRET_BASE_OPPONENT;
-}
-
-u8 GetSecretBaseTrainerPicIndex(void)
-{
-    u8 facilityClass = sSecretBaseFacilityClasses[gBattleResources->secretBase->gender][gBattleResources->secretBase->trainerId[0] % 5];
-    return gFacilityClassToPicIndex[facilityClass];
-}
-
-u8 GetSecretBaseTrainerNameIndex(void)
-{
-    u8 facilityClass = sSecretBaseFacilityClasses[gBattleResources->secretBase->gender][gBattleResources->secretBase->trainerId[0] % 5];
-    return gFacilityClassToTrainerClass[facilityClass];
 }
 
 bool8 IsPlayerPartyAndPokemonStorageFull(void)

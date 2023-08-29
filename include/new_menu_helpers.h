@@ -43,8 +43,6 @@ u8 CreateStartMenuWindow(u8 height);
 u8 GetStartMenuWindowId(void);
 void RemoveStartMenuWindow(void);
 u16 GetStdWindowBaseTileNum(void);
-void DrawHelpMessageWindowWithText(const u8 * text);
-void DestroyHelpMessageWindow_(void);
 void LoadSignPostWindowFrameGfx(void);
 void SetDefaultFontsPointer(void);
 

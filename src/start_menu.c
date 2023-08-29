@@ -261,7 +261,7 @@ static void DrawTimeBox(void)
 {
 	u8 taskId;
 	bool8 inSafari = GetSafariZoneFlag(), canShowLevelCap = CanShowCurrentLevelCapOnTimeBox();
-    struct WindowTemplate template = SetWindowTemplateFields(0, 1, 1, 10, 2, 15, 0x008);
+    struct WindowTemplate template = SetWindowTemplateFields(0, 1, 1, 10, 2, 15, 0x0D0);
     
 	if (inSafari)
 		template.height += 3;
@@ -545,7 +545,6 @@ static bool8 StartMenuPlayerCallback(void)
 
 static bool8 StartMenuSaveCallback(void)
 {
-    DestroyTask(FindTaskIdByFunc(Task_PutTimeInTimeBox));
     sStartMenuCallback = StartCB_Save1;
     return FALSE;
 }
@@ -578,7 +577,6 @@ static bool8 StartMenuSafariZoneRetireCallback(void)
     SafariZoneRetirePrompt();
     return TRUE;
 }
-
 
 static bool8 StartMenuLinkPlayerCallback(void)
 {
@@ -727,6 +725,7 @@ static bool8 SaveDialog_Wait60FramesThenCheckAButtonHeld(void)
 
 static u8 SaveDialogCB_PrintAskSaveText(void)
 {
+	DestroySafariZoneStatsWindow();
     ClearStdWindowAndFrame(GetStartMenuWindowId(), FALSE);
     RemoveStartMenuWindow();
     PrintSaveStats();

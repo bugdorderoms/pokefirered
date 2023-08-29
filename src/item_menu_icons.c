@@ -1036,33 +1036,7 @@ void CopyItemIconPicTo4x4Buffer(const void * src, void * dest)
 
 u8 AddItemIconObject(u16 tilesTag, u16 paletteTag, u16 itemId)
 {
-    struct SpriteTemplate template;
-    struct SpriteSheet spriteSheet;
-    struct CompressedSpritePalette spritePalette;
-    u8 spriteId;
-
-    if (!TryAllocItemIconTilesBuffers())
-        return MAX_SPRITES;
-
-    LZDecompressWram(GetItemIconGfxPtr(itemId, 0), sItemIconTilesBuffer);
-    CopyItemIconPicTo4x4Buffer(sItemIconTilesBuffer, sItemIconTilesBufferPadded);
-    spriteSheet.data = sItemIconTilesBufferPadded;
-    spriteSheet.size = 0x200;
-    spriteSheet.tag = tilesTag;
-    LoadSpriteSheet(&spriteSheet);
-
-    spritePalette.data = GetItemIconGfxPtr(itemId, 1);
-    spritePalette.tag = paletteTag;
-    LoadCompressedSpritePalette(&spritePalette);
-
-    CpuCopy16(&sSpriteTemplate_ItemIcon, &template, sizeof(struct SpriteTemplate));
-    template.tileTag = tilesTag;
-    template.paletteTag = paletteTag;
-    spriteId = CreateSprite(&template, 0, 0, 0);
-
-    Free(sItemIconTilesBuffer);
-    Free(sItemIconTilesBufferPadded);
-    return spriteId;
+    return AddItemIconObjectWithCustomObjectTemplate(&sSpriteTemplate_ItemIcon, tilesTag, paletteTag, itemId);
 }
 
 u8 AddItemIconObjectWithCustomObjectTemplate(const struct SpriteTemplate * origTemplate, u16 tilesTag, u16 paletteTag, u16 itemId)
@@ -1128,9 +1102,7 @@ void DestroyItemMenuIcon(u8 idx)
 
 const void * GetItemIconGfxPtr(u16 itemId, u8 attrId)
 {
-    if (itemId > ITEMS_COUNT)
-        itemId = ITEM_NONE;
-    return sItemIconGfxPtrs[itemId][attrId];
+    return sItemIconGfxPtrs[itemId > ITEMS_COUNT ? ITEM_NONE : itemId][attrId];
 }
 
 void sub_80989A0(u16 itemId, u8 idx)

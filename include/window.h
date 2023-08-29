@@ -54,6 +54,7 @@ u16 AddWindow(const struct WindowTemplate *template);
 int AddWindowWithoutTileMap(const struct WindowTemplate *template);
 void RemoveWindow(u8 windowId);
 void FreeAllWindowBuffers(void);
+void FillHelpMessageWindow(u8 windowId);
 
 // Mode parameter for funcs below
 #define COPYWIN_MAP  1

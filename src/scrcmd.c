@@ -1265,23 +1265,6 @@ bool8 ScrCmd_message(struct ScriptContext * ctx)
     return FALSE;
 }
 
-bool8 ScrCmd_loadhelp(struct ScriptContext * ctx)
-{
-    const u8 *msg = (const u8 *)ScriptReadWord(ctx);
-
-    if (msg == NULL)
-        msg = (const u8 *)ctx->data[0];
-    DrawHelpMessageWindowWithText(msg);
-    CopyWindowToVram(GetStartMenuWindowId(), COPYWIN_MAP);
-    return FALSE;
-}
-
-bool8 ScrCmd_unloadhelp(struct ScriptContext * ctx)
-{
-    DestroyHelpMessageWindow_();
-    return FALSE;
-}
-
 bool8 ScrCmd_messageautoscroll(struct ScriptContext * ctx)
 {
     const u8 *msg = (const u8 *)ScriptReadWord(ctx);
@@ -1596,7 +1579,7 @@ bool8 ScrCmd_bufferitemnameplural(struct ScriptContext * ctx)
     CopyItemName(itemId, sScriptStringVars[stringVarIndex]);
     if (itemId == ITEM_POKE_BALL && quantity >= 2)
         StringAppend(sScriptStringVars[stringVarIndex], gUnknown_83A72A0);
-    else if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH && itemId != ITEM_ENIGMA_BERRY && quantity >= 2)
+    else if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH && quantity >= 2)
     {
         u16 strlength = StringLength(sScriptStringVars[stringVarIndex]);
         if (strlength != 0)

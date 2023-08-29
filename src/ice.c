@@ -15,8 +15,6 @@ struct HailStruct
     s32 unk3:4;
 };
 
-static void sub_80AF108(struct Sprite *sprite);
-static void sub_80AF28C(struct Sprite *sprite);
 static void AnimIcePunchSwirlingParticle(struct Sprite *sprite);
 static void AnimIceBeamParticle(struct Sprite *sprite);
 static void AnimIceEffectParticle(struct Sprite *sprite);
@@ -43,36 +41,6 @@ static void AnimTask_Haze2(u8 taskId);
 static void AnimTask_OverlayFogTiles(u8 taskId);
 static void AnimTask_Hail2(u8 taskId);
 static bool8 GenerateHailParticle(u8 hailStructId, u8 affineAnimNum, u8 taskId, u8 c);
-
-static const union AnimCmd gUnknown_83E62C0[] =
-{
-    ANIMCMD_FRAME(0, 5, .hFlip = TRUE),
-    ANIMCMD_FRAME(1, 5, .hFlip = TRUE),
-    ANIMCMD_JUMP(0),
-};
-
-static const union AnimCmd *const gUnknown_83E62CC[] =
-{
-    gUnknown_83E62C0,
-};
-
-// not used
-static const struct SpriteTemplate gUnknown_83E62D0 =
-{
-    .tileTag = ANIM_TAG_ICE_CRYSTALS,
-    .paletteTag = ANIM_TAG_ICE_CRYSTALS,
-    .oam = &gOamData_AffineOff_ObjNormal_8x8,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = sub_80AF108,
-};
-
-static const union AnimCmd gUnknown_83E62E8[] =
-{
-    ANIMCMD_FRAME(0, 1),
-    ANIMCMD_END,
-};
 
 static const union AnimCmd sAnim_IceCrystalLarge[] =
 {
@@ -103,12 +71,6 @@ static const union AnimCmd sAnim_SmallBubblePair[] =
     ANIMCMD_FRAME(12, 6),
     ANIMCMD_FRAME(13, 6),
     ANIMCMD_JUMP(0),
-};
-
-// unused
-static const union AnimCmd *const gUnknown_83E631C[] =
-{
-    gUnknown_83E62E8,
 };
 
 static const union AnimCmd *const sAnims_IceCrystalLarge[] =
@@ -518,62 +480,6 @@ const struct SpriteTemplate gIceBallImpactShardSpriteTemplate =
     .callback = InitIceBallParticle,
 };
 
-// not used
-static void sub_80AF108(struct Sprite *sprite)
-{
-    s16 targetX, targetY, attackerX, attackerY;
-
-    sprite->oam.tileNum += 7;
-    targetX = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
-    targetY = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
-    attackerX = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
-    attackerY = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
-    sprite->data[0] = gBattleAnimArgs[4];
-    sprite->data[1] = gBattleAnimArgs[0] + attackerX;
-    sprite->data[2] = gBattleAnimArgs[2] + targetX;
-    sprite->data[3] = gBattleAnimArgs[1] + attackerY;
-    sprite->data[4] = gBattleAnimArgs[3] + targetY;
-    SetupLinearTranslationWithFixedDuration(sprite);
-    // won't match with while loop
-    for (; (targetX >= -32 && targetX <= 272) && (targetY >= -32 && targetY <= 192); targetX += sprite->data[1], targetY += sprite->data[2])
-        ;
-    sprite->data[1] = -sprite->data[1];
-    sprite->data[2] = -sprite->data[2];
-    for (; (attackerX >= -32 && attackerX <= 272) && (attackerY >= -32 && attackerY <= 192); attackerX += sprite->data[1], attackerY += sprite->data[2])
-        ;
-    sprite->x = attackerX;
-    sprite->y = attackerY;
-    sprite->data[0] = gBattleAnimArgs[4];
-    sprite->data[1] = attackerX;
-    sprite->data[2] = targetX;
-    sprite->data[3] = attackerY;
-    sprite->data[4] = targetY;
-    SetupLinearTranslationWithFixedDuration(sprite);
-    sprite->data[3] = gBattleAnimArgs[5];
-    sprite->data[4] = gBattleAnimArgs[6];
-    sprite->callback = sub_80AF28C;
-}
-
-// not used
-static void sub_80AF28C(struct Sprite *sprite)
-{
-    if (sprite->data[0] != 0)
-    {
-        sprite->data[5] += sprite->data[1];
-        sprite->data[6] += sprite->data[2];
-        sprite->x2 = sprite->data[5];
-        sprite->y2 = sprite->data[6];
-        sprite->x2 += Sin(sprite->data[7], sprite->data[3]);
-        sprite->y2 += Sin(sprite->data[7], sprite->data[3]);
-        sprite->data[7] = (sprite->data[7] + sprite->data[4]) & 0xFF;
-        --sprite->data[0];
-    }
-    else
-    {
-        DestroyAnimSprite(sprite);
-    }
-}
-
 // Animates the swirling ice crystals in Ice Punch.
 // arg 0: initial position angle around circle (0-256)
 static void AnimIcePunchSwirlingParticle(struct Sprite *sprite)
@@ -676,9 +582,7 @@ static void AnimSwirlingSnowball_Step1(struct Sprite *sprite)
     {
         sprite->data[0] = 1;
         AnimFastTranslateLinear(sprite);
-        if ((u32)(sprite->x + sprite->x2 + 16) > 272
-         || sprite->y + sprite->y2 > 160
-         || sprite->y + sprite->y2 < -16)
+        if ((u32)(sprite->x + sprite->x2 + 16) > 272 || sprite->y + sprite->y2 > 160 || sprite->y + sprite->y2 < -16)
             break;
     }
     sprite->x += sprite->x2;
@@ -692,15 +596,12 @@ static void AnimSwirlingSnowball_Step1(struct Sprite *sprite)
 
 static void AnimSwirlingSnowball_Step2(struct Sprite *sprite)
 {
-    s16 tempVar;
-
     sprite->x += sprite->x2;
     sprite->y += sprite->y2;
     sprite->y2 = 0;
     sprite->x2 = 0;
     sprite->data[0] = 128;
-    tempVar = GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER ? 20 : -20;
-    sprite->data[3] = Sin(sprite->data[0], tempVar);
+    sprite->data[3] = Sin(sprite->data[0], GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER ? 20 : -20);
     sprite->data[4] = Cos(sprite->data[0], 0xF);
     sprite->data[5] = 0;
     sprite->callback = AnimSwirlingSnowball_Step3;
@@ -709,12 +610,10 @@ static void AnimSwirlingSnowball_Step2(struct Sprite *sprite)
 
 static void AnimSwirlingSnowball_Step3(struct Sprite *sprite)
 {
-    s16 tempVar = GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER ? 20 : -20;
-    
     if (sprite->data[5] <= 31)
     {
-        sprite->x2 = Sin(sprite->data[0], tempVar) - sprite->data[3];
-        sprite->y2 = Cos(sprite->data[0], 15)      - sprite->data[4];
+        sprite->x2 = Sin(sprite->data[0], GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER ? 20 : -20) - sprite->data[3];
+        sprite->y2 = Cos(sprite->data[0], 15) - sprite->data[4];
         sprite->data[0] = (sprite->data[0] + 16) & 0xFF;
         sprite->data[5] += 1;
     }
@@ -732,9 +631,7 @@ static void AnimSwirlingSnowball_End(struct Sprite *sprite)
 {
     sprite->data[0] = 1;
     AnimFastTranslateLinear(sprite);
-    if ((u32)(sprite->x + sprite->x2 + 16) > 272
-     || sprite->y + sprite->y2 > 256
-     || sprite->y + sprite->y2 < -16)
+    if ((u32)(sprite->x + sprite->x2 + 16) > 272 || sprite->y + sprite->y2 > 256 || sprite->y + sprite->y2 < -16)
         DestroyAnimSprite(sprite);
 }
 
@@ -780,9 +677,7 @@ static void AnimMoveParticleBeyondTarget(struct Sprite *sprite)
     {
         sprite->data[0] = 1;
         AnimFastTranslateLinear(sprite);
-        if ((u32)(sprite->x + sprite->x2 + 16) > 272
-         || sprite->y + sprite->y2 > 160
-         || sprite->y + sprite->y2 < -16)
+        if ((u32)(sprite->x + sprite->x2 + 16) > 272 || sprite->y + sprite->y2 > 160 || sprite->y + sprite->y2 < -16)
             break;
     }
     sprite->x += sprite->x2;
@@ -806,9 +701,7 @@ static void AnimWiggleParticleTowardsTarget(struct Sprite *sprite)
     sprite->data[7] = (sprite->data[7] + sprite->data[6]) & 0xFF;
     if (sprite->data[0] == 1)
     {
-        if ((u32)(sprite->x + sprite->x2 + 16) > 272
-         || sprite->y + sprite->y2 > 160
-         || sprite->y + sprite->y2 < -16)
+        if ((u32)(sprite->x + sprite->x2 + 16) > 272 || sprite->y + sprite->y2 > 160 || sprite->y + sprite->y2 < -16)
             DestroyAnimSprite(sprite);
     }
 }
@@ -940,7 +833,7 @@ void AnimTask_Haze1(u8 taskId)
     gBattle_BG1_Y = 0;
     SetGpuReg(REG_OFFSET_BG1HOFS, gBattle_BG1_X);
     SetGpuReg(REG_OFFSET_BG1VOFS, gBattle_BG1_Y);
-    GetBattleAnimBg1Data(&animBg);
+    GetBattleAnimBgData(&animBg, 1);
     LoadBgTiles(animBg.bgId, gWeatherFogHorizontalTiles, 0x800, animBg.tilesOffset);
     AnimLoadCompressedBgTilemap(animBg.bgId, gBattleAnimFogTilemap);
     LoadPalette(&gDefaultWeatherSpritePalette, animBg.paletteId * 16, 32);
@@ -989,7 +882,7 @@ static void AnimTask_Haze2(u8 taskId)
         }
         break;
     case 3:
-        GetBattleAnimBg1Data(&animBg);
+        GetBattleAnimBgData(&animBg, 1);
         InitBattleAnimBg(1);
         InitBattleAnimBg(2);
         ++gTasks[taskId].data[12];
@@ -1034,7 +927,7 @@ void AnimTask_LoadMistTiles(u8 taskId)
     gBattle_BG1_Y = 0;
     SetGpuReg(REG_OFFSET_BG1HOFS, gBattle_BG1_X);
     SetGpuReg(REG_OFFSET_BG1VOFS, gBattle_BG1_Y);
-    GetBattleAnimBg1Data(&animBg);
+    GetBattleAnimBgData(&animBg, 1);
     LoadBgTiles(animBg.bgId, gWeatherFogHorizontalTiles, 0x800, animBg.tilesOffset);
     AnimLoadCompressedBgTilemap(animBg.bgId, gBattleAnimFogTilemap);
     LoadPalette(&gDefaultWeatherSpritePalette, animBg.paletteId * 16, 32);
@@ -1070,7 +963,7 @@ static void AnimTask_OverlayFogTiles(u8 taskId)
         if (++gTasks[taskId].data[10] == 4)
         {
             gTasks[taskId].data[10] = 0;
-            gTasks[taskId].data[11] -= 1;
+            --gTasks[taskId].data[11];
             SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(gTasks[taskId].data[11], 16 - gTasks[taskId].data[11]));
             if (gTasks[taskId].data[11] == 0)
             {
@@ -1080,7 +973,7 @@ static void AnimTask_OverlayFogTiles(u8 taskId)
         }
         break;
     case 3:
-        GetBattleAnimBg1Data(&animBg);
+        GetBattleAnimBgData(&animBg, 1);
         InitBattleAnimBg(1);
         InitBattleAnimBg(2);
         ++gTasks[taskId].data[12];
@@ -1123,20 +1016,18 @@ static void InitPoisonGasCloudAnim(struct Sprite *sprite)
     sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
     if (gBattleAnimArgs[7])
     {
-        sprite->data[1] = sprite->x + gBattleAnimArgs[1];
         sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[3];
-        sprite->data[3] = sprite->y + gBattleAnimArgs[2];
         sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[4];
-        sprite->data[7] |= GetBattlerSpriteBGPriority(gBattleAnimTarget) << 8;
     }
     else
     {
-        sprite->data[1] = sprite->x + gBattleAnimArgs[1];
         sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + gBattleAnimArgs[3];
-        sprite->data[3] = sprite->y + gBattleAnimArgs[2];
         sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y) + gBattleAnimArgs[4];
-        sprite->data[7] |= GetBattlerSpriteBGPriority(gBattleAnimTarget) << 8;
     }
+	sprite->data[1] = sprite->x + gBattleAnimArgs[1];
+	sprite->data[3] = sprite->y + gBattleAnimArgs[2];
+	sprite->data[7] |= GetBattlerSpriteBGPriority(gBattleAnimTarget) << 8;
+	
     InitAnimLinearTranslation(sprite);
     sprite->callback = MovePoisonGasCloud;
 }
@@ -1144,7 +1035,7 @@ static void InitPoisonGasCloudAnim(struct Sprite *sprite)
 static void MovePoisonGasCloud(struct Sprite *sprite)
 {
     s32 value;
-    u16 var0;
+	u16 var0;
     
     switch (sprite->data[7] & 0xFF)
     {
@@ -1166,10 +1057,7 @@ static void MovePoisonGasCloud(struct Sprite *sprite)
             sprite->data[3] = sprite->y;
             sprite->data[4] = sprite->y + 29;
             ++sprite->data[7];
-            if (GetBattlerSide(gBattleAnimTarget) != B_SIDE_PLAYER)
-                sprite->data[5] = 204;
-            else
-                sprite->data[5] = 80;
+            sprite->data[5] = GetBattlerSide(gBattleAnimTarget) != B_SIDE_PLAYER ? 204 : 80;
             sprite->y2 = 0;
             value = gSineTable[sprite->data[5]];
             sprite->x2 = value >> 3;
@@ -1194,10 +1082,7 @@ static void MovePoisonGasCloud(struct Sprite *sprite)
             sprite->data[1] = sprite->x += sprite->x2;
             sprite->data[3] = sprite->y += sprite->y2;
             sprite->data[4] = sprite->y + 4;
-            if (GetBattlerSide(gBattleAnimTarget) != B_SIDE_PLAYER)
-                sprite->data[2] = 0x100;
-            else
-                sprite->data[2] = -0x10;
+            sprite->data[2] = GetBattlerSide(gBattleAnimTarget) != B_SIDE_PLAYER ? 0x100 : -0x10;
             ++sprite->data[7];
             sprite->x2 = sprite->y2 = 0;
             BattleAnim_InitLinearTranslationWithDuration(sprite);
@@ -1221,9 +1106,7 @@ static void MovePoisonGasCloud(struct Sprite *sprite)
 // Creates Hail.
 void AnimTask_Hail1(u8 taskId)
 {
-    struct Task *task = &gTasks[taskId];
-
-    task->func = AnimTask_Hail2;
+    gTasks[taskId].func = AnimTask_Hail2;
 }
 
 static void AnimTask_Hail2(u8 taskId)
@@ -1346,15 +1229,12 @@ static void AnimHailBegin(struct Sprite *sprite)
             gSprites[sprite->data[0]].data[6] = sprite->data[6];
             gSprites[sprite->data[0]].data[7] = sprite->data[7];
         }
-        FreeOamMatrix(sprite->oam.matrixNum);
-        DestroySprite(sprite);
     }
     else
-    {
         --gTasks[sprite->data[6]].data[sprite->data[7]];
-        FreeOamMatrix(sprite->oam.matrixNum);
-        DestroySprite(sprite);
-    }
+	
+	FreeOamMatrix(sprite->oam.matrixNum);
+	DestroySprite(sprite);
 }
 
 static void AnimHailContinue(struct Sprite *sprite)
@@ -1436,8 +1316,6 @@ static void AnimIceBallParticle(struct Sprite *sprite)
 // Counter for Ice Ball.
 void AnimTask_GetRolloutCounter(u8 taskId)
 {
-    u8 arg = gBattleAnimArgs[0];
-
-    gBattleAnimArgs[arg] = gAnimDisableStructPtr->rolloutTimerStartValue - gAnimDisableStructPtr->rolloutTimer - 1;
+    gBattleAnimArgs[gBattleAnimArgs[0]] = gAnimDisableStructPtr->rolloutTimerStartValue - gAnimDisableStructPtr->rolloutTimer - 1;
     DestroyAnimVisualTask(taskId);
 }

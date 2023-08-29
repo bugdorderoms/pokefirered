@@ -805,7 +805,7 @@ void AnimTask_CreateSurfWave(u8 taskId)
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 16));
     SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 1);
     SetAnimBgAttribute(1, BG_ANIM_SCREEN_SIZE, 1);
-    GetBattleAnimBg1Data(&animBg);
+    GetBattleAnimBgData(&animBg, 1);
     SetAnimBgAttribute(1, BG_ANIM_CHAR_BASE_BLOCK, 1);
     if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_OPPONENT)
         AnimLoadCompressedBgTilemap(animBg.bgId, gBattleAnimBgTilemap_SurfOpponent);
@@ -865,7 +865,7 @@ static void AnimTask_CreateSurfWave_Step1(u8 taskId)
 
     *BGptrX += gTasks[taskId].data[0];
     *BGptrY += gTasks[taskId].data[1];
-    GetBattleAnimBg1Data(&animBg);
+    GetBattleAnimBgData(&animBg, 1);
     gTasks[taskId].data[2] += gTasks[taskId].data[1];
     if (++gTasks[taskId].data[5] == 4)
     {

@@ -47,7 +47,6 @@
 #include "constants/moves.h"
 #include "constants/pokemon.h"
 #include "constants/songs.h"
-#include "constants/trainers.h"
 
 static void HandleAction_UseMove(void);
 static void HandleAction_Switch(void);
@@ -1184,9 +1183,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 	const struct TrainerMon *partyData;
 	struct PIDParameters parameters;
 	
-    if (trainerNum == TRAINER_SECRET_BASE)
-        return 0;
-	else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && !(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)))
+    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && !(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)))
 	{
 		ZeroEnemyPartyMons();
 		

@@ -520,7 +520,6 @@ extern const u8 gCreditsString_Graphic_Designer[];
 extern const u8 gCreditsString_Akira_Kinashi[];
 
 // berry_pouch
-extern const u8 gText_TheStrVar1CantBeHeldHere[];
 extern const u8 gText_TossOutHowManyStrVar1s[];
 extern const u8 gText_ThrewAwayStrVar2StrVar1s[];
 extern const u8 gText_ThrowAwayStrVar2OfThisItemQM[];

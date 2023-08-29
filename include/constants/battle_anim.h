@@ -276,7 +276,7 @@
 #define ANIM_TAG_GREEN_SPIKE                (ANIM_SPRITES_START + 266)
 #define ANIM_TAG_WHITE_CIRCLE_OF_LIGHT      (ANIM_SPRITES_START + 267)
 #define ANIM_TAG_GLOWY_BLUE_ORB             (ANIM_SPRITES_START + 268)
-#define ANIM_TAG_SAFARI_BAIT                  (ANIM_SPRITES_START + 269)
+#define ANIM_TAG_SAFARI_BAIT                (ANIM_SPRITES_START + 269)
 #define ANIM_TAG_WHITE_FEATHER              (ANIM_SPRITES_START + 270)
 #define ANIM_TAG_SPARKLE_6                  (ANIM_SPRITES_START + 271)
 #define ANIM_TAG_SPLASH                     (ANIM_SPRITES_START + 272)
@@ -322,28 +322,27 @@
 #define SOUND_PAN_TARGET    63
 
 // move background ids
-#define BG_DARK_ 0 // the same as BG_DARK but is unused
-#define BG_DARK 1
-#define BG_GHOST 2
-#define BG_PSYCHIC 3
-#define BG_IMPACT_OPPONENT 4
-#define BG_IMPACT_PLAYER 5
-#define BG_DRILL 6
-#define BG_HIGHSPEED_OPPONENT 7
-#define BG_HIGHSPEED_PLAYER 8
-#define BG_THUNDER 9
-#define BG_GUILLOTINE_OPPONENT 10
-#define BG_GUILLOTINE_PLAYER 11
-#define BG_ICE 12
-#define BG_COSMIC 13
-#define BG_IN_AIR 14
-#define BG_SKY 15
-#define BG_AURORA 16
-#define BG_FISSURE 17
-#define BG_BUG_OPPONENT 18
-#define BG_BUG_PLAYER 19
-#define BG_SOLARBEAM_OPPONENT 20
-#define BG_SOLARBEAM_PLAYER 21
+#define BG_DARK 				0
+#define BG_GHOST 				1
+#define BG_PSYCHIC 				2
+#define BG_IMPACT_OPPONENT		3
+#define BG_IMPACT_PLAYER 		4
+#define BG_DRILL 				5
+#define BG_HIGHSPEED_OPPONENT 	6
+#define BG_HIGHSPEED_PLAYER 	7
+#define BG_THUNDER 				8
+#define BG_GUILLOTINE_OPPONENT 	9
+#define BG_GUILLOTINE_PLAYER 	10
+#define BG_ICE 					11
+#define BG_COSMIC 				12
+#define BG_IN_AIR 				13
+#define BG_SKY 					14
+#define BG_AURORA 				15
+#define BG_FISSURE 				16
+#define BG_BUG_OPPONENT 		17
+#define BG_BUG_PLAYER 			18
+#define BG_SOLARBEAM_OPPONENT 	19
+#define BG_SOLARBEAM_PLAYER 	20
 
 // table ids for general animations
 #define B_ANIM_FORM_CHANGE              0x0
@@ -400,53 +399,17 @@
 #define B_ANIM_STATUS_FRZ               0x6
 #define B_ANIM_STATUS_CURSED            0x7
 #define B_ANIM_STATUS_NIGHTMARE         0x8
-#define B_ANIM_STATUS_WRAPPED           0x9 // does not actually exist
 
 // Most tasks return a value to gBattleAnimArgs[7].
 #define ARG_RET_ID 0x7
 
 // Trapping Wrap-like moves end turn animation.
-#define TRAP_ANIM_BIND 0
-#define TRAP_ANIM_WRAP 0
+#define TRAP_ANIM_BIND 		0
+#define TRAP_ANIM_WRAP 		0
 #define TRAP_ANIM_FIRE_SPIN 1
 #define TRAP_ANIM_WHIRLPOOL 2
-#define TRAP_ANIM_CLAMP 3
+#define TRAP_ANIM_CLAMP 	3
 #define TRAP_ANIM_SAND_TOMB 4
-
-// Weather defines for battle animation scripts.
-#define ANIM_WEATHER_NONE 0
-#define ANIM_WEATHER_SUN 1
-#define ANIM_WEATHER_RAIN 2
-#define ANIM_WEATHER_SANDSTORM 3
-#define ANIM_WEATHER_HAIL 4
-
-// Battle mon back animations.
-#define BACK_ANIM_NONE                         0x00
-#define BACK_ANIM_H_SLIDE_QUICK                0x01
-#define BACK_ANIM_H_SLIDE                      0x02
-#define BACK_ANIM_H_SLIDE_WITH_V_COMPRESS_1    0x03
-#define BACK_ANIM_H_SLIDE_WITH_V_COMPRESS_2    0x04
-#define BACK_ANIM_SHRINK_GROW_1                0x05
-#define BACK_ANIM_GROW_1                       0x06
-#define BACK_ANIM_CIRCLE_MOVE_COUNTERCLOCKWISE 0x07
-#define BACK_ANIM_HORIZONTAL_SHAKE             0x08
-#define BACK_ANIM_VERTICAL_SHAKE               0x09
-#define BACK_ANIM_V_SHAKE_WITH_H_SLIDE         0x0a
-#define BACK_ANIM_VERTICAL_STRETCH             0x0b
-#define BACK_ANIM_HORIZONTAL_STRETCH           0x0c
-#define BACK_ANIM_GROW_2                       0x0d
-#define BACK_ANIM_V_SHAKE_WITH_PAUSE           0x0e
-#define BACK_ANIM_CIRCLE_MOVE_CLOCKWISE        0x0f
-#define BACK_ANIM_CONCAVE_DOWN_ARC_SWAY_SMALL  0x10
-#define BACK_ANIM_CONCAVE_DOWN_ARC_SWAY_LARGE  0x11
-#define BACK_ANIM_CONCAVE_UP_ARC_SWAY_LARGE    0x12
-#define BACK_ANIM_DIP_RIGHT_SIDE               0x13
-#define BACK_ANIM_SHRINK_GROW_2                0x14
-#define BACK_ANIM_JOLT_RIGHT                   0x15
-#define BACK_ANIM_FLASH_YELLOW_WITH_SHAKE      0x16
-#define BACK_ANIM_FADE_RED_WITH_SHAKE          0x17
-#define BACK_ANIM_FADE_GREEN_WITH_SHAKE        0x18
-#define BACK_ANIM_FADE_BLUE_WITH_SHAKE         0x19
 
 // Flags for AnimTask_TransformMon and HandleSpeciesGfxDataChange
 #define SPECIESGFX_FLAG_IS_GHOST             (1 << 0)

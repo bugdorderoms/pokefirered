@@ -146,7 +146,6 @@ void NewGameInitData(void)
     ClearLinkBattleRecords();
     InitHeracrossSizeRecord();
     InitMagikarpSizeRecord();
-    sub_806E190();
     gPlayerPartyCount = 0;
     ZeroPlayerPartyMons();
     ResetPokemonStorageSystem();

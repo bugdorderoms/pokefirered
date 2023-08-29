@@ -83,11 +83,8 @@ static void (*const sExitCallbackByItemType[])(void) = {
 
 static void Task_FadeOuFromBackToField(u8 taskId)
 {
-    u8 itemType;
-    if (gSpecialVar_ItemId == ITEM_ENIGMA_BERRY)
-        itemType = gTasks[taskId].data[4] - 1;
-    else
-        itemType = ItemId_GetType(gSpecialVar_ItemId) - 1;
+    u8 itemType = ItemId_GetType(gSpecialVar_ItemId) - 1;
+
     if (ItemId_GetPocket(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
     {
         BerryPouch_SetExitCallback(sExitCallbackByItemType[itemType]);
@@ -96,8 +93,10 @@ static void Task_FadeOuFromBackToField(u8 taskId)
     else
     {
         ItemMenu_SetExitCallback(sExitCallbackByItemType[itemType]);
+		
         if (itemType == ITEM_TYPE_FIELD - 1)
             Bag_BeginCloseWin0Animation();
+		
         ItemMenu_StartFadeToExitCallback(taskId);
     }
 }
@@ -159,7 +158,7 @@ u8 CheckIfItemIsTMHMOrEvolutionStone(u16 itemId)
         return 0;
 }
 
-static void sub_80A1184(void)
+static inline void sub_80A1184(void)
 {
     gFieldCallback2 = sub_80A1194;
 }
@@ -206,12 +205,8 @@ void FieldUseFunc_MachBike(u8 taskId)
     PlayerGetDestCoords(&x, &y);
     behavior = MapGridGetMetatileBehaviorAt(x, y);
 
-    if (FlagGet(FLAG_SYS_ON_CYCLING_ROAD) == TRUE
-     || MetatileBehavior_IsVerticalRail(behavior) == TRUE
-     || MetatileBehavior_IsHorizontalRail(behavior) == TRUE
-     || MetatileBehavior_IsIsolatedVerticalRail(behavior) == TRUE
-     || MetatileBehavior_IsIsolatedHorizontalRail(behavior) == TRUE
-     || MetatileBehavior_IsGroundRocks(behavior) == TRUE)
+    if (FlagGet(FLAG_SYS_ON_CYCLING_ROAD) || MetatileBehavior_IsVerticalRail(behavior) || MetatileBehavior_IsHorizontalRail(behavior)
+     || MetatileBehavior_IsIsolatedVerticalRail(behavior) || MetatileBehavior_IsIsolatedHorizontalRail(behavior) || MetatileBehavior_IsGroundRocks(behavior))
         DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, gUnknown_8416451);
     else if (Overworld_IsBikingAllowed() == TRUE && !IsBikingDisallowedByPlayer())
     {
@@ -251,10 +246,9 @@ static bool8 ItemUseCheckFunc_Rod(void)
     GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
     behavior = MapGridGetMetatileBehaviorAt(x, y);
 
-    if (MetatileBehavior_IsWaterfall(behavior) || CheckPlayerInGroundRocks())
+    if (MetatileBehavior_IsWaterfall(behavior) || CheckPlayerInGroundRocks() || TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER))
         return FALSE;
-    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER))
-        return FALSE;
+
     if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
     {
         if (IsPlayerFacingSurfableFishableWater())
@@ -262,9 +256,7 @@ static bool8 ItemUseCheckFunc_Rod(void)
     }
     else
     {
-        if (MetatileBehavior_IsSurfable(behavior) && !MapGridIsImpassableAt(x, y))
-            return TRUE;
-        if (MetatileBehavior_IsBridge(behavior) == TRUE)
+        if ((MetatileBehavior_IsSurfable(behavior) && !MapGridIsImpassableAt(x, y)) || MetatileBehavior_IsBridge(behavior))
             return TRUE;
     }
     return FALSE;
@@ -285,13 +277,9 @@ void ItemUseOutOfBattle_Itemfinder(u8 taskId)
 
 void FieldUseFunc_CoinCase(u8 taskId)
 {
+	ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, NULL, gSpecialVar_ItemId, 0xFFFF);
     ConvertIntToDecimalStringN(gStringVar1, GetCoins(), STR_CONV_MODE_LEFT_ALIGN, 4);
-    StringExpandPlaceholders(gStringVar4, gUnknown_8416537);
-    ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, NULL, gSpecialVar_ItemId, 0xFFFF);
-    if (gTasks[taskId].data[3] == 0)
-        DisplayItemMessageInBag(taskId, 2, gStringVar4, Task_ReturnToBagFromContextMenu);
-    else
-        DisplayItemMessageOnField(taskId, 2, gStringVar4, Task_ItemUse_CloseMessageBoxAndReturnToField);
+    DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, gUnknown_8416537);
 }
 
 void FieldUseFunc_PokeFlute(u8 taskId)
@@ -318,10 +306,7 @@ void FieldUseFunc_PokeFlute(u8 taskId)
     else
     {
         // Now that's a catchy tune!
-        if (gTasks[taskId].data[3] == 0)
-            DisplayItemMessageInBag(taskId, 2, gUnknown_841665C, Task_ReturnToBagFromContextMenu);
-        else
-            DisplayItemMessageOnField(taskId, 2, gUnknown_841665C, Task_ItemUse_CloseMessageBoxAndReturnToField);
+        DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, gUnknown_841665C);
     }
 }
 
@@ -334,12 +319,7 @@ static void sub_80A1648(u8 taskId)
 static void sub_80A1674(u8 taskId)
 {
     if (WaitFanfare(FALSE))
-    {
-        if (gTasks[taskId].data[3] == 0)
-            DisplayItemMessageInBag(taskId, 2, gUnknown_84166A7, Task_ReturnToBagFromContextMenu);
-        else
-            DisplayItemMessageOnField(taskId, 2, gUnknown_84166A7, Task_ItemUse_CloseMessageBoxAndReturnToField);
-    }
+        DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, gUnknown_84166A7);
 }
 
 void FieldUseFunc_Medicine(u8 taskId)
@@ -550,8 +530,7 @@ bool8 CanUseEscapeRopeOnCurrMap(void)
 {
     if (gMapHeader.allowEscaping)
         return TRUE;
-    else
-        return FALSE;
+	return FALSE;
 }
 
 void ItemUseOutOfBattle_EscapeRope(u8 taskId)
@@ -646,14 +625,10 @@ static void sub_80A1D68(u8 taskId)
 
 void FieldUseFunc_VsSeeker(u8 taskId)
 {
-    if ((gMapHeader.mapType != MAP_TYPE_ROUTE
-      && gMapHeader.mapType != MAP_TYPE_TOWN
-      && gMapHeader.mapType != MAP_TYPE_CITY)
-     || (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(VIRIDIAN_FOREST)
-      && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(VIRIDIAN_FOREST)
-       || gSaveBlock1Ptr->location.mapNum == MAP_NUM(MT_EMBER_EXTERIOR)
-       || gSaveBlock1Ptr->location.mapNum == MAP_NUM(THREE_ISLAND_BERRY_FOREST)
-       || gSaveBlock1Ptr->location.mapNum == MAP_NUM(SIX_ISLAND_PATTERN_BUSH))))
+    if ((gMapHeader.mapType != MAP_TYPE_ROUTE && gMapHeader.mapType != MAP_TYPE_TOWN && gMapHeader.mapType != MAP_TYPE_CITY)
+		|| (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(VIRIDIAN_FOREST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(VIRIDIAN_FOREST)
+		|| gSaveBlock1Ptr->location.mapNum == MAP_NUM(MT_EMBER_EXTERIOR) || gSaveBlock1Ptr->location.mapNum == MAP_NUM(THREE_ISLAND_BERRY_FOREST)
+		|| gSaveBlock1Ptr->location.mapNum == MAP_NUM(SIX_ISLAND_PATTERN_BUSH))))
     {
         PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
     }
@@ -870,10 +845,7 @@ void ItemUse_SetQuestLogEvent(u8 eventId, struct Pokemon * pokemon, u16 itemId, 
 
     questLog->itemId = itemId;
     questLog->param = param;
-    if (pokemon != NULL)
-        questLog->species = GetMonData(pokemon, MON_DATA_SPECIES2);
-    else
-        questLog->species = 0xFFFF;
+    questLog->species = pokemon != NULL ? GetMonData(pokemon, MON_DATA_SPECIES2) : 0xFFFF;
     SetQuestLogEvent(eventId, (void *)questLog);
     Free(questLog);
 }
@@ -901,10 +873,7 @@ bool8 CanUseItemInBattle(u8 partyIdx, u16 itemId)
 		else // use it in battle
 			failStr = PokemonUseItemEffectsBattle(gBattlerInMenuId, itemId, &canUse);
 	}
-	if (failStr != NULL)
-		StringExpandPlaceholders(gStringVar4, failStr);
-	else
-		StringExpandPlaceholders(gStringVar4, gText_WontHaveEffect);
+	StringExpandPlaceholders(gStringVar4, failStr != NULL ? failStr : gText_WontHaveEffect);
 	
 	return canUse;
 }

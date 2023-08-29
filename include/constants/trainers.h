@@ -167,9 +167,6 @@
 #define TRAINER_PIC_LADY                  146
 #define TRAINER_PIC_PAINTER               147
 
-// Leftover from R/S
-#define TRAINER_SECRET_BASE                 1024
-
 #define TRAINER_CLASS_NONE                0
 #define TRAINER_CLASS_PKMN_TRAINER_UNUSED 1
 #define TRAINER_CLASS_AQUA_LEADER         2
@@ -430,11 +427,5 @@
 #define FACILITY_CLASS_CHAMPION_RIVAL_2       149
 
 #define F_TRAINER_FEMALE (1 << 7)
-
-// All trainer parties specify the IV, level, and species for each Pokémon in the
-// party. Some trainer parties also specify held items and custom moves for each
-// Pokémon.
-#define F_TRAINER_PARTY_CUSTOM_MOVESET (1 << 0)
-#define F_TRAINER_PARTY_HELD_ITEM      (1 << 1)
 
 #endif  // GUARD_CONSTANTS_TRAINERS_H

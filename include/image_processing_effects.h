@@ -29,13 +29,12 @@ enum
 
 struct ImageProcessingContext
 {
-    u8 effect;
     void *canvasPixels;
     u16 *canvasPalette;
-    u8 fillerC[0x4];
     void *dest;
     u16 quantizeEffect;
     u16 var_16;
+	u8 effect;
     u8 paletteStart;
     u8 columnStart;
     u8 rowStart;

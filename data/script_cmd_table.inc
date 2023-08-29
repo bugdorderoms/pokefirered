@@ -201,8 +201,8 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_waitmoncry
 	.4byte ScrCmd_bufferboxname
 	.4byte ScrCmd_textcolor
-	.4byte ScrCmd_loadhelp
-	.4byte ScrCmd_unloadhelp
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_signmsg
 	.4byte ScrCmd_normalmsg
 	.4byte ScrCmd_comparestattoword

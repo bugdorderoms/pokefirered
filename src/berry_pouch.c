@@ -192,13 +192,6 @@ static const u8 sOptions_GiveExit[] = {
     BP_ACTION_DUMMY
 };
 
-static const u8 sOptions_Exit[] = {
-    BP_ACTION_EXIT,
-    BP_ACTION_DUMMY,
-    BP_ACTION_DUMMY,
-    BP_ACTION_DUMMY
-};
-
 static const u8 sOptions_UseToss_Exit[] = {
     BP_ACTION_USE,
     BP_ACTION_TOSS,
@@ -947,16 +940,8 @@ static void CreateNormalContextMenu(u8 taskId)
     }
     else if (MenuHelpers_LinkSomething() == TRUE || InUnionRoom() == TRUE)
     {
-        if (!itemid_link_can_give_berry(gSpecialVar_ItemId))
-        {
-            sContextMenuOptions = sOptions_Exit;
-            sStaticCnt.contextMenuNumOptions = 1;
-        }
-        else
-        {
-            sContextMenuOptions = sOptions_GiveExit;
-            sStaticCnt.contextMenuNumOptions = 2;
-        }
+		sContextMenuOptions = sOptions_GiveExit;
+		sStaticCnt.contextMenuNumOptions = 2;
     }
     else
     {
@@ -1184,19 +1169,8 @@ static void Task_BerryPouch_Exit(u8 taskId)
 
 static void Task_ContextMenu_FromPartyGiveMenu(u8 taskId)
 {
-    u16 itemId = BagGetItemIdByPocketPosition(POCKET_BERRY_POUCH, gTasks[taskId].data[1]);
-	
-    if (!itemid_link_can_give_berry(itemId))
-    {
-        CopyItemName(itemId, gStringVar1);
-        StringExpandPlaceholders(gStringVar4, gText_TheStrVar1CantBeHeldHere);
-        DisplayItemMessageInBerryPouch(taskId, 2, gStringVar4, Task_WaitButtonBeforeDialogueWindowDestruction);
-    }
-    else
-    {
-        sResources->exitCallback = CB2_GiveHoldItem;
-        gTasks[taskId].func = BerryPouch_StartFadeToExitCallback;
-    }
+	sResources->exitCallback = CB2_GiveHoldItem;
+	gTasks[taskId].func = BerryPouch_StartFadeToExitCallback;
 }
 
 static void Task_ContextMenu_FromPokemonPC(u8 taskId)

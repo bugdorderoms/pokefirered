@@ -539,8 +539,6 @@ static u8 GetWildBattleTransition(void)
 
 static u8 GetTrainerBattleTransition(void)
 {
-    if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
-        return B_TRANSITION_BLUE;
     if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_ELITE_FOUR)
     {
         if (gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_LORELEI || gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_LORELEI_2)
@@ -622,15 +620,15 @@ static void TrainerBattleLoadArgs(const struct TrainerBattleParameter *specs, co
         switch (specs->ptrType)
         {
         case TRAINER_PARAM_LOAD_VAL_8BIT:
-            SetU8(specs->varPtr, T1_READ_8(data));
+            SetU8(specs->varPtr, data[0]);
             data += 1;
             break;
         case TRAINER_PARAM_LOAD_VAL_16BIT:
-            SetU16(specs->varPtr, T1_READ_16(data));
+            SetU16(specs->varPtr, READ_16(data));
             data += 2;
             break;
         case TRAINER_PARAM_LOAD_VAL_32BIT:
-            SetU32(specs->varPtr, T1_READ_32(data));
+            SetU32(specs->varPtr, READ_32(data));
             data += 4;
             break;
         case TRAINER_PARAM_CLEAR_VAL_8BIT:
@@ -662,7 +660,7 @@ static void SetMapVarsToTrainer(void)
 const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
 {
     InitTrainerBattleVariables();
-    sTrainerBattleMode = T1_READ_8(data);
+    sTrainerBattleMode = data[0];
     switch (sTrainerBattleMode)
     {
     case TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT:
@@ -715,7 +713,7 @@ void ConfigureAndSetUpOneTrainerBattle(u8 trainerEventObjId, const u8 *trainerSc
 
 bool32 GetTrainerFlagFromScriptPointer(const u8 *data)
 {
-    return FlagGet(TRAINER_FLAGS_START + T1_READ_16(data + 2));
+    return FlagGet(TRAINER_FLAGS_START + READ_16(data + 2));
 }
 
 void SetUpTrainerMovement(void)
@@ -800,11 +798,7 @@ static void CB2_EndTrainerBattle(void)
     }
     else
     {
-        if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
-        {
-            SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
-        }
-        else if (IsPlayerDefeated(gBattleOutcome) == TRUE)
+        if (IsPlayerDefeated(gBattleOutcome) == TRUE)
         {
             SetMainCallback2(CB2_WhiteOut);
         }
@@ -819,11 +813,7 @@ static void CB2_EndTrainerBattle(void)
 
 static void CB2_EndRematchBattle(void)
 {
-    if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
-    {
-        SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
-    }
-    else if (IsPlayerDefeated(gBattleOutcome) == TRUE)
+    if (IsPlayerDefeated(gBattleOutcome) == TRUE)
     {
         SetMainCallback2(CB2_WhiteOut);
     }

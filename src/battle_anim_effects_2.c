@@ -2950,7 +2950,7 @@ void AnimTask_HeartsBackground(u8 taskId)
     gBattle_BG1_Y = 0;
     SetGpuReg(REG_OFFSET_BG1HOFS, gBattle_BG1_X);
     SetGpuReg(REG_OFFSET_BG1VOFS, gBattle_BG1_Y);
-    GetBattleAnimBg1Data(&animBg);
+    GetBattleAnimBgData(&animBg, 1);
     AnimLoadCompressedBgTilemap(animBg.bgId, gBattleAnimBg_AttractTilemap);
     AnimLoadCompressedBgGfx(animBg.bgId, gBattleAnimBg_AttractGfx, animBg.tilesOffset);
     LoadCompressedPalette(gBattleAnimBg_AttractPal, animBg.paletteId * 16, 32);
@@ -2997,7 +2997,7 @@ static void HeartsBackground_Step(u8 taskId)
         }
         break;
     case 3:
-        GetBattleAnimBg1Data(&animBg);
+        GetBattleAnimBgData(&animBg, 1);
         InitBattleAnimBg(animBg.bgId);
         gTasks[taskId].data[12]++;
         break;
@@ -3024,13 +3024,8 @@ void AnimTask_ScaryFace(u8 taskId)
     gBattle_BG1_Y = 0;
     SetGpuReg(REG_OFFSET_BG1HOFS, gBattle_BG1_X);
     SetGpuReg(REG_OFFSET_BG1VOFS, gBattle_BG1_Y);
-    GetBattleAnimBg1Data(&animBg);
-    
-    if (GetBattlerSide(gBattleAnimTarget) == B_SIDE_OPPONENT)
-        AnimLoadCompressedBgTilemap(animBg.bgId, gBattleAnimBgTilemap_ScaryFacePlayer);
-    else
-        AnimLoadCompressedBgTilemap(animBg.bgId, gBattleAnimBgTilemap_ScaryFaceOpponent);
-
+    GetBattleAnimBgData(&animBg, 1);
+    AnimLoadCompressedBgTilemap(animBg.bgId, GetBattlerSide(gBattleAnimTarget) == B_SIDE_OPPONENT ? gBattleAnimBgTilemap_ScaryFacePlayer : gBattleAnimBgTilemap_ScaryFaceOpponent);
     AnimLoadCompressedBgGfx(animBg.bgId, gBattleAnim_ScaryFaceGfx, animBg.tilesOffset);
     LoadCompressedPalette(gBattleAnim_ScaryFacePal, animBg.paletteId * 16, 32);
     gTasks[taskId].func = ScaryFace_Step;
@@ -3076,7 +3071,7 @@ static void ScaryFace_Step(u8 taskId)
         }
         break;
     case 3:
-        GetBattleAnimBg1Data(&animBg);
+        GetBattleAnimBgData(&animBg, 1);
         InitBattleAnimBg(1);
         InitBattleAnimBg(2);
         gTasks[taskId].data[12]++;
