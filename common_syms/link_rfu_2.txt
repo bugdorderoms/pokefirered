@@ -1,3 +1,2 @@
 gHostRFUtgtGnameBuffer
-Rfu
 gHostRFUtgtUnameBuffer
