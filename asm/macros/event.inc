@@ -837,7 +837,15 @@
 	.macro multichoicegrid x:req, y:req, list:req, perRowItems:req, ignoreBPress:req
 	multichoice \x, \y, \list, \ignoreBPress, 0, \perRowItems
 	.endm
-
+	
+	@ Displays a box containing the sprite for the specified item.
+	.macro drawitempic itemId:req, x:req, y:req
+	.byte 0x71
+	.2byte \itemId
+	.byte \x
+	.byte \y
+	.endm
+	
 	.macro drawbox
 	.byte 0x72
 	.endm
@@ -862,7 +870,7 @@
 	.byte \y
 	.endm
 
-	@ Hides all boxes displayed with drawmonpic.
+	@ Hides all boxes displayed with drawmonpic and drawitempic.
 	.macro erasemonpic
 	.byte 0x76
 	.endm

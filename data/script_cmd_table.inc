@@ -114,7 +114,7 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_yesnobox
 	.4byte ScrCmd_multichoice
 	.4byte ScrCmd_nop
-	.4byte ScrCmd_nop
+	.4byte ScrCmd_showitempic
 	.4byte ScrCmd_drawbox
 	.4byte ScrCmd_erasebox
 	.4byte ScrCmd_drawboxtext

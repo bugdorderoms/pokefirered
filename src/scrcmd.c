@@ -1418,6 +1418,16 @@ bool8 ScrCmd_multichoice(struct ScriptContext * ctx)
 	return FALSE;
 }
 
+bool8 ScrCmd_showitempic(struct ScriptContext * ctx)
+{
+	u16 itemId = VarGet(ScriptReadHalfword(ctx));
+    u8 x = ScriptReadByte(ctx);
+    u8 y = ScriptReadByte(ctx);
+
+    ScriptMenu_ShowItemPic(itemId, x, y);
+    return FALSE;
+}
+
 bool8 ScrCmd_drawbox(struct ScriptContext * ctx)
 {
     /*u8 left = ScriptReadByte(ctx);

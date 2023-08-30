@@ -32,4 +32,7 @@ void PicboxCancel(void);
 void RemovePokemonSpeciesOnPicbox(void);
 void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y);
 
+// Item pic
+bool8 ScriptMenu_ShowItemPic(u16 itemId, u8 x, u8 y);
+
 #endif //GUARD_SCRIPT_MENU_H
