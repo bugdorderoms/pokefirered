@@ -43,23 +43,23 @@
 #define TAG_BALL_TILES       5557
 #define TAG_BALL_PAL         5558
 
-struct InGameTrade {
-    /*0x00*/ u8 nickname[POKEMON_NAME_LENGTH + 1];
-    /*0x0C*/ u16 species;
-    /*0x0E*/ u8 ivs[NUM_STATS];
-    /*0x14*/ u8 abilityNum;
-    /*0x18*/ u32 otId;
-    /*0x1C*/ u8 conditions[5];
-    /*0x24*/ u32 personality;
-    /*0x28*/ u16 heldItem;
-    /*0x2A*/ u8 mailNum;
-    /*0x2B*/ u8 otName[11];
-    /*0x36*/ u8 otGender;
-    /*0x37*/ u8 sheen;
-    /*0x38*/ u16 requestedSpecies;
+struct InGameTrade
+{
+	/*0x00*/ u16 species;
+    /*0x02*/ u8 nickname[POKEMON_NAME_LENGTH + 1];
+    /*0x0D*/ u8 ivs[NUM_STATS];
+    /*0x13*/ u8 abilityNum;
+    /*0x14*/ u32 otId;
+    /*0x18*/ u32 personality;
+    /*0x1C*/ u16 heldItem;
+	/*0x1E*/ u16 requestedSpecies;
+    /*0x20*/ u8 mailNum;
+    /*0x21*/ u8 otName[11];
+    /*0x2C*/ u8 otGender;
 };
 
-struct TradeAnimationResources {
+struct TradeAnimationResources
+{
     /*0x00*/ struct Pokemon mon;
     /*0x64*/ u32 timer;
     /*0x68*/ u32 monPersonalities[2];
@@ -136,7 +136,6 @@ static void CB2_WaitAndAckTradeComplete(void);
 static void CB2_HandleTradeEnded(void);
 static void LinkTrade_TearDownAssets(void);
 static void Task_WaitFadeAndStartInGameTradeAnim(u8 taskId);
-static void CheckPartnersMonForRibbons(void);
 static void Task_AnimateWirelessSignal(u8 taskId);
 static void Task_OpenCenterWhiteColumn(u8 taskId);
 static void Task_CloseCenterWhiteColumn(u8 taskId);
@@ -1708,7 +1707,6 @@ static bool8 DoTradeAnim_Cable(void)
         }
         break;
     case 70:
-        CheckPartnersMonForRibbons();
         sTradeData->state++;
         break;
     case 71:
@@ -2228,7 +2226,6 @@ static bool8 DoTradeAnim_Wireless(void)
         }
         break;
     case 70:
-        CheckPartnersMonForRibbons();
         sTradeData->state++;
         break;
     case 71:
@@ -2430,10 +2427,25 @@ static void CreateInGameTradePokemonInternal(u8 playerSlot, u8 inGameTradeIdx)
     const struct InGameTrade * inGameTrade = &sInGameTrades[inGameTradeIdx];
     u8 level = GetMonData(&gPlayerParty[playerSlot], MON_DATA_LEVEL);
     struct Mail mail;
-    u8 metLocation = METLOC_IN_GAME_TRADE;
+    u8 mailNum, metLocation = METLOC_IN_GAME_TRADE;
     struct Pokemon * tradeMon = &gEnemyParty[0];
-    u8 mailNum;
-    CreateMon(tradeMon, inGameTrade->species, level, USE_RANDOM_IVS, TRUE, inGameTrade->personality, TRUE, inGameTrade->otId);
+	struct PokemonGenerator generator =
+	{
+		.species = inGameTrade->species,
+		.level = level,
+		.shinyType = GENERATE_SHINY_NORMAL,
+		.forceGender = FALSE,
+		.forcedGender = MON_MALE,
+		.otIdType = OT_ID_PRESET,
+		.fixedOtId = inGameTrade->otId,
+		.hasFixedPersonality = TRUE,
+		.fixedPersonality = inGameTrade->personality,
+		.forceNature = FALSE,
+		.forcedNature = NUM_NATURES,
+		.pokemon = tradeMon,
+	};
+	
+    CreateMon(generator);
     SetMonData(tradeMon, MON_DATA_HP_IV, &inGameTrade->ivs[0]);
     SetMonData(tradeMon, MON_DATA_ATK_IV, &inGameTrade->ivs[1]);
     SetMonData(tradeMon, MON_DATA_DEF_IV, &inGameTrade->ivs[2]);
@@ -2444,12 +2456,6 @@ static void CreateInGameTradePokemonInternal(u8 playerSlot, u8 inGameTradeIdx)
     SetMonData(tradeMon, MON_DATA_OT_NAME, inGameTrade->otName);
     SetMonData(tradeMon, MON_DATA_OT_GENDER, &inGameTrade->otGender);
     SetMonData(tradeMon, MON_DATA_ABILITY_NUM, &inGameTrade->abilityNum);
-    SetMonData(tradeMon, MON_DATA_BEAUTY, &inGameTrade->conditions[1]);
-    SetMonData(tradeMon, MON_DATA_CUTE, &inGameTrade->conditions[2]);
-    SetMonData(tradeMon, MON_DATA_COOL, &inGameTrade->conditions[0]);
-    SetMonData(tradeMon, MON_DATA_SMART, &inGameTrade->conditions[3]);
-    SetMonData(tradeMon, MON_DATA_TOUGH, &inGameTrade->conditions[4]);
-    SetMonData(tradeMon, MON_DATA_SHEEN, &inGameTrade->sheen);
     SetMonData(tradeMon, MON_DATA_MET_LOCATION, &metLocation);
     mailNum = 0;
     if (inGameTrade->heldItem != ITEM_NONE)
@@ -2738,18 +2744,6 @@ static void Task_WaitFadeAndStartInGameTradeAnim(u8 taskId)
         gFieldCallback = FieldCB_ContinueScriptHandleMusic;
         DestroyTask(taskId);
     }
-}
-
-static void CheckPartnersMonForRibbons(void)
-{
-    u8 nRibbons = 0;
-    u8 i;
-    for (i = 0; i < 12; i++)
-    {
-        nRibbons += GetMonData(&gEnemyParty[gSelectedTradeMonPositions[1] % 6], MON_DATA_CHAMPION_RIBBON + i);
-    }
-    if (nRibbons != 0)
-        FlagSet(FLAG_SYS_RIBBON_GET);
 }
 
 void LoadTradeAnimGfx(void)

@@ -1565,7 +1565,7 @@ u8 GetBattlerSpriteBGPriorityRank(u8 battlerId)
         return 1;
 }
 
-u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, s16 x, s16 y, u8 subpriority, u32 personality, u32 trainerId)
+u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, s16 x, s16 y, u8 subpriority, u32 personality, bool8 isShiny)
 {
     u16 sheet = LoadSpriteSheet(sMoveAnimAdtlSprSheet);
     u16 palette = AllocSpritePalette(sSpriteTemplate_AdditionalForAnim.paletteTag);
@@ -1573,7 +1573,7 @@ u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, s16 x, s16
     if (gMonSpritesGfxPtr != NULL && gMonSpritesGfxPtr->multiUseBuffer == NULL)
         gMonSpritesGfxPtr->multiUseBuffer = AllocZeroed(0x2000);
 	
-	LoadCompressedPalette(GetMonSpritePalFromSpeciesAndPersonality(species, trainerId, personality), (palette * 0x10) + 0x100, 0x20);
+	LoadCompressedPalette(GetMonSpritePalFromSpecies(species, isShiny), (palette * 0x10) + 0x100, 0x20);
 	LoadSpecialPokePic(isBackpic ? &gMonBackPicTable[species] : &gMonFrontPicTable[species], gMonSpritesGfxPtr->multiUseBuffer, species, personality, isBackpic ^ TRUE);
     RequestDma3Copy(gMonSpritesGfxPtr->multiUseBuffer, (void *)(OBJ_VRAM0 + (sheet * 0x20)), 0x800, 1);
     FREE_AND_SET_NULL(gMonSpritesGfxPtr->multiUseBuffer);

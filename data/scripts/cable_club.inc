@@ -507,12 +507,6 @@ CableClub_EventScript_AbortLinkIncorrectNumberOfParticipants:: @ 81BB857
 	release
 	end
 
-CableClub_EventScript_AbortLinkPlayerHasBadEgg:: @ 81BB867
-	special CloseLink
-	msgbox CableClub_Text_YouHaveAMonThatCantBeTaken
-	release
-	end
-
 CableClub_EventScript_WirelessClubAdjustements:: @ 81BB877
 	msgbox Text_WirelessClubUndergoingAdjustments
 	release
@@ -756,9 +750,6 @@ CableClub_EventScript_UnionRoomAttendant:: @ 81BBA04
 	lock
 	faceplayer
 	goto_if_unset FLAG_SYS_POKEDEX_GET, CableClub_EventScript_WirelessClubAdjustements
-	specialvar VAR_RESULT, IsBadEggInParty
-	compare VAR_RESULT, TRUE
-	goto_if_eq CableClub_EventScript_AbortLinkPlayerHasBadEgg
 	copyvar VAR_0x8007, VAR_LAST_TALKED
 	specialvar VAR_RESULT, IsWirelessAdapterConnected
 	compare VAR_RESULT, FALSE
@@ -857,9 +848,6 @@ CableClub_EventScript_DirectCornerAttendant:: @ 81BBB9C
 	lock
 	faceplayer
 	goto_if_unset FLAG_SYS_POKEDEX_GET, CableClub_EventScript_WirelessClubAdjustements
-	specialvar VAR_RESULT, IsBadEggInParty
-	compare VAR_RESULT, TRUE
-	goto_if_eq CableClub_EventScript_AbortLinkPlayerHasBadEgg
 	specialvar VAR_RESULT, IsWirelessAdapterConnected
 	compare VAR_RESULT, FALSE
 	goto_if_eq CableClub_EventScript_WelcomeToCableClub
@@ -1456,10 +1444,6 @@ CableClub_Text_NotSetUpForFarAwayRegion:: @ 81BC95C
 
 CableClub_Text_OtherTrainerNotReady:: @ 81BC9C0
 	.string "The other TRAINER is not ready.$"
-
-CableClub_Text_YouHaveAMonThatCantBeTaken:: @ 81BC9E0
-	.string "You have at least one Pokémon\n"
-	.string "that can't be taken.$"
 
 CableClub_Text_AdapterNotConnected:: @ 81BCA13
 	.string "The Wireless Adapter is not\n"

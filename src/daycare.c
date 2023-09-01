@@ -686,17 +686,16 @@ static void TriggerPendingDaycareEgg(void)
 	struct DayCare *daycare = &gSaveBlock1Ptr->daycare;
     s32 natureTries = 0, natureSlot = GetSlotToInheritNature(daycare);
 	u32 personality;
-    struct PIDParameters parameters = {.species = SPECIES_NONE, .pidType = PID_TYPE_EGG, .shinyType = GENERATE_SHINY_NORMAL};
 
     if (natureSlot < 0)
-		personality = GeneratePIDMaster(parameters);
+		personality = (Random() << 0x10) | ((Random() % 0xFFFE) + 1);
     else
     {
         u8 wantedNature = GetNatureFromPersonality(GetBoxMonData(&daycare->mons[natureSlot].mon, MON_DATA_PERSONALITY, NULL));
 
         do
         {
-            personality = GeneratePIDMaster(parameters);
+            personality = Random32();
             
             if (wantedNature == GetNatureFromPersonality(personality) && personality != 0)
                 break; // we found a personality with the same nature
@@ -1057,8 +1056,21 @@ void CreateEgg(struct Pokemon *mon, u16 species, bool8 setHotSpringsLocation)
     u8 language;
     u8 metLocation;
     u8 isEgg;
-
-    CreateMon(mon, species, EGG_HATCH_LEVEL, USE_RANDOM_IVS, FALSE, 0, OT_ID_PLAYER_ID, 0);
+	struct PokemonGenerator generator =
+	{
+		.species = species,
+		.level = EGG_HATCH_LEVEL,
+		.forceGender = FALSE,
+		.forcedGender = MON_MALE,
+		.shinyType = GENERATE_SHINY_NORMAL,
+		.otIdType = OT_ID_PLAYER_ID,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.forceNature = FALSE,
+		.forcedNature = NUM_NATURES,
+		.pokemon = mon,
+	};
+    CreateMon(generator);
 	species = DoWildEncounterFormChange(mon);
 	
     metLevel = 0;
@@ -1081,13 +1093,24 @@ void CreateEgg(struct Pokemon *mon, u16 species, bool8 setHotSpringsLocation)
 
 static u16 SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare)
 {
-    u32 personality;
     u16 ball;
     u8 metLevel;
     u8 language;
-
-    personality = daycare->offspringPersonality | (Random() << 16);
-    CreateMon(mon, species, EGG_HATCH_LEVEL, USE_RANDOM_IVS, TRUE, personality, OT_ID_PLAYER_ID, 0);
+	struct PokemonGenerator generator =
+	{
+		.species = species,
+		.level = EGG_HATCH_LEVEL,
+		.forceGender = FALSE,
+		.forcedGender = MON_MALE,
+		.shinyType = GENERATE_SHINY_NORMAL,
+		.otIdType = OT_ID_PLAYER_ID,
+		.hasFixedPersonality = TRUE,
+		.fixedPersonality = daycare->offspringPersonality | (Random() << 16),
+		.forceNature = FALSE,
+		.forcedNature = NUM_NATURES,
+		.pokemon = mon,
+	};
+    CreateMon(generator);
 	species = DoWildEncounterFormChange(mon);
     metLevel = 0;
     ball = ITEM_POKE_BALL;
@@ -1154,8 +1177,6 @@ static bool8 TryProduceOrHatchEgg(struct DayCare *daycare)
         for (i = 0; i < gPlayerPartyCount; i++)
         {
             if (!GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG))
-                continue;
-            if (GetMonData(&gPlayerParty[i], MON_DATA_SANITY_IS_BAD_EGG))
                 continue;
 
             steps = GetMonData(&gPlayerParty[i], MON_DATA_FRIENDSHIP);
@@ -1583,11 +1604,11 @@ u16 TakePokemonFromRoute5Daycare(void)
 static void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 {
     u16 species;
-    u32 personality, pokerus;
-    u8 i, friendship, language, gameMet, markings, isEventLegal;
+    u32 pokerus;
+    u8 i, friendship, language, gameMet, markings;
     u16 moves[4];
     u32 ivs[NUM_STATS];
-
+	struct PokemonGenerator generator;
 
     species = GetMonData(egg, MON_DATA_SPECIES);
 
@@ -1595,21 +1616,24 @@ static void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
     {
         moves[i] = GetMonData(egg, MON_DATA_MOVE1 + i);
     }
-
-    personality = GetMonData(egg, MON_DATA_PERSONALITY);
-
     for (i = 0; i < NUM_STATS; i++)
     {
         ivs[i] = GetMonData(egg, MON_DATA_HP_IV + i);
     }
-
-//    language = GetMonData(egg, MON_DATA_LANGUAGE);
-    gameMet = GetMonData(egg, MON_DATA_MET_GAME);
-    markings = GetMonData(egg, MON_DATA_MARKINGS);
-    pokerus = GetMonData(egg, MON_DATA_POKERUS);
-    isEventLegal = GetMonData(egg, MON_DATA_EVENT_LEGAL);
-
-    CreateMon(temp, species, EGG_HATCH_LEVEL, USE_RANDOM_IVS, TRUE, personality, 0, 0);
+	
+	generator.species = species,
+	generator.level = EGG_HATCH_LEVEL,
+	generator.forceGender = FALSE,
+	generator.forcedGender = MON_MALE,
+	generator.shinyType = GENERATE_SHINY_NORMAL,
+	generator.otIdType = OT_ID_PLAYER_ID,
+	generator.hasFixedPersonality = TRUE,
+	generator.fixedPersonality = GetMonData(egg, MON_DATA_PERSONALITY),
+	generator.forceNature = FALSE,
+	generator.forcedNature = NUM_NATURES,
+	generator.pokemon = temp,
+	
+    CreateMon(generator);
 
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
@@ -1623,13 +1647,18 @@ static void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 
     language = GAME_LANGUAGE;
     SetMonData(temp, MON_DATA_LANGUAGE, &language);
+	
+	gameMet = GetMonData(egg, MON_DATA_MET_GAME);
     SetMonData(temp, MON_DATA_MET_GAME, &gameMet);
+	
+	markings = GetMonData(egg, MON_DATA_MARKINGS);
     SetMonData(temp, MON_DATA_MARKINGS, &markings);
 
     friendship = 120;
     SetMonData(temp, MON_DATA_FRIENDSHIP, &friendship);
+	
+	pokerus = GetMonData(egg, MON_DATA_POKERUS);
     SetMonData(temp, MON_DATA_POKERUS, &pokerus);
-    SetMonData(temp, MON_DATA_EVENT_LEGAL, &isEventLegal);
 
     *egg = *temp;
 }

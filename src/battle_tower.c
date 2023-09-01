@@ -435,6 +435,7 @@ static void FillBattleTowerTrainerParty(void)
     u8 monPoolSize;
     u8 teamFlags;
     const struct BattleTowerPokemonTemplate *battleTowerMons;
+	struct PokemonGenerator generator;
 
     battleMonsOffset = 0;
     monPoolSize = 60;
@@ -572,10 +573,27 @@ static void FillBattleTowerTrainerParty(void)
                 continue;
 
             chosenMonIndices[partyIndex] = battleMonIndex;
-
+			
+			generator.species = battleTowerMons[battleMonIndex].species;
+			generator.level = level;
+			generator.otIdType = OT_ID_PLAYER_ID;
+			generator.shinyType = GENERATE_SHINY_NORMAL;
+			generator.forceGender = FALSE;
+			generator.forcedGender = MON_MALE;
+			generator.hasFixedPersonality = FALSE;
+			generator.fixedPersonality = 0;
+			generator.forceNature = FALSE;
+			generator.forcedNature = NUM_NATURES;
+			generator.pokemon = &gEnemyParty[partyIndex];
+			
             // Place the chosen pokemon into the trainer's party.
-            CreateMonWithEVSpread(&gEnemyParty[partyIndex], battleTowerMons[battleMonIndex].species, level, fixedIV, battleTowerMons[battleMonIndex].evSpread);
-
+			CreateMon(generator);
+			
+			for (i = 0; i < NUM_STATS; i++)
+				SetMonData(&gEnemyParty[partyIndex], MON_DATA_HP_IV + i, &fixedIV);
+			
+			GiveMonEvSpread(&gEnemyParty[partyIndex], battleTowerMons[battleMonIndex].evSpread);
+			
             // Give the chosen pokemon its specified moves.
             for (i = 0; i < MAX_MON_MOVES; i++)
             {
@@ -1132,39 +1150,6 @@ void GiveBattleTowerPrize(void)
         gSpecialVar_Result = 0;
         gSaveBlock2Ptr->battleTower.var_4AE[battleTowerLevelType] = 6;
     }
-}
-
-void AwardBattleTowerRibbons(void)
-{
-    s32 i;
-    u32 partyIndex;
-    struct Pokemon *pokemon;
-    u8 ribbonType;
-    u8 battleTowerLevelType = gSaveBlock2Ptr->battleTower.battleTowerLevelType;
-
-    if (battleTowerLevelType != 0)
-        ribbonType = MON_DATA_VICTORY_RIBBON;
-    else
-        ribbonType = MON_DATA_WINNING_RIBBON;
-
-    gSpecialVar_Result = 0;
-
-    if (GetCurrentBattleTowerWinStreak(battleTowerLevelType) > 55)
-    {
-        for (i = 0; i < 3; i++)
-        {
-            partyIndex = gSaveBlock2Ptr->battleTower.selectedPartyMons[i] - 1;
-            pokemon = &gPlayerParty[partyIndex];
-            if (!GetMonData(pokemon, ribbonType))
-            {
-                gSpecialVar_Result = 1;
-                SetMonData(pokemon, ribbonType, &gSpecialVar_Result);
-            }
-        }
-    }
-
-    if (gSpecialVar_Result != 0)
-        IncrementGameStat(GAME_STAT_RECEIVED_RIBBONS);
 }
 
 // This is a leftover debugging function that is used to populate the E-Reader

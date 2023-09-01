@@ -313,6 +313,7 @@ const u8 *const gItemEffectTable[] =
 	[ITEM_UP_GRADE - ITEM_POTION] = sItemEffect_EvolutionItem,
 	[ITEM_DEEP_SEA_TOOTH - ITEM_POTION] = sItemEffect_EvolutionItem,
 	[ITEM_DEEP_SEA_SCALE - ITEM_POTION] = sItemEffect_EvolutionItem,
+	[ITEM_PRISM_SCALE - ITEM_POTION] = sItemEffect_EvolutionItem,
 	[ITEM_HEALTH_WING - ITEM_POTION] = sItemEffect_Wings,
 	[ITEM_MUSCLE_WING - ITEM_POTION] = sItemEffect_Wings,
 	[ITEM_RESIST_WING - ITEM_POTION] = sItemEffect_Wings,

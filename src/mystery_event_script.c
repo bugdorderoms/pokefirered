@@ -152,7 +152,6 @@ bool8 MEScrCmd_giveribbon(struct ScriptContext *ctx)
 {
     u8 index = ScriptReadByte(ctx);
     u8 ribbonId = ScriptReadByte(ctx);
-    GiveGiftRibbonToParty(index, ribbonId);
     StringExpandPlaceholders(gStringVar4, gText_MysteryGiftSpecialRibbon);
     ctx->data[2] = 2;
     return FALSE;

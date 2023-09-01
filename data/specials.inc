@@ -252,7 +252,7 @@ gSpecials:: @ 815FD60
 	def_special BattleTower_SoftReset
 	def_special DetermineBattleTowerPrize
 	def_special GiveBattleTowerPrize
-	def_special AwardBattleTowerRibbons
+	def_special NullFieldSpecial
 	def_special ChooseBattleTowerPlayerParty
 	def_special ValidateEReaderTrainer
 	def_special NullFieldSpecial
@@ -300,8 +300,8 @@ gSpecials:: @ 815FD60
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
-	def_special LeadMonHasEffortRibbon
-	def_special GiveLeadMonEffortRibbon
+	def_special NullFieldSpecial
+	def_special NullFieldSpecial
 	def_special AreLeadMonEVsMaxedOut
 	def_special Script_FacePlayer
 	def_special Script_ClearHeldMovement
@@ -438,7 +438,7 @@ gSpecials:: @ 815FD60
 	def_special DoDeoxysTriangleInteraction
 	def_special SetDeoxysTrianglePalette
 	def_special IsPlayerLeftOfVermilionSailor
-	def_special IsBadEggInParty
+	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special HasAllMons
 	def_special IsPlayerNotInTrainerTowerLobby
@@ -451,5 +451,5 @@ gSpecials:: @ 815FD60
 	def_special InitElevatorFloorSelectMenuPos
 	def_special UpdateLoreleiDollCollection
 	def_special LoopWingFlapSound
-	def_special CreateEventLegalEnemyMon
+	def_special NullFieldSpecial
 gSpecialsEnd::

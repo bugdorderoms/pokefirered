@@ -970,11 +970,13 @@ static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityN
     struct Pokemon* mon = &gEnemyParty[0];
     u8 i, perfectIv = MAX_PER_STAT_IVS, iv[3] = {0};
 
-    if (DexNavTryMakeShinyMon())
-        FlagSet(FLAG_CREATE_SHINY_MON); // just easier this way
-
     GenerateWildMon(species, level);  // shiny rate bonus handled in CreateBoxMon
-
+	
+	if (DexNavTryMakeShinyMon())
+	{
+		i = TRUE;
+		SetMonData(mon, MON_DATA_IS_SHINY, &i);
+	}
     // Pick random, unique IVs to set to 31. The number of perfect IVs that are assigned is equal to the potential
     iv[0] = Random() % NUM_STATS;               // choose 1st perfect stat
 	
@@ -991,14 +993,14 @@ static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityN
     if (potential > 0 && iv[0] != NUM_STATS)
         SetMonData(mon, MON_DATA_HP_IV + iv[0], &perfectIv);
 
-    //Set ability and hidden ability
+    // Set ability and hidden ability
     SetMonData(mon, MON_DATA_ABILITY_NUM, &abilityNum);
     SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &abilityHidden);
 
     // Set Held Item
 	SetMonData(mon, MON_DATA_HELD_ITEM, &item);
 
-    //Set moves
+    // Set moves
     for (i = 0; i < MAX_MON_MOVES; i++)
         SetMonMoveSlot(mon, moves[i], i);
 

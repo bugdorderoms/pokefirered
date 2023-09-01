@@ -218,8 +218,22 @@ static bool8 UnlockedTanobyOrAreNotInTanoby(void)
 
 u16 GenerateWildMon(u16 species, u8 level)
 {
+	struct PokemonGenerator generator =
+	{
+		.species = species,
+		.level = level,
+		.forceGender = FALSE,
+		.forcedGender = MON_MALE,
+		.otIdType = OT_ID_PLAYER_ID,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.shinyType = GENERATE_SHINY_NORMAL,
+		.forceNature = FALSE,
+		.forcedNature = NUM_NATURES,
+		.pokemon = &gEnemyParty[0],
+	};
     ZeroEnemyPartyMons();
-	CreateMon(&gEnemyParty[0], species, level, USE_RANDOM_IVS, FALSE, 0, OT_ID_PLAYER_ID, 0);
+	CreateMon(generator);
 	return DoWildEncounterFormChange(&gEnemyParty[0]);
 }
 

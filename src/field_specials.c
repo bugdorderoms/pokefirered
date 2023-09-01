@@ -384,20 +384,6 @@ u8 GetRandomSlotMachineId(void)
     return sSlotMachineIndices[Random() % NELEMS(sSlotMachineIndices)];
 }
 
-bool8 LeadMonHasEffortRibbon(void)
-{
-    return GetMonData(&gPlayerParty[GetLeadMonIndex()], MON_DATA_EFFORT_RIBBON, NULL);
-}
-
-void GiveLeadMonEffortRibbon(void)
-{
-    bool8 param = TRUE;
-	
-    IncrementGameStat(GAME_STAT_RECEIVED_RIBBONS);
-    FlagSet(FLAG_SYS_RIBBON_GET);
-    SetMonData(&gPlayerParty[GetLeadMonIndex()], MON_DATA_EFFORT_RIBBON, &param);
-}
-
 bool8 AreLeadMonEVsMaxedOut(void)
 {
     return (GetMonEVCount(&gPlayerParty[GetLeadMonIndex()]) >= MAX_TOTAL_EVS);
@@ -2380,18 +2366,6 @@ void SetDeoxysTrianglePalette(void)
     u8 num = VarGet(VAR_DEOXYS_INTERACTION_NUM);
     LoadPalette(sDeoxysObjectPals[num], 0x1A0, 0x08);
     ApplyGlobalFieldPaletteTint(10);
-}
-
-bool8 IsBadEggInParty(void)
-{
-    u8 partyCount = CalculatePlayerPartyCount();
-    u8 i;
-    for (i = 0; i < partyCount; i++)
-    {
-        if (GetMonData(&gPlayerParty[i], MON_DATA_SANITY_IS_BAD_EGG) == TRUE)
-            return TRUE;
-    }
-    return FALSE;
 }
 
 bool8 IsPlayerNotInTrainerTowerLobby(void)

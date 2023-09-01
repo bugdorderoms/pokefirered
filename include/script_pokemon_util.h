@@ -1,7 +1,7 @@
 #ifndef GUARD_SCRIPT_POKEMON_UTIL_H
 #define GUARD_SCRIPT_POKEMON_UTIL_H
 
-bool8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall);
+bool8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, bool8 isShiny, bool8 hiddenAbility);
 bool8 ScriptGiveEgg(u16 species);
 void ScriptSetMonMoveSlot(u8 partyIdx, u16 move, u8 slot);
 void HealPlayerParty(void);

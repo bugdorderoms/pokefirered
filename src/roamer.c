@@ -98,21 +98,31 @@ void ClearRoamerData(void)
 
 void CreateInitialRoamerMon(void)
 {
+	u16 species = GetRoamerSpecies();
+	u8 level = 50;
     struct Pokemon * mon = &gEnemyParty[0];
-    u16 species = GetRoamerSpecies();
-    CreateMon(mon, species, 50, USE_RANDOM_IVS, FALSE, 0, OT_ID_PLAYER_ID, 0);
+	struct PokemonGenerator generator =
+	{
+		.species = species,
+		.level = level,
+		.forceGender = FALSE,
+		.forcedGender = MON_MALE,
+		.shinyType = GENERATE_SHINY_NORMAL,
+		.otIdType = OT_ID_PLAYER_ID,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.forceNature = FALSE,
+		.forcedNature = NUM_NATURES,
+		.pokemon = mon,
+	};
+    CreateMon(generator);
     ROAMER->species = species;
-    ROAMER->level = 50;
+    ROAMER->level = level;
     ROAMER->status = 0;
     ROAMER->active = TRUE;
     ROAMER->ivs = GetMonData(mon, MON_DATA_IVS);
     ROAMER->personality = GetMonData(mon, MON_DATA_PERSONALITY);
     ROAMER->hp = GetMonData(mon, MON_DATA_MAX_HP);
-    ROAMER->cool = GetMonData(mon, MON_DATA_COOL);
-    ROAMER->beauty = GetMonData(mon, MON_DATA_BEAUTY);
-    ROAMER->cute = GetMonData(mon, MON_DATA_CUTE);
-    ROAMER->smart = GetMonData(mon, MON_DATA_SMART);
-    ROAMER->tough = GetMonData(mon, MON_DATA_TOUGH);
     sRoamerLocation[MAP_GRP] = ROAMER_MAP_GROUP;
     sRoamerLocation[MAP_NUM] = sRoamerLocations[Random() % NUM_LOCATION_SETS][0];
 }
@@ -206,17 +216,27 @@ void CreateRoamerMonInstance(void)
 {
     u32 status;
     struct Pokemon *mon = &gEnemyParty[0];
-    
+	struct PokemonGenerator generator =
+	{
+		.species = ROAMER->species,
+		.level = ROAMER->level,
+		.otIdType = OT_ID_PLAYER_ID,
+		.shinyType = GENERATE_SHINY_NORMAL,
+		.forceGender = FALSE,
+		.forcedGender = MON_MALE,
+		.hasFixedPersonality = TRUE,
+		.fixedPersonality = ROAMER->personality,
+		.forceNature = FALSE,
+		.forcedNature = NUM_NATURES,
+		.pokemon = mon,
+	};
     ZeroEnemyPartyMons();
-    CreateMonWithIVsPersonality(mon, ROAMER->species, ROAMER->level, ROAMER->ivs, ROAMER->personality);
+    CreateMon(generator);
     status = ROAMER->status;
     SetMonData(mon, MON_DATA_STATUS, &status);
     SetMonData(mon, MON_DATA_HP, &ROAMER->hp);
-    SetMonData(mon, MON_DATA_COOL, &ROAMER->cool);
-    SetMonData(mon, MON_DATA_BEAUTY, &ROAMER->beauty);
-    SetMonData(mon, MON_DATA_CUTE, &ROAMER->cute);
-    SetMonData(mon, MON_DATA_SMART, &ROAMER->smart);
-    SetMonData(mon, MON_DATA_TOUGH, &ROAMER->tough);
+	SetMonData(mon, MON_DATA_IVS, &ROAMER->ivs);
+	CalculateMonStats(mon);
 }
 
 bool8 TryStartRoamerEncounter(void)

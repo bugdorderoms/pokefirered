@@ -355,38 +355,32 @@ void sub_814ADCC(struct PokemonJump2 *arg0, struct PokemonJump1_MonInfo *jumpMon
     struct SpriteSheet spriteSheet;
     struct CompressedSpritePalette spritePalette;
     u8 *buffer;
-    u8 *unusedBuffer;
     u8 subpriority;
     u8 spriteId;
 
     spriteTemplate = gUnknown_846E0E8;
     buffer = Alloc(0x2000);
-    unusedBuffer = Alloc(0x800);
+
     if (multiplayerId == sub_81499B4())
         subpriority = 3;
     else
         subpriority = multiplayerId + 4;
 
-    if (buffer && unusedBuffer)
+    if (buffer)
     {
-        HandleLoadSpecialPokePic(
-            &gMonFrontPicTable[jumpMon->species],
-            buffer,
-            jumpMon->species,
-            jumpMon->personality);
+        HandleLoadSpecialPokePic(&gMonFrontPicTable[jumpMon->species], buffer, jumpMon->species, jumpMon->personality);
 
         spriteSheet.data = buffer;
         spriteSheet.tag = multiplayerId;
         spriteSheet.size = 0x800;
         LoadSpriteSheet(&spriteSheet);
 
-        spritePalette.data = GetMonSpritePalFromSpeciesAndPersonality(jumpMon->species, jumpMon->otId, jumpMon->personality);
+        spritePalette.data = GetMonSpritePalFromSpecies(jumpMon->species, FALSE);
         spritePalette.tag = multiplayerId;
         LoadCompressedSpritePalette(&spritePalette);
 
         Free(buffer);
-        Free(unusedBuffer);
-
+		
         spriteTemplate.tileTag += multiplayerId;
         spriteTemplate.paletteTag += multiplayerId;
         spriteId = CreateSprite(&spriteTemplate, x, y, subpriority);

@@ -133,9 +133,10 @@
 #define ITEM_UP_GRADE                 (PROTEIN_ITEMS_END + 32)
 #define ITEM_DEEP_SEA_TOOTH           (PROTEIN_ITEMS_END + 33)
 #define ITEM_DEEP_SEA_SCALE           (PROTEIN_ITEMS_END + 34)
+#define ITEM_PRISM_SCALE              (PROTEIN_ITEMS_END + 35)
 
 // In case you want to add new evolution items, all the indexes below this will be updated with the corrected index
-#define EVOLUTION_ITEMS_END           ITEM_DEEP_SEA_SCALE
+#define EVOLUTION_ITEMS_END           ITEM_PRISM_SCALE
 
 // Wings
 #define ITEM_HEALTH_WING              (EVOLUTION_ITEMS_END + 1)

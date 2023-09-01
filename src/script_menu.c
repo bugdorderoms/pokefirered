@@ -972,7 +972,7 @@ static void Task_YesNoMenu_HandleInput(u8 taskId)
 
 static u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y)
 {
-    return CreateMonPicSprite(species, 0, 0x8000, TRUE, 8 * x + 40, 8 * y + 40, 0, gMonPaletteTable[species].tag);
+    return CreateMonPicSprite(species, FALSE, 0x8000, TRUE, 8 * x + 40, 8 * y + 40, 0, gMonPaletteTable[species].tag);
 }
 
 static u8 CreateMenuMonPic(u16 species, u8 x, u8 y)
@@ -1185,7 +1185,7 @@ void RemovePokemonSpeciesOnPicbox(void)
 	u8 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
 	
 	if (taskId != 0xFF)
-		DestroyPicboxPic(FALSE, gTasks[taskId].tSpriteId);
+		DestroyPicboxPic(PIC_TYPE_POKEMON, gTasks[taskId].tSpriteId);
 }
 
 void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y)

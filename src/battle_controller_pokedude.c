@@ -926,12 +926,6 @@ static u32 CopyPokedudeMonData(u8 monId, u8 *dst)
         dst[3] = (data32 & 0xFF000000) >> 24;
         size = 4;
         break;
-    case REQUEST_CHECKSUM_BATTLE:
-        data16 = GetMonData(mon, MON_DATA_CHECKSUM);
-        dst[0] = data16;
-        dst[1] = data16 >> 8;
-        size = 2;
-        break;
     case REQUEST_STATUS_BATTLE:
         data32 = GetMonData(mon, MON_DATA_STATUS);
         dst[0] = (data32 & 0x000000FF);
@@ -985,50 +979,6 @@ static u32 CopyPokedudeMonData(u8 monId, u8 *dst)
         dst[0] = data16;
         dst[1] = data16 >> 8;
         size = 2;
-        break;
-    case REQUEST_COOL_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_COOL);
-        size = 1;
-        break;
-    case REQUEST_BEAUTY_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_BEAUTY);
-        size = 1;
-        break;
-    case REQUEST_CUTE_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_CUTE);
-        size = 1;
-        break;
-    case REQUEST_SMART_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_SMART);
-        size = 1;
-        break;
-    case REQUEST_TOUGH_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_TOUGH);
-        size = 1;
-        break;
-    case REQUEST_SHEEN_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_SHEEN);
-        size = 1;
-        break;
-    case REQUEST_COOL_RIBBON_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_COOL_RIBBON);
-        size = 1;
-        break;
-    case REQUEST_BEAUTY_RIBBON_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_BEAUTY_RIBBON);
-        size = 1;
-        break;
-    case REQUEST_CUTE_RIBBON_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_CUTE_RIBBON);
-        size = 1;
-        break;
-    case REQUEST_SMART_RIBBON_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_SMART_RIBBON);
-        size = 1;
-        break;
-    case REQUEST_TOUGH_RIBBON_BATTLE:
-        dst[0] = GetMonData(mon, MON_DATA_TOUGH_RIBBON);
-        size = 1;
         break;
     }
     return size;
@@ -1216,9 +1166,6 @@ static void SetPokedudeMonData(u8 monId)
     case REQUEST_PERSONALITY_BATTLE:
         SetMonData(mon, MON_DATA_PERSONALITY, &gBattleBufferA[gActiveBattler][3]);
         break;
-    case REQUEST_CHECKSUM_BATTLE:
-        SetMonData(mon, MON_DATA_CHECKSUM, &gBattleBufferA[gActiveBattler][3]);
-        break;
     case REQUEST_STATUS_BATTLE:
         SetMonData(mon, MON_DATA_STATUS, &gBattleBufferA[gActiveBattler][3]);
         break;
@@ -1245,39 +1192,6 @@ static void SetPokedudeMonData(u8 monId)
         break;
     case REQUEST_SPDEF_BATTLE:
         SetMonData(mon, MON_DATA_SPDEF, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_COOL_BATTLE:
-        SetMonData(mon, MON_DATA_COOL, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_BEAUTY_BATTLE:
-        SetMonData(mon, MON_DATA_BEAUTY, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_CUTE_BATTLE:
-        SetMonData(mon, MON_DATA_CUTE, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_SMART_BATTLE:
-        SetMonData(mon, MON_DATA_SMART, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_TOUGH_BATTLE:
-        SetMonData(mon, MON_DATA_TOUGH, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_SHEEN_BATTLE:
-        SetMonData(mon, MON_DATA_SHEEN, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_COOL_RIBBON_BATTLE:
-        SetMonData(mon, MON_DATA_COOL_RIBBON, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_BEAUTY_RIBBON_BATTLE:
-        SetMonData(mon, MON_DATA_BEAUTY_RIBBON, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_CUTE_RIBBON_BATTLE:
-        SetMonData(mon, MON_DATA_CUTE_RIBBON, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_SMART_RIBBON_BATTLE:
-        SetMonData(mon, MON_DATA_SMART_RIBBON, &gBattleBufferA[gActiveBattler][3]);
-        break;
-    case REQUEST_TOUGH_RIBBON_BATTLE:
-        SetMonData(mon, MON_DATA_TOUGH_RIBBON, &gBattleBufferA[gActiveBattler][3]);
         break;
     }
     HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], gActiveBattler);
@@ -2643,11 +2557,21 @@ void InitPokedudePartyAndOpponent(void)
     s32 myIdx = 0;
     s32 opIdx = 0;
     const struct PokedudeBattlePartyInfo *data;
+	struct PokemonGenerator generator =
+	{
+		.otIdType = OT_ID_PLAYER_ID,
+		.shinyType = GENERATE_SHINY_NORMAL,
+		.forceGender = TRUE,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.forceNature = TRUE,
+	};
 
     gBattleTypeFlags = BATTLE_TYPE_POKEDUDE;
     ZeroPlayerPartyMons();
     ZeroEnemyPartyMons();
     data = sPokedudeBattlePartyPointers[gSpecialVar_0x8004];
+	
     i = 0;
     do
     {
@@ -2655,9 +2579,17 @@ void InitPokedudePartyAndOpponent(void)
             mon = &gPlayerParty[myIdx++];
         else
             mon = &gEnemyParty[opIdx++];
-        CreateMonWithGender(mon, data[i].species, data[i].level, 0, data[i].gender);
-		SetMonData(mon, MON_DATA_NATURE, &data[i].nature);
+		
+		generator.species = data[i].species;
+		generator.level = data[i].level;
+		generator.forcedGender = data[i].gender;
+		generator.forcedNature = data[i].nature;
+		generator.pokemon = mon;
+			
+        CreateMon(generator);
+
         for (j = 0; j < 4; ++j)
             SetMonMoveSlot(mon, data[i].moves[j], j);
+
     } while (data[++i].side != 0xFF);
 }

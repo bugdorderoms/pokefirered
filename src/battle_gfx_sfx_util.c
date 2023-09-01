@@ -282,7 +282,7 @@ bool8 IsBattleSEPlaying(u8 battlerId)
 void BattleLoadMonSpriteGfx(u8 battlerId)
 {
 	struct Pokemon *mon = GetBattlerIllusionPartyIndexPtr(battlerId);
-    u32 currentPersonality, monsPersonality = GetMonData(mon, MON_DATA_PERSONALITY);
+    u32 currentPersonality;
     u16 species;
     u16 paletteOffset;
     void *buffer;
@@ -290,7 +290,7 @@ void BattleLoadMonSpriteGfx(u8 battlerId)
     if (gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies == SPECIES_NONE)
     {
         species = GetMonData(mon, MON_DATA_SPECIES);
-        currentPersonality = monsPersonality;
+        currentPersonality = GetMonData(mon, MON_DATA_PERSONALITY);
     }
     else
     {
@@ -304,7 +304,7 @@ void BattleLoadMonSpriteGfx(u8 battlerId)
 	
     buffer = AllocZeroed(0x400);
     LZDecompressWram(gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies == SPECIES_NONE ? GetMonFrontSpritePal(mon)
-	: GetMonSpritePalFromSpeciesAndPersonality(species, GetMonData(mon, MON_DATA_OT_ID), monsPersonality), buffer);
+	: GetMonSpritePalFromSpecies(species, GetMonData(mon, MON_DATA_IS_SHINY)), buffer);
     LoadPalette(buffer, paletteOffset, 0x20);
     LoadPalette(buffer, 0x80 + battlerId * 16, 0x20);
     Free(buffer);
@@ -518,7 +518,7 @@ void HandleSpeciesGfxDataChange(u8 battlerAtk, u8 battlerDef, u8 flags)
 	DmaCopy32(3, gMonSpritesGfxPtr->sprites[atkPosition], (void *)(VRAM + 0x10000 + gSprites[gBattlerSpriteIds[battlerAtk]].oam.tileNum * 32), 0x800);
 	
 	buffer = AllocZeroed(0x400);
-	LZDecompressWram(GetMonSpritePalFromSpeciesAndPersonality(targetSpecies, GetMonData(atkMon, MON_DATA_OT_ID), atkPersonality), buffer);
+	LZDecompressWram(GetMonSpritePalFromSpecies(targetSpecies, GetMonData(atkMon, MON_DATA_IS_SHINY)), buffer);
 	paletteOffset = 0x100 + battlerAtk * 16;
 	LoadPalette(buffer, paletteOffset, 32);
 	Free(buffer);

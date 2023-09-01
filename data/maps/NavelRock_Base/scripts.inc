@@ -56,10 +56,7 @@ NavelRock_Base_EventScript_Lugia:: @ 8165134
 	playmoncry SPECIES_LUGIA, 2
 	waitmoncry
 	delay 20
-	setvar VAR_0x8004, SPECIES_LUGIA
-	setvar VAR_0x8005, 70  @ Level
-	setvar VAR_0x8006, ITEM_NONE
-	special CreateEventLegalEnemyMon
+	setwildbattle SPECIES_LUGIA, 70, ITEM_NONE
 	setflag FLAG_SYS_SPECIAL_WILD_BATTLE
 	special StartLegendaryBattle
 	waitstate

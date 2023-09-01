@@ -189,7 +189,7 @@ struct PokemonSummaryScreenData
     } summary;
 
     u8 ALIGNED(4) isEgg; /* 0x3200 */
-    u8 ALIGNED(4) isBadEgg; /* 0x3204 */
+    u8 ALIGNED(4) unused; /* 0x3204 */
 
     u8 ALIGNED(4) mode; /* 0x3208 */
     u8 ALIGNED(4) unk320C; /* 0x320C */
@@ -1030,11 +1030,6 @@ void ShowPokemonSummaryScreen(struct Pokemon * party, u8 cursorPos, u8 lastIdx, 
 
     BufferSelectedMonData(&sMonSummaryScreen->currentMon);
     sMonSummaryScreen->isEgg = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_IS_EGG);
-    sMonSummaryScreen->isBadEgg = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SANITY_IS_BAD_EGG);
-
-    if (sMonSummaryScreen->isBadEgg == TRUE)
-        sMonSummaryScreen->isEgg = TRUE;
-
     sMonSummaryScreen->lastPageFlipDirection = 0xff;
     SetMainCallback2(CB2_SetUpPSS);
 }
@@ -1987,7 +1982,7 @@ static u8 PokeSum_HandleLoadBgGfx(void)
     {
     case 0:
         LoadPalette(gTrainerMemoPal1, 0, 0x20 * 5);
-        if (IsMonShiny(&sMonSummaryScreen->currentMon) == TRUE && !sMonSummaryScreen->isEgg)
+        if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_IS_SHINY) && !sMonSummaryScreen->isEgg)
         {
             LoadPalette(&gTrainerMemoPal1[16 * 6], 0, 0x20);
             LoadPalette(&gTrainerMemoPal1[16 * 5], 0x10, 0x20);
@@ -2412,9 +2407,6 @@ static void PrintInfoPage(void)
         else
             hatchMsgIndex = 0;
 
-        if (sMonSummaryScreen->isBadEgg)
-            hatchMsgIndex = 0;
-
         AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 7, 45, sLevelNickTextColors[0], TEXT_SPEED_FF, sEggHatchTimeTexts[hatchMsgIndex]);
     }
 }
@@ -2593,20 +2585,10 @@ static void PokeSum_PrintTrainerMemo_Mon_HeldByOT(void)
     // but Japanese uses different grammar for Bold and Gentle natures.
     if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MET_LEVEL) == 0) // Hatched
     {
-        if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_EVENT_LEGAL) == 1) // Fateful encounter
-        {
-            if (PokeSum_IsMonBoldOrGentle(nature))
-                DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_FatefulEncounterHatched_BoldGentleGrammar);
-            else
-                DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_FatefulEncounterHatched);
-        }
-        else
-        {
-            if (PokeSum_IsMonBoldOrGentle(nature))
-                DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_Hatched_BoldGentleGrammar);
-            else
-                DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_Hatched);
-        }
+		if (PokeSum_IsMonBoldOrGentle(nature))
+			DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_Hatched_BoldGentleGrammar);
+		else
+			DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_Hatched);
     }
     else
     {
@@ -2690,20 +2672,10 @@ static void PokeSum_PrintTrainerMemo_Mon_NotHeldByOT(void)
     // but Japanese uses different grammar for Bold and Gentle natures.
     if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MET_LEVEL) == 0) // hatched from an EGG
     {
-        if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_EVENT_LEGAL) == 1) // Fateful encounter
-        {
-            if (PokeSum_IsMonBoldOrGentle(nature))
-                DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_ApparentlyFatefulEncounterHatched_BoldGentleGrammar);
-            else
-                DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_ApparentlyFatefulEncounterHatched);
-        }
-        else
-        {
-            if (PokeSum_IsMonBoldOrGentle(nature))
-                DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_ApparentlyMet_BoldGentleGrammar);
-            else
-                DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_ApparentlyMet);
-        }
+		if (PokeSum_IsMonBoldOrGentle(nature))
+			DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_ApparentlyMet_BoldGentleGrammar);
+		else
+			DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_ApparentlyMet);
     }
     else
     {
@@ -2744,7 +2716,7 @@ static void PokeSum_PrintTrainerMemo_Egg(void)
 
     if (sMonSummaryScreen->monList.mons != gEnemyParty)
     {
-        if (metLocation == METLOC_FATEFUL_ENCOUNTER || GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_EVENT_LEGAL) == 1)
+        if (metLocation == METLOC_FATEFUL_ENCOUNTER)
             chosenStrIndex = 4;
         else
         {
@@ -2762,7 +2734,7 @@ static void PokeSum_PrintTrainerMemo_Egg(void)
     }
     else
     {
-        if (metLocation == METLOC_FATEFUL_ENCOUNTER || GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_EVENT_LEGAL) == 1)
+        if (metLocation == METLOC_FATEFUL_ENCOUNTER)
             chosenStrIndex = 4;
         else
         {
@@ -2780,10 +2752,6 @@ static void PokeSum_PrintTrainerMemo_Egg(void)
                 chosenStrIndex++;
         }
     }
-
-    if (sMonSummaryScreen->isBadEgg)
-        chosenStrIndex = 0;
-
     AddTextPrinterParameterized4(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2, 0, 3, 0, 0, sLevelNickTextColors[0], TEXT_SPEED_FF, sEggOriginTexts[chosenStrIndex]);
 }
 
@@ -3929,14 +3897,14 @@ static void PokeSum_CreateMonPicSprite(void)
     u16 spriteId;
     u16 species;
     u32 personality;
-    u32 trainerId;
+    bool8 isShiny;
 
     sMonPicBounceState = AllocZeroed(sizeof(struct MonPicBounceState));
 
     species = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES2);
     personality = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PERSONALITY);
-    trainerId = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_OT_ID);
-	spriteId = CreateMonPicSprite(species, trainerId, personality, TRUE, 60, 65, 12, 0xffff);
+    isShiny = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_IS_SHINY);
+	spriteId = CreateMonPicSprite(species, isShiny, personality, TRUE, 60, 65, 12, 0xffff);
     FreeSpriteOamMatrix(&gSprites[spriteId]);
 
     if (!IsPokeSpriteNotFlipped(species))
@@ -4705,8 +4673,7 @@ static void DestroyShinyStarObj(void)
 
 static void HideShowShinyStar(bool8 invisible)
 {
-    if (IsMonShiny(&sMonSummaryScreen->currentMon) == TRUE
-        && !sMonSummaryScreen->isEgg)
+    if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_IS_SHINY) && !sMonSummaryScreen->isEgg)
         sShinyStarObjData->sprite->invisible = invisible;
     else
         sShinyStarObjData->sprite->invisible = TRUE;
@@ -4725,7 +4692,7 @@ static void HideShowShinyStar(bool8 invisible)
 
 static void ShowShinyStarObjIfMonShiny(void)
 {
-    if (IsMonShiny(&sMonSummaryScreen->currentMon) == TRUE && !sMonSummaryScreen->isEgg)
+    if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_IS_SHINY) && !sMonSummaryScreen->isEgg)
         HideShowShinyStar(FALSE);
     else
         HideShowShinyStar(TRUE);
@@ -4952,17 +4919,12 @@ static void Task_PokeSum_SwitchDisplayedPokemon(u8 taskId)
         BufferSelectedMonData(&sMonSummaryScreen->currentMon);
 
         sMonSummaryScreen->isEgg = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_IS_EGG);
-        sMonSummaryScreen->isBadEgg = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SANITY_IS_BAD_EGG);
-
-        if (sMonSummaryScreen->isBadEgg == TRUE)
-            sMonSummaryScreen->isEgg = TRUE;
-
         sMonSummaryScreen->switchMonTaskState++;
         break;
     case 3:
         FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, 30, 20);
 
-        if (IsMonShiny(&sMonSummaryScreen->currentMon) == TRUE && !sMonSummaryScreen->isEgg)
+        if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_IS_SHINY) && !sMonSummaryScreen->isEgg)
         {
             LoadPalette(&gTrainerMemoPal1[16 * 6], 0, 0x20);
             LoadPalette(&gTrainerMemoPal1[16 * 5], 0x10, 0x20);

@@ -586,6 +586,9 @@ const u32 sItemIconPalette_DeepSeaTooth[] = INCBIN_U32("graphics/items/icon_pale
 const u32 sItemIcon_DeepSeaScale[] = INCBIN_U32("graphics/items/icons/deep_sea_scale.4bpp.lz");
 const u32 sItemIconPalette_DeepSeaScale[] = INCBIN_U32("graphics/items/icon_palettes/deep_sea_scale.gbapal.lz");
 
+const u32 sItemIcon_PrismScale[] = INCBIN_U32("graphics/items/icons/prism_scale.4bpp.lz");
+const u32 sItemIconPalette_PrismScale[] = INCBIN_U32("graphics/items/icon_palettes/prism_scale.gbapal.lz");
+
 const u32 sItemIcon_SmokeBall[] = INCBIN_U32("graphics/items/icons/smoke_ball.4bpp.lz");
 const u32 sItemIconPalette_SmokeBall[] = INCBIN_U32("graphics/items/icon_palettes/smoke_ball.gbapal.lz");
 

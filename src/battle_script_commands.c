@@ -8382,7 +8382,7 @@ static void atkF2_displaydexinfo(void)
 		case 4:
 			if (!IsDma3ManagerBusyWithBgCopy())
 			{
-				CreateMonPicSprite(species, gBattleMons[battler].otId, gBattleMons[battler].personality, TRUE, 120, 64, 0, 0xFFFF);
+				CreateMonPicSprite(species, GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_IS_SHINY), gBattleMons[battler].personality, TRUE, 120, 64, 0, 0xFFFF);
 				CpuFill32(0, gPlttBufferFaded, BG_PLTT_SIZE);
 				BeginNormalPaletteFade(0x1FFFF, 0, 0x10, 0, RGB_BLACK);
 				ShowBg(0);

@@ -1277,7 +1277,7 @@ static void sub_8152034(void)
 
 static void sub_8152048(struct DodrioSubstruct_318C * a0, struct Pokemon * a1)
 {
-    a0->isShiny = IsMonShiny(a1);
+    a0->isShiny = GetMonData(a1, MON_DATA_IS_SHINY);
 }
 
 static void sub_815205C(TaskFunc func, u8 priority)

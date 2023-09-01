@@ -599,8 +599,22 @@ void sub_8111438(void)
 {
     struct PokemonAndSomethingElse *r9 = AllocZeroed(sizeof(struct PokemonAndSomethingElse));
     u16 r0, r3, r5, r6;
+	struct PokemonGenerator generator =
+	{
+		.species = SPECIES_RATTATA,
+		.level = 1,
+		.forceGender = FALSE,
+		.forcedGender = MON_MALE,
+		.otIdType = OT_ID_PLAYER_ID,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.shinyType = GENERATE_SHINY_NORMAL,
+		.forceNature = FALSE,
+		.forcedNature = NUM_NATURES,
+		.pokemon = &r9->mon,
+	};
 
-    CreateMon(&r9->mon, SPECIES_RATTATA, 1, 0x20, FALSE, 0, 0, 0);
+    CreateMon(generator);
     r0 = VarGet(VAR_QUEST_LOG_MON_COUNTS);
     r9->sanePartyCount = r0 >> 12;
     r9->saneBoxesCount = r0 % 0x1000;

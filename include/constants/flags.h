@@ -35,8 +35,8 @@
 #define FLAG_TEMP_1E             0x01E
 #define FLAG_TEMP_1F             0x01F
 
-#define FLAG_CREATE_SHINY_MON    0x020
-#define FLAG_HIDDEN_ABILITY_MON  0x021
+#define FLAG_0x020    			 0x020
+#define FLAG_0x021  			 0x021
 #define FLAG_TAUROS_RIDE_GET     0x022
 #define FLAG_STOUTLAND_RIDE_GET  0x023
 #define FLAG_MUDSDALE_RIDE_GET   0x024
@@ -1381,7 +1381,7 @@
 #define FLAG_0x838                                                  (SYS_FLAGS + 0x38)
 #define FLAG_SYS_MYSTERY_GIFT_ENABLED                               (SYS_FLAGS + 0x39)
 #define FLAG_0x83A                                                  (SYS_FLAGS + 0x3A)
-#define FLAG_SYS_RIBBON_GET                                         (SYS_FLAGS + 0x3B)
+#define FLAG_0x83B                                         			(SYS_FLAGS + 0x3B)
 #define FLAG_SYS_SAW_HELP_SYSTEM_INTRO                              (SYS_FLAGS + 0x3C)
 #define FLAG_0x83D                                                  (SYS_FLAGS + 0x3D)
 #define FLAG_OPENED_START_MENU                                      (SYS_FLAGS + 0x3E)

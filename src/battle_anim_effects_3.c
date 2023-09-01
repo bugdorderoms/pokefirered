@@ -2953,7 +2953,7 @@ void AnimTask_RolePlaySilhouette(u8 taskId)
 {
 	struct Pokemon *targetMon = GetBattlerPartyIndexPtr(gBattleAnimTarget);
     u32 personality = GetMonData(targetMon, MON_DATA_PERSONALITY);
-    u32 otId = GetMonData(targetMon, MON_DATA_OT_ID);
+    bool8 isShiny = GetMonData(targetMon, MON_DATA_IS_SHINY);
     u16 species;
     s16 xOffset;
     u32 priority;
@@ -2979,7 +2979,7 @@ void AnimTask_RolePlaySilhouette(u8 taskId)
 	priority = GetBattlerSpriteBGPriority(gBattleAnimAttacker);
     coord1 = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
     coord2 = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y);
-    spriteId = CreateAdditionalMonSpriteForMoveAnim(species, isBackPic, coord1 + xOffset, coord2, 5, personality, otId);
+    spriteId = CreateAdditionalMonSpriteForMoveAnim(species, isBackPic, coord1 + xOffset, coord2, 5, personality, isShiny);
     gSprites[spriteId].oam.priority = priority;
     gSprites[spriteId].oam.objMode = ST_OAM_OBJ_BLEND;
     FillPalette(RGB_WHITE, (gSprites[spriteId].oam.paletteNum << 4) + 0x100, 32);
@@ -4680,7 +4680,7 @@ void AnimTask_SnatchOpposingMonMove(u8 taskId)
 	struct Pokemon * mon;
     u8 spriteId, spriteId2;
     u32 personality;
-    u32 otId;
+    bool8 isShiny;
     u16 species;
     u8 subpriority;
     bool8 isBackPic;
@@ -4710,7 +4710,7 @@ void AnimTask_SnatchOpposingMonMove(u8 taskId)
 
             mon = GetBattlerPartyIndexPtr(gBattleAnimAttacker);
 			personality = GetMonData(mon, MON_DATA_PERSONALITY);
-			otId = GetMonData(mon, MON_DATA_OT_ID);
+			isShiny = GetMonData(mon, MON_DATA_IS_SHINY);
 			
 			if (gBattleSpritesDataPtr->battlerData[gBattleAnimAttacker].transformSpecies == SPECIES_NONE)
 				species = GetMonData(mon, MON_DATA_SPECIES);
@@ -4730,7 +4730,7 @@ void AnimTask_SnatchOpposingMonMove(u8 taskId)
                 x = -32;
             }
 
-            spriteId2 = CreateAdditionalMonSpriteForMoveAnim(species, isBackPic, x, GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y), subpriority, personality, otId);
+            spriteId2 = CreateAdditionalMonSpriteForMoveAnim(species, isBackPic, x, GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y), subpriority, personality, isShiny);
             
             if (gBattleSpritesDataPtr->battlerData[gBattleAnimAttacker].transformSpecies != SPECIES_NONE)
                 BlendPalette((gSprites[spriteId2].oam.paletteNum * 16) | 0x100, 16, 6, RGB_WHITE);

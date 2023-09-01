@@ -1179,9 +1179,9 @@ static u16 GetTrainerClassBallId(u8 trainerClass)
 
 static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 {
-    u32 i, j, otid;
+    u32 i, j;
 	const struct TrainerMon *partyData;
-	struct PIDParameters parameters;
+	struct PokemonGenerator generator;
 	
     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && !(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)))
 	{
@@ -1189,35 +1189,52 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 		
 		partyData = gTrainers[trainerNum].party;
 		
-		otid = Random32();
-		
-		parameters.pidType = PID_TYPE_NORMAL;
-		parameters.forceOtId = TRUE; // For the Pokémon don't be generated with the player otid
-		parameters.forcedOtId = otid;
-		
 		for (i = 0; i < gTrainers[trainerNum].partySize; i++)
 		{
-			parameters.species = partyData[i].species;
-			parameters.shinyType = partyData[i].isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_LOCKED;
+			generator.species = partyData[i].species;
+			generator.level = GetTrainerPartyMonLevel(partyData[i]);
 			
 			if (partyData[i].gender)
 			{
 				switch (partyData[i].gender)
 				{
 					case TRAINER_MON_MALE:
-						parameters.forcedGender = MON_MALE;
+						generator.forcedGender = MON_MALE;
 						break;
 					case TRAINER_MON_FEMALE:
-						parameters.forcedGender = MON_FEMALE;
+						generator.forcedGender = MON_FEMALE;
 						break;
 					case TRAINER_MON_GENDERLESS:
-						parameters.forcedGender = MON_GENDERLESS;
+						generator.forcedGender = MON_GENDERLESS;
 						break;
 				}
-				parameters.forceGender = TRUE;
+				generator.forceGender = TRUE;
 			}
+			else
+			{
+				generator.forceGender = FALSE;
+				generator.forcedGender = MON_MALE;
+			}
+			
+			generator.shinyType = partyData[i].isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_LOCKED;
+			generator.otIdType = OT_ID_RANDOM;
+			generator.hasFixedPersonality = FALSE;
+			generator.fixedPersonality = 0;
+			
+			if (partyData[i].nature)
+			{
+				generator.forceNature = TRUE;
+				generator.forcedNature = partyData[i].nature - 1;
+			}
+			else
+			{
+				generator.forceNature = FALSE;
+				generator.forcedNature = NUM_NATURES;
+			}
+			generator.pokemon = &party[i];
+			
 			// Create mon
-			CreateMon(&party[i], partyData[i].species, GetTrainerPartyMonLevel(partyData[i]), USE_RANDOM_IVS, TRUE, GeneratePIDMaster(parameters), OT_ID_PRESET, otid);
+			CreateMon(generator);
 			
 			// Update form based on gender
 			DoOverworldFormChange(&party[i], FORM_CHANGE_GENDER);
@@ -1259,12 +1276,6 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 					j = partyData[i].abilityNum - 1;
 					SetMonData(&party[i], MON_DATA_ABILITY_NUM, &j);
 				}
-			}
-			// Give nature
-			if (partyData[i].nature)
-			{
-				j = partyData[i].nature - 1;
-				SetMonData(&party[i], MON_DATA_NATURE, &j);
 			}
 			// Calculate stats
 			CalculateMonStats(&party[i]);

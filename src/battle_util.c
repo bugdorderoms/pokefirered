@@ -4452,15 +4452,6 @@ void CopyMoveTargetName(u8 *dest, u16 move)
 	StringCopyN(dest, str, 12);
 }
 
-static bool32 IsNotEventLegalMewOrDeoxys(u8 battlerId)
-{
-    if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT
-     || (GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES, NULL) != SPECIES_DEOXYS
-     && GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES, NULL) != SPECIES_MEW))
-        return TRUE;
-    return GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerId]], MON_DATA_EVENT_LEGAL, NULL);
-}
-
 u8 IsMonDisobedient(void)
 {
     s32 rnd;
@@ -4469,18 +4460,15 @@ u8 IsMonDisobedient(void)
 
     if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKEDUDE)) || GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT)
         return 0;
-    if (IsNotEventLegalMewOrDeoxys(gBattlerAttacker)) // only if species is Mew or Deoxys
-    {
-        if (!IsOtherTrainer(gBattleMons[gBattlerAttacker].otId, gBattleMons[gBattlerAttacker].otName) || FlagGet(FLAG_BADGE08_GET))
-            return 0;
-        obedienceLevel = 10;
-        if (FlagGet(FLAG_BADGE02_GET))
-            obedienceLevel = 30;
-        if (FlagGet(FLAG_BADGE04_GET))
-            obedienceLevel = 50;
-        if (FlagGet(FLAG_BADGE06_GET))
-            obedienceLevel = 70;
-    }
+	if (!IsOtherTrainer(gBattleMons[gBattlerAttacker].otId, gBattleMons[gBattlerAttacker].otName) || FlagGet(FLAG_BADGE08_GET))
+		return 0;
+	obedienceLevel = 10;
+	if (FlagGet(FLAG_BADGE02_GET))
+		obedienceLevel = 30;
+	if (FlagGet(FLAG_BADGE04_GET))
+		obedienceLevel = 50;
+	if (FlagGet(FLAG_BADGE06_GET))
+		obedienceLevel = 70;
     if (gBattleMons[gBattlerAttacker].level <= obedienceLevel)
         return 0;
     rnd = (Random() & 255);

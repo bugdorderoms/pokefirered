@@ -321,13 +321,7 @@ struct Roamer
     /*0x0A*/ u16 hp;
     /*0x0C*/ u8 level;
     /*0x0D*/ u8 status;
-    /*0x0E*/ u8 cool;
-    /*0x0F*/ u8 beauty;
-    /*0x10*/ u8 cute;
-    /*0x11*/ u8 smart;
-    /*0x12*/ u8 tough;
-    /*0x13*/ bool8 active;
-    /*0x14*/ u8 filler[0x8];
+    /*0x0E*/ bool8 active;
 };
 
 struct RamScriptData
@@ -552,9 +546,8 @@ struct SaveBlock1
 	/*0x0116*/ u8 additionalPhrases[ROUND_BITS_TO_BYTES(NUM_ADDITIONAL_PHRASES)];
 	/*0x011B*/ u8 playerPartyCount;
 	/*0x011C*/ u32 towerChallengeId;
-	/*0x0120*/ u8 giftRibbons[GIFT_RIBBONS_COUNT];
-	/*0x012B*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
-	/*0x0133*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
+	/*0x0120*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
+	/*0x0128*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
 	           u8 flags[NUM_FLAG_BYTES]; // size of 0x120 bytes
 			   u16 vars[VARS_COUNT]; // size of 0x200 bytes
 			   struct Pokemon playerParty[PARTY_SIZE];

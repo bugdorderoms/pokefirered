@@ -1444,7 +1444,6 @@ const u8 gUnknown_83FE85C[] = _("\n");
 const u8 gUnknown_83FE85E[] = _("\n");
 const u8 gUnknown_83FE860[] = _(" is");
 const u8 gUnknown_83FE864[] = _(" is");
-const u8 gText_BadEgg[] = _("Bad Egg");
 const u8 gUnknown_83FE870[] = _("ミツル");
 const u8 gText_Win[] = _("{HIGHLIGHT 0}Win");
 const u8 gText_Loss[] = _("{HIGHLIGHT 0}Loss");

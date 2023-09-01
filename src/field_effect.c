@@ -519,9 +519,9 @@ static u8 AddNewGameBirchObject(s16 x, s16 y, u8 subpriority)
     return CreateSprite(&sNewGameOakObjectTemplate, x, y, subpriority);
 }
 
-static u8 CreateMonSprite_FieldMove(u16 species, u32 otId, u32 personality, s16 x, s16 y, u8 subpriority)
+static u8 CreateMonSprite_FieldMove(u16 species, bool8 isShiny, u32 personality, s16 x, s16 y, u8 subpriority)
 {
-    u16 spriteId = CreateMonPicSprite(species, otId, personality, 1, x, y, 0, GetMonSpritePalStructFromOtIdPersonality(species, otId, personality)->tag);
+    u16 spriteId = CreateMonPicSprite(species, isShiny, personality, 1, x, y, 0, GetMonSpritePalStructFromSpecies(species, isShiny)->tag);
 	
 	return spriteId == 0xFFFF ? MAX_SPRITES : spriteId;
 }
@@ -2353,7 +2353,7 @@ static void VBlankCB_ShowMonEffect_Indoors(void);
 static void AnimateIndoorShowMonBg(struct Task * task);
 static bool8 SlideIndoorBannerOnscreen(struct Task * task);
 static bool8 SlideIndoorBannerOffscreen(struct Task * task);
-static u8 InitFieldMoveMonSprite(u32 species, u32 otId, u32 personality);
+static u8 InitFieldMoveMonSprite(u32 species, bool8 isShiny, u32 personality);
 static void SpriteCB_FieldMoveMonSlideOnscreen(struct Sprite * sprite);
 static void SpriteCB_FieldMoveMonWaitAfterCry(struct Sprite * sprite);
 static void SpriteCB_FieldMoveMonSlideOffscreen(struct Sprite * sprite);
@@ -2384,13 +2384,13 @@ u32 FldEff_FieldMoveShowMonInit(void)
     if (gUsingRideMon == RIDE_NONE)
     {
 	    gFieldEffectArguments[0] = GetMonData(&gPlayerParty[partyIdx], MON_DATA_SPECIES);
-	    gFieldEffectArguments[1] = GetMonData(&gPlayerParty[partyIdx], MON_DATA_OT_ID);
+	    gFieldEffectArguments[1] = GetMonData(&gPlayerParty[partyIdx], MON_DATA_IS_SHINY);
 	    gFieldEffectArguments[2] = GetMonData(&gPlayerParty[partyIdx], MON_DATA_PERSONALITY);
     }
     else
     {
 	    gFieldEffectArguments[0] = RideToSpeciesId(gUsingRideMon);
-	    gFieldEffectArguments[1] = gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8) | (gSaveBlock2Ptr->playerTrainerId[2] << 16) | (gSaveBlock2Ptr->playerTrainerId[3] << 24);
+	    gFieldEffectArguments[1] = FALSE;
 	    gFieldEffectArguments[2] = Random32();
 	    gUsingRideMon = RIDE_NONE;
     }
@@ -2711,14 +2711,14 @@ static bool8 SlideIndoorBannerOffscreen(struct Task * task)
     return FALSE;
 }
 
-static u8 InitFieldMoveMonSprite(u32 species, u32 otId, u32 personality)
+static u8 InitFieldMoveMonSprite(u32 species, bool8 isShiny, u32 personality)
 {
     bool16 playCry = (species & 0x80000000) >> 16;
     u8 monSprite;
     struct Sprite * sprite;
 	
     species &= 0x7fffffff;
-    monSprite = CreateMonSprite_FieldMove(species, otId, personality, 0x140, 0x50, 0);
+    monSprite = CreateMonSprite_FieldMove(species, isShiny, personality, 0x140, 0x50, 0);
 	
     sprite = &gSprites[monSprite];
     sprite->callback = SpriteCallbackDummy;

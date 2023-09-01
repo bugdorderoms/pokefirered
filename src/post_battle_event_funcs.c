@@ -9,11 +9,8 @@
 
 bool8 EnterHallOfFame(void)
 {
-    bool8 ribbonState;
-    bool8 *r7;
-    int i;
-    bool8 gaveAtLeastOneRibbon;
     HealPlayerParty();
+	
     if (FlagGet(FLAG_SYS_GAME_CLEAR) == TRUE)
     {
         gHasHallOfFameRecords = TRUE;
@@ -29,24 +26,6 @@ bool8 EnterHallOfFame(void)
     }
     SetContinueGameWarpStatus();
     SetContinueGameWarpToHealLocation(SPAWN_PALLET_TOWN);
-    gaveAtLeastOneRibbon = FALSE;
-    for (i = 0, r7 = &ribbonState; i < PARTY_SIZE; i++)
-    {
-        if (GetMonData(&gPlayerParty[i], MON_DATA_SANITY_HAS_SPECIES) && !GetMonData(&gPlayerParty[i], MON_DATA_SANITY_IS_EGG))
-        {
-            if (!GetMonData(&gPlayerParty[i], MON_DATA_CHAMPION_RIBBON))
-            {
-                *r7 = TRUE;
-                SetMonData(&gPlayerParty[i], MON_DATA_CHAMPION_RIBBON, &ribbonState);
-                gaveAtLeastOneRibbon = TRUE;
-            }
-        }
-    }
-    if (gaveAtLeastOneRibbon == TRUE)
-    {
-        IncrementGameStat(GAME_STAT_RECEIVED_RIBBONS);
-        FlagSet(FLAG_SYS_RIBBON_GET);
-    }
     SetMainCallback2(CB2_DoHallOfFameScreen);
     return FALSE;
 }

@@ -212,6 +212,7 @@ static const u8 sItemDesc_CleanseTag[]     = _("An item to be held by a Pokémon
 static const u8 sItemDesc_SoulDew[]        = _("A orb to be held by either Latios\nor Latias. It raises the power of\nPsychic and Dragon-type moves.");
 static const u8 sItemDesc_DeepSeaTooth[]   = _("An item to be held by Clamperl.\nThis fang gleams a sharp silver and\nraises the holder's Sp. Atk stat.");
 static const u8 sItemDesc_DeepSeaScale[]   = _("An item to be held by Clamperl. A\nscale that shines a faint pink, it\nraises the Sp. Def stat.");
+static const u8 sItemDesc_PrismScale[]     = _("A mysterious scale that causes a\ncertain Pokémon to evolve. It\nshines in rainbow colors.");
 static const u8 sItemDesc_SmokeBall[]      = _("An item to be held by a Pokémon.\nIt enables the holder to flee from\nany wild Pokémon without fail.");
 static const u8 sItemDesc_Everstone[]      = _("An item to be held by a Pokémon. A\nPokémon holding this peculiar\nstone is prevented from evolving.");
 static const u8 sItemDesc_FocusBand[]      = _("An item to be held by a Pokémon.\nThe holder may endure a potential\nKO attack, surviving with 1 HP.");
@@ -1867,6 +1868,17 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_HELD_ITEM,
+		.flingPower = 30,
+	},
+	[ITEM_PRISM_SCALE] =
+	{
+		.name = _("Prism Scale"),
+		.description = sItemDesc_PrismScale,
+		.price = 1000,
+		.pocket = POCKET_ITEMS,
+		.type = ITEM_TYPE_PARTY_MENU,
+		.fieldUseFunc = FieldUseFunc_EvoItem,
+		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
 	},
 	[ITEM_HEALTH_WING] =

@@ -43,18 +43,17 @@
 #define GAME_STAT_USED_ITEMFINDER            39
 #define GAME_STAT_GOT_RAINED_ON              40
 #define GAME_STAT_CHECKED_POKEDEX            41
-#define GAME_STAT_RECEIVED_RIBBONS           42
-#define GAME_STAT_JUMPED_DOWN_LEDGES         43
-#define GAME_STAT_WATCHED_TV                 44
-#define GAME_STAT_CHECKED_CLOCK              45
-#define GAME_STAT_WON_POKEMON_LOTTERY        46
-#define GAME_STAT_USED_DAYCARE               47
-#define GAME_STAT_RODE_CABLE_CAR             48
-#define GAME_STAT_ENTERED_HOT_SPRINGS        49
-#define GAME_STAT_NUM_UNION_ROOM_BATTLES     50
-#define GAME_STAT_DEXNAV_SCANNED             51
+#define GAME_STAT_JUMPED_DOWN_LEDGES         42
+#define GAME_STAT_WATCHED_TV                 43
+#define GAME_STAT_CHECKED_CLOCK              44
+#define GAME_STAT_WON_POKEMON_LOTTERY        45
+#define GAME_STAT_USED_DAYCARE               46
+#define GAME_STAT_RODE_CABLE_CAR             47
+#define GAME_STAT_ENTERED_HOT_SPRINGS        48
+#define GAME_STAT_NUM_UNION_ROOM_BATTLES     49
+#define GAME_STAT_DEXNAV_SCANNED             50
 
-#define NUM_USED_GAME_STATS                  52
+#define NUM_USED_GAME_STATS                  51
 #define NUM_GAME_STATS                       64
 
 #endif // GUARD_CONSTANTS_GAME_STAT_H

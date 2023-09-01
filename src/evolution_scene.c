@@ -178,7 +178,7 @@ void EvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 bits, u8 partyI
 {
     u8 name[20];
     u16 currSpecies;
-    u32 trainerId, personality;
+	bool8 isShiny;
     u8 id;
 
     SetHBlankCallback(NULL);
@@ -224,10 +224,9 @@ void EvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 bits, u8 partyI
 
     // preEvo sprite
     currSpecies = GetMonData(mon, MON_DATA_SPECIES);
-    trainerId = GetMonData(mon, MON_DATA_OT_ID);
-    personality = GetMonData(mon, MON_DATA_PERSONALITY);
+    isShiny = GetMonData(mon, MON_DATA_IS_SHINY);
     DecompressPicFromTable(&gMonFrontPicTable[currSpecies], gMonSpritesGfxPtr->sprites[1], currSpecies);
-    LoadCompressedPalette(GetMonSpritePalStructFromOtIdPersonality(currSpecies, trainerId, personality)->data, 0x110, 0x20);
+    LoadCompressedPalette(GetMonSpritePalStructFromSpecies(currSpecies, isShiny)->data, 0x110, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(currSpecies, 1);
     gMultiuseSpriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
@@ -239,7 +238,7 @@ void EvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 bits, u8 partyI
 
     // postEvo sprite
     DecompressPicFromTable(&gMonFrontPicTable[speciesToEvolve], gMonSpritesGfxPtr->sprites[3], speciesToEvolve);
-    LoadCompressedPalette(GetMonSpritePalStructFromOtIdPersonality(speciesToEvolve, trainerId, personality)->data, 0x120, 0x20);
+    LoadCompressedPalette(GetMonSpritePalStructFromSpecies(speciesToEvolve, isShiny)->data, 0x120, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(speciesToEvolve, 3);
     gMultiuseSpriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
@@ -310,7 +309,7 @@ static void CB2_EvolutionSceneLoadGraphics(void)
 	postEvoSpecies = gTasks[sEvoStructPtr->evoTaskId].tPostEvoSpecies;
 	
     DecompressPicFromTable(&gMonFrontPicTable[postEvoSpecies], gMonSpritesGfxPtr->sprites[3], postEvoSpecies);
-    LoadCompressedPalette(GetMonSpritePalStructFromOtIdPersonality(postEvoSpecies, GetMonData(Mon, MON_DATA_OT_ID), GetMonData(Mon, MON_DATA_PERSONALITY))->data, 0x120, 0x20);
+    LoadCompressedPalette(GetMonSpritePalStructFromSpecies(postEvoSpecies, GetMonData(Mon, MON_DATA_IS_SHINY))->data, 0x120, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(postEvoSpecies, 3);
     gMultiuseSpriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
@@ -377,7 +376,7 @@ static void CB2_TradeEvolutionSceneLoadGraphics(void)
 			Mon = &gPlayerParty[gTasks[sEvoStructPtr->evoTaskId].tPartyId];
 			
             DecompressPicFromTable(&gMonFrontPicTable[postEvoSpecies], gMonSpritesGfxPtr->sprites[3], postEvoSpecies);
-            LoadCompressedPalette(GetMonSpritePalStructFromOtIdPersonality(postEvoSpecies, GetMonData(Mon, MON_DATA_OT_ID), GetMonData(Mon, MON_DATA_PERSONALITY))->data, 0x120, 0x20);
+            LoadCompressedPalette(GetMonSpritePalStructFromSpecies(postEvoSpecies, GetMonData(Mon, MON_DATA_IS_SHINY))->data, 0x120, 0x20);
             gMain.state++;
         }
         break;
@@ -433,7 +432,7 @@ void TradeEvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 preEvoSpri
 
     DecompressPicFromTable(&gMonFrontPicTable[speciesToEvolve], gMonSpritesGfxPtr->sprites[1], speciesToEvolve);
 
-    LoadCompressedPalette(GetMonSpritePalStructFromOtIdPersonality(speciesToEvolve, GetMonData(mon, MON_DATA_OT_ID), GetMonData(mon, MON_DATA_PERSONALITY))->data, 0x120, 0x20);
+    LoadCompressedPalette(GetMonSpritePalStructFromSpecies(speciesToEvolve, GetMonData(mon, MON_DATA_IS_SHINY))->data, 0x120, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(speciesToEvolve, 1);
     gMultiuseSpriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
@@ -499,13 +498,6 @@ static void CreateShedinja(u16 preEvoSpecies, struct Pokemon* mon)
         SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_NICKNAME, (gSpeciesNames[gEvolutionTable[preEvoSpecies][1].targetSpecies]));
         SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_HELD_ITEM, (&data));
         SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_MARKINGS, (&data));
-        SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_ENCRYPT_SEPARATOR, (&data));
-
-        for (i = MON_DATA_COOL_RIBBON; i < MON_DATA_COOL_RIBBON + 5; i++)
-            SetMonData(&gPlayerParty[gPlayerPartyCount], i, (&data));
-        for (i = MON_DATA_CHAMPION_RIBBON; i <= MON_DATA_FILLER; i++)
-            SetMonData(&gPlayerParty[gPlayerPartyCount], i, (&data));
-
         SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_STATUS, (&data));
         data = 0xFF;
         SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_MAIL, (&data));

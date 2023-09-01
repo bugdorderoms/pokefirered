@@ -287,7 +287,21 @@ static void DoTrainerBattle(void)
 
 void StartOldManTutorialBattle(void)
 {
-    CreateMaleMon(&gEnemyParty[0], SPECIES_WEEDLE, 5);
+	struct PokemonGenerator generator =
+	{
+		.species = SPECIES_WEEDLE,
+		.level = 5,
+		.otIdType = OT_ID_RANDOM,
+		.shinyType = GENERATE_SHINY_LOCKED,
+		.forceGender = TRUE,
+		.forcedGender = MON_MALE,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.forceNature = FALSE,
+		.forcedNature = NUM_NATURES,
+		.pokemon = &gEnemyParty[0],
+	};
+    CreateMon(generator);
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_ReturnToFieldContinueScriptPlayMapMusic;
     gBattleTypeFlags = BATTLE_TYPE_OLD_MAN_TUTORIAL;
@@ -308,16 +322,28 @@ void StartScriptedWildBattle(void)
 
 void StartMarowakBattle(void)
 {
-	u8 nature;
-	
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndMarowakBattle;
+	
     if (CheckBagHasItem(ITEM_SILPH_SCOPE, 1))
     {
-        gBattleTypeFlags = BATTLE_TYPE_GHOST | BATTLE_TYPE_GHOST_UNVEILED;
-        CreateMonWithGender(&gEnemyParty[0], SPECIES_MAROWAK, 30, MAX_PER_STAT_IVS, MON_FEMALE);
-		nature = NATURE_SERIOUS;
-		SetMonData(&gEnemyParty[0], MON_DATA_NATURE, &nature);
+		struct PokemonGenerator generator =
+		{
+			.species = SPECIES_MAROWAK,
+			.level = 30,
+			.otIdType = OT_ID_PLAYER_ID,
+			.shinyType = GENERATE_SHINY_LOCKED,
+			.forceGender = TRUE,
+			.forcedGender = MON_FEMALE,
+			.hasFixedPersonality = FALSE,
+			.fixedPersonality = 0,
+			.forceNature = TRUE,
+			.forcedNature = NATURE_SERIOUS,
+			.pokemon = &gEnemyParty[0],
+		};
+        CreateMon(generator);
+		
+		gBattleTypeFlags = BATTLE_TYPE_GHOST | BATTLE_TYPE_GHOST_UNVEILED;
     }
     else
     {

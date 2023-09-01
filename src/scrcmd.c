@@ -1693,19 +1693,18 @@ bool8 ScrCmd_givemon(struct ScriptContext * ctx)
     u8 level = ScriptReadByte(ctx);
     u16 ball, item = VarGet(ScriptReadHalfword(ctx));
     u8 i, ivs[NUM_STATS] = {0};
+	bool8 isShiny, hiddenAbility;
     
     for (i = 0; i < NUM_STATS; i++)
         ivs[i] = ScriptReadByte(ctx);
 	
-    if (ScriptReadByte(ctx))
-	    FlagSet(FLAG_CREATE_SHINY_MON);
+    isShiny = ScriptReadByte(ctx);
     
-    if (ScriptReadByte(ctx))
-	    FlagSet(FLAG_HIDDEN_ABILITY_MON);
-    
+    hiddenAbility = ScriptReadByte(ctx);
+	
 	ball = ScriptReadHalfword(ctx);
 	
-    gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ball);
+    gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ball, isShiny, hiddenAbility);
     return FALSE;
 }
 
@@ -2187,24 +2186,6 @@ bool8 ScrCmd_signmsg(struct ScriptContext * ctx)
 bool8 ScrCmd_normalmsg(struct ScriptContext * ctx)
 {
     MsgSetNotSignPost();
-    return FALSE;
-}
-
-// This command will set a Pokémon's eventLegal bit; there is no similar command to clear it.
-bool8 ScrCmd_setmoneventlegal(struct ScriptContext * ctx)
-{
-    bool8 isEventLegal = TRUE;
-    u16 partyIndex = VarGet(ScriptReadHalfword(ctx));
-
-    SetMonData(&gPlayerParty[partyIndex], MON_DATA_EVENT_LEGAL, &isEventLegal);
-    return FALSE;
-}
-
-bool8 ScrCmd_checkmoneventlegal(struct ScriptContext * ctx)
-{
-    u16 partyIndex = VarGet(ScriptReadHalfword(ctx));
-
-    gSpecialVar_Result = GetMonData(&gPlayerParty[partyIndex], MON_DATA_EVENT_LEGAL, NULL);
     return FALSE;
 }
 

@@ -446,6 +446,7 @@ static const void *const sItemIconGfxPtrs[][2] = {
     [ITEM_METAL_COAT] = {sItemIcon_MetalCoat, sItemIconPalette_MetalCoat},
     [ITEM_LEFTOVERS] = {sItemIcon_Leftovers, sItemIconPalette_Leftovers},
     [ITEM_DRAGON_SCALE] = {sItemIcon_DragonScale, sItemIconPalette_DragonScale},
+	[ITEM_PRISM_SCALE] = {sItemIcon_PrismScale, sItemIconPalette_PrismScale},
     [ITEM_LIGHT_BALL] = {sItemIcon_LightBall, sItemIconPalette_LightBall},
     [ITEM_SOFT_SAND] = {sItemIcon_SoftSand, sItemIconPalette_SoftSand},
     [ITEM_HARD_STONE] = {sItemIcon_HardStone, sItemIconPalette_HardStone},

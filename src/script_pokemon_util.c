@@ -45,14 +45,27 @@ void HealPlayerParty(void)
     }
 }
 
-u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall)
+u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, bool8 isShiny, bool8 hiddenAbility)
 {
     u16 nationalDexNum;
     int sentToPc;
     u8 i, heldItem[2];
     struct Pokemon *mon = AllocZeroed(sizeof(struct Pokemon));
-
-    CreateMon(mon, species, level, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
+	struct PokemonGenerator generator =
+	{
+		.species = species,
+		.level = level,
+		.forceGender = FALSE,
+		.forcedGender = MON_MALE,
+		.otIdType = OT_ID_PLAYER_ID,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.shinyType = isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL,
+		.forceNature = FALSE,
+		.forcedNature = NUM_NATURES,
+		.pokemon = mon,
+	};
+    CreateMon(generator);
     species = DoWildEncounterFormChange(mon);
     
     heldItem[0] = item;
@@ -63,12 +76,16 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall)
 	heldItem[1] = pokeBall >> 8;
 	SetMonData(mon, MON_DATA_POKEBALL, heldItem);
     
+	if (hiddenAbility)
+		SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &hiddenAbility);
+	
     for (i = 0; i < NUM_STATS; i++)
     {
         if (ivs[i] != USE_RANDOM_IVS)
             SetMonData(mon, MON_DATA_HP_IV + i, &ivs[i]);
     }
-    
+	CalculateMonStats(mon);
+	
     sentToPc = GiveMonToPlayer(mon);
     nationalDexNum = SpeciesToNationalPokedexNum(species);
 
@@ -132,17 +149,34 @@ static bool8 CheckPartyMonHasHeldItem(u16 item)
 void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 level2, u16 item2)
 {
     u8 heldItem[2];
-
+	struct PokemonGenerator generator =
+	{
+		.species = species,
+		.level = level,
+		.forceGender = FALSE,
+		.forcedGender = MON_MALE,
+		.otIdType = OT_ID_PLAYER_ID,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.shinyType = GENERATE_SHINY_NORMAL,
+		.forceNature = FALSE,
+		.forcedNature = NUM_NATURES,
+		.pokemon = &gEnemyParty[0],
+	};
     ZeroEnemyPartyMons();
 	
-    CreateMon(&gEnemyParty[0], species, level, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
+    CreateMon(generator);
 	heldItem[0] = item;
 	heldItem[1] = item >> 8;
 	SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, heldItem);
 	
 	if (species2)
 	{
-		CreateMon(&gEnemyParty[1], species2, level2, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
+		generator.species = species2;
+		generator.level = level2;
+		generator.pokemon = &gEnemyParty[1];
+		
+		CreateMon(generator);
 		heldItem[0] = item2;
 		heldItem[1] = item2 >> 8;
 		SetMonData(&gEnemyParty[1], MON_DATA_HELD_ITEM, heldItem);

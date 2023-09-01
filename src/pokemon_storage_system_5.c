@@ -1007,11 +1007,10 @@ static void SetCursorMonData(void *pokemon, u8 mode)
 {
     u8 *txtPtr;
     u16 gender;
-    bool8 sanityIsBagEgg;
 
     gPSSData->cursorMonItem = 0;
     gender = MON_MALE;
-    sanityIsBagEgg = FALSE;
+
     if (mode == MODE_PARTY)
     {
         struct Pokemon *mon = (struct Pokemon *)pokemon;
@@ -1019,14 +1018,9 @@ static void SetCursorMonData(void *pokemon, u8 mode)
         gPSSData->cursorMonSpecies = GetMonData(mon, MON_DATA_SPECIES2);
         if (gPSSData->cursorMonSpecies != SPECIES_NONE)
         {
-            sanityIsBagEgg = GetMonData(mon, MON_DATA_SANITY_IS_BAD_EGG);
-            if (sanityIsBagEgg)
-                gPSSData->cursorMonIsEgg = TRUE;
-            else
-                gPSSData->cursorMonIsEgg = GetMonData(mon, MON_DATA_IS_EGG);
-
             GetMonData(mon, MON_DATA_NICKNAME, gPSSData->cursorMonNick);
             StringGet_Nickname(gPSSData->cursorMonNick);
+			gPSSData->cursorMonIsEgg = GetMonData(mon, MON_DATA_IS_EGG);
             gPSSData->cursorMonLevel = GetMonData(mon, MON_DATA_LEVEL);
             gPSSData->cursorMonMarkings = GetMonData(mon, MON_DATA_MARKINGS);
             gPSSData->cursorMonPersonality = GetMonData(mon, MON_DATA_PERSONALITY);
@@ -1042,20 +1036,13 @@ static void SetCursorMonData(void *pokemon, u8 mode)
         gPSSData->cursorMonSpecies = GetBoxMonData(pokemon, MON_DATA_SPECIES2);
         if (gPSSData->cursorMonSpecies != SPECIES_NONE)
         {
-            u32 otId = GetBoxMonData(boxMon, MON_DATA_OT_ID);
-            sanityIsBagEgg = GetBoxMonData(boxMon, MON_DATA_SANITY_IS_BAD_EGG);
-            if (sanityIsBagEgg)
-                gPSSData->cursorMonIsEgg = TRUE;
-            else
-                gPSSData->cursorMonIsEgg = GetBoxMonData(boxMon, MON_DATA_IS_EGG);
-
-
             GetBoxMonData(boxMon, MON_DATA_NICKNAME, gPSSData->cursorMonNick);
             StringGet_Nickname(gPSSData->cursorMonNick);
+			gPSSData->cursorMonIsEgg = GetBoxMonData(boxMon, MON_DATA_IS_EGG);
             gPSSData->cursorMonLevel = GetLevelFromBoxMonExp(boxMon);
             gPSSData->cursorMonMarkings = GetBoxMonData(boxMon, MON_DATA_MARKINGS);
             gPSSData->cursorMonPersonality = GetBoxMonData(boxMon, MON_DATA_PERSONALITY);
-            gPSSData->cursorMonPalette = GetMonSpritePalFromSpeciesAndPersonality(gPSSData->cursorMonSpecies, otId, gPSSData->cursorMonPersonality);
+            gPSSData->cursorMonPalette = GetMonSpritePalFromSpecies(gPSSData->cursorMonSpecies, GetBoxMonData(boxMon, MON_DATA_IS_SHINY));
             gender = GetGenderFromSpeciesAndPersonality(gPSSData->cursorMonSpecies, gPSSData->cursorMonPersonality);
             gPSSData->cursorMonItem = GetBoxMonData(boxMon, MON_DATA_HELD_ITEM);
         }
@@ -1076,11 +1063,7 @@ static void SetCursorMonData(void *pokemon, u8 mode)
     }
     else if (gPSSData->cursorMonIsEgg)
     {
-        if (sanityIsBagEgg)
-            StringCopyPadded(gPSSData->cursorMonTexts[0], gPSSData->cursorMonNick, CHAR_SPACE, 5);
-        else
-            StringCopyPadded(gPSSData->cursorMonTexts[0], gText_EggNickname, CHAR_SPACE, 8);
-
+		StringCopyPadded(gPSSData->cursorMonTexts[0], gText_EggNickname, CHAR_SPACE, 8);
         StringFill(gPSSData->cursorMonTexts[1], CHAR_SPACE, 8);
         StringFill(gPSSData->cursorMonTexts[2], CHAR_SPACE, 8);
         StringFill(gPSSData->cursorMonTexts[3], CHAR_SPACE, 8);

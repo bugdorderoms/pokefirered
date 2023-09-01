@@ -1425,17 +1425,12 @@
 	.4byte \value
 	.endm
 
-	@ Sets the Pokemon in the specified slot of the player party's eventLegal bit.
-	.macro setmoneventlegal slot:req
+	.macro nopcd
 	.byte 0xcd
-	.2byte \slot
 	.endm
 
-	@ Checks if the Pokemon in the specified slot of the player's party has its eventLegal bit set. If it isn't set,
-	@ VAR_RESULT is TRUE. If the bit is set (or if the specified slot is empty or invalid), VAR_RESULT is FALSE.
-	.macro checkmoneventlegal slot:req
+	.macro nopce
 	.byte 0xce
-	.2byte \slot
 	.endm
 
 	@ Depending on factors I haven't managed to understand yet, this command may cause script execution to jump to the offset specified by
