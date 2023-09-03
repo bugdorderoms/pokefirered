@@ -118,12 +118,5 @@ void mevent_srv_sub_init_send(struct mevent_srv_sub * svr, u32 ident, const void
 void mevent_srv_sub_init_recv(struct mevent_srv_sub * svr, u32 ident, void * dest);
 
 void mevent_client_do_init(void);
-u32 mevent_client_do_exec(u16 * a0);
-void mevent_client_inc_flag(void);
-void * mevent_client_get_buffer(void);
-void mevent_client_set_param(u32 a0);
-void mevent_srv_init_wnews(void);
-void mevent_srv_new_wcard(void);
-u32 mevent_srv_common_do_exec(u16 * a0);
 
 #endif //GUARD_MEVENT_SERVER_H

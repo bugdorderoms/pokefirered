@@ -1049,27 +1049,16 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u8 *parent
     return eggSpecies;
 }
 
-void CreateEgg(struct Pokemon *mon, u16 species, bool8 setHotSpringsLocation)
+void CreateEgg(struct PokemonGenerator generator, bool8 setHotSpringsLocation)
 {
     u8 metLevel;
     u16 ball;
     u8 language;
     u8 metLocation;
     u8 isEgg;
-	struct PokemonGenerator generator =
-	{
-		.species = species,
-		.level = EGG_HATCH_LEVEL,
-		.forceGender = FALSE,
-		.forcedGender = MON_MALE,
-		.shinyType = GENERATE_SHINY_NORMAL,
-		.otIdType = OT_ID_PLAYER_ID,
-		.hasFixedPersonality = FALSE,
-		.fixedPersonality = 0,
-		.forceNature = FALSE,
-		.forcedNature = NUM_NATURES,
-		.pokemon = mon,
-	};
+	u16 species;
+	struct Pokemon *mon = generator.pokemon;
+	
     CreateMon(generator);
 	species = DoWildEncounterFormChange(mon);
 	
@@ -1081,12 +1070,12 @@ void CreateEgg(struct Pokemon *mon, u16 species, bool8 setHotSpringsLocation)
     SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);
     SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
     SetMonData(mon, MON_DATA_LANGUAGE, &language);
+	
     if (setHotSpringsLocation)
     {
         metLocation = METLOC_SPECIAL_EGG;
         SetMonData(mon, MON_DATA_MET_LOCATION, &metLocation);
     }
-
     isEgg = TRUE;
     SetMonData(mon, MON_DATA_IS_EGG, &isEgg);
 }

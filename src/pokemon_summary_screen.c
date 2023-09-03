@@ -2592,7 +2592,7 @@ static void PokeSum_PrintTrainerMemo_Mon_HeldByOT(void)
     }
     else
     {
-        if (metLocation == METLOC_FATEFUL_ENCOUNTER)
+        if (metLocation == METLOC_SPECIAL_ENCOUNTER)
         {
             if (PokeSum_IsMonBoldOrGentle(nature))
                 DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_FatefulEncounterMet_BoldGentleGrammar);
@@ -2642,7 +2642,7 @@ static void PokeSum_PrintTrainerMemo_Mon_NotHeldByOT(void)
             return;
         }
 
-        if (metLocation == METLOC_FATEFUL_ENCOUNTER)
+        if (metLocation == METLOC_SPECIAL_ENCOUNTER)
         {
             if (PokeSum_IsMonBoldOrGentle(nature))
                 DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_FatefulEncounterMet_BoldGentleGrammar);
@@ -2679,7 +2679,7 @@ static void PokeSum_PrintTrainerMemo_Mon_NotHeldByOT(void)
     }
     else
     {
-        if (metLocation == METLOC_FATEFUL_ENCOUNTER)
+        if (metLocation == METLOC_SPECIAL_ENCOUNTER)
         {
             if (PokeSum_IsMonBoldOrGentle(nature))
                 DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_FatefulEncounterMet_BoldGentleGrammar);
@@ -2716,7 +2716,7 @@ static void PokeSum_PrintTrainerMemo_Egg(void)
 
     if (sMonSummaryScreen->monList.mons != gEnemyParty)
     {
-        if (metLocation == METLOC_FATEFUL_ENCOUNTER)
+        if (metLocation == METLOC_SPECIAL_ENCOUNTER)
             chosenStrIndex = 4;
         else
         {
@@ -2734,7 +2734,7 @@ static void PokeSum_PrintTrainerMemo_Egg(void)
     }
     else
     {
-        if (metLocation == METLOC_FATEFUL_ENCOUNTER)
+        if (metLocation == METLOC_SPECIAL_ENCOUNTER)
             chosenStrIndex = 4;
         else
         {

@@ -47,29 +47,6 @@ static void BlankBuffer344(void);
 extern const u8 gMultiBootProgram_EReader_Start[];
 extern const u8 gMultiBootProgram_EReader_End[];
 
-static const u16 sGiftItemFlagIds[] = {
-    FLAG_GOT_AURORA_TICKET,
-    FLAG_GOT_MYSTIC_TICKET,
-    FLAG_0x2A9,
-    FLAG_0x2AA,
-    FLAG_0x2AB,
-    FLAG_0x2AC,
-    FLAG_0x2AD,
-    FLAG_0x2AE,
-    FLAG_0x2AF,
-    FLAG_0x2B0,
-    FLAG_0x2B1,
-    FLAG_0x2B2,
-    FLAG_0x2B3,
-    FLAG_0x2B4,
-    FLAG_0x2B5,
-    FLAG_0x2B6,
-    FLAG_0x2B7,
-    FLAG_0x2B8,
-    FLAG_0x2B9,
-    FLAG_0x2BA
-};
-
 struct MEvent_Str_1 sMEventSendToEReaderManager;
 
 static EWRAM_DATA bool32 sReceivedWonderCardIsValid = FALSE;
@@ -536,14 +513,6 @@ static bool32 IsReceivedWonderNewsHeaderValid(const struct WonderNews * data)
     return TRUE;
 }
 
-bool32 WonderNews_Test_Unk_02(void)
-{
-    const struct WonderNews * data = &gSaveBlock1Ptr->mysteryGift.news;
-    if (data->sendType == 0)
-        return FALSE;
-    return TRUE;
-}
-
 static void BlankWonderNews(void)
 {
     CpuFill32(0, GetSavedWonderNews(), sizeof(gSaveBlock1Ptr->mysteryGift.news));
@@ -576,7 +545,6 @@ void DestroyWonderCard(void)
     BlankMEventBuffer2();
     BlankBuffer344();
     ClearRamScript();
-    ResetMysteryEventFlags();
     ResetMysteryEventVars();
     ClearEReaderTrainer(&gSaveBlock2Ptr->battleTower.ereaderTrainer);
 }
@@ -623,14 +591,6 @@ static bool32 IsReceivedWonderCardHeaderValid(const struct WonderCard * data)
     return TRUE;
 }
 
-bool32 WonderCard_Test_Unk_08_6(void)
-{
-    const struct WonderCard * data = &gSaveBlock1Ptr->mysteryGift.card;
-    if (data->sendType == 0)
-        return FALSE;
-    return TRUE;
-}
-
 static void BlankSavedWonderCard(void)
 {
     CpuFill32(0, &gSaveBlock1Ptr->mysteryGift.card, sizeof(struct WonderCard));
@@ -654,23 +614,6 @@ void MEvent_WonderCardResetUnk08_6(struct WonderCard * buffer)
 {
     if (buffer->sendType == 1)
         buffer->sendType = 0;
-}
-
-static bool32 IsCardIdInValidRange(u16 a0)
-{
-    if (a0 >= 1000 && a0 < 1020)
-        return TRUE;
-    return FALSE;
-}
-
-bool32 CheckReceivedGiftFromWonderCard(void)
-{
-    u16 value = GetWonderCardFlagId();
-    if (!IsCardIdInValidRange(value))
-        return FALSE;
-    if (FlagGet(sGiftItemFlagIds[value - 1000]) == TRUE)
-        return FALSE;
-    return TRUE;
 }
 
 static s32 CountReceivedDistributionMons(const struct WonderCardMetadata * data, s32 size)

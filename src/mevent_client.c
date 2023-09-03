@@ -22,37 +22,6 @@ void mevent_client_do_init(void)
     mevent_client_init(s_mevent_client_ptr, 1, 0);
 }
 
-u32 mevent_client_do_exec(u16 * a0)
-{
-    u32 result;
-    if (s_mevent_client_ptr == NULL)
-        return 6;
-    result = mevent_client_exec(s_mevent_client_ptr);
-    if (result == 6)
-    {
-        *a0 = s_mevent_client_ptr->param;
-        mevent_client_free_resources(s_mevent_client_ptr);
-        Free(s_mevent_client_ptr);
-        s_mevent_client_ptr = NULL;
-    }
-    return result;
-}
-
-void mevent_client_inc_flag(void)
-{
-    s_mevent_client_ptr->flag++;
-}
-
-void * mevent_client_get_buffer(void)
-{
-    return s_mevent_client_ptr->buffer;
-}
-
-void mevent_client_set_param(u32 a0)
-{
-    s_mevent_client_ptr->param = a0;
-}
-
 static void mevent_client_init(struct mevent_client * svr, u32 sendPlayerNo, u32 recvPlayerNo)
 {
     svr->unk_00 = 0;

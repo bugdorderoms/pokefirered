@@ -8,7 +8,7 @@ u16 TakePokemonFromDaycare(void);
 void GetDaycareCost(void);
 u8 GetNumLevelsGainedFromDaycare(void);
 void RejectEggFromDayCare(void);
-void CreateEgg(struct Pokemon *mon, u16 species, bool8 setHotSpringsLocation);
+void CreateEgg(struct PokemonGenerator generator, bool8 setHotSpringsLocation);
 void GiveEggFromDaycare(void);
 void GetDaycareMonNicknames(void);
 u8 GetDaycareState(void);

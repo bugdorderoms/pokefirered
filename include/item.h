@@ -84,7 +84,8 @@ extern const struct Item gItems[];
 extern struct BagPocket gBagPockets[];
 
 u16 GetBagItemQuantity(u16 *quantity);
-void CopyItemName(u16 itemId, u8 *string);
+void CopyItemName(u16 itemId, u8 *dest);
+void CopyItemNameHandlePlural(u16 itemId, u16 quantity, u8 *dest);
 bool8 IsBagPocketNonEmpty(u8 pocket);
 bool8 CheckBagHasItem(u16 itemId, u16 count);
 bool8 CheckBagHasSpace(u16 itemId, u16 count);

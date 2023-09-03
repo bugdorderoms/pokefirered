@@ -1577,29 +1577,14 @@ bool8 ScrCmd_bufferitemname(struct ScriptContext * ctx)
     return FALSE;
 }
 
-const u8 gUnknown_83A72A0[] = _("S");
-const u8 gUnknown_83A72A2[] = _("IES");
-
 bool8 ScrCmd_bufferitemnameplural(struct ScriptContext * ctx)
 {
     u8 stringVarIndex = ScriptReadByte(ctx);
     u16 itemId = VarGet(ScriptReadHalfword(ctx));
     u16 quantity = VarGet(ScriptReadHalfword(ctx));
 
-    CopyItemName(itemId, sScriptStringVars[stringVarIndex]);
-    if (itemId == ITEM_POKE_BALL && quantity >= 2)
-        StringAppend(sScriptStringVars[stringVarIndex], gUnknown_83A72A0);
-    else if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH && quantity >= 2)
-    {
-        u16 strlength = StringLength(sScriptStringVars[stringVarIndex]);
-        if (strlength != 0)
-        {
-            u8 * endptr = sScriptStringVars[stringVarIndex] + strlength;
-            endptr[-1] = EOS;
-            StringAppend(sScriptStringVars[stringVarIndex], gUnknown_83A72A2);
-        }
-    }
-
+    CopyItemNameHandlePlural(itemId, quantity, sScriptStringVars[stringVarIndex]);
+	
     return FALSE;
 }
 
@@ -1692,7 +1677,7 @@ bool8 ScrCmd_givemon(struct ScriptContext * ctx)
     u16 species = VarGet(ScriptReadHalfword(ctx));
     u8 level = ScriptReadByte(ctx);
     u16 ball, item = VarGet(ScriptReadHalfword(ctx));
-    u8 i, ivs[NUM_STATS] = {0};
+    u8 i, nature, gender, ivs[NUM_STATS] = {0};
 	bool8 isShiny, hiddenAbility;
     
     for (i = 0; i < NUM_STATS; i++)
@@ -1704,15 +1689,31 @@ bool8 ScrCmd_givemon(struct ScriptContext * ctx)
 	
 	ball = ScriptReadHalfword(ctx);
 	
-    gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ball, isShiny, hiddenAbility);
+	nature = ScriptReadByte(ctx);
+	
+	gender = ScriptReadByte(ctx);
+	
+    gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ball, isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL, hiddenAbility, nature, gender);
     return FALSE;
 }
 
 bool8 ScrCmd_giveegg(struct ScriptContext * ctx)
 {
     u16 species = VarGet(ScriptReadHalfword(ctx));
-
-    gSpecialVar_Result = ScriptGiveEgg(species);
+	u8 i, ivs[NUM_STATS] = {0};
+	bool8 isShiny, hiddenAbility;
+	u8 nature;
+	
+	for (i = 0; i < NUM_STATS; i++)
+        ivs[i] = ScriptReadByte(ctx);
+	
+	isShiny = ScriptReadByte(ctx);
+	
+	hiddenAbility = ScriptReadByte(ctx);
+	
+	nature = ScriptReadByte(ctx);
+	
+    gSpecialVar_Result = ScriptGiveEgg(species, ivs, isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL, hiddenAbility, nature);
     return FALSE;
 }
 

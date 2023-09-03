@@ -167,4 +167,5 @@ void NewGameInitData(void)
     ResetTrainerTowerResults();
 	ResetItemFlags();
     ClearAllFusedMonSpecies();
+	ResetMysteryEventFlags();
 }

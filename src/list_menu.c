@@ -11,14 +11,6 @@
 #include "pokemon_icon.h"
 #include "constants/songs.h"
 
-struct MysteryGiftLinkMenuStruct
-{
-    u32 currItemId;
-    u8 state;
-    u8 windowId;
-    u8 listTaskId;
-};
-
 struct ListMenuOverride
 {
     u8 cursorPal:4;
@@ -36,8 +28,6 @@ struct MoveMenuInfoIcon
     u8 height;
     u16 offset;
 };
-
-static EWRAM_DATA struct MysteryGiftLinkMenuStruct sMysteryGiftLinkMenu = {0};
 
 struct ListMenuOverride gListMenuOverride;
 struct ListMenuTemplate gMultiuseListMenuTemplate;
@@ -100,62 +90,6 @@ const struct MoveMenuInfoIcon gMoveMenuInfoIcons[] =
 
 static void ListMenuDummyTask(u8 taskId)
 {
-}
-
-u32 DoMysteryGiftListMenu(const struct WindowTemplate *windowTemplate, const struct ListMenuTemplate *listMenuTemplate, u8 arg2, u16 tileNum, u16 palNum)
-{
-    switch (sMysteryGiftLinkMenu.state)
-    {
-    case 0:
-    default:
-        sMysteryGiftLinkMenu.windowId = AddWindow(windowTemplate);
-        switch (arg2)
-        {
-        case 2:
-            TextWindow_SetUserSelectedFrame(sMysteryGiftLinkMenu.windowId, tileNum, palNum);
-        case 1:
-            DrawTextBorderOuter(sMysteryGiftLinkMenu.windowId, tileNum, palNum / 16);
-            break;
-        }
-        gMultiuseListMenuTemplate = *listMenuTemplate;
-        gMultiuseListMenuTemplate.windowId = sMysteryGiftLinkMenu.windowId;
-        sMysteryGiftLinkMenu.listTaskId = ListMenuInit(&gMultiuseListMenuTemplate, 0, 0);
-        CopyWindowToVram(sMysteryGiftLinkMenu.windowId, COPYWIN_MAP);
-        sMysteryGiftLinkMenu.state = 1;
-        break;
-    case 1:
-        sMysteryGiftLinkMenu.currItemId = ListMenu_ProcessInput(sMysteryGiftLinkMenu.listTaskId);
-        if (JOY_NEW(A_BUTTON))
-        {
-            sMysteryGiftLinkMenu.state = 2;
-        }
-        if (JOY_NEW(B_BUTTON))
-        {
-            sMysteryGiftLinkMenu.currItemId = LIST_CANCEL;
-            sMysteryGiftLinkMenu.state = 2;
-        }
-        if (sMysteryGiftLinkMenu.state == 2)
-        {
-			switch (arg2)
-			{
-				case 0:
-                    ClearWindowTilemap(sMysteryGiftLinkMenu.windowId);
-                    break;
-                case 2:
-                case 1:
-                    ClearStdWindowAndFrame(sMysteryGiftLinkMenu.windowId, FALSE);
-                    break;
-			}
-            CopyWindowToVram(sMysteryGiftLinkMenu.windowId, COPYWIN_MAP);
-        }
-        break;
-    case 2:
-        DestroyListMenuTask(sMysteryGiftLinkMenu.listTaskId, NULL, NULL);
-        RemoveWindow(sMysteryGiftLinkMenu.windowId);
-        sMysteryGiftLinkMenu.state = 0;
-        return sMysteryGiftLinkMenu.currItemId;
-    }
-    return LIST_NOTHING_CHOSEN;
 }
 
 u8 ListMenuInit(const struct ListMenuTemplate *listMenuTemplate, u16 cursorPos, u16 itemsAbove)

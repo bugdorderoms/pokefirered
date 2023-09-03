@@ -729,29 +729,6 @@ bool8 LinkRfu_GetNameIfCompatible(struct GFtgtGname *gname, u8 *uname, u8 idx)
     return retVal;
 }
 
-/*
- * ==========================================================
- * Specific check for serial number 0x7F7D,
- * which comes from ???
- * ==========================================================
- */
-bool8 LinkRfu_GetNameIfSerial7F7D(struct GFtgtGname *gname, u8 *uname, u8 idx)
-{
-    bool8 retVal = FALSE;
-    if (gRfuLinkStatus->partner[idx].serialNo == RFU_SERIAL_7F7D)
-    {
-        memcpy(gname, gRfuLinkStatus->partner[idx].gname, RFU_GAME_NAME_LENGTH);
-        memcpy(uname, gRfuLinkStatus->partner[idx].uname, RFU_USER_NAME_LENGTH);
-        retVal = TRUE;
-    }
-    else
-    {
-        memset(gname, 0, RFU_GAME_NAME_LENGTH);
-        memset(uname, 0, RFU_USER_NAME_LENGTH);
-    }
-    return retVal;
-}
-
 void LinkRfu3_SetGnameUnameFromStaticBuffers(struct GFtgtGname *gname, u8 *uname)
 {
     memcpy(gname, &gHostRFUtgtGnameBuffer, RFU_GAME_NAME_LENGTH);

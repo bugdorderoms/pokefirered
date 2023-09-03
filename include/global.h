@@ -112,6 +112,9 @@ extern u8 gStringVar4[];
 #define DEX_FLAGS_NO ROUND_BITS_TO_BYTES(NUM_SPECIES)
 #define NUM_FLAG_BYTES ROUND_BITS_TO_BYTES(FLAGS_COUNT)
 
+// Converts a string to a compound literal, essentially making it a pointer to const u8
+#define COMPOUND_STRING(str) (const u8[]) _(str)
+
 // This produces an error at compile-time if expr is zero.
 // It looks like file.c:line: size of array `id' is negative
 #define STATIC_ASSERT(expr, id) typedef char id[(expr) ? 1 : -1];

@@ -3,7 +3,6 @@
 
 #include "global.h"
 
-void MENewsJisan_SetRandomReward(u32 a0);
 void MENewsJisanReset(void);
 void MENewsJisanStepCounter(void);
 

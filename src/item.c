@@ -63,6 +63,31 @@ void CopyItemName(u16 itemId, u8 * dest)
 	StringCopy(dest, ItemId_GetName(itemId));
 }
 
+static const u8 sText_ItemNamePluralSufix[] = _("s");
+static const u8 sText_BerryPluralSufix[] = _("ies");
+
+void CopyItemNameHandlePlural(u16 itemId, u16 quantity, u8 *dest)
+{
+	StringCopy(dest, ItemId_GetName(itemId));
+	
+	if (quantity > 1)
+	{
+		if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH) // Print diferent sufix if it's a berry
+		{
+			u16 strlength = StringLength(dest);
+			
+			if (strlength != 0)
+			{
+				u8 * endptr = dest + strlength;
+				endptr[-1] = EOS;
+				StringAppend(dest, sText_BerryPluralSufix);
+			}
+		}
+		else if (ItemId_GetPocket(itemId) != POCKET_KEY_ITEMS) // All items have a sufix, except Key items
+			StringAppend(dest, sText_ItemNamePluralSufix);
+	}
+}
+
 s8 BagPocketGetFirstEmptySlot(u8 pocketId)
 {
     u16 i;

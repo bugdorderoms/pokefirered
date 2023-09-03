@@ -9,6 +9,7 @@
 #include "oak_speech.h"
 #include "overworld.h"
 #include "pokemon_icon.h"
+#include "naming_screen.h"
 #include "quest_log.h"
 #include "mystery_gift_menu.h"
 #include "strings.h"
@@ -53,7 +54,6 @@ static void Task_WaitDma3AndFadeIn(u8 taskId);
 static void Task_UpdateVisualSelection(u8 taskId);
 static void Task_HandleMenuInput(u8 taskId);
 static void Task_ExecuteMainMenuSelection(u8 taskId);
-static void Task_MysteryGiftError(u8 taskId);
 static void Task_ReturnToTileScreen(u8 taskId);
 static void MoveWindowByMenuTypeAndCursorPos(u8 menuType, u8 cursorPos);
 static bool8 HandleMenuInput(u8 taskId);
@@ -257,14 +257,7 @@ static void Task_SetWin0BldRegsAndCheckSaveFile(u8 taskId)
         {
         case SAVE_STATUS_OK:
             LoadUserFrameToBg(0);
-            if (IsMysteryGiftEnabled() == TRUE)
-            {
-                gTasks[taskId].tMenuType = MAIN_MENU_MYSTERYGIFT;
-            }
-            else
-            {
-                gTasks[taskId].tMenuType = MAIN_MENU_CONTINUE;
-            }
+			gTasks[taskId].tMenuType = MAIN_MENU_MYSTERYGIFT;
             gTasks[taskId].func = Task_SetWin0BldRegsNoSaveFileCheck;
             break;
         case SAVE_STATUS_INVALID:
@@ -274,16 +267,8 @@ static void Task_SetWin0BldRegsAndCheckSaveFile(u8 taskId)
             break;
         case SAVE_STATUS_ERROR:
             SetStdFrame0OnBg(0);
-            gTasks[taskId].tMenuType = MAIN_MENU_CONTINUE;
+            gTasks[taskId].tMenuType = MAIN_MENU_MYSTERYGIFT;
             PrintSaveErrorStatus(taskId, gText_SaveFileCorruptedPrevWillBeLoaded);   
-            if (IsMysteryGiftEnabled() == TRUE)
-            {
-                gTasks[taskId].tMenuType = MAIN_MENU_MYSTERYGIFT;
-            }
-            else
-            {
-                gTasks[taskId].tMenuType = MAIN_MENU_CONTINUE;
-            }
             break;
         case SAVE_STATUS_EMPTY:
         default:
@@ -473,17 +458,7 @@ static void Task_ExecuteMainMenuSelection(u8 taskId)
                 menuAction = MAIN_MENU_NEWGAME;
                 break;
             case 2:
-                if (!IsWirelessAdapterConnected())
-                {
-                    SetStdFrame0OnBg(0);
-                    gTasks[taskId].func = Task_MysteryGiftError;
-                    BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
-                    return;
-                }
-                else
-                {
-                    menuAction = MAIN_MENU_MYSTERYGIFT;
-                }
+				menuAction = MAIN_MENU_MYSTERYGIFT;
                 break;
             }
             break;
@@ -505,43 +480,11 @@ static void Task_ExecuteMainMenuSelection(u8 taskId)
             TrySetUpQuestLogScenes_ElseContinueFromSave(taskId);
             break;
         case MAIN_MENU_MYSTERYGIFT:
-            SetMainCallback2(c2_mystery_gift);
             FreeAllWindowBuffers();
             DestroyTask(taskId);
+			DoNamingScreen(NAMING_SCREEN_MYSTERY_GIFT, gStringVar1, 0, 0, CB2_InitTitleScreen);
             break;
         }
-    }
-}
-
-static void Task_MysteryGiftError(u8 taskId)
-{
-    switch (gTasks[taskId].tMGErrorMsgState)
-    {
-    case 0:
-        FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, 30, 20);
-        if (gTasks[taskId].tMGErrorType == 1)
-            PrintMessageOnWindow4(gText_WirelessAdapterIsNotConnected);
-        else
-            PrintMessageOnWindow4(gText_MysteryGiftCantBeUsedWhileWirelessAdapterIsAttached);
-        gTasks[taskId].tMGErrorMsgState++;
-        break;
-    case 1:
-        if (!gPaletteFade.active)
-            gTasks[taskId].tMGErrorMsgState++;
-        break;
-    case 2:
-        RunTextPrinters();
-        if (!IsTextPrinterActive(MAIN_MENU_WINDOW_ERROR))
-            gTasks[taskId].tMGErrorMsgState++;
-        break;
-    case 3:
-        if (JOY_NEW(A_BUTTON | B_BUTTON))
-        {
-            PlaySE(SE_SELECT);
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
-            gTasks[taskId].func = Task_ReturnToTileScreen;
-        }
-        break;
     }
 }
 

@@ -10,6 +10,7 @@
 #include "script_pokemon_util.h"
 #include "constants/items.h"
 #include "constants/pokemon.h"
+#include "constants/daycare.h"
 
 static void CB2_ReturnFromChooseHalfParty(void);
 static void CB2_ReturnFromChooseBattleTowerParty(void);
@@ -45,7 +46,7 @@ void HealPlayerParty(void)
     }
 }
 
-u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, bool8 isShiny, bool8 hiddenAbility)
+u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shinyType, bool8 hiddenAbility, u8 nature, u8 gender)
 {
     u16 nationalDexNum;
     int sentToPc;
@@ -55,14 +56,14 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, bool8 i
 	{
 		.species = species,
 		.level = level,
-		.forceGender = FALSE,
-		.forcedGender = MON_MALE,
+		.forceGender = (gender != MON_GENDERLESS),
+		.forcedGender = gender,
 		.otIdType = OT_ID_PLAYER_ID,
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
-		.shinyType = isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL,
-		.forceNature = FALSE,
-		.forcedNature = NUM_NATURES,
+		.shinyType = shinyType,
+		.forceNature = (nature != NUM_NATURES),
+		.forcedNature = nature,
 		.pokemon = mon,
 	};
     CreateMon(generator);
@@ -102,16 +103,37 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, bool8 i
     return sentToPc;
 }
 
-u8 ScriptGiveEgg(u16 species)
+u8 ScriptGiveEgg(u16 species, u8 *ivs, u8 shinyType, bool8 hiddenAbility, u8 nature)
 {
+	u8 i;
+	bool8 sentToPc;
     struct Pokemon *mon = AllocZeroed(sizeof(struct Pokemon));
-    bool8 isEgg;
-    bool8 sentToPc;
-
-    CreateEgg(mon, species, TRUE);
-    isEgg = TRUE;
-    SetMonData(mon, MON_DATA_IS_EGG, &isEgg);
-
+	struct PokemonGenerator generator =
+	{
+		.species = species,
+		.level = EGG_HATCH_LEVEL,
+		.otIdType = OT_ID_PLAYER_ID,
+		.shinyType = shinyType,
+		.forceGender = FALSE,
+		.forcedGender = MON_MALE,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.forceNature = (nature != NUM_NATURES),
+		.forcedNature = nature,
+		.pokemon = mon,
+	};
+    CreateEgg(generator, TRUE);
+	
+	if (hiddenAbility)
+		SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &hiddenAbility);
+	
+	for (i = 0; i < NUM_STATS; i++)
+    {
+        if (ivs[i] != USE_RANDOM_IVS)
+            SetMonData(mon, MON_DATA_HP_IV + i, &ivs[i]);
+    }
+	CalculateMonStats(mon);
+	
     sentToPc = GiveMonToPlayer(mon);
     Free(mon);
     return sentToPc;

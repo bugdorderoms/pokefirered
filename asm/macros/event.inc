@@ -888,7 +888,7 @@
 	.endm
 
 	@ Gives the player one of the specified (species) Pokemon at level level holding item.
-	.macro givemon species:req, level:req, item:req, hpIv=USE_RANDOM_IVS, atkIv=USE_RANDOM_IVS, defIv=USE_RANDOM_IVS, speedIv=USE_RANDOM_IVS, spAtkIv=USE_RANDOM_IVS, spDefIv=USE_RANDOM_IVS, shiny=FALSE, hiddenAbility=FALSE, ball=ITEM_POKE_BALL
+	.macro givemon species:req, level:req, item:req, hpIv=USE_RANDOM_IVS, atkIv=USE_RANDOM_IVS, defIv=USE_RANDOM_IVS, speedIv=USE_RANDOM_IVS, spAtkIv=USE_RANDOM_IVS, spDefIv=USE_RANDOM_IVS, shiny=FALSE, hiddenAbility=FALSE, ball=ITEM_POKE_BALL, nature=NUM_NATURES, gender=MON_GENDERLESS
 	.byte 0x79
 	.2byte \species
 	.byte \level
@@ -902,11 +902,22 @@
 	.byte \shiny
 	.byte \hiddenAbility
 	.2byte \ball
+	.byte \nature
+	.byte \gender
 	.endm
 
-	.macro giveegg species:req
+	.macro giveegg species:req, hpIv=USE_RANDOM_IVS, atkIv=USE_RANDOM_IVS, defIv=USE_RANDOM_IVS, speedIv=USE_RANDOM_IVS, spAtkIv=USE_RANDOM_IVS, spDefIv=USE_RANDOM_IVS, shiny=FALSE, hiddenAbility=FALSE, nature=NUM_NATURES
 	.byte 0x7a
 	.2byte \species
+	.byte \hpIv
+	.byte \atkIv
+	.byte \defIv
+	.byte \speedIv
+	.byte \spAtkIv
+	.byte \spDefIv
+	.byte \shiny
+	.byte \hiddenAbility
+	.byte \nature
 	.endm
 
 	.macro setmonmove byte1:req, byte2:req, word:req

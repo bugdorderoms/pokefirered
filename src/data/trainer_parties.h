@@ -4,9 +4,6 @@
 // If no ability was given to it it'll be based on the generated personality.
 #define TRAINER_MON_ABILITY(abilityNum) (abilityNum + 1)
 
-// If no nickname was given to it the pokemon will have its species name. Seting it as TRAINER_MON_NICKNAME("") will cause the pokemon to have no name.
-#define TRAINER_MON_NICKNAME(str) (const u8[]) _(str)
-
 // If the iv field are defined as TRAINER_MON_IVS(0, 0, 0, 0, 0, 0) the pokemon will have random ivs. So in't possible to have a Pokémon with zeroed ivs.
 #define TRAINER_MON_IVS(hp, atk, def, speed, spatk, spdef) (hp | (atk << 5) | (def << 10) | (speed << 15) | (spatk << 20) | (spdef << 25))
 
@@ -18,7 +15,7 @@ static const struct TrainerMon sParty_BugCatcherRick[] = {
         .iv = TRAINER_MON_IVS(31, 9, 3, 29, 31, 1),
         .lvl = 6,
         .species = SPECIES_WEEDLE,
-		.nickname = TRAINER_MON_NICKNAME("Weed"),
+		.nickname = COMPOUND_STRING("Weed"),
 		.ev = TRAINER_MON_EVS(252, 10, 10, 10, 10, 10),
 		.heldItem = ITEM_POISON_BARB,
 		.moves = {MOVE_STRING_SHOT, MOVE_TACKLE},

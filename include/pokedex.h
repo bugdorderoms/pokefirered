@@ -28,7 +28,6 @@ void CopyMonCategoryText(u16 species, u8 *dst);
 u16 GetPokedexHeightWeight(u16 dexNum, u8 data);
 u16 GetNationalPokedexCount(u8);
 u16 GetKantoPokedexCount(u8);
-u8 CreateDexDisplayMonDataTask(u16 dexNum, u32 trainerId, u32 personality);
 s8 GetSetPokedexFlag(u16 nationalNum, u8 caseId);
 u16 GetNationalPokedexCount(u8);
 u16 GetKantoPokedexCount(u8);

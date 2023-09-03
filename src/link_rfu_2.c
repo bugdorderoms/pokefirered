@@ -1980,12 +1980,6 @@ void SetHostRFUtgtGname(u8 activity, u32 child_sprite_genders, u32 started)
     InitHostRFUtgtGname(&gHostRFUtgtGnameBuffer, activity, started, child_sprite_genders);
 }
 
-void SetGnameBufferWonderFlags(bool32 hasNews, bool32 hasCard)
-{
-    gHostRFUtgtGnameBuffer.unk_00.hasNews = hasNews;
-    gHostRFUtgtGnameBuffer.unk_00.hasCard = hasCard;
-}
-
 void RfuUpdatePlayerGnameStateAndSend(u32 type, u32 species, u32 level)
 {
     gHostRFUtgtGnameBuffer.type = type;

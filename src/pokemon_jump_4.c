@@ -501,25 +501,10 @@ bool32 sub_814A408(void)
     return TRUE;
 }
 
-static const u8 sPluralTxt[] = _("IES");
-
 void sub_814A468(u16 itemId, u16 quantity)
 {
-    CopyItemName(itemId, gUnknown_203F3D8->txtBuff[0]);
+    CopyItemNameHandlePlural(itemId, quantity, gUnknown_203F3D8->txtBuff[0]);
     ConvertIntToDecimalStringN(gUnknown_203F3D8->txtBuff[1], quantity, STR_CONV_MODE_LEFT_ALIGN, 1);
-    if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH)
-    {
-        if (quantity > 1)
-        {
-            int endi = StringLength(gUnknown_203F3D8->txtBuff[0]);
-            if (endi != 0)
-            {
-                endi--;
-                endi[gUnknown_203F3D8->txtBuff[0]] = EOS;
-                StringAppend(gUnknown_203F3D8->txtBuff[0], sPluralTxt);
-            }
-        }
-    }
     DynamicPlaceholderTextUtil_Reset();
     DynamicPlaceholderTextUtil_SetPlaceholderPtr(0, gUnknown_203F3D8->txtBuff[0]);
     DynamicPlaceholderTextUtil_SetPlaceholderPtr(1, gUnknown_203F3D8->txtBuff[1]);

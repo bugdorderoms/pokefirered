@@ -11,25 +11,6 @@ static u32 GetMENewsJisanState(struct WonderNewsMetadata *);
 static void MENewsJisanIncrementCounterUnk0_2(struct WonderNewsMetadata *);
 static void MENewsJisanResetCounterUnk0_2(struct WonderNewsMetadata *);
 
-void MENewsJisan_SetRandomReward(u32 a0)
-{
-    struct WonderNewsMetadata *r5 = GetMENewsJisanStructPtr();
-
-    r5->unk_0_0 = a0;
-    switch (a0)
-    {
-    case 0:
-        break;
-    case 1:
-    case 2:
-        r5->berry = (Random() % 15) + ITEM_TO_BERRY(ITEM_RAZZ_BERRY);
-        break;
-    case 3:
-        r5->berry = (Random() % 15) + ITEM_TO_BERRY(ITEM_CHERI_BERRY);
-        break;
-    }
-}
-
 void MENewsJisanReset(void)
 {
     struct WonderNewsMetadata *r5 = GetMENewsJisanStructPtr();

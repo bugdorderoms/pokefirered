@@ -14,8 +14,10 @@
 #include "naming_screen.h"
 #include "new_menu_helpers.h"
 #include "pokemon_icon.h"
+#include "mystery_gift_menu.h"
 #include "pokemon_storage_system.h"
 #include "strings.h"
+#include "save.h"
 #include "task.h"
 #include "text_window.h"
 #include "trig.h"
@@ -50,7 +52,9 @@ enum
     MAIN_STATE_START_PAGE_SWAP,
     MAIN_STATE_WAIT_PAGE_SWAP,
     MAIN_STATE_6,
-    MAIN_STATE_UPDATE_SENT_TO_PC_MESSAGE,
+    MAIN_STATE_UPDATE_DATA_BE_SAVED_TEXT,
+	MAIN_STATE_UPDATE_SAVE_GAME_TEXT,
+    MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT,
     MAIN_STATE_BEGIN_FADE_OUT,
     MAIN_STATE_WAIT_FADE_OUT_AND_EXIT,
 };
@@ -122,7 +126,10 @@ static bool8 pokemon_store(void);
 static bool8 MainState_BeginFadeInOut(void);
 static bool8 MainState_WaitFadeOutAndExit(void);
 static void pokemon_transfer_to_pc_with_message(void);
+static void MysteryGiftDisplayMessage(void);
 static bool8 sub_809E1D4(void);
+static bool8 MainState_UpdateTextAndSaveGame(void);
+static bool8 MainState_UpdateSaveGameText(void);
 static bool8 MainState_StartPageSwap(void);
 static bool8 MainState_WaitPageSwap(void);
 static void StartPageSwapAnim(void);
@@ -164,6 +171,7 @@ static void NamingScreen_CreatePlayerIcon(void);
 static void NamingScreen_CreatePCIcon(void);
 static void NamingScreen_CreateMonIcon(void);
 static void NamingScreen_CreateRivalIcon(void);
+static void NamingScreen_CreateMysteryGiftIcon(void);
 static bool8 HandleKeyboardEvent(void);
 static bool8 KeyboardKeyHandler_Character(u8);
 static bool8 KeyboardKeyHandler_Page(u8);
@@ -216,15 +224,19 @@ static const struct SpriteTemplate gUnknown_83E25EC;
 static const struct SpriteTemplate sSpriteTemplate_InputArrow;
 static const struct SpriteTemplate sSpriteTemplate_Underscore;
 static const struct SpriteTemplate gUnknown_83E2634;
+static const struct SpriteTemplate gSpriteTemplate_GiftBox;
 
 static const u8 *const sNamingScreenKeyboardText[][KBROW_COUNT];
 
 static const struct SpriteSheet gUnknown_83E267C[];
 static const struct SpritePalette gUnknown_83E26E4[];
 
-static const u16 gUnknown_83E1800[] = INCBIN_U16("graphics/interface/naming_screen_83E1800.4bpp");
-static const u16 gUnknown_83E18C0[] = INCBIN_U16("graphics/interface/naming_screen_83E18C0.4bpp");
-static const u16 gUnknown_83E1980[] = INCBIN_U16("graphics/interface/naming_screen_83E1980.4bpp");
+static const u16 gUnknown_83E1800[] 	   = INCBIN_U16("graphics/interface/naming_screen_83E1800.4bpp");
+static const u16 gUnknown_83E18C0[] 	   = INCBIN_U16("graphics/interface/naming_screen_83E18C0.4bpp");
+static const u16 gUnknown_83E1980[] 	   = INCBIN_U16("graphics/interface/naming_screen_83E1980.4bpp");
+// Credit to PrePAWSterous for original gift sprite, i only recreated it in a small size.
+static const u16 gMysteryGiftBox_Gfx[] 	   = INCBIN_U16("graphics/interface/naming_screen_giftbox.4bpp");
+static const u16 gMysteryGiftBox_Palette[] = INCBIN_U16("graphics/interface/naming_screen_giftbox.gbapal");
 
 static const u8 *const sTransferredToPCMessages[] = {
     Text_MonSentToBoxInSomeonesPC,
@@ -538,7 +550,13 @@ static void sub_809DD88(u8 taskId)
     case MAIN_STATE_6:
         pokemon_store();
         break;
-    case MAIN_STATE_UPDATE_SENT_TO_PC_MESSAGE:
+    case MAIN_STATE_UPDATE_DATA_BE_SAVED_TEXT:
+		MainState_UpdateTextAndSaveGame();
+		break;
+	case MAIN_STATE_UPDATE_SAVE_GAME_TEXT:
+		MainState_UpdateSaveGameText();
+		break;
+    case MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT:
         sub_809E1D4();
         break;
     case MAIN_STATE_BEGIN_FADE_OUT:
@@ -636,13 +654,38 @@ static bool8 pokemon_store(void)
     SetInputState(INPUT_STATE_DISABLED);
     sub_809EA64(0);
     sub_809E518(3, 0, 1);
-    if (sNamingScreenData->templateNum == NAMING_SCREEN_CAUGHT_MON &&
-        CalculatePlayerPartyCount() >= 6)
+    if (sNamingScreenData->templateNum == NAMING_SCREEN_CAUGHT_MON && CalculatePlayerPartyCount() >= PARTY_SIZE)
     {
         pokemon_transfer_to_pc_with_message();
-        sNamingScreenData->state = MAIN_STATE_UPDATE_SENT_TO_PC_MESSAGE;
+        sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
         return FALSE;
     }
+	else if (sNamingScreenData->templateNum == NAMING_SCREEN_MYSTERY_GIFT)
+	{
+		switch (GetMysteryGiftCodeState(sNamingScreenData->destBuffer))
+		{
+			case MYSTERY_GIFT_CODE_INVALID:
+				StringExpandPlaceholders(gStringVar4, gText_CodeInvalid);
+				MysteryGiftDisplayMessage();
+				sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
+				break;
+			case MYSTERY_GIFT_CODE_ALREADY_OBTAINED:
+				StringExpandPlaceholders(gStringVar4, gText_GiftAlreadyReceived);
+				MysteryGiftDisplayMessage();
+				sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
+				break;
+			case MYSTERY_GIFT_CODE_FAILED:
+				MysteryGiftDisplayMessage();
+				sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
+				break;
+			case MYSTERY_GIFT_CODE_SUCCESS:
+				StringExpandPlaceholders(gStringVar4, gText_ReceivedGift);
+				MysteryGiftDisplayMessage();
+				sNamingScreenData->state = MAIN_STATE_UPDATE_DATA_BE_SAVED_TEXT;
+				break;
+		}
+		return FALSE;
+	}
     else
     {
         sNamingScreenData->state = MAIN_STATE_BEGIN_FADE_OUT;
@@ -671,6 +714,13 @@ static bool8 MainState_WaitFadeOutAndExit(void)
     return FALSE;
 }
 
+static void NamingScreenMessagePrint(const u8 *str)
+{
+	FillWindowPixelBuffer(0, PIXEL_FILL(1));
+	gTextFlags.canABSpeedUpPrint = TRUE;
+    AddTextPrinterParameterized2(0, 2, str, GetTextSpeedSetting(), NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
+}
+
 static void pokemon_transfer_to_pc_with_message(void)
 {
     u8 stringToDisplay = 0;
@@ -693,8 +743,14 @@ static void pokemon_transfer_to_pc_with_message(void)
 
     StringExpandPlaceholders(gStringVar4, sTransferredToPCMessages[stringToDisplay]);
     DrawDialogueFrame(0, FALSE);
-    gTextFlags.canABSpeedUpPrint = TRUE;
-    AddTextPrinterParameterized2(0, 2, gStringVar4, GetTextSpeedSetting(), NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
+    NamingScreenMessagePrint(gStringVar4);
+    CopyWindowToVram(0, COPYWIN_BOTH);
+}
+
+static void MysteryGiftDisplayMessage(void)
+{
+	DrawDialogueFrame(0, FALSE);
+	NamingScreenMessagePrint(gStringVar4);
     CopyWindowToVram(0, COPYWIN_BOTH);
 }
 
@@ -706,6 +762,33 @@ static bool8 sub_809E1D4(void)
         sNamingScreenData->state = MAIN_STATE_BEGIN_FADE_OUT;
 
     return FALSE;
+}
+
+static bool8 MainState_UpdateTextAndSaveGame(void)
+{
+	RunTextPrinters();
+	
+	if (!IsTextPrinterActive(0) && (JOY_NEW(A_BUTTON)))
+	{
+		PlaySE(SE_SELECT);
+		NamingScreenMessagePrint(gText_DataWillBeSaved);
+		sNamingScreenData->state = MAIN_STATE_UPDATE_SAVE_GAME_TEXT;
+	}
+    return FALSE;
+}
+
+static bool8 MainState_UpdateSaveGameText(void)
+{
+	RunTextPrinters();
+	
+	if (!IsTextPrinterActive(0) && (JOY_NEW(A_BUTTON)))
+	{
+		PlaySE(SE_SELECT);
+		TrySavingData(SAVE_NORMAL);
+		NamingScreenMessagePrint(gText_SaveCompletedPressA);
+		sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
+	}
+	return FALSE;
 }
 
 static bool8 MainState_StartPageSwap(void)
@@ -1269,7 +1352,8 @@ static void (*const sIconFunctions[])(void) = {
     NamingScreen_CreatePlayerIcon,
     NamingScreen_CreatePCIcon,
     NamingScreen_CreateMonIcon,
-    NamingScreen_CreateRivalIcon
+    NamingScreen_CreateRivalIcon,
+	NamingScreen_CreateMysteryGiftIcon
 };
 
 static void CreateInputTargetIcon(void)
@@ -1343,6 +1427,23 @@ static void NamingScreen_CreateRivalIcon(void)
     LoadSpriteSheet(&sheet);
     LoadSpritePalette(&palette);
     spriteId = CreateSprite(&template, 0x38, 0x25, 0);
+    gSprites[spriteId].oam.priority = 3;
+}
+
+static void NamingScreen_CreateMysteryGiftIcon(void)
+{
+	const struct SpriteSheet sheet = {
+		gMysteryGiftBox_Gfx, sizeof(gMysteryGiftBox_Gfx), 0x000C
+	};
+	const struct SpritePalette palette = {
+        gMysteryGiftBox_Palette, 0x000C
+    };
+	u8 spriteId;
+	
+	LoadSpriteSheet(&sheet);
+    LoadSpritePalette(&palette);
+	
+    spriteId = CreateSprite(&gSpriteTemplate_GiftBox, 0x38, 0x28, 0);
     gSprites[spriteId].oam.priority = 3;
 }
 
@@ -1620,11 +1721,12 @@ static void PrintTitleFunction_WithMon(void)
 }
 
 static void (*const sPrintTitleFuncs[])(void) = {
-    [NAMING_SCREEN_PLAYER]     = PrintTitleFunction_NoMon,
-    [NAMING_SCREEN_BOX]        = PrintTitleFunction_NoMon,
-    [NAMING_SCREEN_CAUGHT_MON] = PrintTitleFunction_WithMon,
-    [NAMING_SCREEN_NAME_RATER] = PrintTitleFunction_WithMon,
-    [NAMING_SCREEN_RIVAL]      = PrintTitleFunction_NoMon
+    [NAMING_SCREEN_PLAYER]       = PrintTitleFunction_NoMon,
+    [NAMING_SCREEN_BOX]          = PrintTitleFunction_NoMon,
+    [NAMING_SCREEN_CAUGHT_MON]   = PrintTitleFunction_WithMon,
+    [NAMING_SCREEN_NAME_RATER]   = PrintTitleFunction_WithMon,
+    [NAMING_SCREEN_RIVAL]        = PrintTitleFunction_NoMon,
+	[NAMING_SCREEN_MYSTERY_GIFT] = PrintTitleFunction_NoMon
 };
 
 static void PrintTitle(void)
@@ -2024,12 +2126,22 @@ static const struct NamingScreenTemplate sRivalNamingScreenTemplate = {
     .title = gText_RivalsName,
 };
 
+static const struct NamingScreenTemplate sMysteryGiftNamingScreenTemplate = {
+	.copyExistingString = FALSE,
+    .maxChars = MYSTERY_GIFT_CODE_LENGTH,
+	.iconFunction = 5,
+	.addGenderIcon = 0,
+	.initialPage = KBPAGE_LETTERS_UPPER,
+	.title = gText_MysteryGift2,
+};
+
 static const struct NamingScreenTemplate *const sNamingScreenTemplates[] = {
-    &sPlayerNamingScreenTemplate,
-    &sPcBoxNamingScreenTemplate,
-    &sMonNamingScreenTemplate,
-    &sMonNamingScreenTemplate,
-    &sRivalNamingScreenTemplate,
+    [NAMING_SCREEN_PLAYER]       = &sPlayerNamingScreenTemplate,
+    [NAMING_SCREEN_BOX]    	     = &sPcBoxNamingScreenTemplate,
+    [NAMING_SCREEN_CAUGHT_MON]   = &sMonNamingScreenTemplate,
+    [NAMING_SCREEN_NAME_RATER]   = &sMonNamingScreenTemplate,
+    [NAMING_SCREEN_RIVAL]        = &sRivalNamingScreenTemplate,
+	[NAMING_SCREEN_MYSTERY_GIFT] = &sMysteryGiftNamingScreenTemplate,
 };
 
 static const struct OamData gOamData_858BFEC = {
@@ -2066,6 +2178,19 @@ static const struct OamData gOamData_858BFFC = {
     .shape = SPRITE_SHAPE(32x16),
     .x = 0,
     .size = SPRITE_SIZE(32x16),
+    .tileNum = 0,
+    .priority = 0,
+    .paletteNum = 0,
+};
+
+static const struct OamData gOamData_GiftBox = {
+	.y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x32),
+    .x = 0,
+    .size = SPRITE_SIZE(32x32),
     .tileNum = 0,
     .priority = 0,
     .paletteNum = 0,
@@ -2260,6 +2385,12 @@ static const union AnimCmd gSpriteAnim_858C0A4[] = {
     ANIMCMD_JUMP(0)
 };
 
+static const union AnimCmd gSpriteAnim_GiftBox[] = {
+    ANIMCMD_FRAME(0,  8),
+    ANIMCMD_FRAME(16, 8),
+    ANIMCMD_JUMP(0)
+};
+
 static const union AnimCmd *const gSpriteAnimTable_858C0B0[] = {
     gSpriteAnim_858C090
 };
@@ -2271,6 +2402,10 @@ static const union AnimCmd *const gSpriteAnimTable_858C0B4[] = {
 
 static const union AnimCmd *const gSpriteAnimTable_858C0BC[] = {
     gSpriteAnim_858C0A4
+};
+
+static const union AnimCmd *const gSpriteAnimTable_GiftBox[] = {
+	gSpriteAnim_GiftBox
 };
 
 static const struct SpriteTemplate gUnknown_83E2574 = {
@@ -2359,6 +2494,16 @@ static const struct SpriteTemplate gUnknown_83E2634 = {
     .oam = &gOamData_858BFEC,
     .anims = gSpriteAnimTable_858C0BC,
     .images = gUnknown_0858C080,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy
+};
+
+static const struct SpriteTemplate gSpriteTemplate_GiftBox = {
+	.tileTag = 0x000C,
+    .paletteTag = 0x000C,
+    .oam = &gOamData_GiftBox,
+    .anims = gSpriteAnimTable_GiftBox,
+    .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = SpriteCallbackDummy
 };

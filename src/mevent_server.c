@@ -13,34 +13,6 @@ static u32 mevent_srv_exec_common(struct mevent_srv_common *);
 extern const struct mevent_server_cmd gMEventSrvScript_SendNews[];
 extern const struct mevent_server_cmd gMEventSrvScript_SendCard[];
 
-void mevent_srv_init_wnews(void)
-{
-    s_mevent_srv_common_ptr = AllocZeroed(sizeof(struct mevent_srv_common));
-    mevent_srv_init_common(s_mevent_srv_common_ptr, gMEventSrvScript_SendNews, 0, 1);
-}
-
-void mevent_srv_new_wcard(void)
-{
-    s_mevent_srv_common_ptr = AllocZeroed(sizeof(struct mevent_srv_common));
-    mevent_srv_init_common(s_mevent_srv_common_ptr, gMEventSrvScript_SendCard, 0, 1);
-}
-
-u32 mevent_srv_common_do_exec(u16 * a0)
-{
-    u32 result;
-    if (s_mevent_srv_common_ptr == NULL)
-        return 3;
-    result = mevent_srv_exec_common(s_mevent_srv_common_ptr);
-    if (result == 3)
-    {
-        *a0 = s_mevent_srv_common_ptr->param;
-        mevent_srv_free_resources(s_mevent_srv_common_ptr);
-        Free(s_mevent_srv_common_ptr);
-        s_mevent_srv_common_ptr = NULL;
-    }
-    return result;
-}
-
 static void mevent_srv_init_common(struct mevent_srv_common * svr, const void * cmdBuffer, u32 sendPlayerNo, u32 recvPlayerNo)
 {
     svr->unk_00 = 0;

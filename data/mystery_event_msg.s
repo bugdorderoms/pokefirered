@@ -7,6 +7,8 @@
 #include "constants/species.h"
 #include "constants/vars.h"
 #include "constants/items.h"
+#include "constants/pokemon.h"
+#include "constants/region_map_sections.h"
 	.include "asm/macros.inc"
 	.include "asm/macros/event.inc"
 	.include "constants/constants.inc"
@@ -68,7 +70,7 @@ SurfPichu_FullParty: @ 8488EEB
 
 SurfPichu_GiveEgg: @ 8488EF6
 	giveegg SPECIES_PICHU
-	setmonmetlocation VAR_EVENT_PICHU_SLOT, 0xff
+	setmonmetlocation VAR_EVENT_PICHU_SLOT, METLOC_SPECIAL_ENCOUNTER
 	compare VAR_EVENT_PICHU_SLOT, 1
 	vgoto_if_eq SurfPichu_Slot1
 	compare VAR_EVENT_PICHU_SLOT, 2
