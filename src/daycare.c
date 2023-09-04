@@ -1087,17 +1087,17 @@ static u16 SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *d
     u8 language;
 	struct PokemonGenerator generator =
 	{
-		.species = species,
-		.level = EGG_HATCH_LEVEL,
-		.forceGender = FALSE,
-		.forcedGender = MON_MALE,
-		.shinyType = GENERATE_SHINY_NORMAL,
-		.otIdType = OT_ID_PLAYER_ID,
-		.hasFixedPersonality = TRUE,
-		.fixedPersonality = daycare->offspringPersonality | (Random() << 16),
-		.forceNature = FALSE,
-		.forcedNature = NUM_NATURES,
-		.pokemon = mon,
+	    .species = species,
+	    .level = EGG_HATCH_LEVEL,
+	    .forceGender = FALSE,
+	    .forcedGender = MON_MALE,
+	    .shinyType = GENERATE_SHINY_NORMAL,
+	    .otIdType = OT_ID_PLAYER_ID,
+	    .hasFixedPersonality = TRUE,
+	    .fixedPersonality = daycare->offspringPersonality | (Random() << 16),
+	    .forceNature = FALSE,
+	    .forcedNature = NUM_NATURES,
+	    .pokemon = mon,
 	};
     CreateMon(generator);
 	species = DoWildEncounterFormChange(mon);
@@ -1610,17 +1610,17 @@ static void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
         ivs[i] = GetMonData(egg, MON_DATA_HP_IV + i);
     }
 	
-	generator.species = species,
-	generator.level = EGG_HATCH_LEVEL,
-	generator.forceGender = FALSE,
-	generator.forcedGender = MON_MALE,
-	generator.shinyType = GENERATE_SHINY_NORMAL,
-	generator.otIdType = OT_ID_PLAYER_ID,
-	generator.hasFixedPersonality = TRUE,
-	generator.fixedPersonality = GetMonData(egg, MON_DATA_PERSONALITY),
-	generator.forceNature = FALSE,
-	generator.forcedNature = NUM_NATURES,
-	generator.pokemon = temp,
+	generator.species = species;
+	generator.level = EGG_HATCH_LEVEL;
+	generator.forceGender = FALSE;
+	generator.forcedGender = MON_MALE;
+	generator.shinyType = GENERATE_SHINY_NORMAL;
+	generator.otIdType = OT_ID_PLAYER_ID;
+	generator.hasFixedPersonality = TRUE;
+	generator.fixedPersonality = GetMonData(egg, MON_DATA_PERSONALITY);
+	generator.forceNature = FALSE;
+	generator.forcedNature = NUM_NATURES;
+	generator.pokemon = temp;
 	
     CreateMon(generator);
 

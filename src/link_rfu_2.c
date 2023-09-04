@@ -38,7 +38,7 @@ static EWRAM_DATA INIT_PARAM sRfuReqConfig = {};
 static EWRAM_DATA struct RfuDebug sRfuDebug = {};
 
 static EWRAM_DATA u32 gf_rfu_REQ_api[RFU_API_BUFF_SIZE_RAM / 4];
-EWRAM_DATA GF_RFU_MANAGER Rfu = {};
+EWRAM_DATA GF_RFU_MANAGER Rfu = {0};
 
 static u8 sResendBlock8[14];
 static u16 sResendBlock16[7];
