@@ -209,10 +209,7 @@ extern u8 gHostRFUtgtUnameBuffer[];
 extern GF_RFU_MANAGER Rfu;
 
 // GameFreak signatures
-void AddTextPrinterToWindow1(const u8 *str);
-bool32 MG_PrintTextOnWindow1AndWaitButton(u8 * cmdPtr, const u8 * src);
 void LinkRfu_FatalError(void);
-void MG_DrawCheckerboardPattern(void);
 void Rfu_SetCloseLinkCallback(void);
 bool8 IsLinkRfuTaskFinished(void);
 void DestroyWirelessStatusIndicatorSprite(void);
@@ -294,8 +291,5 @@ void Rfu_UnionRoomChat_StopLinkManager(void);
 void sub_80FB9D0(void);
 void sub_80FB030(u32 a0);
 void ClearRecvCommands(void);
-
-#include "mevent_server.h"
-extern const struct mevent_server_cmd gMEventSrvScript_OtherTrainerCanceled[];
 
 #endif //GUARD_LINK_RFU_H

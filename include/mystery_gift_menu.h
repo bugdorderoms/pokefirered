@@ -9,11 +9,6 @@ enum
 	MYSTERY_GIFT_CODE_SUCCESS, // Success on receive the gift
 };
 
-extern bool8 gGiftIsFromEReader;
-
-void MainCB_FreeAllBuffersAndReturnToInitTitleScreen(void);
-void PrintMysteryGiftOrEReaderTopMenu(bool8, bool32);
-void c2_mystery_gift_e_reader_run(void);
 u8 GetMysteryGiftCodeState(const u8 *code);
 
 #endif //GUARD_MYSTERY_GIFT_MENU_H

@@ -8,7 +8,6 @@
 
 struct ScrollIndicatorPair
 {
-    u8 field_0;
     u16 *scrollOffset;
     u16 fullyUpThreshold;
     u16 fullyDownThreshold;
@@ -41,8 +40,6 @@ struct ScrollIndicatorTemplate
     u8 multiplier;
     s16 frequency;
 };
-
-static EWRAM_DATA struct ScrollArrowsTemplate sTempScrollArrowTemplate = {0};
 
 static void SpriteCallback_ScrollIndicatorArrow(struct Sprite *sprite);
 static void SpriteCallback_RedArrowCursor(struct Sprite *sprite);
@@ -344,7 +341,6 @@ u8 AddScrollIndicatorArrowPair(const struct ScrollArrowsTemplate *arrowInfo, u16
     taskId = CreateTask(Task_ScrollIndicatorArrowPair, 0);
     data = (struct ScrollIndicatorPair *)gTasks[taskId].data;
 
-    data->field_0 = 0;
     data->scrollOffset = scrollOffset;
     data->fullyUpThreshold = arrowInfo->fullyUpThreshold;
     data->fullyDownThreshold = arrowInfo->fullyDownThreshold;
@@ -363,31 +359,33 @@ u8 AddScrollIndicatorArrowPair(const struct ScrollArrowsTemplate *arrowInfo, u16
 
 u8 AddScrollIndicatorArrowPairParameterized(u32 arrowType, s32 commonPos, s32 firstPos, s32 secondPos, s32 fullyDownThreshold, s32 tileTag, s32 palTag, u16 *scrollOffset)
 {
+	struct ScrollArrowsTemplate template;
+	
     if (arrowType == SCROLL_ARROW_UP || arrowType == SCROLL_ARROW_DOWN)
     {
-        sTempScrollArrowTemplate.firstArrowType = SCROLL_ARROW_UP;
-        sTempScrollArrowTemplate.firstX = commonPos;
-        sTempScrollArrowTemplate.firstY = firstPos;
-        sTempScrollArrowTemplate.secondArrowType = SCROLL_ARROW_DOWN;
-        sTempScrollArrowTemplate.secondX = commonPos;
-        sTempScrollArrowTemplate.secondY = secondPos;
+        template.firstArrowType = SCROLL_ARROW_UP;
+        template.firstX = commonPos;
+        template.firstY = firstPos;
+        template.secondArrowType = SCROLL_ARROW_DOWN;
+        template.secondX = commonPos;
+        template.secondY = secondPos;
     }
     else
     {
-        sTempScrollArrowTemplate.firstArrowType = SCROLL_ARROW_LEFT;
-        sTempScrollArrowTemplate.firstX = firstPos;
-        sTempScrollArrowTemplate.firstY = commonPos;
-        sTempScrollArrowTemplate.secondArrowType = SCROLL_ARROW_RIGHT;
-        sTempScrollArrowTemplate.secondX = secondPos;
-        sTempScrollArrowTemplate.secondY = commonPos;
+        template.firstArrowType = SCROLL_ARROW_LEFT;
+        template.firstX = firstPos;
+        template.firstY = commonPos;
+        template.secondArrowType = SCROLL_ARROW_RIGHT;
+        template.secondX = secondPos;
+        template.secondY = commonPos;
     }
-    sTempScrollArrowTemplate.fullyUpThreshold = 0;
-    sTempScrollArrowTemplate.fullyDownThreshold = fullyDownThreshold;
-    sTempScrollArrowTemplate.tileTag = tileTag;
-    sTempScrollArrowTemplate.palTag = palTag;
-    sTempScrollArrowTemplate.palNum = 0;
+    template.fullyUpThreshold = 0;
+    template.fullyDownThreshold = fullyDownThreshold;
+    template.tileTag = tileTag;
+    template.palTag = palTag;
+    template.palNum = 0;
 
-    return AddScrollIndicatorArrowPair(&sTempScrollArrowTemplate, scrollOffset);
+    return AddScrollIndicatorArrowPair(&template, scrollOffset);
 }
 
 static void Task_ScrollIndicatorArrowPair(u8 taskId)

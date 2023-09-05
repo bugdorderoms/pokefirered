@@ -15,7 +15,7 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_callstd_if
 	.4byte ScrCmd_gotoram
 	.4byte ScrCmd_killscript
-	.4byte ScrCmd_setmysteryeventstatus
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_loadword
 	.4byte ScrCmd_loadbyte
 	.4byte ScrCmd_writebytetoaddr
@@ -211,7 +211,7 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_execram
 	.4byte ScrCmd_setworldmapflag
 	.4byte ScrCmd_warpteleport2
-	.4byte ScrCmd_setmonmetlocation
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_getbraillestringwidth
 	.4byte ScrCmd_bufferitemnameplural
 

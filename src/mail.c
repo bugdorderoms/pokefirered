@@ -28,9 +28,9 @@ enum MailIconParam
 
 struct MailEcWordLayout
 {
-    u32 numWordsInLine:2;
-    u32 lineXoffset:6;
-    u32 lineHeight:8;
+    u16 numWordsInLine:2;
+    u16 lineXoffset:6;
+    u16 lineHeight:8;
 };
 
 struct MailAttrStruct
@@ -63,7 +63,6 @@ struct MailViewResources {
     u8 mailType;
     u8 monIconType;
     u8 monIconSpriteId;
-    u8 unused;
     u8 mailArrangementType;
     u8 *(*copyEasyChatWord)(u8 *dest, u16 word);
     u8 *(*convertEasyChatWordsToString)(u8 *dest, const u16 *src, u16 length1, u16 length2);
@@ -440,7 +439,6 @@ static const struct MailAttrStruct sMessageLayouts_5x2[] = {
 void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool8 messageExists)
 {
     sMailViewResources = AllocZeroed(sizeof(struct MailViewResources));
-    sMailViewResources->unused = 2;
     sMailViewResources->mailArrangementType = 1;
     sMailViewResources->copyEasyChatWord = CopyEasyChatWord;
     sMailViewResources->convertEasyChatWordsToString = ConvertEasyChatWordsToString;
@@ -628,8 +626,9 @@ static void CB2_InitMailView(void)
 static void BufferMailMessage(void)
 {
     u16 i;
-    u8 j = 0;
-    for (i = 0; i < sMailViewResources->messageLayout->numRows; i++)
+    u8 j;
+	
+    for (i = 0, j = 0; i < sMailViewResources->messageLayout->numRows; i++)
     {
         ConvertEasyChatWordsToString(sMailViewResources->messageLinesBuffer[i], &sMailViewResources->mail->words[j], sMailViewResources->messageLayout->linesLayout[i].numWordsInLine, 1);
         j += sMailViewResources->messageLayout->linesLayout[i].numWordsInLine;

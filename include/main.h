@@ -83,7 +83,6 @@ struct RtcFill
 	u32 fillcheck2;
 };
 
-extern u8 gUnknown_3001764;
 extern struct Main gMain;
 extern bool8 gSoftResetDisabled;
 extern bool8 gLinkVSyncDisabled;

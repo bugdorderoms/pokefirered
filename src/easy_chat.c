@@ -327,7 +327,7 @@ static bool8 IsTrendySayingUnlocked(u8 additionalPhraseId)
     return (gSaveBlock1Ptr->additionalPhrases[byteOffset] >> shift) & 1;
 }
 
-void EnableRareWord(u8 additionalPhraseId)
+static void EnableRareWord(u8 additionalPhraseId)
 {
     if (additionalPhraseId < 33)
     {

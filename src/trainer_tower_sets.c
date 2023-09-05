@@ -1,5 +1,4 @@
 #include "global.h"
-#include "cereader_tool.h"
 #include "trainer_tower.h"
 #include "text.h"
 #include "constants/easy_chat.h"

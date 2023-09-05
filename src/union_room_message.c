@@ -1,5 +1,5 @@
 #include "global.h"
-#include "mevent_server.h"
+#include "mevent.h"
 #include "constants/union_room.h"
 
 ALIGNED(4) const u8 gUnionRoomActivity_Blank[] = _("");
@@ -470,20 +470,3 @@ const u8 *const gUnknown_8459580[] = {
 };
 
 ALIGNED(4) const u8 gUnknown_8459588[] = _("Finished checking {SPECIAL_F7 0x01}'s\nTRAINER CARD.{PAUSE 60}");
-ALIGNED(4) const u8 gUnknown_84595B0[] = _("Canceled reading the Card.");
-
-const struct mevent_client_cmd gUnknown_84595CC[] = {
-    CLI_RECEIVE(0x15),
-    CLI_RECVBUF,
-    CLI_SENDALL,
-    CLI_RETURN(0x0e)
-};
-
-const struct mevent_server_cmd gMEventSrvScript_OtherTrainerCanceled[] = {
-    SRV_SEND(0x20, gUnknown_84595CC),
-    SRV_WAITSND,
-    SRV_SENDSTR(0x1b, gUnknown_84595B0),
-    SRV_WAITSND,
-    SRV_RECV(0x14),
-    SRV_RETURN(0x09)
-};

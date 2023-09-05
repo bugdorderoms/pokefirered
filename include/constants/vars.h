@@ -82,7 +82,7 @@
 // Bits 12-15 are the same for the player's party.
 // Used by Quest Log.
 #define VAR_QUEST_LOG_MON_COUNTS           0x4027
-#define VAR_MENEWS_JISAN_STEP_COUNTER      0x4028
+#define VAR_0x4028                         0x4028
 #define VAR_DEXNAV_SPECIES                 0x4029
 #define VAR_DEXNAV_ENVIRONMENT             0x402A
 #define VAR_0x402B                         0x402B
@@ -229,7 +229,7 @@
 #define VAR_0x40B2                 0x40B2
 #define VAR_0x40B3                 0x40B3
 #define VAR_PORTHOLE               0x40B4
-#define VAR_EVENT_PICHU_SLOT       0x40B5
+#define VAR_0x40B5       		   0x40B5
 #define VAR_0x40B6                 0x40B6
 #define VAR_0x40B7                 0x40B7
 #define VAR_0x40B8                 0x40B8

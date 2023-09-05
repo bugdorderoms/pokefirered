@@ -121,6 +121,9 @@ static void SpriteCB_HopToPos(struct Sprite * sprite);
 static void StartNidorinoAnim_LaunchSelfAtGengarAnim(struct IntroSequenceData * ptr);
 static void SpriteCB_NidorinoAnim_LaunchSelfAtGengar(struct Sprite * sprite);
 static void LoadFightSceneSpriteTilesAndPals(void);
+static void StartBlendTask(u8 eva_start, u8 evb_start, u8 eva_end, u8 evb_end, u8 ev_step, u8 priority);
+static bool8 IsBlendTaskActive(void);
+
 #if REVISION >= 1
 static void Rev1_GameFreakScene_CreatePresentsText(void);
 #else
@@ -2477,4 +2480,61 @@ static void LoadFightSceneSpriteTilesAndPals(void)
     // sFightSceneSpritePalettes is not properly terminated, so this
     // call exhibits undefined behavior.
     LoadSpritePalettes(sFightSceneSpritePalettes);
+}
+
+#define tEvA data[0]
+#define tEvB data[1]
+#define tEvAEnd data[2]
+#define tEvBEnd data[3]
+#define tEvADelta data[4]
+#define tEvBDelta data[5]
+#define tEvWhich data[6]
+#define tEvStepCount data[8]
+
+static void Task_SmoothBlendLayers(u8 taskId)
+{
+    s16 * data = gTasks[taskId].data;
+
+    if (tEvStepCount != 0)
+    {
+        if (tEvWhich == 0)
+        {
+            tEvA += tEvADelta;
+            tEvWhich = 1;
+        }
+        else
+        {
+            if (--tEvStepCount != 0)
+            {
+                tEvB += tEvBDelta;
+            }
+            else
+            {
+                tEvA = tEvAEnd << 8;
+                tEvB = tEvBEnd << 8;
+            }
+            tEvWhich = 0;
+        }
+        SetGpuReg(REG_OFFSET_BLDALPHA, (tEvB & ~0xFF) | ((u16)tEvA >> 8));
+        if (tEvStepCount == 0)
+            DestroyTask(taskId);
+    }
+}
+
+static void StartBlendTask(u8 eva_start, u8 evb_start, u8 eva_end, u8 evb_end, u8 ev_step, u8 priority)
+{
+    u8 taskId = CreateTask(Task_SmoothBlendLayers, priority);
+    gTasks[taskId].tEvA = eva_start << 8;
+    gTasks[taskId].tEvB = evb_start << 8;
+    gTasks[taskId].tEvAEnd = eva_end;
+    gTasks[taskId].tEvBEnd = evb_end;
+    gTasks[taskId].tEvADelta = (eva_end - eva_start) * 256 / ev_step;
+    gTasks[taskId].tEvBDelta = (evb_end - evb_start) * 256 / ev_step;
+    gTasks[taskId].tEvStepCount = ev_step;
+    SetGpuReg(REG_OFFSET_BLDALPHA, (evb_start << 8) | eva_start);
+}
+
+static bool8 IsBlendTaskActive(void)
+{
+    return FuncIsActiveTask(Task_SmoothBlendLayers);
 }

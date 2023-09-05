@@ -15,7 +15,6 @@
 #include "field_specials.h"
 #include "item_menu.h"
 #include "link.h"
-#include "menews_jisan.h"
 #include "metatile_behavior.h"
 #include "overworld.h"
 #include "renewable_hidden_items.h"
@@ -215,7 +214,6 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     if (input->tookStep)
     {
         IncrementGameStat(GAME_STAT_STEPS);
-        MENewsJisanStepCounter();
         IncrementRenewableHiddenItemStepCounter();
         RunMassageCooldownStepCounter();
         IncrementResortGorgeousStepCounter();

@@ -386,27 +386,6 @@ u16 RunTextPrinters_CheckPrinter0Active(void)
     return IsTextPrinterActive(0);
 }
 
-u16 AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 fgColor, u8 bgColor, u8 shadowColor)
-{
-    struct TextPrinterTemplate printer;
-
-    printer.currentChar = str;
-    printer.windowId = windowId;
-    printer.fontId = fontId;
-    printer.x = 0;
-    printer.y = 1;
-    printer.currentX = 0;
-    printer.currentY = 1;
-    printer.letterSpacing = 1;
-    printer.lineSpacing = 1;
-    printer.unk = 0;
-    printer.fgColor = fgColor;
-    printer.bgColor = bgColor;
-    printer.shadowColor = shadowColor;
-    gTextFlags.useAlternateDownArrow = 0;
-    return AddTextPrinter(&printer, speed, callback);
-}
-
 void AddTextPrinterDiffStyle(bool8 allowSkippingDelayWithButtonPress)
 {
     u8 result;

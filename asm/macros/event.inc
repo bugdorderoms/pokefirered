@@ -80,10 +80,8 @@
 	.byte 0x0d
 	.endm
 
-	@ Sets mystery event status
-	.macro setmysteryeventstatus value:req
+	.macro nop0e
 	.byte 0x0e
-	.byte \value
 	.endm
 
 	@ Sets the specified script bank to immediate value.
@@ -1465,11 +1463,8 @@
 	.2byte \y
 	.endm
 
-	@ Changes the location where the player caught the Pokemon in the specified slot of their party.
-	.macro setmonmetlocation slot:req, location:req
+	.macro nopd2
 	.byte 0xd2
-	.2byte \slot
-	.byte \location
 	.endm
 
 	.macro getbraillestringwidth pointer:req

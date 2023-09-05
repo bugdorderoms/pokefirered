@@ -27,7 +27,6 @@ struct BattleTowerPokemonTemplate
 
 extern const u16 gBattleTowerBannedSpecies[];
 
-void ClearEReaderTrainer(struct BattleTowerEReaderTrainer *);
 void ValidateEReaderTrainer(void);
 u8 GetBattleTowerTrainerFrontSpriteId(void);
 u8 GetEreaderTrainerFrontSpriteId(void);

@@ -2132,7 +2132,7 @@ static const struct NamingScreenTemplate sMysteryGiftNamingScreenTemplate = {
 	.iconFunction = 5,
 	.addGenderIcon = 0,
 	.initialPage = KBPAGE_LETTERS_UPPER,
-	.title = gText_MysteryGift2,
+	.title = gText_MysteryGift,
 };
 
 static const struct NamingScreenTemplate *const sNamingScreenTemplates[] = {

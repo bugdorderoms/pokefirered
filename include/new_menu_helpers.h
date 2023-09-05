@@ -21,7 +21,6 @@ void InitStandardTextBoxWindows(void);
 void FreeAllOverworldWindowBuffers(void);
 void InitTextBoxGfxAndPrinters(void);
 u16 RunTextPrinters_CheckPrinter0Active(void);
-u16 AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 fgColor, u8 bgColor, u8 shadowColor);
 void AddTextPrinterDiffStyle(bool8 allowSkippingDelayWithButtonPress);
 void AddTextPrinterForMessage(bool8 allowSkippingDelayWithButtonPress);
 void AddTextPrinterWithCustomSpeedForMessage(bool8 allowSkippingDelayWithButtonPress, u8 speed);

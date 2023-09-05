@@ -1897,8 +1897,6 @@ static void RfuCheckErrorStatus(void)
 {
     if (Rfu.errorState == 1 && lman.childClockSlave_flag == 0)
     {
-        if (gMain.callback2 == c2_mystery_gift_e_reader_run)
-            gWirelessCommType = 2;
         SetMainCallback2(CB2_LinkError);
         gMain.savedCallback = CB2_LinkError;
         SetLinkErrorFromRfu(

@@ -66,14 +66,8 @@ bool32 IsNationalPokedexEnabled(void)
     return FlagGet(FLAG_SYS_NATIONAL_DEX);
 }
 
-bool32 IsMysteryGiftEnabled(void)
+void ResetMysteryGiftFlags(void)
 {
-    return FlagGet(FLAG_SYS_MYSTERY_GIFT_ENABLED);
-}
-
-void ResetMysteryEventFlags(void)
-{
-    FlagClear(FLAG_MYSTERY_GIFT_DONE);
     FlagClear(FLAG_MYSTERY_GIFT_1);
     FlagClear(FLAG_MYSTERY_GIFT_2);
     FlagClear(FLAG_MYSTERY_GIFT_3);
@@ -89,19 +83,6 @@ void ResetMysteryEventFlags(void)
     FlagClear(FLAG_MYSTERY_GIFT_13);
     FlagClear(FLAG_MYSTERY_GIFT_14);
     FlagClear(FLAG_MYSTERY_GIFT_15);
-}
-
-void ResetMysteryEventVars(void)
-{
-    VarSet(VAR_EVENT_PICHU_SLOT, 0);
-    VarSet(VAR_0x40B6, 0);
-    VarSet(VAR_0x40B7, 0);
-    VarSet(VAR_0x40B8, 0);
-    VarSet(VAR_0x40B9, 0);
-    VarSet(VAR_0x40BA, 0);
-    VarSet(VAR_0x40BB, 0);
-    VarSet(VAR_0x40BC, 0);
-    VarSet(VAR_ALTERING_CAVE_WILD_SET, 0);
 }
 
 u16 *GetVarPointer(u16 idx)

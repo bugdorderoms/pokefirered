@@ -10,7 +10,6 @@
 
 extern void ResetContextNpcTextColor(void); // field_specials
 extern u16 CalcCRC16WithTable(u8 *data, int length); // util
-extern bool32 ValidateReceivedWonderCard(void); // mevent
 
 enum
 {
@@ -521,35 +520,4 @@ bool32 ValidateRamScript(void)
     if (CalculateRamScriptChecksum() != gSaveBlock1Ptr->ramScript.checksum)
         return FALSE;
     return TRUE;
-}
-
-u8 *sub_8069E48(void)
-{
-    struct RamScriptData *scriptData = &gSaveBlock1Ptr->ramScript.data;
-    if (!ValidateReceivedWonderCard())
-        return NULL;
-    if (scriptData->magic != RAM_SCRIPT_MAGIC)
-        return NULL;
-    if (scriptData->mapGroup != MAP_GROUP(UNDEFINED))
-        return NULL;
-    if (scriptData->mapNum != MAP_NUM(UNDEFINED))
-        return NULL;
-    if (scriptData->objectId != 0xFF)
-        return NULL;
-    if (CalculateRamScriptChecksum() != gSaveBlock1Ptr->ramScript.checksum)
-    {
-        ClearRamScript();
-        return NULL;
-    }
-    else
-    {
-        return scriptData->script;
-    }
-}
-
-void MEventSetRamScript(u8 *script, u16 scriptSize)
-{
-    if (scriptSize > sizeof(gSaveBlock1Ptr->ramScript.data.script))
-        scriptSize = sizeof(gSaveBlock1Ptr->ramScript.data.script);
-    InitRamScript(script, scriptSize, 0xFF, 0xFF, 0xFF);
 }

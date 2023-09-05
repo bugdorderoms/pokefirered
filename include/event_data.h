@@ -28,7 +28,6 @@ void ClearTempFieldEventData(void);
 void DisableNationalPokedex(void);
 void EnableNationalPokedex(void);
 bool32 IsNationalPokedexEnabled(void);
-bool32 IsMysteryGiftEnabled(void);
 u16 *GetVarPointer(u16 id);
 u16 VarGet(u16 id);
 bool8 VarSet(u16 id, u16 value);
@@ -37,7 +36,6 @@ u8 FlagSet(u16 id);
 u8 FlagClear(u16 id);
 bool8 FlagGet(u16 id);
 void ResetSpecialVars(void);
-void ResetMysteryEventFlags(void);
-void ResetMysteryEventVars(void);
+void ResetMysteryGiftFlags(void);
 
 #endif // GUARD_EVENT_DATA_H

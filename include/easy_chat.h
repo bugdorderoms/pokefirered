@@ -35,7 +35,6 @@ u8 *ConvertEasyChatWordsToString(u8 *dest, const u16 *src, u16 columns, u16 rows
 bool8 EC_DoesEasyChatStringFitOnLine(const u16 *easyChatWords, u8 columns, u8 rows, u16 maxLength);
 void EC_ResetMEventProfileMaybe(void);
 void InitEasyChatPhrases(void);
-void EnableRareWord(u8);
 bool8 InitEasyChatSelection(void);
 void DestroyEasyChatSelectionData(void);
 u8 GetSelectedGroupByIndex(u8);

@@ -60,8 +60,6 @@ void ClearRamScript(void);
 bool8 InitRamScript(u8 *script, u16 scriptSize, u8 mapGroup, u8 mapNum, u8 objectId);
 const u8 *GetRamScript(u8 objectId, const u8 *script);
 bool32 ValidateRamScript(void);
-void MEventSetRamScript(u8 * script, u16 scriptSize);
-u8 * sub_8069E48(void);
 void RegisterQuestLogInput(u8 var);
 void ClearMsgBoxCancelableState(void);
 void SetQuestLogInputIsDpadFlag(void);

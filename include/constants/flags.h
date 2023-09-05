@@ -693,8 +693,8 @@
 #define FLAG_0x2A4                                       0x2A4
 #define FLAG_CAN_USE_ROCKET_HIDEOUT_LIFT                 0x2A5
 #define FLAG_GOT_TEA                                     0x2A6
-#define FLAG_GOT_AURORA_TICKET                           0x2A7
-#define FLAG_GOT_MYSTIC_TICKET                           0x2A8
+#define FLAG_0x2A7                           			 0x2A7
+#define FLAG_0x2A8                          			 0x2A8
 #define FLAG_0x2A9                                       0x2A9
 #define FLAG_0x2AA                                       0x2AA
 #define FLAG_0x2AB                                       0x2AB
@@ -1000,7 +1000,7 @@
 #define FLAG_0x3D5               0x3D5
 #define FLAG_0x3D6               0x3D6
 #define FLAG_0x3D7               0x3D7
-#define FLAG_MYSTERY_GIFT_DONE   0x3D8
+#define FLAG_0x3D8   			 0x3D8
 #define FLAG_MYSTERY_GIFT_1      0x3D9
 #define FLAG_MYSTERY_GIFT_2      0x3DA
 #define FLAG_MYSTERY_GIFT_3      0x3DB

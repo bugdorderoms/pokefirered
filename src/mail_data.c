@@ -2,6 +2,8 @@
 #include "gflib.h"
 #include "mail.h"
 #include "mail_data.h"
+#include "item.h"
+#include "item_use.h"
 #include "constants/items.h"
 #include "pokemon_icon.h"
 
@@ -29,8 +31,7 @@ void ClearMailStruct(struct Mail *mail)
 
 bool8 MonHasMail(struct Pokemon *mon)
 {
-    u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM);
-    if (ItemIsMail(heldItem) && GetMonData(mon, MON_DATA_MAIL) != 0xFF)
+    if (ItemIsMail(GetMonData(mon, MON_DATA_HELD_ITEM)) && GetMonData(mon, MON_DATA_MAIL) != 0xFF)
         return TRUE;
     else
         return FALSE;
@@ -40,10 +41,10 @@ u8 GiveMailToMon(struct Pokemon *mon, u16 itemId)
 {
     u8 heldItem[2];
     u8 id, i;
-    u16 species;
 
     heldItem[0] = itemId;
     heldItem[1] = itemId >> 8;
+	
     for (id = 0; id < PARTY_SIZE; id++)
     {
         if (gSaveBlock1Ptr->mail[id].itemId == 0)
@@ -57,8 +58,8 @@ u8 GiveMailToMon(struct Pokemon *mon, u16 itemId)
             gSaveBlock1Ptr->mail[id].playerName[i] = EOS;
             for (i = 0; i < 4; i++)
                 gSaveBlock1Ptr->mail[id].trainerId[i] = gSaveBlock2Ptr->playerTrainerId[i];
-            species = GetBoxMonData(&mon->box, MON_DATA_SPECIES);
-            gSaveBlock1Ptr->mail[id].species = species;
+
+            gSaveBlock1Ptr->mail[id].species = GetMonData(mon, MON_DATA_SPECIES);
             gSaveBlock1Ptr->mail[id].itemId = itemId;
             SetMonData(mon, MON_DATA_MAIL, &id);
             SetMonData(mon, MON_DATA_HELD_ITEM, heldItem);
@@ -86,11 +87,6 @@ u8 GiveMailToMon2(struct Pokemon *mon, struct Mail *mail)
     return mailId;
 }
 
-static bool32 DummyMailFunc(void)
-{
-    return FALSE;
-}
-
 void TakeMailFromMon(struct Pokemon *mon)
 {
     u8 heldItem[2];
@@ -106,11 +102,6 @@ void TakeMailFromMon(struct Pokemon *mon)
         SetMonData(mon, MON_DATA_MAIL, &mailId);
         SetMonData(mon, MON_DATA_HELD_ITEM, heldItem);
     }
-}
-
-void ClearMailItemId(u8 mailId)
-{
-    gSaveBlock1Ptr->mail[mailId].itemId = ITEM_NONE;
 }
 
 u8 TakeMailFromMon2(struct Pokemon *mon)
@@ -137,22 +128,5 @@ u8 TakeMailFromMon2(struct Pokemon *mon)
 
 bool8 ItemIsMail(u16 itemId)
 {
-    switch (itemId)
-    {
-    case ITEM_ORANGE_MAIL:
-    case ITEM_HARBOR_MAIL:
-    case ITEM_GLITTER_MAIL:
-    case ITEM_MECH_MAIL:
-    case ITEM_WOOD_MAIL:
-    case ITEM_WAVE_MAIL:
-    case ITEM_BEAD_MAIL:
-    case ITEM_SHADOW_MAIL:
-    case ITEM_TROPIC_MAIL:
-    case ITEM_DREAM_MAIL:
-    case ITEM_FAB_MAIL:
-    case ITEM_RETRO_MAIL:
-        return TRUE;
-    default:
-        return FALSE;
-    }
+	return (ItemId_GetFieldFunc(itemId) == FieldUseFunc_OrangeMail);
 }

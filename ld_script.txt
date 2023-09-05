@@ -199,7 +199,6 @@ SECTIONS {
         src/math_util.o(.text);
         src/roulette_util.o(.text);
         src/save.o(.text);
-        src/mystery_event_script.o(.text);
         src/field_effect_helpers.o(.text);
         src/battle_anim_sound_tasks.o(.text);
         src/battle_controller_safari.o(.text);
@@ -252,7 +251,6 @@ SECTIONS {
         src/union_room_chat_objects.o(.text);
         src/quest_log_battle.o(.text);
         src/fame_checker.o(.text);
-        src/menu2.o(.text);
         src/oak_speech.o(.text);
         src/tm_case.o(.text);
         src/menu_indicators.o(.text);
@@ -267,12 +265,6 @@ SECTIONS {
         src/roamer.o(.text);
         src/mystery_gift_menu.o(.text);
         src/mevent.o(.text);
-        src/mevent_server_helpers.o(.text);
-        src/mevent_client.o(.text);
-        src/mevent_server.o(.text);
-        src/mevent_show_card.o(.text);
-        src/mevent_show_news.o(.text);
-        src/menews_jisan.o(.text);
         src/seagallop.o(.text);
         src/pokemon_jump.o(.text);
         src/pokemon_jump_2.o(.text);
@@ -293,7 +285,6 @@ SECTIONS {
         src/ereader_helpers.o(.text);
         src/digit_obj_util.o(.text);
         src/ss_anne.o(.text);
-        src/cereader_tool.o(.text);
         src/renewable_hidden_items.o(.text);
         src/trainer_tower.o(.text);
         src/minigame_countdown.o(.text);
@@ -319,7 +310,6 @@ SECTIONS {
         data/field_effect_scripts.o(script_data);
         data/battle_scripts_2.o(script_data);
         data/battle_ai_scripts.o(script_data);
-        data/mystery_event_script_cmd_table.o(script_data);
     } =0
 
     lib_text :
@@ -555,7 +545,6 @@ SECTIONS {
         src/union_room_chat_display.o(.rodata);
         src/union_room_chat_objects.o(.rodata);
         src/fame_checker.o(.rodata);
-        src/menu2.o(.rodata);
         src/oak_speech.o(.rodata);
         src/tm_case.o(.rodata);
         src/menu_indicators.o(.rodata);
@@ -570,14 +559,6 @@ SECTIONS {
         src/roamer.o(.rodata);
         src/mystery_gift_menu.o(.rodata);
         src/mevent.o(.rodata);
-        src/mevent_server_helpers.o(.rodata);
-        src/mevent_client.o(.rodata);
-        src/mevent_server.o(.rodata);
-        src/mevent_show_card.o(.rodata);
-        src/mevent_show_news.o(.rodata);
-        src/mevent_scripts.o(.rodata);
-        src/menews_jisan.o(.rodata);
-        src/menews_jisan.o(.rodata.str1.4);
         src/seagallop.o(.rodata);
         src/pokemon_jump.o(.rodata);
         src/pokemon_jump_2.o(.rodata);
@@ -594,7 +575,6 @@ SECTIONS {
         src/teachy_tv.o(.rodata);
         src/digit_obj_util.o(.rodata);
         src/ss_anne.o(.rodata);
-        src/cereader_tool.o(.rodata);
         src/renewable_hidden_items.o(.rodata);
         src/trainer_tower.o(.rodata);
         src/minigame_countdown.o(.rodata);
@@ -613,8 +593,6 @@ SECTIONS {
 		src/set_effect.o(.rodata);
 
         /* These should not be moved to C files */
-        src/mystery_event_msg.o(.rodata);
-        data/mystery_event_msg.o(.rodata);
         src/m4a_tables.o(.rodata);
         data/sound_data.o(.rodata);
     } =0
@@ -1027,7 +1005,6 @@ SECTIONS {
     multiboot_data :
     ALIGN(4)
     {
-        data/multiboot_ereader.o(.rodata);
         data/multiboot_pokemon_colosseum.o(.rodata);
     } =0
 

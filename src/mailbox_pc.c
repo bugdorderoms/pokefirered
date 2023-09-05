@@ -74,11 +74,6 @@ void MailboxPC_RemoveWindow(u8 winIdx)
     sWindowIds[winIdx] = 0xFF;
 }
 
-u8 MailboxPC_GetWindowId(u8 winIdx)
-{
-    return sWindowIds[winIdx];
-}
-
 static void ItemPrintFunc(u8 windowId, u32 itemId, u8 y)
 {
     u8 strbuf[30];

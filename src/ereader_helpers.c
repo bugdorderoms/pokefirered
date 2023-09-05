@@ -2,6 +2,32 @@
 #include "link.h"
 #include "ereader_helpers.h"
 
+enum
+{
+    EREADER_XFR_STATE_INIT = 0,
+    EREADER_XFR_STATE_HANDSHAKE,
+    EREADER_XFR_STATE_START,
+    EREADER_XFR_STATE_TRANSFER,
+    EREADER_XFR_STATE_TRANSFER_DONE,
+    EREADER_XFR_STATE_CHECKSUM,
+    EREADER_XFR_STATE_DONE
+};
+
+#define EREADER_XFER_SHIFT 0
+#define EREADER_XFER_EXE   1
+#define EREADER_XFER_CHK   2
+#define EREADER_XFER_MASK  3
+
+#define EREADER_CANCEL_TIMEOUT 1
+#define EREADER_CANCEL_KEY     2
+#define EREADER_CANCEL_MASK    0xC
+#define EREADER_CANCEL_SHIFT   2
+
+#define EREADER_CHECKSUM_OK    1
+#define EREADER_CHECKSUM_ERR   2
+#define EREADER_CHECKSUM_MASK  0x30
+#define EREADER_CHECKSUM_SHIFT 4
+
 struct SendRecvMgr
 {
     u8 master_slave;       // 0: clock slave; 1: clock master
@@ -19,7 +45,6 @@ static bool16 DetermineSendRecvState(u8);
 static void SetUpTransferManager(size_t, const void *, void *);
 static void StartTm3(void);
 static void EnableSio(void);
-static void DisableTm3(void);
 static void GetKeyInput(void);
 
 static struct SendRecvMgr sSendRecvMgr;
@@ -33,6 +58,107 @@ static u16 sSavedIe;
 static u16 sSavedTm3Cnt;
 static u16 sSavedSioCnt;
 static u16 sSavedRCnt;
+
+static void EReaderHelper_SaveRegsState(void)
+{
+    sSavedIme = REG_IME;
+    sSavedIe = REG_IE;
+    sSavedTm3Cnt = REG_TM3CNT_H;
+    sSavedSioCnt = REG_SIOCNT;
+    sSavedRCnt = REG_RCNT;
+}
+
+static void EReaderHelper_RestoreRegsState(void)
+{
+    REG_IME = sSavedIme;
+    REG_IE = sSavedIe;
+    REG_TM3CNT_H = sSavedTm3Cnt;
+    REG_SIOCNT = sSavedSioCnt;
+    REG_RCNT = sSavedRCnt;
+}
+
+static u16 EReaderHandleTransfer(u8 mode, size_t size, const void * data, void * recvBuffer)
+{
+    switch (sSendRecvMgr.state)
+    {
+    case EREADER_XFR_STATE_INIT:
+        OpenSerialMulti();
+        sSendRecvMgr.xferState = EREADER_XFER_EXE;
+        sSendRecvMgr.state = EREADER_XFR_STATE_HANDSHAKE;
+        break;
+    case EREADER_XFR_STATE_HANDSHAKE:
+        if (DetermineSendRecvState(mode))
+            EnableSio();
+        if (gShouldAdvanceLinkState == 2)
+        {
+            sSendRecvMgr.cancellationReason = EREADER_CANCEL_KEY;
+            sSendRecvMgr.state = EREADER_XFR_STATE_DONE;
+        }
+        // Progression is handled by the serial callback
+        break;
+    case EREADER_XFR_STATE_START:
+        OpenSerial32();
+        SetUpTransferManager(size, data, recvBuffer);
+        sSendRecvMgr.state = EREADER_XFR_STATE_TRANSFER;
+        // fallthrough
+    case EREADER_XFR_STATE_TRANSFER:
+        if (gShouldAdvanceLinkState == 2)
+        {
+            sSendRecvMgr.cancellationReason = EREADER_CANCEL_KEY;
+            sSendRecvMgr.state = EREADER_XFR_STATE_DONE;
+        }
+        else
+        {
+            sCounter1++;
+            sCounter2++;
+            if (sSendRecvMgr.master_slave == 0 && sCounter2 > 60)
+            {
+                sSendRecvMgr.cancellationReason = EREADER_CANCEL_TIMEOUT;
+                sSendRecvMgr.state = EREADER_XFR_STATE_DONE;
+            }
+            if (sSendRecvMgr.xferState != EREADER_XFER_CHK)
+            {
+                if (sSendRecvMgr.master_slave != 0 && sCounter1 > 2)
+                {
+                    EnableSio();
+                    sSendRecvMgr.xferState = EREADER_XFER_CHK;
+                }
+                else
+                {
+                    EnableSio();
+                    sSendRecvMgr.xferState = EREADER_XFER_CHK;
+                }
+            }
+        }
+        // Progression is handled by the serial callback
+        break;
+    case EREADER_XFR_STATE_TRANSFER_DONE:
+        OpenSerialMulti();
+        sSendRecvMgr.state = EREADER_XFR_STATE_CHECKSUM;
+        break;
+    case EREADER_XFR_STATE_CHECKSUM:
+        if (sSendRecvMgr.master_slave == 1 && sCounter1 > 2)
+            EnableSio();
+        if (++sCounter1 > 60)
+        {
+            sSendRecvMgr.cancellationReason = EREADER_CANCEL_TIMEOUT;
+            sSendRecvMgr.state = EREADER_XFR_STATE_DONE;
+        }
+        break;
+        // Progression is handled by the serial callback
+    case EREADER_XFR_STATE_DONE:
+        if (sSendRecvMgr.xferState != 0)
+        {
+            CloseSerial();
+            sSendRecvMgr.xferState = 0;
+        }
+        break;
+    }
+    return
+        (sSendRecvMgr.xferState << EREADER_XFER_SHIFT)
+      | (sSendRecvMgr.cancellationReason << EREADER_CANCEL_SHIFT)
+      | (sSendRecvMgr.checksumResult << EREADER_CHECKSUM_SHIFT);
+}
 
 int EReader_Send(size_t size, const void * src)
 {
@@ -147,89 +273,6 @@ static void OpenSerial32(void)
     sCounter2 = 0;
 }
 
-u16 EReaderHandleTransfer(u8 mode, size_t size, const void * data, void * recvBuffer)
-{
-    switch (sSendRecvMgr.state)
-    {
-    case EREADER_XFR_STATE_INIT:
-        OpenSerialMulti();
-        sSendRecvMgr.xferState = EREADER_XFER_EXE;
-        sSendRecvMgr.state = EREADER_XFR_STATE_HANDSHAKE;
-        break;
-    case EREADER_XFR_STATE_HANDSHAKE:
-        if (DetermineSendRecvState(mode))
-            EnableSio();
-        if (gShouldAdvanceLinkState == 2)
-        {
-            sSendRecvMgr.cancellationReason = EREADER_CANCEL_KEY;
-            sSendRecvMgr.state = EREADER_XFR_STATE_DONE;
-        }
-        // Progression is handled by the serial callback
-        break;
-    case EREADER_XFR_STATE_START:
-        OpenSerial32();
-        SetUpTransferManager(size, data, recvBuffer);
-        sSendRecvMgr.state = EREADER_XFR_STATE_TRANSFER;
-        // fallthrough
-    case EREADER_XFR_STATE_TRANSFER:
-        if (gShouldAdvanceLinkState == 2)
-        {
-            sSendRecvMgr.cancellationReason = EREADER_CANCEL_KEY;
-            sSendRecvMgr.state = EREADER_XFR_STATE_DONE;
-        }
-        else
-        {
-            sCounter1++;
-            sCounter2++;
-            if (sSendRecvMgr.master_slave == 0 && sCounter2 > 60)
-            {
-                sSendRecvMgr.cancellationReason = EREADER_CANCEL_TIMEOUT;
-                sSendRecvMgr.state = EREADER_XFR_STATE_DONE;
-            }
-            if (sSendRecvMgr.xferState != EREADER_XFER_CHK)
-            {
-                if (sSendRecvMgr.master_slave != 0 && sCounter1 > 2)
-                {
-                    EnableSio();
-                    sSendRecvMgr.xferState = EREADER_XFER_CHK;
-                }
-                else
-                {
-                    EnableSio();
-                    sSendRecvMgr.xferState = EREADER_XFER_CHK;
-                }
-            }
-        }
-        // Progression is handled by the serial callback
-        break;
-    case EREADER_XFR_STATE_TRANSFER_DONE:
-        OpenSerialMulti();
-        sSendRecvMgr.state = EREADER_XFR_STATE_CHECKSUM;
-        break;
-    case EREADER_XFR_STATE_CHECKSUM:
-        if (sSendRecvMgr.master_slave == 1 && sCounter1 > 2)
-            EnableSio();
-        if (++sCounter1 > 60)
-        {
-            sSendRecvMgr.cancellationReason = EREADER_CANCEL_TIMEOUT;
-            sSendRecvMgr.state = EREADER_XFR_STATE_DONE;
-        }
-        break;
-        // Progression is handled by the serial callback
-    case EREADER_XFR_STATE_DONE:
-        if (sSendRecvMgr.xferState != 0)
-        {
-            CloseSerial();
-            sSendRecvMgr.xferState = 0;
-        }
-        break;
-    }
-    return
-        (sSendRecvMgr.xferState << EREADER_XFER_SHIFT)
-      | (sSendRecvMgr.cancellationReason << EREADER_CANCEL_SHIFT)
-      | (sSendRecvMgr.checksumResult << EREADER_CHECKSUM_SHIFT);
-}
-
 static bool16 DetermineSendRecvState(u8 mode)
 {
     bool16 resp;
@@ -266,113 +309,9 @@ static void StartTm3(void)
     REG_IME = 1;
 }
 
-void EReaderHelper_Timer3Callback(void)
-{
-    DisableTm3();
-    EnableSio();
-}
-
-void EReaderHelper_SerialCallback(void)
-{
-    u16 recv[4];
-    u16 i;
-    u16 cnt1;
-    u16 cnt2;
-    u32 recv32;
-
-    switch (sSendRecvMgr.state)
-    {
-    case EREADER_XFR_STATE_HANDSHAKE:
-        REG_SIOMLT_SEND = 0xCCD0;
-        *(u64 *)recv = REG_SIOMLT_RECV;
-        for (i = 0, cnt1 = 0, cnt2 = 0; i < 4; i++)
-        {
-            if (recv[i] == 0xCCD0)
-                cnt1++;
-            else if (recv[i] != 0xFFFF)
-                cnt2++;
-        }
-        if (cnt1 == 2 && cnt2 == 0)
-            sSendRecvMgr.state = EREADER_XFR_STATE_START;
-        break;
-        // Progression is handled by software
-    case EREADER_XFR_STATE_TRANSFER:
-        recv32 = REG_SIODATA32;
-        // The first value sent by the EReader is the payload size
-        if (sSendRecvMgr.cursor == 0 && sSendRecvMgr.master_slave == 0)
-            sSendRecvMgr.size = recv32 / 4 + 1;
-        if (sSendRecvMgr.master_slave == 1)
-        {
-            // Send mode
-            if (sSendRecvMgr.cursor < sSendRecvMgr.size)
-            {
-                REG_SIODATA32 = sSendRecvMgr.dataptr[sSendRecvMgr.cursor];
-                sSendRecvMgr.checksum += sSendRecvMgr.dataptr[sSendRecvMgr.cursor];
-            }
-            else
-                REG_SIODATA32 = sSendRecvMgr.checksum;
-        }
-        else
-        {
-            // Receive mode
-            if (sSendRecvMgr.cursor > 0 && sSendRecvMgr.cursor < sSendRecvMgr.size + 1)
-            {
-                // Receive next word
-                sSendRecvMgr.dataptr[sSendRecvMgr.cursor - 1] = recv32;
-                sSendRecvMgr.checksum += recv32;
-            }
-            else if (sSendRecvMgr.cursor != 0)
-            {
-                // Reached the end, test the received checksum
-                if (sSendRecvMgr.checksum == recv32)
-                    sSendRecvMgr.checksumResult = EREADER_CHECKSUM_OK;
-                else
-                    sSendRecvMgr.checksumResult = EREADER_CHECKSUM_ERR;
-            }
-            sCounter2 = 0;
-        }
-        sSendRecvMgr.cursor++;
-        if (sSendRecvMgr.cursor < sSendRecvMgr.size + 2)
-        {
-            if (sSendRecvMgr.master_slave != 0)
-                // Clock master; start timer
-                REG_TM3CNT_H |= TIMER_ENABLE;
-            else
-                // Clock slave; reset
-                EnableSio();
-        }
-        else
-        {
-            sSendRecvMgr.state = EREADER_XFR_STATE_TRANSFER_DONE;
-            sCounter1 = 0;
-        }
-        break;
-        // Progression is handled by the software
-    case EREADER_XFR_STATE_CHECKSUM:
-        if (sSendRecvMgr.master_slave == 0)
-            // Clock slave
-            REG_SIODATA8 = sSendRecvMgr.checksumResult;
-        *(vu64 *)recv = REG_SIOMLT_RECV;
-        if (recv[1] == EREADER_CHECKSUM_OK || recv[1] == EREADER_CHECKSUM_ERR)
-        {
-            if (sSendRecvMgr.master_slave == 1)
-                // EReader has (in)validated the payload
-                sSendRecvMgr.checksumResult = recv[1];
-            sSendRecvMgr.state = EREADER_XFR_STATE_DONE;
-        }
-        break;
-    }
-}
-
 static void EnableSio(void)
 {
     REG_SIOCNT |= SIO_ENABLE;
-}
-
-static void DisableTm3(void)
-{
-    REG_TM3CNT_H &= ~TIMER_ENABLE;
-    REG_TM3CNT_L = -601;
 }
 
 static void GetKeyInput(void)
@@ -380,27 +319,4 @@ static void GetKeyInput(void)
     u16 rawKeys = REG_KEYINPUT ^ 0x3FF;
     sJoyNew = rawKeys & ~sJoyNewOrRepeated;
     sJoyNewOrRepeated = rawKeys;
-}
-
-void EReaderHelper_SaveRegsState(void)
-{
-    sSavedIme = REG_IME;
-    sSavedIe = REG_IE;
-    sSavedTm3Cnt = REG_TM3CNT_H;
-    sSavedSioCnt = REG_SIOCNT;
-    sSavedRCnt = REG_RCNT;
-}
-
-void EReaderHelper_RestoreRegsState(void)
-{
-    REG_IME = sSavedIme;
-    REG_IE = sSavedIe;
-    REG_TM3CNT_H = sSavedTm3Cnt;
-    REG_SIOCNT = sSavedSioCnt;
-    REG_RCNT = sSavedRCnt;
-}
-
-void EReaderHelper_ClearsSendRecvMgr(void)
-{
-    CpuFill32(0, &sSendRecvMgr, sizeof(sSendRecvMgr));
 }

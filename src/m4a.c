@@ -42,10 +42,6 @@ u32 MidiKeyToFreq(struct WaveData *wav, u8 key, u8 fineAdjust)
     return umul3232H32(wav->freq, val1 + umul3232H32(val2 - val1, fineAdjustShifted));
 }
 
-void UnusedDummyFunc(void)
-{
-}
-
 void MPlayContinue(struct MusicPlayerInfo *mplayInfo)
 {
     if (mplayInfo->ident == ID_NUMBER)
@@ -76,10 +72,7 @@ void m4aSoundInit(void)
 
     SoundInit(&gSoundInfo);
     MPlayExtender(gCgbChans);
-    m4aSoundMode(SOUND_MODE_DA_BIT_8
-               | SOUND_MODE_FREQ_13379
-               | (12 << SOUND_MODE_MASVOL_SHIFT)
-               | (5 << SOUND_MODE_MAXCHN_SHIFT));
+    m4aSoundMode(SOUND_MODE_DA_BIT_8 | SOUND_MODE_FREQ_13379 | (12 << SOUND_MODE_MASVOL_SHIFT) | (5 << SOUND_MODE_MAXCHN_SHIFT));
 
     for (i = 0; i < NUM_MUSIC_PLAYERS; i++)
     {
@@ -113,27 +106,6 @@ void m4aSongNumStart(u16 n)
     const struct MusicPlayer *mplay = &mplayTable[song->ms];
 
     MPlayStart(mplay->info, song->header);
-}
-
-void m4aSongNumStartOrChange(u16 n)
-{
-    const struct MusicPlayer *mplayTable = gMPlayTable;
-    const struct Song *songTable = gSongTable;
-    const struct Song *song = &songTable[n];
-    const struct MusicPlayer *mplay = &mplayTable[song->ms];
-
-    if (mplay->info->songHeader != song->header)
-    {
-        MPlayStart(mplay->info, song->header);
-    }
-    else
-    {
-        if ((mplay->info->status & MUSICPLAYER_STATUS_TRACK) == 0
-         || (mplay->info->status & MUSICPLAYER_STATUS_PAUSE))
-        {
-            MPlayStart(mplay->info, song->header);
-        }
-    }
 }
 
 void m4aSongNumStartOrContinue(u16 n)
@@ -260,11 +232,7 @@ void MPlayExtender(struct CgbChannel *cgbChans)
     struct SoundInfo *soundInfo;
     u32 ident;
 
-    REG_SOUNDCNT_X = SOUND_MASTER_ENABLE
-                   | SOUND_4_ON
-                   | SOUND_3_ON
-                   | SOUND_2_ON
-                   | SOUND_1_ON;
+    REG_SOUNDCNT_X = SOUND_MASTER_ENABLE | SOUND_4_ON | SOUND_3_ON | SOUND_2_ON | SOUND_1_ON;
     REG_SOUNDCNT_L = 0; // set master volume to zero
     REG_NR12 = 0x8;
     REG_NR22 = 0x8;
@@ -314,11 +282,6 @@ void MPlayExtender(struct CgbChannel *cgbChans)
     soundInfo->ident = ident;
 }
 
-void MusicPlayerJumpTableCopy(void)
-{
-    asm("swi 0x2A");
-}
-
 void ClearChain(void *x)
 {
     void (*func)(void *) = *(&gMPlayJumpTable[34]);
@@ -343,14 +306,8 @@ void SoundInit(struct SoundInfo *soundInfo)
 
     REG_DMA1CNT_H = DMA_32BIT;
     REG_DMA2CNT_H = DMA_32BIT;
-    REG_SOUNDCNT_X = SOUND_MASTER_ENABLE
-                   | SOUND_4_ON
-                   | SOUND_3_ON
-                   | SOUND_2_ON
-                   | SOUND_1_ON;
-    REG_SOUNDCNT_H = SOUND_B_FIFO_RESET | SOUND_B_TIMER_0 | SOUND_B_LEFT_OUTPUT
-                   | SOUND_A_FIFO_RESET | SOUND_A_TIMER_0 | SOUND_A_RIGHT_OUTPUT
-                   | SOUND_ALL_MIX_FULL;
+    REG_SOUNDCNT_X = SOUND_MASTER_ENABLE | SOUND_4_ON | SOUND_3_ON | SOUND_2_ON | SOUND_1_ON;
+    REG_SOUNDCNT_H = SOUND_B_FIFO_RESET | SOUND_B_TIMER_0 | SOUND_B_LEFT_OUTPUT | SOUND_A_FIFO_RESET | SOUND_A_TIMER_0 | SOUND_A_RIGHT_OUTPUT | SOUND_ALL_MIX_FULL;
     REG_SOUNDBIAS_H = (REG_SOUNDBIAS_H & 0x3F) | 0x40;
 
     REG_DMA1SAD = (s32)soundInfo->pcmBuffer;
@@ -401,11 +358,9 @@ void SampleFreqSet(u32 freq)
 
     m4aSoundVSyncOn();
 
-    while (*(vu8 *)REG_ADDR_VCOUNT == 159)
-        ;
+    while (*(vu8 *)REG_ADDR_VCOUNT == 159);
 
-    while (*(vu8 *)REG_ADDR_VCOUNT != 159)
-        ;
+    while (*(vu8 *)REG_ADDR_VCOUNT != 159);
 
     REG_TM0CNT_H = TIMER_ENABLE | TIMER_1CLK;
 }
@@ -579,8 +534,6 @@ void MPlayOpen(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track
     {
         mplayInfo->MPlayMainNext = soundInfo->MPlayMainHead;
         mplayInfo->musicPlayerNext = soundInfo->musicPlayerHead;
-        // NULL assignment semantically useless, but required for match
-        soundInfo->MPlayMainHead = NULL;
     }
 
     soundInfo->musicPlayerHead = mplayInfo;
@@ -600,11 +553,8 @@ void MPlayStart(struct MusicPlayerInfo *mplayInfo, struct SongHeader *songHeader
 
     unk_B = mplayInfo->unk_B;
 
-    if (!unk_B
-        || ((!mplayInfo->songHeader || !(mplayInfo->tracks[0].flags & MPT_FLG_START))
-            && ((mplayInfo->status & MUSICPLAYER_STATUS_TRACK) == 0
-                || (mplayInfo->status & MUSICPLAYER_STATUS_PAUSE)))
-        || (mplayInfo->priority <= songHeader->priority))
+    if (!unk_B || ((!mplayInfo->songHeader || !(mplayInfo->tracks[0].flags & MPT_FLG_START)) && ((mplayInfo->status & MUSICPLAYER_STATUS_TRACK) == 0
+		|| (mplayInfo->status & MUSICPLAYER_STATUS_PAUSE))) || (mplayInfo->priority <= songHeader->priority))
     {
         mplayInfo->ident++;
         mplayInfo->status = 0;
@@ -772,11 +722,7 @@ void TrkVolPitSet(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *tr
     if (track->flags & MPT_FLG_PITSET)
     {
         s32 bend = track->bend * track->bendRange;
-        s32 x = (track->tune + bend)
-              * 4
-              + (track->keyShift << 8)
-              + (track->keyShiftX << 8)
-              + track->pitX;
+        s32 x = (track->tune + bend) * 4 + (track->keyShift << 8) + (track->keyShiftX << 8) + track->pitX;
 
         if (track->modT == 0)
             x += 16 * track->modM;
@@ -1730,15 +1676,12 @@ void SetPokemonCryStereo(u32 val)
 
     if (val)
     {
-        REG_SOUNDCNT_H = SOUND_B_TIMER_0 | SOUND_B_LEFT_OUTPUT
-                       | SOUND_A_TIMER_0 | SOUND_A_RIGHT_OUTPUT
-                       | SOUND_ALL_MIX_FULL;
+        REG_SOUNDCNT_H = SOUND_B_TIMER_0 | SOUND_B_LEFT_OUTPUT | SOUND_A_TIMER_0 | SOUND_A_RIGHT_OUTPUT | SOUND_ALL_MIX_FULL;
         soundInfo->mode &= ~1;
     }
     else
     {
-        REG_SOUNDCNT_H = SOUND_B_TIMER_0 | SOUND_B_LEFT_OUTPUT | SOUND_B_RIGHT_OUTPUT
-                       | SOUND_A_TIMER_0 | SOUND_A_LEFT_OUTPUT | SOUND_A_RIGHT_OUTPUT
+        REG_SOUNDCNT_H = SOUND_B_TIMER_0 | SOUND_B_LEFT_OUTPUT | SOUND_B_RIGHT_OUTPUT | SOUND_A_TIMER_0 | SOUND_A_LEFT_OUTPUT | SOUND_A_RIGHT_OUTPUT
                        | SOUND_B_MIX_HALF | SOUND_A_MIX_HALF | SOUND_CGB_MIX_FULL;
         soundInfo->mode |= 1;
     }

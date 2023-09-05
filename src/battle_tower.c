@@ -837,6 +837,14 @@ void StartSpecialBattle(void)
     }
 }
 
+static void ClearEReaderTrainer(struct BattleTowerEReaderTrainer *ereaderTrainer)
+{
+    u32 i;
+
+    for (i = 0; i < sizeof(struct BattleTowerEReaderTrainer) / sizeof(u32); i++)
+        ((u32 *)ereaderTrainer)[i] = 0;
+}
+
 void SetBattleTowerProperty(void)
 {
     s32 i;
@@ -1251,14 +1259,6 @@ static void SetEReaderTrainerChecksum(struct BattleTowerEReaderTrainer *ereaderT
     ereaderTrainer->checksum = 0;
     for (i = 0; i < sizeof(struct BattleTowerEReaderTrainer) / sizeof(u32) - 1; i++)
         ereaderTrainer->checksum += ((u32 *)ereaderTrainer)[i];
-}
-
-void ClearEReaderTrainer(struct BattleTowerEReaderTrainer *ereaderTrainer)
-{
-    u32 i;
-
-    for (i = 0; i < sizeof(struct BattleTowerEReaderTrainer) / sizeof(u32); i++)
-        ((u32 *)ereaderTrainer)[i] = 0;
 }
 
 void BufferEReaderTrainerGreeting(void)

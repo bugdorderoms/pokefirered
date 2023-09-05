@@ -9,7 +9,6 @@ bool8 MonHasMail(struct Pokemon *mon);
 u8 GiveMailToMon(struct Pokemon *mon, u16 itemId);
 u8 GiveMailToMon2(struct Pokemon *mon, struct Mail *mail);
 void TakeMailFromMon(struct Pokemon *mon);
-void ClearMailItemId(u8 mailId);
 u8 TakeMailFromMon2(struct Pokemon *mon);
 bool8 ItemIsMail(u16 itemId);
 

@@ -1,7 +1,6 @@
 #include "global.h"
 #include "gflib.h"
 #include "script.h"
-#include "mystery_event_script.h"
 #include "event_data.h"
 #include "random.h"
 #include "item.h"
@@ -257,20 +256,8 @@ bool8 ScrCmd_killscript(struct ScriptContext * ctx)
     return TRUE;
 }
 
-bool8 ScrCmd_setmysteryeventstatus(struct ScriptContext * ctx)
-{
-    SetMysteryEventScriptStatus(ScriptReadByte(ctx));
-    return FALSE;
-}
-
 bool8 ScrCmd_execram(struct ScriptContext * ctx)
 {
-    const u8 * script = sub_8069E48();
-    if (script != NULL)
-    {
-        gRAMScriptPtr = ctx->scriptPtr;
-        ScriptJump(ctx, script);
-    }
     return FALSE;
 }
 
@@ -2187,15 +2174,5 @@ bool8 ScrCmd_signmsg(struct ScriptContext * ctx)
 bool8 ScrCmd_normalmsg(struct ScriptContext * ctx)
 {
     MsgSetNotSignPost();
-    return FALSE;
-}
-
-bool8 ScrCmd_setmonmetlocation(struct ScriptContext * ctx)
-{
-    u16 partyIndex = VarGet(ScriptReadHalfword(ctx));
-    u8 location = ScriptReadByte(ctx);
-
-    if (partyIndex < PARTY_SIZE)
-        SetMonData(&gPlayerParty[partyIndex], MON_DATA_MET_LOCATION, &location);
     return FALSE;
 }

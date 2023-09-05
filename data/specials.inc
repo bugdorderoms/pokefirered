@@ -16,7 +16,7 @@ gSpecials:: @ 815FD60
 	def_special ExitLinkRoom
 	def_special ChooseItemFromBag
 	def_special DisableNationalPokedex
-	def_special IsMysteryGiftEnabled
+	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
@@ -392,16 +392,16 @@ gSpecials:: @ 815FD60
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special NullFieldSpecial
-	def_special ValidateReceivedWonderCard
+	def_special NullFieldSpecial
 	def_special SetUnlockedPokedexFlags
 	def_special InitUnionRoom
 	def_special BufferUnionRoomPlayerName
 	def_special QuestLog_StartRecordingInputsAfterDeferredEvent
 	def_special GetMartClerkObjectId
-	def_special BattleCardAction
+	def_special NullFieldSpecial
 	def_special GetQuestLogState
 	def_special QuestLog_CutRecording
-	def_special GetMENewsJisanItemAndState
+	def_special NullFieldSpecial
 	def_special GetPCBoxToSendMon
 	def_special OpenMuseumFossilPic
 	def_special CloseMuseumFossilPic

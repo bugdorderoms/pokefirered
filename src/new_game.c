@@ -159,7 +159,7 @@ void NewGameInitData(void)
     UnionRoomChat_InitializeRegisteredTexts();
     ResetPokeJumpResults();
     CpuFill16(0, &gSaveBlock2Ptr->berryPick, sizeof(struct BerryPickingResults));
-    InitMEventData();
+    EC_ResetMEventProfileMaybe();
     SetAllRenewableItemFlags();
     WarpToPlayersRoom();
     ScriptContext2_RunNewScript(EventScript_ResetAllMapFlags);
@@ -167,5 +167,5 @@ void NewGameInitData(void)
     ResetTrainerTowerResults();
 	ResetItemFlags();
     ClearAllFusedMonSpecies();
-	ResetMysteryEventFlags();
+	ResetMysteryGiftFlags();
 }

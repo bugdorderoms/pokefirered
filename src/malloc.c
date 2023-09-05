@@ -45,7 +45,7 @@ void PutFirstMemBlockHeader(void *block, u32 size)
     PutMemBlockHeader(block, (struct MemBlock *)block, (struct MemBlock *)block, size - sizeof(struct MemBlock));
 }
 
-void *AllocInternal(void *heapStart, u32 size)
+static void *AllocInternal(void *heapStart, u32 size)
 {
     u32 foundBlockSize;
 
@@ -56,19 +56,24 @@ void *AllocInternal(void *heapStart, u32 size)
     if (size & 3)
         size = 4 * ((size / 4) + 1);
 
-    for (;;) {
+    for (;;)
+	{
         // Loop through the blocks looking for unused block that's big enough.
-
-        if (!pos->flag) {
+        if (!pos->flag)
+		{
             foundBlockSize = pos->size;
 
-            if (foundBlockSize >= size) {
-                if (foundBlockSize - size < 2 * sizeof(struct MemBlock)) {
+            if (foundBlockSize >= size)
+			{
+                if (foundBlockSize - size < 2 * sizeof(struct MemBlock))
+				{
                     // The block isn't much bigger than the requested size,
                     // so just use it.
                     pos->flag = TRUE;
                     return pos->data;
-                } else {
+                }
+				else
+				{
                     // The block is significantly bigger than the requested
                     // size, so split the rest into a separate block.
                     int splitBlockSize = foundBlockSize;
@@ -105,7 +110,8 @@ void FreeInternal(void *heapStart, void *p)
 {
     AGB_ASSERT_EX(p != NULL, ABSPATH("gflib/malloc.c"), 195);
 
-    if (p) {
+    if (p)
+	{
         struct MemBlock *head = (struct MemBlock *)heapStart;
         struct MemBlock *pos = (struct MemBlock *)((u8 *)p - sizeof(struct MemBlock));
         AGB_ASSERT_EX(pos->magic_number == MALLOC_SYSTEM_ID, ABSPATH("gflib/malloc.c"), 204);
@@ -114,8 +120,10 @@ void FreeInternal(void *heapStart, void *p)
 
         // If the freed block isn't the last one, merge with the next block
         // if it's not in use.
-        if (pos->next != head) {
-            if (!pos->next->flag) {
+        if (pos->next != head)
+		{
+            if (!pos->next->flag)
+			{
                 AGB_ASSERT_EX(pos->next->magic_number == MALLOC_SYSTEM_ID, ABSPATH("gflib/malloc.c"), 211);
                 pos->size += sizeof(struct MemBlock) + pos->next->size;
                 pos->next->magic_number = 0;
@@ -127,8 +135,10 @@ void FreeInternal(void *heapStart, void *p)
 
         // If the freed block isn't the first one, merge with the previous block
         // if it's not in use.
-        if (pos != head) {
-            if (!pos->prev->flag) {
+        if (pos != head)
+		{
+            if (!pos->prev->flag)
+			{
                 AGB_ASSERT_EX(pos->prev->magic_number == MALLOC_SYSTEM_ID, ABSPATH("gflib/malloc.c"), 228);
 
                 pos->prev->next = pos->next;
@@ -141,46 +151,6 @@ void FreeInternal(void *heapStart, void *p)
             }
         }
     }
-}
-
-void *AllocZeroedInternal(void *heapStart, u32 size)
-{
-    void *mem = AllocInternal(heapStart, size);
-
-    if (mem != NULL) {
-        if (size & 3)
-            size = 4 * ((size / 4) + 1);
-
-        CpuFill32(0, mem, size);
-    }
-
-    return mem;
-}
-
-bool32 CheckMemBlockInternal(void *heapStart, void *pointer)
-{
-    struct MemBlock *head = (struct MemBlock *)heapStart;
-    struct MemBlock *block = (struct MemBlock *)((u8 *)pointer - sizeof(struct MemBlock));
-
-    if (block->magic_number != MALLOC_SYSTEM_ID)
-        return FALSE;
-
-    if (block->next->magic_number != MALLOC_SYSTEM_ID)
-        return FALSE;
-
-    if (block->next != head && block->next->prev != block)
-        return FALSE;
-
-    if (block->prev->magic_number != MALLOC_SYSTEM_ID)
-        return FALSE;
-
-    if (block->prev != head && block->prev->next != block)
-        return FALSE;
-
-    if (block->next != head && block->next != (struct MemBlock *)(block->data + block->size))
-        return FALSE;
-
-    return TRUE;
 }
 
 void InitHeap(void *heapStart, u32 heapSize)
@@ -197,28 +167,19 @@ void *Alloc(u32 size)
 
 void *AllocZeroed(u32 size)
 {
-    return AllocZeroedInternal(sHeapStart, size);
+    void *mem = AllocInternal(sHeapStart, size);
+
+    if (mem != NULL)
+	{
+        if (size & 3)
+            size = 4 * ((size / 4) + 1);
+
+        CpuFill32(0, mem, size);
+    }
+    return mem;
 }
 
 void Free(void *pointer)
 {
     FreeInternal(sHeapStart, pointer);
-}
-
-bool32 CheckMemBlock(void *pointer)
-{
-    return CheckMemBlockInternal(sHeapStart, pointer);
-}
-
-bool32 CheckHeap()
-{
-    struct MemBlock *pos = (struct MemBlock *)sHeapStart;
-
-    do {
-        if (!CheckMemBlockInternal(sHeapStart, pos->data))
-            return FALSE;
-        pos = pos->next;
-    } while (pos != (struct MemBlock *)sHeapStart);
-
-    return TRUE;
 }

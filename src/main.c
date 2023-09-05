@@ -163,9 +163,7 @@ void AgbMain()
         ReadKeys();
         RTCStart(&gRtcCheckLocation, &gRtcLocationDecimal, &gRtcLocation);
             
-        if (gSoftResetDisabled == FALSE
-         && (gMain.heldKeysRaw & A_BUTTON)
-         && (gMain.heldKeysRaw & B_START_SELECT) == B_START_SELECT)
+        if (gSoftResetDisabled == FALSE && (gMain.heldKeysRaw & A_BUTTON) && (gMain.heldKeysRaw & B_START_SELECT) == B_START_SELECT)
         {
             rfu_REQ_stopMode();
             rfu_waitREQComplete();

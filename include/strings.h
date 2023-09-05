@@ -548,17 +548,11 @@ extern const u8 gText_Player[];
 extern const u8 gText_Time[];
 extern const u8 gText_Colon[];
 extern const u8 gText_Pokedex[];
-extern const u8 gTextJPDummy_Hiki[];
 extern const u8 gText_Badges[];
-extern const u8 gTextJPDummy_Ko[];
 extern const u8 gText_Register[];
 
 // mystery_gift_menu
 extern const u8 gText_PickOKExit[];
-extern const u8 gText_PickOKCancel[];
-extern const u8 gText_MysteryGift2[];
-extern const u8 gJPText_MysteryGift[];
-extern const u8 gJPText_DecideStop[];
 extern const u8 gText_DataWillBeSaved[];
 extern const u8 gText_SaveCompletedPressA[];
 extern const u8 gText_WirelessCommunication[];
@@ -1137,21 +1131,6 @@ extern const u8 gText_PeopleTrading[];
 extern const u8 gText_PeopleBattling[];
 extern const u8 gText_PeopleInUnionRoom[];
 extern const u8 gText_PeopleCommunicating[];
-
-// mevent
-extern const u8 gJPText_ReceiveMysteryGiftWithEReader[];
-extern const u8 gJPText_SelectConnectFromEReaderMenu[];
-extern const u8 gJPText_SelectConnectWithGBA[];
-extern const u8 gJPText_LinkIsIncorrect[];
-extern const u8 gJPText_CardReadingHasBeenHalted[];
-extern const u8 gJPText_Connecting[];
-extern const u8 gJPText_ConnectionErrorCheckLink[];
-extern const u8 gJPText_ConnectionErrorTryAgain[];
-extern const u8 gJPText_AllowEReaderToLoadCard[];
-extern const u8 gJPText_ConnectionComplete[];
-extern const u8 gJPText_NewTrainerHasComeToSevii[];
-extern const u8 gJPText_PleaseWaitAMoment[];
-extern const u8 gJPText_WriteErrorUnableToSaveData[];
 
 // pokemon_jump
 extern const u8 gText_WantToPlayAgain2[];

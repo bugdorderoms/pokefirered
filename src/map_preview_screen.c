@@ -331,45 +331,32 @@ static u8 GetMapPreviewScreenIdx(u8 mapsec)
     for (i = 0; i < MPS_COUNT; i++)
     {
         if (sMapPreviewScreenData[i].mapsec == mapsec)
-        {
             return i;
-        }
     }
     return MPS_COUNT;
 }
 
 bool8 MapHasPreviewScreen(u8 mapsec, u8 type)
 {
-    u8 idx;
+    u8 idx = GetMapPreviewScreenIdx(mapsec);
 
-    idx = GetMapPreviewScreenIdx(mapsec);
     if (idx != MPS_COUNT)
     {
         if (type == MPS_TYPE_ANY)
-        {
             return TRUE;
-        }
         else
-        {
             return sMapPreviewScreenData[idx].type == type ? TRUE : FALSE;
-        }
     }
     else
-    {
         return FALSE;
-    }
 }
 
 bool32 MapHasPreviewScreen_HandleQLState2(u8 mapsec, u8 type)
 {
     if (gQuestLogState == QL_STATE_PLAYBACK)
-    {
         return FALSE;
-    }
     else
-    {
         return MapHasPreviewScreen(mapsec, type);
-    }
 }
 
 void MapPreview_InitBgs(void)
@@ -380,9 +367,8 @@ void MapPreview_InitBgs(void)
 
 void MapPreview_LoadGfx(u8 mapsec)
 {
-    u8 idx;
+    u8 idx = GetMapPreviewScreenIdx(mapsec);
 
-    idx = GetMapPreviewScreenIdx(mapsec);
     if (idx != MPS_COUNT)
     {
        ResetTempTileDataBuffers();
@@ -550,25 +536,19 @@ static void Task_RunMapPreviewScreenForest(u8 taskId)
 
 const struct MapPreviewScreen * GetDungeonMapPreviewScreenInfo(u8 mapsec)
 {
-    u8 idx;
+    u8 idx = GetMapPreviewScreenIdx(mapsec);
 
-    idx = GetMapPreviewScreenIdx(mapsec);
     if (idx == MPS_COUNT)
-    {
         return NULL;
-    }
     else
-    {
         return &sMapPreviewScreenData[idx];
-    }
 }
 
 u16 MapPreview_GetDuration(u8 mapsec)
 {
-    u8 idx;
+    u8 idx = GetMapPreviewScreenIdx(mapsec);
     u16 flagId;
 
-    idx = GetMapPreviewScreenIdx(mapsec);
     if (idx == MPS_COUNT)
     {
         return 0;

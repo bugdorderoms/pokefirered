@@ -155,6 +155,7 @@ static u16 MapNamePopupCreateWindow(bool32 palintoFadedBuffer)
     };
     u16 windowId;
     u16 r6 = 0x01D;
+	
     if (gMapHeader.floorNum != 0)
     {
         if (gMapHeader.floorNum != 0x7F)
