@@ -397,7 +397,7 @@ gSpecials:: @ 815FD60
 	def_special InitUnionRoom
 	def_special BufferUnionRoomPlayerName
 	def_special QuestLog_StartRecordingInputsAfterDeferredEvent
-	def_special GetMartClerkObjectId
+	def_special NullFieldSpecial
 	def_special NullFieldSpecial
 	def_special GetQuestLogState
 	def_special QuestLog_CutRecording

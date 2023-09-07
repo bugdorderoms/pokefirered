@@ -1378,7 +1378,7 @@ static void InitOverworldBgs_NoResetHeap(void)
 
 void CleanupOverworldWindowsAndTilemaps(void)
 {
-    FreeAllOverworldWindowBuffers();
+    FreeAllWindowBuffers();
     Free(gBGTilemapBuffers3);
     Free(gBGTilemapBuffers1);
     Free(gBGTilemapBuffers2);

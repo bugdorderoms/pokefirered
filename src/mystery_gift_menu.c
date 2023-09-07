@@ -123,8 +123,7 @@ static const u8 sText_NeedSpaceInParty[] = _("You'll need space in your party\nt
 
 static u8 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
 {
-	u32 i, j;
-	u8 nature, *ivs;
+	u8 i, j, nature, *ivs;
 	struct Pokemon *mon;
 	const struct MGPokemon *mgPokemon = mysteryGift.present.GivePokemon;
 	
@@ -179,11 +178,11 @@ static u8 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
 	}
 }
 
-static const u8 sText_NeedSpaceInBag[] = _("You'll need some space in your\nbag to receive this gift\pusing the code {STR_VAR_1}.");
+static const u8 sText_NeedSpaceInBag[] = _("You'll need some space in your\nbag to receive this gift\pusing the code {STR_VAR_1}!");
 
 static u8 MysteryGift_GiveItem(struct MysteryGift mysteryGift)
 {
-	u32 i;
+	u16 i;
 	const struct MGItem *mgItem = mysteryGift.present.GiveItem;
 	
 	for (i = 0; i < mysteryGift.presentsCount; i++)

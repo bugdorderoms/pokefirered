@@ -18,7 +18,6 @@ void * MallocAndDecompress(const void * src, u32 * size);
 void SetBgTilemapPalette(u8 bgId, u8 left, u8 top, u8 width, u8 height, u8 palette);
 void CopyToBufferFromBgTilemap(u8 bgId, u16 *dest, u8 left, u8 top, u8 width, u8 height);
 void InitStandardTextBoxWindows(void);
-void FreeAllOverworldWindowBuffers(void);
 void InitTextBoxGfxAndPrinters(void);
 u16 RunTextPrinters_CheckPrinter0Active(void);
 void AddTextPrinterDiffStyle(bool8 allowSkippingDelayWithButtonPress);

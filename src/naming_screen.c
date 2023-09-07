@@ -14,6 +14,7 @@
 #include "naming_screen.h"
 #include "new_menu_helpers.h"
 #include "pokemon_icon.h"
+#include "menu_helpers.h"
 #include "mystery_gift_menu.h"
 #include "pokemon_storage_system.h"
 #include "strings.h"
@@ -26,12 +27,12 @@
 
 #define subsprite_table(ptr) {.subsprites = ptr, .subspriteCount = (sizeof ptr) / (sizeof(struct Subsprite))}
 
-#define KBEVENT_NONE 0
-#define KBEVENT_PRESSED_A 5
-#define KBEVENT_PRESSED_B 6
+#define KBEVENT_NONE 		   0
+#define KBEVENT_PRESSED_A 	   5
+#define KBEVENT_PRESSED_B 	   6
 #define KBEVENT_PRESSED_SELECT 8
-#define KBEVENT_PRESSED_START 9
-#define KBEVENT_PRESSED_L 10
+#define KBEVENT_PRESSED_START  9
+#define KBEVENT_PRESSED_L 	   10
 
 #define KBROW_COUNT 4
 
@@ -51,7 +52,7 @@ enum
     MAIN_STATE_MOVE_TO_OK_BUTTON,
     MAIN_STATE_START_PAGE_SWAP,
     MAIN_STATE_WAIT_PAGE_SWAP,
-    MAIN_STATE_6,
+    MAIN_STATE_TRY_DO_EVENT,
     MAIN_STATE_UPDATE_DATA_BE_SAVED_TEXT,
 	MAIN_STATE_UPDATE_SAVE_GAME_TEXT,
     MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT,
@@ -75,10 +76,11 @@ enum
 
 struct NamingScreenTemplate
 {
-    u8 copyExistingString;
+    u8 copyExistingString:1;
+	u8 addGenderIcon:1;
+	u8 unused:6;
     u8 maxChars;
     u8 iconFunction;
-    u8 addGenderIcon;
     u8 initialPage;
     const u8 *title;
 };
@@ -87,7 +89,7 @@ struct NamingScreenData
 {
     /*0x0*/    u8 tilemapBuffer1[0x800];
     /*0x800*/  u8 tilemapBuffer2[0x800];
-    /*0x800*/  u8 tilemapBuffer3[0x800];
+    /*0x1000*/ u8 tilemapBuffer3[0x800];
     /*0x1800*/ u8 textBuffer[0x10];
     /*0x1810*/ u8 tileBuffer[0x600];
     /*0x1E10*/ u8 state;
@@ -101,14 +103,14 @@ struct NamingScreenData
     /*0x1E21*/ u8 bgToHide;
     /*0x1E22*/ u8 currentPage;
     /*0x1E23*/ u8 cursorSpriteId;
-    /*0x1E24*/ u8 selectBtnFrameSpriteId;
-    /*0x1E25*/ u8 keyRepeatStartDelayCopy;
-    /*0x1E28*/ const struct NamingScreenTemplate *template;
-    /*0x1E2C*/ u8 templateNum;
-    /*0x1E30*/ u8 *destBuffer;
-    /*0x1E34*/ u16 monSpecies;
-    /*0x1E36*/ u16 monGender;
-    /*0x1E3C*/ MainCallback returnCallback;
+    /*0x1E24*/ const struct NamingScreenTemplate *template;
+	/*0x1E28*/ u8 *destBuffer;
+	/*0x1E2C*/ u16 monSpecies;
+	/*0x1E2E*/ u16 monGender;
+	/*0x1E30*/ MainCallback returnCallback;
+	/*0x1E34*/ u8 selectBtnFrameSpriteId;
+    /*0x1E35*/ u8 keyRepeatStartDelayCopy;
+    /*0x1E36*/ u8 templateNum;
 };
 
 static EWRAM_DATA struct NamingScreenData * sNamingScreenData = NULL;
@@ -118,20 +120,19 @@ static void NamingScreen_Init(void);
 static void NamingScreen_InitBGs(void);
 static void sub_809DD60(void);
 static void sub_809DD88(u8 taskId);
-static bool8 MainState_BeginFadeIn(void);
-static bool8 MainState_WaitFadeIn(void);
-static bool8 MainState_HandleInput(void);
-static bool8 MainState_MoveToOKButton(void);
-static bool8 pokemon_store(void);
-static bool8 MainState_BeginFadeInOut(void);
-static bool8 MainState_WaitFadeOutAndExit(void);
+static void MainState_BeginFadeIn(void);
+static void MainState_WaitFadeIn(void);
+static void MainState_MoveToOKButton(void);
+static void MainState_TryDoEventAfterInput(void);
+static void MainState_BeginFadeInOut(void);
+static void MainState_WaitFadeOutAndExit(void);
 static void pokemon_transfer_to_pc_with_message(void);
 static void MysteryGiftDisplayMessage(void);
-static bool8 sub_809E1D4(void);
-static bool8 MainState_UpdateTextAndSaveGame(void);
-static bool8 MainState_UpdateSaveGameText(void);
-static bool8 MainState_StartPageSwap(void);
-static bool8 MainState_WaitPageSwap(void);
+static void sub_809E1D4(void);
+static void MainState_UpdateTextAndSaveGame(void);
+static void MainState_UpdateSaveGameText(void);
+static void MainState_StartPageSwap(void);
+static void MainState_WaitPageSwap(void);
 static void StartPageSwapAnim(void);
 static void Task_HandlePageSwapAnim(u8 taskId);
 static bool8 IsPageSwapAnimNotInProgress(void);
@@ -158,10 +159,10 @@ static bool8 IsCursorAnimFinished(void);
 static u8 GetCurrentPageColumnCount(void);
 static void CreatePageSwitcherSprites(void);
 static void sub_809EC20(void);
-static bool8 PageSwapSpritesCB_Init(struct Sprite * sprite);
-static bool8 PageSwapSpritesCB_Idle(struct Sprite * sprite);
-static bool8 PageSwapSpritesCB_SwapHide(struct Sprite * sprite);
-static bool8 PageSwapSpritesCB_SwapShow(struct Sprite * sprite);
+static void PageSwapSpritesCB_Init(struct Sprite * sprite);
+static void PageSwapSpritesCB_Idle(struct Sprite * sprite);
+static void PageSwapSpritesCB_SwapHide(struct Sprite * sprite);
+static void PageSwapSpritesCB_SwapShow(struct Sprite * sprite);
 static void sub_809ED88(u8 a0, struct Sprite * spr1, struct Sprite * spr2);
 static void CreateBackOkSprites(void);
 static void CreateUnderscoreSprites(void);
@@ -172,12 +173,12 @@ static void NamingScreen_CreatePCIcon(void);
 static void NamingScreen_CreateMonIcon(void);
 static void NamingScreen_CreateRivalIcon(void);
 static void NamingScreen_CreateMysteryGiftIcon(void);
-static bool8 HandleKeyboardEvent(void);
-static bool8 KeyboardKeyHandler_Character(u8);
-static bool8 KeyboardKeyHandler_Page(u8);
-static bool8 KeyboardKeyHandler_Backspace(u8);
-static bool8 KeyboardKeyHandler_OK(u8);
-static bool8 TriggerKeyboardChange(void);
+static void HandleKeyboardEvent(void);
+static void KeyboardKeyHandler_Character(u8);
+static void KeyboardKeyHandler_Page(u8);
+static void KeyboardKeyHandler_Backspace(u8);
+static void KeyboardKeyHandler_OK(u8);
+static void TriggerKeyboardChange(void);
 static u8 GetInputEvent(void);
 static void SetInputState(u8 state);
 static void Task_HandleInput(u8 taskId);
@@ -201,7 +202,6 @@ static void sub_809F9E8(u8 windowId, u8 kbPage);
 static void sub_809FA60(void);
 static void sub_809FAE4(void);
 static void sub_809FB70(void);
-static void NamingScreen_TurnOffScreen(void);
 static void NamingScreen_InitDisplayMode(void);
 static void VBlankCB_NamingScreen(void);
 static void ShowAllBgs(void);
@@ -412,7 +412,7 @@ static void CB2_NamingScreen(void)
     switch (gMain.state)
     {
     case 0:
-        NamingScreen_TurnOffScreen();
+        SetVBlankHBlankCallbacksToNull();
         NamingScreen_Init();
         gMain.state++;
         break;
@@ -536,7 +536,7 @@ static void sub_809DD88(u8 taskId)
         MainState_WaitFadeIn();
         break;
     case MAIN_STATE_HANDLE_INPUT:
-        MainState_HandleInput();
+        HandleKeyboardEvent();
         break;
     case MAIN_STATE_MOVE_TO_OK_BUTTON:
         MainState_MoveToOKButton();
@@ -547,8 +547,8 @@ static void sub_809DD88(u8 taskId)
     case MAIN_STATE_WAIT_PAGE_SWAP:
         MainState_WaitPageSwap();
         break;
-    case MAIN_STATE_6:
-        pokemon_store();
+    case MAIN_STATE_TRY_DO_EVENT:
+        MainState_TryDoEventAfterInput();
         break;
     case MAIN_STATE_UPDATE_DATA_BE_SAVED_TEXT:
 		MainState_UpdateTextAndSaveGame();
@@ -601,7 +601,7 @@ static u8 sub_809DE50(void)
     return sPageOrderSymbolsFirst[sNamingScreenData->currentPage];
 }
 
-static bool8 MainState_BeginFadeIn(void)
+static void MainState_BeginFadeIn(void)
 {
     DecompressToBgTilemapBuffer(3, gUnknown_8E982BC);
     sNamingScreenData->currentPage = KBPAGE_LETTERS_UPPER;
@@ -618,10 +618,9 @@ static bool8 MainState_BeginFadeIn(void)
     BlendPalettes(-1, 16, RGB_BLACK);
     BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
     sNamingScreenData->state++;
-    return FALSE;
 }
 
-static bool8 MainState_WaitFadeIn(void)
+static void MainState_WaitFadeIn(void)
 {
     if (!gPaletteFade.active)
     {
@@ -629,15 +628,9 @@ static bool8 MainState_WaitFadeIn(void)
         sub_809EA64(1);
         sNamingScreenData->state++;
     }
-    return FALSE;
 }
 
-static bool8 MainState_HandleInput(void)
-{
-    return HandleKeyboardEvent();
-}
-
-static bool8 MainState_MoveToOKButton(void)
+static void MainState_MoveToOKButton(void)
 {
     if (IsCursorAnimFinished())
     {
@@ -645,20 +638,19 @@ static bool8 MainState_MoveToOKButton(void)
         MoveCursorToOKButton();
         sNamingScreenData->state = MAIN_STATE_HANDLE_INPUT;
     }
-    return FALSE;
 }
 
-static bool8 pokemon_store(void)
+static void MainState_TryDoEventAfterInput(void)
 {
     CopyStringToDestBuffer();
     SetInputState(INPUT_STATE_DISABLED);
     sub_809EA64(0);
     sub_809E518(3, 0, 1);
+	
     if (sNamingScreenData->templateNum == NAMING_SCREEN_CAUGHT_MON && CalculatePlayerPartyCount() >= PARTY_SIZE)
     {
         pokemon_transfer_to_pc_with_message();
         sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
-        return FALSE;
     }
 	else if (sNamingScreenData->templateNum == NAMING_SCREEN_MYSTERY_GIFT)
 	{
@@ -684,23 +676,18 @@ static bool8 pokemon_store(void)
 				sNamingScreenData->state = MAIN_STATE_UPDATE_DATA_BE_SAVED_TEXT;
 				break;
 		}
-		return FALSE;
 	}
     else
-    {
         sNamingScreenData->state = MAIN_STATE_BEGIN_FADE_OUT;
-        return TRUE;  //Exit the naming screen
-    }
 }
 
-static bool8 MainState_BeginFadeInOut(void)
+static void MainState_BeginFadeInOut(void)
 {
     BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
     sNamingScreenData->state++;
-    return FALSE;
 }
 
-static bool8 MainState_WaitFadeOutAndExit(void)
+static void MainState_WaitFadeOutAndExit(void)
 {
     if (!gPaletteFade.active)
     {
@@ -711,7 +698,6 @@ static bool8 MainState_WaitFadeOutAndExit(void)
         FreeAllWindowBuffers();
         FREE_AND_SET_NULL(sNamingScreenData);
     }
-    return FALSE;
 }
 
 static void NamingScreenMessagePrint(const u8 *str)
@@ -754,17 +740,15 @@ static void MysteryGiftDisplayMessage(void)
     CopyWindowToVram(0, COPYWIN_BOTH);
 }
 
-static bool8 sub_809E1D4(void)
+static void sub_809E1D4(void)
 {
     RunTextPrinters();
 
     if (!IsTextPrinterActive(0) && (JOY_NEW(A_BUTTON)))
         sNamingScreenData->state = MAIN_STATE_BEGIN_FADE_OUT;
-
-    return FALSE;
 }
 
-static bool8 MainState_UpdateTextAndSaveGame(void)
+static void MainState_UpdateTextAndSaveGame(void)
 {
 	RunTextPrinters();
 	
@@ -774,10 +758,9 @@ static bool8 MainState_UpdateTextAndSaveGame(void)
 		NamingScreenMessagePrint(gText_DataWillBeSaved);
 		sNamingScreenData->state = MAIN_STATE_UPDATE_SAVE_GAME_TEXT;
 	}
-    return FALSE;
 }
 
-static bool8 MainState_UpdateSaveGameText(void)
+static void MainState_UpdateSaveGameText(void)
 {
 	RunTextPrinters();
 	
@@ -788,10 +771,9 @@ static bool8 MainState_UpdateSaveGameText(void)
 		NamingScreenMessagePrint(gText_SaveCompletedPressA);
 		sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
 	}
-	return FALSE;
 }
 
-static bool8 MainState_StartPageSwap(void)
+static void MainState_StartPageSwap(void)
 {
     SetInputState(INPUT_STATE_DISABLED);
     sub_809EC20();
@@ -800,10 +782,9 @@ static bool8 MainState_StartPageSwap(void)
     sub_809E518(0, 0, 1);
     PlaySE(SE_WIN_OPEN);
     sNamingScreenData->state = MAIN_STATE_WAIT_PAGE_SWAP;
-    return FALSE;
 }
 
-static bool8 MainState_WaitPageSwap(void)
+static void MainState_WaitPageSwap(void)
 {
     s16 cursorX;
     s16 cursorY;
@@ -811,7 +792,6 @@ static bool8 MainState_WaitPageSwap(void)
 
     if (IsPageSwapAnimNotInProgress())
     {
-
         GetCursorPos(&cursorX, &cursorY);
         var3 = (cursorX == GetCurrentPageColumnCount());
 
@@ -834,7 +814,6 @@ static bool8 MainState_WaitPageSwap(void)
         SetInputState(INPUT_STATE_ENABLED);
         sub_809EA0C(0);
     }
-    return FALSE;
 }
 
 //--------------------------------------------------
@@ -853,16 +832,14 @@ static bool8 (*const sPageSwapAnimStateFuncs[])(struct Task * task) = {
 
 static void StartPageSwapAnim(void)
 {
-    u8 taskId;
+    u8 taskId = CreateTask(Task_HandlePageSwapAnim, 0);
 
-    taskId = CreateTask(Task_HandlePageSwapAnim, 0);
     Task_HandlePageSwapAnim(taskId);
 }
 
 static void Task_HandlePageSwapAnim(u8 taskId)
 {
-    while (sPageSwapAnimStateFuncs[gTasks[taskId].tState](&gTasks[taskId]))
-        ;
+    while (sPageSwapAnimStateFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
 
 static bool8 IsPageSwapAnimNotInProgress(void)
@@ -883,6 +860,7 @@ static bool8 PageSwapAnimState_Init(struct Task *task)
 
 static bool8 PageSwapAnimState_1(struct Task *task)
 {
+	u16 temp;
     u16 *const arr[] =
         {
             &sNamingScreenData->bg2vOffset,
@@ -894,10 +872,7 @@ static bool8 PageSwapAnimState_1(struct Task *task)
     *arr[sNamingScreenData->bgToHide] = Sin((task->tFrameCount + 128) & 0xFF, 40);
     if (task->tFrameCount >= 64)
     {
-        u8 temp = sNamingScreenData->bg1Priority;  //Why u8 and not u16?
-
-        sNamingScreenData->bg1Priority = sNamingScreenData->bg2Priority;
-        sNamingScreenData->bg2Priority = temp;
+		SWAP(sNamingScreenData->bg1Priority, sNamingScreenData->bg2Priority, temp);
         task->tState++;
     }
     return 0;
@@ -905,6 +880,7 @@ static bool8 PageSwapAnimState_1(struct Task *task)
 
 static bool8 PageSwapAnimState_2(struct Task *task)
 {
+	u8 temp;
     u16 *const arr[] =
         {
             &sNamingScreenData->bg2vOffset,
@@ -916,10 +892,7 @@ static bool8 PageSwapAnimState_2(struct Task *task)
     *arr[sNamingScreenData->bgToHide] = Sin((task->tFrameCount + 128) & 0xFF, 40);
     if (task->tFrameCount >= 128)
     {
-        u8 temp = sNamingScreenData->bgToReveal;
-
-        sNamingScreenData->bgToReveal = sNamingScreenData->bgToHide;
-        sNamingScreenData->bgToHide = temp;
+		SWAP(sNamingScreenData->bgToReveal, sNamingScreenData->bgToHide, temp);
         task->tState++;
     }
     return 0;
@@ -942,10 +915,7 @@ static bool8 PageSwapAnimState_Done(struct Task *task)
 
 static void sub_809E4F0(void)
 {
-    u8 taskId;
-
-    taskId = CreateTask(Task_809E58C, 3);
-    gTasks[taskId].data[0] = 3;
+    gTasks[CreateTask(Task_809E58C, 3)].data[0] = 3;
 }
 
 static void sub_809E518(u8 a, u8 b, u8 c)
@@ -1234,7 +1204,7 @@ static void sub_809EC20(void)
     sprite->data[1] = sNamingScreenData->currentPage;
 }
 
-static bool8 (*const sPageSwapSpritesCBs[])(struct Sprite * sprite) = {
+static void (*const sPageSwapSpritesCBs[])(struct Sprite * sprite) = {
     PageSwapSpritesCB_Init,
     PageSwapSpritesCB_Idle,
     PageSwapSpritesCB_SwapHide,
@@ -1243,29 +1213,21 @@ static bool8 (*const sPageSwapSpritesCBs[])(struct Sprite * sprite) = {
 
 static void SpriteCB_PageSwap(struct Sprite *sprite)
 {
-    while (sPageSwapSpritesCBs[sprite->data[0]](sprite))
-        ;
+    sPageSwapSpritesCBs[sprite->data[0]](sprite);
 }
 
-static bool8 PageSwapSpritesCB_Init(struct Sprite *sprite)
+static void PageSwapSpritesCB_Init(struct Sprite *sprite)
 {
     struct Sprite *sprite1 = &gSprites[sprite->data[6]];
     struct Sprite *sprite2 = &gSprites[sprite->data[7]];
 
     sub_809ED88(sub_809DE20(sNamingScreenData->currentPage), sprite1, sprite2);
     sprite->data[0]++;
-    return FALSE;
 }
 
-static bool8 PageSwapSpritesCB_Idle(struct Sprite *sprite)
-{
-    struct Sprite *sprite1 = &gSprites[sprite->data[6]];
-    struct Sprite *sprite2 = &gSprites[sprite->data[7]];
+static void PageSwapSpritesCB_Idle(struct Sprite *sprite) { }
 
-    return FALSE;
-}
-
-static bool8 PageSwapSpritesCB_SwapHide(struct Sprite *sprite)
+static void PageSwapSpritesCB_SwapHide(struct Sprite *sprite)
 {
     struct Sprite *sprite1 = &gSprites[sprite->data[6]];
     struct Sprite *sprite2 = &gSprites[sprite->data[7]];
@@ -1280,10 +1242,9 @@ static bool8 PageSwapSpritesCB_SwapHide(struct Sprite *sprite)
         page = sprite->data[1];
         sub_809ED88(sub_809DE20((page + 1) % 3), sprite1, sprite2);
     }
-    return FALSE;
 }
 
-static bool8 PageSwapSpritesCB_SwapShow(struct Sprite *sprite)
+static void PageSwapSpritesCB_SwapShow(struct Sprite *sprite)
 {
     struct Sprite *sprite1 = &gSprites[sprite->data[6]];
     struct Sprite *sprite2 = &gSprites[sprite->data[7]];
@@ -1295,7 +1256,6 @@ static bool8 PageSwapSpritesCB_SwapShow(struct Sprite *sprite)
         sprite1->y2 = 0;
         sprite->data[0] = 1;
     }
-    return FALSE;
 }
 
 static const u16 gUnknown_83E2388[] = {1, 3, 2};
@@ -1307,8 +1267,6 @@ static void sub_809ED88(u8 page, struct Sprite * sprite1, struct Sprite * sprite
     sprite1->sheetTileStart = GetSpriteTileStartByTag(gUnknown_83E238E[page]);
     sprite1->subspriteTableNum = page;
 }
-
-//
 
 static void CreateBackOkSprites(void)
 {
@@ -1361,38 +1319,26 @@ static void CreateInputTargetIcon(void)
     sIconFunctions[sNamingScreenData->template->iconFunction]();
 }
 
-static void NamingScreen_NoCreateIcon(void)
-{
-
-}
+static void NamingScreen_NoCreateIcon(void) { }
 
 static void NamingScreen_CreatePlayerIcon(void)
 {
-    u8 rivalGfxId;
-    u8 spriteId;
-
-    rivalGfxId = GetPlayerAvatarGraphicsIdByStateIdAndGender(0, sNamingScreenData->monSpecies);
-    spriteId = AddPseudoObjectEvent(rivalGfxId, SpriteCallbackDummy, 0x38, 0x25, 0);
+    u8 spriteId = AddPseudoObjectEvent(GetPlayerAvatarGraphicsIdByStateIdAndGender(0, sNamingScreenData->monSpecies), SpriteCallbackDummy, 0x38, 0x25, 0);
     gSprites[spriteId].oam.priority = 3;
     StartSpriteAnim(&gSprites[spriteId], 4);
 }
 
 static void NamingScreen_CreatePCIcon(void)
 {
-    u8 spriteId;
-
-    spriteId = CreateSprite(&gUnknown_83E2634, 0x38, 0x29, 0);
+    u8 spriteId = CreateSprite(&gUnknown_83E2634, 0x38, 0x29, 0);
     SetSubspriteTables(&gSprites[spriteId], gUnknown_83E252C);
     gSprites[spriteId].oam.priority = 3;
 }
 
 static void NamingScreen_CreateMonIcon(void)
 {
-    u8 spriteId;
-
     LoadMonIconPalettes();
-    spriteId = CreateMonIcon(sNamingScreenData->monSpecies, SpriteCB_MonIcon, 0x38, 0x28, 0);
-    gSprites[spriteId].oam.priority = 3;
+    gSprites[CreateMonIcon(sNamingScreenData->monSpecies, SpriteCB_MonIcon, 0x38, 0x28, 0)].oam.priority = 3;
 }
 
 static const union AnimCmd gUnknown_83E23A8[] = {
@@ -1447,99 +1393,92 @@ static void NamingScreen_CreateMysteryGiftIcon(void)
     gSprites[spriteId].oam.priority = 3;
 }
 
-static bool8 (*const sKeyboardKeyHandlers[])(u8) = {
+static void (*const sKeyboardKeyHandlers[])(u8) = {
     KeyboardKeyHandler_Character,
     KeyboardKeyHandler_Page,
     KeyboardKeyHandler_Backspace,
     KeyboardKeyHandler_OK,
 };
 
-static bool8 HandleKeyboardEvent(void)
+static void HandleKeyboardEvent(void)
 {
     u8 event = GetInputEvent();
     u8 keyRole = GetKeyRoleAtCursorPos();
 
     if (event == KBEVENT_PRESSED_SELECT)
     {
-        return TriggerKeyboardChange();
+        TriggerKeyboardChange();
     }
     else if (event == KBEVENT_PRESSED_B)
     {
         DeleteTextCharacter();
-        return FALSE;
     }
     else if (event == KBEVENT_PRESSED_START)
     {
         MoveCursorToOKButton();
-        return FALSE;
     }
     else if (event == KBEVENT_PRESSED_L)
     {
         ChangeCharacterCase();
-		return FALSE;
     }
     else
     {
-        return sKeyboardKeyHandlers[keyRole](event);
+        sKeyboardKeyHandlers[keyRole](event);
     }
 }
 
-static bool8 KeyboardKeyHandler_Character(u8 event)
+static void KeyboardKeyHandler_Character(u8 event)
 {
     sub_809E518(3, 0, 0);
+	
     if (event == KBEVENT_PRESSED_A)
     {
         bool8 var = AppendCharToBuffer_CheckBufferFull();
 
         sub_809EAA8();
+		
         if (var)
         {
             SetInputState(INPUT_STATE_DISABLED);
             sNamingScreenData->state = MAIN_STATE_MOVE_TO_OK_BUTTON;
         }
 #if PAGE_SWAP
-        else if (GetTextCaretPosition() == 1 && sNamingScreenData->currentPage == KBPAGE_LETTERS_UPPER) {
+        else if (GetTextCaretPosition() == 1 && sNamingScreenData->currentPage == KBPAGE_LETTERS_UPPER)
             sNamingScreenData->state = MAIN_STATE_START_PAGE_SWAP;
-        }
 #endif
     }
-    return FALSE;
 }
 
-static bool8 KeyboardKeyHandler_Page(u8 event)
+static void KeyboardKeyHandler_Page(u8 event)
 {
     sub_809E518(0, 1, 0);
+	
     if (event == KBEVENT_PRESSED_A)
-        return TriggerKeyboardChange();
-    else
-        return FALSE;
+        TriggerKeyboardChange();
 }
 
-static bool8 KeyboardKeyHandler_Backspace(u8 event)
+static void KeyboardKeyHandler_Backspace(u8 event)
 {
     sub_809E518(1, 1, 0);
+	
     if (event == KBEVENT_PRESSED_A)
         DeleteTextCharacter();
-    return FALSE;
 }
 
-static bool8 KeyboardKeyHandler_OK(u8 event)
+static void KeyboardKeyHandler_OK(u8 event)
 {
     sub_809E518(2, 1, 0);
+	
     if (event == KBEVENT_PRESSED_A)
     {
         PlaySE(SE_SELECT);
-        sNamingScreenData->state = MAIN_STATE_6;
-        return TRUE;
+        sNamingScreenData->state = MAIN_STATE_TRY_DO_EVENT;
     }
-    else
-        return FALSE;
 }
 
-static bool8 TriggerKeyboardChange(void)
+static void TriggerKeyboardChange(void)
 {
     sNamingScreenData->state = MAIN_STATE_START_PAGE_SWAP;
-    return TRUE;
 }
 
 //--------------------------------------------------
@@ -1569,16 +1508,12 @@ static void InputInit(void)
 
 static u8 GetInputEvent(void)
 {
-    u8 taskId = FindTaskIdByFunc(Task_HandleInput);
-
-    return gTasks[taskId].tKeyboardEvent;
+    return gTasks[FindTaskIdByFunc(Task_HandleInput)].tKeyboardEvent;
 }
 
 static void SetInputState(u8 state)
 {
-    u8 taskId = FindTaskIdByFunc(Task_HandleInput);
-
-    gTasks[taskId].tState = state;
+    gTasks[FindTaskIdByFunc(Task_HandleInput)].tState = state;
 }
 
 static void Task_HandleInput(u8 taskId)
@@ -1654,7 +1589,7 @@ static void HandleDpadMovement(struct Task *task)
     //Wrap cursor position in the X direction
     if (cursorX < 0)
         cursorX = GetCurrentPageColumnCount();
-    if (cursorX > GetCurrentPageColumnCount())
+    else if (cursorX > GetCurrentPageColumnCount())
         cursorX = 0;
 
     //Handle cursor movement in X direction
@@ -1681,8 +1616,9 @@ static void HandleDpadMovement(struct Task *task)
         //so wrap Y accordingly
         if (cursorY < 0)
             cursorY = 2;
-        if (cursorY > 2)
+        else if (cursorY > 2)
             cursorY = 0;
+		
         if (cursorY == 0)
             task->tKbFunctionKey = FNKEY_BACK;
         else if (cursorY == 2)
@@ -1692,7 +1628,7 @@ static void HandleDpadMovement(struct Task *task)
     {
         if (cursorY < 0)
             cursorY = 3;
-        if (cursorY > 3)
+        else if (cursorY > 3)
             cursorY = 0;
     }
     SetCursorPos(cursorX, cursorY);
@@ -1744,10 +1680,7 @@ static void CallAddGenderIconFunc(void)
     sAddGenderIconFuncs[sNamingScreenData->template->addGenderIcon]();
 }
 
-static void AddGenderIconFunc_No(void)
-{
-
-}
+static void AddGenderIconFunc_No(void) { }
 
 static const u8 sGenderColors[2][3] = {
     [MALE]   = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_LIGHT_BLUE, TEXT_COLOR_BLUE},
@@ -1803,10 +1736,9 @@ static u8 GetPreviousTextCaretPosition(void)
 
 static void DeleteTextCharacter(void)
 {
-    u8 index;
+    u8 index = GetPreviousTextCaretPosition();
     u8 var2;
 
-    index = GetPreviousTextCaretPosition();
     // Temporarily make this a space for redrawing purposes
     sNamingScreenData->textBuffer[index] = CHAR_SPACE;
     PrintBufferCharactersOnScreen();
@@ -1851,9 +1783,7 @@ static bool8 AppendCharToBuffer_CheckBufferFull(void)
 
 static void AddTextCharacter(u8 ch)
 {
-    u8 index = GetTextCaretPosition();
-
-    sNamingScreenData->textBuffer[index] = ch;
+    sNamingScreenData->textBuffer[GetTextCaretPosition()] = ch;
 }
 
 static void CopyStringToDestBuffer(void)
@@ -2013,12 +1943,6 @@ static void sub_809FB70(void)
     UpdatePaletteFade();
 }
 
-static void NamingScreen_TurnOffScreen(void)
-{
-    SetVBlankCallback(NULL);
-    SetHBlankCallback(NULL);
-}
-
 static void NamingScreen_InitDisplayMode(void)
 {
     SetVBlankCallback(VBlankCB_NamingScreen);
@@ -2055,35 +1979,6 @@ static bool8 IsLetter(u8 character)
             return TRUE;
     }
     return FALSE;
-}
-
-//--------------------------------------------------
-// Unused debug functions
-//--------------------------------------------------
-
-static void Debug_DoNamingScreen_Player(void)
-{
-    DoNamingScreen(NAMING_SCREEN_PLAYER, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, CB2_ReturnToFieldWithOpenMenu);
-}
-
-static void Debug_DoNamingScreen_Box(void)
-{
-    DoNamingScreen(NAMING_SCREEN_BOX, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, CB2_ReturnToFieldWithOpenMenu);
-}
-
-static void Debug_DoNamingScreen_CaughtMon(void)
-{
-    DoNamingScreen(NAMING_SCREEN_CAUGHT_MON, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, CB2_ReturnToFieldWithOpenMenu);
-}
-
-static void Debug_DoNamingScreen_NameRater(void)
-{
-    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, CB2_ReturnToFieldWithOpenMenu);
-}
-
-static void Debug_DoNamingScreen_Rival(void)
-{
-    DoNamingScreen(NAMING_SCREEN_RIVAL, gSaveBlock2Ptr->playerName, gSaveBlock2Ptr->playerGender, MON_MALE, CB2_ReturnToFieldWithOpenMenu);
 }
 
 //--------------------------------------------------

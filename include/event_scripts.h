@@ -875,7 +875,6 @@ extern const u8 EventScript_BeautifulSkyWindow[];
 extern const u8 EventScript_BlinkingLights[];
 extern const u8 EventScript_NeatlyLinedUpTools[];
 extern const u8 CableClub_EventScript_ShowWirelessCommunicationScreen[];
-extern const u8 EventScript_Questionnaire[];
 extern const u8 CableClub_EventScript_ShowBattleRecords[];
 extern const u8 EventScript_Indigo_UltimateGoal[];
 extern const u8 EventScript_Indigo_HighestAuthority[];

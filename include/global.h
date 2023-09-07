@@ -457,15 +457,6 @@ struct WonderNewsMetadata
     u8 berry;
 };
 
-struct WonderNews
-{
-    u16 newsId;
-    u8 sendType; // SEND_TYPE_*
-    u8 bgType;
-    u8 titleText[WONDER_NEWS_TEXT_LENGTH];
-    u8 bodyText[WONDER_NEWS_BODY_TEXT_LINES][WONDER_NEWS_TEXT_LENGTH];
-};
-
 struct WonderCard
 {
     u16 flagId; // Event flag (sReceivedGiftFlags) + WONDER_CARD_FLAG_OFFSET
@@ -494,7 +485,6 @@ struct WonderCardMetadata
 struct MysteryGiftSave
 {
     u32 newsCrc;
-    struct WonderNews news;
     u32 cardCrc;
     struct WonderCard card;
     u32 cardMetadataCrc;

@@ -105,7 +105,10 @@ static void Debug_NewGameGiveAllItems(void)
 	u16 i;
 	
 	for (i = ITEM_NONE + 1; i < ITEMS_COUNT; i++)
-		AddBagItem(i, 1);
+	{
+		if (CheckBagHasSpace(i, 10))
+			AddBagItem(i, 10);
+	}
 }
 
 static void Debug_NewGameFillPokedex(void)

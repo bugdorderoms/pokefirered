@@ -129,7 +129,6 @@ bool8 MetatileBehavior_IsSnacks(u8 metatileBehavior);
 bool8 MetatileBehavior_IsStrengthButton(u8 metatileBehavior);
 bool8 MetatileBehavior_IsPlayerFacingCableClubWirelessMonitor(u8 tile, u8 playerDirection);
 bool8 MetatileBehavior_IsPlayerFacingBattleRecords(u8 tile, u8 playerDirection);
-bool8 MetatileBehavior_IsQuestionnaire(u8 metatileBehavior);
 bool8 MetatileBehavior_IsIndigoPlateauMark(u8 metatileBehavior);
 bool8 MetatileBehavior_IsIndigoPlateauMark2(u8 metatileBehavior);
 bool8 MetatileBehavior_IsFood(u8 metatileBehavior);

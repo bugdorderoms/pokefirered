@@ -8,14 +8,12 @@
 static EWRAM_DATA struct PokemonMarkMenu * sMenu = NULL;
 
 static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 paletteTag);
-static void nullsub_62(struct Sprite * sprite);
 static void SpriteCB_MarkingIcon(struct Sprite * sprite);
 static void SpriteCB_Cursor(struct Sprite * sprite);
 static struct Sprite * CreateMonMarkingSprite(u16 tilesTag, u16 paletteTag, const u16 *palette, u16 size);
 
 static const u16 sMonMarkingsPal[] = INCBIN_U16("graphics/misc/mon_markings.gbapal");
 static const u16 sMonMarkingsTiles[] = INCBIN_U16("graphics/misc/mon_markings.4bpp");
-static const u8 sUnref_83EE828[] = {0x09, 0x50, 0x13, 0x02, 0xFF};
 
 static const struct OamData sOamData_64x64 = {
     .shape = SPRITE_SHAPE(64x64),
@@ -259,29 +257,33 @@ static bool8 DoLoadMonMarkingsFrameGfx(void)
 void LoadMonMarkingsFrameGfx(void)
 {
     GetUserFrameForMonMarkings();
-    while (DoLoadMonMarkingsFrameGfx())
-    {}
+	
+    while (DoLoadMonMarkingsFrameGfx()) {}
 }
 
 void DrawMonMarkingsMenu(u8 markings, s16 x, s16 y)
 {
     u16 i;
+	
     sMenu->cursorPos = 0;
     sMenu->markings = markings;
+	
     for (i = 0; i < 4; i++)
-    {
         sMenu->markingsArray[i] = (sMenu->markings >> i) & 1;
-    }
+
     CreateMonMarkingsMenuSprites(x, y, sMenu->baseTileTag, sMenu->basePaletteTag);;
 }
 
 void TeardownMonMarkingsMenu(void)
 {
     u16 i;
+	
     for (i = 0; i < 3; i++)
         FreeSpriteTilesByTag(sMenu->baseTileTag + i);
+	
     FreeSpritePaletteByTag(sMenu->basePaletteTag);
     FreeSpritePaletteByTag(sMenu->basePaletteTag + 1);
+	
     for (i = 0; i < 2; i++)
     {
         if (sMenu->menuWindowSprites[i] == NULL)
@@ -303,6 +305,7 @@ void TeardownMonMarkingsMenu(void)
 bool8 MonMarkingsHandleInput(void)
 {
     u16 i;
+	
     if (JOY_NEW(DPAD_UP))
     {
         PlaySE(SE_SELECT);
@@ -372,7 +375,7 @@ static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 palette
         .anims = sSpriteAnimTable_Frame,
         .images = NULL,
         .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = nullsub_62
+        .callback = SpriteCallbackDummy
     };
     LoadSpriteSheets(sheets);
     LoadSpritePalettes(palettes);
@@ -450,9 +453,6 @@ static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 palette
     }
 }
 
-static void nullsub_62(struct Sprite * sprite)
-{}
-
 static void SpriteCB_MarkingIcon(struct Sprite * sprite)
 {
     if (sMenu->markingsArray[sprite->data[0]])
@@ -493,7 +493,7 @@ static struct Sprite * CreateMonMarkingSprite(u16 tileTag, u16 paletteTag, const
     sprTemplate.anims = sSpriteAnimTable_MonMarkSet;
     sprTemplate.images = NULL;
     sprTemplate.affineAnims = gDummySpriteAffineAnimTable;
-    sprTemplate.callback = nullsub_62;
+    sprTemplate.callback = SpriteCallbackDummy;
 
     sheet.size = size * 0x80;
 

@@ -13,24 +13,23 @@
 #include "math_util.h"
 #include "overworld.h"
 #include "random.h"
+#include "menu_helpers.h"
 #include "data.h"
 #include "constants/songs.h"
 
 struct OakSpeechResources
 {
-    void * solidColorsGfx;
-    void * trainerPicTilemapBuffer;
-    void * unk_0008;
-    u8 filler_000C[4];
-    u16 hasPlayerBeenNamed;
-    u16 unk_0012;
-    u16 unk_0014[4];
-    u8 textColor[3];
-    u8 textSpeed;
-    u8 filler_0020[0x1800];
-    u8 bg2TilemapBuffer[0x400];
-    u8 bg1TilemapBuffer[0x800];
-}; //size=0x2420
+    /*0x000*/ void * solidColorsGfx;
+    /*0x004*/ void * trainerPicTilemapBuffer;
+    /*0x008*/ void * unk_0008;
+    /*0x00C*/ u16 hasPlayerBeenNamed;
+    /*0x00E*/ u16 unk_0012;
+    /*0x010*/ u16 unk_0014[4];
+    /*0x018*/ u8 textColor[3];
+    /*0x01B*/ u8 textSpeed;
+    /*0x01C*/ u8 bg2TilemapBuffer[0x400];
+    /*0x41C*/ u8 bg1TilemapBuffer[0x800];
+}; //size=0xC1C
 
 EWRAM_DATA struct OakSpeechResources * sOakSpeechResources = NULL;
 
@@ -501,8 +500,7 @@ static void Task_OaksSpeech1(u8 taskId)
     switch (gMain.state)
     {
     case 0:
-        SetVBlankCallback(NULL);
-        SetHBlankCallback(NULL);
+		SetVBlankHBlankCallbacksToNull();
         DmaFill16(3, 0, VRAM, VRAM_SIZE);
         DmaFill32(3, 0, OAM, OAM_SIZE);
         DmaFill16(3, 0, PLTT + sizeof(u16), PLTT_SIZE - 2);
@@ -580,7 +578,6 @@ static void Task_OaksSpeech1(u8 taskId)
         gMain.state = 0;
         return;
     }
-
     gMain.state++;
 }
 
@@ -600,6 +597,7 @@ static void Task_OakSpeech4(u8 taskId)
 {
     u8 i = 0;
     u8 r7 = sOakSpeechResources->unk_0012 - 1;
+	
     if (sOakSpeechResources->unk_0012 == 0)
     {
         CreateHelpDocsPage1();

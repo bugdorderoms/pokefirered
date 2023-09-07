@@ -1130,7 +1130,6 @@ EventScript_HandOverItem:: @ 81A74F2
 	.include "data/scripts/pokemon_league.inc"
 	.include "data/scripts/movement.inc"	
 	.include "data/scripts/flavor_text.inc"
-	.include "data/scripts/questionnaire.inc"
 
 EventScript_BagItemCanBeRegistered:: @ 81A77A0
 	msgbox Text_BagItemCanBeRegistered, MSGBOX_SIGN

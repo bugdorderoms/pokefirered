@@ -568,8 +568,6 @@ static const u8 *GetInteractedMetatileScript(struct MapPosition *position, u8 me
         return EventScript_NeatlyLinedUpTools;
     if (MetatileBehavior_IsPlayerFacingCableClubWirelessMonitor(metatileBehavior, direction) == TRUE)
         return CableClub_EventScript_ShowWirelessCommunicationScreen;
-    if (MetatileBehavior_IsQuestionnaire(metatileBehavior) == TRUE)
-        return EventScript_Questionnaire;
     if (MetatileBehavior_IsPlayerFacingBattleRecords(metatileBehavior, direction) == TRUE)
         return CableClub_EventScript_ShowBattleRecords;
     if (MetatileBehavior_IsIndigoPlateauMark(metatileBehavior) == TRUE)

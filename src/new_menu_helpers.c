@@ -367,11 +367,6 @@ void InitStandardTextBoxWindows(void)
     sStartMenuWindowId = 0xFF;
 }
 
-void FreeAllOverworldWindowBuffers(void)
-{
-    FreeAllWindowBuffers();
-}
-
 void InitTextBoxGfxAndPrinters(void)
 {
     ChangeBgX(0, 0, 0);
@@ -591,18 +586,6 @@ void Menu_LoadStdPalAt(u16 offset)
     LoadPalette(gTMCaseMainWindowPalette, offset, 0x14);
 }
 
-static const u16 *GetTmCaseMainWindowPalette(void)
-{
-    return gTMCaseMainWindowPalette;
-}
-
-static u16 GetStdPalColor(u8 colorNum)
-{
-    if (colorNum > 0xF)
-        colorNum = 0;
-    return gTMCaseMainWindowPalette[colorNum];
-}
-
 void DisplayItemMessageOnField(u8 taskId, u8 textSpeed, const u8 *string, TaskFunc callback)
 {
     LoadStdWindowFrameGfx();
@@ -622,7 +605,6 @@ void DisplayYesNoMenuDefaultNo(void)
 
 u8 GetTextSpeedSetting(void)
 {
-    u32 speed;
     if (gSaveBlock2Ptr->optionsTextSpeed > OPTIONS_TEXT_SPEED_FAST)
         gSaveBlock2Ptr->optionsTextSpeed = OPTIONS_TEXT_SPEED_MID;
     return gUnknown_841F428[gSaveBlock2Ptr->optionsTextSpeed];
@@ -651,11 +633,6 @@ void RemoveStartMenuWindow(void)
         RemoveWindow(sStartMenuWindowId);
         sStartMenuWindowId = 0xFF;
     }
-}
-
-static u16 GetDlgWindowBaseTileNum(void)
-{
-    return DLG_WINDOW_BASE_TILE_NUM;
 }
 
 u16 GetStdWindowBaseTileNum(void)

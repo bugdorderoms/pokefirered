@@ -868,14 +868,6 @@ bool8 MetatileBehavior_IsPlayerFacingBattleRecords(u8 tile, u8 playerDirection)
         return FALSE;
 }
 
-bool8 MetatileBehavior_IsQuestionnaire(u8 metatileBehavior)
-{
-    if(metatileBehavior == MB_QUESTIONNAIRE)
-        return TRUE;
-    else
-        return FALSE;
-}
-
 bool8 MetatileBehavior_IsIndigoPlateauMark(u8 metatileBehavior)
 {
     if(metatileBehavior == MB_INDIGO_PLATEAU_MARK_DPAD)

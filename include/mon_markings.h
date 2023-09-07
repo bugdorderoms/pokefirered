@@ -17,9 +17,8 @@ struct PokemonMarkMenu
     /*0x002C*/ const u8 *frameTiles;
     /*0x0030*/ const u16 *framePalette;
     /*0x0034*/ u8 menuWindowSpriteTiles[0x1000];
-    /*0x1034*/ u8 filler1034[0x80];
-    /*0x10B4*/ u8 tileLoadState;
-}; // 10b8
+    /*0x1034*/ u8 tileLoadState;
+}; // 1038
 
 void SetMonMarkingsMenuPointer(struct PokemonMarkMenu * markMenu);
 void LoadMonMarkingsFrameGfx(void);

@@ -1379,7 +1379,7 @@
 #define FLAG_0x836                                                  (SYS_FLAGS + 0x36)
 #define FLAG_0x837                                                  (SYS_FLAGS + 0x37)
 #define FLAG_0x838                                                  (SYS_FLAGS + 0x38)
-#define FLAG_SYS_MYSTERY_GIFT_ENABLED                               (SYS_FLAGS + 0x39)
+#define FLAG_0x839                                                  (SYS_FLAGS + 0x39)
 #define FLAG_0x83A                                                  (SYS_FLAGS + 0x3A)
 #define FLAG_0x83B                                         			(SYS_FLAGS + 0x3B)
 #define FLAG_SYS_SAW_HELP_SYSTEM_INTRO                              (SYS_FLAGS + 0x3C)
