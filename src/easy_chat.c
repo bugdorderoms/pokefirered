@@ -24,7 +24,6 @@ struct Unk203A120
 
 static EWRAM_DATA struct Unk203A120 * sEasyChatSelectionData = NULL;
 
-static u16 GetRandomECPokemon(void);
 static void PopulateECGroups(void);
 static void PopulateAlphabeticalGroups(void);
 static u16 GetUnlockedWordsInECGroup(u16);
@@ -80,34 +79,6 @@ static const u16 sDefaultBattleStartWords[] = {
 static const u16 sDeoxysValue[] = {
     SPECIES_DEOXYS,
 };
-
-static bool8 IsECGroupUnlocked(u8 groupId)
-{
-    switch (groupId)
-    {
-    case EC_GROUP_TRENDY_SAYING:
-        return FALSE;
-    case EC_GROUP_EVENTS:
-    case EC_GROUP_MOVE_1:
-    case EC_GROUP_MOVE_2:
-        return FlagGet(FLAG_SYS_GAME_CLEAR);
-    case EC_GROUP_POKEMON:
-        return IsNationalPokedexEnabled();
-    default:
-        return TRUE;
-    }
-}
-
-static u16 EasyChat_GetNumWordsInGroup(u8 groupId)
-{
-    if (groupId == EC_GROUP_POKEMON)
-        return GetNationalPokedexCount(FLAG_GET_SEEN);
-
-    if (IsECGroupUnlocked(groupId))
-        return sEasyChatGroups[groupId].numEnabledWords;
-
-    return 0;
-}
 
 static bool8 IsECWordInvalid(u16 easyChatWord)
 {
@@ -246,31 +217,6 @@ bool8 EC_DoesEasyChatStringFitOnLine(const u16 *easyChatWords, u8 columns, u8 ro
     return FALSE;
 }
 
-static u16 GetRandomWordFromGroup(u16 groupId)
-{
-    u16 index = Random() % sEasyChatGroups[groupId].numWords;
-    if (groupId == EC_GROUP_POKEMON_2
-     || groupId == EC_GROUP_POKEMON
-     || groupId == EC_GROUP_MOVE_1
-     || groupId == EC_GROUP_MOVE_2)
-    {
-        index = sEasyChatGroups[groupId].wordData.valueList[index];
-    }
-
-    return EC_WORD(groupId, index);
-}
-
-static u16 GetRandomWordFromAnyGroup(u16 groupId)
-{
-    if (!IsECGroupUnlocked(groupId))
-        return EC_WORD_UNDEFINED;
-
-    if (groupId == EC_GROUP_POKEMON)
-        return GetRandomECPokemon();
-
-    return GetRandomWordFromGroup(groupId);
-}
-
 void ShowEasyChatMessage(void)
 {
     u16 *easyChatWords;
@@ -311,13 +257,6 @@ void ShowEasyChatMessage(void)
 
     ConvertEasyChatWordsToString(gStringVar4, easyChatWords, columns, rows);
     ShowFieldAutoScrollMessage(gStringVar4);
-}
-
-void BufferRandomHobbyOrLifestyleString(void)
-{
-    int groupId = Random() & 1 ? EC_GROUP_HOBBIES : EC_GROUP_LIFESTYLE;
-    u16 easyChatWord = GetRandomWordFromAnyGroup(groupId);
-    CopyEasyChatWord(gStringVar2, easyChatWord);
 }
 
 static bool8 IsTrendySayingUnlocked(u8 additionalPhraseId)
@@ -396,35 +335,6 @@ static u16 GetRandomUnlockedTrendySaying(void)
             else
                 return EC_WORD(EC_GROUP_TRENDY_SAYING, i);
         }
-    }
-
-    return EC_WORD_UNDEFINED;
-}
-
-static u16 GetRandomECPokemon(void)
-{
-    u16 i;
-    u16 numWords;
-    const u16 *species;
-    u16 index = EasyChat_GetNumWordsInGroup(EC_GROUP_POKEMON_2);
-    if (index == 0)
-        return EC_WORD_UNDEFINED;
-
-    index = Random() % index;
-    species = sEasyChatGroups[EC_GROUP_POKEMON_2].wordData.valueList;
-    numWords = sEasyChatGroups[EC_GROUP_POKEMON_2].numWords;
-    for (i = 0; i < numWords; i++)
-    {
-        u16 dexNum = SpeciesToNationalPokedexNum(*species);
-        if (GetSetPokedexFlag(dexNum, FLAG_GET_SEEN))
-        {
-            if (index)
-                index--;
-            else
-                return EC_WORD(EC_GROUP_POKEMON_2, *species);
-        }
-
-        species++;
     }
 
     return EC_WORD_UNDEFINED;

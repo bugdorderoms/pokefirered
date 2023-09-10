@@ -90,18 +90,6 @@
 	special CallTrainerTowerFunc
 	.endm
 
-	@ Unused. Displays Trainer Tower results. Handled by ShowBattleRecords instead
-	.macro ttower_showresults
-	setvar VAR_0x8004, TRAINER_TOWER_FUNC_SHOW_RESULTS
-	special CallTrainerTowerFunc
-	.endm
-
-	@ Unused. See above
-	.macro ttower_closeresults
-	setvar VAR_0x8004, TRAINER_TOWER_FUNC_CLOSE_RESULTS
-	special CallTrainerTowerFunc
-	.endm
-
 	@ Returns the eligibility of the players party for a double battle (using GetMonsStateToDoubles)
 	.macro ttower_checkdoubles
 	setvar VAR_0x8004, TRAINER_TOWER_FUNC_CHECK_DOUBLES

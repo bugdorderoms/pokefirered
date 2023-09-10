@@ -30,8 +30,7 @@ bool8 EnterHallOfFame(void)
     return FALSE;
 }
 
-bool8 SetCB2WhiteOut(void)
+void SetCB2WhiteOut(void)
 {
     SetMainCallback2(CB2_WhiteOut);
-    return FALSE;
 }

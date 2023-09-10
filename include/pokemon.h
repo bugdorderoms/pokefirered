@@ -383,7 +383,6 @@ void ZeroEnemyPartyMons(void);
 void CreateMon(struct PokemonGenerator generator);
 void CreateBattleTowerMon(struct Pokemon *mon, struct BattleTowerPokemon *src);
 void GiveMonEvSpread(struct Pokemon *mon, u8 evSpread);
-void ConvertPokemonToBattleTowerPokemon(struct Pokemon *mon, struct BattleTowerPokemon *dest);
 void CalculateMonStats(struct Pokemon *mon);
 void BoxMonToMon(struct BoxPokemon *src, struct Pokemon *dest);
 u8 GetLevelFromBoxMonExp(struct BoxPokemon *boxMon);

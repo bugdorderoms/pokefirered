@@ -106,7 +106,6 @@ static void Task_SuspendListMenu(u8 taskId);
 static void Task_RedrawScrollArrowsAndWaitInput(u8 taskId);
 static void Task_CreateMenuRemoveScrollIndicatorArrowPair(u8 taskId);
 static void Task_ListMenuRemoveScrollIndicatorArrowPair(u8 taskId);
-static u16 GetStarterSpeciesById(u16 starterIdx);
 static void ChangeBoxPokemonNickname_CB(void);
 static void ChangePokemonNickname_CB(void);
 static void Task_RunPokemonLeagueLightingEffect(u8 taskId);
@@ -137,40 +136,14 @@ void ForcePlayerOntoBike(void)
     Overworld_ChangeMusicTo(MUS_CYCLING);
 }
 
-u8 GetPlayerAvatarBike(void)
-{
-    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_ACRO_BIKE))
-        return 1;
-    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE))
-        return 2;
-    else
-        return 0;
-}
-
 void ShowFieldMessageStringVar4(void)
 {
     ShowFieldMessage(gStringVar4);
 }
 
-void GetPlayerXY(void)
-{
-    gSpecialVar_0x8004 = gSaveBlock1Ptr->pos.x;
-    gSpecialVar_0x8005 = gSaveBlock1Ptr->pos.y;
-}
-
-u8 GetPlayerTrainerIdOnesDigit(void)
-{
-    return ((gSaveBlock2Ptr->playerTrainerId[1] << 8) | gSaveBlock2Ptr->playerTrainerId[0]) % 10;
-}
-
 void BufferBigGuyOrBigGirlString(void)
 {
 	StringCopy(gStringVar1, gSaveBlock2Ptr->playerGender == MALE ? gText_BigGuy : gText_BigGirl);
-}
-
-void BufferSonOrDaughterString(void)
-{
-	StringCopy(gStringVar1, gSaveBlock2Ptr->playerGender == MALE ? gText_Daughter : gText_Son);
 }
 
 u8 GetBattleOutcome(void)
@@ -207,25 +180,6 @@ void ShowTownMap(void)
 {
     QuestLog_CutRecording();
     InitRegionMapWithExitCB(REGIONMAP_TYPE_WALL, CB2_ReturnToFieldContinueScriptPlayMapMusic);
-}
-
-bool8 PlayerHasGrassPokemonInParty(void)
-{
-    u8 i;
-    struct Pokemon * pokemon;
-    u16 species;
-
-    for (i = 0; i < PARTY_SIZE; i++)
-    {
-        pokemon = &gPlayerParty[i];
-        if (GetMonData(pokemon, MON_DATA_SANITY_HAS_SPECIES) && !GetMonData(pokemon, MON_DATA_IS_EGG))
-        {
-            species = GetMonData(pokemon, MON_DATA_SPECIES);
-            if (gBaseStats[species].type1 == TYPE_GRASS || gBaseStats[species].type2 == TYPE_GRASS)
-                return TRUE;
-        }
-    }
-    return FALSE;
 }
 
 #define tState data[0]
@@ -384,24 +338,6 @@ u8 GetRandomSlotMachineId(void)
     return sSlotMachineIndices[Random() % NELEMS(sSlotMachineIndices)];
 }
 
-bool8 AreLeadMonEVsMaxedOut(void)
-{
-    return (GetMonEVCount(&gPlayerParty[GetLeadMonIndex()]) >= MAX_TOTAL_EVS);
-}
-
-bool8 IsStarterFirstStageInParty(void)
-{
-    u16 species = GetStarterSpeciesById(VarGet(VAR_STARTER_MON));
-    u8 i;
-	
-    for (i = 0; i < CalculatePlayerPartyCount(); i++)
-    {
-        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) == species)
-            return TRUE;
-    }
-    return FALSE;
-}
-
 bool8 IsThereRoomInAnyBoxForMorePokemon(void)
 {
     u16 i, j;
@@ -415,11 +351,6 @@ bool8 IsThereRoomInAnyBoxForMorePokemon(void)
         }
     }
     return FALSE;
-}
-
-bool8 IsPokerusInParty(void)
-{
-	return CheckPartyPokerus(gPlayerParty, 0x3F);
 }
 
 #define tXtrans   data[0]
@@ -497,12 +428,6 @@ bool8 IsMonOTNameNotPlayers(void)
         return FALSE;
     else
         return TRUE;
-}
-
-// Used to nop all the unused specials from RS
-void NullFieldSpecial(void)
-{
-
 }
 
 void DoPicboxCancel(void)
@@ -1495,25 +1420,6 @@ u8 ContextNpcGetTextColor(void)
             gfxId = VarGetObjectEventGraphicsId(gfxId - OBJ_EVENT_GFX_VAR_0);
         return GetColorFromTextColorTable(gfxId);
     }
-}
-
-static bool8 HasMonBeenRenamed(u8 idx)
-{
-    struct Pokemon * pokemon = &gPlayerParty[idx];
-    u8 language;
-    GetMonData(pokemon, MON_DATA_NICKNAME, gStringVar1);
-    language = GetMonData(pokemon, MON_DATA_LANGUAGE, &language);
-    if (language != LANGUAGE_ENGLISH)
-        return TRUE;
-    else if (StringCompare(gSpeciesNames[GetMonData(pokemon, MON_DATA_SPECIES, NULL)], gStringVar1) != 0)
-        return TRUE;
-    else
-        return FALSE;
-}
-
-bool8 HasLeadMonBeenRenamed(void)
-{
-    return HasMonBeenRenamed(GetLeadMonIndex());
 }
 
 void TV_PrintIntToStringVar(u8 varidx, s32 number)

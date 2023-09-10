@@ -630,8 +630,6 @@ extern const u8 gText_From[];
 // field_specials
 extern const u8 gText_BigGuy[];
 extern const u8 gText_BigGirl[];
-extern const u8 gText_Son[];
-extern const u8 gText_Daughter[];
 extern const u8 gText_NowOn[];
 extern const u8 gText_B4F[];
 extern const u8 gText_B3F[];

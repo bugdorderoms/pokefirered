@@ -47,11 +47,6 @@ void ResetTrainerFanClub(void)
     VarSet(VAR_FANCLUB_LOSE_FAN_TIMER, 0);
 }
 
-void Script_TryLoseFansFromPlayTimeAfterLinkBattle(void)
-{
-    TryLoseFansFromPlayTimeAfterLinkBattle(TRAINER_FAN_CLUB);
-}
-
 static void TryLoseFansFromPlayTimeAfterLinkBattle(struct TrainerFanClub *fanClub)
 {
     if (DidPlayerGetFirstFans(fanClub))
@@ -339,11 +334,6 @@ static void UpdateTrainerFansAfterLinkBattle(struct TrainerFanClub *fanClub)
 static bool8 DidPlayerGetFirstFans(struct TrainerFanClub *fanClub)
 {
     return fanClub->gotInitialFans;
-}
-
-void Script_SetPlayerGotFirstFans(void)
-{
-    SetPlayerGotFirstFans(TRAINER_FAN_CLUB);
 }
 
 static void SetPlayerGotFirstFans(struct TrainerFanClub *fanClub)

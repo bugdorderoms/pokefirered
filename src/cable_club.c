@@ -480,21 +480,6 @@ void TryTradeLinkup(void)
     CreateLinkupTask(2, 2);
 }
 
-void TryRecordMixLinkup(void)
-{
-    gSpecialVar_Result = 0;
-    gLinkType = LINKTYPE_0x3311;
-    gBattleTypeFlags = 0;
-    CreateLinkupTask(2, 4);
-}
-
-void TryContestLinkup(void)
-{
-    gLinkType = LINKTYPE_CONTEST_GMODE;
-    gBattleTypeFlags = 0;
-    CreateLinkupTask(4, 4);
-}
-
 u8 CreateTask_ReestablishLinkInCableClubRoom(void)
 {
     if (FuncIsActiveTask(Task_ReestablishLinkInCableClubRoom_0))
@@ -566,11 +551,6 @@ static void Task_ReestablishLinkInCableClubRoom_2(u8 taskId)
         StartSendingKeysToLink();
         DestroyTask(taskId);
     }
-}
-
-void CableClub_AskSaveTheGame(void)
-{
-    Field_AskSaveTheGame();
 }
 
 static void Task_StartWiredCableClubBattle(u8 taskId)
@@ -884,12 +864,6 @@ void EnterTradeSeat(void)
         CreateEnterCableClubSeatTaskWithFollowupFunc(Task_StartWirelessCableClubTrade);
     else
         CreateEnterCableClubSeatTaskWithFollowupFunc(Task_StartWiredCableClubTrade);
-}
-
-void StartWiredCableClubTrade(void)
-{
-    CreateTask(Task_StartWiredCableClubTrade, 80);
-    ScriptContext1_Stop();
 }
 
 void EnterColosseumPlayerSpot(void)

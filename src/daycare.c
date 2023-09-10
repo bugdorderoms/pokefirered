@@ -1241,15 +1241,6 @@ u8 GetDaycareState(void)
     return DAYCARE_NO_MONS;
 }
 
-u8 GetDaycarePokemonCount(void)
-{
-    u8 ret = CountPokemonInDaycare(&gSaveBlock1Ptr->daycare);
-    if (ret)
-        return ret;
-
-    return 0;
-}
-
 // Determine if the two given egg group lists contain any of the
 // same egg groups.
 static bool8 EggGroupsOverlap(u16 *eggGroups1, u16 *eggGroups2)
@@ -1686,29 +1677,6 @@ static void AddHatchedMonToParty(u8 id)
 
     MonRestorePP(mon);
     CalculateMonStats(mon);
-}
-
-static bool8 BufferDayCareMonReceivedMail(struct DayCare *daycare, u8 daycareId)
-{
-    u8 nick[0x20];
-    struct DaycareMon *daycareMon = &daycare->mons[daycareId];
-
-    DayCare_GetBoxMonNickname(&daycareMon->mon, nick);
-    if (daycareMon->mail.message.itemId != ITEM_NONE
-        && (StringCompare(nick, daycareMon->mail.monName) != 0
-            || StringCompare(gSaveBlock2Ptr->playerName, daycareMon->mail.OT_name) != 0))
-    {
-        StringCopy(gStringVar1, nick);
-        StringCopy(gStringVar2, daycareMon->mail.OT_name);
-        StringCopy(gStringVar3, daycareMon->mail.monName);
-        return TRUE;
-    }
-    return FALSE;
-}
-
-bool8 DaycareMonReceivedMail(void)
-{
-    return BufferDayCareMonReceivedMail(&gSaveBlock1Ptr->daycare, gSpecialVar_0x8004);
 }
 
 extern const struct CompressedSpriteSheet gMonFrontPicTable[];

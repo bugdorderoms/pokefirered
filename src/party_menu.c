@@ -6083,15 +6083,6 @@ static bool8 GetBattleEntryEligibility(struct Pokemon *mon)
         if (GetMonData(mon, MON_DATA_HP) == 0)
             return FALSE;
         break;
-    case 1:
-        if (gSaveBlock2Ptr->battleTower.battleTowerLevelType == 0 // level 50
-         && GetMonData(mon, MON_DATA_LEVEL) > 50)
-            return FALSE;
-        species = GetMonData(mon, MON_DATA_SPECIES);
-        for (; gBattleTowerBannedSpecies[i] != 0xFFFF; ++i)
-            if (gBattleTowerBannedSpecies[i] == species)
-                return FALSE;
-        break;
     }
     return TRUE;
 }
@@ -6104,22 +6095,6 @@ static u8 CheckBattleEntriesAndGetMessage(void)
     
     switch (gPartyMenu.unk_8_6)
     {
-    case 1:
-        if (order[2] == 0)
-            return PARTY_MSG_THREE_MONS_ARE_NEEDED;
-        for (i = 0; i < 2; ++i)
-        {
-            sPartyMenuInternal->data[15] = GetMonData(&party[order[i] - 1], MON_DATA_SPECIES);
-            sPartyMenuInternal->data[14] = GetMonData(&party[order[i] - 1], MON_DATA_HELD_ITEM);
-            for (j = i + 1; j < 3; ++j)
-            {
-                if (sPartyMenuInternal->data[15] == GetMonData(&party[order[j] - 1], MON_DATA_SPECIES))
-                    return PARTY_MSG_MONS_CANT_BE_SAME;
-                if (sPartyMenuInternal->data[14] != ITEM_NONE && sPartyMenuInternal->data[14] == GetMonData(&party[order[j] - 1], MON_DATA_HELD_ITEM))
-                    return PARTY_MSG_NO_SAME_HOLD_ITEMS;
-            }
-        }
-        break;
     case 2:
         if (order[1] == 0)
             return PARTY_MSG_TWO_MONS_ARE_NEEDED;
