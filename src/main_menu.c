@@ -39,9 +39,6 @@ enum MainMenuWindow
 #define tMenuType  data[0]
 #define tCursorPos data[1]
 
-#define tMGErrorMsgState data[9]
-#define tMGErrorType     data[10]
-
 static void Task_SetWin0BldRegsAndCheckSaveFile(u8 taskId);
 static void PrintSaveErrorStatus(u8 taskId, const u8 *str);
 static void Task_SaveErrorStatus_RunPrinterThenWaitButton(u8 taskId);
@@ -317,6 +314,12 @@ static void Task_WaitFadeAndPrintMainMenuText(u8 taskId)
         Task_PrintMainMenuText(taskId);
 }
 
+static void PrintMainMenuHeaderTextCentered(u8 windowId, const u8 *str)
+{
+	u32 x = 192 - GetStringWidth(2, str, -1);
+	AddTextPrinterParameterized3(windowId, 2, x / 2, 2, sTextColor1, -1, str);
+}
+
 static void Task_PrintMainMenuText(u8 taskId)
 {
     u16 pal;
@@ -340,7 +343,7 @@ static void Task_PrintMainMenuText(u8 taskId)
     case MAIN_MENU_NEWGAME:
     default:
         FillWindowPixelBuffer(MAIN_MENU_WINDOW_NEWGAME_ONLY, PIXEL_FILL(10));
-        AddTextPrinterParameterized3(MAIN_MENU_WINDOW_NEWGAME_ONLY, 2, 2, 2, sTextColor1, -1, gText_NewGame);
+		PrintMainMenuHeaderTextCentered(MAIN_MENU_WINDOW_NEWGAME_ONLY, gText_NewGame);
         MainMenu_DrawWindow(&sWindowTemplate[MAIN_MENU_WINDOW_NEWGAME_ONLY]);
         PutWindowTilemap(MAIN_MENU_WINDOW_NEWGAME_ONLY);
         CopyWindowToVram(MAIN_MENU_WINDOW_NEWGAME_ONLY, COPYWIN_BOTH);
@@ -348,8 +351,8 @@ static void Task_PrintMainMenuText(u8 taskId)
     case MAIN_MENU_CONTINUE:
         FillWindowPixelBuffer(MAIN_MENU_WINDOW_CONTINUE, PIXEL_FILL(10));
         FillWindowPixelBuffer(MAIN_MENU_WINDOW_NEWGAME, PIXEL_FILL(10));
-        AddTextPrinterParameterized3(MAIN_MENU_WINDOW_CONTINUE, 2, 2, 2, sTextColor1, -1, gText_Continue);
-        AddTextPrinterParameterized3(MAIN_MENU_WINDOW_NEWGAME, 2, 2, 2, sTextColor1, -1, gText_NewGame);
+		PrintMainMenuHeaderTextCentered(MAIN_MENU_WINDOW_CONTINUE, gText_Continue);
+		PrintMainMenuHeaderTextCentered(MAIN_MENU_WINDOW_NEWGAME, gText_NewGame);
         PrintContinueStats();
         MainMenu_DrawWindow(&sWindowTemplate[MAIN_MENU_WINDOW_CONTINUE]);
         MainMenu_DrawWindow(&sWindowTemplate[MAIN_MENU_WINDOW_NEWGAME]);
@@ -362,10 +365,9 @@ static void Task_PrintMainMenuText(u8 taskId)
         FillWindowPixelBuffer(MAIN_MENU_WINDOW_CONTINUE, PIXEL_FILL(10));
         FillWindowPixelBuffer(MAIN_MENU_WINDOW_NEWGAME, PIXEL_FILL(10));
         FillWindowPixelBuffer(MAIN_MENU_WINDOW_MYSTERYGIFT, PIXEL_FILL(10));
-        AddTextPrinterParameterized3(MAIN_MENU_WINDOW_CONTINUE, 2, 2, 2, sTextColor1, -1, gText_Continue);
-        AddTextPrinterParameterized3(MAIN_MENU_WINDOW_NEWGAME, 2, 2, 2, sTextColor1, -1, gText_NewGame);
-        gTasks[taskId].tMGErrorType = 1;
-        AddTextPrinterParameterized3(MAIN_MENU_WINDOW_MYSTERYGIFT, 2, 2, 2, sTextColor1, -1, gText_MysteryGift);
+		PrintMainMenuHeaderTextCentered(MAIN_MENU_WINDOW_CONTINUE, gText_Continue);
+		PrintMainMenuHeaderTextCentered(MAIN_MENU_WINDOW_NEWGAME, gText_NewGame);
+		PrintMainMenuHeaderTextCentered(MAIN_MENU_WINDOW_MYSTERYGIFT, gText_MysteryGift);
         PrintContinueStats();
         MainMenu_DrawWindow(&sWindowTemplate[MAIN_MENU_WINDOW_CONTINUE]);
         MainMenu_DrawWindow(&sWindowTemplate[MAIN_MENU_WINDOW_NEWGAME]);

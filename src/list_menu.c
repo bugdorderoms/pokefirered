@@ -447,7 +447,7 @@ static void ListMenuScroll(struct ListMenu *list, u8 count, bool8 movingDown)
     {
         u8 yMultiplier = GetFontAttribute(list->template.fontId, FONTATTR_MAX_LETTER_HEIGHT) + list->template.itemVerticalPadding;
 		
-		ScrollWindow(list->template.windowId, 1, count * yMultiplier, PIXEL_FILL(list->template.fillValue));
+		ScrollWindow(list->template.windowId, movingDown ^ 1, count * yMultiplier, PIXEL_FILL(list->template.fillValue));
 		
         if (!movingDown)
         {
