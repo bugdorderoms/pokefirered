@@ -1072,22 +1072,9 @@ EventScript_ResetAllMapFlags:: @ 81A6481
 	.include "data/scripts/pkmn_center_nurse.inc"
 	.include "data/scripts/obtain_item.inc"
 	.include "data/scripts/pc.inc"
-
-Common_ShowEasyChatScreen:: @ 81A6AC0
-	fadescreen FADE_TO_BLACK
-	special ShowEasyChatScreen
-	fadescreen FADE_FROM_BLACK
-	return
-
 	.include "data/scripts/surf.inc"
 	.include "data/scripts/set_gym_trainers.inc"
 	.include "data/scripts/bag_full.inc"
-
-@ Unused
-EventScript_GymBadgeFanfare:: @ 81A6C21
-	playfanfare MUS_OBTAIN_BADGE
-	waitfanfare
-	return
 
 EventScript_OutOfCenterPartyHeal:: @ 81A6C26
 	fadescreen FADE_TO_BLACK
@@ -1349,7 +1336,6 @@ Text_TestMsg:: @ 81ACD45
 	.include "data/scripts/cable_club.inc"
 	.include "data/scripts/field_moves.inc"
 	.include "data/scripts/item_ball_scripts.inc"
-	.include "data/scripts/mystery_event_club.inc"
 	.include "data/scripts/day_care.inc"
 	.include "data/text/day_care.inc"
 	.include "data/scripts/flash.inc"

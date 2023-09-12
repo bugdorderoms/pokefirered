@@ -4,7 +4,6 @@
 #include "easy_chat.h"
 #include "event_data.h"
 #include "field_message_box.h"
-#include "mevent.h"
 #include "menu.h"
 #include "mail.h"
 #include "pokedex.h"
@@ -65,15 +64,6 @@ static const u16 sDefaultProfileWords[] = {
     EC_WORD_A,
     EC_WORD_POKEMON,
     EC_WORD_FRIEND,
-};
-
-static const u16 sDefaultBattleStartWords[] = {
-    EC_WORD_ARE,
-    EC_WORD_YOU,
-    EC_WORD_READY,
-    EC_WORD_QUES,
-    EC_WORD_HERE_I_COME,
-    EC_WORD_EXCL,
 };
 
 static const u16 sDeoxysValue[] = {
@@ -217,48 +207,6 @@ bool8 EC_DoesEasyChatStringFitOnLine(const u16 *easyChatWords, u8 columns, u8 ro
     return FALSE;
 }
 
-void ShowEasyChatMessage(void)
-{
-    u16 *easyChatWords;
-    int columns, rows;
-    switch (gSpecialVar_0x8004)
-    {
-    case 0:
-        easyChatWords = gSaveBlock1Ptr->easyChatProfile;
-        columns = 2;
-        rows = 2;
-        break;
-    case 1:
-        easyChatWords = gSaveBlock1Ptr->easyChatBattleStart;
-        if (EC_DoesEasyChatStringFitOnLine(gSaveBlock1Ptr->easyChatBattleStart, 3, 2, 18))
-        {
-            columns = 2;
-            rows = 3;
-        }
-        else
-        {
-            columns = 3;
-            rows = 2;
-        }
-        break;
-    case 2:
-        easyChatWords = gSaveBlock1Ptr->easyChatBattleWon;
-        columns = 3;
-        rows = 2;
-        break;
-    case 3:
-        easyChatWords = gSaveBlock1Ptr->easyChatBattleLost;
-        columns = 3;
-        rows = 2;
-        break;
-    default:
-        return;
-    }
-
-    ConvertEasyChatWordsToString(gStringVar4, easyChatWords, columns, rows);
-    ShowFieldAutoScrollMessage(gStringVar4);
-}
-
 static bool8 IsTrendySayingUnlocked(u8 additionalPhraseId)
 {
     int byteOffset = additionalPhraseId / 8;
@@ -347,15 +295,6 @@ void InitEasyChatPhrases(void)
     for (i = 0; i < 4; i++)
         gSaveBlock1Ptr->easyChatProfile[i] = sDefaultProfileWords[i];
 
-    for (i = 0; i < 6; i++)
-        gSaveBlock1Ptr->easyChatBattleStart[i] = sDefaultBattleStartWords[i];
-
-    for (i = 0; i < 6; i++)
-    {
-        gSaveBlock1Ptr->easyChatBattleWon[i] = EC_WORD_UNDEFINED;
-        gSaveBlock1Ptr->easyChatBattleLost[i] = EC_WORD_UNDEFINED;
-    }
-
     for (i = 0; i < MAIL_COUNT; i++)
     {
         for (j = 0; j < MAIL_WORDS_COUNT; j++)
@@ -363,14 +302,6 @@ void InitEasyChatPhrases(void)
     }
     for (i = 0; i < NELEMS(gSaveBlock1Ptr->additionalPhrases); i++)
         gSaveBlock1Ptr->additionalPhrases[i] = 0;
-}
-
-void EC_ResetMEventProfileMaybe(void)
-{
-    s32 i;
-    u16 *ptr = GetMEventProfileECWordsMaybe();
-    for (i = 0; i < 4; i++)
-        ptr[i] = EC_WORD_UNDEFINED;
 }
 
 bool8 InitEasyChatSelection(void)

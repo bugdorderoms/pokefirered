@@ -39,8 +39,6 @@ gSpecials:: @ 815FD60
 	def_special AnimateTeleporterCable
 	def_special UpdateLoreleiDollCollection
 	def_special LoopWingFlapSound
-	def_special ShowEasyChatScreen
-	def_special ShowEasyChatMessage
 	def_special TryFieldPoisonWhiteOut
 	def_special SetCB2WhiteOut
 	def_special OverworldWhiteOutGetMoneyLoss

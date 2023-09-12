@@ -32,7 +32,6 @@
 #include "pokedex.h"
 #include "text_window.h"
 #include "menu.h"
-#include "mevent.h"
 #include "naming_screen.h"
 #include "party_menu.h"
 #include "dynamic_placeholder_text_util.h"

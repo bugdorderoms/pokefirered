@@ -1,16 +1,7 @@
 #ifndef GUARD_CONSTANTS_EASY_CHAT_H
 #define GUARD_CONSTANTS_EASY_CHAT_H
 
-#define EASY_CHAT_TYPE_PROFILE                 0
-#define EASY_CHAT_TYPE_BATTLE_START            1
-#define EASY_CHAT_TYPE_BATTLE_WON              2
-#define EASY_CHAT_TYPE_BATTLE_LOST             3
-#define EASY_CHAT_TYPE_MAIL                    4
-#define EASY_CHAT_TYPE_MAIL_NO_CONFIRM         5
-#define EASY_CHAT_TYPE_BARD_SONG               6
-#define EASY_CHAT_TYPE_INTERVIEW               7
-#define EASY_CHAT_TYPE_TRENDY_PHRASE           9
-#define EASY_CHAT_TYPE_QUESTIONNAIRE           14
+#define EASY_CHAT_TYPE_MAIL 0
 
 #define EC_GROUP_POKEMON_2      0x0
 #define EC_GROUP_TRAINER        0x1

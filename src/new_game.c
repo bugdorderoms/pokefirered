@@ -22,7 +22,6 @@
 #include "player_pc.h"
 #include "easy_chat.h"
 #include "union_room_chat.h"
-#include "mevent.h"
 #include "renewable_hidden_items.h"
 #include "trainer_tower.h"
 #include "script.h"
@@ -162,7 +161,6 @@ void NewGameInitData(void)
     UnionRoomChat_InitializeRegisteredTexts();
     ResetPokeJumpResults();
     CpuFill16(0, &gSaveBlock2Ptr->berryPick, sizeof(struct BerryPickingResults));
-    EC_ResetMEventProfileMaybe();
     SetAllRenewableItemFlags();
     WarpToPlayersRoom();
     ScriptContext2_RunNewScript(EventScript_ResetAllMapFlags);

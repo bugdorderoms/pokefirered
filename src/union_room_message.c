@@ -1,5 +1,4 @@
 #include "global.h"
-#include "mevent.h"
 #include "constants/union_room.h"
 
 ALIGNED(4) const u8 gUnionRoomActivity_Blank[] = _("");

@@ -12,7 +12,6 @@
 #include "list_menu.h"
 #include "script_pokemon_util.h"
 #include "link_rfu.h"
-#include "mevent.h"
 #include "save.h"
 #include "constants/moves.h"
 #include "link.h"

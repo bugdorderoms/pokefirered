@@ -18,7 +18,6 @@
 #include "list_menu.h"
 #include "load_save.h"
 #include "menu.h"
-#include "mevent.h"
 #include "mystery_gift_menu.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
@@ -1798,17 +1797,6 @@ static void Task_ExchangeCards(u8 taskId)
                 recvBuff = gBlockRecvBuffer[i];
                 CopyTrainerCardData(gTrainerCards[i], recvBuff, gLinkPlayers[i].version);
             }
-
-            if (GetLinkPlayerCount() == 2)
-            {
-                recvBuff = gBlockRecvBuffer[GetMultiplayerId() ^ 1];
-                MEventHandleReceivedWonderCard(recvBuff[sizeof(struct TrainerCard) / 2]);
-            }
-            else
-            {
-                ResetReceivedWonderCardFlag();
-            }
-
             ResetBlockReceivedFlags();
             DestroyTask(taskId);
         }
@@ -1891,15 +1879,11 @@ static void CB2_TransitionToCableClub(void)
 static void CreateTrainerCardInBuffer(void *dest, bool32 setWonderCard)
 {
     TrainerCard_GenerateCardForLinkPlayer((struct TrainerCard * )dest);
-    if (setWonderCard)
-        *((u16 *)(dest + sizeof(struct TrainerCard))) = GetWonderCardFlagId();
-    else
-        *((u16 *)(dest + sizeof(struct TrainerCard))) = 0;
+	*((u16 *)(dest + sizeof(struct TrainerCard))) = 0;
 }
 
 static void Task_StartActivity(u8 taskId)
 {
-    ResetReceivedWonderCardFlag();
     switch (sPlayerCurrActivity)
     {
     case ACTIVITY_BATTLE:

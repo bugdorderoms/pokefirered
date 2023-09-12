@@ -264,7 +264,6 @@ SECTIONS {
         src/slot_machine.o(.text);
         src/roamer.o(.text);
         src/mystery_gift_menu.o(.text);
-        src/mevent.o(.text);
         src/seagallop.o(.text);
         src/pokemon_jump.o(.text);
         src/pokemon_jump_2.o(.text);
@@ -557,7 +556,6 @@ SECTIONS {
         src/slot_machine.o(.rodata);
         src/roamer.o(.rodata);
         src/mystery_gift_menu.o(.rodata);
-        src/mevent.o(.rodata);
         src/seagallop.o(.rodata);
         src/pokemon_jump.o(.rodata);
         src/pokemon_jump_2.o(.rodata);

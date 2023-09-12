@@ -6,7 +6,6 @@
 #include "trade.h"
 #include "link.h"
 #include "link_rfu.h"
-#include "mevent.h"
 #include "graphics.h"
 #include "strings.h"
 #include "menu.h"
@@ -2584,10 +2583,6 @@ static void CB2_HandleTradeEnded(void)
         {
             SetQuestLogEvent(QL_EVENT_LINK_TRADED, sTradeData->monSpecies);
             IncrementGameStat(GAME_STAT_POKEMON_TRADES);
-        }
-        if (gWirelessCommType)
-        {
-            MEvent_RecordIdOfWonderCardSenderByEventType(2, gLinkPlayers[GetMultiplayerId() ^ 1].trainerId);
         }
         SetContinueGameWarpStatusToDynamicWarp();
         SaveGame_AfterLinkTrade();

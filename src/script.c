@@ -505,19 +505,3 @@ const u8 *GetRamScript(u8 objectId, const u8 *script)
         return scriptData->script;
     }
 }
-
-bool32 ValidateRamScript(void)
-{
-    struct RamScriptData *scriptData = &gSaveBlock1Ptr->ramScript.data;
-    if (scriptData->magic != RAM_SCRIPT_MAGIC)
-        return FALSE;
-    if (scriptData->mapGroup != MAP_GROUP(UNDEFINED))
-        return FALSE;
-    if (scriptData->mapNum != MAP_NUM(UNDEFINED))
-        return FALSE;
-    if (scriptData->objectId != 0xFF)
-        return FALSE;
-    if (CalculateRamScriptChecksum() != gSaveBlock1Ptr->ramScript.checksum)
-        return FALSE;
-    return TRUE;
-}

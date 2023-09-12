@@ -449,51 +449,6 @@ struct FameCheckerSaveData
     u16 unk_0_E:2;
 };
 
-struct WonderNewsMetadata
-{
-    u8 unk_0_0:2;
-    u8 unk_0_2:3;
-    u8 unk_0_5:3;
-    u8 berry;
-};
-
-struct WonderCard
-{
-    u16 flagId; // Event flag (sReceivedGiftFlags) + WONDER_CARD_FLAG_OFFSET
-    u16 iconSpecies;
-    u32 idNumber;
-    u8 type:2; // CARD_TYPE_*
-    u8 bgType:4;
-    u8 sendType:2; // SEND_TYPE_*
-    u8 maxStamps;
-    u8 titleText[WONDER_CARD_TEXT_LENGTH];
-    u8 subtitleText[WONDER_CARD_TEXT_LENGTH];
-    u8 bodyText[WONDER_CARD_BODY_TEXT_LINES][WONDER_CARD_TEXT_LENGTH];
-    u8 footerLine1Text[WONDER_CARD_TEXT_LENGTH];
-    u8 footerLine2Text[WONDER_CARD_TEXT_LENGTH];
-};
-
-struct WonderCardMetadata
-{
-    u16 battlesWon;
-    u16 battlesLost;
-    u16 numTrades;
-    u16 iconSpecies;
-    u16 stampData[2][MAX_STAMP_CARD_STAMPS]; // First element is STAMP_SPECIES, second is STAMP_ID
-};
-
-struct MysteryGiftSave
-{
-    u32 newsCrc;
-    u32 cardCrc;
-    struct WonderCard card;
-    u32 cardMetadataCrc;
-    struct WonderCardMetadata cardMetadata;
-    u16 questionnaireWords[NUM_QUESTIONNAIRE_WORDS];
-    struct WonderNewsMetadata newsMetadata;
-    u32 trainerIds[2][5]; // Saved ids for 10 trainers, 5 each for battles and trades
-}; // 0x36C 0x348C
-
 struct TrainerTower
 {
     u32 timer;
@@ -532,15 +487,12 @@ struct SaveBlock1
 	/*0x0040*/ u32 gameStats[NUM_GAME_STATS];
 	/*0x0080*/ u16 trainerRematchStepCounter;
 	/*0x0082*/ u16 easyChatProfile[EASY_CHAT_BATTLE_WORDS_COUNT];
-	/*0x008E*/ u16 easyChatBattleStart[EASY_CHAT_BATTLE_WORDS_COUNT];
-	/*0x009A*/ u16 easyChatBattleWon[EASY_CHAT_BATTLE_WORDS_COUNT];
-	/*0x00A6*/ u16 easyChatBattleLost[EASY_CHAT_BATTLE_WORDS_COUNT];
-	/*0x00B2*/ u8 trainerRematches[MAX_REMATCH_ENTRIES];
-	/*0x0116*/ u8 additionalPhrases[ROUND_BITS_TO_BYTES(NUM_ADDITIONAL_PHRASES)];
-	/*0x011B*/ u8 playerPartyCount;
-	/*0x011C*/ u32 towerChallengeId;
-	/*0x0120*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
-	/*0x0128*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
+	/*0x008E*/ u8 trainerRematches[MAX_REMATCH_ENTRIES];
+	/*0x00F2*/ u8 additionalPhrases[ROUND_BITS_TO_BYTES(NUM_ADDITIONAL_PHRASES)];
+	/*0x00F7*/ u8 playerPartyCount;
+	/*0x00F8*/ u32 towerChallengeId;
+	/*0x00FC*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
+	/*0x0104*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
 	           u8 flags[NUM_FLAG_BYTES]; // size of 0x120 bytes
 			   u16 vars[VARS_COUNT]; // size of 0x200 bytes
 			   struct Pokemon playerParty[PARTY_SIZE];
@@ -556,7 +508,6 @@ struct SaveBlock1
 			   struct Mail mail[MAIL_COUNT];
 			   struct DayCare daycare;
 			   struct Roamer roamer;
-			   struct MysteryGiftSave mysteryGift;
 			   struct RamScript ramScript;
 			   struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
 			   struct TrainerNameRecord trainerNameRecords[20];

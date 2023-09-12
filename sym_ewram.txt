@@ -116,7 +116,6 @@
 	.include "src/berry_pouch.o"
 	.include "src/slot_machine.o"
 	.include "src/roamer.o"
-	.include "src/mevent.o"
 	.include "src/seagallop.o"
 	.include "src/pokemon_jump_2.o"
 	.include "src/pokemon_jump_4.o"

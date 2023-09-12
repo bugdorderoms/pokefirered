@@ -10,7 +10,6 @@
 #include "link.h"
 #include "load_save.h"
 #include "m4a.h"
-#include "mevent.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
 #include "quest_log.h"
@@ -706,18 +705,6 @@ void CB2_ReturnFromCableClubBattle(void)
     if (gSpecialVar_0x8004 != USING_MULTI_BATTLE)
     {
         TryRecordLinkBattleOutcome(gLocalLinkPlayerId ^ 1);
-        if (gWirelessCommType != 0)
-        {
-            switch (gBattleOutcome)
-            {
-            case B_OUTCOME_WON:
-                MEvent_RecordIdOfWonderCardSenderByEventType(0, gLinkPlayers[GetMultiplayerId() ^ 1].trainerId);
-                break;
-            case B_OUTCOME_LOST:
-                MEvent_RecordIdOfWonderCardSenderByEventType(1, gLinkPlayers[GetMultiplayerId() ^ 1].trainerId);
-                break;
-            }
-        }
     }
     if (InUnionRoom() == TRUE)
     {
