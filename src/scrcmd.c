@@ -867,7 +867,7 @@ bool8 ScrCmd_setdynamicwarp(struct ScriptContext * ctx)
     u16 x = VarGet(ScriptReadHalfword(ctx));
     u16 y = VarGet(ScriptReadHalfword(ctx));
 
-    SetDynamicWarpWithCoords(0, mapGroup, mapNum, warpId, x, y);
+    SetDynamicWarpWithCoords(mapGroup, mapNum, warpId, x, y);
     return FALSE;
 }
 

@@ -724,7 +724,7 @@ void CleanupLinkRoomState(void)
         LoadPlayerParty();
         SavePlayerBag();
     }
-    SetWarpDestinationToDynamicWarp(127);
+    SetWarpDestinationToDynamicWarp();
 }
 
 void ExitLinkRoom(void)
