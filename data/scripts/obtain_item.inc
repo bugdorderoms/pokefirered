@@ -68,12 +68,15 @@ EventScript_BufferBerryPouch:: @ 81A6739
 
 EventScript_ObtainedItem:: @ 81A6749
 	delay 10
+	startplayerfinditemanim
+	delay 15
 	callnative CreateItemIconOnFindMessage
 	message Text_ObtainedTheX
 	waitfanfare
 	waitmessage
 	msgbox Text_PutItemAway
 	callnative DestroyItemIconOnFindMessage
+	endplayerfinditemanim
 	setvar VAR_RESULT, 1
 	return
 
@@ -141,6 +144,8 @@ EventScript_PickUpItem:: @ 81A67EE
 	copyvar VAR_0x8009, VAR_0x8004
 	specialvar VAR_RESULT, BufferTMHMMoveName
 	delay 10
+	startplayerfinditemanim
+	delay 15
 	callnative CreateItemIconOnFindMessage
 	copyvar VAR_0x8008, VAR_RESULT
 	compare VAR_0x8008, TRUE
@@ -151,6 +156,7 @@ EventScript_PickUpItem:: @ 81A67EE
 	waitmessage
 	msgbox Text_PutItemAway
 	callnative DestroyItemIconOnFindMessage
+	endplayerfinditemanim
 	return
 
 EventScript_FoundTMHM:: @ 81A6821
@@ -191,6 +197,8 @@ EventScript_TryPickUpHiddenItem::
 
 EventScript_PickedUpHiddenItem::
 	delay 10
+	startplayerfinditemanim
+	delay 15
 	callnative CreateItemIconOnFindMessage
 	compare VAR_0x8006, 1
 	call_if_eq EventScript_FoundSingleItem
@@ -200,6 +208,7 @@ EventScript_PickedUpHiddenItem::
 	waitmessage
 	msgbox Text_PutItemAway
 	callnative DestroyItemIconOnFindMessage
+	endplayerfinditemanim
 	special SetHiddenItemFlag
 	releaseall
 	end

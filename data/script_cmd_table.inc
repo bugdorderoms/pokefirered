@@ -1,8 +1,8 @@
 	.align 2
 
 gScriptCmdTable:: @ 815F9B4
-	.4byte ScrCmd_nop
-	.4byte ScrCmd_nop
+	.4byte ScrCmd_StartPlayerFindItemAnim
+	.4byte ScrCmd_EndPlayerFindItemAnim
 	.4byte ScrCmd_end
 	.4byte ScrCmd_return
 	.4byte ScrCmd_call

@@ -1676,6 +1676,24 @@ static void sub_805EFF4(struct ObjectEvent *objectEvent)
     ObjectEventClearHeldMovement(objectEvent);
 }
 
+void ReturnPlayerToDefaultGraphicsIdByStateId(struct ObjectEvent *playerObj)
+{
+	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_ACRO_BIKE | PLAYER_AVATAR_FLAG_MACH_BIKE))
+		ObjectEventSetGraphicsId(playerObj, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_BIKE));
+	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+		ObjectEventSetGraphicsId(playerObj, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_RIDE));
+	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE))
+		ObjectEventSetGraphicsId(playerObj, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_TAUROS_RIDE));
+	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE))
+		ObjectEventSetGraphicsId(playerObj, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_STOUTLAND_RIDE));
+	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MUDSDALE_RIDE))
+		ObjectEventSetGraphicsId(playerObj, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_MUDSDALE_RIDE));
+	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
+		ObjectEventSetGraphicsId(playerObj, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_MACHAMP_RIDE));
+	else
+		ObjectEventSetGraphicsId(playerObj, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_NORMAL));
+}
+
 static void SetPlayerAvatarObjectEventIdAndObjectId(u8 objectEventId, u8 spriteId)
 {
     gPlayerAvatar.objectEventId = objectEventId;

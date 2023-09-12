@@ -1,10 +1,10 @@
-	@ Does nothing.
-	.macro nop
+	@ Starts the anim of the player when founding an item.
+	.macro startplayerfinditemanim
 	.byte 0x00
 	.endm
 
-    @ Does nothing
-	.macro nop2
+    @ Ends the anim of the player when founding an item.
+	.macro endplayerfinditemanim
 	.byte 0x01
 	.endm
 

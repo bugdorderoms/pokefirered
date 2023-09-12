@@ -33,6 +33,7 @@
 #include "fieldmap.h"
 #include "field_door.h"
 #include "constants/event_objects.h"
+#include "constants/event_object_movement.h"
 
 extern u16 (*const gSpecials[])(void);
 extern u16 (*const gSpecialsEnd[])(void);
@@ -71,6 +72,65 @@ static const u8 sScriptConditionTable[6][3] =
 bool8 ScrCmd_nop(struct ScriptContext * ctx)
 {
     return FALSE;
+}
+
+static bool8 WaitPlayerForFindItemAnim(void)
+{
+	struct ObjectEvent * playerObj = &gObjectEvents[gPlayerAvatar.objectEventId];
+	
+	if (!ObjectEventIsMovementOverridden(playerObj) || ObjectEventClearHeldMovementIfFinished(playerObj))
+	{
+		StartPlayerAvatarSummonMonForFieldMoveAnim();
+		ObjectEventSetHeldMovement(playerObj, MOVEMENT_ACTION_START_ANIM_IN_DIRECTION);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+bool8 ScrCmd_StartPlayerFindItemAnim(struct ScriptContext * ctx)
+{
+	ScriptContext2_Enable();
+	gPlayerAvatar.preventStep = TRUE;
+	SetupNativeScript(ctx, WaitPlayerForFindItemAnim);
+	return TRUE;
+}
+
+static void Task_EndPlayerFindItemAnim(u8 taskId)
+{
+	struct ObjectEvent * playerObj = &gObjectEvents[gPlayerAvatar.objectEventId];
+	
+	switch (gTasks[taskId].data[0])
+	{
+		case 0:
+			if (ObjectEventClearHeldMovementIfFinished(playerObj))
+			{
+				ReturnPlayerToDefaultGraphicsIdByStateId(playerObj);
+				ObjectEventForceSetHeldMovement(playerObj, GetFaceDirectionMovementAction(playerObj->facingDirection));
+				++gTasks[taskId].data[0];
+			}
+			break;
+		case 1:
+			if (ObjectEventClearHeldMovementIfFinished(playerObj))
+				DestroyTask(taskId);
+			break;
+	}
+}
+
+static bool8 EndPlayerFindItemAnim(void)
+{
+	if (!FuncIsActiveTask(Task_EndPlayerFindItemAnim))
+	{
+		gPlayerAvatar.preventStep = FALSE;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+bool8 ScrCmd_EndPlayerFindItemAnim(struct ScriptContext * ctx)
+{
+	gTasks[CreateTask(Task_EndPlayerFindItemAnim, 80)].data[0] = 0;
+	SetupNativeScript(ctx, EndPlayerFindItemAnim);
+	return TRUE;
 }
 
 bool8 ScrCmd_end(struct ScriptContext * ctx)
