@@ -618,7 +618,7 @@ static const u32 sStarObjTiles[] = INCBIN_U32( "graphics/interface/pokesummary_u
 static const u32 sBgTilemap_MovesInfoPage[] = INCBIN_U32( "graphics/interface/pokesummary_unk_8463B88.bin.lz");
 static const u32 sBgTilemap_MovesPage[] = INCBIN_U32( "graphics/interface/pokesummary_unk_8463C80.bin.lz");
 
-#include "data/text/nature_names.h"
+#include "data/pokemon/nature_names.h"
 
 static const u8 * const sEggHatchTimeTexts[] = {
     gText_PokeSum_EggHatch_LongTime,

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "gflib.h"
 #include "task.h"
+#include "item_menu_icons.h"
 #include "decompress.h"
 #include "text_window.h"
 #include "pokemon_icon.h"

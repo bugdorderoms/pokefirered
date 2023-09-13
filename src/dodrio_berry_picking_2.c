@@ -51,8 +51,139 @@ MainCallback sub_8155E54(void);
 static void sub_8155EA0(void);
 static bool32 sub_8155FE0(void);
 
-// Assets in this header are duplicated
-#include "data/dodrio_berry_picking.h"
+static const u16 sDodrioBerryBgPal1[] = INCBIN_U16("graphics/link_games/dodrioberry_bg1.gbapal",
+                                            "graphics/link_games/dodrioberry_bg2.gbapal");
+static const u16 sDodrioBerryPkmnPal[] = INCBIN_U16("graphics/link_games/dodrioberry_pkmn.gbapal");
+static const u16 sDodrioBerryShinyPal[] = INCBIN_U16("graphics/link_games/dodrioberry_shiny.gbapal");
+static const u16 sDodrioBerryStatusPal[] = INCBIN_U16("graphics/link_games/dodrioberry_status.gbapal");
+static const u16 sDodrioBerrySpritesPal[] = INCBIN_U16("graphics/link_games/dodrioberry_berrysprites.gbapal");
+static const u32 sDodrioBerrySpritesGfx[] = INCBIN_U32("graphics/link_games/dodrioberry_berrysprites.4bpp.lz");
+static const u16 sDodrioBerryPlatformPal[] = INCBIN_U16("graphics/link_games/dodrioberry_platform.gbapal");
+static const u32 sDodrioBerryBgGfx1[] = INCBIN_U32("graphics/link_games/dodrioberry_bg1.4bpp.lz");
+static const u32 sDodrioBerryBgGfx2[] = INCBIN_U32("graphics/link_games/dodrioberry_bg2.4bpp.lz");
+static const u32 sDodrioBerryStatusGfx[] = INCBIN_U32("graphics/link_games/dodrioberry_status.4bpp.lz");
+static const u32 sDodrioBerryPlatformGfx[] = INCBIN_U32("graphics/link_games/dodrioberry_platform.4bpp.lz");
+static const u32 sDodrioBerryPkmnGfx[] = INCBIN_U32("graphics/link_games/dodrioberry_pkmn.4bpp.lz");
+static const u32 sDodrioBerryBgTilemap1[] = INCBIN_U32("graphics/link_games/dodrioberry_bg1.bin.lz");
+static const u32 sDodrioBerryBgTilemap2Right[] = INCBIN_U32("graphics/link_games/dodrioberry_bg2right.bin.lz");
+static const u32 sDodrioBerryBgTilemap2Left[] = INCBIN_U32("graphics/link_games/dodrioberry_bg2left.bin.lz");
+
+static const struct BgTemplate sUnknown_847565C[] =
+{
+    {
+        .bg = 0,
+        .charBaseIndex = 0,
+        .mapBaseIndex = 30,
+        .screenSize = 0,
+        .paletteMode = 0,
+        .priority = 0,
+        .baseTile = 0
+    },
+    {
+        .bg = 1,
+        .charBaseIndex = 2,
+        .mapBaseIndex = 12,
+        .screenSize = 1,
+        .paletteMode = 0,
+        .priority = 1,
+        .baseTile = 0
+    },
+    {
+        .bg = 2,
+        .charBaseIndex = 2,
+        .mapBaseIndex = 14,
+        .screenSize = 1,
+        .paletteMode = 0,
+        .priority = 1,
+        .baseTile = 0
+    },
+    {
+        .bg = 3,
+        .charBaseIndex = 3,
+        .mapBaseIndex = 31,
+        .screenSize = 0,
+        .paletteMode = 0,
+        .priority = 2,
+        .baseTile = 0
+    },
+};
+
+static const struct WindowTemplate sUnknown_8475674[] =
+{
+    {
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 1,
+        .width = 28,
+        .height = 3,
+        .paletteNum = 13,
+        .baseBlock = 0x13,
+    },
+    {
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 6,
+        .width = 28,
+        .height = 13,
+        .paletteNum = 13,
+        .baseBlock = 0x67,
+    }
+};
+
+static const struct WindowTemplate sUnknown_8475684 =
+{
+    .bg = 0,
+    .tilemapLeft = 1,
+    .tilemapTop = 6,
+    .width = 28,
+    .height = 7,
+    .paletteNum = 13,
+    .baseBlock = 0x67,
+};
+
+static const struct WindowTemplate sUnknown_847568C[] =
+{
+    {
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 8,
+        .width = 19,
+        .height = 3,
+        .paletteNum = 13,
+        .baseBlock = 0x13,
+    },
+    {
+        .bg = 0,
+        .tilemapLeft = 22,
+        .tilemapTop = 7,
+        .width = 6,
+        .height = 4,
+        .paletteNum = 13,
+        .baseBlock = 0x4C,
+    }
+};
+
+static const struct WindowTemplate sUnknown_847569C =
+{
+    .bg = 0,
+    .tilemapLeft = 4,
+    .tilemapTop = 6,
+    .width = 22,
+    .height = 5,
+    .paletteNum = 13,
+    .baseBlock = 0x13,
+};
+
+static const struct WindowTemplate sUnknown_84756A4 =
+{
+    .bg = 0,
+    .tilemapLeft = 5,
+    .tilemapTop = 8,
+    .width = 19,
+    .height = 3,
+    .paletteNum = 13,
+    .baseBlock = 0x13,
+};
 
 static const struct OamData sOamData_8478C98 =
 {

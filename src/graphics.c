@@ -17,7 +17,7 @@ const u32 gUnusedPal_OldCharmap[] = INCBIN_U32("graphics/unused/old_charmap.gbap
 const u32 gSmokescreenImpactTiles[] = INCBIN_U32("graphics/battle_anims/sprites/smokescreen_impact.4bpp.lz");
 const u32 gSmokescreenImpactPalette[] = INCBIN_U32("graphics/battle_anims/sprites/smokescreen_impact.gbapal.lz");
 
-#include "data/graphics/interface_pokeballs.h"
+#include "data/item/interface_pokeballs.h"
 
 const u32 gBlankGfxCompressed[] = INCBIN_U32("graphics/interface/blank.4bpp.lz");
 
@@ -951,8 +951,8 @@ const u32 gBattleAnimSpritePal_FlatRock[] = INCBIN_U32("graphics/battle_anims/sp
 
 const u16 gUnknown_8D2FBB4[] = INCBIN_U16("graphics/interface/unk_8D2FBB4.gbapal");
 
-#include "data/graphics/pokemon.h"
-#include "data/graphics/trainers.h"
+#include "data/pokemon/graphics/front_and_back_pic_graphics.h"
+#include "data/trainer/trainer_pics.h"
 
 const u8 gMonIcon_QuestionMark[] = INCBIN_U8("graphics/pokemon/question_mark/icon.4bpp");
 
@@ -961,8 +961,6 @@ const u32 gFile_graphics_battle_transitions_vs_frame_tilemap[] = INCBIN_U32("gra
 const u32 gFile_graphics_battle_transitions_vs_frame_palette[] = INCBIN_U32("graphics/battle_transitions/vs_frame.gbapal.lz");
 
 const u32 gVsLettersGfx[] = INCBIN_U32("graphics/battle_transitions/vs.4bpp.lz");
-
-#include "data/graphics/battle_terrain_unused.h"
 
 const u32 gBattleAnimSpriteGfx_FlyingDirt[] = INCBIN_U32("graphics/battle_anims/sprites/flying_dirt.4bpp.lz");
 
@@ -1165,7 +1163,7 @@ const u32 gBattleAnimSpriteGfx_Sparkle6[] = INCBIN_U32("graphics/battle_anims/sp
 const u32 gGhostPalette[] = INCBIN_U32("graphics/pokemon/ghost/front.gbapal.lz");
 const u32 gGhostFrontPic[] = INCBIN_U32("graphics/pokemon/ghost/front.4bpp.lz");
 
-#include "data/graphics/mail.h"
+#include "data/mail_graphics.h"
 
 const u16 gFireRedMenuElements1_Pal[] = INCBIN_U16("graphics/interface/dex_caught_pokeball.gbapal");
 const u16 gFireRedMenuElements2_Pal[] = INCBIN_U16("graphics/interface/pokemon_types.gbapal");

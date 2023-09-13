@@ -893,7 +893,7 @@ const u8 gUnknown_8419F10[] = _("レポ-トが ないので\nじかんの せっ
 const u8 gUnknown_8419F2D[] = _("ゲ-ムない じかんの しゅうせい システムが\nつかえる ように なりました!");
 const u8 gText_SavingDontTurnOffThePower2[] = _("Saving…\nDon't turn off the power.");
 
-#include "data/text/quest_log.h"
+#include "data/quest_log.h"
 
 const u8 gUnknown_841B285[] = _(" was used on\n");
 const u8 gUnknown_841B293[] = _(".");
@@ -969,7 +969,7 @@ const u8 gString_SlotMachineControls[] = _("{DPAD_LEFTRIGHT}Combos {DPAD_DOWN}Wa
 const u8 gUnknown_841B798[] = _("おしえテレビ");
 const u8 gUnknown_841B79F[] = _("おしまい");
 
-#include "data/text/teachy_tv.h"
+#include "data/teachy_tv.h"
 
 const u8 gString_Bill[] = _("Bill");
 const u8 gString_Someone[] = _("Someone");

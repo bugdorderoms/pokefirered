@@ -424,7 +424,7 @@ const struct TrainerMoneyBall gTrainerMoneyAndBallTable[] =
     { 0xFF, 5, ITEM_NONE },
 };
 
-#include "data/text/abilities.h"
+#include "data/pokemon/abilities.h"
 
 static void (*const sTurnActionsFuncsTable[])(void) =
 {

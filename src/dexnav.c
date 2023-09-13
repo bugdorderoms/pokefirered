@@ -18,6 +18,7 @@
 #include "gpu_regs.h"
 #include "graphics.h"
 #include "item.h"
+#include "item_menu_icons.h"
 #include "m4a.h"
 #include "map_name_popup.h"
 #include "main.h"
@@ -28,7 +29,6 @@
 #include "new_menu_helpers.h"
 #include "overworld.h"
 #include "palette.h"
-#include "party_menu.h"
 #include "pokedex.h"
 #include "pokemon.h"
 #include "pokemon_icon.h"
@@ -64,9 +64,8 @@
 #define ICON_PAL_TAG            56000
 #define SELECTION_CURSOR_TAG    0x4005
 
-// search tags
+// search tag
 #define LIT_STAR_TILE_TAG       0x4010
-#define HELD_ITEM_TAG           0xd750
 
 // Defines
 enum
@@ -248,7 +247,7 @@ static const struct OamData sNoDataIconOam =
     .priority = 1,
 };
 
-static const struct OamData sHeldItemOam =
+static const struct OamData sPotentialStarOam =
 {
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
@@ -314,23 +313,12 @@ static const struct SpriteTemplate sSelectionCursorSpriteTemplate =
     .callback = SpriteCallbackDummy,
 };
 
-// search window sprite templates
-static const struct SpriteTemplate sHeldItemTemplate =
-{
-    .tileTag = HELD_ITEM_TAG,
-    .paletteTag = HELD_ITEM_TAG,
-    .oam = &sHeldItemOam,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCallbackDummy,
-};
-
+// search window sprite template
 static const struct SpriteTemplate sPotentialStarTemplate =
 {
     .tileTag = LIT_STAR_TILE_TAG,
     .paletteTag = OWNED_ICON_TAG,
-    .oam = &sHeldItemOam,
+    .oam = &sPotentialStarOam,
     .anims = gDummySpriteAnimTable,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
@@ -435,10 +423,10 @@ static void RemoveDexNavWindowAndGfx(void)
             DestroySprite(&gSprites[sDexNavSearchDataPtr->starSpriteIds[i]]);
     }
 
-    FreeSpriteTilesByTag(HELD_ITEM_TAG);
+    FreeSpriteTilesByTag(ITEMICON_TAG);
     FreeSpriteTilesByTag(OWNED_ICON_TAG);
     FreeSpriteTilesByTag(LIT_STAR_TILE_TAG);
-    FreeSpritePaletteByTag(HELD_ITEM_TAG);
+    FreeSpritePaletteByTag(ITEMICON_TAG);
     FreeSpritePaletteByTag(OWNED_ICON_TAG);
     SafeFreeMonIconPalette(sDexNavSearchDataPtr->species);
 
@@ -622,7 +610,7 @@ static bool8 TryStartHiddenMonFieldEffect(u8 environment, u8 xSize, u8 ySize)
 
 static void DrawDexNavSearchHeldItem(u8* dst)
 {
-    *dst = CreateSprite(&sHeldItemTemplate, SPECIES_ICON_X + 2, GetSearchWindowY() + 22, 0);
+    *dst = CreateHeldItemSprite(SPECIES_ICON_X + 2, GetSearchWindowY() + 22, 0, FALSE);
 	
     if (*dst != MAX_SPRITES)
         gSprites[*dst].invisible = TRUE;

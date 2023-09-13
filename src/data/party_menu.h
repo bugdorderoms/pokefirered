@@ -699,65 +699,6 @@ static const u8 *const sHMDescriptionTable[] =
 	[FIELD_MOVE_DEFOG]       = gText_BlewAwayFog,
 };
 
-static const u32 sHeldItemGfx[] = INCBIN_U32("graphics/interface/hold_icons.4bpp");
-static const u16 sHeldItemPalette[] = INCBIN_U16("graphics/interface/hold_icons.gbapal");
-
-static const struct OamData sOamData_HeldItem =
-{
-    .y = 0,
-    .affineMode = 0,
-    .objMode = 0,
-    .mosaic = 0,
-    .bpp = 0,
-    .shape = SPRITE_SHAPE(8x8),
-    .x = 0,
-    .matrixNum = 0,
-    .size = SPRITE_SIZE(8x8),
-    .tileNum = 0,
-    .priority = 1,
-    .paletteNum = 0,
-    .affineParam = 0,
-};
-
-static const union AnimCmd sSpriteAnim_HeldItem[] =
-{
-    ANIMCMD_FRAME(0, 1),
-    ANIMCMD_END
-};
-
-static const union AnimCmd sSpriteAnim_HeldMail[] =
-{
-    ANIMCMD_FRAME(1, 1),
-    ANIMCMD_END
-};
-
-static const union AnimCmd *const sSpriteAnimTable_HeldItem[] =
-{
-    sSpriteAnim_HeldItem,
-    sSpriteAnim_HeldMail,
-};
-
-static const struct SpriteSheet sSpriteSheet_HeldItem =
-{
-    sHeldItemGfx, sizeof(sHeldItemGfx), 0xD750
-};
-
-static const struct SpritePalette sSpritePalette_HeldItem =
-{
-    sHeldItemPalette, 0xD750
-};
-
-static const struct SpriteTemplate sSpriteTemplate_HeldItem =
-{
-    0xD750,
-    0xD750,
-    &sOamData_HeldItem,
-    sSpriteAnimTable_HeldItem,
-    NULL,
-    gDummySpriteAffineAnimTable,
-    SpriteCallbackDummy,
-};
-
 static const struct OamData sOamData_MenuPokeball =
 {
     .y = 0,
@@ -1123,7 +1064,16 @@ static const u8 sPartyMenuActionCounts[] =
 
 static const u16 sFieldMoves[] =
 {
-    MOVE_FLASH, MOVE_CUT, MOVE_WATERFALL, MOVE_TELEPORT, MOVE_DIG, MOVE_MILK_DRINK, MOVE_SOFT_BOILED, MOVE_SWEET_SCENT, MOVE_DEFOG, FIELD_MOVE_END // this may be misuse of enum. same in emerald
+    MOVE_FLASH,
+	MOVE_CUT,
+	MOVE_WATERFALL,
+	MOVE_TELEPORT,
+	MOVE_DIG,
+	MOVE_MILK_DRINK,
+	MOVE_SOFT_BOILED,
+	MOVE_SWEET_SCENT,
+	MOVE_DEFOG,
+	FIELD_MOVE_END
 };
 
 static struct
@@ -1154,108 +1104,4 @@ static const u8 *const sUnionRoomTradeMessages[] =
     [UR_TRADE_MSG_PARTNER_CANT_ACCEPT_MON - 1]     = gText_OtherTrainerCantAcceptPkmn,
     [UR_TRADE_MSG_CANT_TRADE_WITH_PARTNER_1 - 1]   = gText_CantTradeWithTrainer,
     [UR_TRADE_MSG_CANT_TRADE_WITH_PARTNER_2 - 1]   = gText_CantTradeWithTrainer,
-};
-
-static const u16 sTMHMMoves[NUM_TECHNICAL_MACHINES] =
-{
-    MOVE_WORK_UP,
-    MOVE_DRAGON_CLAW,
-    MOVE_PSYSHOCK,
-    MOVE_CALM_MIND,
-    MOVE_ROAR,
-    MOVE_TOXIC,
-    MOVE_HAIL,
-    MOVE_BULK_UP,
-    MOVE_VENOSHOCK,
-    MOVE_HIDDEN_POWER,
-    MOVE_SUNNY_DAY,
-    MOVE_TAUNT,
-    MOVE_ICE_BEAM,
-    MOVE_BLIZZARD,
-    MOVE_HYPER_BEAM,
-    MOVE_LIGHT_SCREEN,
-    MOVE_PROTECT,
-    MOVE_RAIN_DANCE,
-    MOVE_ROOST,
-    MOVE_SAFEGUARD,
-    MOVE_FRUSTRATION,
-    MOVE_SOLAR_BEAM,
-    MOVE_SMACK_DOWN,
-    MOVE_THUNDERBOLT,
-    MOVE_THUNDER,
-    MOVE_EARTHQUAKE,
-    MOVE_RETURN,
-    MOVE_LEECH_LIFE,
-    MOVE_PSYCHIC,
-    MOVE_SHADOW_BALL,
-    MOVE_BRICK_BREAK,
-    MOVE_DOUBLE_TEAM,
-    MOVE_REFLECT,
-    MOVE_SLUDGE_WAVE,
-    MOVE_FLAMETHROWER,
-    MOVE_SLUDGE_BOMB,
-    MOVE_SANDSTORM,
-    MOVE_FIRE_BLAST,
-    MOVE_ROCK_TOMB,
-    MOVE_AERIAL_ACE,
-    MOVE_TORMENT,
-    MOVE_FACADE,
-    MOVE_FLAME_CHARGE,
-    MOVE_REST,
-    MOVE_ATTRACT,
-    MOVE_THIEF,
-	MOVE_LOW_SWEEP,
-    MOVE_ROUND,
-    MOVE_ECHOED_VOICE,
-    MOVE_OVERHEAT,
-    MOVE_STEEL_WING,
-	MOVE_FOCUS_BLAST,
-    MOVE_ENERGY_BALL,
-    MOVE_FALSE_SWIPE,
-    MOVE_SCALD,
-    MOVE_FLING,
-    MOVE_CHARGE_BEAM,
-    MOVE_SKY_DROP,
-    MOVE_BRUTAL_SWING,
-    MOVE_QUASH,
-    MOVE_WILL_O_WISP,
-    MOVE_ACROBATICS,
-    MOVE_EMBARGO,
-    MOVE_EXPLOSION,
-    MOVE_SHADOW_CLAW,
-    MOVE_PAYBACK,
-    MOVE_SMART_STRIKE,
-    MOVE_GIGA_IMPACT,
-    MOVE_ROCK_POLISH,
-    MOVE_AURORA_VEIL,
-    MOVE_STONE_EDGE,
-    MOVE_VOLT_SWITCH,
-    MOVE_THUNDER_WAVE,
-    MOVE_GYRO_BALL,
-    MOVE_SWORDS_DANCE,
-    MOVE_FLY,
-    MOVE_PSYCH_UP,
-    MOVE_BULLDOZE,
-    MOVE_FROST_BREATH,
-    MOVE_ROCK_SLIDE,
-    MOVE_X_SCISSOR,
-    MOVE_DRAGON_TAIL,
-    MOVE_INFESTATION,
-    MOVE_POISON_JAB,
-    MOVE_DREAM_EATER,
-    MOVE_GRASS_KNOT,
-    MOVE_SWAGGER,
-    MOVE_SLEEP_TALK,
-    MOVE_U_TURN,
-    MOVE_SUBSTITUTE,
-    MOVE_FLASH_CANNON,
-    MOVE_TRICK_ROOM,
-    MOVE_WILD_CHARGE,
-    MOVE_SURF,
-    MOVE_SNARL,
-    MOVE_NATURE_POWER,
-    MOVE_DARK_PULSE,
-    MOVE_WATERFALL,
-    MOVE_DAZZLING_GLEAM,
-    MOVE_CONFIDE,
 };

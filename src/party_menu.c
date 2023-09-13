@@ -452,7 +452,7 @@ static EWRAM_DATA u8 sFinalLevel = 0;
 
 void (*gItemUseCB)(u8, TaskFunc);
 
-#include "data/pokemon/tutor_learnsets.h"
+#include "data/pokemon/learnsets/tutor_learnsets.h"
 #include "data/party_menu.h"
 
 static const u8 *const sItemUseStrings[] =
@@ -2901,12 +2901,6 @@ static u8 DestroyPartyMonHeldItemSprite(u8 slot, struct PartyMenuBox *menuBox)
 	return priority;
 }
 
-void LoadHeldItemIcons(void)
-{
-    LoadSpriteSheet(&sSpriteSheet_HeldItem);
-    LoadSpritePalette(&sSpritePalette_HeldItem);
-}
-
 void DrawHeldItemIconsForTrade(u8 *partyCounts, u8 *partySpriteIds, u8 whichParty)
 {
     u16 i;
@@ -2935,14 +2929,13 @@ void DrawHeldItemIconsForTrade(u8 *partyCounts, u8 *partySpriteIds, u8 whichPart
 
 static void CreateHeldItemSpriteForTrade(u8 spriteId, bool8 isMail)
 {
-    u8 subpriority = gSprites[spriteId].subpriority;
-    u8 newSpriteId = CreateSprite(&sSpriteTemplate_HeldItem, 250, 170, subpriority - 1);
-
+	u8 newSpriteId = CreateHeldItemSprite(250, 170, gSprites[spriteId].subpriority - 1, isMail);
+	
     gSprites[newSpriteId].x2 = 4;
     gSprites[newSpriteId].y2 = 10;
+	gSprites[newSpriteId].oam.priority = 1;
+	gSprites[newSpriteId].data[7] = spriteId;
     gSprites[newSpriteId].callback = SpriteCB_HeldItem;
-    gSprites[newSpriteId].data[7] = spriteId;
-    StartSpriteAnim(&gSprites[newSpriteId], isMail);
     gSprites[newSpriteId].callback(&gSprites[newSpriteId]);
 }
 
@@ -5238,11 +5231,6 @@ void ItemUseCB_PPUp(u8 taskId, UNUSED TaskFunc func)
     DisplayPartyMenuStdMessage(PARTY_MSG_BOOST_PP_WHICH_MOVE);
     ShowMoveSelectWindow(gPartyMenu.slotId);
     gTasks[taskId].func = Task_HandleWhichMoveInput;
-}
-
-u16 ItemIdToBattleMoveId(u16 item)
-{
-    return sTMHMMoves[item - ITEM_TM01];
 }
 
 bool8 MonKnowsMove(struct Pokemon *mon, u16 move)

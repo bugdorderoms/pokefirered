@@ -468,6 +468,7 @@ const u32 *GetMonSpritePalFromSpecies(u16 species, bool8 isShiny);
 const struct CompressedSpritePalette *GetMonSpritePalStruct(struct Pokemon *mon);
 const struct CompressedSpritePalette *GetMonSpritePalStructFromSpecies(u16 species, bool8 isShiny);
 bool8 IsPokeSpriteNotFlipped(u16 species);
+u16 ItemIdToBattleMoveId(u16 item);
 s8 GetFlavorRelation(u8 battlerId, u8 flavor);
 bool8 IsTradedMon(struct Pokemon *mon);
 bool8 IsOtherTrainer(u32 otId, u8 *otName);

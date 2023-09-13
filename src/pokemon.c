@@ -79,7 +79,7 @@ static void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon);
 static u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
 static u8 GetLevelFromMonExp(struct Pokemon *mon);
 
-#include "data/battle_moves.h"
+#include "data/move/battle_moves.h"
 
 // Used in an unreferenced function in RS.
 // Unreferenced here and in Emerald.
@@ -1389,7 +1389,7 @@ static const struct SpindaSpot sSpindaSpotGraphics[] =
     {34, 26, INCBIN_U16("graphics/spinda_spots/spot_3.bin")}
 };
 
-#include "data/pokemon/item_effects.h"
+#include "data/item/item_effects.h"
 
 const s8 gNatureStatTable[][5] =
 {
@@ -1421,17 +1421,18 @@ const s8 gNatureStatTable[][5] =
     {    0,  0,  0,     0,     0}, // Quirky
 };
 
-#include "data/pokemon/tmhm_learnsets.h"
-#include "data/pokemon/trainer_class_lookups.h"
+#include "data/move/tmhm_moves.h"
+#include "data/pokemon/learnsets/tmhm_learnsets.h"
+#include "data/trainer/trainer_class_lookups.h"
 #include "data/pokemon/experience_tables.h"
 #include "data/pokemon/base_stats.h"
-#include "data/pokemon/level_up_learnsets.h"
+#include "data/pokemon/learnsets/level_up_learnsets.h"
 #include "data/pokemon/evolution.h"
-#include "data/pokemon/level_up_learnset_pointers.h"
+#include "data/pokemon/learnsets/level_up_learnset_pointers.h"
 #include "data/pokemon/form_change_tables.h"
 #include "data/pokemon/form_change_table_pointers.h"
-#include "data/pokemon/move_descriptions.h"
-#include "data/pokemon/items.h"
+#include "data/move/descriptions.h"
+#include "data/item/items.h"
 
 static const s8 sPokeblockFlavorCompatibilityTable[] =
 {
@@ -4449,4 +4450,9 @@ const u8* GetItemEffect(u16 item)
 		return gItemEffectTable[item - ITEM_POTION];
 	
 	return NULL;
+}
+
+u16 ItemIdToBattleMoveId(u16 item)
+{
+    return sTMHMMoves[item - ITEM_TM01];
 }

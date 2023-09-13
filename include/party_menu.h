@@ -42,7 +42,6 @@ void PartyMenuModifyHP(u8 taskId, u8 slot, s8 hpIncrement, s16 hpDifference, Tas
 u8 GetAilmentFromStatus(u32 status);
 u8 GetMonAilment(struct Pokemon *mon);
 void DisplayPartyMenuStdMessage(u32 stringId);
-void LoadHeldItemIcons(void);
 void DrawHeldItemIconsForTrade(u8 *partyCounts, u8 *partySpriteIds, u8 whichParty);
 void SpriteCB_BounceConfirmCancelButton(u8 spriteId, u8 spriteId2, u8 animNum);
 void CB2_SelectBagItemToGive(void);
@@ -56,7 +55,6 @@ void ItemUseCB_Medicine(u8 taskId, TaskFunc func);
 void ItemUseCB_PPRecoveryOneMove(u8 taskId, UNUSED TaskFunc func);
 void ItemUseCB_PPRecoveryAllMoves(u8 taskId, UNUSED TaskFunc func);
 void ItemUseCB_PPUp(u8 taskId, UNUSED TaskFunc func);
-u16 ItemIdToBattleMoveId(u16 item);
 bool8 MonKnowsMove(struct Pokemon *mon, u16 move);
 void ItemUseCB_TMHM(u8 taskId, UNUSED TaskFunc func);
 void ItemUseCB_SacredAsh(u8 taskId, UNUSED TaskFunc func);
