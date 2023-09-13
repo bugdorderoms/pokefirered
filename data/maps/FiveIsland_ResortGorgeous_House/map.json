@@ -16,7 +16,8 @@
   "connections": null,
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
       "x": 4,
       "y": 4,
       "elevation": 3,
@@ -29,7 +30,8 @@
       "flag": "FLAG_HIDE_RESORT_GORGEOUS_INSIDE_SELPHY"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_GENTLEMAN",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_GENTLEMAN",
       "x": 6,
       "y": 2,
       "elevation": 3,

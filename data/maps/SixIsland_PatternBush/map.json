@@ -16,7 +16,8 @@
   "connections": null,
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
       "x": 48,
       "y": 15,
       "elevation": 3,
@@ -29,7 +30,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
       "x": 10,
       "y": 5,
       "elevation": 3,
@@ -42,7 +44,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BUG_CATCHER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BUG_CATCHER",
       "x": 51,
       "y": 6,
       "elevation": 3,
@@ -55,7 +58,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BUG_CATCHER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BUG_CATCHER",
       "x": 12,
       "y": 13,
       "elevation": 3,
@@ -68,7 +72,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BUG_CATCHER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BUG_CATCHER",
       "x": 37,
       "y": 23,
       "elevation": 3,
@@ -81,7 +86,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_YOUNGSTER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_YOUNGSTER",
       "x": 32,
       "y": 5,
       "elevation": 3,
@@ -94,7 +100,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_YOUNGSTER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_YOUNGSTER",
       "x": 52,
       "y": 20,
       "elevation": 3,
@@ -107,7 +114,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_LASS",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_LASS",
       "x": 8,
       "y": 21,
       "elevation": 3,
@@ -120,7 +128,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_LASS",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_LASS",
       "x": 39,
       "y": 6,
       "elevation": 3,
@@ -133,7 +142,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_CAMPER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_CAMPER",
       "x": 3,
       "y": 9,
       "elevation": 3,
@@ -146,7 +156,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_PICNICKER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_PICNICKER",
       "x": 19,
       "y": 24,
       "elevation": 3,
@@ -159,7 +170,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_HIKER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_HIKER",
       "x": 30,
       "y": 19,
       "elevation": 3,

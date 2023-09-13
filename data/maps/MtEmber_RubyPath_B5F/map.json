@@ -16,7 +16,8 @@
   "connections": null,
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_RUBY",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_RUBY",
       "x": 7,
       "y": 7,
       "elevation": 0,

@@ -27,7 +27,8 @@
   ],
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_MAN",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_MAN",
       "x": 7,
       "y": 24,
       "elevation": 3,
@@ -40,7 +41,8 @@
       "flag": "FLAG_HIDE_THREE_ISLAND_ANTIBIKERS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_MAN",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_MAN",
       "x": 8,
       "y": 23,
       "elevation": 3,
@@ -53,7 +55,8 @@
       "flag": "FLAG_HIDE_THREE_ISLAND_ANTIBIKERS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BIKER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BIKER",
       "x": 8,
       "y": 24,
       "elevation": 3,
@@ -66,7 +69,8 @@
       "flag": "FLAG_HIDE_THREE_ISLAND_LONE_BIKER"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BIKER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BIKER",
       "x": 9,
       "y": 23,
       "elevation": 3,
@@ -79,7 +83,8 @@
       "flag": "FLAG_HIDE_THREE_ISLAND_BIKERS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BIKER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BIKER",
       "x": 9,
       "y": 24,
       "elevation": 3,
@@ -92,7 +97,8 @@
       "flag": "FLAG_HIDE_THREE_ISLAND_BIKERS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BIKER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BIKER",
       "x": 10,
       "y": 22,
       "elevation": 3,
@@ -105,7 +111,8 @@
       "flag": "FLAG_HIDE_THREE_ISLAND_BIKERS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BIKER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BIKER",
       "x": 10,
       "y": 24,
       "elevation": 3,
@@ -118,7 +125,8 @@
       "flag": "FLAG_HIDE_THREE_ISLAND_BIKERS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BIKER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BIKER",
       "x": 11,
       "y": 23,
       "elevation": 3,
@@ -131,7 +139,8 @@
       "flag": "FLAG_HIDE_THREE_ISLAND_BIKERS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_CUT_TREE",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_CUT_TREE",
       "x": 20,
       "y": 7,
       "elevation": 3,
@@ -144,7 +153,8 @@
       "flag": "FLAG_TEMP_12"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
       "x": 18,
       "y": 17,
       "elevation": 3,
@@ -157,7 +167,8 @@
       "flag": "FLAG_HIDE_THREE_ISLAND_ZINC"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_WOMAN_1",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_1",
       "x": 15,
       "y": 7,
       "elevation": 3,
@@ -170,7 +181,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_LITTLE_BOY",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_LITTLE_BOY",
       "x": 14,
       "y": 14,
       "elevation": 3,
@@ -183,7 +195,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_DODUO",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_DODUO",
       "x": 15,
       "y": 14,
       "elevation": 3,
@@ -196,7 +209,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BIKER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BIKER",
       "x": 15,
       "y": 31,
       "elevation": 3,

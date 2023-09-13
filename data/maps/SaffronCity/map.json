@@ -38,7 +38,8 @@
   "connections_no_include": true,
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
       "x": 22,
       "y": 15,
       "elevation": 3,
@@ -51,7 +52,8 @@
       "flag": "FLAG_HIDE_SAFFRON_ROCKETS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
       "x": 26,
       "y": 16,
       "elevation": 3,
@@ -64,7 +66,8 @@
       "flag": "FLAG_HIDE_SAFFRON_ROCKETS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
       "x": 46,
       "y": 13,
       "elevation": 3,
@@ -77,7 +80,8 @@
       "flag": "FLAG_HIDE_SAFFRON_ROCKETS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
       "x": 27,
       "y": 22,
       "elevation": 3,
@@ -90,7 +94,8 @@
       "flag": "FLAG_HIDE_SAFFRON_ROCKETS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
       "x": 25,
       "y": 33,
       "elevation": 3,
@@ -103,7 +108,8 @@
       "flag": "FLAG_HIDE_SAFFRON_ROCKETS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
       "x": 34,
       "y": 31,
       "elevation": 3,
@@ -116,7 +122,8 @@
       "flag": "FLAG_HIDE_SAFFRON_ROCKETS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
       "x": 30,
       "y": 39,
       "elevation": 3,
@@ -129,7 +136,8 @@
       "flag": "FLAG_HIDE_SAFFRON_ROCKETS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
       "x": 48,
       "y": 24,
       "elevation": 3,
@@ -142,7 +150,8 @@
       "flag": "FLAG_HIDE_SAFFRON_ROCKETS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_YOUNGSTER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_YOUNGSTER",
       "x": 37,
       "y": 32,
       "elevation": 3,
@@ -155,7 +164,8 @@
       "flag": "FLAG_HIDE_SAFFRON_CIVILIANS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_WORKER_M",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_WORKER_M",
       "x": 21,
       "y": 23,
       "elevation": 3,
@@ -168,7 +178,8 @@
       "flag": "FLAG_HIDE_SAFFRON_CIVILIANS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_MAN",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_MAN",
       "x": 39,
       "y": 16,
       "elevation": 3,
@@ -181,7 +192,8 @@
       "flag": "FLAG_HIDE_SAFFRON_CIVILIANS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BOY",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BOY",
       "x": 44,
       "y": 22,
       "elevation": 3,
@@ -194,7 +206,8 @@
       "flag": "FLAG_HIDE_SAFFRON_CIVILIANS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_PIDGEOT",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_PIDGEOT",
       "x": 45,
       "y": 22,
       "elevation": 3,
@@ -207,7 +220,8 @@
       "flag": "FLAG_HIDE_SAFFRON_CIVILIANS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_LASS",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_LASS",
       "x": 32,
       "y": 39,
       "elevation": 3,
@@ -220,7 +234,8 @@
       "flag": "FLAG_HIDE_SAFFRON_CIVILIANS"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BATTLE_GIRL",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BATTLE_GIRL",
       "x": 47,
       "y": 24,
       "elevation": 3,

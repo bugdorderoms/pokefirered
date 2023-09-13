@@ -27,7 +27,8 @@
   ],
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_WOMAN_1",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_1",
       "x": 9,
       "y": 8,
       "elevation": 3,
@@ -40,7 +41,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_LASS",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_LASS",
       "x": 75,
       "y": 3,
       "elevation": 3,
@@ -53,7 +55,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
       "x": 67,
       "y": 5,
       "elevation": 3,
@@ -66,7 +69,8 @@
       "flag": "FLAG_HIDE_ROUTE4_TM05"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BOY",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BOY",
       "x": 15,
       "y": 14,
       "elevation": 3,
@@ -79,7 +83,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BLACKBELT",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BLACKBELT",
       "x": 47,
       "y": 3,
       "elevation": 3,
@@ -92,7 +97,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BLACKBELT",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BLACKBELT",
       "x": 50,
       "y": 3,
       "elevation": 3,
@@ -105,18 +111,12 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_COOLTRAINER_M",
-      "in_connection": true,
+      "type": "clone",
+	  "graphics_id": "OBJ_EVENT_GFX_COOLTRAINER_M",
       "x": 109,
       "y": 3,
-      "elevation": 12,
-      "movement_type": "MOVEMENT_TYPE_NONE",
-      "movement_range_x": 0,
-      "movement_range_y": 0,
-      "trainer_type": "3",
-      "trainer_sight_or_berry_tree_id": "3",
-      "script": "0x0",
-      "flag": "0"
+      "target_local_id": 12,
+	  "target_map": "MAP_CERULEAN_CITY"
     }
   ],
   "warp_events": [

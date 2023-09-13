@@ -16,7 +16,8 @@
   "connections": null,
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
       "x": 6,
       "y": 2,
       "elevation": 3,
@@ -29,7 +30,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_LASS",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_LASS",
       "x": 4,
       "y": 5,
       "elevation": 3,

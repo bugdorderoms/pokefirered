@@ -32,7 +32,8 @@
   ],
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_FAT_MAN",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_FAT_MAN",
       "x": 8,
       "y": 26,
       "elevation": 3,
@@ -45,7 +46,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_CUT_TREE",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_CUT_TREE",
       "x": 11,
       "y": 24,
       "elevation": 3,
@@ -58,7 +60,8 @@
       "flag": "FLAG_TEMP_11"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_OLD_MAN_1",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_OLD_MAN_1",
       "x": 34,
       "y": 11,
       "elevation": 3,
@@ -71,7 +74,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_VAR_0",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_VAR_0",
       "x": 21,
       "y": 6,
       "elevation": 3,
@@ -84,7 +88,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_WOMAN_3",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_3",
       "x": 20,
       "y": 12,
       "elevation": 3,
@@ -97,7 +102,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_YOUNGSTER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_YOUNGSTER",
       "x": 33,
       "y": 26,
       "elevation": 3,
@@ -110,7 +116,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BOY",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BOY",
       "x": 16,
       "y": 22,
       "elevation": 3,
@@ -123,7 +130,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_CUT_TREE",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_CUT_TREE",
       "x": 18,
       "y": 5,
       "elevation": 3,
@@ -136,7 +144,8 @@
       "flag": "FLAG_TEMP_12"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
       "x": 17,
       "y": 5,
       "elevation": 3,

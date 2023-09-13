@@ -16,7 +16,8 @@
   "connections": null,
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_HIKER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_HIKER",
       "x": 1,
       "y": 2,
       "elevation": 3,
@@ -29,7 +30,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_LASS",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_LASS",
       "x": 7,
       "y": 6,
       "elevation": 3,

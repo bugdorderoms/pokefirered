@@ -16,7 +16,8 @@
   "connections": null,
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_BOY",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BOY",
       "x": 3,
       "y": 5,
       "elevation": 3,
@@ -29,7 +30,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_MACHOKE",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_MACHOKE",
       "x": 2,
       "y": 5,
       "elevation": 3,
@@ -42,7 +44,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
       "x": 2,
       "y": 2,
       "elevation": 0,

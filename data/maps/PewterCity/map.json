@@ -27,7 +27,8 @@
   ],
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_LASS",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_LASS",
       "x": 6,
       "y": 15,
       "elevation": 3,
@@ -40,7 +41,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_MAN",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_MAN",
       "x": 33,
       "y": 17,
       "elevation": 3,
@@ -53,7 +55,8 @@
       "flag": "FLAG_HIDE_PEWTER_MUSEUM_GUIDE"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_FAT_MAN",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_FAT_MAN",
       "x": 21,
       "y": 28,
       "elevation": 3,
@@ -66,7 +69,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BUG_CATCHER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BUG_CATCHER",
       "x": 33,
       "y": 27,
       "elevation": 3,
@@ -79,7 +83,8 @@
       "flag": "0"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_BOY",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_BOY",
       "x": 42,
       "y": 20,
       "elevation": 3,
@@ -92,7 +97,8 @@
       "flag": "FLAG_HIDE_PEWTER_CITY_GYM_GUIDE"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_CUT_TREE",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_CUT_TREE",
       "x": 30,
       "y": 5,
       "elevation": 3,
@@ -105,7 +111,8 @@
       "flag": "FLAG_TEMP_12"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_SCIENTIST",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_SCIENTIST",
       "x": 46,
       "y": 20,
       "elevation": 3,

@@ -16,7 +16,8 @@
   "connections": null,
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
       "x": 5,
       "y": 5,
       "elevation": 3,
@@ -29,7 +30,8 @@
       "flag": "FLAG_HIDE_LOST_CAVE_SELPHY"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
       "x": 5,
       "y": 2,
       "elevation": 3,

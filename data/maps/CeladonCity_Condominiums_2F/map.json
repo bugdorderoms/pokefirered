@@ -16,7 +16,8 @@
   "connections": null,
   "object_events": [
     {
-      "graphics_id": "0",
+      "type": "object",
+	  "graphics_id": "0",
       "x": 6,
       "y": 6,
       "elevation": 0,
@@ -29,7 +30,8 @@
       "flag": "FLAG_HIDE_FAME_CHECKER_ERIKA_JOURNALS"
     },
     {
-      "graphics_id": "0",
+      "type": "object",
+	  "graphics_id": "0",
       "x": 5,
       "y": 6,
       "elevation": 0,

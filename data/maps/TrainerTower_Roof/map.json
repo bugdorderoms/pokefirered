@@ -16,7 +16,8 @@
   "connections": null,
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_TRAINER_TOWER_DUDE",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_TRAINER_TOWER_DUDE",
       "x": 9,
       "y": 7,
       "elevation": 3,

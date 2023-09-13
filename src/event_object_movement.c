@@ -1081,7 +1081,7 @@ static u8 InitObjectEventStateFromTemplate(struct ObjectEventTemplate *template,
     const struct MapHeader *mapHeader;
     u8 objectEventId;
     u8 var0;
-    u8 elevation;
+    u8 localId;
     s16 x;
     s16 y;
     s16 x2;
@@ -1090,24 +1090,24 @@ static u8 InitObjectEventStateFromTemplate(struct ObjectEventTemplate *template,
     s16 y3;
     
     var0 = 0;
-    elevation = 0;
+    localId = 0;
     x2 = 0;
     y2 = 0;
     x3 = 0;
     y3 = 0;
     
-    if (template->inConnection == 0xFF)
+    if (template->kind == OBJ_KIND_CLONE)
     {
         var0 = 1;
-        elevation = template->elevation;
-        mapNum = template->trainerType;
-        mapGroup = template->trainerRange_berryTreeId & 0xFF;
+        localId = template->objUnion.clone.targetLocalId;
+        mapNum = template->objUnion.clone.targetMapNum;
+        mapGroup = template->objUnion.clone.targetMapGroup & 0xFF;
         x2 = template->x;
         y2 = template->y;
         x3 = template->x;
         y3 = template->y;
         mapHeader = Overworld_GetMapHeaderByGroupAndId(mapGroup, mapNum);
-        template = &(mapHeader->events->objectEvents[elevation - 1]);
+        template = &(mapHeader->events->objectEvents[localId - 1]);
     }
     if (GetAvailableObjectEventId(template->localId, mapNum, mapGroup, &objectEventId) || !sub_805E238(template, var0, x3, y3))
         return OBJECT_EVENTS_COUNT;
@@ -1126,7 +1126,7 @@ static u8 InitObjectEventStateFromTemplate(struct ObjectEventTemplate *template,
     objectEvent->active = TRUE;
     objectEvent->triggerGroundEffectsOnMove = TRUE;
     objectEvent->graphicsId = template->graphicsId;
-    objectEvent->movementType = template->movementType;
+    objectEvent->movementType = template->objUnion.normal.movementType;
     objectEvent->localId = template->localId;
     objectEvent->mapNum = mapNum;
     objectEvent->mapGroup = mapGroup;
@@ -1136,13 +1136,13 @@ static u8 InitObjectEventStateFromTemplate(struct ObjectEventTemplate *template,
     objectEvent->currentCoords.y = y;
     objectEvent->previousCoords.x = x;
     objectEvent->previousCoords.y = y;
-    objectEvent->currentElevation = template->elevation;
-    objectEvent->previousElevation = template->elevation;
-    objectEvent->rangeX = template->movementRangeX;
-    objectEvent->rangeY = template->movementRangeY;
-    objectEvent->trainerType = template->trainerType;
-    objectEvent->trainerRange_berryTreeId = template->trainerRange_berryTreeId;
-    objectEvent->previousMovementDirection = gInitialMovementTypeFacingDirections[template->movementType];
+    objectEvent->currentElevation = template->objUnion.normal.elevation;
+    objectEvent->previousElevation = template->objUnion.normal.elevation;
+    objectEvent->rangeX = template->objUnion.normal.movementRangeX;
+    objectEvent->rangeY = template->objUnion.normal.movementRangeY;
+    objectEvent->trainerType = template->objUnion.normal.trainerType;
+    objectEvent->trainerRange_berryTreeId = template->objUnion.normal.trainerRange_berryTreeId;
+    objectEvent->previousMovementDirection = gInitialMovementTypeFacingDirections[template->objUnion.normal.movementType];
     SetObjectEventDirection(objectEvent, objectEvent->previousMovementDirection);
     SetObjectEventDynamicGraphicsId(objectEvent);
     if (gRangedMovementTypes[objectEvent->movementType])
@@ -1392,15 +1392,15 @@ int SpawnSpecialObjectEventParameterized(u8 graphicsId, u8 movementBehavior, u8 
     y -= 7;
     objectEventTemplate.localId = localId;
     objectEventTemplate.graphicsId = graphicsId;
-    objectEventTemplate.inConnection = 0;
+    objectEventTemplate.kind = OBJ_KIND_NORMAL;
     objectEventTemplate.x = x;
     objectEventTemplate.y = y;
-    objectEventTemplate.elevation = z;
-    objectEventTemplate.movementType = movementBehavior;
-    objectEventTemplate.movementRangeX = 0;
-    objectEventTemplate.movementRangeY = 0;
-    objectEventTemplate.trainerType = TRAINER_TYPE_NONE;
-    objectEventTemplate.trainerRange_berryTreeId = 0;
+    objectEventTemplate.objUnion.normal.elevation = z;
+    objectEventTemplate.objUnion.normal.movementType = movementBehavior;
+    objectEventTemplate.objUnion.normal.movementRangeX = 0;
+    objectEventTemplate.objUnion.normal.movementRangeY = 0;
+    objectEventTemplate.objUnion.normal.trainerType = TRAINER_TYPE_NONE;
+    objectEventTemplate.objUnion.normal.trainerRange_berryTreeId = 0;
     return SpawnSpecialObjectEvent(&objectEventTemplate);
 }
 
@@ -1442,7 +1442,7 @@ static void MakeObjectTemplateFromObjectEventGraphicsInfoWithCallbackIndex(u16 g
 
 static void MakeObjectTemplateFromObjectEventTemplate(struct ObjectEventTemplate *objectEventTemplate, struct SpriteTemplate *spriteTemplate, const struct SubspriteTable **subspriteTables)
 {
-    MakeObjectTemplateFromObjectEventGraphicsInfoWithCallbackIndex(objectEventTemplate->graphicsId, objectEventTemplate->movementType, spriteTemplate, subspriteTables);
+    MakeObjectTemplateFromObjectEventGraphicsInfoWithCallbackIndex(objectEventTemplate->graphicsId, objectEventTemplate->objUnion.normal.movementType, spriteTemplate, subspriteTables);
 }
 
 u8 AddPseudoObjectEvent(u16 graphicsId, SpriteCallback callback, s16 x, s16 y, u8 subpriority)
@@ -2157,7 +2157,7 @@ static u16 GetObjectEventFlagIdByObjectEventId(u8 objectEventId)
 
 u16 GetObjectEventFlagByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup)
 {
-    return GetObjectEventTemplateByLocalIdAndMap(localId, mapNum, mapGroup)->trainerType;
+    return GetObjectEventTemplateByLocalIdAndMap(localId, mapNum, mapGroup)->objUnion.normal.trainerType;
 }
 
 static struct ObjectEventTemplate *GetObjectEventTemplateByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup)
@@ -2226,7 +2226,7 @@ void OverrideMovementTypeForObjectEvent(const struct ObjectEvent *objectEvent, u
     struct ObjectEventTemplate *objectEventTemplate = GetBaseTemplateForObjectEvent(objectEvent);
 
     if (objectEventTemplate != NULL)
-        objectEventTemplate->movementType = movementType;
+        objectEventTemplate->objUnion.normal.movementType = movementType;
 }
 
 void TryOverrideObjectEventTemplateCoords(u8 localId, u8 mapNum, u8 mapGroup)

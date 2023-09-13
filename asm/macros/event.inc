@@ -413,7 +413,7 @@
 	.2byte \y
 	.endm
 
-	@ Sets a default warp place. If a warp tries to send the player to Warp 127 on Map 127.127, they will instead be sent here.
+	@ Sets the dynamic warp destination. Warps with a destination map of MAP_DYNAMIC will target this destination.
 	@ Useful when a map has warps that need to go to script-controlled locations (i.e. elevators).
 	.macro setdynamicwarp map:req, warp:req, x:req, y:req
 	.byte 0x3f

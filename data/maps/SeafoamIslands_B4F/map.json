@@ -16,7 +16,8 @@
   "connections": null,
   "object_events": [
     {
-      "graphics_id": "OBJ_EVENT_GFX_PUSHABLE_BOULDER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_PUSHABLE_BOULDER",
       "x": 8,
       "y": 18,
       "elevation": 1,
@@ -29,7 +30,8 @@
       "flag": "FLAG_HIDE_SEAFOAM_B4F_BOULDER_1"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_PUSHABLE_BOULDER",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_PUSHABLE_BOULDER",
       "x": 9,
       "y": 18,
       "elevation": 1,
@@ -42,7 +44,8 @@
       "flag": "FLAG_HIDE_SEAFOAM_B4F_BOULDER_2"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ARTICUNO",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ARTICUNO",
       "x": 9,
       "y": 2,
       "elevation": 4,
@@ -55,7 +58,8 @@
       "flag": "FLAG_HIDE_ARTICUNO"
     },
     {
-      "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
+      "type": "object",
+	  "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
       "x": 22,
       "y": 19,
       "elevation": 4,
