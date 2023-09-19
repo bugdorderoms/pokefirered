@@ -224,6 +224,44 @@ static const struct ScanlineEffectParams sIntroScanlineParams16Bit =
     &REG_BG3HOFS, SCANLINE_EFFECT_DMACNT_16BIT, 1
 };
 
+static const struct DNSPalExceptions sCombatPalExceptions =  
+{
+    .pal = {
+        DNS_PAL_EXCEPTION,  //0
+        DNS_PAL_EXCEPTION,  //1
+        DNS_PAL_ACTIVE,     //2
+        DNS_PAL_ACTIVE,     //3
+        DNS_PAL_ACTIVE,     //4
+        DNS_PAL_EXCEPTION,  //5
+        DNS_PAL_ACTIVE,     //6
+        DNS_PAL_ACTIVE,     //7
+        DNS_PAL_EXCEPTION,  //8
+        DNS_PAL_EXCEPTION,  //9
+        DNS_PAL_ACTIVE,     //10
+        DNS_PAL_ACTIVE,     //11
+        DNS_PAL_ACTIVE,     //12
+        DNS_PAL_ACTIVE,     //13
+        DNS_PAL_ACTIVE,     //14
+        DNS_PAL_ACTIVE,     //15
+        DNS_PAL_EXCEPTION,  //16
+        DNS_PAL_EXCEPTION,  //17
+        DNS_PAL_EXCEPTION,  //18
+        DNS_PAL_EXCEPTION,  //19
+        DNS_PAL_EXCEPTION,  //20
+        DNS_PAL_EXCEPTION,  //21
+        DNS_PAL_EXCEPTION,  //22
+        DNS_PAL_EXCEPTION,  //23
+        DNS_PAL_EXCEPTION,  //24
+        DNS_PAL_EXCEPTION,  //25
+        DNS_PAL_EXCEPTION,  //26
+        DNS_PAL_EXCEPTION,  //27
+        DNS_PAL_EXCEPTION,  //28
+        DNS_PAL_EXCEPTION,  //29
+        DNS_PAL_EXCEPTION,  //30
+        DNS_PAL_EXCEPTION,  //31
+    }
+};
+
 const struct OamData gOamData_BattlerOpponent =
 {
     .y = 0,
@@ -1129,7 +1167,7 @@ void BattleMainCB2(void)
     UpdatePaletteFade();
     RunTasks();
 #if USE_DNS_IN_BATTLE
-    DNSApplyFilters();
+    DNSApplyFilters(sCombatPalExceptions, NULL, 0); // Don't need define battle palette tag since none battle sprite was affected by dns.
 #endif
     
     if (JOY_HELD(B_BUTTON) && gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)

@@ -1,4 +1,5 @@
 #include "global.h"
+#include "battle.h"
 #include "task.h"
 #include "main.h"
 #include "dns.h"
@@ -6,16 +7,9 @@
 #include "overworld.h"
 #include "palette.h"
 #include "pokedex_screen.h"
-#include "pokemon_icon.h"
-#include "dexnav.h"
 #include "battle_main.h"
-#include "battle_interface.h"
-#include "registered_item.h"
-#include "item_menu_icons.h"
+#include "constants/battle.h"
 #include "constants/map_types.h"
-
-#define DNS_PAL_EXCEPTION FALSE
-#define DNS_PAL_ACTIVE    TRUE
 
 /*******************************************************/
 /*********    Day and Night Configuration     **********/
@@ -99,88 +93,6 @@ static const u8 sDNSMapExceptions[] =
 	MAP_TYPE_INDOOR,
 	MAP_TYPE_UNDERGROUND,
 	MAP_TYPE_SECRET_BASE,
-};
-
-/* Configure each palette slot to be affected or not by DNS *
- * while you are in the overworld.                          *
- * 0-15 background, 16-31 sprites.                          */
-static const struct DNSPalExceptions sOWPalExceptions = 
-{
-    .pal = {
-        DNS_PAL_ACTIVE,    //0
-        DNS_PAL_ACTIVE,    //1
-        DNS_PAL_ACTIVE,    //2
-        DNS_PAL_ACTIVE,    //3
-        DNS_PAL_ACTIVE,    //4
-        DNS_PAL_ACTIVE,    //5
-        DNS_PAL_ACTIVE,    //6
-        DNS_PAL_ACTIVE,    //7
-        DNS_PAL_ACTIVE,    //8
-        DNS_PAL_ACTIVE,    //9
-        DNS_PAL_ACTIVE,    //10
-        DNS_PAL_ACTIVE,    //11
-        DNS_PAL_ACTIVE,    //12
-        DNS_PAL_EXCEPTION, //13
-        DNS_PAL_EXCEPTION, //14
-        DNS_PAL_EXCEPTION, //15
-        DNS_PAL_ACTIVE,    //16
-        DNS_PAL_ACTIVE,    //17
-        DNS_PAL_ACTIVE,    //18
-        DNS_PAL_ACTIVE,    //19
-        DNS_PAL_ACTIVE,    //20
-        DNS_PAL_ACTIVE,    //21
-        DNS_PAL_ACTIVE,    //22
-        DNS_PAL_ACTIVE,    //23
-        DNS_PAL_ACTIVE,    //24
-        DNS_PAL_ACTIVE,    //25
-        DNS_PAL_ACTIVE,    //26
-        DNS_PAL_ACTIVE,    //27
-        DNS_PAL_ACTIVE,    //28
-        DNS_PAL_ACTIVE,    //29
-        DNS_PAL_ACTIVE,    //30
-        DNS_PAL_ACTIVE,    //31
-    }
-};
-
-/* Configure each palette slot to be affected or not by DNS *
- * while in combat.                                         *
- * 0-15 background, 16-31 sprites.                          */
-static const struct DNSPalExceptions sCombatPalExceptions =  
-{
-    .pal = {
-        DNS_PAL_EXCEPTION,  //0
-        DNS_PAL_EXCEPTION,  //1
-        DNS_PAL_ACTIVE,     //2
-        DNS_PAL_ACTIVE,     //3
-        DNS_PAL_ACTIVE,     //4
-        DNS_PAL_EXCEPTION,  //5
-        DNS_PAL_ACTIVE,     //6
-        DNS_PAL_ACTIVE,     //7
-        DNS_PAL_EXCEPTION,  //8
-        DNS_PAL_EXCEPTION,  //9
-        DNS_PAL_ACTIVE,     //10
-        DNS_PAL_ACTIVE,     //11
-        DNS_PAL_ACTIVE,     //12
-        DNS_PAL_ACTIVE,     //13
-        DNS_PAL_ACTIVE,     //14
-        DNS_PAL_ACTIVE,     //15
-        DNS_PAL_EXCEPTION,  //16
-        DNS_PAL_EXCEPTION,  //17
-        DNS_PAL_EXCEPTION,  //18
-        DNS_PAL_EXCEPTION,  //19
-        DNS_PAL_EXCEPTION,  //20
-        DNS_PAL_EXCEPTION,  //21
-        DNS_PAL_EXCEPTION,  //22
-        DNS_PAL_EXCEPTION,  //23
-        DNS_PAL_EXCEPTION,  //24
-        DNS_PAL_EXCEPTION,  //25
-        DNS_PAL_EXCEPTION,  //26
-        DNS_PAL_EXCEPTION,  //27
-        DNS_PAL_EXCEPTION,  //28
-        DNS_PAL_EXCEPTION,  //29
-        DNS_PAL_EXCEPTION,  //30
-        DNS_PAL_EXCEPTION,  //31
-    }
 };
 
 /*******************************************************/
@@ -333,27 +245,6 @@ static const u16 sNightfallFilters[] =
 /* Filter used at night. From 22:00 to 24:59 */
 static const u16 sNightFilter = RGB2(14, 14, 6);   //19CE
 
-/*************   SpritePalette DNS exceptions by TAG   **************
- * If you are using any dynamic sprite palette allocation system,   *
- * you will most likely want to use this system to avoid certain    *
- * palette tags to be "banned" from dns, as the palettes may get    *
- * loaded in different slots each time.                             */
-static const u16 sPaletteTagExceptions[] =
-{
-	OWNED_ICON_TAG, // 0x0066
-	ITEMICON_TAG, // 0xD750
-	CURSOR_TAG, // 0x1075
-	BOX_TAG, // 0x1078
-	ITEMICON_INITIAL_TAG + 0, // 0x1088
-	ITEMICON_INITIAL_TAG + 1, // 0x1089
-	ITEMICON_INITIAL_TAG + 2, // 0x108A
-	ITEMICON_INITIAL_TAG + 3, // 0x108B
-	POKE_ICON_BASE_PAL_TAG + 0, // 0xDAC0
-	POKE_ICON_BASE_PAL_TAG + 1, // 0xDAC1
-	POKE_ICON_BASE_PAL_TAG + 2, // 0xDAC2
-	// Don't need define battle palette tag since none battle sprite was affected by dns.
-};
-
 // The season for each month of the year
 static const u8 sSeasonsByMonth[] =
 {
@@ -376,9 +267,6 @@ static const u8 sSeasonsByMonth[] =
  * ******************************************* */
 
 // Functions
-static bool8 IsMapDNSException(void);
-static bool8 IsSpritePaletteTagDNSException(u8 palNum);
-static u8 GetDNSTimeLapse(u8 hour);
 static u16 GetDNSFilter(void);
 static u16 DNSApplyProportionalFilterToColour(u16 colour, u16 filter);
 static void DoDNSLightningWindowsEffect(void);
@@ -398,26 +286,6 @@ ALIGNED(4) EWRAM_DATA static u16 sDNSPaletteDmaBuffer[PLTT_BUFFER_SIZE] = {0};
  * Author: Xhyz/Samu                                    *
  ****************************************************** */
 
-void DNSTransferPlttBuffer(void *src, void *dest)
-{
-#if USE_DNS_IN_BATTLE
-	if ((IN_OVERWORLD || IN_BATTLE) && !IsMapDNSException())
-#else
-	if (IN_OVERWORLD && !IsMapDNSException())
-#endif
-	{
-#if LIT_UP_WINDOWS
-		if (!gMain.inBattle)
-			DoDNSLightningWindowsEffect();
-#endif
-		DmaCopy16(3, sDNSPaletteDmaBuffer, dest, PLTT_SIZE);
-	}
-	else
-	{
-		DmaCopy16(3, src, dest, PLTT_SIZE);
-	}
-}
-
 static bool8 IsMapDNSException(void)
 {
 	u8 i, mapType = gMapHeader.mapType;
@@ -430,33 +298,50 @@ static bool8 IsMapDNSException(void)
 	return FALSE;
 }
 
-static bool8 IsSpritePaletteTagDNSException(u8 palNum)
+void DNSTransferPlttBuffer(void *src, void *dest)
+{
+	if (!IsMapDNSException())
+	{
+		if (IN_OVERWORLD)
+		{
+#if LIT_UP_WINDOWS
+			DoDNSLightningWindowsEffect();
+#endif
+			DmaCopy16(3, sDNSPaletteDmaBuffer, dest, PLTT_SIZE);
+			return;
+		}
+#if USE_DNS_IN_BATTLE
+		else if (IN_BATTLE)
+		{
+			DmaCopy16(3, sDNSPaletteDmaBuffer, dest, PLTT_SIZE);
+			return;
+		}
+#endif
+	}
+	DmaCopy16(3, src, dest, PLTT_SIZE);
+}
+
+static bool8 IsSpritePaletteTagDNSException(u8 palNum, const u16 *tagExceptions, u8 tagExceptionsCount)
 {
 	u8 i;
 	u16 tag = GetSpritePaletteTagByPaletteNum(palNum);
 
-	for (i = 0; i < NELEMS(sPaletteTagExceptions); i++)
+	for (i = 0; i < tagExceptionsCount; i++)
 	{
-		if (sPaletteTagExceptions[i] == tag)
+		if (tagExceptions[i] == tag)
 			return TRUE;
 	}
 	return FALSE;
 }
 
-void DNSApplyFilters(void)
+void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 *tagExceptions, u8 tagExceptionsCount)
 {
 	u8 palNum, colNum;
 	u16 colourSlot, rgbFilter = GetDNSFilter();
-	struct DNSPalExceptions palExceptionFlags;
-#if USE_DNS_IN_BATTLE
-	palExceptionFlags = gMain.inBattle ? sCombatPalExceptions : sOWPalExceptions;
-#else
-	palExceptionFlags = sOWPalExceptions;
-#endif
 	
 	for (palNum = 0; palNum < 32; palNum++)
 	{
-		if (palExceptionFlags.pal[palNum] && (palNum < 16 || !IsSpritePaletteTagDNSException(palNum - 16)))
+		if (palExceptionFlags.pal[palNum] && (palNum < 16 || tagExceptions == NULL || !IsSpritePaletteTagDNSException(palNum - 16, tagExceptions, tagExceptionsCount)))
 		{
 			for (colNum = 0; colNum < 16; colNum++)
 			{
@@ -504,6 +389,22 @@ static void DoDNSLightningWindowsEffect(void)
 	}
 }
 
+static u8 GetDNSTimeLapse(u8 hour)
+{
+	if (hour < DAWN_OF_DAY_START)
+        return TIME_MIDNIGHT;
+    else if (hour < MORNING_OF_DAY_START)
+        return TIME_DAWN;
+    else if (hour < AFTERNOON_OF_DAY_START)
+        return TIME_DAY;
+    else if (hour < NIGHT_OF_DAY_START)
+        return TIME_SUNSET;
+    else if (hour < MIDNIGHT_OF_DAY_START)
+        return TIME_NIGHTFALL;
+    else 
+        return TIME_NIGHT;
+}
+
 static u16 GetDNSFilter(void)
 {
 	u8 hour = gRtcLocation.hour, minutes = gRtcLocation.minute;
@@ -534,22 +435,6 @@ static u16 DNSApplyProportionalFilterToColour(u16 colour, u16 filter)
 	blue = ((colour & 0x7C00) >> 10) * ((0x7C00 - (filter & 0x7C00)) >> 10) >> 5;
 		
 	return RGB2(red <= 31 ? red : 0, green <= 31 ? green : 0, blue <= 31 ? blue : 0);
-}
-
-static u8 GetDNSTimeLapse(u8 hour)
-{
-	if (hour < DAWN_OF_DAY_START)
-        return TIME_MIDNIGHT;
-    else if (hour < MORNING_OF_DAY_START)
-        return TIME_DAWN;
-    else if (hour < AFTERNOON_OF_DAY_START)
-        return TIME_DAY;
-    else if (hour < NIGHT_OF_DAY_START)
-        return TIME_SUNSET;
-    else if (hour < MIDNIGHT_OF_DAY_START)
-        return TIME_NIGHTFALL;
-    else 
-        return TIME_NIGHT;
 }
 
 bool8 GetDNSTimeLapseIsNight(void)

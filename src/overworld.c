@@ -19,6 +19,7 @@
 #include "fieldmap.h"
 #include "fldeff.h"
 #include "heal_location.h"
+#include "item_menu_icons.h"
 #include "link.h"
 #include "link_rfu.h"
 #include "load_save.h"
@@ -31,6 +32,7 @@
 #include "new_menu_helpers.h"
 #include "overworld.h"
 #include "play_time.h"
+#include "pokemon_icon.h"
 #include "quest_log.h"
 #include "quest_log_objects.h"
 #include "random.h"
@@ -240,6 +242,59 @@ static const u16 sWhiteOutMoneyLossBadgeFlagIDs[] = {
     FLAG_BADGE06_GET,
     FLAG_BADGE07_GET,
     FLAG_BADGE08_GET
+};
+
+static const struct DNSPalExceptions sOWPalExceptions = 
+{
+    .pal = {
+        DNS_PAL_ACTIVE,    //0
+        DNS_PAL_ACTIVE,    //1
+        DNS_PAL_ACTIVE,    //2
+        DNS_PAL_ACTIVE,    //3
+        DNS_PAL_ACTIVE,    //4
+        DNS_PAL_ACTIVE,    //5
+        DNS_PAL_ACTIVE,    //6
+        DNS_PAL_ACTIVE,    //7
+        DNS_PAL_ACTIVE,    //8
+        DNS_PAL_ACTIVE,    //9
+        DNS_PAL_ACTIVE,    //10
+        DNS_PAL_ACTIVE,    //11
+        DNS_PAL_ACTIVE,    //12
+        DNS_PAL_EXCEPTION, //13
+        DNS_PAL_EXCEPTION, //14
+        DNS_PAL_EXCEPTION, //15
+        DNS_PAL_ACTIVE,    //16
+        DNS_PAL_ACTIVE,    //17
+        DNS_PAL_ACTIVE,    //18
+        DNS_PAL_ACTIVE,    //19
+        DNS_PAL_ACTIVE,    //20
+        DNS_PAL_ACTIVE,    //21
+        DNS_PAL_ACTIVE,    //22
+        DNS_PAL_ACTIVE,    //23
+        DNS_PAL_ACTIVE,    //24
+        DNS_PAL_ACTIVE,    //25
+        DNS_PAL_ACTIVE,    //26
+        DNS_PAL_ACTIVE,    //27
+        DNS_PAL_ACTIVE,    //28
+        DNS_PAL_ACTIVE,    //29
+        DNS_PAL_ACTIVE,    //30
+        DNS_PAL_ACTIVE,    //31
+    }
+};
+
+static const u16 sOwPaletteTagExceptions[] =
+{
+	OWNED_ICON_TAG, // 0x0066
+	ITEMICON_TAG, // 0xD750
+	CURSOR_TAG, // 0x1075
+	BOX_TAG, // 0x1078
+	ITEMICON_INITIAL_TAG + 0, // 0x1088
+	ITEMICON_INITIAL_TAG + 1, // 0x1089
+	ITEMICON_INITIAL_TAG + 2, // 0x108A
+	ITEMICON_INITIAL_TAG + 3, // 0x108B
+	POKE_ICON_BASE_PAL_TAG + 0, // 0xDAC0
+	POKE_ICON_BASE_PAL_TAG + 1, // 0xDAC1
+	POKE_ICON_BASE_PAL_TAG + 2, // 0xDAC2
 };
 
 static void DoWhiteOut(void)
@@ -1473,7 +1528,7 @@ static void OverworldBasic(void)
     sub_8115798();
     UpdateCameraPanning();
     BuildOamBuffer();
-    DNSApplyFilters();
+    DNSApplyFilters(sOWPalExceptions, sOwPaletteTagExceptions, NELEMS(sOwPaletteTagExceptions));
     UpdatePaletteFade();
     UpdateTilesetAnimations();
     DoScheduledBgTilemapCopiesToVram();

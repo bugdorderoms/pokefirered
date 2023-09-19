@@ -1,6 +1,9 @@
 #ifndef GUARD_DNS_UTILS_H
 #define GUARD_DNS_UTILS_H
 
+#define DNS_PAL_EXCEPTION FALSE
+#define DNS_PAL_ACTIVE    TRUE
+
 enum
 {
 	SEASON_SUMMER,
@@ -22,7 +25,7 @@ struct DNSPalExceptions
 };
 
 void DNSTransferPlttBuffer(void *src, void *dest);
-void DNSApplyFilters(void);
+void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 *tagExceptions, u8 tagExceptionsCount);
 bool8 GetDNSTimeLapseIsNight(void);
 u8 DNSGetCurrentSeason(void);
 
