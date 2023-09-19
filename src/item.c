@@ -1,6 +1,7 @@
 #include "global.h"
 #include "gflib.h"
 #include "event_data.h"
+#include "form_change.h"
 #include "item.h"
 #include "item_use.h"
 #include "load_save.h"

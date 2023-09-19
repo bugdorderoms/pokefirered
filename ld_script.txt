@@ -295,6 +295,7 @@ SECTIONS {
         src/rtc_events.o(.text);
 		src/dexnav.o(.text);
 		src/form_change.o(.text);
+		src/form_change_anim.o(.text);
 		src/fldeff_defog.o(.text);
 		src/set_effect.o(.text);
     } =0
@@ -586,6 +587,7 @@ SECTIONS {
         src/rtc_events.o(.rodata);
         src/dexnav.o(.rodata);
 		src/form_change.o(.rodata);
+		src/form_change_anim.o(.rodata);
 		src/fldeff_defog.o(.rodata);
 		src/set_effect.o(.rodata);
 

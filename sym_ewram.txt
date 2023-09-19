@@ -129,3 +129,4 @@
 	.include "src/ride_pager.o"
 	.include "src/dexnav.o"
 	.include "src/battle_anim_special.o"
+	.include "src/form_change_anim.o"

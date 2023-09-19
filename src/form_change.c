@@ -9,6 +9,7 @@
 #include "item_menu.h"
 #include "party_menu.h"
 #include "pokemon.h"
+#include "sound.h"
 #include "util.h"
 #include "constants/form_change.h"
 #include "constants/pokedex.h"
@@ -207,7 +208,10 @@ u16 DoOverworldFormChange(struct Pokemon *mon, u16 formChangeType)
 			if (gMain.inPc)
 				UpdatePcMonIconSpecies();
 			else if (gMain.inParty)
+			{
 				UpdateCurrentPartyMonIconSpecies(targetSpecies);
+				PlayCry1(targetSpecies, 0);
+			}
 		}
 	}
 	return GetMonData(mon, MON_DATA_SPECIES);

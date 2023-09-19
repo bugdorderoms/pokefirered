@@ -7075,6 +7075,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_RED_NECTAR] =
 	{
 		.name = _("Red Nectar"),
+		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
 		.description = sItemDesc_RedNectar,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -7086,6 +7087,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_YELLOW_NECTAR] =
 	{
 		.name = _("Yellow Nectar"),
+		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
 		.description = sItemDesc_YellowNectar,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -7097,6 +7099,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PINK_NECTAR] =
 	{
 		.name = _("Pink Nectar"),
+		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
 		.description = sItemDesc_PinkNectar,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -7108,6 +7111,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PURPLE_NECTAR] =
 	{
 		.name = _("Purple Nectar"),
+		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
 		.description = sItemDesc_PurpleNectar,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -7159,6 +7163,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_REINS_OF_UNITY] =
 	{
 		.name = _("ReinsOfUnity"),
+		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
 		.description = sItemDesc_ReinsOfUnity,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
@@ -7199,6 +7204,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_REVEAL_GLASS] =
 	{
 		.name = _("Reveal Glass"),
+		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
 		.description = sItemDesc_RevealGlass,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
@@ -7207,6 +7213,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PRISON_BOTTLE] =
 	{
 		.name = _("Prison Bottle"),
+		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
 		.description = sItemDesc_PrisonBottle,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
@@ -7215,6 +7222,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_GRACIDEA] =
 	{
 		.name = _("Gracidea"),
+		.holdEffectParam = FORM_CHANGE_ANIM_GRACIDEA_FLOWERS, // form change anim Id
 		.description = sItemDesc_Gracidea,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
@@ -7274,6 +7282,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_N_SOLARIZER] =
 	{
 		.name = _("N-Solarizer"),
+		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
 		.description = sItemDesc_NSolarizer,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
@@ -7282,6 +7291,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_N_LUNARIZER] =
 	{
 		.name = _("N-Lunarizer"),
+		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
 		.description = sItemDesc_NLunarizer,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
@@ -7315,6 +7325,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_DNA_SPLICERS] =
 	{
 		.name = _("DNA Splicers"),
+		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
 		.description = sItemDesc_DNASplicers,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
