@@ -943,7 +943,7 @@ static void FieldCallback_FlyArrive(void)
     FadeInFromBlack();
     CreateTask(Task_FlyIn, 0);
     gObjectEvents[gPlayerAvatar.objectEventId].invisible = TRUE;
-    if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
     {
         ObjectEventTurn(&gObjectEvents[gPlayerAvatar.objectEventId], DIR_WEST);
     }

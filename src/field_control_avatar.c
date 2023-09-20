@@ -106,11 +106,11 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
     {
         if (GetPlayerSpeed() != 4)
         {
-            if ((newKeys & START_BUTTON) && !(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED))
+            if ((newKeys & START_BUTTON) && !TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_FORCED))
                 input->pressedStartButton = TRUE;
             if (!QL_IS_PLAYBACK_STATE)
             {
-                if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED))
+                if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_FORCED))
                 {
                     if (newKeys & SELECT_BUTTON)
                         input->pressedSelectButton = TRUE;
@@ -612,7 +612,7 @@ static const u8 *GetInteractedWaterScript(struct MapPosition *unused1, u8 metati
 static bool8 TryStartStepBasedScript(struct MapPosition *position, u16 metatileBehavior, u16 direction)
 {
     if (TryStartCoordEventScript(position) || TryStartWarpEventScript(position, metatileBehavior) || TryStartStepCountScript(metatileBehavior)
-		|| (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior) && UpdateRepelCounter()))
+		|| (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_FORCED) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior) && UpdateRepelCounter()))
         return TRUE;
     return FALSE;
 }
@@ -634,7 +634,7 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
 	
     UpdateHappinessStepCounter();
 
-    if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
+    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_FORCED) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
     {
         if (UpdateVsSeekerStepCounter() == TRUE)
         {
@@ -796,7 +796,7 @@ static bool8 TryArrowWarp(struct MapPosition *position, u16 metatileBehavior, u8
         }
         else if (IsDirectionalStairWarpMetatileBehavior(metatileBehavior, direction) == TRUE)
         {
-            if (gPlayerAvatar.flags & (PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE | PLAYER_AVATAR_FLAG_RIDE_ANY))
+            if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE | PLAYER_AVATAR_FLAG_RIDE_ANY))
             {
                 SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);
                 delay = 12;

@@ -130,7 +130,7 @@ static void Task_QLFishMovement(u8 taskId)
             AlignFishingAnimationFrames(sprite);
             if (sprite->animEnded)
             {
-                if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING))
+                if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
                     QL_SetObjectGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_NORMAL));
                 else
                     QL_SetObjectGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_RIDE));
@@ -149,7 +149,7 @@ static void QL_GfxTransition_StartSurf(void)
     struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
     u8 fieldEffectId;
 
-    if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING))
+    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
     {
         QL_SetObjectGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_RIDE));
         ObjectEventTurn(objectEvent, objectEvent->movementDirection);

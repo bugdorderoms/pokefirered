@@ -203,7 +203,7 @@ static void PlayerAllowForcedMovementIfMovingSameDirection(void)
 
 static bool8 TryUpdatePlayerSpinDirection(void)
 {
-    if ((gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED) && MetatileBehavior_IsSpinTile(gPlayerAvatar.lastSpinTile))
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_FORCED) && MetatileBehavior_IsSpinTile(gPlayerAvatar.lastSpinTile))
     {
         sPlayerObjectPtr = &gObjectEvents[gPlayerAvatar.objectEventId];
         if (sPlayerObjectPtr->heldMovementFinished)
@@ -254,7 +254,7 @@ static bool8 TryDoMetatileBehaviorForcedMovement(void)
 {
     int i;
     u8 behavior;
-    if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_CONTROLLABLE))
+    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_CONTROLLABLE))
     {
         behavior = gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior;
 		
@@ -278,7 +278,7 @@ static bool8 TryDoMetatileBehaviorForcedMovement(void)
 
 bool8 ForcedMovement_None(void)
 {
-    if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED)
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_FORCED))
     {
         struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
 
@@ -502,7 +502,7 @@ static void PlayerNotOnBikeMoving(u8 direction, u16 heldKeys)
     }
     gPlayerAvatar.creeping = FALSE;
 
-    if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
     {
 	if (IsDexNavSearchActive() && (heldKeys & A_BUTTON))
 	{
@@ -606,7 +606,7 @@ static const u8 sQuestLogSurfDismountActionIds[] = {
 
 static bool8 CanStopSurfing(s16 x, s16 y, u8 direction)
 {
-    if ((gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING) && MapGridGetZCoordAt(x, y) == 3 && GetObjectEventIdByXYZ(x, y, 3) == OBJECT_EVENTS_COUNT && !MetatileBehavior_IsGroundRocks(MapGridGetMetatileBehaviorAt(x, y)))
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING) && MapGridGetZCoordAt(x, y) == 3 && GetObjectEventIdByXYZ(x, y, 3) == OBJECT_EVENTS_COUNT && !MetatileBehavior_IsGroundRocks(MapGridGetMetatileBehaviorAt(x, y)))
     {
         QuestLogRecordPlayerAvatarGfxTransitionWithDuration(sQuestLogSurfDismountActionIds[direction], 16);
         CreateStopSurfingTask(direction);
@@ -1317,7 +1317,7 @@ static const u8 sPlayerAvatarVsSeekerBikeGfxIds[] = {
 
 u8 GetPlayerAvatarVsSeekerGfxId(void)
 {
-    if (gPlayerAvatar.flags & (PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
         return sPlayerAvatarVsSeekerBikeGfxIds[gPlayerAvatar.gender];
     else
         return GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_VSSEEKER);
@@ -1829,7 +1829,7 @@ static bool8 Fishing11(struct Task *task)
 
             ObjectEventSetGraphicsId(playerObjEvent, task->tPlayerGfxId);
             ObjectEventTurn(playerObjEvent, playerObjEvent->movementDirection);
-            if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
+            if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
                 SetSurfBlob_PlayerOffset(gObjectEvents[gPlayerAvatar.objectEventId].fieldEffectSpriteId, 0, 0);
             gSprites[gPlayerAvatar.spriteId].x2 = 0;
             gSprites[gPlayerAvatar.spriteId].y2 = 0;
@@ -1889,7 +1889,7 @@ static bool8 Fishing15(struct Task *task)
 
         ObjectEventSetGraphicsId(playerObjEvent, task->tPlayerGfxId);
         ObjectEventTurn(playerObjEvent, playerObjEvent->movementDirection);
-        if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
+        if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
             SetSurfBlob_PlayerOffset(gObjectEvents[gPlayerAvatar.objectEventId].fieldEffectSpriteId, 0, 0);
         gSprites[gPlayerAvatar.spriteId].x2 = 0;
         gSprites[gPlayerAvatar.spriteId].y2 = 0;
@@ -1947,7 +1947,7 @@ void AlignFishingAnimationFrames(struct Sprite * playerSprite)
     else if (animType == 10 || animType == 11)
         playerSprite->y2 = 8;
 	
-    if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
         SetSurfBlob_PlayerOffset(gObjectEvents[gPlayerAvatar.objectEventId].fieldEffectSpriteId, 1, playerSprite->y2);
 }
 

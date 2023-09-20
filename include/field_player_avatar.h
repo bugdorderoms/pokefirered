@@ -68,7 +68,10 @@ static inline u8 PlayerGetZCoord(void)
 
 static inline bool8 TestPlayerAvatarFlags(u16 bm)
 {
-	return (gPlayerAvatar.flags & bm);
+	if (gPlayerAvatar.flags & bm)
+		return TRUE;
+	else
+		return FALSE;
 }
 
 #endif //GUARD_FIELD_PLAYER_AVATAR_H
