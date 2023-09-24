@@ -10,7 +10,6 @@ PewterCity_Mart_EventScript_Boy:: @ 816A6D7
 	end
 
 PewterCity_Mart_EventScript_Clerk:: @ 816A6E0
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou

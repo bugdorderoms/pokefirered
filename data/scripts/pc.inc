@@ -1,5 +1,4 @@
 EventScript_PC:: @ 81A6955
-	goto_if_questlog EventScript_ReleaseEnd
 	lockall
 	goto_if_set FLAG_SYS_PC_STORAGE_DISABLED, EventScript_PCDisabled
 	setvar VAR_0x8004, 0

@@ -4,8 +4,6 @@ SixIsland_WaterPath_House1_MapScripts:: @ 817206C
 SixIsland_WaterPath_House1_EventScript_Beauty:: @ 817206D
 	lock
 	faceplayer
-	goto_if_questlog EventScript_ReleaseEnd
-	special QuestLog_CutRecording
 	setvar VAR_0x8004, SPECIES_HERACROSS
 	specialvar VAR_RESULT, DoesPlayerPartyContainSpecies
 	compare VAR_RESULT, FALSE

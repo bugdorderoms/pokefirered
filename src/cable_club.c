@@ -6,13 +6,13 @@
 #include "event_data.h"
 #include "event_scripts.h"
 #include "field_message_box.h"
+#include "field_specials.h"
 #include "field_weather.h"
 #include "link.h"
 #include "load_save.h"
 #include "m4a.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
-#include "quest_log.h"
 #include "script.h"
 #include "script_pokemon_util.h"
 #include "start_menu.h"
@@ -701,7 +701,7 @@ void CB2_ReturnFromCableClubBattle(void)
     Overworld_ResetMapMusic();
     LoadPlayerParty();
     SavePlayerBag();
-    Special_UpdateTrainerFansAfterLinkBattle();
+    UpdateTrainerFansAfterLinkBattle();
     if (gSpecialVar_0x8004 != USING_MULTI_BATTLE)
     {
         TryRecordLinkBattleOutcome(gLocalLinkPlayerId ^ 1);

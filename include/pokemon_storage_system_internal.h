@@ -216,14 +216,6 @@ struct PSS_ItemIconSprite
     u8 active;
 };
 
-struct PssQuestLogBuffer
-{
-    u16 species;
-    u16 species2;
-    u8 fromBox;
-    u8 toBox;
-};
-
 struct PokemonStorageSystemData
 {
     u8 state;
@@ -368,18 +360,17 @@ struct PokemonStorageSystemData
     /* 21f4 */ struct PSS_ItemIconSprite itemIconSprites[MAX_ITEM_ICONS];
     /* 2224 */ u16 movingItem;
     /* 2226 */ u16 field_2236;
-    /* 2228 */ struct PssQuestLogBuffer qlogBuffer;
-    /* 2230 */ u16 field_2238;
-    /* 2232 */ u16 field_223A;
-    /* 2234 */ u16 *field_223C;
-    /* 2238 */ struct Sprite *cursorMonSprite;
-    /* 223c */ u16 field_2244[0x40];
-    /* 22bc */ u8 field_22C4[0x800];
-    /* 2abc */ u8 field_2AC4[0x1800];
-    /* 42bc */ u8 field_42C4[0x800];
-    /* 4abc */ u8 field_4AC4[0x1000];
-    /* 5abc */ u8 field_5AC4[0x800];
-}; // size=62bc
+    /* 2228 */ u16 field_2238;
+    /* 222A */ u16 field_223A;
+    /* 222C */ u16 *field_223C;
+    /* 2230 */ struct Sprite *cursorMonSprite;
+    /* 2234 */ u16 field_2244[0x40];
+    /* 2274 */ u8 field_22C4[0x800];
+    /* 2a74 */ u8 field_2AC4[0x1800];
+    /* 4274 */ u8 field_42C4[0x800];
+    /* 4a74 */ u8 field_4AC4[0x1000];
+    /* 5a74 */ u8 field_5AC4[0x800];
+}; // size=6274
 
 extern struct PokemonStorageSystemData *gPSSData;
 
@@ -419,7 +410,6 @@ void sub_8093660(void);
 void sub_80936B8(void);
 void sub_80937B4(void);
 void sub_8094D14(u8 a0);
-u8 sub_8094D34(void);
 void sub_8094D60(void);
 void sub_8094D84(void);
 bool8 sub_8094F90(void);

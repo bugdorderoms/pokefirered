@@ -928,7 +928,7 @@ static bool8 DexNavTryMakeShinyMon(void)
 
     chainBonus = (chain == 50) ? 5 : (chain == 100) ? 10 : 0;
     rndBonus = (Random() % 100 < 4 ? 4 : 0);
-    shinyRolls = 1 + chainBonus + rndBonus + GetShinyRollsIncrease();
+    shinyRolls = 1 + chainBonus + rndBonus + (GetShinyRollsIncrease() - 1);
 
     if (searchLevel > 200)
     {

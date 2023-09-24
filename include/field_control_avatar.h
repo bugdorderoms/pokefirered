@@ -21,8 +21,6 @@ struct FieldInput
     u8 dpadDirection;
 };
 
-extern struct FieldInput gInputToStoreInQuestLogMaybe;
-
 void ClearPoisonStepCounter(void);
 int SetCableClubWarp(void);
 void HandleBoulderFallThroughOrCoverHole(struct ObjectEvent *);

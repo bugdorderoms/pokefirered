@@ -10,7 +10,6 @@
 #include "overworld.h"
 #include "pokemon_icon.h"
 #include "naming_screen.h"
-#include "quest_log.h"
 #include "mystery_gift_menu.h"
 #include "strings.h"
 #include "title_screen.h"
@@ -459,7 +458,8 @@ static void Task_ExecuteMainMenuSelection(u8 taskId)
             gPlttBufferFaded[0] = RGB_BLACK;
             gUnknown_2031DE0 = 0;
             FreeAllWindowBuffers();
-            TrySetUpQuestLogScenes_ElseContinueFromSave(taskId);
+            SetMainCallback2(CB2_ContinueSavedGame);
+			DestroyTask(taskId);
             break;
         case MAIN_MENU_MYSTERYGIFT:
             FreeAllWindowBuffers();

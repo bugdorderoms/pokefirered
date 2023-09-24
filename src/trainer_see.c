@@ -4,7 +4,6 @@
 #include "field_effect.h"
 #include "field_player_avatar.h"
 #include "field_weather.h"
-#include "quest_log.h"
 #include "script.h"
 #include "task.h"
 #include "util.h"
@@ -89,9 +88,7 @@ static const TrainerSeeFunc sTrainerSeeFuncList2[] = {
 bool8 CheckForTrainersWantingBattle(void)
 {
     u8 i;
-    if (sub_8111C2C() == TRUE)
-        return FALSE;
-
+    
     for (i = 0; i < OBJECT_EVENTS_COUNT; i++)
     {
         if (gObjectEvents[i].active && (gObjectEvents[i].trainerType == TRAINER_TYPE_NORMAL || gObjectEvents[i].trainerType == TRAINER_TYPE_BURIED) && CheckTrainer(i))

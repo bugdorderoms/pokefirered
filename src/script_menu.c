@@ -6,7 +6,6 @@
 #include "item.h"
 #include "item_menu_icons.h"
 #include "script_menu.h"
-#include "quest_log.h"
 #include "new_menu_helpers.h"
 #include "event_data.h"
 #include "script.h"
@@ -722,21 +721,19 @@ u8 InitMultichoice(const struct MenuAction * items, u8 count, u8 bg, u8 x, u8 y,
 	
 	gSpecialVar_Result = SCR_MENU_UNSET;
 	
-	if (!QuestLog_SchedulePlaybackCB(QLPlaybackCB_DestroyScriptMenuMonPicSprites))
-	{
-		width = GetMenuWidthFromList(items, count) + 1;
-		rowCount = count / perRowItems;
-		
-		windowId = CreateMultichoiceWindow(bg, x, y, width * perRowItems, rowCount * 2, baseBlock, palNum);
-		SetStdWindowBorderStyle(windowId, FALSE);
-		
-		taskId = CreateMultichoiceInputTask(ignoreBPress, windowId);
+	width = GetMenuWidthFromList(items, count) + 1;
+	rowCount = count / perRowItems;
+	
+	windowId = CreateMultichoiceWindow(bg, x, y, width * perRowItems, rowCount * 2, baseBlock, palNum);
+	SetStdWindowBorderStyle(windowId, FALSE);
+	
+	taskId = CreateMultichoiceInputTask(ignoreBPress, windowId);
+	
+	MultichoiceGrid_PrintItems(windowId, 1, width * 8, 16, perRowItems, rowCount, items);
+	MultichoiceGrid_InitCursor(windowId, 1, 0, 1, width * 8, perRowItems, rowCount, defaultOpt);
+	
+	ScheduleBgCopyTilemapToVram(bg);
 
-		MultichoiceGrid_PrintItems(windowId, 1, width * 8, 16, perRowItems, rowCount, items);
-		MultichoiceGrid_InitCursor(windowId, 1, 0, 1, width * 8, perRowItems, rowCount, defaultOpt);
-			
-		ScheduleBgCopyTilemapToVram(bg);
-	}
 	return taskId;
 }
 
@@ -935,12 +932,8 @@ bool8 ScriptMenu_YesNo(u8 unused, u8 stuff)
     if (!FuncIsActiveTask(Task_YesNoMenu_HandleInput))
 	{
 		gSpecialVar_Result = SCR_MENU_UNSET;
-		
-		if (!QuestLog_SchedulePlaybackCB(QLPlaybackCB_DestroyScriptMenuMonPicSprites))
-		{
-			DisplayYesNoMenuDefaultYes();
-			CreateTask(Task_YesNoMenu_HandleInput, 80);
-		}
+		DisplayYesNoMenuDefaultYes();
+		CreateTask(Task_YesNoMenu_HandleInput, 80);
 		return TRUE;
 	}
 	return FALSE;
@@ -1081,24 +1074,12 @@ static void DestroyPicboxPic(u8 picType, u8 spriteId)
 #define tState     data[2]
 #define tPicType   data[3]
 
-void QLPlaybackCB_DestroyScriptMenuMonPicSprites(void)
-{
-	u8 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
-	
-	ScriptContext1_SetupScript(EventScript_ReleaseEnd);
-	
-	if (taskId != 0xFF && gTasks[taskId].tState < 2)
-		DestroyPicboxPic(gTasks[taskId].tPicType, gTasks[taskId].tSpriteId);
-}
-
 bool8 ScriptMenu_ShowPokemonPic(u16 species, u8 x, u8 y)
 {
 	u8 spriteId;
 	s16 *data;
 	
-	if (QuestLog_SchedulePlaybackCB(QLPlaybackCB_DestroyScriptMenuMonPicSprites))
-		return TRUE;
-	else if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
+	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
 		return FALSE;
 	else
 	{
@@ -1201,9 +1182,7 @@ bool8 OpenMuseumFossilPic(void)
 	u8 spriteId;
 	s16 *data;
 	
-	if (QuestLog_SchedulePlaybackCB(QLPlaybackCB_DestroyScriptMenuMonPicSprites))
-		return TRUE;
-	else if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
+	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
 		return FALSE;
 	else
 	{
@@ -1253,9 +1232,7 @@ bool8 ScriptMenu_ShowItemPic(u16 itemId, u8 x, u8 y)
 	u8 spriteId;
 	s16 *data;
 	
-	if (QuestLog_SchedulePlaybackCB(QLPlaybackCB_DestroyScriptMenuMonPicSprites))
-		return TRUE;
-	else if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
+	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
 		return FALSE;
 	else
 	{

@@ -11,7 +11,6 @@
 #include "trainer_pokemon_sprites.h"
 #include "menu.h"
 #include "field_weather.h"
-#include "quest_log.h"
 #include "constants/maps.h"
 #include "constants/field_weather.h"
 
@@ -774,7 +773,7 @@ static bool32 DoOverworldMapScrollScene(void)
         sCreditsMgr->subseqno++;
         // fallthrough
     case 1:
-        if (!Overworld_DoScrollSceneForCredits(&sCreditsMgr->ovwldseqno, sOverworldMapScenes[sCreditsMgr->whichMon], QL_TINT_NONE))
+        if (!Overworld_DoScrollSceneForCredits(&sCreditsMgr->ovwldseqno, sOverworldMapScenes[sCreditsMgr->whichMon], GF_TINT_NONE))
             return FALSE;
         CreateCreditsWindow();
         SetGpuReg(REG_OFFSET_WIN0H, 0xF0);

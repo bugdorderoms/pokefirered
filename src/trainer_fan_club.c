@@ -3,6 +3,7 @@
 #include "battle.h"
 #include "event_data.h"
 #include "event_scripts.h"
+#include "field_specials.h"
 #include "random.h"
 
 struct TrainerFanClub
@@ -18,17 +19,6 @@ struct TrainerFanClub
 #define SET_TRAINER_FAN_CLUB_FLAG(flag) (fanClub->fanFlags |= 1 << (flag))
 #define FLIP_TRAINER_FAN_CLUB_FLAG(flag)(fanClub->fanFlags ^= 1 << (flag))
 
-#define FANCLUB_MEMBER1        0
-#define FANCLUB_MEMBER2        1
-#define FANCLUB_MEMBER3        2
-#define FANCLUB_MEMBER4        3
-#define FANCLUB_MEMBER5        4
-#define FANCLUB_MEMBER6        5
-#define FANCLUB_MEMBER7        6
-#define FANCLUB_MEMBER8        7
-
-#define NUM_TRAINER_FAN_CLUB_MEMBERS  8
-
 static void TryLoseFansFromPlayTimeAfterLinkBattle(struct TrainerFanClub *);
 static void UpdateTrainerFanClubGameClear(struct TrainerFanClub *);
 static u8 PlayerGainRandomTrainerFan(struct TrainerFanClub *);
@@ -37,7 +27,6 @@ static void TryLoseFansFromPlayTime(struct TrainerFanClub *);
 static bool16 IsFanClubMemberFanOfPlayer(struct TrainerFanClub *);
 static void SetInitialFansOfPlayer(struct TrainerFanClub *);
 static void BufferFanClubTrainerName(struct LinkBattleRecords *, u8, u8);
-static void UpdateTrainerFansAfterLinkBattle(struct TrainerFanClub *);
 static bool8 DidPlayerGetFirstFans(struct TrainerFanClub * );
 static void SetPlayerGotFirstFans(struct TrainerFanClub *);
 
@@ -314,20 +303,15 @@ static void BufferFanClubTrainerName(struct LinkBattleRecords *linkRecords, u8 w
     }
 }
 
-void Special_UpdateTrainerFansAfterLinkBattle(void)
-{
-    UpdateTrainerFansAfterLinkBattle(TRAINER_FAN_CLUB);
-}
-
-static void UpdateTrainerFansAfterLinkBattle(struct TrainerFanClub *fanClub)
+void UpdateTrainerFansAfterLinkBattle(void)
 {
     if (VarGet(VAR_MAP_SCENE_SAFFRON_CITY_POKEMON_TRAINER_FAN_CLUB) == 2)
     {
-        TryLoseFansFromPlayTimeAfterLinkBattle(fanClub);
+        TryLoseFansFromPlayTimeAfterLinkBattle(TRAINER_FAN_CLUB);
         if (gBattleOutcome == B_OUTCOME_WON)
-            PlayerGainRandomTrainerFan(fanClub);
+            PlayerGainRandomTrainerFan(TRAINER_FAN_CLUB);
         else
-            PlayerLoseRandomTrainerFan(fanClub);
+            PlayerLoseRandomTrainerFan(TRAINER_FAN_CLUB);
     }
 }
 

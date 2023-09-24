@@ -7,7 +7,6 @@
 #include "data.h"
 #include "m4a.h"
 #include "hall_of_fame.h"
-#include "quest_log.h"
 #include "pc_screen_effect.h"
 #include "new_menu_helpers.h"
 #include "strings.h"
@@ -413,8 +412,6 @@ static void Task_Hof_InitTeamSaveData(u8 taskId)
 {
     u16 i;
     struct HallofFameTeam* lastSavedTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
-
-    SaveQuestLogData();
 	
     if (!gHasHallOfFameRecords)
         memset(gDecompressionBuffer, 0, 0x2000);

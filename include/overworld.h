@@ -53,6 +53,12 @@ struct CreditsOverworldCmd
 #define MUSIC_DISABLE_STOP 1
 #define MUSIC_DISABLE_KEEP 2
 
+/* gGlobalFieldTintMode */
+#define GF_TINT_NONE              0
+#define GF_TINT_GRAYSCALE         1
+#define GF_TINT_SEPIA             2
+#define GF_TINT_BACKUP_GRAYSCALE  3
+
 extern const struct UCoords32 gDirectionToVectors[];
 
 extern struct LinkPlayerObjectEvent gLinkPlayerObjectEvents[4];
@@ -111,9 +117,6 @@ void SetGameStat(u8 statId, u32 value);
 
 void CB2_ContinueSavedGame(void);
 void Overworld_SetWarpDestinationFromWarp(struct WarpData *);
-void CB2_SetUpOverworldForQLPlayback(void);
-void CB2_SetUpOverworldForQLPlaybackWithWarpExit(void);
-void CB2_EnterFieldFromQuestLog(void);
 void Overworld_PlaySpecialMapMusic(void);
 
 u8 GetCurrentRegionMapSectionId(void);

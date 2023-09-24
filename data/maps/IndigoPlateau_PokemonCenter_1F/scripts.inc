@@ -43,7 +43,6 @@ IndigoPlateau_PokemonCenter_1F_EventScript_GymGuy:: @ 816EAC3
 	end
 
 IndigoPlateau_PokemonCenter_1F_EventScript_Clerk:: @ 816EACC
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou

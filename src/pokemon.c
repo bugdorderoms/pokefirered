@@ -1712,13 +1712,13 @@ void CreateMon(struct PokemonGenerator generator)
 
 u32 GetShinyRollsIncrease(void)
 {
-	u32 shinyRollsIncrease = 0;
+	u32 shinyRollsIncrease = 1;
 	
 	if (gIsFishingEncounter)
 		shinyRollsIncrease += 1 + 2 * gChainFishingStreak;
 	
 	if (CheckBagHasItem(ITEM_SHINY_CHARM, 1))
-		shinyRollsIncrease += 3;
+		shinyRollsIncrease += 2;
 	
 	return shinyRollsIncrease;
 }
@@ -1751,8 +1751,8 @@ static bool8 IsShinyOtIdPersonality(u32 otId, u32 personality)
 static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *boxMon)
 {
     u8 speciesName[POKEMON_NAME_LENGTH + 1];
-    u32 iv, personality, value, otId;
-	bool8 shinyRerolls = FALSE, isShiny, rolls, shinyRolls;
+    u32 iv, personality, value, otId, shinyRolls;
+	bool8 shinyRerolls = FALSE, isShiny;
 	u16 species = generator.species;
 
     ZeroBoxMonData(boxMon);
@@ -1799,22 +1799,19 @@ static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *b
 		isShiny = TRUE;
 	else if (shinyRerolls)
 	{
-		isShiny = FALSE;
-		rolls = 0;
 		shinyRolls = GetShinyRollsIncrease();
 		value = personality;
 		
-		// Generate random personality values only to simulate an additional shiny chances. The actual pokemon's personality is't overwritten
-		while (rolls < shinyRolls)
+		do
 		{
-			if (IsShinyOtIdPersonality(otId, value))
-			{
-				isShiny = TRUE;
+			isShiny = IsShinyOtIdPersonality(otId, value);
+			if (isShiny)
 				break;
-			}
+			
 			value = Random32();
-			++rolls;
-		}
+			--shinyRolls;
+			
+		} while (shinyRolls > 0);
 	}
 	else
 		isShiny = IsShinyOtIdPersonality(otId, personality);

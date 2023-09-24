@@ -10,7 +10,6 @@ CeruleanCity_Mart_EventScript_Woman:: @ 816ACA7
 	end
 
 CeruleanCity_Mart_EventScript_Clerk:: @ 816ACB0
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou

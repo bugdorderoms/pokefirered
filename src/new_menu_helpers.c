@@ -3,7 +3,6 @@
 #include "menu.h"
 #include "menu_helpers.h"
 #include "new_menu_helpers.h"
-#include "quest_log.h"
 #include "field_specials.h"
 #include "text_window.h"
 #include "script.h"
@@ -410,16 +409,8 @@ void AddTextPrinterWithCustomSpeedForMessage(bool8 allowSkippingDelayWithButtonP
 
 void LoadStdWindowFrameGfx(void)
 {
-    if (gQuestLogState == QL_STATE_PLAYBACK)
-    {
-        gTextFlags.autoScroll = 1;
-        TextWindow_LoadTilesStdFrame1(0, DLG_WINDOW_BASE_TILE_NUM);
-    }
-    else
-    {
-        Menu_LoadStdPal();
-        TextWindow_LoadResourcesStdFrame0(0, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
-    }
+	Menu_LoadStdPal();
+	TextWindow_LoadResourcesStdFrame0(0, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
     TextWindow_SetUserSelectedFrame(0, STD_WINDOW_BASE_TILE_NUM, STD_WINDOW_PALETTE_NUM * 0x10);
 }
 
@@ -448,8 +439,6 @@ void ClearDialogWindowAndFrame(u8 windowId, bool8 copyToVram)
     ClearWindowTilemap(windowId);
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
-    if (gQuestLogState == QL_STATE_PLAYBACK)
-        CommitQuestLogWindow1();
 }
 
 void ClearStdWindowAndFrame(u8 windowId, bool8 copyToVram)
@@ -480,7 +469,7 @@ static void WindowFunc_DrawStandardFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u
 
 static void WindowFunc_DrawDialogueFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum)
 {
-    if (!IsMsgSignPost() || gQuestLogState == QL_STATE_PLAYBACK)
+    if (!IsMsgSignPost())
     {
         FillBgTilemapBufferRect(bg, DLG_WINDOW_BASE_TILE_NUM + 0, tilemapLeft - 2, tilemapTop - 1, 1, 1, DLG_WINDOW_PALETTE_NUM);
         FillBgTilemapBufferRect(bg, DLG_WINDOW_BASE_TILE_NUM + 1, tilemapLeft - 1, tilemapTop - 1, 1, 1, DLG_WINDOW_PALETTE_NUM);
@@ -564,15 +553,7 @@ void SetStdWindowBorderStyle(u8 windowId, bool8 copyToVram)
 
 void sub_80F7768(u8 windowId, bool8 copyToVram)
 {
-    if (gQuestLogState == QL_STATE_PLAYBACK)
-    {
-        gTextFlags.autoScroll = 1;
-        TextWindow_LoadTilesStdFrame1(0, DLG_WINDOW_BASE_TILE_NUM);
-    }
-    else
-    {
-        TextWindow_LoadResourcesStdFrame0(windowId, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
-    }
+	TextWindow_LoadResourcesStdFrame0(windowId, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
     DrawDialogFrameWithCustomTileAndPalette(windowId, copyToVram, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM);
 }
 

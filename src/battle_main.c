@@ -26,7 +26,6 @@
 #include "pokeball.h"
 #include "pokedex.h"
 #include "form_change.h"
-#include "quest_log.h"
 #include "random.h"
 #include "roamer.h"
 #include "wild_encounter.h"
@@ -1509,7 +1508,6 @@ static void EndLinkBattleInSteps(void)
         if (!gPaletteFade.active)
         {
             SetMainCallback2(gMain.savedCallback);
-            TrySetQuestLogLinkBattleEvent();
             FreeMonSpritesGfx();
             FreeBattleSpritesData();
             FreeBattleResources();
@@ -3353,7 +3351,6 @@ static void HandleEndTurn_FinishBattle(void)
 			if (GetBattlerAbility(gActiveBattler) == ABILITY_NATURAL_CURE && gBattleMons[gActiveBattler].status1)
 				SetMonData(GetBattlerPartyIndexPtr(gActiveBattler), MON_DATA_STATUS, &status);
 		}
-        TrySetQuestLogBattleEvent();
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
             ClearRematchStateByTrainerId();
         BeginFastPaletteFade(3);

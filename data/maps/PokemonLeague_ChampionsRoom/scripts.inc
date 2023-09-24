@@ -58,7 +58,6 @@ PokemonLeague_ChampionsRoom_EventScript_EnterRoom:: @ 8162B76
 	delay 20
 	call_if_unset FLAG_SYS_GAME_CLEAR, PokemonLeague_ChampionsRoom_EventScript_Intro
 	call_if_set FLAG_SYS_GAME_CLEAR, PokemonLeague_ChampionsRoom_EventScript_RematchIntro
-	goto_if_questlog PokemonLeague_ChampionsRoom_EventScript_QuestLogEnd
 	setflag FLAG_TEMP_3
 	setflag FLAG_TEMP_5
 	savebgm MUS_VICTORY_GYM_LEADER
@@ -98,11 +97,6 @@ PokemonLeague_ChampionsRoom_EventScript_EnterRoom:: @ 8162B76
 	setvar VAR_TEMP_1, 1
 	warp MAP_POKEMON_LEAGUE_HALL_OF_FAME, 255, 5, 12
 	waitstate
-	releaseall
-	end
-
-PokemonLeague_ChampionsRoom_EventScript_QuestLogEnd:: @ 8162C68
-	call PokemonLeague_ChampionsRoom_EventScript_StopSceneTrigger
 	releaseall
 	end
 

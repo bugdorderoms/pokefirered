@@ -24,7 +24,6 @@
 #include "event_data.h"
 #include "event_object_movement.h"
 #include "money.h"
-#include "quest_log.h"
 #include "script.h"
 #include "constants/songs.h"
 #include "constants/items.h"
@@ -70,17 +69,6 @@ struct ShopData
     /*0x18*/ u16 unk18;
 };
 
-struct MartHistory
-{
-    /*0x00*/ u32 unk0;
-    /*0x04*/ u16 unk4;
-    /*0x06*/ u16 unk6;
-    /*0x08*/ u8 unk8;
-    /*0x09*/ u8 unk9;
-    /*0x0A*/ u8 unkA;
-    /*0x0B*/ u8 unkB;
-}; /* size = 12 */
-
 static EWRAM_DATA s16 sViewportObjectEvents[OBJECT_EVENTS_COUNT][4] = {0};
 EWRAM_DATA struct ShopData gShopData = {0};
 static EWRAM_DATA u8 sShopMenuWindowId = 0;
@@ -90,7 +78,6 @@ EWRAM_DATA u16 (*gShopTilemapBuffer3)[0x400] = {0};
 EWRAM_DATA u16 (*gShopTilemapBuffer4)[0x400] = {0};
 EWRAM_DATA struct ListMenuItem *sShopMenuListMenu = {0};
 static EWRAM_DATA u8 (*sShopMenuItemStrings)[ITEM_NAME_LENGTH] = {0};
-EWRAM_DATA struct MartHistory gShopMenuHistory[2] = {0};
 
 //Function Declarations
 static u8 CreateShopMenu(u8 a0);
@@ -145,9 +132,6 @@ static void Task_ReturnToItemListAfterItemPurchase(u8 taskId);
 static void BuyMenuReturnToItemList(u8 taskId);
 static void ExitBuyMenu(u8 taskId);
 static void Task_ExitBuyMenu(u8 taskId);
-static void DebugFunc_PrintPurchaseDetails(u8 taskId);
-static void DebugFunc_PrintShopMenuHistoryBeforeClearMaybe(void);
-static void RecordQuestLogItemPurchase(void);
 
 static const struct MenuAction sShopMenuActions_BuySellQuit[] =
 {
@@ -481,7 +465,6 @@ static void CB2_GoToSellMenu(void)
 static void Task_HandleShopMenuQuit(u8 taskId)
 {
     ClearShopMenuWindow();
-    RecordQuestLogItemPurchase();
     DestroyTask(taskId);
     if (gShopData.callback != NULL)
         gShopData.callback();
@@ -1179,8 +1162,6 @@ static void BuyMenuTryMakePurchase(u8 taskId)
     {
 	GetSetItemObtained(tItemId, FLAG_SET_OBTAINED);
         BuyMenuDisplayMessage(taskId, gText_HereYouGoThankYou, BuyMenuSubtractMoney);
-        DebugFunc_PrintPurchaseDetails(taskId);
-        RecordItemPurchase(tItemId, tItemCount, 1);
     }
     else
     {
@@ -1253,78 +1234,11 @@ static void Task_ExitBuyMenu(u8 taskId)
     }
 }
 
-static void DebugFunc_PrintPurchaseDetails(u8 taskId)
-{
-}
-
-static void DebugFunc_PrintShopMenuHistoryBeforeClearMaybe(void)
-{
-}
-
-void RecordItemPurchase(u16 item, u16 quantity, u8 a2)
-{
-    struct MartHistory *history;
-    
-    if (gShopMenuHistory[0].unkA == a2)
-    {
-        history = &gShopMenuHistory[0];
-    }
-    else if (gShopMenuHistory[1].unkA == a2)
-    {
-        history = &gShopMenuHistory[1];
-    }
-    else
-    {
-        if (gShopMenuHistory[0].unkA == 0)
-            history = &gShopMenuHistory[0];
-        else
-            history = &gShopMenuHistory[1];
-        history->unkA = a2;
-    }
-    
-    if (history->unk4 != 0)
-    {
-        history->unk9 = 1;
-    }
-    
-    history->unk4 = item;
-    if (history->unk6 < 999)
-    {
-        history->unk6 += quantity;
-        if (history->unk6 > 999)
-            history->unk6 = 999;
-    }
-    
-    if (history->unk0 < 999999)
-    {
-        history->unk0 += (itemid_get_market_price(item) >> (a2 - 1)) * quantity;
-        if (history->unk0 > 999999)
-            history->unk0 = 999999;
-    }    
-}
-
-static void RecordQuestLogItemPurchase(void)
-{
-    u16 v;
-
-    v = gShopMenuHistory[0].unkA;
-    if (v != 0)
-        SetQuestLogEvent(v + QL_EVENT_USED_POKEMART, (const u16 *)&gShopMenuHistory[0]);
-    
-    v = gShopMenuHistory[1].unkA;
-    if (v != 0)
-        SetQuestLogEvent(v + QL_EVENT_USED_POKEMART, (const u16 *)&gShopMenuHistory[1]);
-}
-
 void CreatePokemartMenu(const u16 *itemsForSale)
 {    
     SetShopItemsForSale(itemsForSale);
     CreateShopMenu(MART_TYPE_REGULAR);
     SetShopMenuCallback(EnableBothScriptContexts);
-    DebugFunc_PrintShopMenuHistoryBeforeClearMaybe();
-    memset(&gShopMenuHistory, 0, sizeof(gShopMenuHistory));
-    gShopMenuHistory[0].unk8 = gMapHeader.regionMapSectionId;
-    gShopMenuHistory[1].unk8 = gMapHeader.regionMapSectionId;
 }
 
 void CreateDecorationShop1Menu(const u16 *itemsForSale)

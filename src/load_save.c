@@ -7,7 +7,6 @@
 #include "item.h"
 #include "save_location.h"
 #include "overworld.h"
-#include "quest_log.h"
 
 #define SAVEBLOCK_MOVE_RANGE    128
 
@@ -74,7 +73,6 @@ void SetSaveBlocksPointers(void)
     gPokemonStoragePtr = (void*)(&gPokemonStorage) + offset;
 
     SetBagPocketsPointers();
-    SetQuestLogRecordAndPlaybackPointers(oldSave);
 }
 
 void MoveSaveBlocks_ResetHeap(void)

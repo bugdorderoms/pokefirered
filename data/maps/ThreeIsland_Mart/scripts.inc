@@ -2,7 +2,6 @@ ThreeIsland_Mart_MapScripts:: @ 817188C
 	.byte 0
 
 ThreeIsland_Mart_EventScript_Clerk:: @ 817188D
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou

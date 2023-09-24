@@ -7,8 +7,6 @@ CableClub_EventScript_HideOrShowMysteryGiftMan:: @ 81BB1BA
 	return
 
 CableClub_EventScript_MysteryGiftMan:: @ 81BB1D2
-	goto_if_questlog EventScript_ReleaseEnd
-	special QuestLog_CutRecording
 	execram
 
 @ Unused
@@ -103,7 +101,6 @@ CableClub_EventScript_ExitMinigameRoom:: @ 81BB2FD
 
 CableClub_EventScript_CloseLinkAndExitLinkRoom:: @ 81BB315
 	special CloseLink
-	special QuestLog_StartRecordingInputsAfterDeferredEvent
 	setvar VAR_CABLE_CLUB_STATE, 0
 	textcolor 1
 	compare VAR_0x8007, 0
@@ -128,7 +125,6 @@ CableClub_EventScript_ExitTradeCenter:: @ 81BB34F
 
 CableClub_EventScript_PlayerExitTradeCenter:: @ 81BB367
 	special CloseLink
-	special QuestLog_StartRecordingInputsAfterDeferredEvent
 	setvar VAR_CABLE_CLUB_STATE, 0
 	textcolor 1
 	compare VAR_0x8007, 0
@@ -151,7 +147,6 @@ CableClub_EventScript_ExitUnionRoom:: @ 81BB39C
 	end
 
 CableClub_EventScript_PlayerExitUnionRoom:: @ 81BB3B4
-	special QuestLog_StartRecordingInputsAfterDeferredEvent
 	setvar VAR_CABLE_CLUB_STATE, 0
 	textcolor 1
 	compare VAR_0x8007, 0
@@ -561,7 +556,6 @@ Movement_PlayerEnterMinigameRoom:: @ 81BB8A2
 	step_end
 
 CableClub_EventScript_ShowBattleRecords:: @ 81BB8A7
-	goto_if_questlog EventScript_ReleaseEnd
 	lockall
 	fadescreen FADE_TO_BLACK
 	setvar VAR_0x8004, 0
@@ -738,8 +732,6 @@ CableClub_EventScript_DoLinkRoomExit:: @ 81BB9FC
 	end
 
 CableClub_EventScript_UnionRoomAttendant:: @ 81BBA04
-	goto_if_questlog EventScript_ReleaseEnd
-	special QuestLog_CutRecording
 	lock
 	faceplayer
 	goto_if_unset FLAG_SYS_POKEDEX_GET, CableClub_EventScript_WirelessClubAdjustements
@@ -836,8 +828,6 @@ CableClub_EventScript_DontAskAboutLinking:: @ 81BBB92
 	return
 
 CableClub_EventScript_DirectCornerAttendant:: @ 81BBB9C
-	goto_if_questlog EventScript_ReleaseEnd
-	special QuestLog_CutRecording
 	lock
 	faceplayer
 	goto_if_unset FLAG_SYS_POKEDEX_GET, CableClub_EventScript_WirelessClubAdjustements
@@ -1065,7 +1055,6 @@ CableClub_EventScript_EnterWirelessLinkRoom:: @ 81BBF88
 	end
 
 CableClub_EventScript_ShowWirelessCommunicationScreen:: @ 81BBFD8
-	goto_if_questlog EventScript_ReleaseEnd
 	lockall
 	goto_if_unset FLAG_SYS_POKEDEX_GET, CableClub_EventScript_NotReadyYet
 	specialvar VAR_RESULT, IsWirelessAdapterConnected
@@ -1112,8 +1101,6 @@ CableClub_OnResume:: @ 81BC05C
 	end
 
 JoyfulGameCorner_EventScript_InfoMan2:: @ 81BC060
-	goto_if_questlog EventScript_ReleaseEnd
-	special QuestLog_CutRecording
 	lock
 	faceplayer
 	message Text_DescribeWhichGame
@@ -1142,8 +1129,6 @@ CableClub_EventScript_MinigameInfoExit:: @ 81BC0C4
 	end
 
 JoyfulGameCorner_EventScript_MinigameAttendant:: @ 81BC0CE
-	goto_if_questlog EventScript_ReleaseEnd
-	special QuestLog_CutRecording
 	lock
 	faceplayer
 	message Text_WelcomeCanYouWait
@@ -1278,7 +1263,6 @@ CableClub_EventScript_ExplainDodrioBerryPickingRequirements:: @ 81BC2DE
 	return
 
 TwoIsland_JoyfulGameCorner_EventScript_ShowPokemonJumpRecords:: @ 81BC2E7
-	goto_if_questlog EventScript_ReleaseEnd
 	lockall
 	special ShowPokemonJumpRecords
 	waitstate
@@ -1286,7 +1270,6 @@ TwoIsland_JoyfulGameCorner_EventScript_ShowPokemonJumpRecords:: @ 81BC2E7
 	end
 
 TwoIsland_JoyfulGameCorner_EventScript_ShowDodrioBerryPickingRecords:: @ 81BC2FC
-	goto_if_questlog EventScript_ReleaseEnd
 	lockall
 	special ShowDodrioBerryPickingRecords
 	waitstate

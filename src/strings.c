@@ -893,8 +893,6 @@ const u8 gUnknown_8419F10[] = _("レポ-トが ないので\nじかんの せっ
 const u8 gUnknown_8419F2D[] = _("ゲ-ムない じかんの しゅうせい システムが\nつかえる ように なりました!");
 const u8 gText_SavingDontTurnOffThePower2[] = _("Saving…\nDon't turn off the power.");
 
-#include "data/quest_log.h"
-
 const u8 gUnknown_841B285[] = _(" was used on\n");
 const u8 gUnknown_841B293[] = _(".");
 const u8 gUnknown_841B295[] = _("'s level rose to\n");

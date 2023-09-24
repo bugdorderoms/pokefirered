@@ -97,8 +97,6 @@
 	.include "src/item_pc.o"
 	.include "src/mailbox_pc.o"
 	.include "src/menu.o"
-	.include "src/quest_log.o"
-	.include "src/quest_log_events.o"
 	.include "src/union_room.o"
 	.include "src/rfu_union_tool.o"
 	.include "src/union_room_battle.o"

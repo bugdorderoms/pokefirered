@@ -599,17 +599,3 @@ void WeatherProcessingIdle(void)
 {
     gWeatherPtr->palProcessingState = WEATHER_PAL_STATE_IDLE;
 }
-
-void SlightlyDarkenPalsInWeather(u16 *palbuf, u32 size)
-{
-    switch (gWeatherPtr->currWeather)
-    {
-    case WEATHER_RAIN:
-    case WEATHER_SNOW:
-    case WEATHER_RAIN_THUNDERSTORM:
-    case WEATHER_SHADE:
-    case WEATHER_DOWNPOUR:
-        BlendPalettesAt(palbuf, RGB_BLACK, 3, size);
-        break;
-    }
-}

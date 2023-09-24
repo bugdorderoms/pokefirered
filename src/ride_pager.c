@@ -33,7 +33,6 @@
 #include "constants/field_effects.h"
 #include "constants/flags.h"
 #include "constants/poke_ride.h"
-#include "constants/quest_log.h"
 #include "constants/songs.h"
 #include "constants/species.h"
 
@@ -218,7 +217,6 @@ static u8 DrawRidePagerMultichoiceWindow(s16 *windowId, s16 *cursorPos, s16 *ord
 {
 	u8 i, count;
 	
-	ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, 0, gSpecialVar_ItemId, 0xFFFF);
 	PlaySE(SE_WIN_OPEN);
 	ScriptContext2_Enable();
 	
@@ -482,22 +480,32 @@ static void SharpedoPaddleCallback(u8 taskId)
 	DestroyTask(taskId);
 }
 
+static void Task_CharizardGlide_OpenMap(u8 taskId)
+{
+	if (!gPaletteFade.active)
+	{
+		PlayRainStoppingSoundEffect();
+		CleanupOverworldWindowsAndTilemaps();
+		gUsingRideMon = RIDE_CHARIZARD;
+		InitRegionMapWithExitCB(REGIONMAP_TYPE_FLY, NULL);
+		DestroyTask(taskId);
+	}
+}
+
 static void CharizardGlideCallback(u8 taskId)
 {
 	if (!InUnionRoom() && Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) && !CheckPlayerInGroundRocks())
 	{
-		gUsingRideMon = RIDE_CHARIZARD;
-		SaveMapView();
-		PlayRainStoppingSoundEffect();
-		CleanupOverworldWindowsAndTilemaps();
-		SetMainCallback2(CB2_OpenFlyMap);
+		FadeScreen(FADE_TO_BLACK, 0);
 		gPlayerAvatar.preventStep = FALSE;
 		ScriptContext2_Disable();
+		gTasks[taskId].func = Task_CharizardGlide_OpenMap;
 	}
 	else
+	{
 		ScriptContext1_SetupScript(EventScript_CantUseRideHere);
-	
-	DestroyTask(taskId);
+		DestroyTask(taskId);
+	}
 }
 
 ///////////////////

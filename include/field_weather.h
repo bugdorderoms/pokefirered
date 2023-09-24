@@ -131,7 +131,6 @@ void PlayRainStoppingSoundEffect(void);
 u8 GetCurrentWeather(void);
 void StartWeather(void);
 void ResumePausedWeather(void);
-void SlightlyDarkenPalsInWeather(u16 *, u32);
 bool8 IsWeatherNotFadingIn(void);
 void SetWeatherScreenFadeOut(void);
 void WeatherProcessingIdle(void);

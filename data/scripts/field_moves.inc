@@ -1,5 +1,4 @@
 EventScript_CutTree:: @ 81BDF13
-	goto_if_questlog EventScript_ReleaseEnd
 	lockall
 	goto_if_unset FLAG_BADGE02_GET, EventScript_CantCutTree
 	checkpartymove MOVE_CUT
@@ -59,7 +58,6 @@ Text_TreeCanBeCutDown:: @ 81BDFE3
 	.string "down!$"
 
 EventScript_RockSmash:: @ 81BE00C
-	goto_if_questlog EventScript_ReleaseEnd
 	lockall
 	msgbox Text_UseRockSmash, MSGBOX_SIGN
 	releaseall
@@ -89,7 +87,6 @@ Text_UseRockSmash:: @ 81BE09D
 	.string "may be able to smash it.$"
 
 EventScript_StrengthBoulder:: @ 81BE11D
-	goto_if_questlog EventScript_ReleaseEnd
 	lockall
 	msgbox Text_UseStrength, MSGBOX_SIGN
 	releaseall
@@ -112,7 +109,6 @@ EventScript_CantUseRideToSurfHere::
 	end
 
 EventScript_Waterfall:: @ 81BE2B7
-	goto_if_questlog EventScript_ReleaseEnd
 	lockall
 	checkpartymove MOVE_WATERFALL
 	compare VAR_RESULT, PARTY_SIZE

@@ -11,7 +11,6 @@
 #include "fieldmap.h"
 #include "metatile_behavior.h"
 #include "overworld.h"
-#include "quest_log.h"
 #include "random.h"
 #include "script.h"
 #include "trainer_see.h"
@@ -95,7 +94,6 @@ static bool8 MovementType_Buried_Callback(struct ObjectEvent *, struct Sprite *)
 static u8 MovementType_VsSeeker4D_Callback(struct ObjectEvent *, struct Sprite *);
 static u8 MovementType_VsSeeker4E_Callback(struct ObjectEvent *, struct Sprite *);
 static u8 MovementType_VsSeeker4F_Callback(struct ObjectEvent *, struct Sprite *);
-static void sub_8064544(struct ObjectEvent *, struct Sprite *);
 static void DoObjectUnionRoomWarpYDisplacement(struct Sprite * sprite);
 static void MovementType_None(struct Sprite *);
 static void MovementType_LookAround(struct Sprite *);
@@ -1426,12 +1424,7 @@ void MakeObjectTemplateFromObjectEventGraphicsInfo(u16 graphicsId, void (*callba
     spriteTemplate->anims = graphicsInfo->anims;
     spriteTemplate->images = graphicsInfo->images;
     spriteTemplate->affineAnims = graphicsInfo->affineAnims;
-    
-    do
-    {
-		spriteTemplate->callback = (ScriptContext1_IsScriptSetUp() != TRUE && sub_8112CAC() == TRUE) ? sub_811246C : callback;
-    } while (0);
-    
+	spriteTemplate->callback = callback;
     *subspriteTables = graphicsInfo->subspriteTables;
 }
 
@@ -4357,9 +4350,7 @@ bool8 ObjectEventIsHeldMovementActive(struct ObjectEvent *objectEvent)
 
 bool8 ObjectEventSetHeldMovement(struct ObjectEvent *objectEvent, u8 movementActionId)
 {
-    if(sub_8112CAC() == TRUE)
-        ObjectEventClearHeldMovementIfActive(objectEvent);
-    else if (ObjectEventIsMovementOverridden(objectEvent))
+    if (ObjectEventIsMovementOverridden(objectEvent))
         return TRUE;
 
     UnfreezeObjectEvent(objectEvent);
@@ -4427,28 +4418,6 @@ void UpdateObjectEventCurrentMovement(struct ObjectEvent *objectEvent, struct Sp
     {
         while (callback(objectEvent, sprite));
     }
-    DoGroundEffects_OnBeginStep(objectEvent, sprite);
-    DoGroundEffects_OnFinishStep(objectEvent, sprite);
-    UpdateObjectEventSpriteAnimPause(objectEvent, sprite);
-    UpdateObjectEventVisibility(objectEvent, sprite);
-    ObjectEventUpdateSubpriority(objectEvent, sprite);
-}
-
-void sub_8063E28(struct ObjectEvent *objectEvent, struct Sprite *sprite)
-{
-    DoGroundEffects_OnSpawn(objectEvent, sprite);
-    TryEnableObjectEventAnim(objectEvent, sprite);
-    if (ObjectEventIsHeldMovementActive(objectEvent))
-    {
-        if(!sprite->animBeginning)
-            sub_8064544(objectEvent, sprite);
-    }
-    
-    if (MetatileBehavior_IsIce_2(objectEvent->currentMetatileBehavior) == TRUE
-     || MetatileBehavior_IsUnknownMovement48(objectEvent->currentMetatileBehavior) == TRUE)
-        objectEvent->disableAnim = TRUE;
-    else
-        objectEvent->disableAnim = FALSE;
     DoGroundEffects_OnBeginStep(objectEvent, sprite);
     DoGroundEffects_OnFinishStep(objectEvent, sprite);
     UpdateObjectEventSpriteAnimPause(objectEvent, sprite);
@@ -4525,16 +4494,6 @@ static void ObjectEventExecHeldMovementAction(struct ObjectEvent *objectEvent, s
     }
 }
 
-static void sub_8064544(struct ObjectEvent *objectEvent, struct Sprite *sprite)
-{
-    if (gMovementActionFuncs[objectEvent->movementActionId][sprite->data[2]](objectEvent, sprite))
-    {
-        objectEvent->heldMovementFinished = TRUE;
-        if (objectEvent->graphicsId == OBJ_EVENT_GFX_PUSHABLE_BOULDER)
-            HandleBoulderFallThroughOrCoverHole(objectEvent);
-    }
-}
-
 static bool8 ObjectEventExecSingleMovementAction(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     if (gMovementActionFuncs[objectEvent->movementActionId][sprite->data[2]](objectEvent, sprite))
@@ -4550,11 +4509,6 @@ static void ObjectEventSetSingleMovement(struct ObjectEvent *objectEvent, struct
 {
     objectEvent->movementActionId = animId;
     sprite->data[2] = 0;
-    
-    if (gQuestLogPlaybackState == 2)
-    {
-        QuestLogRecordNPCStep(objectEvent->localId, objectEvent->mapNum, objectEvent->mapGroup, animId);
-    }
 }
 
 static void FaceDirection(struct ObjectEvent *objectEvent, struct Sprite *sprite, u8 direction)

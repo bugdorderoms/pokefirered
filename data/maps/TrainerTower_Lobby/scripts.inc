@@ -124,7 +124,6 @@ TrainerTower_Lobby_EventScript_ReceptionistEnd:: @ 8164990
 	end
 
 TrainerTower_Lobby_EventScript_MartClerk:: @ 8164992
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou

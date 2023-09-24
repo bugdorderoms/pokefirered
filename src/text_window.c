@@ -2,17 +2,10 @@
 #include "gflib.h"
 #include "text_window.h"
 #include "text_window_graphics.h"
-#include "quest_log.h"
 
 extern const u16 gUnknown_841F1C8[];
 
 void LoadWindowGfx(u8 windowId, u8 frameType, u16 destOffset, u8 palIdx);
-
-void sub_814FD04(u8 bgId, u16 destOffset, u8 palIdx)
-{
-    LoadBgTiles(bgId, gUnknown_84566A8, 0x280, destOffset);
-    LoadPalette(stdpal_get(2), palIdx, 32);
-}
 
 void sub_814FD38(u8 bgId, u16 destOffset, u8 palIdx)
 {

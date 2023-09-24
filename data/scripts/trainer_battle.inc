@@ -48,7 +48,6 @@ EventScript_DoNoIntroTrainerBattle:: @ 81A4F21
 	applymovement VAR_LAST_TALKED, Movement_RevealTrainer
 	waitmovement 0
 	special PlayTrainerEncounterMusic
-	goto_if_questlog EventScript_EndQuestLogBattle
 	battlebegin
 	ontrainerbattleend
 
@@ -62,7 +61,6 @@ EventScript_TryDoRematchBattle:: @ 81A4F3E
 	special ShowTrainerIntroSpeech
 	waitmessage
 	waitbuttonpress
-	goto_if_questlog EventScript_EndQuestLogRematch
 	special StartRematchBattle
 	waitstate
 	releaseall
@@ -83,7 +81,6 @@ EventScript_TryDoDoubleRematchBattle:: @ 81A4F73
 	special ShowTrainerIntroSpeech
 	waitmessage
 	waitbuttonpress
-	goto_if_questlog EventScript_EndQuestLogRematch
 	special StartRematchBattle
 	waitstate
 	releaseall
@@ -99,10 +96,6 @@ EventScript_NotEnoughMonsForDoubleRematchBattle:: @ 81A4FB1
 	release
 	end
 
-EventScript_EndQuestLogRematch:: @ 81A4FB8
-	releaseall
-	end
-
 EventScript_RevealTrainer:: @ 81A4FBA
 	applymovement VAR_LAST_TALKED, Movement_RevealTrainer
 	waitmovement 0
@@ -116,7 +109,6 @@ EventScript_DoTrainerBattle:: @ 81A4FC7
 	special ShowTrainerIntroSpeech
 	waitmessage
 	waitbuttonpress
-	goto_if_questlog EventScript_EndQuestLogBattle
 	battlebegin
 	specialvar VAR_RESULT, GetTrainerBattleMode
 	compare VAR_RESULT, TRAINER_BATTLE_SINGLE
@@ -135,11 +127,6 @@ EventScript_EndTrainerBattle:: @ 81A5017
 
 EventScript_EndTrainerBattleContinueScript:: @ 81A5019
 	ontrainerbattleendgoto
-
-EventScript_EndQuestLogBattle:: @ 81A501A
-	special SetBattledTrainerFlag
-	releaseall
-	end
 
 Std_MsgboxAutoclose:: @ 81A501F
 	message 0x0

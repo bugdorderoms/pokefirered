@@ -4,7 +4,6 @@ FourIsland_PokemonDayCare_MapScripts:: @ 817193F
 	.byte 0
 
 FourIsland_PokemonDayCare_EventScript_DaycareWoman:: @ 8171940
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	specialvar VAR_RESULT, GetDaycareState

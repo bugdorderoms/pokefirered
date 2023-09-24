@@ -25,7 +25,6 @@
 #include "constants/event_objects.h"
 #include "constants/maps.h"
 #include "constants/items.h"
-#include "constants/quest_log.h"
 #include "constants/trainer_types.h"
 
 enum
@@ -764,7 +763,6 @@ void Task_VsSeeker_0(u8 taskId)
           DisplayItemMessageOnField(taskId, 2, gText_OakForbidsUseOfItemHere, Task_ItemUse_CloseMessageBoxAndReturnToField);
           return;
        }
-        ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, 0, gSpecialVar_ItemId, 0xffff);
         FieldEffectStart(FLDEFF_USE_VS_SEEKER);
         gTasks[taskId].func = Task_VsSeeker_1;
         gTasks[taskId].data[0] = 15;

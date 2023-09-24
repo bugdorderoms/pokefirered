@@ -1402,25 +1402,6 @@ static void sub_80BFEA0(void)
     LoadPalette(&sRegionMap_Pal[0x2F], 0x2F, sizeof(sRegionMap_Pal[0x2F]));
 }
 
-static void InitRegionMap(u8 type)
-{
-    sRegionMap = AllocZeroed(sizeof(struct RegionMap));
-    if (sRegionMap == NULL)
-    {
-        SetMainCallback2(CB2_ReturnToField);
-    }
-    else
-    {
-        gUnknown_2031DE0 = TRUE;
-        sRegionMap->type = type;
-        sRegionMap->mainState = 0;
-        sRegionMap->openState = 0;
-        sRegionMap->loadGfxState = 0;
-        InitRegionMapType();
-        SetMainCallback2(CB2_OpenRegionMap);
-    }
-}
-
 void InitRegionMapWithExitCB(u8 type, MainCallback cb)
 {
     sRegionMap = AllocZeroed(sizeof(struct RegionMap));
@@ -1430,6 +1411,9 @@ void InitRegionMapWithExitCB(u8 type, MainCallback cb)
     }
     else
     {
+		if (type == REGIONMAP_TYPE_FLY)
+			InitFlyMap();
+		
         gUnknown_2031DE0 = TRUE;
         sRegionMap->type = type;
         sRegionMap->mainState = 0;
@@ -4299,12 +4283,6 @@ static void ClearOrDrawTopBar(bool8 clear)
     }
 }
 
-void CB2_OpenFlyMap(void)
-{
-    InitFlyMap();
-    InitRegionMap(REGIONMAP_TYPE_FLY);
-}
-
 static void Task_FlyMap(u8 taskId)
 {
     switch (sFlyMap->state)
@@ -4463,7 +4441,6 @@ static void SetFlyWarpDestination(u16 mapsec)
     if (sMapFlyDestinations[idx][2])
     {
         SetWarpDestinationToHealLocation(sMapFlyDestinations[idx][2]);
-        SetUsedFlyQuestLogEvent(sMapFlyDestinations[idx]);
     }
     else
     {

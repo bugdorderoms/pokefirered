@@ -30,7 +30,6 @@ PalletTown_PlayersHouse_2F_EventScript_Sign:: @ 8168CDB
 	end
 
 PalletTown_PlayersHouse_2F_EventScript_PC:: @ 8168CE4
-	goto_if_questlog EventScript_ReleaseEnd
 	lockall
 	setvar VAR_0x8004, 1
 	special AnimatePcTurnOn

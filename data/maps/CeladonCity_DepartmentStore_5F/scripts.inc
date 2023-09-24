@@ -14,7 +14,6 @@ CeladonCity_DepartmentStore_5F_EventScript_FloorSign:: @ 816BC53
 	end
 
 CeladonCity_DepartmentStore_5F_EventScript_ClerkXItems:: @ 816BC5C
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou
@@ -38,7 +37,6 @@ CeladonCity_DepartmentStore_5F_XItems:: @ 816BC84
 	end
 
 CeladonCity_DepartmentStore_5F_EventScript_ClerkVitamins:: @ 816BC96
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou

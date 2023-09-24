@@ -56,7 +56,6 @@ ViridianCity_Mart_EventScript_Clerk:: @ 816A268
 	faceplayer
 	compare VAR_MAP_SCENE_VIRIDIAN_CITY_MART, 1
 	goto_if_eq ViridianCity_Mart_EventScript_SayHiToOak
-	goto_if_questlog EventScript_ReleaseEnd
 	message Text_MayIHelpYou
 	waitmessage
 	pokemart 0

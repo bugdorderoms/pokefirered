@@ -5,7 +5,6 @@
 #include "decompress.h"
 #include "save.h"
 #include "battle.h"
-#include "quest_log.h"
 #include "link_rfu.h"
 #include "librfu.h"
 #include "random.h"
@@ -228,9 +227,6 @@ static const u8 sBGControlRegOffsets[] =
 
 bool8 IsWirelessAdapterConnected(void)
 {
-    if (QL_IS_PLAYBACK_STATE)
-        return FALSE;
-
     SetWirelessCommType1();
     InitRFUAPI();
     sub_80FB128(TRUE);

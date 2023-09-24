@@ -16,7 +16,6 @@
 #include "pokemon_icon.h"
 #include "pokemon_storage_system_internal.h"
 #include "pokemon_summary_screen.h"
-#include "quest_log.h"
 #include "strings.h"
 #include "task.h"
 #include "text_window.h"
@@ -99,7 +98,6 @@ static void ClearBottomWindow(void);
 static void AddWallpaperSetsMenu(void);
 static void AddWallpapersMenu(u8 wallpaperSet);
 static void sub_808FDFC(void);
-static void sub_808FE54(u8 species);
 static void sub_808FF70(void);
 
 static const u32 sPokemonStorageScrollingBGTileset[] = INCBIN_U32("graphics/interface/pss_unk_83CE438.4bpp.lz");
@@ -758,7 +756,6 @@ static void Cb_MainPSS(u8 taskId)
             break;
         case 26:
             PlaySE(SE_SELECT);
-            sub_808FE54(3);
             sub_80950BC(5);
             gPSSData->state = 7;
             break;
@@ -1077,7 +1074,6 @@ static void Cb_PlaceMon(u8 taskId)
     switch (gPSSData->state)
     {
     case 0:
-        sub_808FE54(1);
         InitMonPlaceChange(1);
         gPSSData->state++;
         break;
@@ -1098,7 +1094,6 @@ static void Cb_ShiftMon(u8 taskId)
     switch (gPSSData->state)
     {
     case 0:
-        sub_808FE54(0);
         InitMonPlaceChange(2);
         gPSSData->state++;
         break;
@@ -1147,7 +1142,6 @@ static void Cb_WithdrawMon(u8 taskId)
     case 3:
         if (!DoShowPartyMenu())
         {
-            sub_808FE54(1);
             InitMonPlaceChange(1);
             gPSSData->state++;
         }
@@ -1195,7 +1189,6 @@ static void Cb_DepositMenu(u8 taskId)
             if (TryStorePartyMonInBox(boxId))
             {
                 gUnknown_20397B6 = boxId;
-                sub_808FE54(2);
                 ClearBottomWindow();
                 sub_808C950();
                 FreeBoxSelectionPopupSpriteGfx();
@@ -2670,97 +2663,6 @@ static void sub_808FDFC(void)
         sub_8095E2C(gUnknown_20397BA);
         sub_8094D14(3);
     }
-}
-
-static void sub_808FE54(u8 action)
-{
-    u16 event;
-    u8 fromBox = sub_8094D34();
-    u16 species = gPSSData->cursorMonSpecies;
-    u16 species2;
-    u8 toBox;
-    struct PssQuestLogBuffer * qlogBuffer;
-    if (sInPartyMenu)
-    {
-        toBox = TOTAL_BOXES_COUNT;
-        species2 = GetMonData(&gPlayerParty[GetBoxCursorPosition()], MON_DATA_SPECIES2);
-    }
-    else
-    {
-        toBox = StorageGetCurrentBox();
-        species2 = GetCurrentBoxMonData(GetBoxCursorPosition(), MON_DATA_SPECIES2);
-    }
-    qlogBuffer = &gPSSData->qlogBuffer;
-
-    switch (action)
-    {
-    default:
-        return;
-    case 0:
-        if (sInPartyMenu)
-        {
-            if (fromBox == TOTAL_BOXES_COUNT)
-                return;
-            else
-                event = QL_EVENT_SWITCHED_PARTY_MON_FOR_PC_MON;
-        }
-        else
-        {
-            if (fromBox == TOTAL_BOXES_COUNT)
-                // Should upmerge but doesn't
-                event = QL_EVENT_SWITCHED_PARTY_MON_FOR_PC_MON;
-            else
-                event = fromBox != toBox ? QL_EVENT_SWITCHED_MONS_BETWEEN_BOXES : QL_EVENT_SWITCHED_MONS_WITHIN_BOX;
-        }
-        qlogBuffer->species = species;
-        qlogBuffer->species2 = species2;
-        qlogBuffer->fromBox = fromBox;
-        qlogBuffer->toBox = toBox;
-        break;
-    case 1:
-        qlogBuffer->species = species;
-        qlogBuffer->species2 = SPECIES_NONE;
-        qlogBuffer->fromBox = fromBox;
-        qlogBuffer->toBox = 0xFF;
-        if (sInPartyMenu)
-        {
-            if (fromBox == TOTAL_BOXES_COUNT)
-                return;
-            else
-                event = QL_EVENT_WITHDREW_MON_PC;
-        }
-        else
-        {
-            if (fromBox == TOTAL_BOXES_COUNT)
-            {
-                event = QL_EVENT_DEPOSITED_MON_PC;
-                qlogBuffer->fromBox = toBox;
-            }
-            else if (fromBox != toBox)
-            {
-                event = QL_EVENT_MOVED_MON_BETWEEN_BOXES;
-                qlogBuffer->toBox = toBox;
-            }
-            else
-                event = QL_EVENT_MOVED_MON_WITHIN_BOX;
-        }
-        break;
-    case 2:
-        event = QL_EVENT_DEPOSITED_MON_PC;
-        qlogBuffer->species = species;
-        qlogBuffer->species2 = SPECIES_NONE;
-        qlogBuffer->fromBox = gUnknown_20397B6;
-        qlogBuffer->toBox = 0xFF;
-        break;
-    case 3:
-        event = QL_EVENT_SWITCHED_MULTIPLE_MONS;
-        qlogBuffer->species = SPECIES_NONE;
-        qlogBuffer->species2 = SPECIES_NONE;
-        qlogBuffer->fromBox = fromBox;
-        qlogBuffer->toBox = toBox;
-        break;
-    }
-    SetQuestLogEvent(event, (const void *)qlogBuffer);
 }
 
 static void sub_808FF70(void)

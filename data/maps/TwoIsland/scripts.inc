@@ -58,7 +58,6 @@ TwoIsland_EventScript_SetShopExpanded3:: @ 8167606
 	return
 
 TwoIsland_EventScript_Clerk:: @ 816760F
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	compare VAR_MAP_SCENE_TWO_ISLAND, 4

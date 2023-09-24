@@ -10,7 +10,6 @@ SaffronCity_Mart_EventScript_Youngster:: @ 816EFAC
 	end
 
 SaffronCity_Mart_EventScript_Clerk:: @ 816EFB5
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou

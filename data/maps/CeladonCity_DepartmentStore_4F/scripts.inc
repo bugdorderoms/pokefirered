@@ -14,7 +14,6 @@ CeladonCity_DepartmentStore_4F_EventScript_FloorSign:: @ 816BC01
 	end
 
 CeladonCity_DepartmentStore_4F_EventScript_Clerk:: @ 816BC0A
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou

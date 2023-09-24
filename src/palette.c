@@ -921,32 +921,6 @@ void TintPalette_CustomTone(u16 *palette, u16 count, u16 rTone, u16 gTone, u16 b
     }
 }
 
-void sub_80716F8(const u16 *src, u16 *dst, u16 count, u8 a4)
-{
-    s32 r, g, b, i;
-    u32 gray;
-
-    if (!a4)
-    {
-        for (i = 0; i < count; ++i)
-            *dst++ = *src++;
-    }
-    else
-    {
-        for (i = 0; i < count; ++src, ++dst, ++i)
-        {
-            r = (*src >>  0) & 0x1F;
-            g = (*src >>  5) & 0x1F;
-            b = (*src >> 10) & 0x1F;
-            gray = (r * Q_8_8(0.3) + g * Q_8_8(0.59) + b * Q_8_8(0.1133)) >> 8;
-            r += (a4 * (gray - r) >> 4);
-            g += (a4 * (gray - g) >> 4);
-            b += (a4 * (gray - b) >> 4);
-            *dst = (b << 10) | (g << 5) | (r << 0);
-        }
-    }
-}
-
 void sub_80717A8(u32 a1, s8 a2, u8 a3, u8 a4, u16 a5, u8 a6, u8 a7)
 {
     u8 taskId;

@@ -77,11 +77,7 @@
 // triangle in time.
 #define VAR_DEOXYS_INTERACTION_STEP_COUNTER 0x4026
 
-// Bits 0-11 are the number of mons in all boxes
-// with the species sanity bit set.
-// Bits 12-15 are the same for the player's party.
-// Used by Quest Log.
-#define VAR_QUEST_LOG_MON_COUNTS           0x4027
+#define VAR_0x4027                         0x4027
 #define VAR_0x4028                         0x4028
 #define VAR_DEXNAV_SPECIES                 0x4029
 #define VAR_DEXNAV_ENVIRONMENT             0x402A
@@ -122,7 +118,7 @@
 #define VAR_EGG_BRAG_STATE                 0x404A
 #define VAR_LINK_WIN_BRAG_STATE            0x404B
 #define VAR_POKELOT_RND2                   0x404C
-#define VAR_QL_ENTRANCE                    0x404D
+#define VAR_0x404D                         0x404D
 #define VAR_0x404E                         0x404E
 #define VAR_LOTAD_SIZE_RECORD              0x404F
 
@@ -188,7 +184,6 @@
 #define VAR_MAP_SCENE_CINNABAR_ISLAND_2                                        0x408A
 #define VAR_MAP_SCENE_MT_MOON_B2F                                              0x408B
 
-
 #define VAR_0x408C                 0x408C
 #define VAR_0x408D                 0x408D
 #define VAR_0x408E                 0x408E
@@ -219,9 +214,11 @@
 #define VAR_0x40A7                 0x40A7
 #define VAR_0x40A8                 0x40A8
 #define VAR_0x40A9                 0x40A9
-
-#define VAR_QLBAK_TRAINER_REMATCHES 0x40AA // array of 4
-#define VAR_QLBAK_MAP_LAYOUT        0x40AE
+#define VAR_0x40AA                 0x40AA
+#define VAR_0x40AB                 0x40AB
+#define VAR_0x40AC                 0x40AC
+#define VAR_0x40AD                 0x40AD
+#define VAR_0x40AE                 0x40AE
 
 #define VAR_0x40AF                 0x40AF
 #define VAR_0x40B0                 0x40B0

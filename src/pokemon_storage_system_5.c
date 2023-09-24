@@ -1984,11 +1984,6 @@ void sub_8094D14(u8 animNum)
     StartSpriteAnim(gPSSData->field_CB4, animNum);
 }
 
-u8 sub_8094D34(void)
-{
-    return sMovingMonOrigBoxId;
-}
-
 void sub_8094D40(void)
 {
     gPSSData->field_CB4->oam.priority = 1;

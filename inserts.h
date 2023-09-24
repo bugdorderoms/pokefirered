@@ -23,9 +23,6 @@
 // If this setting is enabled, when you overwrite a move with another move that has a higher PP, the remaining PP of the original move will be retained.
 #define DONT_REPLENISH_MOVE_PP TRUE
 
-// If this setting is enabled, it will remove the flashbacks when loading a saved game.
-#define REMOVE_FLASHBACKS TRUE
-
 // If this setting is enabled, all participating Pokémon in a battle will receive full experience points.
 #define FULL_EXP_FOR_PARTICIPATING TRUE
 

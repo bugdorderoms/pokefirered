@@ -2119,11 +2119,6 @@ static void atk19_tryfaintmon(void)
 			gHitMarker |= HITMARKER_PLAYER_FAINTED;
 			AdjustFriendshipOnBattleFaint(gActiveBattler);
 		}
-		else
-		{
-			gBattleStruct->lastOpponentSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_SPECIES);
-			*(u8 *)(&gBattleStruct->field_182) = gBattlerAttacker;
-		}
 		if ((gHitMarker & HITMARKER_DESTINYBOND) && IsBattlerAlive(gBattlerAttacker))
 		{
 			gHitMarker &= ~(HITMARKER_DESTINYBOND);

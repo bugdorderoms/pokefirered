@@ -45,8 +45,6 @@ BirthIsland_Exterior_EventScript_TryRemoveDeoxys:: @ 816525D
 BirthIsland_Exterior_EventScript_Triangle:: @ 8165271
 	lock
 	faceplayer
-	goto_if_questlog EventScript_ReleaseEnd
-	special QuestLog_CutRecording
 	special DoDeoxysTriangleInteraction
 	waitstate
 	switch VAR_RESULT

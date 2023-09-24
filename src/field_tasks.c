@@ -8,7 +8,6 @@
 #include "fieldmap.h"
 #include "metatile_behavior.h"
 #include "overworld.h"
-#include "quest_log.h"
 #include "script.h"
 #include "task.h"
 #include "constants/field_tasks.h"
@@ -54,11 +53,8 @@ static void Task_RunTimeBasedEvents(u8 taskId)
 
     if (!ScriptContext2_IsEnabled())
     {
-        if (!QL_IS_PLAYBACK_STATE)
-        {
-			data = gTasks[taskId].data;
-            UpdateAmbientCry(&data[1], &data[2]);
-        }
+		data = gTasks[taskId].data;
+		UpdateAmbientCry(&data[1], &data[2]);
     }
 }
 

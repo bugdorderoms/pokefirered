@@ -391,7 +391,7 @@ struct BattleStruct
 	/*0x068*/ u8 givenExpMons;
 	/*0x069*/ u8 wishPerishSongState;
     /*0x06A*/ u8 wishPerishSongBattlerId;
-	/*0x06B*/ u8 field_182; // quest log related
+	/*0x06B*/ u8 unused;
 	/*0x06C*/ u16 lastTakenMove[MAX_BATTLERS_COUNT];
 	/*0x074*/ u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT];
 	/*0x094*/ u16 choicedMove[MAX_BATTLERS_COUNT];
@@ -425,8 +425,7 @@ struct BattleStruct
 	/*0x0FA*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // for Pickup gen5 effect
 	/*0x0FE*/ u8 soulHeartBattlerId;
 	/*0x0FF*/ u8 usedReviveItemBattler; // for revive battle usage, as flag using gBitTable
-	/*0x100*/ u16 lastOpponentSpecies; // quest log related
-	/*0x102*/ struct Illusion illusion[MAX_BATTLERS_COUNT];
+	/*0x100*/ struct Illusion illusion[MAX_BATTLERS_COUNT];
 	          struct MoveInfo moveInfo;
     union {
         struct LinkPartnerHeader linkPartnerHeader;

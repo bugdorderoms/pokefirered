@@ -23,7 +23,6 @@
 #include "overworld.h"
 #include "party_menu.h"
 #include "pokemon_jump.h"
-#include "quest_log.h"
 #include "random.h"
 #include "save_location.h"
 #include "script.h"
@@ -2881,10 +2880,8 @@ void InitUnionRoom(void)
     struct UnkStruct_URoom * ptr;
 
     sUnionRoomPlayerName[0] = EOS;
-    if (QL_IS_PLAYBACK_STATE)
-        return;
+    
     CreateTask(Task_InitUnionRoom, 0);
-    sUnionRoomMain.uRoom = sUnionRoomMain.uRoom; // Needed to match.
     sUnionRoomMain.uRoom = ptr = AllocZeroed(sizeof(struct UnkStruct_URoom));
     sURoom = sUnionRoomMain.uRoom;
     ptr->state = 0;

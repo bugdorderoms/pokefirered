@@ -1,7 +1,6 @@
 #include "global.h"
 #include "script.h"
 #include "event_data.h"
-#include "quest_log.h"
 #include "constants/maps.h"
 
 #define RAM_SCRIPT_MAGIC 51
@@ -30,8 +29,6 @@ static struct ScriptContext sScriptContext2;
 static bool8 sScriptContext2Enabled;
 static u8 sMsgBoxWalkawayDisabled;
 static u8 sMsgBoxIsCancelable;
-static u8 sQuestLogInput;
-static u8 sQuestLogInputIsDpad;
 static u8 sMsgIsSignPost;
 
 extern ScrCmdFunc gScriptCmdTable[];
@@ -202,39 +199,6 @@ bool8 ScriptContext2_IsEnabled(void)
     return sScriptContext2Enabled;
 }
 
-void SetQuestLogInputIsDpadFlag(void)
-{
-    sQuestLogInputIsDpad = TRUE;
-}
-
-void ClearQuestLogInputIsDpadFlag(void)
-{
-    sQuestLogInputIsDpad = FALSE;
-}
-
-bool8 IsQuestLogInputDpad(void)
-{
-    if(sQuestLogInputIsDpad == TRUE)
-        return TRUE;
-    else
-        return FALSE;
-}
-
-void RegisterQuestLogInput(u8 var)
-{
-    sQuestLogInput = var;
-}
-
-void ClearQuestLogInput(void)
-{
-    sQuestLogInput = 0;
-}
-
-u8 GetRegisteredQuestLogInput(void)
-{
-    return sQuestLogInput;
-}
-
 void DisableMsgBoxWalkaway(void)
 {
     sMsgBoxWalkawayDisabled = TRUE;
@@ -331,7 +295,6 @@ void ScriptContext1_SetupScript(const u8 *ptr)
 {
     ClearMsgBoxCancelableState();
     EnableMsgBoxWalkaway();
-    ClearQuestLogInputIsDpadFlag();
     InitScriptContext(&sScriptContext1, gScriptCmdTable, gScriptCmdTableEnd);
     SetupBytecodeScript(&sScriptContext1, ptr);
     ScriptContext2_Enable();
@@ -433,12 +396,7 @@ void RunOnDiveWarpMapScript(void)
 
 bool8 TryRunOnFrameMapScript(void)
 {
-    u8 *ptr;
-
-    if(gQuestLogState == QL_STATE_PLAYBACK_LAST)
-        return 0;
-
-    ptr = mapheader_get_first_match_from_tagged_ptr_list(2);
+    u8 *ptr = mapheader_get_first_match_from_tagged_ptr_list(2);
 
     if (!ptr)
         return 0;

@@ -2,7 +2,6 @@
 #include "gba/m4a_internal.h"
 #include "gflib.h"
 #include "battle.h"
-#include "quest_log.h"
 #include "m4a.h"
 #include "constants/songs.h"
 #include "constants/fanfares.h"
@@ -190,19 +189,9 @@ bool8 IsNotWaitingForBGMStop(void)
 
 void PlayFanfareByFanfareNum(u8 fanfareNum)
 {
-    u16 songNum;
-
-    if(gQuestLogState == QL_STATE_PLAYBACK)
-    {
-        sFanfareCounter = 0xFF;
-    }
-    else
-    {
-        m4aMPlayStop(&gMPlayInfo_BGM);
-        songNum = sFanfares[fanfareNum].songNum;
-        sFanfareCounter = sFanfares[fanfareNum].duration;
-        m4aSongNumStart(songNum);
-    }
+	m4aMPlayStop(&gMPlayInfo_BGM);
+	sFanfareCounter = sFanfares[fanfareNum].duration;
+	m4aSongNumStart(sFanfares[fanfareNum].songNum);
 }
 
 bool8 WaitFanfare(bool8 stop)
@@ -361,11 +350,8 @@ void PlayCry4(u16 species, s8 pan, u8 mode)
 
 void PlayCry7(u16 species, u8 mode) // exclusive to FR/LG
 {
-    if (!QL_IS_PLAYBACK_STATE)
-    {
-        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
-        PlayCryInternal(species, 0, CRY_VOLUME, 10, mode);
-    }
+	m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
+	PlayCryInternal(species, 0, CRY_VOLUME, 10, mode);
     gPokemonCryBGMDuckingCounter = 2;
     RestoreBGMVolumeAfterPokemonCry();
 }
@@ -542,7 +528,7 @@ void PlayBGM(u16 songNum)
 
 void PlaySE(u16 songNum)
 {
-    if(gDisableMapMusicChangeOnMapLoad == 0 && gQuestLogState != QL_STATE_PLAYBACK)
+    if(gDisableMapMusicChangeOnMapLoad == 0)
         m4aSongNumStart(songNum);
 }
 

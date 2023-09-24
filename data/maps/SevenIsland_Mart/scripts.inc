@@ -2,7 +2,6 @@ SevenIsland_Mart_MapScripts:: @ 8170B30
 	.byte 0
 
 SevenIsland_Mart_EventScript_Clerk:: @ 8170B31
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou

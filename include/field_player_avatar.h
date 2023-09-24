@@ -16,8 +16,6 @@ void StopPlayerAvatar(void);
 void GetXYCoordsOneStepInFrontOfPlayer(s16 *xPtr, s16 *yPtr);
 u8 GetPlayerAvatarGraphicsIdByStateId(u8);
 void SetPlayerAvatarStateMask(u16 mask);
-void AlignFishingAnimationFrames(struct Sprite *sprite);
-void CreateStopSurfingTask_NoMusicChange(u8 direction);
 void SavePlayerFacingDirectionForTeleport(u8 direction);
 void SetPlayerAvatarTransitionFlags(u16 flags);
 bool8 IsPlayerFacingSurfableFishableWater(void);

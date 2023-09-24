@@ -16,8 +16,6 @@
 	.align 4
 	.include "field_camera.o"
 	.include "scrcmd.o"
-	.include "field_control_avatar.o"
-	.include "event_data.o"
 	.include "sound.o"
 	.include "task.o"
 	.include "image_processing_effects.o"
@@ -31,7 +29,6 @@
 	.include "AgbRfu_LinkManager.o"
 	.align 4
 	.include "list_menu.o"
-	.include "quest_log.o"
 	.include "party_menu.o"
 	.align 4
 	.include "fame_checker.o"

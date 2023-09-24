@@ -76,12 +76,6 @@ gSpecials:: @ 815FD60
 	def_special GetMagikarpSizeRecordInfo
 	def_special CompareMagikarpSize
 
-	@ Quest log
-	def_special SetUsedPkmnCenterQuestLogEvent
-	def_special QuestLog_StartRecordingInputsAfterDeferredEvent
-	def_special GetQuestLogState
-	def_special QuestLog_CutRecording
-	
 	@ Party specials
 	def_special ChoosePartyMon
 	def_special HealPlayerParty
@@ -145,7 +139,6 @@ gSpecials:: @ 815FD60
 	def_special StartLegendaryBattle
 	def_special SetUpTrainerMovement
 	def_special StartMarowakBattle
-	def_special SetBattledTrainerFlag
 	def_special CallTrainerTowerFunc
 	
 	@ Trainer fan club specials

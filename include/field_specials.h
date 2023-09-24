@@ -31,8 +31,8 @@ void IncrementResortGorgeousStepCounter(void);
 void IncrementBirthIslandRockStepCount(void);
 void ResetFieldTasksArgs(void);
 bool8 UsedPokemonCenterWarp(void);
-void QuestLog_CheckDepartingIndoorsMap(void);
-void QuestLog_TryRecordDepartedLocation(void);
 void UpdateTrainerCardPhotoIcons(void);
+void UpdateTrainerFansAfterLinkBattle(void);
+void ResetTrainerFanClub(void);
 
 #endif // GUARD_FIELD_SPECIALS_H

@@ -14,8 +14,6 @@
 #include "new_menu_helpers.h"
 #include "overworld.h"
 #include "party_menu.h"
-#include "quest_log.h"
-#include "quest_log_player.h"
 #include "random.h"
 #include "ride_pager.h"
 #include "script.h"
@@ -596,19 +594,10 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     return collision;
 }
 
-static const u8 sQuestLogSurfDismountActionIds[] = {
-    QL_PLAYER_GFX_STOP_SURF_S,
-    QL_PLAYER_GFX_STOP_SURF_S,
-    QL_PLAYER_GFX_STOP_SURF_N,
-    QL_PLAYER_GFX_STOP_SURF_W,
-    QL_PLAYER_GFX_STOP_SURF_E
-};
-
 static bool8 CanStopSurfing(s16 x, s16 y, u8 direction)
 {
     if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING) && MapGridGetZCoordAt(x, y) == 3 && GetObjectEventIdByXYZ(x, y, 3) == OBJECT_EVENTS_COUNT && !MetatileBehavior_IsGroundRocks(MapGridGetMetatileBehaviorAt(x, y)))
     {
-        QuestLogRecordPlayerAvatarGfxTransitionWithDuration(sQuestLogSurfDismountActionIds[direction], 16);
         CreateStopSurfingTask(direction);
         return TRUE;
     }
@@ -724,6 +713,13 @@ static void DoPlayerAvatarTransition(void)
     }
 }
 
+static void UpdatePlayerSprite(struct ObjectEvent * playerObjEvent, u8 state, u16 mask)
+{
+	ObjectEventSetGraphicsId(playerObjEvent, GetPlayerAvatarGraphicsIdByStateId(state));
+	ObjectEventTurn(playerObjEvent, playerObjEvent->movementDirection);
+	SetPlayerAvatarStateMask(mask);
+}
+
 static void PlayerAvatarTransition_Dummy(struct ObjectEvent * playerObjEvent)
 {
 
@@ -731,21 +727,29 @@ static void PlayerAvatarTransition_Dummy(struct ObjectEvent * playerObjEvent)
 
 static void PlayerAvatarTransition_Normal(struct ObjectEvent * playerObjEvent)
 {
-    QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_NORMAL);
-    QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_NORMAL);
+	UpdatePlayerSprite(playerObjEvent, PLAYER_AVATAR_GFX_NORMAL, PLAYER_AVATAR_FLAG_ON_FOOT);
 }
 
 static void PlayerAvatarTransition_Bike(struct ObjectEvent * playerObjEvent)
 {
-    QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_BIKE);
-    QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_BIKE);
+    UpdatePlayerSprite(playerObjEvent, PLAYER_AVATAR_GFX_BIKE, PLAYER_AVATAR_FLAG_MACH_BIKE);
     BikeClearState(0, 0);
 }
 
 static void PlayerAvatarTransition_Surfing(struct ObjectEvent * playerObjEvent)
 {
-    QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_SURF);
-    QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_SURF);
+	u8 fieldEffectId;
+	
+	if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+	{
+		UpdatePlayerSprite(playerObjEvent, PLAYER_AVATAR_GFX_RIDE, PLAYER_AVATAR_FLAG_SURFING);
+		gFieldEffectArguments[0] = playerObjEvent->currentCoords.x;
+		gFieldEffectArguments[1] = playerObjEvent->currentCoords.y;
+		gFieldEffectArguments[2] = gPlayerAvatar.objectEventId;
+		fieldEffectId = FieldEffectStart(FLDEFF_SURF_BLOB);
+		playerObjEvent->fieldEffectSpriteId = fieldEffectId;
+		SetSurfBlob_BobState(fieldEffectId, 1);
+	}
 }
 
 static void PlayerAvatarTransition_Underwater(struct ObjectEvent * playerObjEvent)
@@ -758,31 +762,27 @@ static void PlayerAvatarTransition_ReturnToField(struct ObjectEvent * playerObjE
     gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_CONTROLLABLE;
 }
 
-static void PlayerAvatarTransition_TaurosRide(struct ObjectEvent * playerObject)
+static void PlayerAvatarTransition_TaurosRide(struct ObjectEvent * playerObjEvent)
 {
-	QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_TAUROS_RIDE);
-	QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_TAUROS_RIDE);
+	UpdatePlayerSprite(playerObjEvent, PLAYER_AVATAR_GFX_TAUROS_RIDE, PLAYER_AVATAR_FLAG_TAUROS_RIDE);
 	BikeClearState(0, 0);
 }
 
-static void PlayerAvatarTransition_StoutlandRide(struct ObjectEvent * playerObject)
+static void PlayerAvatarTransition_StoutlandRide(struct ObjectEvent * playerObjEvent)
 {
-	QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_STOUTLAND_RIDE);
-	QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_STOUTLAND_RIDE);
+	UpdatePlayerSprite(playerObjEvent, PLAYER_AVATAR_GFX_STOUTLAND_RIDE, PLAYER_AVATAR_FLAG_STOUTLAND_RIDE);
 	BikeClearState(0, 0);
 }
 
-static void PlayerAvatarTransition_MudsdaleRide(struct ObjectEvent * playerObject)
+static void PlayerAvatarTransition_MudsdaleRide(struct ObjectEvent * playerObjEvent)
 {
-	QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_MUDSDALE_RIDE);
-	QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_MUDSDALE_RIDE);
+	UpdatePlayerSprite(playerObjEvent, PLAYER_AVATAR_GFX_MUDSDALE_RIDE, PLAYER_AVATAR_FLAG_MUDSDALE_RIDE);
 	BikeClearState(0, 0);
 }
 
-static void PlayerAvatarTransition_MachampRide(struct ObjectEvent * playerObject)
+static void PlayerAvatarTransition_MachampRide(struct ObjectEvent * playerObjEvent)
 {
-	QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_MACHAMP_RIDE);
-	QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_MACHAMP_RIDE);
+	UpdatePlayerSprite(playerObjEvent, PLAYER_AVATAR_GFX_MACHAMP_RIDE, PLAYER_AVATAR_FLAG_MACHAMP_RIDE);
 	BikeClearState(0, 0);
 }
 	
@@ -843,21 +843,8 @@ static void PlayerSetAnimId(u8 movementActionId, u8 copyableMovement)
     if (!PlayerIsAnimActive())
     {
         gObjectEvents[gPlayerAvatar.objectEventId].playerCopyableMovement = copyableMovement;
-        if (!ObjectEventSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], movementActionId))
-            QuestLogRecordPlayerStep(movementActionId);
+        ObjectEventSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], movementActionId);
     }
-}
-
-static void QL_TryRecordPlayerStepWithDuration0(struct ObjectEvent * objectEvent, u8 movementAction)
-{
-    if (!ObjectEventSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], movementAction))
-        QuestLogRecordPlayerStepWithDuration(movementAction, 0);
-}
-
-static void QL_TryRecordNPCStepWithDuration32(struct ObjectEvent * objectEvent, u8 movementAction)
-{
-    if (!ObjectEventSetHeldMovement(objectEvent, movementAction))
-        QuestLogRecordNPCStepWithDuration(objectEvent->localId, objectEvent->mapNum, objectEvent->mapGroup, movementAction, 32);
 }
 
 void PlayerGoSlowest(u8 direction)
@@ -1331,7 +1318,9 @@ void StartPlayerAvatarVsSeekerAnim(void)
 
 void StartPlayerAvatarFishAnim(u8 direction)
 {
-    QuestLogCallUpdatePlayerSprite(QL_PLAYER_GFX_FISH);
+	struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+	ObjectEventSetGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_FISH));
+	StartSpriteAnim(&gSprites[objectEvent->spriteId], GetFishingDirectionAnimNum(objectEvent->facingDirection));
 }
 
 // Stubbed from R/S
@@ -1402,8 +1391,8 @@ static bool8 DoBoulderDust(struct Task *task, struct ObjectEvent *playerObject, 
     {
         ObjectEventClearHeldMovementIfFinished(playerObject);
         ObjectEventClearHeldMovementIfFinished(strengthObject);
-        QL_TryRecordPlayerStepWithDuration0(playerObject, GetWalkInPlaceNormalMovementAction((u8)task->data[2]));
-        QL_TryRecordNPCStepWithDuration32(strengthObject, GetWalkSlowestMovementAction((u8)task->data[2]));
+		ObjectEventSetHeldMovement(playerObject, GetWalkInPlaceNormalMovementAction((u8)task->data[2]));
+        ObjectEventSetHeldMovement(strengthObject, GetWalkSlowestMovementAction((u8)task->data[2]));
         gFieldEffectArguments[0] = strengthObject->currentCoords.x;
         gFieldEffectArguments[1] = strengthObject->currentCoords.y;
         gFieldEffectArguments[2] = strengthObject->previousElevation;
@@ -1451,7 +1440,7 @@ static bool8 PlayerAvatar_DoSecretBaseMatJump(struct Task *task, struct ObjectEv
     if (ObjectEventClearHeldMovementIfFinished(objectEvent))
     {
         PlaySE(SE_LEDGE);
-        QL_TryRecordPlayerStepWithDuration0(objectEvent, GetJumpInPlaceMovementAction(objectEvent->facingDirection));
+        ObjectEventSetHeldMovement(objectEvent, GetJumpInPlaceMovementAction(objectEvent->facingDirection));
 
         if (++task->data[1] > 1)
         {
@@ -1498,7 +1487,7 @@ static bool8 PlayerAvatar_SecretBaseMatSpinStep1(struct Task *task, struct Objec
     {
         u8 direction;
 
-        QL_TryRecordPlayerStepWithDuration0(objectEvent, GetFaceDirectionMovementAction(direction = directions[objectEvent->movementDirection - 1]));
+        ObjectEventSetHeldMovement(objectEvent, GetFaceDirectionMovementAction(direction = directions[objectEvent->movementDirection - 1]));
         if (direction == (u8)task->data[1])
             task->data[2]++;
         task->data[0]++;
@@ -1520,7 +1509,7 @@ static bool8 PlayerAvatar_SecretBaseMatSpinStep2(struct Task *task, struct Objec
 
     if (ObjectEventClearHeldMovementIfFinished(objectEvent))
     {
-        QL_TryRecordPlayerStepWithDuration0(objectEvent, actions[task->data[2]]);
+        ObjectEventSetHeldMovement(objectEvent, actions[task->data[2]]);
         task->data[0] = 1;
     }
     return FALSE;
@@ -1530,7 +1519,7 @@ static bool8 PlayerAvatar_SecretBaseMatSpinStep3(struct Task *task, struct Objec
 {
     if (ObjectEventClearHeldMovementIfFinished(objectEvent))
     {
-        QL_TryRecordPlayerStepWithDuration0(objectEvent, GetWalkSlowestMovementAction(GetOppositeDirection(task->data[1])));
+        ObjectEventSetHeldMovement(objectEvent, GetWalkSlowestMovementAction(GetOppositeDirection(task->data[1])));
         ScriptContext2_Disable();
         gPlayerAvatar.preventStep = FALSE;
         DestroyTask(FindTaskIdByFunc(PlayerAvatar_DoSecretBaseMatSpin));
@@ -1554,27 +1543,9 @@ static void CreateStopSurfingTask(u8 direction)
     Task_StopSurfingInit(taskId);
 }
 
-void CreateStopSurfingTask_NoMusicChange(u8 direction)
-{
-    u8 taskId;
-
-    ScriptContext2_Enable();
-    FreezeObjectEvents();
-    gPlayerAvatar.flags &= ~PLAYER_AVATAR_FLAG_SURFING;
-    gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_ON_FOOT;
-    gPlayerAvatar.preventStep = TRUE;
-    taskId = CreateTask(Task_StopSurfingInit, 0xFF);
-    gTasks[taskId].data[0] = direction;
-    Task_StopSurfingInit(taskId);
-}
-
 void SeafoamIslandsB4F_CurrentDumpsPlayerOnLand(void)
 {
-    if (gQuestLogPlaybackState != 1 && gQuestLogPlaybackState != 3)
-    {
-        QuestLogRecordPlayerAvatarGfxTransitionWithDuration(sQuestLogSurfDismountActionIds[DIR_NORTH], 16);
-        CreateStopSurfingTask(DIR_NORTH);
-    }
+	CreateStopSurfingTask(DIR_NORTH);
 }
 
 static void Task_StopSurfingInit(u8 taskId)
@@ -1587,7 +1558,7 @@ static void Task_StopSurfingInit(u8 taskId)
             return;
     }
     SetSurfBlob_BobState(playerObjEvent->fieldEffectSpriteId, 2);
-    QL_TryRecordPlayerStepWithDuration0(playerObjEvent, sub_80641EC((u8)gTasks[taskId].data[0]));
+    ObjectEventSetHeldMovement(playerObjEvent, sub_80641EC((u8)gTasks[taskId].data[0]));
     gTasks[taskId].func = Task_WaitStopSurfing;
 }
 
@@ -1598,7 +1569,7 @@ static void Task_WaitStopSurfing(u8 taskId)
     if (ObjectEventClearHeldMovementIfFinished(playerObjEvent))
     {
         ObjectEventSetGraphicsId(playerObjEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_NORMAL));
-        QL_TryRecordPlayerStepWithDuration0(playerObjEvent, GetFaceDirectionMovementAction(playerObjEvent->facingDirection));
+        ObjectEventSetHeldMovement(playerObjEvent, GetFaceDirectionMovementAction(playerObjEvent->facingDirection));
         gPlayerAvatar.preventStep = FALSE;
         ScriptContext2_Disable();
         UnfreezeObjectEvents();
@@ -1649,10 +1620,7 @@ void StartFishing(u8 rod)
 
     gTasks[taskId].tFishingRod = rod;
     Task_Fishing(taskId);
-    if (QuestLogTryRecordPlayerAvatarGfxTransition(QL_PLAYER_GFX_FISH) == TRUE)
-        QL_AfterRecordFishActionSuccessful();
 }
-
 
 static void Task_Fishing(u8 taskId)
 {
@@ -1682,6 +1650,41 @@ static bool8 Fishing2(struct Task *task)
     StartPlayerAvatarFishAnim(playerObjEvent->facingDirection);
     task->tStep++;
     return FALSE;
+}
+
+static void AlignFishingAnimationFrames(struct Sprite * playerSprite)
+{
+    u8 animCmdIndex;
+    u8 animType;
+
+    AnimateSprite(playerSprite);
+    playerSprite->x2 = 0;
+    playerSprite->y2 = 0;
+    animCmdIndex = playerSprite->animCmdIndex;
+    if (playerSprite->anims[playerSprite->animNum][animCmdIndex].type == -1)
+    {
+        animCmdIndex--;
+    }
+    else
+    {
+        playerSprite->animDelayCounter++;
+        if (playerSprite->anims[playerSprite->animNum][animCmdIndex].type == -1)
+            animCmdIndex--;
+    }
+    animType = playerSprite->anims[playerSprite->animNum][animCmdIndex].type;
+    if (animType == 1 || animType == 2 || animType == 3)
+    {
+        playerSprite->x2 = 8;
+        if (GetPlayerFacingDirection() == 3)
+            playerSprite->x2 = -8;
+    }
+    if (animType == 5)
+        playerSprite->y2 = -8;
+    else if (animType == 10 || animType == 11)
+        playerSprite->y2 = 8;
+	
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+        SetSurfBlob_PlayerOffset(gObjectEvents[gPlayerAvatar.objectEventId].fieldEffectSpriteId, 1, playerSprite->y2);
 }
 
 static bool8 Fishing3(struct Task *task)
@@ -1915,41 +1918,6 @@ static bool8 Fishing16(struct Task *task)
 #undef tStep
 #undef tFrameCounter
 #undef tFishingRod
-
-void AlignFishingAnimationFrames(struct Sprite * playerSprite)
-{
-    u8 animCmdIndex;
-    u8 animType;
-
-    AnimateSprite(playerSprite);
-    playerSprite->x2 = 0;
-    playerSprite->y2 = 0;
-    animCmdIndex = playerSprite->animCmdIndex;
-    if (playerSprite->anims[playerSprite->animNum][animCmdIndex].type == -1)
-    {
-        animCmdIndex--;
-    }
-    else
-    {
-        playerSprite->animDelayCounter++;
-        if (playerSprite->anims[playerSprite->animNum][animCmdIndex].type == -1)
-            animCmdIndex--;
-    }
-    animType = playerSprite->anims[playerSprite->animNum][animCmdIndex].type;
-    if (animType == 1 || animType == 2 || animType == 3)
-    {
-        playerSprite->x2 = 8;
-        if (GetPlayerFacingDirection() == 3)
-            playerSprite->x2 = -8;
-    }
-    if (animType == 5)
-        playerSprite->y2 = -8;
-    else if (animType == 10 || animType == 11)
-        playerSprite->y2 = 8;
-	
-    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
-        SetSurfBlob_PlayerOffset(gObjectEvents[gPlayerAvatar.objectEventId].fieldEffectSpriteId, 1, playerSprite->y2);
-}
 
 #define tState data[0]
 #define tRotationTimer data[1]

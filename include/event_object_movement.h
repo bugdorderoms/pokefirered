@@ -104,7 +104,6 @@ void MoveCoords(u8, s16 *, s16 *);
 bool8 ObjectEventIsHeldMovementActive(struct ObjectEvent *);
 u8 ObjectEventClearHeldMovementIfFinished(struct ObjectEvent *);
 u8 GetObjectEventIdByXYZ(u16 x, u16 y, u8 z);
-void sub_8063E28(struct ObjectEvent *, struct Sprite *);
 bool8 ObjectEventSetHeldMovement(struct ObjectEvent *, u8);
 void ShiftStillObjectEventCoords(struct ObjectEvent *);
 void OverrideMovementTypeForObjectEvent(const struct ObjectEvent *, u8);

@@ -78,8 +78,6 @@
 #define PARTY_SIZE 6
 #define MULTI_PARTY_SIZE (PARTY_SIZE / 2)
 
-#define QUEST_LOG_SCENE_COUNT 4
-
 #define NUM_TOWER_CHALLENGE_TYPES 4
 
 #define MALE         0
@@ -106,5 +104,15 @@
 #define DIR_SOUTHEAST 6
 #define DIR_NORTHWEST 7
 #define DIR_NORTHEAST 8
+
+#define FANCLUB_MEMBER1               0
+#define FANCLUB_MEMBER2               1
+#define FANCLUB_MEMBER3               2
+#define FANCLUB_MEMBER4               3
+#define FANCLUB_MEMBER5               4
+#define FANCLUB_MEMBER6               5
+#define FANCLUB_MEMBER7               6
+#define FANCLUB_MEMBER8               7
+#define NUM_TRAINER_FAN_CLUB_MEMBERS  8
 
 #endif //GUARD_CONSTANTS_GLOBAL_H

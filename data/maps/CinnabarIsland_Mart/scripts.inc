@@ -10,7 +10,6 @@ CinnabarIsland_Mart_EventScript_Scientist:: @ 816EA19
 	end
 
 CinnabarIsland_Mart_EventScript_Clerk:: @ 816EA22
-	goto_if_questlog EventScript_ReleaseEnd
 	lock
 	faceplayer
 	message Text_MayIHelpYou

@@ -19,7 +19,6 @@
 #include "evolution_scene.h"
 #include "overworld.h"
 #include "field_fadetransition.h"
-#include "quest_log.h"
 #include "new_menu_helpers.h"
 #include "pokedex.h"
 #include "save.h"
@@ -2575,15 +2574,8 @@ static void CB2_HandleTradeEnded(void)
         DrawTextOnTradeWindow(0, gStringVar4, 0);
         break;
     case 50:
-        if (InUnionRoom())
-        {
-            SetQuestLogEvent(QL_EVENT_LINK_TRADED_UNION, sTradeData->monSpecies);
-        }
-        else
-        {
-            SetQuestLogEvent(QL_EVENT_LINK_TRADED, sTradeData->monSpecies);
-            IncrementGameStat(GAME_STAT_POKEMON_TRADES);
-        }
+        if (!InUnionRoom())
+			IncrementGameStat(GAME_STAT_POKEMON_TRADES);
         SetContinueGameWarpStatusToDynamicWarp();
         SaveGame_AfterLinkTrade();
         gMain.state++;
