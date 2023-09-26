@@ -106,7 +106,6 @@ u8 ItemId_GetBattleUsage(u16 itemId);
 u8 ItemId_GetFlingPower(u16 itemId);
 u8 ItemId_GetUsageType(u16 itemId);
 u8 ItemId_GetBattleEffectUsageType(u16 itemId);
-u16 itemid_get_market_price(u16 itemId);
 void ClearBag(void);
 void ClearPCItemSlots(void);
 bool8 AddBagItem(u16 itemId, u16 amount);

@@ -113,3 +113,6 @@
 // If this setting is enabled, the captured Pokémon of trainers will have their level based on the player's party Pokémon with highest level.
 // Otherwise, the level will be customizable in the trainer data.
 #define DYNAMIC_LEVEL TRUE
+
+// This setting determines the price divisor when selling an item. It's 2 in Generation III games, but 4 in Pokémon Legends Arceus. 
+#define ITEM_SELL_DIVISOR 4

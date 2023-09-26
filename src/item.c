@@ -512,7 +512,7 @@ const u8 * ItemId_GetName(u16 itemId)
     return gItems[SanitizeItemId(itemId)].name;
 }
 
-u16 itemid_get_market_price(u16 itemId)
+u16 ItemId_GetPrice(u16 itemId)
 {
     return gItems[SanitizeItemId(itemId)].price;
 }

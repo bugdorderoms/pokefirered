@@ -777,7 +777,7 @@ static void BuyMenuPrintPriceInList(u8 windowId, u32 item, u8 y)
 			BuyMenuPrint(windowId, 0, gText_TmPurchased, 0x58, y, 0, 0, TEXT_SPEED_FF, 1);
 		else
 		{
-			ConvertIntToDecimalStringN(gStringVar1, itemid_get_market_price(item), 0, 4);
+			ConvertIntToDecimalStringN(gStringVar1, ItemId_GetPrice(item), 0, 4);
 			x = 4 - StringLength(gStringVar1);
 			loc = gStringVar4;
 			while (x-- != 0)
@@ -1056,7 +1056,7 @@ static void Task_BuyMenu(u8 taskId)
             BuyMenuRemoveScrollIndicatorArrows();
             BuyMenuPrintCursor(tListTaskId, 2);
             RecolorItemDescriptionBox(1);
-            gShopData.itemPrice = itemid_get_market_price(itemId);
+            gShopData.itemPrice = ItemId_GetPrice(itemId);
             if (!IsEnoughMoney(&gSaveBlock1Ptr->money, gShopData.itemPrice))
             {
                 BuyMenuDisplayMessage(taskId, gText_YouDontHaveMoney, BuyMenuReturnToItemList);
@@ -1069,7 +1069,7 @@ static void Task_BuyMenu(u8 taskId)
             {
                 if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
 				{
-					ConvertIntToDecimalStringN(gStringVar2, itemid_get_market_price(itemId), 3, 4);
+					ConvertIntToDecimalStringN(gStringVar2, ItemId_GetPrice(itemId), 3, 4);
                     StringCopy(gStringVar3, gMoveNames[ItemIdToBattleMoveId(itemId)]);
                     BuyMenuDisplayMessage(taskId, gText_SingleTmBuy, CreateBuyMenuConfirmPurchaseWindow);
 				}
@@ -1098,7 +1098,7 @@ static void Task_BuyHowManyDialogueInit(u8 taskId)
     DrawStdFrameWithCustomTileAndPalette(3, FALSE, 0x1, 0xD);
     BuyMenuPrintItemQuantityAndPrice(taskId);
     ScheduleBgCopyTilemapToVram(0);
-    maxQuantity = GetMoney(&gSaveBlock1Ptr->money) / itemid_get_market_price(tItemId);
+    maxQuantity = GetMoney(&gSaveBlock1Ptr->money) / ItemId_GetPrice(tItemId);
     if (maxQuantity > 99)
         gShopData.maxQuantity = 99;
     else
@@ -1116,7 +1116,7 @@ static void Task_BuyHowManyDialogueHandleInput(u8 taskId)
 
     if (AdjustQuantityAccordingToDPadInput(&tItemCount, gShopData.maxQuantity) == TRUE)
     {
-        gShopData.itemPrice = itemid_get_market_price(tItemId) * tItemCount;
+        gShopData.itemPrice = ItemId_GetPrice(tItemId) * tItemCount;
         BuyMenuPrintItemQuantityAndPrice(taskId);
     }
     else
