@@ -780,7 +780,7 @@ static bool32 DoOverworldMapScrollScene(void)
         SetGpuReg(REG_OFFSET_WIN0V, 0x247C);
         SwitchWin1OffWin0On();
         InitBgDarkenEffect();
-        Menu_LoadStdPalAt(0xF0);
+        Menu_LoadStdPalAt(0xF0, 0x14);
         gPlttBufferUnfaded[0xFF] = RGB_BLACK;
         gPlttBufferFaded[0xFF] = RGB_BLACK;
         return TRUE;
@@ -804,7 +804,7 @@ static s32 RollCredits(void)
     case CREDITSSCENE_SETUP_DARKEN_EFFECT:
         InitBgDarkenEffect();
         CreateCreditsWindow();
-        Menu_LoadStdPalAt(0xF0);
+        Menu_LoadStdPalAt(0xF0, 0x14);
         gPlttBufferUnfaded[0xFF] = RGB_BLACK;
         gPlttBufferFaded[0xFF] = RGB_BLACK;
         sCreditsMgr->mainseqno = CREDITSSCENE_OPEN_WIN0;

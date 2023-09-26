@@ -1329,7 +1329,7 @@ static void BerryPouchInitWindows(void)
     TextWindow_SetUserSelectedFrame(0, 0x001, 0xE0);
     TextWindow_LoadResourcesStdFrame0(0, 0x013, 0xD0);
     TextWindow_SetStdFrame0_WithPal(0, 0x00A, 0xC0);
-    LoadPalette(gTMCaseMainWindowPalette, 0xF0, 0x20);
+    Menu_LoadStdPalAt(0xF0, 0x20);
     for (i = 0; i < 3; i++)
         FillWindowPixelBuffer(i, PIXEL_FILL(0));
     PutWindowTilemap(0);

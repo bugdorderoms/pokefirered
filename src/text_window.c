@@ -47,7 +47,7 @@ void TextWindow_LoadResourcesStdFrame0(u8 windowId, u16 destOffset, u8 palIdx)
     LoadPalette(stdpal_get(0), palIdx, 32);
 }
 
-void sub_814FEEC(u8 windowId, u16 destOffset, u8 palIdx)
+void LoadSignpostWindowGfx(u8 windowId, u16 destOffset, u8 palIdx)
 {
     LoadBgTiles(GetWindowAttribute(windowId, WINDOW_BG), gUnknown_8470B0C, 0x260, destOffset);
     LoadPalette(stdpal_get(1), palIdx, 32);

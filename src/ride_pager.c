@@ -243,7 +243,7 @@ static u8 DrawRidePagerMultichoiceWindow(s16 *windowId, s16 *cursorPos, s16 *ord
 	*cursorPos = Menu_InitCursor(*windowId, 2, 0, 0, 16, count, *cursorPos);
 	CopyWindowToVram(*windowId, COPYWIN_MAP);
 	ScriptMenu_ShowPokemonPic(RideToSpeciesId(order[*cursorPos]), RIDE_PAGER_MON_PIC_X, RIDE_PAGER_MON_PIC_Y);
-	sub_80F7768(0, TRUE);
+	LoadMessageBoxAndFrameGfx(0, TRUE);
 	PrintRideDescInMessageWindow(order[*cursorPos]);
 	
 	return count;

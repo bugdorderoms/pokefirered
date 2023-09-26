@@ -660,7 +660,7 @@ void LoadBattleMenuWindowGfx(void)
     CpuCopy16(&gPlttBufferUnfaded[0x5C], &gPlttBufferFaded[0x5C], 8);
     if (gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_POKEDUDE))
     {
-        Menu_LoadStdPalAt(0x70);
+        Menu_LoadStdPalAt(0x70, 0x14);
         TextWindow_LoadResourcesStdFrame0(0, 0x030, 0x70);
         gPlttBufferUnfaded[0x76] = RGB( 0,  0,  0);
         CpuCopy16(&gPlttBufferUnfaded[0x76], &gPlttBufferFaded[0x76], 2);

@@ -195,7 +195,7 @@ static void CB2_InitWirelessCommunicationScreen(void)
     ChangeBgX(1, 0, 0);
     ChangeBgY(1, 0, 0);
     LoadPalette(sWCSS_Palettes, 0, 0x20);
-    Menu_LoadStdPalAt(0xf0);
+    Menu_LoadStdPalAt(0xF0, 0x14);
     DynamicPlaceholderTextUtil_Reset();
     FillBgTilemapBufferRect(0, 0x000, 0, 0, 32, 32, 0xF);
     CopyBgTilemapBufferToVram(1);

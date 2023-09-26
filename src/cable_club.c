@@ -767,7 +767,7 @@ static void Task_EnterCableClubSeat(u8 taskId)
         break;
     case 3:
         sub_8057F48();
-        sub_80F771C(TRUE);
+        EraseFieldMessageBox(TRUE);
         DestroyTask(taskId);
         EnableBothScriptContexts();
         break;

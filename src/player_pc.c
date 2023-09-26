@@ -149,24 +149,18 @@ void NewGameInitPCItems(void)
 
 void BedroomPC(void)
 {
-    u8 taskId;
-
     gPlayerPcMenuManager.notInRoom = FALSE;
     sItemOrder = gUnknown_8402200;
     sTopMenuItemCount = 3;
-    taskId = CreateTask(TaskDummy, 0);
-    DisplayItemMessageOnField(taskId, 2, gText_WhatWouldYouLikeToDo, Task_DrawPlayerPcTopMenu);
+    DisplayItemMessageOnField(CreateTask(TaskDummy, 0), 2, gText_WhatWouldYouLikeToDo, Task_DrawPlayerPcTopMenu);
 }
 
 void PlayerPC(void)
 {
-    u8 taskId;
-
     gPlayerPcMenuManager.notInRoom = TRUE;
     sItemOrder = gUnknown_8402203;
     sTopMenuItemCount = 3;
-    taskId = CreateTask(TaskDummy, 0);
-    DisplayItemMessageOnField(taskId, 2, gText_WhatWouldYouLikeToDo, Task_DrawPlayerPcTopMenu);
+    DisplayItemMessageOnField(CreateTask(TaskDummy, 0), 2, gText_WhatWouldYouLikeToDo, Task_DrawPlayerPcTopMenu);
 }
 
 static void Task_DrawPlayerPcTopMenu(u8 taskId)

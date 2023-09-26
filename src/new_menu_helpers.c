@@ -7,11 +7,6 @@
 #include "text_window.h"
 #include "script.h"
 
-#define DLG_WINDOW_PALETTE_NUM 15
-#define DLG_WINDOW_BASE_TILE_NUM 0x200
-#define STD_WINDOW_PALETTE_NUM 14
-#define STD_WINDOW_BASE_TILE_NUM 0x214
-
 static EWRAM_DATA bool8 sScheduledBgCopiesToVram[4] = {FALSE};
 static EWRAM_DATA u16 sTempTileDataBufferCursor = {0};
 static EWRAM_DATA void *sTempTileDataBuffers[0x20] = {NULL};
@@ -156,7 +151,7 @@ static void WindowFunc_DrawDialogueFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u
 static void WindowFunc_DrawStandardFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum);
 static void WindowFunc_ClearDialogWindowAndFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum);
 static void WindowFunc_ClearStdWindowAndFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum);
-static void TaskFreeBufAfterCopyingTileDataToVram(u8 taskId);
+static void Task_FreeBufAfterCopyingTileDataToVram(u8 taskId);
 
 void ClearScheduledBgCopiesToVram(void)
 {
@@ -197,9 +192,8 @@ void ResetTempTileDataBuffers(void)
     int i;
 
     for (i = 0; i < (s32)NELEMS(sTempTileDataBuffers); i++)
-    {
         sTempTileDataBuffers[i] = NULL;
-    }
+	
     sTempTileDataBufferCursor = 0;
 }
 
@@ -212,17 +206,13 @@ bool8 FreeTempTileDataBuffersIfPossible(void)
         if (sTempTileDataBufferCursor)
         {
             for (i = 0; i < sTempTileDataBufferCursor; i++)
-            {
                 FREE_AND_SET_NULL(sTempTileDataBuffers[i]);
-            }
+
             sTempTileDataBufferCursor = 0;
         }
         return FALSE;
     }
-    else
-    {
-        return TRUE;
-    }
+	return TRUE;
 }
 
 void *DecompressAndCopyTileDataToVram(u8 bgId, const void *src, u32 size, u16 offset, u8 mode)
@@ -272,7 +262,7 @@ void DecompressAndLoadBgGfxUsingHeap(u8 bgId, const void *src, u32 size, u16 off
         size = sizeOut;
     if (ptr)
     {
-        u8 taskId = CreateTask(TaskFreeBufAfterCopyingTileDataToVram, 0);
+        u8 taskId = CreateTask(Task_FreeBufAfterCopyingTileDataToVram, 0);
         gTasks[taskId].data[0] = CopyDecompressedTileDataToVram(bgId, ptr, size, offset, mode);
         SetWordTaskArg(taskId, 1, (u32)ptr);
     }
@@ -287,13 +277,13 @@ void DecompressAndLoadBgGfxUsingHeap2(u8 bgId, const void *src, u32 size, u16 of
         sizeOut = size;
     if (ptr)
     {
-        u8 taskId = CreateTask(TaskFreeBufAfterCopyingTileDataToVram, 0);
+        u8 taskId = CreateTask(Task_FreeBufAfterCopyingTileDataToVram, 0);
         gTasks[taskId].data[0] = CopyDecompressedTileDataToVram(bgId, ptr, sizeOut, offset, mode);
         SetWordTaskArg(taskId, 1, (u32)ptr);
     }
 }
 
-static void TaskFreeBufAfterCopyingTileDataToVram(u8 taskId)
+static void Task_FreeBufAfterCopyingTileDataToVram(u8 taskId)
 {
     if (!WaitDma3Request(gTasks[taskId].data[0]))
     {
@@ -387,6 +377,7 @@ void AddTextPrinterDiffStyle(bool8 allowSkippingDelayWithButtonPress)
 
     gTextFlags.canABSpeedUpPrint = allowSkippingDelayWithButtonPress;    
     result = ContextNpcGetTextColor();
+	
     if (result == 0)
         AddTextPrinterParameterized2(0, 4, gStringVar4, GetTextSpeedSetting(), nptr, 8, 1, 3);
     else if (result == 1)
@@ -397,8 +388,7 @@ void AddTextPrinterDiffStyle(bool8 allowSkippingDelayWithButtonPress)
 
 void AddTextPrinterForMessage(bool8 allowSkippingDelayWithButtonPress)
 {
-    gTextFlags.canABSpeedUpPrint = allowSkippingDelayWithButtonPress;
-    AddTextPrinterParameterized2(0, 2, gStringVar4, GetTextSpeedSetting(), NULL, 2, 1, 3);
+	AddTextPrinterWithCustomSpeedForMessage(allowSkippingDelayWithButtonPress, GetTextSpeedSetting());
 }
 
 void AddTextPrinterWithCustomSpeedForMessage(bool8 allowSkippingDelayWithButtonPress, u8 speed)
@@ -409,7 +399,7 @@ void AddTextPrinterWithCustomSpeedForMessage(bool8 allowSkippingDelayWithButtonP
 
 void LoadStdWindowFrameGfx(void)
 {
-	Menu_LoadStdPal();
+	Menu_LoadStdPalAt(STD_WINDOW_PALETTE_NUM * 0x10, 0x14);
 	TextWindow_LoadResourcesStdFrame0(0, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
     TextWindow_SetUserSelectedFrame(0, STD_WINDOW_BASE_TILE_NUM, STD_WINDOW_PALETTE_NUM * 0x10);
 }
@@ -419,6 +409,7 @@ void DrawDialogueFrame(u8 windowId, bool8 copyToVram)
     CallWindowFunction(windowId, WindowFunc_DrawDialogueFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     PutWindowTilemap(windowId);
+	
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -428,6 +419,7 @@ void DrawStdWindowFrame(u8 windowId, bool8 copyToVram)
     CallWindowFunction(windowId, WindowFunc_DrawStandardFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     PutWindowTilemap(windowId);
+	
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -437,6 +429,7 @@ void ClearDialogWindowAndFrame(u8 windowId, bool8 copyToVram)
     CallWindowFunction(windowId, WindowFunc_ClearDialogWindowAndFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     ClearWindowTilemap(windowId);
+	
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -446,6 +439,7 @@ void ClearStdWindowAndFrame(u8 windowId, bool8 copyToVram)
     CallWindowFunction(windowId, WindowFunc_ClearStdWindowAndFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     ClearWindowTilemap(windowId);
+	
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -457,6 +451,7 @@ static void WindowFunc_DrawStandardFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u
     FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 0, tilemapLeft - 1, tilemapTop - 1, 1, 1, STD_WINDOW_PALETTE_NUM);
     FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 1, tilemapLeft, tilemapTop - 1, width, 1, STD_WINDOW_PALETTE_NUM);
     FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 2, tilemapLeft + width, tilemapTop - 1, 1, 1, STD_WINDOW_PALETTE_NUM);
+	
     for (i = tilemapTop; i < tilemapTop + height; i++)
     {
         FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 3, tilemapLeft - 1, i, 1, 1, STD_WINDOW_PALETTE_NUM);
@@ -539,9 +534,10 @@ static void WindowFunc_ClearDialogWindowAndFrame(u8 bg, u8 tilemapLeft, u8 tilem
     FillBgTilemapBufferRect(bg, 0, tilemapLeft - 2, tilemapTop - 1, width + 4, height + 2, STD_WINDOW_PALETTE_NUM);
 }
 
-void sub_80F771C(bool8 copyToVram)
+void EraseFieldMessageBox(bool8 copyToVram)
 {
     FillBgTilemapBufferRect(0, 0, 0, 0, 0x20, 0x20, 0x11);
+	
     if (copyToVram == TRUE)
         CopyBgTilemapBufferToVram(0);
 }
@@ -551,20 +547,10 @@ void SetStdWindowBorderStyle(u8 windowId, bool8 copyToVram)
     DrawStdFrameWithCustomTileAndPalette(windowId, copyToVram, STD_WINDOW_BASE_TILE_NUM, STD_WINDOW_PALETTE_NUM);
 }
 
-void sub_80F7768(u8 windowId, bool8 copyToVram)
+void LoadMessageBoxAndFrameGfx(u8 windowId, bool8 copyToVram)
 {
 	TextWindow_LoadResourcesStdFrame0(windowId, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
     DrawDialogFrameWithCustomTileAndPalette(windowId, copyToVram, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM);
-}
-
-void Menu_LoadStdPal(void)
-{
-    LoadPalette(gTMCaseMainWindowPalette, STD_WINDOW_PALETTE_NUM * 0x10, 0x14);
-}
-
-void Menu_LoadStdPalAt(u16 offset)
-{
-    LoadPalette(gTMCaseMainWindowPalette, offset, 0x14);
 }
 
 void DisplayItemMessageOnField(u8 taskId, u8 textSpeed, const u8 *string, TaskFunc callback)
@@ -588,6 +574,7 @@ u8 GetTextSpeedSetting(void)
 {
     if (gSaveBlock2Ptr->optionsTextSpeed > OPTIONS_TEXT_SPEED_FAST)
         gSaveBlock2Ptr->optionsTextSpeed = OPTIONS_TEXT_SPEED_MID;
+	
     return gUnknown_841F428[gSaveBlock2Ptr->optionsTextSpeed];
 }
 
@@ -616,15 +603,10 @@ void RemoveStartMenuWindow(void)
     }
 }
 
-u16 GetStdWindowBaseTileNum(void)
-{
-    return STD_WINDOW_BASE_TILE_NUM;
-}
-
 void LoadSignPostWindowFrameGfx(void)
 {
-    Menu_LoadStdPal();
-    sub_814FEEC(0, DLG_WINDOW_BASE_TILE_NUM, 0x10 * DLG_WINDOW_PALETTE_NUM);
+    Menu_LoadStdPalAt(STD_WINDOW_PALETTE_NUM * 0x10, 0x14);
+    LoadSignpostWindowGfx(0, DLG_WINDOW_BASE_TILE_NUM, 0x10 * DLG_WINDOW_PALETTE_NUM);
     TextWindow_SetUserSelectedFrame(0, STD_WINDOW_BASE_TILE_NUM, 0x10 * STD_WINDOW_PALETTE_NUM);
 }
 

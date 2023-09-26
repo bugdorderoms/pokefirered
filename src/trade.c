@@ -674,8 +674,8 @@ static void InitTradeMenuResources(void)
     ResetPaletteFade();
     gPaletteFade.bufferTransferDisabled = TRUE;
     SetVBlankCallback(VblankCB_Trade);
-    LoadPalette(gTMCaseMainWindowPalette, 0xF0, 0x14);
-    LoadPalette(gTMCaseMainWindowPalette, 0xD0, 0x14);
+    Menu_LoadStdPalAt(0xF0, 0x14);
+    Menu_LoadStdPalAt(0xD0, 0x14);
     ResetBgsAndClearDma3BusyFlags(FALSE);
     InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
     SetBgTilemapBuffer(1, sTradeMenuResourcesPtr->tilemapBuffer);

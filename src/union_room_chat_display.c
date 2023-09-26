@@ -1302,7 +1302,7 @@ static void LoadWin3(void)
     FillWindowPixelBuffer(3, PIXEL_FILL(1));
     TextWindow_SetUserSelectedFrame(3, 1, 0xD0);
     TextWindow_SetStdFrame0_WithPal(3, 0xA, 0x20);
-    LoadPalette(gTMCaseMainWindowPalette, 0xE0,  0x20);
+    Menu_LoadStdPalAt(0xE0, 0x20);
 }
 
 static void InitScanlineEffect(void)

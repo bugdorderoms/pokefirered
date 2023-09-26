@@ -802,7 +802,7 @@ bool8 CreatePCMenu(void)
 
 void ScriptMenu_DisplayPCStartupPrompt(void)
 {
-	sub_80F7768(0, TRUE);
+	LoadMessageBoxAndFrameGfx(0, TRUE);
 	AddTextPrinterParameterized2(0, 2, Text_AccessWhichPC, 0, NULL, 2, 1, 3);
 }
 

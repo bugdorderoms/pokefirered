@@ -2506,7 +2506,7 @@ static void ShowMonEffect_Outdoors_7(struct Task * task)
     SetVBlankCallback(callback);
     ChangeBgX(0, 0, 0);
     ChangeBgY(0, 0, 0);
-    Menu_LoadStdPal();
+    Menu_LoadStdPalAt(STD_WINDOW_PALETTE_NUM * 0x10, 0x14);
     FreeResourcesAndDestroySprite(&gSprites[task->data[15]], task->data[15]);
     FieldEffectActiveListRemove(FLDEFF_FIELD_MOVE_SHOW_MON);
     DestroyTask(FindTaskIdByFunc(Task_ShowMon_Outdoors));
@@ -2626,7 +2626,7 @@ static void ShowMonEffect_Indoors_7(struct Task * task)
     SetVBlankCallback(intrCallback);
     ChangeBgX(0, 0, 0);
     ChangeBgY(0, 0, 0);
-    Menu_LoadStdPal();
+    Menu_LoadStdPalAt(STD_WINDOW_PALETTE_NUM * 0x10, 0x14);
     FreeResourcesAndDestroySprite(&gSprites[task->data[15]], task->data[15]);
     FieldEffectActiveListRemove(FLDEFF_FIELD_MOVE_SHOW_MON);
     DestroyTask(FindTaskIdByFunc(Task_ShowMon_Indoors));
