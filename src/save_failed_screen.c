@@ -1,15 +1,18 @@
 #include "global.h"
 #include "gflib.h"
+#include "save_failed_screen.h"
 #include "decompress.h"
 #include "gba/flash_internal.h"
+#include "menu.h"
 #include "m4a.h"
+#include "task.h"
+#include "text_window.h"
 #include "save.h"
 #include "strings.h"
 
 bool32 sIsInSaveFailedScreen;
 
 static EWRAM_DATA u16 sSaveType = SAVE_NORMAL;
-static EWRAM_DATA u16 unused_203AB4E = 0;
 static EWRAM_DATA u8 sSaveFailedScreenState = 0;
 
 static void BlankPalettes(void);
@@ -20,6 +23,35 @@ static bool32 TryWipeDamagedSectors(void);
 static bool32 WipeDamagedSectors(u32 damagedSectors);
 
 static const u16 sSaveFailedScreenPals[] = INCBIN_U16("graphics/interface/save_failed_screen.gbapal");
+
+static const u8 sText_FlashNotDetected[] = _("{COLOR RED}ERROR!\n{COLOR DARK_GRAY}Flash memory not detected.\n\nSet your emulator's save type\nsetting to Flash 1Mb / 128K\nand reload the rom.");
+
+static const struct BgTemplate sFlashNotDetectedBgTemplates[] =
+{
+    {
+        .bg = 0,
+        .charBaseIndex = 2,
+        .mapBaseIndex = 31,
+        .screenSize = 0,
+        .paletteMode = 0,
+        .priority = 0,
+        .baseTile = 0,
+    }
+};
+
+static const struct WindowTemplate sFlashNotDetectedWinTemplates[] =
+{
+	{
+		.bg = 0,
+		.tilemapLeft = 3,
+		.tilemapTop = 2,
+		.width = 24,
+		.height = 16,
+		.paletteNum = 15,
+		.baseBlock = 1,
+	},
+	DUMMY_WIN_TEMPLATE,
+};
 
 void SetNotInSaveFailedScreen(void)
 {
@@ -216,4 +248,47 @@ static bool32 WipeDamagedSectors(u32 damagedSectors)
         return FALSE;
     else
         return TRUE;
+}
+
+void CB2_FlashNotDetectedScreen(void)
+{
+	switch (gMain.state)
+	{
+		case 0: // Reset gpu regs
+			SetGpuReg(REG_OFFSET_DISPCNT, 0);
+			SetGpuReg(REG_OFFSET_BLDCNT, 0);
+			SetGpuReg(REG_OFFSET_BG0CNT, 0);
+			SetGpuReg(REG_OFFSET_BG0HOFS, 0);
+			SetGpuReg(REG_OFFSET_BG0VOFS, 0);
+			break;
+		case 1: // Clear graphical rams
+			DmaFill16(3, 0, VRAM, VRAM_SIZE);
+			DmaFill32(3, 0, OAM, OAM_SIZE);
+			DmaFill16(3, 0, PLTT, PLTT_SIZE);
+			break;
+		case 2: // Reset graphical structs
+			DeactivateAllTextPrinters();
+			ResetTasks();
+			ResetPaletteFade();
+			ResetBgsAndClearDma3BusyFlags(0);
+			break;
+		case 3: // Init bgs
+			InitBgsFromTemplates(0, sFlashNotDetectedBgTemplates, NELEMS(sFlashNotDetectedBgTemplates));
+			break;
+		case 4: // Init windows
+			InitWindows(sFlashNotDetectedWinTemplates);
+			TextWindow_SetStdFrame0_WithPal(0, 0x214, 0xF0);
+			DrawStdFrameWithCustomTileAndPalette(0, TRUE, 0x214, 15);
+			AddTextPrinterParameterized(0, 2, sText_FlashNotDetected, 8, 1, 0, NULL); // Print text
+			break;
+		case 5: // Update palette
+			TransferPlttBuffer();
+			*(u16*)PLTT = RGB(17, 18, 31); // Set first color to blue for the background
+			// Show bg 0
+			ShowBg(0);
+			break;
+		case 6:
+			return;
+	}
+	++gMain.state;
 }

@@ -152,7 +152,7 @@ void AgbMain()
 
 #if REVISION == 1
     if (gFlashMemoryPresent != TRUE)
-        SetMainCallback2(NULL);
+        SetMainCallback2(CB2_FlashNotDetectedScreen);
 #endif
 
     gLinkTransferringData = FALSE;
