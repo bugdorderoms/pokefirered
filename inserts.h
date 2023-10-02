@@ -94,8 +94,8 @@
 // instead of the name selection screen.
 #define EM_STYLE_GENDER_SELECT_INTRO TRUE
 
-// If this setting is enabled, the icons of the party Pokémon will be displayed on the continue saved game screen.
-#define MON_ICON_ON_CONTINUE_SCREEN TRUE
+// If this setting is enabled, it automatically starts a new game if not saved before, otherwise it will display the new game/options menu like EM.
+#define AUTO_INIT_NEW_GAME TRUE
 
 // If this setting is enabled, an icon will be created during battle to show the current weather condition.
 #define WEATHER_ICON_IN_BATTLE TRUE

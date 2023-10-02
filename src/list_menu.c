@@ -639,16 +639,6 @@ void ListMenuSetTemplateField(u8 taskId, u8 field, s32 value)
     }
 }
 
-void ListMenu_LoadMonIconPalette(u8 palOffset, u16 speciesId)
-{
-    LoadPalette(GetValidMonIconPalettePtr(speciesId), palOffset, 0x20);
-}
-
-void ListMenu_DrawMonIconGraphics(u8 windowId, u16 speciesId, u16 x, u16 y)
-{
-    BlitBitmapToWindow(windowId, GetMonIconPtr(speciesId), x, y, 32, 32);
-}
-
 void ListMenuLoadStdPalAt(u8 palOffset, u8 palId)
 {
     const u16 *palette;

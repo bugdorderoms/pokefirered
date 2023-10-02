@@ -18,8 +18,6 @@ struct MenuAction
 };
 
 // list_menu
-void ListMenu_LoadMonIconPalette(u8 palOffset, u16 speciesId);
-void ListMenu_DrawMonIconGraphics(u8 windowId, u16 speciesId, u16 x, u16 y);
 void ListMenuLoadStdPalAt(u8 palOffset, u8 palId);
 void BlitMoveInfoIcon(u8 windowId, u8 iconId, u16 x, u16 y);
 

@@ -24,6 +24,8 @@ void FreeMonIconPalette(u16 iconId);
 void SetPartyHPBarSprite(struct Sprite * sprite, u8 animNum);
 u8 GetMonIconPaletteIndexFromSpecies(u16 species);
 u16 GetIconSpecies(u16 species);
+void LoadMonIconGraphicsInWindow(u8 windowId, u16 species);
+void LoadMonIconPaletteIdxAt(u8 palIdx, u16 offset);
 void LoadMonIconPalettesAt(u16 offset);
 u8 GetValidMonIconPalIndex(u16 species);
 void SafeLoadMonIconPalette(u16 species);

@@ -2669,6 +2669,16 @@ void SpriteCB_MonIcon(struct Sprite * sprite)
     UpdateMonIconFrame(sprite);
 }
 
+void LoadMonIconGraphicsInWindow(u8 windowId, u16 species)
+{
+	BlitBitmapToWindow(windowId, GetMonIconPtr(species), 0, 0, 32, 32);
+}
+
+void LoadMonIconPaletteIdxAt(u8 palIdx, u16 offset)
+{
+	LoadPalette(gMonIconPaletteTable[palIdx].data, offset, 0x20);
+}
+
 void LoadMonIconPalettesAt(u16 offset)
 {
     int i;
@@ -2676,7 +2686,7 @@ void LoadMonIconPalettesAt(u16 offset)
     {
         for (i = 0; i < (int)NELEMS(gMonIconPaletteTable); i++)
         {
-            LoadPalette(gMonIconPaletteTable[i].data, offset, 0x20);
+			LoadMonIconPaletteIdxAt(i, offset);
             offset += 0x10;
         }
     }

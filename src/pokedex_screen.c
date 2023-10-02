@@ -3,6 +3,7 @@
 #include "gflib.h"
 #include "graphics.h"
 #include "m4a.h"
+#include "pokemon_icon.h"
 #include "scanline_effect.h"
 #include "task.h"
 #include "new_menu_helpers.h"
@@ -2951,8 +2952,8 @@ u8 DexScreen_DrawMonAreaPage(void)
 
     // Draw the mon icon
     FillWindowPixelBuffer(sPokedexScreenData->windowIds[11], PIXEL_FILL(0));
-    ListMenu_LoadMonIconPalette(160, species);
-    ListMenu_DrawMonIconGraphics(sPokedexScreenData->windowIds[11], species, 0, 0);
+	LoadMonIconPaletteIdxAt(GetValidMonIconPalIndex(species), 160);
+	LoadMonIconGraphicsInWindow(sPokedexScreenData->windowIds[11], species);
     PutWindowTilemap(sPokedexScreenData->windowIds[11]);
     CopyWindowToVram(sPokedexScreenData->windowIds[11], COPYWIN_GFX);
 
