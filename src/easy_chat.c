@@ -300,7 +300,7 @@ void InitEasyChatPhrases(void)
         for (j = 0; j < MAIL_WORDS_COUNT; j++)
             gSaveBlock1Ptr->mail[i].words[j] = EC_WORD_UNDEFINED;
     }
-    for (i = 0; i < NELEMS(gSaveBlock1Ptr->additionalPhrases); i++)
+    for (i = 0; i < ARRAY_COUNT(gSaveBlock1Ptr->additionalPhrases); i++)
         gSaveBlock1Ptr->additionalPhrases[i] = 0;
 }
 
@@ -326,6 +326,7 @@ static void PopulateECGroups(void)
     int i;
 
     sEasyChatSelectionData->numGroups = 0;
+	
     if (GetNationalPokedexCount(FLAG_GET_SEEN))
         sEasyChatSelectionData->groups[sEasyChatSelectionData->numGroups++] = EC_GROUP_POKEMON;
 
@@ -533,7 +534,7 @@ static bool8 UnlockedECMonOrMove(u16 wordIndex, u8 groupId)
 static bool32 EC_IsDeoxys(u16 species)
 {
     u32 i;
-    for (i = 0; i < NELEMS(sDeoxysValue); i++)
+    for (i = 0; i < ARRAY_COUNT(sDeoxysValue); i++)
     {
         if (sDeoxysValue[i] == species)
             return TRUE;

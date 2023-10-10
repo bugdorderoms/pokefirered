@@ -273,7 +273,7 @@ void CB2_FlashNotDetectedScreen(void)
 			ResetBgsAndClearDma3BusyFlags(0);
 			break;
 		case 3: // Init bgs
-			InitBgsFromTemplates(0, sFlashNotDetectedBgTemplates, NELEMS(sFlashNotDetectedBgTemplates));
+			InitBgsFromTemplates(0, sFlashNotDetectedBgTemplates, ARRAY_COUNT(sFlashNotDetectedBgTemplates));
 			break;
 		case 4: // Init windows
 			InitWindows(sFlashNotDetectedWinTemplates);

@@ -274,7 +274,7 @@ static void DrawTimeBox(void)
     if (inSafari)
     {
         ConvertIntToDecimalStringN(gStringVar1, gSafariZoneStepCounter, STR_CONV_MODE_LEFT_ALIGN, 3);
-        ConvertIntToDecimalStringN(gStringVar2, 600, STR_CONV_MODE_LEFT_ALIGN, 3);
+        ConvertIntToDecimalStringN(gStringVar2, MAX_SAFARI_STEPS, STR_CONV_MODE_LEFT_ALIGN, 3);
         ConvertIntToDecimalStringN(gStringVar3, gNumSafariBalls, STR_CONV_MODE_LEFT_ALIGN, 2);
         StringExpandPlaceholders(gStringVar4, gUnknown_84162A9);
         AddTextPrinterParameterized(sSafariZoneStatsWindowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
@@ -479,7 +479,7 @@ static bool8 StartMenuDexnavCallback(void)
 
 static bool8 StartMenuPokedexSanityCheck(void)
 {
-    if (sStartMenuActionTable[sStartMenuOrder[sStartMenuCursorPos]].func.u8_void == StartMenuPokedexCallback && GetNationalPokedexCount(0) == 0)
+    if (sStartMenuActionTable[sStartMenuOrder[sStartMenuCursorPos]].func.u8_void == StartMenuPokedexCallback && GetNationalPokedexCount(FLAG_GET_SEEN) == 0)
         return FALSE;
     return TRUE;
 }
@@ -891,13 +891,13 @@ bool32 DoSetUpSaveAfterLinkBattle(u8 *state)
         break;
     case 2:
         ResetBgsAndClearDma3BusyFlags(FALSE);
-        InitBgsFromTemplates(0, sBGTemplates_AfterLinkSaveMessage, NELEMS(sBGTemplates_AfterLinkSaveMessage));
+        InitBgsFromTemplates(0, sBGTemplates_AfterLinkSaveMessage, ARRAY_COUNT(sBGTemplates_AfterLinkSaveMessage));
         InitWindows(sWindowTemplates_AfterLinkSaveMessage);
         TextWindow_SetStdFrame0_WithPal(0, 0x008, 0xF0);
         break;
     case 3:
         ShowBg(0);
-        BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
         SetVBlankCallback(VBlankCB_WhileSavingAfterLinkBattle);
         EnableInterrupts(INTR_FLAG_VBLANK);
         break;
@@ -936,7 +936,7 @@ static void task50_after_link_battle_save(u8 taskId)
             DrawTextBorderOuter(0, 0x008, 0x0F);
             PutWindowTilemap(0);
             CopyWindowToVram(0, COPYWIN_BOTH);
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
             if (gWirelessCommType != 0 && InUnionRoom())
                 data[0] = 5;
             else
@@ -955,7 +955,7 @@ static void task50_after_link_battle_save(u8 taskId)
             }
             break;
         case 3:
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
             data[0] = 4;
             break;
         case 4:

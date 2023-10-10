@@ -201,7 +201,7 @@ s32 BuildPokedexAreaSubspriteBuffer(u16 species, struct Subsprite * subsprites)
                     SetAreaSubsprite(areaCount++, dexAreaSubspriteIdx, subsprites);
                 }
             }
-            for (j = 0; j < NELEMS(sSeviiDexAreas); j++)
+            for (j = 0; j < ARRAY_COUNT(sSeviiDexAreas); j++)
             {
                 if ((seviiAreas >> j) & 1)
                 {
@@ -224,7 +224,7 @@ s32 BuildPokedexAreaSubspriteBuffer(u16 species, struct Subsprite * subsprites)
 static s32 GetRoamerIndex(u16 species)
 {
     s32 i;
-    for (i = 0; i < NELEMS(sRoamerPairs); i++)
+    for (i = 0; i < ARRAY_COUNT(sRoamerPairs); i++)
     {
         if (sRoamerPairs[i].roamer == species)
             return i;

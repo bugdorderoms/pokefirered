@@ -353,18 +353,18 @@ static bool8 ItemPc_DoGfxSetup(void)
     case 17:
         if (sListMenuState.initialized == 1)
         {
-            BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
+            BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
         }
         gMain.state++;
         break;
     case 18:
         if (sListMenuState.initialized == 1)
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         }
         else
         {
-            BeginPCScreenEffect_TurnOn(0, 0, 0);
+            BeginPCScreenEffect_TurnOn(0, 0);
             ItemPc_SetInitializedFlag(TRUE);
             PlaySE(SE_PC_LOGIN);
         }
@@ -384,7 +384,7 @@ static bool8 ItemPc_DoGfxSetup(void)
 
 static void ItemPc_FadeAndBail(void)
 {
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     CreateTask(Task_ItemPcWaitFadeAndBail, 0);
     SetVBlankCallback(ItemPc_VBlankCB);
     SetMainCallback2(ItemPc_MainCB);
@@ -408,7 +408,7 @@ static bool8 ItemPc_InitBgs(void)
         return FALSE;
     memset(sBg1TilemapBuffer, 0, 0x800);
     ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
+    InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
     SetBgTilemapBuffer(1, sBg1TilemapBuffer);
     ScheduleBgCopyTilemapToVram(1);
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON);
@@ -614,11 +614,11 @@ static void Task_ItemPcTurnOff1(u8 taskId)
 {
     if (sListMenuState.initialized == 1)
     {
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     }
     else
     {
-        BeginPCScreenEffect_TurnOff(0, 0, 0);
+        BeginPCScreenEffect_TurnOff(0, 0);
         PlaySE(SE_PC_OFF);
     }
     gTasks[taskId].func = Task_ItemPcTurnOff2;
@@ -990,7 +990,7 @@ static void Task_ItemPcGive(u8 taskId)
 
 static void ItemPc_CB2_SwitchToPartyMenu(void)
 {
-    InitPartyMenu(0, 0, 6, 0, 6, Task_HandleChooseMonInput, ItemPc_CB2_ReturnFromPartyMenu);
+    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_GIVE_PC_ITEM, FALSE, PARTY_MSG_GIVE_TO_WHICH_MON, Task_HandleChooseMonInput, ItemPc_CB2_ReturnFromPartyMenu);
     gPartyMenu.bagItem = ItemPc_GetItemIdBySlotId(sListMenuState.scroll + sListMenuState.row);
 }
 

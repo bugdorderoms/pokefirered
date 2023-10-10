@@ -90,7 +90,7 @@ static bool8 IsFinalStrikeMoveEffect(u16 move)
 	u8 i;
 	u16 moveEffect = gBattleMoves[move].effect;
 	
-	for (i = 0; i < NELEMS(sFinalStrikeOnlyEffects); i++)
+	for (i = 0; i < ARRAY_COUNT(sFinalStrikeOnlyEffects); i++)
 	{
 		if (sFinalStrikeOnlyEffects[i] == moveEffect)
 			return TRUE;

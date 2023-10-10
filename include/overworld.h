@@ -27,12 +27,6 @@
 #define MOVEMENT_MODE_FROZEN 1
 #define MOVEMENT_MODE_SCRIPTED 2
 
-struct UnkPlayerStruct
-{
-    u8 player_field_0;
-    u8 player_field_1;
-};
-
 struct LinkPlayerObjectEvent
 {
     u8 active;
@@ -57,7 +51,6 @@ struct CreditsOverworldCmd
 #define GF_TINT_NONE              0
 #define GF_TINT_GRAYSCALE         1
 #define GF_TINT_SEPIA             2
-#define GF_TINT_BACKUP_GRAYSCALE  3
 
 extern const struct UCoords32 gDirectionToVectors[];
 
@@ -141,14 +134,11 @@ void CB2_Overworld(void);
 void CB2_NewGame(void);
 bool8 IsMapTypeOutdoors(u8 mapType);
 bool8 Overworld_MapTypeAllowsTeleportAndFly(u8 mapType);
-void Overworld_ResetStateAfterTeleport(void);
 
 void Overworld_FadeOutMapMusic(void);
 void CB2_LoadMap(void);
-bool8 BGMusicStopped(void);
 bool8 IsMapTypeIndoors(u8 mapType);
 bool32 Overworld_IsBikingAllowed(void);
-void Overworld_ResetStateAfterDigEscRope(void);
 bool32 Overworld_LinkRecvQueueLengthMoreThan2(void);
 u8 GetCurrentMapType(void);
 
@@ -168,7 +158,7 @@ void CB2_ReturnToFieldAndUseRidePager(void);
 void CB2_WhiteOut(void);
 void CB2_ReturnToFieldFromMultiplayer(void);
 void ApplyNewEncryptionKeyToGameStats(u32 newKey);
-void SetContinueGameWarpToDynamicWarp(int);
+void SetContinueGameWarpToDynamicWarp(void);
 
 void SetContinueGameWarpToHealLocation(u8 loc);
 
@@ -178,9 +168,8 @@ bool32 Overworld_SendKeysToLinkIsRunning(void);
 bool32 Overworld_RecvKeysFromLinkIsRunning(void);
 void OverworldWhiteOutGetMoneyLoss(void);
 u8 GetCurrentMapBattleScene(void);
-void Overworld_ResetStateAfterFly(void);
+void Overworld_ResetStateForLeavingMap(void);
 bool8 sub_8055B38(u16 metatileBehavior);
-void Overworld_ResetMapMusic(void);
 u16 QueueExitLinkRoomKey(void);
 u16 sub_8057F34(void);
 u32 sub_8057EC0(void);

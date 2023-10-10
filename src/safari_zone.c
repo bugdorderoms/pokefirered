@@ -2,21 +2,17 @@
 #include "battle.h"
 #include "event_scripts.h"
 #include "overworld.h"
+#include "safari_zone.h"
 #include "script.h"
 #include "event_data.h"
 #include "field_screen_effect.h"
 
-EWRAM_DATA u8 gNumSafariBalls = 0;
 EWRAM_DATA u16 gSafariZoneStepCounter = 0;
+EWRAM_DATA u8 gNumSafariBalls = 0;
 
 bool32 GetSafariZoneFlag(void)
 {
     return FlagGet(FLAG_SYS_SAFARI_MODE);
-}
-
-void SetSafariZoneFlag(void)
-{
-    FlagSet(FLAG_SYS_SAFARI_MODE);
 }
 
 void ResetSafariZoneFlag(void)
@@ -27,9 +23,9 @@ void ResetSafariZoneFlag(void)
 void EnterSafariMode(void)
 {
     IncrementGameStat(GAME_STAT_ENTERED_SAFARI_ZONE);
-    SetSafariZoneFlag();
-    gNumSafariBalls = 30;
-    gSafariZoneStepCounter = 600;
+    FlagSet(FLAG_SYS_SAFARI_MODE);
+    gNumSafariBalls = MAX_SAFARI_BALLS;
+    gSafariZoneStepCounter = MAX_SAFARI_STEPS;
 }
 
 void ExitSafariMode(void)
@@ -41,15 +37,15 @@ void ExitSafariMode(void)
 
 bool8 SafariZoneTakeStep(void)
 {
-    if (GetSafariZoneFlag() == FALSE)
-        return FALSE;
-    gSafariZoneStepCounter--;
-    if (gSafariZoneStepCounter == 0)
-    {
-        ScriptContext1_SetupScript(SafariZone_EventScript_TimesUp);
-        return TRUE;
-    }
-    return FALSE;
+	if (GetSafariZoneFlag())
+	{
+		if (--gSafariZoneStepCounter == 0)
+		{
+			ScriptContext1_SetupScript(SafariZone_EventScript_TimesUp);
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 void SafariZoneRetirePrompt(void)
@@ -60,9 +56,7 @@ void SafariZoneRetirePrompt(void)
 void CB2_EndSafariBattle(void)
 {
     if (gNumSafariBalls != 0)
-    {
         SetMainCallback2(CB2_ReturnToField);
-    }
     else if (gBattleOutcome == B_OUTCOME_NO_SAFARI_BALLS)
     {
         ScriptContext2_RunNewScript(SafariZone_EventScript_OutOfBallsMidBattle);

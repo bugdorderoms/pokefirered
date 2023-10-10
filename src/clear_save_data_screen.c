@@ -90,7 +90,7 @@ static void Task_DrawClearSaveDataScreen(u8 taskId)
     switch (sClearSaveDataState->unk1)
     {
     case 0:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         break;
     case 1:
         if (gPaletteFade.active)
@@ -191,7 +191,7 @@ static void SaveClearScreen_GpuInit(void)
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
     SetGpuReg(REG_OFFSET_BLDY, 0);
     ResetBgsAndClearDma3BusyFlags(FALSE);
-    InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
+    InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
     ResetAllBgsPos();
     InitWindows(sWindowTemplates);
     DeactivateAllTextPrinters();

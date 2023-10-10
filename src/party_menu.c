@@ -534,9 +534,9 @@ void InitPartyMenu(u8 menuType, u8 layout, u8 partyAction, bool8 keepCursorPos, 
             sPartyMenuInternal->chooseHalf = FALSE;
         if (layout != KEEP_PARTY_LAYOUT)
             gPartyMenu.layout = layout;
-        for (i = 0; i < NELEMS(sPartyMenuInternal->data); ++i)
+        for (i = 0; i < ARRAY_COUNT(sPartyMenuInternal->data); ++i)
             sPartyMenuInternal->data[i] = 0;
-        for (i = 0; i < NELEMS(sPartyMenuInternal->windowId); ++i)
+        for (i = 0; i < ARRAY_COUNT(sPartyMenuInternal->windowId); ++i)
             sPartyMenuInternal->windowId[i] = 0xFF;
         if (!keepCursorPos)
             gPartyMenu.slotId = 0;
@@ -678,11 +678,11 @@ static bool8 ShowPartyMenu(void)
         ++gMain.state;
         break;
     case 20:
-        BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
         ++gMain.state;
         break;
     case 21:
-        BeginNormalPaletteFade(0xFFFFFFFF, -2, 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, -2, 16, 0, RGB_BLACK);
         gPaletteFade.bufferTransferDisabled = FALSE;
         ++gMain.state;
         break;
@@ -696,7 +696,7 @@ static bool8 ShowPartyMenu(void)
 
 static void ExitPartyMenu(void)
 {
-    BeginNormalPaletteFade(0xFFFFFFFF, -2, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, -2, 0, 16, RGB_BLACK);
     CreateTask(Task_ExitPartyMenu, 0);
     SetVBlankCallback(VBlankCB_PartyMenu);
     SetMainCallback2(CB2_UpdatePartyMenu);
@@ -728,7 +728,7 @@ static bool8 AllocPartyMenuBg(void)
         return FALSE;
     memset(sPartyBgTilemapBuffer, 0, 0x800);
     ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sPartyMenuBgTemplates, NELEMS(sPartyMenuBgTemplates));
+    InitBgsFromTemplates(0, sPartyMenuBgTemplates, ARRAY_COUNT(sPartyMenuBgTemplates));
     SetBgTilemapBuffer(1, sPartyBgTilemapBuffer);
     ScheduleBgCopyTilemapToVram(1);
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_OBJ_1D_MAP);
@@ -1181,7 +1181,7 @@ static void SwapPartyPokemon(struct Pokemon *mon1, struct Pokemon *mon2)
 
 static void Task_ClosePartyMenu(u8 taskId)
 {
-    BeginNormalPaletteFade(0xFFFFFFFF, -2, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, -2, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_ClosePartyMenuAndSetCB2;
 }
 
@@ -4199,14 +4199,14 @@ static void CursorCB_FieldMove(u8 taskId)
                 break;
             case FIELD_MOVE_TELEPORT:
                 mapHeader = Overworld_GetMapHeaderByGroupAndId(gSaveBlock1Ptr->lastHealLocation.mapGroup, gSaveBlock1Ptr->lastHealLocation.mapNum);
-                GetMapNameGeneric(gStringVar1, mapHeader->regionMapSectionId);
+                GetMapName(gStringVar1, mapHeader->regionMapSectionId);
                 StringExpandPlaceholders(gStringVar4, gText_ReturnToHealingSpot);
                 DisplayFieldMoveExitAreaMessage(taskId);
                 sPartyMenuInternal->data[0] = fieldMove;
                 break;
             case FIELD_MOVE_DIG:
                 mapHeader = Overworld_GetMapHeaderByGroupAndId(gSaveBlock1Ptr->escapeWarp.mapGroup, gSaveBlock1Ptr->escapeWarp.mapNum);
-                GetMapNameGeneric(gStringVar1, mapHeader->regionMapSectionId);
+                GetMapName(gStringVar1, mapHeader->regionMapSectionId);
                 StringExpandPlaceholders(gStringVar4, gText_EscapeFromHereAndReturnTo);
                 DisplayFieldMoveExitAreaMessage(taskId);
                 sPartyMenuInternal->data[0] = fieldMove;
@@ -4508,40 +4508,6 @@ static bool8 ItemUseDoHPHeal(struct Pokemon *mon, u8 partyIndex, u16 oldHP, u16 
 	return alreadyDone;
 }
 
-// change mon's friendship
-static bool8 ItemUseModifyMonFriendship(struct Pokemon *mon, s8 friendshipDelta)
-{
-	u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM);
-	s16 friendship = GetMonData(mon, MON_DATA_FRIENDSHIP);
-	u8 holdEffect;
-	
-	if ((friendshipDelta > 0 && friendship < 255) || (friendshipDelta < 0 && friendship > 0))
-	{
-		holdEffect = ItemId_GetHoldEffect(heldItem);
-		
-		if (friendshipDelta > 0 && holdEffect == HOLD_EFFECT_HAPPINESS_UP)
-			friendship += 150 * friendshipDelta / 100;
-		else
-			friendship += friendshipDelta;
-	
-		if (friendshipDelta > 0)
-		{
-			if (GetMonData(mon, MON_DATA_POKEBALL) == ITEM_LUXURY_BALL)
-				friendship++;
-			if (GetMonData(mon, MON_DATA_MET_LOCATION) == GetCurrentRegionMapSectionId())
-				friendship++;
-		}
-		if (friendship < 0)
-			friendship = 0;
-		else if (friendship > 255)
-			friendship = 255;
-		SetMonData(mon, MON_DATA_FRIENDSHIP, &friendship);
-		
-		return TRUE;
-	}
-	return FALSE;
-}
-
 // restore mon's move PP
 static bool8 ItemUseRestoreMovePP(struct Pokemon *mon, u8 moveIndex, u8 amount, u8 battleMon)
 {
@@ -4727,13 +4693,13 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 					if (!gMain.inBattle && (hword || !failed)) // if it's use ins't the main use(like the Pomeg Berry), only apply it's effect if was't failed
 					{
 						if ((byte & ITEMEFFECT_FRIENDSHIP_LOW) && GetMonData(mon, MON_DATA_FRIENDSHIP) < 100
-						&& ItemUseModifyMonFriendship(mon, (signedbyte = effectTable[i + 1])))
+						&& ModifyMonFriendship(mon, (signedbyte = effectTable[i + 1])))
 							caseWorked = TRUE;
 						else if ((byte & ITEMEFFECT_FRIENDSHIP_MID) && GetMonData(mon, MON_DATA_FRIENDSHIP) >= 100
-						&& ItemUseModifyMonFriendship(mon, (signedbyte = effectTable[i + 2])))
+						&& ModifyMonFriendship(mon, (signedbyte = effectTable[i + 2])))
 							caseWorked = TRUE;
 						else if ((byte & ITEMEFFECT_FRIENDSHIP_HIGH) && GetMonData(mon, MON_DATA_FRIENDSHIP) >= 200
-						&& ItemUseModifyMonFriendship(mon, (signedbyte = effectTable[i + 3])))
+						&& ModifyMonFriendship(mon, (signedbyte = effectTable[i + 3])))
 							caseWorked = TRUE;
 							
 						if (caseWorked && hword)
@@ -5991,7 +5957,7 @@ static bool8 HasPartySlotAlreadyBeenSelected(u8 slot)
 {
     u8 i;
 
-    for (i = 0; i < NELEMS(gSelectedOrderFromParty); ++i)
+    for (i = 0; i < ARRAY_COUNT(gSelectedOrderFromParty); ++i)
         if (gSelectedOrderFromParty[i] == slot)
             return TRUE;
     return FALSE;
@@ -6106,21 +6072,18 @@ void OpenPartyMenuInTutorialBattle(u8 partyAction)
                       Task_HandleChooseMonInput,
                       SetCB2ToReshowScreenAfterMenu);
     }
-    ReshowBattleScreenDummy();
     UpdatePartyToBattleOrder();
 }
 
 void Pokedude_OpenPartyMenuInBattle(void)
 {
     InitPartyMenu(PARTY_MENU_TYPE_IN_BATTLE, GetPartyLayoutFromBattleType(), PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, Task_PartyMenu_Pokedude, SetCB2ToReshowScreenAfterMenu);
-    ReshowBattleScreenDummy();
     UpdatePartyToBattleOrder();
 }
 
 void Pokedude_ChooseMonForInBattleItem(void)
 {
     InitPartyMenu(PARTY_MENU_TYPE_IN_BATTLE, GetPartyLayoutFromBattleType(), PARTY_ACTION_REUSABLE_ITEM, FALSE, PARTY_MSG_USE_ON_WHICH_MON, Task_PartyMenuFromBag_Pokedude, CB2_BagMenuFromBattle);
-    ReshowBattleScreenDummy();
     UpdatePartyToBattleOrder();
 }
 
@@ -6153,7 +6116,6 @@ void EnterPartyFromItemMenuInBattle(void)
                       Task_HandleChooseMonInput,
                       callback);
     }
-    ReshowBattleScreenDummy();
     UpdatePartyToBattleOrder();
 }
 
@@ -6282,7 +6244,7 @@ static void BufferBattlePartyOrder(u8 *partyBattleOrder, u8 flankId)
             }
         }
     }
-    for (i = 0; i < (s32)NELEMS(gBattlePartyCurrentOrder); ++i)
+    for (i = 0; i < (s32)ARRAY_COUNT(gBattlePartyCurrentOrder); ++i)
         partyBattleOrder[i] = (partyIds[0 + (i * 2)] << 4) | partyIds[1 + (i * 2)];
 }
 
@@ -6429,7 +6391,7 @@ u8 GetPartyIdFromBattlePartyId(u8 battlePartyId)
 {
     u8 i, j;
 
-    for (j = i = 0; i < (s32)NELEMS(gBattlePartyCurrentOrder); ++j, ++i)
+    for (j = i = 0; i < (s32)ARRAY_COUNT(gBattlePartyCurrentOrder); ++j, ++i)
     {
         if ((gBattlePartyCurrentOrder[i] >> 4) != battlePartyId)
         {

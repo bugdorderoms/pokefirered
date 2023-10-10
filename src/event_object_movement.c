@@ -1558,7 +1558,7 @@ void RemoveObjectEventsOutsideView(void)
 
     for (i = 0; i < OBJECT_EVENTS_COUNT; i++)
     {
-        for (j = 0, isActiveLinkPlayer = FALSE; j < NELEMS(gLinkPlayerObjectEvents); j++)
+        for (j = 0, isActiveLinkPlayer = FALSE; j < ARRAY_COUNT(gLinkPlayerObjectEvents); j++)
         {
             if (gLinkPlayerObjectEvents[j].active && i == gLinkPlayerObjectEvents[j].objEventId)
                 isActiveLinkPlayer = TRUE;
@@ -1610,7 +1610,7 @@ static void ReloadMapObjectWithOffset(u8 objectEventId, s16 x, s16 y)
     const struct SubspriteTable *subspriteTables;
     const struct ObjectEventGraphicsInfo *graphicsInfo;
 
-    for (i = 0; i < NELEMS(gLinkPlayerObjectEvents); i++)
+    for (i = 0; i < ARRAY_COUNT(gLinkPlayerObjectEvents); i++)
     {
         if (gLinkPlayerObjectEvents[i].active && objectEventId == gLinkPlayerObjectEvents[i].objEventId)
             return;
@@ -7427,7 +7427,7 @@ static void GetGroundEffectFlags_JumpLanding(struct ObjectEvent *objEvent, u32 *
     {
         u8 i;
 
-        for (i = 0; i < NELEMS(metatileFuncs); i++)
+        for (i = 0; i < ARRAY_COUNT(metatileFuncs); i++)
         {
             if (metatileFuncs[i](objEvent->currentMetatileBehavior))
             {
@@ -7840,7 +7840,7 @@ static void DoFlaggedGroundEffects(struct ObjectEvent *objEvent, struct Sprite *
     if (objEvent->localId == OBJ_EVENT_ID_CAMERA && objEvent->invisible)
         return;
 
-    for (i = 0; i < NELEMS(sGroundEffectFuncs); i++, flags >>= 1)
+    for (i = 0; i < ARRAY_COUNT(sGroundEffectFuncs); i++, flags >>= 1)
         if (flags & 1)
             sGroundEffectFuncs[i](objEvent, sprite);
 }
@@ -8073,11 +8073,11 @@ static const SpriteStepFunc *const sSpriteStepFuncsBySpeed[] = {
 };
 
 static const s16 sSpriteStepCountsBySpeed[] = {
-    NELEMS(sSpeed0),
-    NELEMS(sSpeed1),
-    NELEMS(sSpeed2),
-    NELEMS(sSpeed3),
-    NELEMS(sSpeed4)
+    ARRAY_COUNT(sSpeed0),
+    ARRAY_COUNT(sSpeed1),
+    ARRAY_COUNT(sSpeed2),
+    ARRAY_COUNT(sSpeed3),
+    ARRAY_COUNT(sSpeed4)
 };
 
 bool8 obj_npc_ministep(struct Sprite *sprite)

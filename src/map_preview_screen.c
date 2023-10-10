@@ -352,7 +352,7 @@ bool8 MapHasPreviewScreen(u8 mapsec, u8 type)
 
 void MapPreview_InitBgs(void)
 {
-    InitBgsFromTemplates(0, sMapPreviewBgTemplate, NELEMS(sMapPreviewBgTemplate));
+    InitBgsFromTemplates(0, sMapPreviewBgTemplate, ARRAY_COUNT(sMapPreviewBgTemplate));
     ShowBg(0);
 }
 
@@ -428,7 +428,7 @@ u16 MapPreview_CreateMapNameWindow(u8 mapsec)
     color[0] = TEXT_COLOR_WHITE;
     color[1] = TEXT_COLOR_RED;
     color[2] = TEXT_COLOR_LIGHT_GRAY;
-    GetMapName(gStringVar4, mapsec, 0);
+    GetMapName(gStringVar4, mapsec);
     xctr = 104 - GetStringWidth(2, gStringVar4, 0);
     AddTextPrinterParameterized4(windowId, 2, xctr / 2, 2, 0, 0, color, -1, gStringVar4);
     return windowId;

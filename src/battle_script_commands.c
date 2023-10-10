@@ -1334,8 +1334,8 @@ s16 CalcMoveCritChance(u8 battlerAtk, u8 battlerDef, u16 move)
                      + 2 * (holdEffect == HOLD_EFFECT_STICK && (SpeciesToNationalPokedexNum(gBattleMons[battlerAtk].species) == NATIONAL_DEX_FARFETCHD
 					 || SpeciesToNationalPokedexNum(gBattleMons[battlerAtk].species) == NATIONAL_DEX_SIRFETCHD)); // Stick
 					 
-		if (critChance >= NELEMS(sCriticalHitChance))
-			critChance = NELEMS(sCriticalHitChance) - 1; // Crit chance can't be higer than table's lenght
+		if (critChance >= ARRAY_COUNT(sCriticalHitChance))
+			critChance = ARRAY_COUNT(sCriticalHitChance) - 1; // Crit chance can't be higer than table's lenght
 	}
 	return critChance;
 }
@@ -4174,6 +4174,21 @@ static void atk58_returntoball(void)
     gBattlescriptCurrInstr += 2;
 }
 
+static void GiveMoveToBattleMon(struct BattlePokemon *mon, u16 move)
+{
+    u8 i;
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (!mon->moves[i])
+        {
+            mon->moves[i] = move;
+            mon->pp[i] = gBattleMoves[move].pp;
+            return;
+        }
+    }
+}
+
 static void atk59_handlelearnnewmove(void)
 {
     u16 ret = MonTryLearningNewMove(&gPlayerParty[gBattleStruct->expGetterMonId], gBattlescriptCurrInstr[9]);
@@ -4191,6 +4206,7 @@ static void atk59_handlelearnnewmove(void)
 	    
         if (gBattlerPartyIndexes[gActiveBattler] == gBattleStruct->expGetterMonId && !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED))
             GiveMoveToBattleMon(&gBattleMons[gActiveBattler], ret);
+		
         if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
         {
             gActiveBattler = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
@@ -4200,6 +4216,17 @@ static void atk59_handlelearnnewmove(void)
         }
         gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 1);
     }
+}
+
+static void SetBattleMonMoveSlot(struct BattlePokemon *mon, u16 move, u8 slot)
+{
+    mon->moves[slot] = move;
+    mon->pp[slot] = gBattleMoves[move].pp;
+}
+
+static void RemoveBattleMonPPBonus(struct BattlePokemon *mon, u8 moveIndex)
+{
+    mon->ppBonuses &= gPPUpSetMask[moveIndex];
 }
 
 static void atk5A_yesnoboxlearnmove(void)
@@ -4238,7 +4265,7 @@ static void atk5A_yesnoboxlearnmove(void)
             if (!gBattleCommunication[CURSOR_POSITION])
             {
                 HandleBattleWindow(0x17, 0x8, 0x1D, 0xD, WINDOW_CLEAR);
-                BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+                BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
                 ++gBattleScripting.learnMoveState;
             }
             else
@@ -5983,6 +6010,7 @@ static void atk8F_forcerandomswitch(void)
 		
             if (GetLinkTrainerFlankId(GetBattlerMultiplayerId(gBattlerTarget)) == 1)
                 val = 3;
+			
             for (i = val; i < val + 3; ++i)
             {
                 if (MON_CAN_BATTLE(&party[i]))
@@ -8349,7 +8377,7 @@ static void atkF2_displaydexinfo(void)
     switch (gBattleCommunication[MULTIUSE_STATE])
     {
 		case 0:
-			BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_WHITE);
+			BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_WHITE);
 			++gBattleCommunication[MULTIUSE_STATE];
 			break;
 		case 1:
@@ -8495,7 +8523,7 @@ static void atkF3_trygivecaughtmonnick(void)
 				if (!gBattleCommunication[CURSOR_POSITION])
 				{
 					++gBattleCommunication[MULTIUSE_STATE];
-					BeginFastPaletteFade(3);
+					BeginFastPaletteFade(FAST_FADE_OUT_TO_BLACK);
 				}
 				else
 					gBattleCommunication[MULTIUSE_STATE] = 4;

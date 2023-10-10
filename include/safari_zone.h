@@ -3,11 +3,13 @@
 
 #include "global.h"
 
+#define MAX_SAFARI_BALLS 30
+#define MAX_SAFARI_STEPS 600
+
 extern u8 gNumSafariBalls;
 extern u16 gSafariZoneStepCounter;
 
 bool32 GetSafariZoneFlag(void);
-void SetSafariZoneFlag(void);
 void ResetSafariZoneFlag(void);
 
 void EnterSafariMode(void);

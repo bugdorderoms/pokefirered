@@ -79,7 +79,7 @@ static const u16 sEvolutionSparkleMatrixScales[12] = {
 static void SetEvoSparklesMatrices(void)
 {
     u16 i;
-    for (i = 0; i < NELEMS(sEvolutionSparkleMatrixScales); i++)
+    for (i = 0; i < ARRAY_COUNT(sEvolutionSparkleMatrixScales); i++)
         SetOamMatrix(i + 20, sEvolutionSparkleMatrixScales[i], 0, 0, sEvolutionSparkleMatrixScales[i]);
 }
 

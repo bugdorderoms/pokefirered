@@ -1017,7 +1017,7 @@ static bool8 ShouldTryRematchBattleInternal(const VsSeekerData *vsSeekerData, u1
 
     if (rematchIdx == -1)
         return FALSE;
-    if (rematchIdx >= 0 && rematchIdx < NELEMS(sVsSeekerData))
+    if (rematchIdx >= 0 && rematchIdx < ARRAY_COUNT(sVsSeekerData))
     {
         if (IsThisTrainerRematchable(gSpecialVar_LastTalked))
             return TRUE;
@@ -1046,7 +1046,7 @@ static int LookupVsSeekerOpponentInArray(const VsSeekerData * array, u16 trainer
 {
     int i, j;
 
-    for (i = 0; i < NELEMS(sVsSeekerData); i++)
+    for (i = 0; i < ARRAY_COUNT(sVsSeekerData); i++)
     {
         for (j = 0; j < 6; j++)
         {
@@ -1086,7 +1086,7 @@ static bool8 IsTrainerReadyForRematchInternal(const VsSeekerData * array, u16 tr
 
     if (rematchTrainerIdx == -1)
         return FALSE;
-    if (rematchTrainerIdx >= NELEMS(sVsSeekerData))
+    if (rematchTrainerIdx >= ARRAY_COUNT(sVsSeekerData))
         return FALSE;
     if (!IsThisTrainerRematchable(gSpecialVar_LastTalked))
         return FALSE;
@@ -1182,7 +1182,7 @@ static int GetRematchIdx(const VsSeekerData * vsSeekerData, u16 trainerFlagIdx)
 {
     int i;
 
-    for (i = 0; i < NELEMS(sVsSeekerData); i++)
+    for (i = 0; i < ARRAY_COUNT(sVsSeekerData); i++)
     {
         if (vsSeekerData[i].trainerIdxs[0] == trainerFlagIdx)
             return i;
@@ -1202,7 +1202,7 @@ static void ClearAllTrainerRematchStates(void)
 {
     u8 i;
 
-    for (i = 0; i < NELEMS(gSaveBlock1Ptr->trainerRematches); i++)
+    for (i = 0; i < ARRAY_COUNT(gSaveBlock1Ptr->trainerRematches); i++)
         gSaveBlock1Ptr->trainerRematches[i] = 0;
 }
 
@@ -1228,7 +1228,7 @@ static u8 GetNextAvailableRematchTrainer(const VsSeekerData * vsSeekerData, u16 
 {
     int i, j;
 
-    for (i = 0; i < NELEMS(sVsSeekerData); i++)
+    for (i = 0; i < ARRAY_COUNT(sVsSeekerData); i++)
     {
         if (vsSeekerData[i].trainerIdxs[0] == trainerFlagNo)
         {

@@ -21,6 +21,7 @@
 #include "field_screen_effect.h"
 #include "field_message_box.h"
 #include "vs_seeker.h"
+#include "data.h"
 #include "battle.h"
 #include "battle_transition.h"
 #include "battle_controllers.h"
@@ -525,22 +526,7 @@ static u32 GetSumOfPlayerPartyLevel(void)
 u8 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx)
 {
 #if DYNAMIC_LEVEL
-	u8 i, highestLevel;
-	
-	for (i = 0, highestLevel = 0; i < PARTY_SIZE; i++)
-	{
-		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
-		
-		if (species != SPECIES_EGG && species != SPECIES_NONE && GetMonData(&gPlayerParty[i], MON_DATA_HP))
-		{
-			u8 level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL);
-			
-			if (level > highestLevel)
-				highestLevel = level;
-		}
-	}
-	if (highestLevel != 0) // Safety check
-		return highestLevel;
+	return GetPlayerPartyHighestLevel();
 #endif
 	return partyIdx.lvl;
 }
@@ -879,7 +865,7 @@ void PlayTrainerEncounterMusic(void)
 
     if (sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC && sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC)
     {
-        switch (GetTrainerEncounterMusicId(gTrainerBattleOpponent_A))
+        switch (TRAINER_ENCOUNTER_MUSIC(gTrainerBattleOpponent_A))
         {
         case TRAINER_ENCOUNTER_MUSIC_FEMALE:
         case TRAINER_ENCOUNTER_MUSIC_GIRL:

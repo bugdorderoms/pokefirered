@@ -249,7 +249,7 @@ void CB2_InitMainMenu(void)
     FreeAllSpritePalettes();
     ResetPaletteFade();
     ResetBgsAndClearDma3BusyFlags(FALSE);
-    InitBgsFromTemplates(0, sMainMenuBgTemplate, NELEMS(sMainMenuBgTemplate));
+    InitBgsFromTemplates(0, sMainMenuBgTemplate, ARRAY_COUNT(sMainMenuBgTemplate));
 	ChangeBgX(0, 0, 0);
     ChangeBgY(0, 0, 0);
     ChangeBgX(1, 0, 0);
@@ -411,7 +411,7 @@ static void Task_PrintMainMenuText(u8 taskId)
 
 static void MainMenu_InitFadeToDisplayBgs(void)
 {
-	BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, 0xFFFF);
+	BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, 0xFFFF);
 	ShowBg(0);
 	ShowBg(1);
 	SetVBlankCallback(VBlankCB_MainMenu);
@@ -478,7 +478,7 @@ static bool8 MainMenu_CanScrollBg(u8 taskId, bool8 scrollDown)
 	u8 i;
 	s16 *data = gTasks[taskId].data;
 	
-	for (i = 0; i < NELEMS(sMainMenuBgScrollData); i++)
+	for (i = 0; i < ARRAY_COUNT(sMainMenuBgScrollData); i++)
 	{
 		if (sMainMenuBgScrollData[i].menuType == tMenuType && sMainMenuBgScrollData[i].cursorPos == tCursorPos && sMainMenuBgScrollData[i].scrollDown == scrollDown)
 		{
@@ -501,13 +501,13 @@ static bool8 HandleMenuInput(u8 taskId)
 	{
 		PlaySE(SE_SELECT);
         IsWirelessAdapterConnected(); // called for its side effects only
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         gTasks[taskId].func = Task_ExecuteMainMenuSelection;
 	}
 	else if (JOY_NEW(B_BUTTON))
     {
         PlaySE(SE_SELECT);
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, 240));
         SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(0, 160));
         gTasks[taskId].func = Task_ReturnToTileScreen;

@@ -6,28 +6,28 @@
  * Animates the screen as though it was a CRT monitor turning on or off.
  */
 
-#define tState data[0]
-#define tXSpeed data[1]
-#define tYSpeed data[2]
-#define tWin0Left data[3]
-#define tWin0Right data[4]
-#define tWin0Top data[5]
+#define tState      data[0]
+#define tXSpeed     data[1]
+#define tYSpeed     data[2]
+#define tWin0Left   data[3]
+#define tWin0Right  data[4]
+#define tWin0Top    data[5]
 #define tWin0Bottom data[6]
-#define tBldCntBak data[7]
-#define tBldYBak data[8]
+#define tBldCntBak  data[7]
+#define tBldYBak    data[8]
 
-static void BeginPCScreenEffect(TaskFunc func, u16 a2, UNUSED u16 a3, u8 priority);
+static void BeginPCScreenEffect(TaskFunc func, u16 speed, u8 priority);
 static void Task_PCScreenEffect_TurnOn(u8 taskId);
 static void Task_PCScreenEffect_TurnOff(u8 taskId);
 
-void BeginPCScreenEffect_TurnOn(u16 xspeed, u16 yspeed, u8 priority)
+void BeginPCScreenEffect_TurnOn(u16 speed, u8 priority)
 {
-    BeginPCScreenEffect(Task_PCScreenEffect_TurnOn, xspeed, yspeed, priority);
+    BeginPCScreenEffect(Task_PCScreenEffect_TurnOn, speed, priority);
 }
 
-void BeginPCScreenEffect_TurnOff(u16 xspeed, u16 yspeed, u8 priority)
+void BeginPCScreenEffect_TurnOff(u16 speed, u8 priority)
 {
-    BeginPCScreenEffect(Task_PCScreenEffect_TurnOff, xspeed, yspeed, priority);
+    BeginPCScreenEffect(Task_PCScreenEffect_TurnOff, speed, priority);
 }
 
 bool8 IsPCScreenEffectRunning_TurnOn(void)
@@ -40,13 +40,13 @@ bool8 IsPCScreenEffectRunning_TurnOff(void)
     return FuncIsActiveTask(Task_PCScreenEffect_TurnOff);
 }
 
-static void BeginPCScreenEffect(TaskFunc func, u16 speed, UNUSED u16 unused, u8 priority)
+static void BeginPCScreenEffect(TaskFunc func, u16 speed, u8 priority)
 {
     u8 taskId = CreateTask(func, priority);
 
     gTasks[taskId].tState = 0;
     gTasks[taskId].tXSpeed = speed == 0 ? 16 : speed;
-    gTasks[taskId].tYSpeed = speed == 0 ? 20 : speed; // Bug? should be the unused param, not speed
+    gTasks[taskId].tYSpeed = speed == 0 ? 20 : speed;
     gTasks[taskId].func(taskId);
 }
 
@@ -82,7 +82,7 @@ static void Task_PCScreenEffect_TurnOn(u8 taskId)
             task->tWin0Right = DISPLAY_WIDTH;
             SetGpuReg(REG_OFFSET_BLDY, 0);
             SetGpuReg(REG_OFFSET_BLDCNT, task->tBldCntBak);
-            BlendPalettes(0xFFFFFFFF, 0, RGB_BLACK);
+            BlendPalettes(PALETTES_ALL, 0, RGB_BLACK);
             gPlttBufferFaded[0] = 0;
         }
         SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(task->tWin0Left, task->tWin0Right));
@@ -151,7 +151,7 @@ static void Task_PCScreenEffect_TurnOff(u8 taskId)
         {
             task->tWin0Left = 120;
             task->tWin0Right = 120;
-            BlendPalettes(0xFFFFFFFF, 0x10, RGB_BLACK);
+            BlendPalettes(PALETTES_ALL, 0x10, RGB_BLACK);
             gPlttBufferFaded[0] = 0;
         }
         SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(task->tWin0Left, task->tWin0Right));

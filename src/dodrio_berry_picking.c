@@ -430,8 +430,8 @@ static void sub_8150A84(u8 taskId)
         gUnknown_203F3E0->unk0C++;
         break;
     case 6:
-        BlendPalettes(0xFFFFFFFF, 0x10, RGB_BLACK);
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 0x10, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         SetVBlankCallback(sub_8152034);
         gUnknown_203F3E0->unk0C++;
         break;
@@ -932,7 +932,7 @@ static void sub_81514F0(void)
     switch (gUnknown_203F3E0->unk10)
     {
     case 0:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         gUnknown_203F3E0->unk10++;
         break;
     case 1:
@@ -969,7 +969,7 @@ static void sub_815159C(void)
     {
     case 0:
         sub_81549D4(9);
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         gUnknown_203F3E0->unk10++;
         break;
     case 1:
@@ -993,8 +993,8 @@ static void sub_815159C(void)
         gUnknown_203F3E0->unk10++;
         break;
     case 5:
-        BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         gUnknown_203F3E0->unk10++;
         break;
     case 6:
@@ -1484,8 +1484,8 @@ static void sub_8152174(void)
         {
             s32 r2;
             u8 r4, r3 = gUnknown_203F3E0->unk90[sub_8152BD4(r5)] / 7;
-            if (r3 >= NELEMS(sUnknown_847553C) - 1)
-                r3 = NELEMS(sUnknown_847553C) - 1;
+            if (r3 >= ARRAY_COUNT(sUnknown_847553C) - 1)
+                r3 = ARRAY_COUNT(sUnknown_847553C) - 1;
 
             r2 = sUnknown_847553C[r3][gUnknown_203F3E0->unk31A0[0].unk14.unk0[r5]] - gUnknown_203F3E0->unkD0[r5];
             if (r2 < 6)
@@ -1624,9 +1624,9 @@ static void sub_815256C(void)
             else
             {
                 r3 = gUnknown_203F3E0->unk90[sub_8152BD4(i)] / 7;
-                if (r3 >= NELEMS(sUnknown_847553C) - 1)
+                if (r3 >= ARRAY_COUNT(sUnknown_847553C) - 1)
                 {
-                    r3 = NELEMS(sUnknown_847553C) - 1;
+                    r3 = ARRAY_COUNT(sUnknown_847553C) - 1;
                 }
                 r2 = sUnknown_847553C[r3][ptr->unk32CC.unk14.unk0[i]];
                 if (++gUnknown_203F3E0->unkD0[i] >= r2)
@@ -2514,7 +2514,7 @@ static void sub_8153A04(void)
 {
     u8 i, playerId;
 
-    for (playerId = gUnknown_203F3E0->unk24; playerId < NELEMS(sPlaceholderPlayerNames); playerId++)
+    for (playerId = gUnknown_203F3E0->unk24; playerId < ARRAY_COUNT(sPlaceholderPlayerNames); playerId++)
         StringCopy(gLinkPlayers[playerId].name, sPlaceholderPlayerNames[playerId]);
 
     gUnknown_203F3E0->unk24 = 5;

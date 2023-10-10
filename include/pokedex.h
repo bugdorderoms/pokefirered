@@ -23,16 +23,15 @@ struct PokedexEntry
     /*0x10*/ const u8 *description;
 };  /*size = 0x14*/
 
-void ResetPokedex(void);
-void CopyMonCategoryText(u16 species, u8 *dst);
 u16 GetPokedexHeightWeight(u16 dexNum, u8 data);
-u16 GetNationalPokedexCount(u8);
-u16 GetKantoPokedexCount(u8);
-s8 GetSetPokedexFlag(u16 nationalNum, u8 caseId);
-u16 GetNationalPokedexCount(u8);
-u16 GetKantoPokedexCount(u8);
+u16 GetNationalPokedexCount(u8 caseId);
+u16 GetKantoPokedexCount(u8 caseId);
+bool8 GetSetPokedexFlag(u16 nationalNum, u8 caseId);
+void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality);
 bool16 HasAllKantoMons(void);
 bool16 HasAllMons(void);
+u16 SpeciesToNationalPokedexNum(u16 species);
+u16 NationalPokedexNumToSpecies(u16 nationalNum);
 
 u8 DexScreen_RegisterMonToPokedex(u16 species);
 

@@ -175,7 +175,7 @@ static void OakOldManBufferRunCommand(void)
 {
     if (gBattleControllerExecFlags & gBitTable[gActiveBattler])
     {
-        if (gBattleBufferA[gActiveBattler][0] < NELEMS(sOakOldManBufferCommands))
+        if (gBattleBufferA[gActiveBattler][0] < ARRAY_COUNT(sOakOldManBufferCommands))
             sOakOldManBufferCommands[gBattleBufferA[gActiveBattler][0]]();
         else
             OakOldManBufferExecCompleted();
@@ -368,7 +368,6 @@ static void OpenBagAndChooseItem(void)
     if (!gPaletteFade.active)
     {
         gBattlerControllerFuncs[gActiveBattler] = CompleteWhenChoseItem;
-        ReshowBattleScreenDummy();
         FreeAllWindowBuffers();
         if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
             CB2_BagMenuFromBattle();
@@ -1768,7 +1767,7 @@ static void OakOldManHandleChooseItem(void)
 {
     s32 i;
 	
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
 	gBattleStruct->itemPartyIndex[gActiveBattler] = 0;
     gBattlerControllerFuncs[gActiveBattler] = OpenBagAndChooseItem;
     gBattlerInMenuId = gActiveBattler;
@@ -1787,7 +1786,7 @@ static void OakOldManHandleChoosePokemon(void)
     *(&gBattleStruct->abilityPreventingSwitchout) = gBattleBufferA[gActiveBattler][3] | (gBattleBufferA[gActiveBattler][4] << 8);
     for (i = 0; i < 3; ++i)
         gBattlePartyCurrentOrder[i] = gBattleBufferA[gActiveBattler][5 + i];
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
     gBattlerControllerFuncs[gActiveBattler] = OpenPartyMenuToChooseMon;
     gBattlerInMenuId = gActiveBattler;
 }
@@ -2020,7 +2019,8 @@ static void StartSendOutAnim(u8 battlerId)
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerId]], 0);
     gSprites[gBattlerSpriteIds[battlerId]].invisible = TRUE;
     gSprites[gBattlerSpriteIds[battlerId]].callback = SpriteCallbackDummy;
-    gSprites[gBattleControllerData[battlerId]].data[0] = DoPokeballSendOutAnimation(0, POKEBALL_PLAYER_SENDOUT);
+    gSprites[gBattleControllerData[battlerId]].data[0] = 0;
+	DoPokeballSendOutAnimation(POKEBALL_PLAYER_SENDOUT);
 }
 
 static void Task_StartSendOutAnim(u8 taskId)
@@ -2112,7 +2112,7 @@ static void OakOldManHandleCmd55(void)
 {
     gBattleOutcome = gBattleBufferA[gActiveBattler][1];
     FadeOutMapMusic(5);
-    BeginFastPaletteFade(3);
+    BeginFastPaletteFade(FAST_FADE_OUT_TO_BLACK);
     OakOldManBufferExecCompleted();
     if (!(gBattleTypeFlags & BATTLE_TYPE_IS_MASTER) && gBattleTypeFlags & BATTLE_TYPE_LINK)
         gBattlerControllerFuncs[gActiveBattler] = OakOldManSetBattleEndCallbacks;

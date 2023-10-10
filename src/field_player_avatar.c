@@ -660,7 +660,7 @@ static void CheckAcroBikeCollision(s16 x, s16 y, u8 metatileBehavior, u8 *collis
 {
     u8 i;
 
-    for (i = 0; i < NELEMS(sAcroBikeTrickMetatiles); i++)
+    for (i = 0; i < ARRAY_COUNT(sAcroBikeTrickMetatiles); i++)
     {
         if (sAcroBikeTrickMetatiles[i](metatileBehavior))
         {
@@ -704,7 +704,7 @@ static void DoPlayerAvatarTransition(void)
 
     if (flags != 0)
     {
-        for (i = 0; i < NELEMS(sPlayerAvatarTransitionFuncs); i++, flags >>= 1)
+        for (i = 0; i < ARRAY_COUNT(sPlayerAvatarTransitionFuncs); i++, flags >>= 1)
         {
             if (flags & 1)
                 sPlayerAvatarTransitionFuncs[i](&gObjectEvents[gPlayerAvatar.objectEventId]);
@@ -1225,7 +1225,7 @@ u16 GetPlayerAvatarStateTransitionByGraphicsId(u8 graphicsId, u8 gender)
 {
     u8 i;
 
-    for (i = 0; i < NELEMS(*sPlayerAvatarGfxToStateFlag); i++)
+    for (i = 0; i < ARRAY_COUNT(*sPlayerAvatarGfxToStateFlag); i++)
     {
         if (sPlayerAvatarGfxToStateFlag[gender][i][0] == graphicsId)
             return sPlayerAvatarGfxToStateFlag[gender][i][1];
@@ -1238,7 +1238,7 @@ u8 GetPlayerAvatarGraphicsIdByCurrentState(void)
     u8 i;
     u16 flags = gPlayerAvatar.flags;
 
-    for (i = 0; i < NELEMS(*sPlayerAvatarGfxToStateFlag); i++)
+    for (i = 0; i < ARRAY_COUNT(*sPlayerAvatarGfxToStateFlag); i++)
     {
         if (sPlayerAvatarGfxToStateFlag[gPlayerAvatar.gender][i][1] & flags)
             return sPlayerAvatarGfxToStateFlag[gPlayerAvatar.gender][i][0];

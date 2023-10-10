@@ -1626,7 +1626,7 @@ static void PrintDexNavInstructions(void)
 {
     FillWindowPixelBuffer(WINDOW_MAP_NAME, PIXEL_FILL(0));
     PutWindowTilemap(WINDOW_MAP_NAME);
-    GetMapName(gStringVar4, GetCurrentRegionMapSectionId(), 0);
+    GetMapName(gStringVar4, GetCurrentRegionMapSectionId());
     AddTextPrinterParameterized3(WINDOW_MAP_NAME, 1, 2, 0, sFontColor_White, 0, gStringVar4);
     AddTextPrinterParameterized3(WINDOW_MAP_NAME, 1, 124, 0, sFontColor_White, 0, sText_DexNav_PressSelectToRegister);
     CopyWindowToVram(WINDOW_MAP_NAME, COPYWIN_BOTH);
@@ -1684,7 +1684,7 @@ static void DexNav_RunSetup(void)
 	ResetVramOamAndBgCntRegs();
 	ResetAllBgsPos();
 	ResetBgsAndClearDma3BusyFlags(0);
-	InitBgsFromTemplates(0, sDexNavMenuBgTemplates, NELEMS(sDexNavMenuBgTemplates));
+	InitBgsFromTemplates(0, sDexNavMenuBgTemplates, ARRAY_COUNT(sDexNavMenuBgTemplates));
 	SetBgTilemapBuffer(1, sDexNavUiDataPtr->tilemapBuffer);
 	ScheduleBgCopyTilemapToVram(1);
 	break;
@@ -1739,10 +1739,10 @@ static void DexNav_RunSetup(void)
         DexNavLoadCapturedAllSymbols();
         break;
     case 16:
-	BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
+	BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
 	break;
     case 17:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         break;
     default:
         SetVBlankCallback(DexNav_VBlankCB);
@@ -1776,7 +1776,7 @@ static void Task_DexNavMain(u8 taskId)
     if (JOY_NEW(B_BUTTON))
     {
         PlaySE(SE_POKENAV_OFF);
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         task->func = Task_DexNavFadeAndExit;
     }
     else if (JOY_NEW(DPAD_UP))
@@ -1868,7 +1868,7 @@ static void Task_DexNavMain(u8 taskId)
 	    gSpecialVar_0x8000 = species;
             gSpecialVar_0x8001 = sDexNavUiDataPtr->environment;
             PlaySE(SE_DEX_SEARCH);
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
             task->func = Task_DexNavExitAndSearch;
 	    return;
 	}

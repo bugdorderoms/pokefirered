@@ -8,8 +8,6 @@ extern const u8 * const gNatureNamePointers[];
 
 void ShowSelectMovePokemonSummaryScreen(struct Pokemon *, u8, u8, MainCallback, u16);
 u8 GetMoveSlotToReplace(void);
-void SummaryScreen_SetUnknownTaskId(u8 a0);
-void SummaryScreen_DestroyUnknownTask(void);
 u8 GetLastViewedMonIndex(void);
 void ShowPokemonSummaryScreen(struct Pokemon * party, u8 cursorPos, u8 lastIdx, void (*callback)(void), u8 a4);
 void SetPokemonSummaryScreenMode(u8);

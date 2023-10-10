@@ -129,7 +129,7 @@ static void LinkPartnerBufferRunCommand(void)
 {
     if (gBattleControllerExecFlags & gBitTable[gActiveBattler])
     {
-        if (gBattleBufferA[gActiveBattler][0] < NELEMS(sLinkPartnerBufferCommands))
+        if (gBattleBufferA[gActiveBattler][0] < ARRAY_COUNT(sLinkPartnerBufferCommands))
             sLinkPartnerBufferCommands[gBattleBufferA[gActiveBattler][0]]();
         else
             LinkPartnerBufferExecCompleted();
@@ -894,7 +894,8 @@ static void StartSendOutAnim(u8 battlerId, bool8 dontClearSubstituteBit)
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerId]], 0);
     gSprites[gBattlerSpriteIds[battlerId]].invisible = TRUE;
     gSprites[gBattlerSpriteIds[battlerId]].callback = SpriteCallbackDummy;
-    gSprites[gBattleControllerData[battlerId]].data[0] = DoPokeballSendOutAnimation(0, POKEBALL_PLAYER_SENDOUT);
+    gSprites[gBattleControllerData[battlerId]].data[0] = 0;
+	DoPokeballSendOutAnimation(POKEBALL_PLAYER_SENDOUT);
 }
 
 static void LinkPartnerHandleReturnMonToBall(void)
@@ -1316,7 +1317,7 @@ static void LinkPartnerHandleCmd55(void)
 {
     gBattleOutcome = gBattleBufferA[gActiveBattler][1];
     FadeOutMapMusic(5);
-    BeginFastPaletteFade(3);
+    BeginFastPaletteFade(FAST_FADE_OUT_TO_BLACK);
     LinkPartnerBufferExecCompleted();
     gBattlerControllerFuncs[gActiveBattler] = SetBattleEndCallbacks;
 }

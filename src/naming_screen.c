@@ -494,14 +494,14 @@ static void NamingScreen_InitBGs(void)
 
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0);
     ResetBgsAndClearDma3BusyFlags(FALSE);
-    InitBgsFromTemplates(0, gUnknown_83E2290, NELEMS(gUnknown_83E2290));
+    InitBgsFromTemplates(0, gUnknown_83E2290, ARRAY_COUNT(gUnknown_83E2290));
 
     ResetAllBgsPos();
 
     InitStandardTextBoxWindows();
     InitTextBoxGfxAndPrinters();
 
-    for (i = 0; i < NELEMS(gUnknown_83E22A0) - 1; i++)
+    for (i = 0; i < ARRAY_COUNT(gUnknown_83E22A0) - 1; i++)
         sNamingScreenData->windows[i] = AddWindow(&gUnknown_83E22A0[i]);
 
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON);
@@ -616,7 +616,7 @@ static void MainState_BeginFadeIn(void)
     CopyBgTilemapBufferToVram(2);
     CopyBgTilemapBufferToVram(3);
     BlendPalettes(-1, 16, RGB_BLACK);
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
     sNamingScreenData->state++;
 }
 
@@ -683,7 +683,7 @@ static void MainState_TryDoEventAfterInput(void)
 
 static void MainState_BeginFadeInOut(void)
 {
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     sNamingScreenData->state++;
 }
 

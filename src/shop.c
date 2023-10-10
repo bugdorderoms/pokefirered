@@ -562,8 +562,8 @@ static void CB2_InitBuyMenu(void)
         BuyMenuAddScrollIndicatorArrows();
         taskId = CreateTask(Task_BuyMenu, 8);
         gTasks[taskId].tListTaskId = ListMenuInit(&gMultiuseListMenuTemplate, 0, 0);
-        BlendPalettes(0xFFFFFFFF, 0x10, RGB_BLACK);
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0x10, 0, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 0x10, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0x10, 0, RGB_BLACK);
         SetVBlankCallback(VBlankCB_BuyMenu);
         SetMainCallback2(CB2_BuyMenu);
         break;
@@ -610,7 +610,7 @@ static bool8 InitShopData(void)
 static void BuyMenuInitBgs(void)
 {
     ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sShopBuyMenuBgTemplates, NELEMS(sShopBuyMenuBgTemplates));
+    InitBgsFromTemplates(0, sShopBuyMenuBgTemplates, ARRAY_COUNT(sShopBuyMenuBgTemplates));
     SetBgTilemapBuffer(1, gShopTilemapBuffer2);
     SetBgTilemapBuffer(2, gShopTilemapBuffer4);
     SetBgTilemapBuffer(3, gShopTilemapBuffer3);
@@ -1217,7 +1217,7 @@ static void BuyMenuReturnToItemList(u8 taskId)
 static void ExitBuyMenu(u8 taskId)
 {
     gFieldCallback = MapPostLoadHook_ReturnToShopMenu;
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_ExitBuyMenu;
 }
 

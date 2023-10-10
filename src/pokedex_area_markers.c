@@ -169,22 +169,24 @@ u8 Ctor_PokedexAreaMarkers(u16 species, u16 tilesTag, u8 palIdx, u8 y)
     spriteSheet.size = 0x4A0;
     spriteSheet.tag = tilesTag;
     LoadCompressedSpriteSheet(&spriteSheet);
+	
     LoadPalette(sMarkerPal, 0x100 + 16 * palIdx, 0x20);
+	
     taskId = CreateTask(Task_ShowAreaMarkers, 0);
     data = (void *)gTasks[taskId].data;
-    data->unk_0C = 0;
     data->tilesTag = tilesTag;
-    data->unk_10 = 0xFFFF;
     subsprites = Alloc(120 * sizeof(struct Subsprite));
     data->buffer = subsprites;
     data->subsprites.subsprites = subsprites;
     data->subsprites.subspriteCount = BuildPokedexAreaSubspriteBuffer(species, subsprites);
+	
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_BD);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(12, 8));
     SetGpuReg(REG_OFFSET_BLDY, 0);
     SetGpuReg(REG_OFFSET_WININ, 0x1F1F);
     SetGpuReg(REG_OFFSET_WINOUT, 0x2F3D);
+	
     spriteTemplate = gDummySpriteTemplate;
     spriteTemplate.tileTag = tilesTag;
     data->spr_id = CreateSprite(&spriteTemplate, 104, y + 32, 0);
@@ -193,31 +195,37 @@ u8 Ctor_PokedexAreaMarkers(u16 species, u16 tilesTag, u8 palIdx, u8 y)
     gSprites[data->spr_id].oam.paletteNum = palIdx;
     gSprites[data->spr_id].subspriteTableNum = 0;
     gSprites[data->spr_id].invisible = TRUE;
+	
     HideBg(1);
     SetBgAttribute(1, BG_ATTR_CHARBASEINDEX, 0);
     FillBgTilemapBufferRect_Palette0(1, 0x00F, 0, 0, 30, 20);
     CopyBgTilemapBufferToVram(1);
     ShowBg(1);
+	
     return taskId;
 }
 
 void Dtor_PokedexAreaMarkers(u8 taskId)
 {
     struct PAM_TaskData * data = (void *)gTasks[taskId].data;
+	
     FreeSpriteTilesByTag(data->tilesTag);
     DestroySprite(&gSprites[data->spr_id]);
     Free(data->buffer);
+	
     SetGpuReg(REG_OFFSET_BLDCNT, 0);
     SetGpuReg(REG_OFFSET_BLDALPHA, 0);
     SetGpuReg(REG_OFFSET_BLDY, 0);
     SetGpuReg(REG_OFFSET_WININ, 0x1F1F);
     SetGpuReg(REG_OFFSET_WINOUT, 0x1F1F);
     ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
+	
     HideBg(1);
     SetBgAttribute(1, BG_ATTR_CHARBASEINDEX, 2);
     FillBgTilemapBufferRect_Palette0(1, 0x000, 0, 0, 30, 20);
     CopyBgTilemapBufferToVram(1);
     ShowBg(1);
+	
     DestroyTask(taskId);
 }
 

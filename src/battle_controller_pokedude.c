@@ -202,7 +202,7 @@ static void PokedudeBufferRunCommand(void)
 {
     if (gBattleControllerExecFlags & gBitTable[gActiveBattler])
     {
-        if (gBattleBufferA[gActiveBattler][0] < NELEMS(sPokedudeBufferCommands))
+        if (gBattleBufferA[gActiveBattler][0] < ARRAY_COUNT(sPokedudeBufferCommands))
         {
             if (!HandlePokedudeVoiceoverEtc())
                 sPokedudeBufferCommands[gBattleBufferA[gActiveBattler][0]]();
@@ -353,7 +353,6 @@ static void OpenBagAndChooseItem(void)
     if (!gPaletteFade.active)
     {
         gBattlerControllerFuncs[gActiveBattler] = CompleteWhenChoseItem;
-        ReshowBattleScreenDummy();
         FreeAllWindowBuffers();
         switch (gSpecialVar_0x8004)
         {
@@ -1505,7 +1504,7 @@ static void PokedudeHandleChooseItem(void)
 {
     s32 i;
 	
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
 	gBattleStruct->itemPartyIndex[gActiveBattler] = 0;
     gBattlerControllerFuncs[gActiveBattler] = OpenBagAndChooseItem;
     gBattlerInMenuId = gActiveBattler;
@@ -1524,7 +1523,7 @@ static void PokedudeHandleChoosePokemon(void)
     *(&gBattleStruct->abilityPreventingSwitchout) = gBattleBufferA[gActiveBattler][3] | (gBattleBufferA[gActiveBattler][4] << 8);
     for (i = 0; i < 3; ++i)
         gBattlePartyCurrentOrder[i] = gBattleBufferA[gActiveBattler][5 + i];
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
     gBattlerControllerFuncs[gActiveBattler] = OpenPartyMenuToChooseMon;
     gBattlerInMenuId = gActiveBattler;
 }
@@ -1767,7 +1766,8 @@ static void StartSendOutAnim(u8 battlerId)
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerId]], 0);
     gSprites[gBattlerSpriteIds[battlerId]].invisible = TRUE;
     gSprites[gBattlerSpriteIds[battlerId]].callback = SpriteCallbackDummy;
-    gSprites[gBattleControllerData[battlerId]].data[0] = DoPokeballSendOutAnimation(0, POKEBALL_PLAYER_SENDOUT);
+    gSprites[gBattleControllerData[battlerId]].data[0] = 0;
+	DoPokeballSendOutAnimation(POKEBALL_PLAYER_SENDOUT);
 }
 
 static void Task_StartSendOutAnim(u8 taskId)

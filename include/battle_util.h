@@ -53,6 +53,11 @@
 #define STAT_CHANGE_WORKED      0
 #define STAT_CHANGE_DIDNT_WORK  1
 
+#define BATTLE_ALIVE_EXCEPT_ACTIVE   0
+#define BATTLE_ALIVE_ATK_SIDE        1
+#define BATTLE_ALIVE_DEF_SIDE        2
+#define BATTLE_ALIVE_EXCEPT_ATTACKER 3
+
 u8 GetBattlerForBattleScript(u8 caseId);
 void PressurePPLose(u8 target, u8 attacker, u16 move);
 void PressurePPLoseOnUsingImprison(u8 attacker);
@@ -88,6 +93,7 @@ void BattleScriptPushCursorAndCallback(const u8 *BS_ptr);
 u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn);
 void ClearFuryCutterDestinyBondGrudge(u8 battlerId);
 void HandleAction_RunBattleScript(void);
+u8 GetDefaultMoveTarget(u8 battlerId);
 u8 GetRandomTarget(u8 battlerId);
 u8 GetBattlerMoveTargetType(u8 battlerId, u16 move);
 u8 GetMoveTarget(u16 move, u8 setTarget);
@@ -156,5 +162,6 @@ bool8 IsBattleAnimationsOn(void);
 struct Pokemon *GetBattlerParty(u8 battlerId);
 struct Pokemon *GetBattlerPartyIndexPtr(u8 battlerId);
 struct Pokemon *GetBattlerIllusionPartyIndexPtr(u8 battlerId);
+u8 CountAliveMonsInBattle(u8 caseId);
 
 #endif // GUARD_BATTLE_UTIL_H

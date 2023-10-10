@@ -243,12 +243,6 @@ struct BattleMove
 
 extern const struct BattleMove gBattleMoves[];
 
-struct SpindaSpot
-{
-    u8 x, y;
-    u16 image[16];
-};
-
 struct __attribute__((packed)) LevelUpMove
 {
     u16 move;
@@ -297,30 +291,28 @@ enum
 #define EVO_LEVEL_ATK_GT_DEF              0x0006 // Pokémon reaches the specified level with attack > defense
 #define EVO_LEVEL_ATK_EQ_DEF              0x0007 // Pokémon reaches the specified level with attack = defense
 #define EVO_LEVEL_ATK_LT_DEF              0x0008 // Pokémon reaches the specified level with attack < defense
-#define EVO_LEVEL_SILCOON                 0x0009 // Pokémon reaches the specified level with a Silcoon personality value
-#define EVO_LEVEL_CASCOON                 0x000A // Pokémon reaches the specified level with a Cascoon personality value
-#define EVO_LEVEL_NINJASK                 0x000B // Pokémon reaches the specified level (special value for Ninjask)
-#define EVO_LEVEL_SHEDINJA                0x000C // Pokémon reaches the specified level (special value for Shedinja)
-#define EVO_LEVEL_FEMALE                  0x000D // Pokémon reaches the specified level, is female
-#define EVO_LEVEL_MALE                    0x000E // Pokémon reaches the specified level, is male
-#define EVO_LEVEL_NIGHT                   0x000F // Pokémon reaches the specified level, is night
-#define EVO_LEVEL_DAY                     0x0010 // Pokémon reaches the specified level, is day
-#define EVO_LEVEL_DUSK                    0x0011 // Pokémon reaches the specified level, is dusk (5-6 P.M)
-#define EVO_ITEM_HOLD_DAY                 0x0012 // Pokémon levels up, holds specified item at day
-#define EVO_ITEM_HOLD_NIGHT               0x0013 // Pokémon levels up, holds specified item at night
-#define EVO_MOVE                          0x0014 // Pokémon levels up, knows specified move
-#define EVO_MOVE_TYPE                     0x0015 // Pokémon levels up, knows move with specified type
-#define EVO_MAPSEC                        0x0016 // Pokémon levels up on specified mapsec
-#define EVO_ITEM_MALE                     0x0017 // specified item is used on a male Pokémon
-#define EVO_ITEM_FEMALE                   0x0018 // specified item is used on a female Pokémon
-#define EVO_LEVEL_RAIN_OR_FOG             0x0019 // Pokémon reaches the specified level while it's raining or fog
-#define EVO_SPECIFIC_MON_IN_PARTY         0x001A // Pokémon levels up with a specified Pokémon in party
-#define EVO_LEVEL_DARK_TYPE_MON_IN_PARTY  0x001B // Pokémon reaches the specified level with a Dark Type Pokémon in party
-#define EVO_TRADE_SPECIFIC_MON            0x001C // Pokémon is traded for a specified Pokémon
-#define EVO_LEVEL_NATURE                  0x001D // Pokémon reaches the specified level, nature forms are handled by form change
-#define EVO_CRITICAL_HITS                 0x001E // Pokémon performs specified number of critical hits in one battle
-#define EVO_SCRIPT_TRIGGER_DMG            0x001F // Pokémon has specified HP below max, then player interacts trigger
-#define EVO_LEVEL_PERSONALITY             0x0020 // Pokémon reaches the specified level, personality forms are handled by form change
+#define EVO_LEVEL_NINJASK                 0x0009 // Pokémon reaches the specified level (special value for Ninjask)
+#define EVO_LEVEL_SHEDINJA                0x000A // Pokémon reaches the specified level (special value for Shedinja)
+#define EVO_LEVEL_FEMALE                  0x000B // Pokémon reaches the specified level, is female
+#define EVO_LEVEL_MALE                    0x000C // Pokémon reaches the specified level, is male
+#define EVO_LEVEL_NIGHT                   0x000D // Pokémon reaches the specified level, is night
+#define EVO_LEVEL_DAY                     0x000E // Pokémon reaches the specified level, is day
+#define EVO_LEVEL_DUSK                    0x000F // Pokémon reaches the specified level, is dusk (5-6 P.M)
+#define EVO_ITEM_HOLD_DAY                 0x0010 // Pokémon levels up, holds specified item at day
+#define EVO_ITEM_HOLD_NIGHT               0x0011 // Pokémon levels up, holds specified item at night
+#define EVO_MOVE                          0x0012 // Pokémon levels up, knows specified move
+#define EVO_MOVE_TYPE                     0x0013 // Pokémon levels up, knows move with specified type
+#define EVO_MAPSEC                        0x0014 // Pokémon levels up on specified mapsec
+#define EVO_ITEM_MALE                     0x0015 // specified item is used on a male Pokémon
+#define EVO_ITEM_FEMALE                   0x0016 // specified item is used on a female Pokémon
+#define EVO_LEVEL_RAIN_OR_FOG             0x0017 // Pokémon reaches the specified level while it's raining or fog
+#define EVO_SPECIFIC_MON_IN_PARTY         0x0018 // Pokémon levels up with a specified Pokémon in party
+#define EVO_LEVEL_DARK_TYPE_MON_IN_PARTY  0x0019 // Pokémon reaches the specified level with a Dark Type Pokémon in party
+#define EVO_TRADE_SPECIFIC_MON            0x001A // Pokémon is traded for a specified Pokémon
+#define EVO_LEVEL_NATURE                  0x001B // Pokémon reaches the specified level, nature forms are handled by form change
+#define EVO_CRITICAL_HITS                 0x001C // Pokémon performs specified number of critical hits in one battle
+#define EVO_SCRIPT_TRIGGER_DMG            0x001D // Pokémon has specified HP below max, then player interacts trigger
+#define EVO_LEVEL_PERSONALITY             0x001E // Pokémon reaches the specified level, personality forms are handled by form change
 
 struct Evolution
 {
@@ -370,7 +362,7 @@ extern const u8 gFacilityClassToPicIndex[];
 extern const u8 gFacilityClassToTrainerClass[];
 extern const struct SpriteTemplate gSpriteTemplates_Battlers[];
 extern const u8 gPPUpGetMask[];
-extern const s8 gNatureStatTable[][5];
+extern const s8 gNatureStatTable[NUM_NATURES][NUM_STATS - 1];
 extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
 extern const u8 gPPUpGetMask[];
 extern const u8 gPPUpSetMask[];
@@ -387,23 +379,13 @@ void CalculateMonStats(struct Pokemon *mon);
 void BoxMonToMon(struct BoxPokemon *src, struct Pokemon *dest);
 u8 GetLevelFromBoxMonExp(struct BoxPokemon *boxMon);
 u16 GiveMoveToMon(struct Pokemon *mon, u16 move);
-u16 GiveMoveToBattleMon(struct BattlePokemon *mon, u16 move);
 void SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot);
-void SetBattleMonMoveSlot(struct BattlePokemon *mon, u16 move, u8 slot);
 u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove);
 u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool8 firstMove);
 void GiveMonInitialMoveset(struct Pokemon *mon);
 void DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move);
 u32 GetShinyRollsIncrease(void);
 
-#define BATTLE_ALIVE_EXCEPT_ACTIVE   0
-#define BATTLE_ALIVE_ATK_SIDE        1
-#define BATTLE_ALIVE_DEF_SIDE        2
-#define BATTLE_ALIVE_EXCEPT_ATTACKER 3
-
-u8 CountAliveMonsInBattle(u8 caseId);
-
-u8 GetDefaultMoveTarget(u8 battlerId);
 u8 GetMonGender(struct Pokemon *mon);
 u8 GetBoxMonGender(struct BoxPokemon *boxMon);
 u8 GetGenderFromSpeciesAndPersonality(u16 species, u32 personality);
@@ -436,18 +418,15 @@ bool8 IsPlayerPartyAndPokemonStorageFull(void);
 void GetSpeciesName(u8 *name, u16 species);
 u8 CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 void RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
-void RemoveBattleMonPPBonus(struct BattlePokemon *mon, u8 moveIndex);
 bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex, u8 battleMonId);
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem, struct Pokemon *tradePartner);
-u16 NationalPokedexNumToSpecies(u16 nationalNum);
-u16 SpeciesToNationalPokedexNum(u16 species);
 void DrawSpindaSpots(u16 species, u32 personality, u8 *dest, bool8 isFrontPic);
 void EvolutionRenameMon(struct Pokemon *mon, u16 oldSpecies, u16 newSpecies);
-bool8 GetPlayerFlankId(void);
-bool16 GetLinkTrainerFlankId(u8 linkPlayerId);
+u8 GetPlayerFlankId(void);
+u8 GetLinkTrainerFlankId(u8 linkPlayerId);
 s32 GetBattlerMultiplayerId(u16 a1);
-u8 GetTrainerEncounterMusicId(u16 trainer);
 void AdjustFriendship(struct Pokemon *mon, u8 event);
+bool8 ModifyMonFriendship(struct Pokemon *mon, s8 friendshipDelta);
 void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);
 u16 GetMonEVCount(struct Pokemon *mon);
 void RandomlyGivePartyPokerus(struct Pokemon *party);
@@ -460,16 +439,14 @@ bool8 CanMonLearnTMHM(struct Pokemon *mon, u8 tm);
 u8 GetMoveRelearnerMoves(struct Pokemon *mon, u16 *moves);
 u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves);
 u8 GetNumberOfRelearnableMoves(struct Pokemon *mon);
-u16 SpeciesToPokedexNum(u16 species);
 void PlayBattleBGM(void);
 void PlayMapChosenOrBattleBGM(u16 songId);
 const u32 *GetMonFrontSpritePal(struct Pokemon *mon);
 const u32 *GetMonSpritePalFromSpecies(u16 species, bool8 isShiny);
 const struct CompressedSpritePalette *GetMonSpritePalStruct(struct Pokemon *mon);
 const struct CompressedSpritePalette *GetMonSpritePalStructFromSpecies(u16 species, bool8 isShiny);
-bool8 IsPokeSpriteNotFlipped(u16 species);
 u16 ItemIdToBattleMoveId(u16 item);
-s8 GetFlavorRelation(u8 battlerId, u8 flavor);
+s8 GetMonFlavorRelation(struct Pokemon *mon, u8 flavor);
 bool8 IsTradedMon(struct Pokemon *mon);
 bool8 IsOtherTrainer(u32 otId, u8 *otName);
 void MonRestorePP(struct Pokemon *mon);
@@ -478,23 +455,23 @@ void SetMonPreventsSwitchingString(void);
 void SetWildMonHeldItem(struct Pokemon *mon);
 u8 *GetTrainerPartnerName(void);
 u8 GetPlayerPartyHighestLevel(void);
-u16 FacilityClassToPicIndex(u16 facilityClass);
 void SetDeoxysStats(void);
 u16 GetUnionRoomTrainerPic(void);
 u16 GetUnionRoomTrainerClass(void);
-void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality);
-struct OakSpeechNidoranFStruct *OakSpeechNidoranFSetup(u8 battlePosition, bool8 enable);
-void OakSpeechNidoranFFreeResources(void);
-void *OakSpeechNidoranFGetBuffer(u8 bufferId);
 u8 GetNumOfBadges(void);
 void DeleteMonMove(struct Pokemon *mon, u8 movePos);
 void ClearAllFusedMonSpecies(void);
 bool8 HealStatusConditions(struct Pokemon *mon, u32 healMask, u8 battleId);
 const u8* GetItemEffect(u16 item);
 
-static u8 GetNatureFromPersonality(u32 personality)
+static inline u8 GetNatureFromPersonality(u32 personality)
 {
     return personality % NUM_NATURES;
+}
+
+static inline u16 FacilityClassToPicIndex(u16 facilityClass)
+{
+    return gFacilityClassToPicIndex[facilityClass];
 }
 
 static inline u16 SanitizeSpeciesId(u16 species)

@@ -4,6 +4,7 @@
 #include "scanline_effect.h"
 #include "decompress.h"
 #include "save.h"
+#include "field_specials.h"
 #include "battle.h"
 #include "link_rfu.h"
 #include "librfu.h"
@@ -18,7 +19,6 @@
 #include "link.h"
 #include "graphics.h"
 #include "strings.h"
-#include "reset_save_heap.h"
 #include "constants/battle.h"
 #include "constants/songs.h"
 
@@ -316,7 +316,7 @@ void SetLocalLinkPlayerId(u8 playerId)
 
 static void InitLocalLinkPlayer(void)
 {
-    gLocalLinkPlayer.trainerId = gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8) | (gSaveBlock2Ptr->playerTrainerId[2] << 16) | (gSaveBlock2Ptr->playerTrainerId[3] << 24);
+    gLocalLinkPlayer.trainerId = GetPlayerTrainerId();
     StringCopy(gLocalLinkPlayer.name, gSaveBlock2Ptr->playerName);
     gLocalLinkPlayer.gender = gSaveBlock2Ptr->playerGender;
     gLocalLinkPlayer.linkType = gLinkType;
@@ -451,7 +451,7 @@ void LinkTestProcessKeyInput(void)
     }
     if (JOY_NEW(L_BUTTON))
     {
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB(2, 0, 0));
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB(2, 0, 0));
     }
     if (JOY_NEW(START_BUTTON))
     {
@@ -1462,7 +1462,7 @@ void CB2_LinkError(void)
     InitHeap(gHeap, HEAP_SIZE);
     ResetSpriteData();
     FreeAllSpritePalettes();
-    ResetPaletteFadeControl();
+    ResetPaletteFade();
     FillPalette(0, 0, 2);
     ResetTasks();
     ScanlineEffect_Stop();

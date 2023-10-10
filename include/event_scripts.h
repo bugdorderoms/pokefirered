@@ -926,4 +926,22 @@ extern const u8 EventScript_LostSignal[];
 extern const u8 EventScript_TooDark[];
 extern const u8 EventScript_MovedTooFast[];
 
+// pokedex rating
+extern const u8 PokedexRating_Text_LessThan10[];
+extern const u8 PokedexRating_Text_LessThan20[];
+extern const u8 PokedexRating_Text_LessThan30[];
+extern const u8 PokedexRating_Text_LessThan40[];
+extern const u8 PokedexRating_Text_LessThan50[];
+extern const u8 PokedexRating_Text_LessThan60[];
+extern const u8 PokedexRating_Text_LessThan70[];
+extern const u8 PokedexRating_Text_LessThan80[];
+extern const u8 PokedexRating_Text_LessThan90[];
+extern const u8 PokedexRating_Text_LessThan100[];
+extern const u8 PokedexRating_Text_LessThan110[];
+extern const u8 PokedexRating_Text_LessThan120[];
+extern const u8 PokedexRating_Text_LessThan130[];
+extern const u8 PokedexRating_Text_LessThan140[];
+extern const u8 PokedexRating_Text_LessThan150[];
+extern const u8 PokedexRating_Text_Complete[];
+
 #endif //GUARD_EVENT_SCRIPTS_H

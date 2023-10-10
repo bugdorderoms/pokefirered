@@ -625,7 +625,7 @@ static void MainCB2_LoadFameChecker(void)
             sBg1TilemapBuffer = AllocZeroed(BG_SCREEN_SIZE * 2); // 512x256
             sBg2TilemapBuffer = AllocZeroed(BG_SCREEN_SIZE);     // 256x256
             ResetBgsAndClearDma3BusyFlags(0);
-            InitBgsFromTemplates(0, sUIBgTemplates, NELEMS(sUIBgTemplates));
+            InitBgsFromTemplates(0, sUIBgTemplates, ARRAY_COUNT(sUIBgTemplates));
             SetBgTilemapBuffer(3, sBg3TilemapBuffer);
             SetBgTilemapBuffer(2, sBg2TilemapBuffer);
             SetBgTilemapBuffer(1, sBg1TilemapBuffer);
@@ -667,7 +667,7 @@ static void MainCB2_LoadFameChecker(void)
             LoadUISpriteSheetsAndPalettes();
             CreateAllFlavorTextIcons(FAMECHECKER_OAK);
             WipeMsgBoxAndTransfer();
-            BeginNormalPaletteFade(0xFFFFFFFF,0, 16, 0, 0);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, 0);
             gMain.state++;
             break;
         case 7:
@@ -977,7 +977,7 @@ static bool8 SetMessageSelectorIconObjMode(u8 spriteId, u8 objMode)
 static void Task_StartToCloseFameChecker(u8 taskId)
 {
     PlaySE(SE_M_SWIFT);
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, 0);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, 0);
     gTasks[taskId].func = Task_DestroyAssetsAndCloseFameChecker;
 }
 

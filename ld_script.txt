@@ -111,7 +111,6 @@ SECTIONS {
         src/reshow_battle_screen.o(.text);
         src/battle_anim_status_effects.o(.text);
         src/title_screen.o(.text);
-        src/reset_save_heap.o(.text);
         src/field_weather.o(.text);
         src/field_weather_util.o(.text);
         src/field_weather_effects.o(.text);
@@ -186,9 +185,6 @@ SECTIONS {
         src/battle_ai_script_commands.o(.text);
         src/fldeff_dig.o(.text);
         src/fldeff_flash.o(.text);
-        src/post_battle_event_funcs.o(.text);
-        src/prof_pc.o(.text);
-        src/hof_pc.o(.text);
         src/field_specials.o(.text);
         src/battle_records.o(.text);
         src/evolution_scene.o(.text);
@@ -197,7 +193,6 @@ SECTIONS {
         src/battle_controller_link_partner.o(.text);
         src/battle_message.o(.text);
         src/math_util.o(.text);
-        src/roulette_util.o(.text);
         src/save.o(.text);
         src/field_effect_helpers.o(.text);
         src/battle_anim_sound_tasks.o(.text);
@@ -472,6 +467,7 @@ SECTIONS {
         src/ghost.o(.rodata);
         src/dragon.o(.rodata);
         src/dark.o(.rodata);
+		src/pokedex.o(.rodata);
         src/ground.o(.rodata);
         src/normal.o(.rodata);
         src/battle_anim_utility_funcs.o(.rodata);

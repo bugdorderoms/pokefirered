@@ -218,7 +218,7 @@ static void PlayerBufferRunCommand(void)
 {
     if (gBattleControllerExecFlags & gBitTable[gActiveBattler])
     {
-        if (gBattleBufferA[gActiveBattler][0] < NELEMS(sPlayerBufferCommands))
+        if (gBattleBufferA[gActiveBattler][0] < ARRAY_COUNT(sPlayerBufferCommands))
             sPlayerBufferCommands[gBattleBufferA[gActiveBattler][0]]();
         else
             PlayerBufferExecCompleted();
@@ -525,7 +525,7 @@ void HandleInputChooseMove(void)
 				canSelectTarget = 2;
 			}
         }
-        ResetPaletteFadeControl();
+        ResetPaletteFade();
         BeginNormalPaletteFade(0xF0000, 0, 0, 0, RGB_WHITE);
 		
 		switch (canSelectTarget)
@@ -559,7 +559,7 @@ void HandleInputChooseMove(void)
         PlaySE(SE_SELECT);
         BtlController_EmitTwoReturnValues(1, 10, 0xFFFF);
         PlayerBufferExecCompleted();
-        ResetPaletteFadeControl();
+        ResetPaletteFade();
         BeginNormalPaletteFade(0xF0000, 0, 0, 0, RGB_WHITE);
     }
     else if (JOY_NEW(DPAD_LEFT))
@@ -1379,7 +1379,6 @@ static void OpenBagAndChooseItem(void)
     if (!gPaletteFade.active)
     {
         gBattlerControllerFuncs[gActiveBattler] = CompleteWhenChoseItem;
-        ReshowBattleScreenDummy();
         FreeAllWindowBuffers();
         CB2_BagMenuFromBattle();
     }
@@ -2168,7 +2167,8 @@ static void StartSendOutAnim(u8 battlerId, bool8 dontClearSubstituteBit)
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerId]], 0);
     gSprites[gBattlerSpriteIds[battlerId]].invisible = TRUE;
     gSprites[gBattlerSpriteIds[battlerId]].callback = SpriteCallbackDummy;
-    gSprites[gBattleControllerData[battlerId]].data[0] = DoPokeballSendOutAnimation(0, POKEBALL_PLAYER_SENDOUT);
+    gSprites[gBattleControllerData[battlerId]].data[0] = 0;
+	DoPokeballSendOutAnimation(POKEBALL_PLAYER_SENDOUT);
 }
 
 static void PlayerHandleReturnMonToBall(void)
@@ -2317,7 +2317,7 @@ static void PlayerHandleFaintAnimation(void)
 
 static void PlayerHandlePaletteFade(void)
 {
-    BeginNormalPaletteFade(0xFFFFFFFF, 2, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 2, 0, 16, RGB_BLACK);
     PlayerBufferExecCompleted();
 }
 
@@ -2497,7 +2497,7 @@ static void PlayerHandleChooseItem(void)
 {
     s32 i;
 
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
     gBattlerControllerFuncs[gActiveBattler] = OpenBagAndChooseItem;
     gBattlerInMenuId = gActiveBattler;
     for (i = 0; i < 3; ++i)
@@ -2515,7 +2515,7 @@ static void PlayerHandleChoosePokemon(void)
     *(&gBattleStruct->abilityPreventingSwitchout) = gBattleBufferA[gActiveBattler][3] | (gBattleBufferA[gActiveBattler][4] << 8);
     for (i = 0; i < 3; ++i)
         gBattlePartyCurrentOrder[i] = gBattleBufferA[gActiveBattler][5 + i];
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
     gBattlerControllerFuncs[gActiveBattler] = OpenPartyMenuToChooseMon;
     gBattlerInMenuId = gActiveBattler;
 }
@@ -2523,7 +2523,7 @@ static void PlayerHandleChoosePokemon(void)
 static void PlayerHandleCmd23(void)
 {
     BattleStopLowHpSound();
-    BeginNormalPaletteFade(0xFFFFFFFF, 2, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 2, 0, 16, RGB_BLACK);
     PlayerBufferExecCompleted();
 }
 
@@ -2914,7 +2914,7 @@ static void PlayerHandleCmd55(void)
 {
     gBattleOutcome = gBattleBufferA[gActiveBattler][1];
     FadeOutMapMusic(5);
-    BeginFastPaletteFade(3);
+    BeginFastPaletteFade(FAST_FADE_OUT_TO_BLACK);
     PlayerBufferExecCompleted();
     gBattlerControllerFuncs[gActiveBattler] = SetBattleEndCallbacks;
 }

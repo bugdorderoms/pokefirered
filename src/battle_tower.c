@@ -121,17 +121,11 @@ void SetEReaderTrainerGfxId(void)
 u8 GetBattleTowerTrainerFrontSpriteId(void)
 {
     if (gSaveBlock2Ptr->battleTower.battleTowerTrainerId == BATTLE_TOWER_EREADER_TRAINER_ID)
-    {
-        return gFacilityClassToPicIndex[gSaveBlock2Ptr->battleTower.ereaderTrainer.trainerClass];
-    }
+        return FacilityClassToPicIndex(gSaveBlock2Ptr->battleTower.ereaderTrainer.trainerClass);
     else if (gSaveBlock2Ptr->battleTower.battleTowerTrainerId < BATTLE_TOWER_RECORD_MIXING_TRAINER_BASE_ID)
-    {
-        return gFacilityClassToPicIndex[sBattleTowerTrainers[gSaveBlock2Ptr->battleTower.battleTowerTrainerId].trainerClass];
-    }
+        return FacilityClassToPicIndex(sBattleTowerTrainers[gSaveBlock2Ptr->battleTower.battleTowerTrainerId].trainerClass);
     else
-    {
-        return gFacilityClassToPicIndex[gSaveBlock2Ptr->battleTower.records[gSaveBlock2Ptr->battleTower.battleTowerTrainerId - BATTLE_TOWER_RECORD_MIXING_TRAINER_BASE_ID].trainerClass];
-    }
+        return FacilityClassToPicIndex(gSaveBlock2Ptr->battleTower.records[gSaveBlock2Ptr->battleTower.battleTowerTrainerId - BATTLE_TOWER_RECORD_MIXING_TRAINER_BASE_ID].trainerClass);
 }
 
 u8 GetBattleTowerTrainerClassNameId(void)
@@ -485,7 +479,7 @@ static u16 GetCurrentBattleTowerWinStreak(u8 battleTowerLevelType)
 
 u8 GetEreaderTrainerFrontSpriteId(void)
 {
-    return gFacilityClassToPicIndex[gSaveBlock2Ptr->battleTower.ereaderTrainer.trainerClass];
+    return FacilityClassToPicIndex(gSaveBlock2Ptr->battleTower.ereaderTrainer.trainerClass);
 }
 
 u8 GetEreaderTrainerClassId(void)

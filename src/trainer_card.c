@@ -531,7 +531,7 @@ static void Task_TrainerCard(u8 taskId)
             LoadWirelessStatusIndicatorSpriteGfx();
             CreateWirelessStatusIndicatorSprite(230, 150);
         }
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         SetVBlankCallback(VBlankCB_TrainerCard);
         sTrainerCardDataPtr->mainState++;
         break;
@@ -569,7 +569,7 @@ static void Task_TrainerCard(u8 taskId)
             }
             else
             {
-                BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+                BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
                 sTrainerCardDataPtr->mainState = STATE_CLOSE_CARD;
             }
         }
@@ -590,7 +590,7 @@ static void Task_TrainerCard(u8 taskId)
             }
             else if (gReceivedRemoteLinkPlayers)
             {
-                BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+                BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
                 sTrainerCardDataPtr->mainState = STATE_CLOSE_CARD;
             }
             else
@@ -608,7 +608,7 @@ static void Task_TrainerCard(u8 taskId)
            }
            else
            {
-               BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+               BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
                sTrainerCardDataPtr->mainState = STATE_CLOSE_CARD;
            }
         }
@@ -623,7 +623,7 @@ static void Task_TrainerCard(u8 taskId)
     case STATE_CLOSE_CARD_LINK:
         if (!gReceivedRemoteLinkPlayers)
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
             sTrainerCardDataPtr->mainState = STATE_CLOSE_CARD;
         }
         break;
@@ -895,7 +895,7 @@ void TrainerCard_GenerateCardForLinkPlayer(struct TrainerCard *trainerCard)
     trainerCard->monIconTint = VarGet(VAR_TRAINER_CARD_MON_ICON_TINT_IDX);
 
     for (id = 0; id < PARTY_SIZE; id++)
-		trainerCard->monSpecies[id] = GetIconSpecies(VarGet(VAR_TRAINER_CARD_MON_ICON_1 + id));
+		trainerCard->monSpecies[id] = SanitizeSpeciesId(VarGet(VAR_TRAINER_CARD_MON_ICON_1 + id));
 }
 
 static void SetDataFromTrainerCard(void)
@@ -1005,7 +1005,7 @@ static void InitBgsAndWindows(void)
     ResetSpriteData();
     ResetPaletteFade();
     ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sTrainerCardBgTemplates, NELEMS(sTrainerCardBgTemplates));
+    InitBgsFromTemplates(0, sTrainerCardBgTemplates, ARRAY_COUNT(sTrainerCardBgTemplates));
     ResetAllBgsPos();
     InitWindows(sTrainerCardWindowTemplates);
     DeactivateAllTextPrinters();
@@ -1389,7 +1389,7 @@ static void LoadMonIconGfx(void)
 {
     u8 i;
 
-    CpuCopy16(gMonIconPalettes, sTrainerCardDataPtr->monIconPals, 2 * NELEMS(sTrainerCardDataPtr->monIconPals));
+    CpuCopy16(gMonIconPalettes, sTrainerCardDataPtr->monIconPals, 2 * ARRAY_COUNT(sTrainerCardDataPtr->monIconPals));
     switch (sTrainerCardDataPtr->trainerCard.monIconTint)
     {
     case MON_ICON_TINT_NORMAL:
@@ -1449,7 +1449,7 @@ static bool8 SetTrainerCardBgsAndPals(void)
     switch (sTrainerCardDataPtr->bgPalLoadState)
     {
     case 0:
-        LoadBgTiles(3, sTrainerCardDataPtr->badgeTiles, NELEMS(sTrainerCardDataPtr->badgeTiles), 0);
+        LoadBgTiles(3, sTrainerCardDataPtr->badgeTiles, ARRAY_COUNT(sTrainerCardDataPtr->badgeTiles), 0);
         break;
     case 1:
         LoadBgTiles(0, sTrainerCardDataPtr->cardTiles, 0x1800, 0);

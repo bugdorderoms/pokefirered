@@ -3,17 +3,17 @@
 #define MG_GIVE_POKEMON(pokemon) 		   \
 	.type = MG_TYPE_GIVE_POKEMON,		   \
 	.present = { .GivePokemon = pokemon }, \
-	.presentsCount = NELEMS(pokemon)
+	.presentsCount = ARRAY_COUNT(pokemon)
 
 #define MG_GIVE_ITEM(item)     		 \
 	.type = MG_TYPE_GIVE_ITEM, 		 \
 	.present = { .GiveItem = item }, \
-	.presentsCount = NELEMS(item)
+	.presentsCount = ARRAY_COUNT(item)
 
 #define MG_FEATURE_UNLOCK(feature)  		 \
 	.type = MG_TYPE_UNLOCK_FEATURE, 		 \
 	.present = { .FeatureUnlock = feature }, \
-	.presentsCount = NELEMS(feature)
+	.presentsCount = ARRAY_COUNT(feature)
 
 #define MG_END_TABLE { .type = MG_TYPES_COUNT }
 

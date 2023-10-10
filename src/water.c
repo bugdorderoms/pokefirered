@@ -12,8 +12,6 @@
 #include "trig.h"
 #include "util.h"
 
-#define ISO_RANDOMIZE2(val)(1103515245 * (val) + 12345)
-
 static void AnimRainDrop(struct Sprite *);
 static void AnimRainDrop_Step(struct Sprite *);
 static void AnimWaterBubbleProjectile(struct Sprite *);

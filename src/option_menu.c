@@ -278,7 +278,7 @@ static void InitOptionMenuBg(void)
     DmaClear16(3, (void *)PLTT, PLTT_SIZE);    
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0);
     ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sOptionMenuBgTemplates, NELEMS(sOptionMenuBgTemplates));
+    InitBgsFromTemplates(0, sOptionMenuBgTemplates, ARRAY_COUNT(sOptionMenuBgTemplates));
     ResetAllBgsPos();
     InitWindows(sOptionMenuWinTemplates);
     DeactivateAllTextPrinters();
@@ -340,7 +340,7 @@ static void Task_OptionMenu(u8 taskId)
     switch (sOptionMenuPtr->loadState)
     {
     case 0:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0x10, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0x10, 0, RGB_BLACK);
         OptionMenu_SetVBlankCallback();
         sOptionMenuPtr->loadState++;
         break;
@@ -373,7 +373,7 @@ static void Task_OptionMenu(u8 taskId)
         }
         break;
     case 3:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
         sOptionMenuPtr->loadState++;
         break;
     case 4:

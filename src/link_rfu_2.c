@@ -565,7 +565,7 @@ void LinkRfu_Shutdown(void)
             ResetLinkRfuGFLayer();
         }
     }
-    for (i = 0; i < NELEMS(gUnknown_843ED88); i++)
+    for (i = 0; i < ARRAY_COUNT(gUnknown_843ED88); i++)
     {
         if (FuncIsActiveTask(gUnknown_843ED88[i]) == TRUE)
         {

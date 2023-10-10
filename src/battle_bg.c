@@ -604,7 +604,7 @@ static const struct {
 static u8 GetBattleTerrainByMapScene(u8 mapBattleScene)
 {
     int i;
-    for (i = 0; i < NELEMS(sMapBattleSceneMapping); i++)
+    for (i = 0; i < ARRAY_COUNT(sMapBattleSceneMapping); i++)
     {
         if (mapBattleScene == sMapBattleSceneMapping[i].mapScene)
             return sMapBattleSceneMapping[i].battleTerrain;
@@ -614,7 +614,7 @@ static u8 GetBattleTerrainByMapScene(u8 mapBattleScene)
 
 static void LoadBattleTerrainGfx(u16 terrain)
 {
-    if (terrain >= NELEMS(sBattleTerrainTable))
+    if (terrain >= ARRAY_COUNT(sBattleTerrainTable))
         terrain = BATTLE_TERRAIN_PLAIN;
     // Copy to bg3
     LZDecompressVram(sBattleTerrainTable[terrain].tileset, (void *)BG_CHAR_ADDR(2));
@@ -624,7 +624,7 @@ static void LoadBattleTerrainGfx(u16 terrain)
 
 static void LoadBattleTerrainEntryGfx(u16 terrain)
 {
-    if (terrain >= NELEMS(sBattleTerrainTable))
+    if (terrain >= ARRAY_COUNT(sBattleTerrainTable))
         terrain = BATTLE_TERRAIN_PLAIN;
     // Copy to bg1
     LZDecompressVram(sBattleTerrainTable[terrain].entryTileset, (void *)BG_CHAR_ADDR(1));
@@ -634,7 +634,7 @@ static void LoadBattleTerrainEntryGfx(u16 terrain)
 void BattleInitBgsAndWindows(void)
 {
     ResetBgsAndClearDma3BusyFlags(FALSE);
-    InitBgsFromTemplates(0, gBattleBgTemplates, NELEMS(gBattleBgTemplates));
+    InitBgsFromTemplates(0, gBattleBgTemplates, ARRAY_COUNT(gBattleBgTemplates));
     InitWindows(gUnknown_8248330);
     DeactivateAllTextPrinters();
 }

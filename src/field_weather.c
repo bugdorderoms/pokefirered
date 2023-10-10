@@ -381,7 +381,7 @@ void WeatherBeginGammaFade(u8 gammaIndex, u8 gammaTargetIndex, u8 gammaStepDelay
 
 void FadeScreen(u8 mode, s8 delay)
 {
-	FadeSelectedPals(mode, delay, 0xFFFFFFFF);
+	FadeSelectedPals(mode, delay, PALETTES_ALL);
 }
 
 void FadeSelectedPals(u8 mode, s8 delay, u32 selectedPalettes)

@@ -193,7 +193,7 @@ static void CB2_SetUpSeagallopScene(void)
         ptr = &sBg3TilemapBuffer;
         *ptr = AllocZeroed(0x800);
         ResetBgsAndClearDma3BusyFlags(0);
-        InitBgsFromTemplates(0, sBGTemplates, NELEMS(sBGTemplates));
+        InitBgsFromTemplates(0, sBGTemplates, ARRAY_COUNT(sBGTemplates));
         SetBgTilemapBuffer(3, *ptr);
         ResetAllBgsPos();
         gMain.state++;
@@ -223,11 +223,11 @@ static void CB2_SetUpSeagallopScene(void)
         break;
     case 5:
         LoadFerrySpriteResources();
-        BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
         gMain.state++;
         break;
     case 6:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         gMain.state++;
         break;
     case 7:
@@ -295,7 +295,7 @@ static void Task_Seagallop_1(u8 taskId)
 static void Task_Seagallop_2(u8 taskId)
 {
     ScrollBG();
-    if (BGMusicStopped() && !gPaletteFade.active)
+    if (IsNotWaitingForBGMStop() && !gPaletteFade.active)
     {
         Task_Seagallop_3();
         DestroyTask(taskId);
@@ -306,7 +306,7 @@ static void Task_Seagallop_3(void)
 {
     const s8 * warpInfo;
 
-    if (gSpecialVar_0x8006 >= NELEMS(sSeag))
+    if (gSpecialVar_0x8006 >= ARRAY_COUNT(sSeag))
         gSpecialVar_0x8006 = 0;
 
     warpInfo = sSeag[gSpecialVar_0x8006];
@@ -431,7 +431,7 @@ static void SpriteCB_Wake(struct Sprite * sprite)
 
 static bool8 GetDirectionOfTravel(void)
 {
-    if (gSpecialVar_0x8004 >= NELEMS(sTravelDirectionMatrix))
+    if (gSpecialVar_0x8004 >= ARRAY_COUNT(sTravelDirectionMatrix))
     {
         return DIRN_EASTBOUND;
     }

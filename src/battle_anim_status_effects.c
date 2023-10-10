@@ -90,7 +90,7 @@ static const struct Subsprite sSubsprites_83BF544[] =
 
 static const struct SubspriteTable sUnknown_83BF554[] =
 {
-    {NELEMS(sSubsprites_83BF544), sSubsprites_83BF544},
+    {ARRAY_COUNT(sSubsprites_83BF544), sSubsprites_83BF544},
 };
 
 static const struct SpriteTemplate sUnknown_83BF55C =

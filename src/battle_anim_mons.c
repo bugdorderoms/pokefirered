@@ -1129,13 +1129,13 @@ void AnimThrowProjectile(struct Sprite *sprite)
     sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
     sprite->data[5] = gBattleAnimArgs[5];
     InitAnimArcTranslation(sprite);
-    sprite->callback = AnimThrowProjectile_Step;
+    sprite->callback = DestroyAnimSpriteAfterHorizontalTranslation;
 }
 
-void AnimThrowProjectile_Step(struct Sprite *sprite)
+void DestroyAnimSpriteAfterHorizontalTranslation(struct Sprite *sprite)
 {
-    if (TranslateAnimHorizontalArc(sprite))
-        DestroyAnimSprite(sprite);
+	if (TranslateAnimHorizontalArc(sprite))
+		DestroyAnimSprite(sprite);
 }
 
 void AnimSnoreZ(struct Sprite *sprite)

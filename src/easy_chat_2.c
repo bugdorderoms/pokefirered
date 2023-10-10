@@ -152,15 +152,15 @@ static void Task_RunEasyChat(u8 taskId)
     {
     case 0:
         SetVBlankCallback(VBlankCallback_EasyChatScreen);
-        BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
-        BeginNormalPaletteFade(0xFFFFFFFF, -1, 16, 0, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, -1, 16, 0, RGB_BLACK);
         data[EZCHAT_TASK_STATE]++;
         break;
     case 1:
         action = EasyChatScreen_HandleJoypad();
         if (action == 23)
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, -1, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, -1, 0, 16, RGB_BLACK);
             data[EZCHAT_TASK_STATE] = 3;
         }
         else if (action != 0)
@@ -962,8 +962,8 @@ static const u8 sAlphabetLayout[][7] = {
 
 static int GetSelectedLetter(void)
 {
-    int col = sEasyChatScreen->selectGroupCursorX < NELEMS(*sAlphabetLayout) ? sEasyChatScreen->selectGroupCursorX : 0;
-    int row = sEasyChatScreen->selectGroupCursorY < NELEMS(sAlphabetLayout) ? sEasyChatScreen->selectGroupCursorY : 0;
+    int col = sEasyChatScreen->selectGroupCursorX < ARRAY_COUNT(*sAlphabetLayout) ? sEasyChatScreen->selectGroupCursorX : 0;
+    int row = sEasyChatScreen->selectGroupCursorY < ARRAY_COUNT(sAlphabetLayout) ? sEasyChatScreen->selectGroupCursorY : 0;
     return sAlphabetLayout[row][col];
 }
 
@@ -1079,7 +1079,6 @@ void GetEasyChatConfirmCancelText(const u8 **str1, const u8 **str2)
         *str2 = NULL;
         break;
     }
-
 }
 
 void GetEasyChatConfirmDeletionText(const u8 **str1, const u8 **str2)
@@ -1158,7 +1157,7 @@ static u8 GetEasyChatScreenTemplateId(u8 type)
 {
     u32 i;
 
-    for (i = 0; i < NELEMS(sEasyChatScreenTemplates); i++)
+    for (i = 0; i < ARRAY_COUNT(sEasyChatScreenTemplates); i++)
     {
         if (sEasyChatScreenTemplates[i].type == type)
             return i;

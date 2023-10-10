@@ -954,7 +954,7 @@ struct Sprite *CreateMonIconSprite(u16 species, s16 x, s16 y, u8 oamPriority, u8
     u8 spriteId;
     struct SpriteTemplate template = gUnknown_83CEBF0;
 
-    species = GetIconSpecies(species);
+    species = SanitizeSpeciesId(species);
     template.paletteTag = 0xDAC0 + gMonIconPaletteIndices[species];
     tileNum = sub_80911D4(species);
     if (tileNum == 0xFFFF)

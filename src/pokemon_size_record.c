@@ -35,8 +35,6 @@ static const struct UnknownStruct sBigMonSizeTable[] =
     { 1700,   1,  65510 },
 };
 
-#define CM_PER_INCH 2.54
-
 static u32 GetMonSizeHash(struct Pokemon * pkmn)
 {
     u16 personality = GetMonData(pkmn, MON_DATA_PERSONALITY);

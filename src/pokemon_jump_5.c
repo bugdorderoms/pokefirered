@@ -332,10 +332,10 @@ void sub_814AD6C(struct PokemonJump2 *arg0)
 {
     int i;
 
-    for (i = 0; i < NELEMS(gUnknown_846E0B0); i++)
+    for (i = 0; i < ARRAY_COUNT(gUnknown_846E0B0); i++)
         LoadCompressedSpriteSheet(&gUnknown_846E0B0[i]);
 
-    for (i = 0; i < NELEMS(gUnknown_846E0D8); i++)
+    for (i = 0; i < ARRAY_COUNT(gUnknown_846E0D8); i++)
         LoadSpritePalette(&gUnknown_846E0D8[i]);
 
     arg0->unkE = IndexOfSpritePaletteTag(5);

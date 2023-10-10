@@ -80,7 +80,7 @@ void ActivatePerStepCallback(u8 callbackId)
         for (i = 0; i < 16; i++)
             data[i] = 0;
 		
-		data[0] = callbackId >= NELEMS(sPerStepCallbacks) ? 0 : callbackId;
+		data[0] = callbackId >= ARRAY_COUNT(sPerStepCallbacks) ? 0 : callbackId;
     }
 }
 
@@ -111,7 +111,7 @@ static void MarkIcefallCaveCoordVisited(s16 x, s16 y)
 {
 	u8 i;
 	
-    for (i = 0; i < NELEMS(sIcefallCaveIceTileCoords); ++i)
+    for (i = 0; i < ARRAY_COUNT(sIcefallCaveIceTileCoords); ++i)
     {
         if (sIcefallCaveIceTileCoords[i][0] + 7 == x && sIcefallCaveIceTileCoords[i][1] + 7 == y)
         {
@@ -125,7 +125,7 @@ void SetIcefallCaveCrackedIceMetatiles(void)
 {
 	u8 i;
 	
-    for (i = 0; i < NELEMS(sIcefallCaveIceTileCoords); ++i)
+    for (i = 0; i < ARRAY_COUNT(sIcefallCaveIceTileCoords); ++i)
     {
         if (FlagGet(i + 1) == TRUE)
             MapGridSetMetatileIdAt(sIcefallCaveIceTileCoords[i][0] + 7, sIcefallCaveIceTileCoords[i][1] + 7, METATILE_SeafoamIslands_CrackedIce);

@@ -114,7 +114,7 @@ static void sub_814B5C4(u16 windowId)
     DrawTextBorderOuter(windowId, 0x21D, 0xD);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     AddTextPrinterParameterized5(windowId, 2, gText_PkmnJumpRecords, 0, 0, TEXT_SPEED_FF, NULL, 1, 0);
-    for (i = 0; i < NELEMS(gUnknown_846E2D4); i++)
+    for (i = 0; i < ARRAY_COUNT(gUnknown_846E2D4); i++)
     {
         AddTextPrinterParameterized5(windowId, 2, gUnknown_846E2D4[i], 0, 20 + (i * 14), TEXT_SPEED_FF, NULL, 1, 0);
         ConvertIntToDecimalStringN(strbuf, results[i], STR_CONV_MODE_LEFT_ALIGN, 5);

@@ -28,7 +28,7 @@ static u32 GetHealLocationIndexFromMapGroupAndNum(u16 mapGroup, u16 mapNum)
 {
     u32 i;
 
-    for (i = 0; i < NELEMS(sSpawnPoints); i++)
+    for (i = 0; i < ARRAY_COUNT(sSpawnPoints); i++)
 	{
         if (sSpawnPoints[i].group == mapGroup && sSpawnPoints[i].map == mapNum)
             return i + 1;
@@ -38,7 +38,7 @@ static u32 GetHealLocationIndexFromMapGroupAndNum(u16 mapGroup, u16 mapNum)
 
 const struct HealLocation * GetHealLocation(u32 idx)
 {
-    if (idx == 0 || idx > NELEMS(sSpawnPoints))
+    if (idx == 0 || idx > ARRAY_COUNT(sSpawnPoints))
         return NULL;
 	
     return &sSpawnPoints[idx - 1];

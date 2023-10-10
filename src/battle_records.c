@@ -99,7 +99,7 @@ static void MainCB2_SetUp(void)
     case 2:
         sBg3TilemapBuffer_p = AllocZeroed(0x800);
         ResetBgsAndClearDma3BusyFlags(0);
-        InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
+        InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
         SetBgTilemapBuffer(3, sBg3TilemapBuffer_p);
         ResetAllBgsPos();
         gMain.state++;
@@ -124,7 +124,7 @@ static void MainCB2_SetUp(void)
         gMain.state++;
         break;
     case 6:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         gMain.state++;
         break;
     case 7:
@@ -173,7 +173,7 @@ static void Task_WaitButton(u8 taskId)
 
 static void Task_FadeOut(u8 taskId)
 {
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_DestroyAndReturnToField;
 }
 
@@ -438,7 +438,7 @@ static void PrintTotalRecord(struct LinkBattleRecords * records)
     ConvertIntToDecimalStringN(gStringVar2, nlosses, STR_CONV_MODE_LEFT_ALIGN, 4);
     ConvertIntToDecimalStringN(gStringVar3, ndraws, STR_CONV_MODE_LEFT_ALIGN, 4);
 
-    for (i = 0; i < NELEMS(sStringVars); i++)
+    for (i = 0; i < ARRAY_COUNT(sStringVars); i++)
     {
         strvar = sStringVars[i];
         foundEnd = FALSE;

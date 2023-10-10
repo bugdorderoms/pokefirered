@@ -393,11 +393,11 @@ static bool8 DoSetUpTMCaseUI(void)
         gMain.state++;
         break;
     case 17:
-        BlendPalettes(0xFFFFFFFF, 16, 0);
+        BlendPalettes(PALETTES_ALL, 16, 0);
         gMain.state++;
         break;
     case 18:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         gMain.state++;
         break;
     default:
@@ -425,7 +425,7 @@ static void LoadBGTemplates(void)
     ptr = &sTilemapBuffer;
     *ptr = AllocZeroed(0x800);
     ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sBGTemplates, NELEMS(sBGTemplates));
+    InitBgsFromTemplates(0, sBGTemplates, ARRAY_COUNT(sBGTemplates));
     SetBgTilemapBuffer(2, *ptr);
     ScheduleBgCopyTilemapToVram(1);
     ScheduleBgCopyTilemapToVram(2);
@@ -676,7 +676,7 @@ static void DestroyTMCaseBuffers(void)
 
 static void Task_BeginFadeOutFromTMCase(u8 taskId)
 {
-    BeginNormalPaletteFade(0xFFFFFFFF, -2, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, -2, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_FadeOutAndCloseTMCase;
 }
 
@@ -756,13 +756,13 @@ static void Task_SelectTMAction_FromFieldBag(u8 taskId)
     {
         AddTMContextMenu(&sTMCaseDynamicResources->contextMenuWindowId, 0);
         sTMCaseDynamicResources->menuActionIndices = sMenuActionIndices_Field;
-        sTMCaseDynamicResources->numMenuActions = NELEMS(sMenuActionIndices_Field);
+        sTMCaseDynamicResources->numMenuActions = ARRAY_COUNT(sMenuActionIndices_Field);
     }
     else
     {
         AddTMContextMenu(&sTMCaseDynamicResources->contextMenuWindowId, 1);
         sTMCaseDynamicResources->menuActionIndices = sMenuActionIndices_UnionRoom;
-        sTMCaseDynamicResources->numMenuActions = NELEMS(sMenuActionIndices_UnionRoom);
+        sTMCaseDynamicResources->numMenuActions = ARRAY_COUNT(sMenuActionIndices_UnionRoom);
     }
     AddItemMenuActionTextPrinters(sTMCaseDynamicResources->contextMenuWindowId, 2, GetMenuCursorDimensionByFont(2, 0), 2, 0, GetFontAttribute(2, 1) + 2, sTMCaseDynamicResources->numMenuActions, sMenuActions_UseGiveExit, sTMCaseDynamicResources->menuActionIndices);
     Menu_InitCursor(sTMCaseDynamicResources->contextMenuWindowId, 2, 0, 2, GetFontAttribute(2, 1) + 2, sTMCaseDynamicResources->numMenuActions, 0);
@@ -1071,8 +1071,8 @@ void Pokedude_InitTMCase(void)
     memcpy(sPokedudePackBackup->bagPocket_KeyItems, gSaveBlock1Ptr->bagPocket_KeyItems, sizeof(gSaveBlock1Ptr->bagPocket_KeyItems));
     sPokedudePackBackup->unk_160 = sTMCaseStaticResources.selectedRow;
     sPokedudePackBackup->unk_162 = sTMCaseStaticResources.scrollOffset;
-    ClearItemSlots(gSaveBlock1Ptr->bagPocket_TMHM, NELEMS(gSaveBlock1Ptr->bagPocket_TMHM));
-    ClearItemSlots(gSaveBlock1Ptr->bagPocket_KeyItems, NELEMS(gSaveBlock1Ptr->bagPocket_KeyItems));
+    ClearItemSlots(gSaveBlock1Ptr->bagPocket_TMHM, ARRAY_COUNT(gSaveBlock1Ptr->bagPocket_TMHM));
+    ClearItemSlots(gSaveBlock1Ptr->bagPocket_KeyItems, ARRAY_COUNT(gSaveBlock1Ptr->bagPocket_KeyItems));
     ResetTMCaseCursorPos();
     AddBagItem(ITEM_TM01, 1);
     AddBagItem(ITEM_TM03, 1);
@@ -1206,7 +1206,7 @@ static void Task_TMCaseDude_Playback(u8 taskId)
             Free(sPokedudePackBackup);
             CpuFastCopy(gPlttBufferFaded, gPlttBufferUnfaded, 0x400);
             CB2_SetUpReshowBattleScreenAfterMenu();
-            BeginNormalPaletteFade(0xFFFFFFFF, -2, 0, 16, 0);
+            BeginNormalPaletteFade(PALETTES_ALL, -2, 0, 16, 0);
             data[8]++;
         }
         break;

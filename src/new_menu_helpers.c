@@ -191,7 +191,7 @@ void ResetTempTileDataBuffers(void)
 {
     int i;
 
-    for (i = 0; i < (s32)NELEMS(sTempTileDataBuffers); i++)
+    for (i = 0; i < (s32)ARRAY_COUNT(sTempTileDataBuffers); i++)
         sTempTileDataBuffers[i] = NULL;
 	
     sTempTileDataBufferCursor = 0;
@@ -219,7 +219,7 @@ void *DecompressAndCopyTileDataToVram(u8 bgId, const void *src, u32 size, u16 of
 {
     u32 sizeOut;
 
-    if (sTempTileDataBufferCursor < NELEMS(sTempTileDataBuffers))
+    if (sTempTileDataBufferCursor < ARRAY_COUNT(sTempTileDataBuffers))
     {
         void *ptr = MallocAndDecompress(src, &sizeOut);
         if (!size)
@@ -238,7 +238,7 @@ void *DecompressAndCopyTileDataToVram2(u8 bgId, const void *src, u32 size, u16 o
 {
     u32 sizeOut;
 
-    if (sTempTileDataBufferCursor < NELEMS(sTempTileDataBuffers))
+    if (sTempTileDataBufferCursor < ARRAY_COUNT(sTempTileDataBuffers))
     {
         void *ptr = MallocAndDecompress(src, &sizeOut);
         if (sizeOut > size)

@@ -7,8 +7,6 @@ static void AnimAcidPoisonBubble(struct Sprite *sprite);
 static void AnimSludgeBombHitParticle(struct Sprite *sprite);
 static void AnimAcidPoisonDroplet(struct Sprite *sprite);
 static void AnimBubbleEffect(struct Sprite *sprite);
-static void sub_80B1684(struct Sprite *sprite);
-static void sub_80B1728(struct Sprite *sprite);
 static void sub_80B1798(struct Sprite *sprite);
 static void AnimBubbleEffectStep(struct Sprite *sprite);
 
@@ -188,19 +186,14 @@ static void AnimSludgeProjectile(struct Sprite *sprite)
 {
     if (!gBattleAnimArgs[3])
         StartSpriteAnim(sprite, 2);
+	
     InitSpritePosToAnimAttacker(sprite, 1);
     sprite->data[0] = gBattleAnimArgs[2];
     sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 2);
     sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, 3);
     sprite->data[5] = -30;
     InitAnimArcTranslation(sprite);
-    sprite->callback = sub_80B1684;
-}
-
-static void sub_80B1684(struct Sprite *sprite)
-{
-    if (TranslateAnimHorizontalArc(sprite))
-        DestroyAnimSprite(sprite);
+    sprite->callback = DestroyAnimSpriteAfterHorizontalTranslation;
 }
 
 static void AnimAcidPoisonBubble(struct Sprite *sprite)
@@ -209,22 +202,19 @@ static void AnimAcidPoisonBubble(struct Sprite *sprite)
 
     if (!gBattleAnimArgs[3])
         StartSpriteAnim(sprite, 2);
+	
     InitSpritePosToAnimAttacker(sprite, 1);
     SetAverageBattlerPositions(gBattleAnimTarget, 1, &l1, &l2);
+	
     if (GetBattlerSide(gBattleAnimAttacker))
         gBattleAnimArgs[4] = -gBattleAnimArgs[4];
+	
     sprite->data[0] = gBattleAnimArgs[2];
     sprite->data[2] = l1 + gBattleAnimArgs[4];
     sprite->data[4] = l2 + gBattleAnimArgs[5];
     sprite->data[5] = -30;
     InitAnimArcTranslation(sprite);
-    sprite->callback = sub_80B1728;
-}
-
-static void sub_80B1728(struct Sprite *sprite)
-{
-    if (TranslateAnimHorizontalArc(sprite))
-        DestroyAnimSprite(sprite);
+    sprite->callback = DestroyAnimSpriteAfterHorizontalTranslation;
 }
 
 static void AnimSludgeBombHitParticle(struct Sprite *sprite)
@@ -252,8 +242,10 @@ static void sub_80B1798(struct Sprite *sprite)
 static void AnimAcidPoisonDroplet(struct Sprite *sprite)
 {
     SetAverageBattlerPositions(gBattleAnimTarget, TRUE, &sprite->x, &sprite->y);
+	
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         gBattleAnimArgs[0] = -gBattleAnimArgs[0];
+	
     sprite->x += gBattleAnimArgs[0];
     sprite->y += gBattleAnimArgs[1];
     sprite->data[0] = gBattleAnimArgs[4];
@@ -272,15 +264,14 @@ static void AnimAcidPoisonDroplet(struct Sprite *sprite)
 static void AnimBubbleEffect(struct Sprite *sprite)
 {
     if (!gBattleAnimArgs[2])
-    {
         InitSpritePosToAnimTarget(sprite, TRUE);
-    }
     else
     {
         SetAverageBattlerPositions(gBattleAnimTarget, TRUE, &sprite->x, &sprite->y);
 
         if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
             gBattleAnimArgs[0] = -gBattleAnimArgs[0];
+		
         sprite->x += gBattleAnimArgs[0];
         sprite->y += gBattleAnimArgs[1];
     }
@@ -293,6 +284,7 @@ static void AnimBubbleEffectStep(struct Sprite *sprite)
     sprite->x2 = Sin(sprite->data[0], 4);
     sprite->data[1] += 0x30;
     sprite->y2 = -(sprite->data[1] >> 8);
+	
     if (sprite->affineAnimEnded)
         DestroyAnimSprite(sprite);
 }

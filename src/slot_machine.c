@@ -758,11 +758,11 @@ static const u16 sLineTiles_BLTR[] = {
 };
 
 static const struct LineStateTileIdxList sLineStateTileIdxs[] = {
-    { sLineTiles_TLBR, NELEMS(sLineTiles_TLBR) },
-    { sLineTiles_TopRow, NELEMS(sLineTiles_TopRow) },
-    { sLineTiles_MiddleRow, NELEMS(sLineTiles_MiddleRow) },
-    { sLineTiles_BottomRow, NELEMS(sLineTiles_BottomRow) },
-    { sLineTiles_BLTR, NELEMS(sLineTiles_BLTR) }
+    { sLineTiles_TLBR, ARRAY_COUNT(sLineTiles_TLBR) },
+    { sLineTiles_TopRow, ARRAY_COUNT(sLineTiles_TopRow) },
+    { sLineTiles_MiddleRow, ARRAY_COUNT(sLineTiles_MiddleRow) },
+    { sLineTiles_BottomRow, ARRAY_COUNT(sLineTiles_BottomRow) },
+    { sLineTiles_BLTR, ARRAY_COUNT(sLineTiles_BLTR) }
 };
 
 static const u8 sWInningLineFlashPalIdxs[2] = {2, 4};
@@ -1706,7 +1706,7 @@ static bool32 LoadSpriteGraphicsAndAllocateManager(void)
 {
     s32 i;
 
-    for (i = 0; i < NELEMS(sSpriteSheets); i++)
+    for (i = 0; i < ARRAY_COUNT(sSpriteSheets); i++)
         LoadCompressedSpriteSheet(&sSpriteSheets[i]);
     LoadSpritePalettes(sSpritePalettes);
     sSlotMachineGfxManager = Alloc(sizeof(*sSlotMachineGfxManager));
@@ -1943,7 +1943,7 @@ static bool8 SlotsTask_GraphicsInit(u8 * state, struct SlotMachineSetupTaskData 
     switch (*state)
     {
     case 0:
-        BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
         (*state)++;
         break;
     case 1:
@@ -1956,7 +1956,7 @@ static bool8 SlotsTask_GraphicsInit(u8 * state, struct SlotMachineSetupTaskData 
         SetGpuReg(REG_OFFSET_DISPCNT, 0);
         ResetAllBgsPos();
         ResetBgsAndClearDma3BusyFlags(FALSE);
-        InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
+        InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
         InitWindows(sWindowTemplates);
 
         SetBgTilemapBuffer(3, ptr->bg3TilemapBuffer);
@@ -2000,7 +2000,7 @@ static bool8 SlotsTask_GraphicsInit(u8 * state, struct SlotMachineSetupTaskData 
         CreateScoreDigitSprites();
         CreateClefairySprites();
         UpdateCoinsDisplay();
-        BlendPalettes(0xFFFFFFFF, 0x10, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 0x10, RGB_BLACK);
         SetVBlankCallback(VBlankCB_SlotMachine);
         SetHBlankCallback(HBlankCB_SlotMachine);
         (*state)++;
@@ -2013,8 +2013,8 @@ static bool8 SlotsTask_GraphicsInit(u8 * state, struct SlotMachineSetupTaskData 
             ShowBg(2);
             HideBg(1);
             InitReelButtonTileMem();
-            BlendPalettes(0xFFFFFFFF, 0x10, RGB_BLACK);
-            BeginNormalPaletteFade(0xFFFFFFFF, -1, 16, 0, RGB_BLACK);
+            BlendPalettes(PALETTES_ALL, 0x10, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, -1, 16, 0, RGB_BLACK);
             EnableInterrupts(INTR_FLAG_VBLANK | INTR_FLAG_HBLANK);
             (*state)++;
         }
@@ -2033,7 +2033,7 @@ static bool8 SlotsTask_FadeOut(u8 * state, struct SlotMachineSetupTaskData * ptr
     switch (*state)
     {
     case 0:
-        BeginNormalPaletteFade(0xFFFFFFFF, -1, 0, 16, 0);
+        BeginNormalPaletteFade(PALETTES_ALL, -1, 0, 16, 0);
         (*state)++;
         break;
     case 1:
@@ -2356,7 +2356,7 @@ static void Task_FlashWinningLine(u8 taskId)
             }
         }
 
-        for (i = 0; i < NELEMS(sWInningLineFlashPalIdxs); i++)
+        for (i = 0; i < ARRAY_COUNT(sWInningLineFlashPalIdxs); i++)
         {
             gPlttBufferFaded[sWInningLineFlashPalIdxs[i] + 0x60] = gPlttBufferUnfaded[sWInningLineFlashPalIdxs[i] + 0x60];
         }

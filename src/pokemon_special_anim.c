@@ -180,7 +180,7 @@ static void Task_UseItem_Normal(u8 taskId)
     case 1:
         if (!PokemonSpecialAnimSceneInitIsNotFinished())
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, -1, 16, 0, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, -1, 16, 0, RGB_BLACK);
             ptr->state++;
             SetVBlankCallback(VBlankCB_PSA);
         }
@@ -250,7 +250,7 @@ static void Task_UseItem_Normal(u8 taskId)
         {
             if (CheckIfItemIsTMHMOrEvolutionStone(ptr->itemId) != 2) // evo stone
             {
-                BeginNormalPaletteFade(0xFFFFFFFF, -1, 0, 16, RGB_BLACK);
+                BeginNormalPaletteFade(PALETTES_ALL, -1, 0, 16, RGB_BLACK);
                 ptr->state++;
             }
             else
@@ -290,7 +290,7 @@ static void Task_ForgetMove(u8 taskId)
     case 1:
         if (!PokemonSpecialAnimSceneInitIsNotFinished())
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, -1, 16, 0, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, -1, 16, 0, RGB_BLACK);
             ptr->state++;
             SetVBlankCallback(VBlankCB_PSA);
         }
@@ -399,7 +399,7 @@ static void Task_EvoStone_CantEvolve(u8 taskId)
     case 1:
         if (!PokemonSpecialAnimSceneInitIsNotFinished())
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, -1, 16, 0, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, -1, 16, 0, RGB_BLACK);
             ptr->state++;
             SetVBlankCallback(VBlankCB_PSA);
         }
@@ -439,7 +439,7 @@ static void Task_EvoStone_CantEvolve(u8 taskId)
     case 8:
         if (JOY_NEW(A_BUTTON | B_BUTTON))
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, -1, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, -1, 0, 16, RGB_BLACK);
             ptr->state++;
         }
         break;
@@ -476,7 +476,7 @@ static void Task_UseTM_NoForget(u8 taskId)
     case 1:
         if (!PokemonSpecialAnimSceneInitIsNotFinished())
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, -1, 16, 0, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, -1, 16, 0, RGB_BLACK);
             ptr->state++;
             SetVBlankCallback(VBlankCB_PSA);
         }
@@ -583,7 +583,7 @@ static void Task_CleanUp(u8 taskId)
     {
     case 0:
         SetVBlankCallback(VBlankCB_PSA);
-        BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
         ptr->state++;
         break;
     case 1:
@@ -611,7 +611,7 @@ static u16 GetAnimTypeByItemId(u16 itemId)
 {
     int i;
 
-    for (i = 0; i < NELEMS(gUnknown_8459634); i++)
+    for (i = 0; i < ARRAY_COUNT(gUnknown_8459634); i++)
     {
         if (gUnknown_8459634[i].itemId == itemId)
             return gUnknown_8459634[i].animType;

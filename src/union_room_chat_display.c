@@ -349,7 +349,7 @@ bool8 UnionRoomChat_TryAllocGraphicsWork(void)
     if (sWork && UnionRoomChat_TryAllocSpriteWork())
     {
         ResetBgsAndClearDma3BusyFlags(0);
-        InitBgsFromTemplates(0, gUnknown_845AA84, NELEMS(gUnknown_845AA84));
+        InitBgsFromTemplates(0, gUnknown_845AA84, ARRAY_COUNT(gUnknown_845AA84));
         InitWindows(gUnknown_845AA94);
         ResetTempTileDataBuffers();
         InitScanlineEffect();
@@ -420,7 +420,7 @@ void UnionRoomChat_StartDisplaySubtask(u16 arg0, u8 arg1)
     int i;
 
     sWork->subtasks[arg1].callback = DisplaySubtaskDummy;
-    for (i = 0; i < NELEMS(sSubtaskInfo); i++)
+    for (i = 0; i < ARRAY_COUNT(sSubtaskInfo); i++)
     {
         if (sSubtaskInfo[i].idx == arg0)
         {

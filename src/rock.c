@@ -150,7 +150,7 @@ static const struct Subsprite sFlyingSandSubsprites[] =
 
 static const struct SubspriteTable sFlyingSandSubspriteTable[] =
 {
-    { NELEMS(sFlyingSandSubsprites), sFlyingSandSubsprites },
+    { ARRAY_COUNT(sFlyingSandSubsprites), sFlyingSandSubsprites },
 };
 
 static const union AnimCmd sAnim_BasicRock_0[] =
@@ -317,6 +317,7 @@ static void AnimFallingRock(struct Sprite *sprite)
 {
     if (gBattleAnimArgs[3] != 0)
         SetAverageBattlerPositions(gBattleAnimTarget, 0, &sprite->x, &sprite->y);
+	
     sprite->x += gBattleAnimArgs[0];
     sprite->y += 14;
     StartSpriteAnim(sprite, gBattleAnimArgs[1]);
@@ -349,10 +350,12 @@ static void AnimRockFragment(struct Sprite *sprite)
 {
     StartSpriteAnim(sprite, gBattleAnimArgs[5]);
     AnimateSprite(sprite);
+	
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         sprite->x -= gBattleAnimArgs[0];
     else
         sprite->x += gBattleAnimArgs[0];
+	
     sprite->y += gBattleAnimArgs[1];
     sprite->data[0] = gBattleAnimArgs[4];
     sprite->data[1] = sprite->x;
@@ -372,6 +375,7 @@ static void AnimParticleInVortex(struct Sprite *sprite)
         InitSpritePosToAnimAttacker(sprite, 0);
     else
         InitSpritePosToAnimTarget(sprite, FALSE);
+	
     sprite->data[0] = gBattleAnimArgs[3];
     sprite->data[1] = gBattleAnimArgs[2];
     sprite->data[2] = gBattleAnimArgs[4];
@@ -385,10 +389,9 @@ static void sub_80B47C4(struct Sprite *sprite)
     sprite->y2 = -(sprite->data[4] >> 8);
     sprite->x2 = Sin(sprite->data[5], sprite->data[3]);
     sprite->data[5] = (sprite->data[5] + sprite->data[2]) & 0xFF;
+	
     if (--sprite->data[0] == -1)
-    {
         DestroyAnimSprite(sprite);
-    }
 }
 
 void AnimTask_LoadSandstormBackground(u8 taskId)
@@ -396,22 +399,30 @@ void AnimTask_LoadSandstormBackground(u8 taskId)
     s32 var0;
     struct BattleAnimBgData animBg;
 
-    var0 = 0;
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG1 | BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 16));
+	
     SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 1);
     SetAnimBgAttribute(1, BG_ANIM_SCREEN_SIZE, 0);
     SetAnimBgAttribute(1, BG_ANIM_CHAR_BASE_BLOCK, 1);
+	
     gBattle_BG1_X = 0;
     gBattle_BG1_Y = 0;
+	
     SetGpuReg(REG_OFFSET_BG1HOFS, gBattle_BG1_X);
     SetGpuReg(REG_OFFSET_BG1VOFS, gBattle_BG1_Y);
+	
     GetBattleAnimBgData(&animBg, 1);
+	
     AnimLoadCompressedBgTilemap(animBg.bgId, gFile_graphics_battle_anims_backgrounds_sandstorm_brew_tilemap);
     AnimLoadCompressedBgGfx(animBg.bgId, gFile_graphics_battle_anims_backgrounds_sandstorm_brew_sheet, animBg.tilesOffset);
     LoadCompressedPalette(gBattleAnimSpritePal_FlyingDirt, animBg.paletteId * 16, 32);
+	
     if (gBattleAnimArgs[0] && GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         var0 = 1;
+	else
+		var0 = 0;
+	
     gTasks[taskId].data[0] = var0;
     gTasks[taskId].func = sub_80B490C;
 }
@@ -424,7 +435,9 @@ static void sub_80B490C(u8 taskId)
         gBattle_BG1_X += -6;
     else
         gBattle_BG1_X += 6;
+	
     gBattle_BG1_Y += -1;
+	
     switch (gTasks[taskId].data[12])
     {
     case 0:
@@ -433,6 +446,7 @@ static void sub_80B490C(u8 taskId)
             gTasks[taskId].data[10] = 0;
             ++gTasks[taskId].data[11];
             SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(gTasks[taskId].data[11], 16 - gTasks[taskId].data[11]));
+			
             if (gTasks[taskId].data[11] == 7)
             {
                 ++gTasks[taskId].data[12];
@@ -453,6 +467,7 @@ static void sub_80B490C(u8 taskId)
             gTasks[taskId].data[10] = 0;
             --gTasks[taskId].data[11];
             SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(gTasks[taskId].data[11], 16 - gTasks[taskId].data[11]));
+			
             if (gTasks[taskId].data[11] == 0)
             {
                 ++gTasks[taskId].data[12];
@@ -495,9 +510,8 @@ static void AnimDirtParticleAcrossScreen(struct Sprite *sprite)
             sprite->oam.matrixNum = ST_OAM_HFLIP;
         }
         else
-        {
             sprite->x = -64;
-        }
+
         sprite->y = gBattleAnimArgs[0];
         SetSubspriteTables(sprite, sFlyingSandSubspriteTable);
         sprite->data[1] = gBattleAnimArgs[1];
@@ -512,17 +526,14 @@ static void AnimDirtParticleAcrossScreen(struct Sprite *sprite)
         sprite->y2 += (sprite->data[4] >> 8);
         sprite->data[3] &= 0xFF;
         sprite->data[4] &= 0xFF;
+		
         if (sprite->data[5] == 0)
         {
             if (sprite->x + sprite->x2 > 272)
-            {
                 sprite->callback = DestroyAnimSprite;
-            }
         }
         else if (sprite->x + sprite->x2 < -32)
-        {
             sprite->callback = DestroyAnimSprite;
-        }
     }
 }
 
@@ -549,27 +560,28 @@ void AnimTask_Rollout(u8 taskId)
     u8 var4;
     s32 var5;
     s16 pan1, pan2;
-    struct Task *task;
+    struct Task *task = &gTasks[taskId];
 
-    task = &gTasks[taskId];
     var0 = GetBattlerSpriteCoord(gBattleAnimAttacker, 2);
     var1 = GetBattlerSpriteCoord(gBattleAnimAttacker, 1) + 24;
     var2 = GetBattlerSpriteCoord(gBattleAnimTarget, 2);
-    var3 = GetBattlerSpriteCoord(gBattleAnimTarget, 1) + 24;
-    if (BATTLE_PARTNER(gBattleAnimAttacker) == gBattleAnimTarget)
-        var3 = var1;
+    var3 = BATTLE_PARTNER(gBattleAnimAttacker) == gBattleAnimTarget ? var1 : GetBattlerSpriteCoord(gBattleAnimTarget, 1) + 24;
     var4 = sub_80B4FB8();
+	
     if (var4 == 1)
         task->data[8] = 32;
     else
         task->data[8] = 48 - (var4 * 8);
+	
     task->data[0] = 0;
     task->data[11] = 0;
     task->data[9] = 0;
     task->data[12] = 1;
+	
     var5 = task->data[8];
     if (var5 < 0)
         var5 += 7;
+	
     task->data[10] = (var5 >> 3) - 1;
     task->data[2] = var0 * 8;
     task->data[3] = var1 * 8;
@@ -577,8 +589,10 @@ void AnimTask_Rollout(u8 taskId)
     task->data[5] = ((var3 - var1) * 8) / task->data[8];
     task->data[6] = 0;
     task->data[7] = 0;
+	
     pan1 = BattleAnimAdjustPanning(SOUND_PAN_ATTACKER);
     pan2 = BattleAnimAdjustPanning(SOUND_PAN_TARGET);
+	
     task->data[13] = pan1;
     task->data[14] = (pan2 - pan1) / task->data[8];
     task->data[1] = var4;
@@ -588,9 +602,8 @@ void AnimTask_Rollout(u8 taskId)
 
 static void sub_80B4D00(u8 taskId)
 {
-    struct Task *task;
+    struct Task *task = &gTasks[taskId];
 
-    task = &gTasks[taskId];
     switch (task->data[0])
     {
     case 0:
@@ -598,6 +611,7 @@ static void sub_80B4D00(u8 taskId)
         task->data[7] -= task->data[5];
         gSprites[task->data[15]].x2 = task->data[6] >> 3;
         gSprites[task->data[15]].y2 = task->data[7] >> 3;
+		
         if (++task->data[9] == 10)
         {
             task->data[11] = 20;
@@ -627,6 +641,7 @@ static void sub_80B4D00(u8 taskId)
     case 3:
         task->data[2] += task->data[4];
         task->data[3] += task->data[5];
+		
         if (++task->data[9] >= task->data[10])
         {
             task->data[9] = 0;
@@ -635,9 +650,7 @@ static void sub_80B4D00(u8 taskId)
             PlaySE12WithPanning(SE_M_DIG, task->data[13]);
         }
         if (--task->data[8] == 0)
-        {
             ++task->data[0];
-        }
         break;
     case 4:
         if (task->data[11] == 0)
@@ -678,7 +691,9 @@ static void sub_80B4E70(struct Task *task)
     x = task->data[2] >> 3;
     y = task->data[3] >> 3;
     x += (task->data[12] * 4);
+	
     spriteId = CreateSprite(spriteTemplate, x, y, 35);
+	
     if (spriteId != MAX_SPRITES)
     {
         gSprites[spriteId].data[0] = 18;
@@ -700,6 +715,7 @@ static void AnimRolloutParticle(struct Sprite *sprite)
 
         if (taskId != TAIL_SENTINEL)
             --gTasks[taskId].data[11];
+		
         DestroySprite(sprite);
     }
 }
@@ -711,6 +727,7 @@ static u8 sub_80B4FB8(void)
 
     if (var0 > 4)
         retVal = 1;
+	
     return retVal;
 }
 
@@ -729,26 +746,25 @@ static void AnimRockTomb(struct Sprite *sprite)
 static void sub_80B5024(struct Sprite *sprite)
 {
     sprite->invisible = FALSE;
+	
     if (sprite->data[3] != 0)
     {
         sprite->y2 = sprite->data[2] + sprite->data[3];
         sprite->data[3] += sprite->data[0];
         ++sprite->data[0];
+		
         if (sprite->data[3] > 0)
-        {
             sprite->data[3] = 0;
-        }
     }
     else if (--sprite->data[1] == 0)
-    {
         DestroyAnimSprite(sprite);
-    }
 }
 
 static void AnimRockBlastRock(struct Sprite *sprite)
 {
     if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_OPPONENT)
         StartSpriteAffineAnim(sprite, 1);
+	
     TranslateAnimSpriteToTargetMonLocation(sprite);
 }
 
@@ -772,6 +788,7 @@ static void sub_80B50F8(struct Sprite *sprite)
     sprite->data[4] += sprite->data[2];
     sprite->x2 += sprite->data[3] / 40;
     sprite->y2 -= Sin(sprite->data[0], sprite->data[5]);
+	
     if (sprite->data[0] > 140)
         DestroyAnimSprite(sprite);
 }
@@ -796,6 +813,7 @@ void AnimTask_MoveSeismicTossBg(u8 taskId)
     }
     gBattle_BG3_Y += gTasks[taskId].data[1] / 10;
     gTasks[taskId].data[1] -= 3;
+	
     if (gTasks[taskId].data[0] == 120)
     {
         ToggleBg3Mode(1);
@@ -815,6 +833,7 @@ void AnimTask_SeismicTossBgAccelerateDownAtEnd(u8 taskId)
     gTasks[taskId].data[1] += 80;
     gTasks[taskId].data[1] &= 0xFF;
     gBattle_BG3_Y = gTasks[taskId].data[2] + Cos(4, gTasks[taskId].data[1]);
+	
     if (gBattleAnimArgs[7] == 0xFFF)
     {
         gBattle_BG3_Y = 0;

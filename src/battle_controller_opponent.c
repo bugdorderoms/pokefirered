@@ -163,7 +163,7 @@ static void OpponentBufferRunCommand(void)
 {
     if (gBattleControllerExecFlags & gBitTable[gActiveBattler])
     {
-        if (gBattleBufferA[gActiveBattler][0] < NELEMS(sOpponentBufferCommands))
+        if (gBattleBufferA[gActiveBattler][0] < ARRAY_COUNT(sOpponentBufferCommands))
             sOpponentBufferCommands[gBattleBufferA[gActiveBattler][0]]();
         else
             OpponentBufferExecCompleted();
@@ -980,7 +980,8 @@ static void StartSendOutAnim(u8 battlerId, bool8 dontClearSubstituteBit)
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerId]], 0);
     gSprites[gBattlerSpriteIds[battlerId]].invisible = TRUE;
     gSprites[gBattlerSpriteIds[battlerId]].callback = SpriteCallbackDummy;
-    gSprites[gBattleControllerData[battlerId]].data[0] = DoPokeballSendOutAnimation(0, POKEBALL_OPPONENT_SENDOUT);
+    gSprites[gBattleControllerData[battlerId]].data[0] = 0;
+	DoPokeballSendOutAnimation(POKEBALL_OPPONENT_SENDOUT);
 }
 
 static void OpponentHandleReturnMonToBall(void)
@@ -1301,7 +1302,7 @@ static void OpponentHandleChooseMove(void)
 				speciesAttacker = gBattleMons[gActiveBattler].species;
 				speciesAttackerPartner = gBattleMons[GetBattlerAtPosition(BATTLE_PARTNER(gActiveBattler))].species;
 				
-				for (i = 0; i < NELEMS(sNaturalEnemySpecies); i++)
+				for (i = 0; i < ARRAY_COUNT(sNaturalEnemySpecies); i++)
 				{
 					if (speciesAttacker == sNaturalEnemySpecies[i][0] && speciesAttackerPartner == sNaturalEnemySpecies[i][1])
 					{

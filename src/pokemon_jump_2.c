@@ -369,7 +369,7 @@ static void sub_8147C98(void)
 static s16 GetPokemonJumpSpeciesIdx(u16 species)
 {
     u32 i;
-    for (i = 0; i < NELEMS(sPkmnJumpSpecies); i++)
+    for (i = 0; i < ARRAY_COUNT(sPkmnJumpSpecies); i++)
     {
         if (sPkmnJumpSpecies[i].species == species)
             return i;
@@ -437,8 +437,8 @@ static void sub_8147DA0(u8 taskId)
     case 3:
         if (IsLinkTaskFinished())
         {
-            BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
-            BeginNormalPaletteFade(0xFFFFFFFF, -1, 16, 0, RGB_BLACK);
+            BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, -1, 16, 0, RGB_BLACK);
             SetVBlankCallback(sub_8147D58);
             gUnknown_203F3D4->unk8++;
         }
@@ -1310,7 +1310,7 @@ static bool32 sub_8148D5C(void)
     case 3:
         if (++gUnknown_203F3D4->unk3C > 120)
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, -1, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, -1, 0, 16, RGB_BLACK);
             gUnknown_203F3D4->unkA++;
         }
         break;
@@ -1486,7 +1486,7 @@ static void sub_8149078(void)
         if (!(gUnknown_203F3D4->unk50 & 8))
         {
             gUnknown_203F3D4->unk28 = gUnknown_846B694[gUnknown_203F3D4->unk50] + (gUnknown_203F3D4->unk51 * 7);
-            gUnknown_203F3D4->unk4E = gUnknown_846B6A4[sub_8149194() % NELEMS(gUnknown_846B6A4)] + 2;
+            gUnknown_203F3D4->unk4E = gUnknown_846B6A4[sub_8149194() % ARRAY_COUNT(gUnknown_846B6A4)] + 2;
             gUnknown_203F3D4->unk50++;
         }
         else
@@ -1516,8 +1516,7 @@ static void sub_8149078(void)
 
 static int sub_8149194(void)
 {
-    // The number 1103515245 comes from the example implementation of rand and srand
-    gUnknown_203F3D4->unk24 = gUnknown_203F3D4->unk24 * 1103515245 + 24691;
+    gUnknown_203F3D4->unk24 = ISO_RANDOMIZE(gUnknown_203F3D4->unk24);
     return gUnknown_203F3D4->unk24 >> 16;
 }
 
@@ -1958,7 +1957,7 @@ static void sub_8149900(u16 arg0, u16 *arg1, u16 *arg2)
 
 static u16 sub_8149910(void)
 {
-    u16 index = Random() % NELEMS(gUnknown_846B764);
+    u16 index = Random() % ARRAY_COUNT(gUnknown_846B764);
     return gUnknown_846B764[index];
 }
 

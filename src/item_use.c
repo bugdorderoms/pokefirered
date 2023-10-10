@@ -538,7 +538,7 @@ void ItemUseOutOfBattle_EscapeRope(u8 taskId)
 
 static void sub_80A1C08(u8 taskId)
 {
-    Overworld_ResetStateAfterDigEscRope();
+    Overworld_ResetStateForLeavingMap();
     sub_80A1A44();
     gTasks[taskId].data[0] = 0;
     DisplayItemMessageOnField(taskId, 2, gStringVar4, sub_80A1C44);

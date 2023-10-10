@@ -677,13 +677,13 @@ static void InitTradeMenuResources(void)
     Menu_LoadStdPalAt(0xF0, 0x14);
     Menu_LoadStdPalAt(0xD0, 0x14);
     ResetBgsAndClearDma3BusyFlags(FALSE);
-    InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
+    InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
     SetBgTilemapBuffer(1, sTradeMenuResourcesPtr->tilemapBuffer);
     if (InitWindows(sWindowTemplates))
     {
         DeactivateAllTextPrinters();
         dummy = 590; // ?
-        for (i = 0; i < NELEMS(sWindowTemplates) - 1; i++)
+        for (i = 0; i < ARRAY_COUNT(sWindowTemplates) - 1; i++)
         {
             ClearWindowTilemap(i);
             FillWindowPixelBuffer(i, PIXEL_FILL(0));
@@ -950,7 +950,7 @@ static void CB2_ReturnFromLinkTrade2(void)
         gMain.state++;
         break;
     case 18:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         gMain.state++;
         break;
     case 19:
@@ -1130,8 +1130,8 @@ void CB2_ReturnToTradeMenuFromSummary(void)
         break;
     case 18:
         gPaletteFade.bufferTransferDisabled = FALSE;
-        BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         gMain.state++;
         break;
     case 19:
@@ -1171,7 +1171,7 @@ static void TradeMenuCB_9(void)
 {
     if (++sTradeMenuResourcesPtr->loadUISpritesState >= 16)
     {
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         sTradeMenuResourcesPtr->tradeMenuCBnum = 10;
     }
 }
@@ -1513,7 +1513,7 @@ static void Slave_HandleBlockReceivedStatus(u8 mpId, u8 blockReceivedFlags)
         switch (gBlockRecvBuffer[0][0])
         {
         case 0xEEBB:
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
             PrintTradeErrorOrStatusMessage(TRADESTATMSG_WAITINGFORFRIEND);
             sTradeMenuResourcesPtr->tradeMenuCBnum = 11;
             break;
@@ -1529,7 +1529,7 @@ static void Slave_HandleBlockReceivedStatus(u8 mpId, u8 blockReceivedFlags)
             sTradeMenuResourcesPtr->tradeMenuCBnum = 7;
             break;
         case 0xCCDD:
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
             sTradeMenuResourcesPtr->tradeMenuCBnum = 10;
             break;
         case 0xDDEE:
@@ -1580,7 +1580,7 @@ static void Master_HandleCommunication(void)
             sTradeMenuResourcesPtr->linkData[0] = 0xEEBB;
             sTradeMenuResourcesPtr->linkData[1] = 0;
             ScheduleLinkTaskWithDelay(5, 0);
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
             sTradeMenuResourcesPtr->unk_78 = sTradeMenuResourcesPtr->unk_79 = 0;
             sTradeMenuResourcesPtr->tradeMenuCBnum = 11;
         }
@@ -1723,7 +1723,7 @@ static void TradeMenuCB_0(void)
         }
         else if (sTradeMenuResourcesPtr->tradeMenuCursorPosition < 12)
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
             sTradeMenuResourcesPtr->tradeMenuCBnum = 2;
         }
         else if (sTradeMenuResourcesPtr->tradeMenuCursorPosition == 12)
@@ -1760,7 +1760,7 @@ static void TradeMenuCB_1(void)
     case MENU_NOTHING_CHOSEN:
         break;
     case 0: // SUMMARY
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         sTradeMenuResourcesPtr->tradeMenuCBnum = 2;
         break;
     case 1: // Trade

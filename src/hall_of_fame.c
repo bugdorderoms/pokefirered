@@ -10,6 +10,7 @@
 #include "pc_screen_effect.h"
 #include "new_menu_helpers.h"
 #include "strings.h"
+#include "script_menu.h"
 #include "credits.h"
 #include "event_data.h"
 #include "overworld.h"
@@ -17,9 +18,11 @@
 #include "text_window.h"
 #include "field_fadetransition.h"
 #include "menu.h"
+#include "script.h"
 #include "string_util.h"
 #include "trig.h"
 #include "random.h"
+#include "pokedex.h"
 #include "graphics.h"
 #include "constants/global.h"
 #include "constants/songs.h"
@@ -336,7 +339,7 @@ static bool8 InitHallOfFameScreen(void)
         if (!DrawHofBackground())
         {
             SetVBlankCallback(VBlankCB_HofIdle);
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
             gMain.state++;
         }
         break;
@@ -547,7 +550,7 @@ static void Task_Hof_PaletteFadeAndPrintWelcomeText(u8 taskId)
 {
     u16 i;
 
-    BeginNormalPaletteFade(0xFFFF0000, 0, 0, 0, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_OBJECTS, 0, 0, 0, RGB_BLACK);
     for (i = 0; i < PARTY_SIZE; i++)
     {
         if (gTasks[taskId].data[5 + i] != 0xFF)
@@ -643,7 +646,7 @@ static void Task_Hof_ExitOnKeyPressed(u8 taskId)
 static void Task_Hof_HandlePaletteOnExit(u8 taskId)
 {
     CpuCopy16(gPlttBufferFaded, gPlttBufferUnfaded, PLTT_BUFFER_SIZE * sizeof(u16));
-    BeginNormalPaletteFade(0xFFFFFFFF, 8, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 8, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_Hof_HandleExit;
 }
 
@@ -689,7 +692,7 @@ static void SetWarpsToRollCredits(void)
     ResetInitialPlayerAvatarState();
 }
 
-void CB2_InitHofPC(void)
+static void CB2_InitHofPC(void)
 {
     switch (gMain.state)
     {
@@ -714,7 +717,7 @@ void CB2_InitHofPC(void)
     case 3:
         if (!DrawHofBackground())
         {
-            BeginPCScreenEffect_TurnOn(0, 0, 0);
+            BeginPCScreenEffect_TurnOn(0, 0);
             SetVBlankCallback(VBlankCB_HofIdle);
             gMain.state++;
         }
@@ -819,7 +822,7 @@ static void Task_HofPC_DrawSpritesPrintText(u8 taskId)
         }
     }
 
-    BlendPalettes(0xFFFF0000, 0xC, HALL_OF_FAME_BG_PAL);
+    BlendPalettes(PALETTES_OBJECTS, 0xC, HALL_OF_FAME_BG_PAL);
 
     ConvertIntToDecimalStringN(gStringVar1, gTasks[taskId].data[1], STR_CONV_MODE_LEFT_ALIGN, 3);
     StringExpandPlaceholders(gStringVar4, gText_HOFNumber);
@@ -916,7 +919,7 @@ static void Task_HofPC_HandleInput(u8 taskId)
 static void Task_HofPC_HandlePaletteOnExit(u8 taskId)
 {
     CpuCopy16(gPlttBufferFaded, gPlttBufferUnfaded, 0x400);
-    BeginPCScreenEffect_TurnOff(0, 0, 0);
+    BeginPCScreenEffect_TurnOff(0, 0);
     gTasks[taskId].func = Task_HofPC_HandleExit;
 }
 
@@ -984,17 +987,11 @@ static void HallOfFame_PrintMonInfo(struct HallofFameMon* currMon, u8 unused1, u
     if (currMon->species != SPECIES_EGG)
     {
         StringCopy(text2, gText_Number);
-        dexNumber = SpeciesToPokedexNum(currMon->species);
-        if (dexNumber != 0xFFFF)
-        {
-            text[0] = (dexNumber / 100) + CHAR_0;
-            text[1] = ((dexNumber %= 100) / 10) + CHAR_0;
-            text[2] = (dexNumber % 10) + CHAR_0;
-        }
-        else
-        {
-            text[0] = text[1] = text[2] = CHAR_QUESTION_MARK;
-        }
+        dexNumber = SpeciesToNationalPokedexNum(currMon->species);
+		
+		text[0] = (dexNumber / 100) + CHAR_0;
+		text[1] = ((dexNumber %= 100) / 10) + CHAR_0;
+		text[2] = (dexNumber % 10) + CHAR_0;
         text[3] = EOS;
         StringAppend(text2, text);
         AddTextPrinterParameterized3(0, 2, 0x10, 1, sTextColors[0], 0, text2);
@@ -1144,7 +1141,7 @@ static void HofInit_ResetGpuBuffersAndLoadConfettiGfx(void)
 static void Hof_InitBgs(void)
 {
     ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sHof_BgTemplates, NELEMS(sHof_BgTemplates));
+    InitBgsFromTemplates(0, sHof_BgTemplates, ARRAY_COUNT(sHof_BgTemplates));
     SetBgTilemapBuffer(1, sHofGfxPtr->tilemap1);
     SetBgTilemapBuffer(3, sHofGfxPtr->tilemap2);
     ChangeBgX(0, 0, 0);
@@ -1248,4 +1245,37 @@ static bool8 Hof_SpawnConfetti(void)
     sprite->data[1] = Random() & 3 ? 0 : 1;
 
     return FALSE;
+}
+
+static void Task_WaitFadeAndInitHofPc(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        FreeAllWindowBuffers();
+        ResetBgsAndClearDma3BusyFlags(0);
+        DestroyTask(taskId);
+        SetMainCallback2(CB2_InitHofPC);
+    }
+}
+
+void HallOfFamePCBeginFade(void)
+{
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
+    ScriptContext2_Enable();
+    CreateTask(Task_WaitFadeAndInitHofPc, 0);
+}
+
+static void ReshowPCMenuAfterHallOfFamePC(void)
+{
+    ScriptContext2_Enable();
+    Overworld_PlaySpecialMapMusic();
+    CreatePCMenu();
+    ScriptMenu_DisplayPCStartupPrompt();
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0x10, 0, RGB_BLACK);
+}
+
+void ReturnFromHallOfFamePC(void)
+{
+	SetMainCallback2(CB2_ReturnToField);
+    gFieldCallback = ReshowPCMenuAfterHallOfFamePC;
 }

@@ -536,11 +536,11 @@ static bool8 RunBerryPouchInit(void)
         gMain.state++;
         break;
     case 17:
-        BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
         gMain.state++;
         break;
     case 18:
-        BeginNormalPaletteFade(0xFFFFFFFF, -2, 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, -2, 16, 0, RGB_BLACK);
         gMain.state++;
         break;
     default:
@@ -554,7 +554,7 @@ static bool8 RunBerryPouchInit(void)
 
 static void AbortBerryPouchLoading(void)
 {
-    BeginNormalPaletteFade(0xFFFFFFFF, -2, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, -2, 0, 16, RGB_BLACK);
     CreateTask(Task_AbortBerryPouchLoading_WaitFade, 0);
     SetVBlankCallback(VBlankCB_BerryPouchIdle);
     SetMainCallback2(CB2_BerryPouchIdle);
@@ -575,7 +575,7 @@ static void BerryPouchInitBgs(void)
     ResetAllBgsCoordinatesAndBgCntRegs();
     memset(sResources->bg1TilemapBuffer, 0, BG_SCREEN_SIZE);
     ResetBgsAndClearDma3BusyFlags(FALSE);
-    InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
+    InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
     SetBgTilemapBuffer(1, sResources->bg1TilemapBuffer);
     ScheduleBgCopyTilemapToVram(1);
     SetGpuReg(REG_OFFSET_BLDCNT, 0);
@@ -815,7 +815,7 @@ static void BerryPouch_DestroyResources(void)
 
 void BerryPouch_StartFadeToExitCallback(u8 taskId)
 {
-    BeginNormalPaletteFade(0xFFFFFFFF, -2, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, -2, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_BerryPouchFadeToExitCallback;
 }
 

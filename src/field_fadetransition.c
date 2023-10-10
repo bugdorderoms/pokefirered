@@ -554,7 +554,7 @@ static void Task_CableClubWarp(u8 taskId)
         task->data[0]++;
         break;
     case 1:
-        if (!gPaletteFade.active && BGMusicStopped())
+        if (!gPaletteFade.active && IsNotWaitingForBGMStop())
             task->data[0]++;
         break;
     case 2:
@@ -587,7 +587,7 @@ static void Task_ReturnFromLinkRoomWarp(u8 taskId)
         data[0]++;
         break;
     case 1:
-        if (!gPaletteFade.active && BGMusicStopped())
+        if (!gPaletteFade.active && IsNotWaitingForBGMStop())
         {
             SetCloseLinkCallback();
             data[0]++;
@@ -620,7 +620,7 @@ static void Task_Teleport2Warp(u8 taskId)
         task->data[0]++;
         break;
     case 1:
-        if (!gPaletteFade.active && BGMusicStopped())
+        if (!gPaletteFade.active && IsNotWaitingForBGMStop())
             task->data[0]++;
         break;
     case 2:
@@ -651,7 +651,7 @@ static void Task_TeleportWarp(u8 taskId)
         }
         break;
     case 2:
-        if (!gPaletteFade.active && BGMusicStopped())
+        if (!gPaletteFade.active && IsNotWaitingForBGMStop())
             task->data[0]++;
         break;
     case 3:
@@ -758,7 +758,7 @@ static void Task_StairWarp(u8 taskId)
         break;
     case 3:
         sub_807EAC4(data[2], data[3], &data[4], &data[5], &data[6]);
-        if (!gPaletteFade.active && BGMusicStopped())
+        if (!gPaletteFade.active && IsNotWaitingForBGMStop())
             data[0]++;
         break;
     default:

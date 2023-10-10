@@ -210,7 +210,20 @@ static const struct SpriteSheet sWaveformSpriteSheet = {
     gUnknown_83CE810, 0x01c0, TAG_TILE_WAVEFORM
 };
 
-static const struct OamData gUnknown_83CEB88;
+static const struct OamData gUnknown_83CEB88 = {
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(64x64),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(64x64),
+    .tileNum = 0x000,
+    .priority = 0,
+    .paletteNum = 0
+};
 
 static const struct SpriteTemplate sSpriteTemplate_CursorMon = {
     .tileTag = TAG_TILE_2,
@@ -267,23 +280,7 @@ static const struct WindowTemplate sYesNoWindowTemplate = {
     .baseBlock = 0x05c
 };
 
-static const struct OamData gUnknown_83CEB88 = {
-    .y = 0,
-    .affineMode = ST_OAM_AFFINE_OFF,
-    .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
-    .bpp = ST_OAM_4BPP,
-    .shape = SPRITE_SHAPE(64x64),
-    .x = 0,
-    .matrixNum = 0,
-    .size = SPRITE_SIZE(64x64),
-    .tileNum = 0x000,
-    .priority = 0,
-    .paletteNum = 0
-};
-
 // Waveform
-
 static const struct OamData gUnknown_83CEB90 = {
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
@@ -364,6 +361,7 @@ void Cb2_EnterPSS(u8 boxOption)
     ResetTasks();
     sCurrentBoxOption = boxOption;
     gPSSData = Alloc(sizeof(struct PokemonStorageSystemData));
+	
     if (gPSSData == NULL)
         SetMainCallback2(Cb2_ExitPSS);
     else
@@ -382,6 +380,7 @@ void Cb2_ReturnToPSS(void)
 {
     ResetTasks();
     gPSSData = Alloc(sizeof(struct PokemonStorageSystemData));
+	
     if (gPSSData == NULL)
         SetMainCallback2(Cb2_ExitPSS);
     else
@@ -455,6 +454,7 @@ static void Cb_InitPSS(u8 taskId)
         SetVBlankCallback(NULL);
         SetGpuReg(REG_OFFSET_DISPCNT, 0);
         sub_808CF10();
+		
         if (gPSSData->isReshowingPSS)
         {
             switch (sWhichToReshow)
@@ -538,14 +538,15 @@ static void Cb_InitPSS(u8 taskId)
         break;
     case 10:
         sub_808CFC4();
+		
         if (!gPSSData->isReshowingPSS)
         {
-            BlendPalettes(0xFFFFFFFF, 0x10, RGB_BLACK);
+            BlendPalettes(PALETTES_ALL, 0x10, RGB_BLACK);
             SetPSSCallback(Cb_ShowPSS);
         }
         else
         {
-            BlendPalettes(0xFFFFFFFF, 0x10, RGB_BLACK);
+            BlendPalettes(PALETTES_ALL, 0x10, RGB_BLACK);
             SetPSSCallback(Cb_ReshowPSS);
         }
         SetVBlankCallback(VblankCb_PSS);
@@ -553,7 +554,6 @@ static void Cb_InitPSS(u8 taskId)
     default:
         return;
     }
-
     gPSSData->state++;
 }
 
@@ -563,7 +563,7 @@ static void Cb_ShowPSS(u8 taskId)
     {
     case 0:
         PlaySE(SE_PC_LOGIN);
-        BeginPCScreenEffect_TurnOn(20, 0, 1);
+        BeginPCScreenEffect_TurnOn(20, 1);
         gPSSData->state++;
         break;
     case 1:
@@ -578,7 +578,7 @@ static void Cb_ReshowPSS(u8 taskId)
     switch (gPSSData->state)
     {
     case 0:
-        BeginNormalPaletteFade(0xFFFFFFFF, -1, 0x10, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, -1, 0x10, 0, RGB_BLACK);
         gPSSData->state++;
         break;
     case 1:
@@ -1849,7 +1849,7 @@ static void Cb_NameBox(u8 taskId)
     {
     case 0:
         sub_8093630();
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         gPSSData->state++;
         break;
     case 1:
@@ -1869,7 +1869,7 @@ static void Cb_ShowMonSummary(u8 taskId)
     {
     case 0:
         sub_80936B8();
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         gPSSData->state++;
         break;
     case 1:
@@ -1888,7 +1888,7 @@ static void Cb_GiveItemFromBag(u8 taskId)
     switch (gPSSData->state)
     {
     case 0:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         gPSSData->state++;
         break;
     case 1:
@@ -1948,7 +1948,7 @@ static void Cb_OnCloseBoxPressed(u8 taskId)
         }
         break;
     case 3:
-        BeginPCScreenEffect_TurnOff(20, 0, 1);
+        BeginPCScreenEffect_TurnOff(20, 1);
         gPSSData->state++;
         break;
     case 4:
@@ -2009,7 +2009,7 @@ static void Cb_OnBPressed(u8 taskId)
         }
         break;
     case 3:
-        BeginPCScreenEffect_TurnOff(20, 0, 0);
+        BeginPCScreenEffect_TurnOff(20, 0);
         gPSSData->state++;
         break;
     case 4:
@@ -2107,7 +2107,7 @@ static void ScrollBackground(void)
 
 static void LoadPSSMenuGfx(void)
 {
-    InitBgsFromTemplates(0, gUnknown_83CEA50, NELEMS(gUnknown_83CEA50));
+    InitBgsFromTemplates(0, gUnknown_83CEA50, ARRAY_COUNT(gUnknown_83CEA50));
     DecompressAndLoadBgGfxUsingHeap(1, gPSSMenu_Gfx, 0, 0, 0);
     LZDecompressWram(gUnknown_83CE5FC, gPSSData->field_5AC4);
     SetBgTilemapBuffer(1, gPSSData->field_5AC4);

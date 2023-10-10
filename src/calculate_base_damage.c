@@ -10,6 +10,7 @@
 #include "event_data.h"
 #include "util.h"
 #include "wild_encounter.h"
+#include "pokedex.h"
 #include "pokemon_storage_system.h"
 #include "battle_gfx_sfx_util.h"
 #include "battle_controllers.h"

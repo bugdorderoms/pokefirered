@@ -7,6 +7,7 @@
 #include "new_menu_helpers.h"
 #include "link.h"
 #include "menu.h"
+#include "random.h"
 #include "save.h"
 #include "new_game.h"
 #include "title_screen.h"
@@ -807,7 +808,7 @@ static bool8 RunCopyrightScreen(void)
         ResetTasks();
         ResetSpriteData();
         FreeAllSpritePalettes();
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, 0xFFFF);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, 0xFFFF);
         SetGpuReg(REG_OFFSET_BG0CNT, BGCNT_PRIORITY(0) | BGCNT_CHARBASE(0) | BGCNT_16COLOR | BGCNT_SCREENBASE(7));
         EnableInterrupts(INTR_FLAG_VBLANK);
         SetVBlankCallback(VBlankCB_Copyright);
@@ -824,7 +825,7 @@ static bool8 RunCopyrightScreen(void)
         GameCubeMultiBoot_Main(&sGcmb);
         if (sGcmb.gcmb_field_2 != 1)
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
             gMain.state++;
         }
         break;
@@ -900,7 +901,7 @@ static void CB2_SetUpIntro(void)
         DmaFill16(3, 0, PLTT, PLTT_SIZE);
         FillPalette(RGB_BLACK, 0, 0x400);
         ResetBgsAndClearDma3BusyFlags(FALSE);
-        InitBgsFromTemplates(0, sBgTemplates_GameFreakScene, NELEMS(sBgTemplates_GameFreakScene));
+        InitBgsFromTemplates(0, sBgTemplates_GameFreakScene, ARRAY_COUNT(sBgTemplates_GameFreakScene));
         break;
     case 1:
         LoadPalette(sBg3Pal_GameFreakPresents, 0x00, 0x20);
@@ -912,7 +913,7 @@ static void CB2_SetUpIntro(void)
         if (!FreeTempTileDataBuffersIfPossible())
         {
             StartIntroSequence();
-            BlendPalettes(0xFFFFFFFF, 16, RGB_BLACK);
+            BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
             SetMainCallback2(CB2_Intro);
             SetVBlankCallback(VBlankCB_Intro);
         }
@@ -1012,7 +1013,7 @@ static void IntroCB_OpenWin1ToTheaterDimensions(struct IntroSequenceData * this)
         break;
     case 1:
         ShowBg(3);
-        BlendPalettes(0xFFFFFFFF, 0x00, RGB_BLACK);
+        BlendPalettes(PALETTES_ALL, 0x00, RGB_BLACK);
         this->state++;
         break;
     case 2:
@@ -1168,7 +1169,7 @@ static void IntroCB_FightScene(struct IntroSequenceData * this)
         LoadPalette(sBg0Pal_FightScene1, 0x10, 0x20);
         LoadPalette(sBg1Pal_FightScene1, 0x20, 0x20);
         BlendPalettes(0x00000006, 0x10, RGB_WHITE);
-        InitBgsFromTemplates(0, sBgTemplates_FightScene1, NELEMS(sBgTemplates_FightScene1));
+        InitBgsFromTemplates(0, sBgTemplates_FightScene1, ARRAY_COUNT(sBgTemplates_FightScene1));
         DecompressAndCopyTileDataToVram(1, sBg1Tiles_FightScene1, 0, 0, 0);
         DecompressAndCopyTileDataToVram(1, sBg1Map_FightScene1, 0, 0, 1);
         ShowBg(1);
@@ -1278,7 +1279,7 @@ static void IntroCB_FightScene2(struct IntroSequenceData * this)
     {
     case 0:
         BlendPalettes(0xFFFFFFFE, 16, RGB_WHITE);
-        InitBgsFromTemplates(0, sBgTemplates_FightScene2, NELEMS(sBgTemplates_FightScene2));
+        InitBgsFromTemplates(0, sBgTemplates_FightScene2, ARRAY_COUNT(sBgTemplates_FightScene2));
         DecompressAndCopyTileDataToVram(3, sBg3Tiles_FightScene2, 0, 0, 0);
         DecompressAndCopyTileDataToVram(3, sBg3Map_FightScene2, 0, 0, 1);
         ShowBg(3);
@@ -1403,7 +1404,7 @@ static void IntroCB_FightScene3(struct IntroSequenceData * this)
         LoadPalette(sBg1Pal_FightScene3, 0x10, 0x40);
         LoadPalette(sSpritePals_Gengar, 0x50, 0x20);
         BlendPalettes(0xFFFFFFFE, 16, RGB_WHITE);
-        InitBgsFromTemplates(0, sBgTemplates_FightScene3, NELEMS(sBgTemplates_FightScene3));
+        InitBgsFromTemplates(0, sBgTemplates_FightScene3, ARRAY_COUNT(sBgTemplates_FightScene3));
         DecompressAndCopyTileDataToVram(1, sBg1Tiles_FightScene3, 0, 0, 0);
         DecompressAndCopyTileDataToVram(1, sBg1Map_FightScene3, 0, 0, 1);
         ShowBg(1);
@@ -1768,7 +1769,7 @@ static void GameFreakScene_LoadGfxCreateStar(void)
     u8 spriteId;
     static EWRAM_DATA u32 sTrailingSparklesRngSeed = 0;
 
-    for (i = 0; i < NELEMS(sSpriteSheets_GameFreakScene); i++)
+    for (i = 0; i < ARRAY_COUNT(sSpriteSheets_GameFreakScene); i++)
     {
         LoadCompressedSpriteSheet(&sSpriteSheets_GameFreakScene[i]);
     }
@@ -1847,7 +1848,7 @@ static void Task_GameFreakScene_TrailingSparkleSpawner(u8 taskId)
         if (gSprites[spriteId].data[3] < 0)
             gSprites[spriteId].data[3] = 1;
         data[0]++;
-        if (data[0] >= NELEMS(sTrailingSparkleCoords))
+        if (data[0] >= ARRAY_COUNT(sTrailingSparkleCoords))
         {
             data[1]++;
             if (data[1] > 1)
@@ -1872,8 +1873,8 @@ static void Task_RevealGameFreakTextSparklesSpawner(u8 taskId)
     {
         r2 = data[1];
         data[1] += 4;
-        if (data[1] >= NELEMS(sTrailingSparkleCoords))
-            data[1] -= NELEMS(sTrailingSparkleCoords);
+        if (data[1] >= ARRAY_COUNT(sTrailingSparkleCoords))
+            data[1] -= ARRAY_COUNT(sTrailingSparkleCoords);
         CreateSprite(&sSpriteTemplate_RevealGameFreakTextSparkles, sTrailingSparkleCoords[r2].x, sTrailingSparkleCoords[r2].y, 3);
         data[2]++;
         if (data[2] > 8)
@@ -2049,7 +2050,7 @@ static void SpriteCB_LargeStar(struct Sprite * sprite)
     if (sprite->data[5] % sTrailingSparklesSpawnRate)
     {
         LoadWordFromTwoHalfwords(&sprite->data[6], &v);
-        v = v * 1103515245 + 24691;
+        v = ISO_RANDOMIZE(v);
         StoreWordInTwoHalfwords(&sprite->data[6], v);
         v >>= 16;
         GameFreakScene_TrailingSparklesGen(sprite->x, sprite->y + sprite->y2, v);
@@ -2473,7 +2474,7 @@ static void LoadFightSceneSpriteTilesAndPals(void)
 {
     int i;
     
-    for (i = 0; i < NELEMS(sFightSceneSpriteSheets); i++)
+    for (i = 0; i < ARRAY_COUNT(sFightSceneSpriteSheets); i++)
     {
         LoadCompressedSpriteSheet(&sFightSceneSpriteSheets[i]);
     }

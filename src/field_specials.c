@@ -6,9 +6,12 @@
 #include "field_player_avatar.h"
 #include "overworld.h"
 #include "field_weather.h"
+#include "hall_of_fame.h"
 #include "field_message_box.h"
 #include "event_data.h"
 #include "strings.h"
+#include "load_save.h"
+#include "script_pokemon_util.h"
 #include "battle.h"
 #include "fieldmap.h"
 #include "item.h"
@@ -17,11 +20,13 @@
 #include "task.h"
 #include "battle_tower.h"
 #include "berry_pouch.h"
+#include "event_scripts.h"
 #include "field_camera.h"
 #include "field_effect.h"
 #include "event_object_movement.h"
 #include "menu_indicators.h"
 #include "random.h"
+#include "credits.h"
 #include "tm_case.h"
 #include "item_menu.h"
 #include "mail_data.h"
@@ -42,6 +47,7 @@
 #include "constants/maps.h"
 #include "constants/region_map_sections.h"
 #include "constants/moves.h"
+#include "constants/heal_locations.h"
 #include "constants/menu.h"
 #include "constants/event_objects.h"
 #include "constants/metatile_labels.h"
@@ -331,7 +337,7 @@ static const u8 sSlotMachineIndices[] = {
 
 u8 GetRandomSlotMachineId(void)
 {
-    return sSlotMachineIndices[Random() % NELEMS(sSlotMachineIndices)];
+    return sSlotMachineIndices[Random() % ARRAY_COUNT(sSlotMachineIndices)];
 }
 
 bool8 IsThereRoomInAnyBoxForMorePokemon(void)
@@ -580,10 +586,11 @@ static u16 SampleResortGorgeousMon(void)
     for (i = 0; i < 100; i++)
     {
         species = (Random() % (NUM_SPECIES - 1)) + 1;
-        if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), 0) == TRUE)
+		
+        if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
             return species;
     }
-    while (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), 0) != TRUE)
+    while (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
     {
         if (species == SPECIES_BULBASAUR)
             species = NUM_SPECIES - 1;
@@ -595,7 +602,7 @@ static u16 SampleResortGorgeousMon(void)
 
 static u16 SampleResortGorgeousReward(void)
 {
-	return (Random() % 100) >= 30 ? ITEM_LUXURY_BALL : sResortGorgeousDeluxeRewards[Random() % NELEMS(sResortGorgeousDeluxeRewards)];
+	return (Random() % 100) >= 30 ? ITEM_LUXURY_BALL : sResortGorgeousDeluxeRewards[Random() % ARRAY_COUNT(sResortGorgeousDeluxeRewards)];
 }
 
 bool8 CheckAddCoins(void)
@@ -1104,8 +1111,8 @@ static const u16 sRotomForms[] =
 };
 
 static const struct FormChangeListMenuActions sFormChangeMenuLabels[] = {
-	{sDeoxysListMenu, sDeoxysForms, NELEMS(sDeoxysListMenu)},
-	{sRotomListMenu, sRotomForms, NELEMS(sRotomListMenu)},
+	{sDeoxysListMenu, sDeoxysForms, ARRAY_COUNT(sDeoxysListMenu)},
+	{sRotomListMenu, sRotomForms, ARRAY_COUNT(sRotomListMenu)},
 };
 
 static u8 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const struct FieldSpecialListMenu *menuListTemplate)
@@ -1376,7 +1383,7 @@ static const u16 sStarterSpecies[] = {
 
 static u16 GetStarterSpeciesById(u16 idx)
 {
-    if (idx >= NELEMS(sStarterSpecies))
+    if (idx >= ARRAY_COUNT(sStarterSpecies))
         idx = 0;
     return sStarterSpecies[idx];
 }
@@ -1388,7 +1395,7 @@ u16 GetStarterSpecies(void)
 
 void SetSeenMon(void)
 {
-    GetSetPokedexFlag(SpeciesToNationalPokedexNum(gSpecialVar_0x8004), 2);
+    GetSetPokedexFlag(SpeciesToNationalPokedexNum(gSpecialVar_0x8004), FLAG_SET_SEEN);
 }
 
 void ResetContextNpcTextColor(void)
@@ -1770,12 +1777,8 @@ void DoPokemonLeagueLightingEffect(void)
 static void Task_RunPokemonLeagueLightingEffect(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
-    if (!gPaletteFade.active
-     && FlagGet(FLAG_TEMP_2) != FALSE
-     && FlagGet(FLAG_TEMP_5) != TRUE
-     && gGlobalFieldTintMode != GF_TINT_BACKUP_GRAYSCALE
-     && --data[0] == 0
-    )
+	
+    if (!gPaletteFade.active && FlagGet(FLAG_TEMP_2) && !FlagGet(FLAG_TEMP_5) && --data[0] == 0)
     {
         if (++data[1] == data[2])
             data[1] = 0;
@@ -1842,7 +1845,7 @@ bool8 CapeBrinkGetMoveToTeachLeadPokemon(void)
     u8 leadMonSlot = GetLeadMonIndex();
     u8 i;
     gSpecialVar_0x8007 = leadMonSlot;
-    for (i = 0; i < NELEMS(sCapeBrinkCompatibleSpecies); i++)
+    for (i = 0; i < ARRAY_COUNT(sCapeBrinkCompatibleSpecies); i++)
     {
         if (GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_SPECIES2, NULL) == sCapeBrinkCompatibleSpecies[i])
         {
@@ -1850,7 +1853,7 @@ bool8 CapeBrinkGetMoveToTeachLeadPokemon(void)
             break;
         }
     }
-    if (i == NELEMS(sCapeBrinkCompatibleSpecies) || GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_FRIENDSHIP) != 255)
+    if (i == ARRAY_COUNT(sCapeBrinkCompatibleSpecies) || GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_FRIENDSHIP) != 255)
         return FALSE;
     if (tutorMonId == 0)
     {
@@ -2171,4 +2174,99 @@ void ChooseItemFromBag(void)
 		    GoToBagMenu(ITEMMENULOCATION_CHOOSE_ITEM, pocket - 1, CB2_ReturnToFieldContinueScript);
 			break;
 	}
+}
+
+void EnterHallOfFame(void)
+{
+    HealPlayerParty();
+	
+    if (FlagGet(FLAG_SYS_GAME_CLEAR))
+        gHasHallOfFameRecords = TRUE;
+    else
+    {
+        gHasHallOfFameRecords = FALSE;
+        FlagSet(FLAG_SYS_GAME_CLEAR);
+    }
+    if (GetGameStat(GAME_STAT_FIRST_HOF_PLAY_TIME) == 0)
+        SetGameStat(GAME_STAT_FIRST_HOF_PLAY_TIME, (gSaveBlock2Ptr->playTimeHours << 16) | (gSaveBlock2Ptr->playTimeMinutes << 8) | gSaveBlock2Ptr->playTimeSeconds);
+
+    SetContinueGameWarpStatus();
+    SetContinueGameWarpToHealLocation(SPAWN_PALLET_TOWN);
+    SetMainCallback2(CB2_DoHallOfFameScreen);
+}
+
+void SetCB2WhiteOut(void)
+{
+    SetMainCallback2(CB2_WhiteOut);
+}
+
+bool8 GetPokedexCount(void)
+{
+    if (gSpecialVar_0x8004 == 0)
+    {
+        gSpecialVar_0x8005 = GetKantoPokedexCount(FLAG_GET_SEEN);
+        gSpecialVar_0x8006 = GetKantoPokedexCount(FLAG_GET_CAUGHT);
+    }
+    else
+    {
+        gSpecialVar_0x8005 = GetNationalPokedexCount(FLAG_GET_SEEN);
+        gSpecialVar_0x8006 = GetNationalPokedexCount(FLAG_GET_CAUGHT);
+    }
+    return IsNationalPokedexEnabled();
+}
+
+static const u8 *GetProfOaksRatingMessageByCount(u16 count)
+{
+    gSpecialVar_Result = FALSE;
+
+    if (count < 10)
+        return PokedexRating_Text_LessThan10;
+    else if (count < 20)
+        return PokedexRating_Text_LessThan20;
+    else if (count < 30)
+        return PokedexRating_Text_LessThan30;
+    else if (count < 40)
+        return PokedexRating_Text_LessThan40;
+    else if (count < 50)
+        return PokedexRating_Text_LessThan50;
+    else if (count < 60)
+        return PokedexRating_Text_LessThan60;
+    else if (count < 70)
+        return PokedexRating_Text_LessThan70;
+    else if (count < 80)
+        return PokedexRating_Text_LessThan80;
+    else if (count < 90)
+        return PokedexRating_Text_LessThan90;
+    else if (count < 100)
+        return PokedexRating_Text_LessThan100;
+    else if (count < 110)
+        return PokedexRating_Text_LessThan110;
+    else if (count < 120)
+        return PokedexRating_Text_LessThan120;
+    else if (count < 130)
+        return PokedexRating_Text_LessThan130;
+    else if (count < 140)
+        return PokedexRating_Text_LessThan140;
+    else if (count < 150)
+        return PokedexRating_Text_LessThan150;
+    else if (count == 150)
+    {
+        // Mew doesn't count for completing the pokedex
+        if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(SPECIES_MEW), FLAG_GET_CAUGHT))
+            return PokedexRating_Text_LessThan150;
+
+        gSpecialVar_Result = TRUE;
+        return PokedexRating_Text_Complete;
+    }
+    else if (count == 151)
+    {
+        gSpecialVar_Result = TRUE;
+        return PokedexRating_Text_Complete;
+    }
+    return PokedexRating_Text_LessThan10;
+}
+
+void GetProfOaksRatingMessage(void)
+{
+    ShowFieldMessage(GetProfOaksRatingMessageByCount(gSpecialVar_0x8004));
 }

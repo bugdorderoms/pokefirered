@@ -434,7 +434,7 @@ static bool32 SavedMapViewIsEmpty(void)
     u16 i;
     u32 marker = 0;
 
-    for (i = 0; i < NELEMS(gSaveBlock2Ptr->mapView); i++)
+    for (i = 0; i < ARRAY_COUNT(gSaveBlock2Ptr->mapView); i++)
         marker |= gSaveBlock2Ptr->mapView[i];
 	
 	return (marker == 0);
@@ -760,9 +760,6 @@ static void Fieldmap_ApplyGlobalTintToPaletteEntries(u16 offset, u16 size)
     case GF_TINT_SEPIA:
         TintPalette_SepiaTone(gPlttBufferUnfaded + offset, size);
         break;
-    case GF_TINT_BACKUP_GRAYSCALE:
-        TintPalette_GrayScale(gPlttBufferUnfaded + offset, size);
-        break;
     default:
         return;
     }
@@ -780,9 +777,6 @@ void Fieldmap_ApplyGlobalTintToPaletteSlot(u8 slot, u8 count)
         break;
     case GF_TINT_SEPIA:
         TintPalette_SepiaTone(gPlttBufferUnfaded + slot * 16, count * 16);
-        break;
-    case GF_TINT_BACKUP_GRAYSCALE:
-        TintPalette_GrayScale(gPlttBufferUnfaded + slot * 16, count * 16);
         break;
     default:
         return;

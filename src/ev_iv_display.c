@@ -387,7 +387,7 @@ static void Task_LoadEvIvDisplay(u8 taskId)
 		    CopyBgTilemapBufferToVram(3);
 		    break;
 		case 18:
-		    BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+		    BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
 		    break;
 		case 19:
 		    SetVBlankCallback(VBlank_EvIvDisplay);
@@ -570,7 +570,7 @@ static void Task_EvIvDisplay_HandleInput(u8 taskId)
 	if (JOY_NEW(A_BUTTON | B_BUTTON))
 	{
 		PlaySE(SE_PC_OFF);
-		BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+		BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
 		gTasks[taskId].func = Task_WaitFadeAndCloseEvIvDisplay;
 	}
 }

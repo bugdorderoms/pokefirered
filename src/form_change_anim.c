@@ -110,7 +110,7 @@ static void Task_DoFusionWhiteScreen(u8 taskId)
 	{
 		case 0:
 			PlaySE(SE_M_REFLECT);
-			BeginNormalPaletteFade(0xFFFFFFFF, -2, 0, 16, RGB_WHITE); // Blend screen to white
+			BeginNormalPaletteFade(PALETTES_ALL, -2, 0, 16, RGB_WHITE); // Blend screen to white
 			++tStep;
 			break;
 		case 1:
@@ -124,7 +124,7 @@ static void Task_DoFusionWhiteScreen(u8 taskId)
 		case 2:
 			if (++tDelay >= FUSION_WHITE_SCREEN_DELAY)
 			{
-				BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_WHITE); // Blend screen back
+				BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_WHITE); // Blend screen back
 				++tStep;
 			}
 			break;

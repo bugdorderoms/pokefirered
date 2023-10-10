@@ -364,9 +364,6 @@ void ApplyGlobalFieldPaletteTint(u8 paletteIdx)
     case GF_TINT_SEPIA:
         TintPalette_SepiaTone(&gPlttBufferUnfaded[(paletteIdx + 16) * 16], 0x10);
         break;
-    case GF_TINT_BACKUP_GRAYSCALE:
-        TintPalette_GrayScale(&gPlttBufferUnfaded[(paletteIdx + 16) * 16], 0x10);
-        break;
     default:
         return;
     }
@@ -927,7 +924,7 @@ static void Task_FlyOut(u8 taskId)
     }
     if (!FieldEffectActiveListContains(FLDEFF_USE_FLY))
     {
-        Overworld_ResetStateAfterFly();
+        Overworld_ResetStateForLeavingMap();
         WarpIntoMap();
         SetMainCallback2(CB2_LoadMap);
         gFieldCallback = FieldCallback_FlyArrive;
@@ -1261,7 +1258,7 @@ static void Escalator_BeginFadeOutToNewMap(void)
 
 static void Escalator_TransitionToWarpInEffect(void)
 {
-    if (!gPaletteFade.active && BGMusicStopped() == TRUE)
+    if (!gPaletteFade.active && IsNotWaitingForBGMStop())
     {
         StopEscalator();
         WarpIntoMap();
@@ -1666,7 +1663,7 @@ static bool8 LavaridgeGymB1FWarpEffect_5(struct Task * task, struct ObjectEvent 
 
 static bool8 LavaridgeGymB1FWarpEffect_6(struct Task * task, struct ObjectEvent * objectEvent, struct Sprite * sprite)
 {
-    if (!gPaletteFade.active && BGMusicStopped() == TRUE)
+    if (!gPaletteFade.active && IsNotWaitingForBGMStop())
     {
         WarpIntoMap();
         gFieldCallback = FieldCB_LavaridgeGymB1FWarpExit;
@@ -1846,7 +1843,7 @@ static bool8 LavaridgeGym1FWarpEffect_4(struct Task * task, struct ObjectEvent *
 
 static bool8 LavaridgeGym1FWarpEffect_5(struct Task * task, struct ObjectEvent * objectEvent, struct Sprite * sprite)
 {
-    if (!gPaletteFade.active && BGMusicStopped() == TRUE)
+    if (!gPaletteFade.active && IsNotWaitingForBGMStop())
     {
         WarpIntoMap();
         gFieldCallback = FieldCB_FallWarpExit;
@@ -1942,7 +1939,7 @@ static void EscapeRopeFieldEffect_Step1(struct Task * task)
         WarpFadeOutScreen();
         data[4] = 1;
     }
-    if (data[4] == 1 && !gPaletteFade.active && BGMusicStopped() == TRUE)
+    if (data[4] == 1 && !gPaletteFade.active && IsNotWaitingForBGMStop())
     {
         SetObjectEventDirection(playerObj, task->data[15]);
         SetWarpDestinationToEscapeWarp();
@@ -2211,7 +2208,7 @@ static void TeleportFieldEffectTask3(struct Task * task)
 
 static void TeleportFieldEffectTask4(struct Task * task)
 {
-    if (!gPaletteFade.active && BGMusicStopped())
+    if (!gPaletteFade.active && IsNotWaitingForBGMStop())
     {
 		SetWarpDestinationToLastHealLocation();
 		WarpIntoMap();
@@ -3692,8 +3689,8 @@ static void DestroyDeoxysRockEffect_RockFragments(s16 *data, u8 taskId)
     if (++data[3] > 0x78)
     {
         gObjectEvents[data[2]].invisible = TRUE;
-        BlendPalettes(0x0000FFFF, 0x10, RGB_WHITE);
-        BeginNormalPaletteFade(0x0000FFFF, 0, 0x10, 0, RGB_WHITE);
+        BlendPalettes(PALETTES_BG, 0x10, RGB_WHITE);
+        BeginNormalPaletteFade(PALETTES_BG, 0, 0x10, 0, RGB_WHITE);
         CreateDeoxysRockFragments(&gSprites[gObjectEvents[data[2]].spriteId]);
         PlaySE(SE_THUNDER);
         gTasks[data[5]].data[7] = 1;
@@ -3767,8 +3764,8 @@ static void Task_FldEffUnk45(u8 taskId)
 
 u32 FldEff_Unk45(void)
 {
-    BlendPalettes(0xFFFFFFFF, 0x10, RGB_WHITE);
-    BeginNormalPaletteFade(0xFFFFFFFF, -1, 0x0F, 0x00, RGB_WHITE);
+    BlendPalettes(PALETTES_ALL, 0x10, RGB_WHITE);
+    BeginNormalPaletteFade(PALETTES_ALL, -1, 0x0F, 0x00, RGB_WHITE);
     CreateTask(Task_FldEffUnk45, 90);
 	return FALSE;
 }

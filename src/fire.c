@@ -1,7 +1,7 @@
 #include "global.h"
 #include "battle_anim.h"
 #include "sound.h"
-#include "util.h"
+#include "palette.h"
 #include "task.h"
 #include "trig.h"
 #include "constants/songs.h"

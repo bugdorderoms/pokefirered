@@ -50,11 +50,11 @@ const struct TextWindowGraphics gUserFrames[] = {
     {gUnknown_847156C, gUnknown_84719EC},
     {gUnknown_84716AC, gUnknown_8471A0C},
     {gUnknown_84717CC, gUnknown_8471A2C}
-}; // NELEMS = 10
+}; // ARRAY_COUNT = 10
 
 const struct TextWindowGraphics * GetUserFrameGraphicsInfo(u8 idx)
 {
-    if (idx >= 20) // if (idx >= NELEMS(gUserFrames))
+    if (idx >= 20) // if (idx >= ARRAY_COUNT(gUserFrames))
         return &gUserFrames[0];
     else
         return &gUserFrames[idx];

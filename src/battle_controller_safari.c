@@ -147,7 +147,7 @@ static void SafariBufferRunCommand(void)
 {
     if (gBattleControllerExecFlags & gBitTable[gActiveBattler])
     {
-        if (gBattleBufferA[gActiveBattler][0] < NELEMS(sSafariBufferCommands))
+        if (gBattleBufferA[gActiveBattler][0] < ARRAY_COUNT(sSafariBufferCommands))
             sSafariBufferCommands[gBattleBufferA[gActiveBattler][0]]();
         else
             SafariBufferExecCompleted();
@@ -456,7 +456,7 @@ static void SafariHandleChooseItem(void)
 {
     s32 i;
 
-    BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
     gBattlerControllerFuncs[gActiveBattler] = SafariOpenPokeblockCase;
     gBattlerInMenuId = gActiveBattler;
 }
@@ -653,7 +653,7 @@ static void SafariHandleCmd55(void)
 {
     gBattleOutcome = gBattleBufferA[gActiveBattler][1];
     FadeOutMapMusic(5);
-    BeginFastPaletteFade(3);
+    BeginFastPaletteFade(FAST_FADE_OUT_TO_BLACK);
     SafariBufferExecCompleted();
     if ((gBattleTypeFlags & BATTLE_TYPE_LINK) && !(gBattleTypeFlags & BATTLE_TYPE_IS_MASTER))
         gBattlerControllerFuncs[gActiveBattler] = Safari_SetBattleEndCallbacks;

@@ -454,7 +454,7 @@ void GetTrainerTowerOpponentName(u8 *dest)
 
 u8 GetTrainerTowerTrainerFrontSpriteId(void)
 {
-    return gFacilityClassToPicIndex[sTrainerTowerOpponent->facilityClass];
+    return FacilityClassToPicIndex(sTrainerTowerOpponent->facilityClass);
 }
 
 void InitTrainerTowerBattleStruct(void)
@@ -562,13 +562,13 @@ static void SetTrainerTowerNPCGraphics(void)
     {
     case CHALLENGE_TYPE_SINGLE:
         facilityClass = CURR_FLOOR.trainers[0].facilityClass;
-        for (i = 0; i < NELEMS(sSingleBattleTrainerInfo); i++)
+        for (i = 0; i < ARRAY_COUNT(sSingleBattleTrainerInfo); i++)
         {
             if (sSingleBattleTrainerInfo[i].facilityClass == facilityClass)
                 break;
         }
 
-        if (i != NELEMS(sSingleBattleTrainerInfo))
+        if (i != ARRAY_COUNT(sSingleBattleTrainerInfo))
             trainerGfx1 = sSingleBattleTrainerInfo[i].objGfx;
         else
             trainerGfx1 = OBJ_EVENT_GFX_YOUNGSTER;
@@ -577,12 +577,12 @@ static void SetTrainerTowerNPCGraphics(void)
         break;
     case CHALLENGE_TYPE_DOUBLE:
         facilityClass = CURR_FLOOR.trainers[0].facilityClass;
-        for (i = 0; i < NELEMS(sDoubleBattleTrainerInfo); i++)
+        for (i = 0; i < ARRAY_COUNT(sDoubleBattleTrainerInfo); i++)
         {
             if (sDoubleBattleTrainerInfo[i].facilityClass == facilityClass)
                 break;
         }
-        if (i != NELEMS(sDoubleBattleTrainerInfo))
+        if (i != ARRAY_COUNT(sDoubleBattleTrainerInfo))
         {
             trainerGfx1  = sDoubleBattleTrainerInfo[i].objGfx1;
             trainerGfx2 = sDoubleBattleTrainerInfo[i].objGfx2;
@@ -599,13 +599,13 @@ static void SetTrainerTowerNPCGraphics(void)
         for (j = 0; j < MAX_TRAINERS_PER_FLOOR; j++)
         {
             facilityClass = CURR_FLOOR.trainers[j].facilityClass;
-            for (i = 0; i < NELEMS(sSingleBattleTrainerInfo); i++)
+            for (i = 0; i < ARRAY_COUNT(sSingleBattleTrainerInfo); i++)
             {
                 if (sSingleBattleTrainerInfo[i].facilityClass == facilityClass)
                     break;
             }
 
-            if (i != NELEMS(sSingleBattleTrainerInfo))
+            if (i != ARRAY_COUNT(sSingleBattleTrainerInfo))
                 trainerGfx1 = sSingleBattleTrainerInfo[i].objGfx;
             else
                 trainerGfx1 = OBJ_EVENT_GFX_YOUNGSTER;
@@ -685,21 +685,21 @@ static void TrainerTowerGetOpponentTextColor(u8 challengeType, u8 facilityClass)
     {
     case CHALLENGE_TYPE_SINGLE:
     case CHALLENGE_TYPE_KNOCKOUT:
-        for (i = 0; i < NELEMS(sSingleBattleTrainerInfo); i++)
+        for (i = 0; i < ARRAY_COUNT(sSingleBattleTrainerInfo); i++)
         {
             if (sSingleBattleTrainerInfo[i].facilityClass == facilityClass)
                 break;
         }
-        if (i != NELEMS(sSingleBattleTrainerInfo))
+        if (i != ARRAY_COUNT(sSingleBattleTrainerInfo))
             gender = sSingleBattleTrainerInfo[i].gender;
         break;
     case CHALLENGE_TYPE_DOUBLE:
-        for (i = 0; i < NELEMS(sDoubleBattleTrainerInfo); i++)
+        for (i = 0; i < ARRAY_COUNT(sDoubleBattleTrainerInfo); i++)
         {
             if (sDoubleBattleTrainerInfo[i].facilityClass == facilityClass)
                 break;
         }
-        if (i != NELEMS(sDoubleBattleTrainerInfo))
+        if (i != ARRAY_COUNT(sDoubleBattleTrainerInfo))
         {
             if (VarGet(VAR_TEMP_3))
                 gender = sDoubleBattleTrainerInfo[i].gender2;
@@ -958,13 +958,13 @@ static void PlayTrainerTowerEncounterMusic(void)
     u16 idx = VarGet(VAR_TEMP_1);
     u8 facilityClass = CURR_FLOOR.trainers[idx].facilityClass;
 
-    for (i = 0; i < NELEMS(sTrainerEncounterMusicLUT); i++)
+    for (i = 0; i < ARRAY_COUNT(sTrainerEncounterMusicLUT); i++)
     {
         if (sTrainerEncounterMusicLUT[i].facilityClass == gFacilityClassToTrainerClass[facilityClass])
             break;
     }
 
-    if (i != NELEMS(sTrainerEncounterMusicLUT))
+    if (i != ARRAY_COUNT(sTrainerEncounterMusicLUT))
     {
         idx = sTrainerEncounterMusicLUT[i].musicId;
     }

@@ -7,15 +7,13 @@ struct RenewableHiddenItemData
 {
     s8 mapGroup;
     s8 mapNum;
-    u8 filler[2];
     u8 rare[8];     // 10%
     u8 uncommon[8]; // 30%
     u8 common[8];   // 60%
 };
 
-static void SampleRenewableItemFlags(void);
-
-static const struct RenewableHiddenItemData sRenewableHiddenItems[] = {
+static const struct RenewableHiddenItemData sRenewableHiddenItems[] =
+{
     {
         .mapGroup = MAP_GROUP(ROUTE20),
         .mapNum = MAP_NUM(ROUTE20),
@@ -537,6 +535,7 @@ void SetAllRenewableItemFlags(void)
         const u8 * rare = sRenewableHiddenItems[i].rare;
         const u8 * uncommon = sRenewableHiddenItems[i].uncommon;
         const u8 * common = sRenewableHiddenItems[i].common;
+		
         for (j = 0; j < 8; j++)
         {
             if (rare[j] != 0xFF)
@@ -552,30 +551,9 @@ void SetAllRenewableItemFlags(void)
 void IncrementRenewableHiddenItemStepCounter(void)
 {
     u16 var = VarGet(VAR_RENEWABLE_ITEM_STEP_COUNTER);
+	
     if (var < 1500)
-    {
         VarSet(VAR_RENEWABLE_ITEM_STEP_COUNTER, var + 1);
-    }
-}
-
-void TryRegenerateRenewableHiddenItems(void)
-{
-    u8 i;
-    u8 found_map = 0xFF;
-    for (i = 0; i < 15; i++)
-    {
-        if (sRenewableHiddenItems[i].mapGroup == gSaveBlock1Ptr->location.mapGroup && sRenewableHiddenItems[i].mapNum == gSaveBlock1Ptr->location.mapNum)
-            found_map = i;
-    }
-
-    if (found_map == 0xFF)
-        return;
-    if (VarGet(VAR_RENEWABLE_ITEM_STEP_COUNTER) >= 1500)
-    {
-        VarSet(VAR_RENEWABLE_ITEM_STEP_COUNTER, 0);
-        SetAllRenewableItemFlags();
-        SampleRenewableItemFlags();
-    }
 }
 
 static void SampleRenewableItemFlags(void)
@@ -587,16 +565,38 @@ static void SampleRenewableItemFlags(void)
     for (i = 0; i < 15; i++)
     {
         rval = Random() % 100;
+		
         if (rval >= 90)
             flags = sRenewableHiddenItems[i].rare;
         else if (rval >= 60)
             flags = sRenewableHiddenItems[i].uncommon;
         else
             flags = sRenewableHiddenItems[i].common;
+		
         for (j = 0; j < 8; j++)
         {
             if (flags[j] != 0xFF)
                 FlagClear(FLAG_HIDDEN_ITEMS_START + flags[j]);
         }
+    }
+}
+
+void TryRegenerateRenewableHiddenItems(void)
+{
+    u8 i, found_map = 0xFF;
+	
+    for (i = 0; i < 15; i++)
+    {
+        if (sRenewableHiddenItems[i].mapGroup == gSaveBlock1Ptr->location.mapGroup && sRenewableHiddenItems[i].mapNum == gSaveBlock1Ptr->location.mapNum)
+            found_map = i;
+    }
+    if (found_map == 0xFF)
+        return;
+	
+    if (VarGet(VAR_RENEWABLE_ITEM_STEP_COUNTER) >= 1500)
+    {
+        VarSet(VAR_RENEWABLE_ITEM_STEP_COUNTER, 0);
+        SetAllRenewableItemFlags();
+        SampleRenewableItemFlags();
     }
 }

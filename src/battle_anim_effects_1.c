@@ -10,7 +10,6 @@
 // Function Declarations
 static void AnimMovePowderParticleStep(struct Sprite *);
 static void AnimSolarbeamSmallOrbStep(struct Sprite *);
-static void AnimAbsorptionOrbStep(struct Sprite *);
 static void AnimHyperBeamOrbStep(struct Sprite *);
 static void AnimLeechSeedStep(struct Sprite *);
 static void AnimLeechSeedSprouts(struct Sprite *);
@@ -2039,13 +2038,7 @@ void AnimAbsorptionOrb(struct Sprite* sprite)
     sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
     sprite->data[5] = gBattleAnimArgs[2];
     InitAnimArcTranslation(sprite);
-    sprite->callback = AnimAbsorptionOrbStep;
-}
-
-static void AnimAbsorptionOrbStep(struct Sprite* sprite)
-{
-    if (TranslateAnimHorizontalArc(sprite))
-        DestroyAnimSprite(sprite);
+    sprite->callback = DestroyAnimSpriteAfterHorizontalTranslation;
 }
 
 // Moves an orb in a wave-like fashion towards the target mon. The wave's
@@ -4719,17 +4712,17 @@ void AnimTask_MusicNotesRainbowBlend(u8 taskId)
     if (index != 0xFF)
     {
         index = (index << 4) + 0x100;
-        for (i = 1; i < NELEMS(sParticlesColorBlendTable[0]); i++)
+        for (i = 1; i < ARRAY_COUNT(sParticlesColorBlendTable[0]); i++)
             gPlttBufferFaded[index + i] = sParticlesColorBlendTable[0][i];
     }
 
-    for (j = 1; j < NELEMS(sParticlesColorBlendTable); j++)
+    for (j = 1; j < ARRAY_COUNT(sParticlesColorBlendTable); j++)
     {
         index = AllocSpritePalette(sParticlesColorBlendTable[j][0]);
         if (index != 0xFF)
         {
             index = (index << 4) + 0x100;
-            for (i = 1; i < NELEMS(sParticlesColorBlendTable[0]); i++)
+            for (i = 1; i < ARRAY_COUNT(sParticlesColorBlendTable[0]); i++)
                 gPlttBufferFaded[index + i] = sParticlesColorBlendTable[j][i];
         }
     }
@@ -4741,7 +4734,7 @@ void AnimTask_MusicNotesClearRainbowBlend(u8 taskId)
 {
     u16 i;
     
-    for (i = 1; i < NELEMS(sParticlesColorBlendTable); i++)
+    for (i = 1; i < ARRAY_COUNT(sParticlesColorBlendTable); i++)
         FreeSpritePaletteByTag(sParticlesColorBlendTable[i][0]);
 
     DestroyAnimVisualTask(taskId);

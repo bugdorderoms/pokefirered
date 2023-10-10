@@ -553,7 +553,7 @@ bool8 LoadEasyChatGraphics(void)
     {
     case 0:
         ResetBgsAndClearDma3BusyFlags(0);
-        InitBgsFromTemplates(0, sEasyChatBgTemplates, NELEMS(sEasyChatBgTemplates));
+        InitBgsFromTemplates(0, sEasyChatBgTemplates, ARRAY_COUNT(sEasyChatBgTemplates));
         SetBgTilemapBuffer(3, sEasyChatGraphicsResources->bg3TilemapBuffer);
         SetBgTilemapBuffer(1, sEasyChatGraphicsResources->bg1TilemapBuffer);
         InitWindows(sEasyChatWindowTemplates);
@@ -1568,7 +1568,7 @@ static void PrintEasyChatKeyboardText(void)
 {
     u32 i;
 
-    for (i = 0; i < NELEMS(sEasyChatKeyboardText); i++)
+    for (i = 0; i < ARRAY_COUNT(sEasyChatKeyboardText); i++)
         EC_AddTextPrinterParameterized(2, 1, sEasyChatKeyboardText[i], 10, 96 + i * 16, TEXT_SPEED_FF, NULL);
 }
 
@@ -1905,7 +1905,7 @@ static void LoadSpriteGfx(void)
 
     LoadSpriteSheets(sEasyChatSpriteSheets);
     LoadSpritePalettes(sEasyChatSpritePalettes);
-    for (i = 0; i < NELEMS(sEasyChatCompressedSpriteSheets); i++)
+    for (i = 0; i < ARRAY_COUNT(sEasyChatCompressedSpriteSheets); i++)
         LoadCompressedSpriteSheet(&sEasyChatCompressedSpriteSheets[i]);
 }
 
@@ -2029,7 +2029,7 @@ static void MoveCursor_Alpha(s8 cursorX, s8 cursorY)
         }
         else
         {
-            x += sECDisplay_AlphaModeXCoords[cursorX < NELEMS(sECDisplay_AlphaModeXCoords) ? cursorX : 0];
+            x += sECDisplay_AlphaModeXCoords[cursorX < ARRAY_COUNT(sECDisplay_AlphaModeXCoords) ? cursorX : 0];
             anim = 3;
         }
 

@@ -6,6 +6,7 @@
 #include "item.h"
 #include "item_menu_icons.h"
 #include "menu.h"
+#include "random.h"
 #include "new_menu_helpers.h"
 #include "pokemon_special_anim_internal.h"
 #include "strings.h"
@@ -328,7 +329,7 @@ void InitPokemonSpecialAnimScene(struct PokemonSpecialAnimScene * buffer, u16 an
     ResetTempTileDataBuffers();
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
     ResetBgsAndClearDma3BusyFlags(FALSE);
-    InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
+    InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
     InitWindows(sWindowTemplates);
     ChangeBgX(0, 0, 0);
     ChangeBgY(0, 0, 0);
@@ -494,7 +495,7 @@ void PSA_UseTM_SetUpZoomOutAnim(void)
 void PSA_UseTM_CleanUpForCancel(void)
 {
     StopMakingOutwardSpiralDots();
-    ResetPaletteFadeControl();
+    ResetPaletteFade();
 }
 
 bool8 PSA_UseTM_RunZoomOutAnim(void)
@@ -1282,7 +1283,7 @@ static void Task_UseItem_OutwardSpiralDots(u8 taskId)
 static u16 PSAScene_RandomFromTask(u8 taskId)
 {
     u32 state = GetWordTaskArg(taskId, tOff_RngState);
-    state = state * 1103515245 + 24691;
+    state = ISO_RANDOMIZE(state);
     SetWordTaskArg(taskId, tOff_RngState, state);
     return state >> 16;
 }
@@ -1421,7 +1422,7 @@ static void CreateLevelUpVerticalSprite(u8 taskId, s16 *data)
         gSprites[spriteId].oam.priority = tPriority;
         gSprites[spriteId].tsYsubpixel = 0;
         // similar to the LCRNG in random.c, but seeding from data[2]
-        gSprites[spriteId].tsSpeed = ((tMadeSprCt * 1103515245 + 24691) & 0x3F) + 0x20;
+        gSprites[spriteId].tsSpeed = (ISO_RANDOMIZE(tMadeSprCt) & 0x3F) + 0x20;
         gSprites[spriteId].tsTaskId = taskId;
         tActiveSprCt++;
     }

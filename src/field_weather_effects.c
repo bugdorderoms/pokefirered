@@ -202,7 +202,6 @@ bool8 Rain_Finish(void)
 
 static void StartRainSpriteFall(struct Sprite *sprite)
 {
-    u32 rand;
     u16 numFallingFrames;
     int tileX, tileY;
 
@@ -210,16 +209,12 @@ static void StartRainSpriteFall(struct Sprite *sprite)
         sprite->tRandom = 361;
 
     // Standard RNG sequence.
-    rand = sprite->tRandom * 1103515245 + 12345;
-    sprite->tRandom = ((rand & 0x7FFF0000) >> 16) % 600;
+    sprite->tRandom = ((ISO_RANDOMIZE2(sprite->tRandom) & 0x7FFF0000) >> 16) % 600;
 
     numFallingFrames = sRainSpriteFallingDurations[gWeatherPtr->isDownpour][0];
 
     tileX = sprite->tRandom % 30;
-    sprite->tPosX = tileX * 8; // Useless assignment, leftover from before fixed-point values were used
-
     tileY = sprite->tRandom / 30;
-    sprite->tPosY = tileY * 8; // Useless assignment, leftover from before fixed-point values were used
 
     sprite->tPosX = tileX;
     sprite->tPosX <<= 7; // This is tileX * 8, using a fixed-point value with 4 decimal places
@@ -1863,11 +1858,11 @@ void Bubbles_Main(void)
     if (++gWeatherPtr->bubblesDelayCounter > sBubbleStartDelays[gWeatherPtr->bubblesDelayIndex])
     {
         gWeatherPtr->bubblesDelayCounter = 0;
-        if (++gWeatherPtr->bubblesDelayIndex > NELEMS(sBubbleStartDelays) - 1)
+        if (++gWeatherPtr->bubblesDelayIndex > ARRAY_COUNT(sBubbleStartDelays) - 1)
             gWeatherPtr->bubblesDelayIndex = 0;
 
         CreateBubbleSprite(gWeatherPtr->bubblesCoordsIndex);
-        if (++gWeatherPtr->bubblesCoordsIndex > NELEMS(sBubbleStartCoords) - 1)
+        if (++gWeatherPtr->bubblesCoordsIndex > ARRAY_COUNT(sBubbleStartCoords) - 1)
             gWeatherPtr->bubblesCoordsIndex = 0;
     }
 }

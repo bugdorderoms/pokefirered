@@ -283,8 +283,8 @@ static const struct Subsprite gUnknown_8260398[] = {
 };
 
 static const struct SubspriteTable gUnknown_82603C4[] = {
-    {NELEMS(gUnknown_8260390), gUnknown_8260390},
-    {NELEMS(gUnknown_8260398), gUnknown_8260398}
+    {ARRAY_COUNT(gUnknown_8260390), gUnknown_8260390},
+    {ARRAY_COUNT(gUnknown_8260398), gUnknown_8260398}
 };
 
 static const struct Subsprite gUnknown_82603D4[] = {
@@ -305,11 +305,11 @@ static const struct Subsprite gUnknown_82603E4[] = {
 
 static const struct SubspriteTable sStatusSummaryBar_SubspriteTable[] =
 {
-    {NELEMS(gUnknown_82603D4), gUnknown_82603D4}
+    {ARRAY_COUNT(gUnknown_82603D4), gUnknown_82603D4}
 };
 
 static const struct SubspriteTable gUnknown_8260404[] = {
-    {NELEMS(gUnknown_82603E4), gUnknown_82603E4}
+    {ARRAY_COUNT(gUnknown_82603E4), gUnknown_82603E4}
 };
 
 static const struct CompressedSpriteSheet sStatusSummaryBarSpriteSheets[] = {

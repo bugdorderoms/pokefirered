@@ -3789,7 +3789,7 @@ static u8 ConfusionBerries(u8 battlerId, u8 flavor, bool8 moveTurn)
 	if (gBattleMons[battlerId].hp + gBattleMoveDamage > gBattleMons[battlerId].maxHP)
 	    gBattleMoveDamage = gBattleMons[battlerId].maxHP - gBattleMons[battlerId].hp;
 	gBattleMoveDamage *= -1;
-	if (GetFlavorRelation(battlerId, flavor) < 0)
+	if (GetMonFlavorRelation(GetBattlerPartyIndexPtr(battlerId), flavor) < 0)
 	    BattleScriptExecute(BattleScript_BerryConfuseHealEnd2);
 	else
 	    BattleScriptExecute(BattleScript_ItemHealHP_RemoveItem);
@@ -4312,6 +4312,18 @@ void HandleAction_RunBattleScript(void) // identical to RunBattleScriptCommands
 {
     if (!gBattleControllerExecFlags)
         gBattleScriptingCommandsTable[*gBattlescriptCurrInstr]();
+}
+
+u8 GetDefaultMoveTarget(u8 battlerId)
+{
+    u8 opposing = BATTLE_OPPOSITE(GetBattlerPosition(battlerId) & BIT_SIDE);
+
+    if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+        return GetBattlerAtPosition(opposing);
+    else if (CountAliveMonsInBattle(BATTLE_ALIVE_EXCEPT_ACTIVE) > 1)
+        return GetBattlerAtPosition((Random() & 1) == 0 ? BATTLE_PARTNER(opposing) : opposing);
+    else
+		return GetBattlerAtPosition((gAbsentBattlerFlags & gBitTable[opposing]) ? BATTLE_PARTNER(opposing) : opposing);
 }
 
 u8 GetRandomTarget(u8 battlerId)
@@ -4914,7 +4926,7 @@ bool8 CanBattlerSwitch(u8 battlerId)
 	
     if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
     {
-        if (GetLinkTrainerFlankId(GetBattlerMultiplayerId(battlerId)) == TRUE)
+        if (GetLinkTrainerFlankId(GetBattlerMultiplayerId(battlerId)) == 1)
             i = 3;
 		else
 			i = 0;
@@ -5341,4 +5353,43 @@ struct Pokemon *GetBattlerIllusionPartyIndexPtr(u8 battlerId)
 {
 	struct Pokemon *illusionMon = GetIllusionMonPtr(battlerId);
 	return illusionMon != NULL ? illusionMon : GetBattlerPartyIndexPtr(battlerId);
+}
+
+u8 CountAliveMonsInBattle(u8 caseId)
+{
+    s32 i;
+    u8 retVal = 0;
+
+    switch (caseId)
+    {
+    case BATTLE_ALIVE_EXCEPT_ACTIVE:
+        for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+        {
+            if (i != gActiveBattler && !(gAbsentBattlerFlags & gBitTable[i]))
+                retVal++;
+        }
+        break;
+    case BATTLE_ALIVE_ATK_SIDE:
+        for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+        {
+            if (GetBattlerSide(i) == GetBattlerSide(gBattlerAttacker) && !(gAbsentBattlerFlags & gBitTable[i]))
+                retVal++;
+        }
+        break;
+    case BATTLE_ALIVE_DEF_SIDE:
+        for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+        {
+            if (GetBattlerSide(i) == GetBattlerSide(gBattlerTarget) && !(gAbsentBattlerFlags & gBitTable[i]))
+                retVal++;
+        }
+        break;
+	case BATTLE_ALIVE_EXCEPT_ATTACKER:
+	    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+        {
+            if (i != gBattlerAttacker && !(gAbsentBattlerFlags & gBitTable[i]))
+                retVal++;
+        }
+        break;
+    }
+    return retVal;
 }

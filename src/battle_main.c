@@ -1172,8 +1172,8 @@ void BattleMainCB2(void)
     if (JOY_HELD(B_BUTTON) && gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
     {
         gSpecialVar_Result = gBattleOutcome = B_OUTCOME_DREW;
-        ResetPaletteFadeControl();
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+        ResetPaletteFade();
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
         SetMainCallback2(CB2_QuitPokedudeBattle);
     }
 }
@@ -1500,7 +1500,7 @@ static void EndLinkBattleInSteps(void)
     case 1:
         if (--gBattleCommunication[SPRITES_INIT_STATE1] == 0)
         {
-            BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;
@@ -3353,7 +3353,7 @@ static void HandleEndTurn_FinishBattle(void)
 		}
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
             ClearRematchStateByTrainerId();
-        BeginFastPaletteFade(3);
+        BeginFastPaletteFade(FAST_FADE_OUT_TO_BLACK);
         FadeOutMapMusic(5);
 		DoPlayerPartyEndBattleFormChange();
 		memset(&gBattleMonForms, 0, sizeof(gBattleMonForms));

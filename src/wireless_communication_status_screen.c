@@ -174,7 +174,7 @@ static void CB2_InitWirelessCommunicationScreen(void)
     sWCSS = AllocZeroed(sizeof(*sWCSS));
     SetVBlankCallback(NULL);
     ResetBgsAndClearDma3BusyFlags(FALSE);
-    InitBgsFromTemplates(0, sBGTemplates, NELEMS(sBGTemplates));
+    InitBgsFromTemplates(0, sBGTemplates, ARRAY_COUNT(sBGTemplates));
     SetBgTilemapBuffer(1, Alloc(0x800));
     SetBgTilemapBuffer(0, Alloc(0x800));
     DecompressAndLoadBgGfxUsingHeap(1, sBgTilesGfx, 0, 0, 0);
@@ -268,7 +268,7 @@ static void Task_WirelessCommunicationScreen(u8 taskId)
         gTasks[taskId].data[0]++;
         break;
     case 1:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         ShowBg(1);
         CopyBgTilemapBufferToVram(0);
         ShowBg(0);
@@ -302,7 +302,7 @@ static void Task_WirelessCommunicationScreen(u8 taskId)
         WCSS_CyclePalette(&gTasks[taskId].data[7], &gTasks[taskId].data[8]);
         break;
     case 4:
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         gTasks[taskId].data[0]++;
         break;
     case 5:
@@ -355,7 +355,7 @@ static u32 CountMembersInGroup(struct UnkStruct_x20 * unk20, u32 * counts)
     u32 activity = unk20->gname_uname.gname.activity;
     s32 i, j, k;
 
-    for (i = 0; i < NELEMS(sCountParams); i++)
+    for (i = 0; i < ARRAY_COUNT(sCountParams); i++)
     {
         if (activity == sCountParams[i][0] && unk20->groupScheduledAnim == UNION_ROOM_SPAWN_IN)
         {

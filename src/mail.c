@@ -525,7 +525,7 @@ static bool8 DoInitMailView(void)
         break;
     case 6:
         ResetBgsAndClearDma3BusyFlags(FALSE);
-        InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
+        InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
         SetBgTilemapBuffer(1, sMailViewResources->bg1TilemapBuffer);
         SetBgTilemapBuffer(2, sMailViewResources->bg2TilemapBuffer);
         break;
@@ -582,7 +582,7 @@ static bool8 DoInitMailView(void)
         gPaletteFade.bufferTransferDisabled = TRUE;
         break;
     case 17:
-        iconId = GetIconSpecies(sMailViewResources->mail->species);
+        iconId = SanitizeSpeciesId(sMailViewResources->mail->species);
         switch (sMailViewResources->monIconType)
         {
         case MAIL_ICON_BEAD:
@@ -600,7 +600,7 @@ static bool8 DoInitMailView(void)
         ShowBg(0);
         ShowBg(1);
         ShowBg(2);
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
         gPaletteFade.bufferTransferDisabled = FALSE;
         sMailViewResources->showMailCallback = ShowMailCB_WaitFadeIn;
         return TRUE;
@@ -699,7 +699,7 @@ static void ShowMailCB_WaitButton(void)
 {
     if (JOY_NEW(A_BUTTON | B_BUTTON))
     {
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         sMailViewResources->showMailCallback = ShowMailCB_Teardown;
     }
 }
@@ -713,7 +713,7 @@ static void ShowMailCB_Teardown(void)
         {
         case MAIL_ICON_BEAD:
         case MAIL_ICON_DREAM:
-            FreeMonIconPalette(GetIconSpecies(sMailViewResources->mail->species));
+            SafeFreeMonIconPalette(sMailViewResources->mail->species);
             DestroyMonIcon(&gSprites[sMailViewResources->monIconSpriteId]);
             break;
         }

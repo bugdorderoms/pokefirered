@@ -39,5 +39,6 @@ u8 StorageGetCurrentBox(void);
 void DrawTextWindowAndBufferTiles(const u8 *string, void *dst, u8 zero1, u8 zero2, u8 *buffer, s32 bytesToBuffer);
 u8 CountPartyNonEggMons(void);
 void UpdatePcMonIconSpecies(void);
+s16 SeekToNextMonInBox(struct BoxPokemon * boxMons, s8 curIndex, u8 maxIndex, u8 flags);
 
 #endif // GUARD_POKEMON_STORAGE_SYSTEM_H

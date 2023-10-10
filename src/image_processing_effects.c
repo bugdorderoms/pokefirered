@@ -168,7 +168,7 @@ static void ApplyImageEffect_RedChannelGrayscaleHighlight(u8 highlight)
 static void ApplyImageEffect_Pointillism(void)
 {
     u32 i;
-    for (i = 0; i < NELEMS(sPointillismPoints); i++)
+    for (i = 0; i < ARRAY_COUNT(sPointillismPoints); i++)
         AddPointillismPoints(i);
 }
 

@@ -315,9 +315,7 @@ void AnimRecycle(struct Sprite *);
 
 // battle_anim_special.c
 void TryShinyAnimation(u8 battler);
-u8 ItemIdToBallId(u16 itemId);
-u8 LaunchBallStarsTask(u8 x, u8 y, u8 priority, u8 subpriority, u8 ballId);
-u8 LaunchBallFadeMonTask(bool8 unFadeLater, u8 battlerId, u32 arg2, u8 ballId);
+void IncrementBattleParticleCounter(void);
 void DoLoadHealthboxPalsForLevelUp(u8 *, u8 *, u8 battlerId);
 void DoFreeHealthboxPalsForLevelUp(u8 batterId);
 
@@ -380,6 +378,7 @@ void DestroyAnimVisualTaskAndDisableBlend(u8 taskId);
 void SetSpriteCoordsToAnimAttackerCoords(struct Sprite *sprite);
 void SetAnimSpriteInitialXOffset(struct Sprite *sprite, s16 xOffset);
 void InitAnimArcTranslation(struct Sprite *sprite);
+void DestroyAnimSpriteAfterHorizontalTranslation(struct Sprite *sprite);
 bool8 TranslateAnimHorizontalArc(struct Sprite *sprite);
 bool8 TranslateAnimVerticalArc(struct Sprite *sprite);
 void SetSpritePrimaryCoordsFromSecondaryCoords(struct Sprite *sprite);
@@ -438,7 +437,6 @@ void AnimTask_GetFrustrationPowerLevel(u8 taskId);
 void ResetSpritePriorityOfAllVisibleBattlers(void);
 u8 GetBattlerSpriteSubpriority(u8 battlerId);
 u8 GetBattlerSpriteBGPriority(u8 battlerId);
-void AnimThrowProjectile_Step(struct Sprite *sprite);
 
 // Returns 2 if player left or opp right
 // Returns 1 if player right or opp left

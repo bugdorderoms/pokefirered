@@ -43,11 +43,11 @@
 #define MON_DATA_IS_EGG             38
 #define MON_DATA_ABILITY_NUM        39
 #define MON_DATA_OT_GENDER          40
-#define MON_DATA_ATK2               41
-#define MON_DATA_DEF2               42
-#define MON_DATA_SPEED2             43
-#define MON_DATA_SPATK2             44
-#define MON_DATA_SPDEF2             45
+#define MON_DATA_MAIL               41
+#define MON_DATA_SPECIES2           42
+#define MON_DATA_IVS                43
+#define MON_DATA_KNOWN_MOVES        44
+#define MON_DATA_IS_SHINY           45
 #define MON_DATA_ABILITY_HIDDEN     46
 #define MON_DATA_NATURE             47
 #define MON_DATA_DYNAMAX_LEVEL      48
@@ -62,11 +62,6 @@
 #define MON_DATA_SPEED              57
 #define MON_DATA_SPATK              58
 #define MON_DATA_SPDEF              59
-#define MON_DATA_MAIL               60
-#define MON_DATA_SPECIES2           61
-#define MON_DATA_IVS                62
-#define MON_DATA_KNOWN_MOVES        63
-#define MON_DATA_IS_SHINY           64
 
 #define SPLIT_PHYSICAL               0x0
 #define SPLIT_SPECIAL                0x1

@@ -36,9 +36,6 @@
 
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
 
-// Alias of ARRAY_COUNT using GameFreak's name from AgbAssert calls.
-#define NELEMS(array) ARRAY_COUNT(array)
-
 #define SWAP(a, b, temp)    \
 {                           \
     temp = a;               \

@@ -290,7 +290,7 @@ static bool8 IsMapDNSException(void)
 {
 	u8 i, mapType = gMapHeader.mapType;
 	
-	for (i = 0; i < NELEMS(sDNSMapExceptions); i++)
+	for (i = 0; i < ARRAY_COUNT(sDNSMapExceptions); i++)
 	{
 		if (sDNSMapExceptions[i] == mapType)
 			return TRUE;
@@ -368,7 +368,7 @@ static void DoDNSLightningWindowsEffect(void)
 	
 	if (LIT_UP_TIME)
 	{
-		for (i = 0; i < NELEMS(sLightingColours); i++)
+		for (i = 0; i < ARRAY_COUNT(sLightingColours); i++)
 		{
 			colourSlot = sLightingColours[i].paletteNum * 16 + sLightingColours[i].colourNum;
 			

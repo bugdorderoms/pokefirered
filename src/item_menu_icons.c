@@ -255,7 +255,7 @@ void ResetItemMenuIconState(void)
 {
     u16 i;
 
-    for (i = 0; i < NELEMS(sItemMenuIconSpriteIds); i++)
+    for (i = 0; i < ARRAY_COUNT(sItemMenuIconSpriteIds); i++)
         sItemMenuIconSpriteIds[i] = 0xFF;
 }
 

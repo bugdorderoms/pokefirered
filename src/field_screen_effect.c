@@ -17,7 +17,7 @@ static const u16 sFlashLevelPixelRadii[] = {
     0x00c8, 0x0048, 0x0038, 0x0028, 0x0018
 };
 
-const s32 gMaxFlashLevel = NELEMS(sFlashLevelPixelRadii) - 1;
+const s32 gMaxFlashLevel = ARRAY_COUNT(sFlashLevelPixelRadii) - 1;
 
 static const struct WindowTemplate gUnknown_83C68E4 = {
     .bg = 0,
@@ -212,7 +212,7 @@ void Script_FadeOutMapMusic(void)
 
 static void Task_EnableScriptAfterMusicFade(u8 taskId)
 {
-    if (BGMusicStopped() == TRUE)
+    if (IsNotWaitingForBGMStop())
     {
         DestroyTask(taskId);
         EnableBothScriptContexts();

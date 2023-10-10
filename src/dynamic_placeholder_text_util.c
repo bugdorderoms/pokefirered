@@ -89,7 +89,7 @@ void DynamicPlaceholderTextUtil_Reset(void)
 {
     const u8 **ptr = sStringPointers;
     u8 *fillval = NULL;
-    const u8 **ptr2 = ptr + (NELEMS(sStringPointers) - 1);
+    const u8 **ptr2 = ptr + (ARRAY_COUNT(sStringPointers) - 1);
     
     do
     {
@@ -100,7 +100,7 @@ void DynamicPlaceholderTextUtil_Reset(void)
 
 void DynamicPlaceholderTextUtil_SetPlaceholderPtr(u8 idx, const u8 *ptr)
 {
-    if (idx < NELEMS(sStringPointers))
+    if (idx < ARRAY_COUNT(sStringPointers))
         sStringPointers[idx] = ptr;
 }
 
@@ -131,5 +131,5 @@ const u8 *DynamicPlaceholderTextUtil_GetPlaceholderPtr(u8 idx)
 
 u8 GetColorFromTextColorTable(u16 graphicId)
 {
-    return graphicId >> 1 >= NELEMS(sTextColorTable) ? 3 : (sTextColorTable[graphicId >> 1] >> ((graphicId & 1) << 2)) & 0xF;
+    return graphicId >> 1 >= ARRAY_COUNT(sTextColorTable) ? 3 : (sTextColorTable[graphicId >> 1] >> ((graphicId & 1) << 2)) & 0xF;
 }

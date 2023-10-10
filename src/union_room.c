@@ -1620,7 +1620,7 @@ static bool32 IsPartnerActivityAcceptable(u32 activity, u32 group)
     if (group == 0xFF)
         return TRUE;
 
-    if (group < NELEMS(sAcceptedActivityIds))
+    if (group < ARRAY_COUNT(sAcceptedActivityIds))
     {
         const u8 *bytes = sAcceptedActivityIds[group];
 

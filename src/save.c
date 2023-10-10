@@ -3,11 +3,15 @@
 #include "decompress.h"
 #include "overworld.h"
 #include "load_save.h"
+#include "malloc.h"
+#include "new_game.h"
 #include "task.h"
+#include "gpu_regs.h"
 #include "link.h"
 #include "save_failed_screen.h"
 #include "fieldmap.h"
 #include "gba/flash_internal.h"
+#include "gba/m4a_internal.h"
 
 #define FILE_SIGNATURE 0x08012025  // signature value to determine if a sector is in use
 
@@ -895,4 +899,26 @@ void Task_LinkSave(u8 taskId)
         }
         break;
     }
+}
+
+void ResetSaveHeap(void)
+{
+    u16 imeBackup = REG_IME;
+    
+    REG_IME = 0;
+    RegisterRamReset(RESET_EWRAM);
+    ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_FORCED_BLANK);
+    REG_IME = imeBackup;
+    gMain.inBattle = FALSE;
+    SetSaveBlocksPointers();
+    ResetMenuAndMonGlobals();
+    Save_ResetSaveCounters();
+    Save_LoadGameData(SAVE_NORMAL);
+	
+    if (gSaveFileStatus == SAVE_STATUS_EMPTY || gSaveFileStatus == SAVE_STATUS_INVALID)
+        Sav2_ClearSetDefault();
+	
+    SetPokemonCryStereo(gSaveBlock2Ptr->optionsSound);
+    InitHeap(gHeap, HEAP_SIZE);
+    SetMainCallback2(CB2_ContinueSavedGame);
 }
