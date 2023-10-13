@@ -133,7 +133,7 @@ bool8 CanStealItem(u8 battlerAtk, u8 battlerDef, u16 itemId);
 void StealTargetItem(u8 battlerAtk, u8 battlerDef);
 void SortBattlersBySpeed(u8 *battlers, bool8 slowToFast);
 u8 CountUsablePartyMons(u8 battlerId);
-bool8 CanBattlerEscape(u8 battlerId);
+bool8 CanBattlerEscape(u8 battlerId, bool8 checkIngrain);
 bool8 CanBattlerSwitch(u8 battlerId);
 u8 IsAbilityPreventingSwitchOut(u8 battlerId);
 u8 GetCatchingBattler(void);
@@ -163,5 +163,8 @@ struct Pokemon *GetBattlerParty(u8 battlerId);
 struct Pokemon *GetBattlerPartyIndexPtr(u8 battlerId);
 struct Pokemon *GetBattlerIllusionPartyIndexPtr(u8 battlerId);
 u8 CountAliveMonsInBattle(u8 caseId);
+void CalculatePayDayMoney(void);
+u8 GetTrappingIdByMove(u16 move);
+s32 GetDrainedBigRootHp(u8 battlerId, s32 hp);
 
 #endif // GUARD_BATTLE_UTIL_H

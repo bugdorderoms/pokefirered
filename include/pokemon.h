@@ -195,15 +195,15 @@ struct MoveFlags
 	u32 pulseMove:1; // A move with this flag can be affected by Mega Launcher.
 	u32 targetStatStagesIgnored:1; // A move with this flag will ignore the target Defense and Evasion stat stages.
 	u32 forbiddenMimic:1; // A move with this flag can't be copied by Mimic.
-	u32 hitUnderground:1; // If target is undergrounded, can hit.
-	u32 hitUnderwater:1; // If target is in underwater, can hit.
+	u32 hitUnderground:1; // If target is undergrounded, can hit and deal double damage.
+	u32 hitUnderwater:1; // If target is in underwater, can hit and deal double damage.
 	// end of byte
 	u32 soundMove:1; // A move with this flag will makes sound.
 	u32 ballisticMove:1; // A move with this flag will be blocked by Bulletproof.
 	u32 protectionMove:1; // A move with this flag can set a protect like effect.
 	u32 powderMove:1; // A move with this flag can be blocked by Overcoat, etc.
 	u32 ignoreAbilities:1; // A move with this flag will ignore all ignoreable abilities.
-	u32 twoStrikes:1; // A move with this flag will strike twice, and may apply its effect on each hit.
+	u32 dmgMinimize:1; // A move with this flag will deal double damage and aways hit the target if it was used Minimize.
 	u32 hitInAir:1; // If target is in the air, can hit.
 	u32 hitInAirDoubleDmg:1; // If target is in the air, can hit and deal double damage.
 	// end of byte
@@ -211,7 +211,7 @@ struct MoveFlags
 	u32 hitSubstitute:1; // A move with this flag will ignore the target's Substitute.
 	u32 slicingMove:1; // A move with this flag can be affected by Sharpness.
 	u32 windMove:1; // A move with this flag can be affected by Wind Rider, etc.
-	u32 threeStrikes:1; // A move with this flag will strike three times, and may apply its effect on each hit.
+	u32 forbiddenParentalBond:1; // A move with this flag can't become a multi-hit move due to Parental Bond.
 	u32 forbiddenMirrorMove:1; // A move with this flag can't be affected by Mirror Move.
 	u32 forbiddenMetronome:1; // A move with this flag can't be called by Metronome.
 	u32 forbiddenAssist:1; // A move with this flag can't be executed by Assist.
@@ -219,10 +219,10 @@ struct MoveFlags
 	u32 forbiddenSleepTalk:1; // A move with this flag can't be executed by Sleep Talk.
 	u32 forbiddenCopycat:1; // A move with this flag can't be copied by Copycat.
 	u32 forbiddenInstruct:1; // A move with this flag can't be executed by Instruct.
-	u32 forbiddenParentalBond:1; // A move with this flag can't become a multi-hit move due to Parental Bond.
 	u32 affectsUserSide:1; // Tipycally used to show the entire side on choose the move, but it's still used to determine protect like effects.
-	u32 dmgMinimize:1; // A move with this flag will deal double damage and aways hit the target if it was used Minimize.
-	u32 unused:26;
+	u32 strikeCount:4; // Max 15 hits. Defaults to 1 if not set. May apply its effect on each hit.
+	u32 callOtherMove:1; // A move with this flag will be considered a "Move that call other moves".
+	u32 unused:23;
 };
 
 struct BattleMove

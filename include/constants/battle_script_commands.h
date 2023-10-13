@@ -128,6 +128,10 @@
 #define ATK49_CLEAR_BITS                        24
 #define ATK49_COUNT                             25
 
+// Atk66, status anim ids
+#define ANIM_ID_STATUS1 0
+#define ANIM_ID_STATUS2 1
+
 // TODO: documentation
 // Atk76, various cases
 #define VARIOUS_CANCEL_MULTI_TURN_MOVES             0
@@ -170,15 +174,21 @@
 #define VARIOUS_TRY_ACTIVATE_BEAST_BOOST            37
 #define VARIOUS_TRY_NEUTRALIZING_GAS_SUPPRESSION    38
 #define VARIOUS_JUMP_IF_BATTLER_REVIVED             39
+#define VARIOUS_ARGUMENT_TO_MOVE_EFFECT             40
+#define VARIOUS_ARGUMENT_TO_MOVE_DAMAGE             41
+#define VARIOUS_JUMP_IF_ROAR_FAILS                  42
+#define VARIOUS_JUMP_IF_WEATHER_AFFECTED            43
+#define VARIOUS_GET_BATTLER_SIDE                    44
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN                               0
-#define ATK80_DMG_HALF_BY_TWO_NOT_MORE_THAN_HALF_MAX_HP     1
-#define ATK80_DMG_DOUBLED                                   2 // unused case
+#define ATK80_DMG_HALF_USER_HP                              1
+#define ATK80_DMG_DRAINED                                   2
 #define ATK80_DMG_1_8_MAX_HP                                3
 #define ATK48_NEGATIVE_DMG_DEALT                            4
 #define ATK48_DMG_HALF_TARGET_HP                            5
 #define ATK48_DMG_ATK_LEVEL                                 6
+#define ATK48_DMG_BIG_ROOT                                  7
 
 // Atk83, trainerslide cases
 #define ATK83_TRAINER_SLIDE_CASE_SAVE_SPRITES    0

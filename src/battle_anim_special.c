@@ -1309,24 +1309,7 @@ void AnimTask_SafariGetReaction(u8 taskId)
 
 void AnimTask_GetTrappedMoveAnimId(u8 taskId)
 {
-	switch (gBattleSpritesDataPtr->animationData->animArg)
-	{
-		case MOVE_FIRE_SPIN:
-		    gBattleAnimArgs[0] = TRAP_ANIM_FIRE_SPIN;
-			break;
-		case MOVE_WHIRLPOOL:
-		    gBattleAnimArgs[0] = TRAP_ANIM_WHIRLPOOL;
-			break;
-		case MOVE_CLAMP:
-		    gBattleAnimArgs[0] = TRAP_ANIM_CLAMP;
-			break;
-		case MOVE_SAND_TOMB:
-		    gBattleAnimArgs[0] = TRAP_ANIM_SAND_TOMB;
-			break;
-		default:
-		    gBattleAnimArgs[0] = TRAP_ANIM_BIND;
-			break;
-	}
+	gBattleAnimArgs[0] = GetTrappingIdByMove(gBattleSpritesDataPtr->animationData->animArg);
     DestroyAnimVisualTask(taskId);
 }
 

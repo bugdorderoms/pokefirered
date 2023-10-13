@@ -275,7 +275,7 @@ void DoMoveEffect(bool8 primary)
 					else
 						break;
 				}
-				else if (!IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_ELECTRIC) && gHitMarker & HITMARKER_IGNORE_SAFEGUARD && (primary || certain))
+				else if (IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_ELECTRIC) && gHitMarker & HITMARKER_IGNORE_SAFEGUARD && (primary || certain))
 				{
 					BattleScriptPush(BS_Ptr);
 					gBattlescriptCurrInstr = BattleScript_PRLZPrevention;
@@ -322,7 +322,7 @@ void DoMoveEffect(bool8 primary)
 				case MOVE_EFFECT_CONFUSION:
 				    if (defAbility != ABILITY_OWN_TEMPO)
 					{
-						gBattleMons[gEffectBattler].status2 |= (((Random()) % 0x4)) + 2;
+						gBattleMons[gEffectBattler].status2 |= STATUS2_CONFUSION_TURN((Random() % 4) + 2);
 						BattleScriptPush(BS_Ptr);
 						gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[moveEffect];
 						return;
@@ -356,13 +356,7 @@ void DoMoveEffect(bool8 primary)
 				case MOVE_EFFECT_PAYDAY:
 				    if (GetBattlerSide(gBattleScripting.battler) == B_SIDE_PLAYER && gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_2ND_HIT)
 					{
-						u16 payDayMoney = gPaydayMoney + (gBattleMons[gBattleScripting.battler].level * 5);
-						
-						if (payDayMoney > 0xFFFF)
-							gPaydayMoney = 0xFFFF;
-						else
-							gPaydayMoney = payDayMoney;
-						
+						gBattleStruct->payDayLevels[(GetBattlerPosition(gBattleScripting.battler) != B_POSITION_PLAYER_LEFT)] = gBattleMons[gBattleScripting.battler].level;
 						BattleScriptPush(BS_Ptr);
 						gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[moveEffect];
 						return;
@@ -384,17 +378,12 @@ void DoMoveEffect(bool8 primary)
 				case MOVE_EFFECT_WRAP:
 				    if (!(gBattleMons[gEffectBattler].status2 & STATUS2_WRAPPED))
 					{
-						gBattleMons[gEffectBattler].status2 |= ((Random() & 3) + 3) << 0xD;
+						gBattleMons[gEffectBattler].status2 |= STATUS2_WRAPPED_TURN((Random() & 1) + 4);
 						gBattleStruct->wrappedMove[gEffectBattler] = gCurrentMove;
 						gBattleStruct->wrappedBy[gEffectBattler] = gBattleScripting.battler;
+						gBattleCommunication[MULTISTRING_CHOOSER] = GetTrappingIdByMove(gCurrentMove);
 						BattleScriptPush(BS_Ptr);
 						gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[moveEffect];
-						
-						for (gBattleCommunication[MULTISTRING_CHOOSER] = 0; ; ++gBattleCommunication[MULTISTRING_CHOOSER])
-						{
-							if (gBattleCommunication[MULTISTRING_CHOOSER] > 4 || gTrappingMoves[gBattleCommunication[MULTISTRING_CHOOSER]] == gCurrentMove)
-								break;
-						}
 						return;
 					}
 					break;
@@ -534,7 +523,7 @@ void DoMoveEffect(bool8 primary)
 				    if (!(gBattleMons[gEffectBattler].status2 & STATUS2_LOCK_CONFUSE))
 					{
 						gBattleMons[gEffectBattler].status2 |= STATUS2_MULTIPLETURNS;
-						gBattleMons[gEffectBattler].status2 |= (((Random() & 1) + 2) << 0xA);
+						gBattleMons[gEffectBattler].status2 |= STATUS2_LOCK_CONFUSE_TURN((Random() & 1) + 2);
 						gLockedMoves[gEffectBattler] = gCurrentMove;
 					}
 					break;

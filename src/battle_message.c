@@ -138,7 +138,7 @@ static const u8 sText_PkmnFlewHigh[] = _("{B_ATK_NAME_WITH_PREFIX} flew\nup high
 static const u8 sText_PkmnDugHole[] = _("{B_ATK_NAME_WITH_PREFIX} dug a hole!");
 static const u8 sText_PkmnHidUnderwater[] = _("{B_ATK_NAME_WITH_PREFIX} hid\nunderwater!");
 static const u8 sText_PkmnSprangUp[] = _("{B_ATK_NAME_WITH_PREFIX} sprang up!");
-static const u8 sText_PkmnSqueezedByBind[] = _("{B_DEF_NAME_WITH_PREFIX} was squeezed by\n{B_ATK_NAME_WITH_PREFIX}'s Bind!");
+static const u8 sText_PkmnSqueezedByBind[] = _("{B_DEF_NAME_WITH_PREFIX} was squeezed by\n{B_ATK_NAME_WITH_PREFIX}!");
 static const u8 sText_PkmnTrappedInVortex[] = _("{B_DEF_NAME_WITH_PREFIX} was trapped\nin the vortex!");
 static const u8 sText_PkmnTrappedBySandTomb[] = _("{B_DEF_NAME_WITH_PREFIX} was trapped\nby Sand Tomb!");
 static const u8 sText_PkmnWrappedBy[] = _("{B_DEF_NAME_WITH_PREFIX} was Wrapped by\n{B_ATK_NAME_WITH_PREFIX}!");
@@ -1149,12 +1149,12 @@ const u16 gFirstTurnOfTwoStringIds[] = {
 };
 
 const u16 gWrappedStringIds[] = {
-    STRINGID_PKMNSQUEEZEDBYBIND,
-    STRINGID_PKMNWRAPPEDBY,
-    STRINGID_PKMNTRAPPEDINVORTEX,
-    STRINGID_PKMNCLAMPED,
-    STRINGID_PKMNTRAPPEDINVORTEX,
-    STRINGID_PKMNTRAPPEDBYSANDTOMB
+    [TRAP_ID_BIND]      = STRINGID_PKMNSQUEEZEDBYBIND,
+    [TRAP_ID_WRAP]      = STRINGID_PKMNWRAPPEDBY,
+    [TRAP_ID_FIRE_SPIN] = STRINGID_PKMNTRAPPEDINVORTEX,
+	[TRAP_ID_WHIRLPOOL] = STRINGID_PKMNTRAPPEDINVORTEX,
+    [TRAP_ID_CLAMP]     = STRINGID_PKMNCLAMPED,
+    [TRAP_ID_SAND_TOMB] = STRINGID_PKMNTRAPPEDBYSANDTOMB
 };
 
 const u16 gMistUsedStringIds[] = {
@@ -1311,16 +1311,6 @@ const u16 gDoubleBattleRecallStrings[] = {
     STRINGID_TRAINER1MON1COMEBACK,
     STRINGID_TRAINER1MON2COMEBACK,
     STRINGID_TRAINER1MON1AND2COMEBACK
-};
-
-const u16 gTrappingMoves[] = {
-    MOVE_BIND,
-    MOVE_WRAP,
-    MOVE_FIRE_SPIN,
-    MOVE_CLAMP,
-    MOVE_WHIRLPOOL,
-    MOVE_SAND_TOMB,
-    0xFFFF
 };
 
 const u16 gSwitchInWeatherAbilitiesStrings[] = {

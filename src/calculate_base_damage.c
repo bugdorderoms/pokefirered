@@ -157,7 +157,6 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 			if (!SubsBlockMove(battlerIdAtk, battlerIdDef, move) && defender.status1 & STATUS1_PARALYSIS)
 				power *= 2;
 			break;
-		case EFFECT_GUST:
 		case EFFECT_TWISTER:
 			if (gStatuses3[battlerIdDef] & STATUS3_ON_AIR)
 				power *= 2;
@@ -626,7 +625,18 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 		if (j)
 			gBattleMovePower /= 2;
 	}
-    
+    if (gBattleMoves[move].flags.hitInAirDoubleDmg && gStatuses3[battlerIdDef] & STATUS3_ON_AIR)
+		gBattleMovePower *= 2;
+	
+	if (gBattleMoves[move].flags.hitUnderwater && gStatuses3[battlerIdDef] & STATUS3_UNDERWATER)
+		gBattleMovePower *= 2;
+	
+	if (gBattleMoves[move].flags.hitUnderground && gStatuses3[battlerIdDef] & STATUS3_UNDERGROUND)
+		gBattleMovePower *= 2;
+	
+	if (gBattleMoves[move].flags.dmgMinimize && gStatuses3[battlerIdDef] & STATUS3_MINIMIZED)
+		gBattleMovePower *= 2;
+	
 	// sandstorm stats boost
 	if (IsBattlerWeatherAffected(battlerIdDef, WEATHER_SANDSTORM_ANY) && IS_BATTLER_OF_TYPE(battlerIdDef, TYPE_ROCK))
 	{
@@ -756,8 +766,8 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 	if (gProtectStructs[battlerIdAtk].helpingHand && !isConfusionDmg)
 		damage = (15 * damage) / 10;
 	
-	// any weather except sun weakens solar beam
-	if (IsBattlerWeatherAffected(battlerIdAtk, (WEATHER_ANY & ~(WEATHER_SUN_ANY))) && move == MOVE_SOLAR_BEAM)
+	// any weather except sun and strong winds weakens solar beam
+	if (IsBattlerWeatherAffected(battlerIdAtk, (WEATHER_ANY & ~(WEATHER_SUN_ANY | WEATHER_STRONG_WINDS))) && gBattleMoves[move].effect == EFFECT_SOLARBEAM)
 		damage /= 2;
 	
 	damage *= gBattleScripting.dmgMultiplier;

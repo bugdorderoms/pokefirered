@@ -29,7 +29,7 @@
 	.byte 0x6
 	.endm
 
-        .macro adjustdamage
+    .macro adjustdamage
 	.byte 0x7
 	.endm
 
@@ -171,8 +171,8 @@
 	.4byte \ptr
 	.endm
 
-        .macro jumpbasedontype battler:req, type:req, case:req, ptr:req
-        .byte 0x22
+    .macro jumpbasedontype battler:req, type:req, case:req, ptr:req
+    .byte 0x22
 	.byte \battler
 	.byte \type
 	.byte \case
@@ -567,15 +567,12 @@
 	.byte \param0
 	.endm
 
-	.macro statusanimation battler:req
+	.macro nop64
 	.byte 0x64
-	.byte \battler
 	.endm
 
-	.macro status2animation battler:req, status2:req
+	.macro nop65
 	.byte 0x65
-	.byte \battler
-	.4byte \status2
 	.endm
 
 	.macro chosenstatusanimation battler:req, param1:req, param2:req
@@ -843,14 +840,14 @@
 	.byte 0xa0
 	.endm
 
-	.macro counterdamagecalculator param0:req
+	.macro trycounterattack split:req, ptr:req
 	.byte 0xa1
-	.4byte \param0
+	.byte \split
+	.4byte \ptr
 	.endm
 
-	.macro mirrorcoatdamagecalculator param0:req
+	.macro nopa2
 	.byte 0xa2
-	.4byte \param0
 	.endm
 
 	.macro disablelastusedattack bank:req, param1:req
@@ -1240,7 +1237,7 @@
 	.endm
 
 @new commands
-        .macro callfunction ptr:req
+    .macro callfunction ptr:req
 	.byte 0xf8
 	.4byte \ptr
 	.endm
@@ -1257,7 +1254,7 @@
 	.4byte \value
 	.endm
 	 
-        .macro jumpifsubstituteblocks ptr:req
+    .macro jumpifsubstituteblocks ptr:req
 	.byte 0xfb
 	.4byte \ptr
 	.endm
@@ -1284,8 +1281,9 @@
 	various \battler, VARIOUS_SET_MAGIC_COAT_TARGET
 	.endm
 
-	.macro getifcantrunfrombattle battler:req
+	.macro getifcantrunfrombattle battler:req, checkIngrain:req
 	various \battler, VARIOUS_IS_RUNNING_IMPOSSIBLE
+	.byte \checkIngrain
 	.endm
 
 	.macro getmovetarget battler:req
@@ -1321,14 +1319,14 @@
 	.endm
 
 	.macro checkpokeflute battler:req
-	various \battler, 11
+	various \battler, VARIOUS_CHECK_POKEFLUTE
 	.endm
 
 	.macro waitfanfare battler:req
-	various \battler, 12
+	various \battler, VARIOUS_WAIT_FANFARE
 	.endm
 	
-        .macro tryactivatemoxie battler:req
+    .macro tryactivatemoxie battler:req
 	various \battler, VARIOUS_TRY_ACTIVATE_MOXIE
 	.endm
 	
@@ -1348,15 +1346,15 @@
 	various \battler, VARIOUS_TRY_ACTIVATE_BEAST_BOOST
 	.endm
 
-        .macro tryfirstmondowntrainerslide battler:req
+    .macro tryfirstmondowntrainerslide battler:req
 	various \battler, VARIOUS_TRAINER_SLIDE_FIRST_MON_DOWN
-        .endm
+    .endm
 	
 	.macro trylastmontrainerslide battler:req
 	various \battler, VARIOUS_TRAINER_SLIDE_LAST_MON
-        .endm
+    .endm
 
-        .macro updatenick battler:req
+    .macro updatenick battler:req
 	various \battler, VARIOUS_UPDATE_NICK
 	.endm
 	
@@ -1446,17 +1444,33 @@
 	.4byte \ptr
 	.endm
 	
+	.macro argumenttomoveeffect
+	various BS_ATTACKER, VARIOUS_ARGUMENT_TO_MOVE_EFFECT
+	.endm
+	
+	.macro argumenttomovedamage
+	various BS_ATTACKER, VARIOUS_ARGUMENT_TO_MOVE_DAMAGE
+	.endm
+	
+	.macro jumpifroarfails ptr:req
+	various BS_ATTACKER, VARIOUS_JUMP_IF_ROAR_FAILS
+	.4byte \ptr
+	.endm
+	
+	.macro jumpifweatheraffected battler:req, weatherFlags:req, ptr:req
+	various \battler, VARIOUS_JUMP_IF_WEATHER_AFFECTED
+	.2byte \weatherFlags
+	.4byte \ptr
+	.endm
+	
+	.macro jumpifside battler:req, side:req, ptr:req
+	various \battler, VARIOUS_GET_BATTLER_SIDE
+	jumpifbyte CMP_EQUAL, sMULTIUSE_STATE, \side, \ptr
+	.endm
+	
 @ helpful macros
 	.macro setstatchanger stat:req, stages:req, down:req
 	setbyte sSTATCHANGER \stat | \stages << 4 | \down << 7
-	.endm
-
-	.macro chosenstatus1animation battler:req, status:req
-	chosenstatusanimation \battler 0x0 \status
-	.endm
-
-	.macro chosenstatus2animation battler:req, status:req
-	chosenstatusanimation \battler 0x1 \status
 	.endm
 
 	.macro sethword dst:req, value:req
@@ -1500,7 +1514,7 @@
 	jumpifstatus3condition \battler, \status, 0x1, \jumpptr
 	.endm
 
-        .macro jumpiftype battler:req, type:req, jumpptr:req
+    .macro jumpiftype battler:req, type:req, jumpptr:req
 	jumpbasedontype \battler, \type, 0x0, \jumpptr
 	.endm
 	
@@ -1531,6 +1545,11 @@
 	.macro instantfaintattacker
 	instanthpdrop
 	setatkhptozero
+	.endm
+	
+	.macro typecalc2
+	typecalc
+	bichalfword gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	.endm
 	
 	.macro tryendeffectonabilitychange battler:req

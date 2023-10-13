@@ -58,7 +58,7 @@
 #define HOLD_EFFECT_ZOOM_LENS             54 // todo
 #define HOLD_EFFECT_DESTINY_KNOT          55 // todo
 #define HOLD_EFFECT_WEATHER_EXTEND        56 // todo
-#define HOLD_EFFECT_BIG_ROOT              57 // todo
+#define HOLD_EFFECT_BIG_ROOT              57
 #define HOLD_EFFECT_LIGHT_CLAY            58 // todo
 #define HOLD_EFFECT_SAFETY_GOGGLES        59 // todo
 #define HOLD_EFFECT_ROCKY_HELMET          60 // todo

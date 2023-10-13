@@ -10482,11 +10482,10 @@ General_ItemKnockoff:: @ 81D5C54
 
 General_TurnTrap:: @ 81D5C5F
 	createvisualtask AnimTask_GetTrappedMoveAnimId, 5, 
-	jumpargeq 0, 1, Status_FireSpin
-	jumpargeq 0, 2, Status_Whirlpool
-	jumpargeq 0, 3, Status_Clamp
-	jumpargeq 0, 4, Status_SandTomb
-	goto Status_BindWrap
+	jumpargeq 0, TRAP_ID_FIRE_SPIN, Status_FireSpin
+	jumpargeq 0, TRAP_ID_WHIRLPOOL, Status_Whirlpool
+	jumpargeq 0, TRAP_ID_CLAMP, Status_Clamp
+	jumpargeq 0, TRAP_ID_SAND_TOMB, Status_SandTomb
 
 Status_BindWrap:: @ 81D5C8B
 	loadspritegfx ANIM_TAG_TENDRILS

@@ -391,7 +391,7 @@ struct BattleStruct
 	/*0x068*/ u8 givenExpMons;
 	/*0x069*/ u8 wishPerishSongState;
     /*0x06A*/ u8 wishPerishSongBattlerId;
-	/*0x06B*/ u8 unused;
+	/*0x06B*/ u8 usedReviveItemBattler; // for revive battle usage, as flag using gBitTable
 	/*0x06C*/ u16 lastTakenMove[MAX_BATTLERS_COUNT];
 	/*0x074*/ u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT];
 	/*0x094*/ u16 choicedMove[MAX_BATTLERS_COUNT];
@@ -423,9 +423,11 @@ struct BattleStruct
 	/*0x0F4*/ u8 faintCounter[B_SIDE_COUNT]; // for Supreme Overlord, caps at 100 faints per side
 	/*0x0F6*/ u8 supremeOverlordBoosts[MAX_BATTLERS_COUNT];
 	/*0x0FA*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // for Pickup gen5 effect
-	/*0x0FE*/ u8 soulHeartBattlerId;
-	/*0x0FF*/ u8 usedReviveItemBattler; // for revive battle usage, as flag using gBitTable
-	/*0x100*/ struct Illusion illusion[MAX_BATTLERS_COUNT];
+	/*0x0FE*/ u8 payDayLevels[MAX_BATTLERS_COUNT / 2]; // To store player mon's levels when using pay day, 0 = left, 1 = right
+	/*0x100*/ u8 soulHeartBattlerId;
+	/*0x101*/ u8 unused;
+	/*0x102*/ u16 unused2;
+	/*0x104*/ struct Illusion illusion[MAX_BATTLERS_COUNT];
 	          struct MoveInfo moveInfo;
     union {
         struct LinkPartnerHeader linkPartnerHeader;

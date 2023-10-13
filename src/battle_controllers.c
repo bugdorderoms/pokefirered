@@ -850,10 +850,10 @@ void BtlController_EmitStatusIconUpdate(u8 bufferId, u32 status1, u32 status2)
     PrepareBufferDataTransfer(bufferId, sBattleBuffersTransferData, 9);
 }
 
-void BtlController_EmitStatusAnimation(u8 bufferId, bool8 status2, u32 status)
+void BtlController_EmitStatusAnimation(u8 bufferId, u8 animStatusId, u32 status)
 {
     sBattleBuffersTransferData[0] = CONTROLLER_STATUSANIMATION;
-    sBattleBuffersTransferData[1] = status2;
+    sBattleBuffersTransferData[1] = animStatusId;
     sBattleBuffersTransferData[2] = status;
     sBattleBuffersTransferData[3] = (status & 0x0000FF00) >> 8;
     sBattleBuffersTransferData[4] = (status & 0x00FF0000) >> 16;

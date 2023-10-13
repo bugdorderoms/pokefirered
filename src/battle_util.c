@@ -1196,10 +1196,11 @@ u8 DoBattlerEndTurnEffects(void)
                 break;
             case ENDTURN_WRAP:  // wrap
                 if ((gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED) && IsBattlerAlive(gActiveBattler)
-		 && GetBattlerAbility(gActiveBattler) != ABILITY_MAGIC_GUARD)
+					&& GetBattlerAbility(gActiveBattler) != ABILITY_MAGIC_GUARD)
                 {
 					PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleStruct->wrappedMove[gActiveBattler]);
-                    gBattleMons[gActiveBattler].status2 -= 0x2000;
+                    gBattleMons[gActiveBattler].status2 -= STATUS2_WRAPPED_TURN(1);
+					
                     if (gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED)  // damaged by wrap
                     {
                         gBattleScripting.animArg1 = gBattleStruct->wrappedMove[gActiveBattler];
@@ -1269,11 +1270,10 @@ u8 DoBattlerEndTurnEffects(void)
             case ENDTURN_THRASH:  // thrash
                 if (gBattleMons[gActiveBattler].status2 & STATUS2_LOCK_CONFUSE)
                 {
-                    gBattleMons[gActiveBattler].status2 -= 0x400;
+                    gBattleMons[gActiveBattler].status2 -= STATUS2_LOCK_CONFUSE_TURN(1);
                     if (WasUnableToUseMove(gActiveBattler))
                         CancelMultiTurnMoves(gActiveBattler);
-                    else if (!(gBattleMons[gActiveBattler].status2 & STATUS2_LOCK_CONFUSE)
-                          && (gBattleMons[gActiveBattler].status2 & STATUS2_MULTIPLETURNS))
+                    else if (!(gBattleMons[gActiveBattler].status2 & STATUS2_LOCK_CONFUSE) && (gBattleMons[gActiveBattler].status2 & STATUS2_MULTIPLETURNS))
                     {
                         gBattleMons[gActiveBattler].status2 &= ~(STATUS2_MULTIPLETURNS);
                         if (!(gBattleMons[gActiveBattler].status2 & STATUS2_CONFUSION))
@@ -1737,7 +1737,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 			case CANCELLER_CONFUSED: // confusion
 			    if (gBattleMons[gBattlerAttacker].status2 & STATUS2_CONFUSION)
 				{
-					--gBattleMons[gBattlerAttacker].status2;
+					gBattleMons[gBattlerAttacker].status2 -= STATUS2_CONFUSION_TURN(1);
 					
 					if (gBattleMons[gBattlerAttacker].status2 & STATUS2_CONFUSION)
 					{
@@ -1939,15 +1939,10 @@ u8 AtkCanceller_UnableToUseMove(void)
 						gBattleCommunication[MULTIUSE_STATE] = 0; // For later
 						PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0);
 					}
-					else if (gBattleMoves[gCurrentMove].flags.twoStrikes)
-					{
-						gMultiHitCounter = 2;
-						PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0);
-					}
-					else if (gBattleMoves[gCurrentMove].flags.threeStrikes)
+					else if (gBattleMoves[gCurrentMove].flags.strikeCount > 1)
 					{
 						gBattleScripting.tripleKickPower = 0;
-						gMultiHitCounter = 3;
+						gMultiHitCounter = gBattleMoves[gCurrentMove].flags.strikeCount;
 						PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0);
 					}
 				}
@@ -4893,11 +4888,11 @@ u8 CountUsablePartyMons(u8 battlerId)
 	return ret;
 }
 
-bool8 CanBattlerEscape(u8 battlerId)
+bool8 CanBattlerEscape(u8 battlerId, bool8 checkIngrain)
 {
 	if (IS_BATTLER_OF_TYPE(battlerId, TYPE_GHOST))
 		return TRUE;
-	else if (gBattleMons[battlerId].status2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED) || gStatuses3[battlerId] & STATUS3_ROOTED)
+	else if ((gBattleMons[battlerId].status2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED)) || (checkIngrain && gStatuses3[battlerId] & STATUS3_ROOTED))
 		return FALSE;
 	else
 		return TRUE;
@@ -5392,4 +5387,53 @@ u8 CountAliveMonsInBattle(u8 caseId)
         break;
     }
     return retVal;
+}
+
+void CalculatePayDayMoney(void)
+{
+	u8 i;
+	
+	for (i = 0; i < (MAX_BATTLERS_COUNT / 2); i++)
+	{
+		if (gBattleStruct->payDayLevels[i])
+		{
+			u16 payDayMoney = gPaydayMoney + (gBattleStruct->payDayLevels[i] * 5);
+			
+			if (payDayMoney > 0xFFFF)
+				gPaydayMoney = 0xFFFF;
+			else
+				gPaydayMoney = payDayMoney;
+		}
+		gBattleStruct->payDayLevels[i] = 0;
+	}
+}
+
+u8 GetTrappingIdByMove(u16 move)
+{
+	switch (move)
+	{
+		case MOVE_BIND:
+			return TRAP_ID_BIND;
+		case MOVE_WRAP:
+			return TRAP_ID_WRAP;
+		case MOVE_FIRE_SPIN:
+			return TRAP_ID_FIRE_SPIN;
+		case MOVE_WHIRLPOOL:
+			return TRAP_ID_WHIRLPOOL;
+		case MOVE_CLAMP:
+			return TRAP_ID_CLAMP;
+		case MOVE_SAND_TOMB:
+			return TRAP_ID_SAND_TOMB;
+	}
+}
+
+s32 GetDrainedBigRootHp(u8 battlerId, s32 hp)
+{
+	if (GetBattlerItemHoldEffect(battlerId, TRUE) == HOLD_EFFECT_BIG_ROOT)
+		hp = (hp * (100 + ItemId_GetHoldEffectParam(gBattleMons[battlerId].item))) / 100;
+	
+	if (hp == 0)
+		hp = 1;
+	
+	return hp * -1;
 }

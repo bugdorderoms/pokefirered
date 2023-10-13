@@ -1903,6 +1903,8 @@ static void BattleStartClearSetData(void)
 	gBattleStruct->terastalMsgDone = FALSE;
 	gBattleStruct->soulHeartBattlerId = 0;
 	gBattleStruct->throwingPokeBall = FALSE;
+	gBattleStruct->payDayLevels[0] = 0;
+	gBattleStruct->payDayLevels[1] = 0;
 	
 	for (i = 0; i < PARTY_SIZE; i++)
 	{
@@ -2012,7 +2014,7 @@ void FaintClearSetData(void)
     for (i = 0; i < gBattlersCount; ++i)
     {
         if ((gBattleMons[i].status2 & STATUS2_ESCAPE_PREVENTION) && gDisableStructs[i].battlerPreventingEscape == gActiveBattler)
-            gBattleMons[i].status2 &= ~STATUS2_ESCAPE_PREVENTION;
+            gBattleMons[i].status2 &= ~(STATUS2_ESCAPE_PREVENTION);
         if (gBattleMons[i].status2 & STATUS2_INFATUATED_WITH(gActiveBattler))
             gBattleMons[i].status2 &= ~(STATUS2_INFATUATED_WITH(gActiveBattler));
         if ((gBattleMons[i].status2 & STATUS2_WRAPPED) && gBattleStruct->wrappedBy[i] == gActiveBattler)
@@ -2519,6 +2521,7 @@ void BattleTurnPassed(void)
 	gBattleStruct->throwingPokeBall = FALSE;
     gBattleMainFunc = HandleTurnActionSelectionState;
     gRandomTurnNumber = Random();
+	CalculatePayDayMoney();
 	
     if (ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), TRAINER_SLIDE_LAST_MON_LOW_HP))
 	    BattleScriptExecute(BattleScript_TrainerSlideMsgEnd2);
@@ -2528,7 +2531,7 @@ void BattleTurnPassed(void)
 		BattleScriptExecute(BattleScript_TrainerSlideMsgEnd2);
 }
 
-u8 IsRunningFromBattleImpossible(void)
+u8 IsRunningFromBattleImpossible(bool8 checkIngrain)
 {
     u8 ret, holdEffect = GetBattlerItemHoldEffect(gActiveBattler, TRUE);
 	
@@ -2548,7 +2551,7 @@ u8 IsRunningFromBattleImpossible(void)
 		gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 		return BATTLE_RUN_FAILURE;
 	}
-    if (!CanBattlerEscape(gActiveBattler))
+    if (!CanBattlerEscape(gActiveBattler, checkIngrain))
     {
         gBattleCommunication[MULTISTRING_CHOOSER] = 0;
         return BATTLE_RUN_FORBIDDEN;
@@ -2602,6 +2605,7 @@ static void HandleTurnActionSelectionState(void)
     s32 i;
 
     gBattleCommunication[ACTIONS_CONFIRMED_COUNT] = 0;
+	
     for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
     {
         u8 position = GetBattlerPosition(gActiveBattler);
@@ -2621,7 +2625,7 @@ static void HandleTurnActionSelectionState(void)
                 }
                 else
                 {
-                    if (gBattleMons[gActiveBattler].status2 & (STATUS2_MULTIPLETURNS | STATUS2_RECHARGE))
+                    if ((gBattleMons[gActiveBattler].status2 & (STATUS2_MULTIPLETURNS | STATUS2_RECHARGE)))
                     {
                         gChosenActionByBattler[gActiveBattler] = B_ACTION_USE_MOVE;
                         gBattleCommunication[gActiveBattler] = STATE_WAIT_ACTION_CONFIRMED_STANDBY;
@@ -2699,7 +2703,7 @@ static void HandleTurnActionSelectionState(void)
                     break;
                 case B_ACTION_SWITCH:
                     *(gBattleStruct->battlerPartyIndexes + gActiveBattler) = gBattlerPartyIndexes[gActiveBattler];
-                    if (!CanBattlerEscape(gActiveBattler))
+                    if (!CanBattlerEscape(gActiveBattler, TRUE))
                     {
                         BtlController_EmitChoosePokemon(0, PARTY_ACTION_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
                     }
@@ -2740,7 +2744,7 @@ static void HandleTurnActionSelectionState(void)
                     BattleScriptExecute(BattleScript_PrintCantRunFromTrainer);
                     gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
                 }
-                else if (IsRunningFromBattleImpossible() != BATTLE_RUN_SUCCESS && gBattleBufferB[gActiveBattler][1] == B_ACTION_RUN)
+                else if (IsRunningFromBattleImpossible(TRUE) != BATTLE_RUN_SUCCESS && gBattleBufferB[gActiveBattler][1] == B_ACTION_RUN)
                 {
 					gSelectionBattleScripts[gActiveBattler] = BattleScript_PrintCantEscapeFromBattle;
                     gBattleCommunication[gActiveBattler] = STATE_SELECTION_SCRIPT;
@@ -3183,12 +3187,9 @@ static void TurnValuesCleanUp(bool8 var0)
 			
             if (gDisableStructs[gActiveBattler].isFirstTurn)
                 --gDisableStructs[gActiveBattler].isFirstTurn;
-            if (gDisableStructs[gActiveBattler].rechargeTimer)
-            {
-                --gDisableStructs[gActiveBattler].rechargeTimer;
-                if (gDisableStructs[gActiveBattler].rechargeTimer == 0)
-                    gBattleMons[gActiveBattler].status2 &= ~(STATUS2_RECHARGE);
-            }
+			
+            if (gDisableStructs[gActiveBattler].rechargeTimer && --gDisableStructs[gActiveBattler].rechargeTimer == 0)
+				gBattleMons[gActiveBattler].status2 &= ~(STATUS2_RECHARGE);
         }
 
         if (gDisableStructs[gActiveBattler].substituteHP == 0)
@@ -3250,6 +3251,9 @@ static void RunTurnActionsFunctions(void)
 static void HandleEndTurn_BattleWon(void)
 {
     gCurrentActionFuncId = 0;
+	
+	CalculatePayDayMoney();
+	
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
         gBattleTextBuff1[0] = gBattleOutcome;
@@ -3288,6 +3292,9 @@ static void HandleEndTurn_BattleWon(void)
 static void HandleEndTurn_BattleLost(void)
 {
     gCurrentActionFuncId = 0;
+	
+	CalculatePayDayMoney();
+	
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
         gBattleTextBuff1[0] = gBattleOutcome;
@@ -3313,6 +3320,9 @@ static void HandleEndTurn_BattleLost(void)
 static void HandleEndTurn_RanFromBattle(void)
 {
     gCurrentActionFuncId = 0;
+	
+	CalculatePayDayMoney();
+	
     switch (gProtectStructs[gBattlerAttacker].fleeFlag)
     {
     default:
@@ -3332,6 +3342,7 @@ static void HandleEndTurn_RanFromBattle(void)
 static void HandleEndTurn_MonFled(void)
 {
     gCurrentActionFuncId = 0;
+	CalculatePayDayMoney();
     PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gBattlerAttacker, gBattlerPartyIndexes[gBattlerAttacker]);
     gBattlescriptCurrInstr = BattleScript_WildMonFled;
     gBattleMainFunc = HandleEndTurn_FinishBattle;
@@ -3340,6 +3351,8 @@ static void HandleEndTurn_MonFled(void)
 static void HandleEndTurn_FinishBattle(void)
 {
 	u32 status;
+	
+	CalculatePayDayMoney();
 	
     if (gCurrentActionFuncId == B_ACTION_TRY_FINISH || gCurrentActionFuncId == B_ACTION_FINISHED)
     {
@@ -3570,7 +3583,7 @@ static void HandleAction_UseMove(void)
         gHitMarker |= HITMARKER_NO_PPDEDUCT;
         gBattleStruct->moveTarget[gBattlerAttacker] = GetMoveTarget(MOVE_STRUGGLE, 0);
     }
-    else if (gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS || gBattleMons[gBattlerAttacker].status2 & STATUS2_RECHARGE)
+    else if ((gBattleMons[gBattlerAttacker].status2 & (STATUS2_MULTIPLETURNS | STATUS2_RECHARGE)))
     {
         gCurrentMove = gChosenMove = gLockedMoves[gBattlerAttacker];
     }
@@ -3830,7 +3843,7 @@ static void HandleAction_Run(void)
         }
         else
         {
-            if (!CanBattlerEscape(gBattlerAttacker))
+            if (!CanBattlerEscape(gBattlerAttacker, TRUE))
             {
                 gBattleCommunication[MULTISTRING_CHOOSER] = 4;
                 gBattlescriptCurrInstr = BattleScript_PrintFailedToRunString;

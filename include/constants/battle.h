@@ -99,17 +99,19 @@
 // Volatile status ailments
 // These are removed after exiting the battle or switching out
 #define STATUS2_CONFUSION                (1 << 0 | 1 << 1 | 1 << 2)
+#define STATUS2_CONFUSION_TURN(num)      ((num) << 0)
 #define STATUS2_FLINCHED                 (1 << 3)
 #define STATUS2_UPROAR                   (1 << 4 | 1 << 5 | 1 << 6)
 #define STATUS2_BIDE                     (1 << 7 | 1 << 8)
 #define STATUS2_LOCK_CONFUSE             (1 << 9 | 1 << 10)
+#define STATUS2_LOCK_CONFUSE_TURN(num)   ((num) << 9)
 #define STATUS2_MULTIPLETURNS            (1 << 11)
-#define STATUS2_WRAPPED                  (1 << 12)
-#define STATUS2_INFATUATION              (1 << 13 | 1 << 14 | 1 << 15 | 1 << 16) // 4 bits, one for every battler
-#define STATUS2_INFATUATED_WITH(battler) (gBitTable[battler] << 13)
-#define STATUS2_FOCUS_ENERGY             (1 << 18)
-#define STATUS2_TRANSFORMED              (1 << 19)
-#define STATUS2_RECHARGE                 (1 << 20)
+#define STATUS2_WRAPPED                  (1 << 12 | 1 << 13 | 1 << 14)
+#define STATUS2_WRAPPED_TURN(num)        ((num) << 12)
+#define STATUS2_FOCUS_ENERGY             (1 << 15)
+#define STATUS2_TRANSFORMED              (1 << 16)
+#define STATUS2_INFATUATION              (1 << 17 | 1 << 18 | 1 << 19 | 1 << 20) // 4 bits, one for every battler
+#define STATUS2_INFATUATED_WITH(battler) (gBitTable[battler] << 17)
 #define STATUS2_RAGE                     (1 << 21)
 #define STATUS2_SUBSTITUTE               (1 << 22)
 #define STATUS2_DESTINY_BOND             (1 << 23)
@@ -119,6 +121,7 @@
 #define STATUS2_FORESIGHT                (1 << 27)
 #define STATUS2_DEFENSE_CURL             (1 << 28)
 #define STATUS2_TORMENT                  (1 << 29)
+#define STATUS2_RECHARGE                 (1 << 30)
 
 // Seems like per-battler statuses. Not quite sure how to categorize these
 #define STATUS3_LEECHSEED_BATTLER       (1 << 0 | 1 << 1)
@@ -244,5 +247,18 @@
 #define BATTLE_RUN_SUCCESS        0
 #define BATTLE_RUN_FORBIDDEN      1
 #define BATTLE_RUN_FAILURE        2
+
+// Defines for waitmessage and pause commands.
+#define B_WAIT_TIME_LONG  0x40
+#define B_WAIT_TIME_MED   0x30
+#define B_WAIT_TIME_SHORT 0x20
+
+// For trapping Wrap-like moves, for the string and end turn animation.
+#define TRAP_ID_BIND      0
+#define TRAP_ID_WRAP      1
+#define TRAP_ID_FIRE_SPIN 2
+#define TRAP_ID_WHIRLPOOL 3
+#define TRAP_ID_CLAMP     4
+#define TRAP_ID_SAND_TOMB 5
 
 #endif // GUARD_CONSTANTS_BATTLE_H
