@@ -744,14 +744,14 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 		{
 			if ((gSideStatuses[GetBattlerSide(battlerIdDef)] & i) && GetBattlerAbility(battlerIdAtk) != ABILITY_INFILTRATOR && !isConfusionDmg)
 			{
-				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
+				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(battlerIdDef, BATTLE_ALIVE_SIDE) == 2)
 					damage = 2 * (damage / 3);
 				else
 					damage /= 2;
 			}
 		}
 	}
-	if (!isConfusionDmg && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && GetBattlerMoveTargetType(battlerIdAtk, move) == MOVE_TARGET_BOTH && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) > 1) 
+	if (!isConfusionDmg && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && GetBattlerMoveTargetType(battlerIdAtk, move) == MOVE_TARGET_BOTH && CountAliveMonsInBattle(battlerIdDef, BATTLE_ALIVE_SIDE) > 1) 
 		damage -= damage / 4;
 	
 	// flash fire triggered

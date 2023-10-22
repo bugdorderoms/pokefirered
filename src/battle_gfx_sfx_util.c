@@ -154,38 +154,38 @@ void SpriteCB_TrainerSlideIn(struct Sprite *sprite)
     }
 }
 
-void InitAndLaunchChosenStatusAnimation(u8 animStatusId, u32 status)
+void InitAndLaunchChosenStatusAnimation(u8 battlerId, u8 animStatusId, u32 status)
 {
 	switch (animStatusId)
 	{
 		case ANIM_ID_STATUS1:
 			if (status & STATUS1_FREEZE)
-				LaunchStatusAnimation(gActiveBattler, B_ANIM_STATUS_FRZ);
+				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_FRZ);
 			else if (status & STATUS1_PSN_ANY)
-				LaunchStatusAnimation(gActiveBattler, B_ANIM_STATUS_PSN);
+				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_PSN);
 			else if (status & STATUS1_BURN)
-				LaunchStatusAnimation(gActiveBattler, B_ANIM_STATUS_BRN);
+				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_BRN);
 			else if (status & STATUS1_SLEEP)
-				LaunchStatusAnimation(gActiveBattler, B_ANIM_STATUS_SLP);
+				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_SLP);
 			else if (status & STATUS1_PARALYSIS)
-				LaunchStatusAnimation(gActiveBattler, B_ANIM_STATUS_PRZ);
+				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_PRZ);
 			else // no animation
 				return;
 			break;
 		case ANIM_ID_STATUS2:
 			if (status & STATUS2_INFATUATION)
-				LaunchStatusAnimation(gActiveBattler, B_ANIM_STATUS_INFATUATION);
+				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_INFATUATION);
 			else if (status & STATUS2_CONFUSION)
-				LaunchStatusAnimation(gActiveBattler, B_ANIM_STATUS_CONFUSION);
+				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_CONFUSION);
 			else if (status & STATUS2_CURSED)
-				LaunchStatusAnimation(gActiveBattler, B_ANIM_STATUS_CURSED);
+				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_CURSED);
 			else if (status & STATUS2_NIGHTMARE)
-				LaunchStatusAnimation(gActiveBattler, B_ANIM_STATUS_NIGHTMARE);
+				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_NIGHTMARE);
 			else // no animation
 				return;
 			break;
 	}
-	gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].statusAnimActive = TRUE;
+	gBattleSpritesDataPtr->healthBoxesData[battlerId].statusAnimActive = TRUE;
 }
 
 #define tBattlerId data[0]

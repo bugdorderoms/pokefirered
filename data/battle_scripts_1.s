@@ -449,7 +449,7 @@ BattleScript_TrainerBattleForceOut::
 	getswitchedmondata BS_TARGET
 	switchindataupdate BS_TARGET
 	tryremoveprimalweather BS_TARGET
-	switchinanim BS_TARGET, 0
+	switchinanim BS_TARGET, FALSE
 	waitstate
 	printstring STRINGID_PKMNWASDRAGGEDOUT
 	switchineffects BS_TARGET
@@ -1826,7 +1826,7 @@ BattleScript_EffectBatonPass::
 	hpthresholds BS_ATTACKER
 	tryremoveprimalweather BS_ATTACKER
 	printstring STRINGID_SWITCHINMON
-	switchinanim BS_ATTACKER, 1
+	switchinanim BS_ATTACKER, TRUE
 	waitstate
 	switchineffects BS_ATTACKER
 	goto BattleScript_MoveEnd
@@ -2815,7 +2815,7 @@ BattleScript_FaintedMonTryChooseAnother::
 	tryremoveprimalweather BS_ATTACKER
 	printstring STRINGID_SWITCHINMON
 	hidepartystatussummary BS_ATTACKER
-	switchinanim BS_ATTACKER, 0
+	switchinanim BS_ATTACKER, FALSE
 	waitstate
 	switchineffects BS_ATTACKER
 	resetsentmonsvalue
@@ -2827,7 +2827,7 @@ BattleScript_FaintedMonChooseAnother::
 	tryremoveprimalweather BS_FAINTED
 	printstring STRINGID_SWITCHINMON
 	hidepartystatussummary BS_FAINTED
-	switchinanim BS_FAINTED, 0
+	switchinanim BS_FAINTED, FALSE
 	waitstate
 	resetplayerfainted
 	trylastmontrainerslide BS_FAINTED
@@ -2851,7 +2851,7 @@ BattleScript_LinkBattleFaintedMonLoop::
 	hpthresholds BS_FAINTED
 	printstring STRINGID_SWITCHINMON
 	hidepartystatussummary BS_FAINTED
-	switchinanim BS_FAINTED, 0
+	switchinanim BS_FAINTED, FALSE
 	waitstate
 	switchineffects 5
 	jumpifbytenotequal gBattlerFainted, gBattlersCount, BattleScript_LinkBattleFaintedMonLoop
@@ -3023,7 +3023,7 @@ BattleScript_DoSwitchOut::
 	tryremoveprimalweather BS_ATTACKER
 	printstring STRINGID_SWITCHINMON
 	hidepartystatussummary BS_ATTACKER
-	switchinanim BS_ATTACKER, 0
+	switchinanim BS_ATTACKER, FALSE
 	waitstate
 	switchineffects BS_ATTACKER
 	moveendcase ATK49_STATUS_IMMUNITY_ABILITIES
@@ -4942,7 +4942,7 @@ BattleScript_EmergencyExit::
 	switchindataupdate BS_TARGET
 	hpthresholds BS_TARGET
 	printstring STRINGID_SWITCHINMON
-	switchinanim BS_TARGET, 1
+	switchinanim BS_TARGET, TRUE
 	waitstate
 	switchineffects BS_TARGET
 BattleScript_EmergencyExitRet::

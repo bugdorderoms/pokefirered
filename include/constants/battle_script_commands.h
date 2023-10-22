@@ -61,7 +61,6 @@
 #define BS_PLAYER2                  13 // for atk98_updatestatusicon
 #define BS_OPPONENT2                14
 #define BS_SCRIPTING_PARTNER        15
-#define BS_ACTIVE                   16
 
 // Atk01, accuracy calc
 #define NO_ACC_CALC_CHECK_LOCK_ON 0

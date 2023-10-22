@@ -1677,9 +1677,11 @@ bool8 HealStatusConditions(struct Pokemon *mon, u32 healMask, u8 battleId)
         status &= ~(healMask);
         SetMonData(mon, MON_DATA_STATUS, &status);
 		
-        if (gMain.inBattle && battleId != MAX_BATTLERS_COUNT)
+        if (battleId != MAX_BATTLERS_COUNT)
+		{
             gBattleMons[battleId].status1 &= ~(healMask);
-		
+			gBattleMons[battleId].status2 &= ~(STATUS2_NIGHTMARE); // fix nightmare glitch
+		}
         return FALSE;
     }
 	return TRUE;

@@ -1415,19 +1415,19 @@
 	.endm
 	
 	.macro atknameinbuff1
-	various BS_ACTIVE, VARIOUS_ATKNAME_IN_BUFF1
+	various BS_ATTACKER, VARIOUS_ATKNAME_IN_BUFF1
 	.endm
 	
 	.macro resetsentmonsvalue
-	various BS_ACTIVE, VARIOUS_RESET_SENT_MONS_VALUE
+	various BS_ATTACKER, VARIOUS_RESET_SENT_MONS_VALUE
 	.endm
 	
 	.macro setatktoplayer0
-	various BS_ACTIVE, VARIOUS_SET_ATK_TO_PLAYER0
+	various BS_ATTACKER, VARIOUS_SET_ATK_TO_PLAYER0
 	.endm
 	
 	.macro buffermovetolearn
-	various BS_ACTIVE, VARIOUS_BUFFER_MOVE_TO_LEARN
+	various BS_ATTACKER, VARIOUS_BUFFER_MOVE_TO_LEARN
 	.endm
 	
 	.macro activateweatherchangeabilities

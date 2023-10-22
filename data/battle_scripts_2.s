@@ -21,7 +21,8 @@
 
 gBattlescriptsForUsingItem::
 	.4byte BattleScript_ItemRestoreHP                @ EFFECT_ITEM_RESTORE_HP
-    .4byte BattleScript_ItemCureStatus               @ EFFECT_ITEM_CURE_STATUS
+    .4byte BattleScript_ItemCurePrimaryStatus        @ EFFECT_ITEM_CURE_PRIMARY_STATUS
+	.4byte BattleScript_ItemCureSecondaryStatus      @ EFFECT_ITEM_CURE_SECONDARY_STATUS
     .4byte BattleScript_ItemIncreaseStat             @ EFFECT_ITEM_INCREASE_STAT
     .4byte BattleScript_ItemSetMist                  @ EFFECT_ITEM_SET_MIST
     .4byte BattleScript_ItemSetFocusEnergy           @ EFFECT_ITEM_SET_FOCUS_ENERGY
@@ -73,9 +74,15 @@ BattleScript_ItemRestoreHP_SendOutRevivedBattler::
     switchineffects BS_SCRIPTING
     end
 
-BattleScript_ItemCureStatus::
+BattleScript_ItemCurePrimaryStatus::
     call BattleScript_UseItemMessage
+	cureprimarystatus BS_SCRIPTING, BattleScript_ItemCureSecondaryStatus_PrintString
 	updatestatusicon BS_SCRIPTING
+	goto BattleScript_ItemCureSecondaryStatus_PrintString
+	
+BattleScript_ItemCureSecondaryStatus::
+	call BattleScript_UseItemMessage
+BattleScript_ItemCureSecondaryStatus_PrintString::
     printstring STRINGID_ITEMCUREDSPECIESSTATUS
     waitmessage 0x40
     end

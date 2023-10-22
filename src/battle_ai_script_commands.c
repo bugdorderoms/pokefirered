@@ -260,7 +260,7 @@ static const u16 sDiscouragedPowerfulMoveEffects[] =
     0xFFFF
 };
 
-void BattleAI_HandleItemUseBeforeAISetup(void)
+void BattleAI_HandleItemUseBeforeAISetup(u8 battlerId)
 {
     s32 i;
     u8 *data = (u8 *)BATTLE_HISTORY;
@@ -281,10 +281,10 @@ void BattleAI_HandleItemUseBeforeAISetup(void)
             }
         }
     }
-    BattleAI_SetupAIData();
+    BattleAI_SetupAIData(battlerId);
 }
 
-void BattleAI_SetupAIData(void)
+void BattleAI_SetupAIData(u8 battlerId)
 {
     s32 i;
     u8 *data = (u8 *)AI_THINKING_STRUCT;
@@ -297,7 +297,7 @@ void BattleAI_SetupAIData(void)
     for (i = 0; i < MAX_MON_MOVES; i++)
         AI_THINKING_STRUCT->score[i] = 100;
 
-    moveLimitations = CheckMoveLimitations(gActiveBattler, 0, 0xFF);
+    moveLimitations = CheckMoveLimitations(battlerId, 0, 0xFF);
 
     // Ignore moves that aren't possible to use.
     for (i = 0; i < MAX_MON_MOVES; i++)
@@ -308,7 +308,7 @@ void BattleAI_SetupAIData(void)
         AI_THINKING_STRUCT->simulatedRNG[i] = 100 - (Random() % 16);
     }
     gBattleResources->AI_ScriptsStack->size = 0;
-    gBattlerAttacker = gActiveBattler;
+    gBattlerAttacker = battlerId;
 
     // Decide a random target battlerId in doubles.
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
@@ -1612,13 +1612,13 @@ static void Cmd_if_curr_move_disabled_or_encored(void)
     switch (sAIScriptPtr[1])
     {
     case 0:
-        if (gDisableStructs[gActiveBattler].disabledMove == AI_THINKING_STRUCT->moveConsidered)
+        if (gDisableStructs[gBattlerAttacker].disabledMove == AI_THINKING_STRUCT->moveConsidered)
             sAIScriptPtr = READ_PTR(sAIScriptPtr + 2);
         else
             sAIScriptPtr += 6;
         break;
     case 1:
-        if (gDisableStructs[gActiveBattler].encoredMove == AI_THINKING_STRUCT->moveConsidered)
+        if (gDisableStructs[gBattlerAttacker].encoredMove == AI_THINKING_STRUCT->moveConsidered)
             sAIScriptPtr = READ_PTR(sAIScriptPtr + 2);
         else
             sAIScriptPtr += 6;

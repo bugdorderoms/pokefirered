@@ -111,7 +111,7 @@ static bool8 IsFinalStrikeMoveEffect(u16 move)
 
 void DoMoveEffect(bool8 primary)
 {
-	u8 moveEffect = gBattleStruct->moveEffectByte;
+	u8 i, moveEffect = gBattleStruct->moveEffectByte;
 	u16 defAbility;
 	bool8 affectsUser = gBattleStruct->affectsUser, certain = gBattleStruct->moveEffectCertain, statusChanged = FALSE;
 	const u8 *BS_Ptr = gBattlescriptCurrInstr + 1;
@@ -175,11 +175,11 @@ void DoMoveEffect(bool8 primary)
 		{
 			case STATUS1_SLEEP:
 				if (defAbility != ABILITY_SOUNDPROOF) // Check active Uproar
-					for (gActiveBattler = 0; gActiveBattler < gBattlersCount && !(gBattleMons[gActiveBattler].status2 & STATUS2_UPROAR); ++gActiveBattler);
+					for (i = 0; i < gBattlersCount && !(gBattleMons[i].status2 & STATUS2_UPROAR); ++i);
 				else
-					gActiveBattler = gBattlersCount;
+					i = gBattlersCount;
 				
-				if (gActiveBattler == gBattlersCount && CanBePutToSleep(gEffectBattler, FALSE))
+				if (i == gBattlersCount && CanBePutToSleep(gEffectBattler, FALSE))
 				{
 					CancelMultiTurnMoves(gEffectBattler);
 					statusChanged = TRUE;
@@ -300,9 +300,8 @@ void DoMoveEffect(bool8 primary)
 				gBattleMons[gEffectBattler].status1 |= gStatusFlagsForMoveEffects[moveEffect];
 			
 			gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[moveEffect];
-			gActiveBattler = gEffectBattler;
-            BtlController_EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gEffectBattler].status1);
-            MarkBattlerForControllerExec(gActiveBattler);
+            BtlController_EmitSetMonData(gEffectBattler, BUFFER_A, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gEffectBattler].status1);
+            MarkBattlerForControllerExec(gEffectBattler);
 			SAFEGUARD_CHECK;
 			// For synchronize
 			if (moveEffect == MOVE_EFFECT_POISON || moveEffect == MOVE_EFFECT_TOXIC || moveEffect == MOVE_EFFECT_PARALYSIS || moveEffect == MOVE_EFFECT_BURN)

@@ -4531,6 +4531,23 @@ static bool8 ItemUseRestoreMovePP(struct Pokemon *mon, u8 moveIndex, u8 amount, 
 	return FALSE;
 }
 
+// try cure mon's primary status
+static bool8 ItemUseTryCureStatus(struct Pokemon *mon, u32 healMask, u8 battlerId)
+{
+	u32 status = GetMonData(mon, MON_DATA_STATUS);
+	
+	if (status & healMask)
+	{
+		if (battlerId == MAX_BATTLERS_COUNT) // Heal the status on the battle script
+		{
+			status &= ~(healMask);
+			SetMonData(mon, MON_DATA_STATUS, &status);
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
 #define ITEM_USE_PLAY_SOUND_AND_CONSUME(onlySound)                                                 \
 {                                                                                                  \
 	itemUse->itemEffectsDone = DoEffectsOnItemUse(onlySound, item, itemUse->itemEffectsDone);      \
@@ -4629,30 +4646,27 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 					byte = effectTable[++i]; // status flag to cure
 					
 					// stored as bit flags to be able to cure diferent status at a time
-					if ((byte & ITEMEFFECT_STATUS_POISON) && !HealStatusConditions(mon, (STATUS1_PSN_ANY | STATUS1_TOXIC_COUNTER), battleMonId))
+					if ((byte & ITEMEFFECT_STATUS_POISON) && ItemUseTryCureStatus(mon, (STATUS1_PSN_ANY | STATUS1_TOXIC_COUNTER), battleMonId))
 					{
 						hword = ITEMUSE_STRING_POISON_CURED;
 						caseWorked = TRUE;
 					}
-					if ((byte & ITEMEFFECT_STATUS_BURN) && !HealStatusConditions(mon, STATUS1_BURN, battleMonId))
+					if ((byte & ITEMEFFECT_STATUS_BURN) && ItemUseTryCureStatus(mon, STATUS1_BURN, battleMonId))
 					{
 						hword = ITEMUSE_STRING_BURN_HEALED;
 						caseWorked = TRUE;
 					}
-					if ((byte & ITEMEFFECT_STATUS_FREEZE) && !HealStatusConditions(mon, STATUS1_FREEZE, battleMonId))
+					if ((byte & ITEMEFFECT_STATUS_FREEZE) && ItemUseTryCureStatus(mon, STATUS1_FREEZE, battleMonId))
 					{
 						hword = ITEMUSE_STRING_THAWED;
 						caseWorked = TRUE;
 					}
-					if ((byte & ITEMEFFECT_STATUS_SLEEP) && !HealStatusConditions(mon, STATUS1_SLEEP, battleMonId))
+					if ((byte & ITEMEFFECT_STATUS_SLEEP) && ItemUseTryCureStatus(mon, STATUS1_SLEEP, battleMonId))
 					{
-						if (gMain.inBattle && battleMonId != MAX_BATTLERS_COUNT)
-							gBattleMons[battleMonId].status2 &= ~(STATUS2_NIGHTMARE);
-						
 						hword = ITEMUSE_STRING_WOKE_UP;
 						caseWorked = TRUE;
 					}
-					if ((byte & ITEMEFFECT_STATUS_PARALYSIS) && !HealStatusConditions(mon, STATUS1_PARALYSIS, battleMonId))
+					if ((byte & ITEMEFFECT_STATUS_PARALYSIS) && ItemUseTryCureStatus(mon, STATUS1_PARALYSIS, battleMonId))
 					{
 						hword = ITEMUSE_STRING_PARALYSIS_CURED;
 						caseWorked = TRUE;
@@ -6059,7 +6073,7 @@ void OpenPartyMenuInTutorialBattle(u8 partyAction)
                       FALSE,
                       PARTY_MSG_NONE,
                       Task_FirstBattleEnterParty_WaitFadeIn,
-                      SetCB2ToReshowScreenAfterMenu);
+                      ReshowBattleScreenAfterMenu);
         BtlCtrl_OakOldMan_SetState2Flag(FIRST_BATTLE_MSG_FLAG_PARTY_MENU);
     }
     else
@@ -6070,14 +6084,14 @@ void OpenPartyMenuInTutorialBattle(u8 partyAction)
                       FALSE,
                       PARTY_MSG_CHOOSE_MON,
                       Task_HandleChooseMonInput,
-                      SetCB2ToReshowScreenAfterMenu);
+                      ReshowBattleScreenAfterMenu);
     }
     UpdatePartyToBattleOrder();
 }
 
 void Pokedude_OpenPartyMenuInBattle(void)
 {
-    InitPartyMenu(PARTY_MENU_TYPE_IN_BATTLE, GetPartyLayoutFromBattleType(), PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, Task_PartyMenu_Pokedude, SetCB2ToReshowScreenAfterMenu);
+    InitPartyMenu(PARTY_MENU_TYPE_IN_BATTLE, GetPartyLayoutFromBattleType(), PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, Task_PartyMenu_Pokedude, ReshowBattleScreenAfterMenu);
     UpdatePartyToBattleOrder();
 }
 
@@ -6452,7 +6466,7 @@ static void SwitchAliveMonIntoLeadSlot(void)
 static void CB2_SetUpExitToBattleScreen(void)
 {
     CB2_SetUpReshowBattleScreenAfterMenu();
-    SetMainCallback2(SetCB2ToReshowScreenAfterMenu);
+    SetMainCallback2(ReshowBattleScreenAfterMenu);
 }
 
 void ShowPartyMenuToShowcaseMultiBattleParty(void)

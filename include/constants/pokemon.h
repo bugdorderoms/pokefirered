@@ -55,8 +55,8 @@
 #define MON_DATA_TERA_TYPE          50
 #define MON_DATA_STATUS             51
 #define MON_DATA_LEVEL              52
-#define MON_DATA_HP                 53
-#define MON_DATA_MAX_HP             54
+#define MON_DATA_MAX_HP             53
+#define MON_DATA_HP                 54
 #define MON_DATA_ATK                55
 #define MON_DATA_DEF                56
 #define MON_DATA_SPEED              57

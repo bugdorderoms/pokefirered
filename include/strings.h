@@ -233,7 +233,7 @@ extern const u8 gText_MoveInfoPriorityAndCategory[];
 extern const u8 gText_MoveInfoTarget[];
 extern const u8 gText_LinkStandby[];
 extern const u8 gText_BattleMenu[];
-extern const u8 gText_WhatWillPkmnDo[];
+extern const u8 gText_WhatWillBufferDo[];
 extern const u8 gText_MoveTargetSelected[];
 extern const u8 gText_MoveTargetDepends[];
 extern const u8 gText_MoveTargetUserOrSelected[];
@@ -259,7 +259,7 @@ extern const u8 gText_KeepAnEyeOnHP[];
 extern const u8 gText_OakNoRunningFromATrainer[];
 extern const u8 gText_WinEarnsPrizeMoney[];
 extern const u8 gText_HowDissapointing[];
-extern const u8 gText_WhatWillOldManDo[];
+extern const u8 gText_TheOldMan[];
 
 // battle_controller_pokedude
 extern const u8 Pokedude_Text_SpeedierBattlerGoesFirst[];

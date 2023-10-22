@@ -854,7 +854,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_BURN_HEAL] =
@@ -866,7 +866,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_ICE_HEAL] =
@@ -878,7 +878,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_AWAKENING] =
@@ -890,7 +890,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_PARALYZE_HEAL] =
@@ -902,7 +902,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_FULL_RESTORE] =
@@ -966,7 +966,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_REVIVE] =
@@ -1082,7 +1082,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_REVIVAL_HERB] =
@@ -1159,7 +1159,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_BLUE_FLUTE] =
@@ -1171,7 +1171,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_FLUTE,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_YELLOW_FLUTE] =
@@ -1183,7 +1183,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FLUTE,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_SECONDARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_RED_FLUTE] =
@@ -1195,7 +1195,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FLUTE,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_SECONDARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_BLACK_FLUTE] =
@@ -1268,7 +1268,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_CASTELIACONE] =
@@ -1280,7 +1280,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_LUMIOSE_GALETTE] =
@@ -1292,7 +1292,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_RAGE_CANDY_BAR] =
@@ -1304,7 +1304,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_SHALOUR_SABLE] =
@@ -1316,7 +1316,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_OLD_GATEAU] =
@@ -1328,7 +1328,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_DYNAMAX_CANDY] =
@@ -1374,7 +1374,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
 	},
 	[ITEM_HP_UP] =
@@ -2496,7 +2496,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_BERRY_POUCH,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
 	},
 	[ITEM_CHESTO_BERRY] =
@@ -2508,7 +2508,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_BERRY_POUCH,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
 	},
 	[ITEM_PECHA_BERRY] =
@@ -2520,7 +2520,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_BERRY_POUCH,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
 	},
 	[ITEM_RAWST_BERRY] =
@@ -2532,7 +2532,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_BERRY_POUCH,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
 	},
 	[ITEM_ASPEAR_BERRY] =
@@ -2544,7 +2544,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_BERRY_POUCH,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
 	},
 	[ITEM_LEPPA_BERRY] =
@@ -2582,7 +2582,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_BERRY_POUCH,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_SECONDARY_STATUS,
 		.flingPower = 10,
 	},
 	[ITEM_LUM_BERRY] =
@@ -2594,7 +2594,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_BERRY_POUCH,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
-		.battleUsage = EFFECT_ITEM_CURE_STATUS,
+		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
 	},
 	[ITEM_SITRUS_BERRY] =

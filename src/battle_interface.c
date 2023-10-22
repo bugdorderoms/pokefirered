@@ -727,7 +727,7 @@ void UpdateHpTextInHealthbox(u8 healthboxSpriteId, s16 value, u8 maxOrCurrent)
             ConvertIntToDecimalStringN(text, value, STR_CONV_MODE_RIGHT_ALIGN, 3);
             windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(text, 0, 5, &windowId);
             spriteTileNum = gSprites[healthboxSpriteId].oam.tileNum;
-            TextIntoHealthboxObject( (void*)(OBJ_VRAM0) + spriteTileNum * TILE_SIZE_4BPP + 0xA40, windowTileData, 2);
+            TextIntoHealthboxObject((void*)(OBJ_VRAM0) + spriteTileNum * TILE_SIZE_4BPP + 0xA40, windowTileData, 2);
             RemoveWindow(windowId);
         }
         else // singles, current
@@ -756,8 +756,9 @@ static void UpdateHpTextInHealthboxInDoubles(u8 healthboxSpriteId, s16 value, u8
         u8 *txtPtr = ConvertIntToDecimalStringN(text + 6, value, STR_CONV_MODE_RIGHT_ALIGN, 3);
         u8 i;
 
-        if (!maxOrCurrent)
+        if (maxOrCurrent == HP_CURRENT)
             StringCopy(txtPtr, gText_Slash);
+		
         RenderTextFont9(gMonSpritesGfxPtr->barFontGfx, 0, text, 0, 0, 0, 0, 0);
 
         for (i = var; i < var + 3; i++)

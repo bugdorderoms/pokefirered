@@ -253,11 +253,11 @@ static const u8 sText_PkmnLostFocus[] = _("{B_ATK_NAME_WITH_PREFIX} lost its\nfo
 static const u8 sText_PkmnWasDraggedOut[] = _("{B_DEF_NAME_WITH_PREFIX} was\ndragged out!\p");
 static const u8 sText_TheWallShattered[] = _("The wall shattered!");
 static const u8 sText_ButNoEffect[] = _("But it had no effect!");
-static const u8 sText_PkmnHasNoMovesLeft[] = _("{B_ACTIVE_NAME_WITH_PREFIX} has no\nmoves left!\p");
-static const u8 sText_PkmnMoveIsDisabled[] = _("{B_ACTIVE_NAME_WITH_PREFIX}'s {B_CURRENT_MOVE}\nis disabled!\p");
-static const u8 sText_PkmnCantUseMoveTorment[] = _("{B_ACTIVE_NAME_WITH_PREFIX} can't use the same\nmove in a row due to the Torment!\p");
-static const u8 sText_PkmnCantUseMoveTaunt[] = _("{B_ACTIVE_NAME_WITH_PREFIX} can't use\n{B_CURRENT_MOVE} after the Taunt!\p");
-static const u8 sText_PkmnCantUseMoveSealed[] = _("{B_ACTIVE_NAME_WITH_PREFIX} can't use the\nsealed {B_CURRENT_MOVE}!\p");
+static const u8 sText_PkmnHasNoMovesLeft[] = _("{B_ATK_NAME_WITH_PREFIX} has no\nmoves left!\p");
+static const u8 sText_PkmnMoveIsDisabled[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_CURRENT_MOVE}\nis disabled!\p");
+static const u8 sText_PkmnCantUseMoveTorment[] = _("{B_ATK_NAME_WITH_PREFIX} can't use the same\nmove in a row due to the Torment!\p");
+static const u8 sText_PkmnCantUseMoveTaunt[] = _("{B_ATK_NAME_WITH_PREFIX} can't use\n{B_CURRENT_MOVE} after the Taunt!\p");
+static const u8 sText_PkmnCantUseMoveSealed[] = _("{B_ATK_NAME_WITH_PREFIX} can't use the\nsealed {B_CURRENT_MOVE}!\p");
 static const u8 sText_PkmnMadeItRain[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nmade it rain!");
 static const u8 sText_PkmnRaisedSpeed[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\nraised its Speed!");
 static const u8 sText_PkmnProtectedBy[] = _("{B_DEF_NAME_WITH_PREFIX} was protected\nby {B_DEF_ABILITY}!");
@@ -1372,9 +1372,9 @@ const u8 gText_PkmnIsEvolving[] = _("What?\n{STR_VAR_1} is evolving!");
 const u8 gText_CongratsPkmnEvolved[] = _("Congratulations! Your {STR_VAR_1}\nevolved into {STR_VAR_2}!{WAIT_SE}\p");
 const u8 gText_PkmnStoppedEvolving[] = _("Huh? {STR_VAR_1}\nstopped evolving!\p");
 const u8 gText_EllipsisQuestionMark[] = _("……?\p");
-const u8 gText_WhatWillPkmnDo[] = _("What will\n{B_ACTIVE_NAME_NO_ILLUSION} do?");
+const u8 gText_WhatWillBufferDo[] = _("What will\n{B_BUFF1} do?");
 const u8 gText_WhatWillPlayerThrow[] = _("What will {B_PLAYER_NAME}\nthrow?");
-const u8 gText_WhatWillOldManDo[] = _("What will the\nold man do?");
+const u8 gText_TheOldMan[] = _("the old man");
 const u8 gText_LinkStandby[] = _("{PAUSE 16}Link standby…");
 const u8 gText_BattleMenu[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Fight{CLEAR_TO 56}Bag\nPokémon{CLEAR_TO 56}Run");
 const u8 gUnknown_83FE747[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Ball{CLEAR_TO 56}Bait\nRock{CLEAR_TO 56}Run");
@@ -1496,12 +1496,12 @@ static const u8 *const sATypeMove_Table[] = {
 };
 
 // code
-void BufferStringBattle(u16 stringId)
+void BufferStringBattle(u8 battlerId, u16 stringId)
 {
     s32 i;
     const u8 *stringPtr = NULL;
 
-    sBattleMsgDataPtr = (struct BattleMsgData*)(&gBattleBufferA[gActiveBattler][4]);
+    sBattleMsgDataPtr = (struct BattleMsgData*)(&gBattleBufferA[battlerId][4]);
     gLastUsedItem = sBattleMsgDataPtr->lastItem;
     gLastUsedAbility = sBattleMsgDataPtr->lastAbility;
     gBattleScripting.battler = sBattleMsgDataPtr->scrActive;
@@ -1564,7 +1564,7 @@ void BufferStringBattle(u16 stringId)
         }
         break;
     case STRINGID_INTROSENDOUT: // poke first send-out
-        if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
+        if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
         {
             if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
             {
@@ -1601,7 +1601,7 @@ void BufferStringBattle(u16 stringId)
         }
         break;
     case STRINGID_RETURNMON: // sending poke to ball msg
-        if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER)
+        if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
         {
             if (*(&gBattleStruct->hpScale) == 0)
                 stringPtr = sText_PkmnThatsEnough;
@@ -1667,7 +1667,7 @@ void BufferStringBattle(u16 stringId)
         if (gBattleTextBuff1[0] & B_OUTCOME_LINK_BATTLE_RAN)
         {
             gBattleTextBuff1[0] &= ~(B_OUTCOME_LINK_BATTLE_RAN);
-            if (GetBattlerSide(gActiveBattler) == B_SIDE_OPPONENT && gBattleTextBuff1[0] != B_OUTCOME_DREW)
+            if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT && gBattleTextBuff1[0] != B_OUTCOME_DREW)
                 gBattleTextBuff1[0] ^= (B_OUTCOME_LOST | B_OUTCOME_WON);
 
             if (gBattleTextBuff1[0] == B_OUTCOME_LOST || gBattleTextBuff1[0] == B_OUTCOME_DREW)
@@ -1681,7 +1681,7 @@ void BufferStringBattle(u16 stringId)
         }
         else
         {
-            if (GetBattlerSide(gActiveBattler) == B_SIDE_OPPONENT && gBattleTextBuff1[0] != B_OUTCOME_DREW)
+            if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT && gBattleTextBuff1[0] != B_OUTCOME_DREW)
                 gBattleTextBuff1[0] ^= (B_OUTCOME_LOST | B_OUTCOME_WON);
 
             if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
@@ -1922,9 +1922,6 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
             case B_TXT_EFF_NAME_WITH_PREFIX: // effect battlerId name with prefix
                 HANDLE_NICKNAME_STRING_CASE(gEffectBattler, gBattlerPartyIndexes[gEffectBattler])
                 break;
-            case B_TXT_ACTIVE_NAME_WITH_PREFIX: // active battlerId name with prefix
-                HANDLE_NICKNAME_STRING_CASE(gActiveBattler, gBattlerPartyIndexes[gActiveBattler])
-                break;
             case B_TXT_SCR_ACTIVE_NAME_WITH_PREFIX: // scripting active battlerId name with prefix
                 HANDLE_NICKNAME_STRING_CASE(gBattleScripting.battler, gBattlerPartyIndexes[gBattleScripting.battler])
                 break;
@@ -2099,11 +2096,6 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
                     toCpy = sText_YourTeamPrefix;
                 else
                     toCpy = sText_TheOpposingTeamPrefix;
-                break;
-            case B_TXT_ACTIVE_NAME_NO_ILLUSION:
-			    GetMonData(GetBattlerPartyIndexPtr(gActiveBattler), MON_DATA_NICKNAME, text);
-	        StringGet_Nickname(text);
-                toCpy = text;
                 break;
 			case B_TXT_DEF_NAME:
 			    GetBattlerNick(gBattlerTarget, text);
@@ -2405,12 +2397,12 @@ bool8 BattleStringShouldBeColored(u16 stringId)
     return FALSE;
 }
 
-void SetPpNumbersPaletteInMoveSelection(void)
+void SetPpNumbersPaletteInMoveSelection(u8 battlerId)
 {
-    struct ChooseMoveStruct *chooseMoveStruct = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
+    struct ChooseMoveStruct *chooseMoveStruct = (struct ChooseMoveStruct*)(&gBattleBufferA[battlerId][4]);
     const u16 *palPtr = gUnknown_8D2FBB4;
-    u8 var = GetCurrentPpToMaxPpState(chooseMoveStruct->currentPp[gMoveSelectionCursor[gActiveBattler]],
-                                      chooseMoveStruct->maxPp[gMoveSelectionCursor[gActiveBattler]]);
+    u8 var = GetCurrentPpToMaxPpState(chooseMoveStruct->currentPp[gMoveSelectionCursor[battlerId]],
+                                      chooseMoveStruct->maxPp[gMoveSelectionCursor[battlerId]]);
 
     gPlttBufferUnfaded[92] = palPtr[(var * 2) + 0];
     gPlttBufferUnfaded[91] = palPtr[(var * 2) + 1];

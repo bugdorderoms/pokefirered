@@ -571,7 +571,8 @@ u8 ItemId_GetBattleEffectUsageType(u16 itemId)
 		switch (battleUsage)
 		{
 			case EFFECT_ITEM_RESTORE_HP:
-			case EFFECT_ITEM_CURE_STATUS:
+			case EFFECT_ITEM_CURE_PRIMARY_STATUS:
+			case EFFECT_ITEM_CURE_SECONDARY_STATUS:
 			    type = ITEM_TYPE_PARTY_MENU;
 				break;
 			case EFFECT_ITEM_RESTORE_PP:

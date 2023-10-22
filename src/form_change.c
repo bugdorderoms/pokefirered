@@ -319,13 +319,12 @@ void DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType)
 		case FORM_CHANGE_FAINT:
 		    if (SpeciesHasFormChangeType(gBattleMons[battlerId].species, FORM_CHANGE_FAINT) == FORM_CHANGE_TERMINATOR) // don't revert form when faint
 			{
-				gActiveBattler = battlerId;
-				targetSpecies = gBattleMonForms[partyId][GetBattlerSide(gActiveBattler)];
-				BtlController_EmitSetMonData(0, REQUEST_SPECIES_BATTLE, 0, 2, &targetSpecies);
-				MarkBattlerForControllerExec(gActiveBattler);
+				targetSpecies = gBattleMonForms[partyId][GetBattlerSide(battlerId)];
+				BtlController_EmitSetMonData(battlerId, BUFFER_A, REQUEST_SPECIES_BATTLE, 0, 2, &targetSpecies);
+				MarkBattlerForControllerExec(battlerId);
 				CalculateMonStats(mon);
-				BtlController_EmitSetRawMonData(0, offsetof(struct Pokemon, attack), 10, &mon->attack); // reload all stats
-				MarkBattlerForControllerExec(gActiveBattler);
+				BtlController_EmitSetRawMonData(battlerId, BUFFER_A, offsetof(struct Pokemon, attack), 10, &mon->attack); // reload all stats
+				MarkBattlerForControllerExec(battlerId);
 			}
 			break;
 		case FORM_CHANGE_END_BATTLE:

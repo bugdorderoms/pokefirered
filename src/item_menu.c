@@ -4,6 +4,7 @@
 #include "battle_controllers.h"
 #include "berry_pouch.h"
 #include "decompress.h"
+#include "reshow_battle_screen.h"
 #include "event_scripts.h"
 #include "event_object_movement.h"
 #include "field_player_avatar.h"
@@ -409,7 +410,7 @@ void CB2_BagMenuFromStartMenu(void)
 
 void CB2_BagMenuFromBattle(void)
 {
-    GoToBagMenu(ITEMMENULOCATION_BATTLE, OPEN_BAG_LAST, SetCB2ToReshowScreenAfterMenu2);
+    GoToBagMenu(ITEMMENULOCATION_BATTLE, OPEN_BAG_LAST, ReshowBattleScreenAfterMenu);
 }
 
 static void CB2_BagMenuRun(void)
@@ -2128,7 +2129,7 @@ void InitOldManBag(void)
     BackUpPlayerBag();
     AddBagItem(ITEM_POTION, 1);
     AddBagItem(ITEM_POKE_BALL, 1);
-    GoToBagMenu(ITEMMENULOCATION_OLD_MAN, OPEN_BAG_ITEMS, SetCB2ToReshowScreenAfterMenu2);
+    GoToBagMenu(ITEMMENULOCATION_OLD_MAN, OPEN_BAG_ITEMS, ReshowBattleScreenAfterMenu);
 }
 
 static void Task_Bag_OldManTutorial(u8 taskId)
@@ -2206,11 +2207,11 @@ void InitPokedudeBag(u8 a0)
         location = a0;
         break;
     case 7:
-        cb2 = SetCB2ToReshowScreenAfterMenu2;
+        cb2 = ReshowBattleScreenAfterMenu;
         location = ITEMMENULOCATION_TTVSCR_STATUS;
         break;
     case 8:
-        cb2 = SetCB2ToReshowScreenAfterMenu2;
+        cb2 = ReshowBattleScreenAfterMenu;
         location = ITEMMENULOCATION_TTVSCR_CATCHING;
         break;
     }

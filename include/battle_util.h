@@ -53,10 +53,8 @@
 #define STAT_CHANGE_WORKED      0
 #define STAT_CHANGE_DIDNT_WORK  1
 
-#define BATTLE_ALIVE_EXCEPT_ACTIVE   0
-#define BATTLE_ALIVE_ATK_SIDE        1
-#define BATTLE_ALIVE_DEF_SIDE        2
-#define BATTLE_ALIVE_EXCEPT_ATTACKER 3
+#define BATTLE_ALIVE_SIDE            0
+#define BATTLE_ALIVE_EXCEPT_BATTLER  1
 
 u8 GetBattlerForBattleScript(u8 caseId);
 void PressurePPLose(u8 target, u8 attacker, u16 move);
@@ -74,9 +72,9 @@ void UpdateSentPokesToOpponentValue(u8 battler);
 void BattleScriptPush(const u8 *bsPtr);
 void BattleScriptPushCursor(void);
 void BattleScriptPop(void);
-u8 TrySetCantSelectMoveBattleScript(void);
+u8 TrySetCantSelectMoveBattleScript(u8 battlerId);
 u8 CheckMoveLimitations(u8 battlerId, u8 unusableMoves, u8 check);
-bool8 AreAllMovesUnusable(void);
+bool8 AreAllMovesUnusable(u8 battlerId);
 u8 GetImprisonedMovesCount(u8 battlerId, u16 move);
 u8 DoFieldEndTurnEffects(void);
 u8 DoBattlerEndTurnEffects(void);
@@ -162,7 +160,7 @@ bool8 IsBattleAnimationsOn(void);
 struct Pokemon *GetBattlerParty(u8 battlerId);
 struct Pokemon *GetBattlerPartyIndexPtr(u8 battlerId);
 struct Pokemon *GetBattlerIllusionPartyIndexPtr(u8 battlerId);
-u8 CountAliveMonsInBattle(u8 caseId);
+u8 CountAliveMonsInBattle(u8 battlerId, u8 caseId);
 void CalculatePayDayMoney(void);
 u8 GetTrappingIdByMove(u16 move);
 s32 GetDrainedBigRootHp(u8 battlerId, s32 hp);

@@ -128,7 +128,7 @@ static void CB2_ReshowBattleScreenAfterMenu(void)
             species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[opponentBattler]], MON_DATA_SPECIES);
             SetBattlerShadowSpriteCallback(opponentBattler, species);
         }
-        ActionSelectionCreateCursorAt(gActionSelectionCursor[gBattlerInMenuId], 0);
+        ActionSelectionCreateCursorAt(gActionSelectionCursor[gBattlerInMenuId]);
 		
         if (gWirelessCommType && gReceivedRemoteLinkPlayers)
         {

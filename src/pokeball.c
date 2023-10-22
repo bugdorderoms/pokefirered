@@ -563,16 +563,16 @@ static u16 GetBattlerPokeballItemId(u8 battlerId)
 // BALL SEND OUT ANIM //
 ////////////////////////
 
-void DoPokeballSendOutAnimation(u8 kindOfThrow)
+void DoPokeballSendOutAnimation(u8 battlerId, u8 kindOfThrow)
 {
     u8 taskId;
     
     gDoingBattleAnim = TRUE;
-    gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].ballAnimActive = TRUE;
+    gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive = TRUE;
 	
     taskId = CreateTask(Task_DoPokeballSendOutAnim, 5);
     gTasks[taskId].tThrowId = kindOfThrow;
-    gTasks[taskId].tBattler = gActiveBattler;
+    gTasks[taskId].tBattler = battlerId;
 }
 
 static void Task_DoPokeballSendOutAnim(u8 taskId)

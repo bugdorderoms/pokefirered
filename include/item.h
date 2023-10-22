@@ -14,16 +14,17 @@ typedef void (*ItemUseFunc)(u8);
 #define ITEM_TYPE_PARTY_MENU_MOVES 4
 
 // Item battle script IDs (need to be non-zero)
-#define EFFECT_ITEM_RESTORE_HP           1 // also revive
-#define EFFECT_ITEM_CURE_STATUS          2
-#define EFFECT_ITEM_INCREASE_STAT        3
-#define EFFECT_ITEM_SET_MIST             4
-#define EFFECT_ITEM_SET_FOCUS_ENERGY     5
-#define EFFECT_ITEM_ESCAPE               6
-#define EFFECT_ITEM_THROW_BALL           7
-#define EFFECT_ITEM_RESTORE_PP           8
-#define EFFECT_ITEM_INCREASE_ALL_STATS   9
-#define EFFECT_ITEM_POKE_FLUTE           10
+#define EFFECT_ITEM_RESTORE_HP            1 // also revive
+#define EFFECT_ITEM_CURE_PRIMARY_STATUS   2
+#define EFFECT_ITEM_CURE_SECONDARY_STATUS 3
+#define EFFECT_ITEM_INCREASE_STAT         4
+#define EFFECT_ITEM_SET_MIST              5
+#define EFFECT_ITEM_SET_FOCUS_ENERGY      6
+#define EFFECT_ITEM_ESCAPE                7
+#define EFFECT_ITEM_THROW_BALL            8
+#define EFFECT_ITEM_RESTORE_PP            9
+#define EFFECT_ITEM_INCREASE_ALL_STATS    10
+#define EFFECT_ITEM_POKE_FLUTE            11
 
 enum
 {

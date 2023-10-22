@@ -2,6 +2,7 @@ gPreBattleCallback1
 gBattleMainFunc
 gLeveledUpInBattle
 gBattlerControllerFuncs
+gBattlerControllerEndFuncs
 gHealthboxSpriteIds
 gMultiUsePlayerCursor
 gNumberOfMovesToChoose
