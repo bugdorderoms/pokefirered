@@ -501,6 +501,7 @@ struct BattleScripting
     /*0x25*/ bool8 illusionNickHack;
 	/*0x26*/ bool8 fixedAbilityPopUp;
 	/*0x27*/ bool8 bypassAbilityPopUp; // don't show ability pop up
+	/*0x28*/ u8 savedBattler; // Multiuse
 };
 
 enum

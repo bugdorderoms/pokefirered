@@ -2882,98 +2882,44 @@ static void atk41_call(void)
 
 static void atk42_trysetsleep(void)
 {
-	u8 bank = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+	u8 battlerId = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	const u8 *jumpPtr = READ_PTR(gBattlescriptCurrInstr + 2);
 	
-	if (gBattleMons[bank].status1 & STATUS1_SLEEP)
+	switch (CanBePutToSleep(gBattlerAttacker, battlerId, STATUS_CHANGE_FLAG_CHECK_UPROAR))
 	{
-		gBattlescriptCurrInstr = BattleScript_AlreadyAsleep;
-		return;
+		case STATUS_CHANGE_WORKED:
+			gBattlescriptCurrInstr += 6;
+			break;
+		case STATUS_CHANGE_FAIL_SPECIFIC_STATUSED:
+			gBattlescriptCurrInstr = BattleScript_AlreadyAsleep;
+			break;
+		case STATUS_CHANGE_FAIL_ALREADY_STATUSED:
+			gBattlescriptCurrInstr = BattleScript_ButItFailed;
+			break;
+		case STATUS_CHANGE_FAIL_SAFEGUARD_PROTECTED:
+			gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
+			break;
+		case STATUS_CHANGE_FAIL_UPROAR:
+			gBattlescriptCurrInstr = jumpPtr;
+			break;
+		case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
+			gLastUsedAbility = GetBattlerAbility(battlerId);
+			RecordAbilityBattle(battlerId, gLastUsedAbility);
+			gBattlescriptCurrInstr = BattleScript_AbilityPreventSleep;
+			break;
+		case STATUS_CHANGE_FAIL_SWEET_VEIL_ON_SIDE:
+			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gLastUsedAbility = GetBattlerAbility(gBattleScripting.battler);
+			RecordAbilityBattle(gBattleScripting.battler, gLastUsedAbility);
+			gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
+			break;
+		case STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE:
+			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gLastUsedAbility = GetBattlerAbility(gBattleScripting.battler);
+			RecordAbilityBattle(gBattleScripting.battler, gLastUsedAbility);
+			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+			break;
 	}
-	else if (gBattleMons[bank].status1 & STATUS1_ANY)
-	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed;
-		return;
-	}
-	else if ((gSideStatuses[GetBattlerSide(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR && gBattlerAttacker != bank)
-	{
-		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
-		return;
-	}
-	else if (UproarWakeUpCheck())
-	{
-		gBattlescriptCurrInstr = jumpPtr;
-		return;
-	}
-	else
-	{
-		switch (GetBattlerAbility(bank))
-		{
-			case ABILITY_INSOMNIA:
-			case ABILITY_VITAL_SPIRIT:
-			case ABILITY_PURIFYING_SALT:
-			    gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-				gLastUsedAbility = GetBattlerAbility(bank);
-				gBattlescriptCurrInstr = jumpPtr;
-				RecordAbilityBattle(bank, gLastUsedAbility);
-				return;
-			case ABILITY_LEAF_GUARD:
-				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
-				{
-					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-					gLastUsedAbility = GetBattlerAbility(bank);
-					gBattlescriptCurrInstr = jumpPtr;
-					RecordAbilityBattle(bank, gLastUsedAbility);
-					return;
-				}
-				break;
-			case ABILITY_FLOWER_VEIL:
-			    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
-				{
-					gBattleScripting.battler = bank;
-					gLastUsedAbility = GetBattlerAbility(bank);
-					gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
-					RecordAbilityBattle(bank, gLastUsedAbility);
-					return;
-				}
-				break;
-			case ABILITY_SWEET_VEIL:
-			    gBattleScripting.battler = bank;
-			    gLastUsedAbility = GetBattlerAbility(bank);
-				gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
-				RecordAbilityBattle(bank, gLastUsedAbility);
-				return;
-			case ABILITY_COMATOSE:
-			    gBattleCommunication[MULTISTRING_CHOOSER] = 3;
-			    gLastUsedAbility = GetBattlerAbility(bank);
-				gBattlescriptCurrInstr = jumpPtr;
-				RecordAbilityBattle(bank, gLastUsedAbility);
-				return;
-		}
-		if (IsBattlerAlive(BATTLE_PARTNER(bank)))
-		{
-			switch (GetBattlerAbility(BATTLE_PARTNER(bank)))
-			{
-				case ABILITY_FLOWER_VEIL:
-				    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
-					{
-						gBattleScripting.battler = BATTLE_PARTNER(bank);
-						gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
-						gLastUsedAbility = GetBattlerAbility(BATTLE_PARTNER(bank));
-						RecordAbilityBattle(BATTLE_PARTNER(bank), gLastUsedAbility);
-						return;
-					}
-					break;
-				case ABILITY_SWEET_VEIL:
-				    gBattleScripting.battler = BATTLE_PARTNER(bank);
-				    gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
-					gLastUsedAbility = GetBattlerAbility(BATTLE_PARTNER(bank));
-					RecordAbilityBattle(BATTLE_PARTNER(bank), gLastUsedAbility);
-					return;
-			}
-		}
-	}
-	gBattlescriptCurrInstr += 6;
 }
 
 static void atk43_nop(void)
@@ -5576,83 +5522,43 @@ static void atk83_handletrainerslidecase(void)
 
 static void atk84_trysetpoison(void)
 {
-	u8 bank = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+	u8 battlerId = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	
-	if (gBattleMons[bank].status1 & STATUS1_PSN_ANY)
+	switch (CanBePoisoned(gBattlerAttacker, battlerId, 0))
 	{
-		gBattlescriptCurrInstr = BattleScript_AlreadyPoisoned;
-		return;
+		case STATUS_CHANGE_WORKED:
+			gBattlescriptCurrInstr += 2;
+			break;
+		case STATUS_CHANGE_FAIL_SPECIFIC_STATUSED:
+			gBattlescriptCurrInstr = BattleScript_AlreadyPoisoned;
+			break;
+		case STATUS_CHANGE_FAIL_ALREADY_STATUSED:
+			gBattlescriptCurrInstr = BattleScript_ButItFailed;
+			break;
+		case STATUS_CHANGE_FAIL_TYPE_NOT_AFFECTED:
+			gBattlescriptCurrInstr = BattleScript_NotAffected;
+			break;
+		case STATUS_CHANGE_FAIL_SAFEGUARD_PROTECTED:
+			gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
+			break;
+		case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
+			gLastUsedAbility = GetBattlerAbility(battlerId);
+			RecordAbilityBattle(battlerId, gLastUsedAbility);
+			gBattlescriptCurrInstr = BattleScript_ImmunityProtected;
+			break;
+		case STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE:
+			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gLastUsedAbility = GetBattlerAbility(gBattleScripting.battler);
+			RecordAbilityBattle(gBattleScripting.battler, gLastUsedAbility);
+			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+			break;
+		case STATUS_CHANGE_FAIL_PASTEL_VEIL_ON_SIDE:
+			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gLastUsedAbility = GetBattlerAbility(gBattleScripting.battler);
+			RecordAbilityBattle(gBattleScripting.battler, gLastUsedAbility);
+			gBattlescriptCurrInstr = BattleScript_TeamProtectedByPastelVeil;
+			break;
 	}
-	else if (gBattleMons[bank].status1 & STATUS1_ANY)
-	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed;
-		return;
-	}
-	else if (!CanPoisonType(gBattlerAttacker, bank))
-	{
-		gBattlescriptCurrInstr = BattleScript_NotAffected;
-		return;
-	}
-	else if ((gSideStatuses[GetBattlerSide(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
-	{
-		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
-		return;
-	}
-	else
-	{
-		switch (GetBattlerAbility(bank))
-		{
-			case ABILITY_IMMUNITY:
-			case ABILITY_COMATOSE:
-			case ABILITY_PURIFYING_SALT:
-				gLastUsedAbility = GetBattlerAbility(bank);
-				gBattlescriptCurrInstr = BattleScript_ImmunityProtected;
-				return;
-			case ABILITY_LEAF_GUARD:
-				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
-				{
-					gLastUsedAbility = GetBattlerAbility(bank);
-					gBattlescriptCurrInstr = BattleScript_ImmunityProtected;
-					return;
-				}
-				break;
-			case ABILITY_FLOWER_VEIL:
-			    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
-				{
-					gBattleScripting.battler = bank;
-					gLastUsedAbility = GetBattlerAbility(bank);
-					gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
-					return;
-				}
-				break;
-			case ABILITY_PASTEL_VEIL:
-			    gBattleScripting.battler = bank;
-			    gLastUsedAbility = GetBattlerAbility(bank);
-				gBattlescriptCurrInstr = BattleScript_TeamProtectedByPastelVeil;
-				return;
-		}
-		if (IsBattlerAlive(BATTLE_PARTNER(bank)))
-		{
-			switch (GetBattlerAbility(BATTLE_PARTNER(bank)))
-			{
-				case ABILITY_FLOWER_VEIL:
-				    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
-					{
-						gBattleScripting.battler = BATTLE_PARTNER(bank);
-						gLastUsedAbility = GetBattlerAbility(BATTLE_PARTNER(bank));
-						gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
-						return;
-					}
-					break;
-				case ABILITY_PASTEL_VEIL:
-				    gBattleScripting.battler = BATTLE_PARTNER(bank);
-				    gLastUsedAbility = GetBattlerAbility(BATTLE_PARTNER(bank));
-					gBattlescriptCurrInstr = BattleScript_TeamProtectedByPastelVeil;
-					return;
-			}
-		}
-	}
-	gBattlescriptCurrInstr += 2;
 }
 
 static void atk85_stockpile(void)
@@ -6691,66 +6597,36 @@ static void atkAB_nop(void)
 
 static void atkAC_trysetburn(void)
 {
-	u8 bank = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+	u8 battlerId = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	
-	if (gBattleMons[bank].status1 & STATUS1_BURN)
+	switch (CanBeBurned(gBattlerAttacker, battlerId, 0))
 	{
-		gBattlescriptCurrInstr = BattleScript_AlreadyBurned;
-		return;
-	}
-	else if (gBattleMons[bank].status1 & STATUS1_ANY)
-	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed;
-		return;
-	}
-	else if (IS_BATTLER_OF_TYPE(bank, TYPE_FIRE))
-	{
-		gBattlescriptCurrInstr = BattleScript_NotAffected;
-		return;
-	}
-	else if ((gSideStatuses[GetBattlerSide(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
-	{
-		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
-		return;
-	}
-	else
-	{
-		switch (GetBattlerAbility(bank))
-		{
-			case ABILITY_WATER_VEIL:
-			case ABILITY_WATER_BUBBLE:
-			case ABILITY_COMATOSE:
-			case ABILITY_PURIFYING_SALT:
-				gLastUsedAbility = GetBattlerAbility(bank);
-				gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
-				return;
-			case ABILITY_LEAF_GUARD:
-				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
-				{
-					gLastUsedAbility = GetBattlerAbility(bank);
-					gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
-					return;
-				}
-				break;
-			case ABILITY_FLOWER_VEIL:
-			    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
-				{
-					gBattleScripting.battler = bank;
-					gLastUsedAbility = GetBattlerAbility(bank);
-					gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
-					return;
-				}
-				break;
-		}
-		if (IsBattlerAlive(BATTLE_PARTNER(bank)) && GetBattlerAbility(BATTLE_PARTNER(bank)) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
-		{
-			gBattleScripting.battler = BATTLE_PARTNER(bank);
-			gLastUsedAbility = GetBattlerAbility(BATTLE_PARTNER(bank));
+		case STATUS_CHANGE_WORKED:
+			gBattlescriptCurrInstr += 2;
+			break;
+		case STATUS_CHANGE_FAIL_SPECIFIC_STATUSED:
+			gBattlescriptCurrInstr = BattleScript_AlreadyBurned;
+			break;
+		case STATUS_CHANGE_FAIL_ALREADY_STATUSED:
+			gBattlescriptCurrInstr = BattleScript_ButItFailed;
+			break;
+		case STATUS_CHANGE_FAIL_TYPE_NOT_AFFECTED:
+			gBattlescriptCurrInstr = BattleScript_NotAffected;
+			break;
+		case STATUS_CHANGE_FAIL_SAFEGUARD_PROTECTED:
+			gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
+			break;
+		case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
+			gLastUsedAbility = GetBattlerAbility(battlerId);
+			gBattlescriptCurrInstr = BattleScript_WaterVeilPrevents;
+			break;
+		case STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE:
+			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gLastUsedAbility = GetBattlerAbility(gBattleScripting.battler);
+			RecordAbilityBattle(gBattleScripting.battler, gLastUsedAbility);
 			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
-			return;
-		}
+			break;
 	}
-	gBattlescriptCurrInstr += 2;
 }
 
 static void atkAD_tryspiteppreduce(void)
@@ -6969,65 +6845,36 @@ static void atkB5_handlefurycutter(void)
 
 static void atkB6_trysetparalyze(void)
 {
-	u8 bank = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+	u8 battlerId = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	
-	if (gBattleMons[bank].status1 & STATUS1_PARALYSIS)
+	switch (CanBeParalyzed(gBattlerAttacker, battlerId, 0))
 	{
-		gBattlescriptCurrInstr = BattleScript_AlreadyParalyzed;
-		return;
-	}
-	else if (gBattleMons[bank].status1 & STATUS1_ANY)
-	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed;
-		return;
-	}
-	else if (IS_BATTLER_OF_TYPE(bank, TYPE_ELECTRIC))
-	{
-		gBattlescriptCurrInstr = BattleScript_NotAffected;
-		return;
-	}
-	else if ((gSideStatuses[GetBattlerSide(bank)] & SIDE_STATUS_SAFEGUARD) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR)
-	{
-		gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
-		return;
-	}
-	else
-	{
-		switch (GetBattlerAbility(bank))
-		{
-			case ABILITY_LIMBER:
-			case ABILITY_COMATOSE:
-			case ABILITY_PURIFYING_SALT:
-				gLastUsedAbility = GetBattlerAbility(bank);
-				gBattlescriptCurrInstr = BattleScript_LimberProtected;
-				return;
-			case ABILITY_LEAF_GUARD:
-				if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
-				{
-					gLastUsedAbility = GetBattlerAbility(bank);
-					gBattlescriptCurrInstr = BattleScript_LimberProtected;
-					return;
-				}
-				break;
-			case ABILITY_FLOWER_VEIL:
-			    if (IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
-				{
-					gBattleScripting.battler = bank;
-					gLastUsedAbility = GetBattlerAbility(bank);
-					gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
-					return;
-				}
-				break;
-		}
-		if (IsBattlerAlive(BATTLE_PARTNER(bank)) && GetBattlerAbility(BATTLE_PARTNER(bank)) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
-		{
-			gBattleScripting.battler = BATTLE_PARTNER(bank);
-			gLastUsedAbility = GetBattlerAbility(BATTLE_PARTNER(bank));
+		case STATUS_CHANGE_WORKED:
+			gBattlescriptCurrInstr += 2;
+			break;
+		case STATUS_CHANGE_FAIL_SPECIFIC_STATUSED:
+			gBattlescriptCurrInstr = BattleScript_AlreadyParalyzed;
+			break;
+		case STATUS_CHANGE_FAIL_ALREADY_STATUSED:
+			gBattlescriptCurrInstr = BattleScript_ButItFailed;
+			break;
+		case STATUS_CHANGE_FAIL_TYPE_NOT_AFFECTED:
+			gBattlescriptCurrInstr = BattleScript_NotAffected;
+			break;
+		case STATUS_CHANGE_FAIL_SAFEGUARD_PROTECTED:
+			gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
+			break;
+		case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
+			gLastUsedAbility = GetBattlerAbility(battlerId);
+			gBattlescriptCurrInstr = BattleScript_LimberProtected;
+			break;
+		case STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE:
+			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gLastUsedAbility = GetBattlerAbility(gBattleScripting.battler);
+			RecordAbilityBattle(gBattleScripting.battler, gLastUsedAbility);
 			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
-			return;
-		}
+			break;
 	}
-	gBattlescriptCurrInstr += 2;
 }
 
 static void atkB7_presentcalc(void)

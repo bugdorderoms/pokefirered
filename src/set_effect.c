@@ -179,7 +179,7 @@ void DoMoveEffect(bool8 primary)
 				else
 					i = gBattlersCount;
 				
-				if (i == gBattlersCount && CanBePutToSleep(gEffectBattler, FALSE))
+				if (i == gBattlersCount && CanBePutToSleep(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL) == STATUS_CHANGE_WORKED)
 				{
 					CancelMultiTurnMoves(gEffectBattler);
 					statusChanged = TRUE;
@@ -203,7 +203,7 @@ void DoMoveEffect(bool8 primary)
 					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 					return;
 				}
-				else if (CanBePoisoned(gEffectBattler, gBattleScripting.battler, FALSE))
+				else if (CanBePoisoned(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL) == STATUS_CHANGE_WORKED)
 					statusChanged = TRUE;
 				break;
 			case STATUS1_TOXIC_POISON:
@@ -226,7 +226,7 @@ void DoMoveEffect(bool8 primary)
 				}
 				else if (gBattleMons[gEffectBattler].status1)
 					break;
-				else if (CanBePoisoned(gEffectBattler, gBattleScripting.battler, FALSE))
+				else if (CanBePoisoned(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL) == STATUS_CHANGE_WORKED)
 					statusChanged = TRUE;
 				else
 					gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
@@ -249,11 +249,11 @@ void DoMoveEffect(bool8 primary)
 					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 					return;
 				}
-				else if (CanBeBurned(gEffectBattler, FALSE))
+				else if (CanBeBurned(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL) == STATUS_CHANGE_WORKED)
 					statusChanged = TRUE;
 				break;
 			case STATUS1_FREEZE:
-			    if (CanBeFrozen(gEffectBattler, FALSE))
+			    if (CanBeFrozen(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL))
 				{
 					CancelMultiTurnMoves(gEffectBattler);
 					statusChanged = TRUE;
@@ -282,7 +282,7 @@ void DoMoveEffect(bool8 primary)
 					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 					return;
 				}
-				else if (CanBeParalyzed(gEffectBattler, FALSE))
+				else if (CanBeParalyzed(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL) == STATUS_CHANGE_WORKED)
 					statusChanged = TRUE;
 				break;
 		}

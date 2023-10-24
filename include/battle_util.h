@@ -3,6 +3,25 @@
 
 #include "global.h"
 
+enum
+{
+	STATUS_CHANGE_WORKED,
+	STATUS_CHANGE_FAIL_ALREADY_STATUSED,
+	STATUS_CHANGE_FAIL_SPECIFIC_STATUSED,
+	STATUS_CHANGE_FAIL_TYPE_NOT_AFFECTED,
+	STATUS_CHANGE_FAIL_WEATHER_PREVENTED,
+	STATUS_CHANGE_FAIL_ABILITY_PREVENTED,
+	STATUS_CHANGE_FAIL_SAFEGUARD_PROTECTED,
+	STATUS_CHANGE_FAIL_UPROAR,
+	STATUS_CHANGE_FAIL_SWEET_VEIL_ON_SIDE,
+	STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE,
+	STATUS_CHANGE_FAIL_PASTEL_VEIL_ON_SIDE,
+};
+
+#define STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD   (1 << 0)
+#define STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL (1 << 1)
+#define STATUS_CHANGE_FLAG_CHECK_UPROAR       (1 << 2)
+
 #define MOVE_LIMITATION_ZEROMOVE                (1 << 0)
 #define MOVE_LIMITATION_PP                      (1 << 1)
 #define MOVE_LIMITATION_DISABLED                (1 << 2)
@@ -101,12 +120,12 @@ bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move);
 u8 GetHiddenPowerType(struct Pokemon *mon);
 bool8 CheckPinchBerryActivate(u8 battler, u16 item);
 void ClearBattlerStatus(u8 battler);
-bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil);
-bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil);
+u8 CanBePutToSleep(u8 attacker, u8 defender, u32 flags);
+u8 CanBePoisoned(u8 attacker, u8 defender, u32 flags);
 bool8 CanPoisonType(u8 bankAtk, u8 bankDef);
-bool8 CanBeBurned(u8 bank, bool8 checkFlowerVeil);
-bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil);
-bool8 CanBeParalyzed(u8 bank, bool8 checkFlowerVeil);
+u8 CanBeBurned(u8 attacker, u8 defender, u32 flags);
+bool8 CanBeFrozen(u8 attacker, u8 defender, u32 flags);
+u8 CanBeParalyzed(u8 attacker, u8 defender, u32 flags);
 u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating);
 u16 GetBattlerAbility(u8 battler);
 u16 SetBattlerAbility(u8 battlerId, u16 newAbility);

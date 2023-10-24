@@ -1159,6 +1159,14 @@ BattleScript_RageIsBuildingContraryMessage::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_RageIsBuildingMessage
 
+BattleScript_AbilityPreventSleep::
+	pause B_WAIT_TIME_SHORT
+	loadabilitypopup BS_TARGET
+	printfromtable STRINGID_ITDOESNTAFFECT
+	waitmessage B_WAIT_TIME_LONG
+	removeabilitypopup BS_TARGET
+	goto BattleScript_MoveEnd
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ ATTACKCANCELER BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

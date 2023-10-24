@@ -134,88 +134,139 @@ static const u16 sWeatherFlagsInfo[][2] =
 	[ENUM_WEATHER_FOG] 			= {WEATHER_FOG_TEMPORARY, WEATHER_FOG_PERMANENT},
 };
 
-static bool8 CanBeStatused(u8 bank, bool8 checkFlowerVeil)
+// Check if attacker can put a status condition on defender
+static u8 CanBeStatused(u8 attacker, u8 defender, u32 flags)
 {
-	if (gBattleMons[bank].status1 & STATUS1_ANY)
-		return FALSE;
+	u8 defenderPartner;
 	
-	switch (GetBattlerAbility(bank))
+	// Check already statused
+	if (gBattleMons[defender].status1 & STATUS1_ANY)
+		return STATUS_CHANGE_FAIL_ALREADY_STATUSED;
+	
+	// Check defender's abilities
+	switch (GetBattlerAbility(defender))
 	{
 		case ABILITY_LEAF_GUARD:
-			if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
-				return FALSE;
+			if (IsBattlerWeatherAffected(defender, WEATHER_SUN_ANY))
+				return STATUS_CHANGE_FAIL_ABILITY_PREVENTED;
 			break;
 		case ABILITY_FLOWER_VEIL:
-		    if (checkFlowerVeil && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
-				return FALSE;
+		    if (!(flags & STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL) && IS_BATTLER_OF_TYPE(defender, TYPE_GRASS))
+			{
+				gBattleScripting.savedBattler = defender;
+				return STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE;
+			}
 			break;
 		case ABILITY_COMATOSE:
 		case ABILITY_PURIFYING_SALT:
-		    return FALSE;
+		    return STATUS_CHANGE_FAIL_ABILITY_PREVENTED;
 	}
-	if (!(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+	// Check defender's ally abilities
+	defenderPartner = BATTLE_PARTNER(defender);
+	
+	if (IsBattlerAlive(defenderPartner))
 	{
-		if (IsBattlerAlive(BATTLE_PARTNER(bank)))
+		switch (GetBattlerAbility(defenderPartner))
 		{
-			switch (GetBattlerAbility(BATTLE_PARTNER(bank)))
-			{
-				case ABILITY_FLOWER_VEIL:
-				    if (checkFlowerVeil && IS_BATTLER_OF_TYPE(bank, TYPE_GRASS))
-						return FALSE;
-			}
+			case ABILITY_FLOWER_VEIL:
+				if (!(flags & STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL) && IS_BATTLER_OF_TYPE(defender, TYPE_GRASS))
+				{
+					gBattleScripting.savedBattler = defenderPartner;
+					return STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE;
+				}
+				break;
 		}
-		if (gSideStatuses[GetBattlerSide(bank)] & SIDE_STATUS_SAFEGUARD)
-			return FALSE;
 	}
-	return TRUE;
+	else if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD) && attacker != defender
+		&& gSideStatuses[GetBattlerSide(defender)] & SIDE_STATUS_SAFEGUARD && GetBattlerAbility(attacker) != ABILITY_INFILTRATOR) // Check Safeguard
+		return STATUS_CHANGE_FAIL_SAFEGUARD_PROTECTED;
+	else if (flags & STATUS_CHANGE_FLAG_CHECK_UPROAR && UproarWakeUpCheck()) // Check Uproar
+		return STATUS_CHANGE_FAIL_UPROAR;
+	
+	return STATUS_CHANGE_WORKED;
 }
 
-bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
+// Check if attacker can put defender to sleep
+u8 CanBePutToSleep(u8 attacker, u8 defender, u32 flags)
 {
-	if (!CanBeStatused(bank, checkFlowerVeil))
-		return FALSE;
+	u8 ret, defenderPartner;
 	
-	switch (GetBattlerAbility(bank))
+	// Check already sleeping
+	if (gBattleMons[defender].status1 & STATUS1_SLEEP)
+		return STATUS_CHANGE_FAIL_SPECIFIC_STATUSED;
+	
+	// Check general statuses
+	ret = CanBeStatused(attacker, defender, flags);
+	
+	if (ret != STATUS_CHANGE_WORKED)
+		return ret;
+	
+	// Check defender's abilities
+	switch (GetBattlerAbility(defender))
 	{
 		case ABILITY_INSOMNIA:
 		case ABILITY_VITAL_SPIRIT:
+			return STATUS_CHANGE_FAIL_ABILITY_PREVENTED;
 		case ABILITY_SWEET_VEIL:
-			return FALSE;
+			gBattleScripting.savedBattler = defender;
+			return STATUS_CHANGE_FAIL_SWEET_VEIL_ON_SIDE;
 	}
-	if (IsBattlerAlive(BATTLE_PARTNER(bank)))
+	// Check defender's ally abilities
+	defenderPartner = BATTLE_PARTNER(defender);
+	
+	if (IsBattlerAlive(defenderPartner))
 	{
-		switch (GetBattlerAbility(BATTLE_PARTNER(bank)))
+		switch (GetBattlerAbility(defenderPartner))
 		{
 			case ABILITY_SWEET_VEIL:
-			    return FALSE;
+				gBattleScripting.savedBattler = defenderPartner;
+			    return STATUS_CHANGE_FAIL_SWEET_VEIL_ON_SIDE;
 		}
 	}
-	return TRUE;
+	return STATUS_CHANGE_WORKED;
 }
 
-bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
+// Check if attacker can poison defender
+bool8 CanBePoisoned(u8 attacker, u8 defender, u32 flags)
 {
-	if (!CanBeStatused(bankDef, checkFlowerVeil))
-		return FALSE;
+	u8 ret, defenderPartner;
 	
-	switch (GetBattlerAbility(bankDef))
+	// Check already poisoned
+	if (gBattleMons[defender].status1 & STATUS1_PSN_ANY)
+		return STATUS_CHANGE_FAIL_SPECIFIC_STATUSED;
+	
+	// Check general statuses
+	ret = CanBeStatused(attacker, defender, flags);
+	
+	if (ret != STATUS_CHANGE_WORKED)
+		return ret;
+	
+	// Check defender's abilities
+	switch (GetBattlerAbility(defender))
 	{
 		case ABILITY_IMMUNITY:
+			return STATUS_CHANGE_FAIL_ABILITY_PREVENTED;
 		case ABILITY_PASTEL_VEIL:
-			return FALSE;
+			gBattleScripting.savedBattler = defender;
+			return STATUS_CHANGE_FAIL_PASTEL_VEIL_ON_SIDE;
 	}
-	if (IsBattlerAlive(BATTLE_PARTNER(bankDef)))
+	// Check defender's ally abilities
+	defenderPartner = BATTLE_PARTNER(defender);
+	
+	if (IsBattlerAlive(defenderPartner))
 	{
-		switch (GetBattlerAbility(BATTLE_PARTNER(bankDef)))
+		switch (GetBattlerAbility(defenderPartner))
 		{
 			case ABILITY_PASTEL_VEIL:
-			    return FALSE;
+				gBattleScripting.savedBattler = defenderPartner;
+			    return STATUS_CHANGE_FAIL_PASTEL_VEIL_ON_SIDE;
 		}
 	}
-	if (!CanPoisonType(bankAtk, bankDef))
-		return FALSE;
+	// Check types
+	if (!CanPoisonType(attacker, defender))
+		return STATUS_CHANGE_FAIL_TYPE_NOT_AFFECTED;
 	
-	return TRUE;
+	return STATUS_CHANGE_WORKED;
 }
 
 bool8 CanPoisonType(u8 bankAtk, u8 bankDef)
@@ -225,60 +276,83 @@ bool8 CanPoisonType(u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
-bool8 CanBeBurned(u8 bank, bool8 checkFlowerVeil)
+// Check if attacker can burn defender
+u8 CanBeBurned(u8 attacker, u8 defender, u32 flags)
 {
-	if (!CanBeStatused(bank, checkFlowerVeil))
-		return FALSE;
+	u8 ret;
 	
-	switch (GetBattlerAbility(bank))
+	// Check already burned
+	if (gBattleMons[defender].status1 & STATUS1_BURN)
+		return STATUS_CHANGE_FAIL_SPECIFIC_STATUSED;
+	
+	// Check general statuses
+	ret = CanBeStatused(attacker, defender, flags);
+	
+	if (ret != STATUS_CHANGE_WORKED)
+		return ret;
+	
+	// Check defender's abilities
+	switch (GetBattlerAbility(defender))
 	{
 		case ABILITY_WATER_VEIL:
 		case ABILITY_WATER_BUBBLE:
 		case ABILITY_THERMAL_EXCHANGE:
-			return FALSE;
+			return STATUS_CHANGE_FAIL_ABILITY_PREVENTED;
 	}
+	// Check types
+	if (IS_BATTLER_OF_TYPE(defender, TYPE_FIRE))
+		return STATUS_CHANGE_FAIL_TYPE_NOT_AFFECTED;
 	
-	if (IS_BATTLER_OF_TYPE(bank, TYPE_FIRE))
-		return FALSE;
-	
-	return TRUE;
+	return STATUS_CHANGE_WORKED;
 }
 
-bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil)
+// Check if attacker can frozen defender
+bool8 CanBeFrozen(u8 attacker, u8 defender, u32 flags)
 {
-	if (!CanBeStatused(bank, checkFlowerVeil))
+	// Check general statuses
+	if (CanBeStatused(attacker, defender, flags) != STATUS_CHANGE_WORKED)
 		return FALSE;
 	
-	switch (GetBattlerAbility(bank))
+	// Check defender's abilities
+	switch (GetBattlerAbility(defender))
 	{
 		case ABILITY_MAGMA_ARMOR:
 			return FALSE;
 	}
-	
-	if (IS_BATTLER_OF_TYPE(bank, TYPE_ICE))
+	if (IS_BATTLER_OF_TYPE(defender, TYPE_ICE)) // Check types
 		return FALSE;
-	
-	if (IsBattlerWeatherAffected(bank, WEATHER_SUN_ANY))
+	else if (IsBattlerWeatherAffected(defender, WEATHER_SUN_ANY)) // Check weather
 		return FALSE;
 	
 	return TRUE;
 }
 
-bool8 CanBeParalyzed(u8 bank, bool8 checkFlowerVeil)
+// Check if attacker can paralyse defender
+u8 CanBeParalyzed(u8 attacker, u8 defender, u32 flags)
 {
-	if (!CanBeStatused(bank, checkFlowerVeil))
-		return FALSE;
+	u8 ret;
 	
-	switch (GetBattlerAbility(bank))
+	// Check already paralized
+	if (gBattleMons[defender].status1 & STATUS1_PARALYSIS)
+		return STATUS_CHANGE_FAIL_SPECIFIC_STATUSED;
+	
+	// Check general statuses
+	ret = CanBeStatused(attacker, defender, flags);
+	
+	if (ret != STATUS_CHANGE_WORKED)
+		return ret;
+	
+	// Check defender's abilities
+	switch (GetBattlerAbility(defender))
 	{
 		case ABILITY_LIMBER:
-			return FALSE;
+			return STATUS_CHANGE_FAIL_ABILITY_PREVENTED;
 	}
+	// Check types
+	if (IS_BATTLER_OF_TYPE(defender, TYPE_ELECTRIC))
+		return STATUS_CHANGE_FAIL_TYPE_NOT_AFFECTED;
 	
-	if (IS_BATTLER_OF_TYPE(bank, TYPE_ELECTRIC))
-		return FALSE;
-	
-	return TRUE;
+	return STATUS_CHANGE_WORKED;
 }
 
 u8 GetBattlerForBattleScript(u8 caseId)
@@ -3219,7 +3293,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 							}
 							break;
 						case ABILITY_POISON_TOUCH:
-						    if (CanBePoisoned(gBattlerTarget, battler, TRUE) && IsMoveMakingContact(battler, moveArg) && (Random() % 3) == 0)
+						    if (CanBePoisoned(battler, gBattlerTarget, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED && IsMoveMakingContact(battler, moveArg) && (Random() % 3) == 0)
 							{
 								SetMoveEffect(MOVE_EFFECT_POISON, FALSE, FALSE);
 								PREPARE_ABILITY_BUFFER(gBattleTextBuff1, gLastUsedAbility);
@@ -3297,7 +3371,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 								// sleep
 								if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && BATTLER_DAMAGED(battler)
 								&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg)
-								&& (Random() % 3) == 0 && CanBePutToSleep(gBattlerAttacker, TRUE))
+								&& (Random() % 3) == 0 && CanBePutToSleep(battler, gBattlerAttacker, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
 								{
 									SetMoveEffect(MOVE_EFFECT_SLEEP, TRUE, FALSE);
 									BattleScriptPushCursor();
@@ -3311,7 +3385,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 						    POISON_POINT:
 						    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && BATTLER_DAMAGED(battler)
 							&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg) && (Random() % 3) == 0
-							&& CanBePoisoned(gBattlerAttacker, battler, TRUE))
+							&& CanBePoisoned(battler, gBattlerAttacker, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
 							{
 								SetMoveEffect(MOVE_EFFECT_POISON, TRUE, FALSE);
 								BattleScriptPushCursor();
@@ -3324,7 +3398,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 						    STATIC:
 						    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && BATTLER_DAMAGED(battler)
 							&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg) && (Random() % 3) == 0
-							&& CanBeParalyzed(gBattlerAttacker, TRUE))
+							&& CanBeParalyzed(battler, gBattlerAttacker, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
 							{
 								SetMoveEffect(MOVE_EFFECT_PARALYSIS, TRUE, FALSE);
 								BattleScriptPushCursor();
@@ -3336,7 +3410,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 						case ABILITY_FLAME_BODY:
 						    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && IsBattlerAlive(gBattlerAttacker) && BATTLER_DAMAGED(battler)
 							&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg) && (Random() % 3) == 0
-							&& CanBeBurned(gBattlerAttacker, TRUE))
+							&& CanBeBurned(battler, gBattlerAttacker, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
 							{
 								SetMoveEffect(MOVE_EFFECT_BURN, TRUE, FALSE);
 								BattleScriptPushCursor();
