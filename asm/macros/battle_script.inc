@@ -33,10 +33,8 @@
 	.byte 0x7
 	.endm
 
-	.macro jumpifparentalbondcounter counter:req, ptr:req
+	.macro nop08
 	.byte 0x8
-	.byte \counter
-	.4byte \ptr
 	.endm
 
 	.macro attackanimation
@@ -189,7 +187,7 @@
 	.4byte \ptr
 	.endm
 
-	.macro movevaluescleanup
+	.macro nop25
 	.byte 0x25
 	.endm
 
@@ -273,7 +271,13 @@
 	.4byte \param1
 	.byte \param2
 	.endm
-
+	
+	.macro sethword ptr:req, value:req
+	.byte 0x32
+	.4byte \ptr
+	.2byte \value
+	.endm
+	
 	.macro nop32
 	.byte 0x32
 	.endm
@@ -323,7 +327,7 @@
 	.byte 0x3a
 	.endm
 
-	.macro itemincreasestat
+	.macro nop3b
 	.byte 0x3b
 	.endm
 
@@ -359,10 +363,8 @@
 	.4byte \ptr
 	.endm
 
-	.macro jumpifabilitypresent ability:req, ptr:req
+	.macro nop43
 	.byte 0x43
-	.2byte \ability
-	.4byte \ptr
 	.endm
 
 	.macro endselectionscript
@@ -547,9 +549,8 @@
 	.byte 0x5f
 	.endm
 
-	.macro incrementgamestat param0:req
+	.macro nop60
 	.byte 0x60
-	.byte \param0
 	.endm
 
 	.macro drawpartystatussummary battler:req
@@ -566,12 +567,12 @@
 	.byte 0x63
 	.byte \param0
 	.endm
-
-	.macro nop64
+	
+	.macro argumenttomoveeffect
 	.byte 0x64
 	.endm
 
-	.macro nop65
+	.macro argumenttomovedamage
 	.byte 0x65
 	.endm
 
@@ -670,10 +671,10 @@
 	.byte 0x7a
 	.endm
 
-	.macro tryhealhalfhealth param0:req, battler:req
+	.macro tryhealhalfhealth battler:req, ptr:req
 	.byte 0x7b
-	.4byte \param0
 	.byte \battler
+	.4byte \ptr
 	.endm
 
 	.macro trymirrormove
@@ -702,9 +703,8 @@
 	.4byte \param0
 	.endm
 
-	.macro jumpifnotfirstturn ptr:req
+	.macro nop82
 	.byte 0x82
-	.4byte \ptr
 	.endm
 
 	.macro handletrainerslidecase battler:req, caseId:req
@@ -885,11 +885,11 @@
 	.4byte \param0
 	.endm
 
-	.macro setdestinybond
+	.macro nopaa
 	.byte 0xaa
 	.endm
 
-	.macro trysetdestinybondtohappen
+	.macro nopab
 	.byte 0xab
 	.endm
 
@@ -979,7 +979,7 @@
 	.byte 0xbe
 	.endm
 
-	.macro setdefensecurlbit
+	.macro nopbf
 	.byte 0xbf
 	.endm
 
@@ -1015,7 +1015,7 @@
 	.byte 0xc6
 	.endm
 
-	.macro setminimize
+	.macro nopc7
 	.byte 0xc7
 	.endm
 
@@ -1286,10 +1286,6 @@
 	.byte \checkIngrain
 	.endm
 
-	.macro getmovetarget battler:req
-	various \battler, VARIOUS_GET_MOVE_TARGET
-	.endm
-
 	.macro getbattlerfainted battler:req
 	various \battler, VARIOUS_GET_BATTLER_FAINTED
 	.endm
@@ -1358,10 +1354,6 @@
 	various \battler, VARIOUS_UPDATE_NICK
 	.endm
 	
-	.macro spriteignore0hp
-	various BS_ATTACKER, VARIOUS_SET_SPRITEIGNORE0HP
-	.endm
-	
 	.macro tryremoveillusion battler:req
 	various \battler, VARIOUS_TRY_REMOVE_ILLUSION
 	.endm
@@ -1383,8 +1375,7 @@
 	
 	.macro tryremoveprimalweather battler:req
 	various \battler, VARIOUS_TRY_REMOVE_PRIMAL_WEATHER
-	printstring STRINGID_EMPTYSTRING3
-	waitmessage 1
+	flushmessagebox
 	.endm
 	
 	.macro jumpifabsent battler:req, ptr:req
@@ -1414,22 +1405,6 @@
 	.4byte \ptr
 	.endm
 	
-	.macro atknameinbuff1
-	various BS_ATTACKER, VARIOUS_ATKNAME_IN_BUFF1
-	.endm
-	
-	.macro resetsentmonsvalue
-	various BS_ATTACKER, VARIOUS_RESET_SENT_MONS_VALUE
-	.endm
-	
-	.macro setatktoplayer0
-	various BS_ATTACKER, VARIOUS_SET_ATK_TO_PLAYER0
-	.endm
-	
-	.macro buffermovetolearn
-	various BS_ATTACKER, VARIOUS_BUFFER_MOVE_TO_LEARN
-	.endm
-	
 	.macro activateweatherchangeabilities
 	various BS_SCRIPTING, VARIOUS_ACTIVATE_WEATHER_ABILITIES
 	.endm
@@ -1442,14 +1417,6 @@
 	.macro jumpifrevived ptr:req
 	various BS_ATTACKER, VARIOUS_JUMP_IF_BATTLER_REVIVED
 	.4byte \ptr
-	.endm
-	
-	.macro argumenttomoveeffect
-	various BS_ATTACKER, VARIOUS_ARGUMENT_TO_MOVE_EFFECT
-	.endm
-	
-	.macro argumenttomovedamage
-	various BS_ATTACKER, VARIOUS_ARGUMENT_TO_MOVE_DAMAGE
 	.endm
 	
 	.macro jumpifroarfails ptr:req
@@ -1468,14 +1435,74 @@
 	jumpifbyte CMP_EQUAL, sMULTIUSE_STATE, \side, \ptr
 	.endm
 	
+	.macro jumpifparentalbondcounter counter:req, ptr:req
+	various BS_ATTACKER, VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER
+	.byte \counter
+	.4byte \ptr
+	.endm
+	
+	.macro jumpifnotfirstturn ptr:req
+	various BS_ATTACKER, VARIOUS_JUMP_IF_NOT_FIRST_TURN
+	.4byte \ptr
+	.endm
+	
+@ callfunction macros
+    .macro setminimize
+	callfunction BS_SetMinimize
+	.endm
+	
+	.macro movevaluescleanup
+	callfunction BS_MoveValuesCleanUp
+	.endm
+	
+	.macro itemincreasestat
+	callfunction BS_ItemIncreaseStat
+	.endm
+	
+	.macro incrementgamestat param0:req
+	callfunction BS_IncrementGameStat
+	.byte \param0
+	.endm
+	
+	.macro getmovetarget
+	callfunction BS_GetMoveTarget
+	.endm
+	
+	.macro spriteignore0hp
+	callfunction BS_SwitchSpriteIgnore0HpBit
+	.endm
+	
+	.macro atknameinbuff1
+	callfunction BS_AtkNameInBuff1
+	.endm
+	
+	.macro resetsentmonsvalue
+	callfunction BS_ResetSentMonsValue
+	.endm
+	
+	.macro setatktoplayer0
+	callfunction BS_SetAtkToPlayer0
+	.endm
+	
+	.macro buffermovetolearn
+	callfunction BS_BufferMoveToLearn
+	.endm
+	
+	.macro setdestinybond
+	callfunction BS_SetDestinyBond
+	.endm
+	
+	.macro trysetdestinybondtohappen
+	callfunction BS_TrySetDestinyBondToHappen
+	.endm
+	
+	.macro setdefensecurlbit
+	callfunction BS_SetDefenseCurl
+	.endm
+	
 @ helpful macros
 	.macro setstatchanger stat:req, stages:req, down:req
 	setbyte sSTATCHANGER \stat | \stages << 4 | \down << 7
-	.endm
-
-	.macro sethword dst:req, value:req
-	setbyte \dst, (\value) & 0xFF
-	setbyte \dst + 1, ((\value) >> 8) & 0xFF
 	.endm
 
 	.macro copybyte dst:req, src:req
@@ -1560,4 +1587,9 @@
 	copybyte sBATTLER, \battler
 	activateweatherchangeabilities
 	setbyte sBYPASS_ABILITY_POP_UP, FALSE
+	.endm
+	
+	.macro flushmessagebox
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
 	.endm

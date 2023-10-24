@@ -107,7 +107,6 @@ static void ReturnFromBattleToOverworld(void);
 static void TryEvolvePokemon(void);
 static void TrySpecialEvolution(void);
 static void WaitForEvoSceneToFinish(void);
-static void SetTypeBeforeUsingMove(u16 move, u8 battler);
 
 EWRAM_DATA u16 gBattle_BG0_X = 0;
 EWRAM_DATA u16 gBattle_BG0_Y = 0;
@@ -3509,64 +3508,6 @@ void RunBattleScriptCommands(void)
 {
     if (!gBattleControllerExecFlags)
         gBattleScriptingCommandsTable[gBattlescriptCurrInstr[0]]();
-}
-
-static void SetTypeBeforeUsingMove(u16 move, u8 battler)
-{
-	u16 moveEffect;
-	
-	gBattleStruct->dynamicMoveType = gBattleMoves[move].type;
-	
-	if (move == MOVE_STRUGGLE)
-		return;
-	
-	moveEffect = gBattleMoves[move].effect;
-	
-	switch (moveEffect)
-	{
-		case EFFECT_WEATHER_BALL:
-		    if (IsBattlerWeatherAffected(battler, WEATHER_RAIN_ANY))
-				gBattleStruct->dynamicMoveType = TYPE_WATER;
-			else if (IsBattlerWeatherAffected(battler, WEATHER_SANDSTORM_ANY))
-				gBattleStruct->dynamicMoveType = TYPE_ROCK;
-			else if (IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY))
-				gBattleStruct->dynamicMoveType = TYPE_FIRE;
-			else if (IsBattlerWeatherAffected(battler, WEATHER_HAIL_ANY))
-				gBattleStruct->dynamicMoveType = TYPE_ICE;
-			break;
-		case EFFECT_HIDDEN_POWER:
-			gBattleStruct->dynamicMoveType = GetHiddenPowerType(GetBattlerPartyIndexPtr(battler));
-			break;
-	}
-	if (moveEffect != EFFECT_WEATHER_BALL && moveEffect != EFFECT_HIDDEN_POWER && moveEffect != EFFECT_NATURAL_GIFT && moveEffect != EFFECT_CHANGE_TYPE_ON_ITEM
-	&& moveEffect != EFFECT_TERRAIN_PULSE)
-	{
-		switch (GetBattlerAbility(battler))
-		{
-			case ABILITY_NORMALIZE:
-			    if (gBattleStruct->dynamicMoveType != TYPE_NORMAL)
-					gBattleStruct->dynamicMoveType = TYPE_NORMAL;
-				break;
-			case ABILITY_REFRIGERATE:
-			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
-					gBattleStruct->dynamicMoveType = TYPE_ICE;
-				break;
-			case ABILITY_PIXILATE:
-			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
-					gBattleStruct->dynamicMoveType = TYPE_FAIRY;
-				break;
-			case ABILITY_AERILATE:
-			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
-					gBattleStruct->dynamicMoveType = TYPE_FLYING;
-				break;
-			case ABILITY_GALVANIZE:
-			    if (gBattleStruct->dynamicMoveType == TYPE_NORMAL)
-					gBattleStruct->dynamicMoveType = TYPE_ELECTRIC;
-				break;
-		}
-	}
-	else if (gBattleMoves[move].flags.soundMove && GetBattlerAbility(battler) == ABILITY_LIQUID_VOICE)
-		gBattleStruct->dynamicMoveType = TYPE_WATER;
 }
 
 static void HandleAction_UseMove(void)

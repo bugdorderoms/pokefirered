@@ -222,7 +222,8 @@ struct MoveFlags
 	u32 affectsUserSide:1; // Tipycally used to show the entire side on choose the move, but it's still used to determine protect like effects.
 	u32 strikeCount:4; // Max 15 hits. Defaults to 1 if not set. May apply its effect on each hit.
 	u32 callOtherMove:1; // A move with this flag will be considered a "Move that call other moves".
-	u32 unused:23;
+	u32 twoTurnsMove:1; // A move with this flag will be considered a Two turns move.
+	u32 unused:22;
 };
 
 struct BattleMove

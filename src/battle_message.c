@@ -1162,6 +1162,11 @@ const u16 gMistUsedStringIds[] = {
     STRINGID_BUTITFAILED
 };
 
+const u16 gDrainHpStringIds[] = {
+	STRINGID_PKMNENERGYDRAINED,
+	STRINGID_PKMNDREAMEATEN
+};
+
 const u16 gFocusEnergyUsedStringIds[] = {
     STRINGID_PKMNGETTINGPUMPED,
     STRINGID_BUTITFAILED

@@ -125,7 +125,6 @@ AI_CheckBadMove_CheckEffect:: @ 81D9D27
 	if_effect EFFECT_TOXIC, AI_CBM_Poison
 	if_effect EFFECT_LIGHT_SCREEN, AI_CBM_LightScreen
 	if_effect EFFECT_OHKO, AI_CBM_OneHitKO
-	if_effect EFFECT_RAZOR_WIND, AI_CBM_HighRiskForDamage
 	if_effect EFFECT_SUPER_FANG, AI_CBM_HighRiskForDamage
 	if_effect EFFECT_MIST, AI_CBM_Mist
 	if_effect EFFECT_FOCUS_ENERGY, AI_CBM_FocusEnergy
@@ -662,7 +661,6 @@ AI_CheckViability:: @ 81DA445
 	if_effect EFFECT_SPECIAL_DEFENSE_UP, AI_CV_SpDefUp
 	if_effect EFFECT_ACCURACY_UP, AI_CV_AccuracyUp
 	if_effect EFFECT_EVASION_UP, AI_CV_EvasionUp
-	if_effect EFFECT_ALWAYS_HIT, AI_CV_AlwaysHit
 	if_effect EFFECT_ATTACK_DOWN, AI_CV_AttackDown
 	if_effect EFFECT_DEFENSE_DOWN, AI_CV_DefenseDown
 	if_effect EFFECT_SPEED_DOWN, AI_CV_SpeedDown
@@ -679,7 +677,6 @@ AI_CheckViability:: @ 81DA445
 	if_effect EFFECT_LIGHT_SCREEN, AI_CV_LightScreen
 	if_effect EFFECT_REST, AI_CV_Rest
 	if_effect EFFECT_OHKO, AI_CV_OneHitKO
-	if_effect EFFECT_RAZOR_WIND, AI_CV_ChargeUpMove
 	if_effect EFFECT_SUPER_FANG, AI_CV_SuperFang
 	if_effect EFFECT_TRAP, AI_CV_Trap
 	if_effect EFFECT_CONFUSE, AI_CV_Confuse
@@ -702,7 +699,6 @@ AI_CheckViability:: @ 81DA445
 	if_effect EFFECT_PARALYZE, AI_CV_Paralyze
 	@ if_effect EFFECT_SWAGGER, AI_CV_Swagger  @ Improvement in Emerald
 	if_effect EFFECT_SPEED_DOWN_HIT, AI_CV_SpeedDownFromChance
-	if_effect EFFECT_SKY_ATTACK, AI_CV_ChargeUpMove
 	if_effect EFFECT_VITAL_THROW, AI_CV_VitalThrow
 	if_effect EFFECT_SUBSTITUTE, AI_CV_Substitute
 	if_effect EFFECT_RECHARGE, AI_CV_Recharge
@@ -737,7 +733,6 @@ AI_CheckViability:: @ 81DA445
 	if_effect EFFECT_SKULL_BASH, AI_CV_ChargeUpMove
 	if_effect EFFECT_SOLARBEAM, AI_CV_ChargeUpMove
 	if_effect EFFECT_SEMI_INVULNERABLE, AI_CV_SemiInvulnerable
-	if_effect EFFECT_SOFTBOILED, AI_CV_Heal
 	if_effect EFFECT_FAKE_OUT, AI_CV_FakeOut
 	if_effect EFFECT_SPIT_UP, AI_CV_SpitUp
 	if_effect EFFECT_SWALLOW, AI_CV_Heal
@@ -1103,23 +1098,6 @@ AI_CV_EvasionUp_ScoreDown2:: @ 81DAA51
 	score -2
 
 AI_CV_EvasionUp_End:: @ 81DAA53
-	end
-
-AI_CV_AlwaysHit:: @ 81DAA54
-	if_stat_level_more_than AI_TARGET, STAT_EVASION, 10, AI_CV_AlwaysHit_ScoreUp1
-	if_stat_level_less_than AI_USER, STAT_ACC, 2, AI_CV_AlwaysHit_ScoreUp1
-	if_stat_level_more_than AI_TARGET, STAT_EVASION, 8, AI_CV_AlwaysHit2
-	if_stat_level_less_than AI_USER, STAT_ACC, 4, AI_CV_AlwaysHit2
-	goto AI_CV_AlwaysHit_End
-
-AI_CV_AlwaysHit_ScoreUp1:: @ 81DAA79
-	score +1
-
-AI_CV_AlwaysHit2:: @ 81DAA7B
-	if_random_less_than 100, AI_CV_AlwaysHit_End
-	score +1
-
-AI_CV_AlwaysHit_End:: @ 81DAA83
 	end
 
 AI_CV_AttackDown:: @ 81DAA84
@@ -2771,10 +2749,6 @@ AI_TryToFaint:: @ 81DBA6F
 
 AI_TryToFaint_TryToEncourageQuickAttack:: @ 81DBA7C
 	if_effect EFFECT_EXPLOSION, AI_TryToFaint_End
-	if_not_effect EFFECT_QUICK_ATTACK, AI_TryToFaint_ScoreUp4
-	score +2
-
-AI_TryToFaint_ScoreUp4:: @ 81DBA8A
 	score +4
 
 AI_TryToFaint_End:: @ 81DBA8C
@@ -2872,7 +2846,6 @@ AI_Risky_EffectsToEncourage:: @ 81DBB02
 	.byte EFFECT_EXPLOSION
 	.byte EFFECT_MIRROR_MOVE
 	.byte EFFECT_OHKO
-	.byte EFFECT_HIGH_CRITICAL
 	.byte EFFECT_CONFUSE
 	.byte EFFECT_METRONOME
 	.byte EFFECT_PSYWAVE
@@ -2997,7 +2970,6 @@ AI_HPAware_DiscouragedEffectsWhenHighHP:: @ 81DBBC3
 	.byte EFFECT_MORNING_SUN
 	.byte EFFECT_SYNTHESIS
 	.byte EFFECT_MOONLIGHT
-	.byte EFFECT_SOFTBOILED
 	.byte EFFECT_MEMENTO
 	.byte EFFECT_GRUDGE
 	.byte EFFECT_OVERHEAT
@@ -3165,7 +3137,6 @@ AI_HPAware_DiscouragedEffectsWhenTargetLowHP:: @ 81DBC55
 	.byte EFFECT_TOXIC
 	.byte EFFECT_LIGHT_SCREEN
 	.byte EFFECT_OHKO
-	.byte EFFECT_SUPER_FANG  @ Maybe supposed to be EFFECT_RAZOR_WIND
 	.byte EFFECT_SUPER_FANG
 	.byte EFFECT_MIST
 	.byte EFFECT_FOCUS_ENERGY

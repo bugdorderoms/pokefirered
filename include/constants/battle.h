@@ -103,6 +103,7 @@
 #define STATUS2_FLINCHED                 (1 << 3)
 #define STATUS2_UPROAR                   (1 << 4 | 1 << 5 | 1 << 6)
 #define STATUS2_BIDE                     (1 << 7 | 1 << 8)
+#define STATUS2_BIDE_TURN(num)           ((num) << 7 & STATUS2_BIDE)
 #define STATUS2_LOCK_CONFUSE             (1 << 9 | 1 << 10)
 #define STATUS2_LOCK_CONFUSE_TURN(num)   ((num) << 9)
 #define STATUS2_MULTIPLETURNS            (1 << 11)

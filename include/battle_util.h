@@ -164,5 +164,6 @@ u8 CountAliveMonsInBattle(u8 battlerId, u8 caseId);
 void CalculatePayDayMoney(void);
 u8 GetTrappingIdByMove(u16 move);
 s32 GetDrainedBigRootHp(u8 battlerId, s32 hp);
+void SetTypeBeforeUsingMove(u16 move, u8 battler);
 
 #endif // GUARD_BATTLE_UTIL_H

@@ -136,7 +136,7 @@
 #define VARIOUS_CANCEL_MULTI_TURN_MOVES             0
 #define VARIOUS_SET_MAGIC_COAT_TARGET               1
 #define VARIOUS_IS_RUNNING_IMPOSSIBLE               2
-#define VARIOUS_GET_MOVE_TARGET                     3
+#define VARIOUS_GET_BATTLER_SIDE                    3
 #define VARIOUS_GET_BATTLER_FAINTED                 4
 #define VARIOUS_RESET_INTIMIDATE_TRACE_BITS         5
 #define VARIOUS_UPDATE_CHOICE_MOVE_ON_LVL_UP        6
@@ -151,7 +151,7 @@
 #define VARIOUS_TRAINER_SLIDE_FIRST_MON_DOWN        15
 #define VARIOUS_TRAINER_SLIDE_LAST_MON              16
 #define VARIOUS_UPDATE_NICK                         17
-#define VARIOUS_SET_SPRITEIGNORE0HP                 18
+#define VARIOUS_JUMP_IF_WEATHER_AFFECTED            18
 #define VARIOUS_TRY_REMOVE_ILLUSION                 19
 #define VARIOUS_PLAY_MOVE_ANIMATION                 20
 #define VARIOUS_JUMP_IF_BATTLE_END                  21
@@ -162,29 +162,23 @@
 #define VARIOUS_TRY_END_NEUTRALIZING_GAS            26
 #define VARIOUS_SET_TELEPORT_OUTCOME                27
 #define VARIOUS_TRY_FAINT_ON_SPIKES_DAMAGE          28
-#define VARIOUS_ATKNAME_IN_BUFF1                    29
-#define VARIOUS_RESET_SENT_MONS_VALUE               30
-#define VARIOUS_SET_ATK_TO_PLAYER0                  31
-#define VARIOUS_BUFFER_MOVE_TO_LEARN                32
+#define VARIOUS_JUMP_IF_ROAR_FAILS                  29
+#define VARIOUS_TRY_ACTIVATE_BEAST_BOOST            30
+#define VARIOUS_TRY_NEUTRALIZING_GAS_SUPPRESSION    31
+#define VARIOUS_JUMP_IF_BATTLER_REVIVED             32
 #define VARIOUS_ACTIVATE_WEATHER_ABILITIES          33
 #define VARIOUS_TRY_ACTIVATE_GRIM_NEIGH             34
 #define VARIOUS_TRY_ACTIVATE_SOUL_HEART             35
 #define VARIOUS_TRY_ACTIVATE_RECEIVER               36
-#define VARIOUS_TRY_ACTIVATE_BEAST_BOOST            37
-#define VARIOUS_TRY_NEUTRALIZING_GAS_SUPPRESSION    38
-#define VARIOUS_JUMP_IF_BATTLER_REVIVED             39
-#define VARIOUS_ARGUMENT_TO_MOVE_EFFECT             40
-#define VARIOUS_ARGUMENT_TO_MOVE_DAMAGE             41
-#define VARIOUS_JUMP_IF_ROAR_FAILS                  42
-#define VARIOUS_JUMP_IF_WEATHER_AFFECTED            43
-#define VARIOUS_GET_BATTLER_SIDE                    44
+#define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       37
+#define VARIOUS_JUMP_IF_NOT_FIRST_TURN              38
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN                               0
 #define ATK80_DMG_HALF_USER_HP                              1
 #define ATK80_DMG_DRAINED                                   2
-#define ATK80_DMG_1_8_MAX_HP                                3
-#define ATK48_NEGATIVE_DMG_DEALT                            4
+#define ATK80_DMG_1_8_TARGET_MAX_HP                         3
+#define ATK48_NEGATIVE_DMG_DEALT                            4 // Unused
 #define ATK48_DMG_HALF_TARGET_HP                            5
 #define ATK48_DMG_ATK_LEVEL                                 6
 #define ATK48_DMG_BIG_ROOT                                  7
