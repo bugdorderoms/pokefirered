@@ -5311,6 +5311,7 @@ static void CallAnotherMove(u16 move)
 	gBattlerTarget = GetMoveTarget(move, 0);
 	SetTypeBeforeUsingMove(move, gBattlerAttacker);
 	gBattleStruct->atkCancellerTracker = CANCELLER_RECALL_CASEID;
+	gBattleStruct->moveEffectByte = 0;
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 	gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[move].effect];
 }

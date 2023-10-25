@@ -4522,38 +4522,33 @@ u8 IsMonDisobedient(void)
 {
     s32 rnd;
     s32 calc;
-    u8 obedienceLevel = 0;
+    u8 levelCapLevel = GetCurrentLevelCapLevel();
 
-    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKEDUDE)) || GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT)
+    if (levelCapLevel == MAX_LEVEL || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKEDUDE)) || GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT
+	|| !IsOtherTrainer(gBattleMons[gBattlerAttacker].otId, gBattleMons[gBattlerAttacker].otName) || gBattleMons[gBattlerAttacker].level <= levelCapLevel)
         return 0;
-	if (!IsOtherTrainer(gBattleMons[gBattlerAttacker].otId, gBattleMons[gBattlerAttacker].otName) || FlagGet(FLAG_BADGE08_GET))
-		return 0;
-	obedienceLevel = 10;
-	if (FlagGet(FLAG_BADGE02_GET))
-		obedienceLevel = 30;
-	if (FlagGet(FLAG_BADGE04_GET))
-		obedienceLevel = 50;
-	if (FlagGet(FLAG_BADGE06_GET))
-		obedienceLevel = 70;
-    if (gBattleMons[gBattlerAttacker].level <= obedienceLevel)
-        return 0;
+
     rnd = (Random() & 255);
-    calc = (gBattleMons[gBattlerAttacker].level + obedienceLevel) * rnd >> 8;
-    if (calc < obedienceLevel)
+    calc = (gBattleMons[gBattlerAttacker].level + levelCapLevel) * rnd >> 8;
+    if (calc < levelCapLevel)
         return 0;
+	
     // is not obedient
     if (gCurrentMove == MOVE_RAGE)
         gBattleMons[gBattlerAttacker].status2 &= ~(STATUS2_RAGE);
+	
     if (gBattleMons[gBattlerAttacker].status1 & STATUS1_SLEEP && (gCurrentMove == MOVE_SNORE || gCurrentMove == MOVE_SLEEP_TALK))
     {
         gBattlescriptCurrInstr = BattleScript_IgnoresWhileAsleep;
         return 1;
     }
     rnd = (Random() & 255);
-    calc = (gBattleMons[gBattlerAttacker].level + obedienceLevel) * rnd >> 8;
-    if (calc < obedienceLevel && gCurrentMove != MOVE_FOCUS_PUNCH) // Additional check for focus punch in FR
+    calc = (gBattleMons[gBattlerAttacker].level + levelCapLevel) * rnd >> 8;
+	
+    if (calc < levelCapLevel && gCurrentMove != MOVE_FOCUS_PUNCH) // Additional check for focus punch in FR
     {
         calc = CheckMoveLimitations(gBattlerAttacker, gBitTable[gCurrMovePos], 0xFF);
+		
         if (calc == 0xF) // all moves cannot be used
         {
             gBattleCommunication[MULTISTRING_CHOOSER] = Random() & 3;
@@ -4573,9 +4568,10 @@ u8 IsMonDisobedient(void)
     }
     else
     {
-        obedienceLevel = gBattleMons[gBattlerAttacker].level - obedienceLevel;
+        levelCapLevel = gBattleMons[gBattlerAttacker].level - levelCapLevel;
         calc = (Random() & 255);
-        if (calc < obedienceLevel && !(gBattleMons[gBattlerAttacker].status1 & STATUS1_ANY) && GetBattlerAbility(gBattlerAttacker) != ABILITY_VITAL_SPIRIT && GetBattlerAbility(gBattlerAttacker) != ABILITY_INSOMNIA)
+		
+        if (calc < levelCapLevel && CanBePutToSleep(gBattlerAttacker, gBattlerAttacker, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
         {
             // try putting asleep
             int i;
@@ -4589,8 +4585,8 @@ u8 IsMonDisobedient(void)
                 return 1;
             }
         }
-        calc -= obedienceLevel;
-        if (calc < obedienceLevel)
+        calc -= levelCapLevel;
+        if (calc < levelCapLevel)
         {
             gBattlerTarget = gBattlerAttacker;
             gBattleMoveDamage = CalculateBaseDamage(MOVE_NONE, TYPE_MYSTERY, gBattlerAttacker, gBattlerTarget, FALSE, TRUE);
