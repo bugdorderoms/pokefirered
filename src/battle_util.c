@@ -5273,23 +5273,25 @@ bool8 IsAbilityBlockedByNeutralizingGas(u16 ability)
 	return TRUE;
 }
 
-u8 GetBattleMonForItemUse(u8 partyIndex)
+// battlerId = the battler using the item
+// partyIndex = the party index the item effect get applyed
+u8 GetBattleMonForItemUse(u8 battlerId, u8 partyIndex)
 {
 	u8 battleMonId = MAX_BATTLERS_COUNT;
 	
 	if (gMain.inBattle)
 	{
-		if (partyIndex == gBattlerPartyIndexes[gBattlerAttacker])
-			battleMonId = gBattlerAttacker;
-		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && partyIndex == gBattlerPartyIndexes[BATTLE_PARTNER(gBattlerAttacker)])
-			battleMonId = BATTLE_PARTNER(gBattlerAttacker);
+		if (partyIndex == gBattlerPartyIndexes[battlerId])
+			battleMonId = battlerId;
+		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && partyIndex == gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)])
+			battleMonId = BATTLE_PARTNER(battlerId);
 	}
 	return battleMonId;
 }
 
 u8 GetItemUseBattler(u8 battlerId)
 {
-	return GetBattleMonForItemUse(gBattleStruct->itemPartyIndex[battlerId]);
+	return GetBattleMonForItemUse(battlerId, gBattleStruct->itemPartyIndex[battlerId]);
 }
 
 bool8 IsItemUseBlockedByBattleEffect(void)

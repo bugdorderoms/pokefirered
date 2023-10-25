@@ -172,7 +172,7 @@ bool8 MoveHasHealingEffect(u16 move);
 bool8 IsBattlerAffectedByFollowMe(u8 battlerId, u8 opposingSide, u16 move);
 bool8 IsAbilityBlockedByNeutralizingGas(u16 ability);
 u8 GetItemUseBattler(u8 battlerId);
-u8 GetBattleMonForItemUse(u8 partyIndex);
+u8 GetBattleMonForItemUse(u8 battlerId, u8 partyIndex);
 bool8 IsItemUseBlockedByBattleEffect(void);
 const u8 *PokemonUseItemEffectsBattle(u8 battlerId, u16 itemId, bool8 *canUse);
 bool8 IsBattleAnimationsOn(void);

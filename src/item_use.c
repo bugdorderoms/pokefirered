@@ -827,7 +827,7 @@ bool8 ExecuteTableBasedItemEffect(u8 partyMonIndex, u16 item, u8 monMoveIndex)
 	if (gMain.inBattle)
 		gBattleStruct->usedReviveItemBattler &= ~(gBitTable[gBattlerInMenuId]);
 	
-	return PokemonUseItemEffects(&gPlayerParty[partyMonIndex], item, partyMonIndex, monMoveIndex, GetBattleMonForItemUse(partyMonIndex));
+	return PokemonUseItemEffects(&gPlayerParty[partyMonIndex], item, partyMonIndex, monMoveIndex, GetBattleMonForItemUse(gBattlerInMenuId, partyMonIndex));
 }
 
 bool8 CanUseItemInBattle(u8 partyIdx, u16 itemId)
