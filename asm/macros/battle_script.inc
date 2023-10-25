@@ -1569,6 +1569,40 @@
 	handleabilitypopup ATKFC_REMOVE_POP_UP | \battler
 	.endm
 	
+	.macro abilitycopypopup attacker:req, defender:req, stringId:req
+	loadabilitypopup \attacker
+	pause B_WAIT_TIME_SHORT
+	loadabilitypopup \defender
+	pause B_WAIT_TIME_SHORT
+	removeabilitypopup \attacker
+	pause B_WAIT_TIME_SHORT
+	loadabilitypopup \attacker
+	printstring \stringId
+	waitmessage B_WAIT_TIME_LONG
+	removeabilitypopup \defender
+	pause B_WAIT_TIME_SHORT
+	removeabilitypopup \attacker
+	.endm
+	
+	.macro abilityswappopup attacker:req, defender:req, stringId:req
+	loadabilitypopup \attacker
+	pause B_WAIT_TIME_SHORT
+	loadabilitypopup \defender
+	pause B_WAIT_TIME_SHORT
+	removeabilitypopup \attacker
+	pause B_WAIT_TIME_SHORT
+	loadabilitypopup \attacker
+	pause B_WAIT_TIME_SHORT
+	removeabilitypopup \defender
+	pause B_WAIT_TIME_SHORT
+	loadabilitypopup \defender
+	printstring \stringId
+	waitmessage B_WAIT_TIME_LONG
+	removeabilitypopup \defender
+	pause B_WAIT_TIME_SHORT
+	removeabilitypopup \attacker
+	.endm
+	
 	.macro instantfaintattacker
 	instanthpdrop
 	setatkhptozero
@@ -1592,4 +1626,28 @@
 	.macro flushmessagebox
 	printstring STRINGID_EMPTYSTRING3
 	waitmessage 1
+	.endm
+	
+	.macro switchoutmon battler:req, stringId:req, handleOrderCase:req, dontClearSubstituteBit:req
+	switchoutabilities \battler
+	waitstate
+	switchhandleorder \battler, \handleOrderCase
+	returntoball \battler
+	getswitchedmondata \battler
+	switchindataupdate \battler
+	hpthresholds \battler
+	printstring \stringId
+	switchinanim \battler, \dontClearSubstituteBit
+	waitstate
+	switchineffects \battler
+	.endm
+	
+	.macro savebattlers
+	copybyte sSAVED_DMG, gBattlerAttacker
+	copybyte sGIVEEXP_STATE, gBattlerTarget
+	.endm
+	
+	.macro restorebattlers
+	copybyte gBattlerAttacker, sSAVED_DMG
+	copybyte gBattlerTarget, sGIVEEXP_STATE
 	.endm

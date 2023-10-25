@@ -3470,11 +3470,6 @@ static void atk49_moveend(void)
 						RecordAbilityBattle(i, gLastUsedAbility);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_EmergencyExit;
-						
-						if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || GetBattlerSide(i) == B_SIDE_PLAYER)
-							gBattleCommunication[MULTIUSE_STATE] = FALSE;
-						else
-							gBattleCommunication[MULTIUSE_STATE] = TRUE; // in wild battle
 						effect = TRUE;
 						return;
 					}
