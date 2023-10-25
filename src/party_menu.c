@@ -4485,7 +4485,7 @@ static bool8 ItemUseDoHPHeal(struct Pokemon *mon, u8 partyIndex, u16 oldHP, u16 
 	if (newHP > GetMonData(mon, MON_DATA_MAX_HP))
 		newHP = GetMonData(mon, MON_DATA_MAX_HP);
 	
-	if (gMain.inBattle && battleMon != MAX_BATTLERS_COUNT)
+	if (battleMon != MAX_BATTLERS_COUNT)
 		gBattleMoveDamage = -healAmount;
 	else
 	{
@@ -4522,7 +4522,7 @@ static bool8 ItemUseRestoreMovePP(struct Pokemon *mon, u8 moveIndex, u8 amount, 
 		
 		SetMonData(mon, MON_DATA_PP1 + moveIndex, &pp);
 		
-		if (gMain.inBattle && battleMon != MAX_BATTLERS_COUNT && !(gBattleMons[battleMon].status2 & STATUS2_TRANSFORMED)
+		if (battleMon != MAX_BATTLERS_COUNT && !(gBattleMons[battleMon].status2 & STATUS2_TRANSFORMED)
 			&& !(gDisableStructs[battleMon].mimickedMoves & gBitTable[moveIndex]))
 		    gBattleMons[battleMon].pp[moveIndex] = pp;
 		
@@ -4628,7 +4628,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 				case ITEMEFFECT_REVIVE:
 				    if (!hp)
 					{
-						if (gMain.inBattle && battleMonId != MAX_BATTLERS_COUNT)
+						if (battleMonId != MAX_BATTLERS_COUNT)
 						{
 							if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 								gBattleStruct->usedReviveItemBattler |= gBitTable[gBattlerInMenuId]; // for revive mon in battle
@@ -4672,7 +4672,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 						caseWorked = TRUE;
 					}
 					// battle status cure effects
-					if (gMain.inBattle && battleMonId != MAX_BATTLERS_COUNT)
+					if (battleMonId != MAX_BATTLERS_COUNT)
 					{
 						if ((byte & ITEMEFFECT_STATUS_CONFUSION) && (gBattleMons[battleMonId].status2 & STATUS2_CONFUSION))
 						{
