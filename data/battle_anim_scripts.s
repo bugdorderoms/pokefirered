@@ -425,6 +425,7 @@ gBattleAnims_General::
 	.4byte General_Fog
 	.4byte General_SlideOutOffscreen
 	.4byte General_ItemThrow
+	.4byte General_StrongWinds
 
 gBattleAnims_Special::
 	.4byte Special_LevelUp
@@ -10662,13 +10663,25 @@ General_SlideOutOffscreen::
 	waitforvisualfinish
 	end
 
-General_ItemThrow::
+General_ItemThrow:: @ Credit to Blackuser
     loadspritegfx ANIM_TAG_THIN_RING
     createvisualtask AnimTask_ItemThrow, 2
 	waitforvisualfinish
 	delay 20
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, 2, 3, 7, 0, 26609
 	createsprite gThinRingExpandingSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, 0, 0
+	waitforvisualfinish
+	end
+	
+General_StrongWinds:: @ Credit to Skeli
+	loadspritegfx ANIM_TAG_FLYING_DIRT
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_FLYING_DIRT, 0, 6, 6, 0x7FFF
+	createvisualtask AnimTask_LoadSandstormBackground, 5, 1
+	createvisualtask AnimTask_BlendBackground, 6, 6, 0x7FFF
+	playsewithpan SE_M_GUST, 0
+	delay 68
+	playsewithpan SE_M_GUST2, 0
+	delay 56
 	waitforvisualfinish
 	end
 

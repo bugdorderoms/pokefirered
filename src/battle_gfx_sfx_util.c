@@ -238,6 +238,10 @@ static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId)
     case B_ANIM_HAIL_CONTINUES:
     case B_ANIM_SNATCH_MOVE:
 	case B_ANIM_FOG_CONTINUES:
+	case B_ANIM_ITEM_THROW:
+	case B_ANIM_STRONG_WINDS_CONTINUE:
+	case B_ANIM_LOAD_ABILITY_POP_UP:
+	case B_ANIM_REMOVE_ABILITY_POP_UP:
         return TRUE;
     }
 	return FALSE;

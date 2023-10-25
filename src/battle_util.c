@@ -2298,7 +2298,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 					    if (TryChangeBattleWeather(battler, ENUM_WEATHER_STRONG_WINDS))
 						{
 							gBattleCommunication[MULTISTRING_CHOOSER] = 6;
-							gBattleScripting.animArg1 = B_ANIM_RAIN_CONTINUES; // assign it an apropriated animation
+							gBattleScripting.animArg1 = B_ANIM_STRONG_WINDS_CONTINUE;
 							BattleScriptPushCursorAndCallback(BattleScript_SwitchInWeatherAbilityActivates);
 							++effect;
 						}

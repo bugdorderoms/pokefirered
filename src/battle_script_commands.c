@@ -2950,7 +2950,7 @@ static void PlayAnimationInternal(u8 animId, u16 argument, u8 addr)
 		gBattlescriptCurrInstr = BattleScript_Pausex20;
     }
     else if (animId == B_ANIM_RAIN_CONTINUES || animId == B_ANIM_SUN_CONTINUES || animId == B_ANIM_SANDSTORM_CONTINUES || animId == B_ANIM_HAIL_CONTINUES
-	|| animId == B_ANIM_FOG_CONTINUES)
+	|| animId == B_ANIM_FOG_CONTINUES || animId == B_ANIM_STRONG_WINDS_CONTINUE)
     {
         BtlController_EmitBattleAnimation(battlerId, BUFFER_A, animId, argument);
         MarkBattlerForControllerExec(battlerId);

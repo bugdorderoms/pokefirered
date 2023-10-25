@@ -379,6 +379,7 @@
 #define B_ANIM_FOG_CONTINUES            0x1F
 #define B_ANIM_SLIDE_OUT_OFFSCREEN      0x20
 #define B_ANIM_ITEM_THROW               0x21
+#define B_ANIM_STRONG_WINDS_CONTINUE    0x22
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0
