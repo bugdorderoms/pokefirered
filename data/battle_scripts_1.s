@@ -1091,7 +1091,7 @@ BattleScript_EffectRest::
 	pause B_WAIT_TIME_SHORT
 	printfromtable gRestUsedStringIds
 	waitmessage B_WAIT_TIME_LONG
-	updatestatusicon BS_ATTACKER
+	updatestatusicon BS_TARGET
 	waitstate
 	goto BattleScript_PresentHealTarget
 
