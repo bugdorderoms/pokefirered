@@ -114,7 +114,7 @@ struct ResourceFlags
 struct DisableStruct
 {
     /*0x00*/ u32 transformedMonPersonality;
-    /*0x04*/ u16 disabledMove;
+	/*0x04*/ u16 disabledMove;
     /*0x06*/ u16 encoredMove;
     /*0x08*/ u8 protectUses;
     /*0x09*/ u8 stockpileCounter;
@@ -137,7 +137,8 @@ struct DisableStruct
     /*0x11*/ u8 battlerWithSureHit;
     /*0x12*/ u8 rechargeTimer;
 	/*0x13*/ u8 imposterActivated:1; // only activate when switched in, not when gained
-	/*0x13*/ u8 unused:7;
+	/*0x13*/ u8 transformedMonShynies:1;
+	/*0x13*/ u8 unused:6;
 };
 
 extern struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT];
@@ -447,11 +448,12 @@ extern struct BattleStruct *gBattleStruct;
 #define IS_MOVE_SPECIAL(move)(gBattleMoves[move].split == SPLIT_SPECIAL)
 #define IS_MOVE_STATUS(move)(gBattleMoves[move].split == SPLIT_STATUS)
 #define BATTLER_DAMAGED(battlerId) ((gSpecialStatuses[battlerId].physicalDmg != 0 || gSpecialStatuses[battlerId].specialDmg != 0))
-#define IS_BATTLER_OF_TYPE(battlerId, type)((gBattleMons[battlerId].type1 == type || gBattleMons[battlerId].type2 == type))
-#define SET_BATTLER_TYPE(battlerId, type)   \
-{                                           \
-    gBattleMons[battlerId].type1 = type;    \
-    gBattleMons[battlerId].type2 = type;    \
+#define IS_BATTLER_OF_TYPE(battlerId, type)((gBattleMons[battlerId].type1 == type || gBattleMons[battlerId].type2 == type || (gBattleMons[battlerId].type3 != TYPE_MYSTERY && gBattleMons[battlerId].type3 == type)))
+#define SET_BATTLER_TYPE(battlerId, type)        \
+{                                                \
+    gBattleMons[battlerId].type1 = type;         \
+    gBattleMons[battlerId].type2 = type;         \
+	gBattleMons[battlerId].type3 = TYPE_MYSTERY; \
 }
 
 #define GET_STAT_BUFF_ID(n)((n & 0xF))              // first four bits 0x1, 0x2, 0x4, 0x8
@@ -637,6 +639,7 @@ extern u16 gBattlerPartyIndexes[MAX_BATTLERS_COUNT];
 extern s32 gBattleMoveDamage;
 extern u16 gIntroSlideFlags;
 extern u32 gTransformedPersonalities[MAX_BATTLERS_COUNT];
+extern bool8 gTransformedShinies[MAX_BATTLERS_COUNT];
 extern u8 gBattlerPositions[MAX_BATTLERS_COUNT];
 extern u8 gHealthboxSpriteIds[MAX_BATTLERS_COUNT];
 extern u8 gBattleOutcome;

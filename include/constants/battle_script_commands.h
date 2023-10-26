@@ -1,6 +1,12 @@
 #ifndef GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H
 #define GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H
 
+// Flags for the CanBe* statused function
+#define STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD      (1 << 0)
+#define STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL    (1 << 1)
+#define STATUS_CHANGE_FLAG_CHECK_UPROAR          (1 << 2)
+#define STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS (1 << 3)
+
 // Battle Scripting addresses
 #define sPAINSPLIT_HP gBattleScripting + 0x0
 #define sBIDE_DMG gBattleScripting + 0x4
@@ -172,6 +178,7 @@
 #define VARIOUS_TRY_ACTIVATE_RECEIVER               36
 #define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       37
 #define VARIOUS_JUMP_IF_NOT_FIRST_TURN              38
+#define VARIOUS_TRY_CONVERSION_TYPE_CHANGE          39
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN                               0

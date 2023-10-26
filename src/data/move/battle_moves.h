@@ -2680,7 +2680,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     {
         .effect = EFFECT_REST,
         .type = TYPE_PSYCHIC,
-        .pp = 10,
+        .pp = 5,
         .target = MOVE_TARGET_USER,
         .flags =
 		{

@@ -47,7 +47,6 @@ static const u16 sFinalStrikeOnlyEffects[] =
     EFFECT_SMELLINGSALT,
     EFFECT_WAKE_UP_SLAP,
     EFFECT_HIT_ESCAPE,
-    EFFECT_RECOIL_HP_25,
     EFFECT_HIT_PREVENT_ESCAPE,
     EFFECT_HIT_SWITCH_TARGET,
 };
@@ -292,9 +291,9 @@ void DoMoveEffect(bool8 primary)
 			
 			if (gStatusFlagsForMoveEffects[moveEffect] == STATUS1_SLEEP) // Set sleep counter
 #if SLEEP_UPDATE
-                gBattleMons[gEffectBattler].status1 |= ((Random() & 2) + 1);
+                gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(((Random() & 2) + 1));
 #else
-	            gBattleMons[gEffectBattler].status1 |= ((Random() & 3) + 2);
+	            gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(((Random() & 3) + 2));
 #endif
             else
 				gBattleMons[gEffectBattler].status1 |= gStatusFlagsForMoveEffects[moveEffect];
@@ -364,7 +363,7 @@ void DoMoveEffect(bool8 primary)
 				case MOVE_EFFECT_TRI_ATTACK:
 				    if (!gBattleMons[gEffectBattler].status1)
 					{
-						SetMoveEffect(Random() % 3 + 3, FALSE, FALSE);
+						SetMoveEffect(Random() % 3 + MOVE_EFFECT_BURN, FALSE, FALSE);
 						DoMoveEffect(FALSE);
 						return;
 					}

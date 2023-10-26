@@ -357,9 +357,10 @@
 	.4byte \ptr
 	.endm
 
-	.macro trysetsleep battler:req, ptr:req
+	.macro trysetsleep battler:req, flags:req, ptr:req
 	.byte 0x42
 	.byte \battler
+	.4byte \flags
 	.4byte \ptr
 	.endm
 
@@ -767,9 +768,8 @@
 	.4byte \param0
 	.endm
 
-	.macro tryconversiontypechange param0:req
+	.macro nop90
 	.byte 0x90
-	.4byte \param0
 	.endm
 
 	.macro givepaydaymoney
@@ -1443,6 +1443,11 @@
 	
 	.macro jumpifnotfirstturn ptr:req
 	various BS_ATTACKER, VARIOUS_JUMP_IF_NOT_FIRST_TURN
+	.4byte \ptr
+	.endm
+	
+	.macro tryconversiontypechange ptr:req
+	various BS_ATTACKER, VARIOUS_TRY_CONVERSION_TYPE_CHANGE
 	.4byte \ptr
 	.endm
 	

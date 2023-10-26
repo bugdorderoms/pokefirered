@@ -1280,6 +1280,7 @@ void BtlController_HandleMoveAnimation(u8 battlerId)
         gWeatherMoveAnim = gBattleBufferA[battlerId][12] | (gBattleBufferA[battlerId][13] << 8);
         gAnimDisableStructPtr = (struct DisableStruct *)&gBattleBufferA[battlerId][16];
         gTransformedPersonalities[battlerId] = gAnimDisableStructPtr->transformedMonPersonality;
+		gTransformedShinies[battlerId] = gAnimDisableStructPtr->transformedMonShynies;
         gBattleSpritesDataPtr->healthBoxesData[battlerId].animationState = 0;
         gBattlerControllerFuncs[battlerId] = DoMoveAnimation;
     }

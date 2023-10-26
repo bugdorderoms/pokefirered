@@ -114,7 +114,7 @@ struct BattlePokemon
     /*0x06*/ u16 speed;
     /*0x08*/ u16 spAttack;
     /*0x0A*/ u16 spDefense;
-    /*0x0C*/ u16 moves[4];
+    /*0x0C*/ u16 moves[MAX_MON_MOVES];
     /*0x14*/ u32 hpIV:5;
     /*0x14*/ u32 attackIV:5;
     /*0x15*/ u32 defenseIV:5;
@@ -127,15 +127,15 @@ struct BattlePokemon
     /*0x20*/ u16 ability;
     /*0x22*/ u8 type1;
     /*0x23*/ u8 type2;
-    /*0x24*/ u8 type3; // for Trick-or-Treat and Forest's Curse
-    /*0x25*/ u8 level;
-    /*0x26*/ u16 item;
-    /*0x28*/ u16 hp;
-    /*0x2A*/ u16 maxHP;
-    /*0x2C*/ u8 nickname[POKEMON_NAME_LENGTH + 1];
-    /*0x37*/ u8 ppBonuses;
-    /*0x38*/ u8 otName[8];
-    /*0x40*/ u8 pp[4];
+    /*0x24*/ u8 type3; // For Trick-or-Treat and Forest's Curse
+	/*0x25*/ u8 pp[MAX_MON_MOVES]; // From here to up are all copied by transform
+    /*0x29*/ u8 level;
+    /*0x2A*/ u16 item;
+    /*0x2C*/ u16 hp;
+    /*0x2E*/ u16 maxHP;
+    /*0x30*/ u8 nickname[POKEMON_NAME_LENGTH + 1];
+    /*0x3B*/ u8 ppBonuses;
+    /*0x3C*/ u8 otName[8];
     /*0x44*/ u32 experience;
     /*0x48*/ u32 personality;
     /*0x4C*/ u32 status1;

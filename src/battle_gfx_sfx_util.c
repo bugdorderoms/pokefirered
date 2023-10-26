@@ -291,16 +291,19 @@ void BattleLoadMonSpriteGfx(u8 battlerId)
     u16 species;
     u16 paletteOffset;
     void *buffer;
+	const u32 *frontSpritePal;
 	
     if (gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies == SPECIES_NONE)
     {
         species = GetMonData(mon, MON_DATA_SPECIES);
         currentPersonality = GetMonData(mon, MON_DATA_PERSONALITY);
+		frontSpritePal = GetMonFrontSpritePal(mon);
     }
     else
     {
         species = gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies;
         currentPersonality = gTransformedPersonalities[battlerId];
+		frontSpritePal = GetMonSpritePalFromSpecies(species, gTransformedShinies[battlerId]);
     }
 	HandleLoadSpecialPokePic(GetBattlerSide(battlerId) == B_SIDE_OPPONENT ? &gMonFrontPicTable[species] : &gMonBackPicTable[species],
 	gMonSpritesGfxPtr->sprites[GetBattlerPosition(battlerId)], species, currentPersonality);
@@ -308,8 +311,7 @@ void BattleLoadMonSpriteGfx(u8 battlerId)
     paletteOffset = 0x100 + battlerId * 16;
 	
     buffer = AllocZeroed(0x400);
-    LZDecompressWram(gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies == SPECIES_NONE ? GetMonFrontSpritePal(mon)
-	: GetMonSpritePalFromSpecies(species, GetMonData(mon, MON_DATA_IS_SHINY)), buffer);
+    LZDecompressWram(frontSpritePal, buffer);
     LoadPalette(buffer, paletteOffset, 0x20);
     LoadPalette(buffer, 0x80 + battlerId * 16, 0x20);
     Free(buffer);
@@ -512,18 +514,22 @@ void CopyBattleSpriteInvisibility(u8 battlerId)
 void HandleSpeciesGfxDataChange(u8 battlerAtk, u8 battlerDef, u8 flags)
 {
 	struct Pokemon *atkMon = GetBattlerPartyIndexPtr(battlerAtk);
-	u32 atkPersonality = GetMonData(atkMon, MON_DATA_PERSONALITY);
-	u16 paletteOffset, targetSpecies = GetMonData((flags & SPECIESGFX_FLAG_IS_GHOST) ? atkMon : GetBattlerPartyIndexPtr(battlerDef), MON_DATA_SPECIES);
+	struct Pokemon *defMon = GetBattlerPartyIndexPtr(battlerDef);
 	u8 atkPosition = GetBattlerPosition(battlerAtk);
 	void *buffer;
+	u16 paletteOffset, targetSpecies;
+	bool8 isShiny;
+	
+	targetSpecies = GetMonData((flags & SPECIESGFX_FLAG_IS_GHOST) ? atkMon : defMon, MON_DATA_SPECIES);
+	isShiny = GetMonData((flags & SPECIESGFX_FLAG_NO_TRANSFORM_PALFADE) ? atkMon : defMon, MON_DATA_IS_SHINY);
 	
 	HandleLoadSpecialPokePic(GetBattlerSide(battlerAtk) == B_SIDE_OPPONENT ? &gMonFrontPicTable[targetSpecies] : &gMonBackPicTable[targetSpecies],
-	gMonSpritesGfxPtr->sprites[atkPosition], targetSpecies, atkPersonality);
+	gMonSpritesGfxPtr->sprites[atkPosition], targetSpecies, GetMonData(atkMon, MON_DATA_PERSONALITY));
 	
 	DmaCopy32(3, gMonSpritesGfxPtr->sprites[atkPosition], (void *)(VRAM + 0x10000 + gSprites[gBattlerSpriteIds[battlerAtk]].oam.tileNum * 32), 0x800);
 	
 	buffer = AllocZeroed(0x400);
-	LZDecompressWram(GetMonSpritePalFromSpecies(targetSpecies, GetMonData(atkMon, MON_DATA_IS_SHINY)), buffer);
+	LZDecompressWram(GetMonSpritePalFromSpecies(targetSpecies, isShiny), buffer);
 	paletteOffset = 0x100 + battlerAtk * 16;
 	LoadPalette(buffer, paletteOffset, 32);
 	Free(buffer);

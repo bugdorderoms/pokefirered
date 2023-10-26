@@ -3,6 +3,7 @@
 
 #include "global.h"
 
+// Return values for the CanBe* statused function
 enum
 {
 	STATUS_CHANGE_WORKED,
@@ -17,10 +18,6 @@ enum
 	STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE,
 	STATUS_CHANGE_FAIL_PASTEL_VEIL_ON_SIDE,
 };
-
-#define STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD   (1 << 0)
-#define STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL (1 << 1)
-#define STATUS_CHANGE_FLAG_CHECK_UPROAR       (1 << 2)
 
 #define MOVE_LIMITATION_ZEROMOVE                (1 << 0)
 #define MOVE_LIMITATION_PP                      (1 << 1)
@@ -184,5 +181,7 @@ void CalculatePayDayMoney(void);
 u8 GetTrappingIdByMove(u16 move);
 s32 GetDrainedBigRootHp(u8 battlerId, s32 hp);
 void SetTypeBeforeUsingMove(u16 move, u8 battler);
+bool8 CanTransformIntoBattler(u8 battler1, u8 battler2);
+bool8 CanDisableMove(u8 battlerId, u8 movePos, u16 move);
 
 #endif // GUARD_BATTLE_UTIL_H

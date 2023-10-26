@@ -140,7 +140,7 @@ static u8 CanBeStatused(u8 attacker, u8 defender, u32 flags)
 	u8 defenderPartner;
 	
 	// Check already statused
-	if (gBattleMons[defender].status1 & STATUS1_ANY)
+	if (!(flags & STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS) && gBattleMons[defender].status1 & STATUS1_ANY)
 		return STATUS_CHANGE_FAIL_ALREADY_STATUSED;
 	
 	// Check defender's abilities
@@ -1420,9 +1420,9 @@ u8 DoBattlerEndTurnEffects(void)
 			    }
 			    CancelMultiTurnMoves(gBattlerAttacker);
 #if SLEEP_UPDATE
-			    gBattleMons[gBattlerAttacker].status1 |= (Random() & 2) + 1;
+			    gBattleMons[gBattlerAttacker].status1 |= STATUS1_SLEEP_TURN((Random() & 2) + 1);
 #else
-			    gBattleMons[gBattlerAttacker].status1 |= (Random() & 3) + 2;
+			    gBattleMons[gBattlerAttacker].status1 |= STATUS1_SLEEP_TURN((Random() & 3) + 2);
 #endif
 			    BtlController_EmitSetMonData(gBattlerAttacker, BUFFER_A, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gBattlerAttacker].status1);
 			    MarkBattlerForControllerExec(gBattlerAttacker);
@@ -1679,7 +1679,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 					}
 					else
 					{
-						u8 toSub = GetBattlerAbility(gBattlerAttacker) == ABILITY_EARLY_BIRD ? 2 : 1;
+						u8 toSub = STATUS1_SLEEP_TURN(GetBattlerAbility(gBattlerAttacker) == ABILITY_EARLY_BIRD ? 2 : 1);
 						
 						if ((gBattleMons[gBattlerAttacker].status1 & STATUS1_SLEEP) < toSub)
 						{
@@ -2348,9 +2348,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 						}
 						break;
 					case ABILITY_IMPOSTER:
-					    if (IsBattlerAlive(BATTLE_OPPOSITE(battler)) && !(gBattleMons[BATTLE_OPPOSITE(battler)].status2 & (STATUS2_TRANSFORMED | STATUS2_SUBSTITUTE))
-						&& !(gStatuses3[BATTLE_OPPOSITE(battler)] & STATUS3_SEMI_INVULNERABLE) && !gBattleStruct->illusion[BATTLE_OPPOSITE(battler)].on
-						&& !(gBattleMons[battler].status2 & STATUS2_TRANSFORMED) && !gDisableStructs[battler].imposterActivated)
+						if (IsBattlerAlive(BATTLE_OPPOSITE(battler)) && CanTransformIntoBattler(battler, BATTLE_OPPOSITE(battler)) && !gDisableStructs[battler].imposterActivated)
 						{
 							gDisableStructs[battler].imposterActivated = TRUE;
 							gBattlerAttacker = battler;
@@ -3443,8 +3441,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 						case ABILITY_CURSED_BODY:
 						    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && BATTLER_DAMAGED(battler) && IsBattlerAlive(gBattlerAttacker) && (Random() % 3) == 0
 							&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && !SubsBlockMove(gBattlerAttacker, battler, moveArg)
-							&& moveArg != MOVE_STRUGGLE && !gDisableStructs[gBattlerAttacker].disabledMove && gBattleMons[gBattlerAttacker].pp[gCurrMovePos]
-							&& !CheckAbilityInBattle(CHECK_ABILITY_ON_SIDE, gBattlerAttacker, ABILITY_AROMA_VEIL))
+							&& CanDisableMove(gBattlerAttacker, gCurrMovePos, moveArg))
 							{
 								gDisableStructs[gBattlerAttacker].disabledMove = moveArg;
 								gDisableStructs[gBattlerAttacker].disableTimer = 4;
@@ -5093,7 +5090,8 @@ u8 GetBattlerGender(u8 battlerId)
 bool8 CanBeInfatuatedBy(u8 battlerIdAtk, u8 battlerIdDef)
 {
 	if (GetBattlerGender(battlerIdAtk) == MON_GENDERLESS || GetBattlerGender(battlerIdDef) == MON_GENDERLESS || ARE_BATTLERS_OF_SAME_GENDER(battlerIdAtk, battlerIdDef)
-		|| GetBattlerAbility(battlerIdAtk) == ABILITY_OBLIVIOUS || gBattleMons[battlerIdAtk].status2 & STATUS2_INFATUATION)
+		|| GetBattlerAbility(battlerIdAtk) == ABILITY_OBLIVIOUS || CheckAbilityInBattle(CHECK_ABILITY_ON_SIDE, battlerIdAtk, ABILITY_AROMA_VEIL)
+		|| gBattleMons[battlerIdAtk].status2 & STATUS2_INFATUATION)
 	    return FALSE;
 	return TRUE;
 }
@@ -5537,4 +5535,20 @@ void SetTypeBeforeUsingMove(u16 move, u8 battler)
 	}
 	else if (gBattleMoves[move].flags.soundMove && GetBattlerAbility(battler) == ABILITY_LIQUID_VOICE)
 		gBattleStruct->dynamicMoveType = TYPE_WATER;
+}
+
+// Check if battler1 can transform into battler2
+bool8 CanTransformIntoBattler(u8 battler1, u8 battler2)
+{
+	if (!(gBattleMons[battler2].status2 & (STATUS2_TRANSFORMED | STATUS2_SUBSTITUTE)) && !(gStatuses3[battler2] & STATUS3_SEMI_INVULNERABLE)
+		&& !gBattleStruct->illusion[battler1].on && !gBattleStruct->illusion[battler2].on && !(gBattleMons[battler1].status2 & STATUS2_TRANSFORMED))
+		return TRUE;
+	return FALSE;
+}
+
+bool8 CanDisableMove(u8 battlerId, u8 movePos, u16 move)
+{
+	if (move != MOVE_STRUGGLE && !gDisableStructs[battlerId].disabledMove && gBattleMons[battlerId].pp[movePos] && !CheckAbilityInBattle(CHECK_ABILITY_ON_SIDE, battlerId, ABILITY_AROMA_VEIL))
+		return TRUE;
+	return FALSE;
 }

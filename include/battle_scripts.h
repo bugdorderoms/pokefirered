@@ -300,6 +300,7 @@ extern const u8 BattleScript_ThrowBall[];
 extern const u8 BattleScript_ThrowSafariBall[];
 extern const u8 BattleScript_ItemUseMessageEnd[];
 extern const u8 BattleScript_AbilityPreventSleep[];
+extern const u8 BattleScript_AlreadyHasSubstitute[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForUsingItem[];

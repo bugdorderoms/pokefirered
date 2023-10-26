@@ -87,6 +87,7 @@
 // These persist remain outside of battle and after switching out
 #define STATUS1_NONE             0
 #define STATUS1_SLEEP            (1 << 0 | 1 << 1 | 1 << 2)
+#define STATUS1_SLEEP_TURN(num)  ((num) << 0)
 #define STATUS1_POISON           (1 << 3)
 #define STATUS1_BURN             (1 << 4)
 #define STATUS1_FREEZE           (1 << 5)
