@@ -1,3 +1,8 @@
+@ Define these here since misc_constants.inc conflicts with the C headers
+	.set NULL, 0
+	.set FALSE, 0
+	.set TRUE, 1
+
 @ commands
 	.macro attackcanceler
 	.byte 0x0
@@ -372,14 +377,14 @@
 	.byte 0x44
 	.endm
 
-	.macro playanimation battler:req, param1:req, param2:req
+	.macro playanimation battler:req, param1:req, param2=NULL
 	.byte 0x45
 	.byte \battler
 	.byte \param1
 	.4byte \param2
 	.endm
 
-	.macro playanimation2 battler:req, param1:req, param2:req
+	.macro playanimation2 battler:req, param1:req, param2=NULL
 	.byte 0x46
 	.byte \battler
 	.4byte \param1

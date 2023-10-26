@@ -12,10 +12,6 @@
 #include "constants/game_stat.h"
 #include "battle_string_ids.h"
 	.include "asm/macros/battle_script.inc"
-@ Define these here since misc_constants.inc conflicts with the C headers
-	.set NULL, 0
-	.set FALSE, 0
-	.set TRUE, 1
 	.section script_data, "aw", %progbits
 	.align 2
 
@@ -50,7 +46,7 @@ BattleScript_UseItemMessage::
 	printstring STRINGID_TRAINERUSEDITEM
     waitmessage 0x40
 	jumpifabsent BS_SCRIPTING, BattleScript_UseItemMessageReturn
-	playanimation BS_SCRIPTING, B_ANIM_ITEM_THROW, NULL
+	playanimation BS_SCRIPTING, B_ANIM_ITEM_THROW
 	waitstate
 BattleScript_UseItemMessageReturn::
     playse SE_USE_ITEM
@@ -229,19 +225,19 @@ BattleScript_PokeFluteEnd::
 BattleScript_WatchesCarefully::
 	printfromtable gSafariPokeblockResultStringIds
 	waitmessage 64
-	playanimation BS_OPPONENT1, B_ANIM_SAFARI_REACTION, NULL
+	playanimation BS_OPPONENT1, B_ANIM_SAFARI_REACTION
 	end2
 
 BattleScript_ThrowRock::
 	printstring STRINGID_THREWROCK
 	waitmessage 64
-	playanimation BS_ATTACKER, B_ANIM_ROCK_THROW, NULL
+	playanimation BS_ATTACKER, B_ANIM_ROCK_THROW
 	end2
 
 BattleScript_ThrowBait::
 	printstring STRINGID_THREWBAIT
 	waitmessage 64
-	playanimation BS_ATTACKER, B_ANIM_BAIT_THROW, NULL
+	playanimation BS_ATTACKER, B_ANIM_BAIT_THROW
 	end2
 
 BattleScript_LeftoverWallyPrepToThrow::
