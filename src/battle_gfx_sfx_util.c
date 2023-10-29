@@ -158,7 +158,7 @@ void InitAndLaunchChosenStatusAnimation(u8 battlerId, u8 animStatusId, u32 statu
 {
 	switch (animStatusId)
 	{
-		case ANIM_ID_STATUS1:
+		case ID_STATUS1:
 			if (status & STATUS1_FREEZE)
 				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_FRZ);
 			else if (status & STATUS1_PSN_ANY)
@@ -172,7 +172,7 @@ void InitAndLaunchChosenStatusAnimation(u8 battlerId, u8 animStatusId, u32 statu
 			else // no animation
 				return;
 			break;
-		case ANIM_ID_STATUS2:
+		case ID_STATUS2:
 			if (status & STATUS2_INFATUATION)
 				LaunchStatusAnimation(battlerId, B_ANIM_STATUS_INFATUATION);
 			else if (status & STATUS2_CONFUSION)

@@ -486,6 +486,7 @@ static const u8 sText_PkmnAblWasTakenOver[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}
 static const u8 sText_ItemRestoredAtkHealth[] = _("{B_ITEM_USE_SPECIES_NAME} had its\nHP restored!");
 static const u8 sText_ItemCuredAtkStatus[] = _("{B_ITEM_USE_SPECIES_NAME} had\nits status healed!");
 static const u8 sText_ItemRestoredAtkPP[] = _("{B_ITEM_USE_SPECIES_NAME} had its\nPP restored!");
+const u8 gStatusConditionString_MentalState[] = _("mental");
 
 static const u8 sText_HP2[] = _("HP");
 static const u8 sText_Attack2[] = _("Attack");
@@ -1365,12 +1366,6 @@ const u16 gFormChangeAbilitiesStrings[] = {
 const u16 gStartedSchoolingStringIds[] = {
 	STRINGID_STARTEDSCHOOLING,
 	STRINGID_STOPPEDSCHOOLING,
-};
-
-const u16 gAbilityStatusCureStringIds[] = {
-	STRINGID_PKMNSXCUREDITSYPROBLEM,
-	STRINGID_PKMNGOTOVERINFATUATION,
-	STRINGID_PKMNSHOOKOFFTAUNT,
 };
 
 const u8 gText_PkmnIsEvolving[] = _("What?\n{STR_VAR_1} is evolving!");

@@ -101,17 +101,21 @@
 	.byte 0x15
 	.endm
 
-	.macro seteffectprimary
+	.macro setspecialmoveeffect primary:req, flags:req
 	.byte 0x16
+	.byte \primary
+	.4byte \flags
 	.endm
 
-	.macro seteffectsecondary
+	.macro nop17
 	.byte 0x17
 	.endm
 
-	.macro clearstatusfromeffect battler:req
+	.macro clearbattlerstatus battler:req, statusId:req, status:req
 	.byte 0x18
 	.byte \battler
+	.byte \statusId
+	.4byte \status
 	.endm
 
 	.macro tryfaintmon battler:req
@@ -192,8 +196,11 @@
 	.4byte \ptr
 	.endm
 
-	.macro nop25
+	.macro jumpifabilityonside battler:req, abilityId:req, ptr:req
 	.byte 0x25
+	.byte \battler
+	.2byte \abilityId
+	.4byte \ptr
 	.endm
 
 	.macro setmoveeffect effect:req, affectsUser=FALSE, certain=FALSE
@@ -369,8 +376,9 @@
 	.4byte \ptr
 	.endm
 
-	.macro nop43
+	.macro trysetconfusion battler:req
 	.byte 0x43
+	.byte \battler
 	.endm
 
 	.macro endselectionscript
@@ -569,9 +577,9 @@
 	.byte \battler
 	.endm
 
-	.macro jumptocalledmove param0:req
+	.macro jumptocalledmove setMoveChosen:req
 	.byte 0x63
-	.byte \param0
+	.byte \setMoveChosen
 	.endm
 	
 	.macro argumenttomoveeffect
@@ -748,7 +756,7 @@
 	.4byte \param1
 	.endm
 
-	.macro normalisebuffs
+	.macro nop8a
 	.byte 0x8a
 	.endm
 
@@ -802,9 +810,9 @@
 	.byte 0x96
 	.endm
 
-	.macro tryinfatuating param0:req
+	.macro tryinfatuating battler:req
 	.byte 0x97
-	.4byte \param0
+	.byte \battler
 	.endm
 
 	.macro updatestatusicon battler:req
@@ -876,8 +884,9 @@
 	.4byte \param0
 	.endm
 
-	.macro setalwayshitflag
+	.macro trysetalwayshitflag ptr:req
 	.byte 0xa7
+	.4byte \ptr
 	.endm
 
 	.macro copymovepermanently param0:req
@@ -885,9 +894,9 @@
 	.4byte \param0
 	.endm
 
-	.macro trychoosesleeptalkmove param0:req
+	.macro trychoosesleeptalkmove ptr:req
 	.byte 0xa9
-	.4byte \param0
+	.4byte \ptr
 	.endm
 
 	.macro nopaa
@@ -922,7 +931,7 @@
 	.4byte \param0
 	.endm
 
-	.macro setforesight
+	.macro nopb1
 	.byte 0xb1
 	.endm
 
@@ -1456,6 +1465,11 @@
 	.4byte \ptr
 	.endm
 	
+	.macro trysetdestinybond ptr:req
+	various BS_ATTACKER, VARIOUS_TRY_SET_DESTINY_BOND
+	.4byte \ptr
+	.endm
+	
 @ callfunction macros
     .macro setminimize
 	callfunction BS_SetMinimize
@@ -1498,16 +1512,36 @@
 	callfunction BS_BufferMoveToLearn
 	.endm
 	
-	.macro setdestinybond
-	callfunction BS_SetDestinyBond
-	.endm
-	
 	.macro trysetdestinybondtohappen
 	callfunction BS_TrySetDestinyBondToHappen
 	.endm
 	
 	.macro setdefensecurlbit
 	callfunction BS_SetDefenseCurl
+	.endm
+	
+	.macro setnightmare
+	callfunction BS_SetNightmare
+	.endm
+	
+	.macro normaliseallbuffs
+	callfunction BS_NormaliseAllBuffs
+	.endm
+	
+	.macro setchargingturn
+	callfunction BS_SetChargingTurn
+	.endm
+	
+	.macro setragestatus
+	callfunction BS_SetRage
+	.endm
+	
+	.macro setescapeprevention
+	callfunction BS_SetEscapePrevention
+	.endm
+	
+	.macro setforesight
+	callfunction BS_SetForesight
 	.endm
 	
 @ helpful macros
@@ -1570,7 +1604,15 @@
 	.macro jumpifnotbattletype flags:req, jumpptr:req
 	jumpifword CMP_NO_COMMON_BITS, gBattleTypeFlags, \flags, \jumpptr
 	.endm
-
+	
+	.macro seteffectprimary flags=0
+	setspecialmoveeffect FALSE, \flags
+	.endm
+	
+	.macro seteffectsecondary flags=0
+	setspecialmoveeffect TRUE, \flags
+	.endm
+	
     .macro loadabilitypopup battler:req
 	handleabilitypopup \battler
 	.endm
@@ -1636,20 +1678,6 @@
 	.macro flushmessagebox
 	printstring STRINGID_EMPTYSTRING3
 	waitmessage 1
-	.endm
-	
-	.macro switchoutmon battler:req, stringId:req, handleOrderCase:req, dontClearSubstituteBit:req
-	switchoutabilities \battler
-	waitstate
-	switchhandleorder \battler, \handleOrderCase
-	returntoball \battler
-	getswitchedmondata \battler
-	switchindataupdate \battler
-	hpthresholds \battler
-	printstring \stringId
-	switchinanim \battler, \dontClearSubstituteBit
-	waitstate
-	switchineffects \battler
 	.endm
 	
 	.macro savebattlers

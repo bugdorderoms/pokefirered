@@ -190,7 +190,7 @@ struct MoveFlags
 	u32 forbiddenProtect:1; // A move with this flag will ignore the target's protect effects.
 	// end of byte
 	u32 punchMove:1; // A move with this flag can be affected by Iron Fist.
-	u32 secondaryEffectMove:1; // A move with this flag can be affected by Sheer Force.
+	u32 twoTurnsMove:1; // A move with this flag will be considered a Two turns move.
 	u32 bitingMove:1; // A move with this flag can be affected by Strong Jaw.
 	u32 pulseMove:1; // A move with this flag can be affected by Mega Launcher.
 	u32 targetStatStagesIgnored:1; // A move with this flag will ignore the target Defense and Evasion stat stages.
@@ -222,8 +222,7 @@ struct MoveFlags
 	u32 affectsUserSide:1; // Tipycally used to show the entire side on choose the move, but it's still used to determine protect like effects.
 	u32 strikeCount:4; // Max 15 hits. Defaults to 1 if not set. May apply its effect on each hit.
 	u32 callOtherMove:1; // A move with this flag will be considered a "Move that call other moves".
-	u32 twoTurnsMove:1; // A move with this flag will be considered a Two turns move.
-	u32 unused:22;
+	u32 unused:23;
 };
 
 struct BattleMove
@@ -233,7 +232,7 @@ struct BattleMove
     /*0x03*/ u8 type;
     /*0x04*/ u8 accuracy;
     /*0x05*/ u8 pp;
-    /*0x06*/ u8 secondaryEffectChance;
+    /*0x06*/ u8 secondaryEffectChance; // If diffent than 0 it will be affected by Sheer Force
     /*0x07*/ u8 target;
     /*0x08*/ s8 priority;
     /*0x09*/ u8 split;

@@ -126,9 +126,11 @@ struct DisableStruct
     /*0x0C*/ u16 perishSongTimer:2;
 	/*0x0C*/ u16 isFirstTurn:2;
     /*0x0C*/ u16 tauntTimer:3;
-    /*0x0C*/ u16 furyCutterCounter:3;
+    /*0x0C*/ u16 furyCutterCounter:2;
     /*0x0C*/ u16 rolloutTimer:3;
-    /*0x0C*/ u16 rolloutTimerStartValue:3;
+    /*0x0C*/ u16 destinyBondCounter:2;
+	/*0x0C*/ u16 enduredHit:1;
+	/*0x0C*/ u16 transformedMonShynies:1;
     /*0x0E*/ u8 encoredMovePos;
     /*0x0F*/ u8 mimickedMoves:4;
 	/*0x0F*/ u8 canProteanActivate:1;
@@ -137,8 +139,7 @@ struct DisableStruct
     /*0x11*/ u8 battlerWithSureHit;
     /*0x12*/ u8 rechargeTimer;
 	/*0x13*/ u8 imposterActivated:1; // only activate when switched in, not when gained
-	/*0x13*/ u8 transformedMonShynies:1;
-	/*0x13*/ u8 unused:6;
+	/*0x13*/ u8 unused:7;
 };
 
 extern struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT];
@@ -326,6 +327,14 @@ struct MoveInfo
 	u16 submenuState; // Determine which string will be show on the submenu info
 };
 
+struct MoveEffect
+{
+	u8 moveEffectByte;
+	bool8 affectsUser:1;
+	bool8 certain:1;
+	bool8 unused:6;
+};
+
 struct BattleStruct
 {
     /*0x000*/ u8 turnEffectsTracker;
@@ -341,8 +350,7 @@ struct BattleStruct
     /*0x014*/ u8 moveTarget[MAX_BATTLERS_COUNT];
 	/*0x018*/ u8 expGetterMonId;
     /*0x019*/ u8 wildVictorySong:1;
-	/*0x019*/ u8 affectsUser:1; // means the move effect affects the user
-	/*0x019*/ u8 moveEffectCertain:1; // means a effect that has 100% chance of occours
+	/*0x019*/ u8 firstCritcalHitTakenMsgState:2;
 	/*0x019*/ u8 firstMonSendOutMsgDone:1;
 	/*0x019*/ u8 firstMonDownMsgDone:1;
 	/*0x019*/ u8 lastMonSendOutMsgDone:1;
@@ -385,7 +393,7 @@ struct BattleStruct
     /*0x05C*/ u16 abilityPreventingSwitchout;
 	/*0x05E*/ u8 simulatedInputState[4];  // used by Oak/Old Man/Pokedude controllers
 	/*0x062*/ u8 turnSideTracker;
-	/*0x063*/ u8 moveEffectByte; // move effect byte, like knock off, etc.
+	/*0x063*/ u8 soulHeartBattlerId;
 	/*0x064*/ u16 savedBattleTypeFlags;
 	/*0x066*/ u8 synchronizeMoveEffect;
 	/*0x067*/ u8 switchInItemsCounter;
@@ -412,12 +420,11 @@ struct BattleStruct
 	/*0x0DE*/ u8 itemPartyIndex[MAX_BATTLERS_COUNT]; // for item use
 	/*0x0E2*/ u8 targetsDone[MAX_BATTLERS_COUNT]; // for moves hiting multiples pokemon, as flag using gBitTable
 	/*0x0E6*/ u8 battleTurnCounter;
-	/*0x0E7*/ u8 firstCritcalHitTakenMsgState:2;
 	/*0x0E7*/ u8 zMoveMsgDone:1;
 	/*0x0E7*/ u8 dynamaxMsgDone:1;
 	/*0x0E7*/ u8 terastalMsgDone:1;
 	/*0x0E7*/ u8 throwingPokeBall:1;
-	/*0x0E7*/ u8 filler:2;
+	/*0x0E7*/ u8 filler:4;
 	/*0x0E8*/ u8 intrepidSwordActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x0EA*/ u8 dauntlessShieldActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x0EC*/ u16 abilityOverride[MAX_BATTLERS_COUNT]; // Used to override the ability on pop up by this value
@@ -425,10 +432,8 @@ struct BattleStruct
 	/*0x0F6*/ u8 supremeOverlordBoosts[MAX_BATTLERS_COUNT];
 	/*0x0FA*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // for Pickup gen5 effect
 	/*0x0FE*/ u8 payDayLevels[MAX_BATTLERS_COUNT / 2]; // To store player mon's levels when using pay day, 0 = left, 1 = right
-	/*0x100*/ u8 soulHeartBattlerId;
-	/*0x101*/ u8 unused;
-	/*0x102*/ u16 unused2;
-	/*0x104*/ struct Illusion illusion[MAX_BATTLERS_COUNT];
+	/*0x100*/ struct MoveEffect moveEffect;
+	          struct Illusion illusion[MAX_BATTLERS_COUNT];
 	          struct MoveInfo moveInfo;
     union {
         struct LinkPartnerHeader linkPartnerHeader;
@@ -667,6 +672,7 @@ extern u8 gSentPokesToOpponent[2];
 extern const u8 *gBattlescriptCurrInstr;
 extern const u8 *gSelectionBattleScripts[MAX_BATTLERS_COUNT];
 extern u16 gLastMoves[MAX_BATTLERS_COUNT];
+extern u8 gLastUsedMovesTypes[MAX_BATTLERS_COUNT];
 extern u8 gBattlerByTurnOrder[MAX_BATTLERS_COUNT];
 extern u8 gBattleCommunication[BATTLE_COMMUNICATION_ENTRIES_COUNT];
 extern u16 gSideStatuses[B_SIDE_COUNT];
@@ -684,7 +690,7 @@ extern u16 gLastLandedMoves[MAX_BATTLERS_COUNT];
 extern u8 gLastHitBy[MAX_BATTLERS_COUNT];
 extern u8 gMultiUsePlayerCursor;
 extern u8 gNumberOfMovesToChoose;
-extern u16 gLastHitByType[MAX_BATTLERS_COUNT];
+extern u8 gLastHitByType[MAX_BATTLERS_COUNT];
 extern s32 gHpDealt;
 extern u16 gPauseCounterBattle;
 extern u16 gPaydayMoney;

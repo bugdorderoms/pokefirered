@@ -2,10 +2,10 @@
 #define GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H
 
 // Flags for the CanBe* statused function
-#define STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD      (1 << 0)
-#define STATUS_CHANGE_FLAG_IGNORE_FLOWER_VEIL    (1 << 1)
-#define STATUS_CHANGE_FLAG_CHECK_UPROAR          (1 << 2)
-#define STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS (1 << 3)
+#define STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD          (1 << 0) // Also Flower Veil
+#define STATUS_CHANGE_FLAG_CHECK_UPROAR              (1 << 1)
+#define STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS     (1 << 2)
+#define STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE         (1 << 3)
 
 // Battle Scripting addresses
 #define sPAINSPLIT_HP gBattleScripting + 0x0
@@ -59,8 +59,8 @@
 #define BS_UNKNOWN_5                5 // for openpartyscreen
 #define BS_UNKNOWN_6                6 // for openpartyscreen
 #define BS_BATTLER_0                7
-#define BS_ATTACKER_SIDE            8 // for atk1E_jumpifability
-#define BS_NOT_ATTACKER_SIDE        9 // for atk1E_jumpifability
+#define BS_ATTACKER_SIDE            8 // unused
+#define BS_NOT_ATTACKER_SIDE        9 // unused
 #define BS_SCRIPTING                10
 #define BS_PLAYER1                  11
 #define BS_OPPONENT1                12
@@ -133,10 +133,6 @@
 #define ATK49_CLEAR_BITS                        24
 #define ATK49_COUNT                             25
 
-// Atk66, status anim ids
-#define ANIM_ID_STATUS1 0
-#define ANIM_ID_STATUS2 1
-
 // TODO: documentation
 // Atk76, various cases
 #define VARIOUS_CANCEL_MULTI_TURN_MOVES             0
@@ -179,6 +175,7 @@
 #define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       37
 #define VARIOUS_JUMP_IF_NOT_FIRST_TURN              38
 #define VARIOUS_TRY_CONVERSION_TYPE_CHANGE          39
+#define VARIOUS_TRY_SET_DESTINY_BOND                40
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN                               0
@@ -208,5 +205,9 @@
 #define BIT_SPDEF                   0x20
 #define BIT_ACC                     0x40
 #define BIT_EVASION                 0x80
+
+// status ids
+#define ID_STATUS1 0
+#define ID_STATUS2 1
 
 #endif // GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H

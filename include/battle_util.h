@@ -17,6 +17,7 @@ enum
 	STATUS_CHANGE_FAIL_SWEET_VEIL_ON_SIDE,
 	STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE,
 	STATUS_CHANGE_FAIL_PASTEL_VEIL_ON_SIDE,
+	STATUS_CHANGE_FAIL_AROMA_VEIL_ON_SIDE,
 };
 
 #define MOVE_LIMITATION_ZEROMOVE                (1 << 0)
@@ -117,6 +118,7 @@ bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move);
 u8 GetHiddenPowerType(struct Pokemon *mon);
 bool8 CheckPinchBerryActivate(u8 battler, u16 item);
 void ClearBattlerStatus(u8 battler);
+u8 CanBecameConfused(u8 attacker, u8 defender, u32 flags);
 u8 CanBePutToSleep(u8 attacker, u8 defender, u32 flags);
 u8 CanBePoisoned(u8 attacker, u8 defender, u32 flags);
 bool8 CanPoisonType(u8 bankAtk, u8 bankDef);
@@ -140,7 +142,7 @@ bool8 IsBattlerWeatherAffected(u8 battlerId, u16 weatherFlags);
 bool8 TryChangeBattleWeather(u8 battlerId, u8 weatherEnumId);
 s16 CalcMoveCritChance(u8 battlerAtk, u8 battlerDef, u16 move);
 bool8 IsMoveMakingContact(u8 battler, u16 move);
-bool8 IsBattlerProtected(u8 battlerId, u16 move);
+bool8 IsBattlerProtected(u8 attacker, u8 defender, u16 move);
 u8 CountBattlerStatIncreases(u8 battlerId, bool8 countEvasionAccuracy);
 bool8 IsBattlerGrounded(u8 battlerId);
 bool8 CanStealItem(u8 battlerAtk, u8 battlerDef, u16 itemId);
@@ -158,7 +160,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8, const u8 *BS_ptr);
 bool8 TryResetBattlerStatChanges(u8 battlerId);
 void CopyBattlerStatChanges(u8 battler1, u8 battler2);
 u8 GetBattlerGender(u8 battlerId);
-bool8 CanBeInfatuatedBy(u8 battlerIdAtk, u8 battlerIdDef);
+u8 CanBeInfatuatedBy(u8 battlerIdAtk, u8 battlerIdDef);
 u32 GetBattlerWeight(u8 battlerId);
 bool8 IsBattlerAffectedBySpore(u8 battlerId);
 void RemoveOrAddBattlerOnPickupStack(u8 battlerId, bool8 addToStack);
@@ -183,5 +185,7 @@ s32 GetDrainedBigRootHp(u8 battlerId, s32 hp);
 void SetTypeBeforeUsingMove(u16 move, u8 battler);
 bool8 CanTransformIntoBattler(u8 battler1, u8 battler2);
 bool8 CanDisableMove(u8 battlerId, u8 movePos, u16 move);
+bool8 CanSafeguardProtectBattler(u8 attacker, u8 defender);
+bool8 IsBattlerProtectedByFlowerVeil(u8 battlerId);
 
 #endif // GUARD_BATTLE_UTIL_H

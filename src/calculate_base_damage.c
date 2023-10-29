@@ -120,7 +120,7 @@ static u16 GetModifiedMovePower(u8 battlerIdAtk, u8 battlerIdDef, u16 move)
 			power = gBattleStruct->magnitudeBasePower;
 			break;
 		case EFFECT_TRIPLE_KICK:
-			power = gBattleScripting.tripleKickPower;
+			power += gBattleScripting.tripleKickPower;
 			break;
 		case EFFECT_ERUPTION:
 			power = attacker.hp * power / attacker.maxHP;
@@ -366,7 +366,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 					gBattleMovePower *= 2;
 				break;
 			case ABILITY_SHEER_FORCE:
-				if (gBattleMoves[move].flags.secondaryEffectMove)
+				if (gBattleMoves[move].secondaryEffectChance)
 					gBattleMovePower = (gBattleMovePower * 12) / 10;
 				break;
 			case ABILITY_DEFEATIST:
@@ -637,12 +637,10 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 	if (gBattleMoves[move].flags.dmgMinimize && gStatuses3[battlerIdDef] & STATUS3_MINIMIZED)
 		gBattleMovePower *= 2;
 	
-	// sandstorm stats boost
+	// sandstorm stat boost
 	if (IsBattlerWeatherAffected(battlerIdDef, WEATHER_SANDSTORM_ANY) && IS_BATTLER_OF_TYPE(battlerIdDef, TYPE_ROCK))
-	{
 		spDefense += spDefense / 2;
-		spAttack = (10 * spAttack) / 15;
-	}
+
 #if HAIL_BOOST_DEFENSE
 	// hail stat boost
 	if (IsBattlerWeatherAffected(battlerIdDef, WEATHER_HAIL_ANY) && IS_BATTLER_OF_TYPE(battlerIdDef, TYPE_ICE))

@@ -117,7 +117,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -140,7 +139,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.punchMove = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -159,7 +157,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.punchMove = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -178,7 +175,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.punchMove = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -374,7 +370,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_NORMAL,
 		.accuracy = 85,
         .pp = 20,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -431,7 +426,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
 			.dmgMinimize = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -502,7 +496,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -535,7 +528,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -622,7 +614,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
 			.dmgMinimize = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -636,7 +627,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_NORMAL,
 		.accuracy = 90,
         .pp = 20,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -723,10 +713,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 35,
         .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -742,7 +728,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
 			.strikeCount = 2,
 		},
         .split = SPLIT_PHYSICAL,
@@ -792,7 +777,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -907,10 +891,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 30,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_BOTH,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -924,10 +904,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 25,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -941,10 +917,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 15,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1024,10 +996,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 10,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1043,7 +1011,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
 			.windMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -1059,10 +1026,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 20,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1076,10 +1039,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 20,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1093,10 +1052,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 20,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1447,7 +1402,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIRE,
 		.accuracy = 85,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -1467,10 +1421,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 30,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1484,10 +1434,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 15,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1518,7 +1464,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
 			.hitInAir = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -1602,7 +1547,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_POISON,
 		.accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -1621,10 +1565,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 25,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1638,10 +1578,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 10,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -2112,7 +2048,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2127,10 +2062,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 20,
         .secondaryEffectChance = 40,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -2144,10 +2075,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 20,
         .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -2161,10 +2088,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 20,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -2178,10 +2101,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 5,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -2198,7 +2117,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2211,7 +2129,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_WATER,
 		.accuracy = 85,
 		.pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -2287,7 +2204,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2461,7 +2377,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.highCritChance = TRUE,
-			.secondaryEffectMove = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE,
@@ -2501,10 +2416,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 30,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_BOTH,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -2522,7 +2433,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.punchMove = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2701,10 +2611,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 10,
         .secondaryEffectChance = 30,
         .target = MOVE_TARGET_BOTH,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -2722,7 +2628,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.bitingMove = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2769,10 +2674,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 10,
         .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -2893,12 +2794,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_THIEF] =
     {
-        .effect = EFFECT_THIEF,
+        .effect = EFFECT_THIEF, // TODO:
 		.power = 60,
         .type = TYPE_DARK,
         .accuracy = 100,
 		.pp = 25,
-        .secondaryEffectChance = 100,
+        .secondaryEffectChance = 100, // Remove it bc It'snt affected by Sheer Force
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -2959,7 +2860,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
 			.thawUser = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -2977,7 +2877,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
-			.secondaryEffectMove = TRUE,
 			.soundMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
@@ -3022,7 +2921,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .effect = EFFECT_CONVERSION_2,
         .type = TYPE_NORMAL,
         .pp = 30,
-        .target = MOVE_TARGET_USER,
+        .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
 			.forbiddenProtect = TRUE,
@@ -3106,10 +3005,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 25,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_BOTH,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -3226,7 +3121,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -3242,10 +3136,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 10,
         .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
-        .flags =
-		{
-			.secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -3262,7 +3152,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.ballisticMove = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3295,7 +3184,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -3361,7 +3249,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
 			.windMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -3456,6 +3343,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .accuracy = 100,
 		.pp = 10,
         .target = MOVE_TARGET_SELECTED,
+		.flags =
+		{
+			.kingsRockAffected = TRUE,
+		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -3537,7 +3428,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_NORMAL,
 		.accuracy = 85,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -3551,7 +3441,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     {
         .effect = EFFECT_RESTORE_HP,
         .type = TYPE_NORMAL,
-        .pp = 10,
+        .pp = 5,
         .target = MOVE_TARGET_USER,
         .flags =
 		{
@@ -3574,7 +3464,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3611,7 +3500,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3770,7 +3658,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.thawUser = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -3807,7 +3695,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.punchMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3842,7 +3730,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3938,7 +3826,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3956,7 +3844,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4072,7 +3960,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_BOTH,
 		.flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.hitInAirDoubleDmg = TRUE,
 			.windMove = TRUE,
 		},
@@ -4122,7 +4010,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -4193,7 +4081,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4210,7 +4098,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -4246,7 +4134,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4259,7 +4147,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_WATER,
 		.accuracy = 85,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -4300,7 +4187,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4387,7 +4274,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.windMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -4937,7 +4824,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5027,7 +4914,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5045,7 +4932,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.ballisticMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5095,7 +4982,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.highCritChance = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5149,7 +5036,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5200,7 +5087,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -5219,7 +5106,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5273,7 +5160,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 			.punchMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5291,7 +5178,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5407,7 +5294,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5425,7 +5312,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5519,7 +5406,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5553,7 +5440,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5585,7 +5472,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GROUND,
 		.accuracy = 85,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -5623,7 +5509,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5791,7 +5677,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenAssist = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
@@ -5815,7 +5701,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5835,7 +5721,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 			.highCritChance = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5874,7 +5760,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
 		.argument = STATUS1_PARALYSIS,
@@ -6009,7 +5895,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.pulseMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -6685,7 +6571,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.thawUser = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -6706,7 +6592,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -6758,7 +6644,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -6775,7 +6661,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.pulseMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -6846,7 +6732,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -6884,7 +6770,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 			.soundMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -6919,7 +6805,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.dmgMinimize = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -6988,7 +6874,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -7007,7 +6893,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.ballisticMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7042,7 +6928,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7183,7 +7069,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -7203,7 +7089,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -7223,7 +7109,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -7261,7 +7147,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -7298,7 +7184,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7316,7 +7202,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7334,7 +7220,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7353,7 +7239,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7417,7 +7303,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7435,7 +7321,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7507,7 +7393,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 			.highCritChance = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -7526,7 +7412,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7544,7 +7430,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7644,7 +7530,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.soundMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 			.forbiddenAssist = TRUE,
 			.forbiddenCopycat = TRUE,
@@ -7703,7 +7589,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7903,7 +7789,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIRE,
 		.accuracy = 75,
         .pp = 5,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7940,7 +7825,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7958,7 +7843,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8226,7 +8111,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_FOES_AND_ALLY,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8328,7 +8213,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8363,7 +8248,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8382,7 +8267,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 			.ballisticMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8583,7 +8468,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.thawUser = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -8823,7 +8708,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8904,7 +8789,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8922,7 +8807,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8991,7 +8876,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9062,7 +8947,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9115,7 +9000,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -9152,7 +9037,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9170,7 +9055,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.dmgMinimize = TRUE,
 		},
 		.split = SPLIT_PHYSICAL,
@@ -9205,7 +9090,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9257,7 +9142,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.hitInAir = TRUE,
 			.windMove = TRUE,
 		},
@@ -9313,7 +9198,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 			.ballisticMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9349,7 +9234,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.soundMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -9385,7 +9270,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9404,7 +9289,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9422,7 +9307,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9441,7 +9326,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 			.danceMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9459,7 +9344,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
@@ -9483,7 +9368,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
@@ -9507,7 +9392,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.soundMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
@@ -9526,7 +9411,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9819,7 +9704,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9981,7 +9866,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10016,7 +9901,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10117,7 +10002,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -10136,7 +10021,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.thawUser = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
@@ -10192,7 +10077,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10429,7 +10314,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10459,7 +10344,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_BUG,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -10484,7 +10368,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 			.punchMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10716,7 +10600,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10753,7 +10637,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 			.soundMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .argument = STATUS1_BURN,
@@ -10942,7 +10826,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10977,7 +10861,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -11011,7 +10895,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -11030,7 +10914,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -11158,7 +11042,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -11359,7 +11243,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -11396,7 +11280,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -11611,7 +11495,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -11630,7 +11514,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -11649,7 +11533,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -11843,7 +11727,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.punchMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.strikeCount = 2,
 			.forbiddenMetronome = TRUE,
 		},
@@ -12130,7 +12014,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -12144,7 +12028,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -12169,7 +12052,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 			.ballisticMove = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.thawUser = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
@@ -12249,7 +12132,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -12304,7 +12187,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -12323,7 +12206,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -12343,7 +12226,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -12362,7 +12245,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -12559,7 +12442,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -12645,7 +12528,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -12663,7 +12546,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -12797,7 +12680,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.thawUser = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -12866,7 +12749,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ELECTRIC,
         .accuracy = 90,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -12906,7 +12788,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -12943,7 +12825,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -12995,7 +12877,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.secondaryEffectMove = TRUE,
+			// .secondaryEffectMove = TRUE,
 			.soundMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -13422,7 +13304,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_ALL_OUT_PUMMELING] =
@@ -13436,7 +13317,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_SUPERSONIC_SKYSTRIKE] =
@@ -13450,7 +13330,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_ACID_DOWNPOUR] =
@@ -13464,7 +13343,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_TECTONIC_RAGE] =
@@ -13478,7 +13356,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_CONTINENTAL_CRUSH] =
@@ -13492,7 +13369,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_SAVAGE_SPIN_OUT] =
@@ -13506,7 +13382,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_NEVER_ENDING_NIGHTMARE] =
@@ -13520,7 +13395,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_CORKSCREW_CRASH] =
@@ -13534,7 +13408,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_INFERNO_OVERDRIVE] =
@@ -13548,7 +13421,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_HYDRO_VORTEX] =
@@ -13562,7 +13434,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_BLOOM_DOOM] =
@@ -13576,7 +13447,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_GIGAVOLT_HAVOC] =
@@ -13590,7 +13460,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_SHATTERED_PSYCHE] =
@@ -13604,7 +13473,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_SUBZERO_SLAMMER] =
@@ -13618,7 +13486,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_DEVASTATING_DRAKE] =
@@ -13632,7 +13499,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_BLACK_HOLE_ECLIPSE] =
@@ -13646,7 +13512,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_TWINKLE_TACKLE] =
@@ -13660,7 +13525,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
     },
     [MOVE_CATASTROPIKA] =
@@ -13674,7 +13538,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
     },
@@ -13690,7 +13553,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.highCritChance = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
     },
@@ -13706,7 +13568,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
     },
@@ -13720,7 +13581,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_STATUS,
     },
@@ -13735,7 +13595,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
     },
@@ -13750,7 +13609,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .argument = 0,  //psychic terrain
@@ -13766,7 +13624,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
     },
@@ -13781,7 +13638,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
     },
@@ -13796,7 +13652,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
     },
@@ -13811,7 +13666,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .argument = 1,  //remove terrain
@@ -13827,7 +13681,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
     },
@@ -13844,7 +13697,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.soundMove = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
     },
@@ -13859,7 +13711,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
     },
@@ -13874,7 +13725,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
     },
@@ -13889,7 +13739,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
     },
@@ -13904,7 +13753,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
     },
@@ -13919,7 +13767,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
     },

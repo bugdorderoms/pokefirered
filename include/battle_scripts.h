@@ -249,6 +249,7 @@ extern const u8 BattleScript_AlreadyParalyzed[];
 extern const u8 BattleScript_WaterVeilPrevents[];
 extern const u8 BattleScript_ImmunityProtected[];
 extern const u8 BattleScript_LimberProtected[];
+extern const u8 BattleScript_LimberProtectedRet[];
 extern const u8 BattleScript_NotAffected[];
 extern const u8 BattleScript_PoisonTouchActivation[];
 extern const u8 BattleScript_IllusionOff[];
@@ -301,6 +302,9 @@ extern const u8 BattleScript_ThrowSafariBall[];
 extern const u8 BattleScript_ItemUseMessageEnd[];
 extern const u8 BattleScript_AbilityPreventSleep[];
 extern const u8 BattleScript_AlreadyHasSubstitute[];
+extern const u8 BattleScript_AlreadyConfused[];
+extern const u8 BattleScript_AromaVeilProtects[];
+extern const u8 BattleScript_ObliviousPrevents[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForUsingItem[];
