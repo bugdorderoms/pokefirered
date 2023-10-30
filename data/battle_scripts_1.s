@@ -2070,9 +2070,9 @@ BattleScript_SwitchInAbilityMsgRet::
 
 BattleScript_PoisonTouchActivation::
     waitstate
-	loadabilitypopup BS_EFFECT_BATTLER
+	loadabilitypopup BS_ATTACKER
 	call BattleScript_MoveEffectPoison
-	removeabilitypopup BS_EFFECT_BATTLER
+	removeabilitypopup BS_ATTACKER
 	return
 
 BattleScript_ApplySecondaryEffect::

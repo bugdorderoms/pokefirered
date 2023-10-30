@@ -2942,7 +2942,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 										} while (!(validToLower & gBitTable[i]));
 										
 										SET_STATCHANGER(i, 1, TRUE);
-										gBattleScripting.atk23_state = gBattleScripting.statChanger; // save it in multiuse state
+										gBattleScripting.atk23_state = gBattleScripting.statChanger; // save it for use later
 										validToRaise &= ~(gBitTable[i]); // cannot raise the same stat
 									}
 									if (validToRaise)
