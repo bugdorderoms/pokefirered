@@ -2043,7 +2043,7 @@ static void atk16_setspecialmoveeffect(void)
 	bool8 primary = gBattlescriptCurrInstr[1];
 	u32 flags = READ_32(gBattlescriptCurrInstr + 2);
 	
-	gBattlescriptCurrInstr += 6;
+	gBattlescriptCurrInstr += 5;
 	
     DoMoveEffect(primary, TRUE, flags);
 }
@@ -6148,7 +6148,8 @@ static void atk97_tryinfatuating(void)
 	switch (CanBeInfatuatedBy(battler, gBattlerAttacker))
 	{
 		case STATUS_CHANGE_WORKED:
-		    gBattleMons[battler].status2 |= STATUS2_INFATUATED_WITH(gBattlerAttacker);
+		    gBattleMons[battler].status2 |= STATUS2_INFATUATION;
+			gDisableStructs[battler].infatuatedWith = gBattlerAttacker;
 		    gBattlescriptCurrInstr += 2;
 			break;
 		case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:

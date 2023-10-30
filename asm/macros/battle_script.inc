@@ -1606,11 +1606,11 @@
 	.endm
 	
 	.macro seteffectprimary flags=0
-	setspecialmoveeffect FALSE, \flags
+	setspecialmoveeffect TRUE, \flags
 	.endm
 	
 	.macro seteffectsecondary flags=0
-	setspecialmoveeffect TRUE, \flags
+	setspecialmoveeffect FALSE, \flags
 	.endm
 	
     .macro loadabilitypopup battler:req

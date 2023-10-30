@@ -1636,8 +1636,10 @@ void TryClearRageStatuses(void)
     s32 i;
 
     for (i = 0; i < gBattlersCount; ++i)
+	{
         if ((gBattleMons[i].status2 & STATUS2_RAGE) && gChosenMoveByBattler[i] != MOVE_RAGE)
             gBattleMons[i].status2 &= ~(STATUS2_RAGE);
+	}
 }
 
 static void SetRandomMultiHitCounter(void)
@@ -1669,27 +1671,21 @@ u8 AtkCanceller_UnableToUseMove(void)
 				++gBattleStruct->atkCancellerTracker;
 				break;
 			case CANCELLER_ASLEEP: // check being asleep
-			    if (gBattleMons[gBattlerAttacker].status1 & STATUS1_SLEEP)
+			    if ((gBattleMons[gBattlerAttacker].status1 & STATUS1_SLEEP))
 				{
 					if (UproarWakeUpCheck())
 					{
 						gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-						ClearBattlerStatus(gBattlerAttacker);
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_MoveUsedWokeUp;
-						++effect;
+						effect = 1; // Wake up
 					}
 					else
 					{
 						u8 toSub = STATUS1_SLEEP_TURN(GetBattlerAbility(gBattlerAttacker) == ABILITY_EARLY_BIRD ? 2 : 1);
 						
-						if ((gBattleMons[gBattlerAttacker].status1 & STATUS1_SLEEP) < toSub)
+						if ((gBattleMons[gBattlerAttacker].status1 & STATUS1_SLEEP) <= toSub)
 						{
 							gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-							ClearBattlerStatus(gBattlerAttacker);
-							BattleScriptPushCursor();
-							gBattlescriptCurrInstr = BattleScript_MoveUsedWokeUp;
-							++effect;
+							effect = 1; // Wake up
 						}
 						else
 						{
@@ -1699,16 +1695,23 @@ u8 AtkCanceller_UnableToUseMove(void)
 							{
 								gBattlescriptCurrInstr = BattleScript_MoveUsedIsAsleep;
 								gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
-								++effect;
+								effect = 2; // Asleep
 							}
 						}
+					}
+					
+					if (effect == 1)
+					{
+						ClearBattlerStatus(gBattlerAttacker);
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_MoveUsedWokeUp;
 					}
                 }
 				++gBattleStruct->atkCancellerTracker;
 				break;
 			case CANCELLER_FROZEN: // check being frozen
 			    // unfreezing via a move effect happens in CANCELLER_THAW
-			    if (gBattleMons[gBattlerAttacker].status1 & STATUS1_FREEZE && !gBattleMoves[gCurrentMove].flags.thawUser)
+			    if ((gBattleMons[gBattlerAttacker].status1 & STATUS1_FREEZE) && !gBattleMoves[gCurrentMove].flags.thawUser)
 				{
 					if (Random() % 5)
 					{
@@ -1763,9 +1766,8 @@ u8 AtkCanceller_UnableToUseMove(void)
 				++gBattleStruct->atkCancellerTracker;
 				break;
 			case CANCELLER_DISABLED: // disabled move
-			    if (gDisableStructs[gBattlerAttacker].disabledMove == gCurrentMove && gDisableStructs[gBattlerAttacker].disabledMove)
+			    if (gDisableStructs[gBattlerAttacker].disabledMove && gDisableStructs[gBattlerAttacker].disabledMove == gCurrentMove)
 				{
-					gBattleScripting.battler = gBattlerAttacker;
 					gProtectStructs[gBattlerAttacker].usedDisabledMove = 1;
 					gBattlescriptCurrInstr = BattleScript_MoveUsedIsDisabled;
 					CancelMultiTurnMoves(gBattlerAttacker);
@@ -1811,18 +1813,20 @@ u8 AtkCanceller_UnableToUseMove(void)
                         {
 							gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_MoveUsedIsConfused;
 						}
 						else // confusion dmg
 						{
-							gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 							gBattlerTarget = gBattlerAttacker;
 							gBattleMoveDamage = CalculateBaseDamage(MOVE_NONE, TYPE_MYSTERY, gBattlerAttacker, gBattlerTarget, FALSE, TRUE);
+							CancelMultiTurnMoves(gBattlerAttacker);
 							gProtectStructs[gBattlerAttacker].confusionSelfDmg = 1;
 							gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+							gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+							gBattlescriptCurrInstr = BattleScript_MoveUsedIsConfused;
 						}
-						gBattlescriptCurrInstr = BattleScript_MoveUsedIsConfused;
 					}
-					else // snapped out of confusion
+					else // snapped out
 					{
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_MoveUsedIsConfusedNoMore;
@@ -1836,6 +1840,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 				{
 					gProtectStructs[gBattlerAttacker].prlzImmobility = 1;
 					gBattlescriptCurrInstr = BattleScript_MoveUsedIsParalyzed;
+					CancelMultiTurnMoves(gBattlerAttacker);
 					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 					++effect;
 				}
@@ -1844,12 +1849,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 			case CANCELLER_GHOST: // GHOST in pokemon tower
                 if (IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE())
 				{
-					if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
-						gBattlescriptCurrInstr = BattleScript_TooScaredToMove;
-					else
-						gBattlescriptCurrInstr = BattleScript_GhostGetOutGetOut;
-					
-					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+					gBattlescriptCurrInstr = GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER ? BattleScript_TooScaredToMove : BattleScript_GhostGetOutGetOut;
 					++effect;
 				}
 				++gBattleStruct->atkCancellerTracker;
@@ -1857,7 +1857,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 			case CANCELLER_IN_LOVE: // infatuation
 			    if (gBattleMons[gBattlerAttacker].status2 & STATUS2_INFATUATION)
 				{
-					gBattleScripting.battler = CountTrailingZeroBits((gBattleMons[gBattlerAttacker].status2 & STATUS2_INFATUATION) >> 0x10);
+					gBattleScripting.battler = gDisableStructs[gBattlerAttacker].infatuatedWith;
 					
 					if (Random() & 1)
 						BattleScriptPushCursor();
@@ -1919,20 +1919,21 @@ u8 AtkCanceller_UnableToUseMove(void)
 						case TYPE_FIRE:
 							if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_RAIN_PRIMAL))
 							{
-								gBattlescriptCurrInstr = BattleScript_PrimordialSeaFizzlesOutFireTypeMoves;
+								gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 								++effect;
 							}
 							break;
 						case TYPE_WATER:
 							if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_SUN_PRIMAL))
 							{
-								gBattlescriptCurrInstr = BattleScript_DesolateLandEvaporatesWaterTypeMoves;
+								gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 								++effect;
 							}
 							break;
 					}
 					if (effect)
 					{
+						gBattlescriptCurrInstr = BattleScript_PrimalWeatherBlocksMove;
 						CancelMultiTurnMoves(gBattlerAttacker);
 						gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 						gMoveResultFlags = MOVE_RESULT_FAILED;
@@ -2931,7 +2932,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 								
 								if (validToRaise || validToLower)
 								{
-									gBattleCommunication[MULTIUSE_STATE] = gBattleScripting.statChanger = 0;
+									gBattleScripting.atk23_state = gBattleScripting.statChanger = 0;
 									
 									if (validToLower)
 									{
@@ -2941,7 +2942,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 										} while (!(validToLower & gBitTable[i]));
 										
 										SET_STATCHANGER(i, 1, TRUE);
-										gBattleCommunication[MULTIUSE_STATE] = gBattleScripting.statChanger; // save it in multiuse state
+										gBattleScripting.atk23_state = gBattleScripting.statChanger; // save it in multiuse state
 										validToRaise &= ~(gBitTable[i]); // cannot raise the same stat
 									}
 									if (validToRaise)
@@ -3423,7 +3424,8 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 							&& !gProtectStructs[gBattlerAttacker].confusionSelfDmg && IsMoveMakingContact(gBattlerAttacker, moveArg)
 							&& IsBattlerAlive(gBattlerTarget) && (Random() % 3) == 0 && CanBeInfatuatedBy(gBattlerAttacker, battler) == STATUS_CHANGE_WORKED)
 							{
-								gBattleMons[gBattlerAttacker].status2 |= STATUS2_INFATUATED_WITH(battler);
+								gBattleMons[gBattlerAttacker].status2 |= STATUS2_INFATUATION;
+								gDisableStructs[gBattlerAttacker].infatuatedWith = battler;
 								BattleScriptPushCursor();
 								gBattlescriptCurrInstr = BattleScript_CuteCharmActivates;
 								++effect;
@@ -5029,7 +5031,7 @@ u8 IsUproarActive(void)
 	
 	for (i = 0; i < gBattlersCount; i++)
 	{
-		if (gBattleMons[i].status2 & STATUS2_UPROAR)
+		if ((gBattleMons[i].status2 & STATUS2_UPROAR))
 			break;
 	}
 	return i;

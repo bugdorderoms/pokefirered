@@ -135,7 +135,7 @@
 
 // TODO: documentation
 // Atk76, various cases
-#define VARIOUS_CANCEL_MULTI_TURN_MOVES             0
+#define VARIOUS_CANCEL_MULTI_TURN_MOVES             0 // unused
 #define VARIOUS_SET_MAGIC_COAT_TARGET               1
 #define VARIOUS_IS_RUNNING_IMPOSSIBLE               2
 #define VARIOUS_GET_BATTLER_SIDE                    3

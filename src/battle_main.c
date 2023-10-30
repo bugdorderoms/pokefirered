@@ -1829,8 +1829,8 @@ static void ClearBattlerEffectsOnFaintOrSwitch(u8 battlerId)
 			gBattleMons[i].status2 &= ~(STATUS2_ESCAPE_PREVENTION);
 		
 		// Free all mons infatuated by the user
-		if (gBattleMons[i].status2 & STATUS2_INFATUATED_WITH(battlerId))
-			gBattleMons[i].status2 &= ~(STATUS2_INFATUATED_WITH(battlerId));
+		if ((gBattleMons[i].status2 & STATUS2_INFATUATION) && gDisableStructs[i].infatuatedWith == battlerId)
+			gBattleMons[i].status2 &= ~(STATUS2_INFATUATION);
 		
 		// Free all mons wrapped by the user
 		if ((gBattleMons[i].status2 & STATUS2_WRAPPED) && gBattleStruct->wrappedBy[i] == battlerId)

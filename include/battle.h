@@ -139,7 +139,8 @@ struct DisableStruct
     /*0x11*/ u8 battlerWithSureHit;
     /*0x12*/ u8 rechargeTimer;
 	/*0x13*/ u8 imposterActivated:1; // only activate when switched in, not when gained
-	/*0x13*/ u8 unused:7;
+	/*0x13*/ u8 infatuatedWith:2;
+	/*0x13*/ u8 unused:5;
 };
 
 extern struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT];
