@@ -108,6 +108,7 @@ static void TryEvolvePokemon(void);
 static void TrySpecialEvolution(void);
 static void WaitForEvoSceneToFinish(void);
 
+// Bg rams
 EWRAM_DATA u16 gBattle_BG0_X = 0;
 EWRAM_DATA u16 gBattle_BG0_Y = 0;
 EWRAM_DATA u16 gBattle_BG1_X = 0;
@@ -120,47 +121,60 @@ EWRAM_DATA u16 gBattle_WIN0H = 0;
 EWRAM_DATA u16 gBattle_WIN0V = 0;
 EWRAM_DATA u16 gBattle_WIN1H = 0;
 EWRAM_DATA u16 gBattle_WIN1V = 0;
+EWRAM_DATA u8 *gBattleAnimMons_BgTilesBuffer = NULL;
+EWRAM_DATA u8 *gBattleAnimMons_BgTilemapBuffer = NULL;
+// String rams
 EWRAM_DATA u8 gDisplayedStringBattle[300] = {0};
 EWRAM_DATA u8 gBattleTextBuff1[TEXT_BUFF_ARRAY_COUNT] = {0};
 EWRAM_DATA u8 gBattleTextBuff2[TEXT_BUFF_ARRAY_COUNT] = {0};
 EWRAM_DATA u8 gBattleTextBuff3[TEXT_BUFF_ARRAY_COUNT] = {0};
-EWRAM_DATA u32 gBattleTypeFlags = 0;
+// Battle basic rams
 EWRAM_DATA u8 gBattleTerrain = 0;
-EWRAM_DATA struct MultiBattlePokemonTx gMultiPartnerParty[3] = {0};
-EWRAM_DATA u8 *gBattleAnimMons_BgTilesBuffer = NULL;
-EWRAM_DATA u8 *gBattleAnimMons_BgTilemapBuffer = NULL;
+EWRAM_DATA u8 gAbsentBattlerFlags = 0;
+EWRAM_DATA u32 gBattleTypeFlags = 0;
+EWRAM_DATA u8 gBattlerSpriteIds[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA const u8 *gBattlescriptCurrInstr = NULL;
+EWRAM_DATA const u8 *gSelectionBattleScripts[MAX_BATTLERS_COUNT] = {NULL};
+EWRAM_DATA u16 gBattlerPartyIndexes[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA u8 gBattlerPositions[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA u8 gBattleCommunication[BATTLE_COMMUNICATION_ENTRIES_COUNT] = {0};
+EWRAM_DATA u16 gPauseCounterBattle = 0;
+EWRAM_DATA u16 gRandomTurnNumber = 0;
+EWRAM_DATA u8 gBattlersCount = 0;
+EWRAM_DATA u8 gBattleOutcome = 0;
+EWRAM_DATA u16 gBattleWeather = 0;
+EWRAM_DATA u16 gIntroSlideFlags = 0;
+EWRAM_DATA u8 gSentPokesToOpponent[2] = {0};
+EWRAM_DATA u16 gLastUsedItem = 0;
+EWRAM_DATA u16 gLastUsedAbility = 0;
+EWRAM_DATA u8 gBattlerStatusSummaryTaskId[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA u16 gExpShareExp = 0;
+EWRAM_DATA u8 gBattlerInMenuId = 0;
+EWRAM_DATA bool8 gDoingBattleAnim = FALSE;
+EWRAM_DATA u16 gBattleMonForms[PARTY_SIZE][B_SIDE_COUNT] = {0};
+EWRAM_DATA u16 gMoveToLearn = 0;
+EWRAM_DATA u8 gPartyCriticalHits[PARTY_SIZE] = {0};
+EWRAM_DATA u16 gPaydayMoney = 0;
+EWRAM_DATA u32 gTransformedPersonalities[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA bool8 gTransformedShinies[MAX_BATTLERS_COUNT] = {0};
+// Controller rams
+EWRAM_DATA u8 *gLinkBattleSendBuffer = NULL;
+EWRAM_DATA u8 *gLinkBattleRecvBuffer = NULL;
 EWRAM_DATA u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200] = {0};
 EWRAM_DATA u8 gBattleBufferB[MAX_BATTLERS_COUNT][0x200] = {0};
 EWRAM_DATA u32 gBattleControllerExecFlags = 0;
-EWRAM_DATA u8 gBattlersCount = 0;
-EWRAM_DATA u16 gBattlerPartyIndexes[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u8 gBattlerPositions[MAX_BATTLERS_COUNT] = {0};
+// Turn and actions rams
 EWRAM_DATA u8 gActionsByTurnOrder[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gBattlerByTurnOrder[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA u8 gChosenActionByBattler[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA u16 gChosenMoveByBattler[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA u8 gActionSelectionCursor[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA u8 gMoveSelectionCursor[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gCurrentTurnActionNumber = 0;
 EWRAM_DATA u8 gCurrentActionFuncId = 0;
-EWRAM_DATA struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u8 gBattlerSpriteIds[MAX_BATTLERS_COUNT] = {0};
+// Move vars
 EWRAM_DATA u8 gCurrMovePos = 0;
 EWRAM_DATA u8 gChosenMovePos = 0;
-EWRAM_DATA u16 gCurrentMove = 0;
-EWRAM_DATA u16 gChosenMove = 0;
-EWRAM_DATA u16 gCalledMove = 0;
-EWRAM_DATA s32 gBattleMoveDamage = 0;
-EWRAM_DATA s32 gHpDealt = 0;
-EWRAM_DATA s32 gTakenDmg[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u16 gLastUsedItem = 0;
-EWRAM_DATA u16 gLastUsedAbility = 0;
-EWRAM_DATA u8 gBattlerAttacker = 0;
-EWRAM_DATA u8 gBattlerTarget = 0;
-EWRAM_DATA u8 gBattlerFainted = 0;
-EWRAM_DATA u8 gEffectBattler = 0;
-EWRAM_DATA u8 gAbsentBattlerFlags = 0;
-EWRAM_DATA bool8 gIsCriticalHit = 0;
-EWRAM_DATA u8 gMultiHitCounter = 0;
-EWRAM_DATA const u8 *gBattlescriptCurrInstr = NULL;
-EWRAM_DATA u8 gChosenActionByBattler[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA const u8 *gSelectionBattleScripts[MAX_BATTLERS_COUNT] = {NULL};
 EWRAM_DATA u16 gLastPrintedMoves[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gLastMoves[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gLastLandedMoves[MAX_BATTLERS_COUNT] = {0};
@@ -169,55 +183,54 @@ EWRAM_DATA u16 gLockedMoves[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gLastUsedMovesTypes[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gLastHitBy[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gLastHitByType[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u16 gChosenMoveByBattler[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u16 gMoveResultFlags = 0;
-EWRAM_DATA u32 gHitMarker = 0;
+EWRAM_DATA u16 gCurrentMove = 0;
+EWRAM_DATA u16 gChosenMove = 0;
+EWRAM_DATA u16 gCalledMove = 0;
+EWRAM_DATA bool8 gIsCriticalHit = FALSE;
+EWRAM_DATA u8 gMultiHitCounter = 0;
+// Damage vars
+EWRAM_DATA s32 gBattleMoveDamage = 0;
+EWRAM_DATA s32 gHpDealt = 0;
+EWRAM_DATA s32 gTakenDmg[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gTakenDmgByBattler[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA u32 gHitMarker = 0;
+EWRAM_DATA u16 gBattleMovePower = 0;
+EWRAM_DATA u16 gMoveResultFlags = 0;
+// Battlers vars
+EWRAM_DATA u8 gBattlerAttacker = 0;
+EWRAM_DATA u8 gBattlerTarget = 0;
+EWRAM_DATA u8 gBattlerFainted = 0;
+EWRAM_DATA u8 gEffectBattler = 0;
+// Structs and timers
+EWRAM_DATA struct MultiBattlePokemonTx gMultiPartnerParty[3] = {0};
+EWRAM_DATA struct BattleSpriteData *gBattleSpritesDataPtr = NULL;
+EWRAM_DATA struct MonSpritesGfx *gMonSpritesGfxPtr = NULL;
+EWRAM_DATA struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gSideStatuses[B_SIDE_COUNT] = {0};
 EWRAM_DATA struct SideTimer gSideTimers[B_SIDE_COUNT] = {0};
 EWRAM_DATA u32 gStatuses3[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u16 gPauseCounterBattle = 0;
-EWRAM_DATA u16 gPaydayMoney = 0;
-EWRAM_DATA u16 gRandomTurnNumber = 0;
-EWRAM_DATA u8 gBattleCommunication[BATTLE_COMMUNICATION_ENTRIES_COUNT] = {0};
-EWRAM_DATA u8 gBattleOutcome = 0;
 EWRAM_DATA struct ProtectStruct gProtectStructs[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA struct SpecialStatus gSpecialStatuses[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u16 gBattleWeather = 0;
 EWRAM_DATA struct WishFutureKnock gWishFutureKnock = {0};
-EWRAM_DATA u16 gIntroSlideFlags = 0;
-EWRAM_DATA u8 gSentPokesToOpponent[2] = {0};
-EWRAM_DATA u16 gExpShareExp = 0;
 EWRAM_DATA struct BattleScripting gBattleScripting = {0};
 EWRAM_DATA struct BattleStruct *gBattleStruct = NULL;
-EWRAM_DATA u8 *gLinkBattleSendBuffer = NULL;
-EWRAM_DATA u8 *gLinkBattleRecvBuffer = NULL;
 EWRAM_DATA struct BattleResources *gBattleResources = NULL;
-EWRAM_DATA u8 gActionSelectionCursor[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u8 gMoveSelectionCursor[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u8 gBattlerStatusSummaryTaskId[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA u8 gBattlerInMenuId = 0;
-EWRAM_DATA bool8 gDoingBattleAnim = FALSE;
-EWRAM_DATA u32 gTransformedPersonalities[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA bool8 gTransformedShinies[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA struct BattleSpriteData *gBattleSpritesDataPtr = NULL;
-EWRAM_DATA struct MonSpritesGfx *gMonSpritesGfxPtr = NULL;
-EWRAM_DATA u16 gBattleMovePower = 0;
-EWRAM_DATA u16 gMoveToLearn = 0;
-EWRAM_DATA u16 gBattleMonForms[PARTY_SIZE][B_SIDE_COUNT] = {0};
-EWRAM_DATA u8 gPartyCriticalHits[PARTY_SIZE] = {0};
+EWRAM_DATA u32 gFieldStatus = 0;
+EWRAM_DATA struct FieldTimer gFieldTimers = {0};
+// Static rams
 EWRAM_DATA static u8 sTriedEvolving = 0;
 
+// IWRAM vars
 void (*gPreBattleCallback1)(void);
 void (*gBattleMainFunc)(void);
-u8 gLeveledUpInBattle;
 void (*gBattlerControllerFuncs[MAX_BATTLERS_COUNT])(u8);
 void (*gBattlerControllerEndFuncs[MAX_BATTLERS_COUNT])(u8);
+u8 gBattleControllerData[MAX_BATTLERS_COUNT];
 u8 gHealthboxSpriteIds[MAX_BATTLERS_COUNT];
 u8 gMultiUsePlayerCursor;
 u8 gNumberOfMovesToChoose;
-u8 gBattleControllerData[MAX_BATTLERS_COUNT];
+u8 gLeveledUpInBattle;
 
 static const struct ScanlineEffectParams sIntroScanlineParams16Bit =
 {
@@ -1956,7 +1969,7 @@ void SwitchInClearSetData(u8 battlerId)
 	{
 		// Status passed by Baton Pass
 		gBattleMons[battlerId].status2 &= (STATUS2_CONFUSION | STATUS2_FOCUS_ENERGY | STATUS2_SUBSTITUTE | STATUS2_ESCAPE_PREVENTION | STATUS2_CURSED);
-        gStatuses3[battlerId] &= (STATUS3_LEECHSEED_BATTLER | STATUS3_LEECHSEED | STATUS3_PERISH_SONG | STATUS3_ROOTED | STATUS3_MUDSPORT | STATUS3_WATERSPORT);
+        gStatuses3[battlerId] &= (STATUS3_LEECHSEED_BATTLER | STATUS3_LEECHSEED | STATUS3_PERISH_SONG | STATUS3_ROOTED);
         
 		gDisableStructs[battlerId].substituteHP = disableStructCopy.substituteHP;
         gDisableStructs[battlerId].perishSongTimer = disableStructCopy.perishSongTimer;

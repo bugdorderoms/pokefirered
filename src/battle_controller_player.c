@@ -725,7 +725,7 @@ static void MoveSelectionDisplayMoveType(u8 battlerId)
    
 #if EFFECTIVENESS_ON_MENU
     target = B_POSITION_OPPONENT_LEFT; // default target
-    effect = affectedBy = 0;
+    effect = affectedBy = flags = 0;
     
     // check if move is stab
     if (!IS_MOVE_STATUS(move) && IS_BATTLER_OF_TYPE(battlerId, type))
@@ -738,7 +738,7 @@ static void MoveSelectionDisplayMoveType(u8 battlerId)
         else if (gBattleMons[target].hp == 0)
             target = B_POSITION_OPPONENT_RIGHT;
     }
-    flags = TypeCalc(move, type, battlerId, GetBattlerAtPosition(target), FALSE, FALSE, &affectedBy);
+	CalcTypeEffectivenessMultiplier(move, type, battlerId, GetBattlerAtPosition(target), FALSE, &affectedBy, &flags);
     
     // set respective colours
     if (flags & MOVE_RESULT_SUPER_EFFECTIVE)

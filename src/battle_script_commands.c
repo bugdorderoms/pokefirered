@@ -723,15 +723,12 @@ static void MoveValuesCleanUp(void)
 
 static void CheckWonderGuardAndLevitate(void) // Check for Wonder Guard and Levitate for acurracy calc
 {
-    u16 flags;
+    u16 flags = 0;
     u8 affectedBy = 0;
-    s32 saved;
     
-    if (gCurrentMove != MOVE_STRUGGLE && !IS_MOVE_STATUS(gCurrentMove))
+    if (!IS_MOVE_STATUS(gCurrentMove))
 	{
-		saved = gBattleMoveDamage;
-		flags = TypeCalc(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, FALSE, &affectedBy);
-		gBattleMoveDamage = saved;
+		CalcTypeEffectivenessMultiplier(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, &affectedBy, &flags);
 		
 		if (affectedBy & TYPE_AFFECTED_LEVITATE)
 			flags &= ~(MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -1314,7 +1311,7 @@ s16 CalcMoveCritChance(u8 battlerAtk, u8 battlerDef, u16 move)
 static void atk05_damagecalc(void)
 {
 	// Calculate move damage
-    gBattleMoveDamage = CalculateBaseDamage(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, gIsCriticalHit, TRUE);
+    gBattleMoveDamage = CalculateMoveDamage(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, gIsCriticalHit, TRUE);
     ++gBattlescriptCurrInstr;
 }
 
@@ -1324,35 +1321,34 @@ void AI_CalcDmg(u8 attacker, u8 defender, u16 move)
     
 	// Calculate move damage and type effectiveness for the AI
     gBattleScripting.dmgMultiplier = 1;
-    gMoveResultFlags = 0;
-    gBattleMoveDamage = CalculateBaseDamage(move, moveType, attacker, defender, FALSE, FALSE);
-    TypeCalc(move, moveType, attacker, defender, FALSE, FALSE, &affectedBy);
+    gBattleMoveDamage = CalculateMoveDamage(move, moveType, attacker, defender, FALSE, FALSE);
+	CalcTypeEffectivenessMultiplier(move, moveType, attacker, defender, FALSE, &affectedBy, &gMoveResultFlags);
 }
 
 static void atk06_typecalc(void)
 {
 	u8 affectedBy = 0;
 	
-	if (gCurrentMove != MOVE_STRUGGLE) // except Struggle
-    {
-		// Calculate type effectiveness
-        gMoveResultFlags = TypeCalc(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, TRUE, &affectedBy);
-		
-		if (gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE)
-			gProtectStructs[gBattlerAttacker].targetNotAffected = 1;
+	// Calculate type effectiveness
+	CalcTypeEffectivenessMultiplier(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, &affectedBy, &gMoveResultFlags);
+	
+	if (affectedBy & (TYPE_AFFECTED_LEVITATE | TYPE_AFFECTED_WONDER_GUARD))
+	{
+		gLastLandedMoves[gBattlerTarget] = 0;
+		gLastHitByType[gBattlerTarget] = 0;
 	}
+	if (gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE)
+		gProtectStructs[gBattlerAttacker].targetNotAffected = 1;
+	
     ++gBattlescriptCurrInstr;
 }
 
-static void ModulateDmgByType(u8 multiplier, u16 move, u16 *flags) // Update effectiveness and do damage multiplier for the type calc
+static void UpdateMoveResults(u8 *multiplier, u8 mod, u16 move, u16 *flags) // Update effectiveness multiplier for the type calc
 {
-    gBattleMoveDamage = gBattleMoveDamage * multiplier / 10;
-    if (gBattleMoveDamage == 0 && multiplier != 0)
-        gBattleMoveDamage = 1;
-	
-    switch (multiplier)
+    switch (mod)
     {
 		case TYPE_MUL_NO_EFFECT:
+		    *multiplier = TYPE_MUL_NO_EFFECT;
 		    *flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 			*flags &= ~MOVE_RESULT_NOT_VERY_EFFECTIVE;
 			*flags &= ~MOVE_RESULT_SUPER_EFFECTIVE;
@@ -1364,6 +1360,8 @@ static void ModulateDmgByType(u8 multiplier, u16 move, u16 *flags) // Update eff
 					*flags &= ~MOVE_RESULT_SUPER_EFFECTIVE;
 				else
 					*flags |= MOVE_RESULT_NOT_VERY_EFFECTIVE;
+				
+				*multiplier = TYPE_MUL_NOT_EFFECTIVE;
 			}
 			break;
 		case TYPE_MUL_SUPER_EFFECTIVE:
@@ -1373,6 +1371,8 @@ static void ModulateDmgByType(u8 multiplier, u16 move, u16 *flags) // Update eff
 					*flags &= ~MOVE_RESULT_NOT_VERY_EFFECTIVE;
 				else
 					*flags |= MOVE_RESULT_SUPER_EFFECTIVE;
+				
+				*multiplier = TYPE_MUL_SUPER_EFFECTIVE;
 			}
 			break;
     }
@@ -1383,39 +1383,42 @@ u8 GetTypeModifier(u8 atkType, u8 defType)
 	return gTypeEffectiveness[atkType][defType]; // Get effectiveness betwen the move's type and the defender's type
 }
 
-static void MulByTypeEffectiveness(u16 move, u8 moveType, u8 attacker, u8 defender, u8 defenderType, u16 *flags)
+static void MulByTypeEffectiveness(u16 move, u8 moveType, u8 attacker, u8 defender, u8 defenderType, u8 *multiplier, u16 *flags)
 {
 	u8 mod = GetTypeModifier(moveType, defenderType);
 	
+	// Check Foresight and Scrappy on Ghost types
 	if ((moveType == TYPE_FIGHTING || moveType == TYPE_NORMAL) && defenderType == TYPE_GHOST && mod == TYPE_MUL_NO_EFFECT
-	&& (gBattleMons[defender].status2 & STATUS2_FORESIGHT || GetBattlerAbility(attacker) == ABILITY_SCRAPPY || move == MOVE_GLARE)) // Check Foresight and Scrappy on Ghost types
+	&& (gBattleMons[defender].status2 & STATUS2_FORESIGHT || GetBattlerAbility(attacker) == ABILITY_SCRAPPY || move == MOVE_GLARE))
 	    mod = TYPE_MUL_NORMAL;
 	
-	if (IsBattlerGrounded(defender) && moveType == TYPE_GROUND && mod == TYPE_MUL_NO_EFFECT) // Check ground immunities
+	// Check ground immunities
+	if (moveType == TYPE_GROUND && mod == TYPE_MUL_NO_EFFECT && IsBattlerGrounded(defender))
 		mod = TYPE_MUL_NORMAL;
 	
 	// Check strong winds
 	if (IsBattlerWeatherAffected(defender, WEATHER_STRONG_WINDS) && defenderType == TYPE_FLYING && mod == TYPE_MUL_SUPER_EFFECTIVE)
 		mod = TYPE_MUL_NORMAL;
 	
-	ModulateDmgByType(mod, move, flags);
+	UpdateMoveResults(multiplier, mod, move, flags);
 }
 
-u8 CalcTypeEffectivenessMultiplierInternal(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 recordAbilities, u16 *flags)
+static u8 CalcTypeEffectivenessMultiplierInternal(u16 move, u8 moveType, u8 attacker, u8 defender, u8 multiplier, bool8 recordAbilities, u8 *affectedBy, u16 *flags)
 {
 	u16 defAbility = GetBattlerAbility(defender);
-	u8 affectedBy = 0;
 	
-	MulByTypeEffectiveness(move, moveType, attacker, defender, gBattleMons[defender].type1, flags); // Multiplier interation betwen type1
+	MulByTypeEffectiveness(move, moveType, attacker, defender, gBattleMons[defender].type1, &multiplier, flags);
 	
 	if (gBattleMons[defender].type1 != gBattleMons[defender].type2)
-		MulByTypeEffectiveness(move, moveType, attacker, defender, gBattleMons[defender].type2, flags); // Multiplier interation betwen type2
+		MulByTypeEffectiveness(move, moveType, attacker, defender, gBattleMons[defender].type2, &multiplier, flags);
 	
-	// Check Levitate
-	if (!IsBattlerGrounded(defender) && moveType == TYPE_GROUND && defAbility == ABILITY_LEVITATE)
+	if (IS_MOVE_STATUS(move) && move != MOVE_THUNDER_WAVE)
+		multiplier = TYPE_MUL_NORMAL;
+	else if (moveType == TYPE_GROUND && !IsBattlerGrounded(defender) && defAbility == ABILITY_LEVITATE)
 	{
+		multiplier = TYPE_MUL_NO_EFFECT;
+		*affectedBy = TYPE_AFFECTED_LEVITATE;
 		*flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
-		affectedBy = TYPE_AFFECTED_LEVITATE;
 		
 		if (recordAbilities)
 		{
@@ -1424,12 +1427,12 @@ u8 CalcTypeEffectivenessMultiplierInternal(u16 move, u8 moveType, u8 attacker, u
 			RecordAbilityBattle(defender, gLastUsedAbility);
 		}
 	}
-	// Check Wonder Guard
-	if (defAbility == ABILITY_WONDER_GUARD && AttacksThisTurn(attacker, move) && !IS_MOVE_STATUS(move)
-	&& (!(*flags & MOVE_RESULT_SUPER_EFFECTIVE) || ((*flags & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE))))
+	
+	if (defAbility == ABILITY_WONDER_GUARD && multiplier != TYPE_MUL_SUPER_EFFECTIVE)
 	{
+		*affectedBy = TYPE_AFFECTED_WONDER_GUARD;
+		multiplier = TYPE_MUL_NO_EFFECT;
 		*flags |= MOVE_RESULT_MISSED;
-		affectedBy = TYPE_AFFECTED_WONDER_GUARD;
 		
 		if (recordAbilities)
 		{
@@ -1438,37 +1441,31 @@ u8 CalcTypeEffectivenessMultiplierInternal(u16 move, u8 moveType, u8 attacker, u
 			RecordAbilityBattle(defender, gLastUsedAbility);
 		}
 	}
-	return affectedBy;
+	return multiplier;
 }
 
-u16 TypeCalc(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 recordAbilities, bool8 resetFlags, u8 *affectedBy)
+u8 CalcTypeEffectivenessMultiplier(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 recordAbilities, u8 *affectedBy, u16 *flags)
 {
-	u16 flags = 0;
+	u8 multiplier = TYPE_MUL_NORMAL;
 	
-	if (move != MOVE_STRUGGLE)
+	if (move != MOVE_STRUGGLE && moveType != TYPE_MYSTERY)
 	{
-		*affectedBy |= CalcTypeEffectivenessMultiplierInternal(move, moveType, attacker, defender, recordAbilities, &flags);
-		
-		if (resetFlags && *affectedBy & (TYPE_AFFECTED_LEVITATE | TYPE_AFFECTED_WONDER_GUARD))
-		{
-			gLastLandedMoves[defender] = 0;
-			gLastHitByType[defender] = 0;
-		}
+		multiplier = CalcTypeEffectivenessMultiplierInternal(move, moveType, attacker, defender, multiplier, recordAbilities, affectedBy, flags);
 	}
-	return flags;
+	return multiplier;
 }
 
 u16 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility)
 {
-    u8 moveType = gBattleMoves[move].type, affectedBy = 0;
+    u8 moveType = gBattleMoves[move].type, affectedBy = 0, multiplier;
 	u16 flags = 0;
 
     if (move != MOVE_STRUGGLE)
 	{
-		MulByTypeEffectiveness(move, moveType, 0, 0, gBaseStats[targetSpecies].type1, &flags);
+		MulByTypeEffectiveness(move, moveType, 0, 0, gBaseStats[targetSpecies].type1, &multiplier, &flags);
 		
 		if (gBaseStats[targetSpecies].type1 != gBaseStats[targetSpecies].type2)
-			MulByTypeEffectiveness(move, moveType, 0, 0, gBaseStats[targetSpecies].type2, &flags);
+			MulByTypeEffectiveness(move, moveType, 0, 0, gBaseStats[targetSpecies].type2, &multiplier, &flags);
 		
 		if (moveType == TYPE_GROUND && targetAbility == ABILITY_LEVITATE)
 			flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -5626,7 +5623,7 @@ static void atk86_stockpiletobasedamage(void)
     {
         if (gBattleCommunication[MISS_TYPE] != 1)
         {
-            gBattleMoveDamage = CalculateBaseDamage(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, FALSE, TRUE);
+            gBattleMoveDamage = CalculateMoveDamage(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, FALSE, TRUE);
             gBattleScripting.animTurn = gDisableStructs[gBattlerAttacker].stockpileCounter;
         }
 		if (!(gSpecialStatuses[gBattlerAttacker].parentalBondState == PARENTAL_BOND_1ST_HIT && IsBattlerAlive(gBattlerTarget)))
@@ -7163,7 +7160,7 @@ static void atkC3_trysetfutureattack(void)
         gWishFutureKnock.futureSightMove[gBattlerTarget] = gCurrentMove;
         gWishFutureKnock.futureSightAttacker[gBattlerTarget] = gBattlerAttacker;
         gWishFutureKnock.futureSightCounter[gBattlerTarget] = 3;
-        gWishFutureKnock.futureSightDmg[gBattlerTarget] = CalculateBaseDamage(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, FALSE, TRUE);
+        gWishFutureKnock.futureSightDmg[gBattlerTarget] = CalculateMoveDamage(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, FALSE, TRUE);
 		
         if (gCurrentMove == MOVE_DOOM_DESIRE)
             gBattleCommunication[MULTISTRING_CHOOSER] = 1;
@@ -7820,22 +7817,24 @@ static void atkE8_settypebasedhalvers(void) // water and mud sport
 
     if (gBattleMoves[gCurrentMove].effect == EFFECT_MUD_SPORT)
     {
-        if (!(gStatuses3[gBattlerAttacker] & STATUS3_MUDSPORT))
-        {
-            gStatuses3[gBattlerAttacker] |= STATUS3_MUDSPORT;
-            gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-            worked = TRUE;
-        }
+		if (!(gFieldStatus & STATUS_FIELD_MUDSPORT))
+		{
+			gFieldStatus |= STATUS_FIELD_MUDSPORT;
+			gFieldTimers.mudSportTimer = 5;
+			gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+			worked = TRUE;
+		}
     }
     else // water sport
     {
-        if (!(gStatuses3[gBattlerAttacker] & STATUS3_WATERSPORT))
-        {
-            gStatuses3[gBattlerAttacker] |= STATUS3_WATERSPORT;
-            gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-            worked = TRUE;
-        }
-    }
+		if (!(gFieldStatus & STATUS_FIELD_WATERSPORT))
+		{
+			gFieldStatus |= STATUS_FIELD_WATERSPORT;
+			gFieldTimers.waterSportTimer = 5;
+			gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+			worked = TRUE;
+		}
+	}
     if (worked)
         gBattlescriptCurrInstr += 5;
     else

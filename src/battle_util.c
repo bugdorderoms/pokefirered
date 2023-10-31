@@ -1082,6 +1082,12 @@ u8 DoFieldEndTurnEffects(void)
 			++gBattleStruct->turnCountersTracker;
 			break;
         case ENDTURN_FIELD_COUNT:
+		    if (gFieldTimers.mudSportTimer && --gFieldTimers.mudSportTimer == 0)
+				gFieldStatus &= ~(STATUS_FIELD_MUDSPORT);
+			
+			if (gFieldTimers.waterSportTimer && --gFieldTimers.waterSportTimer == 0)
+				gFieldStatus &= ~(STATUS_FIELD_WATERSPORT);
+			
             ++effect;
             break;
         }
@@ -1818,7 +1824,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 						else // confusion dmg
 						{
 							gBattlerTarget = gBattlerAttacker;
-							gBattleMoveDamage = CalculateBaseDamage(MOVE_NONE, TYPE_MYSTERY, gBattlerAttacker, gBattlerTarget, FALSE, TRUE);
+							gBattleMoveDamage = CalculateConfusionDamage(gBattlerAttacker, gBattlerTarget);
 							CancelMultiTurnMoves(gBattlerAttacker);
 							gProtectStructs[gBattlerAttacker].confusionSelfDmg = 1;
 							gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
@@ -2503,6 +2509,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
 							u8 j, affectedBy;
+							u16 flags;
 							
 							for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 							{
@@ -2521,7 +2528,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg)
 											else
 												moveType = gBattleMoves[moveArg].type;
 											
-											if (TypeCalc(moveArg, moveType, i, battler, FALSE, FALSE, &affectedBy) & MOVE_RESULT_SUPER_EFFECTIVE)
+											if (CalcTypeEffectivenessMultiplier(moveArg, moveType, i, battler, FALSE, &affectedBy, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
 												++effect;
 										}
 									}
@@ -4578,7 +4585,7 @@ u8 IsMonDisobedient(void)
         if (calc < levelCapLevel)
         {
             gBattlerTarget = gBattlerAttacker;
-            gBattleMoveDamage = CalculateBaseDamage(MOVE_NONE, TYPE_MYSTERY, gBattlerAttacker, gBattlerTarget, FALSE, TRUE);
+            gBattleMoveDamage = CalculateConfusionDamage(gBattlerAttacker, gBattlerTarget);
             gBattlescriptCurrInstr = BattleScript_IgnoresAndHitsItself;
             gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
             return 2;

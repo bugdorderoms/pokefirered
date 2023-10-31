@@ -139,11 +139,9 @@
 #define STATUS3_IMPRISONED_OTHERS       (1 << 13)
 #define STATUS3_GRUDGE                  (1 << 14)
 #define STATUS3_CANT_SCORE_A_CRIT       (1 << 15)
-#define STATUS3_MUDSPORT                (1 << 16)
-#define STATUS3_WATERSPORT              (1 << 17)
-#define STATUS3_UNDERWATER              (1 << 18)
-#define STATUS3_POWER_TRICK             (1 << 19)
-#define STATUS3_EMBARGO                 (1 << 20)
+#define STATUS3_UNDERWATER              (1 << 16)
+#define STATUS3_POWER_TRICK             (1 << 17)
+#define STATUS3_EMBARGO                 (1 << 18)
 
 #define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
 
@@ -176,6 +174,10 @@
 #define SIDE_STATUS_SAFEGUARD        (1 << 4)
 #define SIDE_STATUS_FUTUREATTACK     (1 << 5)
 #define SIDE_STATUS_MIST             (1 << 6)
+
+// Field statuses
+#define STATUS_FIELD_WATERSPORT (1 << 0)
+#define STATUS_FIELD_MUDSPORT   (1 << 1)
 
 // Flags describing move's result
 #define MOVE_RESULT_MISSED             (1 << 0)

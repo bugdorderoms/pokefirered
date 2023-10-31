@@ -234,7 +234,13 @@ struct SideTimer
     /*0x0A*/ u8 spikesAmount;
 };
 
-extern struct SideTimer gSideTimers[];
+extern struct SideTimer gSideTimers[B_SIDE_COUNT];
+
+struct FieldTimer
+{
+	u8 waterSportTimer:3;
+	u8 mudSportTimer:3;
+};
 
 struct WishFutureKnock
 {
@@ -709,6 +715,8 @@ extern u16 gRandomTurnNumber;
 extern u8 gPartyCriticalHits[PARTY_SIZE];
 extern u8 gBattlerTarget;
 extern u8 gAbsentBattlerFlags;
+extern u32 gFieldStatus;
+extern struct FieldTimer gFieldTimers;
 
 static inline u8 GetBattlerPosition(u8 battlerId)
 {

@@ -3,6 +3,7 @@
 
 #include "global.h"
 
-s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, bool8 isCrit, bool8 randomFactor);
+s32 CalculateConfusionDamage(u8 attacker, u8 defender);
+s32 CalculateMoveDamage(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 isCrit, bool8 randomFactor);
 
 #endif // GUARD_CALCULATE_BASE_DAMAGE_H

@@ -463,11 +463,12 @@ u8 GetMostSuitableMonToSwitchInto(u8 battlerId)
         {
             for (i = 0; i < MAX_MON_MOVES; ++i)
             {
+				u16 flags;
 				move = GetMonData(&gEnemyParty[bestMonId], MON_DATA_MOVE1 + i);
 				
 				if (move != MOVE_NONE)
 				{
-					if (TypeCalc(move, gBattleMoves[move].type, battlerId, opposingBattler, FALSE, FALSE, &affectedBy) & MOVE_RESULT_SUPER_EFFECTIVE)
+					if (CalcTypeEffectivenessMultiplier(move, gBattleMoves[move].type, battlerId, opposingBattler, FALSE, &affectedBy, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
 						break;
 				}
             }

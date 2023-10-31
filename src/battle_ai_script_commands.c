@@ -1170,7 +1170,7 @@ static void Cmd_get_highest_type_effectiveness(void)
         
         if (gCurrentMove != MOVE_NONE)
         {
-            flags = TypeCalc(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, FALSE, &affectedBy);
+			CalcTypeEffectivenessMultiplier(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, &affectedBy, &flags);
 
             if (gBattleMoveDamage == 120) // Super effective STAB.
                 gBattleMoveDamage = AI_EFFECTIVENESS_x2;
@@ -1204,7 +1204,7 @@ static void Cmd_if_type_effectiveness(void)
     gBattleMoveDamage = AI_EFFECTIVENESS_x1;
     gCurrentMove = AI_THINKING_STRUCT->moveConsidered;
     
-    flags = TypeCalc(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, FALSE, &affectedBy);
+	CalcTypeEffectivenessMultiplier(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, &affectedBy, &flags);
 
     if (gBattleMoveDamage == 120) // Super effective STAB.
         gBattleMoveDamage = AI_EFFECTIVENESS_x2;
