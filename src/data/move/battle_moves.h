@@ -3599,6 +3599,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .accuracy = 90,
         .pp = 15,
         .target = MOVE_TARGET_SELECTED,
+		.flags =
+		{
+			.kingsRockAffected = TRUE,
+		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -3658,7 +3662,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			// .secondaryEffectMove = TRUE,
 			.thawUser = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -3695,7 +3698,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.punchMove = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3730,7 +3732,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3777,6 +3778,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
+			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3826,7 +3828,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3844,7 +3845,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3852,7 +3852,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_VITAL_THROW] =
     {
-        .effect = EFFECT_VITAL_THROW,
+        .effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_FIGHTING,
         .pp = 10,
@@ -3885,7 +3885,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_SYNTHESIS] =
     {
-        .effect = EFFECT_SYNTHESIS,
+        .effect = EFFECT_MORNING_SUN,
         .type = TYPE_GRASS,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -3901,7 +3901,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_MOONLIGHT] =
     {
-        .effect = EFFECT_MOONLIGHT,
+        .effect = EFFECT_MORNING_SUN,
 		.type = TYPE_FAIRY,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -3951,7 +3951,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_TWISTER] =
     {
-        .effect = EFFECT_TWISTER,
+        .effect = EFFECT_FLINCH_HIT,
         .power = 40,
         .type = TYPE_DRAGON,
         .accuracy = 100,
@@ -3960,7 +3960,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_BOTH,
 		.flags =
 		{
-			// .secondaryEffectMove = TRUE,
 			.hitInAirDoubleDmg = TRUE,
 			.windMove = TRUE,
 		},
@@ -4010,7 +4009,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			// .secondaryEffectMove = TRUE,
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -4079,10 +4077,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 5,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
-		.flags =
-		{
-			// .secondaryEffectMove = TRUE,
-		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -4098,7 +4092,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			// .secondaryEffectMove = TRUE,
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -4134,7 +4127,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,

@@ -95,7 +95,7 @@ bool8 AreAllMovesUnusable(u8 battlerId);
 u8 GetImprisonedMovesCount(u8 battlerId, u16 move);
 u8 DoFieldEndTurnEffects(void);
 u8 DoBattlerEndTurnEffects(void);
-bool8 HandleWishPerishSongOnTurnEnd(void);
+bool8 HandleFutureAttackPerishSongOnTurnEnd(void);
 bool8 HandleFaintedMonActions(void);
 void TryClearRageStatuses(void);
 u8 AtkCanceller_UnableToUseMove(void);
@@ -117,6 +117,7 @@ u8 IsMonDisobedient(void);
 bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move);
 u8 GetHiddenPowerType(struct Pokemon *mon);
 bool8 CheckPinchBerryActivate(u8 battler, u16 item);
+void CopyStatusStringToBattleBuffer1(u32 status);
 void ClearBattlerStatus(u8 battler);
 u8 CanBecameConfused(u8 attacker, u8 defender, u32 flags);
 u8 CanBePutToSleep(u8 attacker, u8 defender, u32 flags);
@@ -187,5 +188,6 @@ bool8 CanTransformIntoBattler(u8 battler1, u8 battler2);
 bool8 CanDisableMove(u8 battlerId, u8 movePos, u16 move);
 bool8 CanSafeguardProtectBattler(u8 attacker, u8 defender);
 bool8 IsBattlerProtectedByFlowerVeil(u8 battlerId);
+u8 GetFutureAttackStringId(u16 move);
 
 #endif // GUARD_BATTLE_UTIL_H

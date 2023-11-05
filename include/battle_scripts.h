@@ -304,6 +304,10 @@ extern const u8 BattleScript_AlreadyHasSubstitute[];
 extern const u8 BattleScript_AlreadyConfused[];
 extern const u8 BattleScript_AromaVeilProtects[];
 extern const u8 BattleScript_ObliviousPrevents[];
+extern const u8 BattleScript_HealBellActivateOnBattler[];
+extern const u8 BattleScript_HealBellActivateOnParty[];
+extern const u8 BattleScript_SoundproofBlocksHealBell[];
+extern const u8 BattleScript_MagnitudeString[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForUsingItem[];

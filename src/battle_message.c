@@ -486,6 +486,7 @@ static const u8 sText_PkmnAblWasTakenOver[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}
 static const u8 sText_ItemRestoredAtkHealth[] = _("{B_ITEM_USE_SPECIES_NAME} had its\nHP restored!");
 static const u8 sText_ItemCuredAtkStatus[] = _("{B_ITEM_USE_SPECIES_NAME} had\nits status healed!");
 static const u8 sText_ItemRestoredAtkPP[] = _("{B_ITEM_USE_SPECIES_NAME} had its\nPP restored!");
+static const u8 sText_Buff2CuredItsBuff1Problem[] = _("{B_BUFF2} was cured\nof its {B_BUFF1}.");
 const u8 gStatusConditionString_MentalState[] = _("mental");
 
 static const u8 sText_HP2[] = _("HP");
@@ -1021,6 +1022,7 @@ const u8 *const gBattleStringsTable[] = {
 	[STRINGID_ITEMRESTOREDSPECIESHEALTH - 12]     = sText_ItemRestoredAtkHealth,
 	[STRINGID_ITEMCUREDSPECIESSTATUS - 12]        = sText_ItemCuredAtkStatus,
 	[STRINGID_ITEMRESTOREDSPECIESPP - 12]         = sText_ItemRestoredAtkPP,
+	[STRINGID_BUFF2CUREDOFITSBUFF1 - 12]          = sText_Buff2CuredItsBuff1Problem,
 };
 
 const u16 gMissStringIds[] = {
@@ -1229,9 +1231,6 @@ const u16 gSportsUsedStringIds[] = {
 };
 
 const u16 gPartyStatusHealStringIds[] = {
-    STRINGID_BELLCHIMED,
-    STRINGID_BELLCHIMED,
-    STRINGID_BELLCHIMED,
     STRINGID_BELLCHIMED,
     STRINGID_SOOTHINGAROMA
 };

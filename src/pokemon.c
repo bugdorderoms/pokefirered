@@ -1674,6 +1674,7 @@ bool8 HealStatusConditions(struct Pokemon *mon, u32 healMask, u8 battleId)
 
     if (status & healMask)
     {
+		CopyStatusStringToBattleBuffer1(status);
         status &= ~(healMask);
         SetMonData(mon, MON_DATA_STATUS, &status);
 		

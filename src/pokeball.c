@@ -547,7 +547,7 @@ static u8 CreateBallParticleSprite(u8 ballId, s16 x, s16 y, u8 subpriority)
 	return CreateSprite(&template, x, y, subpriority);
 }
 
-static u16 GetBattlerPokeballItemId(u8 battlerId)
+u16 GetBattlerPokeballItemId(u8 battlerId)
 {
 	return GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_POKEBALL);
 }

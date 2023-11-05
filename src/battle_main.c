@@ -1927,7 +1927,8 @@ static void BattleStartClearSetData(void)
     gBattleScripting.animTargetsHit = 0;
     gLeveledUpInBattle = 0;
     gAbsentBattlerFlags = 0;
-
+	gBattleStruct->moneyMultiplier = 1;
+	
 	// safari battles can't be double battles, so this no need to be changed
     gBattleStruct->safariCatchFactor = gBaseStats[GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)].catchRate * 100 / 1275;
 	
@@ -2455,7 +2456,7 @@ void BattleTurnPassed(void)
     if (HandleFaintedMonActions())
         return;
     gBattleStruct->faintedActionsState = 0;
-    if (HandleWishPerishSongOnTurnEnd())
+    if (HandleFutureAttackPerishSongOnTurnEnd())
         return;
     TurnValuesCleanUp(FALSE);
     gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING | HITMARKER_UNABLE_TO_USE_MOVE | HITMARKER_PLAYER_FAINTED | HITMARKER_PASSIVE_DAMAGE);
@@ -2630,13 +2631,6 @@ static void HandleTurnActionSelectionState(void)
                         gBattleStruct->selectionScriptFinished &= ~(gBitTable[battlerId]);
                         *(gBattleStruct->stateIdAfterSelScript + battlerId) = STATE_WAIT_ACTION_CONFIRMED_STANDBY;
                         gBattleStruct->moveTarget[battlerId] = gBattleBufferB[battlerId][3];
-                        return;
-                    }
-                    else if (gDisableStructs[battlerId].encoredMove != MOVE_NONE)
-                    {
-                        gChosenMoveByBattler[battlerId] = gDisableStructs[battlerId].encoredMove;
-                        *(gBattleStruct->chosenMovePositions + battlerId) = gDisableStructs[battlerId].encoredMovePos;
-                        gBattleCommunication[battlerId] = STATE_WAIT_ACTION_CONFIRMED_STANDBY;
                         return;
                     }
                     else
@@ -3480,6 +3474,7 @@ static void HandleAction_UseMove(void)
     gIsCriticalHit = FALSE;
     gBattleScripting.dmgMultiplier = 1;
     gBattleStruct->atkCancellerTracker = 0;
+	gBattleStruct->magnitudeBasePower = 0;
     gMoveResultFlags = 0;
     gMultiHitCounter = 0;
 	gBattleScripting.savedDmg = 0;

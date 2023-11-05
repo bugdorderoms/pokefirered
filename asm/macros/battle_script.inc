@@ -416,7 +416,7 @@
 	.byte \param1
 	.endm
 
-	@ Help macros for 5 uses of moveend command
+	@ Help macros for uses of moveend command
 
 	@ All cases
 	.macro moveendall
@@ -447,7 +447,13 @@
 	setbyte sMOVEEND_STATE, \from
 	moveend ATK49_MOVEEND_TO, \to
 	.endm
-
+	
+	@ Cases when on a future attack hit
+	.macro moveendfutureattack
+	setbyte sMOVEEND_STATE, 0
+	moveend ATK49_MOVEEND_FUTURE_ATTACK, 0
+	.endm
+	
 	.macro formchange battler:req, basespecies:req, targetspecies:req, reloadtypes:req, reloadability:req, ptr:req
 	.byte 0x4a
 	.byte \battler
@@ -917,8 +923,9 @@
 	.4byte \param0
 	.endm
 
-	.macro healpartystatus
+	.macro healpartystatus caseId:req
 	.byte 0xae
+	.byte \caseId
 	.endm
 
 	.macro cursetarget param0:req
@@ -997,7 +1004,7 @@
 	.byte 0xbf
 	.endm
 
-	.macro recoverbasedonsunlight param0:req
+	.macro recoverbasedonweather param0:req
 	.byte 0xc0
 	.4byte \param0
 	.endm
@@ -1006,7 +1013,7 @@
 	.byte 0xc1
 	.endm
 
-	.macro selectfirstvalidtarget
+	.macro nopc2
 	.byte 0xc2
 	.endm
 

@@ -1462,78 +1462,72 @@ u8 DoBattlerEndTurnEffects(void)
     return 0;
 }
 
-bool8 HandleWishPerishSongOnTurnEnd(void)
+bool8 HandleFutureAttackPerishSongOnTurnEnd(void)
 {
-    gHitMarker |= (HITMARKER_GRUDGE | HITMARKER_SKIP_DMG_TRACK);
-    switch (gBattleStruct->wishPerishSongState)
-    {
-    case 0:
-        while (gBattleStruct->wishPerishSongBattlerId < gBattlersCount)
-        {
-            u8 battlerId = gBattleStruct->wishPerishSongBattlerId;
-            if (gAbsentBattlerFlags & gBitTable[battlerId])
-            {
-                ++gBattleStruct->wishPerishSongBattlerId;
-                continue;
-            }
-            ++gBattleStruct->wishPerishSongBattlerId;
-            if (gWishFutureKnock.futureSightCounter[battlerId] != 0
-             && --gWishFutureKnock.futureSightCounter[battlerId] == 0
-             && gBattleMons[battlerId].hp != 0)
-            {
-                if (gWishFutureKnock.futureSightMove[battlerId] == MOVE_FUTURE_SIGHT)
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-                else
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-                PREPARE_MOVE_BUFFER(gBattleTextBuff1, gWishFutureKnock.futureSightMove[battlerId]);
-		gCurrentMove = gWishFutureKnock.futureSightMove[battlerId];
-		gBattleStruct->dynamicMoveType = gBattleMoves[gCurrentMove].type;
-                gBattlerTarget = battlerId;
-                gBattlerAttacker = gWishFutureKnock.futureSightAttacker[battlerId];
-                gBattleMoveDamage = gWishFutureKnock.futureSightDmg[battlerId];
-                gSpecialStatuses[gBattlerTarget].dmg = 0xFFFF;
-                BattleScriptExecute(BattleScript_MonTookFutureAttack);
-                return TRUE;
-            }
-        }
-        {
-            u8 *state = &gBattleStruct->wishPerishSongState;
-
-            *state = 1;
-            gBattleStruct->wishPerishSongBattlerId = 0;
-        }
-        // fall through
-    case 1:
-        while (gBattleStruct->wishPerishSongBattlerId < gBattlersCount)
-        {
-            gBattlerAttacker = gBattlerByTurnOrder[gBattleStruct->wishPerishSongBattlerId];
-            if (gAbsentBattlerFlags & gBitTable[gBattlerAttacker])
-            {
-                ++gBattleStruct->wishPerishSongBattlerId;
-                continue;
-            }
-            ++gBattleStruct->wishPerishSongBattlerId;
-            if (gStatuses3[gBattlerAttacker] & STATUS3_PERISH_SONG)
-            {
-                PREPARE_BYTE_NUMBER_BUFFER(gBattleTextBuff1, 1, gDisableStructs[gBattlerAttacker].perishSongTimer);
-                if (gDisableStructs[gBattlerAttacker].perishSongTimer == 0)
-                {
-                    gStatuses3[gBattlerAttacker] &= ~STATUS3_PERISH_SONG;
-                    gBattleMoveDamage = gBattleMons[gBattlerAttacker].hp;
-                    gBattlescriptCurrInstr = BattleScript_PerishSongTakesLife;
-                }
-                else
-                {
-                    --gDisableStructs[gBattlerAttacker].perishSongTimer;
-                    gBattlescriptCurrInstr = BattleScript_PerishSongCountGoesDown;
-                }
-                BattleScriptExecute(gBattlescriptCurrInstr);
-                return TRUE;
-            }
-        }
-        break;
-    }
-    gHitMarker &= ~(HITMARKER_GRUDGE | HITMARKER_SKIP_DMG_TRACK);
+	u8 battlerId;
+	
+	gHitMarker |= (HITMARKER_GRUDGE | HITMARKER_SKIP_DMG_TRACK);
+	
+	switch (gBattleStruct->wishPerishSongState)
+	{
+		case 0: // Future Sight
+		    while (gBattleStruct->wishPerishSongBattlerId < gBattlersCount)
+			{
+				battlerId = gBattleStruct->wishPerishSongBattlerId++;
+				
+				if (gWishFutureKnock.futureSightCounter[battlerId] != 0 && --gWishFutureKnock.futureSightCounter[battlerId] == 0 && IsBattlerAlive(battlerId))
+				{
+					gBattlerTarget = battlerId;
+					gBattlerAttacker = gWishFutureKnock.futureSightAttacker[battlerId];
+					gCurrentMove = gWishFutureKnock.futureSightMove[battlerId];
+					SetTypeBeforeUsingMove(gCurrentMove, gBattlerAttacker);
+					
+					gSpecialStatuses[gBattlerTarget].dmg = 0xFFFF;
+					PREPARE_MOVE_BUFFER(gBattleTextBuff1, gCurrentMove);
+					
+					switch (GetFutureAttackStringId(gCurrentMove))
+					{
+						case 0:
+						    gBattleScripting.animArg1 = B_ANIM_FUTURE_SIGHT_HIT;
+							break;
+						case 1:
+						    gBattleScripting.animArg1 = B_ANIM_DOOM_DESIRE_HIT;
+							break;
+					}
+					BattleScriptExecute(BattleScript_MonTookFutureAttack);
+					return TRUE;
+				}
+			}
+			++gBattleStruct->wishPerishSongState;
+			gBattleStruct->wishPerishSongBattlerId = 0;
+			// fallthrough
+		case 1: // Perish Song
+            while (gBattleStruct->wishPerishSongBattlerId < gBattlersCount)
+			{
+				gBattlerAttacker = gBattlerByTurnOrder[gBattleStruct->wishPerishSongBattlerId++];
+				
+				if (IsBattlerAlive(gBattlerAttacker) && (gStatuses3[gBattlerAttacker] & STATUS3_PERISH_SONG))
+				{
+					PREPARE_BYTE_NUMBER_BUFFER(gBattleTextBuff1, 1, gDisableStructs[gBattlerAttacker].perishSongTimer);
+					
+					if (gDisableStructs[gBattlerAttacker].perishSongTimer == 0)
+					{
+						gStatuses3[gBattlerAttacker] &= ~(STATUS3_PERISH_SONG);
+						gBattleMoveDamage = gBattleMons[gBattlerAttacker].hp;
+						gBattlescriptCurrInstr = BattleScript_PerishSongTakesLife;
+					}
+					else
+					{
+						--gDisableStructs[gBattlerAttacker].perishSongTimer;
+						gBattlescriptCurrInstr = BattleScript_PerishSongCountGoesDown;
+					}
+					BattleScriptExecute(gBattlescriptCurrInstr);
+					return TRUE;
+				}
+			}
+			break;
+	}
+	gHitMarker &= ~(HITMARKER_GRUDGE | HITMARKER_SKIP_DMG_TRACK);
     return FALSE;
 }
 
@@ -2087,19 +2081,23 @@ bool8 HasNoMonsToSwitch(u8 battler, u8 partyIdBattlerOn1, u8 partyIdBattlerOn2)
     }
 }
 
+void CopyStatusStringToBattleBuffer1(u32 status)
+{
+	if (status & STATUS1_PSN_ANY)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_PoisonJpn);
+	else if (status & STATUS1_PARALYSIS)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_ParalysisJpn);
+	else if (status & STATUS1_BURN)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_BurnJpn);
+	else if (status & STATUS1_FREEZE)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_IceJpn);
+	else if (status & STATUS1_SLEEP)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_SleepJpn);
+}
+
 void ClearBattlerStatus(u8 battler)
 {
-	if (gBattleMons[battler].status1 & STATUS1_PSN_ANY)
-		StringCopy(gBattleTextBuff1, gStatusConditionString_PoisonJpn);
-	else if (gBattleMons[battler].status1 & STATUS1_PARALYSIS)
-		StringCopy(gBattleTextBuff1, gStatusConditionString_ParalysisJpn);
-	else if (gBattleMons[battler].status1 & STATUS1_BURN)
-		StringCopy(gBattleTextBuff1, gStatusConditionString_BurnJpn);
-	else if (gBattleMons[battler].status1 & STATUS1_FREEZE)
-		StringCopy(gBattleTextBuff1, gStatusConditionString_IceJpn);
-	else if (gBattleMons[battler].status1 & STATUS1_SLEEP)
-		StringCopy(gBattleTextBuff1, gStatusConditionString_SleepJpn);
-	
+	CopyStatusStringToBattleBuffer1(gBattleMons[battler].status1);
 	gBattleMons[battler].status1 = 0;
 	gBattleMons[battler].status2 &= ~(STATUS2_NIGHTMARE); // fix nightmare glitch
 	gBattleScripting.battler = battler;
@@ -5245,11 +5243,9 @@ bool8 MoveHasHealingEffect(u16 move)
 		case EFFECT_RESTORE_HP:
 		case EFFECT_ABSORB:
 		case EFFECT_DREAM_EATER:
-		// TODO:
 		case EFFECT_REST:
 		case EFFECT_MORNING_SUN:
-		case EFFECT_MOONLIGHT:
-		case EFFECT_SYNTHESIS:
+		// TODO:
 		case EFFECT_HEAL_PULSE:
 		case EFFECT_HEALING_WISH:
 		case EFFECT_SWALLOW:
@@ -5602,4 +5598,21 @@ bool8 IsBattlerProtectedByFlowerVeil(u8 battlerId)
 		return TRUE;
 	}
 	return FALSE;
+}
+
+u8 GetFutureAttackStringId(u16 move)
+{
+	u8 stringId;
+	
+	switch (move)
+	{
+		case MOVE_DOOM_DESIRE:
+		    stringId = 1;
+			break;
+		default:
+		    stringId = 0;
+			break;
+	}
+	gBattleCommunication[MULTISTRING_CHOOSER] = stringId;
+	return stringId;
 }

@@ -468,11 +468,23 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			for (i = 1; i < gDisableStructs[attacker].furyCutterCounter; i++)
 				basePower *= 2;
 			break;
-		case EFFECT_ERUPTION:
-			basePower = (gBattleMons[attacker].hp * basePower) / gBattleMons[attacker].maxHP;
+		case EFFECT_RETURN:
+			basePower = 10 * (gBattleMons[attacker].friendship) / 25;
+			break;
+		case EFFECT_PRESENT:
+		    basePower = gBattleStruct->presentBasePower;
+			break;
+		case EFFECT_FRUSTRATION:
+			basePower = 10 * (255 - gBattleMons[attacker].friendship) / 25;
+			break;
+		case EFFECT_MAGNITUDE:
+			basePower = gBattleStruct->magnitudeBasePower;
 			break;
 		case EFFECT_BEAT_UP:
 		    basePower = (gBaseStats[GetMonData(&GetBattlerParty(attacker)[gBattleCommunication[0] - 1], MON_DATA_SPECIES)].baseAttack / 10) + 5;
+			break;
+		case EFFECT_ERUPTION:
+			basePower = (gBattleMons[attacker].hp * basePower) / gBattleMons[attacker].maxHP;
 			break;
 		case EFFECT_FACADE:
 			if ((gBattleMons[attacker].status1 & (STATUS1_PARALYSIS | STATUS1_BURN | STATUS1_PSN_ANY)))
@@ -493,18 +505,6 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 		    break;
 		case EFFECT_SPIT_UP:
 			basePower = 100 * gDisableStructs[attacker].stockpileCounter;
-			break;
-		case EFFECT_RETURN:
-			basePower = 10 * (gBattleMons[attacker].friendship) / 25;
-			break;
-		case EFFECT_FRUSTRATION:
-			basePower = 10 * (255 - gBattleMons[attacker].friendship) / 25;
-			break;
-		case EFFECT_PRESENT:
-		    basePower = gBattleStruct->presentBasePower;
-			break;
-		case EFFECT_MAGNITUDE:
-			basePower = gBattleStruct->magnitudeBasePower;
 			break;
 	}
 	

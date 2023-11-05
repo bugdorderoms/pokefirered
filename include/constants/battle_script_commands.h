@@ -102,9 +102,10 @@
 #define ATK48_DONT_CHECK_LOWER      0x8
 
 // Atk49, moveend states and cases
-#define ATK49_MOVEEND_ALL  0 // loop through all cases
-#define ATK49_MOVEEND_CASE 1 // do only the specified case
-#define ATK49_MOVEEND_TO   2 // loop from first to specified cases
+#define ATK49_MOVEEND_ALL           0 // loop through all cases
+#define ATK49_MOVEEND_CASE          1 // do only the specified case
+#define ATK49_MOVEEND_TO            2 // loop from first to specified cases
+#define ATK49_MOVEEND_FUTURE_ATTACK 3 // only cases that occours on a future attack hit
 
 #define ATK49_SUM_DMG                           0
 #define ATK49_RAGE                              1

@@ -303,7 +303,7 @@ void AnimTask_SwitchOutShrinkMon(u8 taskId)
 void AnimTask_SwitchOutBallEffect(u8 taskId)
 {
     u8 spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
-    u8 ballId = ItemIdToBallId(GetMonData(GetBattlerPartyIndexPtr(gBattleAnimAttacker), MON_DATA_POKEBALL));
+    u8 ballId = ItemIdToBallId(GetBattlerPokeballItemId(gBattleAnimAttacker));
     u8 x, y;
     u8 priority, subpriority;
 
