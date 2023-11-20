@@ -85,6 +85,7 @@ void ItemUseCB_FormChangeListMenu(u8 taskId, TaskFunc func);
 void ItemUseCB_Fusion(u8 taskId, TaskFunc func);
 void UpdateCurrentPartyMonIconSpecies(u16 species);
 void UpdatePartyAfterPokemonFusion(u16 species);
+void CreatePartyMonAfterDefusing(u16 species);
 void SetBattlerUsedItemForBattleScript(u16 item);
 
 #endif // GUARD_PARTY_MENU_H

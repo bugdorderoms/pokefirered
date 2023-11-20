@@ -74,7 +74,7 @@ u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 a
 							if (formsTable[i].param2 != ability && !gSpecialStatuses[battlerId].removedWeatherChangeAbility)
 								break;
 						}
-					    if ((!param && !gBattleWeather) || IsBattlerWeatherAffected(battlerId, param))
+					    if ((!param && (!gBattleWeather || !WEATHER_HAS_EFFECT)) || IsBattlerWeatherAffected(battlerId, param))
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
 					case FORM_CHANGE_SWITCH_OUT:
@@ -143,16 +143,18 @@ u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 a
 							    targetSpecies = formsTable[i].param2;
 						}
 						break;
-					case FORM_CHANGE_FUSION_MASTER:
-					    if (param == gSpecialVar_ItemId)
+					case FORM_CHANGE_ENDTURN:
+					    if (param == species)
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
-					case FORM_CHANGE_FUSION_ITEM:
-					    if (param == gSpecialVar_ItemId)
-						{
+					case FORM_CHANGE_MOVE:
+					    if (param == gCurrentMove)
 							targetSpecies = formsTable[i].targetSpecies;
-							gSpecialVar_0x8000 = formsTable[i].param2;
-						}
+						break;
+					case FORM_CHANGE_MOVE_SPLIT:
+					    if ((formsTable[i].param2 && param != GetMoveSplit(gCurrentMove))
+							|| (!formsTable[i].param2 && param == GetMoveSplit(gCurrentMove)))
+							targetSpecies = formsTable[i].targetSpecies;
 						break;
 				}
 			}

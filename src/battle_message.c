@@ -156,7 +156,7 @@ static const u8 sText_PkmnPeltedByHail[] = _("{B_ATK_NAME_WITH_PREFIX} is pelted
 static const u8 sText_PkmnsXWoreOff[] = _("{B_ATK_PREFIX1}'s {B_BUFF1}\nwore off!");
 static const u8 sText_PkmnSeeded[] = _("{B_DEF_NAME_WITH_PREFIX} was seeded!");
 static const u8 sText_PkmnEvadedAttack[] = _("{B_DEF_NAME_WITH_PREFIX} evaded\nthe attack!");
-static const u8 sText_PkmnSappedByLeechSeed[] = _("{B_ATK_NAME_WITH_PREFIX}'s health is\nsapped by Leech Seed!");
+static const u8 sText_PkmnSappedByLeechSeed[] = _("{B_DEF_NAME_WITH_PREFIX}'s health is\nsapped by Leech Seed!");
 static const u8 sText_PkmnFastAsleep[] = _("{B_ATK_NAME_WITH_PREFIX} is fast\nasleep.");
 static const u8 sText_PkmnWokeUp[] = _("{B_ATK_NAME_WITH_PREFIX} woke up!");
 static const u8 sText_PkmnUproarKeptAwake[] = _("But {B_SCR_ACTIVE_NAME_WITH_PREFIX}'s Uproar\nkept it awake!");
@@ -487,6 +487,9 @@ static const u8 sText_ItemRestoredAtkHealth[] = _("{B_ITEM_USE_SPECIES_NAME} had
 static const u8 sText_ItemCuredAtkStatus[] = _("{B_ITEM_USE_SPECIES_NAME} had\nits status healed!");
 static const u8 sText_ItemRestoredAtkPP[] = _("{B_ITEM_USE_SPECIES_NAME} had its\nPP restored!");
 static const u8 sText_Buff2CuredItsBuff1Problem[] = _("{B_BUFF2} was cured\nof its {B_BUFF1}.");
+static const u8 sText_MysteriousAirContinues[] = _("The mysterious air current\ncontinues to blow!");
+static const u8 sText_AbilityActivated[] = _("{B_SCR_ACTIVE_ABILITY} activated!");
+static const u8 sText_AbilityDeactivated[] = _("{B_SCR_ACTIVE_ABILITY} deactivated!");
 const u8 gStatusConditionString_MentalState[] = _("mental");
 
 static const u8 sText_HP2[] = _("HP");
@@ -1023,6 +1026,9 @@ const u8 *const gBattleStringsTable[] = {
 	[STRINGID_ITEMCUREDSPECIESSTATUS - 12]        = sText_ItemCuredAtkStatus,
 	[STRINGID_ITEMRESTOREDSPECIESPP - 12]         = sText_ItemRestoredAtkPP,
 	[STRINGID_BUFF2CUREDOFITSBUFF1 - 12]          = sText_Buff2CuredItsBuff1Problem,
+	[STRINGID_MYSTERIOUSAIRCONTINUES - 12]        = sText_MysteriousAirContinues,
+	[STRINGID_ABILITYACTIVATED - 12]              = sText_AbilityActivated,
+	[STRINGID_ABILITYDEACTIVATED - 12]            = sText_AbilityDeactivated,
 };
 
 const u16 gMissStringIds[] = {
@@ -1050,25 +1056,23 @@ const u16 gMoveWeatherChangeStringIds[] = {
     STRINGID_STARTEDHAIL
 };
 
-const u16 gSandstormHailContinuesStringIds[] = {
-    STRINGID_SANDSTORMRAGES,
-    STRINGID_HAILCONTINUES
-};
-
 const u16 gSandstormHailDmgStringIds[] = {
     STRINGID_PKMNBUFFETEDBYSANDSTORM,
     STRINGID_PKMNPELTEDBYHAIL
 };
 
-const u16 gSandstormHailEndStringIds[] = {
-    STRINGID_SANDSTORMSUBSIDED,
-    STRINGID_HAILSTOPPED
-};
-
-const u16 gRainContinuesStringIds[] = {
+const u16 gWeatherContinuesStringIds[] = {
     STRINGID_RAINCONTINUES,
-    STRINGID_DOWNPOURCONTINUES,
-    STRINGID_RAINSTOPPED
+    STRINGID_RAINSTOPPED,
+	STRINGID_SUNLIGHTSTRONG,
+	STRINGID_SUNLIGHTFADED,
+	STRINGID_SANDSTORMRAGES,
+	STRINGID_SANDSTORMSUBSIDED,
+	STRINGID_HAILCONTINUES,
+	STRINGID_HAILSTOPPED,
+	STRINGID_DEEPFOG,
+	STRINGID_FOGENDED,
+	STRINGID_MYSTERIOUSAIRCONTINUES,
 };
 
 const u16 gProtectLikeUsedStringIds[] = {
@@ -1265,16 +1269,6 @@ const u16 gBallEscapeStringIds[] = {
     STRINGID_SHOOTSOCLOSE
 };
 
-const u16 gWeatherContinuesStringIds[] = {
-    [WEATHER_RAIN] = STRINGID_ITISRAINING,
-    [WEATHER_SNOW] = STRINGID_STARTEDHAIL,
-    [WEATHER_RAIN_THUNDERSTORM] = STRINGID_ITISRAINING,
-    [WEATHER_FOG_HORIZONTAL] = STRINGID_DEEPFOG,
-    [WEATHER_SANDSTORM] = STRINGID_SANDSTORMISRAGING,
-    [WEATHER_FOG_DIAGONAL] = STRINGID_DEEPFOG,
-    [WEATHER_DOWNPOUR] = STRINGID_ITISRAINING,
-};
-
 const u16 gInobedientStringIds[] = {
     STRINGID_PKMNLOAFING,
     STRINGID_PKMNWONTOBEY,
@@ -1360,6 +1354,8 @@ const u16 gFormChangeAbilitiesStrings[] = {
 	STRINGID_PKMNTRANSFORMED,
 	STRINGID_CHANGEDTOBLADE,
 	STRINGID_CHANGEDTOSHIELD,
+	STRINGID_ABILITYACTIVATED,
+	STRINGID_ABILITYDEACTIVATED,
 };
 
 const u16 gStartedSchoolingStringIds[] = {
@@ -1370,6 +1366,12 @@ const u16 gStartedSchoolingStringIds[] = {
 const u16 gPrimalWeatherBlocksAttackStringIds[] = {
 	STRINGID_FIZZLESFIRETYPEATTACK,
 	STRINGID_EVAPORATEWATERTYPEATTACK,
+};
+
+const u16 gSideStatusWoreOffStringIds[] =
+{
+	STRINGID_PKMNSXWOREOFF,
+	STRINGID_PKMNSAFEGUARDEXPIRED,
 };
 
 const u8 gText_PkmnIsEvolving[] = _("What?\n{STR_VAR_1} is evolving!");

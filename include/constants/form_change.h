@@ -72,15 +72,18 @@
 // param2 is optionally passed as an species if the pokemon can revert form if uses the item in it again
 #define FORM_CHANGE_USE_ITEM      0x000F
 
-// form change used to determine the master of an fusion. (eg. Kyurem, Necrozma, etc)
-// param = itemId
-// the species passed as target is the fusion master itself
-#define FORM_CHANGE_FUSION_MASTER 0x0010
+// form change when a battle turn passes. (It will switch betwen the forms on each turn)
+// param = actual species
+#define FORM_CHANGE_ENDTURN       0x0010
 
-// form change fusing it with an master species.
-// param = itemId
-// param2 = master species
-#define FORM_CHANGE_FUSION_ITEM   0x0011
+// form change when the pokemon uses an move.
+// param = moveId
+#define FORM_CHANGE_MOVE          0x0011
+
+// form change when the pokemon uses an move with split.
+// param = split
+// param2 = if TRUE it will transform when use a move with diferent split
+#define FORM_CHANGE_MOVE_SPLIT    0x0012
 
 // battle mechanic forms. TODO:
 

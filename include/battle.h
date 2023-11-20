@@ -5,6 +5,7 @@
 #include "global.h"
 #include "constants/battle.h"
 #include "battle_util.h"
+#include "battle_queued_effects.h"
 #include "battle_script_commands.h"
 #include "battle_main.h"
 #include "battle_ai_switch_items.h"
@@ -341,10 +342,17 @@ struct MoveEffect
 	bool8 unused:6;
 };
 
+struct QueuedEffect
+{
+	u8 id;
+	u8 battler;
+	bool8 done;
+};
+
 struct BattleStruct
 {
     /*0x000*/ u8 turnEffectsTracker;
-    /*0x001*/ u8 turnCountersTracker;
+    /*0x001*/ u8 queuedEffectsCount;
 	/*0x002*/ u8 atkCancellerTracker;
 	/*0x003*/ u8 faintedActionsState;
 	/*0x004*/ u8 focusPunchBattlerId;
@@ -398,14 +406,13 @@ struct BattleStruct
 	/*0x05B*/ u8 multiplayerId;
     /*0x05C*/ u16 abilityPreventingSwitchout;
 	/*0x05E*/ u8 simulatedInputState[4];  // used by Oak/Old Man/Pokedude controllers
-	/*0x062*/ u8 turnSideTracker;
+	/*0x062*/ u8 filler; // Unused
 	/*0x063*/ u8 soulHeartBattlerId;
 	/*0x064*/ u16 savedBattleTypeFlags;
 	/*0x066*/ u8 synchronizeMoveEffect;
 	/*0x067*/ u8 switchInItemsCounter;
 	/*0x068*/ u8 givenExpMons;
-	/*0x069*/ u8 wishPerishSongState;
-    /*0x06A*/ u8 wishPerishSongBattlerId;
+	/*0x069*/ u8 payDayLevels[MAX_BATTLERS_COUNT / 2]; // To store player mon's levels when using pay day, 0 = left, 1 = right
 	/*0x06B*/ u8 usedReviveItemBattler; // for revive battle usage, as flag using gBitTable
 	/*0x06C*/ u16 lastTakenMove[MAX_BATTLERS_COUNT];
 	/*0x074*/ u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT];
@@ -430,15 +437,16 @@ struct BattleStruct
 	/*0x0E7*/ u8 dynamaxMsgDone:1;
 	/*0x0E7*/ u8 terastalMsgDone:1;
 	/*0x0E7*/ u8 throwingPokeBall:1;
-	/*0x0E7*/ u8 filler:4;
+	/*0x0E7*/ u8 turnSideTracker:3;
+	/*0x0E7*/ u8 filler2:1; // Unused
 	/*0x0E8*/ u8 intrepidSwordActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x0EA*/ u8 dauntlessShieldActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x0EC*/ u16 abilityOverride[MAX_BATTLERS_COUNT]; // Used to override the ability on pop up by this value
 	/*0x0F4*/ u8 faintCounter[B_SIDE_COUNT]; // for Supreme Overlord, caps at 100 faints per side
 	/*0x0F6*/ u8 supremeOverlordBoosts[MAX_BATTLERS_COUNT];
 	/*0x0FA*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // for Pickup gen5 effect
-	/*0x0FE*/ u8 payDayLevels[MAX_BATTLERS_COUNT / 2]; // To store player mon's levels when using pay day, 0 = left, 1 = right
-	/*0x100*/ struct MoveEffect moveEffect;
+	/*0x0FE*/ struct QueuedEffect queuedEffectsList[B_QUEUED_COUNT + 1];
+	          struct MoveEffect moveEffect;
 	          struct Illusion illusion[MAX_BATTLERS_COUNT];
 	          struct MoveInfo moveInfo;
     union {
@@ -455,9 +463,9 @@ extern struct BattleStruct *gBattleStruct;
     (var) /= (gStatStageRatios)[(mon)->statStages[(statIndex)]][1];                 \
 }
 
-#define IS_MOVE_PHYSICAL(move)(gBattleMoves[move].split == SPLIT_PHYSICAL)
-#define IS_MOVE_SPECIAL(move)(gBattleMoves[move].split == SPLIT_SPECIAL)
-#define IS_MOVE_STATUS(move)(gBattleMoves[move].split == SPLIT_STATUS)
+#define IS_MOVE_PHYSICAL(move)(GetMoveSplit(move) == SPLIT_PHYSICAL)
+#define IS_MOVE_SPECIAL(move)(GetMoveSplit(move) == SPLIT_SPECIAL)
+#define IS_MOVE_STATUS(move)(GetMoveSplit(move) == SPLIT_STATUS)
 #define BATTLER_DAMAGED(battlerId) ((gSpecialStatuses[battlerId].physicalDmg != 0 || gSpecialStatuses[battlerId].specialDmg != 0))
 #define IS_BATTLER_OF_TYPE(battlerId, type)((gBattleMons[battlerId].type1 == type || gBattleMons[battlerId].type2 == type || (gBattleMons[battlerId].type3 != TYPE_MYSTERY && gBattleMons[battlerId].type3 == type)))
 #define SET_BATTLER_TYPE(battlerId, type)        \

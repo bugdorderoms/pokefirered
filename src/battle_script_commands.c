@@ -21,6 +21,7 @@
 #include "overworld.h"
 #include "form_change.h"
 #include "party_menu.h"
+#include "battle_queued_effects.h"
 #include "trainer_pokemon_sprites.h"
 #include "field_specials.h"
 #include "battle.h"
@@ -227,7 +228,7 @@ static void atk92_setlightscreen(void);
 static void atk93_tryKO(void);
 static void atk94_nop(void);
 static void atk95_setsandstorm(void);
-static void atk96_weatherdamage(void);
+static void atk96_nop(void);
 static void atk97_tryinfatuating(void);
 static void atk98_updatestatusicon(void);
 static void atk99_setmist(void);
@@ -486,7 +487,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk93_tryKO,
     atk94_nop,
     atk95_setsandstorm,
-    atk96_weatherdamage,
+    atk96_nop,
     atk97_tryinfatuating,
     atk98_updatestatusicon,
     atk99_setmist,
@@ -870,33 +871,27 @@ static void atk00_attackcanceler(void)
 	gHitMarker &= ~(HITMARKER_ALLOW_NO_PP);
 	
 	// Try activate Stance Change
-	if (GetBattlerAbility(gBattlerAttacker) == ABILITY_STANCE_CHANGE && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_TRANSFORMED)
-		&& !gBattleMoves[gCurrentMove].flags.callOtherMove)
+	if (GetBattlerAbility(gBattlerAttacker) == ABILITY_STANCE_CHANGE && !gBattleMoves[gCurrentMove].flags.callOtherMove)
 	{
-		switch (gBattleMons[gBattlerAttacker].species)
+		u16 newSpecies = TryDoBattleFormChange(gBattlerAttacker, FORM_CHANGE_MOVE);
+		
+		if (newSpecies)
+			gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+		else
 		{
-			case SPECIES_AEGISLASH:
-			    if (!IS_MOVE_STATUS(gCurrentMove))
-				{
-					DoBattleFormChange(gBattlerAttacker, SPECIES_AEGISLASH_BLADE, FALSE, FALSE);
-					gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-					gLastUsedAbility = ABILITY_STANCE_CHANGE;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_AttackerFormChange;
-					return;
-				}
-				break;
-			case SPECIES_AEGISLASH_BLADE:
-			    if (gCurrentMove == MOVE_KINGS_SHIELD)
-				{
-					DoBattleFormChange(gBattlerAttacker, SPECIES_AEGISLASH, FALSE, FALSE);
-					gBattleCommunication[MULTISTRING_CHOOSER] = 3;
-					gLastUsedAbility = ABILITY_STANCE_CHANGE;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_AttackerFormChange;
-					return;
-				}
-				break;
+			newSpecies = TryDoBattleFormChange(gBattlerAttacker, FORM_CHANGE_MOVE_SPLIT);
+			
+			if (newSpecies)
+				gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+		}
+		
+		if (newSpecies)
+		{
+			gLastUsedAbility = GetBattlerAbility(gBattlerAttacker);
+			DoBattleFormChange(gBattlerAttacker, newSpecies, FALSE, FALSE);
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_AttackerFormChange;
+			return;
 		}
 	}
 	// Check if obeys
@@ -1288,7 +1283,7 @@ s16 CalcMoveCritChance(u8 battlerAtk, u8 battlerDef, u16 move)
 	u16 atkAbility = GetBattlerAbility(battlerAtk), defAbility = GetBattlerAbility(battlerDef);
 	
 	// Check effects that blocks critical hits
-	if (gStatuses3[battlerAtk] & STATUS3_CANT_SCORE_A_CRIT || defAbility == ABILITY_BATTLE_ARMOR || defAbility == ABILITY_SHELL_ARMOR)
+	if (defAbility == ABILITY_BATTLE_ARMOR || defAbility == ABILITY_SHELL_ARMOR)
 		critChance = -1;
 	else if (atkAbility == ABILITY_MERCILESS && gBattleMons[battlerDef].status1 & STATUS1_PSN_ANY) // Check effects that cause the moves to aways be critical
 		critChance = -2;
@@ -1891,6 +1886,7 @@ static void atk0F_resultmessage(void)
 				case MOVE_RESULT_FOE_ENDURED:
 				    gDisableStructs[gBattlerTarget].enduredHit = TRUE; // So effects that require damage can activate
 				    stringId = STRINGID_PKMNENDUREDHIT;
+					break;
 				case MOVE_RESULT_FAILED:
 				    stringId = STRINGID_BUTITFAILED;
 					break;
@@ -3427,9 +3423,10 @@ static void atk49_moveend(void)
 				++gBattleScripting.atk49_state;
 				break;
 			case ATK49_MAGICIAN: // Check Magician activates
-			    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && BATTLER_DAMAGED(gBattlerTarget) && GetBattlerAbility(gBattlerAttacker) == ABILITY_MAGICIAN
-				&& IsBattlerAlive(gBattlerAttacker) && gCurrentMove != MOVE_FLING && gCurrentMove != MOVE_NATURAL_GIFT && !gBattleMons[gBattlerAttacker].item
-				&& !(gWishFutureKnock.knockedOffMons[GetBattlerSide(gBattlerTarget)] & gBitTable[gBattlerPartyIndexes[gBattlerTarget]])
+			    if (state != ATK49_MOVEEND_FUTURE_ATTACK && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && BATTLER_DAMAGED(gBattlerTarget)
+				&& GetBattlerAbility(gBattlerAttacker) == ABILITY_MAGICIAN && IsBattlerAlive(gBattlerAttacker)
+			    && gBattleMoves[gCurrentMove].effect != EFFECT_FLING && gBattleMoves[gCurrentMove].effect != EFFECT_NATURAL_GIFT
+				&& !gBattleMons[gBattlerAttacker].item && !(gWishFutureKnock.knockedOffMons[GetBattlerSide(gBattlerTarget)] & gBitTable[gBattlerPartyIndexes[gBattlerTarget]])
 				&& gBattleMons[gBattlerTarget].item && !(GetBattlerAbility(gBattlerTarget) == ABILITY_STICKY_HOLD && IsBattlerAlive(gBattlerTarget))
 				&& !SubsBlockMove(gBattlerAttacker, gBattlerTarget, gCurrentMove) && CanStealItem(gBattlerAttacker, gBattlerTarget, gBattleMons[gBattlerTarget].item))
 				{
@@ -6103,46 +6100,8 @@ static void atk95_setsandstorm(void)
     ++gBattlescriptCurrInstr;
 }
 
-static bool8 IsImmuneToWeatherDamage(void)
+static void atk96_nop(void)
 {
-	if ((IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE() && GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT) || !IsBattlerAlive(gBattlerAttacker) || !WEATHER_HAS_EFFECT
-	|| (gStatuses3[gBattlerAttacker] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER)) || GetBattlerAbility(gBattlerAttacker) == ABILITY_OVERCOAT
-	|| GetBattlerAbility(gBattlerAttacker) == ABILITY_MAGIC_GUARD)
-	    return TRUE;
-	return FALSE;
-}
-
-static void atk96_weatherdamage(void)
-{
-	u16 atkAbility;
-	
-	gBattlerAttacker = gBattlerByTurnOrder[gBattleCommunication[MULTIUSE_STATE]];
-	gBattleMoveDamage = 0;
-	
-    if (!IsImmuneToWeatherDamage())
-    {
-		atkAbility = GetBattlerAbility(gBattlerAttacker);
-		
-        if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_SANDSTORM_ANY))
-		{
-			if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ROCK) && !IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_STEEL) && !IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_GROUND)
-			&& atkAbility != ABILITY_SAND_VEIL && atkAbility != ABILITY_SAND_RUSH && atkAbility != ABILITY_SAND_FORCE)
-			{
-				gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
-				if (gBattleMoveDamage == 0)
-					gBattleMoveDamage = 1;
-			}
-		}
-		else if (IsBattlerWeatherAffected(gBattlerAttacker, WEATHER_HAIL_ANY))
-		{
-			if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ICE) && atkAbility != ABILITY_ICE_BODY && atkAbility != ABILITY_SNOW_CLOAK)
-            {
-                gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
-                if (gBattleMoveDamage == 0)
-                    gBattleMoveDamage = 1;
-            }
-		}
-    }
     ++gBattlescriptCurrInstr;
 }
 
@@ -7185,6 +7144,7 @@ static void atkC3_trysetfutureattack(void)
         gWishFutureKnock.futureSightMove[gBattlerTarget] = gCurrentMove;
         gWishFutureKnock.futureSightAttacker[gBattlerTarget] = gBattlerAttacker;
         gWishFutureKnock.futureSightCounter[gBattlerTarget] = 3;
+		AddBattleEffectToQueueList(gBattlerTarget, B_QUEUED_FUTURE_SIGHT);
 		GetFutureAttackStringId(gCurrentMove);
         gBattlescriptCurrInstr += 5;
     }

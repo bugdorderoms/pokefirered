@@ -4179,7 +4179,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4192,7 +4191,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_RANDOM,
         .flags =
 		{

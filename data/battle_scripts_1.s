@@ -141,6 +141,8 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectAllStatsUpHit         @ EFFECT_ALL_STATS_UP_HIT
 	.4byte BattleScript_EffectFutureSight           @ EFFECT_FUTURE_SIGHT
 	.4byte BattleScript_EffectBeatUp                @ EFFECT_BEAT_UP
+	.4byte BattleScript_EffectFakeOut               @ EFFECT_FAKE_OUT
+	.4byte BattleScript_EffectUproar                @ EFFECT_UPROAR
 	
 	.4byte BattleScript_EffectSpecialAttackUp       @ 
 	.4byte BattleScript_EffectSpeedDown             @ 
@@ -172,8 +174,6 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectTwister
 	.4byte BattleScript_EffectGust
 	.4byte BattleScript_EffectFlinchMinimizeHit
-	.4byte BattleScript_EffectFakeOut
-	.4byte BattleScript_EffectUproar
 	.4byte BattleScript_EffectStockpile
 	.4byte BattleScript_EffectSpitUp
 	.4byte BattleScript_EffectSwallow
@@ -1572,6 +1572,20 @@ BattleScript_EffectBeatUp::
 	addbyte sMULTIUSE_STATE, 1
 	goto BattleScript_HitFromAtkString
 
+BattleScript_EffectFakeOut::
+	attackcanceler
+	jumpifnotfirstturn BattleScript_ButItFailedAtkStringPpReduce
+	goto BattleScript_EffectFlinchHit
+
+BattleScript_EffectUproar::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	setmoveeffect MOVE_EFFECT_UPROAR, TRUE, TRUE
+	attackstring
+	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_HitFromCritCalc
+	ppreduce
+	goto BattleScript_HitFromCritCalc
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1694,11 +1708,22 @@ BattleScript_AbsorbLiquidOoze::
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	jumpifmovehadnoeffect BattleScript_AbsorbTryFainting
-	loadabilitypopup BS_TARGET
+	call BattleScript_SuckedLiquidOoozeString
+	goto BattleScript_AbsorbTryFainting
+
+BattleScript_LeechSeedLiquidOoze::
+    manipulatedamage ATK80_DMG_CHANGE_SIGN
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	call BattleScript_SuckedLiquidOoozeString
+	goto BattleScript_LeechSeedTurnUpdateHp
+
+BattleScript_SuckedLiquidOoozeString::
+    loadabilitypopup BS_TARGET
 	printstring STRINGID_ITSUCKEDLIQUIDOOZE
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_TARGET
-	goto BattleScript_AbsorbTryFainting
+	return
 
 BattleScript_RageIsBuildingContraryMessage::
     printfromtable gStatDownStringIds
@@ -1801,6 +1826,10 @@ BattleScript_PickpocketActivation::
 	swapattackerwithtarget
 	removeabilitypopup BS_TARGET
 	return
+
+BattleScript_EmergencyExitEnd2::
+    call BattleScript_EmergencyExit
+	end2
 
 BattleScript_EmergencyExit::
     loadabilitypopup BS_TARGET
@@ -2097,12 +2126,11 @@ BattleScript_BadDreamsDmg::
 	setbyte sFIXED_ABILITY_POPUP, TRUE
 	printstring STRINGID_DEFISTORMENTED
 	waitmessage B_WAIT_TIME_LONG
+	recordlastability BS_ATTACKER
 	manipulatedamage ATK80_DMG_1_8_TARGET_MAX_HP
-	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE
-	healthbarupdate BS_TARGET
-	datahpupdate BS_TARGET
-	tryfaintmon BS_TARGET
-	checkteamslot BattleScript_BadDreamsNextTarget
+	swapattackerwithtarget
+	call BattleScript_DoTurnDmg
+	swapattackerwithtarget
 BattleScript_BadDreamsNextTarget::
 	addbyte gBattlerTarget, 1
 	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_BadDreamsLoop
@@ -2167,10 +2195,7 @@ BattleScript_SoundproofProtected::
 	goto BattleScript_MoveEnd
 
 BattleScript_SoundproofBlocksPerishSong::
-    loadabilitypopup BS_SCRIPTING
-	printstring STRINGID_PKMNSXBLOCKSY2
-	waitmessage B_WAIT_TIME_LONG
-	removeabilitypopup BS_SCRIPTING
+    call BattleScript_SoundproofBlocksHealBell
 	goto BattleScript_PerishSongLoopIncrement
 
 BattleScript_SoundproofBlocksHealBell::
@@ -2486,8 +2511,137 @@ BattleScript_PerishSongCountGoesDown::
 	waitmessage B_WAIT_TIME_LONG
 	end2
 
+BattleScript_WeatherContinuesOrEnds::
+	printfromtable gWeatherContinuesStringIds
+	waitmessage B_WAIT_TIME_LONG
+	jumpifbyte CMP_EQUAL, sMULTIUSE_STATE, TRUE, BattleScript_WeatherEnds
+	playanimation2 BS_BATTLER_0, sB_ANIM_ARG1
+BattleScript_WeatherEnds::
+	end2
 
+BattleScript_WeatherDamage::
+	printfromtable gSandstormHailDmgStringIds
+	waitmessage B_WAIT_TIME_LONG
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE
+	effectivenesssound
+	playanimation BS_ATTACKER, B_ANIM_MON_HIT
+	waitstate
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	tryfaintmon BS_ATTACKER
+	end2
+	
+BattleScript_IngrainTurnHeal::
+	playanimation BS_ATTACKER, B_ANIM_INGRAIN_HEAL
+	printstring STRINGID_PKMNABSORBEDNUTRIENTS
+	waitmessage B_WAIT_TIME_LONG
+	manipulatedamage ATK48_DMG_BIG_ROOT
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	end2
+	
+BattleScript_LeechSeedTurnDrain::
+	playanimation BS_TARGET, B_ANIM_LEECH_SEED_DRAIN, sB_ANIM_ARG1
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	copyword gBattleMoveDamage, gHpDealt
+	manipulatedamage ATK48_DMG_BIG_ROOT
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE
+	jumpifability BS_TARGET, ABILITY_LIQUID_OOZE, BattleScript_LeechSeedLiquidOoze
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	printstring STRINGID_PKMNSAPPEDBYLEECHSEED
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_LeechSeedTurnUpdateHp::
+	tryfaintmon BS_TARGET
+	tryfaintmon BS_ATTACKER
+	end2
+	
+BattleScript_DoTurnDmg::
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	tryfaintmon BS_ATTACKER
+	checkteamslot BattleScript_DoTurnDmgReturn
+BattleScript_DoTurnDmgReturn::
+	return
 
+BattleScript_PoisonTurnDmg::
+	printstring STRINGID_PKMNHURTBYPOISON
+	waitmessage B_WAIT_TIME_LONG
+	chosenstatusanimation BS_ATTACKER, ID_STATUS1, STATUS1_PSN_ANY
+BattleScript_DoTurnDmgEnd2::
+	call BattleScript_DoTurnDmg
+	end2
+
+BattleScript_BurnTurnDmg::
+	printstring STRINGID_PKMNHURTBYBURN
+	waitmessage B_WAIT_TIME_LONG
+	chosenstatusanimation BS_ATTACKER, ID_STATUS1, STATUS1_BURN
+	goto BattleScript_DoTurnDmgEnd2
+
+BattleScript_NightmareTurnDmg::
+	printstring STRINGID_PKMNLOCKEDINNIGHTMARE
+	waitmessage B_WAIT_TIME_LONG
+	chosenstatusanimation BS_ATTACKER, ID_STATUS2, STATUS2_NIGHTMARE
+	goto BattleScript_DoTurnDmgEnd2
+
+BattleScript_CurseTurnDmg::
+	printstring STRINGID_PKMNAFFLICTEDBYCURSE
+	waitmessage B_WAIT_TIME_LONG
+	chosenstatusanimation BS_ATTACKER, ID_STATUS2, STATUS2_CURSED
+	goto BattleScript_DoTurnDmgEnd2
+
+BattleScript_WrapTurnDmg::
+	playanimation BS_ATTACKER, B_ANIM_TURN_TRAP, sB_ANIM_ARG1
+	printstring STRINGID_PKMNHURTBY
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_DoTurnDmgEnd2
+
+BattleScript_WrapEnds::
+	printstring STRINGID_PKMNFREEDFROM
+	waitmessage B_WAIT_TIME_LONG
+	end2
+	
+BattleScript_EncoredNoMore::
+	printstring STRINGID_PKMNENCOREENDED
+	waitmessage B_WAIT_TIME_LONG
+	end2
+
+BattleScript_DisabledNoMore::
+	printstring STRINGID_PKMNMOVEDISABLEDNOMORE
+	waitmessage B_WAIT_TIME_LONG
+	end2	
+
+BattleScript_YawnMakesAsleep::
+	chosenstatusanimation BS_EFFECT_BATTLER, ID_STATUS1, STATUS1_SLEEP
+	printstring STRINGID_PKMNFELLASLEEP
+	waitmessage B_WAIT_TIME_LONG
+	updatestatusicon BS_EFFECT_BATTLER
+	waitstate
+	makevisible BS_EFFECT_BATTLER
+	end2
+	
+BattleScript_SideStatusWoreOff::
+    pause B_WAIT_TIME_SHORT
+    printfromtable gSideStatusWoreOffStringIds
+	waitmessage B_WAIT_TIME_LONG
+	end2
+
+BattleScript_PrintUproarOverTurns::
+	printfromtable gUproarOverTurnStringIds
+	waitmessage B_WAIT_TIME_LONG
+	end2
+
+BattleScript_ThrashConfuses::
+	chosenstatusanimation BS_ATTACKER, ID_STATUS2, STATUS2_CONFUSION
+	printstring STRINGID_PKMNFATIGUECONFUSION
+	waitmessage B_WAIT_TIME_LONG
+	end2
+	
+	
 
 
 BattleScript_AlreadyAsleep::
@@ -2657,27 +2811,12 @@ BattleScript_EffectFlinchMinimizeHit::
 	setbyte sDMG_MULTIPLIER, 2
 	goto BattleScript_FlinchEffect
 
-BattleScript_EffectFakeOut::
-	attackcanceler
-	jumpifnotfirstturn BattleScript_ButItFailedAtkStringPpReduce
-	setmoveeffect MOVE_EFFECT_FLINCH, FALSE, TRUE
-	goto BattleScript_EffectHit
-
 BattleScript_NotAffected::
 	pause 0x20
 	orhalfword gMoveResultFlags, MOVE_RESULT_DOESNT_AFFECT_FOE
 	resultmessage
 	waitmessage 0x40
 	goto BattleScript_MoveEnd
-
-BattleScript_EffectUproar::
-	attackcanceler
-	accuracycheck BattleScript_PrintMoveMissed
-	setmoveeffect MOVE_EFFECT_UPROAR, TRUE
-	attackstring
-	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_HitFromCritCalc
-	ppreduce
-	goto BattleScript_HitFromCritCalc
 
 BattleScript_EffectStockpile::
 	attackcanceler
@@ -3713,108 +3852,11 @@ BattleScript_LearnedNewMove::
 BattleScript_LearnMoveReturn::
 	return
 
-BattleScript_RainContinuesOrEnds::
-	printfromtable gRainContinuesStringIds
-	waitmessage 0x40
-	jumpifbyte CMP_EQUAL, sMULTISTRING_CHOOSER, 2, BattleScript_RainContinuesOrEndsEnd
-	playanimation BS_ATTACKER, B_ANIM_RAIN_CONTINUES
-BattleScript_RainContinuesOrEndsEnd::
-	end2
-
-BattleScript_DamagingWeatherContinues::
-	printfromtable gSandstormHailContinuesStringIds
-	waitmessage 0x40
-	playanimation2 BS_ATTACKER, sB_ANIM_ARG1
-	setbyte sMULTIUSE_STATE, 0
-BattleScript_DamagingWeatherLoop::
-	weatherdamage
-	jumpifword CMP_EQUAL, gBattleMoveDamage, NULL, BattleScript_DamagingWeatherContinuesEnd
-	printfromtable gSandstormHailDmgStringIds
-	waitmessage 0x40
-	orword gHitMarker, HITMARKER_SKIP_DMG_TRACK | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_GRUDGE | HITMARKER_IGNORE_DISGUISE
-	effectivenesssound
-	healthbarupdate BS_ATTACKER
-	datahpupdate BS_ATTACKER
-	tryfaintmon BS_ATTACKER
-	checkteamslot BattleScript_DamagingWeatherContinuesEnd
-BattleScript_DamagingWeatherContinuesEnd::
-	jumpifbyte CMP_NOT_EQUAL, gBattleOutcome, 0, BattleScript_WeatherDamageEndedBattle
-	addbyte sMULTIUSE_STATE, 1
-	jumpifbytenotequal sMULTIUSE_STATE, gBattlersCount, BattleScript_DamagingWeatherLoop
-BattleScript_WeatherDamageEndedBattle::
-	bicword gHitMarker, HITMARKER_SKIP_DMG_TRACK | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_GRUDGE | HITMARKER_IGNORE_DISGUISE
-	end2
-
-BattleScript_SandStormHailEnds::
-	printfromtable gSandstormHailEndStringIds
-	waitmessage 0x40
-	end2
-
-BattleScript_SunlightContinues::
-	printstring STRINGID_SUNLIGHTSTRONG
-	waitmessage 0x40
-	playanimation BS_ATTACKER, B_ANIM_SUN_CONTINUES
-	end2
-
-BattleScript_SunlightFaded::
-	printstring STRINGID_SUNLIGHTFADED
-	waitmessage 0x40
-	end2
-
-BattleScript_FogContinues::
-    printstring STRINGID_DEEPFOG
-	waitmessage 0x40
-	playanimation BS_ATTACKER, B_ANIM_FOG_CONTINUES
-	end2
-
-BattleScript_FogEnded::
-    printstring STRINGID_FOGENDED
-	waitmessage 0x40
-	end2
-
 BattleScript_OverworldWeatherStarts::
 	printfromtable gWeatherContinuesStringIds
 	waitmessage 0x40
 	playanimation2 BS_ATTACKER, sB_ANIM_ARG1
 	end3
-
-BattleScript_SideStatusWoreOff::
-	printstring STRINGID_PKMNSXWOREOFF
-	waitmessage 0x40
-	end2
-
-BattleScript_SafeguardEnds::
-	pause 0x20
-	printstring STRINGID_PKMNSAFEGUARDEXPIRED
-	waitmessage 0x40
-	end2
-
-BattleScript_LeechSeedTurnDrain::
-	playanimation BS_ATTACKER, B_ANIM_LEECH_SEED_DRAIN, sB_ANIM_ARG1
-	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE
-	healthbarupdate BS_ATTACKER
-	datahpupdate BS_ATTACKER
-	copyword gBattleMoveDamage, gHpDealt
-	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE
-	jumpifability BS_ATTACKER, ABILITY_LIQUID_OOZE, BattleScript_LeechSeedLiquidOoze
-	manipulatedamage ATK80_DMG_CHANGE_SIGN
-	healthbarupdate BS_TARGET
-	datahpupdate BS_TARGET
-	printstring STRINGID_PKMNSAPPEDBYLEECHSEED
-	waitmessage 0x40
-	goto BattleScript_LeechSeedTurnUpdateHp
-
-BattleScript_LeechSeedLiquidOoze::
-	healthbarupdate BS_TARGET
-	datahpupdate BS_TARGET
-	loadabilitypopup BS_ATTACKER
-	printstring STRINGID_ITSUCKEDLIQUIDOOZE
-	waitmessage 0x40
-	removeabilitypopup BS_ATTACKER
-BattleScript_LeechSeedTurnUpdateHp::
-	tryfaintmon BS_ATTACKER
-	tryfaintmon BS_TARGET
-	end2
 
 BattleScript_MistProtected::
 	pause 0x20
@@ -3825,16 +3867,6 @@ BattleScript_MistProtected::
 BattleScript_SelectingDisabledMove::
 	printselectionstring STRINGID_PKMNMOVEISDISABLED
 	endselectionscript
-
-BattleScript_DisabledNoMore::
-	printstring STRINGID_PKMNMOVEDISABLEDNOMORE
-	waitmessage 0x40
-	end2
-
-BattleScript_EncoredNoMore::
-	printstring STRINGID_PKMNENCOREENDED
-	waitmessage 0x40
-	end2
 
 BattleScript_DestinyBondTakesLife::
 	printstring STRINGID_PKMNTOOKFOE
@@ -3998,15 +4030,6 @@ BattleScript_WishButFullHp::
 	waitmessage 0x40
 	end2
 
-BattleScript_IngrainTurnHeal::
-	playanimation BS_ATTACKER, B_ANIM_INGRAIN_HEAL
-	printstring STRINGID_PKMNABSORBEDNUTRIENTS
-	waitmessage 0x40
-	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
-	healthbarupdate BS_ATTACKER
-	datahpupdate BS_ATTACKER
-	end2
-
 BattleScript_AtkDefDown::
 	setbyte sSTAT_ANIM_PLAYED, 0
 	playstatchangeanimation BS_ATTACKER, BIT_ATK | BIT_DEF, ATK48_STAT_NEGATIVE | ATK48_ONLY_MULTIPLE | ATK48_DONT_CHECK_LOWER
@@ -4092,25 +4115,6 @@ BattleScript_MonWokeUpInUproar::
 	updatestatusicon BS_ATTACKER
 	end2
 
-BattleScript_PoisonTurnDmg::
-	printstring STRINGID_PKMNHURTBYPOISON
-	waitmessage B_WAIT_TIME_LONG
-	chosenstatusanimation BS_ATTACKER, ID_STATUS1, STATUS1_PSN_ANY
-BattleScript_DoTurnDmg::
-	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE
-	healthbarupdate BS_ATTACKER
-	datahpupdate BS_ATTACKER
-	tryfaintmon BS_ATTACKER
-	checkteamslot BattleScript_DoTurnDmgEnd
-BattleScript_DoTurnDmgEnd::
-	end2
-
-BattleScript_BurnTurnDmg::
-	printstring STRINGID_PKMNHURTBYBURN
-	waitmessage B_WAIT_TIME_LONG
-	chosenstatusanimation BS_ATTACKER, ID_STATUS1, STATUS1_BURN
-	goto BattleScript_DoTurnDmg
-
 BattleScript_DefrostedViaFireMove::
 	printstring STRINGID_PKMNWASDEFROSTED
 	waitmessage 0x40
@@ -4130,44 +4134,10 @@ BattleScript_SteadfastSpeedUp::
 	removeabilitypopup BS_ATTACKER
 	goto BattleScript_MoveEnd
 
-BattleScript_PrintUproarOverTurns::
-	printfromtable gUproarOverTurnStringIds
-	waitmessage 0x40
-	end2
-
-BattleScript_ThrashConfuses::
-	chosenstatusanimation BS_ATTACKER, ID_STATUS2, STATUS2_CONFUSION
-	printstring STRINGID_PKMNFATIGUECONFUSION
-	waitmessage 0x40
-	end2
-
 BattleScript_PrintPayDayMoneyString::
 	printstring STRINGID_PKMNPICKEDUPITEM
 	waitmessage 0x40
 	return
-
-BattleScript_WrapTurnDmg::
-	playanimation BS_ATTACKER, B_ANIM_TURN_TRAP, sB_ANIM_ARG1
-	printstring STRINGID_PKMNHURTBY
-	waitmessage 0x40
-	goto BattleScript_DoTurnDmg
-
-BattleScript_WrapEnds::
-	printstring STRINGID_PKMNFREEDFROM
-	waitmessage 0x40
-	end2
-
-BattleScript_NightmareTurnDmg::
-	printstring STRINGID_PKMNLOCKEDINNIGHTMARE
-	waitmessage 0x40
-	chosenstatusanimation BS_ATTACKER, ID_STATUS2, STATUS2_NIGHTMARE
-	goto BattleScript_DoTurnDmg
-
-BattleScript_CurseTurnDmg::
-	printstring STRINGID_PKMNAFFLICTEDBYCURSE
-	waitmessage 0x40
-	chosenstatusanimation BS_ATTACKER, ID_STATUS2, STATUS2_CURSED
-	goto BattleScript_DoTurnDmg
 
 BattleScript_TargetPRLZHeal::
 	printstring STRINGID_PKMNHEALEDPARALYSIS
@@ -4183,15 +4153,6 @@ BattleScript_SilphScopeUnveiled::
 	pause 0x20
 	printstring STRINGID_GHOSTWASMAROWAK
 	waitmessage 0x40
-	end2
-
-BattleScript_YawnMakesAsleep::
-	chosenstatusanimation BS_EFFECT_BATTLER, ID_STATUS1, STATUS1_SLEEP
-	printstring STRINGID_PKMNFELLASLEEP
-	waitmessage 0x40
-	updatestatusicon BS_EFFECT_BATTLER
-	waitstate
-	makevisible BS_EFFECT_BATTLER
 	end2
 
 BattleScript_MoveEffectUproar::
@@ -4667,8 +4628,8 @@ BattleScript_MoodyActivates::
 	waitmessage 0x40
 	
 BattleScript_MoodyLower::
-        jumpifbyte CMP_EQUAL, sGIVEEXP_STATE, 0, BattleScript_MoodyEnd
-	copybyte sSTATCHANGER, sGIVEEXP_STATE
+        jumpifbyte CMP_EQUAL, sMULTIUSE_STATE, 0, BattleScript_MoodyEnd
+	copybyte sSTATCHANGER, sMULTIUSE_STATE
 	statbuffchange MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN | STAT_CHANGE_NOT_PROTECT_AFFECTED, BattleScript_MoodyEnd
 	jumpifbyte CMP_GREATER_THAN, sMULTISTRING_CHOOSER, 1, BattleScript_MoodyEnd
 	setgraphicalstatchangevalues

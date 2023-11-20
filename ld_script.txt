@@ -288,6 +288,7 @@ SECTIONS {
 		src/form_change_anim.o(.text);
 		src/fldeff_defog.o(.text);
 		src/set_effect.o(.text);
+		src/battle_queued_effects.o(.text);
     } =0
 
     script_data :
@@ -578,6 +579,7 @@ SECTIONS {
 		src/form_change_anim.o(.rodata);
 		src/fldeff_defog.o(.rodata);
 		src/set_effect.o(.rodata);
+		src/battle_queued_effects.o(.rodata);
 
         /* These should not be moved to C files */
         src/m4a_tables.o(.rodata);

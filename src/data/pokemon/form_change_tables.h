@@ -621,27 +621,9 @@ static const struct FormChange sThundurusFormChangeTable[] =
 	FORM_CHANGE_END,
 };
 
-static const struct FormChange sReshiramFormChangeTable[] =
-{
-	FORM_CHANGE(FORM_CHANGE_FUSION_ITEM, SPECIES_KYUREM_WHITE, ITEM_DNA_SPLICERS, SPECIES_KYUREM),
-	FORM_CHANGE_END,
-};
-
-static const struct FormChange sZekromFormChangeTable[] =
-{
-	FORM_CHANGE(FORM_CHANGE_FUSION_ITEM, SPECIES_KYUREM_BLACK, ITEM_DNA_SPLICERS, SPECIES_KYUREM),
-	FORM_CHANGE_END,
-};
-
 static const struct FormChange sLandorusFormChangeTable[] =
 {
 	FORM_CHANGE(FORM_CHANGE_USE_ITEM, SPECIES_LANDORUS_THERIAN, ITEM_REVEAL_GLASS, SPECIES_LANDORUS),
-	FORM_CHANGE_END,
-};
-
-static const struct FormChange sKyuremFormChangeTable[] =
-{
-	FORM_CHANGE(FORM_CHANGE_FUSION_MASTER, SPECIES_KYUREM, ITEM_DNA_SPLICERS, 0),
 	FORM_CHANGE_END,
 };
 
@@ -746,6 +728,13 @@ static const struct FormChange sMeowsticFormChangeTable[] =
 	FORM_CHANGE_END,
 };
 
+static const struct FormChange sAegislashFormChangeTable[] =
+{
+	FORM_CHANGE(FORM_CHANGE_MOVE, SPECIES_AEGISLASH, MOVE_KINGS_SHIELD, 0),
+	FORM_CHANGE(FORM_CHANGE_MOVE_SPLIT, SPECIES_AEGISLASH_BLADE, SPLIT_STATUS, TRUE),
+	FORM_CHANGE_END,
+};
+
 static const struct FormChange sXerneasFormChangeTable[] =
 {
 	FORM_CHANGE(FORM_CHANGE_START_BATTLE, SPECIES_XERNEAS_ACTIVE, 0, 0),
@@ -832,25 +821,6 @@ static const struct FormChange sMiniorCoreFormChangeTable[] =
 static const struct FormChange sMimikyuFormChangeTable[] =
 {
 	FORM_CHANGE(FORM_CHANGE_SWITCH_OUT, SPECIES_NONE, 0, 0), // don't revert form when switched out
-	FORM_CHANGE_END,
-};
-
-static const struct FormChange sSolgaleoFormChangeTable[] =
-{
-	FORM_CHANGE(FORM_CHANGE_FUSION_ITEM, SPECIES_NECROZMA_DUSK_MANE, ITEM_N_SOLARIZER, SPECIES_NECROZMA),
-	FORM_CHANGE_END,
-};
-
-static const struct FormChange sLunalaFormChangeTable[] =
-{
-	FORM_CHANGE(FORM_CHANGE_FUSION_ITEM, SPECIES_NECROZMA_DAWN_WINGS, ITEM_N_LUNARIZER, SPECIES_NECROZMA),
-	FORM_CHANGE_END,
-};
-
-static const struct FormChange sNecrozmaFormChangeTable[] =
-{
-	FORM_CHANGE(FORM_CHANGE_FUSION_MASTER, SPECIES_NECROZMA, ITEM_N_SOLARIZER, 0),
-	FORM_CHANGE(FORM_CHANGE_FUSION_MASTER, SPECIES_NECROZMA, ITEM_N_LUNARIZER, 0),
 	FORM_CHANGE_END,
 };
 
@@ -969,7 +939,7 @@ static const struct FormChange sAlcremieFormChangeTable[] =
 
 static const struct FormChange sEiscueFormChangeTable[] =
 {
-	FORM_CHANGE(FORM_CHANGE_WEATHER, SPECIES_EISCUE, WEATHER_RAIN_ANY, 0),
+	FORM_CHANGE(FORM_CHANGE_WEATHER, SPECIES_EISCUE, WEATHER_HAIL_ANY, 0),
 	FORM_CHANGE(FORM_CHANGE_SWITCH_OUT, SPECIES_NONE, 0, 0), // don't revert form when switched out
 	FORM_CHANGE_END,
 };
@@ -978,6 +948,13 @@ static const struct FormChange sIndeedeeFormChangeTable[] =
 {
 	FORM_CHANGE(FORM_CHANGE_GENDER, SPECIES_INDEEDEE, MON_MALE, 0),
 	FORM_CHANGE(FORM_CHANGE_GENDER, SPECIES_INDEEDEE_FEMALE, MON_FEMALE, 0),
+	FORM_CHANGE_END,
+};
+
+static const struct FormChange sMorpekoFormChangeTable[] =
+{
+	FORM_CHANGE(FORM_CHANGE_ENDTURN, SPECIES_MORPEKO_HANGRY, SPECIES_MORPEKO, 0),
+	FORM_CHANGE(FORM_CHANGE_ENDTURN, SPECIES_MORPEKO, SPECIES_MORPEKO_HANGRY, 0),
 	FORM_CHANGE_END,
 };
 
@@ -1016,24 +993,6 @@ static const struct FormChange sUrshifuSingleStrikeFormChangeTable[] =
 static const struct FormChange sUrshifuRapidStrikeFormChangeTable[] =
 {
 	FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_URSHIFU_RAPID_STRIKE_GIGA, 0, 0),
-	FORM_CHANGE_END,
-};
-
-static const struct FormChange sGlastrierFormChangeTable[] =
-{
-	FORM_CHANGE(FORM_CHANGE_FUSION_ITEM, SPECIES_CALYREX_ICE_RIDER, ITEM_REINS_OF_UNITY, SPECIES_CALYREX),
-	FORM_CHANGE_END,
-};
-
-static const struct FormChange sSpectrierFormChangeTable[] =
-{
-	FORM_CHANGE(FORM_CHANGE_FUSION_ITEM, SPECIES_CALYREX_SHADOW_RIDER, ITEM_REINS_OF_UNITY, SPECIES_CALYREX),
-	FORM_CHANGE_END,
-};
-
-static const struct FormChange sCalyrexFormChangeTable[] =
-{
-	FORM_CHANGE(FORM_CHANGE_FUSION_MASTER, SPECIES_CALYREX, ITEM_REINS_OF_UNITY, 0),
 	FORM_CHANGE_END,
 };
 

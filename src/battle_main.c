@@ -12,6 +12,7 @@
 #include "battle_string_ids.h"
 #include "data.h"
 #include "dns.h"
+#include "battle_queued_effects.h"
 #include "dexnav.h"
 #include "decompress.h"
 #include "event_data.h"
@@ -1929,6 +1930,9 @@ static void BattleStartClearSetData(void)
     gAbsentBattlerFlags = 0;
 	gBattleStruct->moneyMultiplier = 1;
 	
+	// Init queued effects
+	gBattleStruct->queuedEffectsList[0].id = B_QUEUED_COUNT;
+	
 	// safari battles can't be double battles, so this no need to be changed
     gBattleStruct->safariCatchFactor = gBaseStats[GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)].catchRate * 100 / 1275;
 	
@@ -2406,11 +2410,9 @@ static void TryDoEventsBeforeFirstTurn(void)
             gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
         gBattleStruct->turnEffectsTracker = 0;
         gBattleStruct->turnEffectsBattlerId = 0;
-        gBattleStruct->wishPerishSongState = 0;
-        gBattleStruct->wishPerishSongBattlerId = 0;
+		gBattleStruct->turnSideTracker = 0;
         gBattleScripting.atk49_state = 0;
         gBattleStruct->faintedActionsState = 0;
-        gBattleStruct->turnCountersTracker = 0;
         gMoveResultFlags = 0;
         gRandomTurnNumber = Random();
 		
@@ -2436,28 +2438,26 @@ static void HandleEndTurn_ContinueBattle(void)
         }
         gBattleStruct->turnEffectsTracker = 0;
         gBattleStruct->turnEffectsBattlerId = 0;
-        gBattleStruct->wishPerishSongState = 0;
-        gBattleStruct->wishPerishSongBattlerId = 0;
-        gBattleStruct->turnCountersTracker = 0;
+		gBattleStruct->turnSideTracker = 0;
         gMoveResultFlags = 0;
+		SaveBattlersHps(); // For Emergency Exit
     }
 }
 
 void BattleTurnPassed(void)
 {
-    s32 i;
+    u8 i;
 
     TurnValuesCleanUp(TRUE);
-    if (gBattleOutcome == 0)
-    {
-        if (DoFieldEndTurnEffects() || DoBattlerEndTurnEffects())
-            return;
-    }
+	
+    if (gBattleOutcome == 0 && DoEndTurnEffects())
+		return;
+	
     if (HandleFaintedMonActions())
         return;
+	
     gBattleStruct->faintedActionsState = 0;
-    if (HandleFutureAttackPerishSongOnTurnEnd())
-        return;
+	
     TurnValuesCleanUp(FALSE);
     gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING | HITMARKER_UNABLE_TO_USE_MOVE | HITMARKER_PLAYER_FAINTED | HITMARKER_PASSIVE_DAMAGE);
     gBattleScripting.animTurn = 0;
@@ -2465,8 +2465,10 @@ void BattleTurnPassed(void)
     gBattleScripting.atk49_state = 0;
     gBattleMoveDamage = 0;
     gMoveResultFlags = 0;
+	
     for (i = 0; i < 5; ++i)
         gBattleCommunication[i] = 0;
+	
     if (gBattleOutcome != 0)
     {
         gCurrentActionFuncId = B_ACTION_FINISHED;
@@ -2475,6 +2477,7 @@ void BattleTurnPassed(void)
     }
     if (gBattleStruct->battleTurnCounter < 0xFF)
         ++gBattleStruct->battleTurnCounter;
+	
     for (i = 0; i < gBattlersCount; ++i)
     {
         gChosenActionByBattler[i] = B_ACTION_NONE;
@@ -2491,6 +2494,7 @@ void BattleTurnPassed(void)
     gBattleMainFunc = HandleTurnActionSelectionState;
     gRandomTurnNumber = Random();
 	CalculatePayDayMoney();
+	ResetAllQueuedEffectsDone();
 	
     if (ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), TRAINER_SLIDE_LAST_MON_LOW_HP))
 	    BattleScriptExecute(BattleScript_TrainerSlideMsgEnd2);
@@ -3138,10 +3142,7 @@ static void TurnValuesCleanUp(bool8 var0)
     for (battlerId = 0; battlerId < gBattlersCount; ++battlerId)
     {
         if (var0)
-        {
             gProtectStructs[battlerId].protected = FALSE;
-            gProtectStructs[battlerId].endured = FALSE;
-        }
         else
         {
 			memset(&gProtectStructs[battlerId], 0, sizeof(struct ProtectStruct));
@@ -3624,8 +3625,7 @@ static void HandleAction_UseMove(void)
             }
         }
     }
-	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
-		gBattleStruct->hpBefore[i] = gBattleMons[i].hp;
+	SaveBattlersHps(); // For abilities
 	
     gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
     gCurrentActionFuncId = B_ACTION_EXEC_SCRIPT;

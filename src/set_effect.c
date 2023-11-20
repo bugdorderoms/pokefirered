@@ -245,7 +245,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		    if (!(gBattleMons[gEffectBattler].status2 & STATUS2_UPROAR))
 			{
 				gBattleMons[gEffectBattler].status2 |= STATUS2_MULTIPLETURNS;
-				gBattleMons[gEffectBattler].status2 |= ((Random() & 3) + 2) << 4;
+				gBattleMons[gEffectBattler].status2 |= STATUS2_UPROAR_TURN(3);
 				gLockedMoves[gEffectBattler] = gCurrentMove;
 				effect = 2;
 			}

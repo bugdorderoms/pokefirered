@@ -21,7 +21,8 @@ struct FormChangeAnimData
 	u8 isFusion:1; // If true, apply the white screen effect on the end of the animations
 	u8 numSpritesCreated:4;
 	u8 unused:2;
-	u16 species;
+	u16 oldSpecies;
+	u16 newSpecies;
 };
 
 static void Task_DoFusionWhiteScreen(u8 taskId);
@@ -39,11 +40,12 @@ static void (*const sFormChangeAnimsTable[])(u8) =
 
 // Init the form change animation
 // animId = The anim index to play
-// species = The species the mon is transforming or changing into
+// oldSpecies = The original mon's species
+// newSpecies = The species the mon is transforming or changing into
 // isFusion = Determines if white screen flash occours at the final animation
 // icon1 = The sprite of the mon icon
 // icon2 = The sprite of the second mon icon, when fusing
-void DoFormChangeAnim(u8 animId, u16 species, bool8 isFusion, struct Sprite *icon1, struct Sprite *icon2)
+void DoFormChangeAnim(u8 animId, u16 oldSpecies, u16 newSpecies, bool8 isFusion, struct Sprite *icon1, struct Sprite *icon2)
 {
 	sFormChangeAnimData = AllocZeroed(sizeof(struct FormChangeAnimData));
 	
@@ -54,7 +56,8 @@ void DoFormChangeAnim(u8 animId, u16 species, bool8 isFusion, struct Sprite *ico
 		sFormChangeAnimData->stepId = 0;
 		sFormChangeAnimData->icon1 = icon1;
 		sFormChangeAnimData->icon2 = icon2;
-		sFormChangeAnimData->species = species;
+		sFormChangeAnimData->oldSpecies = oldSpecies;
+		sFormChangeAnimData->newSpecies = newSpecies;
 		sFormChangeAnimData->isFusion = isFusion;
 		sFormChangeAnimData->finished = FALSE;
 		sFormChangeAnimData->numSpritesCreated = 0;
@@ -77,12 +80,12 @@ bool8 IsFormChangeAnimFinished(void)
 // Update icon
 static void UpdateIconForFormChange(void)
 {
-	u16 species = sFormChangeAnimData->species;
+	u16 newSpecies = sFormChangeAnimData->newSpecies;
 	
-	UpdateCurrentPartyMonIconSpecies(species);
+	UpdateCurrentPartyMonIconSpecies(newSpecies);
 	
 	if (sFormChangeAnimData->icon2 != NULL) // Update party after fusion
-		UpdatePartyAfterPokemonFusion(species);
+		UpdatePartyAfterPokemonFusion(newSpecies);
 }
 
 //////////////////
@@ -130,7 +133,12 @@ static void Task_DoFusionWhiteScreen(u8 taskId)
 			break;
 		case 3:
 			if (!gPaletteFade.active) // Wait screen blend back
+			{
+				if (sFormChangeAnimData->icon2 == NULL) // Create second mon when defusing
+					CreatePartyMonAfterDefusing(sFormChangeAnimData->oldSpecies);
+				
 				DestroyTask(taskId);
+			}
 			break;
 	}
 }
@@ -163,7 +171,7 @@ static void Task_PlayMonCryAfterFormChangeAnim(u8 taskId)
 		case 1:
 			if (++gTasks[taskId].tCryWait >= PLAY_CRY_WAIT_FRAMES)
 			{
-				PlayCry1(sFormChangeAnimData->species, 0);
+				PlayCry1(sFormChangeAnimData->newSpecies, 0);
 				DestroyTask(taskId);
 				sFormChangeAnimData->finished = TRUE;
 			}

@@ -178,6 +178,14 @@ struct ItemUseData
 	u32 stringCopyData;
 };
 
+struct FormChangeMove
+{
+	u16 species;
+	u16 moveToLearn;
+	u16 replaceMove1;
+	u16 replaceMove2;
+};
+
 static void BlitBitmapToPartyWindow_LeftColumn(u8 windowId, u8 x, u8 y, u8 width, u8 height, bool8 isEgg);
 static void BlitBitmapToPartyWindow_RightColumn(u8 windowId, u8 x, u8 y, u8 width, u8 height, bool8 isEgg);
 static void CursorCB_Summary(u8 taskId);
@@ -507,6 +515,25 @@ static const union AffineAnimCmd sAffineAnim_ItemIcon[] =
 static const union AffineAnimCmd *const sSpriteAffineAnim_HeldItem[] =
 {
 	sAffineAnim_ItemIcon,
+};
+
+static const struct FormChangeMove sFormChangeMoves[] =
+{
+	{.species = SPECIES_ROTOM, .moveToLearn = MOVE_THUNDER_SHOCK},
+	{.species = SPECIES_ROTOM_HEAT, .moveToLearn = MOVE_OVERHEAT},
+	{.species = SPECIES_ROTOM_WASH, .moveToLearn = MOVE_HYDRO_PUMP},
+	{.species = SPECIES_ROTOM_FROST, .moveToLearn = MOVE_BLIZZARD},
+	{.species = SPECIES_ROTOM_FAN, .moveToLearn = MOVE_AIR_SLASH},
+	{.species = SPECIES_ROTOM_MOW, .moveToLearn = MOVE_LEAF_STORM},
+	{.species = SPECIES_KYUREM, .moveToLearn = MOVE_GLACIATE, .replaceMove1 = MOVE_FUSION_BOLT, .replaceMove2 = MOVE_FUSION_FLARE},
+	{.species = SPECIES_KYUREM_WHITE, .moveToLearn = MOVE_FUSION_FLARE, .replaceMove1 = MOVE_GLACIATE},
+	{.species = SPECIES_KYUREM_BLACK, .moveToLearn = MOVE_FUSION_BOLT, .replaceMove1 = MOVE_GLACIATE},
+	{.species = SPECIES_NECROZMA, .moveToLearn = MOVE_NONE, .replaceMove1 = MOVE_SUNSTEEL_STRIKE, .replaceMove2 = MOVE_MOONGEIST_BEAM},
+	{.species = SPECIES_NECROZMA_DUSK_MANE, .moveToLearn = MOVE_SUNSTEEL_STRIKE},
+	{.species = SPECIES_NECROZMA_DAWN_WINGS, .moveToLearn = MOVE_MOONGEIST_BEAM},
+	{.species = SPECIES_CALYREX, .moveToLearn = MOVE_NONE, .replaceMove1 = MOVE_GLACIAL_LANCE, .replaceMove2 = MOVE_ASTRAL_BARRAGE},
+	{.species = SPECIES_CALYREX_ICE_RIDER, .moveToLearn = MOVE_GLACIAL_LANCE},
+	{.species = SPECIES_CALYREX_SHADOW_RIDER, .moveToLearn = MOVE_ASTRAL_BARRAGE},
 };
 
 void InitPartyMenu(u8 menuType, u8 layout, u8 partyAction, bool8 keepCursorPos, u8 messageId, TaskFunc task, MainCallback callback)
@@ -6584,6 +6611,7 @@ void UpdateCurrentPartyMonIconSpecies(u16 species)
 
 static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 {
+	u32 i;
 	u8 movePos;
 	struct Pokemon *mon;
 	u16 replaceMove, replaceMove2;
@@ -6597,60 +6625,17 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 		
 		gPartyMenuUseExitCallback = FALSE;
 		
-		switch (GetMonData(mon, MON_DATA_SPECIES))
+		for (i = 0; i < ARRAY_COUNT(sFormChangeMoves); i++)
 		{
-			case SPECIES_ROTOM:
-			    gMoveToLearn = MOVE_THUNDER_SHOCK;
+			if (GetMonData(mon, MON_DATA_SPECIES) == sFormChangeMoves[i].species)
+			{
+				gMoveToLearn = sFormChangeMoves[i].moveToLearn;
+				replaceMove = sFormChangeMoves[i].replaceMove1;
+				replaceMove2 = sFormChangeMoves[i].replaceMove2;
 				break;
-			case SPECIES_ROTOM_HEAT:
-			    gMoveToLearn = MOVE_OVERHEAT;
-				break;
-			case SPECIES_ROTOM_WASH:
-			    gMoveToLearn = MOVE_HYDRO_PUMP;
-				break;
-			case SPECIES_ROTOM_FROST:
-			    gMoveToLearn = MOVE_BLIZZARD;
-				break;
-			case SPECIES_ROTOM_FAN:
-			    gMoveToLearn = MOVE_AIR_SLASH;
-				break;
-			case SPECIES_ROTOM_MOW:
-			    gMoveToLearn = MOVE_LEAF_STORM;
-				break;
-			case SPECIES_KYUREM:
-			    gMoveToLearn = MOVE_GLACIATE;
-				replaceMove = MOVE_FUSION_BOLT;
-				replaceMove2 = MOVE_FUSION_FLARE;
-				break;
-			case SPECIES_KYUREM_WHITE:
-				gMoveToLearn = MOVE_FUSION_FLARE;
-				replaceMove = MOVE_GLACIATE;
-				break;
-			case SPECIES_KYUREM_BLACK:
-				gMoveToLearn = MOVE_FUSION_BOLT;
-				replaceMove = MOVE_GLACIATE;
-				break;
-			case SPECIES_NECROZMA:
-				replaceMove = MOVE_SUNSTEEL_STRIKE;
-				replaceMove2 = MOVE_MOONGEIST_BEAM;
-				break;
-			case SPECIES_NECROZMA_DUSK_MANE:
-				gMoveToLearn = MOVE_SUNSTEEL_STRIKE;
-				break;
-			case SPECIES_NECROZMA_DAWN_WINGS:
-				gMoveToLearn = MOVE_MOONGEIST_BEAM;
-				break;
-			case SPECIES_CALYREX:
-			    replaceMove = MOVE_GLACIAL_LANCE;
-				replaceMove2 = MOVE_ASTRAL_BARRAGE;
-				break;
-			case SPECIES_CALYREX_ICE_RIDER:
-			    gMoveToLearn = MOVE_GLACIAL_LANCE;
-				break;
-			case SPECIES_CALYREX_SHADOW_RIDER:
-			    gMoveToLearn = MOVE_ASTRAL_BARRAGE;
-				break;
+			}
 		}
+
 		if (gMoveToLearn)
 		{
 			if (replaceMove)
@@ -6723,8 +6708,15 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 
 static void Task_WaitFormChangeAnim(u8 taskId)
 {
+	struct Pokemon *mon;
+	
 	if (IsFormChangeAnimFinished())
 	{
+		mon = (struct Pokemon*)GetWordTaskArg(taskId, 1);
+		
+		SetMonData(mon, MON_DATA_SPECIES, &gTasks[taskId].data[0]);
+		CalculateMonStats(mon);
+		GetMonNickname(mon, gStringVar1);
 		StringExpandPlaceholders(gStringVar4, gText_FormChangeItem);
 		DisplayPartyMenuMessage(gStringVar4, TRUE);
 		ScheduleBgCopyTilemapToVram(2);
@@ -6736,12 +6728,11 @@ static void Task_WaitFormChangeAnim(u8 taskId)
 // 0 = no fusion
 // 1 = fuse
 // 2 = defuse
-static void DoItemUseFormChange(u8 taskId, struct Pokemon *mon, u16 newSpecies, u8 animId, u8 fusionState)
+static void DoItemUseFormChange(u8 taskId, struct Pokemon *mon, u16 oldSpecies, u16 newSpecies, u8 animId, u8 fusionState)
 {
-	SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
-	CalculateMonStats(mon);
-	DoFormChangeAnim(animId, newSpecies, (fusionState != 0), &gSprites[sPartyMenuBoxes[gPartyMenu.slotId].monSpriteId], fusionState == 1 ? &gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].monSpriteId] : NULL);
-	GetMonNickname(mon, gStringVar1);
+	DoFormChangeAnim(animId, oldSpecies, newSpecies, (fusionState != 0), &gSprites[sPartyMenuBoxes[gPartyMenu.slotId].monSpriteId], fusionState == 1 ? &gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].monSpriteId] : NULL);
+	SetWordTaskArg(taskId, 1, (u32)mon);
+	gTasks[taskId].data[0] = newSpecies;
 	gTasks[taskId].func = Task_WaitFormChangeAnim;
 }
 
@@ -6764,7 +6755,7 @@ void ItemUseCB_FormChange(u8 taskId, TaskFunc func)
 		if (ItemId_GetPocket(gSpecialVar_ItemId) != POCKET_KEY_ITEMS) // comsume items that are not key items, like nectars
 			RemoveBagItem(gSpecialVar_ItemId, 1);
 
-		DoItemUseFormChange(taskId, mon, newSpecies, ItemId_GetHoldEffectParam(gSpecialVar_ItemId), 0);
+		DoItemUseFormChange(taskId, mon, species, newSpecies, ItemId_GetHoldEffectParam(gSpecialVar_ItemId), 0);
 		return;
 	}
 	NO_EFFECT:
@@ -6836,7 +6827,7 @@ static void Task_FormChangeListMenu(u8 taskId)
 					
 					if (GetMonData(mon, MON_DATA_SPECIES) != newSpecies)
 					{
-						DoItemUseFormChange(taskId, mon, newSpecies, FORM_CHANGE_ANIM_MOSAIC, 0);
+						DoItemUseFormChange(taskId, mon, GetMonData(mon, MON_DATA_SPECIES), newSpecies, FORM_CHANGE_ANIM_MOSAIC, 0);
 						return;
 					}
 					break;
@@ -6890,6 +6881,15 @@ void UpdatePartyAfterPokemonFusion(u16 species)
 	CompactPartySlots();
 }
 
+void CreatePartyMonAfterDefusing(u16 species)
+{
+	struct Pokemon *baseMon = GetBaseMonForFusedSpecies(species);
+	gPlayerParty[gPlayerPartyCount] = *baseMon;
+	memset(baseMon, 0, sizeof(*baseMon));
+	CreatePartyMonSprites(gPlayerPartyCount);
+	RenderPartyMenuBox(gPlayerPartyCount);
+}
+
 static bool8 CheckMonAlreadyFusedWithSpecies(u16 masterSpecies, u16 otherSpecies, u16 fusionSpecies)
 {
 	struct Pokemon *mon = GetBaseMonForFusedSpecies(fusionSpecies);
@@ -6909,8 +6909,8 @@ static bool8 CheckMonAlreadyFusedWithSpecies(u16 masterSpecies, u16 otherSpecies
 
 static void Task_FusionItemStep(u8 taskId)
 {
+	u32 i;
 	s8 *slotPtr;
-	u16 masterSpecies, otherSpecies, newSpecies;
 	
 	if (!gPaletteFade.active && !sub_80BF748())
 	{
@@ -6920,31 +6920,32 @@ static void Task_FusionItemStep(u8 taskId)
 		{
 			case 1:
 				PlaySE(SE_SELECT);
-				gSpecialVar_0x8000 = SPECIES_NONE;
 				gPartyMenu.action = PARTY_ACTION_CHOOSE_MON;
 				AnimatePartySlot(gPartyMenu.slotId, 1);
 				AnimatePartySlot(gPartyMenu.slotId2, 0);
-				newSpecies = GetMonFormChangeSpecies(&gPlayerParty[gPartyMenu.slotId2], FORM_CHANGE_FUSION_ITEM);
-				masterSpecies = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_SPECIES);
 				
-				if (!GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_IS_EGG) && gSpecialVar_0x8000 == masterSpecies)
+				if (!GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_IS_EGG))
 				{
-					otherSpecies = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_SPECIES);
-					
-					if (!CheckMonAlreadyFusedWithSpecies(masterSpecies, otherSpecies, newSpecies))
+					for (i = 0; gFusionsTable[i].masterSpecies != SPECIES_NONE; i++)
 					{
-						DoItemUseFormChange(taskId, &gPlayerParty[gPartyMenu.slotId], newSpecies, ItemId_GetHoldEffectParam(gSpecialVar_ItemId), 1);
-						return;
+						if (gFusionsTable[i].item == gSpecialVar_ItemId && gFusionsTable[i].otherSpecies == GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_SPECIES) && gFusionsTable[i].masterSpecies == gSpecialVar_0x8000)
+						{
+							if (!CheckMonAlreadyFusedWithSpecies(gSpecialVar_0x8000, gFusionsTable[i].otherSpecies, gFusionsTable[i].targetSpecies))
+							{
+								DoItemUseFormChange(taskId, &gPlayerParty[gPartyMenu.slotId], gSpecialVar_0x8000, gFusionsTable[i].targetSpecies, ItemId_GetHoldEffectParam(gSpecialVar_ItemId), 1);
+								return;
+							}
+							else
+								goto END;
+						}
 					}
 				}
-				else
-				{
-					gPartyMenuUseExitCallback = FALSE;
-					DisplayPartyMenuMessage(gText_CantFuseWithPokemon, TRUE);
-					ScheduleBgCopyTilemapToVram(2);
-				}
+				gPartyMenuUseExitCallback = FALSE;
+				DisplayPartyMenuMessage(gText_CantFuseWithPokemon, TRUE);
+				ScheduleBgCopyTilemapToVram(2);
 				// fallthrough
 			case 2:
+			END:
 			    gTasks[taskId].func = Task_ClosePartyMenuAfterText;
 				break;
 		}
@@ -6953,49 +6954,48 @@ static void Task_FusionItemStep(u8 taskId)
 
 void ItemUseCB_Fusion(u8 taskId, TaskFunc func)
 {
-	struct Pokemon *baseMon, *mon = &gPlayerParty[gPartyMenu.slotId];
-	u16 species = GetMonData(mon, MON_DATA_SPECIES), newSpecies = GetMonFormChangeSpecies(mon, FORM_CHANGE_FUSION_MASTER);
+	u32 i;
+	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+	u16 species = GetMonData(mon, MON_DATA_SPECIES);
 	
 	PlaySE(SE_SELECT);
 	
-	if (newSpecies)
+	for (i = 0; gFusionsTable[i].masterSpecies != SPECIES_NONE; i++)
 	{
-		if (species == newSpecies) // try fuse
+		if (gFusionsTable[i].item == gSpecialVar_ItemId)
 		{
-			gPartyMenu.action = PARTY_ACTION_SWITCH;
-			DisplayPartyMenuStdMessage(PARTY_MSG_FUSE_WITH_WHICH);
-			AnimatePartySlot(gPartyMenu.slotId, 1);
-			gPartyMenu.slotId2 = gPartyMenu.slotId;
-			gTasks[taskId].func = Task_FusionItemStep;
-		}
-		else // try defuse
-		{
-			if (!GetMonData(GetBaseMonForFusedSpecies(species), MON_DATA_SPECIES))
+			if (gFusionsTable[i].masterSpecies == species) // try fuse
 			{
-				gPartyMenuUseExitCallback = FALSE;
-				DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
-				ScheduleBgCopyTilemapToVram(2);
-				gTasks[taskId].func = func;
+				gSpecialVar_0x8000 = gFusionsTable[i].masterSpecies;
+				gPartyMenu.action = PARTY_ACTION_SWITCH;
+				DisplayPartyMenuStdMessage(PARTY_MSG_FUSE_WITH_WHICH);
+				AnimatePartySlot(gPartyMenu.slotId, 1);
+				gPartyMenu.slotId2 = gPartyMenu.slotId;
+				gTasks[taskId].func = Task_FusionItemStep;
+				return;
 			}
-			else if (gPlayerPartyCount == PARTY_SIZE)
+			else if (gFusionsTable[i].targetSpecies == species) // try defuse
 			{
-				GetMonNickname(mon, gStringVar1);
-				StringExpandPlaceholders(gStringVar4, gText_NoSpaceForDefuse);
-				DisplayPartyMenuMessage(gStringVar4, TRUE);
-				ScheduleBgCopyTilemapToVram(2);
-				gTasks[taskId].func = func;
-			}
-			else
-			{
-				baseMon = GetBaseMonForFusedSpecies(species);
-				gPlayerParty[gPlayerPartyCount] = *baseMon;
-				memset(baseMon, 0, sizeof(*baseMon));
-				CreatePartyMonSprites(gPlayerPartyCount);
-				RenderPartyMenuBox(gPlayerPartyCount);
-				DoItemUseFormChange(taskId, mon, newSpecies, ItemId_GetHoldEffectParam(gSpecialVar_ItemId), 2);
+				if (!GetMonData(GetBaseMonForFusedSpecies(species), MON_DATA_SPECIES))
+					break;
+				else if (gPlayerPartyCount == PARTY_SIZE)
+				{
+					GetMonNickname(mon, gStringVar1);
+					StringExpandPlaceholders(gStringVar4, gText_NoSpaceForDefuse);
+					DisplayPartyMenuMessage(gStringVar4, TRUE);
+					ScheduleBgCopyTilemapToVram(2);
+					gTasks[taskId].func = func;
+				}
+				else
+					DoItemUseFormChange(taskId, mon, species, gFusionsTable[i].masterSpecies, ItemId_GetHoldEffectParam(gSpecialVar_ItemId), 2);
+				return;
 			}
 		}
 	}
+	gPartyMenuUseExitCallback = FALSE;
+	DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+	ScheduleBgCopyTilemapToVram(2);
+	gTasks[taskId].func = func;
 }
 
 static void Task_AbilityChange(u8 taskId)

@@ -1,3 +1,11 @@
+#define FUSION(master, other, itemId, target) \
+{                                             \
+	.masterSpecies = master,                  \
+	.otherSpecies = other,                    \
+	.item = itemId,                           \
+	.targetSpecies = target,                  \
+}
+
 const struct FormChange *const gFormChangeTable[NUM_SPECIES] =
 {
 	[SPECIES_VENUSAUR] = sVenusaurFormChangeTable,
@@ -234,13 +242,8 @@ const struct FormChange *const gFormChangeTable[NUM_SPECIES] =
 	[SPECIES_TORNADUS_THERIAN] = sTornadusFormChangeTable,
 	[SPECIES_THUNDURUS] = sThundurusFormChangeTable,
 	[SPECIES_THUNDURUS_THERIAN] = sThundurusFormChangeTable,
-	[SPECIES_RESHIRAM] = sReshiramFormChangeTable,
-	[SPECIES_ZEKROM] = sZekromFormChangeTable,
 	[SPECIES_LANDORUS] = sLandorusFormChangeTable,
 	[SPECIES_LANDORUS_THERIAN] = sLandorusFormChangeTable,
-	[SPECIES_KYUREM] = sKyuremFormChangeTable,
-	[SPECIES_KYUREM_WHITE] = sKyuremFormChangeTable,
-	[SPECIES_KYUREM_BLACK] = sKyuremFormChangeTable,
 	[SPECIES_KELDEO] = sKeldeoFormChangeTable,
 	[SPECIES_KELDEO_RESOLUTE] = sKeldeoFormChangeTable,
     [SPECIES_GENESECT] = sGenesectFormChangeTable,
@@ -297,8 +300,8 @@ const struct FormChange *const gFormChangeTable[NUM_SPECIES] =
     [SPECIES_FURFROU_PHARAOH_TRIM] = sFurfrouFormChangeTable,
 	[SPECIES_MEOWSTIC] = sMeowsticFormChangeTable,
 	[SPECIES_MEOWSTIC_FEMALE] = sMeowsticFormChangeTable,
-	/*[SPECIES_AEGISLASH] = sAegislashFormChangeTable, handled separated
-	[SPECIES_AEGISLASH_BLADE] = sAegislashFormChangeTable,*/
+	[SPECIES_AEGISLASH] = sAegislashFormChangeTable,
+	[SPECIES_AEGISLASH_BLADE] = sAegislashFormChangeTable,
 	[SPECIES_XERNEAS] = sXerneasFormChangeTable,
 	[SPECIES_XERNEAS_ACTIVE] = sXerneasFormChangeTable,
 	[SPECIES_DIANCIE] = sDiancieFormChangeTable,
@@ -339,11 +342,6 @@ const struct FormChange *const gFormChangeTable[NUM_SPECIES] =
 	[SPECIES_MINIOR_METEOR] = sMiniorMeteorFormChangeTable,
 	[SPECIES_MIMIKYU] = sMimikyuFormChangeTable,
 	[SPECIES_MIMIKYU_BUSTED] = sMimikyuFormChangeTable,
-	[SPECIES_SOLGALEO] = sSolgaleoFormChangeTable,
-	[SPECIES_LUNALA] = sLunalaFormChangeTable,
-	[SPECIES_NECROZMA] = sNecrozmaFormChangeTable,
-	[SPECIES_NECROZMA_DUSK_MANE] = sNecrozmaFormChangeTable,
-	[SPECIES_NECROZMA_DAWN_WINGS] = sNecrozmaFormChangeTable,
 	[SPECIES_MELMETAL] = sMelmetalFormChangeTable,
 	[SPECIES_MELMETAL_GIGA] = sMelmetalFormChangeTable,
 	[SPECIES_RILLABOOM] = sRillaboomFormChangeTable,
@@ -390,8 +388,8 @@ const struct FormChange *const gFormChangeTable[NUM_SPECIES] =
 	[SPECIES_EISCUE_NOICE_FACE] = sEiscueFormChangeTable,
 	[SPECIES_INDEEDEE] = sIndeedeeFormChangeTable,
 	[SPECIES_INDEEDEE_FEMALE] = sIndeedeeFormChangeTable,
-	/*[SPECIES_MORPEKO] = sMorpekoFormChangeTable, handled separated
-	[SPECIES_MORPEKO_HANGRY] = sMorpekoFormChangeTable,*/
+	[SPECIES_MORPEKO] = sMorpekoFormChangeTable,
+	[SPECIES_MORPEKO_HANGRY] = sMorpekoFormChangeTable,
 	[SPECIES_COPPERAJAH] = sCopperajahFormChangeTable,
 	[SPECIES_COPPERAJAH_GIGA] = sCopperajahFormChangeTable,
 	[SPECIES_DURALUDON] = sDuraludonFormChangeTable,
@@ -404,11 +402,6 @@ const struct FormChange *const gFormChangeTable[NUM_SPECIES] =
 	[SPECIES_URSHIFU_GIGA] = sUrshifuSingleStrikeFormChangeTable,
 	[SPECIES_URSHIFU_RAPID_STRIKE_STYLE] = sUrshifuRapidStrikeFormChangeTable,
 	[SPECIES_URSHIFU_RAPID_STRIKE_GIGA] = sUrshifuRapidStrikeFormChangeTable,
-	[SPECIES_GLASTRIER] = sGlastrierFormChangeTable,
-	[SPECIES_SPECTRIER] = sSpectrierFormChangeTable,
-	[SPECIES_CALYREX] = sCalyrexFormChangeTable,
-	[SPECIES_CALYREX_ICE_RIDER] = sCalyrexFormChangeTable,
-	[SPECIES_CALYREX_SHADOW_RIDER] = sCalyrexFormChangeTable,
 	[SPECIES_BASCULEGION] = sBasculegionFormChangeTable,
 	[SPECIES_BASCULEGION_FEMALE] = sBasculegionFormChangeTable,
 	[SPECIES_ENAMORUS] = sEnamorusFormChangeTable,
@@ -426,4 +419,13 @@ const struct FormChange *const gFormChangeTable[NUM_SPECIES] =
 	[SPECIES_TATSUGIRI] = sTatsugiriFormChangeTable,
 	[SPECIES_TATSUGIRI_DROOPY] = sTatsugiriFormChangeTable,
 	[SPECIES_TATSUGIRI_STRETCHY] = sTatsugiriFormChangeTable,
+};
+
+const struct Fusion gFusionsTable[] =
+{
+	FUSION(SPECIES_KYUREM,   SPECIES_RESHIRAM, ITEM_DNA_SPLICERS, SPECIES_KYUREM_WHITE),
+	FUSION(SPECIES_KYUREM,   SPECIES_ZEKROM,   ITEM_DNA_SPLICERS, SPECIES_KYUREM_BLACK),
+	FUSION(SPECIES_NECROZMA, SPECIES_SOLGALEO, ITEM_N_SOLARIZER,  SPECIES_NECROZMA_DUSK_MANE),
+	FUSION(SPECIES_NECROZMA, SPECIES_LUNALA,   ITEM_N_LUNARIZER,  SPECIES_NECROZMA_DAWN_WINGS),
+	FUSION(SPECIES_NONE,     SPECIES_NONE,     ITEM_NONE,         SPECIES_NONE), // end table
 };

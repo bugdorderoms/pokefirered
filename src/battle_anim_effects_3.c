@@ -2131,7 +2131,7 @@ void AnimTask_TransformMon(u8 taskId)
     case 0:
         SetGpuReg(REG_OFFSET_MOSAIC, 0);
 		SetAnimBgAttribute(GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker), BG_ANIM_MOSAIC, 1);
-        gTasks[taskId].data[10] = gBattleAnimArgs[1];
+        gTasks[taskId].data[10] = gBattleAnimArgs[0];
         gTasks[taskId].data[0]++;
         break;
     case 1:

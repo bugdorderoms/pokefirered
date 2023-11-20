@@ -93,9 +93,7 @@ u8 TrySetCantSelectMoveBattleScript(u8 battlerId);
 u8 CheckMoveLimitations(u8 battlerId, u8 unusableMoves, u8 check);
 bool8 AreAllMovesUnusable(u8 battlerId);
 u8 GetImprisonedMovesCount(u8 battlerId, u16 move);
-u8 DoFieldEndTurnEffects(void);
-u8 DoBattlerEndTurnEffects(void);
-bool8 HandleFutureAttackPerishSongOnTurnEnd(void);
+bool8 DoEndTurnEffects(void);
 bool8 HandleFaintedMonActions(void);
 void TryClearRageStatuses(void);
 u8 AtkCanceller_UnableToUseMove(void);
@@ -108,6 +106,7 @@ void BattleScriptPushCursorAndCallback(const u8 *BS_ptr);
 u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn);
 void ClearFuryCutterDestinyBondGrudge(u8 battlerId);
 void HandleAction_RunBattleScript(void);
+u8 GetMoveSplit(u16 move);
 u8 GetDefaultMoveTarget(u8 battlerId);
 u8 GetRandomTarget(u8 battlerId);
 u8 GetBattlerMoveTargetType(u8 battlerId, u16 move);
@@ -189,5 +188,6 @@ bool8 CanDisableMove(u8 battlerId, u8 movePos, u16 move);
 bool8 CanSafeguardProtectBattler(u8 attacker, u8 defender);
 bool8 IsBattlerProtectedByFlowerVeil(u8 battlerId);
 u8 GetFutureAttackStringId(u16 move);
+void SaveBattlersHps(void);
 
 #endif // GUARD_BATTLE_UTIL_H

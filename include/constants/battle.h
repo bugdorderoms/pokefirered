@@ -94,6 +94,7 @@
 #define STATUS1_PARALYSIS        (1 << 6)
 #define STATUS1_TOXIC_POISON     (1 << 7)
 #define STATUS1_TOXIC_COUNTER    (1 << 8 | 1 << 9 | 1 << 10 | 1 << 11)
+#define STATUS1_TOXIC_TURN(num)  ((num) << 8)
 #define STATUS1_PSN_ANY          (STATUS1_POISON | STATUS1_TOXIC_POISON)
 #define STATUS1_ANY              (STATUS1_SLEEP | STATUS1_BURN | STATUS1_FREEZE | STATUS1_PARALYSIS | STATUS1_PSN_ANY)
 
@@ -102,7 +103,9 @@
 #define STATUS2_CONFUSION                (1 << 0 | 1 << 1 | 1 << 2)
 #define STATUS2_CONFUSION_TURN(num)      ((num) << 0)
 #define STATUS2_FLINCHED                 (1 << 3)
-#define STATUS2_UPROAR                   (1 << 4 | 1 << 5 | 1 << 6)
+#define STATUS2_RECHARGE                 (1 << 4)
+#define STATUS2_UPROAR                   (1 << 5 | 1 << 6)
+#define STATUS2_UPROAR_TURN(num)         ((num) << 5)
 #define STATUS2_BIDE                     (1 << 7 | 1 << 8)
 #define STATUS2_BIDE_TURN(num)           ((num) << 7 & STATUS2_BIDE)
 #define STATUS2_LOCK_CONFUSE             (1 << 9 | 1 << 10)
@@ -122,7 +125,6 @@
 #define STATUS2_FORESIGHT                (1 << 24)
 #define STATUS2_DEFENSE_CURL             (1 << 25)
 #define STATUS2_TORMENT                  (1 << 26)
-#define STATUS2_RECHARGE                 (1 << 27)
 
 // Seems like per-battler statuses. Not quite sure how to categorize these
 #define STATUS3_LEECHSEED_BATTLER       (1 << 0 | 1 << 1)
@@ -136,12 +138,12 @@
 #define STATUS3_ROOTED                  (1 << 9)
 #define STATUS3_CHARGED_UP              (1 << 10)
 #define STATUS3_YAWN                    (1 << 11 | 1 << 12)
+#define STATUS3_YAWN_TURN(num)          ((num) << 11)
 #define STATUS3_IMPRISONED_OTHERS       (1 << 13)
 #define STATUS3_GRUDGE                  (1 << 14)
-#define STATUS3_CANT_SCORE_A_CRIT       (1 << 15)
-#define STATUS3_UNDERWATER              (1 << 16)
-#define STATUS3_POWER_TRICK             (1 << 17)
-#define STATUS3_EMBARGO                 (1 << 18)
+#define STATUS3_UNDERWATER              (1 << 15)
+#define STATUS3_POWER_TRICK             (1 << 16)
+#define STATUS3_EMBARGO                 (1 << 17)
 
 #define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
 

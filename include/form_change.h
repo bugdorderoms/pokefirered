@@ -1,6 +1,14 @@
 #ifndef GUARD_FORM_CHANGE_H
 #define GUARD_FORM_CHANGE_H
 
+struct Fusion
+{
+	u16 masterSpecies;
+	u16 otherSpecies;
+	u16 item;
+	u16 targetSpecies;
+};
+
 struct FormChange
 {
 	u16 method;
@@ -29,9 +37,10 @@ void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 r
 void DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType);
 
 extern const struct FormChange *const gFormChangeTable[];
+extern const struct Fusion gFusionsTable[];
 
 // form change animations
-void DoFormChangeAnim(u8 animId, u16 species, bool8 isFusion, struct Sprite *icon1, struct Sprite *icon2);
+void DoFormChangeAnim(u8 animId, u16 oldSpecies, u16 newSpecies, bool8 isFusion, struct Sprite *icon1, struct Sprite *icon2);
 bool8 IsFormChangeAnimFinished(void);
 
 #endif // GUARD_FORM_CHANGE_H
