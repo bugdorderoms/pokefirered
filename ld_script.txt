@@ -274,7 +274,6 @@ SECTIONS {
         src/digit_obj_util.o(.text);
         src/ss_anne.o(.text);
         src/renewable_hidden_items.o(.text);
-        src/trainer_tower.o(.text);
         src/minigame_countdown.o(.text);
         src/dns.o(.text);
         src/trainer_slide.o(.text);
@@ -563,10 +562,8 @@ SECTIONS {
         src/digit_obj_util.o(.rodata);
         src/ss_anne.o(.rodata);
         src/renewable_hidden_items.o(.rodata);
-        src/trainer_tower.o(.rodata);
         src/minigame_countdown.o(.rodata);
         src/keyboard_text.o(.rodata);
-        src/trainer_tower_sets.o(.rodata);
         src/dns.o(.rodata);
         src/trainer_slide.o(.rodata);
         src/registered_item.o(.rodata);

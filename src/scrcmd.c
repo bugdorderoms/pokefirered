@@ -310,6 +310,16 @@ bool8 ScrCmd_killscript(struct ScriptContext * ctx)
     return TRUE;
 }
 
+bool8 ScrCmd_jumpifcantgivenick(struct ScriptContext * ctx)
+{
+	const u8 * scrptr = (const u8 *)ScriptReadWord(ctx);
+	
+	if (gSaveBlock2Ptr->optionsSkipPkmnNickname)
+		ScriptJump(ctx, scrptr);
+	
+	return FALSE;
+}
+
 bool8 ScrCmd_execram(struct ScriptContext * ctx)
 {
     return FALSE;

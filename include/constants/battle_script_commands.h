@@ -1,11 +1,13 @@
 #ifndef GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H
 #define GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H
 
-// Flags for the CanBe* statused function
+// Flags for the CanBe* statused functions
 #define STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD          (1 << 0) // Also Flower Veil
 #define STATUS_CHANGE_FLAG_CHECK_UPROAR              (1 << 1)
 #define STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS     (1 << 2)
 #define STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE         (1 << 3)
+#define STATUS_CHANGE_FLAG_ALL (STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_CHECK_UPROAR | STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS \
+                               | STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE)
 
 // Battle Scripting addresses
 #define sPAINSPLIT_HP gBattleScripting + 0x0
@@ -13,7 +15,7 @@
 #define sSAVED_DMG gBattleScripting + 0x8
 #define sMULTIHIT_STRING gBattleScripting + 0x0C
 #define sDMG_MULTIPLIER gBattleScripting + 0x12
-#define sTWOTURN_STRINGID gBattleScripting + 0x13
+#define sBYPASS_ABILITY_POP_UP gBattleScripting + 0x13
 #define sB_ANIM_ARG1 gBattleScripting + 0x14
 #define sB_ANIM_ARG2 gBattleScripting + 0x15
 #define sTRIPLE_KICK_POWER gBattleScripting + 0x16
@@ -29,7 +31,6 @@
 #define sLEARNMOVE_STATE gBattleScripting + 0x21
 #define sILLUSION_NICK_HACK gBattleScripting + 0x25
 #define sFIXED_ABILITY_POPUP gBattleScripting + 0x26
-#define sBYPASS_ABILITY_POP_UP gBattleScripting + 0x27
 
 // array entries for battle communication
 #define MULTIUSE_STATE                      0
@@ -71,11 +72,6 @@
 // Atk01, accuracy calc
 #define NO_ACC_CALC_CHECK_LOCK_ON 0
 #define ACC_CURR_MOVE             1
-
-// Atk08, Parental Bond counter states
-#define PARENTAL_BOND_1ST_HIT 2
-#define PARENTAL_BOND_2ND_HIT 1
-#define PARENTAL_BOND_OFF     0
 
 // Compare operands
 #define CMP_EQUAL               0x0
@@ -136,17 +132,17 @@
 
 // TODO: documentation
 // Atk76, various cases
-#define VARIOUS_CANCEL_MULTI_TURN_MOVES             0 // unused
-#define VARIOUS_SET_MAGIC_COAT_TARGET               1
+#define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       0
+#define VARIOUS_TRY_COPY_ABILITY                    1
 #define VARIOUS_IS_RUNNING_IMPOSSIBLE               2
 #define VARIOUS_GET_BATTLER_SIDE                    3
 #define VARIOUS_GET_BATTLER_FAINTED                 4
 #define VARIOUS_RESET_INTIMIDATE_TRACE_BITS         5
 #define VARIOUS_UPDATE_CHOICE_MOVE_ON_LVL_UP        6
 #define VARIOUS_RESET_PLAYER_FAINTED_FLAG           7
-#define VARIOUS_GET_BATTLERS_FOR_RECALL             8
-#define VARIOUS_RETURN_OPPONENT_MON1                9
-#define VARIOUS_RETURN_OPPONENT_MON2                10
+#define VARIOUS_TRY_SET_DESTINY_BOND                8
+#define VARIOUS_JUMP_IF_NOT_FIRST_TURN              9
+#define VARIOUS_TRY_CONVERSION_TYPE_CHANGE          10
 #define VARIOUS_CHECK_POKEFLUTE                     11
 #define VARIOUS_WAIT_FANFARE                        12
 #define VARIOUS_TRY_ACTIVATE_MOXIE                  13
@@ -173,20 +169,20 @@
 #define VARIOUS_TRY_ACTIVATE_GRIM_NEIGH             34
 #define VARIOUS_TRY_ACTIVATE_SOUL_HEART             35
 #define VARIOUS_TRY_ACTIVATE_RECEIVER               36
-#define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       37
-#define VARIOUS_JUMP_IF_NOT_FIRST_TURN              38
-#define VARIOUS_TRY_CONVERSION_TYPE_CHANGE          39
-#define VARIOUS_TRY_SET_DESTINY_BOND                40
+#define VARIOUS_JUMP_IF_CANT_GIVE_NICK              37
+#define VARIOUS_JUMP_IF_NO_DAMAGE                   38
+#define VARIOUS_JUMP_IF_ENDEAVOR_FAIL               39
+#define VARIOUS_TRY_SWAP_ABILITIES                  40
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN                               0
 #define ATK80_DMG_HALF_USER_HP                              1
 #define ATK80_DMG_DRAINED                                   2
 #define ATK80_DMG_1_8_TARGET_MAX_HP                         3
-#define ATK48_NEGATIVE_DMG_DEALT                            4 // Unused
-#define ATK48_DMG_HALF_TARGET_HP                            5
-#define ATK48_DMG_ATK_LEVEL                                 6
-#define ATK48_DMG_BIG_ROOT                                  7
+#define ATK48_DMG_HALF_TARGET_HP                            4
+#define ATK48_DMG_ATK_LEVEL                                 5
+#define ATK48_DMG_BIG_ROOT                                  6
+#define ATK80_DMG_HEALTH_DIFFERENCE                         7
 
 // Atk83, trainerslide cases
 #define ATK83_TRAINER_SLIDE_CASE_SAVE_SPRITES    0
@@ -210,5 +206,11 @@
 // status ids
 #define ID_STATUS1 0
 #define ID_STATUS2 1
+#define ID_STATUS3 2
+
+// Parental Bond counter states
+#define PARENTAL_BOND_1ST_HIT 2
+#define PARENTAL_BOND_2ND_HIT 1
+#define PARENTAL_BOND_OFF     0
 
 #endif // GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H

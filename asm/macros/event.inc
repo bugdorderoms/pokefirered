@@ -79,9 +79,11 @@
 	.macro killscript
 	.byte 0x0d
 	.endm
-
-	.macro nop0e
+	
+	@ Jumps if the pokemon nickname scene is skiped.
+	.macro jumpifcantgivenick ptr:req
 	.byte 0x0e
+	.4byte \ptr
 	.endm
 
 	@ Sets the specified script bank to immediate value.
@@ -1675,4 +1677,13 @@
 	fadescreen FADE_TO_BLACK
 	special ChooseItemFromBag
 	waitstate
+	.endm
+	
+	.macro givenickmsg ptr1:req, ptr2:req
+	jumpifcantgivenick \ptr2
+	msgbox Text_GiveNicknameToThisMon, MSGBOX_YESNO
+	compare VAR_RESULT, YES
+	goto_if_eq \ptr1
+	compare VAR_RESULT, NO
+	goto_if_eq \ptr2
 	.endm

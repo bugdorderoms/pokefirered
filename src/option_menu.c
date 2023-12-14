@@ -19,6 +19,7 @@ enum
     MENUITEM_BATTLESTYLE,
     MENUITEM_SOUND,
     MENUITEM_FRAMETYPE,
+	MENUITEM_PKMNNICKNAME,
     MENUITEM_CANCEL,
     MENUITEM_COUNT
 };
@@ -127,16 +128,17 @@ static const struct BgTemplate sOptionMenuBgTemplates[] =
 };
 
 static const u16 sOptionMenuPalette[] = INCBIN_U16("graphics/misc/unk_83cc2e4.gbapal");
-static const u16 sOptionMenuItemCounts[MENUITEM_COUNT] = {3, 2, 2, 2, 10, 0};
+static const u16 sOptionMenuItemCounts[MENUITEM_COUNT] = {3, 2, 2, 2, 10, 2, 0};
 
 static const u8 *const sOptionMenuItemsNames[MENUITEM_COUNT] =
 {
-    [MENUITEM_TEXTSPEED]   = gText_TextSpeed,
-    [MENUITEM_BATTLESCENE] = gText_BattleScene,
-    [MENUITEM_BATTLESTYLE] = gText_BattleStyle,
-    [MENUITEM_SOUND]       = gText_Sound,
-    [MENUITEM_FRAMETYPE]   = gText_Frame,
-    [MENUITEM_CANCEL]      = gText_OptionMenuCancel,
+    [MENUITEM_TEXTSPEED]    = gText_TextSpeed,
+    [MENUITEM_BATTLESCENE]  = gText_BattleScene,
+    [MENUITEM_BATTLESTYLE]  = gText_BattleStyle,
+    [MENUITEM_SOUND]        = gText_Sound,
+    [MENUITEM_FRAMETYPE]    = gText_Frame,
+	[MENUITEM_PKMNNICKNAME] = gText_Nicknames,
+    [MENUITEM_CANCEL]       = gText_OptionMenuCancel,
 };
 
 static const u8 *const sTextSpeedOptions[] =
@@ -162,6 +164,12 @@ static const u8 *const sSoundOptions[] =
 {
     gText_SoundMono, 
     gText_SoundStereo
+};
+
+static const u8 *const sNicknameOptions[] =
+{
+	gText_GiveNicknames,
+	gText_SkipNicknames
 };
 
 static const u8 sOptionMenuPickSwitchCancelTextColor[] = {TEXT_DYNAMIC_COLOR_6, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
@@ -199,6 +207,7 @@ void CB2_OptionsMenuFromStartMenu(void)
     sOptionMenuPtr->option[MENUITEM_BATTLESTYLE] = gSaveBlock2Ptr->optionsBattleStyle;
     sOptionMenuPtr->option[MENUITEM_SOUND] = gSaveBlock2Ptr->optionsSound;
     sOptionMenuPtr->option[MENUITEM_FRAMETYPE] = gSaveBlock2Ptr->optionsWindowFrameType;
+	sOptionMenuPtr->option[MENUITEM_PKMNNICKNAME] = gSaveBlock2Ptr->optionsSkipPkmnNickname;
     
     for (i = 0; i < MENUITEM_COUNT - 1; i++)
     {
@@ -474,6 +483,9 @@ static void BufferOptionMenuString(u8 selection)
         StringAppendN(str, buf, 3);
         AddTextPrinterParameterized3(1, 2, x, y, dst, -1, str);
         break;
+	case MENUITEM_PKMNNICKNAME:
+	    AddTextPrinterParameterized3(1, 2, x, y, dst, -1, sNicknameOptions[sOptionMenuPtr->option[selection]]);
+        break;
     default:
         break;
     }
@@ -491,6 +503,7 @@ static void CloseAndSaveOptionMenu(u8 taskId)
     gSaveBlock2Ptr->optionsBattleStyle = sOptionMenuPtr->option[MENUITEM_BATTLESTYLE];
     gSaveBlock2Ptr->optionsSound = sOptionMenuPtr->option[MENUITEM_SOUND];
     gSaveBlock2Ptr->optionsWindowFrameType = sOptionMenuPtr->option[MENUITEM_FRAMETYPE];
+	gSaveBlock2Ptr->optionsSkipPkmnNickname = sOptionMenuPtr->option[MENUITEM_PKMNNICKNAME];
     SetPokemonCryStereo(gSaveBlock2Ptr->optionsSound);
     FREE_AND_SET_NULL(sOptionMenuPtr);
     DestroyTask(taskId);

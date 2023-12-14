@@ -182,7 +182,7 @@ u8 CountPartyNonEggMons(void)
 
     for (i = 0, count = 0; i < PARTY_SIZE; i++)
     {
-        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG))
+        if (IsMonValidSpecies(&gPlayerParty[i]))
             count++;
     }
     return count;
@@ -194,7 +194,7 @@ u8 CountPartyAliveNonEggMonsExcept(u8 slotToIgnore)
 
     for (i = 0, count = 0; i < PARTY_SIZE; i++)
     {
-        if (i != slotToIgnore && GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG) && GetMonData(&gPlayerParty[i], MON_DATA_HP))
+        if (i != slotToIgnore && MonCanBattle(&gPlayerParty[i]))
             count++;
     }
     return count;

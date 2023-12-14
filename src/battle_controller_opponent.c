@@ -9,17 +9,16 @@
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_controllers.h"
-#include "battle_string_ids.h"
 #include "battle_message.h"
 #include "battle_interface.h"
 #include "battle_tower.h"
 #include "battle_gfx_sfx_util.h"
 #include "battle_ai_script_commands.h"
 #include "battle_ai_switch_items.h"
-#include "trainer_tower.h"
 #include "constants/battle_anim.h"
 #include "constants/moves.h"
 #include "constants/songs.h"
+#include "constants/battle_string_ids.h"
 
 static void OpponentBufferRunCommand(u8 battlerId);
 static void OpponentBufferExecCompleted(u8 battlerId);
@@ -197,8 +196,6 @@ static u32 GetOpponentTrainerPicId(void)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
         return GetBattleTowerTrainerFrontSpriteId();
-    else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
-        return GetTrainerTowerTrainerFrontSpriteId();
     else if (gBattleTypeFlags & BATTLE_TYPE_EREADER_TRAINER)
         return GetEreaderTrainerFrontSpriteId();
     else
@@ -278,9 +275,11 @@ static void OpponentHandleChooseMove(u8 battlerId)
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_RUN, 0);
             break;
         default:
-            if ((gBattleMoves[moveInfo->moves[chosenMoveId]].target & (MOVE_TARGET_USER_OR_SELECTED | MOVE_TARGET_USER)))
+            if (gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_USER_OR_SELECTED || gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_USER
+			|| gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_ALL_BATTLERS || gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_USER_OR_ALLY)
                 gBattlerTarget = battlerId;
-            if (gBattleMoves[moveInfo->moves[chosenMoveId]].target & MOVE_TARGET_BOTH)
+            if (gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_BOTH || gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_FOES_AND_ALLY
+			|| gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_ALL_BATTLERS)
             {
                 gBattlerTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
                 if (gAbsentBattlerFlags & gBitTable[gBattlerTarget])
@@ -302,14 +301,15 @@ static void OpponentHandleChooseMove(u8 battlerId)
         }
         while (move == MOVE_NONE);
 		
-        if ((gBattleMoves[move].target & (MOVE_TARGET_USER_OR_SELECTED | MOVE_TARGET_USER)))
+        if (gBattleMoves[move].target == MOVE_TARGET_USER_OR_SELECTED || gBattleMoves[move].target == MOVE_TARGET_USER
+		|| gBattleMoves[move].target == MOVE_TARGET_ALL_BATTLERS || gBattleMoves[move].target == MOVE_TARGET_USER_OR_ALLY)
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, (chosenMoveId) | (battlerId << 8));
         else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 		{
 			target = GetBattlerAtPosition(Random() & 2);
 		
 #if DOUBLE_WILD_ATTACK_NATURAL_ENEMY
-			if (!(gBattleMoves[move].target & MOVE_TARGET_BOTH))
+			if (gBattleMoves[move].target != MOVE_TARGET_BOTH && gBattleMoves[move].target != MOVE_TARGET_FOES_AND_ALLY)
 			{
 				speciesAttacker = gBattleMons[battlerId].species;
 				speciesAttackerPartner = gBattleMons[GetBattlerAtPosition(BATTLE_PARTNER(battlerId))].species;

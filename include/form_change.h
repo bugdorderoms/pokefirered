@@ -33,7 +33,7 @@ u16 GetMonFormChangeSpecies(struct Pokemon *mon, u16 formChangeType);
 
 // battle form change
 u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType);
-void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 reloadAbility);
+void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 reloadStats, bool8 reloadAbility);
 void DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType);
 
 extern const struct FormChange *const gFormChangeTable[];

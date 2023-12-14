@@ -278,10 +278,7 @@ static u8 sub_8090058(void)
 
 void CreateMovingMonIcon(void)
 {
-    u16 species = GetMonData(&gPSSData->movingMon, MON_DATA_SPECIES2);
-    u8 priority = sub_8090058();
-
-    gPSSData->movingMonSprite = CreateMonIconSprite(species, 0, 0, priority, 7);
+    gPSSData->movingMonSprite = CreateMonIconSprite(GetMonData(&gPSSData->movingMon, MON_DATA_SPECIES2), 0, 0, sub_8090058(), 7);
     gPSSData->movingMonSprite->callback = sub_80911B0;
 }
 

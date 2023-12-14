@@ -4,12 +4,9 @@
 #include "battle_anim.h"
 #include "pokemon.h"
 #include "malloc.h"
-#include "trainer_tower.h"
 
 void AllocateBattleResources(void)
 {
-    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
-        InitTrainerTowerBattleStruct();
     if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
     {
         s32 i;
@@ -36,8 +33,6 @@ void AllocateBattleResources(void)
 
 void FreeBattleResources(void)
 {
-    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
-        FreeTrainerTowerBattleStruct();
     if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
     {
         s32 i;

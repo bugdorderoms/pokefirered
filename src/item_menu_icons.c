@@ -487,20 +487,20 @@ u8 CreateHeldItemSprite(s16 x, s16 y, u8 subpriority, bool8 isMail)
 static u8 ShowObtainedItemDescription(u16 item)
 {
 	struct WindowTemplate template;
-	s16 textX, textY, maxWidth, windowHeight, numLines;
+	s16 textX, textY, maxChars, windowHeight, numLines;
 	u8 windowId;
 	
 	if (IS_KEY_ITEM_TM(ItemId_GetPocket(item)))
 	{
 		textX = 1;
-		maxWidth = 222;
+		maxChars = 43;
 	}
 	else
 	{
 		textX = ITEM_ICON_X + 2;
-		maxWidth = 195;
+		maxChars = 39;
 	}
-	numLines = ReformatStringToMaxChars(gStringVar4, ItemId_GetDescription(item), 0, maxWidth, FALSE);
+	numLines = ReformatStringToMaxChars(ItemId_GetDescription(item), 0, maxChars, FALSE);
 	
 	if (numLines == 1)
 	{

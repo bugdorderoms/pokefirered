@@ -726,9 +726,10 @@ void StripExtCtrlCodes(u8 *str)
     str[destIndex] = 0xFF;
 }
 
-u8 ReformatStringToMaxChars(u8 *dest, const u8 *src, u8 fontId, u8 maxChars, bool8 allowsJumpLine)
+u8 ReformatStringToMaxChars(const u8 *src, u8 fontId, u8 maxChars, bool8 allowsJumpLine)
 {
-	u8 numLines = 1, buffer[1000], *lineStart;
+	u8 buffer[1000], *lineStart, numLines = 1, *dest = gStringVar4, maxWidth = 5 * maxChars;
+	bool8 clearedPrompt = FALSE; // handle logic for prompt clear. "\p".
 	u32 k = 0;
 
 	memset(dest, 0xFF, 1000);
@@ -739,7 +740,7 @@ u8 ReformatStringToMaxChars(u8 *dest, const u8 *src, u8 fontId, u8 maxChars, boo
 	
 	while (buffer[k] != EOS)
 	{
-		if (GetStringWidth(fontId, lineStart, -1) >= maxChars)
+		if (GetStringWidth(fontId, lineStart, -1) >= maxWidth)
 		{
 			do
 			{
@@ -749,8 +750,14 @@ u8 ReformatStringToMaxChars(u8 *dest, const u8 *src, u8 fontId, u8 maxChars, boo
 			
 			if (buffer[k + 1] != EOS)
 			{
-				*dest = CHAR_NEWLINE;
-				numLines++;
+				++numLines;
+				
+				if (numLines > 2 && !clearedPrompt && allowsJumpLine)
+					*dest = CHAR_PROMPT_SCROLL;
+				else
+					*dest = CHAR_NEWLINE;
+				
+				clearedPrompt = FALSE;
 			}
 			lineStart = ++dest;
 		}
@@ -758,17 +765,32 @@ u8 ReformatStringToMaxChars(u8 *dest, const u8 *src, u8 fontId, u8 maxChars, boo
 		{
 			*dest = buffer[k];
 			
-			if (buffer[k] == CHAR_NEWLINE)
+			switch (buffer[k])
 			{
-				if (allowsJumpLine)
-				{
-					numLines++;
+				case CHAR_NEWLINE:
+				    if (allowsJumpLine)
+					{
+						++numLines;
+						
+						if (numLines > 2 && !clearedPrompt)
+							*dest = CHAR_PROMPT_SCROLL;
+						
+						lineStart = dest + 1;
+						clearedPrompt = FALSE;
+					}
+					else if (buffer[k - 1] != CHAR_SPACE)
+						*dest = CHAR_SPACE;
+					else
+						dest--;
+					break;
+				case CHAR_PROMPT_SCROLL:
+				    ++numLines;
 					lineStart = dest + 1;
-				}
-				else if (buffer[k - 1] != CHAR_SPACE)
-					*dest = CHAR_SPACE;
-				else
-					dest--;
+					break;
+				case CHAR_PROMPT_CLEAR:
+				    lineStart = dest + 1;
+					clearedPrompt = TRUE;
+					break;
 			}
 			dest++;
 		}

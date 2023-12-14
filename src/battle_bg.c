@@ -748,9 +748,7 @@ static void DrawLinkBattleParticipantPokeballs(u8 taskId, u8 multiplayerId, u8 b
 static void DrawLinkBattleVsScreenOutcomeText(void)
 {
     if (gBattleOutcome == B_OUTCOME_DREW)
-    {
-        BattlePutTextOnWindow(gText_Draw, 0x15);
-    }
+        BattlePutTextOnWindow(gText_Draw, B_WIN_VS_OUTCOME_DRAW);
     else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
     {
         if (gBattleOutcome == B_OUTCOME_WON)
@@ -759,13 +757,13 @@ static void DrawLinkBattleVsScreenOutcomeText(void)
             {
             case 0:
 			case 2:
-                BattlePutTextOnWindow(gText_Win, 0x16);
-                BattlePutTextOnWindow(gText_Loss, 0x17);
+                BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_LEFT);
+                BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_RIGHT);
                 break;
             case 1:
 			case 3:
-                BattlePutTextOnWindow(gText_Win, 0x17);
-                BattlePutTextOnWindow(gText_Loss, 0x16);
+                BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_RIGHT);
+                BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_LEFT);
                 break;
             }
         }
@@ -775,13 +773,13 @@ static void DrawLinkBattleVsScreenOutcomeText(void)
             {
             case 0:
 			case 2:
-                BattlePutTextOnWindow(gText_Win, 0x17);
-                BattlePutTextOnWindow(gText_Loss, 0x16);
+                BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_RIGHT);
+                BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_LEFT);
                 break;
             case 1:
 			case 3:
-                BattlePutTextOnWindow(gText_Win, 0x16);
-                BattlePutTextOnWindow(gText_Loss, 0x17);
+                BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_LEFT);
+                BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_RIGHT);
                 break;
             }
         }
@@ -790,26 +788,26 @@ static void DrawLinkBattleVsScreenOutcomeText(void)
     {
         if (gLinkPlayers[gBattleStruct->multiplayerId].id != 0)
         {
-            BattlePutTextOnWindow(gText_Win, 0x17);
-            BattlePutTextOnWindow(gText_Loss, 0x16);
+            BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_RIGHT);
+            BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_LEFT);
         }
         else
         {
-            BattlePutTextOnWindow(gText_Win, 0x16);
-            BattlePutTextOnWindow(gText_Loss, 0x17);
+            BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_LEFT);
+            BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_RIGHT);
         }
     }
     else
     {
         if (gLinkPlayers[gBattleStruct->multiplayerId].id != 0)
         {
-            BattlePutTextOnWindow(gText_Win, 0x16);
-            BattlePutTextOnWindow(gText_Loss, 0x17);
+            BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_LEFT);
+            BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_RIGHT);
         }
         else
         {
-            BattlePutTextOnWindow(gText_Win, 0x17);
-            BattlePutTextOnWindow(gText_Loss, 0x16);
+            BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_RIGHT);
+            BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_LEFT);
         }
     }
 }
@@ -833,19 +831,19 @@ void InitLinkBattleVsScreen(u8 taskId)
                 switch (linkPlayer->id)
                 {
                 case 0:
-                    BattlePutTextOnWindow(name, 0x11);
+                    BattlePutTextOnWindow(name, B_WIN_VS_MULTI_PLAYER_1);
                     DrawLinkBattleParticipantPokeballs(taskId, linkPlayer->id, 1, 2, 4);
                     break;
                 case 1:
-                    BattlePutTextOnWindow(name, 0x12);
+                    BattlePutTextOnWindow(name, B_WIN_VS_MULTI_PLAYER_2);
                     DrawLinkBattleParticipantPokeballs(taskId, linkPlayer->id, 2, 2, 4);
                     break;
                 case 2:
-                    BattlePutTextOnWindow(name, 0x13);
+                    BattlePutTextOnWindow(name, B_WIN_VS_MULTI_PLAYER_3);
                     DrawLinkBattleParticipantPokeballs(taskId, linkPlayer->id, 1, 2, 8);
                     break;
                 case 3:
-                    BattlePutTextOnWindow(name, 0x14);
+                    BattlePutTextOnWindow(name, B_WIN_VS_MULTI_PLAYER_4);
                     DrawLinkBattleParticipantPokeballs(taskId, linkPlayer->id, 2, 2, 8);
                     break;
                 }
@@ -859,10 +857,10 @@ void InitLinkBattleVsScreen(u8 taskId)
 				SWAP(playerId, opponentId, temp);
 
             name = gLinkPlayers[playerId].name;
-            BattlePutTextOnWindow(name, 0xF);
+            BattlePutTextOnWindow(name, B_WIN_VS_PLAYER);
 
             name = gLinkPlayers[opponentId].name;
-            BattlePutTextOnWindow(name, 0x10);
+            BattlePutTextOnWindow(name, B_WIN_VS_OPPONENT);
 
             DrawLinkBattleParticipantPokeballs(taskId, playerId, 1, 2, 7);
             DrawLinkBattleParticipantPokeballs(taskId, opponentId, 2, 2, 7);
@@ -940,24 +938,19 @@ void DrawBattleEntryBackground(void)
         LoadCompressedSpriteSheetUsingHeap(&sVsLettersSpriteSheet);
     }
     else if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
-    {
         LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_GRASS);
-    }
-    else if (gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER))
-    {
+    else if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER)))
         LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_BUILDING);
-    }
     else
     {
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
         {
-            u8 trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
-            if (trainerClass == TRAINER_CLASS_LEADER)
+            if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_LEADER)
             {
                 LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_BUILDING);
                 return;
             }
-            else if (trainerClass == TRAINER_CLASS_CHAMPION)
+            else if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_CHAMPION)
             {
                 LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_BUILDING);
                 return;
@@ -965,23 +958,18 @@ void DrawBattleEntryBackground(void)
         }
 
         if (GetCurrentMapBattleScene() == MAP_BATTLE_SCENE_NORMAL)
-        {
             LoadBattleTerrainEntryGfx(gBattleTerrain);
-        }
         else
-        {
             LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_BUILDING);
-        }
     }
 }
 
 static u8 GetBattleTerrainOverride(void)
 {
     u8 battleScene;
-    if (gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER))
-    {
+	
+    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER)))
         return BATTLE_TERRAIN_LINK;
-    }
     else if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
     {
         gBattleTerrain = BATTLE_TERRAIN_GRASS;
@@ -990,20 +978,13 @@ static u8 GetBattleTerrainOverride(void)
     else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
     {
         if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_LEADER)
-        {
             return BATTLE_TERRAIN_LEADER;
-        }
         else if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_CHAMPION)
-        {
             return BATTLE_TERRAIN_CHAMPION;
-        }
     }
     battleScene = GetCurrentMapBattleScene();
-    if (battleScene == MAP_BATTLE_SCENE_NORMAL)
-    {
-        return gBattleTerrain;
-    }
-    return GetBattleTerrainByMapScene(battleScene);
+	
+    return battleScene == MAP_BATTLE_SCENE_NORMAL ? gBattleTerrain : GetBattleTerrainByMapScene(battleScene);
 }
 
 void CreateBattleMoveInfoWindowAndArrows(u8 *str)

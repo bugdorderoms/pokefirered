@@ -806,7 +806,7 @@ void ItemUseInBattle_BagMenu(u8 taskId)
 		DisplayItemMessageInBag(taskId, 2, gStringVar4, Task_ReturnToBagFromContextMenu);
 	else
 	{
-		SetBattlerUsedItemForBattleScript(gSpecialVar_ItemId);
+		SetBattlerUsedItemForBattleScript(gSpecialVar_ItemId, TRUE);
 		gTasks[taskId].func = ItemMenu_StartFadeToExitCallback;
 	}
 }

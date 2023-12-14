@@ -61,9 +61,8 @@ Route4_PokemonCenter_1F_EventScript_TryBuyMagikarp:: @ 816F7A2
 
 Route4_PokemonCenter_1F_EventScript_BuyMagikarpParty:: @ 816F7F6
 	call Route4_PokemonCenter_1F_EventScript_PayForMagikarp
-	msgbox Text_GiveNicknameToThisMon, MSGBOX_YESNO
-	compare VAR_RESULT, NO
-	goto_if_eq Route4_PokemonCenter_1F_EventScript_EndPurchaseMagikarp
+	givenickmsg Route4_PokemonCenter_1F_EventScript_GiveNickToPurchasedMagikarp, Route4_PokemonCenter_1F_EventScript_EndPurchaseMagikarp
+Route4_PokemonCenter_1F_EventScript_GiveNickToPurchasedMagikarp::
 	call EventScript_GetGiftMonPartySlot
 	fadescreen FADE_TO_BLACK
 	hidemoneybox 0, 0
@@ -74,9 +73,8 @@ Route4_PokemonCenter_1F_EventScript_BuyMagikarpParty:: @ 816F7F6
 
 Route4_PokemonCenter_1F_EventScript_BuyMagikarpPC:: @ 816F822
 	call Route4_PokemonCenter_1F_EventScript_PayForMagikarp
-	msgbox Text_GiveNicknameToThisMon, MSGBOX_YESNO
-	compare VAR_RESULT, NO
-	goto_if_eq Route4_PokemonCenter_1F_EventScript_TransferMagikarpCloseMoneyBox
+	givenickmsg Route4_PokemonCenter_1F_EventScript_GiveNickAndTransferMagikarp, Route4_PokemonCenter_1F_EventScript_TransferMagikarpCloseMoneyBox
+Route4_PokemonCenter_1F_EventScript_GiveNickAndTransferMagikarp::
 	fadescreen FADE_TO_BLACK
 	hidemoneybox 0, 0
 	special ChangeBoxPokemonNickname

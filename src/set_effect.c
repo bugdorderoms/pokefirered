@@ -27,6 +27,7 @@
 #include "constants/item_effects.h"
 #include "constants/hold_effects.h"
 #include "constants/battle_move_effects.h"
+#include "constants/battle_string_ids.h"
 
 static const u8 *const sMoveEffectBS_Ptrs[] =
 {
@@ -70,7 +71,7 @@ static const u8 *const sMoveEffectBS_Ptrs[] =
 	[MOVE_EFFECT_EVS_MINUS_2]      = BattleScript_StatDown,
 	[MOVE_EFFECT_ALL_STATS_UP]     = BattleScript_AllStatsUp,
 	[MOVE_EFFECT_RAPIDSPIN]        = BattleScript_RapidSpinAway,
-	[MOVE_EFFECT_REMOVE_PARALYSIS] = BattleScript_TargetPRLZHeal,
+	[MOVE_EFFECT_REMOVE_STATUS]    = BattleScript_TargetStatusHeal,
 	[MOVE_EFFECT_ATK_DEF_DOWN]     = BattleScript_AtkDefDown,
 };
 
@@ -163,24 +164,60 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			}
 			break;
 		case MOVE_EFFECT_POISON:
-			if (CanBePoisoned(gBattleScripting.battler, gEffectBattler, flags) == STATUS_CHANGE_WORKED)
+		    ret = CanBePoisoned(gBattleScripting.battler, gEffectBattler, flags);
+		
+			if (ret == STATUS_CHANGE_WORKED)
 			{
 				gBattleMons[gEffectBattler].status1 |= STATUS1_POISON;
 				effect = 1;
 			}
+			else
+			{
+				POISON_FAIL_SCRIPTS:
+				if (primary || certain) // Basically for Synchronize
+				{
+					switch (ret)
+					{
+						case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
+						    gLastUsedAbility = defAbility;
+							RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+							BattleScriptPush(gBattlescriptCurrInstr + 1);
+							gBattlescriptCurrInstr = BattleScript_ImmunityProtectedRet;
+							return FALSE;
+					}
+				}
+			}
 			break;
 		case MOVE_EFFECT_TOXIC:
-			if (CanBePoisoned(gBattleScripting.battler, gEffectBattler, flags) == STATUS_CHANGE_WORKED)
+		    ret = CanBePoisoned(gBattleScripting.battler, gEffectBattler, flags);
+		
+			if (ret == STATUS_CHANGE_WORKED)
 			{
 				gBattleMons[gEffectBattler].status1 |= STATUS1_TOXIC_POISON;
 				effect = 1;
 			}
+			else
+				goto POISON_FAIL_SCRIPTS;
 			break;
 		case MOVE_EFFECT_BURN:
-			if (CanBeBurned(gBattleScripting.battler, gEffectBattler, flags) == STATUS_CHANGE_WORKED)
+		    ret = CanBeBurned(gBattleScripting.battler, gEffectBattler, flags);
+		
+			if (ret == STATUS_CHANGE_WORKED)
 			{
 				gBattleMons[gEffectBattler].status1 |= STATUS1_BURN;
 				effect = 1;
+			}
+			else if (primary || certain) // Basically for Synchronize
+			{
+				switch (ret)
+				{
+					case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
+					    gLastUsedAbility = defAbility;
+						RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+						BattleScriptPush(gBattlescriptCurrInstr + 1);
+						gBattlescriptCurrInstr = BattleScript_WaterVeilProtectedRet;
+						return FALSE;
+				}
 			}
 			break;
 		case MOVE_EFFECT_FREEZE:
@@ -199,7 +236,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 				gBattleMons[gEffectBattler].status1 |= STATUS1_PARALYSIS;
 				effect = 1;
 			}
-			else if (primary || certain)
+			else if (primary || certain) // Basically for Synchronize
 			{
 				switch (ret)
 				{
@@ -340,10 +377,11 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		case MOVE_EFFECT_RAPIDSPIN:
 		    effect = 2;
 			break;
-		case MOVE_EFFECT_REMOVE_PARALYSIS:
-		    if (gBattleMons[gEffectBattler].status1 & STATUS1_PARALYSIS)
+		case MOVE_EFFECT_REMOVE_STATUS:
+		    if (gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_1ST_HIT && (gBattleMons[gEffectBattler].status1 & gBattleMoves[gCurrentMove].argument))
 			{
 				ClearBattlerStatus(gEffectBattler);
+				gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument == STATUS1_SLEEP ? B_MSG_WOKEUP_EFFECT : B_MSG_CURED_BUFF1;
 				effect = 2;
 			}
 			break;

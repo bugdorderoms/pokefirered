@@ -314,7 +314,8 @@ static bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility)
 static u8 GetAbilityEncounterRateModType(void)
 {
     sWildEncounterData.abilityEffect = 0;
-    if (!GetMonData(&gPlayerParty[0], MON_DATA_SANITY_IS_EGG))
+	
+	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG))
     {
         u16 ability = GetMonAbility(&gPlayerParty[0]);
         if (ability == ABILITY_STENCH)
@@ -633,7 +634,7 @@ static bool8 IsWildLevelAllowedByRepel(u8 wildLevel)
 
     for (i = 0; i < PARTY_SIZE; i++)
     {
-        if (GetMonData(&gPlayerParty[i], MON_DATA_HP) && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG))
+        if (MonCanBattle(&gPlayerParty[i]))
         {
             u8 ourLevel = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL);
 

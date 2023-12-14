@@ -68,7 +68,6 @@ gSpecials:: @ 815FD60
 	def_special IsPokemonJumpSpeciesInParty
 	def_special ShowPokemonJumpRecords
 	def_special ShowDodrioBerryPickingRecords
-	def_special IsPlayerNotInTrainerTowerLobby
 	def_special DoDeoxysTriangleInteraction
 	def_special SetDeoxysTrianglePalette
 	def_special GetHeracrossSizeRecordInfo
@@ -139,7 +138,6 @@ gSpecials:: @ 815FD60
 	def_special StartLegendaryBattle
 	def_special SetUpTrainerMovement
 	def_special StartMarowakBattle
-	def_special CallTrainerTowerFunc
 	
 	@ Trainer fan club specials
 	def_special Script_IsFanClubMemberFanOfPlayer

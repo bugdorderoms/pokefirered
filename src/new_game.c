@@ -23,7 +23,6 @@
 #include "easy_chat.h"
 #include "union_room_chat.h"
 #include "renewable_hidden_items.h"
-#include "trainer_tower.h"
 #include "script.h"
 #include "pokemon_jump.h"
 #include "event_scripts.h"
@@ -62,6 +61,7 @@ static void SetDefaultOptions(void)
     gSaveBlock2Ptr->optionsSound = OPTIONS_SOUND_MONO;
     gSaveBlock2Ptr->optionsBattleStyle = OPTIONS_BATTLE_STYLE_SHIFT;
     gSaveBlock2Ptr->optionsBattleSceneOff = FALSE;
+	gSaveBlock2Ptr->optionsSkipPkmnNickname = FALSE;
 }
 
 static void ClearPokedexFlags(void)
@@ -165,7 +165,6 @@ void NewGameInitData(void)
     WarpToPlayersRoom();
     ScriptContext2_RunNewScript(EventScript_ResetAllMapFlags);
     StringCopy(gSaveBlock1Ptr->rivalName, rivalName);
-    ResetTrainerTowerResults();
 	ResetItemFlags();
     ClearAllFusedMonSpecies();
 	ResetMysteryGiftFlags();

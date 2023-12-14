@@ -501,8 +501,6 @@ AI_CBM_SunnyDay:: @ 81DA312
 	end
 
 AI_CBM_FutureSight:: @ 81DA31A
-	if_side_affecting AI_TARGET, SIDE_STATUS_FUTUREATTACK, Score_Minus10
-@	if_side_affecting AI_USER, SIDE_STATUS_FUTUREATTACK, Score_Minus12  @ Improvement in Emerald
 	end
 
 AI_CBM_FakeOut:: @ 81DA325
@@ -736,7 +734,6 @@ AI_CheckViability:: @ 81DA445
 	if_effect EFFECT_MEMENTO, AI_CV_SelfKO
 	if_effect EFFECT_FACADE, AI_CV_Facade
 	if_effect EFFECT_FOCUS_PUNCH, AI_CV_FocusPunch
-	if_effect EFFECT_SMELLINGSALT, AI_CV_SmellingSalt
 	if_effect EFFECT_TRICK, AI_CV_Trick
 	if_effect EFFECT_ROLE_PLAY, AI_CV_ChangeSelfAbility
 	if_effect EFFECT_SUPERPOWER, AI_CV_Superpower

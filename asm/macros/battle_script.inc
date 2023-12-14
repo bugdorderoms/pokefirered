@@ -133,18 +133,17 @@
 	.byte \battler
 	.endm
 
-	.macro jumpifstatus battler:req, status1:req, ptr:req
+	.macro jumpbasedonstatus battler:req, statusId:req, cmpKind:req, status:req, ptr:req
 	.byte 0x1c
 	.byte \battler
-	.4byte \status1
+	.byte \statusId
+	.byte \cmpKind
+	.4byte \status
 	.4byte \ptr
 	.endm
 
-	.macro jumpifstatus2 battler:req, status2:req, ptr:req
+	.macro nop1d
 	.byte 0x1d
-	.byte \battler
-	.4byte \status2
-	.4byte \ptr
 	.endm
 
 	.macro jumpifability param0:req, ability:req, ptr:req
@@ -170,12 +169,8 @@
 	.4byte \ptr
 	.endm
 
-	.macro jumpifstatus3condition battler:req, status3:req, param2:req, ptr:req
+	.macro nop21
 	.byte 0x21
-	.byte \battler
-	.4byte \status3
-	.byte \param2
-	.4byte \ptr
 	.endm
 
     .macro jumpbasedontype battler:req, type:req, case:req, ptr:req
@@ -359,9 +354,8 @@
 	.byte 0x3f
 	.endm
 
-	.macro jumpifaffectedbyprotect ptr:req
+	.macro nop40
 	.byte 0x40
-	.4byte \ptr
 	.endm
 
 	.macro call ptr:req
@@ -369,11 +363,10 @@
 	.4byte \ptr
 	.endm
 
-	.macro trysetsleep battler:req, flags:req, ptr:req
+	.macro trysetsleep battler:req, flags:req
 	.byte 0x42
 	.byte \battler
 	.4byte \flags
-	.4byte \ptr
 	.endm
 
 	.macro trysetconfusion battler:req
@@ -454,12 +447,13 @@
 	moveend ATK49_MOVEEND_FUTURE_ATTACK, 0
 	.endm
 	
-	.macro formchange battler:req, basespecies:req, targetspecies:req, reloadtypes:req, reloadability:req, ptr:req
+	.macro formchange battler:req, basespecies:req, targetspecies:req, reloadtypes:req, reloadstats:req, reloadability:req, ptr:req
 	.byte 0x4a
 	.byte \battler
 	.2byte \basespecies
 	.2byte \targetspecies
 	.byte \reloadtypes
+	.byte \reloadstats
 	.byte \reloadability
 	.4byte \ptr
 	.endm
@@ -607,7 +601,7 @@
 	.byte 0x67
 	.endm
 
-	.macro cancelallactions
+	.macro nop68
 	.byte 0x68
 	.endm
 
@@ -705,8 +699,9 @@
 	.byte 0x7d
 	.endm
 
-	.macro setreflect
+	.macro trysetreflect ptr:req
 	.byte 0x7e
+	.4byte \ptr
 	.endm
 
 	.macro setseeded
@@ -766,7 +761,7 @@
 	.byte 0x8a
 	.endm
 
-	.macro setbide
+	.macro nop8b
 	.byte 0x8b
 	.endm
 
@@ -795,8 +790,9 @@
 	.byte 0x91
 	.endm
 
-	.macro setlightscreen
+	.macro trysetlightscreen ptr:req
 	.byte 0x92
+	.4byte \ptr
 	.endm
 
 	.macro tryKO param0:req
@@ -826,11 +822,11 @@
 	.byte \battler
 	.endm
 
-	.macro setmist
+	.macro nop99
 	.byte 0x99
 	.endm
 
-	.macro setfocusenergy
+	.macro nop9a
 	.byte 0x9a
 	.endm
 
@@ -847,7 +843,7 @@
 	.4byte \param0
 	.endm
 
-	.macro metronome
+	.macro nop9e
 	.byte 0x9e
 	.endm
 
@@ -855,7 +851,7 @@
 	.byte 0x9f
 	.endm
 
-	.macro psywavedamageeffect
+	.macro nopa0
 	.byte 0xa0
 	.endm
 
@@ -970,8 +966,9 @@
 	.byte 0xb7
 	.endm
 
-	.macro setsafeguard
+	.macro trysetsafeguard ptr:req
 	.byte 0xb8
+	.4byte \ptr
 	.endm
 
 	.macro magnitudedamagecalculation
@@ -992,7 +989,7 @@
 	.4byte \param0
 	.endm
 
-	.macro copyfoestats
+	.macro nopbd
 	.byte 0xbd
 	.endm
 
@@ -1022,10 +1019,8 @@
 	.4byte \param0
 	.endm
 
-	.macro trydobeatup param0:req, param1:req
+	.macro nopc4
 	.byte 0xc4
-	.4byte \param0
-	.4byte \param1
 	.endm
 
 	.macro setsemiinvulnerablebit
@@ -1049,15 +1044,15 @@
 	.4byte \ptr
 	.endm
 
-	.macro setforcedtarget
+	.macro nopca
 	.byte 0xca
 	.endm
 
-	.macro setcharge
+	.macro nopcb
 	.byte 0xcb
 	.endm
 
-	.macro callterrainattack
+	.macro nopcc
 	.byte 0xcc
 	.endm
 
@@ -1070,9 +1065,8 @@
 	.4byte \param0
 	.endm
 
-	.macro jumpifnodamage param0:req
+	.macro nopcf
 	.byte 0xcf
-	.4byte \param0
 	.endm
 
 	.macro settaunt param0:req
@@ -1096,10 +1090,10 @@
 	.byte \target
 	.endm
 
-	.macro trywish param0:req, param1:req
+	.macro trywish caseId:req, ptr:req
 	.byte 0xd4
-	.byte \param0
-	.4byte \param1
+	.byte \caseId
+	.4byte \ptr
 	.endm
 
 	.macro trysetroots param0:req
@@ -1111,14 +1105,13 @@
 	.byte 0xd6
 	.endm
 
-	.macro setyawn param0:req
+	.macro setyawn ptr:req
 	.byte 0xd7
-	.4byte \param0
+	.4byte \ptr
 	.endm
 
-	.macro setdamagetohealthdifference param0:req
+	.macro nopd8
 	.byte 0xd8
-	.4byte \param0
 	.endm
 
 	.macro nopd9
@@ -1215,7 +1208,7 @@
 	.byte 0xed
 	.endm
 
-	.macro removelightscreenreflect
+	.macro nopee
 	.byte 0xee
 	.endm
 
@@ -1294,14 +1287,6 @@
 	.endm
 	
 @ various command changed to more readable macros
-	.macro cancelmultiturnmoves battler:req
-	various \battler, VARIOUS_CANCEL_MULTI_TURN_MOVES
-	.endm
-
-	.macro setmagiccoattarget battler:req
-	various \battler, VARIOUS_SET_MAGIC_COAT_TARGET
-	.endm
-
 	.macro getifcantrunfrombattle battler:req, checkIngrain:req
 	various \battler, VARIOUS_IS_RUNNING_IMPOSSIBLE
 	.byte \checkIngrain
@@ -1321,18 +1306,6 @@
 
 	.macro resetplayerfainted
 	various BS_ATTACKER, VARIOUS_RESET_PLAYER_FAINTED_FLAG
-	.endm
-
-	.macro getbattlersforrecall
-	various BS_ATTACKER, VARIOUS_GET_BATTLERS_FOR_RECALL
-	.endm
-
-	.macro returnopponentmon1toball battler:req
-	various \battler, VARIOUS_RETURN_OPPONENT_MON1
-	.endm
-
-	.macro returnopponentmon2toball battler:req
-	various \battler, VARIOUS_RETURN_OPPONENT_MON2
 	.endm
 
 	.macro checkpokeflute battler:req
@@ -1426,8 +1399,8 @@
 	.4byte \ptr
 	.endm
 	
-	.macro activateweatherchangeabilities
-	various BS_SCRIPTING, VARIOUS_ACTIVATE_WEATHER_ABILITIES
+	.macro activateweatherchangeabilities battler:req
+	various \battler, VARIOUS_ACTIVATE_WEATHER_ABILITIES
 	.endm
 	
 	.macro tryneutralizinggassuppression battler:req, ptr:req
@@ -1475,6 +1448,32 @@
 	.macro trysetdestinybond ptr:req
 	various BS_ATTACKER, VARIOUS_TRY_SET_DESTINY_BOND
 	.4byte \ptr
+	.endm
+	
+	.macro trycopyability ptr:req
+	various BS_ATTACKER, VARIOUS_TRY_COPY_ABILITY
+	.4byte \ptr
+	.endm
+	
+	.macro jumpifcantgivenickname ptr:req
+	various BS_ATTACKER, VARIOUS_JUMP_IF_CANT_GIVE_NICK
+	.4byte \ptr
+	.endm
+	
+	.macro jumpifnodamage ptr:req
+	various BS_ATTACKER, VARIOUS_JUMP_IF_NO_DAMAGE
+	.4byte \ptr
+	.endm
+	
+	.macro jumpifendeavorfail ptr:req
+	various BS_ATTACKER, VARIOUS_JUMP_IF_ENDEAVOR_FAIL
+	.4byte \ptr
+	.endm
+	
+	.macro tryswapabilities ptr:req
+	various BS_ATTACKER, VARIOUS_TRY_SWAP_ABILITIES
+	.4byte \ptr
+	swapabilities
 	.endm
 	
 @ callfunction macros
@@ -1551,6 +1550,58 @@
 	callfunction BS_SetForesight
 	.endm
 	
+	.macro setforcedtarget
+	callfunction BS_SetForcedTarget
+	.endm
+	
+	.macro callterrainattack
+	callfunction BS_CallTerrainAttack
+	.endm
+	
+	.macro gettwotunsmovestring
+	callFunction BS_GetTwoTurnsMoveString
+	.endm
+	
+	.macro setmagiccoattarget
+	callfunction BS_SetMagicCoatTarget
+	.endm
+	
+	.macro setfocusenergy
+	callfunction BS_SetFocusEnergy
+	.endm
+	
+	.macro cancelallactions
+	callfunction BS_CancelAllActions
+	.endm
+	
+	.macro setbide
+	callfunction BS_SetBide
+	.endm
+	
+	.macro setmist
+	callfunction BS_SetMist
+	.endm
+	
+	.macro metronome
+	callfunction BS_Metronome
+	.endm
+	
+	.macro psywavedamageeffect
+	callfunction BS_PsywaveDamageEffect
+	.endm
+	
+	.macro copyfoestats
+	callfunction BS_CopyFoeStats
+	.endm
+	
+	.macro setcharge
+	callfunction BS_SetCharge
+	.endm
+	
+	.macro removescreens
+	callfunction BS_RemoveScreens
+	.endm
+	
 @ helpful macros
 	.macro setstatchanger stat:req, stages:req, down:req
 	setbyte sSTATCHANGER \stat | \stages << 4 | \down << 7
@@ -1584,14 +1635,6 @@
 	jumpifhalfword CMP_NOT_EQUAL, gCurrentMove, \move, \jumpptr
 	.endm
 
-	.macro jumpifstatus3 battler:req, status:req, jumpptr:req
-	jumpifstatus3condition \battler, \status, 0x0, \jumpptr
-	.endm
-
-	.macro jumpifnostatus3 battler:req, status:req, jumpptr:req
-	jumpifstatus3condition \battler, \status, 0x1, \jumpptr
-	.endm
-
     .macro jumpiftype battler:req, type:req, jumpptr:req
 	jumpbasedontype \battler, \type, 0x0, \jumpptr
 	.endm
@@ -1599,7 +1642,31 @@
 	.macro jumpifnotype battler:req, type:req, jumpptr:req
 	jumpbasedontype \battler, \type, 0x1, \jumpptr
 	.endm
+	
+	.macro jumpifstatus battler:req, status1:req, ptr:req
+	jumpbasedonstatus \battler, ID_STATUS1, CMP_COMMON_BITS, \status1, \ptr
+	.endm
+	
+	.macro jumpifnostatus battler:req, status1:req, ptr:req
+	jumpbasedonstatus \battler, ID_STATUS1, CMP_NO_COMMON_BITS, \status1, \ptr
+	.endm
+	
+	.macro jumpifstatus2 battler:req, status2:req, ptr:req
+	jumpbasedonstatus \battler, ID_STATUS2, CMP_COMMON_BITS, \status2, \ptr
+	.endm
+	
+	.macro jumpifnostatus2 battler:req, status2:req, ptr:req
+	jumpbasedonstatus \battler, ID_STATUS2, CMP_NO_COMMON_BITS, \status2, \ptr
+	.endm
+	
+	.macro jumpifstatus3 battler:req, status3:req, ptr:req
+	jumpbasedonstatus \battler, ID_STATUS3, CMP_COMMON_BITS, \status3, \ptr
+	.endm
 
+	.macro jumpifnostatus3 battler:req, status3:req, ptr:req
+	jumpbasedonstatus \battler, ID_STATUS3, CMP_NO_COMMON_BITS, \status3, \ptr
+	.endm
+	
 	.macro jumpifmovehadnoeffect jumpptr:req
 	jumpifhalfword CMP_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_NO_EFFECT, \jumpptr
 	.endm
@@ -1667,23 +1734,17 @@
 	setatkhptozero
 	.endm
 	
-	.macro typecalc2
-	typecalc
-	bichalfword gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
-	.endm
-	
 	.macro tryendeffectonabilitychange battler:req
 	tryendneutralizinggas \battler @ switch in abilities still show it's pop ups
 	setbyte sBYPASS_ABILITY_POP_UP, TRUE @ don't show ability pop up. I'm not sure if it's show or not, but added this bc yes...
 	tryremoveprimalweather \battler
 	tryremoveillusion \battler
-	copybyte sBATTLER, \battler
-	activateweatherchangeabilities
+	activateweatherchangeabilities \battler
 	setbyte sBYPASS_ABILITY_POP_UP, FALSE
 	.endm
 	
 	.macro flushmessagebox
-	printstring STRINGID_EMPTYSTRING3
+	printstring STRINGID_EMPTYSTRING
 	waitmessage 1
 	.endm
 	
@@ -1695,4 +1756,11 @@
 	.macro restorebattlers
 	copybyte gBattlerAttacker, sSAVED_DMG
 	copybyte gBattlerTarget, sGIVEEXP_STATE
+	.endm
+	
+	.macro damageformula
+	critcalc
+	damagecalc
+	typecalc
+	adjustdamage
 	.endm

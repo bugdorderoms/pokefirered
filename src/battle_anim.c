@@ -9,6 +9,7 @@
 #include "graphics.h"
 #include "m4a.h"
 #include "task.h"
+#include "constants/battle_move_effects.h"
 #include "constants/battle_anim.h"
 #include "constants/moves.h"
 
@@ -1855,10 +1856,10 @@ void LaunchBattleAnimation(u8 animType, u16 animId)
 		    animsTable = gBattleAnims_Moves;
 			sAnimMoveIndex = animId;
 			
-			if (animId != MOVE_TRANSFORM)
+			if (gBattleMoves[animId].effect != EFFECT_TRANSFORM)
 				hideHpBoxes = TRUE;
 			
-			for (i = 0; gMovesWithQuietBGM[i] != 0xFFFF; i++)
+			for (i = 0; gMovesWithQuietBGM[i] != MOVE_UNVAILABLE; i++)
 			{
 				if (animId == gMovesWithQuietBGM[i])
 				{

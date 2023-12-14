@@ -267,7 +267,7 @@ void BattleAI_HandleItemUseBeforeAISetup(u8 battlerId)
         data[i] = 0;
 
     // Items are allowed to use in ONLY trainer battles.
-    if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && !(gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER
+    if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && !(gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER
 	| BATTLE_TYPE_SAFARI | BATTLE_TYPE_LINK)))
     {
         for (i = 0; i < MAX_TRAINER_ITEMS; i++)
@@ -295,7 +295,7 @@ void BattleAI_SetupAIData(u8 battlerId)
     for (i = 0; i < MAX_MON_MOVES; i++)
         AI_THINKING_STRUCT->score[i] = 100;
 
-    moveLimitations = CheckMoveLimitations(battlerId, 0, 0xFF);
+    moveLimitations = CheckMoveLimitations(battlerId, 0);
 
     // Ignore moves that aren't possible to use.
     for (i = 0; i < MAX_MON_MOVES; i++)
@@ -334,7 +334,7 @@ void BattleAI_SetupAIData(u8 battlerId)
         AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_ROAMING;
         return;
     }
-    else if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_LEGENDARY)))
+    else if (!(gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER)))
     {
         if (gBattleTypeFlags & BATTLE_TYPE_WILD_SCRIPTED)
         {
@@ -1076,13 +1076,8 @@ static void Cmd_count_alive_pokemon(void)
 
     for (i = 0; i < PARTY_SIZE; i++)
     {
-        if (i != battlerOnField1 && i != battlerOnField2
-         && GetMonData(&party[i], MON_DATA_HP) != 0
-         && GetMonData(&party[i], MON_DATA_SPECIES2) != SPECIES_NONE
-         && GetMonData(&party[i], MON_DATA_SPECIES2) != SPECIES_EGG)
-        {
+        if (i != battlerOnField1 && i != battlerOnField2 && MonCanBattle(&party[i]))
             AI_THINKING_STRUCT->funcResult++;
-        }
     }
 
     sAIScriptPtr += 2;
@@ -1154,7 +1149,6 @@ static void Cmd_get_ability(void)
 
 static void Cmd_get_highest_type_effectiveness(void)
 {
-	u8 affectedBy = 0;
 	u16 flags;
     s32 i;
 	
@@ -1170,7 +1164,7 @@ static void Cmd_get_highest_type_effectiveness(void)
         
         if (gCurrentMove != MOVE_NONE)
         {
-			CalcTypeEffectivenessMultiplier(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, &affectedBy, &flags);
+			CalcTypeEffectivenessMultiplier(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, &flags);
 
             if (gBattleMoveDamage == 120) // Super effective STAB.
                 gBattleMoveDamage = AI_EFFECTIVENESS_x2;
@@ -1194,7 +1188,7 @@ static void Cmd_get_highest_type_effectiveness(void)
 
 static void Cmd_if_type_effectiveness(void)
 {
-    u8 damageVar, affectedBy = 0;
+    u8 damageVar;
 	u16 flags;
 
     gBattleScripting.dmgMultiplier = 1;
@@ -1204,7 +1198,7 @@ static void Cmd_if_type_effectiveness(void)
     gBattleMoveDamage = AI_EFFECTIVENESS_x1;
     gCurrentMove = AI_THINKING_STRUCT->moveConsidered;
     
-	CalcTypeEffectivenessMultiplier(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, &affectedBy, &flags);
+	CalcTypeEffectivenessMultiplier(gCurrentMove, gBattleMoves[gCurrentMove].type, gBattlerAttacker, gBattlerTarget, FALSE, &flags);
 
     if (gBattleMoveDamage == 120) // Super effective STAB.
         gBattleMoveDamage = AI_EFFECTIVENESS_x2;

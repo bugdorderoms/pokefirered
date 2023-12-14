@@ -193,10 +193,7 @@ extern const u8 gText_ChooseForm[];
 // pokemon
 extern const u8 gBattleText_Rose[];
 extern const u8 gText_PkmnsStatChanged2[];
-extern const u8 gBattleText_GetPumped[];
-extern const u8 gBattleText_MistShroud[];
 extern const u8 gText_PkmnsXPreventsSwitching[];
-extern const u8 *const gStatNamesTable[];
 
 // diploma
 extern const u8 gUnknown_841B60E[];
@@ -218,7 +215,7 @@ extern const u8 gString_QuitPlaying[];
 extern const u8 gString_SlotMachineControls[];
 
 // battle_controller_safari
-extern const u8 gText_EmptyString3[];
+extern const u8 gText_EmptyString[];
 extern const u8 gUnknown_83FE747[];
 extern const u8 gText_WhatWillPlayerThrow[];
 
@@ -905,6 +902,7 @@ extern const u8 gText_BattleScene[];
 extern const u8 gText_BattleStyle[];
 extern const u8 gText_Sound[];
 extern const u8 gText_Frame[];
+extern const u8 gText_Nicknames[];
 extern const u8 gText_OptionMenuCancel[];
 extern const u8 gText_TextSpeedSlow[];
 extern const u8 gText_TextSpeedMid[];
@@ -918,6 +916,8 @@ extern const u8 gText_SoundStereo[];
 extern const u8 gText_MenuOption[];
 extern const u8 gText_FrameType[];
 extern const u8 gTextJP_Type[];
+extern const u8 gText_SkipNicknames[];
+extern const u8 gText_GiveNicknames[];
 extern const u8 gText_PickSwitchCancel[];
 
 // evolution_scene

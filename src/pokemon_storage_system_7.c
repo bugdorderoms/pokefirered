@@ -398,38 +398,15 @@ static void sub_80956A4(u8 x, u8 y)
     u16 species = GetCurrentBoxMonData(position, MON_DATA_SPECIES2);
 
     if (species != SPECIES_NONE)
-    {
-        const u8 *iconGfx = GetMonIconPtr(species);
-        u8 index = GetValidMonIconPalIndex(species) + 8;
-
-        BlitBitmapRectToWindow4BitTo8Bit(gPSSData->field_2200,
-                                         iconGfx,
-                                         0,
-                                         0,
-                                         32,
-                                         32,
-                                         24 * x,
-                                         24 * y,
-                                         32,
-                                         32,
-                                         index);
-    }
+        BlitBitmapRectToWindow4BitTo8Bit(gPSSData->field_2200, GetMonIconPtr(species), 0, 0, 32, 32, 24 * x, 24 * y, 32, 32, GetValidMonIconPalIndex(species) + 8);
 }
 
 static void sub_809572C(u8 x, u8 y)
 {
     u8 position = x + (IN_BOX_ROWS * y);
-    u16 species = GetCurrentBoxMonData(position, MON_DATA_SPECIES2);
 
-    if (species != SPECIES_NONE)
-    {
-        FillWindowPixelRect8Bit(gPSSData->field_2200,
-                                PIXEL_FILL(0),
-                                24 * x,
-                                24 * y,
-                                32,
-                                32);
-    }
+    if (GetCurrentBoxMonData(position, MON_DATA_SPECIES2) != SPECIES_NONE)
+        FillWindowPixelRect8Bit(gPSSData->field_2200, PIXEL_FILL(0), 24 * x, 24 * y, 32, 32);
 }
 
 static void sub_8095780(u16 bgX, u16 bgY, u16 duration)

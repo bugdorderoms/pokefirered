@@ -1125,9 +1125,6 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
     case MON_DATA_SANITY_HAS_SPECIES:
         retVal = boxMon->species != SPECIES_NONE;
         break;
-    case MON_DATA_SANITY_IS_EGG:
-        retVal = boxMon->isEgg;
-        break;
     case MON_DATA_OT_NAME:
         // FRLG changed this to 7 which used to be PLAYER_NAME_LENGTH + 1
         while (retVal < 7)
@@ -1350,9 +1347,6 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
         break;
     case MON_DATA_LANGUAGE:
         SET8(boxMon->language);
-        break;
-    case MON_DATA_SANITY_IS_EGG:
-        SET8(boxMon->isEgg);
         break;
     case MON_DATA_OT_NAME:
         for (i = 0; i < 7; i++)
@@ -1578,20 +1572,16 @@ u8 CalculateEnemyPartyCount(void)
 
 u8 GetMonsStateToDoubles(void)
 {
-    s32 aliveCount = 0;
-    s32 i;
+    u8 i, aliveCount;
 	
     CalculatePlayerPartyCount();
 
     if (gPlayerPartyCount == 1)
-        return gPlayerPartyCount; // PLAYER_HAS_ONE_MON
+        return PLAYER_HAS_ONE_MON;
 
-    for (i = 0; i < gPlayerPartyCount; i++)
+    for (i = 0, aliveCount = 0; i < gPlayerPartyCount; i++)
     {
-        // FRLG changed the order of these checks, but there's no point to doing that
-        // because of the requirement of all 3 of these checks.
-        if (GetMonData(&gPlayerParty[i], MON_DATA_HP, NULL) && GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL)
-			&& GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) != SPECIES_EGG)
+        if (MonCanBattle(&gPlayerParty[i]))
             aliveCount++;
     }
     return (aliveCount > 1) ? PLAYER_HAS_TWO_USABLE_MONS : PLAYER_HAS_ONE_USABLE_MON;
@@ -2041,10 +2031,9 @@ bool8 ModifyMonFriendship(struct Pokemon *mon, s8 friendshipDelta)
 
 void AdjustFriendship(struct Pokemon *mon, u8 event)
 {
-    u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
 	u8 friendshipLevel, friendship;
 
-    if (species && species != SPECIES_EGG)
+    if (IsMonValidSpecies(mon))
     {
 		switch (event)
 		{
@@ -2546,17 +2535,17 @@ void SetMonPreventsSwitchingString(void)
 	
     gLastUsedAbility = gBattleStruct->abilityPreventingSwitchout;
 	
-	PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff1, battlerId,
-	GetBattlerSide(battlerId) == B_SIDE_PLAYER ? GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[battlerId]) : gBattlerPartyIndexes[battlerId])
+	PrepareMonNickWithPrefixBuffer(gBattleTextBuff1, battlerId,
+	GetBattlerSide(battlerId) == B_SIDE_PLAYER ? GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[battlerId]) : gBattlerPartyIndexes[battlerId]);
 	
-    PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff2, gBattlerInMenuId, GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[gBattlerInMenuId]))
+    PrepareMonNickWithPrefixBuffer(gBattleTextBuff2, gBattlerInMenuId, GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[gBattlerInMenuId]));
 
     BattleStringExpandPlaceholders(gText_PkmnsXPreventsSwitching, gStringVar4);
 }
 
 void SetWildMonHeldItem(struct Pokemon *mon)
 {
-    if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LEGENDARY | BATTLE_TYPE_TRAINER)) && !gDexnavBattle)
+    if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_TRAINER)) && !gDexnavBattle)
     {
         u16 rnd = Random() % 100;
         u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
@@ -2579,7 +2568,7 @@ u8 GetPlayerPartyHighestLevel(void)
 
     for (slot = 0; slot < PARTY_SIZE; ++slot)
     {
-        if (GetMonData(&gPlayerParty[slot], MON_DATA_SANITY_HAS_SPECIES, NULL) && !GetMonData(&gPlayerParty[slot], MON_DATA_SANITY_IS_EGG, NULL))
+        if (IsMonValidSpecies(&gPlayerParty[slot]))
         {
             monLevel = GetMonData(&gPlayerParty[slot], MON_DATA_LEVEL, NULL);
             if (monLevel > level)
@@ -2627,4 +2616,16 @@ const u8* GetItemEffect(u16 item)
 u16 ItemIdToBattleMoveId(u16 item)
 {
     return sTMHMMoves[item - ITEM_TM01];
+}
+
+bool8 IsMonValidSpecies(struct Pokemon *mon)
+{
+	return (GetMonData(mon, MON_DATA_SPECIES2, NULL) && GetMonData(mon, MON_DATA_SPECIES2, NULL) != SPECIES_EGG);
+}
+
+bool8 MonCanBattle(struct Pokemon *mon)
+{
+	if (IsMonValidSpecies(mon) && GetMonData(mon, MON_DATA_HP, NULL))
+		return TRUE;
+	return FALSE;
 }

@@ -411,7 +411,7 @@ u8 GetLeadMonIndex(void)
 	
     for (i = 0; i < CalculatePlayerPartyCount(); i++)
     {
-        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) != SPECIES_EGG && GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) != SPECIES_NONE)
+        if (IsMonValidSpecies(&gPlayerParty[i]))
             return i;
     }
     return 0;
@@ -771,26 +771,6 @@ void GetElevatorFloor(void)
             break;
         }
     }
-    if (gSaveBlock1Ptr->dynamicWarp.mapGroup == MAP_GROUP(TRAINER_TOWER_1F))
-    {
-        switch (gSaveBlock1Ptr->dynamicWarp.mapNum)
-        {
-        case MAP_NUM(TRAINER_TOWER_1F):
-        case MAP_NUM(TRAINER_TOWER_2F):
-        case MAP_NUM(TRAINER_TOWER_3F):
-        case MAP_NUM(TRAINER_TOWER_4F):
-        case MAP_NUM(TRAINER_TOWER_5F):
-        case MAP_NUM(TRAINER_TOWER_6F):
-        case MAP_NUM(TRAINER_TOWER_7F):
-        case MAP_NUM(TRAINER_TOWER_8F):
-        case MAP_NUM(TRAINER_TOWER_ROOF):
-            floor = 15;
-            break;
-        case MAP_NUM(TRAINER_TOWER_LOBBY):
-            floor = 3;
-            break;
-        }
-    }
     VarSet(VAR_ELEVATOR_FLOOR, floor);
 }
 
@@ -884,28 +864,6 @@ u16 InitElevatorFloorSelectMenuPos(void)
         case MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_1F):
             sElevatorScroll = 0;
             sElevatorCursorPos = 4;
-            break;
-        }
-    }
-    if (gSaveBlock1Ptr->dynamicWarp.mapGroup == MAP_GROUP(TRAINER_TOWER_1F))
-    {
-        switch (gSaveBlock1Ptr->dynamicWarp.mapNum)
-        {
-        case MAP_NUM(TRAINER_TOWER_1F):
-        case MAP_NUM(TRAINER_TOWER_2F):
-        case MAP_NUM(TRAINER_TOWER_3F):
-        case MAP_NUM(TRAINER_TOWER_4F):
-        case MAP_NUM(TRAINER_TOWER_5F):
-        case MAP_NUM(TRAINER_TOWER_6F):
-        case MAP_NUM(TRAINER_TOWER_7F):
-        case MAP_NUM(TRAINER_TOWER_8F):
-        case MAP_NUM(TRAINER_TOWER_ROOF):
-            sElevatorScroll = 0;
-            sElevatorCursorPos = 0;
-            break;
-        case MAP_NUM(TRAINER_TOWER_LOBBY):
-            sElevatorScroll = 0;
-            sElevatorCursorPos = 1;
             break;
         }
     }
@@ -2070,14 +2028,6 @@ void SetDeoxysTrianglePalette(void)
     u8 num = VarGet(VAR_DEOXYS_INTERACTION_NUM);
     LoadPalette(sDeoxysObjectPals[num], 0x1A0, 0x08);
     ApplyGlobalFieldPaletteTint(10);
-}
-
-bool8 IsPlayerNotInTrainerTowerLobby(void)
-{
-    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(TRAINER_TOWER_LOBBY) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(TRAINER_TOWER_LOBBY))
-        return FALSE;
-    else
-        return TRUE;
 }
 
 void BrailleCursorToggle(void)

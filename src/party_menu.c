@@ -2785,10 +2785,7 @@ static void sub_8122138(u8 action)
 
 static void CreatePartyMonIconSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox, u32 slot)
 {
-    u16 species2;
-
-    species2 = GetMonData(mon, MON_DATA_SPECIES2);
-    CreatePartyMonIconSpriteParameterized(species2, menuBox, 1);
+    CreatePartyMonIconSpriteParameterized(GetMonData(mon, MON_DATA_SPECIES2), menuBox, 1);
     UpdatePartyMonHPBar(menuBox->monSpriteId, mon);
 }
 
@@ -4137,10 +4134,9 @@ static void CursorCB_Store(u8 taskId)
 // Register mon for the Trading Board in Union Room
 static void CursorCB_Register(u8 taskId)
 {
-    u16 species2 = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_SPECIES2);
-    u16 species = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_SPECIES);
-
-    switch (CanRegisterMonForTradingBoard(*(struct GFtgtGnameSub *)GetHostRFUtgtGname(), species2, species))
+	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+	
+    switch (CanRegisterMonForTradingBoard(*(struct GFtgtGnameSub *)GetHostRFUtgtGname(), GetMonData(mon, MON_DATA_SPECIES2), GetMonData(mon, MON_DATA_SPECIES)))
     {
     case CANT_REGISTER_MON:
         StringExpandPlaceholders(gStringVar4, gText_PkmnCantBeTradedNow);
@@ -4977,7 +4973,7 @@ static void Task_Medicine(u8 taskId)
 	else
 	{
 		if (gMain.inBattle)
-			SetBattlerUsedItemForBattleScript(item);
+			SetBattlerUsedItemForBattleScript(item, FALSE);
 		
 		if (ItemId_GetUsageType(item) != ITEM_TYPE_HEALTH_RECOVERY)
 		{
@@ -5032,15 +5028,19 @@ void ItemUseCB_BattleScript(u8 taskId, TaskFunc func)
 	}
 	else
 	{
-		SetBattlerUsedItemForBattleScript(itemId);
+		SetBattlerUsedItemForBattleScript(itemId, FALSE);
 		gPartyMenuUseExitCallback = TRUE;
 	}
 	gTasks[taskId].func = func;
 }
 
-void SetBattlerUsedItemForBattleScript(u16 item)
+void SetBattlerUsedItemForBattleScript(u16 item, bool8 fromBagMenu)
 {
-	gBattleStruct->itemPartyIndex[gBattlerInMenuId] = GetPartyIdFromBattleSlot(gPartyMenu.slotId);
+	if (fromBagMenu)
+		gBattleStruct->itemPartyIndex[gBattlerInMenuId] = gBattlerPartyIndexes[gBattlerInMenuId]; // It's always used on self
+	else
+		gBattleStruct->itemPartyIndex[gBattlerInMenuId] = GetPartyIdFromBattleSlot(gPartyMenu.slotId);
+	
 	RemoveBagItem(item, 1);
 }
 

@@ -15,12 +15,12 @@
 #include "battle_controllers.h"
 #include "battle_interface.h"
 #include "battle_message.h"
-#include "battle_string_ids.h"
 #include "reshow_battle_screen.h"
 #include "teachy_tv.h"
 #include "constants/songs.h"
 #include "constants/moves.h"
 #include "constants/pokemon.h"
+#include "constants/battle_string_ids.h"
 
 struct PokedudeTextScriptHeader
 {
@@ -662,7 +662,7 @@ static const struct PokedudeTextScriptHeader sPokedudeTextScripts_Catching[] =
     {
         .btlcmd = CONTROLLER_PRINTSTRING,
         .side = B_SIDE_OPPONENT,
-        .stringid = STRINGID_PKMNFASTASLEEP,
+        .stringid = STRINGID_ATKFASTASLEEP,
         .callback = PokedudeAction_PrintVoiceoverMessage,
     },
     {
@@ -995,7 +995,7 @@ static void PokedudeAction_PrintVoiceoverMessage(u8 battlerId)
     case 2:
         gBattle_BG0_Y = 0;
         BattleStringExpandPlaceholdersToDisplayedString(GetPokedudeText());
-        BattlePutTextOnWindow(gDisplayedStringBattle, 24);
+        BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
         ++gPokedudeBattlerStates[battlerId]->timer;
         break;
     case 3:
@@ -1050,7 +1050,7 @@ static void PokedudeAction_PrintMessageWithHealthboxPals(u8 battlerId)
         break;
     case 3:
         BattleStringExpandPlaceholdersToDisplayedString(GetPokedudeText());
-        BattlePutTextOnWindow(gDisplayedStringBattle, 24);
+        BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
         ++gPokedudeBattlerStates[battlerId]->timer;
         break;
     case 4:

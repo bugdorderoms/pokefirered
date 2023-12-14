@@ -346,9 +346,8 @@ void StartMarowakBattle(void)
 		gBattleTypeFlags = BATTLE_TYPE_GHOST | BATTLE_TYPE_GHOST_UNVEILED;
     }
     else
-    {
         gBattleTypeFlags = BATTLE_TYPE_GHOST;
-    }
+
     CreateBattleStartTask(GetWildBattleTransition(), 0);
     SetMonData(&gEnemyParty[0], MON_DATA_NICKNAME, gText_Ghost);
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
@@ -362,7 +361,7 @@ void StartLegendaryBattle(void)
     
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
-    gBattleTypeFlags = BATTLE_TYPE_LEGENDARY;
+    gBattleTypeFlags = BATTLE_TYPE_WILD_SCRIPTED;
 	
     switch (GetMonData(&gEnemyParty[0], MON_DATA_SPECIES))
     {
@@ -515,9 +514,7 @@ static u32 GetSumOfPlayerPartyLevel(void)
 
     for (i = 0, sum = 0; i < PARTY_SIZE; ++i)
     {
-        u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
-
-        if (species != SPECIES_EGG && species != SPECIES_NONE && GetMonData(&gPlayerParty[i], MON_DATA_HP) != 0)
+        if (MonCanBattle(&gPlayerParty[i]))
             sum += GetMonData(&gPlayerParty[i], MON_DATA_LEVEL);
     }
     return sum;

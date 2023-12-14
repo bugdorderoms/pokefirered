@@ -173,7 +173,7 @@
 #define VAR_MAP_SCENE_MT_EMBER_EXTERIOR                                        0x407F
 #define VAR_MAP_SCENE_ICEFALL_CAVE_BACK                                        0x4080
 #define VAR_MAP_SCENE_SAFFRON_CITY_DOJO                                        0x4081
-#define VAR_MAP_SCENE_TRAINER_TOWER                                            0x4082
+#define VAR_0x4082                                                             0x4082
 #define VAR_MAP_SCENE_FIVE_ISLAND_LOST_CAVE_ROOM10                             0x4083
 #define VAR_MAP_SCENE_FIVE_ISLAND_RESORT_GORGEOUS                              0x4084
 #define VAR_MAP_SCENE_INDIGO_PLATEAU_EXTERIOR                                  0x4085

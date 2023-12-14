@@ -41,7 +41,7 @@ bool8 UproarWakeUpCheck(void);
 u8 IsUproarActive(void);
 u8 GetTypeModifier(u8 atkType, u8 defType);
 u16 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility);
-u8 CalcTypeEffectivenessMultiplier(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 recordAbilities, u8 *affectedBy, u16 *flags);
+u8 CalcTypeEffectivenessMultiplier(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 recordAbilities, u16 *flags);
 void AI_CalcDmg(u8 attacker, u8 defender, u16 move);
 bool32 IsMonGettingExpSentOut(void);
 void BattleCreateYesNoCursorAt(void);

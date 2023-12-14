@@ -56,12 +56,10 @@
 #define BATTLE_TYPE_OLD_MAN_TUTORIAL (1 << 9)
 #define BATTLE_TYPE_ROAMER           (1 << 10)
 #define BATTLE_TYPE_EREADER_TRAINER  (1 << 11)
-#define BATTLE_TYPE_LEGENDARY        (1 << 12)
-#define BATTLE_TYPE_GHOST_UNVEILED   (1 << 12) // Re-use of BATTLE_TYPE_LEGENDARY, when combined with BATTLE_TYPE_GHOST
+#define BATTLE_TYPE_GHOST_UNVEILED   (1 << 12)
 #define BATTLE_TYPE_GHOST            (1 << 13)
 #define BATTLE_TYPE_POKEDUDE         (1 << 14)
 #define BATTLE_TYPE_WILD_SCRIPTED    (1 << 15)
-#define BATTLE_TYPE_TRAINER_TOWER    (1 << 16)
 
 #define IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE() (gBattleTypeFlags & BATTLE_TYPE_GHOST && !(gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
 #define IS_BATTLE_TYPE_GHOST_WITH_SCOPE() (gBattleTypeFlags & BATTLE_TYPE_GHOST && gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED)
@@ -126,7 +124,8 @@
 #define STATUS2_DEFENSE_CURL             (1 << 25)
 #define STATUS2_TORMENT                  (1 << 26)
 
-// Seems like per-battler statuses. Not quite sure how to categorize these
+// per-battler statuses
+// These are removed after exiting the battle or switching out
 #define STATUS3_LEECHSEED_BATTLER       (1 << 0 | 1 << 1)
 #define STATUS3_LEECHSEED               (1 << 2)
 #define STATUS3_ALWAYS_HITS             (1 << 3 | 1 << 4)
@@ -137,8 +136,8 @@
 #define STATUS3_MINIMIZED               (1 << 8)
 #define STATUS3_ROOTED                  (1 << 9)
 #define STATUS3_CHARGED_UP              (1 << 10)
-#define STATUS3_YAWN                    (1 << 11 | 1 << 12)
-#define STATUS3_YAWN_TURN(num)          ((num) << 11)
+#define STATUS3_YAWN                    (1 << 11 | 1 << 12) // Number of turns to sleep
+#define STATUS3_YAWN_TURN(num)          (((num) << 11) & STATUS3_YAWN)
 #define STATUS3_IMPRISONED_OTHERS       (1 << 13)
 #define STATUS3_GRUDGE                  (1 << 14)
 #define STATUS3_UNDERWATER              (1 << 15)
@@ -174,8 +173,9 @@
 #define SIDE_STATUS_SPIKES           (1 << 2)
 #define SIDE_STATUS_SPIKES_DAMAGED   (1 << 3)
 #define SIDE_STATUS_SAFEGUARD        (1 << 4)
-#define SIDE_STATUS_FUTUREATTACK     (1 << 5)
-#define SIDE_STATUS_MIST             (1 << 6)
+#define SIDE_STATUS_MIST             (1 << 5)
+#define SIDE_STATUS_AURORA_VEIL      (1 << 6)
+#define SIDE_STATUS_SCREENS_ANY      (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_AURORA_VEIL)
 
 // Field statuses
 #define STATUS_FIELD_WATERSPORT (1 << 0)
@@ -265,5 +265,35 @@
 #define TRAP_ID_WHIRLPOOL 3
 #define TRAP_ID_CLAMP     4
 #define TRAP_ID_SAND_TOMB 5
+
+// Window Ids for sTextOnWindowsInfo_Normal
+#define B_WIN_MSG                 0
+#define B_WIN_ACTION_PROMPT       1 // "What will {x} do?"
+#define B_WIN_ACTION_MENU         2 // "Fight/Pokémon/Bag/Run" menu
+#define B_WIN_MOVE_NAME_1         3 // Top left
+#define B_WIN_MOVE_NAME_2         4 // Top right
+#define B_WIN_MOVE_NAME_3         5 // Bottom left
+#define B_WIN_MOVE_NAME_4         6 // Bottom right
+#define B_WIN_PP                  7
+#define B_WIN_MOVE_TYPE           8
+#define B_WIN_PP_REMAINING        9
+#define B_WIN_DUMMY              10
+#define B_WIN_SWITCH_PROMPT      11 // "Switch which?"
+#define B_WIN_LEVEL_UP_BOX       12
+#define B_WIN_LEVEL_UP_BANNER    13
+#define B_WIN_YESNO              14
+#define B_WIN_VS_PLAYER          15
+#define B_WIN_VS_OPPONENT        16
+#define B_WIN_VS_MULTI_PLAYER_1  17
+#define B_WIN_VS_MULTI_PLAYER_2  18
+#define B_WIN_VS_MULTI_PLAYER_3  19
+#define B_WIN_VS_MULTI_PLAYER_4  20
+#define B_WIN_VS_OUTCOME_DRAW    21
+#define B_WIN_VS_OUTCOME_LEFT    22
+#define B_WIN_VS_OUTCOME_RIGHT   23
+#define B_WIN_OAK_OLD_MAN        24
+
+#define B_TEXT_FLAG_NPC_CONTEXT_FONT    (1 << 6)
+#define B_TEXT_FLAG_WINDOW_CLEAR        (1 << 7)
 
 #endif // GUARD_CONSTANTS_BATTLE_H

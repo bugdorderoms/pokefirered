@@ -69,12 +69,12 @@ u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 a
 						}
 						break;
 					case FORM_CHANGE_WEATHER:
-					    if (formsTable[i].param2)
+					    if (gSpecialStatuses[battlerId].removedWeatherChangeAbility)
 						{
-							if (formsTable[i].param2 != ability && !gSpecialStatuses[battlerId].removedWeatherChangeAbility)
-								break;
+							if (!param)
+								targetSpecies = formsTable[i].targetSpecies;
 						}
-					    if ((!param && (!gBattleWeather || !WEATHER_HAS_EFFECT)) || IsBattlerWeatherAffected(battlerId, param))
+						else if ((!param && (!gBattleWeather || !WEATHER_HAS_EFFECT)) || IsBattlerWeatherAffected(battlerId, param))
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
 					case FORM_CHANGE_SWITCH_OUT:
@@ -232,7 +232,7 @@ u16 DoWildEncounterFormChange(struct Pokemon *mon)
 	
 	GiveMonInitialMoveset(mon); // Other forms may have diferent movesets
 	
-	return GetMonData(mon, MON_DATA_SPECIES);
+	return DoOverworldFormChange(mon, FORM_CHANGE_KNOW_MOVE);
 }
 
 void DoPlayerPartyEndBattleFormChange(void)
@@ -252,32 +252,32 @@ void DoPlayerPartyEndBattleFormChange(void)
 // BATTLE FORM CHANGE //
 ////////////////////////
 
-void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 reloadAbility)
+void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 reloadStats, bool8 reloadAbility)
 {
 	struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
 	
-	SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
-	CalculateMonStats(mon);
-	
 	gBattleMons[battlerId].species = newSpecies;
-	gBattleMons[battlerId].hp = GetMonData(mon, MON_DATA_HP);
-	gBattleMons[battlerId].maxHP = GetMonData(mon, MON_DATA_MAX_HP);
-	gBattleMons[battlerId].attack = GetMonData(mon, MON_DATA_ATK);
-	gBattleMons[battlerId].defense = GetMonData(mon, MON_DATA_DEF);
-	gBattleMons[battlerId].speed = GetMonData(mon, MON_DATA_SPEED);
-	gBattleMons[battlerId].spAttack = GetMonData(mon, MON_DATA_SPATK);
-	gBattleMons[battlerId].spDefense = GetMonData(mon, MON_DATA_SPDEF);
-	HANDLE_POWER_TRICK_SWAP(battlerId);
+	SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
+	
+	if (reloadStats)
+	{
+		CalculateMonStats(mon);
+		gBattleMons[battlerId].hp = GetMonData(mon, MON_DATA_HP);
+		gBattleMons[battlerId].maxHP = GetMonData(mon, MON_DATA_MAX_HP);
+		gBattleMons[battlerId].attack = GetMonData(mon, MON_DATA_ATK);
+		gBattleMons[battlerId].defense = GetMonData(mon, MON_DATA_DEF);
+		gBattleMons[battlerId].speed = GetMonData(mon, MON_DATA_SPEED);
+		gBattleMons[battlerId].spAttack = GetMonData(mon, MON_DATA_SPATK);
+		gBattleMons[battlerId].spDefense = GetMonData(mon, MON_DATA_SPDEF);
+		HANDLE_POWER_TRICK_SWAP(battlerId);
+	}
 	
 	if (reloadAbility)
 		gBattleMons[battlerId].ability = GetMonAbility(mon);
 	
 	if (reloadTypes)
-	{
-		gBattleMons[battlerId].type1 = gBaseStats[newSpecies].type1;
-		gBattleMons[battlerId].type2 = gBaseStats[newSpecies].type2;
-		gBattleMons[battlerId].type3 = TYPE_MYSTERY;
-	}
+		SetBattlerInitialTypes(battlerId);
+	
 	ClearIllusionMon(battlerId);
 }
 
@@ -307,22 +307,18 @@ u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType)
 void DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType)
 {
 	u16 targetSpecies;
-	struct Pokemon *mon;
-	
-	if (battlerId != 0xFF)
-		mon = GetBattlerPartyIndexPtr(battlerId);
+	struct Pokemon *mon = battlerId == 0xFF ? &gPlayerParty[partyId] : GetBattlerPartyIndexPtr(battlerId);
 	
 	switch (formChangeType)
 	{
 		case FORM_CHANGE_SWITCH_OUT:
 		    if (SpeciesHasFormChangeType(gBattleMons[battlerId].species, FORM_CHANGE_SWITCH_OUT) == FORM_CHANGE_TERMINATOR) // don't revert form when switched out
-				DoBattleFormChange(battlerId, gBattleMonForms[partyId][GetBattlerSide(battlerId)], FALSE, FALSE);
+				DoBattleFormChange(battlerId, gBattleMonForms[GetBattlerSide(battlerId)][partyId], FALSE, TRUE, FALSE);
 			break;
 		case FORM_CHANGE_FAINT:
 		    if (SpeciesHasFormChangeType(gBattleMons[battlerId].species, FORM_CHANGE_FAINT) == FORM_CHANGE_TERMINATOR) // don't revert form when faint
 			{
-				targetSpecies = gBattleMonForms[partyId][GetBattlerSide(battlerId)];
-				BtlController_EmitSetMonData(battlerId, BUFFER_A, REQUEST_SPECIES_BATTLE, 0, 2, &targetSpecies);
+				BtlController_EmitSetMonData(battlerId, BUFFER_A, REQUEST_SPECIES_BATTLE, 0, 2, &gBattleMonForms[GetBattlerSide(battlerId)][partyId]);
 				MarkBattlerForControllerExec(battlerId);
 				CalculateMonStats(mon);
 				BtlController_EmitSetRawMonData(battlerId, BUFFER_A, offsetof(struct Pokemon, attack), 10, &mon->attack); // reload all stats
@@ -330,13 +326,7 @@ void DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType)
 			}
 			break;
 		case FORM_CHANGE_END_BATTLE:
-		    if (battlerId == 0xFF)
-			{
-				targetSpecies = gBattleMonForms[partyId][B_SIDE_PLAYER];
-				mon = &gPlayerParty[partyId];
-			}
-			else
-				targetSpecies = gBattleMonForms[partyId][GetBattlerSide(battlerId)];
+		    targetSpecies = battlerId == 0xFF ? gBattleMonForms[B_SIDE_PLAYER][partyId] : gBattleMonForms[GetBattlerSide(battlerId)][partyId];
 			
 			if (targetSpecies && targetSpecies < NUM_SPECIES)
 			{

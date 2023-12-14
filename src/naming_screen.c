@@ -710,16 +710,12 @@ static void NamingScreenMessagePrint(const u8 *str)
 static void pokemon_transfer_to_pc_with_message(void)
 {
     u8 stringToDisplay = 0;
-
-    if (!IsDestinationBoxFull())
+	
+	StringCopy(gStringVar1, GetBoxNamePtr(VarGet(VAR_PC_BOX_TO_SEND_MON)));
+	StringCopy(gStringVar2, sNamingScreenData->destBuffer);
+	
+    if (IsDestinationBoxFull())
     {
-        StringCopy(gStringVar1, GetBoxNamePtr(VarGet(VAR_PC_BOX_TO_SEND_MON)));
-        StringCopy(gStringVar2, sNamingScreenData->destBuffer);
-    }
-    else
-    {
-        StringCopy(gStringVar1, GetBoxNamePtr(VarGet(VAR_PC_BOX_TO_SEND_MON)));
-        StringCopy(gStringVar2, sNamingScreenData->destBuffer);
         StringCopy(gStringVar3, GetBoxNamePtr(GetPCBoxToSendMon()));
         stringToDisplay = 2;
     }

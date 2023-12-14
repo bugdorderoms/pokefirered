@@ -4,7 +4,6 @@
 #include "task.h"
 #include "text_window.h"
 #include "battle.h"
-#include "trainer_tower.h"
 #include "trainer_pokemon_sprites.h"
 #include "scanline_effect.h"
 #include "link.h"
@@ -130,10 +129,7 @@ static void MainCB2_SetUp(void)
     case 7:
         SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG3_ON);
         SetVBlankCallback(VBlankCB);
-        if (gSpecialVar_0x8004)
-            PrintTrainerTowerRecords();
-        else
-            PrintBattleRecords();
+		PrintBattleRecords();
         CreateTask(Task_WaitFadeIn, 8);
         SetMainCallback2(MainCB2);
         gMain.state = 0;

@@ -4,6 +4,7 @@
 #include "battle_message.h"
 #include "battle_queued_effects.h"
 #include "battle_scripts.h"
+#include "constants/battle_string_ids.h"
 
 // Lists
 const u8 gWishFutureSightQueuedEffectIds[] =
@@ -36,28 +37,17 @@ static u8 FindBattlerQueuedEffectInList(u8 battlerId, u8 id)
 	return B_QUEUED_COUNT;
 }
 
-static u8 FindQueuedEffectInList(u8 id)
+bool8 TryDoQueuedBattleEffectsInList(const u8 *list, bool8(*func)(u8, u8))
 {
-	u8 i;
+	u8 i, j;
 	
 	for (i = 0; i < gBattleStruct->queuedEffectsCount; i++)
 	{
-		if (gBattleStruct->queuedEffectsList[i].id == id && !gBattleStruct->queuedEffectsList[i].done)
-			return i;
-	}
-	return B_QUEUED_COUNT;
-}
-
-bool8 TryDoQueuedBattleEffectsInList(const u8 *list, bool8(*func)(u8, u8))
-{
-	u8 i, listId;
-	
-	for (i = 0; list[i] != B_QUEUED_COUNT; i++)
-	{
-		listId = FindQueuedEffectInList(list[i]);
-		
-		if (listId != B_QUEUED_COUNT && func(gBattleStruct->queuedEffectsList[listId].battler, list[i]))
-			return TRUE;
+		for (j = 0; list[j] != B_QUEUED_COUNT; j++)
+		{
+			if (gBattleStruct->queuedEffectsList[i].id == list[j] && !gBattleStruct->queuedEffectsList[i].done && func(gBattleStruct->queuedEffectsList[i].battler, list[j]))
+				return TRUE;
+		}
 	}
 	return FALSE;
 }
@@ -113,14 +103,13 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 				SetTypeBeforeUsingMove(gCurrentMove, gBattlerAttacker);
 				
 				gSpecialStatuses[battlerId].dmg = 0xFFFF;
-				PREPARE_MOVE_BUFFER(gBattleTextBuff1, gCurrentMove);
 				
 				switch (GetFutureAttackStringId(gCurrentMove))
 				{
-					case 0:
+					case B_MSG_FORESAW_ATTACK:
 					    gBattleScripting.animArg1 = B_ANIM_FUTURE_SIGHT_HIT;
 						break;
-					case 1:
+					case B_MSG_CHOSE_AS_DESTINY:
 					    gBattleScripting.animArg1 = B_ANIM_DOOM_DESIRE_HIT;
 						break;
 				}

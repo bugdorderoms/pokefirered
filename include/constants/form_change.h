@@ -29,7 +29,6 @@
 
 // form change based on current weather in battle.
 // param = weather
-// param2 is optionally passed to check for an specific pokemon's ability, if the ability is replaced or lost it will revert back to it's original form
 #define FORM_CHANGE_WEATHER       0x0006
 
 // form change used internaly in battle when a pokemon is switched out.

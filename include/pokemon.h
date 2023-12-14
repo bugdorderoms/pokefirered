@@ -222,7 +222,9 @@ struct MoveFlags
 	u32 affectsUserSide:1; // Tipycally used to show the entire side on choose the move, but it's still used to determine protect like effects.
 	u32 strikeCount:4; // Max 15 hits. Defaults to 1 if not set. May apply its effect on each hit.
 	u32 callOtherMove:1; // A move with this flag will be considered a "Move that call other moves".
-	u32 unused:23;
+	u32 noEffectiveness:1; // A move with this flag will not display the "Its super effective" and "Its not very effective" message.
+	u32 recoilDivisor:3; // Used by EFFECT_RECOIL and EFFECT_RECOIL_HP to determine the recoil damage.
+	u32 unused:19;
 };
 
 struct BattleMove
@@ -463,6 +465,8 @@ void DeleteMonMove(struct Pokemon *mon, u8 movePos);
 void ClearAllFusedMonSpecies(void);
 bool8 HealStatusConditions(struct Pokemon *mon, u32 healMask, u8 battleId);
 const u8* GetItemEffect(u16 item);
+bool8 MonCanBattle(struct Pokemon *mon);
+bool8 IsMonValidSpecies(struct Pokemon *mon);
 
 static inline u8 GetNatureFromPersonality(u32 personality)
 {

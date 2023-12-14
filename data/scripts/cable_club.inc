@@ -558,7 +558,6 @@ Movement_PlayerEnterMinigameRoom:: @ 81BB8A2
 CableClub_EventScript_ShowBattleRecords:: @ 81BB8A7
 	lockall
 	fadescreen FADE_TO_BLACK
-	setvar VAR_0x8004, 0
 	special ShowBattleRecords
 	waitstate
 	releaseall

@@ -46,6 +46,7 @@
 #define MOVE_TARGET_BOTH              (1 << 4)
 #define MOVE_TARGET_USER              (1 << 5)
 #define MOVE_TARGET_ALLY              (1 << 6)
+#define MOVE_TARGET_USER_OR_ALLY      (MOVE_TARGET_USER | MOVE_TARGET_ALLY)
 #define MOVE_TARGET_FOES_AND_ALLY     (MOVE_TARGET_BOTH | MOVE_TARGET_ALLY)
 #define MOVE_TARGET_ALL_BATTLERS      (MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_USER)
 
@@ -152,7 +153,7 @@ struct ProtectStruct
     u32 protected:1;
     u32 endured:1;
     u32 noValidMoves:1;
-    u32 helpingHand:1;
+    u32 pranksterElevated:1;
     u32 bounceMove:1;
     u32 stealMove:1;
     u32 notFirstStrike:1;
@@ -170,9 +171,7 @@ struct ProtectStruct
     u32 flinchImmobility:1;
     u32 usesBouncedMove:1;
     u32 myceliumMightElevated:1;
-	u32 pranksterElevated:1;
-    u32 flag_x20:1;
-    u32 flag_x40:1;
+	u32 helpingHandUses:3;
     u32 flag_x80:1;
 	/* field_3 */
     u32 field3:8;
@@ -222,17 +221,19 @@ extern struct SpecialStatus gSpecialStatuses[MAX_BATTLERS_COUNT];
 
 struct SideTimer
 {
-    /*0x00*/ u8 reflectTimer;
-    /*0x01*/ u8 reflectBattlerId;
-    /*0x02*/ u8 lightscreenTimer;
-    /*0x03*/ u8 lightscreenBattlerId;
-    /*0x04*/ u8 mistTimer;
-    /*0x05*/ u8 mistBattlerId;
-    /*0x06*/ u8 safeguardTimer;
-    /*0x07*/ u8 safeguardBattlerId;
-    /*0x08*/ u8 followmeTimer;
-    /*0x09*/ u8 followmeTarget;
-    /*0x0A*/ u8 spikesAmount;
+    /*0x00*/ u32 reflectTimer:4;
+    /*0x00*/ u32 reflectBattlerId:2;
+	/*0x00*/ u32 lightscreenTimer:4;
+	/*0x00*/ u32 lightscreenBattlerId:2;
+	/*0x00*/ u32 mistTimer:3;
+	/*0x00*/ u32 mistBattlerId:2;
+	/*0x00*/ u32 safeguardTimer:3;
+	/*0x00*/ u32 safeguardBattlerId:2;
+	/*0x00*/ u32 followmeSet:1;
+	/*0x00*/ u32 followmeTarget:2;
+	/*0x00*/ u32 spikesAmount:2;
+	/*0x00*/ u32 unused:5;
+	// end of word
 };
 
 extern struct SideTimer gSideTimers[B_SIDE_COUNT];
@@ -374,7 +375,7 @@ struct BattleStruct
 	/*0x01B*/ u8 battlerPreventingSwitchout;
     /*0x01C*/ u8 moneyMultiplier;
     /*0x01D*/ u8 savedTurnActionNumber;
-	/*0x01E*/ u8 scriptPartyIdx; // for printing the nickname
+	/*0x01E*/ u8 filler3; // Unused
 	/*0x01F*/ u8 runTries;
 	/*0x020*/ u16 expValue;
 	/*0x022*/ u8 sentInPokes;
@@ -389,7 +390,8 @@ struct BattleStruct
 	/*0x039*/ u8 overworldWeatherDone:1;
 	/*0x03A*/ u8 stringMoveType;
 	/*0x03B*/ u8 absentBattlerFlags:4;
-	/*0x03B*/ u8 attackerBeforeBounce:2;
+	/*0x03B*/ u8 zMoveMsgDone:1;
+	/*0x03B*/ u8 dynamaxMsgDone:1;
 	/*0x03B*/ u8 firstSuperEffectiveHitTakenMsgState:2;
     /*0x03C*/ u8 caughtMonNick[POKEMON_NAME_LENGTH + 1];
     /*0x047*/ u8 safariGoNearCounter;
@@ -433,12 +435,10 @@ struct BattleStruct
 	/*0x0DE*/ u8 itemPartyIndex[MAX_BATTLERS_COUNT]; // for item use
 	/*0x0E2*/ u8 targetsDone[MAX_BATTLERS_COUNT]; // for moves hiting multiples pokemon, as flag using gBitTable
 	/*0x0E6*/ u8 battleTurnCounter;
-	/*0x0E7*/ u8 zMoveMsgDone:1;
-	/*0x0E7*/ u8 dynamaxMsgDone:1;
 	/*0x0E7*/ u8 terastalMsgDone:1;
 	/*0x0E7*/ u8 throwingPokeBall:1;
 	/*0x0E7*/ u8 turnSideTracker:3;
-	/*0x0E7*/ u8 filler2:1; // Unused
+	/*0x0E7*/ u8 filler2:3; // Unused
 	/*0x0E8*/ u8 intrepidSwordActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x0EA*/ u8 dauntlessShieldActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x0EC*/ u16 abilityOverride[MAX_BATTLERS_COUNT]; // Used to override the ability on pop up by this value
@@ -463,25 +463,19 @@ extern struct BattleStruct *gBattleStruct;
     (var) /= (gStatStageRatios)[(mon)->statStages[(statIndex)]][1];                 \
 }
 
-#define IS_MOVE_PHYSICAL(move)(GetMoveSplit(move) == SPLIT_PHYSICAL)
-#define IS_MOVE_SPECIAL(move)(GetMoveSplit(move) == SPLIT_SPECIAL)
-#define IS_MOVE_STATUS(move)(GetMoveSplit(move) == SPLIT_STATUS)
+#define IS_MOVE_PHYSICAL(move)((GetMoveSplit(move) == SPLIT_PHYSICAL))
+#define IS_MOVE_SPECIAL(move)((GetMoveSplit(move) == SPLIT_SPECIAL))
+#define IS_MOVE_STATUS(move)((GetMoveSplit(move) == SPLIT_STATUS))
+
 #define BATTLER_DAMAGED(battlerId) ((gSpecialStatuses[battlerId].physicalDmg != 0 || gSpecialStatuses[battlerId].specialDmg != 0))
+
 #define IS_BATTLER_OF_TYPE(battlerId, type)((gBattleMons[battlerId].type1 == type || gBattleMons[battlerId].type2 == type || (gBattleMons[battlerId].type3 != TYPE_MYSTERY && gBattleMons[battlerId].type3 == type)))
-#define SET_BATTLER_TYPE(battlerId, type)        \
-{                                                \
-    gBattleMons[battlerId].type1 = type;         \
-    gBattleMons[battlerId].type2 = type;         \
-	gBattleMons[battlerId].type3 = TYPE_MYSTERY; \
-}
 
 #define GET_STAT_BUFF_ID(n)((n & 0xF))              // first four bits 0x1, 0x2, 0x4, 0x8
 #define GET_STAT_BUFF_VALUE2(n)((n & 0xF0))
 #define GET_STAT_BUFF_VALUE(n)(((n >> 4) & 7))      // 0x10, 0x20, 0x40
 #define STAT_BUFF_NEGATIVE 0x80                     // 0x80, the sign bit
-
 #define SET_STAT_BUFF_VALUE(n)(((s8)(((s8)(n) << 4)) & 0xF0))
-
 #define SET_STATCHANGER(statId, stage, goesDown)(gBattleScripting.statChanger = (statId) + (stage << 4) + (goesDown << 7))
 
 #define HANDLE_POWER_TRICK_SWAP(battlerId)                                         \
@@ -492,7 +486,9 @@ extern struct BattleStruct *gBattleStruct;
 		SWAP(gBattleMons[battlerId].attack, gBattleMons[battlerId].defense, temp); \
 }
 
-#define ARE_BATTLERS_OF_SAME_GENDER(battler1, battler2) (GetBattlerGender(battler1) == GetBattlerGender(battler2))
+#define ARE_BATTLERS_OF_SAME_GENDER(battler1, battler2) ((GetBattlerGender(battler1) == GetBattlerGender(battler2)))
+
+#define BATTLER_MAX_HP(battlerId) ((gBattleMons[battlerId].hp == gBattleMons[battlerId].maxHP))
 
 struct BattleScripting
 {
@@ -501,7 +497,7 @@ struct BattleScripting
 	/*0x08*/ s32 savedDmg;
     /*0x0C*/ u8 multihitString[6]; // for the "Hit X time(s)!" string
     /*0x12*/ u8 dmgMultiplier;
-    /*0x13*/ u8 twoTurnsMoveStringId;
+    /*0x27*/ bool8 bypassAbilityPopUp; // don't show ability pop up
     /*0x14*/ u8 animArg1;
     /*0x15*/ u8 animArg2;
     /*0x16*/ u8 tripleKickPower;
@@ -521,8 +517,7 @@ struct BattleScripting
     /*0x24*/ u8 field_23; // does something with hp calc
     /*0x25*/ bool8 illusionNickHack;
 	/*0x26*/ bool8 fixedAbilityPopUp;
-	/*0x27*/ bool8 bypassAbilityPopUp; // don't show ability pop up
-	/*0x28*/ u8 savedBattler; // Multiuse
+	/*0x27*/ u8 savedBattler; // Multiuse
 };
 
 enum
@@ -662,7 +657,7 @@ extern bool8 gTransformedShinies[MAX_BATTLERS_COUNT];
 extern u8 gBattlerPositions[MAX_BATTLERS_COUNT];
 extern u8 gHealthboxSpriteIds[MAX_BATTLERS_COUNT];
 extern u8 gBattleOutcome;
-extern u16 gBattleMonForms[PARTY_SIZE][B_SIDE_COUNT];
+extern u16 gBattleMonForms[B_SIDE_COUNT][PARTY_SIZE];
 extern void (*gBattlerControllerFuncs[MAX_BATTLERS_COUNT])(u8);
 extern void (*gBattlerControllerEndFuncs[MAX_BATTLERS_COUNT])(u8);
 extern u32 gBattleControllerExecFlags;

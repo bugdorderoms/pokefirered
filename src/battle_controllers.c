@@ -112,6 +112,7 @@ static void CreateTasksForSendRecvLinkBuffers(void)
     gTasks[sLinkSendTaskId].data[13] = 0;
     gTasks[sLinkSendTaskId].data[14] = 0;
     gTasks[sLinkSendTaskId].data[15] = 0;
+	
     sLinkReceiveTaskId = CreateTask(Task_HandleCopyReceivedLinkBuffersData, 0);
     gTasks[sLinkReceiveTaskId].data[12] = 0;
     gTasks[sLinkReceiveTaskId].data[13] = 0;
@@ -363,8 +364,7 @@ static void SetBattlePartyIds(void)
 			
             for (j = 0; j < PARTY_SIZE; ++j)
             {
-				if (GetMonData(&party[j], MON_DATA_HP) && GetMonData(&party[j], MON_DATA_SPECIES2) && GetMonData(&party[j], MON_DATA_SPECIES2) != SPECIES_EGG
-					&& !GetMonData(&party[j], MON_DATA_IS_EGG) && (i < 2 || gBattlerPartyIndexes[i - 2] != j))
+				if (MonCanBattle(&party[j]) && (i < 2 || gBattlerPartyIndexes[i - 2] != j))
 				{
 					gBattlerPartyIndexes[i] = j;
 					break;
@@ -754,11 +754,10 @@ void BtlController_EmitPrintString(u8 battlerId, u8 bufferId, u16 stringId)
 	
     stringInfo = (struct BattleMsgData *)(&sBattleBuffersTransferData[4]);
     stringInfo->currentMove = gCurrentMove;
-    stringInfo->originallyUsedMove = gChosenMove;
+    stringInfo->chosenMove = gChosenMove;
     stringInfo->lastItem = gLastUsedItem;
     stringInfo->lastAbility = gLastUsedAbility;
     stringInfo->scrActive = gBattleScripting.battler;
-    stringInfo->bakScriptPartyIdx = gBattleStruct->scriptPartyIdx;
     stringInfo->hpScale = gBattleStruct->hpScale;
     stringInfo->moveType = gBattleMoves[gCurrentMove].type;
     for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
@@ -784,11 +783,10 @@ void BtlController_EmitPrintSelectionString(u8 battlerId, u8 bufferId, u16 strin
 	
     stringInfo = (struct BattleMsgData *)(&sBattleBuffersTransferData[4]);
     stringInfo->currentMove = gCurrentMove;
-    stringInfo->originallyUsedMove = gChosenMove;
+    stringInfo->chosenMove = gChosenMove;
     stringInfo->lastItem = gLastUsedItem;
     stringInfo->lastAbility = gLastUsedAbility;
     stringInfo->scrActive = gBattleScripting.battler;
-    stringInfo->bakScriptPartyIdx = gBattleStruct->scriptPartyIdx;
     for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
         stringInfo->abilities[i] = gBattleMons[i].ability;
     for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; ++i)
@@ -1291,7 +1289,7 @@ void BtlController_HandlePrintString(u8 battlerId, u16 stringId)
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
 	BufferStringBattle(battlerId, stringId);
-	BattlePutTextOnWindow(gDisplayedStringBattle, BattleStringShouldBeColored(stringId) ? 0x40 : 0);
+	BattlePutTextOnWindow(gDisplayedStringBattle, BattleStringShouldBeColored(stringId) ? (B_WIN_MSG | B_TEXT_FLAG_NPC_CONTEXT_FONT) : B_WIN_MSG);
 	gBattlerControllerFuncs[battlerId] = CompleteOnInactiveTextPrinter;
 }
 
@@ -1301,15 +1299,15 @@ void BtlController_HandleChooseAction(u8 battlerId, const u8 *actionsStr, const 
 
     gBattlerControllerFuncs[battlerId] = controllerFunc;
 	
-    BattlePutTextOnWindow(gText_EmptyString3, 0);
-    BattlePutTextOnWindow(actionsStr, 2);
+    BattlePutTextOnWindow(gText_EmptyString, B_WIN_MSG);
+    BattlePutTextOnWindow(actionsStr, B_WIN_ACTION_MENU);
 	
     for (i = 0; i < MAX_MON_MOVES; ++i)
         ActionSelectionDestroyCursorAt(i);
 	
     ActionSelectionCreateCursorAt(gActionSelectionCursor[battlerId]);
 	BattleStringExpandPlaceholdersToDisplayedString(whatDoStr);
-    BattlePutTextOnWindow(gDisplayedStringBattle, 1);
+    BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_ACTION_PROMPT);
 }
 
 void BtlController_HandleChooseItem(u8 battlerId, void(*controllerFunc)(u8))
@@ -1989,9 +1987,6 @@ static void CompleteOnSpecialAnimDone(u8 battlerId)
 
 static void DoMoveAnimation(u8 battlerId)
 {
-	u16 move = gBattleBufferA[battlerId][1] | (gBattleBufferA[battlerId][2] << 8);
-    u8 multihit = gBattleBufferA[battlerId][11];
-
     switch (gBattleSpritesDataPtr->healthBoxesData[battlerId].animationState)
     {
     case 0:
@@ -2006,7 +2001,7 @@ static void DoMoveAnimation(u8 battlerId)
         if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].specialAnimActive)
         {
             SetBattlerSpriteAffineMode(0);
-            DoMoveAnim(move);
+            DoMoveAnim((gBattleBufferA[battlerId][1] | (gBattleBufferA[battlerId][2] << 8)));
             gBattleSpritesDataPtr->healthBoxesData[battlerId].animationState = 2;
         }
         break;
@@ -2017,7 +2012,7 @@ static void DoMoveAnimation(u8 battlerId)
         {
             SetBattlerSpriteAffineMode(1);
 			
-            if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute && multihit < 2)
+            if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute && gBattleBufferA[battlerId][11] < 2)
             {
                 InitAndLaunchSpecialAnimation(battlerId, battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
                 gBattleSpritesDataPtr->battlerData[battlerId].flag_x8 = 0;
@@ -2046,13 +2041,12 @@ static void CompleteOnInactiveTextPrinter(u8 battlerId)
 static void CompleteOnHealthbarDone(u8 battlerId)
 {
 	s16 hpValue = MoveBattleBar(battlerId, gHealthboxSpriteIds[battlerId], HEALTH_BAR);
-	u8 side = GetBattlerSide(battlerId);
 
     SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
 	
     if (hpValue == -1) // Done
 	{
-		if (side == B_SIDE_PLAYER)
+		if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
 			HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[battlerId]], battlerId);
 		
 		if ((gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) && !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_INFLICT_DMG))

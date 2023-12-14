@@ -10,21 +10,13 @@
 #include "field_poison.h"
 #include "constants/battle.h"
 
-static bool32 IsMonValidSpecies(struct Pokemon *pokemon)
-{
-    u16 species = GetMonData(pokemon, MON_DATA_SPECIES2);
-    if (species == SPECIES_NONE || species == SPECIES_EGG)
-        return FALSE;
-    return TRUE;
-}
-
 static bool32 AllMonsFainted(void)
 {
     int i;
 
     for (i = 0; i < PARTY_SIZE; i++)
 	{
-        if (IsMonValidSpecies(&gPlayerParty[i]) && GetMonData(&gPlayerParty[i], MON_DATA_HP))
+        if (MonCanBattle(&gPlayerParty[i]))
             return FALSE;
 	}
     return TRUE;

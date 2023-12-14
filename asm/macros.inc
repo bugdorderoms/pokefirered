@@ -5,7 +5,6 @@
 	.include "asm/macros/ec.inc"
 	.include "asm/macros/map.inc"
 	.include "asm/macros/m4a.inc"
-	.include "asm/macros/trainer_tower.inc"
 
 	.macro region_map_location x, y, width, height, name
 	.byte \x

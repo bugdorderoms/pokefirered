@@ -148,6 +148,7 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 {
 	u16 baseAttack = CalcBaseAttackStat(attacker, defender, damageStruct, confusionDmg);
 	u16 baseDefense = CalcBaseDefenseStat(attacker, defender, damageStruct, confusionDmg);
+	u16 move = damageStruct->move;
 	s32 damage;
 	
 	gBattleMovePower = basePower;
@@ -156,9 +157,8 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 	damage = basePower * baseAttack * (2 * gBattleMons[attacker].level / 5 + 2) / baseDefense / 50 + 2;
 
 	// targets modifier
-	if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && (GetBattlerMoveTargetType(attacker, damageStruct->move) == MOVE_TARGET_BOTH
-	|| GetBattlerMoveTargetType(attacker, damageStruct->move) == MOVE_TARGET_FOES_AND_ALLY) && CountAliveMonsInBattle(defender, BATTLE_ALIVE_SIDE) > 1)
-	    damage = (damage * 75) / 100;
+	if (!DoesSpreadMoveStrikesOnlyOnce(attacker, defender, move, FALSE))
+		damage = (damage * 75) / 100;
 	
 	// Parental Bond modifier
 	if (gSpecialStatuses[attacker].parentalBondState == PARENTAL_BOND_2ND_HIT)
@@ -206,34 +206,34 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 	damage = (damage * damageStruct->effectiveness) / 10;
 	
 	// Burn modifier
-	if (!confusionDmg && (gBattleMons[attacker].status1 & STATUS1_BURN) && IS_MOVE_PHYSICAL(damageStruct->move) && damageStruct->atkAbility != ABILITY_GUTS
-	&& gBattleMoves[damageStruct->move].effect != EFFECT_FACADE)
+	if (!confusionDmg && (gBattleMons[attacker].status1 & STATUS1_BURN) && IS_MOVE_PHYSICAL(move) && gBattleMoves[move].effect != EFFECT_FACADE
+	&& damageStruct->atkAbility != ABILITY_GUTS)
 	    damage /= 2;
 	
 	// TODO: Dynamax Cannon modifier
 	
 	
 	// Minimize modifier
-	if (gBattleMoves[damageStruct->move].flags.dmgMinimize && gStatuses3[defender] & STATUS3_MINIMIZED)
+	if (gBattleMoves[move].flags.dmgMinimize && (gStatuses3[defender] & STATUS3_MINIMIZED))
 		damage *= 2;
 	
 	// Underground modifier
-	if (gBattleMoves[damageStruct->move].flags.hitUnderground && gStatuses3[defender] & STATUS3_UNDERGROUND)
+	if (gBattleMoves[move].flags.hitUnderground && (gStatuses3[defender] & STATUS3_UNDERGROUND))
 		damage *= 2;
 	
 	// Underwater modifier
-	if (gBattleMoves[damageStruct->move].flags.hitUnderwater && gStatuses3[defender] & STATUS3_UNDERWATER)
+	if (gBattleMoves[move].flags.hitUnderwater && (gStatuses3[defender] & STATUS3_UNDERWATER))
 		damage *= 2;
 	
 	// In air modifier
-	if (gBattleMoves[damageStruct->move].flags.hitInAirDoubleDmg && gStatuses3[defender] & STATUS3_ON_AIR)
+	if (gBattleMoves[move].flags.hitInAirDoubleDmg && (gStatuses3[defender] & STATUS3_ON_AIR))
 		damage *= 2;
 	
 	// Screens modifier
 	if (!damageStruct->isCrit && damageStruct->atkAbility != ABILITY_INFILTRATOR && !confusionDmg)
 	{
-		if (((gSideStatuses[GetBattlerSide(defender)] & SIDE_STATUS_LIGHTSCREEN) && IS_MOVE_SPECIAL(damageStruct->move))
-			|| ((gSideStatuses[GetBattlerSide(defender)] & SIDE_STATUS_REFLECT) && IS_MOVE_PHYSICAL(damageStruct->move)))
+		if (((gSideStatuses[GetBattlerSide(defender)] & SIDE_STATUS_LIGHTSCREEN) && IS_MOVE_SPECIAL(move))
+			|| ((gSideStatuses[GetBattlerSide(defender)] & SIDE_STATUS_REFLECT) && IS_MOVE_PHYSICAL(move)))
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 				damage = (damage * 66) / 100;
@@ -270,21 +270,21 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 		{
 			case ABILITY_MULTISCALE:
 			case ABILITY_SHADOW_SHIELD:
-				if (gBattleMons[defender].hp == gBattleMons[defender].maxHP)
+				if (BATTLER_MAX_HP(defender))
 					damage /= 2;
 				break;
 			case ABILITY_FLUFFY:
-			    if (IsMoveMakingContact(attacker, damageStruct->move))
+			    if (IsMoveMakingContact(attacker, move))
 					damage /= 2;
 				if (damageStruct->moveType == TYPE_FIRE)
 					damage *= 2;
 				break;
 			case ABILITY_PUNK_ROCK:
-			    if (gBattleMoves[damageStruct->move].flags.soundMove)
+			    if (gBattleMoves[move].flags.soundMove)
 					damage /= 2;
 				break;
 			case ABILITY_ICE_SCALES:
-			    if (IS_MOVE_SPECIAL(damageStruct->move))
+			    if (IS_MOVE_SPECIAL(move))
 					damage /= 2;
 				break;
 			case ABILITY_FILTER:
@@ -335,9 +335,8 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 
 s32 CalculateMoveDamage(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 isCrit, bool8 randomFactor)
 {
-	u8 affectedBy;
 	u16 flags;
-	u8 effectiveness = CalcTypeEffectivenessMultiplier(move, moveType, attacker, defender, FALSE, &affectedBy, &flags);
+	u8 effectiveness = CalcTypeEffectivenessMultiplier(move, moveType, attacker, defender, FALSE, &flags);
 	struct DamageCalc *damageStruct = PopulateDamageStruct(attacker, defender, move, moveType, effectiveness, isCrit);
 	return CalculateDamage(attacker, defender, damageStruct, GetMoveBasePower(attacker, defender, damageStruct), randomFactor, FALSE);
 }
@@ -346,9 +345,10 @@ s32 CalculateMoveDamage(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 i
 // Badge boost apply if raises the user's Attack or Defense
 // Type enhancing items don't apply
 // Silk Scarf, Choice Band, Thick Club and Light Ball boosts don't apply
-s32 CalculateConfusionDamage(u8 attacker, u8 defender)
+s32 CalculateConfusionDamage(void)
 {
-	return CalculateDamage(attacker, defender, PopulateDamageStruct(attacker, defender, MOVE_NONE, TYPE_MYSTERY, TYPE_MUL_NORMAL, FALSE), 40, TRUE, TRUE);
+	u8 battler = gBattlerTarget = gBattlerAttacker;
+	return CalculateDamage(battler, battler, PopulateDamageStruct(battler, battler, MOVE_NONE, TYPE_MYSTERY, TYPE_MUL_NORMAL, FALSE), 40, TRUE, TRUE);
 }
 
 /////////////////////////////////
@@ -375,20 +375,6 @@ static const u8 sFlailHpScaleToPowerTable[] =
     48, 20
 };
 
-static bool8 IsRecoilDamageMoveEffect(u16 moveEffect)
-{
-	switch (moveEffect)
-	{
-		case EFFECT_RECOIL_IF_MISS:
-		case EFFECT_RECOIL_25:
-		case EFFECT_DOUBLE_EDGE:
-		case EFFECT_RECOIL_33_STATUS:
-		case EFFECT_RECOIL_50:
-		    return TRUE;
-	}
-	return FALSE;
-}
-
 static inline bool8 CanReceiveBadgeBoost(u8 battlerId, u16 flagId)
 {
 #if BADGE_BOOST
@@ -411,6 +397,8 @@ static inline u16 GetSupremeOverlordModifier(u8 battlerId)
 	}
 	return modifier;
 }
+
+#define IS_RECOIL_MOVE_EFFECT(moveEffect) ((moveEffect == EFFECT_RECOIL_IF_MISS || moveEffect == EFFECT_RECOIL || moveEffect == EFFECT_RECOIL_33_STATUS))
 
 static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageStruct)
 {
@@ -483,19 +471,15 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 		case EFFECT_BEAT_UP:
 		    basePower = (gBaseStats[GetMonData(&GetBattlerParty(attacker)[gBattleCommunication[0] - 1], MON_DATA_SPECIES)].baseAttack / 10) + 5;
 			break;
-		case EFFECT_ERUPTION:
-			basePower = (gBattleMons[attacker].hp * basePower) / gBattleMons[attacker].maxHP;
-			break;
 		case EFFECT_FACADE:
 			if ((gBattleMons[attacker].status1 & (STATUS1_PARALYSIS | STATUS1_BURN | STATUS1_PSN_ANY)))
 				basePower *= 2;
 			break;
-		case EFFECT_SMELLINGSALT:
-			if (!SubsBlockMove(attacker, defender, move) && (gBattleMons[defender].status1 & STATUS1_PARALYSIS))
-				basePower *= 2;
+		case EFFECT_ERUPTION:
+			basePower = (gBattleMons[attacker].hp * basePower) / gBattleMons[attacker].maxHP;
 			break;
-		case EFFECT_WEATHER_BALL:
-			if (IsBattlerWeatherAffected(attacker, WEATHER_ANY & ~(WEATHER_STRONG_WINDS)))
+		case EFFECT_REMOVE_STATUS:
+			if (!SubsBlockMove(attacker, defender, move) && (gBattleMons[defender].status1 & gBattleMoves[move].argument))
 				basePower *= 2;
 			break;
 		case EFFECT_REVENGE:
@@ -503,10 +487,17 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			    || (gProtectStructs[attacker].specialDmg && gProtectStructs[attacker].specialBattlerId == defender))
 				basePower *= 2;
 		    break;
+		case EFFECT_WEATHER_BALL:
+			if (IsBattlerWeatherAffected(attacker, WEATHER_ANY & ~(WEATHER_STRONG_WINDS)))
+				basePower *= 2;
+			break;
 		case EFFECT_SPIT_UP:
 			basePower = 100 * gDisableStructs[attacker].stockpileCounter;
 			break;
 	}
+	
+	if (basePower == 0)
+		basePower = 1;
 	
 	// Attacker's abilities
 	switch (damageStruct->atkAbility)
@@ -541,7 +532,7 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 				basePower = (12 * basePower) / 10;
 			break;
 		case ABILITY_RECKLESS:
-		    if (IsRecoilDamageMoveEffect(moveEffect))
+		    if (IS_RECOIL_MOVE_EFFECT(moveEffect))
 				basePower = (12 * basePower) / 10;
 			break;
 		case ABILITY_RIVALRY:
@@ -644,12 +635,16 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 	}
 	
 	// Various effects
+	
+	// Charge
 	if ((gStatuses3[attacker] & STATUS3_CHARGED_UP) && damageStruct->moveType == TYPE_ELECTRIC)
 		basePower *= 2;
 	
-	if (gProtectStructs[attacker].helpingHand)
+	// Helping Hand
+	for (i = 0; i < gProtectStructs[attacker].helpingHandUses; i++)
 		basePower = (basePower * 15) / 10;
 	
+	// Water/Mud Sport
 	if (((gFieldStatus & STATUS_FIELD_WATERSPORT) && damageStruct->moveType == TYPE_FIRE)
 		|| ((gFieldStatus & STATUS_FIELD_MUDSPORT) && damageStruct->moveType == TYPE_ELECTRIC))
 	    basePower = (basePower * 33) / 100;

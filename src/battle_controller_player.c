@@ -279,7 +279,7 @@ void PlayerHandleChooseAction(u8 battlerId)
 	if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
 		StringCopy(gBattleTextBuff1, gText_TheOldMan);
 	else
-		PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, battlerId, gBattlerPartyIndexes[battlerId]);
+		PrepareMonNickNoIllusionBuffer(gBattleTextBuff1, battlerId);
 	
 	BtlController_HandleChooseAction(battlerId, gText_BattleMenu, gText_WhatWillBufferDo, HandleChooseActionAfterDma3);
 }
@@ -347,7 +347,7 @@ static void PrintLinkStandbyMsg(void)
     {
         gBattle_BG0_X = 0;
         gBattle_BG0_Y = 0;
-        BattlePutTextOnWindow(gText_LinkStandby, 0);
+        BattlePutTextOnWindow(gText_LinkStandby, B_WIN_MSG);
     }
 }
 
@@ -676,7 +676,7 @@ static void MoveSelectionDisplayMoveNames(u8 battlerId)
         MoveSelectionDestroyCursorAt(i);
         StringCopy(gDisplayedStringBattle, gUnknown_83FE770);
         StringAppend(gDisplayedStringBattle, gMoveNames[moveInfo->moves[i]]);
-        BattlePutTextOnWindow(gDisplayedStringBattle, i + 3);
+        BattlePutTextOnWindow(gDisplayedStringBattle, i + B_WIN_MOVE_NAME_1);
 		
         if (moveInfo->moves[i])
             ++gNumberOfMovesToChoose;
@@ -686,7 +686,7 @@ static void MoveSelectionDisplayMoveNames(u8 battlerId)
 static void MoveSelectionDisplayPpString(void)
 {
     StringCopy(gDisplayedStringBattle, gText_MoveInterfacePP);
-    BattlePutTextOnWindow(gDisplayedStringBattle, 7);
+    BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP);
 }
 
 static void MoveSelectionDisplayPpNumber(u8 battlerId)
@@ -702,15 +702,15 @@ static void MoveSelectionDisplayPpNumber(u8 battlerId)
 		txtPtr = ConvertIntToDecimalStringN(gDisplayedStringBattle, moveInfo->currentPp[gMoveSelectionCursor[battlerId]], STR_CONV_MODE_RIGHT_ALIGN, 2);
 		*txtPtr = CHAR_SLASH;
 		ConvertIntToDecimalStringN(++txtPtr, moveInfo->maxPp[gMoveSelectionCursor[battlerId]], STR_CONV_MODE_RIGHT_ALIGN, 2);
-		BattlePutTextOnWindow(gDisplayedStringBattle, 9);
+		BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP_REMAINING);
 	}
 }
 
 static void MoveSelectionDisplayMoveType(u8 battlerId)
 {
+	u8 *txtPtr;
+    u8 type, target, effect;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
-    u8 *txtPtr;
-    u8 type, target, effect, affectedBy;
     u16 flags, move = moveInfo->moves[gMoveSelectionCursor[battlerId]];
     
     if (gBattleMoves[move].effect != EFFECT_HIDDEN_POWER)
@@ -724,21 +724,22 @@ static void MoveSelectionDisplayMoveType(u8 battlerId)
     *txtPtr++ = 1;
    
 #if EFFECTIVENESS_ON_MENU
-    target = B_POSITION_OPPONENT_LEFT; // default target
-    effect = affectedBy = flags = 0;
+    target = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT); // default target
+    effect = flags = 0;
     
     // check if move is stab
     if (!IS_MOVE_STATUS(move) && IS_BATTLER_OF_TYPE(battlerId, type))
         effect = 2;
+	
     // try change move target in double
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
     {
         if (gBattlerControllerFuncs[battlerId] == HandleInputChooseTarget)
             target = gMultiUsePlayerCursor;
-        else if (gBattleMons[target].hp == 0)
-            target = B_POSITION_OPPONENT_RIGHT;
+        else if (!IsBattlerAlive(target))
+            target = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
     }
-	CalcTypeEffectivenessMultiplier(move, type, battlerId, GetBattlerAtPosition(target), FALSE, &affectedBy, &flags);
+	CalcTypeEffectivenessMultiplier(move, type, battlerId, target, FALSE, &flags);
     
     // set respective colours
     if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
@@ -769,7 +770,7 @@ static void MoveSelectionDisplayMoveType(u8 battlerId)
     txtPtr = StringCopy(txtPtr, gUnknown_83FE770);
 #endif
     StringCopy(txtPtr, gTypeNames[type]);
-    BattlePutTextOnWindow(gDisplayedStringBattle, 8);
+    BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MOVE_TYPE);
 }
 
 static void MoveSelectionDisplayMoveMenu(u8 battlerId)
@@ -874,7 +875,7 @@ void HandleInputChooseMove(u8 battlerId)
     {
         PlaySE(SE_SELECT);
 		
-        if (moveTarget & MOVE_TARGET_USER)
+        if (moveTarget == MOVE_TARGET_USER || moveTarget == MOVE_TARGET_ALL_BATTLERS || moveTarget == MOVE_TARGET_USER_OR_ALLY)
             gMultiUsePlayerCursor = battlerId;
         else
             gMultiUsePlayerCursor = GetBattlerAtPosition(BATTLE_OPPOSITE(GetBattlerPosition(battlerId) & BIT_SIDE));
@@ -886,16 +887,16 @@ void HandleInputChooseMove(u8 battlerId)
         }
         else // double battle
         {
-            if (!(moveTarget & (MOVE_TARGET_RANDOM | MOVE_TARGET_BOTH | MOVE_TARGET_DEPENDS | MOVE_TARGET_OPPONENTS_FIELD | MOVE_TARGET_USER))
-				&& moveTarget != MOVE_TARGET_ALLY)
+            if (moveTarget == MOVE_TARGET_SELECTED || moveTarget == MOVE_TARGET_USER_OR_SELECTED)
                 ++canSelectTarget; // either selected or user
 			
-			if (moveTarget == (MOVE_TARGET_USER | MOVE_TARGET_ALLY) && IsBattlerAlive(BATTLE_PARTNER(battlerId)))
+			if (moveTarget == MOVE_TARGET_USER_OR_ALLY && IsBattlerAlive(BATTLE_PARTNER(battlerId)))
 				++canSelectTarget;
 			
             if (!moveInfo->currentPp[gMoveSelectionCursor[battlerId]])
                 canSelectTarget = 0;
-            else if (!(moveTarget & (MOVE_TARGET_USER | MOVE_TARGET_USER_OR_SELECTED)) && CountAliveMonsInBattle(battlerId, BATTLE_ALIVE_EXCEPT_BATTLER) <= 1)
+            else if (moveTarget != MOVE_TARGET_USER_OR_SELECTED && moveTarget != MOVE_TARGET_USER && moveTarget != MOVE_TARGET_ALL_BATTLERS
+			&& moveTarget != MOVE_TARGET_USER_OR_ALLY && CountAliveMonsInBattle(battlerId, BATTLE_ALIVE_EXCEPT_BATTLER) <= 1)
             {
 				gMultiUsePlayerCursor = GetDefaultMoveTarget(battlerId);
 				canSelectTarget = 0;
@@ -927,7 +928,8 @@ void HandleInputChooseMove(u8 battlerId)
 			case 1:
 			    gBattlerControllerFuncs[battlerId] = HandleInputChooseTarget;
 				
-				if (moveTarget & (MOVE_TARGET_USER | MOVE_TARGET_USER_OR_SELECTED))
+				if (moveTarget == MOVE_TARGET_USER_OR_SELECTED || moveTarget == MOVE_TARGET_USER || moveTarget == MOVE_TARGET_ALL_BATTLERS
+				|| moveTarget == MOVE_TARGET_USER_OR_ALLY)
 					gMultiUsePlayerCursor = battlerId;
 				else if (gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)])
 					gMultiUsePlayerCursor = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
@@ -1015,7 +1017,7 @@ void HandleInputChooseMove(u8 battlerId)
             MoveSelectionCreateCursorAt(gMoveSelectionCursor[battlerId], 29);
 			gMultiUsePlayerCursor = gMoveSelectionCursor[battlerId] != 0 ? 0 : gMoveSelectionCursor[battlerId] + 1;
             MoveSelectionCreateCursorAt(gMultiUsePlayerCursor, 27);
-            BattlePutTextOnWindow(gText_BattleSwitchWhich, 0xB);
+            BattlePutTextOnWindow(gText_BattleSwitchWhich, B_WIN_SWITCH_PROMPT);
             gBattlerControllerFuncs[battlerId] = HandleMoveSwitching;
         }
     }
@@ -1141,7 +1143,7 @@ static void HandleInputChooseTarget(u8 battlerId)
         PlaySE(SE_SELECT);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 		
-		if (moveTarget == (MOVE_TARGET_USER | MOVE_TARGET_ALLY)) // Acupressure target
+		if (moveTarget == MOVE_TARGET_USER_OR_ALLY)
 			gMultiUsePlayerCursor = BATTLE_PARTNER(gMultiUsePlayerCursor);
 		else
 		{
@@ -1169,9 +1171,7 @@ static void HandleInputChooseTarget(u8 battlerId)
 				{
 					case B_POSITION_PLAYER_LEFT:
 					case B_POSITION_PLAYER_RIGHT:
-						if (battlerId != gMultiUsePlayerCursor)
-							++i;
-						else if (moveTarget == MOVE_TARGET_USER_OR_SELECTED)
+						if (battlerId != gMultiUsePlayerCursor || moveTarget == MOVE_TARGET_USER_OR_SELECTED)
 							++i;
 						break;
 					default:
@@ -1191,7 +1191,7 @@ static void HandleInputChooseTarget(u8 battlerId)
         PlaySE(SE_SELECT);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 		
-		if (moveTarget == (MOVE_TARGET_USER | MOVE_TARGET_ALLY)) // Acupressure target
+		if (moveTarget == MOVE_TARGET_USER_OR_ALLY)
 			gMultiUsePlayerCursor = BATTLE_PARTNER(gMultiUsePlayerCursor);
 		else
 		{
@@ -1219,9 +1219,7 @@ static void HandleInputChooseTarget(u8 battlerId)
 				{
 					case B_POSITION_PLAYER_LEFT:
 					case B_POSITION_PLAYER_RIGHT:
-					    if (battlerId != gMultiUsePlayerCursor)
-							++i;
-						else if (moveTarget == MOVE_TARGET_USER_OR_SELECTED)
+					    if (battlerId != gMultiUsePlayerCursor || moveTarget == MOVE_TARGET_USER_OR_SELECTED)
 							++i;
 						break;
 					default:
@@ -1421,7 +1419,7 @@ static void MoveInfoPrintMoveDescription(u8 battlerId)
 	u16 move = moveInfo->moves[gMoveSelectionCursor[battlerId]];
 	
 	// Move's description
-	ReformatStringToMaxChars(gStringVar4, gMoveDescriptionPointers[move - 1], 0, 150, FALSE);
+	ReformatStringToMaxChars(gMoveDescriptionPointers[move - 1], 0, 30, FALSE);
 	CreateBattleMoveInfoWindowAndArrows(gStringVar4);
 }
 
@@ -1465,7 +1463,7 @@ static void MoveInfoPrintSubmenuString(u8 battlerId, u8 stateId)
 {
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
 	sMoveInfoSubmenuFuncs[stateId](moveInfo->moves[gMoveSelectionCursor[battlerId]]);
-	BattlePutTextOnWindow(gDisplayedStringBattle, 0xB);
+	BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_SWITCH_PROMPT);
 }
 
 // Redrawn moves window

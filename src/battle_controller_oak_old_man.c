@@ -4,7 +4,6 @@
 #include "battle_controllers.h"
 #include "battle_interface.h"
 #include "battle_message.h"
-#include "battle_string_ids.h"
 #include "item_menu.h"
 #include "link.h"
 #include "party_menu.h"
@@ -13,6 +12,7 @@
 #include "util.h"
 #include "constants/battle_anim.h"
 #include "constants/songs.h"
+#include "constants/battle_string_ids.h"
 
 static void OakOldManBufferRunCommand(u8 battlerId);
 static void OakOldManBufferExecCompleted(u8 battlerId);
@@ -432,7 +432,7 @@ void PrintOakText_KeepAnEyeOnHP(u8 battlerId)
         break;
     case 3:
         BattleStringExpandPlaceholdersToDisplayedString(gText_KeepAnEyeOnHP);
-        BattlePutTextOnWindow(gDisplayedStringBattle, 24);
+        BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
         ++gBattleStruct->simulatedInputState[0];
         break;
     case 4:
@@ -482,7 +482,7 @@ static void PrintOakText_ForPetesSake(u8 battlerId)
         break;
     case 2:
         BattleStringExpandPlaceholdersToDisplayedString(gText_ForPetesSake);
-        BattlePutTextOnWindow(gDisplayedStringBattle, 24);
+        BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
         ++gBattleStruct->simulatedInputState[0];
         break;
     case 3:
@@ -496,7 +496,7 @@ static void PrintOakText_ForPetesSake(u8 battlerId)
         if (!gPaletteFade.active)
         {
             BattleStringExpandPlaceholdersToDisplayedString(gText_TheTrainerThat);
-            BattlePutTextOnWindow(gDisplayedStringBattle, 24);
+            BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
             ++gBattleStruct->simulatedInputState[0];
         }
         break;
@@ -511,7 +511,7 @@ static void PrintOakText_ForPetesSake(u8 battlerId)
         if (!gPaletteFade.active)
         {
             BattleStringExpandPlaceholdersToDisplayedString(gText_TryBattling);
-            BattlePutTextOnWindow(gDisplayedStringBattle, 24);
+            BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
             ++gBattleStruct->simulatedInputState[0];
         }
         break;
@@ -562,7 +562,7 @@ static void PrintOakTextWithMainBgDarkened(u8 battlerId, const u8 *str, u8 delay
         break;
     case 3:
         BattleStringExpandPlaceholdersToDisplayedString(str);
-        BattlePutTextOnWindow(gDisplayedStringBattle, 24);
+        BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
         ++gBattleStruct->simulatedInputState[0];
         break;
     case 4:
@@ -577,7 +577,7 @@ static void PrintOakTextWithMainBgDarkened(u8 battlerId, const u8 *str, u8 delay
         {
             BtlCtrl_RemoveVoiceoverMessageFrame();
 			BattleControllerComplete(battlerId);
-            gBattleCommunication[MSG_DISPLAY] = 0;
+            gBattleCommunication[MSG_DISPLAY] = FALSE;
             gBattleStruct->simulatedInputState[0] = 0;
         }
         break;

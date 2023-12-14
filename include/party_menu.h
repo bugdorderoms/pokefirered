@@ -86,6 +86,6 @@ void ItemUseCB_Fusion(u8 taskId, TaskFunc func);
 void UpdateCurrentPartyMonIconSpecies(u16 species);
 void UpdatePartyAfterPokemonFusion(u16 species);
 void CreatePartyMonAfterDefusing(u16 species);
-void SetBattlerUsedItemForBattleScript(u16 item);
+void SetBattlerUsedItemForBattleScript(u16 item, bool8 fromBagMenu);
 
 #endif // GUARD_PARTY_MENU_H

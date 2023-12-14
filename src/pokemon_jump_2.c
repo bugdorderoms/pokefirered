@@ -2020,8 +2020,7 @@ void IsPokemonJumpSpeciesInParty(void)
     {
         if (GetMonData(&gPlayerParty[i], MON_DATA_SANITY_HAS_SPECIES))
         {
-            u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
-            if (IsSpeciesAllowedInPokemonJump(species))
+            if (IsSpeciesAllowedInPokemonJump(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2)))
             {
                 gSpecialVar_Result = TRUE;
                 return;

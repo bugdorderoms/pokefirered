@@ -1220,11 +1220,7 @@ PalletTown_ProfessorOaksLab_EventScript_ChoseStarter:: @ 8169C74
 	waitmessage
 	playfanfare MUS_OBTAIN_KEY_ITEM
 	waitfanfare
-	msgbox Text_GiveNicknameToThisMon, MSGBOX_YESNO
-	compare VAR_RESULT, YES
-	goto_if_eq EventScript_GiveNicknameToStarter
-	compare VAR_RESULT, NO
-	goto_if_eq PalletTown_ProfessorOaksLab_EventScript_RivalPicksStarter
+	givenickmsg EventScript_GiveNicknameToStarter, PalletTown_ProfessorOaksLab_EventScript_RivalPicksStarter
 	end
 
 EventScript_GiveNicknameToStarter:: @ 8169CCC

@@ -121,7 +121,6 @@
 	.include "src/dodrio_berry_picking_2.o"
 	.include "src/teachy_tv.o"
 	.include "src/digit_obj_util.o"
-	.include "src/trainer_tower.o"
 	.include "src/dns.o"
 	.include "src/ev_iv_display.o"
 	.include "src/ride_pager.o"

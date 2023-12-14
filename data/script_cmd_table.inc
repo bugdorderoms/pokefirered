@@ -15,7 +15,7 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_callstd_if
 	.4byte ScrCmd_gotoram
 	.4byte ScrCmd_killscript
-	.4byte ScrCmd_nop
+	.4byte ScrCmd_jumpifcantgivenick
 	.4byte ScrCmd_loadword
 	.4byte ScrCmd_loadbyte
 	.4byte ScrCmd_writebytetoaddr

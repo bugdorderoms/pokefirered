@@ -55,10 +55,7 @@ static bool8 ShouldSwitchIfWonderGuard(u8 battlerId)
         // Find a Pokemon in the party that has a super effective move.
         for (i = 0; i < PARTY_SIZE; ++i)
         {
-            if (GetMonData(&gEnemyParty[i], MON_DATA_HP) == 0
-             || GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2) == SPECIES_NONE
-             || GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2) == SPECIES_EGG
-             || i == gBattlerPartyIndexes[battlerId])
+            if (!MonCanBattle(&gEnemyParty[i]) || i == gBattlerPartyIndexes[battlerId])
                 continue;
             GetMonData(&gEnemyParty[i], MON_DATA_SPECIES); // Unused return value.
             GetMonData(&gEnemyParty[i], MON_DATA_ABILITY_NUM); // Unused return value.        
@@ -120,9 +117,8 @@ static bool8 FindMonThatAbsorbsOpponentsMove(u8 battlerId)
     {
         u16 monAbility;
 
-        if (!GetMonData(&gEnemyParty[i], MON_DATA_HP) || !GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2) || GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2) == SPECIES_EGG
-		|| i == gBattlerPartyIndexes[battlerIn1] || i == gBattlerPartyIndexes[battlerIn2] || i == gBattleStruct->monToSwitchIntoId[battlerIn1]
-		|| i == gBattleStruct->monToSwitchIntoId[battlerIn2])
+        if (!MonCanBattle(&gEnemyParty[i]) || i == gBattlerPartyIndexes[battlerIn1] || i == gBattlerPartyIndexes[battlerIn2]
+		|| i == gBattleStruct->monToSwitchIntoId[battlerIn1] || i == gBattleStruct->monToSwitchIntoId[battlerIn2])
             continue;
             monAbility = GetMonAbility(&gEnemyParty[i]);
         if (absorbingTypeAbility == monAbility && Random() & 1)
@@ -254,13 +250,8 @@ static bool8 FindMonWithFlagsAndSuperEffective(u8 battlerId, u8 flags, u8 modulo
     {
         u16 monAbility;
 
-        if ((GetMonData(&gEnemyParty[i], MON_DATA_HP) == 0)
-         || (GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2) == SPECIES_NONE)
-         || (GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2) == SPECIES_EGG)
-         || (i == gBattlerPartyIndexes[battlerIn1])
-         || (i == gBattlerPartyIndexes[battlerIn2])
-         || (i == gBattleStruct->monToSwitchIntoId[battlerIn1])
-         || (i == gBattleStruct->monToSwitchIntoId[battlerIn2]))
+        if (!MonCanBattle(&gEnemyParty[i]) || (i == gBattlerPartyIndexes[battlerIn1]) || (i == gBattlerPartyIndexes[battlerIn2])
+         || (i == gBattleStruct->monToSwitchIntoId[battlerIn1]) || (i == gBattleStruct->monToSwitchIntoId[battlerIn2]))
             continue;
             monAbility = GetMonAbility(&gEnemyParty[i]);
         moveFlags = AI_TypeCalc(gLastLandedMoves[battlerId], GetMonData(&gEnemyParty[i], MON_DATA_SPECIES), monAbility);
@@ -315,13 +306,8 @@ static bool8 ShouldSwitch(u8 battlerId)
     }
     for (i = 0; i < PARTY_SIZE; ++i)
     {
-        if ((GetMonData(&gEnemyParty[i], MON_DATA_HP) == 0)
-         || (GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2) == SPECIES_NONE)
-         || (GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2) == SPECIES_EGG)
-         || (i == gBattlerPartyIndexes[battlerIn1])
-         || (i == gBattlerPartyIndexes[battlerIn2])
-         || (i == gBattleStruct->monToSwitchIntoId[battlerIn1])
-         || (i == gBattleStruct->monToSwitchIntoId[battlerIn2]))
+        if (!MonCanBattle(&gEnemyParty[i]) || (i == gBattlerPartyIndexes[battlerIn1]) || (i == gBattlerPartyIndexes[battlerIn2])
+         || (i == gBattleStruct->monToSwitchIntoId[battlerIn1]) || (i == gBattleStruct->monToSwitchIntoId[battlerIn2]))
             continue;
         ++availableToSwitch;
     }
@@ -399,7 +385,7 @@ u8 GetMostSuitableMonToSwitchInto(u8 battlerId)
 {
     u8 opposingBattler;
     u8 bestDmg; // Note : should be changed to u32 for obvious reasons.
-    u8 bestMonId, affectedBy = 0;
+    u8 bestMonId;
     u8 battlerIn1, battlerIn2;
     s32 i, j;
     u8 invalidMons;
@@ -468,7 +454,7 @@ u8 GetMostSuitableMonToSwitchInto(u8 battlerId)
 				
 				if (move != MOVE_NONE)
 				{
-					if (CalcTypeEffectivenessMultiplier(move, gBattleMoves[move].type, battlerId, opposingBattler, FALSE, &affectedBy, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
+					if (CalcTypeEffectivenessMultiplier(move, gBattleMoves[move].type, battlerId, opposingBattler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
 						break;
 				}
             }
@@ -518,9 +504,7 @@ static bool8 ShouldUseItem(u8 battlerId)
     bool8 shouldUse = FALSE;
 
     for (i = 0; i < PARTY_SIZE; ++i)
-        if (GetMonData(&gEnemyParty[i], MON_DATA_HP) != 0
-         && GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2) != SPECIES_NONE
-         && GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2) != SPECIES_EGG)
+        if (MonCanBattle(&gEnemyParty[i]))
             ++validMons;
     for (i = 0; i < MAX_TRAINER_ITEMS; ++i)
     {

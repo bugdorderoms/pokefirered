@@ -18,7 +18,7 @@ gMovesWithQuietBGM:: @ 81C68EC
 	.2byte MOVE_SING
 	.2byte MOVE_PERISH_SONG
 	.2byte MOVE_GRASS_WHISTLE
-	.2byte 0xFFFF
+	.2byte MOVE_UNVAILABLE
 
 	.align 2
 gBattleAnims_Moves::

@@ -9,13 +9,10 @@
 static u8 GetEnemyTeamCount(bool8 onlyAlive)
 {
 	u8 i, count;
-	u16 species;
 	
 	for (i = 0, count = 0; i < PARTY_SIZE; i++)
 	{
-		species = GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2, NULL);
-		
-		if (species && species != SPECIES_EGG && (!onlyAlive || GetMonData(&gEnemyParty[i], MON_DATA_HP, NULL)))
+		if (IsMonValidSpecies(&gEnemyParty[i]) && (!onlyAlive || GetMonData(&gEnemyParty[i], MON_DATA_HP, NULL)))
 			++count;
 	}
 	return count;

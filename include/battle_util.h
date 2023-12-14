@@ -20,36 +20,33 @@ enum
 	STATUS_CHANGE_FAIL_AROMA_VEIL_ON_SIDE,
 };
 
-#define MOVE_LIMITATION_ZEROMOVE                (1 << 0)
-#define MOVE_LIMITATION_PP                      (1 << 1)
-#define MOVE_LIMITATION_DISABLED                (1 << 2)
-#define MOVE_LIMITATION_TORMENTED               (1 << 3)
-#define MOVE_LIMITATION_TAUNT                   (1 << 4)
-#define MOVE_LIMITATION_IMPRISON                (1 << 5)
+#define MOVE_LIMITATION_ALL_MOVES_MASK ((1 << MAX_MON_MOVES) - 1)
+
+#define MOVE_LIMITATION_IGNORE_NO_PP             (1 << 0)
+#define MOVE_LIMITATION_IGNORE_IMPRISON          (1 << 1)
 
 #define ABILITYEFFECT_SWITCH_IN_WEATHER          0
 #define ABILITYEFFECT_ON_SWITCHIN                1
 #define ABILITYEFFECT_ENDTURN                    2
-#define ABILITYEFFECT_TRACE1                     3
-#define ABILITYEFFECT_TRACE2                     4
-#define ABILITYEFFECT_NEUTRALIZING_GAS           5
-#define ABILITYEFFECT_UNNERVE                    6
-#define ABILITYEFFECT_MOVES_BLOCK                7
-#define ABILITYEFFECT_ABSORBING                  8
-#define ABILITYEFFECT_MOVE_END_ATTACKER          9
-#define ABILITYEFFECT_MOVE_END_TARGET            10
-#define ABILITYEFFECT_IMMUNITY                   11
-#define ABILITYEFFECT_ON_WEATHER                 12
-#define ABILITYEFFECT_SYNCHRONIZE                13
-#define ABILITYEFFECT_ON_TERRAIN                 14
+#define ABILITYEFFECT_TRACE                      3
+#define ABILITYEFFECT_NEUTRALIZING_GAS           4
+#define ABILITYEFFECT_UNNERVE                    5
+#define ABILITYEFFECT_MOVES_BLOCK                6
+#define ABILITYEFFECT_ABSORBING                  7
+#define ABILITYEFFECT_MOVE_END_ATTACKER          8
+#define ABILITYEFFECT_MOVE_END_TARGET            9
+#define ABILITYEFFECT_IMMUNITY                   10
+#define ABILITYEFFECT_ON_WEATHER                 11
+#define ABILITYEFFECT_SYNCHRONIZE                12
+#define ABILITYEFFECT_ON_TERRAIN                 13
 
 #define CHECK_ABILITY_ON_FIELD                   0
 #define CHECK_ABILITY_ON_FIELD_EXCEPT_BATTLER    1
 #define CHECK_ABILITY_ON_SIDE                    2
 
-#define ABILITY_ON_OPPOSING_SIDE(battlerId, abilityId)(CheckAbilityInBattle(CHECK_ABILITY_ON_SIDE, BATTLE_OPPOSITE(battlerId), abilityId))
-#define ABILITY_ON_FIELD(abilityId)(CheckAbilityInBattle(CHECK_ABILITY_ON_FIELD, 0, abilityId))
-#define ABILITY_ON_FIELD_EXCPET_BATTLER(battlerId, abilityId)(CheckAbilityInBattle(CHECK_ABILITY_ON_FIELD_EXCEPT_BATTLER, battlerId, abilityId))
+#define ABILITY_ON_OPPOSING_SIDE(battlerId, abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_SIDE, BATTLE_OPPOSITE(battlerId), abilityId)))
+#define ABILITY_ON_FIELD(abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_FIELD, 0, abilityId)))
+#define ABILITY_ON_FIELD_EXCPET_BATTLER(battlerId, abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_FIELD_EXCEPT_BATTLER, battlerId, abilityId)))
 
 #define ITEMEFFECT_ON_SWITCH_IN                 0x0
 #define ITEMEFFECT_MOVE_END                     0x3
@@ -73,6 +70,8 @@ enum
 #define BATTLE_ALIVE_SIDE            0
 #define BATTLE_ALIVE_EXCEPT_BATTLER  1
 
+#define IS_WHOLE_SIDE_ALIVE(battler) ((CountAliveMonsInBattle(battler, BATTLE_ALIVE_SIDE) >= 2))
+
 u8 GetBattlerForBattleScript(u8 caseId);
 void PressurePPLose(u8 target, u8 attacker, u16 move);
 void PressurePPLoseOnUsingImprison(u8 attacker);
@@ -89,16 +88,15 @@ void UpdateSentPokesToOpponentValue(u8 battler);
 void BattleScriptPush(const u8 *bsPtr);
 void BattleScriptPushCursor(void);
 void BattleScriptPop(void);
-u8 TrySetCantSelectMoveBattleScript(u8 battlerId);
-u8 CheckMoveLimitations(u8 battlerId, u8 unusableMoves, u8 check);
+bool8 TrySetCantSelectMoveBattleScript(u8 battlerId);
+u8 CheckMoveLimitations(u8 battlerId, u32 flags);
 bool8 AreAllMovesUnusable(u8 battlerId);
-u8 GetImprisonedMovesCount(u8 battlerId, u16 move);
 bool8 DoEndTurnEffects(void);
 bool8 HandleFaintedMonActions(void);
 void TryClearRageStatuses(void);
 u8 AtkCanceller_UnableToUseMove(void);
 bool8 HasNoMonsToSwitch(u8 battler, u8 partyIdBattlerOn1, u8 partyIdBattlerOn2);
-u8 AbilityBattleEffects(u8 caseId, u8 battler, u16 moveArg);
+u8 AbilityBattleEffects(u8 caseId, u8 battler);
 u8 CheckAbilityInBattle(u8 mode, u8 battlerId, u16 abilityId);
 bool8 DoSwitchInAbilitiesItems(u8 battlerId);
 void BattleScriptExecute(const u8 *BS_ptr);
@@ -121,7 +119,6 @@ void ClearBattlerStatus(u8 battler);
 u8 CanBecameConfused(u8 attacker, u8 defender, u32 flags);
 u8 CanBePutToSleep(u8 attacker, u8 defender, u32 flags);
 u8 CanBePoisoned(u8 attacker, u8 defender, u32 flags);
-bool8 CanPoisonType(u8 bankAtk, u8 bankDef);
 u8 CanBeBurned(u8 attacker, u8 defender, u32 flags);
 bool8 CanBeFrozen(u8 attacker, u8 defender, u32 flags);
 u8 CanBeParalyzed(u8 attacker, u8 defender, u32 flags);
@@ -129,8 +126,14 @@ u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating);
 u16 GetBattlerAbility(u8 battler);
 u16 SetBattlerAbility(u8 battlerId, u16 newAbility);
 u16 SuppressBattlerAbility(u8 battlerId);
+bool8 IsAbilityBlockedByNeutralizingGas(u16 ability);
+bool8 IsRolePlayBannedAbilityAttacker(u16 ability);
+bool8 IsRolePlayBannedAbilityTarget(u16 ability);
+bool8 IsAbilityCopyableByReceiver(u16 ability);
+bool8 IsSkillSwapBannedAbility(u16 ability);
 void ClearIllusionMon(u8 battler);
 bool8 TryRemoveIllusion(u8 battler);
+u8 GetPartyMonIdForIllusion(u8 battler, struct Pokemon *party, u8 partyCount, struct Pokemon *illusionMon);
 bool8 ReceiveSheerForceBoost(u8 battler, u16 move);
 bool8 CompareStat(u8 battlerId, u8 statId, s8 cmpTo, u8 cmpKind);
 bool8 IsUnnerveOnOpposingField(u8 battler);
@@ -169,7 +172,6 @@ bool8 TryRecycleBattlerItem(u8 battlerRecycler, u8 battlerItem);
 u8 GetBattlerHighestStatId(u8 battlerId);
 bool8 MoveHasHealingEffect(u16 move);
 bool8 IsBattlerAffectedByFollowMe(u8 battlerId, u8 opposingSide, u16 move);
-bool8 IsAbilityBlockedByNeutralizingGas(u16 ability);
 u8 GetItemUseBattler(u8 battlerId);
 u8 GetBattleMonForItemUse(u8 battlerId, u8 partyIndex);
 bool8 IsItemUseBlockedByBattleEffect(void);
@@ -189,5 +191,11 @@ bool8 CanSafeguardProtectBattler(u8 attacker, u8 defender);
 bool8 IsBattlerProtectedByFlowerVeil(u8 battlerId);
 u8 GetFutureAttackStringId(u16 move);
 void SaveBattlersHps(void);
+bool8 IsBattlerOfType(u8 battlerId, u8 type);
+void SetBattlerType(u8 battlerId, u8 type);
+void SetBattlerInitialTypes(u8 battlerId);
+bool8 CopyBattlerCritModifier(u8 attacker, u8 defender);
+bool8 TryRemoveScreens(u8 battler, bool8 fromBothSides);
+bool8 DoesSpreadMoveStrikesOnlyOnce(u8 attacker, u8 defender, u16 move, bool8 checkTargetsDone);
 
 #endif // GUARD_BATTLE_UTIL_H

@@ -89,6 +89,16 @@
 #define READ_PTR(ptr)  (u8*) READ_32(ptr)
 #define READ_PTR2(ptr) (void*) READ_32(ptr)
 
+#define WRITE_16(ptr, id, value)        \
+    ptr[id] = (value);                  \
+	ptr[id + 1] = (value & 0xFF00) >> 8
+
+#define WRITE_32(ptr, id, value)              \
+    ptr[id] = (value);                        \
+	ptr[id + 1] = (value & 0x0000FF00) >> 8;  \
+    ptr[id + 2] = (value & 0x00FF0000) >> 16; \
+	ptr[id + 3] = (value & 0xFF000000) >> 24
+
 // This macro is required to prevent the compiler from optimizing
 // a dpad up/down check in sub_812CAD8 (fame_checker.c).
 #define TEST_BUTTON(field, button) ({(field) & (button);})
@@ -277,9 +287,10 @@ struct SaveBlock2
 	/*0x010*/ u32 optionsSound:1; // OPTIONS_SOUND_[MONO/STEREO]
 	/*0x010*/ u32 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
 	/*0x010*/ u32 optionsBattleSceneOff:1; // whether battle animations are disabled
+	/*0x010*/ u32 optionsSkipPkmnNickname:1; // whether pokemon nickname prompt are disabled
 	/*0x010*/ u32 expShare:1; // whether exp share is on
 	/*0x010*/ u32 autoRun:1; // whether auto run is on
-	/*0x010*/ u32 unused:19;
+	/*0x010*/ u32 unused:18;
 	/*0x014*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
 	/*0x018*/ u32 encryptionKey;
 	/*0x01C*/ u16 mapView[0x100];
@@ -380,20 +391,6 @@ struct FameCheckerSaveData
     u16 unk_0_E:2;
 };
 
-struct TrainerTower
-{
-    u32 timer;
-    u32 bestTime;
-    u8 floorsCleared;
-    u8 unk9;
-    bool8 receivedPrize:1;
-    bool8 checkedFinalTime:1;
-    bool8 spokeToOwner:1;
-    bool8 hasLost:1;
-    bool8 unkA_4:1;
-    bool8 validated:1;
-};
-
 struct TrainerNameRecord
 {
     u32 trainerId;
@@ -421,9 +418,8 @@ struct SaveBlock1
 	/*0x008E*/ u8 trainerRematches[MAX_REMATCH_ENTRIES];
 	/*0x00F2*/ u8 additionalPhrases[ROUND_BITS_TO_BYTES(NUM_ADDITIONAL_PHRASES)];
 	/*0x00F7*/ u8 playerPartyCount;
-	/*0x00F8*/ u32 towerChallengeId;
-	/*0x00FC*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
-	/*0x0104*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
+	/*0x00F8*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
+	/*0x0100*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
 	           u8 flags[NUM_FLAG_BYTES]; // size of 0x120 bytes
 			   u16 vars[VARS_COUNT]; // size of 0x200 bytes
 			   struct Pokemon playerParty[PARTY_SIZE];
@@ -442,7 +438,6 @@ struct SaveBlock1
 			   struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
 			   struct TrainerNameRecord trainerNameRecords[20];
 			   struct DaycareMon route5DayCareMon;
-			   struct TrainerTower trainerTower[NUM_TOWER_CHALLENGE_TYPES];
 			   struct Pokemon fusedReshiram;
 			   struct Pokemon fusedZekrom;
 			   struct Pokemon fusedSolgaleo;
