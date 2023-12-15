@@ -8,7 +8,7 @@
 
 #define NUM_FORM_CHANGE_ANIM_SPRITES 10
 
-#define FORM_CHANGE_ANIM_TAG 0x57D0
+#define FORM_CHANGE_ANIM_SPRITE_TAG 0x57D0
 
 struct FormChangeAnimData
 {
@@ -19,8 +19,8 @@ struct FormChangeAnimData
 	u8 stepId; // Main task step Id
 	u8 finished:1; // Set when anim ends
 	u8 isFusion:1; // If true, apply the white screen effect on the end of the animations
-	u8 numSpritesCreated:4;
-	u8 unused:2;
+	u8 numSpritesCreated:5; // Max 31 sprites. To support NUM_FORM_CHANGE_ANIM_SPRITES for both sprites1 and sprites2
+	u8 unused:1;
 	u16 oldSpecies;
 	u16 newSpecies;
 };
@@ -28,14 +28,15 @@ struct FormChangeAnimData
 static void Task_DoFusionWhiteScreen(u8 taskId);
 static void Task_DoMosaicFormChangeAnim(u8 taskId);
 static void Task_DoGracideaFlowersFormChangeAnim(u8 taskId);
-static void SpriteCB_WaitGracideaFlowerAnim(struct Sprite *sprite);
+static void Task_DoPurpleCloudFormChangeAnim(u8 taskId);
 
 static EWRAM_DATA struct FormChangeAnimData *sFormChangeAnimData = NULL;
 
-static void (*const sFormChangeAnimsTable[])(u8) =
+static const TaskFunc sFormChangeAnimsTable[] =
 {
 	[FORM_CHANGE_ANIM_MOSAIC]           = Task_DoMosaicFormChangeAnim,
-	[FORM_CHANGE_ANIM_GRACIDEA_FLOWERS] = Task_DoGracideaFlowersFormChangeAnim
+	[FORM_CHANGE_ANIM_GRACIDEA_FLOWERS] = Task_DoGracideaFlowersFormChangeAnim,
+	[FORM_CHANGE_ANIM_PURPLE_CLOUD]     = Task_DoPurpleCloudFormChangeAnim,
 };
 
 // Init the form change animation
@@ -86,6 +87,24 @@ static void UpdateIconForFormChange(void)
 	
 	if (sFormChangeAnimData->icon2 != NULL) // Update party after fusion
 		UpdatePartyAfterPokemonFusion(newSpecies);
+}
+
+// Create a sprite
+static struct Sprite *CreateSpriteForFormChangeAnim(const struct SpriteTemplate *template, struct Sprite *linker, s8 addrX, s8 addrY, u8 subpriority)
+{
+	struct Sprite *sprite = &gSprites[CreateSprite(template, linker->oam.x + 16 + addrX, linker->oam.y + 16 + addrY, subpriority)];
+	sprite->oam.priority = linker->oam.priority - 1;
+	++sFormChangeAnimData->numSpritesCreated;
+	return sprite;
+}
+
+static void SpriteCB_WaitSpriteAffineAnim(struct Sprite *sprite)
+{
+	if (sprite->affineAnimEnded)
+	{
+		DestroySprite(sprite);
+		--sFormChangeAnimData->numSpritesCreated;
+	}
 }
 
 //////////////////
@@ -161,8 +180,8 @@ static void Task_PlayMonCryAfterFormChangeAnim(u8 taskId)
 		case 0:
 			if (!FuncIsActiveTask(Task_DoFusionWhiteScreen) && sFormChangeAnimData->numSpritesCreated == 0)
 			{
-				FreeSpriteTilesByTag(FORM_CHANGE_ANIM_TAG);
-				FreeSpritePaletteByTag(FORM_CHANGE_ANIM_TAG);
+				FreeSpriteTilesByTag(FORM_CHANGE_ANIM_SPRITE_TAG);
+				FreeSpritePaletteByTag(FORM_CHANGE_ANIM_SPRITE_TAG);
 				
 				gTasks[taskId].tCryWait = 0;
 				++sFormChangeAnimData->stepId;
@@ -260,12 +279,12 @@ static const u16 sGracideaFlowerPalette[] = INCBIN_U16("graphics/form_change/gra
 
 static const struct SpriteSheet sSpriteSheet_GracideaFlower =
 {
-	sGracideaFlowerGfx, sizeof(sGracideaFlowerGfx), FORM_CHANGE_ANIM_TAG
+	sGracideaFlowerGfx, sizeof(sGracideaFlowerGfx), FORM_CHANGE_ANIM_SPRITE_TAG
 };
 
 static const struct SpritePalette sSpritePalette_GracideaFlower =
 {
-    sGracideaFlowerPalette, FORM_CHANGE_ANIM_TAG
+    sGracideaFlowerPalette, FORM_CHANGE_ANIM_SPRITE_TAG
 };
 
 static const union AffineAnimCmd sAffineAnim_GracideaFlower[] =
@@ -299,32 +318,32 @@ static const struct OamData sOamData_GracideaFlower =
 
 static const struct SpriteTemplate sSpriteTemplate_GracideaFlower =
 {
-	.tileTag = FORM_CHANGE_ANIM_TAG,
-	.paletteTag = FORM_CHANGE_ANIM_TAG,
+	.tileTag = FORM_CHANGE_ANIM_SPRITE_TAG,
+	.paletteTag = FORM_CHANGE_ANIM_SPRITE_TAG,
 	.oam = &sOamData_GracideaFlower,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
 	.affineAnims = sAffineAnimTable_GracideaFlower,
-	.callback = SpriteCB_WaitGracideaFlowerAnim
+	.callback = SpriteCB_WaitSpriteAffineAnim
 };
 
 static const struct Coords8 sGracideaFlowersDelta[NUM_FORM_CHANGE_ANIM_SPRITES] =
 {
-	{.x = 31, .y =  8},
-	{.x = 17, .y = 22},
-	{.x = 11, .y =  2},
-	{.x =  5, .y = 24},
-	{.x = 14, .y = 30},
-	{.x =  7, .y = 16},
-	{.x = 20, .y = 10},
-	{.x = 24, .y =  7},
-	{.x = 30, .y = 20},
-	{.x = 26, .y = 29},
+	{.x =  15, .y =  -8},
+	{.x =   1, .y =   6},
+	{.x =  -5, .y = -14},
+	{.x = -11, .y =   8},
+	{.x =  -2, .y =  14},
+	{.x =  -9, .y =   0},
+	{.x =   4, .y =  -6},
+	{.x =   8, .y =  -9},
+	{.x =  14, .y =   4},
+	{.x =  10, .y =  13},
 };
 
-static struct Sprite *CreateGracideaFlowerSprite(u8 idx, s16 x, s16 y)
+static inline struct Sprite *CreateGracideaFlowerSprite(struct Sprite *linker, s8 addrX, s8 addrY, u8 idx)
 {
-	return &gSprites[CreateSprite(&sSpriteTemplate_GracideaFlower, x, y, idx & 2)];
+	return CreateSpriteForFormChangeAnim(&sSpriteTemplate_GracideaFlower, linker, addrX, addrY, idx & 1);
 }
 
 static bool8 CreateGracideaFlowerSprites(u8 idx)
@@ -333,24 +352,14 @@ static bool8 CreateGracideaFlowerSprites(u8 idx)
 	{
 		s8 deltaX = sGracideaFlowersDelta[idx].x, deltaY = sGracideaFlowersDelta[idx].y;
 		
-		sFormChangeAnimData->sprites1[idx] = CreateGracideaFlowerSprite(idx, sFormChangeAnimData->icon1->oam.x + deltaX, sFormChangeAnimData->icon1->oam.y + deltaY);
+		sFormChangeAnimData->sprites1[idx] = CreateGracideaFlowerSprite(sFormChangeAnimData->icon1, deltaX, deltaY, idx);
 		
 		if (sFormChangeAnimData->icon2 != NULL)
-			sFormChangeAnimData->sprites2[idx] = CreateGracideaFlowerSprite(idx, sFormChangeAnimData->icon2->oam.x + deltaX, sFormChangeAnimData->icon2->oam.y + deltaY);
+			sFormChangeAnimData->sprites2[idx] = CreateGracideaFlowerSprite(sFormChangeAnimData->icon2, deltaX, deltaY, idx);
 		
-		++sFormChangeAnimData->numSpritesCreated;
 		return TRUE;
 	}
 	return FALSE;
-}
-
-static void SpriteCB_WaitGracideaFlowerAnim(struct Sprite *sprite)
-{
-	if (sprite->affineAnimEnded)
-	{
-		DestroySprite(sprite);
-		--sFormChangeAnimData->numSpritesCreated;
-	}
 }
 
 #define tDelay        data[0]
@@ -363,12 +372,12 @@ static void Task_DoGracideaFlowersFormChangeAnim(u8 taskId)
 	switch (sFormChangeAnimData->stepId)
 	{
 		case 0:
+		    PlaySE(SE_M_PETAL_DANCE);
 			LoadSpriteSheet(&sSpriteSheet_GracideaFlower);
 			LoadSpritePalette(&sSpritePalette_GracideaFlower);
 			++sFormChangeAnimData->stepId;
 			// Fallthrough
 		case 1:
-			PlaySE(SE_M_PETAL_DANCE);
 			tDelay = 0;
 			tCurrSpriteId = 0;
 			++sFormChangeAnimData->stepId;
@@ -400,3 +409,102 @@ static void Task_DoGracideaFlowersFormChangeAnim(u8 taskId)
 
 #undef tDelay
 #undef tCurrSpriteId
+
+///////////////////////////////////
+// FORM_CHANGE_ANIM_PURPLE_CLOUD //
+///////////////////////////////////
+
+#define CLOUD_ANIM_COUNTER 52 // Num frames the clouds will do their anim
+
+static const u16 sPurpleCloudGfx[] = INCBIN_U16("graphics/form_change/purple_cloud.4bpp");
+static const u16 sPurpleCloudPalette[] = INCBIN_U16("graphics/form_change/purple_cloud.gbapal");
+
+static const struct SpriteSheet sSpriteSheet_PurpleCloud =
+{
+	sPurpleCloudGfx, sizeof(sPurpleCloudGfx), FORM_CHANGE_ANIM_SPRITE_TAG
+};
+
+static const struct SpritePalette sSpritePalette_PurpleCloud =
+{
+    sPurpleCloudPalette, FORM_CHANGE_ANIM_SPRITE_TAG
+};
+
+static const union AffineAnimCmd sAffineAnim_PurpleCloud[] =
+{
+	AFFINEANIMCMD_FRAME(330, 330, 0, 0), // Start a little big
+	AFFINEANIMCMD_FRAME(3, 3, 0, CLOUD_ANIM_COUNTER), // Increase size for CLOUD_ANIM_COUNTER frames
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sAffineAnimTable_PurpleCloud[] =
+{
+	sAffineAnim_PurpleCloud,
+};
+
+static const struct OamData sOamData_PurpleCloud =
+{
+	.y = 0,
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.bpp = ST_OAM_4BPP,
+	.shape = SPRITE_SHAPE(32x32),
+	.x = 0,
+	.size = SPRITE_SIZE(32x32),
+	.tileNum = 0,
+	.priority = 0,
+	.paletteNum = 0,
+};
+
+static const struct SpriteTemplate sSpriteTemplate_PurpleCloud =
+{
+	.tileTag = FORM_CHANGE_ANIM_SPRITE_TAG,
+	.paletteTag = FORM_CHANGE_ANIM_SPRITE_TAG,
+	.oam = &sOamData_PurpleCloud,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = sAffineAnimTable_PurpleCloud,
+	.callback = SpriteCB_WaitSpriteAffineAnim
+};
+
+static inline struct Sprite *CreatePurpleCloudSpriteInternal(struct Sprite *linker)
+{
+	return CreateSpriteForFormChangeAnim(&sSpriteTemplate_PurpleCloud, linker, 0, 0, 0);
+}
+
+static void CreatePurpleCloudSprite(void)
+{
+	PlaySE(SE_M_SELF_DESTRUCT);
+	
+	LoadSpriteSheet(&sSpriteSheet_PurpleCloud);
+	LoadSpritePalette(&sSpritePalette_PurpleCloud);
+	
+	sFormChangeAnimData->sprites1[0] = CreatePurpleCloudSpriteInternal(sFormChangeAnimData->icon1);
+	
+	if (sFormChangeAnimData->icon2 != NULL)
+		sFormChangeAnimData->sprites2[0] = CreatePurpleCloudSpriteInternal(sFormChangeAnimData->icon2);
+}
+
+#define tWaitCounter data[0]
+
+static void Task_DoPurpleCloudFormChangeAnim(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+	
+	switch (sFormChangeAnimData->stepId)
+	{
+		case 0:
+			CreatePurpleCloudSprite();
+			tWaitCounter = 0;
+			++sFormChangeAnimData->stepId;
+			break;
+		case 1:
+		    if (++tWaitCounter >= (CLOUD_ANIM_COUNTER - 4))
+			{
+				DoFusionWhiteScreenOrUpdateIcon();
+				InitPlayMonCryAfterFormChangeTask(taskId);
+			}
+			break;
+	}
+}
+
+#undef tWaitCounter

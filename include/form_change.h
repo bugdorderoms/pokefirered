@@ -21,6 +21,7 @@ enum
 {
 	FORM_CHANGE_ANIM_MOSAIC,
 	FORM_CHANGE_ANIM_GRACIDEA_FLOWERS,
+	FORM_CHANGE_ANIM_PURPLE_CLOUD,
 };
 
 u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 ability, u16 itemId, u8 battlerId, bool8 knowsMove);

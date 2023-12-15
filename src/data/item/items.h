@@ -7213,7 +7213,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PRISON_BOTTLE] =
 	{
 		.name = _("Prison Bottle"),
-		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
+		.holdEffectParam = FORM_CHANGE_ANIM_PURPLE_CLOUD, // form change anim Id
 		.description = sItemDesc_PrisonBottle,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
