@@ -21,10 +21,7 @@ void SaveStatToString(u8 gameStatId, u8 *dest0, u8 color)
         dest = StringCopy(dest, gSaveBlock2Ptr->playerName);
         break;
     case SAVE_STAT_POKEDEX:
-        if (IsNationalPokedexEnabled())
-            dest = ConvertIntToDecimalStringN(dest, GetNationalPokedexCount(FLAG_GET_CAUGHT), STR_CONV_MODE_LEFT_ALIGN, 4);
-        else
-            dest = ConvertIntToDecimalStringN(dest, GetKantoPokedexCount(FLAG_GET_CAUGHT), STR_CONV_MODE_LEFT_ALIGN, 3);
+	    dest = ConvertIntToDecimalStringN(dest, GetNationalPokedexCount(FLAG_GET_CAUGHT), STR_CONV_MODE_LEFT_ALIGN, 4);
         break;
     case SAVE_STAT_TIME:
         dest = ConvertIntToDecimalStringN(dest, gSaveBlock2Ptr->playTimeHours, STR_CONV_MODE_LEFT_ALIGN, 3);

@@ -178,12 +178,9 @@ gSpecials:: @ 815FD60
 	def_special SetSeenMon
 	def_special GetPokedexCount
 	def_special GetProfOaksRatingMessage
-	def_special DisableNationalPokedex
-	def_special EnableNationalPokedex
 	def_special HasAllMons
 	def_special HasAllKantoMons
 	def_special SetUnlockedPokedexFlags
-	def_special IsNationalPokedexEnabled
 	
 	@ Pc specials
 	def_special BedroomPC

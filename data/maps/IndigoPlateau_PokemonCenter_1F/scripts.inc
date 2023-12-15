@@ -7,9 +7,7 @@ IndigoPlateau_PokemonCenter_1F_MapScripts:: @ 816EA5A
 
 IndigoPlateau_PokemonCenter_1F_OnTransition:: @ 816EA65
 	setrespawn SPAWN_INDIGO_PLATEAU
-	specialvar VAR_RESULT, IsNationalPokedexEnabled
-	compare VAR_RESULT, TRUE
-	call_if_eq IndigoPlateau_PokemonCenter_1F_EventScript_CheckBlockDoor
+	call IndigoPlateau_PokemonCenter_1F_EventScript_CheckBlockDoor
 	end
 
 IndigoPlateau_PokemonCenter_1F_EventScript_CheckBlockDoor:: @ 816EA79
@@ -20,11 +18,7 @@ IndigoPlateau_PokemonCenter_1F_EventScript_CheckBlockDoor:: @ 816EA79
 IndigoPlateau_PokemonCenter_1F_EventScript_DoorGuard:: @ 816EA8A
 	lock
 	faceplayer
-	specialvar VAR_RESULT, IsNationalPokedexEnabled
-	compare VAR_RESULT, TRUE
-	goto_if_eq IndigoPlateau_PokemonCenter_1F_EventScript_CheckSeviiIslandComplete
-	msgbox IndigoPlateau_PokemonCenter_1F_Text_FaceEliteFourGoodLuck
-	release
+	goto IndigoPlateau_PokemonCenter_1F_EventScript_CheckSeviiIslandComplete
 	end
 
 IndigoPlateau_PokemonCenter_1F_EventScript_CheckSeviiIslandComplete:: @ 816EAA6

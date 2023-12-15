@@ -1040,14 +1040,6 @@ static void ReceivedMonSetPokedexFlags(u8 partyIdx)
     }
 }
 
-static void RS_TryEnableNationalPokedex(void)
-{
-    u8 mpId = GetMultiplayerId();
-    // Originally in Ruby but commented out
-    /*if (gLinkPlayers[mpId ^ 1].lp_field_2 == 0x8000)
-        EnableNationalPokedex();*/
-}
-
 static void TradeMons(u8 playerPartyIdx, u8 partnerPartyIdx)
 {
     u8 friendship;
@@ -1078,8 +1070,6 @@ static void TradeMons(u8 playerPartyIdx, u8 partnerPartyIdx)
         GiveMailToMon2(playerMon, &gLinkPartnerMail[partnerMail]);
 
     ReceivedMonSetPokedexFlags(playerPartyIdx);
-    if (gReceivedRemoteLinkPlayers)
-        RS_TryEnableNationalPokedex();
 }
 
 static void HandleLinkDataSend(void)

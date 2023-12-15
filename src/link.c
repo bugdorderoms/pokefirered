@@ -323,7 +323,7 @@ static void InitLocalLinkPlayer(void)
     gLocalLinkPlayer.language = gGameLanguage;
     gLocalLinkPlayer.version = gGameVersion + 0x4000;
     gLocalLinkPlayer.lp_field_2 = 0x8000;
-    gLocalLinkPlayer.progressFlags = IsNationalPokedexEnabled();
+    gLocalLinkPlayer.progressFlags = FlagGet(FLAG_SYS_POKEDEX_GET);
     if (FlagGet(FLAG_SYS_CAN_LINK_WITH_RS))
     {
         gLocalLinkPlayer.progressFlags |= 0x10;

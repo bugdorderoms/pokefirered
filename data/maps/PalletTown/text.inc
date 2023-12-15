@@ -33,29 +33,6 @@ PalletTown_Text_TownSign:: @ 817D895
     .string "PALLET TOWN\n"
     .string "Shades of your journey await!$"
 
-PalletTown_Text_OakLetMeSeePokedex:: @ 817D8BF
-    .string "OAK: Ah, {PLAYER}!\n"
-    .string "You're back, are you?\p"
-    .string "How much have you filled in your\n"
-    .string "POKéDEX?\p"
-    .string "May I see it?\p"
-    .string "Let's see…$"
-
-PalletTown_Text_CaughtXPuttingInHonestEffort:: @ 817D925
-    .string "You've caught {STR_VAR_2}…\p"
-    .string "Hm, it looks as if you're putting\n"
-    .string "in an honest effort.\p"
-    .string "When you manage to fill it some\n"
-    .string "more, come show me, please.$"
-
-PalletTown_Text_CaughtXImpressiveFollowMe:: @ 817D9AA
-    .string "You've caught… {STR_VAR_2}!?\n"
-    .string "Now, this is impressive!\p"
-    .string "There's something I wanted to ask\n"
-    .string "of you, {PLAYER}.\p"
-    .string "Come.\n"
-    .string "Follow me.$"
-
 PalletTown_Text_OakYouEnjoyingTraveling:: @ 817DA16
     .string "OAK: Ah, {PLAYER}!\n"
     .string "You seem to be enjoying traveling.\p"

@@ -6,38 +6,13 @@ ThreeIsland_DunsparceTunnel_MapScripts:: @ 8164D26
 
 ThreeIsland_DunsparceTunnel_OnTransition:: @ 8164D2C
 	setworldmapflag FLAG_WORLD_MAP_THREE_ISLAND_DUNSPARCE_TUNNEL
-	specialvar VAR_RESULT, IsNationalPokedexEnabled
-	copyvar VAR_0x8008, VAR_RESULT
-	compare VAR_0x8008, TRUE
-	call_if_eq ThreeIsland_DunsparceTunnel_EventScript_SetLayoutDugOut
-	compare VAR_0x8008, FALSE
-	call_if_eq ThreeIsland_DunsparceTunnel_EventScript_MoveProspectorToWall
-	end
-
-ThreeIsland_DunsparceTunnel_EventScript_SetLayoutDugOut:: @ 8164D50
 	setmaplayoutindex LAYOUT_THREE_ISLAND_DUNSPARCE_TUNNEL_DUG_OUT
-	return
-
-ThreeIsland_DunsparceTunnel_EventScript_MoveProspectorToWall:: @ 8164D54
-	setobjectxyperm LOCALID_PROSPECTOR, 6, 3
-	setobjectmovementtype LOCALID_PROSPECTOR, MOVEMENT_TYPE_FACE_RIGHT
-	return
+	end
 
 ThreeIsland_DunsparceTunnel_EventScript_Prospector:: @ 8164D60
 	lock
 	faceplayer
 	goto_if_set FLAG_GOT_NUGGET_FROM_DUNSPARCE_TUNNEL, ThreeIsland_DunsparceTunnel_EventScript_ProspectorAlreadyGaveNugget
-	specialvar VAR_RESULT, IsNationalPokedexEnabled
-	compare VAR_RESULT, TRUE
-	goto_if_eq ThreeIsland_DunsparceTunnel_EventScript_ProspectorStruckGold
-	msgbox ThreeIsland_DunsparceTunnel_Text_ProspectingForGold
-	closemessage
-	applymovement LOCALID_PROSPECTOR, Movement_FaceOriginalDirection
-	waitmovement 0
-	release
-	end
-
-ThreeIsland_DunsparceTunnel_EventScript_ProspectorStruckGold:: @ 8164D90
 	msgbox ThreeIsland_DunsparceTunnel_Text_StruckGoldThisIsForYou
 	giveitem ITEM_NUGGET
 	compare VAR_RESULT, FALSE

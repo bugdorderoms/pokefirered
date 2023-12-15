@@ -109,7 +109,6 @@ static void BufferTextForCardBack(void);
 static void PrintNameOnCardFront(void);
 static void PrintIdOnCard(void);
 static void PrintMoneyOnCard(void);
-static u16 GetCaughtMonsCount(void);
 static void PrintPokedexOnCard(void);
 static void PrintTimeOnCard(void);
 static void PrintProfilePhraseOnCard(void);
@@ -811,7 +810,7 @@ static void SetPlayerCardData(struct TrainerCard *trainerCard, u8 cardType)
 
     trainerCard->rse.hasPokedex = FlagGet(FLAG_SYS_POKEDEX_GET);
     trainerCard->rse.caughtAllHoenn = FALSE;
-    trainerCard->rse.caughtMonsCount = GetCaughtMonsCount();
+    trainerCard->rse.caughtMonsCount = GetNationalPokedexCount(FLAG_GET_CAUGHT);
 
     trainerCard->rse.trainerId = (gSaveBlock2Ptr->playerTrainerId[1] << 8) | gSaveBlock2Ptr->playerTrainerId[0];
 
@@ -1139,14 +1138,6 @@ static void PrintMoneyOnCard(void)
         AddTextPrinterParameterized3(1, sTrainerCardFontIds[1], 16, 57, sTrainerCardTextColors, TEXT_SPEED_FF, gText_TrainerCardMoney);
         AddTextPrinterParameterized3(1, sTrainerCardFontIds[1], x, 57, sTrainerCardTextColors, TEXT_SPEED_FF, buffer);
     }    
-}
-
-static u16 GetCaughtMonsCount(void)
-{
-    if (IsNationalPokedexEnabled())
-        return GetNationalPokedexCount(FLAG_GET_CAUGHT);
-    else
-        return GetKantoPokedexCount(FLAG_GET_CAUGHT);
 }
 
 static void PrintPokedexOnCard(void)

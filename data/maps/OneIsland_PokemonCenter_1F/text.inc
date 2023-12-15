@@ -102,12 +102,6 @@ OneIsland_PokemonCenter_1F_Text_GotPCWorkingStrollAWhileMore:: @ 81A128C
     .string "Can you go out on a stroll or\n"
     .string "something for a while more?$"
 
-OneIsland_PokemonCenter_1F_Text_SorryForBeingPoorHost:: @ 81A1321
-    .string "I'm sorry for taking up so much of\n"
-    .string "BILL's time.\p"
-    .string "I'm also sorry for being such a \n"
-    .string "poor host on your visit here.$"
-
 OneIsland_PokemonCenter_1F_Text_UsualPCServicesUnavailable:: @ 81A1390
     .string "The usual PC services aren't\n"
     .string "available…$"
@@ -148,16 +142,6 @@ OneIsland_PokemonCenter_1F_Text_CelioPromiseIllShowYouAroundSometime:: @ 81A1574
     .string "that we sent you off alone today.\p"
     .string "I promise, I will show you around\n"
     .string "these islands sometime.$"
-
-OneIsland_PokemonCenter_1F_Text_CelioImModifyingMyNetworkMachine:: @ 81A15EC
-    .string "CELIO: Hello!\n"
-    .string "You look awfully busy as always.\p"
-    .string "How am I doing?\p"
-    .string "Well, I'm modifying my Network\n"
-    .string "Machine.\p"
-    .string "When I get done with the machine,\n"
-    .string "I hope you'll be first to use it,\l"
-    .string "{PLAYER}.$"
 
 OneIsland_PokemonCenter_1F_Text_CelioCaughtMoreMonMaybeICanBeUseful:: @ 81A169B
     .string "CELIO: {PLAYER}, how have things\n"

@@ -46,21 +46,6 @@ void ClearTempFieldEventData(void)
     FlagClear(FLAG_SYS_INFORMED_OF_LOCAL_WIRELESS_PLAYER);
 }
 
-void DisableNationalPokedex(void)
-{
-    FlagClear(FLAG_SYS_NATIONAL_DEX);
-}
-
-void EnableNationalPokedex(void)
-{
-    FlagSet(FLAG_SYS_NATIONAL_DEX);
-}
-
-bool32 IsNationalPokedexEnabled(void)
-{
-    return FlagGet(FLAG_SYS_NATIONAL_DEX);
-}
-
 void ResetMysteryGiftFlags(void)
 {
     FlagClear(FLAG_MYSTERY_GIFT_1);

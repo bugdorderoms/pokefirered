@@ -217,15 +217,15 @@ OneIsland_PokemonCenter_1F_EventScript_Celio:: @ 8170EC5
 	goto_if_set FLAG_GOT_RUBY, OneIsland_PokemonCenter_1F_EventScript_GiveCelioRuby
 	compare VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 4
 	goto_if_eq OneIsland_PokemonCenter_1F_EventScript_CelioWaitingForRuby
-	specialvar VAR_RESULT, IsNationalPokedexEnabled
-	compare VAR_RESULT, TRUE
-	goto_if_eq OneIsland_PokemonCenter_1F_EventScript_CelioRequestRuby
-	compare VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 3
-	goto_if_eq OneIsland_PokemonCenter_1F_EventScript_CelioPlayerMissingNationalDex
-	msgbox OneIsland_PokemonCenter_1F_Text_SorryForBeingPoorHost
-	closemessage
-	applymovement LOCALID_CELIO, Movement_FaceOriginalDirection
+	msgbox OneIsland_PokemonCenter_1F_Text_CelioCaughtMoreMonMaybeICanBeUseful
+	applymovement LOCALID_CELIO, Movement_WalkInPlaceFastestUp
 	waitmovement 0
+	msgbox OneIsland_PokemonCenter_1F_Text_YoullBeTradingFromTrainersFarAway
+	applymovement LOCALID_CELIO, Movement_FacePlayer
+	waitmovement 0
+	msgbox OneIsland_PokemonCenter_1F_Text_NeedsSpecialGemstone
+	setvar VAR_MAP_SCENE_MT_EMBER_EXTERIOR, 1
+	setvar VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 4
 	release
 	end
 
@@ -355,24 +355,6 @@ OneIsland_PokemonCenter_1F_EventScript_GiveRainbowPass:: @ 81710B2
 
 OneIsland_PokemonCenter_1F_EventScript_CelioWaitingForRuby:: @ 81710F2
 	msgbox OneIsland_PokemonCenter_1F_Text_TryingToFindGem
-	release
-	end
-
-OneIsland_PokemonCenter_1F_EventScript_CelioRequestRuby:: @ 81710FC
-	msgbox OneIsland_PokemonCenter_1F_Text_CelioCaughtMoreMonMaybeICanBeUseful
-	applymovement LOCALID_CELIO, Movement_WalkInPlaceFastestUp
-	waitmovement 0
-	msgbox OneIsland_PokemonCenter_1F_Text_YoullBeTradingFromTrainersFarAway
-	applymovement LOCALID_CELIO, Movement_FacePlayer
-	waitmovement 0
-	msgbox OneIsland_PokemonCenter_1F_Text_NeedsSpecialGemstone
-	setvar VAR_MAP_SCENE_MT_EMBER_EXTERIOR, 1
-	setvar VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 4
-	release
-	end
-
-OneIsland_PokemonCenter_1F_EventScript_CelioPlayerMissingNationalDex:: @ 8171134
-	msgbox OneIsland_PokemonCenter_1F_Text_CelioImModifyingMyNetworkMachine
 	release
 	end
 

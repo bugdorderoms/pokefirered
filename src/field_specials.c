@@ -2162,7 +2162,7 @@ bool8 GetPokedexCount(void)
         gSpecialVar_0x8005 = GetNationalPokedexCount(FLAG_GET_SEEN);
         gSpecialVar_0x8006 = GetNationalPokedexCount(FLAG_GET_CAUGHT);
     }
-    return IsNationalPokedexEnabled();
+    return FlagGet(FLAG_SYS_POKEDEX_GET);
 }
 
 static const u8 *GetProfOaksRatingMessageByCount(u16 count)

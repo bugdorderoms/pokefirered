@@ -1,11 +1,3 @@
-ThreeIsland_DunsparceTunnel_Text_ProspectingForGold:: @ 817D13B
-    .string "Hey, there!\n"
-    .string "How's it going?\p"
-    .string "What am I doing here, you ask?\n"
-    .string "Why, I'm prospecting for gold!\p"
-    .string "When I strike it rich, I'm buying\n"
-    .string "a house in KANTO.$"
-
 ThreeIsland_DunsparceTunnel_Text_StruckGoldThisIsForYou:: @ 817D1C9
     .string "Hey, there! How's it going?\n"
     .string "Did you hear? I've struck gold!\p"

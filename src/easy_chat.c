@@ -340,7 +340,7 @@ static void PopulateECGroups(void)
         sEasyChatSelectionData->groups[sEasyChatSelectionData->numGroups++] = EC_GROUP_MOVE_2;
     }
 
-    if (IsNationalPokedexEnabled())
+    if (FlagGet(FLAG_SYS_POKEDEX_GET))
         sEasyChatSelectionData->groups[sEasyChatSelectionData->numGroups++] = EC_GROUP_POKEMON_2;
 }
 
