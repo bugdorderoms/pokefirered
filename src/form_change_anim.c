@@ -414,7 +414,7 @@ static void Task_DoGracideaFlowersFormChangeAnim(u8 taskId)
 // FORM_CHANGE_ANIM_PURPLE_CLOUD //
 ///////////////////////////////////
 
-#define CLOUD_ANIM_COUNTER 52 // Num frames the clouds will do their anim
+#define CLOUD_ANIM_COUNTER 60 // Num frames the clouds will do their anim
 
 static const u16 sPurpleCloudGfx[] = INCBIN_U16("graphics/form_change/purple_cloud.4bpp");
 static const u16 sPurpleCloudPalette[] = INCBIN_U16("graphics/form_change/purple_cloud.gbapal");
@@ -498,7 +498,7 @@ static void Task_DoPurpleCloudFormChangeAnim(u8 taskId)
 			++sFormChangeAnimData->stepId;
 			break;
 		case 1:
-		    if (++tWaitCounter >= (CLOUD_ANIM_COUNTER - 4))
+		    if (++tWaitCounter >= (CLOUD_ANIM_COUNTER - 16))
 			{
 				DoFusionWhiteScreenOrUpdateIcon();
 				InitPlayMonCryAfterFormChangeTask(taskId);

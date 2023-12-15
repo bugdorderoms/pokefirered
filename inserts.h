@@ -116,3 +116,7 @@
 
 // This setting determines the price divisor when selling an item. It's 2 in Generation III games, but 4 in Pokémon Legends Arceus. 
 #define ITEM_SELL_DIVISOR 4
+
+// If this setting is enabled, when searching for a Pokémon on the Dexnav you must need to press the A button to creeping.
+// Otherwise, the Pokémon will run away.
+#define DEXNAV_CREEPING_SEARCH TRUE

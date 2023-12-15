@@ -351,11 +351,11 @@ static void DrawDexNavSearchMonIcon(u16 species, u8 *dst, bool8 caught)
 
 static void AddSearchWindow(void)
 {
-    struct WindowTemplate template = SetWindowTemplateFields(0, 0, sDexNavSearchDataPtr->tileY > gSaveBlock1Ptr->pos.y + 7 ? 0 : 16, 30, 4, 15, 8);
-    sDexNavSearchDataPtr->windowId = AddWindow(&template);
-    PutWindowTilemap(sDexNavSearchDataPtr->windowId);
+	struct WindowTemplate template = SetWindowTemplateFields(0, 0, sDexNavSearchDataPtr->tileY > gSaveBlock1Ptr->pos.y + 7 ? 0 : 16, 30, 4, 15, 8);
     LoadDexNavWindowGfx(sDexNavSearchDataPtr->windowId, 0x200, 0xF0);
-    CopyWindowToVram(sDexNavSearchDataPtr->windowId, COPYWIN_MAP);
+	sDexNavSearchDataPtr->windowId = AddWindow(&template);
+	FillWindowPixelBuffer(sDexNavSearchDataPtr->windowId, PIXEL_FILL(1));
+	PutWindowTilemap(sDexNavSearchDataPtr->windowId);
 }
 
 #define WINDOW_COL_0          2
@@ -401,8 +401,8 @@ static void AddSearchWindowText(u16 species, u8 proximity)
     ConvertIntToDecimalStringN(gStringVar1, sCurrentDexNavChain, STR_CONV_MODE_LEFT_ALIGN, 3);
     StringExpandPlaceholders(gStringVar4, sText_DexNavChain);
     AddTextPrinterParameterized3(windowId, 0, SEARCH_ARROW_X - 18, WINDOW_COL_1, sSearchFontColor, 0, gStringVar4);    
-
-    CopyWindowToVram(windowId, COPYWIN_GFX);
+	
+    CopyWindowToVram(windowId, COPYWIN_MAP);
 }
 
 static void RemoveDexNavWindowAndGfx(void)
@@ -624,39 +624,55 @@ static void LoadSearchIconData(void)
     LoadCompressedSpriteSheetUsingHeap(&sCapturedAllPokemonSpriteSheet);
 }
 
-#define tProximity   data[0]
-#define tFrameCount  data[1]
-#define tSpecies     data[2]
-#define tEnvironment data[3]
+#define tSetupStep   data[0]
+#define tProximity   data[1]
+#define tFrameCount  data[2]
+#define tSpecies     data[3]
+#define tEnvironment data[4]
 
 static void Task_SetUpDexNavSearch(u8 taskId)
 {
+	s16 *data = gTasks[taskId].data;
     u8 i;
-
-    // init sprites
-    sDexNavSearchDataPtr->iconSpriteId = MAX_SPRITES;
-    sDexNavSearchDataPtr->itemSpriteId = MAX_SPRITES;
-    sDexNavSearchDataPtr->ownedIconSpriteId = MAX_SPRITES;
 	
-	for (i = 0; i < 3; i++)
-		sDexNavSearchDataPtr->starSpriteIds[i] = MAX_SPRITES;
-    
-    sDexNavSearchDataPtr->species = DexNavGenerateMoveset(sDexNavSearchDataPtr->species, sDexNavSearchDataPtr->monLevel, &sDexNavSearchDataPtr->moves[0]);
-    sDexNavSearchDataPtr->heldItem = DexNavGenerateHeldItem(sDexNavSearchDataPtr->species);
-    sDexNavSearchDataPtr->abilityHidden = DexNavGetAbilityNum(sDexNavSearchDataPtr->species);
-    sDexNavSearchDataPtr->potential = DexNavGeneratePotential();
-    
-    DexNavProximityUpdate();
-    LoadSearchIconData();
-    DexNavDrawIcons();
-    DexNavUpdateSearchWindow(sDexNavSearchDataPtr->proximity);
-
-    IncrementGameStat(GAME_STAT_DEXNAV_SCANNED);
-	
-    gPlayerAvatar.creeping = TRUE;  // initialize as true in case mon appears beside you
-    gTasks[taskId].tProximity = gSprites[gPlayerAvatar.spriteId].x;
-    gTasks[taskId].tFrameCount = 0;
-    gTasks[taskId].func = Task_DexNavSearch;
+	switch (tSetupStep)
+	{
+		case 0: // init sprites
+		    sDexNavSearchDataPtr->iconSpriteId = MAX_SPRITES;
+			sDexNavSearchDataPtr->itemSpriteId = MAX_SPRITES;
+			sDexNavSearchDataPtr->ownedIconSpriteId = MAX_SPRITES;
+			
+			for (i = 0; i < 3; i++)
+				sDexNavSearchDataPtr->starSpriteIds[i] = MAX_SPRITES;
+			
+			++tSetupStep;
+			break;
+		case 1: // Init species data
+		    sDexNavSearchDataPtr->species = DexNavGenerateMoveset(sDexNavSearchDataPtr->species, sDexNavSearchDataPtr->monLevel, &sDexNavSearchDataPtr->moves[0]);
+			sDexNavSearchDataPtr->heldItem = DexNavGenerateHeldItem(sDexNavSearchDataPtr->species);
+			sDexNavSearchDataPtr->abilityHidden = DexNavGetAbilityNum(sDexNavSearchDataPtr->species);
+			sDexNavSearchDataPtr->potential = DexNavGeneratePotential();
+			++tSetupStep;
+			break;
+		case 2: // Init search window data
+		    DexNavProximityUpdate();
+			LoadSearchIconData();
+			AddSearchWindow();
+			++tSetupStep;
+			break;
+		case 3: // Draw everything
+		    DexNavDrawIcons();
+			DexNavUpdateSearchWindow(sDexNavSearchDataPtr->proximity);
+			++tSetupStep;
+			break;
+		case 4: // Init search
+		    IncrementGameStat(GAME_STAT_DEXNAV_SCANNED);
+			gPlayerAvatar.creeping = TRUE;  // initialize as true in case mon appears beside you
+			gTasks[taskId].tProximity = gSprites[gPlayerAvatar.spriteId].x;
+			gTasks[taskId].tFrameCount = 0;
+			gTasks[taskId].func = Task_DexNavSearch;
+			break;
+	}
 }
 
 static void Task_InitDexNavSearch(u8 taskId)
@@ -691,6 +707,7 @@ static void Task_InitDexNavSearch(u8 taskId)
 			sLastSearchedSpecies = species;
 			sDexNavSearchLevel = 0;
 		}
+		gTasks[taskId].tSetupStep = 0;
 		gTasks[taskId].func = Task_SetUpDexNavSearch;
 	}
 }
@@ -746,13 +763,9 @@ static void DexNavUpdateDirectionArrow(void)
 static void DexNavDrawIcons(void)
 {
     u16 species = sDexNavSearchDataPtr->species;
-
-    AddSearchWindow();
-    AddSearchWindowText(species, sDexNavSearchDataPtr->proximity);
     DrawDexNavSearchMonIcon(species, &sDexNavSearchDataPtr->iconSpriteId, GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT));
     DrawDexNavSearchHeldItem(&sDexNavSearchDataPtr->itemSpriteId);
     DexNavDrawPotentialStars(sDexNavSearchDataPtr->potential, &sDexNavSearchDataPtr->starSpriteIds[0]);
-    DexNavUpdateDirectionArrow();
 }
 
 /////////////////////
@@ -813,12 +826,14 @@ static void Task_DexNavSearch(u8 taskId)
         EndDexNavSearchSetupScript(EventScript_LostSignal, taskId);
         return;
     }
+#if DEXNAV_CREEPING_SEARCH
     // should be creeping but player walks normally
     if (sDexNavSearchDataPtr->proximity <= CREEPING_PROXIMITY && !gPlayerAvatar.creeping && tFrameCount > 60)
     {
         EndDexNavSearchSetupScript(EventScript_MovedTooFast, taskId);
         return;
     }
+#endif
     // running/biking too close
     if (sDexNavSearchDataPtr->proximity <= SNEAKING_PROXIMITY && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH | PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE | PLAYER_AVATAR_FLAG_RIDE_ANY)) 
     {
@@ -874,7 +889,7 @@ static void Task_DexNavSearch(u8 taskId)
     // player has moved
     if (tProximity != sDexNavSearchDataPtr->proximity)
     {
-	DexNavUpdateSearchWindow(sDexNavSearchDataPtr->proximity);
+		DexNavUpdateSearchWindow(sDexNavSearchDataPtr->proximity);
         tProximity = sDexNavSearchDataPtr->proximity;
     }
     tFrameCount++;
