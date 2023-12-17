@@ -941,11 +941,11 @@ void HandleBoulderFallThroughOrCoverHole(struct ObjectEvent * object)
     }
 	else if (metatileBehavior == MB_STRENGTH_HOLE)
 	{
-		/* Find a apropriated metatile first
 		PlaySE(SE_M_ROCK_THROW);
 		RemoveObjectEventByLocalIdAndMap(object->localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
-		MapGridSetMetatileIdAt(x, y, METATILE_SeafoamIslands_CrackedIce);
-		CurrentMapDrawMetatileAt(x, y);*/
+		FlagClear(GetObjectEventFlagByLocalIdAndMap(object->localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup));
+		MapGridSetMetatileIdAt(x, y, METATILE_Cave_Covered_Hole);
+		CurrentMapDrawMetatileAt(x, y);
 	}
 }
 

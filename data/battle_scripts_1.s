@@ -2195,7 +2195,7 @@ BattleScript_NeutralizingGasExitsLoop::
     switchinabilities BS_TARGET
 BattleScript_NeutralizingGasExitsLoopIncrement::
 	addbyte gBattlerTarget, 1
-	jumpifbyte CMP_NOT_EQUAL, gBattlerTarget, MAX_BATTLERS_COUNT, BattleScript_NeutralizingGasExitsLoop
+	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_NeutralizingGasExitsLoop
 	restorebattlers
 	return
 

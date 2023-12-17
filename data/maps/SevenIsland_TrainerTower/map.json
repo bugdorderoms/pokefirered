@@ -15,15 +15,15 @@
   "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
   "connections": [
     {
-      "map": "MAP_SEVEN_ISLAND",
+      "direction": "down",
       "offset": 48,
-      "direction": "down"
+      "map": "MAP_SEVEN_ISLAND"
     }
   ],
   "object_events": [
     {
-      "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BOY",
+      "graphics_id": "OBJ_EVENT_GFX_BOY",
+      "in_connection": false,
       "x": 56,
       "y": 26,
       "elevation": 3,
@@ -33,11 +33,12 @@
       "trainer_type": "TRAINER_TYPE_NORMAL",
       "trainer_sight_or_berry_tree_id": "1",
       "script": "SevenIsland_TrainerTower_EventScript_Dario",
-      "flag": "0"
+      "flag": "0",
+      "type": "object"
     },
     {
-      "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_1",
+      "graphics_id": "OBJ_EVENT_GFX_WOMAN_1",
+      "in_connection": false,
       "x": 56,
       "y": 29,
       "elevation": 3,
@@ -47,11 +48,16 @@
       "trainer_type": "TRAINER_TYPE_NORMAL",
       "trainer_sight_or_berry_tree_id": "1",
       "script": "SevenIsland_TrainerTower_EventScript_Rodette",
-      "flag": "0"
+      "flag": "0",
+      "type": "object"
     }
   ],
-  "warp_events": [],
-  "coord_events": [],
+  "warp_events": [
+
+  ],
+  "coord_events": [
+
+  ],
   "bg_events": [
     {
       "type": "hidden_item",
