@@ -93,7 +93,7 @@ static void atk0D_critmessage(void);
 static void atk0E_effectivenesssound(void);
 static void atk0F_resultmessage(void);
 static void atk10_printstring(void);
-static void atk11_printselectionstring(void);
+static void atk11_nop(void);
 static void atk12_waitmessage(void);
 static void atk13_printfromtable(void);
 static void atk14_printselectionstringfromtable(void);
@@ -144,7 +144,7 @@ static void atk40_nop(void);
 static void atk41_call(void);
 static void atk42_trysetsleep(void);
 static void atk43_trysetconfusion(void);
-static void atk44_endselectionscript(void);
+static void atk44_nop(void);
 static void atk45_playanimation(void);
 static void atk46_playanimation2(void);
 static void atk47_setgraphicalstatchangevalues(void);
@@ -352,7 +352,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk0E_effectivenesssound,
     atk0F_resultmessage,
     atk10_printstring,
-    atk11_printselectionstring,
+    atk11_nop,
     atk12_waitmessage,
     atk13_printfromtable,
     atk14_printselectionstringfromtable,
@@ -403,7 +403,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk41_call,
     atk42_trysetsleep,
     atk43_trysetconfusion,
-    atk44_endselectionscript,
+    atk44_nop,
     atk45_playanimation,
     atk46_playanimation2,
     atk47_setgraphicalstatchangevalues,
@@ -1905,12 +1905,9 @@ static void atk10_printstring(void)
     }
 }
 
-static void atk11_printselectionstring(void)
+static void atk11_nop(void)
 {
-    BtlController_EmitPrintSelectionString(gBattlerAttacker, BUFFER_A, READ_16(gBattlescriptCurrInstr + 1));
-    MarkBattlerForControllerExec(gBattlerAttacker);
-    gBattleCommunication[MSG_DISPLAY] = TRUE;
-	gBattlescriptCurrInstr += 3;
+	++gBattlescriptCurrInstr;
 }
 
 static void atk12_waitmessage(void)
@@ -2868,9 +2865,9 @@ static void atk43_trysetconfusion(void)
 	}
 }
 
-static void atk44_endselectionscript(void)
+static void atk44_nop(void)
 {
-    gBattleStruct->selectionScriptFinished |= gBitTable[gBattlerAttacker];
+    ++gBattlescriptCurrInstr;
 }
 
 // unify playanimation and playanimation2 into a single function
@@ -8425,4 +8422,10 @@ void BS_RemoveScreens(void)
         gBattleScripting.animTargetsHit = 0;
     }
 	gBattlescriptCurrInstr += 5;
+}
+
+void BS_EndSelectionScript(void)
+{
+	gBattleStruct->selectionScriptFinished |= gBitTable[gBattlerAttacker];
+	// No script incremment
 }

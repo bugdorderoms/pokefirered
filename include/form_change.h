@@ -7,6 +7,7 @@ struct Fusion
 	u16 otherSpecies;
 	u16 item;
 	u16 targetSpecies;
+	u8 id;
 };
 
 struct FormChange
@@ -41,7 +42,7 @@ extern const struct FormChange *const gFormChangeTable[];
 extern const struct Fusion gFusionsTable[];
 
 // form change animations
-void DoFormChangeAnim(u8 animId, u16 oldSpecies, u16 newSpecies, bool8 isFusion, struct Sprite *icon1, struct Sprite *icon2);
+void DoFormChangeAnim(u8 animId, u16 species, bool8 isFusion, struct Sprite *icon1, struct Sprite *icon2);
 bool8 IsFormChangeAnimFinished(void);
 
 #endif // GUARD_FORM_CHANGE_H

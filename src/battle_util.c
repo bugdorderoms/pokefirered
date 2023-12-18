@@ -724,14 +724,18 @@ void PressurePPLoseOnUsingPerishSong(u8 attacker)
 
 void MarkAllBattlersForControllerExec(void)
 {
-    s32 i;
+    u8 i;
 
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+	{
         for (i = 0; i < gBattlersCount; ++i)
             gBattleControllerExecFlags |= gBitTable[i] << 0x1C;
+	}
     else
+	{
         for (i = 0; i < gBattlersCount; ++i)
             gBattleControllerExecFlags |= gBitTable[i];
+	}
 }
 
 void MarkBattlerForControllerExec(u8 battlerId)
@@ -762,14 +766,9 @@ void CancelMultiTurnMoves(u8 battler)
 
 bool8 WasUnableToUseMove(u8 battler)
 {
-    if (gProtectStructs[battler].prlzImmobility
-     || gProtectStructs[battler].targetNotAffected
-     || gProtectStructs[battler].usedImprisonedMove
-     || gProtectStructs[battler].loveImmobility
-     || gProtectStructs[battler].usedDisabledMove
-     || gProtectStructs[battler].usedTauntedMove
-     || gProtectStructs[battler].flinchImmobility
-     || gProtectStructs[battler].confusionSelfDmg)
+    if (gProtectStructs[battler].prlzImmobility || gProtectStructs[battler].targetNotAffected || gProtectStructs[battler].usedImprisonedMove
+     || gProtectStructs[battler].loveImmobility || gProtectStructs[battler].usedDisabledMove || gProtectStructs[battler].usedTauntedMove
+     || gProtectStructs[battler].flinchImmobility || gProtectStructs[battler].confusionSelfDmg)
         return TRUE;
     else
         return FALSE;
@@ -937,9 +936,7 @@ void OpponentSwitchInResetSentPokesToOpponentValue(u8 battler)
 void UpdateSentPokesToOpponentValue(u8 battler)
 {
     if (GetBattlerSide(battler) == B_SIDE_OPPONENT)
-    {
         OpponentSwitchInResetSentPokesToOpponentValue(battler);
-    }
     else
     {
         s32 i;
@@ -970,6 +967,21 @@ void BattleScriptCall(const u8 *bsPtr)
 	gBattlescriptCurrInstr = bsPtr;
 }
 
+void BattleScriptExecute(const u8 *BS_ptr)
+{
+    gBattlescriptCurrInstr = BS_ptr;
+    gBattleResources->battleCallbackStack->function[gBattleResources->battleCallbackStack->size++] = gBattleMainFunc;
+    gBattleMainFunc = RunBattleScriptCommands_PopCallbacksStack;
+    gCurrentActionFuncId = 0;
+}
+
+void BattleScriptPushCursorAndCallback(const u8 *BS_ptr)
+{
+	BattleScriptCall(BS_ptr);
+    gBattleResources->battleCallbackStack->function[gBattleResources->battleCallbackStack->size++] = gBattleMainFunc;
+    gBattleMainFunc = RunBattleScriptCommands;
+}
+
 static u8 GetImprisonedMovesCount(u8 battlerId, u16 move)
 {
     u8 i, j, imprisonedMoves = 0, battlerSide = GetBattlerSide(battlerId);
@@ -995,23 +1007,23 @@ bool8 TrySetCantSelectMoveBattleScript(u8 battlerId)
 
     if (move && gDisableStructs[battlerId].disabledMove == move)
     {
-        gSelectionBattleScripts[battlerId] = BattleScript_SelectingDisabledMove;
+        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_DISABLED;
         cantSelect = TRUE;
     }
     if ((gBattleMons[battlerId].status2 & STATUS2_TORMENT) && move != MOVE_STRUGGLE && move == gLastMoves[battlerId])
     {
         CancelMultiTurnMoves(battlerId);
-        gSelectionBattleScripts[battlerId] = BattleScript_SelectingTormentedMove;
+		gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_TORMENTED;
         cantSelect = TRUE;
     }
     if (gDisableStructs[battlerId].tauntTimer && IS_MOVE_STATUS(move))
     {
-        gSelectionBattleScripts[battlerId] = BattleScript_SelectingNotAllowedMoveTaunt;
+        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_TAUNTED;
         cantSelect = TRUE;
     }
     if (GetImprisonedMovesCount(battlerId, move))
     {
-        gSelectionBattleScripts[battlerId] = BattleScript_SelectingImprisonedMove;
+        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_SEALED;
         cantSelect = TRUE;
     }
 	holdEffect = GetBattlerItemHoldEffect(battlerId, TRUE);
@@ -1021,17 +1033,20 @@ bool8 TrySetCantSelectMoveBattleScript(u8 battlerId)
     {
 		move = gBattleStruct->choicedMove[battlerId];
         gLastUsedItem = gBattleMons[battlerId].item;
-        gSelectionBattleScripts[battlerId] = BattleScript_SelectingNotAllowedMoveChoiceItem;
+		gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_LOCKED_CHOICE_ITEM;
         cantSelect = TRUE;
     }
     if (!gBattleMons[battlerId].pp[movePos])
     {
-        gSelectionBattleScripts[battlerId] = BattleScript_SelectingMoveWithNoPP;
+        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_NO_PP;
         cantSelect = TRUE;
     }
 	
 	if (cantSelect)
+	{
 		gCurrentMove = move;
+		gSelectionBattleScripts[battlerId] = BattleScript_SelectingNotAllowedMove;
+	}
 	
     return cantSelect;
 }
@@ -1079,8 +1094,9 @@ bool8 AreAllMovesUnusable(u8 battlerId)
 
     if (unusable == MOVE_LIMITATION_ALL_MOVES_MASK) // All moves are unusable.
     {
+		gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_NO_MOVES;
         gProtectStructs[battlerId].noValidMoves = TRUE;
-        gSelectionBattleScripts[battlerId] = BattleScript_NoMovesLeft;
+        gSelectionBattleScripts[battlerId] = BattleScript_SelectingNotAllowedMove;
 		
         if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
             gBattleBufferB[battlerId][3] = GetBattlerAtPosition((BATTLE_OPPOSITE(GetBattlerPosition(battlerId))) | (Random() & 2));
@@ -2841,12 +2857,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 											++effect;
 										else if (move && !IS_MOVE_STATUS(move))
 										{
-											if (gBattleMoves[move].effect == EFFECT_HIDDEN_POWER)
-												moveType = GetHiddenPowerType(GetBattlerPartyIndexPtr(i));
-											else
-												moveType = gBattleMoves[move].type;
-											
-											if (CalcTypeEffectivenessMultiplier(move, moveType, i, battler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
+											if (CalcTypeEffectivenessMultiplier(move, GetTypeChangingMoveType(GetBattlerPartyIndexPtr(i), move), i, battler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
 												++effect;
 										}
 									}
@@ -4033,21 +4044,6 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 	return effect;
 }
 
-void BattleScriptExecute(const u8 *BS_ptr)
-{
-    gBattlescriptCurrInstr = BS_ptr;
-    gBattleResources->battleCallbackStack->function[gBattleResources->battleCallbackStack->size++] = gBattleMainFunc;
-    gBattleMainFunc = RunBattleScriptCommands_PopCallbacksStack;
-    gCurrentActionFuncId = 0;
-}
-
-void BattleScriptPushCursorAndCallback(const u8 *BS_ptr)
-{
-	BattleScriptCall(BS_ptr);
-    gBattleResources->battleCallbackStack->function[gBattleResources->battleCallbackStack->size++] = gBattleMainFunc;
-    gBattleMainFunc = RunBattleScriptCommands;
-}
-
 enum
 {
     ITEM_NO_EFFECT,
@@ -4837,6 +4833,18 @@ u8 GetHiddenPowerType(struct Pokemon *mon)
 	if (type >= TYPE_MYSTERY)
 		++type;
 	return type;
+}
+
+// Get the move's type, checking for specific type changing moves
+u8 GetTypeChangingMoveType(struct Pokemon *mon, u16 move)
+{
+	switch (gBattleMoves[move].effect)
+	{
+		case EFFECT_HIDDEN_POWER:
+		    return GetHiddenPowerType(mon);
+		default:
+		    return gBattleMoves[move].type;
+	}
 }
 
 u8 GetPartyMonIdForIllusion(u8 battler, struct Pokemon *party, u8 partyCount, struct Pokemon *illusionMon)
@@ -5632,14 +5640,14 @@ u8 CountAliveMonsInBattle(u8 battlerId, u8 caseId)
     case BATTLE_ALIVE_SIDE:
         for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         {
-            if (GetBattlerSide(i) == GetBattlerSide(battlerId) && !(gAbsentBattlerFlags & gBitTable[i]))
+            if (IsBattlerAlive(i) && GetBattlerSide(i) == GetBattlerSide(battlerId))
                 retVal++;
         }
         break;
 	case BATTLE_ALIVE_EXCEPT_BATTLER:
 	    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         {
-            if (i != battlerId && !(gAbsentBattlerFlags & gBitTable[i]))
+            if (i != battlerId && IsBattlerAlive(i))
                 retVal++;
         }
         break;
@@ -5661,8 +5669,9 @@ void CalculatePayDayMoney(void)
 				gPaydayMoney = 0xFFFF;
 			else
 				gPaydayMoney = payDayMoney;
+			
+			gBattleStruct->payDayLevels[i] = 0;
 		}
-		gBattleStruct->payDayLevels[i] = 0;
 	}
 }
 
@@ -5700,7 +5709,7 @@ void SetTypeBeforeUsingMove(u16 move, u8 battler)
 {
 	u16 moveEffect;
 	
-	gBattleStruct->dynamicMoveType = gBattleMoves[move].type;
+	gBattleStruct->dynamicMoveType = GetTypeChangingMoveType(GetBattlerPartyIndexPtr(battler), move);
 	
 	if (move == MOVE_STRUGGLE)
 		return;
@@ -5718,9 +5727,6 @@ void SetTypeBeforeUsingMove(u16 move, u8 battler)
 				gBattleStruct->dynamicMoveType = TYPE_FIRE;
 			else if (IsBattlerWeatherAffected(battler, WEATHER_HAIL_ANY))
 				gBattleStruct->dynamicMoveType = TYPE_ICE;
-			break;
-		case EFFECT_HIDDEN_POWER:
-			gBattleStruct->dynamicMoveType = GetHiddenPowerType(GetBattlerPartyIndexPtr(battler));
 			break;
 	}
 	if (moveEffect != EFFECT_WEATHER_BALL && moveEffect != EFFECT_HIDDEN_POWER && moveEffect != EFFECT_NATURAL_GIFT && moveEffect != EFFECT_CHANGE_TYPE_ON_ITEM

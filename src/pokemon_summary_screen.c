@@ -2064,7 +2064,7 @@ static void BufferMonMoveI(u8 i)
 	{
 		sMonSummaryScreen->numMoves++;
 		
-		sMonSummaryScreen->moveTypes[i] = gBattleMoves[move].effect != EFFECT_HIDDEN_POWER ? gBattleMoves[move].type : GetHiddenPowerType(&sMonSummaryScreen->currentMon);
+		sMonSummaryScreen->moveTypes[i] = GetTypeChangingMoveType(&sMonSummaryScreen->currentMon, move);
 		
 		StringCopy(sMonSummaryScreen->summary.moveNameStrBufs[i], gMoveNames[move]);
 		

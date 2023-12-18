@@ -21,7 +21,6 @@ struct FormChangeAnimData
 	u8 isFusion:1; // If true, apply the white screen effect on the end of the animations
 	u8 numSpritesCreated:5; // Max 31 sprites. To support NUM_FORM_CHANGE_ANIM_SPRITES for both sprites1 and sprites2
 	u8 unused:1;
-	u16 oldSpecies;
 	u16 newSpecies;
 };
 
@@ -41,12 +40,11 @@ static const TaskFunc sFormChangeAnimsTable[] =
 
 // Init the form change animation
 // animId = The anim index to play
-// oldSpecies = The original mon's species
-// newSpecies = The species the mon is transforming or changing into
+// species = The species the mon is transforming or changing into
 // isFusion = Determines if white screen flash occours at the final animation
 // icon1 = The sprite of the mon icon
 // icon2 = The sprite of the second mon icon, when fusing
-void DoFormChangeAnim(u8 animId, u16 oldSpecies, u16 newSpecies, bool8 isFusion, struct Sprite *icon1, struct Sprite *icon2)
+void DoFormChangeAnim(u8 animId, u16 species, bool8 isFusion, struct Sprite *icon1, struct Sprite *icon2)
 {
 	sFormChangeAnimData = AllocZeroed(sizeof(struct FormChangeAnimData));
 	
@@ -57,8 +55,7 @@ void DoFormChangeAnim(u8 animId, u16 oldSpecies, u16 newSpecies, bool8 isFusion,
 		sFormChangeAnimData->stepId = 0;
 		sFormChangeAnimData->icon1 = icon1;
 		sFormChangeAnimData->icon2 = icon2;
-		sFormChangeAnimData->oldSpecies = oldSpecies;
-		sFormChangeAnimData->newSpecies = newSpecies;
+		sFormChangeAnimData->newSpecies = species;
 		sFormChangeAnimData->isFusion = isFusion;
 		sFormChangeAnimData->finished = FALSE;
 		sFormChangeAnimData->numSpritesCreated = 0;
@@ -81,12 +78,10 @@ bool8 IsFormChangeAnimFinished(void)
 // Update icon
 static void UpdateIconForFormChange(void)
 {
-	u16 newSpecies = sFormChangeAnimData->newSpecies;
-	
-	UpdateCurrentPartyMonIconSpecies(newSpecies);
+	UpdateCurrentPartyMonIconSpecies(sFormChangeAnimData->newSpecies);
 	
 	if (sFormChangeAnimData->icon2 != NULL) // Update party after fusion
-		UpdatePartyAfterPokemonFusion(newSpecies);
+		UpdatePartyAfterPokemonFusion();
 }
 
 // Create a sprite
@@ -154,7 +149,7 @@ static void Task_DoFusionWhiteScreen(u8 taskId)
 			if (!gPaletteFade.active) // Wait screen blend back
 			{
 				if (sFormChangeAnimData->icon2 == NULL) // Create second mon when defusing
-					CreatePartyMonAfterDefusing(sFormChangeAnimData->oldSpecies);
+					CreatePartyMonAfterDefusing();
 				
 				DestroyTask(taskId);
 			}

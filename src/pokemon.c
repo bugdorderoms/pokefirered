@@ -1280,8 +1280,8 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
 }
 
 #define SET8(lhs) (lhs) = *data
-#define SET16(lhs) (lhs) = data[0] + (data[1] << 8)
-#define SET32(lhs) (lhs) = data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24)
+#define SET16(lhs) (lhs) = READ_16(data)
+#define SET32(lhs) (lhs) = READ_32(data)
 
 void SetMonData(struct Pokemon *mon, s32 field, const void *dataArg)
 {
@@ -2596,12 +2596,10 @@ u16 GetUnionRoomTrainerClass(void)
 
 void ClearAllFusedMonSpecies(void)
 {
-	memset(&gSaveBlock1Ptr->fusedReshiram, 0, sizeof(struct Pokemon));
-	memset(&gSaveBlock1Ptr->fusedZekrom, 0, sizeof(struct Pokemon));
-	memset(&gSaveBlock1Ptr->fusedSolgaleo, 0, sizeof(struct Pokemon));
-	memset(&gSaveBlock1Ptr->fusedLunala, 0, sizeof(struct Pokemon));
-	memset(&gSaveBlock1Ptr->fusedGlastrier, 0, sizeof(struct Pokemon));
-	memset(&gSaveBlock1Ptr->fusedSpectrier, 0, sizeof(struct Pokemon));
+	u8 i;
+	
+	for (i = 0; i < FUSIONS_COUNT; i++)
+		memset(&gSaveBlock1Ptr->fusions[i], 0, sizeof(struct Pokemon));
 }
 
 const u8* GetItemEffect(u16 item)

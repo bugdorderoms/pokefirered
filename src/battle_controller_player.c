@@ -709,14 +709,9 @@ static void MoveSelectionDisplayPpNumber(u8 battlerId)
 static void MoveSelectionDisplayMoveType(u8 battlerId)
 {
 	u8 *txtPtr;
-    u8 type, target, effect;
-    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
+	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
     u16 flags, move = moveInfo->moves[gMoveSelectionCursor[battlerId]];
-    
-    if (gBattleMoves[move].effect != EFFECT_HIDDEN_POWER)
-        type = gBattleMoves[move].type;
-    else
-        type = GetHiddenPowerType(GetBattlerPartyIndexPtr(battlerId));
+    u8 target, effect, type = GetTypeChangingMoveType(GetBattlerPartyIndexPtr(battlerId), move);
     
     txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfaceType);
     *txtPtr++ = EXT_CTRL_CODE_BEGIN;

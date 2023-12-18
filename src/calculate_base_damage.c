@@ -203,7 +203,7 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 	}
 	
 	// Type effectiveness modifier
-	damage = (damage * damageStruct->effectiveness) / 10;
+	damage = (damage * damageStruct->effectiveness) / TYPE_MUL_NORMAL;
 	
 	// Burn modifier
 	if (!confusionDmg && (gBattleMons[attacker].status1 & STATUS1_BURN) && IS_MOVE_PHYSICAL(move) && gBattleMoves[move].effect != EFFECT_FACADE
@@ -342,7 +342,6 @@ s32 CalculateMoveDamage(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 i
 }
 
 // Not affected by Life Orb
-// Badge boost apply if raises the user's Attack or Defense
 // Type enhancing items don't apply
 // Silk Scarf, Choice Band, Thick Club and Light Ball boosts don't apply
 s32 CalculateConfusionDamage(void)

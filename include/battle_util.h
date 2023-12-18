@@ -198,5 +198,6 @@ void SetBattlerInitialTypes(u8 battlerId);
 bool8 CopyBattlerCritModifier(u8 attacker, u8 defender);
 bool8 TryRemoveScreens(u8 battler, bool8 fromBothSides);
 bool8 DoesSpreadMoveStrikesOnlyOnce(u8 attacker, u8 defender, u16 move, bool8 checkTargetsDone);
+u8 GetTypeChangingMoveType(struct Pokemon *mon, u16 move);
 
 #endif // GUARD_BATTLE_UTIL_H

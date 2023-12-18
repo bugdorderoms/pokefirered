@@ -628,6 +628,8 @@ static const u8 sText_AtkIgnoredOrders[] = _("{B_ATK_NAME_WITH_PREFIX} ignored o
 static const u8 sText_AtkBeganToNap[] = _("{B_ATK_NAME_WITH_PREFIX} began to nap!");
 static const u8 sText_EnemyAboutToSwitchPkmn[] = _("{B_TRAINER1_CLASS} {B_TRAINER1_NAME} is\nabout to use {B_BUFF2}.\pWill {B_PLAYER_NAME} change Pokémon?");
 static const u8 sText_LastItemAllowsOnlyCurrMove[] = _("{B_LAST_ITEM}'s effect allows only {B_CURRENT_MOVE} to be used!\p");
+static const u8 sText_ItemsCantBeUsedNow[] = _("Items can't be used now.{PAUSE 64}");
+static const u8 sText_BoxIsFull[] = _("The Box is full!\nYou can't catch any more!\p");
 
 
 static const u8 sText_Trainer1RecallPkmn1[] = _("{B_TRAINER1_NAME}: {B_OPPONENT_MON1_NAME}, come back!");
@@ -680,7 +682,6 @@ static const u8 sText_PkmnSnatchedMove[] = _("{B_DEF_NAME_WITH_PREFIX} Snatched\
 static const u8 sText_ElectricityWeakened[] = _("Electricity's power was\nweakened!");
 static const u8 sText_FireWeakened[] = _("Fire's power was\nweakened!");
 static const u8 sText_XFoundOneY[] = _("{B_ATK_NAME_WITH_PREFIX} found\none {B_LAST_ITEM}!");
-static const u8 sText_ItemsCantBeUsedNow[] = _("Items can't be used now.{PAUSE 64}");
 static const u8 sText_ForXCommaYZ[] = _("For {B_SCR_ACTIVE_NAME_WITH_PREFIX},\n{B_LAST_ITEM} {B_BUFF1}");
 static const u8 sText_PkmnUsedXToGetPumped[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} used\n{B_LAST_ITEM} to hustle!");
 static const u8 sText_PkmnLostFocus[] = _("{B_ATK_NAME_WITH_PREFIX} lost its\nfocus and couldn't move!");
@@ -841,7 +842,6 @@ const u8 *const gPokeblockWasTooXStringTable[] = {
 };
 
 const u8 gUnknown_83FD78A[] = _("よけられた!\nこいつは つかまりそうにないぞ!");
-static const u8 sText_BoxIsFull[] = _("The Box is full!\nYou can't catch any more!\p");
 static const u8 gUnknown_83FD8B6[] = _("ナゾ");
 static const u8 sText_PkmnsItemCuredParalysis[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\ncured paralysis!");
 static const u8 sText_PkmnsItemCuredPoison[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\ncured poison!");
@@ -1215,6 +1215,23 @@ const u16 gPartyStatusHealStringIds[] =
     [B_MSG_SOOTHING_AROMA] = STRINGID_SOOTHINGAROMA
 };
 
+const u16 gCantUseItemStringIds[] =
+{
+	[B_MSG_CANT_USE_ITEM] = STRINGID_ITEMSCANTBEUSEDNOW,
+	[B_MSG_BOX_FULL]      = STRINGID_BOXISFULL
+};
+
+const u16 gNotAllowedMoveStringIds[] =
+{
+	[B_MSG_MOVE_DISABLED]           = STRINGID_ATKCURRMOVEISDISABLED,
+	[B_MSG_NO_MOVES]                = STRINGID_ATKHASNOMOVESLEFT,
+	[B_MSG_MOVE_TORMENTED]          = STRINGID_ATKCANTUSEMOVETORMENT,
+	[B_MSG_MOVE_TAUNTED]            = STRINGID_ATKCANTUSECURRMOVETAUNT,
+	[B_MSG_MOVE_SEALED]             = STRINGID_PKMNCANTUSEMOVESEALED,
+	[B_MSG_MOVE_LOCKED_CHOICE_ITEM] = STRINGID_LASTITEMALLOWSONLYCURRMOVE,
+	[B_MSG_MOVE_NO_PP]              = STRINGID_NOPPLEFT
+};
+
 // Strings table
 const u8 *const gBattleStringsTable[] =
 {
@@ -1443,6 +1460,8 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_ATKBEGANTONAP - BATTLESTRINGS_ID_ADDER]                 = sText_AtkBeganToNap,
     [STRINGID_ENEMYABOUTTOSWITCHPKMN - BATTLESTRINGS_ID_ADDER]        = sText_EnemyAboutToSwitchPkmn,
     [STRINGID_LASTITEMALLOWSONLYCURRMOVE - BATTLESTRINGS_ID_ADDER]    = sText_LastItemAllowsOnlyCurrMove,
+	[STRINGID_ITEMSCANTBEUSEDNOW - BATTLESTRINGS_ID_ADDER]            = sText_ItemsCantBeUsedNow,
+	[STRINGID_BOXISFULL - BATTLESTRINGS_ID_ADDER]                     = sText_BoxIsFull,
 	
 	
     [STRINGID_PKMNHUNGONWITHX - BATTLESTRINGS_ID_ADDER]               = sText_PkmnHungOnWithX,
@@ -1460,7 +1479,6 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_HMMOVESCANTBEFORGOTTEN - BATTLESTRINGS_ID_ADDER]        = sText_HMMovesCantBeForgotten,
     [STRINGID_XFOUNDONEY - BATTLESTRINGS_ID_ADDER]                    = sText_XFoundOneY,
     [STRINGID_PLAYERDEFEATEDTRAINER1 - BATTLESTRINGS_ID_ADDER]        = sText_PlayerDefeatedLinkTrainerTrainer1,
-    [STRINGID_ITEMSCANTBEUSEDNOW - BATTLESTRINGS_ID_ADDER]            = sText_ItemsCantBeUsedNow,
     [STRINGID_FORXCOMMAYZ - BATTLESTRINGS_ID_ADDER]                   = sText_ForXCommaYZ,
     [STRINGID_USINGXTHEYOFZN - BATTLESTRINGS_ID_ADDER]                = sText_UsingXTheYOfZN,
     [STRINGID_PKMNUSEDXTOGETPUMPED - BATTLESTRINGS_ID_ADDER]          = sText_PkmnUsedXToGetPumped,
@@ -1475,7 +1493,6 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_PKMNWASDRAGGEDOUT - BATTLESTRINGS_ID_ADDER]             = sText_PkmnWasDraggedOut,
     [STRINGID_PREVENTEDFROMWORKING - BATTLESTRINGS_ID_ADDER]          = sText_PreventedFromWorking,
     [STRINGID_PKMNSITEMNORMALIZEDSTATUS - BATTLESTRINGS_ID_ADDER]     = sText_PkmnsItemNormalizedStatus,
-    [STRINGID_BOXISFULL - BATTLESTRINGS_ID_ADDER]                     = sText_BoxIsFull,
     [STRINGID_PKMNAVOIDEDATTACK - BATTLESTRINGS_ID_ADDER]             = sText_PkmnAvoidedAttack,
     [STRINGID_PKMNSXMADEITINEFFECTIVE - BATTLESTRINGS_ID_ADDER]       = sText_PkmnsXMadeItIneffective,
     [STRINGID_PKMNSXPREVENTSFLINCHING - BATTLESTRINGS_ID_ADDER]       = sText_PkmnsXPreventsFlinching,
@@ -1636,6 +1653,15 @@ const u8 *const gBattleStringsTable[] =
 };
 
 // Prepare buffers
+#define WRITE_16(ptr, id, value)            \
+    ptr[id] = (value);                      \
+	ptr[id + 1] = (value & 0x0000FF00) >> 8
+
+#define WRITE_32(ptr, id, value)              \
+    WRITE_16(ptr, id, value);                 \
+    ptr[id + 2] = (value & 0x00FF0000) >> 16; \
+	ptr[id + 3] = (value & 0xFF000000) >> 24
+
 void PrepareFlavorBuffer(u8 *textVar, u8 flavorId)
 {
 	textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;

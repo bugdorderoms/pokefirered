@@ -89,16 +89,6 @@
 #define READ_PTR(ptr)  (u8*) READ_32(ptr)
 #define READ_PTR2(ptr) (void*) READ_32(ptr)
 
-#define WRITE_16(ptr, id, value)        \
-    ptr[id] = (value);                  \
-	ptr[id + 1] = (value & 0xFF00) >> 8
-
-#define WRITE_32(ptr, id, value)              \
-    ptr[id] = (value);                        \
-	ptr[id + 1] = (value & 0x0000FF00) >> 8;  \
-    ptr[id + 2] = (value & 0x00FF0000) >> 16; \
-	ptr[id + 3] = (value & 0xFF000000) >> 24
-
 // This macro is required to prevent the compiler from optimizing
 // a dpad up/down check in sub_812CAD8 (fame_checker.c).
 #define TEST_BUTTON(field, button) ({(field) & (button);})
@@ -397,6 +387,17 @@ struct TrainerNameRecord
     u8 trainerName[PLAYER_NAME_LENGTH + 1];
 };
 
+enum
+{
+	FUSION_RESHIRAN,
+	FUSION_ZEKROM,
+	FUSION_SOLGALEO,
+	FUSION_LUNALA,
+	FUSION_GLASTRIER,
+	FUSION_SPECTRIER,
+	FUSIONS_COUNT,
+};
+
 struct SaveBlock1
 {
     /*0x0000*/ struct Coords16 pos;
@@ -438,12 +439,7 @@ struct SaveBlock1
 			   struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
 			   struct TrainerNameRecord trainerNameRecords[20];
 			   struct DaycareMon route5DayCareMon;
-			   struct Pokemon fusedReshiram;
-			   struct Pokemon fusedZekrom;
-			   struct Pokemon fusedSolgaleo;
-			   struct Pokemon fusedLunala;
-			   struct Pokemon fusedGlastrier;
-			   struct Pokemon fusedSpectrier;
+			   struct Pokemon fusions[FUSIONS_COUNT];
 };
 
 struct MapPosition

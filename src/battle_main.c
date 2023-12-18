@@ -2652,6 +2652,7 @@ static void HandleTurnActionSelectionState(void)
                 case B_ACTION_USE_ITEM:
                     if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER))
                     {
+						gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CANT_USE_ITEM;
                         gSelectionBattleScripts[battlerId] = BattleScript_ActionSelectionItemsCantBeUsed;
                         gBattleCommunication[battlerId] = STATE_SELECTION_SCRIPT;
                         gBattleStruct->selectionScriptFinished &= ~(gBitTable[battlerId]);
@@ -2688,7 +2689,8 @@ static void HandleTurnActionSelectionState(void)
                 case B_ACTION_SAFARI_BALL:
                     if (IsPlayerPartyAndPokemonStorageFull())
                     {
-                        gSelectionBattleScripts[battlerId] = BattleScript_PrintFullBox;
+						gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_BOX_FULL;
+                        gSelectionBattleScripts[battlerId] = BattleScript_ActionSelectionItemsCantBeUsed;
                         gBattleCommunication[battlerId] = STATE_SELECTION_SCRIPT;
                         gBattleStruct->selectionScriptFinished &= ~(gBitTable[battlerId]);
                         *(gBattleStruct->stateIdAfterSelScript + battlerId) = STATE_BEFORE_ACTION_CHOSEN;

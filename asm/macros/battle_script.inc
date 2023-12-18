@@ -77,9 +77,8 @@
 	.2byte \id
 	.endm
 
-	.macro printselectionstring id:req
+	.macro nop11
 	.byte 0x11
-	.2byte \id
 	.endm
 
 	.macro waitmessage param0:req
@@ -374,7 +373,7 @@
 	.byte \battler
 	.endm
 
-	.macro endselectionscript
+	.macro nop44
 	.byte 0x44
 	.endm
 
@@ -1453,6 +1452,7 @@
 	.macro trycopyability ptr:req
 	various BS_ATTACKER, VARIOUS_TRY_COPY_ABILITY
 	.4byte \ptr
+	copyability BS_ATTACKER, BS_TARGET
 	.endm
 	
 	.macro jumpifcantgivenickname ptr:req
@@ -1600,6 +1600,10 @@
 	
 	.macro removescreens
 	callfunction BS_RemoveScreens
+	.endm
+	
+	.macro endselectionscript
+	callfunction BS_EndSelectionScript
 	.endm
 	
 @ helpful macros

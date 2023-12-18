@@ -1735,7 +1735,6 @@ BattleScript_EffectRolePlay::
 	ppreduce
 	accuracycheck BattleScript_ButItFailed
 	trycopyability BattleScript_ButItFailed
-	copyability BS_ATTACKER, BS_TARGET
 	attackanimation
 	waitstate
 	abilitycopypopup BS_ATTACKER, BS_TARGET, STRINGID_ATKCOPIEDDEFABL
@@ -2173,11 +2172,10 @@ BattleScript_NeutralizingGasActivatesRet::
 	savebattlers
 	setbyte gBattlerTarget, 0
 BattleScript_NeutralizingGasActivatesLoop::
-    copybyte sBATTLER, gBattlerTarget
-	jumpifabsent BS_SCRIPTING, BattleScript_NeutralizingGasLoopIncrement
-	jumpifbyteequal sBATTLER, gBattlerAttacker, BattleScript_NeutralizingGasLoopIncrement
-    tryneutralizinggassuppression BS_SCRIPTING, BattleScript_NeutralizingGasLoopIncrement
-	tryendeffectonabilitychange BS_SCRIPTING
+	jumpifabsent BS_TARGET, BattleScript_NeutralizingGasLoopIncrement
+	jumpifbyteequal gBattlerTarget, gBattlerAttacker, BattleScript_NeutralizingGasLoopIncrement
+    tryneutralizinggassuppression BS_TARGET, BattleScript_NeutralizingGasLoopIncrement
+	tryendeffectonabilitychange BS_TARGET
 BattleScript_NeutralizingGasLoopIncrement::
     addbyte gBattlerTarget, 1
 	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_NeutralizingGasActivatesLoop
@@ -3092,36 +3090,16 @@ BattleScript_RecoilEnd::
 @ ACTION SELECTION BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_SelectingDisabledMove::
-	printselectionstring STRINGID_ATKCURRMOVEISDISABLED
-	endselectionscript
-
-BattleScript_NoMovesLeft::
-	printselectionstring STRINGID_ATKHASNOMOVESLEFT
-	endselectionscript
-
-BattleScript_SelectingTormentedMove::
-	printselectionstring STRINGID_ATKCANTUSEMOVETORMENT
-	endselectionscript
-
-BattleScript_SelectingNotAllowedMoveTaunt::
-	printselectionstring STRINGID_ATKCANTUSECURRMOVETAUNT
-	endselectionscript
-
-BattleScript_SelectingImprisonedMove::
-	printselectionstring STRINGID_PKMNCANTUSEMOVESEALED
-	endselectionscript
-
-BattleScript_SelectingNotAllowedMoveChoiceItem::
-	printselectionstring STRINGID_LASTITEMALLOWSONLYCURRMOVE
-	endselectionscript
-
-BattleScript_SelectingMoveWithNoPP::
-	printselectionstring STRINGID_NOPPLEFT
+BattleScript_SelectingNotAllowedMove::
+    printselectionstringfromtable gNotAllowedMoveStringIds
 	endselectionscript
 
 BattleScript_PrintCantEscapeFromBattle::
 	printselectionstringfromtable gNoEscapeStringIds
+	endselectionscript
+
+BattleScript_ActionSelectionItemsCantBeUsed::
+    printselectionstringfromtable gCantUseItemStringIds
 	endselectionscript
 
 @@@@@@@@@@@@@@@@@@@@@@@@
@@ -4086,13 +4064,6 @@ BattleScript_SmokeBallEscape::
 	waitmessage 0x40
 	end2
 
-
-
-
-BattleScript_PrintFullBox::
-	printselectionstring STRINGID_BOXISFULL
-	endselectionscript
-
 BattleScript_ActionSwitch::
 	hpthresholds2 BS_ATTACKER
 	printstring STRINGID_RETURNMON
@@ -4674,10 +4645,6 @@ BattleScript_BerryFocusEnergyEnd2::
 	waitmessage 0x40
 	removeitem BS_ATTACKER
 	end2
-
-BattleScript_ActionSelectionItemsCantBeUsed::
-	printselectionstring STRINGID_ITEMSCANTBEUSEDNOW
-	endselectionscript
 
 BattleScript_TrainerSlideMsgEnd2::
        call BattleScript_TrainerSlideMsg
