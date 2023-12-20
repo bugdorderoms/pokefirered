@@ -129,7 +129,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 	if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD))
 	{
 		// Check Shield Dust
-		if (!primary && defAbility == ABILITY_SHIELD_DUST && moveEffect <= MOVE_EFFECT_TRI_ATTACK)
+		if (!primary && defAbility == ABILITY_SHIELD_DUST && moveEffect <= MOVE_EFFECT_SECRET_POWER)
 			INCREMENT_RETURN
 		
 		if (!primary && CanSafeguardProtectBattler(gBattleScripting.battler, gEffectBattler) && moveEffect <= MOVE_EFFECT_CONFUSION)
@@ -277,7 +277,14 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			break;
 		case MOVE_EFFECT_TRI_ATTACK:
 		    SetMoveEffect(Random() % 3 + MOVE_EFFECT_BURN, FALSE, FALSE);
-			return DoMoveEffect(FALSE, TRUE, 0);
+			return DoMoveEffect(primary, jumpToScript, 0);
+		case MOVE_EFFECT_SECRET_POWER:
+		    if (gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_1ST_HIT) // Only apply on final hit
+			{
+				SetMoveEffect(GetSecretPowerEffect(), FALSE, FALSE);
+				return DoMoveEffect(primary, jumpToScript, 0);
+			}
+			break;
 		case MOVE_EFFECT_UPROAR:
 		    if (!(gBattleMons[gEffectBattler].status2 & STATUS2_UPROAR))
 			{

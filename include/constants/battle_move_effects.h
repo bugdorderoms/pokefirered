@@ -161,6 +161,12 @@
 #define EFFECT_SKILL_SWAP 156
 #define EFFECT_IMPRISON 157
 #define EFFECT_REFRESH 158
+#define EFFECT_GRUDGE 159
+#define EFFECT_SNATCH 160
+#define EFFECT_SECRET_POWER 161
+#define EFFECT_CAMOUFLAGE 162
+#define EFFECT_SPECIAL_ATTACK_UP_3 163
+#define EFFECT_SPECIAL_ATTACK_DOWN_HIT 164
 
 #define EFFECT_SPEED_UP 12
 #define EFFECT_SPECIAL_ATTACK_UP 13
@@ -176,12 +182,8 @@
 #define EFFECT_SPECIAL_ATTACK_DOWN_2 61
 #define EFFECT_SPECIAL_DEFENSE_DOWN_2 62
 #define EFFECT_ACCURACY_DOWN_2 63
-#define EFFECT_SPECIAL_ATTACK_DOWN_HIT 71
 #define EFFECT_EVASION_DOWN_HIT 74
 #define EFFECT_FLINCH_MINIMIZE_HIT 150
-#define EFFECT_GRUDGE 194
-#define EFFECT_SNATCH 195
-#define EFFECT_SECRET_POWER 197
 #define EFFECT_TEETER_DANCE 199
 #define EFFECT_MUD_SPORT 201
 #define EFFECT_POISON_FANG 202
@@ -194,7 +196,6 @@
 #define EFFECT_WATER_SPORT 210
 #define EFFECT_CALM_MIND 211
 #define EFFECT_DRAGON_DANCE 212
-#define EFFECT_CAMOUFLAGE 213
 #define EFFECT_NATURAL_GIFT                 214
 #define EFFECT_WAKE_UP_SLAP                 215
 #define EFFECT_WRING_OUT                    216
@@ -370,7 +371,6 @@
 #define EFFECT_DARK_VOID                    389
 #define EFFECT_PLEDGE                       390
 #define EFFECT_FLING                        391
-#define EFFECT_SPECIAL_ATTACK_UP_3          392
 #define EFFECT_FUSION_COMBO                 393
 #define EFFECT_HEAL_BLOCK                   394
 #define EFFECT_HAMMER_ARM 396
@@ -392,10 +392,10 @@
 #define MOVE_EFFECT_TOXIC               6
 #define MOVE_EFFECT_CONFUSION           7 // From here to up all prevented by Safeguard
 #define MOVE_EFFECT_FLINCH              8
-#define MOVE_EFFECT_TRI_ATTACK          9 // From here to up are all prevented by Shield Dust
-#define MOVE_EFFECT_UPROAR              10
+#define MOVE_EFFECT_TRI_ATTACK          9
+#define MOVE_EFFECT_SECRET_POWER        10 // From here to up are all prevented by Shield Dust
 #define MOVE_EFFECT_PAYDAY              11
-#define MOVE_EFFECT_CHARGING            12 // Unused
+#define MOVE_EFFECT_UPROAR              12
 #define MOVE_EFFECT_WRAP                13
 #define MOVE_EFFECT_INCINERATE          14 // TODO
 #define MOVE_EFFECT_ATK_PLUS_1          15

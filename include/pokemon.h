@@ -224,7 +224,8 @@ struct MoveFlags
 	u32 callOtherMove:1; // A move with this flag will be considered a "Move that call other moves".
 	u32 noEffectiveness:1; // A move with this flag will not display the "Its super effective" and "Its not very effective" message.
 	u32 recoilDivisor:3; // Used by EFFECT_RECOIL and EFFECT_RECOIL_HP to determine the recoil damage.
-	u32 unused:19;
+	u32 forcePressure:1; // A move with this flag will force the extra PP consuption from Pressure.
+	u32 unused:18;
 };
 
 struct BattleMove

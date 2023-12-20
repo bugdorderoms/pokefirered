@@ -1163,7 +1163,7 @@
 	.byte 0xe3
 	.endm
 
-	.macro getsecretpowereffect
+	.macro nope4
 	.byte 0xe4
 	.endm
 
@@ -1203,7 +1203,7 @@
 	.4byte \param0
 	.endm
 
-	.macro snatchsetbattlers
+	.macro noped
 	.byte 0xed
 	.endm
 
@@ -1604,6 +1604,10 @@
 	
 	.macro endselectionscript
 	callfunction BS_EndSelectionScript
+	.endm
+	
+	.macro snatchsetbattlers
+	callfunction BS_SnatchSetBattlers
 	.endm
 	
 @ helpful macros

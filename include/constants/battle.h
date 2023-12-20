@@ -160,7 +160,7 @@
 #define HITMARKER_PASSIVE_DAMAGE        (1 << 10)
 #define HITMARKER_PLAYER_FAINTED        (1 << 11)
 #define HITMARKER_ALLOW_NO_PP           (1 << 12)
-#define HITMARKER_GRUDGE                (1 << 13)
+#define HITMARKER_IGNORE_GRUDGE         (1 << 13)
 #define HITMARKER_OBEYS                 (1 << 14)
 #define HITMARKER_CHARGING              (1 << 15)
 #define HITMARKER_IGNORE_DISGUISE       (1 << 16)

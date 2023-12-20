@@ -890,6 +890,13 @@ static const struct FormChange sSandacondaFormChangeTable[] =
 	FORM_CHANGE_END,
 };
 
+static const struct FormChange sCramorantFormChangeTable[] =
+{
+	FORM_CHANGE(FORM_CHANGE_HP, SPECIES_CRAMORANT_GULPING, 2, HP_FORM_GT),
+	FORM_CHANGE(FORM_CHANGE_HP, SPECIES_CRAMORANT_GORGING, 2, HP_FORM_LS),
+	FORM_CHANGE_END,
+};
+
 static const struct FormChange sToxtricityAmpedFormChangeTable[] =
 {
 	TOXTRICITY_NATURE_FORMS,

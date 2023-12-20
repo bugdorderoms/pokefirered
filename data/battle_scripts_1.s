@@ -175,16 +175,20 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectSkillSwap             @ EFFECT_SKILL_SWAP
 	.4byte BattleScript_EffectImprison              @ EFFECT_IMPRISON
 	.4byte BattleScript_EffectRefresh               @ EFFECT_REFRESH
+	.4byte BattleScript_EffectGrudge                @ EFFECT_GRUDGE
+	.4byte BattleScript_EffectSnatch                @ EFFECT_SNATCH
+	.4byte BattleScript_EffectSecretPower           @ EFFECT_SECRET_POWER
+	.4byte BattleScript_EffectCamouflage            @ EFFECT_CAMOUFLAGE
+	.4byte BattleScript_EffectHit                   @ EFFECT_SPECIAL_ATTACK_UP_3
+	.4byte BattleScript_EffectSpecialAttackDownHit  @ EFFECT_SPECIAL_ATTACK_DOWN_HIT
 	
 	.4byte BattleScript_EffectSpecialAttackUp       @ 
 	.4byte BattleScript_EffectSpeedDown             @ 
 	.4byte BattleScript_EffectSpecialAttackUp2      @ 
 	.4byte BattleScript_EffectSpecialDefenseDown2   @ 
-	.4byte BattleScript_EffectSpecialAttackDownHit  @ 
 	.4byte BattleScript_EffectThief                 @ 
 	.4byte BattleScript_EffectCurse                 @ 
 	.4byte BattleScript_EffectThawHit               @ 
-	.4byte BattleScript_EffectHit                   @ 
 	.4byte BattleScript_EffectHit                   @ 
 	.4byte BattleScript_EffectHit                   @ 
 	.4byte BattleScript_EffectHit                   @ 
@@ -196,10 +200,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectKnockOff
 	.4byte BattleScript_EffectHit
-	.4byte BattleScript_EffectGrudge
-	.4byte BattleScript_EffectSnatch
 	.4byte BattleScript_EffectHit
-	.4byte BattleScript_EffectSecretPower
 	.4byte BattleScript_EffectHit
 	.4byte BattleScript_EffectTeeterDance
 	.4byte BattleScript_EffectHit
@@ -215,7 +216,6 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectMudSport
 	.4byte BattleScript_EffectCalmMind
 	.4byte BattleScript_EffectDragonDance
-	.4byte BattleScript_EffectCamouflage
 
 @@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE BATTLE SCRIPTS @
@@ -1891,6 +1891,62 @@ BattleScript_EffectRefresh::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+@ EFFECT_GRUDGE @
+
+BattleScript_EffectGrudge::
+	attackcanceler
+	attackstring
+	ppreduce
+	trysetgrudge BattleScript_ButItFailed
+	attackanimation
+	waitstate
+	printstring STRINGID_PKMNWANTSGRUDGE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ EFFECT_SNATCH @
+
+BattleScript_EffectSnatch::
+	attackcanceler
+	trysetsnatch BattleScript_ButItFailedAtkStringPpReduce
+	attackstring
+	ppreduce
+	attackanimation
+	waitstate
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_PKMNWAITSFORTARGET
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ EFFECT_SECRET_POWER @
+
+BattleScript_EffectSecretPower::
+    setmoveeffect MOVE_EFFECT_SECRET_POWER
+	goto BattleScript_EffectHit
+
+@ EFFECT_CAMOUFLAGE @
+
+BattleScript_EffectCamouflage::
+	attackcanceler
+	attackstring
+	ppreduce
+	settypetoterrain BattleScript_ButItFailed
+	attackanimation
+	waitstate
+	printstring STRINGID_PKMNTYPECHANGEDTOBUFF1
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ EFFECT_SPECIAL_ATTACK_UP_3 @
+
+
+
+@ EFFECT_SPECIAL_ATTACK_DOWN_HIT @
+
+BattleScript_EffectSpecialAttackDownHit::
+	setmoveeffect MOVE_EFFECT_SP_ATK_MINUS_1
+	goto BattleScript_EffectHit
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2563,11 +2619,23 @@ BattleScript_PoisonTouchActivation::
 	removeabilitypopup BS_ATTACKER
 	return
 
+BattleScript_GulpMissileSpitUpPrey::
+    playanimation BS_TARGET, B_ANIM_FORM_CHANGE @ assign it an apropriated animation
+	waitstate
+	setbyte sBYPASS_ABILITY_POP_UP, TRUE
+	jumpifability BS_ATTACKER, ABILITY_MAGIC_GUARD, BattleScript_ApplySecondaryEffect
+	playanimation BS_ATTACKER, B_ANIM_MON_HIT
+	waitstate
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	tryfaintmon BS_ATTACKER
 BattleScript_ApplySecondaryEffect::
 	waitstate
 	loadabilitypopup BS_TARGET
 	seteffectsecondary STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE @ These are already checked
 	removeabilitypopup BS_TARGET
+	setbyte sBYPASS_ABILITY_POP_UP, FALSE @ clear it if set
 	return
 
 BattleScript_LimberProtected::
@@ -2642,6 +2710,11 @@ BattleScript_MonMadeMoveUseless::
 	call BattleScript_AvoidMoveWithAbility
 	orhalfword gMoveResultFlags, MOVE_RESULT_DOESNT_AFFECT_FOE
 	goto BattleScript_MoveEnd
+
+BattleScript_GulpMissileCatchPrey::
+    playanimation BS_ATTACKER, B_ANIM_FORM_CHANGE
+	waitstate
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ ATTACKCANCELLER BATTLE SCRIPTS @
@@ -3300,6 +3373,22 @@ BattleScript_DestinyBondTakesLife::
 	tryfaintmon BS_ATTACKER
 	return
 
+BattleScript_GrudgeTakesPp::
+	printstring STRINGID_PKMNLOSTPPGRUDGE
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_SnatchedMove::
+	attackstring
+	ppreduce
+	snatchsetbattlers
+	playanimation BS_TARGET, B_ANIM_SNATCH_MOVE
+	printstring STRINGID_PKMNSNATCHEDMOVE
+	waitmessage B_WAIT_TIME_LONG
+	orword gHitMarker, HITMARKER_ATTACKSTRING_PRINTED | HITMARKER_NO_PPDEDUCT | HITMARKER_ALLOW_NO_PP
+	swapattackerwithtarget
+	return
+
 @@@@@@@@@@@@@@@@@@@@@@@@@
 @ ACTION BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3356,10 +3445,6 @@ BattleScript_EffectSpecialAttackUp2::
 BattleScript_EffectSpecialDefenseDown2::
 	setstatchanger STAT_SPDEF, 2, TRUE
 	goto BattleScript_EffectStatDown
-
-BattleScript_EffectSpecialAttackDownHit::
-	setmoveeffect MOVE_EFFECT_SP_ATK_MINUS_1
-	goto BattleScript_EffectHit
 
 BattleScript_EffectThief::
 	setmoveeffect MOVE_EFFECT_STEAL_ITEM
@@ -3622,33 +3707,6 @@ BattleScript_EffectKnockOff::
 	setmoveeffect MOVE_EFFECT_KNOCK_OFF
 	goto BattleScript_EffectHit
 
-BattleScript_EffectGrudge::
-	attackcanceler
-	attackstring
-	ppreduce
-	trysetgrudge BattleScript_ButItFailed
-	attackanimation
-	waitstate
-	printstring STRINGID_PKMNWANTSGRUDGE
-	waitmessage 0x40
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectSnatch::
-	attackcanceler
-	trysetsnatch BattleScript_ButItFailedAtkStringPpReduce
-	attackstring
-	ppreduce
-	attackanimation
-	waitstate
-	pause 0x20
-	printstring STRINGID_PKMNWAITSFORTARGET
-	waitmessage 0x40
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectSecretPower::
-	getsecretpowereffect
-	goto BattleScript_EffectHit
-
 BattleScript_EffectTeeterDance::
 	attackcanceler
 	attackstring
@@ -3856,17 +3914,6 @@ BattleScript_DragonDanceTrySpeed::
 	printfromtable gStatUpStringIds
 	waitmessage 0x40
 BattleScript_DragonDanceEnd::
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectCamouflage::
-	attackcanceler
-	attackstring
-	ppreduce
-	settypetoterrain BattleScript_ButItFailed
-	attackanimation
-	waitstate
-	printstring STRINGID_PKMNTYPECHANGEDTOBUFF1
-	waitmessage 0x40
 	goto BattleScript_MoveEnd
 
 BattleScript_FaintAttacker::
@@ -4292,22 +4339,6 @@ BattleScript_KnockedOff::
 	playanimation BS_TARGET, B_ANIM_ITEM_KNOCKOFF
 	printstring STRINGID_PKMNKNOCKEDOFF
 	waitmessage 0x40
-	return
-
-BattleScript_GrudgeTakesPp::
-	printstring STRINGID_PKMNLOSTPPGRUDGE
-	waitmessage 0x40
-	return
-
-BattleScript_SnatchedMove::
-	attackstring
-	ppreduce
-	snatchsetbattlers
-	playanimation BS_TARGET, B_ANIM_SNATCH_MOVE
-	printstring STRINGID_PKMNSNATCHEDMOVE
-	waitmessage 0x40
-	orword gHitMarker, HITMARKER_ATTACKSTRING_PRINTED | HITMARKER_NO_PPDEDUCT | HITMARKER_ALLOW_NO_PP
-	swapattackerwithtarget
 	return
 
 BattleScript_MonWokeUpInUproar::

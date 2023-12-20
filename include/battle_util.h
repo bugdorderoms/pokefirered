@@ -73,9 +73,6 @@ enum
 #define IS_WHOLE_SIDE_ALIVE(battler) ((CountAliveMonsInBattle(battler, BATTLE_ALIVE_SIDE) >= 2))
 
 u8 GetBattlerForBattleScript(u8 caseId);
-void PressurePPLose(u8 target, u8 attacker, u16 move);
-void PressurePPLoseOnUsingImprison(u8 attacker);
-void PressurePPLoseOnUsingPerishSong(u8 attacker);
 void MarkAllBattlersForControllerExec(void);
 void MarkBattlerForControllerExec(u8 battlerId);
 void MarkBattlerReceivedLinkData(u8 battlerId);
@@ -187,7 +184,7 @@ u8 GetTrappingIdByMove(u16 move);
 s32 GetDrainedBigRootHp(u8 battlerId, s32 hp);
 void SetTypeBeforeUsingMove(u16 move, u8 battler);
 bool8 CanTransformIntoBattler(u8 battler1, u8 battler2);
-bool8 CanDisableMove(u8 battlerId, u8 movePos, u16 move);
+bool8 TryDisableMove(u8 battlerId, u8 movePos, u16 move);
 bool8 CanSafeguardProtectBattler(u8 attacker, u8 defender);
 bool8 IsBattlerProtectedByFlowerVeil(u8 battlerId);
 u8 GetFutureAttackStringId(u16 move);
@@ -199,5 +196,6 @@ bool8 CopyBattlerCritModifier(u8 attacker, u8 defender);
 bool8 TryRemoveScreens(u8 battler, bool8 fromBothSides);
 bool8 DoesSpreadMoveStrikesOnlyOnce(u8 attacker, u8 defender, u16 move, bool8 checkTargetsDone);
 u8 GetTypeChangingMoveType(struct Pokemon *mon, u16 move);
+u8 GetSecretPowerEffect(void);
 
 #endif // GUARD_BATTLE_UTIL_H

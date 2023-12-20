@@ -299,6 +299,8 @@ extern const u8 BattleScript_WatchesCarefully[];
 extern const u8 BattleScript_ThrowRock[];
 extern const u8 BattleScript_ThrowBait[];
 extern const u8 BattleScript_LeftoverWallyPrepToThrow[];
+extern const u8 BattleScript_GulpMissileCatchPrey[];
+extern const u8 BattleScript_GulpMissileSpitUpPrey[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForUsingItem[];

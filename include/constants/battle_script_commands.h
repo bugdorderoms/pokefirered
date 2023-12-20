@@ -2,12 +2,12 @@
 #define GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H
 
 // Flags for the CanBe* statused functions
-#define STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD          (1 << 0) // Also Flower Veil
-#define STATUS_CHANGE_FLAG_CHECK_UPROAR              (1 << 1)
-#define STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS     (1 << 2)
-#define STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE         (1 << 3)
-#define STATUS_CHANGE_FLAG_ALL (STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_CHECK_UPROAR | STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS \
-                               | STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE)
+#define STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD      (1 << 0) // Also Flower Veil
+#define STATUS_CHANGE_FLAG_CHECK_UPROAR          (1 << 1)
+#define STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS (1 << 2)
+#define STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE     (1 << 3)
+#define STATUS_CHANGE_FLAG_ALL                   (STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_CHECK_UPROAR            \
+                                                | STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS | STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE)
 
 // Battle Scripting addresses
 #define sPAINSPLIT_HP gBattleScripting + 0x0
@@ -130,7 +130,6 @@
 #define ATK49_CLEAR_BITS                        24
 #define ATK49_COUNT                             25
 
-// TODO: documentation
 // Atk76, various cases
 #define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       0
 #define VARIOUS_TRY_COPY_ABILITY                    1

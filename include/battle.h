@@ -193,7 +193,7 @@ struct SpecialStatus
     u32 lightningRodRedirected:1;
 	u32 stormDrainRedirected:1;
     u32 restoredBattlerSprite:1;
-    u32 ppNotAffectedByPressure:1;
+    u32 removedWeatherChangeAbility:1;
     u32 faintedHasReplacement:1;
     u32 focusBanded:1;
     u32 sturdied:1;
@@ -208,8 +208,7 @@ struct SpecialStatus
 	// end of byte
 	u32 multiHitOn:1;
 	u32 announceUnnerve:1;
-	u32 removedWeatherChangeAbility:1;
-	u32 unused:5;
+	u32 unused:6;
 	// end of byte
 	u32 unused2:8;
     u8 physicalBattlerId;
@@ -468,6 +467,8 @@ extern struct BattleStruct *gBattleStruct;
 #define IS_MOVE_STATUS(move)((GetMoveSplit(move) == SPLIT_STATUS))
 
 #define BATTLER_DAMAGED(battlerId) ((gSpecialStatuses[battlerId].physicalDmg != 0 || gSpecialStatuses[battlerId].specialDmg != 0))
+#define BATTLER_TURN_DAMAGED(battlerId) ((!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && BATTLER_DAMAGED(battlerId) \
+                                         && !gProtectStructs[gBattlerAttacker].confusionSelfDmg))
 
 #define IS_BATTLER_OF_TYPE(battlerId, type)((gBattleMons[battlerId].type1 == type || gBattleMons[battlerId].type2 == type || (gBattleMons[battlerId].type3 != TYPE_MYSTERY && gBattleMons[battlerId].type3 == type)))
 
