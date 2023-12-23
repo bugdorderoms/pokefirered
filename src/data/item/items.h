@@ -7282,7 +7282,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_N_SOLARIZER] =
 	{
 		.name = _("N-Solarizer"),
-		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
+		.holdEffectParam = FORM_CHANGE_ANIM_LIGHT_ABSORPTION, // form change anim Id
 		.description = sItemDesc_NSolarizer,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
@@ -7291,7 +7291,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_N_LUNARIZER] =
 	{
 		.name = _("N-Lunarizer"),
-		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
+		.holdEffectParam = FORM_CHANGE_ANIM_LIGHT_ABSORPTION, // form change anim Id
 		.description = sItemDesc_NLunarizer,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,

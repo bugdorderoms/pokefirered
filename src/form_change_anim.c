@@ -24,10 +24,12 @@ struct FormChangeAnimData
 	u16 newSpecies;
 };
 
+static void SpriteCB_LightAbsorption(struct Sprite *sprite);
 static void Task_DoFusionWhiteScreen(u8 taskId);
 static void Task_DoMosaicFormChangeAnim(u8 taskId);
 static void Task_DoGracideaFlowersFormChangeAnim(u8 taskId);
 static void Task_DoPurpleCloudFormChangeAnim(u8 taskId);
+static void Task_DoLightAbsorptionFormChangeAnim(u8 taskId);
 
 static EWRAM_DATA struct FormChangeAnimData *sFormChangeAnimData = NULL;
 
@@ -36,6 +38,7 @@ static const TaskFunc sFormChangeAnimsTable[] =
 	[FORM_CHANGE_ANIM_MOSAIC]           = Task_DoMosaicFormChangeAnim,
 	[FORM_CHANGE_ANIM_GRACIDEA_FLOWERS] = Task_DoGracideaFlowersFormChangeAnim,
 	[FORM_CHANGE_ANIM_PURPLE_CLOUD]     = Task_DoPurpleCloudFormChangeAnim,
+	[FORM_CHANGE_ANIM_LIGHT_ABSORPTION] = Task_DoLightAbsorptionFormChangeAnim,
 };
 
 // Init the form change animation
@@ -93,13 +96,32 @@ static struct Sprite *CreateSpriteForFormChangeAnim(const struct SpriteTemplate 
 	return sprite;
 }
 
+// Destroy a sprite
+static void DestroyFormChangeAnimSprite(struct Sprite *sprite)
+{
+	DestroySprite(sprite);
+	--sFormChangeAnimData->numSpritesCreated;
+}
+
+// Destroy all sprites at a time
+static void DestroyAllFormChangeSpritesCreated(void)
+{
+	u8 i;
+	
+	for (i = 0; i < NUM_FORM_CHANGE_ANIM_SPRITES; i++)
+	{
+		if (sFormChangeAnimData->sprites1[i] != NULL)
+			DestroyFormChangeAnimSprite(sFormChangeAnimData->sprites1[i]);
+		
+		if (sFormChangeAnimData->sprites2[i] != NULL)
+			DestroyFormChangeAnimSprite(sFormChangeAnimData->sprites2[i]);
+	}
+}
+
 static void SpriteCB_WaitSpriteAffineAnim(struct Sprite *sprite)
 {
 	if (sprite->affineAnimEnded)
-	{
-		DestroySprite(sprite);
-		--sFormChangeAnimData->numSpritesCreated;
-	}
+		DestroyFormChangeAnimSprite(sprite);
 }
 
 //////////////////
@@ -503,3 +525,195 @@ static void Task_DoPurpleCloudFormChangeAnim(u8 taskId)
 }
 
 #undef tWaitCounter
+
+//////////////////////////////////////
+// FORM_CHANGE_ANIM_LIGHT_Absorption //
+//////////////////////////////////////
+
+#define LIGHT_CREATION_DELAY 5 // Num frames to wait before create a new light sprite
+#define LIGHT_MOVING_SPEED   7 // Light movement speed, how higher more slow it moves
+
+static const u16 sLightAbsorptionGfx[] = INCBIN_U16("graphics/form_change/lights.4bpp");
+static const u16 sLightAbsorptionPalette[] = INCBIN_U16("graphics/form_change/lights.gbapal");
+
+static const struct SpriteSheet sSpriteSheet_LightAbsorption =
+{
+	sLightAbsorptionGfx, sizeof(sLightAbsorptionGfx), FORM_CHANGE_ANIM_SPRITE_TAG
+};
+
+static const struct SpritePalette sSpritePalette_LightAbsorption =
+{
+    sLightAbsorptionPalette, FORM_CHANGE_ANIM_SPRITE_TAG
+};
+
+static const union AffineAnimCmd sAffineAnim_LightAbsorption[] =
+{
+	AFFINEANIMCMD_FRAME(-2, -2, 0, 1), // Gradually decrease size
+	AFFINEANIMCMD_JUMP(0), // Loop the anim
+};
+
+static const union AffineAnimCmd *const sAffineAnimTable_LightAbsorption[] =
+{
+	sAffineAnim_LightAbsorption,
+};
+
+static const union AnimCmd sAnim_LightAbsorptionBlack[] =
+{
+    ANIMCMD_FRAME(0, 0), // Black orb
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_LightAbsorptionWhite[] =
+{
+	ANIMCMD_FRAME(4, 0), // White orb
+    ANIMCMD_END,
+};
+
+static const union AnimCmd *const sAnimTable_LightAbsorption[] =
+{
+    sAnim_LightAbsorptionBlack,
+	sAnim_LightAbsorptionWhite,
+};
+
+static const struct OamData sOamData_LightAbsorption =
+{
+	.y = 0,
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.bpp = ST_OAM_4BPP,
+	.shape = SPRITE_SHAPE(16x16),
+	.x = 0,
+	.size = SPRITE_SIZE(16x16),
+	.tileNum = 0,
+	.priority = 0,
+	.paletteNum = 0,
+};
+
+static const struct SpriteTemplate sSpriteTemplate_LightAbsorption =
+{
+	.tileTag = FORM_CHANGE_ANIM_SPRITE_TAG,
+	.paletteTag = FORM_CHANGE_ANIM_SPRITE_TAG,
+	.oam = &sOamData_LightAbsorption,
+	.anims = sAnimTable_LightAbsorption,
+	.images = NULL,
+	.affineAnims = sAffineAnimTable_LightAbsorption,
+	.callback = SpriteCB_LightAbsorption,
+};
+
+
+static const struct Coords8 sLightAbsorptionDeltas[NUM_FORM_CHANGE_ANIM_SPRITES] =
+{
+	{.x =   9, .y = -11},
+	{.x =  20, .y = -13},
+	{.x =   8, .y =  11},
+	{.x = -14, .y =   9},
+	{.x =  13, .y = -14},
+	{.x =  19, .y =   9},
+	{.x =  15, .y =  18},
+	{.x = -10, .y = -19},
+	{.x = -16, .y =  13},
+	{.x =  -7, .y =  19},
+};
+
+static void SpriteCB_LightAbsorption(struct Sprite *sprite)
+{
+	if (++sprite->data[2] >= LIGHT_MOVING_SPEED)
+	{
+		sprite->data[2] = 0;
+		
+		if (sprite->x2 != 0)
+	    	sprite->x2 += sprite->data[0];
+	    
+	    if (sprite->y2 != 0)
+	    	sprite->y2 += sprite->data[1];
+	}
+}
+
+static struct Sprite *CreateLightAbsorptionSprite(struct Sprite *linker, s8 x, s8 y, u8 idx, bool8 secondFrame)
+{
+	struct Sprite *sprite = CreateSpriteForFormChangeAnim(&sSpriteTemplate_LightAbsorption, linker, 0, 0, idx & 1);
+	StartSpriteAnim(sprite, secondFrame);
+	
+	sprite->x2 = x;
+	sprite->y2 = y;
+	
+	// Movement direction
+	sprite->data[0] = x < 0 ? 1 : -1;
+	sprite->data[1] = y < 0 ? 1 : -1;
+	
+	sprite->data[2] = 0;
+	
+	return sprite;
+}
+
+static bool8 CreateLightAbsorptionSprites(u8 idx)
+{
+	if (idx < NUM_FORM_CHANGE_ANIM_SPRITES)
+	{
+		s8 x = sLightAbsorptionDeltas[idx].x, y = sLightAbsorptionDeltas[idx].y;
+		
+		sFormChangeAnimData->sprites1[idx] = CreateLightAbsorptionSprite(sFormChangeAnimData->icon1, x, y, idx, FALSE);
+		
+		if (sFormChangeAnimData->icon2 != NULL)
+			sFormChangeAnimData->sprites2[idx] = CreateLightAbsorptionSprite(sFormChangeAnimData->icon2, x, y, idx, TRUE);
+		
+		return TRUE;
+	}
+	return FALSE;
+}
+
+#define tDelay        data[0]
+#define tCurrSpriteId data[1]
+
+static void Task_DoLightAbsorptionFormChangeAnim(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+	
+	switch (sFormChangeAnimData->stepId)
+	{
+		case 0:
+		    PlaySE(SE_M_MEGA_KICK);
+			LoadSpriteSheet(&sSpriteSheet_LightAbsorption);
+			LoadSpritePalette(&sSpritePalette_LightAbsorption);
+			++sFormChangeAnimData->stepId;
+			// Fallthrough
+		case 1:
+			tDelay = 0;
+			tCurrSpriteId = 0;
+			++sFormChangeAnimData->stepId;
+			// Fallthrough
+		case 2:
+			if (--tDelay <= 0)
+			{
+				if (CreateLightAbsorptionSprites(tCurrSpriteId))
+				{
+					++tCurrSpriteId;
+					tDelay = LIGHT_CREATION_DELAY;
+				}
+				else
+				{
+					tDelay = 25;
+					++sFormChangeAnimData->stepId;
+				}
+			}
+			break;
+		case 3:
+			if (--tDelay == 0)
+			{
+				DoFusionWhiteScreenOrUpdateIcon();
+				tDelay = 10;
+				++sFormChangeAnimData->stepId;
+			}
+			break;
+		case 4:
+		    if (--tDelay == 0)
+			{
+				DestroyAllFormChangeSpritesCreated();
+				InitPlayMonCryAfterFormChangeTask(taskId);
+			}
+			break;
+	}
+}
+
+#undef tDelay
+#undef tCurrSpriteId
