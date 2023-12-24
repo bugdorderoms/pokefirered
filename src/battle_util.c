@@ -1978,30 +1978,38 @@ u8 AtkCanceller_UnableToUseMove(void)
 					}
 					else
 					{
-						u8 toSub = STATUS1_SLEEP_TURN(GetBattlerAbility(gBattlerAttacker) == ABILITY_EARLY_BIRD ? 2 : 1);
-						
-						if ((gBattleMons[gBattlerAttacker].status1 & STATUS1_SLEEP) <= toSub)
-						{
-							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WOKEUP;
-							effect = 1; // Wake up
-						}
+						if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE) // Prevent from wake up
+							effect = 2;
 						else
 						{
-							gBattleMons[gBattlerAttacker].status1 -= toSub;
+							u8 toSub = STATUS1_SLEEP_TURN(GetBattlerAbility(gBattlerAttacker) == ABILITY_EARLY_BIRD ? 2 : 1);
 							
-							if (gBattleMoves[gCurrentMove].effect != EFFECT_SNORE && gBattleMoves[gCurrentMove].effect != EFFECT_SLEEP_TALK)
-							{
-								gBattlescriptCurrInstr = BattleScript_MoveUsedIsAsleep;
-								gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+							if ((gBattleMons[gBattlerAttacker].status1 & STATUS1_SLEEP) <= toSub)
+						    {
+						    	gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WOKEUP;
+						    	effect = 1; // Wake up
+						    }
+						    else
+						    {
+						    	gBattleMons[gBattlerAttacker].status1 -= toSub;
 								effect = 2; // Asleep
-							}
+						    }
 						}
 					}
 					
-					if (effect == 1)
+					switch (effect)
 					{
-						ClearBattlerStatus(gBattlerAttacker);
-						BattleScriptCall(BattleScript_MoveUsedWokeUp);
+						case 1: // Wake up
+						    ClearBattlerStatus(gBattlerAttacker);
+							BattleScriptCall(BattleScript_MoveUsedWokeUp);
+							break;
+						case 2: // Asleep
+						    if (gBattleMoves[gCurrentMove].effect != EFFECT_SNORE && gBattleMoves[gCurrentMove].effect != EFFECT_SLEEP_TALK)
+							{
+								gBattlescriptCurrInstr = BattleScript_MoveUsedIsAsleep;
+								gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+							}
+						    break;
 					}
                 }
 				++gBattleStruct->atkCancellerTracker;

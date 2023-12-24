@@ -956,11 +956,7 @@ void DrawBattleEntryBackground(void)
                 return;
             }
         }
-
-        if (GetCurrentMapBattleScene() == MAP_BATTLE_SCENE_NORMAL)
-            LoadBattleTerrainEntryGfx(gBattleTerrain);
-        else
-            LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_BUILDING);
+		LoadBattleTerrainEntryGfx(GetCurrentMapBattleScene() == MAP_BATTLE_SCENE_NORMAL ? gBattleTerrain : BATTLE_TERRAIN_BUILDING);
     }
 }
 

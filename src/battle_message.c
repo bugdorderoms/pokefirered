@@ -1878,9 +1878,11 @@ void BufferStringBattle(u8 battlerId, u16 stringId)
         sBattlerAbilities[i] = sBattleMsgDataPtr->abilities[i];
 
     for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)
+	{
 		gBattleTextBuff1[i] = sBattleMsgDataPtr->textBuffs[0][i];
-        gBattleTextBuff2[i] = sBattleMsgDataPtr->textBuffs[1][i];
-        gBattleTextBuff3[i] = sBattleMsgDataPtr->textBuffs[2][i];
+		gBattleTextBuff2[i] = sBattleMsgDataPtr->textBuffs[1][i];
+		gBattleTextBuff3[i] = sBattleMsgDataPtr->textBuffs[2][i];
+	}
 		
     switch (stringId)
     {

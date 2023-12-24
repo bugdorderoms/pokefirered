@@ -690,7 +690,7 @@ static const struct PokedudeBattlePartyInfo sParties_Battle[] =
     },
     {
         .side = B_SIDE_OPPONENT,
-        .level = 18,
+        .level = 15,
         .species = SPECIES_PIDGEY,
         .moves = { MOVE_TACKLE, MOVE_SAND_ATTACK, MOVE_GUST, MOVE_QUICK_ATTACK },
         .nature = NATURE_NAUGHTY,
