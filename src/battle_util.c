@@ -120,6 +120,7 @@ static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
     [ABILITY_PURIFYING_SALT] = TRUE,
     [ABILITY_WELL_BAKED_BODY] = TRUE,
     [ABILITY_WIND_RIDER] = TRUE,
+	[ABILITY_ILLUMINATE] = TRUE,
 };
 
 static const u16 sWeatherFlagsInfo[][2] =

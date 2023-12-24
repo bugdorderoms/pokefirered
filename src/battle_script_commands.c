@@ -1029,7 +1029,8 @@ static u32 CalcMoveTotalAccuracy(u16 move, u8 attacker, u8 defender)
 		accuracyStatStages = DEFAULT_STAT_STAGES; // Set accuracy stages to default
 	
 	// Check effects that ignore the target's evasion stat stages
-	if (atkAbility == ABILITY_KEEN_EYE || atkAbility == ABILITY_UNAWARE || (gBattleMons[defender].status2 & STATUS2_FORESIGHT && evasionStatStages > DEFAULT_STAT_STAGES))
+	if (atkAbility == ABILITY_KEEN_EYE || atkAbility == ABILITY_UNAWARE || atkAbility == ABILITY_ILLUMINATE
+	|| (gBattleMons[defender].status2 & STATUS2_FORESIGHT && evasionStatStages > DEFAULT_STAT_STAGES))
 		evasionStatStages = DEFAULT_STAT_STAGES; // Set evasion stages to default
 	else
 		evasionStatStages = accuracyStatStages + DEFAULT_STAT_STAGES - evasionStatStages;
@@ -2965,6 +2966,7 @@ static void atk48_playstatchangeanimation(void)
                 else if (!(gSideStatuses[GetBattlerSide(battlerId)] & SIDE_STATUS_MIST) && GetBattlerAbility(battlerId) != ABILITY_CLEAR_BODY
 			 && GetBattlerAbility(battlerId) != ABILITY_WHITE_SMOKE && GetBattlerAbility(battlerId) != ABILITY_FULL_METAL_BODY
 			 && !(GetBattlerAbility(battlerId) == ABILITY_KEEN_EYE && currStat == STAT_ACC)
+			 && !(GetBattlerAbility(battlerId) == ABILITY_ILLUMINATE && currStat == STAT_ACC)
 			 && !(GetBattlerAbility(battlerId) == ABILITY_HYPER_CUTTER && currStat == STAT_ATK)
 			 && !(GetBattlerAbility(battlerId) == ABILITY_BIG_PECKS && currStat == STAT_DEF)
 			 && !(GetBattlerAbility(battlerId) == ABILITY_FLOWER_VEIL && IS_BATTLER_OF_TYPE(battlerId, TYPE_GRASS))
@@ -5606,6 +5608,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
             return STAT_CHANGE_DIDNT_WORK;
 		}
         else if (!certain && ((GetBattlerAbility(battler) == ABILITY_KEEN_EYE && statId == STAT_ACC)
+		|| (GetBattlerAbility(battler) == ABILITY_ILLUMINATE && statId == STAT_ACC)
 		|| (GetBattlerAbility(battler) == ABILITY_HYPER_CUTTER && statId == STAT_ATK)
 		|| (GetBattlerAbility(battler) == ABILITY_BIG_PECKS && statId == STAT_DEF)))
         {
