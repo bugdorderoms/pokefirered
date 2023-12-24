@@ -150,9 +150,9 @@ gNewGame_HelpDocs6:: @ 81C594F
     .string "a registered item.$"
 
 gNewGame_HelpDocs7:: @ 81C5981
-    .string "If you need help playing the\n"
-    .string "game, or on how to do things,\n"
-    .string "press the L or R Button.$"
+    .string "Press L to search on Dexnav\n"
+    .string "and R to toggle auto run.\n"
+    .string "Their functions can be swapped.$"
 
 gOakText_AskPlayerGender:: @ 81C59D5
     .string "Now tell me. Are you a boy?\n"
