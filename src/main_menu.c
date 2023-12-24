@@ -665,13 +665,13 @@ static void PrintPlayerName(void)
 {
     u8 i, name[PLAYER_NAME_LENGTH + 1], *ptr = name;
 
-    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 18, sTextColor2, -1, gText_Player);
+    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 16, sTextColor2, -1, gText_Player);
 
     for (i = 0; i < PLAYER_NAME_LENGTH; i++)
         *ptr++ = gSaveBlock2Ptr->playerName[i];
     *ptr = EOS;
 	
-    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 62, 18, sTextColor2, -1, name);
+    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 62, 16, sTextColor2, -1, name);
 }
 
 static void PrintDexCount(void)
@@ -680,9 +680,9 @@ static void PrintDexCount(void)
 	
     if (FlagGet(FLAG_SYS_POKEDEX_GET))
     {
-        AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 50, sTextColor2, -1, gText_Pokedex);
+        AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 44, sTextColor2, -1, gText_Pokedex);
         ConvertIntToDecimalStringN(strbuf, GetNationalPokedexCount(FLAG_GET_CAUGHT), STR_CONV_MODE_LEFT_ALIGN, 4);
-        AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 62, 50, sTextColor2, -1, strbuf);
+        AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 62, 44, sTextColor2, -1, strbuf);
     }
 }
 
@@ -691,19 +691,19 @@ static void PrintPlayTime(void)
     u8 strbuf[30];
     u8 *ptr;
 
-    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 34, sTextColor2, -1, gText_Time);
+    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 30, sTextColor2, -1, gText_Time);
     ptr = ConvertIntToDecimalStringN(strbuf, gSaveBlock2Ptr->playTimeHours, STR_CONV_MODE_LEFT_ALIGN, 3);
     *ptr++ = CHAR_COLON;
     ConvertIntToDecimalStringN(ptr, gSaveBlock2Ptr->playTimeMinutes, STR_CONV_MODE_LEADING_ZEROS, 2);
-    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 62, 34, sTextColor2, -1, strbuf);
+    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 62, 30, sTextColor2, -1, strbuf);
 }
 
 static void PrintBadgeCount(void)
 {
     u8 strbuf[30];
-    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 66, sTextColor2, -1, gText_Badges);
+    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 58, sTextColor2, -1, gText_Badges);
     ConvertIntToDecimalStringN(strbuf, GetNumOfBadges(), STR_CONV_MODE_LEADING_ZEROS, 1);
-    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 62, 66, sTextColor2, -1, strbuf);
+    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 62, 58, sTextColor2, -1, strbuf);
 }
 
 // Create different windows on bg1 for each pokemon icon

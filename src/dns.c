@@ -25,17 +25,6 @@
  * options, to understand how the dns works.            *
  * ******************************************************/
 
-/* Timelapses */
-enum
-{
-    TIME_MIDNIGHT,
-    TIME_DAWN,
-    TIME_DAY,
-    TIME_SUNSET,
-    TIME_NIGHTFALL,
-    TIME_NIGHT
-};
-
 /* This array contains the colours used for the windows or other    *
  * tiles that have to be illuminated at night.                      *
  * You can add or remove light slots as you whish, each entry       *
@@ -268,7 +257,6 @@ static const u8 sSeasonsByMonth[] =
 
 // Functions
 static u16 GetDNSFilter(void);
-static u16 DNSApplyProportionalFilterToColour(u16 colour, u16 filter);
 static void DoDNSLightningWindowsEffect(void);
 
 // DNS palette buffer in EWRAM
@@ -286,7 +274,7 @@ ALIGNED(4) EWRAM_DATA static u16 sDNSPaletteDmaBuffer[PLTT_BUFFER_SIZE] = {0};
  * Author: Xhyz/Samu                                    *
  ****************************************************** */
 
-static bool8 IsMapDNSException(void)
+bool8 IsMapDNSException(void)
 {
 	u8 i, mapType = gMapHeader.mapType;
 	
@@ -332,6 +320,17 @@ static bool8 IsSpritePaletteTagDNSException(u8 palNum, const u16 *tagExceptions,
 			return TRUE;
 	}
 	return FALSE;
+}
+
+static inline u16 DNSApplyProportionalFilterToColour(u16 colour, u16 filter)
+{
+	u32 red, green, blue;
+    
+	red = (colour & 0x1F) * (0x1F - (filter & 0x1F)) >> 5;
+	green = ((colour & 0x3E0) >> 5) * ((0x3E0 - (filter & 0x3E0)) >> 5) >> 5;
+	blue = ((colour & 0x7C00) >> 10) * ((0x7C00 - (filter & 0x7C00)) >> 10) >> 5;
+	
+	return RGB2(red <= 31 ? red : 0, green <= 31 ? green : 0, blue <= 31 ? blue : 0);
 }
 
 void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 *tagExceptions, u8 tagExceptionsCount)
@@ -389,8 +388,10 @@ static void DoDNSLightningWindowsEffect(void)
 	}
 }
 
-static u8 GetDNSTimeLapse(u8 hour)
+u8 GetDNSTimeLapse(void)
 {
+	u8 hour = gRtcLocation.hour;
+	
 	if (hour < DAWN_OF_DAY_START)
         return TIME_MIDNIGHT;
     else if (hour < MORNING_OF_DAY_START)
@@ -407,12 +408,12 @@ static u8 GetDNSTimeLapse(u8 hour)
 
 static u16 GetDNSFilter(void)
 {
-	u8 hour = gRtcLocation.hour, minutes = gRtcLocation.minute;
+	u8 minutes = gRtcLocation.minute;
 	
-	switch (GetDNSTimeLapse(hour))
+	switch (GetDNSTimeLapse())
 	{
 		case TIME_MIDNIGHT:
-			return sMidnightFilters[hour < 1 ? minutes >> 3 : 7];
+			return sMidnightFilters[gRtcLocation.hour < 1 ? minutes >> 3 : 7];
 		case TIME_DAWN:
 		    return sDawnFilters[minutes >> 1];
 		case TIME_DAY:
@@ -426,20 +427,9 @@ static u16 GetDNSFilter(void)
 	}
 }
 
-static u16 DNSApplyProportionalFilterToColour(u16 colour, u16 filter)
-{
-	u32 red, green, blue;
-    
-	red = (colour & 0x1F) * (0x1F - (filter & 0x1F)) >> 5;
-	green = ((colour & 0x3E0) >> 5) * ((0x3E0 - (filter & 0x3E0)) >> 5) >> 5;
-	blue = ((colour & 0x7C00) >> 10) * ((0x7C00 - (filter & 0x7C00)) >> 10) >> 5;
-		
-	return RGB2(red <= 31 ? red : 0, green <= 31 ? green : 0, blue <= 31 ? blue : 0);
-}
-
 bool8 GetDNSTimeLapseIsNight(void)
 {
-	switch (GetDNSTimeLapse(gRtcLocation.hour))
+	switch (GetDNSTimeLapse())
 	{
 		case TIME_MIDNIGHT:
 		case TIME_NIGHTFALL:

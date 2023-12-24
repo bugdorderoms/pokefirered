@@ -120,3 +120,7 @@
 // If this setting is enabled, when searching for a Pokémon on the Dexnav you must need to press the A button to creeping.
 // Otherwise, the Pokémon will run away.
 #define DEXNAV_CREEPING_SEARCH TRUE
+
+// If this setting is enabled, random weathers will start on enter maps that don't have a weather defined.
+// Those weather are choose based on current time and season.
+#define DYNAMIC_WEATHER TRUE

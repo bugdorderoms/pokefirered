@@ -122,29 +122,29 @@ static void SetDefaultFlashLevel(void);
 static void Overworld_TryMapConnectionMusicTransition(void);
 static void ChooseAmbientCrySpecies(void);
 
-static void CB2_LoadMap_Step(void);
-static void c2_80567AC(void);
+static void CB2_LoadMap2(void);
+static void CB2_LoadMapOnReturnToFieldCableClub(void);
 static void CB2_ReturnToFieldLocal(void);
 static void CB2_ReturnToFieldLink(void);
 static void FieldClearVBlankHBlankCallbacks(void);
 static void SetFieldVBlankCallback(void);
 static void VBlankCB_Field(void);
 
-static bool32 map_loading_iteration_3(u8 *state);
-static bool32 sub_8056CD8(u8 *state);
-static bool32 map_loading_iteration_2_link(u8 *state);
-static void do_load_map_stuff_loop(u8 *state);
-static void sub_8056E80(void);
-static void sub_8056F08(void);
+static bool32 LoadMapInStepsLink(u8 *state);
+static bool32 ReturnToFieldLocal(u8 *state);
+static bool32 ReturnToFieldLink(u8 *state);
+static void DoMapLoadLoop(u8 *state);
+static void ResetScreenForMapLoad(void);
+static void InitViewGraphics(void);
 static void InitOverworldGraphicsRegisters(void);
-static void ResumeMap(bool32 a0);
-static void sub_8057074(void);
-static void mli4_mapscripts_and_other(void);
+static void ResumeMap(bool8 inLink);
+static void InitObjectEventsLink(void);
+static void InitObjectEventsLocal(void);
 static void ReloadObjectsAndRunReturnToFieldMapScript(void);
-static void sub_8057114(void);
+static void SetCameraToTrackPlayer(void);
 static void SetCameraToTrackGuestPlayer(void);
-static void sub_8057178(void);
-static void sub_80571A8(void);
+static void OffsetCameraFocusByLinkPlayerId(void);
+static void SpawnLinkPlayers(void);
 static void CreateLinkPlayerSprites(void);
 static bool32 SetUpScrollSceneForCredits(u8 *state);
 static bool8 MapLdr_Credits(void);
@@ -434,7 +434,7 @@ void Overworld_SetObjEventTemplateMovementType(u8 localId, u8 movementType)
 
 // Routines related to the map layout
 
-static void mapdata_load_assets_to_gpu_and_full_redraw(void)
+static void InitMapView(void)
 {
     move_tilemap_camera_to_upper_left_corner();
     CopyMapTilesetsToVram(gMapHeader.mapLayout);
@@ -734,7 +734,7 @@ void LoadMapFromCameraTransition(u8 mapGroup, u8 mapNum)
         ShowMapNamePopup(TRUE);
 }
 
-static void mli0_load_map(void)
+static void LoadMapFromWarp(void)
 {
     bool8 isOutdoors;
 
@@ -785,13 +785,13 @@ void StoreInitialPlayerAvatarState(void)
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_ACRO_BIKE))
         sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_ACRO_BIKE;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE))
-	sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_TAUROS_RIDE;
+		sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_TAUROS_RIDE;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE))
-	sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_STOUTLAND_RIDE;
+		sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_STOUTLAND_RIDE;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MUDSDALE_RIDE))
         sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_MUDSDALE_RIDE;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
-	sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_MACHAMP_RIDE;
+		sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_MACHAMP_RIDE;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
         sInitialPlayerAvatarState.transitionFlags = PLAYER_AVATAR_FLAG_SURFING;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER))
@@ -823,7 +823,7 @@ static u16 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *pl
         return PLAYER_AVATAR_FLAG_ON_FOOT;
     else if (mapType == MAP_TYPE_UNDERWATER)
         return PLAYER_AVATAR_FLAG_UNDERWATER;
-    else if (sub_8055B38(metatileBehavior))
+    else if (MetatileBehavior_IsSurfableInSeafoamIslands(metatileBehavior))
         return PLAYER_AVATAR_FLAG_ON_FOOT;
     else if (MetatileBehavior_IsSurfable(metatileBehavior))
         return PLAYER_AVATAR_FLAG_SURFING;
@@ -845,7 +845,7 @@ static u16 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *pl
         return PLAYER_AVATAR_FLAG_ON_FOOT;
 }
 
-bool8 sub_8055B38(u16 metatileBehavior)
+bool8 MetatileBehavior_IsSurfableInSeafoamIslands(u16 metatileBehavior)
 {
     if (!MetatileBehavior_IsSurfable(metatileBehavior))
         return FALSE;
@@ -1259,7 +1259,7 @@ static void InitOverworldBgs_NoResetHeap(void)
 static void InitOverworldBgs_ResetHeap(void)
 {
     MoveSaveBlocks_ResetHeap();
-    sub_8056E80();
+    ResetScreenForMapLoad();
 	InitOverworldBgs_NoResetHeap();
 }
 
@@ -1341,7 +1341,7 @@ void SetMainCallback1(MainCallback cb)
     gMain.callback1 = cb;
 }
 
-static bool8 map_post_load_hook_exec(void)
+static bool8 RunFieldCallback(void)
 {
     if (gFieldCallback2)
     {
@@ -1377,7 +1377,7 @@ void CB2_NewGame(void)
     ScriptContext2_Disable();
     gFieldCallback = FieldCB_WarpExitFadeFromBlack;
     gFieldCallback2 = NULL;
-    do_load_map_stuff_loop(&gMain.state);
+    DoMapLoadLoop(&gMain.state);
     SetFieldVBlankCallback();
     SetMainCallback1(CB1_Overworld);
     SetMainCallback2(CB2_Overworld);
@@ -1398,7 +1398,7 @@ void CB2_WhiteOut(void)
         ScriptContext2_Disable();
         gFieldCallback = FieldCB_RushInjuredPokemonToCenter;
         val = 0;
-        do_load_map_stuff_loop(&val);
+        DoMapLoadLoop(&val);
         SetFieldVBlankCallback();
         SetMainCallback1(CB1_Overworld);
         SetMainCallback2(CB2_Overworld);
@@ -1412,12 +1412,12 @@ void CB2_LoadMap(void)
     ScriptContext2_Disable();
     SetMainCallback1(NULL);
     SetMainCallback2(CB2_DoChangeMap);
-    gMain.savedCallback = CB2_LoadMap_Step;
+    gMain.savedCallback = CB2_LoadMap2;
 }
 
-static void CB2_LoadMap_Step(void)
+static void CB2_LoadMap2(void)
 {
-    do_load_map_stuff_loop(&gMain.state);
+    DoMapLoadLoop(&gMain.state);
 	SetFieldVBlankCallback();
 	SetMainCallback1(CB1_Overworld);
 	SetMainCallback2(CB2_Overworld);
@@ -1427,12 +1427,12 @@ void CB2_ReturnToFieldCableClub(void)
 {
     FieldClearVBlankHBlankCallbacks();
     gFieldCallback = FieldCB_ReturnToFieldWirelessLink;
-    SetMainCallback2(c2_80567AC);
+    SetMainCallback2(CB2_LoadMapOnReturnToFieldCableClub);
 }
 
-static void c2_80567AC(void)
+static void CB2_LoadMapOnReturnToFieldCableClub(void)
 {
-    if (map_loading_iteration_3(&gMain.state))
+    if (LoadMapInStepsLink(&gMain.state))
     {
         SetFieldVBlankCallback();
         SetMainCallback1(CB1_UpdateLinkState);
@@ -1454,7 +1454,7 @@ void CB2_ReturnToField(void)
 
 static void CB2_ReturnToFieldLocal(void)
 {
-    if (sub_8056CD8(&gMain.state))
+    if (ReturnToFieldLocal(&gMain.state))
     {
         SetFieldVBlankCallback();
         SetMainCallback2(CB2_Overworld);
@@ -1463,7 +1463,7 @@ static void CB2_ReturnToFieldLocal(void)
 
 static void CB2_ReturnToFieldLink(void)
 {
-    if (!Overworld_LinkRecvQueueLengthMoreThan2() && map_loading_iteration_2_link(&gMain.state))
+    if (!Overworld_LinkRecvQueueLengthMoreThan2() && ReturnToFieldLink(&gMain.state))
         SetMainCallback2(CB2_Overworld);
 }
 
@@ -1604,7 +1604,7 @@ static void InitCurrentFlashLevelScanlineEffect(void)
     }
 }
 
-static bool32 map_loading_iteration_3(u8 *state)
+static bool32 LoadMapInStepsLink(u8 *state)
 {
     switch (*state)
     {
@@ -1615,7 +1615,7 @@ static bool32 map_loading_iteration_3(u8 *state)
         (*state)++;
         break;
     case 1:
-        mli0_load_map();
+        LoadMapFromWarp();
         (*state)++;
         break;
     case 2:
@@ -1623,9 +1623,9 @@ static bool32 map_loading_iteration_3(u8 *state)
         (*state)++;
         break;
     case 3:
-        sub_8057178();
-        sub_8057074();
-        sub_80571A8();
+        OffsetCameraFocusByLinkPlayerId();
+        InitObjectEventsLink();
+        SpawnLinkPlayers();
         SetCameraToTrackGuestPlayer();
         (*state)++;
         break;
@@ -1670,7 +1670,7 @@ static bool32 map_loading_iteration_3(u8 *state)
         (*state)++;
         break;
     case 12:
-        if (map_post_load_hook_exec())
+        if (RunFieldCallback())
             (*state)++;
         break;
     case 13:
@@ -1680,29 +1680,29 @@ static bool32 map_loading_iteration_3(u8 *state)
     return FALSE;
 }
 
-static bool32 load_map_stuff(u8 *state, bool32 a1)
+static bool32 LoadMapInStepsLocal(u8 *state)
 {
     switch (*state)
     {
     case 0:
         InitOverworldBgs_ResetHeap();
         FieldClearVBlankHBlankCallbacks();
-        mli0_load_map();
+        LoadMapFromWarp();
         (*state)++;
         break;
     case 1:
         (*state)++;
         break;
     case 2:
-        ResumeMap(a1);
+        ResumeMap(FALSE);
         (*state)++;
         break;
     case 3:
         (*state)++;
         break;
     case 4:
-        mli4_mapscripts_and_other();
-        sub_8057114();
+        InitObjectEventsLocal();
+        SetCameraToTrackPlayer();
         (*state)++;
         break;
     case 5:
@@ -1743,14 +1743,12 @@ static bool32 load_map_stuff(u8 *state, bool32 a1)
             MapPreview_LoadGfx(gMapHeader.regionMapSectionId);
             MapPreview_StartForestTransition(gMapHeader.regionMapSectionId);
         }
-        else if (gMapHeader.showMapName == TRUE)
-        {
+        else if (gMapHeader.showMapName)
             ShowMapNamePopup(FALSE);
-        }
         (*state)++;
         break;
     case 13:
-        if (map_post_load_hook_exec())
+        if (RunFieldCallback())
             (*state)++;
         break;
     case 14:
@@ -1759,7 +1757,7 @@ static bool32 load_map_stuff(u8 *state, bool32 a1)
     return FALSE;
 }
 
-static bool32 sub_8056CD8(u8 *state)
+static bool32 ReturnToFieldLocal(u8 *state)
 {
     switch (*state)
     {
@@ -1767,18 +1765,18 @@ static bool32 sub_8056CD8(u8 *state)
         InitOverworldBgs_ResetHeap();
         ResumeMap(FALSE);
         ReloadObjectsAndRunReturnToFieldMapScript();
-        sub_8057114();
+        SetCameraToTrackPlayer();
         (*state)++;
         break;
     case 1:
         (*state)++;
         break;
     case 2:
-        sub_8056F08();
+        InitViewGraphics();
         (*state)++;
         break;
     case 3:
-        if (map_post_load_hook_exec())
+        if (RunFieldCallback())
             (*state)++;
         break;
     case 4:
@@ -1787,7 +1785,7 @@ static bool32 sub_8056CD8(u8 *state)
     return FALSE;
 }
 
-static bool32 map_loading_iteration_2_link(u8 *state)
+static bool32 ReturnToFieldLink(u8 *state)
 {
     switch (*state)
     {
@@ -1797,7 +1795,7 @@ static bool32 map_loading_iteration_2_link(u8 *state)
         (*state)++;
         break;
     case 1:
-        ResumeMap(1);
+        ResumeMap(TRUE);
         (*state)++;
         break;
     case 2:
@@ -1850,7 +1848,7 @@ static bool32 map_loading_iteration_2_link(u8 *state)
         (*state)++;
         break;
     case 12:
-        if (map_post_load_hook_exec())
+        if (RunFieldCallback())
             (*state)++;
         break;
     case 13:
@@ -1862,12 +1860,12 @@ static bool32 map_loading_iteration_2_link(u8 *state)
     return FALSE;
 }
 
-static void do_load_map_stuff_loop(u8 *state)
+static void DoMapLoadLoop(u8 *state)
 {
-    while (!load_map_stuff(state, FALSE));
+    while (!LoadMapInStepsLocal(state));
 }
 
-static void sub_8056E80(void)
+static void ResetScreenForMapLoad(void)
 {
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
     ScanlineEffect_Stop();
@@ -1878,11 +1876,11 @@ static void sub_8056E80(void)
     LoadOam();
 }
 
-static void sub_8056F08(void)
+static void InitViewGraphics(void)
 {
     InitCurrentFlashLevelScanlineEffect();
     InitOverworldGraphicsRegisters();
-    mapdata_load_assets_to_gpu_and_full_redraw();
+    InitMapView();
 }
 
 static void InitOverworldGraphicsRegisters(void)
@@ -1909,7 +1907,7 @@ static void InitOverworldGraphicsRegisters(void)
 	ResetAllBgsPos();
 }
 
-static void ResumeMap(u32 a1)
+static void ResumeMap(bool8 inLink)
 {
     ResetTasks();
     ResetSpriteData();
@@ -1922,12 +1920,12 @@ static void ResumeMap(u32 a1)
     FieldEffectActiveListClear();
     StartWeather();
     ResumePausedWeather();
-    if (!a1)
+    if (!inLink)
         SetUpFieldTasks();
     RunOnResumeMapScript();
 }
 
-static void sub_8057074(void)
+static void InitObjectEventsLink(void)
 {
     gTotalCameraPixelOffsetX = 0;
     gTotalCameraPixelOffsetY = 0;
@@ -1936,7 +1934,7 @@ static void sub_8057074(void)
     TryRunOnWarpIntoMapScript();
 }
 
-static void mli4_mapscripts_and_other(void)
+static void InitObjectEventsLocal(void)
 {
     s16 x, y;
     struct InitialPlayerAvatarState *player;
@@ -1959,7 +1957,7 @@ static void ReloadObjectsAndRunReturnToFieldMapScript(void)
     RunOnReturnToFieldMapScript();
 }
 
-static void sub_8057114(void)
+static void SetCameraToTrackPlayer(void)
 {
     gObjectEvents[gPlayerAvatar.objectEventId].trackedByCamera = TRUE;
     InitCameraUpdateCallback(gPlayerAvatar.spriteId);
@@ -1970,18 +1968,18 @@ static void SetCameraToTrackGuestPlayer(void)
     InitCameraUpdateCallback(GetSpriteForLinkedPlayer(gLocalLinkPlayerId));
 }
 
-static void sub_8057178(void)
+static void OffsetCameraFocusByLinkPlayerId(void)
 {
     u16 x, y;
 	
     GetCameraFocusCoords(&x, &y);
 
-    // This is a hack of some kind; it's undone in sub_8086B14, which is called
+    // This is a hack of some kind; it's undone in SpawnLinkPlayers, which is called
     // soon after this function.
     SetCameraFocusCoords(x + gLocalLinkPlayerId, y);
 }
 
-static void sub_80571A8(void)
+static void SpawnLinkPlayers(void)
 {
     u16 i;
     u16 x, y;
@@ -2091,7 +2089,7 @@ static bool8 MapLdr_Credits(void)
     {
     case 0:
         InitOverworldBgs_NoResetHeap();
-        mli0_load_map();
+        LoadMapFromWarp();
         (*state)++;
         break;
     case 1:

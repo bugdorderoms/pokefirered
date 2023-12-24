@@ -1107,7 +1107,7 @@ static bool8 FallWarpEffect_7(struct Task * task)
     InstallCameraPanAheadCallback();
     PlayerGetDestCoords(&x, &y);
     // Seafoam Islands
-    if (sub_8055B38(MapGridGetMetatileBehaviorAt(x, y)) == TRUE)
+    if (MetatileBehavior_IsSurfableInSeafoamIslands(MapGridGetMetatileBehaviorAt(x, y)))
     {
         VarSet(VAR_TEMP_1, 1);
         SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_SURFING);

@@ -407,8 +407,8 @@ struct SaveBlock1
     /*0x001C*/ struct WarpData lastHealLocation;
     /*0x0024*/ struct WarpData escapeWarp;
     /*0x002C*/ u16 savedMusic;
-    /*0x002E*/ u8 weather;
-    /*0x002F*/ u8 flashLevel;
+	/*0x002E*/ u8 weatherDelay;
+    /*0x002F*/ u8 weather;
     /*0x0030*/ u16 mapLayoutId;
 	/*0x0032*/ u16 coins;
 	/*0x0034*/ u32 money;
@@ -421,6 +421,7 @@ struct SaveBlock1
 	/*0x00F7*/ u8 playerPartyCount;
 	/*0x00F8*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
 	/*0x0100*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
+	/*0x01D2*/ u8 flashLevel;
 	           u8 flags[NUM_FLAG_BYTES]; // size of 0x120 bytes
 			   u16 vars[VARS_COUNT]; // size of 0x200 bytes
 			   struct Pokemon playerParty[PARTY_SIZE];

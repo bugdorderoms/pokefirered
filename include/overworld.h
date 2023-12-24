@@ -169,7 +169,7 @@ bool32 Overworld_RecvKeysFromLinkIsRunning(void);
 void OverworldWhiteOutGetMoneyLoss(void);
 u8 GetCurrentMapBattleScene(void);
 void Overworld_ResetStateForLeavingMap(void);
-bool8 sub_8055B38(u16 metatileBehavior);
+bool8 MetatileBehavior_IsSurfableInSeafoamIslands(u16 metatileBehavior);
 u16 QueueExitLinkRoomKey(void);
 u16 sub_8057F34(void);
 u32 sub_8057EC0(void);
