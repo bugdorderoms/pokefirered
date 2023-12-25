@@ -1197,7 +1197,7 @@ static void atk02_attackstring(void)
 			
 			gProtectStructs[gBattlerAttacker].notFirstStrike = 1;
 		
-            if (!(gBattleMons[gBattlerAttacker].status2 & STATUS2_TRANSFORMED) && !((gDisableStructs[gBattlerAttacker].mimickedMoves) & gBitTable[gCurrMovePos]))
+            if (MOVE_IS_PERMANENT(gBattlerAttacker, gCurrMovePos))
             {
                 BtlController_EmitSetMonData(gBattlerAttacker, BUFFER_A, REQUEST_PPMOVE1_BATTLE + gCurrMovePos, 0, 1, &gBattleMons[gBattlerAttacker].pp[gCurrMovePos]);
                 MarkBattlerForControllerExec(gBattlerAttacker);
@@ -4109,14 +4109,12 @@ static void atk5A_yesnoboxlearnmove(void)
 				RemoveMonPPBonus(&gPlayerParty[gBattleStruct->expGetterMonId], movePosition);
 				SetMonMoveSlot(&gPlayerParty[gBattleStruct->expGetterMonId], gMoveToLearn, movePosition);
 				
-				if (gBattlerPartyIndexes[0] == gBattleStruct->expGetterMonId && !(gBattleMons[0].status2 & STATUS2_TRANSFORMED)
-				&& !(gDisableStructs[0].mimickedMoves & gBitTable[movePosition]))
+				if (gBattlerPartyIndexes[0] == gBattleStruct->expGetterMonId && MOVE_IS_PERMANENT(0, movePosition))
 				{
 					RemoveBattleMonPPBonus(&gBattleMons[0], movePosition);
 					SetBattleMonMoveSlot(&gBattleMons[0], gMoveToLearn, movePosition);
 				}
-				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattlerPartyIndexes[2] == gBattleStruct->expGetterMonId
-				&& !(gBattleMons[2].status2 & STATUS2_TRANSFORMED) && !(gDisableStructs[2].mimickedMoves & gBitTable[movePosition]))
+				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattlerPartyIndexes[2] == gBattleStruct->expGetterMonId && MOVE_IS_PERMANENT(2, movePosition))
 				{
 					RemoveBattleMonPPBonus(&gBattleMons[2], movePosition);
 					SetBattleMonMoveSlot(&gBattleMons[2], gMoveToLearn, movePosition);
@@ -6435,7 +6433,7 @@ static void atkAD_tryspiteppreduce(void)
             PrepareByteNumberBuffer(gBattleTextBuff2, 1, ppToDeduct);
             gBattleMons[gBattlerTarget].pp[i] -= ppToDeduct;
 			
-            if (!(gDisableStructs[gBattlerTarget].mimickedMoves & gBitTable[i]) && !(gBattleMons[gBattlerTarget].status2 & STATUS2_TRANSFORMED))
+            if (MOVE_IS_PERMANENT(gBattlerTarget, i))
             {
                 BtlController_EmitSetMonData(gBattlerTarget, BUFFER_A, REQUEST_PPMOVE1_BATTLE + i, 0, 1, &gBattleMons[gBattlerTarget].pp[i]);
                 MarkBattlerForControllerExec(gBattlerTarget);

@@ -4344,7 +4344,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                     MarkBattlerForControllerExec(battlerId);
                     break;
                 case ITEM_PP_CHANGE:
-                    if (!(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED) && !(gDisableStructs[battlerId].mimickedMoves & gBitTable[i]))
+                    if (MOVE_IS_PERMANENT(battlerId, i))
                         gBattleMons[battlerId].pp[i] = changedPP;
                     break;
                 }

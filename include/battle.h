@@ -491,6 +491,11 @@ extern struct BattleStruct *gBattleStruct;
 
 #define BATTLER_MAX_HP(battlerId) ((gBattleMons[battlerId].hp == gBattleMons[battlerId].maxHP))
 
+// Used to exclude moves learned temporarily by Transform or Mimic
+#define MOVE_IS_PERMANENT(battler, moveSlot)                         \
+    (!(gBattleMons[battler].status2 & STATUS2_TRANSFORMED)           \
+ && !(gDisableStructs[battler].mimickedMoves & gBitTable[moveSlot]))
+
 struct BattleScripting
 {
     /*0x00*/ s32 painSplitHp;

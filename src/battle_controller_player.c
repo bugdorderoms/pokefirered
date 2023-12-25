@@ -1263,7 +1263,7 @@ static void HandleMoveSwitching(u8 battlerId)
             moveInfo->maxPp[gMultiUsePlayerCursor] = i;
             if (gDisableStructs[battlerId].mimickedMoves & gBitTable[gMoveSelectionCursor[battlerId]])
             {
-                gDisableStructs[battlerId].mimickedMoves &= (~gBitTable[gMoveSelectionCursor[battlerId]]);
+                gDisableStructs[battlerId].mimickedMoves &= ~(gBitTable[gMoveSelectionCursor[battlerId]]);
                 gDisableStructs[battlerId].mimickedMoves |= gBitTable[gMultiUsePlayerCursor];
             }
             MoveSelectionDisplayMoveNames(battlerId);

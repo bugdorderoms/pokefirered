@@ -4545,8 +4545,7 @@ static bool8 ItemUseRestoreMovePP(struct Pokemon *mon, u8 moveIndex, u8 amount, 
 		
 		SetMonData(mon, MON_DATA_PP1 + moveIndex, &pp);
 		
-		if (battleMon != MAX_BATTLERS_COUNT && !(gBattleMons[battleMon].status2 & STATUS2_TRANSFORMED)
-			&& !(gDisableStructs[battleMon].mimickedMoves & gBitTable[moveIndex]))
+		if (battleMon != MAX_BATTLERS_COUNT && MOVE_IS_PERMANENT(battleMon, moveIndex))
 		    gBattleMons[battleMon].pp[moveIndex] = pp;
 		
 		return TRUE;
