@@ -9,6 +9,11 @@
 #define STATUS_CHANGE_FLAG_ALL                   (STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_CHECK_UPROAR            \
                                                 | STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS | STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE)
 
+#define STAT_CHANGE_FLAG_SELF_INFLICT    (1 << 0) // The stat change is self inflicted. So, can't be bounced back by Mirror Armor or blocked by any effect
+#define STAT_CHANGE_FLAG_IGNORE_PROTECT  (1 << 1) // Ignore Protect effects
+#define STAT_CHANGE_FLAG_UPDATE_RESULT   (1 << 2) // If stat change failed to apply set gMoveResultFlags as MOVE_RESULT_MISSED
+#define STAT_CHANGE_FLAG_NO_MIRROR_ARMOR (1 << 3) // Ignore Mirror Armor
+
 // Battle Scripting addresses
 #define sPAINSPLIT_HP gBattleScripting + 0x0
 #define sBIDE_DMG gBattleScripting + 0x4
@@ -23,14 +28,12 @@
 #define sBATTLER gBattleScripting + 0x19
 #define sB_ANIM_TURN gBattleScripting + 0x1A
 #define sB_ANIM_TARGETS_HIT gBattleScripting + 0x1B
-#define sSTATCHANGER gBattleScripting + 0x1C
-#define sSTAT_ANIM_PLAYED gBattleScripting + 0x1D
+#define sFIXED_ABILITY_POPUP gBattleScripting + 0x1C
+#define sILLUSION_NICK_HACK gBattleScripting + 0x1D
 #define sGIVEEXP_STATE gBattleScripting + 0x1E
 #define sBATTLE_STYLE gBattleScripting + 0x1F
 #define sLVLBOX_STATE gBattleScripting + 0x20
 #define sLEARNMOVE_STATE gBattleScripting + 0x21
-#define sILLUSION_NICK_HACK gBattleScripting + 0x25
-#define sFIXED_ABILITY_POPUP gBattleScripting + 0x26
 
 // array entries for battle communication
 #define MULTIUSE_STATE                      0
@@ -87,15 +90,20 @@
 // Atk50, a flag used for the openpartyscreen command
 #define OPEN_PARTY_ALLOW_CANCEL     0x80
 
-// Statchange defines
-#define STAT_CHANGE_BS_PTR                  0x1
-#define STAT_CHANGE_NOT_PROTECT_AFFECTED    0x20
-
 // Atk48
-#define ATK48_STAT_NEGATIVE         0x1
-#define ATK48_STAT_BY_TWO           0x2
-#define ATK48_ONLY_MULTIPLE         0x4
-#define ATK48_DONT_CHECK_LOWER      0x8
+// Used when there's multiple buffs
+#define BIT_ATK     (1 << 0)
+#define BIT_DEF     (1 << 1)
+#define BIT_SPEED   (1 << 2)
+#define BIT_SPATK   (1 << 3)
+#define BIT_SPDEF   (1 << 4)
+#define BIT_ACC     (1 << 5)
+#define BIT_EVASION (1 << 6)
+
+#define ATK48_STAT_NEGATIVE      (1 << 0) // Used when there's multiples negative stat buffs
+#define ATK48_IGNORE_ANIM_PLAYED (1 << 1) // Play stat anim even if disabled, for Defiant
+#define ATK48_SET_ANIM_PLAYED    (1 << 2) // Used when there's multiples buffs, play the anim only on the first buff
+#define ATK48_CLEAR_ANIM_PLAYED  (1 << 3) // Reset anim played, for the next stat buff that can occours
 
 // Atk49, moveend states and cases
 #define ATK49_MOVEEND_ALL           0 // loop through all cases
@@ -172,16 +180,20 @@
 #define VARIOUS_JUMP_IF_NO_DAMAGE                   38
 #define VARIOUS_JUMP_IF_ENDEAVOR_FAIL               39
 #define VARIOUS_TRY_SWAP_ABILITIES                  40
+#define VARIOUS_JUMP_IF_DEFIANT_ACTIVATE            41
+#define VARIOUS_JUMP_IF_CONFUSED_AND_STAT_MAXED     42
+#define VARIOUS_TRY_RATTLED_ON_INTIMIDATE           43
+#define VARIOUS_TRY_ACTIVATE_SAP_SIPPER             44
 
 // Atk80, dmg manipulation
-#define ATK80_DMG_CHANGE_SIGN                               0
-#define ATK80_DMG_HALF_USER_HP                              1
-#define ATK80_DMG_DRAINED                                   2
-#define ATK80_DMG_1_8_TARGET_MAX_HP                         3
-#define ATK48_DMG_HALF_TARGET_HP                            4
-#define ATK48_DMG_ATK_LEVEL                                 5
-#define ATK48_DMG_BIG_ROOT                                  6
-#define ATK80_DMG_HEALTH_DIFFERENCE                         7
+#define ATK80_DMG_CHANGE_SIGN       0
+#define ATK80_DMG_HALF_USER_HP      1
+#define ATK80_DMG_DRAINED           2
+#define ATK80_DMG_1_8_TARGET_MAX_HP 3
+#define ATK48_DMG_HALF_TARGET_HP    4
+#define ATK48_DMG_ATK_LEVEL         5
+#define ATK48_DMG_BIG_ROOT          6
+#define ATK80_DMG_HEALTH_DIFFERENCE 7
 
 // Atk83, trainerslide cases
 #define ATK83_TRAINER_SLIDE_CASE_SAVE_SPRITES    0
@@ -192,15 +204,6 @@
 
 // atkFC, a flag used for the handleabilitypopup command
 #define ATKFC_REMOVE_POP_UP 0x80
-
-#define BIT_HP                      0x1
-#define BIT_ATK                     0x2
-#define BIT_DEF                     0x4
-#define BIT_SPEED                   0x8
-#define BIT_SPATK                   0x10
-#define BIT_SPDEF                   0x20
-#define BIT_ACC                     0x40
-#define BIT_EVASION                 0x80
 
 // status ids
 #define ID_STATUS1 0

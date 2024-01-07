@@ -119,12 +119,12 @@ struct DisableStruct
 	/*0x04*/ u16 disabledMove;
     /*0x06*/ u16 encoredMove;
     /*0x08*/ u8 protectUses;
-    /*0x09*/ u8 stockpileCounter;
+    /*0x09*/ u8 rechargeTimer;
     /*0x0A*/ u8 substituteHP;
     /*0x0B*/ u8 truantCounter:1;
     /*0x0B*/ u8 disableTimer:3;
     /*0x0B*/ u8 encoreTimer:2;
-    /*0x0B*/ u8 chargeTimer:2;
+    /*0x0B*/ u8 infatuatedWith:2;
     /*0x0C*/ u16 perishSongTimer:2;
 	/*0x0C*/ u16 isFirstTurn:2;
     /*0x0C*/ u16 tauntTimer:3;
@@ -139,10 +139,11 @@ struct DisableStruct
     /*0x0F*/ u8 slowStartTimer:3;
     /*0x10*/ u8 battlerPreventingEscape;
     /*0x11*/ u8 battlerWithSureHit;
-    /*0x12*/ u8 rechargeTimer;
-	/*0x13*/ u8 imposterActivated:1; // only activate when switched in, not when gained
-	/*0x13*/ u8 infatuatedWith:2;
-	/*0x13*/ u8 unused:5;
+    /*0x12*/ u8 stockpileCounter:2;
+	/*0x12*/ u8 stockpiledDef:2;
+	/*0x12*/ u8 stockpiledSpDef:2;
+	/*0x12*/ u8 imposterActivated:1; // only activate when switched in, not when gained
+	/*0x12*/ u8 unused:1;
 };
 
 extern struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT];
@@ -189,7 +190,7 @@ struct SpecialStatus
 	s32 dmg;
     s32 physicalDmg;
     s32 specialDmg;
-    u32 statLowered:1;
+    u32 announceUnnerve:1;
     u32 lightningRodRedirected:1;
 	u32 stormDrainRedirected:1;
     u32 restoredBattlerSprite:1;
@@ -207,8 +208,7 @@ struct SpecialStatus
 	u32 parentalBondState:2;
 	// end of byte
 	u32 multiHitOn:1;
-	u32 announceUnnerve:1;
-	u32 unused:6;
+	u32 unused:7;
 	// end of byte
 	u32 unused2:8;
     u8 physicalBattlerId;
@@ -342,6 +342,19 @@ struct MoveEffect
 	bool8 unused:6;
 };
 
+struct StatChange
+{
+	u8 statId;
+	s8 buff;
+	u8 flags;
+	u8 result;
+	const u8* str; // Jump str if fail
+	u8 mirrorArmorState:2; // 1 - reflected, 2 - pop up displayed
+	bool8 maxOut:1;
+	bool8 statAnimPlayed:1;
+	u8 unused:4;
+};
+
 struct QueuedEffect
 {
 	u8 id;
@@ -446,6 +459,7 @@ struct BattleStruct
 	/*0x0FA*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // for Pickup gen5 effect
 	/*0x0FE*/ struct QueuedEffect queuedEffectsList[B_QUEUED_COUNT + 1];
 	          struct MoveEffect moveEffect;
+			  struct StatChange statChange;
 	          struct Illusion illusion[MAX_BATTLERS_COUNT];
 	          struct MoveInfo moveInfo;
     union {
@@ -471,13 +485,6 @@ extern struct BattleStruct *gBattleStruct;
                                          && !gProtectStructs[gBattlerAttacker].confusionSelfDmg))
 
 #define IS_BATTLER_OF_TYPE(battlerId, type)((gBattleMons[battlerId].type1 == type || gBattleMons[battlerId].type2 == type || (gBattleMons[battlerId].type3 != TYPE_MYSTERY && gBattleMons[battlerId].type3 == type)))
-
-#define GET_STAT_BUFF_ID(n)((n & 0xF))              // first four bits 0x1, 0x2, 0x4, 0x8
-#define GET_STAT_BUFF_VALUE2(n)((n & 0xF0))
-#define GET_STAT_BUFF_VALUE(n)(((n >> 4) & 7))      // 0x10, 0x20, 0x40
-#define STAT_BUFF_NEGATIVE 0x80                     // 0x80, the sign bit
-#define SET_STAT_BUFF_VALUE(n)(((s8)(((s8)(n) << 4)) & 0xF0))
-#define SET_STATCHANGER(statId, stage, goesDown)(gBattleScripting.statChanger = (statId) + (stage << 4) + (goesDown << 7))
 
 #define HANDLE_POWER_TRICK_SWAP(battlerId)                                         \
 {                                                                                  \
@@ -512,8 +519,8 @@ struct BattleScripting
     /*0x19*/ u8 battler;
     /*0x1A*/ u8 animTurn;
     /*0x1B*/ u8 animTargetsHit;
-    /*0x1C*/ u8 statChanger;
-    /*0x1D*/ bool8 statAnimPlayed;
+    /*0x1C*/ bool8 fixedAbilityPopUp;
+    /*0x1D*/ bool8 illusionNickHack;
     /*0x1E*/ u8 atk23_state; // give exp state
     /*0x1F*/ u8 battleStyle;
     /*0x20*/ u8 atk6C_state; // lvl up box state
@@ -521,9 +528,7 @@ struct BattleScripting
     /*0x22*/ u8 reshowMainState; // for reshow battle screen after menu
     /*0x23*/ u8 reshowHelperState; // for reshow battle screen after menu
     /*0x24*/ u8 field_23; // does something with hp calc
-    /*0x25*/ bool8 illusionNickHack;
-	/*0x26*/ bool8 fixedAbilityPopUp;
-	/*0x27*/ u8 savedBattler; // Multiuse
+	/*0x25*/ u8 savedBattler; // Multiuse
 };
 
 enum

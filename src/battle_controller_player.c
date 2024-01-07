@@ -279,7 +279,7 @@ void PlayerHandleChooseAction(u8 battlerId)
 	if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
 		StringCopy(gBattleTextBuff1, gText_TheOldMan);
 	else
-		PrepareMonNickNoIllusionBuffer(gBattleTextBuff1, battlerId);
+		PrepareMonNickNoIllusionBuffer(gBattleTextBuff1, battlerId, gBattlerPartyIndexes[battlerId]);
 	
 	BtlController_HandleChooseAction(battlerId, gText_BattleMenu, gText_WhatWillBufferDo, HandleChooseActionAfterDma3);
 }
@@ -807,17 +807,7 @@ static u8 PreviewDeterminativeMoveTargets(u8 battlerId, struct ChooseMoveStruct 
 {
     u32 bitMask;
 	u16 move = moveInfo->moves[gMoveSelectionCursor[battlerId]];
-    u8 moveTarget, startY;
-	
-	if (move == MOVE_CURSE)
-	{
-		if (moveInfo->monType1 != TYPE_GHOST && moveInfo->monType2 != TYPE_GHOST)
-			moveTarget = MOVE_TARGET_USER;
-		else
-			moveTarget = MOVE_TARGET_SELECTED;
-	}
-	else
-		moveTarget = GetBattlerMoveTargetType(battlerId, move);
+    u8 startY, moveTarget = GetBattlerMoveTargetType(battlerId, move);
 	
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
     {

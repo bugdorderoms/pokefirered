@@ -29,50 +29,54 @@
 #include "constants/battle_move_effects.h"
 #include "constants/battle_string_ids.h"
 
+/////////////////
+// MOVE EFFECT //
+/////////////////
+
 static const u8 *const sMoveEffectBS_Ptrs[] =
 {
-    [MOVE_EFFECT_SLEEP]            = BattleScript_MoveEffectSleep,
-    [MOVE_EFFECT_POISON]           = BattleScript_MoveEffectPoison,
-    [MOVE_EFFECT_BURN]             = BattleScript_MoveEffectBurn,
-    [MOVE_EFFECT_FREEZE]           = BattleScript_MoveEffectFreeze,
-    [MOVE_EFFECT_PARALYSIS]        = BattleScript_MoveEffectParalysis,
-    [MOVE_EFFECT_TOXIC]            = BattleScript_MoveEffectToxic,
-    [MOVE_EFFECT_CONFUSION]        = BattleScript_MoveEffectConfusion,
-    [MOVE_EFFECT_UPROAR]           = BattleScript_MoveEffectUproar,
-    [MOVE_EFFECT_PAYDAY]           = BattleScript_MoveEffectPayDay,
-    [MOVE_EFFECT_WRAP]             = BattleScript_MoveEffectWrap,
-	[MOVE_EFFECT_ATK_PLUS_1]       = BattleScript_StatUp,
-	[MOVE_EFFECT_DEF_PLUS_1]       = BattleScript_StatUp,
-	[MOVE_EFFECT_SPD_PLUS_1]       = BattleScript_StatUp,
-	[MOVE_EFFECT_SP_ATK_PLUS_1]    = BattleScript_StatUp,
-	[MOVE_EFFECT_SP_DEF_PLUS_1]    = BattleScript_StatUp,
-	[MOVE_EFFECT_ACC_PLUS_1]       = BattleScript_StatUp,
-	[MOVE_EFFECT_EVS_PLUS_1]       = BattleScript_StatUp,
-	[MOVE_EFFECT_ATK_PLUS_2]       = BattleScript_StatUp,
-	[MOVE_EFFECT_DEF_PLUS_2]       = BattleScript_StatUp,
-	[MOVE_EFFECT_SPD_PLUS_2]       = BattleScript_StatUp,
-	[MOVE_EFFECT_SP_ATK_PLUS_2]    = BattleScript_StatUp,
-	[MOVE_EFFECT_SP_DEF_PLUS_2]    = BattleScript_StatUp,
-	[MOVE_EFFECT_ACC_PLUS_2]       = BattleScript_StatUp,
-	[MOVE_EFFECT_EVS_PLUS_2]       = BattleScript_StatUp,
-	[MOVE_EFFECT_ATK_MINUS_1]      = BattleScript_StatDown,
-	[MOVE_EFFECT_DEF_MINUS_1]      = BattleScript_StatDown,
-	[MOVE_EFFECT_SPD_MINUS_1]      = BattleScript_StatDown,
-	[MOVE_EFFECT_SP_ATK_MINUS_1]   = BattleScript_StatDown,
-	[MOVE_EFFECT_SP_DEF_MINUS_1]   = BattleScript_StatDown,
-	[MOVE_EFFECT_ACC_MINUS_1]      = BattleScript_StatDown,
-	[MOVE_EFFECT_EVS_MINUS_1]      = BattleScript_StatDown,
-	[MOVE_EFFECT_ATK_MINUS_2]      = BattleScript_StatDown,
-	[MOVE_EFFECT_DEF_MINUS_2]      = BattleScript_StatDown,
-	[MOVE_EFFECT_SPD_MINUS_2]      = BattleScript_StatDown,
-	[MOVE_EFFECT_SP_ATK_MINUS_2]   = BattleScript_StatDown,
-	[MOVE_EFFECT_SP_DEF_MINUS_2]   = BattleScript_StatDown,
-	[MOVE_EFFECT_ACC_MINUS_2]      = BattleScript_StatDown,
-	[MOVE_EFFECT_EVS_MINUS_2]      = BattleScript_StatDown,
-	[MOVE_EFFECT_ALL_STATS_UP]     = BattleScript_AllStatsUp,
-	[MOVE_EFFECT_RAPIDSPIN]        = BattleScript_RapidSpinAway,
-	[MOVE_EFFECT_REMOVE_STATUS]    = BattleScript_TargetStatusHeal,
-	[MOVE_EFFECT_ATK_DEF_DOWN]     = BattleScript_AtkDefDown,
+    [MOVE_EFFECT_SLEEP]              = BattleScript_MoveEffectSleep,
+    [MOVE_EFFECT_POISON]             = BattleScript_MoveEffectPoison,
+    [MOVE_EFFECT_BURN]               = BattleScript_MoveEffectBurn,
+    [MOVE_EFFECT_FREEZE]             = BattleScript_MoveEffectFreeze,
+    [MOVE_EFFECT_PARALYSIS]          = BattleScript_MoveEffectParalysis,
+    [MOVE_EFFECT_TOXIC]              = BattleScript_MoveEffectToxic,
+    [MOVE_EFFECT_CONFUSION]          = BattleScript_MoveEffectConfusion,
+    [MOVE_EFFECT_UPROAR]             = BattleScript_MoveEffectUproar,
+    [MOVE_EFFECT_PAYDAY]             = BattleScript_MoveEffectPayDay,
+    [MOVE_EFFECT_WRAP]               = BattleScript_MoveEffectWrap,
+	[MOVE_EFFECT_ATK_PLUS_1]         = BattleScript_StatChange,
+	[MOVE_EFFECT_DEF_PLUS_1]         = BattleScript_StatChange,
+	[MOVE_EFFECT_SPD_PLUS_1]         = BattleScript_StatChange,
+	[MOVE_EFFECT_SP_ATK_PLUS_1]      = BattleScript_StatChange,
+	[MOVE_EFFECT_SP_DEF_PLUS_1]      = BattleScript_StatChange,
+	[MOVE_EFFECT_ACC_PLUS_1]         = BattleScript_StatChange,
+	[MOVE_EFFECT_EVS_PLUS_1]         = BattleScript_StatChange,
+	[MOVE_EFFECT_ATK_PLUS_2]         = BattleScript_StatChange,
+	[MOVE_EFFECT_DEF_PLUS_2]         = BattleScript_StatChange,
+	[MOVE_EFFECT_SPD_PLUS_2]         = BattleScript_StatChange,
+	[MOVE_EFFECT_SP_ATK_PLUS_2]      = BattleScript_StatChange,
+	[MOVE_EFFECT_SP_DEF_PLUS_2]      = BattleScript_StatChange,
+	[MOVE_EFFECT_ACC_PLUS_2]         = BattleScript_StatChange,
+	[MOVE_EFFECT_EVS_PLUS_2]         = BattleScript_StatChange,
+	[MOVE_EFFECT_ATK_MINUS_1]        = BattleScript_StatChange,
+	[MOVE_EFFECT_DEF_MINUS_1]        = BattleScript_StatChange,
+	[MOVE_EFFECT_SPD_MINUS_1]        = BattleScript_StatChange,
+	[MOVE_EFFECT_SP_ATK_MINUS_1]     = BattleScript_StatChange,
+	[MOVE_EFFECT_SP_DEF_MINUS_1]     = BattleScript_StatChange,
+	[MOVE_EFFECT_ACC_MINUS_1]        = BattleScript_StatChange,
+	[MOVE_EFFECT_EVS_MINUS_1]        = BattleScript_StatChange,
+	[MOVE_EFFECT_ATK_MINUS_2]        = BattleScript_StatChange,
+	[MOVE_EFFECT_DEF_MINUS_2]        = BattleScript_StatChange,
+	[MOVE_EFFECT_SPD_MINUS_2]        = BattleScript_StatChange,
+	[MOVE_EFFECT_SP_ATK_MINUS_2]     = BattleScript_StatChange,
+	[MOVE_EFFECT_SP_DEF_MINUS_2]     = BattleScript_StatChange,
+	[MOVE_EFFECT_ACC_MINUS_2]        = BattleScript_StatChange,
+	[MOVE_EFFECT_EVS_MINUS_2]        = BattleScript_StatChange,
+	[MOVE_EFFECT_ALL_STATS_UP]       = BattleScript_AllStatsUp,
+	[MOVE_EFFECT_REMOVE_STATUS]      = BattleScript_TargetStatusHeal,
+	[MOVE_EFFECT_ATK_DEF_DOWN]       = BattleScript_MoveEffectAtkDefDown,
+	[MOVE_EFFECT_STOCKPILE_WORE_OFF] = BattleScript_MoveEffectStockpileWoreOff,
 };
 
 void SetMoveEffect(u8 moveEffect, bool8 affectsUser, bool8 certain)
@@ -101,6 +105,8 @@ static bool8 IsStatLoweringMoveEffect(u8 moveEffect)
 // primary = if the effect is the main use (e.g. Thunder Wave)
 bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 {
+	u8 statId;
+	s8 buff;
 	u8 moveEffect = gBattleStruct->moveEffect.moveEffectByte;
 	bool8 affectsUser = gBattleStruct->moveEffect.affectsUser;
 	bool8 certain = gBattleStruct->moveEffect.certain;
@@ -129,7 +135,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 	if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD))
 	{
 		// Check Shield Dust
-		if (!primary && defAbility == ABILITY_SHIELD_DUST && moveEffect <= MOVE_EFFECT_SECRET_POWER)
+		if (!primary && !affectsUser && defAbility == ABILITY_SHIELD_DUST && moveEffect <= MOVE_EFFECT_SECRET_POWER)
 			INCREMENT_RETURN
 		
 		if (!primary && CanSafeguardProtectBattler(gBattleScripting.battler, gEffectBattler) && moveEffect <= MOVE_EFFECT_CONFUSION)
@@ -319,13 +325,23 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		case MOVE_EFFECT_SP_DEF_PLUS_1:
 		case MOVE_EFFECT_ACC_PLUS_1:
 		case MOVE_EFFECT_EVS_PLUS_1:
-		    if (!NoAliveMonsForEitherParty() && ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), moveEffect - MOVE_EFFECT_ATK_PLUS_1 + 1, affectsUser ? MOVE_EFFECT_AFFECTS_USER : 0, NULL) == STAT_CHANGE_WORKED)
-			{
-				gBattleScripting.animArg1 = moveEffect;
-				gBattleScripting.animArg2 = 0;
-				effect = 2;
-			}
-			break;
+		    statId = moveEffect - MOVE_EFFECT_ATK_PLUS_1 + 1;
+			buff = +1;
+			
+			STAT_CHANGE:
+			    if (!NoAliveMonsForEitherParty())
+				{
+					SetStatChanger(statId, buff);
+					
+					if (!ChangeStatBuffs(affectsUser ? STAT_CHANGE_FLAG_SELF_INFLICT : 0, FALSE))
+					{
+						if (certain)
+							effect = 2;
+					}
+					else
+						effect = 2;
+				}
+				break;
 		case MOVE_EFFECT_ATK_PLUS_2:
 		case MOVE_EFFECT_DEF_PLUS_2:
 		case MOVE_EFFECT_SPD_PLUS_2:
@@ -333,13 +349,9 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		case MOVE_EFFECT_SP_DEF_PLUS_2:
 		case MOVE_EFFECT_ACC_PLUS_2:
 		case MOVE_EFFECT_EVS_PLUS_2:
-		    if (!NoAliveMonsForEitherParty() && ChangeStatBuffs(SET_STAT_BUFF_VALUE(2), moveEffect - MOVE_EFFECT_ATK_PLUS_2 + 1, affectsUser ? MOVE_EFFECT_AFFECTS_USER : 0, NULL) == STAT_CHANGE_WORKED)
-			{
-				gBattleScripting.animArg1 = moveEffect;
-				gBattleScripting.animArg2 = 0;
-				effect = 2;
-			}
-			break;
+		    statId = moveEffect - MOVE_EFFECT_ATK_PLUS_2 + 1;
+			buff = +2;
+			goto STAT_CHANGE;
 		case MOVE_EFFECT_ATK_MINUS_1:
 		case MOVE_EFFECT_DEF_MINUS_1:
 		case MOVE_EFFECT_SPD_MINUS_1:
@@ -347,13 +359,9 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		case MOVE_EFFECT_SP_DEF_MINUS_1:
 		case MOVE_EFFECT_ACC_MINUS_1:
 		case MOVE_EFFECT_EVS_MINUS_1:
-		    if (!NoAliveMonsForEitherParty() && ChangeStatBuffs(SET_STAT_BUFF_VALUE(1) | STAT_BUFF_NEGATIVE, moveEffect - MOVE_EFFECT_ATK_MINUS_1 + 1, affectsUser ? MOVE_EFFECT_AFFECTS_USER : 0, NULL) == STAT_CHANGE_WORKED)
-			{
-				gBattleScripting.animArg1 = moveEffect;
-				gBattleScripting.animArg2 = 0;
-				effect = 2;
-			}
-			break;
+		    statId = moveEffect - MOVE_EFFECT_ATK_MINUS_1 + 1;
+			buff = -1;
+			goto STAT_CHANGE;
 		case MOVE_EFFECT_ATK_MINUS_2:
 		case MOVE_EFFECT_DEF_MINUS_2:
 		case MOVE_EFFECT_SPD_MINUS_2:
@@ -361,13 +369,9 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		case MOVE_EFFECT_SP_DEF_MINUS_2:
 		case MOVE_EFFECT_ACC_MINUS_2:
 		case MOVE_EFFECT_EVS_MINUS_2:
-		    if (!NoAliveMonsForEitherParty() && ChangeStatBuffs(SET_STAT_BUFF_VALUE(2) | STAT_BUFF_NEGATIVE, moveEffect - MOVE_EFFECT_ATK_MINUS_2 + 1, affectsUser ? MOVE_EFFECT_AFFECTS_USER : 0, NULL) == STAT_CHANGE_WORKED)
-			{
-				gBattleScripting.animArg1 = moveEffect;
-				gBattleScripting.animArg2 = 0;
-				effect = 2;
-			}
-			break;
+		    statId = moveEffect - MOVE_EFFECT_ATK_MINUS_2 + 1;
+			buff = -2;
+			goto STAT_CHANGE;
 		case MOVE_EFFECT_RECHARGE:
 		    if (!(gBattleMons[gEffectBattler].status2 & STATUS2_RECHARGE))
 			{
@@ -378,10 +382,13 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			}
 			break;
 		case MOVE_EFFECT_ALL_STATS_UP:
+		case MOVE_EFFECT_ATK_DEF_DOWN:
 		    if (!NoAliveMonsForEitherParty())
 				effect = 2;
 			break;
-		case MOVE_EFFECT_RAPIDSPIN:
+		case MOVE_EFFECT_STOCKPILE_WORE_OFF:
+		    // Reset counter
+		    gDisableStructs[gEffectBattler].stockpileCounter = 0;
 		    effect = 2;
 			break;
 		case MOVE_EFFECT_REMOVE_STATUS:
@@ -391,10 +398,6 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 				gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument == STATUS1_SLEEP ? B_MSG_WOKEUP_EFFECT : B_MSG_CURED_BUFF1;
 				effect = 2;
 			}
-			break;
-		case MOVE_EFFECT_ATK_DEF_DOWN:
-		    if (!NoAliveMonsForEitherParty())
-				effect = 2;
 			break;
 		case MOVE_EFFECT_THRASH:
 		    if (!(gBattleMons[gEffectBattler].status2 & STATUS2_LOCK_CONFUSE))
@@ -478,4 +481,147 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		    ++gBattlescriptCurrInstr;
 			return TRUE;
 	}
+}
+
+/////////////////
+// STAT CHANGE //
+/////////////////
+
+void SetStatChanger(u8 statId, s8 buff)
+{
+	gBattleStruct->statChange.statId = statId;
+	gBattleStruct->statChange.buff = buff;
+	gBattleStruct->statChange.str = NULL;
+	gBattleStruct->statChange.mirrorArmorState = 0;
+}
+
+static u8 CheckStatDecreaseBlockEffects(u8 battlerId, u8 statId, u8 flags)
+{
+	if ((gSideStatuses[GetBattlerSide(battlerId)] & SIDE_STATUS_MIST) && GetBattlerAbility(gBattlerAttacker) != ABILITY_INFILTRATOR) // Check Mist
+		return STAT_CHANGE_FAIL_MIST;
+	else if (!(flags & STAT_CHANGE_FLAG_IGNORE_PROTECT) && JumpIfMoveAffectedByProtect(0, gBattlescriptCurrInstr)) // Check protect
+		return STAT_CHANGE_FAIL_PROTECTED;
+	else if (IsBattlerProtectedByFlowerVeil(battlerId)) // Check Flower Veil
+		return STAT_CHANGE_FAIL_FLOWER_VEIL;
+	
+	switch (GetBattlerAbility(battlerId))
+	{
+		case ABILITY_KEEN_EYE:
+		case ABILITY_ILLUMINATE:
+		    if (statId == STAT_ACC)
+				return STAT_CHANGE_FAIL_ABILITY_PREVENT_SPECIFIC_STAT;
+			break;
+		case ABILITY_HYPER_CUTTER:
+		    if (statId == STAT_ATK)
+				return STAT_CHANGE_FAIL_ABILITY_PREVENT_SPECIFIC_STAT;
+			break;
+		case ABILITY_BIG_PECKS:
+		    if (statId == STAT_DEF)
+				return STAT_CHANGE_FAIL_ABILITY_PREVENT_SPECIFIC_STAT;
+			break;
+		case ABILITY_CLEAR_BODY:
+		case ABILITY_WHITE_SMOKE:
+		case ABILITY_FULL_METAL_BODY:
+		    return STAT_CHANGE_FAIL_ABILITY_PREVENTED;
+	}
+	return STAT_CHANGE_WORKED;
+}
+
+// onlyChecks = used for playstatchangeanimation to check if other stats can be changed
+bool8 ChangeStatBuffs(u8 flags, bool8 onlyChecks)
+{
+	u8 result = STAT_CHANGE_WORKED;
+	u8 statId = gBattleStruct->statChange.statId;
+	s8 buff = gBattleStruct->statChange.buff;
+	bool8 selfInflict;
+	
+	gBattleStruct->statChange.maxOut = (buff == +6 || buff == -6);
+	gBattleStruct->statChange.flags = flags; // For playstatchangeanimation
+	
+	selfInflict = (flags & STAT_CHANGE_FLAG_SELF_INFLICT);
+	
+	if (selfInflict)
+		gEffectBattler = gBattlerAttacker;
+	else
+	{
+		gEffectBattler = gBattlerTarget;
+		
+		// Check Mirror Armor
+		if (!onlyChecks && GetBattlerAbility(gEffectBattler) == ABILITY_MIRROR_ARMOR && buff < 0 && !(flags & STAT_CHANGE_FLAG_NO_MIRROR_ARMOR))
+		{
+			u8 temp;
+			bool8 worked;
+			
+			flags |= STAT_CHANGE_FLAG_NO_MIRROR_ARMOR;
+			++gBattleStruct->statChange.mirrorArmorState; // Bounced back
+			
+			// For the correct stat change target
+			SWAP(gBattlerAttacker, gBattlerTarget, temp);
+			worked = ChangeStatBuffs(flags, FALSE);
+			SWAP(gBattlerAttacker, gBattlerTarget, temp);
+			
+			return worked;
+		}
+	}
+	gSpecialStatuses[gEffectBattler].changedStatsBattlerId = gBattlerAttacker; // The battler that caused the stat to change, for Defiant
+	
+	// Check abilities that changes the buff value
+	switch (GetBattlerAbility(gEffectBattler))
+	{
+		case ABILITY_SIMPLE:
+		    buff *= 2; // Double buff
+			break;
+		case ABILITY_CONTRARY:
+		    buff *= -1; // Invert buff
+			break;
+	}
+	
+	// Clamp buff to max and min values
+	if (buff > +6)
+		buff = +6;
+	else if (buff < -6)
+		buff = -6;
+	
+	if (buff > 0) // Stat increase
+	{
+		if (gBattleMons[gEffectBattler].statStages[statId] < MAX_STAT_STAGES)
+		{
+			if (!onlyChecks) // Stat can be increased, stop here
+			{
+				if (gBattleStruct->statChange.maxOut)
+					gBattleMons[gEffectBattler].statStages[statId] = MAX_STAT_STAGES;
+				else
+				{
+					gBattleMons[gEffectBattler].statStages[statId] += buff;
+					if (gBattleMons[gEffectBattler].statStages[statId] > MAX_STAT_STAGES)
+						gBattleMons[gEffectBattler].statStages[statId] = MAX_STAT_STAGES;
+				}
+			}
+		}
+		else
+			result = STAT_CHANGE_FAIL_WONT_CHANGE;
+	}
+	else if (selfInflict || (result = CheckStatDecreaseBlockEffects(gEffectBattler, statId, flags)) == STAT_CHANGE_WORKED) // Stat decrease
+	{
+		if (gBattleMons[gEffectBattler].statStages[statId] > MIN_STAT_STAGES)
+		{
+		   	if (!onlyChecks) // Stat can be decreased, stop here
+		   	{
+				if (gBattleStruct->statChange.maxOut)
+					gBattleMons[gEffectBattler].statStages[statId] = MIN_STAT_STAGES;
+				else
+				{
+					gBattleMons[gEffectBattler].statStages[statId] += buff;
+					if (gBattleMons[gEffectBattler].statStages[statId] < MIN_STAT_STAGES)
+						gBattleMons[gEffectBattler].statStages[statId] = MIN_STAT_STAGES;
+				}
+		   	}
+		}
+		else
+			result = STAT_CHANGE_FAIL_WONT_CHANGE;
+	}
+	gBattleStruct->statChange.buff = buff; // Store new buff in case it was changed
+	gBattleStruct->statChange.result = result;
+	
+	return (result == STAT_CHANGE_WORKED);
 }

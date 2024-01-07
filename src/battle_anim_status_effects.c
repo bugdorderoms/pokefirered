@@ -323,68 +323,16 @@ static void sub_807862C(u8 taskId)
     }
 }
 
-#define CASE(by, stat) case (STAT_ANIM_##by + stat - 1)
-
 void AnimTask_StatsChange(u8 taskId)
 {
-    bool16 goesDown = FALSE;
-    s16 animStatId;
-    bool16 sharply = FALSE;
-
-    switch (gBattleSpritesDataPtr->animationData->animArg)
-    {
-    CASE(PLUS1,  STAT_ATK):     animStatId = 0;  break;
-    CASE(PLUS1,  STAT_DEF):     animStatId = 1;  break;
-    CASE(PLUS1,  STAT_SPEED):   animStatId = 3;  break;
-    CASE(PLUS1,  STAT_SPATK):   animStatId = 5;  break;
-    CASE(PLUS1,  STAT_SPDEF):   animStatId = 6;  break;
-    CASE(PLUS1,  STAT_ACC):     animStatId = 2;  break;
-    CASE(PLUS1,  STAT_EVASION): animStatId = 4;  break;
-
-    CASE(MINUS1, STAT_ATK):     goesDown = TRUE;   animStatId = 0;  break;
-    CASE(MINUS1, STAT_DEF):     goesDown = TRUE;   animStatId = 1;  break;
-    CASE(MINUS1, STAT_SPEED):   goesDown = TRUE;   animStatId = 3;  break;
-    CASE(MINUS1, STAT_SPATK):   goesDown = TRUE;   animStatId = 5;  break;
-    CASE(MINUS1, STAT_SPDEF):   goesDown = TRUE;   animStatId = 6;  break;
-    CASE(MINUS1, STAT_ACC):     goesDown = TRUE;   animStatId = 2;  break;
-    CASE(MINUS1, STAT_EVASION): goesDown = TRUE;   animStatId = 4;  break;
-
-    CASE(PLUS2,  STAT_ATK):     animStatId = 0;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_DEF):     animStatId = 1;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_SPEED):   animStatId = 3;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_SPATK):   animStatId = 5;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_SPDEF):   animStatId = 6;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_ACC):     animStatId = 2;     sharply = TRUE;   break;
-    CASE(PLUS2,  STAT_EVASION): animStatId = 4;     sharply = TRUE;   break;
-
-    CASE(MINUS2, STAT_ATK):     goesDown = TRUE;   animStatId = 0;     sharply = TRUE;   break;
-    CASE(MINUS2, STAT_DEF):     goesDown = TRUE;   animStatId = 1;     sharply = TRUE;   break;
-    CASE(MINUS2, STAT_SPEED):   goesDown = TRUE;   animStatId = 3;     sharply = TRUE;   break;
-    CASE(MINUS2, STAT_SPATK):   goesDown = TRUE;   animStatId = 5;     sharply = TRUE;   break;
-    CASE(MINUS2, STAT_SPDEF):   goesDown = TRUE;   animStatId = 6;     sharply = TRUE;   break;
-    CASE(MINUS2, STAT_ACC):     goesDown = TRUE;   animStatId = 2;     sharply = TRUE;   break;
-    CASE(MINUS2, STAT_EVASION): goesDown = TRUE;   animStatId = 4;     sharply = TRUE;   break;
-
-    case STAT_ANIM_MULTIPLE_PLUS1:  animStatId = 0xFF;  sharply = FALSE;  break;
-    case STAT_ANIM_MULTIPLE_PLUS2:  animStatId = 0xFF;  sharply = TRUE;   break;
-    case STAT_ANIM_MULTIPLE_MINUS1: goesDown = TRUE;   animStatId = 0xFF;  sharply = FALSE;  break;
-    case STAT_ANIM_MULTIPLE_MINUS2: goesDown = TRUE;   animStatId = 0xFF;  sharply = TRUE;   break;
-
-    default:
-        DestroyAnimVisualTask(taskId);
-        return;
-    }
-
-    gBattleAnimArgs[0] = goesDown;
-    gBattleAnimArgs[1] = animStatId;
+    gBattleAnimArgs[0] = (gBattleStruct->statChange.buff < 0);
+    gBattleAnimArgs[1] = gBattleSpritesDataPtr->animationData->animArg;
     gBattleAnimArgs[2] = 0;
     gBattleAnimArgs[3] = 0;
-    gBattleAnimArgs[4] = sharply;
+    gBattleAnimArgs[4] = 0;
     gTasks[taskId].func = InitStatsChangeAnimation;
     InitStatsChangeAnimation(taskId);
 }
-
-#undef CASE
 
 void LaunchStatusAnimation(u8 battlerId, u8 statusAnimId)
 {

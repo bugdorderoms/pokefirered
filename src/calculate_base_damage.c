@@ -397,8 +397,6 @@ static inline u16 GetSupremeOverlordModifier(u8 battlerId)
 	return modifier;
 }
 
-#define IS_RECOIL_MOVE_EFFECT(moveEffect) ((moveEffect == EFFECT_RECOIL_IF_MISS || moveEffect == EFFECT_RECOIL || moveEffect == EFFECT_RECOIL_33_STATUS))
-
 static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageStruct)
 {
 	u16 move = damageStruct->move;
@@ -486,12 +484,12 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			    || (gProtectStructs[attacker].specialDmg && gProtectStructs[attacker].specialBattlerId == defender))
 				basePower *= 2;
 		    break;
+		case EFFECT_SPIT_UP:
+			basePower = 100 * gDisableStructs[attacker].stockpileCounter;
+			break;
 		case EFFECT_WEATHER_BALL:
 			if (IsBattlerWeatherAffected(attacker, WEATHER_ANY & ~(WEATHER_STRONG_WINDS)))
 				basePower *= 2;
-			break;
-		case EFFECT_SPIT_UP:
-			basePower = 100 * gDisableStructs[attacker].stockpileCounter;
 			break;
 	}
 	
@@ -531,7 +529,7 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 				basePower = (12 * basePower) / 10;
 			break;
 		case ABILITY_RECKLESS:
-		    if (IS_RECOIL_MOVE_EFFECT(moveEffect))
+		    if ((move != MOVE_STRUGGLE && gBattleMoves[move].flags.recoilDivisor) || moveEffect == EFFECT_RECOIL_IF_MISS)
 				basePower = (12 * basePower) / 10;
 			break;
 		case ABILITY_RIVALRY:

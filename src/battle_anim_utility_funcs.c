@@ -361,36 +361,37 @@ void InitStatsChangeAnimation(u8 taskId)
     u8 i;
 
     sAnimStatsChangeData = AllocZeroed(sizeof(struct AnimStatsChangeData));
+	
     for (i = 0; i < 8; ++i)
         sAnimStatsChangeData->data[i] = gBattleAnimArgs[i];
+	
+	sAnimStatsChangeData->battler1 = gBattleAnimAttacker;
+	sAnimStatsChangeData->battler2 = BATTLE_PARTNER(sAnimStatsChangeData->battler1);
+	
     gTasks[taskId].func = StatsChangeAnimation_Step1;
 }
 
 static void StatsChangeAnimation_Step1(u8 taskId)
 {
-    if (sAnimStatsChangeData->data[2] == 0)
-        sAnimStatsChangeData->battler1 = gBattleAnimAttacker;
-    else
-        sAnimStatsChangeData->battler1 = gBattleAnimTarget;
-    sAnimStatsChangeData->battler2 = BATTLE_PARTNER(sAnimStatsChangeData->battler1);
-    if (sAnimStatsChangeData->data[3] && !IsBattlerSpriteVisible(sAnimStatsChangeData->battler2))
-        sAnimStatsChangeData->data[3] = 0;
     gBattle_WIN0H = 0;
     gBattle_WIN0V = 0;
+	
     SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
     SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG0 | WINOUT_WIN01_BG2 | WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ  | WINOUT_WIN01_CLR
                                | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG1 | BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 16));
+	
     SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 0);
     SetAnimBgAttribute(1, BG_ANIM_SCREEN_SIZE, 0);
     SetAnimBgAttribute(1, BG_ANIM_CHAR_BASE_BLOCK, 1);
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && sAnimStatsChangeData->data[3] == 0)
+	
+    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
     {
         if (GetBattlerPosition(sAnimStatsChangeData->battler1) == B_POSITION_OPPONENT_RIGHT || GetBattlerPosition(sAnimStatsChangeData->battler1) == B_POSITION_PLAYER_LEFT)
         {
-            if (IsBattlerSpriteVisible(sAnimStatsChangeData->battler2) == TRUE)
+            if (IsBattlerSpriteVisible(sAnimStatsChangeData->battler2))
             {
                 gSprites[gBattlerSpriteIds[sAnimStatsChangeData->battler2]].oam.priority -= 1;
                 SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 1);
@@ -405,78 +406,60 @@ static void StatsChangeAnimation_Step1(u8 taskId)
 static void StatsChangeAnimation_Step2(u8 taskId)
 {
     struct BattleAnimBgData animBgData;
-    u8 spriteId, newSpriteId = 0;
-    u8 battlerSpriteId;
-
-    battlerSpriteId = gBattlerSpriteIds[sAnimStatsChangeData->battler1];
-    spriteId = CreateCloneOfSpriteInWindowMode(battlerSpriteId, sAnimStatsChangeData->species);
-    if (sAnimStatsChangeData->data[3])
-    {
-        battlerSpriteId = gBattlerSpriteIds[sAnimStatsChangeData->battler2];
-        newSpriteId = CreateCloneOfSpriteInWindowMode(battlerSpriteId, sAnimStatsChangeData->species);
-    }
+    u8 spriteId = CreateCloneOfSpriteInWindowMode(gBattlerSpriteIds[sAnimStatsChangeData->battler1], sAnimStatsChangeData->species);
+	
     GetBattleAnimBgData(&animBgData, 1);
-    if (sAnimStatsChangeData->data[0] == 0)
-        AnimLoadCompressedBgTilemap(animBgData.bgId, gBattleStatMask1_Tilemap);
-    else
-        AnimLoadCompressedBgTilemap(animBgData.bgId, gBattleStatMask2_Tilemap);
+	AnimLoadCompressedBgTilemap(animBgData.bgId, sAnimStatsChangeData->data[0] == 0 ? gBattleStatMask1_Tilemap : gBattleStatMask2_Tilemap);
     AnimLoadCompressedBgGfx(animBgData.bgId, gBattleStatMask_Gfx, animBgData.tilesOffset);
+	
     switch (sAnimStatsChangeData->data[1])
     {
-    case 0:
+	case 0: // Multiple stats
+        LoadCompressedPalette(gBattleStatMask5_Pal, animBgData.paletteId * 16, 32);
+        break;
+    case STAT_ATK: // Attack
         LoadCompressedPalette(gBattleStatMask2_Pal, animBgData.paletteId * 16, 32);
         break;
-    case 1:
+    case STAT_DEF: // Defense
         LoadCompressedPalette(gBattleStatMask1_Pal, animBgData.paletteId * 16, 32);
         break;
-    case 2:
-        LoadCompressedPalette(gBattleStatMask3_Pal, animBgData.paletteId * 16, 32);
-        break;
-    case 3:
+	case STAT_SPEED: // Speed
         LoadCompressedPalette(gBattleStatMask4_Pal, animBgData.paletteId * 16, 32);
         break;
-    case 4:
-        LoadCompressedPalette(gBattleStatMask6_Pal, animBgData.paletteId * 16, 32);
-        break;
-    case 5:
+	case STAT_SPATK: // Sp. Attack
         LoadCompressedPalette(gBattleStatMask7_Pal, animBgData.paletteId * 16, 32);
         break;
-    case 6:
+	case STAT_SPDEF: // Sp. Defense
         LoadCompressedPalette(gBattleStatMask8_Pal, animBgData.paletteId * 16, 32);
         break;
-    default:
-        LoadCompressedPalette(gBattleStatMask5_Pal, animBgData.paletteId * 16, 32);
+    case STAT_ACC: // Accuracy
+        LoadCompressedPalette(gBattleStatMask3_Pal, animBgData.paletteId * 16, 32);
+        break;
+    case STAT_EVASION: // Evasion
+        LoadCompressedPalette(gBattleStatMask6_Pal, animBgData.paletteId * 16, 32);
         break;
     }
     gBattle_BG1_X = 0;
     gBattle_BG1_Y = 0;
-     if (sAnimStatsChangeData->data[0] == 1)
+	
+	// Is negative
+    if (sAnimStatsChangeData->data[0])
     {
         gBattle_BG1_X = 64;
         gTasks[taskId].data[1] = -3;
     }
     else
-    {
         gTasks[taskId].data[1] = 3;
-    }
 
-    if (sAnimStatsChangeData->data[4] == 0)
-    {
-        gTasks[taskId].data[4] = 10;
-        gTasks[taskId].data[5] = 20;
-    }
-    else
-    {
-        gTasks[taskId].data[4] = 13;
-        gTasks[taskId].data[5] = 30;
-    }
     gTasks[taskId].data[0] = spriteId;
-    gTasks[taskId].data[2] = sAnimStatsChangeData->data[3];
-    gTasks[taskId].data[3] = newSpriteId;
+    gTasks[taskId].data[2] = 0;
+    gTasks[taskId].data[3] = 0;
+	gTasks[taskId].data[4] = 10;
+	gTasks[taskId].data[5] = 20;
     gTasks[taskId].data[6] = sAnimStatsChangeData->higherPriority;
     gTasks[taskId].data[7] = gBattlerSpriteIds[sAnimStatsChangeData->battler2];
     gTasks[taskId].func = StatsChangeAnimation_Step3;
-	PlaySE12WithPanning(sAnimStatsChangeData->data[0] == 0 ? SE_M_STAT_INCREASE : SE_M_STAT_DECREASE, BattleAnimAdjustPanning2(SOUND_PAN_ATTACKER));
+	PlaySE12WithPanning(sAnimStatsChangeData->data[0] ? SE_M_STAT_DECREASE : SE_M_STAT_INCREASE, BattleAnimAdjustPanning2(SOUND_PAN_ATTACKER));
 }
 
 static void StatsChangeAnimation_Step3(u8 taskId)
@@ -522,8 +505,6 @@ static void StatsChangeAnimation_Step3(u8 taskId)
         SetGpuReg(REG_OFFSET_BLDCNT, 0);
         SetGpuReg(REG_OFFSET_BLDALPHA, 0);
         DestroySprite(&gSprites[gTasks[taskId].data[0]]);
-        if (gTasks[taskId].data[2])
-            DestroySprite(&gSprites[gTasks[taskId].data[3]]);
         if (gTasks[taskId].data[6] == 1)
             ++gSprites[gTasks[taskId].data[7]].oam.priority;
         Free(sAnimStatsChangeData);

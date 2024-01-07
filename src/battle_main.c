@@ -2515,7 +2515,7 @@ u8 IsRunningFromBattleImpossible(u8 battlerId, bool8 checkIngrain)
 	
 	if (ret)
 	{
-		gBattleScripting.battler = ret;
+		gBattleScripting.battler = ret - 1;
 		gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ABILITY_PREVENT_ESCAPE;
 		return BATTLE_RUN_FAILURE;
 	}
@@ -2637,8 +2637,6 @@ static void HandleTurnActionSelectionState(void)
                         struct ChooseMoveStruct moveInfo;
 
                         moveInfo.species = gBattleMons[battlerId].species;
-                        moveInfo.monType1 = gBattleMons[battlerId].type1;
-                        moveInfo.monType2 = gBattleMons[battlerId].type2;
                         for (i = 0; i < MAX_MON_MOVES; ++i)
                         {
                             moveInfo.moves[i] = gBattleMons[battlerId].moves[i];
@@ -2667,23 +2665,22 @@ static void HandleTurnActionSelectionState(void)
                     break;
                 case B_ACTION_SWITCH:
                     *(gBattleStruct->battlerPartyIndexes + battlerId) = gBattlerPartyIndexes[battlerId];
+					
                     if (!CanBattlerEscape(battlerId, TRUE))
-                    {
                         BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->battlerPartyOrders[battlerId]);
-                    }
-					else if (IsAbilityPreventingSwitchOut(battlerId))
+					else
 					{
-						BtlController_EmitChoosePokemon(battlerId, BUFFER_A, ((IsAbilityPreventingSwitchOut(battlerId) - 1) << 4) | PARTY_ACTION_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->battlerPartyOrders[battlerId]);
-					}
-                    else
-                    {
-                        if (battlerId == 2 && gChosenActionByBattler[0] == B_ACTION_SWITCH)
-                            BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->battlerPartyOrders[battlerId]);
-                        else if (battlerId == 3 && gChosenActionByBattler[1] == B_ACTION_SWITCH)
+						i = IsAbilityPreventingSwitchOut(battlerId);
+						
+						if (i)
+							BtlController_EmitChoosePokemon(battlerId, BUFFER_A, ((i - 1) << 4) | PARTY_ACTION_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->battlerPartyOrders[battlerId]);
+						else if (battlerId == 2 && gChosenActionByBattler[0] == B_ACTION_SWITCH)
+							BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->battlerPartyOrders[battlerId]);
+						else if (battlerId == 3 && gChosenActionByBattler[1] == B_ACTION_SWITCH)
                             BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->battlerPartyOrders[battlerId]);
                         else
                             BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, 6, ABILITY_NONE, gBattleStruct->battlerPartyOrders[battlerId]);
-                    }
+					}
                     MarkBattlerForControllerExec(battlerId);
                     break;
                 case B_ACTION_SAFARI_BALL:
@@ -2860,6 +2857,25 @@ void SwapTurnOrder(u8 id1, u8 id2)
     SWAP(gBattlerByTurnOrder[id1], gBattlerByTurnOrder[id2], temp);
 }
 
+static s32 GetBattlerBracket(u8 battler)
+{
+    u8 holdEffect = GetBattlerItemHoldEffect(battler, TRUE), holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battler].item);
+    s32 bracket = 0;
+	
+	gProtectStructs[battler].myceliumMightElevated = FALSE;
+	
+    if (holdEffect == HOLD_EFFECT_QUICK_CLAW && gRandomTurnNumber < (0xFFFF * holdEffectParam) / 100)
+        bracket = 1;
+    else if (GetBattlerAbility(battler) == ABILITY_STALL)
+        bracket = -1;
+	else if (GetBattlerAbility(battler) == ABILITY_MYCELIUM_MIGHT && IS_MOVE_STATUS(gCurrentMove))
+	{
+		gProtectStructs[battler].myceliumMightElevated = TRUE;
+		bracket = -1;
+	}
+    return bracket;
+}
+
 u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
 {
     s8 battler1Priority, battler2Priority;
@@ -2939,25 +2955,6 @@ s8 GetMovePriority(u8 battler, u16 move)
 			break;
 	}
     return priority;
-}
-
-s32 GetBattlerBracket(u8 battler)
-{
-    u8 holdEffect = GetBattlerItemHoldEffect(battler, TRUE), holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battler].item);
-    s32 bracket = 0;
-	
-	gProtectStructs[battler].myceliumMightElevated = FALSE;
-	
-    if (holdEffect == HOLD_EFFECT_QUICK_CLAW && gRandomTurnNumber < (0xFFFF * holdEffectParam) / 100)
-        bracket = 1;
-    else if (GetBattlerAbility(battler) == ABILITY_STALL)
-        bracket = -1;
-	else if (GetBattlerAbility(battler) == ABILITY_MYCELIUM_MIGHT && IS_MOVE_STATUS(gCurrentMove))
-	{
-		gProtectStructs[battler].myceliumMightElevated = TRUE;
-		bracket = -1;
-	}
-    return bracket;
 }
 
 u32 GetBattlerTotalSpeed(u8 battler)
@@ -3269,11 +3266,11 @@ static void HandleEndTurn_BattleLost(void)
     {
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && GetTrainerBattleMode() == TRAINER_BATTLE_EARLY_RIVAL)
         {
-			gBattleCommunication[MULTISTRING_CHOOSER] = (GetRivalBattleFlags() & RIVAL_BATTLE_HEAL_AFTER) ? 1 : 2; // Do or not white out text
+			gBattleCommunication[MULTIUSE_STATE] = (GetRivalBattleFlags() & RIVAL_BATTLE_HEAL_AFTER) ? 1 : 2; // Do or not white out text
             gBattlerAttacker = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
         }
         else
-            gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+            gBattleCommunication[MULTIUSE_STATE] = 0;
 		
         gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
     }

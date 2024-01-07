@@ -20,6 +20,18 @@ enum
 	STATUS_CHANGE_FAIL_AROMA_VEIL_ON_SIDE,
 };
 
+// Result values for ChangeStatBuffs
+enum
+{
+	STAT_CHANGE_WORKED,
+	STAT_CHANGE_FAIL_WONT_CHANGE,
+	STAT_CHANGE_FAIL_MIST,
+	STAT_CHANGE_FAIL_PROTECTED,
+	STAT_CHANGE_FAIL_ABILITY_PREVENTED,
+	STAT_CHANGE_FAIL_ABILITY_PREVENT_SPECIFIC_STAT,
+	STAT_CHANGE_FAIL_FLOWER_VEIL,
+};
+
 #define MOVE_LIMITATION_ALL_MOVES_MASK ((1 << MAX_MON_MOVES) - 1)
 
 #define MOVE_LIMITATION_IGNORE_NO_PP             (1 << 0)
@@ -62,10 +74,6 @@ enum
 #define BS_GET_OPPONENT1                12
 #define BS_GET_PLAYER2                  13
 #define BS_GET_OPPONENT2                14
-
-// For ChangeStatBuffs
-#define STAT_CHANGE_WORKED      0
-#define STAT_CHANGE_DIDNT_WORK  1
 
 #define BATTLE_ALIVE_SIDE            0
 #define BATTLE_ALIVE_EXCEPT_BATTLER  1
@@ -157,7 +165,6 @@ u8 GetCatchingBattler(void);
 u8 GetBattlerTurnOrderNum(u8 battlerId);
 void CheckSetBattlerUnburden(u8 battler);
 u32 GetEffectChanceIncreases(u8 battlerId, u32 secondaryEffectChance);
-u8 ChangeStatBuffs(s8 statValue, u8 statId, u8, const u8 *BS_ptr);
 bool8 TryResetBattlerStatChanges(u8 battlerId);
 void CopyBattlerStatChanges(u8 battler1, u8 battler2);
 u8 GetBattlerGender(u8 battlerId);
@@ -197,5 +204,6 @@ bool8 TryRemoveScreens(u8 battler, bool8 fromBothSides);
 bool8 DoesSpreadMoveStrikesOnlyOnce(u8 attacker, u8 defender, u16 move, bool8 checkTargetsDone);
 u8 GetTypeChangingMoveType(struct Pokemon *mon, u16 move);
 u8 GetSecretPowerEffect(void);
+bool8 TryRemoveEntryHazards(u8 battlerId);
 
 #endif // GUARD_BATTLE_UTIL_H

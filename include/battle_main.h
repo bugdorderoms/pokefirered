@@ -95,7 +95,6 @@ void SwapTurnOrder(u8 id1, u8 id2);
 u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves);
 s8 GetChosenMovePriority(u8 battler);
 s8 GetMovePriority(u8 battler, u16 move);
-s32 GetBattlerBracket(u8 battler);
 u32 GetBattlerTotalSpeed(u8 battler);
 void RunBattleScriptCommands_PopCallbacksStack(void);
 void RunBattleScriptCommands(void);

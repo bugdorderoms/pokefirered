@@ -38,8 +38,10 @@
 	.byte 0x7
 	.endm
 
-	.macro nop08
+	.macro setstatchanger statId:req, buff:req
 	.byte 0x8
+	.byte \statId
+	.byte \buff
 	.endm
 
 	.macro attackanimation
@@ -159,7 +161,7 @@
 	.4byte \ptr
 	.endm
 
-	.macro jumpifstat battler:req, ifflag:req, stat:req, value:req, ptr
+	.macro jumpifstat battler:req, ifflag:req, stat:req, value:req, ptr:req
 	.byte 0x20
 	.byte \battler
 	.byte \ifflag
@@ -391,15 +393,14 @@
 	.4byte \param2
 	.endm
 
-	.macro setgraphicalstatchangevalues
+	.macro nop47
 	.byte 0x47
 	.endm
 
-	.macro playstatchangeanimation battler:req, param1:req, param2:req
+	.macro playstatchangeanimation bits=0, flags=0
 	.byte 0x48
-	.byte \battler
-	.byte \param1
-	.byte \param2
+	.4byte \bits
+	.byte \flags
 	.endm
 
 	.macro moveend param0:req, param1:req
@@ -528,11 +529,11 @@
 	.byte \battler
 	.endm
 
-	.macro handlelearnnewmove param0:req, param1:req, param2:req
+	.macro handlelearnnewmove learnedMoveStr:req, failStr:req, firstMove:req
 	.byte 0x59
-	.4byte \param0
-	.4byte \param1
-	.byte \param2
+	.4byte \learnedMoveStr
+	.4byte \failStr
+	.byte \firstMove
 	.endm
 
 	.macro yesnoboxlearnmove param0:req
@@ -581,11 +582,11 @@
 	.byte \setMoveChosen
 	.endm
 	
-	.macro argumenttomoveeffect
+	.macro nop64
 	.byte 0x64
 	.endm
 
-	.macro argumenttomovedamage
+	.macro nop65
 	.byte 0x65
 	.endm
 
@@ -732,7 +733,7 @@
 	.byte \battler
 	.endm
 
-	.macro stockpile
+	.macro nop85
 	.byte 0x85
 	.endm
 
@@ -750,14 +751,15 @@
 	.byte 0x88
 	.endm
 
-	.macro statbuffchange param0:req, param1:req
+	.macro statbuffchange flags=0, failPtr=NULL
 	.byte 0x89
-	.byte \param0
-	.4byte \param1
+	.byte \flags
+	.4byte \failPtr
 	.endm
 
-	.macro nop8a
+	.macro displaystatchangestring stringId:req
 	.byte 0x8a
+	.2byte \stringId
 	.endm
 
 	.macro nop8b
@@ -946,10 +948,8 @@
 	.byte 0xb3
 	.endm
 
-	.macro jumpifconfusedandstatmaxed stat:req, ptr:req
+	.macro nopb4
 	.byte 0xb4
-	.byte \stat
-	.4byte \ptr
 	.endm
 
 	.macro handlefurycutter
@@ -1038,9 +1038,8 @@
 	.byte 0xc8
 	.endm
 
-	.macro jumpifattackandspecialattackcannotfall ptr:req
+	.macro nopc9
 	.byte 0xc9
-	.4byte \ptr
 	.endm
 
 	.macro nopca
@@ -1073,9 +1072,8 @@
 	.4byte \param0
 	.endm
 
-	.macro trysethelpinghand param0:req
+	.macro nopd1
 	.byte 0xd1
-	.4byte \param0
 	.endm
 
 	.macro tryswapitems param0:req
@@ -1179,9 +1177,9 @@
 	.byte 0xe7
 	.endm
 
-	.macro settypebasedhalvers param0:req
+	.macro setfieldsport ptr:req
 	.byte 0xe8
-	.4byte \param0
+	.4byte \ptr
 	.endm
 
 	.macro nope9
@@ -1476,6 +1474,27 @@
 	swapabilities
 	.endm
 	
+	.macro jumpifdefiantactivate ptr:req
+	various BS_EFFECT_BATTLER, VARIOUS_JUMP_IF_DEFIANT_ACTIVATE
+	.4byte \ptr
+	.endm
+	
+	.macro jumpifconfusedandstatmaxed battler:req, statId:req, ptr:req
+	various \battler, VARIOUS_JUMP_IF_CONFUSED_AND_STAT_MAXED
+	.byte \statId
+	.4byte \ptr
+	.endm
+	
+	.macro tryactivaterattledonintimidate ptr:req
+	various BS_TARGET, VARIOUS_TRY_RATTLED_ON_INTIMIDATE
+	.4byte \ptr
+	.endm
+	
+	.macro tryactivatesapsipper battler:req, ptr:req
+	various \battler, VARIOUS_TRY_ACTIVATE_SAP_SIPPER
+	.4byte \ptr
+	.endm
+	
 @ callfunction macros
     .macro setminimize
 	callfunction BS_SetMinimize
@@ -1492,10 +1511,6 @@
 	.macro incrementgamestat param0:req
 	callfunction BS_IncrementGameStat
 	.byte \param0
-	.endm
-	
-	.macro getmovetarget
-	callfunction BS_GetMoveTarget
 	.endm
 	
 	.macro spriteignore0hp
@@ -1610,11 +1625,38 @@
 	callfunction BS_SnatchSetBattlers
 	.endm
 	
-@ helpful macros
-	.macro setstatchanger stat:req, stages:req, down:req
-	setbyte sSTATCHANGER \stat | \stages << 4 | \down << 7
+	.macro tryrestoremirrorarmororiginalattacker
+	callfunction BS_TryRestoreMirrorArmorOriginalAttacker
 	.endm
-
+	
+	.macro argumenttomovedamage
+	callfunction BS_ArgumentToMoveDamage
+	.endm
+	
+	.macro argumenttomoveeffect
+	callfunction BS_ArgumentToMoveEffect
+	.endm
+	
+	.macro setstatchangerfrommultiusestate buff:req
+	callfunction BS_SetStatChangerFromMultiuseState
+	.byte \buff
+	.endm
+	
+	.macro stockpile caseId:req, ptr=NULL
+	callfunction BS_Stockpile
+	.byte \caseId
+	.4byte \ptr
+	.endm
+	
+	.macro settargetally
+	callfunction BS_SetTargetAlly
+	.endm
+	
+	.macro sethelpinghand
+	callfunction BS_SetHelpingHand
+	.endm
+	
+@ helpful macros
 	.macro copybyte dst:req, src:req
 	copyarray \dst, \src, 0x1
 	.endm
@@ -1771,4 +1813,10 @@
 	damagecalc
 	typecalc
 	adjustdamage
+	.endm
+	
+	.macro statchangeanimandstring bits=0, flags=0, stringId=0
+	playstatchangeanimation \bits, \flags
+	waitstate
+	displaystatchangestring \stringId
 	.endm

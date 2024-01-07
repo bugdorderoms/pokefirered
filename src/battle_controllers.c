@@ -760,8 +760,10 @@ void BtlController_EmitPrintString(u8 battlerId, u8 bufferId, u16 stringId)
     stringInfo->scrActive = gBattleScripting.battler;
     stringInfo->hpScale = gBattleStruct->hpScale;
     stringInfo->moveType = gBattleMoves[gCurrentMove].type;
+	
     for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
         stringInfo->abilities[i] = gBattleMons[i].ability;
+	
     for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; ++i)
     {
         stringInfo->textBuffs[0][i] = gBattleTextBuff1[i];

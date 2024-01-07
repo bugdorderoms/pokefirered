@@ -91,11 +91,8 @@ BattleScript_ItemCureSecondaryStatus_PrintString::
 BattleScript_ItemIncreaseStat::
     call BattleScript_UseItemMessage
 	itemincreasestat
-    statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_NOT_PROTECT_AFFECTED | STAT_CHANGE_BS_PTR, BattleScript_ItemEnd
-    setgraphicalstatchangevalues
-    playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
-    printfromtable gStatUpStringIds
-    waitmessage B_WAIT_TIME_LONG
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring
     end
 
 @ EFFECT_ITEM_SET_MIST @

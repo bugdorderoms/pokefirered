@@ -39,6 +39,7 @@ enum
 
 bool8 UproarWakeUpCheck(void);
 u8 IsUproarActive(void);
+bool8 JumpIfMoveAffectedByProtect(u8 addr, const u8 *jumpStr);
 u8 GetTypeModifier(u8 atkType, u8 defType);
 u16 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility);
 u8 CalcTypeEffectivenessMultiplier(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 recordAbilities, u16 *flags);

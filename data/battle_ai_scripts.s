@@ -129,7 +129,7 @@ AI_CheckBadMove_CheckEffect:: @ 81D9D27
 	if_effect EFFECT_MIST, AI_CBM_Mist
 	if_effect EFFECT_FOCUS_ENERGY, AI_CBM_FocusEnergy
 	if_effect EFFECT_CONFUSE, AI_CBM_Confuse
-	if_effect EFFECT_ATTACK_UP_2, AI_CBM_AttackUp
+	if_effect EFFECT_USER_ATTACK_UP_2, AI_CBM_AttackUp
 	if_effect EFFECT_DEFENSE_UP_2, AI_CBM_DefenseUp
 	if_effect EFFECT_SPEED_UP_2, AI_CBM_SpeedUp
 	if_effect EFFECT_SPECIAL_ATTACK_UP_2, AI_CBM_SpAtkUp
@@ -676,7 +676,7 @@ AI_CheckViability:: @ 81DA445
 	if_effect EFFECT_SUPER_FANG, AI_CV_SuperFang
 	if_effect EFFECT_TRAP, AI_CV_Trap
 	if_effect EFFECT_CONFUSE, AI_CV_Confuse
-	if_effect EFFECT_ATTACK_UP_2, AI_CV_AttackUp
+	if_effect EFFECT_USER_ATTACK_UP_2, AI_CV_AttackUp
 	if_effect EFFECT_DEFENSE_UP_2, AI_CV_DefenseUp
 	if_effect EFFECT_SPEED_UP_2, AI_CV_SpeedUp
 	if_effect EFFECT_SPECIAL_ATTACK_UP_2, AI_CV_SpAtkUp
@@ -694,7 +694,7 @@ AI_CheckViability:: @ 81DA445
 	if_effect EFFECT_POISON, AI_CV_Poison
 	if_effect EFFECT_PARALYZE, AI_CV_Paralyze
 	@ if_effect EFFECT_SWAGGER, AI_CV_Swagger  @ Improvement in Emerald
-	if_effect EFFECT_SPEED_DOWN_HIT, AI_CV_SpeedDownFromChance
+	if_effect EFFECT_TARGET_SPEED_DOWN_HIT, AI_CV_SpeedDownFromChance
 	if_effect EFFECT_SUBSTITUTE, AI_CV_Substitute
 	if_effect EFFECT_RECHARGE, AI_CV_Recharge
 	if_effect EFFECT_LEECH_SEED, AI_CV_Toxic
@@ -1793,7 +1793,7 @@ AI_CV_Encore_EncouragedMovesToEncore:: @ 81DB164
 	.byte EFFECT_PARALYZE
 	.byte EFFECT_LEECH_SEED
 	.byte EFFECT_DO_NOTHING
-	.byte EFFECT_ATTACK_UP_2
+	.byte EFFECT_USER_ATTACK_UP_2
 	.byte EFFECT_ENCORE
 	.byte EFFECT_CONVERSION_2
 	.byte EFFECT_LOCK_ON
@@ -1832,7 +1832,6 @@ AI_CV_Encore_EncouragedMovesToEncore:: @ 81DB164
 	.byte EFFECT_IMPRISON
 	.byte EFFECT_REFRESH
 	.byte EFFECT_GRUDGE
-	.byte EFFECT_TEETER_DANCE
 	.byte EFFECT_MUD_SPORT
 	.byte EFFECT_WATER_SPORT
 	.byte EFFECT_DRAGON_DANCE
@@ -2777,7 +2776,7 @@ AI_SetupFirstTurn_SetupEffectsToEncourage:: @ 81DBAA7
 	.byte EFFECT_SPECIAL_DEFENSE_UP_2
 	.byte EFFECT_FOCUS_ENERGY
 	.byte EFFECT_CONFUSE
-	.byte EFFECT_ATTACK_UP_2
+	.byte EFFECT_USER_ATTACK_UP_2
 	.byte EFFECT_DEFENSE_UP_2
 	.byte EFFECT_SPEED_UP_2
 	.byte EFFECT_SPECIAL_ATTACK_UP_2
@@ -2807,7 +2806,6 @@ AI_SetupFirstTurn_SetupEffectsToEncourage:: @ 81DBAA7
 	.byte EFFECT_WILL_O_WISP
 	.byte EFFECT_INGRAIN
 	.byte EFFECT_IMPRISON
-	.byte EFFECT_TEETER_DANCE
 	.byte EFFECT_TICKLE
 	.byte EFFECT_COSMIC_POWER
 	.byte EFFECT_BULK_UP
@@ -2851,7 +2849,6 @@ AI_Risky_EffectsToEncourage:: @ 81DBB02
 	.byte EFFECT_MIRROR_COAT
 	.byte EFFECT_FOCUS_PUNCH
 	.byte EFFECT_REVENGE
-	.byte EFFECT_TEETER_DANCE
 	.byte -1
 
 AI_PreferBatonPass:: @ 81DBB16
@@ -2986,7 +2983,7 @@ AI_HPAware_DiscouragedEffectsWhenMediumHP:: @ 81DBBD1
 	.byte EFFECT_LIGHT_SCREEN
 	.byte EFFECT_MIST
 	.byte EFFECT_FOCUS_ENERGY
-	.byte EFFECT_ATTACK_UP_2
+	.byte EFFECT_USER_ATTACK_UP_2
 	.byte EFFECT_DEFENSE_UP_2
 	.byte EFFECT_SPEED_UP_2
 	.byte EFFECT_SPECIAL_ATTACK_UP_2
@@ -3030,7 +3027,7 @@ AI_HPAware_DiscouragedEffectsWhenLowHP:: @ 81DBBFC
 	.byte EFFECT_LIGHT_SCREEN
 	.byte EFFECT_MIST
 	.byte EFFECT_FOCUS_ENERGY
-	.byte EFFECT_ATTACK_UP_2
+	.byte EFFECT_USER_ATTACK_UP_2
 	.byte EFFECT_DEFENSE_UP_2
 	.byte EFFECT_SPEED_UP_2
 	.byte EFFECT_SPECIAL_ATTACK_UP_2
@@ -3080,7 +3077,7 @@ AI_HPAware_DiscouragedEffectsWhenTargetMediumHP:: @ 81DBC2D
 	.byte EFFECT_EVASION_DOWN
 	.byte EFFECT_MIST
 	.byte EFFECT_FOCUS_ENERGY
-	.byte EFFECT_ATTACK_UP_2
+	.byte EFFECT_USER_ATTACK_UP_2
 	.byte EFFECT_DEFENSE_UP_2
 	.byte EFFECT_SPEED_UP_2
 	.byte EFFECT_SPECIAL_ATTACK_UP_2
@@ -3131,7 +3128,7 @@ AI_HPAware_DiscouragedEffectsWhenTargetLowHP:: @ 81DBC55
 	.byte EFFECT_MIST
 	.byte EFFECT_FOCUS_ENERGY
 	.byte EFFECT_CONFUSE
-	.byte EFFECT_ATTACK_UP_2
+	.byte EFFECT_USER_ATTACK_UP_2
 	.byte EFFECT_DEFENSE_UP_2
 	.byte EFFECT_SPEED_UP_2
 	.byte EFFECT_SPECIAL_ATTACK_UP_2
