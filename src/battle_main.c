@@ -2255,8 +2255,9 @@ static void BattleIntroPrintWildMonAttacked(void)
         PrepareStringBattle(STRINGID_INTROMSG, 0);
         if (IS_BATTLE_TYPE_GHOST_WITH_SCOPE())
         {
+			gLastUsedItem = ITEM_SILPH_SCOPE;
             gBattleScripting.battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-            BattleScriptExecute(BattleScript_SilphScopeUnveiled);
+            BattleScriptExecute(BattleScript_ItemUnveiledGhost);
         }
     }
 }

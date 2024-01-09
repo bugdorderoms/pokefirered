@@ -5887,7 +5887,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     {
         .effect = EFFECT_ROOST,
         .type = TYPE_FLYING,
-        .pp = 10,
+        .pp = 5,
         .target = MOVE_TARGET_USER,
         .flags =
 		{

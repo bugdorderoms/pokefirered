@@ -192,6 +192,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectFieldSport            @ EFFECT_WATER_SPORT
 	.4byte BattleScript_EffectCalmMind              @ EFFECT_CALM_MIND
 	.4byte BattleScript_EffectDragonDance           @ EFFECT_DRAGON_DANCE
+	.4byte BattleScript_EffectRoost                 @ EFFECT_ROOST
 
 @@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE BATTLE SCRIPTS @
@@ -334,21 +335,22 @@ BattleScript_TrainerBattleForceOut::
 	tryremoveprimalweather BS_TARGET
 	switchinanim BS_TARGET, FALSE
 	waitstate
-	printstring STRINGID_PKMNWASDRAGGEDOUT
+	printstring STRINGID_DEFWASDRAGGEDOUT
 	switchineffects BS_TARGET
 	goto BattleScript_MoveEnd
 
 @ EFFECT_SEMI_INVULNERABLE @
 
 BattleScript_EffectSemiInvulnerable::
-    attackcanceler
 	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_SecondTurnSemiInvulnerable
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_NO_ATTACKSTRING, BattleScript_SecondTurnSemiInvulnerable
+	attackcanceler
 	call BattleScript_FirstChargingTurn_Ret
 	setsemiinvulnerablebit
 	goto BattleScript_MoveEnd
 
 BattleScript_SecondTurnSemiInvulnerable::
+    attackcanceler
 	clearbattlerstatus BS_ATTACKER, ID_STATUS2, STATUS2_MULTIPLETURNS
 	setbyte sB_ANIM_TURN, 1
 	orword gHitMarker, HITMARKER_NO_PPDEDUCT
@@ -1167,7 +1169,7 @@ BattleScript_GhostCurse::
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
-	printstring STRINGID_PKMNLAIDCURSE
+	printstring STRINGID_ATKCUTHPANDLAIDCURSEONDEF
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_ATTACKER
 	goto BattleScript_MoveEnd
@@ -1306,7 +1308,7 @@ BattleScript_EffectSandstorm::
 BattleScript_MoveWeatherChange::
 	attackanimation
 	waitstate
-	printfromtable gMoveWeatherChangeStringIds
+	printfromtable gWeatherStartsStringIds
 	waitmessage B_WAIT_TIME_LONG
 	call BattleScript_ActivateWeatherChangeAbilities
 	goto BattleScript_MoveEnd
@@ -1793,7 +1795,7 @@ BattleScript_EffectMemento::
 BattleScript_EffectFocusPunch::
 	attackcanceler
 	jumpifnodamage BattleScript_HitFromAccCheck
-	printstring STRINGID_PKMNLOSTFOCUS
+	printstring STRINGID_ATKLOSTITSFOCUS
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
@@ -2258,6 +2260,16 @@ BattleScript_EffectDragonDanceTryAtkUp::
 	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
 	goto BattleScript_MoveEnd
 
+@ EFFECT_ROOST @
+
+BattleScript_EffectRoost::
+    attackcanceler
+	attackstring
+	ppreduce
+	tryhealhalfhealth BS_TARGET, BattleScript_AlreadyAtFullHp
+	setroost
+	goto BattleScript_PresentHealTarget
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2409,7 +2421,7 @@ BattleScript_AromaVeilProtects::
 	pause B_WAIT_TIME_SHORT
 	orhalfword gMoveResultFlags, MOVE_RESULT_FAILED
 	loadabilitypopup BS_SCRIPTING
-	printstring STRINGID_AROMAVEILPROTECTED
+	printstring STRINGID_DEFPROTECTEDBYAROMATICVEIL
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_SCRIPTING
 	goto BattleScript_MoveEnd
@@ -2431,7 +2443,7 @@ BattleScript_LeechSeedLiquidOoze::
 
 BattleScript_SuckedLiquidOoozeString::
     loadabilitypopup BS_TARGET
-	printstring STRINGID_ITSUCKEDLIQUIDOOZE
+	printstring STRINGID_ITSUCKEDTHEDEFABL
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_TARGET
 	return
@@ -2495,7 +2507,7 @@ BattleScript_DisguiseBusted::
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
-	printstring STRINGID_DISGUISEBUSTED
+	printstring STRINGID_DEFDISGUISEBUSTED
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_TARGET
 	return
@@ -2641,7 +2653,7 @@ BattleScript_SandSpitActivated::
 
 BattleScript_SlowStartEnd::
     loadabilitypopup BS_ATTACKER
-	printstring STRINGID_PKMNGOTITSACT
+	printstring STRINGID_ATKGOTITSACTTOGETHER
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_ATTACKER
 	end3
@@ -2698,7 +2710,7 @@ BattleScript_TeamProtectedByFlowerVeilStatChange::
 BattleScript_TeamProtectedByFlowerVeilRet::
     pause B_WAIT_TIME_SHORT
 	loadabilitypopup BS_SCRIPTING
-	printstring STRINGID_FLOWERVEILPROTECTED
+	printstring STRINGID_EFFSURROUNDEDINVEILOFPETALS
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_SCRIPTING
 	return
@@ -2707,7 +2719,7 @@ BattleScript_TeamProtectedBySweetVeil::
     pause B_WAIT_TIME_SHORT
 	orhalfword gMoveResultFlags, MOVE_RESULT_FAILED
 	loadabilitypopup BS_SCRIPTING
-	printstring STRINGID_SWEETVEILPROTECTED
+	printstring STRINGID_DEFSURROUNDEDINSWEETVEIL
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_SCRIPTING
 	goto BattleScript_MoveEnd
@@ -2747,7 +2759,6 @@ BattleScript_IllusionOff::
 
 BattleScript_ImposterActivates::
     loadabilitypopup BS_ATTACKER
-	transformdataexecution
 	playmoveanimation BS_ATTACKER, MOVE_TRANSFORM
 	waitstate
 	printstring STRINGID_ATKTRANSFORMEDINTOBUFF1
@@ -2890,19 +2901,16 @@ BattleScript_SoundproofProtected::
 	attackstring
 	ppreduce
 	pause B_WAIT_TIME_SHORT
-	loadabilitypopup BS_TARGET
-	printstring STRINGID_PKMNSXBLOCKSY
-	waitmessage B_WAIT_TIME_LONG
-	removeabilitypopup BS_TARGET
+	call BattleScript_SoundproofBlocksString
 	goto BattleScript_MoveEnd
 
 BattleScript_SoundproofBlocksPerishSong::
-    call BattleScript_SoundproofBlocksHealBell
+    call BattleScript_SoundproofBlocksString
 	goto BattleScript_PerishSongLoopIncrement
 
-BattleScript_SoundproofBlocksHealBell::
+BattleScript_SoundproofBlocksString::
     loadabilitypopup BS_SCRIPTING
-	printstring STRINGID_PKMNSXBLOCKSY2
+	printstring STRINGID_PKMNABLBLOCKSCURRMOVE
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_SCRIPTING
 	return
@@ -3422,7 +3430,7 @@ BattleScript_MoveUsedIsParalyzed::
 	goto BattleScript_MoveEnd
 
 BattleScript_TooScaredToMove::
-	printstring STRINGID_MONTOOSCAREDTOMOVE
+	printstring STRINGID_ATKTOOSCAREDTOMOVE
 	waitmessage B_WAIT_TIME_LONG
 	playanimation BS_ATTACKER, B_ANIM_MON_SCARED
 	goto BattleScript_MoveEnd
@@ -3609,7 +3617,7 @@ BattleScript_NightmareTurnDmg::
 	goto BattleScript_DoTurnDmgEnd2
 	
 BattleScript_CurseTurnDmg::
-	printstring STRINGID_PKMNAFFLICTEDBYCURSE
+	printstring STRINGID_ATKAFFLICTEDBYCURSE
 	waitmessage B_WAIT_TIME_LONG
 	chosenstatusanimation BS_ATTACKER, ID_STATUS2, STATUS2_CURSED
 	goto BattleScript_DoTurnDmgEnd2
@@ -3740,7 +3748,7 @@ BattleScript_ActionSelectionItemsCantBeUsed::
 @@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_OverworldWeatherStarts::
-	printfromtable gWeatherContinuesStringIds
+	printfromtable gWeatherStartsStringIds
 	waitmessage B_WAIT_TIME_LONG
 	playanimation2 BS_ATTACKER, sB_ANIM_ARG1
 	end3
@@ -3928,7 +3936,7 @@ BattleScript_SnatchedMove::
 	ppreduce
 	snatchsetbattlers
 	playanimation BS_TARGET, B_ANIM_SNATCH_MOVE
-	printstring STRINGID_PKMNSNATCHEDMOVE
+	printstring STRINGID_DEFSNATCHEDPKMNMOVE
 	waitmessage B_WAIT_TIME_LONG
 	orword gHitMarker, HITMARKER_ATTACKSTRING_PRINTED | HITMARKER_NO_PPDEDUCT | HITMARKER_ALLOW_NO_PP
 	swapattackerwithtarget
@@ -4044,6 +4052,16 @@ BattleScript_TrainerSlideMsg::
 	waitstate
 	handletrainerslidecase BS_SCRIPTING, ATK83_TRAINER_SLIDE_CASE_RESTORE_SPRITES
 	return
+
+BattleScript_ItemUnveiledGhost::
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_LASTITEMUNVEILEDGHOST
+	waitstate
+	playanimation BS_OPPONENT1, B_ANIM_SILPH_SCOPED
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_THEGHOSTWASDEF
+	waitmessage B_WAIT_TIME_LONG
+	end2
 
 BattleScript_LevelUp::
 	fanfare MUS_LEVEL_UP
@@ -4268,6 +4286,17 @@ BattleScript_PrintFailedToRunString::
 	waitmessage B_WAIT_TIME_LONG
 	end2
 
+@@@@@@@@@@@@@@@@@@@@@@@
+@ ITEM BATTLE SCRIPTS @
+@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_HangedOnMsg::
+	playanimation BS_TARGET, B_ANIM_HANGED_ON
+	printstring STRINGID_DEFHUNGONUSINGLASTITEM
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+
 
 
 
@@ -4386,16 +4415,6 @@ BattleScript_MonWokeUpInUproar::
 	printstring STRINGID_ATKWOKEUPINUPROAR
 	waitmessage 0x40
 	updatestatusicon BS_ATTACKER
-	end2
-
-BattleScript_SilphScopeUnveiled::
-	pause 0x20
-	printstring STRINGID_SILPHSCOPEUNVEILED
-	waitstate
-	playanimation BS_OPPONENT1, B_ANIM_SILPH_SCOPED
-	pause 0x20
-	printstring STRINGID_GHOSTWASMAROWAK
-	waitmessage 0x40
 	end2
 
 BattleScript_MoveEffectUproar::
@@ -4568,12 +4587,6 @@ BattleScript_ItemHealHP_Ret::
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
-	return
-
-BattleScript_HangedOnMsg::
-	playanimation BS_TARGET, B_ANIM_HANGED_ON
-	printstring STRINGID_PKMNHUNGONWITHX
-	waitmessage 0x40
 	return
 
 BattleScript_BerryConfuseHealEnd2::

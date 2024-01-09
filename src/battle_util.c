@@ -1601,7 +1601,10 @@ bool8 DoEndTurnEffects(void)
 				IncrementBattlerBasedEndTurnEffects();
 				break;
 			case ENDTURN_ROOST_ENDS:
-			    IncrementBattlerBasedEndTurnEffects();
+			    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+					gBattleResources->flags->flags[i] &= ~(RESOURCE_FLAG_ROOST);
+				
+			    ++gBattleStruct->turnEffectsTracker;
 				break;
 			case ENDTURN_REFLECT_ENDS:
                 if ((gSideStatuses[side] & SIDE_STATUS_REFLECT) && --gSideTimers[side].reflectTimer == 0)
@@ -2439,7 +2442,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							gBattleWeather = (WEATHER_RAIN_TEMPORARY | WEATHER_RAIN_PERMANENT);
 							gBattleScripting.animArg1 = B_ANIM_RAIN_CONTINUES;
-							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_RAIN_CONTINUES;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_STARTED_RAIN;
 							++effect;
 						}
 						break;
@@ -2448,7 +2451,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							gBattleWeather = (WEATHER_SANDSTORM_PERMANENT | WEATHER_SANDSTORM_TEMPORARY);
 							gBattleScripting.animArg1 = B_ANIM_SANDSTORM_CONTINUES;
-							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SANDSTORM_CONTINUES;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SANDSTORM_UP;
 							++effect;
 						}
 						break;
@@ -2457,7 +2460,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							gBattleWeather = (WEATHER_HAIL_PERMANENT | WEATHER_HAIL_TEMPORARY);
 							gBattleScripting.animArg1 = B_ANIM_HAIL_CONTINUES;
-							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_HAIL_CONTINUES;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_STARTED_HAIL;
 							++effect;
 						}
 						break;
@@ -2468,7 +2471,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							gBattleWeather = (WEATHER_FOG_PERMANENT | WEATHER_FOG_TEMPORARY);
 							gBattleScripting.animArg1 = B_ANIM_FOG_CONTINUES;
-							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FOG_CONTINUES;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_DEEP_FOG;
 							++effect;
 						}
 						break;
@@ -2578,7 +2581,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-							gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_BREAKS_THE_MOLD;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2588,17 +2591,18 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 							gDisableStructs[battler].slowStartTimer = 5;
-							gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CANT_GET_GOING;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
 						break;
 					case ABILITY_IMPOSTER:
-						if (IsBattlerAlive(BATTLE_OPPOSITE(battler)) && CanTransformIntoBattler(battler, BATTLE_OPPOSITE(battler)) && !gDisableStructs[battler].imposterActivated)
+						if (IsBattlerAlive(BATTLE_OPPOSITE(battler)) && !gDisableStructs[battler].imposterActivated && TryTransformIntoBattler(battler, BATTLE_OPPOSITE(battler)))
 						{
 							gDisableStructs[battler].imposterActivated = TRUE;
 							gBattlerAttacker = battler;
 							gBattlerTarget = BATTLE_OPPOSITE(battler);
+							gBattleStruct->abilityOverride[battler] = gLastUsedAbility;
 							BattleScriptPushCursorAndCallback(BattleScript_ImposterActivates);
 							++effect;
 						}
@@ -2607,7 +2611,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-							gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_BLAZING_AURA;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2616,7 +2620,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-							gBattleCommunication[MULTISTRING_CHOOSER] = 4;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_BURSTING_AURA;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2625,7 +2629,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-							gBattleCommunication[MULTISTRING_CHOOSER] = 5;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_DARK_AURA;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2634,7 +2638,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-							gBattleCommunication[MULTISTRING_CHOOSER] = 6;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FAIRY_AURA;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2643,7 +2647,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-							gBattleCommunication[MULTISTRING_CHOOSER] = 7;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_REVERSED_AURAS;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2652,7 +2656,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-							gBattleCommunication[MULTISTRING_CHOOSER] = 8;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_PKMN_DROWSING;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2661,7 +2665,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-							gBattleCommunication[MULTISTRING_CHOOSER] = 16;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_EXERTING_ABILITY;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2671,7 +2675,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 							PrepareStatBuffer(gBattleTextBuff1, STAT_SPATK);
-							gBattleCommunication[MULTISTRING_CHOOSER] = 18;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WEAKENED_STAT;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2681,7 +2685,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 							PrepareStatBuffer(gBattleTextBuff1, STAT_DEF);
-							gBattleCommunication[MULTISTRING_CHOOSER] = 18;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WEAKENED_STAT;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2691,7 +2695,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 							PrepareStatBuffer(gBattleTextBuff1, STAT_ATK);
-							gBattleCommunication[MULTISTRING_CHOOSER] = 18;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WEAKENED_STAT;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2701,7 +2705,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 							PrepareStatBuffer(gBattleTextBuff1, STAT_SPDEF);
-							gBattleCommunication[MULTISTRING_CHOOSER] = 18;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WEAKENED_STAT;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2710,7 +2714,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					    if (gBattleStruct->zeroToHeroActivated[GetBattlerSide(battler)] & gBitTable[gBattlerPartyIndexes[battler]])
 						{
 							gBattleStruct->zeroToHeroActivated[GetBattlerSide(battler)] &= ~(gBitTable[gBattlerPartyIndexes[battler]]);
-							gBattleCommunication[MULTISTRING_CHOOSER] = 9;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_UNDERWENT_TRANSFORMATION;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2784,7 +2788,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 							}
 							if (effect)
 							{
-								gBattleCommunication[MULTISTRING_CHOOSER] = 10;
+								gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SHUDDERED;
 								BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 								gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 							}
@@ -2874,10 +2878,10 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 								if (data[i].power > data[bestId].power || (data[i].power == data[bestId].power && Random() & 1))
 									bestId = i;
 							}
-							gBattlerTarget = data[bestId].battlerId;
+							gBattleScripting.battler = data[bestId].battlerId;
 							PrepareMoveBuffer(gBattleTextBuff1, data[bestId].moveId);
 							Free(data);
-							gBattleCommunication[MULTISTRING_CHOOSER] = 11;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ALERTED;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2895,7 +2899,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					    if (!gSpecialStatuses[battler].switchInAbilityDone && TryRemoveScreens(battler, TRUE))
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-							gBattleCommunication[MULTISTRING_CHOOSER] = 12;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SCREENS_CLEANSED;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -2903,11 +2907,11 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					case ABILITY_CURIOUS_MEDICINE:
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
-							gBattlerTarget = BATTLE_PARTNER(battler);
+							gBattleScripting.battler = BATTLE_PARTNER(battler);
 							
-							if (IsBattlerAlive(gBattlerTarget) && TryResetBattlerStatChanges(gBattlerTarget))
+							if (IsBattlerAlive(gBattleScripting.battler) && TryResetBattlerStatChanges(gBattleScripting.battler))
 							{
-								gBattleCommunication[MULTISTRING_CHOOSER] = 13;
+								gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_STAT_CHANGES_RESETED;
 								BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 								gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 								++effect;
@@ -2933,7 +2937,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 								if (effect)
 								{
 									gBattlerAttacker = battler;
-									gBattleCommunication[MULTISTRING_CHOOSER] = 14;
+									gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_COPIED_STAT_CHANGES;
 									BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 									gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 								}
@@ -2945,7 +2949,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 							gBattleStruct->supremeOverlordBoosts[battler] = min(5, gBattleStruct->faintCounter[GetBattlerSide(battler)]);
-							gBattleCommunication[MULTISTRING_CHOOSER] = 17;
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_GAINED_STRENGTH;
 							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 							++effect;
 						}
@@ -3341,11 +3345,13 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					{
 						gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 						if (GetBattlerAbility(i) == ABILITY_UNNERVE)
-							gBattleCommunication[MULTISTRING_CHOOSER] = 2; // Unnerve message
+						{
+							PrepareMonTeamPrefixBuffer(gBattleTextBuff1, BATTLE_OPPOSITE(battler));
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_NERVOUS_TO_EAT; // Unnerve message
+						}
 						else
-							gBattleCommunication[MULTISTRING_CHOOSER] = 15; // As One message
+							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_HAS_TWO_ABILITIES; // As One message
 						gBattleScripting.battler = battler = i;
-						PrepareMonTeamPrefixBuffer(gBattleTextBuff1, BATTLE_OPPOSITE(battler));
 						gLastUsedAbility = GetBattlerAbility(i);
 						BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
 						++effect;
@@ -3385,7 +3391,10 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						gHitMarker |= HITMARKER_NO_PPDEDUCT;
 					
 					if (effect == 1)
+					{
+						gBattleScripting.battler = battler;
 						gBattlescriptCurrInstr = BattleScript_SoundproofProtected;
+					}
 					else
 						gBattlescriptCurrInstr = BattleScript_DazzlingProtected;
 				}
@@ -4024,7 +4033,7 @@ static u8 StatRaiseBerries(u8 battlerId, u8 statId, bool8 moveTurn)
     if (CheckPinchBerryActivate(battlerId, gLastUsedItem) && !moveTurn && CompareStat(battlerId, statId, MAX_STAT_STAGES, CMP_LESS_THAN))
     {
         PrepareStatBuffer(gBattleTextBuff1, statId);
-		PrepareStringBuffer(gBattleTextBuff2, STRINGID_STATROSE);
+		// PrepareStringBuffer(gBattleTextBuff2, STRINGID_STATROSE);
 		gEffectBattler = battlerId;
 		SetStatChanger(statId, +1);
 		gBattleScripting.animArg1 = 0xE + statId;
@@ -4188,11 +4197,11 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                         PrepareStatBuffer(gBattleTextBuff1, i + 1);
                         gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
                         gBattleTextBuff2[1] = B_BUFF_STRING;
-                        gBattleTextBuff2[2] = STRINGID_STATSHARPLY;
-                        gBattleTextBuff2[3] = STRINGID_STATSHARPLY >> 8;
+                        // gBattleTextBuff2[2] = STRINGID_STATSHARPLY;
+                        // gBattleTextBuff2[3] = STRINGID_STATSHARPLY >> 8;
                         gBattleTextBuff2[4] = B_BUFF_STRING;
-                        gBattleTextBuff2[5] = STRINGID_STATROSE;
-                        gBattleTextBuff2[6] = STRINGID_STATROSE >> 8;
+                        // gBattleTextBuff2[5] = STRINGID_STATROSE;
+                        // gBattleTextBuff2[6] = STRINGID_STATROSE >> 8;
                         gBattleTextBuff2[7] = EOS;
                         gEffectBattler = battlerId;
                         SetStatChanger(i + 1, +2);
@@ -5417,11 +5426,11 @@ bool8 MoveHasHealingEffect(u16 move)
 		case EFFECT_REST:
 		case EFFECT_MORNING_SUN:
 		case EFFECT_WISH:
+		case EFFECT_SWALLOW:
+		case EFFECT_ROOST:
 		// TODO:
 		case EFFECT_HEAL_PULSE:
 		case EFFECT_HEALING_WISH:
-		case EFFECT_SWALLOW:
-		case EFFECT_ROOST:
 		    return TRUE;
 	}
 	return FALSE;
@@ -5701,12 +5710,47 @@ void SetTypeBeforeUsingMove(u16 move, u8 battler)
 		gBattleStruct->dynamicMoveType = TYPE_WATER;
 }
 
-// Check if battler1 can transform into battler2
-bool8 CanTransformIntoBattler(u8 battler1, u8 battler2)
+// Try transform battler1 into battler2
+bool8 TryTransformIntoBattler(u8 battler1, u8 battler2)
 {
+	u8 i, *battleMonAttacker, *battleMonTarget;
+	u16 oldAbility;
+	
 	if (!(gBattleMons[battler2].status2 & (STATUS2_TRANSFORMED | STATUS2_SUBSTITUTE)) && !(gStatuses3[battler2] & STATUS3_SEMI_INVULNERABLE)
-		&& !gBattleStruct->illusion[battler1].on && !gBattleStruct->illusion[battler2].on && !(gBattleMons[battler1].status2 & STATUS2_TRANSFORMED))
+	&& !gBattleStruct->illusion[battler1].on && !gBattleStruct->illusion[battler2].on && !(gBattleMons[battler1].status2 & STATUS2_TRANSFORMED))
+	{
+		gBattleMons[battler1].status2 |= STATUS2_TRANSFORMED;
+		CopyBattlerCritModifier(battler1, battler2); // Copy Focus Energy
+        gDisableStructs[battler1].disabledMove = MOVE_NONE;
+        gDisableStructs[battler1].disableTimer = 0;
+        gDisableStructs[battler1].transformedMonPersonality = gBattleMons[battler2].personality;
+		gDisableStructs[battler1].transformedMonShynies = GetMonData(GetBattlerPartyIndexPtr(battler2), MON_DATA_IS_SHINY);
+        gDisableStructs[battler1].mimickedMoves = 0;
+		
+        PrepareSpeciesBuffer(gBattleTextBuff1, gBattleMons[battler2].species);
+		
+		oldAbility = gBattleMons[battler1].ability; // Save ability
+		
+		battleMonAttacker = (u8 *)(&gBattleMons[battler1]);
+        battleMonTarget = (u8 *)(&gBattleMons[battler2]);
+		
+		for (i = 0; i < offsetof(struct BattlePokemon, pp); i++)
+			battleMonAttacker[i] = battleMonTarget[i];
+		
+		gBattleMons[battler1].ability = oldAbility; // Restore ability, nessesary for SetBattlerAbility
+		SetBattlerAbility(battler1, gBattleMons[battler2].ability);
+		
+        for (i = 0; i < MAX_MON_MOVES; ++i)
+        {
+            if (gBattleMoves[gBattleMons[battler1].moves[i]].pp < 5)
+                gBattleMons[battler1].pp[i] = gBattleMoves[gBattleMons[battler1].moves[i]].pp;
+            else
+                gBattleMons[battler1].pp[i] = 5;
+        }
+        BtlController_EmitResetActionMoveSelection(battler1, BUFFER_A, RESET_MOVE_SELECTION);
+        MarkBattlerForControllerExec(battler1);
 		return TRUE;
+	}
 	return FALSE;
 }
 
@@ -5777,6 +5821,26 @@ void SaveBattlersHps(void)
 bool8 IsBattlerOfType(u8 battlerId, u8 type)
 {
 	return IS_BATTLER_OF_TYPE(battlerId, type);
+}
+
+u8 GetBattlerType(u8 battlerId, u8 index)
+{
+	u8 types[3] = {gBattleMons[battlerId].type1, gBattleMons[battlerId].type2, gBattleMons[battlerId].type3};
+	
+	--index;
+	
+	if (index != 2) // Can't suppress type added
+	{
+		// Handle Roost
+		if (gBattleResources->flags->flags[battlerId] & RESOURCE_FLAG_ROOST)
+		{
+			if (types[0] == TYPE_FLYING && types[1] == TYPE_FLYING)
+				return TYPE_NORMAL;
+			else if (types[index] == TYPE_FLYING)
+				return TYPE_MYSTERY;
+		}
+	}
+	return types[index];
 }
 
 static inline void SetBattlerTypesInternal(u8 battlerId, u8 type1, u8 type2)

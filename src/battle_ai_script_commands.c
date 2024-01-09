@@ -918,16 +918,16 @@ static void Cmd_get_type(void)
     switch (sAIScriptPtr[1])
     {
     case AI_TYPE1_USER:
-        AI_THINKING_STRUCT->funcResult = gBattleMons[gBattlerAttacker].type1;
+        AI_THINKING_STRUCT->funcResult = GetBattlerType(gBattlerAttacker, 1);
         break;
     case AI_TYPE1_TARGET:
-        AI_THINKING_STRUCT->funcResult = gBattleMons[gBattlerTarget].type1;
+        AI_THINKING_STRUCT->funcResult = GetBattlerType(gBattlerTarget, 1);
         break;
     case AI_TYPE2_USER:
-        AI_THINKING_STRUCT->funcResult = gBattleMons[gBattlerAttacker].type2;
+        AI_THINKING_STRUCT->funcResult = GetBattlerType(gBattlerAttacker, 2);
         break;
     case AI_TYPE2_TARGET:
-        AI_THINKING_STRUCT->funcResult = gBattleMons[gBattlerTarget].type2;
+        AI_THINKING_STRUCT->funcResult = GetBattlerType(gBattlerTarget, 2);
         break;
     case AI_TYPE_MOVE:
         AI_THINKING_STRUCT->funcResult = gBattleMoves[AI_THINKING_STRUCT->moveConsidered].type;

@@ -831,7 +831,7 @@
 	.byte 0x9a
 	.endm
 
-	.macro transformdataexecution
+	.macro nop9b
 	.byte 0x9b
 	.endm
 
@@ -1654,6 +1654,14 @@
 	
 	.macro sethelpinghand
 	callfunction BS_SetHelpingHand
+	.endm
+	
+	.macro transformdataexecution
+	callfunction BS_TransformDataExecution
+	.endm
+	
+	.macro setroost
+	callfunction BS_SetRoost
 	.endm
 	
 @ helpful macros

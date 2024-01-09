@@ -141,8 +141,9 @@ static void OakOldManHandlePrintString(u8 battlerId)
         {
             switch (*stringId)
             {
-            case STRINGID_PKMNSSTATCHANGED4:
-                if (!BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_STAT_CHG))
+            case STRINGID_EFFSTATCHANGED:
+                if (gBattleStruct->statChange.buff < 0 && !(gBattleStruct->statChange.flags & STAT_CHANGE_FLAG_SELF_INFLICT)
+				&& !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_STAT_CHG))
                 {
                     BtlCtrl_OakOldMan_SetState2Flag(FIRST_BATTLE_MSG_FLAG_STAT_CHG);
                     gBattlerControllerFuncs[battlerId] = PrintOakText_LoweringStats;

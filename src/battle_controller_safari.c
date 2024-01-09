@@ -116,7 +116,7 @@ static void HandleChooseActionAfterDma3(u8 battlerId)
 
 static void SafariHandleChooseAction(u8 battlerId)
 {
-	BtlController_HandleChooseAction(battlerId, gUnknown_83FE747, gText_WhatWillPlayerThrow, HandleChooseActionAfterDma3);
+	BtlController_HandleChooseAction(battlerId, gText_SafariMenu, gText_WhatWillPlayerThrow, HandleChooseActionAfterDma3);
 }
 
 static void CompleteWhenChoosePokeblock(u8 battlerId)

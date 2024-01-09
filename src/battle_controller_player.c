@@ -674,7 +674,7 @@ static void MoveSelectionDisplayMoveNames(u8 battlerId)
     for (i = 0; i < MAX_MON_MOVES; ++i)
     {
         MoveSelectionDestroyCursorAt(i);
-        StringCopy(gDisplayedStringBattle, gUnknown_83FE770);
+        StringCopy(gDisplayedStringBattle, gText_MoveInterfaceMoveNamesColor);
         StringAppend(gDisplayedStringBattle, gMoveNames[moveInfo->moves[i]]);
         BattlePutTextOnWindow(gDisplayedStringBattle, i + B_WIN_MOVE_NAME_1);
 		
@@ -760,9 +760,9 @@ static void MoveSelectionDisplayMoveType(u8 battlerId)
     CpuCopy16(&gPlttBufferUnfaded[88], &gPlttBufferFaded[88], sizeof(u16));
     CpuCopy16(&gPlttBufferUnfaded[89], &gPlttBufferFaded[89], sizeof(u16));
     
-    txtPtr = StringCopy(txtPtr, gMoveEffectiveness);
+    txtPtr = StringCopy(txtPtr, gText_MoveInterfaceEffectiveness);
 #else
-    txtPtr = StringCopy(txtPtr, gUnknown_83FE770);
+    txtPtr = StringCopy(txtPtr, gText_MoveInterfaceMoveNamesColor);
 #endif
     StringCopy(txtPtr, gTypeNames[type]);
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MOVE_TYPE);

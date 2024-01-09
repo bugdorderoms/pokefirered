@@ -231,7 +231,6 @@ static inline void PrepareMonTeamPrefixBuffer(u8 *textVar, u8 battlerId)
 }
 
 extern const u8* const gBattleStringsTable[];
-extern const u8* const gPokeblockWasTooXStringTable[];
 
 extern const u16 gMissStringIds[];
 

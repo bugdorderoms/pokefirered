@@ -231,7 +231,7 @@ static void atk97_tryinfatuating(void);
 static void atk98_updatestatusicon(void);
 static void atk99_nop(void);
 static void atk9A_nop(void);
-static void atk9B_transformdataexecution(void);
+static void atk9B_nop(void);
 static void atk9C_setsubstitute(void);
 static void atk9D_mimicattackcopy(void);
 static void atk9E_nop(void);
@@ -490,7 +490,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk98_updatestatusicon,
     atk99_nop,
     atk9A_nop,
-    atk9B_transformdataexecution,
+    atk9B_nop,
     atk9C_setsubstitute,
     atk9D_mimicattackcopy,
     atk9E_nop,
@@ -1360,11 +1360,12 @@ static void MulByTypeEffectiveness(u16 move, u8 moveType, u8 attacker, u8 defend
 static u8 CalcTypeEffectivenessMultiplierInternal(u16 move, u8 moveType, u8 attacker, u8 defender, u8 multiplier, bool8 recordAbilities, u16 *flags)
 {
 	u16 defAbility;
+	u8 type1 = GetBattlerType(defender, 1), type2 = GetBattlerType(defender, 2);
 	
-	MulByTypeEffectiveness(move, moveType, attacker, defender, gBattleMons[defender].type1, &multiplier, flags);
+	MulByTypeEffectiveness(move, moveType, attacker, defender, type1, &multiplier, flags);
 	
-	if (gBattleMons[defender].type1 != gBattleMons[defender].type2)
-		MulByTypeEffectiveness(move, moveType, attacker, defender, gBattleMons[defender].type2, &multiplier, flags);
+	if (type1 != type2)
+		MulByTypeEffectiveness(move, moveType, attacker, defender, type2, &multiplier, flags);
 	
 	defAbility = GetBattlerAbility(defender);
 	
@@ -3822,10 +3823,12 @@ static void atk52_switchineffects(void)
 		gSpecialStatuses[battlerId].announceUnnerve = TRUE;
 		gBattleScripting.battler = battlerId;
 		if (battlerAbility == ABILITY_UNNERVE)
-			gBattleCommunication[MULTISTRING_CHOOSER] = 2; // Unnerve message
+		{
+			PrepareMonTeamPrefixBuffer(gBattleTextBuff1, BATTLE_OPPOSITE(battlerId));
+			gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_NERVOUS_TO_EAT; // Unnerve message
+		}
 		else
-			gBattleCommunication[MULTISTRING_CHOOSER] = 15; // As One message
-		PrepareMonTeamPrefixBuffer(gBattleTextBuff1, BATTLE_OPPOSITE(battlerId));
+			gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_HAS_TWO_ABILITIES; // As One message
 		BattleScriptCall(BattleScript_SwitchInAbilityMsgRet);
 	}
 	else if (!(gSideStatuses[GetBattlerSide(battlerId)] & SIDE_STATUS_SPIKES_DAMAGED) && (gSideStatuses[GetBattlerSide(battlerId)] & SIDE_STATUS_SPIKES)
@@ -5896,49 +5899,9 @@ static void atk9A_nop(void)
     ++gBattlescriptCurrInstr;
 }
 
-static void atk9B_transformdataexecution(void)
+static void atk9B_nop(void)
 {
-    u8 i, *battleMonAttacker, *battleMonTarget;
-	u16 oldAbility;
-	
-    gChosenMove = MOVE_UNVAILABLE;
-	
-    if (!CanTransformIntoBattler(gBattlerAttacker, gBattlerTarget))
-		gBattlescriptCurrInstr = BattleScript_ButItFailed;
-    else
-    {
-		gBattleMons[gBattlerAttacker].status2 |= STATUS2_TRANSFORMED;
-		CopyBattlerCritModifier(gBattlerAttacker, gBattlerTarget); // Copy Focus Energy
-        gDisableStructs[gBattlerAttacker].disabledMove = MOVE_NONE;
-        gDisableStructs[gBattlerAttacker].disableTimer = 0;
-        gDisableStructs[gBattlerAttacker].transformedMonPersonality = gBattleMons[gBattlerTarget].personality;
-		gDisableStructs[gBattlerAttacker].transformedMonShynies = GetMonData(GetBattlerPartyIndexPtr(gBattlerTarget), MON_DATA_IS_SHINY);
-        gDisableStructs[gBattlerAttacker].mimickedMoves = 0;
-		
-        PrepareSpeciesBuffer(gBattleTextBuff1, gBattleMons[gBattlerTarget].species);
-		
-		oldAbility = gBattleMons[gBattlerAttacker].ability; // Save ability
-		
-		battleMonAttacker = (u8 *)(&gBattleMons[gBattlerAttacker]);
-        battleMonTarget = (u8 *)(&gBattleMons[gBattlerTarget]);
-		
-		for (i = 0; i < offsetof(struct BattlePokemon, pp); i++)
-			battleMonAttacker[i] = battleMonTarget[i];
-		
-		gBattleMons[gBattlerAttacker].ability = oldAbility; // Restore ability, nessesary for SetBattlerAbility
-		SetBattlerAbility(gBattlerAttacker, gBattleMons[gBattlerTarget].ability);
-		
-        for (i = 0; i < MAX_MON_MOVES; ++i)
-        {
-            if (gBattleMoves[gBattleMons[gBattlerAttacker].moves[i]].pp < 5)
-                gBattleMons[gBattlerAttacker].pp[i] = gBattleMoves[gBattleMons[gBattlerAttacker].moves[i]].pp;
-            else
-                gBattleMons[gBattlerAttacker].pp[i] = 5;
-        }
-        BtlController_EmitResetActionMoveSelection(gBattlerAttacker, BUFFER_A, RESET_MOVE_SELECTION);
-        MarkBattlerForControllerExec(gBattlerAttacker);
-		++gBattlescriptCurrInstr;
-    }
+	++gBattlescriptCurrInstr;
 }
 
 static void atk9C_setsubstitute(void)
@@ -6360,7 +6323,7 @@ static void atkAE_healpartystatus(void)
 							// Check Substitute and Soundproof
 					    	if (GetBattlerAbility(gBattleScripting.battler) == ABILITY_SOUNDPROOF && gBattleMoves[gCurrentMove].flags.soundMove)
 					        {
-					        	BattleScriptCall(BattleScript_SoundproofBlocksHealBell);
+					        	BattleScriptCall(BattleScript_SoundproofBlocksString);
 					        	break;
 					        }
 					    	else if (SubsBlockMove(gBattlerAttacker, gBattleScripting.battler, gCurrentMove))
@@ -8305,5 +8268,21 @@ void BS_SetTargetAlly(void)
 void BS_SetHelpingHand(void)
 {
 	++gProtectStructs[gBattlerTarget].helpingHandUses;
+	gBattlescriptCurrInstr += 5;
+}
+
+void BS_TransformDataExecution(void)
+{
+	gChosenMove = MOVE_UNVAILABLE;
+	
+    if (TryTransformIntoBattler(gBattlerAttacker, gBattlerTarget))
+		gBattlescriptCurrInstr += 5;
+	else
+		gBattlescriptCurrInstr = BattleScript_ButItFailed;
+}
+
+void BS_SetRoost(void)
+{
+	gBattleResources->flags->flags[gBattlerAttacker] |= RESOURCE_FLAG_ROOST;
 	gBattlescriptCurrInstr += 5;
 }

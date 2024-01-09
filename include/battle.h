@@ -107,6 +107,7 @@ extern const struct TrainerSlide gTrainerSlides[];
 #define RESOURCE_FLAG_UNBURDEN_BOOST   (1 << 2)
 #define RESOURCE_FLAG_NEUTRALIZING_GAS (1 << 3)
 #define RESOURCE_FLAG_EMERGENCY_EXIT   (1 << 4)
+#define RESOURCE_FLAG_ROOST            (1 << 5)
 
 struct ResourceFlags
 {
@@ -484,7 +485,7 @@ extern struct BattleStruct *gBattleStruct;
 #define BATTLER_TURN_DAMAGED(battlerId) ((!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && BATTLER_DAMAGED(battlerId) \
                                          && !gProtectStructs[gBattlerAttacker].confusionSelfDmg))
 
-#define IS_BATTLER_OF_TYPE(battlerId, type)((gBattleMons[battlerId].type1 == type || gBattleMons[battlerId].type2 == type || (gBattleMons[battlerId].type3 != TYPE_MYSTERY && gBattleMons[battlerId].type3 == type)))
+#define IS_BATTLER_OF_TYPE(battlerId, type)((GetBattlerType(battlerId, 1) == type || GetBattlerType(battlerId, 2) == type || (GetBattlerType(battlerId, 3) != TYPE_MYSTERY && GetBattlerType(battlerId, 3) == type)))
 
 #define HANDLE_POWER_TRICK_SWAP(battlerId)                                         \
 {                                                                                  \

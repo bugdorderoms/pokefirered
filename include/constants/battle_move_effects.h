@@ -177,6 +177,7 @@
 #define EFFECT_WATER_SPORT 172
 #define EFFECT_CALM_MIND 173
 #define EFFECT_DRAGON_DANCE 174
+#define EFFECT_ROOST 175
 
 #define EFFECT_SPEED_UP 12
 #define EFFECT_SPECIAL_ATTACK_UP 13
@@ -214,7 +215,6 @@
 #define EFFECT_BULLDOZE                     232
 #define EFFECT_FOUL_PLAY                    233
 #define EFFECT_PSYSHOCK                     234
-#define EFFECT_ROOST                        235
 #define EFFECT_GRAVITY                      236
 #define EFFECT_MIRACLE_EYE                  237
 #define EFFECT_TAILWIND                     238

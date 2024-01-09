@@ -191,8 +191,6 @@ extern const u8 gText_FormChangeItem[];
 extern const u8 gText_ChooseForm[];
 
 // pokemon
-extern const u8 gBattleText_Rose[];
-extern const u8 gText_PkmnsStatChanged2[];
 extern const u8 gText_PkmnsXPreventsSwitching[];
 
 // diploma
@@ -216,13 +214,13 @@ extern const u8 gString_SlotMachineControls[];
 
 // battle_controller_safari
 extern const u8 gText_EmptyString[];
-extern const u8 gUnknown_83FE747[];
+extern const u8 gText_SafariMenu[];
 extern const u8 gText_WhatWillPlayerThrow[];
 
 // battle_controller_player
 extern const u8 gText_BattleSwitchWhich[];
-extern const u8 gUnknown_83FE770[];
-extern const u8 gMoveEffectiveness[];
+extern const u8 gText_MoveInterfaceMoveNamesColor[];
+extern const u8 gText_MoveInterfaceEffectiveness[];
 extern const u8 gText_MoveInterfacePP[];
 extern const u8 gText_MoveInterfaceType[];
 extern const u8 gText_MoveInfoPowerAndAccuracy[];
