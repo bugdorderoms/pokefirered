@@ -577,6 +577,7 @@ SECTIONS {
 		src/fldeff_defog.o(.rodata);
 		src/set_effect.o(.rodata);
 		src/battle_queued_effects.o(.rodata);
+		src/battle_controllers.o(.rodata);
 
         /* These should not be moved to C files */
         src/m4a_tables.o(.rodata);

@@ -48,8 +48,9 @@
 	.byte 0x9
 	.endm
 
-	.macro nop0a
+	.macro lunardancepprestore battler:req
 	.byte 0xa
+	.byte \battler
 	.endm
 
 	.macro healthbarupdate battler:req
@@ -496,7 +497,7 @@
 	.byte \param1
 	.endm
 
-	.macro switchineffects battler:req
+	.macro switchineffectsstate battler:req
 	.byte 0x52
 	.byte \battler
 	.endm
@@ -1495,6 +1496,20 @@
 	.4byte \ptr
 	.endm
 	
+	.macro trysetgravity ptr:req
+	various BS_ATTACKER, VARIOUS_TRY_SET_GRAVITY
+	.4byte \ptr
+	.endm
+	
+	.macro trybringdowninairbattler battler:req, ptr:req
+	various \battler, VARIOUS_TRY_BRING_DOWN_IN_AIR
+	.4byte \ptr
+	.endm
+	
+	.macro tryactivatewindabilities battler:req
+	various \battler, VARIOUS_TRY_ACTIVATE_WIND_ABILITIES
+	.endm
+	
 @ callfunction macros
     .macro setminimize
 	callfunction BS_SetMinimize
@@ -1609,8 +1624,9 @@
 	callfunction BS_CopyFoeStats
 	.endm
 	
-	.macro setcharge
+	.macro setcharge battler:req
 	callfunction BS_SetCharge
+	.byte \battler
 	.endm
 	
 	.macro removescreens
@@ -1662,6 +1678,18 @@
 	
 	.macro setroost
 	callfunction BS_SetRoost
+	.endm
+	
+	.macro setmiracleeye
+	callfunction BS_SetMiracleEye
+	.endm
+	
+	.macro sethealingwish
+	callfunction BS_SetHealingWish
+	.endm
+	
+	.macro settailwind
+	callfunction BS_SetTailwind
 	.endm
 	
 @ helpful macros
@@ -1827,4 +1855,9 @@
 	playstatchangeanimation \bits, \flags
 	waitstate
 	displaystatchangestring \stringId
+	.endm
+	
+	.macro switchineffects battler:req
+	setbyte sSWITCHIN_EFFECTS_STATE, 0
+	switchineffectsstate \battler
 	.endm

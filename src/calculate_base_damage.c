@@ -475,8 +475,12 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 		case EFFECT_ERUPTION:
 			basePower = (gBattleMons[attacker].hp * basePower) / gBattleMons[attacker].maxHP;
 			break;
-		case EFFECT_REMOVE_STATUS:
-			if (!SubsBlockMove(attacker, defender, move) && (gBattleMons[defender].status1 & gBattleMoves[move].argument))
+		case EFFECT_SMELLING_SALT:
+			if (!SubsBlockMove(attacker, defender, move) && (gBattleMons[defender].status1 & STATUS1_PARALYSIS))
+				basePower *= 2;
+			break;
+		case EFFECT_WAKE_UP_SLAP:
+		    if (!SubsBlockMove(attacker, defender, move) && ((gBattleMons[defender].status1 & STATUS1_SLEEP) || damageStruct->defAbility == ABILITY_COMATOSE))
 				basePower *= 2;
 			break;
 		case EFFECT_REVENGE:
@@ -490,6 +494,19 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 		case EFFECT_WEATHER_BALL:
 			if (IsBattlerWeatherAffected(attacker, WEATHER_ANY & ~(WEATHER_STRONG_WINDS)))
 				basePower *= 2;
+			break;
+		case EFFECT_GYRO_BALL:
+		    basePower = ((25 * GetBattlerTotalSpeed(defender)) / GetBattlerTotalSpeed(attacker)) + 1;
+			
+			if (basePower > 150)
+				basePower = 150;
+			break;
+		case EFFECT_BRINE:
+		    if (gBattleMons[defender].hp <= gBattleMons[defender].maxHP / 2)
+				basePower *= 2;
+			break;
+		case EFFECT_NATURAL_GIFT:
+		    basePower = gNaturalGiftTable[ITEM_TO_BERRY(gBattleMons[attacker].item)].power;
 			break;
 	}
 	

@@ -15,7 +15,6 @@ struct BattleMsgData
 	u16 abilities[MAX_BATTLERS_COUNT];
     u8 scrActive;
     u8 hpScale;
-    u8 moveType;
     u8 textBuffs[3][TEXT_BUFF_ARRAY_COUNT];
 };
 

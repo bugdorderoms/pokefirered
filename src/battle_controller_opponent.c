@@ -223,7 +223,7 @@ static void OpponentHandlePrintString(u8 battlerId)
 {
 	u16 *stringId = (u16 *)(&gBattleBufferA[battlerId][2]);
 	
-	BtlController_HandlePrintString(battlerId, *stringId);
+	BtlController_HandlePrintString(battlerId, *stringId, FALSE);
 
     if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
     {

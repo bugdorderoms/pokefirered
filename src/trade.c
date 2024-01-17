@@ -2195,7 +2195,7 @@ static void BuildMovesString(u8 *movesString, u8 whichParty, u8 whichMon)
         {
             if (moves[i] != MOVE_NONE)
             {
-                StringAppend(movesString, gMoveNames[moves[i]]);
+                StringAppend(movesString, gBattleMoves[moves[i]].name);
             }
 
             StringAppend(movesString, sText_Newline);

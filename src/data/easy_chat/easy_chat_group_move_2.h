@@ -189,7 +189,7 @@ static const u16 sEasyChatGroup_Move2[] = {
     MOVE_TRIPLE_KICK,
     MOVE_TWINEEDLE,
     MOVE_TWISTER,
-    MOVE_VICE_GRIP,
+    MOVE_VISE_GRIP,
     MOVE_VINE_WHIP,
     MOVE_VOLT_TACKLE,
     MOVE_WATER_GUN,

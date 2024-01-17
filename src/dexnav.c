@@ -386,7 +386,7 @@ static void AddSearchWindowText(u16 species, u8 proximity)
         // Move name
         if (sDexNavSearchLevel > 1 && sDexNavSearchDataPtr->moves[0])
         {
-            StringCopy(gStringVar1, gMoveNames[sDexNavSearchDataPtr->moves[0]]);
+            StringCopy(gStringVar1, gBattleMoves[sDexNavSearchDataPtr->moves[0]].name);
             StringExpandPlaceholders(gStringVar4, sText_EggMove);
             AddTextPrinterParameterized3(windowId, 0, WINDOW_MOVE_NAME_X, WINDOW_COL_0, sSearchFontColor, 0, gStringVar4);
         }

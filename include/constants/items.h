@@ -935,6 +935,6 @@
 #define NUM_TECHNICAL_MACHINES        100
 
 #define FIRST_BERRY_INDEX             ITEM_CHERI_BERRY
-#define ITEM_TO_BERRY(itemId)         (itemId - FIRST_BERRY_INDEX + 1)
+#define ITEM_TO_BERRY(itemId)         (itemId - FIRST_BERRY_INDEX)
 
 #endif  // GUARD_CONSTANTS_ITEMS_H

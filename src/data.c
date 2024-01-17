@@ -277,4 +277,3 @@ const union AnimCmd *const gSpriteAnimTable_82349BC[] =
 #include "data/trainer/trainers.h"
 #include "data/trainer/trainer_slides.h"
 #include "data/pokemon/species_names.h"
-#include "data/move/move_names.h"

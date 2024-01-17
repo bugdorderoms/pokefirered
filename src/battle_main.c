@@ -366,6 +366,78 @@ const u8 gCategoryNames[NUM_MOVE_SPLITS][8] =
 	[SPLIT_STATUS]   = _("Status"),
 };
 
+const struct NaturalGift gNaturalGiftTable[ITEM_TO_BERRY(BERRY_ITEMS_END) + 1] =
+{
+	[ITEM_TO_BERRY(ITEM_CHERI_BERRY)] = { .type = TYPE_FIRE, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_CHESTO_BERRY)] = { .type = TYPE_WATER, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_PECHA_BERRY)] = { .type = TYPE_ELECTRIC, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_RAWST_BERRY)] = { .type = TYPE_GRASS, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_ASPEAR_BERRY)] = { .type = TYPE_ICE, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_LEPPA_BERRY)] = { .type = TYPE_FIGHTING, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_ORAN_BERRY)] = { .type = TYPE_POISON, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_PERSIM_BERRY)] = { .type = TYPE_GROUND, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_LUM_BERRY)] = { .type = TYPE_FLYING, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_SITRUS_BERRY)] = { .type = TYPE_PSYCHIC, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_FIGY_BERRY)] = { .type = TYPE_BUG, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_WIKI_BERRY)] = { .type = TYPE_ROCK, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_MAGO_BERRY)] = { .type = TYPE_GHOST, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_AGUAV_BERRY)] = { .type = TYPE_DRAGON, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_IAPAPA_BERRY)] = { .type = TYPE_DARK, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_RAZZ_BERRY)] = { .type = TYPE_STEEL, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_BLUK_BERRY)] = { .type = TYPE_FIRE, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_NANAB_BERRY)] = { .type = TYPE_WATER, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_WEPEAR_BERRY)] = { .type = TYPE_ELECTRIC, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_PINAP_BERRY)] = { .type = TYPE_GRASS, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_POMEG_BERRY)] = { .type = TYPE_ICE, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_KELPSY_BERRY)] = { .type = TYPE_FIGHTING, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_QUALOT_BERRY)] = { .type = TYPE_POISON, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_HONDEW_BERRY)] = { .type = TYPE_GROUND, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_GREPA_BERRY)] = { .type = TYPE_FLYING, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_TAMATO_BERRY)] = { .type = TYPE_PSYCHIC, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_CORNN_BERRY)] = { .type = TYPE_BUG, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_MAGOST_BERRY)] = { .type = TYPE_ROCK, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_RABUTA_BERRY)] = { .type = TYPE_GHOST, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_NOMEL_BERRY)] = { .type = TYPE_DRAGON, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_SPELON_BERRY)] = { .type = TYPE_DARK, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_PAMTRE_BERRY)] = { .type = TYPE_STEEL, .power = 90 },
+	[ITEM_TO_BERRY(ITEM_WATMEL_BERRY)] = { .type = TYPE_FIRE, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_DURIN_BERRY)] = { .type = TYPE_WATER, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_BELUE_BERRY)] = { .type = TYPE_ELECTRIC, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_LIECHI_BERRY)] = { .type = TYPE_GRASS, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_GANLON_BERRY)] = { .type = TYPE_ICE, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_SALAC_BERRY)] = { .type = TYPE_FIGHTING, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_PETAYA_BERRY)] = { .type = TYPE_POISON, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_APICOT_BERRY)] = { .type = TYPE_GROUND, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_LANSAT_BERRY)] = { .type = TYPE_FLYING, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_STARF_BERRY)] = { .type = TYPE_PSYCHIC, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_OCCA_BERRY)] = { .type = TYPE_FIRE, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_PASSHO_BERRY)] = { .type = TYPE_WATER, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_WACAN_BERRY)] = { .type = TYPE_ELECTRIC, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_RINDO_BERRY)] = { .type = TYPE_GRASS, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_YACHE_BERRY)] = { .type = TYPE_ICE, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_CHOPLE_BERRY)] = { .type = TYPE_FIGHTING, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_KEBIA_BERRY)] = { .type = TYPE_POISON, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_SHUCA_BERRY)] = { .type = TYPE_GROUND, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_COBA_BERRY)] = { .type = TYPE_FLYING, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_PAYAPA_BERRY)] = { .type = TYPE_PSYCHIC, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_TANGA_BERRY)] = { .type = TYPE_BUG, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_CHARTI_BERRY)] = { .type = TYPE_ROCK, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_KASIB_BERRY)] = { .type = TYPE_GHOST, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_HABAN_BERRY)] = { .type = TYPE_DRAGON, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_COLBUR_BERRY)] = { .type = TYPE_DARK, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_BABIRI_BERRY)] = { .type = TYPE_STEEL, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_CHILAN_BERRY)] = { .type = TYPE_NORMAL, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_MICLE_BERRY)] = { .type = TYPE_ROCK, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_CUSTAP_BERRY)] = { .type = TYPE_GHOST, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_JABOCA_BERRY)] = { .type = TYPE_DRAGON, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_ROWAP_BERRY)] = { .type = TYPE_DARK, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_ROSELI_BERRY)] = { .type = TYPE_FAIRY, .power = 80 },
+	[ITEM_TO_BERRY(ITEM_KEE_BERRY)] = { .type = TYPE_FAIRY, .power = 100 },
+	[ITEM_TO_BERRY(ITEM_MARANGA_BERRY)] = { .type = TYPE_DARK, .power = 100 },
+	// [ITEM_TO_BERRY(ITEM_HOPO_BERRY)] = { .type = TYPE_MYSTERY, .power = 100 }, TODO:
+	[ITEM_TO_BERRY(ITEM_ENIGMA_BERRY)] = { .type = TYPE_BUG, .power = 100 },
+};
+
 // This is a factor in how much money you get for beating a trainer and the poke ball for it.
 const struct TrainerMoneyBall gTrainerMoneyAndBallTable[] =
 {
@@ -1891,6 +1963,7 @@ static void BattleStartClearSetData(void)
 	memset(&gWishFutureKnock, 0, sizeof(gWishFutureKnock));
 	memset(&gStatuses3, 0, sizeof(gStatuses3));
 	memset(&gDisableStructs, 0, sizeof(gDisableStructs));
+	memset(&gFieldStatus, 0, sizeof(gFieldStatus));
 	gDisableStructs[i].isFirstTurn = 2;
 	
 	// Reset datas by battler
@@ -1905,6 +1978,9 @@ static void BattleStartClearSetData(void)
 		gLastUsedMovesTypes[i] = 0;
 		gLockedMoves[i] = MOVE_NONE;
 		gBattleStruct->pickupStack[i] = 0xFF;
+		
+		// Init queued effects
+		gBattleStruct->queuedEffectsCount[i] = 0;
     }
     gBattlerAttacker = 0;
     gBattlerTarget = 0;
@@ -1929,9 +2005,6 @@ static void BattleStartClearSetData(void)
     gLeveledUpInBattle = 0;
     gAbsentBattlerFlags = 0;
 	gBattleStruct->moneyMultiplier = 1;
-	
-	// Init queued effects
-	gBattleStruct->queuedEffectsList[0].id = B_QUEUED_COUNT;
 	
 	// safari battles can't be double battles, so this no need to be changed
     gBattleStruct->safariCatchFactor = gBaseStats[GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)].catchRate * 100 / 1275;
@@ -2490,7 +2563,6 @@ void BattleTurnPassed(void)
     gBattleMainFunc = HandleTurnActionSelectionState;
     gRandomTurnNumber = Random();
 	CalculatePayDayMoney();
-	ResetAllQueuedEffectsDone();
 	
     if (ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), TRAINER_SLIDE_LAST_MON_LOW_HP))
 	    BattleScriptExecute(BattleScript_TrainerSlideMsgEnd2);
@@ -2645,7 +2717,7 @@ static void HandleTurnActionSelectionState(void)
                             moveInfo.maxPp[i] = CalculatePPWithBonus(gBattleMons[battlerId].moves[i], gBattleMons[battlerId].ppBonuses, i);
                         }
                         BtlController_EmitChooseMove(battlerId, BUFFER_A, (gBattleTypeFlags & BATTLE_TYPE_DOUBLE), FALSE, &moveInfo);
-                        MarkBattlerForControllerExec(battlerId);
+						MarkBattlerForControllerExec(battlerId);
                     }
                     break;
                 case B_ACTION_USE_ITEM:
@@ -2996,6 +3068,9 @@ u32 GetBattlerTotalSpeed(u8 battler)
 				monSpeed *= 2;
 			break;
 	}
+	
+	if (gSideStatuses[GetBattlerSide(battler)] & SIDE_STATUS_TAILWIND)
+		monSpeed *= 2;
 	
 #if BADGE_BOOST
     // badge stat boost

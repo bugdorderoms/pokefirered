@@ -796,7 +796,7 @@ static void LoadTmHmNameInMart(s32 item)
         StringCopy(gStringVar4, gOtherText_UnkF9_08_Clear_01);
         StringAppend(gStringVar4, gStringVar1);
         BuyMenuPrint(6, 0, gStringVar4, 0, 0, 0, 0, TEXT_SPEED_FF, 1);
-        StringCopy(gStringVar4, gMoveNames[ItemIdToBattleMoveId(item)]);
+        StringCopy(gStringVar4, gBattleMoves[ItemIdToBattleMoveId(item)].name);
         BuyMenuPrint(6, 2, gStringVar4, 0, 0x10, 0, 0, 0, 1);
     }
     else
@@ -1070,7 +1070,7 @@ static void Task_BuyMenu(u8 taskId)
                 if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
 				{
 					ConvertIntToDecimalStringN(gStringVar2, ItemId_GetPrice(itemId), 3, 4);
-                    StringCopy(gStringVar3, gMoveNames[ItemIdToBattleMoveId(itemId)]);
+                    StringCopy(gStringVar3, gBattleMoves[ItemIdToBattleMoveId(itemId)].name);
                     BuyMenuDisplayMessage(taskId, gText_SingleTmBuy, CreateBuyMenuConfirmPurchaseWindow);
 				}
 				else

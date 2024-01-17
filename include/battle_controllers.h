@@ -224,7 +224,7 @@ void BtlController_HandleTrainerSlideBack(u8 battlerId, s16 data0, bool8 animate
 void BtlController_HandleFaintAnimation(u8 battlerId);
 void BtlController_HandleBallThrowAnim(u8 battlerId, u8 animId);
 void BtlController_HandleMoveAnimation(u8 battlerId);
-void BtlController_HandlePrintString(u8 battlerId, u16 stringId);
+void BtlController_HandlePrintString(u8 battlerId, u16 stringId, bool8 isSelection);
 void BtlController_HandleChooseAction(u8 battlerId, const u8 *actionsStr, const u8 *whatDoStr, void(*controllerFunc)(u8));
 void BtlController_HandleChooseItem(u8 battlerId, void(*controllerFunc)(u8));
 void BtlController_HandleChoosePokemon(u8 battlerId, void(*controllerFunc)(u8));

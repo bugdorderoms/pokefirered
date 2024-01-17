@@ -20,6 +20,7 @@
 #include "task.h"
 #include "util.h"
 #include "constants/battle.h"
+#include "constants/battle_string_ids.h"
 #include "constants/songs.h"
 
 enum
@@ -759,7 +760,6 @@ void BtlController_EmitPrintString(u8 battlerId, u8 bufferId, u16 stringId)
     stringInfo->lastAbility = gLastUsedAbility;
     stringInfo->scrActive = gBattleScripting.battler;
     stringInfo->hpScale = gBattleStruct->hpScale;
-    stringInfo->moveType = gBattleMoves[gCurrentMove].type;
 	
     for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
         stringInfo->abilities[i] = gBattleMons[i].ability;
@@ -1286,11 +1286,15 @@ void BtlController_HandleMoveAnimation(u8 battlerId)
     }
 }
 
-void BtlController_HandlePrintString(u8 battlerId, u16 stringId)
+void BtlController_HandlePrintString(u8 battlerId, u16 stringId, bool8 isSelection)
 {
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
 	BufferStringBattle(battlerId, stringId);
+	
+	if (isSelection && stringId != STRINGID_DONTLEAVEBIRCH && stringId != STRINGID_CANTESCAPE)
+		StringAppend(gDisplayedStringBattle, COMPOUND_STRING("\p"));
+	
 	BattlePutTextOnWindow(gDisplayedStringBattle, BattleStringShouldBeColored(stringId) ? (B_WIN_MSG | B_TEXT_FLAG_NPC_CONTEXT_FONT) : B_WIN_MSG);
 	gBattlerControllerFuncs[battlerId] = CompleteOnInactiveTextPrinter;
 }

@@ -2471,7 +2471,7 @@ static const struct LevelUpMove sMagmarLevelUpLearnset[] = {
 };
 
 static const struct LevelUpMove sPinsirLevelUpLearnset[] = {
-    LEVEL_UP_MOVE( 1, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 1, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE( 1, MOVE_HARDEN),
     LEVEL_UP_MOVE( 4, MOVE_FOCUS_ENERGY),
     LEVEL_UP_MOVE( 8, MOVE_BIND),
@@ -11874,7 +11874,7 @@ static const struct LevelUpMove sFerrothornLevelUpLearnset[] = {
 
 static const struct LevelUpMove sKlinkLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_THUNDER_SHOCK),
-    LEVEL_UP_MOVE( 1, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 1, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE( 4, MOVE_BIND),
     LEVEL_UP_MOVE( 8, MOVE_CHARGE),
     LEVEL_UP_MOVE(12, MOVE_CHARGE_BEAM),
@@ -11892,7 +11892,7 @@ static const struct LevelUpMove sKlinkLevelUpLearnset[] = {
 
 static const struct LevelUpMove sKlangLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_THUNDER_SHOCK),
-    LEVEL_UP_MOVE( 1, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 1, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE( 1, MOVE_BIND),
     LEVEL_UP_MOVE( 1, MOVE_CHARGE),
     LEVEL_UP_MOVE(12, MOVE_CHARGE_BEAM),
@@ -11912,7 +11912,7 @@ static const struct LevelUpMove sKlinklangLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_GEAR_UP),
     LEVEL_UP_MOVE( 1, MOVE_MAGNETIC_FLUX),
     LEVEL_UP_MOVE( 1, MOVE_THUNDER_SHOCK),
-    LEVEL_UP_MOVE( 1, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 1, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE( 1, MOVE_BIND),
     LEVEL_UP_MOVE( 1, MOVE_CHARGE),
     LEVEL_UP_MOVE(12, MOVE_CHARGE_BEAM),
@@ -12524,7 +12524,7 @@ static const struct LevelUpMove sHeatmorLevelUpLearnset[] = {
 static const struct LevelUpMove sDurantLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_FURY_CUTTER),
     LEVEL_UP_MOVE( 1, MOVE_SAND_ATTACK),
-    LEVEL_UP_MOVE( 4, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 4, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE( 8, MOVE_METAL_CLAW),
     LEVEL_UP_MOVE(12, MOVE_BEAT_UP),
     LEVEL_UP_MOVE(16, MOVE_BUG_BITE),
@@ -13696,7 +13696,7 @@ static const struct LevelUpMove sDragalgeLevelUpLearnset[] = {
 static const struct LevelUpMove sClauncherLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_SPLASH),
     LEVEL_UP_MOVE( 1, MOVE_WATER_GUN),
-    LEVEL_UP_MOVE( 5, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 5, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE(10, MOVE_FLAIL),
     LEVEL_UP_MOVE(15, MOVE_AQUA_JET),
     LEVEL_UP_MOVE(20, MOVE_SMACK_DOWN),
@@ -13716,7 +13716,7 @@ static const struct LevelUpMove sClawitzerLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_HEAL_PULSE),
     LEVEL_UP_MOVE( 1, MOVE_SPLASH),
     LEVEL_UP_MOVE( 1, MOVE_WATER_GUN),
-    LEVEL_UP_MOVE( 5, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 5, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE(10, MOVE_FLAIL),
     LEVEL_UP_MOVE(15, MOVE_AQUA_JET),
     LEVEL_UP_MOVE(20, MOVE_SMACK_DOWN),
@@ -14588,7 +14588,7 @@ static const struct LevelUpMove sGumshoosLevelUpLearnset[] = {
 };
 
 static const struct LevelUpMove sGrubbinLevelUpLearnset[] = {
-    LEVEL_UP_MOVE( 1, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 1, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE( 1, MOVE_MUD_SLAP),
     LEVEL_UP_MOVE( 5, MOVE_STRING_SHOT),
     LEVEL_UP_MOVE(10, MOVE_BUG_BITE),
@@ -14604,7 +14604,7 @@ static const struct LevelUpMove sGrubbinLevelUpLearnset[] = {
 static const struct LevelUpMove sCharjabugLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 0, MOVE_CHARGE),
     LEVEL_UP_MOVE( 1, MOVE_CHARGE),
-    LEVEL_UP_MOVE( 1, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 1, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE( 1, MOVE_MUD_SLAP),
     LEVEL_UP_MOVE( 1, MOVE_STRING_SHOT),
     LEVEL_UP_MOVE( 1, MOVE_BUG_BITE),
@@ -14628,7 +14628,7 @@ static const struct LevelUpMove sVikavoltLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_DIG),
     LEVEL_UP_MOVE( 1, MOVE_DISCHARGE),
     LEVEL_UP_MOVE( 1, MOVE_IRON_DEFENSE),
-    LEVEL_UP_MOVE( 1, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 1, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE( 1, MOVE_MUD_SLAP),
     LEVEL_UP_MOVE( 1, MOVE_STRING_SHOT),
     LEVEL_UP_MOVE( 1, MOVE_BUG_BITE),
@@ -17467,7 +17467,7 @@ static const struct LevelUpMove sRegielekiLevelUpLearnset[] = {
 
 static const struct LevelUpMove sRegidragoLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_TWISTER),
-    LEVEL_UP_MOVE( 1, MOVE_VICE_GRIP),
+    LEVEL_UP_MOVE( 1, MOVE_VISE_GRIP),
     LEVEL_UP_MOVE( 6, MOVE_BITE),
     LEVEL_UP_MOVE(12, MOVE_ANCIENT_POWER),
     LEVEL_UP_MOVE(18, MOVE_DRAGON_BREATH),

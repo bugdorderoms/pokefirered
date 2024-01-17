@@ -667,7 +667,7 @@ static void GetBerryNameAndIndexForMenu(u8 * dest, u16 itemId)
 {
     StringCopy(gStringVar4, gText_FontSize0);
     StringAppend(gStringVar4, gOtherText_UnkF9_08_Clear_01);
-    ConvertIntToDecimalStringN(gStringVar1, ITEM_TO_BERRY(itemId), STR_CONV_MODE_LEADING_ZEROS, 2);
+    ConvertIntToDecimalStringN(gStringVar1, ITEM_TO_BERRY(itemId) + 1, STR_CONV_MODE_LEADING_ZEROS, 2);
     StringAppend(gStringVar4, gStringVar1);
     CopyItemName(itemId, gStringVar1);
     StringAppend(gStringVar4, sText_Space);

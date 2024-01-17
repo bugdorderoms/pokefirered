@@ -12,6 +12,12 @@ enum
 	SPEED_TIE,
 };
 
+struct NaturalGift
+{
+	u8 type;
+	u8 power;
+};
+
 struct TrainerMoneyBall
 {
     u8 classId;
@@ -63,6 +69,7 @@ extern const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
 extern const struct TrainerMoneyBall gTrainerMoneyAndBallTable[];
 extern const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT];
 extern const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1];
+extern const struct NaturalGift gNaturalGiftTable[ITEM_TO_BERRY(BERRY_ITEMS_END) + 1];
 
 void CB2_InitBattle(void);
 void BattleMainCB2(void);

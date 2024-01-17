@@ -225,23 +225,25 @@ struct MoveFlags
 	u32 noEffectiveness:1; // A move with this flag will not display the "Its super effective" and "Its not very effective" message.
 	u32 recoilDivisor:3; // Used by moves that have a recoil damage, also if set, its affected by Reckless.
 	u32 forcePressure:1; // A move with this flag will force the extra PP consuption from Pressure.
-	u32 unused:18;
+	u32 gravityBanned:1; // A move with this flag can't be selected while gravity is in effect.
+	u32 unused:17;
 };
 
 struct BattleMove
 {
-    /*0x00*/ u16 effect;
-    /*0x02*/ u8 power;
-    /*0x03*/ u8 type;
-    /*0x04*/ u8 accuracy;
-    /*0x05*/ u8 pp;
-    /*0x06*/ u8 secondaryEffectChance; // If diffent than 0 it will be affected by Sheer Force
-    /*0x07*/ u8 target;
-    /*0x08*/ s8 priority;
-    /*0x09*/ u8 split;
-    /*0x0A*/ u8 argument;
-	/*0x0B*/ u8 zMoveEffect;
-    /*0x0C*/ struct MoveFlags flags;
+	/*0x00*/ u8 name[MOVE_NAME_LENGTH + 1];
+    /*0x14*/ u16 effect;
+    /*0x16*/ u8 power;
+    /*0x17*/ u8 type;
+    /*0x18*/ u8 accuracy;
+    /*0x19*/ u8 pp;
+    /*0x1A*/ u8 secondaryEffectChance; // If diffent than 0 it will be affected by Sheer Force
+    /*0x1B*/ u8 target;
+    /*0x1C*/ s8 priority;
+    /*0x1D*/ u8 split;
+    /*0x1E*/ u8 argument;
+	/*0x1F*/ u8 zMoveEffect;
+    /*0x20*/ struct MoveFlags flags;
 };
 
 extern const struct BattleMove gBattleMoves[];

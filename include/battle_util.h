@@ -81,7 +81,6 @@ enum
 #define IS_WHOLE_SIDE_ALIVE(battler) ((CountAliveMonsInBattle(battler, BATTLE_ALIVE_SIDE) >= 2))
 
 u8 GetBattlerForBattleScript(u8 caseId);
-void MarkAllBattlersForControllerExec(void);
 void MarkBattlerForControllerExec(u8 battlerId);
 void MarkBattlerReceivedLinkData(u8 battlerId);
 void CancelMultiTurnMoves(u8 battler);
@@ -206,5 +205,8 @@ bool8 DoesSpreadMoveStrikesOnlyOnce(u8 attacker, u8 defender, u16 move, bool8 ch
 u8 GetTypeChangingMoveType(struct Pokemon *mon, u16 move);
 u8 GetSecretPowerEffect(void);
 bool8 TryRemoveEntryHazards(u8 battlerId);
+bool8 AttacksThisTurn(u8 battlerId, u16 move);
+bool8 TryActivateEmergencyExit(u8 battler);
+bool8 LiftProtectionEffects(u8 battlerId);
 
 #endif // GUARD_BATTLE_UTIL_H

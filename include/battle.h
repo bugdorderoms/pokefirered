@@ -191,7 +191,7 @@ struct SpecialStatus
 	s32 dmg;
     s32 physicalDmg;
     s32 specialDmg;
-    u32 announceUnnerve:1;
+    u32 removedNeutralizingGas:1;
     u32 lightningRodRedirected:1;
 	u32 stormDrainRedirected:1;
     u32 restoredBattlerSprite:1;
@@ -204,14 +204,14 @@ struct SpecialStatus
 	u32 switchInAbilityDone:1;
 	u32 weatherAbilityDone:1;
 	u32 terrainAbilityDone:1;
-	u32 announceNeutralizingGas:1;
-	u32 removedNeutralizingGas:1;
-	u32 parentalBondState:2;
-	// end of byte
 	u32 multiHitOn:1;
-	u32 unused:7;
+	u32 parentalBondState:2;
+	u32 unused:1;
 	// end of byte
 	u32 unused2:8;
+	// end of byte
+	u32 unused3:8;
+	// end of byte
     u8 physicalBattlerId;
     u8 specialBattlerId;
 	u8 changedStatsBattlerId;
@@ -232,7 +232,8 @@ struct SideTimer
 	/*0x00*/ u32 followmeSet:1;
 	/*0x00*/ u32 followmeTarget:2;
 	/*0x00*/ u32 spikesAmount:2;
-	/*0x00*/ u32 unused:5;
+	/*0x00*/ u32 tailwindTimer:3;
+	/*0x00*/ u32 tailwindBattlerId:2;
 	// end of word
 };
 
@@ -240,8 +241,9 @@ extern struct SideTimer gSideTimers[B_SIDE_COUNT];
 
 struct FieldTimer
 {
-	u8 waterSportTimer:3;
-	u8 mudSportTimer:3;
+	u16 waterSportTimer:3;
+	u16 mudSportTimer:3;
+	u16 gravityTimer:3;
 };
 
 struct WishFutureKnock
@@ -251,8 +253,10 @@ struct WishFutureKnock
     u16 futureSightMove[MAX_BATTLERS_COUNT];
     u8 wishCounter[MAX_BATTLERS_COUNT];
     u8 wishMonId[MAX_BATTLERS_COUNT];
+	u8 storedHealingWish:4; // as flag using gBitTable
+	u8 storedLunarDance:4; // as flag using gBitTable
     u8 weatherDuration;
-    u8 knockedOffMons[B_SIDE_COUNT]; // as bit using gBitTable
+    u8 knockedOffMons[B_SIDE_COUNT]; // as flag using gBitTable
 };
 
 extern struct WishFutureKnock gWishFutureKnock;
@@ -359,16 +363,12 @@ struct StatChange
 struct QueuedEffect
 {
 	u8 id;
-	u8 battler;
 	bool8 done;
 };
 
 struct BattleStruct
 {
-    /*0x000*/ u8 turnEffectsTracker;
-    /*0x001*/ u8 queuedEffectsCount;
-	/*0x002*/ u8 atkCancellerTracker;
-	/*0x003*/ u8 faintedActionsState;
+	/*0x000*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // for Pickup gen5 effect
 	/*0x004*/ u8 focusPunchBattlerId;
 	/*0x005*/ u8 turnEffectsBattlerId;
 	/*0x006*/ u8 faintedActionsBattlerId;
@@ -388,7 +388,10 @@ struct BattleStruct
 	/*0x01B*/ u8 battlerPreventingSwitchout;
     /*0x01C*/ u8 moneyMultiplier;
     /*0x01D*/ u8 savedTurnActionNumber;
-	/*0x01E*/ u8 filler3; // Unused
+	/*0x01E*/ u8 terastalMsgDone:1;
+	/*0x01E*/ u8 throwingPokeBall:1;
+	/*0x01E*/ u8 turnSideTracker:3;
+	/*0x01E*/ u8 soulHeartBattlerId:3;
 	/*0x01F*/ u8 runTries;
 	/*0x020*/ u16 expValue;
 	/*0x022*/ u8 sentInPokes;
@@ -401,7 +404,7 @@ struct BattleStruct
 	/*0x039*/ u8 appearedInBattle:6; // for Burmy form change, as flag using gBitTable
 	/*0x039*/ u8 spriteIgnore0Hp:1; // for Illusion
 	/*0x039*/ u8 overworldWeatherDone:1;
-	/*0x03A*/ u8 stringMoveType;
+	/*0x03A*/ u8 battleTurnCounter;
 	/*0x03B*/ u8 absentBattlerFlags:4;
 	/*0x03B*/ u8 zMoveMsgDone:1;
 	/*0x03B*/ u8 dynamaxMsgDone:1;
@@ -421,8 +424,7 @@ struct BattleStruct
 	/*0x05B*/ u8 multiplayerId;
     /*0x05C*/ u16 abilityPreventingSwitchout;
 	/*0x05E*/ u8 simulatedInputState[4];  // used by Oak/Old Man/Pokedude controllers
-	/*0x062*/ u8 filler; // Unused
-	/*0x063*/ u8 soulHeartBattlerId;
+	/*0x062*/ u8 intrepidSwordActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x064*/ u16 savedBattleTypeFlags;
 	/*0x066*/ u8 synchronizeMoveEffect;
 	/*0x067*/ u8 switchInItemsCounter;
@@ -447,18 +449,15 @@ struct BattleStruct
 	/*0x0DC*/ u8 AI_monToSwitchIntoId[2]; // AI related
 	/*0x0DE*/ u8 itemPartyIndex[MAX_BATTLERS_COUNT]; // for item use
 	/*0x0E2*/ u8 targetsDone[MAX_BATTLERS_COUNT]; // for moves hiting multiples pokemon, as flag using gBitTable
-	/*0x0E6*/ u8 battleTurnCounter;
-	/*0x0E7*/ u8 terastalMsgDone:1;
-	/*0x0E7*/ u8 throwingPokeBall:1;
-	/*0x0E7*/ u8 turnSideTracker:3;
-	/*0x0E7*/ u8 filler2:3; // Unused
-	/*0x0E8*/ u8 intrepidSwordActivated[B_SIDE_COUNT]; // as flag using gBitTable
-	/*0x0EA*/ u8 dauntlessShieldActivated[B_SIDE_COUNT]; // as flag using gBitTable
-	/*0x0EC*/ u16 abilityOverride[MAX_BATTLERS_COUNT]; // Used to override the ability on pop up by this value
-	/*0x0F4*/ u8 faintCounter[B_SIDE_COUNT]; // for Supreme Overlord, caps at 100 faints per side
-	/*0x0F6*/ u8 supremeOverlordBoosts[MAX_BATTLERS_COUNT];
-	/*0x0FA*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // for Pickup gen5 effect
-	/*0x0FE*/ struct QueuedEffect queuedEffectsList[B_QUEUED_COUNT + 1];
+	/*0x0E6*/ u8 dauntlessShieldActivated[B_SIDE_COUNT]; // as flag using gBitTable
+	/*0x0E8*/ u16 abilityOverride[MAX_BATTLERS_COUNT]; // Used to override the ability on pop up by this value
+	/*0x0F0*/ u8 faintCounter[B_SIDE_COUNT]; // for Supreme Overlord, caps at 100 faints per side
+	/*0x0F2*/ u8 supremeOverlordBoosts[MAX_BATTLERS_COUNT];
+	/*0x0F6*/ u8 turnEffectsTracker;
+	/*0x0F7*/ u8 atkCancellerTracker;
+	/*0x0F8*/ u8 queuedEffectsCount[MAX_BATTLERS_COUNT];
+	/*0x0FC*/ u8 faintedActionsState;
+	/*0x0FD*/ struct QueuedEffect queuedEffectsList[MAX_BATTLERS_COUNT][B_QUEUED_COUNT + 1];
 	          struct MoveEffect moveEffect;
 			  struct StatChange statChange;
 	          struct Illusion illusion[MAX_BATTLERS_COUNT];
@@ -530,6 +529,7 @@ struct BattleScripting
     /*0x23*/ u8 reshowHelperState; // for reshow battle screen after menu
     /*0x24*/ u8 field_23; // does something with hp calc
 	/*0x25*/ u8 savedBattler; // Multiuse
+	/*0x26*/ u8 switchinEffectState;
 };
 
 enum

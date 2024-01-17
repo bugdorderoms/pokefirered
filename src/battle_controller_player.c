@@ -241,16 +241,21 @@ void PlayerHandleBallThrowAnim(u8 battlerId)
 	BtlController_HandleBallThrowAnim(battlerId, B_ANIM_BALL_THROW);
 }
 
-void PlayerHandlePrintString(u8 battlerId)
+static void PlayerHandlePrintStringInternal(u8 battlerId, bool8 isSelection)
 {
 	u16 *stringId = (u16 *)(&gBattleBufferA[battlerId][2]);
-	BtlController_HandlePrintString(battlerId, *stringId);
+	BtlController_HandlePrintString(battlerId, *stringId, isSelection);
+}
+
+void PlayerHandlePrintString(u8 battlerId)
+{
+	PlayerHandlePrintStringInternal(battlerId, FALSE);
 }
 
 void PlayerHandlePrintSelectionString(u8 battlerId)
 {
 	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-        PlayerHandlePrintString(battlerId);
+        PlayerHandlePrintStringInternal(battlerId, TRUE);
     else
         BattleControllerComplete(battlerId);
 }
@@ -675,7 +680,7 @@ static void MoveSelectionDisplayMoveNames(u8 battlerId)
     {
         MoveSelectionDestroyCursorAt(i);
         StringCopy(gDisplayedStringBattle, gText_MoveInterfaceMoveNamesColor);
-        StringAppend(gDisplayedStringBattle, gMoveNames[moveInfo->moves[i]]);
+        StringAppend(gDisplayedStringBattle, gBattleMoves[moveInfo->moves[i]].name);
         BattlePutTextOnWindow(gDisplayedStringBattle, i + B_WIN_MOVE_NAME_1);
 		
         if (moveInfo->moves[i])

@@ -419,7 +419,6 @@ static const u8 sText_PkmnCantSleepInUproar[] = _("But {B_DEF_NAME_WITH_PREFIX} 
 static const u8 sText_PkmnCantSleepInUproar2[] = _("But {B_DEF_NAME_WITH_PREFIX} can't\nsleep in an Uproar!");
 static const u8 sText_UproarKeptPkmnAwake[] = _("But the Uproar kept\n{B_DEF_NAME_WITH_PREFIX} awake!");
 static const u8 sText_PkmnStayedAwakeUsing[] = _("{B_DEF_NAME_WITH_PREFIX} stayed awake\nusing its {B_DEF_ABILITY}!");
-static const u8 sText_PkmnHurtBySpikes[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} is hurt\nby Spikes!");
 static const u8 sText_PkmnSwitchedItems[] = _("{B_ATK_NAME_WITH_PREFIX} switched\nitems with its opponent!");
 static const u8 sText_PkmnObtainedX[] = _("{B_ATK_NAME_WITH_PREFIX} obtained\n{B_BUFF1}.");
 static const u8 sText_PkmnObtainedX2[] = _("{B_DEF_NAME_WITH_PREFIX} obtained\n{B_BUFF2}.");
@@ -432,7 +431,6 @@ static const u8 sText_PkmnWaitsForTarget[] = _("{B_ATK_NAME_WITH_PREFIX} waits f
 static const u8 sText_XFoundOneY[] = _("{B_ATK_NAME_WITH_PREFIX} found\none {B_LAST_ITEM}!");
 static const u8 sText_ForXCommaYZ[] = _("For {B_SCR_ACTIVE_NAME_WITH_PREFIX},\n{B_LAST_ITEM} {B_BUFF1}");
 static const u8 sText_PkmnUsedXToGetPumped[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} used\n{B_LAST_ITEM} to hustle!");
-static const u8 sText_PkmnCantUseMoveSealed[] = _("{B_ATK_NAME_WITH_PREFIX} can't use the\nsealed {B_CURRENT_MOVE}!\p");
 static const u8 sText_PkmnsXMadeYUseless[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nmade {B_CURRENT_MOVE} useless!");
 static const u8 sText_PkmnPreventsParalysisWith[] = _("{B_EFF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nprevents paralysis!");
 static const u8 sText_PkmnPreventsRomanceWith[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nprevents romance!");
@@ -472,7 +470,6 @@ static const u8 sText_AtkFriskedFoundLastItem[] = _("{B_ATK_NAME_WITH_PREFIX} fr
 static const u8 sText_AtkCutHpMinimizedAttack[] = _("{B_ATK_NAME_WITH_PREFIX} cut its own HP\nand minimized Attack!");
 static const u8 sText_AtkAblRaisedItsSpeed[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\nraised its Speed!");
 static const u8 sText_PerishInThree[] = _("Both Pokémon will perish\nin three turns!");
-static const u8 sText_CurrMoveChargedDefPower[] = _("Being hit by {B_CURRENT_MOVE}\ncharged {B_DEF_NAME_WITH_PREFIX} with power!");
 static const u8 sText_NeutralizingGasOver[] = _("The effects of\n{B_BUFF1} wore off!");
 static const u8 sText_PkmnAblFilledTheArea[] = _("{B_SCR_ACTIVE_ABILITY} filled the area!");
 static const u8 sText_PastelVeilProtected[] = _("{B_DEF_NAME_WITH_PREFIX} is protected\nby a pastel veil!");
@@ -605,7 +602,8 @@ const u16 gReflectLightScreenSafeguardStringIds[] =
 const u16 gSideStatusWoreOffStringIds[] =
 {
 	[B_MSG_SIDE_STATUS_WORE_OFF] = STRINGID_ATKTEAMBUFF1WOREOFF,
-	[B_MSG_SAFEGUARD_WORE_OFF]   = STRINGID_ATKTEAMSAFEGUARDEXPIRED
+	[B_MSG_SAFEGUARD_WORE_OFF]   = STRINGID_ATKTEAMSAFEGUARDEXPIRED,
+	[B_MSG_TAILWIND_PETERED_OUT] = STRINGID_ATKTEAMTAILWINDPETEREDOUT
 };
 
 const u16 gRestUsedStringIds[] =
@@ -766,9 +764,10 @@ const u16 gNotAllowedMoveStringIds[] =
 	[B_MSG_NO_MOVES]                = STRINGID_ATKHASNOMOVESLEFT,
 	[B_MSG_MOVE_TORMENTED]          = STRINGID_ATKCANTUSEMOVETORMENT,
 	[B_MSG_MOVE_TAUNTED]            = STRINGID_ATKCANTUSECURRMOVETAUNT,
-	[B_MSG_MOVE_SEALED]             = STRINGID_PKMNCANTUSEMOVESEALED,
+	[B_MSG_MOVE_SEALED]             = STRINGID_ATKCANTUSESEALEDCURRMOVE,
 	[B_MSG_MOVE_LOCKED_CHOICE_ITEM] = STRINGID_LASTITEMALLOWSONLYCURRMOVE,
-	[B_MSG_MOVE_NO_PP]              = STRINGID_NOPPLEFT
+	[B_MSG_MOVE_NO_PP]              = STRINGID_NOPPLEFT,
+	[B_MSG_MOVE_IN_GRAVITY]         = STRINGID_ATKCANTUSECURRMOVEINGRAVITY
 };
 
 const u16 gStockpileUsedStringIds[] =
@@ -791,7 +790,8 @@ const u16 gFieldSportUsedStringIds[] =
 
 const u16 gFieldStatusWoreOffStringIds[] =
 {
-	[B_MSG_FIELD_EFFECTS_WORE_OFF] = STRINGID_BUFF1EFFECTSWOREOFF
+	[B_MSG_FIELD_EFFECTS_WORE_OFF] = STRINGID_BUFF1EFFECTSWOREOFF,
+	[B_MSG_GRAVITY_NORMALIZED]     = STRINGID_GRAVITYRETURNEDTONORMAL
 };
 
 const u16 gSwitchInAbilitiesMsgStringIds[] =
@@ -814,7 +814,17 @@ const u16 gSwitchInAbilitiesMsgStringIds[] =
 	[B_MSG_EXERTING_ABILITY]         = STRINGID_PKMNEXERTINGITSABL,
 	[B_MSG_GAINED_STRENGTH]          = STRINGID_PKMNGAINEDSTRENGTHFROMFALLEN,
 	[B_MSG_WEAKENED_STAT]            = STRINGID_PKMNABLWEAKENEDBUFF1OFALL,
-	[B_MSG_COPIED_STAT_CHANGES]      = STRINGID_ATKCOPIEDDEFSTATCHANGES,
+	[B_MSG_COPIED_STAT_CHANGES]      = STRINGID_ATKCOPIEDDEFSTATCHANGES
+};
+
+const u16 gHealingWishLunarDanceStringIds[] =
+{
+	[B_MSG_HEALING_WISH_TRUE] = STRINGID_HEALINGWISHCAMETRUEFORPKMN
+};
+
+const u16 gEntryHazardsDmgStringIds[] =
+{
+	[B_MSG_HURT_BY_SPIKES] = STRINGID_PKMNHURTBYSPIKES
 };
 
 // String tables
@@ -860,7 +870,7 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_PLAYERGOTMONEY - BATTLESTRINGS_ID_ADDER]                = COMPOUND_STRING("{B_PLAYER_NAME} got ¥{B_BUFF1} for winning!\p"),
 	[STRINGID_PLAYERWHITEOUT - BATTLESTRINGS_ID_ADDER]                = COMPOUND_STRING("{B_PLAYER_NAME} is out of usable Pokémon!\p"),
 	[STRINGID_PLAYERPANICKEDANDLOST - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("{B_PLAYER_NAME} panicked and lost ¥{B_BUFF1}…\p… … … …\p{B_PLAYER_NAME} whited out!{PAUSE_UNTIL_PRESS}"),
-	[STRINGID_PKMNPREVENTSESCAPEWITHABL - BATTLESTRINGS_ID_ADDER]     = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} prevents escape with {B_SCR_ACTIVE_ABILITY}!\p"),
+	[STRINGID_PKMNPREVENTSESCAPEWITHABL - BATTLESTRINGS_ID_ADDER]     = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} prevents escape with {B_SCR_ACTIVE_ABILITY}!"),
 	[STRINGID_HITXTIMES - BATTLESTRINGS_ID_ADDER]                     = COMPOUND_STRING("Hit {B_BUFF1} time(s)!"),
 	[STRINGID_EFFFELLASLEEP - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX} fell asleep!"),
 	[STRINGID_DEFALREADYASLEEP - BATTLESTRINGS_ID_ADDER]              = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} is already asleep!"),
@@ -946,7 +956,7 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_ATKMUSTRECHARGE - BATTLESTRINGS_ID_ADDER]               = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} must recharge!"),
 	[STRINGID_ATKTOOKAIMATDEF - BATTLESTRINGS_ID_ADDER]               = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} took aim at {B_DEF_NAME_WITH_PREFIX}!"),
 	[STRINGID_DEFBUFF1WASDISABLED - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX}'s {B_BUFF1} was disabled!"),
-	[STRINGID_ATKCURRMOVEISDISABLED - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX}'s {B_CURRENT_MOVE} is disabled!\p"),
+	[STRINGID_ATKCURRMOVEISDISABLED - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX}'s {B_CURRENT_MOVE} is disabled!"),
 	[STRINGID_ATKDISABLEDNOMORE - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is disabled no more!"),
 	[STRINGID_DEFRECEIVEDENCORE - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} received an encore!"),
 	[STRINGID_ATKENCOREENDED - BATTLESTRINGS_ID_ADDER]                = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX}'s encore ended!"),
@@ -969,12 +979,12 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_DEFTOOKTHECURRMOVEATTACK - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} took the {B_CURRENT_MOVE} attack!"),
 	[STRINGID_ATKBECAMETHECENTERATTENTION - BATTLESTRINGS_ID_ADDER]   = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} became the center of attention!"),
 	[STRINGID_BUFF1TURNEDINTOCURRMOVE - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("{B_BUFF1} turned into {B_CURRENT_MOVE}!"),
-    [STRINGID_ATKHASNOMOVESLEFT - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} has no moves left!\p"),
+    [STRINGID_ATKHASNOMOVESLEFT - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} has no moves left!"),
     [STRINGID_DEFSUBJECTEDTOTORMENT - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} was subjected to torment!"),
-    [STRINGID_ATKCANTUSEMOVETORMENT - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} can't use the same move in a row due to the torment!\p"),
+    [STRINGID_ATKCANTUSEMOVETORMENT - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} can't use the same move in a row due to the torment!"),
     [STRINGID_ATKTIGHTENINGFOCUS - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is tightening its focus!"),
     [STRINGID_DEFFELLFORTAUNT - BATTLESTRINGS_ID_ADDER]               = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} fell for the taunt!"),
-    [STRINGID_ATKCANTUSECURRMOVETAUNT - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} can't use {B_CURRENT_MOVE} after the taunt!\p"),
+    [STRINGID_ATKCANTUSECURRMOVETAUNT - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} can't use {B_CURRENT_MOVE} after the taunt!"),
     [STRINGID_ATKREADYTOHELPDEF - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is ready to help {B_DEF_NAME_WITH_PREFIX}!"),
     [STRINGID_ATKCOPIEDDEFABL - BATTLESTRINGS_ID_ADDER]               = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} copied the {B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}!"),
     [STRINGID_BUFF1WISHCAMETRUE - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_BUFF1}'s wish came true!"),
@@ -1035,8 +1045,8 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_THREWBAIT - BATTLESTRINGS_ID_ADDER]                     = COMPOUND_STRING("{B_PLAYER_NAME} threw some Bait at the {B_OPPONENT_MON1_NAME}!"),
 	[STRINGID_YOUTHROWABALLNOWRIGHT - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("You throw a Ball now, right?\nI… I'll do my best!"),
     [STRINGID_NORUNNINGFROMTRAINERS - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("No! There's no running from a Trainer battle!\p"),
-    [STRINGID_CANTESCAPE - BATTLESTRINGS_ID_ADDER]                    = COMPOUND_STRING("Can't escape!\p"),
-    [STRINGID_DONTLEAVEBIRCH - BATTLESTRINGS_ID_ADDER]                = gText_EmptyString,
+    [STRINGID_CANTESCAPE - BATTLESTRINGS_ID_ADDER]                    = COMPOUND_STRING("Can't escape!"),
+    [STRINGID_DONTLEAVEBIRCH - BATTLESTRINGS_ID_ADDER]                = gText_EmptyString, // Handled by oak can't escape string
 	[STRINGID_ATKCANTESCAPE - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} can't escape!"),
 	[STRINGID_RAINCONTINUES - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("Rain continues to fall."),
 	[STRINGID_RAINSTOPPED - BATTLESTRINGS_ID_ADDER]                   = COMPOUND_STRING("The rain stopped."),
@@ -1059,15 +1069,15 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_SOOTHINGAROMA - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("A soothing aroma wafted through the area!"),
 	[STRINGID_STATCHANGESELIMINATED - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("All stat changes were eliminated!"),
     [STRINGID_ALLPOKEMONFAINTINTHREETURNS - BATTLESTRINGS_ID_ADDER]   = COMPOUND_STRING("All Pokémon hearing the song will faint in three turns!"),
-    [STRINGID_NOPPLEFT - BATTLESTRINGS_ID_ADDER]                      = COMPOUND_STRING("There's no PP left for this move!\p"),
+    [STRINGID_NOPPLEFT - BATTLESTRINGS_ID_ADDER]                      = COMPOUND_STRING("There's no PP left for this move!"),
     [STRINGID_BUTNOPPLEFT - BATTLESTRINGS_ID_ADDER]                   = COMPOUND_STRING("But there was no PP left for the move!"),
     [STRINGID_ATKIGNOREDORDERSASLEEP - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} ignored orders while asleep!"),
     [STRINGID_ATKIGNOREDORDERS - BATTLESTRINGS_ID_ADDER]              = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} ignored orders!"),
     [STRINGID_ATKBEGANTONAP - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} began to nap!"),
     [STRINGID_ENEMYABOUTTOSWITCHPKMN - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("{B_TRAINER1_CLASS} {B_TRAINER1_NAME} is\nabout to use {B_BUFF2}.\pWill {B_PLAYER_NAME} change Pokémon?"),
-    [STRINGID_LASTITEMALLOWSONLYCURRMOVE - BATTLESTRINGS_ID_ADDER]    = COMPOUND_STRING("{B_LAST_ITEM}'s effect allows only {B_CURRENT_MOVE} to be used!\p"),
+    [STRINGID_LASTITEMALLOWSONLYCURRMOVE - BATTLESTRINGS_ID_ADDER]    = COMPOUND_STRING("{B_LAST_ITEM}'s effect allows only {B_CURRENT_MOVE} to be used!"),
 	[STRINGID_ITEMSCANTBEUSEDNOW - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("Items can't be used now.{PAUSE 64}"),
-	[STRINGID_BOXISFULL - BATTLESTRINGS_ID_ADDER]                     = COMPOUND_STRING("The Box is full!\nYou can't catch any more!\p"),
+	[STRINGID_BOXISFULL - BATTLESTRINGS_ID_ADDER]                     = COMPOUND_STRING("The Box is full!\nYou can't catch any more!"),
 	[STRINGID_EFFSTATCHANGED - BATTLESTRINGS_ID_ADDER]                = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX}'s {B_BUFF1}{B_BUFF2}!"),
 	[STRINGID_EFFSTATCANTCHANGE - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX}'s {B_BUFF1} {B_BUFF2}!"),
 	[STRINGID_DEFSTATSWONTCHANGE - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX}'s stats won't change anymore!"),
@@ -1142,6 +1152,18 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_DEFISTORMENTED - BATTLESTRINGS_ID_ADDER]                = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} is tormented!"),
 	[STRINGID_DISGUISESERVEDASDECOY - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("Its disguise served it as a decoy!"),
 	[STRINGID_DEFDISGUISEBUSTED - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX}'s disguise was busted!"),
+	[STRINGID_GRAVITYINTENSIFIED - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("Gravity intensified!"),
+	[STRINGID_PKMNCANTSTAYINAIR - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} can't stay airbone because of gravity!"),
+	[STRINGID_ATKCANTUSECURRMOVEINGRAVITY - BATTLESTRINGS_ID_ADDER]   = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} can't use {B_CURRENT_MOVE} because of gravity!"),
+	[STRINGID_GRAVITYRETURNEDTONORMAL - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("Gravity returned to normal!"),
+	[STRINGID_MOVECANTBESELECTED - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("{B_BUFF1}\p"),
+	[STRINGID_ATKCANTUSESEALEDCURRMOVE - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} can't use the sealed {B_CURRENT_MOVE}!"),
+	[STRINGID_HEALINGWISHCAMETRUEFORPKMN - BATTLESTRINGS_ID_ADDER]    = COMPOUND_STRING("The healing wish came true for {B_SCR_ACTIVE_NAME_WITH_PREFIX}!"),
+	[STRINGID_PKMNHURTBYSPIKES - BATTLESTRINGS_ID_ADDER]              = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} is hurt by spikes!"),
+	[STRINGID_EFFFELLFORTHEFEINT - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX} fell for the feint!"),
+	[STRINGID_TAILWINDBLEWBEHINDATKTEAM - BATTLESTRINGS_ID_ADDER]     = COMPOUND_STRING("The tailwind blew from behind {B_ATK_TEAM_PREFIX}!"),
+	[STRINGID_ATKTEAMTAILWINDPETEREDOUT - BATTLESTRINGS_ID_ADDER]     = COMPOUND_STRING("{B_ATK_TEAM_PREFIX}'s tailwind petered out!"),
+	[STRINGID_CURRMOVECHARGEDPKMNPOWER - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("Being hit by {B_CURRENT_MOVE} charged {B_SCR_ACTIVE_NAME_WITH_PREFIX} with power!"),
 	
 	[STRINGID_ABILITYTRIGGERED - BATTLESTRINGS_ID_ADDER]              = sText_AbilityTriggered,
 	[STRINGID_PKMNGAINSOMEOFHP - BATTLESTRINGS_ID_ADDER]              = sText_PkmnGainSomeOfHp,
@@ -1156,7 +1178,6 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_ATKCUTHPMINIMIZEDATTACK - BATTLESTRINGS_ID_ADDER]       = sText_AtkCutHpMinimizedAttack,
 	[STRINGID_ATKABLRAISEDITSSPEED - BATTLESTRINGS_ID_ADDER]          = sText_AtkAblRaisedItsSpeed,
 	[STRINGID_BOTHWILLPERISHIN3TURNS - BATTLESTRINGS_ID_ADDER]        = sText_PerishInThree,
-	[STRINGID_CURRMOVECHARGEDDEFPOWER - BATTLESTRINGS_ID_ADDER]       = sText_CurrMoveChargedDefPower,
 	[STRINGID_NEUTRALIZINGGASOVER - BATTLESTRINGS_ID_ADDER]           = sText_NeutralizingGasOver,
 	[STRINGID_PKMNABLFILLEDTHEAREA - BATTLESTRINGS_ID_ADDER]          = sText_PkmnAblFilledTheArea,
 	[STRINGID_PASTELVEILPROTECTED - BATTLESTRINGS_ID_ADDER]           = sText_PastelVeilProtected,
@@ -1205,7 +1226,6 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_HEAVYRAINBEGANFALL - BATTLESTRINGS_ID_ADDER]            = sText_HeavyRainBeganFall,
 	[STRINGID_EXTREHARSHSUNLIGHT - BATTLESTRINGS_ID_ADDER]            = sText_SunlightTurnedExtremelyHarsh,
 	[STRINGID_MYSTERIOUSAIRPROTECTINGPKMN - BATTLESTRINGS_ID_ADDER]   = sText_MysteriousAirProtectingPkmn,
-	[STRINGID_PKMNHURTBYSPIKES - BATTLESTRINGS_ID_ADDER]              = sText_PkmnHurtBySpikes,
 	[STRINGID_PKMNUPROARKEPTAWAKE - BATTLESTRINGS_ID_ADDER]           = sText_PkmnUproarKeptAwake,
     [STRINGID_PKMNCAUSEDUPROAR - BATTLESTRINGS_ID_ADDER]              = sText_PkmnCausedUproar,
     [STRINGID_PKMNMAKINGUPROAR - BATTLESTRINGS_ID_ADDER]              = sText_PkmnMakingUproar,
@@ -1217,7 +1237,6 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_PKMNSWITCHEDITEMS - BATTLESTRINGS_ID_ADDER]             = sText_PkmnSwitchedItems,
 	[STRINGID_PKMNKNOCKEDOFF - BATTLESTRINGS_ID_ADDER]                = sText_PkmnKnockedOff,
 	[STRINGID_PKMNSEALEDOPPONENTMOVE - BATTLESTRINGS_ID_ADDER]        = sText_PkmnSealedOpponentMove,
-    [STRINGID_PKMNCANTUSEMOVESEALED - BATTLESTRINGS_ID_ADDER]         = sText_PkmnCantUseMoveSealed,
     [STRINGID_PKMNWANTSGRUDGE - BATTLESTRINGS_ID_ADDER]               = sText_PkmnWantsGrudge,
     [STRINGID_PKMNLOSTPPGRUDGE - BATTLESTRINGS_ID_ADDER]              = sText_PkmnLostPPGrudge,
     [STRINGID_PKMNWAITSFORTARGET - BATTLESTRINGS_ID_ADDER]            = sText_PkmnWaitsForTarget,
@@ -1320,7 +1339,6 @@ void BufferStringBattle(u8 battlerId, u16 stringId)
     gLastUsedAbility = sBattleMsgDataPtr->lastAbility;
     gBattleScripting.battler = sBattleMsgDataPtr->scrActive;
     gBattleStruct->hpScale = sBattleMsgDataPtr->hpScale;
-    gBattleStruct->stringMoveType = sBattleMsgDataPtr->moveType;
 
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         sBattlerAbilities[i] = sBattleMsgDataPtr->abilities[i];
@@ -1453,7 +1471,7 @@ void BufferStringBattle(u8 battlerId, u16 stringId)
         }
         break;
     case STRINGID_USEDMOVE:
-	    StringCopy(gBattleTextBuff2, gMoveNames[sBattleMsgDataPtr->currentMove]);
+	    StringCopy(gBattleTextBuff2, gBattleMoves[sBattleMsgDataPtr->currentMove].name);
         stringPtr = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} used {B_BUFF2}!");
         break;
     case STRINGID_BATTLEEND:
@@ -1646,10 +1664,10 @@ void BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
                     HANDLE_NICKNAME_STRING_CASE(gBattleScripting.battler);
 					break;
 				case B_TXT_CURRENT_MOVE:
-                    toCpy = gMoveNames[sBattleMsgDataPtr->currentMove];
+                    toCpy = gBattleMoves[sBattleMsgDataPtr->currentMove].name;
 					break;
 				case B_TXT_CHOSEN_MOVE:
-                    toCpy = gMoveNames[sBattleMsgDataPtr->chosenMove];
+                    toCpy = gBattleMoves[sBattleMsgDataPtr->chosenMove].name;
 					break;
                 case B_TXT_LAST_ITEM:
 				    CopyItemName(gLastUsedItem, text);
@@ -1802,7 +1820,7 @@ static void ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst)
             srcId += src[srcId + 1] + 3;
             break;
         case B_BUFF_MOVE:
-            StringAppend(dst, gMoveNames[READ_16(&src[srcId + 1])]);
+            StringAppend(dst, gBattleMoves[READ_16(&src[srcId + 1])].name);
             srcId += 3;
             break;
         case B_BUFF_TYPE:

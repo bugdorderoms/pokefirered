@@ -136,7 +136,7 @@
 #define EFFECT_MEMENTO 131
 #define EFFECT_FACADE 132
 #define EFFECT_FOCUS_PUNCH 133
-#define EFFECT_REMOVE_STATUS 134
+#define EFFECT_SMELLING_SALT 134
 #define EFFECT_FOLLOW_ME 135
 #define EFFECT_NATURE_POWER 136
 #define EFFECT_CHARGE 137
@@ -178,6 +178,17 @@
 #define EFFECT_CALM_MIND 173
 #define EFFECT_DRAGON_DANCE 174
 #define EFFECT_ROOST 175
+#define EFFECT_GRAVITY 176
+#define EFFECT_MIRACLE_EYE 177
+#define EFFECT_WAKE_UP_SLAP 178
+#define EFFECT_USER_SPEED_DOWN_HIT 179
+#define EFFECT_GYRO_BALL 180
+#define EFFECT_HEALING_WISH 181
+#define EFFECT_BRINE 182
+#define EFFECT_NATURAL_GIFT 183
+#define EFFECT_FEINT 184
+#define EFFECT_BUG_BITE 185
+#define EFFECT_TAILWIND 186
 
 #define EFFECT_SPEED_UP 12
 #define EFFECT_SPECIAL_ATTACK_UP 13
@@ -194,8 +205,6 @@
 #define EFFECT_ACCURACY_DOWN_2 63
 #define EFFECT_EVASION_DOWN_HIT 74
 #define EFFECT_FLINCH_MINIMIZE_HIT 150
-#define EFFECT_NATURAL_GIFT                 214
-#define EFFECT_WAKE_UP_SLAP                 215
 #define EFFECT_WRING_OUT                    216
 #define EFFECT_HEX                          217
 #define EFFECT_ASSURANCE                    218
@@ -205,19 +214,14 @@
 #define EFFECT_PUNISHMENT                   222
 #define EFFECT_STORED_POWER                 223
 #define EFFECT_ELECTRO_BALL                 224
-#define EFFECT_GYRO_BALL                    225
 #define EFFECT_ECHOED_VOICE                 226
 #define EFFECT_PAYBACK                      227
 #define EFFECT_ROUND                        228
-#define EFFECT_BRINE                        229
 #define EFFECT_VENOSHOCK                    230
 #define EFFECT_RETALIATE                    231
 #define EFFECT_BULLDOZE                     232
 #define EFFECT_FOUL_PLAY                    233
 #define EFFECT_PSYSHOCK                     234
-#define EFFECT_GRAVITY                      236
-#define EFFECT_MIRACLE_EYE                  237
-#define EFFECT_TAILWIND                     238
 #define EFFECT_EMBARGO                      239
 #define EFFECT_AQUA_RING                    240
 #define EFFECT_TRICK_ROOM                   241
@@ -293,7 +297,6 @@
 #define EFFECT_REVELATION_DANCE             314
 #define EFFECT_AURORA_VEIL                  315
 #define EFFECT_THIRD_TYPE                   316
-#define EFFECT_FEINT                        317
 #define EFFECT_SPARKLING_ARIA               318
 #define EFFECT_ACUPRESSURE                  319
 #define EFFECT_AROMATIC_MIST                320
@@ -312,7 +315,6 @@
 #define EFFECT_MAGNETIC_FLUX                333
 #define EFFECT_GEAR_UP                      334
 #define EFFECT_INCINERATE                   335
-#define EFFECT_BUG_BITE                     336
 #define EFFECT_STRENGTH_SAP                 337
 #define EFFECT_MIND_BLOWN                   338
 #define EFFECT_PURIFY                       339
@@ -369,9 +371,7 @@
 #define EFFECT_FLING                        391
 #define EFFECT_FUSION_COMBO                 393
 #define EFFECT_HEAL_BLOCK                   394
-#define EFFECT_HAMMER_ARM 396
 #define EFFECT_ALWAYS_CRIT 397
-#define EFFECT_HEALING_WISH 398
 #define EFFECT_CAPTIVATE 399
 #define EFFECT_FELL_STINGER 400
 #define EFFECT_WORRY_SEED 401
@@ -423,14 +423,15 @@
 #define MOVE_EFFECT_PAYDAY              41
 #define MOVE_EFFECT_WRAP                42
 #define MOVE_EFFECT_RECHARGE            43
-#define MOVE_EFFECT_REMOVE_STATUS       44
+#define MOVE_EFFECT_SMELLING_SALT       44
 #define MOVE_EFFECT_THRASH              45
 #define MOVE_EFFECT_STOCKPILE_WORE_OFF  46
+#define MOVE_EFFECT_WAKE_UP_SLAP        47
+#define MOVE_EFFECT_FEINT               48
 // TODO
-#define MOVE_EFFECT_STEAL_ITEM          47
-#define MOVE_EFFECT_KNOCK_OFF           48
-#define MOVE_EFFECT_FEINT               49
-#define MOVE_EFFECT_UPROAR              50
+#define MOVE_EFFECT_STEAL_ITEM          49
+#define MOVE_EFFECT_KNOCK_OFF           50
+#define MOVE_EFFECT_UPROAR              51
 
 // Z-Move effect bytes
 #define Z_EFFECT_NONE                   0

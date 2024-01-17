@@ -1813,11 +1813,17 @@ void ClearBattleAnimationVars(void)
     gUnknown_2037F24 = 0;
 }
 
+// For test new moves, they will do the Pound anim if it does't have one
+static inline u16 SanitizeMoveAnim(u16 move)
+{
+	return move >= MOVE_ROOST ? MOVE_POUND : move;
+}
+
 void DoMoveAnim(u16 move)
 {
     gBattleAnimAttacker = gBattlerAttacker;
     gBattleAnimTarget = gBattlerTarget;
-    LaunchBattleAnimation(ANIM_TYPE_MOVE, move);
+    LaunchBattleAnimation(ANIM_TYPE_MOVE, SanitizeMoveAnim(move));
 }
 
 void LaunchBattleAnimation(u8 animType, u16 animId)

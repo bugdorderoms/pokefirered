@@ -148,7 +148,7 @@ const struct BattleTowerPokemonTemplate gBattleTowerLevel100Mons[] =
 		.heldItem = BATTLE_TOWER_ITEM_METAL_COAT,
 		.teamFlags = 0x03,
 		.moves = {
-			MOVE_VICE_GRIP,
+			MOVE_VISE_GRIP,
 			MOVE_SWEET_SCENT,
 			MOVE_ASTONISH,
 			MOVE_STRENGTH

@@ -18,6 +18,7 @@ static void OakOldManBufferRunCommand(u8 battlerId);
 static void OakOldManBufferExecCompleted(u8 battlerId);
 static void OakOldManHandleDrawTrainerPic(u8 battlerId);
 static void OakOldManHandleTrainerSlide(u8 battlerId);
+static void OakOldManHandlePrintStringInternal(u8 battlerId, bool8 isSelection);
 static void OakOldManHandlePrintString(u8 battlerId);
 static void OakOldManHandlePrintSelectionString(u8 battlerId);
 static void OakOldManHandleChooseMove(u8 battlerId);
@@ -123,7 +124,7 @@ static void OakOldManHandleTrainerSlide(u8 battlerId)
 	BtlController_HandleTrainerSlide(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicCoords[trainerPicId].size) * 4 + 80);
 }
 
-static void OakOldManHandlePrintString(u8 battlerId)
+static void OakOldManHandlePrintStringInternal(u8 battlerId, bool8 isSelection)
 {
 	u16 *stringId = (u16 *)(&gBattleBufferA[battlerId][2]);
 	
@@ -135,7 +136,7 @@ static void OakOldManHandlePrintString(u8 battlerId)
 	}
     else
     {
-		BtlController_HandlePrintString(battlerId, *stringId);
+		BtlController_HandlePrintString(battlerId, *stringId, isSelection);
 		
         if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
         {
@@ -163,10 +164,15 @@ static void OakOldManHandlePrintString(u8 battlerId)
     }
 }
 
+static void OakOldManHandlePrintString(u8 battlerId)
+{
+	OakOldManHandlePrintStringInternal(battlerId, FALSE);
+}
+
 static void OakOldManHandlePrintSelectionString(u8 battlerId)
 {
 	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-        OakOldManHandlePrintString(battlerId);
+        OakOldManHandlePrintStringInternal(battlerId, TRUE);
     else
         BattleControllerComplete(battlerId);
 }

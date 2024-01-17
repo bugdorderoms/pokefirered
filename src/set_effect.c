@@ -74,9 +74,11 @@ static const u8 *const sMoveEffectBS_Ptrs[] =
 	[MOVE_EFFECT_ACC_MINUS_2]        = BattleScript_StatChange,
 	[MOVE_EFFECT_EVS_MINUS_2]        = BattleScript_StatChange,
 	[MOVE_EFFECT_ALL_STATS_UP]       = BattleScript_AllStatsUp,
-	[MOVE_EFFECT_REMOVE_STATUS]      = BattleScript_TargetStatusHeal,
+	[MOVE_EFFECT_SMELLING_SALT]      = BattleScript_TargetStatusHeal,
+	[MOVE_EFFECT_WAKE_UP_SLAP]       = BattleScript_TargetStatusHeal,
 	[MOVE_EFFECT_ATK_DEF_DOWN]       = BattleScript_MoveEffectAtkDefDown,
 	[MOVE_EFFECT_STOCKPILE_WORE_OFF] = BattleScript_MoveEffectStockpileWoreOff,
+	[MOVE_EFFECT_FEINT]              = BattleScript_MoveEffectFeint,
 };
 
 void SetMoveEffect(u8 moveEffect, bool8 affectsUser, bool8 certain)
@@ -146,7 +148,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 	}
 	
 	// Check if target is't alive
-	if (!IsBattlerAlive(gEffectBattler) && moveEffect != MOVE_EFFECT_PAYDAY && moveEffect != MOVE_EFFECT_STEAL_ITEM)
+	if (!IsBattlerAlive(gEffectBattler) && moveEffect != MOVE_EFFECT_PAYDAY && moveEffect != MOVE_EFFECT_STEAL_ITEM && moveEffect != MOVE_EFFECT_FEINT)
 		INCREMENT_RETURN
 	
 	// Check substitute
@@ -391,11 +393,19 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		    gDisableStructs[gEffectBattler].stockpileCounter = 0;
 		    effect = 2;
 			break;
-		case MOVE_EFFECT_REMOVE_STATUS:
-		    if (gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_1ST_HIT && (gBattleMons[gEffectBattler].status1 & gBattleMoves[gCurrentMove].argument))
+		case MOVE_EFFECT_SMELLING_SALT:
+		    if (gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_1ST_HIT && (gBattleMons[gEffectBattler].status1 & STATUS1_PARALYSIS))
 			{
 				ClearBattlerStatus(gEffectBattler);
-				gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument == STATUS1_SLEEP ? B_MSG_WOKEUP_EFFECT : B_MSG_CURED_BUFF1;
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CURED_BUFF1;
+				effect = 2;
+			}
+			break;
+		case MOVE_EFFECT_WAKE_UP_SLAP:
+		    if (gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_1ST_HIT && (gBattleMons[gEffectBattler].status1 & STATUS1_SLEEP))
+			{
+				ClearBattlerStatus(gEffectBattler);
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WOKEUP_EFFECT;
 				effect = 2;
 			}
 			break;
@@ -407,6 +417,10 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 				gLockedMoves[gEffectBattler] = gCurrentMove;
 				effect = 3; // No script
 			}
+			break;
+		case MOVE_EFFECT_FEINT:
+		    if (LiftProtectionEffects(gEffectBattler))
+				effect = 2;
 			break;
 		case MOVE_EFFECT_KNOCK_OFF: // TODO:
 		    if (gBattleMons[gEffectBattler].item)

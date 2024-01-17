@@ -123,6 +123,7 @@
 #define STATUS2_FORESIGHT                (1 << 24)
 #define STATUS2_DEFENSE_CURL             (1 << 25)
 #define STATUS2_TORMENT                  (1 << 26)
+#define STATUS2_MIRACLE_EYE              (1 << 27)
 
 // per-battler statuses
 // These are removed after exiting the battle or switching out
@@ -143,6 +144,9 @@
 #define STATUS3_UNDERWATER              (1 << 15)
 #define STATUS3_POWER_TRICK             (1 << 16)
 #define STATUS3_EMBARGO                 (1 << 17)
+#define STATUS3_MAGNET_RISE             (1 << 18)
+#define STATUS3_TELEKINESIS             (1 << 19)
+#define STATUS3_SKY_DROPPED             (1 << 20) // The battler that was held
 
 #define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
 
@@ -171,19 +175,26 @@
 #define SIDE_STATUS_REFLECT          (1 << 0)
 #define SIDE_STATUS_LIGHTSCREEN      (1 << 1)
 #define SIDE_STATUS_SPIKES           (1 << 2)
-#define SIDE_STATUS_SPIKES_DAMAGED   (1 << 3)
+#define SIDE_STATUS_STICKY_WEB       (1 << 3)
 #define SIDE_STATUS_SAFEGUARD        (1 << 4)
 #define SIDE_STATUS_MIST             (1 << 5)
 #define SIDE_STATUS_AURORA_VEIL      (1 << 6)
 #define SIDE_STATUS_TOXIC_SPIKES     (1 << 7)
 #define SIDE_STATUS_STEALTH_ROCK     (1 << 8)
-#define SIDE_STATUS_STICKY_WEB       (1 << 9)
+#define SIDE_STATUS_WIDE_GUARD       (1 << 9)
+#define SIDE_STATUS_QUICK_GUARD      (1 << 10)
+#define SIDE_STATUS_CRAFTY_SHIELD    (1 << 11)
+#define SIDE_STATUS_MAT_BLOCK        (1 << 12)
+#define SIDE_STATUS_TAILWIND         (1 << 13)
 #define SIDE_STATUS_SCREENS_ANY      (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_AURORA_VEIL)
 #define SIDE_STATUS_HAZARDS_ANY      (SIDE_STATUS_SPIKES | SIDE_STATUS_TOXIC_SPIKES | SIDE_STATUS_STEALTH_ROCK | SIDE_STATUS_STICKY_WEB)
+#define SIDE_STATUS_PROTECTIONS_ANY  (SIDE_STATUS_WIDE_GUARD | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK)
 
 // Field statuses
 #define STATUS_FIELD_WATERSPORT (1 << 0)
 #define STATUS_FIELD_MUDSPORT   (1 << 1)
+#define STATUS_FIELD_GRAVITY    (1 << 2)
+#define STATUS_FIELD_MAGIC_ROOM (1 << 3)
 
 // Flags describing move's result
 #define MOVE_RESULT_MISSED             (1 << 0)

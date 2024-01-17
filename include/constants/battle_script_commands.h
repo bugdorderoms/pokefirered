@@ -34,6 +34,7 @@
 #define sBATTLE_STYLE gBattleScripting + 0x1F
 #define sLVLBOX_STATE gBattleScripting + 0x20
 #define sLEARNMOVE_STATE gBattleScripting + 0x21
+#define sSWITCHIN_EFFECTS_STATE gBattleScripting + 0x26
 
 // array entries for battle communication
 #define MULTIUSE_STATE                      0
@@ -184,6 +185,9 @@
 #define VARIOUS_JUMP_IF_CONFUSED_AND_STAT_MAXED     42
 #define VARIOUS_TRY_RATTLED_ON_INTIMIDATE           43
 #define VARIOUS_TRY_ACTIVATE_SAP_SIPPER             44
+#define VARIOUS_TRY_SET_GRAVITY                     45
+#define VARIOUS_TRY_BRING_DOWN_IN_AIR               46
+#define VARIOUS_TRY_ACTIVATE_WIND_ABILITIES         47
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN       0
