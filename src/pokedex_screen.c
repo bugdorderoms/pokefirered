@@ -2881,10 +2881,10 @@ static void DexScreen_DrawMonAreaPage(void)
 		DexScreen_AddTextPrinterParameterized(sPokedexScreenData->windowIds[9], 0, gStringVar4, 0, 32, 0);
 		PrepareStatToPrint(species, STAT_PRINT_SPEED);
 		DexScreen_AddTextPrinterParameterized(sPokedexScreenData->windowIds[9], 0, gStringVar4, 44, 32, 0);
-		DexScreen_AddTextPrinterParameterized(sPokedexScreenData->windowIds[9], 0, gAbilityNames[gBaseStats[species].abilities[0]], 0, 46, 0);
+		DexScreen_AddTextPrinterParameterized(sPokedexScreenData->windowIds[9], 0, gAbilities[gBaseStats[species].abilities[0]].name, 0, 46, 0);
 		
 		if (gBaseStats[species].abilities[1] != 0 && gBaseStats[species].abilities[1] != gBaseStats[species].abilities[0])
-			DexScreen_AddTextPrinterParameterized(sPokedexScreenData->windowIds[9], 0, gAbilityNames[gBaseStats[species].abilities[1]], 0, 60, 0);
+			DexScreen_AddTextPrinterParameterized(sPokedexScreenData->windowIds[9], 0, gAbilities[gBaseStats[species].abilities[1]].name, 0, 60, 0);
 	}
 	else
 		DexScreen_AddTextPrinterParameterized(sPokedexScreenData->windowIds[9], 0, gText_CaptureToMoreInfo, 0, 4, 0);

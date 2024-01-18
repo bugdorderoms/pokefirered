@@ -985,7 +985,7 @@ static u32 CalcMoveTotalAccuracy(u16 move, u8 attacker, u8 defender)
 		accuracyStatStages = DEFAULT_STAT_STAGES; // Set accuracy stages to default
 	
 	// Check effects that ignore the target's evasion stat stages
-	if (atkAbility == ABILITY_KEEN_EYE || atkAbility == ABILITY_UNAWARE || atkAbility == ABILITY_ILLUMINATE
+	if (atkAbility == ABILITY_KEEN_EYE || atkAbility == ABILITY_UNAWARE || atkAbility == ABILITY_ILLUMINATE || atkAbility == ABILITY_MINDS_EYE
 	|| ((gBattleMons[defender].status2 & (STATUS2_FORESIGHT | STATUS2_MIRACLE_EYE)) && evasionStatStages > DEFAULT_STAT_STAGES))
 		evasionStatStages = DEFAULT_STAT_STAGES; // Set evasion stages to default
 	else
@@ -1295,8 +1295,8 @@ static void MulByTypeEffectiveness(u16 move, u8 moveType, u8 attacker, u8 defend
 	u8 mod = GetTypeModifier(moveType, defenderType);
 	
 	// Check Foresight and Scrappy on Ghost types
-	if ((moveType == TYPE_FIGHTING || moveType == TYPE_NORMAL) && defenderType == TYPE_GHOST && mod == TYPE_MUL_NO_EFFECT
-	&& (gBattleMons[defender].status2 & STATUS2_FORESIGHT || GetBattlerAbility(attacker) == ABILITY_SCRAPPY || move == MOVE_GLARE))
+	if ((moveType == TYPE_FIGHTING || moveType == TYPE_NORMAL) && defenderType == TYPE_GHOST && mod == TYPE_MUL_NO_EFFECT && (move == MOVE_GLARE
+	|| (gBattleMons[defender].status2 & STATUS2_FORESIGHT) || GetBattlerAbility(attacker) == ABILITY_SCRAPPY || GetBattlerAbility(attacker) == ABILITY_MINDS_EYE))
 	    mod = TYPE_MUL_NORMAL;
 	
 	// Check Miracle Eye
@@ -4842,7 +4842,7 @@ static void atk76_various(void)
 			break;
 		case VARIOUS_TRY_ACTIVATE_RECEIVER:
 		    if (IsBattlerAlive(BATTLE_PARTNER(battlerId)) && (GetBattlerAbility(BATTLE_PARTNER(battlerId)) == ABILITY_RECEIVER
-			|| GetBattlerAbility(BATTLE_PARTNER(battlerId)) == ABILITY_POWER_OF_ALCHEMY) && IsAbilityCopyableByReceiver(gBattleMons[battlerId].ability))
+			|| GetBattlerAbility(BATTLE_PARTNER(battlerId)) == ABILITY_POWER_OF_ALCHEMY) && !gAbilities[gBattleMons[battlerId].ability].cantBeCopied)
 			{
 				gBattleScripting.battler = battlerId;
 				BattleScriptPush(gBattlescriptCurrInstr + 3);
@@ -5009,7 +5009,7 @@ static void atk76_various(void)
 			AbilityBattleEffects(ABILITYEFFECT_ON_WEATHER, battlerId);
 			return;
 		case VARIOUS_TRY_NEUTRALIZING_GAS_SUPPRESSION:
-		    if (IsAbilityBlockedByNeutralizingGas(gBattleMons[battlerId].ability))
+		    if (!gAbilities[gBattleMons[battlerId].ability].cantBeSuppressed)
 			{
 				SuppressBattlerAbility(battlerId);
 				gBattlescriptCurrInstr += 7;
@@ -5084,7 +5084,7 @@ static void atk76_various(void)
 		{
 			u16 abilityAttacker = gBattleMons[gBattlerAttacker].ability, abilityTarget = gBattleMons[gBattlerTarget].ability;
 			
-		    if (abilityAttacker == abilityTarget || IsRolePlayBannedAbilityAttacker(abilityAttacker) || IsRolePlayBannedAbilityTarget(abilityTarget))
+		    if (abilityAttacker == abilityTarget || gAbilities[abilityAttacker].cantBeSuppressed || gAbilities[abilityTarget].cantBeCopied)
 				gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 3);
 			else
 				gBattlescriptCurrInstr += 7;
@@ -5109,7 +5109,7 @@ static void atk76_various(void)
 				gBattlescriptCurrInstr += 7;
 			return;
 		case VARIOUS_TRY_SWAP_ABILITIES:
-		    if (IsSkillSwapBannedAbility(gBattleMons[gBattlerAttacker].ability) || IsSkillSwapBannedAbility(gBattleMons[gBattlerTarget].ability))
+		    if (gAbilities[gBattleMons[gBattlerAttacker].ability].cantBeSwapped || gAbilities[gBattleMons[gBattlerTarget].ability].cantBeSwapped)
 				gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 3);
 			else
 				gBattlescriptCurrInstr += 7;

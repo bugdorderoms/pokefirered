@@ -393,7 +393,7 @@ static void AddSearchWindowText(u16 species, u8 proximity)
         // Ability name
         if (sDexNavSearchLevel > 2)
         {
-            StringCopy(gStringVar1, gAbilityNames[GetAbilityBySpecies(species, sDexNavSearchDataPtr->abilityNum, sDexNavSearchDataPtr->abilityHidden)]);
+            StringCopy(gStringVar1, gAbilities[GetAbilityBySpecies(species, sDexNavSearchDataPtr->abilityNum, sDexNavSearchDataPtr->abilityHidden)].name);
             AddTextPrinterParameterized3(windowId, 0, WINDOW_ABILITY_NAME_X, WINDOW_COL_1, sSearchFontColor, 0, gStringVar1);
         }
     }
@@ -1625,7 +1625,7 @@ static void PrintCurrentSpeciesInfo(void)
         AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, sText_DexNav_NoInfo);
     else if (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT))       
 		AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, gBaseStats[species].hiddenAbility ?
-		gAbilityNames[gBaseStats[species].hiddenAbility] : gText_PokeSum_Item_None);
+		gAbilities[gBaseStats[species].hiddenAbility].name : gText_PokeSum_Item_None);
     else
         AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, sText_DexNav_CaptureToSee);
 

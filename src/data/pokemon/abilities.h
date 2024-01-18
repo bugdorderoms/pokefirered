@@ -1,895 +1,1761 @@
-static const u8 sNoneDescription[] =             _("No special Ability.");
-static const u8 sStenchDescription[] =           _("By releasing stench when attacking, this\nPokémon may cause the target to flinch.");
-static const u8 sDrizzleDescription[] =          _("The Pokémon makes it rain when it enters a\nbattle.");
-static const u8 sSpeedBoostDescription[] =       _("Its Speed stat is boosted every turn.");
-static const u8 sBattleArmorDescription[] =      _("Hard armor protects the Pokémon from critical\nhits.");
-static const u8 sSturdyDescription[] =           _("It cannot be knocked out with one hit. One-hit\nKO moves cannot knock it out, either.");
-static const u8 sDampDescription[] =             _("Prevents the use of explosive moves, such as\nSelf-Destruct, by dampening its surroundings.");
-static const u8 sLimberDescription[] =           _("Its limber body protects the Pokémon from\nparalysis.");
-static const u8 sSandVeilDescription[] =         _("Boosts the Pokémon's evasiveness in a\nsandstorm.");
-static const u8 sStaticDescription[] =           _("The Pokémon is charged with static electricity,\nso contact with it may cause paralysis.");
-static const u8 sVoltAbsorbDescription[] =       _("Restores HP if hit by an Electric-type move\ninstead of taking damage.");
-static const u8 sWaterAbsorbDescription[] =      _("Restores HP if hit by a Water-type move\ninstead of taking damage.");
-static const u8 sObliviousDescription[] =        _("The Pokémon is oblivious, and that keeps it\nfrom being infatuated or falling for taunts.");
-static const u8 sCloudNineDescription[] =        _("Eliminates the effects of weather.");
-static const u8 sCompoundEyesDescription[] =     _("The Pokémon's compound eyes boost its\naccuracy.");
-static const u8 sInsomniaDescription[] =         _("The Pokémon is suffering from insomnia and\ncannot fall asleep.");
-static const u8 sColorChangeDescription[] =      _("The Pokémon's type becomes the type of the\nmove used on it.");
-static const u8 sImmunityDescription[] =         _("The immune system of the Pokémon prevents it\nfrom getting poisoned.");
-static const u8 sFlashFireDescription[] =        _("Powers up the Pokémon's Fire-type moves if\nit's hit by one.");
-static const u8 sShieldDustDescription[] =       _("This Pokémon's dust blocks the additional\neffects of attacks taken.");
-static const u8 sOwnTempoDescription[] =         _("This Pokémon has its own tempo, and that\nprevents it from becoming confused.");
-static const u8 sSuctionCupsDescription[] =      _("This Pokémon uses suction cups to stay in one\nspot to negate moves that force switching out.");
-static const u8 sIntimidateDescription[] =       _("The Pokémon intimidates opposing Pokémon upon\nentering battle, lowering their Attack stat.");
-static const u8 sShadowTagDescription[] =        _("This Pokémon steps on the opposing Pokémon's\nshadow to prevent it from escaping.");
-static const u8 sRoughSkinDescription[] =        _("This Pokémon inflicts damage with its rough\nskin to the attacker on contact.");
-static const u8 sWonderGuardDescription[] =      _("Its mysterious power only lets\n“super effective” moves hit the Pokémon.");
-static const u8 sLevitateDescription[] =         _("By floating in the air, the Pokémon receives\nfull immunity to all Ground-type moves.");
-static const u8 sEffectSporeDescription[] =      _("Contact with the Pokémon may inflict poison,\nsleep, or paralysis on its attacker.");
-static const u8 sSynchronizeDescription[] =      _("The attacker will receive the same status\ncondition that inflicts to the Pokémon.");
-static const u8 sClearBodyDescription[] =        _("Prevents other Pokémon's moves or Abilities\nfrom lowering the Pokémon's stats.");
-static const u8 sNaturalCureDescription[] =      _("All status conditions heal when the Pokémon\nswitches out.");
-static const u8 sLightningRodDescription[] =     _("The Pokémon draws in all Electric-type moves.\nInstead of being hit, it boosts its Sp. Atk.");
-static const u8 sSereneGraceDescription[] =      _("Boosts the likelihood of additional effects\noccurring when attacking.");
-static const u8 sSwiftSwimDescription[] =        _("Boosts the Pokémon's Speed stat in rain.");
-static const u8 sChlorophyllDescription[] =      _("Boosts the Pokémon's Speed stat in harsh\nsunlight.");
-static const u8 sIlluminateDescription[] =       _("By illuminating its surroundings, the Pokémon\nprevents its accuracy from being lowered.");
-static const u8 sTraceDescription[] =            _("When it enters a battle, the Pokémon copies an\nopposing Pokémon's Ability.");
-static const u8 sHugePowerDescription[] =        _("Doubles the Pokémon's Attack stat.");
-static const u8 sPoisonPointDescription[] =      _("Contact with the Pokémon may poison the\nattacker.");
-static const u8 sInnerFocusDescription[] =       _("The Pokémon's intensely focused, and that\nprotects the Pokémon from flinching.");
-static const u8 sMagmaArmorDescription[] =       _("The Pokémon is covered with hot magma, which\nprevents the Pokémon from becoming frozen.");
-static const u8 sWaterVeilDescription[] =        _("The Pokémon is covered with a water veil,\nwhich prevents the Pokémon from getting burn.");
-static const u8 sMagnetPullDescription[] =       _("Prevents Steel-type Pokémon from escaping\nusing its magnetic force.");
-static const u8 sSoundproofDescription[] =       _("Soundproofing gives the Pokémon full immunity\nto all sound-based moves.");
-static const u8 sRainDishDescription[] =         _("The Pokémon gradually regains HP in rain.");
-static const u8 sSandStreamDescription[] =       _("The Pokémon summons a sandstorm when it enters\na battle.");
-static const u8 sPressureDescription[] =         _("By putting pressure on the opposing Pokémon,\nit raises their PP usage.");
-static const u8 sThickFatDescription[] =         _("The Pokémon is protected by a thick fat, which\nhalves the damage of Fire and Ice-type moves.");
-static const u8 sEarlyBirdDescription[] =        _("The Pokémon awakens from sleep twice as fast\nas other Pokémon.");
-static const u8 sFlameBodyDescription[] =        _("Contact with the Pokémon may burn the\nattacker.");
-static const u8 sRunAwayDescription[] =          _("Enables a sure getaway from wild Pokémon.");
-static const u8 sKeenEyeDescription[] =          _("Keen eyes prevent other Pokémon from lowering\nthis Pokémon's accuracy.");
-static const u8 sHyperCutterDescription[] =      _("The Pokémon's proud of its pincers. They\nprevent the foe from lowering its Attack stat.");
-static const u8 sPickupDescription[] =           _("The Pokémon may pick up the item an opposing\nPokémon used during a battle.");
-static const u8 sTruantDescription[] =           _("The Pokémon can't use a move if it had used a\nmove on the previous turn.");
-static const u8 sHustleDescription[] =           _("Boosts the Attack stat, but lowers accuracy.");
-static const u8 sCuteCharmDescription[] =        _("Contact with the Pokémon may cause\ninfatuation.");
-static const u8 sPlusDescription[] =             _("Boosts the Pokémon's Sp. Atk stat if an ally\nwith the Plus or Minus Ability is in battle.");
-static const u8 sForecastDescription[] =         _("The Pokémon transforms with the weather to\nchange its type to Water, Fire, or Ice.");
-static const u8 sStickyHoldDescription[] =       _("Items held by the Pokémon are stuck fast and\ncannot be removed by other Pokémon.");
-static const u8 sShedSkinDescription[] =         _("The Pokémon may heal its own status conditions\nby shedding its skin.");
-static const u8 sGutsDescription[] =             _("It's so gutsy that having a status condition\nboosts the Pokémon's Attack stat.");
-static const u8 sMarvelScaleDescription[] =      _("The Pokémon's marvelous scales boost the\nDefense stat if it has a status condition.");
-static const u8 sLiquidOozeDescription[] =       _("The oozed liquid has a strong stench, which\ndamages attackers using any draining move.");
-static const u8 sOvergrowDescription[] =         _("Powers up Grass-type moves when the Pokémon's\nHP is low.");
-static const u8 sBlazeDescription[] =            _("Powers up Fire-type moves when the Pokémon's\nHP is low.");
-static const u8 sTorrentDescription[] =          _("Powers up Water-type moves when the Pokémon's\nHP is low.");
-static const u8 sSwarmDescription[] =            _("Powers up Bug-type moves when the Pokémon's\nHP is low.");
-static const u8 sRockHeadDescription[] =         _("Protects the Pokémon from recoil damage.");
-static const u8 sDroughtDescription[] =          _("Turns the sunlight harsh when enters a battle.");
-static const u8 sArenaTrapDescription[] =        _("Prevents opposing Pokémon from fleeing.");
-static const u8 sVitalSpiritDescription[] =      _("The Pokémon is full of vitality, and that\nprevents it from falling asleep.");
-static const u8 sWhiteSmokeDescription[] =       _("The Pokémon's white smoke protect it, which\nprevents the foe from lowering its stats.");
-static const u8 sPurePowerDescription[] =        _("Using its pure power, the Pokémon doubles its\nAttack stat.");
-static const u8 sShellArmorDescription[] =       _("A hard shell protects the Pokémon from\ncritical hits.");
-static const u8 sTangledFeetDescription[] =      _("Raises evasiveness if the Pokémon is confused.");
-static const u8 sMotorDriveDescription[] =       _("Boosts its Speed stat if hit by an\nElectric-type move instead of taking damage.");
-static const u8 sRivalryDescription[] =          _("Deals more damage if the Pokémon has the same\ngender, but deal less damage to opposite.");
-static const u8 sSteadfastDescription[] =        _("The Pokémon's determination boosts the Speed\nstat each time the Pokémon flinches.");
-static const u8 sSnowCloakDescription[] =        _("Boosts evasiveness in a hailstorm.");
-static const u8 sGluttonyDescription[] =         _("Makes the Pokémon eat a held Berry when its\nHP drops to half or less, instead of usual.");
-static const u8 sAngerPointDescription[] =       _("The Pokémon is angered when it takes a\ncritical hit, and that maxes its Attack stat.");
-static const u8 sUnburdenDescription[] =         _("Boosts the Speed stat if the Pokémon's held\nitem is used or lost.");
-static const u8 sHeatproofDescription[] =        _("The heatproof body of the Pokémon halves the\ndamage from Fire-type moves that hit it.");
-static const u8 sSimpleDescription[] =           _("The stat changes the Pokémon receives are\ndoubled.");
-static const u8 sDrySkinDescription[] =          _("Restores HP with water, losts HP in sunlight.\nReceives more damage from Fire-type moves.");
-static const u8 sDownloadDescription[] =         _("Raises the Pokémon's Attack or Sp. Atk stat\nto whichever will be more effective.");
-static const u8 sIronFistDescription[] =         _("Powers up “punching” moves.");
-static const u8 sPoisonHealDescription[] =       _("Restores HP if the Pokémon is poisoned instead\nof losing HP.");
-static const u8 sAdaptabilityDescription[] =     _("Powers up moves of the same type as the\nPokémon.");
-static const u8 sSkillLinkDescription[] =        _("Maximizes the number of times multistrike\nmoves hit.");
-static const u8 sHydrationDescription[] =        _("Heals status conditions if it's raining.");
-static const u8 sSolarPowerDescription[] =       _("Boosts the Sp. Atk stat in harsh sunlight, but\nHP decreases every turn.");
-static const u8 sQuickFeetDescription[] =        _("Boosts the Speed stat if the Pokémon has a\nstatus condition.");
-static const u8 sNormalizeDescription[] =        _("All the Pokémon's moves become Normal type.\nThe power of those moves is boosted a little.");
-static const u8 sSniperDescription[] =           _("Powers up moves if they become critical hits\nwhen attacking.");
-static const u8 sMagicGuardDescription[] =       _("The Pokémon only takes damage from attacks.");
-static const u8 sNoGuardDescription[] =          _("The Pokémon employs no-guard tactics to ensure\nincoming and outgoing attacks always land.");
-static const u8 sStallDescription[] =            _("The Pokémon moves after all other Pokémon do.");
-static const u8 sTechnicianDescription[] =       _("Powers up the Pokémon's weaker moves.");
-static const u8 sLeafGuardDescription[] =        _("Prevents status conditions in harsh sunlight.");
-static const u8 sKlutzDescription[] =            _("The Pokémon can't use any held items.");
-static const u8 sMoldBreakerDescription[] =      _("Moves can be used on the target regardless of\nits Abilities.");
-static const u8 sSuperLuckDescription[] =        _("The Pokémon is so lucky that the critical-hit\nratios of its moves are boosted.");
-static const u8 sAftermathDescription[] =        _("Damages the attacker if it contacts the\nPokémon with a finishing hit.");
-static const u8 sAnticipationDescription[] =     _("The Pokémon can sense an opposing Pokémon's\ndangerous moves.");
-static const u8 sForewarnDescription[] =         _("When it enters a battle, the Pokémon can tell\none of the moves an opposing Pokémon has.");
-static const u8 sUnawareDescription[] =          _("When attacking, the Pokémon ignores the target\nPokémon's stat changes.");
-static const u8 sTintedLensDescription[] =       _("The Pokémon can use “not very effective” moves\nto deal regular damage.");
-static const u8 sFilterDescription[] =           _("Reduces the power of “super effective”\nattacks taken.");
-static const u8 sSlowStartDescription[] =        _("The Pokémon's Attack and Speed stats are\nhalved until it gets going.");
-static const u8 sScrappyDescription[] =          _("The Pokémon can hit Ghost-type Pokémon with\nNormal and Fighting-type moves.");
-static const u8 sStormDrainDescription[] =       _("The Pokémon draws in all Water-type moves.\nInstead of being hit, it boosts its Sp. Atk.");
-static const u8 sIceBodyDescription[] =          _("The Pokémon gradually regains HP in a\nhailstorm.");
-static const u8 sSnowWarningDescription[] =      _("The Pokémon summons a hailstorm when it enters\na battle.");
-static const u8 sHoneyGatherDescription[] =      _("The Pokémon may gather Honey after a battle.");
-static const u8 sFriskDescription[] =            _("When it enters a battle, the Pokémon can\ncheck an opposing Pokémon's held item.");
-static const u8 sRecklessDescription[] =         _("Powers up moves that have recoil damage.");
-static const u8 sMultitypeDescription[] =        _("Changes the Pokémon's type to match the Plate\nor Z-Crystal it holds.");
-static const u8 sFlowerGiftDescription[] =       _("Boosts the Attack and Sp. Def stats of itself\nand allies in harsh sunlight.");
-static const u8 sBadDreamsDescription[] =        _("Reduces the HP of sleeping opposing Pokémon.");
-static const u8 sPickpocketDescription[] =       _("Steals an item from an attacker that made\ndirect contact.");
-static const u8 sSheerForceDescription[] =       _("Removes additional effects to increase the\npower of moves when attacking.");
-static const u8 sContraryDescription[] =         _("Makes stat changes have an opposite effect.");
-static const u8 sUnnerveDescription[] =          _("Unnerves opposing Pokémon and makes them\nunable to eat Berries.");
-static const u8 sDefiantDescription[] =          _("Boosts the Pokémon's Attack stat sharply when\nits stats are lowered.");
-static const u8 sDefeatistDescription[] =        _("Halves the Pokémon's Attack and Sp. Atk stats\nwhen its HP becomes half or less.");
-static const u8 sCursedBodyDescription[] =       _("May disable a move used on the Pokémon.");
-static const u8 sHealerDescription[] =           _("Sometimes heals an ally's status condition.");
-static const u8 sFriendGuardDescription[] =      _("Reduces damage done to allies.");
-static const u8 sWeakArmorDescription[] =        _("Physical attacks to the Pokémon lower its\nDefense stat but sharply raise its Speed stat.");
-static const u8 sHeavyMetalDescription[] =       _("Doubles the Pokémon's weight.");
-static const u8 sLightMetalDescription[] =       _("Halves the Pokémon's weight.");
-static const u8 sMultiscaleDescription[] =       _("Reduces the amount of damage the Pokémon\ntakes while its HP is full.");
-static const u8 sToxicBoostDescription[] =       _("Powers up physical attacks when the Pokémon is\npoisoned.");
-static const u8 sFlareBoostDescription[] =       _("Powers up special attacks when the Pokémon is\nburned.");
-static const u8 sHarvestDescription[] =          _("May create another Berry after one is used.");
-static const u8 sTelepathyDescription[] =        _("Anticipates an ally's attack and dodges it.");
-static const u8 sMoodyDescription[] =            _("Raises one stat sharply and lowers another\nevery turn.");
-static const u8 sOvercoatDescription[] =         _("Protects the Pokémon from things like sand,\nhail, and “powder”.");
-static const u8 sPoisonTouchDescription[] =      _("May poison a target when the Pokémon makes\ncontact.");
-static const u8 sRegeneratorDescription[] =      _("Restores a little HP when withdrawn from\nbattle.");
-static const u8 sBigPecksDescription[] =         _("Protects the Pokémon from Defense-lowering\neffects.");
-static const u8 sSandRushDescription[] =         _("Boosts the Pokémon's Speed stat in a\nsandstorm.");
-static const u8 sWonderSkinDescription[] =       _("Makes status moves more likely to miss.");
-static const u8 sAnalyticDescription[] =         _("Boosts move power when the Pokémon moves\nlast.");
-static const u8 sIllusionDescription[] =         _("Comes out disguised as the Pokémon in the\nparty's last spot.");
-static const u8 sImposterDescription[] =         _("The Pokémon transforms itself into the Pokémon\nit's facing.");
-static const u8 sInfiltratorDescription[] =      _("The Pokémon's moves are unaffected by the\ntarget's barriers, substitutes, and the like.");
-static const u8 sMummyDescription[] =            _("Contact with the Pokémon changes the\nattacker's Ability to Mummy.");
-static const u8 sMoxieDescription[] =            _("The Pokémon shows moxie, and that boosts the\nAttack stat after knocking out any Pokémon.");
-static const u8 sJustifiedDescription[] =        _("Being hit by a Dark-type move boosts the\nAttack stat of the Pokémon, for justice.");
-static const u8 sRattledDescription[] =          _("Dark, Ghost, and Bug-type moves scare the\nPokémon and boost its Speed stat.");
-static const u8 sMagicBounceDescription[] =      _("The Pokémon reflects status moves instead of\ngetting hit by them.");
-static const u8 sSapSipperDescription[] =        _("Boosts the Attack stat if hit by a Grass-type\nmove instead of taking damage.");
-static const u8 sPranksterDescription[] =        _("Gives priority to the Pokémon's status moves.");
-static const u8 sSandForceDescription[] =        _("Boosts the power of Rock, Ground, and\nSteel-type moves in a sandstorm.");
-static const u8 sIronBarbsDescription[] =        _("The Pokémon's iron barbs damage the attacker\nif it makes direct contact.");
-static const u8 sZenModeDescription[] =          _("Changes the Pokémon's shape when its HP drops\nto half or less.");
-static const u8 sVictoryStarDescription[] =      _("Boosts the accuracy of the Pokémon and its\nallies.");
-static const u8 sTurboblazeDescription[] =       _("The Pokémon's moves are unimpeded by the\nAbility of the target.");
-static const u8 sAromaVeilDescription[] =        _("Protects the Pokémon and its allies from\neffects that prevent the use of moves.");
-static const u8 sFlowerVeilDescription[] =       _("Ally Grass-type Pokémon are protected from\nstatus conditions and lowering stat effects.");
-static const u8 sCheekPouchDescription[] =       _("Restores HP as well when the Pokémon eats a\nBerry.");
-static const u8 sProteanDescription[] =          _("Changes the Pokémon's type to the type of the\nmove it's about to use.");
-static const u8 sFurCoatDescription[] =          _("Halves the damage from physical moves.");
-static const u8 sMagicianDescription[] =         _("The Pokémon steals the held item from any\ntarget it hits with a move.");
-static const u8 sBulletproofDescription[] =      _("Protects the Pokémon from “ball” and “bomb”\nmoves.");
-static const u8 sCompetitiveDescription[] =      _("Boosts the Pokémon's Sp. Atk stat sharply\nwhen its stats are lowered by an Pokémon.");
-static const u8 sStrongJawDescription[] =        _("The Pokémon's strong jaw boosts the power of\nits “biting” moves.");
-static const u8 sRefrigerateDescription[] =      _("Normal-type moves become Ice-type moves. The\npower of those moves is boosted a little.");
-static const u8 sSweetVeilDescription[] =        _("Prevents the Pokémon and its allies from\nfalling asleep.");
-static const u8 sStanceChangeDescription[] =     _("Changes the Pokémon's form to Shield using\nKing's Shield or to Blade using other move.");
-static const u8 sGaleWingsDescription[] =        _("Gives priority to the Pokémon's Flying-type\nmoves while its HP is full.");
-static const u8 sMegaLauncherDescription[] =     _("Powers up “aura” and “pulse” moves.");
-static const u8 sGrassPeltDescription[] =        _("Boosts the Pokémon's Defense stat on Grassy\nTerrain.");
-static const u8 sSymbiosisDescription[] =        _("The Pokémon passes its held item to an ally\nthat has used up an item.");
-static const u8 sToughClawsDescription[] =       _("Powers up moves that make direct contact.");
-static const u8 sPixilateDescription[] =         _("Normal-type moves become Fairy-type moves. The\npower of those moves is boosted a little.");
-static const u8 sGooeyDescription[] =            _("Contact with the Pokémon lowers the\nattacker's Speed stat.");
-static const u8 sAerilateDescription[] =         _("Normal-type moves become Flying-type moves.\nThe power of those moves is boosted a little.");
-static const u8 sParentalBondDescription[] =     _("The parent and child attack one after the\nother.");
-static const u8 sDarkAuraDescription[] =         _("Powers up the Dark-type moves of all Pokémon\non the field.");
-static const u8 sFairyAuraDescription[] =        _("Powers up the Fairy-type moves of all Pokémon\non the field.");
-static const u8 sAuraBreakDescription[] =        _("The effects of “aura” Abilities are reversed\nto lower the power of affected moves.");
-static const u8 sPrimordialSeaDescription[] =    _("The Pokémon changes the weather to nullify\nFire-type attacks.");
-static const u8 sDesolateLandDescription[] =     _("The Pokémon changes the weather to nullify\nWater-type attacks.");
-static const u8 sDeltaStreamDescription[] =      _("Changes the weather so that no moves are\n“super effective” against the Flying type.");
-static const u8 sStaminaDescription[] =          _("Boosts the Defense stat when the Pokémon is\nhit by an attack.");
-static const u8 sWimpOutDescription[] =          _("The Pokémon cowardly switches out when its HP\ndrops to half or less.");
-static const u8 sEmergencyExitDescription[] =    _("The Pokémon, sensing danger, switches out when\nits HP drops to half or less.");
-static const u8 sWaterCompactionDescription[] =  _("Boosts the Defense stat sharply when the\nPokémon is hit by a Water-type move.");
-static const u8 sMercilessDescription[] =        _("The Pokémon's attacks become critical hits if\nthe target is poisoned.");
-static const u8 sShieldsDownDescription[] =      _("When its HP drops to half or less, the\nPokémon's shell breaks and it becomes angry.");
-static const u8 sStakeoutDescription[] =         _("Doubles the damage dealt to a target that has\njust switched into battle.");
-static const u8 sWaterBubbleDescription[] =      _("Lowers the power of Fire-type moves that hit\nthe Pokémon and prevents it from being burned.");
-static const u8 sSteelworkerDescription[] =      _("Powers up Steel-type moves.");
-static const u8 sBerserkDescription[] =          _("Boosts the Pokémon's Sp. Atk stat when takes\na hit that causes its HP drop to half or less.");
-static const u8 sSlushRushDescription[] =        _("Boosts the Pokémon's Speed stat in snow.");
-static const u8 sLongReachDescription[] =        _("The Pokémon uses its moves without making\ncontact with the target.");
-static const u8 sLiquidVoiceDescription[] =      _("Sound-based moves become Water-type moves.");
-static const u8 sTriageDescription[] =           _("Gives priority to the Pokémon's healing moves.");
-static const u8 sGalvanizeDescription[] =        _("Normal-type moves become Electric-type moves.\nThe power of those moves is boosted a little.");
-static const u8 sSurgeSurferDescription[] =      _("Doubles the Pokémon's Speed stat on Electric\nTerrain.");
-static const u8 sSchoolingDescription[] =        _("When it has a lot of HP, the Pokémon forms a\npowerful school. Stoping when its HP is low.");
-static const u8 sDisguiseDescription[] =         _("Once per battle, the shroud that covers the\nPokémon can protect it from an attack.");
-static const u8 sBattleBondDescription[] =       _("When the Pokémon knocks out a target, its\nAttack, Sp. Atk, and Speed stats are boosted.");
-static const u8 sPowerConstructDescription[] =   _("Cells gather to aid when its HP becomes half\nor less. Changing its form to Complete Forme.");
-static const u8 sCorrosionDescription[] =        _("The Pokémon can poison the target even if it's\na Steel or Poison type.");
-static const u8 sComatoseDescription[] =         _("The Pokémon is always drowsing and will never\nwake up. It can attack while sleeping.");
-static const u8 sQueenlyMajestyDescription[] =   _("Its majesty pressures the foes, making them\nunable to attack using priority moves.");
-static const u8 sInnardsOutDescription[] =       _("Damages the attacker landing the finishing hit\nby the amount equal to its last HP.");
-static const u8 sDancerDescription[] =           _("When another Pokémon uses a “dance” move, you\ncan use a move following it.");
-static const u8 sBatteryDescription[] =          _("Powers up ally Pokémon's special moves.");
-static const u8 sFluffyDescription[] =           _("Halves the damage taken from moves that make\ncontact, but doubles that of Fire-type moves.");
-static const u8 sDazzlingDescription[] =         _("The Pokémon dazzles its foes, making them\nunable to attack using priority moves.");
-static const u8 sSoul_HeartDescription[] =       _("Boosts the Pokémon's Sp. Atk stat every time\nanother Pokémon faints.");
-static const u8 sTanglingHairDescription[] =     _("Contact with the Pokémon lowers the\nattacker's Speed stat.");
-static const u8 sReceiverDescription[] =         _("The Pokémon copies the Ability of a defeated\nally.");
-static const u8 sBeastBoostDescription[] =       _("Boosts the Pokémon's most proficient stat\nevery time it knocks out a target.");
-static const u8 sRKSSystemDescription[] =        _("Changes the Pokémon's type to match the\nmemory disc it holds.");
-static const u8 sElectricSurgeDescription[] =    _("Turns the ground into Electric Terrain when\nthe Pokémon enters a battle.");
-static const u8 sPsychicSurgeDescription[] =     _("Turns the ground into Psychic Terrain when\nthe Pokémon enters a battle.");
-static const u8 sMistySurgeDescription[] =       _("Turns the ground into Misty Terrain when the\nPokémon enters a battle.");
-static const u8 sGrassySurgeDescription[] =      _("Turns the ground into Grassy Terrain when the\nPokémon enters a battle.");
-static const u8 sNeuroforceDescription[] =       _("Powers up the Pokémon's “super effective”\nattacks even further.");
-static const u8 sIntrepidSwordDescription[] =    _("Boosts the Pokémon's Attack stat the first\ntime the Pokémon enters a battle.");
-static const u8 sDauntlessShieldDescription[] =  _("Boosts the Pokémon's Defense stat the first\ntime the Pokémon enters a battle.");
-static const u8 sBallFetchDescription[] =        _("If the Pokémon not have an item, it will fetch\nthe Poké Ball from the first failed throw.");
-static const u8 sCottonDownDescription[] =       _("When attacked, it scatters cotton around and\nlowers the Speed stats of all on the field.");
-static const u8 sPropellerTailDescription[] =    _("Ignores the effects of opposing Pokémon's\nAbilities and moves that draw in moves.");
-static const u8 sMirrorArmorDescription[] =      _("Bounces back only the stat-lowering effects\nthat the Pokémon receives.");
-static const u8 sGulpMissileDescription[] =      _("When it uses Surf or Dive, it will come back\nwith a prey. When attacked spits it out.");
-static const u8 sSteamEngineDescription[] =      _("Boosts the Speed stat drastically when the\nPokémon is hit by a Fire or Water-type move.");
-static const u8 sPunkRockDescription[] =         _("Boosts the power of sound-based moves. Also\ntakes half the damage from these moves.");
-static const u8 sSandSpitDescription[] =         _("The Pokémon creates a sandstorm when it's hit\nby an attack.");
-static const u8 sIceScalesDescription[] =        _("The Pokémon is protected by ice scales, which\nhalve the damage taken from special moves.");
-static const u8 sRipenDescription[] =            _("Ripens Berries and doubles their effect.");
-static const u8 sIceFaceDescription[] =          _("It's ice head can take a physical attack as a\nsubstitute, but it changes it's appearance.");
-static const u8 sPowerSpotDescription[] =        _("Just being next to the Pokémon powers up\nmoves.");
-static const u8 sMimicryDescription[] =          _("Changes the Pokémon's type depending on the\nterrain.");
-static const u8 sScreenCleanerDescription[] =    _("When the Pokémon enters a battle, the effects\nof screens are nullified for both side.");
-static const u8 sSteelySpiritDescription[] =     _("Powers up the Steel-type moves of the Pokémon\nand its allies.");
-static const u8 sPerishBodyDescription[] =       _("When hit by a move that makes contact, he and\nthe attacker will faint after three turns.");
-static const u8 sWanderingSpiritDescription[] =  _("The Pokémon exchanges Abilities with a Pokémon\nthat makes direct contact with it.");
-static const u8 sGorillaTacticsDescription[] =   _("Boosts the Pokémon's Attack stat but only\nallows the use of the first selected move.");
-static const u8 sNeutralizingGasDescription[] =  _("While it's in the battle, the effects of all\nother Pokémon's Abilities will be nullified.");
-static const u8 sPastelVeilDescription[] =       _("Prevents the Pokémon and its allies from being\npoisoned.");
-static const u8 sHungerSwitchDescription[] =     _("The Pokémon changes between its Full Belly and\nHangry Mode after the end of every turn.");
-static const u8 sQuickDrawDescription[] =        _("Enables the Pokémon to move first\noccasionally.");
-static const u8 sUnseenFistDescription[] =       _("If it use moves that make contact, it can\nattack even if the target protects itself.");
-static const u8 sCuriousMedicineDescription[] =  _("When the Pokémon enters a battle, its shell's\nmedicine removes all stat changes from allies.");
-static const u8 sTransistorDescription[] =       _("Powers up Electric-type moves.");
-static const u8 sDragonsMawDescription[] =       _("Powers up Dragon-type moves.");
-static const u8 sChillingNeighDescription[] =    _("When it knocks out a target, it utters a\nchilling neigh, boosting its Attack stat.");
-static const u8 sGrimNeighDescription[] =        _("When it knocks out a target, it utters a\nterrifying neigh, boosting its Sp. Atk stat.");
-static const u8 sAsOneDescription[] =            _("This Ability combines the effects of Calyrex's\nUnnerve and Glastrier's Chilling Neigh.");
-static const u8 sAsOne2Description[] =           _("This Ability combines the effects of Calyrex's\nUnnerve and Spectrier's Grim Neigh.");
-static const u8 sLingeringAromaDescription[] =   _("Contact with the Pokémon changes the\nattacker's Ability to Lingering Aroma.");
-static const u8 sSeedSowerDescription[] =        _("Turns the ground into Grassy Terrain when the\nPokémon is hit by an attack.");
-static const u8 sThermalExchangeDescription[] =  _("Boosts the Attack stat when hit by a Fire-type\nmove. It also cannot be burned.");
-static const u8 sAngerShellDescription[] =       _("When low HP, its defensive stats are lowered\nbut boosts its ofensive stats and its Speed.");
-static const u8 sPurifyingSaltDescription[] =    _("Its pure salt protects it from status and\nhalves the damage from Ghost-type moves.");
-static const u8 sWell_BakedBodyDescription[] =   _("It takes no damage by Fire-type moves.\nInstead, its Defense stat is sharply boosted.");
-static const u8 sWindRiderDescription[] =        _("Boosts it's Attack stat if Tailwind takes\neffect or if hit by a “wind” move.");
-static const u8 sGuardDogDescription[] =         _("Geting intimidated boosts its Attack stat. It\nalso cannot be forced to switch out.");
-static const u8 sRockyPayloadDescription[] =     _("Powers up Rock-type moves.");
-static const u8 sWindPowerDescription[] =        _("Becomes charged when hit by a “wind” move, it\nboosts the next Electric-type move's power.");
-static const u8 sZerotoHeroDescription[] =       _("The Pokémon transforms into its Hero Form when\nit switches out.");
-static const u8 sCommanderDescription[] =        _("When it enters a battle, it goes inside of an\nally Dondozo and commands from there.");
-static const u8 sElectromorphosisDescription[] = _("Becomes charged when it takes damage, it\nboosts the next Electric-type move's power.");
-static const u8 sProtosynthesisDescription[] =   _("Boosts the Pokémon's most proficient stat in\nharsh sunlight or if holding Booster Energy.");
-static const u8 sQuarkDriveDescription[] =       _("Boosts the Pokémon's most proficient stat on\nElectric Terrain or if holding Booster Energy.");
-static const u8 sGoodasGoldDescription[] =       _("A body of pure, solid gold gives the Pokémon\nfull immunity to other Pokémon's status moves.");
-static const u8 sVesselofRuinDescription[] =     _("The power of its ruinous vessel lowers the\nSp. Atk stats of all Pokémon except itself.");
-static const u8 sSwordofRuinDescription[] =      _("The power of its ruinous sword lowers the\nDefense stats of all Pokémon except itself.");
-static const u8 sTabletsofRuinDescription[] =    _("The power of its ruinous wooden tablets lowers\nthe Attack stats of all Pokémon except itself.");
-static const u8 sBeadsofRuinDescription[] =      _("The power of its ruinous beads lowers the\nSp. Def stats of all Pokémon except itself.");
-static const u8 sOrichalcumPulseDescription[] =  _("Turns the sunlight harsh when enters a battle,\nboosting its Attack stat.");
-static const u8 sHadronEngineDescription[] =     _("Turns the ground into Electric Terrain when\nenters a battle, boosting its Sp. Atk stat.");
-static const u8 sOpportunistDescription[] =      _("If an foe's stat is boosted, it seizes the\nopportunity to boost the same stat for itself.");
-static const u8 sCudChewDescription[] =          _("When it eats a Berry, it will regurgitate that\nBerry in the next turn and eat it again.");
-static const u8 sSharpnessDescription[] =        _("Powers up “slicing” moves.");
-static const u8 sSupremeOverlordDescription[] =  _("When it enters a battle, boosts its Attack and\nSp. Atk stats for each fainted party member.");
-static const u8 sCostarDescription[] =           _("When the Pokémon enters a battle, it copies an\nally's stat changes.");
-static const u8 sToxicDebrisDescription[] =      _("Scatters poison spikes on the foe's feet when\nthe Pokémon takes damage from physical moves.");
-static const u8 sArmorTailDescription[] =        _("It's mysterious tail makes opponents unable to\nuse priority moves against it or its allies.");
-static const u8 sEarthEaterDescription[] =       _("If hit by a Ground-type move, the Pokémon has\nits HP restored instead of taking damage.");
-static const u8 sMyceliumMightDescription[] =    _("Acts more slowly with status moves, but these\nmoves can't be impeded by the foe's Ability.");
+static const u8 sCloudNineDescription[]     = _("Eliminates the effects of weather.");
+static const u8 sClearBodyDescription[]     = _("Prevents other Pokémon's moves or Abilities\nfrom lowering the Pokémon's stats.");
+static const u8 sPlusAndMinusDescription[]  = _("Boosts the Pokémon's Sp. Atk stat if an ally\nwith the Plus or Minus Ability is in battle.");
+static const u8 sFilterDescription[]        = _("Reduces the power of “super effective”\nattacks taken.");
+static const u8 sMultiscaleDescription[]    = _("Reduces the amount of damage the Pokémon\ntakes while its HP is full.");
+static const u8 sTurboblazeDescription[]    = _("The Pokémon's moves are unimpeded by the\nAbility of the target.");
+static const u8 sProteanDescription[]       = _("Changes the Pokémon's type to the type of the\nmove it's about to use.");
+static const u8 sReceiverDescription[]      = _("The Pokémon copies the Ability of a defeated\nally.");
+static const u8 sPropellerTailDescription[] = _("Ignores the effects of opposing Pokémon's\nAbilities and moves that draw in moves.");
 
-const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
+const struct Ability gAbilities[ABILITIES_COUNT] =
 {
-    [ABILITY_NONE] = sNoneDescription,
-    [ABILITY_STENCH] = sStenchDescription,
-    [ABILITY_DRIZZLE] = sDrizzleDescription,
-    [ABILITY_SPEED_BOOST] = sSpeedBoostDescription,
-    [ABILITY_BATTLE_ARMOR] = sBattleArmorDescription,
-    [ABILITY_STURDY] = sSturdyDescription,
-    [ABILITY_DAMP] = sDampDescription,
-    [ABILITY_LIMBER] = sLimberDescription,
-    [ABILITY_SAND_VEIL] = sSandVeilDescription,
-    [ABILITY_STATIC] = sStaticDescription,
-    [ABILITY_VOLT_ABSORB] = sVoltAbsorbDescription,
-    [ABILITY_WATER_ABSORB] = sWaterAbsorbDescription,
-    [ABILITY_OBLIVIOUS] = sObliviousDescription,
-    [ABILITY_CLOUD_NINE] = sCloudNineDescription,
-    [ABILITY_COMPOUND_EYES] = sCompoundEyesDescription,
-    [ABILITY_INSOMNIA] = sInsomniaDescription,
-    [ABILITY_COLOR_CHANGE] = sColorChangeDescription,
-    [ABILITY_IMMUNITY] = sImmunityDescription,
-    [ABILITY_FLASH_FIRE] = sFlashFireDescription,
-    [ABILITY_SHIELD_DUST] = sShieldDustDescription,
-    [ABILITY_OWN_TEMPO] = sOwnTempoDescription,
-    [ABILITY_SUCTION_CUPS] = sSuctionCupsDescription,
-    [ABILITY_INTIMIDATE] = sIntimidateDescription,
-    [ABILITY_SHADOW_TAG] = sShadowTagDescription,
-    [ABILITY_ROUGH_SKIN] = sRoughSkinDescription,
-    [ABILITY_WONDER_GUARD] = sWonderGuardDescription,
-    [ABILITY_LEVITATE] = sLevitateDescription,
-    [ABILITY_EFFECT_SPORE] = sEffectSporeDescription,
-    [ABILITY_SYNCHRONIZE] = sSynchronizeDescription,
-    [ABILITY_CLEAR_BODY] = sClearBodyDescription,
-    [ABILITY_NATURAL_CURE] = sNaturalCureDescription,
-    [ABILITY_LIGHTNING_ROD] = sLightningRodDescription,
-    [ABILITY_SERENE_GRACE] = sSereneGraceDescription,
-    [ABILITY_SWIFT_SWIM] = sSwiftSwimDescription,
-    [ABILITY_CHLOROPHYLL] = sChlorophyllDescription,
-    [ABILITY_ILLUMINATE] = sIlluminateDescription,
-    [ABILITY_TRACE] = sTraceDescription,
-    [ABILITY_HUGE_POWER] = sHugePowerDescription,
-    [ABILITY_POISON_POINT] = sPoisonPointDescription,
-    [ABILITY_INNER_FOCUS] = sInnerFocusDescription,
-    [ABILITY_MAGMA_ARMOR] = sMagmaArmorDescription,
-    [ABILITY_WATER_VEIL] = sWaterVeilDescription,
-    [ABILITY_MAGNET_PULL] = sMagnetPullDescription,
-    [ABILITY_SOUNDPROOF] = sSoundproofDescription,
-    [ABILITY_RAIN_DISH] = sRainDishDescription,
-    [ABILITY_SAND_STREAM] = sSandStreamDescription,
-    [ABILITY_PRESSURE] = sPressureDescription,
-    [ABILITY_THICK_FAT] = sThickFatDescription,
-    [ABILITY_EARLY_BIRD] = sEarlyBirdDescription,
-    [ABILITY_FLAME_BODY] = sFlameBodyDescription,
-    [ABILITY_RUN_AWAY] = sRunAwayDescription,
-    [ABILITY_KEEN_EYE] = sKeenEyeDescription,
-    [ABILITY_HYPER_CUTTER] = sHyperCutterDescription,
-    [ABILITY_PICKUP] = sPickupDescription,
-    [ABILITY_TRUANT] = sTruantDescription,
-    [ABILITY_HUSTLE] = sHustleDescription,
-    [ABILITY_CUTE_CHARM] = sCuteCharmDescription,
-    [ABILITY_PLUS] = sPlusDescription,
-    [ABILITY_MINUS] = sPlusDescription,
-    [ABILITY_FORECAST] = sForecastDescription,
-    [ABILITY_STICKY_HOLD] = sStickyHoldDescription,
-    [ABILITY_SHED_SKIN] = sShedSkinDescription,
-    [ABILITY_GUTS] = sGutsDescription,
-    [ABILITY_MARVEL_SCALE] = sMarvelScaleDescription,
-    [ABILITY_LIQUID_OOZE] = sLiquidOozeDescription,
-    [ABILITY_OVERGROW] = sOvergrowDescription,
-    [ABILITY_BLAZE] = sBlazeDescription,
-    [ABILITY_TORRENT] = sTorrentDescription,
-    [ABILITY_SWARM] = sSwarmDescription,
-    [ABILITY_ROCK_HEAD] = sRockHeadDescription,
-    [ABILITY_DROUGHT] = sDroughtDescription,
-    [ABILITY_ARENA_TRAP] = sArenaTrapDescription,
-    [ABILITY_VITAL_SPIRIT] = sVitalSpiritDescription,
-    [ABILITY_WHITE_SMOKE] = sWhiteSmokeDescription,
-    [ABILITY_PURE_POWER] = sPurePowerDescription,
-    [ABILITY_SHELL_ARMOR] = sShellArmorDescription,
-    [ABILITY_AIR_LOCK] = sCloudNineDescription,
-    [ABILITY_TANGLED_FEET] = sTangledFeetDescription,
-    [ABILITY_MOTOR_DRIVE] = sMotorDriveDescription,
-    [ABILITY_RIVALRY] = sRivalryDescription,
-    [ABILITY_STEADFAST] = sSteadfastDescription,
-    [ABILITY_SNOW_CLOAK] = sSnowCloakDescription,
-    [ABILITY_GLUTTONY] = sGluttonyDescription,
-    [ABILITY_ANGER_POINT] = sAngerPointDescription,
-    [ABILITY_UNBURDEN] = sUnburdenDescription,
-    [ABILITY_HEATPROOF] = sHeatproofDescription,
-    [ABILITY_SIMPLE] = sSimpleDescription,
-    [ABILITY_DRY_SKIN] = sDrySkinDescription,
-    [ABILITY_DOWNLOAD] = sDownloadDescription,
-    [ABILITY_IRON_FIST] = sIronFistDescription,
-    [ABILITY_POISON_HEAL] = sPoisonHealDescription,
-    [ABILITY_ADAPTABILITY] = sAdaptabilityDescription,
-    [ABILITY_SKILL_LINK] = sSkillLinkDescription,
-    [ABILITY_HYDRATION] = sHydrationDescription,
-    [ABILITY_SOLAR_POWER] = sSolarPowerDescription,
-    [ABILITY_QUICK_FEET] = sQuickFeetDescription,
-    [ABILITY_NORMALIZE] = sNormalizeDescription,
-    [ABILITY_SNIPER] = sSniperDescription,
-    [ABILITY_MAGIC_GUARD] = sMagicGuardDescription,
-    [ABILITY_NO_GUARD] = sNoGuardDescription,
-    [ABILITY_STALL] = sStallDescription,
-    [ABILITY_TECHNICIAN] = sTechnicianDescription,
-    [ABILITY_LEAF_GUARD] = sLeafGuardDescription,
-    [ABILITY_KLUTZ] = sKlutzDescription,
-    [ABILITY_MOLD_BREAKER] = sMoldBreakerDescription,
-    [ABILITY_SUPER_LUCK] = sSuperLuckDescription,
-    [ABILITY_AFTERMATH] = sAftermathDescription,
-    [ABILITY_ANTICIPATION] = sAnticipationDescription,
-    [ABILITY_FOREWARN] = sForewarnDescription,
-    [ABILITY_UNAWARE] = sUnawareDescription,
-    [ABILITY_TINTED_LENS] = sTintedLensDescription,
-    [ABILITY_FILTER] = sFilterDescription,
-    [ABILITY_SLOW_START] = sSlowStartDescription,
-    [ABILITY_SCRAPPY] = sScrappyDescription,
-    [ABILITY_STORM_DRAIN] = sStormDrainDescription,
-    [ABILITY_ICE_BODY] = sIceBodyDescription,
-    [ABILITY_SOLID_ROCK] = sFilterDescription,
-    [ABILITY_SNOW_WARNING] = sSnowWarningDescription,
-    [ABILITY_HONEY_GATHER] = sHoneyGatherDescription,
-    [ABILITY_FRISK] = sFriskDescription,
-    [ABILITY_RECKLESS] = sRecklessDescription,
-    [ABILITY_MULTITYPE] = sMultitypeDescription,
-    [ABILITY_FLOWER_GIFT] = sFlowerGiftDescription,
-    [ABILITY_BAD_DREAMS] = sBadDreamsDescription,
-    [ABILITY_PICKPOCKET] = sPickpocketDescription,
-    [ABILITY_SHEER_FORCE] = sSheerForceDescription,
-    [ABILITY_CONTRARY] = sContraryDescription,
-    [ABILITY_UNNERVE] = sUnnerveDescription,
-    [ABILITY_DEFIANT] = sDefiantDescription,
-    [ABILITY_DEFEATIST] = sDefeatistDescription,
-    [ABILITY_CURSED_BODY] = sCursedBodyDescription,
-    [ABILITY_HEALER] = sHealerDescription,
-    [ABILITY_FRIEND_GUARD] = sFriendGuardDescription,
-    [ABILITY_WEAK_ARMOR] = sWeakArmorDescription,
-    [ABILITY_HEAVY_METAL] = sHeavyMetalDescription,
-    [ABILITY_LIGHT_METAL] = sLightMetalDescription,
-    [ABILITY_MULTISCALE] = sMultiscaleDescription,
-    [ABILITY_TOXIC_BOOST] = sToxicBoostDescription,
-    [ABILITY_FLARE_BOOST] = sFlareBoostDescription,
-    [ABILITY_HARVEST] = sHarvestDescription,
-    [ABILITY_TELEPATHY] = sTelepathyDescription,
-    [ABILITY_MOODY] = sMoodyDescription,
-    [ABILITY_OVERCOAT] = sOvercoatDescription,
-    [ABILITY_POISON_TOUCH] = sPoisonTouchDescription,
-    [ABILITY_REGENERATOR] = sRegeneratorDescription,
-    [ABILITY_BIG_PECKS] = sBigPecksDescription,
-    [ABILITY_SAND_RUSH] = sSandRushDescription,
-    [ABILITY_WONDER_SKIN] = sWonderSkinDescription,
-    [ABILITY_ANALYTIC] = sAnalyticDescription,
-    [ABILITY_ILLUSION] = sIllusionDescription,
-    [ABILITY_IMPOSTER] = sImposterDescription,
-    [ABILITY_INFILTRATOR] = sInfiltratorDescription,
-	[ABILITY_MUMMY] = sMummyDescription,
-	[ABILITY_MOXIE] = sMoxieDescription,
-	[ABILITY_JUSTIFIED] = sJustifiedDescription,
-	[ABILITY_RATTLED] = sRattledDescription,
-	[ABILITY_MAGIC_BOUNCE] = sMagicBounceDescription,
-	[ABILITY_SAP_SIPPER] = sSapSipperDescription,
-	[ABILITY_PRANKSTER] = sPranksterDescription,
-	[ABILITY_SAND_FORCE] = sSandForceDescription,
-	[ABILITY_IRON_BARBS] = sIronBarbsDescription,
-	[ABILITY_ZEN_MODE] = sZenModeDescription,
-	[ABILITY_VICTORY_STAR] = sVictoryStarDescription,
-	[ABILITY_TURBOBLAZE] = sTurboblazeDescription,
-	[ABILITY_TERAVOLT] = sTurboblazeDescription,
-	[ABILITY_AROMA_VEIL] = sAromaVeilDescription,
-	[ABILITY_FLOWER_VEIL] = sFlowerVeilDescription,
-	[ABILITY_CHEEK_POUCH] = sCheekPouchDescription,
-	[ABILITY_PROTEAN] = sProteanDescription,
-	[ABILITY_FUR_COAT] = sFurCoatDescription,
-	[ABILITY_MAGICIAN] = sMagicianDescription,
-	[ABILITY_BULLETPROOF] = sBulletproofDescription,
-	[ABILITY_COMPETITIVE] = sCompetitiveDescription,
-	[ABILITY_STRONG_JAW] = sStrongJawDescription,
-	[ABILITY_REFRIGERATE] = sRefrigerateDescription,
-	[ABILITY_SWEET_VEIL] = sSweetVeilDescription,
-	[ABILITY_STANCE_CHANGE] = sStanceChangeDescription,
-	[ABILITY_GALE_WINGS] = sGaleWingsDescription,
-	[ABILITY_MEGA_LAUNCHER] = sMegaLauncherDescription,
-	[ABILITY_GRASS_PELT] = sGrassPeltDescription,
-	[ABILITY_SYMBIOSIS] = sSymbiosisDescription,
-	[ABILITY_TOUGH_CLAWS] = sToughClawsDescription,
-	[ABILITY_PIXILATE] = sPixilateDescription,
-	[ABILITY_GOOEY] = sGooeyDescription,
-	[ABILITY_AERILATE] = sAerilateDescription,
-	[ABILITY_PARENTAL_BOND] = sParentalBondDescription,
-	[ABILITY_DARK_AURA] = sDarkAuraDescription,
-	[ABILITY_FAIRY_AURA] = sFairyAuraDescription,
-	[ABILITY_AURA_BREAK] = sAuraBreakDescription,
-	[ABILITY_PRIMORDIAL_SEA] = sPrimordialSeaDescription,
-	[ABILITY_DESOLATE_LAND] = sDesolateLandDescription,
-	[ABILITY_DELTA_STREAM] = sDeltaStreamDescription,
-	[ABILITY_STAMINA] = sStaminaDescription,
-	[ABILITY_WIMP_OUT] = sWimpOutDescription,
-	[ABILITY_EMERGENCY_EXIT] = sEmergencyExitDescription,
-	[ABILITY_WATER_COMPACTION] = sWaterCompactionDescription,
-	[ABILITY_MERCILESS] = sMercilessDescription,
-	[ABILITY_SHIELDS_DOWN] = sShieldsDownDescription,
-	[ABILITY_STAKEOUT] = sStakeoutDescription,
-	[ABILITY_WATER_BUBBLE] = sWaterBubbleDescription,
-	[ABILITY_STEELWORKER] = sSteelworkerDescription,
-	[ABILITY_BERSERK] = sBerserkDescription,
-	[ABILITY_SLUSH_RUSH] = sSlushRushDescription,
-	[ABILITY_LONG_REACH] = sLongReachDescription,
-	[ABILITY_LIQUID_VOICE] = sLiquidVoiceDescription,
-	[ABILITY_TRIAGE] = sTriageDescription,
-	[ABILITY_GALVANIZE] = sGalvanizeDescription,
-	[ABILITY_SURGE_SURFER] = sSurgeSurferDescription,
-	[ABILITY_SCHOOLING] = sSchoolingDescription,
-	[ABILITY_DISGUISE] = sDisguiseDescription,
-	[ABILITY_BATTLE_BOND] = sBattleBondDescription,
-	[ABILITY_POWER_CONSTRUCT] = sPowerConstructDescription,
-	[ABILITY_CORROSION] = sCorrosionDescription,
-	[ABILITY_COMATOSE] = sComatoseDescription,
-	[ABILITY_QUEENLY_MAJESTY] = sQueenlyMajestyDescription,
-	[ABILITY_INNARDS_OUT] = sInnardsOutDescription,
-	[ABILITY_DANCER] = sDancerDescription,
-	[ABILITY_BATTERY] = sBatteryDescription,
-	[ABILITY_FLUFFY] = sFluffyDescription,
-	[ABILITY_DAZZLING] = sDazzlingDescription,
-	[ABILITY_SOUL_HEART] = sSoul_HeartDescription,
-	[ABILITY_TANGLING_HAIR] = sTanglingHairDescription,
-	[ABILITY_RECEIVER] = sReceiverDescription,
-	[ABILITY_POWER_OF_ALCHEMY] = sReceiverDescription,
-	[ABILITY_BEAST_BOOST] = sBeastBoostDescription,
-	[ABILITY_RKS_SYSTEM] = sRKSSystemDescription,
-	[ABILITY_ELECTRIC_SURGE] = sElectricSurgeDescription,
-	[ABILITY_PSYCHIC_SURGE] = sPsychicSurgeDescription,
-	[ABILITY_MISTY_SURGE] = sMistySurgeDescription,
-	[ABILITY_GRASSY_SURGE] = sGrassySurgeDescription,
-	[ABILITY_FULL_METAL_BODY] = sClearBodyDescription,
-	[ABILITY_SHADOW_SHIELD] = sMultiscaleDescription,
-	[ABILITY_PRISM_ARMOR] = sFilterDescription,
-	[ABILITY_NEUROFORCE] = sNeuroforceDescription,
-	[ABILITY_INTREPID_SWORD] = sIntrepidSwordDescription,
-	[ABILITY_DAUNTLESS_SHIELD] = sDauntlessShieldDescription,
-	[ABILITY_LIBERO] = sProteanDescription,
-	[ABILITY_BALL_FETCH] = sBallFetchDescription,
-	[ABILITY_COTTON_DOWN] = sCottonDownDescription,
-	[ABILITY_PROPELLER_TAIL] = sPropellerTailDescription,
-	[ABILITY_MIRROR_ARMOR] = sMirrorArmorDescription,
-	[ABILITY_GULP_MISSILE] = sGulpMissileDescription,
-	[ABILITY_STALWART] = sPropellerTailDescription,
-	[ABILITY_STEAM_ENGINE] = sSteamEngineDescription,
-	[ABILITY_PUNK_ROCK] = sPunkRockDescription,
-	[ABILITY_SAND_SPIT] = sSandSpitDescription,
-	[ABILITY_ICE_SCALES] = sIceScalesDescription,
-	[ABILITY_RIPEN] = sRipenDescription,
-	[ABILITY_ICE_FACE] = sIceFaceDescription,
-	[ABILITY_POWER_SPOT] = sPowerSpotDescription,
-	[ABILITY_MIMICRY] = sMimicryDescription,
-	[ABILITY_SCREEN_CLEANER] = sScreenCleanerDescription,
-	[ABILITY_STEELY_SPIRIT] = sSteelySpiritDescription,
-	[ABILITY_PERISH_BODY] = sPerishBodyDescription,
-	[ABILITY_WANDERING_SPIRIT] = sWanderingSpiritDescription,
-	[ABILITY_GORILLA_TACTICS] = sGorillaTacticsDescription,
-	[ABILITY_NEUTRALIZING_GAS] = sNeutralizingGasDescription,
-	[ABILITY_PASTEL_VEIL] = sPastelVeilDescription,
-	[ABILITY_HUNGER_SWITCH] = sHungerSwitchDescription,
-	[ABILITY_QUICK_DRAW] = sQuickDrawDescription,
-	[ABILITY_UNSEEN_FIST] = sUnseenFistDescription,
-	[ABILITY_CURIOUS_MEDICINE] = sCuriousMedicineDescription,
-	[ABILITY_TRANSISTOR] = sTransistorDescription,
-	[ABILITY_DRAGONS_MAW] = sDragonsMawDescription,
-	[ABILITY_CHILLING_NEIGH] = sChillingNeighDescription,
-	[ABILITY_GRIM_NEIGH] = sGrimNeighDescription,
-	[ABILITY_AS_ONE_ICE_RIDER] = sAsOneDescription,
-	[ABILITY_AS_ONE_SHADOW_RIDER] = sAsOne2Description,
-	[ABILITY_LINGERING_AROMA] = sLingeringAromaDescription,
-	[ABILITY_SEED_SOWER] = sSeedSowerDescription,
-	[ABILITY_THERMAL_EXCHANGE] = sThermalExchangeDescription,
-	[ABILITY_ANGER_SHELL] = sAngerShellDescription,
-	[ABILITY_PURIFYING_SALT] = sPurifyingSaltDescription,
-	[ABILITY_WELL_BAKED_BODY] = sWell_BakedBodyDescription,
-	[ABILITY_WIND_RIDER] = sWindRiderDescription,
-	[ABILITY_GUARD_DOG] = sGuardDogDescription,
-	[ABILITY_ROCKY_PAYLOAD] = sRockyPayloadDescription,
-	[ABILITY_WIND_POWER] = sWindPowerDescription,
-	[ABILITY_ZERO_TO_HERO] = sZerotoHeroDescription,
-	[ABILITY_COMMANDER] = sCommanderDescription,
-	[ABILITY_ELECTROMORPHOSIS] = sElectromorphosisDescription,
-	[ABILITY_PROTOSYNTHESIS] = sProtosynthesisDescription,
-	[ABILITY_QUARK_DRIVE] = sQuarkDriveDescription,
-	[ABILITY_GOOD_AS_GOLD] = sGoodasGoldDescription,
-	[ABILITY_VESSEL_OF_RUIN] = sVesselofRuinDescription,
-	[ABILITY_SWORD_OF_RUIN] = sSwordofRuinDescription,
-	[ABILITY_TABLETS_OF_RUIN] = sTabletsofRuinDescription,
-	[ABILITY_BEADS_OF_RUIN] = sBeadsofRuinDescription,
-	[ABILITY_ORICHALCUM_PULSE] = sOrichalcumPulseDescription,
-	[ABILITY_HADRON_ENGINE] = sHadronEngineDescription,
-	[ABILITY_OPPORTUNIST] = sOpportunistDescription,
-	[ABILITY_CUD_CHEW] = sCudChewDescription,
-	[ABILITY_SHARPNESS] = sSharpnessDescription,
-	[ABILITY_SUPREME_OVERLORD] = sSupremeOverlordDescription,
-	[ABILITY_COSTAR] = sCostarDescription,
-	[ABILITY_TOXIC_DEBRIS] = sToxicDebrisDescription,
-	[ABILITY_ARMOR_TAIL] = sArmorTailDescription,
-	[ABILITY_EARTH_EATER] = sEarthEaterDescription,
-	[ABILITY_MYCELIUM_MIGHT] = sMyceliumMightDescription,
-};
-
-const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
-{
-    [ABILITY_NONE] = _("-------"),
-    [ABILITY_STENCH] = _("Stench"),
-    [ABILITY_DRIZZLE] = _("Drizzle"),
-    [ABILITY_SPEED_BOOST] = _("Speed Boost"),
-    [ABILITY_BATTLE_ARMOR] = _("Battle Armor"),
-    [ABILITY_STURDY] = _("Sturdy"),
-    [ABILITY_DAMP] = _("Damp"),
-    [ABILITY_LIMBER] = _("Limber"),
-    [ABILITY_SAND_VEIL] = _("Sand Veil"),
-    [ABILITY_STATIC] = _("Static"),
-    [ABILITY_VOLT_ABSORB] = _("Volt Absorb"),
-    [ABILITY_WATER_ABSORB] = _("Water Absorb"),
-    [ABILITY_OBLIVIOUS] = _("Oblivious"),
-    [ABILITY_CLOUD_NINE] = _("Cloud Nine"),
-    [ABILITY_COMPOUND_EYES] = _("Compound Eyes"),
-    [ABILITY_INSOMNIA] = _("Insomnia"),
-    [ABILITY_COLOR_CHANGE] = _("Color Change"),
-    [ABILITY_IMMUNITY] = _("Immunity"),
-    [ABILITY_FLASH_FIRE] = _("Flash Fire"),
-    [ABILITY_SHIELD_DUST] = _("Shield Dust"),
-    [ABILITY_OWN_TEMPO] = _("Own Tempo"),
-    [ABILITY_SUCTION_CUPS] = _("Suction Cups"),
-    [ABILITY_INTIMIDATE] = _("Intimidate"),
-    [ABILITY_SHADOW_TAG] = _("Shadow Tag"),
-    [ABILITY_ROUGH_SKIN] = _("Rough Skin"),
-    [ABILITY_WONDER_GUARD] = _("Wonder Guard"),
-    [ABILITY_LEVITATE] = _("Levitate"),
-    [ABILITY_EFFECT_SPORE] = _("Effect Spore"),
-    [ABILITY_SYNCHRONIZE] = _("Synchronize"),
-    [ABILITY_CLEAR_BODY] = _("Clear Body"),
-    [ABILITY_NATURAL_CURE] = _("Natural Cure"),
-    [ABILITY_LIGHTNING_ROD] = _("Lightning Rod"),
-    [ABILITY_SERENE_GRACE] = _("Serene Grace"),
-    [ABILITY_SWIFT_SWIM] = _("Swift Swim"),
-    [ABILITY_CHLOROPHYLL] = _("Chlorophyll"),
-    [ABILITY_ILLUMINATE] = _("Illuminate"),
-    [ABILITY_TRACE] = _("Trace"),
-    [ABILITY_HUGE_POWER] = _("Huge Power"),
-    [ABILITY_POISON_POINT] = _("Poison Point"),
-    [ABILITY_INNER_FOCUS] = _("Inner Focus"),
-    [ABILITY_MAGMA_ARMOR] = _("Magma Armor"),
-    [ABILITY_WATER_VEIL] = _("Water Veil"),
-    [ABILITY_MAGNET_PULL] = _("Magnet Pull"),
-    [ABILITY_SOUNDPROOF] = _("Soundproof"),
-    [ABILITY_RAIN_DISH] = _("Rain Dish"),
-    [ABILITY_SAND_STREAM] = _("Sand Stream"),
-    [ABILITY_PRESSURE] = _("Pressure"),
-    [ABILITY_THICK_FAT] = _("Thick Fat"),
-    [ABILITY_EARLY_BIRD] = _("Early Bird"),
-    [ABILITY_FLAME_BODY] = _("Flame Body"),
-    [ABILITY_RUN_AWAY] = _("Run Away"),
-    [ABILITY_KEEN_EYE] = _("Keen Eye"),
-    [ABILITY_HYPER_CUTTER] = _("Hyper Cutter"),
-    [ABILITY_PICKUP] = _("Pickup"),
-    [ABILITY_TRUANT] = _("Truant"),
-    [ABILITY_HUSTLE] = _("Hustle"),
-    [ABILITY_CUTE_CHARM] = _("Cute Charm"),
-    [ABILITY_PLUS] = _("Plus"),
-    [ABILITY_MINUS] = _("Minus"),
-    [ABILITY_FORECAST] = _("Forecast"),
-    [ABILITY_STICKY_HOLD] = _("Sticky Hold"),
-    [ABILITY_SHED_SKIN] = _("Shed Skin"),
-    [ABILITY_GUTS] = _("Guts"),
-    [ABILITY_MARVEL_SCALE] = _("Marmel Scale"),
-    [ABILITY_LIQUID_OOZE] = _("Liquid Ooze"),
-    [ABILITY_OVERGROW] = _("Overgrow"),
-    [ABILITY_BLAZE] = _("Blaze"),
-    [ABILITY_TORRENT] = _("Torrent"),
-    [ABILITY_SWARM] = _("Swarm"),
-    [ABILITY_ROCK_HEAD] = _("Rock Head"),
-    [ABILITY_DROUGHT] = _("Drought"),
-    [ABILITY_ARENA_TRAP] = _("Arena Trap"),
-    [ABILITY_VITAL_SPIRIT] = _("Vital Spirit"),
-    [ABILITY_WHITE_SMOKE] = _("White Smoke"),
-    [ABILITY_PURE_POWER] = _("Pure Power"),
-    [ABILITY_SHELL_ARMOR] = _("Shell Armor"),
-    [ABILITY_AIR_LOCK] = _("Air Lock"),
-    [ABILITY_TANGLED_FEET] = _("Tangled Feet"),
-    [ABILITY_MOTOR_DRIVE] = _("Motor Drive"),
-    [ABILITY_RIVALRY] = _("Rivalry"),
-    [ABILITY_STEADFAST] = _("Steadfast"),
-    [ABILITY_SNOW_CLOAK] = _("Snow Cloak"),
-    [ABILITY_GLUTTONY] = _("Gluttony"),
-    [ABILITY_ANGER_POINT] = _("Anger Point"),
-    [ABILITY_UNBURDEN] = _("Unburden"),
-    [ABILITY_HEATPROOF] = _("Heatproof"),
-    [ABILITY_SIMPLE] = _("Simple"),
-    [ABILITY_DRY_SKIN] = _("Dry Skin"),
-    [ABILITY_DOWNLOAD] = _("Download"),
-    [ABILITY_IRON_FIST] = _("Iron Fist"),
-    [ABILITY_POISON_HEAL] = _("Poison Heal"),
-    [ABILITY_ADAPTABILITY] = _("Adaptability"),
-    [ABILITY_SKILL_LINK] = _("Skill Link"),
-    [ABILITY_HYDRATION] = _("Hydration"),
-    [ABILITY_SOLAR_POWER] = _("Solar Power"),
-    [ABILITY_QUICK_FEET] = _("Quick Feet"),
-    [ABILITY_NORMALIZE] = _("Normalize"),
-    [ABILITY_SNIPER] = _("Sniper"),
-    [ABILITY_MAGIC_GUARD] = _("Magic Guard"),
-    [ABILITY_NO_GUARD] = _("No Guard"),
-    [ABILITY_STALL] = _("Stall"),
-    [ABILITY_TECHNICIAN] = _("Technician"),
-    [ABILITY_LEAF_GUARD] = _("Leaf Guard"),
-    [ABILITY_KLUTZ] = _("Klutz"),
-    [ABILITY_MOLD_BREAKER] = _("Mold Breaker"),
-    [ABILITY_SUPER_LUCK] = _("Super Luck"),
-    [ABILITY_AFTERMATH] = _("Aftermath"),
-    [ABILITY_ANTICIPATION] = _("Anticipation"),
-    [ABILITY_FOREWARN] = _("Forewarn"),
-    [ABILITY_UNAWARE] = _("Unaware"),
-    [ABILITY_TINTED_LENS] = _("Tinted Lens"),
-    [ABILITY_FILTER] = _("Filter"),
-    [ABILITY_SLOW_START] = _("Slow Start"),
-    [ABILITY_SCRAPPY] = _("Scrappy"),
-    [ABILITY_STORM_DRAIN] = _("Storm Drain"),
-    [ABILITY_ICE_BODY] = _("Ice Body"),
-    [ABILITY_SOLID_ROCK] = _("Solid Rock"),
-    [ABILITY_SNOW_WARNING] = _("Snow Warning"),
-    [ABILITY_HONEY_GATHER] = _("Honey Gather"),
-    [ABILITY_FRISK] = _("Frisk"),
-    [ABILITY_RECKLESS] = _("Reckless"),
-    [ABILITY_MULTITYPE] = _("Multitype"),
-    [ABILITY_FLOWER_GIFT] = _("Flower Gift"),
-    [ABILITY_BAD_DREAMS] = _("Bad Dreams"),
-    [ABILITY_PICKPOCKET] = _("Pickpocket"),
-    [ABILITY_SHEER_FORCE] = _("Sheer Force"),
-    [ABILITY_CONTRARY] = _("Contrary"),
-    [ABILITY_UNNERVE] = _("Unnerve"),
-    [ABILITY_DEFIANT] = _("Defiant"),
-    [ABILITY_DEFEATIST] = _("Defeatist"),
-    [ABILITY_CURSED_BODY] = _("Cursed Body"),
-    [ABILITY_HEALER] = _("Healer"),
-    [ABILITY_FRIEND_GUARD] = _("Friend Guard"),
-    [ABILITY_WEAK_ARMOR] = _("Weak Armor"),
-    [ABILITY_HEAVY_METAL] = _("Heavy Metal"),
-    [ABILITY_LIGHT_METAL] = _("Light Metal"),
-    [ABILITY_MULTISCALE] = _("Multiscale"),
-    [ABILITY_TOXIC_BOOST] = _("Toxic Boost"),
-    [ABILITY_FLARE_BOOST] = _("Flare Boost"),
-    [ABILITY_HARVEST] = _("Harvest"),
-    [ABILITY_TELEPATHY] = _("Telepathy"),
-    [ABILITY_MOODY] = _("Moody"),
-    [ABILITY_OVERCOAT] = _("Overcoat"),
-    [ABILITY_POISON_TOUCH] = _("Poison Touch"),
-    [ABILITY_REGENERATOR] = _("Regenerator"),
-    [ABILITY_BIG_PECKS] = _("Big Pecks"),
-    [ABILITY_SAND_RUSH] = _("Sand Rush"),
-    [ABILITY_WONDER_SKIN] = _("Wonder Skin"),
-    [ABILITY_ANALYTIC] = _("Analytic"),
-    [ABILITY_ILLUSION] = _("Illusion"),
-    [ABILITY_IMPOSTER] = _("Imposter"),
-    [ABILITY_INFILTRATOR] = _("Infiltrator"),
-	[ABILITY_MUMMY] = _("Mummy"),
-	[ABILITY_MOXIE] = _("Moxie"),
-    [ABILITY_JUSTIFIED] = _("Justified"),
-    [ABILITY_RATTLED] = _("Rattled"),
-    [ABILITY_MAGIC_BOUNCE] = _("Magic Bounce"),
-    [ABILITY_SAP_SIPPER] = _("Sap Sipper"),
-    [ABILITY_PRANKSTER] = _("Prankster"),
-    [ABILITY_SAND_FORCE] = _("Sand Force"),
-    [ABILITY_IRON_BARBS] = _("Iron Barbs"),
-    [ABILITY_ZEN_MODE] = _("Zen Mode"),
-    [ABILITY_VICTORY_STAR] = _("Victory Star"),
-    [ABILITY_TURBOBLAZE] = _("Turboblaze"),
-    [ABILITY_TERAVOLT] = _("Teravolt"),
-    [ABILITY_AROMA_VEIL] = _("Aroma Veil"),
-    [ABILITY_FLOWER_VEIL] = _("Flower Veil"),
-    [ABILITY_CHEEK_POUCH] = _("Cheek Pouch"),
-    [ABILITY_PROTEAN] = _("Protean"),
-    [ABILITY_FUR_COAT] = _("Fur Coat"),
-    [ABILITY_MAGICIAN] = _("Magician"),
-    [ABILITY_BULLETPROOF] = _("Bulletproof"),
-    [ABILITY_COMPETITIVE] = _("Competitive"),
-    [ABILITY_STRONG_JAW] = _("Strong Jaw"),
-    [ABILITY_REFRIGERATE] = _("Refrigerate"),
-    [ABILITY_SWEET_VEIL] = _("Sweet Veil"),
-    [ABILITY_STANCE_CHANGE] = _("Stance Change"),
-    [ABILITY_GALE_WINGS] = _("Gale Wings"),
-    [ABILITY_MEGA_LAUNCHER] = _("Mega Launcher"),
-    [ABILITY_GRASS_PELT] = _("Grass Pelt"),
-    [ABILITY_SYMBIOSIS] = _("Symbiosis"),
-    [ABILITY_TOUGH_CLAWS] = _("Tough Claws"),
-    [ABILITY_PIXILATE] = _("Pixilate"),
-    [ABILITY_GOOEY] = _("Gooey"),
-    [ABILITY_AERILATE] = _("Aerilate"),
-    [ABILITY_PARENTAL_BOND] = _("Parental Bond"),
-    [ABILITY_DARK_AURA] = _("Dark Aura"),
-    [ABILITY_FAIRY_AURA] = _("Fairy Aura"),
-    [ABILITY_AURA_BREAK] = _("Aura Break"),
-    [ABILITY_PRIMORDIAL_SEA] = _("Primordial Sea"),
-    [ABILITY_DESOLATE_LAND] = _("Desolate Land"),
-    [ABILITY_DELTA_STREAM] = _("Delta Stream"),
-    [ABILITY_STAMINA] = _("Stamina"),
-    [ABILITY_WIMP_OUT] = _("Wimp Out"),
-    [ABILITY_EMERGENCY_EXIT] = _("Emergency Exit"),
-    [ABILITY_WATER_COMPACTION] = _("Water Compaction"),
-    [ABILITY_MERCILESS] = _("Merciless"),
-    [ABILITY_SHIELDS_DOWN] = _("Shields Down"),
-    [ABILITY_STAKEOUT] = _("Stakeout"),
-    [ABILITY_WATER_BUBBLE] = _("Water Bubble"),
-    [ABILITY_STEELWORKER] = _("Steelworker"),
-    [ABILITY_BERSERK] = _("Berserk"),
-    [ABILITY_SLUSH_RUSH] = _("Slush Rush"),
-    [ABILITY_LONG_REACH] = _("Long Reach"),
-    [ABILITY_LIQUID_VOICE] = _("Liquid Voice"),
-    [ABILITY_TRIAGE] = _("Triage"),
-    [ABILITY_GALVANIZE] = _("Galvanize"),
-    [ABILITY_SURGE_SURFER] = _("Surge Surfer"),
-    [ABILITY_SCHOOLING] = _("Schooling"),
-    [ABILITY_DISGUISE] = _("Disguise"),
-    [ABILITY_BATTLE_BOND] = _("Battle Bond"),
-    [ABILITY_POWER_CONSTRUCT] = _("Power Construct"),
-    [ABILITY_CORROSION] = _("Corrosion"),
-    [ABILITY_COMATOSE]  =_("Comatose"),
-    [ABILITY_QUEENLY_MAJESTY] = _("Queenly Majesty"),
-    [ABILITY_INNARDS_OUT] = _("Innards Out"),
-    [ABILITY_DANCER] = _("Dancer"),
-    [ABILITY_BATTERY] = _("Battery"),
-    [ABILITY_FLUFFY] = _("Fluffy"),
-    [ABILITY_DAZZLING] = _("Dazzling"),
-    [ABILITY_SOUL_HEART] = _("Soul-Heart"),
-    [ABILITY_TANGLING_HAIR] = _("Tangling Hair"),
-    [ABILITY_RECEIVER] = _("Receiver"),
-    [ABILITY_POWER_OF_ALCHEMY] = _("Power of Alchemy"),
-    [ABILITY_BEAST_BOOST] = _("Beast Boost"),
-    [ABILITY_RKS_SYSTEM] = _("RKS System"),
-    [ABILITY_ELECTRIC_SURGE] = _("Electric Surge"),
-    [ABILITY_PSYCHIC_SURGE] = _("Psychic Surge"),
-    [ABILITY_MISTY_SURGE] = _("Misty Surge"),
-    [ABILITY_GRASSY_SURGE] = _("Grassy Surge"),
-    [ABILITY_FULL_METAL_BODY] = _("Full Metal Body"),
-    [ABILITY_SHADOW_SHIELD] = _("Shadow Shield"),
-    [ABILITY_PRISM_ARMOR] = _("Prism Armor"),
-    [ABILITY_NEUROFORCE] = _("Neuroforce"),
-    [ABILITY_INTREPID_SWORD] = _("Intrepid Sword"),
-    [ABILITY_DAUNTLESS_SHIELD] = _("Dauntless Shield"),
-    [ABILITY_LIBERO] = _("Libero"),
-    [ABILITY_BALL_FETCH] = _("Ball Fetch"),
-    [ABILITY_COTTON_DOWN] = _("Cotton Down"),
-    [ABILITY_PROPELLER_TAIL] = _("Propeller Tail"),
-    [ABILITY_MIRROR_ARMOR] = _("Mirror Armor"),
-    [ABILITY_GULP_MISSILE] = _("Gulp Missile"),
-    [ABILITY_STALWART] = _("Stalwart"),
-    [ABILITY_STEAM_ENGINE] = _("Steam Engine"),
-    [ABILITY_PUNK_ROCK] = _("Punk Rock"),
-    [ABILITY_SAND_SPIT] = _("Sand Spit"),
-    [ABILITY_ICE_SCALES] = _("Ice Scales"),
-    [ABILITY_RIPEN] = _("Ripen"),
-    [ABILITY_ICE_FACE] = _("Ice Face"),
-    [ABILITY_POWER_SPOT] = _("Power Spot"),
-    [ABILITY_MIMICRY] = _("Mimicry"),
-    [ABILITY_SCREEN_CLEANER] = _("Screen Cleaner"),
-    [ABILITY_STEELY_SPIRIT] = _("Steely Spirit"),
-    [ABILITY_PERISH_BODY] = _("Perish Body"),
-    [ABILITY_WANDERING_SPIRIT] = _("Wandering Spirit"),
-    [ABILITY_GORILLA_TACTICS] = _("Gorilla Tactics"),
-    [ABILITY_NEUTRALIZING_GAS] = _("Neutralizing Gas"),
-    [ABILITY_PASTEL_VEIL] = _("Pastel Veil"),
-    [ABILITY_HUNGER_SWITCH] = _("Hunger Switch"),
-    [ABILITY_QUICK_DRAW] = _("Quick Draw"),
-    [ABILITY_UNSEEN_FIST] = _("Unseen Fist"),
-    [ABILITY_CURIOUS_MEDICINE] = _("Curious Medicine"),
-    [ABILITY_TRANSISTOR] = _("Transistor"),
-    [ABILITY_DRAGONS_MAW] = _("Dragon's Maw"),
-    [ABILITY_CHILLING_NEIGH] = _("Chilling Neigh"),
-    [ABILITY_GRIM_NEIGH] = _("Grim Neigh"),
-    [ABILITY_AS_ONE_ICE_RIDER] = _("As One"),
-    [ABILITY_AS_ONE_SHADOW_RIDER] = _("As One"),
-    [ABILITY_LINGERING_AROMA] = _("Lingering Aroma"),
-    [ABILITY_SEED_SOWER] = _("Seed Sower"),
-    [ABILITY_THERMAL_EXCHANGE] = _("Thermal Exchange"),
-    [ABILITY_ANGER_SHELL] = _("Anger Shell"),
-    [ABILITY_PURIFYING_SALT] = _("Purifying Salt"),
-    [ABILITY_WELL_BAKED_BODY] = _("Well-Baked Body"),
-    [ABILITY_WIND_RIDER] = _("Wind Rider"),
-    [ABILITY_GUARD_DOG] = _("Guard Dog"),
-    [ABILITY_ROCKY_PAYLOAD] = _("Rocky Payload"),
-    [ABILITY_WIND_POWER] = _("Wind Power"),
-    [ABILITY_ZERO_TO_HERO] = _("Zero to Hero"),
-    [ABILITY_COMMANDER] = _("Commander"),
-    [ABILITY_ELECTROMORPHOSIS] = _("Electromorphosis"),
-    [ABILITY_PROTOSYNTHESIS] = _("Protosynthesis"),
-    [ABILITY_QUARK_DRIVE] = _("Quark Drive"),
-    [ABILITY_GOOD_AS_GOLD] = _("Good as Gold"),
-    [ABILITY_VESSEL_OF_RUIN] = _("Vessel of Ruin"),
-    [ABILITY_SWORD_OF_RUIN] = _("Sword of Ruin"),
-    [ABILITY_TABLETS_OF_RUIN] = _("Tablets of Ruin"),
-    [ABILITY_BEADS_OF_RUIN] = _("Beads of Ruin"),
-    [ABILITY_ORICHALCUM_PULSE] = _("Orichalcum Pulse"),
-    [ABILITY_HADRON_ENGINE] = _("Hadron Engine"),
-    [ABILITY_OPPORTUNIST] = _("Opportunist"),
-    [ABILITY_CUD_CHEW] = _("Cud Chew"),
-    [ABILITY_SHARPNESS] = _("Sharpness"),
-    [ABILITY_SUPREME_OVERLORD] = _("Supreme Overlord"),
-    [ABILITY_COSTAR] = _("Costar"),
-    [ABILITY_TOXIC_DEBRIS] = _("Toxic Debris"),
-    [ABILITY_ARMOR_TAIL] = _("Armor Tail"),
-    [ABILITY_EARTH_EATER] = _("Earth Eater"),
-    [ABILITY_MYCELIUM_MIGHT] = _("Mycelium Might"),
+    [ABILITY_NONE] =
+    {
+        .name = _("-------"),
+        .description = COMPOUND_STRING("No special Ability."),
+    },
+    [ABILITY_STENCH] =
+    {
+        .name = _("Stench"),
+        .description = COMPOUND_STRING("By releasing stench when attacking, this\nPokémon may cause the target to flinch."),
+    },
+    [ABILITY_DRIZZLE] =
+    {
+        .name = _("Drizzle"),
+        .description = COMPOUND_STRING("The Pokémon makes it rain when it enters a\nbattle."),
+    },
+    [ABILITY_SPEED_BOOST] =
+    {
+        .name = _("Speed Boost"),
+        .description = COMPOUND_STRING("Its Speed stat is boosted every turn."),
+    },
+    [ABILITY_BATTLE_ARMOR] =
+    {
+        .name = _("Battle Armor"),
+        .description = COMPOUND_STRING("Hard armor protects the Pokémon from critical\nhits."),
+		.breakable = TRUE,
+    },
+    [ABILITY_STURDY] =
+    {
+        .name = _("Sturdy"),
+        .description = COMPOUND_STRING("It cannot be knocked out with one hit. One-hit\nKO moves cannot knock it out, either."),
+		.breakable = TRUE,
+    },
+    [ABILITY_DAMP] =
+    {
+        .name = _("Damp"),
+        .description = COMPOUND_STRING("Prevents the use of explosive moves, such as\nSelf-Destruct, by dampening its surroundings."),
+		.breakable = TRUE,
+    },
+    [ABILITY_LIMBER] =
+    {
+        .name = _("Limber"),
+        .description = COMPOUND_STRING("Its limber body protects the Pokémon from\nparalysis."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SAND_VEIL] =
+    {
+        .name = _("Sand Veil"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's evasiveness in a\nsandstorm."),
+		.breakable = TRUE,
+    },
+    [ABILITY_STATIC] =
+    {
+        .name = _("Static"),
+        .description = COMPOUND_STRING("The Pokémon is charged with static electricity,\nso contact with it may cause paralysis."),
+    },
+    [ABILITY_VOLT_ABSORB] =
+    {
+        .name = _("Volt Absorb"),
+        .description = COMPOUND_STRING("Restores HP if hit by an Electric-type move\ninstead of taking damage."),
+		.breakable = TRUE,
+    },
+    [ABILITY_WATER_ABSORB] =
+    {
+        .name = _("Water Absorb"),
+        .description = COMPOUND_STRING("Restores HP if hit by a Water-type move\ninstead of taking damage."),
+		.breakable = TRUE,
+    },
+    [ABILITY_OBLIVIOUS] =
+    {
+        .name = _("Oblivious"),
+        .description = COMPOUND_STRING("The Pokémon is oblivious, and that keeps it\nfrom being infatuated or falling for taunts."),
+		.breakable = TRUE,
+    },
+    [ABILITY_CLOUD_NINE] =
+    {
+        .name = _("Cloud Nine"),
+        .description = sCloudNineDescription,
+    },
+    [ABILITY_COMPOUND_EYES] =
+    {
+        .name = _("Compound Eyes"),
+        .description = COMPOUND_STRING("The Pokémon's compound eyes boost its\naccuracy."),
+    },
+    [ABILITY_INSOMNIA] =
+    {
+        .name = _("Insomnia"),
+        .description = COMPOUND_STRING("The Pokémon is suffering from insomnia and\ncannot fall asleep."),
+		.breakable = TRUE,
+    },
+    [ABILITY_COLOR_CHANGE] =
+    {
+        .name = _("Color Change"),
+        .description = COMPOUND_STRING("The Pokémon's type becomes the type of the\nmove used on it."),
+    },
+    [ABILITY_IMMUNITY] =
+    {
+        .name = _("Immunity"),
+        .description = COMPOUND_STRING("The immune system of the Pokémon prevents it\nfrom getting poisoned."),
+		.breakable = TRUE,
+    },
+    [ABILITY_FLASH_FIRE] =
+    {
+        .name = _("Flash Fire"),
+        .description = COMPOUND_STRING("Powers up the Pokémon's Fire-type moves if\nit's hit by one."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SHIELD_DUST] =
+    {
+        .name = _("Shield Dust"),
+        .description = COMPOUND_STRING("This Pokémon's dust blocks the additional\neffects of attacks taken."),
+		.breakable = TRUE,
+    },
+    [ABILITY_OWN_TEMPO] =
+    {
+        .name = _("Own Tempo"),
+        .description = COMPOUND_STRING("This Pokémon has its own tempo, and that\nprevents it from becoming confused."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SUCTION_CUPS] =
+    {
+        .name = _("Suction Cups"),
+        .description = COMPOUND_STRING("This Pokémon uses suction cups to stay in one\nspot to negate moves that force switching out."),
+		.breakable = TRUE,
+    },
+    [ABILITY_INTIMIDATE] =
+    {
+        .name = _("Intimidate"),
+        .description = COMPOUND_STRING("The Pokémon intimidates opposing Pokémon upon\nentering battle, lowering their Attack stat."),
+    },
+    [ABILITY_SHADOW_TAG] =
+    {
+        .name = _("Shadow Tag"),
+        .description = COMPOUND_STRING("This Pokémon steps on the opposing Pokémon's\nshadow to prevent it from escaping."),
+    },
+    [ABILITY_ROUGH_SKIN] =
+    {
+        .name = _("Rough Skin"),
+        .description = COMPOUND_STRING("This Pokémon inflicts damage with its rough\nskin to the attacker on contact."),
+    },
+    [ABILITY_WONDER_GUARD] =
+    {
+        .name = _("Wonder Guard"),
+        .description = COMPOUND_STRING("Its mysterious power only lets\n“super effective” moves hit the Pokémon."),
+		.cantBeCopied = TRUE,
+		.cantBeSwapped = TRUE,
+		.breakable = TRUE,
+    },
+    [ABILITY_LEVITATE] =
+    {
+        .name = _("Levitate"),
+        .description = COMPOUND_STRING("By floating in the air, the Pokémon receives\nfull immunity to all Ground-type moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_EFFECT_SPORE] =
+    {
+        .name = _("Effect Spore"),
+        .description = COMPOUND_STRING("Contact with the Pokémon may inflict poison,\nsleep, or paralysis on its attacker."),
+    },
+    [ABILITY_SYNCHRONIZE] =
+    {
+        .name = _("Synchronize"),
+        .description = COMPOUND_STRING("The attacker will receive the same status\ncondition that inflicts to the Pokémon."),
+    },
+    [ABILITY_CLEAR_BODY] =
+    {
+        .name = _("Clear Body"),
+        .description = sClearBodyDescription,
+		.breakable = TRUE,
+    },
+    [ABILITY_NATURAL_CURE] =
+    {
+        .name = _("Natural Cure"),
+        .description = COMPOUND_STRING("All status conditions heal when the Pokémon\nswitches out."),
+    },
+    [ABILITY_LIGHTNING_ROD] =
+    {
+        .name = _("Lightning Rod"),
+        .description = COMPOUND_STRING("The Pokémon draws in all Electric-type moves.\nInstead of being hit, it boosts its Sp. Atk."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SERENE_GRACE] =
+    {
+        .name = _("Serene Grace"),
+        .description = COMPOUND_STRING("Boosts the likelihood of additional effects\noccurring when attacking."),
+    },
+    [ABILITY_SWIFT_SWIM] =
+    {
+        .name = _("Swift Swim"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Speed stat in rain."),
+    },
+    [ABILITY_CHLOROPHYLL] =
+    {
+        .name = _("Chlorophyll"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Speed stat in harsh\nsunlight."),
+    },
+    [ABILITY_ILLUMINATE] =
+    {
+        .name = _("Illuminate"),
+        .description = COMPOUND_STRING("By illuminating its surroundings, the Pokémon\nprevents its accuracy from being lowered."),
+		.breakable = TRUE,
+    },
+    [ABILITY_TRACE] =
+    {
+        .name = _("Trace"),
+        .description = COMPOUND_STRING("When it enters a battle, the Pokémon copies an\nopposing Pokémon's Ability."),
+		.cantBeCopied = TRUE,
+		.cantBeTraced = TRUE,
+    },
+    [ABILITY_HUGE_POWER] =
+    {
+        .name = _("Huge Power"),
+        .description = COMPOUND_STRING("Doubles the Pokémon's Attack stat."),
+    },
+    [ABILITY_POISON_POINT] =
+    {
+        .name = _("Poison Point"),
+        .description = COMPOUND_STRING("Contact with the Pokémon may poison the\nattacker."),
+    },
+    [ABILITY_INNER_FOCUS] =
+    {
+        .name = _("Inner Focus"),
+        .description = COMPOUND_STRING("The Pokémon's intensely focused, and that\nprotects the Pokémon from flinching."),
+		.breakable = TRUE,
+    },
+    [ABILITY_MAGMA_ARMOR] =
+    {
+        .name = _("Magma Armor"),
+        .description = COMPOUND_STRING("The Pokémon is covered with hot magma, which\nprevents the Pokémon from becoming frozen."),
+		.breakable = TRUE,
+    },
+    [ABILITY_WATER_VEIL] =
+    {
+        .name = _("Water Veil"),
+        .description = COMPOUND_STRING("The Pokémon is covered with a water veil,\nwhich prevents the Pokémon from getting burn."),
+		.breakable = TRUE,
+    },
+    [ABILITY_MAGNET_PULL] =
+    {
+        .name = _("Magnet Pull"),
+        .description = COMPOUND_STRING("Prevents Steel-type Pokémon from escaping\nusing its magnetic force."),
+    },
+    [ABILITY_SOUNDPROOF] =
+    {
+        .name = _("Soundproof"),
+        .description = COMPOUND_STRING("Soundproofing gives the Pokémon full immunity\nto all sound-based moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_RAIN_DISH] =
+    {
+        .name = _("Rain Dish"),
+        .description = COMPOUND_STRING("The Pokémon gradually regains HP in rain."),
+    },
+    [ABILITY_SAND_STREAM] =
+    {
+        .name = _("Sand Stream"),
+        .description = COMPOUND_STRING("The Pokémon summons a sandstorm when it enters\na battle."),
+    },
+    [ABILITY_PRESSURE] =
+    {
+        .name = _("Pressure"),
+        .description = COMPOUND_STRING("By putting pressure on the opposing Pokémon,\nit raises their PP usage."),
+    },
+    [ABILITY_THICK_FAT] =
+    {
+        .name = _("Thick Fat"),
+        .description = COMPOUND_STRING("The Pokémon is protected by a thick fat, which\nhalves the damage of Fire and Ice-type moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_EARLY_BIRD] =
+    {
+        .name = _("Early Bird"),
+        .description = COMPOUND_STRING("The Pokémon awakens from sleep twice as fast\nas other Pokémon."),
+    },
+    [ABILITY_FLAME_BODY] =
+    {
+        .name = _("Flame Body"),
+        .description = COMPOUND_STRING("Contact with the Pokémon may burn the\nattacker."),
+    },
+    [ABILITY_RUN_AWAY] =
+    {
+        .name = _("Run Away"),
+        .description = COMPOUND_STRING("Enables a sure getaway from wild Pokémon."),
+    },
+    [ABILITY_KEEN_EYE] =
+    {
+        .name = _("Keen Eye"),
+        .description = COMPOUND_STRING("Keen eyes prevent other Pokémon from lowering\nthis Pokémon's accuracy."),
+		.breakable = TRUE,
+    },
+    [ABILITY_HYPER_CUTTER] =
+    {
+        .name = _("Hyper Cutter"),
+        .description = COMPOUND_STRING("The Pokémon's proud of its pincers. They\nprevent the foe from lowering its Attack stat."),
+		.breakable = TRUE,
+    },
+    [ABILITY_PICKUP] =
+    {
+        .name = _("Pickup"),
+        .description = COMPOUND_STRING("The Pokémon may pick up the item an opposing\nPokémon used during a battle."),
+    },
+    [ABILITY_TRUANT] =
+    {
+        .name = _("Truant"),
+        .description = COMPOUND_STRING("The Pokémon can't use a move if it had used a\nmove on the previous turn."),
+		.cantBeOverwritten = TRUE,
+    },
+    [ABILITY_HUSTLE] =
+    {
+        .name = _("Hustle"),
+        .description = COMPOUND_STRING("Boosts the Attack stat, but lowers accuracy."),
+    },
+    [ABILITY_CUTE_CHARM] =
+    {
+        .name = _("Cute Charm"),
+        .description = COMPOUND_STRING("Contact with the Pokémon may cause\ninfatuation."),
+    },
+    [ABILITY_PLUS] =
+    {
+        .name = _("Plus"),
+        .description = sPlusAndMinusDescription,
+    },
+    [ABILITY_MINUS] =
+    {
+        .name = _("Minus"),
+        .description = sPlusAndMinusDescription,
+    },
+    [ABILITY_FORECAST] =
+    {
+        .name = _("Forecast"),
+        .description = COMPOUND_STRING("The Pokémon transforms with the weather to\nchange its type to Water, Fire, or Ice."),
+		.cantBeCopied = TRUE,
+		.cantBeTraced = TRUE,
+    },
+    [ABILITY_STICKY_HOLD] =
+    {
+        .name = _("Sticky Hold"),
+        .description = COMPOUND_STRING("Items held by the Pokémon are stuck fast and\ncannot be removed by other Pokémon."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SHED_SKIN] =
+    {
+        .name = _("Shed Skin"),
+        .description = COMPOUND_STRING("The Pokémon may heal its own status conditions\nby shedding its skin."),
+    },
+    [ABILITY_GUTS] =
+    {
+        .name = _("Guts"),
+        .description = COMPOUND_STRING("It's so gutsy that having a status condition\nboosts the Pokémon's Attack stat."),
+    },
+    [ABILITY_MARVEL_SCALE] =
+    {
+        .name = _("Marmel Scale"),
+        .description = COMPOUND_STRING("The Pokémon's marvelous scales boost the\nDefense stat if it has a status condition."),
+		.breakable = TRUE,
+    },
+    [ABILITY_LIQUID_OOZE] =
+    {
+        .name = _("Liquid Ooze"),
+        .description = COMPOUND_STRING("The oozed liquid has a strong stench, which\ndamages attackers using any draining move."),
+    },
+    [ABILITY_OVERGROW] =
+    {
+        .name = _("Overgrow"),
+        .description = COMPOUND_STRING("Powers up Grass-type moves when the Pokémon's\nHP is low."),
+    },
+    [ABILITY_BLAZE] =
+    {
+        .name = _("Blaze"),
+        .description = COMPOUND_STRING("Powers up Fire-type moves when the Pokémon's\nHP is low."),
+    },
+    [ABILITY_TORRENT] =
+    {
+        .name = _("Torrent"),
+        .description = COMPOUND_STRING("Powers up Water-type moves when the Pokémon's\nHP is low."),
+    },
+    [ABILITY_SWARM] =
+    {
+        .name = _("Swarm"),
+        .description = COMPOUND_STRING("Powers up Bug-type moves when the Pokémon's\nHP is low."),
+    },
+    [ABILITY_ROCK_HEAD] =
+    {
+        .name = _("Rock Head"),
+        .description = COMPOUND_STRING("Protects the Pokémon from recoil damage."),
+    },
+    [ABILITY_DROUGHT] =
+    {
+        .name = _("Drought"),
+        .description = COMPOUND_STRING("Turns the sunlight harsh when enters a battle."),
+    },
+    [ABILITY_ARENA_TRAP] =
+    {
+        .name = _("Arena Trap"),
+        .description = COMPOUND_STRING("Prevents opposing Pokémon from fleeing."),
+    },
+    [ABILITY_VITAL_SPIRIT] =
+    {
+        .name = _("Vital Spirit"),
+        .description = COMPOUND_STRING("The Pokémon is full of vitality, and that\nprevents it from falling asleep."),
+		.breakable = TRUE,
+    },
+    [ABILITY_WHITE_SMOKE] =
+    {
+        .name = _("White Smoke"),
+        .description = COMPOUND_STRING("The Pokémon's white smoke protect it, which\nprevents the foe from lowering its stats."),
+		.breakable = TRUE,
+    },
+    [ABILITY_PURE_POWER] =
+    {
+        .name = _("Pure Power"),
+        .description = COMPOUND_STRING("Using its pure power, the Pokémon doubles its\nAttack stat."),
+    },
+    [ABILITY_SHELL_ARMOR] =
+    {
+        .name = _("Shell Armor"),
+        .description = COMPOUND_STRING("A hard shell protects the Pokémon from\ncritical hits."),
+		.breakable = TRUE,
+    },
+    [ABILITY_AIR_LOCK] =
+    {
+        .name = _("Air Lock"),
+        .description = sCloudNineDescription,
+    },
+    [ABILITY_TANGLED_FEET] =
+    {
+        .name = _("Tangled Feet"),
+        .description = COMPOUND_STRING("Raises evasiveness if the Pokémon is confused."),
+		.breakable = TRUE,
+    },
+    [ABILITY_MOTOR_DRIVE] =
+    {
+        .name = _("Motor Drive"),
+        .description = COMPOUND_STRING("Boosts its Speed stat if hit by an\nElectric-type move instead of taking damage."),
+		.breakable = TRUE,
+    },
+    [ABILITY_RIVALRY] =
+    {
+        .name = _("Rivalry"),
+        .description = COMPOUND_STRING("Deals more damage if the Pokémon has the same\ngender, but deal less damage to opposite."),
+    },
+    [ABILITY_STEADFAST] =
+    {
+        .name = _("Steadfast"),
+        .description = COMPOUND_STRING("The Pokémon's determination boosts the Speed\nstat each time the Pokémon flinches."),
+    },
+    [ABILITY_SNOW_CLOAK] =
+    {
+        .name = _("Snow Cloak"),
+        .description = COMPOUND_STRING("Boosts evasiveness in a hailstorm."),
+		.breakable = TRUE,
+    },
+    [ABILITY_GLUTTONY] =
+    {
+        .name = _("Gluttony"),
+        .description = COMPOUND_STRING("Makes the Pokémon eat a held Berry when its\nHP drops to half or less, instead of usual."),
+    },
+    [ABILITY_ANGER_POINT] =
+    {
+        .name = _("Anger Point"),
+        .description = COMPOUND_STRING("The Pokémon is angered when it takes a\ncritical hit, and that maxes its Attack stat."),
+    },
+    [ABILITY_UNBURDEN] =
+    {
+        .name = _("Unburden"),
+        .description = COMPOUND_STRING("Boosts the Speed stat if the Pokémon's held\nitem is used or lost."),
+    },
+    [ABILITY_HEATPROOF] =
+    {
+        .name = _("Heatproof"),
+        .description = COMPOUND_STRING("The heatproof body of the Pokémon halves the\ndamage from Fire-type moves that hit it."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SIMPLE] =
+    {
+        .name = _("Simple"),
+        .description = COMPOUND_STRING("The stat changes the Pokémon receives are\ndoubled."),
+		.breakable = TRUE,
+    },
+    [ABILITY_DRY_SKIN] =
+    {
+        .name = _("Dry Skin"),
+        .description = COMPOUND_STRING("Restores HP with water, losts HP in sunlight.\nReceives more damage from Fire-type moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_DOWNLOAD] =
+    {
+        .name = _("Download"),
+        .description = COMPOUND_STRING("Raises the Pokémon's Attack or Sp. Atk stat\nto whichever will be more effective."),
+    },
+    [ABILITY_IRON_FIST] =
+    {
+        .name = _("Iron Fist"),
+        .description = COMPOUND_STRING("Powers up “punching” moves."),
+    },
+    [ABILITY_POISON_HEAL] =
+    {
+        .name = _("Poison Heal"),
+        .description = COMPOUND_STRING("Restores HP if the Pokémon is poisoned instead\nof losing HP."),
+    },
+    [ABILITY_ADAPTABILITY] =
+    {
+        .name = _("Adaptability"),
+        .description = COMPOUND_STRING("Powers up moves of the same type as the\nPokémon."),
+    },
+    [ABILITY_SKILL_LINK] =
+    {
+        .name = _("Skill Link"),
+        .description = COMPOUND_STRING("Maximizes the number of times multistrike\nmoves hit."),
+    },
+    [ABILITY_HYDRATION] =
+    {
+        .name = _("Hydration"),
+        .description = COMPOUND_STRING("Heals status conditions if it's raining."),
+    },
+    [ABILITY_SOLAR_POWER] =
+    {
+        .name = _("Solar Power"),
+        .description = COMPOUND_STRING("Boosts the Sp. Atk stat in harsh sunlight, but\nHP decreases every turn."),
+    },
+    [ABILITY_QUICK_FEET] =
+    {
+        .name = _("Quick Feet"),
+        .description = COMPOUND_STRING("Boosts the Speed stat if the Pokémon has a\nstatus condition."),
+    },
+    [ABILITY_NORMALIZE] =
+    {
+        .name = _("Normalize"),
+        .description = COMPOUND_STRING("All the Pokémon's moves become Normal type.\nThe power of those moves is boosted a little."),
+    },
+    [ABILITY_SNIPER] =
+    {
+        .name = _("Sniper"),
+        .description = COMPOUND_STRING("Powers up moves if they become critical hits\nwhen attacking."),
+    },
+    [ABILITY_MAGIC_GUARD] =
+    {
+        .name = _("Magic Guard"),
+        .description = COMPOUND_STRING("The Pokémon only takes damage from attacks."),
+    },
+    [ABILITY_NO_GUARD] =
+    {
+        .name = _("No Guard"),
+        .description = COMPOUND_STRING("The Pokémon employs no-guard tactics to ensure\nincoming and outgoing attacks always land."),
+    },
+    [ABILITY_STALL] =
+    {
+        .name = _("Stall"),
+        .description = COMPOUND_STRING("The Pokémon moves after all other Pokémon do."),
+    },
+    [ABILITY_TECHNICIAN] =
+    {
+        .name = _("Technician"),
+        .description = COMPOUND_STRING("Powers up the Pokémon's weaker moves."),
+    },
+    [ABILITY_LEAF_GUARD] =
+    {
+        .name = _("Leaf Guard"),
+        .description = COMPOUND_STRING("Prevents status conditions in harsh sunlight."),
+		.breakable = TRUE,
+    },
+    [ABILITY_KLUTZ] =
+    {
+        .name = _("Klutz"),
+        .description = COMPOUND_STRING("The Pokémon can't use any held items."),
+    },
+    [ABILITY_MOLD_BREAKER] =
+    {
+        .name = _("Mold Breaker"),
+        .description = COMPOUND_STRING("Moves can be used on the target regardless of\nits Abilities."),
+    },
+    [ABILITY_SUPER_LUCK] =
+    {
+        .name = _("Super Luck"),
+        .description = COMPOUND_STRING("The Pokémon is so lucky that the critical-hit\nratios of its moves are boosted."),
+    },
+    [ABILITY_AFTERMATH] =
+    {
+        .name = _("Aftermath"),
+        .description = COMPOUND_STRING("Damages the attacker if it contacts the\nPokémon with a finishing hit."),
+    },
+    [ABILITY_ANTICIPATION] =
+    {
+        .name = _("Anticipation"),
+        .description = COMPOUND_STRING("The Pokémon can sense an opposing Pokémon's\ndangerous moves."),
+    },
+    [ABILITY_FOREWARN] =
+    {
+        .name = _("Forewarn"),
+        .description = COMPOUND_STRING("When it enters a battle, the Pokémon can tell\none of the moves an opposing Pokémon has."),
+    },
+    [ABILITY_UNAWARE] =
+    {
+        .name = _("Unaware"),
+        .description = COMPOUND_STRING("When attacking, the Pokémon ignores the target\nPokémon's stat changes."),
+		.breakable = TRUE,
+    },
+    [ABILITY_TINTED_LENS] =
+    {
+        .name = _("Tinted Lens"),
+        .description = COMPOUND_STRING("The Pokémon can use “not very effective” moves\nto deal regular damage."),
+    },
+    [ABILITY_FILTER] =
+    {
+        .name = _("Filter"),
+        .description = sFilterDescription,
+		.breakable = TRUE,
+    },
+    [ABILITY_SLOW_START] =
+    {
+        .name = _("Slow Start"),
+        .description = COMPOUND_STRING("The Pokémon's Attack and Speed stats are\nhalved until it gets going."),
+    },
+    [ABILITY_SCRAPPY] =
+    {
+        .name = _("Scrappy"),
+        .description = COMPOUND_STRING("The Pokémon can hit Ghost-type Pokémon with\nNormal and Fighting-type moves."),
+    },
+    [ABILITY_STORM_DRAIN] =
+    {
+        .name = _("Storm Drain"),
+        .description = COMPOUND_STRING("The Pokémon draws in all Water-type moves.\nInstead of being hit, it boosts its Sp. Atk."),
+		.breakable = TRUE,
+    },
+    [ABILITY_ICE_BODY] =
+    {
+        .name = _("Ice Body"),
+        .description = COMPOUND_STRING("The Pokémon gradually regains HP in a\nhailstorm."),
+    },
+    [ABILITY_SOLID_ROCK] =
+    {
+        .name = _("Solid Rock"),
+        .description = sFilterDescription,
+		.breakable = TRUE,
+    },
+    [ABILITY_SNOW_WARNING] =
+    {
+        .name = _("Snow Warning"),
+        .description = COMPOUND_STRING("The Pokémon summons a hailstorm when it enters\na battle."),
+    },
+    [ABILITY_HONEY_GATHER] =
+    {
+        .name = _("Honey Gather"),
+        .description = COMPOUND_STRING("The Pokémon may gather Honey after a battle."),
+    },
+    [ABILITY_FRISK] =
+    {
+        .name = _("Frisk"),
+        .description = COMPOUND_STRING("When it enters a battle, the Pokémon can\ncheck an opposing Pokémon's held item."),
+    },
+    [ABILITY_RECKLESS] =
+    {
+        .name = _("Reckless"),
+        .description = COMPOUND_STRING("Powers up moves that have recoil damage."),
+    },
+    [ABILITY_MULTITYPE] =
+    {
+        .name = _("Multitype"),
+        .description = COMPOUND_STRING("Changes the Pokémon's type to match the Plate\nor Z-Crystal it holds."),
+		.cantBeCopied = TRUE,
+		.cantBeSwapped = TRUE,
+		.cantBeTraced = TRUE,
+		.cantBeSuppressed = TRUE,
+		.cantBeOverwritten = TRUE,
+    },
+    [ABILITY_FLOWER_GIFT] =
+    {
+        .name = _("Flower Gift"),
+        .description = COMPOUND_STRING("Boosts the Attack and Sp. Def stats of itself\nand allies in harsh sunlight."),
+		.cantBeCopied = TRUE,
+        .cantBeTraced = TRUE,
+        .breakable = TRUE,
+    },
+    [ABILITY_BAD_DREAMS] =
+    {
+        .name = _("Bad Dreams"),
+        .description = COMPOUND_STRING("Reduces the HP of sleeping opposing Pokémon."),
+    },
+    [ABILITY_PICKPOCKET] =
+    {
+        .name = _("Pickpocket"),
+        .description = COMPOUND_STRING("Steals an item from an attacker that made\ndirect contact."),
+    },
+    [ABILITY_SHEER_FORCE] =
+    {
+        .name = _("Sheer Force"),
+        .description = COMPOUND_STRING("Removes additional effects to increase the\npower of moves when attacking."),
+    },
+    [ABILITY_CONTRARY] =
+    {
+        .name = _("Contrary"),
+        .description = COMPOUND_STRING("Makes stat changes have an opposite effect."),
+		.breakable = TRUE,
+    },
+    [ABILITY_UNNERVE] =
+    {
+        .name = _("Unnerve"),
+        .description = COMPOUND_STRING("Unnerves opposing Pokémon and makes them\nunable to eat Berries."),
+    },
+    [ABILITY_DEFIANT] =
+    {
+        .name = _("Defiant"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Attack stat sharply when\nits stats are lowered."),
+    },
+    [ABILITY_DEFEATIST] =
+    {
+        .name = _("Defeatist"),
+        .description = COMPOUND_STRING("Halves the Pokémon's Attack and Sp. Atk stats\nwhen its HP becomes half or less."),
+    },
+    [ABILITY_CURSED_BODY] =
+    {
+        .name = _("Cursed Body"),
+        .description = COMPOUND_STRING("May disable a move used on the Pokémon."),
+    },
+    [ABILITY_HEALER] =
+    {
+        .name = _("Healer"),
+        .description = COMPOUND_STRING("Sometimes heals an ally's status condition."),
+    },
+    [ABILITY_FRIEND_GUARD] =
+    {
+        .name = _("Friend Guard"),
+        .description = COMPOUND_STRING("Reduces damage done to allies."),
+		.breakable = TRUE,
+    },
+    [ABILITY_WEAK_ARMOR] =
+    {
+        .name = _("Weak Armor"),
+        .description = COMPOUND_STRING("Physical attacks to the Pokémon lower its\nDefense stat but sharply raise its Speed stat."),
+    },
+    [ABILITY_HEAVY_METAL] =
+    {
+        .name = _("Heavy Metal"),
+        .description = COMPOUND_STRING("Doubles the Pokémon's weight."),
+		.breakable = TRUE,
+    },
+    [ABILITY_LIGHT_METAL] =
+    {
+        .name = _("Light Metal"),
+        .description = COMPOUND_STRING("Halves the Pokémon's weight."),
+		.breakable = TRUE,
+    },
+    [ABILITY_MULTISCALE] =
+    {
+        .name = _("Multiscale"),
+        .description = sMultiscaleDescription,
+		.breakable = TRUE,
+    },
+    [ABILITY_TOXIC_BOOST] =
+    {
+        .name = _("Toxic Boost"),
+        .description = COMPOUND_STRING("Powers up physical attacks when the Pokémon is\npoisoned."),
+    },
+    [ABILITY_FLARE_BOOST] =
+    {
+        .name = _("Flare Boost"),
+        .description = COMPOUND_STRING("Powers up special attacks when the Pokémon is\nburned."),
+    },
+    [ABILITY_HARVEST] =
+    {
+        .name = _("Harvest"),
+        .description = COMPOUND_STRING("May create another Berry after one is used."),
+    },
+    [ABILITY_TELEPATHY] =
+    {
+        .name = _("Telepathy"),
+        .description = COMPOUND_STRING("Anticipates an ally's attack and dodges it."),
+		.breakable = TRUE,
+    },
+    [ABILITY_MOODY] =
+    {
+        .name = _("Moody"),
+        .description = COMPOUND_STRING("Raises one stat sharply and lowers another\nevery turn."),
+    },
+    [ABILITY_OVERCOAT] =
+    {
+        .name = _("Overcoat"),
+        .description = COMPOUND_STRING("Protects the Pokémon from things like sand,\nhail, and “powder”."),
+		.breakable = TRUE,
+    },
+    [ABILITY_POISON_TOUCH] =
+    {
+        .name = _("Poison Touch"),
+        .description = COMPOUND_STRING("May poison a target when the Pokémon makes\ncontact."),
+    },
+    [ABILITY_REGENERATOR] =
+    {
+        .name = _("Regenerator"),
+        .description = COMPOUND_STRING("Restores a little HP when withdrawn from\nbattle."),
+    },
+    [ABILITY_BIG_PECKS] =
+    {
+        .name = _("Big Pecks"),
+        .description = COMPOUND_STRING("Protects the Pokémon from Defense-lowering\neffects."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SAND_RUSH] =
+    {
+        .name = _("Sand Rush"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Speed stat in a\nsandstorm."),
+    },
+    [ABILITY_WONDER_SKIN] =
+    {
+        .name = _("Wonder Skin"),
+        .description = COMPOUND_STRING("Makes status moves more likely to miss."),
+		.breakable = TRUE,
+    },
+    [ABILITY_ANALYTIC] =
+    {
+        .name = _("Analytic"),
+        .description = COMPOUND_STRING("Boosts move power when the Pokémon moves\nlast."),
+    },
+    [ABILITY_ILLUSION] =
+    {
+        .name = _("Illusion"),
+        .description = COMPOUND_STRING("Comes out disguised as the Pokémon in the\nparty's last spot."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+    },
+    [ABILITY_IMPOSTER] =
+    {
+        .name = _("Imposter"),
+        .description = COMPOUND_STRING("The Pokémon transforms itself into the Pokémon\nit's facing."),
+		.cantBeCopied = TRUE,
+        .cantBeTraced = TRUE,
+    },
+    [ABILITY_INFILTRATOR] =
+    {
+        .name = _("Infiltrator"),
+        .description = COMPOUND_STRING("The Pokémon's moves are unaffected by the\ntarget's barriers, substitutes, and the like."),
+    },
+	[ABILITY_MUMMY] =
+    {
+        .name = _("Mummy"),
+        .description = COMPOUND_STRING("Contact with the Pokémon changes the\nattacker's Ability to Mummy."),
+    },
+	[ABILITY_MOXIE] =
+    {
+        .name = _("Moxie"),
+        .description = COMPOUND_STRING("The Pokémon shows moxie, and that boosts the\nAttack stat after knocking out any Pokémon."),
+    },
+    [ABILITY_JUSTIFIED] =
+    {
+        .name = _("Justified"),
+        .description = COMPOUND_STRING("Being hit by a Dark-type move boosts the\nAttack stat of the Pokémon, for justice."),
+    },
+    [ABILITY_RATTLED] =
+    {
+        .name = _("Rattled"),
+        .description = COMPOUND_STRING("Dark, Ghost, and Bug-type moves scare the\nPokémon and boost its Speed stat."),
+    },
+    [ABILITY_MAGIC_BOUNCE] =
+    {
+        .name = _("Magic Bounce"),
+        .description = COMPOUND_STRING("The Pokémon reflects status moves instead of\ngetting hit by them."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SAP_SIPPER] =
+    {
+        .name = _("Sap Sipper"),
+        .description = COMPOUND_STRING("Boosts the Attack stat if hit by a Grass-type\nmove instead of taking damage."),
+		.breakable = TRUE,
+    },
+    [ABILITY_PRANKSTER] =
+    {
+        .name = _("Prankster"),
+        .description = COMPOUND_STRING("Gives priority to the Pokémon's status moves."),
+    },
+    [ABILITY_SAND_FORCE] =
+    {
+        .name = _("Sand Force"),
+        .description = COMPOUND_STRING("Boosts the power of Rock, Ground, and\nSteel-type moves in a sandstorm."),
+    },
+    [ABILITY_IRON_BARBS] =
+    {
+        .name = _("Iron Barbs"),
+        .description = COMPOUND_STRING("The Pokémon's iron barbs damage the attacker\nif it makes direct contact."),
+    },
+    [ABILITY_ZEN_MODE] =
+    {
+        .name = _("Zen Mode"),
+        .description = COMPOUND_STRING("Changes the Pokémon's shape when its HP drops\nto half or less."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+    },
+    [ABILITY_VICTORY_STAR] =
+    {
+        .name = _("Victory Star"),
+        .description = COMPOUND_STRING("Boosts the accuracy of the Pokémon and its\nallies."),
+    },
+    [ABILITY_TURBOBLAZE] =
+    {
+        .name = _("Turboblaze"),
+        .description = sTurboblazeDescription,
+    },
+    [ABILITY_TERAVOLT] =
+    {
+        .name = _("Teravolt"),
+        .description = sTurboblazeDescription,
+    },
+    [ABILITY_AROMA_VEIL] =
+    {
+        .name = _("Aroma Veil"),
+        .description = COMPOUND_STRING("Protects the Pokémon and its allies from\neffects that prevent the use of moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_FLOWER_VEIL] =
+    {
+        .name = _("Flower Veil"),
+        .description = COMPOUND_STRING("Ally Grass-type Pokémon are protected from\nstatus conditions and lowering stat effects."),
+		.breakable = TRUE,
+    },
+    [ABILITY_CHEEK_POUCH] =
+    {
+        .name = _("Cheek Pouch"),
+        .description = COMPOUND_STRING("Restores HP as well when the Pokémon eats a\nBerry."),
+    },
+    [ABILITY_PROTEAN] =
+    {
+        .name = _("Protean"),
+        .description = sProteanDescription,
+    },
+    [ABILITY_FUR_COAT] =
+    {
+        .name = _("Fur Coat"),
+        .description = COMPOUND_STRING("Halves the damage from physical moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_MAGICIAN] =
+    {
+        .name = _("Magician"),
+        .description = COMPOUND_STRING("The Pokémon steals the held item from any\ntarget it hits with a move."),
+    },
+    [ABILITY_BULLETPROOF] =
+    {
+        .name = _("Bulletproof"),
+        .description = COMPOUND_STRING("Protects the Pokémon from “ball” and “bomb”\nmoves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_COMPETITIVE] =
+    {
+        .name = _("Competitive"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Sp. Atk stat sharply\nwhen its stats are lowered by an Pokémon."),
+    },
+    [ABILITY_STRONG_JAW] =
+    {
+        .name = _("Strong Jaw"),
+        .description = COMPOUND_STRING("The Pokémon's strong jaw boosts the power of\nits “biting” moves."),
+    },
+    [ABILITY_REFRIGERATE] =
+    {
+        .name = _("Refrigerate"),
+        .description = COMPOUND_STRING("Normal-type moves become Ice-type moves. The\npower of those moves is boosted a little."),
+    },
+    [ABILITY_SWEET_VEIL] =
+    {
+        .name = _("Sweet Veil"),
+        .description = COMPOUND_STRING("Prevents the Pokémon and its allies from\nfalling asleep."),
+		.breakable = TRUE,
+    },
+    [ABILITY_STANCE_CHANGE] =
+    {
+        .name = _("Stance Change"),
+        .description = COMPOUND_STRING("Changes the Pokémon's form to Shield using\nKing's Shield or to Blade using other move."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+    },
+    [ABILITY_GALE_WINGS] =
+    {
+        .name = _("Gale Wings"),
+        .description = COMPOUND_STRING("Gives priority to the Pokémon's Flying-type\nmoves while its HP is full."),
+    },
+    [ABILITY_MEGA_LAUNCHER] =
+    {
+        .name = _("Mega Launcher"),
+        .description = COMPOUND_STRING("Powers up “aura” and “pulse” moves."),
+    },
+    [ABILITY_GRASS_PELT] =
+    {
+        .name = _("Grass Pelt"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Defense stat on Grassy\nTerrain."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SYMBIOSIS] =
+    {
+        .name = _("Symbiosis"),
+        .description = COMPOUND_STRING("The Pokémon passes its held item to an ally\nthat has used up an item."),
+    },
+    [ABILITY_TOUGH_CLAWS] =
+    {
+        .name = _("Tough Claws"),
+        .description = COMPOUND_STRING("Powers up moves that make direct contact."),
+    },
+    [ABILITY_PIXILATE] =
+    {
+        .name = _("Pixilate"),
+        .description = COMPOUND_STRING("Normal-type moves become Fairy-type moves. The\npower of those moves is boosted a little."),
+    },
+    [ABILITY_GOOEY] =
+    {
+        .name = _("Gooey"),
+        .description = COMPOUND_STRING("Contact with the Pokémon lowers the\nattacker's Speed stat."),
+    },
+    [ABILITY_AERILATE] =
+    {
+        .name = _("Aerilate"),
+        .description = COMPOUND_STRING("Normal-type moves become Flying-type moves.\nThe power of those moves is boosted a little."),
+    },
+    [ABILITY_PARENTAL_BOND] =
+    {
+        .name = _("Parental Bond"),
+        .description = COMPOUND_STRING("The parent and child attack one after the\nother."),
+    },
+    [ABILITY_DARK_AURA] =
+    {
+        .name = _("Dark Aura"),
+        .description = COMPOUND_STRING("Powers up the Dark-type moves of all Pokémon\non the field."),
+		.breakable = TRUE,
+    },
+    [ABILITY_FAIRY_AURA] =
+    {
+        .name = _("Fairy Aura"),
+        .description = COMPOUND_STRING("Powers up the Fairy-type moves of all Pokémon\non the field."),
+		.breakable = TRUE,
+    },
+    [ABILITY_AURA_BREAK] =
+    {
+        .name = _("Aura Break"),
+        .description = COMPOUND_STRING("The effects of “aura” Abilities are reversed\nto lower the power of affected moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_PRIMORDIAL_SEA] =
+    {
+        .name = _("Primordial Sea"),
+        .description = COMPOUND_STRING("The Pokémon changes the weather to nullify\nFire-type attacks."),
+    },
+    [ABILITY_DESOLATE_LAND] =
+    {
+        .name = _("Desolate Land"),
+        .description = COMPOUND_STRING("The Pokémon changes the weather to nullify\nWater-type attacks."),
+    },
+    [ABILITY_DELTA_STREAM] =
+    {
+        .name = _("Delta Stream"),
+        .description = COMPOUND_STRING("Changes the weather so that no moves are\n“super effective” against the Flying type."),
+    },
+    [ABILITY_STAMINA] =
+    {
+        .name = _("Stamina"),
+        .description = COMPOUND_STRING("Boosts the Defense stat when the Pokémon is\nhit by an attack."),
+    },
+    [ABILITY_WIMP_OUT] =
+    {
+        .name = _("Wimp Out"),
+        .description = COMPOUND_STRING("The Pokémon cowardly switches out when its HP\ndrops to half or less."),
+    },
+    [ABILITY_EMERGENCY_EXIT] =
+    {
+        .name = _("Emergency Exit"),
+        .description = COMPOUND_STRING("The Pokémon, sensing danger, switches out when\nits HP drops to half or less."),
+    },
+    [ABILITY_WATER_COMPACTION] =
+    {
+        .name = _("Water Compaction"),
+        .description = COMPOUND_STRING("Boosts the Defense stat sharply when the\nPokémon is hit by a Water-type move."),
+    },
+    [ABILITY_MERCILESS] =
+    {
+        .name = _("Merciless"),
+        .description = COMPOUND_STRING("The Pokémon's attacks become critical hits if\nthe target is poisoned."),
+    },
+    [ABILITY_SHIELDS_DOWN] =
+    {
+        .name = _("Shields Down"),
+        .description = COMPOUND_STRING("When its HP drops to half or less, the\nPokémon's shell breaks and it becomes angry."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+    },
+    [ABILITY_STAKEOUT] =
+    {
+        .name = _("Stakeout"),
+        .description = COMPOUND_STRING("Doubles the damage dealt to a target that has\njust switched into battle."),
+    },
+    [ABILITY_WATER_BUBBLE] =
+    {
+        .name = _("Water Bubble"),
+        .description = COMPOUND_STRING("Lowers the power of Fire-type moves that hit\nthe Pokémon and prevents it from being burned."),
+		.breakable = TRUE,
+    },
+    [ABILITY_STEELWORKER] =
+    {
+        .name = _("Steelworker"),
+        .description = COMPOUND_STRING("Powers up Steel-type moves."),
+    },
+    [ABILITY_BERSERK] =
+    {
+        .name = _("Berserk"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Sp. Atk stat when takes\na hit that causes its HP drop to half or less."),
+    },
+    [ABILITY_SLUSH_RUSH] =
+    {
+        .name = _("Slush Rush"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Speed stat in snow."),
+    },
+    [ABILITY_LONG_REACH] =
+    {
+        .name = _("Long Reach"),
+        .description = COMPOUND_STRING("The Pokémon uses its moves without making\ncontact with the target."),
+    },
+    [ABILITY_LIQUID_VOICE] =
+    {
+        .name = _("Liquid Voice"),
+        .description = COMPOUND_STRING("Sound-based moves become Water-type moves."),
+    },
+    [ABILITY_TRIAGE] =
+    {
+        .name = _("Triage"),
+        .description = COMPOUND_STRING("Gives priority to the Pokémon's healing moves."),
+    },
+    [ABILITY_GALVANIZE] =
+    {
+        .name = _("Galvanize"),
+        .description = COMPOUND_STRING("Normal-type moves become Electric-type moves.\nThe power of those moves is boosted a little."),
+    },
+    [ABILITY_SURGE_SURFER] =
+    {
+        .name = _("Surge Surfer"),
+        .description = COMPOUND_STRING("Doubles the Pokémon's Speed stat on Electric\nTerrain."),
+    },
+    [ABILITY_SCHOOLING] =
+    {
+        .name = _("Schooling"),
+        .description = COMPOUND_STRING("When it has a lot of HP, the Pokémon forms a\npowerful school. Stoping when its HP is low."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+    },
+    [ABILITY_DISGUISE] =
+    {
+        .name = _("Disguise"),
+        .description = COMPOUND_STRING("Once per battle, the shroud that covers the\nPokémon can protect it from an attack."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+		.breakable = TRUE,
+    },
+    [ABILITY_BATTLE_BOND] =
+    {
+        .name = _("Battle Bond"),
+        .description = COMPOUND_STRING("When the Pokémon knocks out a target, its\nAttack, Sp. Atk, and Speed stats are boosted."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+    },
+    [ABILITY_POWER_CONSTRUCT] =
+    {
+        .name = _("Power Construct"),
+        .description = COMPOUND_STRING("Cells gather to aid when its HP becomes half\nor less. Changing its form to Complete Forme."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+    },
+    [ABILITY_CORROSION] =
+    {
+        .name = _("Corrosion"),
+        .description = COMPOUND_STRING("The Pokémon can poison the target even if it's\na Steel or Poison type."),
+    },
+    [ABILITY_COMATOSE]  =
+	{
+		.name = _("Comatose"),
+		.description = COMPOUND_STRING("The Pokémon is always drowsing and will never\nwake up. It can attack while sleeping."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+	},
+    [ABILITY_QUEENLY_MAJESTY] =
+    {
+        .name = _("Queenly Majesty"),
+        .description = COMPOUND_STRING("Its majesty pressures the foes, making them\nunable to attack using priority moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_INNARDS_OUT] =
+    {
+        .name = _("Innards Out"),
+        .description = COMPOUND_STRING("Damages the attacker landing the finishing hit\nby the amount equal to its last HP."),
+    },
+    [ABILITY_DANCER] =
+    {
+        .name = _("Dancer"),
+        .description = COMPOUND_STRING("When another Pokémon uses a “dance” move, you\ncan use a move following it."),
+    },
+    [ABILITY_BATTERY] =
+    {
+        .name = _("Battery"),
+        .description = COMPOUND_STRING("Powers up ally Pokémon's special moves."),
+    },
+    [ABILITY_FLUFFY] =
+    {
+        .name = _("Fluffy"),
+        .description = COMPOUND_STRING("Halves the damage taken from moves that make\ncontact, but doubles that of Fire-type moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_DAZZLING] =
+    {
+        .name = _("Dazzling"),
+        .description = COMPOUND_STRING("The Pokémon dazzles its foes, making them\nunable to attack using priority moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SOUL_HEART] =
+    {
+        .name = _("Soul-Heart"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Sp. Atk stat every time\nanother Pokémon faints."),
+    },
+    [ABILITY_TANGLING_HAIR] =
+    {
+        .name = _("Tangling Hair"),
+        .description = COMPOUND_STRING("Contact with the Pokémon lowers the\nattacker's Speed stat."),
+    },
+    [ABILITY_RECEIVER] =
+    {
+        .name = _("Receiver"),
+        .description = sReceiverDescription,
+		.cantBeCopied = TRUE,
+        .cantBeTraced = TRUE,
+    },
+    [ABILITY_POWER_OF_ALCHEMY] =
+    {
+        .name = _("Power of Alchemy"),
+        .description = sReceiverDescription,
+		.cantBeCopied = TRUE,
+        .cantBeTraced = TRUE,
+    },
+    [ABILITY_BEAST_BOOST] =
+    {
+        .name = _("Beast Boost"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's most proficient stat\nevery time it knocks out a target."),
+    },
+    [ABILITY_RKS_SYSTEM] =
+    {
+        .name = _("RKS System"),
+        .description = COMPOUND_STRING("Changes the Pokémon's type to match the\nmemory disc it holds."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+    },
+    [ABILITY_ELECTRIC_SURGE] =
+    {
+        .name = _("Electric Surge"),
+        .description = COMPOUND_STRING("Turns the ground into Electric Terrain when\nthe Pokémon enters a battle."),
+    },
+    [ABILITY_PSYCHIC_SURGE] =
+    {
+        .name = _("Psychic Surge"),
+        .description = COMPOUND_STRING("Turns the ground into Psychic Terrain when\nthe Pokémon enters a battle."),
+    },
+    [ABILITY_MISTY_SURGE] =
+    {
+        .name = _("Misty Surge"),
+        .description = COMPOUND_STRING("Turns the ground into Misty Terrain when the\nPokémon enters a battle."),
+    },
+    [ABILITY_GRASSY_SURGE] =
+    {
+        .name = _("Grassy Surge"),
+        .description = COMPOUND_STRING("Turns the ground into Grassy Terrain when the\nPokémon enters a battle."),
+    },
+    [ABILITY_FULL_METAL_BODY] =
+    {
+        .name = _("Full Metal Body"),
+        .description = sClearBodyDescription,
+    },
+    [ABILITY_SHADOW_SHIELD] =
+    {
+        .name = _("Shadow Shield"),
+        .description = sMultiscaleDescription,
+    },
+    [ABILITY_PRISM_ARMOR] =
+    {
+        .name = _("Prism Armor"),
+        .description = sFilterDescription,
+    },
+    [ABILITY_NEUROFORCE] =
+    {
+        .name = _("Neuroforce"),
+        .description = COMPOUND_STRING("Powers up the Pokémon's “super effective”\nattacks even further."),
+    },
+    [ABILITY_INTREPID_SWORD] =
+    {
+        .name = _("Intrepid Sword"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Attack stat the first\ntime the Pokémon enters a battle."),
+    },
+    [ABILITY_DAUNTLESS_SHIELD] =
+    {
+        .name = _("Dauntless Shield"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Defense stat the first\ntime the Pokémon enters a battle."),
+    },
+    [ABILITY_LIBERO] =
+    {
+        .name = _("Libero"),
+        .description = sProteanDescription,
+    },
+    [ABILITY_BALL_FETCH] =
+    {
+        .name = _("Ball Fetch"),
+        .description = COMPOUND_STRING("If the Pokémon not have an item, it will fetch\nthe Poké Ball from the first failed throw."),
+    },
+    [ABILITY_COTTON_DOWN] =
+    {
+        .name = _("Cotton Down"),
+        .description = COMPOUND_STRING("When attacked, it scatters cotton around and\nlowers the Speed stats of all on the field."),
+    },
+    [ABILITY_PROPELLER_TAIL] =
+    {
+        .name = _("Propeller Tail"),
+        .description = sPropellerTailDescription,
+    },
+    [ABILITY_MIRROR_ARMOR] =
+    {
+        .name = _("Mirror Armor"),
+        .description = COMPOUND_STRING("Bounces back only the stat-lowering effects\nthat the Pokémon receives."),
+		.breakable = TRUE,
+    },
+    [ABILITY_GULP_MISSILE] =
+    {
+        .name = _("Gulp Missile"),
+        .description = COMPOUND_STRING("When it uses Surf or Dive, it will come back\nwith a prey. When attacked spits it out."),
+		.cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+    },
+    [ABILITY_STALWART] =
+    {
+        .name = _("Stalwart"),
+        .description = sPropellerTailDescription,
+    },
+    [ABILITY_STEAM_ENGINE] =
+    {
+        .name = _("Steam Engine"),
+        .description = COMPOUND_STRING("Boosts the Speed stat drastically when the\nPokémon is hit by a Fire or Water-type move."),
+    },
+    [ABILITY_PUNK_ROCK] =
+    {
+        .name = _("Punk Rock"),
+        .description = COMPOUND_STRING("Boosts the power of sound-based moves. Also\ntakes half the damage from these moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SAND_SPIT] =
+    {
+        .name = _("Sand Spit"),
+        .description = COMPOUND_STRING("The Pokémon creates a sandstorm when it's hit\nby an attack."),
+    },
+    [ABILITY_ICE_SCALES] =
+    {
+        .name = _("Ice Scales"),
+        .description = COMPOUND_STRING("The Pokémon is protected by ice scales, which\nhalve the damage taken from special moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_RIPEN] =
+    {
+        .name = _("Ripen"),
+        .description = COMPOUND_STRING("Ripens Berries and doubles their effect."),
+    },
+    [ABILITY_ICE_FACE] =
+    {
+        .name = _("Ice Face"),
+        .description = COMPOUND_STRING("It's ice head can take a physical attack as a\nsubstitute, but it changes it's appearance."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+        .breakable = TRUE,
+    },
+    [ABILITY_POWER_SPOT] =
+    {
+        .name = _("Power Spot"),
+        .description = COMPOUND_STRING("Just being next to the Pokémon powers up\nmoves."),
+    },
+    [ABILITY_MIMICRY] =
+    {
+        .name = _("Mimicry"),
+        .description = COMPOUND_STRING("Changes the Pokémon's type depending on the\nterrain."),
+    },
+    [ABILITY_SCREEN_CLEANER] =
+    {
+        .name = _("Screen Cleaner"),
+        .description = COMPOUND_STRING("When the Pokémon enters a battle, the effects\nof screens are nullified for both side."),
+    },
+    [ABILITY_STEELY_SPIRIT] =
+    {
+        .name = _("Steely Spirit"),
+        .description = COMPOUND_STRING("Powers up the Steel-type moves of the Pokémon\nand its allies."),
+    },
+    [ABILITY_PERISH_BODY] =
+    {
+        .name = _("Perish Body"),
+        .description = COMPOUND_STRING("When hit by a move that makes contact, he and\nthe attacker will faint after three turns."),
+    },
+    [ABILITY_WANDERING_SPIRIT] =
+    {
+        .name = _("Wandering Spirit"),
+        .description = COMPOUND_STRING("The Pokémon exchanges Abilities with a Pokémon\nthat makes direct contact with it."),
+    },
+    [ABILITY_GORILLA_TACTICS] =
+    {
+        .name = _("Gorilla Tactics"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's Attack stat but only\nallows the use of the first selected move."),
+    },
+    [ABILITY_NEUTRALIZING_GAS] =
+    {
+        .name = _("Neutralizing Gas"),
+        .description = COMPOUND_STRING("While it's in the battle, the effects of all\nother Pokémon's Abilities will be nullified."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+    },
+    [ABILITY_PASTEL_VEIL] =
+    {
+        .name = _("Pastel Veil"),
+        .description = COMPOUND_STRING("Prevents the Pokémon and its allies from being\npoisoned."),
+		.breakable = TRUE,
+    },
+    [ABILITY_HUNGER_SWITCH] =
+    {
+        .name = _("Hunger Switch"),
+        .description = COMPOUND_STRING("The Pokémon changes between its Full Belly and\nHangry Mode after the end of every turn."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+    },
+    [ABILITY_QUICK_DRAW] =
+    {
+        .name = _("Quick Draw"),
+        .description = COMPOUND_STRING("Enables the Pokémon to move first\noccasionally."),
+    },
+    [ABILITY_UNSEEN_FIST] =
+    {
+        .name = _("Unseen Fist"),
+        .description = COMPOUND_STRING("If it use moves that make contact, it can\nattack even if the target protects itself."),
+    },
+    [ABILITY_CURIOUS_MEDICINE] =
+    {
+        .name = _("Curious Medicine"),
+        .description = COMPOUND_STRING("When the Pokémon enters a battle, its shell's\nmedicine removes all stat changes from allies."),
+    },
+    [ABILITY_TRANSISTOR] =
+    {
+        .name = _("Transistor"),
+        .description = COMPOUND_STRING("Powers up Electric-type moves."),
+    },
+    [ABILITY_DRAGONS_MAW] =
+    {
+        .name = _("Dragon's Maw"),
+        .description = COMPOUND_STRING("Powers up Dragon-type moves."),
+    },
+    [ABILITY_CHILLING_NEIGH] =
+    {
+        .name = _("Chilling Neigh"),
+        .description = COMPOUND_STRING("When it knocks out a target, it utters a\nchilling neigh, boosting its Attack stat."),
+    },
+    [ABILITY_GRIM_NEIGH] =
+    {
+        .name = _("Grim Neigh"),
+        .description = COMPOUND_STRING("When it knocks out a target, it utters a\nterrifying neigh, boosting its Sp. Atk stat."),
+    },
+    [ABILITY_AS_ONE_ICE_RIDER] =
+    {
+        .name = _("As One"),
+        .description = COMPOUND_STRING("This Ability combines the effects of Calyrex's\nUnnerve and Glastrier's Chilling Neigh."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+    },
+    [ABILITY_AS_ONE_SHADOW_RIDER] =
+    {
+        .name = _("As One"),
+        .description = COMPOUND_STRING("This Ability combines the effects of Calyrex's\nUnnerve and Spectrier's Grim Neigh."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+    },
+    [ABILITY_LINGERING_AROMA] =
+    {
+        .name = _("Lingering Aroma"),
+        .description = COMPOUND_STRING("Contact with the Pokémon changes the\nattacker's Ability to Lingering Aroma."),
+    },
+    [ABILITY_SEED_SOWER] =
+    {
+        .name = _("Seed Sower"),
+        .description = COMPOUND_STRING("Turns the ground into Grassy Terrain when the\nPokémon is hit by an attack."),
+    },
+    [ABILITY_THERMAL_EXCHANGE] =
+    {
+        .name = _("Thermal Exchange"),
+        .description = COMPOUND_STRING("Boosts the Attack stat when hit by a Fire-type\nmove. It also cannot be burned."),
+		.breakable = TRUE,
+    },
+    [ABILITY_ANGER_SHELL] =
+    {
+        .name = _("Anger Shell"),
+        .description = COMPOUND_STRING("When low HP, its defensive stats are lowered\nbut boosts its ofensive stats and its Speed."),
+    },
+    [ABILITY_PURIFYING_SALT] =
+    {
+        .name = _("Purifying Salt"),
+        .description = COMPOUND_STRING("Its pure salt protects it from status and\nhalves the damage from Ghost-type moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_WELL_BAKED_BODY] =
+    {
+        .name = _("Well-Baked Body"),
+        .description = COMPOUND_STRING("It takes no damage by Fire-type moves.\nInstead, its Defense stat is sharply boosted."),
+		.breakable = TRUE,
+    },
+    [ABILITY_WIND_RIDER] =
+    {
+        .name = _("Wind Rider"),
+        .description = COMPOUND_STRING("Boosts it's Attack stat if Tailwind takes\neffect or if hit by a “wind” move."),
+		.breakable = TRUE,
+    },
+    [ABILITY_GUARD_DOG] =
+    {
+        .name = _("Guard Dog"),
+        .description = COMPOUND_STRING("Geting intimidated boosts its Attack stat. It\nalso cannot be forced to switch out."),
+		.breakable = TRUE,
+    },
+    [ABILITY_ROCKY_PAYLOAD] =
+    {
+        .name = _("Rocky Payload"),
+        .description = COMPOUND_STRING("Powers up Rock-type moves."),
+    },
+    [ABILITY_WIND_POWER] =
+    {
+        .name = _("Wind Power"),
+        .description = COMPOUND_STRING("Becomes charged when hit by a “wind” move, it\nboosts the next Electric-type move's power."),
+    },
+    [ABILITY_ZERO_TO_HERO] =
+    {
+        .name = _("Zero to Hero"),
+        .description = COMPOUND_STRING("The Pokémon transforms into its Hero Form when\nit switches out."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+    },
+    [ABILITY_COMMANDER] =
+    {
+        .name = _("Commander"),
+        .description = COMPOUND_STRING("When it enters a battle, it goes inside of an\nally Dondozo and commands from there."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+    },
+    [ABILITY_ELECTROMORPHOSIS] =
+    {
+        .name = _("Electromorphosis"),
+        .description = COMPOUND_STRING("Becomes charged when it takes damage, it\nboosts the next Electric-type move's power."),
+    },
+    [ABILITY_PROTOSYNTHESIS] =
+    {
+        .name = _("Protosynthesis"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's most proficient stat in\nharsh sunlight or if holding Booster Energy."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+    },
+    [ABILITY_QUARK_DRIVE] =
+    {
+        .name = _("Quark Drive"),
+        .description = COMPOUND_STRING("Boosts the Pokémon's most proficient stat on\nElectric Terrain or if holding Booster Energy."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+    },
+    [ABILITY_GOOD_AS_GOLD] =
+    {
+        .name = _("Good as Gold"),
+        .description = COMPOUND_STRING("A body of pure, solid gold gives the Pokémon\nfull immunity to other Pokémon's status moves."),
+		.breakable = TRUE,
+    },
+    [ABILITY_VESSEL_OF_RUIN] =
+    {
+        .name = _("Vessel of Ruin"),
+        .description = COMPOUND_STRING("The power of its ruinous vessel lowers the\nSp. Atk stats of all Pokémon except itself."),
+		.breakable = TRUE,
+    },
+    [ABILITY_SWORD_OF_RUIN] =
+    {
+        .name = _("Sword of Ruin"),
+        .description = COMPOUND_STRING("The power of its ruinous sword lowers the\nDefense stats of all Pokémon except itself."),
+		.breakable = TRUE,
+    },
+    [ABILITY_TABLETS_OF_RUIN] =
+    {
+        .name = _("Tablets of Ruin"),
+        .description = COMPOUND_STRING("The power of its ruinous wooden tablets lowers\nthe Attack stats of all Pokémon except itself."),
+		.breakable = TRUE,
+    },
+    [ABILITY_BEADS_OF_RUIN] =
+    {
+        .name = _("Beads of Ruin"),
+        .description = COMPOUND_STRING("The power of its ruinous beads lowers the\nSp. Def stats of all Pokémon except itself."),
+		.breakable = TRUE,
+    },
+    [ABILITY_ORICHALCUM_PULSE] =
+    {
+        .name = _("Orichalcum Pulse"),
+        .description = COMPOUND_STRING("Turns the sunlight harsh when enters a battle,\nboosting its Attack stat."),
+    },
+    [ABILITY_HADRON_ENGINE] =
+    {
+        .name = _("Hadron Engine"),
+        .description = COMPOUND_STRING("Turns the ground into Electric Terrain when\nenters a battle, boosting its Sp. Atk stat."),
+    },
+    [ABILITY_OPPORTUNIST] =
+    {
+        .name = _("Opportunist"),
+        .description = COMPOUND_STRING("If an foe's stat is boosted, it seizes the\nopportunity to boost the same stat for itself."),
+    },
+    [ABILITY_CUD_CHEW] =
+    {
+        .name = _("Cud Chew"),
+        .description = COMPOUND_STRING("When it eats a Berry, it will regurgitate that\nBerry in the next turn and eat it again."),
+    },
+    [ABILITY_SHARPNESS] =
+    {
+        .name = _("Sharpness"),
+        .description = COMPOUND_STRING("Powers up “slicing” moves."),
+    },
+    [ABILITY_SUPREME_OVERLORD] =
+    {
+        .name = _("Supreme Overlord"),
+        .description = COMPOUND_STRING("When it enters a battle, boosts its Attack and\nSp. Atk stats for each fainted party member."),
+    },
+    [ABILITY_COSTAR] =
+    {
+        .name = _("Costar"),
+        .description = COMPOUND_STRING("When the Pokémon enters a battle, it copies an\nally's stat changes."),
+    },
+    [ABILITY_TOXIC_DEBRIS] =
+    {
+        .name = _("Toxic Debris"),
+        .description = COMPOUND_STRING("Scatters poison spikes on the foe's feet when\nthe Pokémon takes damage from physical moves."),
+    },
+    [ABILITY_ARMOR_TAIL] =
+    {
+        .name = _("Armor Tail"),
+        .description = COMPOUND_STRING("It's mysterious tail makes opponents unable to\nuse priority moves against it or its allies."),
+		.breakable = TRUE,
+    },
+    [ABILITY_EARTH_EATER] =
+    {
+        .name = _("Earth Eater"),
+        .description = COMPOUND_STRING("If hit by a Ground-type move, the Pokémon has\nits HP restored instead of taking damage."),
+		.breakable = TRUE,
+    },
+    [ABILITY_MYCELIUM_MIGHT] =
+    {
+        .name = _("Mycelium Might"),
+        .description = COMPOUND_STRING("Acts more slowly with status moves, but these\nmoves can't be impeded by the foe's Ability."),
+    },
+	[ABILITY_HOSPITALITY] =
+	{
+		.name = _("Hospitality"),
+		.description = COMPOUND_STRING("When the Pokémon enters a battle, it showers\nits ally with hospitality, restoring its HP."),
+	},
+	[ABILITY_MINDS_EYE] =
+	{
+		.name = _("Mind's Eye"),
+		.description = COMPOUND_STRING("Ignores changes to foe's evasiveness, its\naccuracy can't be lowered, and hit Ghost types."),
+		.breakable = TRUE,
+	},
+	[ABILITY_EMBODY_ASPECT] =
+	{
+		.name = _("Embody Aspect"),
+		.description = COMPOUND_STRING("Its heart fills with memories, causing its\nMask to shine and boost the Pokémon's stat."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+	},
+	[ABILITY_TOXIC_CHAIN] =
+	{
+		.name = _("Toxic Chain"),
+		.description = COMPOUND_STRING("The Pokémon's toxic chain may badly poison\nany target the Pokémon hits with a move."),
+	},
+	[ABILITY_SUPERSWEET_SYRUP] =
+	{
+		.name = _("Supersweet Syrup"),
+		.description = COMPOUND_STRING("When it enters a battle, a sickly sweet scent\nlowers the evasiveness of opposing Pokémon."),
+	},
+	[ABILITY_TERA_SHIFT] =
+	{
+		.name = _("Tera Shift"),
+		.description = COMPOUND_STRING("When it enters a battle, it absorbs the energy\naround and transforms into its Terastal Form."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE,
+        .cantBeOverwritten = TRUE,
+	},
+	[ABILITY_TERA_SHELL] =
+	{
+		.name = _("Tera Shell"),
+		.description = COMPOUND_STRING("All damage-dealing moves that hit the Pokémon\nwhen its HP is full will not be very effective."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+        .breakable = TRUE,
+	},
+	[ABILITY_TERAFORM_ZERO] =
+	{
+		.name = _("Teraform Zero"),
+		.description = COMPOUND_STRING("When it changes to its Stellar Form, its power\neliminate all effects of weather and terrain."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+	},
+	[ABILITY_POISON_PUPPETEER] =
+	{
+		.name = _("Poison Puppeteer"),
+		.description = COMPOUND_STRING("Pokémon poisoned by its moves will also\nbecome confused."),
+		.cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+	},
 };

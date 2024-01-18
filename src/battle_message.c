@@ -1674,19 +1674,19 @@ void BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
 					toCpy = text;
 					break;
 				case B_TXT_LAST_ABILITY:
-                    toCpy = gAbilityNames[gLastUsedAbility];
+                    toCpy = gAbilities[gLastUsedAbility].name;
 					break;
 				case B_TXT_ATK_ABILITY:
-                    toCpy = gAbilityNames[sBattlerAbilities[gBattlerAttacker]];
+                    toCpy = gAbilities[sBattlerAbilities[gBattlerAttacker]].name;
 					break;
 				case B_TXT_DEF_ABILITY:
-                    toCpy = gAbilityNames[sBattlerAbilities[gBattlerTarget]];
+                    toCpy = gAbilities[sBattlerAbilities[gBattlerTarget]].name;
 					break;
 				case B_TXT_SCR_ACTIVE_ABILITY:
-                    toCpy = gAbilityNames[sBattlerAbilities[gBattleScripting.battler]];
+                    toCpy = gAbilities[sBattlerAbilities[gBattleScripting.battler]].name;
 					break;
 				case B_TXT_EFF_ABILITY:
-                    toCpy = gAbilityNames[sBattlerAbilities[gEffectBattler]];
+                    toCpy = gAbilities[sBattlerAbilities[gEffectBattler]].name;
 					break;
 				case B_TXT_TRAINER1_CLASS:
                     if (gTrainerBattleOpponent_A == TRAINER_UNION_ROOM)
@@ -1856,7 +1856,7 @@ static void ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst)
             srcId += 2;
             break;
         case B_BUFF_ABILITY:
-            StringAppend(dst, gAbilityNames[READ_16(&src[srcId + 1])]);
+            StringAppend(dst, gAbilities[READ_16(&src[srcId + 1])].name);
             srcId += 3;
             break;
         case B_BUFF_ITEM:

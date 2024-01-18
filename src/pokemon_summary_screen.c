@@ -2022,8 +2022,8 @@ static void BufferMonSkills(void)
     ConvertIntToDecimalStringN(sMonSummaryScreen->summary.expPointsStrBuf, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_EXP), STR_CONV_MODE_LEFT_ALIGN, 7);
     
 	ability = GetMonAbility(&sMonSummaryScreen->currentMon);
-    StringCopy(sMonSummaryScreen->summary.abilityNameStrBuf, gAbilityNames[ability]);
-    StringCopy(sMonSummaryScreen->summary.abilityDescStrBuf, gAbilityDescriptionPointers[ability]);
+    StringCopy(sMonSummaryScreen->summary.abilityNameStrBuf, gAbilities[ability].name);
+    StringCopy(sMonSummaryScreen->summary.abilityDescStrBuf, gAbilities[ability].description);
 
     sMonSummaryScreen->curMonStatusAilment = StatusToAilment(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_STATUS));
 	

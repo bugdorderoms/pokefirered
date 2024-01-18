@@ -67,8 +67,7 @@ extern const u8 gStatusConditionString_MentalState[];
 extern const u8 *const gStatusConditionStringsTable[7][2];
 extern const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
 extern const struct TrainerMoneyBall gTrainerMoneyAndBallTable[];
-extern const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT];
-extern const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1];
+extern const struct Ability gAbilities[ABILITIES_COUNT];
 extern const struct NaturalGift gNaturalGiftTable[ITEM_TO_BERRY(BERRY_ITEMS_END) + 1];
 
 void CB2_InitBattle(void);

@@ -308,6 +308,7 @@ extern const u8 BattleScript_MoveUsedGravityPrevented[];
 extern const u8 BattleScript_HealingWishActivates[];
 extern const u8 BattleScript_LunarDanceActivates[];
 extern const u8 BattleScript_MoveEffectFeint[];
+extern const u8 BattleScript_AngerShellActivates[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForUsingItem[];

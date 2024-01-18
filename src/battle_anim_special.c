@@ -1441,7 +1441,7 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprit
 	else
 		ability = gBattleMons[battler].ability;
     
-    AbilityPopUpPrinter(gAbilityNames[ability], (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP) + 256,
+    AbilityPopUpPrinter(gAbilities[ability].name, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP) + 256,
 			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP) + 256, 4, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_LIGHT_BLUE, TEXT_COLOR_WHITE);
 }
 

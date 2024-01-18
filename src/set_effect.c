@@ -522,6 +522,7 @@ static u8 CheckStatDecreaseBlockEffects(u8 battlerId, u8 statId, u8 flags)
 	{
 		case ABILITY_KEEN_EYE:
 		case ABILITY_ILLUMINATE:
+		case ABILITY_MINDS_EYE:
 		    if (statId == STAT_ACC)
 				return STAT_CHANGE_FAIL_ABILITY_PREVENT_SPECIFIC_STAT;
 			break;

@@ -3,6 +3,7 @@
 
 #include "global.h"
 #include "sprite.h"
+#include "battle_main.h"
 #include "constants/pokemon.h"
 #include "pokemon_storage_system.h"
 
@@ -247,6 +248,20 @@ struct BattleMove
 };
 
 extern const struct BattleMove gBattleMoves[];
+
+struct Ability
+{
+	u8 name[ABILITY_NAME_LENGTH + 1];
+	u8 cantBeCopied:1; // Can't be copied by Role Play.
+	u8 cantBeSwapped:1; // Can't be swapped by Skill Swap or Wandering Spirit.
+	u8 cantBeTraced:1; // Can't be copied by Trace
+	u8 cantBeSuppressed:1; // Can't be suppressed by Gastro Acid or Neutralizing Gas.
+	u8 cantBeOverwritten:1; // Can't be replaced by Entrainment, Worry Seed or Simple Beam (but can be by Mummy).
+	u8 breakable:1; // Can be bypassed by Mold Breaker.
+	u8 unused:2;
+	u16 unused2;
+	const u8 *description;
+};
 
 struct __attribute__((packed)) LevelUpMove
 {

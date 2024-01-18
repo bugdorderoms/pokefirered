@@ -43,86 +43,6 @@ static const u8 sTargetPositions[B_SIDE_COUNT][MAX_BATTLERS_COUNT / 2] =
 	[B_SIDE_OPPONENT] = {B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT},
 };
 
-static const bool8 sIgnorableAbilities[ABILITIES_COUNT] =
-{
-    [ABILITY_BATTLE_ARMOR] = TRUE,
-    [ABILITY_CLEAR_BODY] = TRUE,
-    [ABILITY_DAMP] = TRUE,
-    [ABILITY_DRY_SKIN] = TRUE,
-    [ABILITY_FILTER] = TRUE,
-    [ABILITY_FLASH_FIRE] = TRUE,
-    [ABILITY_FLOWER_GIFT] = TRUE,
-    [ABILITY_HEATPROOF] = TRUE,
-    [ABILITY_HYPER_CUTTER] = TRUE,
-    [ABILITY_IMMUNITY] = TRUE,
-    [ABILITY_INNER_FOCUS] = TRUE,
-    [ABILITY_INSOMNIA] = TRUE,
-    [ABILITY_KEEN_EYE] = TRUE,
-    [ABILITY_LEAF_GUARD] = TRUE,
-    [ABILITY_LEVITATE] = TRUE,
-    [ABILITY_LIGHTNING_ROD] = TRUE,
-    [ABILITY_LIMBER] = TRUE,
-    [ABILITY_MAGMA_ARMOR] = TRUE,
-    [ABILITY_MARVEL_SCALE] = TRUE,
-    [ABILITY_MOTOR_DRIVE] = TRUE,
-    [ABILITY_OBLIVIOUS] = TRUE,
-    [ABILITY_OWN_TEMPO] = TRUE,
-    [ABILITY_SAND_VEIL] = TRUE,
-    [ABILITY_SHELL_ARMOR] = TRUE,
-    [ABILITY_SHIELD_DUST] = TRUE,
-    [ABILITY_SIMPLE] = TRUE,
-    [ABILITY_SNOW_CLOAK] = TRUE,
-    [ABILITY_SOLID_ROCK] = TRUE,
-    [ABILITY_SOUNDPROOF] = TRUE,
-    [ABILITY_STICKY_HOLD] = TRUE,
-    [ABILITY_STORM_DRAIN] = TRUE,
-    [ABILITY_STURDY] = TRUE,
-    [ABILITY_SUCTION_CUPS] = TRUE,
-    [ABILITY_TANGLED_FEET] = TRUE,
-    [ABILITY_THICK_FAT] = TRUE,
-    [ABILITY_UNAWARE] = TRUE,
-    [ABILITY_VITAL_SPIRIT] = TRUE,
-    [ABILITY_VOLT_ABSORB] = TRUE,
-    [ABILITY_WATER_ABSORB] = TRUE,
-    [ABILITY_WATER_VEIL] = TRUE,
-    [ABILITY_WHITE_SMOKE] = TRUE,
-    [ABILITY_WONDER_GUARD] = TRUE,
-    [ABILITY_BIG_PECKS] = TRUE,
-    [ABILITY_CONTRARY] = TRUE,
-    [ABILITY_FRIEND_GUARD] = TRUE,
-    [ABILITY_HEAVY_METAL] = TRUE,
-    [ABILITY_LIGHT_METAL] = TRUE,
-    [ABILITY_MAGIC_BOUNCE] = TRUE,
-    [ABILITY_MULTISCALE] = TRUE,
-    [ABILITY_SAP_SIPPER] = TRUE,
-    [ABILITY_TELEPATHY] = TRUE,
-    [ABILITY_WONDER_SKIN] = TRUE,
-    [ABILITY_AURA_BREAK] = TRUE,
-    [ABILITY_AROMA_VEIL] = TRUE,
-    [ABILITY_BULLETPROOF] = TRUE,
-    [ABILITY_FLOWER_VEIL] = TRUE,
-    [ABILITY_FUR_COAT] = TRUE,
-    [ABILITY_OVERCOAT] = TRUE,
-    [ABILITY_SWEET_VEIL] = TRUE,
-    [ABILITY_DAZZLING] = TRUE,
-    [ABILITY_DISGUISE] = TRUE,
-    [ABILITY_FLUFFY] = TRUE,
-    [ABILITY_QUEENLY_MAJESTY] = TRUE,
-    [ABILITY_WATER_BUBBLE] = TRUE,
-    [ABILITY_ICE_SCALES] = TRUE,
-    [ABILITY_ICE_FACE] = TRUE,
-    [ABILITY_MIRROR_ARMOR] = TRUE,
-    [ABILITY_PASTEL_VEIL] = TRUE,
-    [ABILITY_PUNK_ROCK] = TRUE,
-    [ABILITY_ARMOR_TAIL] = TRUE,
-    [ABILITY_EARTH_EATER] = TRUE,
-    [ABILITY_GOOD_AS_GOLD] = TRUE,
-    [ABILITY_PURIFYING_SALT] = TRUE,
-    [ABILITY_WELL_BAKED_BODY] = TRUE,
-    [ABILITY_WIND_RIDER] = TRUE,
-	[ABILITY_ILLUMINATE] = TRUE,
-};
-
 static const u16 sWeatherFlagsInfo[][2] =
 {
 	[ENUM_WEATHER_NONE]         = {0, 0},
@@ -367,251 +287,6 @@ u8 CanBecameConfused(u8 attacker, u8 defender, u32 flags)
 	return STATUS_CHANGE_WORKED;
 }
 
-bool8 IsAbilityBlockedByNeutralizingGas(u16 ability)
-{
-	switch (ability)
-	{
-		case ABILITY_NEUTRALIZING_GAS:
-		case ABILITY_MULTITYPE:
-		case ABILITY_ZEN_MODE:
-		case ABILITY_STANCE_CHANGE:
-		case ABILITY_SCHOOLING:
-		case ABILITY_COMATOSE:
-		case ABILITY_SHIELDS_DOWN:
-		case ABILITY_DISGUISE:
-		case ABILITY_RKS_SYSTEM:
-		case ABILITY_POWER_CONSTRUCT:
-		case ABILITY_BATTLE_BOND:
-		case ABILITY_ICE_FACE:
-		case ABILITY_GULP_MISSILE:
-		case ABILITY_AS_ONE_ICE_RIDER:
-		case ABILITY_AS_ONE_SHADOW_RIDER:
-		case ABILITY_ZERO_TO_HERO:
-		    return FALSE;
-	}
-	return TRUE;
-}
-
-bool8 IsRolePlayBannedAbilityAttacker(u16 ability)
-{
-	switch (ability)
-	{
-		case ABILITY_COMMANDER:
-		case ABILITY_RECEIVER:
-		case ABILITY_MULTITYPE:
-		case ABILITY_ZEN_MODE:
-		case ABILITY_STANCE_CHANGE:
-		case ABILITY_SCHOOLING:
-		case ABILITY_COMATOSE:
-		case ABILITY_SHIELDS_DOWN:
-		case ABILITY_DISGUISE:
-		case ABILITY_RKS_SYSTEM:
-		case ABILITY_POWER_CONSTRUCT:
-		case ABILITY_BATTLE_BOND:
-		case ABILITY_ICE_FACE:
-		case ABILITY_GULP_MISSILE:
-		case ABILITY_AS_ONE_ICE_RIDER:
-		case ABILITY_AS_ONE_SHADOW_RIDER:
-		case ABILITY_ZERO_TO_HERO:
-		    return TRUE;
-	}
-	return FALSE;
-}
-
-bool8 IsRolePlayBannedAbilityTarget(u16 ability)
-{
-	switch (ability)
-	{
-		case ABILITY_TRACE:
-		case ABILITY_FORECAST:
-		case ABILITY_WONDER_GUARD:
-		case ABILITY_FLOWER_GIFT:
-		case ABILITY_ILLUSION:
-		case ABILITY_IMPOSTER:
-		case ABILITY_POWER_OF_ALCHEMY:
-		case ABILITY_RECEIVER:
-		case ABILITY_COMMANDER:
-		case ABILITY_NEUTRALIZING_GAS:
-		case ABILITY_MULTITYPE:
-		case ABILITY_ZEN_MODE:
-		case ABILITY_STANCE_CHANGE:
-		case ABILITY_SCHOOLING:
-		case ABILITY_COMATOSE:
-		case ABILITY_SHIELDS_DOWN:
-		case ABILITY_DISGUISE:
-		case ABILITY_RKS_SYSTEM:
-		case ABILITY_POWER_CONSTRUCT:
-		case ABILITY_BATTLE_BOND:
-		case ABILITY_ICE_FACE:
-		case ABILITY_GULP_MISSILE:
-		case ABILITY_AS_ONE_ICE_RIDER:
-		case ABILITY_AS_ONE_SHADOW_RIDER:
-		case ABILITY_ZERO_TO_HERO:
-		    return TRUE;
-	}
-	return FALSE;
-}
-
-static bool8 IsBattlerAbilityCopyableByTrace(u8 battlerId)
-{
-	u16 ability = gBattleMons[battlerId].ability;
-	
-	switch (ability)
-	{
-		case ABILITY_TRACE:
-		case ABILITY_FLOWER_GIFT:
-		case ABILITY_FORECAST:
-		case ABILITY_HUNGER_SWITCH:
-		case ABILITY_ILLUSION:
-		case ABILITY_IMPOSTER:
-		case ABILITY_NEUTRALIZING_GAS:
-		case ABILITY_POWER_OF_ALCHEMY:
-		case ABILITY_RECEIVER:
-		case ABILITY_COMMANDER:
-		case ABILITY_MULTITYPE:
-		case ABILITY_ZEN_MODE:
-		case ABILITY_STANCE_CHANGE:
-		case ABILITY_SCHOOLING:
-		case ABILITY_COMATOSE:
-		case ABILITY_SHIELDS_DOWN:
-		case ABILITY_DISGUISE:
-		case ABILITY_RKS_SYSTEM:
-		case ABILITY_POWER_CONSTRUCT:
-		case ABILITY_BATTLE_BOND:
-		case ABILITY_ICE_FACE:
-		case ABILITY_GULP_MISSILE:
-		case ABILITY_AS_ONE_ICE_RIDER:
-		case ABILITY_AS_ONE_SHADOW_RIDER:
-		case ABILITY_ZERO_TO_HERO:
-		    return FALSE;
-	}
-	return TRUE;
-}
-
-static bool8 IsAbilityChangeableByWanderingSpirit(u16 ability)
-{
-	switch (ability)
-	{
-		case ABILITY_COMMANDER:
-		case ABILITY_FLOWER_GIFT:
-		case ABILITY_FORECAST:
-		case ABILITY_HUNGER_SWITCH:
-		case ABILITY_ILLUSION:
-		case ABILITY_IMPOSTER:
-		case ABILITY_NEUTRALIZING_GAS:
-		case ABILITY_POWER_OF_ALCHEMY:
-		case ABILITY_RECEIVER:
-		case ABILITY_WONDER_GUARD:
-		case ABILITY_MULTITYPE:
-		case ABILITY_ZEN_MODE:
-		case ABILITY_STANCE_CHANGE:
-		case ABILITY_SCHOOLING:
-		case ABILITY_COMATOSE:
-		case ABILITY_SHIELDS_DOWN:
-		case ABILITY_DISGUISE:
-		case ABILITY_RKS_SYSTEM:
-		case ABILITY_POWER_CONSTRUCT:
-		case ABILITY_BATTLE_BOND:
-		case ABILITY_ICE_FACE:
-		case ABILITY_GULP_MISSILE:
-		case ABILITY_AS_ONE_ICE_RIDER:
-		case ABILITY_AS_ONE_SHADOW_RIDER:
-		case ABILITY_ZERO_TO_HERO:
-		    return FALSE;
-	}
-	return TRUE;
-}
-
-static bool8 CanAbilityBeReplacedByMummy(u16 ability)
-{
-	switch (ability)
-	{
-		case ABILITY_COMMANDER:
-		case ABILITY_LINGERING_AROMA:
-		case ABILITY_MUMMY:
-		case ABILITY_MULTITYPE:
-		case ABILITY_ZEN_MODE:
-		case ABILITY_STANCE_CHANGE:
-		case ABILITY_SCHOOLING:
-		case ABILITY_COMATOSE:
-		case ABILITY_SHIELDS_DOWN:
-		case ABILITY_DISGUISE:
-		case ABILITY_RKS_SYSTEM:
-		case ABILITY_POWER_CONSTRUCT:
-		case ABILITY_BATTLE_BOND:
-		case ABILITY_ICE_FACE:
-		case ABILITY_GULP_MISSILE:
-		case ABILITY_AS_ONE_ICE_RIDER:
-		case ABILITY_AS_ONE_SHADOW_RIDER:
-		case ABILITY_ZERO_TO_HERO:
-		    return FALSE;
-	}
-	return TRUE;
-}
-
-bool8 IsAbilityCopyableByReceiver(u16 ability)
-{
-	switch (ability)
-	{
-		case ABILITY_RECEIVER:
-		case ABILITY_POWER_OF_ALCHEMY:
-		case ABILITY_TRACE:
-		case ABILITY_FORECAST:
-		case ABILITY_FLOWER_GIFT:
-		case ABILITY_ILLUSION:
-		case ABILITY_WONDER_GUARD:
-		case ABILITY_IMPOSTER:
-		case ABILITY_WANDERING_SPIRIT:
-		case ABILITY_COMMANDER:
-		case ABILITY_MULTITYPE:
-		case ABILITY_ZEN_MODE:
-		case ABILITY_STANCE_CHANGE:
-		case ABILITY_SCHOOLING:
-		case ABILITY_COMATOSE:
-		case ABILITY_SHIELDS_DOWN:
-		case ABILITY_DISGUISE:
-		case ABILITY_RKS_SYSTEM:
-		case ABILITY_POWER_CONSTRUCT:
-		case ABILITY_BATTLE_BOND:
-		case ABILITY_ICE_FACE:
-		case ABILITY_GULP_MISSILE:
-		case ABILITY_AS_ONE_ICE_RIDER:
-		case ABILITY_AS_ONE_SHADOW_RIDER:
-		case ABILITY_ZERO_TO_HERO:
-		    return FALSE;
-	}
-	return TRUE;
-}
-
-bool8 IsSkillSwapBannedAbility(u16 ability)
-{
-	switch (ability)
-	{
-		case ABILITY_WONDER_GUARD:
-		case ABILITY_ILLUSION:
-		case ABILITY_NEUTRALIZING_GAS:
-		case ABILITY_COMMANDER:
-		case ABILITY_MULTITYPE:
-		case ABILITY_STANCE_CHANGE:
-		case ABILITY_SCHOOLING:
-		case ABILITY_COMATOSE:
-		case ABILITY_SHIELDS_DOWN:
-		case ABILITY_DISGUISE:
-		case ABILITY_RKS_SYSTEM:
-		case ABILITY_POWER_CONSTRUCT:
-		case ABILITY_BATTLE_BOND:
-		case ABILITY_ICE_FACE:
-		case ABILITY_GULP_MISSILE:
-		case ABILITY_ZERO_TO_HERO:
-		case ABILITY_PROTOSYNTHESIS:
-		case ABILITY_QUARK_DRIVE:
-		case ABILITY_ORICHALCUM_PULSE:
-		case ABILITY_HADRON_ENGINE:
-		    return TRUE;
-	}
-	return FALSE;
-}
-
 u8 GetBattlerForBattleScript(u8 caseId)
 {
     u32 ret = 0;
@@ -702,10 +377,7 @@ static bool8 IsNeutralizingGasOnField(u16 ability)
 		if (IsBattlerAlive(i) && GetBattlerSupressedAbility(i) == ABILITY_NEUTRALIZING_GAS)
 			foundOnField = TRUE;
 	}
-	if (foundOnField)
-		foundOnField = IsAbilityBlockedByNeutralizingGas(ability);
-	
-	return foundOnField;
+	return foundOnField ? !gAbilities[ability].cantBeSuppressed : FALSE;
 }
 
 // Used to get the battler's ability. Passing throug all effects that can suppress/block the ability effect, like Gastro Acid and Mycelium Might
@@ -716,7 +388,7 @@ u16 GetBattlerAbility(u8 battler)
 	if (IsNeutralizingGasOnField(ability))
 		ability = ABILITY_NONE;
 	else if (gBattlerByTurnOrder[gCurrentTurnActionNumber] == gBattlerAttacker && gActionsByTurnOrder[gBattlerByTurnOrder[gBattlerAttacker]] == B_ACTION_USE_MOVE
-		&& gCurrentTurnActionNumber < gBattlersCount && sIgnorableAbilities[ability] == TRUE) // Check if gBattlerAttacker is using a move
+		&& gCurrentTurnActionNumber < gBattlersCount && gAbilities[ability].breakable) // Check if gBattlerAttacker is using a move
 	{
 		if (attackerAbility == ABILITY_MOLD_BREAKER || attackerAbility == ABILITY_TERAVOLT || attackerAbility == ABILITY_TURBOBLAZE
 		|| (attackerAbility == ABILITY_MYCELIUM_MIGHT && gProtectStructs[gBattlerAttacker].myceliumMightElevated))
@@ -3356,21 +3028,22 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						u8 opposingSide = BATTLE_OPPOSITE(GetBattlerPosition(battler)) & BIT_SIDE;
 						u8 target1 = GetBattlerAtPosition(opposingSide);
 						u8 target2 = GetBattlerAtPosition(opposingSide + BIT_FLANK);
+						u16 target1Abl = gBattleMons[target1].ability;
+						u16 target2Abl = gBattleMons[target2].ability;
 						
 						if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 						{
-							if (IsBattlerAlive(target1) && IsBattlerAlive(target2) && IsBattlerAbilityCopyableByTrace(target1)
-								&& IsBattlerAbilityCopyableByTrace(target2))
+							if (IsBattlerAlive(target1) && IsBattlerAlive(target2) && !gAbilities[target1Abl].cantBeTraced && !gAbilities[target2Abl].cantBeTraced)
 							{
 								gBattlerTarget = GetBattlerAtPosition(((Random() & 1) * 2) | opposingSide);
 								++effect;
 							}
-							else if (IsBattlerAlive(target1) && IsBattlerAbilityCopyableByTrace(target1))
+							else if (IsBattlerAlive(target1) && !gAbilities[target1Abl].cantBeTraced)
 							{
 								gBattlerTarget = target1;
 								++effect;
 							}
-							else if (IsBattlerAlive(target2) && IsBattlerAbilityCopyableByTrace(target2))
+							else if (IsBattlerAlive(target2) && !gAbilities[target2Abl].cantBeTraced)
 							{
 								gBattlerTarget = target2;
 								++effect;
@@ -3378,7 +3051,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						}
 						else
 						{
-							if (IsBattlerAlive(target1) && IsBattlerAbilityCopyableByTrace(target1))
+							if (IsBattlerAlive(target1) && !gAbilities[target1Abl].cantBeTraced)
 							{
 								gBattlerTarget = target1;
 								++effect;
@@ -3789,7 +3462,8 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						case ABILITY_MUMMY:
 						case ABILITY_LINGERING_AROMA:
 						    if (BATTLER_TURN_DAMAGED(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
-						    && CanAbilityBeReplacedByMummy(gBattleMons[gBattlerAttacker].ability))
+						    && gBattleMons[gBattlerTarget].ability != ABILITY_MUMMY && gBattleMons[gBattlerTarget].ability != ABILITY_LINGERING_AROMA
+						    && !gAbilities[gBattleMons[gBattlerTarget].ability].cantBeSuppressed)
 							{
 								BattleScriptCall(BattleScript_MummyActivates);
 								// for recording the correct ability
@@ -3891,7 +3565,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 							break;
 						case ABILITY_WANDERING_SPIRIT:
 						    if (BATTLER_TURN_DAMAGED(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
-							&& IsAbilityChangeableByWanderingSpirit(gBattleMons[gBattlerAttacker].ability))
+							&& !gAbilities[gBattleMons[gBattlerAttacker].ability].cantBeSwapped)
 							{
 								// for recording the correct ability
 								RecordAbilityBattle(gBattlerAttacker, gLastUsedAbility);
@@ -3941,6 +3615,14 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 									DoBattleFormChange(battler, SPECIES_CRAMORANT, FALSE, FALSE, FALSE);
 									BattleScriptCall(BattleScript_GulpMissileSpitUpPrey);
 								}
+							}
+							break;
+						case ABILITY_ANGER_SHELL:
+						    if (BATTLER_TURN_DAMAGED(battler) && IsBattlerAlive(battler) && gBattleStruct->hpBefore[battler] > gBattleMons[battler].maxHP / 2
+							&& gBattleMons[battler].hp <= gBattleMons[battler].maxHP / 2)
+							{
+								BattleScriptCall(BattleScript_AngerShellActivates);
+								++effect;
 							}
 							break;
 					}

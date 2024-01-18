@@ -2752,6 +2752,35 @@ BattleScript_NeutralizingGasExitsLoopIncrement::
 	restorebattlers
 	return
 
+BattleScript_AngerShellActivates::
+    swapattackerwithtarget
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_AngerShellBoost
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPATK, MAX_STAT_STAGES, BattleScript_AngerShellBoost
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPEED, MAX_STAT_STAGES, BattleScript_AngerShellBoost
+	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_DEF, MIN_STAT_STAGES, BattleScript_AngerShellBoost
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPDEF, MIN_STAT_STAGES, BattleScript_AngerShellEnd
+BattleScript_AngerShellBoost::
+    loadabilitypopup BS_ATTACKER
+	setstatchanger STAT_ATK, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring BIT_ATK | BIT_SPATK | BIT_SPEED, ATK48_SET_ANIM_PLAYED
+	setstatchanger STAT_SPATK, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK48_SET_ANIM_PLAYED
+	setstatchanger STAT_SPEED, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	setstatchanger STAT_DEF, -1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK48_STAT_NEGATIVE | ATK48_SET_ANIM_PLAYED
+	setstatchanger STAT_SPDEF, -1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	removeabilitypopup BS_ATTACKER
+BattleScript_AngerShellEnd::
+	swapattackerwithtarget
+	return
+
 BattleScript_PerishBodyActivates::
     loadabilitypopup BS_TARGET
 	printstring STRINGID_BOTHWILLPERISHIN3TURNS

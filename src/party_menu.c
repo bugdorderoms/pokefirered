@@ -7025,7 +7025,7 @@ static void Task_AbilityChange(u8 taskId)
 			{
 				gPartyMenuUseExitCallback = TRUE;
 				GetMonNickname(mon, gStringVar1);
-				StringCopy(gStringVar2, gAbilityNames[GetAbilityBySpecies(species, toHidden ? (isHidden ? 0 : abilityNum) : newAbilityNum, toHidden ? isHidden ^ TRUE : FALSE)]);
+				StringCopy(gStringVar2, gAbilities[GetAbilityBySpecies(species, toHidden ? (isHidden ? 0 : abilityNum) : newAbilityNum, toHidden ? isHidden ^ TRUE : FALSE)].name);
 				StringExpandPlaceholders(gStringVar4, gText_ChangeAbility);
 				DisplayPartyMenuMessage(gStringVar4, TRUE);
 				++gTasks[taskId].data[0];
