@@ -164,18 +164,6 @@ static const struct CompressedSpriteSheet sCapturedAllPokemonSpriteSheet = {sCap
 static const struct CompressedSpriteSheet sPotentialStarSpriteSheet = {sPotentialStarGfx, 0x20, LIT_STAR_TILE_TAG};
 
 static const u8 sText_DexNav_NoInfo[] = _("--------");
-static const u8 sText_DexNav_CaptureToSee[] = _("Capture first!");
-static const u8 sText_DexNav_PressSelectToRegister[] = _("{SELECT_BUTTON}Register {B_BUTTON}Cancel");
-static const u8 sText_DexNav_ChoosePokemon[] = _("Choose a Pokémon.");
-static const u8 sText_DexNav_SearchForRegisteredSpecies[] = _("Pokémon searchable via {L_BUTTON}!");
-static const u8 sText_DexNav_NoDataOfPokemon[] = _("This Pokémon don't have any data!");
-static const u8 sText_MonLevel[] = _("{LV}. {STR_VAR_1}");
-static const u8 sText_EggMove[] = _("Move: {STR_VAR_1}");
-static const u8 sText_DexNavChain[] = _("{NO} {STR_VAR_1}");
-static const u8 sText_ArrowLeft[] = _("{LEFT_ARROW}");
-static const u8 sText_ArrowRight[] = _("{RIGHT_ARROW}");
-static const u8 sText_ArrowUp[] = _("{UP_ARROW}");
-static const u8 sText_ArrowDown[] = _("{DOWN_ARROW}");
 
 static const u8 sFontColor_Black[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GRAY};
 static const u8 sFontColor_White[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
@@ -377,7 +365,7 @@ static void AddSearchWindowText(u16 species, u8 proximity)
 
     // Level
     ConvertIntToDecimalStringN(gStringVar1, sDexNavSearchDataPtr->monLevel, STR_CONV_MODE_LEFT_ALIGN, 3);
-    StringExpandPlaceholders(gStringVar4, sText_MonLevel);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("{LV}. {STR_VAR_1}"));
     AddTextPrinterParameterized3(windowId, 0, WINDOW_X, WINDOW_COL_1, sSearchFontColor, 0, gStringVar4);
 
     if (proximity <= SNEAKING_PROXIMITY)
@@ -387,7 +375,7 @@ static void AddSearchWindowText(u16 species, u8 proximity)
         if (sDexNavSearchLevel > 1 && sDexNavSearchDataPtr->moves[0])
         {
             StringCopy(gStringVar1, gBattleMoves[sDexNavSearchDataPtr->moves[0]].name);
-            StringExpandPlaceholders(gStringVar4, sText_EggMove);
+            StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Move: {STR_VAR_1}"));
             AddTextPrinterParameterized3(windowId, 0, WINDOW_MOVE_NAME_X, WINDOW_COL_0, sSearchFontColor, 0, gStringVar4);
         }
         // Ability name
@@ -399,7 +387,7 @@ static void AddSearchWindowText(u16 species, u8 proximity)
     }
     // Chain level
     ConvertIntToDecimalStringN(gStringVar1, sCurrentDexNavChain, STR_CONV_MODE_LEFT_ALIGN, 3);
-    StringExpandPlaceholders(gStringVar4, sText_DexNavChain);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("{NO} {STR_VAR_1}"));
     AddTextPrinterParameterized3(windowId, 0, SEARCH_ARROW_X - 18, WINDOW_COL_1, sSearchFontColor, 0, gStringVar4);    
 	
     CopyWindowToVram(windowId, COPYWIN_MAP);
@@ -744,16 +732,16 @@ static void DexNavUpdateDirectionArrow(void)
     else if (deltaX > deltaY)
     {
         if (playerX > tileX)
-            str = sText_ArrowLeft;  // player to right
+            str = COMPOUND_STRING("{LEFT_ARROW}");  // player to right
         else
-            str = sText_ArrowRight; // player to left
+            str = COMPOUND_STRING("{RIGHT_ARROW}"); // player to left
     }
     else // greater Y diff
     {
         if (playerY > tileY)
-            str = sText_ArrowUp;    // player below
+            str = COMPOUND_STRING("{UP_ARROW}");    // player below
         else
-            str = sText_ArrowDown;  // player above
+            str = COMPOUND_STRING("{DOWN_ARROW}");  // player above
     }
 
     AddTextPrinterParameterized3(windowId, 1, SEARCH_ARROW_X, WINDOW_COL_0, sSearchFontColor, 0, str);
@@ -1627,7 +1615,7 @@ static void PrintCurrentSpeciesInfo(void)
 		AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, gBaseStats[species].hiddenAbility ?
 		gAbilities[gBaseStats[species].hiddenAbility].name : gText_PokeSum_Item_None);
     else
-        AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, sText_DexNav_CaptureToSee);
+        AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, COMPOUND_STRING("Capture first!"));
 
     // current chain
     ConvertIntToDecimalStringN(gStringVar4, sCurrentDexNavChain, STR_CONV_MODE_LEFT_ALIGN, 3);
@@ -1643,7 +1631,7 @@ static void PrintDexNavInstructions(void)
     PutWindowTilemap(WINDOW_MAP_NAME);
     GetMapName(gStringVar4, GetCurrentRegionMapSectionId());
     AddTextPrinterParameterized3(WINDOW_MAP_NAME, 1, 2, 0, sFontColor_White, 0, gStringVar4);
-    AddTextPrinterParameterized3(WINDOW_MAP_NAME, 1, 124, 0, sFontColor_White, 0, sText_DexNav_PressSelectToRegister);
+    AddTextPrinterParameterized3(WINDOW_MAP_NAME, 1, 124, 0, sFontColor_White, 0, COMPOUND_STRING("{SELECT_BUTTON}Register {B_BUTTON}Cancel"));
     CopyWindowToVram(WINDOW_MAP_NAME, COPYWIN_BOTH);
 }
 
@@ -1657,13 +1645,13 @@ static void PrintDexNavMessage(u8 msgId)
 	switch (msgId)
 	{
 		case DEXNAV_MSG_CHOOSE_POKEMON:
-		    str = sText_DexNav_ChoosePokemon;
+		    str = COMPOUND_STRING("Choose a Pokémon.");
 		    break;
 		case DEXNAV_MSG_SEARCH_POKEMON:
-		    str = sText_DexNav_SearchForRegisteredSpecies;
+		    str = COMPOUND_STRING("Pokémon searchable via {L_BUTTON}!");
 		    break;
 		case DEXNAV_MSG_NO_DATA:
-		    str = sText_DexNav_NoDataOfPokemon;
+		    str = COMPOUND_STRING("This Pokémon don't have any data!");
 		    break;
 	}
 	AddTextPrinterParameterized3(WINDOW_MESSAGE, 1, 2, 0, sFontColor_White, 0, str);

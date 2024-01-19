@@ -657,12 +657,12 @@ static void MainState_TryDoEventAfterInput(void)
 		switch (GetMysteryGiftCodeState(sNamingScreenData->destBuffer))
 		{
 			case MYSTERY_GIFT_CODE_INVALID:
-				StringExpandPlaceholders(gStringVar4, gText_CodeInvalid);
+				StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Code invalid!"));
 				MysteryGiftDisplayMessage();
 				sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
 				break;
 			case MYSTERY_GIFT_CODE_ALREADY_OBTAINED:
-				StringExpandPlaceholders(gStringVar4, gText_GiftAlreadyReceived);
+				StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You already received the gift\nfrom the code {STR_VAR_1}!"));
 				MysteryGiftDisplayMessage();
 				sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
 				break;
@@ -671,7 +671,7 @@ static void MainState_TryDoEventAfterInput(void)
 				sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
 				break;
 			case MYSTERY_GIFT_CODE_SUCCESS:
-				StringExpandPlaceholders(gStringVar4, gText_ReceivedGift);
+				StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You received the gift\nfrom the code {STR_VAR_1}."));
 				MysteryGiftDisplayMessage();
 				sNamingScreenData->state = MAIN_STATE_UPDATE_DATA_BE_SAVED_TEXT;
 				break;

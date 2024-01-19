@@ -63,9 +63,6 @@ void CopyItemName(u16 itemId, u8 * dest)
 	StringCopy(dest, ItemId_GetName(itemId));
 }
 
-static const u8 sText_ItemNamePluralSufix[] = _("s");
-static const u8 sText_BerryPluralSufix[] = _("ies");
-
 void CopyItemNameHandlePlural(u16 itemId, u16 quantity, u8 *dest)
 {
 	StringCopy(dest, ItemId_GetName(itemId));
@@ -80,11 +77,11 @@ void CopyItemNameHandlePlural(u16 itemId, u16 quantity, u8 *dest)
 			{
 				u8 * endptr = dest + strlength;
 				endptr[-1] = EOS;
-				StringAppend(dest, sText_BerryPluralSufix);
+				StringAppend(dest, COMPOUND_STRING("ies"));
 			}
 		}
 		else if (ItemId_GetPocket(itemId) != POCKET_KEY_ITEMS) // All items have a sufix, except Key items
-			StringAppend(dest, sText_ItemNamePluralSufix);
+			StringAppend(dest, COMPOUND_STRING("s"));
 	}
 }
 

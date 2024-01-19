@@ -143,7 +143,7 @@ void ItemUseOnFieldCB_Itemfinder(u8 taskId)
         gTasks[taskId].func = gTasks[taskId].tUnderfoot ? Task_ItemfinderUnderfootSoundsAndAnims : Task_ItemfinderResponseSoundsAndAnims;
     }
     else
-        DisplayItemMessageOnField(taskId, 2, gText_NopeTheresNoResponse, Task_NoResponse_CleanUp);
+        DisplayItemMessageOnField(taskId, 2, COMPOUND_STRING("‥ ‥ ‥ ‥Nope!\nThere's no response.{PAUSE_UNTIL_PRESS}"), Task_NoResponse_CleanUp);
 }
 
 static void Task_NoResponse_CleanUp(u8 taskId)
@@ -464,7 +464,7 @@ static u8 GetPlayerDirectionTowardsHiddenItem(s16 itemX, s16 itemY)
 
 static void Task_ItemfinderResponsePrintMessage(u8 taskId)
 {
-    DisplayItemMessageOnField(taskId, 2, gText_ItemfinderResponding, Task_ItemfinderResponseCleanUp);
+    DisplayItemMessageOnField(taskId, 2, COMPOUND_STRING("Huh?\nThe ItemFinder's responding!\pThere's an item buried around here!{PAUSE_UNTIL_PRESS}"), Task_ItemfinderResponseCleanUp);
 }
 
 static void Task_ItemfinderResponseCleanUp(u8 taskId)
@@ -478,7 +478,7 @@ static void Task_ItemfinderResponseCleanUp(u8 taskId)
 
 static void Task_ItemfinderUnderfootPrintMessage(u8 taskId)
 {
-    DisplayItemMessageOnField(taskId, 2, gText_ItemfinderShakingWildly, Task_ItemfinderUnderfootDigUpItem);
+    DisplayItemMessageOnField(taskId, 2, COMPOUND_STRING("Oh!\nThe ItemFinder's shaking wildly!\pThere's an item buried underfoot!\p‥ ‥ ‥ ‥ ‥ ‥{PAUSE_UNTIL_PRESS}"), Task_ItemfinderUnderfootDigUpItem);
 }
 
 static void Task_ItemfinderUnderfootDigUpItem(u8 taskId)

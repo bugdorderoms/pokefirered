@@ -42,7 +42,6 @@ static const struct WindowTemplate sWindowTemplates[] = {
 };
 
 static const u8 sTextColor[3] = {1, 2, 3};
-static const u8 sString_Dummy[] = _("");
 
 bool8 MailboxPC_InitBuffers(u8 num)
 {
@@ -91,7 +90,7 @@ u8 MailboxPC_InitListMenu(struct PlayerPCItemPageStruct * playerPcStruct)
     u16 i;
     for (i = 0; i < playerPcStruct->count; i++)
     {
-        sListMenuItems[i].label = sString_Dummy;
+        sListMenuItems[i].label = COMPOUND_STRING("");
         sListMenuItems[i].index = i;
     }
     sListMenuItems[i].label = gFameCheckerText_Cancel;

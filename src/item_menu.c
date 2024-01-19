@@ -225,16 +225,6 @@ static const u16 sBagListBgTiles[][18] = {
     INCBIN_U16("graphics/item_menu/bagmap_B.bin")
 };
 
-static const u8 sMenuText_ByName[] = _("Name");
-static const u8 sMenuText_ByType[] = _("Type");
-static const u8 sMenuText_ByAmount[] = _("Amount");
-static const u8 sText_NothingToSort[] = _("There's nothing to sort!");
-static const u8 sText_SortItemsHow[] = _("Sort items how?");
-static const u8 sText_Name[] = _("name");
-static const u8 sText_Type[] = _("type");
-static const u8 sText_Amount[] = _("amount");
-static const u8 sText_ItemsSorted[] = _("Items sorted by {STR_VAR_1}!");
-
 static const struct MenuAction sItemMenuContextActions[] = {
     [ITEMMENUACTION_USE] =          {gOtherText_Use, {.void_u8 = Task_ItemMenuAction_Use}},
     [ITEMMENUACTION_TOSS] =         {gOtherText_Toss, {.void_u8 = Task_ItemMenuAction_Toss}},
@@ -247,9 +237,9 @@ static const struct MenuAction sItemMenuContextActions[] = {
     [ITEMMENUACTION_OPEN_BERRIES] = {gOtherText_Open, {.void_u8 = Task_ItemMenuAction_BattleUse}},
     [ITEMMENUACTION_WALK] =         {gOtherText_Walk, {.void_u8 = Task_ItemMenuAction_Use}},
     [ITEMMENUACTION_DESELECT] =     {gOtherText_Deselect, {.void_u8 = Task_ItemMenuAction_ToggleSelect}},
-    [ITEMMENUACTION_BY_NAME] =      {sMenuText_ByName, {.void_u8 = ItemMenu_SortByName}},
-    [ITEMMENUACTION_BY_TYPE] =      {sMenuText_ByType, {.void_u8 = ItemMenu_SortByType}},
-    [ITEMMENUACTION_BY_AMOUNT] =    {sMenuText_ByAmount, {.void_u8 = ItemMenu_SortByAmount}},
+    [ITEMMENUACTION_BY_NAME] =      {COMPOUND_STRING("Name"), {.void_u8 = ItemMenu_SortByName}},
+    [ITEMMENUACTION_BY_TYPE] =      {COMPOUND_STRING("Type"), {.void_u8 = ItemMenu_SortByType}},
+    [ITEMMENUACTION_BY_AMOUNT] =    {COMPOUND_STRING("Amount"), {.void_u8 = ItemMenu_SortByAmount}},
     [ITEMMENUACTION_DUMMY] =        {gString_Dummy, {.void_u8 = NULL}}
 };
 
@@ -320,9 +310,9 @@ static const TaskFunc sItemContextTaskFuncs[] = {
 
 static const u8 *const sSortTypeStrings[] = 
 {
-    [SORT_ALPHABETICALLY] = sText_Name,
-    [SORT_BY_TYPE] = sText_Type,
-    [SORT_BY_AMOUNT] = sText_Amount,
+    [SORT_ALPHABETICALLY] = COMPOUND_STRING("name"),
+    [SORT_BY_TYPE]        = COMPOUND_STRING("type"),
+    [SORT_BY_AMOUNT]      = COMPOUND_STRING("amount"),
 };
 
 static const u8 sFontColorTable[][3] =
@@ -1076,7 +1066,7 @@ static void Task_BagMenu_HandleInput(u8 taskId)
 					PlaySE(SE_FAILURE);
 					BagDestroyPocketScrollArrowPair();
 					Bag_FillMessageBoxWithPalette(1);
-					DisplayItemMessageInBag(taskId, 2, sText_NothingToSort, Task_WaitAButtonAndCloseContextMenu);
+					DisplayItemMessageInBag(taskId, 2, COMPOUND_STRING("There's nothing to sort!"), Task_WaitAButtonAndCloseContextMenu);
 					return;
 				}
 				ListMenuGetScrollAndRow(data[0], &cursorPos, &itemsAbove);
@@ -2459,7 +2449,7 @@ static void AddBagSortSubMenu(void)
     byte = ShowBagWindow(10, sContextMenuNumItems - 1);
     AddItemMenuActionTextPrinters(byte, 2, GetMenuCursorDimensionByFont(2, 0), 4, GetFontAttribute(2, FONTATTR_LETTER_SPACING), GetFontAttribute(2, FONTATTR_MAX_LETTER_HEIGHT) + 2, sContextMenuNumItems, sItemMenuContextActions, sContextMenuItemsPtr);
     Menu_InitCursor(byte, 2, 0, 2, GetFontAttribute(2, FONTATTR_MAX_LETTER_HEIGHT) + 2, sContextMenuNumItems, 0);
-    StringExpandPlaceholders(gStringVar4, sText_SortItemsHow);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Sort items how?"));
     BagPrintTextOnWindow(ShowBagWindow(6, 0), 2, gStringVar4, 0, 2, 1, 0, 0, 1);
 }
 
@@ -2498,7 +2488,7 @@ static void SortBagItems(u8 taskId)
     PutWindowTilemap(1);
     ScheduleBgCopyTilemapToVram(0);
     StringCopy(gStringVar1, sSortTypeStrings[gTasks[taskId].tSortType]);
-    StringExpandPlaceholders(gStringVar4, sText_ItemsSorted);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Items sorted by {STR_VAR_1}!"));
     DisplayItemMessageInBag(taskId, 1, gStringVar4, Task_SortFinish);
 }
 

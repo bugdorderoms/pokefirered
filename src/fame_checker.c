@@ -155,10 +155,10 @@ static const u16 sTrainerIdxs[] = {
 };
 
 static const u8 *const sNonTrainerNamePointers[] = {
-    gFameCheckerOakName,
-    gFameCheckerDaisyName,
-    gFameCheckerBillName,
-    gFameCheckerMrFujiName
+    COMPOUND_STRING("Oak"),
+    COMPOUND_STRING("Daisy"),
+    COMPOUND_STRING("Bill"),
+    COMPOUND_STRING("Fuji")
 };
 
 static const u8 sFameCheckerTrainerPicIdxs[] = {
@@ -794,7 +794,7 @@ static bool8 TryExitPickMode(u8 taskId)
 
 static void MessageBoxPrintEmptyText(void)
 {
-    AddTextPrinterParameterized2(FCWINDOWID_MSGBOX, 2, gFameCheckerText_ClearTextbox, 0, NULL, 2, 1, 3);
+    AddTextPrinterParameterized2(FCWINDOWID_MSGBOX, 2, COMPOUND_STRING("\n                              "), 0, NULL, 2, 1, 3);
 }
 
 static void Task_EnterPickMode(u8 taskId)
@@ -1042,9 +1042,14 @@ static void PrintUIHelp(u8 state)
     const u8 * src;
 	
     if (state != 0)
-        src = state == 1 ? gFameCheckerText_PickScreenUI : gFameCheckerText_FlavorTextUI;
+	{
+		if (state == 1)
+			src = COMPOUND_STRING("{START_BUTTON}Pick {DPAD_UPDOWN}Select {B_BUTTON}Cancel");
+		else
+			src = COMPOUND_STRING("{DPAD_ANY}Pick {A_BUTTON}Read {B_BUTTON}Cancel");
+	}
 	else
-		src = gFameCheckerText_MainScreenUI;
+		src = COMPOUND_STRING("{START_BUTTON}Pick {DPAD_UPDOWN}Select {A_BUTTON}Ok");
 	
     FillWindowPixelRect(FCWINDOWID_UIHELP, PIXEL_FILL(0), 0, 0, 0xc0, 0x10);
     AddTextPrinterParameterized4(FCWINDOWID_UIHELP, 0, 188 - GetStringWidth(0, src, 0), 0, 0, 2, sTextColor_White, -1, src);
@@ -1406,7 +1411,7 @@ static void Task_SwitchToPickMode(u8 taskId)
 static void PrintCancelDescription(void)
 {
     FillWindowPixelRect(FCWINDOWID_MSGBOX, PIXEL_FILL(1), 0, 0, 0xd0, 0x20);
-    AddTextPrinterParameterized2(FCWINDOWID_MSGBOX, 2, gFameCheckerText_FameCheckerWillBeClosed, 0, NULL, 2, 1, 3);
+    AddTextPrinterParameterized2(FCWINDOWID_MSGBOX, 2, COMPOUND_STRING("The Fame Checker will be closed."), 0, NULL, 2, 1, 3);
     FC_PutWindowTilemapAndCopyWindowToVramMode3(FCWINDOWID_MSGBOX);
 }
 

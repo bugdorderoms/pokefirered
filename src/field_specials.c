@@ -146,7 +146,7 @@ void ShowFieldMessageStringVar4(void)
 
 void BufferBigGuyOrBigGirlString(void)
 {
-	StringCopy(gStringVar1, gSaveBlock2Ptr->playerGender == MALE ? gText_BigGuy : gText_BigGirl);
+	StringCopy(gStringVar1, gSaveBlock2Ptr->playerGender == MALE ? COMPOUND_STRING("Big guy") : COMPOUND_STRING("Big girl"));
 }
 
 u8 GetBattleOutcome(void)

@@ -200,26 +200,14 @@ static const struct SpriteTemplate sEvIvHandSpriteTemplate =
 	.callback = SpriteCallbackDummy,
 };
 
-// text useds
-static const u8 sTextDPadMove[] = _("{DPAD_ANY}Move");
-static const u8 sTextABQuit[] = _("{A_BUTTON}{B_BUTTON}Quit");
-static const u8 sEvIvDisplayText[] = _("Ev-Iv Display");
-static const u8 sEvIvText[] = _("Ev   Iv");
-static const u8 sText_Hp[] = _("Hp:");
-static const u8 sText_Atk[] = _("Attack:");
-static const u8 sText_Def[] = _("Defense:");
-static const u8 sText_Spe[] = _("Speed:");
-static const u8 sText_SpAtk[] = _("Sp.Attack:");
-static const u8 sText_SpDef[] = _("Sp.Defense:");
-
 static const u8 *const sStatNameStrings[] =
 {
-	sText_Hp,
-	sText_Atk,
-	sText_Def,
-	sText_Spe,
-	sText_SpAtk,
-	sText_SpDef,
+	[STAT_HP]    = COMPOUND_STRING("Hp:"),
+	[STAT_ATK]   = COMPOUND_STRING("Attack:"),
+	[STAT_DEF]   = COMPOUND_STRING("Defense:"),
+	[STAT_SPEED] = COMPOUND_STRING("Speed:"),
+	[STAT_SPATK] = COMPOUND_STRING("Sp.Attack:"),
+	[STAT_SPDEF] = COMPOUND_STRING("Sp.Defense:"),
 };
 
 // the text colors
@@ -453,16 +441,16 @@ static void PrintInfoText(void)
 	FillWindowPixelBuffer(WIN_STAT_NAMES, PIXEL_FILL(0));
 	
 	// Print The Instructions
-	AddTextPrinterParameterized3(WIN_INSTRUCTIONS, 2, INSTRUCTION_PRINTER_X_POS + 39, PRINTER_Y_POS, sDarkGrayTextColor, 0, sTextABQuit);
+	AddTextPrinterParameterized3(WIN_INSTRUCTIONS, 2, INSTRUCTION_PRINTER_X_POS + 39, PRINTER_Y_POS, sDarkGrayTextColor, 0, COMPOUND_STRING("{A_BUTTON}{B_BUTTON}Quit"));
 	
 	if (gPlayerPartyCount > 1)
-		AddTextPrinterParameterized3(WIN_INSTRUCTIONS, 2, INSTRUCTION_PRINTER_X_POS, PRINTER_Y_POS, sDarkGrayTextColor, 0, sTextDPadMove);
+		AddTextPrinterParameterized3(WIN_INSTRUCTIONS, 2, INSTRUCTION_PRINTER_X_POS, PRINTER_Y_POS, sDarkGrayTextColor, 0, COMPOUND_STRING("{DPAD_ANY}Move"));
 	
 	// Print The "Ev-Iv Display" Text
-	AddTextPrinterParameterized3(WIN_TITLE, 2, TITLE_PRINTER_X_POS, PRINTER_Y_POS, sDarkGrayTextColor, 0, sEvIvDisplayText);
+	AddTextPrinterParameterized3(WIN_TITLE, 2, TITLE_PRINTER_X_POS, PRINTER_Y_POS, sDarkGrayTextColor, 0, COMPOUND_STRING("Ev-Iv Display"));
 	
 	// Print The Ev Iv Text
-	AddTextPrinterParameterized3(WIN_EVIV_TEXT, 2, EV_IV_PRINTER_X_POS, PRINTER_Y_POS - 2, sWhiteTextColor, 0, sEvIvText);
+	AddTextPrinterParameterized3(WIN_EVIV_TEXT, 2, EV_IV_PRINTER_X_POS, PRINTER_Y_POS - 2, sWhiteTextColor, 0, COMPOUND_STRING("Ev   Iv"));
 	
 	for (i = 0; i < NUM_STATS; i++)
 		// Print The Nº Stat Name

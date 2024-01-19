@@ -68,54 +68,47 @@ static void Task_SummonMonAndSetPlayerAvatarFlag(u8 taskId);
 
 EWRAM_DATA u8 gUsingRideMon = 0;
 
-static const u8 sTaurosCharge[] = _("Tauros Charge");
-static const u8 sStoutlandSearch[] = _("Stoutland Search");
-static const u8 sMudsdaleGallop[] = _("Mudsdale Gallop");
-static const u8 sMachampShove[] = _("Machamp Shove");
-static const u8 sSharpedoPaddle[] = _("Sharpedo Paddle");
-static const u8 sCharizardGlide[] = _("Charizard Glide");
-
-static const u8 sTaurosRideDesc[] = _("This Tauros's charge can\nbreak rocks.");
-static const u8 sStoutlandRideDesc[] = _("This Stoutland can search\nfor buried items.");
-static const u8 sMudsdaleRideDesc[] = _("This Mudsdale can run\nover rocky terrain.");
-static const u8 sMachampRideDesc[] = _("This Machamp can move\nheavy boulders.");
-static const u8 sSharpedoRideDesc[] = _("This Sharpedo allows you\nto surf on the water.");
-static const u8 sCharizardRideDesc[] = _("This Charizard flies you\nto other places.");
-
-static const struct MenuAction sPokeRideActionTable[NUM_RIDE_POKEMON] = {
-    [RIDE_TAUROS]  = { sTaurosCharge, TaurosChargeCallback },
-    [RIDE_STOUTLAND] = { sStoutlandSearch, StoutlandSearchCallback },
-    [RIDE_MUDSDALE] = { sMudsdaleGallop, MudsdaleGallopCallback },
-    [RIDE_MACHAMP] = { sMachampShove, MachampShoveCallback },
-    [RIDE_SHARPEDO] = { sSharpedoPaddle, SharpedoPaddleCallback },
-    [RIDE_CHARIZARD] = { sCharizardGlide, CharizardGlideCallback }
+static const struct MenuAction sPokeRideActionTable[] =
+{
+    [RIDE_TAUROS - 1]    = { COMPOUND_STRING("Tauros Charge"),    TaurosChargeCallback },
+    [RIDE_STOUTLAND - 1] = { COMPOUND_STRING("Stoutland Search"), StoutlandSearchCallback },
+    [RIDE_MUDSDALE - 1]  = { COMPOUND_STRING("Mudsdale Gallop"),  MudsdaleGallopCallback },
+    [RIDE_MACHAMP - 1]   = { COMPOUND_STRING("Machamp Shove"),    MachampShoveCallback },
+    [RIDE_SHARPEDO - 1]  = { COMPOUND_STRING("Sharpedo Paddle"),  SharpedoPaddleCallback },
+    [RIDE_CHARIZARD - 1] = { COMPOUND_STRING("Charizard Glide"),  CharizardGlideCallback }
 };
 
-static const struct RideSpeciesAndDesc sRideToSpeciesAndDesc[NUM_RIDE_POKEMON] = 
+static const struct RideSpeciesAndDesc sRideToSpeciesAndDesc[] = 
 {
-	[RIDE_TAUROS]  = {
+	[RIDE_TAUROS - 1] =
+	{
 		.species = SPECIES_TAUROS,
-		.desc = sTaurosRideDesc,
+		.desc = COMPOUND_STRING("This Tauros's charge can\nbreak rocks."),
 	},
-	[RIDE_STOUTLAND] = {
+	[RIDE_STOUTLAND - 1] =
+	{
 		.species = SPECIES_STOUTLAND,
-		.desc = sStoutlandRideDesc,
+		.desc = COMPOUND_STRING("This Stoutland can search\nfor buried items."),
 	},
-	[RIDE_MUDSDALE] = {
+	[RIDE_MUDSDALE - 1] =
+	{
 		.species = SPECIES_MUDSDALE,
-		.desc = sMudsdaleRideDesc,
+		.desc = COMPOUND_STRING("This Mudsdale can run\nover rocky terrain."),
 	},
-	[RIDE_MACHAMP] = {
+	[RIDE_MACHAMP - 1] =
+	{
 		.species = SPECIES_MACHAMP,
-		.desc = sMachampRideDesc,
+		.desc = COMPOUND_STRING("This Machamp can move\nheavy boulders."),
 	},
-	[RIDE_SHARPEDO] = {
+	[RIDE_SHARPEDO - 1] =
+	{
 		.species = SPECIES_SHARPEDO,
-		.desc = sSharpedoRideDesc,
+		.desc = COMPOUND_STRING("This Sharpedo allows you\nto surf on the water."),
 	},
-	[RIDE_CHARIZARD] = {
+	[RIDE_CHARIZARD - 1] =
+	{
 		.species = SPECIES_CHARIZARD,
-		.desc = sCharizardRideDesc,
+		.desc = COMPOUND_STRING("This Charizard flies you\nto other places."),
 	}
 };
 
@@ -123,7 +116,7 @@ u8 CountObtainedPokeRides(void)
 {
 	u8 i, count;
 	
-	for (i = 0, count = 0; i < (NUM_RIDE_POKEMON - 1); i++)
+	for (i = 0, count = 0; i < NUM_RIDE_POKEMON; i++)
 	{
 		if (FlagGet(FLAG_TAUROS_RIDE_GET + i))
 			++count;
@@ -141,7 +134,7 @@ bool8 PlayerHasObtainedSharpedoPaddle(void)
 
 u16 RideToSpeciesId(u8 ride)
 {
-	return sRideToSpeciesAndDesc[ride].species;
+	return sRideToSpeciesAndDesc[ride - 1].species;
 }
 
 bool8 TryDismountPokeRide(void)
@@ -186,7 +179,7 @@ void TryRemoveStrengthFlag(void)
 bool8 FieldCB_ReturnToFieldUseRidePager(void)
 {
 	u8 i, count;
-	s16 *data, windowId, cursorPos, order[NUM_RIDE_POKEMON - 1];
+	s16 *data, windowId, cursorPos, order[NUM_RIDE_POKEMON];
 	
 	count = DrawRidePagerMultichoiceWindow(&windowId, &cursorPos, order);
 	FadeInFromBlack();
@@ -230,12 +223,12 @@ static u8 DrawRidePagerMultichoiceWindow(s16 *windowId, s16 *cursorPos, s16 *ord
 	*windowId = CreateRidePagerMultichoiceWindow();
 	DrawStdWindowFrame(*windowId, FALSE);
 	
-	for (i = 0, count = 0; i < (NUM_RIDE_POKEMON - 1); i++)
+	for (i = 0, count = 0; i < NUM_RIDE_POKEMON; i++)
 	{
 		if (FlagGet(FLAG_TAUROS_RIDE_GET + i))
 		{
 			order[count] = i + 1;
-			StringExpandPlaceholders(gStringVar4, sPokeRideActionTable[order[count]].text);
+			StringExpandPlaceholders(gStringVar4, sPokeRideActionTable[order[count] - 1].text);
 			AddTextPrinterParameterized(*windowId, 2, gStringVar4, 8, count * 16, 0xFF, NULL);
 			++count;
 		}
@@ -262,7 +255,7 @@ static u8 CreateRidePagerMultichoiceWindow(void)
 
 static void PrintRideDescInMessageWindow(u8 ride)
 {
-	StringExpandPlaceholders(gStringVar4, sRideToSpeciesAndDesc[ride].desc);
+	StringExpandPlaceholders(gStringVar4, sRideToSpeciesAndDesc[ride - 1].desc);
 	FillWindowPixelBuffer(0, PIXEL_FILL(1));
 	AddTextPrinterWithCustomSpeedForMessage(FALSE, 0);
 }
@@ -339,7 +332,7 @@ static void DestroyRidePagerWindow(u8 taskId, bool8 useRide)
 	if (useRide)
 	{
 		gPlayerAvatar.preventStep = TRUE;
-		gTasks[taskId].func = sPokeRideActionTable[tOrder(tCursorPos)].func.void_u8;
+		gTasks[taskId].func = sPokeRideActionTable[tOrder(tCursorPos) - 1].func.void_u8;
 	}
 	else
 	{

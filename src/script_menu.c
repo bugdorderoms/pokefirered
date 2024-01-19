@@ -574,12 +574,12 @@ const u8 *const gStdStringPtrs[] = {
     [STDSTRING_MARSH_BADGE]      = gText_Marshbadge,
     [STDSTRING_VOLCANO_BADGE]    = gText_Volcanobadge,
     [STDSTRING_EARTH_BADGE]      = gText_Earthbadge,
-    [STDSTRING_COINS]            = gText_Coins_2,
+    [STDSTRING_COINS]            = gText_Coins,
     [STDSTRING_ITEMS_POCKET]     = gText_ItemsPocket,
     [STDSTRING_KEY_ITEMS_POCKET] = gText_KeyItemsPocket,
     [STDSTRING_POKEBALLS_POCKET] = gText_PokeBallsPocket,
     [STDSTRING_TM_CASE]          = gText_TmCase,
-    [STDSTRING_BERRY_POUCH]      = gText_BerryPouch_2
+    [STDSTRING_BERRY_POUCH]      = gText_BerryPouch
 };
 
 static const u8 *const sDescriptionPtrs_CableClub_TradeBattleCancel[] = {

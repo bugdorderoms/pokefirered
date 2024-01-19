@@ -449,7 +449,7 @@ static void PrintTotalRecord(struct LinkBattleRecords * records)
         *strvar = 0xFF;
     }
 
-    StringExpandPlaceholders(gStringVar4, gString_BattleRecords_TotalRecord);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Total Record W:{STR_VAR_1} L:{STR_VAR_2} D:{STR_VAR_3}"));
     AddTextPrinterParameterized4(0, 2, 12, 24, 0, 2, sTextColor, 0, gStringVar4);
 }
 
@@ -460,7 +460,7 @@ static void PrintOpponentBattleRecord(struct LinkBattleRecord * record, u8 y)
 
     if (record->wins == 0 && record->losses == 0 && record->draws == 0)
     {
-        AddTextPrinterParameterized4(0, 2, 0, y, 0, 2, sTextColor, 0, gString_BattleRecords_7Dashes);
+        AddTextPrinterParameterized4(0, 2, 0, y, 0, 2, sTextColor, 0, COMPOUND_STRING("-------"));
         for (i = 0; i < 3; i++)
         {
             if (i == 0)
@@ -469,7 +469,7 @@ static void PrintOpponentBattleRecord(struct LinkBattleRecord * record, u8 y)
                 x = 0x84;
             else
                 x = 0xB4;
-            AddTextPrinterParameterized4(0, 2, x, y, 0, 2, sTextColor, 0, gString_BattleRecords_4Dashes);
+            AddTextPrinterParameterized4(0, 2, x, y, 0, 2, sTextColor, 0, COMPOUND_STRING("----"));
         }
     }
     else
@@ -508,11 +508,11 @@ static void PrintBattleRecords(void)
     s32 i;
 
     FillWindowPixelRect(0, PIXEL_FILL(0), 0, 0, 0xD8, 0x90);
-    StringExpandPlaceholders(gStringVar4, gString_BattleRecords_PlayersBattleResults);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("{PLAYER}'s Battle Results"));
     left = 0xD0 - GetStringWidth(2, gStringVar4, -1);
     AddTextPrinterParameterized4(0, 2, left / 2, 4, 0, 2, sTextColor, 0, gStringVar4);
     PrintTotalRecord(&gSaveBlock2Ptr->linkBattleRecords);
-    AddTextPrinterParameterized4(0, 2, 0x54, 0x30, 0, 2, sTextColor, 0, gString_BattleRecords_ColumnHeaders);
+    AddTextPrinterParameterized4(0, 2, 0x54, 0x30, 0, 2, sTextColor, 0, COMPOUND_STRING("Win{CLEAR_TO 0x30}Lose{CLEAR_TO 0x60}Draw"));
     for (i = 0; i < LINK_B_RECORDS_COUNT; i++)
         PrintOpponentBattleRecord(&gSaveBlock2Ptr->linkBattleRecords.entries[i], 0x3D + 14 * i);
 	

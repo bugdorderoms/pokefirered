@@ -65,9 +65,9 @@ static void Task_Error_NoPokemon(u8 taskId);
 static void Task_PlayerPcExitMailSubmenu(u8 taskId);
 
 static const u8 *const sItemStorageActionDescriptionPtrs[] = {
-    gText_TakeOutItemsFromThePC,
-    gText_StoreItemsInThePC,
-    gText_GoBackToThePreviousMenu
+    COMPOUND_STRING("Take out items from the PC."),
+    COMPOUND_STRING("Store items in the PC."),
+    COMPOUND_STRING("Go back to the\nprevious menu.")
 };
 
 static const struct MenuAction sMenuActions_TopMenu[] = {

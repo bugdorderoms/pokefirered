@@ -1447,7 +1447,7 @@ static u8 GetStatusIconForBattlerId(u8 statusElementId, u8 battlerId)
 static void UpdateSafariBallsTextOnHealthbox(u8 healthboxSpriteId)
 {
     u32 windowId, spriteTileNum;
-    u8 *windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(gText_SafariBalls, 0, 3, &windowId);
+    u8 *windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(COMPOUND_STRING("{HIGHLIGHT 2}Safari Balls"), 0, 3, &windowId);
 
     spriteTileNum = gSprites[healthboxSpriteId].oam.tileNum * TILE_SIZE_4BPP;
     TextIntoHealthboxObject((void*)(OBJ_VRAM0 + 0x40) + spriteTileNum, windowTileData, 6);
@@ -1458,7 +1458,7 @@ static void UpdateSafariBallsTextOnHealthbox(u8 healthboxSpriteId)
 static void UpdateLeftNoOfBallsTextOnHealthbox(u8 healthboxSpriteId)
 {
     u8 text[16];
-    u8 *txtPtr = StringCopy(text, gText_HighlightRed_Left);
+    u8 *txtPtr = StringCopy(text, COMPOUND_STRING("{HIGHLIGHT 2}Left: "));
     u32 windowId, spriteTileNum;
     u8 *windowTileData;
 
@@ -1471,11 +1471,9 @@ static void UpdateLeftNoOfBallsTextOnHealthbox(u8 healthboxSpriteId)
     RemoveWindow(windowId);
 }
 
-static const u8 gUnknown_8260556[] = _("{HIGHLIGHT 02}");
-
 static void UpdateNickInHealthbox(u8 healthboxSpriteId, struct Pokemon *mon)
 {
-    u8 nickname[POKEMON_NAME_LENGTH + 1], *windowTileData, *ptr = StringCopy(gDisplayedStringBattle, gUnknown_8260556), gender = GetMonGender(mon);
+    u8 nickname[POKEMON_NAME_LENGTH + 1], *windowTileData, *ptr = StringCopy(gDisplayedStringBattle, COMPOUND_STRING("{HIGHLIGHT 02}")), gender = GetMonGender(mon);
     u32 windowId, spriteTileNum;
     u16 species = GetMonData(mon, MON_DATA_SPECIES);
 	

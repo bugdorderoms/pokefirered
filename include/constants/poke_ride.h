@@ -8,6 +8,6 @@
 #define RIDE_MACHAMP     4
 #define RIDE_SHARPEDO    5
 #define RIDE_CHARIZARD   6
-#define NUM_RIDE_POKEMON 7
+#define NUM_RIDE_POKEMON 6
 
 #endif // GUARD_CONSTANTS_POKE_RIDE_H

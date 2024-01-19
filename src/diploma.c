@@ -229,14 +229,14 @@ static void DiplomaPrintText(void)
     u32 width;
     DynamicPlaceholderTextUtil_Reset();
     DynamicPlaceholderTextUtil_SetPlaceholderPtr(0, gSaveBlock2Ptr->playerName);
-	DynamicPlaceholderTextUtil_SetPlaceholderPtr(1, HasAllMons() ? gUnknown_841B68F : gUnknown_841B698);
+	DynamicPlaceholderTextUtil_SetPlaceholderPtr(1, HasAllMons() ? COMPOUND_STRING("National") : COMPOUND_STRING("Kanto"));
     FillWindowPixelBuffer(0, 0);
-    DynamicPlaceholderTextUtil_ExpandPlaceholders(arr, gUnknown_841B60E);
+    DynamicPlaceholderTextUtil_ExpandPlaceholders(arr, COMPOUND_STRING("Player: {DYNAMIC 0x00}"));
     width = GetStringWidth(2, arr, -1);
     AddTextPrinterParameterized3(0, 2, 0x78 - (width / 2), 4, gUnknown_8415A04, -1, arr);
-    DynamicPlaceholderTextUtil_ExpandPlaceholders(arr, gUnknown_841B619);
+    DynamicPlaceholderTextUtil_ExpandPlaceholders(arr, COMPOUND_STRING("This document is issued in\nrecognition of your magnificent\nachievement - the completion of\nthe {DYNAMIC 0x01} Pokédex."));
     width = GetStringWidth(2, arr, -1);
     AddTextPrinterParameterized3(0, 0x2, 0x78 - (width / 2), 0x1E, gUnknown_8415A04, -1, arr);
-    AddTextPrinterParameterized3(0, 0x2, 0x78, 0x69, gUnknown_8415A04, 0, gUnknown_841B684);
+    AddTextPrinterParameterized3(0, 0x2, 0x78, 0x69, gUnknown_8415A04, 0, COMPOUND_STRING("GAME FREAK"));
     PutWindowTilemap(0);
 }

@@ -4434,37 +4434,37 @@ void CopyMoveTargetName(u8 *dest, u16 move)
 	switch (gBattleMoves[move].target)
 	{
 		case MOVE_TARGET_SELECTED:
-		    str = gText_MoveTargetSelected;
+		    str = COMPOUND_STRING("Selected");
 			break;
 		case MOVE_TARGET_DEPENDS:
-		    str = gText_MoveTargetDepends;
+		    str = COMPOUND_STRING("Depends");
 			break;
 		case MOVE_TARGET_USER_OR_SELECTED:
-		    str = gText_MoveTargetUserOrSelected;
+		    str = COMPOUND_STRING("User o Sel.");
 			break;
 		case MOVE_TARGET_RANDOM:
-		    str = gText_MoveTargetRandom;
+		    str = COMPOUND_STRING("Random");
 			break;
 		case MOVE_TARGET_OPPONENTS_FIELD:
-		    str = gText_MoveTargetOpponentsField;
+		    str = COMPOUND_STRING("Foe's Side");
 			break;
 		case MOVE_TARGET_BOTH:
-		    str = gText_MoveTargetBoth;
+		    str = COMPOUND_STRING("Both Foes");
 			break;
 		case MOVE_TARGET_USER:
-		    str = gText_MoveTargetUser;
+		    str = COMPOUND_STRING("User");
 			break;
 		case MOVE_TARGET_ALLY:
-		    str = gText_MoveTargetAlly;
+		    str = COMPOUND_STRING("User's Ally");
 			break;
 		case MOVE_TARGET_FOES_AND_ALLY:
-		    str = gText_MoveTargetFoesAndAlly;
+		    str = COMPOUND_STRING("Foes & Ally");
 			break;
 		case MOVE_TARGET_USER_OR_ALLY:
-			str = gText_MoveTargetUserOrAlly;
+			str = COMPOUND_STRING("User o Ally");
 			break;
 		case MOVE_TARGET_ALL_BATTLERS:
-		    str = gText_MoveTargetAllBattlers;
+		    str = COMPOUND_STRING("All Field");
 			break;
 	}
 	StringCopyN(dest, str, 12);
@@ -5322,13 +5322,13 @@ const u8 *PokemonUseItemEffectsBattle(u8 battlerId, u16 itemId, bool8 *canUse)
 					*canUse = TRUE;
 					break;
 				case BALL_THROW_UNABLE_TWO_MONS:
-				    failStr = gText_CantThrowPokeBall_TwoMons;
+				    failStr = COMPOUND_STRING("Cannot throw a ball!\nThere are two Pokémon out there!\p");
 					break;
 				case BALL_THROW_UNABLE_NO_ROOM:
-				    failStr = gUnknown_8416631;
+				    failStr = COMPOUND_STRING("The Box is full.{PAUSE_UNTIL_PRESS}");
 					break;
 				case BALL_THROW_UNABLE_SEMI_INVULNERABLE:
-				    failStr = gText_CantThrowPokeBall_SemiInvulnerable;
+				    failStr = COMPOUND_STRING("Cannot throw a ball!\nThere's no Pokémon in sight!\p");
 					break;
 			}
 			break;

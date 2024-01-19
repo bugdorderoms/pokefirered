@@ -117,9 +117,6 @@ static inline void TrySetMysteryGiftFlag(u16 flag)
 		FlagSet(flag);
 }
 
-static const u8 sText_NeedToHavePokemon[] = _("You'll need to have at least\none Pokémon in your party\pto receive this gift\nusing the code {STR_VAR_1}!");
-static const u8 sText_NeedSpaceInParty[] = _("You'll need space in your party\nto receive this gift\pusing the code {STR_VAR_1}!");
-
 static u8 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
 {
 	u8 i, j, nature, *ivs;
@@ -128,12 +125,12 @@ static u8 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
 	
 	if (!FlagGet(FLAG_SYS_POKEMON_GET))
 	{
-		StringExpandPlaceholders(gStringVar4, sText_NeedToHavePokemon);
+		StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You'll need to have at least\none Pokémon in your party\pto receive this gift\nusing the code {STR_VAR_1}!"));
 		return MYSTERY_GIFT_CODE_FAILED;
 	}
 	else if (CalculatePlayerPartyCount() + mysteryGift.presentsCount > PARTY_SIZE) // Only give the gift if has enough space in party
 	{
-		StringExpandPlaceholders(gStringVar4, sText_NeedSpaceInParty);
+		StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You'll need space in your party\nto receive this gift\pusing the code {STR_VAR_1}!"));
 		return MYSTERY_GIFT_CODE_FAILED;
 	}
 	else
@@ -177,8 +174,6 @@ static u8 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
 	}
 }
 
-static const u8 sText_NeedSpaceInBag[] = _("You'll need some space in your\nbag to receive this gift\pusing the code {STR_VAR_1}!");
-
 static u8 MysteryGift_GiveItem(struct MysteryGift mysteryGift)
 {
 	u16 i;
@@ -188,7 +183,7 @@ static u8 MysteryGift_GiveItem(struct MysteryGift mysteryGift)
 	{
 		if (!CheckBagHasSpace(mgItem[i].itemId, mgItem[i].quantity)) // Only give gift if has enough space in bag
 		{
-			StringExpandPlaceholders(gStringVar4, sText_NeedSpaceInBag);
+			StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You'll need some space in your\nbag to receive this gift\pusing the code {STR_VAR_1}!"));
 			return MYSTERY_GIFT_CODE_FAILED;
 		}
 	}

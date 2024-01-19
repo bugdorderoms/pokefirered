@@ -51,7 +51,7 @@ bool8 RemoveCoins(u16 toSub)
 void PrintCoinsString(u32 coinAmount)
 {
     ConvertIntToDecimalStringN(gStringVar1, coinAmount, STR_CONV_MODE_RIGHT_ALIGN, 4);
-    StringExpandPlaceholders(gStringVar4, gText_Coins);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("{STR_VAR_1} Coins"));
     AddTextPrinterParameterized(sCoinsWindowId, 0, gStringVar4, 64 - GetStringWidth(0, gStringVar4, 0), 0xC, 0, NULL);
 }
 
@@ -64,7 +64,7 @@ void ShowCoinsWindow(u32 coinAmount, u8 x, u8 y)
     PutWindowTilemap(sCoinsWindowId);
     TextWindow_SetStdFrame0_WithPal(sCoinsWindowId, 0x21D, 0xD0);
     DrawStdFrameWithCustomTileAndPalette(sCoinsWindowId, FALSE, 0x21D, 0xD);
-    AddTextPrinterParameterized(sCoinsWindowId, 2, gText_Coins_2, 0, 0, 0xFF, 0);
+    AddTextPrinterParameterized(sCoinsWindowId, 2, gText_Coins, 0, 0, 0xFF, 0);
     PrintCoinsString(coinAmount);
 }
 

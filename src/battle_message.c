@@ -347,8 +347,6 @@ static const u8 sNpcTextColorToFont[] = {0x04, 0x05, 0x02, 0x02};
 
 // Strings
 const u8 gText_EmptyString[] = _("");
-const u8 gText_SafariBalls[] = _("{HIGHLIGHT 2}Safari Balls");
-const u8 gText_HighlightRed_Left[] = _("{HIGHLIGHT 2}Left: ");
 const u8 gText_Win[] = _("{HIGHLIGHT 0}Win");
 const u8 gText_Loss[] = _("{HIGHLIGHT 0}Loss");
 const u8 gText_Draw[] = _("{HIGHLIGHT 0}Draw");
@@ -368,17 +366,6 @@ const u8 gText_MoveInterfaceMoveNamesColor[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SH
 const u8 gText_MoveInfoPowerAndAccuracy[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Power: {B_BUFF1}\nAcc.: {B_BUFF2}");
 const u8 gText_MoveInfoPriorityAndCategory[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Prio.: {B_BUFF1}\nCat/{B_BUFF2}");
 const u8 gText_MoveInfoTarget[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Target:\n{B_BUFF1}");
-const u8 gText_MoveTargetSelected[] = _("Selected");
-const u8 gText_MoveTargetDepends[] = _("Depends");
-const u8 gText_MoveTargetUserOrSelected[] = _("User o Sel.");
-const u8 gText_MoveTargetRandom[] = _("Random");
-const u8 gText_MoveTargetOpponentsField[] = _("Foe's Side");
-const u8 gText_MoveTargetBoth[] = _("Both Foes");
-const u8 gText_MoveTargetUser[] = _("User");
-const u8 gText_MoveTargetAlly[] = _("User's Ally");
-const u8 gText_MoveTargetFoesAndAlly[] = _("Foes & Ally");
-const u8 gText_MoveTargetUserOrAlly[] = _("User o Ally");
-const u8 gText_MoveTargetAllBattlers[] = _("All Field");
 const u8 gText_BattleYesNoChoice[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Yes\nNo");
 const u8 gText_BattleSwitchWhich[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Switch\nwhich?");
 const u8 gText_PkmnIsEvolving[] = _("What?\n{STR_VAR_1} is evolving!");

@@ -397,14 +397,14 @@ static void Task_RushInjuredPokemonToCenter(u8 taskId)
             gTasks[taskId].data[0] = 1;
         break;
     case 1:
-        if (PrintWhiteOutRecoveryMessage(taskId, gText_PlayerScurriedToCenter, 2, 8))
+        if (PrintWhiteOutRecoveryMessage(taskId, COMPOUND_STRING("{PLAYER} scurried to a Pokémon Center,\nprotecting the exhausted and fainted\nPokémon from further harm‥\p"), 2, 8))
         {
             ObjectEventTurn(&gObjectEvents[gPlayerAvatar.objectEventId], 2);
             ++gTasks[taskId].data[0];
         }
         break;
     case 4:
-        if (PrintWhiteOutRecoveryMessage(taskId, gText_PlayerScurriedBackHome, 2, 8))
+        if (PrintWhiteOutRecoveryMessage(taskId, COMPOUND_STRING("{PLAYER} scurried back home, protecting\nthe exhausted and fainted Pokémon from\nfurther harm‥\p"), 2, 8))
         {
             ObjectEventTurn(&gObjectEvents[gPlayerAvatar.objectEventId], 2);
             ++gTasks[taskId].data[0];

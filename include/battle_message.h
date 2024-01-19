@@ -241,9 +241,6 @@ extern const u8 gText_Ice[];
 extern const u8 gText_Confusion[];
 extern const u8 gText_Love[];
 
-extern const u8 gText_SafariBalls[];
-extern const u8 gText_HighlightRed_Left[];
-
 extern const u8 gText_Win[];
 extern const u8 gText_Loss[];
 extern const u8 gText_Draw[];

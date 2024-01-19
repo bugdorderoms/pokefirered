@@ -199,8 +199,6 @@ static const u8 sOptions_UseToss_Exit[] = {
     BP_ACTION_DUMMY
 };
 
-static const u8 sText_Space[] = _(" ");
-
 static const struct WindowTemplate sWindowTemplates_Main[] = {
     {
         .bg = 0,
@@ -670,7 +668,7 @@ static void GetBerryNameAndIndexForMenu(u8 * dest, u16 itemId)
     ConvertIntToDecimalStringN(gStringVar1, ITEM_TO_BERRY(itemId) + 1, STR_CONV_MODE_LEADING_ZEROS, 2);
     StringAppend(gStringVar4, gStringVar1);
     CopyItemName(itemId, gStringVar1);
-    StringAppend(gStringVar4, sText_Space);
+    StringAppend(gStringVar4, COMPOUND_STRING(" "));
     StringAppend(gStringVar4, gText_FontSize2);
     StringAppend(gStringVar4, gStringVar1);
     StringCopy(dest, gStringVar4);
@@ -726,7 +724,7 @@ static void PrintSelectedBerryDescription(s32 itemIdx)
 {
     FillWindowPixelBuffer(1, PIXEL_FILL(0));
     BerryPouchPrint(1, 2, itemIdx != sResources->listMenuNumItems ? ItemId_GetDescription(BagGetItemIdByPocketPosition(POCKET_BERRY_POUCH, itemIdx))
-	: gText_TheBerryPouchWillBePutAway, 0, 2, 2, 0, 0, 0);
+	: COMPOUND_STRING("The Berry Pouch will be\nput away."), 0, 2, 2, 0, 0, 0);
 }
 
 static void SetDescriptionWindowBorderPalette(s32 pal)

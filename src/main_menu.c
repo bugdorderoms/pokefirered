@@ -308,17 +308,17 @@ static void Task_SetWin0BldRegsAndCheckSaveFile(u8 taskId)
         case SAVE_STATUS_INVALID:
             SetStdFrame0OnBg0();
             gTasks[taskId].tMenuType = MAIN_MENU_NEWGAME;
-            PrintSaveErrorStatus(taskId, gText_SaveFileHasBeenDeleted);
+            PrintSaveErrorStatus(taskId, COMPOUND_STRING("The save file has been\ndeleted..."));
             break;
         case SAVE_STATUS_ERROR:
             SetStdFrame0OnBg0();
             gTasks[taskId].tMenuType = MAIN_MENU_CONTINUE;
-            PrintSaveErrorStatus(taskId, gText_SaveFileCorruptedPrevWillBeLoaded);   
+            PrintSaveErrorStatus(taskId, COMPOUND_STRING("The save file is corrupted.\pThe previous save file will be\nloaded."));   
             break;
         case SAVE_STATUS_NO_FLASH:
             SetStdFrame0OnBg0();
             gTasks[taskId].tMenuType = MAIN_MENU_NEWGAME;
-            PrintSaveErrorStatus(taskId, gText_1MSubCircuitBoardNotInstalled);
+            PrintSaveErrorStatus(taskId, COMPOUND_STRING("The 1M sub-circuit board is\nnot installed."));
             break;
 		}
 	}
@@ -379,7 +379,7 @@ static void Task_PrintMainMenuText(u8 taskId)
 		case MAIN_MENU_CONTINUE:
 			// Continue
 			FillWindowPixelBuffer(CONTINUE_WINDOW_CONTINUE, PIXEL_FILL(10));
-			PrintMainMenuHeaderTextCentered(CONTINUE_WINDOW_CONTINUE, gText_Continue);
+			PrintMainMenuHeaderTextCentered(CONTINUE_WINDOW_CONTINUE, COMPOUND_STRING("Continue"));
 			MainMenu_DrawWindow(&sMainMenuWinTemplates[CONTINUE_WINDOW_CONTINUE]);
 			PrintContinueStats();
 			PutWindowTilemap(CONTINUE_WINDOW_CONTINUE);
@@ -665,7 +665,7 @@ static void PrintPlayerName(void)
 {
     u8 i, name[PLAYER_NAME_LENGTH + 1], *ptr = name;
 
-    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 16, sTextColor2, -1, gText_Player);
+    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 16, sTextColor2, -1, COMPOUND_STRING("Player"));
 
     for (i = 0; i < PLAYER_NAME_LENGTH; i++)
         *ptr++ = gSaveBlock2Ptr->playerName[i];
@@ -680,7 +680,7 @@ static void PrintDexCount(void)
 	
     if (FlagGet(FLAG_SYS_POKEDEX_GET))
     {
-        AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 44, sTextColor2, -1, gText_Pokedex);
+        AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 44, sTextColor2, -1, COMPOUND_STRING("Pokédex"));
         ConvertIntToDecimalStringN(strbuf, GetNationalPokedexCount(FLAG_GET_CAUGHT), STR_CONV_MODE_LEFT_ALIGN, 4);
         AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 62, 44, sTextColor2, -1, strbuf);
     }
@@ -691,7 +691,7 @@ static void PrintPlayTime(void)
     u8 strbuf[30];
     u8 *ptr;
 
-    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 30, sTextColor2, -1, gText_Time);
+    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 30, sTextColor2, -1, COMPOUND_STRING("Time"));
     ptr = ConvertIntToDecimalStringN(strbuf, gSaveBlock2Ptr->playTimeHours, STR_CONV_MODE_LEFT_ALIGN, 3);
     *ptr++ = CHAR_COLON;
     ConvertIntToDecimalStringN(ptr, gSaveBlock2Ptr->playTimeMinutes, STR_CONV_MODE_LEADING_ZEROS, 2);
@@ -701,7 +701,7 @@ static void PrintPlayTime(void)
 static void PrintBadgeCount(void)
 {
     u8 strbuf[30];
-    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 58, sTextColor2, -1, gText_Badges);
+    AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 58, sTextColor2, -1, COMPOUND_STRING("Badges"));
     ConvertIntToDecimalStringN(strbuf, GetNumOfBadges(), STR_CONV_MODE_LEADING_ZEROS, 1);
     AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 62, 58, sTextColor2, -1, strbuf);
 }
