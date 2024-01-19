@@ -169,7 +169,7 @@ struct PokemonSummaryScreenData
         u8 itemNameStrBuf[ITEM_NAME_LENGTH + 1];
         u8 genderSymbolStrBuf[3];
         u8 levelStrBuf[7];
-        u8 curHpStrBuf[9];
+        u8 curHpStrBuf[11];
         u8 statValueStrBufs[5][5];
         u8 moveCurPpStrBufs[MAX_MON_MOVES + 1][11];
         u8 moveMaxPpStrBufs[MAX_MON_MOVES + 1][11];
@@ -2006,10 +2006,10 @@ static void BufferMonSkills(void)
     u8 i, tempStr[20];
     u16 ability, species;
 
-    ConvertIntToDecimalStringN(sMonSummaryScreen->summary.curHpStrBuf, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP), STR_CONV_MODE_LEFT_ALIGN, 3);
+    ConvertIntToDecimalStringN(sMonSummaryScreen->summary.curHpStrBuf, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP), STR_CONV_MODE_LEFT_ALIGN, 4);
     StringAppend(sMonSummaryScreen->summary.curHpStrBuf, gText_Slash);
 
-    ConvertIntToDecimalStringN(tempStr, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MAX_HP), STR_CONV_MODE_LEFT_ALIGN, 3);
+    ConvertIntToDecimalStringN(tempStr, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MAX_HP), STR_CONV_MODE_LEFT_ALIGN, 4);
     StringAppend(sMonSummaryScreen->summary.curHpStrBuf, tempStr);
 
     sMonSkillsPrinterXpos->curHpStr = GetNumberRightAlign63(sMonSummaryScreen->summary.curHpStrBuf);
@@ -2567,7 +2567,7 @@ static void PokeSum_PrintMonIvs(void)
 	struct Pokemon *mon = &sMonSummaryScreen->currentMon;
 		
 	for (i = 0; i < NUM_STATS; i++)
-		BlitMoveInfoIcon(3, (GetMonData(mon, MON_DATA_HP_IV + i) / 2) + 29, 12, i == 0 ? 6 : sStatsPosY[i - 1] + 1);
+		BlitMoveInfoIcon(3, (GetMonData(mon, MON_DATA_HP_IV + i) / 2) + 29, 6, i == 0 ? 6 : sStatsPosY[i - 1] + 1);
 }
 
 static void PokeSum_PrintAbilityDataOrMoveTypes(void)

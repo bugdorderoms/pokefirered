@@ -146,7 +146,7 @@ enum
 static void SpriteCB_HealthBoxOther(struct Sprite * sprite);
 static void SpriteCB_HealthBar(struct Sprite * sprite);
 static const u8 *GetHealthboxElementGfxPtr(u8 which);
-static void UpdateHpTextInHealthboxInDoubles(u8 healthboxSpriteId, s16 value, u8 maxOrCurrent);
+static void UpdateHpTextInHealthboxInDoubles(u8 healthboxSpriteId, u8 maxOrCurrent, s16 currHP, s16 maxHP);
 static void sub_8049388(u8 taskId);
 static void sub_80493E4(u8 taskId);
 static void sub_8049568(struct Sprite * sprite);
@@ -712,77 +712,58 @@ static void UpdateLvlInHealthbox(u8 healthboxSpriteId, u8 lvl)
     RemoveWindow(windowId);
 }
 
-void UpdateHpTextInHealthbox(u8 healthboxSpriteId, s16 value, u8 maxOrCurrent)
+static void HpTextIntoHealthboxObject(void *dest, u8 *windowTileData, u8 windowWidth)
 {
-    u32 windowId, spriteTileNum;
-    u8 *windowTileData;
-    u8 *strptr;
-
-    if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
-    {
-        u8 text[8];
-		
-        if (maxOrCurrent != HP_CURRENT) // singles, max
-        {
-            ConvertIntToDecimalStringN(text, value, STR_CONV_MODE_RIGHT_ALIGN, 3);
-            windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(text, 0, 5, &windowId);
-            spriteTileNum = gSprites[healthboxSpriteId].oam.tileNum;
-            TextIntoHealthboxObject((void*)(OBJ_VRAM0) + spriteTileNum * TILE_SIZE_4BPP + 0xA40, windowTileData, 2);
-            RemoveWindow(windowId);
-        }
-        else // singles, current
-        {
-            strptr = ConvertIntToDecimalStringN(text, value, STR_CONV_MODE_RIGHT_ALIGN, 3);
-            *strptr++ = CHAR_SLASH;
-            *strptr++ = EOS;
-            windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(text, 4, 5, &windowId);
-            spriteTileNum = gSprites[healthboxSpriteId].oam.tileNum;
-            TextIntoHealthboxObject((void *)(OBJ_VRAM0) + spriteTileNum * TILE_SIZE_4BPP + 0x2E0, windowTileData, 1);
-            TextIntoHealthboxObject((void *)(OBJ_VRAM0) + spriteTileNum * TILE_SIZE_4BPP + 0xA00, windowTileData + 0x20, 2);
-            RemoveWindow(windowId);
-        }
-    }
-    else
-		UpdateHpTextInHealthboxInDoubles(healthboxSpriteId, value, maxOrCurrent);
+	CpuCopy32(windowTileData + 256, dest, windowWidth * TILE_SIZE_4BPP);
 }
 
-static void UpdateHpTextInHealthboxInDoubles(u8 healthboxSpriteId, s16 value, u8 maxOrCurrent)
+static void PrintHpOnHealthbox(u8 healthboxSpriteId, s16 currHP, s16 maxHP, u32 rightTile, u32 leftTile)
 {
+	u8 *windowTileData;
+	u32 windowId;
+	u8 x, tilesCount, text[28], *txtPtr;
+	void *objVram = (void *)(OBJ_VRAM0) + gSprites[healthboxSpriteId].oam.tileNum * TILE_SIZE_4BPP;
+	
+	txtPtr = ConvertIntToDecimalStringN(text, currHP, STR_CONV_MODE_RIGHT_ALIGN, 4);
+    *txtPtr++ = CHAR_SLASH;
+    txtPtr = ConvertIntToDecimalStringN(txtPtr, maxHP, STR_CONV_MODE_LEFT_ALIGN, 4);
+	windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(txtPtr - 6, 0, 5, &windowId);
+	HpTextIntoHealthboxObject(objVram + rightTile, windowTileData, 4);
+	RemoveWindow(windowId);
+	
+	txtPtr[-6] = EOS;
+	
+	if (maxHP >= 1000)
+		x = 9, tilesCount = 3;
+	else
+		x = 6, tilesCount = 2, leftTile += 0x20;
+	
+	windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(text, x, 5, &windowId);
+	HpTextIntoHealthboxObject(objVram + leftTile, windowTileData, tilesCount);
+	RemoveWindow(windowId);
+}
+
+void UpdateHpTextInHealthbox(u8 healthboxSpriteId, u8 maxOrCurrent, s16 currHP, s16 maxHP)
+{
+    if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+		PrintHpOnHealthbox(healthboxSpriteId, currHP, maxHP, 0xB00, 0x3A0);
+    else
+		UpdateHpTextInHealthboxInDoubles(healthboxSpriteId, maxOrCurrent, currHP, maxHP);
+}
+
+static void UpdateHpTextInHealthboxInDoubles(u8 healthboxSpriteId, u8 maxOrCurrent, s16 currHP, s16 maxHP)
+{
+	u8 i, barSpriteId;
+	
     if (gBattleSpritesDataPtr->battlerData[gSprites[healthboxSpriteId].hMain_Battler].hpNumbersNoBars) // don't print text if only bars are visible
     {
-		u8 text[20] = __("{COLOR 01}{HIGHLIGHT 00}");
-        u8 var = maxOrCurrent == HP_CURRENT ? 0 : 4;
-        u8 healthbarSpriteId = gSprites[healthboxSpriteId].hMain_HealthBarSpriteId;
-        u8 *txtPtr = ConvertIntToDecimalStringN(text + 6, value, STR_CONV_MODE_RIGHT_ALIGN, 3);
-        u8 i;
-
-        if (maxOrCurrent == HP_CURRENT)
-            StringCopy(txtPtr, gText_Slash);
+		barSpriteId = gSprites[healthboxSpriteId].hMain_HealthBarSpriteId;
 		
-        RenderTextFont9(gMonSpritesGfxPtr->barFontGfx, 0, text, 0, 0, 0, 0, 0);
-
-        for (i = var; i < var + 3; i++)
-        {
-            if (i < 3)
-            {
-                CpuCopy32(&gMonSpritesGfxPtr->barFontGfx[((i - var) * 64) + 32],
-                          (void*)((OBJ_VRAM0) + 32 * (1 + gSprites[healthbarSpriteId].oam.tileNum + i)),
-                          0x20);
-            }
-            else
-            {
-                CpuCopy32(&gMonSpritesGfxPtr->barFontGfx[((i - var) * 64) + 32],
-                          (void*)((OBJ_VRAM0 + 0x20) + 32 * (i + gSprites[healthbarSpriteId].oam.tileNum)),
-                          0x20);
-            }
-        }
-        if (maxOrCurrent == HP_CURRENT)
-        {
-            CpuCopy32(&gMonSpritesGfxPtr->barFontGfx[224], (void*)((OBJ_VRAM0) + ((gSprites[healthbarSpriteId].oam.tileNum + 4) * TILE_SIZE_4BPP)), 0x20);
-            CpuFill32(0, (void*)((OBJ_VRAM0) + (gSprites[healthbarSpriteId].oam.tileNum * TILE_SIZE_4BPP)), 0x20);
-        }
-        else
-			CpuCopy32(GetHealthboxElementGfxPtr(HEALTHBOX_GFX_116), (void*)(OBJ_VRAM0) + ((gSprites[healthboxSpriteId].oam.tileNum + 52) * TILE_SIZE_4BPP), 0x20);
+		gSprites[barSpriteId].oam.paletteNum = gSprites[healthboxSpriteId].oam.paletteNum;
+		
+		PrintHpOnHealthbox(barSpriteId, currHP, maxHP, 0x80, 0x20);
+		CpuCopy32(GetHealthboxElementGfxPtr(HEALTHBOX_GFX_116), (void *)(OBJ_VRAM0 + 0x680) + (gSprites[healthboxSpriteId].oam.tileNum * TILE_SIZE_4BPP), 0x20);
+		CpuFill32(0, (void*)((OBJ_VRAM0) + (gSprites[barSpriteId].oam.tileNum * TILE_SIZE_4BPP)), 0x40);
     }
 }
 
@@ -809,11 +790,11 @@ void SwapHpBarsWithHpText(void)
 				if (gBattleSpritesDataPtr->battlerData[i].hpNumbersNoBars) // bars to text
 				{
 					CpuFill32(0, (void*)(OBJ_VRAM0 + gSprites[healthboxSprite->hMain_HealthBarSpriteId].oam.tileNum * TILE_SIZE_4BPP), 0x100);
-                    UpdateHpTextInHealthboxInDoubles(healthboxSpriteId, GetMonData(mon, MON_DATA_HP), HP_CURRENT);
-                    UpdateHpTextInHealthboxInDoubles(healthboxSpriteId, GetMonData(mon, MON_DATA_MAX_HP), HP_MAX);
+                    UpdateHpTextInHealthboxInDoubles(healthboxSpriteId, HP_BOTH, GetMonData(mon, MON_DATA_HP), GetMonData(mon, MON_DATA_MAX_HP));
 				}
 				else // text to bars
 				{
+					++gSprites[healthboxSprite->hMain_HealthBarSpriteId].oam.paletteNum;
 					UpdateStatusIconInHealthbox(healthboxSpriteId);
                     UpdateHealthboxAttribute(i, HEALTHBOX_HEALTH_BAR);
                     CpuCopy32(GetHealthboxElementGfxPtr(HEALTHBOX_GFX_117), (void*)(OBJ_VRAM0 + 0x680 + healthboxSprite->oam.tileNum * TILE_SIZE_4BPP), 32);
@@ -1549,6 +1530,7 @@ void UpdateHealthboxAttribute(u8 battlerId, u8 elementId)
 	u32 exp, currLevelExp;
     u8 level, healthboxSpriteId = gHealthboxSpriteIds[battlerId];
 	struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
+	u16 hp = GetMonData(mon, MON_DATA_HP), maxHP = GetMonData(mon, MON_DATA_MAX_HP);
 	
 	// Update for all battlers
 	// Lv
@@ -1563,7 +1545,7 @@ void UpdateHealthboxAttribute(u8 battlerId, u8 elementId)
 	if (elementId == HEALTHBOX_HEALTH_BAR || elementId == HEALTHBOX_ALL)
 	{
 		LoadBattleBarGfx();
-		SetBattleBarStruct(battlerId, GetMonData(mon, MON_DATA_MAX_HP), GetMonData(mon, MON_DATA_HP), 0);
+		SetBattleBarStruct(battlerId, maxHP, hp, 0);
 		MoveBattleBar(battlerId, healthboxSpriteId, HEALTH_BAR);
 	}
 	
@@ -1574,13 +1556,13 @@ void UpdateHealthboxAttribute(u8 battlerId, u8 elementId)
 	// Only updates on player's side
 	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
 	{
-		// Hp
-		if (elementId == HEALTHBOX_CURRENT_HP || elementId == HEALTHBOX_ALL)
-			UpdateHpTextInHealthbox(healthboxSpriteId, GetMonData(mon, MON_DATA_HP), HP_CURRENT);
-		
-		// Hp max
-		if (elementId == HEALTHBOX_MAX_HP || elementId == HEALTHBOX_ALL)
-			UpdateHpTextInHealthbox(healthboxSpriteId, GetMonData(mon, MON_DATA_MAX_HP), HP_MAX);
+		// HP and max HP
+		if (elementId == HEALTHBOX_ALL)
+			UpdateHpTextInHealthbox(healthboxSpriteId, HP_BOTH, hp, maxHP);
+		else if (elementId == HEALTHBOX_CURRENT_HP)
+			UpdateHpTextInHealthbox(healthboxSpriteId, HP_CURRENT, hp, maxHP);
+		else if (elementId == HEALTHBOX_MAX_HP)
+			UpdateHpTextInHealthbox(healthboxSpriteId, HP_MAX, hp, maxHP);
 		
 		// Exp bar
 		if (elementId == HEALTHBOX_EXP_BAR || elementId == HEALTHBOX_ALL)

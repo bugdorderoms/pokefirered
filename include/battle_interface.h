@@ -22,7 +22,8 @@
 enum
 {
     HP_CURRENT,
-    HP_MAX
+    HP_MAX,
+	HP_BOTH,
 };
 
 // Args for MoveBattleBar
@@ -102,7 +103,7 @@ void SetHealthboxSpriteVisible(u8 healthboxSpriteId);
 void DestoryHealthboxSprite(u8 healthboxSpriteId);
 void UpdateOamPriorityInAllHealthboxes(u8 priority, bool8 hideHpBoxes);
 void InitBattlerHealthboxCoords(u8 battlerId);
-void UpdateHpTextInHealthbox(u8 healthboxSpriteId, s16 value, u8 maxOrCurrent);
+void UpdateHpTextInHealthbox(u8 healthboxSpriteId, u8 maxOrCurrent, s16 currHP, s16 maxHP);
 void SwapHpBarsWithHpText(void);
 u8 CreatePartyStatusSummarySprites(u8 battlerId, struct HpAndStatus *partyInfo, u8 isSwitchingMons, bool8 isBattleStart);
 void UpdateHealthboxAttribute(u8 battlerId, u8 elementId);

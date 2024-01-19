@@ -1356,7 +1356,7 @@ void BtlController_HandleHealthbarUpdate(u8 battlerId, bool8 updateHpText)
 		SetBattleBarStruct(battlerId, maxHP, 0, hpVal);
 		
 		if (updateHpText)
-			UpdateHpTextInHealthbox(gHealthboxSpriteIds[battlerId], 0, HP_CURRENT);
+			UpdateHpTextInHealthbox(gHealthboxSpriteIds[battlerId], HP_CURRENT, 0, maxHP);
 	}
 	gBattleControllerData[battlerId] = updateHpText;
     gBattlerControllerFuncs[battlerId] = CompleteOnHealthbarDone;
@@ -2055,7 +2055,7 @@ static void CompleteOnHealthbarDone(u8 battlerId)
 	else
 	{
 		if (gBattleControllerData[battlerId]) // Update hp text
-			UpdateHpTextInHealthbox(gHealthboxSpriteIds[battlerId], hpValue, HP_CURRENT);
+			UpdateHpTextInHealthbox(gHealthboxSpriteIds[battlerId], HP_CURRENT, hpValue, gBattleMons[battlerId].maxHP);
 	}
 }
 
