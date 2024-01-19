@@ -2547,6 +2547,9 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 									spDef += var;
 								}
 							}
+							def /= 2;
+							spDef /= 2;
+							
 							if (def < spDef)
 								statId = STAT_ATK;
 							else

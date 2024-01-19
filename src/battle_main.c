@@ -3735,11 +3735,24 @@ static void HandleAction_UseItem(void)
     gCurrentActionFuncId = B_ACTION_EXEC_SCRIPT;
 }
 
+static u32 GetSideAverageSpeed(u8 battler)
+{
+	u32 speed = 0;
+	
+	if (IsBattlerAlive(battler))
+		speed += GetBattlerTotalSpeed(battler);
+	
+	if (IsBattlerAlive(BATTLE_PARTNER(battler)))
+		speed += GetBattlerTotalSpeed(BATTLE_PARTNER(battler));
+	
+	return speed / 2;
+}
+
 bool8 TryRunFromBattle(u8 battler)
 {
     bool8 effect = FALSE;
     u8 holdEffect = GetBattlerItemHoldEffect(battler, TRUE);
-    u8 speedVar, battlerEscapeFrom;
+	u32 speedVar, battlerSpeed, escapeFromSpeed;
 
     if (holdEffect == HOLD_EFFECT_CAN_ALWAYS_RUN)
     {
@@ -3764,21 +3777,17 @@ bool8 TryRunFromBattle(u8 battler)
     }
     else
     {
-        battlerEscapeFrom = BATTLE_OPPOSITE(battler);
+		battlerSpeed = GetSideAverageSpeed(battler);
+		escapeFromSpeed = GetSideAverageSpeed(BATTLE_OPPOSITE(battler));
 		
-		if (!IsBattlerAlive(battlerEscapeFrom))
-			battlerEscapeFrom = BATTLE_PARTNER(battlerEscapeFrom);
-		
-		if (gBattleMons[battler].speed < gBattleMons[battlerEscapeFrom].speed)
+		if (battlerSpeed < escapeFromSpeed)
 		{
-			speedVar = (gBattleMons[battler].speed * 128) / (gBattleMons[battlerEscapeFrom].speed) + (gBattleStruct->runTries * 30);
+			speedVar = (battlerSpeed * 128) / (escapeFromSpeed) + (gBattleStruct->runTries * 30);
 			if (speedVar > (Random() & 0xFF))
 				++effect;
 		}
 		else // same speed or faster
-		{
 			++effect;
-		}
 
         ++gBattleStruct->runTries;
     }
