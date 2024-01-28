@@ -124,3 +124,7 @@
 // If this setting is enabled, random weathers will start on enter maps that don't have a weather defined.
 // Those weather are choose based on current time and season.
 #define DYNAMIC_WEATHER TRUE
+
+// If this setting is enabled, when a Greninja knocks out a target with a move, it will transform itself into Ash-Greninja.
+// Otherwise, it will increase it's Attack, Sp. Attack and Speed by one stage each.
+#define BATTLE_BOND_TRANSFORM TRUE

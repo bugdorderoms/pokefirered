@@ -144,9 +144,12 @@
 #define STATUS3_UNDERWATER              (1 << 15)
 #define STATUS3_POWER_TRICK             (1 << 16)
 #define STATUS3_EMBARGO                 (1 << 17)
-#define STATUS3_MAGNET_RISE             (1 << 18)
-#define STATUS3_TELEKINESIS             (1 << 19)
-#define STATUS3_SKY_DROPPED             (1 << 20) // The battler that was held
+#define STATUS3_COMMANDING              (1 << 18) // The battler commanding
+#define STATUS3_HEAL_BLOCK              (1 << 19)
+#define STATUS3_GASTRO_ACID             (1 << 20)
+#define STATUS3_MAGNET_RISE             (1 << 21)
+#define STATUS3_TELEKINESIS             (1 << 22)
+#define STATUS3_SKY_DROPPED             (1 << 23) // The battler that was held
 
 #define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
 
@@ -186,6 +189,7 @@
 #define SIDE_STATUS_CRAFTY_SHIELD    (1 << 11)
 #define SIDE_STATUS_MAT_BLOCK        (1 << 12)
 #define SIDE_STATUS_TAILWIND         (1 << 13)
+#define SIDE_STATUS_LUCKY_CHANT      (1 << 14)
 #define SIDE_STATUS_SCREENS_ANY      (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_AURORA_VEIL)
 #define SIDE_STATUS_HAZARDS_ANY      (SIDE_STATUS_SPIKES | SIDE_STATUS_TOXIC_SPIKES | SIDE_STATUS_STEALTH_ROCK | SIDE_STATUS_STICKY_WEB)
 #define SIDE_STATUS_PROTECTIONS_ANY  (SIDE_STATUS_WIDE_GUARD | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK)

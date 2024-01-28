@@ -5038,7 +5038,7 @@ void ItemUseCB_BattleScript(u8 taskId, TaskFunc func)
 	
 	PlaySE(SE_SELECT);
 	
-	if (!CanUseItemInBattle(gPartyMenu.slotId, itemId))
+	if (!CanUseItemInBattle(FALSE, itemId))
 	{
 		gPartyMenuUseExitCallback = FALSE;
 		DisplayPartyMenuMessage(gStringVar4, TRUE);

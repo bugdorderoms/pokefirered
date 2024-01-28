@@ -582,25 +582,6 @@ static void (*const sEndTurnFuncsTable[])(void) =
 	[B_OUTCOME_MON_TELEPORTED] = HandleEndTurn_FinishBattle,
 };
 
-const u8 gStatusConditionString_PoisonJpn[8] = _("どく$$$$$");
-const u8 gStatusConditionString_SleepJpn[8] = _("ねむり$$$$");
-const u8 gStatusConditionString_ParalysisJpn[8] = _("まひ$$$$$");
-const u8 gStatusConditionString_BurnJpn[8] = _("やけど$$$$");
-const u8 gStatusConditionString_IceJpn[8] = _("こおり$$$$");
-const u8 gStatusConditionString_ConfusionJpn[8] = _("こんらん$$$");
-const u8 gStatusConditionString_LoveJpn[8] = _("メロメロ$$$");
-
-const u8 *const gStatusConditionStringsTable[7][2] =
-{
-    { gStatusConditionString_PoisonJpn, gText_Poison },
-    { gStatusConditionString_SleepJpn, gText_Sleep },
-    { gStatusConditionString_ParalysisJpn, gText_Paralysis },
-    { gStatusConditionString_BurnJpn, gText_Burn },
-    { gStatusConditionString_IceJpn, gText_Ice },
-    { gStatusConditionString_ConfusionJpn, gText_Confusion },
-    { gStatusConditionString_LoveJpn, gText_Love }
-};
-
 void CB2_InitBattle(void)
 {
     MoveSaveBlocks_ResetHeap();
@@ -1947,6 +1928,9 @@ static void ClearBattlerEffectsOnFaintOrSwitch(u8 battlerId)
 	// Reset Supreme Overlord boost
 	gBattleStruct->supremeOverlordBoosts[battlerId] = 0;
 	
+	// Reset battler is being commanded
+	gBattleStruct->commanderActivated[GetBattlerSide(battlerId)] &= ~(gBitTable[gBattlerPartyIndexes[battlerId]]);
+	
 	// Reset resource flags
 	gBattleResources->flags->flags[battlerId] = 0;
 }
@@ -2047,11 +2031,19 @@ void SwitchInClearSetData(u8 battlerId)
 	{
 		// Status passed by Baton Pass
 		gBattleMons[battlerId].status2 &= (STATUS2_CONFUSION | STATUS2_FOCUS_ENERGY | STATUS2_SUBSTITUTE | STATUS2_ESCAPE_PREVENTION | STATUS2_CURSED);
-        gStatuses3[battlerId] &= (STATUS3_LEECHSEED_BATTLER | STATUS3_LEECHSEED | STATUS3_PERISH_SONG | STATUS3_ROOTED);
+        gStatuses3[battlerId] &= (STATUS3_LEECHSEED_BATTLER | STATUS3_LEECHSEED | STATUS3_PERISH_SONG | STATUS3_POWER_TRICK | STATUS3_HEAL_BLOCK
+		                         | STATUS3_EMBARGO | STATUS3_ROOTED | STATUS3_GASTRO_ACID);
         
+		HANDLE_POWER_TRICK_SWAP(battlerId)
+		
+		if (gAbilities[gBattleMons[battlerId].ability].cantBeSuppressed)
+			gStatuses3[battlerId] &= ~(STATUS3_GASTRO_ACID);
+		
 		gDisableStructs[battlerId].substituteHP = disableStructCopy.substituteHP;
         gDisableStructs[battlerId].perishSongTimer = disableStructCopy.perishSongTimer;
         gDisableStructs[battlerId].battlerPreventingEscape = disableStructCopy.battlerPreventingEscape;
+		gDisableStructs[battlerId].embargoTimer = disableStructCopy.embargoTimer;
+		gDisableStructs[battlerId].healBlockTimer = disableStructCopy.healBlockTimer;
 	}
 	else
 	{
@@ -2066,6 +2058,13 @@ void SwitchInClearSetData(u8 battlerId)
     gCurrentMove = MOVE_NONE;
 }
 
+static void RestoreCommanderBattlerSprite(u8 battlerId)
+{
+	gStatuses3[battlerId] &= ~(STATUS3_COMMANDING);
+	BtlController_EmitSpriteInvisibility(battlerId, BUFFER_A, FALSE);
+	MarkBattlerForControllerExec(battlerId);
+}
+
 void FaintClearSetData(u8 battlerId)
 {
     u8 i;
@@ -2075,7 +2074,13 @@ void FaintClearSetData(u8 battlerId)
 	
 	// Clear battler status
     gBattleMons[battlerId].status2 = 0;
-    gStatuses3[battlerId] = 0;
+	
+	if (IsBattlerBeingCommanded(battlerId))
+		RestoreCommanderBattlerSprite(BATTLE_PARTNER(battlerId));
+	else if (gStatuses3[battlerId] & STATUS3_COMMANDING)
+		RestoreCommanderBattlerSprite(battlerId);
+	
+	gStatuses3[battlerId] = 0;
 	
 	// Clear battler effects
 	ClearBattlerEffectsOnFaintOrSwitch(battlerId);
@@ -2105,6 +2110,8 @@ void FaintClearSetData(u8 battlerId)
 	gProtectStructs[battlerId].usesBouncedMove = FALSE;
 	gProtectStructs[battlerId].myceliumMightElevated = FALSE;
 	gProtectStructs[battlerId].pranksterElevated = FALSE;
+	gProtectStructs[battlerId].usedGravityBannedMove = FALSE;
+	gProtectStructs[battlerId].usedHealBlockedMove = FALSE;
 	
 	// Set battler initial types
 	SetBattlerInitialTypes(battlerId);
@@ -2480,6 +2487,7 @@ static void TryDoEventsBeforeFirstTurn(void)
         gBattleStruct->turnEffectsTracker = 0;
         gBattleStruct->turnEffectsBattlerId = 0;
 		gBattleStruct->turnSideTracker = 0;
+		gBattleScripting.atk47_state = 0;
         gBattleScripting.atk49_state = 0;
         gBattleStruct->faintedActionsState = 0;
         gMoveResultFlags = 0;
@@ -2531,6 +2539,7 @@ void BattleTurnPassed(void)
     gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING | HITMARKER_UNABLE_TO_USE_MOVE | HITMARKER_PLAYER_FAINTED | HITMARKER_PASSIVE_DAMAGE);
     gBattleScripting.animTurn = 0;
     gBattleScripting.animTargetsHit = 0;
+	gBattleScripting.atk47_state = 0;
     gBattleScripting.atk49_state = 0;
     gBattleMoveDamage = 0;
     gMoveResultFlags = 0;
@@ -2660,7 +2669,7 @@ static void HandleTurnActionSelectionState(void)
              || gBattleStruct->absentBattlerFlags & gBitTable[GetBattlerAtPosition(BATTLE_PARTNER(position))]
              || gBattleCommunication[GetBattlerAtPosition(BATTLE_PARTNER(position))] == STATE_WAIT_ACTION_CONFIRMED)
             {
-                if (gBattleStruct->absentBattlerFlags & gBitTable[battlerId])
+                if ((gBattleStruct->absentBattlerFlags & gBitTable[battlerId]) || (gStatuses3[battlerId] & STATUS3_COMMANDING))
                 {
                     gChosenActionByBattler[battlerId] = B_ACTION_NOTHING_FAINTED;
 					gBattleCommunication[battlerId] = (gBattleTypeFlags & BATTLE_TYPE_MULTI) ? STATE_WAIT_ACTION_CONFIRMED_STANDBY : STATE_WAIT_ACTION_CONFIRMED;
@@ -2739,7 +2748,7 @@ static void HandleTurnActionSelectionState(void)
                 case B_ACTION_SWITCH:
                     *(gBattleStruct->battlerPartyIndexes + battlerId) = gBattlerPartyIndexes[battlerId];
 					
-                    if (!CanBattlerEscape(battlerId, TRUE))
+                    if (IsBattlerBeingCommanded(battlerId) || !CanBattlerEscape(battlerId, TRUE))
                         BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->battlerPartyOrders[battlerId]);
 					else
 					{
@@ -3023,7 +3032,7 @@ s8 GetMovePriority(u8 battler, u16 move)
 				++priority;
 			break;
 		case ABILITY_TRIAGE:
-		    if (MoveHasHealingEffect(move))
+		    if (gBattleMoves[move].flags.healingMove)
 				priority += 3;
 			break;
 	}
@@ -3574,7 +3583,7 @@ static void HandleAction_UseMove(void)
     {
         gCurrentMove = gChosenMove = gDisableStructs[gBattlerAttacker].encoredMove;
         gCurrMovePos = gChosenMovePos = gDisableStructs[gBattlerAttacker].encoredMovePos;
-        gBattleStruct->moveTarget[gBattlerAttacker] = GetMoveTarget(gCurrentMove, 0);
+        gBattleStruct->moveTarget[gBattlerAttacker] = GetMoveTarget(gCurrentMove, gCurrentMove == MOVE_ACUPRESSURE ? MOVE_TARGET_USER + 1 : 0);
     }
     // check if the encored move wasn't overwritten
     else if (gDisableStructs[gBattlerAttacker].encoredMove != MOVE_NONE
@@ -3585,7 +3594,7 @@ static void HandleAction_UseMove(void)
         gDisableStructs[gBattlerAttacker].encoredMove = MOVE_NONE;
         gDisableStructs[gBattlerAttacker].encoredMovePos = 0;
         gDisableStructs[gBattlerAttacker].encoreTimer = 0;
-        gBattleStruct->moveTarget[gBattlerAttacker] = GetMoveTarget(gCurrentMove, 0);
+        gBattleStruct->moveTarget[gBattlerAttacker] = GetMoveTarget(gCurrentMove, gCurrentMove == MOVE_ACUPRESSURE ? MOVE_TARGET_USER + 1 : 0);
     }
     else if (gBattleMons[gBattlerAttacker].moves[gCurrMovePos] != gChosenMoveByBattler[gBattlerAttacker])
     {
@@ -3973,6 +3982,7 @@ static void HandleAction_ActionFinished(void)
     gLastLandedMoves[gBattlerAttacker] = 0;
     gLastHitByType[gBattlerAttacker] = 0;
     gBattleStruct->dynamicMoveType = 0;
+	gBattleScripting.atk47_state = 0;
     gBattleScripting.atk49_state = 0;
     gBattleStruct->moveEffect.moveEffectByte = MOVE_EFFECT_NONE;
     gBattleCommunication[ACTIONS_CONFIRMED_COUNT] = 0;

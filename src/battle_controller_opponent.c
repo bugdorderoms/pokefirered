@@ -275,11 +275,11 @@ static void OpponentHandleChooseMove(u8 battlerId)
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_RUN, 0);
             break;
         default:
-            if (gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_USER_OR_SELECTED || gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_USER
+            if (gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_USER
 			|| gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_ALL_BATTLERS || gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_USER_OR_ALLY)
                 gBattlerTarget = battlerId;
             if (gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_BOTH || gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_FOES_AND_ALLY
-			|| gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_ALL_BATTLERS)
+			|| gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_ALL_BATTLERS || gBattleMoves[moveInfo->moves[chosenMoveId]].target == MOVE_TARGET_OPPONENTS)
             {
                 gBattlerTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
                 if (gAbsentBattlerFlags & gBitTable[gBattlerTarget])
@@ -301,7 +301,7 @@ static void OpponentHandleChooseMove(u8 battlerId)
         }
         while (move == MOVE_NONE);
 		
-        if (gBattleMoves[move].target == MOVE_TARGET_USER_OR_SELECTED || gBattleMoves[move].target == MOVE_TARGET_USER
+        if (gBattleMoves[move].target == MOVE_TARGET_USER
 		|| gBattleMoves[move].target == MOVE_TARGET_ALL_BATTLERS || gBattleMoves[move].target == MOVE_TARGET_USER_OR_ALLY)
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, (chosenMoveId) | (battlerId << 8));
         else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
@@ -309,7 +309,8 @@ static void OpponentHandleChooseMove(u8 battlerId)
 			target = GetBattlerAtPosition(Random() & 2);
 		
 #if DOUBLE_WILD_ATTACK_NATURAL_ENEMY
-			if (gBattleMoves[move].target != MOVE_TARGET_BOTH && gBattleMoves[move].target != MOVE_TARGET_FOES_AND_ALLY)
+			if (gBattleMoves[move].target != MOVE_TARGET_BOTH && gBattleMoves[move].target != MOVE_TARGET_FOES_AND_ALLY
+			&& gBattleMoves[move].target != MOVE_TARGET_OPPONENTS)
 			{
 				speciesAttacker = gBattleMons[battlerId].species;
 				speciesAttackerPartner = gBattleMons[GetBattlerAtPosition(BATTLE_PARTNER(battlerId))].species;

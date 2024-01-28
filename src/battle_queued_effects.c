@@ -136,7 +136,7 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 			}
 			break;
 		case B_QUEUED_WISH:
-		    if (gWishFutureKnock.wishCounter[battlerId] != 0 && --gWishFutureKnock.wishCounter[battlerId] == 0)
+		    if (gWishFutureKnock.wishCounter[battlerId] != 0 && --gWishFutureKnock.wishCounter[battlerId] == 0 && !(gStatuses3[battlerId] & STATUS3_HEAL_BLOCK))
 			{
 				BattleScriptExecute(BattleScript_WishComesTrue);
 				effect = TRUE;

@@ -644,6 +644,13 @@ static const struct FormChange sGenesectFormChangeTable[] =
 	FORM_CHANGE_END,
 };
 
+static const struct FormChange sGreninjaFormChangeTable[] =
+{
+	FORM_CHANGE(FORM_CHANGE_FAINT_TARGET, SPECIES_GRENINJA_ASH, 0, 0),
+	FORM_CHANGE(FORM_CHANGE_SWITCH_OUT, SPECIES_NONE, 0, 0), // don't revert form when switched out
+	FORM_CHANGE_END,
+};
+
 static const struct FormChange sVivillonFormChangeTable[] =
 {
 	FORM_CHANGE(FORM_CHANGE_PERSONALITY, SPECIES_VIVILLON, 20, 0),

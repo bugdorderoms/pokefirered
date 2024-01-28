@@ -404,6 +404,15 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 	u16 moveEffect = gBattleMoves[move].effect;
 	u32 i;
 	
+	// Moves
+	switch (move)
+	{
+		case MOVE_WATER_SHURIKEN:
+		    if (!(gBattleMons[attacker].status2 & STATUS2_TRANSFORMED) && gBattleMons[attacker].species == SPECIES_GRENINJA_ASH)
+				basePower = 20;
+			break;
+	}
+	
 	// Move effects
 	switch (moveEffect)
 	{
@@ -507,6 +516,37 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			break;
 		case EFFECT_NATURAL_GIFT:
 		    basePower = gNaturalGiftTable[ITEM_TO_BERRY(gBattleMons[attacker].item)].power;
+			break;
+		case EFFECT_PAYBACK:
+		    if (gChosenActionByBattler[defender] == B_ACTION_USE_ITEM || GetBattlerTurnOrderNum(attacker) > GetBattlerTurnOrderNum(defender))
+				basePower *= 2;
+			break;
+		case EFFECT_ASSURANCE:
+		    if (gProtectStructs[defender].physicalDmg || gProtectStructs[defender].specialDmg || gProtectStructs[defender].confusionSelfDmg)
+				basePower *= 2;
+			break;
+		case EFFECT_TRUMP_CARD:
+			switch (gBattleMons[attacker].pp[gBattleStruct->chosenMovePositions[attacker]])
+			{
+				case 0:
+				    basePower = 200;
+					break;
+				case 1:
+				    basePower = 80;
+					break;
+				case 2:
+				    basePower = 60;
+					break;
+				case 3:
+				    basePower = 50;
+					break;
+				default:
+				    basePower = 40;
+					break;
+			}
+			break;
+		case EFFECT_WRING_OUT:
+		    basePower = 120 * (gBattleMons[defender].hp / gBattleMons[defender].maxHP);
 			break;
 	}
 	
@@ -710,6 +750,7 @@ static u16 CalcBaseAttackStat(u8 attacker, u8 defender, struct DamageCalc *damag
 					baseAttack *= 2;
 			    break;
 		    case ABILITY_HUSTLE:
+			case ABILITY_GORILLA_TACTICS:
 			    if (IS_MOVE_PHYSICAL(move))
 					baseAttack = (15 * baseAttack) / 10;
 			    break;

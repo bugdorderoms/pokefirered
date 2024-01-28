@@ -35,6 +35,7 @@
 #define sLVLBOX_STATE gBattleScripting + 0x20
 #define sLEARNMOVE_STATE gBattleScripting + 0x21
 #define sSWITCHIN_EFFECTS_STATE gBattleScripting + 0x26
+#define sPREFAINT_MOVEEND_STATE gBattleScripting + 0x27
 
 // array entries for battle communication
 #define MULTIUSE_STATE                      0
@@ -73,10 +74,6 @@
 #define BS_OPPONENT2                14
 #define BS_SCRIPTING_PARTNER        15
 
-// Atk01, accuracy calc
-#define NO_ACC_CALC_CHECK_LOCK_ON 0
-#define ACC_CURR_MOVE             1
-
 // Compare operands
 #define CMP_EQUAL               0x0
 #define CMP_NOT_EQUAL           0x1
@@ -85,11 +82,38 @@
 #define CMP_COMMON_BITS         0x4
 #define CMP_NO_COMMON_BITS      0x5
 
-// Atk4F, a flag used for the jumpifcantswitch command
-#define ATK4F_DONT_CHECK_STATUSES   0x80
+// status ids
+#define ID_STATUS1 0
+#define ID_STATUS2 1
+#define ID_STATUS3 2
 
-// Atk50, a flag used for the openpartyscreen command
-#define OPEN_PARTY_ALLOW_CANCEL     0x80
+// Parental Bond counter states
+#define PARENTAL_BOND_1ST_HIT 2
+#define PARENTAL_BOND_2ND_HIT 1
+#define PARENTAL_BOND_OFF     0
+
+// Atk01, accuracy calc
+#define NO_ACC_CALC_CHECK_LOCK_ON 0
+#define ACC_CURR_MOVE             1
+
+// moveend states
+#define MOVEEND_ALL           0 // loop through all cases
+#define MOVEEND_CASE          1 // do only the specified case
+#define MOVEEND_TO            2 // loop from first to specified cases
+#define MOVEEND_FUTURE_ATTACK 3 // only cases that occours on a future attack hit
+
+// atk47, prefaintmoveend cases
+#define ATK47_SET_UP                 0
+#define ATK47_ATTACKER_ABILITIES     1
+#define ATK47_PROTECTION_EFFECTS     2
+#define ATK47_RAGE                   3
+#define ATK47_SYNCHRONIZE_TARGET     4
+#define ATK47_BEAK_BLAST             5
+#define ATK47_SYNCHRONIZE_ATTACKER   6
+#define ATK47_TARGET_ABILITIES       7
+#define ATK47_SYNCHRONIZE_ATTACKER_2 8
+#define ATK47_TARGET_CONTACT_ITEMS   9
+#define ATK47_COUNT                  10
 
 // Atk48
 // Used when there's multiple buffs
@@ -106,38 +130,40 @@
 #define ATK48_SET_ANIM_PLAYED    (1 << 2) // Used when there's multiples buffs, play the anim only on the first buff
 #define ATK48_CLEAR_ANIM_PLAYED  (1 << 3) // Reset anim played, for the next stat buff that can occours
 
-// Atk49, moveend states and cases
-#define ATK49_MOVEEND_ALL           0 // loop through all cases
-#define ATK49_MOVEEND_CASE          1 // do only the specified case
-#define ATK49_MOVEEND_TO            2 // loop from first to specified cases
-#define ATK49_MOVEEND_FUTURE_ATTACK 3 // only cases that occours on a future attack hit
+// Atk49, moveend cases
+#define ATK49_SKY_DROP                  0
+#define ATK49_ATTACKER_INVISIBLE        1
+#define ATK49_ATTACKER_VISIBLE          2
+#define ATK49_TARGET_VISIBLE            3
+#define ATK49_CHOICE_MOVE               4
+#define ATK49_TARGET_ENDTURN_ITEMS      5
+#define ATK49_KINGS_ROCK                6
+#define ATK49_ATTACKER_ENDTURN_ITEMS    7
+#define ATK49_STATUS_IMMUNITY_ABILITIES 8
+#define ATK49_UPDATE_LAST_MOVES         9
+#define ATK49_MIRROR_MOVE               10
+#define ATK49_MULTIHIT_MOVE             11
+#define ATK49_DEFROST                   12
+#define ATK49_MAGICIAN                  13
+#define ATK49_ATTACKER_ENDTURN_ITEMS_2  14
+#define ATK49_NEXT_TARGET               15
+#define ATK49_RECOIL                    16
+#define ATK49_ATTACKER_ENDTURN_ITEMS_3  17
+#define ATK49_EJECT_BUTTON              18
+#define ATK49_RED_CARD                  19
+#define ATK49_EJECT_PACK                20
+#define ATK49_SHELL_BELL_LIFE_ORB       21
+#define ATK49_EMERGENCY_EXIT            22
+#define ATK49_PICKPOCKET                23
+#define ATK49_SUBSTITUTE                24
+#define ATK49_CLEAR_BITS                25
+#define ATK49_COUNT                     26
 
-#define ATK49_SUM_DMG                           0
-#define ATK49_RAGE                              1
-#define ATK49_SYNCHRONIZE_TARGET                2
-#define ATK49_MOVE_END_ABILITIES_ATTACKER       3
-#define ATK49_MOVE_END_ABILITIES                4
-#define ATK49_STATUS_IMMUNITY_ABILITIES         5
-#define ATK49_SYNCHRONIZE_ATTACKER              6
-#define ATK49_CHOICE_MOVE                       7
-#define ATK49_ATTACKER_INVISIBLE                8
-#define ATK49_ATTACKER_VISIBLE                  9
-#define ATK49_TARGET_VISIBLE                    10
-#define ATK49_ITEM_EFFECTS_ALL                  11
-#define ATK49_KINGSROCK_SHELLBELL               12 // These item effects will occur each strike of a multi-hit move
-#define ATK49_SUBSTITUTE                        13
-#define ATK49_UPDATE_LAST_MOVES                 14
-#define ATK49_MIRROR_MOVE                       15
-#define ATK49_NEXT_TARGET                       16 // Everything up until here is handled for each strike of a multi-hit move
-#define ATK49_MULTIHIT_MOVE                     17
-#define ATK49_DEFROST                           18
-#define ATK49_RECOIL                            19
-#define ATK49_MAGICIAN                          20 // Occurs after final multi-hit strike, and after other items/abilities would activate
-#define ATK49_CHANGED_ITEMS                     21
-#define ATK49_PICKPOCKET                        22
-#define ATK49_EMERGENCY_EXIT                    23
-#define ATK49_CLEAR_BITS                        24
-#define ATK49_COUNT                             25
+// Atk4F, a flag used for the jumpifcantswitch command
+#define ATK4F_DONT_CHECK_STATUSES   0x80
+
+// Atk50, a flag used for the openpartyscreen command
+#define OPEN_PARTY_ALLOW_CANCEL     0x80
 
 // Atk76, various cases
 #define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       0
@@ -188,6 +214,10 @@
 #define VARIOUS_TRY_SET_GRAVITY                     45
 #define VARIOUS_TRY_BRING_DOWN_IN_AIR               46
 #define VARIOUS_TRY_ACTIVATE_WIND_ABILITIES         47
+#define VARIOUS_JUMP_IF_EMERGENCY_EXITED            48
+#define VARIOUS_TRY_STATUS_TRANSFER                 49
+#define VARIOUS_TRY_ACTIVATE_BATTLE_BOND            50
+#define VARIOUS_TRY_ABILITY_SUPPRESSION             51
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN       0
@@ -208,15 +238,5 @@
 
 // atkFC, a flag used for the handleabilitypopup command
 #define ATKFC_REMOVE_POP_UP 0x80
-
-// status ids
-#define ID_STATUS1 0
-#define ID_STATUS2 1
-#define ID_STATUS3 2
-
-// Parental Bond counter states
-#define PARENTAL_BOND_1ST_HIT 2
-#define PARENTAL_BOND_2ND_HIT 1
-#define PARENTAL_BOND_OFF     0
 
 #endif // GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H

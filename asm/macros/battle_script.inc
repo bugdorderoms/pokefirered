@@ -80,8 +80,9 @@
 	.2byte \id
 	.endm
 
-	.macro nop11
+	.macro tryacupressure ptr:req
 	.byte 0x11
+	.4byte \ptr
 	.endm
 
 	.macro waitmessage param0:req
@@ -394,10 +395,11 @@
 	.4byte \param2
 	.endm
 
-	.macro nop47
+	.macro prefaintmoveend state:req
 	.byte 0x47
+	.byte \state
 	.endm
-
+	
 	.macro playstatchangeanimation bits=0, flags=0
 	.byte 0x48
 	.4byte \bits
@@ -410,42 +412,52 @@
 	.byte \param1
 	.endm
 
-	@ Help macros for uses of moveend command
+	@ Help macros for uses of moveend commands
 
 	@ All cases
+	.macro prefaintmoveendall
+	setbyte sPREFAINT_MOVEEND_STATE, 0
+	prefaintmoveend MOVEEND_ALL
+	.endm
+	
 	.macro moveendall
 	setbyte sMOVEEND_STATE, 0
-	moveend ATK49_MOVEEND_ALL, 0
+	moveend MOVEEND_ALL, 0
 	.endm
 
 	@ Chosen case
 	.macro moveendcase case:req
 	setbyte sMOVEEND_STATE, \case
-	moveend ATK49_MOVEEND_CASE, 0
+	moveend MOVEEND_CASE, 0
 	.endm
 
 	@ All cases from (inclusive)
 	.macro moveendfrom from:req
 	setbyte sMOVEEND_STATE, \from
-	moveend ATK49_MOVEEND_ALL, 0
+	moveend MOVEEND_ALL, 0
 	.endm
 
 	@ All cases from 0 to (not inclusive)
 	.macro moveendto to:req
 	setbyte sMOVEEND_STATE, 0
-	moveend ATK49_MOVEEND_TO, \to
+	moveend MOVEEND_TO, \to
 	.endm
 
 	@ Cases from (inclusive) to (not inclusive)
 	.macro moveendfromto from:req, to:req
 	setbyte sMOVEEND_STATE, \from
-	moveend ATK49_MOVEEND_TO, \to
+	moveend MOVEEND_TO, \to
 	.endm
 	
 	@ Cases when on a future attack hit
+	.macro prefaintmoveendfutureattack
+	setbyte sPREFAINT_MOVEEND_STATE, 0
+	prefaintmoveend MOVEEND_FUTURE_ATTACK
+	.endm
+	
 	.macro moveendfutureattack
 	setbyte sMOVEEND_STATE, 0
-	moveend ATK49_MOVEEND_FUTURE_ATTACK, 0
+	moveend MOVEEND_FUTURE_ATTACK, 0
 	.endm
 	
 	.macro formchange battler:req, basespecies:req, targetspecies:req, reloadtypes:req, reloadstats:req, reloadability:req, ptr:req
@@ -1510,6 +1522,25 @@
 	various \battler, VARIOUS_TRY_ACTIVATE_WIND_ABILITIES
 	.endm
 	
+	.macro jumpifemergencyexited battler:req, ptr:req
+	various \battler, VARIOUS_JUMP_IF_EMERGENCY_EXITED
+	.4byte \ptr
+	.endm
+	
+	.macro trystatustransfer ptr:req
+	various BS_ATTACKER, VARIOUS_TRY_STATUS_TRANSFER
+	.4byte \ptr
+	.endm
+	
+	.macro tryactivatebattlebond battler:req
+	various \battler, VARIOUS_TRY_ACTIVATE_BATTLE_BOND
+	.endm
+	
+	.macro tryabilitysuppression battler:req, ptr:req
+	various \battler, VARIOUS_TRY_ABILITY_SUPPRESSION
+	.4byte \ptr
+	.endm
+	
 @ callfunction macros
     .macro setminimize
 	callfunction BS_SetMinimize
@@ -1576,8 +1607,9 @@
 	callfunction BS_SetEscapePrevention
 	.endm
 	
-	.macro setforesight
-	callfunction BS_SetForesight
+	.macro trysetforesight ptr:req
+	callfunction BS_TrySetForesight
+	.4byte \ptr
 	.endm
 	
 	.macro setforcedtarget
@@ -1680,16 +1712,37 @@
 	callfunction BS_SetRoost
 	.endm
 	
-	.macro setmiracleeye
-	callfunction BS_SetMiracleEye
+	.macro trysetmiracleeye ptr:req
+	callfunction BS_TrySetMiracleEye
+	.4byte \ptr
 	.endm
 	
 	.macro sethealingwish
 	callfunction BS_SetHealingWish
 	.endm
 	
-	.macro settailwind
-	callfunction BS_SetTailwind
+	.macro trysettailwind ptr:req
+	callfunction BS_TrySetTailwind
+	.4byte \ptr
+	.endm
+	
+	.macro trysetembargo ptr:req
+	callfunction BS_TrySetEmbargo
+	.4byte \ptr
+	.endm
+	
+	.macro trysethealblock ptr:req
+	callfunction BS_TrySetHealBlock
+	.4byte \ptr
+	.endm
+	
+	.macro setsplitswap
+	callfunction BS_SetSplitSwap
+	.endm
+	
+	.macro trysetluckychant ptr:req
+	callfunction BS_TrySetLuckyChant
+	.4byte \ptr
 	.endm
 	
 @ helpful macros

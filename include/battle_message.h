@@ -233,14 +233,6 @@ extern const u8* const gBattleStringsTable[];
 
 extern const u16 gMissStringIds[];
 
-extern const u8 gText_Sleep[];
-extern const u8 gText_Poison[];
-extern const u8 gText_Burn[];
-extern const u8 gText_Paralysis[];
-extern const u8 gText_Ice[];
-extern const u8 gText_Confusion[];
-extern const u8 gText_Love[];
-
 extern const u8 gText_Win[];
 extern const u8 gText_Loss[];
 extern const u8 gText_Draw[];

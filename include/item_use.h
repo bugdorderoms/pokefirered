@@ -43,7 +43,7 @@ void ItemUseOutOfBattle_Itemfinder(u8 taskId);
 void sub_80A1C44(u8 taskId);
 u8 CanUseEscapeRopeOnCurrMap(void);
 u8 CheckIfItemIsTMHMOrEvolutionStone(u16 itemId);
-bool8 CanUseItemInBattle(u8 partyIdx, u16 itemId);
+bool8 CanUseItemInBattle(bool8 fromBagMenu, u16 itemId);
 bool8 ExecuteTableBasedItemEffect(u8 partyMonIndex, u16 item, u8 monMoveIndex);
 
 #endif //GUARD_ITEM_USE_H

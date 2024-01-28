@@ -189,6 +189,21 @@
 #define EFFECT_FEINT 184
 #define EFFECT_BUG_BITE 185
 #define EFFECT_TAILWIND 186
+#define EFFECT_ACUPRESSURE 187
+#define EFFECT_METAL_BURST 188
+#define EFFECT_HIT_ESCAPE 189
+#define EFFECT_CLOSE_COMBAT 190
+#define EFFECT_PAYBACK 191
+#define EFFECT_ASSURANCE 192
+#define EFFECT_EMBARGO 193
+#define EFFECT_FLING 194
+#define EFFECT_PSYCHO_SHIFT 195
+#define EFFECT_TRUMP_CARD 196
+#define EFFECT_HEAL_BLOCK 197
+#define EFFECT_WRING_OUT 198
+#define EFFECT_POWER_TRICK 199
+#define EFFECT_GASTRO_ACID 200
+#define EFFECT_LUCKY_CHANT 201
 
 #define EFFECT_SPEED_UP 12
 #define EFFECT_SPECIAL_ATTACK_UP 13
@@ -205,31 +220,25 @@
 #define EFFECT_ACCURACY_DOWN_2 63
 #define EFFECT_EVASION_DOWN_HIT 74
 #define EFFECT_FLINCH_MINIMIZE_HIT 150
-#define EFFECT_WRING_OUT                    216
 #define EFFECT_HEX                          217
-#define EFFECT_ASSURANCE                    218
-#define EFFECT_TRUMP_CARD                   219
 #define EFFECT_ACROBATICS                   220
 #define EFFECT_HEAT_CRASH                   221
 #define EFFECT_PUNISHMENT                   222
 #define EFFECT_STORED_POWER                 223
 #define EFFECT_ELECTRO_BALL                 224
 #define EFFECT_ECHOED_VOICE                 226
-#define EFFECT_PAYBACK                      227
 #define EFFECT_ROUND                        228
 #define EFFECT_VENOSHOCK                    230
 #define EFFECT_RETALIATE                    231
 #define EFFECT_BULLDOZE                     232
 #define EFFECT_FOUL_PLAY                    233
 #define EFFECT_PSYSHOCK                     234
-#define EFFECT_EMBARGO                      239
 #define EFFECT_AQUA_RING                    240
 #define EFFECT_TRICK_ROOM                   241
 #define EFFECT_WONDER_ROOM                  242
 #define EFFECT_MAGIC_ROOM                   243
 #define EFFECT_MAGNET_RISE                  244
 #define EFFECT_TOXIC_SPIKES                 245
-#define EFFECT_GASTRO_ACID                  246
 #define EFFECT_STEALTH_ROCK                 247
 #define EFFECT_TELEKINESIS                  248
 #define EFFECT_POWER_SWAP                   249
@@ -238,8 +247,6 @@
 #define EFFECT_POWER_SPLIT                  252
 #define EFFECT_GUARD_SPLIT                  253
 #define EFFECT_STICKY_WEB                   254
-#define EFFECT_METAL_BURST                  255
-#define EFFECT_LUCKY_CHANT                  256
 #define EFFECT_SUCKER_PUNCH                 257
 #define EFFECT_SPECIAL_DEFENSE_DOWN_HIT_2   258
 #define EFFECT_SIMPLE_BEAM                  259
@@ -265,7 +272,6 @@
 #define EFFECT_SCALD                        279
 #define EFFECT_REFLECT_TYPE                 280
 #define EFFECT_SOAK                         281
-#define EFFECT_CLOSE_COMBAT                 283
 #define EFFECT_LAST_RESORT                  284
 #define EFFECT_FLINCH_STATUS                286
 #define EFFECT_SHELL_SMASH                  288
@@ -284,8 +290,6 @@
 #define EFFECT_HIT_ENEMY_HEAL_ALLY          301
 #define EFFECT_SMACK_DOWN                   302
 #define EFFECT_SYNCHRONOISE                 303
-#define EFFECT_PSYCHO_SHIFT                 304
-#define EFFECT_POWER_TRICK                  305
 #define EFFECT_FLAME_BURST                  306
 #define EFFECT_AFTER_YOU                    307
 #define EFFECT_BESTOW                       308
@@ -298,7 +302,6 @@
 #define EFFECT_AURORA_VEIL                  315
 #define EFFECT_THIRD_TYPE                   316
 #define EFFECT_SPARKLING_ARIA               318
-#define EFFECT_ACUPRESSURE                  319
 #define EFFECT_AROMATIC_MIST                320
 #define EFFECT_POWDER                       321
 #define EFFECT_SP_ATTACK_UP_HIT             322
@@ -368,14 +371,11 @@
 #define EFFECT_DAMAGE_SET_TERRAIN           388 // genesis supernova
 #define EFFECT_DARK_VOID                    389
 #define EFFECT_PLEDGE                       390
-#define EFFECT_FLING                        391
 #define EFFECT_FUSION_COMBO                 393
-#define EFFECT_HEAL_BLOCK                   394
 #define EFFECT_ALWAYS_CRIT 397
 #define EFFECT_CAPTIVATE 399
 #define EFFECT_FELL_STINGER 400
 #define EFFECT_WORRY_SEED 401
-#define EFFECT_HIT_ESCAPE 402
 #define EFFECT_PLACEHOLDER 0
 
 // Move effect bytes
@@ -428,10 +428,11 @@
 #define MOVE_EFFECT_STOCKPILE_WORE_OFF  46
 #define MOVE_EFFECT_WAKE_UP_SLAP        47
 #define MOVE_EFFECT_FEINT               48
+#define MOVE_EFFECT_DEF_SPDEF_DOWN      49
 // TODO
-#define MOVE_EFFECT_STEAL_ITEM          49
-#define MOVE_EFFECT_KNOCK_OFF           50
-#define MOVE_EFFECT_UPROAR              51
+#define MOVE_EFFECT_STEAL_ITEM          50
+#define MOVE_EFFECT_KNOCK_OFF           51
+#define MOVE_EFFECT_UPROAR              52
 
 // Z-Move effect bytes
 #define Z_EFFECT_NONE                   0

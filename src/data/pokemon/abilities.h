@@ -1171,7 +1171,11 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_BATTLE_BOND] =
     {
         .name = _("Battle Bond"),
+#if BATTLE_BOND_TRANSFORM
+        .description = COMPOUND_STRING("When the Pokémon knocks out a target, it\nbecomes Ash-Greninja."),
+#else
         .description = COMPOUND_STRING("When the Pokémon knocks out a target, its\nAttack, Sp. Atk, and Speed stats are boosted."),
+#endif
 		.cantBeCopied = TRUE,
         .cantBeSwapped = TRUE,
         .cantBeTraced = TRUE,

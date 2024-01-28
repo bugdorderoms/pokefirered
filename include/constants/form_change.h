@@ -84,6 +84,10 @@
 // param2 = if TRUE it will transform when use a move with diferent split
 #define FORM_CHANGE_MOVE_SPLIT    0x0012
 
+// form change when the pokemon knocks out another.
+// no param is necessary
+#define FORM_CHANGE_FAINT_TARGET  0x0013
+
 // battle mechanic forms. TODO:
 
 // form change for gigantamax in battle.

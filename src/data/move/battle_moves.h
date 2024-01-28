@@ -1274,6 +1274,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.kingsRockAffected = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -1291,6 +1292,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.kingsRockAffected = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -1861,6 +1863,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -2384,6 +2387,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -2433,6 +2437,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .accuracy = 100,
         .pp = 15,
         .target = MOVE_TARGET_SELECTED,
+		.flags =
+		{
+			.healingMove = TRUE,
+		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -2484,6 +2492,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2751,6 +2760,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -3546,6 +3556,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .accuracy = 100,
 		.pp = 10,
         .target = MOVE_TARGET_SELECTED,
+		.flags =
+		{
+			.healingMove = TRUE,
+		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -3654,6 +3668,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenProtect = TRUE,
 			.snatchAffected = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -4112,6 +4127,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -4129,6 +4145,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -4146,6 +4163,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -4506,6 +4524,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -4806,6 +4825,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_SPDEF_UP_1,
@@ -5337,6 +5357,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -6256,6 +6277,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -6360,6 +6382,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -6456,7 +6479,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_ACUPRESSURE] =
     {
-		.name = _("-"),
+		.name = _("Acupressure"),
         .effect = EFFECT_ACUPRESSURE,
         .type = TYPE_NORMAL,
         .pp = 30,
@@ -6472,19 +6495,24 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_METAL_BURST] =
     {
-		.name = _("-"),
+		.name = _("Metal Burst"),
         .effect = EFFECT_METAL_BURST,
+		.power = 1,
         .type = TYPE_STEEL,
         .accuracy = 100,
         .pp = 10,
         .target = MOVE_TARGET_DEPENDS,
+		.flags =
+		{
+			.noEffectiveness = TRUE,
+		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_U_TURN] =
     {
-		.name = _("-"),
+		.name = _("U-Turn"),
         .effect = EFFECT_HIT_ESCAPE,
         .power = 70,
         .type = TYPE_BUG,
@@ -6502,13 +6530,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_CLOSE_COMBAT] =
     {
-		.name = _("-"),
+		.name = _("Close Combat"),
         .effect = EFFECT_CLOSE_COMBAT,
         .power = 120,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -6521,7 +6548,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_PAYBACK] =
     {
-		.name = _("-"),
+		.name = _("Payback"),
         .effect = EFFECT_PAYBACK,
         .power = 50,
         .type = TYPE_DARK,
@@ -6539,7 +6566,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_ASSURANCE] =
     {
-		.name = _("-"),
+		.name = _("Assurance"),
         .effect = EFFECT_ASSURANCE,
 		.power = 60,
         .type = TYPE_DARK,
@@ -6557,7 +6584,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_EMBARGO] =
     {
-		.name = _("-"),
+		.name = _("Embargo"),
         .effect = EFFECT_EMBARGO,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -6573,13 +6600,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_FLING] =
     {
-		.name = _("-"),
+		.name = _("Fling"),
         .effect = EFFECT_FLING,
         .power = 1,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -6592,7 +6619,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_PSYCHO_SHIFT] =
     {
-		.name = _("-"),
+		.name = _("Psycho Shift"),
         .effect = EFFECT_PSYCHO_SHIFT,
         .type = TYPE_PSYCHIC,
 		.accuracy = 100,
@@ -6604,8 +6631,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_TRUMP_CARD] =
     {
-		.name = _("-"),
+		.name = _("Trump Card"),
         .effect = EFFECT_TRUMP_CARD,
+		.power = 1,
         .type = TYPE_NORMAL,
         .pp = 5,
         .target = MOVE_TARGET_SELECTED,
@@ -6620,12 +6648,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_HEAL_BLOCK] =
     {
-		.name = _("-"),
+		.name = _("Heal Block"),
         .effect = EFFECT_HEAL_BLOCK,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 15,
-        .target = MOVE_TARGET_SELECTED,
+        .target = MOVE_TARGET_OPPONENTS,
 		.flags =
 		{
 			.magicCoatAffected = TRUE,
@@ -6636,8 +6664,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_WRING_OUT] =
     {
-		.name = _("-"),
+		.name = _("Wring Out"),
         .effect = EFFECT_WRING_OUT,
+		.power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 5,
@@ -6653,7 +6682,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_POWER_TRICK] =
     {
-		.name = _("-"),
+		.name = _("Power Trick"),
         .effect = EFFECT_POWER_TRICK,
         .type = TYPE_PSYCHIC,
         .pp = 10,
@@ -6670,7 +6699,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_GASTRO_ACID] =
     {
-		.name = _("-"),
+		.name = _("Gastro Acid"),
         .effect = EFFECT_GASTRO_ACID,
         .type = TYPE_POISON,
         .accuracy = 100,
@@ -6686,7 +6715,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_LUCKY_CHANT] =
     {
-		.name = _("-"),
+		.name = _("Lucky Chant"),
         .effect = EFFECT_LUCKY_CHANT,
         .type = TYPE_NORMAL,
         .pp = 30,
@@ -6696,6 +6725,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.affectsUserSide = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_EVSN_UP_1,
@@ -7203,6 +7233,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 			.punchMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8086,6 +8117,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -8178,6 +8210,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8964,6 +8997,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.magicCoatAffected = TRUE,
 			.pulseMove = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -9455,6 +9489,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10187,6 +10222,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10304,6 +10340,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .argument = 75, // restores 75% HP instead of 50% HP
@@ -10955,6 +10992,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .argument = 75, // restores 75% HP instead of 50% HP
@@ -11082,7 +11120,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FLYING,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -11126,6 +11163,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -11259,6 +11297,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.magicCoatAffected = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -11293,6 +11332,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.magicCoatAffected = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_DEF_UP_1,
@@ -11596,6 +11636,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.magicCoatAffected = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_ALL_STATS_UP_1,
@@ -12204,6 +12245,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 			.forbiddenMetronome = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
 		.argument = 100, // restores 100% HP instead of 50% HP
@@ -14005,6 +14047,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,

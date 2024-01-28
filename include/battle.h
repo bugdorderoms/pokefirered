@@ -40,7 +40,7 @@
 
 #define MOVE_TARGET_SELECTED          0
 #define MOVE_TARGET_DEPENDS           (1 << 0)
-#define MOVE_TARGET_USER_OR_SELECTED  (1 << 1) // unused
+#define MOVE_TARGET_OPPONENTS         (1 << 1) // Same as Both foes, but with no script re-execution
 #define MOVE_TARGET_RANDOM            (1 << 2)
 #define MOVE_TARGET_OPPONENTS_FIELD   (1 << 3)
 #define MOVE_TARGET_BOTH              (1 << 4)
@@ -106,8 +106,7 @@ extern const struct TrainerSlide gTrainerSlides[];
 #define RESOURCE_FLAG_TRACED           (1 << 1)
 #define RESOURCE_FLAG_UNBURDEN_BOOST   (1 << 2)
 #define RESOURCE_FLAG_NEUTRALIZING_GAS (1 << 3)
-#define RESOURCE_FLAG_EMERGENCY_EXIT   (1 << 4)
-#define RESOURCE_FLAG_ROOST            (1 << 5)
+#define RESOURCE_FLAG_ROOST            (1 << 4)
 
 struct ResourceFlags
 {
@@ -145,6 +144,9 @@ struct DisableStruct
 	/*0x12*/ u8 stockpiledSpDef:2;
 	/*0x12*/ u8 imposterActivated:1; // only activate when switched in, not when gained
 	/*0x12*/ u8 unused:1;
+	/*0x13*/ u8 embargoTimer:3;
+	/*0x13*/ u8 healBlockTimer:3;
+	/*0x13*/ u8 unused2:2;
 };
 
 extern struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT];
@@ -174,10 +176,10 @@ struct ProtectStruct
     u32 usesBouncedMove:1;
     u32 myceliumMightElevated:1;
 	u32 helpingHandUses:3;
-    u32 flag_x80:1;
+    u32 usedGravityBannedMove:1;
 	/* field_3 */
-    u32 field3:8;
-
+    u32 usedHealBlockedMove:1;
+	u32 field3:7;
     u32 physicalDmg;
     u32 specialDmg;
     u8 physicalBattlerId;
@@ -206,7 +208,7 @@ struct SpecialStatus
 	u32 terrainAbilityDone:1;
 	u32 multiHitOn:1;
 	u32 parentalBondState:2;
-	u32 unused:1;
+	u32 emergencyExited:1;
 	// end of byte
 	u32 unused2:8;
 	// end of byte
@@ -235,6 +237,9 @@ struct SideTimer
 	/*0x00*/ u32 tailwindTimer:3;
 	/*0x00*/ u32 tailwindBattlerId:2;
 	// end of word
+	/*0x04*/ u32 luckyChantTimer:3;
+	/*0x04*/ u32 luckyChantBattlerId:2;
+	/*0x04*/ u32 unused:27;
 };
 
 extern struct SideTimer gSideTimers[B_SIDE_COUNT];
@@ -457,7 +462,9 @@ struct BattleStruct
 	/*0x0F7*/ u8 atkCancellerTracker;
 	/*0x0F8*/ u8 queuedEffectsCount[MAX_BATTLERS_COUNT];
 	/*0x0FC*/ u8 faintedActionsState;
-	/*0x0FD*/ struct QueuedEffect queuedEffectsList[MAX_BATTLERS_COUNT][B_QUEUED_COUNT + 1];
+	/*0x0FD*/ u8 battleBondActivated[B_SIDE_COUNT]; // as flag using gBitTable
+	/*0x0FF*/ u8 commanderActivated[B_SIDE_COUNT]; // as flag using gBitTable
+	/*0x101*/ struct QueuedEffect queuedEffectsList[MAX_BATTLERS_COUNT][B_QUEUED_COUNT + 1];
 	          struct MoveEffect moveEffect;
 			  struct StatChange statChange;
 	          struct Illusion illusion[MAX_BATTLERS_COUNT];
@@ -530,6 +537,7 @@ struct BattleScripting
     /*0x24*/ u8 field_23; // does something with hp calc
 	/*0x25*/ u8 savedBattler; // Multiuse
 	/*0x26*/ u8 switchinEffectState;
+	/*0x27*/ u8 atk47_state;
 };
 
 enum

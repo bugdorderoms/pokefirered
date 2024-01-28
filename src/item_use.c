@@ -802,7 +802,7 @@ void ItemUseInBattle_BagMenu(u8 taskId)
 {
 	PlaySE(SE_SELECT);
 	
-	if (!CanUseItemInBattle(PARTY_SIZE, gSpecialVar_ItemId))
+	if (!CanUseItemInBattle(TRUE, gSpecialVar_ItemId))
 		DisplayItemMessageInBag(taskId, 2, gStringVar4, Task_ReturnToBagFromContextMenu);
 	else
 	{
@@ -830,16 +830,17 @@ bool8 ExecuteTableBasedItemEffect(u8 partyMonIndex, u16 item, u8 monMoveIndex)
 	return PokemonUseItemEffects(&gPlayerParty[partyMonIndex], item, partyMonIndex, monMoveIndex, GetBattleMonForItemUse(gBattlerInMenuId, partyMonIndex));
 }
 
-bool8 CanUseItemInBattle(u8 partyIdx, u16 itemId)
+bool8 CanUseItemInBattle(bool8 fromBagMenu, u16 itemId)
 {
 	bool8 canUse = FALSE;
 	const u8* failStr = NULL;
 	
-	if (!IsItemUseBlockedByBattleEffect())
+	if (!IsItemUseBlockedByBattleEffect(GetBattleMonForItemUse(gBattlerInMenuId, fromBagMenu ? gBattlerPartyIndexes[gBattlerInMenuId] : gPartyMenu.slotId))
+	|| ItemId_GetBattleUsage(itemId) == EFFECT_ITEM_THROW_BALL) // Poke balls can be used regardless of preventing effects
 	{
-		if (partyIdx != PARTY_SIZE) // use it on a party mon
+		if (!fromBagMenu) // use it on a party mon
 		{
-			if (!ExecuteTableBasedItemEffect(partyIdx, itemId, 0))
+			if (!ExecuteTableBasedItemEffect(gPartyMenu.slotId, itemId, 0))
 				canUse = TRUE;
 		}
 		else // use it in battle

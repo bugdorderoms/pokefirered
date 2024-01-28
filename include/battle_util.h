@@ -169,11 +169,10 @@ void RemoveOrAddBattlerOnPickupStack(u8 battlerId, bool8 addToStack);
 u8 GetBattlerOnTopOfPickupStack(u8 battlerId);
 bool8 TryRecycleBattlerItem(u8 battlerRecycler, u8 battlerItem);
 u8 GetBattlerHighestStatId(u8 battlerId);
-bool8 MoveHasHealingEffect(u16 move);
 bool8 IsBattlerAffectedByFollowMe(u8 battlerId, u8 opposingSide, u16 move);
 u8 GetItemUseBattler(u8 battlerId);
 u8 GetBattleMonForItemUse(u8 battlerId, u8 partyIndex);
-bool8 IsItemUseBlockedByBattleEffect(void);
+bool8 IsItemUseBlockedByBattleEffect(u8 battlerId);
 const u8 *PokemonUseItemEffectsBattle(u8 battlerId, u16 itemId, bool8 *canUse);
 bool8 IsBattleAnimationsOn(void);
 struct Pokemon *GetBattlerParty(u8 battlerId);
@@ -203,5 +202,6 @@ bool8 TryRemoveEntryHazards(u8 battlerId);
 bool8 AttacksThisTurn(u8 battlerId, u16 move);
 bool8 TryActivateEmergencyExit(u8 battler);
 bool8 LiftProtectionEffects(u8 battlerId);
+bool8 IsBattlerBeingCommanded(u8 battlerId);
 
 #endif // GUARD_BATTLE_UTIL_H

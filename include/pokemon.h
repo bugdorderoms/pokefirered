@@ -227,7 +227,8 @@ struct MoveFlags
 	u32 recoilDivisor:3; // Used by moves that have a recoil damage, also if set, its affected by Reckless.
 	u32 forcePressure:1; // A move with this flag will force the extra PP consuption from Pressure.
 	u32 gravityBanned:1; // A move with this flag can't be selected while gravity is in effect.
-	u32 unused:17;
+	u32 healingMove:1; // A move with this flag can't be used while affected by Heal Block, also Triage gives priority to it.
+	u32 unused:16;
 };
 
 struct BattleMove

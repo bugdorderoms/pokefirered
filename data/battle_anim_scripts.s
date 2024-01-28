@@ -426,6 +426,7 @@ gBattleAnims_General::
 	.4byte General_SlideOutOffscreen
 	.4byte General_ItemThrow
 	.4byte General_StrongWinds
+	.4byte General_Commander
 
 gBattleAnims_Special::
 	.4byte Special_LevelUp
@@ -10663,7 +10664,8 @@ General_SlideOutOffscreen::
 	waitforvisualfinish
 	end
 
-General_ItemThrow:: @ Credit to Blackuser
+@ Credits to Blackuser
+General_ItemThrow::
     loadspritegfx ANIM_TAG_THIN_RING
     createvisualtask AnimTask_ItemThrow, 2
 	waitforvisualfinish
@@ -10672,8 +10674,9 @@ General_ItemThrow:: @ Credit to Blackuser
 	createsprite gThinRingExpandingSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, 0, 0
 	waitforvisualfinish
 	end
-	
-General_StrongWinds:: @ Credit to Skeli
+
+@ Credits to Skeli
+General_StrongWinds::
 	loadspritegfx ANIM_TAG_FLYING_DIRT
 	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_FLYING_DIRT, 0, 6, 6, 0x7FFF
 	createvisualtask AnimTask_LoadSandstormBackground, 5, 1
@@ -10682,6 +10685,22 @@ General_StrongWinds:: @ Credit to Skeli
 	delay 68
 	playsewithpan SE_M_GUST2, 0
 	delay 56
+	waitforvisualfinish
+	end
+
+@ Credits to Blackuser
+General_Commander::
+    loadspritegfx ANIM_TAG_SHARP_TEETH
+	monbg ANIM_TARGET
+	setalpha 12, 8
+	playsewithpan SE_M_BITE, 63
+	createsprite gSharpTeethSpriteTemplate, ANIM_ATTACKER, 2, 0, -32, 0, 0, 819, 10
+	createsprite gSharpTeethSpriteTemplate, ANIM_ATTACKER, 2, 0, 32, 4, 0, -819, 10
+	delay 10
+	clearmonbg ANIM_TARGET
+	blendoff
+	delay 10
+	createvisualtask AnimTask_SetInvisible, 1, 1
 	waitforvisualfinish
 	end
 

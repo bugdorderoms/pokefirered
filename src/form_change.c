@@ -80,6 +80,7 @@ u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 a
 					case FORM_CHANGE_SWITCH_OUT:
 					case FORM_CHANGE_START_BATTLE:
 					case FORM_CHANGE_WITHDRAW:
+					case FORM_CHANGE_FAINT_TARGET:
 					    targetSpecies = formsTable[i].targetSpecies;
 						break;
 					case FORM_CHANGE_NATURE:
@@ -269,7 +270,7 @@ void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 r
 		gBattleMons[battlerId].speed = GetMonData(mon, MON_DATA_SPEED);
 		gBattleMons[battlerId].spAttack = GetMonData(mon, MON_DATA_SPATK);
 		gBattleMons[battlerId].spDefense = GetMonData(mon, MON_DATA_SPDEF);
-		HANDLE_POWER_TRICK_SWAP(battlerId);
+		HANDLE_POWER_TRICK_SWAP(battlerId)
 	}
 	
 	if (reloadAbility)

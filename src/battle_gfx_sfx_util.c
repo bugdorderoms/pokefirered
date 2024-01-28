@@ -242,6 +242,7 @@ static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId)
 	case B_ANIM_STRONG_WINDS_CONTINUE:
 	case B_ANIM_LOAD_ABILITY_POP_UP:
 	case B_ANIM_REMOVE_ABILITY_POP_UP:
+	case B_ANIM_COMMANDER:
         return TRUE;
     }
 	return FALSE;

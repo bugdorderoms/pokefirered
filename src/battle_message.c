@@ -430,7 +430,6 @@ static const u8 sText_PkmnsXIntensifiedSun[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX
 static const u8 sText_PkmnsXInfatuatedY[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ninfatuated {B_ATK_NAME_WITH_PREFIX}!");
 static const u8 sText_PkmnsXMadeYIneffective[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nmade {B_CURRENT_MOVE} ineffective!");
 static const u8 sText_PkmnsXCuredYProblem[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncured its {B_BUFF1} problem!");
-static const u8 sText_PkmnTransformed[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} transformed!");
 const u8 gText_PkmnsXPreventsSwitching[] = _("{B_BUFF1}'s {B_LAST_ABILITY}\nprevents switching!\p");
 static const u8 sText_PkmnsXPreventsFlinching[] = _("{B_EFF_NAME_WITH_PREFIX}'s won't flinch\nbecause of its {B_EFF_ABILITY}!");
 static const u8 sText_PkmnsXPreventsYsZ[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\nprevents {B_DEF_NAME_WITH_PREFIX}'s\l{B_DEF_ABILITY} from working!"); // unused
@@ -444,7 +443,6 @@ static const u8 sText_PkmnXMadeItHail[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {
 static const u8 sText_HeavyRainBeganFall[] = _("A heavy rain began to fall!");
 static const u8 sText_SunlightTurnedExtremelyHarsh[] = _("The sunlight turned\nextremely harsh!");
 static const u8 sText_MysteriousAirProtectingPkmn[] = _("A mysterious air current is\nprotecting Flying-type Pokémon!");
-static const u8 sText_AbilityTriggered[] = _("{B_SCR_ACTIVE_ABILITY} triggered!");
 static const u8 sText_PkmnGainSomeOfHp[] = _("{B_ATK_NAME_WITH_PREFIX} gain some\nof its HP!");
 static const u8 sText_PkmnLostSomeOfHp[] = _("{B_ATK_NAME_WITH_PREFIX} lost some\nof its HP!");
 static const u8 sText_AtkAblCuredEffProblem[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\ncured {B_EFF_NAME_WITH_PREFIX}'s\l{B_BUFF1} problem!");
@@ -461,20 +459,14 @@ static const u8 sText_NeutralizingGasOver[] = _("The effects of\n{B_BUFF1} wore 
 static const u8 sText_PkmnAblFilledTheArea[] = _("{B_SCR_ACTIVE_ABILITY} filled the area!");
 static const u8 sText_PastelVeilProtected[] = _("{B_DEF_NAME_WITH_PREFIX} is protected\nby a pastel veil!");
 static const u8 sText_PastelVeilCuredStatus[] = _("{B_DEF_NAME_WITH_PREFIX} was cured\nof its poisoning!");
-static const u8 sText_StartedSchooling[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} formed\na school!");
-static const u8 sText_StoppedSchooling[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} stopped\nschooling!");
 static const u8 sText_PkmnGotOverInfatuation[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} got over\nits infatuation!");
 static const u8 sText_PkmnShookOffTaunt[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} shook off\nthe taunt!");
-static const u8 sText_ChangedToBlade[] = _("Changed to Blade Forme!");
-static const u8 sText_ChangedToShield[] = _("Changed to Shield Forme!");
 static const u8 sText_AtkFoundOneLastItem[] = _("{B_ATK_NAME_WITH_PREFIX}'s found\none {B_LAST_ITEM}!");
 static const u8 sText_PkmnAblWasTakenOver[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nwas taken over!");
 static const u8 sText_ItemRestoredAtkHealth[] = _("{B_ITEM_USE_SPECIES_NAME} had its\nHP restored!");
 static const u8 sText_ItemCuredAtkStatus[] = _("{B_ITEM_USE_SPECIES_NAME} had\nits status healed!");
 static const u8 sText_ItemRestoredAtkPP[] = _("{B_ITEM_USE_SPECIES_NAME} had its\nPP restored!");
 static const u8 sText_Buff2CuredItsBuff1Problem[] = _("{B_BUFF2} was cured\nof its {B_BUFF1}.");
-static const u8 sText_AbilityActivated[] = _("{B_SCR_ACTIVE_ABILITY} activated!");
-static const u8 sText_AbilityDeactivated[] = _("{B_SCR_ACTIVE_ABILITY} deactivated!");
 static const u8 sText_PkmnsItemCuredParalysis[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\ncured paralysis!");
 static const u8 sText_PkmnsItemCuredPoison[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\ncured poison!");
 static const u8 sText_PkmnsItemHealedBurn[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\nhealed its burn!");
@@ -487,14 +479,6 @@ static const u8 sText_PkmnsItemRestoredHealth[] = _("{B_SCR_ACTIVE_NAME_WITH_PRE
 static const u8 sText_PkmnsItemRestoredPP[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\nrestored {B_BUFF1}'s PP!");
 static const u8 sText_PkmnsItemRestoredStatus[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\nrestored its status!");
 static const u8 sText_PkmnsItemRestoredHPALittle[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\nrestored its HP a little!");
-const u8 gText_Sleep[] = _("sleep");
-const u8 gText_Poison[] = _("poison");
-const u8 gText_Burn[] = _("burn");
-const u8 gText_Paralysis[] = _("paralysis");
-const u8 gText_Ice[] = _("ice");
-const u8 gText_Confusion[] = _("confusion");
-const u8 gText_Love[] = _("love");
-const u8 gStatusConditionString_MentalState[] = _("mental");
 
 
 
@@ -537,20 +521,6 @@ const u16 gSwitchInWeatherAbilitiesStrings[] = {
 const u16 gRainDishStringIds[] = {
 	STRINGID_PKMNSXRESTOREDHPALITTLE2,
 	STRINGID_PKMNGAINSOMEOFHP,
-};
-
-const u16 gFormChangeAbilitiesStrings[] = {
-	STRINGID_ABILITYTRIGGERED,
-	STRINGID_PKMNTRANSFORMED,
-	STRINGID_CHANGEDTOBLADE,
-	STRINGID_CHANGEDTOSHIELD,
-	STRINGID_ABILITYACTIVATED,
-	STRINGID_ABILITYDEACTIVATED,
-};
-
-const u16 gStartedSchoolingStringIds[] = {
-	STRINGID_STARTEDSCHOOLING,
-	STRINGID_STOPPEDSCHOOLING,
 };
 
 
@@ -754,7 +724,9 @@ const u16 gNotAllowedMoveStringIds[] =
 	[B_MSG_MOVE_SEALED]             = STRINGID_ATKCANTUSESEALEDCURRMOVE,
 	[B_MSG_MOVE_LOCKED_CHOICE_ITEM] = STRINGID_LASTITEMALLOWSONLYCURRMOVE,
 	[B_MSG_MOVE_NO_PP]              = STRINGID_NOPPLEFT,
-	[B_MSG_MOVE_IN_GRAVITY]         = STRINGID_ATKCANTUSECURRMOVEINGRAVITY
+	[B_MSG_MOVE_IN_GRAVITY]         = STRINGID_ATKCANTUSECURRMOVEINGRAVITY,
+	[B_MSG_MOVE_LOCKED_ABILITY]     = STRINGID_ATKABLALLOWSONLYCURRMOVE,
+	[B_MSG_MOVE_HEAL_BLOCKED]       = STRINGID_ATKPREVENTEDFROMHEALING
 };
 
 const u16 gStockpileUsedStringIds[] =
@@ -812,6 +784,27 @@ const u16 gHealingWishLunarDanceStringIds[] =
 const u16 gEntryHazardsDmgStringIds[] =
 {
 	[B_MSG_HURT_BY_SPIKES] = STRINGID_PKMNHURTBYSPIKES
+};
+
+const u16 gFormChangeAbilitiesStringIds[] =
+{
+	[B_MSG_ABL_TRIGGERED]     = STRINGID_PKMNABLTRIGGERED,
+	[B_MSG_FORMED_SCHOOL]     = STRINGID_PKMNFORMEDASCHOOL,
+	[B_MSG_STOPPED_SCHOOLING] = STRINGID_PKMNSTOPPEDSCHOOLING,
+	[B_MSG_ABL_ACTIVATED]     = STRINGID_PKMNABLACTIVATED,
+	[B_MSG_ABL_DEACTIVATED]   = STRINGID_PKMNABLDEACTIVATED,
+	[B_MSG_TRANSFORMED]       = STRINGID_PKMNTRANSFORMED
+};
+
+const u16 gStanceChangeStringIds[] =
+{
+	[B_MSG_CHANGED_TO_BLADE]  = STRINGID_CHANGEDTOBLADEFORME,
+	[B_MSG_CHANGED_TO_SHIELD] = STRINGID_CHANGEDTOSHIELDFORME
+};
+
+const u16 gSplitSwapMovesStringIds[] =
+{
+	[B_MSG_SWITCHED_ATK_AND_DEF] = STRINGID_ATKSWITCHEDATTACKANDDEFENSE
 };
 
 // String tables
@@ -979,7 +972,7 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_ATKABSORBEDNUTRIENTS - BATTLESTRINGS_ID_ADDER]          = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} absorbed nutrients with its roots!"),
     [STRINGID_DEFANCHOREDITSELF - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} anchored itself with its roots!"),
     [STRINGID_DEFGREWDROWSY - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} grew drowsy!"),
-    [STRINGID_ATKSWAPPEDABILITIESWITHTARGET - BATTLESTRINGS_ID_ADDER] = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} swapped abilities with its target!"),
+    [STRINGID_ATKSWAPPEDABILITIESWITHTARGET - BATTLESTRINGS_ID_ADDER] = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} swapped Abilities with its target!"),
 	[STRINGID_DEFBOUNCEDCURRMOVEBACK - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} bounced the {B_CURRENT_MOVE} back!"),
 	[STRINGID_ATKSHROUDEDWITHCURRMOVE - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} shrouded itself with {B_CURRENT_MOVE}!"),
 	[STRINGID_CRITICALHIT - BATTLESTRINGS_ID_ADDER]                   = COMPOUND_STRING("{COLOR 2}{SHADOW 9}A critical hit!"),
@@ -1129,12 +1122,12 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_ALERTEDTOPKMNBUFF1 - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("It was alerted to {B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_BUFF1}!"),
 	[STRINGID_ALLSCREENSCLEANSED - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("All screens on the field were cleansed!"),
 	[STRINGID_PKMNSTATCHANGESWERERESET - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s stat changes were reset!"),
-	[STRINGID_PKMNHASTWOABILITIES - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} has two abilities!"),
+	[STRINGID_PKMNHASTWOABILITIES - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} has two Abilities!"),
 	[STRINGID_PKMNEXERTINGITSABL - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} is exerting its {B_SCR_ACTIVE_ABILITY}!"),
 	[STRINGID_PKMNGAINEDSTRENGTHFROMFALLEN - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} gained strength from the fallen!"),
 	[STRINGID_PKMNABLWEAKENEDBUFF1OFALL - BATTLESTRINGS_ID_ADDER]     = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY} weakened the {B_BUFF1} of all surrounding Pokémon!"),
 	[STRINGID_PKMNILLUSIONOFF - BATTLESTRINGS_ID_ADDER]               = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s illusion wore off!"),
-	[STRINGID_ATKABILITYBECAMEABL - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX}'s ability became {B_ATK_ABILITY}!"),
+	[STRINGID_ATKABILITYBECAMEABL - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX}'s Ability became {B_ATK_ABILITY}!"),
 	[STRINGID_ATKGOTITSACTTOGETHER - BATTLESTRINGS_ID_ADDER]          = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} got its act together!"),
 	[STRINGID_DEFISTORMENTED - BATTLESTRINGS_ID_ADDER]                = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} is tormented!"),
 	[STRINGID_DISGUISESERVEDASDECOY - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("Its disguise served it as a decoy!"),
@@ -1151,8 +1144,27 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_TAILWINDBLEWBEHINDATKTEAM - BATTLESTRINGS_ID_ADDER]     = COMPOUND_STRING("The tailwind blew from behind {B_ATK_TEAM_PREFIX}!"),
 	[STRINGID_ATKTEAMTAILWINDPETEREDOUT - BATTLESTRINGS_ID_ADDER]     = COMPOUND_STRING("{B_ATK_TEAM_PREFIX}'s tailwind petered out!"),
 	[STRINGID_CURRMOVECHARGEDPKMNPOWER - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("Being hit by {B_CURRENT_MOVE} charged {B_SCR_ACTIVE_NAME_WITH_PREFIX} with power!"),
+	[STRINGID_DEFCANTUSEITEMSANYMORE - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} can't use items anymore!"),
+	[STRINGID_ATKCANUSEITEMSAGAIN - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} can use items again!"),
+	[STRINGID_ATKBUFF1WASHEALED - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX}'s {B_BUFF1} was healed."),
+	[STRINGID_ATKABLALLOWSONLYCURRMOVE - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("{B_ATK_ABILITY} allows only {B_CURRENT_MOVE} to be used!"),
+	[STRINGID_ATKBECAMECHARGEDDUETOITSBOND - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} became fully charged due to its bond with its Trainer!"),
+	[STRINGID_PKMNABLTRIGGERED - BATTLESTRINGS_ID_ADDER]              = COMPOUND_STRING("{B_SCR_ACTIVE_ABILITY} triggered!"),
+	[STRINGID_PKMNFORMEDASCHOOL - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} formed a school!"),
+	[STRINGID_PKMNSTOPPEDSCHOOLING - BATTLESTRINGS_ID_ADDER]          = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} stopped schooling!"),
+	[STRINGID_PKMNABLACTIVATED - BATTLESTRINGS_ID_ADDER]              = COMPOUND_STRING("{B_SCR_ACTIVE_ABILITY} activated!"),
+	[STRINGID_PKMNABLDEACTIVATED - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("{B_SCR_ACTIVE_ABILITY} deactivated!"),
+	[STRINGID_PKMNTRANSFORMED - BATTLESTRINGS_ID_ADDER]               = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} transformed!"),
+	[STRINGID_CHANGEDTOBLADEFORME - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("Changed to Blade Forme!"),
+	[STRINGID_CHANGEDTOSHIELDFORME - BATTLESTRINGS_ID_ADDER]          = COMPOUND_STRING("Changed to Shield Forme!"),
+	[STRINGID_ATKBECAMEASHBUFF1 - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} became Ash-{B_BUFF1}!"),
+	[STRINGID_DEFPREVENTEDFROMHEALING - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} was prevented from healing!"),
+	[STRINGID_ATKHEALBLOCKWOREOFF - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX}'s heal block wore off!"),
+	[STRINGID_ATKPREVENTEDFROMHEALING - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} was prevented from healing!"),
+	[STRINGID_ATKSWITCHEDATTACKANDDEFENSE - BATTLESTRINGS_ID_ADDER]   = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} switched its Attack and Defense!"),
+	[STRINGID_DEFABILITYWASSUPPRESSED - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX}'s Ability was suppressed!"),
+	[STRINGID_CURRMOVESHIELDEDTEAMFROMCRITS - BATTLESTRINGS_ID_ADDER] = COMPOUND_STRING("The {B_CURRENT_MOVE} shielded {B_ATK_TEAM_PREFIX} from critical hits!"),
 	
-	[STRINGID_ABILITYTRIGGERED - BATTLESTRINGS_ID_ADDER]              = sText_AbilityTriggered,
 	[STRINGID_PKMNGAINSOMEOFHP - BATTLESTRINGS_ID_ADDER]              = sText_PkmnGainSomeOfHp,
 	[STRINGID_PKMNLOSTSOMEOFHP - BATTLESTRINGS_ID_ADDER]              = sText_PkmnLostSomeOfHp,
 	[STRINGID_ATKABLCUREDEFFPROBLEM - BATTLESTRINGS_ID_ADDER]         = sText_AtkAblCuredEffProblem,
@@ -1169,20 +1181,14 @@ const u8 *const gBattleStringsTable[] =
 	[STRINGID_PKMNABLFILLEDTHEAREA - BATTLESTRINGS_ID_ADDER]          = sText_PkmnAblFilledTheArea,
 	[STRINGID_PASTELVEILPROTECTED - BATTLESTRINGS_ID_ADDER]           = sText_PastelVeilProtected,
 	[STRINGID_PASTELVEILCUREDSTATUS - BATTLESTRINGS_ID_ADDER]         = sText_PastelVeilCuredStatus,
-	[STRINGID_STARTEDSCHOOLING - BATTLESTRINGS_ID_ADDER]              = sText_StartedSchooling,
-	[STRINGID_STOPPEDSCHOOLING - BATTLESTRINGS_ID_ADDER]              = sText_StoppedSchooling,
 	[STRINGID_PKMNGOTOVERINFATUATION - BATTLESTRINGS_ID_ADDER]        = sText_PkmnGotOverInfatuation,
 	[STRINGID_PKMNSHOOKOFFTAUNT - BATTLESTRINGS_ID_ADDER]             = sText_PkmnShookOffTaunt,
-	[STRINGID_CHANGEDTOBLADE - BATTLESTRINGS_ID_ADDER]                = sText_ChangedToBlade,
-	[STRINGID_CHANGEDTOSHIELD - BATTLESTRINGS_ID_ADDER]               = sText_ChangedToShield,
 	[STRINGID_ATKFOUNDLASTITEM - BATTLESTRINGS_ID_ADDER]              = sText_AtkFoundOneLastItem,
 	[STRINGID_PKMNABLWASTAKENOVER - BATTLESTRINGS_ID_ADDER]           = sText_PkmnAblWasTakenOver,
 	[STRINGID_ITEMRESTOREDSPECIESHEALTH - BATTLESTRINGS_ID_ADDER]     = sText_ItemRestoredAtkHealth,
 	[STRINGID_ITEMCUREDSPECIESSTATUS - BATTLESTRINGS_ID_ADDER]        = sText_ItemCuredAtkStatus,
 	[STRINGID_ITEMRESTOREDSPECIESPP - BATTLESTRINGS_ID_ADDER]         = sText_ItemRestoredAtkPP,
 	[STRINGID_BUFF2CUREDOFITSBUFF1 - BATTLESTRINGS_ID_ADDER]          = sText_Buff2CuredItsBuff1Problem,
-	[STRINGID_ABILITYACTIVATED - BATTLESTRINGS_ID_ADDER]              = sText_AbilityActivated,
-	[STRINGID_ABILITYDEACTIVATED - BATTLESTRINGS_ID_ADDER]            = sText_AbilityDeactivated,
 	
 
 	/*
@@ -1191,7 +1197,6 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_PKMNSXINFATUATEDY - BATTLESTRINGS_ID_ADDER]             = sText_PkmnsXInfatuatedY,
     [STRINGID_PKMNSXMADEYINEFFECTIVE - BATTLESTRINGS_ID_ADDER]        = sText_PkmnsXMadeYIneffective,
     [STRINGID_PKMNSXCUREDYPROBLEM - BATTLESTRINGS_ID_ADDER]           = sText_PkmnsXCuredYProblem,
-    [STRINGID_PKMNTRANSFORMED - BATTLESTRINGS_ID_ADDER]               = sText_PkmnTransformed,
     [STRINGID_XFOUNDONEY - BATTLESTRINGS_ID_ADDER]                    = sText_XFoundOneY,
     [STRINGID_FORXCOMMAYZ - BATTLESTRINGS_ID_ADDER]                   = sText_ForXCommaYZ,
     [STRINGID_USINGXTHEYOFZN - BATTLESTRINGS_ID_ADDER]                = sText_UsingXTheYOfZN,

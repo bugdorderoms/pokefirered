@@ -79,6 +79,7 @@ static const u8 *const sMoveEffectBS_Ptrs[] =
 	[MOVE_EFFECT_ATK_DEF_DOWN]       = BattleScript_MoveEffectAtkDefDown,
 	[MOVE_EFFECT_STOCKPILE_WORE_OFF] = BattleScript_MoveEffectStockpileWoreOff,
 	[MOVE_EFFECT_FEINT]              = BattleScript_MoveEffectFeint,
+	[MOVE_EFFECT_DEF_SPDEF_DOWN]     = BattleScript_MoveEffectDefSpDefDown,
 };
 
 void SetMoveEffect(u8 moveEffect, bool8 affectsUser, bool8 certain)
@@ -385,6 +386,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			break;
 		case MOVE_EFFECT_ALL_STATS_UP:
 		case MOVE_EFFECT_ATK_DEF_DOWN:
+		case MOVE_EFFECT_DEF_SPDEF_DOWN:
 		    if (!NoAliveMonsForEitherParty())
 				effect = 2;
 			break;
@@ -439,7 +441,9 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 					CheckSetBattlerUnburden(gEffectBattler);
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_KnockedOff;
-					gBattleStruct->choicedMove[gEffectBattler] = MOVE_NONE;
+					
+					if (GetBattlerAbility(gEffectBattler) != ABILITY_GORILLA_TACTICS)
+						gBattleStruct->choicedMove[gEffectBattler] = MOVE_NONE;
 				}
 				return TRUE;
 			}
