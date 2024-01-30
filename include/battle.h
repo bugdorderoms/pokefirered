@@ -251,21 +251,6 @@ struct FieldTimer
 	u16 gravityTimer:3;
 };
 
-struct WishFutureKnock
-{
-    u8 futureSightCounter[MAX_BATTLERS_COUNT];
-    u8 futureSightAttacker[MAX_BATTLERS_COUNT];
-    u16 futureSightMove[MAX_BATTLERS_COUNT];
-    u8 wishCounter[MAX_BATTLERS_COUNT];
-    u8 wishMonId[MAX_BATTLERS_COUNT];
-	u8 storedHealingWish:4; // as flag using gBitTable
-	u8 storedLunarDance:4; // as flag using gBitTable
-    u8 weatherDuration;
-    u8 knockedOffMons[B_SIDE_COUNT]; // as flag using gBitTable
-};
-
-extern struct WishFutureKnock gWishFutureKnock;
-
 struct AI_ThinkingStruct
 {
     u8 aiState;
@@ -427,7 +412,8 @@ struct BattleStruct
 	/*0x056*/ u16 hpOnSwitchout[2];
 	/*0x05A*/ u8 hpScale;
 	/*0x05B*/ u8 multiplayerId;
-    /*0x05C*/ u16 abilityPreventingSwitchout;
+    /*0x05C*/ u8 weatherDuration;
+	/*0x05D*/ u8 unused:8;
 	/*0x05E*/ u8 simulatedInputState[4];  // used by Oak/Old Man/Pokedude controllers
 	/*0x062*/ u8 intrepidSwordActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x064*/ u16 savedBattleTypeFlags;
@@ -464,10 +450,22 @@ struct BattleStruct
 	/*0x0FC*/ u8 faintedActionsState;
 	/*0x0FD*/ u8 battleBondActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x0FF*/ u8 commanderActivated[B_SIDE_COUNT]; // as flag using gBitTable
-	/*0x101*/ struct QueuedEffect queuedEffectsList[MAX_BATTLERS_COUNT][B_QUEUED_COUNT + 1];
+	/*0x101*/ u8 storedHealingWish:4; // as flag using gBitTable
+	/*0x101*/ u8 storedLunarDance:4; // as flag using gBitTable
+	/*0x102*/ u8 futureSightCounter[MAX_BATTLERS_COUNT];
+    /*0x106*/ u8 futureSightAttacker[MAX_BATTLERS_COUNT];
+    /*0x10A*/ u16 futureSightMove[MAX_BATTLERS_COUNT];
+    /*0x112*/ u8 wishCounter[MAX_BATTLERS_COUNT];
+    /*0x116*/ u8 wishMonId[MAX_BATTLERS_COUNT];
+    /*0x120*/ u8 knockedOffMons[B_SIDE_COUNT]; // as flag using gBitTable
+	/*0x122*/ u8 savedAttackerStack[10];
+	/*0x132*/ u8 savedTargetStack[10];
+	/*0x142*/ u8 savedAttackerStackCount:4;
+	/*0x142*/ u8 savedTargetStackCount:4;
+	          struct QueuedEffect queuedEffectsList[MAX_BATTLERS_COUNT][B_QUEUED_COUNT + 1];
+			  struct Illusion illusion[MAX_BATTLERS_COUNT];
 	          struct MoveEffect moveEffect;
 			  struct StatChange statChange;
-	          struct Illusion illusion[MAX_BATTLERS_COUNT];
 	          struct MoveInfo moveInfo;
     union {
         struct LinkPartnerHeader linkPartnerHeader;
@@ -666,7 +664,6 @@ extern u16 gChosenMove;
 extern u16 gCalledMove;
 extern bool8 gIsCriticalHit;
 extern u16 gBattleWeather;
-extern u16 gLastUsedAbility;
 extern u8 gBattlerInMenuId;
 extern u8 gBattlersCount;
 extern u16 gBattlerPartyIndexes[MAX_BATTLERS_COUNT];

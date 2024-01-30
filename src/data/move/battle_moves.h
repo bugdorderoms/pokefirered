@@ -9796,6 +9796,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 			.forbiddenMetronome = TRUE,
+			.slicingMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -13854,6 +13855,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
+			.punchMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -13976,6 +13978,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
+			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,

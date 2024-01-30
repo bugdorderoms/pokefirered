@@ -778,7 +778,8 @@ static void sub_80B37A4(struct Sprite *sprite)
 {
     if (sprite->data[1] > sprite->data[0] - 10)
         sprite->invisible = sprite->data[1] & 1;
-    else if (sprite->data[1] == sprite->data[0])
+	
+    if (sprite->data[1] == sprite->data[0])
         DestroyAnimSprite(sprite);
 	
     ++sprite->data[1];

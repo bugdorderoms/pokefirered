@@ -16,6 +16,7 @@
 #include "decompress.h"
 #include "event_data.h"
 #include "evolution_scene.h"
+#include "field_weather.h"
 #include "graphics.h"
 #include "item.h"
 #include "link.h"
@@ -47,6 +48,7 @@
 #include "constants/pokemon.h"
 #include "constants/songs.h"
 #include "constants/battle_string_ids.h"
+#include "constants/weather.h"
 
 static void HandleAction_UseMove(void);
 static void HandleAction_Switch(void);
@@ -147,17 +149,16 @@ EWRAM_DATA u16 gBattleWeather = 0;
 EWRAM_DATA u16 gIntroSlideFlags = 0;
 EWRAM_DATA u8 gSentPokesToOpponent[2] = {0};
 EWRAM_DATA u16 gLastUsedItem = 0;
-EWRAM_DATA u16 gLastUsedAbility = 0;
+EWRAM_DATA u16 gPaydayMoney = 0;
 EWRAM_DATA u8 gBattlerStatusSummaryTaskId[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gExpShareExp = 0;
 EWRAM_DATA u8 gBattlerInMenuId = 0;
 EWRAM_DATA bool8 gDoingBattleAnim = FALSE;
 EWRAM_DATA u16 gBattleMonForms[B_SIDE_COUNT][PARTY_SIZE] = {0};
 EWRAM_DATA u16 gMoveToLearn = 0;
-EWRAM_DATA u8 gPartyCriticalHits[PARTY_SIZE] = {0};
-EWRAM_DATA u16 gPaydayMoney = 0;
 EWRAM_DATA u32 gTransformedPersonalities[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA bool8 gTransformedShinies[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA u8 gPartyCriticalHits[PARTY_SIZE] = {0};
 // Controller rams
 EWRAM_DATA u8 *gLinkBattleSendBuffer = NULL;
 EWRAM_DATA u8 *gLinkBattleRecvBuffer = NULL;
@@ -213,7 +214,6 @@ EWRAM_DATA u32 gStatuses3[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA struct ProtectStruct gProtectStructs[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA struct SpecialStatus gSpecialStatuses[MAX_BATTLERS_COUNT] = {0};
-EWRAM_DATA struct WishFutureKnock gWishFutureKnock = {0};
 EWRAM_DATA struct BattleScripting gBattleScripting = {0};
 EWRAM_DATA struct BattleStruct *gBattleStruct = NULL;
 EWRAM_DATA struct BattleResources *gBattleResources = NULL;
@@ -1944,7 +1944,6 @@ static void BattleStartClearSetData(void)
     memset(&gSpecialStatuses, 0, sizeof(gSpecialStatuses));
 	memset(&gSideStatuses, 0, sizeof(gSideStatuses));
 	memset(&gSideTimers, 0, sizeof(gSideTimers));
-	memset(&gWishFutureKnock, 0, sizeof(gWishFutureKnock));
 	memset(&gStatuses3, 0, sizeof(gStatuses3));
 	memset(&gDisableStructs, 0, sizeof(gDisableStructs));
 	memset(&gFieldStatus, 0, sizeof(gFieldStatus));
@@ -2427,6 +2426,57 @@ static void BattleIntroPlayerSendsOutMonAnimation(void)
     }
 }
 
+static bool8 TryStartOverworldWeather(void)
+{
+	bool8 effect = FALSE;
+	
+	switch (GetCurrentWeather())
+	{
+		case WEATHER_RAIN:
+		case WEATHER_RAIN_THUNDERSTORM:
+		case WEATHER_DOWNPOUR:
+		    if (!(gBattleWeather & WEATHER_RAIN_ANY))
+			{
+				gBattleWeather = (WEATHER_RAIN_TEMPORARY | WEATHER_RAIN_PERMANENT);
+				gBattleScripting.animArg1 = B_ANIM_RAIN_CONTINUES;
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_STARTED_RAIN;
+				effect = TRUE;
+			}
+			break;
+		case WEATHER_SANDSTORM:
+		    if (!(gBattleWeather & WEATHER_SANDSTORM_ANY))
+			{
+				gBattleWeather = (WEATHER_SANDSTORM_PERMANENT | WEATHER_SANDSTORM_TEMPORARY);
+				gBattleScripting.animArg1 = B_ANIM_SANDSTORM_CONTINUES;
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SANDSTORM_UP;
+				effect = TRUE;
+			}
+			break;
+		case WEATHER_SNOW:
+		    if (!(gBattleWeather & WEATHER_HAIL_ANY))
+			{
+				gBattleWeather = (WEATHER_HAIL_PERMANENT | WEATHER_HAIL_TEMPORARY);
+				gBattleScripting.animArg1 = B_ANIM_HAIL_CONTINUES;
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_STARTED_HAIL;
+				effect = TRUE;
+			}
+			break;
+#if FOG_IN_BATTLE
+		case WEATHER_FOG_HORIZONTAL:
+		case WEATHER_FOG_DIAGONAL:
+		    if (!(gBattleWeather & WEATHER_FOG_ANY))
+			{
+				gBattleWeather = (WEATHER_FOG_PERMANENT | WEATHER_FOG_TEMPORARY);
+				gBattleScripting.animArg1 = B_ANIM_FOG_CONTINUES;
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_DEEP_FOG;
+				effect = TRUE;
+			}
+			break;
+#endif
+	}
+	return effect;
+}
+
 static void TryDoEventsBeforeFirstTurn(void)
 {
     s32 i, j;
@@ -2442,9 +2492,10 @@ static void TryDoEventsBeforeFirstTurn(void)
                     if (GetWhoStrikesFirst(gBattlerByTurnOrder[i], gBattlerByTurnOrder[j], TRUE) != ATTACKER_STRIKES_FIRST)
                         SwapTurnOrder(i, j);
         }
-        if (!gBattleStruct->overworldWeatherDone && AbilityBattleEffects(ABILITYEFFECT_SWITCH_IN_WEATHER, 0))
+        if (!gBattleStruct->overworldWeatherDone && TryStartOverworldWeather())
         {
             gBattleStruct->overworldWeatherDone = TRUE;
+			BattleScriptPushCursorAndCallback(BattleScript_OverworldWeatherStarts);
             return;
         }
 		// check Neutralizing Gas
@@ -2749,19 +2800,19 @@ static void HandleTurnActionSelectionState(void)
                     *(gBattleStruct->battlerPartyIndexes + battlerId) = gBattlerPartyIndexes[battlerId];
 					
                     if (IsBattlerBeingCommanded(battlerId) || !CanBattlerEscape(battlerId, TRUE))
-                        BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->battlerPartyOrders[battlerId]);
+                        BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CANT_SWITCH, PARTY_SIZE, gBattleStruct->battlerPartyOrders[battlerId]);
 					else
 					{
 						i = IsAbilityPreventingSwitchOut(battlerId);
 						
 						if (i)
-							BtlController_EmitChoosePokemon(battlerId, BUFFER_A, ((i - 1) << 4) | PARTY_ACTION_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->battlerPartyOrders[battlerId]);
+							BtlController_EmitChoosePokemon(battlerId, BUFFER_A, ((i - 1) << 4) | PARTY_ACTION_ABILITY_PREVENTS, PARTY_SIZE, gBattleStruct->battlerPartyOrders[battlerId]);
 						else if (battlerId == 2 && gChosenActionByBattler[0] == B_ACTION_SWITCH)
-							BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->battlerPartyOrders[battlerId]);
+							BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], gBattleStruct->battlerPartyOrders[battlerId]);
 						else if (battlerId == 3 && gChosenActionByBattler[1] == B_ACTION_SWITCH)
-                            BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->battlerPartyOrders[battlerId]);
+                            BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], gBattleStruct->battlerPartyOrders[battlerId]);
                         else
-                            BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, 6, ABILITY_NONE, gBattleStruct->battlerPartyOrders[battlerId]);
+                            BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, PARTY_SIZE, gBattleStruct->battlerPartyOrders[battlerId]);
 					}
                     MarkBattlerForControllerExec(battlerId);
                     break;
@@ -3770,12 +3821,9 @@ bool8 TryRunFromBattle(u8 battler)
         ++effect;
     }
 	else if (IS_BATTLER_OF_TYPE(battler, TYPE_GHOST))
-	{
 		++effect;
-	}
     else if (GetBattlerAbility(battler) == ABILITY_RUN_AWAY)
     {
-        gLastUsedAbility = ABILITY_RUN_AWAY;
         gProtectStructs[battler].fleeFlag = 2;
         ++effect;
     }
@@ -3800,6 +3848,7 @@ bool8 TryRunFromBattle(u8 battler)
 
         ++gBattleStruct->runTries;
     }
+	
     if (effect)
     {
         gCurrentTurnActionNumber = gBattlersCount;

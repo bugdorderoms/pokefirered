@@ -37,20 +37,19 @@ enum
 #define MOVE_LIMITATION_IGNORE_NO_PP             (1 << 0)
 #define MOVE_LIMITATION_IGNORE_IMPRISON          (1 << 1)
 
-#define ABILITYEFFECT_SWITCH_IN_WEATHER          0
-#define ABILITYEFFECT_ON_SWITCHIN                1
-#define ABILITYEFFECT_ENDTURN                    2
-#define ABILITYEFFECT_TRACE                      3
-#define ABILITYEFFECT_NEUTRALIZING_GAS           4
-#define ABILITYEFFECT_UNNERVE                    5
-#define ABILITYEFFECT_MOVES_BLOCK                6
-#define ABILITYEFFECT_ABSORBING                  7
-#define ABILITYEFFECT_MOVE_END_ATTACKER          8
-#define ABILITYEFFECT_MOVE_END_TARGET            9
-#define ABILITYEFFECT_IMMUNITY                   10
-#define ABILITYEFFECT_ON_WEATHER                 11
-#define ABILITYEFFECT_SYNCHRONIZE                12
-#define ABILITYEFFECT_ON_TERRAIN                 13
+#define ABILITYEFFECT_ON_SWITCHIN                0
+#define ABILITYEFFECT_ENDTURN                    1
+#define ABILITYEFFECT_TRACE                      2
+#define ABILITYEFFECT_NEUTRALIZING_GAS           3
+#define ABILITYEFFECT_UNNERVE                    4
+#define ABILITYEFFECT_MOVES_BLOCK                5
+#define ABILITYEFFECT_ABSORBING                  6
+#define ABILITYEFFECT_MOVE_END_ATTACKER          7
+#define ABILITYEFFECT_MOVE_END_TARGET            8
+#define ABILITYEFFECT_IMMUNITY                   9
+#define ABILITYEFFECT_ON_WEATHER                 10
+#define ABILITYEFFECT_SYNCHRONIZE                11
+#define ABILITYEFFECT_ON_TERRAIN                 12
 
 #define CHECK_ABILITY_ON_FIELD                   0
 #define CHECK_ABILITY_ON_FIELD_EXCEPT_BATTLER    1
@@ -203,5 +202,7 @@ bool8 AttacksThisTurn(u8 battlerId, u16 move);
 bool8 TryActivateEmergencyExit(u8 battler);
 bool8 LiftProtectionEffects(u8 battlerId);
 bool8 IsBattlerBeingCommanded(u8 battlerId);
+void SaveAttackerToStack(u8 battlerId);
+void SaveTargetToStack(u8 battlerId);
 
 #endif // GUARD_BATTLE_UTIL_H

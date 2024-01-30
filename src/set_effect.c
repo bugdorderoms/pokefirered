@@ -188,8 +188,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 					switch (ret)
 					{
 						case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
-						    gLastUsedAbility = defAbility;
-							RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+							RecordAbilityBattle(gEffectBattler, defAbility);
 							BattleScriptPush(gBattlescriptCurrInstr + 1);
 							gBattlescriptCurrInstr = BattleScript_ImmunityProtectedRet;
 							return FALSE;
@@ -221,8 +220,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 				switch (ret)
 				{
 					case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
-					    gLastUsedAbility = defAbility;
-						RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+						RecordAbilityBattle(gEffectBattler, defAbility);
 						BattleScriptPush(gBattlescriptCurrInstr + 1);
 						gBattlescriptCurrInstr = BattleScript_WaterVeilProtectedRet;
 						return FALSE;
@@ -250,8 +248,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 				switch (ret)
 				{
 					case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
-					    gLastUsedAbility = defAbility;
-						RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+						RecordAbilityBattle(gEffectBattler, defAbility);
 						BattleScriptPush(gBattlescriptCurrInstr + 1);
 						gBattlescriptCurrInstr = BattleScript_LimberProtectedRet;
 						return FALSE;
@@ -270,8 +267,8 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			{
 				if (certain)
 				{
-					gLastUsedAbility = defAbility;
-					RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+					RecordAbilityBattle(gEffectBattler, defAbility);
+					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_FlinchPrevention;
 					return FALSE;
 				}
@@ -429,15 +426,14 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			{
 				if (IsBattlerAlive(gEffectBattler) && defAbility == ABILITY_STICKY_HOLD)
 				{
-					gLastUsedAbility = defAbility;
-					RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+					RecordAbilityBattle(gEffectBattler, defAbility);
 					gBattlescriptCurrInstr = BattleScript_StickyHoldActivates;
 				}
 				else
 				{
 					gLastUsedItem = gBattleMons[gEffectBattler].item;
 					gBattleMons[gEffectBattler].item = ITEM_NONE;
-					gWishFutureKnock.knockedOffMons[GetBattlerSide(gEffectBattler)] |= gBitTable[gBattlerPartyIndexes[gEffectBattler]];
+					gBattleStruct->knockedOffMons[GetBattlerSide(gEffectBattler)] |= gBitTable[gBattlerPartyIndexes[gEffectBattler]];
 					CheckSetBattlerUnburden(gEffectBattler);
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_KnockedOff;
@@ -453,8 +449,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			{
 				if (gBattleMons[gEffectBattler].item && IsBattlerAlive(gEffectBattler) && defAbility == ABILITY_STICKY_HOLD)
 				{
-					gLastUsedAbility = defAbility;
-					RecordAbilityBattle(gEffectBattler, gLastUsedAbility);
+					RecordAbilityBattle(gEffectBattler, defAbility);
 					gBattlescriptCurrInstr = BattleScript_StickyHoldActivates;
 					return TRUE;
 				}

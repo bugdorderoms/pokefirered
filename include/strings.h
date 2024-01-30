@@ -177,9 +177,6 @@ extern const u8 gText_Ghost[];
 extern const u8 gText_FormChangeItem[];
 extern const u8 gText_ChooseForm[];
 
-// pokemon
-extern const u8 gText_PkmnsXPreventsSwitching[];
-
 // slot_machine
 extern const u8 gString_OutOfCoins[];
 extern const u8 gString_QuitPlaying[];

@@ -757,7 +757,6 @@ void BtlController_EmitPrintString(u8 battlerId, u8 bufferId, u16 stringId)
     stringInfo->currentMove = gCurrentMove;
     stringInfo->chosenMove = gChosenMove;
     stringInfo->lastItem = gLastUsedItem;
-    stringInfo->lastAbility = gLastUsedAbility;
     stringInfo->scrActive = gBattleScripting.battler;
     stringInfo->hpScale = gBattleStruct->hpScale;
 	
@@ -787,7 +786,6 @@ void BtlController_EmitPrintSelectionString(u8 battlerId, u8 bufferId, u16 strin
     stringInfo->currentMove = gCurrentMove;
     stringInfo->chosenMove = gChosenMove;
     stringInfo->lastItem = gLastUsedItem;
-    stringInfo->lastAbility = gLastUsedAbility;
     stringInfo->scrActive = gBattleScripting.battler;
     for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
         stringInfo->abilities[i] = gBattleMons[i].ability;
@@ -830,16 +828,14 @@ void BtlController_EmitChooseItem(u8 battlerId, u8 bufferId, u8 *arg1)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitChoosePokemon(u8 battlerId, u8 bufferId, u8 caseId, u8 arg2, u16 abilityId, u8* arg4)
+void BtlController_EmitChoosePokemon(u8 battlerId, u8 bufferId, u8 caseId, u8 arg2, u8* arg4)
 {
 	s32 i;
     sBattleBuffersTransferData[0] = CONTROLLER_CHOOSEPOKEMON;
     sBattleBuffersTransferData[1] = caseId;
     sBattleBuffersTransferData[2] = arg2;
-    sBattleBuffersTransferData[3] = abilityId;
-    sBattleBuffersTransferData[4] = (abilityId & 0xFF00) >> 8;
     for (i = 0; i < 3; ++i)
-        sBattleBuffersTransferData[5 + i] = arg4[i];
+        sBattleBuffersTransferData[3 + i] = arg4[i];
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 8);
 }
 
@@ -1331,10 +1327,9 @@ void BtlController_HandleChoosePokemon(u8 battlerId, void(*controllerFunc)(u8))
     gTasks[gBattleControllerData[battlerId]].data[0] = gBattleBufferA[battlerId][1] & 0xF;
     gBattleStruct->battlerPreventingSwitchout = gBattleBufferA[battlerId][1] >> 4;
     gBattleStruct->playerPartyIdx = gBattleBufferA[battlerId][2];
-    gBattleStruct->abilityPreventingSwitchout = gBattleBufferA[battlerId][3] | (gBattleBufferA[battlerId][4] << 8);
 	
     for (i = 0; i < 3; ++i)
-        gBattlePartyCurrentOrder[i] = gBattleBufferA[battlerId][5 + i];
+        gBattlePartyCurrentOrder[i] = gBattleBufferA[battlerId][3 + i];
 	
     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
     gBattlerControllerFuncs[battlerId] = controllerFunc;

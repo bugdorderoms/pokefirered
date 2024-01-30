@@ -1589,12 +1589,7 @@ u8 GetMonsStateToDoubles(void)
 
 u16 GetAbilityBySpecies(u16 species, bool8 abilityNum, bool8 abilityHidden)
 {
-	if (abilityHidden && gBaseStats[species].hiddenAbility)
-		gLastUsedAbility = gBaseStats[species].hiddenAbility;
-	else
-		gLastUsedAbility = gBaseStats[species].abilities[abilityNum];
-
-	return gLastUsedAbility;
+	return (abilityHidden && gBaseStats[species].hiddenAbility) ? gBaseStats[species].hiddenAbility : gBaseStats[species].abilities[abilityNum];
 }
 
 u16 GetMonAbility(struct Pokemon *mon)
@@ -2533,14 +2528,12 @@ void SetMonPreventsSwitchingString(void)
 {
 	u8 battlerId = gBattleStruct->battlerPreventingSwitchout;
 	
-    gLastUsedAbility = gBattleStruct->abilityPreventingSwitchout;
-	
 	PrepareMonNickWithPrefixBuffer(gBattleTextBuff1, battlerId,
 	GetBattlerSide(battlerId) == B_SIDE_PLAYER ? GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[battlerId]) : gBattlerPartyIndexes[battlerId]);
 	
-    PrepareMonNickWithPrefixBuffer(gBattleTextBuff2, gBattlerInMenuId, GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[gBattlerInMenuId]));
+    PrepareAbilityBuffer(gBattleTextBuff2, GetBattlerAbility(battlerId));
 
-    BattleStringExpandPlaceholders(gText_PkmnsXPreventsSwitching, gStringVar4);
+    BattleStringExpandPlaceholdersToDisplayedString(COMPOUND_STRING("{B_BUFF1}'s {B_BUFF2}\nprevents switching!\p"));
 }
 
 void SetWildMonHeldItem(struct Pokemon *mon)

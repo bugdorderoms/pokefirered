@@ -1745,6 +1745,26 @@
 	.4byte \ptr
 	.endm
 	
+	.macro saveattacker
+	callfunction BS_SaveAttackerOnStack
+	.endm
+	
+	.macro restoreattacker
+	callfunction BS_RestoreAttackerFromStack
+	.endm
+	
+	.macro savetarget
+	callfunction BS_SaveTargetOnStack
+	.endm
+	
+	.macro restoretarget
+	callfunction BS_RestoreTargetFromStack
+	.endm
+	
+	.macro switchoutpartyorderswap
+	callfunction BS_SwitchOutPartyOrderSwap
+	.endm
+	
 @ helpful macros
 	.macro copybyte dst:req, src:req
 	copyarray \dst, \src, 0x1
@@ -1887,16 +1907,6 @@
 	waitmessage 1
 	.endm
 	
-	.macro savebattlers
-	copybyte sSAVED_DMG, gBattlerAttacker
-	copybyte sGIVEEXP_STATE, gBattlerTarget
-	.endm
-	
-	.macro restorebattlers
-	copybyte gBattlerAttacker, sSAVED_DMG
-	copybyte gBattlerTarget, sGIVEEXP_STATE
-	.endm
-	
 	.macro damageformula
 	critcalc
 	damagecalc
@@ -1913,4 +1923,14 @@
 	.macro switchineffects battler:req
 	setbyte sSWITCHIN_EFFECTS_STATE, 0
 	switchineffectsstate \battler
+	.endm
+	
+	.macro savebattlers
+	saveattacker
+	savetarget
+	.endm
+	
+	.macro restorebattlers
+	restoreattacker
+	restoretarget
 	.endm

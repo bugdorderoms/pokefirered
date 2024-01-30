@@ -11,10 +11,9 @@ struct BattleMsgData
     u16 currentMove;
     u16 chosenMove;
     u16 lastItem;
-    u16 lastAbility;
-	u16 abilities[MAX_BATTLERS_COUNT];
     u8 scrActive;
     u8 hpScale;
+	u16 abilities[MAX_BATTLERS_COUNT];
     u8 textBuffs[3][TEXT_BUFF_ARRAY_COUNT];
 };
 
@@ -38,7 +37,7 @@ struct BattleMsgData
 #define B_TXT_CURRENT_MOVE                0x0F
 #define B_TXT_CHOSEN_MOVE                 0x10
 #define B_TXT_LAST_ITEM                   0x11
-#define B_TXT_LAST_ABILITY                0x12
+#define B_TXT_DEF_NAME                    0x12
 #define B_TXT_ATK_ABILITY                 0x13
 #define B_TXT_DEF_ABILITY                 0x14
 #define B_TXT_SCR_ACTIVE_ABILITY          0x15
@@ -56,7 +55,6 @@ struct BattleMsgData
 #define B_TXT_ITEM_USE_SPECIES_NAME       0x21
 #define B_TXT_ATK_TEAM_PREFIX             0x22
 #define B_TXT_DEF_TEAM_PREFIX             0x23
-#define B_TXT_DEF_NAME                    0x24
 
 // for B_TXT_BUFF1, B_TXT_BUFF2 and B_TXT_BUFF3
 
@@ -80,7 +78,6 @@ struct BattleMsgData
 // String buffers
 void BufferStringBattle(u8 battlerId, u16 stringId);
 void BattleStringExpandPlaceholdersToDisplayedString(const u8* src);
-void BattleStringExpandPlaceholders(const u8* src, u8* dst);
 void SetPpNumbersPaletteInMoveSelection(u8 battlerId);
 void BattlePutTextOnWindow(const u8* text, u8 windowId_flags);
 bool8 BattleStringShouldBeColored(u16);

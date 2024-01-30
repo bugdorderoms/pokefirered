@@ -59,7 +59,7 @@ BattleScript_ItemRestoreHP::
     healthbarupdate BS_SCRIPTING
     datahpupdate BS_SCRIPTING
     updatestatusicon BS_SCRIPTING
-	printstring STRINGID_ITEMRESTOREDSPECIESHEALTH
+	printstring STRINGID_ITEMPKMNHADHPRESTORED
     waitmessage B_WAIT_TIME_LONG
     end
 
@@ -82,7 +82,7 @@ BattleScript_ItemCurePrimaryStatus::
 BattleScript_ItemCureSecondaryStatus::
 	call BattleScript_UseItemMessage
 BattleScript_ItemCureSecondaryStatus_PrintString::
-    printstring STRINGID_ITEMCUREDSPECIESSTATUS
+    printstring STRINGID_ITEMPKMNHADSTATUSHEALED
     waitmessage B_WAIT_TIME_LONG
     end
 
@@ -137,7 +137,7 @@ BattleScript_DoBallThrow::
 
 BattleScript_ItemRestorePP::
     call BattleScript_UseItemMessage
-    printstring STRINGID_ITEMRESTOREDSPECIESPP
+    printstring STRINGID_ITEMPKMNHADPPRESTORED
     waitmessage B_WAIT_TIME_LONG
     end
 

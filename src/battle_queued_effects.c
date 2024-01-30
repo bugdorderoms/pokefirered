@@ -114,10 +114,10 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 	switch (id)
 	{
 		case B_QUEUED_FUTURE_SIGHT:
-		    if (gWishFutureKnock.futureSightCounter[battlerId] != 0 && --gWishFutureKnock.futureSightCounter[battlerId] == 0)
+		    if (gBattleStruct->futureSightCounter[battlerId] != 0 && --gBattleStruct->futureSightCounter[battlerId] == 0)
 			{
-				gBattlerAttacker = gWishFutureKnock.futureSightAttacker[battlerId];
-				gCurrentMove = gWishFutureKnock.futureSightMove[battlerId];
+				gBattlerAttacker = gBattleStruct->futureSightAttacker[battlerId];
+				gCurrentMove = gBattleStruct->futureSightMove[battlerId];
 				SetTypeBeforeUsingMove(gCurrentMove, gBattlerAttacker);
 				
 				gSpecialStatuses[battlerId].dmg = 0xFFFF;
@@ -136,7 +136,7 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 			}
 			break;
 		case B_QUEUED_WISH:
-		    if (gWishFutureKnock.wishCounter[battlerId] != 0 && --gWishFutureKnock.wishCounter[battlerId] == 0 && !(gStatuses3[battlerId] & STATUS3_HEAL_BLOCK))
+		    if (gBattleStruct->wishCounter[battlerId] != 0 && --gBattleStruct->wishCounter[battlerId] == 0 && !(gStatuses3[battlerId] & STATUS3_HEAL_BLOCK))
 			{
 				BattleScriptExecute(BattleScript_WishComesTrue);
 				effect = TRUE;
