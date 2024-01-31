@@ -216,9 +216,14 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectHit                   @ EFFECT_TRUMP_CARD
 	.4byte BattleScript_EffectHealBlock             @ EFFECT_HEAL_BLOCK
 	.4byte BattleScript_EffectHit                   @ EFFECT_WRING_OUT
-	.4byte BattleScript_EffectSplitSwap             @ EFFECT_POWER_TRICK
+	.4byte BattleScript_EffectPowerTrick            @ EFFECT_POWER_TRICK
 	.4byte BattleScript_EffectGastroAcid            @ EFFECT_GASTRO_ACID
 	.4byte BattleScript_EffectLuckyChant            @ EFFECT_LUCKY_CHANT
+	.4byte BattleScript_EffectMeFirst               @ EFFECT_ME_FIRST
+	.4byte BattleScript_EffectCopycat               @ EFFECT_COPYCAT
+	.4byte BattleScript_EffectSplitSwap             @ EFFECT_POWER_SWAP
+	.4byte BattleScript_EffectSplitSwap             @ EFFECT_GUARD_SWAP
+	.4byte BattleScript_EffectHit                   @ EFFECT_PUNISHMENT
 
 @@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE BATTLE SCRIPTS @
@@ -1432,6 +1437,7 @@ BattleScript_SleepTalkIsAsleep::
 	ppreduce
 	orword gHitMarker, HITMARKER_NO_PPDEDUCT | HITMARKER_ALLOW_NO_PP
 	trychoosesleeptalkmove BattleScript_ButItFailed
+BattleScript_DoMoveAnimAndJumpToCalledMove::
 	attackanimation
 	waitstate
 	setbyte sB_ANIM_TURN, 0
@@ -1711,7 +1717,7 @@ BattleScript_EffectSpitUp::
 	attackstring
 	ppreduce
 	jumpifbyte CMP_EQUAL, sMISS_TYPE, B_MSG_PROTECTED, BattleScript_SpitUpNoDamage
-	accuracycheck BattleScript_PrintMoveMissed
+	accuracycheck BattleScript_MoveMissedPause
 	stockpiletobasedamage BattleScript_SpitUpFail
 	goto BattleScript_HitFromCritCalc
 	
@@ -1958,11 +1964,7 @@ BattleScript_EffectAssist::
 	attackcanceler
 	attackstring
 	assistattackselect BattleScript_ButItFailedPpReduce
-	attackanimation
-	waitstate
-	setbyte sB_ANIM_TURN, 0
-	setbyte sB_ANIM_TARGETS_HIT, 0
-	jumptocalledmove FALSE
+	goto BattleScript_DoMoveAnimAndJumpToCalledMove
 
 @ EFFECT_INGRAIN @
 
@@ -2530,8 +2532,9 @@ BattleScript_EffectHealBlock::
 
 @ EFFECT_POWER_TRICK @
 
-BattleScript_EffectSplitSwap::
+BattleScript_EffectPowerTrick::
     attackcanceler
+BattleScript_EffectSplitSwapAfterAtkCanceller::
 	attackstring
 	ppreduce
 	setsplitswap
@@ -2568,6 +2571,30 @@ BattleScript_EffectLuckyChant::
 	printstring STRINGID_CURRMOVESHIELDEDTEAMFROMCRITS
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
+
+@ EFFECT_ME_FIRST @
+
+BattleScript_EffectMeFirst::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	attackstring
+	mefirstattackselect BattleScript_ButItFailedPpReduce
+	goto BattleScript_DoMoveAnimAndJumpToCalledMove
+
+@ EFFECT_COPYCAT @
+
+BattleScript_EffectCopycat::
+    attackcanceler
+	attackstring
+	trycopycat BattleScript_ButItFailedPpReduce
+	goto BattleScript_DoMoveAnimAndJumpToCalledMove
+
+@ EFFECT_POWER_SWAP @
+
+BattleScript_EffectSplitSwap::
+    attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+    goto BattleScript_EffectSplitSwapAfterAtkCanceller
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @

@@ -6,6 +6,7 @@
 #include "random.h"
 #include "pokemon.h"
 #include "string_util.h"
+#include "battle_gimmicks.h"
 #include "field_weather.h"
 #include "form_change.h"
 #include "event_data.h"
@@ -3126,7 +3127,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 				    	case ABILITY_ARMOR_TAIL:
 				    	    if (GetChosenMovePriority(gBattlerAttacker) > 0 && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(battler)
 				    		&& moveTarget != MOVE_TARGET_OPPONENTS_FIELD && (moveTarget != MOVE_TARGET_ALL_BATTLERS || gCurrentMove == MOVE_PERISH_SONG
-				    		|| gCurrentMove == MOVE_FLOWER_SHIELD || gCurrentMove == MOVE_ROTOTILLER))
+				    		|| gCurrentMove == MOVE_FLOWER_SHIELD || gCurrentMove == MOVE_ROTOTILLER) && !IsZMove(gCurrentMove))
 				    			++effect;
 				    		break;
 						case ABILITY_GOOD_AS_GOLD:

@@ -177,6 +177,7 @@ EWRAM_DATA u8 gCurrentActionFuncId = 0;
 // Move vars
 EWRAM_DATA u8 gCurrMovePos = 0;
 EWRAM_DATA u8 gChosenMovePos = 0;
+EWRAM_DATA u16 gLastUsedMove = 0;
 EWRAM_DATA u16 gLastPrintedMoves[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gLastMoves[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gLastLandedMoves[MAX_BATTLERS_COUNT] = {0};
@@ -1980,6 +1981,7 @@ static void BattleStartClearSetData(void)
     for (i = 0; i < BATTLE_COMMUNICATION_ENTRIES_COUNT; ++i)
         gBattleCommunication[i] = 0;
 	
+	gLastUsedMove = MOVE_NONE;
     gPauseCounterBattle = 0;
     gBattleMoveDamage = 0;
     gIntroSlideFlags = 0;

@@ -548,6 +548,12 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 		case EFFECT_WRING_OUT:
 		    basePower = 120 * (gBattleMons[defender].hp / gBattleMons[defender].maxHP);
 			break;
+		case EFFECT_PUNISHMENT:
+		    basePower = 60 + (CountBattlerStatIncreases(defender, TRUE) * 20);
+			
+			if (basePower > 200)
+				basePower = 200;
+			break;
 	}
 	
 	if (basePower == 0)
@@ -703,6 +709,10 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 		|| ((gFieldStatus & STATUS_FIELD_MUDSPORT) && damageStruct->moveType == TYPE_ELECTRIC))
 	    basePower = (basePower * 33) / 100;
 	
+	// Me First
+	if (gBattleStruct->meFirstBoost)
+		basePower = (basePower * 15) / 10;
+	
 	if (basePower == 0)
 		basePower = 1;
 	
@@ -759,8 +769,12 @@ static u16 CalcBaseAttackStat(u8 attacker, u8 defender, struct DamageCalc *damag
 				    baseAttack = (15 * baseAttack) / 10;
 			    break;
 		    case ABILITY_SLOW_START:
-		        if (IS_MOVE_PHYSICAL(move) && gDisableStructs[attacker].slowStartTimer)
-				    baseAttack /= 2;
+			    if (gDisableStructs[attacker].slowStartTimer)
+				{
+					// Halves Sp. Attack of type based Z-Moves
+					if (IS_MOVE_PHYSICAL(move) || (IS_MOVE_SPECIAL(move) && move >= MOVE_BREAKNECK_BLITZ && move <= MOVE_TWINKLE_TACKLE))
+						baseAttack /= 2;
+				}
 			    break;
 		    case ABILITY_FLOWER_GIFT:
 		        if (IS_MOVE_PHYSICAL(move) && IsBattlerWeatherAffected(attacker, WEATHER_SUN_ANY))

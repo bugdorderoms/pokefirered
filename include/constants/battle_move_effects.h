@@ -204,6 +204,11 @@
 #define EFFECT_POWER_TRICK 199
 #define EFFECT_GASTRO_ACID 200
 #define EFFECT_LUCKY_CHANT 201
+#define EFFECT_ME_FIRST 202
+#define EFFECT_COPYCAT 203
+#define EFFECT_POWER_SWAP 204
+#define EFFECT_GUARD_SWAP 205
+#define EFFECT_PUNISHMENT 206
 
 #define EFFECT_SPEED_UP 12
 #define EFFECT_SPECIAL_ATTACK_UP 13
@@ -223,7 +228,6 @@
 #define EFFECT_HEX                          217
 #define EFFECT_ACROBATICS                   220
 #define EFFECT_HEAT_CRASH                   221
-#define EFFECT_PUNISHMENT                   222
 #define EFFECT_STORED_POWER                 223
 #define EFFECT_ELECTRO_BALL                 224
 #define EFFECT_ECHOED_VOICE                 226
@@ -241,8 +245,6 @@
 #define EFFECT_TOXIC_SPIKES                 245
 #define EFFECT_STEALTH_ROCK                 247
 #define EFFECT_TELEKINESIS                  248
-#define EFFECT_POWER_SWAP                   249
-#define EFFECT_GUARD_SWAP                   250
 #define EFFECT_HEART_SWAP                   251
 #define EFFECT_POWER_SPLIT                  252
 #define EFFECT_GUARD_SPLIT                  253
@@ -264,7 +266,6 @@
 #define EFFECT_ATTACK_SPATK_UP              271
 #define EFFECT_HURRICANE                    272
 #define EFFECT_TWO_TYPED_MOVE               273
-#define EFFECT_ME_FIRST                     274
 #define EFFECT_SPEED_UP_HIT                 275
 #define EFFECT_QUIVER_DANCE                 276
 #define EFFECT_COIL                         277
@@ -285,7 +286,6 @@
 #define EFFECT_FINAL_GAMBIT                 296
 #define EFFECT_CHANGE_TYPE_ON_ITEM          297
 #define EFFECT_AUTOTOMIZE                   298
-#define EFFECT_COPYCAT                      299
 #define EFFECT_DEFOG                        300
 #define EFFECT_HIT_ENEMY_HEAL_ALLY          301
 #define EFFECT_SMACK_DOWN                   302

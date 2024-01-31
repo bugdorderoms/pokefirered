@@ -1142,8 +1142,9 @@
 	.4byte \param0
 	.endm
 
-	.macro nopdd
+	.macro mefirstattackselect ptr:req
 	.byte 0xdd
+	.4byte \ptr
 	.endm
 
 	.macro assistattackselect param0:req
@@ -1763,6 +1764,11 @@
 	
 	.macro switchoutpartyorderswap
 	callfunction BS_SwitchOutPartyOrderSwap
+	.endm
+	
+	.macro trycopycat ptr:req
+	callfunction BS_TryCopycat
+	.4byte \ptr
 	.endm
 	
 @ helpful macros

@@ -228,7 +228,8 @@ struct MoveFlags
 	u32 forcePressure:1; // A move with this flag will force the extra PP consuption from Pressure.
 	u32 gravityBanned:1; // A move with this flag can't be selected while gravity is in effect.
 	u32 healingMove:1; // A move with this flag can't be used while affected by Heal Block, also Triage gives priority to it.
-	u32 unused:16;
+	u32 forbiddenMeFirst:1; // A move with this flag can't be executed by Me First.
+	u32 unused:15;
 };
 
 struct BattleMove

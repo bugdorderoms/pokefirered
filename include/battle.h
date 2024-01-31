@@ -413,7 +413,8 @@ struct BattleStruct
 	/*0x05A*/ u8 hpScale;
 	/*0x05B*/ u8 multiplayerId;
     /*0x05C*/ u8 weatherDuration;
-	/*0x05D*/ u8 unused:8;
+	/*0x05D*/ u8 meFirstBoost:1;
+	/*0x05D*/ u8 unused:7; // Unused
 	/*0x05E*/ u8 simulatedInputState[4];  // used by Oak/Old Man/Pokedude controllers
 	/*0x062*/ u8 intrepidSwordActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x064*/ u16 savedBattleTypeFlags;
@@ -697,6 +698,7 @@ extern u32 gStatuses3[MAX_BATTLERS_COUNT];
 extern u8 gSentPokesToOpponent[2];
 extern const u8 *gBattlescriptCurrInstr;
 extern const u8 *gSelectionBattleScripts[MAX_BATTLERS_COUNT];
+extern u16 gLastUsedMove;
 extern u16 gLastMoves[MAX_BATTLERS_COUNT];
 extern u8 gLastUsedMovesTypes[MAX_BATTLERS_COUNT];
 extern u8 gBattlerByTurnOrder[MAX_BATTLERS_COUNT];

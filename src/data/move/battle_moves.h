@@ -1220,6 +1220,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenAssist = TRUE,
 			.forbiddenCopycat = TRUE,
 			.noEffectiveness = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2921,6 +2922,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenCopycat = TRUE,
 			.forbiddenInstruct = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2983,6 +2985,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 			.forbiddenAssist = TRUE,
 			.forbiddenCopycat = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4293,6 +4296,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenAssist = TRUE,
 			.forbiddenCopycat = TRUE,
 			.noEffectiveness = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4662,6 +4666,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -6065,6 +6070,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 			.forbiddenAssist = TRUE,
 			.forbiddenCopycat = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -6505,6 +6511,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.noEffectiveness = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -6733,7 +6740,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_ME_FIRST] =
     {
-		.name = _("-"),
+		.name = _("Me First"),
         .effect = EFFECT_ME_FIRST,
         .type = TYPE_NORMAL,
         .pp = 20,
@@ -6754,7 +6761,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_COPYCAT] =
     {
-		.name = _("-"),
+		.name = _("Copycat"),
         .effect = EFFECT_COPYCAT,
         .type = TYPE_NORMAL,
         .pp = 20,
@@ -6776,7 +6783,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_POWER_SWAP] =
     {
-		.name = _("-"),
+		.name = _("Power Swap"),
         .effect = EFFECT_POWER_SWAP,
         .type = TYPE_PSYCHIC,
         .pp = 10,
@@ -6787,7 +6794,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_GUARD_SWAP] =
     {
-		.name = _("-"),
+		.name = _("Guard Swap"),
         .effect = EFFECT_GUARD_SWAP,
         .type = TYPE_PSYCHIC,
         .pp = 10,
@@ -6798,9 +6805,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_PUNISHMENT] =
     {
-		.name = _("-"),
+		.name = _("Punishment"),
         .effect = EFFECT_PUNISHMENT,
-        .power = 60,
+        .power = 1,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 5,
@@ -7971,6 +7978,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMimic = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10082,6 +10090,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -11735,6 +11744,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -11830,6 +11840,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
+			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
