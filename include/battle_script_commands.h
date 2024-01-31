@@ -48,9 +48,6 @@ enum
 
 #define CANCELLER_RECALL_CASEID CANCELLER_GRAVITY_2
 
-#define STAT_CHANGE_WORKED      0
-#define STAT_CHANGE_DIDNT_WORK  1
-
 #define WINDOW_CLEAR            0x1
 #define WINDOW_x80              0x80
 
