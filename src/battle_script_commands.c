@@ -7281,7 +7281,7 @@ static void atkDD_mefirstattackselect(void)
 {
 	u16 move = gChosenMoveByBattler[gBattlerTarget];
 	
-	if (GetBattlerTurnOrderNum(gBattlerTarget) < gCurrentTurnActionNumber || IS_MOVE_STATUS(move) || gBattleMoves[move].flags.forbiddenMeFirst)
+	if (GetBattlerTurnOrderNum(gBattlerTarget) < gCurrentTurnActionNumber || !move || IS_MOVE_STATUS(move) || gBattleMoves[move].flags.forbiddenMeFirst)
 		gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 1);
 	else
 	{

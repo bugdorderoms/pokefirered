@@ -3,6 +3,7 @@
 #include "task.h"
 #include "main.h"
 #include "dns.h"
+#include "rtc.h"
 #include "fieldmap.h"
 #include "overworld.h"
 #include "palette.h"
@@ -235,20 +236,20 @@ static const u16 sNightfallFilters[] =
 static const u16 sNightFilter = RGB2(14, 14, 6);   //19CE
 
 // The season for each month of the year
-static const u8 sSeasonsByMonth[] =
+static const u8 sSeasonsByMonth[MONTH_COUNT] =
 {
-	SEASON_SUMMER, // January
-	SEASON_SUMMER, // February
-	SEASON_SUMMER, // March
-	SEASON_AUTUMN, // April
-	SEASON_AUTUMN, // May
-	SEASON_AUTUMN, // June
-	SEASON_WINTER, // July
-	SEASON_WINTER, // August
-	SEASON_WINTER, // September
-	SEASON_SPRING, // October
-	SEASON_SPRING, // November
-	SEASON_SPRING, // December
+	[MONTH_JAN - 1] = SEASON_SUMMER,
+	[MONTH_FEB - 1] = SEASON_SUMMER,
+	[MONTH_MAR - 1] = SEASON_SUMMER,
+	[MONTH_APR - 1] = SEASON_AUTUMN,
+	[MONTH_MAY - 1] = SEASON_AUTUMN,
+	[MONTH_JUN - 1] = SEASON_AUTUMN,
+	[MONTH_JUL - 1] = SEASON_WINTER,
+	[MONTH_AUG - 1] = SEASON_WINTER,
+	[MONTH_SEP - 1] = SEASON_WINTER,
+	[MONTH_OCT - 1] = SEASON_SPRING,
+	[MONTH_NOV - 1] = SEASON_SPRING,
+	[MONTH_DEC - 1] = SEASON_SPRING
 };
 
 /***********************************************
@@ -442,5 +443,5 @@ bool8 GetDNSTimeLapseIsNight(void)
 
 u8 DNSGetCurrentSeason(void)
 {
-	return sSeasonsByMonth[gRtcLocation.month];
+	return sSeasonsByMonth[gRtcLocation.month - 1];
 }

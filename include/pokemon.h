@@ -454,7 +454,7 @@ u16 GetMonEVCount(struct Pokemon *mon);
 void RandomlyGivePartyPokerus(struct Pokemon *party);
 u8 CheckPartyPokerus(struct Pokemon *party, u8 party_bm);
 u8 CheckPartyHasHadPokerus(struct Pokemon *party, u8 selection);
-void UpdatePartyPokerusTime(void);
+void UpdatePartyPokerusTime(u32 daysSince);
 void PartySpreadPokerus(struct Pokemon *party);
 bool8 TryIncrementMonLevel(struct Pokemon *mon);
 bool8 CanMonLearnTMHM(struct Pokemon *mon, u8 tm);

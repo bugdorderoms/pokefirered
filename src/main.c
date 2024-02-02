@@ -5,6 +5,7 @@
 #include "load_save.h"
 #include "m4a.h"
 #include "random.h"
+#include "rtc.h"
 #include "gba/flash_internal.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
@@ -81,10 +82,6 @@ static IntrFunc * const sTimerIntrFunc = gIntrTable + 0x7;
 EWRAM_DATA u8 gDecompressionBuffer[0x4000] = {0};
 EWRAM_DATA u16 gTrainerId = 0;
 
-IWRAM_DATA struct RtcFuncStruct gRtcLocationDecimal;
-IWRAM_DATA struct RtcFill gRtcCheckLocation;
-IWRAM_DATA struct RtcStruct gRtcLocation;
-
 static void UpdateLinkAndCallCallbacks(void);
 static void InitMainCallbacks(void);
 static void CallCallbacks(void);
@@ -136,6 +133,7 @@ void AgbMain()
     m4aSoundInit();
     EnableVCountIntrAtLine150();
     InitRFU();
+	RtcInit();
     CheckForFlashMemory();
     InitMainCallbacks();
     InitMapMusic();
@@ -159,8 +157,8 @@ void AgbMain()
 
     for (;;)
     {
+		RtcCalcLocalTime();
         ReadKeys();
-        RTCStart(&gRtcCheckLocation, &gRtcLocationDecimal, &gRtcLocation);
             
         if (gSoftResetDisabled == FALSE && (gMain.heldKeysRaw & A_BUTTON) && (gMain.heldKeysRaw & B_START_SELECT) == B_START_SELECT)
         {

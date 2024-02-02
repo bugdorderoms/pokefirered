@@ -127,3 +127,4 @@
 	.include "src/dexnav.o"
 	.include "src/battle_anim_special.o"
 	.include "src/form_change_anim.o"
+	.include "src/rtc.o"

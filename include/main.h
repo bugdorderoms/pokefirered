@@ -7,13 +7,6 @@ typedef void (*IntrFunc)(void);
 
 #include "global.h"
 
-// defines used by the Day and Night system
-#define DAWN_OF_DAY_START 4
-#define MORNING_OF_DAY_START 6
-#define AFTERNOON_OF_DAY_START 17
-#define NIGHT_OF_DAY_START 19
-#define MIDNIGHT_OF_DAY_START 22
-
 extern IntrFunc gIntrTable[];
 
 struct Main
@@ -53,46 +46,12 @@ struct Main
 	/*0x439*/ u8 tilesetPaletteReloaded:1; // For dns
 };
 
-struct RtcFuncStruct
-{
-    u8 unk00;
-    u8 year;
-    u8 day;
-    u8 month;
-    u8 unk04;
-    u8 hour;
-    u8 minute;
-    u8 second;
-};
-
-struct RtcStruct
-{
-    u16 year;
-    u8 bytefill;
-    u8 month;
-    u8 day;
-    u8 bytefill2;
-    u8 hour;
-    u8 minute;
-    u8 second;
-};
-
-struct RtcFill
-{
-	u32 fillcheck1;
-	u32 fillcheck2;
-};
-
 extern struct Main gMain;
 extern bool8 gSoftResetDisabled;
 extern bool8 gLinkVSyncDisabled;
 
 extern const u8 gGameVersion;
 extern const u8 gGameLanguage;
-
-extern struct RtcFuncStruct gRtcLocationDecimal;
-extern struct RtcFill gRtcCheckLocation;
-extern struct RtcStruct gRtcLocation;
 
 void AgbMain(void);
 void SetMainCallback2(MainCallback callback);

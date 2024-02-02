@@ -296,7 +296,6 @@
 	.byte 0x2c
 	.endm
 
-	@ In FireRed, this command is a nop.
 	.macro dodailyevents
 	.byte 0x2d
 	.endm

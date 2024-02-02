@@ -4,6 +4,12 @@
 #define DNS_PAL_EXCEPTION FALSE
 #define DNS_PAL_ACTIVE    TRUE
 
+#define DAWN_OF_DAY_START      4
+#define MORNING_OF_DAY_START   6
+#define AFTERNOON_OF_DAY_START 17
+#define NIGHT_OF_DAY_START     19
+#define MIDNIGHT_OF_DAY_START  22
+
 enum
 {
     TIME_MIDNIGHT,

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "gflib.h"
+#include "rtc.h"
 #include "scanline_effect.h"
 #include "overworld.h"
 #include "link.h"

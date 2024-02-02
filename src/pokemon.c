@@ -11,6 +11,7 @@
 #include "item.h"
 #include "event_data.h"
 #include "util.h"
+#include "rtc.h"
 #include "dexnav.h"
 #include "wild_encounter.h"
 #include "field_weather.h"
@@ -2227,7 +2228,7 @@ u8 CheckPartyHasHadPokerus(struct Pokemon *party, u8 selection)
     return retVal;
 }
 
-void UpdatePartyPokerusTime(void)
+void UpdatePartyPokerusTime(u32 daysSince)
 {
 	u8 i, pokerus;
 	
@@ -2239,10 +2240,10 @@ void UpdatePartyPokerusTime(void)
 			
 			if (pokerus & 0x3)
 			{
-				if ((pokerus & 0xF) < 0x1)
+				if ((pokerus & 0xF) < daysSince || daysSince > 4)
 					pokerus &= 0x4;
 				else
-					pokerus -= 0x1;
+					pokerus -= daysSince;
 				
 				if (!pokerus)
 					pokerus = 0x4;

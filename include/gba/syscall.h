@@ -30,8 +30,6 @@ u16 ArcTan2(s16 x, s16 y);
 void CpuSet(const void *src, void *dest, u32 control);
 void CpuSet2(const void *src, u32 dest, u32 control);
 
-void RTCStart(struct RtcFill *Check1, struct RtcFuncStruct *PCTime, struct RtcStruct *GameTime);
-
 #define CPU_FAST_SET_SRC_FIXED 0x01000000
 
 void CpuFastSet(const void *src, void *dest, u32 control);

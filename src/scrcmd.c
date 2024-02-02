@@ -710,7 +710,7 @@ bool8 ScrCmd_initclock(struct ScriptContext * ctx)
 
 bool8 ScrCmd_dodailyevents(struct ScriptContext * ctx)
 {
-//    DoTimeBasedEvents();
+//	  DoTimeBasedEvents();
     return FALSE;
 }
 

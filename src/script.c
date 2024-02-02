@@ -397,7 +397,7 @@ void RunOnDiveWarpMapScript(void)
 bool8 TryRunOnFrameMapScript(void)
 {
     u8 *ptr = mapheader_get_first_match_from_tagged_ptr_list(2);
-
+	
     if (!ptr)
         return 0;
 
