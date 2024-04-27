@@ -405,14 +405,6 @@
 // Most tasks return a value to gBattleAnimArgs[7].
 #define ARG_RET_ID 0x7
 
-// Trapping Wrap-like moves end turn animation.
-#define TRAP_ANIM_BIND 		0
-#define TRAP_ANIM_WRAP 		0
-#define TRAP_ANIM_FIRE_SPIN 1
-#define TRAP_ANIM_WHIRLPOOL 2
-#define TRAP_ANIM_CLAMP 	3
-#define TRAP_ANIM_SAND_TOMB 4
-
 // Flags for AnimTask_TransformMon and HandleSpeciesGfxDataChange
 #define SPECIESGFX_FLAG_IS_GHOST             (1 << 0)
 #define SPECIESGFX_FLAG_NO_TRANSFORM_PALFADE (1 << 1)

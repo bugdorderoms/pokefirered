@@ -239,7 +239,8 @@ struct SideTimer
 	// end of word
 	/*0x04*/ u32 luckyChantTimer:3;
 	/*0x04*/ u32 luckyChantBattlerId:2;
-	/*0x04*/ u32 unused:27;
+	/*0x04*/ u32 toxicSpikesAmount:2;
+	/*0x04*/ u32 unused:25;
 };
 
 extern struct SideTimer gSideTimers[B_SIDE_COUNT];
@@ -414,7 +415,8 @@ struct BattleStruct
 	/*0x05B*/ u8 multiplayerId;
     /*0x05C*/ u8 weatherDuration;
 	/*0x05D*/ u8 meFirstBoost:1;
-	/*0x05D*/ u8 unused:7; // Unused
+	/*0x05D*/ u8 poisonPuppeteerConfusion:1;
+	/*0x05D*/ u8 unused:6; // Unused
 	/*0x05E*/ u8 simulatedInputState[4];  // used by Oak/Old Man/Pokedude controllers
 	/*0x062*/ u8 intrepidSwordActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x064*/ u16 savedBattleTypeFlags;
@@ -463,6 +465,7 @@ struct BattleStruct
 	/*0x132*/ u8 savedTargetStack[10];
 	/*0x142*/ u8 savedAttackerStackCount:4;
 	/*0x142*/ u8 savedTargetStackCount:4;
+	/*0x143*/ u8 usedMoveIndices[MAX_BATTLERS_COUNT];
 	          struct QueuedEffect queuedEffectsList[MAX_BATTLERS_COUNT][B_QUEUED_COUNT + 1];
 			  struct Illusion illusion[MAX_BATTLERS_COUNT];
 	          struct MoveEffect moveEffect;

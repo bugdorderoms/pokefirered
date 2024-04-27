@@ -2010,19 +2010,13 @@ static u8 CanMonLearnTMTutor(struct Pokemon *mon, u16 item, u8 tutor)
             move = ItemIdToBattleMoveId(item);
         else
             return CANNOT_LEARN_MOVE;
-        do
-        {
-        } while (0);
     }
     else if (CanLearnTutorMove(GetMonData(mon, MON_DATA_SPECIES), tutor) == FALSE)
-    {
         return CANNOT_LEARN_MOVE;
-    }
     else
-    {
         move = GetTutorMove(tutor);
-    }
-    if (MonKnowsMove(mon, move) == TRUE)
+
+    if (FindMoveSlotInMoveset(mon, move) != MAX_MON_MOVES)
         return ALREADY_KNOWS_MOVE;
     else
         return CAN_LEARN_MOVE;
@@ -3119,7 +3113,7 @@ static void SetPartyMonSelectionActions(struct Pokemon *mons, u8 slotId, u8 acti
 
 static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 {
-    u8 i, j;
+    u8 i;
 
     sPartyMenuInternal->numActions = 0;
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
@@ -3128,17 +3122,12 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
         AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_NICKNAME);
     
     // Add field moves to action list
-    for (i = 0; i < MAX_MON_MOVES; ++i)
-    {
-        for (j = 0; sFieldMoves[j] != FIELD_MOVE_END; ++j)
-        {
-            if (GetMonData(&mons[slotId], i + MON_DATA_MOVE1) == sFieldMoves[j])
-            {
-                AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, j + MENU_FIELD_MOVES);
-                break;
-            }
-        }
-    }
+	for (i = 0; sFieldMoves[i] != FIELD_MOVE_END; ++i)
+	{
+		if (FindMoveSlotInMoveset(&mons[slotId], sFieldMoves[i]) != MAX_MON_MOVES)
+			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, i + MENU_FIELD_MOVES);
+	}
+	
     if (GetMonData(&mons[1], MON_DATA_SPECIES) != SPECIES_NONE)
         AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SWITCH);
     if (ItemIsMail(GetMonData(&mons[slotId], MON_DATA_HELD_ITEM)))
@@ -5159,18 +5148,6 @@ void ItemUseCB_PPUp(u8 taskId, UNUSED TaskFunc func)
     gTasks[taskId].func = Task_HandleWhichMoveInput;
 }
 
-bool8 MonKnowsMove(struct Pokemon *mon, u16 move)
-{
-    u8 i;
-
-    for (i = 0; i < MAX_MON_MOVES; ++i)
-    {
-        if (GetMonData(mon, MON_DATA_MOVE1 + i) == move)
-            return TRUE;
-    }
-    return FALSE;
-}
-
 static void DisplayLearnMoveMessage(const u8 *str)
 {
     StringExpandPlaceholders(gStringVar4, str);
@@ -6655,11 +6632,8 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 		{
 			if (replaceMove)
 			{
-				for (movePos = 0; movePos < MAX_MON_MOVES; movePos++)
-				{
-					if (GetMonData(mon, MON_DATA_MOVE1 + movePos) == replaceMove)
-						break;
-				}
+				movePos = FindMoveSlotInMoveset(mon, replaceMove);
+				
 				if (movePos < MAX_MON_MOVES)
 				{
 					SetMonMoveSlot(mon, gMoveToLearn, movePos);
@@ -6669,11 +6643,8 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 			}
 			if (replaceMove2)
 			{
-				for (movePos = 0; movePos < MAX_MON_MOVES; movePos++)
-				{
-					if (GetMonData(mon, MON_DATA_MOVE1 + movePos) == replaceMove2)
-						break;
-				}
+				movePos = FindMoveSlotInMoveset(mon, replaceMove2);
+				
 				if (movePos < MAX_MON_MOVES)
 				{
 					SetMonMoveSlot(mon, gMoveToLearn, movePos);
@@ -6681,11 +6652,8 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 					return;
 				}
 			}
-			for (movePos = 0; movePos < MAX_MON_MOVES; movePos++)
-			{
-				if (!GetMonData(mon, MON_DATA_MOVE1 + movePos))
-					break;
-			}
+			movePos = FindMoveSlotInMoveset(mon, MOVE_NONE); // Find first free slot
+			
 			if (movePos < MAX_MON_MOVES)
 			{
 				SetMonMoveSlot(mon, gMoveToLearn, movePos);
@@ -6698,21 +6666,13 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 		{
 			if (replaceMove)
 			{
-				for (movePos = 0; movePos < MAX_MON_MOVES; movePos++)
-				{
-					if (GetMonData(mon, MON_DATA_MOVE1 + movePos) == replaceMove)
-						break;
-				}
+				movePos = FindMoveSlotInMoveset(mon, replaceMove);
 				if (movePos < MAX_MON_MOVES)
 					DeleteMonMove(mon, movePos);
 			}
 			if (replaceMove2)
 			{
-				for (movePos = 0; movePos < MAX_MON_MOVES; movePos++)
-				{
-					if (GetMonData(mon, MON_DATA_MOVE1 + movePos) == replaceMove2)
-						break;
-				}
+				movePos = FindMoveSlotInMoveset(mon, replaceMove2);
 				if (movePos < MAX_MON_MOVES)
 					DeleteMonMove(mon, movePos);
 			}

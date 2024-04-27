@@ -56,7 +56,6 @@ void GetNumMovesSelectedMonHas(void)
 void BufferMoveDeleterNicknameAndMove(void)
 {
     struct Pokemon *mon = &gPlayerParty[gSpecialVar_0x8004];
-
     GetMonNickname(mon, gStringVar1);
     StringCopy(gStringVar2, gBattleMoves[GetMonData(mon, MON_DATA_MOVE1 + gSpecialVar_0x8005)].name);
 }

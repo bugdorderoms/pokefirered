@@ -156,12 +156,10 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 	if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE) && !affectsUser && SubsBlockMove(gBattleScripting.battler, gEffectBattler, gCurrentMove))
 		INCREMENT_RETURN
 	
-	flags = STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD; // Ignore it since it's already checked above
-	
 	switch (moveEffect)
 	{
 		case MOVE_EFFECT_SLEEP:
-			if (IsUproarActive() == gBattlersCount && CanBePutToSleep(gBattleScripting.battler, gEffectBattler, flags) == STATUS_CHANGE_WORKED)
+			if (IsUproarActive() == gBattlersCount && CanBePutToSleep(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
 			{
 #if SLEEP_UPDATE
                 gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(((Random() & 2) + 1));
@@ -173,7 +171,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			}
 			break;
 		case MOVE_EFFECT_POISON:
-		    ret = CanBePoisoned(gBattleScripting.battler, gEffectBattler, flags);
+		    ret = CanBePoisoned(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD);
 		
 			if (ret == STATUS_CHANGE_WORKED)
 			{
@@ -197,7 +195,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			}
 			break;
 		case MOVE_EFFECT_TOXIC:
-		    ret = CanBePoisoned(gBattleScripting.battler, gEffectBattler, flags);
+		    ret = CanBePoisoned(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD);
 		
 			if (ret == STATUS_CHANGE_WORKED)
 			{
@@ -208,7 +206,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 				goto POISON_FAIL_SCRIPTS;
 			break;
 		case MOVE_EFFECT_BURN:
-		    ret = CanBeBurned(gBattleScripting.battler, gEffectBattler, flags);
+		    ret = CanBeBurned(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD);
 		
 			if (ret == STATUS_CHANGE_WORKED)
 			{
@@ -228,7 +226,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			}
 			break;
 		case MOVE_EFFECT_FREEZE:
-			if (CanBeFrozen(gBattleScripting.battler, gEffectBattler, flags))
+			if (CanBeFrozen(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD))
 			{
 				gBattleMons[gEffectBattler].status1 |= STATUS1_FREEZE;
 				CancelMultiTurnMoves(gEffectBattler);
@@ -236,7 +234,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			}
 			break;
 		case MOVE_EFFECT_PARALYSIS:
-		    ret = CanBeParalyzed(gBattleScripting.battler, gEffectBattler, flags);
+		    ret = CanBeParalyzed(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD);
 			
 			if (ret == STATUS_CHANGE_WORKED)
 			{
@@ -256,7 +254,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			}
 			break;
 		case MOVE_EFFECT_CONFUSION:
-			if (CanBecameConfused(gBattleScripting.battler, gEffectBattler, flags) == STATUS_CHANGE_WORKED)
+			if (CanBecameConfused(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
 			{
 				gBattleMons[gEffectBattler].status2 |= STATUS2_CONFUSION_TURN((Random() % 4) + 2);
 				effect = 2;
@@ -475,11 +473,17 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			BtlController_EmitSetMonData(gEffectBattler, BUFFER_A, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gEffectBattler].status1);
 			MarkBattlerForControllerExec(gEffectBattler);
 			
-			// For synchronize
-			if (moveEffect == MOVE_EFFECT_POISON || moveEffect == MOVE_EFFECT_TOXIC || moveEffect == MOVE_EFFECT_PARALYSIS || moveEffect == MOVE_EFFECT_BURN)
+			// For synchronize and Poison Puppeteer
+			if (!(flags & STATUS_CHANGE_FLAG_NO_SYNCHRONISE))
 			{
-				gBattleStruct->synchronizeMoveEffect = moveEffect;
-				gHitMarker |= HITMARKER_SYNCHRONISE_EFFECT;
+				if (moveEffect == MOVE_EFFECT_POISON || moveEffect == MOVE_EFFECT_TOXIC || moveEffect == MOVE_EFFECT_PARALYSIS || moveEffect == MOVE_EFFECT_BURN)
+				{
+					gBattleStruct->synchronizeMoveEffect = moveEffect;
+					gHitMarker |= HITMARKER_SYNCHRONISE_EFFECT;
+				}
+				
+				if (moveEffect == MOVE_EFFECT_POISON || moveEffect == MOVE_EFFECT_TOXIC)
+					gBattleStruct->poisonPuppeteerConfusion = TRUE;
 			}
 			// fallthrough
 		case 2: // Try execute script

@@ -291,6 +291,12 @@ extern const u8 BattleScript_BattleBondTransform[];
 extern const u8 BattleScript_BattleBondBoost[];
 extern const u8 BattleScript_HealBlockEnds[];
 extern const u8 BattleScript_MoveUsedHealBlockPrevented[];
+extern const u8 BattleScript_PrintEntryHazardsDmgString[];
+extern const u8 BattleScript_ToxicDebrisActivation[];
+extern const u8 BattleScript_PoisonPuppeteerActivation[];
+extern const u8 BattleScript_SupersweetSyrupActivates[];
+extern const u8 BattleScript_DoPreFaintEffects[];
+extern const u8 BattleScript_Hospitality[];
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 extern const u8 *const gBattlescriptsForUsingItem[];

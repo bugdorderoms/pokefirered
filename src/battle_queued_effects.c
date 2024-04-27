@@ -4,7 +4,10 @@
 #include "battle_message.h"
 #include "battle_queued_effects.h"
 #include "battle_scripts.h"
+#include "set_effect.h"
+#include "constants/battle_move_effects.h"
 #include "constants/battle_string_ids.h"
+#include "constants/moves.h"
 
 // Lists
 const u8 gWishFutureSightQueuedEffectIds[] =
@@ -116,37 +119,28 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 		case B_QUEUED_FUTURE_SIGHT:
 		    if (gBattleStruct->futureSightCounter[battlerId] != 0 && --gBattleStruct->futureSightCounter[battlerId] == 0)
 			{
+				gBattlerTarget = battlerId;
 				gBattlerAttacker = gBattleStruct->futureSightAttacker[battlerId];
 				gCurrentMove = gBattleStruct->futureSightMove[battlerId];
+				gSpecialStatuses[gBattlerAttacker].dmg = 0xFFFF;
 				SetTypeBeforeUsingMove(gCurrentMove, gBattlerAttacker);
-				
-				gSpecialStatuses[battlerId].dmg = 0xFFFF;
-				
-				switch (GetFutureAttackStringId(gCurrentMove))
-				{
-					case B_MSG_FORESAW_ATTACK:
-					    gBattleScripting.animArg1 = B_ANIM_FUTURE_SIGHT_HIT;
-						break;
-					case B_MSG_CHOSE_AS_DESTINY:
-					    gBattleScripting.animArg1 = B_ANIM_DOOM_DESIRE_HIT;
-						break;
-				}
 				BattleScriptExecute(BattleScript_MonTookFutureAttack);
+				RemoveBattleEffectFromQueueList(battlerId, id);
 				effect = TRUE;
 			}
 			break;
 		case B_QUEUED_WISH:
-		    if (gBattleStruct->wishCounter[battlerId] != 0 && --gBattleStruct->wishCounter[battlerId] == 0 && !(gStatuses3[battlerId] & STATUS3_HEAL_BLOCK))
+		    if (gBattleStruct->wishCounter[battlerId] != 0 && --gBattleStruct->wishCounter[battlerId] == 0)
 			{
-				BattleScriptExecute(BattleScript_WishComesTrue);
-				effect = TRUE;
+				if (!(gStatuses3[battlerId] & STATUS3_HEAL_BLOCK))
+				{
+					gBattlerTarget = battlerId;
+					BattleScriptExecute(BattleScript_WishComesTrue);
+					effect = TRUE;
+				}
+				RemoveBattleEffectFromQueueList(battlerId, id);
 			}
 			break;
-	}
-	if (effect)
-	{
-		gBattlerTarget = battlerId;
-		RemoveBattleEffectFromQueueList(battlerId, id);
 	}
 	return effect;
 }
@@ -175,16 +169,17 @@ static void SetDmgHazardsBattleScript(u8 multistringId)
 bool8 QueuedEffects_DoEntryHazardsEffects(u8 battlerId, u8 id)
 {
 	u8 side;
-	bool8 effect = FALSE;
+	u16 currMove;
+	bool8 badPoison, effect = FALSE;
 	
-	if (IsBattlerGrounded(battlerId))
+	if (IsBattlerGrounded(battlerId) && GetBattlerAbility(battlerId) != ABILITY_MAGIC_GUARD)
 	{
 		side = GetBattlerSide(battlerId);
 		
 		switch (id)
 		{
 			case B_QUEUED_SPIKES:
-			    if ((gSideStatuses[side] & SIDE_STATUS_SPIKES) && GetBattlerAbility(battlerId) != ABILITY_MAGIC_GUARD)
+			    if (gSideStatuses[side] & SIDE_STATUS_SPIKES)
 				{
 					gBattleMoveDamage = gBattleMons[battlerId].maxHP / ((5 - gSideTimers[side].spikesAmount) * 2);
 					if (gBattleMoveDamage == 0)
@@ -194,24 +189,52 @@ bool8 QueuedEffects_DoEntryHazardsEffects(u8 battlerId, u8 id)
 				}
 				break;
 			case B_QUEUED_TOXIC_SPIKES:
+			    if (gSideStatuses[side] & SIDE_STATUS_TOXIC_SPIKES)
+				{
+					if (IS_BATTLER_OF_TYPE(battlerId, TYPE_POISON)) // Absorb the Toxic Spikes
+					{
+						gSideStatuses[side] &= ~(SIDE_STATUS_TOXIC_SPIKES);
+						gSideTimers[side].toxicSpikesAmount = 0;
+						RemoveBattleEffectFromQueueList(battlerId, B_QUEUED_TOXIC_SPIKES);
+						RemoveBattleEffectFromQueueList(BATTLE_PARTNER(battlerId), B_QUEUED_TOXIC_SPIKES);
+						gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ABSORBED_TOXIC_SPIKES;
+						BattleScriptCall(BattleScript_PrintEntryHazardsDmgString);
+						effect = TRUE;
+					}
+					else
+					{
+						badPoison = (gSideTimers[side].toxicSpikesAmount != 1);
+						
+						currMove = gCurrentMove;
+					    gCurrentMove = MOVE_NONE; // So Corrosion won't activate
+						
+						SaveAttackerToStack(battlerId);
+						SaveTargetToStack(battlerId);
+						
+					    BattleScriptPushCursor();
+						
+					    SetMoveEffect(badPoison ? MOVE_EFFECT_TOXIC : MOVE_EFFECT_POISON, TRUE, FALSE);
+					    
+					    if (DoMoveEffect(FALSE, FALSE, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_NO_SYNCHRONISE))
+					    {
+					    	BattleScriptPop();
+					    	BattleScriptCall(badPoison ? BattleScript_MoveEffectToxic : BattleScript_MoveEffectPoison);
+							effect = TRUE;
+					    }
+					    else
+					    	BattleScriptPop();
+					    
+						RestoreTargetFromStack();
+						RestoreAttackerFromStack();
+					    gCurrentMove = currMove;
+					}
+				}
 			    break;
 			case B_QUEUED_STEALTH_ROCK:
-			    if (GetBattlerAbility(battlerId) != ABILITY_MAGIC_GUARD)
-				{
-					
-				}
 				break;
 			case B_QUEUED_STICKY_WEB:
-			    if (GetBattlerAbility(battlerId) != ABILITY_MAGIC_GUARD)
-				{
-					
-				}
 				break;
 			case B_QUEUED_STEELSURGE:
-			    if (GetBattlerAbility(battlerId) != ABILITY_MAGIC_GUARD)
-				{
-					
-				}
 				break;
 		}
 	}

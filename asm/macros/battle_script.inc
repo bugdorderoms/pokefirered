@@ -1771,6 +1771,30 @@
 	.4byte \ptr
 	.endm
 	
+	.macro trylastresort ptr:req
+	callfunction BS_TryLastResort
+	.4byte \ptr
+	.endm
+	
+	.macro trysetability ptr:req
+	callfunction BS_TrySetAbility
+	.4byte \ptr
+	.endm
+	
+	.macro trysuckerpunch ptr:req
+	callfunction BS_TrySuckerPunch
+	.4byte \ptr
+	.endm
+	
+	.macro trysettoxicspikes ptr:req
+	callfunction BS_TrySetToxicSpikes
+	.4byte \ptr
+	.endm
+	
+	.macro getfutureattackanim
+	callfunction BS_GetFutureAttackAnim
+	.endm
+	
 @ helpful macros
 	.macro copybyte dst:req, src:req
 	copyarray \dst, \src, 0x1
@@ -1858,6 +1882,17 @@
 
     .macro removeabilitypopup battler:req
 	handleabilitypopup ATKFC_REMOVE_POP_UP | \battler
+	.endm
+	
+	.macro abilitysetpopup battler:req, stringId:req
+	loadabilitypopup \battler
+	pause B_WAIT_TIME_SHORT
+	removeabilitypopup \battler
+	pause B_WAIT_TIME_SHORT
+	loadabilitypopup \battler
+	printstring \stringId
+	waitmessage B_WAIT_TIME_LONG
+	removeabilitypopup \battler
 	.endm
 	
 	.macro abilitycopypopup attacker:req, defender:req, stringId:req

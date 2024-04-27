@@ -209,6 +209,10 @@
 #define EFFECT_POWER_SWAP 204
 #define EFFECT_GUARD_SWAP 205
 #define EFFECT_PUNISHMENT 206
+#define EFFECT_LAST_RESORT 207
+#define EFFECT_SET_ABILITY 208
+#define EFFECT_SUCKER_PUNCH 209
+#define EFFECT_TOXIC_SPIKES 210
 
 #define EFFECT_SPEED_UP 12
 #define EFFECT_SPECIAL_ATTACK_UP 13
@@ -242,14 +246,12 @@
 #define EFFECT_WONDER_ROOM                  242
 #define EFFECT_MAGIC_ROOM                   243
 #define EFFECT_MAGNET_RISE                  244
-#define EFFECT_TOXIC_SPIKES                 245
 #define EFFECT_STEALTH_ROCK                 247
 #define EFFECT_TELEKINESIS                  248
 #define EFFECT_HEART_SWAP                   251
 #define EFFECT_POWER_SPLIT                  252
 #define EFFECT_GUARD_SPLIT                  253
 #define EFFECT_STICKY_WEB                   254
-#define EFFECT_SUCKER_PUNCH                 257
 #define EFFECT_SPECIAL_DEFENSE_DOWN_HIT_2   258
 #define EFFECT_SIMPLE_BEAM                  259
 #define EFFECT_ENTRAINMENT                  260
@@ -273,7 +275,6 @@
 #define EFFECT_SCALD                        279
 #define EFFECT_REFLECT_TYPE                 280
 #define EFFECT_SOAK                         281
-#define EFFECT_LAST_RESORT                  284
 #define EFFECT_FLINCH_STATUS                286
 #define EFFECT_SHELL_SMASH                  288
 #define EFFECT_SHIFT_GEAR                   289
@@ -375,7 +376,6 @@
 #define EFFECT_ALWAYS_CRIT 397
 #define EFFECT_CAPTIVATE 399
 #define EFFECT_FELL_STINGER 400
-#define EFFECT_WORRY_SEED 401
 #define EFFECT_PLACEHOLDER 0
 
 // Move effect bytes

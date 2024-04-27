@@ -284,6 +284,10 @@
 #define TRAP_ID_CLAMP     4
 #define TRAP_ID_SAND_TOMB 5
 
+// For future attack moves, for the string and end turn animation.
+#define FUTURE_ATTACK_ID_FUTURE_SIGHT 0
+#define FUTURE_ATTACK_ID_DOOM_DESIRE  1
+
 // Window Ids for sTextOnWindowsInfo_Normal
 #define B_WIN_MSG                 0
 #define B_WIN_ACTION_PROMPT       1 // "What will {x} do?"

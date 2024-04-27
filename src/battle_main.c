@@ -1921,6 +1921,7 @@ static void ClearBattlerEffectsOnFaintOrSwitch(u8 battlerId)
     gLastResultingMoves[battlerId] = MOVE_NONE;
     gLastPrintedMoves[battlerId] = MOVE_NONE;
     gLastHitBy[battlerId] = 0xFF;
+	gBattleStruct->usedMoveIndices[battlerId] = 0;
 	gBattleStruct->lastTakenMove[battlerId] = MOVE_NONE;
 	gBattleStruct->choicedMove[battlerId] = MOVE_NONE;
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
@@ -3631,16 +3632,14 @@ static void HandleAction_UseMove(void)
         gCurrentMove = gChosenMove = gLockedMoves[gBattlerAttacker];
     }
     // encore forces you to use the same move
-    else if (gDisableStructs[gBattlerAttacker].encoredMove != MOVE_NONE
-          && gDisableStructs[gBattlerAttacker].encoredMove == gBattleMons[gBattlerAttacker].moves[gDisableStructs[gBattlerAttacker].encoredMovePos])
+    else if (gDisableStructs[gBattlerAttacker].encoredMove && gDisableStructs[gBattlerAttacker].encoredMove == gBattleMons[gBattlerAttacker].moves[gDisableStructs[gBattlerAttacker].encoredMovePos])
     {
         gCurrentMove = gChosenMove = gDisableStructs[gBattlerAttacker].encoredMove;
         gCurrMovePos = gChosenMovePos = gDisableStructs[gBattlerAttacker].encoredMovePos;
         gBattleStruct->moveTarget[gBattlerAttacker] = GetMoveTarget(gCurrentMove, gCurrentMove == MOVE_ACUPRESSURE ? MOVE_TARGET_USER + 1 : 0);
     }
     // check if the encored move wasn't overwritten
-    else if (gDisableStructs[gBattlerAttacker].encoredMove != MOVE_NONE
-          && gDisableStructs[gBattlerAttacker].encoredMove != gBattleMons[gBattlerAttacker].moves[gDisableStructs[gBattlerAttacker].encoredMovePos])
+    else if (gDisableStructs[gBattlerAttacker].encoredMove && gDisableStructs[gBattlerAttacker].encoredMove != gBattleMons[gBattlerAttacker].moves[gDisableStructs[gBattlerAttacker].encoredMovePos])
     {
         gCurrMovePos = gChosenMovePos = gDisableStructs[gBattlerAttacker].encoredMovePos;
         gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];

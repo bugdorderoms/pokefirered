@@ -487,6 +487,7 @@ bool8 HealStatusConditions(struct Pokemon *mon, u32 healMask, u8 battleId);
 const u8* GetItemEffect(u16 item);
 bool8 MonCanBattle(struct Pokemon *mon);
 bool8 IsMonValidSpecies(struct Pokemon *mon);
+u8 FindMoveSlotInMoveset(struct Pokemon *mon, u16 move);
 
 static inline u8 GetNatureFromPersonality(u32 personality)
 {

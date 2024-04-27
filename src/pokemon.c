@@ -1770,7 +1770,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem, s
 				}
 				break;
 			case EVO_MOVE:
-			    if (MonKnowsMove(mon, gEvolutionTable[species][i].param))
+			    if (FindMoveSlotInMoveset(mon, gEvolutionTable[species][i].param) != MAX_MON_MOVES)
 					targetSpecies = gEvolutionTable[species][i].targetSpecies;
 				break;
 			case EVO_MOVE_TYPE:
@@ -2339,12 +2339,9 @@ bool8 CanMonLearnTMHM(struct Pokemon *mon, u8 tm)
 
 u8 GetMoveRelearnerMoves(struct Pokemon *mon, u16 *moves)
 {
-    u16 learnedMoves[MAX_MON_MOVES], species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-    u8 numMoves, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
-    u32 i, j, k;
-
-    for (i = 0; i < MAX_MON_MOVES; i++)
-        learnedMoves[i] = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+    u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+    u8 numMoves, movePos, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
+    u32 i, j;
 
     for (i = 0, numMoves = 0; i < 20; i++)
     {
@@ -2353,13 +2350,13 @@ u8 GetMoveRelearnerMoves(struct Pokemon *mon, u16 *moves)
 
         if (gLevelUpLearnsets[species][i].level <= level)
         {
-            for (j = 0; j < MAX_MON_MOVES && learnedMoves[j] != gLevelUpLearnsets[species][i].move; j++);
+			movePos = FindMoveSlotInMoveset(mon, gLevelUpLearnsets[species][i].move);
 
-            if (j == MAX_MON_MOVES)
+            if (movePos == MAX_MON_MOVES)
             {
-                for (k = 0; k < numMoves && moves[k] != gLevelUpLearnsets[species][i].move; k++);
+                for (j = 0; j < numMoves && moves[j] != gLevelUpLearnsets[species][i].move; j++);
 
-                if (k == numMoves)
+                if (j == numMoves)
                     moves[numMoves++] = gLevelUpLearnsets[species][i].move;
             }
         }
@@ -2379,15 +2376,12 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves)
 
 u8 GetNumberOfRelearnableMoves(struct Pokemon *mon)
 {
-    u16 learnedMoves[MAX_MON_MOVES], moves[20], species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
-    u8 numMoves, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
-    u32 i, j, k;
+    u16 moves[20], species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
+    u8 numMoves, movePos, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
+    u32 i, j;
 
     if (species == SPECIES_EGG)
         return 0;
-
-    for (i = 0; i < MAX_MON_MOVES; i++)
-        learnedMoves[i] = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
 
     for (i = 0, numMoves = 0; i < 20; i++)
     {
@@ -2396,13 +2390,13 @@ u8 GetNumberOfRelearnableMoves(struct Pokemon *mon)
 
         if (gLevelUpLearnsets[species][i].level <= level)
         {
-            for (j = 0; j < MAX_MON_MOVES && learnedMoves[j] != gLevelUpLearnsets[species][i].move; j++);
-
-            if (j == MAX_MON_MOVES)
+			movePos = FindMoveSlotInMoveset(mon, gLevelUpLearnsets[species][i].move);
+			
+            if (movePos == MAX_MON_MOVES)
             {
-                for (k = 0; k < numMoves && moves[k] != gLevelUpLearnsets[species][i].move; k++);
+                for (j = 0; j < numMoves && moves[j] != gLevelUpLearnsets[species][i].move; j++);
 
-                if (k == numMoves)
+                if (j == numMoves)
                     moves[numMoves++] = gLevelUpLearnsets[species][i].move;
             }
         }
@@ -2620,4 +2614,16 @@ bool8 MonCanBattle(struct Pokemon *mon)
 	if (IsMonValidSpecies(mon) && GetMonData(mon, MON_DATA_HP, NULL))
 		return TRUE;
 	return FALSE;
+}
+
+u8 FindMoveSlotInMoveset(struct Pokemon *mon, u16 move)
+{
+	u8 i;
+	
+	for (i = 0; i < MAX_MON_MOVES; i++)
+	{
+		if (GetMonData(mon, MON_DATA_MOVE1 + i, NULL) == move)
+			break;
+	}
+	return i;
 }

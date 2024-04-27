@@ -3067,10 +3067,19 @@ static void SetNextTarget(u8 nextTarget)
 
 static void atk49_moveend(void)
 {
-	u16 originallyUsedMove = gChosenMove == MOVE_UNVAILABLE ? MOVE_NONE : gChosenMove;
-	u8 i, state = gBattlescriptCurrInstr[1], lastCase = gBattlescriptCurrInstr[2];
-	bool8 effect = FALSE;
+	u16 originallyUsedMove;
+	u8 i, state, lastCase;
+	bool8 effect;
     
+	if (!gBattleScripting.atk47_state) // Apply here in case it was'nt called before
+	{
+		BattleScriptCall(BattleScript_DoPreFaintEffects);
+		return;
+	}
+	originallyUsedMove = gChosenMove == MOVE_UNVAILABLE ? MOVE_NONE : gChosenMove;
+	state = gBattlescriptCurrInstr[1], lastCase = gBattlescriptCurrInstr[2];
+	effect = FALSE;
+
 	do
 	{
 		switch (gBattleScripting.atk49_state)
@@ -3125,13 +3134,8 @@ static void atk49_moveend(void)
 						gBattleStruct->choicedMove[gBattlerAttacker] = gChosenMove;
 					}
 					
-					// Check mon knows the choice move
-					for (i = 0; i < MAX_MON_MOVES; i++)
-					{
-						if (gBattleMons[gBattlerAttacker].moves[i] == gBattleStruct->choicedMove[gBattlerAttacker])
-							break;
-					}
-					if (i == MAX_MON_MOVES)
+					// Check mon don't knows the choice move
+					if (FindMoveSlotInBattlerMoveset(gBattlerAttacker, gBattleStruct->choicedMove[gBattlerAttacker]) == MAX_MON_MOVES)
 						gBattleStruct->choicedMove[gBattlerAttacker] = MOVE_NONE;
 				}
 				++gBattleScripting.atk49_state;
@@ -3166,6 +3170,9 @@ static void atk49_moveend(void)
 						gLastUsedMove = gCurrentMove;
 						gLastPrintedMoves[gBattlerAttacker] = gChosenMove;
 						gLastUsedMovesTypes[gBattlerAttacker] = gBattleStruct->dynamicMoveType;
+						
+						if (!IsZMove(gCurrentMove))
+							gBattleStruct->usedMoveIndices[gBattlerAttacker] |= gBitTable[gCurrMovePos];
 					}
 					
 					if (!(gAbsentBattlerFlags & gBitTable[gBattlerAttacker]) && !(gBattleStruct->absentBattlerFlags & gBitTable[gBattlerAttacker])
@@ -3390,6 +3397,7 @@ static void atk49_moveend(void)
 					gStatuses3[gBattlerAttacker] &= ~(STATUS3_CHARGED_UP);
 				
 				gBattleStruct->meFirstBoost = FALSE;
+				gBattleStruct->poisonPuppeteerConfusion = FALSE;
 				gProtectStructs[gBattlerAttacker].usesBouncedMove = FALSE;
 				++gBattleScripting.atk49_state;
 				break;
@@ -4793,12 +4801,7 @@ static void atk76_various(void)
 			{
 				battlerId = gBattlerPartyIndexes[0] == gBattleStruct->expGetterMonId ? 0 : 2;
 				
-				for (i = 0; i < MAX_MON_MOVES; ++i)
-				{
-					if (gBattleMons[battlerId].moves[i] == gBattleStruct->choicedMove[battlerId])
-						break;
-				}
-				if (i == MAX_MON_MOVES)
+				if (FindMoveSlotInBattlerMoveset(battlerId, gBattleStruct->choicedMove[battlerId]) == MAX_MON_MOVES)
 					gBattleStruct->choicedMove[battlerId] = MOVE_NONE;
 			}
 			break;
@@ -6155,8 +6158,6 @@ static void atk9C_setsubstitute(void)
 
 static void atk9D_mimicattackcopy(void)
 { 
-    u8 i;
-	
     gChosenMove = MOVE_UNVAILABLE;
 	
     if (!gLastMoves[gBattlerTarget] || gLastMoves[gBattlerTarget] == MOVE_UNVAILABLE || gBattleMoves[gLastMoves[gBattlerTarget]].flags.forbiddenMimic
@@ -6164,12 +6165,7 @@ static void atk9D_mimicattackcopy(void)
         gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 1);
     else
     {
-        for (i = 0; i < MAX_MON_MOVES; ++i)
-        {
-            if (gBattleMons[gBattlerAttacker].moves[i] == gLastMoves[gBattlerTarget])
-                break;
-        }
-        if (i == MAX_MON_MOVES)
+        if (FindMoveSlotInBattlerMoveset(gBattlerAttacker, gLastMoves[gBattlerTarget]) == MAX_MON_MOVES)
         {
             gBattleMons[gBattlerAttacker].moves[gCurrMovePos] = gLastMoves[gBattlerTarget];
 			gBattleMons[gBattlerAttacker].pp[gCurrMovePos] = gBattleMoves[gLastMoves[gBattlerTarget]].pp;
@@ -6252,16 +6248,11 @@ static void atkA2_nop(void)
 
 static void atkA3_disablelastusedattack(void)
 {
-    u8 i, battler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
+    u8 battler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]), movePos = FindMoveSlotInBattlerMoveset(battler, gLastMoves[battler]);
 
-    for (i = 0; i < MAX_MON_MOVES; ++i)
+	if (movePos != MAX_MON_MOVES && TryDisableMove(battler, movePos, gBattleMons[battler].moves[movePos]))
     {
-        if (gBattleMons[battler].moves[i] == gLastMoves[battler])
-            break;
-    }
-	if (i != MAX_MON_MOVES && TryDisableMove(battler, i, gBattleMons[battler].moves[i]))
-    {
-        PrepareMoveBuffer(gBattleTextBuff1, gBattleMons[battler].moves[i]);
+        PrepareMoveBuffer(gBattleTextBuff1, gBattleMons[battler].moves[movePos]);
         gBattlescriptCurrInstr += 6;
     }
     else
@@ -6270,22 +6261,19 @@ static void atkA3_disablelastusedattack(void)
 
 static void atkA4_trysetencore(void)
 {
-    u8 i;
+    u8 movePos;
 	u16 lastMove = gLastMoves[gBattlerTarget];
 
-    for (i = 0; i < MAX_MON_MOVES; ++i)
-	{
-        if (gBattleMons[gBattlerTarget].moves[i] == lastMove)
-            break;
-	}
     if (lastMove == MOVE_STRUGGLE || lastMove == MOVE_ENCORE || lastMove == MOVE_MIRROR_MOVE || lastMove == MOVE_TRANSFORM || lastMove == MOVE_MIMIC
 	|| lastMove == MOVE_SKETCH || lastMove == MOVE_DYNAMAX_CANNON || gBattleMoves[lastMove].flags.callOtherMove)
-        i = MAX_MON_MOVES;
+        movePos = MAX_MON_MOVES;
+	else
+		movePos = FindMoveSlotInBattlerMoveset(gBattlerTarget, lastMove);
 	
-    if (!gDisableStructs[gBattlerTarget].encoredMove && i != MAX_MON_MOVES && gBattleMons[gBattlerTarget].pp[i])
+    if (!gDisableStructs[gBattlerTarget].encoredMove && movePos != MAX_MON_MOVES && gBattleMons[gBattlerTarget].pp[movePos])
     {
-        gDisableStructs[gBattlerTarget].encoredMove = gBattleMons[gBattlerTarget].moves[i];
-        gDisableStructs[gBattlerTarget].encoredMovePos = i;
+        gDisableStructs[gBattlerTarget].encoredMove = gBattleMons[gBattlerTarget].moves[movePos];
+        gDisableStructs[gBattlerTarget].encoredMovePos = movePos;
         gDisableStructs[gBattlerTarget].encoreTimer = 3;
         gBattlescriptCurrInstr += 5;
     }
@@ -6373,19 +6361,14 @@ static void atkA7_trysetalwayshitflag(void)
 
 static void atkA8_copymovepermanently(void) // sketch
 {
-    u8 i;
+	u8 i;
 	
     gChosenMove = MOVE_UNVAILABLE;
 	
     if (!(gBattleMons[gBattlerAttacker].status2 & STATUS2_TRANSFORMED) && gLastPrintedMoves[gBattlerTarget] && gLastPrintedMoves[gBattlerTarget] != MOVE_UNVAILABLE
 	&& gLastPrintedMoves[gBattlerTarget] != MOVE_STRUGGLE && gLastPrintedMoves[gBattlerTarget] != MOVE_CHATTER && gLastPrintedMoves[gBattlerTarget] != gCurrentMove)
     {
-        for (i = 0; i < MAX_MON_MOVES; ++i)
-		{
-            if (gBattleMons[gBattlerAttacker].moves[i] != gCurrentMove && gBattleMons[gBattlerAttacker].moves[i] == gLastPrintedMoves[gBattlerTarget])
-                break;
-		}
-        if (i != MAX_MON_MOVES)
+        if (FindMoveSlotInBattlerMoveset(gBattlerAttacker, gLastPrintedMoves[gBattlerTarget]) != MAX_MON_MOVES)
             gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 1);
         else // sketch worked
         {
@@ -6484,34 +6467,31 @@ static void atkAC_trysetburn(void)
 
 static void atkAD_tryspiteppreduce(void)
 {
-    u8 i, ppToDeduct;
+    u8 movePos, ppToDeduct;
 	
     if (gLastMoves[gBattlerTarget] && gLastMoves[gBattlerTarget] != MOVE_UNVAILABLE)
     {
-        for (i = 0; i < MAX_MON_MOVES; ++i)
-		{
-            if (gLastMoves[gBattlerTarget] == gBattleMons[gBattlerTarget].moves[i])
-                break;
-		}
-        if (i != MAX_MON_MOVES && gBattleMons[gBattlerTarget].pp[i])
+		movePos = FindMoveSlotInBattlerMoveset(gBattlerTarget, gLastMoves[gBattlerTarget]);
+		
+        if (movePos != MAX_MON_MOVES && gBattleMons[gBattlerTarget].pp[movePos])
         {
             ppToDeduct = gBattleMoves[gCurrentMove].argument;
 
-            if (gBattleMons[gBattlerTarget].pp[i] < ppToDeduct)
-                ppToDeduct = gBattleMons[gBattlerTarget].pp[i];
+            if (gBattleMons[gBattlerTarget].pp[movePos] < ppToDeduct)
+                ppToDeduct = gBattleMons[gBattlerTarget].pp[movePos];
 			
             PrepareMoveBuffer(gBattleTextBuff1, gLastMoves[gBattlerTarget]);
             ConvertIntToDecimalStringN(gBattleTextBuff2, ppToDeduct, STR_CONV_MODE_LEFT_ALIGN, 1);
             PrepareByteNumberBuffer(gBattleTextBuff2, 1, ppToDeduct);
-            gBattleMons[gBattlerTarget].pp[i] -= ppToDeduct;
+            gBattleMons[gBattlerTarget].pp[movePos] -= ppToDeduct;
 			
-            if (MOVE_IS_PERMANENT(gBattlerTarget, i))
+            if (MOVE_IS_PERMANENT(gBattlerTarget, movePos))
             {
-                BtlController_EmitSetMonData(gBattlerTarget, BUFFER_A, REQUEST_PPMOVE1_BATTLE + i, 0, 1, &gBattleMons[gBattlerTarget].pp[i]);
+                BtlController_EmitSetMonData(gBattlerTarget, BUFFER_A, REQUEST_PPMOVE1_BATTLE + movePos, 0, 1, &gBattleMons[gBattlerTarget].pp[movePos]);
                 MarkBattlerForControllerExec(gBattlerTarget);
             }
 			
-			if (!gBattleMons[gBattlerTarget].pp[i])
+			if (!gBattleMons[gBattlerTarget].pp[movePos])
                 CancelMultiTurnMoves(gBattlerTarget);
 			
             gBattlescriptCurrInstr += 5;
@@ -6975,7 +6955,7 @@ static void atkC3_trysetfutureattack(void)
         gBattleStruct->futureSightMove[gBattlerTarget] = gCurrentMove;
         gBattleStruct->futureSightAttacker[gBattlerTarget] = gBattlerAttacker;
 		AddBattleEffectToQueueList(gBattlerTarget, B_QUEUED_FUTURE_SIGHT);
-		GetFutureAttackStringId(gCurrentMove);
+		gBattleCommunication[MULTISTRING_CHOOSER] = GetFutureAttackData(0, gCurrentMove); // Get string to print
         gBattlescriptCurrInstr += 5;
     }
 }
@@ -7082,7 +7062,7 @@ static void atkD0_settaunt(void)
 {
     if (!gDisableStructs[gBattlerTarget].tauntTimer)
     {
-        gDisableStructs[gBattlerTarget].tauntTimer = GetBattlerTurnOrderNum(gBattlerTarget) > GetBattlerTurnOrderNum(gBattlerAttacker) ? 3 : 4;
+        gDisableStructs[gBattlerTarget].tauntTimer = GetBattlerTurnOrderNum(gBattlerTarget) > gCurrentTurnActionNumber ? 3 : 4;
         gBattlescriptCurrInstr += 5;
     }
     else
@@ -8654,7 +8634,7 @@ void BS_SaveAttackerOnStack(void)
 
 void BS_RestoreAttackerFromStack(void)
 {
-	gBattlerAttacker = gBattleStruct->savedAttackerStack[--gBattleStruct->savedAttackerStackCount];
+	RestoreAttackerFromStack();
 	gBattlescriptCurrInstr += 5;
 }
 
@@ -8666,7 +8646,7 @@ void BS_SaveTargetOnStack(void)
 
 void BS_RestoreTargetFromStack(void)
 {
-	gBattlerTarget = gBattleStruct->savedTargetStack[--gBattleStruct->savedTargetStackCount];
+	RestoreTargetFromStack();
 	gBattlescriptCurrInstr += 5;
 }
 
@@ -8689,4 +8669,49 @@ void BS_TryCopycat(void)
 		gCalledMove = gLastUsedMove;
 		gBattlescriptCurrInstr += 9;
 	}
+}
+
+void BS_TryLastResort(void)
+{
+	if (!CanUseLastResort(gBattlerAttacker))
+		gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 5);
+	else
+		gBattlescriptCurrInstr += 9;
+}
+
+void BS_TrySetAbility(void)
+{
+	u16 newAbility = gBattleMoves[gCurrentMove].argument;
+	
+	if (gBattleMons[gBattlerTarget].ability == newAbility || gAbilities[gBattleMons[gBattlerTarget].ability].cantBeOverwritten)
+		gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 5);
+	else
+	{
+		gBattleStruct->abilityOverride[gBattlerTarget] = SetBattlerAbility(gBattlerTarget, newAbility);
+		gBattlescriptCurrInstr += 9;
+	}
+}
+
+void BS_TrySuckerPunch(void)
+{
+	u16 move = gChosenMoveByBattler[gBattlerTarget];
+	
+	if (GetBattlerTurnOrderNum(gBattlerTarget) < gCurrentTurnActionNumber || !move || (IS_MOVE_STATUS(move) && move != MOVE_ME_FIRST))
+		gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 5);
+	else
+		gBattlescriptCurrInstr += 9;
+}
+
+void BS_TrySetToxicSpikes(void)
+{
+	if (!TrySetToxicSpikesOnBattlerSide(BATTLE_OPPOSITE(gBattlerAttacker)))
+		gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 5);
+	else
+		gBattlescriptCurrInstr += 9;
+}
+
+void BS_GetFutureAttackAnim(void)
+{
+	gBattleScripting.animArg1 = GetFutureAttackData(1, gCurrentMove); // Get anim
+	gBattlescriptCurrInstr += 5;
 }

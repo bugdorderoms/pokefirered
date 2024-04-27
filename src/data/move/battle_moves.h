@@ -4384,6 +4384,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.argument = FUTURE_ATTACK_ID_FUTURE_SIGHT,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -6251,6 +6252,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.argument = FUTURE_ATTACK_ID_DOOM_DESIRE,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -6823,7 +6825,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_LAST_RESORT] =
     {
-		.name = _("-"),
+		.name = _("Last Resort"),
         .effect = EFFECT_LAST_RESORT,
 		.power = 140,
         .type = TYPE_NORMAL,
@@ -6841,8 +6843,8 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_WORRY_SEED] =
     {
-		.name = _("-"),
-        .effect = EFFECT_WORRY_SEED,
+		.name = _("Worry Seed"),
+        .effect = EFFECT_SET_ABILITY,
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 10,
@@ -6852,12 +6854,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.magicCoatAffected = TRUE,
 		},
         .split = SPLIT_STATUS,
+		.argument = ABILITY_INSOMNIA,
         .zMoveEffect = Z_EFFECT_SPD_UP_1,
     },
 
     [MOVE_SUCKER_PUNCH] =
     {
-		.name = _("-"),
+		.name = _("Sucker Punch"),
         .effect = EFFECT_SUCKER_PUNCH,
 		.power = 70,
         .type = TYPE_DARK,
@@ -6876,7 +6879,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_TOXIC_SPIKES] =
     {
-		.name = _("-"),
+		.name = _("Toxic Spikes"),
         .effect = EFFECT_TOXIC_SPIKES,
         .type = TYPE_POISON,
         .pp = 20,

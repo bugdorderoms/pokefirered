@@ -186,7 +186,7 @@ bool8 TryTransformIntoBattler(u8 battler1, u8 battler2);
 bool8 TryDisableMove(u8 battlerId, u8 movePos, u16 move);
 bool8 CanSafeguardProtectBattler(u8 attacker, u8 defender);
 bool8 IsBattlerProtectedByFlowerVeil(u8 battlerId);
-u8 GetFutureAttackStringId(u16 move);
+u16 GetFutureAttackData(u8 caseId, u16 move);
 void SaveBattlersHps(void);
 bool8 IsBattlerOfType(u8 battlerId, u8 type);
 u8 GetBattlerType(u8 battlerId, u8 index);
@@ -203,6 +203,11 @@ bool8 TryActivateEmergencyExit(u8 battler);
 bool8 LiftProtectionEffects(u8 battlerId);
 bool8 IsBattlerBeingCommanded(u8 battlerId);
 void SaveAttackerToStack(u8 battlerId);
+void RestoreAttackerFromStack(void);
 void SaveTargetToStack(u8 battlerId);
+void RestoreTargetFromStack(void);
+u8 FindMoveSlotInBattlerMoveset(u8 battlerId, u16 move);
+bool8 CanUseLastResort(u8 battlerId);
+bool8 TrySetToxicSpikesOnBattlerSide(u8 battlerId);
 
 #endif // GUARD_BATTLE_UTIL_H

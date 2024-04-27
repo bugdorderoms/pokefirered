@@ -192,7 +192,7 @@ u16 GetMonFormChangeSpecies(struct Pokemon *mon, u16 formChangeType)
 	bool8 hasWantedMoveKnow = FALSE;
 	
 	if (param != FORM_CHANGE_TERMINATOR)
-		hasWantedMoveKnow = MonKnowsMove(mon, param);
+		hasWantedMoveKnow = (FindMoveSlotInMoveset(mon, param) != MAX_MON_MOVES);
 	
 	return GetSpeciesFormChange(formChangeType, species, personality, ability, item, 0, hasWantedMoveKnow);
 }

@@ -224,6 +224,10 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectSplitSwap             @ EFFECT_POWER_SWAP
 	.4byte BattleScript_EffectSplitSwap             @ EFFECT_GUARD_SWAP
 	.4byte BattleScript_EffectHit                   @ EFFECT_PUNISHMENT
+	.4byte BattleScript_EffectLastResort            @ EFFECT_LAST_RESORT
+	.4byte BattleScript_EffectSetAbility            @ EFFECT_SET_ABILITY
+	.4byte BattleScript_EffectSuckerPunch           @ EFFECT_SUCKER_PUNCH
+	.4byte BattleScript_EffectToxicSpikes           @ EFFECT_TOXIC_SPIKES
 
 @@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE BATTLE SCRIPTS @
@@ -355,7 +359,6 @@ BattleScript_EffectRoar::
 BattleScript_SuccessForceOut::
 	attackanimation
 	waitstate
-	prefaintmoveendall
 	moveendall
 	switchoutabilities BS_TARGET
 	returntoball BS_TARGET
@@ -2596,6 +2599,47 @@ BattleScript_EffectSplitSwap::
 	accuracycheck BattleScript_PrintMoveMissed
     goto BattleScript_EffectSplitSwapAfterAtkCanceller
 
+@ EFFECT_LAST_RESORT @
+
+BattleScript_EffectLastResort::
+    attackcanceler
+	trylastresort BattleScript_ButItFailedAtkStringPpReduce
+	goto BattleScript_HitFromAtkString
+
+@ EFFECT_SET_ABILITY @
+
+BattleScript_EffectSetAbility::
+    attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	attackstring
+	ppreduce
+	trysetability BattleScript_ButItFailed
+	attackanimation
+	waitstate
+	abilitysetpopup BS_TARGET, STRINGID_DEFACQUIREDDEFABL
+	tryendeffectonabilitychange BS_TARGET
+	goto BattleScript_MoveEnd
+
+@ EFFECT_SUCKER_PUNCH @
+
+BattleScript_EffectSuckerPunch::
+    attackcanceler
+	trysuckerpunch BattleScript_ButItFailedAtkStringPpReduce
+	goto BattleScript_HitFromAtkString
+
+@ EFFECT_TOXIC_SPIKES @
+
+BattleScript_EffectToxicSpikes::
+    attackcanceler
+	trysettoxicspikes BattleScript_ButItFailedAtkStringPpReduce
+	attackstring
+	ppreduce
+	attackanimation
+	waitstate
+	printstring STRINGID_POISONSPIKESSCATTERED
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2904,14 +2948,7 @@ BattleScript_Pickup::
 	
 BattleScript_ReceiverActivates::
     copyability BS_SCRIPTING_PARTNER, BS_SCRIPTING
-	loadabilitypopup BS_SCRIPTING_PARTNER
-	pause B_WAIT_TIME_SHORT
-	removeabilitypopup BS_SCRIPTING_PARTNER
-	pause B_WAIT_TIME_SHORT
-	loadabilitypopup BS_SCRIPTING_PARTNER
-	printstring STRINGID_PKMNABLWASTAKENOVER
-	waitmessage B_WAIT_TIME_LONG
-	removeabilitypopup BS_SCRIPTING_PARTNER
+	abilitysetpopup BS_SCRIPTING_PARTNER, STRINGID_PKMNABLWASTAKENOVER
 	return
 
 BattleScript_NeutralizingGasActivates::
@@ -3352,6 +3389,13 @@ BattleScript_PoisonTouchActivation::
 	call BattleScript_MoveEffectPoison
 	removeabilitypopup BS_ATTACKER
 	return
+	
+BattleScript_PoisonPuppeteerActivation::
+    waitstate
+	loadabilitypopup BS_ATTACKER
+	call BattleScript_MoveEffectConfusion
+	removeabilitypopup BS_ATTACKER
+	return
 
 BattleScript_GulpMissileSpitUpPrey::
     playanimation BS_TARGET, B_ANIM_FORM_CHANGE @ assign it an apropriated animation
@@ -3529,6 +3573,27 @@ BattleScript_IntimidateActivationLoop::
 BattleScript_IntimidateIncrement::
 	addbyte gBattlerTarget, 1
 	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_IntimidateActivationLoop
+	removeabilitypopup BS_ATTACKER
+	setbyte sFIXED_ABILITY_POPUP, FALSE
+	restorebattlers
+	end3
+
+BattleScript_SupersweetSyrupActivates::
+    pause B_WAIT_TIME_SHORT
+	savetarget
+	setbyte gBattlerTarget, 0
+BattleScript_SupersweetSyrupActivationLoop::
+    jumpifabsent BS_TARGET, BattleScript_SupersweetSyrupIncrement
+	jumpiftargetally BattleScript_SupersweetSyrupIncrement
+    loadabilitypopup BS_ATTACKER
+	setbyte sFIXED_ABILITY_POPUP, TRUE
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_SupersweetSyrupIncrement
+	setstatchanger STAT_EVASION, -1
+	statbuffchange STAT_CHANGE_FLAG_IGNORE_PROTECT
+	statchangeanimandstring
+BattleScript_SupersweetSyrupIncrement::
+	addbyte gBattlerTarget, 1
+	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_SupersweetSyrupActivationLoop
 	removeabilitypopup BS_ATTACKER
 	setbyte sFIXED_ABILITY_POPUP, FALSE
 	restorebattlers
@@ -3730,6 +3795,27 @@ BattleScript_BattleBondBoost::
 	removeabilitypopup BS_ATTACKER
 	return
 
+BattleScript_ToxicDebrisActivation::
+    playmoveanimation BS_TARGET, MOVE_SPIKES @ Replace with anim of Toxic Spikes
+	waitstate
+	restoretarget
+    loadabilitypopup BS_TARGET
+	printstring STRINGID_POISONSPIKESSCATTERED
+	waitmessage B_WAIT_TIME_LONG
+	removeabilitypopup BS_TARGET
+	return
+	
+BattleScript_Hospitality::
+    pause B_WAIT_TIME_SHORT
+	loadabilitypopup BS_SCRIPTING
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
+	healthbarupdate BS_SCRIPTING_PARTNER
+	datahpupdate BS_SCRIPTING_PARTNER
+	printstring STRINGID_BUFF1DRANKALLMATCHAPKMNMADE
+	waitmessage B_WAIT_TIME_LONG
+	removeabilitypopup BS_SCRIPTING
+	end3
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ ATTACKCANCELLER BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3919,7 +4005,6 @@ BattleScript_IgnoresWhileAsleep::
 	printstring STRINGID_ATKIGNOREDORDERSASLEEP
 	waitmessage B_WAIT_TIME_LONG
 BattleScript_AsleepMoveEnd::
-	prefaintmoveendall
 	moveendto ATK49_NEXT_TARGET
 	end
 
@@ -3984,6 +4069,7 @@ BattleScript_MonTookFutureAttack::
 	waitmessage B_WAIT_TIME_LONG
 	accuracycheck BattleScript_FutureAttackMiss
 	damageformula
+	getfutureattackanim
 	playanimation2 BS_ATTACKER, sB_ANIM_ARG1
 	call BattleScript_EffectHitFromEffectiveness_Ret
 	prefaintmoveendfutureattack
@@ -4220,6 +4306,10 @@ BattleScript_OverworldWeatherStarts::
 
 BattleScript_Pausex20::
 	pause B_WAIT_TIME_SHORT
+	return
+
+BattleScript_DoPreFaintEffects::
+    prefaintmoveendall
 	return
 
 BattleScript_EffectHitFromAtkString_Ret::

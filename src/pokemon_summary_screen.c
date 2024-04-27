@@ -88,8 +88,6 @@ static void BufferMonSkills(void);
 static void BufferMonMoves(void);
 static u8 StatusToAilment(u32 status);
 static void BufferMonMoveI(u8);
-static u16 GetMonMoveBySlotId(struct Pokemon * mon, u8 moveSlot);
-static u16 GetMonPpByMoveSlot(struct Pokemon * mon, u8 moveSlot);
 static void CreateShinyStarObj(u16, u16);
 static void CreatePokerusIconObj(u16, u16);
 static void PokeSum_CreateMonMarkingsSprite(void);
@@ -2049,7 +2047,7 @@ static void BufferMonMoveI(u8 i)
 	u16 move;
 	
     if (i < MAX_MON_MOVES)
-        sMonSummaryScreen->moveIds[i] = move = GetMonMoveBySlotId(&sMonSummaryScreen->currentMon, i);
+        sMonSummaryScreen->moveIds[i] = move = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MOVE1 + i);
 
     if (!move)
     {
@@ -2075,7 +2073,7 @@ static void BufferMonMoveI(u8 i)
 		}
 		else
 		{
-			ConvertIntToDecimalStringN(sMonSummaryScreen->summary.moveCurPpStrBufs[i], GetMonPpByMoveSlot(&sMonSummaryScreen->currentMon, i), STR_CONV_MODE_LEFT_ALIGN, 3);
+			ConvertIntToDecimalStringN(sMonSummaryScreen->summary.moveCurPpStrBufs[i], GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PP1 + i), STR_CONV_MODE_LEFT_ALIGN, 3);
 			ConvertIntToDecimalStringN(sMonSummaryScreen->summary.moveMaxPpStrBufs[i], CalculatePPWithBonus(move, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PP_BONUSES), i), STR_CONV_MODE_LEFT_ALIGN, 3);
 		}
 		sMonSkillsPrinterXpos->curPp[i] = GetRightAlignXpos_NDigits(2, sMonSummaryScreen->summary.moveCurPpStrBufs[i]);
@@ -2317,7 +2315,7 @@ static void PrintMovesPage(void)
 static void PokeSum_PrintMoveName(u8 i)
 {
     u8 colorIdx = 0;
-    u8 curPP = GetMonPpByMoveSlot(&sMonSummaryScreen->currentMon, i);
+    u8 curPP = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PP1 + i);
     u8 maxPP = CalculatePPWithBonus(sMonSummaryScreen->moveIds[i], GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PP_BONUSES), i);
 
     if (i == MAX_MON_MOVES)
@@ -3069,48 +3067,6 @@ static void BufferSelectedMonData(struct Pokemon * mon)
         *mon = sMonSummaryScreen->monList.mons[GetLastViewedMonIndex()];
     else
         BoxMonToMon(&sMonSummaryScreen->monList.boxMons[GetLastViewedMonIndex()], mon);
-}
-
-static u16 GetMonMoveBySlotId(struct Pokemon * mon, u8 moveSlot)
-{
-    u16 move;
-
-    switch (moveSlot)
-    {
-    case 0:
-        move = GetMonData(mon, MON_DATA_MOVE1);
-        break;
-    case 1:
-        move = GetMonData(mon, MON_DATA_MOVE2);
-        break;
-    case 2:
-        move = GetMonData(mon, MON_DATA_MOVE3);
-        break;
-    default:
-        move = GetMonData(mon, MON_DATA_MOVE4);
-    }
-    return move;
-}
-
-static u16 GetMonPpByMoveSlot(struct Pokemon * mon, u8 moveSlot)
-{
-    u16 pp;
-
-    switch (moveSlot)
-    {
-    case 0:
-        pp = GetMonData(mon, MON_DATA_PP1);
-        break;
-    case 1:
-        pp = GetMonData(mon, MON_DATA_PP2);
-        break;
-    case 2:
-        pp = GetMonData(mon, MON_DATA_PP3);
-        break;
-    default:
-        pp = GetMonData(mon, MON_DATA_PP4);
-    }
-    return pp;
 }
 
 static u8 StatusToAilment(u32 status)
