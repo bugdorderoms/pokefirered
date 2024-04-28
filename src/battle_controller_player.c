@@ -40,13 +40,14 @@ static void PlayerHandleOneReturnValue(u8 battlerId);
 static void PlayerHandleIntroTrainerBallThrow(u8 battlerId);
 static void PlayerHandleResetActionMoveSelection(u8 battlerId);
 static void HandleInputChooseAction(u8 battlerId);
+static void SetPlayerChooseMoveInput(u8 battlerId);
 static void HandleInputChooseTarget(u8 battlerId);
 static void HandleMoveSwitching(u8 battlerId);
 static void HandleInputMoveInfo(u8 battlerId);
 static void TryShowAsTarget(u8 battlerId);
 static void HandleInputShowTargets(u8 battlerId);
 static void HandleInputShowEntireFieldTargets(u8 battlerId);
-static void MoveInfoPrintMoveDescription(u8 battlerId);
+static void MoveInfoPrintMoveNameAndDescription(u8 battlerId);
 static void MoveInfoPrintSubmenuString(u8 battlerId, u8 stateId);
 static void MoveInfoPrintPowerAndAccuracy(u16 move);
 static void MoveInfoPrintPriorityAndCategory(u16 move);
@@ -295,7 +296,8 @@ static void HandleChooseMoveAfterDma3(u8 battlerId)
     {
         gBattle_BG0_X = 0;
         gBattle_BG0_Y = 320;
-        gBattlerControllerFuncs[battlerId] = HandleInputChooseMove;
+		
+		SetPlayerChooseMoveInput(battlerId);
     }
 }
 
@@ -792,6 +794,12 @@ void InitMoveSelectionsVarsAndStrings(u8 battlerId)
 // MOVE SELECTION INPUT //
 //////////////////////////
 
+static void SetPlayerChooseMoveInput(u8 battlerId)
+{
+	CreateMoveInfoTriggerSprite(battlerId);
+	gBattlerControllerFuncs[battlerId] = HandleInputChooseMove;
+}
+
 void MoveSelectionCreateCursorAt(u8 cursorPosition, u8 arg1)
 {
     u16 src[2];
@@ -869,6 +877,7 @@ void HandleInputChooseMove(u8 battlerId)
     if (JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
+		ShowOrHideMoveInfoTriggerSprite(TRUE); // Hide trigger
 		
         if (moveTarget == MOVE_TARGET_USER || moveTarget == MOVE_TARGET_ALL_BATTLERS || moveTarget == MOVE_TARGET_USER_OR_ALLY)
             gMultiUsePlayerCursor = battlerId;
@@ -943,6 +952,7 @@ void HandleInputChooseMove(u8 battlerId)
     else if (JOY_NEW(B_BUTTON))
     {
         PlaySE(SE_SELECT);
+		ShowOrHideMoveInfoTriggerSprite(TRUE); // Hide trigger
         BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, 0xFFFF);
         BattleControllerComplete(battlerId);
         ResetPaletteFade();
@@ -1005,6 +1015,7 @@ void HandleInputChooseMove(u8 battlerId)
         if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
         {
             MoveSelectionCreateCursorAt(gMoveSelectionCursor[battlerId], 29);
+			ShowOrHideMoveInfoTriggerSprite(TRUE); // Hide trigger sprite
 			gMultiUsePlayerCursor = gMoveSelectionCursor[battlerId] != 0 ? 0 : gMoveSelectionCursor[battlerId] + 1;
             MoveSelectionCreateCursorAt(gMultiUsePlayerCursor, 27);
             BattlePutTextOnWindow(gText_BattleSwitchWhich, B_WIN_SWITCH_PROMPT);
@@ -1016,8 +1027,9 @@ void HandleInputChooseMove(u8 battlerId)
 	{
 		PlaySE(SE_SELECT);
 		MoveSelectionDestroyCursorAt(gMoveSelectionCursor[battlerId]);
+		ShowOrHideMoveInfoTriggerSprite(TRUE); // Hide trigger sprite
 		gBattleStruct->moveInfo.submenuState = 0; // Always initialize on first submenu
-		MoveInfoPrintMoveDescription(battlerId);
+		MoveInfoPrintMoveNameAndDescription(battlerId);
 		MoveInfoPrintSubmenuString(battlerId, gBattleStruct->moveInfo.submenuState);
 		gBattlerControllerFuncs[battlerId] = HandleInputMoveInfo;
 	}
@@ -1067,7 +1079,7 @@ static void HandleInputShowTargets(u8 battlerId)
     {
         PlaySE(SE_SELECT);
         HideAllTargets(battlerId, TRUE);
-        gBattlerControllerFuncs[battlerId] = HandleInputChooseMove;
+		SetPlayerChooseMoveInput(battlerId);
 		MoveSelectionDisplayMoveType(battlerId);
         DoBounceEffect(battlerId, BOUNCE_HEALTHBOX, 7, 1);
         DoBounceEffect(battlerId, BOUNCE_MON, 7, 1);
@@ -1087,7 +1099,7 @@ static void HandleInputShowEntireFieldTargets(u8 battlerId)
     {
         PlaySE(SE_SELECT);
         HideAllTargets(battlerId, FALSE);
-        gBattlerControllerFuncs[battlerId] = HandleInputChooseMove;
+        SetPlayerChooseMoveInput(battlerId);
 		MoveSelectionDisplayMoveType(battlerId);
         DoBounceEffect(battlerId, BOUNCE_HEALTHBOX, 7, 1);
         DoBounceEffect(battlerId, BOUNCE_MON, 7, 1);
@@ -1121,7 +1133,7 @@ static void HandleInputChooseTarget(u8 battlerId)
     {
         PlaySE(SE_SELECT);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
-        gBattlerControllerFuncs[battlerId] = HandleInputChooseMove;
+        SetPlayerChooseMoveInput(battlerId);
         DoBounceEffect(battlerId, BOUNCE_HEALTHBOX, 7, 1);
         DoBounceEffect(battlerId, BOUNCE_MON, 7, 1);
         EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
@@ -1310,7 +1322,7 @@ static void HandleMoveSwitching(u8 battlerId)
         if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
             gBattlerControllerFuncs[battlerId] = OakOldManHandleInputChooseMove;
         else
-            gBattlerControllerFuncs[battlerId] = HandleInputChooseMove;
+            SetPlayerChooseMoveInput(battlerId);
 		
         gMoveSelectionCursor[battlerId] = gMultiUsePlayerCursor;
         MoveSelectionCreateCursorAt(gMoveSelectionCursor[battlerId], 0);
@@ -1325,7 +1337,7 @@ static void HandleMoveSwitching(u8 battlerId)
         if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
             gBattlerControllerFuncs[battlerId] = OakOldManHandleInputChooseMove;
         else
-            gBattlerControllerFuncs[battlerId] = HandleInputChooseMove;
+            SetPlayerChooseMoveInput(battlerId);
 		
 		MoveSelectionDisplayMoveMenu(battlerId);
     }
@@ -1402,14 +1414,14 @@ static void (*const sMoveInfoSubmenuFuncs[NUM_MOVEINFO_SUBMENUS])(u16) =
 	MoveInfoPrintMoveTarget,
 };
 
-static void MoveInfoPrintMoveDescription(u8 battlerId)
+static void MoveInfoPrintMoveNameAndDescription(u8 battlerId)
 {
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
 	u16 move = moveInfo->moves[gMoveSelectionCursor[battlerId]];
 	
-	// Move's description
+	// Move's name and description
 	ReformatStringToMaxChars(gMoveDescriptionPointers[move - 1], 0, 30, FALSE);
-	CreateBattleMoveInfoWindowAndArrows(gStringVar4);
+	CreateBattleMoveInfoWindowsAndArrows(move);
 }
 
 static void MoveInfoPrintPowerAndAccuracy(u16 move)
@@ -1458,9 +1470,9 @@ static void MoveInfoPrintSubmenuString(u8 battlerId, u8 stateId)
 // Redrawn moves window
 static void HandleCloseMoveInfo_Step(u8 battlerId)
 {
-	DestroyBattleMoveInfoWindow();
+	DestroyBattleMoveInfoWindows();
 	InitMoveSelectionsVarsAndStrings(battlerId);
-	gBattlerControllerFuncs[battlerId] = HandleInputChooseMove;
+	SetPlayerChooseMoveInput(battlerId);
 }
 
 static void HandleInputMoveInfo(u8 battlerId)

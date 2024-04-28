@@ -166,7 +166,7 @@ static u8 *AddTextPrinterAndCreateWindowOnHealthbox(const u8 *str, u32 x, u32 y,
 static void TextIntoHealthboxObject(void *dest, u8 *windowTileData, s32 windowWidth);
 static void SpriteCB_HealthboxSlideInDelayed(struct Sprite *sprite);
 static void SpriteCB_HealthboxSlideIn(struct Sprite *sprite);
-static void SpriteCB_WeatherAnimIcon(struct Sprite *sprite);
+static void SpriteCB_InterfaceTrigger(struct Sprite *sprite);
 
 static const u8 sWeatherIconRainGfx[] = INCBIN_U8("graphics/battle_interface/weather_icon_rain.4bpp");
 static const u8 sWeatherIconSunGfx[] = INCBIN_U8("graphics/battle_interface/weather_icon_sun.4bpp");
@@ -180,6 +180,8 @@ static const u16 sWeatherIconSunPal[] = INCBIN_U16("graphics/battle_interface/we
 static const u16 sWeatherIconHailPal[] = INCBIN_U16("graphics/battle_interface/weather_icon_hail.gbapal");
 static const u16 sWeatherIconSandstormPal[] = INCBIN_U16("graphics/battle_interface/weather_icon_sandstorm.gbapal");
 static const u16 sWeatherIconFogPal[] = INCBIN_U16("graphics/battle_interface/weather_icon_fog.gbapal");
+
+static const u8 sMoveInfoTriggerGfx[] = INCBIN_U8("graphics/battle_interface/move_info_trigger.4bpp");
 
 static const struct OamData gOamData_8260270 = {
     .shape = SPRITE_SHAPE(64x32),
@@ -424,7 +426,23 @@ static const struct SpriteTemplate sSpriteTemplate_WeatherIcon =
     .anims = sAnims_WeatherIcon,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCB_WeatherAnimIcon
+    .callback = SpriteCB_InterfaceTrigger
+};
+
+static const struct SpriteSheet sSpriteSheet_MoveInfoTrigger =
+{
+	sMoveInfoTriggerGfx, sizeof(sMoveInfoTriggerGfx), TAG_MOVEINFO_TRIGGER_GFX
+};
+
+static const struct SpriteTemplate sSpriteTemplate_MoveInfoTrigger =
+{
+	.tileTag = TAG_MOVEINFO_TRIGGER_GFX,
+    .paletteTag = TAG_MOVEINFO_TRIGGER_GFX,
+    .oam = &sOam_WeatherIcon,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCB_InterfaceTrigger
 };
 
 enum
@@ -1907,8 +1925,10 @@ static void SafariTextIntoHealthboxObject(void *dest, u8 *windowTileData, u32 wi
     CpuCopy32(windowTileData + 256, dest + 256, windowWidth * TILE_SIZE_4BPP);
 }
 
-#define sHide   data[0]
-#define sFinalX data[1]
+#define sHide             data[0]
+#define sInitialX         data[1]
+#define sFinalX           data[2]
+#define sSlideSpeedAndDir data[3] // < 0 = slide to right, > 0 = slide to left
 
 #define WEATHER_ICON_X_POS   256
 #define WEATHER_ICON_Y_POS   15
@@ -1938,8 +1958,11 @@ void TryCreateWeatherAnimIcon(void)
 			
 			LoadSpriteSheet(&sSpriteSheet_WeatherStatusIcons[iconAnimId - 1]);
 			LoadSpritePalette(&sSpritePalette_WeatherStatusIcons[iconAnimId - 1]);
+
 			gBattleStruct->weatherIconSpriteId = CreateSprite(&sSpriteTemplate_WeatherIcon, WEATHER_ICON_X_POS, WEATHER_ICON_Y_POS, 0);
+			gSprites[gBattleStruct->weatherIconSpriteId].sInitialX = WEATHER_ICON_X_POS;
 			gSprites[gBattleStruct->weatherIconSpriteId].sFinalX = WEATHER_ICON_X_POS - WEATHER_ICON_X_SLIDE;
+			gSprites[gBattleStruct->weatherIconSpriteId].sSlideSpeedAndDir = 1; // Move 1px per frame
 		}
 		ShowOrHideWeatherAnimIcon(FALSE); // show icon
 	}
@@ -1950,25 +1973,78 @@ void ShowOrHideWeatherAnimIcon(bool8 hide)
 	gSprites[gBattleStruct->weatherIconSpriteId].sHide = hide;
 }
 
-static void SpriteCB_WeatherAnimIcon(struct Sprite *sprite)
+static void SpriteCB_InterfaceTrigger(struct Sprite *sprite)
 {
 	if (sprite->sHide)
 	{
-		if (sprite->x != WEATHER_ICON_X_POS) // slide out
-			++sprite->x;
+		if (sprite->x != sprite->sInitialX) // slide out
+		{
+			sprite->x += sprite->sSlideSpeedAndDir;
+			
+			if (sprite->sSlideSpeedAndDir > 0)
+			{
+				if (sprite->x > sprite->sInitialX)
+					sprite->x = sprite->sInitialX;
+			}
+			else
+			{
+				if (sprite->x < sprite->sInitialX)
+					sprite->x = sprite->sInitialX;
+			}
+		}
 		else // destroy sprite
 		{
-			FreeSpriteTilesByTag(TAG_WEATHER_ICON_GFX);
-			FreeSpritePaletteByTag(TAG_WEATHER_ICON_GFX);
+			FreeSpriteTiles(sprite);
+			FreeSpritePalette(sprite);
 			DestroySprite(sprite);
 		}
 	}
 	else
 	{
 		if (sprite->x != sprite->sFinalX) // slide in
-			--sprite->x;
+		{
+			sprite->x -= sprite->sSlideSpeedAndDir;
+			
+			if (sprite->sSlideSpeedAndDir > 0)
+			{
+				if (sprite->x < sprite->sFinalX)
+					sprite->x = sprite->sFinalX;
+			}
+			else
+			{
+				if (sprite->x > sprite->sFinalX)
+					sprite->x = sprite->sFinalX;
+			}
+		}
 	}
 }
 
+#define MOVEINFO_TRIGGER_X_POS   -16
+#define MOVEINFO_TRIGGER_Y_POS   100
+#define MOVEINFO_TRIGGER_X_SLIDE 32
+
+void CreateMoveInfoTriggerSprite(u8 battlerId)
+{
+	if (GetSpriteTileStartByTag(TAG_MOVEINFO_TRIGGER_GFX) == 0xFFFF)
+	{
+		LoadSpriteSheet(&sSpriteSheet_MoveInfoTrigger);
+		
+		gBattleStruct->moveInfo.triggerSpriteId = CreateSprite(&sSpriteTemplate_MoveInfoTrigger, MOVEINFO_TRIGGER_X_POS, MOVEINFO_TRIGGER_Y_POS, 0);
+		gSprites[gBattleStruct->moveInfo.triggerSpriteId].oam.priority = 1;
+		gSprites[gBattleStruct->moveInfo.triggerSpriteId].oam.paletteNum = gSprites[gHealthboxSpriteIds[battlerId]].oam.paletteNum; // Same palette as healthbox
+		gSprites[gBattleStruct->moveInfo.triggerSpriteId].sInitialX = MOVEINFO_TRIGGER_X_POS;
+		gSprites[gBattleStruct->moveInfo.triggerSpriteId].sFinalX = MOVEINFO_TRIGGER_X_POS + MOVEINFO_TRIGGER_X_SLIDE;
+		gSprites[gBattleStruct->moveInfo.triggerSpriteId].sSlideSpeedAndDir = -2; // Move 2px per frame
+	}
+	ShowOrHideMoveInfoTriggerSprite(FALSE); // show trigger
+}
+
+void ShowOrHideMoveInfoTriggerSprite(bool8 hide)
+{
+	gSprites[gBattleStruct->moveInfo.triggerSpriteId].sHide = hide;
+}
+
 #undef sHide
+#undef sInitialX
 #undef sFinalX
+#undef sSlideSpeedAndDir

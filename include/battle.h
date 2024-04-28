@@ -325,7 +325,8 @@ struct Illusion
 
 struct MoveInfo
 {
-	u8 windowId; // Move's description window Id
+	u8 triggerSpriteId;
+	u8 windowIds[2]; // 0 - move's name, 1 - move's desc
 	u8 arrowTaskId; // Submenu arrow task id
 	u16 submenuState; // Determine which string will be show on the submenu info
 };

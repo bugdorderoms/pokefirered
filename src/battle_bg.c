@@ -343,8 +343,17 @@ static const struct WindowTemplate gUnknown_8248330[] = {
     }, DUMMY_WIN_TEMPLATE
 };
 
-static const struct WindowTemplate sMoveInfoWindowTemplate[] =
+static const struct WindowTemplate sMoveInfoWindowTemplates[] =
 {
+	{ // Move's name
+		.bg = 0,
+        .tilemapLeft = 0,
+        .tilemapTop = 52,
+		.width = 11,
+        .height = 2,
+		.paletteNum = 1,
+        .baseBlock = 0x340
+	},
 	{ // Move's description
         .bg = 0,
         .tilemapLeft = 0,
@@ -352,7 +361,7 @@ static const struct WindowTemplate sMoveInfoWindowTemplate[] =
         .width = 20,
         .height = 6,
         .paletteNum = 1,
-        .baseBlock = 0x340
+        .baseBlock = 0x356
     },
 };
 
@@ -983,28 +992,61 @@ static u8 GetBattleTerrainOverride(void)
     return battleScene == MAP_BATTLE_SCENE_NORMAL ? gBattleTerrain : GetBattleTerrainByMapScene(battleScene);
 }
 
-void CreateBattleMoveInfoWindowAndArrows(u8 *str)
+#define NUM_TOPBAR_REMOVE_LINES 5 // Num lines to remove on top bar
+
+static void DrawMoveInfoWindowBorder(u8 windowId)
 {
-	u8 colors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
+	u8 i, pixelsCount;
 	
-	// Create window
-	gBattleStruct->moveInfo.windowId = AddWindow(sMoveInfoWindowTemplate);
-	FillWindowPixelBuffer(gBattleStruct->moveInfo.windowId, PIXEL_FILL(15));
-	AddTextPrinterParameterized3(gBattleStruct->moveInfo.windowId, 0, 4, 0, colors, 0xFF, str);
-	PutWindowTilemap(gBattleStruct->moveInfo.windowId);
-	CopyWindowToVram(gBattleStruct->moveInfo.windowId, COPYWIN_BOTH);
+	// Remove some pixels on top
+	FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, 0, sMoveInfoWindowTemplates[0].width * 8, NUM_TOPBAR_REMOVE_LINES);
+	
+	// Draw left circle border
+	for (i = 0, pixelsCount = 1; i < 2; i++, pixelsCount++)
+		FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, (NUM_TOPBAR_REMOVE_LINES + 1) - i, pixelsCount, 1);
+	
+	// Draw right retangle border
+	for (i = 0, pixelsCount = NUM_TOPBAR_REMOVE_LINES; i < 16; i++, pixelsCount++)
+		FillWindowPixelRect(windowId, PIXEL_FILL(0), 73 + pixelsCount, NUM_TOPBAR_REMOVE_LINES + i, 16 - pixelsCount, 1);
+}
+
+void CreateBattleMoveInfoWindowsAndArrows(u16 move)
+{
+	u8 i, colors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
+	bool8 isNameWindow;
+	
+	// Create windows
+	for (i = 0; i < 2; i++)
+	{
+		gBattleStruct->moveInfo.windowIds[i] = AddWindow(&sMoveInfoWindowTemplates[i]);
+		FillWindowPixelBuffer(gBattleStruct->moveInfo.windowIds[i], PIXEL_FILL(15));
+		
+		isNameWindow = (i == 0);
+		
+		if (isNameWindow)
+			DrawMoveInfoWindowBorder(gBattleStruct->moveInfo.windowIds[i]);
+		
+		AddTextPrinterParameterized3(gBattleStruct->moveInfo.windowIds[i], 0, 4, 3, colors, 0xFF, isNameWindow ? gBattleMoves[move].name : gStringVar4);
+		PutWindowTilemap(gBattleStruct->moveInfo.windowIds[i]);
+		CopyWindowToVram(gBattleStruct->moveInfo.windowIds[i], COPYWIN_BOTH);
+	}
 	
 	// Create arrows
 	gBattleStruct->moveInfo.arrowTaskId = AddScrollIndicatorArrowPairParameterized(0, 137, 165, 235, NUM_MOVEINFO_SUBMENUS - 1, 110, 110, &gBattleStruct->moveInfo.submenuState);
 }
 
-void DestroyBattleMoveInfoWindow(void)
+void DestroyBattleMoveInfoWindows(void)
 {
-	// Destroy window
-	FillWindowPixelBuffer(gBattleStruct->moveInfo.windowId, PIXEL_FILL(15));
-	PutWindowTilemap(gBattleStruct->moveInfo.windowId);
-	CopyWindowToVram(gBattleStruct->moveInfo.windowId, COPYWIN_BOTH);
-	RemoveWindow(gBattleStruct->moveInfo.windowId);
+	u8 i;
+	
+	// Destroy windows
+	for (i = 0; i < 2; i++)
+	{
+		FillWindowPixelBuffer(gBattleStruct->moveInfo.windowIds[i], PIXEL_FILL(15));
+		PutWindowTilemap(gBattleStruct->moveInfo.windowIds[i]);
+		CopyWindowToVram(gBattleStruct->moveInfo.windowIds[i], COPYWIN_BOTH);
+		RemoveWindow(gBattleStruct->moveInfo.windowIds[i]);
+	}
 	
 	// Load moves box
 	CopyToBgTilemapBuffer(0, gBattleTextboxTilemap, 0, 0x000);

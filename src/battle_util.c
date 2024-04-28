@@ -2748,11 +2748,15 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					case ABILITY_SUPREME_OVERLORD:
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
-							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
 							gBattleStruct->supremeOverlordBoosts[battler] = min(PARTY_SIZE - 1, gBattleStruct->faintCounter[GetBattlerSide(battler)]);
-							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_GAINED_STRENGTH;
-							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
-							++effect;
+							
+							if (gBattleStruct->supremeOverlordBoosts[battler] > 0)
+							{
+								gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_GAINED_STRENGTH;
+								BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+								gSpecialStatuses[battler].switchInAbilityDone = TRUE;
+								++effect;
+							}
 						}
 						break;
 					case ABILITY_LIMBER:

@@ -79,6 +79,9 @@ enum
 // Weather icon
 #define TAG_WEATHER_ICON_GFX                    0xD70D
 
+// Move info trigger
+#define TAG_MOVEINFO_TRIGGER_GFX                0xD70E
+
 // Args for UpdateHealthboxAttribute
 enum
 {
@@ -114,5 +117,7 @@ s32 MoveBattleBar(u8 battler, u8 healthboxSpriteId, u8 whichBar);
 void StartHealthboxSlideIn(u8 battler);
 void TryCreateWeatherAnimIcon(void);
 void ShowOrHideWeatherAnimIcon(bool8 hide);
+void CreateMoveInfoTriggerSprite(u8 battlerId);
+void ShowOrHideMoveInfoTriggerSprite(bool8 hide);
 
 #endif // GUARD_BATTLE_INTERFACE_H
