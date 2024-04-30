@@ -582,7 +582,7 @@ static void AnimSwirlingSnowball_Step1(struct Sprite *sprite)
     {
         sprite->data[0] = 1;
         AnimFastTranslateLinear(sprite);
-        if ((u32)(sprite->x + sprite->x2 + 16) > 272 || sprite->y + sprite->y2 > 160 || sprite->y + sprite->y2 < -16)
+        if (sprite->x + sprite->x2 > DISPLAY_WIDTH + 16 || sprite->x + sprite->x2 < -16 || sprite->y + sprite->y2 > DISPLAY_HEIGHT || sprite->y + sprite->y2 < -16)
             break;
     }
     sprite->x += sprite->x2;
@@ -677,7 +677,7 @@ static void AnimMoveParticleBeyondTarget(struct Sprite *sprite)
     {
         sprite->data[0] = 1;
         AnimFastTranslateLinear(sprite);
-        if ((u32)(sprite->x + sprite->x2 + 16) > 272 || sprite->y + sprite->y2 > 160 || sprite->y + sprite->y2 < -16)
+        if (sprite->x + sprite->x2 > DISPLAY_WIDTH + 16 || sprite->x + sprite->x2 < -16 || sprite->y + sprite->y2 > DISPLAY_HEIGHT || sprite->y + sprite->y2 < -16)
             break;
     }
     sprite->x += sprite->x2;
@@ -701,7 +701,7 @@ static void AnimWiggleParticleTowardsTarget(struct Sprite *sprite)
     sprite->data[7] = (sprite->data[7] + sprite->data[6]) & 0xFF;
     if (sprite->data[0] == 1)
     {
-        if ((u32)(sprite->x + sprite->x2 + 16) > 272 || sprite->y + sprite->y2 > 160 || sprite->y + sprite->y2 < -16)
+        if (sprite->x + sprite->x2 > DISPLAY_WIDTH + 16 || sprite->x + sprite->x2 < -16 || sprite->y + sprite->y2 > DISPLAY_HEIGHT || sprite->y + sprite->y2 < -16)
             DestroyAnimSprite(sprite);
     }
 }

@@ -369,9 +369,7 @@ void CopyItemIconPicTo4x4Buffer(const void * src, void * dest)
     u8 i;
 
     for (i = 0; i < 3; i++)
-    {
-        CpuCopy16(src + 0x60 * i, dest + 0x80 * i, 0x60);
-    }
+        CpuCopy16(src + 0x60 * i, dest + 0xA0 + 0x80 * i, 0x60);
 }
 
 u8 AddItemIconObject(u16 tilesTag, u16 paletteTag, u16 itemId)
@@ -423,8 +421,8 @@ void CreateItemMenuIcon(u16 itemId, u8 idx)
         if (spriteId != MAX_SPRITES)
         {
             ptr[idx] = spriteId;
-            gSprites[spriteId].x2 = 24;
-            gSprites[spriteId].y2 = 140;
+            gSprites[spriteId].x2 = 16;
+            gSprites[spriteId].y2 = 132;
         }
     }
 }
@@ -458,8 +456,8 @@ void sub_80989A0(u16 itemId, u8 idx)
         if (spriteId != MAX_SPRITES)
         {
             ptr[idx] = spriteId;
-            gSprites[spriteId].x2 = 24;
-            gSprites[spriteId].y2 = 147;
+            gSprites[spriteId].x2 = 16;
+            gSprites[spriteId].y2 = 139;
         }
     }
 }
@@ -479,8 +477,8 @@ u8 CreateHeldItemSprite(s16 x, s16 y, u8 subpriority, bool8 isMail)
 	return spriteId;
 }
 
-#define ITEM_ICON_X 26
-#define ITEM_ICON_Y 24
+#define ITEM_ICON_X 18
+#define ITEM_ICON_Y 16
 
 #define IS_KEY_ITEM_TM(pocket) ((pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE))
 
@@ -497,7 +495,7 @@ static u8 ShowObtainedItemDescription(u16 item)
 	}
 	else
 	{
-		textX = ITEM_ICON_X + 2;
+		textX = 28;
 		maxChars = 39;
 	}
 	numLines = ReformatStringToMaxChars(ItemId_GetDescription(item), 0, maxChars, FALSE);
@@ -555,8 +553,8 @@ void CreateItemIconOnFindMessage(void)
 		
 		if (IS_KEY_ITEM_TM(ItemId_GetPocket(itemId)))
 		{
-			x = 112;
-			y = 64;
+			x = 96;
+			y = 48;
 			
 			sprite1->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
 			sprite1->oam.matrixNum = AllocOamMatrix();
@@ -579,8 +577,8 @@ void CreateItemIconOnFindMessage(void)
 		{
 			if (GetSetItemObtained(itemId, FLAG_GET_OBTAINED))
 			{
-				x = 213;
-				y = 140;
+				x = 205;
+				y = 132;
 			}
 			else
 			{

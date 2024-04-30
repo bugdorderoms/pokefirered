@@ -41,7 +41,15 @@ static const struct WindowTemplate sDefaultBagWindowsStd[] = {
         .height = 0x02,
         .paletteNum = 0x0f,
         .baseBlock = 0x01f8
-    }, DUMMY_WIN_TEMPLATE
+    }, {
+		.bg = 0,
+        .tilemapLeft = 0x04,
+        .tilemapTop = 0x03,
+        .width = 0x06,
+        .height = 0x02,
+        .paletteNum = 0x00,
+        .baseBlock = 0x03B2
+	}, DUMMY_WIN_TEMPLATE
 };
 
 static const struct WindowTemplate sDefaultBagWindowsDeposit[] = {
@@ -192,15 +200,22 @@ static EWRAM_DATA u8 sOpenWindows[11] = {};
 
 void InitBagWindows(void)
 {
-    u8 i;
+    u8 i, count;
+	bool8 isPcItems = (gBagMenuState.location == ITEMMENULOCATION_ITEMPC);
     
-	InitWindows(gBagMenuState.location == 3 ? sDefaultBagWindowsDeposit : sDefaultBagWindowsStd);
+	InitWindows(isPcItems ? sDefaultBagWindowsDeposit : sDefaultBagWindowsStd);
     DeactivateAllTextPrinters();
     TextWindow_SetUserSelectedFrame(0, 0x64, 0xE0);
     TextWindow_LoadResourcesStdFrame0(0, 0x6D, 0xD0);
     TextWindow_SetStdFrame0_WithPal(0, 0x81, 0xC0);
+	
     LoadPalette(sBagWindowPalF, 0xF0, 0x20);
-    for (i = 0; i < 3; i++)
+	
+	count = ARRAY_COUNT(sDefaultBagWindowsStd);
+	if (isPcItems)
+		count--;
+	
+    for (i = 0; i < count; i++)
     {
         FillWindowPixelBuffer(i, 0x00);
         PutWindowTilemap(i);

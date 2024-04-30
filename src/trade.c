@@ -1651,8 +1651,8 @@ static void TradeMenuMoveCursor(u8 *tradeMenuCursorPosition, u8 direction)
     if (newPosition == 12) // CANCEL
     {
         StartSpriteAnim(&gSprites[sTradeMenuResourcesPtr->tradeMenuCursorSpriteIdx], 1);
-        gSprites[sTradeMenuResourcesPtr->tradeMenuCursorSpriteIdx].x = 224;
-        gSprites[sTradeMenuResourcesPtr->tradeMenuCursorSpriteIdx].y = 160;
+        gSprites[sTradeMenuResourcesPtr->tradeMenuCursorSpriteIdx].x = DISPLAY_WIDTH - 16;
+        gSprites[sTradeMenuResourcesPtr->tradeMenuCursorSpriteIdx].y = DISPLAY_HEIGHT;
     }
     else
     {

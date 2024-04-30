@@ -1561,13 +1561,13 @@ void AnimTask_ItemThrow(u8 taskId)
 		
 		if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER) // get initial coords
 		{
-			sprite->x = 249;
-			sprite->y = 29;
+			sprite->x = 241;
+			sprite->y = 21;
 		}
 		else
 		{
-			sprite->x = 0;
-			sprite->y = 81;
+			sprite->x = -8;
+			sprite->y = 73;
 		}
 		sprite->oam.priority = 0;
 		sprite->data[0] = 40; // duration

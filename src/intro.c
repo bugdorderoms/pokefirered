@@ -1006,7 +1006,7 @@ static void IntroCB_OpenWin1ToTheaterDimensions(struct IntroSequenceData * this)
         SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON);
         SetGpuReg(REG_OFFSET_WININ, 0x3F00);
         SetGpuReg(REG_OFFSET_WINOUT, 0x0000);
-        SetGpuReg(REG_OFFSET_WIN1H, 0x00F0);
+        SetGpuReg(REG_OFFSET_WIN1H, DISPLAY_WIDTH);
         SetGpuReg(REG_OFFSET_WIN1V, 0x0000);
         this->data[5] = 0;
         this->state++;
@@ -1020,7 +1020,7 @@ static void IntroCB_OpenWin1ToTheaterDimensions(struct IntroSequenceData * this)
         this->data[5] += 8;
         if (this->data[5] >= 0x30)
             this->data[5] = 0x30;
-        SetGpuReg(REG_OFFSET_WIN1V, ((0x50 - this->data[5]) << 8) | (0x50 + this->data[5]));
+        SetGpuReg(REG_OFFSET_WIN1V, WIN_RANGE(DISPLAY_HEIGHT / 2 - this->data[5], DISPLAY_HEIGHT / 2 + this->data[5]));
         if (this->data[5] == 0x30)
             SetIntroCB(this, IntroCB_GameFreakStar);
         break;
@@ -1417,8 +1417,8 @@ static void IntroCB_FightScene3(struct IntroSequenceData * this)
         SetGpuRegBits(REG_OFFSET_WININ, 0x12);
         ClearGpuRegBits(REG_OFFSET_WININ, 0x01);
         SetGpuRegBits(REG_OFFSET_WINOUT, 0x00);
-        SetGpuReg(REG_OFFSET_WIN0V, 0x2080);
-        SetGpuReg(REG_OFFSET_WIN0H, 0x0078);
+        SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(32, DISPLAY_HEIGHT - 32));
+        SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, DISPLAY_WIDTH / 2));
         break;
     case 1:
         if (!FreeTempTileDataBuffersIfPossible())
@@ -1810,7 +1810,7 @@ static void GameFreakScene_TrailingSparklesGen(s16 x, s16 y, u16 a2)
         sYmod = -3;
     x += xMod;
     y += yMod;
-    if (x >= 1 && x <= 0xEF)
+    if (x >= 1 && x <= DISPLAY_WIDTH)
     {
         spriteId = CreateSprite(&sSpriteTemplate_TrailingSparkles, x, y, 1);
         if (spriteId != MAX_SPRITES)
@@ -2078,7 +2078,7 @@ static void SpriteCB_TrailingSparkles(struct Sprite * sprite)
         if (sprite->data[7] > sTrailingSparklesDestroySpriteTime)
             DestroySprite(sprite);
     }
-    if (sprite->y + sprite->y2 < 0 || sprite->y + sprite->y2 > 160)
+    if (sprite->y + sprite->y2 < 0 || sprite->y + sprite->y2 > DISPLAY_HEIGHT)
         DestroySprite(sprite);
 }
 

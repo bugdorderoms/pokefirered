@@ -609,12 +609,12 @@ static void CB2_InitBattleInternal(void)
     SetVBlankCallback(NULL);
     CpuFill32(0, (void *)VRAM, VRAM_SIZE);
     SetGpuReg(REG_OFFSET_MOSAIC, 0);
-    SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, 0xF0));
-    SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(0x50, 0x51));
+    SetGpuReg(REG_OFFSET_WIN0H, DISPLAY_WIDTH);
+    SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(DISPLAY_HEIGHT / 2, DISPLAY_HEIGHT / 2 + 1));
     SetGpuReg(REG_OFFSET_WININ, 0);
     SetGpuReg(REG_OFFSET_WINOUT, 0);
-    gBattle_WIN0H = WIN_RANGE(0, 0xF0);
-    gBattle_WIN0V = WIN_RANGE(0x50, 0x51);
+    gBattle_WIN0H = DISPLAY_WIDTH;
+    gBattle_WIN0V = WIN_RANGE(DISPLAY_HEIGHT / 2, DISPLAY_HEIGHT / 2 + 1);
     ScanlineEffect_Clear();
     for (i = 0; i < 80; ++i)
     {

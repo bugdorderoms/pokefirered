@@ -1001,8 +1001,8 @@ static u8 CreateMenuItemPic(u16 itemId, u16 x, u16 y)
 	u16 reg1 = GetGpuReg(REG_OFFSET_DISPCNT), reg2 = GetGpuReg(REG_OFFSET_WINOUT);
 	u8 spriteId2 = MAX_SPRITES, spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
 	
-	x = 8 * x + 24;
-	y = 8 * y + 24;
+	x = 8 * x + 16;
+	y = 8 * y + 16;
 	
 	if (Overworld_GetFlashLevel() > 0)
 	{

@@ -517,6 +517,17 @@ static const union AffineAnimCmd *const sSpriteAffineAnim_HeldItem[] =
 	sAffineAnim_ItemIcon,
 };
 
+static const struct SpriteTemplate sSpriteTemplate_ItemIcon =
+{
+	0xD750,
+	0xD750,
+	&sOamData_ItemIcon,
+	gDummySpriteAnimTable,
+	NULL,
+	sSpriteAffineAnim_HeldItem,
+	SpriteCallbackDummy,
+};
+
 static const struct FormChangeMove sFormChangeMoves[] =
 {
 	{.species = SPECIES_ROTOM, .moveToLearn = MOVE_THUNDER_SHOCK},
@@ -2892,22 +2903,11 @@ static void CreatePartyMonHeldItemSpriteParameterized(u8 slot, u16 species, u16 
 {
 	u16 tag = GET_ITEM_SPRITE_TAG(slot);
 	
-	struct SpriteTemplate sSpriteTemplate_ItemIcon =
-	{
-		tag,
-		tag,
-		&sOamData_ItemIcon,
-		gDummySpriteAnimTable,
-		NULL,
-		sSpriteAffineAnim_HeldItem,
-		SpriteCallbackDummy,
-	};
-	
     if (species != SPECIES_NONE)
     {
         menuBox->itemSpriteId = AddItemIconObjectWithCustomObjectTemplate(&sSpriteTemplate_ItemIcon, tag, tag, item);
-		gSprites[menuBox->itemSpriteId].x = menuBox->spriteCoords[2];
-		gSprites[menuBox->itemSpriteId].y = menuBox->spriteCoords[3];
+		gSprites[menuBox->itemSpriteId].x = menuBox->spriteCoords[2] - 4;
+		gSprites[menuBox->itemSpriteId].y = menuBox->spriteCoords[3] - 4;
         gSprites[menuBox->itemSpriteId].oam.priority = priority;
 		gSprites[menuBox->itemSpriteId].invisible = (item == ITEM_NONE);
     }

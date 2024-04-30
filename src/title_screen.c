@@ -706,19 +706,19 @@ static void Task_TitleScreen_SlideWin0(u8 taskId)
     {
     case 0:
         SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON);
-        SetGpuReg(REG_OFFSET_WININ, WIN_RANGE(0x00, 0x3F));
-        SetGpuReg(REG_OFFSET_WINOUT, WIN_RANGE(0x00, 0x37));
-        SetGpuReg(REG_OFFSET_WIN0V, 0xA0);
-        SetGpuReg(REG_OFFSET_WIN0H, 0x00);
+        SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_ALL);
+        SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR);
+        SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(0, DISPLAY_HEIGHT));
+        SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, 0));
         BlendPalettes(0x00004000, 0, RGB_BLACK);
         data[0]++;
         break;
     case 1:
         data[1] += 0x180;
         data[2] = data[1] >> 4;
-        if (data[2] >= 0xF0)
+        if (data[2] >= DISPLAY_WIDTH)
         {
-            data[2] = 0xF0;
+            data[2] = DISPLAY_WIDTH;
             data[0]++;
         }
         SetGpuReg(REG_OFFSET_WIN0H, data[2]);
@@ -732,8 +732,8 @@ static void Task_TitleScreen_SlideWin0(u8 taskId)
         }
         break;
     case 3:
-        SetGpuReg(REG_OFFSET_WINOUT, WIN_RANGE(0, 0x3B));
-        SetGpuReg(REG_OFFSET_WIN0H, 0xF0F0);
+        SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR);
+        SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(DISPLAY_WIDTH, DISPLAY_WIDTH));
         ChangeBgX(2, -0xF000, 0);
         BlendPalettes(0x00008000, 0, RGB_BLACK);
         data[1] = 0xF00;
@@ -748,7 +748,7 @@ static void Task_TitleScreen_SlideWin0(u8 taskId)
             data[0]++;
         }
         ChangeBgX(2, -data[2] << 8, 0);
-        SetGpuReg(REG_OFFSET_WIN0H, (data[2] << 8) | 0xF0);
+        SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(data[2], DISPLAY_WIDTH));
         break;
     case 5:
         ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON);
@@ -981,7 +981,7 @@ static void Task_FlameOrLeafSpawner(u8 taskId)
             xspeed = (TitleScreen_rand(taskId, 3) % 4) - 2;
             yspeed = (TitleScreen_rand(taskId, 3) % 8) - 16;
             y = (TitleScreen_rand(taskId, 3) % 3) + 0x74;
-            x = TitleScreen_rand(taskId, 3) % 240;
+            x = TitleScreen_rand(taskId, 3) % DISPLAY_WIDTH;
             CreateFlameOrLeafSprite(
                 x,
                 y,
@@ -1012,10 +1012,10 @@ static void Task_FlameOrLeafSpawner(u8 taskId)
 
 static void CreateFlameOrLeafSprite(s32 y0, s32 x1, s32 y1)
 {
-    u8 spriteId = CreateSprite(&sSpriteTemplate_FlameOrLeaf_State1, 0xF0, y0, 0);
+    u8 spriteId = CreateSprite(&sSpriteTemplate_FlameOrLeaf_State1, DISPLAY_WIDTH, y0, 0);
     if (spriteId != MAX_SPRITES)
     {
-        gSprites[spriteId].data[0] = 0xF00;
+        gSprites[spriteId].data[0] = DISPLAY_WIDTH * 16;
         gSprites[spriteId].data[1] = x1;
         gSprites[spriteId].data[2] = y0 << 4;
         gSprites[spriteId].data[3] = y1;
@@ -1028,7 +1028,7 @@ static void SpriteCallback_LG_8079800(struct Sprite * sprite)
     sprite->x -= 7;
     if (sprite->x < -16)
     {
-        sprite->x = 0x100;
+        sprite->x = DISPLAY_WIDTH + 16;
         sprite->data[7]++;
         if (sprite->data[7] >= ARRAY_COUNT(gUnknown_LG_83BFA10))
             sprite->data[7] = 0;
@@ -1042,7 +1042,7 @@ static void sub_LG_8079844(void)
     u8 spriteId;
     for (i = 0; i < 4; i++)
     {
-        spriteId = CreateSprite(&sSpriteTemplate_FlameOrLeaf_State0, 0x100 + 0x28 * i, gUnknown_LG_83BFA10[i], 0xFF);
+        spriteId = CreateSprite(&sSpriteTemplate_FlameOrLeaf_State0, DISPLAY_WIDTH + 16 + 40 * i, gUnknown_LG_83BFA10[i], 0xFF);
         if (spriteId != MAX_SPRITES)
         {
             gSprites[spriteId].data[7] = i;
@@ -1176,7 +1176,7 @@ static void SpriteCallback_Slash(struct Sprite * sprite)
         {
             sprite->y += 7;
         }
-        if (sprite->x > 272)
+        if (sprite->x > DISPLAY_WIDTH + 32)
         {
             sprite->invisible = TRUE;
             if (sprite->data[2])

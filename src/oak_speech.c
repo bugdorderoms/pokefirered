@@ -749,10 +749,10 @@ static void Task_OakSpeech7(u8 taskId)
     case 0:
         if (!gPaletteFade.active)
         {
-            SetGpuReg(REG_OFFSET_WIN0H, 0x00F0);
-            SetGpuReg(REG_OFFSET_WIN0V, 0x10A0);
-            SetGpuReg(REG_OFFSET_WININ, 0x003F);
-            SetGpuReg(REG_OFFSET_WINOUT, 0x001F);
+            SetGpuReg(REG_OFFSET_WIN0H, DISPLAY_WIDTH);
+            SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(16, DISPLAY_HEIGHT));
+            SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_CLR | WININ_WIN0_OBJ);
+            SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ);
             SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON);
             gMain.state = 1;
         }

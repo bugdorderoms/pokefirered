@@ -776,8 +776,8 @@ static bool32 DoOverworldMapScrollScene(void)
         if (!Overworld_DoScrollSceneForCredits(&sCreditsMgr->ovwldseqno, sOverworldMapScenes[sCreditsMgr->whichMon], GF_TINT_NONE))
             return FALSE;
         CreateCreditsWindow();
-        SetGpuReg(REG_OFFSET_WIN0H, 0xF0);
-        SetGpuReg(REG_OFFSET_WIN0V, 0x247C);
+        SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, DISPLAY_WIDTH));
+        SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(36, DISPLAY_HEIGHT - 36));
         SwitchWin1OffWin0On();
         InitBgDarkenEffect();
         Menu_LoadStdPalAt(0xF0, 0x14);
@@ -797,8 +797,8 @@ static s32 RollCredits(void)
     {
     case CREDITSSCENE_INIT_WIN0:
         SwitchWin1OffWin0On();
-        SetGpuReg(REG_OFFSET_WIN0H, 0xF0);
-        SetGpuReg(REG_OFFSET_WIN0V, 0x4F51);
+        SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, DISPLAY_WIDTH));
+        SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(DISPLAY_HEIGHT / 2 - 1, DISPLAY_HEIGHT / 2 + 1));
         sCreditsMgr->mainseqno = CREDITSSCENE_SETUP_DARKEN_EFFECT;
         return 0;
     case CREDITSSCENE_SETUP_DARKEN_EFFECT:
@@ -1323,16 +1323,16 @@ static void LoadPlayerOrRivalSprite(u8 whichScene)
         {
         default:
         case 0:
-            x = 0xd0;
-            y = 0x50;
+            x = DISPLAY_WIDTH - 32;
+            y = DISPLAY_HEIGHT / 2;
             break;
         case 1:
-            x = 0x110;
-            y = 0x50;
+            x = DISPLAY_WIDTH + 32;
+            y = DISPLAY_HEIGHT / 2;
             break;
         case 2:
-            x = 0xd0;
-            y = 0xa0;
+            x = DISPLAY_WIDTH - 32;
+            y = DISPLAY_HEIGHT;
             break;
         }
         data->spriteMoveCmd = sPlayerRivalSpriteParams[whichScene][2];

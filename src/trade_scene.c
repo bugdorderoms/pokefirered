@@ -795,8 +795,8 @@ void CB2_InitTradeAnim_LinkTrade(void)
         sTradeData->bg2texY = 64;
         sTradeData->unk_D8 = 0;
         sTradeData->unk_DA = 0;
-        sTradeData->bg2srcX = 120;
-        sTradeData->bg2srcY = 80;
+        sTradeData->bg2srcX = DISPLAY_WIDTH / 2;
+        sTradeData->bg2srcY = DISPLAY_HEIGHT / 2;
         sTradeData->sXY = 256;
         sTradeData->bg2alpha = 0;
         break;
@@ -971,8 +971,8 @@ static void CB2_InitTradeAnim_InGameTrade(void)
         sTradeData->bg2texY = 64;
         sTradeData->unk_D8 = 0;
         sTradeData->unk_DA = 0;
-        sTradeData->bg2srcX = 120;
-        sTradeData->bg2srcY = 80;
+        sTradeData->bg2srcX = DISPLAY_WIDTH / 2;
+        sTradeData->bg2srcY = DISPLAY_HEIGHT / 2;
         sTradeData->sXY = 256;
         sTradeData->bg2alpha = 0;
         sTradeData->timer = 0;
@@ -1471,7 +1471,7 @@ static bool8 DoTradeAnim_Cable(void)
     case 38:
         gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 -= 3;
         gSprites[sTradeData->pokePicSpriteIdxs[1]].y2 += 3;
-        if (gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 < -160 && gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 >= -163)
+        if (gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 < -DISPLAY_HEIGHT && gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 >= -DISPLAY_HEIGHT - 3)
         {
             PlaySE(SE_WARP_IN);
         }
@@ -1972,7 +1972,7 @@ static bool8 DoTradeAnim_Wireless(void)
     case 38:
         gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 -= 3;
         gSprites[sTradeData->pokePicSpriteIdxs[1]].y2 += 3;
-        if (gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 < -160 && gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 >= -163)
+        if (gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 < -DISPLAY_HEIGHT && gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 >= -DISPLAY_HEIGHT - 3)
         {
             PlaySE(SE_WARP_IN);
         }
@@ -2775,9 +2775,9 @@ static void Task_OpenCenterWhiteColumn(u8 taskId)
 
     if (data[0] == 0)
     {
-        sTradeData->win0left = sTradeData->win0right = 120;
+        sTradeData->win0left = sTradeData->win0right = DISPLAY_WIDTH / 2;
         sTradeData->win0top = 0;
-        sTradeData->win0bottom = 160;
+        sTradeData->win0bottom = DISPLAY_HEIGHT;
         SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON);
         SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_OBJ);
         SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG0 |
@@ -2805,7 +2805,7 @@ static void Task_CloseCenterWhiteColumn(u8 taskId)
     if (data[0] == 0)
     {
         sTradeData->win0left = 80;
-        sTradeData->win0right = 160;
+        sTradeData->win0right = DISPLAY_WIDTH - 80;
         SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_OBJ);
         SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG0 |
                                     WININ_WIN0_BG1 |
@@ -2815,13 +2815,13 @@ static void Task_CloseCenterWhiteColumn(u8 taskId)
     SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE2(sTradeData->win0left, sTradeData->win0right));
     SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE2(sTradeData->win0top, sTradeData->win0bottom));
 
-    if (sTradeData->win0left != 120)
+    if (sTradeData->win0left != DISPLAY_WIDTH / 2)
     {
         data[0]++;
         sTradeData->win0left += 5;
         sTradeData->win0right -= 5;
 
-        if (sTradeData->win0left >= 116)
+        if (sTradeData->win0left > DISPLAY_WIDTH / 2 - 5)
             BlendPalettes(0x8, 0, RGB_WHITEALPHA);
     }
     else

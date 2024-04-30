@@ -190,7 +190,7 @@ static u8 sub_807EFC8(s32 centerX, s32 centerY, s32 initialFlashRadius, s32 dest
 
 void AnimateFlash(u8 flashLevel)
 {
-    sub_807EFC8(120, 80, sFlashLevelPixelRadii[Overworld_GetFlashLevel()], sFlashLevelPixelRadii[flashLevel], (flashLevel == 0), 2);
+    sub_807EFC8(DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2, sFlashLevelPixelRadii[Overworld_GetFlashLevel()], sFlashLevelPixelRadii[flashLevel], (flashLevel == 0), 2);
     sub_807EFA4();
     ScriptContext2_Enable();
 }
@@ -275,15 +275,15 @@ void Task_BarnDoorWipe(u8 taskId)
             if (data[10] == 0)
             {
                 SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, 0));
-                SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(240, 255));
+                SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(DISPLAY_WIDTH, 255));
                 SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(0, 255));
                 SetGpuReg(REG_OFFSET_WIN1V, WIN_RANGE(0, 255));
             }
             else
             {
-                SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, 120));
+                SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, DISPLAY_WIDTH / 2));
                 SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(0, 255));
-                SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(120, 255));
+                SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(DISPLAY_WIDTH / 2, 255));
                 SetGpuReg(REG_OFFSET_WIN1V, WIN_RANGE(0, 255));
             }
             SetGpuReg(REG_OFFSET_WININ, 0);
@@ -315,8 +315,8 @@ static void Task_BarnDoorWipeChild(u8 taskId)
     if (gTasks[FindTaskIdByFunc(Task_BarnDoorWipe)].tDirection == DIR_WIPE_IN)
     {
         lhs = tChildOffset;
-        rhs = 240 - tChildOffset;
-        if (lhs > 120)
+        rhs = DISPLAY_WIDTH - tChildOffset;
+        if (lhs > DISPLAY_WIDTH / 2)
         {
             DestroyTask(taskId);
             return;
@@ -324,8 +324,8 @@ static void Task_BarnDoorWipeChild(u8 taskId)
     }
     else
     {
-        lhs = 120 - tChildOffset;
-        rhs = 120 + tChildOffset;
+        lhs = DISPLAY_WIDTH / 2 - tChildOffset;
+        rhs = DISPLAY_WIDTH / 2 + tChildOffset;
         if (lhs < 0)
         {
             DestroyTask(taskId);
@@ -333,8 +333,8 @@ static void Task_BarnDoorWipeChild(u8 taskId)
         }
     }
     SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, lhs));
-    SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(rhs, 240));
-    if (lhs <= 89)
+    SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(rhs, DISPLAY_WIDTH));
+    if (lhs < 90)
     {
         tChildOffset += 4;
     }
