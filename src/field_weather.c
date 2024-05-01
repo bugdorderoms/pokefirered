@@ -16,13 +16,6 @@ enum
 	GAMMA_BLEND,
 };
 
-struct RGBColor
-{
-    u16 r:5;
-    u16 g:5;
-    u16 b:5;
-};
-
 struct WeatherCallbacks
 {
     void (*initVars)(void);
@@ -275,7 +268,6 @@ static void ApplyGammaShift(u8 gammaType, u8 startPalIndex, u8 numPalettes, s8 g
 {
     u8 i, r, g, b, blendCoeff, curPalIndex = startPalIndex;
     u16 fadeColor, palOffset = startPalIndex * 16;
-	struct RGBColor baseColor, blendColor;
 	
 	numPalettes += startPalIndex;
 	
@@ -293,12 +285,10 @@ static void ApplyGammaShift(u8 gammaType, u8 startPalIndex, u8 numPalettes, s8 g
 					{
 						for (i = 0; i < 16; i++)
 						{
-							baseColor = *(struct RGBColor *)&gPlttBufferUnfaded[palOffset];
-							
 							// Apply gamma shift to the original color.
-							r = sGammaShiftTable[gammaIndex][baseColor.r];
-							g = sGammaShiftTable[gammaIndex][baseColor.g];
-							b = sGammaShiftTable[gammaIndex][baseColor.b];
+							r = sGammaShiftTable[gammaIndex][GET_R(gPlttBufferUnfaded[palOffset])];
+							g = sGammaShiftTable[gammaIndex][GET_G(gPlttBufferUnfaded[palOffset])];
+							b = sGammaShiftTable[gammaIndex][GET_B(gPlttBufferUnfaded[palOffset])];
 							
 							gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
 						}
@@ -322,7 +312,6 @@ static void ApplyGammaShift(u8 gammaType, u8 startPalIndex, u8 numPalettes, s8 g
 			--gammaIndex;
 			blendCoeff = 16 - gWeatherPtr->fadeScreenCounter;
 			fadeColor = gWeatherPtr->fadeDestColor;
-			blendColor = *(struct RGBColor *)&fadeColor;
 			
 			while (curPalIndex < numPalettes)
 			{
@@ -330,17 +319,15 @@ static void ApplyGammaShift(u8 gammaType, u8 startPalIndex, u8 numPalettes, s8 g
 				{
 					for (i = 0; i < 16; i++)
 					{
-						baseColor = *(struct RGBColor *)&gPlttBufferUnfaded[palOffset];
-						
 						// Apply gamma shift to the original color.
-						r = sGammaShiftTable[gammaIndex][baseColor.r];
-						g = sGammaShiftTable[gammaIndex][baseColor.g];
-						b = sGammaShiftTable[gammaIndex][baseColor.b];
+						r = sGammaShiftTable[gammaIndex][GET_R(gPlttBufferUnfaded[palOffset])];
+						g = sGammaShiftTable[gammaIndex][GET_G(gPlttBufferUnfaded[palOffset])];
+						b = sGammaShiftTable[gammaIndex][GET_B(gPlttBufferUnfaded[palOffset])];
 						
 						// Apply target blend color to the original color.
-						r += ((blendColor.r - r) * blendCoeff) >> 4;
-						g += ((blendColor.g - g) * blendCoeff) >> 4;
-						b += ((blendColor.b - b) * blendCoeff) >> 4;
+						r += ((GET_R(fadeColor) - r) * blendCoeff) >> 4;
+						g += ((GET_G(fadeColor) - g) * blendCoeff) >> 4;
+						b += ((GET_B(fadeColor) - b) * blendCoeff) >> 4;
 						
 						gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
 					}

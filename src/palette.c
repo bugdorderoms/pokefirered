@@ -159,14 +159,13 @@ void BlendPalette(u16 palOffset, u16 numEntries, u8 coeff, u16 blendColor)
     for (i = 0; i < numEntries; i++)
     {
         u16 index = i + palOffset;
-        struct PlttData *data1 = (struct PlttData *)&gPlttBufferUnfaded[index];
-        s8 r = data1->r;
-        s8 g = data1->g;
-        s8 b = data1->b;
-        struct PlttData *data2 = (struct PlttData *)&blendColor;
-        gPlttBufferFaded[index] = ((r + (((data2->r - r) * coeff) >> 4)) << 0)
-                                | ((g + (((data2->g - g) * coeff) >> 4)) << 5)
-                                | ((b + (((data2->b - b) * coeff) >> 4)) << 10);
+		s8 r = GET_R(gPlttBufferUnfaded[index]);
+		s8 g = GET_G(gPlttBufferUnfaded[index]);
+		s8 b = GET_B(gPlttBufferUnfaded[index]);
+		
+        gPlttBufferFaded[index] = ((r + (((GET_R(blendColor) - r) * coeff) >> 4)) << 0)
+                                | ((g + (((GET_G(blendColor) - g) * coeff) >> 4)) << 5)
+                                | ((b + (((GET_B(blendColor) - b) * coeff) >> 4)) << 10);
     }
 }
 
@@ -329,81 +328,69 @@ static u8 UpdateFastPaletteFade(void)
     case FAST_FADE_IN_FROM_WHITE:
         for (i = paletteOffsetStart; i < paletteOffsetEnd; ++i)
         {
-            struct PlttData *unfaded;
-            struct PlttData *faded;
-
-            unfaded = (struct PlttData *)&gPlttBufferUnfaded[i];
-            r0 = unfaded->r;
-            g0 = unfaded->g;
-            b0 = unfaded->b;
-            faded = (struct PlttData *)&gPlttBufferFaded[i];
-            r = faded->r - 2;
-            g = faded->g - 2;
-            b = faded->b - 2;
+            r0 = GET_R(gPlttBufferUnfaded[i]);
+            g0 = GET_G(gPlttBufferUnfaded[i]);
+            b0 = GET_B(gPlttBufferUnfaded[i]);
+            
+			r = GET_R(gPlttBufferFaded[i]) - 2;
+            g = GET_G(gPlttBufferFaded[i]) - 2;
+            b = GET_B(gPlttBufferFaded[i]) - 2;
             if (r < r0)
                 r = r0;
             if (g < g0)
                 g = g0;
             if (b < b0)
                 b = b0;
-            gPlttBufferFaded[i] = r | (g << 5) | (b << 10);
+            gPlttBufferFaded[i] = RGB(r, g, b);
         }
         break;
     case FAST_FADE_OUT_TO_WHITE:
         for (i = paletteOffsetStart; i < paletteOffsetEnd; ++i)
         {
-            struct PlttData *data = (struct PlttData *)&gPlttBufferFaded[i];
-
-            r = data->r + 2;
-            g = data->g + 2;
-            b = data->b + 2;
+			r = GET_R(gPlttBufferFaded[i]) + 2;
+            g = GET_G(gPlttBufferFaded[i]) + 2;
+            b = GET_B(gPlttBufferFaded[i]) + 2;
             if (r > 31)
                 r = 31;
             if (g > 31)
                 g = 31;
             if (b > 31)
                 b = 31;
-            gPlttBufferFaded[i] = r | (g << 5) | (b << 10);
+            gPlttBufferFaded[i] = RGB(r, g, b);
         }
         break;
     case FAST_FADE_IN_FROM_BLACK:
         for (i = paletteOffsetStart; i < paletteOffsetEnd; ++i)
         {
-            struct PlttData *unfaded;
-            struct PlttData *faded;
-
-            unfaded = (struct PlttData *)&gPlttBufferUnfaded[i];
-            r0 = unfaded->r;
-            g0 = unfaded->g;
-            b0 = unfaded->b;
-            faded = (struct PlttData *)&gPlttBufferFaded[i];
-            r = faded->r + 2;
-            g = faded->g + 2;
-            b = faded->b + 2;
+			r0 = GET_R(gPlttBufferUnfaded[i]);
+            g0 = GET_G(gPlttBufferUnfaded[i]);
+            b0 = GET_B(gPlttBufferUnfaded[i]);
+            
+			r = GET_R(gPlttBufferFaded[i]) + 2;
+            g = GET_G(gPlttBufferFaded[i]) + 2;
+            b = GET_B(gPlttBufferFaded[i]) + 2;
             if (r > r0)
                 r = r0;
             if (g > g0)
                 g = g0;
             if (b > b0)
                 b = b0;
-            gPlttBufferFaded[i] = r | (g << 5) | (b << 10);
+            gPlttBufferFaded[i] = RGB(r, g, b);
         }
         break;
     case FAST_FADE_OUT_TO_BLACK:
         for (i = paletteOffsetStart; i < paletteOffsetEnd; ++i)
         {
-            struct PlttData *data = (struct PlttData *)&gPlttBufferFaded[i];
-
-            r = data->r - 2;
-            g = data->g - 2;
-            b = data->b - 2;
+            r = GET_R(gPlttBufferFaded[i]) - 2;
+            g = GET_G(gPlttBufferFaded[i]) - 2;
+            b = GET_B(gPlttBufferFaded[i]) - 2;
             if (r < 0)
                 r = 0;
             if (g < 0)
                 g = 0;
             if (b < 0)
                 b = 0;
-            gPlttBufferFaded[i] = r | (g << 5) | (b << 10);
+            gPlttBufferFaded[i] = RGB(r, g, b);
         }
     }
     gPaletteFade.objPaletteToggle ^= TRUE;
@@ -551,11 +538,11 @@ void TintPalette_GrayScale(u16 *palette, u16 count)
 
     for (i = 0; i < count; ++i)
     {
-        r = (*palette >>  0) & 0x1F;
-        g = (*palette >>  5) & 0x1F;
-        b = (*palette >> 10) & 0x1F;
+        r = GET_R(*palette);
+        g = GET_G(*palette);
+        b = GET_B(*palette);
         gray = (r * Q_8_8(0.3) + g * Q_8_8(0.59) + b * Q_8_8(0.1133)) >> 8;
-        *palette++ = (gray << 10) | (gray << 5) | (gray << 0);
+        *palette++ = RGB2(gray, gray, gray);
     }
 }
 
@@ -566,15 +553,15 @@ void TintPalette_GrayScale2(u16 *palette, u16 count)
 
     for (i = 0; i < count; ++i)
     {
-        r = (*palette >>  0) & 0x1F;
-        g = (*palette >>  5) & 0x1F;
-        b = (*palette >> 10) & 0x1F;
+        r = GET_R(*palette);
+        g = GET_G(*palette);
+        b = GET_B(*palette);
         gray = (r * Q_8_8(0.3) + g * Q_8_8(0.59) + b * Q_8_8(0.1133)) >> 8;
 
         if (gray > 0x1F)
             gray = 0x1F;
         gray = sRoundedDownGrayscaleMap[gray];
-        *palette++ = (gray << 10) | (gray << 5) | (gray << 0);
+        *palette++ = RGB2(gray, gray, gray);
     }
 }
 
@@ -585,16 +572,16 @@ void TintPalette_SepiaTone(u16 *palette, u16 count)
 
     for (i = 0; i < count; ++i)
     {
-        r = (*palette >>  0) & 0x1F;
-        g = (*palette >>  5) & 0x1F;
-        b = (*palette >> 10) & 0x1F;
+        r = GET_R(*palette);
+        g = GET_G(*palette);
+        b = GET_B(*palette);
         gray = (r * Q_8_8(0.3) + g * Q_8_8(0.59) + b * Q_8_8(0.1133)) >> 8;
         r = (u16)((Q_8_8(1.2) * gray)) >> 8;
         g = (u16)((Q_8_8(1.0) * gray)) >> 8;
         b = (u16)((Q_8_8(0.94) * gray)) >> 8;
         if (r > 31)
             r = 31;
-        *palette++ = (b << 10) | (g << 5) | (r << 0);
+        *palette++ = RGB2(r, g, b);
     }
 }
 
@@ -605,9 +592,9 @@ void TintPalette_CustomTone(u16 *palette, u16 count, u16 rTone, u16 gTone, u16 b
 
     for (i = 0; i < count; ++i)
     {
-        r = (*palette >>  0) & 0x1F;
-        g = (*palette >>  5) & 0x1F;
-        b = (*palette >> 10) & 0x1F;
+        r = GET_R(*palette);
+        g = GET_G(*palette);
+        b = GET_B(*palette);
         gray = (r * Q_8_8(0.3) + g * Q_8_8(0.59) + b * Q_8_8(0.1133)) >> 8;
         r = (u16)((rTone * gray)) >> 8;
         g = (u16)((gTone * gray)) >> 8;
@@ -618,7 +605,7 @@ void TintPalette_CustomTone(u16 *palette, u16 count, u16 rTone, u16 gTone, u16 b
             g = 31;
         if (b > 31)
             b = 31;
-        *palette++ = (b << 10) | (g << 5) | (r << 0);
+        *palette++ = RGB2(r, g, b);
     }
 }
 
