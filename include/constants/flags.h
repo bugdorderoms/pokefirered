@@ -682,7 +682,7 @@
 #define FLAG_0x299                                       0x299
 #define FLAG_GOT_TM04_FROM_SABRINA                       0x29A
 #define FLAG_GOT_FAME_CHECKER                            0x29B
-#define FLAG_GOT_RECORD_SETTING_MAGIKARP                 0x29C
+#define FLAG_0x29C                                       0x29C
 #define FLAG_TWO_ISLAND_SHOP_INTRODUCED                  0x29D
 #define FLAG_TWO_ISLAND_SHOP_EXPANDED_1                  0x29E
 #define FLAG_TWO_ISLAND_SHOP_EXPANDED_2                  0x29F
@@ -743,7 +743,7 @@
 #define FLAG_UNLOCKED_ROCKET_WAREHOUSE                   0x2D6
 #define FLAG_NO_ROOM_FOR_TM42_AT_MEMORIAL_PILLAR         0x2D7
 #define FLAG_LEARNED_YES_NAH_CHANSEY                     0x2D8
-#define FLAG_GOT_NEST_BALL_FROM_WATER_PATH_HOUSE_1       0x2D9
+#define FLAG_0x2D9                                       0x2D9
 #define FLAG_GOT_TOGEPI_EGG                              0x2DA
 #define FLAG_NO_ROOM_FOR_TOGEPI_EGG                      0x2DB
 #define FLAG_RECOVERED_SAPPHIRE                          0x2DC

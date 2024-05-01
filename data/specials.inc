@@ -70,10 +70,6 @@ gSpecials:: @ 815FD60
 	def_special ShowDodrioBerryPickingRecords
 	def_special DoDeoxysTriangleInteraction
 	def_special SetDeoxysTrianglePalette
-	def_special GetHeracrossSizeRecordInfo
-	def_special CompareHeracrossSize
-	def_special GetMagikarpSizeRecordInfo
-	def_special CompareMagikarpSize
 
 	@ Party specials
 	def_special ChoosePartyMon

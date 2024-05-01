@@ -102,10 +102,10 @@
 #define VAR_ELEVATOR_FLOOR                 0x403A
 #define VAR_RESORT_GORGEOUS_REWARD         0x403B
 #define VAR_0x403C                         0x403C
-#define VAR_HERACROSS_SIZE_RECORD          0x403D
+#define VAR_0x403D                         0x403D
 #define VAR_DEOXYS_INTERACTION_NUM         0x403E
 #define VAR_0x403F                         0x403F
-#define VAR_MAGIKARP_SIZE_RECORD           0x4040
+#define VAR_0x4040                         0x4040
 #define VAR_0x4041                         0x4041
 #define VAR_TRAINER_CARD_MON_ICON_TINT_IDX 0x4042
 #define VAR_TRAINER_CARD_MON_ICON_1        0x4043

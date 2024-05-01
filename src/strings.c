@@ -556,7 +556,6 @@ const u8 gUnknown_8417F9F[] = _("99かい いじょう");
 const u8 gUnknown_8417FA9[] = _("1ぷん いじょう");
 const u8 gUnknown_8417FB2[] = _("びょう");
 const u8 gUnknown_8417FB6[] = _("かい");
-const u8 gText_DecimalPoint[] = _(".");
 const u8 gText_BoulderBadge[] = _("Boulderbadge");
 const u8 gText_CascadeBadge[] = _("Cascadebadge");
 const u8 gText_ThunderBadge[] = _("Thunderbadge");

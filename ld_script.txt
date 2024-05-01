@@ -149,7 +149,6 @@ SECTIONS {
         src/money.o(.text);
         src/script_pokemon_util.o(.text);
         src/field_poison.o(.text);
-        src/pokemon_size_record.o(.text);
         src/pc_screen_effect.o(.text);
         src/fldeff_poison.o(.text);
         src/safari_zone.o(.text);
@@ -451,7 +450,6 @@ SECTIONS {
         src/special_field_anim.o(.rodata);
         src/script_menu.o(.rodata);
         src/naming_screen.o(.rodata);
-        src/pokemon_size_record.o(.rodata);
         src/item_use.o(.rodata);
         src/battle_anim_effects_1.o(.rodata);
         src/battle_anim_effects_2.o(.rodata);

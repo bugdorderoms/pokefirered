@@ -13,7 +13,6 @@
 #include "money.h"
 #include "dexnav.h"
 #include "battle_records.h"
-#include "pokemon_size_record.h"
 #include "pokemon_storage_system.h"
 #include "roamer.h"
 #include "item.h"
@@ -146,8 +145,6 @@ void NewGameInitData(void)
     SetMoney(&gSaveBlock1Ptr->money, 3000);
     ResetGameStats();
     ClearLinkBattleRecords();
-    InitHeracrossSizeRecord();
-    InitMagikarpSizeRecord();
     gPlayerPartyCount = 0;
     ZeroPlayerPartyMons();
     ResetPokemonStorageSystem();
