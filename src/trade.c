@@ -7,6 +7,7 @@
 #include "pokemon_icon.h"
 #include "graphics.h"
 #include "link.h"
+#include "field_specials.h"
 #include "link_rfu.h"
 #include "cable_club.h"
 #include "data.h"
@@ -864,7 +865,7 @@ static void CB2_ReturnFromLinkTrade2(void)
         gMain.state++;
         break;
     case 8:
-        LoadHeldItemIcons();
+        LoadSymbolsIconGraphics();
         DrawHeldItemIconsForTrade(sTradeMenuResourcesPtr->partyCounts, sTradeMenuResourcesPtr->partyIcons[0], 0);
         gMain.state++;
         break;
@@ -1049,7 +1050,7 @@ void CB2_ReturnToTradeMenuFromSummary(void)
         gMain.state++;
         break;
     case 8:
-        LoadHeldItemIcons();
+        LoadSymbolsIconGraphics();
         DrawHeldItemIconsForTrade(sTradeMenuResourcesPtr->partyCounts, sTradeMenuResourcesPtr->partyIcons[0], 0);
         gMain.state++;
         break;

@@ -26,8 +26,6 @@ void SetBagVisualPocketId(u8);
 void ShakeBagSprite(void);
 const void * GetItemIconGfxPtr(u16 itemId, u8 ptrId);
 void CreateBagOrSatchelSprite(u8 animNum);
-void LoadHeldItemIcons(void);
-u8 CreateHeldItemSprite(s16 x, s16 y, u8 subpriority, bool8 isMail);
 void CreateItemIconOnFindMessage(void);
 void DestroyItemIconOnFindMessage(void);
 

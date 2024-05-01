@@ -175,65 +175,6 @@ static const struct SpriteTemplate sSpriteTemplate_ItemIcon = {
     SpriteCallbackDummy
 };
 
-static const u32 sHeldItemGfx[] = INCBIN_U32("graphics/interface/hold_icons.4bpp");
-static const u16 sHeldItemPalette[] = INCBIN_U16("graphics/interface/hold_icons.gbapal");
-
-static const struct OamData sOamData_HeldItem =
-{
-    .y = 0,
-    .affineMode = ST_OAM_AFFINE_OFF,
-    .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = 0,
-    .bpp = 0,
-    .shape = SPRITE_SHAPE(8x8),
-    .x = 0,
-    .matrixNum = 0,
-    .size = SPRITE_SIZE(8x8),
-    .tileNum = 0,
-    .priority = 0,
-    .paletteNum = 0,
-    .affineParam = 0,
-};
-
-static const union AnimCmd sSpriteAnim_HeldItem[] =
-{
-    ANIMCMD_FRAME(0, 1),
-    ANIMCMD_END
-};
-
-static const union AnimCmd sSpriteAnim_HeldMail[] =
-{
-    ANIMCMD_FRAME(1, 1),
-    ANIMCMD_END
-};
-
-static const union AnimCmd *const sSpriteAnimTable_HeldItem[] =
-{
-    sSpriteAnim_HeldItem,
-    sSpriteAnim_HeldMail,
-};
-
-static const struct SpriteSheet sSpriteSheet_HeldItem =
-{
-    sHeldItemGfx, sizeof(sHeldItemGfx), ITEMICON_TAG
-};
-
-static const struct SpritePalette sSpritePalette_HeldItem =
-{
-    sHeldItemPalette, ITEMICON_TAG
-};
-
-static const struct SpriteTemplate sSpriteTemplate_HeldItem =
-{
-	.tileTag = ITEMICON_TAG,
-    .paletteTag = ITEMICON_TAG,
-    .oam = &sOamData_HeldItem,
-    .anims = sSpriteAnimTable_HeldItem,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCallbackDummy,
-};
-
 static const union AffineAnimCmd sSpriteAffineAnim_KeyItemTM[] =
 {
 	AFFINEANIMCMD_FRAME(0, 0, 128, 1), // Start rotated left
@@ -460,21 +401,6 @@ void sub_80989A0(u16 itemId, u8 idx)
             gSprites[spriteId].y2 = 139;
         }
     }
-}
-
-void LoadHeldItemIcons(void)
-{
-    LoadSpriteSheet(&sSpriteSheet_HeldItem);
-    LoadSpritePalette(&sSpritePalette_HeldItem);
-}
-
-u8 CreateHeldItemSprite(s16 x, s16 y, u8 subpriority, bool8 isMail)
-{
-	u8 spriteId = CreateSprite(&sSpriteTemplate_HeldItem, x, y, subpriority);
-	
-	StartSpriteAnim(&gSprites[spriteId], isMail);
-	
-	return spriteId;
 }
 
 #define ITEM_ICON_X 18

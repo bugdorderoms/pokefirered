@@ -254,7 +254,7 @@ static const struct DNSPalExceptions sOWPalExceptions =
 
 static const u16 sOwPaletteTagExceptions[] =
 {
-	OWNED_ICON_TAG, // 0x0066
+	TAG_8x8_SYMBOLS, // 0x0066
 	ITEMICON_TAG, // 0xD750
 	CURSOR_TAG, // 0x1075
 	BOX_TAG, // 0x1078

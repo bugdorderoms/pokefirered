@@ -3,6 +3,7 @@
 #include "list_menu.h"
 #include "diploma.h"
 #include "script.h"
+#include "decompress.h"
 #include "field_player_avatar.h"
 #include "overworld.h"
 #include "field_weather.h"
@@ -118,6 +119,66 @@ static void Task_DoDeoxysTriangleInteraction(u8 taskId);
 static void MoveDeoxysObject(u8 num);
 static void Task_WaitDeoxysFieldEffect(u8 taskId);
 static void Task_WingFlapSound(u8 taskId);
+
+static const u32 s8x8SymbolsGfx[] = INCBIN_U32("graphics/interface/8_8_symbols.4bpp.lz");
+static const u16 s8x8SymbolsPal[] = INCBIN_U16("graphics/interface/8_8_symbols_pal.gbapal");
+
+static const struct CompressedSpriteSheet s8x8SymbolsSpriteSheet = { .data = s8x8SymbolsGfx, .size = 0x20 * SYMBOLS_COUNT, .tag = TAG_8x8_SYMBOLS };
+static const struct SpritePalette s8x8SymbolsSpritePal = { .data = s8x8SymbolsPal, .tag = TAG_8x8_SYMBOLS };
+
+static const struct OamData s8x8SymbolOam =
+{
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .shape = SPRITE_SHAPE(8x8),
+    .size = SPRITE_SIZE(8x8),
+    .priority = 0,
+};
+
+static const union AnimCmd s8x8Symbol_StarIconYellow[] = {
+    ANIMCMD_FRAME(0, 1),
+    ANIMCMD_END
+};
+
+static const union AnimCmd s8x8Symbol_StarIconWhite[] = {
+    ANIMCMD_FRAME(1, 1),
+    ANIMCMD_END
+};
+
+static const union AnimCmd s8x8Symbol_PokeballIcon[] = {
+    ANIMCMD_FRAME(2, 1),
+    ANIMCMD_END
+};
+
+static const union AnimCmd s8x8Symbol_HeldItem[] = {
+    ANIMCMD_FRAME(3, 1),
+    ANIMCMD_END
+};
+
+static const union AnimCmd s8x8Symbol_HeldMail[] = {
+    ANIMCMD_FRAME(4, 1),
+    ANIMCMD_END
+};
+
+static const union AnimCmd * const s8x8SymbolsAnimTable[] =
+{
+	[SYMBOL_YELLOWSTAR] = s8x8Symbol_StarIconYellow,
+	[SYMBOL_WHITESTAR]  = s8x8Symbol_StarIconWhite,
+	[SYMBOL_POKEBALL]   = s8x8Symbol_PokeballIcon,
+	[SYMBOL_HELDITEM]   = s8x8Symbol_HeldItem,
+	[SYMBOL_HELDMAIL]   = s8x8Symbol_HeldMail
+};
+
+static const struct SpriteTemplate s8x8SymbolSpriteTemplate =
+{
+    .tileTag = TAG_8x8_SYMBOLS,
+    .paletteTag = TAG_8x8_SYMBOLS,
+    .oam = &s8x8SymbolOam,
+    .anims = s8x8SymbolsAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
 
 static u8 *const sStringVarPtrs[] = {
     gStringVar1,
@@ -2219,4 +2280,25 @@ static const u8 *GetProfOaksRatingMessageByCount(u16 count)
 void GetProfOaksRatingMessage(void)
 {
     ShowFieldMessage(GetProfOaksRatingMessageByCount(gSpecialVar_0x8004));
+}
+
+void LoadSymbolsIconGraphics(void)
+{
+	LoadCompressedSpriteSheet(&s8x8SymbolsSpriteSheet);
+	LoadSpritePalette(&s8x8SymbolsSpritePal);
+}
+
+void FreeSymbolsIconGraphics(void)
+{
+	FreeSpriteTilesByTag(TAG_8x8_SYMBOLS);
+	FreeSpritePaletteByTag(TAG_8x8_SYMBOLS);
+}
+
+u8 Create8x8SymbolSprite(s16 x, s16 y, u8 subpriority, u8 symbolId)
+{
+	u8 spriteId = CreateSprite(&s8x8SymbolSpriteTemplate, x, y, subpriority);
+	
+	StartSpriteAnim(&gSprites[spriteId], symbolId);
+	
+	return spriteId;
 }

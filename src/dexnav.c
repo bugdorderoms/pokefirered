@@ -9,6 +9,7 @@
 #include "event_data.h"
 #include "event_object_movement.h"
 #include "event_scripts.h"
+#include "field_specials.h"
 #include "field_effect.h"
 #include "field_effect_helpers.h"
 #include "field_message_box.h"
@@ -63,9 +64,6 @@
 #define ICON_GFX_TAG            55130
 #define ICON_PAL_TAG            56000
 #define SELECTION_CURSOR_TAG    0x4005
-
-// search tag
-#define LIT_STAR_TILE_TAG       0x4010
 
 // Defines
 enum
@@ -154,14 +152,9 @@ static const u32 sDexNavGuiTiles[] = INCBIN_U32("graphics/dexnav/gui_tiles.4bpp.
 static const u32 sDexNavGuiTilemap[] = INCBIN_U32("graphics/dexnav/gui_tilemap.bin.lz");
 static const u32 sDexNavGuiPal[] = INCBIN_U32("graphics/dexnav/gui.gbapal");
 static const u32 sSelectionCursorGfx[] = INCBIN_U32("graphics/dexnav/cursor_tiles.4bpp.lz");
-static const u16 sSelectionCursorPal[] = INCBIN_U16("graphics/dexnav/cursor.gbapal");
-static const u32 sCapturedAllMonsTiles[] = INCBIN_U32("graphics/dexnav/captured_all.4bpp.lz");
 static const u32 sNoDataGfx[] = INCBIN_U32("graphics/dexnav/no_data.4bpp.lz");
-static const u32 sPotentialStarGfx[] = INCBIN_U32("graphics/dexnav/star.4bpp.lz");
 
 static const struct CompressedSpriteSheet sNoDataIconSpriteSheet = {sNoDataGfx, 0x200, ICON_GFX_TAG};
-static const struct CompressedSpriteSheet sCapturedAllPokemonSpriteSheet = {sCapturedAllMonsTiles, 0x20, OWNED_ICON_TAG};
-static const struct CompressedSpriteSheet sPotentialStarSpriteSheet = {sPotentialStarGfx, 0x20, LIT_STAR_TILE_TAG};
 
 static const u8 sText_DexNav_NoInfo[] = _("--------");
 
@@ -220,12 +213,6 @@ static const struct BgTemplate sDexNavMenuBgTemplates[2] =
     }
 };
 
-static const struct SpritePalette sOwnedIconSpritePal =
-{
-	.data = sSelectionCursorPal,
-	.tag = OWNED_ICON_TAG,
-};
-
 static const struct OamData sNoDataIconOam =
 {
     .affineMode = ST_OAM_AFFINE_OFF,
@@ -233,33 +220,6 @@ static const struct OamData sNoDataIconOam =
     .shape = SPRITE_SHAPE(32x32),
     .size = SPRITE_SIZE(32x32),
     .priority = 1,
-};
-
-static const struct OamData sPotentialStarOam =
-{
-    .affineMode = ST_OAM_AFFINE_OFF,
-    .objMode = ST_OAM_OBJ_NORMAL,
-    .shape = SPRITE_SHAPE(8x8),
-    .size = SPRITE_SIZE(8x8),
-    .priority = 0,
-    .paletteNum = 0,
-};
-
-static const struct OamData sCapturedAllOam =
-{
-    .y = 0,
-    .affineMode = 1,
-    .objMode = 0,
-    .mosaic = 0,
-    .bpp = 0,
-    .shape = SPRITE_SHAPE(8x8),
-    .x = 0,
-    .matrixNum = 0,
-    .size = SPRITE_SIZE(8x8),
-    .tileNum = 0,
-    .priority = 0,
-    .paletteNum = 0,
-    .affineParam = 0,
 };
 
 static const struct OamData sSelectionCursorOam =
@@ -279,35 +239,12 @@ static const struct SpriteTemplate sNoDataIconTemplate =
     .callback = SpriteCallbackDummy,
 };
 
-static const struct SpriteTemplate sCaptureAllMonsSpriteTemplate =
-{
-    .tileTag = OWNED_ICON_TAG,
-    .paletteTag = OWNED_ICON_TAG,
-    .oam = &sCapturedAllOam,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCallbackDummy,
-};
-
 static const struct SpriteTemplate sSelectionCursorSpriteTemplate =
 {
     .tileTag = SELECTION_CURSOR_TAG,
-    .paletteTag = OWNED_ICON_TAG,
+    .paletteTag = TAG_8x8_SYMBOLS,
     .oam = &sSelectionCursorOam,
     .anims =  gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCallbackDummy,
-};
-
-// search window sprite template
-static const struct SpriteTemplate sPotentialStarTemplate =
-{
-    .tileTag = LIT_STAR_TILE_TAG,
-    .paletteTag = OWNED_ICON_TAG,
-    .oam = &sPotentialStarOam,
-    .anims = gDummySpriteAnimTable,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = SpriteCallbackDummy,
@@ -334,7 +271,7 @@ static void DrawDexNavSearchMonIcon(u16 species, u8 *dst, bool8 caught)
     gSprites[*dst].oam.priority = 0;
 
     if (caught)
-        sDexNavSearchDataPtr->ownedIconSpriteId = CreateSprite(&sCaptureAllMonsSpriteTemplate, SPECIES_ICON_X + 6, windowY + 4, 0);
+        sDexNavSearchDataPtr->ownedIconSpriteId = Create8x8SymbolSprite(SPECIES_ICON_X + 6, windowY + 4, 0, SYMBOL_POKEBALL);
 }
 
 static void AddSearchWindow(void)
@@ -410,14 +347,12 @@ static void RemoveDexNavWindowAndGfx(void)
         if (sDexNavSearchDataPtr->starSpriteIds[i] != MAX_SPRITES)
             DestroySprite(&gSprites[sDexNavSearchDataPtr->starSpriteIds[i]]);
     }
-
-    FreeSpriteTilesByTag(ITEMICON_TAG);
-    FreeSpriteTilesByTag(OWNED_ICON_TAG);
-    FreeSpriteTilesByTag(LIT_STAR_TILE_TAG);
-    FreeSpritePaletteByTag(ITEMICON_TAG);
-    FreeSpritePaletteByTag(OWNED_ICON_TAG);
+	
+	// free graphics and palettes
+	FreeSymbolsIconGraphics();
     SafeFreeMonIconPalette(sDexNavSearchDataPtr->species);
-
+	
+	// remove window
     ClearStdWindowAndFrameToTransparent(sDexNavSearchDataPtr->windowId, TRUE);
     RemoveWindow(sDexNavSearchDataPtr->windowId);
 }
@@ -598,18 +533,10 @@ static bool8 TryStartHiddenMonFieldEffect(u8 environment, u8 xSize, u8 ySize)
 
 static void DrawDexNavSearchHeldItem(u8* dst)
 {
-    *dst = CreateHeldItemSprite(SPECIES_ICON_X + 2, GetSearchWindowY() + 22, 0, FALSE);
+    *dst = Create8x8SymbolSprite(SPECIES_ICON_X + 2, GetSearchWindowY() + 22, 0, SYMBOL_HELDITEM);
 	
     if (*dst != MAX_SPRITES)
         gSprites[*dst].invisible = TRUE;
-}
-
-static void LoadSearchIconData(void)
-{
-    LoadHeldItemIcons();
-    LoadSpritePalette(&sOwnedIconSpritePal);
-    LoadCompressedSpriteSheetUsingHeap(&sPotentialStarSpriteSheet);
-    LoadCompressedSpriteSheetUsingHeap(&sCapturedAllPokemonSpriteSheet);
 }
 
 #define tSetupStep   data[0]
@@ -644,7 +571,7 @@ static void Task_SetUpDexNavSearch(u8 taskId)
 			break;
 		case 2: // Init search window data
 		    DexNavProximityUpdate();
-			LoadSearchIconData();
+			LoadSymbolsIconGraphics();
 			AddSearchWindow();
 			++tSetupStep;
 			break;
@@ -707,7 +634,7 @@ static void DexNavDrawPotentialStars(u8 potential, u8* dst)
 
     for (i = 0; i < 3; i++)
     {
-        dst[i] = potential > i ? CreateSprite(&sPotentialStarTemplate, SPECIES_ICON_X - 22, windowY + 5 + (i * 10), 0) : MAX_SPRITES;
+        dst[i] = potential > i ? Create8x8SymbolSprite(SPECIES_ICON_X - 22, windowY + 5 + (i * 10), 0, SYMBOL_YELLOWSTAR) : MAX_SPRITES;
 		
         if (dst[i] != MAX_SPRITES)
             gSprites[dst[i]].invisible = TRUE;
@@ -1370,7 +1297,6 @@ static void CreateSelectionCursor(void)
 		.tag = SELECTION_CURSOR_TAG,
 	};
     LoadCompressedSpriteSheet(&spriteSheet);
-    LoadSpritePalette(&sOwnedIconSpritePal);
 
     sDexNavUiDataPtr->cursorSpriteId = CreateSprite(&sSelectionCursorSpriteTemplate, 12, 32, 0);  
 
@@ -1406,13 +1332,11 @@ static void DexNavLoadCapturedAllSymbols(void)
 {
     u16 headerId = GetCurrentMapWildMonHeaderId();
 
-    LoadCompressedSpriteSheetUsingHeap(&sCapturedAllPokemonSpriteSheet);
-
     if (CapturedAllMonsOfHeader(headerId, WILD_HEADER_WATER))
-        CreateSprite(&sCaptureAllMonsSpriteTemplate, 139, 28, 0);
+		Create8x8SymbolSprite(139, 28, 0, SYMBOL_POKEBALL);
 	
     if (CapturedAllMonsOfHeader(headerId, WILD_HEADER_LAND))
-        CreateSprite(&sCaptureAllMonsSpriteTemplate, 153, 76, 0);
+		Create8x8SymbolSprite(153, 76, 0, SYMBOL_POKEBALL);
 }
 
 static void DexNavGuiFreeResources(void)
@@ -1554,27 +1478,27 @@ static void DrawSpeciesIcons(void)
     }
 }
 
-static u16 DexNavGetSpecies(void)
+static u16 DexNavGetSeachableSpecies(void)
 {
-    u16 species;
-
-    switch (sDexNavUiDataPtr->cursorRow)
+	switch (sDexNavUiDataPtr->cursorRow)
     {
 		case ROW_WATER:
-		    species = sDexNavUiDataPtr->waterSpecies[sDexNavUiDataPtr->cursorCol];
-		    break;
+		    return sDexNavUiDataPtr->waterSpecies[sDexNavUiDataPtr->cursorCol];
 		case ROW_LAND_TOP:
-		    species = sDexNavUiDataPtr->landSpecies[sDexNavUiDataPtr->cursorCol];
-		    break;
+		    return sDexNavUiDataPtr->landSpecies[sDexNavUiDataPtr->cursorCol];
 		case ROW_LAND_BOT:
-		    species = sDexNavUiDataPtr->landSpecies[sDexNavUiDataPtr->cursorCol + COL_LAND_COUNT];
-		    break;
+		    return sDexNavUiDataPtr->landSpecies[sDexNavUiDataPtr->cursorCol + COL_LAND_COUNT];
 		default:
 		    return SPECIES_NONE;
     }
+}
+
+static u16 DexNavGetSpecies(void)
+{
+    u16 species = DexNavGetSeachableSpecies();
 
     if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
-        return SPECIES_NONE;
+        species = SPECIES_NONE;
 
     return species;
 }
@@ -1737,6 +1661,7 @@ static void DexNav_RunSetup(void)
 	gTasks[taskId].tEnvironment = sDexNavUiDataPtr->environment;
 	break;
     case 15:
+	LoadSymbolsIconGraphics();
 	CreateSelectionCursor();
         DrawSpeciesIcons();
         DexNavLoadCapturedAllSymbols();
@@ -1849,34 +1774,42 @@ static void Task_DexNavMain(u8 taskId)
     }
     else if (JOY_NEW(SELECT_BUTTON))
     {
-        species = DexNavGetSpecies();
+        species = DexNavGetSeachableSpecies();
 
         if (species)
-        {      
-            VarSet(VAR_DEXNAV_SPECIES, species);
-	    VarSet(VAR_DEXNAV_ENVIRONMENT, sDexNavUiDataPtr->environment);
-            PrintDexNavMessage(DEXNAV_MSG_SEARCH_POKEMON);
-            PlayCry7(species, 0);
-	    return;
+        {
+			if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
+				PrintDexNavMessage(DEXNAV_MSG_NO_DATA);
+			else
+			{
+				VarSet(VAR_DEXNAV_SPECIES, species);
+			    VarSet(VAR_DEXNAV_ENVIRONMENT, sDexNavUiDataPtr->environment);
+                PrintDexNavMessage(DEXNAV_MSG_SEARCH_POKEMON);
+                PlayCry7(species, 0);
+			    return;
+			}
         }
-	PrintDexNavMessage(DEXNAV_MSG_NO_DATA);
-	PlaySE(SE_FAILURE);
+		PlaySE(SE_FAILURE);
     }
     else if (JOY_NEW(A_BUTTON))
     {
-        species = DexNavGetSpecies();
+        species = DexNavGetSeachableSpecies();
 		
-	if (species)
-	{
-	    gSpecialVar_0x8000 = species;
-            gSpecialVar_0x8001 = sDexNavUiDataPtr->environment;
-            PlaySE(SE_DEX_SEARCH);
-            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
-            task->func = Task_DexNavExitAndSearch;
-	    return;
-	}
-	PrintDexNavMessage(DEXNAV_MSG_NO_DATA);
-	PlaySE(SE_FAILURE);
+	    if (species)
+	    {
+			if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
+				PrintDexNavMessage(DEXNAV_MSG_NO_DATA);
+			else
+			{
+				gSpecialVar_0x8000 = species;
+                gSpecialVar_0x8001 = sDexNavUiDataPtr->environment;
+                PlaySE(SE_DEX_SEARCH);
+                BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+                task->func = Task_DexNavExitAndSearch;
+	            return;
+			}
+	    }
+		PlaySE(SE_FAILURE);
     }
 }
 

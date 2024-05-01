@@ -15,6 +15,7 @@
 #include "util.h"
 #include "event_data.h"
 #include "evolution_scene.h"
+#include "field_specials.h"
 #include "field_effect.h"
 #include "field_player_avatar.h"
 #include "field_fadetransition.h"
@@ -2952,7 +2953,7 @@ void DrawHeldItemIconsForTrade(u8 *partyCounts, u8 *partySpriteIds, u8 whichPart
 
 static void CreateHeldItemSpriteForTrade(u8 spriteId, bool8 isMail)
 {
-	u8 newSpriteId = CreateHeldItemSprite(250, 170, gSprites[spriteId].subpriority - 1, isMail);
+	u8 newSpriteId = Create8x8SymbolSprite(250, 170, gSprites[spriteId].subpriority - 1, SYMBOL_HELDITEM + isMail);
 	
     gSprites[newSpriteId].x2 = 4;
     gSprites[newSpriteId].y2 = 10;

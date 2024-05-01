@@ -88,8 +88,6 @@
 
 #define MON_LEVEL_NONEXISTENT   255 // if mon not in area GetEncounterLevel returns this to exit the search
 
-#define OWNED_ICON_TAG          0x0066
-
 // funcs
 void DexNavGuiInit(MainCallback callback);
 bool8 TryStartDexnavSearch(void);

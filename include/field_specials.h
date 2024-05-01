@@ -11,6 +11,18 @@ enum HiddenItemAttr
     HIDDEN_ITEM_UNDERFOOT
 };
 
+enum
+{
+	SYMBOL_YELLOWSTAR,
+	SYMBOL_WHITESTAR,
+	SYMBOL_POKEBALL,
+	SYMBOL_HELDITEM,
+	SYMBOL_HELDMAIL,
+	SYMBOLS_COUNT
+};
+
+#define TAG_8x8_SYMBOLS 0x0066
+
 u8 GetLeadMonIndex(void);
 s32 CountDigits(s32 number);
 void TV_PrintIntToStringVar(u8 varidx, s32 number);
@@ -34,5 +46,8 @@ bool8 UsedPokemonCenterWarp(void);
 void UpdateTrainerCardPhotoIcons(void);
 void UpdateTrainerFansAfterLinkBattle(void);
 void ResetTrainerFanClub(void);
+void LoadSymbolsIconGraphics(void);
+void FreeSymbolsIconGraphics(void);
+u8 Create8x8SymbolSprite(s16 x, s16 y, u8 subpriority, u8 symbolId);
 
 #endif // GUARD_FIELD_SPECIALS_H
