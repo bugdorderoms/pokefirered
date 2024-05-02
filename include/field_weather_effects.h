@@ -54,4 +54,9 @@ void Bubbles_InitVars(void);
 void Bubbles_Main(void);
 bool8 Bubbles_Finish(void);
 
+void Clouds_InitAll(void);
+void Clouds_InitVars(void);
+void Clouds_Main(void);
+bool8 Clouds_Finish(void);
+
 #endif //GUARD_FIELD_WEATHER_EFFECTS_H

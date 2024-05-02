@@ -13,6 +13,7 @@
 #include "trig.h"
 
 const struct SpritePalette sSandstormSpritePalette = {gSandstormWeatherPalette, GFXTAG_SANDSTORM};
+const struct SpritePalette sCloudsSpritePalette    = {gCloudWeatherPalette, GFXTAG_CLOUD};
 
 //------------------------------------------------------------------------------
 // WEATHER_RAIN
@@ -1937,3 +1938,148 @@ static void UpdateBubbleSprite(struct Sprite *sprite)
 #undef tScrollXCounter
 #undef tScrollXDir
 #undef tCounter
+
+//------------------------------------------------------------------------------
+// WEATHER_CLOUDS
+//------------------------------------------------------------------------------
+
+static void CreateCloudSprites(void);
+static void DestroyCloudSprites(void);
+static void UpdateCloudSprite(struct Sprite *);
+
+// The clouds are positioned on the map's grid.
+static const struct Coords16 sCloudSpriteMapCoords[] = {
+    { 0, 66},
+    { 5, 73},
+    {10, 78},
+};
+
+static const struct SpriteSheet sCloudsSpriteSheet = {
+    .data = gWeatherCloudTiles,
+    .size = 0x0800,
+    .tag = GFXTAG_CLOUD,
+};
+
+static const struct OamData sCloudSpriteOamData = {
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(64x64),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(64x64),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+
+static const union AnimCmd sCloudSpriteAnimCmd[] = {
+    ANIMCMD_FRAME(0, 16),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd *const sCloudSpriteAnimCmds[] = {
+    sCloudSpriteAnimCmd,
+};
+
+static const struct SpriteTemplate sCloudSpriteTemplate = {
+    .tileTag = GFXTAG_CLOUD,
+    .paletteTag = GFXTAG_CLOUD,
+    .oam = &sCloudSpriteOamData,
+    .anims = sCloudSpriteAnimCmds,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = UpdateCloudSprite,
+};
+
+void Clouds_InitVars(void)
+{
+	gWeatherPtr->initStep = 0;
+    gWeatherPtr->weatherGfxLoaded = FALSE;
+    gWeatherPtr->gammaTargetIndex = 0;
+    gWeatherPtr->gammaStepDelay = 20;
+	if (!gWeatherPtr->cloudSpritesCreated)
+		Weather_SetBlendCoeffs(0, 16);
+}
+
+void Clouds_InitAll(void)
+{
+	Clouds_InitVars();
+	while (!gWeatherPtr->weatherGfxLoaded)
+		Clouds_Main();
+}
+
+void Clouds_Main(void)
+{
+	CreateCloudSprites();
+	gWeatherPtr->weatherGfxLoaded = TRUE;
+}
+
+bool8 Clouds_Finish(void)
+{
+	DestroyCloudSprites();
+	return FALSE;
+}
+
+static void CreateCloudSprites(void)
+{
+	u8 i, spriteId;
+	struct Sprite *sprite;
+	
+	if (!gWeatherPtr->cloudSpritesCreated)
+	{
+		gWeatherPtr->cloudSpritesCreated = TRUE;
+		
+		LoadSpriteSheet(&sCloudsSpriteSheet);
+		LoadCustomWeatherSpritePalette(&sCloudsSpritePalette);
+		
+		for (i = 0; i < NUM_CLOUD_SPRITES; i++)
+		{
+			spriteId = CreateSprite(&sCloudSpriteTemplate, 0, 0, 0);
+			
+			if (spriteId != MAX_SPRITES)
+			{
+				gWeatherPtr->cloudSprites[i] = sprite = &gSprites[spriteId];
+				SetSpritePosToMapCoords(sCloudSpriteMapCoords[i].x + 7, sCloudSpriteMapCoords[i].y + 7, &sprite->x, &sprite->y);
+				sprite->coordOffsetEnabled = TRUE;
+			}
+			else
+				gWeatherPtr->cloudSprites[i] = NULL;
+		}
+	}
+}
+
+static void DestroyCloudSprites(void)
+{
+	u8 i;
+	
+	if (gWeatherPtr->cloudSpritesCreated)
+	{
+		gWeatherPtr->cloudSpritesCreated = FALSE;
+		
+		for (i = 0; i < NUM_CLOUD_SPRITES; i++)
+		{
+			if (gWeatherPtr->cloudSprites[i] != NULL)
+				DestroySprite(gWeatherPtr->cloudSprites[i]);
+		}
+	}
+	FreeSpriteTilesByTag(GFXTAG_CLOUD);
+}
+
+#define tMovementDelay data[0]
+
+static void UpdateCloudSprite(struct Sprite *sprite)
+{
+	// Every 10 frames move sprite 3 pixels to right and 1 pixel to down.
+	if (++sprite->tMovementDelay == 10)
+	{
+		sprite->tMovementDelay = 0;
+		sprite->x += 3;
+		sprite->y++;
+	}
+}
+
+#undef tMovementDelay
