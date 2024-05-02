@@ -5,7 +5,6 @@
 #include "battle_controllers.h"
 #include "battle_gfx_sfx_util.h"
 #include "battle_interface.h"
-#include "battle_tower.h"
 #include "berry_pouch.h"
 #include "data.h"
 #include "decompress.h"
@@ -6715,7 +6714,7 @@ static void DoItemUseFormChange(u8 taskId, struct Pokemon *mon, u16 newSpecies, 
 void ItemUseCB_FormChange(u8 taskId, TaskFunc func)
 {
 	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    u16 species = GetMonData(mon, MON_DATA_SPECIES), newSpecies = GetMonFormChangeSpecies(mon, FORM_CHANGE_USE_ITEM);
+    u16 species = GetMonData(mon, MON_DATA_SPECIES), newSpecies = GetMonFormChangeSpecies(mon, species, FORM_CHANGE_USE_ITEM);
 	
 	PlaySE(SE_SELECT);
 	
@@ -6763,7 +6762,7 @@ static void Task_FormChangeListMenu_HandleInput(u8 taskId)
 static void Task_FormChangeListMenu(u8 taskId)
 {
 	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-	u16 newSpecies;
+	u16 newSpecies, species = GetMonData(mon, MON_DATA_SPECIES);
 	u8 listId = ItemId_GetHoldEffectParam(gSpecialVar_ItemId);
 	
 	switch (gTasks[taskId].data[0])
@@ -6771,7 +6770,7 @@ static void Task_FormChangeListMenu(u8 taskId)
 		case 0:
 		    PlaySE(SE_SELECT);
 			
-			if (GetMonFormChangeSpecies(mon, FORM_CHANGE_USE_ITEM))
+			if (GetMonFormChangeSpecies(mon, species, FORM_CHANGE_USE_ITEM))
 			{
 				gPartyMenuUseExitCallback = TRUE;
 				GetMonNickname(mon, gStringVar1);
@@ -6801,7 +6800,7 @@ static void Task_FormChangeListMenu(u8 taskId)
 				default:
 				    newSpecies = GetFormChangeListMenuSpecies(listId);
 					
-					if (GetMonData(mon, MON_DATA_SPECIES) != newSpecies)
+					if (species != newSpecies)
 					{
 						DoItemUseFormChange(taskId, mon, newSpecies, FORM_CHANGE_ANIM_MOSAIC, 0);
 						return;

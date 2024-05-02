@@ -357,16 +357,24 @@ struct PokemonGenerator
 	u16 species;
 	u8 level;
 	u8 otIdType;
+	
 	u32 fixedOtId;
+	
 	u8 shinyType;
 	bool8 forceGender;
 	u8 forcedGender;
 	bool8 hasFixedPersonality;
+	
 	u32 fixedPersonality;
+	
 	bool8 forceNature;
 	u8 forcedNature;
-	u16 unused;
-	struct Pokemon *pokemon;
+	bool8 changeForm;
+	u8 unused;
+	
+	u16 *formChanges;
+	
+	u16 moves[MAX_MON_MOVES];
 };
 
 extern u8 gPlayerPartyCount;
@@ -394,9 +402,7 @@ void ZeroBoxMonData(struct BoxPokemon *boxMon);
 void ZeroMonData(struct Pokemon *mon);
 void ZeroPlayerPartyMons(void);
 void ZeroEnemyPartyMons(void);
-void CreateMon(struct PokemonGenerator generator);
-void CreateBattleTowerMon(struct Pokemon *mon, struct BattleTowerPokemon *src);
-void GiveMonEvSpread(struct Pokemon *mon, u8 evSpread);
+void CreateMon(struct Pokemon *dest, struct PokemonGenerator generator);
 void CalculateMonStats(struct Pokemon *mon);
 void BoxMonToMon(struct BoxPokemon *src, struct Pokemon *dest);
 u8 GetLevelFromBoxMonExp(struct BoxPokemon *boxMon);
@@ -404,7 +410,6 @@ u16 GiveMoveToMon(struct Pokemon *mon, u16 move);
 void SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot);
 u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove);
 u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool8 firstMove);
-void GiveMonInitialMoveset(struct Pokemon *mon);
 void DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move);
 u32 GetShinyRollsIncrease(void);
 

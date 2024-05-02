@@ -4688,7 +4688,7 @@ BattleScript_FaintedMonTryChooseAnother::
 	openpartyscreen BS_FAINTED, BattleScript_FaintedMonEnd
 	switchhandleorder BS_FAINTED, 2
 	jumpifnotbattletype BATTLE_TYPE_TRAINER, BattleScript_FaintedMonChooseAnother
-	jumpifbattletype BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_DOUBLE, BattleScript_FaintedMonChooseAnother
+	jumpifbattletype BATTLE_TYPE_LINK | BATTLE_TYPE_DOUBLE, BattleScript_FaintedMonChooseAnother
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_PLAYER_FAINTED, BattleScript_FaintedMonChooseAnother
 	jumpifbyte CMP_EQUAL, sBATTLE_STYLE, OPTIONS_BATTLE_STYLE_SET, BattleScript_FaintedMonChooseAnother
 	jumpifcantswitch BS_PLAYER1, BattleScript_FaintedMonChooseAnother
@@ -4774,7 +4774,6 @@ BattleScript_PayDayMoneyAndPickUpItems::
 	end2
 
 BattleScript_LocalBattleLost::
-	jumpifbattletype BATTLE_TYPE_EREADER_TRAINER, BattleScript_EReaderTrainerEnd
 	jumpifbyte CMP_NOT_EQUAL, sMULTIUSE_STATE, 0, BattleScript_RivalBattleLost
 BattleScript_LocalBattleLostPrintWhiteOut::
 	jumpifbattletype BATTLE_TYPE_TRAINER, BattleScript_LocalBattleLostEnd
@@ -4783,7 +4782,6 @@ BattleScript_LocalBattleLostPrintWhiteOut::
 	getmoneyreward BattleScript_LocalBattleLostPrintTrainersWinText
 	printstring STRINGID_PLAYERPANICKEDANDLOST
 	waitmessage B_WAIT_TIME_LONG
-BattleScript_EReaderTrainerEnd::
 	end2
 
 BattleScript_RivalBattleLost::
@@ -4817,13 +4815,6 @@ BattleScript_LinkBattleWonOrLost::
 	waitmessage B_WAIT_TIME_LONG
 	endlinkbattle
 	waitmessage B_WAIT_TIME_LONG
-	end2
-
-BattleScript_BattleTowerTrainerBattleWon::
-	printstring STRINGID_PLAYERDEFEATEDTRAINER1
-	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK83_TRAINER_SLIDE_CASE_SLIDE_IN
-	waitstate
-	pickup
 	end2
 
 BattleScript_PrintEntryHazardsDmgString::

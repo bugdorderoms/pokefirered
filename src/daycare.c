@@ -49,7 +49,7 @@ struct EggHatchData
 
 // this file's functions
 static void ClearDaycareMonMail(struct DayCareMail *mail);
-static u16 SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare);
+static void SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare);
 static u8 GetDaycareCompatibilityScore(struct DayCare *daycare);
 static void DaycarePrintMonInfo(u8 windowId, u32 daycareSlotId, u8 y);
 
@@ -1049,25 +1049,22 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u8 *parent
     return eggSpecies;
 }
 
-void CreateEgg(struct PokemonGenerator generator, bool8 setHotSpringsLocation)
+void CreateEgg(struct Pokemon *mon, struct PokemonGenerator generator, bool8 setHotSpringsLocation)
 {
     u8 metLevel;
     u16 ball;
     u8 language;
     u8 metLocation;
     u8 isEgg;
-	u16 species;
-	struct Pokemon *mon = generator.pokemon;
 	
-    CreateMon(generator);
-	species = DoWildEncounterFormChange(mon);
+    CreateMon(mon, generator);
 	
     metLevel = 0;
     ball = ITEM_POKE_BALL;
     language = LANGUAGE_JAPANESE;
     SetMonData(mon, MON_DATA_POKEBALL, &ball);
     SetMonData(mon, MON_DATA_NICKNAME, sJapaneseEggNickname);
-    SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);
+    SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[GetMonData(mon, MON_DATA_SPECIES)].eggCycles);
     SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
     SetMonData(mon, MON_DATA_LANGUAGE, &language);
 	
@@ -1080,7 +1077,7 @@ void CreateEgg(struct PokemonGenerator generator, bool8 setHotSpringsLocation)
     SetMonData(mon, MON_DATA_IS_EGG, &isEgg);
 }
 
-static u16 SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare)
+static void SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare)
 {
     u16 ball;
     u8 metLevel;
@@ -1097,20 +1094,20 @@ static u16 SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *d
 	    .fixedPersonality = daycare->offspringPersonality | (Random() << 16),
 	    .forceNature = FALSE,
 	    .forcedNature = NUM_NATURES,
-	    .pokemon = mon,
+		.changeForm = TRUE,
+		.formChanges = NULL,
+		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
 	};
-    CreateMon(generator);
-	species = DoWildEncounterFormChange(mon);
+    CreateMon(mon, generator);
+	
     metLevel = 0;
     ball = ITEM_POKE_BALL;
     language = LANGUAGE_JAPANESE;
     SetMonData(mon, MON_DATA_POKEBALL, &ball);
     SetMonData(mon, MON_DATA_NICKNAME, sJapaneseEggNickname);
-    SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);
+    SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[GetMonData(mon, MON_DATA_SPECIES)].eggCycles);
     SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
     SetMonData(mon, MON_DATA_LANGUAGE, &language);
-	
-	return species;
 }
 
 void GiveEggFromDaycare(void)
@@ -1123,12 +1120,12 @@ void GiveEggFromDaycare(void)
 
     species = DetermineEggSpeciesAndParentSlots(daycare, parentSlots);
     AlterEggSpeciesWithIncenseItem(&species, daycare);
-    species = SetInitialEggData(&egg, species, daycare);
+    SetInitialEggData(&egg, species, daycare);
     InheritIVs(&egg, daycare);
     BuildEggMoveset(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
 
 #if VOLT_TACKLE_BY_BREEDING
-    if (species == SPECIES_PICHU)
+    if (GetMonData(&egg, MON_DATA_SPECIES) == SPECIES_PICHU)
         GiveVoltTackleIfLightBall(&egg, daycare);
 #endif
     
@@ -1586,16 +1583,11 @@ static void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
     u16 species;
     u32 pokerus;
     u8 i, friendship, language, gameMet, markings;
-    u16 moves[4];
     u32 ivs[NUM_STATS];
 	struct PokemonGenerator generator;
 
     species = GetMonData(egg, MON_DATA_SPECIES);
 
-    for (i = 0; i < MAX_MON_MOVES; i++)
-    {
-        moves[i] = GetMonData(egg, MON_DATA_MOVE1 + i);
-    }
     for (i = 0; i < NUM_STATS; i++)
     {
         ivs[i] = GetMonData(egg, MON_DATA_HP_IV + i);
@@ -1611,14 +1603,13 @@ static void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 	generator.fixedPersonality = GetMonData(egg, MON_DATA_PERSONALITY);
 	generator.forceNature = FALSE;
 	generator.forcedNature = NUM_NATURES;
-	generator.pokemon = temp;
+	generator.changeForm = FALSE;
+	generator.formChanges = NULL;
 	
-    CreateMon(generator);
-
-    for (i = 0; i < MAX_MON_MOVES; i++)
-    {
-        SetMonData(temp, MON_DATA_MOVE1 + i,  &moves[i]);
-    }
+	for (i = 0; i < MAX_MON_MOVES; i++)
+        generator.moves[i] = GetMonData(egg, MON_DATA_MOVE1 + i);
+	
+    CreateMon(temp, generator);
 
     for (i = 0; i < NUM_STATS; i++)
     {

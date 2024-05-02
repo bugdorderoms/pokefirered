@@ -4881,14 +4881,11 @@ bool8 IsBattlerGrounded(u8 battlerId)
 
 static bool8 CanBattlerGetOrLoseItem(u8 battlerId, u16 itemId)
 {
-	u16 ability = GetBattlerAbility(battlerId), species = gBattleMons[battlerId].species;
-	u32 personality = gBattleMons[battlerId].personality;
+	u16 species = gBattleMons[battlerId].species;
 	
-	if (GetBattlerItemHoldEffect(battlerId, FALSE) == HOLD_EFFECT_Z_CRYSTAL || ItemIsMail(itemId)
-	|| GetSpeciesFormChange(FORM_CHANGE_HOLD_ITEM, species, personality, ability, itemId, 0, FALSE)
-	|| GetSpeciesFormChange(FORM_CHANGE_MEGA_EVO, species, personality, ability, itemId, 0, FALSE)
-	|| GetSpeciesFormChange(FORM_CHANGE_PRIMAL, species, personality, ability, itemId, 0, FALSE)
-	|| GetSpeciesFormChange(FORM_CHANGE_ULTRA_BURST, species, personality, ability, itemId, 0, FALSE))
+	if (GetBattlerItemHoldEffect(battlerId, FALSE) == HOLD_EFFECT_Z_CRYSTAL || ItemIsMail(itemId) || ItemIsMail(gBattleMons[battlerId].item)
+	|| GetBattlerFormChangeSpecies(battlerId, species, itemId, FORM_CHANGE_PRIMAL) || GetBattlerFormChangeSpecies(battlerId, species, itemId, FORM_CHANGE_HOLD_ITEM)
+    || GetBattlerFormChangeSpecies(battlerId, species, itemId, FORM_CHANGE_ULTRA_BURST) || GetBattlerFormChangeSpecies(battlerId, species, itemId, FORM_CHANGE_MEGA_EVO))
 	    return FALSE;
 	return TRUE;
 }
@@ -4896,8 +4893,7 @@ static bool8 CanBattlerGetOrLoseItem(u8 battlerId, u16 itemId)
 bool8 CanStealItem(u8 battlerAtk, u8 battlerDef, u16 itemId)
 {
 	u8 battlerAtkSide = GetBattlerSide(battlerAtk);
-	bool8 battleTypeBlocksItemSteal = !((gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_LINK))
-	&& gTrainerBattleOpponent_A != 0x400);
+	bool8 battleTypeBlocksItemSteal = !((gBattleTypeFlags & BATTLE_TYPE_LINK) && gTrainerBattleOpponent_A != 0x400);
 	
 	if (((battlerAtkSide == B_SIDE_OPPONENT || gBattleStruct->knockedOffMons[battlerAtkSide] & gBitTable[gBattlerPartyIndexes[battlerAtk]])
 		&& battleTypeBlocksItemSteal) || !CanBattlerGetOrLoseItem(battlerDef, itemId) || !CanBattlerGetOrLoseItem(battlerAtk, itemId))

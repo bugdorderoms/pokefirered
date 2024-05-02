@@ -19,7 +19,6 @@
 #include "field_specials.h"
 #include "region_map.h"
 #include "task.h"
-#include "battle_tower.h"
 #include "berry_pouch.h"
 #include "event_scripts.h"
 #include "field_camera.h"
@@ -364,11 +363,6 @@ void RemoveCameraObject(void)
 {
     CameraObjectSetFollowedObjectId(gPlayerAvatar.spriteId);
     RemoveObjectEventByLocalIdAndMap(127, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
-}
-
-void BufferEReaderTrainerName(void)
-{
-    CopyEReaderTrainerName5(gStringVar1);
 }
 
 static const u8 sSlotMachineIndices[] = {

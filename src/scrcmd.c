@@ -33,6 +33,7 @@
 #include "field_door.h"
 #include "constants/event_objects.h"
 #include "constants/event_object_movement.h"
+#include "constants/moves.h"
 
 extern u16 (*const gSpecials[])(void);
 extern u16 (*const gSpecialsEnd[])(void);
@@ -1632,7 +1633,11 @@ bool8 ScrCmd_givemon(struct ScriptContext * ctx)
     u16 ball, item = VarGet(ScriptReadHalfword(ctx));
     u8 i, nature, gender, ivs[NUM_STATS] = {0};
 	bool8 isShiny, hiddenAbility;
+	u16 moves[MAX_MON_MOVES];
     
+	for (i = 0; i < MAX_MON_MOVES; i++)
+		moves[i] = MOVE_NONE;
+	
     for (i = 0; i < NUM_STATS; i++)
         ivs[i] = ScriptReadByte(ctx);
 	
@@ -1646,7 +1651,7 @@ bool8 ScrCmd_givemon(struct ScriptContext * ctx)
 	
 	gender = ScriptReadByte(ctx);
 	
-    gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ball, isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL, hiddenAbility, nature, gender);
+    gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ball, isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL, hiddenAbility, nature, gender, moves);
     return FALSE;
 }
 
@@ -1656,6 +1661,10 @@ bool8 ScrCmd_giveegg(struct ScriptContext * ctx)
 	u8 i, ivs[NUM_STATS] = {0};
 	bool8 isShiny, hiddenAbility;
 	u8 nature;
+	u16 moves[MAX_MON_MOVES];
+    
+	for (i = 0; i < MAX_MON_MOVES; i++)
+		moves[i] = MOVE_NONE;
 	
 	for (i = 0; i < NUM_STATS; i++)
         ivs[i] = ScriptReadByte(ctx);
@@ -1666,7 +1675,7 @@ bool8 ScrCmd_giveegg(struct ScriptContext * ctx)
 	
 	nature = ScriptReadByte(ctx);
 	
-    gSpecialVar_Result = ScriptGiveEgg(species, ivs, isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL, hiddenAbility, nature);
+    gSpecialVar_Result = ScriptGiveEgg(species, ivs, isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL, hiddenAbility, nature, moves);
     return FALSE;
 }
 

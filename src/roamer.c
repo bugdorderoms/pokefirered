@@ -2,8 +2,10 @@
 #include "random.h"
 #include "overworld.h"
 #include "field_specials.h"
+#include "wild_encounter.h"
 #include "constants/maps.h"
 #include "constants/region_map_sections.h"
+#include "constants/moves.h"
 
 // Despite having a variable to track it, the roamer is
 // hard-coded to only ever be in map group 3
@@ -98,26 +100,12 @@ static u16 GetRoamerSpecies(void)
 
 static void CreateInitialRoamerMon(void)
 {
-	u16 species = GetRoamerSpecies();
 	u8 level = 50;
     struct Pokemon * mon = &gEnemyParty[0];
-	struct PokemonGenerator generator =
-	{
-		.species = species,
-		.level = level,
-		.forceGender = FALSE,
-		.forcedGender = MON_MALE,
-		.shinyType = GENERATE_SHINY_NORMAL,
-		.otIdType = OT_ID_PLAYER_ID,
-		.hasFixedPersonality = FALSE,
-		.fixedPersonality = 0,
-		.forceNature = FALSE,
-		.forcedNature = NUM_NATURES,
-		.pokemon = mon,
-	};
-    CreateMon(generator);
 	
-    ROAMER->species = species;
+	GenerateWildMon(GetRoamerSpecies(), level);
+	
+    ROAMER->species = GetMonData(mon, MON_DATA_SPECIES);
     ROAMER->level = level;
     ROAMER->status = 0;
     ROAMER->active = TRUE;
@@ -221,10 +209,12 @@ static void CreateRoamerMonInstance(void)
 		.fixedPersonality = ROAMER->personality,
 		.forceNature = FALSE,
 		.forcedNature = NUM_NATURES,
-		.pokemon = mon,
+		.changeForm = FALSE,
+		.formChanges = NULL,
+		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
 	};
     ZeroEnemyPartyMons();
-    CreateMon(generator);
+    CreateMon(mon, generator);
     status = ROAMER->status;
     SetMonData(mon, MON_DATA_STATUS, &status);
     SetMonData(mon, MON_DATA_HP, &ROAMER->hp);

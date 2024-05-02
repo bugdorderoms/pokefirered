@@ -96,7 +96,7 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 				}
 				break;
 			case HOLD_EFFECT_SOUL_DEW:
-				if (!(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER)) && (attacker->species == SPECIES_LATIAS || attacker->species == SPECIES_LATIOS)
+				if ((attacker->species == SPECIES_LATIAS || attacker->species == SPECIES_LATIOS)
 					&& (type == TYPE_PSYCHIC || type == TYPE_DRAGON))
 					gBattleMovePower = (gBattleMovePower * 120) / 100;
 				break;
@@ -377,7 +377,7 @@ static const u8 sFlailHpScaleToPowerTable[] =
 static inline bool8 CanReceiveBadgeBoost(u8 battlerId, u16 flagId)
 {
 #if BADGE_BOOST
-    if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER)) && GetBattlerSide(battlerId) == B_SIDE_PLAYER
+    if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) && GetBattlerSide(battlerId) == B_SIDE_PLAYER
 	&& FlagGet(flagId))
 		return TRUE;
 #endif

@@ -101,10 +101,6 @@ gSpecials:: @ 815FD60
 	def_special EnterColosseumPlayerSpot
 	def_special EnterTradeSeat
 	def_special Script_ShowLinkTrainerCard
-	def_special BufferEReaderTrainerGreeting
-	def_special ValidateEReaderTrainer
-	def_special BufferEReaderTrainerName
-	def_special SetEReaderTrainerGfxId
 	def_special IsWirelessAdapterConnected
 	def_special TryBecomeLinkLeader
 	def_special TryJoinLinkGroup
@@ -130,7 +126,6 @@ gSpecials:: @ 815FD60
 	def_special GetBattleOutcome
 	def_special RockSmashWildEncounter
 	def_special ShowBattleRecords
-	def_special StartSpecialBattle
 	def_special StartLegendaryBattle
 	def_special SetUpTrainerMovement
 	def_special StartMarowakBattle

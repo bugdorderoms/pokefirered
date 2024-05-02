@@ -8,7 +8,6 @@
 #include "event_scripts.h"
 #include "event_data.h"
 #include "item.h"
-#include "battle_tower.h"
 #include "battle_setup.h"
 #include "field_specials.h"
 #include "new_menu_helpers.h"
@@ -1597,23 +1596,12 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
 				case B_TXT_TRAINER1_CLASS:
                     if (gTrainerBattleOpponent_A == TRAINER_UNION_ROOM)
 						toCpy = gTrainerClassNames[GetUnionRoomTrainerClass()];
-					else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
-						toCpy = gTrainerClassNames[GetBattleTowerTrainerClassNameId()];
-					else if (gBattleTypeFlags & BATTLE_TYPE_EREADER_TRAINER)
-						toCpy = gTrainerClassNames[GetEreaderTrainerClassId()];
 					else
 						toCpy = gTrainerClassNames[gTrainers[gTrainerBattleOpponent_A].trainerClass];
 					break;
 				case B_TXT_TRAINER1_NAME:
                     if (gTrainerBattleOpponent_A == TRAINER_UNION_ROOM)
 						toCpy = gLinkPlayers[BATTLE_OPPOSITE(multiplayerId)].name;
-					else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
-						GetBattleTowerTrainerName(text);
-					else if (gBattleTypeFlags & BATTLE_TYPE_EREADER_TRAINER)
-					{
-						CopyEReaderTrainerName5(text);
-						toCpy = text;
-					}
 					else
 					{
 						if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_RIVAL_EARLY

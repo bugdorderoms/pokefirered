@@ -948,7 +948,7 @@ void DrawBattleEntryBackground(void)
     }
     else if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
         LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_GRASS);
-    else if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER)))
+    else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
         LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_BUILDING);
     else
     {
@@ -973,7 +973,7 @@ static u8 GetBattleTerrainOverride(void)
 {
     u8 battleScene;
 	
-    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER)))
+    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
         return BATTLE_TERRAIN_LINK;
     else if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
     {

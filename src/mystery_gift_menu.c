@@ -120,6 +120,7 @@ static inline void TrySetMysteryGiftFlag(u16 flag)
 static u8 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
 {
 	u8 i, j, nature, *ivs;
+	u16 moves[MAX_MON_MOVES];
 	struct Pokemon *mon;
 	const struct MGPokemon *mgPokemon = mysteryGift.present.GivePokemon;
 	
@@ -143,18 +144,15 @@ static u8 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
 			ivs = (u8*)mgPokemon[i].ivs;
 			nature = mgPokemon[i].nature != 0 ? mgPokemon[i].nature - 1 : NUM_NATURES;
 			
+			for (j = 0; j < MAX_MON_MOVES; j++)
+				moves[j] = mgPokemon[i].moves[j];
+			
 			if (mgPokemon[i].isEgg)
-				ScriptGiveEgg(mgPokemon[i].species, ivs, mgPokemon[i].shinyType, FALSE, nature);
+				ScriptGiveEgg(mgPokemon[i].species, ivs, mgPokemon[i].shinyType, FALSE, nature, moves);
 			else
-				ScriptGiveMon(mgPokemon[i].species, mgPokemon[i].level, mgPokemon[i].heldItem, ivs, mgPokemon[i].ballId, mgPokemon[i].shinyType, FALSE, nature, MON_GENDERLESS);
+				ScriptGiveMon(mgPokemon[i].species, mgPokemon[i].level, mgPokemon[i].heldItem, ivs, mgPokemon[i].ballId, mgPokemon[i].shinyType, FALSE, nature, MON_GENDERLESS, moves);
 			
 			mon = &gPlayerParty[gPlayerPartyCount - 1];
-			
-			for (j = 0; j < MAX_MON_MOVES; j++)
-			{
-				if (mgPokemon[i].moves[j])
-					SetMonMoveSlot(mon, mgPokemon[i].moves[j], j);
-			}
 			
 			if (mgPokemon[i].nickname != NULL)
 				SetMonData(mon, MON_DATA_NICKNAME, mgPokemon[i].nickname);

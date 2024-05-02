@@ -2245,8 +2245,7 @@ static void atk23_getexp(void)
     switch (gBattleScripting.atk23_state)
     {
 		case 0: // Check if should receive exp at all
-            if (GetBattlerSide(gBattlerFainted) != B_SIDE_OPPONENT
-			|| (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_SAFARI | BATTLE_TYPE_EREADER_TRAINER)))
+            if (GetBattlerSide(gBattlerFainted) != B_SIDE_OPPONENT || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI)))
 			    gBattleScripting.atk23_state = 6; // Goto last case
 			else
 			{
@@ -3489,8 +3488,8 @@ static void atk4E_switchinanim(void)
     {
         u8 battlerId = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 	    
-        if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_OLD_MAN_TUTORIAL
-		| BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_GHOST)))
+        if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_POKEDUDE
+		| BATTLE_TYPE_GHOST)))
             HandleSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[battlerId].species), FLAG_SET_SEEN, gBattleMons[battlerId].personality);
 			
         gAbsentBattlerFlags &= ~(gBitTable[battlerId]);
@@ -7098,12 +7097,12 @@ static void atkD2_tryswapitems(void) // trick
     u16 oldItemAtk, *newItemAtk;
 	
     // opponent can't swap items with player in regular battles
-    if ((GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER))))
+    if ((GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT && !(gBattleTypeFlags & BATTLE_TYPE_LINK)))
         gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 1);
     else
     {
         // you can't swap items if they were knocked off in regular battles
-        if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER))
+        if (!(gBattleTypeFlags & BATTLE_TYPE_LINK)
 			&& (gBattleStruct->knockedOffMons[sideAttacker] & gBitTable[gBattlerPartyIndexes[gBattlerAttacker]]
             || gBattleStruct->knockedOffMons[sideTarget] & gBitTable[gBattlerPartyIndexes[gBattlerTarget]]))
             gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 1);

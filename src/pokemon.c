@@ -56,9 +56,6 @@ EWRAM_DATA struct Pokemon gPlayerParty[PARTY_SIZE] = {};
 EWRAM_DATA struct SpriteTemplate gMultiuseSpriteTemplate = {0};
 
 static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *boxMon);
-static void DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
-static void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon);
-static u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
 static u8 GetLevelFromMonExp(struct Pokemon *mon);
 
 #include "data/move/battle_moves.h"
@@ -353,16 +350,71 @@ void ZeroEnemyPartyMons(void)
         ZeroMonData(&gEnemyParty[i]);
 }
 
-void CreateMon(struct PokemonGenerator generator)
+static void GiveMonInitialMoveset(struct Pokemon *mon)
 {
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+    s32 level = GetLevelFromMonExp(mon);
+    s32 i;
+
+    for (i = 0; gLevelUpLearnsets[species][i].move != LEVEL_UP_END; i++)
+    {
+        u8 moveLevel;
+        u16 move;
+
+        moveLevel = gLevelUpLearnsets[species][i].level;
+		
+		if (moveLevel == 0)
+			continue;
+        else if (moveLevel > level)
+            break;
+
+        move = gLevelUpLearnsets[species][i].move;
+		
+		if (GiveMoveToMon(mon, move) == 0xFFFF)
+			DeleteFirstMoveAndGiveMoveToMon(mon, move);
+    }
+}
+
+void CreateMon(struct Pokemon *dest, struct PokemonGenerator generator)
+{
+	u8 i;
+	u16 *formChanges;
     u32 arg;
 	
-    ZeroMonData(generator.pokemon);
-    CreateBoxMon(generator, &generator.pokemon->box);
-    SetMonData(generator.pokemon, MON_DATA_LEVEL, &generator.level);
+    ZeroMonData(dest);
+	
+    CreateBoxMon(generator, &dest->box);
+	
+    SetMonData(dest, MON_DATA_LEVEL, &generator.level);
+	
     arg = 255;
-    SetMonData(generator.pokemon, MON_DATA_MAIL, &arg);
-    CalculateMonStats(generator.pokemon);
+    SetMonData(dest, MON_DATA_MAIL, &arg);
+	
+	// Try change form
+	if (generator.changeForm)
+	{
+		if (generator.formChanges != NULL)
+			formChanges = generator.formChanges;
+		else // Default form changes
+		{
+			u16 defaultFormChanges[] = {FORM_CHANGE_GENDER, FORM_CHANGE_PERSONALITY, FORM_CHANGE_SEASON, FORM_CHANGE_NATURE, FORM_CHANGE_TERMINATOR};
+			formChanges = defaultFormChanges;
+		}
+		
+		for (i = 0; formChanges[i] != FORM_CHANGE_TERMINATOR; i++)
+			DoOverworldFormChange(dest, formChanges[i]);
+	}
+	
+	// Give moveset
+	GiveMonInitialMoveset(dest);
+	
+	for (i = 0; i < MAX_MON_MOVES; i++)
+	{
+		if (generator.moves[i])
+			SetMonMoveSlot(dest, generator.moves[i], i);
+	}
+	
+	CalculateMonStats(dest);
 }
 
 u32 GetShinyRollsIncrease(void)
@@ -405,11 +457,11 @@ static bool8 IsShinyOtIdPersonality(u32 otId, u32 personality)
 
 static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *boxMon)
 {
-    u8 speciesName[POKEMON_NAME_LENGTH + 1];
+    u8 i, speciesName[POKEMON_NAME_LENGTH + 1];
     u32 iv, personality, value, otId, shinyRolls;
 	bool8 shinyRerolls = FALSE, isShiny;
 	u16 species = generator.species;
-
+	
     ZeroBoxMonData(boxMon);
 	
 	// Choose otId
@@ -447,28 +499,35 @@ static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *b
     SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
 	
 	// Calc shiny rate
-	if (generator.shinyType == GENERATE_SHINY_LOCKED)
-		isShiny = FALSE;
-	else if (generator.shinyType == GENERATE_SHINY_FORCED)
-		isShiny = TRUE;
-	else if (shinyRerolls)
+	switch (generator.shinyType)
 	{
-		shinyRolls = GetShinyRollsIncrease();
-		value = personality;
-		
-		do
-		{
-			isShiny = IsShinyOtIdPersonality(otId, value);
-			if (isShiny)
-				break;
-			
-			value = Random32();
-			--shinyRolls;
-			
-		} while (shinyRolls > 0);
+		case GENERATE_SHINY_LOCKED:
+		    isShiny = FALSE;
+			break;
+		case GENERATE_SHINY_FORCED:
+		    isShiny = TRUE;
+			break;
+		default:
+		    if (shinyRerolls)
+			{
+				shinyRolls = GetShinyRollsIncrease();
+				value = personality;
+				
+				do
+				{
+					isShiny = IsShinyOtIdPersonality(otId, value);
+					if (isShiny)
+						break;
+					
+					value = Random32();
+					--shinyRolls;
+					
+				} while (shinyRolls > 0);
+			}
+			else
+				isShiny = IsShinyOtIdPersonality(otId, personality);
+			break;
 	}
-	else
-		isShiny = IsShinyOtIdPersonality(otId, personality);
 	// Set shiny
 	SetBoxMonData(boxMon, MON_DATA_IS_SHINY, &isShiny);
 	
@@ -549,97 +608,6 @@ static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *b
 	    SetBoxMonData(boxMon, MON_DATA_ABILITY_HIDDEN, &value);
     }
 #endif
-
-	// Give initial moveset
-    GiveBoxMonInitialMoveset(boxMon);
-}
-
-void GiveMonEvSpread(struct Pokemon *mon, u8 evSpread)
-{
-    s32 i, statCount;
-    u16 evAmount;
-    u8 evsBits = evSpread;
-
-    for (i = 0, statCount = 0; i < NUM_STATS; i++, evsBits >>= 1)
-    {
-        if (evsBits & 1)
-            statCount++;
-    }
-    evAmount = MAX_TOTAL_EVS / statCount;
-
-    for (i = 0, evsBits = 1; i < NUM_STATS; i++, evsBits <<= 1)
-    {
-        if (evSpread & evsBits)
-            SetMonData(mon, MON_DATA_HP_EV + i, &evAmount);
-    }
-    CalculateMonStats(mon);
-}
-
-void CreateBattleTowerMon(struct Pokemon *mon, struct BattleTowerPokemon *src)
-{
-    s32 i;
-    u8 value;
-	struct PokemonGenerator generator =
-	{
-		.species = src->species,
-		.level = src->level,
-		.otIdType = OT_ID_PRESET,
-		.fixedOtId = src->otId,
-		.shinyType = GENERATE_SHINY_NORMAL,
-		.forceGender = FALSE,
-		.forcedGender = MON_MALE,
-		.hasFixedPersonality = TRUE,
-		.fixedPersonality = src->personality,
-		.forceNature = FALSE,
-		.forcedNature = NUM_NATURES,
-		.pokemon = mon,
-	};
-    CreateMon(generator);
-
-    for (i = 0; i < MAX_MON_MOVES; i++)
-        SetMonMoveSlot(mon, src->moves[i], i);
-
-    SetMonData(mon, MON_DATA_PP_BONUSES, &src->ppBonuses);
-    SetMonData(mon, MON_DATA_HELD_ITEM, &src->heldItem);
-
-    // Why is this commented out in FR/LG?
-    /*
-    StringCopy(nickname, src->nickname);
-
-    if (nickname[0] == 0xFC && nickname[1] == 0x15)
-        language = LANGUAGE_JAPANESE;
-    else
-        language = GAME_LANGUAGE;
-
-    SetMonData(mon, MON_DATA_LANGUAGE, &language);
-    Text_StripExtCtrlCodes(nickname);
-    */
-
-    SetMonData(mon, MON_DATA_NICKNAME, &src->nickname);
-    SetMonData(mon, MON_DATA_FRIENDSHIP, &src->friendship);
-    SetMonData(mon, MON_DATA_HP_EV, &src->hpEV);
-    SetMonData(mon, MON_DATA_ATK_EV, &src->attackEV);
-    SetMonData(mon, MON_DATA_DEF_EV, &src->defenseEV);
-    SetMonData(mon, MON_DATA_SPEED_EV, &src->speedEV);
-    SetMonData(mon, MON_DATA_SPATK_EV, &src->spAttackEV);
-    SetMonData(mon, MON_DATA_SPDEF_EV, &src->spDefenseEV);
-    value = src->abilityHidden;
-    SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &value);	
-    value = src->abilityNum;
-    SetMonData(mon, MON_DATA_ABILITY_NUM, &value);
-    value = src->hpIV;
-    SetMonData(mon, MON_DATA_HP_IV, &value);
-    value = src->attackIV;
-    SetMonData(mon, MON_DATA_ATK_IV, &value);
-    value = src->defenseIV;
-    SetMonData(mon, MON_DATA_DEF_IV, &value);
-    value = src->speedIV;
-    SetMonData(mon, MON_DATA_SPEED_IV, &value);
-    value = src->spAttackIV;
-    SetMonData(mon, MON_DATA_SPATK_IV, &value);
-    value = src->spDefenseIV;
-    SetMonData(mon, MON_DATA_SPDEF_IV, &value);
-    CalculateMonStats(mon);
 }
 
 #define CALC_STAT(base, iv, ev, statIndex, field)                                 \
@@ -762,33 +730,57 @@ u8 GetLevelFromBoxMonExp(struct BoxPokemon *boxMon)
 
 u16 GiveMoveToMon(struct Pokemon *mon, u16 move)
 {
-    return GiveMoveToBoxMon(&mon->box, move);
-}
-
-static void SetBoxMonMoveSlot(struct BoxPokemon *boxMon, u16 move, u8 slot)
-{
-	SetBoxMonData(boxMon, MON_DATA_MOVE1 + slot, &move);
-	SetBoxMonData(boxMon, MON_DATA_PP1 + slot, &gBattleMoves[move].pp);
-	DoOverworldFormChange((struct Pokemon*)boxMon, FORM_CHANGE_KNOW_MOVE);
-}
-
-static u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move)
-{
-    u8 i;
+	u8 i;
 	
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
-        u16 existingMove = GetBoxMonData(boxMon, MON_DATA_MOVE1 + i, NULL);
+        u16 existingMove = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
 		
         if (!existingMove)
         {
-			SetBoxMonMoveSlot(boxMon, move, i);
+			SetMonMoveSlot(mon, move, i);
             return move;
         }
         if (existingMove == move)
             return -2;
     }
     return -1;
+}
+
+static void SetMonMoveSlotInternal(struct Pokemon *mon, u8 slot, u16 move, u8 pp)
+{
+	SetMonData(mon, MON_DATA_MOVE1 + slot, &move);
+	SetMonData(mon, MON_DATA_PP1 + slot, &pp);
+	DoOverworldFormChange(mon, FORM_CHANGE_KNOW_MOVE);
+}
+
+void SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot)
+{
+	SetMonMoveSlotInternal(mon, slot, move, gBattleMoves[move].pp);
+}
+
+void DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move)
+{
+	s32 i;
+    u16 moves[MAX_MON_MOVES];
+    u8 pp[MAX_MON_MOVES];
+    u8 ppBonuses;
+
+    for (i = 0; i < MAX_MON_MOVES - 1; i++)
+    {
+        moves[i] = GetMonData(mon, MON_DATA_MOVE2 + i, NULL);
+        pp[i] = GetMonData(mon, MON_DATA_PP2 + i, NULL);
+    }
+
+    ppBonuses = GetMonData(mon, MON_DATA_PP_BONUSES, NULL);
+    ppBonuses >>= 2;
+    moves[MAX_MON_MOVES - 1] = move;
+    pp[MAX_MON_MOVES - 1] = gBattleMoves[move].pp;
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+		SetMonMoveSlotInternal(mon, i, moves[i], pp[i]);
+
+    SetMonData(mon, MON_DATA_PP_BONUSES, &ppBonuses);
 }
 
 static void ShiftMoveSlot(struct Pokemon *mon, u8 slotTo, u8 slotFrom)
@@ -823,46 +815,6 @@ void DeleteMonMove(struct Pokemon *mon, u8 movePos)
 	
 	for (i = movePos; i < MAX_MON_MOVES - 1; ++i)
 		ShiftMoveSlot(mon, i, i + 1);
-}
-
-void SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot)
-{
-	SetBoxMonMoveSlot(&mon->box, move, slot);
-}
-
-void GiveMonInitialMoveset(struct Pokemon *mon)
-{
-	u8 i;
-	
-	for (i = 0; i < MAX_MON_MOVES; i++)
-		SetMonMoveSlot(mon, MOVE_NONE, i);
-	
-	GiveBoxMonInitialMoveset(&mon->box);
-}
-
-static void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon)
-{
-    u16 species = GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL);
-    s32 level = GetLevelFromBoxMonExp(boxMon);
-    s32 i;
-
-    for (i = 0; gLevelUpLearnsets[species][i].move != LEVEL_UP_END; i++)
-    {
-        u8 moveLevel;
-        u16 move;
-
-        moveLevel = gLevelUpLearnsets[species][i].level;
-		
-		if (moveLevel == 0)
-			continue;
-        else if (moveLevel > level)
-            break;
-
-        move = gLevelUpLearnsets[species][i].move;
-
-        if (GiveMoveToBoxMon(boxMon, move) == 0xFFFF)
-            DeleteFirstMoveAndGiveMoveToBoxMon(boxMon, move);
-    }
 }
 
 u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove)
@@ -920,37 +872,6 @@ u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool8 firstMove)
 		sLearningMoveTableID++;
 	}
 	return 0;
-}
-
-void DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move)
-{
-	DeleteFirstMoveAndGiveMoveToBoxMon(&mon->box, move);
-}
-
-static void DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move)
-{
-    s32 i;
-    u16 moves[MAX_MON_MOVES];
-    u8 pp[MAX_MON_MOVES];
-    u8 ppBonuses;
-
-    for (i = 0; i < MAX_MON_MOVES - 1; i++)
-    {
-        moves[i] = GetBoxMonData(boxMon, MON_DATA_MOVE2 + i, NULL);
-        pp[i] = GetBoxMonData(boxMon, MON_DATA_PP2 + i, NULL);
-    }
-
-    ppBonuses = GetBoxMonData(boxMon, MON_DATA_PP_BONUSES, NULL);
-    ppBonuses >>= 2;
-    moves[MAX_MON_MOVES - 1] = move;
-    pp[MAX_MON_MOVES - 1] = gBattleMoves[move].pp;
-
-    for (i = 0; i < MAX_MON_MOVES; i++)
-    {
-        SetBoxMonData(boxMon, MON_DATA_MOVE1 + i, &moves[i]);
-        SetBoxMonData(boxMon, MON_DATA_PP1 + i, &pp[i]);
-    }
-    SetBoxMonData(boxMon, MON_DATA_PP_BONUSES, &ppBonuses);
 }
 
 u8 GetNumOfBadges(void)
@@ -1797,7 +1718,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem, s
 			case EVO_SPECIFIC_MON_IN_PARTY:
 			    for (j = 0; j < PARTY_SIZE; j++)
 				{
-					if (GetMonData(mon, MON_DATA_SPECIES, NULL) == gEvolutionTable[species][i].param)
+					if (GetMonData(&gPlayerParty[j], MON_DATA_SPECIES, NULL) == gEvolutionTable[species][i].param)
 					{
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 						break;
@@ -1809,7 +1730,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem, s
 				{
 					for (j = 0; j < PARTY_SIZE; j++)
 					{
-						data = GetMonData(mon, MON_DATA_SPECIES, NULL);
+						data = GetMonData(&gPlayerParty[j], MON_DATA_SPECIES, NULL);
 						
 						if (gBaseStats[data].type1 == TYPE_DARK || gBaseStats[data].type2 == TYPE_DARK)
 						{
@@ -1827,7 +1748,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem, s
 				
 				EVOLUTIONS_FORM_CHANGE:
 				if (gEvolutionTable[species][i].param <= level)
-					targetSpecies = GetSpeciesFormChange(data, gEvolutionTable[species][i].targetSpecies, GetMonData(mon, MON_DATA_PERSONALITY, NULL), GetMonAbility(mon), heldItem, 0, FALSE);
+					targetSpecies = GetMonFormChangeSpecies(mon, gEvolutionTable[species][i].targetSpecies, data);
 				break;
             }
         }

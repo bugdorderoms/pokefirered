@@ -1287,14 +1287,21 @@ static u16 GetTrainerClassBallId(u8 trainerClass)
 static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 {
     u32 i, j;
+	u16 formChanges[] = {FORM_CHANGE_GENDER, FORM_CHANGE_TERMINATOR};
 	const struct TrainerMon *partyData;
 	struct PokemonGenerator generator;
 	
-    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && !(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER)))
+    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
 		ZeroEnemyPartyMons();
 		
 		partyData = gTrainers[trainerNum].party;
+		
+		generator.otIdType = OT_ID_RANDOM;
+		generator.hasFixedPersonality = FALSE;
+		generator.fixedPersonality = 0;
+		generator.changeForm = TRUE;
+		generator.formChanges = formChanges;
 		
 		for (i = 0; i < gTrainers[trainerNum].partySize; i++)
 		{
@@ -1324,9 +1331,9 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 			}
 			
 			generator.shinyType = partyData[i].isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_LOCKED;
-			generator.otIdType = OT_ID_RANDOM;
-			generator.hasFixedPersonality = FALSE;
-			generator.fixedPersonality = 0;
+			
+			for (j = 0; j < MAX_MON_MOVES; j++)
+				generator.moves[j] = partyData[i].moves[j];
 			
 			if (partyData[i].nature)
 			{
@@ -1338,23 +1345,13 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 				generator.forceNature = FALSE;
 				generator.forcedNature = NUM_NATURES;
 			}
-			generator.pokemon = &party[i];
 			
 			// Create mon
-			CreateMon(generator);
-			
-			// Update form based on gender
-			DoOverworldFormChange(&party[i], FORM_CHANGE_GENDER);
+			CreateMon(&party[i], generator);
 			
 			// Set held item
 			SetMonData(&party[i], MON_DATA_HELD_ITEM, &partyData[i].heldItem);
 			
-			// Give moves
-			for (j = 0; j < MAX_MON_MOVES; j++)
-			{
-				if (partyData[i].moves[j])
-					SetMonMoveSlot(&party[i], partyData[i].moves[j], j);
-			}
 			// Give nickname
 			if (partyData[i].nickname != NULL)
 				SetMonData(&party[i], MON_DATA_NICKNAME, partyData[i].nickname);
@@ -2227,7 +2224,7 @@ static void BattleIntroDrawTrainersOrMonsSprites(void)
 					if (!IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE())
 						HandleSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[battlerId].species), FLAG_SET_SEEN, gBattleMons[battlerId].personality);
 				}
-				else if (!(gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LINK | BATTLE_TYPE_OLD_MAN_TUTORIAL)))
+				else if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LINK | BATTLE_TYPE_OLD_MAN_TUTORIAL)))
 					    HandleSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[battlerId].species), FLAG_SET_SEEN, gBattleMons[battlerId].personality);
 			}
             if (GetBattlerPosition(battlerId) == B_POSITION_PLAYER_LEFT)
@@ -2384,8 +2381,8 @@ static void BattleIntroRecordMonsToDex(void)
     {
         for (battlerId = 0; battlerId < gBattlersCount; ++battlerId)
 		{
-            if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT && !(gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LINK
-			| BATTLE_TYPE_GHOST | BATTLE_TYPE_OLD_MAN_TUTORIAL)))
+            if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT && !(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LINK | BATTLE_TYPE_GHOST
+			| BATTLE_TYPE_OLD_MAN_TUTORIAL)))
                 HandleSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[battlerId].species), FLAG_SET_SEEN, gBattleMons[battlerId].personality);
         }
 		gBattleMainFunc = BattleIntroPrintPlayerSendsOut;
@@ -2784,7 +2781,7 @@ static void HandleTurnActionSelectionState(void)
                     }
                     break;
                 case B_ACTION_USE_ITEM:
-                    if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_EREADER_TRAINER))
+                    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
                     {
 						gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CANT_USE_ITEM;
                         gSelectionBattleScripts[battlerId] = BattleScript_ActionSelectionItemsCantBeUsed;
@@ -3359,12 +3356,6 @@ static void HandleEndTurn_BattleWon(void)
         gBattlerAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
         gBattlescriptCurrInstr = BattleScript_LinkBattleWonOrLost;
         gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
-    }
-    else if (gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BATTLE_TOWER))
-    {
-        BattleStopLowHpSound();
-        PlayBGM(MUS_VICTORY_TRAINER);
-        gBattlescriptCurrInstr = BattleScript_BattleTowerTrainerBattleWon;
     }
     else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
     {

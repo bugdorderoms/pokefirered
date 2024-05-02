@@ -1097,6 +1097,8 @@ void InitPokedudePartyAndOpponent(void)
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.forceNature = TRUE,
+		.changeForm = FALSE,
+		.formChanges = NULL,
 	};
     gBattleTypeFlags = BATTLE_TYPE_POKEDUDE;
 	
@@ -1114,12 +1116,11 @@ void InitPokedudePartyAndOpponent(void)
 		generator.level = data[i].level;
 		generator.forcedGender = data[i].gender;
 		generator.forcedNature = data[i].nature;
-		generator.pokemon = mon;
-			
-        CreateMon(generator);
+		
+		for (j = 0; j < MAX_MON_MOVES; ++j)
+			generator.moves[j] = data[i].moves[j];
 
-        for (j = 0; j < MAX_MON_MOVES; ++j)
-            SetMonMoveSlot(mon, data[i].moves[j], j);
+        CreateMon(mon, generator);
 
     } while (data[++i].side != 0xFF);
 }

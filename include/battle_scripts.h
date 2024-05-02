@@ -26,7 +26,6 @@ extern const u8 BattleScript_LocalBattleLost[];
 extern const u8 BattleScript_LocalBattleLostPrintWhiteOut[];
 extern const u8 BattleScript_LocalBattleLostEnd[];
 extern const u8 BattleScript_LinkBattleWonOrLost[];
-extern const u8 BattleScript_BattleTowerTrainerBattleWon[];
 extern const u8 BattleScript_SmokeBallEscape[];
 extern const u8 BattleScript_RanAwayUsingMonAbility[];
 extern const u8 BattleScript_GotAwaySafely[];

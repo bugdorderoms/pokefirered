@@ -32,6 +32,7 @@
 #include "constants/songs.h"
 #include "constants/pokemon.h"
 #include "constants/trainers.h"
+#include "constants/moves.h"
 
 enum
 {
@@ -299,9 +300,11 @@ void StartOldManTutorialBattle(void)
 		.fixedPersonality = 0,
 		.forceNature = FALSE,
 		.forcedNature = NUM_NATURES,
-		.pokemon = &gEnemyParty[0],
+		.changeForm = FALSE,
+		.formChanges = NULL,
+		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
 	};
-    CreateMon(generator);
+    CreateMon(&gEnemyParty[0], generator);
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_ReturnToFieldContinueScriptPlayMapMusic;
     gBattleTypeFlags = BATTLE_TYPE_OLD_MAN_TUTORIAL;
@@ -339,9 +342,11 @@ void StartMarowakBattle(void)
 			.fixedPersonality = 0,
 			.forceNature = TRUE,
 			.forcedNature = NATURE_SERIOUS,
-			.pokemon = &gEnemyParty[0],
+			.changeForm = FALSE,
+			.formChanges = NULL,
+			.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
 		};
-        CreateMon(generator);
+        CreateMon(&gEnemyParty[0], generator);
 		
 		gBattleTypeFlags = BATTLE_TYPE_GHOST | BATTLE_TYPE_GHOST_UNVEILED;
     }
@@ -563,11 +568,6 @@ static u8 GetTrainerBattleTransition(void)
         return B_TRANSITION_BLUE;
 	
 	return sBattleTransitionTable_Trainer[GetBattleTransitionTypeByMap()][(GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A) < GetSumOfPlayerPartyLevel()) ? 0 : 1];
-}
-
-u8 BattleSetup_GetBattleTowerBattleTransition(void)
-{
-	return (GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel()) ? B_TRANSITION_SLIDING_POKEBALLS : B_TRANSITION_BIG_POKEBALL;
 }
 
 static u16 GetTrainerAFlag(void)

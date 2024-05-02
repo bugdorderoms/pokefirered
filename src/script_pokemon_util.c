@@ -11,6 +11,7 @@
 #include "constants/items.h"
 #include "constants/pokemon.h"
 #include "constants/daycare.h"
+#include "constants/moves.h"
 
 static void CB2_ReturnFromChooseHalfParty(void);
 
@@ -38,7 +39,7 @@ void HealPlayerParty(void)
     }
 }
 
-u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shinyType, bool8 hiddenAbility, u8 nature, u8 gender)
+u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shinyType, bool8 hiddenAbility, u8 nature, u8 gender, u16 moves[])
 {
     u16 nationalDexNum;
     int sentToPc;
@@ -56,10 +57,11 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shin
 		.shinyType = shinyType,
 		.forceNature = (nature != NUM_NATURES),
 		.forcedNature = nature,
-		.pokemon = mon,
+		.changeForm = FALSE,
+		.formChanges = NULL,
+		.moves = {moves[0], moves[1], moves[2], moves[3]},
 	};
-    CreateMon(generator);
-    species = DoWildEncounterFormChange(mon);
+    CreateMon(mon, generator);
     
     heldItem[0] = item;
     heldItem[1] = item >> 8;
@@ -80,7 +82,7 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shin
 	CalculateMonStats(mon);
 	
     sentToPc = GiveMonToPlayer(mon);
-    nationalDexNum = SpeciesToNationalPokedexNum(species);
+    nationalDexNum = SpeciesToNationalPokedexNum(GetMonData(mon, MON_DATA_SPECIES));
 
     switch(sentToPc)
     {
@@ -95,7 +97,7 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shin
     return sentToPc;
 }
 
-u8 ScriptGiveEgg(u16 species, u8 *ivs, u8 shinyType, bool8 hiddenAbility, u8 nature)
+u8 ScriptGiveEgg(u16 species, u8 *ivs, u8 shinyType, bool8 hiddenAbility, u8 nature, u16 moves[])
 {
 	u8 i;
 	bool8 sentToPc;
@@ -112,9 +114,11 @@ u8 ScriptGiveEgg(u16 species, u8 *ivs, u8 shinyType, bool8 hiddenAbility, u8 nat
 		.fixedPersonality = 0,
 		.forceNature = (nature != NUM_NATURES),
 		.forcedNature = nature,
-		.pokemon = mon,
+		.changeForm = FALSE,
+		.formChanges = NULL,
+		.moves = {moves[0], moves[1], moves[2], moves[3]},
 	};
-    CreateEgg(generator, TRUE);
+    CreateEgg(mon, generator, TRUE);
 	
 	if (hiddenAbility)
 		SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &hiddenAbility);
@@ -174,11 +178,13 @@ void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 lev
 		.shinyType = GENERATE_SHINY_NORMAL,
 		.forceNature = FALSE,
 		.forcedNature = NUM_NATURES,
-		.pokemon = &gEnemyParty[0],
+		.changeForm = FALSE,
+		.formChanges = NULL,
+		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
 	};
     ZeroEnemyPartyMons();
 	
-    CreateMon(generator);
+    CreateMon(&gEnemyParty[0], generator);
 	heldItem[0] = item;
 	heldItem[1] = item >> 8;
 	SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, heldItem);
@@ -187,9 +193,8 @@ void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 lev
 	{
 		generator.species = species2;
 		generator.level = level2;
-		generator.pokemon = &gEnemyParty[1];
 		
-		CreateMon(generator);
+		CreateMon(&gEnemyParty[1], generator);
 		heldItem[0] = item2;
 		heldItem[1] = item2 >> 8;
 		SetMonData(&gEnemyParty[1], MON_DATA_HELD_ITEM, heldItem);

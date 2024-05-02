@@ -11,7 +11,6 @@
 #include "battle_controllers.h"
 #include "battle_message.h"
 #include "battle_interface.h"
-#include "battle_tower.h"
 #include "battle_gfx_sfx_util.h"
 #include "battle_ai_script_commands.h"
 #include "battle_ai_switch_items.h"
@@ -192,14 +191,9 @@ static void OpponentHandleSwitchInAnim(u8 battlerId)
 	BtlController_HandleSwitchInAnim(battlerId, FALSE, SwitchIn_TryShinyAnim);
 }
 
-static u32 GetOpponentTrainerPicId(void)
+static inline u32 GetOpponentTrainerPicId(void)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
-        return GetBattleTowerTrainerFrontSpriteId();
-    else if (gBattleTypeFlags & BATTLE_TYPE_EREADER_TRAINER)
-        return GetEreaderTrainerFrontSpriteId();
-    else
-        return gTrainers[gTrainerBattleOpponent_A].trainerPic;
+	return gTrainers[gTrainerBattleOpponent_A].trainerPic;
 }
 
 static void OpponentHandleDrawTrainerPic(u8 battlerId)

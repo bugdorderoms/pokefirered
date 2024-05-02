@@ -73,7 +73,6 @@
 	.include "src/save.o"
 	.include "src/fldeff_sweetscent.o"
 	.include "src/learn_move.o"
-	.include "src/battle_tower.o"
 	.include "src/player_pc.o"
 	.include "src/intro.o"
 	.include "src/hall_of_fame.o"

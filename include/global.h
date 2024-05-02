@@ -213,58 +213,6 @@ struct LinkBattleRecords
 #include "global.fieldmap.h"
 #include "pokemon.h"
 
-struct BattleTowerRecord // record mixing
-{
-    /*0x00*/ u8 battleTowerLevelType; // 0 = level 50, 1 = level 100
-    /*0x01*/ u8 trainerClass;
-    /*0x02*/ u16 winStreak;
-    /*0x04*/ u8 name[PLAYER_NAME_LENGTH + 1];
-    /*0x0C*/ u8 trainerId[TRAINER_ID_LENGTH];
-    /*0x10*/ u16 greeting[EASY_CHAT_BATTLE_WORDS_COUNT];
-    /*0x1C*/ struct BattleTowerPokemon party[3];
-    /*0xA0*/ u32 checksum;
-};
-
-struct BattleTowerEReaderTrainer
-{
-    /*0x4A0 0x3F0 0x00*/ u8 unk0;
-    /*0x4A1 0x3F1 0x01*/ u8 trainerClass;
-    /*0x4A2 0x3F2 0x02*/ u16 winStreak;
-    /*0x4A4 0x3F4 0x04*/ u8 name[8];
-    /*0x4AC 0x3FC 0x0C*/ u8 trainerId[4];
-    /*0x4B0 0x400 0x10*/ u16 greeting[6];
-    /*0x4BC 0x40C 0x1C*/ u16 farewellPlayerLost[6];
-    /*0x4C8 0x418 0x28*/ u16 farewellPlayerWon[6];
-    /*0x4D4 0x424 0x34*/ struct BattleTowerPokemon party[3];
-    /*0x558 0x4A8 0xB8*/ u32 checksum;
-};
-
-struct BattleTowerData // Leftover from R/S
-{
-    /*0x0000, 0x00B0*/ struct BattleTowerRecord playerRecord;
-    /*0x00A4, 0x0154*/ struct BattleTowerRecord records[5]; // from record mixing
-    /*0x03D8, 0x0488*/ u16 firstMonSpecies; // species of the first pokemon in the player's battle tower party
-    /*0x03DA, 0x048A*/ u16 defeatedBySpecies; // species of the pokemon that defated the player
-    /*0x03DC, 0x048C*/ u8 defeatedByTrainerName[8];
-    /*0x03E4, 0x0494*/ u8 firstMonNickname[POKEMON_NAME_LENGTH]; // nickname of the first pokemon in the player's battle tower party
-    /*0x03F0, 0x04A0*/ struct BattleTowerEReaderTrainer ereaderTrainer;
-    /*0x04AC, 0x055C*/ u8 battleTowerLevelType:1; // 0 = level 50; 1 = level 100
-    /*0x04AC, 0x055C*/ u8 lastStreakLevelType:1; // 0 = level 50, 1 = level 100.  level type of the last streak. Used by tv to report the level mode.
-    /*0x04AC, 0x055C*/ u8 unk_554:1;
-    /*0x04AD, 0x055D*/ u8 battleOutcome;
-    /*0x04AE, 0x055E*/ u8 var_4AE[2];
-    /*0x04B0, 0x0560*/ u16 curChallengeBattleNum[2]; // 1-based index of battle in the current challenge. (challenges consist of 7 battles)
-    /*0x04B4, 0x0564*/ u16 curStreakChallengesNum[2]; // 1-based index of the current challenge in the current streak.
-    /*0x04B8, 0x0568*/ u16 recordWinStreaks[2];
-    /*0x04BC, 0x056C*/ u8 battleTowerTrainerId; // index for gBattleTowerTrainers table
-    /*0x04BD, 0x056D*/ u8 selectedPartyMons[0x3]; // indices of the 3 selected player party mons.
-    /*0x04C0, 0x0570*/ u16 prizeItem;
-    /*0x04C2, 0x0572*/ u8 battledTrainerIds[6];
-    /*0x04C8, 0x0578*/ u16 totalBattleTowerWins;
-    /*0x04CA, 0x057A*/ u16 bestBattleTowerWinStreak;
-    /*0x04CC, 0x057C*/ u16 currentWinStreaks[2];
-}; /* size = 0x7E8 */
-
 struct SaveBlock2
 {
     /*0x000*/ u8 playerName[PLAYER_NAME_LENGTH + 1];
@@ -292,7 +240,6 @@ struct SaveBlock2
               struct Pokedex pokedex;
               struct Time localTimeOffset;
               struct Time lastBerryTreeUpdate;
-              struct BattleTowerData battleTower;
               struct LinkBattleRecords linkBattleRecords;
               struct PokemonJumpRecords pokeJump;
               struct BerryPickingResults berryPick;

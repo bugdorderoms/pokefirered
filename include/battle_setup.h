@@ -12,7 +12,6 @@ void StartScriptedWildBattle(void);
 void StartMarowakBattle(void);
 void StartLegendaryBattle(void);
 u8 BattleSetup_GetTerrainId(void);
-u8 BattleSetup_GetBattleTowerBattleTransition(void);
 const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data);
 void ConfigureAndSetUpOneTrainerBattle(u8 trainerEventObjId, const u8 *trainerScript);
 bool32 GetTrainerFlagFromScriptPointer(const u8 *data);

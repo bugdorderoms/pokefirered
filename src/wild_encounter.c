@@ -17,6 +17,7 @@
 #include "constants/maps.h"
 #include "constants/abilities.h"
 #include "constants/items.h"
+#include "constants/moves.h"
 
 struct WildEncounterData
 {
@@ -229,11 +230,15 @@ u16 GenerateWildMon(u16 species, u8 level)
 		.shinyType = GENERATE_SHINY_NORMAL,
 		.forceNature = FALSE,
 		.forcedNature = NUM_NATURES,
-		.pokemon = &gEnemyParty[0],
+		.changeForm = TRUE,
+		.formChanges = NULL,
+		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
 	};
+	
     ZeroEnemyPartyMons();
-	CreateMon(generator);
-	return DoWildEncounterFormChange(&gEnemyParty[0]);
+	CreateMon(&gEnemyParty[0], generator);
+	
+	return GetMonData(&gEnemyParty[0], MON_DATA_SPECIES);
 }
 
 enum
@@ -275,9 +280,7 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo * info, u8 area, u8
 static u16 GenerateFishingEncounter(const struct WildPokemonInfo * info, u8 rod)
 {
     u8 slot = ChooseWildMonIndex_Fishing(rod);
-    u8 level = ChooseWildMonLevel(&info->wildPokemon[slot]);
-    
-    return GenerateWildMon(info->wildPokemon[slot].species, level);
+    return GenerateWildMon(info->wildPokemon[slot].species, ChooseWildMonLevel(&info->wildPokemon[slot]));
 }
 
 static bool8 DoWildEncounterRateDiceRoll(u16 a0)

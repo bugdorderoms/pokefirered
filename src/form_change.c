@@ -15,9 +15,10 @@
 #include "constants/pokedex.h"
 #include "constants/pokemon.h"
 
-u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 ability, u16 itemId, u8 battlerId, bool8 knowsMove)
+static u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 ability, u16 itemId, u16 *moves, u8 battlerId)
 {
-	u8 i;
+	u8 i, j;
+	bool8 knowsMove;
 	u16 param, targetSpecies = SPECIES_NONE;
 	const struct FormChange *formsTable = gFormChangeTable[species];
 	
@@ -132,6 +133,14 @@ u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 a
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
 					case FORM_CHANGE_KNOW_MOVE:
+					    knowsMove = FALSE;
+						
+						for (j = 0; j < MAX_MON_MOVES; j++)
+						{
+							if (param == moves[j])
+								knowsMove = TRUE;
+						}
+					
 					    if (formsTable[i].param2 == knowsMove)
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
@@ -164,46 +173,30 @@ u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 a
 	return targetSpecies;
 }
 
-static u16 SpeciesHasFormChangeType(u16 species, u16 formChangeType)
-{
-	u8 i;
-	const struct FormChange *formsTable = gFormChangeTable[species];
-	
-	if (formsTable != NULL)
-	{
-		for (i = 0; formsTable[i].method != FORM_CHANGE_TERMINATOR; i++)
-		{
-			if (formsTable[i].method == formChangeType)
-				return formsTable[i].param;
-		}
-	}
-	return FORM_CHANGE_TERMINATOR;
-}
-
 ///////////////////////////
 // OVERWORLD FORM CHANGE //
 ///////////////////////////
 
-u16 GetMonFormChangeSpecies(struct Pokemon *mon, u16 formChangeType)
+u16 GetMonFormChangeSpecies(struct Pokemon *mon, u16 species, u16 formChangeType)
 {
-	u16 species = GetMonData(mon, MON_DATA_SPECIES), item = GetMonData(mon, MON_DATA_HELD_ITEM), ability = GetMonAbility(mon);
-	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY);
-	u16 param = SpeciesHasFormChangeType(species, FORM_CHANGE_KNOW_MOVE);
-	bool8 hasWantedMoveKnow = FALSE;
+	u8 i;
+	u16 moves[MAX_MON_MOVES];
 	
-	if (param != FORM_CHANGE_TERMINATOR)
-		hasWantedMoveKnow = (FindMoveSlotInMoveset(mon, param) != MAX_MON_MOVES);
+	for (i = 0; i < MAX_MON_MOVES; i++)
+		moves[i] = GetMonData(mon, MON_DATA_MOVE1 + i);
 	
-	return GetSpeciesFormChange(formChangeType, species, personality, ability, item, 0, hasWantedMoveKnow);
+	return GetSpeciesFormChange(formChangeType, species, GetMonData(mon, MON_DATA_PERSONALITY), GetMonAbility(mon), GetMonData(mon, MON_DATA_HELD_ITEM), moves, 0);
 }
 
 u16 DoOverworldFormChange(struct Pokemon *mon, u16 formChangeType)
 {
-	u16 targetSpecies = GetMonFormChangeSpecies(mon, formChangeType);
+	u16 species = GetMonData(mon, MON_DATA_SPECIES);
+	u16 targetSpecies = GetMonFormChangeSpecies(mon, species, formChangeType);
 	
-	if (targetSpecies && targetSpecies < NUM_SPECIES && targetSpecies != GetMonData(mon, MON_DATA_SPECIES))
+	if (targetSpecies && targetSpecies < NUM_SPECIES && targetSpecies != species)
 	{
-		SetMonData(mon, MON_DATA_SPECIES, &targetSpecies);
+		species = targetSpecies;
+		SetMonData(mon, MON_DATA_SPECIES, &species);
 		CalculateMonStats(mon);
 		
 		if (formChangeType == FORM_CHANGE_HOLD_ITEM) // update mon icon sprite if it's in pc or in party
@@ -212,28 +205,12 @@ u16 DoOverworldFormChange(struct Pokemon *mon, u16 formChangeType)
 				UpdatePcMonIconSpecies();
 			else if (gMain.inParty)
 			{
-				UpdateCurrentPartyMonIconSpecies(targetSpecies);
-				PlayCry1(targetSpecies, 0);
+				UpdateCurrentPartyMonIconSpecies(species);
+				PlayCry1(species, 0);
 			}
 		}
 	}
-	return GetMonData(mon, MON_DATA_SPECIES);
-}
-
-u16 DoWildEncounterFormChange(struct Pokemon *mon)
-{
-	u8 i;
-	u16 wildEncounterFormChange[] =
-	{
-		FORM_CHANGE_GENDER, FORM_CHANGE_PERSONALITY, FORM_CHANGE_SEASON, FORM_CHANGE_NATURE, FORM_CHANGE_TERMINATOR
-	};
-	
-	for (i = 0; wildEncounterFormChange[i] != FORM_CHANGE_TERMINATOR; i++)
-		DoOverworldFormChange(mon, wildEncounterFormChange[i]);
-	
-	GiveMonInitialMoveset(mon); // Other forms may have diferent movesets
-	
-	return DoOverworldFormChange(mon, FORM_CHANGE_KNOW_MOVE);
+	return species;
 }
 
 void DoPlayerPartyEndBattleFormChange(void)
@@ -252,6 +229,32 @@ void DoPlayerPartyEndBattleFormChange(void)
 ////////////////////////
 // BATTLE FORM CHANGE //
 ////////////////////////
+
+u16 GetBattlerFormChangeSpecies(u8 battlerId, u16 species, u16 itemId, u16 formChangeType)
+{
+	return GetSpeciesFormChange(formChangeType, species, gBattleMons[battlerId].personality, GetBattlerAbility(battlerId), itemId, &gBattleMons[battlerId].moves[0], battlerId);
+}
+
+u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType)
+{
+	u16 item, species, personalitySpecies, targetSpecies = SPECIES_NONE;
+	
+	if (!(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED)) // no change form if transformed
+	{
+		item = gBattleMons[battlerId].item; // form change items are not affected by Kluts, etc.
+		species = gBattleMons[battlerId].species;
+		
+		targetSpecies = GetBattlerFormChangeSpecies(battlerId, species, item, formChangeType);
+		personalitySpecies = GetBattlerFormChangeSpecies(battlerId, targetSpecies, item, FORM_CHANGE_PERSONALITY);
+		
+		if (personalitySpecies) // handle minior forms
+		    targetSpecies = personalitySpecies;
+			
+		if (targetSpecies == species)
+			targetSpecies = SPECIES_NONE;
+	}
+	return targetSpecies;
+}
 
 void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 reloadStats, bool8 reloadAbility)
 {
@@ -282,27 +285,20 @@ void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 r
 	ClearIllusionMon(battlerId);
 }
 
-u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType)
+static bool8 SpeciesHasFormChangeType(u16 species, u16 formChangeType)
 {
-	u16 ability, item, species, personalitySpecies, targetSpecies = SPECIES_NONE;
-	u32 personality;
+	u8 i;
+	const struct FormChange *formsTable = gFormChangeTable[species];
 	
-	if (!(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED)) // no change form if transformed
+	if (formsTable != NULL)
 	{
-		item = gBattleMons[battlerId].item; // form change items are not affected by Kluts, etc.
-		personality = gBattleMons[battlerId].personality;
-		species = gBattleMons[battlerId].species;
-		ability = GetBattlerAbility(battlerId);
-		targetSpecies = GetSpeciesFormChange(formChangeType, species, personality, ability, item, battlerId, FALSE);
-		personalitySpecies = GetSpeciesFormChange(FORM_CHANGE_PERSONALITY, targetSpecies, personality, ability, item, 0, FALSE);
-		
-		if (personalitySpecies) // handle minior forms
-		    targetSpecies = personalitySpecies;
-			
-		if (targetSpecies == species)
-			targetSpecies = SPECIES_NONE;
+		for (i = 0; formsTable[i].method != FORM_CHANGE_TERMINATOR; i++)
+		{
+			if (formsTable[i].method == formChangeType)
+				return TRUE;
+		}
 	}
-	return targetSpecies;
+	return FALSE;
 }
 
 void DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType)
@@ -313,11 +309,11 @@ void DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType)
 	switch (formChangeType)
 	{
 		case FORM_CHANGE_SWITCH_OUT:
-		    if (SpeciesHasFormChangeType(gBattleMons[battlerId].species, FORM_CHANGE_SWITCH_OUT) == FORM_CHANGE_TERMINATOR) // don't revert form when switched out
+		    if (!SpeciesHasFormChangeType(gBattleMons[battlerId].species, FORM_CHANGE_SWITCH_OUT)) // don't revert form when switched out
 				DoBattleFormChange(battlerId, gBattleMonForms[GetBattlerSide(battlerId)][partyId], FALSE, TRUE, FALSE);
 			break;
 		case FORM_CHANGE_FAINT:
-		    if (SpeciesHasFormChangeType(gBattleMons[battlerId].species, FORM_CHANGE_FAINT) == FORM_CHANGE_TERMINATOR) // don't revert form when faint
+		    if (!SpeciesHasFormChangeType(gBattleMons[battlerId].species, FORM_CHANGE_FAINT)) // don't revert form when faint
 			{
 				BtlController_EmitSetMonData(battlerId, BUFFER_A, REQUEST_SPECIES_BATTLE, 0, 2, &gBattleMonForms[GetBattlerSide(battlerId)][partyId]);
 				MarkBattlerForControllerExec(battlerId);

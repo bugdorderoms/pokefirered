@@ -745,13 +745,14 @@ static void CB2_ReturnFromLinkTrade2(void)
 		generator.shinyType = GENERATE_SHINY_NORMAL;
 		generator.forceNature = FALSE;
 		generator.forcedNature = NUM_NATURES;
+		generator.changeForm = FALSE;
+		generator.formChanges = NULL;
+		
+		for (i = 0; i < MAX_MON_MOVES; i++)
+			generator.moves[i] = MOVE_NONE;
 		
         for (i = 0; i < PARTY_SIZE; i++)
-        {
-			generator.pokemon = &gEnemyParty[i];
-			
-            CreateMon(generator);
-        }
+            CreateMon(&gEnemyParty[i], generator);
 
         PrintTradeErrorOrStatusMessage(TRADESTATMSG_COMMSTANDBY);
         ShowBg(0);
