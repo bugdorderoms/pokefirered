@@ -639,7 +639,7 @@ static void Task_ExecuteMainMenuSelection(u8 taskId)
 				break;
 			case MAIN_MENU_ACTION_OPTIONS:
 				FreeAllWindowBuffers();
-				SetMainCallback2(CB2_OptionsMenuFromStartMenu);
+				SetMainCallback2(CB2_InitOptionsMenu);
 				gMain.savedCallback = CB2_InitMainMenu;
 				DestroyTask(taskId);
 				break;

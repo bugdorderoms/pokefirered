@@ -68,7 +68,7 @@ static s8 GetWarpEventAtMapPosition(struct MapHeader * mapHeader, struct MapPosi
 static bool8 TryDoorWarp(struct MapPosition * position, u16 metatileBehavior, u8 playerDirection);
 static s8 GetWarpEventAtPosition(struct MapHeader * mapHeader, u16 x, u16 y, u8 z);
 static const u8 *GetCoordEventScriptAtPosition(struct MapHeader * mapHeader, u16 x, u16 y, u8 z);
-static bool8 ToggleAutoRun(void);
+static bool8 DoLRButtonAction(bool8 pressedL);
 
 void FieldClearPlayerInput(struct FieldInput *input)
 {
@@ -217,10 +217,10 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     if (input->pressedSelectButton && UseRegisteredKeyItemOnField() == TRUE)
         return TRUE;
 
-    if (input->pressedRButton && ToggleAutoRun())
+    if (input->pressedRButton && DoLRButtonAction(FALSE))
 		return TRUE;
 	
-    if (input->pressedLButton && TryStartDexnavSearch())
+    if (input->pressedLButton && DoLRButtonAction(TRUE))
         return TRUE;
 
     return FALSE;
@@ -1063,4 +1063,12 @@ static bool8 ToggleAutoRun(void)
 	ScriptContext1_SetupScript(gSaveBlock2Ptr->autoRun ? EventScript_EnableAutoRun : EventScript_DisableAutoRun);
 
 	return TRUE;
+}
+
+static bool8 DoLRButtonAction(bool8 pressedL)
+{
+	if (pressedL)
+		return gSaveBlock2Ptr->optionsDexnavSearchOnR ? ToggleAutoRun() : TryStartDexnavSearch();
+	else
+		return gSaveBlock2Ptr->optionsDexnavSearchOnR ? TryStartDexnavSearch() : ToggleAutoRun();
 }

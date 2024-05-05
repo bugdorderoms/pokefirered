@@ -556,7 +556,7 @@ static bool8 StartMenuOptionCallback(void)
         PlayRainStoppingSoundEffect();
         DestroySafariZoneStatsWindow();
         CleanupOverworldWindowsAndTilemaps();
-        SetMainCallback2(CB2_OptionsMenuFromStartMenu);
+        SetMainCallback2(CB2_InitOptionsMenu);
         gMain.savedCallback = CB2_ReturnToFieldWithOpenMenu;
         return TRUE;
     }

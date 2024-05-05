@@ -226,9 +226,10 @@ struct SaveBlock2
 	/*0x010*/ u32 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
 	/*0x010*/ u32 optionsBattleSceneOff:1; // whether battle animations are disabled
 	/*0x010*/ u32 optionsSkipPkmnNickname:1; // whether pokemon nickname prompt are disabled
+	/*0x010*/ u32 optionsDexnavSearchOnR:1; // swap dexnav search and auto run button functions
 	/*0x010*/ u32 expShare:1; // whether exp share is on
 	/*0x010*/ u32 autoRun:1; // whether auto run is on
-	/*0x010*/ u32 unused:18;
+	/*0x010*/ u32 unused:17;
 	/*0x014*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
 	/*0x018*/ u32 encryptionKey;
 	/*0x01C*/ u16 mapView[0x100];
