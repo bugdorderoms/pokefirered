@@ -1096,7 +1096,7 @@ static void atk01_accuracycheck(void)
 	    return;
     else
     {
-		if ((Random() % 100 + 1) > CalcMoveTotalAccuracy(gCurrentMove, gBattlerAttacker, gBattlerTarget)) // final calculation, determines if the move misses
+		if ((RandomMax(100) + 1) > CalcMoveTotalAccuracy(gCurrentMove, gBattlerAttacker, gBattlerTarget)) // final calculation, determines if the move misses
 		{
 			gMoveResultFlags |= MOVE_RESULT_MISSED;
 			
@@ -1182,7 +1182,7 @@ static void atk04_critcalc(void)
 	if ((gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_POKEDUDE))
 		|| (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE && !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_INFLICT_DMG)) || critChance == -1)
 		gIsCriticalHit = FALSE;
-	else if (critChance == -2 || !(Random() % sCriticalHitChance[critChance]))
+	else if (critChance == -2 || !(RandomMax(sCriticalHitChance[critChance])))
 	{
 		gIsCriticalHit = TRUE;
 		
@@ -1417,7 +1417,7 @@ static void atk07_adjustdamage(void) // Check for effects that prevent the targe
     u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
 	
 	// Check Focus Band
-    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
+    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && RandomPercent(param))
     {
         RecordItemEffectBattle(gBattlerTarget, holdEffect);
         gSpecialStatuses[gBattlerTarget].focusBanded = 1;
@@ -1898,7 +1898,7 @@ static void atk11_tryacupressure(void)
 		{
 			do
 			{
-				statId = (Random() % (NUM_BATTLE_STATS - 1)) + 1;
+				statId = RandomRange(STAT_ATK, NUM_BATTLE_STATS - 1);
 			}
 			while (!(bits & gBitTable[statId]));
 			
@@ -1961,7 +1961,7 @@ static void atk15_seteffectwithchance(void)
 	{
 		percentChance = GetEffectChanceIncreases(gBattlerAttacker, gBattleMoves[gCurrentMove].secondaryEffectChance);
 		
-		if (gBattleStruct->moveEffect.moveEffectByte && (gBattleStruct->moveEffect.certain || Random() % 100 <= percentChance))
+		if (gBattleStruct->moveEffect.moveEffectByte && (gBattleStruct->moveEffect.certain || RandomMax(100) <= percentChance))
 		{
 			if (percentChance >= 100)
 				gBattleStruct->moveEffect.certain = TRUE;
@@ -5436,7 +5436,7 @@ static void atk7C_trymirrormove(void)
     if (move && move != MOVE_UNVAILABLE)
 		newMove = move;
     else if (validMovesCount)
-        newMove = movesArray[Random() % validMovesCount];
+        newMove = movesArray[RandomMax(validMovesCount)];
     else // No valid moves find
     {
         ++gBattlescriptCurrInstr;
@@ -5857,7 +5857,7 @@ static void atk8F_forcerandomswitch(void)
             {
                 do
                 {
-                    val = Random() % 3;
+                    val = RandomMax(3);
 			
                     if (GetLinkTrainerFlankId(GetBattlerMultiplayerId(gBattlerTarget)) == 1)
                         i = val + 3;
@@ -5872,7 +5872,7 @@ static void atk8F_forcerandomswitch(void)
                 {
                     do
                     {
-                        i = Random() % PARTY_SIZE;
+                        i = RandomMax(PARTY_SIZE);
                     }
                     while (i == gBattlerPartyIndexes[gBattlerTarget] || i == gBattlerPartyIndexes[BATTLE_PARTNER(gBattlerTarget)] || !MonCanBattle(&party[i]));
                 }
@@ -5880,7 +5880,7 @@ static void atk8F_forcerandomswitch(void)
                 {
                     do
                     {
-                        i = Random() % PARTY_SIZE;
+                        i = RandomMax(PARTY_SIZE);
                     }
                     while (i == gBattlerPartyIndexes[gBattlerTarget] || !MonCanBattle(&party[i]));
                 }
@@ -5949,7 +5949,7 @@ static bool8 CalcKOChance(void)
 	
 	chance = acc + (gBattleMons[gBattlerAttacker].level - gBattleMons[gBattlerTarget].level);
 	
-	if (Random() % 100 + 1 < chance && gBattleMons[gBattlerAttacker].level >= gBattleMons[gBattlerTarget].level)
+	if (RandomMax(100) + 1 < chance && gBattleMons[gBattlerAttacker].level >= gBattleMons[gBattlerTarget].level)
 		return TRUE;
 	else
 		return FALSE;
@@ -5960,7 +5960,7 @@ static void atk93_tryKO(void)
     u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
     bool8 chance;
 	
-    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && (Random() % 100) < param)
+    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && RandomPercent(param))
     {
         RecordItemEffectBattle(gBattlerTarget, HOLD_EFFECT_FOCUS_BAND);
         gSpecialStatuses[gBattlerTarget].focusBanded = 1;
@@ -6326,7 +6326,7 @@ static void atkA6_settypetorandomresistance(void) // conversion 2
 		    
 		    while (resistTypes != 0)
 		    {
-		    	i = Random() % NUMBER_OF_MON_TYPES;
+		    	i = RandomMax(NUMBER_OF_MON_TYPES);
 		    	
 		    	if (resistTypes & gBitTable[i])
 		    	{
@@ -6409,7 +6409,7 @@ static void atkA9_trychoosesleeptalkmove(void)
     else // at least one move can be chosen
     {
         do
-            movePosition = Random() % MAX_MON_MOVES;
+            movePosition = RandomMax(MAX_MON_MOVES);
         while ((gBitTable[movePosition] & unusableMovesBits));
 		
 		gCurrMovePos = movePosition;
@@ -6771,7 +6771,7 @@ static void atkB9_magnitudedamagecalculation(void)
 	
 	if (!gBattleStruct->magnitudeBasePower) // Check power has't been calculated
 	{
-		magnitude = Random() % 100;
+		magnitude = RandomMax(100);
 		
 		if (magnitude < 5)
 		{
@@ -7296,7 +7296,7 @@ static void atkDE_assistattackselect(void)
 	}
     if (chooseableMovesNo)
     {
-        gCalledMove = movesArray[Random() % chooseableMovesNo];
+        gCalledMove = movesArray[RandomMax(chooseableMovesNo)];
         gBattlescriptCurrInstr += 5;
     }
     else
@@ -7400,7 +7400,7 @@ static void atkE5_pickup(void)
 
     for (i = 0; i < PARTY_SIZE; ++i)
     {
-		random = Random() % 100;
+		random = RandomMax(100);
         heldItem = GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM);
 	    ability = GetMonAbility(&gPlayerParty[i]);
 		level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL);
@@ -7411,7 +7411,7 @@ static void atkE5_pickup(void)
         
 		if (IsMonValidSpecies(&gPlayerParty[i]) && !heldItem)
 		{
-			if (ability == ABILITY_PICKUP && !(Random() % 10))
+			if (ability == ABILITY_PICKUP && !(RandomMax(10)))
 			{
 				for (j = 0; j < 15; ++j)
 				{
@@ -7429,7 +7429,7 @@ static void atkE5_pickup(void)
 				}
 			}
 #if SHUCKLE_MAKES_BERRY_JUICE_CHANCE != 0
-			else if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2) == SPECIES_SHUCKLE && ItemId_GetPocket(heldItem) == POCKET_BERRY_POUCH && Random() % 100 < SHUCKLE_MAKES_BERRY_JUICE_CHANCE)
+			else if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2) == SPECIES_SHUCKLE && ItemId_GetPocket(heldItem) == POCKET_BERRY_POUCH && RandomPercent(SHUCKLE_MAKES_BERRY_JUICE_CHANCE))
 			{
 				heldItem = ITEM_BERRY_JUICE;
 				SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &heldItem);
@@ -8334,7 +8334,7 @@ void BS_Metronome(void)
 	
     while (TRUE)
     {
-        move = (Random() % (MOVES_COUNT - 1)) + 1;
+        move = RandomRange(MOVE_NONE + 1, MOVES_COUNT - 1);
 	    
         if (!gBattleMoves[move].flags.forbiddenMetronome)
 		{
@@ -8346,7 +8346,7 @@ void BS_Metronome(void)
 
 void BS_PsywaveDamageEffect(void)
 {
-	u32 rand = (Random() % 101) + 50;
+	u32 rand = RandomMax(101) + 50;
 	
 	gBattleMoveDamage = (gBattleMons[gBattlerAttacker].level * rand) / 100;
 	

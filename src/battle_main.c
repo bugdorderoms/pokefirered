@@ -3050,12 +3050,7 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
     else if (battler1Speed < battler2Speed)
         return DEFENDER_STRIKES_FIRST;
     else
-    {
-        if ((Random() & 1))
-            return ATTACKER_STRIKES_FIRST;
-        else
-            return SPEED_TIE;
-    }
+		return RandomPercent(50) ? ATTACKER_STRIKES_FIRST : SPEED_TIE;
 }
 
 s8 GetChosenMovePriority(u8 battler)
@@ -3947,7 +3942,7 @@ static void HandleAction_ThrowBait(void)
     gBattlerAttacker = gBattlerByTurnOrder[gCurrentTurnActionNumber];
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
-    gBattleStruct->safariPkblThrowCounter += Random() % 5 + 2;
+    gBattleStruct->safariPkblThrowCounter += RandomRange(2, 6);
     if (gBattleStruct->safariPkblThrowCounter > 6)
         gBattleStruct->safariPkblThrowCounter = 6;
     gBattleStruct->safariGoNearCounter = 0;
@@ -3963,7 +3958,7 @@ static void HandleAction_ThrowRock(void)
     gBattlerAttacker = gBattlerByTurnOrder[gCurrentTurnActionNumber];
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
-    gBattleStruct->safariGoNearCounter += Random() % 5 + 2;
+    gBattleStruct->safariGoNearCounter += RandomRange(2, 6);
     if (gBattleStruct->safariGoNearCounter > 6)
         gBattleStruct->safariGoNearCounter = 6;
     gBattleStruct->safariPkblThrowCounter = 0;

@@ -31,11 +31,11 @@ static u8 TryStartRandomWeather(void)
 	    		case SEASON_SPRING:
 	    		    weatherChance += 10; // +10% chance
 	    			
-	    			if (Random() % 100 < 5) // 5% chance that becames a heavy rain
+	    			if (RandomPercent(5)) // 5% chance that becames a heavy rain
 	    				newWeather = WEATHER_RAIN_THUNDERSTORM;
 	    			break;
 	    		case SEASON_AUTUMN:
-	    		    if (Random() % 100 < 2) // 2% chance init a snow
+	    		    if (RandomPercent(2)) // 2% chance init a snow
 	    			    newWeather = WEATHER_SNOW;
 	    			else
 	    				newWeather = WEATHER_NONE; // Otherwise, no weather occours
@@ -43,7 +43,7 @@ static u8 TryStartRandomWeather(void)
 	    		case SEASON_WINTER:
 	    		    weatherChance = 5; // Set default chance to 5%
 	    			
-	    			if (Random() % 100 < 2) // 2% chance that becames a heavy rain
+	    			if (RandomPercent(2)) // 2% chance that becames a heavy rain
 	    			    newWeather = WEATHER_RAIN_THUNDERSTORM;
 	    			break;
 	    	}
@@ -67,7 +67,7 @@ static u8 TryStartRandomWeather(void)
 	    	}
 	    	
 	    	// Final calculation
-	    	if (newWeather != WEATHER_NONE && (Random() % 100 < weatherChance))
+	    	if (newWeather != WEATHER_NONE && RandomPercent(weatherChance))
 	    		gSaveBlock1Ptr->weather = newWeather; // Apply new weather
 	    	else
 	    		newWeather = gSaveBlock1Ptr->weather; // Failed to apply

@@ -290,7 +290,7 @@ static void OpponentHandleChooseMove(u8 battlerId)
 
         do
         {
-            chosenMoveId = Random() & 3;
+            chosenMoveId = RandomMax(MAX_MON_MOVES);
             move = moveInfo->moves[chosenMoveId];
         }
         while (move == MOVE_NONE);

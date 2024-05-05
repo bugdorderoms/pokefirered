@@ -224,8 +224,8 @@ static void CreatePostEvoSparkleSet2(u8 unused)
     u8 spriteId = CreateSprite(&sSpriteTemplate_EvolutionSparkles, 120, 56, 0);
     if (spriteId != MAX_SPRITES)
     {
-        gSprites[spriteId].data[3] = 3 - (Random() % 7);
-        gSprites[spriteId].data[5] = 48 + (Random() & 63);
+        gSprites[spriteId].data[3] = 3 - RandomMax(7);
+        gSprites[spriteId].data[5] = 48 + RandomMax(64);
         gSprites[spriteId].data[7] = 0;
         gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
         gSprites[spriteId].oam.matrixNum = 31;
@@ -381,7 +381,7 @@ static void EvoTask_CreatePostEvoSparklesSet2(u8 taskId)
         {
         default:
             if (gTasks[taskId].data[15] < 50)
-                CreatePostEvoSparkleSet2(Random() & 7);
+                CreatePostEvoSparkleSet2(RandomMax(8));
             break;
         case 0:
             for (i = 0; i < 8; i++)
@@ -432,7 +432,7 @@ static void EvoTask_CreatePostEvoSparklesSet2Trade(u8 taskId)
         {
         default:
             if (gTasks[taskId].data[15] < 50)
-                CreatePostEvoSparkleSet2(Random() & 7);
+                CreatePostEvoSparkleSet2(RandomMax(8));
             break;
         case 0:
             for (i = 0; i < 8; i++)

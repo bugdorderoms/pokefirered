@@ -392,7 +392,7 @@ static const u8 sSlotMachineIndices[] = {
 
 u8 GetRandomSlotMachineId(void)
 {
-    return sSlotMachineIndices[Random() % ARRAY_COUNT(sSlotMachineIndices)];
+    return sSlotMachineIndices[RandomMax(ARRAY_COUNT(sSlotMachineIndices))];
 }
 
 bool8 IsThereRoomInAnyBoxForMorePokemon(void)
@@ -496,13 +496,13 @@ void DoPicboxCancel(void)
 
 void SetVermilionTrashCans(void)
 {
-    u16 idx = (Random() % 15) + 1;
+    u16 idx = RandomMax(15) + 1;
     gSpecialVar_0x8004 = idx;
     gSpecialVar_0x8005 = idx;
     switch (gSpecialVar_0x8004)
     {
     case 1:
-        idx = Random() % 2;
+        idx = RandomMax(2);
         if (idx == 0)
             gSpecialVar_0x8005 += 1;
         else
@@ -511,7 +511,7 @@ void SetVermilionTrashCans(void)
     case 2:
     case 3:
     case 4:
-        idx = Random() % 3;
+        idx = RandomMax(3);
         if (idx == 0)
             gSpecialVar_0x8005 += 1;
         else if (idx == 1)
@@ -520,14 +520,14 @@ void SetVermilionTrashCans(void)
             gSpecialVar_0x8005 -= 1;
         break;
     case 5:
-        idx = Random() % 2;
+        idx = RandomMax(2);
         if (idx == 0)
             gSpecialVar_0x8005 += 5;
         else
             gSpecialVar_0x8005 -= 1;
         break;
     case 6:
-        idx = Random() % 3;
+        idx = RandomMax(3);
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else if (idx == 1)
@@ -538,7 +538,7 @@ void SetVermilionTrashCans(void)
     case 7:
     case 8:
     case 9:
-        idx = Random() % 4;
+        idx = RandomMax(4);
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else if (idx == 1)
@@ -549,7 +549,7 @@ void SetVermilionTrashCans(void)
             gSpecialVar_0x8005 -= 1;
         break;
     case 10:
-        idx = Random() % 3;
+        idx = RandomMax(3);
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else if (idx == 1)
@@ -558,7 +558,7 @@ void SetVermilionTrashCans(void)
             gSpecialVar_0x8005 -= 1;
         break;
     case 11:
-        idx = Random() % 2;
+        idx = RandomMax(2);
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else
@@ -567,7 +567,7 @@ void SetVermilionTrashCans(void)
     case 12:
     case 13:
     case 14:
-        idx = Random() % 3;
+        idx = RandomMax(3);
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else if (idx == 1)
@@ -576,7 +576,7 @@ void SetVermilionTrashCans(void)
             gSpecialVar_0x8005 -= 1;
         break;
     case 15:
-        idx = Random() % 2;
+        idx = RandomMax(2);
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else
@@ -640,7 +640,7 @@ static u16 SampleResortGorgeousMon(void)
 	
     for (i = 0; i < 100; i++)
     {
-        species = (Random() % (NUM_SPECIES - 1)) + 1;
+        species = RandomMax(NUM_SPECIES - 1) + 1;
 		
         if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
             return species;
@@ -657,7 +657,7 @@ static u16 SampleResortGorgeousMon(void)
 
 static u16 SampleResortGorgeousReward(void)
 {
-	return (Random() % 100) >= 30 ? ITEM_LUXURY_BALL : sResortGorgeousDeluxeRewards[Random() % ARRAY_COUNT(sResortGorgeousDeluxeRewards)];
+	return RandomMax(100) >= 30 ? ITEM_LUXURY_BALL : sResortGorgeousDeluxeRewards[RandomMax(ARRAY_COUNT(sResortGorgeousDeluxeRewards))];
 }
 
 bool8 CheckAddCoins(void)

@@ -1641,7 +1641,7 @@ void TryClearRageStatuses(void)
 
 static void SetRandomMultiHitCounter(void)
 {
-	gMultiHitCounter = Random() % 100;
+	gMultiHitCounter = RandomMax(100);
 	
 	if (gMultiHitCounter < 35)
 		gMultiHitCounter = 2;
@@ -1717,7 +1717,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 			    // unfreezing via a move thawing happens in CANCELLER_THAW
 			    if ((gBattleMons[gBattlerAttacker].status1 & STATUS1_FREEZE) && !gBattleMoves[gCurrentMove].flags.thawUser)
 				{
-					if (Random() % 5)
+					if (RandomMax(5))
 					{
 						gBattlescriptCurrInstr = BattleScript_MoveUsedIsFrozen;
 						gHitMarker |= HITMARKER_NO_ATTACKSTRING;
@@ -1834,9 +1834,9 @@ u8 AtkCanceller_UnableToUseMove(void)
 					if (gBattleMons[gBattlerAttacker].status2 & STATUS2_CONFUSION)
 					{
 #if CONFUSION_UPDATE
-                        if (Random() % 3)
+                        if (RandomMax(3))
 #else
-		                if (Random() & 1)
+		                if (RandomMax(2))
 #endif
 							BattleScriptCall(BattleScript_MoveUsedIsConfused);
 						else // confusion dmg
@@ -1856,7 +1856,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 				++gBattleStruct->atkCancellerTracker;
 				break;
 			case CANCELLER_PARALYSED: // paralysis
-			    if ((gBattleMons[gBattlerAttacker].status1 & STATUS1_PARALYSIS) && (Random() % 4) == 0)
+			    if ((gBattleMons[gBattlerAttacker].status1 & STATUS1_PARALYSIS) && !RandomMax(4))
 				{
 					gProtectStructs[gBattlerAttacker].prlzImmobility = TRUE;
 					gBattlescriptCurrInstr = BattleScript_MoveUsedIsParalyzed;
@@ -1879,7 +1879,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 				{
 					gBattleScripting.battler = gDisableStructs[gBattlerAttacker].infatuatedWith;
 					
-					if (Random() & 1)
+					if (RandomPercent(50))
 						BattleScriptCall(BattleScript_MoveUsedIsInLove);
 					else
 					{
@@ -2658,7 +2658,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 							}
 							for (i = 1, bestId = 0; i < count; i++)
 							{
-								if (data[i].power > data[bestId].power || (data[i].power == data[bestId].power && Random() & 1))
+								if (data[i].power > data[bestId].power || (data[i].power == data[bestId].power && RandomPercent(50)))
 									bestId = i;
 							}
 							gBattleScripting.battler = data[bestId].battlerId;
@@ -2882,7 +2882,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 							goto DRY_SKIN_SCRIPT;
 						break;
 					case ABILITY_SHED_SKIN:
-					    if (gBattleMons[battler].status1 & STATUS1_ANY && (Random() % 3) == 0)
+					    if (gBattleMons[battler].status1 & STATUS1_ANY && !RandomMax(3))
 						{
 							SHED_SKIN_SCRIPT:
 							ClearBattlerStatus(battler);
@@ -2896,7 +2896,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 							goto SHED_SKIN_SCRIPT;
 						break;
 					case ABILITY_HEALER:
-					    if (IsBattlerAlive(BATTLE_PARTNER(battler)) && gBattleMons[BATTLE_PARTNER(battler)].status1 & STATUS1_ANY && (Random() % 3) == 0)
+					    if (IsBattlerAlive(BATTLE_PARTNER(battler)) && gBattleMons[BATTLE_PARTNER(battler)].status1 & STATUS1_ANY && !RandomMax(3))
 						{
 							ClearBattlerStatus(BATTLE_PARTNER(battler));
 							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CURED_POKEMON_PROBLEM;
@@ -2927,7 +2927,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						}
 						break;
 					case ABILITY_HARVEST:
-					    if ((IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY) || (Random() % 2) == 0) && !gBattleMons[battler].item
+					    if ((IsBattlerWeatherAffected(battler, WEATHER_SUN_ANY) || RandomPercent(50)) && !gBattleMons[battler].item
 						&& !gBattleStruct->changedItems[battler] && ItemId_GetPocket(*GetUsedHeldItemPtr(battler)) == POCKET_BERRY_POUCH
 						&& TryRecycleBattlerItem(battler, battler))
 						{
@@ -2957,7 +2957,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 								{
 									do
 									{
-										i = (Random() % NUM_STATS) + STAT_ATK;
+										i = RandomRange(STAT_ATK, NUM_STATS - 1);
 									} while (!(validToLower & gBitTable[i]));
 									
 									gBattleCommunication[MULTIUSE_STATE] = i; // Save the stat id to decrease
@@ -2968,7 +2968,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 								{
 									do
 									{
-										i = (Random() % NUM_STATS) + STAT_ATK;
+										i = RandomRange(STAT_ATK, NUM_STATS - 1);
 									} while (!(validToRaise & gBitTable[i]));
 									
 									SetStatChanger(i, +2);
@@ -3070,7 +3070,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						{
 							if (IsBattlerAlive(target1) && IsBattlerAlive(target2) && !gAbilities[target1Abl].cantBeTraced && !gAbilities[target2Abl].cantBeTraced)
 							{
-								SaveTargetToStack(GetBattlerAtPosition(((Random() & 1) * 2) | opposingSide));
+								SaveTargetToStack(GetBattlerAtPosition((RandomMax(2) * 2) | opposingSide));
 								++effect;
 							}
 							else if (IsBattlerAlive(target1) && !gAbilities[target1Abl].cantBeTraced)
@@ -3312,7 +3312,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 				{
 					case ABILITY_STENCH: // Stench check is taken care of in King's Rock check
 					    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && !gProtectStructs[battler].confusionSelfDmg && IsBattlerAlive(gBattlerTarget)
-						&& !SubsBlockMove(battler, gBattlerTarget, gCurrentMove) && Random() % 100 < 10 && !MoveHasFlinchChance(gCurrentMove) && BATTLER_DAMAGED(gBattlerTarget))
+						&& !SubsBlockMove(battler, gBattlerTarget, gCurrentMove) && RandomPercent(10) && !MoveHasFlinchChance(gCurrentMove) && BATTLER_DAMAGED(gBattlerTarget))
 						{
 							BattleScriptPushCursor(); // Backup the current script
 							SetMoveEffect(MOVE_EFFECT_FLINCH, FALSE, FALSE);
@@ -3422,7 +3422,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						case ABILITY_EFFECT_SPORE:
 						    if (IsBattlerAffectedBySpore(gBattlerAttacker))
 							{
-								i = Random() % 3;
+								i = RandomMax(3);
 								
 								if (i == 0)
 									goto POISON_POINT;
@@ -3430,7 +3430,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 									goto STATIC;
 								// sleep
 								if (BATTLER_TURN_DAMAGED(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
-								&& !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && (Random() % 3) == 0
+								&& !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && !RandomMax(3)
 								&& CanBePutToSleep(battler, gBattlerAttacker, STATUS_CHANGE_FLAG_CHECK_UPROAR) == STATUS_CHANGE_WORKED)
 								{
 									SetMoveEffect(MOVE_EFFECT_SLEEP, TRUE, FALSE);
@@ -3443,7 +3443,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						    POISON_POINT:
 						    if (BATTLER_TURN_DAMAGED(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
 							&& !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && CanBePoisoned(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED
-							&& (Random() % 3) == 0)
+							&& !RandomMax(3))
 							{
 								SetMoveEffect(MOVE_EFFECT_POISON, TRUE, FALSE);
 								BattleScriptCall(BattleScript_ApplySecondaryEffect);
@@ -3454,7 +3454,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						    STATIC:
 						    if (BATTLER_TURN_DAMAGED(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
 							&& !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && CanBeParalyzed(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED
-						    && (Random() % 3) == 0)
+						    && !RandomMax(3))
 							{
 								SetMoveEffect(MOVE_EFFECT_PARALYSIS, TRUE, FALSE);
 								BattleScriptCall(BattleScript_ApplySecondaryEffect);
@@ -3464,7 +3464,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						case ABILITY_FLAME_BODY:
 						    if (BATTLER_TURN_DAMAGED(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
 							&& !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && CanBeBurned(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED
-							&& (Random() % 3) == 0)
+							&& !RandomMax(3))
 							{
 								SetMoveEffect(MOVE_EFFECT_BURN, TRUE, FALSE);
 								BattleScriptCall(BattleScript_ApplySecondaryEffect);
@@ -3473,7 +3473,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 							break;
 						case ABILITY_CUTE_CHARM:
 						    if (BATTLER_TURN_DAMAGED(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
-							&& (Random() % 3) == 0 && IsBattlerAlive(battler) && CanBeInfatuatedBy(gBattlerAttacker, battler) == STATUS_CHANGE_WORKED)
+							&& !RandomMax(3) && IsBattlerAlive(battler) && CanBeInfatuatedBy(gBattlerAttacker, battler) == STATUS_CHANGE_WORKED)
 							{
 								gBattleMons[gBattlerAttacker].status2 |= STATUS2_INFATUATION;
 								gDisableStructs[gBattlerAttacker].infatuatedWith = battler;
@@ -3492,7 +3492,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 							break;
 						case ABILITY_CURSED_BODY:
 						    if (BATTLER_TURN_DAMAGED(battler) && IsBattlerAlive(gBattlerAttacker) && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
-						    && (Random() % 3) == 0 && TryDisableMove(gBattlerAttacker, gCurrMovePos, gCurrentMove))
+						    && !RandomMax(3) && TryDisableMove(gBattlerAttacker, gCurrMovePos, gCurrentMove))
 							{
 								BattleScriptCall(BattleScript_CursedBodyActivation);
 								++effect;
@@ -4021,7 +4021,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                     if (i != 5)
                     {
                         do
-                            i = Random() % 5;
+                            i = RandomMax(NUM_STATS - 1);
                         while (!CompareStat(battlerId, STAT_ATK + i, MAX_STAT_STAGES, CMP_LESS_THAN));
                         PrepareStatBuffer(gBattleTextBuff1, i + 1);
                         gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
@@ -4306,7 +4306,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                  && gBattleMoves[gCurrentMove].flags.kingsRockAffected
                  && IsBattlerAlive(gBattlerTarget)
 				 && GetBattlerAbility(battlerId) != ABILITY_STENCH
-				 && (Random() % 100) < GetEffectChanceIncreases(battlerId, battlerHoldEffectParam))
+				 && RandomPercent(GetEffectChanceIncreases(battlerId, battlerHoldEffectParam)))
                 {
 					BattleScriptPushCursor();
 					SetMoveEffect(MOVE_EFFECT_FLINCH, FALSE, FALSE);
@@ -4376,14 +4376,14 @@ u8 GetDefaultMoveTarget(u8 battlerId)
     if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
         return GetBattlerAtPosition(opposing);
     else if (CountAliveMonsInBattle(battlerId, BATTLE_ALIVE_EXCEPT_BATTLER) > 1)
-        return GetBattlerAtPosition((Random() & 1) == 0 ? BATTLE_PARTNER(opposing) : opposing);
+        return GetBattlerAtPosition(RandomMax(2) ? opposing : BATTLE_PARTNER(opposing));
     else
 		return GetBattlerAtPosition((gAbsentBattlerFlags & gBitTable[opposing]) ? BATTLE_PARTNER(opposing) : opposing);
 }
 
 u8 GetRandomTarget(u8 battlerId)
 {
-	return GetBattlerAtPosition(sTargetPositions[GetBattlerSide(battlerId)][Random() & 1]);
+	return GetBattlerAtPosition(sTargetPositions[GetBattlerSide(battlerId)][RandomMax(2)]);
 }
 
 // Get move base target type
@@ -4561,14 +4561,14 @@ u8 IsMonDisobedient(void)
 		
         if (calc == MOVE_LIMITATION_ALL_MOVES_MASK) // all moves cannot be used
         {
-            gBattleCommunication[MULTISTRING_CHOOSER] = Random() % ARRAY_COUNT(gInobedientStringIds); // Choose a random string to print
+            gBattleCommunication[MULTISTRING_CHOOSER] = RandomMax(ARRAY_COUNT(gInobedientStringIds)); // Choose a random string to print
             gBattlescriptCurrInstr = BattleScript_MoveUsedLoafingAround;
             return 1;
         }
         else // use a random move
         {
             do
-                gCurrMovePos = gChosenMovePos = Random() % MAX_MON_MOVES;
+                gCurrMovePos = gChosenMovePos = RandomMax(MAX_MON_MOVES);
             while (gBitTable[gCurrMovePos] & calc);
 			
             gCalledMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
@@ -4598,7 +4598,7 @@ u8 IsMonDisobedient(void)
         }
         else
         {
-            gBattleCommunication[MULTISTRING_CHOOSER] = Random() % ARRAY_COUNT(gInobedientStringIds); // Choose a random string to print
+            gBattleCommunication[MULTISTRING_CHOOSER] = RandomMax(ARRAY_COUNT(gInobedientStringIds)); // Choose a random string to print
             gBattlescriptCurrInstr = BattleScript_MoveUsedLoafingAround;
             return 1;
         }

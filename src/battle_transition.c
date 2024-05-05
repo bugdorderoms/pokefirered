@@ -961,7 +961,7 @@ static bool8 BT_Phase2SlidingPokeballs_SetupFldeffArgs(struct Task *task)
 
     memcpy(arr0, gUnknown_83FA400, sizeof(gUnknown_83FA400));
     memcpy(arr1, gUnknown_83FA404, sizeof(gUnknown_83FA404));
-    rand = Random() & 1;
+    rand = RandomMax(2);
     for (i = 0; i <= 4; ++i, rand ^= 1)
     {
         gFieldEffectArguments[0] = arr0[rand];      // x

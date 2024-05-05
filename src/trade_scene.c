@@ -2601,7 +2601,7 @@ static void CB2_HandleTradeEnded(void)
         {
             if (GetMultiplayerId() == 0)
             {
-                sTradeData->timer = Random() % 30;
+                sTradeData->timer = RandomMax(30);
             }
             else
             {

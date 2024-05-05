@@ -55,7 +55,6 @@ EWRAM_DATA struct Pokemon gEnemyParty[PARTY_SIZE] = {};
 EWRAM_DATA struct Pokemon gPlayerParty[PARTY_SIZE] = {};
 EWRAM_DATA struct SpriteTemplate gMultiuseSpriteTemplate = {0};
 
-static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *boxMon);
 static u8 GetLevelFromMonExp(struct Pokemon *mon);
 
 #include "data/move/battle_moves.h"
@@ -375,48 +374,6 @@ static void GiveMonInitialMoveset(struct Pokemon *mon)
     }
 }
 
-void CreateMon(struct Pokemon *dest, struct PokemonGenerator generator)
-{
-	u8 i;
-	u16 *formChanges;
-    u32 arg;
-	
-    ZeroMonData(dest);
-	
-    CreateBoxMon(generator, &dest->box);
-	
-    SetMonData(dest, MON_DATA_LEVEL, &generator.level);
-	
-    arg = 255;
-    SetMonData(dest, MON_DATA_MAIL, &arg);
-	
-	// Try change form
-	if (generator.changeForm)
-	{
-		if (generator.formChanges != NULL)
-			formChanges = generator.formChanges;
-		else // Default form changes
-		{
-			u16 defaultFormChanges[] = {FORM_CHANGE_GENDER, FORM_CHANGE_PERSONALITY, FORM_CHANGE_SEASON, FORM_CHANGE_NATURE, FORM_CHANGE_TERMINATOR};
-			formChanges = defaultFormChanges;
-		}
-		
-		for (i = 0; formChanges[i] != FORM_CHANGE_TERMINATOR; i++)
-			DoOverworldFormChange(dest, formChanges[i]);
-	}
-	
-	// Give moveset
-	GiveMonInitialMoveset(dest);
-	
-	for (i = 0; i < MAX_MON_MOVES; i++)
-	{
-		if (generator.moves[i])
-			SetMonMoveSlot(dest, generator.moves[i], i);
-	}
-	
-	CalculateMonStats(dest);
-}
-
 u32 GetShinyRollsIncrease(void)
 {
 	u32 shinyRollsIncrease = 1;
@@ -455,14 +412,15 @@ static bool8 IsShinyOtIdPersonality(u32 otId, u32 personality)
 	return FALSE;
 }
 
-static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *boxMon)
+void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
 {
-    u8 i, speciesName[POKEMON_NAME_LENGTH + 1];
-    u32 iv, personality, value, otId, shinyRolls;
-	bool8 shinyRerolls = FALSE, isShiny;
-	u16 species = generator.species;
+	u8 i, speciesName[POKEMON_NAME_LENGTH + 1];
+    u32 otId, value, personality, shinyRolls;
+	u16 *formChanges, newSpecies, species;
+	bool8 isShiny, shinyRerolls = FALSE;
 	
-    ZeroBoxMonData(boxMon);
+    ZeroMonData(mon);
+	ZeroBoxMonData(&mon->box);
 	
 	// Choose otId
 	switch (generator.otIdType)
@@ -479,7 +437,13 @@ static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *b
 			break;
 	}
 	// Set otId
-    SetBoxMonData(boxMon, MON_DATA_OT_ID, &otId);
+    SetMonData(mon, MON_DATA_OT_ID, &otId);
+	
+	// Set Ot name
+    SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2Ptr->playerName);
+	
+	// Set Ot gender
+    SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2Ptr->playerGender);
 	
 	// Choose personality
 	if (generator.hasFixedPersonality)
@@ -496,7 +460,7 @@ static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *b
 		} while (TRUE);
 	}
 	// Set personality
-    SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
+    SetMonData(mon, MON_DATA_PERSONALITY, &personality);
 	
 	// Calc shiny rate
 	switch (generator.shinyType)
@@ -529,85 +493,108 @@ static void CreateBoxMon(struct PokemonGenerator generator, struct BoxPokemon *b
 			break;
 	}
 	// Set shiny
-	SetBoxMonData(boxMon, MON_DATA_IS_SHINY, &isShiny);
+	SetMonData(mon, MON_DATA_IS_SHINY, &isShiny);
 	
 	// Set nature
 	value = GetNatureFromPersonality(personality);
-    SetBoxMonData(boxMon, MON_DATA_NATURE, &value);
+    SetMonData(mon, MON_DATA_NATURE, &value);
+	
+	// Try change form
+	species = generator.species;
+	
+	if (generator.changeForm)
+	{
+		if (generator.formChanges != NULL)
+			formChanges = generator.formChanges;
+		else // Default form changes
+		{
+			u16 defaultFormChanges[] = {FORM_CHANGE_GENDER, FORM_CHANGE_PERSONALITY, FORM_CHANGE_SEASON, FORM_CHANGE_NATURE, FORM_CHANGE_TERMINATOR};
+			formChanges = defaultFormChanges;
+		}
+		
+		for (i = 0; formChanges[i] != FORM_CHANGE_TERMINATOR; i++)
+		{
+			newSpecies = GetMonFormChangeSpecies(mon, species, formChanges[i]);
+			
+			if (newSpecies && newSpecies < NUM_SPECIES)
+				species = newSpecies;
+		}
+	}
+	// Set species
+    SetMonData(mon, MON_DATA_SPECIES, &species);
 	
 	// Set species name
     GetSpeciesName(speciesName, species);
-    SetBoxMonData(boxMon, MON_DATA_NICKNAME, speciesName);
+    SetMonData(mon, MON_DATA_NICKNAME, speciesName);
 	
-	// Set language
-    SetBoxMonData(boxMon, MON_DATA_LANGUAGE, &gGameLanguage);
-	
-	// Set Ot name
-    SetBoxMonData(boxMon, MON_DATA_OT_NAME, gSaveBlock2Ptr->playerName);
-	
-	// Set ot gender
-    SetBoxMonData(boxMon, MON_DATA_OT_GENDER, &gSaveBlock2Ptr->playerGender);
-	
-	// Set species
-    SetBoxMonData(boxMon, MON_DATA_SPECIES, &species);
-	
-	// Set exp
-    SetBoxMonData(boxMon, MON_DATA_EXP, &gExperienceTables[gBaseStats[species].growthRate][generator.level]);
-	
-	// Set friendship
-    SetBoxMonData(boxMon, MON_DATA_FRIENDSHIP, &gBaseStats[species].friendship);
-	
-	// Set met location
-    value = GetCurrentRegionMapSectionId();
-    SetBoxMonData(boxMon, MON_DATA_MET_LOCATION, &value);
-	
-	// Set met level
-    SetBoxMonData(boxMon, MON_DATA_MET_LEVEL, &generator.level);
-	
-	// Set met game
-    SetBoxMonData(boxMon, MON_DATA_MET_GAME, &gGameVersion);
+	// Set ivs
+	for (i = 0; i < NUM_STATS; i++)
+	{
+		value = RandomRange(0, MAX_PER_STAT_IVS);
+		SetMonData(mon, MON_DATA_HP_IV + i, &value);
+	}
 	
 	// Set pokeball
     value = ITEM_POKE_BALL;
-    SetBoxMonData(boxMon, MON_DATA_POKEBALL, &value);
+    SetMonData(mon, MON_DATA_POKEBALL, &value);
 	
-	// Set tera type
-	value = (Random() & 1) ? gBaseStats[species].type1 : gBaseStats[species].type2;
-	SetBoxMonData(boxMon, MON_DATA_TERA_TYPE, &value);
-		
-	// Choose random ivs
-    value = Random();
+	// Set language
+    SetMonData(mon, MON_DATA_LANGUAGE, &gGameLanguage);
 	
-	iv = value & MAX_PER_STAT_IVS;
-	SetBoxMonData(boxMon, MON_DATA_HP_IV, &iv);
-	iv = (value & 0x3E0) >> 5;
-	SetBoxMonData(boxMon, MON_DATA_ATK_IV, &iv);
-	iv = (value & 0x7C00) >> 10;
-	SetBoxMonData(boxMon, MON_DATA_DEF_IV, &iv);
+	// Set met game
+    SetMonData(mon, MON_DATA_MET_GAME, &gGameVersion);
 	
-	value = Random();
-	iv = value & MAX_PER_STAT_IVS;
-	SetBoxMonData(boxMon, MON_DATA_SPEED_IV, &iv);
-	iv = (value & 0x3E0) >> 5;
-	SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &iv);
-	iv = (value & 0x7C00) >> 10;
-	SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &iv);
+	// Set met location
+    value = GetCurrentRegionMapSectionId();
+    SetMonData(mon, MON_DATA_MET_LOCATION, &value);
+	
+	// Set met level
+    SetMonData(mon, MON_DATA_MET_LEVEL, &generator.level);
+	
+	// Set level
+	SetMonData(mon, MON_DATA_LEVEL, &generator.level);
+	
+	// Set exp
+    SetMonData(mon, MON_DATA_EXP, &gExperienceTables[gBaseStats[species].growthRate][generator.level]);
+	
+	// Set friendship
+    SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].friendship);
 	
 	// Set ability num
     if (gBaseStats[species].abilities[1])
     {
         value = personality & 1;
-        SetBoxMonData(boxMon, MON_DATA_ABILITY_NUM, &value);
+        SetMonData(mon, MON_DATA_ABILITY_NUM, &value);
     }
+	
+	// Set tera type
+	value = RandomMax(2) ? gBaseStats[species].type1 : gBaseStats[species].type2;
+	SetMonData(mon, MON_DATA_TERA_TYPE, &value);
 	
 	// Set ability hidden
 #if WILD_HIDDEN_ABILITY_CHANCE != 0
-    if (Random() % 100 < WILD_HIDDEN_ABILITY_CHANCE)
+    if (RandomPercent(WILD_HIDDEN_ABILITY_CHANCE))
     {
 	    value = TRUE;
-	    SetBoxMonData(boxMon, MON_DATA_ABILITY_HIDDEN, &value);
+	    SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &value);
     }
 #endif
+	
+	// Reset mail
+    value = 255;
+    SetMonData(mon, MON_DATA_MAIL, &value);
+
+	// Give initial moveset
+	GiveMonInitialMoveset(mon);
+	
+	for (i = 0; i < MAX_MON_MOVES; i++)
+	{
+		if (generator.moves[i])
+			SetMonMoveSlot(mon, generator.moves[i], i);
+	}
+	
+	// Calculate stats
+	CalculateMonStats(mon);
 }
 
 #define CALC_STAT(base, iv, ev, statIndex, field)                                 \
@@ -1955,7 +1942,7 @@ void AdjustFriendship(struct Pokemon *mon, u8 event)
 		switch (event)
 		{
 			case FRIENDSHIP_EVENT_WALKING:
-				if (Random() & 1) // 50% chance every 128 steps
+				if (RandomPercent(50)) // 50% chance every 128 steps
 					return;
 				break;
 			case FRIENDSHIP_EVENT_LEAGUE_BATTLE:
@@ -2072,7 +2059,7 @@ void RandomlyGivePartyPokerus(struct Pokemon *party)
 		{
 			do
 			{
-				rnd = Random() % PARTY_SIZE;
+				rnd = RandomMax(PARTY_SIZE);
 				mon = &party[rnd];
 			}
 			while (!GetMonData(mon, MON_DATA_SPECIES, NULL));
@@ -2179,7 +2166,7 @@ void PartySpreadPokerus(struct Pokemon *party)
 {
 	u8 i, pokerus;
 	
-	if (!(Random() % 3))
+	if (!RandomMax(3))
 	{
 		for (i = 0; i < PARTY_SIZE; i++)
 		{
@@ -2456,7 +2443,7 @@ void SetWildMonHeldItem(struct Pokemon *mon)
 {
     if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_TRAINER)) && !gDexnavBattle)
     {
-        u16 rnd = Random() % 100;
+        u16 rnd = RandomMax(100);
         u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 		
         if (gBaseStats[species].item1 == gBaseStats[species].item2)

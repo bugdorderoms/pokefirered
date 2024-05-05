@@ -2018,13 +2018,13 @@ void AnimMiniTwinklingStar(struct Sprite *sprite)
     u8 rand;
     s8 y;
 
-    rand = Random() & 3;
+    rand = RandomMax(4);
     if (rand == 0)
         sprite->oam.tileNum += 4;
     else
         sprite->oam.tileNum += 5;
 
-    y = Random() & 7;
+    y = RandomMax(8);
     if (y > 3)
         y = -y;
 
@@ -2806,7 +2806,7 @@ void AnimFlatterConfetti(struct Sprite *sprite)
     int rand1;
     int rand2;
 
-    tileOffset = Random() % 12;
+    tileOffset = RandomMax(12);
     sprite->oam.tileNum += tileOffset;
     rand1 = Random() & 0x1FF;
     rand2 = Random() & 0xFF;

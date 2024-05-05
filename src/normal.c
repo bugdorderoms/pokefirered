@@ -741,14 +741,14 @@ static void AnimHitSplatHandleInvert(struct Sprite *sprite)
 static void AnimHitSplatRandom(struct Sprite *sprite)
 {
     if (gBattleAnimArgs[1] == -1)
-        gBattleAnimArgs[1] = Random() & 3;
+        gBattleAnimArgs[1] = RandomMax(4);
     StartSpriteAffineAnim(sprite, gBattleAnimArgs[1]);
     if (gBattleAnimArgs[0] == 0)
         InitSpritePosToAnimAttacker(sprite, 0);
     else
         InitSpritePosToAnimTarget(sprite, FALSE);
-    sprite->x2 += (Random() % 48) - 24;
-    sprite->y2 += (Random() % 24) - 12;
+    sprite->x2 += RandomMax(48) - 24;
+    sprite->y2 += RandomMax(24) - 12;
     StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
     sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
 }

@@ -1077,8 +1077,8 @@ static void PlayAmbientCry(void)
     if (gDisableMapMusicChangeOnMapLoad == 2)
         return;
 	
-	pan = (Random() % 88) + 212;
-    volume = (Random() % 30) + 50;
+	pan = RandomMax(88) + 212;
+    volume = RandomMax(30) + 50;
     PlayCry2(sAmbientCrySpecies, pan, volume, 1);
 }
 
@@ -1090,11 +1090,11 @@ void UpdateAmbientCry(s16 *state, u16 *delayCounter)
 		*state = sAmbientCrySpecies == SPECIES_NONE ? 4 : 1;
         break;
     case 1:
-        *delayCounter = (Random() % 2400) + 1200;
+        *delayCounter = RandomMax(2400) + 1200;
         *state = 3;
         break;
     case 2:
-        *delayCounter = (Random() % 1200) + 1200;
+        *delayCounter = RandomMax(1200) + 1200;
         *state = 3;
         break;
     case 3:

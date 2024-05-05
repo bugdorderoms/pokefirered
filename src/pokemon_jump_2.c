@@ -1957,8 +1957,7 @@ static void sub_8149900(u16 arg0, u16 *arg1, u16 *arg2)
 
 static u16 sub_8149910(void)
 {
-    u16 index = Random() % ARRAY_COUNT(gUnknown_846B764);
-    return gUnknown_846B764[index];
+    return gUnknown_846B764[RandomMax(ARRAY_COUNT(gUnknown_846B764))];
 }
 
 static u16 sub_8149930(void)

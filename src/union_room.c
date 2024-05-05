@@ -3646,19 +3646,19 @@ static s32 UnionRoomGetPlayerInteractionResponse(struct UnkStruct_Main0 * main0,
         {
         case ACTIVITY_BATTLE:
             // Battling
-            StringExpandPlaceholders(gStringVar4, gUnknown_8458758[playerGender][Random() % 4]);
+            StringExpandPlaceholders(gStringVar4, gUnknown_8458758[playerGender][RandomMax(4)]);
             break;
         case ACTIVITY_TRADE:
             // Trading
-            StringExpandPlaceholders(gStringVar4, gUnknown_8458A78[playerGender][Random() % 2]);
+            StringExpandPlaceholders(gStringVar4, gUnknown_8458A78[playerGender][RandomMax(2)]);
             break;
         case ACTIVITY_CHAT:
             // Chatting
-            StringExpandPlaceholders(gStringVar4, gUnknown_84588BC[playerGender][Random() % 4]);
+            StringExpandPlaceholders(gStringVar4, gUnknown_84588BC[playerGender][RandomMax(4)]);
             break;
         case ACTIVITY_CARD:
             // Sharing cards
-            StringExpandPlaceholders(gStringVar4, gUnknown_84589AC[playerGender][Random() % 2]);
+            StringExpandPlaceholders(gStringVar4, gUnknown_84589AC[playerGender][RandomMax(2)]);
             break;
         default:
             // Unknown

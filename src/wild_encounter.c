@@ -53,7 +53,7 @@ void DisableWildEncounters(bool8 state)
 
 static u8 ChooseWildMonIndex_Land(void)
 {
-    u8 rand = Random() % ENCOUNTER_CHANCE_LAND_MONS_TOTAL;
+    u8 rand = RandomMax(ENCOUNTER_CHANCE_LAND_MONS_TOTAL);
 
     if (rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_0)
         return 0;
@@ -83,7 +83,7 @@ static u8 ChooseWildMonIndex_Land(void)
 
 static u8 ChooseWildMonIndex_WaterRock(void)
 {
-    u8 rand = Random() % ENCOUNTER_CHANCE_WATER_MONS_TOTAL;
+    u8 rand = RandomMax(ENCOUNTER_CHANCE_WATER_MONS_TOTAL);
 
     if (rand < ENCOUNTER_CHANCE_WATER_MONS_SLOT_0)
         return 0;
@@ -107,8 +107,8 @@ enum
 static u8 ChooseWildMonIndex_Fishing(u8 rod)
 {
     u8 wildMonIndex = 0;
-    u8 rand = Random() % max(max(ENCOUNTER_CHANCE_FISHING_MONS_OLD_ROD_TOTAL, ENCOUNTER_CHANCE_FISHING_MONS_GOOD_ROD_TOTAL),
-                             ENCOUNTER_CHANCE_FISHING_MONS_SUPER_ROD_TOTAL);
+    u8 rand = RandomMax(max(max(ENCOUNTER_CHANCE_FISHING_MONS_OLD_ROD_TOTAL, ENCOUNTER_CHANCE_FISHING_MONS_GOOD_ROD_TOTAL),
+                             ENCOUNTER_CHANCE_FISHING_MONS_SUPER_ROD_TOTAL));
 
     switch (rod)
     {
@@ -159,9 +159,9 @@ static u8 ChooseWildMonLevel(const struct WildPokemon * info)
     res = lo + (Random() % (hi - lo + 1));
 	
 	if (FlagGet(FLAG_SYS_BLACK_FLUTE_ACTIVE))
-		res += ((Random() & 3) + 1);
+		res += RandomRange(1, 4);
 	else if (FlagGet(FLAG_SYS_WHITE_FLUTE_ACTIVE))
-		res -= ((Random() & 3) + 1);
+		res -= RandomRange(1, 4);
 	
     return min(MAX_LEVEL, res);
 }
@@ -331,7 +331,7 @@ static u8 GetAbilityEncounterRateModType(void)
 
 static bool8 DoGlobalWildEncounterDiceRoll(void)
 {
-    if ((Random() % 100) >= 60)
+    if (RandomMax(100) >= 60)
         return FALSE;
     return TRUE;
 }
@@ -581,7 +581,7 @@ u16 GetLocalWildMon(bool8 *isWaterMon)
         return waterMonsInfo->wildPokemon[ChooseWildMonIndex_WaterRock()].species;
     }
     // Either land or water Pokemon
-    if ((Random() % 100) < 80)
+    if (RandomPercent(80))
     {
         return landMonsInfo->wildPokemon[ChooseWildMonIndex_Land()].species;
     }
@@ -740,7 +740,7 @@ static bool8 HandleWildEncounterCooldown(u32 currMetatileAttrs)
     if (sWildEncounterData.stepsSinceLastEncounter >= minSteps)
         return TRUE;
     sWildEncounterData.stepsSinceLastEncounter++;
-    if ((Random() % 100) < encRate)
+    if (RandomPercent(encRate))
         return TRUE;
     return FALSE;
 }
@@ -815,7 +815,7 @@ static bool8 TryDoDoubleWildBattle(void)
 	else
 	{
 #if DOUBLE_WILD_BATTLE_CHANCE != 0
-        if (Random() % 100 < DOUBLE_WILD_BATTLE_CHANCE)
+        if (RandomPercent(DOUBLE_WILD_BATTLE_CHANCE))
 			return TRUE;
 #endif
 	    return FALSE;

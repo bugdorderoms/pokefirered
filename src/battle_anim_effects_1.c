@@ -2045,10 +2045,7 @@ void AnimAbsorptionOrb(struct Sprite* sprite)
 // properties and the sprite anim are randomly determined.
 void AnimHyperBeamOrb(struct Sprite* sprite)
 {
-    u16 speed;
-    u16 animNum = Random();
-
-    StartSpriteAnim(sprite, animNum % 8);
+    StartSpriteAnim(sprite, RandomMax(8));
     sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
     sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
@@ -2056,8 +2053,7 @@ void AnimHyperBeamOrb(struct Sprite* sprite)
     else
         sprite->x += 20;
 
-    speed = Random();
-    sprite->data[0] = (speed & 31) + 64;
+    sprite->data[0] = (Random() & 31) + 64;
     sprite->data[1] = sprite->x;
     sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
     sprite->data[3] = sprite->y;

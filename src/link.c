@@ -294,7 +294,7 @@ void LinkTestScreen(void)
     SeedRng(gMain.vblankCounter2);
     for (i = 0; i < MAX_LINK_PLAYERS; i++)
     {
-        gSaveBlock2Ptr->playerTrainerId[i] = Random() % 256;
+        gSaveBlock2Ptr->playerTrainerId[i] = RandomMax(256);
     }
     InitLinkTestBG(0, 2, 4, 0, 0);
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON);

@@ -892,7 +892,7 @@ static u8 GetVsSeekerResponseInArea(const VsSeekerData * vsSeekerData)
             }
             else
             {
-                rval = Random() % 100; // Even if it's overwritten below, it progresses the RNG.
+                rval = RandomMax(100); // Even if it's overwritten below, it progresses the RNG.
                 response = GetCurVsSeekerResponse(vsSeekerIdx, trainerIdx);
                 if (response == VSSEEKER_SINGLE_RESP_YES)
                     rval = 100; // Definitely yes
@@ -1104,7 +1104,7 @@ static bool8 ObjectEventIdIsSane(u8 objectEventId)
 
 static u8 GetRandomFaceDirectionMovementType()
 {
-    u16 r1 = Random() % 4;
+    u16 r1 = RandomMax(4);
 
     switch (r1)
     {

@@ -246,7 +246,7 @@ static u16 UnlockRandomTrendySaying(void)
     if (numAdditionalPhrasesUnlocked == 33)
         return EC_WORD_UNDEFINED;
 
-    additionalPhraseId = Random() % (33 - numAdditionalPhrasesUnlocked);
+    additionalPhraseId = RandomMax(33 - numAdditionalPhrasesUnlocked);
     for (i = 0; i < 33; i++)
     {
         if (!IsTrendySayingUnlocked(i))
@@ -273,7 +273,7 @@ static u16 GetRandomUnlockedTrendySaying(void)
     if (additionalPhraseId == 0)
         return EC_WORD_UNDEFINED;
 
-    additionalPhraseId = Random() % additionalPhraseId;
+    additionalPhraseId = RandomMax(additionalPhraseId);
     for (i = 0; i < 33; i++)
     {
         if (IsTrendySayingUnlocked(i))

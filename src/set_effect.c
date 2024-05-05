@@ -82,6 +82,13 @@ static const u8 *const sMoveEffectBS_Ptrs[] =
 	[MOVE_EFFECT_DEF_SPDEF_DOWN]     = BattleScript_MoveEffectDefSpDefDown,
 };
 
+static const u8 sTriAttackEffects[] =
+{
+	MOVE_EFFECT_BURN,
+	MOVE_EFFECT_FREEZE,
+	MOVE_EFFECT_PARALYSIS
+};
+
 void SetMoveEffect(u8 moveEffect, bool8 affectsUser, bool8 certain)
 {
 	gBattleStruct->moveEffect.moveEffectByte = moveEffect;
@@ -162,9 +169,9 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			if (IsUproarActive() == gBattlersCount && CanBePutToSleep(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
 			{
 #if SLEEP_UPDATE
-                gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(((Random() & 2) + 1));
+                gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(RandomRange(1, 3));
 #else
-	            gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(((Random() & 3) + 2));
+	            gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(RandomRange(1, 5));
 #endif
 				CancelMultiTurnMoves(gEffectBattler);
 				effect = 1;
@@ -256,7 +263,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		case MOVE_EFFECT_CONFUSION:
 			if (CanBecameConfused(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
 			{
-				gBattleMons[gEffectBattler].status2 |= STATUS2_CONFUSION_TURN((Random() % 4) + 2);
+				gBattleMons[gEffectBattler].status2 |= STATUS2_CONFUSION_TURN(RandomRange(2, 5));
 				effect = 2;
 			}
 			break;
@@ -280,7 +287,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			}
 			break;
 		case MOVE_EFFECT_TRI_ATTACK:
-		    SetMoveEffect(Random() % 3 + MOVE_EFFECT_BURN, FALSE, FALSE);
+		    SetMoveEffect(sTriAttackEffects[RandomMax(ARRAY_COUNT(sTriAttackEffects))], FALSE, FALSE);
 			return DoMoveEffect(primary, jumpToScript, 0);
 		case MOVE_EFFECT_SECRET_POWER:
 		    if (gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_1ST_HIT) // Only apply on final hit
@@ -309,7 +316,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		case MOVE_EFFECT_WRAP:
 		    if (!(gBattleMons[gEffectBattler].status2 & STATUS2_WRAPPED))
 			{
-				gBattleMons[gEffectBattler].status2 |= STATUS2_WRAPPED_TURN((Random() & 1) + 4);
+				gBattleMons[gEffectBattler].status2 |= STATUS2_WRAPPED_TURN(RandomRange(4, 5));
 				gBattleStruct->wrappedMove[gEffectBattler] = gCurrentMove;
 				gBattleStruct->wrappedBy[gEffectBattler] = gBattleScripting.battler;
 				gBattleCommunication[MULTISTRING_CHOOSER] = GetTrappingIdByMove(gCurrentMove);
@@ -410,7 +417,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 		    if (!(gBattleMons[gEffectBattler].status2 & STATUS2_LOCK_CONFUSE))
 			{
 				gBattleMons[gEffectBattler].status2 |= STATUS2_MULTIPLETURNS;
-				gBattleMons[gEffectBattler].status2 |= STATUS2_LOCK_CONFUSE_TURN((Random() & 1) + 2);
+				gBattleMons[gEffectBattler].status2 |= STATUS2_LOCK_CONFUSE_TURN(RandomRange(2, 3));
 				gLockedMoves[gEffectBattler] = gCurrentMove;
 				effect = 3; // No script
 			}

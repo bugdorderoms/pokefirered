@@ -1318,11 +1318,11 @@ static void StopReel1(u16 whichReel)
     }
     if (numPosToSample == 0)
     {
-        destPos = Random() % 5;
+        destPos = RandomMax(5);
     }
     else
     {
-        destPos = posToSample[Random() % numPosToSample];
+        destPos = posToSample[RandomMax(numPosToSample)];
     }
     destPos = nextPos - destPos;
     if (destPos < 0)
@@ -1616,12 +1616,12 @@ static void CalcSlotBias(void)
         if (sSlotMachineState->biasCooldown == 0)
         {
             if ((Random() & 0x3FFF) < biasChances[SLOT_PAYOUT_7])
-                sSlotMachineState->biasCooldown = (Random() & 1) ? 5 : 60;
+                sSlotMachineState->biasCooldown = RandomPercent(50) ? 5 : 60;
         }
         if (sSlotMachineState->biasCooldown != 0)
         {
             if (i == 0 && (Random() & 0x3FFF) < 0x2CCC) // 70%
-                sSlotMachineState->biasCooldown = (Random() & 1) ? 5 : 60;
+                sSlotMachineState->biasCooldown = RandomPercent(50) ? 5 : 60;
             sSlotMachineState->biasCooldown--;
         }
         sSlotMachineState->machineBias = i;

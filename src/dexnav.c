@@ -428,12 +428,12 @@ static bool8 DexNavPickTile(u8 environment, u8 areaX, u8 areaY)
                             break; //occurs at same z coord
 
                         scale = 440 - (GetPlayerDistance(topX, topY) / 2)  - (2 * (topX + topY));
-                        weight = ((Random() % scale) < 1) && !MapGridIsImpassableAt(topX, topY);
+                        weight = (RandomMax(scale) < 1) && !MapGridIsImpassableAt(topX, topY);
                     }
                     else
                     { // outdoors: grass
                         scale = 100 - (GetPlayerDistance(topX, topY) * 2);
-                        weight = (Random() % scale <= 5) && !MapGridIsImpassableAt(topX, topY);
+                        weight = (RandomMax(scale) <= 5) && !MapGridIsImpassableAt(topX, topY);
                     }
                 }
                 break;
@@ -445,7 +445,7 @@ static bool8 DexNavPickTile(u8 environment, u8 areaX, u8 areaY)
                     if (IsZCoordMismatchAt(gObjectEvents[gPlayerAvatar.objectEventId].currentElevation, topX, topY))
                         break;
 
-                    weight = (Random() % scale <= 1) && !MapGridIsImpassableAt(topX, topY);
+                    weight = (RandomMax(scale) <= 1) && !MapGridIsImpassableAt(topX, topY);
                 }
                 break;
             default:
@@ -857,7 +857,7 @@ static bool8 DexNavTryMakeShinyMon(void)
     u8 chain = sCurrentDexNavChain;
 
     chainBonus = (chain == 50) ? 5 : (chain == 100) ? 10 : 0;
-    rndBonus = (Random() % 100 < 4 ? 4 : 0);
+    rndBonus = RandomPercent(4) ? 4 : 0;
     shinyRolls = 1 + chainBonus + rndBonus + (GetShinyRollsIncrease() - 1);
 
     if (searchLevel > 200)
@@ -877,7 +877,7 @@ static bool8 DexNavTryMakeShinyMon(void)
 	
     for (i = 0; i < shinyRolls; i++)
     {
-        if (Random() % 10000 < shinyRate)
+        if (RandomMax(10000) < shinyRate)
             return TRUE;
     }
     return FALSE;
@@ -896,11 +896,11 @@ static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityN
 		SetMonData(mon, MON_DATA_IS_SHINY, &i);
 	}
     // Pick random, unique IVs to set to 31. The number of perfect IVs that are assigned is equal to the potential
-    iv[0] = Random() % NUM_STATS;               // choose 1st perfect stat
+    iv[0] = RandomMax(NUM_STATS);               // choose 1st perfect stat
 	
     do {
-        iv[1] = Random() % NUM_STATS;
-        iv[2] = Random() % NUM_STATS;
+        iv[1] = RandomMax(NUM_STATS);
+        iv[2] = RandomMax(NUM_STATS);
     } while ((iv[1] == iv[0])                   // unique 2nd perfect stat
       || (iv[2] == iv[0] || iv[2] == iv[1]));   // unique 3rd perfect stat
 	  
@@ -933,7 +933,7 @@ static u8 DexNavTryGenerateMonLevel(u16 species, u8 environment)
     if (levelBase == MON_LEVEL_NONEXISTENT)
         return levelBase; // species not found in the area
 
-    if (Random() % 100 < 4)
+    if (RandomPercent(4))
         levelBonus += 10; // 4% chance of having a +10 level bonus
 	
 	levelBase += levelBonus;
@@ -944,7 +944,7 @@ static u8 DexNavTryGenerateMonLevel(u16 species, u8 environment)
 static u16 DexNavGenerateMoveset(u16 species, u8 encounterLevel, u16* moveDst)
 {
     bool8 genMove = FALSE;
-    u16 newSpecies, numEggMoves, randVal = Random() % 100, eggMoveBuffer[EGG_MOVES_ARRAY_COUNT];
+    u16 newSpecies, numEggMoves, randVal = RandomMax(100), eggMoveBuffer[EGG_MOVES_ARRAY_COUNT];
     u8 i, searchLevel = sDexNavSearchLevel;
 
     // see if first move slot should be an egg move
@@ -1004,14 +1004,14 @@ static u16 DexNavGenerateMoveset(u16 species, u8 encounterLevel, u16* moveDst)
         numEggMoves = GetEggMoves(&gEnemyParty[0], eggMoveBuffer);
 		
         if (numEggMoves)
-            moveDst[0] = eggMoveBuffer[Random() % numEggMoves];
+            moveDst[0] = eggMoveBuffer[RandomMax(numEggMoves)];
     }
 	return newSpecies;
 }
 
 static u16 DexNavGenerateHeldItem(u16 species)
 {
-    u16 randVal = Random() % 100;
+    u16 randVal = RandomMax(100);
     u8 searchLevelInfluence = sDexNavSearchLevel >> 1;
     u16 item1 = gBaseStats[species].item1;
     u16 item2 = gBaseStats[species].item2;
@@ -1039,7 +1039,7 @@ static bool8 DexNavGetAbilityNum(u16 species)
 {
     u8 searchLevel = sDexNavSearchLevel;
     bool8 genAbility = FALSE, abilityHidden = FALSE;
-    u16 randVal = Random() % 100;
+    u16 randVal = RandomMax(100);
 
     if (searchLevel < 5)
     {
@@ -1088,7 +1088,7 @@ static bool8 DexNavGetAbilityNum(u16 species)
         abilityHidden = TRUE;
 		
     //Pick a normal ability of that Pokemon
-    sDexNavSearchDataPtr->abilityNum = gBaseStats[species].abilities[1] ? Random() & 1 : 0;
+    sDexNavSearchDataPtr->abilityNum = gBaseStats[species].abilities[1] ? RandomMax(2) : 0;
 
     return abilityHidden;
 }
@@ -1096,7 +1096,7 @@ static bool8 DexNavGetAbilityNum(u16 species)
 static u8 DexNavGeneratePotential(void)
 {
     u8 genChance = 0, searchLevel = sDexNavSearchLevel;
-    int randVal = Random() % 100;
+    int randVal = RandomMax(100);
 
     if (searchLevel < 5)
     {
@@ -1236,7 +1236,7 @@ static u8 GetEncounterLevelFromMapData(u16 species, u8 environment)
     if (min == max)
 		return min;
 	
-    return (Random() % ((max + 1) - min)) + min;
+	return RandomRange(min, max);
 }
 
 ///////////

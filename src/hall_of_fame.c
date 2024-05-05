@@ -1232,7 +1232,7 @@ static void SpriteCB_Confetti(struct Sprite* sprite)
         sprite->y2 += sprite->data[1];
 
         tableID = sprite->data[0];
-        rand = (Random() % 4) + 8;
+        rand = RandomMax(4) + 8;
         sprite->x2 = rand * gSineTable[tableID] / 256;
 
         sprite->data[0] += 4;
@@ -1241,13 +1241,13 @@ static void SpriteCB_Confetti(struct Sprite* sprite)
 
 static bool8 Hof_SpawnConfetti(void)
 {
-    s16 posX = Random() % 240;
-    s16 posY = -(Random() % 8);
+    s16 posX = RandomMax(240);
+    s16 posY = -(RandomMax(8));
 	struct Sprite* sprite = &gSprites[CreateSprite(&sSpriteTemplate_Confetti, posX, posY, 0)];
 
-    StartSpriteAnim(sprite, Random() % 17);
+    StartSpriteAnim(sprite, RandomMax(17));
 
-    sprite->data[1] = Random() & 3 ? 0 : 1;
+    sprite->data[1] = RandomMax(4) ? 0 : 1;
 
     return FALSE;
 }

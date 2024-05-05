@@ -2456,7 +2456,7 @@ static void sub_80FBA78(void)
         OpenLink();
         SeedRng(gMain.vblankCounter2);
         for (i = 0; i < RFU_CHILD_MAX; i++)
-            gSaveBlock2Ptr->playerTrainerId[i] = Random() % 256;
+            gSaveBlock2Ptr->playerTrainerId[i] = RandomMax(256);
 
         SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_1D_MAP);
         RunTasks();

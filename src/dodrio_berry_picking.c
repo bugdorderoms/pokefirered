@@ -1506,7 +1506,7 @@ static void sub_8152174(void)
                 {
                     u8 unk0 = gUnknown_203F3E0->unkF4[r5][0];
                     i = gUnknown_203F3E0->unkF4[r5][1]; // Have to re-use the variable to match.
-                    if (!(Random() & 1))
+                    if (!RandomPercent(50))
                     {
                         r4 = unk0;
                         id = i;
@@ -2115,7 +2115,7 @@ static void sub_8153150(void)
     case 5:  var = 2; break;
     }
 
-    var2 = Random() % 10;
+    var2 = RandomMax(10);
     for (i = 0; i < 5; i++)
         gUnknown_203F3E0->unk4A[i][4] = sUnknown_8475558[var][var2];
 }

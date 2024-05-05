@@ -550,7 +550,7 @@ static bool8 DestroySnowflakeSprite(void)
 
 static void InitSnowflakeSpriteMovement(struct Sprite *sprite)
 {
-    u16 rand, x = ((sprite->tSnowflakeId * 5) & 7) * 30 + (Random() % 30);
+    u16 rand, x = ((sprite->tSnowflakeId * 5) & 7) * 30 + RandomMax(30);
 
     sprite->y = -3 - (gSpriteCoordOffsetY + sprite->centerToCornerVecY);
     sprite->x = x - (gSpriteCoordOffsetX + sprite->centerToCornerVecX);
@@ -688,7 +688,7 @@ void Thunderstorm_Main(void)
         break;
     case 4:
         gWeatherPtr->thunderAllowEnd = TRUE;
-        gWeatherPtr->thunderDelay = (Random() % 360) + 360;
+        gWeatherPtr->thunderDelay = RandomRange(360, 719);
         gWeatherPtr->initStep++;
         // fall through
     case 5:
@@ -697,11 +697,11 @@ void Thunderstorm_Main(void)
         break;
     case 6:
         gWeatherPtr->thunderAllowEnd = TRUE;
-        gWeatherPtr->thunderSkipShort = Random() % 2;
+        gWeatherPtr->thunderSkipShort = RandomMax(2);
         gWeatherPtr->initStep++;
         break;
     case 7:
-        gWeatherPtr->thunderShortRetries = (Random() & 1) + 1;
+        gWeatherPtr->thunderShortRetries = RandomRange(1, 2);
         gWeatherPtr->initStep++;
         // fall through
     case 8:
@@ -709,7 +709,7 @@ void Thunderstorm_Main(void)
         if (!gWeatherPtr->thunderSkipShort && gWeatherPtr->thunderShortRetries == 1)
             SetThunderCounter(20);
 
-        gWeatherPtr->thunderDelay = (Random() % 3) + 6;
+        gWeatherPtr->thunderDelay = RandomRange(6, 8);
         gWeatherPtr->initStep++;
         break;
     case 9:
@@ -720,7 +720,7 @@ void Thunderstorm_Main(void)
 			
             if (--gWeatherPtr->thunderShortRetries != 0)
             {
-                gWeatherPtr->thunderDelay = (Random() % 16) + 60;
+                gWeatherPtr->thunderDelay = RandomRange(60, 75);
                 gWeatherPtr->initStep = 10;
             }
             else if (!gWeatherPtr->thunderSkipShort)
@@ -734,7 +734,7 @@ void Thunderstorm_Main(void)
             gWeatherPtr->initStep = 8;
         break;
     case 11:
-        gWeatherPtr->thunderDelay = (Random() % 16) + 60;
+        gWeatherPtr->thunderDelay = RandomRange(60, 75);
         gWeatherPtr->initStep++;
         break;
     case 12:
@@ -742,7 +742,7 @@ void Thunderstorm_Main(void)
         {
             SetThunderCounter(100);
             WeatherShiftGammaIfPalStateIdle(19);
-            gWeatherPtr->thunderDelay = (Random() & 0xF) + 30;
+            gWeatherPtr->thunderDelay = RandomRange(30, 45);
             gWeatherPtr->initStep++;
         }
         break;
@@ -801,7 +801,7 @@ static void SetThunderCounter(u16 max)
 {
     if (!gWeatherPtr->thunderTriggered)
     {
-        gWeatherPtr->thunderCounter = Random() % max;
+        gWeatherPtr->thunderCounter = RandomMax(max);
         gWeatherPtr->thunderTriggered = TRUE;
     }
 }
@@ -814,11 +814,8 @@ static void UpdateThunderSound(void)
         {
             if (IsSEPlaying())
                 return;
-
-            if (Random() & 1)
-                PlaySE(SE_THUNDER);
-            else
-                PlaySE(SE_THUNDER2);
+			
+			PlaySE(RandomPercent(50) ? SE_THUNDER : SE_THUNDER2);
 
             gWeatherPtr->thunderTriggered = FALSE;
         }
