@@ -445,9 +445,8 @@ static void ShiftDaycareSlots(struct DayCare *daycare)
 
 static void ApplyDaycareExperience(struct Pokemon *mon)
 {
-    s32 i;
+    u8 i, ret;
     bool8 firstMove;
-    u16 learnedMove;
 
     for (i = 0; i < MAX_LEVEL; i++)
     {
@@ -456,17 +455,17 @@ static void ApplyDaycareExperience(struct Pokemon *mon)
         {
             // Teach the mon new moves it learned while in the daycare.
             firstMove = TRUE;
-            while ((learnedMove = MonTryLearningNewMove(mon, firstMove)) != 0)
-            {
-                firstMove = FALSE;
-                if (learnedMove == MON_HAS_MAX_MOVES)
-                    DeleteFirstMoveAndGiveMoveToMon(mon, gMoveToLearn);
-            }
+			
+			while ((ret = MonTryLearningNewMove(mon, firstMove)) != MON_DONT_FIND_MOVE_TO_LEARN)
+			{
+				firstMove = FALSE;
+				
+				if (ret == MON_HAS_MAX_MOVES)
+					DeleteFirstMoveAndGiveMoveToMon(mon, gMoveToLearn);
+			}
         }
         else
-        {
             break;
-        }
     }
 
     // Re-calculate the mons stats at its new level.
@@ -857,6 +856,7 @@ static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, stru
         sHatchedEggLevelUpMoves[i] = MOVE_NONE;
 
     numLevelUpMoves = GetLevelUpMovesBySpecies(GetMonData(egg, MON_DATA_SPECIES), sHatchedEggLevelUpMoves);
+	
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
         sHatchedEggFatherMoves[i] = GetBoxMonData(father, MON_DATA_MOVE1 + i);

@@ -58,31 +58,26 @@ void SetBagPocketsPointers(void)
     gBagPockets[POCKET_BERRY_POUCH - 1].capacity = BAG_BERRIES_COUNT;
 }
 
-void CopyItemName(u16 itemId, u8 * dest)
+u8 *CopyItemName(u16 itemId, u8 * dest)
 {
-	StringCopy(dest, ItemId_GetName(itemId));
+	return StringCopy(dest, ItemId_GetName(itemId));
 }
 
-void CopyItemNameHandlePlural(u16 itemId, u16 quantity, u8 *dest)
+u8 *CopyItemNameHandlePlural(u16 itemId, u16 quantity, u8 *dest)
 {
-	StringCopy(dest, ItemId_GetName(itemId));
+	u8 *end = CopyItemName(itemId, dest);
 	
 	if (quantity > 1)
 	{
 		if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH) // Print diferent sufix if it's a berry
 		{
-			u16 strlength = StringLength(dest);
-			
-			if (strlength != 0)
-			{
-				u8 * endptr = dest + strlength;
-				endptr[-1] = EOS;
-				StringAppend(dest, COMPOUND_STRING("ies"));
-			}
+			if (StringLength(dest) != 0)
+				return StringCopy(end - 1, COMPOUND_STRING("ies"));
 		}
 		else if (ItemId_GetPocket(itemId) != POCKET_KEY_ITEMS) // All items have a sufix, except Key items
-			StringAppend(dest, COMPOUND_STRING("s"));
+			return StringCopy(end, COMPOUND_STRING("s"));
 	}
+	return end;
 }
 
 s8 BagPocketGetFirstEmptySlot(u8 pocketId)

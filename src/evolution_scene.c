@@ -650,9 +650,10 @@ static void Task_EvolutionScene(u8 taskId)
         if (!IsTextPrinterActive(0))
         {
             var = MonTryLearningNewMoveAfterEvolution(mon, gTasks[taskId].tLearnsFirstMove);
-            if (var != 0 && !gTasks[taskId].tEvoWasStopped)
+			
+            if (var != MON_DONT_FIND_MOVE_TO_LEARN && !gTasks[taskId].tEvoWasStopped)
             {
-                u8 text[20];
+                u8 text[POKEMON_NAME_LENGTH + 1];
 
                 StopMapMusic();
                 Overworld_PlaySpecialMapMusic();
@@ -991,9 +992,10 @@ static void Task_TradeEvolutionScene(u8 taskId)
         if (!IsTextPrinterActive(0) && IsFanfareTaskInactive() == TRUE)
         {
             var = MonTryLearningNewMoveAfterEvolution(mon, gTasks[taskId].tLearnsFirstMove);
-            if (var != 0 && !gTasks[taskId].tEvoWasStopped)
+			
+            if (var != MON_DONT_FIND_MOVE_TO_LEARN && !gTasks[taskId].tEvoWasStopped)
             {
-                u8 text[20];
+                u8 text[POKEMON_NAME_LENGTH + 1];
 
                 gTasks[taskId].tBits |= TASK_BIT_LEARN_MOVE;
                 gTasks[taskId].tLearnsFirstMove = FALSE;

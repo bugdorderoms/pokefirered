@@ -369,7 +369,7 @@ static void GiveMonInitialMoveset(struct Pokemon *mon)
 
         move = gLevelUpLearnsets[species][i].move;
 		
-		if (GiveMoveToMon(mon, move) == 0xFFFF)
+		if (GiveMoveToMon(mon, move) == MON_HAS_MAX_MOVES)
 			DeleteFirstMoveAndGiveMoveToMon(mon, move);
     }
 }
@@ -715,7 +715,7 @@ u8 GetLevelFromBoxMonExp(struct BoxPokemon *boxMon)
     return level - 1;
 }
 
-u16 GiveMoveToMon(struct Pokemon *mon, u16 move)
+u8 GiveMoveToMon(struct Pokemon *mon, u16 move)
 {
 	u8 i;
 	
@@ -726,12 +726,13 @@ u16 GiveMoveToMon(struct Pokemon *mon, u16 move)
         if (!existingMove)
         {
 			SetMonMoveSlot(mon, move, i);
-            return move;
+            return MON_LEARNED_MOVE;
         }
+		
         if (existingMove == move)
-            return -2;
+            return MON_ALREADY_KNOWS_MOVE;
     }
-    return -1;
+    return MON_HAS_MAX_MOVES;
 }
 
 static void SetMonMoveSlotInternal(struct Pokemon *mon, u8 slot, u16 move, u8 pp)
@@ -804,9 +805,8 @@ void DeleteMonMove(struct Pokemon *mon, u8 movePos)
 		ShiftMoveSlot(mon, i, i + 1);
 }
 
-u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove)
+u8 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove)
 {
-    u32 retVal = 0;
     u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
     u8 level = GetMonData(mon, MON_DATA_LEVEL, NULL);
 
@@ -820,21 +820,20 @@ u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove)
 
         while (gLevelUpLearnsets[species][sLearningMoveTableID].level != level)
         {
-            sLearningMoveTableID++;
-            if (gLevelUpLearnsets[species][sLearningMoveTableID].move == LEVEL_UP_END)
-                return 0;
+            if (gLevelUpLearnsets[species][++sLearningMoveTableID].move == LEVEL_UP_END)
+                return MON_DONT_FIND_MOVE_TO_LEARN;
         }
     }
+	
     if (gLevelUpLearnsets[species][sLearningMoveTableID].level == level)
     {
-        gMoveToLearn = gLevelUpLearnsets[species][sLearningMoveTableID].move;
-        sLearningMoveTableID++;
-        retVal = GiveMoveToMon(mon, gMoveToLearn);
+		gMoveToLearn = gLevelUpLearnsets[species][sLearningMoveTableID++].move;
+		return GiveMoveToMon(mon, gMoveToLearn);
     }
-    return retVal;
+    return MON_DONT_FIND_MOVE_TO_LEARN;
 }
 
-u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool8 firstMove)
+u8 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool8 firstMove)
 {
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u8 moveLevel, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
@@ -852,13 +851,12 @@ u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool8 firstMove)
 		
 		while (moveLevel == 0 || moveLevel == level)
 		{
-			gMoveToLearn = gLevelUpLearnsets[species][sLearningMoveTableID].move;
-			sLearningMoveTableID++;
+			gMoveToLearn = gLevelUpLearnsets[species][sLearningMoveTableID++].move;
 			return GiveMoveToMon(mon, gMoveToLearn);
 		}
 		sLearningMoveTableID++;
 	}
-	return 0;
+	return MON_DONT_FIND_MOVE_TO_LEARN;
 }
 
 u8 GetNumOfBadges(void)
@@ -2251,11 +2249,8 @@ u8 GetMoveRelearnerMoves(struct Pokemon *mon, u16 *moves)
     u8 numMoves, movePos, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
     u32 i, j;
 
-    for (i = 0, numMoves = 0; i < 20; i++)
+    for (i = 0, numMoves = 0; i < MAX_LV_UP_MOVES && gLevelUpLearnsets[species][i].move != LEVEL_UP_END; i++)
     {
-        if (gLevelUpLearnsets[species][i].move == LEVEL_UP_END)
-            break;
-
         if (gLevelUpLearnsets[species][i].level <= level)
         {
 			movePos = FindMoveSlotInMoveset(mon, gLevelUpLearnsets[species][i].move);
@@ -2276,7 +2271,7 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves)
 {
     u8 i, numMoves;
 
-    for (i = 0, numMoves = 0; i < 20 && gLevelUpLearnsets[species][i].move != LEVEL_UP_END; i++)
+    for (i = 0, numMoves = 0; i < MAX_LV_UP_MOVES && gLevelUpLearnsets[species][i].move != LEVEL_UP_END; i++)
          moves[numMoves++] = gLevelUpLearnsets[species][i].move;
 
      return numMoves;
@@ -2284,18 +2279,15 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves)
 
 u8 GetNumberOfRelearnableMoves(struct Pokemon *mon)
 {
-    u16 moves[20], species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
+    u16 moves[MAX_LV_UP_MOVES], species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
     u8 numMoves, movePos, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
     u32 i, j;
 
     if (species == SPECIES_EGG)
         return 0;
 
-    for (i = 0, numMoves = 0; i < 20; i++)
+    for (i = 0, numMoves = 0; i < MAX_LV_UP_MOVES && gLevelUpLearnsets[species][i].move != LEVEL_UP_END; i++)
     {
-        if (gLevelUpLearnsets[species][i].move == LEVEL_UP_END)
-            break;
-
         if (gLevelUpLearnsets[species][i].level <= level)
         {
 			movePos = FindMoveSlotInMoveset(mon, gLevelUpLearnsets[species][i].move);

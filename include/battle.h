@@ -402,12 +402,10 @@ struct BattleStruct
 	/*0x03B*/ u8 dynamaxMsgDone:1;
 	/*0x03B*/ u8 firstSuperEffectiveHitTakenMsgState:2;
     /*0x03C*/ u8 caughtMonNick[POKEMON_NAME_LENGTH + 1];
-    /*0x047*/ u8 safariGoNearCounter;
-    /*0x048*/ u8 safariPkblThrowCounter;
     /*0x049*/ u8 safariEscapeFactor;
     /*0x04A*/ u8 safariCatchFactor;
-    /*0x04B*/ u8 linkBattleVsSpriteId_V;
-    /*0x04C*/ u8 linkBattleVsSpriteId_S;
+	/*0x04B*/ u8 safariGoNearCounter;
+    /*0x04C*/ u8 safariPkblThrowCounter;
 	/*0x04D*/ u8 chosenMovePositions[MAX_BATTLERS_COUNT];
     /*0x051*/ u8 stateIdAfterSelScript[MAX_BATTLERS_COUNT];
     /*0x055*/ u8 playerPartyIdx;
@@ -467,6 +465,8 @@ struct BattleStruct
 	/*0x142*/ u8 savedAttackerStackCount:4;
 	/*0x142*/ u8 savedTargetStackCount:4;
 	/*0x143*/ u8 usedMoveIndices[MAX_BATTLERS_COUNT];
+	/*0x047*/ u8 linkBattleVsSpriteId_V;
+    /*0x048*/ u8 linkBattleVsSpriteId_S;
 	          struct QueuedEffect queuedEffectsList[MAX_BATTLERS_COUNT][B_QUEUED_COUNT + 1];
 			  struct Illusion illusion[MAX_BATTLERS_COUNT];
 	          struct MoveEffect moveEffect;

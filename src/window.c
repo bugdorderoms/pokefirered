@@ -9,6 +9,7 @@ void *gWindowBgTilemapBuffers[4];
 EWRAM_DATA struct Window gWindows[WINDOWS_MAX] = {0};
 
 static u8 GetNumActiveWindowsOnBg(u8 bgId);
+static u32 WindowHeightPx(u8 windowId);
 
 static const struct WindowTemplate sDummyWindowTemplate = {0xFF, 0, 0, 0, 0, 0, 0};
 
@@ -330,8 +331,8 @@ void BlitBitmapRectToWindow(u8 windowId, const u8 *pixels, u16 srcX, u16 srcY, u
     sourceRect.height = srcHeight;
 
     destRect.pixels = gWindows[windowId].tileData;
-    destRect.width = 8 * gWindows[windowId].window.width;
-    destRect.height = 8 * gWindows[windowId].window.height;
+    destRect.width = WindowWidthPx(windowId);
+    destRect.height = WindowHeightPx(windowId);
 
     BlitBitmapRect4Bit(&sourceRect, &destRect, srcX, srcY, destX, destY, rectWidth, rectHeight, 0);
 }
@@ -346,8 +347,8 @@ void BlitBitmapRectToWindowWithColorKey(u8 windowId, const u8 *pixels, u16 srcX,
     sourceRect.height = srcHeight;
 
     destRect.pixels = gWindows[windowId].tileData;
-    destRect.width = 8 * gWindows[windowId].window.width;
-    destRect.height = 8 * gWindows[windowId].window.height;
+    destRect.width = WindowWidthPx(windowId);
+    destRect.height = WindowHeightPx(windowId);
 
     BlitBitmapRect4Bit(&sourceRect, &destRect, srcX, srcY, destX, destY, rectWidth, rectHeight, colorKey);
 }
@@ -357,8 +358,8 @@ void FillWindowPixelRect(u8 windowId, u8 fillValue, u16 x, u16 y, u16 width, u16
     struct Bitmap pixelRect;
 
     pixelRect.pixels = gWindows[windowId].tileData;
-    pixelRect.width = 8 * gWindows[windowId].window.width;
-    pixelRect.height = 8 * gWindows[windowId].window.height;
+    pixelRect.width = WindowWidthPx(windowId);
+    pixelRect.height = WindowHeightPx(windowId);
 
     FillBitmapRect4Bit(&pixelRect, x, y, width, height, fillValue);
 }
@@ -540,4 +541,14 @@ void FillHelpMessageWindow(u8 windowId)
         CopyToWindowPixelBuffer(windowId, buffer, width * height * 32, 0);
         Free(buffer);
     }
+}
+
+u32 WindowWidthPx(u8 windowId)
+{
+	return gWindows[windowId].window.width * 8;
+}
+
+static u32 WindowHeightPx(u8 windowId)
+{
+	return gWindows[windowId].window.height * 8;
 }

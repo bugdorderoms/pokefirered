@@ -70,7 +70,8 @@ struct ListMenuTemplate
              u8 scrollMultiple:2; // x40, x80 = xC0
     /*0x17*/ u8 fontId:6; // x1, x2, x4, x8, x10, x20 = x3F
              u8 cursorKind:2; // x40, x80
-}; /* size = 0x18 */
+	/*0x18*/ u8 textNarrowWidth;
+}; /* size = 0x19 */
 
 struct ListMenu
 {

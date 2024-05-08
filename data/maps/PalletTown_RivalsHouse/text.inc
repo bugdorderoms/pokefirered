@@ -62,8 +62,8 @@ PalletTown_RivalsHouse_Text_LookingNiceInNoTime:: @ 818D8CC
     .string "nice in no time.$"
 
 PalletTown_RivalsHouse_Text_ThereYouGoAllDone:: @ 818D8FE
-    .string "{SIZE}Á{STR_VAR_1} looks dreamily content…\p"
-    .string "{SIZE}ÈDAISY: There you go! All done.\n"
+    .string "{FONT_NORMAL}{STR_VAR_1} looks dreamily content…\p"
+    .string "{FONT_FEMALE}DAISY: There you go! All done.\n"
     .string "See? Doesn't it look nice?\p"
     .string "Giggle…\n"
     .string "It's such a cute Pokémon.$"

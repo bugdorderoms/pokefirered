@@ -6,12 +6,14 @@
 #include "decompress.h"
 #include "field_player_avatar.h"
 #include "overworld.h"
+#include "field_fadetransition.h"
 #include "field_weather.h"
 #include "hall_of_fame.h"
 #include "field_message_box.h"
 #include "event_data.h"
 #include "strings.h"
 #include "load_save.h"
+#include "learn_move.h"
 #include "script_pokemon_util.h"
 #include "battle.h"
 #include "fieldmap.h"
@@ -2295,4 +2297,21 @@ u8 Create8x8SymbolSprite(s16 x, s16 y, u8 subpriority, u8 symbolId)
 	StartSpriteAnim(&gSprites[spriteId], symbolId);
 	
 	return spriteId;
+}
+
+static void Task_WaitFadeOutAndShowMoveTutor(u8 taskId)
+{
+	if (!gPaletteFade.active)
+	{
+		DestroyTask(taskId);
+		gFieldCallback = FieldCB_ContinueScriptHandleMusic;
+		ShowMoveTutorMenu(FALSE);
+	}
+}
+
+void DisplayMoveTutorMenu(void)
+{
+	ScriptContext2_Enable();
+	BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+	CreateTask(Task_WaitFadeOutAndShowMoveTutor, 10);
 }

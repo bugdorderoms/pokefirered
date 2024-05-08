@@ -154,7 +154,23 @@
 #define NUM_TEXT_PRINTERS 32
 
 #define TEXT_SPEED_INSTANT 0
+// Given as a text speed when all the text should be
+// loaded at once but not copied to vram yet.
 #define TEXT_SPEED_FF 0xFF
+
+enum
+{
+    FONT_SMALL,
+    FONT_NORMAL_COPY_1,
+    FONT_NORMAL,
+    FONT_NORMAL_COPY_2,
+    FONT_MALE,
+    FONT_FEMALE,
+    FONT_BRAILLE,
+	FONT_BOLD,
+	FONT_NARROWER,
+	FONT_SMALL_NARROWER,
+};
 
 enum
 {
@@ -284,17 +300,6 @@ void DecompressGlyphTile(const u16 *src, u16 *dest);
 u8 GetLastTextColor(u8 colorType);
 void CopyGlyphToWindow(struct TextPrinter *x);
 void ClearTextSpan(struct TextPrinter *textPrinter, u32 width);
-
-u16 Font0Func(struct TextPrinter *textPrinter);
-u16 Font1Func(struct TextPrinter *textPrinter);
-u16 Font2Func(struct TextPrinter *textPrinter);
-u16 Font3Func(struct TextPrinter *textPrinter);
-u16 Font4Func(struct TextPrinter *textPrinter);
-u16 Font5Func(struct TextPrinter *textPrinter);
-u16 Font7Func(struct TextPrinter *textPrinter);
-u16 Font8Func(struct TextPrinter *textPrinter);
-u16 Font6Func(struct TextPrinter *textPrinter);
-
 void TextPrinterInitDownArrowCounters(struct TextPrinter *textPrinter);
 void TextPrinterDrawDownArrow(struct TextPrinter *textPrinter);
 void TextPrinterClearDownArrow(struct TextPrinter *textPrinter);
@@ -304,7 +309,6 @@ bool16 TextPrinterWait(struct TextPrinter *textPrinter);
 void DrawDownArrow(u8 windowId, u16 x, u16 y, u8 bgColor, bool8 drawArrow, u8 *counter, u8 *yCoordIndex);
 u16 RenderText(struct TextPrinter *textPrinter);
 void RenderSaveFailedScreenText(u8 fontId, u8 * dest, const u8 * src, u8 x, u8 y, u8 width, u8 height);
-s32 GetStringWidthFixedWidthFont(const u8 *str, u8 fontId, u8 letterSpacing);
 s32 (*GetFontWidthFunc(u8 glyphId))(u16, bool32);
 s32 GetStringWidth(u8 fontId, const u8 *str, s16 letterSpacing);
 u8 RenderTextFont9(u8 *pixels, u8 fontId, u8 *str, int a3, int a4, int a5, int a6, int a7);
@@ -314,24 +318,21 @@ u8 GetKeypadIconWidth(u8 keypadIconId);
 u8 GetKeypadIconHeight(u8 keypadIconId);
 u8 GetFontAttribute(u8 fontId, u8 attributeId);
 u8 GetMenuCursorDimensionByFont(u8 fontId, u8 whichDimension);
-void DecompressGlyphFont0(u16 glyphId, bool32 isJapanese);
-s32 GetGlyphWidthFont0(u16 glyphId, bool32 isJapanese);
-void DecompressGlyphFont7(u16 glyphId, bool32 isJapanese);
-s32 GetGlyphWidthFont7(u16 glyphId, bool32 isJapanese);
-void DecompressGlyphFont8(u16 glyphId, bool32 isJapanese);
-s32 GetGlyphWidthFont8(u16 glyphId, bool32 isJapanese);
-void DecompressGlyphFont2(u16 glyphId, bool32 isJapanese);
-s32 GetGlyphWidthFont2(u16 glyphId, bool32 isJapanese);
-void DecompressGlyphFont1(u16 glyphId, bool32 isJapanese);
-s32 GetGlyphWidthFont1(u16 glyphId, bool32 isJapanese);
-void DecompressGlyphFont9(u16 glyphId);
-s32 GetGlyphWidthFont3(u16 glyphId, bool32 isJapanese);
-s32 GetGlyphWidthFont4(u16 glyphId, bool32 isJapanese);
-void DecompressGlyphFont5(u16 glyphId, bool32 isJapanese);
-s32 GetGlyphWidthFont5(u16 glyphId, bool32 isJapanese);
+u16 FontFunc_Small(struct TextPrinter *textPrinter);
+u16 FontFunc_NormalCopy1(struct TextPrinter *textPrinter);
+u16 FontFunc_Normal(struct TextPrinter *textPrinter);
+u16 FontFunc_NormalCopy2(struct TextPrinter *textPrinter);
+u16 FontFunc_Male(struct TextPrinter *textPrinter);
+u16 FontFunc_Female(struct TextPrinter *textPrinter);
+u16 FontFunc_Braille(struct TextPrinter *textPrinter);
+u16 FontFunc_Narrower(struct TextPrinter *);
+u16 FontFunc_SmallNarrower(struct TextPrinter *);
+s32 GetGlyphWidth_Braille(u16 font_type, bool32 isJapanese);
 void sub_80062B0(struct Sprite *sprite);
 u8 CreateTextCursorSpriteForOakSpeech(u8 sheetId, u16 x, u16 y, u8 priority, u8 subpriority);
 void DestroyTextCursorSprite(u8 spriteId);
-s32 GetGlyphWidthFont6(u16 font_type, bool32 isJapanese);
+u8 GetFontIdToFit(const u8 *string, u8 fontId, s16 letterSpacing, u32 widthPx);
+u8 *PrependFontIdToFit(u8 *start, u8 *end, u8 fontId, u32 width);
+u8 *WrapFontIdToFit(u8 *start, u8 *end, u8 fontId, u32 width);
 
 #endif // GUARD_TEXT_H

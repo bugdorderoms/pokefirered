@@ -44,8 +44,8 @@ static const struct WindowTemplate sYesNo_WindowTemplate =
 
 static const struct FontInfo gFontInfos[] = 
 {
-    {
-        .fontFunction = Font0Func,
+    [FONT_SMALL] = {
+        .fontFunction = FontFunc_Small,
         .maxLetterWidth = 0x8,
         .maxLetterHeight = 0xD,
         .letterSpacing = 0x0,
@@ -55,8 +55,8 @@ static const struct FontInfo gFontInfos[] =
         .bgColor = 0x1,
         .shadowColor = 0x3,
     },
-    {
-        .fontFunction = Font1Func,
+    [FONT_NORMAL_COPY_1] = {
+        .fontFunction = FontFunc_NormalCopy1,
         .maxLetterWidth = 0x8,
         .maxLetterHeight = 0xE,
         .letterSpacing = 0x0,
@@ -66,8 +66,8 @@ static const struct FontInfo gFontInfos[] =
         .bgColor = 0x1,
         .shadowColor = 0x3,
     },
-    {
-        .fontFunction = Font2Func,
+    [FONT_NORMAL] = {
+        .fontFunction = FontFunc_Normal,
         .maxLetterWidth = 0xA,
         .maxLetterHeight = 0xE,
         .letterSpacing = 0x1,
@@ -77,8 +77,8 @@ static const struct FontInfo gFontInfos[] =
         .bgColor = 0x1,
         .shadowColor = 0x3,
     },
-    {
-        .fontFunction = Font3Func,
+    [FONT_NORMAL_COPY_2] = {
+        .fontFunction = FontFunc_NormalCopy2,
         .maxLetterWidth = 0xA,
         .maxLetterHeight = 0xE,
         .letterSpacing = 0x1,
@@ -88,8 +88,8 @@ static const struct FontInfo gFontInfos[] =
         .bgColor = 0x1,
         .shadowColor = 0x3,
     },
-    {
-        .fontFunction = Font4Func,
+    [FONT_MALE] = {
+        .fontFunction = FontFunc_Male,
         .maxLetterWidth = 0xA,
         .maxLetterHeight = 0xE,
         .letterSpacing = 0x0,
@@ -99,8 +99,8 @@ static const struct FontInfo gFontInfos[] =
         .bgColor = 0x1,
         .shadowColor = 0x3,
     },
-    {
-        .fontFunction = Font5Func,
+    [FONT_FEMALE] = {
+        .fontFunction = FontFunc_Female,
         .maxLetterWidth = 0xA,
         .maxLetterHeight = 0xE,
         .letterSpacing = 0x0,
@@ -110,8 +110,8 @@ static const struct FontInfo gFontInfos[] =
         .bgColor = 0x1,
         .shadowColor = 0x3,
     },
-    {
-        .fontFunction = Font6Func,
+    [FONT_BRAILLE] = {
+        .fontFunction = FontFunc_Braille,
         .maxLetterWidth = 0x8,
         .maxLetterHeight = 0x10,
         .letterSpacing = 0x0,
@@ -121,7 +121,7 @@ static const struct FontInfo gFontInfos[] =
         .bgColor = 0x1,
         .shadowColor = 0x3,
     },
-    {
+    [FONT_BOLD] = {
         .fontFunction = NULL,
         .maxLetterWidth = 0x8,
         .maxLetterHeight = 0x8,
@@ -131,19 +131,41 @@ static const struct FontInfo gFontInfos[] =
         .fgColor = 0x1,
         .bgColor = 0x2,
         .shadowColor = 0xF,
-    }
+    },
+	[FONT_NARROWER] = {
+        .fontFunction = FontFunc_Narrower,
+        .maxLetterWidth = 5,
+        .maxLetterHeight = 16,
+        .letterSpacing = 0,
+        .lineSpacing = 0,
+        .fgColor = 2,
+        .bgColor = 1,
+        .shadowColor = 3,
+    },
+    [FONT_SMALL_NARROWER] = {
+        .fontFunction = FontFunc_SmallNarrower,
+        .maxLetterWidth = 5,
+        .maxLetterHeight = 8,
+        .letterSpacing = 0,
+        .lineSpacing = 0,
+        .fgColor = 2,
+        .bgColor = 1,
+        .shadowColor = 3,
+    },
 };
 
 static const u8 gMenuCursorDimensions[][2] = 
 {
-    { 0x8,  0xD },
-    { 0x8,  0xE },
-    { 0x8,  0xE },
-    { 0x8,  0xE },
-    { 0x8,  0xE },
-    { 0x8,  0xE },
-    { 0x8, 0x10 },
-    { 0x0,  0x0 }
+    [FONT_SMALL]          = { 8,  13 },
+    [FONT_NORMAL_COPY_1]  = { 8,  14 },
+    [FONT_NORMAL]         = { 8,  14 },
+    [FONT_NORMAL_COPY_2]  = { 8,  14 },
+    [FONT_MALE]           = { 8,  14 },
+    [FONT_FEMALE]         = { 8,  14 },
+    [FONT_BRAILLE]        = { 8,  16 },
+    [FONT_BOLD]           = {},
+	[FONT_NARROWER]       = { 8,  15 },
+    [FONT_SMALL_NARROWER] = { 8,   8 },
 };
 
 static u16 CopyDecompressedTileDataToVram(u8 bgId, const void *src, u16 size, u16 offset, u8 mode);
@@ -553,10 +575,10 @@ void LoadMessageBoxAndFrameGfx(u8 windowId, bool8 copyToVram)
     DrawDialogFrameWithCustomTileAndPalette(windowId, copyToVram, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM);
 }
 
-void DisplayItemMessageOnField(u8 taskId, u8 textSpeed, const u8 *string, TaskFunc callback)
+void DisplayItemMessageOnField(u8 taskId, u8 fontId, const u8 *string, TaskFunc callback)
 {
     LoadStdWindowFrameGfx();
-    DisplayMessageAndContinueTask(taskId, 0, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM, textSpeed, GetTextSpeedSetting(), string, callback);
+    DisplayMessageAndContinueTask(taskId, 0, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM, fontId, GetTextSpeedSetting(), string, callback);
     CopyWindowToVram(0, COPYWIN_BOTH);
 }
 

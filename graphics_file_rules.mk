@@ -32,40 +32,43 @@ HALLOFFAMEGFXDIR := graphics/hall_of_fame
 types := normal fight flying poison ground rock bug ghost steel mystery fire water grass electric psychic ice dragon dark
 contest_types := cool beauty cute smart tough
 
-$(FONTGFXDIR)/font0_latin.latfont: $(FONTGFXDIR)/font0_latin.png
+$(FONTGFXDIR)/latin_small.latfont: $(FONTGFXDIR)/latin_small.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font0_jap.fwjpnfont: $(FONTGFXDIR)/font0_jap.png
+$(FONTGFXDIR)/japanese_small.fwjpnfont: $(FONTGFXDIR)/japanese_small.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font1_latin.latfont: $(FONTGFXDIR)/font1_latin.png
+$(FONTGFXDIR)/japanese_tall.fwjpnfont: $(FONTGFXDIR)/japanese_tall.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font1_jap.fwjpnfont: $(FONTGFXDIR)/font1_jap.png
+$(FONTGFXDIR)/latin_normal.latfont: $(FONTGFXDIR)/latin_normal.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font2_latin.latfont: $(FONTGFXDIR)/font2_latin.png
+$(FONTGFXDIR)/japanese_normal.fwjpnfont: $(FONTGFXDIR)/japanese_normal.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font2_jap.fwjpnfont: $(FONTGFXDIR)/font2_jap.png
+$(FONTGFXDIR)/latin_male.latfont: $(FONTGFXDIR)/latin_male.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font4_latin.latfont: $(FONTGFXDIR)/font4_latin.png
+$(FONTGFXDIR)/japanese_male.fwjpnfont: $(FONTGFXDIR)/japanese_male.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font4_jap.fwjpnfont: $(FONTGFXDIR)/font4_jap.png
+$(FONTGFXDIR)/latin_female.latfont: $(FONTGFXDIR)/latin_female.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font5_latin.latfont: $(FONTGFXDIR)/font5_latin.png
+$(FONTGFXDIR)/japanese_female.fwjpnfont: $(FONTGFXDIR)/japanese_female.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font5_jap.fwjpnfont: $(FONTGFXDIR)/font5_jap.png
+$(FONTGFXDIR)/braille.fwjpnfont: $(FONTGFXDIR)/braille.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font6.fwjpnfont: $(FONTGFXDIR)/font6_braille.png
+$(FONTGFXDIR)/japanese_bold.fwjpnfont: $(FONTGFXDIR)/japanese_bold.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/font9_jap.fwjpnfont: $(FONTGFXDIR)/font9_jap.png
+$(FONTGFXDIR)/narrower.latfont: $(FONTGFXDIR)/latin_narrower.png
+	$(GFX) $< $@
+
+$(FONTGFXDIR)/small_narrower.latfont: $(FONTGFXDIR)/latin_small_narrower.png
 	$(GFX) $< $@
 
 graphics/title_screen/pokemon_logo.gbapal: %.gbapal: %.pal

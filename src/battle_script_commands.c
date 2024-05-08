@@ -4070,28 +4070,28 @@ static void GiveMoveToBattleMon(struct BattlePokemon *mon, u16 move)
 
 static void atk59_handlelearnnewmove(void)
 {
-    u16 ret = MonTryLearningNewMove(&gPlayerParty[gBattleStruct->expGetterMonId], gBattlescriptCurrInstr[9]);
+    u8 ret = MonTryLearningNewMove(&gPlayerParty[gBattleStruct->expGetterMonId], gBattlescriptCurrInstr[9]);
     
-    while (ret == 0xFFFE)
+    while (ret == MON_ALREADY_KNOWS_MOVE)
         ret = MonTryLearningNewMove(&gPlayerParty[gBattleStruct->expGetterMonId], FALSE);
 	
-    if (!ret)
+    if (ret == MON_DONT_FIND_MOVE_TO_LEARN)
         gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 5);
-    else if (ret == 0xFFFF)
+    else if (ret == MON_HAS_MAX_MOVES)
         gBattlescriptCurrInstr += 10;
     else
     {
         u8 battlerId = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 	    
         if (gBattlerPartyIndexes[battlerId] == gBattleStruct->expGetterMonId && !(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED))
-            GiveMoveToBattleMon(&gBattleMons[battlerId], ret);
+            GiveMoveToBattleMon(&gBattleMons[battlerId], gMoveToLearn);
 		
         if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
         {
             battlerId = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 		
             if (gBattlerPartyIndexes[battlerId] == gBattleStruct->expGetterMonId && !(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED))
-                GiveMoveToBattleMon(&gBattleMons[battlerId], ret);
+                GiveMoveToBattleMon(&gBattleMons[battlerId], gMoveToLearn);
         }
         gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 1);
     }

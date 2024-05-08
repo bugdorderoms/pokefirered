@@ -57,12 +57,12 @@
 #define PC_MAIL_NUM(i) (PARTY_SIZE + (i))
 
 // string lengths
-#define ITEM_NAME_LENGTH             14
-#define POKEMON_NAME_LENGTH          10
+#define ITEM_NAME_LENGTH             20
+#define POKEMON_NAME_LENGTH          12
 #define PLAYER_NAME_LENGTH           7
 #define MAIL_WORDS_COUNT             9
 #define EASY_CHAT_BATTLE_WORDS_COUNT 6
-#define MOVE_NAME_LENGTH             12
+#define MOVE_NAME_LENGTH             16
 #define MYSTERY_GIFT_CODE_LENGTH     10
 
 #define DAYCARE_MON_COUNT 2

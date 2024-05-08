@@ -999,7 +999,7 @@ static void DrawMoveInfoWindowBorder(u8 windowId)
 	u8 i, pixelsCount;
 	
 	// Remove some pixels on top
-	FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, 0, sMoveInfoWindowTemplates[0].width * 8, NUM_TOPBAR_REMOVE_LINES);
+	FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, 0, WindowWidthPx(windowId), NUM_TOPBAR_REMOVE_LINES);
 	
 	// Draw left circle border
 	for (i = 0, pixelsCount = 1; i < 2; i++, pixelsCount++)

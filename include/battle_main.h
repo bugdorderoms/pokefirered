@@ -30,17 +30,18 @@ struct MultiBattlePokemonTx
     /*0x00*/ u16 species;
     /*0x02*/ u16 heldItem;
     /*0x04*/ u8 nickname[POKEMON_NAME_LENGTH + 1];
-    /*0x0F*/ u8 level;
-    /*0x10*/ u16 hp;
-    /*0x12*/ u16 maxhp;
-    /*0x14*/ u32 status;
-    /*0x18*/ u32 personality;
-    /*0x1C*/ u8 gender;
-    /*0x1D*/ u8 language;
+    /*0x11*/ u8 level;
+    /*0x12*/ u16 hp;
+    /*0x14*/ u16 maxhp;
+	/*0x16*/ u8 gender;
+	/*0x17*/ u8 language;
+    /*0x18*/ u32 status;
+    /*0x1C*/ u32 personality;
 };
 
-#define TYPE_NAME_LENGTH    6
-#define ABILITY_NAME_LENGTH 16
+#define TYPE_NAME_LENGTH     8
+#define CATEGORY_NAME_LENGTH 8
+#define ABILITY_NAME_LENGTH  16
 
 // defines for the gTypeEffectiveness multipliers
 #define TYPE_MUL_NO_EFFECT          0
@@ -55,7 +56,7 @@ struct MultiBattlePokemonTx
 extern const struct OamData gOamData_BattlerOpponent;
 extern const struct OamData gOamData_BattlerPlayer;
 extern const u8 gTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1];
-extern const u8 gCategoryNames[NUM_MOVE_SPLITS][8];
+extern const u8 gCategoryNames[NUM_MOVE_SPLITS][CATEGORY_NAME_LENGTH + 1];
 extern const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
 extern const struct TrainerMoneyBall gTrainerMoneyAndBallTable[];
 extern const struct Ability gAbilities[ABILITIES_COUNT];

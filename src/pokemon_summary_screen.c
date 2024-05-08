@@ -2044,12 +2044,10 @@ static void BufferMonMoves(void)
 
 static void BufferMonMoveI(u8 i)
 {
-	u16 move;
-	
     if (i < MAX_MON_MOVES)
-        sMonSummaryScreen->moveIds[i] = move = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MOVE1 + i);
+        sMonSummaryScreen->moveIds[i] = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MOVE1 + i);
 
-    if (!move)
+    if (!sMonSummaryScreen->moveIds[i])
     {
         StringCopy(sMonSummaryScreen->summary.moveNameStrBufs[i], gText_PokeSum_OneHyphen);
         StringCopy(sMonSummaryScreen->summary.moveCurPpStrBufs[i], gText_PokeSum_TwoHyphens);
@@ -2060,6 +2058,8 @@ static void BufferMonMoveI(u8 i)
     }
 	else
 	{
+		u16 move = sMonSummaryScreen->moveIds[i];
+		
 		sMonSummaryScreen->numMoves++;
 		
 		sMonSummaryScreen->moveTypes[i] = GetTypeChangingMoveType(&sMonSummaryScreen->currentMon, move);

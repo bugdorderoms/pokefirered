@@ -6,10 +6,12 @@
 #include "trig.h"
 #include "field_fadetransition.h"
 #include "overworld.h"
+#include "learn_move.h"
 #include "new_menu_helpers.h"
 #include "menu.h"
 #include "list_menu.h"
 #include "event_data.h"
+#include "party_menu.h"
 #include "text_window.h"
 #include "pokemon_summary_screen.h"
 #include "graphics.h"
@@ -124,18 +126,18 @@ struct LearnMoveGfxResources
     u8 selectedMoveSlot;
 	u16 listMenuScrollPos;
     u16 listMenuScrollRow;
-    u16 learnableMoves[25];
-    u8 listMenuStrbufs[25][13];
+    u16 learnableMoves[MAX_LV_UP_MOVES];
+    u8 listMenuStrbufs[MAX_LV_UP_MOVES + 1][MOVE_NAME_LENGTH + 1];
     u8 listMenuTaskId;
     u8 bg1TilemapBuffer[BG_SCREEN_SIZE];
     u8 textColor[3];
     u8 selectedIndex;
-	struct ListMenuItem listMenuItems[25];
+	struct ListMenuItem listMenuItems[MAX_LV_UP_MOVES + 1];
 };
 
 static EWRAM_DATA struct LearnMoveGfxResources * sMoveRelearner = NULL;
+static EWRAM_DATA bool8 sOpenFromPartyMenu = FALSE;
 
-static void Task_InitMoveRelearnerMenu(u8 taskId);
 static void CB2_MoveRelearner_Init(void);
 static void CB2_MoveRelearner(void);
 static void MoveRelearnerStateMachine(void);
@@ -315,21 +317,10 @@ static void VBlankCB_MoveRelearner(void)
     TransferPlttBuffer();
 }
 
-void DisplayMoveTutorMenu(void)
+void ShowMoveTutorMenu(bool8 fromPartyMenu)
 {
-    ScriptContext2_Enable();
-    CreateTask(Task_InitMoveRelearnerMenu, 10);
-    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
-}
-
-static void Task_InitMoveRelearnerMenu(u8 taskId)
-{
-    if (!gPaletteFade.active)
-    {
-        SetMainCallback2(CB2_MoveRelearner_Init);
-        gFieldCallback = FieldCB_ContinueScriptHandleMusic;
-        DestroyTask(taskId);
-    }
+	sOpenFromPartyMenu = fromPartyMenu;
+    SetMainCallback2(CB2_MoveRelearner_Init);
 }
 
 static void MoveRelearnerLoadBgGfx(void)
@@ -464,7 +455,7 @@ static void MoveRelearnerStateMachine(void)
         switch (YesNoMenuProcessInput())
         {
         case 0:
-            if (GiveMoveToMon(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves[sMoveRelearner->selectedIndex]) != 0xFFFF)
+            if (GiveMoveToMon(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves[sMoveRelearner->selectedIndex]) != MON_HAS_MAX_MOVES)
             {
                 StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_MonLearnedMove);
                 gSpecialVar_0x8004 = TRUE;
@@ -570,7 +561,14 @@ static void MoveRelearnerStateMachine(void)
         {
             FreeAllWindowBuffers();
             Free(sMoveRelearner);
-            SetMainCallback2(CB2_ReturnToField);
+			
+			if (sOpenFromPartyMenu)
+			{
+				sOpenFromPartyMenu = FALSE;
+				CB2_ReturnToPartyMenuFromSummaryScreen();
+			}
+			else
+				SetMainCallback2(CB2_ReturnToField);
         }
         break;
     case MENU_STATE_FADE_FROM_SUMMARY_SCREEN:

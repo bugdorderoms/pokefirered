@@ -160,7 +160,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_THUNDER_PUNCH] =
     {
-		.name = _("ThunderPunch"),
+		.name = _("Thunder Punch"),
         .effect = EFFECT_PARALYZE_HIT,
         .power = 75,
         .type = TYPE_ELECTRIC,
@@ -1374,7 +1374,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_POISON_POWDER] =
     {
-		.name = _("PoisonPowder"),
+		.name = _("Poison Powder"),
         .effect = EFFECT_POISON,
         .type = TYPE_POISON,
         .accuracy = 75,
@@ -1497,7 +1497,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_THUNDER_SHOCK] =
     {
-		.name = _("ThunderShock"),
+		.name = _("Thunder Shock"),
         .effect = EFFECT_PARALYZE_HIT,
         .power = 40,
         .type = TYPE_ELECTRIC,
@@ -2126,7 +2126,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_SELF_DESTRUCT] =
     {
-		.name = _("SelfDestruct"),
+		.name = _("Self-Destruct"),
         .effect = EFFECT_EXPLOSION,
         .power = 200,
         .type = TYPE_NORMAL,
@@ -2396,7 +2396,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_HI_JUMP_KICK] =
     {
-		.name = _("Hi Jump Kick"),
+		.name = _("High Jump Kick"),
         .effect = EFFECT_RECOIL_IF_MISS,
 		.power = 130,
         .type = TYPE_FIGHTING,
@@ -3262,7 +3262,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_FAINT_ATTACK] =
     {
-		.name = _("Faint Attack"),
+		.name = _("Feint Attack"),
         .effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_DARK,
@@ -3926,7 +3926,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_DYNAMIC_PUNCH] =
     {
-		.name = _("DynamicPunch"),
+		.name = _("Dynamic Punch"),
         .effect = EFFECT_CONFUSE_HIT,
         .power = 100,
         .type = TYPE_FIGHTING,
@@ -3963,7 +3963,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_DRAGON_BREATH] =
     {
-		.name = _("DragonBreath"),
+		.name = _("Dragon Breath"),
         .effect = EFFECT_PARALYZE_HIT,
         .power = 60,
         .type = TYPE_DRAGON,
@@ -4320,7 +4320,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_EXTREME_SPEED] =
     {
-		.name = _("ExtremeSpeed"),
+		.name = _("Extreme Speed"),
         .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_NORMAL,
@@ -4339,7 +4339,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_ANCIENT_POWER] =
     {
-		.name = _("AncientPower"),
+		.name = _("Ancient Power"),
         .effect = EFFECT_ALL_STATS_UP_HIT,
         .power = 60,
         .type = TYPE_ROCK,
@@ -4675,7 +4675,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_SMELLING_SALT] =
     {
-		.name = _("SmellingSalt"),
+		.name = _("Smelling Salts"),
         .effect = EFFECT_SMELLING_SALT,
 		.power = 70,
         .type = TYPE_NORMAL,
@@ -5244,7 +5244,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_FEATHER_DANCE] =
     {
-		.name = _("FeatherDance"),
+		.name = _("Feather Dance"),
         .effect = EFFECT_ATTACK_DOWN_2,
         .type = TYPE_FLYING,
         .accuracy = 100,
@@ -5652,7 +5652,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_GRASS_WHISTLE] =
     {
-		.name = _("GrassWhistle"),
+		.name = _("Grass Whistle"),
         .effect = EFFECT_SLEEP,
         .type = TYPE_GRASS,
         .accuracy = 55,

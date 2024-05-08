@@ -86,5 +86,6 @@ void UpdateCurrentPartyMonIconSpecies(u16 species);
 void UpdatePartyAfterPokemonFusion(void);
 void CreatePartyMonAfterDefusing(void);
 void SetBattlerUsedItemForBattleScript(u16 item, bool8 fromBagMenu);
+void CB2_ReturnToPartyMenuFromSummaryScreen(void);
 
 #endif // GUARD_PARTY_MENU_H

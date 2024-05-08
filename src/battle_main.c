@@ -340,7 +340,7 @@ const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES] =
 const u8 gTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1] =
 {
     [TYPE_NORMAL]   = _("Normal"),
-    [TYPE_FIGHTING] = _("Fight"),
+    [TYPE_FIGHTING] = _("Fighting"),
     [TYPE_FLYING]   = _("Flying"),
     [TYPE_POISON]   = _("Poison"),
     [TYPE_GROUND]   = _("Ground"),
@@ -352,17 +352,17 @@ const u8 gTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1] =
     [TYPE_FIRE]     = _("Fire"),
     [TYPE_WATER]    = _("Water"),
     [TYPE_GRASS]    = _("Grass"),
-    [TYPE_ELECTRIC] = _("Electr"),
-    [TYPE_PSYCHIC]  = _("Psychc"),
+    [TYPE_ELECTRIC] = _("Electric"),
+    [TYPE_PSYCHIC]  = _("Psychic"),
     [TYPE_ICE]      = _("Ice"),
     [TYPE_DRAGON]   = _("Dragon"),
     [TYPE_DARK]     = _("Dark"),
 	[TYPE_FAIRY]    = _("Fairy"),
 };
 
-const u8 gCategoryNames[NUM_MOVE_SPLITS][8] =
+const u8 gCategoryNames[NUM_MOVE_SPLITS][CATEGORY_NAME_LENGTH + 1] =
 {
-	[SPLIT_PHYSICAL] = _("Physic"),
+	[SPLIT_PHYSICAL] = _("Physical"),
 	[SPLIT_SPECIAL]  = _("Special"),
 	[SPLIT_STATUS]   = _("Status"),
 };

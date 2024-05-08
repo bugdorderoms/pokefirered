@@ -482,6 +482,17 @@ static const struct WindowTemplate sItemGiveTakeWindowTemplate =
     .baseBlock = 0x373,
 };
 
+static const struct WindowTemplate sMoveRelearnDeleteWindowTemplate =
+{
+    .bg = 2,
+    .tilemapLeft = 22,
+    .tilemapTop = 13,
+    .width = 7,
+    .height = 6,
+    .paletteNum = 14,
+    .baseBlock = 0x373,
+};
+
 static const struct WindowTemplate sMailReadTakeWindowTemplate =
 {
     .bg = 2,
@@ -670,6 +681,7 @@ static const u8 *const sActionStringTable[] =
     [PARTY_MSG_DO_WHAT_WITH_ITEM]      = gText_DoWhatWithItem,
     [PARTY_MSG_DO_WHAT_WITH_MAIL]      = gText_DoWhatWithMail,
 	[PARTY_MSG_FUSE_WITH_WHICH]        = gText_FuseWithWhich,
+	[PARTY_MSG_DO_WHAT_WITH_MOVES]     = gText_DoWhatWithMoves,
 };
 
 static const u8 *const sDescriptionStringTable[] =
@@ -944,7 +956,10 @@ enum
     MENU_ITEM,
     MENU_GIVE,
     MENU_TAKE_ITEM,
-    MENU_MOVE,
+    MENU_MOVE_ITEM,
+	MENU_MOVES,
+	MENU_REMEMBER_MOVE,
+	MENU_FORGET_MOVE,
     MENU_MAIL,
     MENU_TAKE_MAIL,
     MENU_READ,
@@ -973,7 +988,10 @@ static struct
     [MENU_ITEM] = {gText_Item, CursorCB_Item},
     [MENU_GIVE] = {gOtherText_Give, CursorCB_Give},
     [MENU_TAKE_ITEM] = {gText_Take, CursorCB_TakeItem},
-    [MENU_MOVE] = {gText_Move, CursorCB_Move},
+    [MENU_MOVE_ITEM] = {gText_Move, CursorCB_MoveItem},
+	[MENU_MOVES] = {gText_Moves, CursorCB_Moves},
+	[MENU_REMEMBER_MOVE] = {gText_Remember, CursorCB_RelearnMove},
+	[MENU_FORGET_MOVE] = {gText_Forget, CursorCB_DeleteMove},
     [MENU_MAIL] = {gText_Mail, CursorCB_Mail},
     [MENU_TAKE_MAIL] = {gText_Take2, CursorCB_TakeMail},
     [MENU_READ] = {gText_Read2, CursorCB_Read},
@@ -1004,7 +1022,8 @@ static const u8 sPartyMenuAction_SummaryCancel[] = {MENU_SUMMARY, MENU_CANCEL1};
 static const u8 sPartyMenuAction_EnterSummaryCancel[] = {MENU_ENTER, MENU_SUMMARY, MENU_CANCEL1};
 static const u8 sPartyMenuAction_NoEntrySummaryCancel[] = {MENU_NO_ENTRY, MENU_SUMMARY, MENU_CANCEL1};
 static const u8 sPartyMenuAction_StoreSummaryCancel[] = {MENU_STORE, MENU_SUMMARY, MENU_CANCEL1};
-static const u8 sPartyMenuAction_GiveTakeItemCancel[] = {MENU_GIVE, MENU_TAKE_ITEM, MENU_MOVE, MENU_CANCEL2};
+static const u8 sPartyMenuAction_GiveTakeItemCancel[] = {MENU_GIVE, MENU_TAKE_ITEM, MENU_MOVE_ITEM, MENU_CANCEL2};
+static const u8 sPartyMenuAction_RelearnDeleteMoveCancel[] = {MENU_REMEMBER_MOVE, MENU_FORGET_MOVE, MENU_CANCEL2};
 static const u8 sPartyMenuAction_ReadTakeMailCancel[] = {MENU_READ, MENU_TAKE_MAIL, MENU_CANCEL2};
 static const u8 sPartyMenuAction_RegisterSummaryCancel[] = {MENU_REGISTER, MENU_SUMMARY, MENU_CANCEL1};
 static const u8 sPartyMenuAction_TradeSummaryCancel1[] = {MENU_TRADE1, MENU_SUMMARY, MENU_CANCEL1};
@@ -1022,6 +1041,7 @@ enum
     ACTIONS_STORE,
     ACTIONS_SUMMARY_ONLY,
     ACTIONS_ITEM,
+	ACTIONS_MOVES,
     ACTIONS_MAIL,
     ACTIONS_REGISTER,
     ACTIONS_TRADE,
@@ -1039,6 +1059,7 @@ static const u8 *const sPartyMenuActions[] =
     [ACTIONS_STORE]         = sPartyMenuAction_StoreSummaryCancel,
     [ACTIONS_SUMMARY_ONLY]  = sPartyMenuAction_SummaryCancel,
     [ACTIONS_ITEM]          = sPartyMenuAction_GiveTakeItemCancel,
+	[ACTIONS_MOVES]         = sPartyMenuAction_RelearnDeleteMoveCancel,
     [ACTIONS_MAIL]          = sPartyMenuAction_ReadTakeMailCancel,
     [ACTIONS_REGISTER]      = sPartyMenuAction_RegisterSummaryCancel,
     [ACTIONS_TRADE]         = sPartyMenuAction_TradeSummaryCancel1,
@@ -1056,6 +1077,7 @@ static const u8 sPartyMenuActionCounts[] =
     [ACTIONS_STORE]         = ARRAY_COUNT(sPartyMenuAction_StoreSummaryCancel),
     [ACTIONS_SUMMARY_ONLY]  = ARRAY_COUNT(sPartyMenuAction_SummaryCancel),
     [ACTIONS_ITEM]          = ARRAY_COUNT(sPartyMenuAction_GiveTakeItemCancel),
+	[ACTIONS_MOVES]         = ARRAY_COUNT(sPartyMenuAction_RelearnDeleteMoveCancel),
     [ACTIONS_MAIL]          = ARRAY_COUNT(sPartyMenuAction_ReadTakeMailCancel),
     [ACTIONS_REGISTER]      = ARRAY_COUNT(sPartyMenuAction_RegisterSummaryCancel),
     [ACTIONS_TRADE]         = ARRAY_COUNT(sPartyMenuAction_TradeSummaryCancel1),

@@ -158,8 +158,12 @@
 #define SHINY_ODDS 8 // Actual probability is SHINY_ODDS/65536
 
 // Learning moves
-#define MON_ALREADY_KNOWS_MOVE 0xFFFE
-#define MON_HAS_MAX_MOVES      0xFFFF
+#define MON_DONT_FIND_MOVE_TO_LEARN 0
+#define MON_HAS_MAX_MOVES           1
+#define MON_ALREADY_KNOWS_MOVE      2
+#define MON_LEARNED_MOVE            3
+
+#define MAX_LV_UP_MOVES              30
 
 #define PLAYER_HAS_TWO_USABLE_MONS              0x0
 #define PLAYER_HAS_ONE_MON                      0x1

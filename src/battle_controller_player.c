@@ -721,9 +721,6 @@ static void MoveSelectionDisplayMoveType(u8 battlerId)
     u8 target, effect, type = GetTypeChangingMoveType(GetBattlerPartyIndexPtr(battlerId), move);
     
     txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfaceType);
-    *txtPtr++ = EXT_CTRL_CODE_BEGIN;
-    *txtPtr++ = 6;
-    *txtPtr++ = 1;
    
 #if EFFECTIVENESS_ON_MENU
     target = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT); // default target
@@ -771,7 +768,7 @@ static void MoveSelectionDisplayMoveType(u8 battlerId)
 #else
     txtPtr = StringCopy(txtPtr, gText_MoveInterfaceMoveNamesColor);
 #endif
-    StringCopy(txtPtr, gTypeNames[type]);
+    PrependFontIdToFit(txtPtr, StringCopy(txtPtr, gTypeNames[type]), 0, WindowWidthPx(B_WIN_MOVE_TYPE) - 32);
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MOVE_TYPE);
 }
 
@@ -1447,7 +1444,7 @@ static void MoveInfoPrintPriorityAndCategory(u16 move)
 	ConvertIntToDecimalStringN(gBattleTextBuff1, gBattleMoves[move].priority, STR_CONV_MODE_LEFT_ALIGN, 2);
 	
 	// Move's category
-	StringCopy(gBattleTextBuff2, gCategoryNames[gBattleMoves[move].split]);
+	PrependFontIdToFit(gBattleTextBuff2, StringCopy(gBattleTextBuff2, gCategoryNames[gBattleMoves[move].split]), 1, WindowWidthPx(B_WIN_SWITCH_PROMPT) - 33);
 	
 	BattleStringExpandPlaceholdersToDisplayedString(gText_MoveInfoPriorityAndCategory);
 }

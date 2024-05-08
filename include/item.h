@@ -63,16 +63,16 @@ enum
 struct Item
 {
     /*0x00*/ u8 name[ITEM_NAME_LENGTH];
-	/*0x0E*/ u8 holdEffect;
-    /*0x0F*/ u8 holdEffectParam;
-    /*0x10*/ const u8 *description;
-	/*0x14*/ u16 price;
-	/*0x16*/ u8 pocket;
-    /*0x17*/ u8 type; // determine the exit CB
-    /*0x18*/ ItemUseFunc fieldUseFunc;
-	/*0x1C*/ u8 usageType; // used by bag sorting
-    /*0x1D*/ u8 battleUsage; // determine battle script id
-	/*0x1E*/ u8 flingPower;
+	/*0x14*/ u8 holdEffect;
+    /*0x15*/ u8 holdEffectParam;
+	/*0x16*/ u16 price;
+    /*0x18*/ const u8 *description;
+	/*0x1C*/ ItemUseFunc fieldUseFunc;
+	/*0x20*/ u8 pocket;
+    /*0x21*/ u8 type; // determine the exit CB
+	/*0x22*/ u8 usageType; // used by bag sorting
+    /*0x23*/ u8 battleUsage; // determine battle script id
+	/*0x24*/ u8 flingPower;
 };
 
 struct BagPocket
@@ -85,8 +85,8 @@ extern const struct Item gItems[];
 extern struct BagPocket gBagPockets[];
 
 u16 GetBagItemQuantity(u16 *quantity);
-void CopyItemName(u16 itemId, u8 *dest);
-void CopyItemNameHandlePlural(u16 itemId, u16 quantity, u8 *dest);
+u8 *CopyItemName(u16 itemId, u8 *dest);
+u8 *CopyItemNameHandlePlural(u16 itemId, u16 quantity, u8 *dest);
 bool8 IsBagPocketNonEmpty(u8 pocket);
 bool8 CheckBagHasItem(u16 itemId, u16 count);
 bool8 CheckBagHasSpace(u16 itemId, u16 count);
