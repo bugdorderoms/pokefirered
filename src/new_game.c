@@ -28,6 +28,7 @@
 #include "registered_item.h"
 #include "constants/maps.h"
 #include "constants/pokedex.h"
+#include "constants/species.h"
 
 // EWRAM vars
 EWRAM_DATA bool8 gDifferentSaveFile = FALSE;
@@ -109,7 +110,7 @@ static void Debug_NewGameFillPokedex(void)
 {
 	u16 i;
 	
-	for (i = NATIONAL_DEX_NONE + 1; i <= NATIONAL_DEX_COUNT; i++)
+	for (i = NATIONAL_DEX_NONE + 1; i <= NATIONAL_DEX_END; i++)
 	{
 		GetSetPokedexFlag(i, FLAG_SET_SEEN);
 		GetSetPokedexFlag(i, FLAG_SET_CAUGHT);

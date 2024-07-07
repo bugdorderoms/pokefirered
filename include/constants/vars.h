@@ -20,6 +20,7 @@
 #define VAR_TEMP_D                          0x400D
 #define VAR_TEMP_E                          0x400E
 #define VAR_TEMP_F                          0x400F
+#define TEMP_VARS_END                       VAR_TEMP_F
 
 // Object event graphics IDs which can be changed by
 // script commands.

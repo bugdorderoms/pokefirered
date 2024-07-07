@@ -7,21 +7,36 @@
 #include "form_change.h"
 #include "item.h"
 #include "item_menu.h"
+#include "item_use.h"
+#include "overworld.h"
 #include "party_menu.h"
 #include "pokemon.h"
+#include "region_map.h"
 #include "sound.h"
 #include "util.h"
 #include "constants/form_change.h"
-#include "constants/pokedex.h"
 #include "constants/pokemon.h"
+#include "constants/regions.h"
+#include "constants/species.h"
 
-static u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality, u16 ability, u16 itemId, u16 *moves, u8 battlerId)
+const u16 gDeafultGeneratorFormChanges[] =
+{
+	// No region form, so it's possible to encounter/breed an regional form in another region
+	// FORM_CHANGE_REGION,
+	FORM_CHANGE_GENDER,
+	FORM_CHANGE_PERSONALITY,
+	FORM_CHANGE_SEASON,
+	FORM_CHANGE_NATURE,
+	FORM_CHANGE_TERMINATOR
+};
+
+static u16 GetSpeciesForm(u16 formChangeType, u16 species, u32 personality, u16 ability, u16 itemId, u16 *moves, u8 battlerId)
 {
 	u8 i, j;
 	bool8 knowsMove;
 	u16 param, targetSpecies = SPECIES_NONE;
-	const struct FormChange *formsTable = gFormChangeTable[species];
-	
+	const struct FormChange *formsTable = gSpeciesInfo[species].formChangeTable;
+
 	if (formsTable != NULL)
 	{
 		for (i = 0; formsTable[i].method != FORM_CHANGE_TERMINATOR; i++)
@@ -37,7 +52,7 @@ static u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality
 							targetSpecies = formsTable[i].targetSpecies;
 					    break;
 					case FORM_CHANGE_PERSONALITY:
-					    targetSpecies = formsTable[personality % param].targetSpecies;
+					    targetSpecies = formsTable[(personality % param) + formsTable[i].param2].targetSpecies;
 						break;
 					case FORM_CHANGE_SEASON:
 					    if (param == DNSGetCurrentSeason())
@@ -129,7 +144,7 @@ static u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality
 						}
 						break;
 					case FORM_CHANGE_TIME:
-					    if (param == GetDNSTimeLapseIsNight())
+					    if (param == GetDNSTimeLapseDayOrNight())
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
 					case FORM_CHANGE_KNOW_MOVE:
@@ -149,8 +164,13 @@ static u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality
 						{
 							targetSpecies = formsTable[i].targetSpecies;
 							
-							if (species == targetSpecies && formsTable[i].param2) // if already transformed revert to it's original form
-							    targetSpecies = formsTable[i].param2;
+							if (ItemId_GetFieldFunc(param) == FieldUseFunc_FormChangeItemListMenu) // Save list id
+								gSpecialVar_0x8000 = formsTable[i].param2;
+							else
+							{
+								if (species == targetSpecies && formsTable[i].param2) // If already transformed revert to it's original form
+									targetSpecies = formsTable[i].param2;
+							}
 						}
 						break;
 					case FORM_CHANGE_ENDTURN:
@@ -162,8 +182,19 @@ static u16 GetSpeciesFormChange(u16 formChangeType, u16 species, u32 personality
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
 					case FORM_CHANGE_MOVE_SPLIT:
-					    if ((formsTable[i].param2 && param != GetMoveSplit(gCurrentMove))
-							|| (!formsTable[i].param2 && param == GetMoveSplit(gCurrentMove)))
+					    if (formsTable[i].param2)
+						{
+							if (param != GetMoveSplit(gCurrentMove))
+								targetSpecies = formsTable[i].targetSpecies;
+						}
+						else
+						{
+							if (param == GetMoveSplit(gCurrentMove))
+								targetSpecies = formsTable[i].targetSpecies;
+						}
+						break;
+					case FORM_CHANGE_REGION:
+					    if (param == REGIONS_COUNT || param == gMapSectionsInfo[GetCurrentRegionMapSectionId()].region)
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
 				}
@@ -185,7 +216,7 @@ u16 GetMonFormChangeSpecies(struct Pokemon *mon, u16 species, u16 formChangeType
 	for (i = 0; i < MAX_MON_MOVES; i++)
 		moves[i] = GetMonData(mon, MON_DATA_MOVE1 + i);
 	
-	return GetSpeciesFormChange(formChangeType, species, GetMonData(mon, MON_DATA_PERSONALITY), GetMonAbility(mon), GetMonData(mon, MON_DATA_HELD_ITEM), moves, 0);
+	return GetSpeciesForm(formChangeType, species, GetMonData(mon, MON_DATA_PERSONALITY), GetMonAbility(mon), GetMonData(mon, MON_DATA_HELD_ITEM), moves, 0);
 }
 
 u16 DoOverworldFormChange(struct Pokemon *mon, u16 formChangeType)
@@ -232,7 +263,7 @@ void DoPlayerPartyEndBattleFormChange(void)
 
 u16 GetBattlerFormChangeSpecies(u8 battlerId, u16 species, u16 itemId, u16 formChangeType)
 {
-	return GetSpeciesFormChange(formChangeType, species, gBattleMons[battlerId].personality, GetBattlerAbility(battlerId), itemId, &gBattleMons[battlerId].moves[0], battlerId);
+	return GetSpeciesForm(formChangeType, species, gBattleMons[battlerId].personality, GetBattlerAbility(battlerId), itemId, &gBattleMons[battlerId].moves[0], battlerId);
 }
 
 u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType)
@@ -285,10 +316,10 @@ void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 r
 	ClearIllusionMon(battlerId);
 }
 
-static bool8 SpeciesHasFormChangeType(u16 species, u16 formChangeType)
+bool8 SpeciesHasFormChangeType(u16 species, u16 formChangeType)
 {
 	u8 i;
-	const struct FormChange *formsTable = gFormChangeTable[species];
+	const struct FormChange *formsTable = gSpeciesInfo[species].formChangeTable;
 	
 	if (formsTable != NULL)
 	{
@@ -323,7 +354,7 @@ void DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType)
 			}
 			break;
 		case FORM_CHANGE_END_BATTLE:
-		    targetSpecies = battlerId == 0xFF ? gBattleMonForms[B_SIDE_PLAYER][partyId] : gBattleMonForms[GetBattlerSide(battlerId)][partyId];
+		    targetSpecies = gBattleMonForms[battlerId == 0xFF ? B_SIDE_PLAYER : GetBattlerSide(battlerId)][partyId];
 			
 			if (targetSpecies && targetSpecies < NUM_SPECIES)
 			{

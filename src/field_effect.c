@@ -514,9 +514,9 @@ static u8 AddNewGameBirchObject(s16 x, s16 y, u8 subpriority)
     return CreateSprite(&sNewGameOakObjectTemplate, x, y, subpriority);
 }
 
-static u8 CreateMonSprite_FieldMove(u16 species, bool8 isShiny, u32 personality, s16 x, s16 y, u8 subpriority)
+static u8 CreateMonSprite_FieldMove(u16 species, bool8 isShiny, u32 personality, s16 x, s16 y)
 {
-    u16 spriteId = CreateMonPicSprite(species, isShiny, personality, 1, x, y, 0, GetMonSpritePalStructFromSpecies(species, isShiny)->tag);
+    u16 spriteId = CreateMonPicSprite(species, isShiny, personality, 1, x, y, 0, species);
 	
 	return spriteId == 0xFFFF ? MAX_SPRITES : spriteId;
 }
@@ -2706,7 +2706,7 @@ static u8 InitFieldMoveMonSprite(u32 species, bool8 isShiny, u32 personality)
     struct Sprite * sprite;
 	
     species &= 0x7fffffff;
-    monSprite = CreateMonSprite_FieldMove(species, isShiny, personality, 0x140, 0x50, 0);
+    monSprite = CreateMonSprite_FieldMove(species, isShiny, personality, 0x140, 0x50);
 	
     sprite = &gSprites[monSprite];
     sprite->callback = SpriteCallbackDummy;

@@ -5,6 +5,7 @@
 #include "item.h"
 #include "pokeball.h"
 #include "pokedex.h"
+#include "constants/pokedex.h"
 
 struct GFRomHeader
 {
@@ -60,7 +61,7 @@ struct GFRomHeader
     u32 externalEventFlagsOffset;
     u32 externalEventDataOffset;
     u32 unk18;
-    const struct BaseStats * baseStats;
+    const struct SpeciesInfo * speciesInfo;
     const u8 (* abilityNames)[];
     const u8 * const * abilityDescriptions;
     const struct Item * items;
@@ -95,14 +96,14 @@ static const struct GFRomHeader sGFRomHeader = {
 #else
     .gameName = "pokemon green version",
 #endif
-    .monFrontPics = gMonFrontPicTable,
-    .monBackPics = gMonBackPicTable,
-    .monNormalPalettes = gMonPaletteTable,
-    .monShinyPalettes = gMonShinyPaletteTable,
-    .monIcons = gMonIconTable,
-    .monIconPaletteIds = gMonIconPaletteIndices,
+    // .monFrontPics = gMonFrontPicTable,
+    // .monBackPics = gMonBackPicTable,
+    // .monNormalPalettes = gMonPaletteTable,
+    // .monShinyPalettes = gMonShinyPaletteTable,
+    // .monIcons = gMonIconTable,
+    // .monIconPaletteIds = gMonIconPaletteIndices,
     .monIconPalettes = gMonIconPaletteTable,
-    .monSpeciesNames = gSpeciesNames,
+    // .monSpeciesNames = gSpeciesNames,
     // .moveNames = gMoveNames,
     .decorations = NULL,
     .flagsOffset = offsetof(struct SaveBlock1, flags),
@@ -113,7 +114,7 @@ static const struct GFRomHeader sGFRomHeader = {
     .pokedexVar = 0,
     .pokedexFlag = 0,
     .mysteryGiftFlag = 0,
-    .pokedexCount = NATIONAL_DEX_COUNT,
+    .pokedexCount = NATIONAL_DEX_END,
     .playerNameLength = PLAYER_NAME_LENGTH,
     .unk2 = 10,
     .pokemonNameLength1 = POKEMON_NAME_LENGTH,
@@ -145,7 +146,7 @@ static const struct GFRomHeader sGFRomHeader = {
     .externalEventFlagsOffset = 0,
     .externalEventDataOffset = 0,
     .unk18 = 0,
-    .baseStats = gBaseStats,
+    .speciesInfo = gSpeciesInfo,
     // .abilityNames = gAbilityNames,
     // .abilityDescriptions = gAbilityDescriptionPointers,
     .items = gItems,

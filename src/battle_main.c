@@ -20,6 +20,7 @@
 #include "graphics.h"
 #include "item.h"
 #include "link.h"
+#include "evolution.h"
 #include "link_rfu.h"
 #include "load_save.h"
 #include "m4a.h"
@@ -108,7 +109,6 @@ static void HandleEndTurn_FinishBattle(void);
 static void FreeResetData_ReturnToOvOrDoEvolutions(void);
 static void ReturnFromBattleToOverworld(void);
 static void TryEvolvePokemon(void);
-static void TrySpecialEvolution(void);
 static void WaitForEvoSceneToFinish(void);
 
 // Bg rams
@@ -335,6 +335,7 @@ const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES] =
     {TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NOT_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NO_EFFECT},
     {TYPE_MUL_NORMAL, TYPE_MUL_NOT_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NOT_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE},
 	{TYPE_MUL_NORMAL, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NOT_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NOT_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NOT_EFFECTIVE, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_NORMAL, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL},
+    // TODO: Stellar type effectiveness
 };
 
 const u8 gTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1] =
@@ -358,6 +359,7 @@ const u8 gTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1] =
     [TYPE_DRAGON]   = _("Dragon"),
     [TYPE_DARK]     = _("Dark"),
 	[TYPE_FAIRY]    = _("Fairy"),
+	[TYPE_STELLAR]  = _("Stellar"),
 };
 
 const u8 gCategoryNames[NUM_MOVE_SPLITS][CATEGORY_NAME_LENGTH + 1] =
@@ -1287,7 +1289,6 @@ static u16 GetTrainerClassBallId(u8 trainerClass)
 static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 {
     u32 i, j;
-	u16 formChanges[] = {FORM_CHANGE_GENDER, FORM_CHANGE_TERMINATOR};
 	const struct TrainerMon *partyData;
 	struct PokemonGenerator generator;
 	
@@ -1300,13 +1301,13 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 		generator.otIdType = OT_ID_RANDOM;
 		generator.hasFixedPersonality = FALSE;
 		generator.fixedPersonality = 0;
-		generator.changeForm = TRUE;
-		generator.formChanges = formChanges;
+		generator.formChanges = GENERATOR_FORMS(FORM_CHANGE_GENDER);
 		
 		for (i = 0; i < gTrainers[trainerNum].partySize; i++)
 		{
 			generator.species = partyData[i].species;
 			generator.level = GetTrainerPartyMonLevel(partyData[i]);
+			generator.forcedNature = partyData[i].nature ? partyData[i].nature - 1 : NUM_NATURES;
 			
 			if (partyData[i].gender)
 			{
@@ -1318,33 +1319,15 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
 					case TRAINER_MON_FEMALE:
 						generator.forcedGender = MON_FEMALE;
 						break;
-					case TRAINER_MON_GENDERLESS:
-						generator.forcedGender = MON_GENDERLESS;
-						break;
 				}
-				generator.forceGender = TRUE;
 			}
 			else
-			{
-				generator.forceGender = FALSE;
-				generator.forcedGender = MON_MALE;
-			}
+				generator.forcedGender = MON_GENDERLESS;
 			
 			generator.shinyType = partyData[i].isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_LOCKED;
 			
 			for (j = 0; j < MAX_MON_MOVES; j++)
 				generator.moves[j] = partyData[i].moves[j];
-			
-			if (partyData[i].nature)
-			{
-				generator.forceNature = TRUE;
-				generator.forcedNature = partyData[i].nature - 1;
-			}
-			else
-			{
-				generator.forceNature = FALSE;
-				generator.forcedNature = NUM_NATURES;
-			}
 			
 			// Create mon
 			CreateMon(&party[i], generator);
@@ -1676,7 +1659,7 @@ void SpriteCB_FaintOpponentMon(struct Sprite *sprite)
     else
         species = sprite->sSpeciesId;
 	
-    sprite->data[3] = 8 - gMonFrontPicCoords[SanitizeSpeciesId(species)].y_offset / 8;
+    sprite->data[3] = 8 - gSpeciesInfo[SanitizeSpeciesId(species)].frontPicYOffset / 8;
     sprite->data[4] = 1;
     sprite->callback = SpriteCB_AnimFaintOpponent;
 }
@@ -1936,7 +1919,7 @@ static void ClearBattlerEffectsOnFaintOrSwitch(u8 battlerId)
 
 static void BattleStartClearSetData(void)
 {
-    u8 i;
+    u8 i, catchRate;
 	
 	// Clear ram locs
     TurnValuesCleanUp(FALSE);
@@ -1990,9 +1973,11 @@ static void BattleStartClearSetData(void)
 	gBattleStruct->moneyMultiplier = 1;
 	
 	// safari battles can't be double battles, so this no need to be changed
-    gBattleStruct->safariCatchFactor = gBaseStats[GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)].catchRate * 100 / 1275;
+	catchRate = gSpeciesInfo[GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)].catchRate;
 	
-    gBattleStruct->safariEscapeFactor = gBaseStats[GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)].safariZoneFleeRate * 100 / 1275;
+    gBattleStruct->safariCatchFactor = catchRate * 100 / 1275;
+	
+    gBattleStruct->safariEscapeFactor = catchRate / 2 / gBattleStruct->safariCatchFactor;
 	if (gBattleStruct->safariEscapeFactor <= 1)
         gBattleStruct->safariEscapeFactor = 2;
 	
@@ -2992,7 +2977,8 @@ void SwapTurnOrder(u8 id1, u8 id2)
 
 static s32 GetBattlerBracket(u8 battler)
 {
-    u8 holdEffect = GetBattlerItemHoldEffect(battler, TRUE), holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battler].item);
+    u8 holdEffect = GetBattlerItemHoldEffect(battler, TRUE);
+	u16 holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battler].item);
     s32 bracket = 0;
 	
 	gProtectStructs[battler].myceliumMightElevated = FALSE;
@@ -3087,7 +3073,8 @@ s8 GetMovePriority(u8 battler, u16 move)
 
 u32 GetBattlerTotalSpeed(u8 battler)
 {
-    u8 holdEffect, holdEffectParam;
+    u8 holdEffect;
+	u16 holdEffectParam;
     u32 monSpeed;
 	
 	APPLY_STAT_MOD(monSpeed, &gBattleMons[battler], gBattleMons[battler].speed, STAT_SPEED);
@@ -3472,7 +3459,7 @@ static void FreeResetData_ReturnToOvOrDoEvolutions(void)
         gIsFishingEncounter = FALSE;
 		gIsSurfingEncounter = FALSE;
         ResetSpriteData();
-		gBattleMainFunc = gBattleOutcome != B_OUTCOME_WON ? ReturnFromBattleToOverworld : TrySpecialEvolution;
+		gBattleMainFunc = TryEvolvePokemon;
         FreeAllWindowBuffers();
         if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
         {
@@ -3486,56 +3473,39 @@ static void FreeResetData_ReturnToOvOrDoEvolutions(void)
 
 static void TryEvolvePokemon(void)
 {
-    s32 i;
-
-    while (gLeveledUpInBattle != 0)
-    {
-        for (i = 0; i < PARTY_SIZE; ++i)
-        {
-            if (gLeveledUpInBattle & gBitTable[i])
-            {
-                u16 species;
-                u8 levelUpBits = gLeveledUpInBattle;
-
-                levelUpBits &= ~(gBitTable[i]);
-                gLeveledUpInBattle = levelUpBits;
-                species = GetEvolutionTargetSpecies(&gPlayerParty[i], EVO_MODE_NORMAL, levelUpBits, NULL);
-                if (species != SPECIES_NONE)
-                {
-                    gBattleMainFunc = WaitForEvoSceneToFinish;
-                    EvolutionScene(&gPlayerParty[i], species, (TASK_BIT_CAN_STOP | TASK_BIT_LEARN_MOVE), i);
-                    return;
-                }
-            }
-        }
-    }
-    gBattleMainFunc = ReturnFromBattleToOverworld;
-}
-
-static void TrySpecialEvolution(void) // Attempts to perform non-level related battle evolutions
-{
-	s32 i;
+	u8 i;
+	u16 species;
 	
 	for (i = 0; i < PARTY_SIZE; i++)
 	{
-		u16 species = GetEvolutionTargetSpecies(&gPlayerParty[i], EVO_MODE_BATTLE_SPECIAL, i, NULL);
-		
-		if (species != SPECIES_NONE && !(sTriedEvolving & gBitTable[i]))
+		if (!(sTriedEvolving & gBitTable[i]))
 		{
 			sTriedEvolving |= gBitTable[i];
-			gBattleMainFunc = WaitForEvoSceneToFinish;
-			EvolutionScene(&gPlayerParty[i], species, (TASK_BIT_CAN_STOP | TASK_BIT_LEARN_MOVE), i);
-			return;
+			species = GetEvolutionTargetSpecies(i, EVO_MODE_BATTLE_SPECIAL, ITEM_NONE, NULL);
+			
+			if (!species && (gLeveledUpInBattle & gBitTable[i]))
+			{
+				gLeveledUpInBattle &= ~(gBitTable[i]);
+				species = GetEvolutionTargetSpecies(i, EVO_MODE_NORMAL, ITEM_NONE, NULL);
+			}
+			
+			if (species)
+			{
+				gBattleMainFunc = WaitForEvoSceneToFinish;
+				EvolutionScene(&gPlayerParty[i], species, (TASK_BIT_CAN_STOP | TASK_BIT_LEARN_MOVE), i);
+				return;
+			}
 		}
 	}
 	sTriedEvolving = 0;
-	gBattleMainFunc = TryEvolvePokemon;
+    gLeveledUpInBattle = 0;
+    gBattleMainFunc = ReturnFromBattleToOverworld;
 }
 
 static void WaitForEvoSceneToFinish(void)
 {
     if (gMain.callback2 == BattleMainCB2)
-        gBattleMainFunc = TrySpecialEvolution;
+        gBattleMainFunc = TryEvolvePokemon;
 }
 
 static void ReturnFromBattleToOverworld(void)
@@ -3904,7 +3874,7 @@ static void HandleAction_WatchesCarefully(void)
     {
         if (--gBattleStruct->safariGoNearCounter == 0)
         {
-            *(&gBattleStruct->safariCatchFactor) = gBaseStats[GetMonData(gEnemyParty, MON_DATA_SPECIES)].catchRate * 100 / 1275;
+            *(&gBattleStruct->safariCatchFactor) = gSpeciesInfo[GetMonData(gEnemyParty, MON_DATA_SPECIES)].catchRate * 100 / 1275;
             gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WATCHING_CAREFULLY;
         }
         else

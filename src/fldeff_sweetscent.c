@@ -4,6 +4,7 @@
 #include "field_effect.h"
 #include "party_menu.h"
 #include "script.h"
+#include "field_fadetransition.h"
 #include "fldeff.h"
 #include "event_scripts.h"
 #include "event_data.h"

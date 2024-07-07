@@ -2,8 +2,6 @@
 #include "gflib.h"
 #include "decompress.h"
 
-extern const struct CompressedSpriteSheet gMonFrontPicTable[];
-extern const struct CompressedSpriteSheet gMonBackPicTable[];
 extern const struct CompressedSpriteSheet gTrainerFrontPicTable[];
 extern const struct CompressedSpriteSheet gTrainerBackPicTable[];
 extern const struct CompressedSpritePalette gTrainerFrontPicPaletteTable[];
@@ -56,27 +54,12 @@ bool16 ResetAllPicSprites(void)
     return FALSE;
 }
 
-static bool16 DecompressPic(u16 species, u32 personality, bool8 isFrontPic, u8 *dest, bool8 isTrainer)
+static void DecompressPic(u16 species, u32 personality, bool8 isFrontPic, u8 *dest, bool8 isTrainer)
 {
     if (!isTrainer)
-    {
-        if (isFrontPic)
-        {
-			LoadSpecialPokePic(&gMonFrontPicTable[species], dest, species, personality, isFrontPic);
-        }
-        else
-        {
-			LoadSpecialPokePic(&gMonBackPicTable[species], dest, species, personality, isFrontPic);
-        }
-    }
+		LoadSpecialPokePic(species, personality, isFrontPic, dest);
     else
-    {
-        if (isFrontPic)
-            DecompressPicFromTable(&gTrainerFrontPicTable[species], dest, species);
-        else
-            DecompressPicFromTable(&gTrainerBackPicTable[species], dest, species);
-    }
-    return FALSE;
+		LZDecompressWram(isFrontPic ? gTrainerFrontPicTable[species].data : gTrainerBackPicTable[species].data, dest);
 }
 
 void AssignSpriteAnimsTable(bool8 isTrainer)
@@ -99,7 +82,7 @@ static void LoadPicPaletteByTagOrSlot(u16 species, bool8 isShiny, u8 paletteSlot
         else
         {
             sCreatingSpriteTemplate.paletteTag = paletteTag;
-            LoadCompressedSpritePalette(GetMonSpritePalStructFromSpecies(species, isShiny));
+			LoadMonPaletteFromSpecies(species, isShiny);
         }
     }
     else
@@ -128,30 +111,24 @@ static u16 CreatePicSprite(u16 species, bool8 isShiny, u32 personality, bool8 is
     for (i = 0; i < PICS_COUNT; i ++)
     {
         if (!sSpritePics[i].active)
-        {
             break;
-        }
     }
+	
     if (i == PICS_COUNT)
-    {
         return 0xFFFF;
-    }
+
     framePics = Alloc(4 * 0x800);
     if (!framePics)
-    {
         return 0xFFFF;
-    }
+
     images = Alloc(4 * sizeof(struct SpriteFrameImage));
     if (!images)
     {
         Free(framePics);
         return 0xFFFF;
     }
-    if (DecompressPic(species, personality, isFrontPic, framePics, isTrainer))
-    {
-        // debug trap?
-        return 0xFFFF;
-    }
+	DecompressPic(species, personality, isFrontPic, framePics, isTrainer);
+
     for (j = 0; j < 4; j ++)
     {
         images[j].data = framePics + 0x800 * j;
@@ -166,14 +143,14 @@ static u16 CreatePicSprite(u16 species, bool8 isShiny, u32 personality, bool8 is
     LoadPicPaletteByTagOrSlot(species, isShiny, paletteSlot, paletteTag, isTrainer);
     spriteId = CreateSprite(&sCreatingSpriteTemplate, x, y, 0);
     if (paletteTag == 0xFFFF)
-    {
         gSprites[spriteId].oam.paletteNum = paletteSlot;
-    }
+
     sSpritePics[i].frames = framePics;
     sSpritePics[i].images = images;
     sSpritePics[i].paletteTag = paletteTag;
     sSpritePics[i].spriteId = spriteId;
     sSpritePics[i].active = TRUE;
+	
     return spriteId;
 }
 
@@ -220,8 +197,9 @@ u16 CreateTrainerCardSprite(u16 species, bool8 isShiny, u32 personality, bool8 i
     u8 *framePics;
 
     framePics = Alloc(4 * 0x800);
-    if (framePics && !DecompressPic(species, personality, isFrontPic, framePics, isTrainer))
+    if (framePics)
     {
+		DecompressPic(species, personality, isFrontPic, framePics, isTrainer);
         BlitBitmapRectToWindow(windowId, framePics, 0, 0, 0x40, 0x40, destX, destY, 0x40, 0x40);
         LoadPicPaletteBySlot(species, isShiny, paletteSlot, isTrainer);
         Free(framePics);

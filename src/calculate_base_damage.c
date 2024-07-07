@@ -47,9 +47,10 @@ struct DamageCalc
 	u8 moveType;
 	u8 atkHoldEffect;
 	u8 defHoldEffect;
-	u8 atkHoldEffParam;
-	u8 defHoldEffParam;
+	u16 atkHoldEffParam;
+	u16 defHoldEffParam;
 	bool8 isCrit;
+	u8 flags;
 };
 
 static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageStruct);
@@ -475,7 +476,7 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			basePower = gBattleStruct->magnitudeBasePower;
 			break;
 		case EFFECT_BEAT_UP:
-		    basePower = (gBaseStats[GetMonData(&GetBattlerParty(attacker)[gBattleCommunication[0] - 1], MON_DATA_SPECIES)].baseAttack / 10) + 5;
+		    basePower = (gSpeciesInfo[GetMonData(&GetBattlerParty(attacker)[gBattleCommunication[0] - 1], MON_DATA_SPECIES)].baseAttack / 10) + 5;
 			break;
 		case EFFECT_FACADE:
 			if ((gBattleMons[attacker].status1 & (STATUS1_PARALYSIS | STATUS1_BURN | STATUS1_PSN_ANY)))

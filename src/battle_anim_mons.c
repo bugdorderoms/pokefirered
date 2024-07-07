@@ -85,12 +85,12 @@ u8 GetBattlerSpriteCoord(u8 battlerId, u8 coordType)
 static u8 GetBattlerYDelta(u8 battlerId, u16 species)
 {
 	species = SanitizeSpeciesId(species);
-    return GetBattlerSide(battlerId) == B_SIDE_PLAYER ? gMonBackPicCoords[species].y_offset : gMonFrontPicCoords[species].y_offset;
+    return GetBattlerSide(battlerId) == B_SIDE_PLAYER ? gSpeciesInfo[species].backPicYOffset : gSpeciesInfo[species].frontPicYOffset;
 }
 
 static u8 GetBattlerElevation(u8 battlerId, u16 species)
 {
-	return GetBattlerSide(battlerId) == B_SIDE_OPPONENT ? gEnemyMonElevation[SanitizeSpeciesId(species)] : 0;
+	return GetBattlerSide(battlerId) == B_SIDE_OPPONENT ? gSpeciesInfo[SanitizeSpeciesId(species)].elevation : 0;
 }
 
 static u8 GetBattlerSpriteFinal_Y(u8 battlerId, u16 species, bool8 a3)
@@ -1449,7 +1449,7 @@ static u16 GetBattlerYDeltaFromSpriteId(u8 spriteId)
 			mon = GetBattlerPartyIndexPtr(i);
 			species = spriteInfo[battlerId].transformSpecies == SPECIES_NONE ? GetMonData(mon, MON_DATA_SPECIES) : spriteInfo[battlerId].transformSpecies;
 			
-			return GetBattlerSide(i) == B_SIDE_PLAYER ? gMonBackPicCoords[species].y_offset : gMonFrontPicCoords[species].y_offset;
+			return GetBattlerSide(i) == B_SIDE_PLAYER ? gSpeciesInfo[species].backPicYOffset : gSpeciesInfo[species].frontPicYOffset;
         }
     }
     return 64;
@@ -1570,10 +1570,10 @@ u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, s16 x, s16
         gMonSpritesGfxPtr->multiUseBuffer = AllocZeroed(0x2000);
 	
 	LoadCompressedPalette(GetMonSpritePalFromSpecies(species, isShiny), (palette * 0x10) + 0x100, 0x20);
-	LoadSpecialPokePic(isBackpic ? &gMonBackPicTable[species] : &gMonFrontPicTable[species], gMonSpritesGfxPtr->multiUseBuffer, species, personality, isBackpic ^ TRUE);
+	LoadSpecialPokePic(species, personality, isBackpic ^ TRUE, gMonSpritesGfxPtr->multiUseBuffer);
     RequestDma3Copy(gMonSpritesGfxPtr->multiUseBuffer, (void *)(OBJ_VRAM0 + (sheet * 0x20)), 0x800, 1);
     FREE_AND_SET_NULL(gMonSpritesGfxPtr->multiUseBuffer);
-	y += isBackpic ? gMonBackPicCoords[species].y_offset : gMonFrontPicCoords[species].y_offset;
+	y += isBackpic ? gSpeciesInfo[species].backPicYOffset : gSpeciesInfo[species].frontPicYOffset;
 
     return CreateSprite(&sSpriteTemplate_AdditionalForAnim, x, y, subpriority);
 }
@@ -1581,40 +1581,43 @@ u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, s16 x, s16
 s16 GetBattlerSpriteCoordAttr(u8 battlerId, u8 attr)
 {
     u16 species;
-    u32 personality;
-    const struct MonCoords *coords;
-	struct Pokemon *mon;
+	u8 size, yOffset;
     struct BattleSpriteInfo *spriteInfo = gBattleSpritesDataPtr->battlerData;
 	
 	if (!spriteInfo[battlerId].transformSpecies)
+		species = GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES);
+	else
+		species = spriteInfo[battlerId].transformSpecies;
+	
+	species = SanitizeSpeciesId(species);
+	
+	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
 	{
-		mon = GetBattlerPartyIndexPtr(battlerId);
-		species = GetMonData(mon, MON_DATA_SPECIES);
-		personality = GetMonData(mon, MON_DATA_PERSONALITY);
+		size = gSpeciesInfo[species].frontPicSize;
+		yOffset = gSpeciesInfo[species].frontPicYOffset;
 	}
 	else
 	{
-		species = spriteInfo[battlerId].transformSpecies;
-		personality = gTransformedPersonalities[battlerId];
+		size = gSpeciesInfo[species].backPicSize;
+		yOffset = gSpeciesInfo[species].backPicYOffset;
 	}
-	coords = &gMonBackPicCoords[SanitizeSpeciesId(species)];
 	
     switch (attr)
     {
     case BATTLER_COORD_ATTR_HEIGHT:
-        return (coords->size & 0xf) * 8;
+        return GET_MON_COORDS_HEIGHT(size);
     case BATTLER_COORD_ATTR_WIDTH:
-        return (coords->size >> 4) * 8;
+        return GET_MON_COORDS_WIDTH(size);
     case BATTLER_COORD_ATTR_LEFT:
-        return GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X_2) - ((coords->size >> 4) * 4);
+        return GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X_2) - (GET_MON_COORDS_WIDTH(size) / 2);
     case BATTLER_COORD_ATTR_RIGHT:
-        return GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X_2) + ((coords->size >> 4) * 4);
+        return GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X_2) + (GET_MON_COORDS_WIDTH(size) / 2);
     case BATTLER_COORD_ATTR_TOP:
-        return GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y_PIC_OFFSET) - ((coords->size & 0xf) * 4);
+        return GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y_PIC_OFFSET) - (GET_MON_COORDS_HEIGHT(size) / 2);
     case BATTLER_COORD_ATTR_BOTTOM:
-        return GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y_PIC_OFFSET) + ((coords->size & 0xf) * 4);
+        return GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y_PIC_OFFSET) + (GET_MON_COORDS_HEIGHT(size) / 2);
     case BATTLER_COORD_ATTR_RAW_BOTTOM:
-        return (GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y) + 31) - coords->y_offset;
+        return (GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y) + 31) - yOffset;
     default:
         return 0;
     }

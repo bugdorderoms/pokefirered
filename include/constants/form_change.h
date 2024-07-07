@@ -7,6 +7,7 @@
 
 // form change based on the pokemon's personality.
 // param = nº forms (eg. Unown have 28 forms so the param is 28)
+// param2 = id of the first personality form into the table (e.g Unown personality forms start at index 0 in it's form change table)
 #define FORM_CHANGE_PERSONALITY   0x0001
 
 // form change based on current season of the year.
@@ -68,7 +69,8 @@
 
 // form change using a item on the pokemon.
 // param = itemId
-// param2 is optionally passed as an species if the pokemon can revert form if uses the item in it again
+// if the itemId is an item that handle forms by multichoice the param2 is the list id. Otherwise,
+// it is optionally passed as an species if the pokemon can revert form if uses the item in it again
 #define FORM_CHANGE_USE_ITEM      0x000F
 
 // form change when a battle turn passes. (It will switch betwen the forms on each turn)
@@ -88,7 +90,15 @@
 // no param is necessary
 #define FORM_CHANGE_FAINT_TARGET  0x0013
 
+// form change based on the current region the player is in.
+// param = region (REGIONS_COUNT is used to determine that this form is applied to all other regions that are not listed below)
+#define FORM_CHANGE_REGION 0x0014
+
 // battle mechanic forms. TODO:
+
+// form change for terastalization in battle.
+// param = type
+#define FORM_CHANGE_TERASTAL      0xFFF9
 
 // form change for gigantamax in battle.
 // no param is necessary
@@ -120,10 +130,6 @@
 // modes for FORM_CHANGE_NATURE
 #define NATURE_FORM_AMPED   0
 #define NATURE_FORM_LOW_KEY 1
-
-// modes for FORM_CHANGE_TIME
-#define TIME_FORM_DAY   0
-#define TIME_FORM_NIGHT 1
 
 // modes for FORM_CHANGE_KNOW_MOVE
 #define KNOW_MOVE_FORM_DONT_KNOW 0

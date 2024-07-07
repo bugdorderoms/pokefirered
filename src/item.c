@@ -499,6 +499,17 @@ static inline u16 SanitizeItemId(u16 itemId)
 	return itemId >= ITEMS_COUNT ? ITEM_NONE : itemId;
 }
 
+const u8* GetItemEffect(u16 item)
+{
+	item = SanitizeItemId(item);
+	
+	// Check if the item is one that can be used on a Pokemon
+	if (item >= ITEM_POTION && item <= BERRY_ITEMS_END)
+		return gItemEffectTable[item - ITEM_POTION];
+	
+	return NULL;
+}
+
 const u8 * ItemId_GetName(u16 itemId)
 {
     return gItems[SanitizeItemId(itemId)].name;
@@ -514,7 +525,7 @@ u8 ItemId_GetHoldEffect(u16 itemId)
     return gItems[SanitizeItemId(itemId)].holdEffect;
 }
 
-u8 ItemId_GetHoldEffectParam(u16 itemId)
+u16 ItemId_GetHoldEffectParam(u16 itemId)
 {
     return gItems[SanitizeItemId(itemId)].holdEffectParam;
 }

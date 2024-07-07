@@ -384,14 +384,15 @@ static const struct ListMenuItem sListMenuItems_TypeNames[] = {
     {gTypeNames[TYPE_DRAGON],     TYPE_DRAGON},
     {gTypeNames[TYPE_STEEL],       TYPE_STEEL},
     {gTypeNames[TYPE_DARK],         TYPE_DARK},
-    {gUnknown_8459360,           NUMBER_OF_MON_TYPES}
+	{gTypeNames[TYPE_FAIRY],       TYPE_FAIRY},
+    {gUnknown_8459360,           NUMBER_OF_MON_TYPES - 1} // Excludes Stellar type
 };
 
 static const struct ListMenuTemplate sListMenuTemplate_TypeNames = {
     .items = sListMenuItems_TypeNames,
     .moveCursorFunc = ListMenuDefaultCursorMoveFunc,
     .itemPrintFunc = NULL,
-    .totalItems = NUMBER_OF_MON_TYPES,
+    .totalItems = NUMBER_OF_MON_TYPES - 1, // Excludes Stellar type
     .maxShowed = 6,
     .windowId = 0,
     .header_X = 0,
@@ -1904,7 +1905,7 @@ static void Task_StartActivity(u8 taskId)
     case ACTIVITY_ACCEPT | IN_UNION_ROOM:
         CleanupOverworldWindowsAndTilemaps();
         gMain.savedCallback = CB2_UnionRoomBattle;
-        InitChooseHalfPartyForBattle(2);
+        InitChooseHalfPartyForBattle(CHOOSE_MONS_FOR_UNION_ROOM_BATTLE);
         break;
     case ACTIVITY_BATTLE:
         CleanupOverworldWindowsAndTilemaps();
@@ -2649,7 +2650,7 @@ static void Task_RunUnionRoom(u8 taskId)
             }
             else
             {
-                StringCopy(gStringVar1, gSpeciesNames[GetHostRFUtgtGname()->species]);
+                StringCopy(gStringVar1, gSpeciesInfo[GetHostRFUtgtGname()->species].name);
                 ConvertIntToDecimalStringN(gStringVar2, GetHostRFUtgtGname()->level, STR_CONV_MODE_LEFT_ALIGN, 3);
                 StringExpandPlaceholders(gStringVar4, gUnknown_8458DBC);
             }
@@ -3688,7 +3689,7 @@ static void TradeBoardPrintItemInfo(u8 windowId, u8 y, struct GFtgtGname * gname
     else
     {
         BlitMoveInfoIcon(windowId, type + 1, 0x44, y);
-        UR_AddTextPrinterParameterized(windowId, 2, gSpeciesNames[species], 0x76, y, colorIdx);
+        UR_AddTextPrinterParameterized(windowId, 2, gSpeciesInfo[species].name, 0x76, y, colorIdx);
         ConvertIntToDecimalStringN(level_t, level, STR_CONV_MODE_LEFT_ALIGN, 3);
         UR_AddTextPrinterParameterized(windowId, 2, level_t, GetStringRightAlignXOffset(2, level_t, 218), y, colorIdx);
     }
@@ -3774,7 +3775,7 @@ static s32 IsRequestedTypeAndSpeciesInPlayerParty(u32 type, u32 species)
         for (i = 0; i < gPlayerPartyCount; i++)
         {
             species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
-            if (gBaseStats[species].type1 == type || gBaseStats[species].type2 == type)
+            if (gSpeciesInfo[species].types[0] == type || gSpeciesInfo[species].types[1] == type)
             {
                 return UR_TRADE_MATCH;
             }
@@ -3839,13 +3840,13 @@ static s32 GetChatLeaderActionRequestMessage(u8 *dst, u32 gender, u16 *activity_
         break;
     case ACTIVITY_TRADE | IN_UNION_ROOM:
         ConvertIntToDecimalStringN(arg3->activityRequestStrbufs[0], sUnionRoomTrade.playerLevel, STR_CONV_MODE_LEFT_ALIGN, 3);
-        StringCopy(arg3->activityRequestStrbufs[1], gSpeciesNames[sUnionRoomTrade.playerSpecies]);
+        StringCopy(arg3->activityRequestStrbufs[1], gSpeciesInfo[sUnionRoomTrade.playerSpecies].name);
         for (i = 0; i < RFU_CHILD_MAX; i++)
         {
             if (gRfuLinkStatus->partner[i].serialNo == 0x0002)
             {
                 ConvertIntToDecimalStringN(arg3->activityRequestStrbufs[2], activity_p[2], STR_CONV_MODE_LEFT_ALIGN, 3);
-                StringCopy(arg3->activityRequestStrbufs[3], gSpeciesNames[activity_p[1]]);
+                StringCopy(arg3->activityRequestStrbufs[3], gSpeciesInfo[activity_p[1]].name);
                 species = activity_p[1];
                 break;
             }

@@ -49,9 +49,9 @@ static void HandleInputShowTargets(u8 battlerId);
 static void HandleInputShowEntireFieldTargets(u8 battlerId);
 static void MoveInfoPrintMoveNameAndDescription(u8 battlerId);
 static void MoveInfoPrintSubmenuString(u8 battlerId, u8 stateId);
-static void MoveInfoPrintPowerAndAccuracy(u16 move);
-static void MoveInfoPrintPriorityAndCategory(u16 move);
-static void MoveInfoPrintMoveTarget(u16 move);
+static void MoveInfoPrintPowerAndAccuracy(u8 battlerId, u16 move);
+static void MoveInfoPrintPriorityAndCategory(u8 battlerId, u16 move);
+static void MoveInfoPrintMoveTarget(u8 battlerId, u16 move);
 
 static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u8) =
 {
@@ -1404,7 +1404,7 @@ static void HandleMoveSwitching(u8 battlerId)
 // MOVE INFO INPUT //
 /////////////////////
 
-static void (*const sMoveInfoSubmenuFuncs[NUM_MOVEINFO_SUBMENUS])(u16) =
+static void (*const sMoveInfoSubmenuFuncs[NUM_MOVEINFO_SUBMENUS])(u8, u16) =
 {
 	MoveInfoPrintPowerAndAccuracy,
 	MoveInfoPrintPriorityAndCategory,
@@ -1421,7 +1421,7 @@ static void MoveInfoPrintMoveNameAndDescription(u8 battlerId)
 	CreateBattleMoveInfoWindowsAndArrows(move);
 }
 
-static void MoveInfoPrintPowerAndAccuracy(u16 move)
+static void MoveInfoPrintPowerAndAccuracy(u8 battlerId, u16 move)
 {
 	// Move's power
 	if (gBattleMoves[move].power <= 1)
@@ -1438,7 +1438,7 @@ static void MoveInfoPrintPowerAndAccuracy(u16 move)
 	BattleStringExpandPlaceholdersToDisplayedString(gText_MoveInfoPowerAndAccuracy);
 }
 
-static void MoveInfoPrintPriorityAndCategory(u16 move)
+static void MoveInfoPrintPriorityAndCategory(u8 battlerId, u16 move)
 {
 	// Move's priority
 	ConvertIntToDecimalStringN(gBattleTextBuff1, gBattleMoves[move].priority, STR_CONV_MODE_LEFT_ALIGN, 2);
@@ -1449,10 +1449,10 @@ static void MoveInfoPrintPriorityAndCategory(u16 move)
 	BattleStringExpandPlaceholdersToDisplayedString(gText_MoveInfoPriorityAndCategory);
 }
 
-static void MoveInfoPrintMoveTarget(u16 move)
+static void MoveInfoPrintMoveTarget(u8 battlerId, u16 move)
 {
 	// Move's target
-	CopyMoveTargetName(gBattleTextBuff1, move);
+	CopyMoveTargetName(battlerId, move, gBattleTextBuff1);
 	
 	BattleStringExpandPlaceholdersToDisplayedString(gText_MoveInfoTarget);
 }
@@ -1460,7 +1460,7 @@ static void MoveInfoPrintMoveTarget(u16 move)
 static void MoveInfoPrintSubmenuString(u8 battlerId, u8 stateId)
 {
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
-	sMoveInfoSubmenuFuncs[stateId](moveInfo->moves[gMoveSelectionCursor[battlerId]]);
+	sMoveInfoSubmenuFuncs[stateId](battlerId, moveInfo->moves[gMoveSelectionCursor[battlerId]]);
 	BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_SWITCH_PROMPT);
 }
 

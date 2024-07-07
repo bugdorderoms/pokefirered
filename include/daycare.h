@@ -5,19 +5,19 @@
 
 void StoreSelectedPokemonInDaycare(void);
 u16 TakePokemonFromDaycare(void);
-void GetDaycareCost(void);
 u8 GetNumLevelsGainedFromDaycare(void);
-void RejectEggFromDayCare(void);
-void CreateEgg(struct Pokemon *mon, struct PokemonGenerator generator, bool8 setHotSpringsLocation);
-void GiveEggFromDaycare(void);
-void GetDaycareMonNicknames(void);
-u8 GetDaycareState(void);
-void SetDaycareCompatibilityString(void);
-bool8 NameHasGenderSymbol(const u8 *name, u8 genderRatio);
 void ShowDaycareLevelMenu(void);
+void GetDaycareCost(void);
+u8 GetDaycareState(void);
 void ChooseSendDaycareMon(void);
-u8 GetEggMoves(struct Pokemon *pokemon, u16 *eggMoves);
-void EggHatch(void);
+void CreateEgg(struct Pokemon *mon, struct PokemonGenerator generator);
+void GiveEggFromDaycare(void);
+void RejectEggFromDayCare(void);
+void SetDaycareCompatibilityString(void);
 bool8 ShouldEggHatch(void);
+void EggHatch(void);
+bool8 NameHasGenderSymbol(const u8 *name, u8 genderRatio);
+void GetDaycareMonNicknames(void);
+u8 GetEggMoves(struct Pokemon *pokemon, u16 *eggMoves);
 
 #endif // GUARD_DAYCARE_H

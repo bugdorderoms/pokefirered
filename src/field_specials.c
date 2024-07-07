@@ -53,6 +53,7 @@
 #include "constants/menu.h"
 #include "constants/event_objects.h"
 #include "constants/metatile_labels.h"
+#include "constants/regions.h"
 
 struct FieldSpecialListMenu
 {
@@ -632,7 +633,7 @@ void SampleResortGorgeousMonAndReward(void)
         VarSet(VAR_RESORT_GORGEOUS_REWARD, SampleResortGorgeousReward());
         VarSet(VAR_RESORT_GOREGEOUS_STEP_COUNTER, 0);
     }
-    StringCopy(gStringVar1, gSpeciesNames[requestedSpecies]);
+    StringCopy(gStringVar1, gSpeciesInfo[requestedSpecies].name);
 }
 
 static u16 SampleResortGorgeousMon(void)
@@ -1125,9 +1126,59 @@ static const u16 sRotomForms[] =
 	SPECIES_ROTOM
 };
 
+static const struct ListMenuLabels sPikachuListMenu[] = {
+	{ gText_PikachuFormRockStar },
+	{ gText_PikachuFormBelle },
+	{ gText_PikachuFormPopStar },
+	{ gText_PikachuFormPhd },
+	{ gText_PikachuFormLibre },
+	{ gOtherText_DefaultForm }
+};
+
+static const u16 sPikachuForms[] =
+{
+	SPECIES_PIKACHU_ROCK_STAR,
+	SPECIES_PIKACHU_BELLE,
+	SPECIES_PIKACHU_POP_STAR,
+	SPECIES_PIKACHU_PH_D,
+	SPECIES_PIKACHU_LIBRE,
+	SPECIES_PIKACHU_COSPLAY
+};
+
+static const struct ListMenuLabels sFurfrouListMenu[] = {
+	{ gText_FurfrouFormHeartTrim },
+	{ gText_FurfrouFormStarTrim },
+	{ gText_FurfrouFormDiamondTrim },
+	{ gText_FurfrouFormDebutanteTrim },
+	{ gText_FurfrouFormMatronTrim },
+	{ gText_FurfrouFormDandyTrim },
+	{ gText_FurfrouFormLaReineTrim },
+	{ gText_FurfrouFormKabukiTrim },
+	{ gText_FurfrouFormPharaohTrim }
+	// No default form, if changed its trim it will only returns after 5 days
+};
+
+static const u16 sFurfrouForms[] =
+{
+	SPECIES_FURFROU_HEART_TRIM,
+	SPECIES_FURFROU_STAR_TRIM,
+	SPECIES_FURFROU_DIAMOND_TRIM,
+	SPECIES_FURFROU_DEBUTANTE_TRIM,
+	SPECIES_FURFROU_MATRON_TRIM,
+	SPECIES_FURFROU_DANDY_TRIM,
+	SPECIES_FURFROU_LA_REINE_TRIM,
+	SPECIES_FURFROU_KABUKI_TRIM,
+	SPECIES_FURFROU_PHARAOH_TRIM
+};
+
+#define FORMS_LIST(listName)                                                          \
+    { s##listName##ListMenu, s##listName##Forms, ARRAY_COUNT(s##listName##ListMenu) }
+
 static const struct FormChangeListMenuActions sFormChangeMenuLabels[] = {
-	{sDeoxysListMenu, sDeoxysForms, ARRAY_COUNT(sDeoxysListMenu)},
-	{sRotomListMenu, sRotomForms, ARRAY_COUNT(sRotomListMenu)},
+	FORMS_LIST(Deoxys),
+	FORMS_LIST(Rotom),
+	FORMS_LIST(Pikachu),
+	FORMS_LIST(Furfrou),
 };
 
 static u8 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const struct FieldSpecialListMenu *menuListTemplate)
@@ -1691,7 +1742,7 @@ bool8 BufferTMHMMoveName(void)
     // 8004 = item ID
     if (ItemId_GetPocket(gSpecialVar_0x8004) == POCKET_TM_CASE)
     {
-        StringCopy(gStringVar1, gBattleMoves[ItemIdToBattleMoveId(gSpecialVar_0x8004)].name);
+        StringCopy(gStringVar1, gBattleMoves[ItemId_GetHoldEffectParam(gSpecialVar_0x8004)].name);
         return TRUE;
 	}
 	return FALSE;
@@ -1836,93 +1887,74 @@ static void Task_CancelPokemonLeagueLightingEffect(u8 taskId)
 
 void StopPokemonLeagueLightingEffectTask(void)
 {
-    if (FuncIsActiveTask(Task_RunPokemonLeagueLightingEffect) == TRUE)
-    {
+    if (FuncIsActiveTask(Task_RunPokemonLeagueLightingEffect))
         DestroyTask(FindTaskIdByFunc(Task_RunPokemonLeagueLightingEffect));
-    }
 }
 
-static const u8 sCapeBrinkCompatibleSpecies[] = {
-    SPECIES_VENUSAUR,
-    SPECIES_CHARIZARD,
-    SPECIES_BLASTOISE
+const struct CapeBrinkTutor gCapeBrinkCompatibleSpecies[3] =
+{
+	{SPECIES_VENUSAUR, MOVE_FRENZY_PLANT, FLAG_TUTOR_FRENZY_PLANT},
+	{SPECIES_CHARIZARD, MOVE_BLAST_BURN, FLAG_TUTOR_BLAST_BURN},
+	{SPECIES_BLASTOISE, MOVE_HYDRO_CANNON, FLAG_TUTOR_HYDRO_CANNON}
 };
 
 bool8 CapeBrinkGetMoveToTeachLeadPokemon(void)
 {
     // Returns:
-    //   8005 = Move tutor index
+    //   8005 = Move index
     //   8006 = Num moves known by lead mon
     //   8007 = Index of lead mon
     //   to specialvar = whether a move can be taught in the first place
-    u8 tutorMonId = 0;
-    u8 numMovesKnown = 0;
+    u8 i, j, numMovesKnown = 0;
     u8 leadMonSlot = GetLeadMonIndex();
-    u8 i;
+	
     gSpecialVar_0x8007 = leadMonSlot;
-    for (i = 0; i < ARRAY_COUNT(sCapeBrinkCompatibleSpecies); i++)
-    {
-        if (GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_SPECIES2, NULL) == sCapeBrinkCompatibleSpecies[i])
+	
+	if (GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_FRIENDSHIP) == 255)
+	{
+		for (i = 0; i < ARRAY_COUNT(gCapeBrinkCompatibleSpecies); i++)
         {
-            tutorMonId = i;
-            break;
+            if (GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_SPECIES2, NULL) == gCapeBrinkCompatibleSpecies[i].species)
+            {
+                u16 move = gCapeBrinkCompatibleSpecies[i].move;
+				
+				StringCopy(gStringVar2, gBattleMoves[move].name);
+				gSpecialVar_0x8005 = move;
+				
+				if (!FlagGet(gCapeBrinkCompatibleSpecies[i].flagId))
+				{
+					for (j = 0; j < MAX_MON_MOVES; j++)
+					{
+						if (GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_MOVE1 + j))
+							++numMovesKnown;
+					}
+					gSpecialVar_0x8006 = numMovesKnown;
+					
+					return TRUE;
+				}
+				break;
+            }
         }
-    }
-    if (i == ARRAY_COUNT(sCapeBrinkCompatibleSpecies) || GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_FRIENDSHIP) != 255)
-        return FALSE;
-    if (tutorMonId == 0)
-    {
-        StringCopy(gStringVar2, gBattleMoves[MOVE_FRENZY_PLANT].name);
-        gSpecialVar_0x8005 = MOVETUTOR_FRENZY_PLANT;
-        if (FlagGet(FLAG_TUTOR_FRENZY_PLANT) == TRUE)
-            return FALSE;
-    }
-    else if (tutorMonId == 1)
-    {
-        StringCopy(gStringVar2, gBattleMoves[MOVE_BLAST_BURN].name);
-        gSpecialVar_0x8005 = MOVETUTOR_BLAST_BURN;
-        if (FlagGet(FLAG_TUTOR_BLAST_BURN) == TRUE)
-            return FALSE;
-    }
-    else
-    {
-        StringCopy(gStringVar2, gBattleMoves[MOVE_HYDRO_CANNON].name);
-        gSpecialVar_0x8005 = MOVETUTOR_HYDRO_CANNON;
-        if (FlagGet(FLAG_TUTOR_HYDRO_CANNON) == TRUE)
-            return FALSE;
-    }
-    if (GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_MOVE1) != MOVE_NONE)
-        numMovesKnown++;
-    if (GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_MOVE2) != MOVE_NONE)
-        numMovesKnown++;
-    if (GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_MOVE3) != MOVE_NONE)
-        numMovesKnown++;
-    if (GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_MOVE4) != MOVE_NONE)
-        numMovesKnown++;
-    gSpecialVar_0x8006 = numMovesKnown;
-    return TRUE;
+	}
+	return FALSE;
 }
 
 bool8 HasLearnedAllMovesFromCapeBrinkTutor(void)
 {
     // 8005 is set by CapeBrinkGetMoveToTeachLeadPokemon
-    u8 r4 = 0;
-    if (gSpecialVar_0x8005 == MOVETUTOR_FRENZY_PLANT)
-        FlagSet(FLAG_TUTOR_FRENZY_PLANT);
-    else if (gSpecialVar_0x8005 == MOVETUTOR_BLAST_BURN)
-        FlagSet(FLAG_TUTOR_BLAST_BURN);
-    else
-        FlagSet(FLAG_TUTOR_HYDRO_CANNON);
-    if (FlagGet(FLAG_TUTOR_FRENZY_PLANT) == TRUE)
-        r4++;
-    if (FlagGet(FLAG_TUTOR_BLAST_BURN) == TRUE)
-        r4++;
-    if (FlagGet(FLAG_TUTOR_HYDRO_CANNON) == TRUE)
-        r4++;
-    if (r4 == 3)
-        return TRUE;
-    else
-        return FALSE;
+    u8 i, num = 0;
+	
+	for (i = 0; i < ARRAY_COUNT(gCapeBrinkCompatibleSpecies); i++)
+	{
+		u16 flagId = gCapeBrinkCompatibleSpecies[i].flagId;
+		
+		if (gSpecialVar_0x8005 == gCapeBrinkCompatibleSpecies[i].move)
+			FlagSet(flagId);
+		
+		if (FlagGet(flagId))
+			++num;
+	}
+	return (num == ARRAY_COUNT(gCapeBrinkCompatibleSpecies));
 }
 
 bool8 CutMoveRuinValleyCheck(void)
@@ -1932,8 +1964,7 @@ bool8 CutMoveRuinValleyCheck(void)
      && gSaveBlock1Ptr->location.mapNum == MAP_NUM(SIX_ISLAND_RUIN_VALLEY)
      && gSaveBlock1Ptr->pos.x == 24
      && gSaveBlock1Ptr->pos.y == 25
-     && GetPlayerFacingDirection() == DIR_NORTH
-    )
+     && GetPlayerFacingDirection() == DIR_NORTH)
         return TRUE;
     else
         return FALSE;
@@ -2211,8 +2242,8 @@ bool8 GetPokedexCount(void)
 {
     if (gSpecialVar_0x8004 == 0)
     {
-        gSpecialVar_0x8005 = GetKantoPokedexCount(FLAG_GET_SEEN);
-        gSpecialVar_0x8006 = GetKantoPokedexCount(FLAG_GET_CAUGHT);
+        gSpecialVar_0x8005 = GetCurrentRegionPokedexCount(FLAG_GET_SEEN);
+        gSpecialVar_0x8006 = GetCurrentRegionPokedexCount(FLAG_GET_CAUGHT);
     }
     else
     {
@@ -2220,6 +2251,11 @@ bool8 GetPokedexCount(void)
         gSpecialVar_0x8006 = GetNationalPokedexCount(FLAG_GET_CAUGHT);
     }
     return FlagGet(FLAG_SYS_POKEDEX_GET);
+}
+
+bool8 HasAllKantoMons(void)
+{
+	return HasAllRegionMons(REGION_KANTO);
 }
 
 static const u8 *GetProfOaksRatingMessageByCount(u16 count)

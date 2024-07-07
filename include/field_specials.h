@@ -21,6 +21,13 @@ enum
 	SYMBOLS_COUNT
 };
 
+struct CapeBrinkTutor
+{
+	u16 species;
+	u16 move;
+	u16 flagId;
+};
+
 #define TAG_8x8_SYMBOLS 0x0066
 
 u8 GetLeadMonIndex(void);
@@ -49,5 +56,7 @@ void ResetTrainerFanClub(void);
 void LoadSymbolsIconGraphics(void);
 void FreeSymbolsIconGraphics(void);
 u8 Create8x8SymbolSprite(s16 x, s16 y, u8 subpriority, u8 symbolId);
+
+extern const struct CapeBrinkTutor gCapeBrinkCompatibleSpecies[3];
 
 #endif // GUARD_FIELD_SPECIALS_H

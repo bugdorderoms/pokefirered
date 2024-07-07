@@ -12,9 +12,9 @@ bool8 LoadCompressedSpriteSheetUsingHeap(const struct CompressedSpriteSheet* src
 void LoadCompressedSpritePalette(const struct CompressedSpritePalette *src);
 bool8 LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette *src);
 
-void DecompressPicFromTable(const struct CompressedSpriteSheet *src, void* buffer, s32 species);
+void LoadSpecialPokePic(u16 species, u32 personality, bool8 isFrontPic, void *dest);
 
-void HandleLoadSpecialPokePic(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality);
-void LoadSpecialPokePic(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality, bool8 isFrontPic);
+void LoadMonPalette(struct Pokemon *mon);
+void LoadMonPaletteFromSpecies(u16 species, bool8 isShiny);
 
 #endif // GUARD_DECOMPRESS_H

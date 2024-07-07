@@ -113,7 +113,7 @@ u8 GetDefaultMoveTarget(u8 battlerId);
 u8 GetRandomTarget(u8 battlerId);
 u8 GetBattlerMoveTargetType(u8 battlerId, u16 move);
 u8 GetMoveTarget(u16 move, u8 setTarget);
-void CopyMoveTargetName(u8 *dest, u16 move);
+void CopyMoveTargetName(u8 battlerId, u16 move, u8 *dest);
 u8 IsMonDisobedient(void);
 bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move);
 u8 GetHiddenPowerType(struct Pokemon *mon);
@@ -179,7 +179,6 @@ struct Pokemon *GetBattlerPartyIndexPtr(u8 battlerId);
 struct Pokemon *GetBattlerIllusionPartyIndexPtr(u8 battlerId);
 u8 CountAliveMonsInBattle(u8 battlerId, u8 caseId);
 void CalculatePayDayMoney(void);
-u8 GetTrappingIdByMove(u16 move);
 s32 GetDrainedBigRootHp(u8 battlerId, s32 hp);
 void SetTypeBeforeUsingMove(u16 move, u8 battler);
 bool8 TryTransformIntoBattler(u8 battler1, u8 battler2);
@@ -209,5 +208,7 @@ void RestoreTargetFromStack(void);
 u8 FindMoveSlotInBattlerMoveset(u8 battlerId, u16 move);
 bool8 CanUseLastResort(u8 battlerId);
 bool8 TrySetToxicSpikesOnBattlerSide(u8 battlerId);
+void TryUpdateEvolutionTracker(u16 evoMode, u32 upAmount, u16 data);
+bool8 IsMultiBattle(void);
 
 #endif // GUARD_BATTLE_UTIL_H

@@ -108,5 +108,6 @@
 #define HOLD_EFFECT_PLATE                 104 // todo
 #define HOLD_EFFECT_DRIVE                 105 // todo
 #define HOLD_EFFECT_MEMORY                106 // todo
+#define HOLD_EFFECT_MASK                  107 // todo
 
 #endif // GUARD_HOLD_EFFECTS_H

@@ -702,7 +702,7 @@ static void sub_814A8B8(void)
     {
         struct PokemonJump1_MonInfo *info = sub_81499C0(i);
 
-        y = gMonFrontPicCoords[info->species].y_offset;
+        y = gSpeciesInfo[info->species].frontPicYOffset;
         sub_814ADCC(gUnknown_203F3D8, info, *xCoords, y + 112, i);
         sub_814B240(gUnknown_203F3D8, *xCoords, 112, i);
         xCoords++;

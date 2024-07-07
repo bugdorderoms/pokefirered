@@ -14,4 +14,12 @@
 #define WEATHER_UNDERWATER_BUBBLES 10
 #define WEATHER_CLOUDS             11
 
+// Weathers as bits
+#define WEATHER_BIT_RAIN         (1 << 0)
+#define WEATHER_BIT_SNOW         (1 << 1)
+#define WEATHER_BIT_FOG          (1 << 2)
+#define WEATHER_BIT_VOLCANIC_ASH (1 << 3)
+#define WEATHER_BIT_SANDSTORM    (1 << 4)
+#define WEATHER_BIT_UNDERWATER   (1 << 5)
+
 #endif  // GUARD_CONSTANTS_WEATHER_H

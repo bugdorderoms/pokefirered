@@ -10,14 +10,6 @@ struct Fusion
 	u8 id;
 };
 
-struct FormChange
-{
-	u16 method;
-	u16 targetSpecies;
-	u16 param;
-	u16 param2;
-};
-
 enum
 {
 	FORM_CHANGE_ANIM_MOSAIC,
@@ -30,6 +22,7 @@ enum
 u16 GetMonFormChangeSpecies(struct Pokemon *mon, u16 species, u16 formChangeType);
 u16 DoOverworldFormChange(struct Pokemon *mon, u16 formChangeType);
 void DoPlayerPartyEndBattleFormChange(void);
+bool8 SpeciesHasFormChangeType(u16 species, u16 formChangeType);
 
 // battle form change
 u16 GetBattlerFormChangeSpecies(u8 battlerId, u16 species, u16 itemId, u16 formChangeType);
@@ -37,7 +30,8 @@ u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType);
 void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 reloadStats, bool8 reloadAbility);
 void DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType);
 
-extern const struct FormChange *const gFormChangeTable[];
+extern const u16 gDeafultGeneratorFormChanges[];
+
 extern const struct Fusion gFusionsTable[];
 
 // form change animations

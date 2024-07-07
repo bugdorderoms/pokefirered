@@ -12,6 +12,7 @@
 #include "data.h"
 #include "battle.h"
 #include "script.h"
+#include "evolution.h"
 #include "event_data.h"
 #include "mail.h"
 #include "mail_data.h"
@@ -451,15 +452,6 @@ static const u16 sTradeGlow2PaletteAnimTable[] = {
     RGB(31, 31, 31)
 };
 
-static const union AffineAnimCmd gAffineAnimCmd_826CF78[] = {
-    AFFINEANIMCMD_FRAME(-0x100,  0x100, 0, 0),
-    AFFINEANIMCMD_JUMP(0)
-};
-
-static const union AffineAnimCmd *const sSpriteAffineAnimTable_PlayerPokePicAlt[] = {
-    gAffineAnimCmd_826CF78
-};
-
 #include "data/ingame_trades.h"
 
 static const struct WindowTemplate sTradeMessageWindowTemplates[] = {
@@ -749,19 +741,14 @@ static void LoadTradeMonPic(u8 whichParty, u8 action)
         // Load graphics
         species = GetMonData(mon, MON_DATA_SPECIES2);
         personality = GetMonData(mon, MON_DATA_PERSONALITY);
-
-        if (whichParty == 0)
-            HandleLoadSpecialPokePic(&gMonFrontPicTable[species], gMonSpritesGfxPtr->sprites[1], species, personality);
-        else
-            HandleLoadSpecialPokePic(&gMonFrontPicTable[species], gMonSpritesGfxPtr->sprites[whichParty * 2 + 1], species, personality);
-
-        LoadCompressedSpritePalette(GetMonSpritePalStruct(mon));
+		LoadSpecialPokePic(species, personality, TRUE, gMonSpritesGfxPtr->sprites[whichParty == 0 ? 1 : whichParty * 2 + 1]);
+        LoadMonPalette(mon);
         sTradeData->tradeSpecies[whichParty] = species;
         sTradeData->monPersonalities[whichParty] = personality;
         break;
     case 1:
         // Create sprite
-        SetMultiuseSpriteTemplateToPokemon(GetMonSpritePalStruct(mon)->tag, pos);
+        SetMultiuseSpriteTemplateToPokemon(GetMonData(mon, MON_DATA_SPECIES2), pos);
         sTradeData->pokePicSpriteIdxs[whichParty] = CreateSprite(&gMultiuseSpriteTemplate, 120, 60, 6);
         gSprites[sTradeData->pokePicSpriteIdxs[whichParty]].invisible = TRUE;
         gSprites[sTradeData->pokePicSpriteIdxs[whichParty]].callback = SpriteCallbackDummy;
@@ -1256,7 +1243,7 @@ static bool8 DoTradeAnim_Cable(void)
     case 0:
         gSprites[sTradeData->pokePicSpriteIdxs[0]].invisible = FALSE;
         gSprites[sTradeData->pokePicSpriteIdxs[0]].x2 = -180;
-        gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 = gMonFrontPicCoords[sTradeData->tradeSpecies[0]].y_offset;
+        gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 = gSpeciesInfo[sTradeData->tradeSpecies[0]].frontPicYOffset;
         sTradeData->state++;
         sTradeData->cachedMapMusic = GetCurrentMapMusic();
         PlayNewMapMusic(MUS_EVOLUTION);
@@ -1448,17 +1435,7 @@ static bool8 DoTradeAnim_Cable(void)
         sTradeData->state++;
         break;
     case 37:
-        if (!gBaseStats[sTradeData->tradeSpecies[0]].noFlip)
-        {
-            gSprites[sTradeData->pokePicSpriteIdxs[0]].affineAnims = sSpriteAffineAnimTable_PlayerPokePicAlt;
-            gSprites[sTradeData->pokePicSpriteIdxs[0]].oam.affineMode = 3;
-            CalcCenterToCornerVec(&gSprites[sTradeData->pokePicSpriteIdxs[0]], 0, 3, 3);
-            StartSpriteAffineAnim(&gSprites[sTradeData->pokePicSpriteIdxs[0]], 0);
-        }
-        else
-        {
-            StartSpriteAffineAnim(&gSprites[sTradeData->pokePicSpriteIdxs[0]], 0);
-        }
+	    StartSpriteAffineAnim(&gSprites[sTradeData->pokePicSpriteIdxs[0]], 0);
         StartSpriteAffineAnim(&gSprites[sTradeData->pokePicSpriteIdxs[1]], 0);
         gSprites[sTradeData->pokePicSpriteIdxs[0]].x = 60;
         gSprites[sTradeData->pokePicSpriteIdxs[1]].x = 180;
@@ -1631,13 +1608,13 @@ static bool8 DoTradeAnim_Cable(void)
     case 65:
         if (gSprites[sTradeData->pokeballSpriteId2].callback == SpriteCallbackDummy)
         {
-            HandleLoadSpecialPokePic(&gMonFrontPicTable[sTradeData->tradeSpecies[1]], gMonSpritesGfxPtr->sprites[3], sTradeData->tradeSpecies[1], sTradeData->monPersonalities[1]);
+            LoadSpecialPokePic(sTradeData->tradeSpecies[1], sTradeData->monPersonalities[1], TRUE, gMonSpritesGfxPtr->sprites[3]);
             sTradeData->state++;
         }
         break;
     case 66:
         gSprites[sTradeData->pokePicSpriteIdxs[1]].x = 120;
-        gSprites[sTradeData->pokePicSpriteIdxs[1]].y = gMonFrontPicCoords[sTradeData->tradeSpecies[1]].y_offset + 60;
+        gSprites[sTradeData->pokePicSpriteIdxs[1]].y = gSpeciesInfo[sTradeData->tradeSpecies[1]].frontPicYOffset + 60;
         gSprites[sTradeData->pokePicSpriteIdxs[1]].x2 = 0;
         gSprites[sTradeData->pokePicSpriteIdxs[1]].y2 = 0;
         StartSpriteAnim(&gSprites[sTradeData->pokePicSpriteIdxs[1]], 0);
@@ -1710,7 +1687,7 @@ static bool8 DoTradeAnim_Cable(void)
     case 72: // Only if in-game trade
         TradeMons(gSpecialVar_0x8005, 0);
         gCB2_AfterEvolution = CB2_RunTradeAnim_InGameTrade;
-        evoTarget = GetEvolutionTargetSpecies(&gPlayerParty[gSelectedTradeMonPositions[0]], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]]);
+        evoTarget = GetEvolutionTargetSpecies(gSelectedTradeMonPositions[0], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]]);
         if (evoTarget != SPECIES_NONE)
         {
             TradeEvolutionScene(&gPlayerParty[gSelectedTradeMonPositions[0]], evoTarget, sTradeData->pokePicSpriteIdxs[1], gSelectedTradeMonPositions[0]);
@@ -1751,7 +1728,7 @@ static bool8 DoTradeAnim_Wireless(void)
     case 0:
         gSprites[sTradeData->pokePicSpriteIdxs[0]].invisible = FALSE;
         gSprites[sTradeData->pokePicSpriteIdxs[0]].x2 = -180;
-        gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 = gMonFrontPicCoords[sTradeData->tradeSpecies[0]].y_offset;
+        gSprites[sTradeData->pokePicSpriteIdxs[0]].y2 = gSpeciesInfo[sTradeData->tradeSpecies[0]].frontPicYOffset;
         sTradeData->state++;
         sTradeData->cachedMapMusic = GetCurrentMapMusic();
         PlayNewMapMusic(MUS_EVOLUTION);
@@ -1949,17 +1926,7 @@ static bool8 DoTradeAnim_Wireless(void)
         sTradeData->state++;
         break;
     case 37:
-        if (!gBaseStats[sTradeData->tradeSpecies[0]].noFlip)
-        {
-            gSprites[sTradeData->pokePicSpriteIdxs[0]].affineAnims = sSpriteAffineAnimTable_PlayerPokePicAlt;
-            gSprites[sTradeData->pokePicSpriteIdxs[0]].oam.affineMode = 3;
-            CalcCenterToCornerVec(&gSprites[sTradeData->pokePicSpriteIdxs[0]], 0, 3, 3);
-            StartSpriteAffineAnim(&gSprites[sTradeData->pokePicSpriteIdxs[0]], 0);
-        }
-        else
-        {
-            StartSpriteAffineAnim(&gSprites[sTradeData->pokePicSpriteIdxs[0]], 0);
-        }
+	    StartSpriteAffineAnim(&gSprites[sTradeData->pokePicSpriteIdxs[0]], 0);
         StartSpriteAffineAnim(&gSprites[sTradeData->pokePicSpriteIdxs[1]], 0);
         gSprites[sTradeData->pokePicSpriteIdxs[0]].x = 40;
         gSprites[sTradeData->pokePicSpriteIdxs[1]].x = 200;
@@ -2150,13 +2117,13 @@ static bool8 DoTradeAnim_Wireless(void)
     case 65:
         if (gSprites[sTradeData->pokeballSpriteId2].callback == SpriteCallbackDummy)
         {
-            HandleLoadSpecialPokePic(&gMonFrontPicTable[sTradeData->tradeSpecies[1]], gMonSpritesGfxPtr->sprites[3], sTradeData->tradeSpecies[1], sTradeData->monPersonalities[1]);
+            LoadSpecialPokePic(sTradeData->tradeSpecies[1], sTradeData->monPersonalities[1], TRUE, gMonSpritesGfxPtr->sprites[3]);
             sTradeData->state++;
         }
         break;
     case 66:
         gSprites[sTradeData->pokePicSpriteIdxs[1]].x = 120;
-        gSprites[sTradeData->pokePicSpriteIdxs[1]].y = gMonFrontPicCoords[sTradeData->tradeSpecies[1]].y_offset + 60;
+        gSprites[sTradeData->pokePicSpriteIdxs[1]].y = gSpeciesInfo[sTradeData->tradeSpecies[1]].frontPicYOffset + 60;
         gSprites[sTradeData->pokePicSpriteIdxs[1]].x2 = 0;
         gSprites[sTradeData->pokePicSpriteIdxs[1]].y2 = 0;
         StartSpriteAnim(&gSprites[sTradeData->pokePicSpriteIdxs[1]], 0);
@@ -2229,7 +2196,7 @@ static bool8 DoTradeAnim_Wireless(void)
     case 72: // Only if in-game trade
         TradeMons(gSpecialVar_0x8005, 0);
         gCB2_AfterEvolution = CB2_RunTradeAnim_InGameTrade;
-        evoTarget = GetEvolutionTargetSpecies(&gPlayerParty[gSelectedTradeMonPositions[0]], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]]);
+        evoTarget = GetEvolutionTargetSpecies(gSelectedTradeMonPositions[0], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]]);
         if (evoTarget != SPECIES_NONE)
         {
             TradeEvolutionScene(&gPlayerParty[gSelectedTradeMonPositions[0]], evoTarget, sTradeData->pokePicSpriteIdxs[1], gSelectedTradeMonPositions[0]);
@@ -2272,7 +2239,7 @@ static void CB2_TryEvolveAfterTrade(void)
         break;
     case 4:
         gCB2_AfterEvolution = CB2_HandleTradeEnded;
-        evoSpecies = GetEvolutionTargetSpecies(&gPlayerParty[gSelectedTradeMonPositions[0]], EVO_MODE_TRADE, 0, &gPlayerParty[gSelectedTradeMonPositions[1]]);
+        evoSpecies = GetEvolutionTargetSpecies(gSelectedTradeMonPositions[0], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]]);
         if (evoSpecies != SPECIES_NONE)
             TradeEvolutionScene(&gPlayerParty[gSelectedTradeMonPositions[0]], evoSpecies, sTradeData->pokePicSpriteIdxs[1], gSelectedTradeMonPositions[0]);
         else
@@ -2394,8 +2361,8 @@ u16 GetInGameTradeSpeciesInfo(void)
     // gStringVar2 with the name of the offered species.
     // Returns the requested species.
     const struct InGameTrade * inGameTrade = &sInGameTrades[gSpecialVar_0x8004];
-    StringCopy(gStringVar1, gSpeciesNames[inGameTrade->requestedSpecies]);
-    StringCopy(gStringVar2, gSpeciesNames[inGameTrade->species]);
+    StringCopy(gStringVar1, gSpeciesInfo[inGameTrade->requestedSpecies].name);
+    StringCopy(gStringVar2, gSpeciesInfo[inGameTrade->species].name);
     return inGameTrade->requestedSpecies;
 }
 
@@ -2407,7 +2374,7 @@ static void BufferInGameTradeMonName(void)
     const struct InGameTrade * inGameTrade = &sInGameTrades[gSpecialVar_0x8004];
     GetMonData(&gPlayerParty[gSpecialVar_0x8005], MON_DATA_NICKNAME, nickname);
     StringCopy_Nickname(gStringVar1, nickname);
-    StringCopy(gStringVar2, gSpeciesNames[inGameTrade->species]);
+    StringCopy(gStringVar2, gSpeciesInfo[inGameTrade->species].name);
 }
 
 static void CreateInGameTradePokemonInternal(u8 playerSlot, u8 inGameTradeIdx)
@@ -2422,15 +2389,12 @@ static void CreateInGameTradePokemonInternal(u8 playerSlot, u8 inGameTradeIdx)
 		.species = inGameTrade->species,
 		.level = level,
 		.shinyType = GENERATE_SHINY_NORMAL,
-		.forceGender = FALSE,
-		.forcedGender = MON_MALE,
+		.forcedGender = MON_GENDERLESS,
 		.otIdType = OT_ID_PRESET,
 		.fixedOtId = inGameTrade->otId,
 		.hasFixedPersonality = TRUE,
 		.fixedPersonality = inGameTrade->personality,
-		.forceNature = FALSE,
 		.forcedNature = NUM_NATURES,
-		.changeForm = FALSE,
 		.formChanges = NULL,
 		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
 	};

@@ -169,9 +169,9 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 			if (IsUproarActive() == gBattlersCount && CanBePutToSleep(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
 			{
 #if SLEEP_UPDATE
-                gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(RandomRange(1, 3));
+                gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(RandomRange(2, 3));
 #else
-	            gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(RandomRange(1, 5));
+	            gBattleMons[gEffectBattler].status1 |= STATUS1_SLEEP_TURN(RandomRange(2, 5));
 #endif
 				CancelMultiTurnMoves(gEffectBattler);
 				effect = 1;
@@ -319,7 +319,7 @@ bool8 DoMoveEffect(bool8 primary, bool8 jumpToScript, u32 flags)
 				gBattleMons[gEffectBattler].status2 |= STATUS2_WRAPPED_TURN(RandomRange(4, 5));
 				gBattleStruct->wrappedMove[gEffectBattler] = gCurrentMove;
 				gBattleStruct->wrappedBy[gEffectBattler] = gBattleScripting.battler;
-				gBattleCommunication[MULTISTRING_CHOOSER] = GetTrappingIdByMove(gCurrentMove);
+				gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument; // Trap id
 				effect = 2;
 			}
 			break;

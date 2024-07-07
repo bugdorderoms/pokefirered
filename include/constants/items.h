@@ -134,9 +134,13 @@
 #define ITEM_DEEP_SEA_TOOTH           (PROTEIN_ITEMS_END + 33)
 #define ITEM_DEEP_SEA_SCALE           (PROTEIN_ITEMS_END + 34)
 #define ITEM_PRISM_SCALE              (PROTEIN_ITEMS_END + 35)
+#define ITEM_PEAT_BLOCK               (PROTEIN_ITEMS_END + 36)
+#define ITEM_SYRUPY_APPLE             (PROTEIN_ITEMS_END + 37)
+#define ITEM_METAL_ALLOY              (PROTEIN_ITEMS_END + 38)
+#define ITEM_MASTERPIECE_TEACUP       (PROTEIN_ITEMS_END + 39)
 
 // In case you want to add new evolution items, all the indexes below this will be updated with the corrected index
-#define EVOLUTION_ITEMS_END           ITEM_PRISM_SCALE
+#define EVOLUTION_ITEMS_END           ITEM_MASTERPIECE_TEACUP
 
 // Wings
 #define ITEM_HEALTH_WING              (EVOLUTION_ITEMS_END + 1)
@@ -421,9 +425,10 @@
 #define ITEM_ROCK_INCENSE             (BATTLE_ITEMS_END + 12)
 #define ITEM_ROSE_INCENSE             (BATTLE_ITEMS_END + 13)
 #define ITEM_WAVE_INCENSE             (BATTLE_ITEMS_END + 14)
+#define ITEM_PURE_INCENSE             (BATTLE_ITEMS_END + 15)
 
 // In case you want to add new incense items, all the indexes below this will be updated with the corrected index
-#define INCENSE_ITEMS_END             ITEM_WAVE_INCENSE
+#define INCENSE_ITEMS_END             ITEM_PURE_INCENSE
 
 // Mega
 #define ITEM_VENUSAURITE              (INCENSE_ITEMS_END + 1)
@@ -529,24 +534,30 @@
 #define ITEM_SHOCK_DRIVE              (PLATE_ITEMS_END + 3)
 #define ITEM_CHILL_DRIVE              (PLATE_ITEMS_END + 4)
 
+// Masks
+#define ITEM_TEAL_MASK                (PLATE_ITEMS_END + 5)
+#define ITEM_WELLSPRING_MASK          (PLATE_ITEMS_END + 6)
+#define ITEM_HEARTHFLAME_MASK         (PLATE_ITEMS_END + 7)
+#define ITEM_CORNERSTONE_MASK         (PLATE_ITEMS_END + 8)
+
 // Memories
-#define ITEM_FIGHTING_MEMORY          (PLATE_ITEMS_END + 5)
-#define ITEM_FLYING_MEMORY            (PLATE_ITEMS_END + 6)
-#define ITEM_POISON_MEMORY            (PLATE_ITEMS_END + 7)
-#define ITEM_GROUND_MEMORY            (PLATE_ITEMS_END + 8)
-#define ITEM_ROCK_MEMORY              (PLATE_ITEMS_END + 9)
-#define ITEM_BUG_MEMORY               (PLATE_ITEMS_END + 10)
-#define ITEM_GHOST_MEMORY             (PLATE_ITEMS_END + 11)
-#define ITEM_STEEL_MEMORY             (PLATE_ITEMS_END + 12)
-#define ITEM_FIRE_MEMORY              (PLATE_ITEMS_END + 13)
-#define ITEM_WATER_MEMORY             (PLATE_ITEMS_END + 14)
-#define ITEM_GRASS_MEMORY             (PLATE_ITEMS_END + 15)
-#define ITEM_ELECTRIC_MEMORY          (PLATE_ITEMS_END + 16)
-#define ITEM_PSYCHIC_MEMORY           (PLATE_ITEMS_END + 17)
-#define ITEM_ICE_MEMORY               (PLATE_ITEMS_END + 18)
-#define ITEM_DRAGON_MEMORY            (PLATE_ITEMS_END + 19)
-#define ITEM_DARK_MEMORY              (PLATE_ITEMS_END + 20)
-#define ITEM_FAIRY_MEMORY             (PLATE_ITEMS_END + 21)
+#define ITEM_FIGHTING_MEMORY          (PLATE_ITEMS_END + 9)
+#define ITEM_FLYING_MEMORY            (PLATE_ITEMS_END + 10)
+#define ITEM_POISON_MEMORY            (PLATE_ITEMS_END + 11)
+#define ITEM_GROUND_MEMORY            (PLATE_ITEMS_END + 12)
+#define ITEM_ROCK_MEMORY              (PLATE_ITEMS_END + 13)
+#define ITEM_BUG_MEMORY               (PLATE_ITEMS_END + 14)
+#define ITEM_GHOST_MEMORY             (PLATE_ITEMS_END + 15)
+#define ITEM_STEEL_MEMORY             (PLATE_ITEMS_END + 16)
+#define ITEM_FIRE_MEMORY              (PLATE_ITEMS_END + 17)
+#define ITEM_WATER_MEMORY             (PLATE_ITEMS_END + 18)
+#define ITEM_GRASS_MEMORY             (PLATE_ITEMS_END + 19)
+#define ITEM_ELECTRIC_MEMORY          (PLATE_ITEMS_END + 20)
+#define ITEM_PSYCHIC_MEMORY           (PLATE_ITEMS_END + 21)
+#define ITEM_ICE_MEMORY               (PLATE_ITEMS_END + 22)
+#define ITEM_DRAGON_MEMORY            (PLATE_ITEMS_END + 23)
+#define ITEM_DARK_MEMORY              (PLATE_ITEMS_END + 24)
+#define ITEM_FAIRY_MEMORY             (PLATE_ITEMS_END + 25)
 
 // In case you want to add new types and consequently new memories, all the indexes below this will be updated with the corrected index
 #define MEMORY_ITEMS_END              ITEM_FAIRY_MEMORY
@@ -721,11 +732,12 @@
 #define ITEM_SHINY_CHARM              (GENERAL_ITEMS_END + 54)
 #define ITEM_RAINBOW_WING             (GENERAL_ITEMS_END + 55)
 #define ITEM_SILVER_WING              (GENERAL_ITEMS_END + 56)
+#define ITEM_FASHION_CASE             (GENERAL_ITEMS_END + 57)
 
-#define NUM_KEY_ITEMS                 52
+#define NUM_KEY_ITEMS                 53
 
 // In case you want to add new key items, all the indexes below this will be updated with the corrected index
-#define KEY_ITEMS_END                 ITEM_SILVER_WING
+#define KEY_ITEMS_END                 ITEM_FASHION_CASE
 
 // Tm
 #define ITEM_TM01                     (KEY_ITEMS_END + 1)
@@ -828,8 +840,10 @@
 #define ITEM_TM98                     (KEY_ITEMS_END + 98)
 #define ITEM_TM99                     (KEY_ITEMS_END + 99)
 #define ITEM_TM100                    (KEY_ITEMS_END + 100)
+#define ITEM_TM101                    (KEY_ITEMS_END + 101)
+#define ITEM_TM102                    (KEY_ITEMS_END + 102)
 
-#define ITEMS_COUNT                   (ITEM_TM100 + 1)
+#define ITEMS_COUNT                   (ITEM_TM102 + 1)
 
 #define ITEM_TM01_WORK_UP             ITEM_TM01
 #define ITEM_TM02_DRAGON_CLAW         ITEM_TM02
@@ -931,8 +945,10 @@
 #define ITEM_TM98_WATERFALL           ITEM_TM98
 #define ITEM_TM99_DAZZLING_GLEAM      ITEM_TM99
 #define ITEM_TM100_CONFIDE            ITEM_TM100
+#define ITEM_TM101_CUT                ITEM_TM101
+#define ITEM_TM102_FLASH              ITEM_TM102
 
-#define NUM_TECHNICAL_MACHINES        100
+#define NUM_TECHNICAL_MACHINES        102
 
 #define FIRST_BERRY_INDEX             ITEM_CHERI_BERRY
 #define ITEM_TO_BERRY(itemId)         (itemId - FIRST_BERRY_INDEX)

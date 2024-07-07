@@ -1,6 +1,13 @@
 #ifndef GUARD_POKEDEX_H
 #define GUARD_POKEDEX_H
 
+struct Region
+{
+	u8 name[8];
+	u16 dexStart;
+	u16 dexEnd;
+};
+
 enum
 {
     DEX_MODE_KANTO,
@@ -15,24 +22,21 @@ enum
     FLAG_SET_CAUGHT
 };
 
-struct PokedexEntry
-{
-    /*0x00*/ u8 categoryName[13];
-    /*0x0C*/ u16 height; //in decimeters
-    /*0x0E*/ u16 weight; //in hectograms
-    /*0x10*/ const u8 *description;
-};  /*size = 0x14*/
-
-u16 GetPokedexHeightWeight(u16 dexNum, u8 data);
 u16 GetNationalPokedexCount(u8 caseId);
-u16 GetKantoPokedexCount(u8 caseId);
+u16 GetRegionPokedexCount(u8 region, u8 caseId);
+u16 GetCurrentRegionPokedexCount(u8 caseId);
+bool16 HasAllMons(void);
+bool16 HasAllRegionMons(u8 region);
+bool16 HasAllCurrentRegionMons(void);
+u16 GetNumMonsInRegionPokedex(u8 region);
+u16 GetNumMonsInCurrentRegionPokedex(void);
+const u8 *GetRegionName(u8 region);
+const u8 *GetCurrentRegionName(void);
 bool8 GetSetPokedexFlag(u16 nationalNum, u8 caseId);
 void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality);
-bool16 HasAllKantoMons(void);
-bool16 HasAllMons(void);
 u16 SpeciesToNationalPokedexNum(u16 species);
-u16 NationalPokedexNumToSpecies(u16 nationalNum);
-
 u8 DexScreen_RegisterMonToPokedex(u16 species);
+
+extern const struct Region gRegions[];
 
 #endif // GUARD_POKEDEX_H

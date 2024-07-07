@@ -1,6 +1,7 @@
 #include "global.h"
 #include "gflib.h"
 #include "task.h"
+#include "field_fadetransition.h"
 #include "constants/songs.h"
 
 static void Task_FieldPoisonEffect(u8 taskId)

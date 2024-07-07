@@ -971,7 +971,6 @@ enum
     MENU_STORE,
     MENU_REGISTER,
     MENU_TRADE1,
-    MENU_TRADE2,
     MENU_FIELD_MOVES,
 };
 
@@ -1003,7 +1002,6 @@ static struct
     [MENU_STORE] = {gText_Store, CursorCB_Store},
     [MENU_REGISTER] = {gText_Register, CursorCB_Register},
     [MENU_TRADE1] = {gText_Trade4, CursorCB_Trade1},
-    [MENU_TRADE2] = {gText_Trade4, CursorCB_Trade2},
     [MENU_FIELD_MOVES + FIELD_MOVE_FLASH] = {gBattleMoves[MOVE_FLASH].name, CursorCB_FieldMove},
     [MENU_FIELD_MOVES + FIELD_MOVE_CUT] = {gBattleMoves[MOVE_CUT].name, CursorCB_FieldMove},
     [MENU_FIELD_MOVES + FIELD_MOVE_WATERFALL] = {gBattleMoves[MOVE_WATERFALL].name, CursorCB_FieldMove},
@@ -1027,7 +1025,6 @@ static const u8 sPartyMenuAction_RelearnDeleteMoveCancel[] = {MENU_REMEMBER_MOVE
 static const u8 sPartyMenuAction_ReadTakeMailCancel[] = {MENU_READ, MENU_TAKE_MAIL, MENU_CANCEL2};
 static const u8 sPartyMenuAction_RegisterSummaryCancel[] = {MENU_REGISTER, MENU_SUMMARY, MENU_CANCEL1};
 static const u8 sPartyMenuAction_TradeSummaryCancel1[] = {MENU_TRADE1, MENU_SUMMARY, MENU_CANCEL1};
-static const u8 sPartyMenuAction_TradeSummaryCancel2[] = {MENU_TRADE2, MENU_SUMMARY, MENU_CANCEL1};
 
 // IDs for the action lists that appear when a party mon is selected
 enum
@@ -1045,7 +1042,6 @@ enum
     ACTIONS_MAIL,
     ACTIONS_REGISTER,
     ACTIONS_TRADE,
-    ACTIONS_SPIN_TRADE,
 };
 
 static const u8 *const sPartyMenuActions[] =
@@ -1063,7 +1059,6 @@ static const u8 *const sPartyMenuActions[] =
     [ACTIONS_MAIL]          = sPartyMenuAction_ReadTakeMailCancel,
     [ACTIONS_REGISTER]      = sPartyMenuAction_RegisterSummaryCancel,
     [ACTIONS_TRADE]         = sPartyMenuAction_TradeSummaryCancel1,
-    [ACTIONS_SPIN_TRADE]    = sPartyMenuAction_TradeSummaryCancel2,
 };
 
 static const u8 sPartyMenuActionCounts[] =
@@ -1081,21 +1076,20 @@ static const u8 sPartyMenuActionCounts[] =
     [ACTIONS_MAIL]          = ARRAY_COUNT(sPartyMenuAction_ReadTakeMailCancel),
     [ACTIONS_REGISTER]      = ARRAY_COUNT(sPartyMenuAction_RegisterSummaryCancel),
     [ACTIONS_TRADE]         = ARRAY_COUNT(sPartyMenuAction_TradeSummaryCancel1),
-    [ACTIONS_SPIN_TRADE]    = ARRAY_COUNT(sPartyMenuAction_TradeSummaryCancel2),
 };
 
 static const u16 sFieldMoves[] =
 {
-    MOVE_FLASH,
-	MOVE_CUT,
-	MOVE_WATERFALL,
-	MOVE_TELEPORT,
-	MOVE_DIG,
-	MOVE_MILK_DRINK,
-	MOVE_SOFT_BOILED,
-	MOVE_SWEET_SCENT,
-	MOVE_DEFOG,
-	FIELD_MOVE_END
+    [FIELD_MOVE_FLASH]       = MOVE_FLASH,
+	[FIELD_MOVE_CUT]         = MOVE_CUT,
+	[FIELD_MOVE_WATERFALL]   = MOVE_WATERFALL,
+	[FIELD_MOVE_TELEPORT]    = MOVE_TELEPORT,
+	[FIELD_MOVE_DIG]         = MOVE_DIG,
+	[FIELD_MOVE_MILK_DRINK]  = MOVE_MILK_DRINK,
+	[FIELD_MOVE_SOFT_BOILED] = MOVE_SOFT_BOILED,
+	[FIELD_MOVE_SWEET_SCENT] = MOVE_SWEET_SCENT,
+	[FIELD_MOVE_DEFOG]       = MOVE_DEFOG,
+	[FIELD_MOVE_END]         = FIELD_MOVE_END
 };
 
 static struct

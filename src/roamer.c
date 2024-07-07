@@ -85,7 +85,7 @@ void ClearRoamerData(void)
     }
 }
 
-static u16 GetRoamerSpecies(void)
+u16 GetRoamerSpecies(void)
 {
 	switch (GetStarterSpecies())
 	{
@@ -96,6 +96,7 @@ static u16 GetRoamerSpecies(void)
 		case SPECIES_SQUIRTLE:
 			return SPECIES_RAIKOU;
 	}
+	return SPECIES_NONE;
 }
 
 static void CreateInitialRoamerMon(void)
@@ -203,13 +204,10 @@ static void CreateRoamerMonInstance(void)
 		.level = ROAMER->level,
 		.otIdType = OT_ID_PLAYER_ID,
 		.shinyType = GENERATE_SHINY_NORMAL,
-		.forceGender = FALSE,
-		.forcedGender = MON_MALE,
+		.forcedGender = MON_GENDERLESS,
 		.hasFixedPersonality = TRUE,
 		.fixedPersonality = ROAMER->personality,
-		.forceNature = FALSE,
 		.forcedNature = NUM_NATURES,
-		.changeForm = FALSE,
 		.formChanges = NULL,
 		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
 	};

@@ -18,6 +18,7 @@
 #include "constants/songs.h"
 #include "constants/game_stat.h"
 #include "constants/trainers.h"
+#include "constants/regions.h"
 
 // Trainer Card Strings
 enum
@@ -842,7 +843,7 @@ static void SetPlayerCardData(struct TrainerCard *trainerCard, u8 cardType)
         if (trainerCard->rse.hofDebutHours != 0 || (trainerCard->rse.hofDebutMinutes != 0 || trainerCard->rse.hofDebutSeconds != 0))
             trainerCard->rse.stars = cardType;
 
-        if (HasAllKantoMons())
+        if (HasAllRegionMons(REGION_KANTO))
             trainerCard->rse.stars++;
 
         if (HasAllMons())
@@ -863,7 +864,7 @@ void TrainerCard_GenerateCardForLinkPlayer(struct TrainerCard *trainerCard)
     if (trainerCard->rse.hofDebutHours != 0 || trainerCard->rse.hofDebutMinutes != 0 || trainerCard->rse.hofDebutSeconds != 0)
         trainerCard->rse.stars = 1;
 
-    trainerCard->rse.caughtAllHoenn = HasAllKantoMons();
+    trainerCard->rse.caughtAllHoenn = HasAllRegionMons(REGION_KANTO);
     trainerCard->hasAllMons = HasAllMons();
     trainerCard->berriesPicked = gSaveBlock2Ptr->berryPick.berriesPicked;
     trainerCard->jumpsInRow = gSaveBlock2Ptr->pokeJump.jumpsInRow;

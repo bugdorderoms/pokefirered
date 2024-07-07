@@ -85,10 +85,10 @@ static void CameraObject_2(struct Sprite *);
 static struct ObjectEventTemplate *FindObjectEventTemplateByLocalId(u8 localId, struct ObjectEventTemplate *templates, u8 count);
 static void ClearObjectEventMovement(struct ObjectEvent *, struct Sprite *);
 static void ObjectEventSetSingleMovement(struct ObjectEvent *, struct Sprite *, u8);
-static bool8 sub_805E238(struct ObjectEventTemplate *, u8, s16, s16);
-static bool8 sub_805E27C(struct ObjectEventTemplate *, s16, s16);
-static bool8 sub_805E2E8(struct ObjectEventTemplate *, s16, s16);
-static void sub_805E384(struct ObjectEventTemplate *);
+static bool8 ShouldInitObjectEventStateFromTemplate(struct ObjectEventTemplate *, bool8 isClone, s16, s16);
+static bool8 TemplateIsObstacleAndWithinView(struct ObjectEventTemplate *, s16, s16);
+static bool8 TemplateIsObstacleAndVisibleFromConnectingMap(struct ObjectEventTemplate *, s16, s16);
+static void SetHideObstacleFlag(struct ObjectEventTemplate *);
 static bool8 MovementType_Disguise_Callback(struct ObjectEvent *, struct Sprite *);
 static bool8 MovementType_Buried_Callback(struct ObjectEvent *, struct Sprite *);
 static u8 MovementType_VsSeeker4D_Callback(struct ObjectEvent *, struct Sprite *);
@@ -1085,7 +1085,7 @@ static u8 InitObjectEventStateFromTemplate(struct ObjectEventTemplate *template,
     struct ObjectEvent *objectEvent;
     const struct MapHeader *mapHeader;
     u8 objectEventId;
-    u8 var0;
+    bool8 isClone;
     u8 localId;
     s16 x;
     s16 y;
@@ -1094,16 +1094,9 @@ static u8 InitObjectEventStateFromTemplate(struct ObjectEventTemplate *template,
     s16 x3;
     s16 y3;
     
-    var0 = 0;
-    localId = 0;
-    x2 = 0;
-    y2 = 0;
-    x3 = 0;
-    y3 = 0;
-    
     if (template->kind == OBJ_KIND_CLONE)
     {
-        var0 = 1;
+        isClone = TRUE;
         localId = template->objUnion.clone.targetLocalId;
         mapNum = template->objUnion.clone.targetMapNum;
         mapGroup = template->objUnion.clone.targetMapGroup & 0xFF;
@@ -1114,11 +1107,23 @@ static u8 InitObjectEventStateFromTemplate(struct ObjectEventTemplate *template,
         mapHeader = Overworld_GetMapHeaderByGroupAndId(mapGroup, mapNum);
         template = &(mapHeader->events->objectEvents[localId - 1]);
     }
-    if (GetAvailableObjectEventId(template->localId, mapNum, mapGroup, &objectEventId) || !sub_805E238(template, var0, x3, y3))
+	else
+	{
+		isClone = FALSE;
+		localId = 0;
+        x2 = 0;
+        y2 = 0;
+        x3 = 0;
+        y3 = 0;
+	}
+	
+    if (GetAvailableObjectEventId(template->localId, mapNum, mapGroup, &objectEventId) || !ShouldInitObjectEventStateFromTemplate(template, isClone, x3, y3))
         return OBJECT_EVENTS_COUNT;
+	
     objectEvent = &gObjectEvents[objectEventId];
     ClearObjectEvent(objectEvent);
-    if (var0)
+	
+    if (isClone)
     {
         x = x2 + 7;
         y = y2 + 7;
@@ -1150,36 +1155,34 @@ static u8 InitObjectEventStateFromTemplate(struct ObjectEventTemplate *template,
     objectEvent->previousMovementDirection = gInitialMovementTypeFacingDirections[template->objUnion.normal.movementType];
     SetObjectEventDirection(objectEvent, objectEvent->previousMovementDirection);
     SetObjectEventDynamicGraphicsId(objectEvent);
+	
     if (gRangedMovementTypes[objectEvent->movementType])
     {
         if (objectEvent->rangeX == 0)
-        {
             objectEvent->rangeX++;
-        }
+
         if (objectEvent->rangeY == 0)
-        {
             objectEvent->rangeY++;
-        }
     }
     return objectEventId;
 }
 
-static bool8 sub_805E238(struct ObjectEventTemplate *template, u8 var, s16 x, s16 y)
+static bool8 ShouldInitObjectEventStateFromTemplate(struct ObjectEventTemplate *template, bool8 isClone, s16 x, s16 y)
 {
-    if (var)
+    if (isClone)
     {
-        if (!sub_805E27C(template, x, y))
+        if (!TemplateIsObstacleAndWithinView(template, x, y))
             return FALSE;
     }
-    if (!sub_805E2E8(template, x, y))
+    if (!TemplateIsObstacleAndVisibleFromConnectingMap(template, x, y))
         return FALSE;
     
     return TRUE;
 }
 
-static bool8 sub_805E27C(struct ObjectEventTemplate *template, s16 x, s16 y)
+static bool8 TemplateIsObstacleAndWithinView(struct ObjectEventTemplate *template, s16 x, s16 y)
 {
-    if ((u8)(template->graphicsId - OBJ_EVENT_GFX_CUT_TREE) > 1)
+    if (template->graphicsId != OBJ_EVENT_GFX_CUT_TREE && template->graphicsId != OBJ_EVENT_GFX_ROCK_SMASH_ROCK)
         return TRUE;
 
     if (gSaveBlock1Ptr->pos.x < x)
@@ -1202,7 +1205,7 @@ static bool8 sub_805E27C(struct ObjectEventTemplate *template, s16 x, s16 y)
     return TRUE;
 }
 
-static bool8 sub_805E2E8(struct ObjectEventTemplate *template, s16 x, s16 y)
+static bool8 TemplateIsObstacleAndVisibleFromConnectingMap(struct ObjectEventTemplate *template, s16 x, s16 y)
 {
     s32 x2, y2;
     
@@ -1212,14 +1215,14 @@ static bool8 sub_805E2E8(struct ObjectEventTemplate *template, s16 x, s16 y)
     x2 = VMap.Xsize - 16;
     y2 = VMap.Ysize - 15;
     
-    if ((u8)(template->graphicsId - OBJ_EVENT_GFX_CUT_TREE) > 1)
+    if (template->graphicsId != OBJ_EVENT_GFX_CUT_TREE && template->graphicsId != OBJ_EVENT_GFX_ROCK_SMASH_ROCK)
         return TRUE;
     
     if (!gSaveBlock1Ptr->pos.x)
     {
         if (template->x <= 8)
         {
-            sub_805E384(template);
+            SetHideObstacleFlag(template);
             return FALSE;
         }
     }
@@ -1228,7 +1231,7 @@ static bool8 sub_805E2E8(struct ObjectEventTemplate *template, s16 x, s16 y)
     {
         if (template->x >= x2 - 8)
         {
-            sub_805E384(template);
+            SetHideObstacleFlag(template);
             return FALSE;
         }
     }
@@ -1237,7 +1240,7 @@ static bool8 sub_805E2E8(struct ObjectEventTemplate *template, s16 x, s16 y)
     {
         if (template->y <= 6)
         {
-            sub_805E384(template);
+            SetHideObstacleFlag(template);
             return FALSE;
         }
     }
@@ -1246,7 +1249,7 @@ static bool8 sub_805E2E8(struct ObjectEventTemplate *template, s16 x, s16 y)
     {
         if (template->y >= y2 - 6)
         {
-            sub_805E384(template);
+            SetHideObstacleFlag(template);
             return FALSE;
         }
     }
@@ -1254,9 +1257,9 @@ static bool8 sub_805E2E8(struct ObjectEventTemplate *template, s16 x, s16 y)
     return TRUE;
 }
 
-static void sub_805E384(struct ObjectEventTemplate *template)
+static void SetHideObstacleFlag(struct ObjectEventTemplate *template)
 {
-    if ((u16)(template->flagId - 17) < 15)
+    if (template->flagId >= FLAG_TEMP_11 && template->flagId <= FLAG_TEMP_1F)
         FlagSet(template->flagId);
 }
 

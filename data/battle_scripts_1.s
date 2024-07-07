@@ -1078,7 +1078,7 @@ BattleScript_EffectSubstitute::
 BattleScript_SubstituteAnim::
 	attackanimation
 	waitstate
-	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
+	orword gHitMarker, HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 BattleScript_SubstituteString::
@@ -1262,7 +1262,7 @@ BattleScript_EffectBellyDrum::
 	maxattackhalvehp BattleScript_ButItFailed
 	attackanimation
 	waitstate
-	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
+	orword gHitMarker, HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	setstatchanger STAT_ATK, +6 @ Max out
@@ -4275,6 +4275,7 @@ BattleScript_MoveEffectRecoil::
 	datahpupdate BS_ATTACKER
 	printstring STRINGID_ATKHITWITHRECOIL
 	waitmessage B_WAIT_TIME_LONG
+	updaterecoilevolutiontracker
 	tryfaintmon BS_ATTACKER
 	return
 
@@ -4594,6 +4595,7 @@ BattleScript_FaintTarget::
 	cleareffectsonfaint BS_TARGET
 	printstring STRINGID_DEFFAINTED
 	flushmessagebox
+	tryupdatedefeatmonevolutiontracker BS_TARGET
 	tryactivatebattlebond BS_ATTACKER
 	tryactivatemoxie BS_ATTACKER
 	tryactivategrimneigh BS_ATTACKER

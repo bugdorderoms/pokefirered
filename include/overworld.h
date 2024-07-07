@@ -43,14 +43,14 @@ struct CreditsOverworldCmd
 };
 
 /* gDisableMapMusicChangeOnMapLoad */
-#define MUSIC_DISABLE_OFF 0
+#define MUSIC_DISABLE_OFF  0
 #define MUSIC_DISABLE_STOP 1
 #define MUSIC_DISABLE_KEEP 2
 
 /* gGlobalFieldTintMode */
-#define GF_TINT_NONE              0
-#define GF_TINT_GRAYSCALE         1
-#define GF_TINT_SEPIA             2
+#define GF_TINT_NONE      0
+#define GF_TINT_GRAYSCALE 1
+#define GF_TINT_SEPIA     2
 
 extern const struct UCoords32 gDirectionToVectors[];
 

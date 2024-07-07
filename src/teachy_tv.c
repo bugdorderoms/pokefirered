@@ -38,10 +38,10 @@ struct TeachyTvCtrlBlk
 struct TeachyTvBuf
 {
     MainCallback savedCallback;
-    u16 buffer1[0x800];
-    u16 buffer2[0x800];
-    u16 buffer3[0x800];
-    u16 buffer4[0x800];
+    u16 buffer1[BG_SCREEN_SIZE];
+    u16 buffer2[BG_SCREEN_SIZE];
+    u16 buffer3[BG_SCREEN_SIZE];
+    u16 buffer4[BG_SCREEN_SIZE];
     u8 grassAnimCounterLo;
     u8 grassAnimCounterHi;
     u8 grassAnimDisabled;

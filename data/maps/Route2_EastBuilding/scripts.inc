@@ -7,7 +7,7 @@ Route2_EastBuilding_EventScript_Aide:: @ 816F67F
 	lock
 	faceplayer
 	call Route2_EastBuilding_EventScript_GetAideRequestInfo
-	goto_if_set FLAG_GOT_HM05, Route2_EastBuilding_EventScript_AlreadyGotHM05
+	goto_if_set FLAG_GOT_FLASH, Route2_EastBuilding_EventScript_AlreadyGotHM05
 	msgbox Route2_EastBuilding_Text_GiveHM05IfSeen10Mons, MSGBOX_YESNO
 	compare VAR_RESULT, NO
 	goto_if_eq Aide_EventScript_DeclineCheckMons
@@ -18,11 +18,11 @@ Route2_EastBuilding_EventScript_Aide:: @ 816F67F
 	compare VAR_0x8006, REQUIRED_SEEN_MONS
 	goto_if_lt Aide_EventScript_HaventCaughtEnough
 	msgbox Route2_EastBuilding_Text_GreatHereYouGo
-	checkitemspace ITEM_TM99, 1
+	checkitemspace ITEM_TM102_FLASH, 1
 	compare VAR_RESULT, FALSE
 	goto_if_eq Aide_EventScript_NoRoomForItem
-	giveitem_msg Route2_EastBuilding_Text_ReceivedHM05FromAide, ITEM_TM99
-	setflag FLAG_GOT_HM05
+	giveitem_msg Route2_EastBuilding_Text_ReceivedHM05FromAide, ITEM_TM102_FLASH
+	setflag FLAG_GOT_FLASH
 	msgbox Route2_EastBuilding_Text_ExplainHM05
 	release
 	end
@@ -34,7 +34,7 @@ Route2_EastBuilding_EventScript_AlreadyGotHM05:: @ 816F701
 
 Route2_EastBuilding_EventScript_GetAideRequestInfo:: @ 816F70B
 	getnumberstring 0, REQUIRED_SEEN_MONS
-	getitemname 1, ITEM_TM99
+	getitemname 1, ITEM_TM102_FLASH
 	return
 
 Route2_EastBuilding_EventScript_Rocker:: @ 816F714

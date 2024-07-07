@@ -23,8 +23,6 @@
 
 #include "pokedex.h"
 
-extern const struct PokedexEntry gPokedexEntries[];
-
 void CB2_OpenPokedexFromStartMenu(void);
 void VBlankCB(void);
 

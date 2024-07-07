@@ -222,16 +222,13 @@ u16 GenerateWildMon(u16 species, u8 level)
 	{
 		.species = species,
 		.level = level,
-		.forceGender = FALSE,
-		.forcedGender = MON_MALE,
+		.forcedGender = MON_GENDERLESS,
 		.otIdType = OT_ID_PLAYER_ID,
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.shinyType = GENERATE_SHINY_NORMAL,
-		.forceNature = FALSE,
 		.forcedNature = NUM_NATURES,
-		.changeForm = TRUE,
-		.formChanges = NULL,
+		.formChanges = gDeafultGeneratorFormChanges,
 		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
 	};
 	
@@ -774,32 +771,26 @@ static void AddToWildEncounterRateBuff(u8 encounterRate)
         sWildEncounterData.encounterRateBuff = 0;
 }
 
-#define GET_WILD_INFO(monsInfo, isNight)      \
-{                                             \
-    if (isNight && monsInfo##isNight != NULL) \
-		return monsInfo##isNight;             \
-	else                                      \
-		return monsInfo;                      \
-}
+#define GET_WILD_INFO(monsInfo, dayOrNight)                  \
+    if (dayOrNight == TIME_NIGHT && monsInfo##Night != NULL) \
+		return monsInfo##Night;                              \
+	else                                                     \
+		return monsInfo
 
 const struct WildPokemonInfo *GetWildPokemonInfoByHeaderType(u16 headerId, u8 type)
 {
-	bool8 Night = GetDNSTimeLapseIsNight();
+	u8 dayOrNight = GetDNSTimeLapseDayOrNight();
 	
 	switch (type)
 	{
 		case WILD_HEADER_LAND:
-			GET_WILD_INFO(gWildMonHeaders[headerId].landMonsInfo, Night);
-			break;
+			GET_WILD_INFO(gWildMonHeaders[headerId].landMonsInfo, dayOrNight);
 		case WILD_HEADER_WATER:
-		    GET_WILD_INFO(gWildMonHeaders[headerId].waterMonsInfo, Night);
-			break;
+		    GET_WILD_INFO(gWildMonHeaders[headerId].waterMonsInfo, dayOrNight);
 		case WILD_HEADER_ROCK_SMASH:
-		    GET_WILD_INFO(gWildMonHeaders[headerId].rockSmashMonsInfo, Night);
-			break;
+		    GET_WILD_INFO(gWildMonHeaders[headerId].rockSmashMonsInfo, dayOrNight);
 		case WILD_HEADER_FISH:
-		    GET_WILD_INFO(gWildMonHeaders[headerId].fishingMonsInfo, Night);
-			break;
+		    GET_WILD_INFO(gWildMonHeaders[headerId].fishingMonsInfo, dayOrNight);
 	}
 }
 

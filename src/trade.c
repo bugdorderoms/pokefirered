@@ -737,15 +737,12 @@ static void CB2_ReturnFromLinkTrade2(void)
 		
 		generator.species = SPECIES_NONE;
 		generator.level = 0;
-		generator.forceGender = FALSE;
-		generator.forcedGender = MON_MALE;
+		generator.forcedGender = MON_GENDERLESS;
 		generator.otIdType = OT_ID_PLAYER_ID;
 		generator.hasFixedPersonality = FALSE;
 		generator.fixedPersonality = 0;
 		generator.shinyType = GENERATE_SHINY_NORMAL;
-		generator.forceNature = FALSE;
 		generator.forcedNature = NUM_NATURES;
-		generator.changeForm = FALSE;
 		generator.formChanges = NULL;
 		
 		for (i = 0; i < MAX_MON_MOVES; i++)
@@ -1437,7 +1434,7 @@ static bool8 shedinja_maker_maybe(void)
 
                     if (!StringCompareWithoutExtCtrlCodes(name, gJPText_Shedinja))
                     {
-                        SetMonData(mon, MON_DATA_NICKNAME, gSpeciesNames[SPECIES_SHEDINJA]);
+                        SetMonData(mon, MON_DATA_NICKNAME, gSpeciesInfo[SPECIES_SHEDINJA].name);
                     }
                 }
             }
@@ -2711,7 +2708,7 @@ int GetUnionRoomTradeMessageId(struct GFtgtGnameSub playerSub, struct GFtgtGname
     }
     else
     {
-        if (gBaseStats[species1].type1 != type && gBaseStats[species1].type2 != type)
+        if (gSpeciesInfo[species1].types[0] != type && gSpeciesInfo[species1].types[1] != type)
         {
             return 1;
         }

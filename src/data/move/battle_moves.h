@@ -384,6 +384,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 		},
+		.argument = TRAP_ID_BIND,
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -656,6 +657,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 		},
+		.argument = TRAP_ID_WRAP,
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1490,9 +1492,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 		},
+		.argument = TRAP_ID_FIRE_SPIN,
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
-
     },
 
     [MOVE_THUNDER_SHOCK] =
@@ -2265,6 +2267,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 		},
+		.argument = TRAP_ID_CLAMP,
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -4420,6 +4423,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 			.hitUnderwater = TRUE,
 		},
+		.argument = TRAP_ID_WHIRLPOOL,
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -5797,6 +5801,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.argument = TRAP_ID_SAND_TOMB,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 

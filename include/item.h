@@ -48,6 +48,7 @@ enum
 	ITEM_TYPE_PLATE,
 	ITEM_TYPE_MEMORY,
 	ITEM_TYPE_DRIVE,
+	ITEM_TYPE_MASK,
 	ITEM_TYPE_INCENSE,
 	ITEM_TYPE_MEGA_STONE,
 	ITEM_TYPE_Z_CRYSTAL,
@@ -63,16 +64,16 @@ enum
 struct Item
 {
     /*0x00*/ u8 name[ITEM_NAME_LENGTH];
-	/*0x14*/ u8 holdEffect;
-    /*0x15*/ u8 holdEffectParam;
-	/*0x16*/ u16 price;
-    /*0x18*/ const u8 *description;
-	/*0x1C*/ ItemUseFunc fieldUseFunc;
-	/*0x20*/ u8 pocket;
-    /*0x21*/ u8 type; // determine the exit CB
-	/*0x22*/ u8 usageType; // used by bag sorting
-    /*0x23*/ u8 battleUsage; // determine battle script id
-	/*0x24*/ u8 flingPower;
+	/*0x14*/ const u8 *description;
+	/*0x18*/ u8 pocket;
+	/*0x19*/ u8 holdEffect;
+	/*0x1A*/ u16 holdEffectParam;
+	/*0x1C*/ u16 price;
+	/*0x1E*/ u8 type; // determine the exit CB
+	/*0x1F*/ u8 usageType; // used by bag sorting
+	/*0x20*/ ItemUseFunc fieldUseFunc;
+    /*0x24*/ u8 battleUsage; // determine battle script id
+	/*0x25*/ u8 flingPower;
 };
 
 struct BagPocket
@@ -98,7 +99,7 @@ bool8 AddPCItem(u16 itemId, u16 count);
 const u8 *ItemId_GetName(u16 itemId);
 u16 ItemId_GetPrice(u16 itemId);
 u8 ItemId_GetHoldEffect(u16 itemId);
-u8 ItemId_GetHoldEffectParam(u16 itemId);
+u16 ItemId_GetHoldEffectParam(u16 itemId);
 const u8 *ItemId_GetDescription(u16 itemId);
 u8 ItemId_GetPocket(u16 itemId);
 u8 ItemId_GetType(u16 itemId);
@@ -107,6 +108,7 @@ u8 ItemId_GetBattleUsage(u16 itemId);
 u8 ItemId_GetFlingPower(u16 itemId);
 u8 ItemId_GetUsageType(u16 itemId);
 u8 ItemId_GetBattleEffectUsageType(u16 itemId);
+const u8* GetItemEffect(u16 item);
 void ClearBag(void);
 void ClearPCItemSlots(void);
 bool8 AddBagItem(u16 itemId, u16 amount);

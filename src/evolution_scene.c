@@ -9,6 +9,7 @@
 #include "link.h"
 #include "link_rfu.h"
 #include "m4a.h"
+#include "evolution.h"
 #include "event_data.h"
 #include "trade_scene.h"
 #include "new_menu_helpers.h"
@@ -220,13 +221,13 @@ void EvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 bits, u8 partyI
 
     GetMonData(mon, MON_DATA_NICKNAME, name);
     StringCopy_Nickname(gStringVar1, name);
-    StringCopy(gStringVar2, gSpeciesNames[speciesToEvolve]);
+    StringCopy(gStringVar2, gSpeciesInfo[speciesToEvolve].name);
 
     // preEvo sprite
     currSpecies = GetMonData(mon, MON_DATA_SPECIES);
     isShiny = GetMonData(mon, MON_DATA_IS_SHINY);
-    DecompressPicFromTable(&gMonFrontPicTable[currSpecies], gMonSpritesGfxPtr->sprites[1], currSpecies);
-    LoadCompressedPalette(GetMonSpritePalStructFromSpecies(currSpecies, isShiny)->data, 0x110, 0x20);
+    LZDecompressWram(gSpeciesInfo[currSpecies].frontPic, gMonSpritesGfxPtr->sprites[1]);
+    LoadCompressedPalette(GetMonSpritePalFromSpecies(currSpecies, isShiny), 0x110, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(currSpecies, 1);
     gMultiuseSpriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
@@ -237,8 +238,8 @@ void EvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 bits, u8 partyI
     gSprites[id].invisible = TRUE;
 
     // postEvo sprite
-    DecompressPicFromTable(&gMonFrontPicTable[speciesToEvolve], gMonSpritesGfxPtr->sprites[3], speciesToEvolve);
-    LoadCompressedPalette(GetMonSpritePalStructFromSpecies(speciesToEvolve, isShiny)->data, 0x120, 0x20);
+    LZDecompressWram(gSpeciesInfo[speciesToEvolve].frontPic, gMonSpritesGfxPtr->sprites[3]);
+    LoadCompressedPalette(GetMonSpritePalFromSpecies(speciesToEvolve, isShiny), 0x120, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(speciesToEvolve, 3);
     gMultiuseSpriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
@@ -308,8 +309,8 @@ static void CB2_EvolutionSceneLoadGraphics(void)
 	Mon = &gPlayerParty[gTasks[sEvoStructPtr->evoTaskId].tPartyId];
 	postEvoSpecies = gTasks[sEvoStructPtr->evoTaskId].tPostEvoSpecies;
 	
-    DecompressPicFromTable(&gMonFrontPicTable[postEvoSpecies], gMonSpritesGfxPtr->sprites[3], postEvoSpecies);
-    LoadCompressedPalette(GetMonSpritePalStructFromSpecies(postEvoSpecies, GetMonData(Mon, MON_DATA_IS_SHINY))->data, 0x120, 0x20);
+    LZDecompressWram(gSpeciesInfo[postEvoSpecies].frontPic, gMonSpritesGfxPtr->sprites[3]);
+    LoadCompressedPalette(GetMonSpritePalFromSpecies(postEvoSpecies, GetMonData(Mon, MON_DATA_IS_SHINY)), 0x120, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(postEvoSpecies, 3);
     gMultiuseSpriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
@@ -375,8 +376,8 @@ static void CB2_TradeEvolutionSceneLoadGraphics(void)
         {
 			Mon = &gPlayerParty[gTasks[sEvoStructPtr->evoTaskId].tPartyId];
 			
-            DecompressPicFromTable(&gMonFrontPicTable[postEvoSpecies], gMonSpritesGfxPtr->sprites[3], postEvoSpecies);
-            LoadCompressedPalette(GetMonSpritePalStructFromSpecies(postEvoSpecies, GetMonData(Mon, MON_DATA_IS_SHINY))->data, 0x120, 0x20);
+            LZDecompressWram(gSpeciesInfo[postEvoSpecies].frontPic, gMonSpritesGfxPtr->sprites[3]);
+            LoadCompressedPalette(GetMonSpritePalFromSpecies(postEvoSpecies, GetMonData(Mon, MON_DATA_IS_SHINY)), 0x120, 0x20);
             gMain.state++;
         }
         break;
@@ -422,7 +423,7 @@ void TradeEvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 preEvoSpri
 
     GetMonData(mon, MON_DATA_NICKNAME, name);
     StringCopy_Nickname(gStringVar1, name);
-    StringCopy(gStringVar2, gSpeciesNames[speciesToEvolve]);
+    StringCopy(gStringVar2, gSpeciesInfo[speciesToEvolve].name);
 
     gAffineAnimsDisabled = TRUE;
 
@@ -430,9 +431,9 @@ void TradeEvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 preEvoSpri
     sEvoStructPtr = AllocZeroed(sizeof(struct EvoInfo));
     sEvoStructPtr->preEvoSpriteId = preEvoSpriteId;
 
-    DecompressPicFromTable(&gMonFrontPicTable[speciesToEvolve], gMonSpritesGfxPtr->sprites[1], speciesToEvolve);
+    LZDecompressWram(gSpeciesInfo[speciesToEvolve].frontPic, gMonSpritesGfxPtr->sprites[1]);
 
-    LoadCompressedPalette(GetMonSpritePalStructFromSpecies(speciesToEvolve, GetMonData(mon, MON_DATA_IS_SHINY))->data, 0x120, 0x20);
+    LoadCompressedPalette(GetMonSpritePalFromSpecies(speciesToEvolve, GetMonData(mon, MON_DATA_IS_SHINY)), 0x120, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(speciesToEvolve, 1);
     gMultiuseSpriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
@@ -485,28 +486,42 @@ static void CB2_TradeEvolutionSceneUpdate(void)
     RunTasks();
 }
 
-static void CreateShedinja(u16 preEvoSpecies, struct Pokemon* mon)
+static void TryMonCreationEvolution(u16 preEvoSpecies, struct Pokemon* mon)
 {
-    if (gEvolutionTable[preEvoSpecies][0].method == EVO_LEVEL_NINJASK && gPlayerPartyCount < PARTY_SIZE)
+	u8 i;
+	const u8 *evolutions = gSpeciesInfo[preEvoSpecies].evolutions;
+	
+    if (evolutions != NULL && gPlayerPartyCount < PARTY_SIZE)
     {
-		u32 data = 0;
-        s32 i;
-        struct Pokemon* shedinja = &gPlayerParty[gPlayerPartyCount];
-
-        CopyMon(&gPlayerParty[gPlayerPartyCount], mon, sizeof(struct Pokemon));
-        SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_SPECIES, (&gEvolutionTable[preEvoSpecies][1].targetSpecies));
-        SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_NICKNAME, (gSpeciesNames[gEvolutionTable[preEvoSpecies][1].targetSpecies]));
-        SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_HELD_ITEM, (&data));
-        SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_MARKINGS, (&data));
-        SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_STATUS, (&data));
-        data = 0xFF;
-        SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_MAIL, (&data));
-
-        CalculateMonStats(&gPlayerParty[gPlayerPartyCount]);
-        CalculatePlayerPartyCount();
-
-        GetSetPokedexFlag(SpeciesToNationalPokedexNum(gEvolutionTable[preEvoSpecies][1].targetSpecies), FLAG_SET_SEEN);
-        GetSetPokedexFlag(SpeciesToNationalPokedexNum(gEvolutionTable[preEvoSpecies][1].targetSpecies), FLAG_SET_CAUGHT);
+		while (*evolutions != EVOLUTIONS_END)
+		{
+			if (*evolutions != EVO_CREATE_SPECIES)
+				evolutions += gEvolutionCmdArgumentsSize[*evolutions] + 1;
+			else
+			{
+				u32 data = 0;
+				u16 natDexNum, species = READ_16(evolutions + 1);
+				struct Pokemon* newMon = &gPlayerParty[gPlayerPartyCount];
+				
+				CopyMon(newMon, mon, sizeof(struct Pokemon));
+                SetMonData(newMon, MON_DATA_SPECIES, &species);
+                SetMonData(newMon, MON_DATA_NICKNAME, gSpeciesInfo[species].name);
+                SetMonData(newMon, MON_DATA_HELD_ITEM, &data);
+                SetMonData(newMon, MON_DATA_MARKINGS, &data);
+                SetMonData(newMon, MON_DATA_STATUS, &data);
+                data = 0xFF;
+                SetMonData(newMon, MON_DATA_MAIL, &data);
+		        
+                CalculateMonStats(newMon);
+                CalculatePlayerPartyCount();
+		        
+		        natDexNum = SpeciesToNationalPokedexNum(species);
+                GetSetPokedexFlag(natDexNum, FLAG_SET_SEEN);
+                GetSetPokedexFlag(natDexNum, FLAG_SET_CAUGHT);
+				
+				break;
+			}
+		}
     }
 }
 
@@ -686,7 +701,7 @@ static void Task_EvolutionScene(u8 taskId)
                 Overworld_PlaySpecialMapMusic();
             }
             if (!gTasks[taskId].tEvoWasStopped)
-                CreateShedinja(gTasks[taskId].tPreEvoSpecies, mon);
+                TryMonCreationEvolution(gTasks[taskId].tPreEvoSpecies, mon);
 
             DestroyTask(taskId);
             FreeMonSpritesGfx();

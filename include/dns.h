@@ -28,6 +28,14 @@ enum
 	SEASON_SPRING
 };
 
+enum
+{
+	PHASE_NEW_MOON,
+	PHASE_CRESCENT_MOON,
+	PHASE_FULL_MOON,
+	PHASE_WANING_MOON,
+};
+
 struct lightingColour
 {
     u8 paletteNum;
@@ -43,8 +51,9 @@ struct DNSPalExceptions
 void DNSTransferPlttBuffer(void *src, void *dest);
 void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 *tagExceptions, u8 tagExceptionsCount);
 u8 GetDNSTimeLapse(void);
-bool8 GetDNSTimeLapseIsNight(void);
+u8 GetDNSTimeLapseDayOrNight(void);
 u8 DNSGetCurrentSeason(void);
 bool8 IsMapDNSException(void);
+u8 DNSGetMoonPhase(void);
 
 #endif // GUARD_DNS_UTILS_H

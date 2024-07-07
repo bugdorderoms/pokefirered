@@ -1542,6 +1542,10 @@
 	.4byte \ptr
 	.endm
 	
+	.macro tryupdatedefeatmonevolutiontracker battler:req
+	various \battler, VARIOUS_UPDATE_DEFEAT_MON_EVOLUTION_TRACKER
+	.endm
+	
 @ callfunction macros
     .macro setminimize
 	callfunction BS_SetMinimize
@@ -1793,6 +1797,10 @@
 	
 	.macro getfutureattackanim
 	callfunction BS_GetFutureAttackAnim
+	.endm
+	
+	.macro updaterecoilevolutiontracker
+	callfunction BS_UpdateRecoilEvolutionTracker
 	.endm
 	
 @ helpful macros

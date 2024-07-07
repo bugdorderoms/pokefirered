@@ -1093,11 +1093,8 @@ void InitPokedudePartyAndOpponent(void)
 	{
 		.otIdType = OT_ID_PLAYER_ID,
 		.shinyType = GENERATE_SHINY_NORMAL,
-		.forceGender = TRUE,
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
-		.forceNature = TRUE,
-		.changeForm = FALSE,
 		.formChanges = NULL,
 	};
     gBattleTypeFlags = BATTLE_TYPE_POKEDUDE;

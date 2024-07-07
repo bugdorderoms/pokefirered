@@ -157,8 +157,9 @@
 #define ATK49_EMERGENCY_EXIT            22
 #define ATK49_PICKPOCKET                23
 #define ATK49_SUBSTITUTE                24
-#define ATK49_CLEAR_BITS                25
-#define ATK49_COUNT                     26
+#define ATK49_EVOLUTIONS_TRACKER        25
+#define ATK49_CLEAR_BITS                26
+#define ATK49_COUNT                     27
 
 // Atk4F, a flag used for the jumpifcantswitch command
 #define ATK4F_DONT_CHECK_STATUSES   0x80
@@ -219,6 +220,7 @@
 #define VARIOUS_TRY_STATUS_TRANSFER                 49
 #define VARIOUS_TRY_ACTIVATE_BATTLE_BOND            50
 #define VARIOUS_TRY_ABILITY_SUPPRESSION             51
+#define VARIOUS_UPDATE_DEFEAT_MON_EVOLUTION_TRACKER 52
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN       0

@@ -8,7 +8,6 @@
 #include "constants/global.h"
 #include "constants/flags.h"
 #include "constants/vars.h"
-#include "constants/pokedex.h"
 #include "constants/species.h"
 #include "constants/easy_chat.h"
 #include "constants/items.h"
@@ -89,6 +88,18 @@
 #define READ_PTR(ptr)  (u8*) READ_32(ptr)
 #define READ_PTR2(ptr) (void*) READ_32(ptr)
 
+/* Expands to the first/second/third/fourth argument. */
+#define FIRST(a, ...) a
+#define SECOND(a, ...) __VA_OPT__(FIRST(__VA_ARGS__))
+#define THIRD(a, ...) __VA_OPT__(SECOND(__VA_ARGS__))
+#define FOURTH(a, ...) __VA_OPT__(THIRD(__VA_ARGS__))
+
+/* Picks the xth VA_ARG if it exists, otherwise returns a default value */
+#define DEFAULT(_default, ...) FIRST(__VA_OPT__(__VA_ARGS__, ) _default)
+#define DEFAULT_2(_default, ...) DEFAULT(_default __VA_OPT__(, SECOND(__VA_ARGS__)))
+#define DEFAULT_3(_default, ...) DEFAULT(_default __VA_OPT__(, THIRD(__VA_ARGS__)))
+#define DEFAULT_4(_default, ...) DEFAULT(_default __VA_OPT__(, FOURTH(__VA_ARGS__)))
+
 // This macro is required to prevent the compiler from optimizing
 // a dpad up/down check in sub_812CAD8 (fame_checker.c).
 #define TEST_BUTTON(field, button) ({(field) & (button);})
@@ -107,7 +118,6 @@ extern u8 gStringVar4[];
 #define ROUND_BITS_TO_BYTES(numBits) DIV_ROUND_UP(numBits, 8)
 
 #define DEX_FLAGS_NO ROUND_BITS_TO_BYTES(NUM_SPECIES)
-#define NUM_FLAG_BYTES ROUND_BITS_TO_BYTES(FLAGS_COUNT)
 
 // Converts a string to a compound literal, essentially making it a pointer to const u8
 #define COMPOUND_STRING(str) (const u8[]) _(str)
@@ -316,8 +326,9 @@ struct DaycareMon
 struct DayCare
 {
     struct DaycareMon mons[DAYCARE_MON_COUNT];
-    u16 offspringPersonality;
+    u32 offspringPersonality;
     u8 stepCounter;
+	bool8 pending;
 };
 
 #include "fame_checker.h"
@@ -370,7 +381,7 @@ struct SaveBlock1
 	/*0x00F8*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
 	/*0x0100*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
 	/*0x01D2*/ u8 flashLevel;
-	           u8 flags[NUM_FLAG_BYTES]; // size of 0x120 bytes
+	           u8 flags[ROUND_BITS_TO_BYTES(FLAGS_COUNT)]; // size of 0x120 bytes
 			   u16 vars[VARS_COUNT]; // size of 0x200 bytes
 			   struct Pokemon playerParty[PARTY_SIZE];
 			   struct ItemSlot pcItems[PC_ITEMS_COUNT];

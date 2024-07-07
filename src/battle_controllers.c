@@ -2063,7 +2063,7 @@ static void Task_GiveExpToMon(u8 taskId)
     {
         struct Pokemon *mon = &gPlayerParty[monId];
         u32 currExp = GetMonData(mon, MON_DATA_EXP);
-        u32 nextLvlExp = gExperienceTables[gBaseStats[GetMonData(mon, MON_DATA_SPECIES)].growthRate][GetMonData(mon, MON_DATA_LEVEL) + 1];
+        u32 nextLvlExp = gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][GetMonData(mon, MON_DATA_LEVEL) + 1];
 
         if (currExp + gainedExp >= nextLvlExp)
         {
@@ -2096,11 +2096,11 @@ static void Task_PrepareToGiveExpWithExpBar(u8 taskId)
     u8 level = GetMonData(mon, MON_DATA_LEVEL);
     u16 species = GetMonData(mon, MON_DATA_SPECIES);
     u32 exp = GetMonData(mon, MON_DATA_EXP);
-    u32 currLvlExp = gExperienceTables[gBaseStats[species].growthRate][level];
+    u32 currLvlExp = gExperienceTables[gSpeciesInfo[species].growthRate][level];
     u32 expToNextLvl;
 
     exp -= currLvlExp;
-    expToNextLvl = gExperienceTables[gBaseStats[species].growthRate][level + 1] - currLvlExp;
+    expToNextLvl = gExperienceTables[gSpeciesInfo[species].growthRate][level + 1] - currLvlExp;
     SetBattleBarStruct(gTasks[taskId].tExpTask_battler, expToNextLvl, exp, -gTasks[taskId].tExpTask_gainedExp);
     PlaySE(SE_EXP);
     gTasks[taskId].func = Task_GiveExpWithExpBar;
@@ -2122,7 +2122,7 @@ static void Task_GiveExpWithExpBar(u8 taskId)
         if (newExpPoints == -1) // The bar has been filled with given exp points.
         {
             s32 currExp = GetMonData(&gPlayerParty[monId], MON_DATA_EXP);
-            s32 expOnNextLvl = gExperienceTables[gBaseStats[GetMonData(&gPlayerParty[monId], MON_DATA_SPECIES)].growthRate][GetMonData(&gPlayerParty[monId], MON_DATA_LEVEL) + 1];
+            s32 expOnNextLvl = gExperienceTables[gSpeciesInfo[GetMonData(&gPlayerParty[monId], MON_DATA_SPECIES)].growthRate][GetMonData(&gPlayerParty[monId], MON_DATA_LEVEL) + 1];
 
             m4aSongNumStop(SE_EXP);
 

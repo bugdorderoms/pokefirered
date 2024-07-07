@@ -3,6 +3,7 @@
 #include "event_scripts.h"
 #include "field_effect.h"
 #include "field_weather.h"
+#include "field_fadetransition.h"
 #include "fldeff.h"
 #include "party_menu.h"
 #include "script.h"

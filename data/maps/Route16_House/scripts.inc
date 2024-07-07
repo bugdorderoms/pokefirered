@@ -4,19 +4,9 @@ Route16_House_MapScripts:: @ 817014E
 Route16_House_EventScript_Woman:: @ 817014F
 	lock
 	faceplayer
-	goto_if_set FLAG_GOT_HM02, Route16_House_EventScript_AlreadyGotHM02
+	goto_if_set FLAG_CHARIZARD_RIDE_GET, Route16_House_EventScript_AlreadyGotHM02
 	msgbox Route16_House_Text_FoundMySecretRetreat
-	checkitemspace ITEM_TM98, 1
-	compare VAR_RESULT, FALSE
-	goto_if_eq Route16_House_EventScript_NoRoomForHM02
-	giveitem_msg Route16_House_Text_ReceivedHM02FromGirl, ITEM_TM98
-	msgbox Route16_House_Text_ExplainHM02
-	setflag FLAG_GOT_HM02
-	release
-	end
-
-Route16_House_EventScript_NoRoomForHM02:: @ 817019B
-	msgbox Route16_House_Text_DontHaveAnyRoomForThis
+	setflag FLAG_CHARIZARD_RIDE_GET
 	release
 	end
 

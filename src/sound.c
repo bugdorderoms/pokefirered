@@ -363,8 +363,8 @@ void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
     u32 length;
     u32 pitch;
     u32 chorus;
+	u16 cryId;
 
-    species--;
     length = 140;
     v0 = FALSE;
     release = 0;
@@ -447,21 +447,19 @@ void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
     SetPokemonCryRelease(release);
     SetPokemonCryChorus(chorus);
     SetPokemonCryPriority(priority);
-
-    gMPlay_PokemonCry = SetPokemonCryTone(v0 ? &gCryTable2[species] : &gCryTable[species]);
+	
+	cryId = gSpeciesInfo[SanitizeSpeciesId(species)].cryId;
+    gMPlay_PokemonCry = SetPokemonCryTone(v0 ? &gCryTable2[cryId] : &gCryTable[cryId]);
 }
 
 bool8 IsCryFinished(void)
 {
-    if (FuncIsActiveTask(Task_DuckBGMForPokemonCry) == TRUE)
-    {
-        return FALSE;
-    }
-    else
-    {
-        ClearPokemonCrySongs();
+	if (!FuncIsActiveTask(Task_DuckBGMForPokemonCry))
+	{
+		ClearPokemonCrySongs();
         return TRUE;
-    }
+	}
+	return FALSE;
 }
 
 void StopCryAndClearCrySongs(void)

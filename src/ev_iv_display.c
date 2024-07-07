@@ -39,12 +39,6 @@ enum
 	WIN_STATS,
 };
 
-struct EvIvDisplay
-{
-	MainCallback exitCallback;
-	u16 tilemapBuffer[0x800];
-};
-
 // this file's functions
 static void CB2_EvIvDisplay(void);
 static void VBlank_EvIvDisplay(void);
@@ -53,39 +47,16 @@ static void CreateMonIconSprites(void);
 static void CreateHandSprite(u8 taskId);
 static void PrintInfoText(void);
 static void PrintMonStats(u8 taskId);
-static void UpdateHandSpritePos(u8 taskId);
-static void UpdateToViewNextPoke(u8 taskId);
 static void Task_LoadEvIvDisplay(u8 taskId);
 static void Task_EvIvDisplay_HandleInput(u8 taskId);
 static void Task_WaitFadeAndCloseEvIvDisplay(u8 taskId);
-
-static EWRAM_DATA struct EvIvDisplay *sEvIvDisplay = NULL;
+static void SpriteCB_Hand(struct Sprite *sprite);
 
 #define TAG_EV_IV_HAND 9999
 
-// hand sprite pos for each member of the party
-static const struct UCoords8 sHandSpritePos[PARTY_SIZE] =
-{
-	{
-		.x = 145,
-		.y = 70,
-	},{
-		.x = 185,
-		.y = 70,
-	},{
-		.x = 225,
-		.y = 70,
-	},{
-		.x = 145,
-		.y = 110,
-	},{
-		.x = 185,
-		.y = 110,
-	},{
-		.x = 225,
-		.y = 110,
-	}
-};
+#define HAND_INITIAL_X 145
+#define HAND_INITIAL_Y 70
+#define HAND_X_Y_DIFF  40
 
 static const struct BgTemplate sEvIvBgTemplates[] = 
 {
@@ -110,15 +81,18 @@ static const struct BgTemplate sEvIvBgTemplates[] =
 
 static const struct WindowTemplate sEvIvWinTemplates[] = 
 {
-	{ // instructions bar
+	[WIN_INSTRUCTIONS] =
+	{
 		.bg = 3,
 		.tilemapLeft = 19,
-		.tilemapTop = 0,
+		.tilemapTop = 18,
 		.width = 11,
 		.height = 2,
 		.paletteNum = 15,
 		.baseBlock = 0x000
-	},{ // title text
+	},
+	[WIN_TITLE] =
+	{
 		.bg = 3,
 		.tilemapLeft = 10,
 		.tilemapTop = 2,
@@ -126,7 +100,9 @@ static const struct WindowTemplate sEvIvWinTemplates[] =
 		.height = 2,
 		.paletteNum = 15,
 		.baseBlock = 0x016
-	},{ // hidden power type
+	},
+	[WIN_HIDDEN_POWER_TYPE] =
+	{
 		.bg = 3,
 		.tilemapLeft = 0,
 		.tilemapTop = 5,
@@ -134,7 +110,9 @@ static const struct WindowTemplate sEvIvWinTemplates[] =
 		.height = 2,
 		.paletteNum = 1,
 		.baseBlock = 0x02A
-	},{ // ev iv text
+	},
+	[WIN_EVIV_TEXT] =
+	{
 		.bg = 3,
 		.tilemapLeft = 8,
 		.tilemapTop = 5,
@@ -142,7 +120,9 @@ static const struct WindowTemplate sEvIvWinTemplates[] =
 		.height = 2,
 		.paletteNum = 15,
 		.baseBlock = 0x034
-	},{ // pokemon name and party num
+	},
+	[WIN_POKEMON_NAME] =
+	{
 		.bg = 3,
 		.tilemapLeft = 16,
 		.tilemapTop = 5,
@@ -150,7 +130,9 @@ static const struct WindowTemplate sEvIvWinTemplates[] =
 		.height = 2,
 		.paletteNum = 15,
 		.baseBlock = 0x040
-	},{ // stat names
+	},
+	[WIN_STAT_NAMES] =
+	{
 		.bg = 3,
 		.tilemapLeft = 0,
 		.tilemapTop = 7,
@@ -158,7 +140,9 @@ static const struct WindowTemplate sEvIvWinTemplates[] =
 		.height = 11,
 		.paletteNum = 15,
 		.baseBlock = 0x05C
-	},{ // stats
+	},
+	[WIN_STATS] =
+	{
 		.bg = 3,
 		.tilemapLeft = 8,
 		.tilemapTop = 7,
@@ -166,7 +150,8 @@ static const struct WindowTemplate sEvIvWinTemplates[] =
 		.height = 11,
 		.paletteNum = 15,
 		.baseBlock = 0x0B4
-	}, DUMMY_WIN_TEMPLATE
+	},
+	DUMMY_WIN_TEMPLATE
 };
 
 static const struct SpriteSheet sEvIvHandSpriteSheet = 
@@ -197,7 +182,7 @@ static const struct SpriteTemplate sEvIvHandSpriteTemplate =
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
 	.affineAnims = gDummySpriteAffineAnimTable,
-	.callback = SpriteCallbackDummy,
+	.callback = SpriteCB_Hand,
 };
 
 static const u8 *const sStatNameStrings[] =
@@ -216,33 +201,26 @@ static const u8 sDarkGrayTextColor[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK
 
 // task defines
 #define tCurrMonId    data[0]
-#define tHandSpriteId data[1]
-#define tOnInit       data[2]
-#define tCallbackStep data[3]
+#define tOnInit       data[1]
+#define tCallbackStep data[2]
+#define tExitCB       3
 
 void ShowEvIvDisplay(MainCallback exitCallback)
 {
 	u8 taskId;
 	
-	sEvIvDisplay = AllocZeroed(sizeof(*sEvIvDisplay));
-	
-	if (sEvIvDisplay == NULL)
-		SetMainCallback2(CB2_ReturnToField);
-	else
-	{
-		sEvIvDisplay->exitCallback = exitCallback;
-		ResetSpriteData();
-		ResetPaletteFade();
-		FreeAllSpritePalettes();
-		ResetTasks();
-		ScanlineEffect_Stop();
-		PlaySE(SE_PC_ON);
-		taskId = CreateTask(Task_LoadEvIvDisplay, 0);
-		gTasks[taskId].tCurrMonId = 0;
-		gTasks[taskId].tCallbackStep = 0;
-		gTasks[taskId].tOnInit = TRUE; // for don't play the mon cry on open the system
-		SetMainCallback2(CB2_EvIvDisplay);
-	}
+	ResetSpriteData();
+	ResetPaletteFade();
+	FreeAllSpritePalettes();
+	ResetTasks();
+	ScanlineEffect_Stop();
+	PlaySE(SE_PC_ON);
+	taskId = CreateTask(Task_LoadEvIvDisplay, 0);
+	gTasks[taskId].tCurrMonId = 0;
+	gTasks[taskId].tCallbackStep = 0;
+	gTasks[taskId].tOnInit = TRUE; // for don't play the mon cry on open the system
+	SetWordTaskArg(taskId, tExitCB, (u32)exitCallback);
+	SetMainCallback2(CB2_EvIvDisplay);
 }
 
 static void CB2_EvIvDisplay(void)
@@ -325,7 +303,7 @@ static void Task_LoadEvIvDisplay(u8 taskId)
 		    SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON);
 		    break;
 		case 5:
-		    SetBgTilemapBuffer(0, sEvIvDisplay->tilemapBuffer);
+		    SetBgTilemapBuffer(0, (u16*)AllocZeroed(BG_SCREEN_SIZE));
 		    break;
 		case 6:
 		    CreateShadowBox();
@@ -391,31 +369,27 @@ static void Task_LoadEvIvDisplay(u8 taskId)
 
 static void CreateHandSprite(u8 taskId)
 {
-	s16 *data = gTasks[taskId].data;
 	LoadSpriteSheet(&sEvIvHandSpriteSheet);
 	LoadSpritePalette(&sEvIvHandSpritePalette);
-	tHandSpriteId = CreateSprite(&sEvIvHandSpriteTemplate, sHandSpritePos[tCurrMonId].x, sHandSpritePos[tCurrMonId].y, 0);
+	gSprites[CreateSprite(&sEvIvHandSpriteTemplate, HAND_INITIAL_X, HAND_INITIAL_Y, 0)].data[0] = taskId;
 }
+
+#define GET_HAND_POS_X(partyId) (((partyId % (PARTY_SIZE / 2)) * HAND_X_Y_DIFF + HAND_INITIAL_X))
+#define GET_HAND_POS_Y(partyId) ((partyId / (PARTY_SIZE / 2)) * HAND_X_Y_DIFF + HAND_INITIAL_Y)
 
 static void CreateMonIconSprites(void)
 {
 	u8 i;
 	
 	for (i = 0; i < gPlayerPartyCount; i++)
-		CreateMonIcon(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2), SpriteCB_MonIcon, sHandSpritePos[i].x, sHandSpritePos[i].y + 10, 1);
+		CreateMonIcon(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2), SpriteCB_MonIcon, GET_HAND_POS_X(i), GET_HAND_POS_Y(i) + 10, 1);
 }
 
-static void UpdateHandSpritePos(u8 taskId)
+static void SpriteCB_Hand(struct Sprite *sprite)
 {
-	s16 *data = gTasks[taskId].data;
-	gSprites[tHandSpriteId].x = sHandSpritePos[tCurrMonId].x;
-	gSprites[tHandSpriteId].y = sHandSpritePos[tCurrMonId].y;
-}
-
-static void UpdateToViewNextPoke(u8 taskId)
-{
-	UpdateHandSpritePos(taskId);
-	PrintMonStats(taskId);
+	u8 partyId = gTasks[sprite->data[0]].tCurrMonId;
+	sprite->x = GET_HAND_POS_X(partyId);
+	sprite->y = GET_HAND_POS_Y(partyId);
 }
 
 // X and Y positions of the texts and type icon
@@ -529,7 +503,7 @@ static void Task_EvIvDisplay_HandleInput(u8 taskId)
 				tCurrMonId = 0;
 			else
 				tCurrMonId++;
-			UpdateToViewNextPoke(taskId);
+			PrintMonStats(taskId);
 		}
 		if (JOY_REPT(DPAD_LEFT))
 		{
@@ -537,21 +511,21 @@ static void Task_EvIvDisplay_HandleInput(u8 taskId)
 				tCurrMonId = (gPlayerPartyCount - 1);
 			else
 				tCurrMonId--;
-			UpdateToViewNextPoke(taskId);
+			PrintMonStats(taskId);
 		}
 		if (JOY_REPT(DPAD_DOWN | DPAD_UP))
 		{
-			if (gPlayerPartyCount > 3)
+			if (gPlayerPartyCount > (PARTY_SIZE / 2))
 			{
-				if (tCurrMonId > 2)
-					tCurrMonId -= 3;
+				if (tCurrMonId > ((PARTY_SIZE / 2) - 1))
+					tCurrMonId -= (PARTY_SIZE / 2);
 				else
 				{
-					tCurrMonId += 3;
+					tCurrMonId += (PARTY_SIZE / 2);
 					if (tCurrMonId > (gPlayerPartyCount - 1))
 						tCurrMonId = (gPlayerPartyCount - 1);
 				}
-				UpdateToViewNextPoke(taskId);
+				PrintMonStats(taskId);
 			}
 		}
 	}
@@ -565,10 +539,14 @@ static void Task_EvIvDisplay_HandleInput(u8 taskId)
 
 static void Task_WaitFadeAndCloseEvIvDisplay(u8 taskId)
 {
-	if (gPaletteFade.active || IsCryPlaying())
-		return;
-	DestroyTask(taskId);
-	FreeAllWindowBuffers();
-	SetMainCallback2(sEvIvDisplay->exitCallback);
-	FREE_AND_SET_NULL(sEvIvDisplay);
+	void *bgBuff;
+	
+	if (!gPaletteFade.active && !IsCryPlaying())
+	{
+		FreeAllWindowBuffers();
+	    SetMainCallback2((MainCallback)GetWordTaskArg(taskId, tExitCB));
+		bgBuff = GetBgTilemapBuffer(0);
+	    FREE_AND_SET_NULL(bgBuff);
+	    DestroyTask(taskId);
+	}
 }

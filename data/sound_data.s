@@ -9,5 +9,6 @@
 	.include "sound/music_player_table.inc"
 	.include "sound/song_table.inc"
 	.include "sound/direct_sound_data.inc"
+	.include "sound/cries_sound_data.inc"
 
 	.align 2

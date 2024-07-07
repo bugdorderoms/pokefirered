@@ -1309,7 +1309,7 @@ void AnimTask_SafariGetReaction(u8 taskId)
 
 void AnimTask_GetTrappedMoveAnimId(u8 taskId)
 {
-	gBattleAnimArgs[0] = GetTrappingIdByMove(gBattleSpritesDataPtr->animationData->animArg);
+	gBattleAnimArgs[0] = gBattleMoves[gBattleSpritesDataPtr->animationData->animArg].argument;
     DestroyAnimVisualTask(taskId);
 }
 
@@ -1426,7 +1426,7 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprit
     
     if (*(textPtr - 1) == EOS)
         --textPtr;
-    textPtr[0] = CHAR_SGL_QUOT_RIGHT;
+    textPtr[0] = CHAR_SGL_QUOTE_RIGHT;
     textPtr[1] = CHAR_s;
     textPtr[2] = EOS;
     

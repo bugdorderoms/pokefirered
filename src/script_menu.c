@@ -965,7 +965,7 @@ static void Task_YesNoMenu_HandleInput(u8 taskId)
 
 static u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y)
 {
-    return CreateMonPicSprite(species, FALSE, 0x8000, TRUE, 8 * x + 40, 8 * y + 40, 0, gMonPaletteTable[species].tag);
+    return CreateMonPicSprite(species, FALSE, 0x8000, TRUE, 8 * x + 40, 8 * y + 40, 0, species);
 }
 
 static u8 CreateMenuMonPic(u16 species, u8 x, u8 y)

@@ -5,10 +5,8 @@
 
 #define POKE_ICON_BASE_PAL_TAG 56000
 
-extern const u8 *const gMonIconTable[];
 extern const struct SpritePalette gMonIconPaletteTable[];
 extern const u16 gMonIconPalettes[][16];
-extern const u8 gMonIconPaletteIndices[];
 
 const u8 *GetMonIconPtr(u16 speciesId);
 const u8 *GetMonIconTiles(u16 iconSpecies);

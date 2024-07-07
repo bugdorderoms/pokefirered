@@ -191,7 +191,7 @@ static void CB2_SetUpSeagallopScene(void)
         break;
     case 2:
         ptr = &sBg3TilemapBuffer;
-        *ptr = AllocZeroed(0x800);
+        *ptr = AllocZeroed(BG_SCREEN_SIZE);
         ResetBgsAndClearDma3BusyFlags(0);
         InitBgsFromTemplates(0, sBGTemplates, ARRAY_COUNT(sBGTemplates));
         SetBgTilemapBuffer(3, *ptr);

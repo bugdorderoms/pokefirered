@@ -368,7 +368,7 @@ void sub_814ADCC(struct PokemonJump2 *arg0, struct PokemonJump1_MonInfo *jumpMon
 
     if (buffer)
     {
-        HandleLoadSpecialPokePic(&gMonFrontPicTable[jumpMon->species], buffer, jumpMon->species, jumpMon->personality);
+        LoadSpecialPokePic(jumpMon->species, jumpMon->personality, TRUE, buffer);
 
         spriteSheet.data = buffer;
         spriteSheet.tag = multiplayerId;

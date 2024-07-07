@@ -3,6 +3,10 @@
 #include "item_menu.h"
 #include "field_player_avatar.h"
 
+#define NUM_SPECIAL_FLAGS (SPECIAL_FLAGS_END - SPECIAL_FLAGS_START + 1)
+#define NUM_TEMP_FLAGS    (TEMP_FLAGS_END - TEMP_FLAGS_START + 1)
+#define NUM_TEMP_VARS     (TEMP_VARS_END - VARS_START + 1)
+
 EWRAM_DATA u16 gSpecialVar_0x8000 = 0;
 EWRAM_DATA u16 gSpecialVar_0x8001 = 0;
 EWRAM_DATA u16 gSpecialVar_0x8002 = 0;
@@ -23,21 +27,21 @@ EWRAM_DATA u16 gSpecialVar_MonBoxPos = 0;
 EWRAM_DATA u16 gSpecialVar_TextColor = 0;
 EWRAM_DATA u16 gSpecialVar_PrevTextColor = 0;
 EWRAM_DATA u16 gSpecialVar_0x8014 = 0;
-EWRAM_DATA u8 sSpecialFlags[SPECIAL_FLAGS_COUNT] = {};
+EWRAM_DATA u8 sSpecialFlags[NUM_SPECIAL_FLAGS] = {};
 
 extern u16 *const gSpecialVars[];
 
 void InitEventData(void)
 {
-    memset(gSaveBlock1Ptr->flags, 0, NUM_FLAG_BYTES);
-    memset(gSaveBlock1Ptr->vars, 0, VARS_COUNT * 2);
-    memset(sSpecialFlags, 0, SPECIAL_FLAGS_COUNT);
+    memset(gSaveBlock1Ptr->flags, 0, sizeof(gSaveBlock1Ptr->flags));
+    memset(gSaveBlock1Ptr->vars, 0, sizeof(gSaveBlock1Ptr->vars));
+    memset(sSpecialFlags, 0, NUM_SPECIAL_FLAGS);
 }
 
 void ClearTempFieldEventData(void)
 {
-    memset(gSaveBlock1Ptr->flags, 0, 4);
-    memset(gSaveBlock1Ptr->vars, 0, 16 * 2);
+    memset(gSaveBlock1Ptr->flags + (TEMP_FLAGS_START / 8), 0, (NUM_TEMP_FLAGS / 8));
+    memset(gSaveBlock1Ptr->vars, 0, (NUM_TEMP_VARS * 2));
     FlagClear(FLAG_SYS_WHITE_FLUTE_ACTIVE);
     FlagClear(FLAG_SYS_BLACK_FLUTE_ACTIVE);
     if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACHAMP_RIDE))
@@ -48,21 +52,10 @@ void ClearTempFieldEventData(void)
 
 void ResetMysteryGiftFlags(void)
 {
-    FlagClear(FLAG_MYSTERY_GIFT_1);
-    FlagClear(FLAG_MYSTERY_GIFT_2);
-    FlagClear(FLAG_MYSTERY_GIFT_3);
-    FlagClear(FLAG_MYSTERY_GIFT_4);
-    FlagClear(FLAG_MYSTERY_GIFT_5);
-    FlagClear(FLAG_MYSTERY_GIFT_6);
-    FlagClear(FLAG_MYSTERY_GIFT_7);
-    FlagClear(FLAG_MYSTERY_GIFT_8);
-    FlagClear(FLAG_MYSTERY_GIFT_9);
-    FlagClear(FLAG_MYSTERY_GIFT_10);
-    FlagClear(FLAG_MYSTERY_GIFT_11);
-    FlagClear(FLAG_MYSTERY_GIFT_12);
-    FlagClear(FLAG_MYSTERY_GIFT_13);
-    FlagClear(FLAG_MYSTERY_GIFT_14);
-    FlagClear(FLAG_MYSTERY_GIFT_15);
+	u16 i;
+	
+	for (i = FLAG_MYSTERY_GIFT_1; i <= FLAG_MYSTERY_GIFT_15; i++)
+		FlagClear(i);
 }
 
 u16 *GetVarPointer(u16 idx)

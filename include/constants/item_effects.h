@@ -5,15 +5,14 @@
 #define ITEMEFFECT_CURE_STATUS       0x1  // nextByte = See defines for it
 #define ITEMEFFECT_REVIVE            0x2  // itemHoldEffectParam = HP divisor
 #define ITEMEFFECT_CHANGE_FRIENDSHIP 0x3  // nextByte = See defines for it(acordly with it's value the next bytes are used to determine the increase/decrease amount)
-#define ITEMEFFECT_RESTORE_PP        0x4  // itemHoldEffectParam = PP amount, nextByte = TRUE if restore all moves's PP or FALSE if only for the seected move
+#define ITEMEFFECT_RESTORE_PP        0x4  // itemHoldEffectParam = PP amount
 #define ITEMEFFECT_UP_DYNAMAX_LEVEL  0x5  // itemHoldEffectParam = Increase amount
 #define ITEMEFFECT_CHANGE_EV         0x6  // itemHoldEffectParam = StatId, nextByte = Amount
-#define ITEMEFFECT_GIVE_EXPERIENCE   0x7  // nextHWord = Exp amount(if 0 it automatically levels up)
-#define ITEMEFFECT_INCREASE_PP       0x8  // nextByte = FALSE for PP Up or TRUE for PP Max
+#define ITEMEFFECT_GIVE_EXPERIENCE   0x7  // itemHoldEffectParam = Exp amount(if 0 it automatically levels up)
+#define ITEMEFFECT_INCREASE_PP       0x8  // itemHoldEffectParam = FALSE for PP Up or TRUE for PP Max
 #define ITEMEFFECT_GIVE_GMAX_FACTOR  0x9  // No param
-#define ITEMEFFECT_EVOLUTION         0x10 // No param
-#define ITEMEFFECT_SET_TERA_TYPE     0x11 // itemHoldEffectParam = TypeId
-#define ITEMEFFECT_HEAL_HP_PERCENT   0x12 // itemHoldEffectParam = Heal percent
+#define ITEMEFFECT_SET_TERA_TYPE     0x10 // itemHoldEffectParam = TypeId
+#define ITEMEFFECT_HEAL_HP_PERCENT   0x11 // itemHoldEffectParam = Heal percent
 #define ITEMEFFECT_END               0xFF
 
 // defines for ITEMEFFECT_CURE_STATUS
@@ -32,7 +31,6 @@
 #define ITEMEFFECT_FRIENDSHIP_MID    0x2
 #define ITEMEFFECT_FRIENDSHIP_HIGH   0x4
 #define ITEMEFFECT_FRIENDSHIP_MAIN   0x8
-
 #define ITEMEFFECT_FRIENDSHIP_ALL    (ITEMEFFECT_FRIENDSHIP_LOW | ITEMEFFECT_FRIENDSHIP_MID | ITEMEFFECT_FRIENDSHIP_HIGH)
 
 #endif // GUARD_CONSTANTS_ITEM_EFFECTS_H

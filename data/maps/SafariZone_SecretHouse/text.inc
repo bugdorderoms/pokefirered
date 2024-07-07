@@ -9,10 +9,6 @@ SafariZone_SecretHouse_Text_CongratsYouveWon:: @ 8177DC1
     .string "Congratulations!\n"
     .string "You have won!$"
 
-SafariZone_SecretHouse_Text_ReceivedHM03FromAttendant:: @ 8177E92
-    .string "{PLAYER} received HM03\n"
-    .string "from the attendant!$"
-
 SafariZone_SecretHouse_Text_ExplainSurf:: @ 8177EB7
     .string "HM03 is SURF.\p"
     .string "Pokémon will be able to ferry you\n"
@@ -20,9 +16,5 @@ SafariZone_SecretHouse_Text_ExplainSurf:: @ 8177EB7
     .string "And, this HM isn't disposable, so\n"
     .string "you can use it over and over.\p"
     .string "You're super lucky for winning this\n"
-    .string "fabulous prize!$"
-
-SafariZone_SecretHouse_Text_DontHaveRoomForPrize:: @ 8177F72
-    .string "You don't have room for this\n"
     .string "fabulous prize!$"
 

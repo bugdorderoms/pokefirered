@@ -14,13 +14,6 @@ struct SeviiDexArea
     s32 count;
 };
 
-struct RoamerPair
-{
-    u16 roamer;
-    u16 starter;
-};
-
-static s32 GetRoamerIndex(u16 species);
 static s32 CountRoamerNests(u16 species, struct Subsprite * subsprites);
 static bool32 PokemonInAnyEncounterTableInMap(const struct WildPokemonHeader * data, s32 species);
 static bool32 PokemonInEncounterTable(const struct WildPokemonInfo * pokemon, s32 species, s32 count);
@@ -154,12 +147,6 @@ static const struct SeviiDexArea sSeviiDexAreas[] = {
     { sDexAreas_Sevii7, 11 }
 };
 
-static const struct RoamerPair sRoamerPairs[] = {
-    { SPECIES_ENTEI,   SPECIES_BULBASAUR  },
-    { SPECIES_SUICUNE, SPECIES_CHARMANDER },
-    { SPECIES_RAIKOU,  SPECIES_SQUIRTLE   }
-};
-
 s32 BuildPokedexAreaSubspriteBuffer(u16 species, struct Subsprite * subsprites)
 {
     s32 areaCount;
@@ -171,11 +158,9 @@ s32 BuildPokedexAreaSubspriteBuffer(u16 species, struct Subsprite * subsprites)
     s32 alteringCaveCount;
     s32 alteringCaveNum;
     s32 i;
-
-    if (GetRoamerIndex(species) >= SPECIES_NONE)
-    {
-        return CountRoamerNests(species, subsprites);
-    }
+	
+	if (GetRoamerSpecies() == species)
+		return CountRoamerNests(species, subsprites);
 
     seviiAreas = GetUnlockedSeviiAreas();
     alteringCaveCount = 0;
@@ -221,32 +206,11 @@ s32 BuildPokedexAreaSubspriteBuffer(u16 species, struct Subsprite * subsprites)
     return areaCount;
 }
 
-static s32 GetRoamerIndex(u16 species)
-{
-    s32 i;
-    for (i = 0; i < ARRAY_COUNT(sRoamerPairs); i++)
-    {
-        if (sRoamerPairs[i].roamer == species)
-            return i;
-    }
-
-    return -1;
-}
-
 static s32 CountRoamerNests(u16 species, struct Subsprite * subsprites)
 {
-    u16 roamerLocation;
-    s32 roamerIdx;
-    u16 dexAreaSubspriteIdx;
-    s32 dexAreaEntryLUTidx;
-
-    roamerIdx = GetRoamerIndex(species);
-    if (roamerIdx < 0)
-        return 0;
-    if (sRoamerPairs[roamerIdx].starter != GetStarterSpecies())
-        return 0;
-    roamerLocation = GetRoamerLocationMapSectionId();
-    dexAreaEntryLUTidx = 0;
+    s32 dexAreaEntryLUTidx = 0;
+	u16 dexAreaSubspriteIdx, roamerLocation = GetRoamerLocationMapSectionId();
+	
     if (TryGetMapSecPokedexAreaEntry(roamerLocation, sDexAreas_Kanto, 55, &dexAreaEntryLUTidx, &dexAreaSubspriteIdx))
     {
         if (dexAreaSubspriteIdx != 0)

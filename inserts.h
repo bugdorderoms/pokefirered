@@ -29,6 +29,12 @@
 // If this setting is enabled, Pichu eggs will hatch with the Volt Tackle move.
 #define VOLT_TACKLE_BY_BREEDING TRUE
 
+// If this setting is enabled, some species's eggs will change depending if it's holding a specific incense item.
+#define INCENSE_ITEM_BREEDING TRUE
+
+// If this setting is enabled, eggs will inherit any TM the father knows like prior to Pokémon X and Y.
+#define INHERIT_TMS FALSE
+
 // This is the percentage chance that a wild Pokémon will appear with its hidden ability, if it has one.
 // If the value is set to 0, then the Pokémon will not appear with its hidden ability.
 #define WILD_HIDDEN_ABILITY_CHANCE 5
@@ -115,7 +121,7 @@
 #define DYNAMIC_LEVEL TRUE
 
 // This setting determines the price divisor when selling an item. It's 2 in Generation III games, but 4 in Pokémon Legends Arceus. 
-#define ITEM_SELL_DIVISOR 4
+#define ITEM_SELL_DIVISOR 2
 
 // If this setting is enabled, when searching for a Pokémon on the Dexnav you must need to press the A button to creeping.
 // Otherwise, the Pokémon will run away.
@@ -128,3 +134,10 @@
 // If this setting is enabled, when a Greninja knocks out a target with a move, it will transform itself into Ash-Greninja.
 // Otherwise, it will increase it's Attack, Sp. Attack and Speed by one stage each.
 #define BATTLE_BOND_TRANSFORM TRUE
+
+// Value of friendship the Pokémon must have to trigger its evolution, in Generation IX onward it was decreased from 220 to 160.
+#define FRIENDSHIP_EVO_THRESHOLD 220
+
+// If this setting is enabled, evolutions will be able to requires a moon phase in order to evolve.
+// Otherwise, this requirement will be ignored if set.
+#define MOON_PHASE_EVO_REQUIREMENT TRUE

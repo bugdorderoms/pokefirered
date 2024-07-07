@@ -4,6 +4,7 @@
 #include "global.h"
 #include "sprite.h"
 #include "battle_main.h"
+#include "constants/form_change.h"
 #include "constants/pokemon.h"
 #include "pokemon_storage_system.h"
 
@@ -53,8 +54,9 @@ struct BoxPokemon
 	/*0x39*/ u8 spDefenseEV;
 	/*0x3A*/ u8 metLocation;
 	/*0x3B*/ u8 ppBonuses;
-	/*0x3C*/ u8 shiny:1;
-			 u8 unused:7;
+	/*0x3C*/ u16 evolutionTracker:10; // Values up to 1023
+	         u16 shiny:1;
+			 u16 unused:5;
 };
 
 struct Pokemon
@@ -146,37 +148,63 @@ struct BattlePokemon
 	/*0x58*/ u32 experience;
 };
 
-struct BaseStats
+struct SpeciesInfo
 {
- /* 0x00 */ u8 baseHP;
- /* 0x01 */ u8 baseAttack;
- /* 0x02 */ u8 baseDefense;
- /* 0x03 */ u8 baseSpeed;
- /* 0x04 */ u8 baseSpAttack;
- /* 0x05 */ u8 baseSpDefense;
- /* 0x06 */ u8 type1;
- /* 0x07 */ u8 type2;
- /* 0x08 */ u8 catchRate;
- /* 0x09 */ u16 expYield;
- /* 0x0A */ u16 evYield_HP:2;
- /* 0x0A */ u16 evYield_Attack:2;
- /* 0x0A */ u16 evYield_Defense:2;
- /* 0x0A */ u16 evYield_Speed:2;
- /* 0x0B */ u16 evYield_SpAttack:2;
- /* 0x0B */ u16 evYield_SpDefense:2;
- /* 0x0C */ u16 item1;
- /* 0x0E */ u16 item2;
- /* 0x10 */ u8 genderRatio;
- /* 0x11 */ u8 eggCycles;
- /* 0x12 */ u8 friendship;
- /* 0x13 */ u8 growthRate;
- /* 0x14 */ u8 eggGroup1;
- /* 0x15 */ u8 eggGroup2;
- /* 0x16 */ u16 abilities[2];
- /* 0x1A */ u8 safariZoneFleeRate;
- /* 0x1B */ u8 bodyColor:7;
-            u8 noFlip:1;
- /* 0x1C */ u16 hiddenAbility;
+	        // Base stats
+ /* 0x00 */ u8 name[POKEMON_NAME_LENGTH + 1];
+ /* 0x0D */ u8 baseHP;
+ /* 0x0E */ u8 baseAttack;
+ /* 0x0F */ u8 baseDefense;
+ /* 0x10 */ u8 baseSpeed;
+ /* 0x11 */ u8 baseSpAttack;
+ /* 0x12 */ u8 baseSpDefense;
+ /* 0x13 */ u8 types[2];
+ /* 0x15 */ u8 catchRate;
+ /* 0x16 */ u16 expYield;
+ /* 0x18 */ u8 evYield_HP:2;
+            u8 evYield_Attack:2;
+            u8 evYield_Defense:2;
+            u8 evYield_Speed:2;
+ /* 0x19 */ u8 evYield_SpAttack:2;
+            u8 evYield_SpDefense:2;
+			u8 growthRate:4; // last bit was unused
+ /* 0x1A */ u8 eggGroup1:4;
+			u8 eggGroup2:4;
+ /* 0x1B */ u8 friendship;
+ /* 0x1C */ u16 itemCommon;
+ /* 0x1E */ u16 itemRare;
+ /* 0x20 */ u16 abilities[2];
+ /* 0x24 */ u16 hiddenAbility;
+ /* 0x26 */ u8 eggCycles;
+ /* 0x27 */ u8 genderRatio;
+ /* 0x28 */ u16 cryId;
+ /* 0x2A */ u16 flags;
+            // Pokedex
+ /* 0x2C */ const u8 *description;
+ /* 0x30 */ u16 natDexNum;
+ /* 0x32 */ u16 height; // In decimeters
+ /* 0x34 */ u16 weight; // In hectograms
+ /* 0x36 */ u8 categoryName[DEX_CATEGORY_NAME_LENGTH + 1];
+			// Graphics
+ /* 0x44 */ const u8 *footprint;
+ /* 0x48 */ const u8 *icon;
+ /* 0x4C */ const u32 *frontPic; // LZ77 compressed pixel data.
+ /* 0x50 */ const u32 *backPic; // LZ77 compressed pixel data.
+ /* 0x54 */ const u32 *palette; // LZ77 compressed palette data.
+ /* 0x58 */ const u32 *shinyPalette; // LZ77 compressed palette data.
+ /* 0x5C */ u16 iconPaletteIndex:2;
+			// All Pokémon pics are 64x64, but this data table defines where in this 64x64 frame the sprite's non-transparent pixels actually are.
+			u16 frontPicYOffset:5; // The number of pixels between the drawn pixel area and the bottom edge.
+			u16 backPicYOffset:5; // The number of pixels between the drawn pixel area and the bottom edge.
+			u16 elevation:4; // This determines how much higher above the usual position the enemy Pokémon is during battle. Species that float or fly have nonzero values.
+ /* 0x5E */ u8 frontPicSize; // The dimensions of this drawn pixel area.
+ /* 0x5F */ u8 backPicSize; // The dimensions of this drawn pixel area.
+            // Evolutions and forms
+ /* 0x60 */ const u8 *evolutions;
+ /* 0x64 */ const struct FormChange *formChangeTable;
+			// Learnable moves
+ /* 0x68 */ const u16 *tmLearnsets;
+ /* 0x6C */ const u16 *tutorLearnsets;
 };
 
 struct MoveFlags
@@ -267,6 +295,13 @@ struct Ability
 	const u8 *description;
 };
 
+struct NatureInfo
+{
+	const u8 *name;
+	u8 statUpId;
+	u8 statDownId;
+};
+
 struct __attribute__((packed)) LevelUpMove
 {
     u16 move;
@@ -295,64 +330,12 @@ enum
 
 enum
 {
-    BODY_COLOR_RED,
-    BODY_COLOR_BLUE,
-    BODY_COLOR_YELLOW,
-    BODY_COLOR_GREEN,
-    BODY_COLOR_BLACK,
-    BODY_COLOR_BROWN,
-    BODY_COLOR_PURPLE,
-    BODY_COLOR_GRAY,
-    BODY_COLOR_WHITE,
-    BODY_COLOR_PINK
-};
-
-#define EVO_FRIENDSHIP                    0x0001 // Pokémon levels up with friendship ≥ 220
-#define EVO_FRIENDSHIP_DAY                0x0002 // Pokémon levels up during the day with friendship ≥ 220
-#define EVO_FRIENDSHIP_NIGHT              0x0003 // Pokémon levels up at night with friendship ≥ 220
-#define EVO_LEVEL                         0x0004 // Pokémon reaches the specified level
-#define EVO_ITEM                          0x0005 // specified item is used on Pokémon
-#define EVO_LEVEL_ATK_GT_DEF              0x0006 // Pokémon reaches the specified level with attack > defense
-#define EVO_LEVEL_ATK_EQ_DEF              0x0007 // Pokémon reaches the specified level with attack = defense
-#define EVO_LEVEL_ATK_LT_DEF              0x0008 // Pokémon reaches the specified level with attack < defense
-#define EVO_LEVEL_NINJASK                 0x0009 // Pokémon reaches the specified level (special value for Ninjask)
-#define EVO_LEVEL_SHEDINJA                0x000A // Pokémon reaches the specified level (special value for Shedinja)
-#define EVO_LEVEL_FEMALE                  0x000B // Pokémon reaches the specified level, is female
-#define EVO_LEVEL_MALE                    0x000C // Pokémon reaches the specified level, is male
-#define EVO_LEVEL_NIGHT                   0x000D // Pokémon reaches the specified level, is night
-#define EVO_LEVEL_DAY                     0x000E // Pokémon reaches the specified level, is day
-#define EVO_LEVEL_DUSK                    0x000F // Pokémon reaches the specified level, is dusk (5-6 P.M)
-#define EVO_ITEM_HOLD_DAY                 0x0010 // Pokémon levels up, holds specified item at day
-#define EVO_ITEM_HOLD_NIGHT               0x0011 // Pokémon levels up, holds specified item at night
-#define EVO_MOVE                          0x0012 // Pokémon levels up, knows specified move
-#define EVO_MOVE_TYPE                     0x0013 // Pokémon levels up, knows move with specified type
-#define EVO_MAPSEC                        0x0014 // Pokémon levels up on specified mapsec
-#define EVO_ITEM_MALE                     0x0015 // specified item is used on a male Pokémon
-#define EVO_ITEM_FEMALE                   0x0016 // specified item is used on a female Pokémon
-#define EVO_LEVEL_RAIN_OR_FOG             0x0017 // Pokémon reaches the specified level while it's raining or fog
-#define EVO_SPECIFIC_MON_IN_PARTY         0x0018 // Pokémon levels up with a specified Pokémon in party
-#define EVO_LEVEL_DARK_TYPE_MON_IN_PARTY  0x0019 // Pokémon reaches the specified level with a Dark Type Pokémon in party
-#define EVO_TRADE_SPECIFIC_MON            0x001A // Pokémon is traded for a specified Pokémon
-#define EVO_LEVEL_NATURE                  0x001B // Pokémon reaches the specified level, nature forms are handled by form change
-#define EVO_CRITICAL_HITS                 0x001C // Pokémon performs specified number of critical hits in one battle
-#define EVO_SCRIPT_TRIGGER_DMG            0x001D // Pokémon has specified HP below max, then player interacts trigger
-#define EVO_LEVEL_PERSONALITY             0x001E // Pokémon reaches the specified level, personality forms are handled by form change
-
-struct Evolution
-{
-    u16 method;
-    u16 param;
-    u16 targetSpecies;
-};
-
-#define EVOS_PER_MON 10
-
-enum
-{
     GENERATE_SHINY_NORMAL,
     GENERATE_SHINY_LOCKED,
     GENERATE_SHINY_FORCED
 };
+
+#define GENERATOR_FORMS(...) (const u16[]) { __VA_ARGS__, FORM_CHANGE_TERMINATOR }
 
 struct PokemonGenerator
 {
@@ -363,27 +346,30 @@ struct PokemonGenerator
 	u32 fixedOtId;
 	
 	u8 shinyType;
-	bool8 forceGender;
-	u8 forcedGender;
+	u8 forcedGender; // If different than MON_GENDERLESS
+	u8 forcedNature; // If different than NUM_NATURES
 	bool8 hasFixedPersonality;
 	
 	u32 fixedPersonality;
-	
-	bool8 forceNature;
-	u8 forcedNature;
-	bool8 changeForm;
-	u8 unused;
-	
-	u16 *formChanges;
+
+	const u16 *formChanges; // If defined, executes all form changes on the given array
 	
 	u16 moves[MAX_MON_MOVES];
+};
+
+struct FormChange
+{
+	u16 method;
+	u16 targetSpecies;
+	u16 param;
+	u16 param2;
 };
 
 extern u8 gPlayerPartyCount;
 extern struct Pokemon gPlayerParty[PARTY_SIZE];
 extern u8 gEnemyPartyCount;
 extern struct Pokemon gEnemyParty[PARTY_SIZE];
-extern const struct BaseStats gBaseStats[];
+extern const struct SpeciesInfo gSpeciesInfo[];
 extern const u8 *const gItemEffectTable[];
 extern const u8 gStatStageRatios[][2];
 extern struct SpriteTemplate gMultiuseSpriteTemplate;
@@ -394,8 +380,7 @@ extern const u8 gFacilityClassToPicIndex[];
 extern const u8 gFacilityClassToTrainerClass[];
 extern const struct SpriteTemplate gSpriteTemplates_Battlers[];
 extern const u8 gPPUpGetMask[];
-extern const s8 gNatureStatTable[NUM_NATURES][NUM_STATS - 1];
-extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
+extern const struct NatureInfo gNaturesInfo[];
 extern const u8 gPPUpGetMask[];
 extern const u8 gPPUpSetMask[];
 extern const u8 gPPUpAddMask[];
@@ -447,8 +432,8 @@ bool8 IsPlayerPartyAndPokemonStorageFull(void);
 void GetSpeciesName(u8 *name, u16 species);
 u8 CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 void RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
-bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex, u8 battleMonId);
-u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem, struct Pokemon *tradePartner);
+bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 battleMonId);
+u16 GetEvolutionTargetSpecies(u8 partyId, u8 type, u16 evolutionItem, struct Pokemon *tradePartner);
 void DrawSpindaSpots(u16 species, u32 personality, u8 *dest, bool8 isFrontPic);
 void EvolutionRenameMon(struct Pokemon *mon, u16 oldSpecies, u16 newSpecies);
 u8 GetPlayerFlankId(void);
@@ -456,6 +441,8 @@ u8 GetLinkTrainerFlankId(u8 linkPlayerId);
 s32 GetBattlerMultiplayerId(u16 a1);
 void AdjustFriendship(struct Pokemon *mon, u8 event);
 bool8 ModifyMonFriendship(struct Pokemon *mon, s8 friendshipDelta);
+u8 *GetMonNickname(struct Pokemon *mon, u8 *dest);
+u8 *GetBoxMonNickname(struct BoxPokemon *boxMon, u8 *dest);
 void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);
 u16 GetMonEVCount(struct Pokemon *mon);
 void RandomlyGivePartyPokerus(struct Pokemon *party);
@@ -464,17 +451,15 @@ u8 CheckPartyHasHadPokerus(struct Pokemon *party, u8 selection);
 void UpdatePartyPokerusTime(u32 daysSince);
 void PartySpreadPokerus(struct Pokemon *party);
 bool8 TryIncrementMonLevel(struct Pokemon *mon);
-bool8 CanMonLearnTMHM(struct Pokemon *mon, u8 tm);
+bool8 CanMonLearnTM(struct Pokemon *mon, u16 move);
+bool8 CanSpeciesLearnTutorMove(u16 species, u16 move);
 u8 GetMoveRelearnerMoves(struct Pokemon *mon, u16 *moves);
 u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves);
 u8 GetNumberOfRelearnableMoves(struct Pokemon *mon);
 void PlayBattleBGM(void);
 void PlayMapChosenOrBattleBGM(u16 songId);
-const u32 *GetMonFrontSpritePal(struct Pokemon *mon);
+const u32 *GetMonSpritePal(struct Pokemon *mon);
 const u32 *GetMonSpritePalFromSpecies(u16 species, bool8 isShiny);
-const struct CompressedSpritePalette *GetMonSpritePalStruct(struct Pokemon *mon);
-const struct CompressedSpritePalette *GetMonSpritePalStructFromSpecies(u16 species, bool8 isShiny);
-u16 ItemIdToBattleMoveId(u16 item);
 s8 GetMonFlavorRelation(struct Pokemon *mon, u8 flavor);
 bool8 IsTradedMon(struct Pokemon *mon);
 bool8 IsOtherTrainer(u32 otId, u8 *otName);
@@ -484,17 +469,17 @@ void SetMonPreventsSwitchingString(void);
 void SetWildMonHeldItem(struct Pokemon *mon);
 u8 *GetTrainerPartnerName(void);
 u8 GetPlayerPartyHighestLevel(void);
-void SetDeoxysStats(void);
 u16 GetUnionRoomTrainerPic(void);
 u16 GetUnionRoomTrainerClass(void);
 u8 GetNumOfBadges(void);
 void DeleteMonMove(struct Pokemon *mon, u8 movePos);
 void ClearAllFusedMonSpecies(void);
 bool8 HealStatusConditions(struct Pokemon *mon, u32 healMask, u8 battleId);
-const u8* GetItemEffect(u16 item);
 bool8 MonCanBattle(struct Pokemon *mon);
 bool8 IsMonValidSpecies(struct Pokemon *mon);
 u8 FindMoveSlotInMoveset(struct Pokemon *mon, u16 move);
+u8 FindMoveSlotInBoxMonMoveset(struct BoxPokemon *boxMon, u16 move);
+void DrawSpeciesFootprint(u8 windowId, u16 species, u8 x, u8 y);
 
 static inline u8 GetNatureFromPersonality(u32 personality)
 {

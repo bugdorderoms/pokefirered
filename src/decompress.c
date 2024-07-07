@@ -3,9 +3,6 @@
 #include "decompress.h"
 #include "pokemon.h"
 
-extern const struct CompressedSpriteSheet gMonFrontPicTable[];
-extern const struct CompressedSpriteSheet gMonBackPicTable[];
-
 u16 LoadCompressedSpriteSheet(const struct CompressedSpriteSheet *src)
 {
     struct SpriteSheet dest;
@@ -59,18 +56,24 @@ bool8 LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette 
     return FALSE;
 }
 
-void DecompressPicFromTable(const struct CompressedSpriteSheet *src, void* buffer, s32 species)
+void LoadMonPalette(struct Pokemon *mon)
 {
-	LZDecompressWram(species > NUM_SPECIES ? gMonFrontPicTable[SPECIES_NONE].data : src->data, buffer);
+	LoadMonPaletteFromSpecies(GetMonData(mon, MON_DATA_SPECIES2), GetMonData(mon, MON_DATA_IS_SHINY));
 }
 
-void HandleLoadSpecialPokePic(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality)
+void LoadMonPaletteFromSpecies(u16 species, bool8 isShiny)
 {
-    LoadSpecialPokePic(src, dest, species, personality, (src == &gMonFrontPicTable[species]));
+	struct SpritePalette dest;
+
+    LZDecompressWram(GetMonSpritePalFromSpecies(species, isShiny), gDecompressionBuffer);
+    dest.data = (void*)gDecompressionBuffer;
+    dest.tag = species;
+    LoadSpritePalette(&dest);
 }
 
-void LoadSpecialPokePic(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality, bool8 isFrontPic)
+void LoadSpecialPokePic(u16 species, u32 personality, bool8 isFrontPic, void *dest)
 {
-	LZDecompressWram(species > NUM_SPECIES ? gMonFrontPicTable[SPECIES_NONE].data : src->data, dest);
+	species = SanitizeSpeciesId(species);
+	LZDecompressWram(isFrontPic ? gSpeciesInfo[species].frontPic : gSpeciesInfo[species].backPic, dest);
     DrawSpindaSpots(species, personality, dest, isFrontPic);
 }

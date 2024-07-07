@@ -298,7 +298,7 @@ void BattleLoadMonSpriteGfx(u8 battlerId)
     {
         species = GetMonData(mon, MON_DATA_SPECIES);
         currentPersonality = GetMonData(mon, MON_DATA_PERSONALITY);
-		frontSpritePal = GetMonFrontSpritePal(mon);
+		frontSpritePal = GetMonSpritePal(mon);
     }
     else
     {
@@ -306,8 +306,7 @@ void BattleLoadMonSpriteGfx(u8 battlerId)
         currentPersonality = gTransformedPersonalities[battlerId];
 		frontSpritePal = GetMonSpritePalFromSpecies(species, gTransformedShinies[battlerId]);
     }
-	HandleLoadSpecialPokePic(GetBattlerSide(battlerId) == B_SIDE_OPPONENT ? &gMonFrontPicTable[species] : &gMonBackPicTable[species],
-	gMonSpritesGfxPtr->sprites[GetBattlerPosition(battlerId)], species, currentPersonality);
+	LoadSpecialPokePic(species, currentPersonality, (GetBattlerSide(battlerId) == B_SIDE_OPPONENT), gMonSpritesGfxPtr->sprites[GetBattlerPosition(battlerId)]);
 	
     paletteOffset = 0x100 + battlerId * 16;
 	
@@ -342,7 +341,7 @@ void DecompressTrainerFrontPic(u16 frontPicId, u8 battlerId)
     struct SpriteSheet sheet;
     u8 position = GetBattlerPosition(battlerId);
 
-    DecompressPicFromTable(&gTrainerFrontPicTable[frontPicId], gMonSpritesGfxPtr->sprites[position], SPECIES_NONE);
+    LZDecompressWram(gTrainerFrontPicTable[frontPicId].data, gMonSpritesGfxPtr->sprites[position]);
     sheet.data = gMonSpritesGfxPtr->sprites[position];
     sheet.size = gTrainerFrontPicTable[frontPicId].size;
     sheet.tag = gTrainerFrontPicTable[frontPicId].tag;
@@ -524,8 +523,7 @@ void HandleSpeciesGfxDataChange(u8 battlerAtk, u8 battlerDef, u8 flags)
 	targetSpecies = GetMonData((flags & SPECIESGFX_FLAG_IS_GHOST) ? atkMon : defMon, MON_DATA_SPECIES);
 	isShiny = GetMonData((flags & SPECIESGFX_FLAG_NO_TRANSFORM_PALFADE) ? atkMon : defMon, MON_DATA_IS_SHINY);
 	
-	HandleLoadSpecialPokePic(GetBattlerSide(battlerAtk) == B_SIDE_OPPONENT ? &gMonFrontPicTable[targetSpecies] : &gMonBackPicTable[targetSpecies],
-	gMonSpritesGfxPtr->sprites[atkPosition], targetSpecies, GetMonData(atkMon, MON_DATA_PERSONALITY));
+	LoadSpecialPokePic(targetSpecies, GetMonData(atkMon, MON_DATA_PERSONALITY), (GetBattlerSide(battlerAtk) == B_SIDE_OPPONENT), gMonSpritesGfxPtr->sprites[atkPosition]);
 	
 	DmaCopy32(3, gMonSpritesGfxPtr->sprites[atkPosition], (void *)(VRAM + 0x10000 + gSprites[gBattlerSpriteIds[battlerAtk]].oam.tileNum * 32), 0x800);
 	
@@ -546,7 +544,7 @@ void HandleSpeciesGfxDataChange(u8 battlerAtk, u8 battlerDef, u8 flags)
 	
 	if (flags & SPECIESGFX_FLAG_IS_GHOST)
 	{
-		SetMonData(atkMon, MON_DATA_NICKNAME, gSpeciesNames[targetSpecies]);
+		SetMonData(atkMon, MON_DATA_NICKNAME, gSpeciesInfo[targetSpecies].name);
         UpdateHealthboxAttribute(battlerAtk, HEALTHBOX_NICK);
         TryAddPokeballIconToHealthbox(gHealthboxSpriteIds[battlerAtk], TRUE);
 	}
@@ -693,7 +691,7 @@ static void SpriteCB_EnemyShadow(struct Sprite *shadowSprite)
         return;
     }
     if (gAnimScriptActive || battlerSprite->invisible || (gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies != SPECIES_NONE
-		&& gEnemyMonElevation[gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies] == 0) || gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute)
+		&& gSpeciesInfo[gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies].elevation == 0) || gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute)
         invisible = TRUE;
 		
     shadowSprite->x = battlerSprite->x;
@@ -715,7 +713,7 @@ void SetBattlerShadowSpriteCallback(u8 battlerId, u16 species)
     if (gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies != SPECIES_NONE)
         species = gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies;
 	
-	gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].callback = gEnemyMonElevation[species] != 0 ? SpriteCB_EnemyShadow : SpriteCB_SetInvisible;
+	gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].callback = gSpeciesInfo[species].elevation != 0 ? SpriteCB_EnemyShadow : SpriteCB_SetInvisible;
 }
 
 void HideBattlerShadowSprite(u8 battlerId)

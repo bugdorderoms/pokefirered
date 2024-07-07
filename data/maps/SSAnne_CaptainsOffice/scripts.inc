@@ -5,7 +5,7 @@ SSAnne_CaptainsOffice_MapScripts:: @ 8160B39
 
 SSAnne_CaptainsOffice_EventScript_Captain:: @ 8160B3A
 	lock
-	goto_if_set FLAG_GOT_HM01, SSAnne_CaptainsOffice_EventScript_AlreadyGotCut
+	goto_if_set FLAG_GOT_CUT, SSAnne_CaptainsOffice_EventScript_AlreadyGotCut
 	msgbox SSAnne_CaptainsOffice_Text_CaptainIFeelSeasick
 	textcolor 3
 	message SSAnne_CaptainsOffice_Text_RubbedCaptainsBack
@@ -17,9 +17,9 @@ SSAnne_CaptainsOffice_EventScript_Captain:: @ 8160B3A
 	applymovement LOCALID_CAPTAIN, Movement_FacePlayer
 	waitmovement 0
 	msgbox SSAnne_CaptainsOffice_Text_ThankYouHaveHMForCut
-	giveitem_msg SSAnne_CaptainsOffice_Text_ObtainedHM01FromCaptain, ITEM_EV_IV_DISPLAY, 1, MUS_OBTAIN_KEY_ITEM
+	giveitem_msg SSAnne_CaptainsOffice_Text_ObtainedHM01FromCaptain, ITEM_TM101_CUT, 1, MUS_OBTAIN_KEY_ITEM
 	msgbox SSAnne_CaptainsOffice_Text_ExplainCut
-	setflag FLAG_GOT_HM01
+	setflag FLAG_GOT_CUT
 	setvar VAR_MAP_SCENE_VERMILION_CITY, 1
 	release
 	end

@@ -981,7 +981,6 @@ static void HallOfFame_PrintMonInfo(struct HallofFameMon* currMon)
     u16 i;
     u8 *stringPtr;
     u16 dexNumber;
-    u8 gender;
     s32 width;
     s32 x;
 
@@ -1022,13 +1021,9 @@ static void HallOfFame_PrintMonInfo(struct HallofFameMon* currMon)
     if (currMon->species != SPECIES_EGG)
     {
         text[0] = CHAR_SLASH;
-        stringPtr = StringCopy(text + 1, gSpeciesNames[currMon->species]);
+        stringPtr = StringCopy(text + 1, gSpeciesInfo[currMon->species].name);
 
-        if (currMon->species == SPECIES_NIDORAN_M || currMon->species == SPECIES_NIDORAN_F)
-            gender = MON_GENDERLESS;
-        else
-            gender = GetGenderFromSpeciesAndPersonality(currMon->species, currMon->personality);
-        switch (gender)
+        switch (GetGenderFromSpeciesAndPersonality(currMon->species, currMon->personality))
         {
         case MON_MALE:
             *stringPtr++ = CHAR_MALE;

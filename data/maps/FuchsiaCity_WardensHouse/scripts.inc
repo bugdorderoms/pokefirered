@@ -4,7 +4,7 @@ FuchsiaCity_WardensHouse_MapScripts:: @ 816D74B
 FuchsiaCity_WardensHouse_EventScript_Warden:: @ 816D74C
 	lock
 	faceplayer
-	goto_if_set FLAG_GOT_HM04, FuchsiaCity_WardensHouse_EventScript_ExplainStrength
+	goto_if_set FLAG_MACHAMP_RIDE_GET, FuchsiaCity_WardensHouse_EventScript_ExplainStrength
 	goto_if_set FLAG_HIDE_SAFARI_ZONE_WEST_GOLD_TEETH, FuchsiaCity_WardensHouse_EventScript_GiveGoldTeeth
 	msgbox FuchsiaCity_WardensHouse_Text_HifFuffHefifoo, MSGBOX_YESNO
 	compare VAR_RESULT, YES
@@ -27,8 +27,7 @@ FuchsiaCity_WardensHouse_EventScript_GiveGoldTeeth:: @ 816D780
 	call_if_eq FuchsiaCity_WardensHouse_EventScript_WardenThanksMale
 	compare VAR_RESULT, FEMALE
 	call_if_eq FuchsiaCity_WardensHouse_EventScript_WardenThanksFemale
-	giveitem_msg FuchsiaCity_WardensHouse_Text_ReceivedHM04FromWarden, ITEM_TM66
-	setflag FLAG_GOT_HM04
+	setflag FLAG_MACHAMP_RIDE_GET
 	removeitem ITEM_GOLD_TEETH, 1
 	release
 	end

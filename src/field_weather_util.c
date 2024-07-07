@@ -9,7 +9,7 @@
 // So, the player need change map "X" times to have a chance to activate it.
 #define RANDOM_WEATHER_DELAY 40
 
-static u8 TryStartRandomWeather(void)
+static u8 TryStartDynamicWeather(void)
 {
 	u32 weatherChance;
 	u8 newWeather = gSaveBlock1Ptr->weather;
@@ -34,13 +34,11 @@ static u8 TryStartRandomWeather(void)
 	    			if (RandomPercent(5)) // 5% chance that becames a heavy rain
 	    				newWeather = WEATHER_RAIN_THUNDERSTORM;
 	    			break;
-	    		case SEASON_AUTUMN:
-	    		    if (RandomPercent(2)) // 2% chance init a snow
-	    			    newWeather = WEATHER_SNOW;
-	    			else
-	    				newWeather = WEATHER_NONE; // Otherwise, no weather occours
-	    			break;
 	    		case SEASON_WINTER:
+				    weatherChance = 100; // Set default chance to 100%
+				    newWeather = WEATHER_SNOW; // Always init a snow
+	    			break;
+	    		case SEASON_AUTUMN:
 	    		    weatherChance = 5; // Set default chance to 5%
 	    			
 	    			if (RandomPercent(2)) // 2% chance that becames a heavy rain
@@ -104,7 +102,7 @@ void DoCurrentWeather(void)
 void ResumePausedWeather(void)
 {
 #if DYNAMIC_WEATHER
-    SetCurrentAndNextWeather(TryStartRandomWeather());
+    SetCurrentAndNextWeather(TryStartDynamicWeather());
 #else
 	SetCurrentAndNextWeather(gSaveBlock1Ptr->weather);
 #endif

@@ -34,6 +34,7 @@ bool8 FieldCB_ReturnToFieldOpenStartMenu(void);
 void FieldCB_ContinueScript(void);
 void FieldCB_ContinueScriptHandleMusic(void);
 void FieldCB_WarpExitFadeFromBlack(void);
+bool8 FieldCallback_PrepareFadeInFromMenu(void);
 
 static inline void palette_bg_faded_fill_black(void)
 {

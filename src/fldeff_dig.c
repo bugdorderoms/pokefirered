@@ -3,6 +3,7 @@
 #include "field_player_avatar.h"
 #include "fldeff.h"
 #include "item_use.h"
+#include "field_fadetransition.h"
 #include "overworld.h"
 #include "party_menu.h"
 

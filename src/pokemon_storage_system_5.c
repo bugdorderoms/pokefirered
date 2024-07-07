@@ -1024,7 +1024,7 @@ static void SetCursorMonData(void *pokemon, u8 mode)
             gPSSData->cursorMonLevel = GetMonData(mon, MON_DATA_LEVEL);
             gPSSData->cursorMonMarkings = GetMonData(mon, MON_DATA_MARKINGS);
             gPSSData->cursorMonPersonality = GetMonData(mon, MON_DATA_PERSONALITY);
-            gPSSData->cursorMonPalette = GetMonFrontSpritePal(mon);
+            gPSSData->cursorMonPalette = GetMonSpritePal(mon);
             gender = GetMonGender(mon);
             gPSSData->cursorMonItem = GetMonData(mon, MON_DATA_HELD_ITEM);
         }
@@ -1063,21 +1063,18 @@ static void SetCursorMonData(void *pokemon, u8 mode)
     }
     else if (gPSSData->cursorMonIsEgg)
     {
-		StringCopyPadded(gPSSData->cursorMonTexts[0], gText_EggNickname, CHAR_SPACE, 8);
+		StringCopyPadded(gPSSData->cursorMonTexts[0], gSpeciesInfo[SPECIES_EGG].name, CHAR_SPACE, 8);
         StringFill(gPSSData->cursorMonTexts[1], CHAR_SPACE, 8);
         StringFill(gPSSData->cursorMonTexts[2], CHAR_SPACE, 8);
         StringFill(gPSSData->cursorMonTexts[3], CHAR_SPACE, 8);
     }
     else
     {
-        if (gPSSData->cursorMonSpecies == SPECIES_NIDORAN_F || gPSSData->cursorMonSpecies == SPECIES_NIDORAN_M)
-            gender = MON_GENDERLESS;
-
         StringCopyPadded(gPSSData->cursorMonTexts[0], gPSSData->cursorMonNick, CHAR_SPACE, 5);
 
         txtPtr = gPSSData->cursorMonTexts[1];
         *(txtPtr)++ = CHAR_SLASH;
-        StringCopyPadded(txtPtr, gSpeciesNames[gPSSData->cursorMonSpecies], CHAR_SPACE, 5);
+        StringCopyPadded(txtPtr, gSpeciesInfo[gPSSData->cursorMonSpecies].name, CHAR_SPACE, 5);
 
         txtPtr = gPSSData->cursorMonTexts[2];
         *(txtPtr)++ = EXT_CTRL_CODE_BEGIN;

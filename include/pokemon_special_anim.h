@@ -9,7 +9,6 @@ void GetMonLevelUpWindowStats(struct Pokemon *mon, u16 *currStats);
 void DrawLevelUpWindowPg1(u16 windowId, u16 *statsBefore, u16 *statsAfter, u8 bgClr, u8 fgClr, u8 shadowClr);
 void DrawLevelUpWindowPg2(u16 windowId, u16 *currStats, u8 bgClr, u8 fgClr, u8 shadowClr);
 void StartUseItemAnim_Normal(u8 slotId, u16 itemId, MainCallback callback);
-void StartUseItemAnim_CantEvolve(u8 slotId, u16 itemId, MainCallback callback);
 bool32 PSA_IsCancelDisabled(void);
 void StartUseItemAnim_ForgetMoveAndLearnTMorHM(u8 slotId, u16 itemId, u16 moveId, MainCallback callback);
 

@@ -302,7 +302,7 @@ static const struct WindowTemplate gUnknown_83E22A0[6] = {
         .bg = 3,
         .tilemapLeft = 8,
         .tilemapTop = 6,
-        .width = 14,
+        .width = 15,
         .height = 2,
         .paletteNum = 10,
         .baseBlock = 0x0030
@@ -313,7 +313,7 @@ static const struct WindowTemplate gUnknown_83E22A0[6] = {
         .width = 16,
         .height = 2,
         .paletteNum = 10,
-        .baseBlock = 0x004c
+        .baseBlock = 0x004E
     }, {
         .bg = 0,
         .tilemapLeft = 0,
@@ -1643,9 +1643,10 @@ static void PrintTitleFunction_NoMon(void)
 
 static void PrintTitleFunction_WithMon(void)
 {
-    u8 buffer[0x20];
-
-    StringCopy(buffer, gSpeciesNames[sNamingScreenData->monSpecies]);
+    u8 buffer[64];
+	u8 *end = StringCopy(buffer, gSpeciesInfo[sNamingScreenData->monSpecies].name);
+	
+	WrapFontIdToFit(buffer, end, 1, 128 - 64);
     StringAppendN(buffer, sNamingScreenData->template->title, 15);
     FillWindowPixelBuffer(sNamingScreenData->windows[3], PIXEL_FILL(1));
     AddTextPrinterParameterized(sNamingScreenData->windows[3], 1, buffer, 1, 1, 0, NULL);
@@ -1697,7 +1698,7 @@ static void AddGenderIconFunc_Yes(void)
             StringCopy(genderSymbol, gText_FemaleSymbol);
             gender = FEMALE;
         }
-        AddTextPrinterParameterized3(sNamingScreenData->windows[2], 2, 0x68, 1, sGenderColors[gender], TEXT_SPEED_FF, genderSymbol);
+        AddTextPrinterParameterized3(sNamingScreenData->windows[2], 2, 0x6E, 1, sGenderColors[gender], TEXT_SPEED_FF, genderSymbol);
     }
 }
 

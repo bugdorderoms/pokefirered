@@ -2,6 +2,7 @@
 #include "gflib.h"
 #include "party_menu.h"
 #include "menu.h"
+#include "field_fadetransition.h"
 #include "new_menu_helpers.h"
 #include "constants/songs.h"
 

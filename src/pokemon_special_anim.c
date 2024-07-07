@@ -19,10 +19,8 @@ static EWRAM_DATA struct PokemonSpecialAnim * sPSAWork = NULL;
 static struct PokemonSpecialAnim * AllocPSA(u8 slotId, u16 itemId, MainCallback callback);
 static void SetUpUseItemAnim_Normal(struct PokemonSpecialAnim * ptr);
 static void SetUpUseItemAnim_ForgetMoveAndLearnTMorHM(struct PokemonSpecialAnim * ptr);
-static void SetUpUseItemAnim_CantEvolve(struct PokemonSpecialAnim * ptr);
 static void Task_UseItem_Normal(u8 taskId);
 static void Task_ForgetMove(u8 taskId);
-static void Task_EvoStone_CantEvolve(u8 taskId);
 static void Task_UseTM_NoForget(u8 taskId);
 static void Task_MachineSet(u8 taskId);
 static void Task_CleanUp(u8 taskId);
@@ -48,15 +46,6 @@ void StartUseItemAnim_ForgetMoveAndLearnTMorHM(u8 slotId, u16 itemId, u16 moveId
         StringCopy(ptr->nameOfMoveForgotten, gBattleMoves[moveId].name);
         SetUpUseItemAnim_ForgetMoveAndLearnTMorHM(ptr);
     }
-}
-
-void StartUseItemAnim_CantEvolve(u8 slotId, u16 itemId, MainCallback callback)
-{
-    struct PokemonSpecialAnim * ptr = AllocPSA(slotId, itemId, callback);
-    if (ptr == NULL)
-        SetMainCallback2(callback);
-    else
-        SetUpUseItemAnim_CantEvolve(ptr);
 }
 
 static struct PokemonSpecialAnim * AllocPSA(u8 slotId, u16 itemId, MainCallback callback)
@@ -88,7 +77,7 @@ static struct PokemonSpecialAnim * AllocPSA(u8 slotId, u16 itemId, MainCallback 
     GetMonData(pokemon, MON_DATA_NICKNAME, ptr->nickname);
 	
     if (ptr->animType == 4)
-        StringCopy(ptr->nameOfMoveToTeach, gBattleMoves[ItemIdToBattleMoveId(itemId)].name);
+        StringCopy(ptr->nameOfMoveToTeach, gBattleMoves[ItemId_GetHoldEffectParam(itemId)].name);
 
     return ptr;
 }
@@ -147,14 +136,6 @@ static void SetUpUseItemAnim_ForgetMoveAndLearnTMorHM(struct PokemonSpecialAnim 
     SetMainCallback2(CB2_PSA);
     sPSATaskId = taskId;
     ptr->cancelDisabled = FALSE;
-}
-
-static void SetUpUseItemAnim_CantEvolve(struct PokemonSpecialAnim * ptr)
-{
-    u8 taskId = CreateTask(Task_EvoStone_CantEvolve, 0);
-    SetWordTaskArg(taskId, 0, (uintptr_t)ptr);
-    SetMainCallback2(CB2_PSA);
-    sPSATaskId = taskId;
 }
 
 static void Task_UseItem_Normal(u8 taskId)
@@ -246,7 +227,7 @@ static void Task_UseItem_Normal(u8 taskId)
     case 12:
         if (JOY_NEW(A_BUTTON | B_BUTTON))
         {
-            if (CheckIfItemIsTMHMOrEvolutionStone(ptr->itemId) != 2) // evo stone
+            if (GetItemUseAnimFollowUpCBIdByItemType(ptr->itemId) != ITEMUSE_FOLLOWUP_EVOLUTION_ITEM)
             {
                 BeginNormalPaletteFade(PALETTES_ALL, -1, 0, 16, RGB_BLACK);
                 ptr->state++;
@@ -372,83 +353,6 @@ static void Task_ForgetMove(u8 taskId)
         break;
     case 13:
         SetUseItemAnimCallback(taskId, Task_MachineSet);
-        break;
-    }
-}
-
-static void Task_EvoStone_CantEvolve(u8 taskId)
-{
-    struct PokemonSpecialAnim * ptr = (void *)GetWordTaskArg(taskId, 0);
-
-    if (!ptr->cancelDisabled && JOY_HELD(B_BUTTON))
-    {
-        SetUseItemAnimCallback(taskId, Task_CleanUp);
-        return;
-    }
-
-    switch (ptr->state)
-    {
-    case 0:
-        SetVBlankCallback(NULL);
-        InitPokemonSpecialAnimScene(&ptr->sceneResources, ptr->animType);
-        PSA_CreateMonSpriteAtCloseness(0);
-        ptr->state++;
-        break;
-    case 1:
-        if (!PokemonSpecialAnimSceneInitIsNotFinished())
-        {
-            BeginNormalPaletteFade(PALETTES_ALL, -1, 16, 0, RGB_BLACK);
-            ptr->state++;
-            SetVBlankCallback(VBlankCB_PSA);
-        }
-        break;
-    case 2:
-        if (!gPaletteFade.active)
-        {
-            ptr->state++;
-        }
-        break;
-    case 3:
-        PSA_SetUpZoomAnim(ptr->closeness);
-        ptr->state++;
-        break;
-    case 4:
-        PSA_SetUpItemUseOnMonAnim(ptr->itemId, ptr->closeness, FALSE);
-        ptr->state++;
-        break;
-    case 5:
-        if (!PSA_IsItemUseOnMonAnimActive())
-        {
-            PSA_ShowMessageWindow();
-            ptr->state++;
-        }
-        break;
-    case 6:
-        PSA_PrintMessage(PSA_TEXT_HUH);
-        ptr->state++;
-        break;
-    case 7:
-        if (!PSA_IsMessagePrintTaskActive())
-        {
-            ptr->cancelDisabled = TRUE;
-            ptr->state++;
-        }
-        break;
-    case 8:
-        if (JOY_NEW(A_BUTTON | B_BUTTON))
-        {
-            BeginNormalPaletteFade(PALETTES_ALL, -1, 0, 16, RGB_BLACK);
-            ptr->state++;
-        }
-        break;
-    case 9:
-        if (!gPaletteFade.active)
-        {
-            SetMainCallback2(ptr->savedCallback);
-            PSA_FreeWindowBuffers();
-            Free(ptr);
-            DestroyTask(taskId);
-        }
         break;
     }
 }

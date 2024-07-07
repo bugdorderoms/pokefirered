@@ -2262,7 +2262,7 @@ static void LoadCursorMonGfx(u16 species, u32 pid)
 
     if (species != SPECIES_NONE)
     {
-        HandleLoadSpecialPokePic(&gMonFrontPicTable[species], gPSSData->field_22C4, species, pid);
+        LoadSpecialPokePic(species, pid, TRUE, gPSSData->field_22C4);
         LZDecompressWram(gPSSData->cursorMonPalette, gPSSData->field_2244);
         CpuCopy32(gPSSData->field_22C4, gPSSData->field_223C, 0x800);
         LoadPalette(gPSSData->field_2244, gPSSData->field_223A, 0x20);
@@ -2282,18 +2282,16 @@ static void PrintCursorMonInfo(void)
     if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
     {
         for (i = 0, y = 0; i < 3; i++, y += 14)
-        {
-            AddTextPrinterParameterized(0, 2, gPSSData->cursorMonTexts[i], i == 2 ? 10 : 6, y, TEXT_SPEED_FF, NULL);
-        }
+            AddTextPrinterParameterized(0, 0, gPSSData->cursorMonTexts[i], i == 2 ? 10 : 6, y, TEXT_SPEED_FF, NULL);
+
         AddTextPrinterParameterized(0, 0, gPSSData->cursorMonTexts[3], 6, y + 2, TEXT_SPEED_FF, NULL);
     }
     else
     {
         AddTextPrinterParameterized(0, 0, gPSSData->cursorMonTexts[3], 6, 0, TEXT_SPEED_FF, NULL);
+		
         for (i = 0, y = 15; i < 3; i++, y += 14)
-        {
-            AddTextPrinterParameterized(0, 2, gPSSData->cursorMonTexts[i], i == 2 ? 10 : 6, y, TEXT_SPEED_FF, NULL);
-        }
+            AddTextPrinterParameterized(0, 0, gPSSData->cursorMonTexts[i], i == 2 ? 10 : 6, y, TEXT_SPEED_FF, NULL);
     }
 
     CopyWindowToVram(0, COPYWIN_GFX);

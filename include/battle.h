@@ -52,9 +52,8 @@
 
 #define MAX_TRAINER_ITEMS 4
 
-#define TRAINER_MON_MALE       1
-#define TRAINER_MON_FEMALE     2
-#define TRAINER_MON_GENDERLESS 3
+#define TRAINER_MON_MALE   1
+#define TRAINER_MON_FEMALE 2
 
 struct TrainerMon
 {

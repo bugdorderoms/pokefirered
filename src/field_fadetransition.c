@@ -8,6 +8,7 @@
 #include "field_player_avatar.h"
 #include "task.h"
 #include "script.h"
+#include "party_menu.h"
 #include "cable_club.h"
 #include "fieldmap.h"
 #include "metatile_behavior.h"
@@ -88,7 +89,7 @@ void WarpFadeOutScreen(void)
 {
     const struct MapHeader *header = GetDestinationWarpMapHeader();
 	
-    if (header->regionMapSectionId != gMapHeader.regionMapSectionId && MapHasPreviewScreen(header->regionMapSectionId, MPS_TYPE_CAVE))
+    if (header->regionMapSectionId != gMapHeader.regionMapSectionId && MapHasPreviewScreen(header->regionMapSectionId, MAP_PREVIEW_TYPE_CAVE))
         FadeScreen(FADE_TO_BLACK, 0);
     else
 		FadeScreen(MapTransitionIsEnter(GetCurrentMapType(), header->mapType) ? FADE_TO_WHITE : FADE_TO_BLACK, 0);
@@ -879,4 +880,22 @@ static bool8 sub_807EDA0(s16 *a0, s16 *a1, s16 *a2, s16 *a3, s16 *a4)
         sprite->y2 = 0;
         return FALSE;
     }
+}
+
+static void Task_FieldMoveWaitForFade(u8 taskId)
+{
+    if (IsWeatherNotFadingIn())
+    {
+        gFieldEffectArguments[0] = GetMonData(&gPlayerParty[GetCursorSelectionMonId()], MON_DATA_SPECIES);
+        gPostMenuFieldCallback();
+        DestroyTask(taskId);
+    }
+}
+
+// For field moves
+bool8 FieldCallback_PrepareFadeInFromMenu(void)
+{
+    FadeInFromBlack();
+    CreateTask(Task_FieldMoveWaitForFade, 8);
+    return TRUE;
 }

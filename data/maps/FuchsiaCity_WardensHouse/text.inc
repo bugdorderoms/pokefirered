@@ -38,10 +38,6 @@ FuchsiaCity_WardensHouse_Text_ThanksLassieGiveYouSomething:: @ 8198F96
     .string "Let me give you something for your\n"
     .string "trouble.$"
 
-FuchsiaCity_WardensHouse_Text_ReceivedHM04FromWarden:: @ 8199068
-    .string "{PLAYER} received HM04\n"
-    .string "from the WARDEN.$"
-
 FuchsiaCity_WardensHouse_Text_ExplainStrength:: @ 819908A
     .string "WARDEN: Inside HM04 you'll find\n"
     .string "STRENGTH.\p"

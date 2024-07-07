@@ -49,15 +49,12 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shin
 	{
 		.species = species,
 		.level = level,
-		.forceGender = (gender != MON_GENDERLESS),
 		.forcedGender = gender,
 		.otIdType = OT_ID_PLAYER_ID,
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.shinyType = shinyType,
-		.forceNature = (nature != NUM_NATURES),
 		.forcedNature = nature,
-		.changeForm = FALSE,
 		.formChanges = NULL,
 		.moves = {moves[0], moves[1], moves[2], moves[3]},
 	};
@@ -67,9 +64,12 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shin
     heldItem[1] = item >> 8;
     SetMonData(mon, MON_DATA_HELD_ITEM, heldItem);
     
-	heldItem[0] = pokeBall;
-	heldItem[1] = pokeBall >> 8;
-	SetMonData(mon, MON_DATA_POKEBALL, heldItem);
+	if (pokeBall)
+	{
+		heldItem[0] = pokeBall;
+		heldItem[1] = pokeBall >> 8;
+		SetMonData(mon, MON_DATA_POKEBALL, heldItem);
+	}
     
 	if (hiddenAbility)
 		SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &hiddenAbility);
@@ -108,17 +108,14 @@ u8 ScriptGiveEgg(u16 species, u8 *ivs, u8 shinyType, bool8 hiddenAbility, u8 nat
 		.level = EGG_HATCH_LEVEL,
 		.otIdType = OT_ID_PLAYER_ID,
 		.shinyType = shinyType,
-		.forceGender = FALSE,
-		.forcedGender = MON_MALE,
+		.forcedGender = MON_GENDERLESS,
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
-		.forceNature = (nature != NUM_NATURES),
 		.forcedNature = nature,
-		.changeForm = FALSE,
 		.formChanges = NULL,
 		.moves = {moves[0], moves[1], moves[2], moves[3]},
 	};
-    CreateEgg(mon, generator, TRUE);
+    CreateEgg(mon, generator);
 	
 	if (hiddenAbility)
 		SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &hiddenAbility);
@@ -170,15 +167,12 @@ void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 lev
 	{
 		.species = species,
 		.level = level,
-		.forceGender = FALSE,
-		.forcedGender = MON_MALE,
+		.forcedGender = MON_GENDERLESS,
 		.otIdType = OT_ID_PLAYER_ID,
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.shinyType = GENERATE_SHINY_NORMAL,
-		.forceNature = FALSE,
 		.forcedNature = NUM_NATURES,
-		.changeForm = FALSE,
 		.formChanges = NULL,
 		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
 	};
@@ -215,7 +209,7 @@ void ChooseHalfPartyForBattle(void)
 {
     gMain.savedCallback = CB2_ReturnFromChooseHalfParty;
 //    VarSet(VAR_FRONTIER_FACILITY, FACILITY_MULTI_OR_EREADER);
-    InitChooseHalfPartyForBattle(0);
+    InitChooseHalfPartyForBattle(CHOOSE_MONS_FOR_CABLE_CLUB_BATTLE);
 }
 
 static void CB2_ReturnFromChooseHalfParty(void)
@@ -240,10 +234,11 @@ void ReducePlayerPartyToThree(void)
 
     // copy the selected pokemon according to the order.
     for (i = 0; i < 3; i++)
+	{
         if (gSelectedOrderFromParty[i]) // as long as the order keeps going (did the player select 1 mon? 2? 3?), do not stop
             party[i] = gPlayerParty[gSelectedOrderFromParty[i] - 1]; // index is 0 based, not literal
-
-    CpuFill32(0, gPlayerParty, sizeof gPlayerParty);
+	}
+    CpuFill32(0, gPlayerParty, sizeof(gPlayerParty));
 
     // overwrite the first 3 with the order copied to.
     for (i = 0; i < 3; i++)

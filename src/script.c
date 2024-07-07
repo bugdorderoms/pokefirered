@@ -1,14 +1,13 @@
 #include "global.h"
 #include "script.h"
+#include "util.h"
 #include "event_data.h"
 #include "constants/maps.h"
 
 #define RAM_SCRIPT_MAGIC 51
 #define SCRIPT_STACK_SIZE 20
 
-
 extern void ResetContextNpcTextColor(void); // field_specials
-extern u16 CalcCRC16WithTable(u8 *data, int length); // util
 
 enum
 {

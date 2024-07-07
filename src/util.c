@@ -1,4 +1,10 @@
 #include "global.h"
+#include "util.h"
+#include "text.h"
+#include "list_menu.h"
+#include "malloc.h"
+#include "global.h"
+#include "constants/battle_script_commands.h"
 
 const u32 gBitTable[] =
 {
@@ -214,25 +220,6 @@ void CopySpriteTiles(u8 shape, u8 size, u8 *tiles, u16 *tilemap, u8 *output)
     }
 }
 
-u16 CalcCRC16(const u8 *data, u32 length)
-{
-    u16 i, j;
-    u16 crc = 0x1121;
-
-    for (i = 0; i < length; i++)
-    {
-        crc ^= data[i];
-        for (j = 0; j < 8; j++)
-        {
-            if (crc & 1)
-                crc = (crc >> 1) ^ 0x8408;
-            else
-                crc >>= 1;
-        }
-    }
-    return ~crc;
-}
-
 u16 CalcCRC16WithTable(const u8 *data, u32 length)
 {
     u16 i;
@@ -246,4 +233,116 @@ u16 CalcCRC16WithTable(const u8 *data, u32 length)
         crc = byte ^ gCrc16Table[(u8)crc];
     }
     return ~crc;
+}
+
+bool8 JumpBasedOnKind(u32 value, u8 cmpKind, u32 cmpTo)
+{
+	bool8 ret = FALSE;
+	
+	switch (cmpKind)
+	{
+		case CMP_EQUAL:
+		    if (value == cmpTo)
+				ret = TRUE;
+			break;
+		case CMP_NOT_EQUAL:
+		    if (value != cmpTo)
+				ret = TRUE;
+			break;
+		case CMP_GREATER_THAN:
+		    if (value > cmpTo)
+				ret = TRUE;
+			break;
+		case CMP_LESS_THAN:
+		    if (value < cmpTo)
+				ret = TRUE;
+			break;
+		case CMP_COMMON_BITS:
+		    if (value & cmpTo)
+				ret = TRUE;
+			break;
+		case CMP_NO_COMMON_BITS:
+		    if (!(value & cmpTo))
+				ret = TRUE;
+			break;
+	}
+	return ret;
+}
+
+#define SORT(unionVar)                                                      \
+    if (aux == NULL)                                                        \
+		return;                                                             \
+                                                                            \
+	for (k = low; k <= high; ++k)                                           \
+	aux[k] = comparator->sortUnion.unionVar.array[k];                       \
+	                                                                        \
+	/* Merge back to a[low..high] */                                        \
+	for (k = low; k <= high; ++k)                                           \
+	{                                                                       \
+	    if (i > mid)                                                        \
+            comparator->sortUnion.unionVar.array[k] = aux[j++];             \
+        else if (j > high)                                                  \
+            comparator->sortUnion.unionVar.array[k] = aux[i++];             \
+        else if (comparator->sortUnion.unionVar.func(&aux[j], &aux[i]) < 0) \
+            comparator->sortUnion.unionVar.array[k] = aux[j++];             \
+        else                                                                \
+            comparator->sortUnion.unionVar.array[k] = aux[i++];             \
+	}                                                                       \
+	Free(aux)
+
+void MergeSort(struct SortComparator *comparator, u32 low, u32 high)
+{
+    u32 mid, i, j, k;
+
+    if (high <= low)
+        return;
+
+    mid = low + (high - low) / 2;
+    MergeSort(comparator, low, mid); // Sort left half.
+    MergeSort(comparator, mid + 1, high); // Sort right half.
+	
+	// Merge results.
+	i = low;
+	j = mid + 1;
+	
+	switch (comparator->kind)
+	{
+		case SORT_BAG_ITEMS:
+		{
+		    struct ItemSlot *aux = Alloc(sizeof(struct ItemSlot) * (high + 1));
+			
+		    SORT(bagItemSort);
+			return;
+		}
+		case SORT_LIST_MENU_ITEMS:
+		{
+		    struct ListMenuItem *aux = Alloc(sizeof(struct ListMenuItem) * (high + 1));
+			
+		    SORT(listMenuItemSort);
+			return;
+		}
+	}
+}
+
+// Returns -1 if text1 goes before text2 alphabetically, otherwise returns 1
+// Returns 0 if the two texts are identical
+s8 CompareTextAlphabetically(const u8 *text1, const u8 *text2)
+{
+	u8 i;
+	
+	for (i = 0; ; ++i)
+    {
+        if (text1[i] == EOS && text2[i] != EOS)
+            return -1;
+        else if (text1[i] != EOS && text2[i] == EOS)
+            return 1;
+        else if (text1[i] == EOS && text2[i] == EOS)
+            return 0;
+
+        if (text1[i] < text2[i])
+            return -1;
+        else if (text1[i] > text2[i])
+            return 1;
+    }
+	return 0;
 }

@@ -369,6 +369,7 @@ static const void *const sItemIconGfxPtrs[][2] = {
     [ITEM_ROCK_INCENSE] = {sItemIcon_RockIncense, sItemIconPalette_RockIncense},
     [ITEM_ROSE_INCENSE] = {sItemIcon_RoseIncense, sItemIconPalette_RoseIncense},
     [ITEM_WAVE_INCENSE] = {sItemIcon_WaveIncense, sItemIconPalette_WaveIncense},
+	[ITEM_PURE_INCENSE] = {sItemIcon_PureIncense, sItemIconPalette_PureIncense},
     [ITEM_VENUSAURITE] = {sItemIcon_Venusaurite, sItemIconPalette_Venusaurite},
     [ITEM_CHARIZARDITE_X] = {sItemIcon_CharizarditeX, sItemIconPalette_CharizarditeX},
     [ITEM_CHARIZARDITE_Y] = {sItemIcon_CharizarditeY, sItemIconPalette_CharizarditeY},

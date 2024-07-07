@@ -524,7 +524,7 @@ static void GetTMNumberAndMoveString(u8 * dest, u16 itemId)
 	StringAppend(gStringVar4, gStringVar1);
     StringAppend(gStringVar4, sText_SingleSpace);
     StringAppend(gStringVar4, gText_FontSize2);
-    StringAppend(gStringVar4, gBattleMoves[ItemIdToBattleMoveId(itemId)].name);
+    StringAppend(gStringVar4, gBattleMoves[ItemId_GetHoldEffectParam(itemId)].name);
     StringCopy(dest, gStringVar4);
 }
 
@@ -813,7 +813,7 @@ static void TMHMContextMenuAction_Use(u8 taskId)
     }
     else
     {
-        gItemUseCB = ItemUseCB_TMHM;
+        gItemUseCB = ItemUseCB_TM;
         sTMCaseDynamicResources->savedCallback = CB2_ShowPartyMenuForItemUse;
         Task_BeginFadeOutFromTMCase(taskId);
     }
@@ -1299,7 +1299,7 @@ static void TMCase_MoveCursor_UpdatePrintedTMInfo(u16 itemId)
     }
     else
     {
-        move = ItemIdToBattleMoveId(itemId);
+        move = ItemId_GetHoldEffectParam(itemId);
         BlitMoveInfoIcon(5, gBattleMoves[move].type + 1, 0, 0);
         if (gBattleMoves[move].power < 2)
             str = gText_ThreeHyphens;
@@ -1364,7 +1364,7 @@ static u8 CreateTMSprite(u16 itemId)
 		animNum = itemId - ITEM_TM01;
 		
 		SetTMSpriteAnim(&gSprites[spriteId], animNum);
-		TintTMSpriteByType(gBattleMoves[ItemIdToBattleMoveId(itemId)].type);
+		TintTMSpriteByType(gBattleMoves[ItemId_GetHoldEffectParam(itemId)].type);
 	}
     UpdateTMSpritePosition(&gSprites[spriteId], animNum);
 	
@@ -1427,7 +1427,7 @@ static void SpriteCB_MoveTMSpriteInCase(struct Sprite * sprite)
             if (sprite->data[0] != ITEM_NONE)
             {
                 sprite->data[1]++;
-                TintTMSpriteByType(gBattleMoves[ItemIdToBattleMoveId(sprite->data[0])].type);
+                TintTMSpriteByType(gBattleMoves[ItemId_GetHoldEffectParam(sprite->data[0])].type);
                 sprite->data[0] -= ITEM_TM01;
                 SetTMSpriteAnim(sprite, sprite->data[0]);
                 UpdateTMSpritePosition(sprite, sprite->data[0]);

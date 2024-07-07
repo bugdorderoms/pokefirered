@@ -5,9 +5,9 @@
 	.present = { .GivePokemon = pokemon }, \
 	.presentsCount = ARRAY_COUNT(pokemon)
 
-#define MG_GIVE_ITEM(item)     		 \
-	.type = MG_TYPE_GIVE_ITEM, 		 \
-	.present = { .GiveItem = item }, \
+#define MG_GIVE_ITEM(item)     		   \
+	.type = MG_TYPE_GIVE_ITEM, 		   \
+	.present = { .GiveItem = item },   \
 	.presentsCount = ARRAY_COUNT(item)
 
 #define MG_FEATURE_UNLOCK(feature)  		 \

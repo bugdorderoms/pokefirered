@@ -16,7 +16,7 @@ struct Diploma
     u8 state;
     u8 gfxStep;
     u8 callbackStep;
-    u16 tilemapBuffer[0x800];
+    u16 tilemapBuffer[BG_SCREEN_SIZE];
 };
 
 static EWRAM_DATA struct Diploma *gDiploma = NULL;

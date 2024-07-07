@@ -13,15 +13,12 @@ struct MonCoords
     u8 y_offset;
 };
 
-extern const u8 gSpeciesNames[][POKEMON_NAME_LENGTH + 1];
+#define MON_COORDS_SIZE(width, height)(DIV_ROUND_UP(width, 8) << 4 | DIV_ROUND_UP(height, 8))
+#define GET_MON_COORDS_WIDTH(size)((size >> 4) * 8)
+#define GET_MON_COORDS_HEIGHT(size)((size & 0xF) * 8)
+
 extern const u8 gTrainerClassNames[][13];
 
-extern const struct MonCoords gMonFrontPicCoords[];
-extern const struct CompressedSpriteSheet gMonFrontPicTable[];
-extern const struct MonCoords gMonBackPicCoords[];
-extern const struct CompressedSpriteSheet gMonBackPicTable[];
-extern const struct CompressedSpritePalette gMonPaletteTable[];
-extern const struct CompressedSpritePalette gMonShinyPaletteTable[];
 extern const union AnimCmd *const *const gTrainerFrontAnimsPtrTable[];
 extern const struct MonCoords gTrainerFrontPicCoords[];
 extern const struct CompressedSpriteSheet gTrainerFrontPicTable[];
@@ -32,8 +29,6 @@ extern const struct CompressedSpritePalette gTrainerBackPicPaletteTable[];
 
 extern const struct CompressedSpriteSheet gSpriteSheet_EnemyShadow;
 extern const struct SpriteTemplate gSpriteTemplate_EnemyShadow;
-
-extern const u8 gEnemyMonElevation[NUM_SPECIES];
 
 extern const union AnimCmd *const gSpriteAnimTable_82349BC[];
 extern const union AffineAnimCmd *const gSpriteAffineAnimTable_BattlerPlayer[];

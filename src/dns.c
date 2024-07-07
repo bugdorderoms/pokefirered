@@ -428,20 +428,64 @@ static u16 GetDNSFilter(void)
 	}
 }
 
-bool8 GetDNSTimeLapseIsNight(void)
+u8 GetDNSTimeLapseDayOrNight(void)
 {
 	switch (GetDNSTimeLapse())
 	{
 		case TIME_MIDNIGHT:
 		case TIME_NIGHTFALL:
 		case TIME_NIGHT:
-		    return TRUE;
+		    return TIME_NIGHT;
 		default:
-			return FALSE;
+			return TIME_DAY;
 	}
 }
 
 u8 DNSGetCurrentSeason(void)
 {
 	return sSeasonsByMonth[gRtcLocation.month - 1];
+}
+
+// Based off: https://blog.eletrogate.com/relogio-de-fases-lunares-com-o-arduino/
+u8 DNSGetMoonPhase(void)
+{
+	u8 month = gRtcLocation.month;
+	int moonPhase, year = gRtcLocation.year - (int)((MONTH_COUNT - month) / 10);
+	f64 yearDays, monthDays, leapYear, julianaDate;
+	
+	month += 9;
+	if (month >= MONTH_COUNT)
+		month -= MONTH_COUNT;
+	
+	yearDays = 365.25 * (year + 4172);
+	monthDays = (int)((30.6001 * month) + 0.5);
+	leapYear = (int)((((year / 100) + 4) * 0.75) - 38);
+	
+	julianaDate = yearDays + monthDays + gRtcLocation.day + 59;
+	julianaDate -= leapYear;
+	julianaDate = (int)(julianaDate - 2244116.75);
+	julianaDate /= 29.53;
+	
+	moonPhase = julianaDate;
+	julianaDate -= moonPhase;
+	
+	moonPhase = julianaDate * 8 + 0.5;
+	moonPhase &= 7;
+	
+	switch (moonPhase)
+	{
+		case 0:
+		    moonPhase = PHASE_NEW_MOON;
+			break;
+		case 1 ... 3:
+		    moonPhase = PHASE_CRESCENT_MOON;
+			break;
+		case 4:
+		    moonPhase = PHASE_FULL_MOON;
+			break;
+		case 5 ... 7:
+		    moonPhase = PHASE_WANING_MOON;
+			break;
+	}
+	return moonPhase;
 }

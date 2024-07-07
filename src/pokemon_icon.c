@@ -16,9 +16,6 @@ struct MonIconSpriteTemplate
 
 static u8 CreateMonIconSprite(const struct MonIconSpriteTemplate * template, s16 x, s16 y, u8 subpriority);
 
-#include "data/pokemon/graphics/icon_table.h"
-#include "data/pokemon/graphics/icon_palette_indices.h"
-
 const u16 gMonIconPalettes[][16] = {
     INCBIN_U16("graphics/pokemon/icon_palettes/icon_palette_0.gbapal"),
     INCBIN_U16("graphics/pokemon/icon_palettes/icon_palette_1.gbapal"),
@@ -128,7 +125,7 @@ u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subprior
 		.anims = sMonIconAnims,
 		.affineAnims = sMonIconAffineAnims,
 		.callback = callback,
-		.paletteTag = POKE_ICON_BASE_PAL_TAG + gMonIconPaletteIndices[SanitizeSpeciesId(species)],
+		.paletteTag = POKE_ICON_BASE_PAL_TAG + gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex,
 	};
 
     spriteId = CreateMonIconSprite(&iconTemplate, x, y, subpriority);
@@ -140,7 +137,7 @@ u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subprior
 
 const u8 *GetMonIconTiles(u16 species)
 {
-    return gMonIconTable[species];
+    return gSpeciesInfo[species].icon;
 }
 
 const u8 *GetMonIconPtr(u16 species)
@@ -165,7 +162,7 @@ void LoadMonIconPalettes(void)
 
 void SafeLoadMonIconPalette(u16 species)
 {
-    u8 palIndex = gMonIconPaletteIndices[SanitizeSpeciesId(species)];
+    u8 palIndex = gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex;
 	
     if (IndexOfSpritePaletteTag(gMonIconPaletteTable[palIndex].tag) == 0xFF)
         LoadSpritePalette(&gMonIconPaletteTable[palIndex]);
@@ -173,7 +170,7 @@ void SafeLoadMonIconPalette(u16 species)
 
 void LoadMonIconPalette(u16 species)
 {
-    u8 palIndex = gMonIconPaletteIndices[species];
+    u8 palIndex = gSpeciesInfo[species].iconPaletteIndex;
 	
     if (IndexOfSpritePaletteTag(gMonIconPaletteTable[palIndex].tag) == 0xFF)
         LoadSpritePalette(&gMonIconPaletteTable[palIndex]);
@@ -189,12 +186,12 @@ void FreeMonIconPalettes(void)
 
 void SafeFreeMonIconPalette(u16 species)
 {
-    FreeSpritePaletteByTag(gMonIconPaletteTable[gMonIconPaletteIndices[SanitizeSpeciesId(species)]].tag);
+    FreeSpritePaletteByTag(gMonIconPaletteTable[gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex].tag);
 }
 
 void FreeMonIconPalette(u16 species)
 {
-    FreeSpritePaletteByTag(gMonIconPaletteTable[gMonIconPaletteIndices[species]].tag);
+    FreeSpritePaletteByTag(gMonIconPaletteTable[gSpeciesInfo[species].iconPaletteIndex].tag);
 }
 
 void SpriteCB_MonIcon(struct Sprite * sprite)
@@ -228,17 +225,17 @@ void LoadMonIconPalettesAt(u16 offset)
 
 const u16 *GetValidMonIconPalettePtr(u16 species)
 {
-    return gMonIconPaletteTable[gMonIconPaletteIndices[SanitizeSpeciesId(species)]].data;
+    return gMonIconPaletteTable[gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex].data;
 }
 
 u8 GetValidMonIconPalIndex(u16 species)
 {
-    return gMonIconPaletteIndices[SanitizeSpeciesId(species)];
+    return gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex;
 }
 
 u8 GetMonIconPaletteIndexFromSpecies(u16 species)
 {
-    return gMonIconPaletteIndices[species];
+    return gSpeciesInfo[species].iconPaletteIndex;
 }
 
 u8 UpdateMonIconFrame(struct Sprite * sprite)

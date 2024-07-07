@@ -504,18 +504,22 @@ static void ItemPc_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *
 {
     u16 itemId;
     const u8 * desc;
+	
     if (onInit != TRUE)
         PlaySE(SE_SELECT);
 
     if (sStateDataPtr->moveModeOrigPos == 0xFF)
     {
         DestroyItemMenuIcon(sStateDataPtr->itemMenuIconSlot ^ 1);
+		
         if (itemIndex != -2)
         {
             itemId = ItemPc_GetItemIdBySlotId(itemIndex);
+			
             CreateItemMenuIcon(itemId, sStateDataPtr->itemMenuIconSlot);
+			
             if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
-                desc = gBattleMoves[ItemIdToBattleMoveId(itemId)].name;
+                desc = gBattleMoves[ItemId_GetHoldEffectParam(itemId)].name;
             else
                 desc = ItemId_GetDescription(itemId);
         }

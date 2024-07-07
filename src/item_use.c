@@ -147,16 +147,6 @@ void Task_ItemUse_CloseMessageBoxAndReturnToField(u8 taskId)
     ScriptContext2_Disable();
 }
 
-u8 CheckIfItemIsTMHMOrEvolutionStone(u16 itemId)
-{
-    if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
-        return 1;
-    else if (ItemId_GetFieldFunc(itemId) == FieldUseFunc_EvoItem)
-        return 2;
-    else
-        return 0;
-}
-
 static inline void sub_80A1184(void)
 {
     gFieldCallback2 = sub_80A1194;
@@ -822,12 +812,12 @@ void FieldUseFunc_OakStopsYou(u8 taskId)
         PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
 }
 
-bool8 ExecuteTableBasedItemEffect(u8 partyMonIndex, u16 item, u8 monMoveIndex)
+bool8 ExecuteTableBasedItemEffect(u8 partyMonIndex, u16 item)
 {
 	if (gMain.inBattle)
 		gBattleStruct->usedReviveItemBattler &= ~(gBitTable[gBattlerInMenuId]);
 	
-	return PokemonUseItemEffects(&gPlayerParty[partyMonIndex], item, partyMonIndex, monMoveIndex, GetBattleMonForItemUse(gBattlerInMenuId, partyMonIndex));
+	return PokemonUseItemEffects(&gPlayerParty[partyMonIndex], item, partyMonIndex, GetBattleMonForItemUse(gBattlerInMenuId, GetPartyIdFromBattleSlot(partyMonIndex)));
 }
 
 bool8 CanUseItemInBattle(bool8 fromBagMenu, u16 itemId)
@@ -835,15 +825,15 @@ bool8 CanUseItemInBattle(bool8 fromBagMenu, u16 itemId)
 	bool8 canUse = FALSE;
 	const u8* failStr = NULL;
 	
-	if (!IsItemUseBlockedByBattleEffect(GetBattleMonForItemUse(gBattlerInMenuId, fromBagMenu ? gBattlerPartyIndexes[gBattlerInMenuId] : gPartyMenu.slotId))
+	if (!IsItemUseBlockedByBattleEffect(fromBagMenu ? gBattlerInMenuId : GetBattleMonForItemUse(gBattlerInMenuId, GetPartyIdFromBattleSlot(gPartyMenu.slotId)))
 	|| ItemId_GetBattleUsage(itemId) == EFFECT_ITEM_THROW_BALL) // Poke balls can be used regardless of preventing effects
 	{
 		if (!fromBagMenu) // use it on a party mon
 		{
-			if (!ExecuteTableBasedItemEffect(gPartyMenu.slotId, itemId, 0))
+			if (!ExecuteTableBasedItemEffect(gPartyMenu.slotId, itemId))
 				canUse = TRUE;
 		}
-		else // use it in battle
+		else // use it in self
 			failStr = PokemonUseItemEffectsBattle(gBattlerInMenuId, itemId, &canUse);
 	}
 	StringExpandPlaceholders(gStringVar4, failStr != NULL ? failStr : gText_WontHaveEffect);

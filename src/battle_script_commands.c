@@ -20,6 +20,7 @@
 #include "naming_screen.h"
 #include "dns.h"
 #include "overworld.h"
+#include "evolution.h"
 #include "form_change.h"
 #include "party_menu.h"
 #include "battle_queued_effects.h"
@@ -51,6 +52,7 @@
 #include "constants/maps.h"
 #include "constants/battle_move_effects.h"
 #include "constants/battle_string_ids.h"
+#include "constants/pokedex.h"
 
 struct StatFractions
 {
@@ -979,9 +981,9 @@ static bool8 AccuracyCalcHelper(void)
 
 static u32 CalcMoveTotalAccuracy(u16 move, u8 attacker, u8 defender)
 {
-	u8 holdEffect, holdEffectParam, moveAcc = gBattleMoves[move].accuracy;
+	u8 holdEffect, moveAcc = gBattleMoves[move].accuracy;
 	u8 accuracyStatStages = gBattleMons[attacker].statStages[STAT_ACC], evasionStatStages = gBattleMons[defender].statStages[STAT_EVASION];
-	u16 atkAbility = GetBattlerAbility(attacker), defAbility = GetBattlerAbility(defender);
+	u16 holdEffectParam, atkAbility = GetBattlerAbility(attacker), defAbility = GetBattlerAbility(defender);
 	u32 totalAccuracy;
 	
 	// Check effects that ignore the user's accuracy stat stages
@@ -1187,7 +1189,8 @@ static void atk04_critcalc(void)
 		gIsCriticalHit = TRUE;
 		
 		// counter for EVO_CRITICAL_HITS
-		if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER && gPartyCriticalHits[gBattlerPartyIndexes[gBattlerAttacker]] < 255)
+		if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER && !(gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_LINK | BATTLE_TYPE_MULTI))
+		&& gPartyCriticalHits[gBattlerPartyIndexes[gBattlerAttacker]] < 255)
 			++gPartyCriticalHits[gBattlerPartyIndexes[gBattlerAttacker]];
 		
 		// Signal for trainer slide
@@ -1391,10 +1394,10 @@ u16 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility)
 
     if (move != MOVE_STRUGGLE)
 	{
-		MulByTypeEffectiveness(move, moveType, 0, 0, gBaseStats[targetSpecies].type1, &multiplier, &flags);
+		MulByTypeEffectiveness(move, moveType, 0, 0, gSpeciesInfo[targetSpecies].types[0], &multiplier, &flags);
 		
-		if (gBaseStats[targetSpecies].type1 != gBaseStats[targetSpecies].type2)
-			MulByTypeEffectiveness(move, moveType, 0, 0, gBaseStats[targetSpecies].type2, &multiplier, &flags);
+		if (gSpeciesInfo[targetSpecies].types[0] != gSpeciesInfo[targetSpecies].types[1])
+			MulByTypeEffectiveness(move, moveType, 0, 0, gSpeciesInfo[targetSpecies].types[1], &multiplier, &flags);
 		
 		if (moveType == TYPE_GROUND && targetAbility == ABILITY_LEVITATE)
 			flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -1414,7 +1417,8 @@ bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move) // Check if substitute c
 
 static void atk07_adjustdamage(void) // Check for effects that prevent the target from faint
 {
-    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
+    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE);
+	u16 param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
 	
 	// Check Focus Band
     if (holdEffect == HOLD_EFFECT_FOCUS_BAND && RandomPercent(param))
@@ -2079,47 +2083,13 @@ static void atk1B_cleareffectsonfaint(void)
         MarkBattlerForControllerExec(battlerId);
         FaintClearSetData(battlerId); // Effects like attractions, trapping, etc.
 		DoSpecialFormChange(battlerId, gBattlerPartyIndexes[battlerId], FORM_CHANGE_FAINT);
+		
 		// Here bc wild mon teleporting from a wild double battle probably don't increase this counter
 		if (gBattleStruct->faintCounter[GetBattlerSide(battlerId)] < 100)
 			++gBattleStruct->faintCounter[GetBattlerSide(battlerId)];
 		
         gBattlescriptCurrInstr += 2;
     }
-}
-
-// unify jumpifbyte, jumpifhalfword and jumpifword into one single function body
-static bool8 JumpBasedOnKind(u32 cmpTo, u32 value, u8 cmpKind)
-{
-	bool8 ret = FALSE;
-	
-	switch (cmpKind)
-	{
-		case CMP_EQUAL:
-		    if (value == cmpTo)
-				ret = TRUE;
-			break;
-		case CMP_NOT_EQUAL:
-		    if (value != cmpTo)
-				ret = TRUE;
-			break;
-		case CMP_GREATER_THAN:
-		    if (value > cmpTo)
-				ret = TRUE;
-			break;
-		case CMP_LESS_THAN:
-		    if (value < cmpTo)
-				ret = TRUE;
-			break;
-		case CMP_COMMON_BITS:
-		    if (value & cmpTo)
-				ret = TRUE;
-			break;
-		case CMP_NO_COMMON_BITS:
-		    if (!(value & cmpTo))
-				ret = TRUE;
-			break;
-	}
-	return ret;
 }
 
 static void atk1C_jumpbasedonstatus(void)
@@ -2137,21 +2107,21 @@ static void atk1C_jumpbasedonstatus(void)
 		switch (gBattlescriptCurrInstr[2])
 		{
 			case ID_STATUS1:
-			    if (JumpBasedOnKind(status, gBattleMons[battlerId].status1, cmpKind))
+			    if (JumpBasedOnKind(gBattleMons[battlerId].status1, cmpKind, status))
 				{
 					gBattlescriptCurrInstr = jumpPtr;
 					return;
 				}
 				break;
 			case ID_STATUS2:
-			    if (JumpBasedOnKind(status, gBattleMons[battlerId].status2, cmpKind))
+			    if (JumpBasedOnKind(gBattleMons[battlerId].status2, cmpKind, status))
 				{
 					gBattlescriptCurrInstr = jumpPtr;
 					return;
 				}
 				break;
 			case ID_STATUS3:
-			    if (JumpBasedOnKind(status, gStatuses3[battlerId], cmpKind))
+			    if (JumpBasedOnKind(gStatuses3[battlerId], cmpKind, status))
 				{
 					gBattlescriptCurrInstr = jumpPtr;
 					return;
@@ -2197,7 +2167,7 @@ bool8 CompareStat(u8 battlerId, u8 statId, s8 cmpTo, u8 cmpKind)
 		cmpTo -= MAX_STAT_STAGES;
 		cmpTo *= -1;
     }
-	return JumpBasedOnKind(cmpTo, gBattleMons[battlerId].statStages[statId], cmpKind);
+	return JumpBasedOnKind(gBattleMons[battlerId].statStages[statId], cmpKind, cmpTo);
 }
 
 static void atk20_jumpifstat(void)
@@ -2262,7 +2232,7 @@ static void atk23_getexp(void)
                         ++viaSentIn;
                 }
             }
-            calculatedExp = gBaseStats[gBattleMons[gBattlerFainted].species].expYield * gBattleMons[gBattlerFainted].level / 5;
+            calculatedExp = gSpeciesInfo[gBattleMons[gBattlerFainted].species].expYield * gBattleMons[gBattlerFainted].level / 5;
 		
             if (gSaveBlock2Ptr->expShare) // Exp share is turned on
             {
@@ -2569,7 +2539,7 @@ static void atk29_jumpifbyte(void)
 {
     const u8 *memByte = READ_PTR(gBattlescriptCurrInstr + 2);
 	
-	if (JumpBasedOnKind(gBattlescriptCurrInstr[6], *memByte, gBattlescriptCurrInstr[1]))
+	if (JumpBasedOnKind(*memByte, gBattlescriptCurrInstr[1], gBattlescriptCurrInstr[6]))
 		gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 7);
 	else
 		gBattlescriptCurrInstr += 11;
@@ -2579,7 +2549,7 @@ static void atk2A_jumpifhalfword(void)
 {
     const u16 *memHword = READ_PTR2(gBattlescriptCurrInstr + 2);
 	
-	if (JumpBasedOnKind(READ_16(gBattlescriptCurrInstr + 6), *memHword, gBattlescriptCurrInstr[1]))
+	if (JumpBasedOnKind(*memHword, gBattlescriptCurrInstr[1], READ_16(gBattlescriptCurrInstr + 6)))
 		gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 8);
 	else
 		gBattlescriptCurrInstr += 12;
@@ -2589,7 +2559,7 @@ static void atk2B_jumpifword(void)
 {
     const u32 *memWord = READ_PTR2(gBattlescriptCurrInstr + 2);
 	
-	if (JumpBasedOnKind(READ_32(gBattlescriptCurrInstr + 6), *memWord, gBattlescriptCurrInstr[1]))
+	if (JumpBasedOnKind(*memWord, gBattlescriptCurrInstr[1], READ_32(gBattlescriptCurrInstr + 6)))
 		gBattlescriptCurrInstr = READ_PTR(gBattlescriptCurrInstr + 10);
 	else
 		gBattlescriptCurrInstr += 14;
@@ -3069,7 +3039,7 @@ static void atk49_moveend(void)
 	u16 originallyUsedMove;
 	u8 i, state, lastCase;
 	bool8 effect;
-    
+	
 	if (!gBattleScripting.atk47_state) // Apply here in case it was'nt called before
 	{
 		BattleScriptCall(BattleScript_DoPreFaintEffects);
@@ -3078,7 +3048,7 @@ static void atk49_moveend(void)
 	originallyUsedMove = gChosenMove == MOVE_UNVAILABLE ? MOVE_NONE : gChosenMove;
 	state = gBattlescriptCurrInstr[1], lastCase = gBattlescriptCurrInstr[2];
 	effect = FALSE;
-
+	
 	do
 	{
 		switch (gBattleScripting.atk49_state)
@@ -3385,6 +3355,11 @@ static void atk49_moveend(void)
 					if (gDisableStructs[i].substituteHP == 0)
 						gBattleMons[i].status2 &= ~(STATUS2_SUBSTITUTE);
 				}
+				++gBattleScripting.atk49_state;
+				break;
+			case ATK49_EVOLUTIONS_TRACKER:
+			    if (originallyUsedMove)
+					TryUpdateEvolutionTracker(EVO_REQ_USE_MOVE_X_TIMES, 1, originallyUsedMove);
 				++gBattleScripting.atk49_state;
 				break;
 			case ATK49_CLEAR_BITS: // Clear bits after attack ends
@@ -4336,6 +4311,8 @@ static void CallAnotherMove(u16 move)
 	SetTypeBeforeUsingMove(move, gBattlerAttacker);
 	gBattleStruct->atkCancellerTracker = CANCELLER_RECALL_CASEID;
 	gBattleStruct->moveEffect.moveEffectByte = MOVE_EFFECT_NONE;
+	gSpecialStatuses[gBattlerAttacker].parentalBondState = PARENTAL_BOND_OFF;
+	gMultiHitCounter = 0;
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 	gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[move].effect];
 }
@@ -5327,6 +5304,10 @@ static void atk76_various(void)
 			gBattlescriptCurrInstr += 7;
 			return;
 		}
+		case VARIOUS_UPDATE_DEFEAT_MON_EVOLUTION_TRACKER:
+		    if (HasAttackerFaintedTarget())
+				TryUpdateEvolutionTracker(EVO_REQ_DEFEAT_SPECIES_X_TIMES, 1, gBattleMons[battlerId].species);
+			break;
     }
     gBattlescriptCurrInstr += 3;
 }
@@ -5957,7 +5938,8 @@ static bool8 CalcKOChance(void)
 
 static void atk93_tryKO(void)
 {
-    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE), param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
+    u8 holdEffect = GetBattlerItemHoldEffect(gBattlerTarget, TRUE);
+	u16 param = ItemId_GetHoldEffectParam(gBattleMons[gBattlerTarget].item);
     bool8 chance;
 	
     if (holdEffect == HOLD_EFFECT_FOCUS_BAND && RandomPercent(param))
@@ -6311,9 +6293,9 @@ static void atkA6_settypetorandomresistance(void) // conversion 2
 	{
 		lastUsedMoveType = gLastUsedMovesTypes[gBattlerTarget];
 		
-		if (lastUsedMoveType != TYPE_MYSTERY)
+		if (lastUsedMoveType != TYPE_MYSTERY && lastUsedMoveType != TYPE_STELLAR)
 		{
-		    for (i = 0, resistTypes = 0; i < NUMBER_OF_MON_TYPES; i++)
+		    for (i = 0, resistTypes = 0; i < NUMBER_OF_MON_TYPES - 1; i++)
 		    {
 		    	switch (GetTypeModifier(lastUsedMoveType, i))
 		    	{
@@ -6326,7 +6308,7 @@ static void atkA6_settypetorandomresistance(void) // conversion 2
 		    
 		    while (resistTypes != 0)
 		    {
-		    	i = RandomMax(NUMBER_OF_MON_TYPES);
+		    	i = RandomMax(NUMBER_OF_MON_TYPES - 1);
 		    	
 		    	if (resistTypes & gBitTable[i])
 		    	{
@@ -7566,7 +7548,8 @@ static void atkEF_handleballthrow(void)
     u8 shakes, catchRate;
 	s8 ballAdition;
 	s32 ballMultiplier;
-    u32 i, odds, weight;
+    u32 odds, weight;
+	const u8 *evolutions;
 
     if (!gBattleControllerExecFlags)
     {
@@ -7601,108 +7584,119 @@ static void atkEF_handleballthrow(void)
 			if (gLastUsedItem == ITEM_SAFARI_BALL)
 				catchRate = gBattleStruct->safariCatchFactor * 1275 / 100;
 			else
-				catchRate = gBaseStats[GetMonData(GetBattlerPartyIndexPtr(gBattlerTarget), MON_DATA_SPECIES)].catchRate; // Don't copy catchRate if transformed
+				catchRate = gSpeciesInfo[GetMonData(GetBattlerPartyIndexPtr(gBattlerTarget), MON_DATA_SPECIES)].catchRate; // Don't copy catchRate if transformed
 			
 			// Get ball catch multiplier
 			ballMultiplier = 100; // default multiplier x1.0
 			
-			switch (gLastUsedItem)
-			{
-				case ITEM_ULTRA_BALL:
-				    ballMultiplier = 200;
-					break;
-				case ITEM_GREAT_BALL:
-				case ITEM_SAFARI_BALL:
-				    ballMultiplier = 150;
-					break;
-				case ITEM_NET_BALL:
-				    if (IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_WATER) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_BUG))
-						ballMultiplier = 350;
-					break;
-				case ITEM_DIVE_BALL:
-				    if (GetCurrentMapType() == MAP_TYPE_UNDERWATER || gIsFishingEncounter || gIsSurfingEncounter)
-						ballMultiplier = 350;
-					break;
-				case ITEM_NEST_BALL:
-				    if (gBattleMons[gBattlerTarget].level < 30)
-						ballMultiplier = 410 - (gBattleMons[gBattlerTarget].level * 10);
-					break;
-				case ITEM_REPEAT_BALL:
-				    if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[gBattlerTarget].species), FLAG_GET_CAUGHT))
-						ballMultiplier = 350;
-					break;
-				case ITEM_TIMER_BALL:
-				    ballMultiplier = (gBattleStruct->battleTurnCounter * 30) + 100;
-                    if (ballMultiplier > 400)
-                        ballMultiplier = 400;
-                    break;
-				case ITEM_DUSK_BALL:
-				    if (gMapHeader.cave || GetCurrentMapType() == MAP_TYPE_UNDERGROUND || GetDNSTimeLapseIsNight())
-						ballMultiplier = 300;
-					break;
-				case ITEM_QUICK_BALL:
-				    if (gBattleStruct->battleTurnCounter == 0)
-						ballMultiplier = 500;
-					break;
-				case ITEM_FAST_BALL:
-				    if (gBaseStats[gBattleMons[gBattlerTarget].species].baseSpeed >= 100)
-						ballMultiplier = 400;
-					break;
-				case ITEM_LEVEL_BALL:
-				    if (gBattleMons[gBattlerAttacker].level >= 4 * gBattleMons[gBattlerTarget].level)
-                        ballMultiplier = 800;
-                    else if (gBattleMons[gBattlerAttacker].level > 2 * gBattleMons[gBattlerTarget].level)
-                        ballMultiplier = 400;
-                    else if (gBattleMons[gBattlerAttacker].level > gBattleMons[gBattlerTarget].level)
-                        ballMultiplier = 200;
-                    break;
-				case ITEM_LURE_BALL:
-				    if (gIsFishingEncounter)
-						ballMultiplier = 500;
-					break;
-				case ITEM_HEAVY_BALL:
-				    weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[gBattlerTarget].species), 1);
-				
-				    if (weight < 1000)
-						ballAdition = -20;
-					else if (weight < 2000)
-						ballAdition = 0;
-					else if (weight < 3000)
-						ballAdition = 20;
-					else
-						ballAdition = 30;
-					break;
-				case ITEM_LOVE_BALL:
-				    if (gBattleMons[gBattlerAttacker].species == gBattleMons[gBattlerTarget].species)
-					{
-						if (GetBattlerGender(gBattlerAttacker) != MON_GENDERLESS && GetBattlerGender(gBattlerTarget) != MON_GENDERLESS
-						&& !ARE_BATTLERS_OF_SAME_GENDER(gBattlerAttacker, gBattlerTarget))
-						    ballMultiplier = 800;
-					}
-					break;
-				case ITEM_MOON_BALL:
-				    for (i = 0; i < EVOS_PER_MON; i++)
-					{
-						if (gEvolutionTable[gBattleMons[gBattlerTarget].species][i].method == EVO_ITEM
-						&& gEvolutionTable[gBattleMons[gBattlerTarget].species][i].param == ITEM_MOON_STONE)
-						    ballMultiplier = 400;
-					}
-					break;
-				case ITEM_BEAST_BALL:
-				    ballMultiplier = 10;
-					break;
-				case ITEM_DREAM_BALL:
-				    if (gBattleMons[gBattlerTarget].status1 & STATUS1_SLEEP || GetBattlerAbility(gBattlerTarget) == ABILITY_COMATOSE)
-						ballMultiplier = 40;
-					break;
-			}
 			// Check Ultra Beast
-			if (IS_SPECIES_ULTRA_BEAST(gBattleMons[gBattlerTarget].species))
+			if (gSpeciesInfo[gBattleMons[gBattlerTarget].species].flags & SPECIES_FLAG_ULTRA_BEAST)
 			{
 				if (gLastUsedItem == ITEM_BEAST_BALL)
 					ballMultiplier = 500;
 				else
 					ballMultiplier = 10;
+			}
+			else
+			{
+				switch (gLastUsedItem)
+			    {
+			    	case ITEM_ULTRA_BALL:
+			    	    ballMultiplier = 200;
+			    		break;
+			    	case ITEM_GREAT_BALL:
+			    	case ITEM_SAFARI_BALL:
+			    	    ballMultiplier = 150;
+			    		break;
+			    	case ITEM_NET_BALL:
+			    	    if (IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_WATER) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_BUG))
+			    			ballMultiplier = 350;
+			    		break;
+			    	case ITEM_DIVE_BALL:
+			    	    if (GetCurrentMapType() == MAP_TYPE_UNDERWATER || gIsFishingEncounter || gIsSurfingEncounter)
+			    			ballMultiplier = 350;
+			    		break;
+			    	case ITEM_NEST_BALL:
+			    	    if (gBattleMons[gBattlerTarget].level < 30)
+			    			ballMultiplier = 410 - (gBattleMons[gBattlerTarget].level * 10);
+			    		break;
+			    	case ITEM_REPEAT_BALL:
+			    	    if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[gBattlerTarget].species), FLAG_GET_CAUGHT))
+			    			ballMultiplier = 350;
+			    		break;
+			    	case ITEM_TIMER_BALL:
+			    	    ballMultiplier = (gBattleStruct->battleTurnCounter * 30) + 100;
+                        if (ballMultiplier > 400)
+                            ballMultiplier = 400;
+                        break;
+			    	case ITEM_DUSK_BALL:
+			    	    if (gMapHeader.cave || GetCurrentMapType() == MAP_TYPE_UNDERGROUND || GetDNSTimeLapseDayOrNight() == TIME_NIGHT)
+			    			ballMultiplier = 300;
+			    		break;
+			    	case ITEM_QUICK_BALL:
+			    	    if (gBattleStruct->battleTurnCounter == 0)
+			    			ballMultiplier = 500;
+			    		break;
+			    	case ITEM_FAST_BALL:
+			    	    if (gSpeciesInfo[gBattleMons[gBattlerTarget].species].baseSpeed >= 100)
+			    			ballMultiplier = 400;
+			    		break;
+			    	case ITEM_LEVEL_BALL:
+			    	    if (gBattleMons[gBattlerAttacker].level >= 4 * gBattleMons[gBattlerTarget].level)
+                            ballMultiplier = 800;
+                        else if (gBattleMons[gBattlerAttacker].level > 2 * gBattleMons[gBattlerTarget].level)
+                            ballMultiplier = 400;
+                        else if (gBattleMons[gBattlerAttacker].level > gBattleMons[gBattlerTarget].level)
+                            ballMultiplier = 200;
+                        break;
+			    	case ITEM_LURE_BALL:
+			    	    if (gIsFishingEncounter)
+			    			ballMultiplier = 500;
+			    		break;
+			    	case ITEM_HEAVY_BALL:
+			    	    weight = gSpeciesInfo[gBattleMons[gBattlerTarget].species].weight;
+			    	
+			    	    if (weight < 1000)
+			    			ballAdition = -20;
+			    		else if (weight < 2000)
+			    			ballAdition = 0;
+			    		else if (weight < 3000)
+			    			ballAdition = 20;
+			    		else
+			    			ballAdition = 30;
+			    		break;
+			    	case ITEM_LOVE_BALL:
+			    	    if (gBattleMons[gBattlerAttacker].species == gBattleMons[gBattlerTarget].species)
+			    		{
+			    			if (GetBattlerGender(gBattlerAttacker) != MON_GENDERLESS && GetBattlerGender(gBattlerTarget) != MON_GENDERLESS
+			    			&& !ARE_BATTLERS_OF_SAME_GENDER(gBattlerAttacker, gBattlerTarget))
+			    			    ballMultiplier = 800;
+			    		}
+			    		break;
+			    	case ITEM_MOON_BALL:
+			    	    evolutions = gSpeciesInfo[gBattleMons[gBattlerTarget].species].evolutions;
+			    		
+			    		if (evolutions != NULL)
+			    		{
+							while (*evolutions != EVOLUTIONS_END)
+							{
+								if (*evolutions == EVO_REQ_ITEM && READ_16(evolutions + 1) == ITEM_MOON_STONE)
+								{
+									ballMultiplier = 400;
+									break;
+								}
+								evolutions += gEvolutionCmdArgumentsSize[*evolutions] + 1;
+							}
+			    		}
+			    		break;
+			    	case ITEM_BEAST_BALL:
+			    	    ballMultiplier = 10;
+			    		break;
+			    	case ITEM_DREAM_BALL:
+			    	    if (gBattleMons[gBattlerTarget].status1 & STATUS1_SLEEP || GetBattlerAbility(gBattlerTarget) == ABILITY_COMATOSE)
+			    			ballMultiplier = 40;
+			    		break;
+			    }
 			}
 			// catchRate is unsigned, which means that it may potentially overflow if sum is applied directly.
 			if (catchRate < 21 && ballAdition == -20)
@@ -8712,5 +8706,11 @@ void BS_TrySetToxicSpikes(void)
 void BS_GetFutureAttackAnim(void)
 {
 	gBattleScripting.animArg1 = GetFutureAttackData(1, gCurrentMove); // Get anim
+	gBattlescriptCurrInstr += 5;
+}
+
+void BS_UpdateRecoilEvolutionTracker(void)
+{
+	TryUpdateEvolutionTracker(EVO_REQ_RECOIL_DAMAGE, gBattleMoveDamage, 0);
 	gBattlescriptCurrInstr += 5;
 }

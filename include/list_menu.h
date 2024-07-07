@@ -56,7 +56,8 @@ struct ListMenuTemplate
     /*0x04*/ void (* moveCursorFunc)(s32 itemIndex, bool8 onInit, struct ListMenu *list);
     /*0x08*/ void (* itemPrintFunc)(u8 windowId, u32 itemId, u8 y);
     /*0x0C*/ u16 totalItems;
-    /*0x0E*/ u16 maxShowed;
+    /*0x0E*/ u8 maxShowed;
+	/*0x0F*/ u8 textNarrowWidth;
     /*0x10*/ u8 windowId;
     /*0x11*/ u8 header_X;
     /*0x12*/ u8 item_X;
@@ -70,8 +71,7 @@ struct ListMenuTemplate
              u8 scrollMultiple:2; // x40, x80 = xC0
     /*0x17*/ u8 fontId:6; // x1, x2, x4, x8, x10, x20 = x3F
              u8 cursorKind:2; // x40, x80
-	/*0x18*/ u8 textNarrowWidth;
-}; /* size = 0x19 */
+}; /* size = 0x18 */
 
 struct ListMenu
 {

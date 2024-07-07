@@ -249,31 +249,14 @@ const union AnimCmd *const gSpriteAnimTable_82349BC[] =
     gSpriteAnim_82349B4,
 };
 
-#define SPECIES_SHINY_TAG 500
-
-#define SPECIES_SPRITE(species, sprite) [SPECIES_##species] = {sprite, 0x800, SPECIES_##species}
-#define SPECIES_PAL(species, pal) [SPECIES_##species] = {pal, SPECIES_##species}
-#define SPECIES_SHINY_PAL(species, pal) [SPECIES_##species] = {pal, SPECIES_##species + SPECIES_SHINY_TAG}
-
 #define TRAINER_SPRITE(trainerPic, sprite, size) [TRAINER_PIC_##trainerPic] = {sprite, size, TRAINER_PIC_##trainerPic}
 #define TRAINER_PAL(trainerPic, pal) [TRAINER_PIC_##trainerPic] = {pal, TRAINER_PIC_##trainerPic}
-
-#include "data/pokemon/graphics/front_pic_coordinates.h"
-#include "data/pokemon/graphics/front_pic_table.h"
-#include "data/pokemon/graphics/back_pic_coordinates.h"
-#include "data/pokemon/graphics/back_pic_table.h"
-#include "data/pokemon/graphics/palette_table.h"
-#include "data/pokemon/graphics/shiny_palette_table.h"
 
 #include "data/trainer/front_pic_anims.h"
 #include "data/trainer/front_pic_tables.h"
 #include "data/trainer/back_pic_anims.h"
 #include "data/trainer/back_pic_tables.h"
-
-#include "data/pokemon/graphics/enemy_mon_elevation.h"
-
 #include "data/trainer/trainer_parties.h"
 #include "data/trainer/trainer_class_names.h"
 #include "data/trainer/trainers.h"
 #include "data/trainer/trainer_slides.h"
-#include "data/pokemon/species_names.h"

@@ -15,6 +15,7 @@
 #include "item_menu_icons.h"
 #include "item_use.h"
 #include "link.h"
+#include "util.h"
 #include "list_menu.h"
 #include "load_save.h"
 #include "mail_data.h"
@@ -179,8 +180,6 @@ static void ItemMenu_SortByAmount(u8 taskId);
 static void SortBagItems(u8 taskId);
 static void Task_SortFinish(u8 taskId);
 static void SortItemsInBag(u8 pocket, u8 type);
-static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*));
-static void Merge(struct ItemSlot* array, u32 low, u32 mid, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*));
 static s8 CompareItemsAlphabetically(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
 static s8 CompareItemsByMost(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
 static s8 CompareItemsByType(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
@@ -2509,7 +2508,7 @@ static void ItemMenu_SortByType(u8 taskId)
 
 static void ItemMenu_SortByAmount(u8 taskId)
 {
-    gTasks[taskId].tSortType = SORT_BY_AMOUNT; //greatest->least
+    gTasks[taskId].tSortType = SORT_BY_AMOUNT; // greatest->least
     gTasks[taskId].func = SortBagItems;
 }
 
@@ -2539,7 +2538,9 @@ static void SortItemsInBag(u8 pocket, u8 type)
 {
     struct ItemSlot* itemMem;
     u16 itemAmount;
-    s8 (*func)(struct ItemSlot*, struct ItemSlot*);
+	struct SortComparator comparator;
+	s8 (*sortFunc)(struct ItemSlot*, struct ItemSlot*);
+	
     switch (pocket)
     {
     case (POCKET_ITEMS - 1):
@@ -2569,86 +2570,33 @@ static void SortItemsInBag(u8 pocket, u8 type)
     switch (type)
     {
     case SORT_ALPHABETICALLY:
-        func = CompareItemsAlphabetically;
+        sortFunc = CompareItemsAlphabetically;
         break;
     case SORT_BY_AMOUNT:
-		func = CompareItemsByMost;
+		sortFunc = CompareItemsByMost;
         break;
     default:
-		func = CompareItemsByType;
+		sortFunc = CompareItemsByType;
         break;
     }
-	MergeSort(itemMem, 0, itemAmount - 1, func);
-}
-
-static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*))
-{
-    u32 mid;
-
-    if (high <= low)
-        return;
-
-    mid = low + (high - low) / 2;
-    MergeSort(array, low, mid, comparator); //Sort left half.
-    MergeSort(array, mid + 1, high, comparator); //Sort right half.
-    Merge(array, low, mid, high, comparator); //Merge results.
-}
-
-static void Merge(struct ItemSlot* array, u32 low, u32 mid, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*))
-{
-    u32 i = low;
-    u32 j = mid + 1;
-    u32 k;
-    struct ItemSlot aux[high + 1];
-
-    for (k = low; k <= high; ++k)
-        aux[k] = array[k];
-
-    for (k = low; k <= high; ++k)
-    { //Merge back to a[low..high]
-        if (i > mid)
-            array[k] = aux[j++];
-        else if (j > high)
-            array[k] = aux[i++];
-        else if (comparator(&aux[j], &aux[i]) < 0)
-            array[k] = aux[j++];
-        else
-            array[k] = aux[i++];
-    }
+	
+	comparator.kind = SORT_BAG_ITEMS;
+	comparator.sortUnion.bagItemSort.array = itemMem;
+	comparator.sortUnion.bagItemSort.func = sortFunc;
+	MergeSortArray(&comparator, itemAmount);
 }
 
 static s8 CompareItemsAlphabetically(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
 {
-    u16 item1 = itemSlot1->itemId;
-    u16 item2 = itemSlot2->itemId;
-    int i;
-    const u8 *name1;
-    const u8 *name2;
-
+	u16 item1 = itemSlot1->itemId;
+	u16 item2 = itemSlot2->itemId;
+    
     if (item1 == ITEM_NONE)
         return 1;
     else if (item2 == ITEM_NONE)
         return -1;
 
-    name1 = ItemId_GetName(item1);
-    name2 = ItemId_GetName(item2);
-
-    for (i = 0; ; ++i)
-    {
-        if (name1[i] == EOS && name2[i] != EOS)
-            return -1;
-        else if (name1[i] != EOS && name2[i] == EOS)
-            return 1;
-        else if (name1[i] == EOS && name2[i] == EOS)
-            return 0;
-
-        if (name1[i] < name2[i])
-            return -1;
-        else if (name1[i] > name2[i])
-            return 1;
-    }
-
-    return 0; //Will never be reached
+    return CompareTextAlphabetically(ItemId_GetName(item1), ItemId_GetName(item2)); 
 }
 
 static s8 CompareItemsByMost(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
@@ -2656,22 +2604,17 @@ static s8 CompareItemsByMost(struct ItemSlot* itemSlot1, struct ItemSlot* itemSl
     u16 quantity1 = GetBagItemQuantity(&itemSlot1->quantity);
     u16 quantity2 = GetBagItemQuantity(&itemSlot2->quantity);
 
-    if (itemSlot1->itemId == ITEM_NONE)
-        return 1;
-    else if (itemSlot2->itemId == ITEM_NONE)
-        return -1;
-
     if (quantity1 < quantity2)
         return 1;
     else if (quantity1 > quantity2)
         return -1;
 
-    return CompareItemsAlphabetically(itemSlot1, itemSlot2); //Items have same quantity so sort alphabetically
+    return CompareItemsAlphabetically(itemSlot1, itemSlot2); // Items have same quantity so sort alphabetically
 }
 
 static s8 CompareItemsByType(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
 {
-    //Null items go last
+    // Null items go last
     u8 type1 = ItemId_GetUsageType(itemSlot1->itemId);
     u8 type2 = ItemId_GetUsageType(itemSlot2->itemId);
 
@@ -2680,5 +2623,5 @@ static s8 CompareItemsByType(struct ItemSlot* itemSlot1, struct ItemSlot* itemSl
     else if (type1 > type2)
         return 1;
 
-    return CompareItemsAlphabetically(itemSlot1, itemSlot2); //Items are of same type so sort alphabetically
+    return CompareItemsAlphabetically(itemSlot1, itemSlot2); // Items are of same type so sort alphabetically
 }

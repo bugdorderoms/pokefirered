@@ -46,6 +46,7 @@
 #include "tileset_anims.h"
 #include "trainer_pokemon_sprites.h"
 #include "vs_seeker.h"
+#include "region_map.h"
 #include "wild_encounter.h"
 #include "dns.h"
 #include "constants/event_objects.h"
@@ -199,8 +200,6 @@ static void SpriteCB_LinkPlayer(struct Sprite * sprite);
 
 extern const struct MapLayout * gMapLayouts[];
 extern const struct MapHeader *const *gMapGroups[];
-
-// Routines related to game state on warping in
 
 static const u8 sWhiteOutMoneyLossMultipliers[] = {
      2,
@@ -508,12 +507,14 @@ static void LoadCurrentMapData(void)
 {
     gMapHeader = *Overworld_GetMapHeaderByGroupAndId(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum);
 	SetCurrentMapLayout(gMapHeader.mapLayoutId);
+	gMapHeader.region = gMapSectionsInfo[gMapHeader.regionMapSectionId].region;
 }
 
 static void LoadSaveblockMapHeader(void)
 {
     gMapHeader = *Overworld_GetMapHeaderByGroupAndId(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum);
     gMapHeader.mapLayout = GetMapLayout();
+	gMapHeader.region = gMapSectionsInfo[gMapHeader.regionMapSectionId].region;
 }
 
 static void SetPlayerCoordsFromWarp(void)
@@ -1738,7 +1739,7 @@ static bool32 LoadMapInStepsLocal(u8 *state)
         (*state)++;
         break;
     case 12:
-        if (GetLastUsedWarpMapSectionId() != gMapHeader.regionMapSectionId && MapHasPreviewScreen(gMapHeader.regionMapSectionId, MPS_TYPE_FOREST) == TRUE)
+        if (GetLastUsedWarpMapSectionId() != gMapHeader.regionMapSectionId && MapHasPreviewScreen(gMapHeader.regionMapSectionId, MAP_PREVIEW_TYPE_FOREST) == TRUE)
         {
             MapPreview_LoadGfx(gMapHeader.regionMapSectionId);
             MapPreview_StartForestTransition(gMapHeader.regionMapSectionId);

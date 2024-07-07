@@ -61,6 +61,7 @@
 #define MON_DATA_SPEED              56
 #define MON_DATA_SPATK              57
 #define MON_DATA_SPDEF              58
+#define MON_DATA_EVOLUTION_TRACKER  59
 
 #define SPLIT_PHYSICAL               0x0
 #define SPLIT_SPECIAL                0x1
@@ -68,26 +69,27 @@
 #define NUM_MOVE_SPLITS              0x3
 
 // Pokemon types
-#define TYPE_NORMAL   0x00
-#define TYPE_FIGHTING 0x01
-#define TYPE_FLYING   0x02
-#define TYPE_POISON   0x03
-#define TYPE_GROUND   0x04
-#define TYPE_ROCK     0x05
-#define TYPE_BUG      0x06
-#define TYPE_GHOST    0x07
-#define TYPE_STEEL    0x08
-#define TYPE_MYSTERY  0x09
-#define TYPE_FIRE     0x0a
-#define TYPE_WATER    0x0b
-#define TYPE_GRASS    0x0c
-#define TYPE_ELECTRIC 0x0d
-#define TYPE_PSYCHIC  0x0e
-#define TYPE_ICE      0x0f
-#define TYPE_DRAGON   0x10
-#define TYPE_DARK     0x11
-#define TYPE_FAIRY    0x12
-#define NUMBER_OF_MON_TYPES     0x13
+#define TYPE_NORMAL         0x00
+#define TYPE_FIGHTING       0x01
+#define TYPE_FLYING         0x02
+#define TYPE_POISON         0x03
+#define TYPE_GROUND         0x04
+#define TYPE_ROCK           0x05
+#define TYPE_BUG            0x06
+#define TYPE_GHOST          0x07
+#define TYPE_STEEL          0x08
+#define TYPE_MYSTERY        0x09
+#define TYPE_FIRE           0x0a
+#define TYPE_WATER          0x0b
+#define TYPE_GRASS          0x0c
+#define TYPE_ELECTRIC       0x0d
+#define TYPE_PSYCHIC        0x0e
+#define TYPE_ICE            0x0f
+#define TYPE_DRAGON         0x10
+#define TYPE_DARK           0x11
+#define TYPE_FAIRY          0x12
+#define TYPE_STELLAR        0x13
+#define NUMBER_OF_MON_TYPES 0x14
 
 // Pokemon egg groups
 #define EGG_GROUP_NONE 0
@@ -154,6 +156,20 @@
 #define MIN_STAT_STAGES     0
 #define MAX_STAT_STAGES     12
 
+// Species flags
+#define SPECIES_FLAG_LEGENDARY    (1 << 0)
+#define SPECIES_FLAG_MYTHICAL     (1 << 1)
+#define SPECIES_FLAG_ULTRA_BEAST  (1 << 2)
+#define SPECIES_FLAG_MEGA         (1 << 3)
+#define SPECIES_FLAG_PRIMAL       (1 << 4)
+#define SPECIES_FLAG_ULTRA_BURST  (1 << 5)
+#define SPECIES_FLAG_GIGANTAMAX   (1 << 6)
+#define SPECIES_FLAG_PARADOX      (1 << 7)
+#define SPECIES_FLAG_TERASTAL     (1 << 8)
+#define SPECIES_FLAG_CANT_TRADE   (1 << 9)
+// Those species flags cause the pokemon to be created with 3 perfect ivs
+#define SPECIES_PERFECT_IVS_FLAGS (SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_MYTHICAL | SPECIES_FLAG_ULTRA_BEAST | SPECIES_FLAG_PARADOX)
+
 // Shiny odds
 #define SHINY_ODDS 8 // Actual probability is SHINY_ODDS/65536
 
@@ -203,12 +219,5 @@
 
 #define PARTY_SIZE 6
 #define BOX_NAME_LENGTH 8
-
-#define EVO_MODE_NORMAL            0
-#define EVO_MODE_TRADE             1
-#define EVO_MODE_ITEM_USE          2
-#define EVO_MODE_ITEM_CHECK        3 // If an Everstone is being held, still want to show that the stone *could* be used on that Pokémon to evolve
-#define EVO_MODE_BATTLE_SPECIAL    4
-#define EVO_MODE_OVERWORLD_SPECIAL 5
 
 #endif // GUARD_CONSTANTS_POKEMON_H

@@ -1118,19 +1118,9 @@ static void Cmd_get_ability(void)
             sAIScriptPtr += 2;
             return;
         }
-
-        if (gBaseStats[gBattleMons[battlerId].species].abilities[1] != ABILITY_NONE)
-        {
-            // AI has no knowledge of opponent, so it guesses which ability.
-            if (Random() % 2)
-                AI_THINKING_STRUCT->funcResult = gBaseStats[gBattleMons[battlerId].species].abilities[0];
-            else
-                AI_THINKING_STRUCT->funcResult = gBaseStats[gBattleMons[battlerId].species].abilities[1];
-        }
-        else
-        {
-            AI_THINKING_STRUCT->funcResult = gBaseStats[gBattleMons[battlerId].species].abilities[0];
-        }
+		
+		// AI has no knowledge of opponent, so it guesses which ability.
+		AI_THINKING_STRUCT->funcResult = gSpeciesInfo[gBattleMons[battlerId].species].abilities[Random() % 2];
     }
     else
     {

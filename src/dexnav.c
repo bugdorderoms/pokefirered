@@ -297,7 +297,7 @@ static void AddSearchWindowText(u16 species, u8 proximity)
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
 	
 	// Species's name
-    StringCopy(gStringVar1, gSpeciesNames[species]);
+    StringCopy(gStringVar1, gSpeciesInfo[species].name);
     AddTextPrinterParameterized3(windowId, 0, WINDOW_X, WINDOW_COL_0, sSearchFontColor, 0, gStringVar1);
 
     // Level
@@ -898,7 +898,8 @@ static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityN
     // Pick random, unique IVs to set to 31. The number of perfect IVs that are assigned is equal to the potential
     iv[0] = RandomMax(NUM_STATS);               // choose 1st perfect stat
 	
-    do {
+    do
+	{
         iv[1] = RandomMax(NUM_STATS);
         iv[2] = RandomMax(NUM_STATS);
     } while ((iv[1] == iv[0])                   // unique 2nd perfect stat
@@ -1013,24 +1014,26 @@ static u16 DexNavGenerateHeldItem(u16 species)
 {
     u16 randVal = RandomMax(100);
     u8 searchLevelInfluence = sDexNavSearchLevel >> 1;
-    u16 item1 = gBaseStats[species].item1;
-    u16 item2 = gBaseStats[species].item2;
+    u16 itemCommon = gSpeciesInfo[species].itemCommon;
+    u16 itemRare = gSpeciesInfo[species].itemRare;
 
     // if no items can be held, then yeah...no items
-    if (!item2 && !item1)
+    if (!itemCommon && !itemRare)
         return ITEM_NONE;
 
     // if both are the same, 100% to hold
-    if (item1 == item2)
-        return item1;
+    if (itemCommon == itemRare)
+        return itemCommon;
 
     // if only one entry, 50% chance
-    if (!item2 && item1)
-        return (randVal < 50) ? item1 : ITEM_NONE;
+    if (itemCommon && !itemRare)
+        return (randVal < 50) ? itemCommon : ITEM_NONE;
 
-    // if both are distinct item1 = 50% + srclvl/2; item2 = 5% + srchlvl/2
+    // if both are distinct:
+	// itemCommon = 50% + srclvl / 2
+	// itemRare = 5% + srchlvl / 2
     if (randVal < (50 + searchLevelInfluence + 5 + sDexNavSearchLevel))
-        return (randVal > 5 + searchLevelInfluence) ? item1 : item2;
+        return (randVal > 5 + searchLevelInfluence) ? itemCommon : itemRare;
     
     return ITEM_NONE;
 }
@@ -1084,12 +1087,12 @@ static bool8 DexNavGetAbilityNum(u16 species)
 #endif
     }
     // Only give hidden ability if Pokemon has been caught before
-    if (genAbility && gBaseStats[species].hiddenAbility && GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
+    if (genAbility && gSpeciesInfo[species].hiddenAbility && GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
         abilityHidden = TRUE;
 		
     //Pick a normal ability of that Pokemon
-    sDexNavSearchDataPtr->abilityNum = gBaseStats[species].abilities[1] ? RandomMax(2) : 0;
-
+	sDexNavSearchDataPtr->abilityNum = RandomMax(2);
+	
     return abilityHidden;
 }
 
@@ -1380,21 +1383,20 @@ static void Task_DexNavFadeAndExit(u8 taskId)
 static bool8 SpeciesInArray(u16 species, u8 section)
 {
     u8 i;
-    u16 dexNum = SpeciesToNationalPokedexNum(species);
-
+	
     switch (section)
     {
     case ENCOUNTER_TYPE_LAND:
         for (i = 0; i < LAND_WILD_COUNT; i++)
         {
-            if (SpeciesToNationalPokedexNum(sDexNavUiDataPtr->landSpecies[i]) == dexNum)
+            if (sDexNavUiDataPtr->landSpecies[i] == species)
                 return TRUE;
         }
         break;
     case ENCOUNTER_TYPE_WATER:
         for (i = 0; i < WATER_WILD_COUNT; i++)
         {
-            if (SpeciesToNationalPokedexNum(sDexNavUiDataPtr->waterSpecies[i]) == dexNum)
+            if (sDexNavUiDataPtr->waterSpecies[i] == species)
                 return TRUE;
         }
         break;
@@ -1521,7 +1523,7 @@ static void PrintCurrentSpeciesInfo(void)
     FillWindowPixelBuffer(WINDOW_INFO, PIXEL_FILL(0));
 
     // species name
-	AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, SPECIES_INFO_Y, sFontColor_Black, 0, species ? gSpeciesNames[species] : sText_DexNav_NoInfo);
+	AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, SPECIES_INFO_Y, sFontColor_Black, 0, species ? gSpeciesInfo[species].name : sText_DexNav_NoInfo);
 
     // search level
     if (!species)
@@ -1536,8 +1538,8 @@ static void PrintCurrentSpeciesInfo(void)
     if (!species)
         AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, sText_DexNav_NoInfo);
     else if (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT))       
-		AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, gBaseStats[species].hiddenAbility ?
-		gAbilities[gBaseStats[species].hiddenAbility].name : gText_PokeSum_Item_None);
+		AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, gSpeciesInfo[species].hiddenAbility ?
+		gAbilities[gSpeciesInfo[species].hiddenAbility].name : gText_PokeSum_Item_None);
     else
         AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, COMPOUND_STRING("Capture first!"));
 
