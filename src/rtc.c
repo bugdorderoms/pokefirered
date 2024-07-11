@@ -47,6 +47,40 @@ static const u8 sNumDaysInMonths[MONTH_COUNT] =
 	[MONTH_DEC - 1] = 31
 };
 
+// Cumulative Days by month
+static const u16 sCumDaysByMonth[MONTH_COUNT] =
+{
+	[MONTH_JAN - 1] = 0,
+	[MONTH_FEB - 1] = 31,
+	[MONTH_MAR - 1] = 59,
+	[MONTH_APR - 1] = 90,
+	[MONTH_MAY - 1] = 120,
+	[MONTH_JUN - 1] = 151,
+	[MONTH_JUL - 1] = 181,
+	[MONTH_AUG - 1] = 212,
+	[MONTH_SEP - 1] = 243,
+	[MONTH_OCT - 1] = 273,
+	[MONTH_NOV - 1] = 304,
+	[MONTH_DEC - 1] = 334
+};
+
+// Cumulative Days by month for leap year
+static const u16 sCumDaysByMonthLeapYear[MONTH_COUNT] =
+{
+	[MONTH_JAN - 1] = 0,
+	[MONTH_FEB - 1] = 31,
+	[MONTH_MAR - 1] = 60,
+	[MONTH_APR - 1] = 91,
+	[MONTH_MAY - 1] = 121,
+	[MONTH_JUN - 1] = 152,
+	[MONTH_JUL - 1] = 182,
+	[MONTH_AUG - 1] = 213,
+	[MONTH_SEP - 1] = 244,
+	[MONTH_OCT - 1] = 274,
+	[MONTH_NOV - 1] = 305,
+	[MONTH_DEC - 1] = 335
+};
+
 /////////
 // RTC //
 /////////
@@ -209,6 +243,39 @@ static u32 ConvertBcdToBinary(u8 bcd)
 		return 0xFF;
 	else
 		return (bcd & 0xF) <= 9 ? (10 * ((bcd >> 4) & 0xF)) + (bcd & 0xF) : 0xFF;
+}
+
+static inline bool8 IsDate1BeforeDate2(u32 y1, u8 m1, u8 d1, u32 y2, u8 m2, u8 d2)
+{
+	return y1 < y2 ? TRUE : (y1 == y2 ? (m1 < m2 ? TRUE : (m1 == m2 ? d1 < d2 : FALSE)) : FALSE);
+}
+
+u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 endMonth, u8 endDay)
+{
+	const u16 *cumDays;
+	u32 year, totalDays = 0;
+	bool8 isLeapYear;
+	
+	if (!IsDate1BeforeDate2(startYear, startMonth, startDay, endYear, endMonth, endDay))
+		return totalDays;
+	
+	isLeapYear = IsLeapYear(startYear);
+	cumDays = isLeapYear ? sCumDaysByMonthLeapYear : sCumDaysByMonth;
+	
+	if (startYear == endYear)
+		return (cumDays[endMonth - 1] + endDay) - (cumDays[startMonth - 1] + startDay);
+	
+	totalDays = (isLeapYear ? 366 : 365) - (cumDays[startMonth - 1] + startDay);
+	
+	year = startYear + 1;
+	while (year < endYear)
+	{
+		totalDays += (IsLeapYear(year) ? 366 : 365);
+		year++;
+	}
+	totalDays += (IsLeapYear(endYear) ? sCumDaysByMonthLeapYear[endMonth - 1] : sCumDaysByMonth[endMonth - 1]) + endDay;
+	
+	return totalDays;
 }
 
 ////////////
@@ -490,123 +557,3 @@ static u8 SiiRtcProbe(void)
 	}
 	return (errorCode << 4) | 1;
 }
-
-//////////////////
-// DAILY EVENTS //
-//////////////////
-
-/*
-// Cumulative Days by month
-static const u16 sCumDaysByMonth[MONTH_COUNT] =
-{
-	[MONTH_JAN - 1] = 0,
-	[MONTH_FEB - 1] = 31,
-	[MONTH_MAR - 1] = 59,
-	[MONTH_APR - 1] = 90,
-	[MONTH_MAY - 1] = 120,
-	[MONTH_JUN - 1] = 151,
-	[MONTH_JUL - 1] = 181,
-	[MONTH_AUG - 1] = 212,
-	[MONTH_SEP - 1] = 243,
-	[MONTH_OCT - 1] = 273,
-	[MONTH_NOV - 1] = 304,
-	[MONTH_DEC - 1] = 334
-};
-
-// Cumulative Days by month for leap year
-static const u16 sCumDaysByMonthLeapYear[MONTH_COUNT] =
-{
-	[MONTH_JAN - 1] = 0,
-	[MONTH_FEB - 1] = 31,
-	[MONTH_MAR - 1] = 60,
-	[MONTH_APR - 1] = 91,
-	[MONTH_MAY - 1] = 121,
-	[MONTH_JUN - 1] = 152,
-	[MONTH_JUL - 1] = 182,
-	[MONTH_AUG - 1] = 213,
-	[MONTH_SEP - 1] = 244,
-	[MONTH_OCT - 1] = 274,
-	[MONTH_NOV - 1] = 305,
-	[MONTH_DEC - 1] = 335
-};
-
-bool8 CheckSetDailyEvent(u16 var, bool8 set)
-{
-	bool8 ret = FALSE;
-	struct DailyEvent *dailyEventData = (struct DailyEvent*)GetVarPointer(var);
-	u8 dailyYear = dailyEventData->year + dailyEventData->century * 100;
-	u8 dailyMonth = dailyEventData->month;
-	u8 dailyDay = dailyEventData->day;
-	u16 year = gRtcLocation.year;
-	u8 month = gRtcLocation.month;
-	u8 day = gRtcLocation.day;
-	
-	if (!(dailyYear > year || (dailyYear == year && dailyMonth > month) || (dailyYear == year && dailyMonth == month && dailyDay > day)) && (dailyDay != day
-	|| dailyMonth != month || dailyYear != year))
-	{
-		if (set)
-		{
-			dailyEventData->year = year % 100;
-			dailyEventData->century = year / 100;
-			dailyEventData->month = month;
-			dailyEventData->day = day;
-			dailyEventData->hour = gRtcLocation.hour;
-			dailyEventData->minute = gRtcLocation.minute;
-		}
-		ret = TRUE;
-	}
-	return ret;
-}
-
-void DoTimeBasedEvents(void)
-{
-	u32 i;
-	u16 var;
-	
-	for (i = 0; i < ARRAY_COUNT(sTimeBasedEventFuncs); i++)
-	{
-		var = sTimeBasedEventFuncs[i].var;
-		
-		if (CheckSetDailyEvent(var, TRUE))
-			sTimeBasedEventFuncs[i].func(GetDaysSinceTimeInValue((struct DailyEvent *)(VarGet(var) | (VarGet(var + 1) << 16))));
-	}
-}
-
-static inline bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2)
-{
-	return y1 < y2 ? TRUE : (y1 == y2 ? (m1 < m2 ? TRUE : (m1 == m2 ? d1 < d2 : FALSE)) : FALSE);
-}
-
-static u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 endMonth, u8 endDay)
-{
-	const u16 *cumDays;
-	u32 year, totalDays = 0;
-	bool8 isLeapYear;
-	
-	if (!IsDate1BeforeDate2(startYear, startMonth, startDay, endYear, endMonth, endDay))
-		return totalDays;
-	
-	isLeapYear = IsLeapYear(startYear);
-	cumDays = isLeapYear ? sCumDaysByMonthLeapYear : sCumDaysByMonth;
-	
-	if (startYear == endYear)
-		return (cumDays[endMonth - 1] + endDay) - (cumDays[startMonth - 1] + startDay);
-	
-	totalDays = (isLeapYear ? 366 : 365) - (cumDays[startMonth - 1] + startDay);
-	
-	year = startYear + 1;
-	if (year < endYear)
-		totalDays += (IsLeapYear(year) ? 366 : 365);
-	
-	totalDays += (IsLeapYear(endYear) ? sCumDaysByMonthLeapYear[endMonth - 1] : sCumDaysByMonth[endMonth - 1]) + endDay;
-	
-	return totalDays;
-}
-
-u32 GetDaysSinceTimeInValue(struct DailyEvent *dailyEventData)
-{
-	u16 startYear = dailyEventData->year + dailyEventData->century * 100;
-	if (startYear < 1900)
-		startYear = 1900;
-	return GetDayDifference(startYear, dailyEventData->month, dailyEventData->day, gRtcLocation.year, gRtcLocation.month, gRtcLocation.day);
-}*/

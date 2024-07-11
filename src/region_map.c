@@ -3703,7 +3703,7 @@ static void FreeFlyMap(u8 taskId)
         if (gUsingRideMon == RIDE_CHARIZARD)
         {
             gUsingRideMon = RIDE_NONE;
-			SetMainCallback2(CB2_ReturnToFieldAndUseRidePager);
+			SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);
         }
         else
             SetMainCallback2(CB2_ReturnToPartyMenuFromFlyMap);

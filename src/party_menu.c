@@ -4419,6 +4419,12 @@ static void SetPartyMonSelectionActions(struct Pokemon *mons, u8 slotId, u8 acti
     }
 }
 
+static void AppendToList(u8 *list, u8 *cursor, u8 newEntry)
+{
+	list[*cursor] = newEntry;
+    (*cursor)++;
+}
+
 static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 {
     u8 i;
@@ -5678,6 +5684,7 @@ static void Task_WaitFormChangeAnim(u8 taskId)
 		
 		SetMonData(mon, MON_DATA_SPECIES, &gTasks[taskId].data[0]);
 		CalculateMonStats(mon);
+		TrySetMonFormChangeCountdown(mon);
 		GetMonNickname(mon, gStringVar1);
 		StringExpandPlaceholders(gStringVar4, gText_FormChangeItem);
 		DisplayPartyMenuMessage(gStringVar4, TRUE);

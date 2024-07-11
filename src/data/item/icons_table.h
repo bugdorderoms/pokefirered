@@ -586,7 +586,6 @@ static const void *const sItemIconGfxPtrs[][2] = {
 	[ITEM_SS_TICKET] = {sItemIcon_SSTicket, sItemIconPalette_SSTicket},
 	[ITEM_N_SOLARIZER] = {sItemIcon_NSolarizer, sItemIconPalette_NSolarizer},
     [ITEM_N_LUNARIZER] = {sItemIcon_NSolarizer, sItemIconPalette_NLunarizer},
-	[ITEM_RIDE_PAGER] = {sItemIcon_RidePager, sItemIconPalette_RidePager},
 	[ITEM_MEGA_BRACELET] = {sItemIcon_MegaBracelet, sItemIconPalette_MegaBracelet},
 	[ITEM_ROTOM_CATALOG] = {sItemIcon_RotomCatalog, sItemIconPalette_RotomCatalog},
 	[ITEM_DNA_SPLICERS] = {sItemIcon_DnaSplicers, sItemIconPalette_DnaSplicers},

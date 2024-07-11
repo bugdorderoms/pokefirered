@@ -147,6 +147,7 @@ void NewGameInitData(void)
     ClearRoamerData();
 	memset(&gSaveBlock1Ptr->registeredItem, 0, sizeof(gSaveBlock1Ptr->registeredItem));
     ClearBag();
+	EnablePlayerBag();
     NewGameInitPCItems();
 	// Debug_NewGameGiveAllItems();
     InitEasyChatPhrases();

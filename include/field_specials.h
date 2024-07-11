@@ -56,6 +56,8 @@ void ResetTrainerFanClub(void);
 void LoadSymbolsIconGraphics(void);
 void FreeSymbolsIconGraphics(void);
 u8 Create8x8SymbolSprite(s16 x, s16 y, u8 subpriority, u8 symbolId);
+void DisablePlayerBag(void);
+void EnablePlayerBag(void);
 
 extern const struct CapeBrinkTutor gCapeBrinkCompatibleSpecies[3];
 

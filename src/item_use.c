@@ -17,6 +17,7 @@
 #include "field_weather.h"
 #include "fieldmap.h"
 #include "item.h"
+#include "ride_pager.h"
 #include "script_menu.h"
 #include "item_menu.h"
 #include "item_use.h"
@@ -29,7 +30,6 @@
 #include "overworld.h"
 #include "party_menu.h"
 #include "region_map.h"
-#include "ride_pager.h"
 #include "script.h"
 #include "strings.h"
 #include "task.h"
@@ -686,17 +686,6 @@ void FieldUseFunc_EvIvDisplay(u8 taskId)
 		StopPokemonLeagueLightingEffectTask();
 		FadeScreen(FADE_TO_BLACK, 0);
 		gTasks[taskId].func = Task_OpenEvIvDisplayFromField;
-	}
-}
-
-void FieldUseFunc_RidePager(u8 taskId)
-{
-	if (!CountObtainedPokeRides())
-		PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
-	else
-	{
-		sItemUseOnFieldCB = Task_InitRidePager;
-		sub_80A103C(taskId);
 	}
 }
 

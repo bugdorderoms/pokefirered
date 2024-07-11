@@ -34,5 +34,6 @@ u8 FlagClear(u16 id);
 bool8 FlagGet(u16 id);
 void ResetSpecialVars(void);
 void ResetMysteryGiftFlags(void);
+void ClearDailyEventFlags(void);
 
 #endif // GUARD_EVENT_DATA_H

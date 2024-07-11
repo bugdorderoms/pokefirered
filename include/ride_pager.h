@@ -1,10 +1,9 @@
 #ifndef GUARD_RIDE_PAGER_H
 #define GUARD_RIDE_PAGER_H
 
+void InitRidePager(void);
 u8 CountObtainedPokeRides(void);
 bool8 PlayerHasObtainedSharpedoPaddle(void);
-void Task_InitRidePager(u8 taskId);
-bool8 FieldCB_ReturnToFieldUseRidePager(void);
 u16 RideToSpeciesId(u8 ride);
 bool8 TryDismountPokeRide(void);
 void TryRemoveStrengthFlag(void);

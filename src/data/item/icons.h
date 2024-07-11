@@ -1468,9 +1468,6 @@ const u32 sItemIcon_NSolarizer[] = INCBIN_U32("graphics/items/icons/n_solarizer.
 const u32 sItemIconPalette_NSolarizer[] = INCBIN_U32("graphics/items/icon_palettes/n_solarizer.gbapal.lz");
 const u32 sItemIconPalette_NLunarizer[] = INCBIN_U32("graphics/items/icon_palettes/n_lunarizer.gbapal.lz");
 
-const u32 sItemIcon_RidePager[] = INCBIN_U32("graphics/items/icons/ride_pager.4bpp.lz");
-const u32 sItemIconPalette_RidePager[] = INCBIN_U32("graphics/items/icon_palettes/ride_pager.gbapal.lz");
-
 const u32 sItemIcon_MegaBracelet[] = INCBIN_U32("graphics/items/icons/mega_bracelet.4bpp.lz");
 const u32 sItemIconPalette_MegaBracelet[] = INCBIN_U32("graphics/items/icon_palettes/mega_bracelet.gbapal.lz");
 

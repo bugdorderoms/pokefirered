@@ -557,7 +557,6 @@ static const u8 sItemDesc_SuperRod[]          = _("An awesome, high-tech fishing
 static const u8 sItemDesc_SSTicket[]          = _("A ticket required for sailing on\nthe ferry S.S. Anne. It has a\ndrawing of a ship on its front.");
 static const u8 sItemDesc_NSolarizer[]        = _("A machine to fuse and to separate\nNecrozma, which needs light, and\nSolgaleo.");
 static const u8 sItemDesc_NLunarizer[]        = _("A machine to fuse and to separate\nNecrozma, which needs light, and\nLunala.");
-static const u8 sItemDesc_RidePager[]         = _("A device that register certains\nPokémon that you can call in any\nplace to ride it.");
 static const u8 sItemDesc_MegaBracelet[]      = _("This cuff contains an power that\nenables Pokémon carrying a Mega\nStone to Mega Evolve in battle.");
 static const u8 sItemDesc_RotomCatalog[]      = _("A catalog of devices that Rotom\nlike. Use it to have Rotom hop in\nand out of devices listed within.");
 static const u8 sItemDesc_DNASplicers[]       = _("A splicer that fuses Kyurem and a\ncertain Pokémon. They are said to\nhave been one in the beginning.");
@@ -7413,14 +7412,6 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FusionItem,
-	},
-	[ITEM_RIDE_PAGER] =
-	{
-		.name = _("Ride Pager"),
-		.description = sItemDesc_RidePager,
-		.pocket = POCKET_KEY_ITEMS,
-		.type = ITEM_TYPE_FIELD,
-		.fieldUseFunc = FieldUseFunc_RidePager,
 	},
 	[ITEM_MEGA_BRACELET] =
 	{

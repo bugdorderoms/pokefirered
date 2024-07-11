@@ -58,6 +58,14 @@ void ResetMysteryGiftFlags(void)
 		FlagClear(i);
 }
 
+void ClearDailyEventFlags(void)
+{
+	u16 i;
+	
+	for (i = FLAG_0x0B2; i <= FLAG_0x0BB; i++)
+		FlagClear(i);
+}
+
 u16 *GetVarPointer(u16 idx)
 {
     if (idx < VARS_START)

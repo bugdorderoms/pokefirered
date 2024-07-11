@@ -2351,3 +2351,13 @@ void DisplayMoveTutorMenu(void)
 	BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
 	CreateTask(Task_WaitFadeOutAndShowMoveTutor, 10);
 }
+
+void EnablePlayerBag(void)
+{
+	FlagSet(FLAG_SYS_BAG_ENABLED);
+}
+
+void DisablePlayerBag(void)
+{
+	FlagClear(FLAG_SYS_BAG_ENABLED);
+}

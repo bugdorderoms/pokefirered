@@ -38,7 +38,7 @@
 #define TEMP_FLAGS_END           FLAG_TEMP_1F
 
 #define FLAG_0x020    			 0x020
-#define FLAG_0x021  			 0x021
+#define FLAG_SYS_RIDE_PAGER_GET  0x021
 #define FLAG_TAUROS_RIDE_GET     0x022
 #define FLAG_STOUTLAND_RIDE_GET  0x023
 #define FLAG_MUDSDALE_RIDE_GET   0x024
@@ -187,6 +187,7 @@
 #define FLAG_LOAD_OFFSCREEN_OBJ  0x0AF
 #define FLAG_DOUBLE_WILD_BATTLE  0x0B0
 #define FLAG_THREE_PERFECT_IVS   0x0B1
+// From flag FLAG_0x0B2 to FLAG_0x0BB are used for daily events, they are reseted every day
 #define FLAG_0x0B2               0x0B2
 #define FLAG_0x0B3               0x0B3
 #define FLAG_0x0B4               0x0B4
@@ -1365,7 +1366,7 @@
 #define FLAG_SYS_POKEMON_GET                                        (SYS_FLAGS + 0x28)
 #define FLAG_SYS_POKEDEX_GET                                        (SYS_FLAGS + 0x29)
 #define FLAG_SYS_DEXNAV_GET                                         (SYS_FLAGS + 0x2A)
-#define FLAG_0x82B                                                  (SYS_FLAGS + 0x2B)
+#define FLAG_SYS_BAG_ENABLED                                        (SYS_FLAGS + 0x2B)
 #define FLAG_SYS_GAME_CLEAR                                         (SYS_FLAGS + 0x2C)
 #define FLAG_0x82D                                                  (SYS_FLAGS + 0x2D)
 #define FLAG_0x82E                                                  (SYS_FLAGS + 0x2E)

@@ -15,8 +15,11 @@
 #include "item_use.h"
 #include "item_menu.h"
 #include "link.h"
+#include "list_menu.h"
+#include "malloc.h"
 #include "map_name_popup.h"
 #include "menu.h"
+#include "menu_indicators.h"
 #include "metatile_behavior.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
@@ -25,6 +28,7 @@
 #include "script.h"
 #include "script_menu.h"
 #include "sound.h"
+#include "start_menu.h"
 #include "string_util.h"
 #include "task.h"
 #include "window.h"
@@ -39,6 +43,7 @@
 ////////////////
 // RIDE PAGER //
 ////////////////
+
 struct Ride
 {
 	struct MenuAction action;
@@ -50,12 +55,12 @@ struct Ride
 #define RIDE_PAGER_MON_PIC_X 18
 #define RIDE_PAGER_MON_PIC_Y 1
 
-static u8 DrawRidePagerMultichoiceWindow(s16 *windowId, s16 *cursorPos, s16 *order);
-static u8 CreateRidePagerMultichoiceWindow(void);
+static void Task_InitRidePager(u8 taskId);
+static void CreateRidePagerMultichoiceWindow(u8 taskId);
 static void UpdateRidePagerMonPic(u8 ride);
 static void PrintRideDescInMessageWindow(u8 ride);
-static void Task_WaitFadeAndGoToRidePagerInput(u8 taskId);
 static void Task_RidePagerHandleInput(u8 taskId);
+static void RidePager_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list);
 static void DestroyRidePagerWindow(u8 taskId, bool8 useRide);
 static void TaurosChargeCallback(u8 taskId);
 static void StoutlandSearchCallback(u8 taskId);
@@ -68,6 +73,7 @@ static void Task_CheckPlayerMovementAndUseRide(u8 taskId);
 static void Task_SummonMonWaitPlayerAnim(u8 taskId);
 static void Task_SummonMonAndSetPlayerAvatarFlag(u8 taskId);
 
+static EWRAM_DATA struct ListMenuItem *sRidesList = NULL;
 EWRAM_DATA u8 gUsingRideMon = 0;
 
 #define RIDE(_species, name, callback, _desc) \
@@ -148,51 +154,20 @@ void TryRemoveStrengthFlag(void)
 		FlagClear(FLAG_SYS_USE_STRENGTH);
 }
 
-#define tWindowId  data[0]
-#define tCursorPos data[1]
-#define tCount     data[2]
-#define tState     data[3]
-#define tOrder(i)  data[i + 4]
+#define tState       data[0]
+#define tWindowId    data[1]
+#define tListTaskId  data[2]
+#define tScrollId    data[3]
+#define tCursorPos   data[4]
+#define tCursorMoved data[5]
+#define tSelectedId  data[6]
 
 #define tRide data[0]
 #define tFlag data[1]
 
-bool8 FieldCB_ReturnToFieldUseRidePager(void)
+void InitRidePager(void)
 {
-	u8 i, count;
-	s16 *data, windowId, cursorPos, order[NUM_RIDE_POKEMON];
-	
-	count = DrawRidePagerMultichoiceWindow(&windowId, &cursorPos, order);
-	FadeInFromBlack();
-	data = gTasks[CreateTask(Task_WaitFadeAndGoToRidePagerInput, 8)].data;
-	tWindowId = windowId;
-	tCursorPos = cursorPos;
-	tCount = count;
-	
-	for (i = 0; i < count; i++)
-		tOrder(i) = order[i];
-	
-	return TRUE;
-}
-
-void Task_InitRidePager(u8 taskId)
-{
-	u8 i;
-	s16 *data = gTasks[taskId].data;
-	
-	for (i = 0; i < 16; i++)
-		data[i] = 0;
-	
-	tCount = DrawRidePagerMultichoiceWindow(&tWindowId, &tCursorPos, &tOrder(0));
-	gTasks[taskId].func = Task_RidePagerHandleInput;
-}
-
-static u8 DrawRidePagerMultichoiceWindow(s16 *windowId, s16 *cursorPos, s16 *order)
-{
-	u8 i, count = 0;
-	
 	PlaySE(SE_WIN_OPEN);
-	ScriptContext2_Enable();
 	
 	if (!IsUpdateLinkStateCBActive())
 	{
@@ -200,38 +175,96 @@ static u8 DrawRidePagerMultichoiceWindow(s16 *windowId, s16 *cursorPos, s16 *ord
 		HandleEnforcedLookDirectionOnPlayerStopMoving();
 		StopPlayerAvatar();
 	}
-	LoadStdWindowFrameGfx();
-	*windowId = CreateRidePagerMultichoiceWindow();
-	DrawStdWindowFrame(*windowId, FALSE);
+	ScriptContext2_Enable();
 	
+	CreateTask(Task_InitRidePager, 80);
+}
+
+static void Task_InitRidePager(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+	
+	switch (tState)
+	{
+		case 0:
+			CreateRidePagerMultichoiceWindow(taskId);
+			tState++;
+			break;
+		case 1:
+			CopyWindowToVram(tWindowId, COPYWIN_MAP);
+			tState++;
+			break;
+		case 2:
+			ScriptMenu_ShowPokemonPic(RideToSpeciesId(tSelectedId), RIDE_PAGER_MON_PIC_X, RIDE_PAGER_MON_PIC_Y);
+			tState++;
+			break;
+		case 3:
+			LoadMessageBoxAndFrameGfx(0, TRUE);
+			PrintRideDescInMessageWindow(tSelectedId);
+			tState++;
+			break;
+		case 4:
+			gTasks[taskId].func = Task_RidePagerHandleInput;
+			break;
+	}
+}
+
+static void CreateRidePagerMultichoiceWindow(u8 taskId)
+{
+	u8 i, maxShowed, count = 0;
+	s16 *data = gTasks[taskId].data;
+	struct WindowTemplate template;
+	struct ListMenuItem rides[NUM_RIDE_POKEMON];
+	
+	// Init rides list
 	for (i = RIDE_NONE; i < NUM_RIDE_POKEMON; i++)
 	{
 		if (FlagGet(sPokeRidesTable[i].flagId))
 		{
-			order[count] = i + 1;
-			StringExpandPlaceholders(gStringVar4, sPokeRidesTable[i].action.text);
-			AddTextPrinterParameterized(*windowId, 2, gStringVar4, 8, count * 16, 0xFF, NULL);
-			++count;
+			rides[count].label = sPokeRidesTable[i].action.text;
+			rides[count].index = i + 1;
+			count++;
 		}
 	}
-	*cursorPos = Menu_InitCursor(*windowId, 2, 0, 0, 16, count, *cursorPos);
-	CopyWindowToVram(*windowId, COPYWIN_MAP);
-	ScriptMenu_ShowPokemonPic(RideToSpeciesId(order[*cursorPos]), RIDE_PAGER_MON_PIC_X, RIDE_PAGER_MON_PIC_Y);
-	LoadMessageBoxAndFrameGfx(0, TRUE);
-	PrintRideDescInMessageWindow(order[*cursorPos]);
+	sRidesList = Alloc(sizeof(struct ListMenuItem) * count);
 	
-	return count;
-}
-
-static u8 CreateRidePagerMultichoiceWindow(void)
-{
-	u8 windowId;
+	for (i = RIDE_NONE; i < count; i++)
+		sRidesList[i] = rides[i];
 	
-	struct WindowTemplate template = SetWindowTemplateFields(0, 1, 1, 13, CountObtainedPokeRides() * 2, 15, 0xFC);
-	windowId = AddWindow(&template);
-	PutWindowTilemap(windowId);
+	tSelectedId = rides[0].index;
 	
-	return windowId;
+	maxShowed = count > 6 ? 6 : count;
+	
+	// Create window
+	LoadStdWindowFrameGfx();
+	template = SetWindowTemplateFields(0, 1, 1, 13, maxShowed * 2, 15, 0xFC);
+	tWindowId = AddWindow(&template);
+	DrawStdWindowFrame(tWindowId, TRUE);
+	
+	// Create list menu
+	gMultiuseListMenuTemplate.items = sRidesList;
+	gMultiuseListMenuTemplate.totalItems = count;
+	gMultiuseListMenuTemplate.windowId = tWindowId;
+    gMultiuseListMenuTemplate.header_X = 0;
+    gMultiuseListMenuTemplate.item_X = 8;
+    gMultiuseListMenuTemplate.cursor_X = 0;
+    gMultiuseListMenuTemplate.lettersSpacing = 0;
+    gMultiuseListMenuTemplate.itemVerticalPadding = 2;
+    gMultiuseListMenuTemplate.upText_Y = 0;
+    gMultiuseListMenuTemplate.maxShowed = maxShowed;
+    gMultiuseListMenuTemplate.fontId = 2;
+    gMultiuseListMenuTemplate.cursorPal = 2;
+    gMultiuseListMenuTemplate.fillValue = 1;
+    gMultiuseListMenuTemplate.cursorShadowPal = 3;
+    gMultiuseListMenuTemplate.moveCursorFunc = RidePager_MoveCursorFunc;
+    gMultiuseListMenuTemplate.itemPrintFunc = NULL;
+    gMultiuseListMenuTemplate.scrollMultiple = 0;
+    gMultiuseListMenuTemplate.cursorKind = 0;
+	
+	tListTaskId = ListMenuInit(&gMultiuseListMenuTemplate, 0, 0);
+	
+	// Create scroll arrow
+	tScrollId = AddScrollIndicatorArrowPairParameterized(SCROLL_ARROW_UP, 60, 5, 108, count - maxShowed, 110, 110, &tCursorPos);
 }
 
 static void PrintRideDescInMessageWindow(u8 ride)
@@ -239,12 +272,6 @@ static void PrintRideDescInMessageWindow(u8 ride)
 	StringExpandPlaceholders(gStringVar4, sPokeRidesTable[ride - 1].desc);
 	FillWindowPixelBuffer(0, PIXEL_FILL(1));
 	AddTextPrinterWithCustomSpeedForMessage(FALSE, 0);
-}
-
-static void Task_WaitFadeAndGoToRidePagerInput(u8 taskId)
-{
-	if (FieldFadeTransitionBackgroundEffectIsFinished())
-		gTasks[taskId].func = Task_RidePagerHandleInput;
 }
 
 static void Task_RidePagerHandlePicboxUpdate(u8 taskId)
@@ -258,8 +285,8 @@ static void Task_RidePagerHandlePicboxUpdate(u8 taskId)
 			++tState;
 			break;
 		case 1:
-			UpdatePokemonSpeciesOnPicbox(RideToSpeciesId(tOrder(tCursorPos)), RIDE_PAGER_MON_PIC_X, RIDE_PAGER_MON_PIC_Y);
-		    PrintRideDescInMessageWindow(tOrder(tCursorPos));
+			UpdatePokemonSpeciesOnPicbox(RideToSpeciesId(tSelectedId), RIDE_PAGER_MON_PIC_X, RIDE_PAGER_MON_PIC_Y);
+		    PrintRideDescInMessageWindow(tSelectedId);
 			gTasks[taskId].func = Task_RidePagerHandleInput;
 			break;
 	}
@@ -268,44 +295,53 @@ static void Task_RidePagerHandlePicboxUpdate(u8 taskId)
 static void Task_RidePagerHandleInput(u8 taskId)
 {
 	s16 *data = gTasks[taskId].data;
+	s32 input = ListMenu_ProcessInput(tListTaskId);
 	
-	if (JOY_NEW(DPAD_UP))
+	ListMenuGetScrollAndRow(tListTaskId, &tCursorPos, NULL);
+	
+	switch (input)
 	{
-		if (tCount > 1)
-		{
+		case LIST_CANCEL:
+			DestroyRidePagerWindow(taskId, FALSE);
+			break;
+		case LIST_NOTHING_CHOSEN:
+		    if (tCursorMoved)
+			{
+				tCursorMoved = FALSE;
+				tState = 0;
+				gTasks[taskId].func = Task_RidePagerHandlePicboxUpdate;
+			}
+			break;
+		default:
 			PlaySE(SE_SELECT);
-			tCursorPos = Menu_MoveCursor(-1);
-			tState = 0;
-			gTasks[taskId].func = Task_RidePagerHandlePicboxUpdate;
-			return;
-		}
-		PlaySE(SE_FAILURE);
+			DestroyRidePagerWindow(taskId, TRUE);
+			break;
 	}
-	else if (JOY_NEW(DPAD_DOWN))
+}
+
+static void RidePager_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list)
+{
+	u8 taskId;
+	
+	if (!onInit)
 	{
-		if (tCount > 1)
-		{
-			PlaySE(SE_SELECT);
-			tCursorPos = Menu_MoveCursor(+1);
-			tState = 0;
-			gTasks[taskId].func = Task_RidePagerHandlePicboxUpdate;
-			return;
-		}
-		PlaySE(SE_FAILURE);
+		PlaySE(SE_SELECT);
+		
+		taskId = FindTaskIdByFunc(Task_RidePagerHandleInput);
+		gTasks[taskId].tSelectedId = itemIndex;
+		gTasks[taskId].tCursorMoved = TRUE;
 	}
-	else if (JOY_NEW(A_BUTTON))
-		DestroyRidePagerWindow(taskId, TRUE);
-	else if (JOY_NEW(B_BUTTON))
-		DestroyRidePagerWindow(taskId, FALSE);
 }
 
 static void DestroyRidePagerWindow(u8 taskId, bool8 useRide)
 {
 	s16 *data = gTasks[taskId].data;
 	
-	PlaySE(SE_SELECT);
 	ClearStdWindowAndFrame(tWindowId, TRUE);
 	RemoveWindow(tWindowId);
+	DestroyListMenuTask(tListTaskId, NULL, NULL);
+	RemoveScrollIndicatorArrowPair(tScrollId);
+	FREE_AND_SET_NULL(sRidesList);
 	PicboxCancel();
 	ClearDialogWindowAndFrame(0, TRUE);
 	ClearPlayerHeldMovementAndUnfreezeObjectEvents();
@@ -313,11 +349,12 @@ static void DestroyRidePagerWindow(u8 taskId, bool8 useRide)
 	if (useRide)
 	{
 		gPlayerAvatar.preventStep = TRUE;
-		gTasks[taskId].func = sPokeRidesTable[tOrder(tCursorPos) - 1].action.func.void_u8;
+		gTasks[taskId].func = sPokeRidesTable[tSelectedId - 1].action.func.void_u8;
 	}
 	else
 	{
-		ScriptContext2_Disable();
+		PlaySE(SE_WIN_OPEN);
+		ShowStartMenu();
 		DestroyTask(taskId);
 	}
 }
@@ -462,22 +499,24 @@ static void Task_CharizardGlide_OpenMap(u8 taskId)
 		CleanupOverworldWindowsAndTilemaps();
 		gUsingRideMon = RIDE_CHARIZARD;
 		InitRegionMapWithExitCB(REGIONMAP_TYPE_FLY, NULL);
+		gPlayerAvatar.preventStep = FALSE;
+		ScriptContext2_Disable();
 		DestroyTask(taskId);
 	}
 }
 
 static void CharizardGlideCallback(u8 taskId)
-{
+{	
 	if (!InUnionRoom() && Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) && !CheckPlayerInGroundRocks())
 	{
 		FadeScreen(FADE_TO_BLACK, 0);
-		gPlayerAvatar.preventStep = FALSE;
-		ScriptContext2_Disable();
 		gTasks[taskId].func = Task_CharizardGlide_OpenMap;
 	}
 	else
 	{
 		ScriptContext1_SetupScript(EventScript_CantUseRideHere);
+		gPlayerAvatar.preventStep = FALSE;
+		ScriptContext2_Disable();
 		DestroyTask(taskId);
 	}
 }
@@ -485,6 +524,7 @@ static void CharizardGlideCallback(u8 taskId)
 ///////////////////
 // RIDE MOVEMENT //
 ///////////////////
+
 static u8 GetRideMovementInput(u8 *newDirection);
 static u8 RideInputHandler_Normal(u8 *newDirection);
 static u8 RideInputHandler_Turning(u8 *newDirection);

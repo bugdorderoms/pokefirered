@@ -10,7 +10,6 @@
 static EWRAM_DATA bool8 sScheduledBgCopiesToVram[4] = {FALSE};
 static EWRAM_DATA u16 sTempTileDataBufferCursor = {0};
 static EWRAM_DATA void *sTempTileDataBuffers[0x20] = {NULL};
-static EWRAM_DATA u8 sStartMenuWindowId = {0};
 
 const u16 gUnknown_841F1C8[] = INCBIN_U16("graphics/text_window/unk_841F1C8.4bpp");
 const u16 gTMCaseMainWindowPalette[] = INCBIN_U16("graphics/tm_case/unk_841F408.gbapal");
@@ -375,7 +374,6 @@ void CopyToBufferFromBgTilemap(u8 bgId, u16 *dest, u8 left, u8 top, u8 width, u8
 void InitStandardTextBoxWindows(void)
 {
     InitWindows(sStandardTextBox_WindowTemplates);
-    sStartMenuWindowId = 0xFF;
 }
 
 void InitTextBoxGfxAndPrinters(void)
@@ -598,31 +596,6 @@ u8 GetTextSpeedSetting(void)
         gSaveBlock2Ptr->optionsTextSpeed = OPTIONS_TEXT_SPEED_MID;
 	
     return gUnknown_841F428[gSaveBlock2Ptr->optionsTextSpeed];
-}
-
-u8 CreateStartMenuWindow(u8 height)
-{
-    if (sStartMenuWindowId == 0xFF)
-    {
-        struct WindowTemplate template = SetWindowTemplateFields(0, 0x16, 1, 7, height * 2 - 1, DLG_WINDOW_PALETTE_NUM, 0x13D);
-        sStartMenuWindowId = AddWindow(&template);
-        PutWindowTilemap(sStartMenuWindowId);
-    }
-    return sStartMenuWindowId;
-}
-
-u8 GetStartMenuWindowId(void)
-{
-    return sStartMenuWindowId;
-}
-
-void RemoveStartMenuWindow(void)
-{
-    if (sStartMenuWindowId != 0xFF)
-    {
-        RemoveWindow(sStartMenuWindowId);
-        sStartMenuWindowId = 0xFF;
-    }
 }
 
 void LoadSignPostWindowFrameGfx(void)

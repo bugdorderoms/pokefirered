@@ -115,6 +115,20 @@
 	(u8)damageAmount,                   \
 	(damageAmount & 0xFF00) >> 8
 
+#define REQ_MOON_PHASE(phase) \
+    EVO_REQ_MOON_PHASE,       \
+	phase
+
+#define REQ_DAMAGE_HP(damageAmount) \
+    EVO_REQ_DAMAGE_HP,              \
+	(u8)damageAmount,               \
+	(damageAmount & 0xFF00) >> 8
+
+#define REQ_FOLLOW_STEPS(numSteps) \
+    EVO_REQ_FOLLOW_STEPS,          \
+	(u8)numSteps,                  \
+	(numSteps & 0xFF00) >> 8
+
 // Evo special macros
 #define CREATE_SPECIES(species) \
     EVO_CREATE_SPECIES,         \
@@ -129,20 +143,6 @@
 
 #define PERSONALITY_FORM \
 	EVO_PERSONALITY_FORM
-
-#define REQ_MOON_PHASE(phase) \
-    EVO_REQ_MOON_PHASE,       \
-	phase
-
-#define REQ_DAMAGE_HP(damageAmount) \
-    EVO_REQ_DAMAGE_HP,              \
-	(u8)damageAmount,               \
-	(damageAmount & 0xFF00) >> 8
-
-#define REQ_FOLLOW_STEPS(numSteps) \
-    EVO_REQ_FOLLOW_STEPS,          \
-	(u8)numSteps,                  \
-	(numSteps & 0xFF00) >> 8
 
 // Modes for GetEvolutionTargetSpecies
 #define EVO_MODE_NORMAL         0 // Levels up

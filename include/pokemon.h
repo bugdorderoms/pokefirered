@@ -56,7 +56,8 @@ struct BoxPokemon
 	/*0x3B*/ u8 ppBonuses;
 	/*0x3C*/ u16 evolutionTracker:10; // Values up to 1023
 	         u16 shiny:1;
-			 u16 unused:5;
+			 u16 formCountdown:3;
+			 u16 unused:2;
 };
 
 struct Pokemon
@@ -480,6 +481,7 @@ bool8 IsMonValidSpecies(struct Pokemon *mon);
 u8 FindMoveSlotInMoveset(struct Pokemon *mon, u16 move);
 u8 FindMoveSlotInBoxMonMoveset(struct BoxPokemon *boxMon, u16 move);
 void DrawSpeciesFootprint(u8 windowId, u16 species, u8 x, u8 y);
+void UpdatePartyFormChangeCountdown(u32 daysSince);
 
 static inline u8 GetNatureFromPersonality(u32 personality)
 {

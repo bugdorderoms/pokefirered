@@ -23,6 +23,7 @@ u16 GetMonFormChangeSpecies(struct Pokemon *mon, u16 species, u16 formChangeType
 u16 DoOverworldFormChange(struct Pokemon *mon, u16 formChangeType);
 void DoPlayerPartyEndBattleFormChange(void);
 bool8 SpeciesHasFormChangeType(u16 species, u16 formChangeType);
+void TrySetMonFormChangeCountdown(struct Pokemon *mon);
 
 // battle form change
 u16 GetBattlerFormChangeSpecies(u8 battlerId, u16 species, u16 itemId, u16 formChangeType);

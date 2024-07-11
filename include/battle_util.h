@@ -210,5 +210,6 @@ bool8 CanUseLastResort(u8 battlerId);
 bool8 TrySetToxicSpikesOnBattlerSide(u8 battlerId);
 void TryUpdateEvolutionTracker(u16 evoMode, u32 upAmount, u16 data);
 bool8 IsMultiBattle(void);
+bool8 IsPlayerBagDisabled(void);
 
 #endif // GUARD_BATTLE_UTIL_H

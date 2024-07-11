@@ -70,6 +70,8 @@ gSpecials:: @ 815FD60
 	def_special ShowDodrioBerryPickingRecords
 	def_special DoDeoxysTriangleInteraction
 	def_special SetDeoxysTrianglePalette
+	def_special DisablePlayerBag
+	def_special EnablePlayerBag
 
 	@ Party specials
 	def_special ChoosePartyMon

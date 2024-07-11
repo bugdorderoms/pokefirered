@@ -2766,7 +2766,7 @@ static void HandleTurnActionSelectionState(void)
                     }
                     break;
                 case B_ACTION_USE_ITEM:
-                    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+                    if (IsPlayerBagDisabled())
                     {
 						gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CANT_USE_ITEM;
                         gSelectionBattleScripts[battlerId] = BattleScript_ActionSelectionItemsCantBeUsed;

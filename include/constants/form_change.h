@@ -94,6 +94,10 @@
 // param = region (REGIONS_COUNT is used to determine that this form is applied to all other regions that are not listed below)
 #define FORM_CHANGE_REGION 0x0014
 
+// form change that sets a countdown, when it reaches 0 the pokemon will revert form.
+// param = num days
+#define FORM_CHANGE_COUNTDOWN 0x0015
+
 // battle mechanic forms. TODO:
 
 // form change for terastalization in battle.

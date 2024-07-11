@@ -453,28 +453,30 @@ void CallWindowFunction(u8 windowId, WindowFunc func)
     func(window.bg, window.tilemapLeft, window.tilemapTop, window.width, window.height, window.paletteNum);
 }
 
-bool8 SetWindowAttribute(u8 windowId, u8 attributeId, u32 value)
+void SetWindowAttribute(u8 windowId, u8 attributeId, u32 value)
 {
     switch (attributeId)
     {
     case WINDOW_TILEMAP_LEFT:
         gWindows[windowId].window.tilemapLeft = value;
-        return FALSE;
+        break;
     case WINDOW_TILEMAP_TOP:
         gWindows[windowId].window.tilemapTop = value;
-        return FALSE;
+        break;
     case WINDOW_PALETTE_NUM:
         gWindows[windowId].window.paletteNum = value;
-        return FALSE;
+        break;
     case WINDOW_BASE_BLOCK:
         gWindows[windowId].window.baseBlock = value;
-        return FALSE;
-    case WINDOW_TILE_DATA:
-    case WINDOW_BG:
-    case WINDOW_WIDTH:
-    case WINDOW_HEIGHT:
+        break;
+	case WINDOW_HEIGHT:
+	    gWindows[windowId].window.height = value;
+		break;
+	case WINDOW_WIDTH:
+		gWindows[windowId].window.width = value;
+		break;
     default:
-        return TRUE;
+        break;
     }
 }
 

@@ -87,7 +87,6 @@ extern const u8 gText_Confirm3[];
 extern const u8 gText_Cancel4[];
 extern const u8 gText_IsThisTheCorrectTime[];
 extern const u8 gText_PkmnFainted3[];
-extern const u8 gStartMenuText_Pokemon[];
 extern const u8 gText_PkmnPoisonSurvived[];
 extern const u8 gText_ExpShareOn[];
 extern const u8 gText_ExpShareOff[];
@@ -197,6 +196,7 @@ extern const u8 gText_MoveInfoPriorityAndCategory[];
 extern const u8 gText_MoveInfoTarget[];
 extern const u8 gText_LinkStandby[];
 extern const u8 gText_BattleMenu[];
+extern const u8 gText_BattleMenuBagDisabled[];
 extern const u8 gText_WhatWillBufferDo[];
 
 // battle_script_commands
@@ -546,22 +546,17 @@ extern const u8 gText_MailReturnedToBagMessageErased[];
 extern const u8 gStartMenu_TimeBoxClock[];
 extern const u8 gText_Font2Colon[];
 extern const u8 gText_Space[];
-extern const u8 gStartMenuText_Dexnav[];
-extern const u8 gStartMenuText_Pokedex[];
 extern const u8 gStartMenuText_Bag[];
-extern const u8 gStartMenuText_Player[];
-extern const u8 gStartMenuText_Save[];
-extern const u8 gStartMenuText_Option[];
-extern const u8 gStartMenuText_Exit[];
-extern const u8 gStartMenuText_Retire[];
+extern const u8 gStartMenuText_Options[];
 extern const u8 gUnknown_84162A9[];
 extern const u8 gText_CurrentLevelCap[];
 extern const u8 gText_SaveError_PleaseExchangeBackupMemory[];
 extern const u8 gText_SavingDontTurnOffThePower2[];
 extern const u8 gSaveStatName_Player[];
 extern const u8 gSaveStatName_Badges[];
-extern const u8 gSaveStatName_Pokedex[];
-extern const u8 gSaveStatName_Time[];
+extern const u8 gSaveStatName_Seen[];
+extern const u8 gSaveStatName_Caught[];
+extern const u8 gSaveStatName_Date[];
 
 // mail
 extern const u8 gText_From[];

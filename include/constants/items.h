@@ -701,7 +701,7 @@
 #define ITEM_SS_TICKET                (GENERAL_ITEMS_END + 23)
 #define ITEM_N_SOLARIZER              (GENERAL_ITEMS_END + 24)
 #define ITEM_N_LUNARIZER              (GENERAL_ITEMS_END + 25)
-#define ITEM_RIDE_PAGER               (GENERAL_ITEMS_END + 26)
+#define ITEM_FASHION_CASE             (GENERAL_ITEMS_END + 26)
 #define ITEM_MEGA_BRACELET            (GENERAL_ITEMS_END + 27)
 #define ITEM_ROTOM_CATALOG            (GENERAL_ITEMS_END + 28)
 #define ITEM_DNA_SPLICERS             (GENERAL_ITEMS_END + 29)
@@ -732,12 +732,11 @@
 #define ITEM_SHINY_CHARM              (GENERAL_ITEMS_END + 54)
 #define ITEM_RAINBOW_WING             (GENERAL_ITEMS_END + 55)
 #define ITEM_SILVER_WING              (GENERAL_ITEMS_END + 56)
-#define ITEM_FASHION_CASE             (GENERAL_ITEMS_END + 57)
 
-#define NUM_KEY_ITEMS                 53
+#define NUM_KEY_ITEMS                 52
 
 // In case you want to add new key items, all the indexes below this will be updated with the corrected index
-#define KEY_ITEMS_END                 ITEM_FASHION_CASE
+#define KEY_ITEMS_END                 ITEM_SILVER_WING
 
 // Tm
 #define ITEM_TM01                     (KEY_ITEMS_END + 1)

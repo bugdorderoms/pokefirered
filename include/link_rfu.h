@@ -237,7 +237,7 @@ u32 GetRfuRecvQueueLength(void);
 void LinkRfu_Shutdown(void);
 void LinkRfu_CreateIdleTask(void);
 bool8 ToggleLMANlinkRecovery(bool32 enable);
-void var_800D_set_xB(void);
+void TrySetUsingUnionRoomStartMenu(void);
 struct GFtgtGname *GetHostRFUtgtGname(void);
 void UpdateWirelessStatusIndicatorSprite(void);
 void InitRFU(void);

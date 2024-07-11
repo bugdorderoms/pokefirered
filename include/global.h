@@ -162,14 +162,6 @@ struct UCoords32
     u32 y;
 };
 
-struct Time
-{
-    /*0x00*/ s16 days;
-    /*0x02*/ s8 hours;
-    /*0x03*/ s8 minutes;
-    /*0x04*/ s8 seconds;
-};
-
 struct Pokedex
 {
 	u32 spindaPersonality; // set when you first see Spinda
@@ -219,6 +211,16 @@ struct LinkBattleRecords
     u8 languages[LINK_B_RECORDS_COUNT];
 };
 
+struct DailyEvent
+{
+	u32 minute:6;
+	u32 hour:5;
+	u32 day:5;
+	u32 month:4;
+	u32 year:7;
+	u32 century:5;
+};
+
 #include "constants/game_stat.h"
 #include "global.fieldmap.h"
 #include "pokemon.h"
@@ -249,11 +251,10 @@ struct SaveBlock2
 	          // from here to down are the structs and data that can be vary in size
 	          u8 itemFlags[ROUND_BITS_TO_BYTES(ITEMS_COUNT)];
               struct Pokedex pokedex;
-              struct Time localTimeOffset;
-              struct Time lastBerryTreeUpdate;
               struct LinkBattleRecords linkBattleRecords;
               struct PokemonJumpRecords pokeJump;
               struct BerryPickingResults berryPick;
+			  struct DailyEvent dailyEvent;
 };
 
 extern struct SaveBlock2 *gSaveBlock2Ptr;

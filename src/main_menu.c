@@ -369,7 +369,7 @@ static void Task_PrintMainMenuText(u8 taskId)
 			CopyWindowToVram(NEWGAME_WINDOW_NEWGAME, COPYWIN_GFX);
 			// Option
 			FillWindowPixelBuffer(NEWGAME_WINDOW_OPTIONS, PIXEL_FILL(10));
-			PrintMainMenuHeaderTextCentered(NEWGAME_WINDOW_OPTIONS, gStartMenuText_Option);
+			PrintMainMenuHeaderTextCentered(NEWGAME_WINDOW_OPTIONS, gStartMenuText_Options);
 			MainMenu_DrawWindow(&sMainMenuWinTemplates[NEWGAME_WINDOW_OPTIONS]);
 			PutWindowTilemap(NEWGAME_WINDOW_OPTIONS);
 			CopyWindowToVram(NEWGAME_WINDOW_OPTIONS, COPYWIN_BOTH);
@@ -392,7 +392,7 @@ static void Task_PrintMainMenuText(u8 taskId)
 			CopyWindowToVram(CONTINUE_WINDOW_NEWGAME, COPYWIN_GFX);
 			// Option
 			FillWindowPixelBuffer(CONTINUE_WINDOW_OPTIONS, PIXEL_FILL(10));
-			PrintMainMenuHeaderTextCentered(CONTINUE_WINDOW_OPTIONS, gStartMenuText_Option);
+			PrintMainMenuHeaderTextCentered(CONTINUE_WINDOW_OPTIONS, gStartMenuText_Options);
 			MainMenu_DrawWindow(&sMainMenuWinTemplates[CONTINUE_WINDOW_OPTIONS]);
 			PutWindowTilemap(CONTINUE_WINDOW_OPTIONS);
 			CopyWindowToVram(CONTINUE_WINDOW_OPTIONS, COPYWIN_GFX);

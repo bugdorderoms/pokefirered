@@ -62,6 +62,7 @@
 #define MON_DATA_SPATK              57
 #define MON_DATA_SPDEF              58
 #define MON_DATA_EVOLUTION_TRACKER  59
+#define MON_DATA_FORM_COUNTDOWN     60
 
 #define SPLIT_PHYSICAL               0x0
 #define SPLIT_SPECIAL                0x1

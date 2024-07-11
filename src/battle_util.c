@@ -5901,3 +5901,10 @@ bool8 IsMultiBattle(void)
     else
         return FALSE;
 }
+
+bool8 IsPlayerBagDisabled(void)
+{
+	if ((gBattleTypeFlags & BATTLE_TYPE_LINK) || !FlagGet(FLAG_SYS_BAG_ENABLED))
+		return TRUE;
+	return FALSE;
+}

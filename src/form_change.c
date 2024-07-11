@@ -97,6 +97,7 @@ static u16 GetSpeciesForm(u16 formChangeType, u16 species, u32 personality, u16 
 					case FORM_CHANGE_START_BATTLE:
 					case FORM_CHANGE_WITHDRAW:
 					case FORM_CHANGE_FAINT_TARGET:
+					case FORM_CHANGE_COUNTDOWN:
 					    targetSpecies = formsTable[i].targetSpecies;
 						break;
 					case FORM_CHANGE_NATURE:
@@ -254,6 +255,25 @@ void DoPlayerPartyEndBattleFormChange(void)
 		
 		if (gBattleStruct->appearedInBattle & gBitTable[i]) // only change form if appeared in battle
 			DoOverworldFormChange(&gPlayerParty[i], FORM_CHANGE_TERRAIN); // update Burmy form
+	}
+}
+
+void TrySetMonFormChangeCountdown(struct Pokemon *mon)
+{
+	u8 i;
+	u16 species = GetMonData(mon, MON_DATA_SPECIES);
+	const struct FormChange *formsTable = gSpeciesInfo[species].formChangeTable;
+	
+	if (formsTable != NULL)
+	{
+		for (i = 0; formsTable[i].method != FORM_CHANGE_TERMINATOR; i++)
+		{
+			if (formsTable[i].method == FORM_CHANGE_COUNTDOWN && formsTable[i].targetSpecies != species)
+			{
+				SetMonData(mon, MON_DATA_FORM_COUNTDOWN, &formsTable[i].param);
+				break;
+			}
+		}
 	}
 }
 

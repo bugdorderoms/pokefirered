@@ -2831,9 +2831,9 @@ static void Task_RunUnionRoom(u8 taskId)
     }
 }
 
-void var_800D_set_xB(void)
+void TrySetUsingUnionRoomStartMenu(void)
 {
-    if (InUnionRoom() == TRUE)
+    if (InUnionRoom())
         gSpecialVar_Result = 11;
 }
 

@@ -213,7 +213,6 @@ SECTIONS {
         src/fldeff_teleport.o(.text);
         src/new_menu_helpers.o(.text);
         src/box_party_pokemon_dropdown.o(.text);
-        src/save_menu_util.o(.text);
         src/map_preview_screen.o(.text);
         src/link_rfu_2.o(.text);
         src/link_rfu_3.o(.text);
@@ -287,6 +286,7 @@ SECTIONS {
 		src/battle_queued_effects.o(.text);
 		src/battle_gimmicks.o(.text);
 		src/rtc.o(.text);
+		src/daily_events.o(.text);
     } =0
 
     script_data :

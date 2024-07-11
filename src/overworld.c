@@ -23,6 +23,7 @@
 #include "link.h"
 #include "link_rfu.h"
 #include "load_save.h"
+#include "daily_events.h"
 #include "m4a.h"
 #include "map_name_popup.h"
 #include "map_preview_screen.h"
@@ -35,7 +36,6 @@
 #include "pokemon_icon.h"
 #include "random.h"
 #include "renewable_hidden_items.h"
-#include "ride_pager.h"
 #include "roamer.h"
 #include "safari_zone.h"
 #include "save_location.h"
@@ -1293,6 +1293,8 @@ void CB1_Overworld(void)
 		
 		if (!ScriptContext2_IsEnabled())
 		{
+			DoDailyEvents();
+			
 			if (ProcessPlayerFieldInput(&fieldInput))
 			{
 				ScriptContext2_Enable();
@@ -1484,13 +1486,6 @@ void CB2_ReturnToFieldWithOpenMenu(void)
 {
     FieldClearVBlankHBlankCallbacks();
     gFieldCallback2 = FieldCB_ReturnToFieldOpenStartMenu;
-    CB2_ReturnToField();
-}
-
-void CB2_ReturnToFieldAndUseRidePager(void)
-{
-    FieldClearVBlankHBlankCallbacks();
-    gFieldCallback2 = FieldCB_ReturnToFieldUseRidePager;
     CB2_ReturnToField();
 }
 

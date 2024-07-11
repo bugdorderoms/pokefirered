@@ -421,7 +421,11 @@ static void IntrDummy(void)
 static void WaitForVBlank(void)
 {
     gMain.intrCheck &= ~INTR_FLAG_VBLANK;
-    VBlankIntrWait();
+	
+	if (!gWirelessCommType)
+		VBlankIntrWait();
+	else
+		while (!(gMain.intrCheck & INTR_FLAG_VBLANK));
 }
 
 void SetVBlankCounter1Ptr(u32 *ptr)

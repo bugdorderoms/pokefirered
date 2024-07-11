@@ -287,7 +287,7 @@ void PlayerHandleChooseAction(u8 battlerId)
 	else
 		PrepareMonNickNoIllusionBuffer(gBattleTextBuff1, battlerId, gBattlerPartyIndexes[battlerId]);
 	
-	BtlController_HandleChooseAction(battlerId, gText_BattleMenu, gText_WhatWillBufferDo, HandleChooseActionAfterDma3);
+	BtlController_HandleChooseAction(battlerId, IsPlayerBagDisabled() ? gText_BattleMenuBagDisabled : gText_BattleMenu, gText_WhatWillBufferDo, HandleChooseActionAfterDma3);
 }
 
 static void HandleChooseMoveAfterDma3(u8 battlerId)

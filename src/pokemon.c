@@ -1172,6 +1172,9 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
 	case MON_DATA_EVOLUTION_TRACKER:
 	    retVal = boxMon->evolutionTracker;
 		break;
+	case MON_DATA_FORM_COUNTDOWN:
+	    retVal = boxMon->formCountdown;
+		break;
     default:
         break;
     }
@@ -1371,6 +1374,9 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
 		break;
 	case MON_DATA_EVOLUTION_TRACKER:
 	    SET16(boxMon->evolutionTracker);
+		break;
+	case MON_DATA_FORM_COUNTDOWN:
+		SET8(boxMon->formCountdown);
 		break;
     case MON_DATA_IVS:
     {
@@ -2672,4 +2678,30 @@ void DrawSpeciesFootprint(u8 windowId, u16 species, u8 x, u8 y)
         }
     }
 	BlitBitmapRectToWindow(windowId, buffer, 0, 0, 16, 16, x, y, 16, 16);
+}
+
+void UpdatePartyFormChangeCountdown(u32 daysSince)
+{
+	u8 i, countDown;
+	
+	for (i = 0; i < PARTY_SIZE; i++)
+	{
+		if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL))
+		{
+			countDown = GetMonData(&gPlayerParty[i], MON_DATA_FORM_COUNTDOWN, NULL);
+			
+			if (countDown)
+			{
+				if (countDown > daysSince)
+					countDown -= daysSince;
+				else
+					countDown = 0;
+				
+				SetMonData(&gPlayerParty[i], MON_DATA_FORM_COUNTDOWN, &countDown);
+				
+				if (!countDown)
+					DoOverworldFormChange(&gPlayerParty[i], FORM_CHANGE_COUNTDOWN);
+			}
+		}
+	}
 }
