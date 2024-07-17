@@ -1085,6 +1085,8 @@ static void PlayAmbientCry(void)
 
 void UpdateAmbientCry(s16 *state, u16 *delayCounter)
 {
+	u8 i, divBy, partyCount;
+	
     switch (*state)
     {
     case 0:
@@ -1095,7 +1097,18 @@ void UpdateAmbientCry(s16 *state, u16 *delayCounter)
         *state = 3;
         break;
     case 2:
-        *delayCounter = RandomMax(1200) + 1200;
+		divBy = 1;
+		partyCount = CalculatePlayerPartyCount();
+		
+		for (i = 0; i < partyCount; i++)
+		{
+			if (IsMonValidSpecies(&gPlayerParty[i]) && GetMonAbility(&gPlayerParty[i]) == ABILITY_SWARM)
+			{
+				divBy = 2;
+				break;
+			}
+		}
+        *delayCounter = ((RandomMax(1200) + 1200) / divBy);
         *state = 3;
         break;
     case 3:
@@ -1114,7 +1127,7 @@ void UpdateAmbientCry(s16 *state, u16 *delayCounter)
 
 static void ChooseAmbientCrySpecies(void)
 {
-    sAmbientCrySpecies = GetLocalWildMon(&sIsAmbientCryWaterMon);
+    sAmbientCrySpecies = GetWildMonForAmbientCry(&sIsAmbientCryWaterMon);
 }
 
 bool32 Overworld_MusicCanOverrideMapMusic(u16 music)
@@ -1594,8 +1607,7 @@ static void InitCurrentFlashLevelScanlineEffect(void)
         ScanlineEffect_SetParams((struct ScanlineEffectParams){
             .dmaDest = &REG_WIN0H,
             .dmaControl = (2 >> 1) | ((DMA_16BIT | DMA_DEST_RELOAD | DMA_SRC_INC | DMA_REPEAT | DMA_START_HBLANK | DMA_ENABLE) << 16),
-            .initState = 1,
-            .unused9 = 0
+            .initState = 1
         });
     }
 }

@@ -1,3 +1,5 @@
+#include "generations.h"
+
 // If this setting is enabled, it blocks the experience gain based on the number of badges you have.
 // To do so, go to "src/battle_script_commands.c" and edit the levels for each badge in "sExpBlockLevels".
 #define EXP_BLOCK TRUE
@@ -141,3 +143,7 @@
 // If this setting is enabled, evolutions will be able to requires a moon phase in order to evolve.
 // Otherwise, this requirement will be ignored if set.
 #define MOON_PHASE_EVO_REQUIREMENT TRUE
+
+// This setting defines which Generation the TMs will be associated with. For example, GEN_9 will generate the TM items of Generation III,
+// GEN_7 the TMs of Generation VII, and so on.
+#define TMS_GEN GEN_9

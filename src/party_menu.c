@@ -768,10 +768,29 @@ void ChooseMonForDaycare(void)
     InitPartyMenu(PARTY_MENU_TYPE_DAYCARE, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON_2, Task_HandleChooseMonInput, CB2_ReturnToField);
 }
 
-void ChoosePartyMonByMenuType(u8 menuType)
+static void Task_WaitFadeAndInitChoosePartyPokemon(u8 taskId)
 {
-    gFieldCallback2 = CB2_FadeFromPartyMenu;
-    InitPartyMenu(menuType, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_AND_CLOSE, FALSE, PARTY_MSG_CHOOSE_MON, Task_HandleChooseMonInput, CB2_ReturnToField);
+    if (!gPaletteFade.active)
+    {
+        gPaletteFade.bufferTransferDisabled = TRUE;
+		gFieldCallback2 = CB2_FadeFromPartyMenu;
+		InitPartyMenu(gTasks[taskId].data[0], PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_AND_CLOSE, FALSE, PARTY_MSG_CHOOSE_MON, Task_HandleChooseMonInput, CB2_ReturnToField);
+        DestroyTask(taskId);
+    }
+}
+
+void ChoosePartyMon(void)
+{
+    ScriptContext2_Enable();
+    gTasks[CreateTask(Task_WaitFadeAndInitChoosePartyPokemon, 10)].data[0] = PARTY_MENU_TYPE_CHOOSE_MON;
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
+}
+
+void SelectMoveTutorMon(void)
+{
+    ScriptContext2_Enable();
+    gTasks[CreateTask(Task_WaitFadeAndInitChoosePartyPokemon, 10)].data[0] = PARTY_MENU_TYPE_MOVE_RELEARNER;
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
 }
 
 static void CB2_UpdatePartyMenu(void)
@@ -2152,6 +2171,14 @@ static u8 TryTakeMonItem(struct Pokemon *mon, u16 item)
 u8 GetCursorSelectionMonId(void)
 {
     return gPartyMenu.slotId;
+}
+
+void IsSelectedMonEgg(void)
+{
+    if (GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_IS_EGG))
+        gSpecialVar_Result = TRUE;
+    else
+        gSpecialVar_Result = FALSE;
 }
 
 u8 GetPartyMenuType(void)

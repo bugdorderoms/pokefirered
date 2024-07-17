@@ -300,6 +300,7 @@
 #define ANIM_TAG_ABILITY_POP_UP2            (ANIM_SPRITES_START + 290)
 #define ANIM_TAG_ABILITY_POP_UP3            (ANIM_SPRITES_START + 291)
 #define ANIM_TAG_ABILITY_POP_UP4            (ANIM_SPRITES_START + 292)
+#define ANIM_TAG_KARATE_HAND                (ANIM_SPRITES_START + 293)
 
 // battlers
 #define ANIM_ATTACKER    0
@@ -404,6 +405,25 @@
 
 // Most tasks return a value to gBattleAnimArgs[7].
 #define ARG_RET_ID 0x7
+
+// For createsprite macro to use internally
+#define ANIMSPRITE_IS_TARGET (1 << 7)
+
+// Flags given to various functions to indicate which palettes to consider.
+// Handled by UnpackSelectedBattlePalettes
+#define F_PAL_BG          (1 << 0)
+#define F_PAL_ATTACKER    (1 << 1)
+#define F_PAL_TARGET      (1 << 2)
+#define F_PAL_ATK_PARTNER (1 << 3)
+#define F_PAL_DEF_PARTNER (1 << 4)
+#define F_PAL_ANIM_1      (1 << 5) // Palette set for GetBattleAnimBg1Data/GetBattleAnimBgDataByPriorityRank. Only used (ineffectually?) by Aromatherapy.
+#define F_PAL_ANIM_2      (1 << 6) // Palette set for GetBattleAnimBgData/GetBattleAnimBgDataByPriorityRank. Unused.
+#define F_PAL_ATK_SIDE    (F_PAL_ATTACKER | F_PAL_ATK_PARTNER)
+#define F_PAL_DEF_SIDE    (F_PAL_TARGET | F_PAL_DEF_PARTNER)
+#define F_PAL_BATTLERS    (F_PAL_ATK_SIDE | F_PAL_DEF_SIDE)
+// The below are only used by AnimTask_BlendSelected to get battler sprite palettes by position rather than by role.
+// It's redundant with F_PAL_BATTLERS, because they're only ever used together to refer to all the battlers at once.
+#define F_PAL_BATTLERS_2  (1 << 7 | 1 << 8 | 1 << 9 | 1 << 10)
 
 // Flags for AnimTask_TransformMon and HandleSpeciesGfxDataChange
 #define SPECIESGFX_FLAG_IS_GHOST             (1 << 0)

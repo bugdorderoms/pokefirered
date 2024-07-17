@@ -1062,11 +1062,11 @@ static void Task_SaveGameAfterLinkBattle(u8 taskId)
             break;
         case LINK_SAVE_STATE_WARP_PLAYER:
             SetContinueGameWarpStatusToDynamicWarp();
-            sub_80DA45C();
+            WriteSaveBlock2();
             tState = LINK_SAVE_STATE_WAIT_WRITE_SAVEBLOCK1;
             break;
         case LINK_SAVE_STATE_WAIT_WRITE_SAVEBLOCK1:
-            if (sub_80DA4A0())
+            if (WriteSaveBlock1Sector())
             {
                 ClearContinueGameWarpStatus2();
                 tState = LINK_SAVE_STATE_START_FADE_OUT;

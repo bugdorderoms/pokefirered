@@ -670,7 +670,7 @@ static const struct PickupItem sPickupItems[] =
     { ITEM_RAWST_BERRY,  55 },
     { ITEM_ASPEAR_BERRY, 65 },
     { ITEM_PERSIM_BERRY, 75 },
-    { ITEM_TM10,         80 },
+    { NUM_TO_TM(10),     80 },
     { ITEM_PP_UP,        85 },
     { ITEM_RARE_CANDY,   90 },
     { ITEM_NUGGET,       95 },
@@ -4769,7 +4769,6 @@ static void atk76_various(void)
 				gBattleCommunication[MULTIUSE_STATE] = FALSE;
 			break;
 		case VARIOUS_RESET_INTIMIDATE_TRACE_BITS:
-	        gSpecialStatuses[battlerId].traced = FALSE;
 			gSpecialStatuses[battlerId].switchInAbilityDone = FALSE;
 			break;
 		case VARIOUS_UPDATE_CHOICE_MOVE_ON_LVL_UP:
@@ -5023,7 +5022,6 @@ static void atk76_various(void)
 			{
 				AbilityBattleEffects(ABILITYEFFECT_NEUTRALIZING_GAS, 0);
 				AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, battlerId);
-				AbilityBattleEffects(ABILITYEFFECT_TRACE, battlerId);
 			}
 			return;
 		case VARIOUS_TRY_END_NEUTRALIZING_GAS: // Try remove it when ability changed or suppresed
@@ -8328,7 +8326,7 @@ void BS_Metronome(void)
 	
     while (TRUE)
     {
-        move = RandomRange(MOVE_NONE + 1, MOVES_COUNT - 1);
+        move = RandomRange(MOVE_NONE + 1, METRONOME_MOVES_COUNT - 1);
 	    
         if (!gBattleMoves[move].flags.forbiddenMetronome)
 		{

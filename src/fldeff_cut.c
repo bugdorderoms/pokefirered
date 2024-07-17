@@ -122,14 +122,29 @@ static u8 MetatileAtCoordsIsGrassTile(s16 x, s16 y)
     return TestMetatileAttributeBit(MapGridGetMetatileAttributeAt(x, y, METATILE_ATTRIBUTE_TERRAIN), TILE_TERRAIN_GRASS);
 }
 
+static bool8 GetCutGrassRange(u8 *range)
+{
+	u16 ability = GetMonAbility(&gPlayerParty[GetCursorSelectionMonId()]);
+	bool8 hasHyperCutter = (ability == ABILITY_HYPER_CUTTER);
+	
+	if (hasHyperCutter)
+		*range = CUT_SIDE + 2;
+	else
+		*range = CUT_SIDE;
+	
+	return hasHyperCutter;
+}
+
 bool8 SetUpFieldMove_Cut(void)
 {
     s16 x, y;
     u8 i, j;
+	u8 cutRange;
+	bool8 hasHyperCutter;
 	
     sScheduleOpenDottedHole = FALSE;
 	
-    if (CutMoveRuinValleyCheck() == TRUE)
+    if (CutMoveRuinValleyCheck())
     {
         sScheduleOpenDottedHole = TRUE;
         gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
@@ -137,7 +152,7 @@ bool8 SetUpFieldMove_Cut(void)
         return TRUE;
     }
 
-    if (CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_CUT_TREE) == TRUE)
+    if (CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_CUT_TREE))
     {
         gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
         gPostMenuFieldCallback = FieldCallback_CutTree;
@@ -147,16 +162,24 @@ bool8 SetUpFieldMove_Cut(void)
     else
     {
         PlayerGetDestCoords(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
-    
-        for (i = 0; i < CUT_SIDE; i++)
+		
+		hasHyperCutter = GetCutGrassRange(&cutRange);
+		
+        for (i = 0; i < cutRange; i++)
         {
             y = gPlayerFacingPosition.y - 1 + i;
-            for (j = 0; j < CUT_SIDE; j++)
+			if (hasHyperCutter)
+				--y;
+			
+            for (j = 0; j < cutRange; j++)
             {
                 x = gPlayerFacingPosition.x - 1 + j;
+				if (hasHyperCutter)
+					--x;
+				
                 if (MapGridGetZCoordAt(x, y) == gPlayerFacingPosition.height)
                 {
-                    if (MetatileAtCoordsIsGrassTile(x, y) == TRUE)
+                    if (MetatileAtCoordsIsGrassTile(x, y))
                     {
                         gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
                         gPostMenuFieldCallback = FieldCallback_CutGrass;
@@ -200,7 +223,8 @@ bool8 FldEff_UseCutOnTree(void)
 static void FieldMoveCallback_CutGrass(void)
 {
     FieldEffectActiveListRemove(FLDEFF_USE_CUT_ON_GRASS);
-    if (sScheduleOpenDottedHole == TRUE)
+    
+	if (sScheduleOpenDottedHole)
         CutMoveOpenDottedHoleDoor();
     else
         FieldEffectStart(FLDEFF_CUT_GRASS);
@@ -209,19 +233,29 @@ static void FieldMoveCallback_CutGrass(void)
 bool8 FldEff_CutGrass(void)
 {
     u8 i, j;
+	u8 cutRange;
+	bool8 hasHyperCutter;
     s16 x, y;
     u8 pos;
 
     PlaySE(SE_M_CUT);
     pos = gFieldEffectArguments[1] - 1;
     PlayerGetDestCoords(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
-
-    for (i = 0; i < CUT_SIDE; i++)
+	
+	hasHyperCutter = GetCutGrassRange(&cutRange);
+	
+    for (i = 0; i < cutRange; i++)
     {
         y = gPlayerFacingPosition.y - 1 + i;
-        for (j = 0; j < CUT_SIDE; j++)
+		if (hasHyperCutter)
+			--y;
+		
+        for (j = 0; j < cutRange; j++)
         {
             x = gPlayerFacingPosition.x - 1 + j;
+			if (hasHyperCutter)
+				--x;
+			
             if (MapGridGetZCoordAt(x, y) == gPlayerFacingPosition.height)
             {
                 if (MetatileAtCoordsIsGrassTile(x, y) == TRUE)

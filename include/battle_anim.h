@@ -147,6 +147,7 @@ extern const struct OamData gOamData_AffineDouble_ObjBlend_32x64;
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
 
+u8 GetBattlerForAnimScript(u8 animBattler);
 void MoveBattlerSpriteToBG(u8 battlerId, bool8 toBG_2);
 void ResetBattleAnimBg(bool8 to_BG2);
 void ClearBattleAnimationVars(void);
@@ -375,6 +376,7 @@ bool8 TranslateAnimVerticalArc(struct Sprite *sprite);
 void SetSpritePrimaryCoordsFromSecondaryCoords(struct Sprite *sprite);
 void InitSpritePosToAnimTarget(struct Sprite *sprite, bool8 respectMonPicOffsets);
 void InitSpritePosToAnimAttacker(struct Sprite *sprite, bool8 respectMonPicOffsets);
+void InitSpritePosToAnimBattler(struct Sprite *sprite, u8 battler, bool8 respectMonPicOffsets);
 u8 GetBattlerAtPosition(u8 position);
 bool8 IsBattlerSpritePresent(u8 battlerId);
 void GetBattleAnimBgData(struct BattleAnimBgData *animBgData, u32 bgId);
@@ -462,7 +464,7 @@ extern const struct SpriteTemplate gBasicHitSplatSpriteTemplate;
 extern const struct SpriteTemplate gWaterHitSplatSpriteTemplate;
 
 u32 UnpackSelectedBattleAnimPalettes(s16 selector);
-void AnimTask_CurseBlendEffect(u8 taskId);
+void AnimTask_BlendColorCycle(u8 taskId);
 void AnimTask_BlendColorCycleExclude(u8 taskId);
 void AnimTask_BlendColorCycleByTag(u8 taskId);
 void AnimTask_FlashAnimTagWithColor(u8 taskId);
@@ -557,9 +559,7 @@ extern const union AnimCmd *const gAnims_WaterMudOrb[];
 extern const union AnimCmd *const gAnims_WaterBubble[];
 
 void AnimWaterPulseRing(struct Sprite *sprite);
-
-// smokescreen.c
-u8 SmokescreenImpact(s16 x, s16 y, u8 a3);
+void AnimToTargetInSinWave(struct Sprite *sprite);
 
 // battle_anim_utility_funcs.c
 void AnimTask_BlendSelected(u8 taskId);
@@ -591,9 +591,7 @@ void AnimTask_SetAttackerInvisibleWaitForSignal(u8 taskId);
 void AnimTask_SetInvisible(u8 taskId);
 
 // battle_anim_scripts.s
-extern const u16 gMovesWithQuietBGM[];
 extern const u8 *const gBattleAnims_General[];
-extern const u8 *const gBattleAnims_Moves[];
 extern const u8 *const gBattleAnims_StatusConditions[];
 extern const u8 *const gBattleAnims_Special[];
 

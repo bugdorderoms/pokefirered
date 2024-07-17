@@ -1417,7 +1417,7 @@ static void MoveInfoPrintMoveNameAndDescription(u8 battlerId)
 	u16 move = moveInfo->moves[gMoveSelectionCursor[battlerId]];
 	
 	// Move's name and description
-	ReformatStringToMaxChars(gMoveDescriptionPointers[move - 1], 0, 30, FALSE);
+	ReformatStringToMaxChars(gBattleMoves[move].description, 0, 30, FALSE);
 	CreateBattleMoveInfoWindowsAndArrows(move);
 }
 

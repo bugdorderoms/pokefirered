@@ -15,6 +15,11 @@
 #include "constants/songs.h"
 #include "constants/weather.h"
 
+#define TAG_SMOKESCREEN 55019
+
+#define PALTAG_SHADOW 55039
+#define GFXTAG_SHADOW 55129
+
 // Function Declarations
 static void AnimBlackSmokeStep(struct Sprite *);
 static void AnimWhiteHalo_Step1(struct Sprite *);
@@ -70,8 +75,121 @@ static void MoveOdorSleuthClone(struct Sprite *);
 static void AnimTask_TeeterDanceMovementStep(u8);
 static void AnimRecycleStep(struct Sprite *);
 static void AnimTask_SlackOffSquishStep(u8);
+static void SmokescreenImpact_Callback(struct Sprite * sprite);
+static void SmokescreenImpact_Callback_DestroySprite(struct Sprite * sprite);
 
 // Data
+const struct CompressedSpriteSheet gSpriteSheet_EnemyShadow =
+{
+    .data = gFile_graphics_battle_interface_enemy_mon_shadow_sheet, .size = 0x80, .tag = GFXTAG_SHADOW
+};
+
+static const struct OamData sOamData_EnemyShadow =
+{
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x8),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(32x8),
+    .tileNum = 0,
+    .priority = 3,
+    .paletteNum = 0,
+    .affineParam = 0
+};
+
+const struct SpriteTemplate gSpriteTemplate_EnemyShadow =
+{
+    .tileTag = GFXTAG_SHADOW,
+    .paletteTag = PALTAG_SHADOW,
+    .oam = &sOamData_EnemyShadow,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCB_SetInvisible
+};
+
+static const struct CompressedSpriteSheet sSmokescreenImpactSpriteSheet =
+{
+    .data = gSmokescreenImpactTiles, .size = 0x180, .tag = TAG_SMOKESCREEN
+};
+
+static const struct CompressedSpritePalette sSmokescreenImpactSpritePalette =
+{
+    .data = gSmokescreenImpactPalette, .tag = TAG_SMOKESCREEN
+};
+
+static const struct OamData sOamData_SmokescreenImpact =
+{
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(16x16),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(16x16),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+    .affineParam = 0
+};
+
+static const union AnimCmd sAnim_SmokescreenImpact_0[] =
+{
+    ANIMCMD_FRAME(0, 4),
+    ANIMCMD_FRAME(4, 4),
+    ANIMCMD_FRAME(8, 4),
+    ANIMCMD_END
+};
+
+static const union AnimCmd sAnim_SmokescreenImpact_1[] =
+{
+    ANIMCMD_FRAME(0, 4, .hFlip = TRUE),
+    ANIMCMD_FRAME(4, 4, .hFlip = TRUE),
+    ANIMCMD_FRAME(8, 4, .hFlip = TRUE),
+    ANIMCMD_END
+};
+
+static const union AnimCmd sAnim_SmokescreenImpact_2[] =
+{
+    ANIMCMD_FRAME(0, 4, .vFlip = TRUE),
+    ANIMCMD_FRAME(4, 4, .vFlip = TRUE),
+    ANIMCMD_FRAME(8, 4, .vFlip = TRUE),
+    ANIMCMD_END
+};
+
+static const union AnimCmd sAnim_SmokescreenImpact_3[] =
+{
+    ANIMCMD_FRAME(0, 4, .hFlip = TRUE, .vFlip = TRUE),
+    ANIMCMD_FRAME(4, 4, .hFlip = TRUE, .vFlip = TRUE),
+    ANIMCMD_FRAME(8, 4, .hFlip = TRUE, .vFlip = TRUE),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sAnims_SmokescreenImpact[] =
+{
+    sAnim_SmokescreenImpact_0,
+    sAnim_SmokescreenImpact_1,
+    sAnim_SmokescreenImpact_2,
+    sAnim_SmokescreenImpact_3,
+};
+
+static const struct SpriteTemplate sSmokescreenImpactSpriteTemplate =
+{
+    .tileTag = TAG_SMOKESCREEN,
+    .paletteTag = TAG_SMOKESCREEN,
+    .oam = &sOamData_SmokescreenImpact,
+    .anims = sAnims_SmokescreenImpact,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SmokescreenImpact_Callback
+};
+
 static const union AnimCmd sScratchAnimCmds[] =
 {
     ANIMCMD_FRAME(0, 4),
@@ -1134,8 +1252,68 @@ static void AnimBlackSmokeStep(struct Sprite *sprite)
 
 void AnimTask_SmokescreenImpact(u8 taskId)
 {
-    SmokescreenImpact(GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + 8, GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + 8, 0);
+	u8 mainSpriteId;
+	s16 x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + 8;
+	s16 y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + 8;
+    u8 spriteId1, spriteId2, spriteId3, spriteId4;
+    struct Sprite *mainSprite;
+
+    if (GetSpriteTileStartByTag(sSmokescreenImpactSpriteSheet.tag) == 0xFFFF)
+    {
+        LoadCompressedSpriteSheetUsingHeap(&sSmokescreenImpactSpriteSheet);
+        LoadCompressedSpritePaletteUsingHeap(&sSmokescreenImpactSpritePalette);
+    }
+
+    mainSpriteId = CreateInvisibleSpriteWithCallback(SmokescreenImpact_Callback);
+    mainSprite = &gSprites[mainSpriteId];
+    mainSprite->data[1] = 0;
+
+    spriteId1 = CreateSprite(&sSmokescreenImpactSpriteTemplate, x - 16, y - 16, 2);
+    gSprites[spriteId1].data[0] = mainSpriteId;
+    mainSprite->data[0]++;
+    AnimateSprite(&gSprites[spriteId1]);
+
+    spriteId2 = CreateSprite(&sSmokescreenImpactSpriteTemplate, x, y - 16, 2);
+    gSprites[spriteId2].data[0] = mainSpriteId;
+    mainSprite->data[0]++;
+    StartSpriteAnim(&gSprites[spriteId2], 1);
+    AnimateSprite(&gSprites[spriteId2]);
+
+    spriteId3 = CreateSprite(&sSmokescreenImpactSpriteTemplate, x - 16, y, 2);
+    gSprites[spriteId3].data[0] = mainSpriteId;
+    mainSprite->data[0]++;
+    StartSpriteAnim(&gSprites[spriteId3], 2);
+    AnimateSprite(&gSprites[spriteId3]);
+
+    spriteId4 = CreateSprite(&sSmokescreenImpactSpriteTemplate, x, y, 2);
+    gSprites[spriteId4].data[0] = mainSpriteId;
+    mainSprite->data[0]++;
+    StartSpriteAnim(&gSprites[spriteId4], 3);
+    AnimateSprite(&gSprites[spriteId4]);
+
     DestroyAnimVisualTask(taskId);
+}
+
+static void SmokescreenImpact_Callback(struct Sprite *sprite)
+{
+    if (!sprite->data[0])
+    {
+        FreeSpriteTilesByTag(sSmokescreenImpactSpriteSheet.tag);
+        FreeSpritePaletteByTag(sSmokescreenImpactSpritePalette.tag);
+        if (!sprite->data[1])
+            DestroySprite(sprite);
+        else
+            sprite->callback = SpriteCallbackDummy;
+    }
+}
+
+static void SmokescreenImpact_Callback_DestroySprite(struct Sprite *sprite)
+{
+    if (sprite->animEnded)
+    {
+        gSprites[sprite->data[0]].data[0]--;
+        DestroySprite(sprite);
+    }
 }
 
 void AnimWhiteHalo(struct Sprite *sprite)
@@ -1699,7 +1877,6 @@ void AnimTask_RapinSpinMonElevation(u8 taskId)
 
     scanlineParams.dmaControl = SCANLINE_EFFECT_DMACNT_16BIT;
     scanlineParams.initState = 1;
-    scanlineParams.unused9 = 0;
     ScanlineEffect_SetParams(scanlineParams);
 
     task->func = RapinSpinMonElevation_Step;
@@ -2121,6 +2298,8 @@ void AnimTask_SwallowDeformMon(u8 taskId)
     }
 }
 
+// Animates the sprite mosaic effect on change form.
+// Arg 0: gfx flags
 void AnimTask_TransformMon(u8 taskId)
 {
     struct BattleAnimBgData animBg;
@@ -2139,8 +2318,10 @@ void AnimTask_TransformMon(u8 taskId)
         {
             gTasks[taskId].data[2] = 0;
             gTasks[taskId].data[1]++;
+			
             stretch = gTasks[taskId].data[1];
             SetGpuReg(REG_OFFSET_MOSAIC, (stretch << 4) | stretch);
+			
             if (stretch == 15)
                 gTasks[taskId].data[0]++;
         }
@@ -2167,11 +2348,10 @@ void AnimTask_TransformMon(u8 taskId)
     case 4:
         SetGpuReg(REG_OFFSET_MOSAIC, 0);
 		SetAnimBgAttribute(GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker), BG_ANIM_MOSAIC, 0);
+		
         if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_OPPONENT)
-        {
-            if (gTasks[taskId].data[10] == 0)
-                SetBattlerShadowSpriteCallback(gBattleAnimAttacker, gBattleSpritesDataPtr->battlerData[gBattleAnimAttacker].transformSpecies);
-        }
+			SetBattlerShadowSpriteCallback(gBattleAnimAttacker, gBattleSpritesDataPtr->battlerData[gBattleAnimAttacker].transformSpecies);
+		
         DestroyAnimVisualTask(taskId);
         break;
     }
@@ -3076,7 +3256,6 @@ void AnimTask_AcidArmor(u8 taskId)
 
     scanlineParams.dmaControl = SCANLINE_EFFECT_DMACNT_32BIT;
     scanlineParams.initState = 1;
-    scanlineParams.unused9 = 0;
     ScanlineEffect_SetParams(scanlineParams);
     task->func = AnimTask_AcidArmorStep;
 }
@@ -4394,35 +4573,36 @@ void AnimTask_MonToSubstitute(u8 taskId)
 {
     int i;
     u8 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
-
-    if (gTasks[taskId].data[0] == 0)
-    {
-        PrepareBattlerSpriteForRotScale(spriteId, FALSE);
-        gTasks[taskId].data[1] = 0x100;
-        gTasks[taskId].data[2] = 0x100;
-        gTasks[taskId].data[0]++;
-    }
-    else if (gTasks[taskId].data[0] == 1)
-    {
-        gTasks[taskId].data[1] += 0x60;
-        gTasks[taskId].data[2] -= 0xD;
-        SetSpriteRotScale(spriteId, gTasks[taskId].data[1], gTasks[taskId].data[2], 0);
-        if (++gTasks[taskId].data[3] == 9)
-        {
-            gTasks[taskId].data[3] = 0;
-            ResetSpriteRotScale(spriteId);
-            gSprites[spriteId].invisible = TRUE;
-            gTasks[taskId].data[0]++;
-        }
-    }
-    else
-    {
-        LoadBattleMonGfxAndAnimate(gBattleAnimAttacker, 0, spriteId);
-        for (i = 0; i < 16; i++)
-            gTasks[taskId].data[i] = 0;
-
-        gTasks[taskId].func = AnimTask_MonToSubstituteDoll;
-    }
+	
+	switch (gTasks[taskId].data[0])
+	{
+		case 0:
+			PrepareBattlerSpriteForRotScale(spriteId, FALSE);
+			gTasks[taskId].data[1] = 0x100;
+			gTasks[taskId].data[2] = 0x100;
+			gTasks[taskId].data[0]++;
+			break;
+		case 1:
+			gTasks[taskId].data[1] += 0x60;
+			gTasks[taskId].data[2] -= 0xD;
+			SetSpriteRotScale(spriteId, gTasks[taskId].data[1], gTasks[taskId].data[2], 0);
+			
+			if (++gTasks[taskId].data[3] == 9)
+			{
+				gTasks[taskId].data[3] = 0;
+				ResetSpriteRotScale(spriteId);
+				gSprites[spriteId].invisible = TRUE;
+				gTasks[taskId].data[0]++;
+			}
+			break;
+		case 2:
+			LoadBattleMonGfxAndAnimate(gBattleAnimAttacker, FALSE, spriteId);
+			for (i = 0; i < 16; i++)
+				gTasks[taskId].data[i] = 0;
+	
+			gTasks[taskId].func = AnimTask_MonToSubstituteDoll;
+			break;
+	}
 }
 
 static void AnimTask_MonToSubstituteDoll(u8 taskId)
@@ -4465,6 +4645,7 @@ static void AnimTask_MonToSubstituteDoll(u8 taskId)
         break;
     case 3:
         gTasks[taskId].data[10] += 112;
+		
         gSprites[spriteId].y2 += gTasks[taskId].data[10] >> 8;
         if (gSprites[spriteId].y2 > 0)
             gSprites[spriteId].y2 = 0;
@@ -4479,7 +4660,6 @@ static void AnimTask_MonToSubstituteDoll(u8 taskId)
 }
 
 // Moves down an X that flickers and disappears.
-// No args.
 void AnimBlockX(struct Sprite *sprite)
 {
     s16 y;

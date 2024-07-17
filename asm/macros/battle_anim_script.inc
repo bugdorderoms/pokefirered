@@ -10,11 +10,11 @@
 	.2byte \tag
 	.endm
 
-.macro createsprite template:req, anim_battler:req, subpriority_offset:req, argv:vararg
+	.macro createsprite template:req, anim_battler:req, subpriority_offset:req, argv:vararg
 	.byte 0x02
 	.4byte \template
 	.if \anim_battler == ANIM_TARGET
-	.byte 0x80 | (\subpriority_offset & 0x7F)
+	.byte ANIMSPRITE_IS_TARGET | (\subpriority_offset & 0x7F)
 	.else
 	.byte (\subpriority_offset & 0x7F)
 	.endif
@@ -34,17 +34,20 @@
 .Lcreatetask_\@_2:
 	.endm
 
-	.macro delay param0:req
+	.macro delay amount:req
 	.byte 0x4
-	.byte \param0
+	.byte \amount
 	.endm
 
 	.macro waitforvisualfinish
 	.byte 0x5
 	.endm
 
-	.macro hang1
+	.macro setbgbasedonside anim_battler:req, playerbg:req, opponentbg:req
 	.byte 0x6
+	.byte \anim_battler
+	.byte \playerbg
+	.byte \opponentbg
 	.endm
 
 	.macro hang2
@@ -79,9 +82,9 @@
 	.byte 0xd
 	.endm
 
-	.macro call param0:req
+	.macro call ptr:req
 	.byte 0xe
-	.4byte \param0
+	.4byte \ptr
 	.endm
 
 	.macro return
@@ -232,7 +235,7 @@
 	.byte \param4
 	.endm
 
-	.macro monbgprio_28 battler:req
+	.macro splitbgprio battler:req
 	.byte 0x28
 	.byte \battler
 	.endm

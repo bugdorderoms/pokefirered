@@ -1745,18 +1745,30 @@ static bool8 Fishing5(struct Task *task)
 }
 
 // Determine if fish bites
+static bool8 DoesFishingBiteOccours(void)
+{	
+	if (IsMonValidSpecies(&gPlayerParty[0]))
+	{
+		switch (GetMonAbility(&gPlayerParty[0]))
+		{
+			case ABILITY_SUCTION_CUPS:
+			case ABILITY_STICKY_HOLD:
+				return !RandomPercent(15);
+		}
+	}
+	return RandomPercent(50);
+}
+
 static bool8 Fishing6(struct Task *task)
 {
     AlignFishingAnimationFrames(&gSprites[gPlayerAvatar.spriteId]);
-    task->tStep++;
 
-    if (!DoesCurrentMapHaveFishingMons() || RandomPercent(50))
-    {
+    if (!DoesCurrentMapHaveFishingMons() || !DoesFishingBiteOccours())
         task->tStep = FISHING_NO_BITE;
-    }
     else
     {
         StartSpriteAnim(&gSprites[gPlayerAvatar.spriteId], GetFishingBiteDirectionAnimNum(GetPlayerFacingDirection()));
+		task->tStep++;
     }
     return TRUE;
 }

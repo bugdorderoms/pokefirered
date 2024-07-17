@@ -53,7 +53,6 @@ const u8 gBattleIntroRegOffsBgCnt[] = { REG_OFFSET_BG0CNT, REG_OFFSET_BG1CNT, RE
 void AnimTask_BlendSelected(u8 taskId)
 {
     u32 selectedPalettes = UnpackSelectedBattleAnimPalettes(gBattleAnimArgs[0]);
-    
     selectedPalettes |= SelectBattlerSpritePalettes((gBattleAnimArgs[0] >> 7) & 1, (gBattleAnimArgs[0] >> 8) & 1, (gBattleAnimArgs[0] >> 9) & 1, (gBattleAnimArgs[0] >> 10) & 1);
     StartBlendAnimSpriteColor(taskId, selectedPalettes);
 }
@@ -180,10 +179,12 @@ static void AnimTask_BlendSpriteColor_Step2(u8 taskId)
     {
         gTasks[taskId].data[9] = 0;
         selectedPalettes = gTasks[taskId].data[0] | (gTasks[taskId].data[1] << 16);
+		
         while (selectedPalettes)
         {
             if (selectedPalettes & 1)
                 BlendPalette(singlePaletteMask, 16, gTasks[taskId].data[10], gTasks[taskId].data[5]);
+			
             singlePaletteMask += 0x10;
             selectedPalettes >>= 1;
         }
@@ -195,9 +196,7 @@ static void AnimTask_BlendSpriteColor_Step2(u8 taskId)
             DestroyAnimVisualTask(taskId);
     }
     else
-    {
         ++gTasks[taskId].data[9];
-    }
 }
 
 void AnimTask_HardwarePaletteFade(u8 taskId)

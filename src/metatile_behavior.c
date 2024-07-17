@@ -2,25 +2,27 @@
 #include "metatile_behavior.h"
 #include "constants/metatile_behaviors.h"
 
-static const bool8 sTileSurfable[METATILE_COUNT] = {
-    [MB_POND_WATER] = TRUE,
-    [MB_SEMI_DEEP_WATER] = TRUE,
-    [MB_DEEP_WATER] = TRUE,
-    [MB_WATERFALL] = TRUE,
-    [MB_OCEAN_WATER] = TRUE,
-    [MB_1B] = TRUE,
-    [MB_EASTWARD_CURRENT] = TRUE,
-    [MB_WESTWARD_CURRENT] = TRUE,
-    [MB_NORTHWARD_CURRENT] = TRUE,
-    [MB_SOUTHWARD_CURRENT] = TRUE
+static const u8 sTilesSurfable[] =
+{
+	MB_POND_WATER,
+	MB_SEMI_DEEP_WATER,
+	MB_DEEP_WATER,
+	MB_WATERFALL,
+	MB_OCEAN_WATER,
+	MB_1B,
+	MB_EASTWARD_CURRENT,
+    MB_WESTWARD_CURRENT,
+	MB_NORTHWARD_CURRENT,
+    MB_SOUTHWARD_CURRENT,
 };
 
-static const u8 sTileBitAttributes[32] = {
-    [0] = 0x00,
-    [1] = 0x01,
-    [2] = 0x02,
-    [3] = 0x04,
-    [4] = 0x08,
+static const u8 sTileBitAttributes[32] =
+{
+    [0] = 0,
+    [1] = 1 << 0,
+    [2] = 1 << 1,
+    [3] = 1 << 2,
+    [4] = 1 << 3,
 };
 
 bool8 MetatileBehavior_IsATile(u8 metatileBehavior)
@@ -201,10 +203,14 @@ bool8 MetatileBehavior_IsDeepSouthWarp(u8 metatileBehavior) { return FALSE; }
 
 bool8 MetatileBehavior_IsSurfable(u8 metatileBehavior)
 {
-    if(sTileSurfable[metatileBehavior] & 1)
-        return TRUE;
-    else
-        return FALSE;
+	u8 i;
+	
+	for (i = 0; i < ARRAY_COUNT(sTilesSurfable); i++)
+	{
+		if (sTilesSurfable[i] == metatileBehavior)
+			return TRUE;
+	}
+	return FALSE;
 }
 
 bool8 MetatileBehavior_IsSemiDeepWater(u8 metatileBehavior)

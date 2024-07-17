@@ -106,6 +106,15 @@
 #define DIR_NORTHWEST 7
 #define DIR_NORTHEAST 8
 
+#define CONNECTION_INVALID -1
+#define CONNECTION_NONE     0
+#define CONNECTION_SOUTH    1
+#define CONNECTION_NORTH    2
+#define CONNECTION_WEST     3
+#define CONNECTION_EAST     4
+#define CONNECTION_DIVE     5
+#define CONNECTION_EMERGE   6
+
 #define FANCLUB_MEMBER1               0
 #define FANCLUB_MEMBER2               1
 #define FANCLUB_MEMBER3               2

@@ -814,6 +814,26 @@ void RejectEggFromDayCare(void)
     RemoveEggFromDayCare(&gSaveBlock1Ptr->daycare);
 }
 
+static u8 GetEggCyclesToSubtract(void)
+{
+	u8 i, count = CalculatePlayerPartyCount();
+	
+	for (i = 0; i < count; i++)
+	{
+		if (IsMonValidSpecies(&gPlayerParty[i]))
+		{
+			switch (GetMonAbility(&gPlayerParty[i]))
+			{
+				case ABILITY_FLAME_BODY:
+				case ABILITY_MAGMA_ARMOR:
+				case ABILITY_STEAM_ENGINE:
+					return 2;
+			}
+		}
+	}
+	return 1;
+}
+
 static bool8 TryProduceOrHatchEgg(struct DayCare *daycare)
 {
     u8 i, validEggs = 0;
@@ -847,7 +867,12 @@ static bool8 TryProduceOrHatchEgg(struct DayCare *daycare)
             steps = GetMonData(&gPlayerParty[i], MON_DATA_FRIENDSHIP);
             if (steps != 0)
             {
-                steps -= 1;
+                u8 toSub = GetEggCyclesToSubtract();
+				if (steps >= toSub)
+                    steps -= toSub;
+                else
+                    steps -= 1;
+				
                 SetMonData(&gPlayerParty[i], MON_DATA_FRIENDSHIP, &steps);
             }
             else // hatch the egg
@@ -1319,7 +1344,7 @@ static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, stru
     {
         for (j = 0; j < NUM_TECHNICAL_MACHINES; j++)
         {
-			u16 move = ItemId_GetHoldEffectParam(ITEM_TM01 + j);
+			u16 move = ItemId_GetHoldEffectParam(NUM_TO_TM(01) + j);
 			
             if (fatherMoves[i] == move && CanMonLearnTM(egg, move))
             {

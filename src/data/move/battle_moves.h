@@ -3,6 +3,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_NONE] =
     {
 		.name = _("-"),
+		.description = COMPOUND_STRING("A physical attack\n"
+									   "delivered with a\n"
+									   "long tail or a\n"
+									   "foreleg, etc."),
+		.animScript = Move_NONE,
         .effect = EFFECT_HIT,
         .type = TYPE_NORMAL,
         .target = MOVE_TARGET_SELECTED,
@@ -13,7 +18,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_POUND] =
     {
 		.name = _("Pound"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "physically pounded\n"
+                                       "with a long tail or\n"
+                                       "a foreleg, etc."),
+        .animScript = Move_POUND,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -31,6 +41,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_KARATE_CHOP] =
     {
 		.name = _("Karate Chop"),
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with a sharp chop.\n"
+                                       "Critical hits land\n"
+                                       "more easily."),
+		.animScript = Move_KARATE_CHOP,
         .effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_FIGHTING,
@@ -50,7 +65,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DOUBLE_SLAP] =
     {
 		.name = _("Double Slap"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("The foe is slapped\n"
+                                       "repeatedly, back\n"
+                                       "and forth, two to\n"
+                                       "five times in a row."),
+        .animScript = Move_DOUBLE_SLAP,
+		.effect = EFFECT_MULTI_HIT,
         .power = 15,
         .type = TYPE_NORMAL,
         .accuracy = 85,
@@ -68,7 +88,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_COMET_PUNCH] =
     {
 		.name = _("Comet Punch"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "a flurry of punches\n"
+                                       "that strike two to\n"
+                                       "five times in a row."),
+        .animScript = Move_COMET_PUNCH,
+		.effect = EFFECT_MULTI_HIT,
         .power = 18,
         .type = TYPE_NORMAL,
         .accuracy = 85,
@@ -87,6 +112,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MEGA_PUNCH] =
     {
 		.name = _("Mega Punch"),
+		.description = COMPOUND_STRING("The target is\n"
+                                       "slugged by a punch\n"
+                                       "thrown with\n"
+                                       "muscle-packed power."),
+		.animScript = Move_MEGA_PUNCH,
         .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_NORMAL,
@@ -106,6 +136,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PAY_DAY] =
     {
 		.name = _("Pay Day"),
+		.description = COMPOUND_STRING("Numerous coins are\n"
+                                       "hurled at the foe\n"
+                                       "to inflict damage."),
+		.animScript = Move_PAY_DAY,
         .effect = EFFECT_PAY_DAY,
         .power = 40,
         .type = TYPE_NORMAL,
@@ -869,6 +903,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.magicCoatAffected = TRUE,
 			.soundMove = TRUE,
+			.hasQuietBGM = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_SPD_UP_1,
@@ -943,6 +978,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_EMBER] =
     {
 		.name = _("Ember"),
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with small flames.\n"
+                                       "This may also leave\n"
+                                       "it with a burn."),
         .effect = EFFECT_BURN_HIT,
         .power = 40,
         .type = TYPE_FIRE,
@@ -3445,6 +3484,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.soundMove = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
+			.hasQuietBGM = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -5666,6 +5706,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.magicCoatAffected = TRUE,
 			.soundMove = TRUE,
+			.hasQuietBGM = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_SPD_UP_1,

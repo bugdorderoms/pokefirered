@@ -888,7 +888,7 @@ static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityN
     struct Pokemon* mon = &gEnemyParty[0];
     u8 i, perfectIv = MAX_PER_STAT_IVS, iv[3] = {0};
 
-    GenerateWildMon(species, level);  // shiny rate bonus handled in CreateBoxMon
+    GenerateWildMon(species, level, FALSE);  // shiny rate bonus handled in CreateBoxMon
 	
 	if (DexNavTryMakeShinyMon())
 	{
@@ -993,7 +993,7 @@ static u16 DexNavGenerateMoveset(u16 species, u8 encounterLevel, u16* moveDst)
     }
 
     // Generate a wild mon just to get the initial moveset (later overwritten by CreateDexNavWildMon)
-    newSpecies = GenerateWildMon(species, encounterLevel);
+    newSpecies = GenerateWildMon(species, encounterLevel, FALSE);
 
     // Store generated mon moves into Dex Nav Struct
     for (i = 0; i < MAX_MON_MOVES; i++)

@@ -236,7 +236,9 @@ u8 gLeveledUpInBattle;
 
 static const struct ScanlineEffectParams sIntroScanlineParams16Bit =
 {
-    &REG_BG3HOFS, SCANLINE_EFFECT_DMACNT_16BIT, 1
+    .dmaDest = &REG_BG3HOFS,
+	.dmaControl = SCANLINE_EFFECT_DMACNT_16BIT,
+	.initState = 1
 };
 
 static const struct DNSPalExceptions sCombatPalExceptions =  
@@ -2404,9 +2406,8 @@ static void BattleIntroPlayerSendsOutMonAnimation(void)
                 MarkBattlerForControllerExec(battlerId);
             }
         }
-        gBattleStruct->switchInAbilitiesCounter = 0;
-        gBattleStruct->switchInItemsCounter = 0;
-        gBattleStruct->overworldWeatherDone = FALSE;
+		gBattleStruct->firstTurnEventsState = 0;
+        gBattleStruct->switchInByTurnOrderCounter = 0;
         gBattleMainFunc = TryDoEventsBeforeFirstTurn;
     }
 }
@@ -2464,73 +2465,100 @@ static bool8 TryStartOverworldWeather(void)
 
 static void TryDoEventsBeforeFirstTurn(void)
 {
-    s32 i, j;
-
+	u8 i, j;
+	
     if (!gBattleControllerExecFlags)
     {
-        if (gBattleStruct->switchInAbilitiesCounter == 0)
-        {
-            for (i = 0; i < gBattlersCount; ++i)
-                gBattlerByTurnOrder[i] = i;
-            for (i = 0; i < gBattlersCount - 1; ++i)
-                for (j = i + 1; j < gBattlersCount; ++j)
-                    if (GetWhoStrikesFirst(gBattlerByTurnOrder[i], gBattlerByTurnOrder[j], TRUE) != ATTACKER_STRIKES_FIRST)
-                        SwapTurnOrder(i, j);
-        }
-        if (!gBattleStruct->overworldWeatherDone && TryStartOverworldWeather())
-        {
-            gBattleStruct->overworldWeatherDone = TRUE;
-			BattleScriptPushCursorAndCallback(BattleScript_OverworldWeatherStarts);
-            return;
-        }
-		// check Neutralizing Gas
-		if (AbilityBattleEffects(ABILITYEFFECT_NEUTRALIZING_GAS, 0))
-			return;
-		// check Unnerve
-		if (AbilityBattleEffects(ABILITYEFFECT_UNNERVE, 0))
-			return;
-        // Check all switch in abilities happening from the fastest mon to slowest.
-        while (gBattleStruct->switchInAbilitiesCounter < gBattlersCount)
-        {
-            if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBattlerByTurnOrder[gBattleStruct->switchInAbilitiesCounter++]))
-                return;
-        }
-        if (AbilityBattleEffects(ABILITYEFFECT_TRACE, 0))
-            return;
-        // Check all switch in items having effect from the fastest mon to slowest.
-        while (gBattleStruct->switchInItemsCounter < gBattlersCount)
-        {
-            if (ItemBattleEffects(ITEMEFFECT_ON_SWITCH_IN, gBattlerByTurnOrder[gBattleStruct->switchInItemsCounter++], FALSE))
-                return;
-        }
-        for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
-        {
-            gBattleStruct->monToSwitchIntoId[i] = PARTY_SIZE;
-            gChosenActionByBattler[i] = B_ACTION_NONE;
-            gChosenMoveByBattler[i] = MOVE_NONE;
-			if (IsBattlerAlive(i) && GetBattlerSide(i) == B_SIDE_PLAYER)
-				gBattleStruct->appearedInBattle |= gBitTable[gBattlerPartyIndexes[i]];
-        }
-        TurnValuesCleanUp(FALSE);
-        memset(&gSpecialStatuses, 0, sizeof(gSpecialStatuses));
-        gBattleStruct->absentBattlerFlags = gAbsentBattlerFlags;
-        gBattleMainFunc = HandleTurnActionSelectionState;
-        ResetSentPokesToOpponentValue();
-        for (i = 0; i < BATTLE_COMMUNICATION_ENTRIES_COUNT; ++i)
-            gBattleCommunication[i] = 0;
-        for (i = 0; i < gBattlersCount; ++i)
-            gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
-        gBattleStruct->turnEffectsTracker = 0;
-        gBattleStruct->turnEffectsBattlerId = 0;
-		gBattleStruct->turnSideTracker = 0;
-		gBattleScripting.atk47_state = 0;
-        gBattleScripting.atk49_state = 0;
-        gBattleStruct->faintedActionsState = 0;
-        gMoveResultFlags = 0;
-        gRandomTurnNumber = Random();
-		
-		if (ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), TRAINER_SLIDE_FIRST_MON_SEND_OUT))
-			BattleScriptExecute(BattleScript_TrainerSlideMsgEnd2);
+		switch (gBattleStruct->firstTurnEventsState)
+		{
+			case 0: // Set turn order
+				for (i = 0; i < gBattlersCount; ++i)
+					gBattlerByTurnOrder[i] = i;
+				
+				for (i = 0; i < gBattlersCount - 1; ++i)
+				{
+					for (j = i + 1; j < gBattlersCount; ++j)
+					{
+						if (GetWhoStrikesFirst(gBattlerByTurnOrder[i], gBattlerByTurnOrder[j], TRUE) != ATTACKER_STRIKES_FIRST)
+							SwapTurnOrder(i, j);
+					}
+				}
+				++gBattleStruct->firstTurnEventsState;
+				break;
+			case 1: // Try start overworld weather
+				if (TryStartOverworldWeather())
+					BattleScriptPushCursorAndCallback(BattleScript_OverworldWeatherStarts);
+
+				++gBattleStruct->firstTurnEventsState;
+				break;
+			case 2: // Check Neutralizing Gas and Unnerve
+				if (!AbilityBattleEffects(ABILITYEFFECT_NEUTRALIZING_GAS, 0) && !AbilityBattleEffects(ABILITYEFFECT_UNNERVE, 0))
+					++gBattleStruct->firstTurnEventsState; // Incremment when all battler have been checked
+				break;
+			case 3: // Check switch in abilities from the fastest mon to slowest
+				while (gBattleStruct->switchInByTurnOrderCounter < gBattlersCount)
+				{
+					if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBattlerByTurnOrder[gBattleStruct->switchInByTurnOrderCounter++]))
+						return;
+				}
+				
+				gBattleStruct->switchInByTurnOrderCounter = 0;
+				++gBattleStruct->firstTurnEventsState;
+				break;
+			case 4: // Check switch in item effects from the fastest mon to slowest
+				while (gBattleStruct->switchInByTurnOrderCounter < gBattlersCount)
+				{
+					if (ItemBattleEffects(ITEMEFFECT_ON_SWITCH_IN, gBattlerByTurnOrder[gBattleStruct->switchInByTurnOrderCounter++], FALSE))
+						return;
+				}
+				
+				gBattleStruct->switchInByTurnOrderCounter = 0;
+				++gBattleStruct->firstTurnEventsState;
+				break;
+			case 5: // Update vars on switch in
+				for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
+				{
+					gBattleStruct->monToSwitchIntoId[i] = PARTY_SIZE;
+					gChosenActionByBattler[i] = B_ACTION_NONE;
+					gChosenMoveByBattler[i] = MOVE_NONE;
+					
+					if (IsBattlerAlive(i) && GetBattlerSide(i) == B_SIDE_PLAYER)
+						gBattleStruct->appearedInBattle |= gBitTable[gBattlerPartyIndexes[i]];
+					
+					gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
+				}
+				TurnValuesCleanUp(FALSE);
+				memset(&gSpecialStatuses, 0, sizeof(gSpecialStatuses));
+				gBattleStruct->absentBattlerFlags = gAbsentBattlerFlags;
+				
+				ResetSentPokesToOpponentValue();
+				
+				for (i = 0; i < BATTLE_COMMUNICATION_ENTRIES_COUNT; ++i)
+					gBattleCommunication[i] = 0;
+				
+				gBattleScripting.atk47_state = 0;
+				gBattleScripting.atk49_state = 0;
+				
+				gMoveResultFlags = 0;
+				gRandomTurnNumber = Random();
+				
+				gBattleStruct->turnEffectsTracker = 0;
+				gBattleStruct->turnEffectsBattlerId = 0;
+				gBattleStruct->turnSideTracker = 0;
+				gBattleStruct->faintedActionsState = 0;
+				
+				++gBattleStruct->firstTurnEventsState;
+				break;
+			case 6: // Try do trainer slide
+				if (ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), TRAINER_SLIDE_FIRST_MON_SEND_OUT))
+					BattleScriptExecute(BattleScript_TrainerSlideMsgEnd2);
+					
+				++gBattleStruct->firstTurnEventsState;
+				break;
+			case 7:
+				gBattleMainFunc = HandleTurnActionSelectionState;
+				break;
+		}
     }
 }
 
@@ -2541,17 +2569,22 @@ static void HandleEndTurn_ContinueBattle(void)
     if (!gBattleControllerExecFlags)
     {
         gBattleMainFunc = BattleTurnPassed;
+		
         for (i = 0; i < BATTLE_COMMUNICATION_ENTRIES_COUNT; ++i)
             gBattleCommunication[i] = 0;
+		
         for (i = 0; i < gBattlersCount; ++i)
         {
             gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
+			
             if ((gBattleMons[i].status1 & STATUS1_SLEEP) && (gBattleMons[i].status2 & STATUS2_MULTIPLETURNS))
                 CancelMultiTurnMoves(i);
         }
+		
         gBattleStruct->turnEffectsTracker = 0;
         gBattleStruct->turnEffectsBattlerId = 0;
 		gBattleStruct->turnSideTracker = 0;
+		
         gMoveResultFlags = 0;
 		SaveBattlersHps(); // For Emergency Exit
     }

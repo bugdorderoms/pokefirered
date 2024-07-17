@@ -26,7 +26,7 @@ FiveIsland_MemorialPillar_EventScript_AlreadyGotTM42:: @ 8168A18
 
 FiveIsland_MemorialPillar_EventScript_ReturnedForTM42:: @ 8168A22
 	msgbox FiveIsland_MemorialPillar_Text_StillHaveThingAsMyThanks
-	giveitem ITEM_TM42
+	giveitem NUM_TO_TM(42)
 	compare VAR_RESULT, FALSE
 	goto_if_eq FiveIsland_MemorialPillar_EventScript_NoRoomForTM42
 	call FiveIsland_MemorialPillar_EventScript_ReceivedTM42
@@ -62,7 +62,7 @@ FiveIsland_MemorialPillar_EventScript_PlaceLemonade:: @ 8168A9B
 	waitmovement 0
 	textcolor 0
 	msgbox FiveIsland_MemorialPillar_Text_ThankYouPleaseTakeThis
-	giveitem ITEM_TM42
+	giveitem NUM_TO_TM(42)
 	compare VAR_RESULT, FALSE
 	goto_if_eq FiveIsland_MemorialPillar_EventScript_NoRoomForTM42
 	call FiveIsland_MemorialPillar_EventScript_ReceivedTM42

@@ -2346,12 +2346,37 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						}
 						break;
 					case ABILITY_TRACE:
-					    if (!gSpecialStatuses[battler].traced)
+						if (!gSpecialStatuses[battler].switchInAbilityDone)
 						{
-							gSpecialStatuses[battler].traced = TRUE;
-							gBattleResources->flags->flags[battler] |= RESOURCE_FLAG_TRACED;
+							u8 tgt2, target = 0xFF, tgt1 = BATTLE_OPPOSITE(battler);
+							u16 tgt2Ability, tgt1Ability = gBattleMons[tgt1].ability;
+							
+							if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+							{
+								tgt2 = BATTLE_PARTNER(tgt1);
+								tgt2Ability = gBattleMons[tgt2].ability;
+								
+								if (IS_WHOLE_SIDE_ALIVE(tgt1) && !gAbilities[tgt1Ability].cantBeTraced && !gAbilities[tgt2Ability].cantBeTraced)
+									target = RandomPercent(50) ? tgt1 : tgt2;
+								else if (IsBattlerAlive(tgt1) && !gAbilities[tgt1Ability].cantBeTraced)
+									target = tgt1;
+								else if (IsBattlerAlive(tgt2) && !gAbilities[tgt2Ability].cantBeTraced)
+									target = tgt2;
+							}
+							else if (IsBattlerAlive(tgt1) && !gAbilities[tgt1Ability].cantBeTraced)
+								target = tgt1;
+							
+							if (target != 0xFF)
+							{
+								SaveAttackerToStack(battler);
+								SaveTargetToStack(target);
+								RecordAbilityBattle(battler, gBattleMons[target].ability);
+								BattleScriptPushCursorAndCallback(BattleScript_TraceActivates);
+								gSpecialStatuses[battler].switchInAbilityDone = TRUE;
+								++effect;
+							}
 						}
-						break;
+						return effect;
 					case ABILITY_CLOUD_NINE:
 					case ABILITY_AIR_LOCK:
 					    if (!gSpecialStatuses[battler].switchInAbilityDone)
@@ -3057,54 +3082,6 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 					case ABILITY_BAD_DREAMS:
 						BattleScriptPushCursorAndCallback(BattleScript_BadDreamsActivates);
 						return ++effect; // don't record ability if don't activate
-				}
-				break;
-			case ABILITYEFFECT_TRACE:
-			    for (i = 0; i < gBattlersCount; i++)
-				{
-					if (GetBattlerAbility(i) == ABILITY_TRACE && gBattleResources->flags->flags[i] & RESOURCE_FLAG_TRACED)
-					{
-						u8 opposingSide = BATTLE_OPPOSITE(GetBattlerPosition(battler)) & BIT_SIDE;
-						u8 target1 = GetBattlerAtPosition(opposingSide);
-						u8 target2 = GetBattlerAtPosition(opposingSide + BIT_FLANK);
-						u16 target1Abl = gBattleMons[target1].ability;
-						u16 target2Abl = gBattleMons[target2].ability;
-						
-						if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-						{
-							if (IsBattlerAlive(target1) && IsBattlerAlive(target2) && !gAbilities[target1Abl].cantBeTraced && !gAbilities[target2Abl].cantBeTraced)
-							{
-								SaveTargetToStack(GetBattlerAtPosition((RandomMax(2) * 2) | opposingSide));
-								++effect;
-							}
-							else if (IsBattlerAlive(target1) && !gAbilities[target1Abl].cantBeTraced)
-							{
-								SaveTargetToStack(target1);
-								++effect;
-							}
-							else if (IsBattlerAlive(target2) && !gAbilities[target2Abl].cantBeTraced)
-							{
-								SaveTargetToStack(target2);
-								++effect;
-							}
-						}
-						else
-						{
-							if (IsBattlerAlive(target1) && !gAbilities[target1Abl].cantBeTraced)
-							{
-								SaveTargetToStack(target1);
-								++effect;
-							}
-						}
-						if (effect)
-						{
-							SaveAttackerToStack(i);
-							gBattleResources->flags->flags[i] &= ~(RESOURCE_FLAG_TRACED);
-							RecordAbilityBattle(i, gBattleMons[gBattlerTarget].ability);
-							BattleScriptPushCursorAndCallback(BattleScript_TraceActivates);
-							break;
-						}
-					}
 				}
 				break;
 			case ABILITYEFFECT_NEUTRALIZING_GAS:
@@ -4856,7 +4833,7 @@ bool8 DoSwitchInAbilitiesItems(u8 battlerId)
 {
 	if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, battlerId) || TryActivateCommander(BATTLE_PARTNER(battlerId), TRUE)
 	|| AbilityBattleEffects(ABILITYEFFECT_ON_WEATHER, battlerId) || AbilityBattleEffects(ABILITYEFFECT_ON_TERRAIN, battlerId)
-    || AbilityBattleEffects(ABILITYEFFECT_TRACE, 0) || ItemBattleEffects(ITEMEFFECT_ON_SWITCH_IN, battlerId, FALSE))
+    || ItemBattleEffects(ITEMEFFECT_ON_SWITCH_IN, battlerId, FALSE))
 		return TRUE;
 	return FALSE;
 }

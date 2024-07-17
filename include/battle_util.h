@@ -39,17 +39,16 @@ enum
 
 #define ABILITYEFFECT_ON_SWITCHIN                0
 #define ABILITYEFFECT_ENDTURN                    1
-#define ABILITYEFFECT_TRACE                      2
-#define ABILITYEFFECT_NEUTRALIZING_GAS           3
-#define ABILITYEFFECT_UNNERVE                    4
-#define ABILITYEFFECT_MOVES_BLOCK                5
-#define ABILITYEFFECT_ABSORBING                  6
-#define ABILITYEFFECT_MOVE_END_ATTACKER          7
-#define ABILITYEFFECT_MOVE_END_TARGET            8
-#define ABILITYEFFECT_IMMUNITY                   9
-#define ABILITYEFFECT_ON_WEATHER                 10
-#define ABILITYEFFECT_SYNCHRONIZE                11
-#define ABILITYEFFECT_ON_TERRAIN                 12
+#define ABILITYEFFECT_NEUTRALIZING_GAS           2
+#define ABILITYEFFECT_UNNERVE                    3
+#define ABILITYEFFECT_MOVES_BLOCK                4
+#define ABILITYEFFECT_ABSORBING                  5
+#define ABILITYEFFECT_MOVE_END_ATTACKER          6
+#define ABILITYEFFECT_MOVE_END_TARGET            7
+#define ABILITYEFFECT_IMMUNITY                   8
+#define ABILITYEFFECT_ON_WEATHER                 9
+#define ABILITYEFFECT_SYNCHRONIZE                10
+#define ABILITYEFFECT_ON_TERRAIN                 11
 
 #define CHECK_ABILITY_ON_FIELD                   0
 #define CHECK_ABILITY_ON_FIELD_EXCEPT_BATTLER    1

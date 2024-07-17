@@ -165,46 +165,22 @@ u8 GetBattlerYCoordWithElevation(u8 battlerId)
 
 u8 GetAnimBattlerSpriteId(u8 animBattler)
 {
-    u8 *sprites;
-
-    if (animBattler == ANIM_ATTACKER)
-    {
-        if (IsBattlerSpritePresent(gBattleAnimAttacker))
-        {
-            sprites = gBattlerSpriteIds;
-            return sprites[gBattleAnimAttacker];
-        }
-        else
-        {
-            return 0xFF;
-        }
-    }
-    else if (animBattler == ANIM_TARGET)
-    {
-        if (IsBattlerSpritePresent(gBattleAnimTarget))
-        {
-            sprites = gBattlerSpriteIds;
-            return sprites[gBattleAnimTarget];
-        }
-        else
-        {
-            return 0xFF;
-        }
-    }
-    else if (animBattler == ANIM_ATK_PARTNER)
-    {
-        if (!IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)))
-            return 0xFF;
-        else
-            return gBattlerSpriteIds[BATTLE_PARTNER(gBattleAnimAttacker)];
-    }
-    else
-    {
-        if (IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimTarget)))
-            return gBattlerSpriteIds[BATTLE_PARTNER(gBattleAnimTarget)];
-        else
-            return 0xFF;
-    }
+	u8 battler = GetBattlerForAnimScript(animBattler);
+	
+	switch (animBattler)
+	{
+		case ANIM_ATTACKER:
+		case ANIM_TARGET:
+			if (!IsBattlerSpritePresent(battler))
+				return 0xFF;
+			break;
+		case ANIM_ATK_PARTNER:
+		case ANIM_DEF_PARTNER:
+			if (!IsBattlerSpriteVisible(battler))
+				return 0xFF;
+			break;
+	}
+	return gBattlerSpriteIds[battler];
 }
 
 void StoreSpriteCallbackInData6(struct Sprite *sprite, SpriteCallback callback)
@@ -216,7 +192,6 @@ void StoreSpriteCallbackInData6(struct Sprite *sprite, SpriteCallback callback)
 static void SetCallbackToStoredInData6(struct Sprite *sprite)
 {
     u32 callback = (u16)sprite->data[6] | (sprite->data[7] << 16);
-    
     sprite->callback = (SpriteCallback)callback;
 }
 
@@ -486,13 +461,9 @@ void SetAnimSpriteInitialXOffset(struct Sprite *sprite, s16 xOffset)
     u16 targetX = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
 
     if (attackerX > targetX)
-    {
         sprite->x -= xOffset;
-    }
     else if (attackerX < targetX)
-    {
         sprite->x += xOffset;
-    }
     else
     {
         if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
@@ -564,6 +535,14 @@ void InitSpritePosToAnimAttacker(struct Sprite *sprite, bool8 respectMonPicOffse
     }
     SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
     sprite->y += gBattleAnimArgs[1];
+}
+
+void InitSpritePosToAnimBattler(struct Sprite *sprite, u8 battler, bool8 respectMonPicOffsets)
+{
+	if (battler == ANIM_ATTACKER)
+		InitSpritePosToAnimAttacker(sprite, respectMonPicOffsets);
+	else
+		InitSpritePosToAnimTarget(sprite, respectMonPicOffsets);
 }
 
 u8 GetBattlerAtPosition(u8 position)
@@ -995,43 +974,38 @@ u32 SelectBattleAnimSpriteAndBgPalettes(bool8 battleBackground, bool8 attacker, 
     u32 shift;
 
     if (battleBackground)
-    {
-        selectedPalettes = 0xe;
-    }
+        selectedPalettes = 0xE; // Palettes 1, 2 and 3
+
     if (attacker)
     {
         shift = gBattleAnimAttacker + 16;
         selectedPalettes |= 1 << shift;
     }
+	
     if (target)
     {
         shift = gBattleAnimTarget + 16;
         selectedPalettes |= 1 << shift;
     }
-    if (attackerPartner)
+	
+    if (attackerPartner && IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)))
     {
-        if (IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)))
-        {
-            shift = BATTLE_PARTNER(gBattleAnimAttacker) + 16;
-            selectedPalettes |= 1 << shift;
-        }
+		shift = BATTLE_PARTNER(gBattleAnimAttacker) + 16;
+		selectedPalettes |= 1 << shift;
     }
-    if (targetPartner)
+	
+    if (targetPartner && IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimTarget)))
     {
-        if (IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimTarget)))
-        {
-            shift = BATTLE_PARTNER(gBattleAnimTarget) + 16;
-            selectedPalettes |= 1 << shift;
-        }
+		shift = BATTLE_PARTNER(gBattleAnimTarget) + 16;
+		selectedPalettes |= 1 << shift;
     }
+	
     if (a6)
-    {
         selectedPalettes |= 0x100;
-    }
+
     if (a7)
-    {
         selectedPalettes |= 0x200;
-    }
+	
     return selectedPalettes;
 }
 

@@ -263,35 +263,35 @@ CeladonCity_GameCorner_PrizeRoom_EventScript_ChoosePrizeTM:: @ 816CE47
 	end
 
 CeladonCity_GameCorner_PrizeRoom_EventScript_TM13:: @ 816CEA5
-	setvar VAR_TEMP_1, ITEM_TM13
+	setvar VAR_TEMP_1, NUM_TO_TM(13)
 	setvar VAR_TEMP_2, 4000
 	getmovename 1, MOVE_ICE_BEAM
 	goto CeladonCity_GameCorner_PrizeRoom_EventScript_ConfirmPrizeTM
 	end
 
 CeladonCity_GameCorner_PrizeRoom_EventScript_TM23:: @ 816CEB9
-	setvar VAR_TEMP_1, ITEM_TM23
+	setvar VAR_TEMP_1, NUM_TO_TM(23)
 	setvar VAR_TEMP_2, 3500
 	getmovename 1, MOVE_IRON_TAIL
 	goto CeladonCity_GameCorner_PrizeRoom_EventScript_ConfirmPrizeTM
 	end
 
 CeladonCity_GameCorner_PrizeRoom_EventScript_TM24:: @ 816CECD
-	setvar VAR_TEMP_1, ITEM_TM24
+	setvar VAR_TEMP_1, NUM_TO_TM(24)
 	setvar VAR_TEMP_2, 4000
 	getmovename 1, MOVE_THUNDERBOLT
 	goto CeladonCity_GameCorner_PrizeRoom_EventScript_ConfirmPrizeTM
 	end
 
 CeladonCity_GameCorner_PrizeRoom_EventScript_TM30:: @ 816CEE1
-	setvar VAR_TEMP_1, ITEM_TM30
+	setvar VAR_TEMP_1, NUM_TO_TM(30)
 	setvar VAR_TEMP_2, 4500
 	getmovename 1, MOVE_SHADOW_BALL
 	goto CeladonCity_GameCorner_PrizeRoom_EventScript_ConfirmPrizeTM
 	end
 
 CeladonCity_GameCorner_PrizeRoom_EventScript_TM35:: @ 816CEF5
-	setvar VAR_TEMP_1, ITEM_TM35
+	setvar VAR_TEMP_1, NUM_TO_TM(35)
 	setvar VAR_TEMP_2, 4000
 	getmovename 1, MOVE_FLAMETHROWER
 	goto CeladonCity_GameCorner_PrizeRoom_EventScript_ConfirmPrizeTM

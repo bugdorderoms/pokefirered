@@ -21,6 +21,9 @@
     0x2 bit is responsible for the id of sent out pokemon. 0 means it's the first sent out pokemon, 1 it's the second one. (Triple battle didn't exist at the time yet.)
 */
 
+#define GetBattlerPosition(battlerId) ((gBattlerPositions[battlerId]))
+#define GetBattlerSide(battlerId) ((GetBattlerPosition(battlerId) & BIT_SIDE))
+
 #define B_ACTION_USE_MOVE                  0
 #define B_ACTION_USE_ITEM                  1
 #define B_ACTION_SWITCH                    2
@@ -102,10 +105,9 @@ extern const struct Trainer gTrainers[];
 extern const struct TrainerSlide gTrainerSlides[];
 
 #define RESOURCE_FLAG_FLASH_FIRE       (1 << 0)
-#define RESOURCE_FLAG_TRACED           (1 << 1)
-#define RESOURCE_FLAG_UNBURDEN_BOOST   (1 << 2)
-#define RESOURCE_FLAG_NEUTRALIZING_GAS (1 << 3)
-#define RESOURCE_FLAG_ROOST            (1 << 4)
+#define RESOURCE_FLAG_UNBURDEN_BOOST   (1 << 1)
+#define RESOURCE_FLAG_NEUTRALIZING_GAS (1 << 2)
+#define RESOURCE_FLAG_ROOST            (1 << 3)
 
 struct ResourceFlags
 {
@@ -201,13 +203,13 @@ struct SpecialStatus
     u32 focusBanded:1;
     u32 sturdied:1;
 	// end of byte
-	u32 traced:1;
 	u32 switchInAbilityDone:1;
 	u32 weatherAbilityDone:1;
 	u32 terrainAbilityDone:1;
 	u32 multiHitOn:1;
 	u32 parentalBondState:2;
 	u32 emergencyExited:1;
+	u32 unused:1;
 	// end of byte
 	u32 unused2:8;
 	// end of byte
@@ -363,7 +365,7 @@ struct BattleStruct
 	/*0x004*/ u8 focusPunchBattlerId;
 	/*0x005*/ u8 turnEffectsBattlerId;
 	/*0x006*/ u8 faintedActionsBattlerId;
-	/*0x007*/ u8 switchInAbilitiesCounter;
+	/*0x007*/ u8 switchInByTurnOrderCounter;
     /*0x008*/ u16 wrappedMove[MAX_BATTLERS_COUNT];
 	/*0x010*/ u8 wrappedBy[MAX_BATTLERS_COUNT];
     /*0x014*/ u8 moveTarget[MAX_BATTLERS_COUNT];
@@ -394,7 +396,7 @@ struct BattleStruct
     /*0x038*/ u8 switchInAbilityPostponed:4; // for switch in abilities, as flag using gBitTable
 	/*0x039*/ u8 appearedInBattle:6; // for Burmy form change, as flag using gBitTable
 	/*0x039*/ u8 spriteIgnore0Hp:1; // for Illusion
-	/*0x039*/ u8 overworldWeatherDone:1;
+	/*0x039*/ u8 poisonPuppeteerConfusion:1;
 	/*0x03A*/ u8 battleTurnCounter;
 	/*0x03B*/ u8 absentBattlerFlags:4;
 	/*0x03B*/ u8 zMoveMsgDone:1;
@@ -413,13 +415,12 @@ struct BattleStruct
 	/*0x05B*/ u8 multiplayerId;
     /*0x05C*/ u8 weatherDuration;
 	/*0x05D*/ u8 meFirstBoost:1;
-	/*0x05D*/ u8 poisonPuppeteerConfusion:1;
-	/*0x05D*/ u8 unused:6; // Unused
+	/*0x05D*/ u8 unused:7; // Unused
 	/*0x05E*/ u8 simulatedInputState[4];  // used by Oak/Old Man/Pokedude controllers
 	/*0x062*/ u8 intrepidSwordActivated[B_SIDE_COUNT]; // as flag using gBitTable
 	/*0x064*/ u16 savedBattleTypeFlags;
 	/*0x066*/ u8 synchronizeMoveEffect;
-	/*0x067*/ u8 switchInItemsCounter;
+	/*0x067*/ u8 firstTurnEventsState;
 	/*0x068*/ u8 givenExpMons;
 	/*0x069*/ u8 payDayLevels[MAX_BATTLERS_COUNT / 2]; // To store player mon's levels when using pay day, 0 = left, 1 = right
 	/*0x06B*/ u8 usedReviveItemBattler; // for revive battle usage, as flag using gBitTable
@@ -741,15 +742,5 @@ extern u8 gBattlerTarget;
 extern u8 gAbsentBattlerFlags;
 extern u32 gFieldStatus;
 extern struct FieldTimer gFieldTimers;
-
-static inline u8 GetBattlerPosition(u8 battlerId)
-{
-    return gBattlerPositions[battlerId];
-}
-
-static inline u8 GetBattlerSide(u8 battlerId)
-{
-    return GetBattlerPosition(battlerId) & BIT_SIDE;
-}
 
 #endif // GUARD_BATTLE_H

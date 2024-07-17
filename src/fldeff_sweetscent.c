@@ -63,7 +63,8 @@ static void TrySweetScentEncounter(u8 taskId)
         if (data[0] == 64)
         {
             data[0] = 0;
-            if (SweetScentWildEncounter() == TRUE)
+			
+            if (TrySweetScentWildEncounter())
             {
                 Free(sPlttBufferBak);
                 DestroyTask(taskId);

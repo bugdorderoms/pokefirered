@@ -21,6 +21,7 @@
 #include "battle_gfx_sfx_util.h"
 #include "battle_controllers.h"
 #include "evolution_scene.h"
+#include "generations.h"
 #include "battle_message.h"
 #include "battle_util.h"
 #include "battle_script_commands.h"
@@ -32,6 +33,7 @@
 #include "strings.h"
 #include "decompress.h"
 #include "overworld.h"
+#include "move_anim_scripts.h"
 #include "dns.h"
 #include "util.h"
 #include "oak_speech.h"
@@ -74,14 +76,10 @@ static u8 GetLevelFromMonExp(struct Pokemon *mon);
 #include "data/pokemon/experience_tables.h"
 #include "data/pokemon/fusions.h"
 #include "data/pokemon/natures_info.h"
-
 // Moves
 #include "data/move/battle_moves.h"
-#include "data/move/descriptions.h"
-
 // Trainer
 #include "data/trainer/trainer_class_lookups.h"
-
 // Item
 #include "data/item/items.h"
 #include "data/item/item_effects.h"
@@ -2567,13 +2565,29 @@ void SetWildMonHeldItem(struct Pokemon *mon)
 {
     if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_TRAINER)) && !gDexnavBattle)
     {
-        u16 rnd = RandomMax(100);
-        u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+        u16 rnd, rndVal1, rndVal2, species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 		
         if (gSpeciesInfo[species].itemCommon == gSpeciesInfo[species].itemRare)
             SetMonData(mon, MON_DATA_HELD_ITEM, &gSpeciesInfo[species].itemCommon);
-        else if (rnd > 44)
-			SetMonData(mon, MON_DATA_HELD_ITEM, rnd <= 94 ? &gSpeciesInfo[species].itemCommon : &gSpeciesInfo[species].itemRare);
+		else
+		{
+			rnd = RandomMax(100);
+			
+			if (IsMonValidSpecies(&gPlayerParty[0]) && (GetMonAbility(&gPlayerParty[0]) == ABILITY_COMPOUND_EYES
+			|| GetMonAbility(&gPlayerParty[0]) == ABILITY_SUPER_LUCK))
+			{
+				rndVal1 = 20;
+				rndVal2 = 80;
+			}
+			else
+			{
+				rndVal1 = 45;
+				rndVal2 = 95;
+			}
+			
+			if (rnd >= rndVal1)
+				SetMonData(mon, MON_DATA_HELD_ITEM, rnd < rndVal2 ? &gSpeciesInfo[species].itemCommon : &gSpeciesInfo[species].itemRare);
+		}
     }
 }
 
@@ -2632,6 +2646,18 @@ bool8 MonCanBattle(struct Pokemon *mon)
 	if (IsMonValidSpecies(mon) && GetMonData(mon, MON_DATA_HP, NULL))
 		return TRUE;
 	return FALSE;
+}
+
+u8 GetFirstAliveMonSlotInParty(void)
+{
+	u8 i;
+	
+	for (i = 0; i < PARTY_SIZE; i++)
+	{
+		if (MonCanBattle(&gPlayerParty[i]))
+			break;
+	}
+	return i;
 }
 
 u8 FindMoveSlotInMoveset(struct Pokemon *mon, u16 move)

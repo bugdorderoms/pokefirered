@@ -2520,7 +2520,7 @@ static void PokeSum_PrintSelectedMoveStats(void)
                                      sLevelNickTextColors[0], TEXT_SPEED_FF, sMonSummaryScreen->summary.moveAccuracyStrBufs[sMoveSelectionCursorPos]);
 
         AddTextPrinterParameterized4(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2, 7, 42, 0, 0,
-                                     sLevelNickTextColors[0], TEXT_SPEED_FF, gMoveDescriptionPointers[sMonSummaryScreen->moveIds[sMoveSelectionCursorPos] - 1]);
+                                     sLevelNickTextColors[0], TEXT_SPEED_FF, gBattleMoves[sMonSummaryScreen->moveIds[sMoveSelectionCursorPos]].description);
     }
 }
 

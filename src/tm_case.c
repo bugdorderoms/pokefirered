@@ -520,7 +520,7 @@ static void GetTMNumberAndMoveString(u8 * dest, u16 itemId)
 {
     StringCopy(gStringVar4, gText_FontSize0);
     StringAppend(gStringVar4, gOtherText_UnkF9_08_Clear_01);
-	ConvertIntToDecimalStringN(gStringVar1, (itemId - ITEM_TM01) + 1, STR_CONV_MODE_LEADING_ZEROS, 3);
+	ConvertIntToDecimalStringN(gStringVar1, (itemId - NUM_TO_TM(01)) + 1, STR_CONV_MODE_LEADING_ZEROS, 3);
 	StringAppend(gStringVar4, gStringVar1);
     StringAppend(gStringVar4, sText_SingleSpace);
     StringAppend(gStringVar4, gText_FontSize2);
@@ -1074,10 +1074,10 @@ void Pokedude_InitTMCase(void)
     ClearItemSlots(gSaveBlock1Ptr->bagPocket_TMHM, ARRAY_COUNT(gSaveBlock1Ptr->bagPocket_TMHM));
     ClearItemSlots(gSaveBlock1Ptr->bagPocket_KeyItems, ARRAY_COUNT(gSaveBlock1Ptr->bagPocket_KeyItems));
     ResetTMCaseCursorPos();
-    AddBagItem(ITEM_TM01, 1);
-    AddBagItem(ITEM_TM03, 1);
-    AddBagItem(ITEM_TM09, 1);
-    AddBagItem(ITEM_TM35, 1);
+    AddBagItem(NUM_TO_TM(01), 1);
+    AddBagItem(NUM_TO_TM(03), 1);
+    AddBagItem(NUM_TO_TM(9), 1);
+    AddBagItem(NUM_TO_TM(35), 1);
     InitTMCase(4, CB2_ReturnToTeachyTV, 0);
 }
 
@@ -1361,7 +1361,7 @@ static u8 CreateTMSprite(u16 itemId)
 		animNum = 0xFF;
 	else
 	{
-		animNum = itemId - ITEM_TM01;
+		animNum = itemId - NUM_TO_TM(01);
 		
 		SetTMSpriteAnim(&gSprites[spriteId], animNum);
 		TintTMSpriteByType(gBattleMoves[ItemId_GetHoldEffectParam(itemId)].type);
@@ -1428,7 +1428,7 @@ static void SpriteCB_MoveTMSpriteInCase(struct Sprite * sprite)
             {
                 sprite->data[1]++;
                 TintTMSpriteByType(gBattleMoves[ItemId_GetHoldEffectParam(sprite->data[0])].type);
-                sprite->data[0] -= ITEM_TM01;
+                sprite->data[0] -= NUM_TO_TM(01);
                 SetTMSpriteAnim(sprite, sprite->data[0]);
                 UpdateTMSpritePosition(sprite, sprite->data[0]);
             }

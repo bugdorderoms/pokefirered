@@ -930,6 +930,9 @@
 
 #define MOVES_COUNT_GMAX    (LAST_GMAX_MOVE + 1)
 
+// This setting defines up to which move the Metronome can call.
+#define METRONOME_MOVES_COUNT MOVES_COUNT
+
 #define MOVE_UNVAILABLE     0xFFFF
 
 #endif  // GUARD_CONSTANTS_MOVES_H

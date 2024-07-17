@@ -50,6 +50,8 @@ struct Ride
 	const u8 *desc;
 	u16 species;
 	u16 flagId;
+	u16 playerAvatarFlag;
+	u16 encounterRateMod; // > 100 increase rate, < 100 decrease rate
 };
 
 #define RIDE_PAGER_MON_PIC_X 18
@@ -62,13 +64,9 @@ static void PrintRideDescInMessageWindow(u8 ride);
 static void Task_RidePagerHandleInput(u8 taskId);
 static void RidePager_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list);
 static void DestroyRidePagerWindow(u8 taskId, bool8 useRide);
-static void TaurosChargeCallback(u8 taskId);
-static void StoutlandSearchCallback(u8 taskId);
-static void MudsdaleGallopCallback(u8 taskId);
-static void MachampShoveCallback(u8 taskId);
 static void SharpedoPaddleCallback(u8 taskId);
 static void CharizardGlideCallback(u8 taskId);
-static void Task_StartPlayerToPokeRideEffect(u8 taskId);
+static void PlayerToPokeRideCallback(u8 taskId);
 static void Task_CheckPlayerMovementAndUseRide(u8 taskId);
 static void Task_SummonMonWaitPlayerAnim(u8 taskId);
 static void Task_SummonMonAndSetPlayerAvatarFlag(u8 taskId);
@@ -76,27 +74,30 @@ static void Task_SummonMonAndSetPlayerAvatarFlag(u8 taskId);
 static EWRAM_DATA struct ListMenuItem *sRidesList = NULL;
 EWRAM_DATA u8 gUsingRideMon = 0;
 
-#define RIDE(_species, name, callback, _desc) \
-    [RIDE_##_species - 1] =                   \
-	{                                         \
-		.action =                             \
-		{                                     \
-			.text = COMPOUND_STRING(name),    \
-			{ .void_u8 = callback }           \
-		},                                    \
-		.desc = COMPOUND_STRING(_desc),       \
-		.species = SPECIES_##_species,        \
-		.flagId = FLAG_##_species##_RIDE_GET, \
+// Extra args are player avatar flag and encounter rate mod
+#define RIDE(_species, name, callback, _desc, ...)       \
+    [RIDE_##_species - 1] =                   		     \
+	{                                         		     \
+		.action =                             		     \
+		{                                     		     \
+			.text = COMPOUND_STRING(name),    		     \
+			{ .void_u8 = callback }           		     \
+		},                                    		     \
+		.desc = COMPOUND_STRING(_desc),       		     \
+		.species = SPECIES_##_species,        		     \
+		.flagId = FLAG_##_species##_RIDE_GET, 		     \
+		.playerAvatarFlag = DEFAULT(0, __VA_ARGS__),     \
+		.encounterRateMod = DEFAULT_2(100, __VA_ARGS__), \
 	}
 
 static const struct Ride sPokeRidesTable[] =
 {
-	RIDE(TAUROS,    "Tauros Charge",    TaurosChargeCallback,    "This Tauros's charge can\nbreak rocks."),
-	RIDE(STOUTLAND, "Stoutland Search", StoutlandSearchCallback, "This Stoutland can search\nfor buried items."),
-	RIDE(MUDSDALE,  "Mudsdale Gallop",  MudsdaleGallopCallback,  "This Mudsdale can run\nover rocky terrain."),
-	RIDE(MACHAMP,   "Machamp Shove",    MachampShoveCallback,    "This Machamp can move\nheavy boulders."),
-	RIDE(SHARPEDO,  "Sharpedo Paddle",  SharpedoPaddleCallback,  "This Sharpedo allows you\nto surf on the water."),
-	RIDE(CHARIZARD, "Charizard Glide",  CharizardGlideCallback,  "This Charizard flies you\nto other places."),
+	RIDE(TAUROS,    "Tauros Charge",    PlayerToPokeRideCallback, "This Tauros's charge can\nbreak rocks.",          PLAYER_AVATAR_FLAG_TAUROS_RIDE,    100 - 50),
+	RIDE(STOUTLAND, "Stoutland Search", PlayerToPokeRideCallback, "This Stoutland can search\nfor buried items.",    PLAYER_AVATAR_FLAG_STOUTLAND_RIDE, 100 - 45),
+	RIDE(MUDSDALE,  "Mudsdale Gallop",  PlayerToPokeRideCallback, "This Mudsdale can run\nover rocky terrain.",      PLAYER_AVATAR_FLAG_MUDSDALE_RIDE,  100 - 35),
+	RIDE(MACHAMP,   "Machamp Shove",    PlayerToPokeRideCallback, "This Machamp can move\nheavy boulders.",          PLAYER_AVATAR_FLAG_MACHAMP_RIDE),
+	RIDE(SHARPEDO,  "Sharpedo Paddle",  SharpedoPaddleCallback,   "This Sharpedo allows you\nto surf on the water.", PLAYER_AVATAR_FLAG_SURFING,        100 - 85),
+	RIDE(CHARIZARD, "Charizard Glide",  CharizardGlideCallback,   "This Charizard flies you\nto other places."),
 };
 
 u8 CountObtainedPokeRides(void)
@@ -154,6 +155,21 @@ void TryRemoveStrengthFlag(void)
 		FlagClear(FLAG_SYS_USE_STRENGTH);
 }
 
+u32 ApplyRideEncounterRateMod(u32 encounterRate)
+{
+	u8 i;
+	
+	for (i = RIDE_NONE; i < NUM_RIDE_POKEMON; i++)
+	{
+		if (sPokeRidesTable[i].playerAvatarFlag && TestPlayerAvatarFlags(sPokeRidesTable[i].playerAvatarFlag))
+		{
+			encounterRate = encounterRate * sPokeRidesTable[i].encounterRateMod / 100;
+			break;
+		}
+	}
+	return encounterRate;
+}
+
 #define tState       data[0]
 #define tWindowId    data[1]
 #define tListTaskId  data[2]
@@ -161,9 +177,6 @@ void TryRemoveStrengthFlag(void)
 #define tCursorPos   data[4]
 #define tCursorMoved data[5]
 #define tSelectedId  data[6]
-
-#define tRide data[0]
-#define tFlag data[1]
 
 void InitRidePager(void)
 {
@@ -359,7 +372,7 @@ static void DestroyRidePagerWindow(u8 taskId, bool8 useRide)
 	}
 }
 
-static void Task_StartPlayerToPokeRideEffect(u8 taskId)
+static void PlayerToPokeRideCallback(u8 taskId)
 {
 	s16 x, y, *data = gTasks[taskId].data;
 	u8 behavior;
@@ -373,7 +386,7 @@ static void Task_StartPlayerToPokeRideEffect(u8 taskId)
 	{
 		gBikeCameraAheadPanback = FALSE;
 		
-		if (TestPlayerAvatarFlags(tFlag))
+		if (TestPlayerAvatarFlags(sPokeRidesTable[tSelectedId - 1].playerAvatarFlag))
 			TryDismountPokeRide();
 		else
 		{
@@ -393,7 +406,7 @@ static void Task_CheckPlayerMovementAndUseRide(u8 taskId)
 {
 	if (!ObjectEventIsMovementOverridden(&gObjectEvents[gPlayerAvatar.objectEventId]) || ObjectEventClearHeldMovementIfFinished(&gObjectEvents[gPlayerAvatar.objectEventId]))
 	{
-		gUsingRideMon = gTasks[taskId].tRide;
+		gUsingRideMon = gTasks[taskId].tSelectedId;
 		StartPlayerAvatarSummonMonForFieldMoveAnim();
 		ObjectEventSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], MOVEMENT_ACTION_START_ANIM_IN_DIRECTION);
 		gTasks[taskId].func = Task_SummonMonWaitPlayerAnim;
@@ -414,9 +427,9 @@ static void Task_SummonMonAndSetPlayerAvatarFlag(u8 taskId)
 {
 	if (!FieldEffectActiveListContains(FLDEFF_FIELD_MOVE_SHOW_MON))
 	{
-		SetPlayerAvatarTransitionFlags(gTasks[taskId].tFlag);
+		SetPlayerAvatarTransitionFlags(sPokeRidesTable[gTasks[taskId].tSelectedId - 1].playerAvatarFlag);
 		
-		if (gTasks[taskId].tRide == RIDE_MACHAMP)
+		if (gTasks[taskId].tSelectedId == RIDE_MACHAMP)
 			FlagSet(FLAG_SYS_USE_STRENGTH);
 		else
 			FlagClear(FLAG_SYS_USE_STRENGTH);
@@ -431,42 +444,6 @@ static void Task_SummonMonAndSetPlayerAvatarFlag(u8 taskId)
 		ScriptContext2_Disable();
 		DestroyTask(taskId);
 	}
-}
-
-static void TaurosChargeCallback(u8 taskId)
-{
-	s16 *data = gTasks[taskId].data;
-	
-	tRide = RIDE_TAUROS;
-	tFlag = PLAYER_AVATAR_FLAG_TAUROS_RIDE;
-	gTasks[taskId].func = Task_StartPlayerToPokeRideEffect;
-}
-
-static void StoutlandSearchCallback(u8 taskId)
-{
-	s16 *data = gTasks[taskId].data;
-	
-	tRide = RIDE_STOUTLAND;
-	tFlag = PLAYER_AVATAR_FLAG_STOUTLAND_RIDE;
-	gTasks[taskId].func = Task_StartPlayerToPokeRideEffect;
-}
-
-static void MudsdaleGallopCallback(u8 taskId)
-{
-	s16 *data = gTasks[taskId].data;
-	
-	tRide = RIDE_MUDSDALE;
-	tFlag = PLAYER_AVATAR_FLAG_MUDSDALE_RIDE;
-	gTasks[taskId].func = Task_StartPlayerToPokeRideEffect;
-}
-
-static void MachampShoveCallback(u8 taskId)
-{
-	s16 *data = gTasks[taskId].data;
-	
-	tRide = RIDE_MACHAMP;
-	tFlag = PLAYER_AVATAR_FLAG_MACHAMP_RIDE;
-	gTasks[taskId].func = Task_StartPlayerToPokeRideEffect;
 }
 
 static void SharpedoPaddleCallback(u8 taskId)

@@ -20,10 +20,10 @@ CeruleanCity_Gym_EventScript_MistyDefeated:: @ 816AAD3
 
 CeruleanCity_Gym_EventScript_GiveTM03:: @ 816AAF9
 	msgbox CeruleanCity_Gym_Text_ExplainCascadeBadge
-	checkitemspace ITEM_TM03, 1
+	checkitemspace NUM_TO_TM(03), 1
 	compare VAR_RESULT, FALSE
 	goto_if_eq CeruleanCity_Gym_EventScript_NoRoomForTM03
-	giveitem_msg CeruleanCity_Gym_Text_ReceivedTM03FromMisty, ITEM_TM03
+	giveitem_msg CeruleanCity_Gym_Text_ReceivedTM03FromMisty, NUM_TO_TM(03)
 	setflag FLAG_GOT_TM03_FROM_MISTY
 	msgbox CeruleanCity_Gym_Text_ExplainTM03
 	release

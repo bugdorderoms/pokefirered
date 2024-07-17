@@ -3,8 +3,6 @@
 
 #include "main.h"
 
-extern const u8 * const gMoveDescriptionPointers[];
-
 void ShowSelectMovePokemonSummaryScreen(struct Pokemon *, u8, u8, MainCallback, u16);
 u8 GetMoveSlotToReplace(void);
 u8 GetLastViewedMonIndex(void);

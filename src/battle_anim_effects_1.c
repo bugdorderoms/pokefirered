@@ -3746,9 +3746,11 @@ void AnimSparkingStars(struct Sprite* sprite)
     sprite->callback = TranslateSpriteLinearFixedPoint;
 }
 
+// Animates the Z letter on the sleep animation.
 void AnimSleepLetterZ(struct Sprite* sprite)
 {
     SetSpriteCoordsToAnimAttackerCoords(sprite);
+	
     if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_PLAYER)
     {
         sprite->x += gBattleAnimArgs[0];
@@ -3762,7 +3764,6 @@ void AnimSleepLetterZ(struct Sprite* sprite)
         sprite->data[3] = 0xFFFF;
         StartSpriteAffineAnim(sprite, 1);
     }
-
     sprite->callback = AnimSleepLetterZStep;
 }
 
@@ -3770,8 +3771,10 @@ static void AnimSleepLetterZStep(struct Sprite* sprite)
 {
     sprite->y2 = -(sprite->data[0] / 0x28);
     sprite->x2 = sprite->data[4] / 10;
+	
     sprite->data[4] += sprite->data[3] * 2;
     sprite->data[0] += sprite->data[1];
+	
     if (++sprite->data[1] > 60)
         DestroySpriteAndMatrix(sprite);
 }

@@ -73,10 +73,10 @@ CinnabarIsland_Gym_EventScript_DefeatedBlaine:: @ 816DA06
 
 CinnabarIsland_Gym_EventScript_GiveTM38:: @ 816DA34
 	msgbox CinnabarIsland_Gym_Text_ExplainVolcanoBadge
-	checkitemspace ITEM_TM38, 1
+	checkitemspace NUM_TO_TM(38), 1
 	compare VAR_RESULT, FALSE
 	goto_if_eq CinnabarIsland_Gym_EventScript_NoRoomForTM38
-	giveitem_msg CinnabarIsland_Gym_Text_ReceivedTM38FromBlaine, ITEM_TM38
+	giveitem_msg CinnabarIsland_Gym_Text_ReceivedTM38FromBlaine, NUM_TO_TM(38)
 	setflag FLAG_GOT_TM38_FROM_BLAINE
 	msgbox CinnabarIsland_Gym_Text_FireBlastIsUltimateFireMove
 	release

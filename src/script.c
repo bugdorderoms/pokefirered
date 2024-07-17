@@ -21,9 +21,7 @@ EWRAM_DATA const u8 *gRAMScriptPtr = NULL;
 
 // iwram bss
 static u8 sScriptContext1Status;
-static u32 sUnusedVariable1;
 static struct ScriptContext sScriptContext1;
-static u32 sUnusedVariable2;
 static struct ScriptContext sScriptContext2;
 static bool8 sScriptContext2Enabled;
 static u8 sMsgBoxWalkawayDisabled;
@@ -52,11 +50,10 @@ void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTable
         ctx->stack[i] = 0;
 }
 
-u8 SetupBytecodeScript(struct ScriptContext *ctx, const u8 *ptr)
+static void SetupBytecodeScript(struct ScriptContext *ctx, const u8 *ptr)
 {
     ctx->scriptPtr = ptr;
     ctx->mode = SCRIPT_MODE_BYTECODE;
-    return 1;
 }
 
 void SetupNativeScript(struct ScriptContext *ctx, bool8 (*ptr)(void))
@@ -87,8 +84,9 @@ bool8 RunScriptCommand(struct ScriptContext *ctx)
     case SCRIPT_MODE_NATIVE:
         if (ctx->nativePtr)
         {
-            if (ctx->nativePtr() == TRUE)
+            if (ctx->nativePtr())
                 ctx->mode = SCRIPT_MODE_BYTECODE;
+			
             return TRUE;
         }
         ctx->mode = SCRIPT_MODE_BYTECODE;

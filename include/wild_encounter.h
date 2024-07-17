@@ -45,21 +45,17 @@ extern u8 gChainFishingStreak;
 extern bool8 gIsFishingEncounter;
 extern bool8 gIsSurfingEncounter;
 
-void DisableWildEncounters(bool8 disabled);
-bool8 StandardWildEncounter(u32 currMetatileAttrs, u16 previousMetaTileBehavior);
-bool8 SweetScentWildEncounter(void);
-bool8 DoesCurrentMapHaveFishingMons(void);
-void FishingWildEncounter(u8 rod);
-u16 GetLocalWildMon(bool8 *isWaterMon);
-u16 GetLocalWaterMon(void);
-bool8 UpdateRepelCounter(void);
-void DisableWildEncounters(bool8 state);
-bool8 SweetScentWildEncounter(void);
 void SeedWildEncounterRng(u16 randVal);
 void ResetEncounterRateModifiers(void);
-bool8 TryStandardWildEncounter(u32 currMetatileAttrs);
-const struct WildPokemonInfo *GetWildPokemonInfoByHeaderType(u16 headerId, u8 type);
-u16 GenerateWildMon(u16 species, u8 level);
+void ToggleWildEncountersState(bool8 disabled);
 u16 GetCurrentMapWildMonHeaderId(void);
+const struct WildPokemonInfo *GetWildPokemonInfoByHeaderType(u16 headerId, u8 type);
+u16 GenerateWildMon(u16 species, u8 level, bool8 checkWildInfluence);
+bool8 TryStandardWildEncounter(u32 currMetatileAttrs);
+void FishingWildEncounter(u8 rod);
+bool8 DoesCurrentMapHaveFishingMons(void);
+bool8 TrySweetScentWildEncounter(void);
+u16 GetWildMonForAmbientCry(bool8 *isWaterMon);
+bool8 UpdateRepelCounter(void);
 
 #endif // GUARD_WILD_ENCOUNTER_H

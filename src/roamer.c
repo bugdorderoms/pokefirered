@@ -102,11 +102,9 @@ u16 GetRoamerSpecies(void)
 static void CreateInitialRoamerMon(void)
 {
 	u8 level = 50;
-    struct Pokemon * mon = &gEnemyParty[0];
+    struct Pokemon *mon = &gEnemyParty[0];
 	
-	GenerateWildMon(GetRoamerSpecies(), level);
-	
-    ROAMER->species = GetMonData(mon, MON_DATA_SPECIES);
+    ROAMER->species = GenerateWildMon(GetRoamerSpecies(), level, FALSE);
     ROAMER->level = level;
     ROAMER->status = 0;
     ROAMER->active = TRUE;

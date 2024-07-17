@@ -260,7 +260,8 @@ struct MoveFlags
 	/*0x05*/ u8 healingMove:1; // A move with this flag can't be used while affected by Heal Block, also Triage gives priority to it.
 	// end of byte
 	/*0x06*/ u8 forbiddenMeFirst:1; // A move with this flag can't be executed by Me First.
-	/*0x06*/ u8 unused:7;
+	/*0x06*/ u8 hasQuietBGM:1; // A move with this flag will have a quiet BGM on its battle anim.
+			 u8 unused:6;
 };
 
 struct BattleMove
@@ -268,16 +269,18 @@ struct BattleMove
 	/*0x00*/ u8 name[MOVE_NAME_LENGTH + 1];
 	/*0x11*/ u8 power;
     /*0x12*/ u16 effect;
-    /*0x14*/ u8 type;
-    /*0x15*/ u8 accuracy;
-    /*0x16*/ u8 pp;
-    /*0x17*/ u8 secondaryEffectChance; // If diffent than 0 it will be affected by Sheer Force
-    /*0x18*/ u8 target;
-    /*0x19*/ s8 priority;
-    /*0x1A*/ u8 split;
-    /*0x1B*/ u8 argument;
-	/*0x1C*/ u8 zMoveEffect;
-    /*0x1D*/ struct MoveFlags flags;
+	/*0x14*/ const u8 *description;
+	/*0x18*/ const u8 *animScript;
+    /*0x1C*/ u8 type;
+    /*0x1D*/ u8 accuracy;
+    /*0x1E*/ u8 pp;
+    /*0x1F*/ u8 secondaryEffectChance; // If diffent than 0 it will be affected by Sheer Force
+    /*0x20*/ u8 target;
+    /*0x21*/ s8 priority;
+    /*0x22*/ u8 split;
+    /*0x23*/ struct MoveFlags flags;
+			 u8 argument;
+			 u8 zMoveEffect;
 };
 
 extern const struct BattleMove gBattleMoves[];
@@ -478,6 +481,7 @@ void ClearAllFusedMonSpecies(void);
 bool8 HealStatusConditions(struct Pokemon *mon, u32 healMask, u8 battleId);
 bool8 MonCanBattle(struct Pokemon *mon);
 bool8 IsMonValidSpecies(struct Pokemon *mon);
+u8 GetFirstAliveMonSlotInParty(void);
 u8 FindMoveSlotInMoveset(struct Pokemon *mon, u16 move);
 u8 FindMoveSlotInBoxMonMoveset(struct BoxPokemon *boxMon, u16 move);
 void DrawSpeciesFootprint(u8 windowId, u16 species, u8 x, u8 y);

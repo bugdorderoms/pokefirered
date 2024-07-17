@@ -17,7 +17,7 @@ SSAnne_CaptainsOffice_EventScript_Captain:: @ 8160B3A
 	applymovement LOCALID_CAPTAIN, Movement_FacePlayer
 	waitmovement 0
 	msgbox SSAnne_CaptainsOffice_Text_ThankYouHaveHMForCut
-	giveitem_msg SSAnne_CaptainsOffice_Text_ObtainedHM01FromCaptain, ITEM_TM101_CUT, 1, MUS_OBTAIN_KEY_ITEM
+	giveitem_msg SSAnne_CaptainsOffice_Text_ObtainedHM01FromCaptain, NUM_TO_TM(101), 1, MUS_OBTAIN_KEY_ITEM
 	msgbox SSAnne_CaptainsOffice_Text_ExplainCut
 	setflag FLAG_GOT_CUT
 	setvar VAR_MAP_SCENE_VERMILION_CITY, 1

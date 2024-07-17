@@ -82,7 +82,6 @@ gSpecials:: @ 815FD60
 	def_special CalculatePlayerPartyCount
 	def_special CountPartyNonEggMons
 	def_special CountPartyAliveNonEggMons_IgnoreVar0x8004Slot
-	def_special GetNumMovesSelectedMonHas
 	def_special GetLeadMonFriendship
 	def_special ReducePlayerPartyToThree
 	def_special GetPartyMonSpecies
@@ -190,9 +189,6 @@ gSpecials:: @ 815FD60
 	
 	@ Move tutor specials
 	def_special SelectMoveTutorMon
-	def_special SelectMoveDeleterMove
-	def_special MoveDeleterForgetMove
-	def_special BufferMoveDeleterNicknameAndMove
 	def_special DisplayMoveTutorMenu
 	def_special ChooseMonForMoveTutor
 	def_special BufferTMHMMoveName

@@ -116,7 +116,7 @@ CeladonCity_DepartmentStore_Roof_EventScript_AskGiveAllDrinks:: @ 816BED7
 
 CeladonCity_DepartmentStore_Roof_EventScript_GiveFreshWater:: @ 816BF19
 	setvar VAR_0x8008, ITEM_FRESH_WATER
-	setvar VAR_0x8009, ITEM_TM16
+	setvar VAR_0x8009, NUM_TO_TM(16)
 	goto_if_set FLAG_GOT_TM16_FROM_THIRSTY_GIRL, CeladonCity_DepartmentStore_Roof_EventScript_NotThirstyAfterAll
 	msgbox CeladonCity_DepartmentStore_Roof_Text_YayFreshWaterHaveThis
 	goto CeladonCity_DepartmentStore_Roof_EventScript_GiveDrink
@@ -124,7 +124,7 @@ CeladonCity_DepartmentStore_Roof_EventScript_GiveFreshWater:: @ 816BF19
 
 CeladonCity_DepartmentStore_Roof_EventScript_GiveSodaPop:: @ 816BF3A
 	setvar VAR_0x8008, ITEM_SODA_POP
-	setvar VAR_0x8009, ITEM_TM20
+	setvar VAR_0x8009, NUM_TO_TM(20)
 	goto_if_set FLAG_GOT_TM20_FROM_THIRSTY_GIRL, CeladonCity_DepartmentStore_Roof_EventScript_NotThirstyAfterAll
 	msgbox CeladonCity_DepartmentStore_Roof_Text_YaySodaPopHaveThis
 	goto CeladonCity_DepartmentStore_Roof_EventScript_GiveDrink
@@ -132,7 +132,7 @@ CeladonCity_DepartmentStore_Roof_EventScript_GiveSodaPop:: @ 816BF3A
 
 CeladonCity_DepartmentStore_Roof_EventScript_GiveLemonade:: @ 816BF5B
 	setvar VAR_0x8008, ITEM_LEMONADE
-	setvar VAR_0x8009, ITEM_TM33
+	setvar VAR_0x8009, NUM_TO_TM(33)
 	goto_if_set FLAG_GOT_TM33_FROM_THIRSTY_GIRL, CeladonCity_DepartmentStore_Roof_EventScript_NotThirstyAfterAll
 	msgbox CeladonCity_DepartmentStore_Roof_Text_YayLemonadeHaveThis
 	goto CeladonCity_DepartmentStore_Roof_EventScript_GiveDrink

@@ -85,7 +85,6 @@ void SwitchPartyMonSlots(u8 slot, u8 slot2);
 u8 GetPartyIdFromBattlePartyId(u8 battlePartyId);
 void ShowPartyMenuToShowcaseMultiBattleParty(void);
 void ChooseMonForDaycare(void);
-void ChoosePartyMonByMenuType(u8 menuType);
 void UpdateCurrentPartyMonIconSpecies(u16 species);
 void UpdatePartyAfterPokemonFusion(void);
 void CreatePartyMonAfterDefusing(void);

@@ -528,6 +528,7 @@ extern const u32 gFile_graphics_interface_bag_swap_sheet[];
 extern const u32 gFile_graphics_interface_bag_swap_palette[];
 
 // battle_anim_utility_funcs
+extern const u32 gFile_graphics_battle_interface_enemy_mon_shadow_sheet[];
 extern const u32 gFile_graphics_battle_anims_masks_curse_sheet[];
 extern const u32 gFile_graphics_battle_anims_masks_curse_tilemap[];
 extern const u32 gBattleStatMask_Gfx[];
@@ -822,6 +823,9 @@ extern const u32 gBattleAnimBgTilemap_ScaryFacePlayer[];
 extern const u32 gBattleAnimBgTilemap_ScaryFaceOpponent[];
 extern const u32 gBattleAnimSpriteGfx_Bird[];
 extern const u32 gBattleAnimSpriteGfx_CrossImpact[];
+extern const u32 gBattleAnimSpriteGfx_KarateHand[];
+extern const u32 gSmokescreenImpactTiles[];
+extern const u32 gSmokescreenImpactPalette[];
 
 // battle anim particle pals
 extern const u32 gBattleAnimSpritePal_Bone[];

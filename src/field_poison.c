@@ -10,18 +10,6 @@
 #include "field_poison.h"
 #include "constants/battle.h"
 
-static bool32 AllMonsFainted(void)
-{
-    int i;
-
-    for (i = 0; i < PARTY_SIZE; i++)
-	{
-        if (MonCanBattle(&gPlayerParty[i]))
-            return FALSE;
-	}
-    return TRUE;
-}
-
 static void FaintFromFieldPoison(u8 partyIdx)
 {
     struct Pokemon *pokemon = &gPlayerParty[partyIdx];
@@ -84,7 +72,7 @@ static void Task_TryFieldPoisonWhiteOut(u8 taskId)
             tState--;
         break;
     case 2:
-        gSpecialVar_Result = AllMonsFainted();
+        gSpecialVar_Result = (GetFirstAliveMonSlotInParty() == PARTY_SIZE);
         EnableBothScriptContexts();
         DestroyTask(taskId);
         break;

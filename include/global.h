@@ -11,6 +11,7 @@
 #include "constants/species.h"
 #include "constants/easy_chat.h"
 #include "constants/items.h"
+#include "constants/rgb.h"
 
 // Prevent cross-jump optimization.
 #define BLOCK_CROSS_JUMP asm("");

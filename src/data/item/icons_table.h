@@ -616,7 +616,7 @@ static const void *const sItemIconGfxPtrs[][2] = {
     [ITEM_SHINY_CHARM] = {sItemIcon_ShinyCharm, sItemIconPalette_ShinyCharm},
     [ITEM_RAINBOW_WING] = {sItemIcon_RainbowWing, sItemIconPalette_RainbowWing},
     [ITEM_SILVER_WING] = {sItemIcon_RainbowWing, sItemIconPalette_SilverWing},
-	[ITEM_TM01] = {sItemIcon_TM, sItemIconPalette_NormalTMHM},
+	/*[ITEM_TM01] = {sItemIcon_TM, sItemIconPalette_NormalTMHM},
     [ITEM_TM02] = {sItemIcon_TM, sItemIconPalette_DragonTMHM},
     [ITEM_TM03] = {sItemIcon_TM, sItemIconPalette_PsychicTMHM},
     [ITEM_TM04] = {sItemIcon_TM, sItemIconPalette_PsychicTMHM},
@@ -715,6 +715,6 @@ static const void *const sItemIconGfxPtrs[][2] = {
     [ITEM_TM97] = {sItemIcon_TM, sItemIconPalette_DarkTMHM},
     [ITEM_TM98] = {sItemIcon_TM, sItemIconPalette_WaterTMHM},
     [ITEM_TM99] = {sItemIcon_TM, sItemIconPalette_FairyTMHM},
-    [ITEM_TM100] = {sItemIcon_TM, sItemIconPalette_NormalTMHM},
+    [ITEM_TM100] = {sItemIcon_TM, sItemIconPalette_NormalTMHM},*/
     [ITEMS_COUNT] = {sItemIcon_ReturnToFieldArrow, sItemIconPalette_ReturnToFieldArrow},
 };

@@ -2588,7 +2588,7 @@ static void CB2_HandleTradeEnded(void)
     case 42:
         if (IsLinkTaskFinished())
         {
-            sub_80DA434();
+            LinkTradeSetLastSectorSignature();
             gMain.state = 5;
         }
         break;

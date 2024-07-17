@@ -99,14 +99,12 @@ void AnimTask_ShakeMon(u8 taskId)
         DestroyAnimVisualTask(taskId);
     else
     {
-        gSprites[spriteId].x2 = gBattleAnimArgs[1];
-        gSprites[spriteId].y2 = gBattleAnimArgs[2];
-        gTasks[taskId].data[0] = spriteId;
+		gTasks[taskId].data[0] = spriteId;
         gTasks[taskId].data[1] = gBattleAnimArgs[3];
         gTasks[taskId].data[2] = gBattleAnimArgs[4];
         gTasks[taskId].data[3] = gBattleAnimArgs[4];
-        gTasks[taskId].data[4] = gBattleAnimArgs[1];
-        gTasks[taskId].data[5] = gBattleAnimArgs[2];
+        gTasks[taskId].data[4] = gSprites[spriteId].x2 = gBattleAnimArgs[1];
+        gTasks[taskId].data[5] = gSprites[spriteId].y2 = gBattleAnimArgs[2];
         gTasks[taskId].func = AnimTask_ShakeMonStep;
         gTasks[taskId].func(taskId);
     }
@@ -114,21 +112,21 @@ void AnimTask_ShakeMon(u8 taskId)
 
 static void AnimTask_ShakeMonStep(u8 taskId)
 {
+	// Wait num of frames
     if (gTasks[taskId].data[3] == 0)
     {
-        if (gSprites[gTasks[taskId].data[0]].x2 == 0)
-            gSprites[gTasks[taskId].data[0]].x2 = gTasks[taskId].data[4];
-        else
-            gSprites[gTasks[taskId].data[0]].x2 = 0;
-        if (gSprites[gTasks[taskId].data[0]].y2 == 0)
-            gSprites[gTasks[taskId].data[0]].y2 = gTasks[taskId].data[5];
-        else
-            gSprites[gTasks[taskId].data[0]].y2 = 0;
+		u8 spriteId = gTasks[taskId].data[0];
+		
+		gSprites[spriteId].x2 = (gSprites[spriteId].x2 == 0) ? gTasks[taskId].data[4] : 0;
+		gSprites[spriteId].y2 = (gSprites[spriteId].y2 == 0) ? gTasks[taskId].data[5] : 0;
+        
         gTasks[taskId].data[3] = gTasks[taskId].data[2];
+		
         if (--gTasks[taskId].data[1] == 0)
         {
-            gSprites[gTasks[taskId].data[0]].x2 = 0;
-            gSprites[gTasks[taskId].data[0]].y2 = 0;
+            gSprites[spriteId].x2 = 0;
+            gSprites[spriteId].y2 = 0;
+			
             DestroyAnimVisualTask(taskId);
         }
     }

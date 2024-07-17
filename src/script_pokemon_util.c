@@ -13,8 +13,6 @@
 #include "constants/daycare.h"
 #include "constants/moves.h"
 
-static void CB2_ReturnFromChooseHalfParty(void);
-
 void HealPlayerParty(void)
 {
     u8 i, arg[4];
@@ -134,30 +132,7 @@ u8 ScriptGiveEgg(u16 species, u8 *ivs, u8 shinyType, bool8 hiddenAbility, u8 nat
 
 void HasEnoughMonsForDoubleBattle(void)
 {
-    switch (GetMonsStateToDoubles())
-    {
-    case PLAYER_HAS_TWO_USABLE_MONS:
-        gSpecialVar_Result = PLAYER_HAS_TWO_USABLE_MONS;
-        break;
-    case PLAYER_HAS_ONE_MON:
-        gSpecialVar_Result = PLAYER_HAS_ONE_MON;
-        break;
-    case PLAYER_HAS_ONE_USABLE_MON:
-        gSpecialVar_Result = PLAYER_HAS_ONE_USABLE_MON;
-        break;
-    }
-}
-
-static bool8 CheckPartyMonHasHeldItem(u16 item)
-{
-    int i;
-
-    for(i = 0; i < PARTY_SIZE; i++)
-    {
-        if (IsMonValidSpecies(&gPlayerParty[i]) && GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM) == item)
-            return TRUE;
-    }
-    return FALSE;
+	gSpecialVar_Result = GetMonsStateToDoubles();
 }
 
 void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 level2, u16 item2)
@@ -203,15 +178,6 @@ void ScriptSetMonMoveSlot(u8 monIndex, u16 move, u8 slot)
     SetMonMoveSlot(&gPlayerParty[monIndex], move, slot);
 }
 
-// Note: When control returns to the event script, gSpecialVar_Result will be
-// TRUE if the party selection was successful.
-void ChooseHalfPartyForBattle(void)
-{
-    gMain.savedCallback = CB2_ReturnFromChooseHalfParty;
-//    VarSet(VAR_FRONTIER_FACILITY, FACILITY_MULTI_OR_EREADER);
-    InitChooseHalfPartyForBattle(CHOOSE_MONS_FOR_CABLE_CLUB_BATTLE);
-}
-
 static void CB2_ReturnFromChooseHalfParty(void)
 {
     switch (gSelectedOrderFromParty[0])
@@ -223,17 +189,25 @@ static void CB2_ReturnFromChooseHalfParty(void)
         gSpecialVar_Result = TRUE;
         break;
     }
-
     SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+}
+
+// Note: When control returns to the event script, gSpecialVar_Result will be
+// TRUE if the party selection was successful.
+void ChooseHalfPartyForBattle(void)
+{
+    gMain.savedCallback = CB2_ReturnFromChooseHalfParty;
+//    VarSet(VAR_FRONTIER_FACILITY, FACILITY_MULTI_OR_EREADER);
+    InitChooseHalfPartyForBattle(CHOOSE_MONS_FOR_CABLE_CLUB_BATTLE);
 }
 
 void ReducePlayerPartyToThree(void)
 {
-    struct Pokemon * party = AllocZeroed(3 * sizeof(struct Pokemon));
+    struct Pokemon * party = AllocZeroed((PARTY_SIZE / 2) * sizeof(struct Pokemon));
     int i;
 
     // copy the selected pokemon according to the order.
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < (PARTY_SIZE / 2); i++)
 	{
         if (gSelectedOrderFromParty[i]) // as long as the order keeps going (did the player select 1 mon? 2? 3?), do not stop
             party[i] = gPlayerParty[gSelectedOrderFromParty[i] - 1]; // index is 0 based, not literal
@@ -241,7 +215,7 @@ void ReducePlayerPartyToThree(void)
     CpuFill32(0, gPlayerParty, sizeof(gPlayerParty));
 
     // overwrite the first 3 with the order copied to.
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < (PARTY_SIZE / 2); i++)
         gPlayerParty[i] = party[i];
 
     CalculatePlayerPartyCount();

@@ -12,10 +12,10 @@
 // Function Declarations
 static u8 sub_8078178(u8 battlerId, bool8 b);
 static void sub_80782BC(u8 taskId);
-static void sub_80784D8(u8 taskId);
-static void sub_8078528(u8 taskId);
-static void sub_80785D8(u8 taskId);
-static void sub_807862C(u8 taskId);
+static void AnimTask_FrozenIceCubeStep(u8 taskId);
+static void AnimTask_FrozenIceCubeStep2(u8 taskId);
+static void AnimTask_FrozenIceCubeStep3(u8 taskId);
+static void AnimTask_FrozenIceCubeStep4(u8 taskId);
 static void Task_DoStatusAnimation(u8 taskId);
 static void sub_807834C(struct Sprite *sprite);
 static void sub_8078380(struct Sprite *sprite);
@@ -80,7 +80,7 @@ const struct SpriteTemplate gSpriteTemplate_83BF480 =
     .callback = SpriteCB_TrackOffsetFromAttackerAndWaitAnim,
 };
 
-static const struct Subsprite sSubsprites_83BF544[] =
+static const struct Subsprite sFrozenIceCubeSubsprites[] =
 {
     {.x = -16, .y = -16, .shape = SPRITE_SHAPE(8x8),  .size = 3, .tileOffset =   0, .priority = 2},
     {.x = -16, .y =  48, .shape = SPRITE_SHAPE(16x8), .size = 3, .tileOffset =  64, .priority = 2},
@@ -88,12 +88,12 @@ static const struct Subsprite sSubsprites_83BF544[] =
     {.x =  48, .y =  48, .shape = SPRITE_SHAPE(8x8),  .size = 2, .tileOffset = 128, .priority = 2},
 };
 
-static const struct SubspriteTable sUnknown_83BF554[] =
+static const struct SubspriteTable sFrozenIceCubeSubspriteTable[] =
 {
-    {ARRAY_COUNT(sSubsprites_83BF544), sSubsprites_83BF544},
+    {ARRAY_COUNT(sFrozenIceCubeSubsprites), sFrozenIceCubeSubsprites},
 };
 
-static const struct SpriteTemplate sUnknown_83BF55C =
+static const struct SpriteTemplate sFrozenIceCubeSpriteTemplate =
 {
     .tileTag = ANIM_TAG_ICE_CUBE,
     .paletteTag = ANIM_TAG_ICE_CUBE,
@@ -226,92 +226,86 @@ static void sub_8078380(struct Sprite *sprite)
 
 void AnimTask_FrozenIceCube(u8 taskId)
 {
+	u8 spriteId;
     s16 x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) - 32;
     s16 y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) - 36;
-    u8 spriteId;
+    
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 16));
-    spriteId = CreateSprite(&sUnknown_83BF55C, x, y, 4);
+	
+    spriteId = CreateSprite(&sFrozenIceCubeSpriteTemplate, x, y, 4);
     if (GetSpriteTileStartByTag(ANIM_TAG_ICE_CUBE) == SPRITE_INVALID_TAG)
         gSprites[spriteId].invisible = TRUE;
     
-    SetSubspriteTables(&gSprites[spriteId], sUnknown_83BF554);
+    SetSubspriteTables(&gSprites[spriteId], sFrozenIceCubeSubspriteTable);
     gTasks[taskId].data[15] = spriteId;
-    gTasks[taskId].func = sub_80784D8;
+    gTasks[taskId].func = AnimTask_FrozenIceCubeStep;
 }
 
-static void sub_80784D8(u8 taskId)
+static void AnimTask_FrozenIceCubeStep(u8 taskId)
 {
-    gTasks[taskId].data[1]++;
-    if (gTasks[taskId].data[1] == 10)
+    if (++gTasks[taskId].data[1] == 10)
     {
-        gTasks[taskId].func = sub_8078528;
+        gTasks[taskId].func = AnimTask_FrozenIceCubeStep2;
         gTasks[taskId].data[1] = 0;
     }
     else
     {
         u8 var = gTasks[taskId].data[1];
-
         SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(var, 16 - var));
     }
 }
 
-static void sub_8078528(u8 taskId)
+static void AnimTask_FrozenIceCubeStep2(u8 taskId)
 {
     u8 palIndex = IndexOfSpritePaletteTag(ANIM_TAG_ICE_CUBE);
 
     if (gTasks[taskId].data[1]++ > 13)
     {
-        gTasks[taskId].data[2]++;
-        if (gTasks[taskId].data[2] == 3)
+        if (++gTasks[taskId].data[2] == 3)
         {
-            u16 temp;
+            u16 temp = gPlttBufferFaded[0x100 + palIndex * 16 + 13];
 
-            temp = gPlttBufferFaded[0x100 + palIndex * 16 + 13];
             gPlttBufferFaded[0x100 + palIndex * 16 + 13] = gPlttBufferFaded[0x100 + palIndex * 16 + 14];
             gPlttBufferFaded[0x100 + palIndex * 16 + 14] = gPlttBufferFaded[0x100 + palIndex * 16 + 15];
             gPlttBufferFaded[0x100 + palIndex * 16 + 15] = temp;
 
             gTasks[taskId].data[2] = 0;
-            gTasks[taskId].data[3]++;
-            if (gTasks[taskId].data[3] == 3)
+
+            if (++gTasks[taskId].data[3] == 3)
             {
                 gTasks[taskId].data[3] = 0;
                 gTasks[taskId].data[1] = 0;
-                gTasks[taskId].data[4]++;
-                if (gTasks[taskId].data[4] == 2)
+
+                if (++gTasks[taskId].data[4] == 2)
                 {
                     gTasks[taskId].data[1] = 9;
-                    gTasks[taskId].func = sub_80785D8;
+                    gTasks[taskId].func = AnimTask_FrozenIceCubeStep3;
                 }
             }
         }
     }
 }
 
-static void sub_80785D8(u8 taskId)
+static void AnimTask_FrozenIceCubeStep3(u8 taskId)
 {
-    gTasks[taskId].data[1]--;
-    if (gTasks[taskId].data[1] == -1)
+    if (--gTasks[taskId].data[1] == -1)
     {
-        gTasks[taskId].func = sub_807862C;
+        gTasks[taskId].func = AnimTask_FrozenIceCubeStep4;
         gTasks[taskId].data[1] = 0;
     }
     else
     {
         u8 var = gTasks[taskId].data[1];
-
         SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(var, 16 - var));
     }
 }
 
-static void sub_807862C(u8 taskId)
+static void AnimTask_FrozenIceCubeStep4(u8 taskId)
 {
-    gTasks[taskId].data[1]++;
-    if (gTasks[taskId].data[1] == 37)
+    if (++gTasks[taskId].data[1] == 37)
     {
         u8 spriteId = gTasks[taskId].data[15];
-
         FreeSpriteOamMatrix(&gSprites[spriteId]);
         DestroySprite(&gSprites[spriteId]);
     }

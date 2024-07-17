@@ -1443,6 +1443,7 @@ void AnimTask_AirCutterProjectile(u8 taskId)
     gTasks[taskId].func = AirCutterProjectileStep1;
 }
 
+// Animates the coin sprite translating to the target position.
 void AnimCoinThrow(struct Sprite *sprite)
 {
     s16 r6;
@@ -1452,6 +1453,7 @@ void AnimCoinThrow(struct Sprite *sprite)
     InitSpritePosToAnimAttacker(sprite, TRUE);
     r6 = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
     r7 = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+	
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         gBattleAnimArgs[2] = -gBattleAnimArgs[2];
 
@@ -1459,6 +1461,7 @@ void AnimCoinThrow(struct Sprite *sprite)
     var = ArcTan2Neg(r6 - sprite->x, r7 - sprite->y);
     var += 0xC000;
     TrySetSpriteRotScale(sprite, FALSE, 0x100, 0x100, var);
+	
     sprite->data[0] = gBattleAnimArgs[4];
     sprite->data[2] = r6;
     sprite->data[4] = r7;
@@ -1466,6 +1469,7 @@ void AnimCoinThrow(struct Sprite *sprite)
     StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
+// Animates the falling coin sprite on MOVE_PAY_DAY.
 void AnimFallingCoin(struct Sprite *sprite)
 {
     sprite->data[2] = -16;
@@ -1476,16 +1480,19 @@ void AnimFallingCoin(struct Sprite *sprite)
 static void AnimFallingCoin_Step(struct Sprite *sprite)
 {
     sprite->data[0] += 0x80;
+	
     sprite->x2 = sprite->data[0] >> 8;
     if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_PLAYER)
         sprite->x2 = -sprite->x2;
 
     sprite->y2 = Sin(sprite->data[1], sprite->data[2]);
+	
     sprite->data[1] += 5;
     if (sprite->data[1] > 126)
     {
         sprite->data[1] = 0;
         sprite->data[2] /= 2;
+		
         if (++sprite->data[3] == 2)
             DestroyAnimSprite(sprite);
     }
@@ -2104,7 +2111,6 @@ void AnimTask_SketchDrawMon(u8 taskId)
 
     params.dmaControl = SCANLINE_EFFECT_DMACNT_16BIT;
     params.initState = 1;
-    params.unused9 = 0;
     ScanlineEffect_SetParams(params);
     task->func = AnimTask_SketchDrawMon_Step;
 }
@@ -2753,6 +2759,9 @@ void AnimHealBellMusicNote(struct Sprite *sprite)
     SetMusicNotePalette(sprite, gBattleAnimArgs[5], gBattleAnimArgs[6]);
 }
 
+// Animates hearts flying above the player's head.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
 void AnimMagentaHeart(struct Sprite *sprite)
 {
     if (++sprite->data[0] == 1)
@@ -2760,8 +2769,10 @@ void AnimMagentaHeart(struct Sprite *sprite)
 
     sprite->x2 = Sin(sprite->data[1], 8);
     sprite->y2 = sprite->data[2] >> 8;
+	
     sprite->data[1] = (sprite->data[1] + 7) & 0xFF;
     sprite->data[2] -= 0x80;
+	
     if (sprite->data[0] == 60)
         DestroyAnimSprite(sprite);
 }

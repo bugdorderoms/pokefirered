@@ -7,7 +7,7 @@ static bool32 IsCurMapInLocationList(const u16 *list)
     s32 i;
     u16 locSum = (gSaveBlock1Ptr->location.mapGroup << 8) + (gSaveBlock1Ptr->location.mapNum);
 
-    for (i = 0; list[i] != 0xFFFF; i++)
+    for (i = 0; list[i] != MAP_UNDEFINED; i++)
     {
         if (list[i] == locSum)
             return TRUE;
@@ -40,7 +40,7 @@ static const u16 sSaveLocationPokeCenterList[] =
     MAP_TRADE_CENTER,
     MAP_BATTLE_COLOSSEUM_4P, 
     MAP_UNION_ROOM,
-    0xFFFF,
+    MAP_UNDEFINED,
 };
 
 bool32 IsCurMapPokeCenter(void)
@@ -48,23 +48,16 @@ bool32 IsCurMapPokeCenter(void)
     return IsCurMapInLocationList(sSaveLocationPokeCenterList);
 }
 
-static const u16 sSaveLocationReloadLocList[] = { 0xFFFF };
+static const u16 sSaveLocationReloadLocList[] = { MAP_UNDEFINED };
 
 static bool32 IsCurMapReloadLocation(void)
 {
     return IsCurMapInLocationList(sSaveLocationReloadLocList);
 }
 
-static const u16 sUnknown_8453094[] = { 0xFFFF };
-
-static bool32 sub_810B75C(void)
-{
-    return IsCurMapInLocationList(sUnknown_8453094);
-}
-
 static void TrySetPokeCenterWarpStatus(void)
 {
-    if (IsCurMapPokeCenter() == FALSE)
+    if (!IsCurMapPokeCenter())
         gSaveBlock2Ptr->specialSaveWarpFlags &= ~(POKECENTER_SAVEWARP);
     else
         gSaveBlock2Ptr->specialSaveWarpFlags |= POKECENTER_SAVEWARP;
@@ -78,19 +71,11 @@ static void TrySetReloadWarpStatus(void)
         gSaveBlock2Ptr->specialSaveWarpFlags |= LOBBY_SAVEWARP;
 }
 
-static void sub_810B7CC(void)
-{
-    if (!sub_810B75C())
-        gSaveBlock2Ptr->specialSaveWarpFlags &= ~(UNK_SPECIAL_SAVE_WARP_FLAG_3);
-    else
-        gSaveBlock2Ptr->specialSaveWarpFlags |= UNK_SPECIAL_SAVE_WARP_FLAG_3;
-}
-
 void TrySetMapSaveWarpStatus(void)
 {
     TrySetPokeCenterWarpStatus();
     TrySetReloadWarpStatus();
-    sub_810B7CC();
+    gSaveBlock2Ptr->specialSaveWarpFlags &= ~(UNK_SPECIAL_SAVE_WARP_FLAG_3);
 }
 
 void SetUnlockedPokedexFlags(void)
