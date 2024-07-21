@@ -66,9 +66,6 @@
 #define ROW_LAND_TOP_ICON_Y     92
 #define ROW_LAND_BOT_ICON_Y     (ROW_LAND_TOP_ICON_Y + 28)
 
-#define ENCOUNTER_TYPE_LAND     0
-#define ENCOUNTER_TYPE_WATER    1
-
 #define COL_WATER_COUNT         5
 #define COL_LAND_COUNT          6
 

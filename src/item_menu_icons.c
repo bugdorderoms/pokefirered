@@ -17,10 +17,6 @@ static EWRAM_DATA void * sItemIconTilesBufferPadded = NULL;
 static void SpriteCB_BagVisualSwitchingPockets(struct Sprite * sprite);
 static void SpriteCB_ShakeBagSprite(struct Sprite * sprite);
 
-// item graphics
-#include "data/item/icons.h"
-#include "data/item/icons_table.h"
-
 static const struct OamData sOamData_BagOrSatchel = {
     .affineMode = ST_OAM_AFFINE_NORMAL,
     .shape = ST_OAM_SQUARE,
@@ -305,7 +301,7 @@ static bool8 TryAllocItemIconTilesBuffers(void)
     return TRUE;
 }
 
-void CopyItemIconPicTo4x4Buffer(const void * src, void * dest)
+static void CopyItemIconPicTo4x4Buffer(const void * src, void * dest)
 {
     u8 i;
 
@@ -328,14 +324,14 @@ u8 AddItemIconObjectWithCustomObjectTemplate(const struct SpriteTemplate * origT
     if (!TryAllocItemIconTilesBuffers())
         return MAX_SPRITES;
 
-    LZDecompressWram(GetItemIconGfxPtr(itemId, 0), sItemIconTilesBuffer);
+    LZDecompressWram(GetItemIconPic(itemId), sItemIconTilesBuffer);
     CopyItemIconPicTo4x4Buffer(sItemIconTilesBuffer, sItemIconTilesBufferPadded);
     spriteSheet.data = sItemIconTilesBufferPadded;
     spriteSheet.size = 0x200;
     spriteSheet.tag = tilesTag;
     LoadSpriteSheet(&spriteSheet);
 
-    spritePalette.data = GetItemIconGfxPtr(itemId, 1);
+    spritePalette.data = GetItemIconPalette(itemId);
     spritePalette.tag = paletteTag;
     LoadCompressedSpritePalette(&spritePalette);
 
@@ -379,9 +375,33 @@ void DestroyItemMenuIcon(u8 idx)
     }
 }
 
-const void * GetItemIconGfxPtr(u16 itemId, u8 attrId)
+const u32 *GetItemIconPic(u16 itemId)
 {
-    return sItemIconGfxPtrs[itemId > ITEMS_COUNT ? ITEM_NONE : itemId][attrId];
+	if (itemId == ITEMS_COUNT)
+		return gItemIcon_ReturnToFieldArrow;
+	else
+	{
+		if (itemId > ITEMS_COUNT)
+			itemId = ITEM_NONE;
+		
+		return gItems[itemId].iconPic;
+	}
+}
+
+const u32 *GetItemIconPalette(u16 itemId)
+{
+	if (itemId == ITEMS_COUNT)
+		return gItemIconPalette_ReturnToFieldArrow;
+	else
+	{
+		if (itemId > ITEMS_COUNT)
+			itemId = ITEM_NONE;
+		
+		if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
+			return gTypesInfo[gBattleMoves[ItemId_GetHoldEffectParam(itemId)].type].tmPalette;
+		else
+			return gItems[itemId].iconPalette;
+	}
 }
 
 void sub_80989A0(u16 itemId, u8 idx)

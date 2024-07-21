@@ -18,6 +18,7 @@
 #include "list_menu.h"
 #include "load_save.h"
 #include "menu.h"
+#include "pokemon.h"
 #include "mystery_gift_menu.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
@@ -367,24 +368,24 @@ static const struct WindowTemplate sWindowTemplate_TypeNames = {
 };
 
 static const struct ListMenuItem sListMenuItems_TypeNames[] = {
-    {gTypeNames[TYPE_NORMAL],     TYPE_NORMAL},
-    {gTypeNames[TYPE_FIRE],         TYPE_FIRE},
-    {gTypeNames[TYPE_WATER],       TYPE_WATER},
-    {gTypeNames[TYPE_ELECTRIC], TYPE_ELECTRIC},
-    {gTypeNames[TYPE_GRASS],       TYPE_GRASS},
-    {gTypeNames[TYPE_ICE],           TYPE_ICE},
-    {gTypeNames[TYPE_GROUND],     TYPE_GROUND},
-    {gTypeNames[TYPE_ROCK],         TYPE_ROCK},
-    {gTypeNames[TYPE_FLYING],     TYPE_FLYING},
-    {gTypeNames[TYPE_PSYCHIC],   TYPE_PSYCHIC},
-    {gTypeNames[TYPE_FIGHTING], TYPE_FIGHTING},
-    {gTypeNames[TYPE_POISON],     TYPE_POISON},
-    {gTypeNames[TYPE_BUG],           TYPE_BUG},
-    {gTypeNames[TYPE_GHOST],       TYPE_GHOST},
-    {gTypeNames[TYPE_DRAGON],     TYPE_DRAGON},
-    {gTypeNames[TYPE_STEEL],       TYPE_STEEL},
-    {gTypeNames[TYPE_DARK],         TYPE_DARK},
-	{gTypeNames[TYPE_FAIRY],       TYPE_FAIRY},
+    {gTypesInfo[TYPE_NORMAL].name,     TYPE_NORMAL},
+    {gTypesInfo[TYPE_FIRE].name,         TYPE_FIRE},
+    {gTypesInfo[TYPE_WATER].name,       TYPE_WATER},
+    {gTypesInfo[TYPE_ELECTRIC].name, TYPE_ELECTRIC},
+    {gTypesInfo[TYPE_GRASS].name,       TYPE_GRASS},
+    {gTypesInfo[TYPE_ICE].name,           TYPE_ICE},
+    {gTypesInfo[TYPE_GROUND].name,     TYPE_GROUND},
+    {gTypesInfo[TYPE_ROCK].name,         TYPE_ROCK},
+    {gTypesInfo[TYPE_FLYING].name,     TYPE_FLYING},
+    {gTypesInfo[TYPE_PSYCHIC].name,   TYPE_PSYCHIC},
+    {gTypesInfo[TYPE_FIGHTING].name, TYPE_FIGHTING},
+    {gTypesInfo[TYPE_POISON].name,     TYPE_POISON},
+    {gTypesInfo[TYPE_BUG].name,           TYPE_BUG},
+    {gTypesInfo[TYPE_GHOST].name,       TYPE_GHOST},
+    {gTypesInfo[TYPE_DRAGON].name,     TYPE_DRAGON},
+    {gTypesInfo[TYPE_STEEL].name,       TYPE_STEEL},
+    {gTypesInfo[TYPE_DARK].name,         TYPE_DARK},
+	{gTypesInfo[TYPE_FAIRY].name,       TYPE_FAIRY},
     {gUnknown_8459360,           NUMBER_OF_MON_TYPES - 1} // Excludes Stellar type
 };
 
@@ -2770,12 +2771,12 @@ static void Task_RunUnionRoom(u8 taskId)
                     break;
                 case UR_TRADE_NOTYPE:
                     IntlConvPartnerUname(gStringVar1, data->field_0->arr[var5]);
-                    StringCopy(gStringVar2, gTypeNames[data->field_0->arr[var5].gname_uname.gname.type]);
+                    StringCopy(gStringVar2, gTypesInfo[data->field_0->arr[var5].gname_uname.gname.type].name);
                     UnionRoom_ScheduleFieldMessageWithFollowupState(46, gUnknown_8458ED0);
                     break;
                 case UR_TRADE_NOEGG:
                     IntlConvPartnerUname(gStringVar1, data->field_0->arr[var5]);
-                    StringCopy(gStringVar2, gTypeNames[data->field_0->arr[var5].gname_uname.gname.type]);
+                    StringCopy(gStringVar2, gTypesInfo[data->field_0->arr[var5].gname_uname.gname.type].name);
                     UnionRoom_ScheduleFieldMessageWithFollowupState(46, gUnknown_8458F04);
                     break;
                 }

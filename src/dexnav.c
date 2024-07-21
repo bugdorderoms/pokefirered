@@ -419,7 +419,7 @@ static bool8 DexNavPickTile(u8 environment, u8 areaX, u8 areaY)
 
             switch (environment)
             {
-            case ENCOUNTER_TYPE_LAND:
+            case WILD_HEADER_LAND:
                 if (MapGridGetMetatileAttributeAt(topX, topY, METATILE_ATTRIBUTE_ENCOUNTER_TYPE) == TILE_ENCOUNTER_LAND)
                 {
                     if (currMapType == MAP_TYPE_UNDERGROUND)
@@ -437,7 +437,7 @@ static bool8 DexNavPickTile(u8 environment, u8 areaX, u8 areaY)
                     }
                 }
                 break;
-            case ENCOUNTER_TYPE_WATER:
+            case WILD_HEADER_WATER:
                 if (MetatileBehavior_IsSurfable(MapGridGetMetatileBehaviorAt(topX, topY)))
                 {
                     scale = 320 - (GetPlayerDistance(topX, topY) / 2);
@@ -477,7 +477,7 @@ static bool8 TryStartHiddenMonFieldEffect(u8 environment, u8 xSize, u8 ySize)
 
         switch (environment)
         {
-	case ENCOUNTER_TYPE_LAND:
+	case WILD_HEADER_LAND:
 	    if (currMapType == MAP_TYPE_UNDERGROUND)
 	        fldEffId = FLDEFF_CAVE_DUST;
 	    else if (IsMapTypeIndoors(currMapType))
@@ -505,7 +505,7 @@ static bool8 TryStartHiddenMonFieldEffect(u8 environment, u8 xSize, u8 ySize)
 		    fldEffId = FLDEFF_BERRY_TREE_GROWTH_SPARKLE; // default
 	    }
 	    break;
-	case ENCOUNTER_TYPE_WATER:
+	case WILD_HEADER_WATER:
 	    fldEffId = FLDEFF_WATER_SURFACING;
 	    break;
 	default:
@@ -788,7 +788,7 @@ static void Task_DexNavSearch(u8 taskId)
     }
 
     // Caves and water the pokemon moves around
-    if ((sDexNavSearchDataPtr->environment == ENCOUNTER_TYPE_WATER || GetCurrentMapType() == MAP_TYPE_UNDERGROUND) && sDexNavSearchDataPtr->proximity < GetMovementProximityBySearchLevel() && sDexNavSearchDataPtr->movementCount < 2)
+    if ((sDexNavSearchDataPtr->environment == WILD_HEADER_WATER || GetCurrentMapType() == MAP_TYPE_UNDERGROUND) && sDexNavSearchDataPtr->proximity < GetMovementProximityBySearchLevel() && sDexNavSearchDataPtr->movementCount < 2)
     {
         FieldEffectStop(&gSprites[sDexNavSearchDataPtr->fldEffSpriteId], sDexNavSearchDataPtr->fldEffId);
 		
@@ -1196,42 +1196,36 @@ static u8 DexNavGeneratePotential(void)
 
 static u8 GetEncounterLevelFromMapData(u16 species, u8 environment)
 {
-    u16 headerId = GetCurrentMapWildMonHeaderId();
-    const struct WildPokemonInfo *landMonsInfo = GetWildPokemonInfoByHeaderType(headerId, WILD_HEADER_LAND);
-    const struct WildPokemonInfo *waterMonsInfo = GetWildPokemonInfoByHeaderType(headerId, WILD_HEADER_WATER);
-    u8 i, min = MAX_LEVEL, max = 0;
-
-    switch (environment)
-    {
-		case ENCOUNTER_TYPE_LAND:
-		    if (landMonsInfo == NULL)
-		        return MON_LEVEL_NONEXISTENT;
-			
-		    for (i = 0; i < LAND_WILD_COUNT; i++)
-		    {
-			    if (landMonsInfo->wildPokemon[i].species == species)
-			    {
-				    min = (min < landMonsInfo->wildPokemon[i].minLevel) ? min : landMonsInfo->wildPokemon[i].minLevel;
-				    max = (max > landMonsInfo->wildPokemon[i].maxLevel) ? max : landMonsInfo->wildPokemon[i].maxLevel;
-			    }
-		    }
-		    break;
-		case ENCOUNTER_TYPE_WATER:
-		    if (waterMonsInfo == NULL)
-			return MON_LEVEL_NONEXISTENT;
-		    
-		    for (i = 0; i < WATER_WILD_COUNT; i++)
-		    {
-			    if (waterMonsInfo->wildPokemon[i].species == species)
-			    {
-				    min = (min < waterMonsInfo->wildPokemon[i].minLevel) ? min : waterMonsInfo->wildPokemon[i].minLevel;
-				    max = (max > waterMonsInfo->wildPokemon[i].maxLevel) ? max : waterMonsInfo->wildPokemon[i].maxLevel;
-			    }
-		    }
-		    break;
+	u8 i, count, min, max;
+	const struct WildPokemonInfo *monsInfo;
+	
+	switch (environment)
+	{
+		case WILD_HEADER_LAND:
+			count = LAND_WILD_COUNT;
+			break;
+		case WILD_HEADER_WATER:
+			count = WATER_WILD_COUNT;
+			break;
 		default:
-		    return MON_LEVEL_NONEXISTENT;
-    }
+			return MON_LEVEL_NONEXISTENT;
+	}
+	
+	monsInfo = GetWildPokemonInfoByHeaderType(GetCurrentMapWildMonHeaderId(), environment);
+	if (monsInfo == NULL)
+		return MON_LEVEL_NONEXISTENT;
+	
+	min = MAX_LEVEL;
+	max = 0;
+	
+	for (i = 0; i < count; i++)
+	{
+		if (monsInfo->wildPokemon[i].species == species)
+		{
+			min = (min < monsInfo->wildPokemon[i].minLevel) ? min : monsInfo->wildPokemon[i].minLevel;
+			max = (max > monsInfo->wildPokemon[i].maxLevel) ? max : monsInfo->wildPokemon[i].maxLevel;
+		}
+	}
 
     if (!max)
         return MON_LEVEL_NONEXISTENT;
@@ -1270,17 +1264,17 @@ static void UpdateCursorPosition(void)
 		case ROW_WATER:
 		    x = ROW_WATER_ICON_X + (24 * sDexNavUiDataPtr->cursorCol);
 		    y = ROW_WATER_ICON_Y;
-		    sDexNavUiDataPtr->environment = ENCOUNTER_TYPE_WATER;
+		    sDexNavUiDataPtr->environment = WILD_HEADER_WATER;
 		    break;
 		case ROW_LAND_TOP:
 		    x = ROW_LAND_ICON_X + (24 * sDexNavUiDataPtr->cursorCol);
 		    y = ROW_LAND_TOP_ICON_Y;
-		    sDexNavUiDataPtr->environment = ENCOUNTER_TYPE_LAND;
+		    sDexNavUiDataPtr->environment = WILD_HEADER_LAND;
 		    break;
 		case ROW_LAND_BOT:
 		    x = ROW_LAND_ICON_X + (24 * sDexNavUiDataPtr->cursorCol);
 		    y = ROW_LAND_BOT_ICON_Y;
-		    sDexNavUiDataPtr->environment = ENCOUNTER_TYPE_LAND;
+		    sDexNavUiDataPtr->environment = WILD_HEADER_LAND;
 		    break;
 		default:
 		    return;
@@ -1386,14 +1380,14 @@ static bool8 SpeciesInArray(u16 species, u8 section)
 	
     switch (section)
     {
-    case ENCOUNTER_TYPE_LAND:
+    case WILD_HEADER_LAND:
         for (i = 0; i < LAND_WILD_COUNT; i++)
         {
             if (sDexNavUiDataPtr->landSpecies[i] == species)
                 return TRUE;
         }
         break;
-    case ENCOUNTER_TYPE_WATER:
+    case WILD_HEADER_WATER:
         for (i = 0; i < WATER_WILD_COUNT; i++)
         {
             if (sDexNavUiDataPtr->waterSpecies[i] == species)
@@ -1426,7 +1420,7 @@ static void DexNavLoadEncounterData(void)
         {
             species = landMonsInfo->wildPokemon[i].species;
 			
-            if (species && !SpeciesInArray(species, ENCOUNTER_TYPE_LAND))
+            if (species && !SpeciesInArray(species, WILD_HEADER_LAND))
                 sDexNavUiDataPtr->landSpecies[grassIndex++] = species;
         }
     }
@@ -1437,7 +1431,7 @@ static void DexNavLoadEncounterData(void)
         {
             species = waterMonsInfo->wildPokemon[i].species;
 			
-            if (species && !SpeciesInArray(species, ENCOUNTER_TYPE_WATER))
+            if (species && !SpeciesInArray(species, WILD_HEADER_WATER))
                 sDexNavUiDataPtr->waterSpecies[waterIndex++] = species;
         }
     }
@@ -1650,7 +1644,7 @@ static void DexNav_RunSetup(void)
     case 12:
         sDexNavUiDataPtr->cursorRow = ROW_LAND_TOP;
         sDexNavUiDataPtr->cursorCol = 0;
-        sDexNavUiDataPtr->environment = ENCOUNTER_TYPE_LAND;
+        sDexNavUiDataPtr->environment = WILD_HEADER_LAND;
         break;
     case 13:
 	PrintDexNavInstructions();

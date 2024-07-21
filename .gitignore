@@ -35,6 +35,7 @@
 *.sa*
 *.swo
 *.swp
+*.pyc
 *.til
 .fuse*
 .idea/

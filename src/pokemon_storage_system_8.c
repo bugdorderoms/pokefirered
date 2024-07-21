@@ -17,8 +17,6 @@ static void sub_8096408(u8 id, const u32 * tiles, const u32 * pal);
 static void sub_80964B8(u8 id, u8 affineAnimNo);
 static void sub_80964E8(u8 id, u8 command, u8 cursorArea, u8 cursorPos);
 static void sub_8096624(u8 id, bool8 show);
-static const u32 *GetItemIconPic(u16 itemId);
-static const u32 *GetItemIconPalette(u16 itemId);
 static void sub_8096898(u32 x);
 static void sub_809692C(struct Sprite * sprite);
 static void sub_8096958(struct Sprite * sprite);
@@ -545,16 +543,6 @@ static void sub_8096624(u8 id, bool8 show)
 
     gPSSData->itemIconSprites[id].active = show;
     gPSSData->itemIconSprites[id].sprite->invisible = (show == FALSE);
-}
-
-static const u32 *GetItemIconPic(u16 itemId)
-{
-    return GetItemIconGfxPtr(itemId, 0);
-}
-
-static const u32 *GetItemIconPalette(u16 itemId)
-{
-    return GetItemIconGfxPtr(itemId, 1);
 }
 
 void PrintItemDescription(void)

@@ -279,5 +279,4 @@ const u8 *const gItemEffectTable[] =
 	[ITEM_HONDEW_BERRY - ITEM_POTION] = sItemEffect_FriendshipBerry,
 	[ITEM_GREPA_BERRY - ITEM_POTION] = sItemEffect_FriendshipBerry,
 	[ITEM_TAMATO_BERRY - ITEM_POTION] = sItemEffect_FriendshipBerry,
-	[ITEM_HOPO_BERRY - ITEM_POTION] = sItemEffect_RestoreMovePP,
 };

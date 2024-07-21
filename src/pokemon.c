@@ -8,6 +8,7 @@
 #include "main.h"
 #include "battle.h"
 #include "battle_anim.h"
+#include "battle_main.h"
 #include "item.h"
 #include "event_data.h"
 #include "util.h"
@@ -65,6 +66,10 @@ EWRAM_DATA struct SpriteTemplate gMultiuseSpriteTemplate = {0};
 
 static u8 GetLevelFromMonExp(struct Pokemon *mon);
 
+// Item
+#include "data/item/icons.h"
+#include "data/item/items.h"
+#include "data/item/item_effects.h"
 // Species
 #include "data/pokemon/graphics/pics_and_icons.h"
 #include "data/pokemon/graphics/footprints.h"
@@ -76,13 +81,11 @@ static u8 GetLevelFromMonExp(struct Pokemon *mon);
 #include "data/pokemon/experience_tables.h"
 #include "data/pokemon/fusions.h"
 #include "data/pokemon/natures_info.h"
+#include "data/pokemon/types_info.h"
 // Moves
 #include "data/move/battle_moves.h"
 // Trainer
 #include "data/trainer/trainer_class_lookups.h"
-// Item
-#include "data/item/items.h"
-#include "data/item/item_effects.h"
 
 struct SpindaSpot
 {
@@ -96,36 +99,6 @@ static const struct SpindaSpot sSpindaSpotGraphics[] =
     {40,  8, INCBIN_U16("graphics/spinda_spots/spot_1.bin")},
     {22, 25, INCBIN_U16("graphics/spinda_spots/spot_2.bin")},
     {34, 26, INCBIN_U16("graphics/spinda_spots/spot_3.bin")}
-};
-
-static const s8 sPokeblockFlavorCompatibilityTable[] =
-{
-       // Cool, Beauty, Cute, Smart, Tough
-          0,      0,    0,     0,     0, // Hardy
-          1,      0,    0,     0,    -1, // Lonely
-          1,      0,   -1,     0,     0, // Brave
-          1,     -1,    0,     0,     0, // Adamant
-          1,      0,    0,    -1,     0, // Naughty
-         -1,      0,    0,     0,     1, // Bold
-          0,      0,    0,     0,     0, // Docile
-          0,      0,   -1,     0,     1, // Relaxed
-          0,     -1,    0,     0,     1, // Impish
-          0,      0,    0,    -1,     1, // Lax
-         -1,      0,    1,     0,     0, // Timid
-          0,      0,    1,     0,    -1, // Hasty
-          0,      0,    0,     0,     0, // Serious
-          0,     -1,    1,     0,     0, // Jolly
-          0,      0,    1,    -1,     0, // Naive
-         -1,      1,    0,     0,     0, // Modest
-          0,      1,    0,     0,    -1, // Mild
-          0,      1,   -1,     0,     0, // Quiet
-          0,      0,    0,     0,     0, // Bashful
-          0,      1,    0,    -1,     0, // Rash
-         -1,      0,    0,     1,     0, // Calm
-          0,      0,    0,     1,    -1, // Gentle
-          0,      0,   -1,     1,     0, // Sassy
-          0,     -1,    0,     1,     0, // Careful
-          0,      0,    0,     0,     0  // Quirky
 };
 
 const u8 gPPUpGetMask[] = { 0x03, 0x0c, 0x30, 0xc0 }; // Masks for getting PP Up count, also PP Max values
@@ -2504,7 +2477,7 @@ const u32 *GetMonSpritePalFromSpecies(u16 species, bool8 isShiny)
 
 s8 GetMonFlavorRelation(struct Pokemon *mon, u8 flavor)
 {
-    return sPokeblockFlavorCompatibilityTable[GetMonData(mon, MON_DATA_NATURE, NULL) * 5 + flavor];
+	return gNaturesInfo[GetMonData(mon, MON_DATA_NATURE, NULL)].flavor[flavor];
 }
 
 bool8 IsTradedMon(struct Pokemon *mon)

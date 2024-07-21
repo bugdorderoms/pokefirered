@@ -1,9 +1,12 @@
 #include "global.h"
 #include "gflib.h"
+#include "decompress.h"
+#include "graphics.h"
 #include "form_change.h"
 #include "party_menu.h"
 #include "sound.h"
 #include "task.h"
+#include "trig.h"
 #include "constants/songs.h"
 
 #define NUM_FORM_CHANGE_ANIM_SPRITES 10
@@ -25,11 +28,14 @@ struct FormChangeAnimData
 };
 
 static void SpriteCB_LightAbsorption(struct Sprite *sprite);
+static void SpriteCB_FallingFeather(struct Sprite *sprite);
 static void Task_DoFusionWhiteScreen(u8 taskId);
 static void Task_DoMosaicFormChangeAnim(u8 taskId);
 static void Task_DoGracideaFlowersFormChangeAnim(u8 taskId);
 static void Task_DoPurpleCloudFormChangeAnim(u8 taskId);
 static void Task_DoLightAbsorptionFormChangeAnim(u8 taskId);
+static void Task_DoClosingScreenFormChangeAnim(u8 taskId);
+static void Task_DoFallingFeathersFormChangeAnim(u8 taskId);
 
 static EWRAM_DATA struct FormChangeAnimData *sFormChangeAnimData = NULL;
 
@@ -39,6 +45,8 @@ static const TaskFunc sFormChangeAnimsTable[] =
 	[FORM_CHANGE_ANIM_GRACIDEA_FLOWERS] = Task_DoGracideaFlowersFormChangeAnim,
 	[FORM_CHANGE_ANIM_PURPLE_CLOUD]     = Task_DoPurpleCloudFormChangeAnim,
 	[FORM_CHANGE_ANIM_LIGHT_ABSORPTION] = Task_DoLightAbsorptionFormChangeAnim,
+	[FORM_CHANGE_ANIM_CLOSING_SCREEN]   = Task_DoClosingScreenFormChangeAnim,
+	[FORM_CHANGE_ANIM_FALLING_FEATHERS] = Task_DoFallingFeathersFormChangeAnim,
 };
 
 // Init the form change animation
@@ -141,6 +149,12 @@ static void DoFusionWhiteScreenOrUpdateIcon(void)
 		UpdateIconForFormChange();
 }
 
+static void TryCreatePartyMonAfterDefusing(void)
+{
+	if (sFormChangeAnimData->icon2 == NULL)
+		CreatePartyMonAfterDefusing();
+}
+
 static void Task_DoFusionWhiteScreen(u8 taskId)
 {
 	s16 *data = gTasks[taskId].data;
@@ -170,9 +184,7 @@ static void Task_DoFusionWhiteScreen(u8 taskId)
 		case 3:
 			if (!gPaletteFade.active) // Wait screen blend back
 			{
-				if (sFormChangeAnimData->icon2 == NULL) // Create second mon when defusing
-					CreatePartyMonAfterDefusing();
-				
+				TryCreatePartyMonAfterDefusing(); // Create second mon when defusing
 				DestroyTask(taskId);
 			}
 			break;
@@ -393,13 +405,8 @@ static void Task_DoGracideaFlowersFormChangeAnim(u8 taskId)
 			LoadSpriteSheet(&sSpriteSheet_GracideaFlower);
 			LoadSpritePalette(&sSpritePalette_GracideaFlower);
 			++sFormChangeAnimData->stepId;
-			// Fallthrough
+			break;
 		case 1:
-			tDelay = 0;
-			tCurrSpriteId = 0;
-			++sFormChangeAnimData->stepId;
-			// Fallthrough
-		case 2:
 			if (--tDelay <= 0)
 			{
 				if (CreateGracideaFlowerSprites(tCurrSpriteId))
@@ -414,7 +421,7 @@ static void Task_DoGracideaFlowersFormChangeAnim(u8 taskId)
 				}
 			}
 			break;
-		case 3:
+		case 2:
 			if (--tDelay == 0)
 			{
 				DoFusionWhiteScreenOrUpdateIcon();
@@ -511,7 +518,6 @@ static void Task_DoPurpleCloudFormChangeAnim(u8 taskId)
 	{
 		case 0:
 			CreatePurpleCloudSprite();
-			tWaitCounter = 0;
 			++sFormChangeAnimData->stepId;
 			break;
 		case 1:
@@ -526,9 +532,9 @@ static void Task_DoPurpleCloudFormChangeAnim(u8 taskId)
 
 #undef tWaitCounter
 
-//////////////////////////////////////
-// FORM_CHANGE_ANIM_LIGHT_Absorption //
-//////////////////////////////////////
+///////////////////////////////////////
+// FORM_CHANGE_ANIM_LIGHT_ABSORPTION //
+///////////////////////////////////////
 
 #define LIGHT_CREATION_DELAY 5 // Num frames to wait before create a new light sprite
 #define LIGHT_MOVING_SPEED   7 // Light movement speed, how higher more slow it moves
@@ -599,7 +605,6 @@ static const struct SpriteTemplate sSpriteTemplate_LightAbsorption =
 	.affineAnims = sAffineAnimTable_LightAbsorption,
 	.callback = SpriteCB_LightAbsorption,
 };
-
 
 static const struct Coords8 sLightAbsorptionDeltas[NUM_FORM_CHANGE_ANIM_SPRITES] =
 {
@@ -676,13 +681,8 @@ static void Task_DoLightAbsorptionFormChangeAnim(u8 taskId)
 			LoadSpriteSheet(&sSpriteSheet_LightAbsorption);
 			LoadSpritePalette(&sSpritePalette_LightAbsorption);
 			++sFormChangeAnimData->stepId;
-			// Fallthrough
+			break;
 		case 1:
-			tDelay = 0;
-			tCurrSpriteId = 0;
-			++sFormChangeAnimData->stepId;
-			// Fallthrough
-		case 2:
 			if (--tDelay <= 0)
 			{
 				if (CreateLightAbsorptionSprites(tCurrSpriteId))
@@ -697,7 +697,7 @@ static void Task_DoLightAbsorptionFormChangeAnim(u8 taskId)
 				}
 			}
 			break;
-		case 3:
+		case 2:
 			if (--tDelay == 0)
 			{
 				DoFusionWhiteScreenOrUpdateIcon();
@@ -705,7 +705,7 @@ static void Task_DoLightAbsorptionFormChangeAnim(u8 taskId)
 				++sFormChangeAnimData->stepId;
 			}
 			break;
-		case 4:
+		case 3:
 		    if (--tDelay == 0)
 			{
 				DestroyAllFormChangeSpritesCreated();
@@ -717,3 +717,243 @@ static void Task_DoLightAbsorptionFormChangeAnim(u8 taskId)
 
 #undef tDelay
 #undef tCurrSpriteId
+
+/////////////////////////////////////
+// FORM_CHANGE_ANIM_CLOSING_SCREEN //
+/////////////////////////////////////
+
+#define BLACK_WIPE_DURATION 15 // Num frames to wait before doing the black wipe in effect
+
+#define tOffset data[0]
+#define tDelay  data[1]
+
+// Uses Bg's palette 0 index 0 as the whipe color
+static void Task_DoClosingScreenFormChangeAnim(u8 taskId)
+{
+	s16 val;
+	s16 *data = gTasks[taskId].data;
+	
+	switch (sFormChangeAnimData->stepId)
+	{
+		case 0:
+			SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
+			SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG0 | WINOUT_WINOBJ_BG0 | WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR);
+			SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, 0));
+			SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(DISPLAY_WIDTH, 255));
+			SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(0, 255));
+			SetGpuReg(REG_OFFSET_WIN1V, WIN_RANGE(0, 255));
+			PlaySE(SE_M_FLATTER);
+			sFormChangeAnimData->stepId++;
+			break;
+		case 1: // Whipe in
+			if (tOffset > DISPLAY_WIDTH / 2)
+			{
+				tOffset = 0;
+				sFormChangeAnimData->stepId++;
+			}
+			else
+			{
+				SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, tOffset));
+				SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(DISPLAY_WIDTH - tOffset, DISPLAY_WIDTH));
+				tOffset += 4;
+			}
+			break;
+		case 2:
+			UpdateIconForFormChange(); // No white screen
+			sFormChangeAnimData->stepId++;
+			break;
+		case 3:
+			if (++tDelay == BLACK_WIPE_DURATION)
+			{
+				PlaySE(SE_M_FLATTER);
+				sFormChangeAnimData->stepId++;
+			}
+			break;
+		case 4: // Whipe out
+			val = DISPLAY_WIDTH / 2 - tOffset;
+			
+			if (val < 0)
+				sFormChangeAnimData->stepId++;
+			else
+			{
+				SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, val));
+				SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(DISPLAY_WIDTH / 2 + tOffset, DISPLAY_WIDTH));
+				tOffset += 4;
+			}
+			break;
+		case 5:
+			ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
+			SetGpuReg(REG_OFFSET_WINOUT, 0);
+			
+			if (sFormChangeAnimData->isFusion)
+				TryCreatePartyMonAfterDefusing();
+			
+			InitPlayMonCryAfterFormChangeTask(taskId);
+			break;
+	}
+}
+
+#undef tOffset
+#undef tDelay
+
+///////////////////////////////////////
+// FORM_CHANGE_ANIM_FALLING_FEATHERS //
+///////////////////////////////////////
+
+#define FEATHER_FALL_DELAY 10 // Num frames to wait before the feather moves down by 1 px
+
+static const struct CompressedSpriteSheet sSpriteSheet_Feather =
+{
+	gBattleAnimSpriteGfx_WhiteFeather, 0x0400, FORM_CHANGE_ANIM_SPRITE_TAG
+};
+
+static const struct CompressedSpritePalette sSpritePalette_Feather =
+{
+    gBattleAnimSpritePal_WhiteFeather, FORM_CHANGE_ANIM_SPRITE_TAG
+};
+
+static const union AnimCmd sAnim_FeatherLeft[] =
+{
+    ANIMCMD_FRAME(0, 0),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_FeatherRight[] =
+{
+	ANIMCMD_FRAME(16, 0),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd *const sAnimTable_Feathers[] =
+{
+    sAnim_FeatherLeft,
+	sAnim_FeatherRight,
+};
+
+static const struct OamData sOamData_Feather =
+{
+	.y = 0,
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.bpp = ST_OAM_4BPP,
+	.shape = SPRITE_SHAPE(32x32),
+	.x = 0,
+	.size = SPRITE_SIZE(32x32),
+	.tileNum = 0,
+	.priority = 0,
+	.paletteNum = 0,
+};
+
+static const struct SpriteTemplate sSpriteTemplate_FallingFeather =
+{
+	.tileTag = FORM_CHANGE_ANIM_SPRITE_TAG,
+	.paletteTag = FORM_CHANGE_ANIM_SPRITE_TAG,
+	.oam = &sOamData_Feather,
+	.anims = sAnimTable_Feathers,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_FallingFeather
+};
+
+static const s8 sFeathersInitialPosX[NUM_FORM_CHANGE_ANIM_SPRITES] = { 0, 10, -4, 6, -6, -2, 4, -13, 16, -10 };
+
+static void SpriteCB_FallingFeather(struct Sprite *sprite)
+{
+	if (!sprite->invisible)
+	{
+		sprite->x2 += sprite->data[3];
+		
+		// Delay to change the falling direction
+		if (++sprite->data[1] >= 12 && (sprite->data[4]++ & 1))
+		{
+			sprite->data[1] = 0;
+			sprite->data[3] = -sprite->data[3];
+		}
+		
+		// Delay to fall
+		if (++sprite->data[2] == FEATHER_FALL_DELAY)
+		{
+			sprite->data[2] = 0;
+			++sprite->y2;
+		}
+		
+		// Delay to hide sprite, it will be destroyed later
+		if (++sprite->data[0] == (FEATHER_FALL_DELAY * 16))
+			sprite->invisible = TRUE;
+	}
+}
+
+static struct Sprite *CreateFeatherSprite(struct Sprite *linker, s8 x, u8 idx)
+{
+	struct Sprite *sprite = CreateSpriteForFormChangeAnim(&sSpriteTemplate_FallingFeather, linker, x, -2, 0);
+	sprite->data[3] = idx & 1 ? 1 : -1;
+	StartSpriteAnim(sprite, (idx & 1));
+	return sprite;
+}
+
+static bool8 CreateFeatherSprites(u8 id)
+{
+	if (id < NUM_FORM_CHANGE_ANIM_SPRITES)
+	{
+		s8 initialX = sFeathersInitialPosX[id];
+		
+		sFormChangeAnimData->sprites1[id] = CreateFeatherSprite(sFormChangeAnimData->icon1, initialX, id);
+		
+		if (sFormChangeAnimData->icon2 != NULL)
+			sFormChangeAnimData->sprites2[id] = CreateFeatherSprite(sFormChangeAnimData->icon2, initialX, id);
+		
+		return TRUE;
+	}
+	return FALSE;
+}
+
+#define tCurrSpriteId data[0]
+#define tDelay        data[1]
+
+static void Task_DoFallingFeathersFormChangeAnim(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+	
+	switch (sFormChangeAnimData->stepId)
+	{
+		case 0:
+			PlaySE(SE_M_PETAL_DANCE);
+			LoadCompressedSpriteSheet(&sSpriteSheet_Feather);
+			LoadCompressedSpritePalette(&sSpritePalette_Feather);
+			++sFormChangeAnimData->stepId;
+			break;
+		case 1:
+			if (--tDelay <= 0)
+			{
+				if (CreateFeatherSprites(tCurrSpriteId))
+				{
+					++tCurrSpriteId;
+					tDelay = 20;
+				}
+				else
+				{
+					tDelay = 22;
+					++sFormChangeAnimData->stepId;
+				}
+			}
+			break;
+		case 2:
+			if (--tDelay == 0)
+			{
+				DoFusionWhiteScreenOrUpdateIcon();
+				tDelay = 10;
+				++sFormChangeAnimData->stepId;
+			}
+			break;
+		case 3:
+			if (--tDelay == 0)
+			{
+				DestroyAllFormChangeSpritesCreated();
+				InitPlayMonCryAfterFormChangeTask(taskId);
+			}
+			break;
+	}
+}
+
+#undef tCurrSpriteId
+#undef tDelay

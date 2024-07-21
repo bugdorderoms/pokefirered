@@ -4,6 +4,20 @@
 #include "constants/abilities.h"
 #include "constants/pokemon.h"
 
+#define TYPE_NAME_LENGTH     8
+#define CATEGORY_NAME_LENGTH 8
+#define ABILITY_NAME_LENGTH  16
+
+// defines for the type effectiveness multipliers
+#define TYPE_MUL_NO_EFFECT       0
+#define TYPE_MUL_NOT_EFFECTIVE   5
+#define TYPE_MUL_NORMAL          10
+#define TYPE_MUL_SUPER_EFFECTIVE 20
+
+// defines for the 'DoBounceEffect' function
+#define BOUNCE_MON       0x0
+#define BOUNCE_HEALTHBOX 0x1
+
 // Return values of GetWhoStrikesFirst
 enum
 {
@@ -39,25 +53,9 @@ struct MultiBattlePokemonTx
     /*0x1C*/ u32 personality;
 };
 
-#define TYPE_NAME_LENGTH     8
-#define CATEGORY_NAME_LENGTH 8
-#define ABILITY_NAME_LENGTH  16
-
-// defines for the gTypeEffectiveness multipliers
-#define TYPE_MUL_NO_EFFECT          0
-#define TYPE_MUL_NOT_EFFECTIVE      5
-#define TYPE_MUL_NORMAL             10
-#define TYPE_MUL_SUPER_EFFECTIVE    20
-
-// defines for the 'DoBounceEffect' function
-#define BOUNCE_MON          0x0
-#define BOUNCE_HEALTHBOX    0x1
-
 extern const struct OamData gOamData_BattlerOpponent;
 extern const struct OamData gOamData_BattlerPlayer;
-extern const u8 gTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1];
 extern const u8 gCategoryNames[NUM_MOVE_SPLITS][CATEGORY_NAME_LENGTH + 1];
-extern const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
 extern const struct TrainerMoneyBall gTrainerMoneyAndBallTable[];
 extern const struct Ability gAbilities[ABILITIES_COUNT];
 extern const struct NaturalGift gNaturalGiftTable[ITEM_TO_BERRY(BERRY_ITEMS_END) + 1];

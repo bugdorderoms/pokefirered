@@ -1,21 +1,16 @@
 import glob
 import os
+from header import *
 
-# This script generates the files pokedex.h and cry_ids.h on include/constants folder,
-# pics_and_icons.h and footprints.h on src/data/pokemon/graphics folder,
-# cry_tables.inc and cries_sound_data.inc on sound folder
-
-# Go to project's root
-file_path = os.path.dirname(os.path.realpath(__file__))
-requiredPath = "\\help_scripts"
-
-if not file_path.endswith(requiredPath):
-    print(f"Please run this script from {file_path}{requiredPath}")
-    quit()
-else:
-    file_path = file_path.removesuffix(requiredPath)
+# This script generates the files pokedex.h and cry_ids.h on the include/constants folder,
+# pics_and_icons.h and footprints.h on the src/data/pokemon/graphics folder,
+# and cry_tables.inc and cries_sound_data.inc on the sound folder
+# all these are generated based on the include/constants/species.h file
 
 # Start of code
+
+# Go to project's root
+file_path = CheckPath(__file__)
 
 # Create Pokedex.h, cry_ids.h, cry_tables.inc and cries_sound_data.inc
 
@@ -29,16 +24,6 @@ cries = []
 cry_table_normal = []
 cry_table_reverse = []
 cry_sound_data = []
-
-# Function for capitalization and format of the text
-def FormatExtension(name, separator="_"):
-    extensions = name.replace(separator, "_").split("_")
-    extension = ""
-    
-    for ex in extensions:
-        extension += ex.capitalize()
-
-    return extension
 
 # Append a new cry to cry_tables.inc and cries_sound_data.inc
 def AppendToCryFiles(name, num):
@@ -65,7 +50,7 @@ def AppendToCryFiles(name, num):
         if comment:
             text += "/*\n"
 
-        text += f"    .align 2\nCry_{formatedName}::\n    .incbin {chr(34)}sound/direct_sound_samples/cries/{name}{uncomp}.bin{chr(34)}\n"
+        text += f"\t.align 2\nCry_{formatedName}::\n\t.incbin {chr(34)}sound/direct_sound_samples/cries/{name}{uncomp}.bin{chr(34)}\n"
 
         if comment:
             text += "*/\n"
@@ -80,15 +65,16 @@ def AppendToCryFiles(name, num):
             text = "Cry_Unown @ " + text
             uncomp = "" # Since the cry will be replaced by the Unown cry, it can't have the _uncomp prefix
 
-        cry_table_normal.append(f"    cry{uncomp} {text}\n")
-        cry_table_reverse.append(f"    cry2{uncomp} {text}\n")
+        cry_table_normal.append(f"\tcry{uncomp} {text}\n")
+        cry_table_reverse.append(f"\tcry2{uncomp} {text}\n")
 
 # Append the defines of the first and the last species of a region
 def AppendRegionDefinesToPokedex(currentRegion, firstDexSpecies, lastDexSpecies):
     if firstDexSpecies != "NONE":
-        pokedex.append(f"\n#define DEX_START_{currentRegion} NATIONAL_DEX_{firstDexSpecies}\n#define DEX_END_{currentRegion} NATIONAL_DEX_{lastDexSpecies}\n")
+        pokedex.append(f"\n#define DEX_START_{currentRegion} NATIONAL_DEX_{firstDexSpecies}\n"
+                       f"#define DEX_END_{currentRegion} NATIONAL_DEX_{lastDexSpecies}\n")
 
-with open(file_path + "/include/constants/species.h", 'r') as speciesFile:
+with open(f"{file_path}/include/constants/species.h", 'r') as speciesFile:
     num = 0
     forms = False
     lastSpecies = "NONE"
@@ -103,8 +89,8 @@ with open(file_path + "/include/constants/species.h", 'r') as speciesFile:
             AppendRegionDefinesToPokedex(currentRegion, firstDexSpecies, lastSpecies)
             pokedex.append(f"\n#define NATIONAL_DEX_END NATIONAL_DEX_{lastSpecies}\n")
             cries.append("\n// Forms cry ids\n")
-            cry_table_normal.append("\n    @ Forms cry start\n")
-            cry_table_reverse.append("\n    @ Forms cry start\n")
+            cry_table_normal.append("\n\t@ Forms cry start\n")
+            cry_table_reverse.append("\n\t@ Forms cry start\n")
             forms = True
 
         if line.startswith("// Region: "): # Start of region, copy string to output files
@@ -113,6 +99,7 @@ with open(file_path + "/include/constants/species.h", 'r') as speciesFile:
             currentRegion = line.removeprefix("// Region: ").upper() # Get region's name
             pokedex.append(f"\n{line}\n")
             cries.append(f"\n{line}\n")
+
         elif line.find("#define SPECIES_") == 0:
             # Isolate species's name, removing prefix and suffix
             species = line.removeprefix("#define SPECIES_").split()[0]
@@ -122,6 +109,7 @@ with open(file_path + "/include/constants/species.h", 'r') as speciesFile:
                 if line.endswith("// Form cry"):
                     AppendToCryFiles(species, num)
                     num += 1
+
             else: # Base species defines
                 pokedex.append(f"#define NATIONAL_DEX_{species} {str(num)}\n")
                 AppendToCryFiles(species, num)
@@ -129,31 +117,32 @@ with open(file_path + "/include/constants/species.h", 'r') as speciesFile:
 
                 if firstDexSpecies == "NONE" and species != "NONE":
                     firstDexSpecies = species
+
                 num += 1
 
-donotmodifytext = "DO NOT MODIFY THIS FILE. IT IS AUTO GENERATED BY species_creator_helper.py"
+donotmodifytext = GetDontModifyHeader(__file__)
 
 # Write to pokedex.h
-pokedex_file = open(file_path + "/include/constants/pokedex.h", 'w')
+pokedex_file = open(f"{file_path}/include/constants/pokedex.h", 'w')
 pokedex_file.write(f"#ifndef GUARD_CONSTANTS_DEX_H\n#define GUARD_CONSTANTS_DEX_H\n\n// {donotmodifytext}\n")
 pokedex_file.writelines(pokedex)
 pokedex_file.write("\n#endif // GUARD_CONSTANTS_DEX_H\n")
 pokedex_file.close()
 # Write to cry_ids.h
-cries_file = open(file_path + "/include/constants/cry_ids.h", 'w')
+cries_file = open(f"{file_path}/include/constants/cry_ids.h", 'w')
 cries_file.write(f"#ifndef GUARD_CONSTANTS_CRY_IDS_H\n#define GUARD_CONSTANTS_CRY_IDS_H\n\n// {donotmodifytext}\n")
 cries_file.writelines(cries)
 cries_file.write("\n#endif // GUARD_CONSTANTS_CRY_IDS_H\n")
 cries_file.close()
 # Write to cry_tables.inc
-cry_tables_file = open(file_path + "/sound/cry_tables.inc", 'w')
-cry_tables_file.write(f"@ {donotmodifytext}\n\n    .align 2\ngCryTable::\n")
+cry_tables_file = open(f"{file_path}/sound/cry_tables.inc", 'w')
+cry_tables_file.write(f"@ {donotmodifytext}\n\n\t.align 2\ngCryTable::\n")
 cry_tables_file.writelines(cry_table_normal)
-cry_tables_file.write("\n    .align 2\ngCryTable2::\n")
+cry_tables_file.write("\n\t.align 2\ngCryTable2::\n")
 cry_tables_file.writelines(cry_table_reverse)
 cry_tables_file.close()
 # Write to cries_sound_data.inc
-cries_data_file = open(file_path + "/sound/cries_sound_data.inc", 'w')
+cries_data_file = open(f"{file_path}/sound/cries_sound_data.inc", 'w')
 cries_data_file.write(f"/* {donotmodifytext} */\n")
 cries_data_file.writelines(cry_sound_data)
 cries_data_file.close()
@@ -169,7 +158,7 @@ footprints = []
 # Append blank footprint image
 footprints.append(f"static const u8 sMonFootprint_None[] = INCBIN_U8({chr(34)}graphics/pokedex/blank_footprint.1bpp{chr(34)});\n")
 
-dir = file_path + "/graphics/pokemon"
+dir = f"{file_path}/graphics/pokemon"
 
 # Append to its respective files all sprites and palettes found
 for path in glob.glob(dir + "/**", recursive=True):
@@ -177,31 +166,31 @@ for path in glob.glob(dir + "/**", recursive=True):
     formatedExtension = FormatExtension(extension, "/")
 
     # Append front pic
-    if os.path.exists(path + "\\front.png"):
+    if os.path.exists(f"{path}\\front.png"):
         frontpics.append(f"static const u32 sMonFrontPic_{formatedExtension}[] = INCBIN_U32({chr(34)}graphics/pokemon/{extension}/front.4bpp.lz{chr(34)});\n")
     
     # Append palette
-    if os.path.exists(path + "\\normal.pal"):
+    if os.path.exists(f"{path}\\normal.pal"):
         palettes.append(f"static const u32 sMonPalette_{formatedExtension}[] = INCBIN_U32({chr(34)}graphics/pokemon/{extension}/normal.gbapal.lz{chr(34)});\n")
 
     # Append back pic
-    if os.path.exists(path + "\\back.png"):
+    if os.path.exists(f"{path}\\back.png"):
         backpics.append(f"static const u32 sMonBackPic_{formatedExtension}[] = INCBIN_U32({chr(34)}graphics/pokemon/{extension}/back.4bpp.lz{chr(34)});\n")
     
     # Append shiny palette
-    if os.path.exists(path + "\\shiny.pal"):
+    if os.path.exists(f"{path}\\shiny.pal"):
         shiny_palettes.append(f"static const u32 sMonShinyPalette_{formatedExtension}[] = INCBIN_U32({chr(34)}graphics/pokemon/{extension}/shiny.gbapal.lz{chr(34)});\n")
 
     # Append icon
-    if os.path.exists(path + "\\icon.png"):
+    if os.path.exists(f"{path}\\icon.png"):
         icons.append(f"static const u8 sMonIcon_{formatedExtension}[] = INCBIN_U8({chr(34)}graphics/pokemon/{extension}/icon.4bpp{chr(34)});\n")
 
     # Append footprint
-    if os.path.exists(path + "\\footprint.png"):
+    if os.path.exists(f"{path}\\footprint.png"):
         footprints.append(f"static const u8 sMonFootprint_{formatedExtension}[] = INCBIN_U8({chr(34)}graphics/pokemon/{extension}/footprint.1bpp{chr(34)});\n")
 
 # Write to pics_and_icons.h
-output = open(file_path + "/src/data/pokemon/graphics/pics_and_icons.h", 'w')
+output = open(f"{file_path}/src/data/pokemon/graphics/pics_and_icons.h", 'w')
 # Write front pics
 output.write(f"// {donotmodifytext}\n\n// Front pics\n")
 output.writelines(frontpics)
@@ -220,7 +209,7 @@ output.writelines(icons)
 output.close()
 
 # Write to footprints.h
-output = open(file_path + "/src/data/pokemon/graphics/footprints.h", 'w')
+output = open(f"{file_path}/src/data/pokemon/graphics/footprints.h", 'w')
 output.write(f"// {donotmodifytext}\n\n")
 output.writelines(footprints)
 output.close()

@@ -599,6 +599,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_UNRECOGNIZED,
+		.iconPic = sItemIcon_QuestionMark,
+		.iconPalette = sItemIconPalette_QuestionMark,
 	},
 	[ITEM_MASTER_BALL] =
 	{
@@ -607,6 +609,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_MasterBall,
+		.iconPalette = sItemIconPalette_MasterBall,
 	},
 	[ITEM_ULTRA_BALL] = 
 	{
@@ -616,6 +620,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_UltraBall,
+		.iconPalette = sItemIconPalette_UltraBall,
 	},
 	[ITEM_GREAT_BALL] = 
 	{
@@ -625,6 +631,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_GreatBall,
+		.iconPalette = sItemIconPalette_GreatBall,
 	},
 	[ITEM_POKE_BALL] =
 	{
@@ -634,6 +642,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_PokeBall,
+		.iconPalette = sItemIconPalette_PokeBall,
 	},
 	[ITEM_SAFARI_BALL] =
 	{
@@ -642,6 +652,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_SafariBall,
+		.iconPalette = sItemIconPalette_SafariBall,
 	},
 	[ITEM_NET_BALL] =
 	{
@@ -651,6 +663,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_NetBall,
+		.iconPalette = sItemIconPalette_NetBall,
 	},
 	[ITEM_DIVE_BALL] =
 	{
@@ -660,6 +674,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_DiveBall,
+		.iconPalette = sItemIconPalette_DiveBall,
 	},
 	[ITEM_NEST_BALL] =
 	{
@@ -669,6 +685,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_NestBall,
+		.iconPalette = sItemIconPalette_NestBall,
 	},
 	[ITEM_REPEAT_BALL] =
 	{
@@ -678,6 +696,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_RepeatBall,
+		.iconPalette = sItemIconPalette_RepeatBall,
 	},
 	[ITEM_TIMER_BALL] =
 	{
@@ -687,6 +707,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_TimerBall,
+		.iconPalette = sItemIconPalette_RepeatBall,
 	},
 	[ITEM_LUXURY_BALL] =
 	{
@@ -696,6 +718,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_LuxuryBall,
+		.iconPalette = sItemIconPalette_LuxuryBall,
 	},
 	[ITEM_PREMIER_BALL] =
 	{
@@ -705,6 +729,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_PremierBall,
+		.iconPalette = sItemIconPalette_LuxuryBall,
 	},
 	[ITEM_PARK_BALL] =
 	{
@@ -714,6 +740,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_ParkBall,
+		.iconPalette = sItemIconPalette_ParkBall,
 	},
 	[ITEM_CHERISH_BALL] =
 	{
@@ -723,6 +751,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_CherishBall,
+		.iconPalette = sItemIconPalette_CherishBall,
 	},
 	[ITEM_DUSK_BALL] =
 	{
@@ -732,6 +762,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_DuskBall,
+		.iconPalette = sItemIconPalette_DuskBall,
 	},
 	[ITEM_HEAL_BALL] =
 	{
@@ -741,6 +773,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_HealBall,
+		.iconPalette = sItemIconPalette_HealBall,
 	},
 	[ITEM_QUICK_BALL] =
 	{
@@ -750,6 +784,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_QuickBall,
+		.iconPalette = sItemIconPalette_QuickBall,
 	},
 	[ITEM_FAST_BALL] =
 	{
@@ -759,6 +795,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_FastBall,
+		.iconPalette = sItemIconPalette_FastBall,
 	},
 	[ITEM_LEVEL_BALL] =
 	{
@@ -768,6 +806,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_LevelBall,
+		.iconPalette = sItemIconPalette_LevelBall,
 	},
 	[ITEM_LURE_BALL] =
 	{
@@ -777,6 +817,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_LureBall,
+		.iconPalette = sItemIconPalette_LureBall,
 	},
 	[ITEM_HEAVY_BALL] =
 	{
@@ -786,6 +828,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_HeavyBall,
+		.iconPalette = sItemIconPalette_HeavyBall,
 	},
 	[ITEM_LOVE_BALL] =
 	{
@@ -795,6 +839,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_LoveBall,
+		.iconPalette = sItemIconPalette_LoveBall,
 	},
 	[ITEM_FRIEND_BALL] =
 	{
@@ -804,6 +850,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_FriendBall,
+		.iconPalette = sItemIconPalette_FriendBall,
 	},
 	[ITEM_MOON_BALL] =
 	{
@@ -813,6 +861,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_MoonBall,
+		.iconPalette = sItemIconPalette_MoonBall,
 	},
 	[ITEM_SPORT_BALL] =
 	{
@@ -822,6 +872,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_SportBall,
+		.iconPalette = sItemIconPalette_SportBall,
 	},
 	[ITEM_BEAST_BALL] =
 	{
@@ -831,6 +883,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_BeastBall,
+		.iconPalette = sItemIconPalette_BeastBall,
 	},
 	[ITEM_DREAM_BALL] =
 	{
@@ -840,6 +894,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_POKE_BALLS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.battleUsage = EFFECT_ITEM_THROW_BALL,
+		.iconPic = sItemIcon_DreamBall,
+		.iconPalette = sItemIconPalette_DreamBall,
 	},
 	[ITEM_POTION] =
 	{
@@ -853,6 +909,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Potion,
+		.iconPalette = sItemIconPalette_Potion,
 	},
 	[ITEM_ANTIDOTE] =
 	{
@@ -865,6 +923,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Antidote,
+		.iconPalette = sItemIconPalette_Antidote,
 	},
 	[ITEM_BURN_HEAL] =
 	{
@@ -877,6 +937,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_StatusHeal,
+		.iconPalette = sItemIconPalette_BurnHeal,
 	},
 	[ITEM_ICE_HEAL] =
 	{
@@ -889,6 +951,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_StatusHeal,
+		.iconPalette = sItemIconPalette_IceHeal,
 	},
 	[ITEM_AWAKENING] =
 	{
@@ -901,6 +965,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_StatusHeal,
+		.iconPalette = sItemIconPalette_Awakening,
 	},
 	[ITEM_PARALYZE_HEAL] =
 	{
@@ -913,6 +979,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_StatusHeal,
+		.iconPalette = sItemIconPalette_ParalyzeHeal,
 	},
 	[ITEM_FULL_RESTORE] =
 	{
@@ -926,6 +994,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LargePotion,
+		.iconPalette = sItemIconPalette_FullRestore,
 	},
 	[ITEM_MAX_POTION] =
 	{
@@ -939,6 +1009,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LargePotion,
+		.iconPalette = sItemIconPalette_MaxPotion,
 	},
 	[ITEM_HYPER_POTION] =
 	{
@@ -952,6 +1024,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Potion,
+		.iconPalette = sItemIconPalette_HyperPotion,
 	},
 	[ITEM_SUPER_POTION] =
 	{
@@ -965,6 +1039,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Potion,
+		.iconPalette = sItemIconPalette_SuperPotion,
 	},
 	[ITEM_FULL_HEAL] =
 	{
@@ -977,6 +1053,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_FullHeal,
+		.iconPalette = sItemIconPalette_FullHeal,
 	},
 	[ITEM_REVIVE] =
 	{
@@ -990,6 +1068,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Revive,
+		.iconPalette = sItemIconPalette_Revive,
 	},
 	[ITEM_MAX_REVIVE] =
 	{
@@ -1003,6 +1083,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_MaxRevive,
+		.iconPalette = sItemIconPalette_Revive,
 	},
 	[ITEM_FRESH_WATER] =
 	{
@@ -1016,6 +1098,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_FreshWater,
+		.iconPalette = sItemIconPalette_FreshWater,
 	},
 	[ITEM_SODA_POP] =
 	{
@@ -1029,6 +1113,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_SodaPop,
+		.iconPalette = sItemIconPalette_SodaPop,
 	},
 	[ITEM_LEMONADE] =
 	{
@@ -1042,6 +1128,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Lemonade,
+		.iconPalette = sItemIconPalette_Lemonade,
 	},
 	[ITEM_MOOMOO_MILK] =
 	{
@@ -1055,6 +1143,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_MoomooMilk,
+		.iconPalette = sItemIconPalette_MoomooMilk,
 	},
 	[ITEM_ENERGY_POWDER] =
 	{
@@ -1068,6 +1158,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Powder,
+		.iconPalette = sItemIconPalette_EnergyPowder,
 	},
 	[ITEM_ENERGY_ROOT] =
 	{
@@ -1081,6 +1173,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_EnergyRoot,
+		.iconPalette = sItemIconPalette_EnergyRoot,
 	},
 	[ITEM_HEAL_POWDER] =
 	{
@@ -1093,6 +1187,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Powder,
+		.iconPalette = sItemIconPalette_HealPowder,
 	},
 	[ITEM_REVIVAL_HERB] =
 	{
@@ -1106,6 +1202,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_RevivalHerb,
+		.iconPalette = sItemIconPalette_RevivalHerb,
 	},
 	[ITEM_ETHER] =
 	{
@@ -1119,6 +1217,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_PP_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_PP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Ether,
+		.iconPalette = sItemIconPalette_Ether,
 	},
 	[ITEM_MAX_ETHER] =
 	{
@@ -1132,6 +1232,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_PP_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_PP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Ether,
+		.iconPalette = sItemIconPalette_MaxEther,
 	},
 	[ITEM_ELIXIR] =
 	{
@@ -1145,6 +1247,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_PP_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_PP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Ether,
+		.iconPalette = sItemIconPalette_Elixir,
 	},
 	[ITEM_MAX_ELIXIR] =
 	{
@@ -1158,6 +1262,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_PP_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_PP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Ether,
+		.iconPalette = sItemIconPalette_MaxElixir,
 	},
 	[ITEM_LAVA_COOKIE] =
 	{
@@ -1170,6 +1276,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LavaCookie,
+		.iconPalette = sItemIconPalette_LavaCookieAndLetter,
 	},
 	[ITEM_BLUE_FLUTE] =
 	{
@@ -1182,6 +1290,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_FLUTE,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Flute,
+		.iconPalette = sItemIconPalette_BlueFlute,
 	},
 	[ITEM_YELLOW_FLUTE] =
 	{
@@ -1194,6 +1304,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_FLUTE,
 		.battleUsage = EFFECT_ITEM_CURE_SECONDARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Flute,
+		.iconPalette = sItemIconPalette_YellowFlute,
 	},
 	[ITEM_RED_FLUTE] =
 	{
@@ -1206,6 +1318,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_FLUTE,
 		.battleUsage = EFFECT_ITEM_CURE_SECONDARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Flute,
+		.iconPalette = sItemIconPalette_RedFlute,
 	},
 	[ITEM_BLACK_FLUTE] =
 	{
@@ -1217,6 +1331,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_BlackFlute,
 		.usageType = ITEM_TYPE_FLUTE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Flute,
+		.iconPalette = sItemIconPalette_BlackFlute,
 	},
 	[ITEM_WHITE_FLUTE] =
 	{
@@ -1228,6 +1344,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_BlackFlute,
 		.usageType = ITEM_TYPE_FLUTE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Flute,
+		.iconPalette = sItemIconPalette_WhiteFlute,
 	},
 	[ITEM_BERRY_JUICE] =
 	{
@@ -1242,6 +1360,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BerryJuice,
+		.iconPalette = sItemIconPalette_BerryJuice,
 	},
 	[ITEM_SACRED_ASH] =
 	{
@@ -1254,6 +1374,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_SacredAsh,
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.flingPower = 30,
+		.iconPic = sItemIcon_SacredAsh,
+		.iconPalette = sItemIconPalette_SacredAsh,
 	},
 	[ITEM_SWEET_HEART] =
 	{
@@ -1267,6 +1389,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 30,
+		.iconPic = sItemIcon_SweetHeart,
+		.iconPalette = sItemIconPalette_SweetHeart,
 	},
 	[ITEM_BIG_MALASADA] =
 	{
@@ -1279,6 +1403,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BigMalasada,
+		.iconPalette = sItemIconPalette_BigMalasada,
 	},
 	[ITEM_CASTELIACONE] =
 	{
@@ -1291,6 +1417,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Casteliacone,
+		.iconPalette = sItemIconPalette_Casteliacone,
 	},
 	[ITEM_LUMIOSE_GALETTE] =
 	{
@@ -1303,6 +1431,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LumioseGalette,
+		.iconPalette = sItemIconPalette_LumioseGalette,
 	},
 	[ITEM_RAGE_CANDY_BAR] =
 	{
@@ -1315,6 +1445,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_RageCandyBar,
+		.iconPalette = sItemIconPalette_RageCandyBar,
 	},
 	[ITEM_SHALOUR_SABLE] =
 	{
@@ -1327,6 +1459,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ShalourSable,
+		.iconPalette = sItemIconPalette_ShalourSable,
 	},
 	[ITEM_OLD_GATEAU] =
 	{
@@ -1339,6 +1473,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_OldGateau,
+		.iconPalette = sItemIconPalette_OldGateau,
 	},
 	[ITEM_DYNAMAX_CANDY] =
 	{
@@ -1351,6 +1487,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_DynamaxCandy,
+		.iconPalette = sItemIconPalette_DynamaxCandy,
 	},
 	[ITEM_ABILITY_CAPSULE] =
 	{
@@ -1362,6 +1500,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_ChangeAbility,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
+		.iconPic = sItemIcon_AbilityCapsule,
+		.iconPalette = sItemIconPalette_AbilityCapsule,
 	},
 	[ITEM_ABILITY_PATCH] =
 	{
@@ -1373,6 +1513,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_ChangeAbility,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
+		.iconPic = sItemIcon_AbilityPatch,
+		.iconPalette = sItemIconPalette_AbilityPatch,
 	},
 	[ITEM_PEWTER_CRUNCHIES] =
 	{
@@ -1385,6 +1527,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STATUS_RECOVERY,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_PewterCrunchies,
+		.iconPalette = sItemIconPalette_PewterCrunchies,
 	},
 	[ITEM_HP_UP] =
 	{
@@ -1397,6 +1541,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_HpUp,
+		.iconPalette = sItemIconPalette_HpUp,
 	},
 	[ITEM_PROTEIN] =
 	{
@@ -1409,6 +1555,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Vitamin,
+		.iconPalette = sItemIconPalette_Protein,
 	},
 	[ITEM_IRON] =
 	{
@@ -1421,6 +1569,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Vitamin,
+		.iconPalette = sItemIconPalette_Iron,
 	},
 	[ITEM_CARBOS] =
 	{
@@ -1433,6 +1583,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Vitamin,
+		.iconPalette = sItemIconPalette_Carbos,
 	},
 	[ITEM_CALCIUM] =
 	{
@@ -1445,6 +1597,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Vitamin,
+		.iconPalette = sItemIconPalette_Calcium,
 	},
 	[ITEM_RARE_CANDY] =
 	{
@@ -1457,6 +1611,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_RareCandy,
+		.iconPalette = sItemIconPalette_RareCandy,
 	},
 	[ITEM_PP_UP] =
 	{
@@ -1469,6 +1625,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_PpUp,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_PpUp,
+		.iconPalette = sItemIconPalette_PpUp,
 	},
 	[ITEM_ZINC] =
 	{
@@ -1481,6 +1639,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Vitamin,
+		.iconPalette = sItemIconPalette_Zinc,
 	},
 	[ITEM_PP_MAX] =
 	{
@@ -1493,6 +1653,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_PpUp,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_PpMax,
+		.iconPalette = sItemIconPalette_PpMax,
 	},
 	[ITEM_MAX_MUSHROOMS] =
 	{
@@ -1505,6 +1667,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.battleUsage = EFFECT_ITEM_INCREASE_ALL_STATS,
 		.flingPower = 30,
+		.iconPic = sItemIcon_MaxMushrooms,
+		.iconPalette = sItemIconPalette_MaxMushrooms,
 	},
 	[ITEM_SUN_STONE] =
 	{
@@ -1516,6 +1680,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_SunStone,
+		.iconPalette = sItemIconPalette_SunStone,
 	},
 	[ITEM_MOON_STONE] =
 	{
@@ -1527,6 +1693,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_MoonStone,
+		.iconPalette = sItemIconPalette_MoonStone,
 	},
 	[ITEM_FIRE_STONE] =
 	{
@@ -1538,6 +1706,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_FireStone,
+		.iconPalette = sItemIconPalette_FireStone,
 	},
 	[ITEM_THUNDER_STONE] =
 	{
@@ -1549,6 +1719,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ThunderStone,
+		.iconPalette = sItemIconPalette_ThunderStone,
 	},
 	[ITEM_WATER_STONE] =
 	{
@@ -1560,6 +1732,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_WaterStone,
+		.iconPalette = sItemIconPalette_WaterStone,
 	},
 	[ITEM_LEAF_STONE] =
 	{
@@ -1571,6 +1745,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LeafStone,
+		.iconPalette = sItemIconPalette_LeafStone,
 	},
 	[ITEM_ICE_STONE] =
 	{
@@ -1582,6 +1758,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_IceStone,
+		.iconPalette = sItemIconPalette_IceStone,
 	},
 	[ITEM_DUSK_STONE] =
 	{
@@ -1593,6 +1771,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_DuskStone,
+		.iconPalette = sItemIconPalette_DuskStone,
 	},
 	[ITEM_DAWN_STONE] =
 	{
@@ -1604,6 +1784,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_DawnStone,
+		.iconPalette = sItemIconPalette_DawnStone,
 	},
 	[ITEM_SHINY_STONE] =
 	{
@@ -1615,6 +1797,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_ShinyStone,
+		.iconPalette = sItemIconPalette_ShinyStone,
 	},
 	[ITEM_PROTECTOR] =
 	{
@@ -1626,6 +1810,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Protector,
+		.iconPalette = sItemIconPalette_Protector,
 	},
 	[ITEM_MAGMARIZER] =
 	{
@@ -1637,6 +1823,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Magmarizer,
+		.iconPalette = sItemIconPalette_Magmarizer,
 	},
 	[ITEM_SACHET] =
 	{
@@ -1648,6 +1836,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Sachet,
+		.iconPalette = sItemIconPalette_Sachet,
 	},
 	[ITEM_WHIPPED_DREAM] =
 	{
@@ -1659,6 +1849,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_WhippedDream,
+		.iconPalette = sItemIconPalette_WhippedDream,
 	},
 	[ITEM_REAPER_CLOTH] =
 	{
@@ -1670,6 +1862,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ReaperCloth,
+		.iconPalette = sItemIconPalette_ReaperCloth,
 	},
 	[ITEM_DUBIOUS_DISC] =
 	{
@@ -1681,6 +1875,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 50,
+		.iconPic = sItemIcon_DubiousDisc,
+		.iconPalette = sItemIconPalette_DubiousDisc,
 	},
 	[ITEM_ELECTIRIZER] =
 	{
@@ -1692,6 +1888,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Electirizer,
+		.iconPalette = sItemIconPalette_Electirizer,
 	},
 	[ITEM_CRACKED_POT] =
 	{
@@ -1703,6 +1901,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_CrackedPot,
+		.iconPalette = sItemIconPalette_CrackedPot,
 	},
 	[ITEM_SWEET_APPLE] =
 	{
@@ -1714,6 +1914,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_SweetApple,
+		.iconPalette = sItemIconPalette_SweetApple,
 	},
 	[ITEM_TART_APPLE] =
 	{
@@ -1725,6 +1927,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_TartApple,
+		.iconPalette = sItemIconPalette_TartApple,
 	},
 	[ITEM_BLACK_AUGURITE] =
 	{
@@ -1735,6 +1939,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
+		.iconPic = sItemIcon_BlackAugurite,
+		.iconPalette = sItemIconPalette_BlackAugurite,
 	},
 	[ITEM_GALARICA_CUFF] =
 	{
@@ -1746,6 +1952,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_GalaricaCuff,
+		.iconPalette = sItemIconPalette_GalaricaItem,
 	},
 	[ITEM_GALARICA_WREATH] =
 	{
@@ -1757,6 +1965,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_GalaricaWreath,
+		.iconPalette = sItemIconPalette_GalaricaItem,
 	},
 	[ITEM_LINKING_CORD] =
 	{
@@ -1767,6 +1977,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
+		.iconPic = sItemIcon_LinkingCord,
+		.iconPalette = sItemIconPalette_LinkingCord,
 	},
 	[ITEM_SCROLL_OF_DARKNESS] =
 	{
@@ -1777,6 +1989,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
+		.iconPic = sItemIcon_Scroll,
+		.iconPalette = sItemIconPalette_ScrollOfDarkness,
 	},
 	[ITEM_SCROLL_OF_WATERS] =
 	{
@@ -1787,6 +2001,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
+		.iconPic = sItemIcon_Scroll,
+		.iconPalette = sItemIconPalette_ScrollOfWaters,
 	},
 	[ITEM_AUSPICIOUS_ARMOR] =
 	{
@@ -1798,6 +2014,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_AuspiciousArmor,
+		.iconPalette = sItemIconPalette_AuspiciousArmor,
 	},
 	[ITEM_MALICIOUS_ARMOR] =
 	{
@@ -1809,6 +2027,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_MaliciousArmor,
+		.iconPalette = sItemIconPalette_MaliciousArmor,
 	},
 	[ITEM_KINGS_ROCK] =
 	{
@@ -1822,6 +2042,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_KingsRock,
+		.iconPalette = sItemIconPalette_KingsRock,
 	},
 	[ITEM_METAL_COAT] =
 	{
@@ -1835,6 +2057,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_MetalCoat,
+		.iconPalette = sItemIconPalette_MetalCoat,
 	},
 	[ITEM_DRAGON_SCALE] =
 	{
@@ -1846,6 +2070,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_DragonScale,
+		.iconPalette = sItemIconPalette_DragonScale,
 	},
 	[ITEM_UP_GRADE] =
 	{
@@ -1857,6 +2083,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_UpGrade,
+		.iconPalette = sItemIconPalette_UpGrade,
 	},
 	[ITEM_DEEP_SEA_TOOTH] =
 	{
@@ -1869,6 +2097,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 90,
+		.iconPic = sItemIcon_DeepSeaTooth,
+		.iconPalette = sItemIconPalette_DeepSeaTooth,
 	},
 	[ITEM_DEEP_SEA_SCALE] =
 	{
@@ -1881,6 +2111,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_DeepSeaScale,
+		.iconPalette = sItemIconPalette_DeepSeaScale,
 	},
 	[ITEM_PRISM_SCALE] =
 	{
@@ -1892,6 +2124,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_PrismScale,
+		.iconPalette = sItemIconPalette_PrismScale,
 	},
 	[ITEM_PEAT_BLOCK] =
 	{
@@ -1944,6 +2178,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_WING,
 		.flingPower = 20,
+		.iconPic = sItemIcon_Wing,
+		.iconPalette = sItemIconPalette_HealthWing,
 	},
 	[ITEM_MUSCLE_WING] =
 	{
@@ -1956,6 +2192,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_WING,
 		.flingPower = 20,
+		.iconPic = sItemIcon_Wing,
+		.iconPalette = sItemIconPalette_MuscleWing,
 	},
 	[ITEM_RESIST_WING] =
 	{
@@ -1968,6 +2206,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_WING,
 		.flingPower = 20,
+		.iconPic = sItemIcon_Wing,
+		.iconPalette = sItemIconPalette_ResistWing,
 	},
 	[ITEM_GENIUS_WING] =
 	{
@@ -1980,6 +2220,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_WING,
 		.flingPower = 20,
+		.iconPic = sItemIcon_Wing,
+		.iconPalette = sItemIconPalette_GeniusWing,
 	},
 	[ITEM_CLEVER_WING] =
 	{
@@ -1992,6 +2234,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_WING,
 		.flingPower = 20,
+		.iconPic = sItemIcon_Wing,
+		.iconPalette = sItemIconPalette_CleverWing,
 	},
 	[ITEM_SWIFT_WING] =
 	{
@@ -2004,6 +2248,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_WING,
 		.flingPower = 20,
+		.iconPic = sItemIcon_Wing,
+		.iconPalette = sItemIconPalette_SwiftWing,
 	},
 	[ITEM_PRETTY_WING] =
 	{
@@ -2015,6 +2261,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_STAT_BOOST_WING,
 		.flingPower = 20,
+		.iconPic = sItemIcon_PrettyWing,
+		.iconPalette = sItemIconPalette_PrettyWing,
 	},
 	[ITEM_ADAMANT_MINT] =
 	{
@@ -2027,6 +2275,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_RedMint,
 	},
 	[ITEM_BOLD_MINT] =
 	{
@@ -2039,6 +2289,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_BlueMint,
 	},
 	[ITEM_BRAVE_MINT] =
 	{
@@ -2051,6 +2303,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_RedMint,
 	},
 	[ITEM_CALM_MINT] =
 	{
@@ -2063,6 +2317,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_PinkMint,
 	},
 	[ITEM_CAREFUL_MINT] =
 	{
@@ -2075,6 +2331,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_PinkMint,
 	},
 	[ITEM_GENTLE_MINT] =
 	{
@@ -2087,6 +2345,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_PinkMint,
 	},
 	[ITEM_HASTY_MINT] =
 	{
@@ -2099,6 +2359,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_GreenMint,
 	},
 	[ITEM_IMPISH_MINT] =
 	{
@@ -2111,6 +2373,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_BlueMint,
 	},
 	[ITEM_JOLLY_MINT] =
 	{
@@ -2123,6 +2387,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_GreenMint,
 	},
 	[ITEM_LAX_MINT] =
 	{
@@ -2135,6 +2401,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_BlueMint,
 	},
 	[ITEM_LONELY_MINT] =
 	{
@@ -2147,6 +2415,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_RedMint,
 	},
 	[ITEM_MILD_MINT] =
 	{
@@ -2159,6 +2429,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_LightBlueMint,
 	},
 	[ITEM_MODEST_MINT] =
 	{
@@ -2171,6 +2443,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_LightBlueMint,
 	},
 	[ITEM_NAIVE_MINT] =
 	{
@@ -2183,6 +2457,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_GreenMint,
 	},
 	[ITEM_NAUGHTY_MINT] =
 	{
@@ -2195,6 +2471,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_RedMint,
 	},
 	[ITEM_QUIET_MINT] =
 	{
@@ -2207,6 +2485,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_LightBlueMint,
 	},
 	[ITEM_RASH_MINT] =
 	{
@@ -2219,6 +2499,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_LightBlueMint,
 	},
 	[ITEM_RELAXED_MINT] =
 	{
@@ -2231,6 +2513,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_BlueMint,
 	},
 	[ITEM_SASSY_MINT] =
 	{
@@ -2243,6 +2527,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_PinkMint,
 	},
 	[ITEM_SERIOUS_MINT] =
 	{
@@ -2255,6 +2541,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_YellowMint,
 	},
 	[ITEM_TIMID_MINT] =
 	{
@@ -2267,6 +2555,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Mint,
 		.usageType = ITEM_TYPE_MINT,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Mint,
+		.iconPalette = sItemIconPalette_GreenMint,
 	},
 	[ITEM_EXP_CANDY_XS] =
 	{
@@ -2279,6 +2569,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ExpCandyXs,
+		.iconPalette = sItemIconPalette_ExpCandy,
 	},
 	[ITEM_EXP_CANDY_S] =
 	{
@@ -2291,6 +2583,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ExpCandyS,
+		.iconPalette = sItemIconPalette_ExpCandy,
 	},
 	[ITEM_EXP_CANDY_M] =
 	{
@@ -2303,6 +2597,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ExpCandyM,
+		.iconPalette = sItemIconPalette_ExpCandy,
 	},
 	[ITEM_EXP_CANDY_L] =
 	{
@@ -2315,6 +2611,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ExpCandyL,
+		.iconPalette = sItemIconPalette_ExpCandy,
 	},
 	[ITEM_EXP_CANDY_XL] =
 	{
@@ -2327,6 +2625,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_STAT_BOOST_DRINK,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ExpCandyXl,
+		.iconPalette = sItemIconPalette_ExpCandy,
 	},
 	[ITEM_NORMAL_TERA_SHARD] =
 	{
@@ -2339,6 +2639,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_NormalTeraShard,
 	},
 	[ITEM_FIRE_TERA_SHARD] =
 	{
@@ -2351,6 +2653,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_FireTeraShard,
 	},
 	[ITEM_WATER_TERA_SHARD] =
 	{
@@ -2363,6 +2667,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_WaterTeraShard,
 	},
 	[ITEM_ELECTRIC_TERA_SHARD] =
 	{
@@ -2375,6 +2681,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_ElectricTeraShard,
 	},
 	[ITEM_GRASS_TERA_SHARD] =
 	{
@@ -2387,6 +2695,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_GrassTeraShard,
 	},
 	[ITEM_ICE_TERA_SHARD] =
 	{
@@ -2399,6 +2709,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_IceTeraShard,
 	},
 	[ITEM_FIGHTING_TERA_SHARD] =
 	{
@@ -2411,6 +2723,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_FightingTeraShard,
 	},
 	[ITEM_POISON_TERA_SHARD] =
 	{
@@ -2423,6 +2737,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_PoisonTeraShard,
 	},
 	[ITEM_GROUND_TERA_SHARD] =
 	{
@@ -2435,6 +2751,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_GroundTeraShard,
 	},
 	[ITEM_FLYING_TERA_SHARD] =
 	{
@@ -2447,6 +2765,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_FlyingTeraShard,
 	},
 	[ITEM_PSYCHIC_TERA_SHARD] =
 	{
@@ -2459,6 +2779,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_PsychicTeraShard,
 	},
 	[ITEM_BUG_TERA_SHARD] =
 	{
@@ -2471,6 +2793,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_BugTeraShard,
 	},
 	[ITEM_ROCK_TERA_SHARD] =
 	{
@@ -2483,6 +2807,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_RockTeraShard,
 	},
 	[ITEM_GHOST_TERA_SHARD] =
 	{
@@ -2495,6 +2821,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_GhostTeraShard,
 	},
 	[ITEM_DRAGON_TERA_SHARD] =
 	{
@@ -2507,6 +2835,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_DragonTeraShard,
 	},
 	[ITEM_DARK_TERA_SHARD] =
 	{
@@ -2519,6 +2849,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_DarkTeraShard,
 	},
 	[ITEM_STEEL_TERA_SHARD] =
 	{
@@ -2531,6 +2863,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_SteelTeraShard,
 	},
 	[ITEM_FAIRY_TERA_SHARD] =
 	{
@@ -2543,6 +2877,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_TERA_SHARD,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_TeraShard,
+		// .iconPalette = sItemIconPalette_FairyTeraShard,
 	},
 	[ITEM_CHERI_BERRY] =
 	{
@@ -2555,6 +2891,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
+		.iconPic = sItemIcon_CheriBerry,
+		.iconPalette = sItemIconPalette_CheriBerry,
 	},
 	[ITEM_CHESTO_BERRY] =
 	{
@@ -2567,6 +2905,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ChestoBerry,
+		.iconPalette = sItemIconPalette_ChestoBerry,
 	},
 	[ITEM_PECHA_BERRY] =
 	{
@@ -2579,6 +2919,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
+		.iconPic = sItemIcon_PechaBerry,
+		.iconPalette = sItemIconPalette_PechaBerry,
 	},
 	[ITEM_RAWST_BERRY] =
 	{
@@ -2591,6 +2933,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
+		.iconPic = sItemIcon_RawstBerry,
+		.iconPalette = sItemIconPalette_RawstBerry,
 	},
 	[ITEM_ASPEAR_BERRY] =
 	{
@@ -2603,6 +2947,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
+		.iconPic = sItemIcon_AspearBerry,
+		.iconPalette = sItemIconPalette_AspearBerry,
 	},
 	[ITEM_LEPPA_BERRY] =
 	{
@@ -2616,6 +2962,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Ether,
 		.battleUsage = EFFECT_ITEM_RESTORE_PP,
 		.flingPower = 10,
+		.iconPic = sItemIcon_LeppaBerry,
+		.iconPalette = sItemIconPalette_LeppaBerry,
 	},
 	[ITEM_ORAN_BERRY] =
 	{
@@ -2629,6 +2977,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 10,
+		.iconPic = sItemIcon_OranBerry,
+		.iconPalette = sItemIconPalette_OranBerry,
 	},
 	[ITEM_PERSIM_BERRY] =
 	{
@@ -2641,6 +2991,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.battleUsage = EFFECT_ITEM_CURE_SECONDARY_STATUS,
 		.flingPower = 10,
+		.iconPic = sItemIcon_PersimBerry,
+		.iconPalette = sItemIconPalette_PersimBerry,
 	},
 	[ITEM_LUM_BERRY] =
 	{
@@ -2653,6 +3005,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.battleUsage = EFFECT_ITEM_CURE_PRIMARY_STATUS,
 		.flingPower = 10,
+		.iconPic = sItemIcon_LumBerry,
+		.iconPalette = sItemIconPalette_LumBerry,
 	},
 	[ITEM_SITRUS_BERRY] =
 	{
@@ -2666,6 +3020,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.battleUsage = EFFECT_ITEM_RESTORE_HP,
 		.flingPower = 10,
+		.iconPic = sItemIcon_SitrusBerry,
+		.iconPalette = sItemIconPalette_SitrusBerry,
 	},
 	[ITEM_FIGY_BERRY] =
 	{
@@ -2678,6 +3034,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_FigyBerry,
+		.iconPalette = sItemIconPalette_FigyBerry,
 	},
 	[ITEM_WIKI_BERRY] =
 	{
@@ -2690,6 +3048,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_WikiBerry,
+		.iconPalette = sItemIconPalette_WikiBerry,
 	},
 	[ITEM_MAGO_BERRY] =
 	{
@@ -2702,6 +3062,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_MagoBerry,
+		.iconPalette = sItemIconPalette_MagoBerry,
 	},
 	[ITEM_AGUAV_BERRY] =
 	{
@@ -2714,6 +3076,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_AguavBerry,
+		.iconPalette = sItemIconPalette_AguavBerry,
 	},
 	[ITEM_IAPAPA_BERRY] =
 	{
@@ -2726,6 +3090,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_IapapaBerry,
+		.iconPalette = sItemIconPalette_IapapaBerry,
 	},
 	[ITEM_RAZZ_BERRY] =
 	{
@@ -2736,6 +3102,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_RazzBerry,
+		.iconPalette = sItemIconPalette_RazzBerry,
 	},
 	[ITEM_BLUK_BERRY] =
 	{
@@ -2746,6 +3114,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_BlukBerry,
+		.iconPalette = sItemIconPalette_BlukBerry,
 	},
 	[ITEM_NANAB_BERRY] =
 	{
@@ -2756,6 +3126,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_NanabBerry,
+		.iconPalette = sItemIconPalette_NanabBerry,
 	},
 	[ITEM_WEPEAR_BERRY] =
 	{
@@ -2766,6 +3138,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_WepearBerry,
+		.iconPalette = sItemIconPalette_WepearBerry,
 	},
 	[ITEM_PINAP_BERRY] =
 	{
@@ -2776,6 +3150,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_PinapBerry,
+		.iconPalette = sItemIconPalette_PinapBerry,
 	},
 	[ITEM_POMEG_BERRY] =
 	{
@@ -2787,6 +3163,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.flingPower = 10,
+		.iconPic = sItemIcon_PomegBerry,
+		.iconPalette = sItemIconPalette_PomegBerry,
 	},
 	[ITEM_KELPSY_BERRY] =
 	{
@@ -2798,6 +3176,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.flingPower = 10,
+		.iconPic = sItemIcon_KelpsyBerry,
+		.iconPalette = sItemIconPalette_KelpsyBerry,
 	},
 	[ITEM_QUALOT_BERRY] =
 	{
@@ -2809,6 +3189,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.flingPower = 10,
+		.iconPic = sItemIcon_QualotBerry,
+		.iconPalette = sItemIconPalette_QualotBerry,
 	},
 	[ITEM_HONDEW_BERRY] =
 	{
@@ -2820,6 +3202,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.flingPower = 10,
+		.iconPic = sItemIcon_HondewBerry,
+		.iconPalette = sItemIconPalette_HondewBerry,
 	},
 	[ITEM_GREPA_BERRY] =
 	{
@@ -2831,6 +3215,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.flingPower = 10,
+		.iconPic = sItemIcon_GrepaBerry,
+		.iconPalette = sItemIconPalette_GrepaBerry,
 	},
 	[ITEM_TAMATO_BERRY] =
 	{
@@ -2842,6 +3228,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.flingPower = 10,
+		.iconPic = sItemIcon_TamatoBerry,
+		.iconPalette = sItemIconPalette_TamatoBerry,
 	},
 	[ITEM_CORNN_BERRY] =
 	{
@@ -2852,6 +3240,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_CornnBerry,
+		.iconPalette = sItemIconPalette_CornnBerry,
 	},
 	[ITEM_MAGOST_BERRY] =
 	{
@@ -2862,6 +3252,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_MagostBerry,
+		.iconPalette = sItemIconPalette_MagostBerry,
 	},
 	[ITEM_RABUTA_BERRY] =
 	{
@@ -2872,6 +3264,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_RabutaBerry,
+		.iconPalette = sItemIconPalette_RabutaBerry,
 	},
 	[ITEM_NOMEL_BERRY] =
 	{
@@ -2882,6 +3276,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_NomelBerry,
+		.iconPalette = sItemIconPalette_NomelBerry,
 	},
 	[ITEM_SPELON_BERRY] =
 	{
@@ -2892,6 +3288,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_SpelonBerry,
+		.iconPalette = sItemIconPalette_SpelonBerry,
 	},
 	[ITEM_PAMTRE_BERRY] =
 	{
@@ -2902,6 +3300,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_PamtreBerry,
+		.iconPalette = sItemIconPalette_PamtreBerry,
 	},
 	[ITEM_WATMEL_BERRY] =
 	{
@@ -2912,6 +3312,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_WatmelBerry,
+		.iconPalette = sItemIconPalette_WatmelBerry,
 	},
 	[ITEM_DURIN_BERRY] =
 	{
@@ -2922,6 +3324,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_DurinBerry,
+		.iconPalette = sItemIconPalette_DurinBerry,
 	},
 	[ITEM_BELUE_BERRY] =
 	{
@@ -2932,6 +3336,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_BelueBerry,
+		.iconPalette = sItemIconPalette_BelueBerry,
 	},
 	[ITEM_LIECHI_BERRY] =
 	{
@@ -2944,6 +3350,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_LiechiBerry,
+		.iconPalette = sItemIconPalette_LiechiBerry,
 	},
 	[ITEM_GANLON_BERRY] =
 	{
@@ -2956,6 +3364,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_GanlonBerry,
+		.iconPalette = sItemIconPalette_GanlonBerry,
 	},
 	[ITEM_SALAC_BERRY] =
 	{
@@ -2968,6 +3378,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_SalacBerry,
+		.iconPalette = sItemIconPalette_SalacBerry,
 	},
 	[ITEM_PETAYA_BERRY] =
 	{
@@ -2980,6 +3392,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_PetayaBerry,
+		.iconPalette = sItemIconPalette_PetayaBerry,
 	},
 	[ITEM_APICOT_BERRY] =
 	{
@@ -2992,6 +3406,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ApicotBerry,
+		.iconPalette = sItemIconPalette_ApicotBerry,
 	},
 	[ITEM_LANSAT_BERRY] =
 	{
@@ -3003,6 +3419,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_LansatBerry,
+		.iconPalette = sItemIconPalette_LansatBerry,
 	},
 	[ITEM_STARF_BERRY] =
 	{
@@ -3014,6 +3432,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_StarfBerry,
+		.iconPalette = sItemIconPalette_StarfBerry,
 	},
 	[ITEM_OCCA_BERRY] =
 	{
@@ -3026,6 +3446,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_OccaBerry,
+		.iconPalette = sItemIconPalette_OccaBerry,
 	},
 	[ITEM_PASSHO_BERRY] =
 	{
@@ -3038,6 +3460,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_PasshoBerry,
+		.iconPalette = sItemIconPalette_PasshoBerry,
 	},
 	[ITEM_WACAN_BERRY] =
 	{
@@ -3050,6 +3474,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_WacanBerry,
+		.iconPalette = sItemIconPalette_WacanBerry,
 	},
 	[ITEM_RINDO_BERRY] =
 	{
@@ -3062,6 +3488,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_RindoBerry,
+		.iconPalette = sItemIconPalette_RindoBerry,
 	},
 	[ITEM_YACHE_BERRY] =
 	{
@@ -3074,6 +3502,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_YacheBerry,
+		.iconPalette = sItemIconPalette_YacheBerry,
 	},
 	[ITEM_CHOPLE_BERRY] =
 	{
@@ -3086,6 +3516,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ChopleBerry,
+		.iconPalette = sItemIconPalette_ChopleBerry,
 	},
 	[ITEM_KEBIA_BERRY] =
 	{
@@ -3098,6 +3530,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_KebiaBerry,
+		.iconPalette = sItemIconPalette_KebiaBerry,
 	},
 	[ITEM_SHUCA_BERRY] =
 	{
@@ -3110,6 +3544,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ShucaBerry,
+		.iconPalette = sItemIconPalette_ShucaBerry,
 	},
 	[ITEM_COBA_BERRY] =
 	{
@@ -3122,6 +3558,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_CobaBerry,
+		.iconPalette = sItemIconPalette_CobaBerry,
 	},
 	[ITEM_PAYAPA_BERRY] =
 	{
@@ -3134,6 +3572,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_PayapaBerry,
+		.iconPalette = sItemIconPalette_PayapaBerry,
 	},
 	[ITEM_TANGA_BERRY] =
 	{
@@ -3146,6 +3586,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_TangaBerry,
+		.iconPalette = sItemIconPalette_TangaBerry,
 	},
 	[ITEM_CHARTI_BERRY] =
 	{
@@ -3158,6 +3600,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ChartiBerry,
+		.iconPalette = sItemIconPalette_ChartiBerry,
 	},
 	[ITEM_KASIB_BERRY] =
 	{
@@ -3170,6 +3614,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_KasibBerry,
+		.iconPalette = sItemIconPalette_KasibBerry,
 	},
 	[ITEM_HABAN_BERRY] =
 	{
@@ -3182,6 +3628,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_HabanBerry,
+		.iconPalette = sItemIconPalette_HabanBerry,
 	},
 	[ITEM_COLBUR_BERRY] =
 	{
@@ -3194,6 +3642,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ColburBerry,
+		.iconPalette = sItemIconPalette_ColburBerry,
 	},
 	[ITEM_BABIRI_BERRY] =
 	{
@@ -3206,6 +3656,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_BabiriBerry,
+		.iconPalette = sItemIconPalette_BabiriBerry,
 	},
 	[ITEM_CHILAN_BERRY] =
 	{
@@ -3218,6 +3670,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ChilanBerry,
+		.iconPalette = sItemIconPalette_ChilanBerry,
 	},
 	[ITEM_MICLE_BERRY] =
 	{
@@ -3229,6 +3683,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_MicleBerry,
+		.iconPalette = sItemIconPalette_MicleBerry,
 	},
 	[ITEM_CUSTAP_BERRY] =
 	{
@@ -3240,6 +3696,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_CustapBerry,
+		.iconPalette = sItemIconPalette_CustapBerry,
 	},
 	[ITEM_JABOCA_BERRY] =
 	{
@@ -3252,6 +3710,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_JabocaBerry,
+		.iconPalette = sItemIconPalette_JabocaBerry,
 	},
 	[ITEM_ROWAP_BERRY] =
 	{
@@ -3264,6 +3724,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_RowapBerry,
+		.iconPalette = sItemIconPalette_RowapBerry,
 	},
 	[ITEM_ROSELI_BERRY] =
 	{
@@ -3276,6 +3738,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_RoseliBerry,
+		.iconPalette = sItemIconPalette_RoseliBerry,
 	},
 	[ITEM_KEE_BERRY] =
 	{
@@ -3288,6 +3752,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_KeeBerry,
+		.iconPalette = sItemIconPalette_KeeBerry,
 	},
 	[ITEM_MARANGA_BERRY] =
 	{
@@ -3300,19 +3766,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
-	},
-	[ITEM_HOPO_BERRY] =
-	{
-		.name = _("Hopo Berry"),
-		.holdEffect = HOLD_EFFECT_RESTORE_PP,
-		.holdEffectParam = 10,
-		.description = sItemDesc_LeppaBerry,
-		.price = 20,
-		.pocket = POCKET_BERRY_POUCH,
-		.type = ITEM_TYPE_PARTY_MENU_MOVES,
-		.fieldUseFunc = FieldUseFunc_Ether,
-		.battleUsage = EFFECT_ITEM_RESTORE_PP,
-		.flingPower = 10,
+		.iconPic = sItemIcon_MarangaBerry,
+		.iconPalette = sItemIconPalette_MarangaBerry,
 	},
 	[ITEM_ENIGMA_BERRY] =
 	{
@@ -3325,6 +3780,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.flingPower = 10,
+		.iconPic = sItemIcon_EnigmaBerry,
+		.iconPalette = sItemIconPalette_EnigmaBerry,
 	},
 	[ITEM_POKE_DOLL] =
 	{
@@ -3337,6 +3794,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_BATTLE_ITEM,
 		.battleUsage = EFFECT_ITEM_ESCAPE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_PokeDoll,
+		.iconPalette = sItemIconPalette_PokeDoll,
 	},
 	[ITEM_FLUFFY_TAIL] =
 	{
@@ -3349,6 +3808,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_BATTLE_ITEM,
 		.battleUsage = EFFECT_ITEM_ESCAPE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_FluffyTail,
+		.iconPalette = sItemIconPalette_FluffyTail,
 	},
 	[ITEM_BRIGHT_POWDER] =
 	{
@@ -3362,6 +3823,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_BrightPowder,
+		.iconPalette = sItemIconPalette_BrightPowder,
 	},
 	[ITEM_WHITE_HERB] =
 	{
@@ -3374,6 +3837,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_InBattleHerb,
+		.iconPalette = sItemIconPalette_WhiteHerb,
 	},
 	[ITEM_MACHO_BRACE] =
 	{
@@ -3386,6 +3851,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 60,
+		.iconPic = sItemIcon_MachoBrace,
+		.iconPalette = sItemIconPalette_MachoBrace,
 	},
 	[ITEM_RAZOR_FANG] =
 	{
@@ -3399,6 +3866,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_RazorFang,
+		.iconPalette = sItemIconPalette_RazorFang,
 	},
 	[ITEM_QUICK_CLAW] =
 	{
@@ -3412,6 +3881,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_QuickClaw,
+		.iconPalette = sItemIconPalette_QuickClaw,
 	},
 	[ITEM_SOOTHE_BELL] =
 	{
@@ -3424,6 +3895,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_SootheBell,
+		.iconPalette = sItemIconPalette_SootheBell,
 	},
 	[ITEM_MENTAL_HERB] =
 	{
@@ -3436,6 +3909,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_InBattleHerb,
+		.iconPalette = sItemIconPalette_MentalHerb,
 	},
 	[ITEM_CHOICE_BAND] =
 	{
@@ -3449,6 +3924,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ChoiceBand,
+		.iconPalette = sItemIconPalette_ChoiceBand,
 	},
 	[ITEM_SILVER_POWDER] =
 	{
@@ -3462,6 +3939,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_SilverPowder,
+		.iconPalette = sItemIconPalette_SilverPowder,
 	},
 	[ITEM_AMULET_COIN] =
 	{
@@ -3474,6 +3953,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_AmuletCoin,
+		.iconPalette = sItemIconPalette_AmuletCoin,
 	},
 	[ITEM_CLEANSE_TAG] =
 	{
@@ -3485,6 +3966,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_CleanseTag,
+		.iconPalette = sItemIconPalette_CleanseTag,
 	},
 	[ITEM_SOUL_DEW] =
 	{
@@ -3497,6 +3980,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_SoulDew,
+		.iconPalette = sItemIconPalette_SoulDew,
 	},
 	[ITEM_SMOKE_BALL] =
 	{
@@ -3509,6 +3994,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_SmokeBall,
+		.iconPalette = sItemIconPalette_SmokeBall,
 	},
 	[ITEM_EVERSTONE] =
 	{
@@ -3521,6 +4008,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Everstone,
+		.iconPalette = sItemIconPalette_Everstone,
 	},
 	[ITEM_FOCUS_BAND] =
 	{
@@ -3534,6 +4023,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_FocusBand,
+		.iconPalette = sItemIconPalette_FocusBand,
 	},
 	[ITEM_LUCKY_EGG] =
 	{
@@ -3546,6 +4037,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LuckyEgg,
+		.iconPalette = sItemIconPalette_LuckyEgg,
 	},
 	[ITEM_SCOPE_LENS] =
 	{
@@ -3558,6 +4051,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ScopeLens,
+		.iconPalette = sItemIconPalette_ScopeLens,
 	},
 	[ITEM_LEFTOVERS] =
 	{
@@ -3571,6 +4066,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Leftovers,
+		.iconPalette = sItemIconPalette_Leftovers,
 	},
 	[ITEM_LIGHT_BALL] =
 	{
@@ -3583,6 +4080,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LightBall,
+		.iconPalette = sItemIconPalette_LightBall,
 	},
 	[ITEM_SOFT_SAND] =
 	{
@@ -3596,6 +4095,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_SoftSand,
+		.iconPalette = sItemIconPalette_SoftSand,
 	},
 	[ITEM_HARD_STONE] =
 	{
@@ -3609,6 +4110,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 100,
+		.iconPic = sItemIcon_HardStone,
+		.iconPalette = sItemIconPalette_HardStone,
 	},
 	[ITEM_MIRACLE_SEED] =
 	{
@@ -3622,6 +4125,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_MiracleSeed,
+		.iconPalette = sItemIconPalette_MiracleSeed,
 	},
 	[ITEM_BLACK_GLASSES] =
 	{
@@ -3635,6 +4140,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BlackGlasses,
+		.iconPalette = sItemIconPalette_BlackTypeEnhancingItem,
 	},
 	[ITEM_BLACK_BELT] =
 	{
@@ -3648,6 +4155,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BlackBelt,
+		.iconPalette = sItemIconPalette_BlackTypeEnhancingItem,
 	},
 	[ITEM_MAGNET] =
 	{
@@ -3661,6 +4170,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Magnet,
+		.iconPalette = sItemIconPalette_Magnet,
 	},
 	[ITEM_MYSTIC_WATER] =
 	{
@@ -3674,6 +4185,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_MysticWater,
+		.iconPalette = sItemIconPalette_MysticWater,
 	},
 	[ITEM_SHARP_BEAK] =
 	{
@@ -3687,6 +4200,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 50,
+		.iconPic = sItemIcon_SharpBeak,
+		.iconPalette = sItemIconPalette_SharpBeak,
 	},
 	[ITEM_POISON_BARB] =
 	{
@@ -3700,6 +4215,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 70,
+		.iconPic = sItemIcon_PoisonBarb,
+		.iconPalette = sItemIconPalette_PoisonBarb,
 	},
 	[ITEM_NEVER_MELT_ICE] =
 	{
@@ -3713,6 +4230,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_NeverMeltIce,
+		.iconPalette = sItemIconPalette_NeverMeltIce,
 	},
 	[ITEM_SPELL_TAG] =
 	{
@@ -3726,6 +4245,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_SpellTag,
+		.iconPalette = sItemIconPalette_SpellTag,
 	},
 	[ITEM_TWISTED_SPOON] =
 	{
@@ -3739,6 +4260,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_TwistedSpoon,
+		.iconPalette = sItemIconPalette_TwistedSpoon,
 	},
 	[ITEM_CHARCOAL] =
 	{
@@ -3752,6 +4275,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Charcoal,
+		.iconPalette = sItemIconPalette_Charcoal,
 	},
 	[ITEM_DRAGON_FANG] =
 	{
@@ -3765,6 +4290,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 70,
+		.iconPic = sItemIcon_DragonFang,
+		.iconPalette = sItemIconPalette_DragonFang,
 	},
 	[ITEM_SILK_SCARF] =
 	{
@@ -3778,6 +4305,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_SilkScarf,
+		.iconPalette = sItemIconPalette_SilkScarf,
 	},
 	[ITEM_SHELL_BELL] =
 	{
@@ -3791,6 +4320,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ShellBell,
+		.iconPalette = sItemIconPalette_Shell,
 	},
 	[ITEM_LUCKY_PUNCH] =
 	{
@@ -3803,6 +4334,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 40,
+		.iconPic = sItemIcon_LuckyPunch,
+		.iconPalette = sItemIconPalette_LuckyPunch,
 	},
 	[ITEM_METAL_POWDER] =
 	{
@@ -3816,6 +4349,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_MetalPowder,
+		.iconPalette = sItemIconPalette_MetalPowder,
 	},
 	[ITEM_THICK_CLUB] =
 	{
@@ -3828,6 +4363,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 90,
+		.iconPic = sItemIcon_ThickClub,
+		.iconPalette = sItemIconPalette_ThickClub,
 	},
 	[ITEM_LEEK] =
 	{
@@ -3840,6 +4377,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 60,
+		.iconPic = sItemIcon_Stick,
+		.iconPalette = sItemIconPalette_Stick,
 	},
 	[ITEM_ADAMANT_ORB] =
 	{
@@ -3852,6 +4391,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 60,
+		.iconPic = sItemIcon_AdamantOrb,
+		.iconPalette = sItemIconPalette_AdamantOrb,
 	},
 	[ITEM_LUSTROUS_ORB] =
 	{
@@ -3864,6 +4405,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 60,
+		.iconPic = sItemIcon_LustrousOrb,
+		.iconPalette = sItemIconPalette_LustrousOrb,
 	},
 	[ITEM_GRISEOUS_ORB] =
 	{
@@ -3876,6 +4419,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 60,
+		.iconPic = sItemIcon_GriseousOrb,
+		.iconPalette = sItemIconPalette_GriseousOrb,
 	},
 	[ITEM_EXPERT_BELT] =
 	{
@@ -3889,6 +4434,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ExpertBelt,
+		.iconPalette = sItemIconPalette_ExpertBelt,
 	},
 	[ITEM_POWER_HERB] =
 	{
@@ -3901,6 +4448,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_PowerHerb,
+		.iconPalette = sItemIconPalette_PowerHerb,
 	},
 	[ITEM_WIDE_LENS] =
 	{
@@ -3914,6 +4463,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_WideLens,
+		.iconPalette = sItemIconPalette_WideLens,
 	},
 	[ITEM_ZOOM_LENS] =
 	{
@@ -3927,6 +4478,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ZoomLens,
+		.iconPalette = sItemIconPalette_ZoomLens,
 	},
 	[ITEM_DESTINY_KNOT] =
 	{
@@ -3939,6 +4492,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_DestinyKnot,
+		.iconPalette = sItemIconPalette_DestinyKnot,
 	},
 	[ITEM_SMOOTH_ROCK] =
 	{
@@ -3952,6 +4507,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_SmoothRock,
+		.iconPalette = sItemIconPalette_SmoothRock,
 	},
 	[ITEM_DAMP_ROCK] =
 	{
@@ -3965,6 +4522,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 60,
+		.iconPic = sItemIcon_DampRock,
+		.iconPalette = sItemIconPalette_DampRock,
 	},
 	[ITEM_HEAT_ROCK] =
 	{
@@ -3978,6 +4537,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 60,
+		.iconPic = sItemIcon_HeatRock,
+		.iconPalette = sItemIconPalette_HeatRock,
 	},
 	[ITEM_ICY_ROCK] =
 	{
@@ -3991,6 +4552,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 40,
+		.iconPic = sItemIcon_IcyRock,
+		.iconPalette = sItemIconPalette_IcyRock,
 	},
 	[ITEM_BIG_ROOT] =
 	{
@@ -4004,6 +4567,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_BigRoot,
+		.iconPalette = sItemIconPalette_EnergyRoot,
 	},
 	[ITEM_LIGHT_CLAY] =
 	{
@@ -4016,6 +4581,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LightClay,
+		.iconPalette = sItemIconPalette_LightClay,
 	},
 	[ITEM_SAFETY_GOGGLES] =
 	{
@@ -4028,6 +4595,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_SafetyGoggles,
+		.iconPalette = sItemIconPalette_SafetyGoggles,
 	},
 	[ITEM_ROCKY_HELMET] =
 	{
@@ -4041,6 +4610,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 60,
+		.iconPic = sItemIcon_RockyHelmet,
+		.iconPalette = sItemIconPalette_RockyHelmet,
 	},
 	[ITEM_WEAKNESS_POLICY] =
 	{
@@ -4053,6 +4624,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_WeaknessPolicy,
+		.iconPalette = sItemIconPalette_WeaknessPolicy,
 	},
 	[ITEM_ASSAULT_VEST] =
 	{
@@ -4066,6 +4639,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_AssaultVest,
+		.iconPalette = sItemIconPalette_AssaultVest,
 	},
 	[ITEM_EVIOLITE] =
 	{
@@ -4079,6 +4654,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 40,
+		.iconPic = sItemIcon_Eviolite,
+		.iconPalette = sItemIconPalette_Eviolite,
 	},
 	[ITEM_ABSORB_BULB] =
 	{
@@ -4092,6 +4669,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_AbsorbBulb,
+		.iconPalette = sItemIconPalette_AbsorbBulb,
 	},
 	[ITEM_AIR_BALLOON] =
 	{
@@ -4104,6 +4683,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_AirBalloon,
+		.iconPalette = sItemIconPalette_AirBalloon,
 	},
 	[ITEM_ADRENALINE_ORB] =
 	{
@@ -4116,6 +4697,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_AdrenalineOrb,
+		.iconPalette = sItemIconPalette_AdrenalineOrb,
 	},
 	[ITEM_BINDING_BAND] =
 	{
@@ -4129,6 +4712,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BindingBand,
+		.iconPalette = sItemIconPalette_BindingBand,
 	},
 	[ITEM_CELL_BATTERY] =
 	{
@@ -4142,6 +4727,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_CellBattery,
+		.iconPalette = sItemIconPalette_CellBattery,
 	},
 	[ITEM_EJECT_BUTTON] =
 	{
@@ -4154,6 +4741,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_EjectButton,
+		.iconPalette = sItemIconPalette_EjectButton,
 	},
 	[ITEM_FLOAT_STONE] =
 	{
@@ -4167,6 +4756,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_FloatStone,
+		.iconPalette = sItemIconPalette_FloatStone,
 	},
 	[ITEM_FOCUS_SASH] =
 	{
@@ -4180,6 +4771,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_FocusSash,
+		.iconPalette = sItemIconPalette_FocusSash,
 	},
 	[ITEM_GRIP_CLAW] =
 	{
@@ -4192,6 +4785,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 90,
+		.iconPic = sItemIcon_GripClaw,
+		.iconPalette = sItemIconPalette_GripClaw,
 	},
 	[ITEM_IRON_BALL] =
 	{
@@ -4204,6 +4799,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 130,
+		.iconPic = sItemIcon_IronBall,
+		.iconPalette = sItemIconPalette_IronBall,
 	},
 	[ITEM_LAGGING_TAIL] =
 	{
@@ -4216,6 +4813,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_LaggingTail,
+		.iconPalette = sItemIconPalette_LaggingTail,
 	},
 	[ITEM_LUMINOUS_MOSS] =
 	{
@@ -4229,6 +4828,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LuminousMoss,
+		.iconPalette = sItemIconPalette_LuminousMoss,
 	},
 	[ITEM_QUICK_POWDER] =
 	{
@@ -4242,6 +4843,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_SacredAsh,
+		.iconPalette = sItemIconPalette_QuickPowder,
 	},
 	[ITEM_METRONOME] =
 	{
@@ -4254,6 +4857,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Metronome,
+		.iconPalette = sItemIconPalette_Metronome,
 	},
 	[ITEM_MUSCLE_BAND] =
 	{
@@ -4267,6 +4872,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_MuscleBand,
+		.iconPalette = sItemIconPalette_MuscleBand,
 	},
 	[ITEM_PROTECTIVE_PADS] =
 	{
@@ -4279,6 +4886,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ProtectivePads,
+		.iconPalette = sItemIconPalette_ProtectivePads,
 	},
 	[ITEM_RED_CARD] =
 	{
@@ -4291,6 +4900,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_RedCard,
+		.iconPalette = sItemIconPalette_RedCard,
 	},
 	[ITEM_RING_TARGET] =
 	{
@@ -4303,6 +4914,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_RingTarget,
+		.iconPalette = sItemIconPalette_RingTarget,
 	},
 	[ITEM_SHED_SHELL] =
 	{
@@ -4315,6 +4928,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ShedShell,
+		.iconPalette = sItemIconPalette_ShedShell,
 	},
 	[ITEM_SNOWBALL] =
 	{
@@ -4328,6 +4943,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Snowball,
+		.iconPalette = sItemIconPalette_Snowball,
 	},
 	[ITEM_STICKY_BARB] =
 	{
@@ -4340,6 +4957,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_StickyBarb,
+		.iconPalette = sItemIconPalette_StickyBarb,
 	},
 	[ITEM_TERRAIN_EXTENDER] =
 	{
@@ -4352,6 +4971,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 60,
+		.iconPic = sItemIcon_TerrainExtender,
+		.iconPalette = sItemIconPalette_TerrainExtender,
 	},
 	[ITEM_WISE_GLASSES] =
 	{
@@ -4365,6 +4986,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_WiseGlasses,
+		.iconPalette = sItemIconPalette_WiseGlasses,
 	},
 	[ITEM_ELECTRIC_SEED] =
 	{
@@ -4378,6 +5001,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_TerrainSeeds,
+		.iconPalette = sItemIconPalette_ElectricSeed,
 	},
 	[ITEM_GRASSY_SEED] =
 	{
@@ -4391,6 +5016,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_TerrainSeeds,
+		.iconPalette = sItemIconPalette_GrassySeed,
 	},
 	[ITEM_MISTY_SEED] =
 	{
@@ -4404,6 +5031,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_TerrainSeeds,
+		.iconPalette = sItemIconPalette_MistySeed,
 	},
 	[ITEM_PSYCHIC_SEED] =
 	{
@@ -4417,6 +5046,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_TerrainSeeds,
+		.iconPalette = sItemIconPalette_PsychicSeed,
 	},
 	[ITEM_LIFE_ORB] =
 	{
@@ -4429,6 +5060,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LifeOrb,
+		.iconPalette = sItemIconPalette_LifeOrb,
 	},
 	[ITEM_TOXIC_ORB] =
 	{
@@ -4441,6 +5074,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ToxicOrb,
+		.iconPalette = sItemIconPalette_ToxicOrb,
 	},
 	[ITEM_FLAME_ORB] =
 	{
@@ -4453,6 +5088,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_FlameOrb,
+		.iconPalette = sItemIconPalette_FlameOrb,
 	},
 	[ITEM_BLACK_SLUDGE] =
 	{
@@ -4465,6 +5102,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BlackSludge,
+		.iconPalette = sItemIconPalette_BlackSludge,
 	},
 	[ITEM_CHOICE_SPECS] =
 	{
@@ -4478,6 +5117,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ChoiceSpecs,
+		.iconPalette = sItemIconPalette_ChoiceSpecs,
 	},
 	[ITEM_CHOICE_SCARF] =
 	{
@@ -4491,6 +5132,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 10,
+		.iconPic = sItemIcon_ChoiceScarf,
+		.iconPalette = sItemIconPalette_ChoiceScarf,
 	},
 	[ITEM_EJECT_PACK] =
 	{
@@ -4503,6 +5146,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 50,
+		.iconPic = sItemIcon_EjectPack,
+		.iconPalette = sItemIconPalette_EjectPack,
 	},
 	[ITEM_ROOM_SERVICE] =
 	{
@@ -4515,6 +5160,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 100,
+		.iconPic = sItemIcon_RoomService,
+		.iconPalette = sItemIconPalette_RoomService,
 	},
 	[ITEM_BLUNDER_POLICY] =
 	{
@@ -4527,6 +5174,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_WeaknessPolicy,
+		.iconPalette = sItemIconPalette_BlunderPolicy,
 	},
 	[ITEM_HEAVY_DUTY_BOOTS] =
 	{
@@ -4539,6 +5188,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_HeavyDutyBoots,
+		.iconPalette = sItemIconPalette_HeavyDutyBoots,
 	},
 	[ITEM_UTILITY_UMBRELLA] =
 	{
@@ -4551,6 +5202,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 60,
+		.iconPic = sItemIcon_UtilityUmbrella,
+		.iconPalette = sItemIconPalette_UtilityUmbrella,
 	},
 	[ITEM_THROAT_SPRAY] =
 	{
@@ -4564,6 +5217,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ThroatSpray,
+		.iconPalette = sItemIconPalette_ThroatSpray,
 	},
 	[ITEM_BOOSTER_ENERGY] =
 	{
@@ -4576,6 +5231,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BoosterEnergy,
+		.iconPalette = sItemIconPalette_BoosterEnergy,
 	},
 	[ITEM_ABILITY_SHIELD] =
 	{
@@ -4588,6 +5245,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_AbilityShield,
+		.iconPalette = sItemIconPalette_AbilityShield,
 	},
 	[ITEM_CLEAR_AMULET] =
 	{
@@ -4600,6 +5259,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		// .iconPic = sItemIcon_ClearAmulet,
+		// .iconPalette = sItemIconPalette_ClearAmulet,
 	},
 	[ITEM_MIRROR_HERB] =
 	{
@@ -4612,6 +5273,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_MirrorHerb,
+		.iconPalette = sItemIconPalette_MirrorHerb,
 	},
 	[ITEM_PUNCHING_GLOVE] =
 	{
@@ -4625,6 +5288,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_PunchingGlove,
+		.iconPalette = sItemIconPalette_PunchingGlove,
 	},
 	[ITEM_COVERT_CLOAK] =
 	{
@@ -4637,6 +5302,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_CovertCloak,
+		.iconPalette = sItemIconPalette_CovertCloak,
 	},
 	[ITEM_LOADED_DICE] =
 	{
@@ -4649,6 +5316,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 30,
+		.iconPic = sItemIcon_LoadedDice,
+		.iconPalette = sItemIconPalette_LoadedDice,
 	},
 	[ITEM_RUSTED_SWORD] =
 	{
@@ -4659,6 +5328,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
+		.iconPic = sItemIcon_RustedSword,
+		.iconPalette = sItemIconPalette_RustedSword,
 	},
 	[ITEM_RUSTED_SHIELD] =
 	{
@@ -4669,6 +5340,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
+		.iconPic = sItemIcon_RustedShield,
+		.iconPalette = sItemIconPalette_RustedSword,
 	},
 	[ITEM_RAZOR_CLAW] =
 	{
@@ -4681,6 +5354,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_RazorClaw,
+		.iconPalette = sItemIconPalette_RazorClaw,
 	},
 	[ITEM_OVAL_STONE] =
 	{
@@ -4692,6 +5367,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 80,
+		.iconPic = sItemIcon_OvalStone,
+		.iconPalette = sItemIconPalette_OvalStone,
 	},
 	[ITEM_RED_ORB] =
 	{
@@ -4702,6 +5379,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
+		.iconPic = sItemIcon_RedOrb,
+		.iconPalette = sItemIconPalette_RedOrb,
 	},
 	[ITEM_BLUE_ORB] =
 	{
@@ -4712,6 +5391,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
+		.iconPic = sItemIcon_BlueOrb,
+		.iconPalette = sItemIconPalette_BlueOrb,
 	},
 	[ITEM_GUARD_SPEC] =
 	{
@@ -4724,6 +5405,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_BATTLE_ITEM,
 		.battleUsage = EFFECT_ITEM_SET_MIST,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BattleStatItem,
+		.iconPalette = sItemIconPalette_GuardSpec,
 	},
 	[ITEM_DIRE_HIT] =
 	{
@@ -4736,6 +5419,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_BATTLE_ITEM,
 		.battleUsage = EFFECT_ITEM_SET_FOCUS_ENERGY,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BattleStatItem,
+		.iconPalette = sItemIconPalette_DireHit,
 	},
 	[ITEM_X_ATTACK] =
 	{
@@ -4749,6 +5434,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_BATTLE_ITEM,
 		.battleUsage = EFFECT_ITEM_INCREASE_STAT,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BattleStatItem,
+		.iconPalette = sItemIconPalette_XAttack,
 	},
 	[ITEM_X_DEFEND] =
 	{
@@ -4762,6 +5449,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_BATTLE_ITEM,
 		.battleUsage = EFFECT_ITEM_INCREASE_STAT,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BattleStatItem,
+		.iconPalette = sItemIconPalette_XDefend,
 	},
 	[ITEM_X_SPEED] =
 	{
@@ -4775,6 +5464,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_BATTLE_ITEM,
 		.battleUsage = EFFECT_ITEM_INCREASE_STAT,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BattleStatItem,
+		.iconPalette = sItemIconPalette_XSpeed,
 	},
 	[ITEM_X_ACCURACY] =
 	{
@@ -4788,6 +5479,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_BATTLE_ITEM,
 		.battleUsage = EFFECT_ITEM_INCREASE_STAT,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BattleStatItem,
+		.iconPalette = sItemIconPalette_XAccuracy,
 	},
 	[ITEM_X_SPECIAL] =
 	{
@@ -4801,6 +5494,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_BATTLE_ITEM,
 		.battleUsage = EFFECT_ITEM_INCREASE_STAT,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BattleStatItem,
+		.iconPalette = sItemIconPalette_XSpecial,
 	},
 	[ITEM_X_SPECIAL_DEFENSE] =
 	{
@@ -4814,6 +5509,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.usageType = ITEM_TYPE_BATTLE_ITEM,
 		.battleUsage = EFFECT_ITEM_INCREASE_STAT,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BattleStatItem,
+		.iconPalette = sItemIconPalette_XSpecialDefense,
 	},
 	[ITEM_POWER_BRACER] =
 	{
@@ -4827,6 +5524,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 70,
+		.iconPic = sItemIcon_PowerBracer,
+		.iconPalette = sItemIconPalette_PowerBracer,
 	},
 	[ITEM_POWER_BELT] =
 	{
@@ -4840,6 +5539,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 70,
+		.iconPic = sItemIcon_PowerBelt,
+		.iconPalette = sItemIconPalette_PowerBelt,
 	},
 	[ITEM_POWER_LENS] =
 	{
@@ -4853,6 +5554,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 70,
+		.iconPic = sItemIcon_PowerLens,
+		.iconPalette = sItemIconPalette_PowerLens,
 	},
 	[ITEM_POWER_BAND] =
 	{
@@ -4866,6 +5569,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 70,
+		.iconPic = sItemIcon_PowerBand,
+		.iconPalette = sItemIconPalette_PowerBand,
 	},
 	[ITEM_POWER_ANKLET] =
 	{
@@ -4879,6 +5584,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 70,
+		.iconPic = sItemIcon_PowerAnklet,
+		.iconPalette = sItemIconPalette_PowerAnklet,
 	},
 	[ITEM_POWER_WEIGHT] =
 	{
@@ -4892,6 +5599,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
 		.flingPower = 70,
+		.iconPic = sItemIcon_PowerWeight,
+		.iconPalette = sItemIconPalette_PowerWeight,
 	},
 	[ITEM_SEA_INCENSE] =
 	{
@@ -4905,6 +5614,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_INCENSE,
 		.flingPower = 10,
+		.iconPic = sItemIcon_SeaIncense,
+		.iconPalette = sItemIconPalette_SeaIncense,
 	},
 	[ITEM_LAX_INCENSE] =
 	{
@@ -4918,6 +5629,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_INCENSE,
 		.flingPower = 10,
+		.iconPic = sItemIcon_LaxIncense,
+		.iconPalette = sItemIconPalette_LaxIncense,
 	},
 	[ITEM_LUCK_INCENSE] =
 	{
@@ -4930,6 +5643,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_INCENSE,
 		.flingPower = 10,
+		.iconPic = sItemIcon_LuckIncense,
+		.iconPalette = sItemIconPalette_LuckIncense,
 	},
 	[ITEM_FULL_INCENSE] =
 	{
@@ -4942,6 +5657,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_INCENSE,
 		.flingPower = 10,
+		.iconPic = sItemIcon_FullIncense,
+		.iconPalette = sItemIconPalette_FullIncense,
 	},
 	[ITEM_ODD_INCENSE] =
 	{
@@ -4955,6 +5672,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_INCENSE,
 		.flingPower = 10,
+		.iconPic = sItemIcon_OddIncense,
+		.iconPalette = sItemIconPalette_OddIncense,
 	},
 	[ITEM_ROCK_INCENSE] =
 	{
@@ -4968,6 +5687,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_INCENSE,
 		.flingPower = 10,
+		.iconPic = sItemIcon_RockIncense,
+		.iconPalette = sItemIconPalette_RockIncense,
 	},
 	[ITEM_ROSE_INCENSE] =
 	{
@@ -4981,6 +5702,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_INCENSE,
 		.flingPower = 10,
+		.iconPic = sItemIcon_RoseIncense,
+		.iconPalette = sItemIconPalette_RoseIncense,
 	},
 	[ITEM_WAVE_INCENSE] =
 	{
@@ -4994,6 +5717,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_INCENSE,
 		.flingPower = 10,
+		.iconPic = sItemIcon_WaveIncense,
+		.iconPalette = sItemIconPalette_WaveIncense,
 	},
 	[ITEM_PURE_INCENSE] =
 	{
@@ -5005,6 +5730,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_INCENSE,
 		.flingPower = 10,
+		.iconPic = sItemIcon_PureIncense,
+		.iconPalette = sItemIconPalette_PureIncense,
 	},
 	[ITEM_VENUSAURITE] =
 	{
@@ -5015,6 +5742,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Venusaurite,
+		.iconPalette = sItemIconPalette_Venusaurite,
 	},
 	[ITEM_CHARIZARDITE_X] =
 	{
@@ -5025,6 +5754,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_CharizarditeX,
+		.iconPalette = sItemIconPalette_CharizarditeX,
 	},
 	[ITEM_CHARIZARDITE_Y] =
 	{
@@ -5035,6 +5766,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_CharizarditeY,
+		.iconPalette = sItemIconPalette_CharizarditeY,
 	},
 	[ITEM_BLASTOISINITE] =
 	{
@@ -5045,6 +5778,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Blastoisinite,
+		.iconPalette = sItemIconPalette_Blastoisinite,
 	},
 	[ITEM_BEEDRILLITE] =
 	{
@@ -5055,6 +5790,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Beedrillite,
+		.iconPalette = sItemIconPalette_Beedrillite,
 	},
 	[ITEM_PIDGEOTITE] =
 	{
@@ -5065,6 +5802,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Pidgeotite,
+		.iconPalette = sItemIconPalette_Pidgeotite,
 	},
 	[ITEM_ALAKAZITE] =
 	{
@@ -5075,6 +5814,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Alakazite,
+		.iconPalette = sItemIconPalette_Alakazite,
 	},
 	[ITEM_SLOWBRONITE] =
 	{
@@ -5085,6 +5826,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Slowbronite,
+		.iconPalette = sItemIconPalette_Slowbronite,
 	},
 	[ITEM_GENGARITE] =
 	{
@@ -5095,6 +5838,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Gengarite,
+		.iconPalette = sItemIconPalette_Gengarite,
 	},
 	[ITEM_KANGASKHANITE] =
 	{
@@ -5105,6 +5850,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Kangaskhanite,
+		.iconPalette = sItemIconPalette_Kangaskhanite,
 	},
 	[ITEM_PINSIRITE] =
 	{
@@ -5115,6 +5862,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Pinsirite,
+		.iconPalette = sItemIconPalette_Pinsirite,
 	},
 	[ITEM_GYARADOSITE] =
 	{
@@ -5125,6 +5874,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Gyaradosite,
+		.iconPalette = sItemIconPalette_Gyaradosite,
 	},
 	[ITEM_AERODACTYLITE] =
 	{
@@ -5135,6 +5886,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Aerodactylite,
+		.iconPalette = sItemIconPalette_Aerodactylite,
 	},
 	[ITEM_MEWTWONITE_X] =
 	{
@@ -5145,6 +5898,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_MewtwoniteX,
+		.iconPalette = sItemIconPalette_MewtwoniteX,
 	},
 	[ITEM_MEWTWONITE_Y] =
 	{
@@ -5155,6 +5910,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_MewtwoniteY,
+		.iconPalette = sItemIconPalette_MewtwoniteY,
 	},
 	[ITEM_AMPHAROSITE] =
 	{
@@ -5165,6 +5922,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Ampharosite,
+		.iconPalette = sItemIconPalette_Ampharosite,
 	},
 	[ITEM_STEELIXITE] =
 	{
@@ -5175,6 +5934,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Steelixite,
+		.iconPalette = sItemIconPalette_Steelixite,
 	},
 	[ITEM_SCIZORITE] =
 	{
@@ -5185,6 +5946,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Scizorite,
+		.iconPalette = sItemIconPalette_Scizorite,
 	},
 	[ITEM_HERACRONITE] =
 	{
@@ -5195,6 +5958,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Heracronite,
+		.iconPalette = sItemIconPalette_Heracronite,
 	},
 	[ITEM_HOUNDOOMINITE] =
 	{
@@ -5205,6 +5970,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Houndoominite,
+		.iconPalette = sItemIconPalette_Houndoominite,
 	},
 	[ITEM_TYRANITARITE] =
 	{
@@ -5215,6 +5982,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Tyranitarite,
+		.iconPalette = sItemIconPalette_Tyranitarite,
 	},
 	[ITEM_SCEPTILITE] =
 	{
@@ -5225,6 +5994,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Tyranitarite,
+		.iconPalette = sItemIconPalette_Tyranitarite,
 	},
 	[ITEM_BLAZIKENITE] =
 	{
@@ -5235,6 +6006,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Blazikenite,
+		.iconPalette = sItemIconPalette_Blazikenite,
 	},
 	[ITEM_SWAMPERTITE] =
 	{
@@ -5245,6 +6018,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Swampertite,
+		.iconPalette = sItemIconPalette_Swampertite,
 	},
 	[ITEM_GARDEVOIRITE] =
 	{
@@ -5255,6 +6030,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Gardevoirite,
+		.iconPalette = sItemIconPalette_Gardevoirite,
 	},
 	[ITEM_SABLENITE] =
 	{
@@ -5265,6 +6042,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Sablenite,
+		.iconPalette = sItemIconPalette_Sablenite,
 	},
 	[ITEM_MAWILITE] =
 	{
@@ -5275,6 +6054,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Mawilite,
+		.iconPalette = sItemIconPalette_Mawilite,
 	},
 	[ITEM_AGGRONITE] =
 	{
@@ -5285,6 +6066,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Aggronite,
+		.iconPalette = sItemIconPalette_Aggronite,
 	},
 	[ITEM_MEDICHAMITE] =
 	{
@@ -5295,6 +6078,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Medichamite,
+		.iconPalette = sItemIconPalette_Medichamite,
 	},
 	[ITEM_MANECTITE] =
 	{
@@ -5305,6 +6090,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Manectite,
+		.iconPalette = sItemIconPalette_Manectite,
 	},
 	[ITEM_SHARPEDONITE] =
 	{
@@ -5315,6 +6102,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Sharpedonite,
+		.iconPalette = sItemIconPalette_Sharpedonite,
 	},
 	[ITEM_CAMERUPTITE] =
 	{
@@ -5325,6 +6114,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Cameruptite,
+		.iconPalette = sItemIconPalette_Cameruptite,
 	},
 	[ITEM_ALTARIANITE] =
 	{
@@ -5335,6 +6126,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Altarianite,
+		.iconPalette = sItemIconPalette_Altarianite,
 	},
 	[ITEM_BANETTITE] =
 	{
@@ -5345,6 +6138,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Banettite,
+		.iconPalette = sItemIconPalette_Banettite,
 	},
 	[ITEM_ABSOLITE] =
 	{
@@ -5355,6 +6150,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Absolite,
+		.iconPalette = sItemIconPalette_Absolite,
 	},
 	[ITEM_GLALITITE] =
 	{
@@ -5365,6 +6162,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Glalitite,
+		.iconPalette = sItemIconPalette_Glalitite,
 	},
 	[ITEM_SALAMENCITE] =
 	{
@@ -5375,6 +6174,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Salamencite,
+		.iconPalette = sItemIconPalette_Salamencite,
 	},
 	[ITEM_METAGROSSITE] =
 	{
@@ -5385,6 +6186,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Metagrossite,
+		.iconPalette = sItemIconPalette_Metagrossite,
 	},
 	[ITEM_LATIASITE] =
 	{
@@ -5395,6 +6198,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Latiasite,
+		.iconPalette = sItemIconPalette_Latiasite,
 	},
 	[ITEM_LATIOSITE] =
 	{
@@ -5405,6 +6210,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Latiosite,
+		.iconPalette = sItemIconPalette_Latiosite,
 	},
 	[ITEM_LOPUNNITE] =
 	{
@@ -5415,6 +6222,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Lopunnite,
+		.iconPalette = sItemIconPalette_Lopunnite,
 	},
 	[ITEM_GARCHOMPITE] =
 	{
@@ -5425,6 +6234,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Garchompite,
+		.iconPalette = sItemIconPalette_Garchompite,
 	},
 	[ITEM_LUCARIONITE] =
 	{
@@ -5435,6 +6246,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Lucarionite,
+		.iconPalette = sItemIconPalette_Lucarionite,
 	},
 	[ITEM_ABOMASITE] =
 	{
@@ -5445,6 +6258,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Abomasite,
+		.iconPalette = sItemIconPalette_Abomasite,
 	},
 	[ITEM_GALLADITE] =
 	{
@@ -5455,6 +6270,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Galladite,
+		.iconPalette = sItemIconPalette_Galladite,
 	},
 	[ITEM_AUDINITE] =
 	{
@@ -5465,6 +6282,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Audinite,
+		.iconPalette = sItemIconPalette_Audinite,
 	},
 	[ITEM_DIANCITE] =
 	{
@@ -5475,6 +6294,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEGA_STONE,
 		.flingPower = 80,
+		.iconPic = sItemIcon_Diancite,
+		.iconPalette = sItemIconPalette_Diancite,
 	},
 	[ITEM_ULTRANECROZIUM_Z] =
 	{
@@ -5485,6 +6306,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_UltranecroziumZ,
+		.iconPalette = sItemIconPalette_UltranecroziumZ,
 	},
 	[ITEM_NORMAL_GEM] =
 	{
@@ -5497,6 +6320,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_NormalGem,
 	},
 	[ITEM_FIGHTING_GEM] =
 	{
@@ -5509,6 +6334,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_FightingGem,
 	},
 	[ITEM_FLYING_GEM] =
 	{
@@ -5521,6 +6348,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_FlyingGem,
 	},
 	[ITEM_POISON_GEM] =
 	{
@@ -5533,6 +6362,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_PoisonGem,
 	},
 	[ITEM_GROUND_GEM] =
 	{
@@ -5545,6 +6376,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_GroundGem,
 	},
 	[ITEM_ROCK_GEM] =
 	{
@@ -5557,6 +6390,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_RockGem,
 	},
 	[ITEM_BUG_GEM] =
 	{
@@ -5569,6 +6404,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_BugGem,
 	},
 	[ITEM_GHOST_GEM] =
 	{
@@ -5581,6 +6418,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_GhostGem,
 	},
 	[ITEM_STEEL_GEM] =
 	{
@@ -5593,6 +6432,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_SteelGem,
 	},
 	[ITEM_FIRE_GEM] =
 	{
@@ -5605,6 +6446,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_FireGem,
 	},
 	[ITEM_WATER_GEM] =
 	{
@@ -5617,6 +6460,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_WaterGem,
 	},
 	[ITEM_GRASS_GEM] =
 	{
@@ -5629,6 +6474,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_GrassGem,
 	},
 	[ITEM_ELECTRIC_GEM] =
 	{
@@ -5641,6 +6488,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_ElectricGem,
 	},
 	[ITEM_PSYCHIC_GEM] =
 	{
@@ -5653,6 +6502,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_PsychicGem,
 	},
 	[ITEM_ICE_GEM] =
 	{
@@ -5665,6 +6516,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_IceGem,
 	},
 	[ITEM_DRAGON_GEM] =
 	{
@@ -5677,6 +6530,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_DragonGem,
 	},
 	[ITEM_DARK_GEM] =
 	{
@@ -5689,6 +6544,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_DarkGem,
 	},
 	[ITEM_FAIRY_GEM] =
 	{
@@ -5701,6 +6558,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_GEM,
+		.iconPic = sItemIcon_Gem,
+		.iconPalette = sItemIconPalette_FairyGem,
 	},
 	[ITEM_FIST_PLATE] =
 	{
@@ -5714,6 +6573,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_FistPlate,
 	},
 	[ITEM_SKY_PLATE] =
 	{
@@ -5727,6 +6588,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_SkyPlate,
 	},
 	[ITEM_TOXIC_PLATE] =
 	{
@@ -5740,6 +6603,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_ToxicPlate,
 	},
 	[ITEM_EARTH_PLATE] =
 	{
@@ -5753,6 +6618,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_EarthPlate,
 	},
 	[ITEM_STONE_PLATE] =
 	{
@@ -5766,6 +6633,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_StonePlate,
 	},
 	[ITEM_INSECT_PLATE] =
 	{
@@ -5779,6 +6648,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_InsectPlate,
 	},
 	[ITEM_SPOOKY_PLATE] =
 	{
@@ -5792,6 +6663,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_SpookyPlate,
 	},
 	[ITEM_IRON_PLATE] =
 	{
@@ -5805,6 +6678,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_IronPlate,
 	},
 	[ITEM_FLAME_PLATE] =
 	{
@@ -5818,6 +6693,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_FlamePlate,
 	},
 	[ITEM_SPLASH_PLATE] =
 	{
@@ -5831,6 +6708,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_SplashPlate,
 	},
 	[ITEM_MEADOW_PLATE] =
 	{
@@ -5844,6 +6723,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_MeadowPlate,
 	},
 	[ITEM_ZAP_PLATE] =
 	{
@@ -5857,6 +6738,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_ZapPlate,
 	},
 	[ITEM_MIND_PLATE] =
 	{
@@ -5870,6 +6753,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_MindPlate,
 	},
 	[ITEM_ICICLE_PLATE] =
 	{
@@ -5883,6 +6768,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_IciclePlate,
 	},
 	[ITEM_DRACO_PLATE] =
 	{
@@ -5896,6 +6783,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_DracoPlate,
 	},
 	[ITEM_DREAD_PLATE] =
 	{
@@ -5909,6 +6798,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_DreadPlate,
 	},
 	[ITEM_PIXIE_PLATE] =
 	{
@@ -5922,6 +6813,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_PLATE,
 		.flingPower = 90,
+		.iconPic = sItemIcon_Plate,
+		.iconPalette = sItemIconPalette_PixiePlate,
 	},
 	[ITEM_BURN_DRIVE] =
 	{
@@ -5935,6 +6828,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_DRIVE,
 		.flingPower = 70,
+		.iconPic = sItemIcon_Drive,
+		.iconPalette = sItemIconPalette_BurnDrive,
 	},
 	[ITEM_DOUSE_DRIVE] =
 	{
@@ -5948,6 +6843,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_DRIVE,
 		.flingPower = 70,
+		.iconPic = sItemIcon_Drive,
+		.iconPalette = sItemIconPalette_DouseDrive,
 	},
 	[ITEM_SHOCK_DRIVE] =
 	{
@@ -5961,6 +6858,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_DRIVE,
 		.flingPower = 70,
+		.iconPic = sItemIcon_Drive,
+		.iconPalette = sItemIconPalette_ShockDrive,
 	},
 	[ITEM_CHILL_DRIVE] =
 	{
@@ -5974,6 +6873,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_DRIVE,
 		.flingPower = 70,
+		.iconPic = sItemIcon_Drive,
+		.iconPalette = sItemIconPalette_ChillDrive,
 	},
 	[ITEM_TEAL_MASK] =
 	{
@@ -6035,6 +6936,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_FightingMemory,
+		.iconPalette = sItemIconPalette_FightingMemory,
 	},
 	[ITEM_FLYING_MEMORY] =
 	{
@@ -6048,6 +6951,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_FlyingMemory,
+		.iconPalette = sItemIconPalette_FlyingMemory,
 	},
 	[ITEM_POISON_MEMORY] =
 	{
@@ -6061,6 +6966,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_PoisonMemory,
+		.iconPalette = sItemIconPalette_PoisonMemory,
 	},
 	[ITEM_GROUND_MEMORY] =
 	{
@@ -6074,6 +6981,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_GroundMemory,
+		.iconPalette = sItemIconPalette_GroundMemory,
 	},
 	[ITEM_ROCK_MEMORY] =
 	{
@@ -6087,6 +6996,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_RockMemory,
+		.iconPalette = sItemIconPalette_RockMemory,
 	},
 	[ITEM_BUG_MEMORY] =
 	{
@@ -6100,6 +7011,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_BugMemory,
+		.iconPalette = sItemIconPalette_BugMemory,
 	},
 	[ITEM_GHOST_MEMORY] =
 	{
@@ -6113,6 +7026,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_GhostMemory,
+		.iconPalette = sItemIconPalette_GhostMemory,
 	},
 	[ITEM_STEEL_MEMORY] =
 	{
@@ -6126,6 +7041,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_SteelMemory,
+		.iconPalette = sItemIconPalette_SteelMemory,
 	},
 	[ITEM_FIRE_MEMORY] =
 	{
@@ -6139,6 +7056,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_FireMemory,
+		.iconPalette = sItemIconPalette_FireMemory,
 	},
 	[ITEM_WATER_MEMORY] =
 	{
@@ -6152,6 +7071,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_WaterMemory,
+		.iconPalette = sItemIconPalette_WaterMemory,
 	},
 	[ITEM_GRASS_MEMORY] =
 	{
@@ -6165,6 +7086,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_GrassMemory,
+		.iconPalette = sItemIconPalette_GrassMemory,
 	},
 	[ITEM_ELECTRIC_MEMORY] =
 	{
@@ -6178,6 +7101,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_ElectricMemory,
+		.iconPalette = sItemIconPalette_ElectricMemory,
 	},
 	[ITEM_PSYCHIC_MEMORY] =
 	{
@@ -6191,6 +7116,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_PsychicMemory,
+		.iconPalette = sItemIconPalette_PsychicMemory,
 	},
 	[ITEM_ICE_MEMORY] =
 	{
@@ -6204,6 +7131,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_IceMemory,
+		.iconPalette = sItemIconPalette_IceMemory,
 	},
 	[ITEM_DRAGON_MEMORY] =
 	{
@@ -6217,6 +7146,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_DragonMemory,
+		.iconPalette = sItemIconPalette_DragonMemory,
 	},
 	[ITEM_DARK_MEMORY] =
 	{
@@ -6230,6 +7161,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_DarkMemory,
+		.iconPalette = sItemIconPalette_DarkMemory,
 	},
 	[ITEM_FAIRY_MEMORY] =
 	{
@@ -6243,6 +7176,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_MEMORY,
 		.flingPower = 50,
+		.iconPic = sItemIcon_FairyMemory,
+		.iconPalette = sItemIconPalette_FairyMemory,
 	},
 	[ITEM_NORMALIUM_Z] =
 	{
@@ -6254,6 +7189,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_NormaliumZ,
+		.iconPalette = sItemIconPalette_NormaliumZ,
 	},
 	[ITEM_FIGHTINIUM_Z] =
 	{
@@ -6265,6 +7202,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_FightiniumZ,
+		.iconPalette = sItemIconPalette_FightiniumZ,
 	},
 	[ITEM_FLYINIUM_Z] =
 	{
@@ -6276,6 +7215,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_FlyiniumZ,
+		.iconPalette = sItemIconPalette_FlyiniumZ,
 	},
 	[ITEM_POISONIUM_Z] =
 	{
@@ -6287,6 +7228,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_PoisoniumZ,
+		.iconPalette = sItemIconPalette_PoisoniumZ,
 	},
 	[ITEM_GROUNDIUM_Z] =
 	{
@@ -6298,6 +7241,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_GroundiumZ,
+		.iconPalette = sItemIconPalette_GroundiumZ,
 	},
 	[ITEM_ROCKIUM_Z] =
 	{
@@ -6309,6 +7254,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_RockiumZ,
+		.iconPalette = sItemIconPalette_RockiumZ,
 	},
 	[ITEM_BUGINIUM_Z] =
 	{
@@ -6320,6 +7267,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_BuginiumZ,
+		.iconPalette = sItemIconPalette_BuginiumZ,
 	},
 	[ITEM_GHOSTIUM_Z] =
 	{
@@ -6331,6 +7280,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_GhostiumZ,
+		.iconPalette = sItemIconPalette_GhostiumZ,
 	},
 	[ITEM_STEELIUM_Z] =
 	{
@@ -6342,6 +7293,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_SteeliumZ,
+		.iconPalette = sItemIconPalette_SteeliumZ,
 	},
 	[ITEM_FIRIUM_Z] =
 	{
@@ -6353,6 +7306,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_FiriumZ,
+		.iconPalette = sItemIconPalette_FiriumZ,
 	},
 	[ITEM_WATERIUM_Z] =
 	{
@@ -6364,6 +7319,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_WateriumZ,
+		.iconPalette = sItemIconPalette_WateriumZ,
 	},
 	[ITEM_GRASSIUM_Z] =
 	{
@@ -6375,6 +7332,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_GrassiumZ,
+		.iconPalette = sItemIconPalette_GrassiumZ,
 	},
 	[ITEM_ELECTRIUM_Z] =
 	{
@@ -6386,6 +7345,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_ElectriumZ,
+		.iconPalette = sItemIconPalette_ElectriumZ,
 	},
 	[ITEM_PSYCHIUM_Z] =
 	{
@@ -6397,6 +7358,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_PsychiumZ,
+		.iconPalette = sItemIconPalette_PsychiumZ,
 	},
 	[ITEM_ICIUM_Z] =
 	{
@@ -6408,6 +7371,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_IciumZ,
+		.iconPalette = sItemIconPalette_IciumZ,
 	},
 	[ITEM_DRAGONIUM_Z] =
 	{
@@ -6419,6 +7384,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_DragoniumZ,
+		.iconPalette = sItemIconPalette_DragoniumZ,
 	},
 	[ITEM_DARKINIUM_Z] =
 	{
@@ -6430,6 +7397,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_DarkiniumZ,
+		.iconPalette = sItemIconPalette_DarkiniumZ,
 	},
 	[ITEM_FAIRIUM_Z] =
 	{
@@ -6441,6 +7410,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_FairiumZ,
+		.iconPalette = sItemIconPalette_FairiumZ,
 	},
 	[ITEM_ALORAICHIUM_Z] =
 	{
@@ -6451,6 +7422,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_AloraichiumZ,
+		.iconPalette = sItemIconPalette_AloraichiumZ,
 	},
 	[ITEM_DECIDIUM_Z] =
 	{
@@ -6461,6 +7434,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_DecidiumZ,
+		.iconPalette = sItemIconPalette_DecidiumZ,
 	},
 	[ITEM_EEVIUM_Z] =
 	{
@@ -6471,6 +7446,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_EeviumZ,
+		.iconPalette = sItemIconPalette_EeviumZ,
 	},
 	[ITEM_INCINIUM_Z] =
 	{
@@ -6481,6 +7458,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_InciniumZ,
+		.iconPalette = sItemIconPalette_InciniumZ,
 	},
 	[ITEM_KOMMONIUM_Z] =
 	{
@@ -6491,6 +7470,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_KommoniumZ,
+		.iconPalette = sItemIconPalette_KommoniumZ,
 	},
 	[ITEM_LUNALIUM_Z] =
 	{
@@ -6501,6 +7482,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_LunaliumZ,
+		.iconPalette = sItemIconPalette_LunaliumZ,
 	},
 	[ITEM_LYCANIUM_Z] =
 	{
@@ -6511,6 +7494,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_LycaniumZ,
+		.iconPalette = sItemIconPalette_LycaniumZ,
 	},
 	[ITEM_MARSHADIUM_Z] =
 	{
@@ -6521,6 +7506,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_MarshadiumZ,
+		.iconPalette = sItemIconPalette_MarshadiumZ,
 	},
 	[ITEM_MEWNIUM_Z] =
 	{
@@ -6531,6 +7518,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_MewniumZ,
+		.iconPalette = sItemIconPalette_MewniumZ,
 	},
 	[ITEM_MIMIKIUM_Z] =
 	{
@@ -6541,6 +7530,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_MimikiumZ,
+		.iconPalette = sItemIconPalette_MimikiumZ,
 	},
 	[ITEM_PIKANIUM_Z] =
 	{
@@ -6551,6 +7542,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_PikaniumZ,
+		.iconPalette = sItemIconPalette_PikaniumZ,
 	},
 	[ITEM_PIKASHUNIUM_Z] =
 	{
@@ -6561,6 +7554,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_PikashuniumZ,
+		.iconPalette = sItemIconPalette_PikashuniumZ,
 	},
 	[ITEM_PRIMARIUM_Z] =
 	{
@@ -6571,6 +7566,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_PrimariumZ,
+		.iconPalette = sItemIconPalette_PrimariumZ,
 	},
 	[ITEM_SNORLIUM_Z] =
 	{
@@ -6581,6 +7578,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_SnorliumZ,
+		.iconPalette = sItemIconPalette_SnorliumZ,
 	},
 	[ITEM_SOLGANIUM_Z] =
 	{
@@ -6591,6 +7590,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_SolganiumZ,
+		.iconPalette = sItemIconPalette_SolganiumZ,
 	},
 	[ITEM_TAPUNIUM_Z] =
 	{
@@ -6601,6 +7602,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_Z_CRYSTAL,
+		.iconPic = sItemIcon_TapuniumZ,
+		.iconPalette = sItemIconPalette_TapuniumZ,
 	},
 	[ITEM_SHOAL_SHELL] =
 	{
@@ -6612,6 +7615,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_ShoalShell,
+		.iconPalette = sItemIconPalette_Shell,
 	},
 	[ITEM_TINY_MUSHROOM] =
 	{
@@ -6623,6 +7628,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_TinyMushroom,
+		.iconPalette = sItemIconPalette_Mushroom,
 	},
 	[ITEM_BIG_MUSHROOM] =
 	{
@@ -6634,6 +7641,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BigMushroom,
+		.iconPalette = sItemIconPalette_Mushroom,
 	},
 	[ITEM_PEARL] =
 	{
@@ -6645,6 +7654,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Pearl,
+		.iconPalette = sItemIconPalette_Pearl,
 	},
 	[ITEM_BIG_PEARL] =
 	{
@@ -6656,6 +7667,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BigPearl,
+		.iconPalette = sItemIconPalette_Pearl,
 	},
 	[ITEM_STARDUST] =
 	{
@@ -6667,6 +7680,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Stardust,
+		.iconPalette = sItemIconPalette_Star,
 	},
 	[ITEM_STAR_PIECE] =
 	{
@@ -6678,6 +7693,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_StarPiece,
+		.iconPalette = sItemIconPalette_Star,
 	},
 	[ITEM_NUGGET] =
 	{
@@ -6689,6 +7706,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Nugget,
+		.iconPalette = sItemIconPalette_Nugget,
 	},
 	[ITEM_HEART_SCALE] =
 	{
@@ -6700,6 +7719,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_HeartScale,
+		.iconPalette = sItemIconPalette_HeartScale,
 	},
 	[ITEM_RARE_BONE] =
 	{
@@ -6711,6 +7732,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 100,
+		.iconPic = sItemIcon_RareBone,
+		.iconPalette = sItemIconPalette_RareBone,
 	},
 	[ITEM_PEARL_STRING] =
 	{
@@ -6722,6 +7745,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_PearlString,
+		.iconPalette = sItemIconPalette_Pearl,
 	},
 	[ITEM_BIG_NUGGET] =
 	{
@@ -6733,6 +7758,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BigNugget,
+		.iconPalette = sItemIconPalette_Nugget,
 	},
 	[ITEM_COMET_SHARD] =
 	{
@@ -6744,6 +7771,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_StarPiece,
+		.iconPalette = sItemIconPalette_CometShard,
 	},
 	[ITEM_BALM_MUSHROOM] =
 	{
@@ -6755,6 +7784,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BalmMushroom,
+		.iconPalette = sItemIconPalette_BalmMushroom,
 	},
 	[ITEM_BOTTLE_CAP] =
 	{
@@ -6766,6 +7797,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_BottleCap,
+		.iconPalette = sItemIconPalette_BottleCap,
 	},
 	[ITEM_GOLD_BOTTLE_CAP] =
 	{
@@ -6777,6 +7810,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_GoldBottleCap,
+		.iconPalette = sItemIconPalette_GoldBottleCap,
 	},
 	[ITEM_HELIX_FOSSIL] =
 	{
@@ -6788,6 +7823,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_HelixFossil,
+		.iconPalette = sItemIconPalette_KantoFossil,
 	},
 	[ITEM_DOME_FOSSIL] =
 	{
@@ -6799,6 +7836,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_DomeFossil,
+		.iconPalette = sItemIconPalette_KantoFossil,
 	},
 	[ITEM_OLD_AMBER] =
 	{
@@ -6810,6 +7849,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_OldAmber,
+		.iconPalette = sItemIconPalette_OldAmber,
 	},
 	[ITEM_ROOT_FOSSIL] =
 	{
@@ -6821,6 +7862,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_RootFossil,
+		.iconPalette = sItemIconPalette_HoennFossil,
 	},
 	[ITEM_CLAW_FOSSIL] =
 	{
@@ -6832,6 +7875,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_ClawFossil,
+		.iconPalette = sItemIconPalette_HoennFossil,
 	},
 	[ITEM_SKULL_FOSSIL] =
 	{
@@ -6843,6 +7888,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_SkullFossil,
+		.iconPalette = sItemIconPalette_SinnohFossil,
 	},
 	[ITEM_ARMOR_FOSSIL] =
 	{
@@ -6854,6 +7901,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_ArmorFossil,
+		.iconPalette = sItemIconPalette_SinnohFossil,
 	},
 	[ITEM_COVER_FOSSIL] =
 	{
@@ -6865,6 +7914,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_CoverFossil,
+		.iconPalette = sItemIconPalette_UnovaFossil,
 	},
 	[ITEM_PLUME_FOSSIL] =
 	{
@@ -6876,6 +7927,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_PlumeFossil,
+		.iconPalette = sItemIconPalette_UnovaFossil,
 	},
 	[ITEM_JAW_FOSSIL] =
 	{
@@ -6887,6 +7940,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_JawFossil,
+		.iconPalette = sItemIconPalette_JawFossil,
 	},
 	[ITEM_SAIL_FOSSIL] =
 	{
@@ -6898,6 +7953,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_SailFossil,
+		.iconPalette = sItemIconPalette_SailFossil,
 	},
 	[ITEM_BIRD_FOSSIL] =
 	{
@@ -6909,6 +7966,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_BirdFossil,
+		.iconPalette = sItemIconPalette_BirdFossil,
 	},
 	[ITEM_FISH_FOSSIL] =
 	{
@@ -6920,6 +7979,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_FishFossil,
+		.iconPalette = sItemIconPalette_FishFossil,
 	},
 	[ITEM_DRAKE_FOSSIL] =
 	{
@@ -6931,6 +7992,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_DrakeFossil,
+		.iconPalette = sItemIconPalette_DrakeFossil,
 	},
 	[ITEM_DINO_FOSSIL] =
 	{
@@ -6942,6 +8005,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FOSSIL,
 		.flingPower = 100,
+		.iconPic = sItemIcon_DinoFossil,
+		.iconPalette = sItemIconPalette_DinoFossil,
 	},
 	[ITEM_ORANGE_MAIL] =
 	{
@@ -6953,6 +8018,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_OrangeMail,
+		.iconPalette = sItemIconPalette_OrangeMail,
 	},
 	[ITEM_HARBOR_MAIL] =
 	{
@@ -6964,6 +8031,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_HarborMail,
+		.iconPalette = sItemIconPalette_HarborMail,
 	},
 	[ITEM_GLITTER_MAIL] =
 	{
@@ -6975,6 +8044,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_GlitterMail,
+		.iconPalette = sItemIconPalette_GlitterMail,
 	},
 	[ITEM_MECH_MAIL] =
 	{
@@ -6986,6 +8057,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_MechMail,
+		.iconPalette = sItemIconPalette_MechMail,
 	},
 	[ITEM_WOOD_MAIL] =
 	{
@@ -6997,6 +8070,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_WoodMail,
+		.iconPalette = sItemIconPalette_WoodMail,
 	},
 	[ITEM_WAVE_MAIL] =
 	{
@@ -7008,6 +8083,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_WaveMail,
+		.iconPalette = sItemIconPalette_WaveMail,
 	},
 	[ITEM_BEAD_MAIL] =
 	{
@@ -7019,6 +8096,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_BeadMail,
+		.iconPalette = sItemIconPalette_BeadMail,
 	},
 	[ITEM_SHADOW_MAIL] =
 	{
@@ -7030,6 +8109,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_ShadowMail,
+		.iconPalette = sItemIconPalette_ShadowMail,
 	},
 	[ITEM_TROPIC_MAIL] =
 	{
@@ -7041,6 +8122,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_TropicMail,
+		.iconPalette = sItemIconPalette_TropicMail,
 	},
 	[ITEM_DREAM_MAIL] =
 	{
@@ -7052,6 +8135,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_DreamMail,
+		.iconPalette = sItemIconPalette_DreamMail,
 	},
 	[ITEM_FAB_MAIL] =
 	{
@@ -7063,6 +8148,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_FabMail,
+		.iconPalette = sItemIconPalette_FabMail,
 	},
 	[ITEM_RETRO_MAIL] =
 	{
@@ -7074,6 +8161,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_NONE,
 		.fieldUseFunc = FieldUseFunc_OrangeMail,
 		.usageType = ITEM_TYPE_MAIL,
+		.iconPic = sItemIcon_RetroMail,
+		.iconPalette = sItemIconPalette_RetroMail,
 	},
 	[ITEM_RED_SHARD] =
 	{
@@ -7085,6 +8174,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Shard,
+		.iconPalette = sItemIconPalette_RedShard,
 	},
 	[ITEM_BLUE_SHARD] =
 	{
@@ -7096,6 +8187,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Shard,
+		.iconPalette = sItemIconPalette_BlueShard,
 	},
 	[ITEM_YELLOW_SHARD] =
 	{
@@ -7107,6 +8200,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Shard,
+		.iconPalette = sItemIconPalette_YellowShard,
 	},
 	[ITEM_GREEN_SHARD] =
 	{
@@ -7118,6 +8213,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_SELLABLE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Shard,
+		.iconPalette = sItemIconPalette_GreenShard,
 	},
 	[ITEM_WISHING_PIECE] =
 	{
@@ -7129,6 +8226,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_FIELD_USE,
 		.flingPower = 50,
+		.iconPic = sItemIcon_WishingPiece,
+		.iconPalette = sItemIconPalette_WishingPiece,
 	},
 	[ITEM_HONEY] =
 	{
@@ -7140,6 +8239,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_Honey,
 		.usageType = ITEM_TYPE_FIELD_USE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Honey,
+		.iconPalette = sItemIconPalette_Honey,
 	},
 	[ITEM_REPEL] =
 	{
@@ -7152,6 +8253,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_SuperRepel,
 		.usageType = ITEM_TYPE_FIELD_USE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Repel,
+		.iconPalette = sItemIconPalette_Repel,
 	},
 	[ITEM_SUPER_REPEL] =
 	{
@@ -7164,6 +8267,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_SuperRepel,
 		.usageType = ITEM_TYPE_FIELD_USE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Repel,
+		.iconPalette = sItemIconPalette_SuperRepel,
 	},
 	[ITEM_MAX_REPEL] =
 	{
@@ -7176,6 +8281,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_SuperRepel,
 		.usageType = ITEM_TYPE_FIELD_USE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_Repel,
+		.iconPalette = sItemIconPalette_MaxRepel,
 	},
 	[ITEM_ESCAPE_ROPE] =
 	{
@@ -7187,11 +8294,13 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = ItemUseOutOfBattle_EscapeRope,
 		.usageType = ITEM_TYPE_FIELD_USE,
 		.flingPower = 30,
+		.iconPic = sItemIcon_EscapeRope,
+		.iconPalette = sItemIconPalette_EscapeRope,
 	},
 	[ITEM_RED_NECTAR] =
 	{
 		.name = _("Red Nectar"),
-		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
+		.holdEffectParam = FORM_CHANGE_ANIM_FALLING_FEATHERS, // form change anim Id
 		.description = sItemDesc_RedNectar,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -7199,11 +8308,13 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_FormChangeItem,
 		.usageType = ITEM_TYPE_NECTAR,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Nectar,
+		.iconPalette = sItemIconPalette_RedNectar,
 	},
 	[ITEM_YELLOW_NECTAR] =
 	{
 		.name = _("Yellow Nectar"),
-		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
+		.holdEffectParam = FORM_CHANGE_ANIM_FALLING_FEATHERS, // form change anim Id
 		.description = sItemDesc_YellowNectar,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -7211,11 +8322,13 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_FormChangeItem,
 		.usageType = ITEM_TYPE_NECTAR,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Nectar,
+		.iconPalette = sItemIconPalette_YellowNectar,
 	},
 	[ITEM_PINK_NECTAR] =
 	{
 		.name = _("Pink Nectar"),
-		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
+		.holdEffectParam = FORM_CHANGE_ANIM_FALLING_FEATHERS, // form change anim Id
 		.description = sItemDesc_PinkNectar,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -7223,11 +8336,13 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_FormChangeItem,
 		.usageType = ITEM_TYPE_NECTAR,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Nectar,
+		.iconPalette = sItemIconPalette_PinkNectar,
 	},
 	[ITEM_PURPLE_NECTAR] =
 	{
 		.name = _("Purple Nectar"),
-		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
+		.holdEffectParam = FORM_CHANGE_ANIM_FALLING_FEATHERS, // form change anim Id
 		.description = sItemDesc_PurpleNectar,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -7235,6 +8350,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.fieldUseFunc = FieldUseFunc_FormChangeItem,
 		.usageType = ITEM_TYPE_NECTAR,
 		.flingPower = 10,
+		.iconPic = sItemIcon_Nectar,
+		.iconPalette = sItemIconPalette_PurpleNectar,
 	},
 	[ITEM_EXPLORER_KIT] =
 	{
@@ -7243,6 +8360,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_ExplorerKit,
+		.iconPalette = sItemIconPalette_ExplorerKit,
 	},
 	[ITEM_LUNAR_WING] =
 	{
@@ -7251,6 +8370,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_LunarWing,
+		.iconPalette = sItemIconPalette_LunarWing,
 	},
 	[ITEM_ZYGARDE_CUBE] =
 	{
@@ -7259,6 +8380,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_ZygardeCube,
+		.iconPalette = sItemIconPalette_ZygardeCube,
 	},
 	[ITEM_CATCHING_CHARM] =
 	{
@@ -7267,6 +8390,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_CatchingCharm,
+		.iconPalette = sItemIconPalette_CatchingCharm,
 	},
 	[ITEM_EXP_CHARM] =
 	{
@@ -7275,6 +8400,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_ExpCharm,
+		.iconPalette = sItemIconPalette_ExpCharm,
 	},
 	[ITEM_REINS_OF_UNITY] =
 	{
@@ -7284,6 +8411,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FusionItem,
+		.iconPic = sItemIcon_ReinsOfUnity,
+		.iconPalette = sItemIconPalette_ReinsOfUnity,
 	},
 	[ITEM_TERA_ORB] =
 	{
@@ -7292,6 +8421,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_TeraOrb,
+		.iconPalette = sItemIconPalette_TeraOrb,
 	},
 	[ITEM_Z_RING] =
 	{
@@ -7300,6 +8431,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_ZRing,
+		.iconPalette = sItemIconPalette_ZRing,
 	},
 	[ITEM_DYNAMAX_BAND] =
 	{
@@ -7308,6 +8441,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_DynamaxBand,
+		.iconPalette = sItemIconPalette_DynamaxBand,
 	},
 	[ITEM_EXP_SHARE] =
 	{
@@ -7316,6 +8451,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_ExpShare,
+		.iconPic = sItemIcon_ExpShare,
+		.iconPalette = sItemIconPalette_ExpShare,
 	},
 	[ITEM_REVEAL_GLASS] =
 	{
@@ -7325,6 +8462,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FormChangeItem,
+		.iconPic = sItemIcon_RevealGlass,
+		.iconPalette = sItemIconPalette_RevealGlass,
 	},
 	[ITEM_PRISON_BOTTLE] =
 	{
@@ -7334,6 +8473,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FormChangeItem,
+		.iconPic = sItemIcon_PrisonBottle,
+		.iconPalette = sItemIconPalette_PrisonBottle,
 	},
 	[ITEM_GRACIDEA] =
 	{
@@ -7343,6 +8484,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FormChangeItem,
+		.iconPic = sItemIcon_Gracidea,
+		.iconPalette = sItemIconPalette_Gracidea,
 	},
 	[ITEM_COIN_CASE] =
 	{
@@ -7351,6 +8494,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_CoinCase,
+		.iconPic = sItemIcon_CoinCase,
+		.iconPalette = sItemIconPalette_CoinCase,
 	},
 	[ITEM_ITEMFINDER] =
 	{
@@ -7359,6 +8504,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_FIELD,
 		.fieldUseFunc = ItemUseOutOfBattle_Itemfinder,
+		.iconPic = sItemIcon_Itemfinder,
+		.iconPalette = sItemIconPalette_Itemfinder,
 	},
 	[ITEM_OLD_ROD] =
 	{
@@ -7368,6 +8515,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_FIELD,
 		.fieldUseFunc = FieldUseFunc_OldRod,
+		.iconPic = sItemIcon_OldRod,
+		.iconPalette = sItemIconPalette_OldRod,
 	},
 	[ITEM_GOOD_ROD] =
 	{
@@ -7377,6 +8526,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_FIELD,
 		.fieldUseFunc = FieldUseFunc_OldRod,
+		.iconPic = sItemIcon_GoodRod,
+		.iconPalette = sItemIconPalette_GoodRod,
 	},
 	[ITEM_SUPER_ROD] =
 	{
@@ -7386,6 +8537,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_FIELD,
 		.fieldUseFunc = FieldUseFunc_OldRod,
+		.iconPic = sItemIcon_SuperRod,
+		.iconPalette = sItemIconPalette_SuperRod,
 	},
 	[ITEM_SS_TICKET] =
 	{
@@ -7394,6 +8547,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_SsTicket,
+		.iconPalette = sItemIconPalette_SsTicket,
 	},
 	[ITEM_N_SOLARIZER] =
 	{
@@ -7403,6 +8558,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FusionItem,
+		.iconPic = sItemIcon_NSolarizer,
+		.iconPalette = sItemIconPalette_NSolarizer,
 	},
 	[ITEM_N_LUNARIZER] =
 	{
@@ -7412,6 +8569,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FusionItem,
+		.iconPic = sItemIcon_NSolarizer,
+		.iconPalette = sItemIconPalette_NLunarizer,
 	},
 	[ITEM_MEGA_BRACELET] =
 	{
@@ -7420,6 +8579,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_MegaBracelet,
+		.iconPalette = sItemIconPalette_MegaBracelet,
 	},
 	[ITEM_ROTOM_CATALOG] =
 	{
@@ -7429,6 +8590,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FormChangeItemListMenu,
+		.iconPic = sItemIcon_RotomCatalog,
+		.iconPalette = sItemIconPalette_RotomCatalog,
 	},
 	[ITEM_DNA_SPLICERS] =
 	{
@@ -7438,6 +8601,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FusionItem,
+		.iconPic = sItemIcon_DnaSplicers,
+		.iconPalette = sItemIconPalette_DnaSplicers,
 	},
 	[ITEM_METEORITE] =
 	{
@@ -7447,6 +8612,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FormChangeItemListMenu,
+		.iconPic = sItemIcon_Meteorite,
+		.iconPalette = sItemIconPalette_Meteorite,
 	},
 	[ITEM_OAKS_PARCEL] =
 	{
@@ -7455,6 +8622,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_OaksParcel,
+		.iconPalette = sItemIconPalette_OaksParcel,
 	},
 	[ITEM_POKE_FLUTE] =
 	{
@@ -7464,6 +8633,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_PokeFlute,
 		.battleUsage = EFFECT_ITEM_POKE_FLUTE,
+		.iconPic = sItemIcon_PokeFlute,
+		.iconPalette = sItemIconPalette_PokeFlute,
 	},
 	[ITEM_SECRET_KEY] =
 	{
@@ -7472,6 +8643,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_SecretKey,
+		.iconPalette = sItemIconPalette_SecretKey,
 	},
 	[ITEM_BIKE_VOUCHER] =
 	{
@@ -7480,6 +8653,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_BikeVoucher,
+		.iconPalette = sItemIconPalette_BikeVoucher,
 	},
 	[ITEM_GOLD_TEETH] =
 	{
@@ -7488,6 +8663,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_GoldTeeth,
+		.iconPalette = sItemIconPalette_GoldTeeth,
 	},
 	[ITEM_CARD_KEY] =
 	{
@@ -7496,6 +8673,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_CardKey,
+		.iconPalette = sItemIconPalette_CardKey,
 	},
 	[ITEM_LIFT_KEY] =
 	{
@@ -7504,6 +8683,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_LiftKey,
+		.iconPalette = sItemIconPalette_Key,
 	},
 	[ITEM_SILPH_SCOPE] =
 	{
@@ -7512,6 +8693,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_SilphScope,
+		.iconPalette = sItemIconPalette_SilphScope,
 	},
 	[ITEM_BICYCLE] =
 	{
@@ -7520,6 +8703,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_FIELD,
 		.fieldUseFunc = FieldUseFunc_MachBike,
+		.iconPic = sItemIcon_Bicycle,
+		.iconPalette = sItemIconPalette_Bicycle,
 	},
 	[ITEM_TOWN_MAP] =
 	{
@@ -7528,6 +8713,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_TownMap,
+		.iconPic = sItemIcon_TownMap,
+		.iconPalette = sItemIconPalette_TownMap,
 	},
 	[ITEM_VS_SEEKER] =
 	{
@@ -7536,6 +8723,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_FIELD,
 		.fieldUseFunc = FieldUseFunc_VsSeeker,
+		.iconPic = sItemIcon_VsSeeker,
+		.iconPalette = sItemIconPalette_VsSeeker,
 	},
 	[ITEM_FAME_CHECKER] =
 	{
@@ -7544,6 +8733,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_FameChecker,
+		.iconPic = sItemIcon_FameChecker,
+		.iconPalette = sItemIconPalette_FameChecker,
 	},
 	[ITEM_TM_CASE] =
 	{
@@ -7552,6 +8743,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_TmCase,
+		.iconPic = sItemIcon_TmCase,
+		.iconPalette = sItemIconPalette_TmCase,
 	},
 	[ITEM_BERRY_POUCH] =
 	{
@@ -7560,6 +8753,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_BerryPouch,
+		.iconPic = sItemIcon_BerryPouch,
+		.iconPalette = sItemIconPalette_BerryPouch,
 	},
 	[ITEM_TEACHY_TV] =
 	{
@@ -7568,6 +8763,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_FIELD,
 		.fieldUseFunc = FieldUseFunc_TeachyTv,
+		.iconPic = sItemIcon_TeachyTv,
+		.iconPalette = sItemIconPalette_TeachyTv,
 	},
 	[ITEM_TRI_PASS] =
 	{
@@ -7576,6 +8773,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_TriPass,
+		.iconPalette = sItemIconPalette_TriPass,
 	},
 	[ITEM_RAINBOW_PASS] =
 	{
@@ -7584,6 +8783,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_RainbowPass,
+		.iconPalette = sItemIconPalette_RainbowPass,
 	},
 	[ITEM_TEA] =
 	{
@@ -7592,6 +8793,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_Tea,
+		.iconPalette = sItemIconPalette_Tea,
 	},
 	[ITEM_MYSTIC_TICKET] =
 	{
@@ -7600,6 +8803,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_MysticTicket,
+		.iconPalette = sItemIconPalette_MysticTicket,
 	},
 	[ITEM_AURORA_TICKET] =
 	{
@@ -7608,6 +8813,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_AuroraTicket,
+		.iconPalette = sItemIconPalette_AuroraTicket,
 	},
 	[ITEM_RUBY] =
 	{
@@ -7616,6 +8823,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_RubyAndSapphire,
+		.iconPalette = sItemIconPalette_Ruby,
 	},
 	[ITEM_SAPPHIRE] =
 	{
@@ -7624,6 +8833,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_RubyAndSapphire,
+		.iconPalette = sItemIconPalette_Sapphire,
 	},
 	[ITEM_EV_IV_DISPLAY] =
 	{
@@ -7632,6 +8843,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_EvIvDisplay,
+		.iconPic = sItemIcon_EvIvDisplay,
+		.iconPalette = sItemIconPalette_EvIvDisplay,
 	},
 	[ITEM_SHINY_CHARM] =
 	{
@@ -7640,6 +8853,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_ShinyCharm,
+		.iconPalette = sItemIconPalette_ShinyCharm,
 	},
 	[ITEM_RAINBOW_WING] =
 	{
@@ -7648,6 +8863,8 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_RainbowWing,
+		.iconPalette = sItemIconPalette_RainbowWing,
 	},
 	[ITEM_SILVER_WING] =
 	{
@@ -7656,17 +8873,21 @@ const struct Item gItems[ITEMS_COUNT] =
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.iconPic = sItemIcon_RainbowWing,
+		.iconPalette = sItemIconPalette_SilverWing,
 	},
 	[ITEM_FASHION_CASE] =
 	{
 		.name = _("Fashion Case"),
-		.holdEffectParam = FORM_CHANGE_ANIM_MOSAIC, // form change anim Id
+		.holdEffectParam = FORM_CHANGE_ANIM_CLOSING_SCREEN, // form change anim Id
 		.description = sItemDesc_FashionCase,
 		.pocket = POCKET_KEY_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_FormChangeItemListMenu,
+		.iconPic = sItemIcon_FashionCase,
+		.iconPalette = sItemIconPalette_FashionCase,
 	},
-	
+
 #if TMS_GEN == GEN_3
 	#include "tms/gen_3.h"
 #elif TMS_GEN == GEN_4
@@ -7682,5 +8903,4 @@ const struct Item gItems[ITEMS_COUNT] =
 #elif TMS_GEN == GEN_9
 	#include "tms/gen_9.h"
 #endif
-
 };

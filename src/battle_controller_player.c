@@ -7,6 +7,7 @@
 #include "m4a.h"
 #include "party_menu.h"
 #include "pokeball.h"
+#include "battle_main.h"
 #include "strings.h"
 #include "pokemon_special_anim.h"
 #include "task.h"
@@ -768,7 +769,7 @@ static void MoveSelectionDisplayMoveType(u8 battlerId)
 #else
     txtPtr = StringCopy(txtPtr, gText_MoveInterfaceMoveNamesColor);
 #endif
-    PrependFontIdToFit(txtPtr, StringCopy(txtPtr, gTypeNames[type]), 0, WindowWidthPx(B_WIN_MOVE_TYPE) - 32);
+    PrependFontIdToFit(txtPtr, StringCopy(txtPtr, gTypesInfo[type].name), 0, WindowWidthPx(B_WIN_MOVE_TYPE) - 32);
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MOVE_TYPE);
 }
 

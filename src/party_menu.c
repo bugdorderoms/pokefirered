@@ -6131,7 +6131,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 bat
 			    StringCopy(gStringVar2, itemUse->stringCopyData ? gText_Gained : gText_Loses);
 				break;
 			case ITEMUSE_COPY_TYPE_NAME: // copy type name
-			    StringCopy(gStringVar2, gTypeNames[itemUse->stringCopyData]);
+			    StringCopy(gStringVar2, gTypesInfo[itemUse->stringCopyData].name);
 				break;
 			case ITEMUSE_COPY_INCREASED_OR_DECREASED:
 			    StringCopy(gStringVar2, itemUse->stringCopyData ? gText_Increased : gText_Decreased);

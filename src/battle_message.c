@@ -1719,7 +1719,7 @@ static void ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst)
             srcId += 3;
             break;
         case B_BUFF_TYPE:
-            StringAppend(dst, gTypeNames[src[srcId + 1]]);
+            StringAppend(dst, gTypesInfo[src[srcId + 1]].name);
             srcId += 2;
             break;
         case B_BUFF_MON_NICK_WITH_PREFIX:

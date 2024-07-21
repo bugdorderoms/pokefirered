@@ -277,8 +277,7 @@
 #define ITEM_ROSELI_BERRY             (TERA_SHARD_ITEMS_END + 64)
 #define ITEM_KEE_BERRY                (TERA_SHARD_ITEMS_END + 65)
 #define ITEM_MARANGA_BERRY            (TERA_SHARD_ITEMS_END + 66)
-#define ITEM_HOPO_BERRY               (TERA_SHARD_ITEMS_END + 67)
-#define ITEM_ENIGMA_BERRY             (TERA_SHARD_ITEMS_END + 68)
+#define ITEM_ENIGMA_BERRY             (TERA_SHARD_ITEMS_END + 67)
 
 // In case you want to add new berries, all the indexes below this will be updated with the corrected index
 #define BERRY_ITEMS_END               ITEM_ENIGMA_BERRY

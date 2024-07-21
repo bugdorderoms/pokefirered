@@ -83,6 +83,7 @@ static const u8 sDNSMapExceptions[] =
 	MAP_TYPE_INDOOR,
 	MAP_TYPE_UNDERGROUND,
 	MAP_TYPE_SECRET_BASE,
+	MAP_TYPE_UNDERWATER
 };
 
 /*******************************************************/

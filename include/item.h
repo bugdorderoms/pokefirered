@@ -72,8 +72,10 @@ struct Item
 	/*0x1E*/ u8 type; // determine the exit CB
 	/*0x1F*/ u8 usageType; // used by bag sorting
 	/*0x20*/ ItemUseFunc fieldUseFunc;
-    /*0x24*/ u8 battleUsage; // determine battle script id
-	/*0x25*/ u8 flingPower;
+	/*0x24*/ const u32 *iconPic;
+	/*0x28*/ const u32 *iconPalette;
+    /*0x2C*/ u8 battleUsage; // determine battle script id
+	/*0x2D*/ u8 flingPower;
 };
 
 struct BagPocket

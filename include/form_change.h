@@ -7,7 +7,7 @@ struct Fusion
 	u16 otherSpecies;
 	u16 item;
 	u16 targetSpecies;
-	u8 id;
+	u16 id;
 };
 
 enum
@@ -16,6 +16,8 @@ enum
 	FORM_CHANGE_ANIM_GRACIDEA_FLOWERS,
 	FORM_CHANGE_ANIM_PURPLE_CLOUD,
 	FORM_CHANGE_ANIM_LIGHT_ABSORPTION,
+	FORM_CHANGE_ANIM_CLOSING_SCREEN,
+	FORM_CHANGE_ANIM_FALLING_FEATHERS,
 };
 
 // overworld form change

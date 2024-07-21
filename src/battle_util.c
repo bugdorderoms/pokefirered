@@ -3319,9 +3319,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 							BattleScriptPop(); // Restore current script
 						break;
 					case ABILITY_GULP_MISSILE: // Catch prey
-					    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && !gProtectStructs[battler].confusionSelfDmg && IsBattlerAlive(gBattlerTarget)
-						&& !SubsBlockMove(battler, gBattlerTarget, gCurrentMove) && ((gCurrentMove == MOVE_SURF && BATTLER_DAMAGED(gBattlerTarget))
-					    || (gCurrentMove == MOVE_DIVE && (gStatuses3[battler] & STATUS3_UNDERWATER))))
+					    if ((gCurrentMove == MOVE_SURF && BATTLER_DAMAGED(gBattlerTarget)) || (gStatuses3[battler] & STATUS3_UNDERWATER))
 						{
 							u16 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_HP);
 							

@@ -272,7 +272,8 @@ void Task_BarnDoorWipe(u8 taskId)
             BarnDoorWipeSaveGpuRegs(taskId);
             SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON);
             SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON);
-            if (data[10] == 0)
+			
+            if (tDirection == DIR_WIPE_IN)
             {
                 SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, 0));
                 SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(DISPLAY_WIDTH, 255));

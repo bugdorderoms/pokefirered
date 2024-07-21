@@ -299,11 +299,11 @@ struct Ability
 	const u8 *description;
 };
 
-struct NatureInfo
+struct TypeInfo
 {
-	const u8 *name;
-	u8 statUpId;
-	u8 statDownId;
+	const u32 *tmPalette;
+	u8 name[TYPE_NAME_LENGTH + 1];
+	u8 effectiveness[NUMBER_OF_MON_TYPES];
 };
 
 struct __attribute__((packed)) LevelUpMove
@@ -337,6 +337,14 @@ enum
     GENERATE_SHINY_NORMAL,
     GENERATE_SHINY_LOCKED,
     GENERATE_SHINY_FORCED
+};
+
+struct NatureInfo
+{
+	const u8 *name;
+	u8 statUpId;
+	u8 statDownId;
+	s8 flavor[FLAVOR_COUNT];
 };
 
 #define GENERATOR_FORMS(...) (const u16[]) { __VA_ARGS__, FORM_CHANGE_TERMINATOR }
@@ -383,8 +391,8 @@ extern const struct LevelUpMove *const gLevelUpLearnsets[];
 extern const u8 gFacilityClassToPicIndex[];
 extern const u8 gFacilityClassToTrainerClass[];
 extern const struct SpriteTemplate gSpriteTemplates_Battlers[];
-extern const u8 gPPUpGetMask[];
 extern const struct NatureInfo gNaturesInfo[];
+extern const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES];
 extern const u8 gPPUpGetMask[];
 extern const u8 gPPUpSetMask[];
 extern const u8 gPPUpAddMask[];

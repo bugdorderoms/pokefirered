@@ -5,6 +5,7 @@
 #include "random.h"
 #include "pokedex.h"
 #include "money.h"
+#include "battle_main.h"
 #include "battle_gimmicks.h"
 #include "battle_setup.h"
 #include "pokemon_icon.h"
@@ -30,7 +31,6 @@
 #include "pokemon.h"
 #include "battle_message.h"
 #include "battle_anim.h"
-#include "battle_main.h"
 #include "battle_ai_script_commands.h"
 #include "calculate_base_damage.h"
 #include "battle_scripts.h"
@@ -1297,7 +1297,7 @@ static void UpdateMoveResults(u8 *multiplier, u8 mod, u16 move, u16 *flags) // U
 
 u8 GetTypeModifier(u8 atkType, u8 defType)
 {
-	return gTypeEffectiveness[atkType][defType]; // Get effectiveness betwen the move's type and the defender's type
+	return gTypesInfo[atkType].effectiveness[defType]; // Get effectiveness betwen the move's type and the defender's type
 }
 
 static void MulByTypeEffectiveness(u16 move, u8 moveType, u8 attacker, u8 defender, u8 defenderType, u8 *multiplier, u16 *flags)

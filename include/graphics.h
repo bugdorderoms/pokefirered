@@ -374,8 +374,6 @@ extern const u8 gFireRedMenuElements_Gfx[];
 extern const u16 gFireRedMenuElements1_Pal[];
 extern const u16 gFireRedMenuElements2_Pal[];
 
-extern const u8 gItemIcon_QuestionMark[];
-extern const u8 gItemIconPalette_QuestionMark[];
 extern const u8 gUnknown_08DB7AA0[];
 extern const u8 gUnknown_08DB7B34[];
 extern const u8 gUnknown_08DB7B5C[];
@@ -526,6 +524,8 @@ extern const u32 gUnknown_8E83DBC[];
 extern const u32 gUnknown_8E84560[];
 extern const u32 gFile_graphics_interface_bag_swap_sheet[];
 extern const u32 gFile_graphics_interface_bag_swap_palette[];
+extern const u32 gItemIcon_ReturnToFieldArrow[];
+extern const u32 gItemIconPalette_ReturnToFieldArrow[];
 
 // battle_anim_utility_funcs
 extern const u32 gFile_graphics_battle_interface_enemy_mon_shadow_sheet[];
