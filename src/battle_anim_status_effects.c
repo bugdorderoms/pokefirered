@@ -21,40 +21,7 @@ static void sub_807834C(struct Sprite *sprite);
 static void sub_8078380(struct Sprite *sprite);
 
 // Data
-static const union AnimCmd sUnknown_83BF428[] =
-{
-    ANIMCMD_FRAME(0, 3),
-    ANIMCMD_JUMP(0)
-};
-
-static const union AnimCmd *const sSpriteAnimTable_83BF430[] =
-{
-    sUnknown_83BF428
-};
-
-const struct SpriteTemplate gWeatherBallUpSpriteTemplate =
-{
-    .tileTag = ANIM_TAG_WEATHER_BALL,
-    .paletteTag = ANIM_TAG_WEATHER_BALL,
-    .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = sSpriteAnimTable_83BF430,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCB_WeatherBallUp,
-};
-
-const struct SpriteTemplate gWeatherBallNormalDownSpriteTemplate =
-{
-    .tileTag = ANIM_TAG_WEATHER_BALL,
-    .paletteTag = ANIM_TAG_WEATHER_BALL,
-    .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = sSpriteAnimTable_83BF430,
-    .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = AnimWeatherBallDown,
-};
-
-static const union AnimCmd sUnknown_83BF464[] =
+static const union AnimCmd sSpriteAnim_DisableSparkle[] =
 {
     ANIMCMD_FRAME(0, 3),
     ANIMCMD_FRAME(16, 3),
@@ -64,17 +31,17 @@ static const union AnimCmd sUnknown_83BF464[] =
     ANIMCMD_END
 };
 
-static const union AnimCmd *const sSpriteAnimTable_83BF47C[] =
+static const union AnimCmd *const sSpriteAnimTable_DisableSparkle[] =
 {
-    sUnknown_83BF464
+    sSpriteAnim_DisableSparkle
 };
 
-const struct SpriteTemplate gSpriteTemplate_83BF480 =
+const struct SpriteTemplate gDisableSparkleSpriteTemplate =
 {
     .tileTag = ANIM_TAG_SPARKLE_4,
     .paletteTag = ANIM_TAG_SPARKLE_4,
     .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = sSpriteAnimTable_83BF47C,
+    .anims = sSpriteAnimTable_DisableSparkle,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = SpriteCB_TrackOffsetFromAttackerAndWaitAnim,
@@ -224,20 +191,24 @@ static void sub_8078380(struct Sprite *sprite)
     }
 }
 
+// Animates the frozen ice cube on the given battler.
+// arg 0: anim battler
 void AnimTask_FrozenIceCube(u8 taskId)
 {
-	u8 spriteId;
-    s16 x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) - 32;
-    s16 y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) - 36;
+	u8 spriteId, battlerId = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    s16 x = GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X) - 32;
+    s16 y = GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y_PIC_OFFSET) - 36;
     
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 16));
 	
     spriteId = CreateSprite(&sFrozenIceCubeSpriteTemplate, x, y, 4);
+	
     if (GetSpriteTileStartByTag(ANIM_TAG_ICE_CUBE) == SPRITE_INVALID_TAG)
         gSprites[spriteId].invisible = TRUE;
     
     SetSubspriteTables(&gSprites[spriteId], sFrozenIceCubeSubspriteTable);
+	
     gTasks[taskId].data[15] = spriteId;
     gTasks[taskId].func = AnimTask_FrozenIceCubeStep;
 }
@@ -304,17 +275,9 @@ static void AnimTask_FrozenIceCubeStep3(u8 taskId)
 static void AnimTask_FrozenIceCubeStep4(u8 taskId)
 {
     if (++gTasks[taskId].data[1] == 37)
-    {
-        u8 spriteId = gTasks[taskId].data[15];
-        FreeSpriteOamMatrix(&gSprites[spriteId]);
-        DestroySprite(&gSprites[spriteId]);
-    }
+        DestroySpriteAndFreeMatrix(&gSprites[gTasks[taskId].data[15]]);
     else if (gTasks[taskId].data[1] == 39)
-    {
-        SetGpuReg(REG_OFFSET_BLDCNT, 0);
-        SetGpuReg(REG_OFFSET_BLDALPHA, 0);
-        DestroyAnimVisualTask(taskId);
-    }
+        DestroyAnimVisualTaskAndDisableBlend(taskId);
 }
 
 void AnimTask_StatsChange(u8 taskId)
@@ -339,6 +302,7 @@ void LaunchStatusAnimation(u8 battlerId, u8 statusAnimId)
 static void Task_DoStatusAnimation(u8 taskId)
 {
     gAnimScriptCallback();
+	
     if (!gAnimScriptActive)
     {
         gBattleSpritesDataPtr->healthBoxesData[gTasks[taskId].data[0]].statusAnimActive = FALSE;

@@ -115,7 +115,7 @@ static void SwitchIn_ShowSubstitute(u8 battlerId)
     if (gSprites[gHealthboxSpriteIds[battlerId]].callback == SpriteCallbackDummy)
     {
         if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute)
-            InitAndLaunchSpecialAnimation(battlerId, battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
+            InitAndLaunchSpecialAnimation(battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
 		
         gBattlerControllerFuncs[battlerId] = SwitchIn_HandleSoundAndEnd;
     }
@@ -146,7 +146,7 @@ static void SwitchIn_TryShinyAnim(u8 battlerId)
     if (gSprites[gBattleControllerData[battlerId]].callback == SpriteCallbackDummy && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
     {
         DestroySprite(&gSprites[gBattleControllerData[battlerId]]);
-        SetBattlerShadowSpriteCallback(battlerId, GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES));
+        SetBattlerShadowSpriteCallback(battlerId);
         gBattlerControllerFuncs[battlerId] = SwitchIn_ShowHealthbox;
     }
 }
@@ -194,7 +194,7 @@ static void LinkOpponentHandleDrawTrainerPic(u8 battlerId)
 				trainerPicId = gFacilityClassToPicIndex[gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_LEAF : FACILITY_CLASS_RED];
 		}
 	}
-	BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, TRUE, xPos, (8 - gTrainerFrontPicCoords[trainerPicId].size) * 4 + 40, GetBattlerSpriteSubpriority(battlerId));
+	BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, TRUE, xPos, (8 - gTrainerFrontPicTable[trainerPicId].coords.size) * 4 + 40, GetBattlerSpriteSubpriority(battlerId));
 }
 
 static void Intro_DelayAndEnd(u8 battlerId)

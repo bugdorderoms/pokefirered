@@ -270,16 +270,15 @@ static u8 UpdateNormalPaletteFade(void)
 
 void InvertPlttBuffer(u32 selectedPalettes)
 {
+	u8 i;
     u16 paletteOffset = 0;
 
     while (selectedPalettes)
     {
         if (selectedPalettes & 1)
         {
-            u8 i;
-
             for (i = 0; i < 16; ++i)
-                gPlttBufferFaded[paletteOffset + i] = ~gPlttBufferFaded[paletteOffset + i];
+                gPlttBufferFaded[paletteOffset + i] = ~(gPlttBufferFaded[paletteOffset + i]);
         }
         selectedPalettes >>= 1;
         paletteOffset += 16;
@@ -424,7 +423,7 @@ static u8 UpdateFastPaletteFade(void)
     return PALETTE_FADE_STATUS_ACTIVE;
 }
 
-void BeginHardwarePaletteFade(u8 blendCnt, u8 delay, u8 y, u8 targetY, u8 shouldResetBlendRegisters)
+void BeginHardwarePaletteFade(u8 blendCnt, u8 delay, u8 y, u8 targetY, bool8 shouldResetBlendRegisters)
 {
     gPaletteFade_blendCnt = blendCnt;
     gPaletteFade.delayCounter = delay;

@@ -16,13 +16,11 @@ void AllocateBattleResources(void)
     }
     gBattleStruct = AllocZeroed(sizeof(*gBattleStruct));
     gBattleResources = AllocZeroed(sizeof(*gBattleResources));
-    gBattleResources->flags = AllocZeroed(sizeof(*gBattleResources->flags));
     gBattleResources->battleScriptsStack = AllocZeroed(sizeof(*gBattleResources->battleScriptsStack));
     gBattleResources->battleCallbackStack = AllocZeroed(sizeof(*gBattleResources->battleCallbackStack));
     gBattleResources->beforeLvlUp = AllocZeroed(sizeof(*gBattleResources->beforeLvlUp));
-    gBattleResources->ai = AllocZeroed(sizeof(*gBattleResources->ai));
-    gBattleResources->battleHistory = AllocZeroed(sizeof(*gBattleResources->battleHistory));
-    gBattleResources->AI_ScriptsStack = AllocZeroed(sizeof(*gBattleResources->AI_ScriptsStack));
+	gBattleResources->aiData = AllocZeroed(sizeof(*gBattleResources->aiData));
+	gBattleResources->aiThinking = AllocZeroed(sizeof(*gBattleResources->aiThinking));
     gLinkBattleSendBuffer = AllocZeroed(BATTLE_BUFFER_LINK_SIZE);
     gLinkBattleRecvBuffer = AllocZeroed(BATTLE_BUFFER_LINK_SIZE);
     gBattleAnimMons_BgTilesBuffer = AllocZeroed(0x2000);
@@ -45,13 +43,11 @@ void FreeBattleResources(void)
     if (gBattleResources != NULL)
     {
         FREE_AND_SET_NULL(gBattleStruct);
-        FREE_AND_SET_NULL(gBattleResources->flags);
         FREE_AND_SET_NULL(gBattleResources->battleScriptsStack);
         FREE_AND_SET_NULL(gBattleResources->battleCallbackStack);
         FREE_AND_SET_NULL(gBattleResources->beforeLvlUp);
-        FREE_AND_SET_NULL(gBattleResources->ai);
-        FREE_AND_SET_NULL(gBattleResources->battleHistory);
-        FREE_AND_SET_NULL(gBattleResources->AI_ScriptsStack);
+		FREE_AND_SET_NULL(gBattleResources->aiData);
+		FREE_AND_SET_NULL(gBattleResources->aiThinking);
         FREE_AND_SET_NULL(gBattleResources);
         FREE_AND_SET_NULL(gLinkBattleSendBuffer);
         FREE_AND_SET_NULL(gLinkBattleRecvBuffer);
@@ -62,23 +58,18 @@ void FreeBattleResources(void)
 
 void AdjustFriendshipOnBattleFaint(u8 battlerId)
 {
-    u8 opposingBattlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), opposingBattlerId2;
-
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-    {
-        opposingBattlerId2 = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-        if (gBattleMons[opposingBattlerId2].level > gBattleMons[opposingBattlerId].level)
-            opposingBattlerId = opposingBattlerId2;
-    }
-    if (gBattleMons[opposingBattlerId].level > gBattleMons[battlerId].level)
-    {
-        if (gBattleMons[opposingBattlerId].level - gBattleMons[battlerId].level > 29)
-            AdjustFriendship(&gPlayerParty[gBattlerPartyIndexes[battlerId]], FRIENDSHIP_EVENT_FAINT_LARGE);
-        else
-            AdjustFriendship(&gPlayerParty[gBattlerPartyIndexes[battlerId]], FRIENDSHIP_EVENT_FAINT_SMALL);
-    }
-    else
-    {
-        AdjustFriendship(&gPlayerParty[gBattlerPartyIndexes[battlerId]], FRIENDSHIP_EVENT_FAINT_SMALL);
-    }
+	u8 i, friendshipEvent, level = 0;
+	
+	for (i = 0; i < gBattlersCount; i++)
+	{
+		if (GetBattlerSide(i) == B_SIDE_OPPONENT && gBattleMons[i].level > level)
+			level = gBattleMons[i].level;
+	}
+	
+	if (level > gBattleMons[battlerId].level && level - gBattleMons[battlerId].level > 29)
+		friendshipEvent = FRIENDSHIP_EVENT_FAINT_LARGE;
+	else
+		friendshipEvent = FRIENDSHIP_EVENT_FAINT_SMALL;
+	
+	AdjustFriendship(GetBattlerPartyIndexPtr(battlerId), friendshipEvent);
 }

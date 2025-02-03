@@ -448,6 +448,10 @@
 
 @ OAM attribute constants
 
+	.set ST_OAM_OBJ_NORMAL,      0
+	.set ST_OAM_OBJ_BLEND,       1
+	.set ST_OAM_OBJ_WINDOW,		 2
+	
 	.set OAM_OBJ_NORMAL,         0x00000000
 	.set OAM_OBJ_BLEND,          0x00000400
 	.set OAM_OBJ_WINDOW,         0x00000800

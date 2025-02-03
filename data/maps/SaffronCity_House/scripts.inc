@@ -13,7 +13,7 @@ SaffronCity_House_EventScript_Pidgey:: @ 816EF86
 	lock
 	faceplayer
 	waitse
-	playmoncry SPECIES_PIDGEY, 0
+	playmoncry SPECIES_PIDGEY, CRY_MODE_NORMAL
 	msgbox SaffronCity_House_Text_Pidgey
 	waitmoncry
 	release

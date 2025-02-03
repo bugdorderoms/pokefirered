@@ -38,7 +38,7 @@ PowerPlant_EventScript_Zapdos:: @ 81637B8
 	faceplayer
 	setwildbattle SPECIES_ZAPDOS, 50, ITEM_NONE
 	waitse
-	playmoncry SPECIES_ZAPDOS, 2
+	playmoncry SPECIES_ZAPDOS, CRY_MODE_ENCOUNTER
 	message Text_Gyaoo
 	waitmessage
 	waitmoncry
@@ -75,7 +75,7 @@ PowerPlant_EventScript_Electrode1:: @ 816382F
 	faceplayer
 	setwildbattle SPECIES_ELECTRODE, 34, ITEM_NONE
 	waitse
-	playmoncry SPECIES_ELECTRODE, 2
+	playmoncry SPECIES_ELECTRODE, CRY_MODE_ENCOUNTER
 	delay 40
 	waitmoncry
 	setflag FLAG_SYS_SPECIAL_WILD_BATTLE
@@ -102,7 +102,7 @@ PowerPlant_EventScript_Electrode2:: @ 816388D
 	faceplayer
 	setwildbattle SPECIES_ELECTRODE, 34, ITEM_NONE
 	waitse
-	playmoncry SPECIES_ELECTRODE, 2
+	playmoncry SPECIES_ELECTRODE, CRY_MODE_ENCOUNTER
 	delay 40
 	waitmoncry
 	setflag FLAG_SYS_SPECIAL_WILD_BATTLE

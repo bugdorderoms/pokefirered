@@ -30,7 +30,6 @@ static void DestroyArrowAndStarTiles(void);
 static void LoadArrowAndStarTiles(void);
 static void CreateArrowSprite(u8 animNum, u8 direction);
 static void SpriteCallback_Arrow(struct Sprite * sprite);
-static void SpriteCallback_DestroyArrow(struct Sprite * sprite);
 static u8 CreateStarSprite(void);
 static void SpriteCallback_Star(struct Sprite * sprite);
 static void SpriteCallback_DestroyStar(struct Sprite * sprite);
@@ -499,8 +498,7 @@ void Task_StoutlandSearch(u8 taskId)
 		if (tStartSpriteId != MAX_SPRITES)
 		{
 			DestroyArrowAndStarTiles();
-			FreeSpriteOamMatrix(&gSprites[tStartSpriteId]);
-			DestroySprite(&gSprites[tStartSpriteId]);
+			DestroySpriteAndFreeMatrix(&gSprites[tStartSpriteId]);
 		}
 		DestroyTask(taskId);
 		return;
@@ -649,13 +647,7 @@ static void SpriteCallback_Arrow(struct Sprite * sprite)
     sprite->y = sprite->spCenterY + (sprite->spCurY >> 8);
 	
     if (sprite->x <= 104 || sprite->x > 132 || sprite->y <= 60 || sprite->y > 88)
-        sprite->callback = SpriteCallback_DestroyArrow;
-}
-
-static void SpriteCallback_DestroyArrow(struct Sprite * sprite)
-{
-    FreeSpriteOamMatrix(sprite);
-    DestroySprite(sprite);
+        sprite->callback = DestroySpriteAndFreeMatrix;
 }
 
 static u8 CreateStarSprite(void)

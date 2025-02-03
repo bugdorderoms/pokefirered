@@ -50,7 +50,7 @@ def AppendToCryFiles(name, num):
         if comment:
             text += "/*\n"
 
-        text += f"\t.align 2\nCry_{formatedName}::\n\t.incbin {chr(34)}sound/direct_sound_samples/cries/{name}{uncomp}.bin{chr(34)}\n"
+        text += f'\t.align 2\nCry_{formatedName}::\n\t.incbin "sound/direct_sound_samples/cries/{name}{uncomp}.bin"\n'
 
         if comment:
             text += "*/\n"
@@ -66,7 +66,7 @@ def AppendToCryFiles(name, num):
             uncomp = "" # Since the cry will be replaced by the Unown cry, it can't have the _uncomp prefix
 
         cry_table_normal.append(f"\tcry{uncomp} {text}\n")
-        cry_table_reverse.append(f"\tcry2{uncomp} {text}\n")
+        cry_table_reverse.append(f"\tcry_reverse{uncomp} {text}\n")
 
 # Append the defines of the first and the last species of a region
 def AppendRegionDefinesToPokedex(currentRegion, firstDexSpecies, lastDexSpecies):
@@ -138,7 +138,7 @@ cries_file.close()
 cry_tables_file = open(f"{file_path}/sound/cry_tables.inc", 'w')
 cry_tables_file.write(f"@ {donotmodifytext}\n\n\t.align 2\ngCryTable::\n")
 cry_tables_file.writelines(cry_table_normal)
-cry_tables_file.write("\n\t.align 2\ngCryTable2::\n")
+cry_tables_file.write("\n\t.align 2\ngCryTableReverse::\n")
 cry_tables_file.writelines(cry_table_reverse)
 cry_tables_file.close()
 # Write to cries_sound_data.inc
@@ -156,7 +156,7 @@ icons = []
 footprints = []
 
 # Append blank footprint image
-footprints.append(f"static const u8 sMonFootprint_None[] = INCBIN_U8({chr(34)}graphics/pokedex/blank_footprint.1bpp{chr(34)});\n")
+footprints.append(f'static const u8 sMonFootprint_None[] = INCBIN_U8("graphics/pokedex/blank_footprint.1bpp");\n')
 
 dir = f"{file_path}/graphics/pokemon"
 
@@ -167,27 +167,27 @@ for path in glob.glob(dir + "/**", recursive=True):
 
     # Append front pic
     if os.path.exists(f"{path}\\front.png"):
-        frontpics.append(f"static const u32 sMonFrontPic_{formatedExtension}[] = INCBIN_U32({chr(34)}graphics/pokemon/{extension}/front.4bpp.lz{chr(34)});\n")
+        frontpics.append(f'static const u32 sMonFrontPic_{formatedExtension}[] = INCBIN_U32("graphics/pokemon/{extension}/front.4bpp.lz");\n')
     
     # Append palette
     if os.path.exists(f"{path}\\normal.pal"):
-        palettes.append(f"static const u32 sMonPalette_{formatedExtension}[] = INCBIN_U32({chr(34)}graphics/pokemon/{extension}/normal.gbapal.lz{chr(34)});\n")
+        palettes.append(f'static const u32 sMonPalette_{formatedExtension}[] = INCBIN_U32("graphics/pokemon/{extension}/normal.gbapal.lz");\n')
 
     # Append back pic
     if os.path.exists(f"{path}\\back.png"):
-        backpics.append(f"static const u32 sMonBackPic_{formatedExtension}[] = INCBIN_U32({chr(34)}graphics/pokemon/{extension}/back.4bpp.lz{chr(34)});\n")
+        backpics.append(f'static const u32 sMonBackPic_{formatedExtension}[] = INCBIN_U32("graphics/pokemon/{extension}/back.4bpp.lz");\n')
     
     # Append shiny palette
     if os.path.exists(f"{path}\\shiny.pal"):
-        shiny_palettes.append(f"static const u32 sMonShinyPalette_{formatedExtension}[] = INCBIN_U32({chr(34)}graphics/pokemon/{extension}/shiny.gbapal.lz{chr(34)});\n")
+        shiny_palettes.append(f'static const u32 sMonShinyPalette_{formatedExtension}[] = INCBIN_U32("graphics/pokemon/{extension}/shiny.gbapal.lz");\n')
 
     # Append icon
     if os.path.exists(f"{path}\\icon.png"):
-        icons.append(f"static const u8 sMonIcon_{formatedExtension}[] = INCBIN_U8({chr(34)}graphics/pokemon/{extension}/icon.4bpp{chr(34)});\n")
+        icons.append(f'static const u8 sMonIcon_{formatedExtension}[] = INCBIN_U8("graphics/pokemon/{extension}/icon.4bpp");\n')
 
     # Append footprint
     if os.path.exists(f"{path}\\footprint.png"):
-        footprints.append(f"static const u8 sMonFootprint_{formatedExtension}[] = INCBIN_U8({chr(34)}graphics/pokemon/{extension}/footprint.1bpp{chr(34)});\n")
+        footprints.append(f'static const u8 sMonFootprint_{formatedExtension}[] = INCBIN_U8("graphics/pokemon/{extension}/footprint.1bpp");\n')
 
 # Write to pics_and_icons.h
 output = open(f"{file_path}/src/data/pokemon/graphics/pics_and_icons.h", 'w')

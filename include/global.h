@@ -101,6 +101,94 @@
 #define DEFAULT_3(_default, ...) DEFAULT(_default __VA_OPT__(, THIRD(__VA_ARGS__)))
 #define DEFAULT_4(_default, ...) DEFAULT(_default __VA_OPT__(, FOURTH(__VA_ARGS__)))
 
+/* Recursive macros.
+ * Based on https://www.scs.stanford.edu/~dm/blog/va-opt.html
+ *
+ * Macros prefixed with R_ are recursive, to correctly expand them the
+ * top-level macro which references them should use 'RECURSIVELY' around
+ * them. 'RECURSIVELY' cannot be nested, hence the top-level macro must
+ * use it so that a recursive macro is able to reference another
+ * recursive macro. */
+
+#define RECURSIVELY(...) RECURSIVELY_4(RECURSIVELY_4(RECURSIVELY_4(RECURSIVELY_4(__VA_ARGS__))))
+#define RECURSIVELY_4(...) RECURSIVELY_3(RECURSIVELY_3(RECURSIVELY_3(RECURSIVELY_3(__VA_ARGS__))))
+#define RECURSIVELY_3(...) RECURSIVELY_2(RECURSIVELY_2(RECURSIVELY_2(RECURSIVELY_2(__VA_ARGS__))))
+#define RECURSIVELY_2(...) RECURSIVELY_1(RECURSIVELY_1(RECURSIVELY_1(RECURSIVELY_1(__VA_ARGS__))))
+#define RECURSIVELY_1(...) __VA_ARGS__
+
+/* You'll never guess what this one does */
+#define APPEND_SEMICOLON(a) a;
+
+/* Concatenates the xth VA_ARG at the end of the string */
+#define CONCAT_HELPER(x, y) x ## y
+#define CONCAT_(x, y) CONCAT_HELPER(x, y)
+#define CONCAT(prefix, name, ...) CONCAT_(CONCAT_(prefix, name), __VA_OPT__(__VA_ARGS__))
+
+/* Useful for deferring expansion until the second scan. See
+ * https://www.scs.stanford.edu/~dm/blog/va-opt.html for more info. */
+#define PARENS ()
+
+/* Expands to 'macro(a)' for each 'a' in '...' */
+#define R_FOR_EACH(macro, ...) __VA_OPT__(R_FOR_EACH_(macro, __VA_ARGS__))
+#define R_FOR_EACH_(macro, a, ...) macro(a) __VA_OPT__(R_FOR_EACH_P PARENS (macro, __VA_ARGS__))
+#define R_FOR_EACH_P() R_FOR_EACH_
+
+/* (Credit to MGriffin) A rather monstrous way of finding the set bit in a word.
+Invalid input causes a compiler error. Sample: https://cexplore.karathan.at/z/x1hm7B */
+#define BIT_INDEX(n) \
+    (n) == (1 << 0) ? 0 : \
+    (n) == (1 << 1) ? 1 : \
+    (n) == (1 << 2) ? 2 : \
+    (n) == (1 << 3) ? 3 : \
+    (n) == (1 << 4) ? 4 : \
+    (n) == (1 << 5) ? 5 : \
+    (n) == (1 << 6) ? 6 : \
+    (n) == (1 << 7) ? 7 : \
+    (n) == (1 << 8) ? 8 : \
+    (n) == (1 << 9) ? 9 : \
+    (n) == (1 << 10) ? 10 : \
+    (n) == (1 << 11) ? 11 : \
+    (n) == (1 << 12) ? 12 : \
+    (n) == (1 << 13) ? 13 : \
+    (n) == (1 << 14) ? 14 : \
+    (n) == (1 << 15) ? 15 : \
+    (n) == (1 << 16) ? 16 : \
+    (n) == (1 << 17) ? 17 : \
+    (n) == (1 << 18) ? 18 : \
+    (n) == (1 << 19) ? 19 : \
+    (n) == (1 << 20) ? 20 : \
+    (n) == (1 << 21) ? 21 : \
+    (n) == (1 << 22) ? 22 : \
+    (n) == (1 << 23) ? 23 : \
+    (n) == (1 << 24) ? 24 : \
+    (n) == (1 << 25) ? 25 : \
+    (n) == (1 << 26) ? 26 : \
+    (n) == (1 << 27) ? 27 : \
+    (n) == (1 << 28) ? 28 : \
+    (n) == (1 << 29) ? 29 : \
+    (n) == (1 << 30) ? 30 : \
+    (n) == (1 << 31) ? 31 : \
+    *(u32 *)NULL
+
+#define COMPRESS_BITS_0 0, 1
+#define COMPRESS_BITS_1 1, 1
+#define COMPRESS_BITS_2 2, 1
+#define COMPRESS_BITS_3 3, 1
+#define COMPRESS_BITS_4 4, 1
+#define COMPRESS_BITS_5 5, 1
+#define COMPRESS_BITS_6 6, 1
+#define COMPRESS_BITS_7 7, 1
+
+/* Will try and compress a set bit (or up to three sequential bits) into a single byte
+Input must be of the form (upper << lower) where upper can be up to 3, lower up to 31 */
+#define COMPRESS_BITS(_val) COMPRESS_BITS_STEP_2 _val
+#define COMPRESS_BITS_STEP_2(_unpacked) COMPRESS_BITS_STEP_3(COMPRESS_BITS_## _unpacked)
+#define COMPRESS_BITS_STEP_3(...) COMPRESS_BITS_STEP_4(__VA_ARGS__)
+#define COMPRESS_BITS_STEP_4(upper, lower) (((upper % 8) << 5) + (BIT_INDEX(lower)))
+
+/* Will read a compressed bit stored by COMPRESS_BIT into a single byte */
+#define UNCOMPRESS_BITS(compressed) ((compressed >> 5) << (compressed & 0x1F))
+
 // This macro is required to prevent the compiler from optimizing
 // a dpad up/down check in sub_812CAD8 (fame_checker.c).
 #define TEST_BUTTON(field, button) ({(field) & (button);})
@@ -242,13 +330,15 @@ struct SaveBlock2
 	/*0x010*/ u32 optionsDexnavSearchOnR:1; // swap dexnav search and auto run button functions
 	/*0x010*/ u32 expShare:1; // whether exp share is on
 	/*0x010*/ u32 autoRun:1; // whether auto run is on
-	/*0x010*/ u32 unused:17;
+	/*0x010*/ u32 waitingTaurosChargeStamina:1;
+	/*0x010*/ u32 unused:16;
 	/*0x014*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
 	/*0x018*/ u32 encryptionKey;
 	/*0x01C*/ u16 mapView[0x100];
 	/*0x21C*/ u8 playTimeMinutes;
 	/*0x21D*/ u8 playTimeSeconds;
 	/*0x21E*/ u8 playTimeVBlanks;
+	/*0x21F*/ u8 taurosChargeStamina;
 	          // from here to down are the structs and data that can be vary in size
 	          u8 itemFlags[ROUND_BITS_TO_BYTES(ITEMS_COUNT)];
               struct Pokedex pokedex;
@@ -281,7 +371,7 @@ struct Roamer
     /*0x08*/ u16 species;
     /*0x0A*/ u16 hp;
     /*0x0C*/ u8 level;
-    /*0x0D*/ u8 status;
+    /*0x0D*/ struct Status1 status;
     /*0x0E*/ bool8 active;
 };
 

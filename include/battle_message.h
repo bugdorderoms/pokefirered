@@ -55,6 +55,7 @@ struct BattleMsgData
 #define B_TXT_ITEM_USE_SPECIES_NAME       0x21
 #define B_TXT_ATK_TEAM_PREFIX             0x22
 #define B_TXT_DEF_TEAM_PREFIX             0x23
+#define B_TXT_CURRENT_TRAINER_NAME        0x24
 
 // for B_TXT_BUFF1, B_TXT_BUFF2 and B_TXT_BUFF3
 

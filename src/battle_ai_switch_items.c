@@ -1,18 +1,241 @@
 #include "global.h"
 #include "battle.h"
-#include "battle_anim.h"
-#include "battle_util.h"
+#include "battle_ai.h"
+#include "battle_ai_util.h"
 #include "battle_controllers.h"
-#include "random.h"
-#include "party_menu.h"
+#include "calculate_base_damage.h"
 #include "item.h"
 #include "util.h"
-#include "constants/abilities.h"
-#include "constants/item_effects.h"
-#include "constants/items.h"
-#include "constants/moves.h"
-#include "constants/pokemon.h"
 
+////////////
+// SWITCH //
+////////////
+
+static bool8 ShouldSwitchIfNoOneMoveIsEffective(u8 battlerId)
+{
+	u8 i, j, k, unusableMoves = 0;
+	u8 battlerIn2, battlerIn1 = battlerId;
+	
+	if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
+		battlerIn2 = BATTLE_PARTNER(battlerId);
+	else
+		battlerIn2 = battlerId;
+	
+	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+	{
+		if (IsBattlerAlive(i) && GetBattlerSide(i) != GetBattlerSide(battlerId))
+		{
+			for (j = 0; j < MAX_MON_MOVES; j++)
+			{
+				if (AI_THINKING->moves[battlerId][j] && AI_THINKING->effectiveness[battlerId][i][j] != TYPE_MUL_NO_EFFECT)
+					return FALSE;
+				else
+					++unusableMoves;
+			}
+			
+			if (unusableMoves == MAX_MON_MOVES)
+			{
+				for (j = 0; j < MAX_MON_MOVES; j++)
+				{
+					for (k = 0; k < gEnemyPartyCount; k++)
+					{
+						if (k != gBattlerPartyIndexes[battlerIn1] && k != gBattlerPartyIndexes[battlerIn2] && MonCanBattle(&gEnemyParty[k])
+						&& AI_TypeCalc(&gEnemyParty[k], AI_THINKING->moves[battlerId][j], i) != TYPE_MUL_NO_EFFECT)
+						{
+							gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = k;
+							return TRUE;
+						}
+					}
+				}
+			}
+		}
+	}
+	return FALSE;
+}
+
+bool8 BattleAI_ShouldSwitch(u8 battlerId)
+{
+	if (CanBattlerEscape(battlerId, TRUE) && !IsAbilityPreventingSwitchOut(battlerId) && !(gStatuses3[battlerId] & STATUS3_COMMANDING) && !IsBattlerBeingCommanded(battlerId))
+	{
+		u8 i, availableToSwitch, battlerIn2, battlerIn1 = battlerId;
+		
+		if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
+			battlerIn2 = BATTLE_PARTNER(battlerId);
+		else
+			battlerIn2 = battlerId;
+		
+		for (i = availableToSwitch = 0; i < gEnemyPartyCount; i++)
+		{
+			if (MonCanBattle(&gEnemyParty[i]) && i != gBattlerPartyIndexes[battlerIn1] && i != gBattlerPartyIndexes[battlerIn2]
+			&& i != gBattleStruct->battlers[battlerIn1].monToSwitchIntoId && i != gBattleStruct->battlers[battlerIn2].monToSwitchIntoId)
+				++availableToSwitch;
+		}
+		
+		if (availableToSwitch)
+		{
+			if ((gStatuses3[battlerId] & STATUS3_PERISH_SONG) && gDisableStructs[battlerId].perishSongTimer == 0)
+			{
+				gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = PARTY_SIZE;
+				return TRUE;
+			}
+			else if (ShouldSwitchIfNoOneMoveIsEffective(battlerId))
+				return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+bool8 BattleAI_SwitchIfBadMoves(u8 battlerId, bool8 doubles)
+{
+	return FALSE;
+}
+
+u8 GetMostSuitableMonToSwitchInto(u8 battlerId)
+{
+	if (gBattleStruct->battlers[battlerId].monToSwitchIntoId != PARTY_SIZE)
+		return gBattleStruct->battlers[battlerId].monToSwitchIntoId;
+	else
+	{
+		u8 i, battlerIn2, battlerIn1 = battlerId;
+		
+		if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
+			battlerIn2 = BATTLE_PARTNER(battlerId);
+		else
+			battlerIn2 = battlerId;
+		
+		/*
+		TODO: add logic
+		
+		for (i = 0; i < gEnemyPartyCount; i++)
+		{
+			if (MonCanBattle(&gEnemyParty[i]) && i != gBattlerPartyIndexes[battlerIn1] && i != gBattlerPartyIndexes[battlerIn2])
+			{
+				if ()
+			}
+		}*/
+		return 1;
+	}
+}
+
+///////////
+// ITEMS //
+///////////
+
+#define MAX_ITEM_PRIORITY 10
+
+// How higher more priority takes over other item effects
+bool8 BattleAI_ShouldUseItem(u8 battlerId)
+{
+	u8 i, j, partyId, itemPriority, chosenItemIndex, numUsableItems, itemPriorities[MAX_TRAINER_ITEMS];
+	u16 holdEffectParam, item, usableItems[MAX_TRAINER_ITEMS];
+	
+	// Item effects are'nt blocked
+	if (!IsItemUseBlockedByBattleEffect(battlerId))
+	{
+		gBattleStruct->battlers[battlerId].itemPartyIndex = PARTY_SIZE;
+		
+		itemPriority = 0;
+		numUsableItems = 0;
+		
+		for (i = 0; i < MAX_TRAINER_ITEMS; i++, itemPriority = 0)
+		{
+			usableItems[numUsableItems] = item = gTrainers[gTrainerBattleOpponent_A].items[i];
+			
+			// Ignore items that was already used or that dont exist
+			if (item && item < ITEMS_COUNT && !(AI_DATA->usedItemsIndices & gBitTable[i]))
+			{
+				holdEffectParam = ItemId_GetHoldEffectParam(item);
+				
+				switch (ItemId_GetBattleUsage(item))
+				{
+					case EFFECT_ITEM_REVIVE:
+						for (partyId = 0; partyId < gEnemyPartyCount; partyId++)
+						{
+							// Loop through fainted mons
+							if (partyId != gBattlerPartyIndexes[battlerId] && !GetMonData(&gEnemyParty[partyId], MON_DATA_HP)
+								/*&& (IsMonGoodChoiceToSwitchInto(&gEnemyParty[partyId]) || GetNoOfHitsToKOBattlerHigherDamage(defender, attacker) < 3)*/)
+								break;
+						}
+						
+						if (partyId != gEnemyPartyCount)
+						{
+							gBattleStruct->battlers[battlerId].itemPartyIndex = partyId;
+							itemPriority = MAX_ITEM_PRIORITY / holdEffectParam; // Increase based on how much HP the mon will be revived with
+						}
+						break;
+						// Need a party member selector
+					case EFFECT_ITEM_RESTORE_HP:
+					case EFFECT_ITEM_CURE_PRIMARY_STATUS:
+						break;
+					case EFFECT_ITEM_INCREASE_STAT:
+						if (gBattleMons[battlerId].hp >= gBattleMons[battlerId].maxHP / 2 && CompareStat(battlerId, holdEffectParam, MAX_STAT_STAGES, CMP_LESS_THAN))
+							itemPriority = GetStatUpScore(battlerId, MAX_BATTLERS_COUNT, holdEffectParam, GetItemStatChangeStages(item), FALSE); // Increase based on the number of stages
+						break;
+					case EFFECT_ITEM_INCREASE_ALL_STATS:
+						if (gBattleMons[battlerId].hp >= gBattleMons[battlerId].maxHP / 2)
+						{
+							u8 count = 0;
+							
+							for (j = STAT_ATK; j < NUM_STATS; j++)
+							{
+								// Increases how much as has valid stats to increase
+								if (CompareStat(battlerId, j, MAX_STAT_STAGES, CMP_LESS_THAN))
+								{
+									itemPriority += GetStatUpScore(battlerId, MAX_BATTLERS_COUNT, j, +1, FALSE);
+									++count;
+								}
+							}
+							itemPriority /= (count / 2); // Get average score
+						}
+						break;
+					/*case EFFECT_ITEM_SET_FOCUS_ENERGY:
+						if (ShouldAIIncreaseCriticalChance(attacker, defender))
+							itemPriority = 2; // Since it increases two stages, consider 2x a stat up
+						break;*/
+					// The other items cant be used
+					default:
+						break;
+				}
+				
+				if (itemPriority)
+				{
+					if (itemPriority > MAX_ITEM_PRIORITY)
+						itemPriority = MAX_ITEM_PRIORITY;
+					
+					itemPriorities[numUsableItems] = itemPriority;
+					++numUsableItems;
+				}
+			}
+		}
+		
+		// Choose item to use
+		if (numUsableItems)
+		{
+			chosenItemIndex = 0;
+			
+			for (i = 0; i < numUsableItems; i++)
+			{
+				if (itemPriorities[i] > itemPriorities[chosenItemIndex])
+					chosenItemIndex = i;
+			}
+			
+			AI_DATA->usedItemsIndices |= gBitTable[chosenItemIndex];
+			
+			gBattleStruct->battlers[battlerId].chosenItem = usableItems[chosenItemIndex];
+			
+			// Set selected party ID to current battler if none chosen.
+			if (gBattleStruct->battlers[battlerId].itemPartyIndex == PARTY_SIZE)
+				gBattleStruct->battlers[battlerId].itemPartyIndex = gBattlerPartyIndexes[battlerId];
+			
+			BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_USE_ITEM, 0);
+			
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+/*
 static bool8 HasSuperEffectiveMoveAgainstOpponents(u8 battlerId, bool8 noRng);
 static bool8 FindMonWithFlagsAndSuperEffective(u8 battlerId, u8 flags, u8 moduloPercent);
 static bool8 ShouldUseItem(u8 battlerId);
@@ -495,45 +718,4 @@ u8 GetMostSuitableMonToSwitchInto(u8 battlerId)
         }
     }
     return bestMonId;
-}
-
-static bool8 ShouldUseItem(u8 battlerId)
-{
-    s32 i;
-    u8 validMons = 0;
-    bool8 shouldUse = FALSE;
-
-    for (i = 0; i < PARTY_SIZE; ++i)
-        if (MonCanBattle(&gEnemyParty[i]))
-            ++validMons;
-    for (i = 0; i < MAX_TRAINER_ITEMS; ++i)
-    {
-        u16 item;
-        const u8 *itemEffects;
-        u8 paramOffset;
-        u8 battlerSide;
-
-        item = gBattleResources->battleHistory->trainerItems[i];
-        if (item == ITEM_NONE)
-            continue;
-		itemEffects = GetItemEffect(item);
-        if (itemEffects == NULL)
-			continue;
-        switch (ItemId_GetBattleUsage(item))
-        {
-			default: // TODO: add ai logic
-			    shouldUse = FALSE;
-        }
-        if (shouldUse)
-        {
-			// Set selected party ID to current battler if none chosen.
-			if (gBattleStruct->itemPartyIndex[battlerId] == PARTY_SIZE)
-				gBattleStruct->itemPartyIndex[battlerId] = gBattlerPartyIndexes[battlerId];
-            BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_USE_ITEM, 0);
-            gBattleStruct->chosenItem[battlerId] = item;
-            gBattleResources->battleHistory->trainerItems[i] = 0;
-            return shouldUse;
-        }
-    }
-    return FALSE;
-}
+}*/

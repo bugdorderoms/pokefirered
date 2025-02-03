@@ -8,6 +8,7 @@
 #include "party_menu.h"
 #include "pokedex.h"
 #include "script_pokemon_util.h"
+#include "constants/battle.h"
 #include "constants/items.h"
 #include "constants/pokemon.h"
 #include "constants/daycare.h"
@@ -15,33 +16,24 @@
 
 void HealPlayerParty(void)
 {
-    u8 i, arg[4];
+    u8 i, status = STATUS1_NONE;
 
     // restore HP.
     for(i = 0; i < gPlayerPartyCount; i++)
     {
         u16 maxHP = GetMonData(&gPlayerParty[i], MON_DATA_MAX_HP);
-        arg[0] = maxHP;
-        arg[1] = maxHP >> 8;
-        SetMonData(&gPlayerParty[i], MON_DATA_HP, arg);
 		
-		// restore PP.
+        SetMonData(&gPlayerParty[i], MON_DATA_HP, &maxHP);
 		MonRestorePP(&gPlayerParty[i]);
-		
-        // since status is u32, the four 0 assignments here are probably for safety to prevent undefined data from reaching SetMonData.
-        arg[0] = 0;
-        arg[1] = 0;
-        arg[2] = 0;
-        arg[3] = 0;
-        SetMonData(&gPlayerParty[i], MON_DATA_STATUS, arg);
+        SetMonData(&gPlayerParty[i], MON_DATA_STATUS_ID, &status);
     }
 }
 
-u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shinyType, bool8 hiddenAbility, u8 nature, u8 gender, u16 moves[])
+u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shinyType, bool8 hiddenAbility, u8 nature, u8 gender, u16 *moves)
 {
+	u8 i;
     u16 nationalDexNum;
     int sentToPc;
-    u8 i, heldItem[2];
     struct Pokemon *mon = AllocZeroed(sizeof(struct Pokemon));
 	struct PokemonGenerator generator =
 	{
@@ -52,22 +44,19 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shin
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.shinyType = shinyType,
+		.shinyRollType = SHINY_ROLL_NORMAL,
 		.forcedNature = nature,
 		.formChanges = NULL,
-		.moves = {moves[0], moves[1], moves[2], moves[3]},
+		.nPerfectIvs = 0,
 	};
+	memcpy(generator.moves, moves, sizeof(generator.moves));
+	
     CreateMon(mon, generator);
     
-    heldItem[0] = item;
-    heldItem[1] = item >> 8;
-    SetMonData(mon, MON_DATA_HELD_ITEM, heldItem);
+    SetMonData(mon, MON_DATA_HELD_ITEM, &item);
     
 	if (pokeBall)
-	{
-		heldItem[0] = pokeBall;
-		heldItem[1] = pokeBall >> 8;
-		SetMonData(mon, MON_DATA_POKEBALL, heldItem);
-	}
+		SetMonData(mon, MON_DATA_POKEBALL, &pokeBall);
     
 	if (hiddenAbility)
 		SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &hiddenAbility);
@@ -90,12 +79,12 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shin
         GetSetPokedexFlag(nationalDexNum, FLAG_SET_CAUGHT);
         break;
     }
-
     Free(mon);
+	
     return sentToPc;
 }
 
-u8 ScriptGiveEgg(u16 species, u8 *ivs, u8 shinyType, bool8 hiddenAbility, u8 nature, u16 moves[])
+u8 ScriptGiveEgg(u16 species, u8 *ivs, u8 shinyType, bool8 hiddenAbility, u8 nature, u16 *moves)
 {
 	u8 i;
 	bool8 sentToPc;
@@ -106,13 +95,16 @@ u8 ScriptGiveEgg(u16 species, u8 *ivs, u8 shinyType, bool8 hiddenAbility, u8 nat
 		.level = EGG_HATCH_LEVEL,
 		.otIdType = OT_ID_PLAYER_ID,
 		.shinyType = shinyType,
+		.shinyRollType = SHINY_ROLL_NORMAL,
 		.forcedGender = MON_GENDERLESS,
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.forcedNature = nature,
 		.formChanges = NULL,
-		.moves = {moves[0], moves[1], moves[2], moves[3]},
+		.nPerfectIvs = 0,
 	};
+	memcpy(generator.moves, moves, sizeof(generator.moves));
+	
     CreateEgg(mon, generator);
 	
 	if (hiddenAbility)
@@ -137,7 +129,6 @@ void HasEnoughMonsForDoubleBattle(void)
 
 void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 level2, u16 item2)
 {
-    u8 heldItem[2];
 	struct PokemonGenerator generator =
 	{
 		.species = species,
@@ -147,16 +138,17 @@ void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 lev
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.shinyType = GENERATE_SHINY_NORMAL,
+		.shinyRollType = SHINY_ROLL_NORMAL,
 		.forcedNature = NUM_NATURES,
 		.formChanges = NULL,
-		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
+		.moves = {0},
+		.nPerfectIvs = 0,
 	};
     ZeroEnemyPartyMons();
 	
     CreateMon(&gEnemyParty[0], generator);
-	heldItem[0] = item;
-	heldItem[1] = item >> 8;
-	SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, heldItem);
+
+	SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &item);
 	
 	if (species2)
 	{
@@ -164,9 +156,7 @@ void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 lev
 		generator.level = level2;
 		
 		CreateMon(&gEnemyParty[1], generator);
-		heldItem[0] = item2;
-		heldItem[1] = item2 >> 8;
-		SetMonData(&gEnemyParty[1], MON_DATA_HELD_ITEM, heldItem);
+		SetMonData(&gEnemyParty[1], MON_DATA_HELD_ITEM, &item2);
 	}
 }
 
@@ -203,8 +193,8 @@ void ChooseHalfPartyForBattle(void)
 
 void ReducePlayerPartyToThree(void)
 {
+	u8 i;
     struct Pokemon * party = AllocZeroed((PARTY_SIZE / 2) * sizeof(struct Pokemon));
-    int i;
 
     // copy the selected pokemon according to the order.
     for (i = 0; i < (PARTY_SIZE / 2); i++)

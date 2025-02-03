@@ -63,7 +63,6 @@
 	.include "src/mail.o"
 	.include "src/menu_helpers.o"
 	.include "src/region_map.o"
-	.include "src/battle_ai_script_commands.o"
 	.include "src/field_specials.o"
 	.include "src/battle_records.o"
 	.include "src/evolution_scene.o"
@@ -127,3 +126,4 @@
 	.include "src/battle_anim_special.o"
 	.include "src/form_change_anim.o"
 	.include "src/rtc.o"
+	.include "src/battle_ai_main.o"

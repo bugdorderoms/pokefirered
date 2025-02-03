@@ -28,7 +28,7 @@
   "object_events": [
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_1",
+      "graphics_id": "OBJ_EVENT_GFX_WOMAN_1",
       "x": 3,
       "y": 10,
       "elevation": 3,
@@ -42,7 +42,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_FAT_MAN",
+      "graphics_id": "OBJ_EVENT_GFX_FAT_MAN",
       "x": 13,
       "y": 17,
       "elevation": 3,
@@ -56,7 +56,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_PROF_OAK",
+      "graphics_id": "OBJ_EVENT_GFX_PROF_OAK",
       "x": 10,
       "y": 8,
       "elevation": 3,

@@ -162,7 +162,7 @@ SeafoamIslands_B4F_EventScript_Articuno:: @ 81631AC
 	faceplayer
 	setwildbattle SPECIES_ARTICUNO, 50, ITEM_NONE
 	waitse
-	playmoncry SPECIES_ARTICUNO, 2
+	playmoncry SPECIES_ARTICUNO, CRY_MODE_ENCOUNTER
 	message Text_Gyaoo
 	waitmessage
 	waitmoncry

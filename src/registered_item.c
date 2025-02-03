@@ -319,8 +319,7 @@ static void DestroyItemIconSprite(struct Sprite *cursorSprite, u8 direction)
 	
 	if (spriteId != MAX_SPRITES)
 	{
-		FreeSpriteOamMatrix(&gSprites[spriteId]);
-	    DestroySprite(&gSprites[spriteId]);
+		DestroySpriteAndFreeMatrix(&gSprites[spriteId]);
 	    FreeSpriteTilesByTag(ITEMICON_INITIAL_TAG + direction);
 	    FreeSpritePaletteByTag(ITEMICON_INITIAL_TAG + direction);
 	}
@@ -328,8 +327,7 @@ static void DestroyItemIconSprite(struct Sprite *cursorSprite, u8 direction)
 
 static void DestroyCursorSprite(struct Sprite *sprite)
 {
-	FreeSpriteOamMatrix(sprite);
-	DestroySprite(sprite);
+	DestroySpriteAndFreeMatrix(sprite);
 	FreeSpriteTilesByTag(CURSOR_TAG);
 	FreeSpritePaletteByTag(BOX_TAG);
 }
@@ -505,8 +503,7 @@ static void SpriteCB_HandleItemSelection(struct Sprite *sprite)
 		{
 			DestroyItemIconSprite(sprite, i);
 			
-			FreeSpriteOamMatrix(&gSprites[sprite->sBoxSpriteIds(i)]);
-			DestroySprite(&gSprites[sprite->sBoxSpriteIds(i)]);
+			DestroySpriteAndFreeMatrix(&gSprites[sprite->sBoxSpriteIds(i)]);
 			FreeSpriteTilesByTag(BOX_TAG);
 			FreeSpritePaletteByTag(BOX_TAG);
 		}

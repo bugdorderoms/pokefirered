@@ -3,8 +3,6 @@
 
 #include "global.h"
 
-#define TRAINER_ENCOUNTER_MUSIC(trainer)((gTrainers[trainer].encounterMusic_gender & 0x7F))
-
 struct MonCoords
 {
     // This would use a bitfield, but some function
@@ -13,22 +11,26 @@ struct MonCoords
     u8 y_offset;
 };
 
+struct TrainerPic
+{
+	const struct CompressedSpriteSheet pic;
+	const struct CompressedSpritePalette palette;
+	struct MonCoords coords;
+	const union AnimCmd *const *anims;
+};
+
 #define MON_COORDS_SIZE(width, height)(DIV_ROUND_UP(width, 8) << 4 | DIV_ROUND_UP(height, 8))
 #define GET_MON_COORDS_WIDTH(size)((size >> 4) * 8)
 #define GET_MON_COORDS_HEIGHT(size)((size & 0xF) * 8)
 
-extern const u8 gTrainerClassNames[][13];
+extern const u16 gTrainerEncounterMusicIdsTable[];
+extern const struct TrainerPic gTrainerFrontPicTable[];
+extern const struct TrainerPic gTrainerBackPicTable[];
 
-extern const union AnimCmd *const *const gTrainerFrontAnimsPtrTable[];
-extern const struct MonCoords gTrainerFrontPicCoords[];
-extern const struct CompressedSpriteSheet gTrainerFrontPicTable[];
-extern const struct CompressedSpritePalette gTrainerFrontPicPaletteTable[];
-extern const union AnimCmd *const *const gTrainerBackAnimsPtrTable[];
-extern const struct MonCoords gTrainerBackPicCoords[];
-extern const struct CompressedSpritePalette gTrainerBackPicPaletteTable[];
-
-extern const struct CompressedSpriteSheet gSpriteSheet_EnemyShadow;
+extern const struct CompressedSpriteSheet gSpriteSheet_EnemyShadowsSized;
 extern const struct SpriteTemplate gSpriteTemplate_EnemyShadow;
+
+extern const struct SpritePalette gSpritePalettes_HealthBoxHealthBar[2];
 
 extern const union AnimCmd *const gSpriteAnimTable_82349BC[];
 extern const union AffineAnimCmd *const gSpriteAffineAnimTable_BattlerPlayer[];

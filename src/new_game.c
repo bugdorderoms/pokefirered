@@ -162,4 +162,6 @@ void NewGameInitData(void)
 	ResetItemFlags();
     ClearAllFusedMonSpecies();
 	ResetMysteryGiftFlags();
+	gSaveBlock2Ptr->waitingTaurosChargeStamina = FALSE;
+	gSaveBlock2Ptr->taurosChargeStamina = TAUROS_CHARGE_STAMINA;
 }

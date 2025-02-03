@@ -3,7 +3,6 @@
 
 #include "global.h"
 #include "sprite.h"
-#include "battle_main.h"
 #include "constants/form_change.h"
 #include "constants/pokemon.h"
 #include "pokemon_storage_system.h"
@@ -60,10 +59,16 @@ struct BoxPokemon
 			 u16 unused:2;
 };
 
+struct Status1
+{
+	u8 id:4;
+	u8 counter:4;
+};
+
 struct Pokemon
 {
     struct BoxPokemon box;
-    u32 status;
+    struct Status1 status;
     u8 level;
     u8 mail;
     u16 hp;
@@ -141,12 +146,11 @@ struct BattlePokemon
     /*0x3D*/ u8 ppBonuses;
     /*0x3E*/ u8 otName[8];
 	/*0x46*/ u8 friendship;
-	/*0x47*/ u8 unknown;
+	/*0x47*/ struct Status1 status1;
     /*0x48*/ u32 personality;
-    /*0x4C*/ u32 status1;
-    /*0x50*/ u32 status2;
-    /*0x54*/ u32 otId;
-	/*0x58*/ u32 experience;
+    /*0x4C*/ u32 status2;
+    /*0x50*/ u32 otId;
+	/*0x54*/ u32 experience;
 };
 
 struct SpeciesInfo
@@ -197,15 +201,22 @@ struct SpeciesInfo
 			// All Pokémon pics are 64x64, but this data table defines where in this 64x64 frame the sprite's non-transparent pixels actually are.
 			u16 frontPicYOffset:5; // The number of pixels between the drawn pixel area and the bottom edge.
 			u16 backPicYOffset:5; // The number of pixels between the drawn pixel area and the bottom edge.
-			u16 elevation:4; // This determines how much higher above the usual position the enemy Pokémon is during battle. Species that float or fly have nonzero values.
- /* 0x5E */ u8 frontPicSize; // The dimensions of this drawn pixel area.
- /* 0x5F */ u8 backPicSize; // The dimensions of this drawn pixel area.
+			u16 suppressEnemyShadow:1; // If true, it won't create a shadow on the enemy front sprite. Also, it is unaffected by Telekinesis.
+			u16 shadowSize:3;
+ /* 0x5E */ s8 shadowXOffset; // The relative x pixel offset of the shadow sprite.
+ /* 0x5F */ s8 frontPicElevation; // The elevation of the pokemon front pic.
+ /* 0x60 */ u8 frontPicSize; // The dimensions of this drawn pixel area.
+ /* 0x61 */ u8 backPicSize; // The dimensions of this drawn pixel area.
+            // Sos battles calls
+ /* 0x62 */ u16 sosCallAllies[3]; // Possible allies a Pokémon can call for help in a SOS Battle. 3 in total.
+ /* 0x68 */ u8 sosCallRate:4; // The max value for a Pokémon call rate is 15%.
+			u8 unused:4;
             // Evolutions and forms
- /* 0x60 */ const u8 *evolutions;
- /* 0x64 */ const struct FormChange *formChangeTable;
+ /* 0x6C */ const u8 *evolutions;
+ /* 0x70 */ const struct FormChange *formChangeTable;
 			// Learnable moves
- /* 0x68 */ const u16 *tmLearnsets;
- /* 0x6C */ const u16 *tutorLearnsets;
+ /* 0x74 */ const u16 *tmLearnsets;
+ /* 0x78 */ const u16 *tutorLearnsets;
 };
 
 struct MoveFlags
@@ -216,11 +227,11 @@ struct MoveFlags
 	/*0x00*/ u8 snatchAffected:1; // A move with this flag can be stealed by Snatch.
 	/*0x00*/ u8 thawUser:1; // A move with this flag will thaw the user when used.
 	/*0x00*/ u8 kingsRockAffected:1; // A move with this flag can be affected by Kings Rock.
-	/*0x00*/ u8 highCritChance:1; // A move with this flag have a high chance to be critical.
+	/*0x00*/ u8 gravityBanned:1; // A move with this flag can't be selected while gravity is in effect.
 	/*0x00*/ u8 forbiddenProtect:1; // A move with this flag will ignore the target's protect effects.
 	// end of byte
 	/*0x01*/ u8 punchMove:1; // A move with this flag can be affected by Iron Fist.
-	/*0x01*/ u8 twoTurnsMove:1; // A move with this flag will be considered a Two turns move.
+	/*0x01*/ u8 forbiddenMeFirst:1; // A move with this flag can't be executed by Me First.
 	/*0x01*/ u8 bitingMove:1; // A move with this flag can be affected by Strong Jaw.
 	/*0x01*/ u8 pulseMove:1; // A move with this flag can be affected by Mega Launcher.
 	/*0x01*/ u8 targetStatStagesIgnored:1; // A move with this flag will ignore the target Defense and Evasion stat stages.
@@ -249,20 +260,29 @@ struct MoveFlags
 	/*0x04*/ u8 forbiddenSleepTalk:1; // A move with this flag can't be executed by Sleep Talk.
 	/*0x04*/ u8 forbiddenCopycat:1; // A move with this flag can't be copied by Copycat.
 	/*0x04*/ u8 forbiddenInstruct:1; // A move with this flag can't be executed by Instruct.
-	/*0x04*/ u8 affectsUserSide:1; // Tipycally used to show the entire side on choose the move, but it's still used to determine protect like effects.
-	/*0x04*/ u8 strikeCount:4; // Max 15 hits. Defaults to 1 if not set. May apply its effect on each hit.
+	/*0x04*/ u8 hasQuietBGM:1; // A move with this flag will have a quiet BGM on its battle anim.
+	/*0x04*/ u8 strikeCount:4; // Num hits the move will do, max 15 hits. Defaults to 1 if not set. May apply its effect on each hit.
 	// end of byte
-	/*0x05*/ u8 callOtherMove:1; // A move with this flag will be considered a "Move that call other moves".
-	/*0x05*/ u8 noEffectiveness:1; // A move with this flag will not display the "Its super effective" and "Its not very effective" message.
 	/*0x05*/ u8 recoilDivisor:3; // Used by moves that have a recoil damage, also if set, its affected by Reckless.
 	/*0x05*/ u8 forcePressure:1; // A move with this flag will force the extra PP consuption from Pressure.
-	/*0x05*/ u8 gravityBanned:1; // A move with this flag can't be selected while gravity is in effect.
-	/*0x05*/ u8 healingMove:1; // A move with this flag can't be used while affected by Heal Block, also Triage gives priority to it.
+	/*0x05*/ u8 critStage:2; // Max +3 crit stages. Used by moves with a high chance to be critical.
+	/*0x05*/ u8 unused:2;
 	// end of byte
-	/*0x06*/ u8 forbiddenMeFirst:1; // A move with this flag can't be executed by Me First.
-	/*0x06*/ u8 hasQuietBGM:1; // A move with this flag will have a quiet BGM on its battle anim.
-			 u8 unused:6;
 };
+
+struct AdditionalEffect
+{
+	u8 moveEffect;
+	u8 chance; // 0% = effect certain - If diffent than 0 the move will be affected by Sheer Force
+    bool8 self:1;
+	bool8 onChargeTurnOnly:1; // Effect applies only on the chaging turn of a two turns move
+    bool8 onlyIfTargetRaisedStats:1; // Effect applies only if target was raised its stat
+	bool8 onFinalMultiHitOnly:1; // Effect applies only on the final hit of a miltihit move
+	bool8 afterTargetItemsOnly:1; // Effect applies only after the target items take effect
+};
+
+#define EFFECTS_ARR(...) (const struct AdditionalEffect[]) {__VA_ARGS__}
+#define ADDITIONAL_EFFECTS(...) EFFECTS_ARR( __VA_ARGS__ ), .numAdditionalEffects = ARRAY_COUNT(EFFECTS_ARR( __VA_ARGS__ ))
 
 struct BattleMove
 {
@@ -274,19 +294,61 @@ struct BattleMove
     /*0x1C*/ u8 type;
     /*0x1D*/ u8 accuracy;
     /*0x1E*/ u8 pp;
-    /*0x1F*/ u8 secondaryEffectChance; // If diffent than 0 it will be affected by Sheer Force
-    /*0x20*/ u8 target;
-    /*0x21*/ s8 priority;
-    /*0x22*/ u8 split;
-    /*0x23*/ struct MoveFlags flags;
-			 u8 argument;
-			 u8 zMoveEffect;
+	/*0x1F*/ u8 target;
+	/*0x20*/ union {
+				struct { u8 percentage; } absorb;
+				struct { u8 trappingId; } bind;
+				struct { u8 amount; } fixedDamage;
+				struct { u8 increment; } tripleKick;
+				struct { u8 ppToDeduct; } spite;
+				struct { u8 split; } counterAttack;
+				struct { u8 statusId; } cureStatus;
+				struct { u16 abilityId; } setAbility;
+				struct { u8 weatherId; u16 stringId; } setWeather;
+				struct { u16 weather; u16 debuffWeather; } neverMissInWeather;
+				struct { u16 stringId; u16 status; } semiInvulnerable;
+				struct { u16 stringId; u16 weather; } twoTurns;
+				struct { u16 stringId; u16 animationId; } futureAttack;
+			 } argument;
+	/*0x24*/ s8 priority;
+	/*0x25*/ u8 split;
+	/*0x26*/ u8 zMoveEffect;
+    /*0x27*/ struct MoveFlags flags;
+	const struct AdditionalEffect *additionalEffects; // primary/secondary effects
+	u8 numAdditionalEffects;
 };
 
 extern const struct BattleMove gBattleMoves[];
 
+struct BattleMoveEffect
+{
+	const u8 *battleScript;
+	u32 normalizeUnaffected:1; // Move effects with this flag will not change type if affected by Normalize and similar abilities.
+	u32 twoTurnsEffect:1; // Move effects with this flag will be considered a Two turns effect.
+	u32 semiInvulnerableEffect:1; // Move effects with this flag will cause the battler to be semi invulnerable.
+	u32 healingEffect:1; // Move effects with this flag can't be used while affected by Heal Block, also Triage gives priority to it.
+	u32 affectsUserSide:1; // Tipycally used to show the entire side on chose the move, but it's still used to determine protect like effects.
+	u32 callOtherMove:1; // Move effects with this flag will be considered a effect of a "Move that call other moves".
+	u32 noEffectiveness:1; // Move effects with this flag will not display the "Its super effective" and "Its not very effective" message.
+	u32 unused:1;
+	// end of byte
+	u32 unused2:8;
+	// end of byte
+	u32 unused3:8;
+	// end of byte
+	u32 unused4:8;
+	// end of byte
+};
+
+extern const struct BattleMoveEffect gBattleMoveEffects[];
+
+#define GET_MOVEEFFECT_TABLE(moveEffect) ((gBattleMoveEffects[moveEffect]))
+#define GET_MOVE_MOVEEFFECT_TABLE(move) GET_MOVEEFFECT_TABLE(gBattleMoves[move].effect)
+#define GET_MOVE_BATTLESCRIPT(move) GET_MOVE_MOVEEFFECT_TABLE(move).battleScript
+
 struct Ability
 {
+	const u8 *description;
 	u8 name[ABILITY_NAME_LENGTH + 1];
 	u8 cantBeCopied:1; // Can't be copied by Role Play.
 	u8 cantBeSwapped:1; // Can't be swapped by Skill Swap or Wandering Spirit.
@@ -296,14 +358,12 @@ struct Ability
 	u8 breakable:1; // Can be bypassed by Mold Breaker.
 	u8 unused:2;
 	u16 unused2;
-	const u8 *description;
 };
 
 struct TypeInfo
 {
 	const u32 *tmPalette;
 	u8 name[TYPE_NAME_LENGTH + 1];
-	u8 effectiveness[NUMBER_OF_MON_TYPES];
 };
 
 struct __attribute__((packed)) LevelUpMove
@@ -339,6 +399,13 @@ enum
     GENERATE_SHINY_FORCED
 };
 
+enum
+{
+	SHINY_ROLL_NORMAL,
+	SHINY_ROLL_DEXNAV,
+	SHINY_ROLL_SOS_CALL,
+};
+
 struct NatureInfo
 {
 	const u8 *name;
@@ -365,8 +432,10 @@ struct PokemonGenerator
 	u32 fixedPersonality;
 
 	const u16 *formChanges; // If defined, executes all form changes on the given array
-	
 	u16 moves[MAX_MON_MOVES];
+	
+	u8 nPerfectIvs;
+	u8 shinyRollType;
 };
 
 struct FormChange
@@ -382,7 +451,6 @@ extern struct Pokemon gPlayerParty[PARTY_SIZE];
 extern u8 gEnemyPartyCount;
 extern struct Pokemon gEnemyParty[PARTY_SIZE];
 extern const struct SpeciesInfo gSpeciesInfo[];
-extern const u8 *const gItemEffectTable[];
 extern const u8 gStatStageRatios[][2];
 extern struct SpriteTemplate gMultiuseSpriteTemplate;
 extern struct PokemonStorage* gPokemonStoragePtr;
@@ -415,6 +483,7 @@ u32 GetShinyRollsIncrease(void);
 u8 GetMonGender(struct Pokemon *mon);
 u8 GetBoxMonGender(struct BoxPokemon *boxMon);
 u8 GetGenderFromSpeciesAndPersonality(u16 species, u32 personality);
+bool8 SpeciesHasFixedGenderRatio(u16 species);
 void SetMultiuseSpriteTemplateToPokemon(u16 speciesTag, u8 battlerPosition);
 void SetMultiuseSpriteTemplateToTrainerBack(u16 trainerSpriteId, u8 battlerPosition);
 
@@ -478,7 +547,7 @@ bool8 IsOtherTrainer(u32 otId, u8 *otName);
 void MonRestorePP(struct Pokemon *mon);
 void BoxMonRestorePP(struct BoxPokemon *boxMon);
 void SetMonPreventsSwitchingString(void);
-void SetWildMonHeldItem(struct Pokemon *mon);
+void SetWildMonsHeldItem(void);
 u8 *GetTrainerPartnerName(void);
 u8 GetPlayerPartyHighestLevel(void);
 u16 GetUnionRoomTrainerPic(void);
@@ -486,7 +555,7 @@ u16 GetUnionRoomTrainerClass(void);
 u8 GetNumOfBadges(void);
 void DeleteMonMove(struct Pokemon *mon, u8 movePos);
 void ClearAllFusedMonSpecies(void);
-bool8 HealStatusConditions(struct Pokemon *mon, u32 healMask, u8 battleId);
+bool8 HealStatusConditions(struct Pokemon *mon, u8 statusToHeal, u8 battleId);
 bool8 MonCanBattle(struct Pokemon *mon);
 bool8 IsMonValidSpecies(struct Pokemon *mon);
 u8 GetFirstAliveMonSlotInParty(void);
@@ -494,6 +563,7 @@ u8 FindMoveSlotInMoveset(struct Pokemon *mon, u16 move);
 u8 FindMoveSlotInBoxMonMoveset(struct BoxPokemon *boxMon, u16 move);
 void DrawSpeciesFootprint(u8 windowId, u16 species, u8 x, u8 y);
 void UpdatePartyFormChangeCountdown(u32 daysSince);
+void CopyPokemonToBattleMon(u8 battlerId, struct Pokemon *mon, struct BattlePokemon *dst, bool8 setAllData);
 
 static inline u8 GetNatureFromPersonality(u32 personality)
 {

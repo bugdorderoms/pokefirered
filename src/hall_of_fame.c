@@ -513,7 +513,8 @@ static void Task_Hof_PlayMonCryAndPrintInfo(u8 taskId)
     if (gSprites[gTasks[taskId].data[5 + currMonId]].data[0])
     {
         if (currMon->species != SPECIES_EGG)
-            PlayCry1(currMon->species, 0);
+            PlayCry_Normal(currMon->species, 0);
+		
         HallOfFame_PrintMonInfo(currMon);
         gTasks[taskId].data[3] = 120;
         gTasks[taskId].func = Task_Hof_TryDisplayAnotherMon;
@@ -857,10 +858,11 @@ static void Task_HofPC_PrintMonInfo(u8 taskId)
     BlendPalettesUnfaded(sSelectedPaletteIndices, 0xC, HALL_OF_FAME_BG_PAL);
 
     currMon = &savedTeams->mon[gTasks[taskId].data[2]];
+	
     if (currMon->species != SPECIES_EGG)
     {
         StopCryAndClearCrySongs();
-        PlayCry1(currMon->species, 0);
+        PlayCry_Normal(currMon->species, 0);
     }
     HallOfFame_PrintMonInfo(currMon);
 

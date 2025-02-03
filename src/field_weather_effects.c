@@ -12,8 +12,8 @@
 #include "task.h"
 #include "trig.h"
 
-const struct SpritePalette sSandstormSpritePalette = {gSandstormWeatherPalette, GFXTAG_SANDSTORM};
-const struct SpritePalette sCloudsSpritePalette    = {gCloudWeatherPalette, GFXTAG_CLOUD};
+static const struct SpritePalette sSandstormSpritePalette = {gSandstormWeatherPalette, GFXTAG_SANDSTORM};
+static const struct SpritePalette sCloudsSpritePalette    = {gCloudWeatherPalette, GFXTAG_CLOUD};
 
 //------------------------------------------------------------------------------
 // WEATHER_RAIN
@@ -149,6 +149,7 @@ void Rain_Main(void)
     {
     case 0:
         LoadRainSpriteSheet();
+		LoadWeatherDefaultPalette();
         gWeatherPtr->initStep++;
         break;
     case 1:
@@ -455,6 +456,7 @@ void Snow_InitVars(void)
     gWeatherPtr->gammaStepDelay = 20;
     gWeatherPtr->targetSnowflakeSpriteCount = 16;
     gWeatherPtr->snowflakeVisibleCounter = 0;
+	LoadWeatherDefaultPalette();
 }
 
 void Snow_InitAll(void)
@@ -462,9 +464,11 @@ void Snow_InitAll(void)
     u16 i;
 
     Snow_InitVars();
+	
     while (!gWeatherPtr->weatherGfxLoaded)
     {
         Snow_Main();
+		
         for (i = 0; i < gWeatherPtr->snowflakeSpriteCount; i++)
             UpdateSnowflakeSprite(gWeatherPtr->snowflakeSprites[i]);
     }
@@ -669,6 +673,7 @@ void Thunderstorm_Main(void)
     {
     case 0:
         LoadRainSpriteSheet();
+		LoadWeatherDefaultPalette();
         gWeatherPtr->initStep++;
         break;
     case 1:
@@ -943,7 +948,7 @@ void FogHorizontal_Main(void)
     case 0:
         CreateFogHorizontalSprites();
         if (gWeatherPtr->currWeather == WEATHER_FOG_HORIZONTAL)
-            Weather_SetTargetBlendCoeffs(10, 9, 6);
+            Weather_SetTargetBlendCoeffs(6, 6, 3);
         else
             Weather_SetTargetBlendCoeffs(9, 11, 0); // WEATHER_UNDERWATER_BUBBLES
 		SetGpuRegBits(REG_OFFSET_WININ, WININ_WIN0_CLR);
@@ -1025,6 +1030,7 @@ static void CreateFogHorizontalSprites(void)
             .tag = GFXTAG_FOG_H,
         };
         LoadSpriteSheet(&fogHorizontalSpriteSheet);
+		LoadWeatherDefaultPalette();
 		
         for (i = 0; i < NUM_FOG_HORIZONTAL_SPRITES; i++)
         {
@@ -1135,6 +1141,7 @@ void Ash_Main(void)
     {
     case 0:
         LoadSpriteSheet(&sAshSpriteSheet);
+		LoadWeatherDefaultPalette();
         gWeatherPtr->initStep++;
         break;
     case 1:
@@ -1422,7 +1429,7 @@ static void CreateSandstormSprites(void)
     if (!gWeatherPtr->sandstormSpritesCreated)
     {
         LoadSpriteSheet(&sSandstormSpriteSheet);
-        LoadCustomWeatherSpritePalette(&sSandstormSpritePalette);
+        LoadWeatherSpritePalette(&sSandstormSpritePalette);
 		
         for (i = 0; i < NUM_SANDSTORM_SPRITES; i++)
         {
@@ -1604,7 +1611,7 @@ void FogDiagonal_Main(void)
         gWeatherPtr->initStep++;
         break;
     case 1:
-        Weather_SetTargetBlendCoeffs(10, 9, 6);
+        Weather_SetTargetBlendCoeffs(6, 6, 3);
 		SetGpuRegBits(REG_OFFSET_WININ, WININ_WIN0_CLR);
 		SetGpuRegBits(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG1);
         gWeatherPtr->initStep++;
@@ -1679,6 +1686,7 @@ static void CreateFogDiagonalSprites(void)
     if (!gWeatherPtr->fogDSpritesCreated)
     {
         LoadSpriteSheet(&gFogDiagonalSpriteSheet);
+		LoadWeatherDefaultPalette();
 		
         for (i = 0; i < NUM_FOG_DIAGONAL_SPRITES; i++)
         {
@@ -1737,6 +1745,7 @@ void Shade_InitVars(void)
     gWeatherPtr->initStep = 0;
     gWeatherPtr->gammaTargetIndex = 3;
     gWeatherPtr->gammaStepDelay = 20;
+	LoadWeatherDefaultPalette();
 }
 
 void Shade_InitAll(void)
@@ -1835,6 +1844,7 @@ void Bubbles_InitVars(void)
     if (!gWeatherPtr->bubblesSpritesCreated)
     {
         LoadSpriteSheet(&sWeatherBubbleSpriteSheet);
+		LoadWeatherDefaultPalette();
         gWeatherPtr->bubblesDelayIndex = 0;
         gWeatherPtr->bubblesDelayCounter = sBubbleStartDelays[0];
         gWeatherPtr->bubblesCoordsIndex = 0;
@@ -2031,7 +2041,7 @@ static void CreateCloudSprites(void)
 		gWeatherPtr->cloudSpritesCreated = TRUE;
 		
 		LoadSpriteSheet(&sCloudsSpriteSheet);
-		LoadCustomWeatherSpritePalette(&sCloudsSpritePalette);
+		LoadWeatherSpritePalette(&sCloudsSpritePalette);
 		
 		for (i = 0; i < NUM_CLOUD_SPRITES; i++)
 		{

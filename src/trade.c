@@ -742,11 +742,11 @@ static void CB2_ReturnFromLinkTrade2(void)
 		generator.hasFixedPersonality = FALSE;
 		generator.fixedPersonality = 0;
 		generator.shinyType = GENERATE_SHINY_NORMAL;
+		generator.shinyRollType = SHINY_ROLL_NORMAL;
 		generator.forcedNature = NUM_NATURES;
+		generator.nPerfectIvs = 0;
 		generator.formChanges = NULL;
-		
-		for (i = 0; i < MAX_MON_MOVES; i++)
-			generator.moves[i] = MOVE_NONE;
+		memset(generator.moves, MOVE_NONE, sizeof(generator.moves));
 		
         for (i = 0; i < PARTY_SIZE; i++)
             CreateMon(&gEnemyParty[i], generator);

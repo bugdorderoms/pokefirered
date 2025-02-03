@@ -353,6 +353,7 @@ extern const u8 gText_PkmnBecameHealthy[];
 extern const u8 gText_PkmnDynamaxLevelRaised[];
 extern const u8 gText_PkmnGainedVar3ExpPoints[];
 extern const u8 gText_PkmnGainedVar3ExpPointsRaisedToLvVar2[];
+extern const u8 gText_PkmnCantGoAboveTheLevelCap[];
 extern const u8 gText_PkmnVar2TheGMaxFactor[];
 extern const u8 gText_PkmnTeraTypeBecameVar2[];
 extern const u8 gText_Gained[];

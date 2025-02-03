@@ -77,7 +77,6 @@ static void GetAffineAnimFrame(u8 matrixNum, struct Sprite *sprite, struct Affin
 static void ApplyAffineAnimFrame(u8 matrixNum, struct AffineAnimFrameCmd *frameCmd);
 static u8 IndexOfSpriteTileTag(u16 tag);
 static void AllocSpriteTileRange(u16 tag, u16 start, u16 count);
-static void DoLoadSpritePalette(const u16 *src, u16 paletteOffset);
 static void obj_update_pos2(struct Sprite* sprite, s32 a1, s32 a2);
 
 typedef void (*AnimFunc)(struct Sprite *);
@@ -306,6 +305,7 @@ void ResetSpriteData(void)
 void AnimateSprites(void)
 {
     u8 i;
+	
     for (i = 0; i < MAX_SPRITES; i++)
     {
         struct Sprite *sprite = &gSprites[i];
@@ -435,9 +435,10 @@ u8 CreateSprite(const struct SpriteTemplate *template, s16 x, s16 y, u8 subprior
     u8 i;
 
     for (i = 0; i < MAX_SPRITES; i++)
+	{
         if (!gSprites[i].inUse)
             return CreateSpriteAt(i, template, x, y, subpriority);
-
+	}
     return MAX_SPRITES;
 }
 
@@ -446,9 +447,10 @@ u8 CreateSpriteAtEnd(const struct SpriteTemplate *template, s16 x, s16 y, u8 sub
     s16 i;
 
     for (i = MAX_SPRITES - 1; i > -1; i--)
+	{
         if (!gSprites[i].inUse)
             return CreateSpriteAt(i, template, x, y, subpriority);
-
+	}
     return MAX_SPRITES;
 }
 
@@ -457,9 +459,7 @@ u8 CreateInvisibleSprite(void (*callback)(struct Sprite *))
     u8 index = CreateSprite(&gDummySpriteTemplate, 0, 0, 31);
 
     if (index == MAX_SPRITES)
-    {
         return MAX_SPRITES;
-    }
     else
     {
         gSprites[index].invisible = TRUE;
@@ -493,8 +493,10 @@ u8 CreateSpriteAt(u8 index, const struct SpriteTemplate *template, s16 x, s16 y,
     if (template->tileTag == 0xFFFF)
     {
         s16 tileNum;
+		
         sprite->images = template->images;
         tileNum = AllocSpriteTiles((u8)(sprite->images->size / TILE_SIZE_4BPP));
+		
         if (tileNum == -1)
         {
             ResetSprite(sprite);
@@ -542,7 +544,6 @@ u8 CreateSpriteAndAnimate(const struct SpriteTemplate *template, s16 x, s16 y, u
             return index;
         }
     }
-
     return MAX_SPRITES;
 }
 
@@ -554,6 +555,7 @@ void DestroySprite(struct Sprite *sprite)
         {
             u16 i;
             u16 tileEnd = (sprite->images->size / TILE_SIZE_4BPP) + sprite->oam.tileNum;
+			
             for (i = sprite->oam.tileNum; i < tileEnd; i++)
                 FREE_SPRITE_TILE(i);
         }
@@ -596,6 +598,7 @@ void ClearSpriteCopyRequests(void)
 void ResetOamMatrices(void)
 {
     u8 i;
+	
     for (i = 0; i < OAM_MATRIX_COUNT; i++)
     {
         // set to identity matrix
@@ -629,7 +632,6 @@ void CalcCenterToCornerVec(struct Sprite *sprite, u8 shape, u8 size, u8 affineMo
         x *= 2;
         y *= 2;
     }
-
     sprite->centerToCornerVecX = x;
     sprite->centerToCornerVecY = y;
 }
@@ -772,6 +774,7 @@ void CopyFromSprites(u8 *dest)
 {
     u32 i;
     u8 *src = (u8 *)gSprites;
+	
     for (i = 0; i < sizeof(struct Sprite) * MAX_SPRITES; i++)
     {
         *dest = *src;
@@ -784,6 +787,7 @@ void CopyToSprites(u8 *src)
 {
     u32 i;
     u8 *dest = (u8 *)gSprites;
+	
     for (i = 0; i < sizeof(struct Sprite) * MAX_SPRITES; i++)
     {
         *dest = *src;
@@ -801,7 +805,6 @@ void ResetAllSprites(void)
         ResetSprite(&gSprites[i]);
         gSpriteOrder[i] = i;
     }
-
     ResetSprite(&gSprites[i]);
 }
 
@@ -825,12 +828,17 @@ void FreeSpriteOamMatrix(struct Sprite *sprite)
     }
 }
 
+void DestroySpriteAndFreeMatrix(struct Sprite *sprite)
+{
+	FreeSpriteOamMatrix(sprite);
+    DestroySprite(sprite);
+}
+
 void DestroySpriteAndFreeResources(struct Sprite *sprite)
 {
     FreeSpriteTiles(sprite);
     FreeSpritePalette(sprite);
-    FreeSpriteOamMatrix(sprite);
-    DestroySprite(sprite);
+    DestroySpriteAndFreeMatrix(sprite);
 }
 
 void AnimateSprite(struct Sprite *sprite)
@@ -1127,8 +1135,10 @@ void CopyOamMatrix(u8 destMatrixIndex, struct OamMatrix *srcMatrix)
 u8 GetSpriteMatrixNum(struct Sprite *sprite)
 {
     u8 matrixNum = 0;
+	
     if (sprite->oam.affineMode & ST_OAM_AFFINE_ON_MASK)
         matrixNum = sprite->oam.matrixNum;
+	
     return matrixNum;
 }
 
@@ -1225,6 +1235,7 @@ bool8 DecrementAffineAnimDelayCounter(struct Sprite *sprite, u8 matrixNum)
 {
     if (!sprite->affineAnimPaused)
         --sAffineAnimStates[matrixNum].delayCounter;
+	
     return sprite->affineAnimPaused;
 }
 
@@ -1234,7 +1245,7 @@ void ApplyAffineAnimFrameRelativeAndUpdateMatrix(u8 matrixNum, struct AffineAnim
     struct OamMatrix matrix;
     sAffineAnimStates[matrixNum].xScale += frameCmd->xScale;
     sAffineAnimStates[matrixNum].yScale += frameCmd->yScale;
-    sAffineAnimStates[matrixNum].rotation = (sAffineAnimStates[matrixNum].rotation + (frameCmd->rotation << 8)) & ~0xFF;
+    sAffineAnimStates[matrixNum].rotation = (sAffineAnimStates[matrixNum].rotation + (frameCmd->rotation << 8)) & ~(0xFF);
     srcData.xScale = ConvertScaleParam(sAffineAnimStates[matrixNum].xScale);
     srcData.yScale = ConvertScaleParam(sAffineAnimStates[matrixNum].yScale);
     srcData.rotation = sAffineAnimStates[matrixNum].rotation;
@@ -1301,31 +1312,27 @@ void SeekSpriteAnim(struct Sprite *sprite, u8 animCmdIndex)
 
 void StartSpriteAffineAnim(struct Sprite *sprite, u8 animNum)
 {
-    u8 matrixNum = GetSpriteMatrixNum(sprite);
-    AffineAnimStateStartAnim(matrixNum, animNum);
+    AffineAnimStateStartAnim(GetSpriteMatrixNum(sprite), animNum);
     sprite->affineAnimBeginning = TRUE;
     sprite->affineAnimEnded = FALSE;
 }
 
 void StartSpriteAffineAnimIfDifferent(struct Sprite *sprite, u8 animNum)
 {
-    u8 matrixNum = GetSpriteMatrixNum(sprite);
-    if (sAffineAnimStates[matrixNum].animNum != animNum)
+    if (sAffineAnimStates[GetSpriteMatrixNum(sprite)].animNum != animNum)
         StartSpriteAffineAnim(sprite, animNum);
 }
 
 void ChangeSpriteAffineAnim(struct Sprite *sprite, u8 animNum)
 {
-    u8 matrixNum = GetSpriteMatrixNum(sprite);
-    sAffineAnimStates[matrixNum].animNum = animNum;
+    sAffineAnimStates[GetSpriteMatrixNum(sprite)].animNum = animNum;
     sprite->affineAnimBeginning = TRUE;
     sprite->affineAnimEnded = FALSE;
 }
 
 void ChangeSpriteAffineAnimIfDifferent(struct Sprite *sprite, u8 animNum)
 {
-    u8 matrixNum = GetSpriteMatrixNum(sprite);
-    if (sAffineAnimStates[matrixNum].animNum != animNum)
+    if (sAffineAnimStates[GetSpriteMatrixNum(sprite)].animNum != animNum)
         ChangeSpriteAffineAnim(sprite, animNum);
 }
 
@@ -1392,6 +1399,7 @@ void FreeOamMatrix(u8 matrixNum)
 void InitSpriteAffineAnim(struct Sprite *sprite)
 {
     u8 matrixNum = AllocOamMatrix();
+	
     if (matrixNum != 0xFF)
     {
         CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
@@ -1417,9 +1425,7 @@ u16 LoadSpriteSheet(const struct SpriteSheet *sheet)
     s16 tileStart = AllocSpriteTiles(sheet->size / TILE_SIZE_4BPP);
 
     if (tileStart < 0)
-    {
         return 0;
-    }
     else
     {
         AllocSpriteTileRange(sheet->tag, (u16)tileStart, sheet->size / TILE_SIZE_4BPP);
@@ -1431,6 +1437,7 @@ u16 LoadSpriteSheet(const struct SpriteSheet *sheet)
 void LoadSpriteSheets(const struct SpriteSheet *sheets)
 {
     u8 i;
+	
     for (i = 0; sheets[i].data != NULL; i++)
         LoadSpriteSheet(&sheets[i]);
 }
@@ -1438,6 +1445,7 @@ void LoadSpriteSheets(const struct SpriteSheet *sheets)
 void FreeSpriteTilesByTag(u16 tag)
 {
     u8 index = IndexOfSpriteTileTag(tag);
+	
     if (index != 0xFF)
     {
         u16 i;
@@ -1471,8 +1479,10 @@ void FreeSpriteTileRanges(void)
 u16 GetSpriteTileStartByTag(u16 tag)
 {
     u8 index = IndexOfSpriteTileTag(tag);
+	
     if (index == 0xFF)
         return 0xFFFF;
+	
     return sSpriteTileRanges[index * 2];
 }
 
@@ -1481,9 +1491,10 @@ u8 IndexOfSpriteTileTag(u16 tag)
     u8 i;
 
     for (i = 0; i < MAX_SPRITES; i++)
+	{
         if (sSpriteTileRangeTags[i] == tag)
             return i;
-
+	}
     return 0xFF;
 }
 
@@ -1496,7 +1507,6 @@ u16 GetSpriteTileTagByTileStart(u16 start)
         if (sSpriteTileRangeTags[i] != 0xFFFF && sSpriteTileRanges[i * 2] == start)
             return sSpriteTileRangeTags[i];
     }
-
     return 0xFFFF;
 }
 
@@ -1510,9 +1520,17 @@ void AllocSpriteTileRange(u16 tag, u16 start, u16 count)
 void FreeAllSpritePalettes(void)
 {
     u8 i;
+	
     gReservedSpritePaletteCount = 0;
+	
     for (i = 0; i < 16; i++)
         sSpritePaletteTags[i] = 0xFFFF;
+}
+
+void LoadSpritePaletteAtIndex(const struct SpritePalette *palette, u8 index)
+{
+	sSpritePaletteTags[index] = palette->tag;
+    LoadPalette(palette->data, index * 16 + 0x100, 32);
 }
 
 u8 LoadSpritePalette(const struct SpritePalette *palette)
@@ -1525,13 +1543,10 @@ u8 LoadSpritePalette(const struct SpritePalette *palette)
     index = IndexOfSpritePaletteTag(0xFFFF);
 
     if (index == 0xFF)
-    {
         return 0xFF;
-    }
     else
     {
-        sSpritePaletteTags[index] = palette->tag;
-        DoLoadSpritePalette(palette->data, index * 16);
+        LoadSpritePaletteAtIndex(palette, index);
         return index;
     }
 }
@@ -1539,23 +1554,20 @@ u8 LoadSpritePalette(const struct SpritePalette *palette)
 void LoadSpritePalettes(const struct SpritePalette *palettes)
 {
     u8 i;
+	
     for (i = 0; palettes[i].data != NULL; i++)
+	{
         if (LoadSpritePalette(&palettes[i]) == 0xFF)
             break;
-}
-
-void DoLoadSpritePalette(const u16 *src, u16 paletteOffset)
-{
-    LoadPalette(src, paletteOffset + 0x100, 32);
+	}
 }
 
 u8 AllocSpritePalette(u16 tag)
 {
     u8 index = IndexOfSpritePaletteTag(0xFFFF);
+	
     if (index == 0xFF)
-    {
         return 0xFF;
-    }
     else
     {
         sSpritePaletteTags[index] = tag;
@@ -1566,10 +1578,12 @@ u8 AllocSpritePalette(u16 tag)
 u8 IndexOfSpritePaletteTag(u16 tag)
 {
     u8 i;
+	
     for (i = gReservedSpritePaletteCount; i < 16; i++)
+	{
         if (sSpritePaletteTags[i] == tag)
             return i;
-
+	}
     return 0xFF;
 }
 
@@ -1604,9 +1618,7 @@ bool8 AddSpriteToOamBuffer(struct Sprite *sprite, u8 *oamIndex)
         return 0;
     }
     else
-    {
         return AddSubspritesToOamBuffer(sprite, &gMain.oamBuffer[*oamIndex], oamIndex);
-    }
 }
 
 bool8 AddSubspritesToOamBuffer(struct Sprite *sprite, struct OamData *destOam, u8 *oamIndex)

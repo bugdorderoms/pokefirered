@@ -24,6 +24,6 @@
 #include "pokedex.h"
 
 void CB2_OpenPokedexFromStartMenu(void);
-void VBlankCB(void);
+void VBlankCB_PokedexScreen(void);
 
 #endif //GUARD_POKEDEX_SCREEN_H

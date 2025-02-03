@@ -13,14 +13,13 @@
 static void FaintFromFieldPoison(u8 partyIdx)
 {
     struct Pokemon *pokemon = &gPlayerParty[partyIdx];
-    u32 status;
+    u8 status = STATUS1_NONE;
 	
 #if POISON_SURVIVAL == FALSE
     AdjustFriendship(pokemon, FRIENDSHIP_EVENT_FAINT_OUTSIDE_BATTLE);
 #endif
 
-	status = STATUS1_NONE;
-    SetMonData(pokemon, MON_DATA_STATUS, &status);
+    SetMonData(pokemon, MON_DATA_STATUS_ID, &status);
     GetMonData(pokemon, MON_DATA_NICKNAME, gStringVar1);
     StringGet_Nickname(gStringVar1);
 }
@@ -29,13 +28,14 @@ static bool32 MonFaintedFromPoison(u8 partyIdx)
 {
     struct Pokemon *pokemon = &gPlayerParty[partyIdx];
 	
+	if (IsMonValidSpecies(pokemon) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS_ID)) == AILMENT_PSN &&
 #if POISON_SURVIVAL
-    if (IsMonValidSpecies(pokemon) && GetMonData(pokemon, MON_DATA_HP) == 1 && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS)) == AILMENT_PSN)
-        return TRUE;
+		GetMonData(pokemon, MON_DATA_HP) == 1
 #else
-    if (IsMonValidSpecies(pokemon) && !GetMonData(pokemon, MON_DATA_HP) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS)) == AILMENT_PSN)
-        return TRUE;
+		!GetMonData(pokemon, MON_DATA_HP)
 #endif
+	)
+		return TRUE;
 
     return FALSE;
 }
@@ -95,7 +95,7 @@ s32 DoPoisonFieldEffect(void)
     {
 		pokemon = &gPlayerParty[i];
 		
-        if (GetMonData(pokemon, MON_DATA_SANITY_HAS_SPECIES) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS)) == AILMENT_PSN)
+        if (GetMonData(pokemon, MON_DATA_SANITY_HAS_SPECIES) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS_ID)) == AILMENT_PSN)
         {
             hp = GetMonData(pokemon, MON_DATA_HP);
 			

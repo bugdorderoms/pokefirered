@@ -417,8 +417,7 @@ static void Task_TitleScreenMain(u8 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
-    if (JOY_NEW(A_BUTTON | B_BUTTON | START_BUTTON)
-    && data[0] != 3 && data[0] != 4 && data[0] != 5)
+    if (JOY_NEW(A_BUTTON | B_BUTTON | START_BUTTON) && data[0] != 3 && data[0] != 4 && data[0] != 5)
     {
         ScheduleStopScanlineEffect();
         LoadMainTitleScreenPalsAndResetBgs();
@@ -661,7 +660,7 @@ static void SetTitleScreenScene_Cry(s16 * data)
     case 0:
         if (!gPaletteFade.active)
         {
-            PlayCry1(TITLE_SPECIES, 0);
+            PlayCry_Normal(TITLE_SPECIES, 0);
             ScheduleHideSlashSprite(data[6]);
             data[2] = 0;
             data[1]++;

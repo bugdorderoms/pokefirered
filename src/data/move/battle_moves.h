@@ -1,4 +1,4 @@
-const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
+const struct BattleMove gBattleMoves[MOVES_COUNT] =
 {
     [MOVE_NONE] =
     {
@@ -7,7 +7,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 									   "delivered with a\n"
 									   "long tail or a\n"
 									   "foreleg, etc."),
-		.animScript = Move_NONE,
+		.animScript = gMoveAnim_NONE,
         .effect = EFFECT_HIT,
         .type = TYPE_NORMAL,
         .target = MOVE_TARGET_SELECTED,
@@ -22,7 +22,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
                                        "physically pounded\n"
                                        "with a long tail or\n"
                                        "a foreleg, etc."),
-        .animScript = Move_POUND,
+        .animScript = gMoveAnim_POUND,
 		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_NORMAL,
@@ -45,7 +45,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
                                        "with a sharp chop.\n"
                                        "Critical hits land\n"
                                        "more easily."),
-		.animScript = Move_KARATE_CHOP,
+		.animScript = gMoveAnim_KARATE_CHOP,
         .effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_FIGHTING,
@@ -56,7 +56,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_PHYSICAL,
 		.zMoveEffect = Z_EFFECT_NONE,
@@ -69,7 +69,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
                                        "repeatedly, back\n"
                                        "and forth, two to\n"
                                        "five times in a row."),
-        .animScript = Move_DOUBLE_SLAP,
+        .animScript = gMoveAnim_DOUBLE_SLAP,
 		.effect = EFFECT_MULTI_HIT,
         .power = 15,
         .type = TYPE_NORMAL,
@@ -92,7 +92,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
                                        "a flurry of punches\n"
                                        "that strike two to\n"
                                        "five times in a row."),
-        .animScript = Move_COMET_PUNCH,
+        .animScript = gMoveAnim_COMET_PUNCH,
 		.effect = EFFECT_MULTI_HIT,
         .power = 18,
         .type = TYPE_NORMAL,
@@ -116,7 +116,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
                                        "slugged by a punch\n"
                                        "thrown with\n"
                                        "muscle-packed power."),
-		.animScript = Move_MEGA_PUNCH,
+		.animScript = gMoveAnim_MEGA_PUNCH,
         .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_NORMAL,
@@ -139,8 +139,8 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.description = COMPOUND_STRING("Numerous coins are\n"
                                        "hurled at the foe\n"
                                        "to inflict damage."),
-		.animScript = Move_PAY_DAY,
-        .effect = EFFECT_PAY_DAY,
+		.animScript = gMoveAnim_PAY_DAY,
+        .effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -151,18 +151,26 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PAYDAY,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FIRE_PUNCH] =
     {
 		.name = _("Fire Punch"),
-        .effect = EFFECT_BURN_HIT,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with a fiery punch.\n"
+                                       "This may also leave\n"
+                                       "the foe with a burn."),
+        .animScript = gMoveAnim_FIRE_PUNCH,
+		.effect = EFFECT_HIT,
         .power = 75,
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -170,18 +178,26 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.punchMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ICE_PUNCH] =
     {
 		.name = _("Ice Punch"),
-        .effect = EFFECT_FREEZE_HIT,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "punched with an icy\n"
+                                       "fist. This may also\n"
+                                       "leave it frozen."),
+        .animScript = gMoveAnim_ICE_PUNCH,
+		.effect = EFFECT_HIT,
         .power = 75,
         .type = TYPE_ICE,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -189,18 +205,26 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.punchMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FREEZE,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_THUNDER_PUNCH] =
     {
 		.name = _("Thunder Punch"),
-        .effect = EFFECT_PARALYZE_HIT,
+		.description = COMPOUND_STRING("The foe is punched\n"
+                                       "with an electrified\n"
+                                       "fist. It may leave\n"
+                                       "it with paralysis."),
+        .animScript = gMoveAnim_THUNDER_PUNCH,
+		.effect = EFFECT_HIT,
         .power = 75,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -208,13 +232,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.punchMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SCRATCH] =
     {
 		.name = _("Scratch"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("Hard, pointed,\n"
+                                       "sharp claws rake\n"
+                                       "the target to\n"
+                                       "inflict damage."),
+        .animScript = gMoveAnim_SCRATCH,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -232,7 +265,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_VISE_GRIP] =
     {
 		.name = _("Vise Grip"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("Huge, impressive\n"
+                                       "pincers grip and\n"
+                                       "squeeze the foe."),
+        .animScript = gMoveAnim_VISE_GRIP,
+		.effect = EFFECT_HIT,
         .power = 55,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -250,7 +287,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GUILLOTINE] =
     {
 		.name = _("Guillotine"),
-        .effect = EFFECT_OHKO,
+		.description = COMPOUND_STRING("A tearing attack\n"
+                                       "with big pincers.\n"
+                                       "The target faints\n"
+                                       "instantly if hits."),
+        .animScript = gMoveAnim_GUILLOTINE,
+		.effect = EFFECT_OHKO,
         .power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 30,
@@ -268,7 +310,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_RAZOR_WIND] =
     {
 		.name = _("Razor Wind"),
-        .effect = EFFECT_TWO_TURNS_ATTACK,
+		.description = COMPOUND_STRING("Blades of wind hit\n"
+                                       "the foe on the 2nd\n"
+                                       "turn. It has a high\n"
+                                       "critical-hit ratio."),
+        .animScript = gMoveAnim_RAZOR_WIND,
+		.effect = EFFECT_TWO_TURNS_ATTACK,
         .power = 80,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -277,11 +324,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE,
-			.twoTurnsMove = TRUE,
+		},
+		.argument = {
+			.twoTurns = { .stringId = B_MSG_WHIPPED_WHIRLWIND }
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -290,6 +339,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SWORDS_DANCE] =
     {
 		.name = _("Swords Dance"),
+		.description = COMPOUND_STRING("A dance to uplift\n"
+                                       "the spirit. It\n"
+                                       "sharply raises the\n"
+                                       "user's Attack stat."),
+		.animScript = gMoveAnim_SWORDS_DANCE,
         .effect = EFFECT_USER_ATTACK_UP_2,
         .type = TYPE_NORMAL,
 		.pp = 20,
@@ -308,7 +362,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CUT] =
     {
 		.name = _("Cut"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The target is cut\n"
+                                       "with a scythe, a\n"
+                                       "claw, or the like\n"
+                                       "to inflict damage."),
+        .animScript = gMoveAnim_CUT,
+		.effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_NORMAL,
         .accuracy = 95,
@@ -327,7 +386,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GUST] =
     {
 		.name = _("Gust"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("A gust is whipped\n"
+                                       "up by wings and\n"
+                                       "launched at the foe\n"
+                                       "to inflict damage."),
+        .animScript = gMoveAnim_GUST,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_FLYING,
         .accuracy = 100,
@@ -346,7 +410,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WING_ATTACK] =
     {
 		.name = _("Wing Attack"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The foe is struck\n"
+                                       "with large wings\n"
+                                       "spread wide to\n"
+                                       "inflict damage."),
+        .animScript = gMoveAnim_WING_ATTACK,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_FLYING,
         .accuracy = 100,
@@ -364,7 +433,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WHIRLWIND] =
     {
 		.name = _("Whirlwind"),
-        .effect = EFFECT_ROAR,
+		.description = COMPOUND_STRING("The target is blown\n"
+                                       "away, and a\n"
+                                       "different Pokémon\n"
+                                       "is dragged out."),
+        .animScript = gMoveAnim_WHIRLWIND,
+		.effect = EFFECT_RANDOM_SWITCH,
         .type = TYPE_NORMAL,
         .pp = 20,
         .target = MOVE_TARGET_SELECTED,
@@ -384,7 +458,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FLY] =
     {
 		.name = _("Fly"),
-        .effect = EFFECT_SEMI_INVULNERABLE,
+		.description = COMPOUND_STRING("The user flies up\n"
+                                       "into the sky and\n"
+                                       "then attacks on the\n"
+                                       "next turn."),
+        .animScript = gMoveAnim_FLY,
+		.effect = EFFECT_SEMI_INVULNERABLE,
 		.power = 90,
         .type = TYPE_FLYING,
         .accuracy = 95,
@@ -397,8 +476,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenAssist = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.twoTurnsMove = TRUE,
 			.gravityBanned = TRUE,
+		},
+		.argument = {
+			.semiInvulnerable = {
+				.stringId = B_MSG_FLEW_UP_HIGH,
+				.status = COMPRESS_BITS(STATUS3_ON_AIR),
+			},
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -407,7 +491,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BIND] =
     {
 		.name = _("Bind"),
-        .effect = EFFECT_TRAP,
+		.description = COMPOUND_STRING("A body or tentacles\n"
+                                       "are used to squeeze\n"
+                                       "the foe for four to\n"
+                                       "five turns."),
+        .animScript = gMoveAnim_BIND,
+		.effect = EFFECT_HIT,
         .power = 15,
         .type = TYPE_NORMAL,
 		.accuracy = 85,
@@ -418,15 +507,26 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 		},
-		.argument = TRAP_ID_BIND,
+		.argument = {
+			.bind = { .trappingId = TRAP_ID_BIND },
+		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_WRAP,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SLAM] =
     {
 		.name = _("Slam"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "slammed with a long\n"
+                                       "tail, vines, etc.,\n"
+                                       "to inflict damage."),
+        .animScript = gMoveAnim_SLAM,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_NORMAL,
         .accuracy = 75,
@@ -444,7 +544,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_VINE_WHIP] =
     {
 		.name = _("Vine Whip"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The foe is struck\n"
+                                       "with slender,\n"
+                                       "whiplike vines to\n"
+                                       "inflict damage."),
+        .animScript = gMoveAnim_VINE_WHIP,
+		.effect = EFFECT_HIT,
 		.power = 45,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -462,12 +567,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_STOMP] =
     {
 		.name = _("Stomp"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("The foe is stomped\n"
+                                       "with a big foot. It\n"
+                                       "may also make the\n"
+                                       "target flinch."),
+        .animScript = gMoveAnim_STOMP,
+		.effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -475,13 +584,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.dmgMinimize = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_DOUBLE_KICK] =
     {
 		.name = _("Double Kick"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "quickly kicked\n"
+                                       "twice in succession\n"
+                                       "using both feet."),
+        .animScript = gMoveAnim_DOUBLE_KICK,
+		.effect = EFFECT_HIT,
         .power = 30,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -500,7 +618,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MEGA_KICK] =
     {
 		.name = _("Mega Kick"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "attacked by a kick\n"
+                                       "launched with\n"
+                                       "muscle-packed power."),
+        .animScript = gMoveAnim_MEGA_KICK,
+		.effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_NORMAL,
         .accuracy = 75,
@@ -518,7 +641,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_JUMP_KICK] =
     {
 		.name = _("Jump Kick"),
-        .effect = EFFECT_RECOIL_IF_MISS,
+		.description = COMPOUND_STRING("The user jumps up\n"
+                                       "high, then kicks.\n"
+                                       "If it misses, the\n"
+                                       "user hurts itself."),
+        .animScript = gMoveAnim_JUMP_KICK,
+		.effect = EFFECT_RECOIL_IF_MISS,
 		.power = 100,
         .type = TYPE_FIGHTING,
         .accuracy = 95,
@@ -537,25 +665,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ROLLING_KICK] =
     {
 		.name = _("Rolling Kick"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("The user lashes out\n"
+                                       "with a spinning\n"
+                                       "kick. It may also\n"
+                                       "make the foe flinch."),
+        .animScript = gMoveAnim_ROLLING_KICK,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_FIGHTING,
         .accuracy = 85,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SAND_ATTACK] =
     {
 		.name = _("Sand Attack"),
-        .effect = EFFECT_ACCURACY_DOWN,
+		.description = COMPOUND_STRING("Sand is hurled in\n"
+                                       "the target's face,\n"
+                                       "lowering the\n"
+                                       "target's accuracy."),
+        .animScript = gMoveAnim_SAND_ATTACK,
+		.effect = EFFECT_ACCURACY_DOWN,
         .type = TYPE_GROUND,
         .accuracy = 100,
         .pp = 15,
@@ -571,25 +712,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HEADBUTT] =
     {
 		.name = _("Headbutt"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("The user sticks its\n"
+                                       "head out and rams.\n"
+                                       "It may make the foe\n"
+                                       "flinch."),
+        .animScript = gMoveAnim_HEADBUTT,
+		.effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_HORN_ATTACK] =
     {
 		.name = _("Horn Attack"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The foe is jabbed\n"
+                                       "with a sharply\n"
+                                       "pointed horn to\n"
+                                       "inflict damage."),
+        .animScript = gMoveAnim_HORN_ATTACK,
+		.effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -607,7 +761,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FURY_ATTACK] =
     {
 		.name = _("Fury Attack"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("The foe is jabbed\n"
+                                       "repeatedly with a\n"
+                                       "horn or beak two to\n"
+                                       "five times in a row."),
+        .animScript = gMoveAnim_FURY_ATTACK,
+		.effect = EFFECT_MULTI_HIT,
         .power = 15,
         .type = TYPE_NORMAL,
         .accuracy = 85,
@@ -625,7 +784,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HORN_DRILL] =
     {
 		.name = _("Horn Drill"),
-        .effect = EFFECT_OHKO,
+		.description = COMPOUND_STRING("The horn is rotated\n"
+                                       "like a drill to\n"
+                                       "ram. The foe will\n"
+                                       "faint if it hits."),
+        .animScript = gMoveAnim_HORN_DRILL,
+		.effect = EFFECT_OHKO,
         .power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 30,
@@ -643,7 +807,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TACKLE] =
     {
 		.name = _("Tackle"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("A physical attack\n"
+                                       "in which the user\n"
+                                       "charges, full body,\n"
+                                       "into the foe."),
+        .animScript = gMoveAnim_TACKLE,
+		.effect = EFFECT_HIT,
 		.power = 40,
         .type = TYPE_NORMAL,
 		.accuracy = 100,
@@ -661,12 +830,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BODY_SLAM] =
     {
 		.name = _("Body Slam"),
-        .effect = EFFECT_PARALYZE_HIT,
+		.description = COMPOUND_STRING("It drops onto the\n"
+                                       "foe with its full\n"
+                                       "body. It may leave\n"
+                                       "the foe paralyzed."),
+        .animScript = gMoveAnim_BODY_SLAM,
+		.effect = EFFECT_HIT,
         .power = 85,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -674,13 +847,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.dmgMinimize = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_WRAP] =
     {
 		.name = _("Wrap"),
-        .effect = EFFECT_TRAP,
+		.description = COMPOUND_STRING("A long body or\n"
+                                       "vines are used to\n"
+                                       "wrap the foe for\n"
+                                       "four to five turns."),
+        .animScript = gMoveAnim_WRAP,
+		.effect = EFFECT_HIT,
         .power = 15,
         .type = TYPE_NORMAL,
 		.accuracy = 90,
@@ -691,15 +873,26 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 		},
-		.argument = TRAP_ID_WRAP,
+		.argument = {
+			.bind = { .trappingId = TRAP_ID_WRAP },
+		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_WRAP,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_TAKE_DOWN] =
     {
 		.name = _("Take Down"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("A reckless,\n"
+                                       "full-body attack\n"
+                                       "that also hurts the\n"
+                                       "user a little."),
+        .animScript = gMoveAnim_TAKE_DOWN,
+		.effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_NORMAL,
         .accuracy = 85,
@@ -718,7 +911,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_THRASH] =
     {
 		.name = _("Thrash"),
-        .effect = EFFECT_RAMPAGE,
+		.description = COMPOUND_STRING("The user rampages\n"
+                                       "about for two to\n"
+                                       "three turns, then\n"
+                                       "becomes confused."),
+        .animScript = gMoveAnim_THRASH,
+		.effect = EFFECT_HIT,
 		.power = 120,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -731,13 +929,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_THRASH,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_DOUBLE_EDGE] =
     {
 		.name = _("Double-Edge"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("A reckless,\n"
+                                       "life-risking tackle\n"
+                                       "that also hurts the\n"
+                                       "user quite a lot."),
+        .animScript = gMoveAnim_DOUBLE_EDGE,
+		.effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -756,7 +964,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TAIL_WHIP] =
     {
 		.name = _("Tail Whip"),
-        .effect = EFFECT_DEFENSE_DOWN,
+		.description = COMPOUND_STRING("The user wags its\n"
+                                       "tail cutely, making\n"
+                                       "the foe lower its\n"
+                                       "Defense stat."),
+        .animScript = gMoveAnim_TAIL_WHIP,
+		.effect = EFFECT_DEFENSE_DOWN,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 30,
@@ -772,26 +985,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_POISON_STING] =
     {
 		.name = _("Poison Sting"),
-        .effect = EFFECT_POISON_HIT,
+		.description = COMPOUND_STRING("The user stabs the\n"
+                                       "target with a toxic\n"
+                                       "barb. This may also\n"
+                                       "poison the target."),
+        .animScript = gMoveAnim_POISON_STING,
+		.effect = EFFECT_HIT,
         .power = 15,
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 35,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_POISON,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_TWINEEDLE] =
     {
 		.name = _("Twineedle"),
-        .effect = EFFECT_POISON_HIT,
+		.description = COMPOUND_STRING("The foe is stabbed\n"
+                                       "twice by a pair of\n"
+                                       "stingers. It may\n"
+                                       "poison the target."),
+        .animScript = gMoveAnim_TWINEEDLE,
+		.effect = EFFECT_HIT,
         .power = 25,
         .type = TYPE_BUG,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -799,13 +1024,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_POISON,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_PIN_MISSILE] =
     {
 		.name = _("Pin Missile"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("Sharp pins are shot\n"
+                                       "at the foe and hit\n"
+                                       "two to five times\n"
+                                       "at once."),
+        .animScript = gMoveAnim_PIN_MISSILE,
+		.effect = EFFECT_MULTI_HIT,
 		.power = 25,
         .type = TYPE_BUG,
 		.accuracy = 95,
@@ -822,7 +1056,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LEER] =
     {
 		.name = _("Leer"),
-        .effect = EFFECT_DEFENSE_DOWN,
+		.description = COMPOUND_STRING("The foes are given\n"
+                                       "an intimidating\n"
+                                       "leer that lowers\n"
+                                       "their Defense stats."),
+        .animScript = gMoveAnim_LEER,
+		.effect = EFFECT_DEFENSE_DOWN,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 30,
@@ -838,12 +1077,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BITE] =
     {
 		.name = _("Bite"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "bitten with sharp\n"
+                                       "fangs. It may make\n"
+                                       "the target flinch."),
+        .animScript = gMoveAnim_BITE,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 25,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -851,13 +1094,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_GROWL] =
     {
 		.name = _("Growl"),
-        .effect = EFFECT_ATTACK_DOWN,
+		.description = COMPOUND_STRING("The user growls in\n"
+                                       "a cute way, making\n"
+                                       "the foe lower its\n"
+                                       "Attack stat."),
+        .animScript = gMoveAnim_GROWL,
+		.effect = EFFECT_ATTACK_DOWN,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 40,
@@ -874,7 +1126,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ROAR] =
     {
 		.name = _("Roar"),
-        .effect = EFFECT_ROAR,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "scared off, and a\n"
+                                       "different Pokémon\n"
+                                       "is dragged out."),
+        .animScript = gMoveAnim_ROAR,
+		.effect = EFFECT_RANDOM_SWITCH,
         .type = TYPE_NORMAL,
         .pp = 20,
         .target = MOVE_TARGET_SELECTED,
@@ -894,7 +1151,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SING] =
     {
 		.name = _("Sing"),
-        .effect = EFFECT_SLEEP,
+		.description = COMPOUND_STRING("A soothing song in\n"
+                                       "a calming voice\n"
+                                       "lulls the foe into\n"
+                                       "a deep slumber."),
+        .animScript = gMoveAnim_SING,
+		.effect = EFFECT_SLEEP,
         .type = TYPE_NORMAL,
         .accuracy = 55,
         .pp = 15,
@@ -912,7 +1174,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SUPERSONIC] =
     {
 		.name = _("Supersonic"),
-        .effect = EFFECT_CONFUSE,
+		.description = COMPOUND_STRING("The user generates\n"
+                                       "odd sound waves\n"
+                                       "from its body that\n"
+                                       "confuse the target."),
+        .animScript = gMoveAnim_SUPERSONIC,
+		.effect = EFFECT_CONFUSE,
         .type = TYPE_NORMAL,
         .accuracy = 55,
         .pp = 20,
@@ -929,7 +1196,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SONIC_BOOM] =
     {
 		.name = _("Sonic Boom"),
-        .effect = EFFECT_FIXED_DAMAGE,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "a shock wave that\n"
+                                       "always inflicts 20\n"
+                                       "HP damage."),
+        .animScript = gMoveAnim_SONIC_BOOM,
+		.effect = EFFECT_FIXED_DAMAGE,
         .power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 90,
@@ -938,17 +1210,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_SPECIAL,
-		.argument = 20,
+		.argument = {
+			.fixedDamage = { .amount = 20 },
+		},
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_DISABLE] =
     {
 		.name = _("Disable"),
-        .effect = EFFECT_DISABLE,
+		.description = COMPOUND_STRING("For four turns, the\n"
+                                       "foe will be unable\n"
+                                       "to use whichever\n"
+                                       "move it last used."),
+        .animScript = gMoveAnim_DISABLE,
+		.effect = EFFECT_DISABLE_MOVE,
         .type = TYPE_NORMAL,
 		.accuracy = 100,
         .pp = 20,
@@ -964,14 +1242,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ACID] =
     {
 		.name = _("Acid"),
-        .effect = EFFECT_TARGET_SP_DEFENSE_DOWN_HIT,
+		.description = COMPOUND_STRING("Foes are sprayed\n"
+                                       "with harsh acid\n"
+                                       "that may lower it's\n"
+                                       "Sp. Defense stat."),
+        .animScript = gMoveAnim_ACID,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 30,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_BOTH,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -982,35 +1268,52 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
                                        "with small flames.\n"
                                        "This may also leave\n"
                                        "it with a burn."),
-        .effect = EFFECT_BURN_HIT,
+        .animScript = gMoveAnim_EMBER,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 25,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FLAMETHROWER] =
     {
 		.name = _("Flamethrower"),
-        .effect = EFFECT_BURN_HIT,
+		.description = COMPOUND_STRING("The foe is scorched\n"
+                                       "with intense\n"
+                                       "flames. The foe may\n"
+                                       "suffer a burn."),
+        .animScript = gMoveAnim_FLAMETHROWER,
+		.effect = EFFECT_HIT,
 		.power = 90,
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MIST] =
     {
 		.name = _("Mist"),
-        .effect = EFFECT_MIST,
+		.description = COMPOUND_STRING("The user's side is\n"
+                                       "cloaked in a mist.\n"
+                                       "It prevents stat\n"
+                                       "loss for five turns."),
+        .animScript = gMoveAnim_MIST,
+		.effect = EFFECT_SET_MIST,
         .type = TYPE_ICE,
         .pp = 30,
         .target = MOVE_TARGET_USER,
@@ -1019,7 +1322,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.affectsUserSide = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RECOVER_HP,
@@ -1028,7 +1330,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WATER_GUN] =
     {
 		.name = _("Water Gun"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "blasted with a\n"
+                                       "forceful shot of\n"
+                                       "water."),
+        .animScript = gMoveAnim_WATER_GUN,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_WATER,
         .accuracy = 100,
@@ -1045,7 +1352,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HYDRO_PUMP] =
     {
 		.name = _("Hydro Pump"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The foe is blasted\n"
+                                       "by a huge volume of\n"
+                                       "water launched\n"
+                                       "under high pressure."),
+        .animScript = gMoveAnim_HYDRO_PUMP,
+		.effect = EFFECT_HIT,
 		.power = 110,
         .type = TYPE_WATER,
         .accuracy = 80,
@@ -1062,7 +1374,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SURF] =
     {
 		.name = _("Surf"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user attacks\n"
+                                       "swamping its\n"
+                                       "surroundings with a\n"
+                                       "giant wave."),
+        .animScript = gMoveAnim_SURF,
+		.effect = EFFECT_HIT,
 		.power = 90,
         .type = TYPE_WATER,
         .accuracy = 100,
@@ -1080,81 +1397,129 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ICE_BEAM] =
     {
 		.name = _("Ice Beam"),
-        .effect = EFFECT_FREEZE_HIT,
+		.description = COMPOUND_STRING("The foe is struck\n"
+                                       "with an icy-cold\n"
+                                       "beam. It may freeze\n"
+                                       "the target solid."),
+        .animScript = gMoveAnim_ICE_BEAM,
+		.effect = EFFECT_HIT,
 		.power = 90,
         .type = TYPE_ICE,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FREEZE,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BLIZZARD] =
     {
 		.name = _("Blizzard"),
-        .effect = EFFECT_FREEZE_HIT,
+		.description = COMPOUND_STRING("A blizzard is\n"
+                                       "summoned to strike\n"
+                                       "the foe. It may\n"
+                                       "freeze the target."),
+        .animScript = gMoveAnim_BLIZZARD,
+		.effect = EFFECT_NEVER_MISS_IN_WEATHER,
 		.power = 110,
         .type = TYPE_ICE,
         .accuracy = 70,
         .pp = 5,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
 			.windMove = TRUE,
 		},
+		.argument = {
+			.neverMissInWeather = { .weather = B_WEATHER_HAIL },
+		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FREEZE,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_PSYBEAM] =
     {
 		.name = _("Psybeam"),
-        .effect = EFFECT_CONFUSE_HIT,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with a peculiar\n"
+                                       "ray. This may also\n"
+                                       "confuse the target."),
+        .animScript = gMoveAnim_PSYBEAM,
+		.effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CONFUSION,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BUBBLE_BEAM] =
     {
 		.name = _("Bubble Beam"),
-        .effect = EFFECT_TARGET_SPEED_DOWN_HIT,
+		.description = COMPOUND_STRING("A spray of bubbles\n"
+                                       "is ejected at the\n"
+                                       "target. This may\n"
+                                       "lower its Speed."),
+        .animScript = gMoveAnim_BUBBLE_BEAM,
+		.effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_WATER,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_AURORA_BEAM] =
     {
 		.name = _("Aurora Beam"),
-        .effect = EFFECT_TARGET_ATTACK_DOWN_HIT,
+		.description = COMPOUND_STRING("A rainbow-colored\n"
+                                       "beam hits the foe.\n"
+                                       "This may also lower\n"
+                                       "the target's Attack."),
+        .animScript = gMoveAnim_AURORA_BEAM,
+		.effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_ICE,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ATK_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_HYPER_BEAM] =
     {
 		.name = _("Hyper Beam"),
-        .effect = EFFECT_RECHARGE,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with a powerful\n"
+                                       "beam. The user must\n"
+                                       "rest the next turn."),
+        .animScript = gMoveAnim_HYPER_BEAM,
+		.effect = EFFECT_HIT,
         .power = 150,
         .type = TYPE_NORMAL,
         .accuracy = 90,
@@ -1166,13 +1531,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_RECHARGE,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_PECK] =
     {
 		.name = _("Peck"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "jabbed with a\n"
+                                       "sharply pointed\n"
+                                       "beak or horn."),
+        .animScript = gMoveAnim_PECK,
+		.effect = EFFECT_HIT,
         .power = 35,
         .type = TYPE_FLYING,
         .accuracy = 100,
@@ -1190,7 +1565,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRILL_PECK] =
     {
 		.name = _("Drill Peck"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("A corkscrewing\n"
+                                       "attack that strikes\n"
+                                       "the foe with a beak\n"
+                                       "acting as a drill."),
+        .animScript = gMoveAnim_DRILL_PECK,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_FLYING,
         .accuracy = 100,
@@ -1208,7 +1588,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SUBMISSION] =
     {
 		.name = _("Submission"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("A reckless,\n"
+                                       "full-body throw\n"
+                                       "attack that also\n"
+                                       "hurts the user."),
+        .animScript = gMoveAnim_SUBMISSION,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_FIGHTING,
         .accuracy = 80,
@@ -1227,7 +1612,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LOW_KICK] =
     {
 		.name = _("Low Kick"),
-        .effect = EFFECT_LOW_KICK,
+		.description = COMPOUND_STRING("A low, tripping\n"
+                                       "kick that inflicts\n"
+                                       "more damage on\n"
+                                       "heavier foes."),
+        .animScript = gMoveAnim_LOW_KICK,
+		.effect = EFFECT_DAMAGE_BASED_TARGET_WEIGHT,
         .power = 1,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -1245,7 +1635,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_COUNTER] =
     {
 		.name = _("Counter"),
-        .effect = EFFECT_COUNTER,
+		.description = COMPOUND_STRING("A retaliation move\n"
+                                       "that counters any\n"
+                                       "physical hit with\n"
+                                       "double the damage."),
+        .animScript = gMoveAnim_COUNTER,
+		.effect = EFFECT_COUNTER_ATTACK,
         .power = 1,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -1260,8 +1655,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 			.forbiddenAssist = TRUE,
 			.forbiddenCopycat = TRUE,
-			.noEffectiveness = TRUE,
 			.forbiddenMeFirst = TRUE,
+		},
+		.argument = {
+			.counterAttack = { .split = SPLIT_PHYSICAL },
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -1270,7 +1667,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SEISMIC_TOSS] =
     {
 		.name = _("Seismic Toss"),
-        .effect = EFFECT_LEVEL_DAMAGE,
+		.description = COMPOUND_STRING("A gravity-fed throw\n"
+                                       "that causes damage\n"
+                                       "matching the user's\n"
+                                       "level."),
+        .animScript = gMoveAnim_SEISMIC_TOSS,
+		.effect = EFFECT_USER_LEVEL_TO_DAMAGE,
         .power = 1,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -1280,7 +1682,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -1289,7 +1690,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_STRENGTH] =
     {
 		.name = _("Strength"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "slugged with a\n"
+                                       "punch thrown at\n"
+                                       "maximum power."),
+        .animScript = gMoveAnim_STRENGTH,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -1307,7 +1713,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ABSORB] =
     {
 		.name = _("Absorb"),
-        .effect = EFFECT_ABSORB,
+		.description = COMPOUND_STRING("A nutrient-draining\n"
+                                       "attack. The user's\n"
+                                       "HP is restored by\n"
+                                       "half the damage."),
+        .animScript = gMoveAnim_ABSORB,
+		.effect = EFFECT_HIT_ABSORB,
         .power = 20,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -1316,7 +1727,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.kingsRockAffected = TRUE,
-			.healingMove = TRUE,
+		},
+		.argument = {
+			.absorb = { .percentage = 50 },
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -1325,7 +1738,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MEGA_DRAIN] =
     {
 		.name = _("Mega Drain"),
-        .effect = EFFECT_ABSORB,
+		.description = COMPOUND_STRING("A nutrient-draining\n"
+                                       "attack. The user's\n"
+                                       "HP is restored by\n"
+                                       "half the damage."),
+        .animScript = gMoveAnim_MEGA_DRAIN,
+		.effect = EFFECT_HIT_ABSORB,
         .power = 40,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -1334,7 +1752,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		.flags =
 		{
 			.kingsRockAffected = TRUE,
-			.healingMove = TRUE,
+		},
+		.argument = {
+			.absorb = { .percentage = 50 },
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -1343,7 +1763,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LEECH_SEED] =
     {
 		.name = _("Leech Seed"),
-        .effect = EFFECT_LEECH_SEED,
+		.description = COMPOUND_STRING("A seed is planted\n"
+                                       "on the target. It\n"
+                                       "steals some HP from\n"
+                                       "the foe every turn."),
+        .animScript = gMoveAnim_LEECH_SEED,
+		.effect = EFFECT_SET_SEEDED,
         .type = TYPE_GRASS,
         .accuracy = 90,
         .pp = 10,
@@ -1359,7 +1784,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GROWTH] =
     {
 		.name = _("Growth"),
-        .effect = EFFECT_GROWTH,
+		.description = COMPOUND_STRING("The user's body\n"
+                                       "grows all at once,\n"
+                                       "boosting the Attack\n"
+                                       "and Sp. Atk stats."),
+        .animScript = gMoveAnim_GROWTH,
+		.effect = EFFECT_USER_ATTACK_AND_SP_ATTACK_UP_2X_IN_SUNNY,
         .type = TYPE_NORMAL,
 		.pp = 20,
         .target = MOVE_TARGET_USER,
@@ -1376,7 +1806,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_RAZOR_LEAF] =
     {
 		.name = _("Razor Leaf"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "a cutting leaf. It\n"
+                                       "has a high\n"
+                                       "critical-hit ratio."),
+        .animScript = gMoveAnim_RAZOR_LEAF,
+		.effect = EFFECT_HIT,
         .power = 55,
         .type = TYPE_GRASS,
         .accuracy = 95,
@@ -1385,7 +1820,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -1395,7 +1830,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SOLAR_BEAM] =
     {
 		.name = _("Solar Beam"),
-        .effect = EFFECT_SOLARBEAM,
+		.description = COMPOUND_STRING("The user gathers\n"
+                                       "light on the first\n"
+                                       "turn, then blasts a\n"
+                                       "beam next turn."),
+        .animScript = gMoveAnim_SOLAR_BEAM,
+		.effect = EFFECT_SKIP_CHARGING_IN_WEATHER,
         .power = 120,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -1407,7 +1847,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE,
-			.twoTurnsMove = TRUE,
+		},
+		.argument = {
+			.twoTurns = {
+				.stringId = B_MSG_ABSORBED_LIGHT,
+				.weather = B_WEATHER_SUN_ANY,
+			},
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -1416,7 +1861,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_POISON_POWDER] =
     {
 		.name = _("Poison Powder"),
-        .effect = EFFECT_POISON,
+		.description = COMPOUND_STRING("The user scatters a\n"
+                                       "cloud of poisonous\n"
+                                       "dust that poisons\n"
+                                       "the target."),
+        .animScript = gMoveAnim_POISON_POWDER,
+		.effect = EFFECT_SET_POISON,
         .type = TYPE_POISON,
         .accuracy = 75,
         .pp = 35,
@@ -1433,7 +1883,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_STUN_SPORE] =
     {
 		.name = _("Stun Spore"),
-        .effect = EFFECT_PARALYZE,
+		.description = COMPOUND_STRING("The user scatters a\n"
+                                       "cloud of numbing\n"
+                                       "powder that\n"
+                                       "paralyzes the foe."),
+        .animScript = gMoveAnim_STUN_SPORE,
+		.effect = EFFECT_SET_PARALYZE,
         .type = TYPE_GRASS,
         .accuracy = 75,
         .pp = 30,
@@ -1450,7 +1905,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SLEEP_POWDER] =
     {
 		.name = _("Sleep Powder"),
-        .effect = EFFECT_SLEEP,
+		.description = COMPOUND_STRING("The user scatters a\n"
+                                       "cloud of soporific\n"
+                                       "dust that puts the\n"
+                                       "target to sleep."),
+        .animScript = gMoveAnim_SLEEP_POWDER,
+		.effect = EFFECT_SLEEP,
         .type = TYPE_GRASS,
         .accuracy = 75,
         .pp = 15,
@@ -1467,7 +1927,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PETAL_DANCE] =
     {
 		.name = _("Petal Dance"),
-        .effect = EFFECT_RAMPAGE,
+		.description = COMPOUND_STRING("The user attacks\n"
+                                       "with petals for two\n"
+                                       "to three turns,\n"
+                                       "then gets confused."),
+        .animScript = gMoveAnim_PETAL_DANCE,
+		.effect = EFFECT_HIT,
 		.power = 120,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -1480,13 +1945,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.danceMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_THRASH,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_STRING_SHOT] =
     {
 		.name = _("String Shot"),
-        .effect = EFFECT_SPEED_DOWN_2,
+		.description = COMPOUND_STRING("The foes are\n"
+                                       "bounded with\n"
+                                       "strings shot to\n"
+                                       "reduce its Speed."),
+        .animScript = gMoveAnim_STRING_SHOT,
+		.effect = EFFECT_SPEED_DOWN_2,
         .type = TYPE_BUG,
         .accuracy = 95,
         .pp = 40,
@@ -1502,7 +1977,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRAGON_RAGE] =
     {
 		.name = _("Dragon Rage"),
-        .effect = EFFECT_FIXED_DAMAGE,
+		.description = COMPOUND_STRING("The foe is stricken\n"
+                                       "by a shock wave. It\n"
+                                       "always inflicts 40\n"
+                                       "HP damage."),
+        .animScript = gMoveAnim_DRAGON_RAGE,
+		.effect = EFFECT_FIXED_DAMAGE,
         .power = 1,
         .type = TYPE_DRAGON,
         .accuracy = 100,
@@ -1511,17 +1991,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_SPECIAL,
-		.argument = 40,
+		.argument = {
+			.fixedDamage = { .amount = 40 },
+		},
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FIRE_SPIN] =
     {
 		.name = _("Fire Spin"),
-        .effect = EFFECT_TRAP,
+		.description = COMPOUND_STRING("The foe is trapped\n"
+                                       "in an spiral of\n"
+                                       "fire that rages\n"
+                                       "four to five turns."),
+        .animScript = gMoveAnim_FIRE_SPIN,
+		.effect = EFFECT_HIT,
 		.power = 35,
         .type = TYPE_FIRE,
 		.accuracy = 85,
@@ -1531,43 +2017,70 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 		},
-		.argument = TRAP_ID_FIRE_SPIN,
+		.argument = {
+			.bind = { .trappingId = TRAP_ID_FIRE_SPIN },
+		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_WRAP,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_THUNDER_SHOCK] =
     {
 		.name = _("Thunder Shock"),
-        .effect = EFFECT_PARALYZE_HIT,
+		.description = COMPOUND_STRING("It attacks the foe\n"
+                                       "with a jolt of\n"
+                                       "electricity. It may\n"
+                                       "paralyze the foe."),
+        .animScript = gMoveAnim_THUNDER_SHOCK,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
         .pp = 30,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_THUNDERBOLT] =
     {
 		.name = _("Thunderbolt"),
-        .effect = EFFECT_PARALYZE_HIT,
+		.description = COMPOUND_STRING("A strong electric\n"
+                                       "blast is loosed at\n"
+                                       "the foe. It may\n"
+                                       "paralyze the foe."),
+        .animScript = gMoveAnim_THUNDERBOLT,
+		.effect = EFFECT_HIT,
 		.power = 90,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_THUNDER_WAVE] =
     {
 		.name = _("Thunder Wave"),
-        .effect = EFFECT_PARALYZE,
+		.description = COMPOUND_STRING("The user launches a\n"
+                                       "weak jolt of\n"
+                                       "electricity that\n"
+                                       "paralyzes the foe."),
+        .animScript = gMoveAnim_THUNDER_WAVE,
+		.effect = EFFECT_SET_PARALYZE,
         .type = TYPE_ELECTRIC,
 		.accuracy = 90,
         .pp = 20,
@@ -1583,25 +2096,44 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_THUNDER] =
     {
 		.name = _("Thunder"),
-        .effect = EFFECT_PARALYZE_HIT,
+		.description = COMPOUND_STRING("A wicked thunder is\n"
+                                       "dropped on the foe.\n"
+                                       "It may also leave\n"
+                                       "the foe paralyzed."),
+        .animScript = gMoveAnim_THUNDER,
+		.effect = EFFECT_NEVER_MISS_IN_WEATHER,
 		.power = 110,
         .type = TYPE_ELECTRIC,
         .accuracy = 70,
         .pp = 10,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.hitInAir = TRUE,
 		},
+		.argument = {
+			.neverMissInWeather = {
+				.weather = B_WEATHER_RAIN_ANY,
+				.debuffWeather = B_WEATHER_SUN_ANY,
+			},
+		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ROCK_THROW] =
     {
 		.name = _("Rock Throw"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user picks up\n"
+                                       "and throws a small\n"
+                                       "rock at the target\n"
+                                       "to inflict damage."),
+        .animScript = gMoveAnim_ROCK_THROW,
+		.effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_ROCK,
         .accuracy = 90,
@@ -1618,7 +2150,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_EARTHQUAKE] =
     {
 		.name = _("Earthquake"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user sets off\n"
+                                       "an earthquake that\n"
+                                       "strikes every\n"
+                                       "Pokémon around it."),
+        .animScript = gMoveAnim_EARTHQUAKE,
+		.effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_GROUND,
         .accuracy = 100,
@@ -1636,7 +2173,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FISSURE] =
     {
 		.name = _("Fissure"),
-        .effect = EFFECT_OHKO,
+		.description = COMPOUND_STRING("The foe is dropped\n"
+                                       "into a fissure. The\n"
+                                       "target instantly\n"
+                                       "faints if it hits."),
+        .animScript = gMoveAnim_FISSURE,
+		.effect = EFFECT_OHKO,
         .power = 1,
         .type = TYPE_GROUND,
         .accuracy = 30,
@@ -1653,7 +2195,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DIG] =
     {
 		.name = _("Dig"),
-        .effect = EFFECT_SEMI_INVULNERABLE,
+		.description = COMPOUND_STRING("The user burrows\n"
+                                       "into the ground,\n"
+                                       "then attacks on the\n"
+                                       "next turn."),
+        .animScript = gMoveAnim_DIG,
+		.effect = EFFECT_SEMI_INVULNERABLE,
 		.power = 80,
         .type = TYPE_GROUND,
         .accuracy = 100,
@@ -1666,7 +2213,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenAssist = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.twoTurnsMove = TRUE,
+		},
+		.argument = {
+			.semiInvulnerable = {
+				.stringId = B_MSG_BURROWED_IN_GROUND,
+				.status = COMPRESS_BITS(STATUS3_UNDERGROUND),
+			},
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -1675,7 +2227,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TOXIC] =
     {
 		.name = _("Toxic"),
-        .effect = EFFECT_TOXIC,
+		.description = COMPOUND_STRING("It leaves the foe\n"
+                                       "badly poisoned. Its\n"
+                                       "poison damage\n"
+                                       "worsens every turn."),
+		.animScript = gMoveAnim_TOXIC,
+        .effect = EFFECT_SET_TOXIC_POISON,
         .type = TYPE_POISON,
 		.accuracy = 90,
         .pp = 10,
@@ -1691,35 +2248,56 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CONFUSION] =
     {
 		.name = _("Confusion"),
-        .effect = EFFECT_CONFUSE_HIT,
+		.description = COMPOUND_STRING("The foe is hit by a\n"
+                                       "weak telekinetic\n"
+                                       "force. It may also\n"
+                                       "confuse the foe."),
+        .animScript = gMoveAnim_CONFUSION,
+		.effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 25,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CONFUSION,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_PSYCHIC] =
     {
 		.name = _("Psychic"),
-        .effect = EFFECT_TARGET_SP_DEFENSE_DOWN_HIT,
+		.description = COMPOUND_STRING("The foe is hit by a\n"
+                                       "strong telekinetic\n"
+                                       "force. It may lower\n"
+                                       "the foe's Sp. Def."),
+        .animScript = gMoveAnim_PSYCHIC,
+		.effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_HYPNOSIS] =
     {
 		.name = _("Hypnosis"),
-        .effect = EFFECT_SLEEP,
+		.description = COMPOUND_STRING("The user employs\n"
+                                       "hypnotic suggestion\n"
+                                       "to make the target\n"
+                                       "fall asleep."),
+        .animScript = gMoveAnim_HYPNOSIS,
+		.effect = EFFECT_SLEEP,
         .type = TYPE_PSYCHIC,
         .accuracy = 60,
         .pp = 20,
@@ -1735,7 +2313,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MEDITATE] =
     {
 		.name = _("Meditate"),
-        .effect = EFFECT_ATTACK_UP,
+		.description = COMPOUND_STRING("The user meditates\n"
+                                       "to awaken its power\n"
+                                       "and raise its\n"
+                                       "Attack stat."),
+        .animScript = gMoveAnim_MEDITATE,
+		.effect = EFFECT_ATTACK_UP,
         .type = TYPE_PSYCHIC,
         .pp = 40,
         .target = MOVE_TARGET_USER,
@@ -1752,7 +2335,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_AGILITY] =
     {
 		.name = _("Agility"),
-        .effect = EFFECT_SPEED_UP_2,
+		.description = COMPOUND_STRING("The user relaxes\n"
+                                       "and lightens its\n"
+                                       "body to sharply\n"
+                                       "boost its Speed."),
+        .animScript = gMoveAnim_AGILITY,
+		.effect = EFFECT_SPEED_UP_2,
         .type = TYPE_PSYCHIC,
         .pp = 30,
         .target = MOVE_TARGET_USER,
@@ -1769,7 +2357,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_QUICK_ATTACK] =
     {
 		.name = _("Quick Attack"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("An almost invisibly\n"
+                                       "fast attack that is\n"
+                                       "certain to strike\n"
+                                       "first."),
+        .animScript = gMoveAnim_QUICK_ATTACK,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -1788,7 +2381,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_RAGE] =
     {
 		.name = _("Rage"),
-        .effect = EFFECT_RAGE,
+		.description = COMPOUND_STRING("While this move is\n"
+                                       "in use, it gains\n"
+                                       "Attack each time\n"
+                                       "the user is hit."),
+        .animScript = gMoveAnim_RAGE,
+		.effect = EFFECT_RAGE,
         .power = 20,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -1806,7 +2404,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TELEPORT] =
     {
 		.name = _("Teleport"),
-        .effect = EFFECT_TELEPORT,
+		.description = COMPOUND_STRING("It switches places\n"
+                                       "with a different\n"
+                                       "Pokémon, using\n"
+                                       "telekinetic power."),
+        .animScript = gMoveAnim_TELEPORT,
+		.effect = EFFECT_TELEPORT,
         .type = TYPE_PSYCHIC,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -1823,7 +2426,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_NIGHT_SHADE] =
     {
 		.name = _("Night Shade"),
-        .effect = EFFECT_LEVEL_DAMAGE,
+		.description = COMPOUND_STRING("The user makes the\n"
+                                       "foe see a mirage.\n"
+                                       "It damages matching\n"
+                                       "the user's level."),
+        .animScript = gMoveAnim_NIGHT_SHADE,
+		.effect = EFFECT_USER_LEVEL_TO_DAMAGE,
         .power = 1,
         .type = TYPE_GHOST,
         .accuracy = 100,
@@ -1832,7 +2440,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -1841,7 +2448,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MIMIC] =
     {
 		.name = _("Mimic"),
-        .effect = EFFECT_MIMIC,
+		.description = COMPOUND_STRING("The user copies the\n"
+                                       "move last used by\n"
+                                       "the foe for the\n"
+                                       "rest of the battle."),
+        .animScript = gMoveAnim_MIMIC,
+		.effect = EFFECT_MIMIC_MOVE,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -1862,7 +2474,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SCREECH] =
     {
 		.name = _("Screech"),
-        .effect = EFFECT_DEFENSE_DOWN_2,
+		.description = COMPOUND_STRING("An earsplitting\n"
+                                       "screech harshly\n"
+                                       "lowers the target's\n"
+                                       "Defense stat."),
+        .animScript = gMoveAnim_SCREECH,
+		.effect = EFFECT_DEFENSE_DOWN_2,
         .type = TYPE_NORMAL,
         .accuracy = 85,
         .pp = 40,
@@ -1879,7 +2496,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DOUBLE_TEAM] =
     {
 		.name = _("Double Team"),
-        .effect = EFFECT_EVASION_UP,
+		.description = COMPOUND_STRING("The user creates\n"
+                                       "illusory copies of\n"
+                                       "itself to raise its\n"
+                                       "evasiveness."),
+        .animScript = gMoveAnim_DOUBLE_TEAM,
+		.effect = EFFECT_EVASION_UP,
         .type = TYPE_NORMAL,
         .pp = 15,
         .target = MOVE_TARGET_USER,
@@ -1896,7 +2518,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_RECOVER] =
     {
 		.name = _("Recover"),
-        .effect = EFFECT_RESTORE_HP,
+		.description = COMPOUND_STRING("Restoring its own\n"
+                                       "cells, the user\n"
+                                       "restores its HP by\n"
+                                       "half of its max HP."),
+        .animScript = gMoveAnim_RECOVER,
+		.effect = EFFECT_RESTORE_HP,
         .type = TYPE_NORMAL,
 		.pp = 5,
         .target = MOVE_TARGET_USER,
@@ -1905,7 +2532,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -1914,7 +2540,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HARDEN] =
     {
 		.name = _("Harden"),
-        .effect = EFFECT_DEFENSE_UP,
+		.description = COMPOUND_STRING("The user stiffens\n"
+                                       "all the muscles in\n"
+                                       "its body to boost\n"
+                                       "its Defense stat."),
+        .animScript = gMoveAnim_HARDEN,
+		.effect = EFFECT_DEFENSE_UP,
         .type = TYPE_NORMAL,
         .pp = 30,
         .target = MOVE_TARGET_USER,
@@ -1931,7 +2562,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MINIMIZE] =
     {
 		.name = _("Minimize"),
-        .effect = EFFECT_MINIMIZE,
+		.description = COMPOUND_STRING("The user compresses\n"
+                                       "all the cells in\n"
+                                       "its body to raise\n"
+                                       "its evasiveness."),
+        .animScript = gMoveAnim_MINIMIZE,
+		.effect = EFFECT_EVASION_UP_SET_MINIMIZE,
         .type = TYPE_NORMAL,
 		.pp = 10,
         .target = MOVE_TARGET_USER,
@@ -1948,7 +2584,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SMOKESCREEN] =
     {
 		.name = _("Smokescreen"),
-        .effect = EFFECT_ACCURACY_DOWN,
+		.description = COMPOUND_STRING("An obscuring cloud\n"
+                                       "of smoke or ink\n"
+                                       "reduces the foe's\n"
+                                       "accuracy."),
+        .animScript = gMoveAnim_SMOKESCREEN,
+		.effect = EFFECT_ACCURACY_DOWN,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 20,
@@ -1964,7 +2605,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CONFUSE_RAY] =
     {
 		.name = _("Confuse Ray"),
-        .effect = EFFECT_CONFUSE,
+		.description = COMPOUND_STRING("The target is\n"
+                                       "exposed to a\n"
+                                       "sinister ray that\n"
+                                       "causes confusion."),
+        .animScript = gMoveAnim_CONFUSE_RAY,
+		.effect = EFFECT_CONFUSE,
         .type = TYPE_GHOST,
         .accuracy = 100,
         .pp = 10,
@@ -1980,7 +2626,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WITHDRAW] =
     {
 		.name = _("Withdraw"),
-        .effect = EFFECT_DEFENSE_UP,
+		.description = COMPOUND_STRING("The user withdraws\n"
+                                       "its body into its\n"
+                                       "shell, boosting its\n"
+                                       "Defense stat."),
+        .animScript = gMoveAnim_WITHDRAW,
+		.effect = EFFECT_DEFENSE_UP,
         .type = TYPE_WATER,
         .pp = 40,
         .target = MOVE_TARGET_USER,
@@ -1997,7 +2648,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DEFENSE_CURL] =
     {
 		.name = _("Defense Curl"),
-        .effect = EFFECT_DEFENSE_CURL,
+		.description = COMPOUND_STRING("The user curls up\n"
+                                       "to conceal weak\n"
+                                       "spots and raise its\n"
+                                       "Defense stat."),
+        .animScript = gMoveAnim_DEFENSE_CURL,
+		.effect = EFFECT_DEFENSE_UP_SET_DEFENSE_CURL,
         .type = TYPE_NORMAL,
         .pp = 40,
         .target = MOVE_TARGET_USER,
@@ -2014,7 +2670,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BARRIER] =
     {
 		.name = _("Barrier"),
-        .effect = EFFECT_DEFENSE_UP_2,
+		.description = COMPOUND_STRING("The user throws up\n"
+                                       "a sturdy wall that\n"
+                                       "sharply raises its\n"
+                                       "Defense stat."),
+        .animScript = gMoveAnim_BARRIER,
+		.effect = EFFECT_DEFENSE_UP_2,
         .type = TYPE_PSYCHIC,
 		.pp = 20,
         .target = MOVE_TARGET_USER,
@@ -2031,7 +2692,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LIGHT_SCREEN] =
     {
 		.name = _("Light Screen"),
-        .effect = EFFECT_LIGHT_SCREEN,
+		.description = COMPOUND_STRING("A wall of light\n"
+                                       "cuts damage from\n"
+                                       "special attacks for\n"
+                                       "five turns."),
+        .animScript = gMoveAnim_LIGHT_SCREEN,
+		.effect = EFFECT_SET_LIGHT_SCREEN,
         .type = TYPE_PSYCHIC,
         .pp = 30,
         .target = MOVE_TARGET_USER,
@@ -2040,7 +2706,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.affectsUserSide = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_SPDEF_UP_1,
@@ -2049,7 +2714,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HAZE] =
     {
 		.name = _("Haze"),
-        .effect = EFFECT_HAZE,
+		.description = COMPOUND_STRING("Eliminates all stat\n"
+                                       "changes among all\n"
+                                       "Pokémon engaged in\n"
+                                       "battle."),
+        .animScript = gMoveAnim_HAZE,
+		.effect = EFFECT_NORMALISE_FIELD_BUFFS,
         .type = TYPE_ICE,
         .pp = 30,
         .target = MOVE_TARGET_ALL_BATTLERS,
@@ -2065,7 +2735,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_REFLECT] =
     {
 		.name = _("Reflect"),
-        .effect = EFFECT_REFLECT,
+		.description = COMPOUND_STRING("A wall of light\n"
+                                       "cuts damage from\n"
+                                       "physical attacks\n"
+                                       "for five turns."),
+        .animScript = gMoveAnim_REFLECT,
+		.effect = EFFECT_SET_REFLECT,
         .type = TYPE_PSYCHIC,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -2074,7 +2749,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.affectsUserSide = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_DEF_UP_1,
@@ -2083,7 +2757,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FOCUS_ENERGY] =
     {
 		.name = _("Focus Energy"),
-        .effect = EFFECT_FOCUS_ENERGY,
+		.description = COMPOUND_STRING("The user takes a\n"
+                                       "breath and focuses\n"
+                                       "so that critical\n"
+                                       "hits land more."),
+        .animScript = gMoveAnim_FOCUS_ENERGY,
+		.effect = EFFECT_FOCUS_ENERGY,
         .type = TYPE_NORMAL,
         .pp = 30,
         .target = MOVE_TARGET_USER,
@@ -2100,7 +2779,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BIDE] =
     {
 		.name = _("Bide"),
-        .effect = EFFECT_BIDE,
+		.description = COMPOUND_STRING("The user endures\n"
+                                       "attacks for two\n"
+                                       "turns, then strikes\n"
+                                       "back double."),
+        .animScript = gMoveAnim_BIDE,
+		.effect = EFFECT_BIDE,
         .power = 1,
         .type = TYPE_NORMAL,
         .pp = 10,
@@ -2114,8 +2798,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE, // Note: Bide should work with Parental Bond. This will be addressed in future.
-			.twoTurnsMove = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2124,7 +2806,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_METRONOME] =
     {
 		.name = _("Metronome"),
-        .effect = EFFECT_METRONOME,
+		.description = COMPOUND_STRING("Waggles a finger\n"
+                                       "and stimulates the\n"
+                                       "brain into using\n"
+                                       "any move at random."),
+        .animScript = gMoveAnim_METRONOME,
+		.effect = EFFECT_METRONOME,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_DEPENDS,
@@ -2137,7 +2824,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.callOtherMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2146,7 +2832,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MIRROR_MOVE] =
     {
 		.name = _("Mirror Move"),
-        .effect = EFFECT_MIRROR_MOVE,
+		.description = COMPOUND_STRING("The user counters\n"
+                                       "the target by\n"
+                                       "mimicking the\n"
+                                       "target's last move."),
+        .animScript = gMoveAnim_NONE,
+		.effect = EFFECT_MIRROR_MOVE,
         .type = TYPE_FLYING,
         .pp = 20,
         .target = MOVE_TARGET_DEPENDS,
@@ -2159,7 +2850,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.callOtherMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_ATK_UP_2,
@@ -2168,7 +2858,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SELF_DESTRUCT] =
     {
 		.name = _("Self-Destruct"),
-        .effect = EFFECT_EXPLOSION,
+		.description = COMPOUND_STRING("The user blows up\n"
+                                       "to inflict severe\n"
+                                       "damage, even making\n"
+                                       "itself faint."),
+        .animScript = gMoveAnim_SELF_DESTRUCT,
+		.effect = EFFECT_EXPLOSION,
         .power = 200,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -2185,7 +2880,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_EGG_BOMB] =
     {
 		.name = _("Egg Bomb"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("A large egg is\n"
+                                       "hurled at the foe\n"
+                                       "with maximum force\n"
+                                       "to inflict damage."),
+        .animScript = gMoveAnim_EGG_BOMB,
+		.effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_NORMAL,
         .accuracy = 75,
@@ -2203,99 +2903,152 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LICK] =
     {
 		.name = _("Lick"),
-        .effect = EFFECT_PARALYZE_HIT,
+		.description = COMPOUND_STRING("The foe is licked\n"
+                                       "and hit with a long\n"
+                                       "tongue. It may also\n"
+                                       "paralyze."),
+        .animScript = gMoveAnim_LICK,
+		.effect = EFFECT_HIT,
 		.power = 30,
         .type = TYPE_GHOST,
         .accuracy = 100,
         .pp = 30,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SMOG] =
     {
 		.name = _("Smog"),
-        .effect = EFFECT_POISON_HIT,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with exhaust gases.\n"
+                                       "It may also poison\n"
+                                       "the foe."),
+        .animScript = gMoveAnim_SMOG,
+		.effect = EFFECT_HIT,
 		.power = 30,
         .type = TYPE_POISON,
         .accuracy = 70,
         .pp = 20,
-        .secondaryEffectChance = 40,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_POISON,
+			.chance = 40,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SLUDGE] =
     {
 		.name = _("Sludge"),
-        .effect = EFFECT_POISON_HIT,
+		.description = COMPOUND_STRING("Unsanitary sludge\n"
+                                       "is hurled at the\n"
+                                       "target. It may also\n"
+                                       "poison the target."),
+        .animScript = gMoveAnim_SLUDGE,
+		.effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_POISON,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BONE_CLUB] =
     {
 		.name = _("Bone Club"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("The user clubs the\n"
+                                       "target with a bone.\n"
+                                       "This may also make\n"
+                                       "the target flinch."),
+        .animScript = gMoveAnim_BONE_CLUB,
+		.effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_GROUND,
         .accuracy = 85,
         .pp = 20,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FIRE_BLAST] =
     {
 		.name = _("Fire Blast"),
-        .effect = EFFECT_BURN_HIT,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "an intense flame.\n"
+                                       "It may leave the\n"
+                                       "target with a burn."),
+        .animScript = gMoveAnim_FIRE_BLAST,
+		.effect = EFFECT_HIT,
 		.power = 110,
         .type = TYPE_FIRE,
         .accuracy = 85,
         .pp = 5,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_WATERFALL] =
     {
 		.name = _("Waterfall"),
-		.effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("A powerful charge\n"
+                                       "attack. It can also\n"
+                                       "be used to climb a\n"
+                                       "waterfall."),
+		.animScript = gMoveAnim_WATERFALL,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_WATER,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_CLAMP] =
     {
 		.name = _("Clamp"),
-        .effect = EFFECT_TRAP,
+		.description = COMPOUND_STRING("The foe is clamped\n"
+                                       "and squeezed by the\n"
+                                       "user's shell for\n"
+                                       "four to five turns."),
+        .animScript = gMoveAnim_CLAMP,
+		.effect = EFFECT_HIT,
         .power = 35,
         .type = TYPE_WATER,
 		.accuracy = 85,
@@ -2306,15 +3059,26 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 		},
-		.argument = TRAP_ID_CLAMP,
+		.argument = {
+			.bind = { .trappingId = TRAP_ID_CLAMP },
+		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_WRAP,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SWIFT] =
     {
 		.name = _("Swift"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("Star-shaped rays\n"
+                                       "are shot at the\n"
+                                       "target. This attack\n"
+                                       "never misses."),
+        .animScript = gMoveAnim_SWIFT,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_NORMAL,
         .pp = 20,
@@ -2330,7 +3094,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SKULL_BASH] =
     {
 		.name = _("Skull Bash"),
-        .effect = EFFECT_SKULL_BASH,
+		.description = COMPOUND_STRING("The user raises its\n"
+                                       "Defense on first\n"
+                                       "turn, then attacks\n"
+                                       "on the second turn."),
+        .animScript = gMoveAnim_SKULL_BASH,
+		.effect = EFFECT_TWO_TURNS_ATTACK,
 		.power = 130,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -2343,16 +3112,29 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE,
-			.twoTurnsMove = TRUE,
+		},
+		.argument = {
+			.twoTurns = { .stringId = B_MSG_TUCKED_HEAD },
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_PLUS_1,
+			.chance = 0,
+			.self = TRUE,
+			.onChargeTurnOnly = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SPIKE_CANNON] =
     {
 		.name = _("Spike Cannon"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("Sharp spikes are\n"
+                                       "fired at the foe to\n"
+                                       "strike two to five\n"
+                                       "times in succession."),
+        .animScript = gMoveAnim_SPIKE_CANNON,
+		.effect = EFFECT_MULTI_HIT,
         .power = 20,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -2369,25 +3151,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CONSTRICT] =
     {
 		.name = _("Constrict"),
-        .effect = EFFECT_TARGET_SPEED_DOWN_HIT,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with long tentacles\n"
+                                       "or vines. It may\n"
+                                       "lower Speed."),
+        .animScript = gMoveAnim_CONSTRICT,
+		.effect = EFFECT_HIT,
         .power = 10,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 35,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_AMNESIA] =
     {
 		.name = _("Amnesia"),
-        .effect = EFFECT_SPECIAL_DEFENSE_UP_2,
+		.description = COMPOUND_STRING("It temporarily\n"
+                                       "empties its mind.\n"
+                                       "It sharply raises\n"
+                                       "its Sp. Def stat."),
+        .animScript = gMoveAnim_AMNESIA,
+		.effect = EFFECT_SPECIAL_DEFENSE_UP_2,
         .type = TYPE_PSYCHIC,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -2404,7 +3199,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_KINESIS] =
     {
 		.name = _("Kinesis"),
-        .effect = EFFECT_ACCURACY_DOWN,
+		.description = COMPOUND_STRING("The user distracts\n"
+                                       "the foe by bending\n"
+                                       "a spoon. It lowers\n"
+                                       "the foe's accuracy."),
+        .animScript = gMoveAnim_KINESIS,
+		.effect = EFFECT_ACCURACY_DOWN,
         .type = TYPE_PSYCHIC,
         .accuracy = 80,
         .pp = 15,
@@ -2420,7 +3220,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SOFT_BOILED] =
     {
 		.name = _("Soft-Boiled"),
-        .effect = EFFECT_RESTORE_HP,
+		.description = COMPOUND_STRING("Heals the user by\n"
+                                       "up to half its full\n"
+                                       "HP. It can be used\n"
+                                       "to heal an ally."),
+        .animScript = gMoveAnim_SOFT_BOILED,
+		.effect = EFFECT_RESTORE_HP,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 5,
@@ -2430,7 +3235,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -2439,7 +3243,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HI_JUMP_KICK] =
     {
 		.name = _("High Jump Kick"),
-        .effect = EFFECT_RECOIL_IF_MISS,
+		.description = COMPOUND_STRING("A strong jumping\n"
+                                       "knee kick. If it\n"
+                                       "misses, the user is\n"
+                                       "hurt."),
+        .animScript = gMoveAnim_HIGH_JUMP_KICK,
+		.effect = EFFECT_RECOIL_IF_MISS,
 		.power = 130,
         .type = TYPE_FIGHTING,
         .accuracy = 90,
@@ -2458,7 +3267,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GLARE] =
     {
 		.name = _("Glare"),
-        .effect = EFFECT_PARALYZE,
+		.description = COMPOUND_STRING("It intimidates the\n"
+                                       "foe with its\n"
+                                       "belly's pattern to\n"
+                                       "cause paralysis."),
+        .animScript = gMoveAnim_GLARE,
+		.effect = EFFECT_SET_PARALYZE,
         .type = TYPE_NORMAL,
 		.accuracy = 100,
         .pp = 30,
@@ -2474,15 +3288,19 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DREAM_EATER] =
     {
 		.name = _("Dream Eater"),
-        .effect = EFFECT_DREAM_EATER,
+		.description = COMPOUND_STRING("Absorbs half the\n"
+                                       "damage it inflicted\n"
+                                       "on a sleeping foe\n"
+                                       "to restore HP."),
+        .animScript = gMoveAnim_DREAM_EATER,
+		.effect = EFFECT_DREAM_EATER,
         .power = 100,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 15,
         .target = MOVE_TARGET_SELECTED,
-		.flags =
-		{
-			.healingMove = TRUE,
+		.argument = {
+			.absorb = { .percentage = 50 },
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2491,7 +3309,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_POISON_GAS] =
     {
 		.name = _("Poison Gas"),
-        .effect = EFFECT_POISON,
+		.description = COMPOUND_STRING("A cloud of poison\n"
+                                       "gas is sprayed at\n"
+                                       "opposing Pokémon,\n"
+                                       "poisoning those hit."),
+        .animScript = gMoveAnim_POISON_GAS,
+		.effect = EFFECT_SET_POISON,
         .type = TYPE_POISON,
 		.accuracy = 90,
         .pp = 40,
@@ -2507,7 +3330,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BARRAGE] =
     {
 		.name = _("Barrage"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("Round objects are\n"
+                                       "hurled at the foe\n"
+                                       "to strike two to\n"
+                                       "five times in a row."),
+        .animScript = gMoveAnim_BARRAGE,
+		.effect = EFFECT_MULTI_HIT,
         .power = 15,
         .type = TYPE_NORMAL,
         .accuracy = 85,
@@ -2525,7 +3353,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LEECH_LIFE] =
     {
 		.name = _("Leech Life"),
-        .effect = EFFECT_ABSORB,
+		.description = COMPOUND_STRING("A blood-draining\n"
+                                       "attack. The user's\n"
+                                       "HP is restored by\n"
+                                       "half the damage."),
+        .animScript = gMoveAnim_LEECH_LIFE,
+		.effect = EFFECT_HIT_ABSORB,
 		.power = 80,
         .type = TYPE_BUG,
         .accuracy = 100,
@@ -2535,7 +3368,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.healingMove = TRUE,
+		},
+		.argument = {
+			.absorb = { .percentage = 50 },
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2544,7 +3379,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LOVELY_KISS] =
     {
 		.name = _("Lovely Kiss"),
-        .effect = EFFECT_SLEEP,
+		.description = COMPOUND_STRING("The user forces a\n"
+                                       "kiss on the foe\n"
+                                       "with a scary face\n"
+                                       "that induces sleep."),
+        .animScript = gMoveAnim_LOVELY_KISS,
+		.effect = EFFECT_SLEEP,
         .type = TYPE_NORMAL,
         .accuracy = 75,
         .pp = 10,
@@ -2560,30 +3400,44 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SKY_ATTACK] =
     {
 		.name = _("Sky Attack"),
-        .effect = EFFECT_TWO_TURNS_ATTACK,
+		.description = COMPOUND_STRING("A two-turn attack\n"
+                                       "with a high\n"
+                                       "critical-hit ratio.\n"
+                                       "The foe may flinch."),
+        .animScript = gMoveAnim_SKY_ATTACK,
+		.effect = EFFECT_TWO_TURNS_ATTACK,
         .power = 140,
         .type = TYPE_FLYING,
         .accuracy = 90,
         .pp = 5,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
-			.highCritChance = TRUE,
+			.critStage = 1,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE,
-			.twoTurnsMove = TRUE,
+		},
+		.argument = {
+			.twoTurns = { .stringId = B_MSG_CLOAKED_IN_SUNLIGHT },
 		},
         .split = SPLIT_PHYSICAL,
-        .argument = MOVE_EFFECT_FLINCH,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_TRANSFORM] =
     {
 		.name = _("Transform"),
-        .effect = EFFECT_TRANSFORM,
+		.description = COMPOUND_STRING("The user transforms\n"
+                                       "into a copy of the\n"
+                                       "foe with even the\n"
+                                       "same move set."),
+        .animScript = gMoveAnim_TRANSFORM,
+		.effect = EFFECT_TRANSFORM,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -2604,26 +3458,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BUBBLE] =
     {
 		.name = _("Bubble"),
-        .effect = EFFECT_TARGET_SPEED_DOWN_HIT,
+		.description = COMPOUND_STRING("A spray of bubbles\n"
+                                       "hits the foe. It\n"
+                                       "may lower the foe's\n"
+                                       "Speed stat."),
+        .animScript = gMoveAnim_BUBBLE,
+		.effect = EFFECT_HIT,
 		.power = 40,
         .type = TYPE_WATER,
         .accuracy = 100,
         .pp = 30,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_BOTH,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_DIZZY_PUNCH] =
     {
 		.name = _("Dizzy Punch"),
-        .effect = EFFECT_CONFUSE_HIT,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "a rhythmically\n"
+                                       "punch that may also\n"
+                                       "leave it confused."),
+        .animScript = gMoveAnim_DIZZY_PUNCH,
+		.effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -2631,13 +3497,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.punchMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CONFUSION,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SPORE] =
     {
 		.name = _("Spore"),
-        .effect = EFFECT_SLEEP,
+		.description = COMPOUND_STRING("The user scatters\n"
+                                       "bursts of spores\n"
+                                       "that induce sleep."),
+        .animScript = gMoveAnim_SPORE,
+		.effect = EFFECT_SLEEP,
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 15,
@@ -2654,7 +3528,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FLASH] =
     {
 		.name = _("Flash"),
-        .effect = EFFECT_ACCURACY_DOWN,
+		.description = COMPOUND_STRING("A blast of light\n"
+                                       "that cuts the foe's\n"
+                                       "accuracy. It also\n"
+                                       "illuminates caves."),
+        .animScript = gMoveAnim_FLASH,
+		.effect = EFFECT_ACCURACY_DOWN,
         .type = TYPE_NORMAL,
 		.accuracy = 100,
         .pp = 20,
@@ -2670,7 +3549,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PSYWAVE] =
     {
 		.name = _("Psywave"),
-        .effect = EFFECT_PSYWAVE,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with an odd psychic\n"
+                                       "wave. The attack\n"
+                                       "varies in intensity."),
+        .animScript = gMoveAnim_PSYWAVE,
+		.effect = EFFECT_PSYWAVE,
         .power = 1,
         .type = TYPE_PSYCHIC,
 		.accuracy = 100,
@@ -2679,7 +3563,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2688,7 +3571,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SPLASH] =
     {
 		.name = _("Splash"),
-        .effect = EFFECT_DO_NOTHING,
+		.description = COMPOUND_STRING("The user just flops\n"
+                                       "and splashes around\n"
+                                       "to no effect at\n"
+                                       "all..."),
+        .animScript = gMoveAnim_SPLASH,
+		.effect = EFFECT_DO_NOTHING,
         .type = TYPE_NORMAL,
         .pp = 40,
         .target = MOVE_TARGET_USER,
@@ -2705,7 +3593,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ACID_ARMOR] =
     {
 		.name = _("Acid Armor"),
-        .effect = EFFECT_DEFENSE_UP_2,
+		.description = COMPOUND_STRING("The user alters its\n"
+                                       "cells to liquefy\n"
+                                       "itself and sharply\n"
+                                       "raise Defense."),
+        .animScript = gMoveAnim_ACID_ARMOR,
+		.effect = EFFECT_DEFENSE_UP_2,
         .type = TYPE_POISON,
 		.pp = 20,
         .target = MOVE_TARGET_USER,
@@ -2722,7 +3615,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CRABHAMMER] =
     {
 		.name = _("Crabhammer"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("A large pincer is\n"
+                                       "used to hammer the\n"
+                                       "foe. It has a high\n"
+                                       "critical-hit ratio."),
+        .animScript = gMoveAnim_CRABHAMMER,
+		.effect = EFFECT_HIT,
 		.power = 100,
         .type = TYPE_WATER,
 		.accuracy = 90,
@@ -2732,7 +3630,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2741,7 +3639,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_EXPLOSION] =
     {
 		.name = _("Explosion"),
-        .effect = EFFECT_EXPLOSION,
+		.description = COMPOUND_STRING("The user explodes\n"
+                                       "to inflict terrible\n"
+                                       "damage even while\n"
+                                       "fainting itself."),
+        .animScript = gMoveAnim_EXPLOSION,
+		.effect = EFFECT_EXPLOSION,
         .power = 250,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -2758,7 +3661,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FURY_SWIPES] =
     {
 		.name = _("Fury Swipes"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("The foe is raked\n"
+                                       "with sharp claws or\n"
+                                       "scythes two to five\n"
+                                       "times."),
+        .animScript = gMoveAnim_FURY_SWIPES,
+		.effect = EFFECT_MULTI_HIT,
         .power = 18,
         .type = TYPE_NORMAL,
         .accuracy = 80,
@@ -2776,7 +3684,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BONEMERANG] =
     {
 		.name = _("Bonemerang"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user throws a\n"
+                                       "bone that hits the\n"
+                                       "foe once, then once\n"
+                                       "again on return."),
+        .animScript = gMoveAnim_BONEMERANG,
+		.effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_GROUND,
         .accuracy = 90,
@@ -2794,7 +3707,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_REST] =
     {
 		.name = _("Rest"),
-        .effect = EFFECT_REST,
+		.description = COMPOUND_STRING("The user sleeps for\n"
+                                       "two turns to fully\n"
+                                       "restore HP and heal\n"
+                                       "any status problem."),
+        .animScript = gMoveAnim_REST,
+		.effect = EFFECT_REST,
         .type = TYPE_PSYCHIC,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -2803,7 +3721,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -2812,26 +3729,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ROCK_SLIDE] =
     {
 		.name = _("Rock Slide"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("Large boulders are\n"
+                                       "hurled at the foe.\n"
+                                       "It may make the foe\n"
+                                       "flinch."),
+        .animScript = gMoveAnim_ROCK_SLIDE,
+		.effect = EFFECT_HIT,
         .power = 75,
         .type = TYPE_ROCK,
         .accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_BOTH,
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_HYPER_FANG] =
     {
 		.name = _("Hyper Fang"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with sharp fangs.\n"
+                                       "It may make the foe\n"
+                                       "flinch."),
+        .animScript = gMoveAnim_HYPER_FANG,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_NORMAL,
         .accuracy = 90,
         .pp = 15,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -2839,13 +3768,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SHARPEN] =
     {
 		.name = _("Sharpen"),
-        .effect = EFFECT_ATTACK_UP,
+		.description = COMPOUND_STRING("The user makes its\n"
+                                       "edges more jagged,\n"
+                                       "which raises its\n"
+                                       "Attack stat."),
+        .animScript = gMoveAnim_SHARPEN,
+		.effect = EFFECT_ATTACK_UP,
         .type = TYPE_NORMAL,
         .pp = 30,
         .target = MOVE_TARGET_USER,
@@ -2862,7 +3800,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CONVERSION] =
     {
 		.name = _("Conversion"),
-        .effect = EFFECT_CONVERSION,
+		.description = COMPOUND_STRING("The user changes\n"
+                                       "its type to the\n"
+                                       "same type as the\n"
+                                       "move in first slot."),
+        .animScript = gMoveAnim_CONVERSION,
+		.effect = EFFECT_CONVERSION,
         .type = TYPE_NORMAL,
         .pp = 30,
         .target = MOVE_TARGET_USER,
@@ -2879,21 +3822,34 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TRI_ATTACK] =
     {
 		.name = _("Tri Attack"),
-        .effect = EFFECT_TRI_ATTACK,
+		.description = COMPOUND_STRING("A simultaneous\n"
+                                       "3-beam attack that\n"
+                                       "may paralyze, burn,\n"
+                                       "or freeze the foe."),
+        .animScript = gMoveAnim_TRI_ATTACK,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_TRI_ATTACK,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SUPER_FANG] =
     {
 		.name = _("Super Fang"),
-        .effect = EFFECT_SUPER_FANG,
+		.description = COMPOUND_STRING("The user attacks\n"
+                                       "with sharp fangs\n"
+                                       "and halves the\n"
+                                       "foe's HP."),
+        .animScript = gMoveAnim_SUPER_FANG,
+		.effect = EFFECT_SUPER_FANG,
         .power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 90,
@@ -2902,7 +3858,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2911,7 +3866,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SLASH] =
     {
 		.name = _("Slash"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The foe is slashed\n"
+                                       "with claws, etc. It\n"
+                                       "has a high\n"
+                                       "critical-hit ratio."),
+        .animScript = gMoveAnim_SLASH,
+		.effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -2921,7 +3881,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -2931,7 +3891,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SUBSTITUTE] =
     {
 		.name = _("Substitute"),
-        .effect = EFFECT_SUBSTITUTE,
+		.description = COMPOUND_STRING("The user creates a\n"
+                                       "decoy using\n"
+                                       "one-quarter of its\n"
+                                       "full HP."),
+        .animScript = gMoveAnim_SUBSTITUTE,
+		.effect = EFFECT_SUBSTITUTE,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -2948,7 +3913,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_STRUGGLE] =
     {
 		.name = _("Struggle"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("An attack that is\n"
+                                       "used only if there\n"
+                                       "is no PP. It also\n"
+                                       "hurts the user."),
+        .animScript = gMoveAnim_STRUGGLE,
+		.effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_NORMAL,
         .pp = 1,
@@ -2965,6 +3935,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenMeFirst = TRUE,
+			.forbiddenParentalBond = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2973,7 +3944,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SKETCH] =
     {
 		.name = _("Sketch"),
-        .effect = EFFECT_SKETCH,
+		.description = COMPOUND_STRING("This move copies\n"
+                                       "the move last used\n"
+                                       "by the foe, then\n"
+                                       "disappears."),
+        .animScript = gMoveAnim_SKETCH,
+		.effect = EFFECT_SKETCH,
         .type = TYPE_NORMAL,
         .pp = 1,
         .target = MOVE_TARGET_SELECTED,
@@ -2995,7 +3971,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TRIPLE_KICK] =
     {
 		.name = _("Triple Kick"),
-        .effect = EFFECT_TRIPLE_KICK,
+		.description = COMPOUND_STRING("A three-kick attack\n"
+                                       "that becomes more\n"
+                                       "powerful with each\n"
+                                       "successful hit."),
+        .animScript = gMoveAnim_TRIPLE_KICK,
+		.effect = EFFECT_TRIPLE_KICK,
         .power = 10,
         .type = TYPE_FIGHTING,
         .accuracy = 90,
@@ -3008,35 +3989,53 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.strikeCount = 3,
 		},
         .split = SPLIT_PHYSICAL,
+		.argument = {
+			.tripleKick = { .increment = 10 },
+		},
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_THIEF] =
     {
 		.name = _("Thief"),
-        .effect = EFFECT_THIEF, // TODO:
+		.description = COMPOUND_STRING("An attack that take\n"
+                                       "the foe's held item\n"
+                                       "if the user isn't\n"
+                                       "holding one."),
+        .animScript = gMoveAnim_THIEF,
+		.effect = EFFECT_HIT,
 		.power = 60,
         .type = TYPE_DARK,
         .accuracy = 100,
 		.pp = 25,
-        .secondaryEffectChance = 100, // Remove it bc It'snt affected by Sheer Force
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
+			.kingsRockAffected = TRUE,
 			.forbiddenMetronome = TRUE,
 			.forbiddenAssist = TRUE,
 			.forbiddenCopycat = TRUE,
 			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_STEAL_ITEM,
+			.chance = 0,
+			.onFinalMultiHitOnly = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SPIDER_WEB] =
     {
 		.name = _("Spider Web"),
-        .effect = EFFECT_MEAN_LOOK,
+		.description = COMPOUND_STRING("The user ensnares\n"
+                                       "the foe with gooey\n"
+                                       "silk so it can't\n"
+                                       "flee from battle."),
+        .animScript = gMoveAnim_SPIDER_WEB,
+		.effect = EFFECT_MEAN_LOOK,
         .type = TYPE_BUG,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -3052,7 +4051,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MIND_READER] =
     {
 		.name = _("Mind Reader"),
-        .effect = EFFECT_LOCK_ON,
+		.description = COMPOUND_STRING("The user predicts\n"
+                                       "the foe's action to\n"
+                                       "ensure its next\n"
+                                       "attack hits."),
+        .animScript = gMoveAnim_MIND_READER,
+		.effect = EFFECT_LOCK_ON,
         .type = TYPE_NORMAL,
         .pp = 5,
         .target = MOVE_TARGET_SELECTED,
@@ -3063,7 +4067,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_NIGHTMARE] =
     {
 		.name = _("Nightmare"),
-        .effect = EFFECT_NIGHTMARE,
+		.description = COMPOUND_STRING("A sleeping target\n"
+                                       "sees a nightmare\n"
+                                       "that inflicts some\n"
+                                       "damage every turn."),
+        .animScript = gMoveAnim_NIGHTMARE,
+		.effect = EFFECT_NIGHTMARE,
         .type = TYPE_GHOST,
 		.accuracy = 100,
         .pp = 15,
@@ -3075,12 +4084,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FLAME_WHEEL] =
     {
 		.name = _("Flame Wheel"),
-        .effect = EFFECT_BURN_HIT,
+		.description = COMPOUND_STRING("The user makes a\n"
+                                       "fiery charge at the\n"
+                                       "foe. It may cause a\n"
+                                       "burn."),
+        .animScript = gMoveAnim_FLAME_WHEEL,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 25,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -3088,18 +4101,26 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.thawUser = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SNORE] =
     {
 		.name = _("Snore"),
-        .effect = EFFECT_SNORE,
+		.description = COMPOUND_STRING("An attack that can\n"
+                                       "be used only while\n"
+                                       "asleep. It may\n"
+                                       "cause flinching."),
+        .animScript = gMoveAnim_SNORE,
+		.effect = EFFECT_SNORE,
 		.power = 50,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -3107,13 +4128,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_CURSE] =
     {
 		.name = _("Curse"),
-        .effect = EFFECT_CURSE,
+		.description = COMPOUND_STRING("A move that works\n"
+                                       "differently for the\n"
+                                       "Ghost type than for\n"
+                                       "all other types."),
+        .animScript = gMoveAnim_CURSE,
+		.effect = EFFECT_CURSE,
 		.type = TYPE_GHOST,
         .pp = 10,
         .target = MOVE_TARGET_RANDOM,
@@ -3129,7 +4159,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FLAIL] =
     {
 		.name = _("Flail"),
-        .effect = EFFECT_FLAIL,
+		.description = COMPOUND_STRING("A desperate attack\n"
+                                       "that becomes more\n"
+                                       "powerful the less\n"
+                                       "HP the user has."),
+        .animScript = gMoveAnim_FLAIL,
+		.effect = EFFECT_FLAIL,
         .power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -3147,7 +4182,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CONVERSION_2] =
     {
 		.name = _("Conversion 2"),
-        .effect = EFFECT_CONVERSION_2,
+		.description = COMPOUND_STRING("The user changes\n"
+                                       "type to make itself\n"
+                                       "resistant to the\n"
+                                       "last attack it took."),
+        .animScript = gMoveAnim_CONVERSION_2,
+		.effect = EFFECT_CONVERSION_2,
         .type = TYPE_NORMAL,
         .pp = 30,
         .target = MOVE_TARGET_SELECTED,
@@ -3163,7 +4203,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_AEROBLAST] =
     {
 		.name = _("Aeroblast"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("A vortex of air is\n"
+                                       "shot at the foe. It\n"
+                                       "has a high\n"
+                                       "critical-hit ratio."),
+        .animScript = gMoveAnim_AEROBLAST,
+		.effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_FLYING,
         .accuracy = 95,
@@ -3172,7 +4217,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 			.windMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
@@ -3182,7 +4227,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_COTTON_SPORE] =
     {
 		.name = _("Cotton Spore"),
-        .effect = EFFECT_SPEED_DOWN_2,
+		.description = COMPOUND_STRING("Cotton-like spores\n"
+                                       "cling to the foes,\n"
+                                       "sharply reducing\n"
+                                       "their Speed stat."),
+        .animScript = gMoveAnim_COTTON_SPORE,
+		.effect = EFFECT_SPEED_DOWN_2,
         .type = TYPE_GRASS,
 		.accuracy = 100,
         .pp = 40,
@@ -3199,7 +4249,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_REVERSAL] =
     {
 		.name = _("Reversal"),
-        .effect = EFFECT_FLAIL,
+		.description = COMPOUND_STRING("An all-out attack\n"
+                                       "that becomes more\n"
+                                       "powerful the less\n"
+                                       "HP the user has."),
+        .animScript = gMoveAnim_REVERSAL,
+		.effect = EFFECT_FLAIL,
         .power = 1,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -3217,7 +4272,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SPITE] =
     {
 		.name = _("Spite"),
-        .effect = EFFECT_SPITE,
+		.description = COMPOUND_STRING("It looses grudge on\n"
+                                       "the foe's last used\n"
+                                       "move by cutting 4\n"
+                                       "PP from it."),
+        .animScript = gMoveAnim_SPITE,
+		.effect = EFFECT_SPITE,
         .type = TYPE_GHOST,
         .accuracy = 100,
         .pp = 10,
@@ -3226,7 +4286,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.magicCoatAffected = TRUE,
 		},
-		.argument = 4, // PP to deduct
+		.argument = {
+			.spite = { .ppToDeduct = 4 },
+		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RECOVER_HP,
     },
@@ -3234,21 +4296,34 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_POWDER_SNOW] =
     {
 		.name = _("Powder Snow"),
-        .effect = EFFECT_FREEZE_HIT,
+		.description = COMPOUND_STRING("It attacks with a\n"
+                                       "gust of powdery\n"
+                                       "snow. It may also\n"
+                                       "freeze the targets."),
+        .animScript = gMoveAnim_POWDER_SNOW,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_ICE,
         .accuracy = 100,
         .pp = 25,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_BOTH,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FREEZE,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_PROTECT] =
     {
 		.name = _("Protect"),
-        .effect = EFFECT_PROTECT,
+		.description = COMPOUND_STRING("Enables the user to\n"
+                                       "evade all attacks.\n"
+                                       "It may fail if used\n"
+                                       "in succession."),
+        .animScript = gMoveAnim_PROTECT,
+		.effect = EFFECT_PROTECT,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -3269,7 +4344,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MACH_PUNCH] =
     {
 		.name = _("Mach Punch"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user throws a\n"
+                                       "punch at blinding\n"
+                                       "speed. This move\n"
+                                       "always goes first."),
+        .animScript = gMoveAnim_MACH_PUNCH,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -3289,7 +4369,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SCARY_FACE] =
     {
 		.name = _("Scary Face"),
-        .effect = EFFECT_SPEED_DOWN_2,
+		.description = COMPOUND_STRING("It frightens the\n"
+                                       "foe with a scary\n"
+                                       "face to sharply\n"
+                                       "lower its Speed."),
+        .animScript = gMoveAnim_SCARY_FACE,
+		.effect = EFFECT_SPEED_DOWN_2,
         .type = TYPE_NORMAL,
 		.accuracy = 100,
         .pp = 10,
@@ -3305,7 +4390,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FAINT_ATTACK] =
     {
 		.name = _("Feint Attack"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user draws up\n"
+                                       "close to the foe\n"
+                                       "disarmingly, then\n"
+                                       "hits without fail."),
+        .animScript = gMoveAnim_FAINT_ATTACK,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_DARK,
         .pp = 20,
@@ -3322,7 +4412,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SWEET_KISS] =
     {
 		.name = _("Sweet Kiss"),
-        .effect = EFFECT_CONFUSE,
+		.description = COMPOUND_STRING("The user kisses the\n"
+                                       "foe with sweet\n"
+                                       "cuteness that\n"
+                                       "causes confusion."),
+        .animScript = gMoveAnim_SWEET_KISS,
+		.effect = EFFECT_CONFUSE,
 		.type = TYPE_FAIRY,
         .accuracy = 75,
         .pp = 10,
@@ -3338,7 +4433,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BELLY_DRUM] =
     {
 		.name = _("Belly Drum"),
-        .effect = EFFECT_BELLY_DRUM,
+		.description = COMPOUND_STRING("The user maximizes\n"
+                                       "its Attack stat but\n"
+                                       "loses HP equal to\n"
+                                       "half its max HP."),
+        .animScript = gMoveAnim_BELLY_DRUM,
+		.effect = EFFECT_BELLY_DRUM,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -3355,57 +4455,86 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SLUDGE_BOMB] =
     {
 		.name = _("Sludge Bomb"),
-        .effect = EFFECT_POISON_HIT,
+		.description = COMPOUND_STRING("Unsanitary sludge\n"
+                                       "is hurled at the\n"
+                                       "foe. This may also\n"
+                                       "poison the foe."),
+        .animScript = gMoveAnim_SLUDGE_BOMB,
+		.effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_POISON,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MUD_SLAP] =
     {
 		.name = _("Mud-Slap"),
-        .effect = EFFECT_TARGET_ACCURACY_DOWN_HIT,
+		.description = COMPOUND_STRING("It hurls mud in the\n"
+                                       "foe's face to\n"
+                                       "inflict damage and\n"
+                                       "lower its accuracy."),
+        .animScript = gMoveAnim_MUD_SLAP,
+		.effect = EFFECT_HIT,
         .power = 20,
         .type = TYPE_GROUND,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ACC_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_OCTAZOOKA] =
     {
 		.name = _("Octazooka"),
-        .effect = EFFECT_TARGET_ACCURACY_DOWN_HIT,
+		.description = COMPOUND_STRING("Ink is blasted in\n"
+                                       "the foe's face or\n"
+                                       "eyes to damage and\n"
+                                       "lower accuracy."),
+        .animScript = gMoveAnim_OCTAZOOKA,
+		.effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_WATER,
         .accuracy = 85,
         .pp = 10,
-        .secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ACC_MINUS_1,
+			.chance = 50,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SPIKES] =
     {
 		.name = _("Spikes"),
-        .effect = EFFECT_SPIKES,
+		.description = COMPOUND_STRING("A trap of spikes is\n"
+                                       "laid around the\n"
+                                       "foe's feet to hurt\n"
+                                       "foes switching in."),
+        .animScript = gMoveAnim_SPIKES,
+		.effect = EFFECT_SPIKES,
         .type = TYPE_GROUND,
         .pp = 20,
         .target = MOVE_TARGET_OPPONENTS_FIELD,
@@ -3423,25 +4552,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ZAP_CANNON] =
     {
 		.name = _("Zap Cannon"),
-        .effect = EFFECT_PARALYZE_HIT,
+		.description = COMPOUND_STRING("An electric blast\n"
+                                       "is fired like a\n"
+                                       "cannon to inflict\n"
+                                       "damage and paralyze."),
+        .animScript = gMoveAnim_ZAP_CANNON,
+		.effect = EFFECT_HIT,
 		.power = 120,
         .type = TYPE_ELECTRIC,
         .accuracy = 50,
         .pp = 5,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FORESIGHT] =
     {
 		.name = _("Foresight"),
-        .effect = EFFECT_FORESIGHT,
+		.description = COMPOUND_STRING("Completely negates\n"
+                                       "the foe's efforts\n"
+                                       "to heighten its\n"
+                                       "ability to evade."),
+        .animScript = gMoveAnim_FORESIGHT,
+		.effect = EFFECT_FORESIGHT,
         .type = TYPE_NORMAL,
         .pp = 40,
         .target = MOVE_TARGET_SELECTED,
@@ -3456,7 +4598,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DESTINY_BOND] =
     {
 		.name = _("Destiny Bond"),
-        .effect = EFFECT_DESTINY_BOND,
+		.description = COMPOUND_STRING("When used, if\n"
+                                       "faints, who landed\n"
+                                       "the knockout hit\n"
+                                       "also faints."),
+        .animScript = gMoveAnim_DESTINY_BOND,
+		.effect = EFFECT_DESTINY_BOND,
         .type = TYPE_GHOST,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -3475,7 +4622,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PERISH_SONG] =
     {
 		.name = _("Perish Song"),
-        .effect = EFFECT_PERISH_SONG,
+		.description = COMPOUND_STRING("Anyone that hears\n"
+                                       "this song faints in\n"
+                                       "three turns unless\n"
+                                       "it switches out."),
+        .animScript = gMoveAnim_PERISH_SONG,
+		.effect = EFFECT_PERISH_SONG,
         .type = TYPE_NORMAL,
         .pp = 5,
         .target = MOVE_TARGET_ALL_BATTLERS,
@@ -3493,25 +4645,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ICY_WIND] =
     {
 		.name = _("Icy Wind"),
-        .effect = EFFECT_TARGET_SPEED_DOWN_HIT,
+		.description = COMPOUND_STRING("It attacks with a\n"
+                                       "gust of chilled\n"
+                                       "air. Also lower the\n"
+                                       "foes's Speed stats."),
+        .animScript = gMoveAnim_ICY_WIND,
+		.effect = EFFECT_HIT,
         .power = 55,
         .type = TYPE_ICE,
         .accuracy = 95,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
 			.windMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_DETECT] =
     {
 		.name = _("Detect"),
-        .effect = EFFECT_PROTECT,
+		.description = COMPOUND_STRING("Enables the user to\n"
+                                       "evade all attacks.\n"
+                                       "It may fail if used\n"
+                                       "in succession."),
+        .animScript = gMoveAnim_DETECT,
+		.effect = EFFECT_PROTECT,
         .type = TYPE_FIGHTING,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -3532,7 +4697,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BONE_RUSH] =
     {
 		.name = _("Bone Rush"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("The user strikes\n"
+                                       "the target with a\n"
+                                       "hard bone two to\n"
+                                       "five times in a row."),
+        .animScript = gMoveAnim_BONE_RUSH,
+		.effect = EFFECT_MULTI_HIT,
         .power = 25,
         .type = TYPE_GROUND,
 		.accuracy = 90,
@@ -3549,7 +4719,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LOCK_ON] =
     {
 		.name = _("Lock-On"),
-        .effect = EFFECT_LOCK_ON,
+		.description = COMPOUND_STRING("The user takes sure\n"
+                                       "aim at the foe. It\n"
+                                       "ensures the next\n"
+                                       "move does not fail."),
+        .animScript = gMoveAnim_LOCK_ON,
+		.effect = EFFECT_LOCK_ON,
         .type = TYPE_NORMAL,
         .pp = 5,
         .target = MOVE_TARGET_SELECTED,
@@ -3560,7 +4735,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_OUTRAGE] =
     {
 		.name = _("Outrage"),
-        .effect = EFFECT_RAMPAGE,
+		.description = COMPOUND_STRING("It rampages and\n"
+                                       "attacks for two to\n"
+                                       "three turns. Then\n"
+                                       "becomes confused."),
+        .animScript = gMoveAnim_OUTRAGE,
+		.effect = EFFECT_HIT,
 		.power = 120,
         .type = TYPE_DRAGON,
         .accuracy = 100,
@@ -3573,13 +4753,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_THRASH,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SANDSTORM] =
     {
 		.name = _("Sandstorm"),
-        .effect = EFFECT_SANDSTORM,
+		.description = COMPOUND_STRING("A 5-turn sandstorm\n"
+                                       "that damages all\n"
+                                       "types except Rock,\n"
+                                       "Ground and Steel."),
+        .animScript = gMoveAnim_SANDSTORM,
+		.effect = EFFECT_SET_WEATHER,
         .type = TYPE_ROCK,
         .pp = 10,
         .target = MOVE_TARGET_ALL_BATTLERS,
@@ -3590,21 +4780,31 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.windMove = TRUE, // Only set for data purpose, no one wind ability can activate due it
 		},
         .split = SPLIT_STATUS,
+		.argument = {
+			.setWeather = {
+				.weatherId = ENUM_WEATHER_SANDSTORM,
+				.stringId = B_MSG_SANDSTORM_UP,
+			},
+		},
         .zMoveEffect = Z_EFFECT_SPD_UP_1,
     },
 
     [MOVE_GIGA_DRAIN] =
     {
 		.name = _("Giga Drain"),
-        .effect = EFFECT_ABSORB,
+		.description = COMPOUND_STRING("A harsh attack that\n"
+                                       "absorbs half the\n"
+                                       "damage it inflicted\n"
+                                       "to restore HP."),
+        .animScript = gMoveAnim_GIGA_DRAIN,
+		.effect = EFFECT_HIT_ABSORB,
 		.power = 75,
         .type = TYPE_GRASS,
         .accuracy = 100,
 		.pp = 10,
         .target = MOVE_TARGET_SELECTED,
-		.flags =
-		{
-			.healingMove = TRUE,
+		.argument = {
+			.absorb = { .percentage = 50 },
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3613,7 +4813,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ENDURE] =
     {
 		.name = _("Endure"),
-        .effect = EFFECT_ENDURE,
+		.description = COMPOUND_STRING("The user endures\n"
+                                       "any hit with 1 HP.\n"
+                                       "It may fail if used\n"
+                                       "in succession."),
+        .animScript = gMoveAnim_ENDURE,
+		.effect = EFFECT_ENDURE,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -3634,7 +4839,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CHARM] =
     {
 		.name = _("Charm"),
-        .effect = EFFECT_ATTACK_DOWN_2,
+		.description = COMPOUND_STRING("The foe is charmed\n"
+                                       "by the user's cute\n"
+                                       "appeals, sharply\n"
+                                       "cutting its Attack."),
+        .animScript = gMoveAnim_CHARM,
+		.effect = EFFECT_ATTACK_DOWN_2,
 		.type = TYPE_FAIRY,
         .accuracy = 100,
         .pp = 20,
@@ -3650,7 +4860,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ROLLOUT] =
     {
 		.name = _("Rollout"),
-        .effect = EFFECT_ROLLOUT,
+		.description = COMPOUND_STRING("A 5-turn rolling\n"
+                                       "attack that becomes\n"
+                                       "stronger each time\n"
+                                       "it hits."),
+        .animScript = gMoveAnim_ROLLOUT,
+		.effect = EFFECT_ROLLOUT,
         .power = 30,
         .type = TYPE_ROCK,
         .accuracy = 90,
@@ -3662,7 +4877,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3671,7 +4885,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FALSE_SWIPE] =
     {
 		.name = _("False Swipe"),
-        .effect = EFFECT_FALSE_SWIPE,
+		.description = COMPOUND_STRING("A restrained attack\n"
+                                       "that always leaves\n"
+                                       "the foe with at\n"
+                                       "least 1 HP."),
+        .animScript = gMoveAnim_FALSE_SWIPE,
+		.effect = EFFECT_FALSE_SWIPE,
         .power = 40,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -3689,7 +4908,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SWAGGER] =
     {
 		.name = _("Swagger"),
-        .effect = EFFECT_SWAGGER,
+		.description = COMPOUND_STRING("A move that makes\n"
+                                       "the foe confused,\n"
+                                       "but also sharply\n"
+                                       "raises its Attack."),
+        .animScript = gMoveAnim_SWAGGER,
+		.effect = EFFECT_SWAGGER,
         .type = TYPE_NORMAL,
 		.accuracy = 85,
         .pp = 15,
@@ -3705,7 +4929,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MILK_DRINK] =
     {
 		.name = _("Milk Drink"),
-        .effect = EFFECT_RESTORE_HP,
+		.description = COMPOUND_STRING("Heals the user by\n"
+                                       "up to half its full\n"
+                                       "HP. It can be used\n"
+                                       "to heal an ally."),
+        .animScript = gMoveAnim_MILK_DRINK,
+		.effect = EFFECT_RESTORE_HP,
         .type = TYPE_NORMAL,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -3714,7 +4943,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenProtect = TRUE,
 			.snatchAffected = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -3723,25 +4951,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SPARK] =
     {
 		.name = _("Spark"),
-        .effect = EFFECT_PARALYZE_HIT,
+		.description = COMPOUND_STRING("An electrically\n"
+                                       "charged tackle that\n"
+                                       "may also paralyze\n"
+                                       "the foe."),
+        .animScript = gMoveAnim_SPARK,
+		.effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FURY_CUTTER] =
     {
 		.name = _("Fury Cutter"),
-        .effect = EFFECT_FURY_CUTTER,
+		.description = COMPOUND_STRING("It slashes the foe\n"
+                                       "with scythes. It\n"
+                                       "grows stronger on\n"
+                                       "each successive hit."),
+        .animScript = gMoveAnim_FURY_CUTTER,
+		.effect = EFFECT_FURY_CUTTER,
 		.power = 40,
         .type = TYPE_BUG,
         .accuracy = 95,
@@ -3760,12 +5001,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_STEEL_WING] =
     {
 		.name = _("Steel Wing"),
-        .effect = EFFECT_USER_DEFENSE_UP_HIT,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "wings of steel. It\n"
+                                       "may also raise the\n"
+                                       "user's Defense stat."),
+        .animScript = gMoveAnim_STEEL_WING,
+		.effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_STEEL,
         .accuracy = 90,
         .pp = 25,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -3773,13 +5018,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_PLUS_1,
+			.chance = 10,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MEAN_LOOK] =
     {
 		.name = _("Mean Look"),
-        .effect = EFFECT_MEAN_LOOK,
+		.description = COMPOUND_STRING("The foe is fixed\n"
+                                       "with a mean look\n"
+                                       "that prevents it\n"
+                                       "from escaping."),
+        .animScript = gMoveAnim_MEAN_LOOK,
+		.effect = EFFECT_MEAN_LOOK,
         .type = TYPE_NORMAL,
         .pp = 5,
         .target = MOVE_TARGET_SELECTED,
@@ -3795,7 +5050,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ATTRACT] =
     {
 		.name = _("Attract"),
-        .effect = EFFECT_ATTRACT,
+		.description = COMPOUND_STRING("If it is the other\n"
+                                       "gender, the foe is\n"
+                                       "made infatuated and\n"
+                                       "unlikely to attack."),
+        .animScript = gMoveAnim_ATTRACT,
+		.effect = EFFECT_ATTRACT,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 15,
@@ -3811,7 +5071,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SLEEP_TALK] =
     {
 		.name = _("Sleep Talk"),
-        .effect = EFFECT_SLEEP_TALK,
+		.description = COMPOUND_STRING("While it is asleep,\n"
+                                       "the user randomly\n"
+                                       "uses one of the\n"
+                                       "moves it knows."),
+        .animScript = gMoveAnim_SLEEP_TALK,
+		.effect = EFFECT_SLEEP_TALK,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_DEPENDS,
@@ -3824,7 +5089,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.callOtherMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_BOOST_CRITS,
@@ -3833,7 +5097,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HEAL_BELL] =
     {
 		.name = _("Heal Bell"),
-        .effect = EFFECT_HEAL_BELL,
+		.description = COMPOUND_STRING("A soothing bell\n"
+                                       "chimes to heal the\n"
+                                       "status problems of\n"
+                                       "all allies."),
+        .animScript = gMoveAnim_HEAL_BELL,
+		.effect = EFFECT_HEAL_BELL,
         .type = TYPE_NORMAL,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -3843,7 +5112,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.soundMove = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.affectsUserSide = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RECOVER_HP,
@@ -3852,7 +5120,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_RETURN] =
     {
 		.name = _("Return"),
-        .effect = EFFECT_RETURN,
+		.description = COMPOUND_STRING("This attack grows\n"
+                                       "more powerful the\n"
+                                       "more the user likes\n"
+                                       "its Trainer."),
+        .animScript = gMoveAnim_RETURN,
+		.effect = EFFECT_RETURN,
         .power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -3870,7 +5143,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PRESENT] =
     {
 		.name = _("Present"),
-        .effect = EFFECT_PRESENT,
+		.description = COMPOUND_STRING("The foe is given a\n"
+                                       "booby-trapped gift.\n"
+                                       "It restores HP\n"
+                                       "sometimes, however."),
+        .animScript = gMoveAnim_PRESENT,
+		.effect = EFFECT_PRESENT,
         .power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 90,
@@ -3887,7 +5165,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FRUSTRATION] =
     {
 		.name = _("Frustration"),
-        .effect = EFFECT_FRUSTRATION,
+		.description = COMPOUND_STRING("This attack grows\n"
+                                       "more powerful the\n"
+                                       "less the user likes\n"
+                                       "its Trainer."),
+        .animScript = gMoveAnim_FRUSTRATION,
+		.effect = EFFECT_FRUSTRATION,
         .power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -3905,7 +5188,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SAFEGUARD] =
     {
 		.name = _("Safeguard"),
-        .effect = EFFECT_SAFEGUARD,
+		.description = COMPOUND_STRING("It creates a field\n"
+                                       "that protects from\n"
+                                       "status problems for\n"
+                                       "five turns."),
+        .animScript = gMoveAnim_SAFEGUARD,
+		.effect = EFFECT_SAFEGUARD,
         .type = TYPE_NORMAL,
         .pp = 25,
         .target = MOVE_TARGET_USER,
@@ -3914,7 +5202,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.affectsUserSide = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_SPD_UP_1,
@@ -3923,7 +5210,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PAIN_SPLIT] =
     {
 		.name = _("Pain Split"),
-        .effect = EFFECT_PAIN_SPLIT,
+		.description = COMPOUND_STRING("The user adds its\n"
+                                       "HP to the foe's HP,\n"
+                                       "then equally shares\n"
+                                       "the total HP."),
+        .animScript = gMoveAnim_PAIN_SPLIT,
+		.effect = EFFECT_PAIN_SPLIT,
         .type = TYPE_NORMAL,
         .pp = 20,
         .target = MOVE_TARGET_SELECTED,
@@ -3934,25 +5226,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SACRED_FIRE] =
     {
 		.name = _("Sacred Fire"),
-        .effect = EFFECT_BURN_HIT,
+		.description = COMPOUND_STRING("The foe is razed\n"
+                                       "with a intensity\n"
+                                       "mystical fire. It\n"
+                                       "may burn the foe."),
+        .animScript = gMoveAnim_SACRED_FIRE,
+		.effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_FIRE,
         .accuracy = 95,
         .pp = 5,
-        .secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.thawUser = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 50,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MAGNITUDE] =
     {
 		.name = _("Magnitude"),
-        .effect = EFFECT_MAGNITUDE,
+		.description = COMPOUND_STRING("A ground-shaking\n"
+                                       "attack against all\n"
+                                       "standing Pokémon.\n"
+                                       "Its power varies."),
+        .animScript = gMoveAnim_MAGNITUDE,
+		.effect = EFFECT_MAGNITUDE,
         .power = 1,
         .type = TYPE_GROUND,
         .accuracy = 100,
@@ -3970,12 +5275,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DYNAMIC_PUNCH] =
     {
 		.name = _("Dynamic Punch"),
-        .effect = EFFECT_CONFUSE_HIT,
+		.description = COMPOUND_STRING("The foe is punched\n"
+                                       "with the user's\n"
+                                       "full power. It\n"
+                                       "confuses the foe."),
+        .animScript = gMoveAnim_DYNAMIC_PUNCH,
+		.effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_FIGHTING,
         .accuracy = 50,
         .pp = 5,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -3983,13 +5292,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.punchMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CONFUSION,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MEGAHORN] =
     {
 		.name = _("Megahorn"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("Using its tough\n"
+                                       "horn, the user rams\n"
+                                       "into the target\n"
+                                       "with no letup."),
+        .animScript = gMoveAnim_MEGAHORN,
+		.effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_BUG,
         .accuracy = 85,
@@ -4007,25 +5325,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRAGON_BREATH] =
     {
 		.name = _("Dragon Breath"),
-        .effect = EFFECT_PARALYZE_HIT,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "an incredible blast\n"
+                                       "of breath that may\n"
+                                       "also paralyze."),
+        .animScript = gMoveAnim_DRAGON_BREATH,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_DRAGON,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BATON_PASS] =
     {
 		.name = _("Baton Pass"),
-        .effect = EFFECT_BATON_PASS,
+		.description = COMPOUND_STRING("The user switches\n"
+                                       "out, passing along\n"
+                                       "any stat changes to\n"
+                                       "the new battler."),
+        .animScript = gMoveAnim_BATON_PASS,
+		.effect = EFFECT_BATON_PASS,
         .type = TYPE_NORMAL,
         .pp = 40,
         .target = MOVE_TARGET_USER,
@@ -4041,7 +5372,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ENCORE] =
     {
 		.name = _("Encore"),
-        .effect = EFFECT_ENCORE,
+		.description = COMPOUND_STRING("It compels the foe\n"
+                                       "to keep using the\n"
+                                       "move it encored for\n"
+                                       "three turns."),
+        .animScript = gMoveAnim_ENCORE,
+		.effect = EFFECT_ENCORE,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 5,
@@ -4057,7 +5393,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PURSUIT] =
     {
 		.name = _("Pursuit"),
-        .effect = EFFECT_PURSUIT,
+		.description = COMPOUND_STRING("An attack move that\n"
+                                       "works especially\n"
+                                       "well on a foe that\n"
+                                       "is switching out."),
+        .animScript = gMoveAnim_PURSUIT,
+		.effect = EFFECT_PURSUIT,
         .power = 40,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -4075,12 +5416,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_RAPID_SPIN] =
     {
 		.name = _("Rapid Spin"),
-        .effect = EFFECT_RAPID_SPIN,
+		.description = COMPOUND_STRING("A spin attack that\n"
+                                       "removes trapping\n"
+                                       "status. Also boosts\n"
+                                       "its Speed stat."),
+        .animScript = gMoveAnim_RAPID_SPIN,
+		.effect = EFFECT_HIT,
 		.power = 50,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 40,
-		.secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -4088,13 +5433,27 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CLEAR_HAZARDS,
+			.chance = 0,
+			.self = TRUE,
+		},{
+			.moveEffect = MOVE_EFFECT_SPD_PLUS_1,
+			.chance = 100,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SWEET_SCENT] =
     {
 		.name = _("Sweet Scent"),
-        .effect = EFFECT_EVASION_DOWN_2,
+		.description = COMPOUND_STRING("Releases a scent\n"
+                                       "that harshly lowers\n"
+                                       "opposing Pokémon's\n"
+                                       "evasiveness."),
+        .animScript = gMoveAnim_SWEET_SCENT,
+		.effect = EFFECT_EVASION_DOWN_2,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 20,
@@ -4110,43 +5469,65 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_IRON_TAIL] =
     {
 		.name = _("Iron Tail"),
-        .effect = EFFECT_TARGET_DEFENSE_DOWN_HIT,
+		.description = COMPOUND_STRING("The foe is slammed\n"
+                                       "with a steel tail.\n"
+                                       "It may also lower\n"
+                                       "the foe's Defense."),
+        .animScript = gMoveAnim_IRON_TAIL,
+		.effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_STEEL,
         .accuracy = 75,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_MINUS_1,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_METAL_CLAW] =
     {
 		.name = _("Metal Claw"),
-        .effect = EFFECT_USER_ATTACK_UP_HIT,
+		.description = COMPOUND_STRING("The foe is raked\n"
+                                       "with steel claws.\n"
+                                       "This may also raise\n"
+                                       "the user's Attack."),
+        .animScript = gMoveAnim_METAL_CLAW,
+		.effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_STEEL,
         .accuracy = 95,
         .pp = 35,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ATK_PLUS_1,
+			.chance = 10,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_VITAL_THROW] =
     {
 		.name = _("Vital Throw"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user attacks\n"
+                                       "last. In return,\n"
+                                       "this throw move\n"
+                                       "never misses."),
+        .animScript = gMoveAnim_VITAL_THROW,
+		.effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_FIGHTING,
         .pp = 10,
@@ -4164,7 +5545,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MORNING_SUN] =
     {
 		.name = _("Morning Sun"),
-        .effect = EFFECT_MORNING_SUN,
+		.description = COMPOUND_STRING("Restores the user's\n"
+                                       "HP. The amount of\n"
+                                       "HP regained varies\n"
+                                       "with the weather."),
+        .animScript = gMoveAnim_MORNING_SUN,
+		.effect = EFFECT_MORNING_SUN,
         .type = TYPE_NORMAL,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -4173,7 +5559,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -4182,7 +5567,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SYNTHESIS] =
     {
 		.name = _("Synthesis"),
-        .effect = EFFECT_MORNING_SUN,
+		.description = COMPOUND_STRING("Restores the user's\n"
+                                       "HP. The amount of\n"
+                                       "HP regained varies\n"
+                                       "with the weather."),
+        .animScript = gMoveAnim_SYNTHESIS,
+		.effect = EFFECT_MORNING_SUN,
         .type = TYPE_GRASS,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -4191,7 +5581,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -4200,7 +5589,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MOONLIGHT] =
     {
 		.name = _("Moonlight"),
-        .effect = EFFECT_MORNING_SUN,
+		.description = COMPOUND_STRING("Restores the user's\n"
+                                       "HP. The amount of\n"
+                                       "HP regained varies\n"
+                                       "with the weather."),
+        .animScript = gMoveAnim_MOONLIGHT,
+		.effect = EFFECT_MORNING_SUN,
 		.type = TYPE_FAIRY,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -4209,7 +5603,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -4218,7 +5611,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HIDDEN_POWER] =
     {
 		.name = _("Hidden Power"),
-        .effect = EFFECT_HIDDEN_POWER,
+		.description = COMPOUND_STRING("A unique attack\n"
+                                       "that varies in type\n"
+                                       "depending on the\n"
+                                       "Pokémon using it."),
+        .animScript = gMoveAnim_HIDDEN_POWER,
+		.effect = EFFECT_HIDDEN_POWER,
 		.power = 60,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -4235,7 +5633,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CROSS_CHOP] =
     {
 		.name = _("Cross Chop"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "double chops. It\n"
+                                       "has a high\n"
+                                       "critical-hit ratio."),
+        .animScript = gMoveAnim_CROSS_CHOP,
+		.effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_FIGHTING,
         .accuracy = 80,
@@ -4245,7 +5648,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4254,12 +5657,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TWISTER] =
     {
 		.name = _("Twister"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("Whips up a twister\n"
+                                       "to tear at the\n"
+                                       "foes. It may also\n"
+                                       "make they flinch."),
+        .animScript = gMoveAnim_TWISTER,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_DRAGON,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_BOTH,
 		.flags =
 		{
@@ -4267,13 +5674,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.windMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_RAIN_DANCE] =
     {
 		.name = _("Rain Dance"),
-        .effect = EFFECT_RAIN_DANCE,
+		.description = COMPOUND_STRING("A heavy rain falls\n"
+                                       "for five turns,\n"
+                                       "powering up Water\n"
+                                       "type moves."),
+        .animScript = gMoveAnim_RAIN_DANCE,
+		.effect = EFFECT_SET_WEATHER,
         .type = TYPE_WATER,
         .pp = 5,
         .target = MOVE_TARGET_ALL_BATTLERS,
@@ -4283,13 +5699,24 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_STATUS,
+		.argument = {
+			.setWeather = {
+				.weatherId = ENUM_WEATHER_RAIN,
+				.stringId = B_MSG_STARTED_RAIN,
+			},
+		},
         .zMoveEffect = Z_EFFECT_SPD_UP_1,
     },
 
     [MOVE_SUNNY_DAY] =
     {
 		.name = _("Sunny Day"),
-        .effect = EFFECT_SUNNY_DAY,
+		.description = COMPOUND_STRING("It intensifies the\n"
+                                       "sun for five turns,\n"
+                                       "powering up Fire\n"
+                                       "type moves."),
+        .animScript = gMoveAnim_SUNNY_DAY,
+		.effect = EFFECT_SET_WEATHER,
         .type = TYPE_FIRE,
         .pp = 5,
         .target = MOVE_TARGET_ALL_BATTLERS,
@@ -4299,18 +5726,28 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_STATUS,
+		.argument = {
+			.setWeather = {
+				.weatherId = ENUM_WEATHER_SUN,
+				.stringId = B_MSG_SUN_TURN_HARSH,
+			},
+		},
         .zMoveEffect = Z_EFFECT_SPD_UP_1,
     },
 
     [MOVE_CRUNCH] =
     {
 		.name = _("Crunch"),
-        .effect = EFFECT_TARGET_DEFENSE_DOWN_HIT,
+		.description = COMPOUND_STRING("Crunches up the foe\n"
+                                       "with sharp fangs.\n"
+                                       "It may also lower\n"
+                                       "the foe's Defense."),
+        .animScript = gMoveAnim_CRUNCH,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -4318,13 +5755,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_MINUS_1,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MIRROR_COAT] =
     {
 		.name = _("Mirror Coat"),
-        .effect = EFFECT_MIRROR_COAT,
+		.description = COMPOUND_STRING("Counters any\n"
+                                       "special attack,\n"
+                                       "inflicting double\n"
+                                       "the damage taken."),
+        .animScript = gMoveAnim_MIRROR_COAT,
+		.effect = EFFECT_COUNTER_ATTACK,
         .power = 1,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
@@ -4338,8 +5784,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 			.forbiddenAssist = TRUE,
 			.forbiddenCopycat = TRUE,
-			.noEffectiveness = TRUE,
 			.forbiddenMeFirst = TRUE,
+		},
+		.argument = {
+			.counterAttack = { .split = SPLIT_SPECIAL },
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4348,7 +5796,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PSYCH_UP] =
     {
 		.name = _("Psych Up"),
-        .effect = EFFECT_PSYCH_UP,
+		.description = COMPOUND_STRING("The user hypnotizes\n"
+                                       "itself into copying\n"
+                                       "any stat change\n"
+                                       "made by the foe."),
+        .animScript = gMoveAnim_PSYCH_UP,
+		.effect = EFFECT_PSYCH_UP,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -4364,7 +5817,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_EXTREME_SPEED] =
     {
 		.name = _("Extreme Speed"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user charges\n"
+                                       "the foe at blinding\n"
+                                       "speed. This move\n"
+                                       "always goes first."),
+        .animScript = gMoveAnim_EXTREME_SPEED,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -4383,39 +5841,61 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ANCIENT_POWER] =
     {
 		.name = _("Ancient Power"),
-        .effect = EFFECT_ALL_STATS_UP_HIT,
+		.description = COMPOUND_STRING("An ancient power is\n"
+                                       "used to attack. It\n"
+                                       "may also raise all\n"
+                                       "the user's stats."),
+        .animScript = gMoveAnim_ANCIENT_POWER,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_ROCK,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ALL_STATS_UP,
+			.chance = 10,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SHADOW_BALL] =
     {
 		.name = _("Shadow Ball"),
-        .effect = EFFECT_TARGET_SP_DEFENSE_DOWN_HIT,
+		.description = COMPOUND_STRING("A shadowy blob is\n"
+                                       "hurled at the foe.\n"
+                                       "May also lower the\n"
+                                       "foe's Sp. Def."),
+        .animScript = gMoveAnim_SHADOW_BALL,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_GHOST,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_MINUS_1,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FUTURE_SIGHT] =
     {
 		.name = _("Future Sight"),
-        .effect = EFFECT_FUTURE_SIGHT,
+		.description = COMPOUND_STRING("Two turns after\n"
+                                       "this move is used,\n"
+                                       "the foe is attacked\n"
+                                       "psychically."),
+        .animScript = gMoveAnim_FUTURE_SIGHT,
+		.effect = EFFECT_FUTURE_SIGHT,
 		.power = 120,
         .type = TYPE_PSYCHIC,
 		.accuracy = 100,
@@ -4427,32 +5907,50 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
-		.argument = FUTURE_ATTACK_ID_FUTURE_SIGHT,
+		.argument = {
+			.futureAttack = {
+				.stringId = B_MSG_FORESAW_ATTACK,
+				.animationId = B_ANIM_FUTURE_SIGHT_HIT,
+			},
+		},
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ROCK_SMASH] =
     {
 		.name = _("Rock Smash"),
-        .effect = EFFECT_TARGET_DEFENSE_DOWN_HIT,
+		.description = COMPOUND_STRING("The user attacks\n"
+                                       "with a punch. This\n"
+                                       "may also lower the\n"
+                                       "foe's Defense stat."),
+        .animScript = gMoveAnim_ROCK_SMASH,
+		.effect = EFFECT_HIT,
 		.power = 40,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_MINUS_1,
+			.chance = 50,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_WHIRLPOOL] =
     {
 		.name = _("Whirlpool"),
-        .effect = EFFECT_TRAP,
+		.description = COMPOUND_STRING("The user traps the\n"
+                                       "foe in a violent\n"
+                                       "whirlpool for four\n"
+                                       "to five turns."),
+        .animScript = gMoveAnim_WHIRLPOOL,
+		.effect = EFFECT_HIT,
 		.power = 35,
         .type = TYPE_WATER,
 		.accuracy = 85,
@@ -4463,15 +5961,26 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 			.hitUnderwater = TRUE,
 		},
-		.argument = TRAP_ID_WHIRLPOOL,
+		.argument = {
+			.bind = { .trappingId = TRAP_ID_WHIRLPOOL },
+		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_WRAP,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BEAT_UP] =
     {
 		.name = _("Beat Up"),
-        .effect = EFFECT_BEAT_UP,
+		.description = COMPOUND_STRING("All party Pokémon\n"
+                                       "join in the attack.\n"
+                                       "The more allies,\n"
+                                       "the more damage."),
+        .animScript = gMoveAnim_BEAT_UP,
+		.effect = EFFECT_BEAT_UP,
 		.power = 1,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -4489,12 +5998,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FAKE_OUT] =
     {
 		.name = _("Fake Out"),
-        .effect = EFFECT_FAKE_OUT,
+		.description = COMPOUND_STRING("An attack that hits\n"
+                                       "first and causes\n"
+                                       "flinching. Usable\n"
+                                       "only on 1st turn."),
+        .animScript = gMoveAnim_FAKE_OUT,
+		.effect = EFFECT_FAKE_OUT,
         .power = 40,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
 		.priority = 3,
         .flags =
@@ -4502,13 +6015,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_UPROAR] =
     {
 		.name = _("Uproar"),
-        .effect = EFFECT_UPROAR,
+		.description = COMPOUND_STRING("The user attacks in\n"
+                                       "an uproar that\n"
+                                       "prevents sleep for\n"
+                                       "two to five turns."),
+        .animScript = gMoveAnim_UPROAR,
+		.effect = EFFECT_HIT,
 		.power = 90,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -4523,13 +6045,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenParentalBond = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_UPROAR,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_STOCKPILE] =
     {
 		.name = _("Stockpile"),
-        .effect = EFFECT_STOCKPILE,
+		.description = COMPOUND_STRING("Charges power and\n"
+                                       "raises its Defense\n"
+                                       "and Sp. Def. It can\n"
+                                       "be used three times."),
+        .animScript = gMoveAnim_STOCKPILE,
+		.effect = EFFECT_STOCKPILE,
         .type = TYPE_NORMAL,
 		.pp = 20,
         .target = MOVE_TARGET_USER,
@@ -4546,7 +6078,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SPIT_UP] =
     {
 		.name = _("Spit Up"),
-        .effect = EFFECT_SPIT_UP,
+		.description = COMPOUND_STRING("The power stored\n"
+                                       "using Stockpile is\n"
+                                       "released at once in\n"
+                                       "an attack."),
+        .animScript = gMoveAnim_SPIT_UP,
+		.effect = EFFECT_SPIT_UP,
 		.power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -4558,13 +6095,24 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_STOCKPILE_WORE_OFF,
+			.chance = 0,
+			.self = TRUE,
+			.onFinalMultiHitOnly = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SWALLOW] =
     {
 		.name = _("Swallow"),
-        .effect = EFFECT_SWALLOW,
+		.description = COMPOUND_STRING("The power stored\n"
+                                       "using Stockpile is\n"
+                                       "absorbed by the\n"
+                                       "user to heal its HP."),
+        .animScript = gMoveAnim_SWALLOW,
+		.effect = EFFECT_SWALLOW,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -4573,21 +6121,29 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_STOCKPILE_WORE_OFF,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_RESET_STATS,
     },
 
     [MOVE_HEAT_WAVE] =
     {
 		.name = _("Heat Wave"),
-        .effect = EFFECT_BURN_HIT,
+		.description = COMPOUND_STRING("Exhales a hot\n"
+                                       "breath on the foes.\n"
+                                       "It may leave those\n"
+                                       "with a burn."),
+        .animScript = gMoveAnim_HEAT_WAVE,
+		.effect = EFFECT_HIT,
 		.power = 95,
         .type = TYPE_FIRE,
         .accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -4595,13 +6151,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.windMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_HAIL] =
     {
 		.name = _("Hail"),
-        .effect = EFFECT_HAIL,
+		.description = COMPOUND_STRING("A hailstorm lasting\n"
+                                       "five turns damages\n"
+                                       "all Pokémon except\n"
+                                       "the Ice type."),
+        .animScript = gMoveAnim_HAIL,
+		.effect = EFFECT_SET_WEATHER,
         .type = TYPE_ICE,
         .pp = 10,
         .target = MOVE_TARGET_ALL_BATTLERS,
@@ -4611,13 +6176,24 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_STATUS,
+		.argument = {
+			.setWeather = {
+				.weatherId = ENUM_WEATHER_HAIL,
+				.stringId = B_MSG_STARTED_HAIL,
+			},
+		},
         .zMoveEffect = Z_EFFECT_SPD_UP_1,
     },
 
     [MOVE_TORMENT] =
     {
 		.name = _("Torment"),
-        .effect = EFFECT_TORMENT,
+		.description = COMPOUND_STRING("It enrages the foe,\n"
+                                       "making it incapable\n"
+                                       "of using the same\n"
+                                       "move successively."),
+        .animScript = gMoveAnim_TORMENT,
+		.effect = EFFECT_TORMENT,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 15,
@@ -4633,7 +6209,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FLATTER] =
     {
 		.name = _("Flatter"),
-        .effect = EFFECT_FLATTER,
+		.description = COMPOUND_STRING("Flattery is used to\n"
+                                       "confuse the foe.\n"
+                                       "But, it also boosts\n"
+                                       "the foe's Sp. Atk."),
+        .animScript = gMoveAnim_FLATTER,
+		.effect = EFFECT_FLATTER,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 15,
@@ -4649,7 +6230,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WILL_O_WISP] =
     {
 		.name = _("Will-O-Wisp"),
-        .effect = EFFECT_WILL_O_WISP,
+		.description = COMPOUND_STRING("The user shoots a\n"
+                                       "sinister flame at\n"
+                                       "the target to\n"
+                                       "inflict a burn."),
+        .animScript = gMoveAnim_WILL_O_WISP,
+		.effect = EFFECT_WILL_O_WISP,
         .type = TYPE_FIRE,
 		.accuracy = 85,
         .pp = 15,
@@ -4665,7 +6251,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MEMENTO] =
     {
 		.name = _("Memento"),
-        .effect = EFFECT_MEMENTO,
+		.description = COMPOUND_STRING("The user faints. In\n"
+                                       "return, the foe's\n"
+                                       "Attack and Sp. Atk\n"
+                                       "are harshly lowered."),
+        .animScript = gMoveAnim_MEMENTO,
+		.effect = EFFECT_MEMENTO,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 10,
@@ -4677,7 +6268,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FACADE] =
     {
 		.name = _("Facade"),
-        .effect = EFFECT_FACADE,
+		.description = COMPOUND_STRING("This move's power\n"
+                                       "is doubled if the\n"
+                                       "user is paralyzed,\n"
+                                       "burned, or poisoned."),
+        .animScript = gMoveAnim_FACADE,
+		.effect = EFFECT_FACADE,
         .power = 70,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -4694,7 +6290,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FOCUS_PUNCH] =
     {
 		.name = _("Focus Punch"),
-        .effect = EFFECT_FOCUS_PUNCH,
+		.description = COMPOUND_STRING("An attack that is\n"
+                                       "executed last. The\n"
+                                       "user flinches if\n"
+                                       "hit beforehand."),
+        .animScript = gMoveAnim_FOCUS_PUNCH,
+		.effect = EFFECT_FOCUS_PUNCH,
         .power = 150,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -4720,7 +6321,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SMELLING_SALT] =
     {
 		.name = _("Smelling Salts"),
-        .effect = EFFECT_SMELLING_SALT,
+		.description = COMPOUND_STRING("Doubly effective on\n"
+                                       "a paralyzed foe,\n"
+                                       "but it also cures\n"
+                                       "the foe's paralysis."),
+        .animScript = gMoveAnim_SMELLING_SALT,
+		.effect = EFFECT_CURE_STATUS1_FROM_ARG,
 		.power = 70,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -4730,14 +6336,27 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 		},
+		.argument = {
+			.cureStatus = { .statusId = STATUS1_PARALYSIS },
+		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CURE_STATUS1,
+			.chance = 0,
+			.onFinalMultiHitOnly = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FOLLOW_ME] =
     {
 		.name = _("Follow Me"),
-        .effect = EFFECT_FOLLOW_ME,
+		.description = COMPOUND_STRING("It draws attention\n"
+                                       "to itself, making\n"
+                                       "all foes take aim\n"
+                                       "only at the user."),
+        .animScript = gMoveAnim_FOLLOW_ME,
+		.effect = EFFECT_FOLLOW_ME,
         .type = TYPE_NORMAL,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -4757,7 +6376,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_NATURE_POWER] =
     {
 		.name = _("Nature Power"),
-        .effect = EFFECT_NATURE_POWER,
+		.description = COMPOUND_STRING("An attack that\n"
+                                       "changes type\n"
+                                       "depending on the\n"
+                                       "user's location."),
+        .animScript = gMoveAnim_NONE,
+		.effect = EFFECT_NATURE_POWER,
         .type = TYPE_NORMAL,
         .pp = 20,
         .target = MOVE_TARGET_DEPENDS,
@@ -4770,7 +6394,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.callOtherMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4779,7 +6402,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CHARGE] =
     {
 		.name = _("Charge"),
-        .effect = EFFECT_CHARGE,
+		.description = COMPOUND_STRING("Boosts the power of\n"
+                                       "the next Electric\n"
+                                       "move used. Also\n"
+                                       "raises its Sp. Def."),
+        .animScript = gMoveAnim_CHARGE,
+		.effect = EFFECT_CHARGE,
         .type = TYPE_ELECTRIC,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -4790,13 +6418,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_STATUS,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_PLUS_1,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_SPDEF_UP_1,
     },
 
     [MOVE_TAUNT] =
     {
 		.name = _("Taunt"),
-        .effect = EFFECT_TAUNT,
+		.description = COMPOUND_STRING("The foe is taunted\n"
+                                       "into a rage that\n"
+                                       "allows it to use\n"
+                                       "only attack moves."),
+        .animScript = gMoveAnim_TAUNT,
+		.effect = EFFECT_TAUNT,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 20,
@@ -4812,7 +6450,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HELPING_HAND] =
     {
 		.name = _("Helping Hand"),
-        .effect = EFFECT_HELPING_HAND,
+		.description = COMPOUND_STRING("The user assists an\n"
+                                       "ally by boosting\n"
+                                       "the power of that\n"
+                                       "ally's attack."),
+        .animScript = gMoveAnim_HELPING_HAND,
+		.effect = EFFECT_HELPING_HAND,
         .type = TYPE_NORMAL,
         .pp = 20,
 		.target = MOVE_TARGET_ALLY,
@@ -4832,7 +6475,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TRICK] =
     {
 		.name = _("Trick"),
-        .effect = EFFECT_TRICK,
+		.description = COMPOUND_STRING("The user catches\n"
+                                       "the foe off guard\n"
+                                       "and swaps its held\n"
+                                       "item with its own."),
+        .animScript = gMoveAnim_TRICK,
+		.effect = EFFECT_TRICK,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 10,
@@ -4850,7 +6498,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ROLE_PLAY] =
     {
 		.name = _("Role Play"),
-        .effect = EFFECT_ROLE_PLAY,
+		.description = COMPOUND_STRING("The user mimics the\n"
+                                       "target completely,\n"
+                                       "copying the\n"
+                                       "target's Ability."),
+        .animScript = gMoveAnim_ROLE_PLAY,
+		.effect = EFFECT_ROLE_PLAY,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -4866,7 +6519,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WISH] =
     {
 		.name = _("Wish"),
-        .effect = EFFECT_WISH,
+		.description = COMPOUND_STRING("A self-healing move\n"
+                                       "that restores half\n"
+                                       "the full HP on the\n"
+                                       "next turn."),
+        .animScript = gMoveAnim_WISH,
+		.effect = EFFECT_WISH,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -4875,7 +6533,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_SPDEF_UP_1,
@@ -4884,7 +6541,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ASSIST] =
     {
 		.name = _("Assist"),
-        .effect = EFFECT_ASSIST,
+		.description = COMPOUND_STRING("The user randomly\n"
+                                       "picks and uses a\n"
+                                       "move of an allied\n"
+                                       "Pokémon."),
+        .animScript = gMoveAnim_ASSIST,
+		.effect = EFFECT_ASSIST,
         .type = TYPE_NORMAL,
         .pp = 20,
         .target = MOVE_TARGET_DEPENDS,
@@ -4897,7 +6559,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.callOtherMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4906,7 +6567,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_INGRAIN] =
     {
 		.name = _("Ingrain"),
-        .effect = EFFECT_INGRAIN,
+		.description = COMPOUND_STRING("The user lays roots\n"
+                                       "that restore HP on\n"
+                                       "every turn. It\n"
+                                       "can't switch out."),
+        .animScript = gMoveAnim_INGRAIN,
+		.effect = EFFECT_INGRAIN,
         .type = TYPE_GRASS,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -4923,7 +6589,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SUPERPOWER] =
     {
 		.name = _("Superpower"),
-        .effect = EFFECT_SUPERPOWER,
+		.description = COMPOUND_STRING("A powerful attack,\n"
+                                       "but it also lowers\n"
+                                       "the user's Attack\n"
+                                       "and Defense stats."),
+        .animScript = gMoveAnim_SUPERPOWER,
+		.effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -4934,13 +6605,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ATK_DEF_DOWN,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MAGIC_COAT] =
     {
 		.name = _("Magic Coat"),
-        .effect = EFFECT_MAGIC_COAT,
+		.description = COMPOUND_STRING("Reflects back moves\n"
+                                       "like Leech Seed and\n"
+                                       "moves that damage\n"
+                                       "status."),
+        .animScript = gMoveAnim_MAGIC_COAT,
+		.effect = EFFECT_MAGIC_COAT,
         .type = TYPE_PSYCHIC,
         .pp = 15,
         .target = MOVE_TARGET_DEPENDS,
@@ -4957,7 +6638,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_RECYCLE] =
     {
 		.name = _("Recycle"),
-        .effect = EFFECT_RECYCLE,
+		.description = COMPOUND_STRING("Recycles a held\n"
+                                       "item that has been\n"
+                                       "used so it can be\n"
+                                       "used again."),
+        .animScript = gMoveAnim_RECYCLE,
+		.effect = EFFECT_RECYCLE,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -4974,7 +6660,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_REVENGE] =
     {
 		.name = _("Revenge"),
-        .effect = EFFECT_REVENGE,
+		.description = COMPOUND_STRING("An attack move that\n"
+                                       "gains in intensity\n"
+                                       "if the target has\n"
+                                       "hurt the user."),
+        .animScript = gMoveAnim_REVENGE,
+		.effect = EFFECT_REVENGE,
         .power = 60,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -4993,7 +6684,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BRICK_BREAK] =
     {
 		.name = _("Brick Break"),
-        .effect = EFFECT_BRICK_BREAK,
+		.description = COMPOUND_STRING("An attack that also\n"
+                                       "breaks any barrier\n"
+                                       "like Light Screen\n"
+                                       "and Reflect."),
+        .animScript = gMoveAnim_BRICK_BREAK,
+		.effect = EFFECT_BRICK_BREAK,
         .power = 75,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -5011,7 +6707,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_YAWN] =
     {
 		.name = _("Yawn"),
-        .effect = EFFECT_YAWN,
+		.description = COMPOUND_STRING("A huge yawn lulls\n"
+                                       "the foe into\n"
+                                       "falling asleep on\n"
+                                       "the next turn."),
+        .animScript = gMoveAnim_YAWN,
+		.effect = EFFECT_YAWN,
         .type = TYPE_NORMAL,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -5026,7 +6727,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_KNOCK_OFF] =
     {
 		.name = _("Knock Off"),
-        .effect = EFFECT_KNOCK_OFF,
+		.description = COMPOUND_STRING("Knocks down the\n"
+                                       "foe's held item to\n"
+                                       "prevent its use\n"
+                                       "during the battle."),
+        .animScript = gMoveAnim_KNOCK_OFF,
+		.effect = EFFECT_KNOCK_OFF,
 		.power = 65,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -5035,15 +6741,26 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
+			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_KNOCK_OFF,
+			.chance = 0,
+			.afterTargetItemsOnly = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ENDEAVOR] =
     {
 		.name = _("Endeavor"),
-        .effect = EFFECT_ENDEAVOR,
+		.description = COMPOUND_STRING("This attack move\n"
+                                       "cuts down the\n"
+                                       "target's HP to\n"
+                                       "equal the user's HP."),
+        .animScript = gMoveAnim_ENDEAVOR,
+		.effect = EFFECT_ENDEAVOR,
         .power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -5054,7 +6771,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 			.forbiddenParentalBond = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5063,7 +6779,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ERUPTION] =
     {
 		.name = _("Eruption"),
-        .effect = EFFECT_ERUPTION,
+		.description = COMPOUND_STRING("The higher the\n"
+                                       "user's HP, the more\n"
+                                       "powerful this\n"
+                                       "attack becomes."),
+        .animScript = gMoveAnim_ERUPTION,
+		.effect = EFFECT_ERUPTION,
         .power = 150,
         .type = TYPE_FIRE,
         .accuracy = 100,
@@ -5080,7 +6801,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SKILL_SWAP] =
     {
 		.name = _("Skill Swap"),
-        .effect = EFFECT_SKILL_SWAP,
+		.description = COMPOUND_STRING("Employs its psychic\n"
+                                       "power to exchange\n"
+                                       "Abilities with the\n"
+                                       "target."),
+        .animScript = gMoveAnim_SKILL_SWAP,
+		.effect = EFFECT_SKILL_SWAP,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -5091,7 +6817,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_IMPRISON] =
     {
 		.name = _("Imprison"),
-        .effect = EFFECT_IMPRISON,
+		.description = COMPOUND_STRING("Prevents foes from\n"
+                                       "using any move that\n"
+                                       "is also known by\n"
+                                       "the user."),
+        .animScript = gMoveAnim_IMPRISON,
+		.effect = EFFECT_IMPRISON,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -5109,7 +6840,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_REFRESH] =
     {
 		.name = _("Refresh"),
-        .effect = EFFECT_REFRESH,
+		.description = COMPOUND_STRING("The user rests to\n"
+                                       "cure itself of\n"
+                                       "poisoning, a burn,\n"
+                                       "or paralysis."),
+        .animScript = gMoveAnim_REFRESH,
+		.effect = EFFECT_REFRESH,
         .type = TYPE_NORMAL,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -5126,7 +6862,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GRUDGE] =
     {
 		.name = _("Grudge"),
-        .effect = EFFECT_GRUDGE,
+		.description = COMPOUND_STRING("If the user faints,\n"
+                                       "this move deletes\n"
+                                       "the PP of the move\n"
+                                       "that finished it."),
+        .animScript = gMoveAnim_GRUDGE,
+		.effect = EFFECT_GRUDGE,
         .type = TYPE_GHOST,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -5142,7 +6883,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SNATCH] =
     {
 		.name = _("Snatch"),
-        .effect = EFFECT_SNATCH,
+		.description = COMPOUND_STRING("Steals the effects\n"
+                                       "of the foe's\n"
+                                       "status-changing or\n"
+                                       "healing move."),
+        .animScript = gMoveAnim_SNATCH,
+		.effect = EFFECT_SNATCH,
         .type = TYPE_DARK,
         .pp = 10,
         .target = MOVE_TARGET_DEPENDS,
@@ -5155,7 +6901,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenAssist = TRUE,
 			.forbiddenCopycat = TRUE,
 			.forbiddenInstruct = TRUE,
-			.callOtherMove = TRUE,
 			.forcePressure = TRUE,
 		},
         .split = SPLIT_STATUS,
@@ -5165,25 +6910,39 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SECRET_POWER] =
     {
 		.name = _("Secret Power"),
-        .effect = EFFECT_SECRET_POWER,
+		.description = COMPOUND_STRING("An attack that may\n"
+                                       "have an additional\n"
+                                       "effect that varies\n"
+                                       "with the terrain."),
+        .animScript = gMoveAnim_SECRET_POWER,
+		.effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SECRET_POWER,
+			.chance = 30,
+			.onFinalMultiHitOnly = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_DIVE] =
     {
 		.name = _("Dive"),
-        .effect = EFFECT_SEMI_INVULNERABLE,
+		.description = COMPOUND_STRING("The user dives\n"
+                                       "underwater on the\n"
+                                       "first turn and\n"
+                                       "strikes next turn."),
+        .animScript = gMoveAnim_DIVE,
+		.effect = EFFECT_SEMI_INVULNERABLE,
 		.power = 80,
         .type = TYPE_WATER,
         .accuracy = 100,
@@ -5196,7 +6955,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenAssist = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.twoTurnsMove = TRUE,
+		},
+		.argument = {
+			.semiInvulnerable = {
+				.stringId = B_MSG_HID_UNDERWATER,
+				.status = COMPRESS_BITS(STATUS3_UNDERWATER),
+			},
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5205,7 +6969,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ARM_THRUST] =
     {
 		.name = _("Arm Thrust"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("A quick flurry of\n"
+                                       "straight-arm\n"
+                                       "punches that hit\n"
+                                       "two to five times."),
+        .animScript = gMoveAnim_ARM_THRUST,
+		.effect = EFFECT_MULTI_HIT,
         .power = 15,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -5223,7 +6992,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CAMOUFLAGE] =
     {
 		.name = _("Camouflage"),
-        .effect = EFFECT_CAMOUFLAGE,
+		.description = COMPOUND_STRING("The user's type is\n"
+                                       "changed depending\n"
+                                       "on its environment."),
+        .animScript = gMoveAnim_CAMOUFLAGE,
+		.effect = EFFECT_CAMOUFLAGE,
         .type = TYPE_NORMAL,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -5240,7 +7013,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TAIL_GLOW] =
     {
 		.name = _("Tail Glow"),
-        .effect = EFFECT_SPECIAL_ATTACK_UP_3,
+		.description = COMPOUND_STRING("The user stares at\n"
+                                       "flashing lights\n"
+                                       "that drastically\n"
+                                       "raises its Sp. Atk."),
+        .animScript = gMoveAnim_TAIL_GLOW,
+		.effect = EFFECT_SPECIAL_ATTACK_UP_3,
         .type = TYPE_BUG,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -5257,39 +7035,60 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LUSTER_PURGE] =
     {
 		.name = _("Luster Purge"),
-        .effect = EFFECT_TARGET_SP_DEFENSE_DOWN_HIT,
+		.description = COMPOUND_STRING("A burst of light\n"
+                                       "injures the foe. It\n"
+                                       "may also lower the\n"
+                                       "foe's Sp. Def."),
+        .animScript = gMoveAnim_LUSTER_PURGE,
+		.effect = EFFECT_HIT,
         .power = 95,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_MINUS_1,
+			.chance = 50,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MIST_BALL] =
     {
 		.name = _("Mist Ball"),
-        .effect = EFFECT_TARGET_SP_ATTACK_DOWN_HIT,
+		.description = COMPOUND_STRING("A flurry of down\n"
+                                       "hits the foe. It\n"
+                                       "may also lower the\n"
+                                       "foe's Sp. Atk."),
+        .animScript = gMoveAnim_MIST_BALL,
+		.effect = EFFECT_HIT,
         .power = 95,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_1,
+			.chance = 50,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FEATHER_DANCE] =
     {
 		.name = _("Feather Dance"),
-        .effect = EFFECT_ATTACK_DOWN_2,
+		.description = COMPOUND_STRING("The foe is covered\n"
+                                       "with a mass of down\n"
+                                       "that sharply cuts\n"
+                                       "the Attack stat."),
+        .animScript = gMoveAnim_FEATHER_DANCE,
+		.effect = EFFECT_ATTACK_DOWN_2,
         .type = TYPE_FLYING,
         .accuracy = 100,
         .pp = 15,
@@ -5306,7 +7105,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TEETER_DANCE] =
     {
 		.name = _("Teeter Dance"),
-        .effect = EFFECT_CONFUSE,
+		.description = COMPOUND_STRING("The user performs a\n"
+                                       "wobbly dance that\n"
+                                       "confuses every\n"
+                                       "Pokémon around it."),
+        .animScript = gMoveAnim_TEETER_DANCE,
+		.effect = EFFECT_CONFUSE,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 20,
@@ -5322,26 +7126,39 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BLAZE_KICK] =
     {
 		.name = _("Blaze Kick"),
-        .effect = EFFECT_BURN_HIT,
+		.description = COMPOUND_STRING("A fiery kick with a\n"
+                                       "high critical-hit\n"
+                                       "ratio. It may also\n"
+                                       "burn the foe."),
+        .animScript = gMoveAnim_BLAZE_KICK,
+		.effect = EFFECT_HIT,
         .power = 85,
         .type = TYPE_FIRE,
         .accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MUD_SPORT] =
     {
 		.name = _("Mud Sport"),
-        .effect = EFFECT_MUD_SPORT,
+		.description = COMPOUND_STRING("Kicks up mud on the\n"
+                                       "field. This weakens\n"
+                                       "Electric type moves\n"
+                                       "for five turns."),
+        .animScript = gMoveAnim_MUD_SPORT,
+		.effect = EFFECT_MUD_SPORT,
         .type = TYPE_GROUND,
         .accuracy = 100,
         .pp = 15,
@@ -5358,7 +7175,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ICE_BALL] =
     {
 		.name = _("Ice Ball"),
-        .effect = EFFECT_ROLLOUT,
+		.description = COMPOUND_STRING("Attacks the foe for\n"
+                                       "five turns. It\n"
+                                       "becomes stronger\n"
+                                       "each time it hits."),
+        .animScript = gMoveAnim_ICE_BALL,
+		.effect = EFFECT_ROLLOUT,
         .power = 30,
         .type = TYPE_ICE,
         .accuracy = 90,
@@ -5371,7 +7193,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.ballisticMove = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -5380,25 +7201,37 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_NEEDLE_ARM] =
     {
 		.name = _("Needle Arm"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("An attack using\n"
+                                       "thorny arms. It may\n"
+                                       "make the foe flinch."),
+        .animScript = gMoveAnim_NEEDLE_ARM,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SLACK_OFF] =
     {
 		.name = _("Slack Off"),
-        .effect = EFFECT_RESTORE_HP,
+		.description = COMPOUND_STRING("The user slacks\n"
+                                       "off, restoring its\n"
+                                       "own HP by up to\n"
+                                       "half its max HP."),
+        .animScript = gMoveAnim_SLACK_OFF,
+		.effect = EFFECT_RESTORE_HP,
         .type = TYPE_NORMAL,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -5407,7 +7240,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -5416,7 +7248,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HYPER_VOICE] =
     {
 		.name = _("Hyper Voice"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user attacks by\n"
+                                       "letting loose a\n"
+                                       "horribly loud,\n"
+                                       "resounding cry."),
+        .animScript = gMoveAnim_HYPER_VOICE,
+		.effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -5433,12 +7270,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_POISON_FANG] =
     {
 		.name = _("Poison Fang"),
-        .effect = EFFECT_POISON_FANG,
+		.description = COMPOUND_STRING("The foe is bitten\n"
+                                       "with toxic fangs.\n"
+                                       "It may also badly\n"
+                                       "poison the foe."),
+        .animScript = gMoveAnim_POISON_FANG,
+		.effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 15,
-		.secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -5446,31 +7287,48 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_TOXIC,
+			.chance = 50,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_CRUSH_CLAW] =
     {
 		.name = _("Crush Claw"),
-        .effect = EFFECT_TARGET_DEFENSE_DOWN_HIT,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with sharp claws.\n"
+                                       "It may also lower\n"
+                                       "the foe's Defense."),
+        .animScript = gMoveAnim_CRUSH_CLAW,
+		.effect = EFFECT_HIT,
         .power = 75,
         .type = TYPE_NORMAL,
         .accuracy = 95,
         .pp = 10,
-        .secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_MINUS_1,
+			.chance = 50,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BLAST_BURN] =
     {
 		.name = _("Blast Burn"),
-        .effect = EFFECT_RECHARGE,
+		.description = COMPOUND_STRING("The foe is razed by\n"
+                                       "a fiery explosion.\n"
+                                       "The user can't move\n"
+                                       "on the next turn."),
+        .animScript = gMoveAnim_BLAST_BURN,
+		.effect = EFFECT_HIT,
         .power = 150,
         .type = TYPE_FIRE,
         .accuracy = 90,
@@ -5482,13 +7340,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_RECHARGE,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_HYDRO_CANNON] =
     {
 		.name = _("Hydro Cannon"),
-        .effect = EFFECT_RECHARGE,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "a watery blast. The\n"
+                                       "user can't move on\n"
+                                       "the next turn."),
+        .animScript = gMoveAnim_HYDRO_CANNON,
+		.effect = EFFECT_HIT,
         .power = 150,
         .type = TYPE_WATER,
         .accuracy = 90,
@@ -5500,18 +7368,27 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_RECHARGE,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_METEOR_MASH] =
     {
 		.name = _("Meteor Mash"),
-        .effect = EFFECT_USER_ATTACK_UP_HIT,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "a hard, fast punch.\n"
+                                       "It may also raise\n"
+                                       "the user's Attack."),
+        .animScript = gMoveAnim_METEOR_MASH,
+		.effect = EFFECT_HIT,
 		.power = 90,
         .type = TYPE_STEEL,
 		.accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -5520,31 +7397,49 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.punchMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ATK_PLUS_1,
+			.chance = 20,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ASTONISH] =
     {
 		.name = _("Astonish"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("An attack using a\n"
+                                       "startling shout. It\n"
+                                       "also may make the\n"
+                                       "foe flinch."),
+        .animScript = gMoveAnim_ASTONISH,
+		.effect = EFFECT_HIT,
         .power = 30,
         .type = TYPE_GHOST,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_WEATHER_BALL] =
     {
 		.name = _("Weather Ball"),
-        .effect = EFFECT_WEATHER_BALL,
+		.description = COMPOUND_STRING("This attack move\n"
+                                       "varies in power and\n"
+                                       "type depending on\n"
+                                       "the weather."),
+        .animScript = gMoveAnim_WEATHER_BALL,
+		.effect = EFFECT_WEATHER_BALL,
         .power = 50,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -5562,7 +7457,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_AROMATHERAPY] =
     {
 		.name = _("Aromatherapy"),
-        .effect = EFFECT_HEAL_BELL,
+		.description = COMPOUND_STRING("A soothing scent is\n"
+                                       "released to heal\n"
+                                       "all status problems\n"
+                                       "in the user's party."),
+        .animScript = gMoveAnim_AROMATHERAPY,
+		.effect = EFFECT_HEAL_BELL,
         .type = TYPE_GRASS,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -5571,7 +7471,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.affectsUserSide = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RECOVER_HP,
@@ -5580,7 +7479,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FAKE_TEARS] =
     {
 		.name = _("Fake Tears"),
-        .effect = EFFECT_SPECIAL_DEFENSE_DOWN_2,
+		.description = COMPOUND_STRING("The user feigns\n"
+                                       "crying to sharply\n"
+                                       "lower the target's\n"
+                                       "Sp. Def."),
+        .animScript = gMoveAnim_FAKE_TEARS,
+		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_2,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 20,
@@ -5596,7 +7500,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_AIR_CUTTER] =
     {
 		.name = _("Air Cutter"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("Launches razorlike\n"
+                                       "wind to slash the\n"
+                                       "foes. It has a high\n"
+                                       "critical-hit ratio."),
+        .animScript = gMoveAnim_AIR_CUTTER,
+		.effect = EFFECT_HIT,
 		.power = 60,
         .type = TYPE_FLYING,
         .accuracy = 95,
@@ -5605,7 +7514,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 			.slicingMove = TRUE,
 			.windMove = TRUE,
 		},
@@ -5616,7 +7525,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_OVERHEAT] =
     {
 		.name = _("Overheat"),
-        .effect = EFFECT_OVERHEAT,
+		.description = COMPOUND_STRING("An intense attack\n"
+                                       "that also sharply\n"
+                                       "reduces the user's\n"
+                                       "Sp. Atk stat."),
+        .animScript = gMoveAnim_OVERHEAT,
+		.effect = EFFECT_HIT,
 		.power = 130,
         .type = TYPE_FIRE,
         .accuracy = 90,
@@ -5627,13 +7541,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_2,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ODOR_SLEUTH] =
     {
 		.name = _("Odor Sleuth"),
-        .effect = EFFECT_FORESIGHT,
+		.description = COMPOUND_STRING("Completely negates\n"
+                                       "the foe's efforts\n"
+                                       "to heighten its\n"
+                                       "ability to evade."),
+        .animScript = gMoveAnim_ODOR_SLEUTH,
+		.effect = EFFECT_FORESIGHT,
         .type = TYPE_NORMAL,
         .pp = 40,
         .target = MOVE_TARGET_SELECTED,
@@ -5648,39 +7572,61 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ROCK_TOMB] =
     {
 		.name = _("Rock Tomb"),
-        .effect = EFFECT_TARGET_SPEED_DOWN_HIT,
+		.description = COMPOUND_STRING("Boulders are hurled\n"
+                                       "at the foe. It also\n"
+                                       "lowers the foe's\n"
+                                       "Speed if it hits."),
+        .animScript = gMoveAnim_ROCK_TOMB,
+		.effect = EFFECT_HIT,
 		.power = 60,
         .type = TYPE_ROCK,
 		.accuracy = 95,
 		.pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SILVER_WIND] =
     {
 		.name = _("Silver Wind"),
-        .effect = EFFECT_ALL_STATS_UP_HIT,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with a silver dust.\n"
+                                       "It may raise all\n"
+                                       "the user's stats."),
+        .animScript = gMoveAnim_SILVER_WIND,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_BUG,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ALL_STATS_UP,
+			.chance = 10,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_METAL_SOUND] =
     {
 		.name = _("Metal Sound"),
-        .effect = EFFECT_SPECIAL_DEFENSE_DOWN_2,
+		.description = COMPOUND_STRING("A horrible sound\n"
+                                       "like scraping metal\n"
+                                       "harshly lowers the\n"
+                                       "foe's Sp. Def stat."),
+        .animScript = gMoveAnim_METAL_SOUND,
+		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_2,
         .type = TYPE_STEEL,
         .accuracy = 85,
         .pp = 40,
@@ -5697,7 +7643,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GRASS_WHISTLE] =
     {
 		.name = _("Grass Whistle"),
-        .effect = EFFECT_SLEEP,
+		.description = COMPOUND_STRING("The user plays a\n"
+                                       "pleasant melody\n"
+                                       "that lulls the foe\n"
+                                       "into a deep sleep."),
+        .animScript = gMoveAnim_GRASS_WHISTLE,
+		.effect = EFFECT_SLEEP,
         .type = TYPE_GRASS,
         .accuracy = 55,
         .pp = 15,
@@ -5715,7 +7666,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TICKLE] =
     {
 		.name = _("Tickle"),
-        .effect = EFFECT_TICKLE,
+		.description = COMPOUND_STRING("The foe is made to\n"
+                                       "laugh, reducing its\n"
+                                       "Attack and Defense\n"
+                                       "stats."),
+        .animScript = gMoveAnim_TICKLE,
+		.effect = EFFECT_TICKLE,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 20,
@@ -5731,7 +7687,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_COSMIC_POWER] =
     {
 		.name = _("Cosmic Power"),
-        .effect = EFFECT_COSMIC_POWER,
+		.description = COMPOUND_STRING("The user absorbs a\n"
+                                       "mystic power to\n"
+                                       "raise its Defense\n"
+                                       "and Sp. Def."),
+        .animScript = gMoveAnim_COSMIC_POWER,
+		.effect = EFFECT_COSMIC_POWER,
         .type = TYPE_PSYCHIC,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -5748,7 +7709,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WATER_SPOUT] =
     {
 		.name = _("Water Spout"),
-        .effect = EFFECT_ERUPTION,
+		.description = COMPOUND_STRING("The higher the\n"
+                                       "user's HP, the more\n"
+                                       "powerful this\n"
+                                       "attack becomes."),
+        .animScript = gMoveAnim_WATER_SPOUT,
+		.effect = EFFECT_ERUPTION,
         .power = 150,
         .type = TYPE_WATER,
         .accuracy = 100,
@@ -5761,25 +7727,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SIGNAL_BEAM] =
     {
 		.name = _("Signal Beam"),
-        .effect = EFFECT_CONFUSE_HIT,
+		.description = COMPOUND_STRING("It attacks with a\n"
+                                       "sinister beam of\n"
+                                       "light. It may also\n"
+                                       "confuse the target."),
+        .animScript = gMoveAnim_SIGNAL_BEAM,
+		.effect = EFFECT_HIT,
         .power = 75,
         .type = TYPE_BUG,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CONFUSION,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SHADOW_PUNCH] =
     {
 		.name = _("Shadow Punch"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user throws a\n"
+                                       "punch from the\n"
+                                       "shadows. This\n"
+                                       "attack never misses."),
+        .animScript = gMoveAnim_SHADOW_PUNCH,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_GHOST,
         .pp = 20,
@@ -5797,21 +7776,34 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_EXTRASENSORY] =
     {
 		.name = _("Extrasensory"),
-        .effect = EFFECT_FLINCH_HIT,
+		.description = COMPOUND_STRING("The user attacks\n"
+                                       "with an odd power\n"
+                                       "that may make the\n"
+                                       "foe flinch."),
+        .animScript = gMoveAnim_EXTRASENSORY,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
 		.pp = 20,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SKY_UPPERCUT] =
     {
-		.name = _("Sky UpperCut"),
-        .effect = EFFECT_HIT,
+		.name = _("Sky Uppercut"),
+		.description = COMPOUND_STRING("The user attacks\n"
+                                       "the target with an\n"
+                                       "uppercut thrown\n"
+                                       "skyward with force."),
+        .animScript = gMoveAnim_SKY_UPPERCUT,
+		.effect = EFFECT_HIT,
         .power = 85,
         .type = TYPE_FIGHTING,
         .accuracy = 90,
@@ -5831,7 +7823,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SAND_TOMB] =
     {
 		.name = _("Sand Tomb"),
-        .effect = EFFECT_TRAP,
+		.description = COMPOUND_STRING("The user traps the\n"
+                                       "foe inside a raging\n"
+                                       "sandstorm for four\n"
+                                       "to five turns."),
+        .animScript = gMoveAnim_SAND_TOMB,
+		.effect = EFFECT_HIT,
 		.power = 35,
         .type = TYPE_GROUND,
 		.accuracy = 85,
@@ -5841,15 +7838,26 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 		},
+		.argument = {
+			.bind = { .trappingId = TRAP_ID_SAND_TOMB },
+		},
         .split = SPLIT_PHYSICAL,
-		.argument = TRAP_ID_SAND_TOMB,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_WRAP,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SHEER_COLD] =
     {
 		.name = _("Sheer Cold"),
-        .effect = EFFECT_OHKO,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with ultimate cold\n"
+                                       "that causes\n"
+                                       "fainting if it hits."),
+        .animScript = gMoveAnim_SHEER_COLD,
+		.effect = EFFECT_OHKO,
         .power = 1,
         .type = TYPE_ICE,
         .accuracy = 30,
@@ -5866,25 +7874,38 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MUDDY_WATER] =
     {
 		.name = _("Muddy Water"),
-        .effect = EFFECT_TARGET_ACCURACY_DOWN_HIT,
+		.description = COMPOUND_STRING("The user attacks\n"
+                                       "with muddy water.\n"
+                                       "It may also lower\n"
+                                       "the foe's accuracy."),
+        .animScript = gMoveAnim_MUDDY_WATER,
+		.effect = EFFECT_HIT,
 		.power = 90,
         .type = TYPE_WATER,
         .accuracy = 85,
         .pp = 10,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ACC_MINUS_1,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BULLET_SEED] =
     {
 		.name = _("Bullet Seed"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("The user forcefully\n"
+                                       "shoots seeds at the\n"
+                                       "target two to five\n"
+                                       "times in a row."),
+        .animScript = gMoveAnim_BULLET_SEED,
+		.effect = EFFECT_MULTI_HIT,
 		.power = 25,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -5902,7 +7923,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_AERIAL_ACE] =
     {
 		.name = _("Aerial Ace"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user confounds\n"
+                                       "the foe with speed,\n"
+                                       "then slashes. This\n"
+                                       "attack never misses."),
+        .animScript = gMoveAnim_AERIAL_ACE,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_FLYING,
         .pp = 20,
@@ -5920,7 +7946,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ICICLE_SPEAR] =
     {
 		.name = _("Icicle Spear"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("The user launches\n"
+                                       "sharp icicles at\n"
+                                       "the target two to\n"
+                                       "five times in a row."),
+        .animScript = gMoveAnim_ICICLE_SPEAR,
+		.effect = EFFECT_MULTI_HIT,
 		.power = 25,
         .type = TYPE_ICE,
         .accuracy = 100,
@@ -5937,7 +7968,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_IRON_DEFENSE] =
     {
 		.name = _("Iron Defense"),
-        .effect = EFFECT_DEFENSE_UP_2,
+		.description = COMPOUND_STRING("It hardens its\n"
+                                       "body's surface like\n"
+                                       "iron, sharply\n"
+                                       "raising its Defense."),
+        .animScript = gMoveAnim_IRON_DEFENSE,
+		.effect = EFFECT_DEFENSE_UP_2,
         .type = TYPE_STEEL,
         .pp = 15,
         .target = MOVE_TARGET_USER,
@@ -5954,7 +7990,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BLOCK] =
     {
 		.name = _("Block"),
-        .effect = EFFECT_MEAN_LOOK,
+		.description = COMPOUND_STRING("The user blocks the\n"
+                                       "target's way with\n"
+                                       "arms spread wide to\n"
+                                       "prevent escape."),
+        .animScript = gMoveAnim_BLOCK,
+		.effect = EFFECT_MEAN_LOOK,
         .type = TYPE_NORMAL,
         .pp = 5,
         .target = MOVE_TARGET_SELECTED,
@@ -5970,7 +8011,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HOWL] =
     {
 		.name = _("Howl"),
-        .effect = EFFECT_HOWL,
+		.description = COMPOUND_STRING("Howls loudly to\n"
+                                       "rouse itself and\n"
+                                       "its allies. This\n"
+                                       "boosts their Attack."),
+        .animScript = gMoveAnim_HOWL,
+		.effect = EFFECT_HOWL,
         .type = TYPE_NORMAL,
         .pp = 40,
         .target = MOVE_TARGET_USER,
@@ -5980,7 +8026,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.soundMove = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.affectsUserSide = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_ATK_UP_1,
@@ -5989,7 +8034,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRAGON_CLAW] =
     {
 		.name = _("Dragon Claw"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The user slashes\n"
+                                       "the target with\n"
+                                       "huge, sharp claws\n"
+                                       "to inflict damage."),
+        .animScript = gMoveAnim_DRAGON_CLAW,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_DRAGON,
         .accuracy = 100,
@@ -6007,7 +8057,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FRENZY_PLANT] =
     {
 		.name = _("Frenzy Plant"),
-        .effect = EFFECT_RECHARGE,
+		.description = COMPOUND_STRING("The foe is hit with\n"
+                                       "an enormous branch.\n"
+                                       "The user can't move\n"
+                                       "on the next turn."),
+        .animScript = gMoveAnim_FRENZY_PLANT,
+		.effect = EFFECT_HIT,
         .power = 150,
         .type = TYPE_GRASS,
         .accuracy = 90,
@@ -6018,13 +8073,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_RECHARGE,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BULK_UP] =
     {
 		.name = _("Bulk Up"),
-        .effect = EFFECT_BULK_UP,
+		.description = COMPOUND_STRING("The user bulks up\n"
+                                       "its body to boost\n"
+                                       "both its Attack and\n"
+                                       "Defense stats."),
+        .animScript = gMoveAnim_BULK_UP,
+		.effect = EFFECT_BULK_UP,
         .type = TYPE_FIGHTING,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -6041,12 +8106,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BOUNCE] =
     {
 		.name = _("Bounce"),
-        .effect = EFFECT_SEMI_INVULNERABLE,
+		.description = COMPOUND_STRING("The user bounces on\n"
+                                       "the foe on the 2nd\n"
+                                       "turn. It may\n"
+                                       "paralyze the foe."),
+        .animScript = gMoveAnim_BOUNCE,
+		.effect = EFFECT_SEMI_INVULNERABLE,
         .power = 85,
         .type = TYPE_FLYING,
         .accuracy = 85,
         .pp = 5,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -6055,61 +8124,89 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenAssist = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.twoTurnsMove = TRUE,
 			.gravityBanned = TRUE,
 		},
+		.argument = {
+			.semiInvulnerable = {
+				.stringId = B_MSG_SPRANG_UP,
+				.status = COMPRESS_BITS(STATUS3_ON_AIR),
+			},
+		},
         .split = SPLIT_PHYSICAL,
-        .argument = MOVE_EFFECT_PARALYSIS,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MUD_SHOT] =
     {
 		.name = _("Mud Shot"),
-        .effect = EFFECT_TARGET_SPEED_DOWN_HIT,
+		.description = COMPOUND_STRING("The user attacks by\n"
+                                       "hurling mud. It\n"
+                                       "also reduces the\n"
+                                       "foe's Speed."),
+        .animScript = gMoveAnim_MUD_SHOT,
+		.effect = EFFECT_HIT,
         .power = 55,
         .type = TYPE_GROUND,
         .accuracy = 95,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_POISON_TAIL] =
     {
 		.name = _("Poison Tail"),
-        .effect = EFFECT_POISON_HIT,
+		.description = COMPOUND_STRING("An attack with a\n"
+                                       "high critical-hit\n"
+                                       "ratio. It may also\n"
+                                       "poison the foe."),
+        .animScript = gMoveAnim_POISON_TAIL,
+		.effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 25,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_POISON,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_COVET] =
     {
 		.name = _("Covet"),
-        .effect = EFFECT_THIEF,
+		.description = COMPOUND_STRING("Endearingly\n"
+                                       "approaches the foe,\n"
+                                       "then steals the\n"
+                                       "foe's held item."),
+        .animScript = gMoveAnim_COVET,
+		.effect = EFFECT_HIT,
 		.power = 60,
         .type = TYPE_NORMAL,
         .accuracy = 100,
 		.pp = 25,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -6120,18 +8217,27 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_STEAL_ITEM,
+			.chance = 0,
+			.onFinalMultiHitOnly = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_VOLT_TACKLE] =
     {
 		.name = _("Volt Tackle"),
-        .effect = EFFECT_PARALYZE_HIT,
+		.description = COMPOUND_STRING("The user throws an\n"
+                                       "electrified tackle.\n"
+                                       "It hurts the user a\n"
+                                       "little."),
+        .animScript = gMoveAnim_VOLT_TACKLE,
+		.effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -6140,13 +8246,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.recoilDivisor = 3, // 33%
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MAGICAL_LEAF] =
     {
 		.name = _("Magical Leaf"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The foe is attacked\n"
+                                       "with a strange leaf\n"
+                                       "that cannot be\n"
+                                       "evaded."),
+        .animScript = gMoveAnim_MAGICAL_LEAF,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_GRASS,
         .pp = 20,
@@ -6162,7 +8277,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WATER_SPORT] =
     {
 		.name = _("Water Sport"),
-        .effect = EFFECT_WATER_SPORT,
+		.description = COMPOUND_STRING("It soaks the field\n"
+                                       "with water. This\n"
+                                       "weakens Fire type\n"
+                                       "moves for 5 turns."),
+        .animScript = gMoveAnim_WATER_SPORT,
+		.effect = EFFECT_WATER_SPORT,
         .type = TYPE_WATER,
         .pp = 15,
         .target = MOVE_TARGET_ALL_BATTLERS,
@@ -6178,7 +8298,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CALM_MIND] =
     {
 		.name = _("Calm Mind"),
-        .effect = EFFECT_CALM_MIND,
+		.description = COMPOUND_STRING("It focuses its mind\n"
+                                       "and calms its\n"
+                                       "spirit to raise its\n"
+                                       "Sp. Atk and Sp. Def."),
+        .animScript = gMoveAnim_CALM_MIND,
+		.effect = EFFECT_CALM_MIND,
         .type = TYPE_PSYCHIC,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -6195,7 +8320,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LEAF_BLADE] =
     {
 		.name = _("Leaf Blade"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("The foe is slashed\n"
+                                       "with a sharp leaf.\n"
+                                       "It has a high\n"
+                                       "critical-hit ratio."),
+        .animScript = gMoveAnim_LEAF_BLADE,
+		.effect = EFFECT_HIT,
 		.power = 90,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -6205,7 +8335,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -6215,7 +8345,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRAGON_DANCE] =
     {
 		.name = _("Dragon Dance"),
-        .effect = EFFECT_DRAGON_DANCE,
+		.description = COMPOUND_STRING("A mystic, powerful\n"
+                                       "dance that boosts\n"
+                                       "the user's Attack\n"
+                                       "and Speed stats."),
+        .animScript = gMoveAnim_DRAGON_DANCE,
+		.effect = EFFECT_DRAGON_DANCE,
         .type = TYPE_DRAGON,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -6233,7 +8368,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ROCK_BLAST] =
     {
 		.name = _("Rock Blast"),
-        .effect = EFFECT_MULTI_HIT,
+		.description = COMPOUND_STRING("It hurls hard rocks\n"
+                                       "at the foe. Two to\n"
+                                       "five rocks are\n"
+                                       "launched in a row."),
+        .animScript = gMoveAnim_ROCK_BLAST,
+		.effect = EFFECT_MULTI_HIT,
         .power = 25,
         .type = TYPE_ROCK,
 		.accuracy = 90,
@@ -6251,7 +8391,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SHOCK_WAVE] =
     {
 		.name = _("Shock Wave"),
-        .effect = EFFECT_HIT,
+		.description = COMPOUND_STRING("A rapid jolt of\n"
+                                       "electricity strikes\n"
+                                       "the foe. It can't\n"
+                                       "be evaded."),
+        .animScript = gMoveAnim_SHOCK_WAVE,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_ELECTRIC,
         .pp = 20,
@@ -6267,12 +8412,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WATER_PULSE] =
     {
 		.name = _("Water Pulse"),
-        .effect = EFFECT_CONFUSE_HIT,
+		.description = COMPOUND_STRING("Attacks the foe\n"
+                                       "with a pulsing\n"
+                                       "blast of water. It\n"
+                                       "may confuse the foe."),
+        .animScript = gMoveAnim_WATER_PULSE,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_WATER,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -6280,13 +8429,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.pulseMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CONFUSION,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_DOOM_DESIRE] =
     {
 		.name = _("Doom Desire"),
-        .effect = EFFECT_FUTURE_SIGHT,
+		.description = COMPOUND_STRING("A move that attacks\n"
+                                       "the foe with a\n"
+                                       "blast of light two\n"
+                                       "turns after use."),
+        .animScript = gMoveAnim_DOOM_DESIRE,
+		.effect = EFFECT_FUTURE_SIGHT,
 		.power = 140,
         .type = TYPE_STEEL,
 		.accuracy = 100,
@@ -6298,14 +8456,24 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
-		.argument = FUTURE_ATTACK_ID_DOOM_DESIRE,
+		.argument = {
+			.futureAttack = {
+				.stringId = B_MSG_CHOSE_AS_DESTINY,
+				.animationId = B_ANIM_DOOM_DESIRE_HIT,
+			},
+		},
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_PSYCHO_BOOST] =
     {
 		.name = _("Psycho Boost"),
-        .effect = EFFECT_OVERHEAT,
+		.description = COMPOUND_STRING("An intense attack\n"
+                                       "that also sharply\n"
+                                       "reduces the user's\n"
+                                       "Sp. Atk stat."),
+        .animScript = gMoveAnim_PSYCHO_BOOST,
+		.effect = EFFECT_HIT,
         .power = 140,
         .type = TYPE_PSYCHIC,
         .accuracy = 90,
@@ -6316,13 +8484,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_2,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ROOST] =
     {
 		.name = _("Roost"),
-        .effect = EFFECT_ROOST,
+		.description = COMPOUND_STRING("The user lands and\n"
+                                       "rests its body.\n"
+                                       "Restoring it's HP\n"
+                                       "by half its max HP."),
+        .animScript = gMoveAnim_ROOST,
+		.effect = EFFECT_ROOST,
         .type = TYPE_FLYING,
         .pp = 5,
         .target = MOVE_TARGET_USER,
@@ -6331,7 +8509,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -6340,7 +8517,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GRAVITY] =
     {
 		.name = _("Gravity"),
-        .effect = EFFECT_GRAVITY,
+		.description = COMPOUND_STRING("Intensifies the\n"
+                                       "gravity for five\n"
+                                       "turns, making\n"
+                                       "flying unusable."),
+        .animScript = gMoveAnim_GRAVITY,
+		.effect = EFFECT_GRAVITY,
         .type = TYPE_PSYCHIC,
         .pp = 5,
         .target = MOVE_TARGET_ALL_BATTLERS,
@@ -6356,7 +8538,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MIRACLE_EYE] =
     {
 		.name = _("Miracle Eye"),
-        .effect = EFFECT_MIRACLE_EYE,
+		.description = COMPOUND_STRING("Enables hit Ghost\n"
+                                       "types. It also\n"
+                                       "enables the user to\n"
+                                       "hit an evasive foe."),
+        .animScript = gMoveAnim_MIRACLE_EYE,
+		.effect = EFFECT_MIRACLE_EYE,
         .type = TYPE_PSYCHIC,
         .pp = 40,
         .target = MOVE_TARGET_SELECTED,
@@ -6371,7 +8558,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WAKE_UP_SLAP] =
     {
 		.name = _("Wake-Up Slap"),
-        .effect = EFFECT_WAKE_UP_SLAP,
+		.description = COMPOUND_STRING("Inflicts high\n"
+                                       "damage on a\n"
+                                       "sleeping foe. Also\n"
+                                       "wakes the foe up."),
+        .animScript = gMoveAnim_WAKE_UP_SLAP,
+		.effect = EFFECT_CURE_STATUS1_FROM_ARG,
 		.power = 70,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -6382,14 +8574,27 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 		},
+		.argument = {
+			.cureStatus = { .statusId = STATUS1_SLEEP },
+		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CURE_STATUS1,
+			.chance = 0,
+			.onFinalMultiHitOnly = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_HAMMER_ARM] =
     {
 		.name = _("Hammer Arm"),
-        .effect = EFFECT_USER_SPEED_DOWN_HIT,
+		.description = COMPOUND_STRING("The user swings and\n"
+                                       "hits with its heavy\n"
+                                       "fist. It lowers the\n"
+                                       "user's Speed."),
+        .animScript = gMoveAnim_HAMMER_ARM,
+		.effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_FIGHTING,
         .accuracy = 90,
@@ -6402,13 +8607,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.punchMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_GYRO_BALL] =
     {
 		.name = _("Gyro Ball"),
-        .effect = EFFECT_GYRO_BALL,
+		.description = COMPOUND_STRING("A high-speed spin's\n"
+                                       "tackle. The slower\n"
+                                       "the user, the\n"
+                                       "greater the damage."),
+        .animScript = gMoveAnim_GYRO_BALL,
+		.effect = EFFECT_GYRO_BALL,
         .power = 1,
         .type = TYPE_STEEL,
         .accuracy = 100,
@@ -6427,7 +8642,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HEALING_WISH] =
     {
 		.name = _("Healing Wish"),
-        .effect = EFFECT_HEALING_WISH,
+		.description = COMPOUND_STRING("The user faints. In\n"
+                                       "return, it heals\n"
+                                       "the HP and status\n"
+                                       "of its replacement."),
+        .animScript = gMoveAnim_HEALING_WISH,
+		.effect = EFFECT_HEALING_WISH,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -6436,7 +8656,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -6445,7 +8664,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BRINE] =
     {
 		.name = _("Brine"),
-        .effect = EFFECT_BRINE,
+		.description = COMPOUND_STRING("This move's power\n"
+                                       "is doubled if the\n"
+                                       "target's HP is at\n"
+                                       "half or less."),
+        .animScript = gMoveAnim_BRINE,
+		.effect = EFFECT_BRINE,
         .power = 65,
         .type = TYPE_WATER,
         .accuracy = 100,
@@ -6462,7 +8686,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_NATURAL_GIFT] =
     {
 		.name = _("Natural Gift"),
-        .effect = EFFECT_NATURAL_GIFT,
+		.description = COMPOUND_STRING("Attacks by using\n"
+                                       "its held Berry. The\n"
+                                       "Berry determines\n"
+                                       "its type and power."),
+        .animScript = gMoveAnim_NATURAL_GIFT,
+		.effect = EFFECT_NATURAL_GIFT,
         .power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -6475,7 +8704,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FEINT] =
     {
 		.name = _("Feint"),
-        .effect = EFFECT_FEINT,
+		.description = COMPOUND_STRING("This attack hits a\n"
+                                       "foe using Protect.\n"
+                                       "This also lifts the\n"
+                                       "effects of the move."),
+        .animScript = gMoveAnim_FEINT,
+		.effect = EFFECT_HIT,
 		.power = 30,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -6490,18 +8724,27 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FEINT,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_PLUCK] =
     {
 		.name = _("Pluck"),
-        .effect = EFFECT_BUG_BITE,
+		.description = COMPOUND_STRING("It pecks the foe,\n"
+                                       "plucks its held\n"
+                                       "Berry and gains its\n"
+                                       "effect."),
+        .animScript = gMoveAnim_PLUCK,
+		.effect = EFFECT_BUG_BITE,
         .power = 60,
         .type = TYPE_FLYING,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -6515,7 +8758,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TAILWIND] =
     {
 		.name = _("Tailwind"),
-        .effect = EFFECT_TAILWIND,
+		.description = COMPOUND_STRING("The user whips up a\n"
+                                       "whirlwind that ups\n"
+                                       "Speed of its party\n"
+                                       "for four turns."),
+        .animScript = gMoveAnim_TAILWIND,
+		.effect = EFFECT_TAILWIND,
         .type = TYPE_FLYING,
 		.pp = 15,
         .target = MOVE_TARGET_USER,
@@ -6524,7 +8772,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.affectsUserSide = TRUE,
 			.windMove = TRUE, // Only set for data purpose, Wind Power are handled separated
 		},
         .split = SPLIT_STATUS,
@@ -6534,7 +8781,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ACUPRESSURE] =
     {
 		.name = _("Acupressure"),
-        .effect = EFFECT_ACUPRESSURE,
+		.description = COMPOUND_STRING("It applies pressure\n"
+                                       "to stress points,\n"
+                                       "sharply boosting\n"
+                                       "one of its stats."),
+        .animScript = gMoveAnim_ACUPRESSURE,
+		.effect = EFFECT_ACUPRESSURE,
         .type = TYPE_NORMAL,
         .pp = 30,
         .target = MOVE_TARGET_USER_OR_ALLY,
@@ -6550,7 +8802,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_METAL_BURST] =
     {
 		.name = _("Metal Burst"),
-        .effect = EFFECT_METAL_BURST,
+		.description = COMPOUND_STRING("Retaliates against\n"
+                                       "the foe that last\n"
+                                       "did damage on it\n"
+                                       "with greater power."),
+        .animScript = gMoveAnim_METAL_BURST,
+		.effect = EFFECT_COUNTER_ATTACK,
 		.power = 1,
         .type = TYPE_STEEL,
         .accuracy = 100,
@@ -6558,8 +8815,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_DEPENDS,
 		.flags =
 		{
-			.noEffectiveness = TRUE,
 			.forbiddenMeFirst = TRUE,
+		},
+		.argument = {
+			.counterAttack = { .split = SPLIT_STATUS }, // Counter both physical and special
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -6568,7 +8827,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_U_TURN] =
     {
 		.name = _("U-Turn"),
-        .effect = EFFECT_HIT_ESCAPE,
+		.description = COMPOUND_STRING("After the attack,\n"
+                                       "it rushes back to\n"
+                                       "switch places with\n"
+                                       "a party Pokémon."),
+        .animScript = gMoveAnim_U_TURN,
+		.effect = EFFECT_HIT_ESCAPE,
         .power = 70,
         .type = TYPE_BUG,
         .accuracy = 100,
@@ -6586,7 +8850,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CLOSE_COMBAT] =
     {
 		.name = _("Close Combat"),
-        .effect = EFFECT_CLOSE_COMBAT,
+		.description = COMPOUND_STRING("It fights the foe\n"
+                                       "up close. It also\n"
+                                       "cuts the user's\n"
+                                       "Defense and Sp. Def."),
+        .animScript = gMoveAnim_CLOSE_COMBAT,
+		.effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -6598,13 +8867,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_SPDEF_DOWN,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_PAYBACK] =
     {
 		.name = _("Payback"),
-        .effect = EFFECT_PAYBACK,
+		.description = COMPOUND_STRING("If the user can use\n"
+                                       "this attack after\n"
+                                       "the foe, its power\n"
+                                       "is doubled."),
+        .animScript = gMoveAnim_PAYBACK,
+		.effect = EFFECT_PAYBACK,
         .power = 50,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -6622,7 +8901,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ASSURANCE] =
     {
 		.name = _("Assurance"),
-        .effect = EFFECT_ASSURANCE,
+		.description = COMPOUND_STRING("Its power is\n"
+                                       "doubled if the foe\n"
+                                       "has taken damage in\n"
+                                       "the same turn."),
+        .animScript = gMoveAnim_ASSURANCE,
+		.effect = EFFECT_ASSURANCE,
 		.power = 60,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -6640,7 +8924,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_EMBARGO] =
     {
 		.name = _("Embargo"),
-        .effect = EFFECT_EMBARGO,
+		.description = COMPOUND_STRING("It prevents the\n"
+                                       "target from using\n"
+                                       "its held item."),
+        .animScript = gMoveAnim_EMBARGO,
+		.effect = EFFECT_EMBARGO,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 15,
@@ -6656,7 +8944,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FLING] =
     {
 		.name = _("Fling"),
-        .effect = EFFECT_FLING,
+		.description = COMPOUND_STRING("It flings its held\n"
+                                       "item at the foe.\n"
+                                       "Its effect and\n"
+                                       "power depend on it."),
+        .animScript = gMoveAnim_FLING,
+		.effect = EFFECT_FLING,
         .power = 1,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -6675,7 +8968,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PSYCHO_SHIFT] =
     {
 		.name = _("Psycho Shift"),
-        .effect = EFFECT_PSYCHO_SHIFT,
+		.description = COMPOUND_STRING("Using its psychic\n"
+                                       "power, it transfers\n"
+                                       "its status problems\n"
+                                       "to the target."),
+        .animScript = gMoveAnim_PSYCHO_SHIFT,
+		.effect = EFFECT_PSYCHO_SHIFT,
         .type = TYPE_PSYCHIC,
 		.accuracy = 100,
         .pp = 10,
@@ -6687,7 +8985,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TRUMP_CARD] =
     {
 		.name = _("Trump Card"),
-        .effect = EFFECT_TRUMP_CARD,
+		.description = COMPOUND_STRING("The fewer PP this\n"
+                                       "move has, the more\n"
+                                       "power it has for\n"
+                                       "attack."),
+        .animScript = gMoveAnim_TRUMP_CARD,
+		.effect = EFFECT_TRUMP_CARD,
 		.power = 1,
         .type = TYPE_NORMAL,
         .pp = 5,
@@ -6704,7 +9007,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HEAL_BLOCK] =
     {
 		.name = _("Heal Block"),
-        .effect = EFFECT_HEAL_BLOCK,
+		.description = COMPOUND_STRING("The user prevents\n"
+                                       "the foes from any\n"
+                                       "HP-recovery effect\n"
+                                       "for five turns."),
+        .animScript = gMoveAnim_HEAL_BLOCK,
+		.effect = EFFECT_HEAL_BLOCK,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 15,
@@ -6720,7 +9028,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WRING_OUT] =
     {
 		.name = _("Wring Out"),
-        .effect = EFFECT_WRING_OUT,
+		.description = COMPOUND_STRING("Powerfully wrings\n"
+                                       "the foe. The more\n"
+                                       "HP the foe has, the\n"
+                                       "greater the power."),
+        .animScript = gMoveAnim_WRING_OUT,
+		.effect = EFFECT_WRING_OUT,
 		.power = 1,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -6738,7 +9051,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_POWER_TRICK] =
     {
 		.name = _("Power Trick"),
-        .effect = EFFECT_POWER_TRICK,
+		.description = COMPOUND_STRING("Employs its psychic\n"
+                                       "power to switch its\n"
+                                       "Attack with its\n"
+                                       "Defense stat."),
+        .animScript = gMoveAnim_POWER_TRICK,
+		.effect = EFFECT_POWER_TRICK,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -6755,7 +9073,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GASTRO_ACID] =
     {
 		.name = _("Gastro Acid"),
-        .effect = EFFECT_GASTRO_ACID,
+		.description = COMPOUND_STRING("It hurls up stomach\n"
+                                       "acids to supress\n"
+                                       "the effect of the\n"
+                                       "foe's ability."),
+        .animScript = gMoveAnim_GASTRO_ACID,
+		.effect = EFFECT_GASTRO_ACID,
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 10,
@@ -6771,7 +9094,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LUCKY_CHANT] =
     {
 		.name = _("Lucky Chant"),
-        .effect = EFFECT_LUCKY_CHANT,
+		.description = COMPOUND_STRING("The user chants an\n"
+                                       "incantation,\n"
+                                       "preventing critical\n"
+                                       "hits from the foes."),
+        .animScript = gMoveAnim_LUCKY_CHANT,
+		.effect = EFFECT_LUCKY_CHANT,
         .type = TYPE_NORMAL,
         .pp = 30,
         .target = MOVE_TARGET_USER,
@@ -6780,7 +9108,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.affectsUserSide = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_EVSN_UP_1,
@@ -6789,10 +9116,15 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ME_FIRST] =
     {
 		.name = _("Me First"),
-        .effect = EFFECT_ME_FIRST,
+		.description = COMPOUND_STRING("Tries to cut ahead\n"
+                                       "of the foe to steal\n"
+                                       "and use its\n"
+                                       "intended move."),
+        .animScript = gMoveAnim_ME_FIRST,
+		.effect = EFFECT_ME_FIRST,
         .type = TYPE_NORMAL,
         .pp = 20,
-        .target = MOVE_TARGET_SELECTED,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
 		.flags =
 		{
 			.forbiddenMirrorMove = TRUE,
@@ -6801,7 +9133,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.callOtherMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_SPD_UP_2,
@@ -6810,7 +9141,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_COPYCAT] =
     {
 		.name = _("Copycat"),
-        .effect = EFFECT_COPYCAT,
+		.description = COMPOUND_STRING("It mimics the move\n"
+                                       "used before it. It\n"
+                                       "fails if no move\n"
+                                       "has been used yet."),
+        .animScript = gMoveAnim_COPYCAT,
+		.effect = EFFECT_COPYCAT,
         .type = TYPE_NORMAL,
         .pp = 20,
         .target = MOVE_TARGET_DEPENDS,
@@ -6823,7 +9159,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.callOtherMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_ACC_UP_1,
@@ -6832,7 +9167,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_POWER_SWAP] =
     {
 		.name = _("Power Swap"),
-        .effect = EFFECT_POWER_SWAP,
+		.description = COMPOUND_STRING("The user switches\n"
+                                       "changes to its\n"
+                                       "Attack and Sp. Atk\n"
+                                       "with the foe."),
+        .animScript = gMoveAnim_POWER_SWAP,
+		.effect = EFFECT_POWER_SWAP,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -6843,7 +9183,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GUARD_SWAP] =
     {
 		.name = _("Guard Swap"),
-        .effect = EFFECT_GUARD_SWAP,
+		.description = COMPOUND_STRING("The user switches\n"
+                                       "changes to its\n"
+                                       "Defense and Sp. Def\n"
+                                       "with the foe."),
+        .animScript = gMoveAnim_GUARD_SWAP,
+		.effect = EFFECT_GUARD_SWAP,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -6854,7 +9199,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PUNISHMENT] =
     {
 		.name = _("Punishment"),
-        .effect = EFFECT_PUNISHMENT,
+		.description = COMPOUND_STRING("Its power increases\n"
+                                       "the more the foe\n"
+                                       "has powered up with\n"
+                                       "stat changes."),
+        .animScript = gMoveAnim_PUNISHMENT,
+		.effect = EFFECT_PUNISHMENT,
         .power = 1,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -6872,7 +9222,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LAST_RESORT] =
     {
 		.name = _("Last Resort"),
-        .effect = EFFECT_LAST_RESORT,
+		.description = COMPOUND_STRING("It can be used only\n"
+                                       "after the user has\n"
+                                       "used all the other\n"
+                                       "moves it knows."),
+        .animScript = gMoveAnim_LAST_RESORT,
+		.effect = EFFECT_LAST_RESORT,
 		.power = 140,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -6890,7 +9245,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_WORRY_SEED] =
     {
 		.name = _("Worry Seed"),
-        .effect = EFFECT_SET_ABILITY,
+		.description = COMPOUND_STRING("A seed that causes\n"
+                                       "worry is planted on\n"
+                                       "the foe. Making its\n"
+                                       "ability Insomnia."),
+        .animScript = gMoveAnim_WORRY_SEED,
+		.effect = EFFECT_SET_ABILITY,
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 10,
@@ -6900,14 +9260,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.magicCoatAffected = TRUE,
 		},
         .split = SPLIT_STATUS,
-		.argument = ABILITY_INSOMNIA,
+		.argument = {
+			.setAbility = { .abilityId = ABILITY_INSOMNIA },
+		},
         .zMoveEffect = Z_EFFECT_SPD_UP_1,
     },
 
     [MOVE_SUCKER_PUNCH] =
     {
 		.name = _("Sucker Punch"),
-        .effect = EFFECT_SUCKER_PUNCH,
+		.description = COMPOUND_STRING("Enables the user to\n"
+                                       "attack first. Fails\n"
+                                       "if the foe is not\n"
+                                       "readying an attack."),
+        .animScript = gMoveAnim_SUCKER_PUNCH,
+		.effect = EFFECT_SUCKER_PUNCH,
 		.power = 70,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -6926,7 +9293,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TOXIC_SPIKES] =
     {
 		.name = _("Toxic Spikes"),
-        .effect = EFFECT_TOXIC_SPIKES,
+		.description = COMPOUND_STRING("Poison spikes are\n"
+                                       "laid on the foe's\n"
+                                       "feet to poison foes\n"
+                                       "switching in."),
+        .animScript = gMoveAnim_TOXIC_SPIKES,
+		.effect = EFFECT_TOXIC_SPIKES,
         .type = TYPE_POISON,
         .pp = 20,
         .target = MOVE_TARGET_OPPONENTS_FIELD,
@@ -6943,15 +9315,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 
     [MOVE_HEART_SWAP] =
     {
-		.name = _("-"),
-        .effect = EFFECT_HEART_SWAP,
+		.name = _("Heart Swap"),
+		.description = COMPOUND_STRING("It employs its\n"
+                                       "psychic power to\n"
+                                       "switch stat changes\n"
+                                       "with the target."),
+        .animScript = gMoveAnim_HEART_SWAP,
+		.effect = EFFECT_HEART_SWAP,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
-		.flags =
-		{
-			.forbiddenMirrorMove = TRUE,
-		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_BOOST_CRITS,
     },
@@ -6994,12 +9367,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FLARE_BLITZ] =
     {
 		.name = _("-"),
-        .effect = EFFECT_BURN_HIT,
+        .effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7009,18 +9381,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.thawUser = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FORCE_PALM] =
     {
 		.name = _("-"),
-        .effect = EFFECT_PARALYZE_HIT,
+        .effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7029,6 +9404,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7070,12 +9449,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_POISON_JAB] =
     {
 		.name = _("-"),
-        .effect = EFFECT_POISON_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7084,18 +9462,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_POISON,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_DARK_PULSE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -7103,6 +9484,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.pulseMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7119,7 +9504,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -7165,12 +9550,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_AIR_SLASH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 75,
         .type = TYPE_FLYING,
         .accuracy = 95,
 		.pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -7178,6 +9562,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7203,12 +9591,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BUG_BUZZ] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_BUG,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7217,6 +9604,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7241,12 +9632,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRAGON_RUSH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_DRAGON,
         .accuracy = 75,
         .pp = 10,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -7255,6 +9645,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.dmgMinimize = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7278,7 +9672,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRAIN_PUNCH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_ABSORB,
+        .effect = EFFECT_HIT_ABSORB,
 		.power = 75,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -7289,7 +9683,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 			.punchMove = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
+		},
+		.argument = {
+			.absorb = { .percentage = 50 },
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7316,12 +9713,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FOCUS_BLAST] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_FIGHTING,
         .accuracy = 70,
         .pp = 5,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7329,18 +9725,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ENERGY_BALL] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
 		.power = 90,
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7348,6 +9747,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7373,12 +9776,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_EARTH_POWER] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_GROUND,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7386,6 +9788,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7410,7 +9816,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GIGA_IMPACT] =
     {
 		.name = _("-"),
-        .effect = EFFECT_RECHARGE,
+        .effect = EFFECT_HIT,
         .power = 150,
         .type = TYPE_NORMAL,
         .accuracy = 90,
@@ -7423,6 +9829,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_RECHARGE,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7513,7 +9924,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7527,7 +9938,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ELECTRIC,
         .accuracy = 95,
         .pp = 15,
-        .secondaryEffectChance = 10,
+        // .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -7536,7 +9947,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
-        .argument = STATUS1_PARALYSIS,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7548,7 +9958,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ICE,
         .accuracy = 95,
         .pp = 15,
-        .secondaryEffectChance = 10,
+        // .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -7557,7 +9967,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
-        .argument = STATUS1_FREEZE,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7569,7 +9978,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIRE,
         .accuracy = 95,
         .pp = 15,
-        .secondaryEffectChance = 10,
+        // .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -7578,7 +9987,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.bitingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
-        .argument = STATUS1_BURN,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7604,12 +10012,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MUD_BOMB] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_ACCURACY_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_GROUND,
         .accuracy = 85,
         .pp = 10,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7618,6 +10025,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.ballisticMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ACC_MINUS_1,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7633,7 +10044,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -7643,12 +10054,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ZEN_HEADBUTT] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_PSYCHIC,
         .accuracy = 90,
         .pp = 15,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7656,18 +10066,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_MIRROR_SHOT] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_ACCURACY_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_STEEL,
         .accuracy = 85,
         .pp = 10,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7675,18 +10088,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ACC_MINUS_1,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FLASH_CANNON] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_STEEL,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7694,18 +10110,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ROCK_CLIMB] =
     {
 		.name = _("-"),
-        .effect = EFFECT_CONFUSE_HIT,
+        .effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_NORMAL,
         .accuracy = 85,
         .pp = 20,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7714,6 +10133,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CONFUSION,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7751,30 +10174,33 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRACO_METEOR] =
     {
 		.name = _("-"),
-        .effect = EFFECT_OVERHEAT,
+        .effect = EFFECT_HIT,
 		.power = 130,
         .type = TYPE_DRAGON,
         .accuracy = 90,
         .pp = 5,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_2,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_DISCHARGE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_PARALYZE_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_FOES_AND_ALLY,
         .flags =
 		{
@@ -7782,18 +10208,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_LAVA_PLUME] =
     {
 		.name = _("-"),
-        .effect = EFFECT_BURN_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_FOES_AND_ALLY,
         .flags =
 		{
@@ -7801,24 +10230,32 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_LEAF_STORM] =
     {
 		.name = _("-"),
-        .effect = EFFECT_OVERHEAT,
+        .effect = EFFECT_HIT,
 		.power = 130,
         .type = TYPE_GRASS,
         .accuracy = 90,
         .pp = 5,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_2,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7843,7 +10280,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ROCK_WRECKER] =
     {
 		.name = _("-"),
-        .effect = EFFECT_RECHARGE,
+        .effect = EFFECT_HIT,
         .power = 150,
         .type = TYPE_ROCK,
         .accuracy = 90,
@@ -7856,40 +10293,47 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_RECHARGE,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_CROSS_POISON] =
     {
 		.name = _("-"),
-        .effect = EFFECT_POISON_HIT,
+        .effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 			// .secondaryEffectMove = TRUE,
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_POISON,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_GUNK_SHOT] =
     {
 		.name = _("-"),
-        .effect = EFFECT_POISON_HIT,
+        .effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_POISON,
 		.accuracy = 80,
         .pp = 5,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -7897,18 +10341,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_POISON,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_IRON_HEAD] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_STEEL,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -7916,6 +10363,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -7948,7 +10399,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7992,7 +10443,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GRASS_KNOT] =
     {
 		.name = _("-"),
-        .effect = EFFECT_LOW_KICK,
+        .effect = EFFECT_DAMAGE_BASED_TARGET_WEIGHT,
         .power = 1,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -8010,12 +10461,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CHATTER] =
     {
 		.name = _("-"),
-        .effect = EFFECT_CONFUSE_HIT,
+        .effect = EFFECT_HIT,
 		.power = 65,
         .type = TYPE_FLYING,
         .accuracy = 100,
         .pp = 20,
-		.secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -8030,6 +10480,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMeFirst = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CONFUSION,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -8047,7 +10501,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
-        .argument = HOLD_EFFECT_PLATE,
+        // .argument = HOLD_EFFECT_PLATE,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -8059,7 +10513,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_BUG,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -8078,7 +10532,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ELECTRIC,
         .accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 70,
+        // .secondaryEffectChance = 70,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -8139,7 +10593,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8174,7 +10628,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -8221,7 +10675,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ROAR_OF_TIME] =
     {
 		.name = _("-"),
-        .effect = EFFECT_RECHARGE,
+        .effect = EFFECT_HIT,
         .power = 150,
         .type = TYPE_DRAGON,
         .accuracy = 90,
@@ -8233,6 +10687,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_RECHARGE,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -8248,7 +10707,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8267,7 +10726,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8294,7 +10753,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MAGMA_STORM] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TRAP,
+        .effect = EFFECT_HIT,
 		.power = 100,
         .type = TYPE_FIRE,
 		.accuracy = 75,
@@ -8305,6 +10764,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_WRAP,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -8332,7 +10795,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GRASS,
         .accuracy = 85,
         .pp = 5,
-        .secondaryEffectChance = 40,
+        // .secondaryEffectChance = 40,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -8346,12 +10809,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_OMINOUS_WIND] =
     {
 		.name = _("-"),
-        .effect = EFFECT_ALL_STATS_UP_HIT,
+        .effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_GHOST,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -8359,6 +10821,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ALL_STATS_UP,
+			.chance = 10,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -8380,11 +10847,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenAssist = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.twoTurnsMove = TRUE,
+			// .twoTurnsMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
-        .argument = MOVE_EFFECT_FEINT,
+        // .argument = MOVE_EFFECT_FEINT,
     },
 
     [MOVE_HONE_CLAWS] =
@@ -8419,7 +10886,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
 			.forbiddenMetronome = TRUE,
-			.affectsUserSide = TRUE, // Potects the whole side.
+			// .affectsUserSide = TRUE, // Potects the whole side.
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_DEF_UP_1,
@@ -8581,7 +11048,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ROCK,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -8618,7 +11085,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -8631,18 +11098,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SLUDGE_WAVE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_POISON_HIT,
+        .effect = EFFECT_HIT,
         .power = 95,
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_FOES_AND_ALLY,
         .flags =
 		{
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_POISON,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -8742,7 +11212,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -8774,12 +11244,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LOW_SWEEP] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SPEED_DOWN_HIT,
+        .effect = EFFECT_HIT,
 		.power = 65,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -8788,6 +11257,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -8799,7 +11272,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -8940,7 +11413,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .power = 50,
         .type = TYPE_POISON,
         .pp = 15,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -8982,7 +11455,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
 			.forbiddenMetronome = TRUE,
-			.affectsUserSide = TRUE, // Protects the whole side.
+			// .affectsUserSide = TRUE, // Protects the whole side.
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_DEF_UP_1,
@@ -9013,7 +11486,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_WATER,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
+        // .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9054,7 +11527,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.magicCoatAffected = TRUE,
 			.pulseMove = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -9145,7 +11618,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -9265,18 +11738,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_INFERNO] =
     {
 		.name = _("-"),
-        .effect = EFFECT_BURN_HIT,
+        .effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_FIRE,
         .accuracy = 50,
         .pp = 5,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -9351,18 +11827,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_STRUGGLE_BUG] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_ATTACK_DOWN_HIT,
+        .effect = EFFECT_HIT,
 		.power = 50,
         .type = TYPE_BUG,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -9374,7 +11853,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GROUND,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_FOES_AND_ALLY,
         .flags =
 		{
@@ -9442,12 +11921,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ELECTROWEB] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SPEED_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 55,
         .type = TYPE_ELECTRIC,
         .accuracy = 95,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -9455,6 +11933,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -9490,7 +11972,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9518,12 +12000,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HEART_STAMP] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 25,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9531,13 +12012,17 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_HORN_LEECH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_ABSORB,
+        .effect = EFFECT_HIT_ABSORB,
         .power = 75,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -9546,7 +12031,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.makesContact = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
+		},
+		.argument = {
+			.absorb = { .percentage = 50 },
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -9575,12 +12063,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_RAZOR_SHELL] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 75,
         .type = TYPE_WATER,
         .accuracy = 95,
         .pp = 10,
-        .secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9589,6 +12076,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_MINUS_1,
+			.chance = 50,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -9614,12 +12105,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LEAF_TORNADO] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_ACCURACY_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_GRASS,
         .accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9627,18 +12117,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ACC_MINUS_1,
+			.chance = 50,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_STEAMROLLER] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_BUG,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9647,6 +12140,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.dmgMinimize = TRUE,
 		},
 		.split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -9670,12 +12167,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_NIGHT_DAZE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_ACCURACY_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 85,
         .type = TYPE_DARK,
         .accuracy = 95,
         .pp = 10,
-        .secondaryEffectChance = 40,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9683,6 +12179,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ACC_MINUS_1,
+			.chance = 40,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -9729,7 +12229,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FLYING,
         .accuracy = 70,
         .pp = 10,
-        .secondaryEffectChance = 30,
+        // .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9783,12 +12283,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SEARING_SHOT] =
     {
 		.name = _("-"),
-        .effect = EFFECT_BURN_HIT,
+        .effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_FOES_AND_ALLY,
         .flags =
 		{
@@ -9797,6 +12296,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -9815,7 +12318,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
-        .argument = HOLD_EFFECT_DRIVE,
+        // .argument = HOLD_EFFECT_DRIVE,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -9827,7 +12330,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 10,
+        // .secondaryEffectChance = 10,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -9837,7 +12340,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
-        .argument = STATUS1_SLEEP,
+        // .argument = STATUS1_SLEEP,
     },
 
     [MOVE_SECRET_SWORD] =
@@ -9862,30 +12365,32 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_GLACIATE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SPEED_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 65,
         .type = TYPE_ICE,
         .accuracy = 95,
         .pp = 10,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BOLT_STRIKE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_PARALYZE_HIT,
+        .effect = EFFECT_HIT,
         .power = 130,
         .type = TYPE_ELECTRIC,
         .accuracy = 85,
         .pp = 5,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9894,18 +12399,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BLUE_FLARE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_BURN_HIT,
+        .effect = EFFECT_HIT,
         .power = 130,
         .type = TYPE_FIRE,
         .accuracy = 85,
         .pp = 5,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9913,6 +12421,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -9924,7 +12436,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 50,
+        // .secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9944,7 +12456,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ICE,
         .accuracy = 90,
         .pp = 5,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9954,10 +12465,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE,
-			.twoTurnsMove = TRUE,
+			// .twoTurnsMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
-        .argument = MOVE_EFFECT_PARALYSIS,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -9969,7 +12483,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ICE,
         .accuracy = 90,
         .pp = 5,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -9979,22 +12492,24 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE,
-			.twoTurnsMove = TRUE,
+			// .twoTurnsMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
-        .argument = MOVE_EFFECT_BURN,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SNARL] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_ATTACK_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 55,
         .type = TYPE_DARK,
         .accuracy = 95,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -10004,24 +12519,31 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ICICLE_CRASH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 85,
         .type = TYPE_ICE,
         .accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -10033,7 +12555,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIRE,
         .accuracy = 95,
         .pp = 5,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -10097,7 +12619,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.gravityBanned = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
-        .argument = TYPE_FLYING,
+        // .argument = TYPE_FLYING,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -10118,7 +12640,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenCopycat = TRUE,
 		},
         .split = SPLIT_STATUS,
-        .argument = TRUE, // Protects the whole side.
+        // .argument = TRUE, // Protects the whole side.
         .zMoveEffect = Z_EFFECT_DEF_UP_1,
     },
 
@@ -10204,7 +12726,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GHOST,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -10215,10 +12737,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenAssist = TRUE,
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
-			.twoTurnsMove = TRUE,
+			// .twoTurnsMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
-        .argument = MOVE_EFFECT_FEINT,
+        // .argument = MOVE_EFFECT_FEINT,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -10231,7 +12753,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 20,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_STATUS,
-        .argument = TYPE_GHOST,
+        // .argument = TYPE_GHOST,
         .zMoveEffect = Z_EFFECT_ALL_STATS_UP_1,
     },
 
@@ -10272,7 +12794,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PARABOLIC_CHARGE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_ABSORB,
+        .effect = EFFECT_HIT_ABSORB,
 		.power = 65,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
@@ -10281,7 +12803,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
+		},
+		.argument = {
+			.absorb = { .percentage = 50 },
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -10296,7 +12821,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .pp = 20,
         .target = MOVE_TARGET_SELECTED,
         .split = SPLIT_STATUS,
-        .argument = TYPE_GRASS,
+        // .argument = TYPE_GRASS,
         .zMoveEffect = Z_EFFECT_ALL_STATS_UP_1,
     },
 
@@ -10326,7 +12851,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ICE,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 10,
+        // .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -10389,7 +12914,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRAINING_KISS] =
     {
 		.name = _("-"),
-        .effect = EFFECT_ABSORB,
+        .effect = EFFECT_HIT_ABSORB,
         .power = 50,
         .type = TYPE_FAIRY,
         .accuracy = 100,
@@ -10399,10 +12924,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
+		},
+		.argument = {
+			.absorb = { .percentage = 75 },
 		},
         .split = SPLIT_SPECIAL,
-        .argument = 75, // restores 75% HP instead of 50% HP
         .zMoveEffect = Z_EFFECT_NONE,
 
     },
@@ -10422,7 +12949,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_STATUS,
-        .argument = TRUE, // Protects the whole side.
+        // .argument = TRUE, // Protects the whole side.
         .zMoveEffect = Z_EFFECT_SPDEF_UP_1,
     },
 
@@ -10493,12 +13020,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_PLAY_ROUGH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_ATTACK_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_FAIRY,
         .accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -10507,6 +13033,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ATK_MINUS_1,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -10531,12 +13061,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MOONBLAST] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_ATTACK_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 95,
         .type = TYPE_FAIRY,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -10544,6 +13073,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_1,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -10642,7 +13175,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ROCK,
         .accuracy = 95,
         .pp = 5,
-        .secondaryEffectChance = 50,
+        // .secondaryEffectChance = 50,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -10662,7 +13195,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_WATER,
         .accuracy = 95,
         .pp = 5,
-        .secondaryEffectChance = 30,
+        // .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -10678,7 +13211,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_HYPERSPACE_HOLE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FEINT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_PSYCHIC,
         .pp = 5,
@@ -10690,6 +13223,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FEINT,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -10715,12 +13252,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_MYSTICAL_FIRE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_ATTACK_DOWN_HIT,
+        .effect = EFFECT_HIT,
 		.power = 75,
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -10728,6 +13264,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -10965,12 +13505,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_NUZZLE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_PARALYZE_HIT,
+        .effect = EFFECT_HIT,
         .power = 20,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -10979,6 +13518,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -11003,7 +13546,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_INFESTATION] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TRAP,
+        .effect = EFFECT_HIT,
         .power = 20,
         .type = TYPE_BUG,
         .accuracy = 100,
@@ -11015,18 +13558,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_WRAP,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_POWER_UP_PUNCH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_USER_ATTACK_UP_HIT,
+        .effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -11036,13 +13582,18 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ATK_PLUS_1,
+			.chance = 100,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_OBLIVION_WING] =
     {
 		.name = _("-"),
-        .effect = EFFECT_ABSORB,
+        .effect = EFFECT_HIT_ABSORB,
         .power = 80,
         .type = TYPE_FLYING,
         .accuracy = 100,
@@ -11051,10 +13602,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
+		},
+		.argument = {
+			.absorb = { .percentage = 75 },
 		},
         .split = SPLIT_SPECIAL,
-        .argument = 75, // restores 75% HP instead of 50% HP
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -11066,7 +13619,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GROUND,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -11087,7 +13640,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GROUND,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -11174,7 +13727,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRAGON_ASCENT] =
     {
 		.name = _("-"),
-        .effect = EFFECT_CLOSE_COMBAT,
+        .effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_FLYING,
         .accuracy = 100,
@@ -11187,6 +13740,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_SPDEF_DOWN,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -11197,7 +13755,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .power = 100,
         .type = TYPE_DARK,
         .pp = 5,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -11222,7 +13780,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -11313,7 +13871,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_WATER,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_FOES_AND_ALLY,
         .flags =
 		{
@@ -11322,14 +13880,16 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
-        .argument = STATUS1_BURN,
+        .argument = {
+			.cureStatus = { .statusId = STATUS1_BURN },
+		},
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ICE_HAMMER] =
     {
 		.name = _("-"),
-        .effect = EFFECT_USER_SPEED_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_ICE,
         .accuracy = 90,
@@ -11342,6 +13902,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.punchMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -11356,7 +13921,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.magicCoatAffected = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -11391,7 +13956,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.magicCoatAffected = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_DEF_UP_1,
@@ -11400,7 +13965,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SOLAR_BLADE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_SOLARBEAM,
+        .effect = EFFECT_SKIP_CHARGING_IN_WEATHER,
         .power = 125,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -11414,7 +13979,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenSleepTalk = TRUE,
 			.forbiddenInstruct = TRUE,
 			.forbiddenParentalBond = TRUE,
-			.twoTurnsMove = TRUE,
+		},
+		.argument = {
+			.twoTurns = {
+				.stringId = B_MSG_ABSORBED_LIGHT,
+				.weather = B_WEATHER_SUN_ANY,
+			},
 		},
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -11582,12 +14152,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LUNGE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_ATTACK_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_BUG,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -11596,18 +14165,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ATK_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FIRE_LASH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -11616,6 +14188,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -11645,7 +14221,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -11695,7 +14271,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.magicCoatAffected = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_ALL_STATS_UP_1,
@@ -11739,12 +14315,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_TROP_KICK] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_ATTACK_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -11753,6 +14328,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ATK_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -11898,12 +14477,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_FLEUR_CANNON] =
     {
 		.name = _("-"),
-        .effect = EFFECT_OVERHEAT,
+        .effect = EFFECT_HIT,
         .power = 130,
         .type = TYPE_FAIRY,
         .accuracy = 90,
         .pp = 5,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -11911,6 +14489,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_2,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -11954,12 +14537,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SHADOW_BONE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 85,
         .type = TYPE_GHOST,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -11967,6 +14549,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_MINUS_1,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -11992,12 +14578,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_LIQUIDATION] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 85,
         .type = TYPE_WATER,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -12006,13 +14591,17 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_MINUS_1,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_PRISMATIC_LASER] =
     {
 		.name = _("-"),
-        .effect = EFFECT_RECHARGE,
+        .effect = EFFECT_HIT,
         .power = 160,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
@@ -12024,6 +14613,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_RECHARGE,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -12035,7 +14629,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GHOST,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -12105,18 +14699,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_ZING_ZAP] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.makesContact = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -12134,7 +14731,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
 			.forbiddenMetronome = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -12155,7 +14751,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.kingsRockAffected = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
-        .argument = HOLD_EFFECT_MEMORY,
+        // .argument = HOLD_EFFECT_MEMORY,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -12223,7 +14819,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
 		.pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .priority = 2,
 		.flags =
@@ -12240,12 +14836,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SPLISHY_SPLASH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_PARALYZE_HIT,
+        .effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_WATER,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_BOTH,
 		.flags =
 		{
@@ -12254,18 +14849,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FLOATY_FALL] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_FLYING,
         .accuracy = 95,
         .pp = 15,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -12274,6 +14872,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -12296,7 +14898,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BOUNCY_BUBBLE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_ABSORB,
+        .effect = EFFECT_HIT_ABSORB,
 		.power = 60,
         .type = TYPE_WATER,
         .accuracy = 100,
@@ -12306,22 +14908,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.kingsRockAffected = TRUE,
 			.forbiddenMetronome = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
+		},
+		.argument = {
+			.absorb = { .percentage = 100 },
 		},
         .split = SPLIT_SPECIAL,
-		.argument = 100, // restores 100% HP instead of 50% HP
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BUZZY_BUZZ] =
     {
 		.name = _("-"),
-        .effect = EFFECT_PARALYZE_HIT,
+        .effect = EFFECT_HIT,
 		.power = 60,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
 		.pp = 20,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -12329,18 +14932,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_PARALYSIS,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SIZZLY_SLIDE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_BURN_HIT,
+        .effect = EFFECT_HIT,
 		.power = 60,
         .type = TYPE_FIRE,
         .accuracy = 100,
 		.pp = 20,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -12350,6 +14956,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -12465,12 +15075,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DOUBLE_IRON_BASH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_STEEL,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -12481,6 +15090,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 30,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -12519,7 +15132,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			.highCritChance = TRUE,
+			.critStage = 1,
 		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -12608,7 +15221,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.powderMove = TRUE,
 		},
         .split = SPLIT_STATUS,
-        .argument = TYPE_PSYCHIC,
+        // .argument = TYPE_PSYCHIC,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -12770,12 +15383,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_DRUM_BEATING] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SPEED_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -12784,13 +15396,17 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SNAP_TRAP] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TRAP,
+        .effect = EFFECT_HIT,
         .power = 35,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -12803,18 +15419,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_WRAP,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_PYRO_BALL] =
     {
 		.name = _("-"),
-        .effect = EFFECT_BURN_HIT,
+        .effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_FIRE,
         .accuracy = 90,
         .pp = 5,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -12825,6 +15444,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -12879,7 +15502,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -12893,12 +15516,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_BREAKING_SWIPE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_ATTACK_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_DRAGON,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -12908,6 +15530,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ATK_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -12952,12 +15578,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_APPLE_ACID] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -12966,6 +15591,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_DEF_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -12977,7 +15606,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -12992,12 +15621,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SPIRIT_BREAK] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_ATTACK_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 75,
         .type = TYPE_FAIRY,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13007,18 +15635,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_STRANGE_STEAM] =
     {
 		.name = _("-"),
-        .effect = EFFECT_CONFUSE_HIT,
+        .effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_FAIRY,
         .accuracy = 95,
         .pp = 10,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13027,6 +15658,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_CONFUSION,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -13092,7 +15727,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_METEOR_ASSAULT] =
     {
 		.name = _("-"),
-        .effect = EFFECT_RECHARGE,
+        .effect = EFFECT_HIT,
         .power = 150,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
@@ -13105,13 +15740,18 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_RECHARGE,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_ETERNABEAM] =
     {
 		.name = _("-"),
-        .effect = EFFECT_RECHARGE,
+        .effect = EFFECT_HIT,
         .power = 160,
         .type = TYPE_DRAGON,
         .accuracy = 90,
@@ -13124,6 +15764,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenInstruct = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_RECHARGE,
+			.chance = 0,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -13188,7 +15833,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_DRAGON,
         .accuracy = 90,
         .pp = 20,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13226,7 +15871,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 20,
+        // .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13310,12 +15955,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_SKITTER_SMACK] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_SP_ATTACK_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_BUG,
         .accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13324,18 +15968,21 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BURNING_JEALOUSY] =
     {
 		.name = _("-"),
-        .effect = EFFECT_BURN_HIT,
+        .effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_FIRE,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -13343,6 +15990,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_BURN,
+			.chance = 100,
+			.onlyIfTargetRaisedStats = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -13447,6 +16099,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.strikeCount = 3,
 		},
         .split = SPLIT_PHYSICAL,
+		.argument = {
+			.tripleKick = { .increment = 20 },
+		},
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -13477,7 +16132,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GROUND,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 30,
+        // .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13550,7 +16205,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_THUNDER_CAGE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TRAP,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_ELECTRIC,
         .accuracy = 90,
@@ -13562,6 +16217,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_WRAP,
+			.chance = 0,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -13587,11 +16246,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     {
         .power = 90,
 		.name = _("-"),
-        .effect = EFFECT_FREEZE_HIT,
+        .effect = EFFECT_HIT,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13600,36 +16258,42 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FREEZE,
+			.chance = 10,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_FIERY_WRATH] =
     {
 		.name = _("-"),
-        .effect = EFFECT_FLINCH_HIT,
+        .effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_DARK,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_BOTH,
 		.flags =
 		{
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_FLINCH,
+			.chance = 20,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_THUNDEROUS_KICK] =
     {
 		.name = _("-"),
-        .effect = EFFECT_TARGET_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_FIGHTING,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13639,6 +16303,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMetronome = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_DEF_MINUS_1,
+			.chance = 100,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -13693,7 +16361,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			// .secondaryEffectMove = TRUE,
 			.soundMove = TRUE,
 		},
-		.argument = 3, // PP to deduct
+		.argument = {
+			.spite = { .ppToDeduct = 3 },
+		},
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -13724,7 +16394,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_PSYCHIC,
         .accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 50, // TODO: Adjust this value. Currently it's set to Fiery Dance's.
+        // .secondaryEffectChance = 50, // TODO: Adjust this value. Currently it's set to Fiery Dance's.
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13778,7 +16448,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FAIRY,
         .accuracy = 80,
         .pp = 5,
-        .secondaryEffectChance = 30,
+        // .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13796,7 +16466,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_PSYCHIC,
         .accuracy = 90,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13814,7 +16484,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIRE,
         .accuracy = 85,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13834,7 +16504,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_WATER,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13854,7 +16524,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GRASS,
         .accuracy = 95,
         .pp = 5,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13872,7 +16542,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_ICE,
         .accuracy = 85,
         .pp = 5,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13888,7 +16558,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .effect = EFFECT_PLACEHOLDER, // EFFECT_VICTORY_DANCE,
         .type = TYPE_FIGHTING,
         .pp = 20,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_USER,
         .flags =
 		{
@@ -13909,7 +16579,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_GROUND,
         .accuracy = 100,
         .pp = 5,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -13979,7 +16649,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .effect = EFFECT_PLACEHOLDER, // EFFECT_SHELTER,
         .type = TYPE_STEEL,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_USER,
 		.flags =
 		{
@@ -13998,7 +16668,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .type = TYPE_FIGHTING,
         .accuracy = 100,
         .pp = 15,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
@@ -14110,7 +16780,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.snatchAffected = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.healingMove = TRUE,
+			// .healingMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -14412,7 +17082,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
-			.highCritChance = TRUE,
+			.critStage = 2,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
 		},
@@ -14421,11 +17091,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_STOKED_SPARKSURFER] =
     {
 		.name = _("-"),
-        .effect = EFFECT_PARALYZE_HIT,
+        // .effect = EFFECT_PARALYZE_HIT,
         .power = 175,
         .type = TYPE_ELECTRIC,
         .pp = 1,
-        .secondaryEffectChance = 100,
+        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
 		.flags =
 		{
@@ -14477,7 +17147,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
-        .argument = 0,  //psychic terrain
+        // .argument = 0,  //psychic terrain
     },
     [MOVE_SINISTER_ARROW_RAID] =
     {
@@ -14538,7 +17208,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
-        .argument = 1,  //remove terrain
+        // .argument = 1,  //remove terrain
     },
     [MOVE_LETS_SNUGGLE_FOREVER] =
     {
@@ -14558,11 +17228,10 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
     [MOVE_CLANGOROUS_SOULBLAZE] =
     {
 		.name = _("-"),
-        .effect = EFFECT_ALL_STATS_UP_HIT,
+        .effect = EFFECT_HIT,
         .power = 185,
         .type = TYPE_DRAGON,
         .pp = 1,
-        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_BOTH,
         .flags =
 		{
@@ -14571,6 +17240,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_ALL_STATS_UP,
+			.chance = 100,
+			.self = TRUE,
+		}),
     },
     [MOVE_GUARDIAN_OF_ALOLA] =
     {
@@ -14584,7 +17258,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT_GMAX] =
 		{
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
-			.noEffectiveness = TRUE,
 		},
         .split = SPLIT_SPECIAL,
     },

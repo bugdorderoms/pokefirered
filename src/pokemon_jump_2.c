@@ -140,7 +140,6 @@ static void sub_8149898(u16);
 static bool32 sub_81498B4(void);
 static u16 sub_81498D8(void);
 static void sub_8149900(u16, u16 *, u16 *);
-static u16 sub_8149910(void);
 static u16 sub_8149930(void);
 static u16 sub_8149978(u16 item, u16 quantity);
 
@@ -1944,7 +1943,7 @@ static bool32 sub_81498B4(void)
 
 static u16 sub_81498D8(void)
 {
-    u16 lo = sub_8149910();
+    u16 lo = RandomElement(gUnknown_846B764);
     u16 hi = sub_8149930();
     return (hi << 12) | (lo & 0xFFF);
 }
@@ -1953,11 +1952,6 @@ static void sub_8149900(u16 arg0, u16 *arg1, u16 *arg2)
 {
     *arg2 = arg0 >> 12;
     *arg1 = arg0 & 0xFFF;
-}
-
-static u16 sub_8149910(void)
-{
-    return gUnknown_846B764[RandomMax(ARRAY_COUNT(gUnknown_846B764))];
 }
 
 static u16 sub_8149930(void)

@@ -234,7 +234,7 @@ static const struct SpritePalette gUnknown_83E26E4[];
 static const u16 gUnknown_83E1800[] 	   = INCBIN_U16("graphics/interface/naming_screen_83E1800.4bpp");
 static const u16 gUnknown_83E18C0[] 	   = INCBIN_U16("graphics/interface/naming_screen_83E18C0.4bpp");
 static const u16 gUnknown_83E1980[] 	   = INCBIN_U16("graphics/interface/naming_screen_83E1980.4bpp");
-// Credit to PrePAWSterous for original gift sprite, i only recreated it in a small size.
+// Credit to PrePAWSterous for original gift sprite, I only recreated it in a small size.
 static const u16 gMysteryGiftBox_Gfx[] 	   = INCBIN_U16("graphics/interface/naming_screen_giftbox.4bpp");
 static const u16 gMysteryGiftBox_Palette[] = INCBIN_U16("graphics/interface/naming_screen_giftbox.gbapal");
 
@@ -740,7 +740,7 @@ static void sub_809E1D4(void)
 {
     RunTextPrinters();
 
-    if (!IsTextPrinterActive(0) && (JOY_NEW(A_BUTTON)))
+    if (!IsTextPrinterActive(0) && JOY_NEW(A_BUTTON))
         sNamingScreenData->state = MAIN_STATE_BEGIN_FADE_OUT;
 }
 
@@ -748,7 +748,7 @@ static void MainState_UpdateTextAndSaveGame(void)
 {
 	RunTextPrinters();
 	
-	if (!IsTextPrinterActive(0) && (JOY_NEW(A_BUTTON)))
+	if (!IsTextPrinterActive(0) && JOY_NEW(A_BUTTON))
 	{
 		PlaySE(SE_SELECT);
 		NamingScreenMessagePrint(gText_DataWillBeSaved);
@@ -760,7 +760,7 @@ static void MainState_UpdateSaveGameText(void)
 {
 	RunTextPrinters();
 	
-	if (!IsTextPrinterActive(0) && (JOY_NEW(A_BUTTON)))
+	if (!IsTextPrinterActive(0) && JOY_NEW(A_BUTTON))
 	{
 		PlaySE(SE_SELECT);
 		TrySavingData(SAVE_NORMAL);
@@ -828,9 +828,7 @@ static bool8 (*const sPageSwapAnimStateFuncs[])(struct Task * task) = {
 
 static void StartPageSwapAnim(void)
 {
-    u8 taskId = CreateTask(Task_HandlePageSwapAnim, 0);
-
-    Task_HandlePageSwapAnim(taskId);
+    Task_HandlePageSwapAnim(CreateTask(Task_HandlePageSwapAnim, 0));
 }
 
 static void Task_HandlePageSwapAnim(u8 taskId)
@@ -992,7 +990,6 @@ static u16 sub_809E644(u8 a)
 static void sub_809E6B8(u8 a)
 {
     u16 index = sub_809E644(a);
-
     gPlttBufferFaded[index] = gPlttBufferUnfaded[index];
 }
 
@@ -1229,8 +1226,7 @@ static void PageSwapSpritesCB_SwapHide(struct Sprite *sprite)
     struct Sprite *sprite2 = &gSprites[sprite->data[7]];
     u8 page;
 
-    sprite1->y2++;
-    if (sprite1->y2 > 7)
+    if (++sprite1->y2 > 7)
     {
         sprite->data[0]++;
         sprite1->y2 = -4;
@@ -1246,8 +1242,8 @@ static void PageSwapSpritesCB_SwapShow(struct Sprite *sprite)
     struct Sprite *sprite2 = &gSprites[sprite->data[7]];
 
     sprite1->invisible = FALSE;
-    sprite1->y2++;
-    if (sprite1->y2 >= 0)
+
+    if (++sprite1->y2 >= 0)
     {
         sprite1->y2 = 0;
         sprite->data[0] = 1;
@@ -2278,8 +2274,10 @@ static const union AnimCmd gSpriteAnim_858C0A4[] = {
 };
 
 static const union AnimCmd gSpriteAnim_GiftBox[] = {
-    ANIMCMD_FRAME(0,  8),
-    ANIMCMD_FRAME(16, 8),
+    ANIMCMD_FRAME(0,  100),
+    ANIMCMD_FRAME(16, 10),
+	ANIMCMD_FRAME(0,  10),
+    ANIMCMD_FRAME(16, 10),
     ANIMCMD_JUMP(0)
 };
 

@@ -508,7 +508,8 @@ static void TryMonCreationEvolution(u16 preEvoSpecies, struct Pokemon* mon)
                 SetMonData(newMon, MON_DATA_NICKNAME, gSpeciesInfo[species].name);
                 SetMonData(newMon, MON_DATA_HELD_ITEM, &data);
                 SetMonData(newMon, MON_DATA_MARKINGS, &data);
-                SetMonData(newMon, MON_DATA_STATUS, &data);
+                SetMonData(newMon, MON_DATA_STATUS_ID, &data);
+				SetMonData(newMon, MON_DATA_STATUS_COUNTER, &data);
                 data = 0xFF;
                 SetMonData(newMon, MON_DATA_MAIL, &data);
 		        
@@ -561,7 +562,7 @@ static void Task_EvolutionScene(u8 taskId)
     case 2: // wait for string, animate mon(and play its cry)
         if (!IsTextPrinterActive(0))
         {
-            PlayCry1(gTasks[taskId].tPreEvoSpecies, 0);
+            PlayCry_Normal(gTasks[taskId].tPreEvoSpecies, 0);
             gTasks[taskId].tState++;
         }
         break;
@@ -642,7 +643,7 @@ static void Task_EvolutionScene(u8 taskId)
     case 13: // animate mon
         if (!gPaletteFade.active)
         {
-            PlayCry1(gTasks[taskId].tPostEvoSpecies, 0);
+            PlayCry_Normal(gTasks[taskId].tPostEvoSpecies, 0);
             gTasks[taskId].tState++;
         }
         break;
@@ -722,7 +723,7 @@ static void Task_EvolutionScene(u8 taskId)
     case 18: // animate pokemon trying to evolve again, evolution has been stopped
         if (!gPaletteFade.active)
         {
-            PlayCry1(gTasks[taskId].tPreEvoSpecies, 0);
+            PlayCry_Normal(gTasks[taskId].tPreEvoSpecies, 0);
             gTasks[taskId].tState++;
         }
         break;
@@ -909,7 +910,7 @@ static void Task_TradeEvolutionScene(u8 taskId)
     case 1:
         if (!IsTextPrinterActive(0))
         {
-            PlayCry1(gTasks[taskId].tPreEvoSpecies, 0);
+            PlayCry_Normal(gTasks[taskId].tPreEvoSpecies, 0);
             gTasks[taskId].tState++;
         }
         break;
@@ -983,7 +984,7 @@ static void Task_TradeEvolutionScene(u8 taskId)
         if (!IsSEPlaying())
         {
 //            Free(sEvoMovingBgPtr);
-            PlayCry1(gTasks[taskId].tPostEvoSpecies, 0);
+            PlayCry_Normal(gTasks[taskId].tPostEvoSpecies, 0);
             memcpy(&gPlttBufferUnfaded[0x20], sEvoStructPtr->savedPalette, 0x60);
             gTasks[taskId].tState++;
         }
@@ -1054,7 +1055,7 @@ static void Task_TradeEvolutionScene(u8 taskId)
     case 16:
         if (!gPaletteFade.active)
         {
-            PlayCry1(gTasks[taskId].tPreEvoSpecies, 0);
+            PlayCry_Normal(gTasks[taskId].tPreEvoSpecies, 0);
             gTasks[taskId].tState++;
         }
         break;

@@ -1251,7 +1251,7 @@ static void BeginMovingItemInPocket(u8 taskId, s16 itemIndex)
     ListMenuSetTemplateField(data[0], LISTFIELD_CURSORKIND, 1);
     data[1] = itemIndex;
     sBagMenuDisplay->itemOriginalLocation = itemIndex;
-    StringCopy(gStringVar1, ItemId_GetName(BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, data[1])));
+	CopyItemName(BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, data[1]), gStringVar1);
     StringExpandPlaceholders(gStringVar4, gOtherText_WhereShouldTheStrVar1BePlaced);
     FillWindowPixelBuffer(1, PIXEL_FILL(0));
     BagPrintTextOnWindow(1, 2, gStringVar4, 0, 3, 2, 0, 0, 0);

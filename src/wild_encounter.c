@@ -373,13 +373,8 @@ static u8 ChooseWildMonIndex_Fishing(const struct WildPokemon *wildPokemon, u8 r
 
 static u8 TryGetForcedWildMonGender(u16 species)
 {
-	switch (gSpeciesInfo[species].genderRatio)
-	{
-		case MON_MALE:
-		case MON_FEMALE:
-		case MON_GENDERLESS:
-			return MON_GENDERLESS; // No forced gender
-	}
+	if (SpeciesHasFixedGenderRatio(species))
+		return MON_GENDERLESS; // No forced gender
 	
 	if (IsMonValidSpecies(&gPlayerParty[0]))
 	{
@@ -402,15 +397,15 @@ static u8 TryGetForcedWildMonGender(u16 species)
 	return MON_GENDERLESS; // No forced gender
 }
 
-static u8 TryGetForcedWildMonNature(void)
+u8 TryGetForcedWildMonNature(struct Pokemon *mon, u16 ability)
 {
-	if (IsMonValidSpecies(&gPlayerParty[0]))
+	if (IsMonValidSpecies(mon))
 	{
-		switch (GetMonAbility(&gPlayerParty[0]))
+		switch (ability)
 		{
 			case ABILITY_SYNCHRONIZE:
 				if (RandomPercent(50))
-					return GetNatureFromPersonality(GetMonData(&gPlayerParty[0], MON_DATA_PERSONALITY)); // Ignore Mints
+					return GetNatureFromPersonality(GetMonData(mon, MON_DATA_PERSONALITY)); // Ignore Mints
 				break;
 		}
 	}
@@ -428,9 +423,11 @@ u16 GenerateWildMon(u16 species, u8 level, bool8 checkWildInfluence)
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.shinyType = GENERATE_SHINY_NORMAL,
-		.forcedNature = checkWildInfluence ? TryGetForcedWildMonNature() : NUM_NATURES,
-		.formChanges = gDeafultGeneratorFormChanges,
-		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
+		.shinyRollType = SHINY_ROLL_NORMAL,
+		.forcedNature = checkWildInfluence ? TryGetForcedWildMonNature(&gPlayerParty[0], GetMonAbility(&gPlayerParty[0])) : NUM_NATURES,
+		.formChanges = gDefaultGeneratorFormChanges,
+		.moves = {0},
+		.nPerfectIvs = 0,
 	};
 	
     ZeroEnemyPartyMons();

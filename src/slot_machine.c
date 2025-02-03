@@ -1317,13 +1317,10 @@ static void StopReel1(u16 whichReel)
         }
     }
     if (numPosToSample == 0)
-    {
         destPos = RandomMax(5);
-    }
     else
-    {
         destPos = posToSample[RandomMax(numPosToSample)];
-    }
+
     destPos = nextPos - destPos;
     if (destPos < 0)
         destPos += 21;

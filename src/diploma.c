@@ -9,7 +9,7 @@
 #include "scanline_effect.h"
 #include "strings.h"
 #include "task.h"
-#include "constants/fanfares.h"
+#include "constants/sound.h"
 
 struct Diploma
 {
@@ -127,10 +127,9 @@ static void Task_DiplomaInit(u8 taskId)
         break;
     default:
         if (gPaletteFade.active)
-        {
             break;
-        }
-        PlayFanfareByFanfareNum(FANFARE_05);
+
+        PlayFanfareByFanfareNum(FANFARE_OBTAIN_BADGE);
         gTasks[taskId].func = Task_WaitForExit;
     }
     gDiploma->callbackStep++;

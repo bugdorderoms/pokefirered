@@ -86,7 +86,6 @@ static bool8 HasUnlockedAllFlavorTextsForCurrentPerson(void);
 static u8 CreateFlavorTextIconSelectorCursorSprite(s16 where);
 static void SpriteCB_DestroyFlavorTextIconSelectorCursor(struct Sprite *sprite);
 static u8 PlaceQuestionMarkTile(u8 x, u8 y);
-static void SpriteCB_DestroySpinningPokeball(struct Sprite *sprite);
 static void FreeNonTrainerPicTiles(void);
 static u8 CreatePersonPicSprite(u8 fcPersonIdx);
 static void DestroyPersonPicSprite(u8 taskId, u16 who);
@@ -826,7 +825,7 @@ static void Task_ExitPickMode(u8 taskId)
         sFameCheckerData->inPickMode = FALSE;
         DestroyPersonPicSprite(taskId, FameCheckerGetCursorY());
         task->func = Task_TopMenuHandleInput;
-        gSprites[task->data[3]].callback = SpriteCB_DestroySpinningPokeball;
+        gSprites[task->data[3]].callback = DestroySpriteAndFreeMatrix;
     }
 }
 
@@ -990,8 +989,7 @@ static void Task_DestroyAssetsAndCloseFameChecker(u8 taskId)
         if (sFameCheckerData->inPickMode)
         {
             DestroyPersonPicSprite(taskId, FameCheckerGetCursorY());
-            FreeSpriteOamMatrix(&gSprites[gTasks[taskId].data[3]]);
-            DestroySprite(&gSprites[gTasks[taskId].data[3]]);
+            DestroySpriteAndFreeMatrix(&gSprites[gTasks[taskId].data[3]]);
         }
 		DestroyAllFlavorTextIcons();
         FreeNonTrainerPicTiles();
@@ -1197,12 +1195,6 @@ static u8 PlaceQuestionMarkTile(u8 x, u8 y)
     gSprites[spriteId].oam.priority = 2;
     gSprites[spriteId].oam.paletteNum = 2;
     return spriteId;
-}
-
-static void SpriteCB_DestroySpinningPokeball(struct Sprite * sprite)
-{
-    FreeSpriteOamMatrix(sprite);
-    DestroySprite(sprite);
 }
 
 static void FreeNonTrainerPicTiles(void)

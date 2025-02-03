@@ -265,8 +265,8 @@ static void DoDNSLightningWindowsEffect(void);
 ALIGNED(4) EWRAM_DATA static u16 sDNSPaletteDmaBuffer[PLTT_BUFFER_SIZE] = {0};
 
 #define IN_OVERWORLD ((gMain.callback2 == CB2_Overworld || gMain.callback2 == CB2_OverworldBasic))
-#define IN_BATTLE ((gMain.callback2 == BattleMainCB2 && gMain.vblankCallback != VBlankCB))
-#define LIT_UP_TIME ((gRtcLocation.hour < MORNING_OF_DAY_START || gRtcLocation.hour >= NIGHT_OF_DAY_START))
+#define IN_BATTLE ((gMain.callback2 == BattleMainCB2 && gMain.vblankCallback != VBlankCB_PokedexScreen))
+#define LIT_UP_TIME ((gRtcLocation.hour < MORNING_OF_DAY_START || gRtcLocation.hour >= NIGHT_OF_DAY_START - 1))
 
 /* **************************************************** *
  * **************** D&N for pokefirered *************** *

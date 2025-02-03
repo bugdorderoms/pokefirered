@@ -51,6 +51,8 @@ const u8 gWeatherRainTiles[] = INCBIN_U8("graphics/weather/rain.4bpp");
 const u8 gWeatherSandstormTiles[] = INCBIN_U8("graphics/weather/sandstorm.4bpp");
 const u8 gWeatherCloudTiles[] = INCBIN_U8("graphics/weather/cloud.4bpp");
 
+static const struct SpritePalette sDefaultWeatherSpritePalette = {gDefaultWeatherSpritePalette, TAG_WEATHER_START};
+
 static const struct WeatherCallbacks sWeatherFuncs[] = {
     [WEATHER_NONE]               = {None_Init, None_Main, None_Init, None_Finish},
     [WEATHER_RAIN]               = {Rain_InitVars, Rain_Main, Rain_InitAll, Rain_Finish},
@@ -111,9 +113,7 @@ void StartWeather(void)
 {
     if (!FuncIsActiveTask(Task_WeatherMain))
     {
-        u8 index = 15;
-        CpuCopy32(gDefaultWeatherSpritePalette, &gPlttBufferUnfaded[0x100 + index * 16], 32);
-        ApplyGlobalFieldPaletteTint(index);
+		LoadWeatherDefaultPalette(); // Make the palette slot used even if it not has an weather
         gWeatherPtr->rainSpriteCount = 0;
         gWeatherPtr->curRainSpriteIndex = 0;
         gWeatherPtr->snowflakeSpriteCount = 0;
@@ -477,10 +477,15 @@ void ApplyWeatherGammaShiftToPal(u8 paletteIndex)
     ApplyGammaShift(GAMMA_NORMAL, paletteIndex, 1, gWeatherPtr->gammaIndex);
 }
 
-void LoadCustomWeatherSpritePalette(const struct SpritePalette *palette)
+void LoadWeatherDefaultPalette(void)
 {
-    LoadSpritePalette(palette);
-	UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(palette->tag));
+	LoadWeatherSpritePalette(&sDefaultWeatherSpritePalette);
+}
+
+void LoadWeatherSpritePalette(const struct SpritePalette *palette)
+{
+	LoadSpritePaletteAtIndex(palette, 15);
+	UpdateSpritePaletteWithWeather(15);
 }
 
 void Weather_SetBlendCoeffs(u8 eva, u8 evb)

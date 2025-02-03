@@ -20,11 +20,10 @@
 #define sBIDE_DMG gBattleScripting + 0x4
 #define sSAVED_DMG gBattleScripting + 0x8
 #define sMULTIHIT_STRING gBattleScripting + 0x0C
-#define sDMG_MULTIPLIER gBattleScripting + 0x12
+#define sPREFAINT_MOVEEND_STATE gBattleScripting + 0x12
 #define sBYPASS_ABILITY_POP_UP gBattleScripting + 0x13
 #define sB_ANIM_ARG1 gBattleScripting + 0x14
 #define sB_ANIM_ARG2 gBattleScripting + 0x15
-#define sTRIPLE_KICK_POWER gBattleScripting + 0x16
 #define sMOVEEND_STATE gBattleScripting + 0x17
 #define sBATTLER gBattleScripting + 0x19
 #define sB_ANIM_TURN gBattleScripting + 0x1A
@@ -36,7 +35,7 @@
 #define sLVLBOX_STATE gBattleScripting + 0x20
 #define sLEARNMOVE_STATE gBattleScripting + 0x21
 #define sSWITCHIN_EFFECTS_STATE gBattleScripting + 0x26
-#define sPREFAINT_MOVEEND_STATE gBattleScripting + 0x27
+#define sEXP_CATCH gBattleScripting + 0x27
 
 // array entries for battle communication
 #define MULTIUSE_STATE                      0
@@ -44,7 +43,7 @@
 #define TASK_ID                             1 // task Id and cursor position share the same field
 #define SPRITES_INIT_STATE1                 1 // shares the Id as well
 #define SPRITES_INIT_STATE2                 2
-#define MOVE_EFFECT_BYTE                    3 // unused
+#define FAINT_EFFECTS_STATE                 3
 #define ACTIONS_CONFIRMED_COUNT             4
 #define MULTISTRING_CHOOSER                 5
 #define MISS_TYPE                           6
@@ -54,6 +53,7 @@
 // BattleCommunication addresses
 #define sMULTIUSE_STATE gBattleCommunication + MULTIUSE_STATE
 #define sCURSOR_POSITION gBattleCommunication + CURSOR_POSITION
+#define sFAINT_EFFECTS_STATE gBattleCommunication + FAINT_EFFECTS_STATE
 #define sMULTISTRING_CHOOSER gBattleCommunication + MULTISTRING_CHOOSER
 #define sMISS_TYPE gBattleCommunication + MISS_TYPE
 
@@ -83,6 +83,18 @@
 #define CMP_COMMON_BITS         0x4
 #define CMP_NO_COMMON_BITS      0x5
 
+// Args for UpdateHealthboxAttribute
+#define HEALTHBOX_ALL               0
+#define HEALTHBOX_CURRENT_HP        1
+#define HEALTHBOX_MAX_HP            2
+#define HEALTHBOX_LEVEL             3
+#define HEALTHBOX_NICK              4
+#define HEALTHBOX_HEALTH_BAR        5
+#define HEALTHBOX_EXP_BAR           6
+#define HEALTHBOX_STATUS_ICON       7
+#define HEALTHBOX_SAFARI_ALL_TEXT   8
+#define HEALTHBOX_SAFARI_BALLS_TEXT 9
+
 // status ids
 #define ID_STATUS1 0
 #define ID_STATUS2 1
@@ -92,10 +104,6 @@
 #define PARENTAL_BOND_1ST_HIT 2
 #define PARENTAL_BOND_2ND_HIT 1
 #define PARENTAL_BOND_OFF     0
-
-// Atk01, accuracy calc
-#define NO_ACC_CALC_CHECK_LOCK_ON 0
-#define ACC_CURR_MOVE             1
 
 // moveend states
 #define MOVEEND_ALL           0 // loop through all cases
@@ -145,21 +153,22 @@
 #define ATK49_MIRROR_MOVE               10
 #define ATK49_MULTIHIT_MOVE             11
 #define ATK49_DEFROST                   12
-#define ATK49_MAGICIAN                  13
-#define ATK49_ATTACKER_ENDTURN_ITEMS_2  14
-#define ATK49_NEXT_TARGET               15
-#define ATK49_RECOIL                    16
-#define ATK49_ATTACKER_ENDTURN_ITEMS_3  17
-#define ATK49_EJECT_BUTTON              18
-#define ATK49_RED_CARD                  19
-#define ATK49_EJECT_PACK                20
-#define ATK49_SHELL_BELL_LIFE_ORB       21
-#define ATK49_EMERGENCY_EXIT            22
-#define ATK49_PICKPOCKET                23
-#define ATK49_SUBSTITUTE                24
-#define ATK49_EVOLUTIONS_TRACKER        25
-#define ATK49_CLEAR_BITS                26
-#define ATK49_COUNT                     27
+#define ATK49_SECOND_MOVE_EFFECT        13
+#define ATK49_MAGICIAN                  14
+#define ATK49_ATTACKER_ENDTURN_ITEMS_2  15
+#define ATK49_NEXT_TARGET               16
+#define ATK49_RECOIL                    17
+#define ATK49_ATTACKER_ENDTURN_ITEMS_3  18
+#define ATK49_EJECT_BUTTON              19
+#define ATK49_RED_CARD                  20
+#define ATK49_EJECT_PACK                21
+#define ATK49_SHELL_BELL_LIFE_ORB       22
+#define ATK49_EMERGENCY_EXIT            23
+#define ATK49_PICKPOCKET                24
+#define ATK49_SUBSTITUTE                25
+#define ATK49_EVOLUTIONS_TRACKER        26
+#define ATK49_CLEAR_BITS                27
+#define ATK49_COUNT                     28
 
 // Atk4F, a flag used for the jumpifcantswitch command
 #define ATK4F_DONT_CHECK_STATUSES   0x80
@@ -167,12 +176,16 @@
 // Atk50, a flag used for the openpartyscreen command
 #define OPEN_PARTY_ALLOW_CANCEL     0x80
 
+// Atk6A, flags
+#define ATK6A_FLAG_CHECK_CHEEK_POUCH    (1 << 0) // Try activate Cheek pouch
+#define ATK6A_FLAG_DONT_CHECK_SYMBIOSIS (1 << 1) // Don't check Symbiosis
+
 // Atk76, various cases
 #define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       0
 #define VARIOUS_TRY_COPY_ABILITY                    1
-#define VARIOUS_IS_RUNNING_IMPOSSIBLE               2
+#define VARIOUS_TRY_RATTLED_ON_INTIMIDATE           2
 #define VARIOUS_GET_BATTLER_SIDE                    3
-#define VARIOUS_GET_BATTLER_FAINTED                 4
+#define VARIOUS_TRY_LAST_MON_TRAINER_SLIDE          4
 #define VARIOUS_RESET_INTIMIDATE_TRACE_BITS         5
 #define VARIOUS_UPDATE_CHOICE_MOVE_ON_LVL_UP        6
 #define VARIOUS_RESET_PLAYER_FAINTED_FLAG           7
@@ -181,11 +194,11 @@
 #define VARIOUS_TRY_CONVERSION_TYPE_CHANGE          10
 #define VARIOUS_CHECK_POKEFLUTE                     11
 #define VARIOUS_WAIT_FANFARE                        12
-#define VARIOUS_TRY_ACTIVATE_MOXIE                  13
+#define VARIOUS_TRY_ABILITY_SUPPRESSION             13
 #define VARIOUS_JUMP_IF_TARGET_ALLY                 14
-#define VARIOUS_TRAINER_SLIDE_FIRST_MON_DOWN        15
-#define VARIOUS_TRAINER_SLIDE_LAST_MON              16
-#define VARIOUS_UPDATE_NICK                         17
+#define VARIOUS_TRY_ACTIVATE_SAP_SIPPER             15
+#define VARIOUS_TRY_ACTIVATE_WIND_ABILITIES         16
+#define VARIOUS_UPDATE_HEALTHBOX_ATTRIBUTE          17
 #define VARIOUS_JUMP_IF_WEATHER_AFFECTED            18
 #define VARIOUS_TRY_REMOVE_ILLUSION                 19
 #define VARIOUS_PLAY_MOVE_ANIMATION                 20
@@ -197,30 +210,19 @@
 #define VARIOUS_TRY_END_NEUTRALIZING_GAS            26
 #define VARIOUS_SET_TELEPORT_OUTCOME                27
 #define VARIOUS_TRY_FAINT_ON_SPIKES_DAMAGE          28
-#define VARIOUS_JUMP_IF_ROAR_FAILS                  29
-#define VARIOUS_TRY_ACTIVATE_BEAST_BOOST            30
+#define VARIOUS_JUMP_IF_CONFUSED_AND_STAT_MAXED     29
+#define VARIOUS_JUMP_IF_EMERGENCY_EXITED            30
 #define VARIOUS_TRY_NEUTRALIZING_GAS_SUPPRESSION    31
 #define VARIOUS_JUMP_IF_BATTLER_REVIVED             32
 #define VARIOUS_ACTIVATE_WEATHER_ABILITIES          33
-#define VARIOUS_TRY_ACTIVATE_GRIM_NEIGH             34
-#define VARIOUS_TRY_ACTIVATE_SOUL_HEART             35
-#define VARIOUS_TRY_ACTIVATE_RECEIVER               36
+#define VARIOUS_TRY_STATUS_TRANSFER                 34
+#define VARIOUS_TRY_BRING_DOWN_IN_AIR               35
+#define VARIOUS_TRY_SET_GRAVITY                     36
 #define VARIOUS_JUMP_IF_CANT_GIVE_NICK              37
 #define VARIOUS_JUMP_IF_NO_DAMAGE                   38
 #define VARIOUS_JUMP_IF_ENDEAVOR_FAIL               39
 #define VARIOUS_TRY_SWAP_ABILITIES                  40
 #define VARIOUS_JUMP_IF_DEFIANT_ACTIVATE            41
-#define VARIOUS_JUMP_IF_CONFUSED_AND_STAT_MAXED     42
-#define VARIOUS_TRY_RATTLED_ON_INTIMIDATE           43
-#define VARIOUS_TRY_ACTIVATE_SAP_SIPPER             44
-#define VARIOUS_TRY_SET_GRAVITY                     45
-#define VARIOUS_TRY_BRING_DOWN_IN_AIR               46
-#define VARIOUS_TRY_ACTIVATE_WIND_ABILITIES         47
-#define VARIOUS_JUMP_IF_EMERGENCY_EXITED            48
-#define VARIOUS_TRY_STATUS_TRANSFER                 49
-#define VARIOUS_TRY_ACTIVATE_BATTLE_BOND            50
-#define VARIOUS_TRY_ABILITY_SUPPRESSION             51
-#define VARIOUS_UPDATE_DEFEAT_MON_EVOLUTION_TRACKER 52
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN       0
@@ -240,6 +242,7 @@
 #define ATK83_TRAINER_SLIDE_CASE_RESTORE_SPRITES 4
 
 // atkFC, a flag used for the handleabilitypopup command
+#define ATKFC_UPDATE_POP_UP 0x40
 #define ATKFC_REMOVE_POP_UP 0x80
 
 #endif // GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H

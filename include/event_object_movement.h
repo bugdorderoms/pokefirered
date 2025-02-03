@@ -73,6 +73,7 @@ void ObjectEventClearHeldMovementIfActive(struct ObjectEvent *);
 void SpawnObjectEventsInView(s16, s16);
 u8 sprite_new(u8, u8, s16, s16, u8, u8);
 u8 AddPseudoObjectEvent(u16, SpriteCallback, s16, s16, u8);
+void BlitObjectEventToWindow(u8 windowId, u16 graphicsId, u8 frameId, u16 paletteOffset, u16 width, u16 height);
 u8 TrySpawnObjectEvent(u8 localId, u8 mapNum, u8 mapGroup);
 int SpawnSpecialObjectEventParameterized(u8, u8, u8, s16, s16, u8);
 u8 SpawnSpecialObjectEvent(struct ObjectEventTemplate *);

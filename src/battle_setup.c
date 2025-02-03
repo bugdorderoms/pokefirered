@@ -16,10 +16,12 @@
 #include "event_scripts.h"
 #include "fldeff.h"
 #include "fieldmap.h"
+#include "util.h"
 #include "field_control_avatar.h"
 #include "field_player_avatar.h"
 #include "field_screen_effect.h"
 #include "field_message_box.h"
+#include "random.h"
 #include "vs_seeker.h"
 #include "data.h"
 #include "battle.h"
@@ -55,14 +57,12 @@ static void DoSafariBattle(void);
 static void DoGhostBattle(void);
 static void DoStandardWildBattle(bool8 isDouble);
 static void CB2_EndWildBattle(void);
-static u8 GetWildBattleTransition(void);
-static u8 GetTrainerBattleTransition(void);
 static void CB2_EndScriptedWildBattle(void);
 static void CB2_EndMarowakBattle(void);
-static bool32 IsPlayerDefeated(u32 battleOutcome);
 static void CB2_EndTrainerBattle(void);
-
-static const u8 *ReturnEmptyStringIfNull(const u8 *string);
+static u8 GetWildBattleTransition(void);
+static u8 GetTrainerBattleTransition(void);
+static bool32 IsPlayerDefeated(u32 battleOutcome);
 
 static EWRAM_DATA u16 sTrainerBattleMode = 0;
 EWRAM_DATA u16 gTrainerBattleOpponent_A = 0;
@@ -187,7 +187,7 @@ static void Task_BattleStart(u8 taskId)
         }
         break;
     case 1:
-        if (BT_IsDone() == TRUE)
+        if (BT_IsDone())
         {
             CleanupOverworldWindowsAndTilemaps();
             SetMainCallback2(CB2_InitBattle);
@@ -208,13 +208,14 @@ static void CreateBattleStartTask(u8 transition, u16 song) // song == 0 means de
 static bool8 CheckSilphScopeInPokemonTower(u16 mapGroup, u16 mapNum)
 {
     if (mapGroup == MAP_GROUP(POKEMON_TOWER_1F) && (mapNum == MAP_NUM(POKEMON_TOWER_1F) || mapNum == MAP_NUM(POKEMON_TOWER_2F) || mapNum == MAP_NUM(POKEMON_TOWER_3F)
-      || mapNum == MAP_NUM(POKEMON_TOWER_4F) || mapNum == MAP_NUM(POKEMON_TOWER_5F) || mapNum == MAP_NUM(POKEMON_TOWER_6F) || mapNum == MAP_NUM(POKEMON_TOWER_7F))
-     && !(CheckBagHasItem(ITEM_SILPH_SCOPE, 1)))
+	|| mapNum == MAP_NUM(POKEMON_TOWER_4F) || mapNum == MAP_NUM(POKEMON_TOWER_5F) || mapNum == MAP_NUM(POKEMON_TOWER_6F) || mapNum == MAP_NUM(POKEMON_TOWER_7F))
+    && !(CheckBagHasItem(ITEM_SILPH_SCOPE, 1)))
         return TRUE;
     else
         return FALSE;
 }
 
+// Called when a wild encounter appears
 void StartWildBattle(void)
 {
     if (GetSafariZoneFlag())
@@ -228,32 +229,6 @@ void StartWildBattle(void)
 void StartDoubleWildBattle(void)
 {
 	DoStandardWildBattle(TRUE);
-}
-
-static void DoStandardWildBattle(bool8 isDouble)
-{
-    ScriptContext2_Enable();
-    FreezeObjectEvents();
-    StopPlayerAvatar();
-    gMain.savedCallback = CB2_EndWildBattle;
-    gBattleTypeFlags = 0;
-	if (isDouble)
-		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
-    CreateBattleStartTask(GetWildBattleTransition(), 0);
-    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
-    IncrementGameStat(GAME_STAT_WILD_BATTLES);
-}
-
-void StartRoamerBattle(void)
-{
-    ScriptContext2_Enable();
-    FreezeObjectEvents();
-    StopPlayerAvatar();
-    gMain.savedCallback = CB2_EndWildBattle;
-    gBattleTypeFlags = BATTLE_TYPE_ROAMER;
-    CreateBattleStartTask(GetWildBattleTransition(), MUS_VS_LEGEND);
-    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
-    IncrementGameStat(GAME_STAT_WILD_BATTLES);
 }
 
 static void DoSafariBattle(void)
@@ -279,6 +254,38 @@ static void DoGhostBattle(void)
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
 }
 
+static void DoStandardWildBattle(bool8 isDouble)
+{
+    ScriptContext2_Enable();
+    FreezeObjectEvents();
+    StopPlayerAvatar();
+    gMain.savedCallback = CB2_EndWildBattle;
+    gBattleTypeFlags = 0;
+	
+	if (isDouble)
+		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+#if SOS_WILD_BATTLE_CHANCE != 0
+	else if (RandomPercent(SOS_WILD_BATTLE_CHANCE))
+		gBattleTypeFlags |= BATTLE_TYPE_SOS;
+#endif
+	
+    CreateBattleStartTask(GetWildBattleTransition(), 0);
+    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
+    IncrementGameStat(GAME_STAT_WILD_BATTLES);
+}
+
+void StartRoamerBattle(void)
+{
+    ScriptContext2_Enable();
+    FreezeObjectEvents();
+    StopPlayerAvatar();
+    gMain.savedCallback = CB2_EndWildBattle;
+    gBattleTypeFlags = BATTLE_TYPE_ROAMER;
+    CreateBattleStartTask(GetWildBattleTransition(), MUS_VS_LEGEND);
+    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
+    IncrementGameStat(GAME_STAT_WILD_BATTLES);
+}
+
 static void DoTrainerBattle(void)
 {
     CreateBattleStartTask(GetTrainerBattleTransition(), 0);
@@ -294,12 +301,14 @@ void StartOldManTutorialBattle(void)
 		.level = 5,
 		.otIdType = OT_ID_RANDOM,
 		.shinyType = GENERATE_SHINY_LOCKED,
+		.shinyRollType = SHINY_ROLL_NORMAL,
 		.forcedGender = MON_MALE,
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.forcedNature = NUM_NATURES,
 		.formChanges = NULL,
-		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
+		.moves = {0},
+		.nPerfectIvs = 0,
 	};
     CreateMon(&gEnemyParty[0], generator);
     ScriptContext2_Enable();
@@ -312,10 +321,33 @@ void StartScriptedWildBattle(void)
 {
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
+	
 	gBattleTypeFlags = BATTLE_TYPE_WILD_SCRIPTED;
 	if (GetMonData(&gEnemyParty[1], MON_DATA_SPECIES)) // if have a second mon turn into double battle
 		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+		
     CreateBattleStartTask(GetWildBattleTransition(), 0);
+    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
+    IncrementGameStat(GAME_STAT_WILD_BATTLES);
+}
+
+void StartTotemBattle(s8 *buffs)
+{
+	u8 i;
+	
+	ScriptContext2_Enable();
+    gMain.savedCallback = CB2_EndScriptedWildBattle;
+	gBattleTypeFlags = (BATTLE_TYPE_TOTEM | BATTLE_TYPE_SOS);
+	
+	for (i = STAT_ATK; i < NUM_BATTLE_STATS; i++)
+	{
+		if (buffs[i] != 0)
+		{
+			gQueuedStatBoosts[B_POSITION_OPPONENT_LEFT].stats |= gBitTable[i];
+			gQueuedStatBoosts[B_POSITION_OPPONENT_LEFT].statChanges[i] = buffs[i];
+		}
+	}
+	CreateBattleStartTask(GetWildBattleTransition(), 0);
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
 }
@@ -333,22 +365,25 @@ void StartMarowakBattle(void)
 			.level = 30,
 			.otIdType = OT_ID_PLAYER_ID,
 			.shinyType = GENERATE_SHINY_LOCKED,
+			.shinyRollType = SHINY_ROLL_NORMAL,
 			.forcedGender = MON_FEMALE,
 			.hasFixedPersonality = FALSE,
 			.fixedPersonality = 0,
 			.forcedNature = NATURE_SERIOUS,
 			.formChanges = NULL,
-			.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
+			.moves = {0},
+			.nPerfectIvs = 0,
 		};
         CreateMon(&gEnemyParty[0], generator);
 		
-		gBattleTypeFlags = BATTLE_TYPE_GHOST | BATTLE_TYPE_GHOST_UNVEILED;
+		gBattleTypeFlags = (BATTLE_TYPE_GHOST | BATTLE_TYPE_GHOST_UNVEILED);
     }
     else
         gBattleTypeFlags = BATTLE_TYPE_GHOST;
-
+	
+	SetMonData(&gEnemyParty[0], MON_DATA_NICKNAME, gText_Ghost);
+	
     CreateBattleStartTask(GetWildBattleTransition(), 0);
-    SetMonData(&gEnemyParty[0], MON_DATA_NICKNAME, gText_Ghost);
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
 }
@@ -394,10 +429,9 @@ static void CB2_EndWildBattle(void)
 {
     CpuFill16(0, (void *)BG_PLTT, BG_PLTT_SIZE);
     ResetOamRange(0, 128);
-    if (IsPlayerDefeated(gBattleOutcome) == TRUE)
-    {
+	
+    if (IsPlayerDefeated(gBattleOutcome))
         SetMainCallback2(CB2_WhiteOut);
-    }
     else
     {
         SetMainCallback2(CB2_ReturnToField);
@@ -409,7 +443,8 @@ static void CB2_EndScriptedWildBattle(void)
 {
     CpuFill16(0, (void *)BG_PLTT, BG_PLTT_SIZE);
     ResetOamRange(0, 128);
-    if (IsPlayerDefeated(gBattleOutcome) == TRUE)
+	
+    if (IsPlayerDefeated(gBattleOutcome))
         SetMainCallback2(CB2_WhiteOut);
     else
         SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
@@ -419,10 +454,9 @@ static void CB2_EndMarowakBattle(void)
 {
     CpuFill16(0, (void *)BG_PLTT, BG_PLTT_SIZE);
     ResetOamRange(0, 128);
+	
     if (IsPlayerDefeated(gBattleOutcome))
-    {
         SetMainCallback2(CB2_WhiteOut);
-    }
     else
     {
         // If result is TRUE player didnt defeat Marowak, force player back from stairs
@@ -435,48 +469,56 @@ u8 BattleSetup_GetTerrainId(void)
 {
     u16 tileBehavior;
     s16 x, y;
+	
+	if (gIsFishingEncounter)
+		return BATTLE_TERRAIN_WATER;
 
     PlayerGetDestCoords(&x, &y);
     tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+	
     if (MetatileBehavior_IsTallGrass_2(tileBehavior))
         return BATTLE_TERRAIN_GRASS;
-    if (MetatileBehavior_IsLongGrass(tileBehavior))
+    else if (MetatileBehavior_IsLongGrass(tileBehavior))
         return BATTLE_TERRAIN_LONG_GRASS;
-    if (MetatileBehavior_IsSandOrShallowFlowingWater(tileBehavior))
+    else if (MetatileBehavior_IsSandOrShallowFlowingWater(tileBehavior))
         return BATTLE_TERRAIN_SAND;
+	
     switch (gMapHeader.mapType)
     {
-    case MAP_TYPE_TOWN:
-    case MAP_TYPE_CITY:
-    case MAP_TYPE_ROUTE:
-        break;
-    case MAP_TYPE_UNDERGROUND:
-        if (MetatileBehavior_IsIndoorEncounter(tileBehavior))
-            return BATTLE_TERRAIN_BUILDING;
-        if (MetatileBehavior_IsSurfable(tileBehavior))
-            return BATTLE_TERRAIN_POND;
-        return BATTLE_TERRAIN_CAVE;
-    case MAP_TYPE_INDOOR:
-    case MAP_TYPE_SECRET_BASE:
-        return BATTLE_TERRAIN_BUILDING;
-    case MAP_TYPE_UNDERWATER:
-        return BATTLE_TERRAIN_UNDERWATER;
-    case MAP_TYPE_OCEAN_ROUTE:
-        if (MetatileBehavior_IsSurfable(tileBehavior))
-            return BATTLE_TERRAIN_WATER;
-        return BATTLE_TERRAIN_PLAIN;
+		case MAP_TYPE_TOWN:
+		case MAP_TYPE_CITY:
+		case MAP_TYPE_ROUTE:
+			break;
+		case MAP_TYPE_UNDERGROUND:
+			if (MetatileBehavior_IsIndoorEncounter(tileBehavior))
+				return BATTLE_TERRAIN_BUILDING;
+			else if (MetatileBehavior_IsSurfable(tileBehavior))
+				return BATTLE_TERRAIN_POND;
+			
+			return BATTLE_TERRAIN_CAVE;
+		case MAP_TYPE_INDOOR:
+		case MAP_TYPE_SECRET_BASE:
+			return BATTLE_TERRAIN_BUILDING;
+		case MAP_TYPE_UNDERWATER:
+			return BATTLE_TERRAIN_UNDERWATER;
+		case MAP_TYPE_OCEAN_ROUTE:
+			if (MetatileBehavior_IsSurfable(tileBehavior))
+				return BATTLE_TERRAIN_WATER;
+			
+			return BATTLE_TERRAIN_PLAIN;
     }
+	
     if (MetatileBehavior_IsDeepSemiDeepOrSplashingWater(tileBehavior))
         return BATTLE_TERRAIN_WATER;
-    if (MetatileBehavior_IsSurfable(tileBehavior))
+    else if (MetatileBehavior_IsSurfable(tileBehavior))
         return BATTLE_TERRAIN_POND;
-    if (MetatileBehavior_IsMountain(tileBehavior))
+    else if (MetatileBehavior_IsMountain(tileBehavior))
         return BATTLE_TERRAIN_MOUNTAIN;
-    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+    else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
     {
         if (MetatileBehavior_GetBridgeType(tileBehavior))
             return BATTLE_TERRAIN_POND;
-        if (MetatileBehavior_IsBridge(tileBehavior) == TRUE)
+        else if (MetatileBehavior_IsBridge(tileBehavior))
             return BATTLE_TERRAIN_WATER;
     }
     return BATTLE_TERRAIN_PLAIN;
@@ -486,12 +528,14 @@ static u8 GetBattleTransitionTypeByMap(void)
 {
     u16 tileBehavior;
     s16 x, y;
-
-    PlayerGetDestCoords(&x, &y);
-    tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+	
     if (Overworld_GetFlashLevel())
         return B_TRANSITION_HORIZONTAL_CORRUGATE;
-    if (!MetatileBehavior_IsSurfable(tileBehavior))
+	
+	PlayerGetDestCoords(&x, &y);
+    tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+	
+    if (!MetatileBehavior_IsSurfable(tileBehavior) && !gIsFishingEncounter)
     {
         switch (gMapHeader.mapType)
         {
@@ -508,8 +552,8 @@ static u8 GetBattleTransitionTypeByMap(void)
 
 static u32 GetSumOfPlayerPartyLevel(void)
 {
+	u8 i;
     u32 sum;
-    s32 i;
 
     for (i = 0, sum = 0; i < PARTY_SIZE; ++i)
     {
@@ -662,7 +706,9 @@ static void SetMapVarsToTrainer(void)
 const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
 {
     InitTrainerBattleVariables();
+	
     sTrainerBattleMode = data[0];
+	
     switch (sTrainerBattleMode)
     {
     case TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT:
@@ -760,8 +806,10 @@ void ClearTrainerFlag(u16 trainerId)
 void StartTrainerBattle(void)
 {
     gBattleTypeFlags = BATTLE_TYPE_TRAINER;
+	
     if (GetTrainerBattleMode() == TRAINER_BATTLE_EARLY_RIVAL && GetRivalBattleFlags() & RIVAL_BATTLE_TUTORIAL)
         gBattleTypeFlags |= BATTLE_TYPE_FIRST_BATTLE;
+	
     gMain.savedCallback = CB2_EndTrainerBattle;
     DoTrainerBattle();
     ScriptContext1_Stop();
@@ -771,49 +819,37 @@ static void CB2_EndTrainerBattle(void)
 {
     if (sTrainerBattleMode == TRAINER_BATTLE_EARLY_RIVAL)
     {
-        if (IsPlayerDefeated(gBattleOutcome) == TRUE)
+        if (IsPlayerDefeated(gBattleOutcome))
         {
             gSpecialVar_Result = TRUE;
+			
             if (sRivalBattleFlags & RIVAL_BATTLE_HEAL_AFTER)
-            {
                 HealPlayerParty();
-            }
             else
             {
                 SetMainCallback2(CB2_WhiteOut);
                 return;
             }
-            SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
-            SetBattledTrainerFlag();
         }
         else
-        {
             gSpecialVar_Result = FALSE;
-            SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
-            SetBattledTrainerFlag();
-        }
-
     }
     else
     {
-        if (IsPlayerDefeated(gBattleOutcome) == TRUE)
-        {
+        if (IsPlayerDefeated(gBattleOutcome))
+		{
             SetMainCallback2(CB2_WhiteOut);
-        }
-        else
-        {
-            SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
-            SetBattledTrainerFlag();
+			return;
         }
     }
+	SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+	SetBattledTrainerFlag();
 }
 
 static void CB2_EndRematchBattle(void)
 {
-    if (IsPlayerDefeated(gBattleOutcome) == TRUE)
-    {
+    if (IsPlayerDefeated(gBattleOutcome))
         SetMainCallback2(CB2_WhiteOut);
-    }
     else
     {
         SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
@@ -828,6 +864,11 @@ void StartRematchBattle(void)
     gMain.savedCallback = CB2_EndRematchBattle;
     DoTrainerBattle();
     ScriptContext1_Stop();
+}
+
+static const u8 *ReturnEmptyStringIfNull(const u8 *string)
+{
+	return string == NULL ? gString_Dummy : string;
 }
 
 void ShowTrainerIntroSpeech(void)
@@ -852,38 +893,8 @@ void ShowTrainerCantBattleSpeech(void)
 
 void PlayTrainerEncounterMusic(void)
 {
-    u16 music;
-
     if (sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC && sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC)
-    {
-        switch (TRAINER_ENCOUNTER_MUSIC(gTrainerBattleOpponent_A))
-        {
-        case TRAINER_ENCOUNTER_MUSIC_FEMALE:
-        case TRAINER_ENCOUNTER_MUSIC_GIRL:
-        case TRAINER_ENCOUNTER_MUSIC_TWINS:
-            music = MUS_ENCOUNTER_GIRL;
-            break;
-        case TRAINER_ENCOUNTER_MUSIC_MALE:
-        case TRAINER_ENCOUNTER_MUSIC_INTENSE:
-        case TRAINER_ENCOUNTER_MUSIC_COOL:
-        case TRAINER_ENCOUNTER_MUSIC_SWIMMER:
-        case TRAINER_ENCOUNTER_MUSIC_ELITE_FOUR:
-        case TRAINER_ENCOUNTER_MUSIC_HIKER:
-        case TRAINER_ENCOUNTER_MUSIC_INTERVIEWER:
-        case TRAINER_ENCOUNTER_MUSIC_RICH:
-            music = MUS_ENCOUNTER_BOY;
-            break;
-        default:
-            music = MUS_ENCOUNTER_ROCKET;
-            break;
-        }
-        PlayNewMapMusic(music);
-    }
-}
-
-static const u8 *ReturnEmptyStringIfNull(const u8 *string)
-{
-	return string == NULL ? gString_Dummy : string;
+		PlayNewMapMusic(gTrainerEncounterMusicIdsTable[gTrainers[gTrainerBattleOpponent_A].encounterMusic]);
 }
 
 const u8 *GetTrainerALoseText(void)

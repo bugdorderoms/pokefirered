@@ -1189,12 +1189,14 @@ static void SetInitialEggData(struct Pokemon *mon, u16 species, u32 personality)
 	    .level = EGG_HATCH_LEVEL,
 	    .forcedGender = MON_GENDERLESS,
 	    .shinyType = GENERATE_SHINY_NORMAL,
+		.shinyRollType = SHINY_ROLL_NORMAL,
 	    .otIdType = OT_ID_PLAYER_ID,
 	    .hasFixedPersonality = TRUE,
 	    .fixedPersonality = personality,
 	    .forcedNature = NUM_NATURES,
-		.formChanges = gDeafultGeneratorFormChanges,
-		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
+		.formChanges = gDefaultGeneratorFormChanges,
+		.moves = {0},
+		.nPerfectIvs = 0,
 	};
     CreateMon(mon, generator);
 
@@ -1252,12 +1254,14 @@ static void TriggerPendingDaycareEgg(void)
 		.level = 1,
 		.otIdType = OT_ID_PLAYER_ID,
 		.shinyType = GENERATE_SHINY_LOCKED,
+		.shinyRollType = SHINY_ROLL_NORMAL,
 		.forcedGender = MON_GENDERLESS,
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.forcedNature = natureSlot == DAYCARE_MON_COUNT ? NUM_NATURES : GetNatureFromPersonality(GetBoxMonData(&daycare->mons[natureSlot].mon, MON_DATA_PERSONALITY)),
 		.formChanges = NULL,
-		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
+		.moves = {0},
+		.nPerfectIvs = 0,
 	};
 	
 	// Generate a mon only to get its personality
@@ -1701,15 +1705,13 @@ static void CB2_EggHatch_1(void)
     case 3:
         if (gSprites[sEggHatchData->eggSpriteID].callback == SpriteCallbackDummy)
         {
-            PlayCry1(sEggHatchData->species, 0);
+            PlayCry_Normal(sEggHatchData->species, 0);
             sEggHatchData->CB2_state++;
         }
         break;
     case 4:
         if (IsCryFinished())
-        {
             sEggHatchData->CB2_state++;
-        }
         break;
     case 5:
         GetMonNickname(&gPlayerParty[sEggHatchData->eggPartyID], gStringVar1);

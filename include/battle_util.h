@@ -3,7 +3,7 @@
 
 #include "global.h"
 
-// Return values for the CanBe* statused function
+// Return values for the CanBe* statused functions
 enum
 {
 	STATUS_CHANGE_WORKED,
@@ -32,51 +32,57 @@ enum
 	STAT_CHANGE_FAIL_FLOWER_VEIL,
 };
 
-#define MOVE_LIMITATION_ALL_MOVES_MASK ((1 << MAX_MON_MOVES) - 1)
+// Flags for GetMoveRealType
+#define TYPE_CALC_SUMMARY      (1 << 0)
+#define TYPE_CALC_ANTICIPATION (1 << 1)
 
-#define MOVE_LIMITATION_IGNORE_NO_PP             (1 << 0)
-#define MOVE_LIMITATION_IGNORE_IMPRISON          (1 << 1)
+// Flags for CheckMoveLimitations
+#define MOVE_LIMITATION_IGNORE_NO_PP    (1 << 0)
+#define MOVE_LIMITATION_IGNORE_IMPRISON (1 << 1)
+#define MOVE_LIMITATION_ALL_MOVES_MASK  ((1 << MAX_MON_MOVES) - 1) // Mask when all moves are unusable
 
-#define ABILITYEFFECT_ON_SWITCHIN                0
-#define ABILITYEFFECT_ENDTURN                    1
-#define ABILITYEFFECT_NEUTRALIZING_GAS           2
-#define ABILITYEFFECT_UNNERVE                    3
-#define ABILITYEFFECT_MOVES_BLOCK                4
-#define ABILITYEFFECT_ABSORBING                  5
-#define ABILITYEFFECT_MOVE_END_ATTACKER          6
-#define ABILITYEFFECT_MOVE_END_TARGET            7
-#define ABILITYEFFECT_IMMUNITY                   8
-#define ABILITYEFFECT_ON_WEATHER                 9
-#define ABILITYEFFECT_SYNCHRONIZE                10
-#define ABILITYEFFECT_ON_TERRAIN                 11
+// Cases for AbilityBattleEffects
+#define ABILITYEFFECT_ON_SWITCHIN       0
+#define ABILITYEFFECT_ENDTURN           1
+#define ABILITYEFFECT_NEUTRALIZING_GAS  2
+#define ABILITYEFFECT_UNNERVE           3
+#define ABILITYEFFECT_MOVES_BLOCK       4
+#define ABILITYEFFECT_WOULD_BLOCK_MOVE  5
+#define ABILITYEFFECT_ABSORBING         6
+#define ABILITYEFFECT_WOULD_ABSORB_MOVE 7
+#define ABILITYEFFECT_MOVE_END_ATTACKER 8
+#define ABILITYEFFECT_MOVE_END_TARGET   9
+#define ABILITYEFFECT_IMMUNITY          10
+#define ABILITYEFFECT_ON_WEATHER        11
+#define ABILITYEFFECT_SYNCHRONIZE       12
+#define ABILITYEFFECT_ON_TERRAIN        13
 
-#define CHECK_ABILITY_ON_FIELD                   0
-#define CHECK_ABILITY_ON_FIELD_EXCEPT_BATTLER    1
-#define CHECK_ABILITY_ON_SIDE                    2
+// Cases for CheckAbilityInBattle
+#define CHECK_ABILITY_ON_FIELD                0
+#define CHECK_ABILITY_ON_FIELD_EXCEPT_BATTLER 1
+#define CHECK_ABILITY_ON_SIDE                 2
 
-#define ABILITY_ON_OPPOSING_SIDE(battlerId, abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_SIDE, BATTLE_OPPOSITE(battlerId), abilityId)))
+// CheckAbilityInBattle expanded to more readable macros
+#define ABILITY_ON_SIDE(battlerId, abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_SIDE, battlerId, abilityId)))
+#define ABILITY_ON_OPPOSING_SIDE(battlerId, abilityId) ABILITY_ON_SIDE(BATTLE_OPPOSITE(battlerId), abilityId)
 #define ABILITY_ON_FIELD(abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_FIELD, 0, abilityId)))
 #define ABILITY_ON_FIELD_EXCPET_BATTLER(battlerId, abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_FIELD_EXCEPT_BATTLER, battlerId, abilityId)))
 
+// Cases for ItemBattleEffects
 #define ITEMEFFECT_ON_SWITCH_IN                 0x0
 #define ITEMEFFECT_MOVE_END                     0x3
 #define ITEMEFFECT_KINGSROCK_SHELLBELL          0x4
 
 #define WEATHER_HAS_EFFECT ((!ABILITY_ON_FIELD(ABILITY_CLOUD_NINE) && !ABILITY_ON_FIELD(ABILITY_AIR_LOCK)))
 
-#define BS_GET_TARGET                   0
-#define BS_GET_ATTACKER                 1
-#define BS_GET_EFFECT_BANK              2
-#define BS_GET_SCRIPTING_BANK           10
-#define BS_GET_PLAYER1                  11
-#define BS_GET_OPPONENT1                12
-#define BS_GET_PLAYER2                  13
-#define BS_GET_OPPONENT2                14
-
 #define BATTLE_ALIVE_SIDE            0
 #define BATTLE_ALIVE_EXCEPT_BATTLER  1
 
-#define IS_WHOLE_SIDE_ALIVE(battler) ((CountAliveMonsInBattle(battler, BATTLE_ALIVE_SIDE) >= 2))
+#define IS_WHOLE_SIDE_ALIVE(battler) ((CountAliveMonsInBattle(battler, BATTLE_ALIVE_SIDE) >= NUM_BATTLERS_PER_SIDE))
+
+#define IS_MULTIHIT_FINAL_STRIKE ((gBattleStruct->pursuitSwitchDmg || gMultiHitCounter <= 1))
+
+#define IsDoubleBattleForBattler(battlerId) ((IsDoubleBattleOnSide(GetBattlerSide(battlerId))))
 
 u8 GetBattlerForBattleScript(u8 caseId);
 void MarkBattlerForControllerExec(u8 battlerId);
@@ -109,6 +115,7 @@ void ClearFuryCutterDestinyBondGrudge(u8 battlerId);
 void HandleAction_RunBattleScript(void);
 u8 GetMoveSplit(u16 move);
 u8 GetDefaultMoveTarget(u8 battlerId);
+u8 SetRandomTarget(u8 battlerId);
 u8 GetRandomTarget(u8 battlerId);
 u8 GetBattlerMoveTargetType(u8 battlerId, u16 move);
 u8 GetMoveTarget(u16 move, u8 setTarget);
@@ -117,7 +124,7 @@ u8 IsMonDisobedient(void);
 bool8 SubsBlockMove(u8 attacker, u8 defender, u16 move);
 u8 GetHiddenPowerType(struct Pokemon *mon);
 bool8 CheckPinchBerryActivate(u8 battler, u16 item);
-void CopyStatusStringToBattleBuffer1(u32 status);
+void CopyStatusStringToBattleBuffer1(u8 statusId);
 void ClearBattlerStatus(u8 battler);
 u8 CanBecameConfused(u8 attacker, u8 defender, u32 flags);
 u8 CanBePutToSleep(u8 attacker, u8 defender, u32 flags);
@@ -125,13 +132,17 @@ u8 CanBePoisoned(u8 attacker, u8 defender, u32 flags);
 u8 CanBeBurned(u8 attacker, u8 defender, u32 flags);
 bool8 CanBeFrozen(u8 attacker, u8 defender, u32 flags);
 u8 CanBeParalyzed(u8 attacker, u8 defender, u32 flags);
+bool8 IsAbilityOrBattleEffectBlockingItemEffect(u16 ability);
+u16 GetBattlerItem(u8 battlerId);
 u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating);
+bool8 IsNeutralizingGasOnField(u16 ability, bool8 forAI);
 u16 GetBattlerAbility(u8 battler);
 u16 SetBattlerAbility(u8 battlerId, u16 newAbility);
 u16 SuppressBattlerAbility(u8 battlerId);
 void ClearIllusionMon(u8 battler);
 bool8 TryRemoveIllusion(u8 battler);
 u8 GetPartyMonIdForIllusion(u8 battler, struct Pokemon *party, u8 partyCount, struct Pokemon *illusionMon);
+bool8 MoveIsAffectedBySheerForce(u16 move);
 bool8 ReceiveSheerForceBoost(u8 battler, u16 move);
 bool8 CompareStat(u8 battlerId, u8 statId, s8 cmpTo, u8 cmpKind);
 bool8 IsUnnerveOnOpposingField(u8 battler);
@@ -141,22 +152,26 @@ bool8 NoAliveMonsForEitherParty(void);
 bool8 IsBattlerAlive(u8 battlerId);
 bool8 IsBattlerWeatherAffected(u8 battlerId, u16 weatherFlags);
 bool8 TryChangeBattleWeather(u8 battlerId, u8 weatherEnumId);
-s16 CalcMoveCritChance(u8 battlerAtk, u8 battlerDef, u16 move);
+u8 GetCurrentWeatherEnumId(u16 weatherFlags);
+void LoadWeatherIconSpriteAndPalette(u8 weatherEnumId);
+bool8 CalcMoveIsCritical(u8 battlerAtk, u8 battlerDef, u16 move);
 bool8 IsMoveMakingContact(u8 battler, u16 move);
 bool8 IsBattlerProtected(u8 attacker, u8 defender, u16 move);
 u8 CountBattlerStatIncreases(u8 battlerId, bool8 countEvasionAccuracy);
 bool8 IsBattlerGrounded(u8 battlerId);
+bool8 CanBattlerGetOrLoseItem(u8 battlerId, u16 itemId);
 bool8 CanStealItem(u8 battlerAtk, u8 battlerDef, u16 itemId);
-void StealTargetItem(u8 battlerAtk, u8 battlerDef);
+void RemoveBattlerItem(u8 battlerId);
+void GiveItemToBattler(u8 battlerId, u16 itemId);
 void SortBattlersBySpeed(u8 *battlers, bool8 slowToFast);
-u8 CountUsablePartyMons(u8 battlerId);
+u8 CountUsablePartyMons(u8 battlerId, u8 *viableMons);
 bool8 CanBattlerEscape(u8 battlerId, bool8 checkIngrain);
-bool8 CanBattlerSwitch(u8 battlerId);
+bool8 CanBattlerSwitchOut(u8 battlerId, bool8 checkEscapePrevention);
 u8 IsAbilityPreventingSwitchOut(u8 battlerId);
 u8 GetCatchingBattler(void);
 u8 GetBattlerTurnOrderNum(u8 battlerId);
 void CheckSetBattlerUnburden(u8 battler);
-u32 GetEffectChanceIncreases(u8 battlerId, u32 secondaryEffectChance);
+u32 CalcSecondaryEffectChance(u8 battlerId, u8 moveEffect, u32 chance);
 bool8 TryResetBattlerStatChanges(u8 battlerId);
 void CopyBattlerStatChanges(u8 battler1, u8 battler2);
 u8 GetBattlerGender(u8 battlerId);
@@ -180,23 +195,21 @@ u8 CountAliveMonsInBattle(u8 battlerId, u8 caseId);
 void CalculatePayDayMoney(void);
 s32 GetDrainedBigRootHp(u8 battlerId, s32 hp);
 void SetTypeBeforeUsingMove(u16 move, u8 battler);
+u8 GetBattlerMoveRealType(u8 battler, u16 move, u8 flags);
+u8 GetMoveRealType(struct Pokemon *mon, u16 move, u16 ability, u16 item, u8 flags);
 bool8 TryTransformIntoBattler(u8 battler1, u8 battler2);
 bool8 TryDisableMove(u8 battlerId, u8 movePos, u16 move);
 bool8 CanSafeguardProtectBattler(u8 attacker, u8 defender);
 bool8 IsBattlerProtectedByFlowerVeil(u8 battlerId);
-u16 GetFutureAttackData(u8 caseId, u16 move);
 void SaveBattlersHps(void);
-bool8 IsBattlerOfType(u8 battlerId, u8 type);
+void GetBattlerTypes(u8 battlerId, u8 *types);
 u8 GetBattlerType(u8 battlerId, u8 index);
 void SetBattlerType(u8 battlerId, u8 type);
 void SetBattlerInitialTypes(u8 battlerId);
 bool8 CopyBattlerCritModifier(u8 attacker, u8 defender);
 bool8 TryRemoveScreens(u8 battler, bool8 fromBothSides);
 bool8 DoesSpreadMoveStrikesOnlyOnce(u8 attacker, u8 defender, u16 move, bool8 checkTargetsDone);
-u8 GetTypeChangingMoveType(struct Pokemon *mon, u16 move);
-u8 GetSecretPowerEffect(void);
 bool8 TryRemoveEntryHazards(u8 battlerId);
-bool8 AttacksThisTurn(u8 battlerId, u16 move);
 bool8 TryActivateEmergencyExit(u8 battler);
 bool8 LiftProtectionEffects(u8 battlerId);
 bool8 IsBattlerBeingCommanded(u8 battlerId);
@@ -204,11 +217,29 @@ void SaveAttackerToStack(u8 battlerId);
 void RestoreAttackerFromStack(void);
 void SaveTargetToStack(u8 battlerId);
 void RestoreTargetFromStack(void);
+void GetBattlerMovesArray(u8 battlerId, u16 *moves);
 u8 FindMoveSlotInBattlerMoveset(u8 battlerId, u16 move);
 bool8 CanUseLastResort(u8 battlerId);
 bool8 TrySetToxicSpikesOnBattlerSide(u8 battlerId);
 void TryUpdateEvolutionTracker(u16 evoMode, u32 upAmount, u16 data);
 bool8 IsMultiBattle(void);
+bool8 IsDoubleBattleOnSide(u8 side);
 bool8 IsPlayerBagDisabled(void);
+bool8 CanTargetBattler(u8 attacker, u8 defender, u16 move, u8 moveTarget);
+u8 GetNumBeatUpHits(u8 battler);
+s8 GetItemStatChangeStages(u16 item);
+bool8 CanReceiveBadgeBoost(u8 battlerId, u16 flagId);
+bool8 MoveHasMoveEffect(u16 move, u8 moveEffect, bool8 self);
+bool8 MoveHasChargeTurnMoveEffect(u16 move);
+bool8 TryInitSosCall(void);
+const struct SosCall GetSosCallRateTable(void);
+bool8 IsBattlerTotemPokemon(u8 battlerId);
+void SwapBattlersPositions(u8 battler1, u8 battler2);
+
+static inline bool8 CanBattlerSwitch(u8 battlerId)
+{
+	u8 viableMons[PARTY_SIZE];
+	return (CountUsablePartyMons(battlerId, viableMons) > 0);
+}
 
 #endif // GUARD_BATTLE_UTIL_H

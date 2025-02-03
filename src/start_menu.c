@@ -574,12 +574,11 @@ static u8 StartMenuRidePagerCallback(void)
 // CLOCK //
 ///////////
 
-static inline bool8 CanShowCurrentLevelCapOnClockBox(void)
+static inline bool8 CanShowCurrentLevelCapOnClockBox(u8 levelCap)
 {
-#if EXP_BLOCK
-	if (!MenuHelpers_LinkSomething() && !InUnionRoom() && FlagGet(FLAG_SYS_POKEMON_GET))
+	if (levelCap != MAX_LEVEL && !MenuHelpers_LinkSomething() && !InUnionRoom() && FlagGet(FLAG_SYS_POKEMON_GET))
 		return TRUE;
-#endif
+	
 	return FALSE;
 }
 
@@ -612,9 +611,9 @@ static void Task_UpdateTimeInClockBox(u8 taskId)
 
 static void DrawClockBox(void)
 {
-	u8 windowId, height;
+	u8 windowId, height, levelCap = GetCurrentLevelCapLevel();
+	bool8 inSafari = GetSafariZoneFlag(), canShowLevelCap = CanShowCurrentLevelCapOnClockBox(levelCap);
 	struct WindowTemplate template;
-	bool8 inSafari = GetSafariZoneFlag(), canShowLevelCap = CanShowCurrentLevelCapOnClockBox();
 	
 	// Create task
 	sStartMenu.clockTaskId = CreateTask(Task_UpdateTimeInClockBox, 90);
@@ -643,7 +642,7 @@ static void DrawClockBox(void)
     }
 	else if (canShowLevelCap) // Display level cap
 	{
-		ConvertIntToDecimalStringN(gStringVar1, GetCurrentLevelCapLevel(), STR_CONV_MODE_LEFT_ALIGN, 3);
+		ConvertIntToDecimalStringN(gStringVar1, levelCap, STR_CONV_MODE_LEFT_ALIGN, 3);
 		StringExpandPlaceholders(gStringVar4, gText_CurrentLevelCap);
 		AddTextPrinterParameterized(windowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
 	}

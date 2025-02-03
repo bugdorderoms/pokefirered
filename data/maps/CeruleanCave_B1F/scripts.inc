@@ -26,7 +26,7 @@ CeruleanCave_B1F_EventScript_Mewtwo:: @ 81624F5
 	lock
 	faceplayer
 	waitse
-	playmoncry SPECIES_MEWTWO, 2
+	playmoncry SPECIES_MEWTWO, CRY_MODE_ENCOUNTER
 	message CeruleanCave_B1F_Text_Mew
 	waitmessage
 	waitmoncry

@@ -163,7 +163,12 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
         RunMassageCooldownStepCounter();
         IncrementResortGorgeousStepCounter();
         IncrementBirthIslandRockStepCount();
-        if (TryStartStepBasedScript(&position, metatileBehavior, playerDirection) == TRUE)
+		
+#if TAUROS_CHARGE_STAMINA != 0
+		DecreaseTaurosChargeStamina();
+#endif
+		
+        if (TryStartStepBasedScript(&position, metatileBehavior, playerDirection))
         {
             return TRUE;
         }

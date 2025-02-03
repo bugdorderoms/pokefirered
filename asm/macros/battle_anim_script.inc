@@ -42,12 +42,13 @@
 	.macro waitforvisualfinish
 	.byte 0x5
 	.endm
-
-	.macro setbgbasedonside anim_battler:req, playerbg:req, opponentbg:req
+	
+	.macro setbgbasedonside anim_battler:req, playerbg:req, opponentbg:req, fadeToBg=FALSE
 	.byte 0x6
 	.byte \anim_battler
 	.byte \playerbg
 	.byte \opponentbg
+	.byte \fadeToBg
 	.endm
 
 	.macro hang2
@@ -114,9 +115,10 @@
 	.4byte \ptr
 	.endm
 
-	.macro fadetobg bg:req
+	.macro fadetobg bg:req, setBg=FALSE
 	.byte 0x14
 	.byte \bg
+	.byte \setBg
 	.endm
 
 	.macro restorebg
@@ -131,9 +133,8 @@
 	.byte 0x17
 	.endm
 
-	.macro changebg bg:req
+	.macro nop18
 	.byte 0x18
-	.byte \bg
 	.endm
 
 	.macro playsewithpan se:req, pan:req
@@ -206,15 +207,14 @@
 	.byte \battler
 	.endm
 
-	.macro nop
+	.macro callreteq value:req, ptr:req
 	.byte 0x24
+	.2byte \value
+	.4byte \ptr
 	.endm
 
-	.macro fadetobgfromset param0:req, param1:req, param2:req
+	.macro nop25
 	.byte 0x25
-	.byte \param0
-	.byte \param1
-	.byte \param2
 	.endm
 
 	.macro panse_26 se:req, param1:req, param2:req, param3:req, param4:req
@@ -284,4 +284,12 @@
 	
 	.macro jumpretfalse ptr:req
 	jumpreteq FALSE, \ptr
+	.endm
+	
+	.macro setargret value:req
+	setarg ARG_RET_ID, \value
+	.endm
+	
+	.macro callrettrue ptr:req
+	callreteq TRUE, \ptr
 	.endm

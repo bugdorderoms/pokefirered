@@ -4,7 +4,7 @@
 #include "battle.h"
 #include "m4a.h"
 #include "constants/songs.h"
-#include "constants/fanfares.h"
+#include "constants/sound.h"
 #include "task.h"
 
 struct Fanfare
@@ -37,33 +37,32 @@ extern struct MusicPlayerInfo gMPlayInfo_SE1;
 extern struct MusicPlayerInfo gMPlayInfo_SE2;
 extern struct MusicPlayerInfo gMPlayInfo_SE3;
 extern struct ToneData gCryTable[];
-extern struct ToneData gCryTable2[];
+extern struct ToneData gCryTableReverse[];
 
-static const struct Fanfare sFanfares[] = {
-    [FANFARE_00]        = { MUS_LEVEL_UP,         80 },
-    [FANFARE_01]        = { MUS_OBTAIN_ITEM,     160 },
-    [FANFARE_02]        = { MUS_EVOLVED,         220 },
-    [FANFARE_03]        = { MUS_OBTAIN_TMHM,     220 },
-    [FANFARE_04]        = { MUS_HEAL,            160 },
-    [FANFARE_05]        = { MUS_OBTAIN_BADGE,    340 },
-    [FANFARE_06]        = { MUS_MOVE_DELETED,    180 },
-    [FANFARE_07]        = { MUS_OBTAIN_BERRY,    120 },
-    [FANFARE_08]        = { MUS_SLOTS_JACKPOT,   250 },
-    [FANFARE_09]        = { MUS_SLOTS_WIN,       150 },
-    [FANFARE_10]        = { MUS_TOO_BAD,         160 },
-    [FANFARE_POKEFLUTE] = { MUS_POKE_FLUTE,      450 },
-    [FANFARE_KEY_ITEM]  = { MUS_OBTAIN_KEY_ITEM, 170 },
-    [FANFARE_DEX_EVAL]  = { MUS_DEX_RATING,      196 }
+static const struct Fanfare sFanfares[] =
+{
+    [FANFARE_LEVEL_UP]      = { MUS_LEVEL_UP,         80 },
+    [FANFARE_OBTAIN_ITEM]   = { MUS_OBTAIN_ITEM,     160 },
+    [FANFARE_EVOLVED]       = { MUS_EVOLVED,         220 },
+    [FANFARE_OBTAIN_TMHM]   = { MUS_OBTAIN_TMHM,     220 },
+    [FANFARE_HEAL]          = { MUS_HEAL,            160 },
+    [FANFARE_OBTAIN_BADGE]  = { MUS_OBTAIN_BADGE,    340 },
+    [FANFARE_MOVE_DELETED]  = { MUS_MOVE_DELETED,    180 },
+    [FANFARE_OBTAIN_BERRY]  = { MUS_OBTAIN_BERRY,    120 },
+    [FANFARE_SLOTS_JACKPOT] = { MUS_SLOTS_JACKPOT,   250 },
+    [FANFARE_SLOTS_WIN]     = { MUS_SLOTS_WIN,       150 },
+    [FANFARE_TOO_BAD]       = { MUS_TOO_BAD,         160 },
+    [FANFARE_POKEFLUTE]     = { MUS_POKE_FLUTE,      450 },
+    [FANFARE_KEY_ITEM]      = { MUS_OBTAIN_KEY_ITEM, 170 },
+    [FANFARE_DEX_EVAL]      = { MUS_DEX_RATING,      196 }
 };
-
-extern u16 SpeciesToCryId(u16);
 
 static void Task_Fanfare(u8 taskId);
 static void CreateFanfareTask(void);
 static void Task_DuckBGMForPokemonCry(u8 taskId);
 static void RestoreBGMVolumeAfterPokemonCry(void);
 
-#define CRY_VOLUME  120 // was 125 in R/S
+#define CRY_VOLUME 120 // was 125 in R/S
 
 void InitMapMusic(void)
 {
@@ -194,6 +193,23 @@ void PlayFanfareByFanfareNum(u8 fanfareNum)
 	m4aSongNumStart(sFanfares[fanfareNum].songNum);
 }
 
+void PlayFanfare(u16 songNum)
+{
+    u32 i;
+	
+    for (i = 0; i < ARRAY_COUNT(sFanfares); i++)
+    {
+        if (sFanfares[i].songNum == songNum)
+        {
+            PlayFanfareByFanfareNum(i);
+            CreateFanfareTask();
+            return;
+        }
+    }
+    PlayFanfareByFanfareNum(FANFARE_LEVEL_UP);
+    CreateFanfareTask();
+}
+
 bool8 WaitFanfare(bool8 stop)
 {
     if (sFanfareCounter)
@@ -217,36 +233,18 @@ void StopFanfareByFanfareNum(u8 fanfareNum)
     m4aSongNumStop(sFanfares[fanfareNum].songNum);
 }
 
-void PlayFanfare(u16 songNum)
-{
-    s32 i;
-    for (i = 0; (u32)i < 14; i++)
-    {
-        if (sFanfares[i].songNum == songNum)
-        {
-            PlayFanfareByFanfareNum(i);
-            CreateFanfareTask();
-            return;
-        }
-    }
-
-    PlayFanfareByFanfareNum(0);
-    CreateFanfareTask();
-}
-
 bool8 IsFanfareTaskInactive(void)
 {
-    if (FuncIsActiveTask(Task_Fanfare) == TRUE)
+    if (FuncIsActiveTask(Task_Fanfare))
         return FALSE;
+	
     return TRUE;
 }
 
 static void Task_Fanfare(u8 taskId)
 {
     if (sFanfareCounter)
-    {
         sFanfareCounter--;
-    }
     else
     {
         m4aMPlayContinue(&gMPlayInfo_BGM);
@@ -256,7 +254,7 @@ static void Task_Fanfare(u8 taskId)
 
 static void CreateFanfareTask(void)
 {
-    if (FuncIsActiveTask(Task_Fanfare) != TRUE)
+    if (!FuncIsActiveTask(Task_Fanfare))
         CreateTask(Task_Fanfare, 80);
 }
 
@@ -304,139 +302,120 @@ bool8 IsBGMStopped(void)
     return FALSE;
 }
 
-void PlayCry1(u16 species, s8 pan)
+static void PlayCry_WithDucking(u16 species, s8 pan, u8 mode)
 {
-    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
-    PlayCryInternal(species, pan, CRY_VOLUME, 10, 0);
+	m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
+    PlayCryInternal(species, pan, CRY_VOLUME, CRY_PRIORITY_NORMAL, mode);
     gPokemonCryBGMDuckingCounter = 2;
     RestoreBGMVolumeAfterPokemonCry();
 }
 
-void PlayCry2(u16 species, s8 pan, s8 volume, u8 priority)
+void PlayCry_Normal(u16 species, s8 pan)
 {
-    PlayCryInternal(species, pan, volume, priority, 0);
+	PlayCry_WithDucking(species, pan, CRY_MODE_NORMAL);
 }
 
-void PlayCry3(u16 species, s8 pan, u8 mode)
+void PlayCry_NormalNoDucking(u16 species, s8 pan, s8 volume, u8 priority)
 {
-    if (mode == 1)
-    {
-        PlayCryInternal(species, pan, CRY_VOLUME, 10, 1);
-    }
+    PlayCryInternal(species, pan, volume, priority, CRY_MODE_NORMAL);
+}
+
+void PlayCry_ByMode(u16 species, s8 pan, u8 mode)
+{
+    if (mode == CRY_MODE_DOUBLES)
+        PlayCryInternal(species, pan, CRY_VOLUME, CRY_PRIORITY_NORMAL, mode);
     else
-    {
-        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
-        PlayCryInternal(species, pan, CRY_VOLUME, 10, mode);
-        gPokemonCryBGMDuckingCounter = 2;
-        RestoreBGMVolumeAfterPokemonCry();
-    }
+		PlayCry_WithDucking(species, pan, mode);
 }
 
-void PlayCry4(u16 species, s8 pan, u8 mode)
+void PlayCry_ReleaseDouble(u16 species, s8 pan, u8 mode)
 {
-    if (mode == 1)
-    {
-        PlayCryInternal(species, pan, CRY_VOLUME, 10, 1);
-    }
+    if (mode == CRY_MODE_DOUBLES)
+        PlayCryInternal(species, pan, CRY_VOLUME, CRY_PRIORITY_NORMAL, mode);
     else
     {
         if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
             m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
-        PlayCryInternal(species, pan, CRY_VOLUME, 10, mode);
+		
+        PlayCryInternal(species, pan, CRY_VOLUME, CRY_PRIORITY_NORMAL, mode);
     }
-}
-
-// PlayCry5 and 6 are not in FR/LG.
-
-void PlayCry7(u16 species, u8 mode) // exclusive to FR/LG
-{
-	m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
-	PlayCryInternal(species, 0, CRY_VOLUME, 10, mode);
-    gPokemonCryBGMDuckingCounter = 2;
-    RestoreBGMVolumeAfterPokemonCry();
 }
 
 void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
 {
-    bool32 v0;
-    u32 release;
-    u32 length;
-    u32 pitch;
-    u32 chorus;
+    bool8 reverse = FALSE;
+    u32 release = 0;
+    u32 length = 140;
+    u32 pitch = 15360;
+    u32 chorus = 0;
 	u16 cryId;
-
-    length = 140;
-    v0 = FALSE;
-    release = 0;
-    pitch = 15360;
-    chorus = 0;
 
     switch (mode)
     {
-    case 0:
+    case CRY_MODE_NORMAL:
         break;
-    case 1:
+    case CRY_MODE_DOUBLES:
         length = 20;
         release = 225;
         break;
-    case 2:
+    case CRY_MODE_ENCOUNTER:
         release = 225;
         pitch = 15600;
         chorus = 20;
         volume = 90;
         break;
-    case 3:
+    case CRY_MODE_HIGH_PITCH:
         length = 50;
         release = 200;
         pitch = 15800;
         chorus = 20;
         volume = 90;
         break;
-    case 4:
+    case CRY_MODE_ECHO_START:
         length = 25;
-        v0 = TRUE;
+        reverse = TRUE;
         release = 100;
         pitch = 15600;
         chorus = 192;
         volume = 90;
         break;
-    case 5:
+    case CRY_MODE_FAINT:
         release = 200;
         pitch = 14440;
         break;
-    case 6: // _08072044
+    case CRY_MODE_ECHO_END:
         release = 220;
         pitch = 15555;
         chorus = 192;
         volume = 90; // FR/LG changed this from 70 to 90
         break;
-    case 7:
+    case CRY_MODE_ROAR_1:
         length = 10;
         release = 100;
         pitch = 14848;
         break;
-    case 8:
+    case CRY_MODE_ROAR_2:
         length = 60;
         release = 225;
         pitch = 15616;
         break;
-    case 9:
+    case CRY_MODE_GROWL_1:
         length = 15;
-        v0 = TRUE;
+        reverse = TRUE;
         release = 125;
         pitch = 15200;
         break;
-    case 10:
+    case CRY_MODE_GROWL_2:
         length = 100;
         release = 225;
         pitch = 15200;
         break;
-    case 12:
-        length = 20;
-        release = 225;
-    case 11:
+	case CRY_MODE_WEAK:
         pitch = 15000;
         break;
+    case CRY_MODE_WEAK_DOUBLES:
+        length = 20;
+        release = 225;
     }
 
     SetPokemonCryVolume(volume);
@@ -449,7 +428,7 @@ void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
     SetPokemonCryPriority(priority);
 	
 	cryId = gSpeciesInfo[SanitizeSpeciesId(species)].cryId;
-    gMPlay_PokemonCry = SetPokemonCryTone(v0 ? &gCryTable2[cryId] : &gCryTable[cryId]);
+    gMPlay_PokemonCry = SetPokemonCryTone(reverse ? &gCryTableReverse[cryId] : &gCryTable[cryId]);
 }
 
 bool8 IsCryFinished(void)

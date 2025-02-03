@@ -19,7 +19,7 @@ u16 RandomRange(u16 min, u16 max)
 	return (Random() & (max - min)) + min;
 }
 
-bool8 RandomPercent(u8 percentage)
+bool8 RandomPercent(u16 percentage)
 {
 	return (RandomMax(100) < percentage);
 }

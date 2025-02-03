@@ -17,7 +17,7 @@
  *   | Player's side             |
  *   |  Left   Right             |
  *   |   0       2               |
- *   ----------------------------+
+ *   +---------------------------+
  *   |                           |
  *   |                           |
  *   +---------------------------+
@@ -28,6 +28,7 @@
 #define B_POSITION_PLAYER_RIGHT   2
 #define B_POSITION_OPPONENT_RIGHT 3
 #define MAX_BATTLERS_COUNT        4
+#define NUM_BATTLERS_PER_SIDE     (MAX_BATTLERS_COUNT / 2)
 
 // These macros can be used with either battler ID or positions to get the partner or the opposite mon
 #define BATTLE_OPPOSITE(id) ((id) ^ BIT_SIDE)
@@ -58,10 +59,13 @@
 #define BATTLE_TYPE_GHOST            (1 << 11)
 #define BATTLE_TYPE_POKEDUDE         (1 << 12)
 #define BATTLE_TYPE_WILD_SCRIPTED    (1 << 13)
+#define BATTLE_TYPE_SOS              (1 << 14)
+#define BATTLE_TYPE_TWO_VS_ONE       (1 << 15) // No functionallity for trainer battles at the moment
+#define BATTLE_TYPE_TOTEM            (1 << 16)
 
-#define IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE() (gBattleTypeFlags & BATTLE_TYPE_GHOST && !(gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
-#define IS_BATTLE_TYPE_GHOST_WITH_SCOPE() (gBattleTypeFlags & BATTLE_TYPE_GHOST && gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED)
-#define IS_DOUBLE_WILD_BATTLE() (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+#define IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE ((gBattleTypeFlags & BATTLE_TYPE_GHOST) && !(gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
+#define IS_BATTLE_TYPE_GHOST_WITH_SCOPE    ((gBattleTypeFlags & BATTLE_TYPE_GHOST) && (gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
+#define BATTLE_TYPE_HAS_AI                 ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER)) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
 
 #define RIVAL_BATTLE_HEAL_AFTER 1
 #define RIVAL_BATTLE_TUTORIAL   3
@@ -81,18 +85,14 @@
 
 // Non-volatile status conditions
 // These persist remain outside of battle and after switching out
-#define STATUS1_NONE             0
-#define STATUS1_SLEEP            (1 << 0 | 1 << 1 | 1 << 2)
-#define STATUS1_SLEEP_TURN(num)  ((num) << 0)
-#define STATUS1_POISON           (1 << 3)
-#define STATUS1_BURN             (1 << 4)
-#define STATUS1_FREEZE           (1 << 5)
-#define STATUS1_PARALYSIS        (1 << 6)
-#define STATUS1_TOXIC_POISON     (1 << 7)
-#define STATUS1_TOXIC_COUNTER    (1 << 8 | 1 << 9 | 1 << 10 | 1 << 11)
-#define STATUS1_TOXIC_TURN(num)  ((num) << 8)
-#define STATUS1_PSN_ANY          (STATUS1_POISON | STATUS1_TOXIC_POISON)
-#define STATUS1_ANY              (STATUS1_SLEEP | STATUS1_BURN | STATUS1_FREEZE | STATUS1_PARALYSIS | STATUS1_PSN_ANY)
+#define STATUS1_NONE         0
+#define STATUS1_SLEEP        1
+#define STATUS1_POISON       2
+#define STATUS1_TOXIC_POISON 3
+#define STATUS1_BURN         4
+#define STATUS1_FREEZE       5
+#define STATUS1_PARALYSIS    6
+#define STATUS1_ANY          0xFF // For item use effects
 
 // Volatile status ailments
 // These are removed after exiting the battle or switching out
@@ -107,8 +107,9 @@
 #define STATUS2_LOCK_CONFUSE             (1 << 9 | 1 << 10)
 #define STATUS2_LOCK_CONFUSE_TURN(num)   ((num) << 9)
 #define STATUS2_MULTIPLETURNS            (1 << 11)
-#define STATUS2_WRAPPED                  (1 << 12 | 1 << 13 | 1 << 14)
-#define STATUS2_WRAPPED_TURN(num)        ((num) << 12)
+#define STATUS2_DEFENSE_CURL             (1 << 12)
+#define STATUS2_TORMENT                  (1 << 13)
+#define STATUS2_MIRACLE_EYE              (1 << 14)
 #define STATUS2_FOCUS_ENERGY             (1 << 15)
 #define STATUS2_TRANSFORMED              (1 << 16)
 #define STATUS2_INFATUATION              (1 << 17)
@@ -119,13 +120,11 @@
 #define STATUS2_NIGHTMARE                (1 << 22)
 #define STATUS2_CURSED                   (1 << 23)
 #define STATUS2_FORESIGHT                (1 << 24)
-#define STATUS2_DEFENSE_CURL             (1 << 25)
-#define STATUS2_TORMENT                  (1 << 26)
-#define STATUS2_MIRACLE_EYE              (1 << 27)
 
 // per-battler statuses
 // These are removed after exiting the battle or switching out
-#define STATUS3_LEECHSEED_BATTLER       (1 << 0 | 1 << 1)
+#define STATUS3_TELEKINESIS             (1 << 0)
+#define STATUS3_SKY_DROPPED             (1 << 1) // The battler that was held
 #define STATUS3_LEECHSEED               (1 << 2)
 #define STATUS3_ALWAYS_HITS             (1 << 3 | 1 << 4)
 #define STATUS3_ALWAYS_HITS_TURN(num)   (((num) << 3) & STATUS3_ALWAYS_HITS)
@@ -146,8 +145,6 @@
 #define STATUS3_HEAL_BLOCK              (1 << 19)
 #define STATUS3_GASTRO_ACID             (1 << 20)
 #define STATUS3_MAGNET_RISE             (1 << 21)
-#define STATUS3_TELEKINESIS             (1 << 22)
-#define STATUS3_SKY_DROPPED             (1 << 23) // The battler that was held
 #define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
 
 // Not really sure what a "hitmarker" is.
@@ -187,15 +184,22 @@
 #define SIDE_STATUS_MAT_BLOCK        (1 << 12)
 #define SIDE_STATUS_TAILWIND         (1 << 13)
 #define SIDE_STATUS_LUCKY_CHANT      (1 << 14)
+#define SIDE_STATUS_RAINBOW          (1 << 15)
 #define SIDE_STATUS_SCREENS_ANY      (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_AURORA_VEIL)
 #define SIDE_STATUS_HAZARDS_ANY      (SIDE_STATUS_SPIKES | SIDE_STATUS_TOXIC_SPIKES | SIDE_STATUS_STEALTH_ROCK | SIDE_STATUS_STICKY_WEB)
 #define SIDE_STATUS_PROTECTIONS_ANY  (SIDE_STATUS_WIDE_GUARD | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK)
 
 // Field statuses
-#define STATUS_FIELD_WATERSPORT (1 << 0)
-#define STATUS_FIELD_MUDSPORT   (1 << 1)
-#define STATUS_FIELD_GRAVITY    (1 << 2)
-#define STATUS_FIELD_MAGIC_ROOM (1 << 3)
+#define STATUS_FIELD_WATERSPORT       (1 << 0)
+#define STATUS_FIELD_MUDSPORT         (1 << 1)
+#define STATUS_FIELD_GRAVITY          (1 << 2)
+#define STATUS_FIELD_MAGIC_ROOM       (1 << 3)
+#define STATUS_FIELD_TRICK_ROOM       (1 << 4)
+#define STATUS_FIELD_GRASSY_TERRAIN   (1 << 5)
+#define STATUS_FIELD_MISTY_TERRAIN    (1 << 6)
+#define STATUS_FIELD_ELECTRIC_TERRAIN (1 << 7)
+#define STATUS_FIELD_PSYCHIC_TERRAIN  (1 << 8)
+#define STATUS_FIELD_TERRAINS_ANY     (STATUS_FIELD_GRASSY_TERRAIN | STATUS_FIELD_MISTY_TERRAIN | STATUS_FIELD_ELECTRIC_TERRAIN | STATUS_FIELD_PSYCHIC_TERRAIN)
 
 // Flags describing move's result
 #define MOVE_RESULT_MISSED             (1 << 0)
@@ -209,38 +213,32 @@
 #define MOVE_RESULT_FOE_STURDIED       (1 << 8)
 #define MOVE_RESULT_NO_EFFECT          (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED)
 
-// Battle Weather flags
-#define WEATHER_RAIN_TEMPORARY      (1 << 0)
-#define WEATHER_RAIN_PERMANENT      (1 << 1)
-#define WEATHER_RAIN_PRIMAL         (1 << 2)
-#define WEATHER_RAIN_ANY            (WEATHER_RAIN_TEMPORARY | WEATHER_RAIN_PERMANENT | WEATHER_RAIN_PRIMAL)
-#define WEATHER_SANDSTORM_TEMPORARY (1 << 3)
-#define WEATHER_SANDSTORM_PERMANENT (1 << 4)
-#define WEATHER_SANDSTORM_ANY       (WEATHER_SANDSTORM_TEMPORARY | WEATHER_SANDSTORM_PERMANENT)
-#define WEATHER_SUN_TEMPORARY       (1 << 5)
-#define WEATHER_SUN_PERMANENT       (1 << 6)
-#define WEATHER_SUN_PRIMAL          (1 << 7)
-#define WEATHER_SUN_ANY             (WEATHER_SUN_TEMPORARY | WEATHER_SUN_PERMANENT | WEATHER_SUN_PRIMAL)
-#define WEATHER_HAIL_TEMPORARY      (1 << 8)
-#define WEATHER_HAIL_PERMANENT      (1 << 9)
-#define WEATHER_HAIL_ANY            (WEATHER_HAIL_TEMPORARY | WEATHER_HAIL_PERMANENT)
-#define WEATHER_STRONG_WINDS        (1 << 10)
-#define WEATHER_FOG_TEMPORARY       (1 << 11)
-#define WEATHER_FOG_PERMANENT       (1 << 12)
-#define WEATHER_FOG_ANY             (WEATHER_FOG_TEMPORARY | WEATHER_FOG_PERMANENT)
-#define WEATHER_ANY                 (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_SUN_ANY | WEATHER_HAIL_ANY | WEATHER_FOG_ANY | WEATHER_STRONG_WINDS)
-#define WEATHER_PRIMAL_ANY          (WEATHER_RAIN_PRIMAL | WEATHER_SUN_PRIMAL | WEATHER_STRONG_WINDS)
-
 // Weather as enum
-#define ENUM_WEATHER_NONE         0
-#define ENUM_WEATHER_RAIN         1
+#define ENUM_WEATHER_RAIN         0
+#define ENUM_WEATHER_RAIN_PRIMAL  1
 #define ENUM_WEATHER_SUN          2
-#define ENUM_WEATHER_SANDSTORM    3
-#define ENUM_WEATHER_HAIL         4
-#define ENUM_WEATHER_FOG          5
-#define ENUM_WEATHER_STRONG_WINDS 6
-#define ENUM_WEATHER_RAIN_PRIMAL  7
-#define ENUM_WEATHER_SUN_PRIMAL   8
+#define ENUM_WEATHER_SUN_PRIMAL   3
+#define ENUM_WEATHER_SANDSTORM    4
+#define ENUM_WEATHER_HAIL         5
+#define ENUM_WEATHER_FOG          6
+#define ENUM_WEATHER_STRONG_WINDS 7
+#define ENUM_WEATHER_COUNT        8
+
+// Battle Weather flags
+#define B_WEATHER_NONE         0
+#define B_WEATHER_RAIN_NORMAL  (1 << ENUM_WEATHER_RAIN)
+#define B_WEATHER_RAIN_PRIMAL  (1 << ENUM_WEATHER_RAIN_PRIMAL)
+#define B_WEATHER_RAIN_ANY     (B_WEATHER_RAIN_NORMAL | B_WEATHER_RAIN_PRIMAL)
+#define B_WEATHER_SUN_NORMAL   (1 << ENUM_WEATHER_SUN)
+#define B_WEATHER_SUN_PRIMAL   (1 << ENUM_WEATHER_SUN_PRIMAL)
+#define B_WEATHER_SUN_ANY      (B_WEATHER_SUN_NORMAL | B_WEATHER_SUN_PRIMAL)
+#define B_WEATHER_SANDSTORM    (1 << ENUM_WEATHER_SANDSTORM)
+#define B_WEATHER_HAIL         (1 << ENUM_WEATHER_HAIL)
+#define B_WEATHER_FOG          (1 << ENUM_WEATHER_FOG)
+#define B_WEATHER_STRONG_WINDS (1 << ENUM_WEATHER_STRONG_WINDS)
+
+#define B_WEATHER_ANY          (B_WEATHER_RAIN_ANY | B_WEATHER_SUN_ANY | B_WEATHER_SANDSTORM | B_WEATHER_HAIL | B_WEATHER_FOG | B_WEATHER_STRONG_WINDS)
+#define B_WEATHER_PRIMAL_ANY   (B_WEATHER_RAIN_PRIMAL | B_WEATHER_SUN_PRIMAL | B_WEATHER_STRONG_WINDS)
 
 // Battle terrain defines for gBattleTerrain.
 #define BATTLE_TERRAIN_GRASS        0
@@ -256,13 +254,15 @@
 #define BATTLE_TERRAIN_LINK         10
 #define BATTLE_TERRAIN_GYM          11
 #define BATTLE_TERRAIN_LEADER       12
-#define BATTLE_TERRAIN_INDOOR_2     13
-#define BATTLE_TERRAIN_INDOOR_1     14
+#define BATTLE_TERRAIN_INDOOR_1     13
+#define BATTLE_TERRAIN_INDOOR_2     14
 #define BATTLE_TERRAIN_LORELEI      15
 #define BATTLE_TERRAIN_BRUNO        16
 #define BATTLE_TERRAIN_AGATHA       17
 #define BATTLE_TERRAIN_LANCE        18
 #define BATTLE_TERRAIN_CHAMPION     19
+
+#define BATTLE_TERRAINS_COUNT       20
 
 // Return value for IsRunningFromBattleImpossible. 
 #define BATTLE_RUN_SUCCESS        0
@@ -281,10 +281,6 @@
 #define TRAP_ID_WHIRLPOOL 3
 #define TRAP_ID_CLAMP     4
 #define TRAP_ID_SAND_TOMB 5
-
-// For future attack moves, for the string and end turn animation.
-#define FUTURE_ATTACK_ID_FUTURE_SIGHT 0
-#define FUTURE_ATTACK_ID_DOOM_DESIRE  1
 
 // Window Ids for sTextOnWindowsInfo_Normal
 #define B_WIN_MSG                 0

@@ -147,7 +147,7 @@ static void SafariHandleStatusIconUpdate(u8 battlerId)
 
 void SafariHandleFaintingCry(u8 battlerId)
 {
-    PlayCry1(GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES), 25);
+    PlayCry_Normal(GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES), 25);
     BattleControllerComplete(battlerId);
 }
 

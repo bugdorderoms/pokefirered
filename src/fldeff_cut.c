@@ -15,6 +15,7 @@
 #include "party_menu.h"
 #include "script.h"
 #include "trig.h"
+#include "constants/abilities.h"
 #include "constants/event_object_movement.h"
 #include "constants/event_objects.h"
 #include "constants/songs.h"
@@ -344,11 +345,11 @@ u8 CreateFieldEffectShowMon(void)
 
 static void Task_FieldEffectShowMon_Init(u8 taskId)
 {
-    u8 mapObjId;
+    u8 mapObjId = gPlayerAvatar.objectEventId;
 
     ScriptContext2_Enable();
     gPlayerAvatar.preventStep = TRUE;
-    mapObjId = gPlayerAvatar.objectEventId;
+	
     if (!ObjectEventIsMovementOverridden(&gObjectEvents[mapObjId]) || ObjectEventClearHeldMovementIfFinished(&gObjectEvents[mapObjId]))
     {
         if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
@@ -368,7 +369,7 @@ static void Task_FieldEffectShowMon_Init(u8 taskId)
 
 static void Task_FieldEffectShowMon_WaitPlayerAnim(u8 taskId)
 {
-    if (ObjectEventCheckHeldMovementStatus(&gObjectEvents[gPlayerAvatar.objectEventId]) == TRUE)
+    if (ObjectEventCheckHeldMovementStatus(&gObjectEvents[gPlayerAvatar.objectEventId]))
     {
         FieldEffectStart(FLDEFF_FIELD_MOVE_SHOW_MON_INIT);
         gTasks[taskId].func = Task_FieldEffectShowMon_WaitFldeff;

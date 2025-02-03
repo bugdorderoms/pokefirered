@@ -76,7 +76,7 @@
 #define ANIM_TAG_BROWN_TRIANGLE             (ANIM_SPRITES_START + 66) // unused
 #define ANIM_TAG_SLEEP_POWDER               (ANIM_SPRITES_START + 67)
 #define ANIM_TAG_STUN_SPORE                 (ANIM_SPRITES_START + 68)
-#define ANIM_TAG_POWDER                     (ANIM_SPRITES_START + 69) // unused
+#define ANIM_TAG_ANCHOR                     (ANIM_SPRITES_START + 69)
 #define ANIM_TAG_SPARKLE_3                  (ANIM_SPRITES_START + 70)
 #define ANIM_TAG_SPARKLE_4                  (ANIM_SPRITES_START + 71)
 #define ANIM_TAG_MUSIC_NOTES                (ANIM_SPRITES_START + 72)
@@ -99,7 +99,7 @@
 #define ANIM_TAG_VINE                       (ANIM_SPRITES_START + 89) // unused
 #define ANIM_TAG_SWORD_2                    (ANIM_SPRITES_START + 90) // unused
 #define ANIM_TAG_CLAPPING                   (ANIM_SPRITES_START + 91) // unused
-#define ANIM_TAG_RED_TUBE                   (ANIM_SPRITES_START + 92) // unused
+#define ANIM_TAG_RED_TUBE                   (ANIM_SPRITES_START + 92)
 #define ANIM_TAG_AMNESIA                    (ANIM_SPRITES_START + 93)
 #define ANIM_TAG_STRING_2                   (ANIM_SPRITES_START + 94) // unused
 #define ANIM_TAG_PENCIL_2                   (ANIM_SPRITES_START + 95) // unused
@@ -266,7 +266,7 @@
 #define ANIM_TAG_METEOR                     (ANIM_SPRITES_START + 256)
 #define ANIM_TAG_FLAT_ROCK                  (ANIM_SPRITES_START + 257)
 #define ANIM_TAG_MAGNIFYING_GLASS           (ANIM_SPRITES_START + 258)
-#define ANIM_TAG_BROWN_ORB                  (ANIM_SPRITES_START + 259)
+#define ANIM_TAG_BROWN_ORB                  (ANIM_SPRITES_START + 259) // unused
 #define ANIM_TAG_METAL_SOUND_WAVES          (ANIM_SPRITES_START + 260)
 #define ANIM_TAG_FLYING_DIRT                (ANIM_SPRITES_START + 261)
 #define ANIM_TAG_ICICLE_SPEAR               (ANIM_SPRITES_START + 262)
@@ -300,13 +300,37 @@
 #define ANIM_TAG_ABILITY_POP_UP2            (ANIM_SPRITES_START + 290)
 #define ANIM_TAG_ABILITY_POP_UP3            (ANIM_SPRITES_START + 291)
 #define ANIM_TAG_ABILITY_POP_UP4            (ANIM_SPRITES_START + 292)
-#define ANIM_TAG_KARATE_HAND                (ANIM_SPRITES_START + 293)
+#define ANIM_TAG_QUICK_GUARD                (ANIM_SPRITES_START + 293)
+#define ANIM_TAG_DRILL                      (ANIM_SPRITES_START + 294)
+#define ANIM_TAG_SMALL_ROCK                 (ANIM_SPRITES_START + 295)
+#define ANIM_TAG_SHELL                      (ANIM_SPRITES_START + 296)
+#define ANIM_TAG_MUSHROOM                   (ANIM_SPRITES_START + 297)
+#define ANIM_TAG_ITEM_BAG_2                 (ANIM_SPRITES_START + 298) // Same as ANIM_TAG_ITEM_BAG, but without changing to an item icon sprite
+#define ANIM_TAG_AURA_SPHERE                (ANIM_SPRITES_START + 299)
+#define ANIM_TAG_POLTERGEIST                (ANIM_SPRITES_START + 300)
+#define ANIM_TAG_ACUPRESSURE_FINGER         (ANIM_SPRITES_START + 301)
+#define ANIM_TAG_VERTICAL_HEX               (ANIM_SPRITES_START + 302)
+#define ANIM_TAG_ZYGARDE_HEXES              (ANIM_SPRITES_START + 303)
+#define ANIM_TAG_RED_CIRCLE_OF_LIGHT        (ANIM_SPRITES_START + 304)
+#define ANIM_TAG_POISON_JAB                 (ANIM_SPRITES_START + 305)
+#define ANIM_TAG_ASSURANCE_HAND             (ANIM_SPRITES_START + 306)
+#define ANIM_TAG_CHAIN_LINK                 (ANIM_SPRITES_START + 307)
+#define ANIM_TAG_POWER_TRICK                (ANIM_SPRITES_START + 308)
+#define ANIM_TAG_MEGA_EVOLUTION_STONE       (ANIM_SPRITES_START + 309)
+#define ANIM_TAG_MEGA_EVOLUTION_ORBS        (ANIM_SPRITES_START + 310)
+#define ANIM_TAG_MEGA_SYMBOL                (ANIM_SPRITES_START + 311)
+#define ANIM_TAG_SMALL_FISH                 (ANIM_SPRITES_START + 312)
+#define ANIM_TAG_PUNISHMENT_BLADES          (ANIM_SPRITES_START + 313)
 
 // battlers
 #define ANIM_ATTACKER    0
 #define ANIM_TARGET      1
 #define ANIM_ATK_PARTNER 2
 #define ANIM_DEF_PARTNER 3
+
+// For the monbg* commands
+#define ANIM_ATK_SIDE    ANIM_ATK_PARTNER
+#define ANIM_DEF_SIDE    ANIM_DEF_PARTNER
 
 // stereo panning constants [0-255]
 //
@@ -319,6 +343,8 @@
 //         .  .
 //          127
 //
+#define SOUND_PAN_ABOVE     0
+#define SOUND_PAN_BELLOW    127
 #define SOUND_PAN_ATTACKER -64
 #define SOUND_PAN_TARGET    63
 
@@ -344,44 +370,64 @@
 #define BG_BUG_PLAYER 			18
 #define BG_SOLARBEAM_OPPONENT 	19
 #define BG_SOLARBEAM_PLAYER 	20
+#define BG_WATER                21
+#define BG_HYDRO_CANNON         22
+#define BG_HYPER_BEAM           23
+#define BG_WATERFALL            24
+#define BG_NIGHTMARE            25
+#define BG_LEAF_STORM           26
+#define BG_GRASSY_TERRAIN       27
+#define BG_MISTY_TERRAIN        28
+#define BG_ELECTRIC_TERRAIN     29
+#define BG_PSYCHIC_TERRAIN      30
 
 // table ids for general animations
-#define B_ANIM_FORM_CHANGE              0x0
-#define B_ANIM_STATS_CHANGE             0x1
-#define B_ANIM_SUBSTITUTE_FADE          0x2
-#define B_ANIM_SUBSTITUTE_APPEAR        0x3
-#define B_ANIM_BAIT_THROW               0x4
-#define B_ANIM_ITEM_KNOCKOFF            0x5
-#define B_ANIM_TURN_TRAP                0x6
-#define B_ANIM_ITEM_EFFECT              0x7
-#define B_ANIM_SMOKEBALL_ESCAPE         0x8
-#define B_ANIM_HANGED_ON                0x9
-#define B_ANIM_RAIN_CONTINUES           0xA
-#define B_ANIM_SUN_CONTINUES            0xB
-#define B_ANIM_SANDSTORM_CONTINUES      0xC
-#define B_ANIM_HAIL_CONTINUES           0xD
-#define B_ANIM_LEECH_SEED_DRAIN         0xE
-#define B_ANIM_MON_HIT                  0xF
-#define B_ANIM_ITEM_STEAL               0x10
-#define B_ANIM_SNATCH_MOVE              0x11
-#define B_ANIM_FUTURE_SIGHT_HIT         0x12
-#define B_ANIM_DOOM_DESIRE_HIT          0x13
-#define B_ANIM_FOCUS_PUNCH_SETUP        0x14
-#define B_ANIM_INGRAIN_HEAL             0x15
-#define B_ANIM_WISH_HEAL                0x16
-#define B_ANIM_MON_SCARED               0x17
-#define B_ANIM_GHOST_GET_OUT            0x18
-#define B_ANIM_SILPH_SCOPED             0x19
-#define B_ANIM_ROCK_THROW               0x1A
-#define B_ANIM_SAFARI_REACTION          0x1B
-#define B_ANIM_LOAD_ABILITY_POP_UP      0x1C
-#define B_ANIM_REMOVE_ABILITY_POP_UP    0x1D
-#define B_ANIM_ILLUSION_OFF             0x1E
-#define B_ANIM_FOG_CONTINUES            0x1F
-#define B_ANIM_SLIDE_OUT_OFFSCREEN      0x20
-#define B_ANIM_ITEM_THROW               0x21
-#define B_ANIM_STRONG_WINDS_CONTINUE    0x22
-#define B_ANIM_COMMANDER                0x23
+#define B_ANIM_FORM_CHANGE           0x0
+#define B_ANIM_STATS_CHANGE          0x1
+#define B_ANIM_SUBSTITUTE_FADE       0x2
+#define B_ANIM_SUBSTITUTE_APPEAR     0x3
+#define B_ANIM_BAIT_THROW            0x4
+#define B_ANIM_ITEM_KNOCKOFF         0x5
+#define B_ANIM_TURN_TRAP             0x6
+#define B_ANIM_ITEM_EFFECT           0x7
+#define B_ANIM_SMOKEBALL_ESCAPE      0x8
+#define B_ANIM_HANGED_ON             0x9
+#define B_ANIM_RAIN_CONTINUES        0xA
+#define B_ANIM_SUN_CONTINUES         0xB
+#define B_ANIM_SANDSTORM_CONTINUES   0xC
+#define B_ANIM_HAIL_CONTINUES        0xD
+#define B_ANIM_LEECH_SEED_DRAIN      0xE
+#define B_ANIM_MON_HIT               0xF
+#define B_ANIM_ITEM_STEAL            0x10
+#define B_ANIM_SNATCH_MOVE           0x11
+#define B_ANIM_FUTURE_SIGHT_HIT      0x12
+#define B_ANIM_DOOM_DESIRE_HIT       0x13
+#define B_ANIM_FOCUS_PUNCH_SETUP     0x14
+#define B_ANIM_INGRAIN_HEAL          0x15
+#define B_ANIM_WISH_HEAL             0x16
+#define B_ANIM_MON_SCARED            0x17
+#define B_ANIM_GHOST_GET_OUT         0x18
+#define B_ANIM_SILPH_SCOPED          0x19
+#define B_ANIM_ROCK_THROW            0x1A
+#define B_ANIM_SAFARI_REACTION       0x1B
+#define B_ANIM_LOAD_ABILITY_POP_UP   0x1C
+#define B_ANIM_REMOVE_ABILITY_POP_UP 0x1D
+#define B_ANIM_ILLUSION_OFF          0x1E
+#define B_ANIM_FOG_CONTINUES         0x1F
+#define B_ANIM_SLIDE_OUT_OFFSCREEN   0x20
+#define B_ANIM_ITEM_THROW            0x21
+#define B_ANIM_STRONG_WINDS_CONTINUE 0x22
+#define B_ANIM_COMMANDER             0x23
+#define B_ANIM_UPDATE_ABILITY_POP_UP 0x24
+#define B_ANIM_HEALING_WISH_HEAL     0x25
+#define B_ANIM_SET_TOXIC_SPIKES      0x26
+#define B_ANIM_MEGA_EVOLUTION        0x27
+#define B_ANIM_BATTLE_BOND           0x28
+#define B_ANIM_ZYGARDE_CELL_SWIRL    0x29
+#define B_ANIM_SCHOOLING             0x2A
+#define B_ANIM_SPIT_OUT_PREY         0x2B
+#define B_ANIM_SILENT_FORM_CHANGE    0x2C // Same as B_ANIM_FORM_CHANGE, but with no sound effects
+#define B_ANIM_TOTEM_BOOST           0x2D
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0
@@ -425,8 +471,19 @@
 // It's redundant with F_PAL_BATTLERS, because they're only ever used together to refer to all the battlers at once.
 #define F_PAL_BATTLERS_2  (1 << 7 | 1 << 8 | 1 << 9 | 1 << 10)
 
+// Flags given to AnimTask_BlendExcept to indicate which palettes not consider.
+#define F_PAL_NO_EXCEPTIONS              0
+#define F_PAL_EXCEPT_BG                  (1 << 0)
+#define F_PAL_EXCEPT_ATTACKER            (1 << 1)
+#define F_PAL_EXCEPT_TARGET              (1 << 2)
+#define F_PAL_EXCEPT_ATK_PARTNER         (1 << 3)
+#define F_PAL_EXCEPT_DEF_PARTNER         (1 << 4)
+#define F_PAL_EXCEPT_ATTACKER_AND_TARGET (F_PAL_EXCEPT_ATTACKER | F_PAL_EXCEPT_TARGET)
+#define F_PAL_EXCEPT_ATK_SIDE            (F_PAL_EXCEPT_ATTACKER | F_PAL_EXCEPT_ATK_PARTNER)
+#define F_PAL_EXCEPT_DEF_SIDE            (F_PAL_EXCEPT_TARGET | F_PAL_EXCEPT_DEF_PARTNER)
+
 // Flags for AnimTask_TransformMon and HandleSpeciesGfxDataChange
-#define SPECIESGFX_FLAG_IS_GHOST             (1 << 0)
-#define SPECIESGFX_FLAG_NO_TRANSFORM_PALFADE (1 << 1)
+#define SPECIESGFX_FLAG_IS_GHOST              (1 << 0)
+#define SPECIESGFX_FLAG_NO_TRANSFORM_PAL_FADE (1 << 1)
 
 #endif // GUARD_CONSTANTS_BATTLE_ANIM_H

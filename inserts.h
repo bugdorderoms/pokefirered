@@ -4,6 +4,9 @@
 // To do so, go to "src/battle_script_commands.c" and edit the levels for each badge in "sExpBlockLevels".
 #define EXP_BLOCK TRUE
 
+// If this setting is enabled, the player can't bypass the current level cap using an EXP item like Rare Candy or any Exp Candy.
+#define EXP_ITEM_LEVEL_CAP TRUE
+
 // If this setting is enabled, Pokémons will not faint due to poison while in the overworld.
 #define POISON_SURVIVAL TRUE
 
@@ -31,7 +34,7 @@
 // If this setting is enabled, Pichu eggs will hatch with the Volt Tackle move.
 #define VOLT_TACKLE_BY_BREEDING TRUE
 
-// If this setting is enabled, some species's eggs will change depending if it's holding a specific incense item.
+// If this setting is enabled, some species's eggs will change depending if it's parents are holding a specific incense item.
 #define INCENSE_ITEM_BREEDING TRUE
 
 // If this setting is enabled, eggs will inherit any TM the father knows like prior to Pokémon X and Y.
@@ -62,6 +65,13 @@
 // then a wild double battle will never occur unless it is called by a scripted wild battle.
 #define DOUBLE_WILD_BATTLE_CHANCE 5
 
+// This is the percentage chance that a wild battle will become a sos battle. If the value is set to 0,
+// then a sos battle will never occur unless due to a Totem Pokémon.
+#define SOS_WILD_BATTLE_CHANCE 30
+
+// If this setting is enabled, when a Pokémon calls for an ally, it will call for a species from the current map it is in if there is no ally set in its data.
+#define RANDOM_SOS_CALLS FALSE
+
 // If this setting is enabled, in a double wild battle where two natural enemies are present, the opposing Pokémon will attack each other
 // instead of the player's Pokémon. To do so, go to "src/battle_controller_opponent.c" and edit the natural enemies in "sNaturalEnemySpecies".
 #define DOUBLE_WILD_ATTACK_NATURAL_ENEMY TRUE
@@ -88,6 +98,13 @@
 // If this setting is enabled, the color of a move's type name will change based on its effectiveness in battle.
 // To do so, go to "src/battle_controller_player.c" and edit each effectiveness's color in "sEffectivenessColours".
 #define EFFECTIVENESS_ON_MENU TRUE
+
+// If this setting is enabled, the real move type will be displayed on the pokemon summary screen.
+// This only affects moves that displays it in the original games, like Hidden Power and Ivy cudgel.
+#define SUMMARY_REAL_MOVE_TYPE TRUE
+
+// If this setting is enabled, the real move type will be displayed on the battle menu.
+#define BATTLE_MENU_REAL_MOVE_TYPE TRUE
 
 // If this setting is enabled, the stats in the summary screen will be colored based on the Pokémon's nature.
 #define NATURE_COLOURS TRUE
@@ -144,6 +161,34 @@
 // Otherwise, this requirement will be ignored if set.
 #define MOON_PHASE_EVO_REQUIREMENT TRUE
 
-// This setting defines which Generation the TMs will be associated with. For example, GEN_9 will generate the TM items of Generation III,
+// This setting defines which Generation the TMs will be associated with. For example, GEN_3 will generate the TM items of Generation III,
 // GEN_7 the TMs of Generation VII, and so on.
 #define TMS_GEN GEN_9
+
+// Value of stamina the Tauros charge has, at each step this counter will be decreased if pressing the B button or increased if not pressing it.
+// When it reachs 0 the B button will be unable to be used until it takes the half amount of steps to recharge. If 0 it will can be used forever.
+#define TAUROS_CHARGE_STAMINA 200
+
+// If this setting is enabled, when you uses item steal effects in wild battles the wild pokémon's held item will be added to your bag. Like in Generation IX.
+// If the bag is full then the item will go to be held normaly.
+#define STEAL_WILD_ITEM_TO_BAG TRUE
+
+// If this setting is enabled, when you collect an item with Pickup it will be added to your bag.
+// If the bag is full then the item will go to be held normaly.
+#define PICKUP_ITEM_TO_BAG TRUE
+
+// If this setting is enabled, the battle RNG states could not be manipulated using the game's save state, similar to the CFRU.
+#define NO_SAVE_STATE_RNG_MANIPULATION TRUE
+
+// If this setting is enabled, when you select the last Pokémon in the summary screen and press down, it will return to the first Pokémon,
+// or when on the first Pokémon and you press up, it will go to the last.
+#define CIRCULAR_SUMMARY_SCREEN TRUE
+
+// If this setting is enabled, when you press SELECT on the summary screen, an battle preview of the Pokémon's sprites will be displayed.
+#define POKEMON_SPRITE_VISUALIZER TRUE
+
+// If this setting is enabled, it will draw the current trainer's overworld sprite on the main menu window that matches its gender.
+#define TRAINER_ICON_ON_MAIN_MENU FALSE
+
+// If this setting is enabled, catching a wild Pokémon will give you experience points.
+#define EXP_ON_CAUGHT TRUE

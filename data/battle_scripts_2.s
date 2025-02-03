@@ -1,6 +1,5 @@
 #include "constants/moves.h"
 #include "constants/battle.h"
-#include "constants/battle_move_effects.h"
 #include "constants/battle_script_commands.h"
 #include "constants/battle_anim.h"
 #include "constants/moves.h"
@@ -27,6 +26,8 @@ gBattlescriptsForUsingItem::
     .4byte BattleScript_ItemRestorePP                @ EFFECT_ITEM_RESTORE_PP
     .4byte BattleScript_ItemIncreaseAllStats         @ EFFECT_ITEM_INCREASE_ALL_STATS
 	.4byte BattleScript_UsePokeFlute                 @ EFFECT_ITEM_POKE_FLUTE
+	.4byte BattleScript_ItemRestoreHP                @ EFFECT_ITEM_REVIVE
+	.4byte BattleScript_ItemDoubleSosCallRate        @ EFFECT_ITEM_ADRENALINE_ORB
 
 @@@@@@@@@@@@@@@@@@@@
 @ ITEM USE SCRIPTS @
@@ -37,11 +38,15 @@ BattleScript_ItemUseMessageEnd::
 BattleScript_ItemEnd::
     end
 
-BattleScript_UseItemMessage::
-    printstring STRINGID_EMPTYSTRING
+UsedItemString::
+	printstring STRINGID_EMPTYSTRING
     pause B_WAIT_TIME_MED
 	printstring STRINGID_TRAINERUSEDITEM
     waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_UseItemMessage::
+	call UsedItemString
 	jumpifabsent BS_SCRIPTING, BattleScript_UseItemMessageReturn
 	playanimation BS_SCRIPTING, B_ANIM_ITEM_THROW
 	waitstate
@@ -169,12 +174,24 @@ BattleScript_PokeFluteWakeUp::
 BattleScript_PokeFluteEnd::
 	finishaction
 
+BattleScript_ItemDoubleSosCallRate::
+	call UsedItemString
+	trysetadrenalineorbeffect
+	printfromtable gAdrenalineOrbUsedStringIds
+	waitmessage B_WAIT_TIME_LONG
+	end
+
 @@@@@@@@@@@@@@@@@@@@@@
 @ BALL THROW SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SuccessBallThrow::
 	printstring STRINGID_GOTCHADEFCAUGHT
+	jumpifbyte CMP_EQUAL, sEXP_CATCH, FALSE, BattleScript_CaughtMonTrySetDexFlag
+	setbyte sGIVEEXP_STATE, 0
+	getexp BS_TARGET
+	sethword gBattle_BG2_X, 0
+BattleScript_CaughtMonTrySetDexFlag::
 	trysetcaughtmondexflags BattleScript_CaughtPokemonSkipNewDex
 	printstring STRINGID_DEFDATAADDEDTODEX
 	waitstate

@@ -41,6 +41,14 @@ struct BgCnt
 };
 typedef volatile struct BgCnt vBgCnt;
 
+struct PlttData
+{
+    u16 r:5; // red
+    u16 g:5; // green
+    u16 b:5; // blue
+    u16 unused_15:1;
+};
+
 struct OamData
 {
     /*0x00*/ u32 y:8;

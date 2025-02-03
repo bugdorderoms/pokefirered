@@ -900,7 +900,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_POTION] =
 	{
 		.name = _("Potion"),
-		.holdEffectParam = 20,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(20)),
 		.description = sItemDesc_Potion,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -915,6 +915,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ANTIDOTE] =
 	{
 		.name = _("Antidote"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_POISON)), // Both poisons
 		.description = sItemDesc_Antidote,
 		.price = 100,
 		.pocket = POCKET_ITEMS,
@@ -929,6 +930,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_BURN_HEAL] =
 	{
 		.name = _("Burn Heal"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_BURN)),
 		.description = sItemDesc_BurnHeal,
 		.price = 250,
 		.pocket = POCKET_ITEMS,
@@ -943,6 +945,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ICE_HEAL] =
 	{
 		.name = _("Ice Heal"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_FREEZE)),
 		.description = sItemDesc_IceHeal,
 		.price = 250,
 		.pocket = POCKET_ITEMS,
@@ -957,6 +960,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_AWAKENING] =
 	{
 		.name = _("Awakening"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_SLEEP)),
 		.description = sItemDesc_Awakening,
 		.price = 250,
 		.pocket = POCKET_ITEMS,
@@ -971,6 +975,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PARALYZE_HEAL] =
 	{
 		.name = _("Paralyze Heal"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_PARALYSIS)),
 		.description = sItemDesc_ParalyzeHeal,
 		.price = 200,
 		.pocket = POCKET_ITEMS,
@@ -985,7 +990,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_FULL_RESTORE] =
 	{
 		.name = _("Full Restore"),
-		.holdEffectParam = 255,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(), CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.description = sItemDesc_FullRestore,
 		.price = 3000,
 		.pocket = POCKET_ITEMS,
@@ -1000,7 +1005,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_MAX_POTION] =
 	{
 		.name = _("Max Potion"),
-		.holdEffectParam = 255,
+		.itemEffect = ITEM_EFFECT(HEAL_HP()),
 		.description = sItemDesc_MaxPotion,
 		.price = 2500,
 		.pocket = POCKET_ITEMS,
@@ -1015,7 +1020,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_HYPER_POTION] =
 	{
 		.name = _("Hyper Potion"),
-		.holdEffectParam = 120,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(120)),
 		.description = sItemDesc_HyperPotion,
 		.price = 1200,
 		.pocket = POCKET_ITEMS,
@@ -1030,7 +1035,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_SUPER_POTION] =
 	{
 		.name = _("Super Potion"),
-		.holdEffectParam = 60,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(60)),
 		.description = sItemDesc_SuperPotion,
 		.price = 700,
 		.pocket = POCKET_ITEMS,
@@ -1045,6 +1050,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_FULL_HEAL] =
 	{
 		.name = _("Full Heal"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.description = sItemDesc_FullHeal,
 		.price = 600,
 		.pocket = POCKET_ITEMS,
@@ -1059,14 +1065,14 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_REVIVE] =
 	{
 		.name = _("Revive"),
-		.holdEffectParam = 2, // 1/2 max HP
+		.itemEffect = ITEM_EFFECT(REVIVE(2)), // 1/2 max HP
 		.description = sItemDesc_Revive,
 		.price = 1500,
 		.pocket = POCKET_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
-		.battleUsage = EFFECT_ITEM_RESTORE_HP,
+		.battleUsage = EFFECT_ITEM_REVIVE,
 		.flingPower = 30,
 		.iconPic = sItemIcon_Revive,
 		.iconPalette = sItemIconPalette_Revive,
@@ -1074,14 +1080,14 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_MAX_REVIVE] =
 	{
 		.name = _("Max Revive"),
-		.holdEffectParam = 1, // 1/1 (full max HP)
+		.itemEffect = ITEM_EFFECT(REVIVE(1)), // 1/1 (full max HP)
 		.description = sItemDesc_MaxRevive,
 		.price = 4000,
 		.pocket = POCKET_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
-		.battleUsage = EFFECT_ITEM_RESTORE_HP,
+		.battleUsage = EFFECT_ITEM_REVIVE,
 		.flingPower = 30,
 		.iconPic = sItemIcon_MaxRevive,
 		.iconPalette = sItemIconPalette_Revive,
@@ -1089,7 +1095,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_FRESH_WATER] =
 	{
 		.name = _("Fresh Water"),
-		.holdEffectParam = 30,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(30)),
 		.description = sItemDesc_FreshWater,
 		.price = 200,
 		.pocket = POCKET_ITEMS,
@@ -1104,7 +1110,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_SODA_POP] =
 	{
 		.name = _("Soda Pop"),
-		.holdEffectParam = 50,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(50)),
 		.description = sItemDesc_SodaPop,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -1119,7 +1125,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_LEMONADE] =
 	{
 		.name = _("Lemonade"),
-		.holdEffectParam = 70,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(70)),
 		.description = sItemDesc_Lemonade,
 		.price = 350,
 		.pocket = POCKET_ITEMS,
@@ -1134,7 +1140,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_MOOMOO_MILK] =
 	{
 		.name = _("Moomoo Milk"),
-		.holdEffectParam = 100,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(100)),
 		.description = sItemDesc_MoomooMilk,
 		.price = 500,
 		.pocket = POCKET_ITEMS,
@@ -1149,7 +1155,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ENERGY_POWDER] =
 	{
 		.name = _("Energy Powder"),
-		.holdEffectParam = 60,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(60), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, -5, -5, -10)),
 		.description = sItemDesc_EnergyPowder,
 		.price = 500,
 		.pocket = POCKET_ITEMS,
@@ -1164,7 +1170,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ENERGY_ROOT] =
 	{
 		.name = _("Energy Root"),
-		.holdEffectParam = 120,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(120), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, -10, -10, -15)),
 		.description = sItemDesc_EnergyRoot,
 		.price = 800,
 		.pocket = POCKET_ITEMS,
@@ -1179,6 +1185,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_HEAL_POWDER] =
 	{
 		.name = _("Heal Powder"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, -5, -5, -10)),
 		.description = sItemDesc_HealPowder,
 		.price = 450,
 		.pocket = POCKET_ITEMS,
@@ -1193,14 +1200,14 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_REVIVAL_HERB] =
 	{
 		.name = _("Revival Herb"),
-		.holdEffectParam = 1, // 1/1 (full max HP)
+		.itemEffect = ITEM_EFFECT(REVIVE(1), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, -15, -15, -20)), // 1/1 (full max HP)
 		.description = sItemDesc_RevivalHerb,
 		.price = 2800,
 		.pocket = POCKET_ITEMS,
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_Medicine,
 		.usageType = ITEM_TYPE_HEALTH_RECOVERY,
-		.battleUsage = EFFECT_ITEM_RESTORE_HP,
+		.battleUsage = EFFECT_ITEM_REVIVE,
 		.flingPower = 30,
 		.iconPic = sItemIcon_RevivalHerb,
 		.iconPalette = sItemIconPalette_RevivalHerb,
@@ -1208,7 +1215,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ETHER] =
 	{
 		.name = _("Ether"),
-		.holdEffectParam = 10,
+		.itemEffect = ITEM_EFFECT(RESTORE_PP(10)),
 		.description = sItemDesc_Ether,
 		.price = 1200,
 		.pocket = POCKET_ITEMS,
@@ -1223,7 +1230,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_MAX_ETHER] =
 	{
 		.name = _("Max Ether"),
-		.holdEffectParam = 255,
+		.itemEffect = ITEM_EFFECT(RESTORE_PP(255)),
 		.description = sItemDesc_MaxEther,
 		.price = 2000,
 		.pocket = POCKET_ITEMS,
@@ -1238,7 +1245,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ELIXIR] =
 	{
 		.name = _("Elixir"),
-		.holdEffectParam = 10,
+		.itemEffect = ITEM_EFFECT(RESTORE_PP(10)),
 		.description = sItemDesc_Elixir,
 		.price = 3000,
 		.pocket = POCKET_ITEMS,
@@ -1253,7 +1260,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_MAX_ELIXIR] =
 	{
 		.name = _("Max Elixir"),
-		.holdEffectParam = 255,
+		.itemEffect = ITEM_EFFECT(RESTORE_PP(255)),
 		.description = sItemDesc_MaxElixir,
 		.price = 4500,
 		.pocket = POCKET_ITEMS,
@@ -1268,6 +1275,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_LAVA_COOKIE] =
 	{
 		.name = _("Lava Cookie"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.description = sItemDesc_LavaCookie,
 		.price = 200,
 		.pocket = POCKET_ITEMS,
@@ -1282,6 +1290,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_BLUE_FLUTE] =
 	{
 		.name = _("Blue Flute"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_SLEEP)),
 		.description = sItemDesc_BlueFlute,
 		.price = 100,
 		.pocket = POCKET_ITEMS,
@@ -1296,6 +1305,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_YELLOW_FLUTE] =
 	{
 		.name = _("Yellow Flute"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_NONE, STATUS2_CONFUSION)),
 		.description = sItemDesc_YellowFlute,
 		.price = 200,
 		.pocket = POCKET_ITEMS,
@@ -1310,6 +1320,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_RED_FLUTE] =
 	{
 		.name = _("Red Flute"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_NONE, STATUS2_INFATUATION)),
 		.description = sItemDesc_RedFlute,
 		.price = 300,
 		.pocket = POCKET_ITEMS,
@@ -1350,6 +1361,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_BERRY_JUICE] =
 	{
 		.name = _("Berry Juice"),
+		.itemEffect = ITEM_EFFECT(HEAL_HP(20)),
 		.holdEffect = HOLD_EFFECT_RESTORE_HP,
 		.holdEffectParam = 20,
 		.description = sItemDesc_BerryJuice,
@@ -1366,7 +1378,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_SACRED_ASH] =
 	{
 		.name = _("Sacred Ash"),
-		.holdEffectParam = 1, // 1/1 (full max HP)
+		.itemEffect = ITEM_EFFECT(REVIVE(1)), // 1/1 (full max HP)
 		.description = sItemDesc_SacredAsh,
 		.price = 200,
 		.pocket = POCKET_ITEMS,
@@ -1380,7 +1392,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_SWEET_HEART] =
 	{
 		.name = _("Sweet Heart"),
-		.holdEffectParam = 20,
+		.itemEffect = ITEM_EFFECT(HEAL_HP(20)),
 		.description = sItemDesc_SweetHeart,
 		.price = 100,
 		.pocket = POCKET_ITEMS,
@@ -1395,6 +1407,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_BIG_MALASADA] =
 	{
 		.name = _("Big Malasada"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.description = sItemDesc_BigMalasada,
 		.price = 350,
 		.pocket = POCKET_ITEMS,
@@ -1409,6 +1422,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_CASTELIACONE] =
 	{
 		.name = _("Casteliacone"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.description = sItemDesc_Casteliacone,
 		.price = 350,
 		.pocket = POCKET_ITEMS,
@@ -1423,6 +1437,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_LUMIOSE_GALETTE] =
 	{
 		.name = _("Miare Galette"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.description = sItemDesc_LumioseGalette,
 		.price = 350,
 		.pocket = POCKET_ITEMS,
@@ -1437,6 +1452,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_RAGE_CANDY_BAR] =
 	{
 		.name = _("RageCandyBar"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.description = sItemDesc_RageCandyBar,
 		.price = 350,
 		.pocket = POCKET_ITEMS,
@@ -1451,6 +1467,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_SHALOUR_SABLE] =
 	{
 		.name = _("Shalour Sable"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.description = sItemDesc_ShalourSable,
 		.price = 350,
 		.pocket = POCKET_ITEMS,
@@ -1465,6 +1482,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_OLD_GATEAU] =
 	{
 		.name = _("Old Gateau"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.description = sItemDesc_OldGateau,
 		.price = 350,
 		.pocket = POCKET_ITEMS,
@@ -1479,7 +1497,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_DYNAMAX_CANDY] =
 	{
 		.name = _("Dynamax Candy"),
-		.holdEffectParam = 1,
+		.itemEffect = ITEM_EFFECT(UP_DYNAMAX_LEVEL(1)),
 		.description = sItemDesc_DynamaxCandy,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -1519,6 +1537,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PEWTER_CRUNCHIES] =
 	{
 		.name = _("Pewter Crunch"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.description = sItemDesc_PewterCrunch,
 		.price = 350,
 		.pocket = POCKET_ITEMS,
@@ -1533,7 +1552,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_HP_UP] =
 	{
 		.name = _("HP Up"),
-		.holdEffectParam = STAT_HP,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_HP, 10), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 5, 3, 2)),
 		.description = sItemDesc_HPUp,
 		.price = 9800,
 		.pocket = POCKET_ITEMS,
@@ -1547,7 +1566,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PROTEIN] =
 	{
 		.name = _("Protein"),
-		.holdEffectParam = STAT_ATK,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_ATK, 10), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 5, 3, 2)),
 		.description = sItemDesc_Protein,
 		.price = 9800,
 		.pocket = POCKET_ITEMS,
@@ -1561,7 +1580,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_IRON] =
 	{
 		.name = _("Iron"),
-		.holdEffectParam = STAT_DEF,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_DEF, 10), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 5, 3, 2)),
 		.description = sItemDesc_Iron,
 		.price = 9800,
 		.pocket = POCKET_ITEMS,
@@ -1575,7 +1594,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_CARBOS] =
 	{
 		.name = _("Carbos"),
-		.holdEffectParam = STAT_SPEED,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_SPEED, 10), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 5, 3, 2)),
 		.description = sItemDesc_Carbos,
 		.price = 9800,
 		.pocket = POCKET_ITEMS,
@@ -1589,7 +1608,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_CALCIUM] =
 	{
 		.name = _("Calcium"),
-		.holdEffectParam = STAT_SPATK,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_SPATK, 10), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 5, 3, 2)),
 		.description = sItemDesc_Calcium,
 		.price = 9800,
 		.pocket = POCKET_ITEMS,
@@ -1603,7 +1622,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_RARE_CANDY] =
 	{
 		.name = _("Rare Candy"),
-		.holdEffectParam = 0, // Level up
+		.itemEffect = ITEM_EFFECT(GIVE_EXP(), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 5, 3, 2)), // Level up
 		.description = sItemDesc_RareCandy,
 		.price = 4800,
 		.pocket = POCKET_ITEMS,
@@ -1617,7 +1636,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PP_UP] =
 	{
 		.name = _("PP Up"),
-		.holdEffectParam = FALSE, // PP Up functionality
+		.itemEffect = ITEM_EFFECT(INCREASE_PP(ITEMEFFECT_PP_UP), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 5, 3, 2)),
 		.description = sItemDesc_PPUp,
 		.price = 9800,
 		.pocket = POCKET_ITEMS,
@@ -1631,7 +1650,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ZINC] =
 	{
 		.name = _("Zinc"),
-		.holdEffectParam = STAT_SPDEF,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_SPDEF, 10), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 5, 3, 2)),
 		.description = sItemDesc_Zinc,
 		.price = 9800,
 		.pocket = POCKET_ITEMS,
@@ -1645,7 +1664,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PP_MAX] =
 	{
 		.name = _("PP Max"),
-		.holdEffectParam = TRUE, // PP Max functionality
+		.itemEffect = ITEM_EFFECT(INCREASE_PP(ITEMEFFECT_PP_MAX), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 5, 3, 2)),
 		.description = sItemDesc_PPMax,
 		.price = 9800,
 		.pocket = POCKET_ITEMS,
@@ -1659,6 +1678,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_MAX_MUSHROOMS] =
 	{
 		.name = _("Max Mushrooms"),
+		.itemEffect = ITEM_EFFECT(GIGANTAMAX_FACTOR_SWITCH),
 		.description = sItemDesc_MaxMushrooms,
 		.price = 8000,
 		.pocket = POCKET_ITEMS,
@@ -2170,7 +2190,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_HEALTH_WING] =
 	{
 		.name = _("Health Wing"),
-		.holdEffectParam = STAT_HP,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_HP, 1), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 3, 2, 1)),
 		.description = sItemDesc_HealthWing,
 		.price = 3000,
 		.pocket = POCKET_ITEMS,
@@ -2184,7 +2204,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_MUSCLE_WING] =
 	{
 		.name = _("Muscle Wing"),
-		.holdEffectParam = STAT_ATK,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_ATK, 1), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 3, 2, 1)),
 		.description = sItemDesc_MuscleWing,
 		.price = 3000,
 		.pocket = POCKET_ITEMS,
@@ -2198,7 +2218,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_RESIST_WING] =
 	{
 		.name = _("Resist Wing"),
-		.holdEffectParam = STAT_DEF,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_DEF, 1), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 3, 2, 1)),
 		.description = sItemDesc_ResistWing,
 		.price = 3000,
 		.pocket = POCKET_ITEMS,
@@ -2212,7 +2232,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_GENIUS_WING] =
 	{
 		.name = _("Genius Wing"),
-		.holdEffectParam = STAT_SPATK,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_SPATK, 1), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 3, 2, 1)),
 		.description = sItemDesc_GeniusWing,
 		.price = 3000,
 		.pocket = POCKET_ITEMS,
@@ -2226,7 +2246,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_CLEVER_WING] =
 	{
 		.name = _("Clever Wing"),
-		.holdEffectParam = STAT_SPDEF,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_SPDEF, 1), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 3, 2, 1)),
 		.description = sItemDesc_CleverWing,
 		.price = 3000,
 		.pocket = POCKET_ITEMS,
@@ -2240,7 +2260,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_SWIFT_WING] =
 	{
 		.name = _("Swift Wing"),
-		.holdEffectParam = STAT_SPEED,
+		.itemEffect = ITEM_EFFECT(CHANGE_EV(STAT_SPEED, 1), CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL, 3, 2, 1)),
 		.description = sItemDesc_SwiftWing,
 		.price = 3000,
 		.pocket = POCKET_ITEMS,
@@ -2561,7 +2581,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_EXP_CANDY_XS] =
 	{
 		.name = _("Exp. Candy XS"),
-		.holdEffectParam = 100, // Exp amount
+		.itemEffect = ITEM_EFFECT(GIVE_EXP(100)),
 		.description = sItemDesc_ExpCandyXS,
 		.price = 10,
 		.pocket = POCKET_ITEMS,
@@ -2575,7 +2595,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_EXP_CANDY_S] =
 	{
 		.name = _("Exp. Candy S"),
-		.holdEffectParam = 800, // Exp amount
+		.itemEffect = ITEM_EFFECT(GIVE_EXP(800)),
 		.description = sItemDesc_ExpCandyS,
 		.price = 120,
 		.pocket = POCKET_ITEMS,
@@ -2589,7 +2609,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_EXP_CANDY_M] =
 	{
 		.name = _("Exp. Candy M"),
-		.holdEffectParam = 3000, // Exp amount
+		.itemEffect = ITEM_EFFECT(GIVE_EXP(3000)),
 		.description = sItemDesc_ExpCandyM,
 		.price = 500,
 		.pocket = POCKET_ITEMS,
@@ -2603,7 +2623,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_EXP_CANDY_L] =
 	{
 		.name = _("Exp. Candy L"),
-		.holdEffectParam = 10000, // Exp amount
+		.itemEffect = ITEM_EFFECT(GIVE_EXP(10000)),
 		.description = sItemDesc_ExpCandyL,
 		.price = 1500,
 		.pocket = POCKET_ITEMS,
@@ -2617,7 +2637,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_EXP_CANDY_XL] =
 	{
 		.name = _("Exp. Candy XL"),
-		.holdEffectParam = 30000, // Exp amount
+		.itemEffect = ITEM_EFFECT(GIVE_EXP(30000)),
 		.description = sItemDesc_ExpCandyXL,
 		.price = 5000,
 		.pocket = POCKET_ITEMS,
@@ -2631,7 +2651,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_NORMAL_TERA_SHARD] =
 	{
 		.name = _("Normal Tera"),
-		.holdEffectParam = TYPE_NORMAL,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_NORMAL)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2645,7 +2665,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_FIRE_TERA_SHARD] =
 	{
 		.name = _("Fire Tera"),
-		.holdEffectParam = TYPE_FIRE,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_FIRE)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2659,7 +2679,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_WATER_TERA_SHARD] =
 	{
 		.name = _("Water Tera"),
-		.holdEffectParam = TYPE_WATER,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_WATER)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2673,7 +2693,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ELECTRIC_TERA_SHARD] =
 	{
 		.name = _("Electric Tera"),
-		.holdEffectParam = TYPE_ELECTRIC,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_ELECTRIC)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2687,7 +2707,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_GRASS_TERA_SHARD] =
 	{
 		.name = _("Grass Tera"),
-		.holdEffectParam = TYPE_GRASS,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_GRASS)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2701,7 +2721,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ICE_TERA_SHARD] =
 	{
 		.name = _("Ice Tera"),
-		.holdEffectParam = TYPE_ICE,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_ICE)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2715,7 +2735,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_FIGHTING_TERA_SHARD] =
 	{
 		.name = _("Fighting Tera"),
-		.holdEffectParam = TYPE_FIGHTING,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_FIGHTING)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2729,7 +2749,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_POISON_TERA_SHARD] =
 	{
 		.name = _("Poison Tera"),
-		.holdEffectParam = TYPE_POISON,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_POISON)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2743,7 +2763,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_GROUND_TERA_SHARD] =
 	{
 		.name = _("Ground Tera"),
-		.holdEffectParam = TYPE_GROUND,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_GROUND)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2757,7 +2777,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_FLYING_TERA_SHARD] =
 	{
 		.name = _("Flying Tera"),
-		.holdEffectParam = TYPE_FLYING,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_FLYING)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2771,7 +2791,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PSYCHIC_TERA_SHARD] =
 	{
 		.name = _("Psychic Tera"),
-		.holdEffectParam = TYPE_PSYCHIC,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_PSYCHIC)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2785,7 +2805,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_BUG_TERA_SHARD] =
 	{
 		.name = _("Bug Tera"),
-		.holdEffectParam = TYPE_BUG,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_BUG)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2799,7 +2819,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ROCK_TERA_SHARD] =
 	{
 		.name = _("Rock Tera"),
-		.holdEffectParam = TYPE_ROCK,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_ROCK)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2813,7 +2833,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_GHOST_TERA_SHARD] =
 	{
 		.name = _("Ghost Tera"),
-		.holdEffectParam = TYPE_GHOST,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_GHOST)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2827,7 +2847,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_DRAGON_TERA_SHARD] =
 	{
 		.name = _("Dragon Tera"),
-		.holdEffectParam = TYPE_DRAGON,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_DRAGON)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2841,7 +2861,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_DARK_TERA_SHARD] =
 	{
 		.name = _("Dark Tera"),
-		.holdEffectParam = TYPE_DARK,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_DARK)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2855,7 +2875,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_STEEL_TERA_SHARD] =
 	{
 		.name = _("Steel Tera"),
-		.holdEffectParam = TYPE_STEEL,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_STEEL)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2869,7 +2889,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_FAIRY_TERA_SHARD] =
 	{
 		.name = _("Fairy Tera"),
-		.holdEffectParam = TYPE_FAIRY,
+		.itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_FAIRY)),
 		.description = sItemDesc_TeraShards,
 		.price = 1000,
 		.pocket = POCKET_ITEMS,
@@ -2883,6 +2903,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_CHERI_BERRY] =
 	{
 		.name = _("Cheri Berry"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_PARALYSIS)),
 		.holdEffect = HOLD_EFFECT_CURE_PAR,
 		.description = sItemDesc_CheriBerry,
 		.price = 20,
@@ -2897,6 +2918,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_CHESTO_BERRY] =
 	{
 		.name = _("Chesto Berry"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_SLEEP)),
 		.holdEffect = HOLD_EFFECT_CURE_SLP,
 		.description = sItemDesc_ChestoBerry,
 		.price = 20,
@@ -2911,6 +2933,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PECHA_BERRY] =
 	{
 		.name = _("Pecha Berry"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_POISON)), // Both poisons
 		.holdEffect = HOLD_EFFECT_CURE_PSN,
 		.description = sItemDesc_PechaBerry,
 		.price = 20,
@@ -2925,6 +2948,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_RAWST_BERRY] =
 	{
 		.name = _("Rawst Berry"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_BURN)),
 		.holdEffect = HOLD_EFFECT_CURE_BRN,
 		.description = sItemDesc_RawstBerry,
 		.price = 20,
@@ -2939,6 +2963,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ASPEAR_BERRY] =
 	{
 		.name = _("Aspear Berry"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_FREEZE)),
 		.holdEffect = HOLD_EFFECT_CURE_FRZ,
 		.description = sItemDesc_AspearBerry,
 		.price = 20,
@@ -2953,6 +2978,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_LEPPA_BERRY] =
 	{
 		.name = _("Leppa Berry"),
+		.itemEffect = ITEM_EFFECT(RESTORE_PP(10)),
 		.holdEffect = HOLD_EFFECT_RESTORE_PP,
 		.holdEffectParam = 10,
 		.description = sItemDesc_LeppaBerry,
@@ -2968,6 +2994,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_ORAN_BERRY] =
 	{
 		.name = _("Oran Berry"),
+		.itemEffect = ITEM_EFFECT(HEAL_HP(10)),
 		.holdEffect = HOLD_EFFECT_RESTORE_HP,
 		.holdEffectParam = 10,
 		.description = sItemDesc_OranBerry,
@@ -2983,6 +3010,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_PERSIM_BERRY] =
 	{
 		.name = _("Persim Berry"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_NONE, STATUS2_CONFUSION)),
 		.holdEffect = HOLD_EFFECT_CURE_CONFUSION,
 		.description = sItemDesc_PersimBerry,
 		.price = 20,
@@ -2997,6 +3025,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_LUM_BERRY] =
 	{
 		.name = _("Lum Berry"),
+		.itemEffect = ITEM_EFFECT(CURE_STATUS(STATUS1_ANY, STATUS2_CONFUSION)),
 		.holdEffect = HOLD_EFFECT_CURE_STATUS,
 		.description = sItemDesc_LumBerry,
 		.price = 20,
@@ -3011,6 +3040,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_SITRUS_BERRY] =
 	{
 		.name = _("Sitrus Berry"),
+		.itemEffect = ITEM_EFFECT(HEAL_HP_PERCENT(25)), // Heal 25% HP
 		.holdEffect = HOLD_EFFECT_RESTORE_HP_PERCENTAGE,
 		.holdEffectParam = 25,
 		.description = sItemDesc_SitrusBerry,
@@ -3156,7 +3186,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_POMEG_BERRY] =
 	{
 		.name = _("Pomeg Berry"),
-		.holdEffectParam = STAT_HP,
+		.itemEffect = ITEM_EFFECT(CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL | ITEMEFFECT_FRIENDSHIP_MAIN, 10, 5, 2), CHANGE_EV(STAT_HP, -10)),
 		.description = sItemDesc_PomegBerry,
 		.price = 20,
 		.pocket = POCKET_BERRY_POUCH,
@@ -3169,7 +3199,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_KELPSY_BERRY] =
 	{
 		.name = _("Kelpsy Berry"),
-		.holdEffectParam = STAT_ATK,
+		.itemEffect = ITEM_EFFECT(CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL | ITEMEFFECT_FRIENDSHIP_MAIN, 10, 5, 2), CHANGE_EV(STAT_ATK, -10)),
 		.description = sItemDesc_KelpsyBerry,
 		.price = 20,
 		.pocket = POCKET_BERRY_POUCH,
@@ -3182,7 +3212,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_QUALOT_BERRY] =
 	{
 		.name = _("Qualot Berry"),
-		.holdEffectParam = STAT_DEF,
+		.itemEffect = ITEM_EFFECT(CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL | ITEMEFFECT_FRIENDSHIP_MAIN, 10, 5, 2), CHANGE_EV(STAT_DEF, -10)),
 		.description = sItemDesc_QualotBerry,
 		.price = 20,
 		.pocket = POCKET_BERRY_POUCH,
@@ -3195,7 +3225,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_HONDEW_BERRY] =
 	{
 		.name = _("Hondew Berry"),
-		.holdEffectParam = STAT_SPATK,
+		.itemEffect = ITEM_EFFECT(CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL | ITEMEFFECT_FRIENDSHIP_MAIN, 10, 5, 2), CHANGE_EV(STAT_SPATK, -10)),
 		.description = sItemDesc_HondewBerry,
 		.price = 20,
 		.pocket = POCKET_BERRY_POUCH,
@@ -3208,7 +3238,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_GREPA_BERRY] =
 	{
 		.name = _("Grepa Berry"),
-		.holdEffectParam = STAT_SPDEF,
+		.itemEffect = ITEM_EFFECT(CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL | ITEMEFFECT_FRIENDSHIP_MAIN, 10, 5, 2), CHANGE_EV(STAT_SPDEF, -10)),
 		.description = sItemDesc_GrepaBerry,
 		.price = 20,
 		.pocket = POCKET_BERRY_POUCH,
@@ -3221,7 +3251,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_TAMATO_BERRY] =
 	{
 		.name = _("Tamato Berry"),
-		.holdEffectParam = STAT_SPEED,
+		.itemEffect = ITEM_EFFECT(CHANGE_FRIENDSHIP(ITEMEFFECT_FRIENDSHIP_ALL | ITEMEFFECT_FRIENDSHIP_MAIN, 10, 5, 2), CHANGE_EV(STAT_SPEED, -10)),
 		.description = sItemDesc_TamatoBerry,
 		.price = 20,
 		.pocket = POCKET_BERRY_POUCH,
@@ -4696,6 +4726,7 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_BAG_MENU,
 		.fieldUseFunc = FieldUseFunc_OakStopsYou,
 		.usageType = ITEM_TYPE_HELD_ITEM,
+		.battleUsage = EFFECT_ITEM_ADRENALINE_ORB,
 		.flingPower = 30,
 		.iconPic = sItemIcon_AdrenalineOrb,
 		.iconPalette = sItemIconPalette_AdrenalineOrb,

@@ -57,5 +57,6 @@ bool8 DoesCurrentMapHaveFishingMons(void);
 bool8 TrySweetScentWildEncounter(void);
 u16 GetWildMonForAmbientCry(bool8 *isWaterMon);
 bool8 UpdateRepelCounter(void);
+u8 TryGetForcedWildMonNature(struct Pokemon *mon, u16 ability);
 
 #endif // GUARD_WILD_ENCOUNTER_H

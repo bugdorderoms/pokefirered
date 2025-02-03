@@ -3,9 +3,6 @@
 
 #include "global.h"
 
-extern const struct CompressedSpriteSheet gBallSpriteSheets[];
-extern const struct CompressedSpritePalette gBallSpritePalettes[];
-
 #define POKEBALL_PLAYER_SENDOUT     0xFF
 #define POKEBALL_OPPONENT_SENDOUT   0xFE
 

@@ -30,6 +30,7 @@
 #include "constants/metatile_behaviors.h"
 #include "constants/poke_ride.h"
 #include "constants/songs.h"
+#include "constants/sound.h"
 #include "pokemon_storage_system.h"
 
 #define FIELD_EFFECT_COUNT 32
@@ -490,10 +491,10 @@ bool8 FieldEffectActiveListContains(u8 fldeff)
 u8 CreateTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpriority)
 {
     struct SpriteTemplate spriteTemplate;
-    LoadCompressedSpritePalette(&gTrainerFrontPicPaletteTable[trainerSpriteID]);
-    LoadCompressedSpriteSheet(&gTrainerFrontPicTable[trainerSpriteID]);
-    spriteTemplate.tileTag = gTrainerFrontPicTable[trainerSpriteID].tag;
-    spriteTemplate.paletteTag = gTrainerFrontPicPaletteTable[trainerSpriteID].tag;
+    LoadCompressedSpritePalette(&gTrainerFrontPicTable[trainerSpriteID].palette);
+    LoadCompressedSpriteSheet(&gTrainerFrontPicTable[trainerSpriteID].pic);
+    spriteTemplate.tileTag = gTrainerFrontPicTable[trainerSpriteID].pic.tag;
+    spriteTemplate.paletteTag = gTrainerFrontPicTable[trainerSpriteID].palette.tag;
     spriteTemplate.oam = &sNewGameOakOamAttributes;
     spriteTemplate.anims = gDummySpriteAnimTable;
     spriteTemplate.images = NULL;
@@ -504,8 +505,8 @@ u8 CreateTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpriority)
 
 static void LoadTrainerGfx_TrainerCard(u8 gender, u16 palOffset, u8 *dest)
 {
-    LZDecompressVram(gTrainerFrontPicTable[gender].data, dest);
-    LoadCompressedPalette(gTrainerFrontPicPaletteTable[gender].data, palOffset, 0x20);
+    LZDecompressVram(gTrainerFrontPicTable[gender].pic.data, dest);
+    LoadCompressedPalette(gTrainerFrontPicTable[gender].palette.data, palOffset, 0x20);
 }
 
 static u8 AddNewGameBirchObject(s16 x, s16 y, u8 subpriority)
@@ -523,9 +524,7 @@ static u8 CreateMonSprite_FieldMove(u16 species, bool8 isShiny, u32 personality,
 
 void FreeResourcesAndDestroySprite(struct Sprite * sprite, u8 spriteId)
 {
-    if (sprite->oam.affineMode != ST_OAM_AFFINE_OFF)
-        FreeOamMatrix(sprite->oam.matrixNum);
-	
+	FreeSpriteOamMatrix(sprite);
     FreeAndDestroyMonPicSprite(spriteId);
 }
 
@@ -2358,16 +2357,15 @@ static void (*const sShowMonOutdoorsEffectFuncs[])(struct Task * task) = {
 
 u32 FldEff_FieldMoveShowMon(void)
 {
-    gTasks[CreateTask(IsMapTypeOutdoors(GetCurrentMapType()) ? Task_ShowMon_Outdoors : Task_ShowMon_Indoors, 0xFF)].data[15] = InitFieldMoveMonSprite(
-	gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-	
+	u8 taskId = CreateTask(IsMapTypeOutdoors(GetCurrentMapType()) ? Task_ShowMon_Outdoors : Task_ShowMon_Indoors, 0xFF);
+    gTasks[taskId].data[15] = InitFieldMoveMonSprite(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
     return 0;
 }
 
 u32 FldEff_FieldMoveShowMonInit(void)
 {
-    u32 r6 = gFieldEffectArguments[0] & 0x80000000;
-    u8 partyIdx = gFieldEffectArguments[0];
+	u8 partyIdx = gFieldEffectArguments[0];
+    bool32 noDucking = gFieldEffectArguments[0] & SHOW_MON_CRY_NO_DUCKING;
 	
     if (gUsingRideMon == RIDE_NONE)
     {
@@ -2382,7 +2380,7 @@ u32 FldEff_FieldMoveShowMonInit(void)
 	    gFieldEffectArguments[2] = Random32();
 	    gUsingRideMon = RIDE_NONE;
     }
-    gFieldEffectArguments[0] |= r6;
+    gFieldEffectArguments[0] |= noDucking;
     FieldEffectStart(FLDEFF_FIELD_MOVE_SHOW_MON);
     FieldEffectActiveListRemove(FLDEFF_FIELD_MOVE_SHOW_MON_INIT);
     return 0;
@@ -2701,58 +2699,51 @@ static bool8 SlideIndoorBannerOffscreen(struct Task * task)
 
 static u8 InitFieldMoveMonSprite(u32 species, bool8 isShiny, u32 personality)
 {
-    bool16 playCry = (species & 0x80000000) >> 16;
+    bool16 noDucking = (species & SHOW_MON_CRY_NO_DUCKING) >> 16;
     u8 monSprite;
     struct Sprite * sprite;
 	
-    species &= 0x7fffffff;
+    species &= ~(SHOW_MON_CRY_NO_DUCKING);
     monSprite = CreateMonSprite_FieldMove(species, isShiny, personality, 0x140, 0x50);
 	
     sprite = &gSprites[monSprite];
     sprite->callback = SpriteCallbackDummy;
     sprite->oam.priority = 0;
     sprite->data[0] = species;
-    sprite->data[6] = playCry;
+    sprite->data[6] = noDucking;
 	
     return monSprite;
 }
 
 static void SpriteCB_FieldMoveMonSlideOnscreen(struct Sprite * sprite)
 {
-    if ((sprite->x -= 20) <= 0x78)
+	sprite->x -= 20;
+	
+    if (sprite->x <= 0x78)
     {
         sprite->x = 0x78;
         sprite->data[1] = 30;
         sprite->callback = SpriteCB_FieldMoveMonWaitAfterCry;
+		
         if (sprite->data[6])
-        {
-            PlayCry2(sprite->data[0], 0, 0x7d, 0xa);
-        }
+            PlayCry_NormalNoDucking(sprite->data[0], 0, 125, CRY_PRIORITY_NORMAL);
         else
-        {
-            PlayCry1(sprite->data[0], 0);
-        }
+            PlayCry_Normal(sprite->data[0], 0);
     }
 }
 
 static void SpriteCB_FieldMoveMonWaitAfterCry(struct Sprite * sprite)
 {
-    if ((--sprite->data[1]) == 0)
-    {
+    if (--sprite->data[1] == 0)
         sprite->callback = SpriteCB_FieldMoveMonSlideOffscreen;
-    }
 }
 
 static void SpriteCB_FieldMoveMonSlideOffscreen(struct Sprite * sprite)
 {
     if (sprite->x < -0x40)
-    {
         sprite->data[7] = 1;
-    }
     else
-    {
         sprite->x -= 20;
-    }
 }
 
 static void Task_FldEffUseSurf(u8 taskId);
@@ -2811,7 +2802,7 @@ static void UseSurfEffect_3(struct Task * task)
 {
     if (ObjectEventCheckHeldMovementStatus(&gObjectEvents[gPlayerAvatar.objectEventId]))
     {
-        gFieldEffectArguments[0] = task->data[15] | 0x80000000;
+        gFieldEffectArguments[0] = task->data[15] | SHOW_MON_CRY_NO_DUCKING;
         FieldEffectStart(FLDEFF_FIELD_MOVE_SHOW_MON_INIT);
         task->data[0]++;
     }
@@ -3185,8 +3176,7 @@ static void SpriteCB_FlyBirdLeaveBall(struct Sprite * sprite)
         if (sprite->data[1] > 0x81)
         {
             sprite->data[7]++;
-            sprite->oam.affineMode = ST_OAM_AFFINE_OFF;
-            FreeOamMatrix(sprite->oam.matrixNum);
+            FreeSpriteOamMatrix(sprite);
             CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, ST_OAM_AFFINE_OFF);
         }
     }
@@ -3249,8 +3239,7 @@ static void SpriteCB_FlyBirdReturnToBall(struct Sprite * sprite)
         if (sprite->data[3] >= 60)
         {
             sprite->data[7]++;
-            sprite->oam.affineMode = ST_OAM_AFFINE_OFF;
-            FreeOamMatrix(sprite->oam.matrixNum);
+            FreeSpriteOamMatrix(sprite);
             sprite->invisible = TRUE;
         }
     }
@@ -3478,8 +3467,7 @@ static void sub_8087828(struct Sprite * sprite)
     if (sprite->data[2] >= 0x80)
     {
         sprite->data[7] = 1;
-        sprite->oam.affineMode = ST_OAM_AFFINE_OFF;
-        FreeOamMatrix(sprite->oam.matrixNum);
+        FreeSpriteOamMatrix(sprite);
         CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, ST_OAM_AFFINE_OFF);
     }
 }
@@ -3490,8 +3478,7 @@ static void sub_80878C0(struct Sprite * sprite)
     {
         if (gOamMatrices[sprite->oam.matrixNum].a == 0x100 || gOamMatrices[sprite->oam.matrixNum].d == 0x100)
         {
-            sprite->oam.affineMode = ST_OAM_AFFINE_OFF;
-            FreeOamMatrix(sprite->oam.matrixNum);
+            FreeSpriteOamMatrix(sprite);
             CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, ST_OAM_AFFINE_OFF);
             StartSpriteAnim(sprite, 0);
             sprite->callback = SpriteCB_FlyBirdSwoopDown;

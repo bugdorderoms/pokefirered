@@ -13,7 +13,7 @@ SSAnne_1F_Room3_EventScript_Wigglytuff:: @ 8160C30
 	lock
 	faceplayer
 	waitse
-	playmoncry SPECIES_WIGGLYTUFF, 0
+	playmoncry SPECIES_WIGGLYTUFF, CRY_MODE_NORMAL
 	msgbox SSAnne_1F_Room3_Text_Wigglytuff
 	waitmoncry
 	release

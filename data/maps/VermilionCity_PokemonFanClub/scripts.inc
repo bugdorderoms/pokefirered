@@ -99,7 +99,7 @@ VermilionCity_PokemonFanClub_EventScript_Pikachu:: @ 816B59E
 	lock
 	faceplayer
 	waitse
-	playmoncry SPECIES_PIKACHU, 0
+	playmoncry SPECIES_PIKACHU, CRY_MODE_NORMAL
 	msgbox VermilionCity_PokemonFanClub_Text_Pikachu
 	waitmoncry
 	release
@@ -109,7 +109,7 @@ VermilionCity_PokemonFanClub_EventScript_Seel:: @ 816B5B1
 	lock
 	faceplayer
 	waitse
-	playmoncry SPECIES_SEEL, 0
+	playmoncry SPECIES_SEEL, CRY_MODE_NORMAL
 	msgbox VermilionCity_PokemonFanClub_Text_Seel
 	waitmoncry
 	release

@@ -45,7 +45,7 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_setflag
 	.4byte ScrCmd_clearflag
 	.4byte ScrCmd_checkflag
-	.4byte ScrCmd_initclock
+	.4byte ScrCmd_starttotembattle
 	.4byte ScrCmd_dodailyevents
 	.4byte ScrCmd_gettime
 	.4byte ScrCmd_playse

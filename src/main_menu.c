@@ -1,6 +1,8 @@
 #include "global.h"
 #include "gflib.h"
 #include "event_data.h"
+#include "event_object_movement.h"
+#include "field_player_avatar.h"
 #include "link.h"
 #include "main_menu.h"
 #include "menu.h"
@@ -620,6 +622,7 @@ static void Task_ExecuteMainMenuSelection(u8 taskId)
 				}
 				break;
 		}
+		
 		// Do action
 		switch (action)
 		{
@@ -728,6 +731,18 @@ static void DrawPartyMonIcons(void)
 	}
 }
 
+// Create a window on bg1 for the icon of the player
+static void DrawPlayerOverworldIcon(void)
+{
+	struct WindowTemplate template = SetWindowTemplateFields(1, 23, 2, 2, 4, 6, 0x001 + (PARTY_SIZE * 4 * 4));
+	u8 windowId = AddWindow(&template);
+	
+	FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
+	BlitObjectEventToWindow(windowId, GetPlayerAvatarGraphicsIdByStateIdAndGender(PLAYER_AVATAR_STATE_NORMAL, gSaveBlock2Ptr->playerGender), 0, 0x60, 16, 32);
+	PutWindowTilemap(windowId);
+	CopyWindowToVram(windowId, COPYWIN_BOTH);
+}
+
 static void PrintContinueStats(void)
 {
 	PrintPlayerName();
@@ -735,6 +750,9 @@ static void PrintContinueStats(void)
     PrintPlayTime();
     PrintBadgeCount();
     DrawPartyMonIcons();
+#if TRAINER_ICON_ON_MAIN_MENU
+	DrawPlayerOverworldIcon();
+#endif
 }
 
 static void PrintMessageOnErrorWindow(const u8 *str)

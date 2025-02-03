@@ -1267,7 +1267,7 @@ static bool8 DoTradeAnim_Cable(void)
 
         if (sTradeData->tradeSpecies[0] != SPECIES_EGG)
         {
-            PlayCry1(sTradeData->tradeSpecies[0], 0);
+            PlayCry_Normal(sTradeData->tradeSpecies[0], 0);
         }
 
         sTradeData->state = 11;
@@ -1619,8 +1619,7 @@ static bool8 DoTradeAnim_Cable(void)
         gSprites[sTradeData->pokePicSpriteIdxs[1]].y2 = 0;
         StartSpriteAnim(&gSprites[sTradeData->pokePicSpriteIdxs[1]], 0);
         CreatePokeballSpriteToReleaseMon(sTradeData->pokePicSpriteIdxs[1], gSprites[sTradeData->pokePicSpriteIdxs[1]].oam.paletteNum, 120, 84, 2, 1, 20, 0xFFFFF);
-        FreeSpriteOamMatrix(&gSprites[sTradeData->pokeballSpriteId2]);
-        DestroySprite(&gSprites[sTradeData->pokeballSpriteId2]);
+        DestroySpriteAndFreeMatrix(&gSprites[sTradeData->pokeballSpriteId2]);
         sTradeData->state++;
         break;
     case 67:
@@ -1640,7 +1639,7 @@ static bool8 DoTradeAnim_Cable(void)
         {
             if (sTradeData->tradeSpecies[1] != SPECIES_EGG)
             {
-                PlayCry1(sTradeData->tradeSpecies[1], 0);
+                PlayCry_Normal(sTradeData->tradeSpecies[1], 0);
             }
             sTradeData->state = 267;
             sTradeData->timer = 0;
@@ -1752,7 +1751,7 @@ static bool8 DoTradeAnim_Wireless(void)
 
         if (sTradeData->tradeSpecies[0] != SPECIES_EGG)
         {
-            PlayCry1(sTradeData->tradeSpecies[0], 0);
+            PlayCry_Normal(sTradeData->tradeSpecies[0], 0);
         }
 
         sTradeData->state = 11;
@@ -2128,8 +2127,7 @@ static bool8 DoTradeAnim_Wireless(void)
         gSprites[sTradeData->pokePicSpriteIdxs[1]].y2 = 0;
         StartSpriteAnim(&gSprites[sTradeData->pokePicSpriteIdxs[1]], 0);
         CreatePokeballSpriteToReleaseMon(sTradeData->pokePicSpriteIdxs[1], gSprites[sTradeData->pokePicSpriteIdxs[1]].oam.paletteNum, 120, 84, 2, 1, 20, 0xFFFFF);
-        FreeSpriteOamMatrix(&gSprites[sTradeData->pokeballSpriteId2]);
-        DestroySprite(&gSprites[sTradeData->pokeballSpriteId2]);
+        DestroySpriteAndFreeMatrix(&gSprites[sTradeData->pokeballSpriteId2]);
         sTradeData->state++;
         break;
     case 67:
@@ -2149,7 +2147,7 @@ static bool8 DoTradeAnim_Wireless(void)
         {
             if (sTradeData->tradeSpecies[1] != SPECIES_EGG)
             {
-                PlayCry1(sTradeData->tradeSpecies[1], 0);
+                PlayCry_Normal(sTradeData->tradeSpecies[1], 0);
             }
             sTradeData->state = 267;
             sTradeData->timer = 0;
@@ -2389,6 +2387,7 @@ static void CreateInGameTradePokemonInternal(u8 playerSlot, u8 inGameTradeIdx)
 		.species = inGameTrade->species,
 		.level = level,
 		.shinyType = GENERATE_SHINY_NORMAL,
+		.shinyRollType = SHINY_ROLL_NORMAL,
 		.forcedGender = MON_GENDERLESS,
 		.otIdType = OT_ID_PRESET,
 		.fixedOtId = inGameTrade->otId,
@@ -2396,7 +2395,8 @@ static void CreateInGameTradePokemonInternal(u8 playerSlot, u8 inGameTradeIdx)
 		.fixedPersonality = inGameTrade->personality,
 		.forcedNature = NUM_NATURES,
 		.formChanges = NULL,
-		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
+		.moves = {0},
+		.nPerfectIvs = 0,
 	};
 	
     CreateMon(tradeMon, generator);
@@ -2564,13 +2564,10 @@ static void CB2_HandleTradeEnded(void)
         if (++sTradeData->timer > 50)
         {
             if (GetMultiplayerId() == 0)
-            {
                 sTradeData->timer = RandomMax(30);
-            }
             else
-            {
                 sTradeData->timer = 0;
-            }
+
             gMain.state = 41;
         }
         break;

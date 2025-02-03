@@ -55,8 +55,7 @@ static void Task_MinigameCountdown(u8 taskId)
         if (!RunMinigameCountdownDigitsAnim(tSpriteId1))
         {
             StartStartGraphic(tSpriteId1, tSpriteId2, tSpriteId3);
-            FreeSpriteOamMatrix(&gSprites[tSpriteId1]);
-            DestroySprite(&gSprites[tSpriteId1]);
+            DestroySpriteAndFreeMatrix(&gSprites[tSpriteId1]);
             tState++;
         }
         break;

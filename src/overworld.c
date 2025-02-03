@@ -49,10 +49,12 @@
 #include "region_map.h"
 #include "wild_encounter.h"
 #include "dns.h"
+#include "constants/abilities.h"
 #include "constants/event_objects.h"
 #include "constants/maps.h"
 #include "constants/region_map_sections.h"
 #include "constants/songs.h"
+#include "constants/sound.h"
 
 #define PLAYER_TRADING_STATE_IDLE 0x80
 #define PLAYER_TRADING_STATE_BUSY 0x81
@@ -713,7 +715,7 @@ void LoadMapFromCameraTransition(u8 mapGroup, u8 mapNum)
     ClearTempFieldEventData();
     ResetDexNavSearch();
     ResetEncounterRateModifiers();
-    MapResetTrainerRematches(mapGroup, mapNum);
+    MapResetTrainerRematches();
     SetSav1WeatherFromCurrMapHeader();
     ChooseAmbientCrySpecies();
     SetDefaultFlashLevel();
@@ -747,7 +749,7 @@ static void LoadMapFromWarp(void)
     ClearTempFieldEventData();
     ResetDexNavSearch();
     ResetEncounterRateModifiers();
-    MapResetTrainerRematches(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum);
+    MapResetTrainerRematches();
 	SetSav1WeatherFromCurrMapHeader();
     ChooseAmbientCrySpecies();
     if (isOutdoors)
@@ -1080,7 +1082,7 @@ static void PlayAmbientCry(void)
 	
 	pan = RandomMax(88) + 212;
     volume = RandomMax(30) + 50;
-    PlayCry2(sAmbientCrySpecies, pan, volume, 1);
+    PlayCry_NormalNoDucking(sAmbientCrySpecies, pan, volume, CRY_PRIORITY_AMBIENT);
 }
 
 void UpdateAmbientCry(s16 *state, u16 *delayCounter)
@@ -1897,7 +1899,7 @@ static void InitOverworldGraphicsRegisters(void)
     ResetTempTileDataBuffers();
     SetGpuReg(REG_OFFSET_MOSAIC, 0);
     SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ);
-    SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG0 | WINOUT_WINOBJ_BG0);
+    SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG0 | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_OBJ);
     SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, 255));
     SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(0, 255));
     SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(255, 255));
@@ -1907,7 +1909,7 @@ static void InitOverworldGraphicsRegisters(void)
     ScheduleBgCopyTilemapToVram(1);
     ScheduleBgCopyTilemapToVram(2);
     ScheduleBgCopyTilemapToVram(3);
-    SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | 0x20 | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
+    SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | 0x20 | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON);
     ShowBg(0);
     ShowBg(1);
     ShowBg(2);

@@ -417,7 +417,7 @@ static void Task_SummonMonWaitPlayerAnim(u8 taskId)
 {
 	if (ObjectEventCheckHeldMovementStatus(&gObjectEvents[gPlayerAvatar.objectEventId]))
 	{
-		gFieldEffectArguments[0] = 0 | 0x80000000;
+		gFieldEffectArguments[0] = 0 | SHOW_MON_CRY_NO_DUCKING;
 		FieldEffectStart(FLDEFF_FIELD_MOVE_SHOW_MON_INIT);
 		gTasks[taskId].func = Task_SummonMonAndSetPlayerAvatarFlag;
 	}
@@ -600,7 +600,7 @@ static void RideTransition_MoveDirection(u8 direction, u16 heldKeys)
 			else
 				PlayerOnBikeCollide(direction);
 		}
-		else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE) && heldKeys & B_BUTTON)
+		else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE) && !gSaveBlock2Ptr->waitingTaurosChargeStamina && (heldKeys & B_BUTTON))
 			PlayerGoSpeed4(direction);
 		else if (collision == COLLISION_COUNT || PlayerIsMovingOnRockStairs(direction) || (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE) && heldKeys & B_BUTTON))
 			PlayerGoSpeed2(direction);
@@ -628,9 +628,27 @@ static void UpdateStoutlandSearchAndTaurosCharge(u16 heldKeys)
 				gTasks[taskId].data[8] = TRUE;
 		}
 	}
-	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE))
+	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE) && !gSaveBlock2Ptr->waitingTaurosChargeStamina)
 	{
-		if (heldKeys & B_BUTTON && gPlayerAvatar.runningState == MOVING && CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_ROCK_SMASH_ROCK))
+		if ((heldKeys & B_BUTTON) && gPlayerAvatar.runningState == MOVING && CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_ROCK_SMASH_ROCK))
 			ScriptContext1_SetupScript(EventScript_UseRockSmash);
+	}
+}
+
+void DecreaseTaurosChargeStamina(void)
+{
+	if (!gSaveBlock2Ptr->waitingTaurosChargeStamina && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE) && JOY_HELD(B_BUTTON))
+	{
+		if (--gSaveBlock2Ptr->taurosChargeStamina == 0)
+			gSaveBlock2Ptr->waitingTaurosChargeStamina = TRUE;
+	}
+	else
+	{
+		gSaveBlock2Ptr->taurosChargeStamina += 2; // Takes half of steps to recharge
+		if (gSaveBlock2Ptr->taurosChargeStamina > TAUROS_CHARGE_STAMINA)
+			gSaveBlock2Ptr->taurosChargeStamina = TAUROS_CHARGE_STAMINA;
+		
+		if (gSaveBlock2Ptr->taurosChargeStamina == TAUROS_CHARGE_STAMINA)
+			gSaveBlock2Ptr->waitingTaurosChargeStamina = FALSE;
 	}
 }

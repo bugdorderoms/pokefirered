@@ -8,7 +8,6 @@ void SetPlayerAvatarExtraStateTransition(u8, u8);
 u8 GetPlayerAvatarGenderByGraphicsId(u8);
 void PlayerGetDestCoords(s16 *, s16 *);
 u8 GetPlayerFacingDirection(void);
-void MovePlayerNotOnBike(u8 direction, u16 heldKeys);
 
 void MovementType_Player(struct Sprite * sprite);
 void HandleEnforcedLookDirectionOnPlayerStopMoving(void);

@@ -284,6 +284,7 @@ const u8 gText_MovesPPIncreased[] = _("{STR_VAR_1}'s PP increased.{PAUSE_UNTIL_P
 const u8 gText_PkmnElevatedToLvVar2[] = _("{STR_VAR_1} was elevated to\nLV. {STR_VAR_2}.");
 const u8 gText_PkmnGainedVar3ExpPoints[] = _("{STR_VAR_1} gained {STR_VAR_3}\nExp. Points.");
 const u8 gText_PkmnGainedVar3ExpPointsRaisedToLvVar2[] = _("{STR_VAR_1} gained {STR_VAR_3}\nExp. Points and elevated to LV. {STR_VAR_2}.");
+const u8 gText_PkmnCantGoAboveTheLevelCap[] = _("{STR_VAR_1}'s level can't\ngo above the current level cap.{PAUSE_UNTIL_PRESS}");
 const u8 gText_PkmnVar2TheGMaxFactor[] = _("{STR_VAR_1} {STR_VAR_2} the\nGigantamax Factor.{PAUSE_UNTIL_PRESS}");
 const u8 gText_PkmnTeraTypeBecameVar2[] = _("{STR_VAR_1}'s Tera Type became\n{STR_VAR_2}-type.{PAUSE_UNTIL_PRESS}");
 const u8 gText_Gained[] = _("gained");

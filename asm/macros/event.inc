@@ -291,9 +291,16 @@
 	.2byte \a
 	.endm
 
-	@ In FireRed, this command is a nop.
-	.macro initclock hour:req minute:req
+	@ Starts a battle with a Totem Pokémon.
+	.macro starttotembattle atk=0, def=0, speed=0, spAtk=0, spDef=0, acc=0, evasion=0
 	.byte 0x2c
+	.byte \atk
+	.byte \def
+	.byte \speed
+	.byte \spAtk
+	.byte \spDef
+	.byte \acc
+	.byte \evasion
 	.endm
 
 	.macro dodailyevents
@@ -1166,10 +1173,10 @@
 	.endm
 
 	@ Plays the specified (species) Pokemon's cry. You can use waitcry to block script execution until the sound finishes.
-	.macro playmoncry species:req, effect:req
+	.macro playmoncry species:req, mode:req
 	.byte 0xa1
 	.2byte \species
-	.2byte \effect
+	.2byte \mode
 	.endm
 
 	@ Changes the metatile at (x, y) on the current map.

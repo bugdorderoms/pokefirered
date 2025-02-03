@@ -483,7 +483,7 @@ static void PrintMonStats(u8 taskId)
 	}
 	// Play The Mon Cry
 	if (!isEgg && !tOnInit)
-		PlayCry7(GetMonData(mon, MON_DATA_SPECIES), 0);
+		PlayCry_Normal(GetMonData(mon, MON_DATA_SPECIES), 0);
 	
 	PutWindowTilemap(WIN_HIDDEN_POWER_TYPE);
 	CopyWindowToVram(WIN_HIDDEN_POWER_TYPE, COPYWIN_GFX);

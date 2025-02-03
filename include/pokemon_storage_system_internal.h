@@ -423,7 +423,6 @@ void sub_8095B5C(void);
 void sub_8096088(void);
 void sub_80960C0(void);
 bool8 sub_809610C(void);
-const u8 *GetMovingItemName(void);
 void sub_80966F4(void);
 bool8 sub_8096728(void);
 bool8 sub_80967C0(void);

@@ -51,7 +51,7 @@ NavelRock_Base_EventScript_Lugia:: @ 8165134
 	delay 30
 	delay 50
 	waitse
-	playmoncry SPECIES_LUGIA, 2
+	playmoncry SPECIES_LUGIA, CRY_MODE_ENCOUNTER
 	waitmoncry
 	delay 20
 	setwildbattle SPECIES_LUGIA, 70, ITEM_NONE

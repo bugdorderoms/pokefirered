@@ -1,65 +1,75 @@
 #include "global.h"
 #include "battle.h"
 #include "battle_anim.h"
+#include "battle_move_effects.h"
 #include "battle_message.h"
 #include "battle_queued_effects.h"
 #include "battle_scripts.h"
 #include "set_effect.h"
-#include "constants/battle_move_effects.h"
 #include "constants/battle_string_ids.h"
 #include "constants/moves.h"
 
 // Lists
 const u8 gWishFutureSightQueuedEffectIds[] =
 {
-	B_QUEUED_FUTURE_SIGHT,
-	B_QUEUED_WISH,
-	B_QUEUED_COUNT
+	B_BATTLER_QUEUED_FUTURE_SIGHT,
+	B_BATTLER_QUEUED_WISH,
+	B_BATTLER_QUEUED_COUNT
 };
 
 const u8 gSeaOfFireAndGMaxQueuedEffectIds[] =
 {
-	B_QUEUED_SEA_OF_FIRE,
-	B_QUEUED_GMAX_CANNONADE,
-	B_QUEUED_GMAX_VINE_LASH,
-	B_QUEUED_GMAX_VOLCALITH,
-	B_QUEUED_GMAX_WILDFIRE,
-	B_QUEUED_COUNT,
+	B_SIDE_QUEUED_SEA_OF_FIRE,
+	B_SIDE_QUEUED_GMAX_CANNONADE,
+	B_SIDE_QUEUED_GMAX_VINE_LASH,
+	B_SIDE_QUEUED_GMAX_VOLCALITH,
+	B_SIDE_QUEUED_GMAX_WILDFIRE,
+	B_SIDE_QUEUED_COUNT
 };
 
 const u8 gEntryHazardsQueuedEffectIds[] =
 {
-	B_QUEUED_SPIKES,
-	B_QUEUED_TOXIC_SPIKES,
-	B_QUEUED_STEALTH_ROCK,
-	B_QUEUED_STICKY_WEB,
-	B_QUEUED_COUNT,
+	B_SIDE_QUEUED_SPIKES,
+	B_SIDE_QUEUED_TOXIC_SPIKES,
+	B_SIDE_QUEUED_STEALTH_ROCK,
+	B_SIDE_QUEUED_STICKY_WEB,
+	B_SIDE_QUEUED_COUNT
 };
 
 // Functions
-static u8 FindBattlerQueuedEffectInList(u8 battlerId, u8 id)
+static u8 FindQueuedEffectInList(u8 count, struct QueuedEffect *queuedEffectsList, u8 id, u8 entryNoFound)
 {
 	u8 i;
 	
-	for (i = 0; i < gBattleStruct->queuedEffectsCount[battlerId]; i++)
+	for (i = 0; i < count; i++)
 	{
-		if (gBattleStruct->queuedEffectsList[battlerId][i].id == id)
+		if (queuedEffectsList[i].id == id)
 			return i;
 	}
-	return B_QUEUED_COUNT;
+	return entryNoFound;
 }
 
-bool8 TryDoQueuedBattleEffectsInList(u8 battlerId, const u8 *list, bool8(*func)(u8, u8))
+static inline u8 FindQueuedEffectInBattlerList(u8 battlerId, u8 id)
+{
+	return FindQueuedEffectInList(gBattleStruct->battlers[battlerId].queuedEffectsCount, gBattleStruct->battlers[battlerId].queuedEffectsList, id, B_BATTLER_QUEUED_COUNT);
+}
+
+static inline u8 FindQueuedEffectInSideList(u8 side, u8 id)
+{
+	return FindQueuedEffectInList(gBattleStruct->sides[side].queuedEffectsCount, gBattleStruct->sides[side].queuedEffectsList, id, B_SIDE_QUEUED_COUNT);
+}
+
+bool8 TryDoQueuedBattleEffectsInBattlerList(u8 battlerId, const u8 *list, bool8(*func)(u8, u8))
 {
 	u8 i, j;
 	
-	for (i = 0; i < gBattleStruct->queuedEffectsCount[battlerId]; i++)
+	for (i = 0; i < gBattleStruct->battlers[battlerId].queuedEffectsCount; i++)
 	{
-		for (j = 0; list[j] != B_QUEUED_COUNT; j++)
+		for (j = 0; list[j] != B_BATTLER_QUEUED_COUNT; j++)
 		{
-			if (gBattleStruct->queuedEffectsList[battlerId][i].id == list[j] && !gBattleStruct->queuedEffectsList[battlerId][i].done)
+			if (gBattleStruct->battlers[battlerId].queuedEffectsList[i].id == list[j] && !gBattleStruct->battlers[battlerId].queuedEffectsList[i].done)
 			{
-				gBattleStruct->queuedEffectsList[battlerId][i].done = TRUE;
+				gBattleStruct->battlers[battlerId].queuedEffectsList[i].done = TRUE;
 				
 				if (func(battlerId, list[j]))
 					return TRUE;
@@ -69,32 +79,81 @@ bool8 TryDoQueuedBattleEffectsInList(u8 battlerId, const u8 *list, bool8(*func)(
 	return FALSE;
 }
 
-void AddBattleEffectToQueueList(u8 battlerId, u8 id)
+bool8 TryDoQueuedBattleEffectsInSideList(u8 battlerId, const u8 *list, bool8(*func)(u8, u8, u8))
 {
-	if (FindBattlerQueuedEffectInList(battlerId, id) == B_QUEUED_COUNT)
+	u8 i, j, side = GetBattlerSide(battlerId);
+	
+	for (i = 0; i < gBattleStruct->sides[side].queuedEffectsCount; i++)
 	{
-		gBattleStruct->queuedEffectsList[battlerId][gBattleStruct->queuedEffectsCount[battlerId]].id = id;
-		gBattleStruct->queuedEffectsList[battlerId][gBattleStruct->queuedEffectsCount[battlerId]].done = FALSE;
-		++gBattleStruct->queuedEffectsCount[battlerId];
+		for (j = 0; list[j] != B_SIDE_QUEUED_COUNT; j++)
+		{
+			if (gBattleStruct->sides[side].queuedEffectsList[i].id == list[j] && !gBattleStruct->sides[side].queuedEffectsList[i].done)
+			{
+				gBattleStruct->sides[side].queuedEffectsList[i].done = TRUE;
+				
+				if (func(battlerId, side, list[j]))
+					return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+
+void AddBattleEffectToBattlerQueueList(u8 battlerId, u8 id)
+{
+	if (FindQueuedEffectInBattlerList(battlerId, id) == B_BATTLER_QUEUED_COUNT)
+	{
+		gBattleStruct->battlers[battlerId].queuedEffectsList[gBattleStruct->battlers[battlerId].queuedEffectsCount].id = id;
+		gBattleStruct->battlers[battlerId].queuedEffectsList[gBattleStruct->battlers[battlerId].queuedEffectsCount].done = FALSE;
+		++gBattleStruct->battlers[battlerId].queuedEffectsCount;
 	}
 }
 
-void RemoveBattleEffectFromQueueList(u8 battlerId, u8 id)
+void AddBattleEffectToSideQueueList(u8 side, u8 id)
 {
-	u8 i, temp, pos = FindBattlerQueuedEffectInList(battlerId, id);
+	if (FindQueuedEffectInSideList(side, id) == B_SIDE_QUEUED_COUNT)
+	{
+		gBattleStruct->sides[side].queuedEffectsList[gBattleStruct->sides[side].queuedEffectsCount].id = id;
+		gBattleStruct->sides[side].queuedEffectsList[gBattleStruct->sides[side].queuedEffectsCount].done = FALSE;
+		++gBattleStruct->sides[side].queuedEffectsCount;
+	}
+}
+
+void RemoveBattleEffectFromBattlerQueueList(u8 battlerId, u8 id)
+{
+	u8 i, temp, pos = FindQueuedEffectInBattlerList(battlerId, id);
 	bool8 temp2;
 	
-	if (pos != B_QUEUED_COUNT)
+	if (pos != B_BATTLER_QUEUED_COUNT)
 	{
-		if (gBattleStruct->queuedEffectsCount[battlerId] > 1)
+		if (gBattleStruct->battlers[battlerId].queuedEffectsCount > 1)
 		{
-			for (i = pos + 1; gBattleStruct->queuedEffectsCount[battlerId]; i++)
+			for (i = pos + 1; gBattleStruct->battlers[battlerId].queuedEffectsCount; i++)
 			{
-				SWAP(gBattleStruct->queuedEffectsList[battlerId][i - 1].id, gBattleStruct->queuedEffectsList[battlerId][i].id, temp);
-				SWAP(gBattleStruct->queuedEffectsList[battlerId][i - 1].done, gBattleStruct->queuedEffectsList[battlerId][i].done, temp2);
+				SWAP(gBattleStruct->battlers[battlerId].queuedEffectsList[i - 1].id, gBattleStruct->battlers[battlerId].queuedEffectsList[i].id, temp);
+				SWAP(gBattleStruct->battlers[battlerId].queuedEffectsList[i - 1].done, gBattleStruct->battlers[battlerId].queuedEffectsList[i].done, temp2);
 			}
 		}
-		--gBattleStruct->queuedEffectsCount[battlerId];
+		--gBattleStruct->battlers[battlerId].queuedEffectsCount;
+	}
+}
+
+void RemoveBattleEffectFromSideQueueList(u8 side, u8 id)
+{
+	u8 i, temp, pos = FindQueuedEffectInSideList(side, id);
+	bool8 temp2;
+	
+	if (pos != B_SIDE_QUEUED_COUNT)
+	{
+		if (gBattleStruct->sides[side].queuedEffectsCount > 1)
+		{
+			for (i = pos + 1; gBattleStruct->sides[side].queuedEffectsCount; i++)
+			{
+				SWAP(gBattleStruct->sides[side].queuedEffectsList[i - 1].id, gBattleStruct->sides[side].queuedEffectsList[i].id, temp);
+				SWAP(gBattleStruct->sides[side].queuedEffectsList[i - 1].done, gBattleStruct->sides[side].queuedEffectsList[i].done, temp2);
+			}
+		}
+		--gBattleStruct->sides[side].queuedEffectsCount;
 	}
 }
 
@@ -104,8 +163,14 @@ void ResetAllQueuedEffectsDone(void)
 	
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 	{
-		for (j = 0; j < gBattleStruct->queuedEffectsCount[i]; j++)
-			gBattleStruct->queuedEffectsList[i][j].done = FALSE;
+		for (j = 0; j < gBattleStruct->battlers[i].queuedEffectsCount; j++)
+			gBattleStruct->battlers[i].queuedEffectsList[j].done = FALSE;
+	}
+	
+	for (i = 0; i < B_SIDE_COUNT; i++)
+	{
+		for (j = 0; j < gBattleStruct->sides[i].queuedEffectsCount; j++)
+			gBattleStruct->sides[i].queuedEffectsList[j].done = FALSE;
 	}
 }
 
@@ -116,21 +181,21 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 	
 	switch (id)
 	{
-		case B_QUEUED_FUTURE_SIGHT:
-		    if (gBattleStruct->futureSightCounter[battlerId] != 0 && --gBattleStruct->futureSightCounter[battlerId] == 0)
+		case B_BATTLER_QUEUED_FUTURE_SIGHT:
+		    if (gBattleStruct->battlers[battlerId].futureSightCounter != 0 && --gBattleStruct->battlers[battlerId].futureSightCounter == 0)
 			{
 				gBattlerTarget = battlerId;
-				gBattlerAttacker = gBattleStruct->futureSightAttacker[battlerId];
-				gCurrentMove = gBattleStruct->futureSightMove[battlerId];
+				gBattlerAttacker = gBattleStruct->battlers[battlerId].futureSightAttacker;
+				gCurrentMove = gBattleStruct->battlers[battlerId].futureSightMove;
 				gSpecialStatuses[gBattlerAttacker].dmg = 0xFFFF;
 				SetTypeBeforeUsingMove(gCurrentMove, gBattlerAttacker);
 				BattleScriptExecute(BattleScript_MonTookFutureAttack);
-				RemoveBattleEffectFromQueueList(battlerId, id);
+				RemoveBattleEffectFromBattlerQueueList(battlerId, id);
 				effect = TRUE;
 			}
 			break;
-		case B_QUEUED_WISH:
-		    if (gBattleStruct->wishCounter[battlerId] != 0 && --gBattleStruct->wishCounter[battlerId] == 0)
+		case B_BATTLER_QUEUED_WISH:
+		    if (gBattleStruct->battlers[battlerId].wishCounter != 0 && --gBattleStruct->battlers[battlerId].wishCounter == 0)
 			{
 				if (!(gStatuses3[battlerId] & STATUS3_HEAL_BLOCK))
 				{
@@ -138,14 +203,14 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 					BattleScriptExecute(BattleScript_WishComesTrue);
 					effect = TRUE;
 				}
-				RemoveBattleEffectFromQueueList(battlerId, id);
+				RemoveBattleEffectFromBattlerQueueList(battlerId, id);
 			}
 			break;
 	}
 	return effect;
 }
 
-bool8 QueuedEffects_DoSeaOfFireAndGMaxEffects(u8 battlerId, u8 id)
+bool8 QueuedEffects_DoSeaOfFireAndGMaxEffects(u8 battlerId, u8 side, u8 id)
 {
 	return FALSE;
 }
@@ -166,19 +231,16 @@ static void SetDmgHazardsBattleScript(u8 multistringId)
 	gHitMarker |= (HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE);
 }
 
-bool8 QueuedEffects_DoEntryHazardsEffects(u8 battlerId, u8 id)
+bool8 QueuedEffects_DoEntryHazardsEffects(u8 battlerId, u8 side, u8 id)
 {
-	u8 side;
 	u16 currMove;
 	bool8 badPoison, effect = FALSE;
 	
 	if (IsBattlerGrounded(battlerId) && GetBattlerAbility(battlerId) != ABILITY_MAGIC_GUARD)
 	{
-		side = GetBattlerSide(battlerId);
-		
 		switch (id)
 		{
-			case B_QUEUED_SPIKES:
+			case B_SIDE_QUEUED_SPIKES:
 			    if (gSideStatuses[side] & SIDE_STATUS_SPIKES)
 				{
 					gBattleMoveDamage = gBattleMons[battlerId].maxHP / ((5 - gSideTimers[side].spikesAmount) * 2);
@@ -188,15 +250,15 @@ bool8 QueuedEffects_DoEntryHazardsEffects(u8 battlerId, u8 id)
 					effect = TRUE;
 				}
 				break;
-			case B_QUEUED_TOXIC_SPIKES:
+			case B_SIDE_QUEUED_TOXIC_SPIKES:
 			    if (gSideStatuses[side] & SIDE_STATUS_TOXIC_SPIKES)
 				{
-					if (IS_BATTLER_OF_TYPE(battlerId, TYPE_POISON)) // Absorb the Toxic Spikes
+					if (IsBattlerOfType(battlerId, TYPE_POISON)) // Absorb the Toxic Spikes
 					{
 						gSideStatuses[side] &= ~(SIDE_STATUS_TOXIC_SPIKES);
 						gSideTimers[side].toxicSpikesAmount = 0;
-						RemoveBattleEffectFromQueueList(battlerId, B_QUEUED_TOXIC_SPIKES);
-						RemoveBattleEffectFromQueueList(BATTLE_PARTNER(battlerId), B_QUEUED_TOXIC_SPIKES);
+						RemoveBattleEffectFromSideQueueList(side, B_SIDE_QUEUED_TOXIC_SPIKES);
+						
 						gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ABSORBED_TOXIC_SPIKES;
 						BattleScriptCall(BattleScript_PrintEntryHazardsDmgString);
 						effect = TRUE;
@@ -211,30 +273,24 @@ bool8 QueuedEffects_DoEntryHazardsEffects(u8 battlerId, u8 id)
 						SaveAttackerToStack(battlerId);
 						SaveTargetToStack(battlerId);
 						
-					    BattleScriptPushCursor();
-						
 					    SetMoveEffect(badPoison ? MOVE_EFFECT_TOXIC : MOVE_EFFECT_POISON, TRUE, FALSE);
 					    
-					    if (DoMoveEffect(FALSE, FALSE, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_NO_SYNCHRONISE))
+					    if (DoMoveEffect(FALSE, NULL, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_NO_SYNCHRONISE))
 					    {
-					    	BattleScriptPop();
 					    	BattleScriptCall(badPoison ? BattleScript_MoveEffectToxic : BattleScript_MoveEffectPoison);
 							effect = TRUE;
 					    }
-					    else
-					    	BattleScriptPop();
-					    
 						RestoreTargetFromStack();
 						RestoreAttackerFromStack();
 					    gCurrentMove = currMove;
 					}
 				}
 			    break;
-			case B_QUEUED_STEALTH_ROCK:
+			case B_SIDE_QUEUED_STEALTH_ROCK:
 				break;
-			case B_QUEUED_STICKY_WEB:
+			case B_SIDE_QUEUED_STICKY_WEB:
 				break;
-			case B_QUEUED_STEELSURGE:
+			case B_SIDE_QUEUED_GMAX_STEELSURGE:
 				break;
 		}
 	}

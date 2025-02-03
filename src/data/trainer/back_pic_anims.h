@@ -1,3 +1,15 @@
+static const union AnimCmd sAnim_GeneralFrame0[] =
+{
+    ANIMCMD_FRAME(0, 0),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_GeneralFrame3[] =
+{
+    ANIMCMD_FRAME(3, 0),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnimCmd_Red_1[] = {
     ANIMCMD_FRAME(1, 20),
     ANIMCMD_FRAME(2, 6),
@@ -78,13 +90,4 @@ const union AnimCmd *const sBackAnims_RSBrendan[] = {
 const union AnimCmd *const sBackAnims_RSMay[] = {
     sAnim_GeneralFrame3,
     sAnimCmd_RSMay_1
-};
-
-const union AnimCmd *const *const gTrainerBackAnimsPtrTable[] = {
-    sBackAnims_Red,
-    sBackAnims_Leaf,
-    sBackAnims_RSBrendan,
-    sBackAnims_RSMay,
-    sBackAnims_Pokedude,
-    sBackAnims_OldMan
 };

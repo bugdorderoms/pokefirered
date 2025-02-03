@@ -4,6 +4,8 @@
 #include "global.h"
 #include "constants/field_effects.h"
 
+#define SHOW_MON_CRY_NO_DUCKING (1 << 31)
+
 extern u32 gFieldEffectArguments[8];
 extern void (*gPostMenuFieldCallback)(void);
 extern bool8 (*gFieldCallback2)(void);

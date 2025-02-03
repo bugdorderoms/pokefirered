@@ -4,17 +4,16 @@
 #include "task.h"
 #include "trig.h"
 
-static void sub_80B725C(struct Sprite *sprite);
 static void AnimDragonFireToTarget(struct Sprite *sprite);
 static void AnimDragonRageFirePlume(struct Sprite *sprite);
 static void AnimDragonDanceOrb(struct Sprite *sprite);
+static void AnimDragonDanceOrb_Step(struct Sprite *sprite);
 static void AnimOverheatFlame(struct Sprite *sprite);
-static void sub_80B74D8(struct Sprite *sprite);
-static void sub_80B76B0(u8 taskId);
-static void sub_80B776C(struct Task *task);
-static void sub_80B7894(struct Sprite *sprite);
+static void AnimOverheatFlame_Step(struct Sprite *sprite);
+static void AnimTask_DragonDanceWaver_Step(u8 taskId);
+static void UpdateDragonDanceScanlineEffect(struct Task *task);
 
-static const union AnimCmd gUnknown_83E7710[] =
+static const union AnimCmd sOutrageFlameAnimCmds[] =
 {
     ANIMCMD_FRAME(0, 4),
     ANIMCMD_FRAME(16, 4),
@@ -24,9 +23,9 @@ static const union AnimCmd gUnknown_83E7710[] =
     ANIMCMD_JUMP(0),
 };
 
-static const union AnimCmd *const gUnknown_83E7728[] =
+static const union AnimCmd *const sOutrageFlameAnimTable[] =
 {
-    gUnknown_83E7710,
+    sOutrageFlameAnimCmds,
 };
 
 const struct SpriteTemplate gOutrageFlameSpriteTemplate =
@@ -34,10 +33,10 @@ const struct SpriteTemplate gOutrageFlameSpriteTemplate =
     .tileTag = ANIM_TAG_SMALL_EMBER,
     .paletteTag = ANIM_TAG_SMALL_EMBER,
     .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = gUnknown_83E7728,
+    .anims = sOutrageFlameAnimTable,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = sub_80B725C,
+    .callback = AnimOutrageFlame,
 };
 
 static const union AnimCmd sAnim_DragonBreathFire_0[] =
@@ -85,6 +84,17 @@ static const union AffineAnimCmd *const sAffineAnims_DragonBreathFire[] =
 const struct SpriteTemplate gDragonBreathFireSpriteTemplate =
 {
     .tileTag = ANIM_TAG_SMALL_EMBER,
+    .paletteTag = ANIM_TAG_WATER_ORB,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = sAnims_DragonBreathFire,
+    .images = NULL,
+    .affineAnims = sAffineAnims_DragonBreathFire,
+    .callback = AnimDragonFireToTarget,
+};
+
+const struct SpriteTemplate gFlamethrowerFireSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SMALL_EMBER,
     .paletteTag = ANIM_TAG_SMALL_EMBER,
     .oam = &gOamData_AffineDouble_ObjNormal_32x32,
     .anims = sAnims_DragonBreathFire,
@@ -111,7 +121,7 @@ static const union AnimCmd *const sAnims_DragonRageFirePlume[] =
 const struct SpriteTemplate gDragonRageFirePlumeSpriteTemplate =
 {
     .tileTag = ANIM_TAG_FIRE_PLUME,
-    .paletteTag = ANIM_TAG_FIRE_PLUME,
+    .paletteTag = ANIM_TAG_PURPLE_FLAME,
     .oam = &gOamData_AffineOff_ObjNormal_32x32,
     .anims = sAnims_DragonRageFirePlume,
     .images = NULL,
@@ -154,7 +164,7 @@ static const union AffineAnimCmd *const sAffineAnims_DragonRageFire[] =
 const struct SpriteTemplate gDragonRageFireSpitSpriteTemplate =
 {
     .tileTag = ANIM_TAG_SMALL_EMBER,
-    .paletteTag = ANIM_TAG_SMALL_EMBER,
+    .paletteTag = ANIM_TAG_PURPLE_FLAME,
     .oam = &gOamData_AffineDouble_ObjNormal_32x32,
     .anims = sAnims_DragonRageFire,
     .images = NULL,
@@ -178,16 +188,35 @@ const struct SpriteTemplate gOverheatFlameSpriteTemplate =
     .tileTag = ANIM_TAG_SMALL_EMBER,
     .paletteTag = ANIM_TAG_SMALL_EMBER,
     .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = gUnknown_83E7728,
+    .anims = sOutrageFlameAnimTable,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimOverheatFlame,
 };
 
-static void sub_80B725C(struct Sprite *sprite)
+const struct SpriteTemplate gDragonDanceBlackSmokeSpriteTemplate =
 {
-    sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, 2);
-    sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, 3);
+    .tileTag = ANIM_TAG_PINK_CLOUD,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineOff_ObjBlend_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimParticleInVortex,
+};
+
+// Animates MOVE_OUTRAGE's flame sprite.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: duration
+// arg 3: x slide
+// arg 4: y slide
+// arg 5: flicker timer
+void AnimOutrageFlame(struct Sprite *sprite)
+{
+    sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
+    sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+	
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
     {
         sprite->x -= gBattleAnimArgs[0];
@@ -195,104 +224,113 @@ static void sub_80B725C(struct Sprite *sprite)
         gBattleAnimArgs[4] = -gBattleAnimArgs[4];
     }
     else
-    {
         sprite->x += gBattleAnimArgs[0];
-    }
+
     sprite->y += gBattleAnimArgs[1];
+	
     sprite->data[0] = gBattleAnimArgs[2];
     sprite->data[1] = gBattleAnimArgs[3];
     sprite->data[3] = gBattleAnimArgs[4];
     sprite->data[5] = gBattleAnimArgs[5];
     sprite->invisible = TRUE;
-    StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
-    sprite->callback = TranslateSpriteLinearAndFlicker;
+	sprite->callback = TranslateSpriteLinearAndFlicker;
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
-static void sub_80B72F8(struct Sprite *sprite)
+// Animates the fore plume in the second part of MOVE_DRAGON_RAGE's anim.
+// arg 0: anim battler
+// arg 1: initial x offset
+// arg 2: initial y offset
+static void AnimDragonRageFirePlume(struct Sprite *sprite)
+{
+	u8 battlerId = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+	
+	sprite->x = GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X);
+	sprite->y = GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y);
+    
+    SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[1]);
+    sprite->y += gBattleAnimArgs[2];
+	
+    sprite->callback = RunStoredCallbackWhenAnimEnds;
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+// For Dragon Breath and Dragon Rage.
+// arg 0: player side initial x offset
+// arg 1: initial y offset
+// arg 2: target x offset
+// arg 3: target y offset
+// arg 4: duration
+static void AnimDragonFireToTarget(struct Sprite *sprite)
 {
     SetSpriteCoordsToAnimAttackerCoords(sprite);
-    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 2);
-    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, 3);
+	
+    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
+    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+	
+	sprite->y += gBattleAnimArgs[1];
+	
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
     {
         sprite->x -= gBattleAnimArgs[1];
-        sprite->y += gBattleAnimArgs[1];
         sprite->data[2] -= gBattleAnimArgs[2];
-        sprite->data[4] += gBattleAnimArgs[3];
+		StartSpriteAffineAnim(sprite, 1);
     }
     else
     {
         sprite->x += gBattleAnimArgs[0];
-        sprite->y += gBattleAnimArgs[1];
         sprite->data[2] += gBattleAnimArgs[2];
-        sprite->data[4] += gBattleAnimArgs[3];
         StartSpriteAnim(sprite, 1);
     }
-    sprite->data[0] = gBattleAnimArgs[4];
+	sprite->data[0] = gBattleAnimArgs[4];
     sprite->callback = StartAnimLinearTranslation;
-    StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
-static void AnimDragonRageFirePlume(struct Sprite *sprite)
-{
-    if (gBattleAnimArgs[0] == 0)
-    {
-        sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, 0);
-        sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, 1);
-    }
-    else
-    {
-        sprite->x = GetBattlerSpriteCoord(gBattleAnimTarget, 0);
-        sprite->y = GetBattlerSpriteCoord(gBattleAnimTarget, 1);
-    }
-    SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[1]);
-    sprite->y += gBattleAnimArgs[2];
-    sprite->callback = RunStoredCallbackWhenAnimEnds;
-    StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
-}
-
-static void AnimDragonFireToTarget(struct Sprite *sprite)
-{
-    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
-        StartSpriteAffineAnim(sprite, 1);
-    sub_80B72F8(sprite);
-}
-
+// Animates the circular orbs in Dragon's Dance anim.
+// arg 0: wave index
 static void AnimDragonDanceOrb(struct Sprite *sprite)
 {
-    u16 r5;
-    u16 r0;
+    u16 height, width;
 
-    sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, 2);
-    sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, 3);
-    sprite->data[4] = 0;
+    sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
+    sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+	
     sprite->data[5] = 1;
     sprite->data[6] = gBattleAnimArgs[0];
-    r5 = GetBattlerSpriteCoordAttr(gBattlerAttacker, BATTLER_COORD_ATTR_HEIGHT);
-    r0 = GetBattlerSpriteCoordAttr(gBattlerAttacker, BATTLER_COORD_ATTR_WIDTH);
-    if (r5 > r0)
-        sprite->data[7] = r5 / 2;
+	
+    height = GetBattlerSpriteCoordAttr(gBattleAnimAttacker, BATTLER_COORD_ATTR_HEIGHT);
+    width = GetBattlerSpriteCoordAttr(gBattleAnimAttacker, BATTLER_COORD_ATTR_WIDTH);
+	
+    if (height > width)
+        sprite->data[7] = height / 2;
     else
-        sprite->data[7] = r0 / 2;
+        sprite->data[7] = width / 2;
+	
     sprite->x2 = Cos(sprite->data[6], sprite->data[7]);
     sprite->y2 = Sin(sprite->data[6], sprite->data[7]);
-    sprite->callback = sub_80B74D8;
+	
+    sprite->callback = AnimDragonDanceOrb_Step;
 }
 
-static void sub_80B74D8(struct Sprite *sprite)
+static void AnimDragonDanceOrb_Step(struct Sprite *sprite)
 {
     switch (sprite->data[0])
     {
     case 0:
         sprite->data[6] = (sprite->data[6] - sprite->data[5]) & 0xFF;
+		
         sprite->x2 = Cos(sprite->data[6], sprite->data[7]);
         sprite->y2 = Sin(sprite->data[6], sprite->data[7]);
+		
         if (++sprite->data[4] > 5)
         {
             sprite->data[4] = 0;
+			
             if (sprite->data[5] <= 15 && ++sprite->data[5] > 15)
                 sprite->data[5] = 16;
         }
+		
         if (++sprite->data[3] > 0x3C)
         {
             sprite->data[3] = 0;
@@ -301,22 +339,29 @@ static void sub_80B74D8(struct Sprite *sprite)
         break;
     case 1:
         sprite->data[6] = (sprite->data[6] - sprite->data[5]) & 0xFF;
+		
         if (sprite->data[7] <= 0x95 && (sprite->data[7] += 8) > 0x95)
             sprite->data[7] = 0x96;
+		
         sprite->x2 = Cos(sprite->data[6], sprite->data[7]);
         sprite->y2 = Sin(sprite->data[6], sprite->data[7]);
+		
         if (++sprite->data[4] > 5)
         {
             sprite->data[4] = 0;
+			
             if (sprite->data[5] <= 15 && ++sprite->data[5] > 15)
                 sprite->data[5] = 16;
         }
+		
         if (++sprite->data[3] > 20)
             DestroyAnimSprite(sprite);
         break;
     }
 }
 
+// Wavers the attacker back and forth. Progressing vertical wave of scanline shifts. Used by Dragon Dance.
+// No args.
 void AnimTask_DragonDanceWaver(u8 taskId)
 {
     struct ScanlineEffectParams sp;
@@ -334,24 +379,27 @@ void AnimTask_DragonDanceWaver(u8 taskId)
         sp.dmaDest = &REG_BG2HOFS;
         task->data[2] = gBattle_BG2_X;
     }
-    sp.dmaControl = 0xA2600001;
+    sp.dmaControl = SCANLINE_EFFECT_DMACNT_16BIT;
     sp.initState = 1;
 
     r1 = GetBattlerYCoordWithElevation(gBattleAnimAttacker);
+	
     task->data[3] = r1 - 32;
     task->data[4] = r1 + 32;
+	
     if (task->data[3] < 0)
         task->data[3] = 0;
+	
     for (i = task->data[3]; i <= task->data[4]; ++i)
     {
         gScanlineEffectRegBuffers[0][i] = task->data[2];
         gScanlineEffectRegBuffers[1][i] = task->data[2];
     }
     ScanlineEffect_SetParams(sp);
-    task->func = sub_80B76B0;
+    task->func = AnimTask_DragonDanceWaver_Step;
 }
 
-static void sub_80B76B0(u8 taskId)
+static void AnimTask_DragonDanceWaver_Step(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
 
@@ -361,24 +409,27 @@ static void sub_80B76B0(u8 taskId)
         if (++task->data[7] > 1)
         {
             task->data[7] = 0;
+			
             if (++task->data[6] == 3)
                 ++task->data[0];
         }
-        sub_80B776C(task);
+        UpdateDragonDanceScanlineEffect(task);
         break;
     case 1:
         if (++task->data[1] > 0x3C)
             ++task->data[0];
-        sub_80B776C(task);
+		
+        UpdateDragonDanceScanlineEffect(task);
         break;
     case 2:
         if (++task->data[7] > 1)
         {
             task->data[7] = 0;
+			
             if (--task->data[6] == 0)
                 ++task->data[0];
         }
-        sub_80B776C(task);
+        UpdateDragonDanceScanlineEffect(task);
         break;
     case 3:
         gScanlineEffect.state = 3;
@@ -390,7 +441,7 @@ static void sub_80B76B0(u8 taskId)
     }
 }
 
-static void sub_80B776C(struct Task *task)
+static void UpdateDragonDanceScanlineEffect(struct Task *task)
 {
     u16 i, r3 = task->data[5];
 
@@ -402,26 +453,37 @@ static void sub_80B776C(struct Task *task)
     task->data[5] = (task->data[5] + 9) & 0xFF;
 }
 
+// Animates Overheat flames.
+// arg 0: movement distance
+// arg 1: wave index
+// arg 2: x amplitude
+// arg 3: movement duration
+// arg 4: y pixel offset
 static void AnimOverheatFlame(struct Sprite *sprite)
 {
-    s32 i, r6 = (gBattleAnimArgs[2] * 3) / 5;
+    s32 yAmplitude = (gBattleAnimArgs[2] * 3) / 5;
 
-    sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, 2);
-    sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, 3) + gBattleAnimArgs[4];
+    sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
+    sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[4];
+	
     sprite->data[1] = Cos(gBattleAnimArgs[1], gBattleAnimArgs[2]);
-    sprite->data[2] = Sin(gBattleAnimArgs[1], r6);
+    sprite->data[2] = Sin(gBattleAnimArgs[1], yAmplitude);
+	
     sprite->x += sprite->data[1] * gBattleAnimArgs[0];
     sprite->y += sprite->data[2] * gBattleAnimArgs[0];
+	
     sprite->data[3] = gBattleAnimArgs[3];
-    sprite->callback = sub_80B7894;
+    sprite->callback = AnimOverheatFlame_Step;
 }
 
-static void sub_80B7894(struct Sprite *sprite)
+static void AnimOverheatFlame_Step(struct Sprite *sprite)
 {
     sprite->data[4] += sprite->data[1];
     sprite->data[5] += sprite->data[2];
+	
     sprite->x2 = sprite->data[4] / 10;
     sprite->y2 = sprite->data[5] / 10;
+	
     if (++sprite->data[0] > sprite->data[3])
         DestroyAnimSprite(sprite);
 }

@@ -91,6 +91,8 @@ bool8 TryStartDexnavSearch(void);
 bool8 IsDexNavSearchActive(void);
 void ResetDexNavSearch(void);
 void IncrementOrResetDexNavChain(bool8 increment);
+u8 GetDexNavShinyRollsIncrease(u32 rolls);
+u32 GetDexNavShinyRate(void);
 
 // ewram
 extern bool8 gDexnavBattle;

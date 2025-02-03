@@ -53,17 +53,17 @@ enum
 
 bool8 UproarWakeUpCheck(void);
 u8 IsUproarActive(void);
+u8 GetHitDamageResult(u8 battlerId, u16 move, bool8 checkSturdy);
+u16 GetOHKOChance(u8 attacker, u8 target, u16 move);
+bool8 KanOHKOBattler(u8 attacker, u8 target, u16 move, bool8 checkKOAcc);
 bool8 JumpIfMoveAffectedByProtect(u8 addr, const u8 *jumpStr);
-u8 GetTypeModifier(u8 atkType, u8 defType);
-u16 AI_TypeCalc(u16 move, u16 targetSpecies, u16 targetAbility);
-u8 CalcTypeEffectivenessMultiplier(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 recordAbilities, u16 *flags);
-void AI_CalcDmg(u8 attacker, u8 defender, u16 move);
 bool32 IsMonGettingExpSentOut(void);
 void BattleCreateYesNoCursorAt(void);
 void BattleDestroyYesNoCursorAt(void);
 void HandleBattleWindow(u8 xStart, u8 yStart, u8 xEnd, u8 yEnd, u8 flags);
 void BufferMoveToLearnIntoBattleTextBuff2(void);
 u8 GetCurrentLevelCapLevel(void);
+u32 CalcMoveTotalAccuracy(u16 move, u8 attacker, u8 defender);
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 

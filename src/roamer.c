@@ -106,7 +106,8 @@ static void CreateInitialRoamerMon(void)
 	
     ROAMER->species = GenerateWildMon(GetRoamerSpecies(), level, FALSE);
     ROAMER->level = level;
-    ROAMER->status = 0;
+    ROAMER->status.id = 0;
+	ROAMER->status.counter = 0;
     ROAMER->active = TRUE;
     ROAMER->ivs = GetMonData(mon, MON_DATA_IVS);
     ROAMER->personality = GetMonData(mon, MON_DATA_PERSONALITY);
@@ -194,7 +195,7 @@ void RoamerMove(void)
 
 static void CreateRoamerMonInstance(void)
 {
-    u32 status;
+	u8 status;
     struct Pokemon *mon = &gEnemyParty[0];
 	struct PokemonGenerator generator =
 	{
@@ -202,17 +203,22 @@ static void CreateRoamerMonInstance(void)
 		.level = ROAMER->level,
 		.otIdType = OT_ID_PLAYER_ID,
 		.shinyType = GENERATE_SHINY_NORMAL,
+		.shinyRollType = SHINY_ROLL_NORMAL,
 		.forcedGender = MON_GENDERLESS,
 		.hasFixedPersonality = TRUE,
 		.fixedPersonality = ROAMER->personality,
 		.forcedNature = NUM_NATURES,
 		.formChanges = NULL,
-		.moves = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE},
+		.moves = {0},
+		.nPerfectIvs = 0,
 	};
     ZeroEnemyPartyMons();
     CreateMon(mon, generator);
-    status = ROAMER->status;
-    SetMonData(mon, MON_DATA_STATUS, &status);
+	
+	status = ROAMER->status.id;
+    SetMonData(mon, MON_DATA_STATUS_ID, &status);
+	status = ROAMER->status.counter;
+	SetMonData(mon, MON_DATA_STATUS_COUNTER, &status);
     SetMonData(mon, MON_DATA_HP, &ROAMER->hp);
 	SetMonData(mon, MON_DATA_IVS, &ROAMER->ivs);
 	CalculateMonStats(mon);
@@ -239,7 +245,8 @@ bool8 TryStartRoamerEncounter(void)
 void UpdateRoamerHPStatus(struct Pokemon *mon)
 {
     ROAMER->hp = GetMonData(mon, MON_DATA_HP);
-    ROAMER->status = GetMonData(mon, MON_DATA_STATUS);
+    ROAMER->status.id = GetMonData(mon, MON_DATA_STATUS_ID);
+	ROAMER->status.counter = GetMonData(mon, MON_DATA_STATUS_COUNTER);
     RoamerMoveToOtherLocationSet();
 }
 

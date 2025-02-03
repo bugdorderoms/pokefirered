@@ -970,14 +970,10 @@ static u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y)
 
 static u8 CreateMenuMonPic(u16 species, u8 x, u8 y)
 {
-	u16 reg1 = GetGpuReg(REG_OFFSET_DISPCNT), reg2 = GetGpuReg(REG_OFFSET_WINOUT);
-	u8 spriteId2 = MAX_SPRITES, spriteId = CreateMonSprite_PicBox(species, x, y);
+	u8 spriteId = CreateMonSprite_PicBox(species, x, y), spriteId2 = MAX_SPRITES;
 	
 	if (Overworld_GetFlashLevel() > 0)
 	{
-		SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
-		SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
-		
 		spriteId2 = CreateMonSprite_PicBox(species, x, y);
 		
 		if (spriteId2 != MAX_SPRITES)
@@ -989,26 +985,20 @@ static u8 CreateMenuMonPic(u16 species, u8 x, u8 y)
 	}
 	gSprites[spriteId].callback = SpriteCallbackDummy;
 	gSprites[spriteId].oam.priority = 0;
-	gSprites[spriteId].data[0] = reg1;
-	gSprites[spriteId].data[1] = reg2;
-	gSprites[spriteId].data[2] = spriteId2;
+	gSprites[spriteId].data[0] = spriteId2;
 	
 	return spriteId;
 }
 
 static u8 CreateMenuItemPic(u16 itemId, u16 x, u16 y)
 {
-	u16 reg1 = GetGpuReg(REG_OFFSET_DISPCNT), reg2 = GetGpuReg(REG_OFFSET_WINOUT);
-	u8 spriteId2 = MAX_SPRITES, spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
+	u8 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2 = MAX_SPRITES;
 	
 	x = 8 * x + 16;
 	y = 8 * y + 16;
 	
 	if (Overworld_GetFlashLevel() > 0)
 	{
-		SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
-		SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
-		
 		spriteId2 = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
 		
 		if (spriteId2 != MAX_SPRITES)
@@ -1022,9 +1012,7 @@ static u8 CreateMenuItemPic(u16 itemId, u16 x, u16 y)
 	gSprites[spriteId].x = x;
 	gSprites[spriteId].y = y;
 	gSprites[spriteId].oam.priority = 0;
-	gSprites[spriteId].data[0] = reg1;
-	gSprites[spriteId].data[1] = reg2;
-	gSprites[spriteId].data[2] = spriteId2;
+	gSprites[spriteId].data[0] = spriteId2;
 	
 	return spriteId;
 }
@@ -1043,13 +1031,9 @@ static void DestroyPicboxPic(u8 picType, u8 spriteId)
 	switch (picType)
 	{
 		case PIC_TYPE_POKEMON:
-			if (sprite->data[2] != MAX_SPRITES)
-			{
-				SetGpuReg(REG_OFFSET_DISPCNT, sprite->data[0]);
-				SetGpuReg(REG_OFFSET_WINOUT, sprite->data[1]);
+			if (sprite->data[0] != MAX_SPRITES)
+				FreeResourcesAndDestroySprite(&gSprites[sprite->data[0]], sprite->data[0]);
 
-				FreeResourcesAndDestroySprite(&gSprites[sprite->data[2]], sprite->data[2]);
-			}
 			FreeResourcesAndDestroySprite(sprite, spriteId);
 			break;
 		case PIC_TYPE_MUSEUM_FOSSIL:
@@ -1057,13 +1041,9 @@ static void DestroyPicboxPic(u8 picType, u8 spriteId)
 			FreeSpriteTilesByTag(TAG_MUSEUM_FOSSIL_PIC);
 			break;
 		case PIC_TYPE_ITEM:
-			if (sprite->data[2] != MAX_SPRITES)
-			{
-				SetGpuReg(REG_OFFSET_DISPCNT, sprite->data[0]);
-				SetGpuReg(REG_OFFSET_WINOUT, sprite->data[1]);
-				
-				DestroySpriteAndFreeResources(&gSprites[sprite->data[2]]);
-			}
+			if (sprite->data[0] != MAX_SPRITES)
+				DestroySpriteAndFreeResources(&gSprites[sprite->data[0]]);
+
 			DestroySpriteAndFreeResources(sprite);
 			break;
 	}
@@ -1074,26 +1054,26 @@ static void DestroyPicboxPic(u8 picType, u8 spriteId)
 #define tState     data[2]
 #define tPicType   data[3]
 
+static void CreatePicBox(u8 spriteId, s16 x, s16 y, u8 width, u8 height, u8 picType)
+{
+	s16 *data = gTasks[CreateTask(Task_ScriptShowPic, 80)].data;
+	
+	tWindowId = CreateMultichoiceWindow(0, x, y, width, height, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
+	tSpriteId = spriteId;
+	tState = 0;
+	tPicType = picType;
+	
+	SetStdWindowBorderStyle(tWindowId, TRUE);
+	ScheduleBgCopyTilemapToVram(0);
+}
+
 bool8 ScriptMenu_ShowPokemonPic(u16 species, u8 x, u8 y)
 {
-	u8 spriteId;
-	s16 *data;
-	
 	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
 		return FALSE;
 	else
 	{
-		spriteId = CreateMenuMonPic(species, x, y);
-		
-		data = gTasks[CreateTask(Task_ScriptShowPic, 80)].data;
-		tWindowId = CreateMultichoiceWindow(0, x, y, 8, 8, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
-		tSpriteId = spriteId;
-		tState = 0;
-		tPicType = PIC_TYPE_POKEMON;
-		
-		SetStdWindowBorderStyle(tWindowId, TRUE);
-		ScheduleBgCopyTilemapToVram(0);
-		
+		CreatePicBox(CreateMenuMonPic(species, x, y), x, y, 8, 8, PIC_TYPE_POKEMON);
 		return TRUE;
 	}
 }
@@ -1180,7 +1160,6 @@ void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y)
 bool8 OpenMuseumFossilPic(void)
 {
 	u8 spriteId;
-	s16 *data;
 	
 	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
 		return FALSE;
@@ -1202,15 +1181,8 @@ bool8 OpenMuseumFossilPic(void)
 		spriteId = CreateSprite(&sMuseumFossilSprTemplate, gSpecialVar_0x8005 * 8 + 40, gSpecialVar_0x8006 * 8 + 40, 0);
 		gSprites[spriteId].oam.paletteNum = 13;
 		
-		data = gTasks[CreateTask(Task_ScriptShowPic, 80)].data;
-		tWindowId = CreateMultichoiceWindow(0, gSpecialVar_0x8005, gSpecialVar_0x8006, 8, 8, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
-		tSpriteId = spriteId;
-		tState = 0;
-		tPicType = PIC_TYPE_MUSEUM_FOSSIL;
-		
-		SetStdWindowBorderStyle(tWindowId, TRUE);
-		ScheduleBgCopyTilemapToVram(0);
-		
+		CreatePicBox(spriteId, gSpecialVar_0x8005, gSpecialVar_0x8006, 8, 8, PIC_TYPE_MUSEUM_FOSSIL);
+
 		return TRUE;
 	}
 }
@@ -1229,24 +1201,11 @@ bool8 CloseMuseumFossilPic(void)
 
 bool8 ScriptMenu_ShowItemPic(u16 itemId, u8 x, u8 y)
 {
-	u8 spriteId;
-	s16 *data;
-	
 	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
 		return FALSE;
 	else
 	{
-		spriteId = CreateMenuItemPic(itemId, x, y);
-		
-		data = gTasks[CreateTask(Task_ScriptShowPic, 80)].data;
-		tWindowId = CreateMultichoiceWindow(0, x, y, 3, 3, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
-		tSpriteId = spriteId;
-		tState = 0;
-		tPicType = PIC_TYPE_ITEM;
-		
-		SetStdWindowBorderStyle(tWindowId, TRUE);
-		ScheduleBgCopyTilemapToVram(0);
-		
+		CreatePicBox(CreateMenuItemPic(itemId, x, y), x, y, 3, 3, PIC_TYPE_ITEM);
 		return TRUE;
 	}
 }

@@ -23,7 +23,7 @@ bool8 ShouldDoTrainerSlide(u8 battlerId, u8 caseId)
 	bool8 doSlide = FALSE;
 	u16 trainerId = gTrainerBattleOpponent_A;
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && GetBattlerSide(battlerId) == B_SIDE_OPPONENT)
+	if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && !(gBattleTypeFlags & BATTLE_TYPE_LINK) && GetBattlerSide(battlerId) == B_SIDE_OPPONENT)
 	{
 		gBattleScripting.battler = battlerId;
 		

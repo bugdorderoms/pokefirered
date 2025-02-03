@@ -2,26 +2,26 @@
 #define GUARD_CONSTANTS_POKEMON_H
 
 // For (Set|Get)(Box)?MonData
-#define MON_DATA_PERSONALITY        0
-#define MON_DATA_OT_ID              1
-#define MON_DATA_NICKNAME           2
-#define MON_DATA_LANGUAGE           3
-#define MON_DATA_SANITY_HAS_SPECIES 4
-#define MON_DATA_IS_EGG             5
-#define MON_DATA_OT_NAME            6
-#define MON_DATA_MARKINGS           7
-#define MON_DATA_SPECIES            8
-#define MON_DATA_HELD_ITEM          9
-#define MON_DATA_MOVE1              10
-#define MON_DATA_MOVE2              11
-#define MON_DATA_MOVE3              12
-#define MON_DATA_MOVE4              13
-#define MON_DATA_PP1                14
-#define MON_DATA_PP2                15
-#define MON_DATA_PP3                16
-#define MON_DATA_PP4                17
-#define MON_DATA_PP_BONUSES         18
-#define MON_DATA_EXP                19
+#define MON_DATA_LEVEL              0
+#define MON_DATA_MAX_HP             1
+#define MON_DATA_HP                 2
+#define MON_DATA_ATK                3
+#define MON_DATA_DEF                4
+#define MON_DATA_SPEED              5
+#define MON_DATA_SPATK              6
+#define MON_DATA_SPDEF              7
+#define MON_DATA_STATUS_ID          8
+#define MON_DATA_STATUS_COUNTER     9
+#define MON_DATA_MAIL               10
+#define MON_DATA_MOVE1              11
+#define MON_DATA_MOVE2              12
+#define MON_DATA_MOVE3              13
+#define MON_DATA_MOVE4              14
+#define MON_DATA_PP1                15
+#define MON_DATA_PP2                16
+#define MON_DATA_PP3                17
+#define MON_DATA_PP4                18
+#define MON_DATA_PP_BONUSES         19
 #define MON_DATA_HP_EV              20
 #define MON_DATA_ATK_EV             21
 #define MON_DATA_DEF_EV             22
@@ -42,7 +42,7 @@
 #define MON_DATA_SPDEF_IV           37
 #define MON_DATA_ABILITY_NUM        38
 #define MON_DATA_OT_GENDER          39
-#define MON_DATA_MAIL               40
+#define MON_DATA_EXP                40
 #define MON_DATA_SPECIES2           41
 #define MON_DATA_IVS                42
 #define MON_DATA_KNOWN_MOVES        43
@@ -52,17 +52,18 @@
 #define MON_DATA_DYNAMAX_LEVEL      47
 #define MON_DATA_HAS_GMAX_FACTOR    48
 #define MON_DATA_TERA_TYPE          49
-#define MON_DATA_STATUS             50
-#define MON_DATA_LEVEL              51
-#define MON_DATA_MAX_HP             52
-#define MON_DATA_HP                 53
-#define MON_DATA_ATK                54
-#define MON_DATA_DEF                55
-#define MON_DATA_SPEED              56
-#define MON_DATA_SPATK              57
-#define MON_DATA_SPDEF              58
-#define MON_DATA_EVOLUTION_TRACKER  59
-#define MON_DATA_FORM_COUNTDOWN     60
+#define MON_DATA_PERSONALITY        50
+#define MON_DATA_OT_ID              51
+#define MON_DATA_NICKNAME           52
+#define MON_DATA_LANGUAGE           53
+#define MON_DATA_SANITY_HAS_SPECIES 54
+#define MON_DATA_IS_EGG             55
+#define MON_DATA_OT_NAME            56
+#define MON_DATA_MARKINGS           57
+#define MON_DATA_SPECIES            58
+#define MON_DATA_HELD_ITEM          59
+#define MON_DATA_EVOLUTION_TRACKER  60
+#define MON_DATA_FORM_COUNTDOWN     61
 
 #define SPLIT_PHYSICAL               0x0
 #define SPLIT_SPECIAL                0x1
@@ -91,6 +92,10 @@
 #define TYPE_FAIRY          0x12
 #define TYPE_STELLAR        0x13
 #define NUMBER_OF_MON_TYPES 0x14
+
+#define TYPE_NAME_LENGTH     8
+#define CATEGORY_NAME_LENGTH 8
+#define ABILITY_NAME_LENGTH  16
 
 // Pokemon egg groups
 #define EGG_GROUP_NONE 0
@@ -168,6 +173,7 @@
 #define SPECIES_FLAG_PARADOX      (1 << 7)
 #define SPECIES_FLAG_TERASTAL     (1 << 8)
 #define SPECIES_FLAG_CANT_TRADE   (1 << 9)
+#define SPECIES_FLAG_TOTEM        (1 << 10)
 // Those species flags cause the pokemon to be created with 3 perfect ivs
 #define SPECIES_PERFECT_IVS_FLAGS (SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_MYTHICAL | SPECIES_FLAG_ULTRA_BEAST | SPECIES_FLAG_PARADOX)
 

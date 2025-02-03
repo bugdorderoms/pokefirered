@@ -700,12 +700,15 @@ bool8 ScrCmd_delay(struct ScriptContext * ctx)
     return TRUE;
 }
 
-bool8 ScrCmd_initclock(struct ScriptContext * ctx)
+bool8 ScrCmd_starttotembattle(struct ScriptContext * ctx)
 {
-//    u8 hour = VarGet(ScriptReadHalfword(ctx));
-//    u8 minute = VarGet(ScriptReadHalfword(ctx));
-//
-//    RtcInitLocalTimeOffset(hour, minute);
+	u8 i;
+	s8 buffs[NUM_BATTLE_STATS];
+	
+	for (i = STAT_ATK; i < NUM_BATTLE_STATS; i++)
+		buffs[i] = ScriptReadByte(ctx);
+	
+	StartTotemBattle(buffs);
     return FALSE;
 }
 
@@ -1426,7 +1429,7 @@ bool8 ScrCmd_showmonpic(struct ScriptContext * ctx)
     u8 y = ScriptReadByte(ctx);
 
     ScriptMenu_ShowPokemonPic(species, x, y);
-    PlayCry7(species, 0);
+    PlayCry_Normal(species, 0);
     return FALSE;
 }
 
@@ -2004,8 +2007,7 @@ bool8 ScrCmd_playmoncry(struct ScriptContext * ctx)
 {
     u16 species = VarGet(ScriptReadHalfword(ctx));
     u16 mode = VarGet(ScriptReadHalfword(ctx));
-
-    PlayCry7(species, mode);
+    PlayCry_ByMode(species, 0, mode);
     return FALSE;
 }
 

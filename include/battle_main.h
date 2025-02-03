@@ -4,9 +4,8 @@
 #include "constants/abilities.h"
 #include "constants/pokemon.h"
 
-#define TYPE_NAME_LENGTH     8
-#define CATEGORY_NAME_LENGTH 8
-#define ABILITY_NAME_LENGTH  16
+#define INTRO_SLIDE_FLAG_SLIDE_IN_COUNTER (1 << 0)
+#define INTRO_SLIDE_FLAG_SLIDE_IN_STARTED (1 << 1)
 
 // defines for the type effectiveness multipliers
 #define TYPE_MUL_NO_EFFECT       0
@@ -32,11 +31,22 @@ struct NaturalGift
 	u8 power;
 };
 
-struct TrainerMoneyBall
+struct NonVolatileStatus
 {
-    u8 classId;
-    u8 value;
-    u16 ballId;
+	const u8 *placeholder;
+	u8 ailmentId;
+	u8 healthboxStatusGfx;
+	u16 healthboxStatusPal;
+	u8 animationId;
+	u8 statusCuredByItemMsgId;
+	u8 statusCuredByMoveMultistringId;
+};
+
+struct TrainerClass
+{
+	u8 name[13];
+    u8 moneyMultiplier;
+    u8 pokeball;
 };
 
 struct MultiBattlePokemonTx
@@ -49,19 +59,22 @@ struct MultiBattlePokemonTx
     /*0x14*/ u16 maxhp;
 	/*0x16*/ u8 gender;
 	/*0x17*/ u8 language;
-    /*0x18*/ u32 status;
-    /*0x1C*/ u32 personality;
+    /*0x18*/ u32 personality;
+    /*0x1C*/ struct Status1 status;
 };
 
 extern const struct OamData gOamData_BattlerOpponent;
 extern const struct OamData gOamData_BattlerPlayer;
 extern const u8 gCategoryNames[NUM_MOVE_SPLITS][CATEGORY_NAME_LENGTH + 1];
-extern const struct TrainerMoneyBall gTrainerMoneyAndBallTable[];
+extern const u8 gTypeEffectivenessTable[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
+extern const struct TrainerClass gTrainerClassTable[];
 extern const struct Ability gAbilities[ABILITIES_COUNT];
 extern const struct NaturalGift gNaturalGiftTable[ITEM_TO_BERRY(BERRY_ITEMS_END) + 1];
+extern const struct NonVolatileStatus gNonVolatileStatusConditions[];
 
 void CB2_InitBattle(void);
 void BattleMainCB2(void);
+void CB2_SosCall(void);
 void FreeRestoreBattleData(void);
 void VBlankCB_Battle(void);
 void SpriteCB_VsLetterDummy(struct Sprite *sprite);

@@ -1,12 +1,9 @@
 #include "global.h"
 #include "gflib.h"
+#include "data.h"
 #include "decompress.h"
 
-extern const struct CompressedSpriteSheet gTrainerFrontPicTable[];
-extern const struct CompressedSpriteSheet gTrainerBackPicTable[];
-extern const struct CompressedSpritePalette gTrainerFrontPicPaletteTable[];
 extern const union AnimCmd *const gSpriteAnimTable_82349BC[];
-extern const union AnimCmd *const *const gTrainerFrontAnimsPtrTable[];
 
 // Static type declarations
 
@@ -59,15 +56,15 @@ static void DecompressPic(u16 species, u32 personality, bool8 isFrontPic, u8 *de
     if (!isTrainer)
 		LoadSpecialPokePic(species, personality, isFrontPic, dest);
     else
-		LZDecompressWram(isFrontPic ? gTrainerFrontPicTable[species].data : gTrainerBackPicTable[species].data, dest);
+		LZDecompressWram(isFrontPic ? gTrainerFrontPicTable[species].pic.data : gTrainerBackPicTable[species].pic.data, dest);
 }
 
-void AssignSpriteAnimsTable(bool8 isTrainer)
+static void AssignSpriteAnimsTable(u16 species, bool8 isTrainer)
 {
     if (!isTrainer)
         sCreatingSpriteTemplate.anims = gSpriteAnimTable_82349BC;
     else
-        sCreatingSpriteTemplate.anims = gTrainerFrontAnimsPtrTable[0];
+        sCreatingSpriteTemplate.anims = gTrainerFrontPicTable[species].anims;
 }
 
 static void LoadPicPaletteByTagOrSlot(u16 species, bool8 isShiny, u8 paletteSlot, u16 paletteTag, bool8 isTrainer)
@@ -90,12 +87,12 @@ static void LoadPicPaletteByTagOrSlot(u16 species, bool8 isShiny, u8 paletteSlot
         if (paletteTag == 0xFFFF)
         {
             sCreatingSpriteTemplate.paletteTag = 0xFFFF;
-            LoadCompressedPalette(gTrainerFrontPicPaletteTable[species].data, 0x100 + paletteSlot * 0x10, 0x20);
+            LoadCompressedPalette(gTrainerFrontPicTable[species].palette.data, 0x100 + paletteSlot * 0x10, 0x20);
         }
         else
         {
             sCreatingSpriteTemplate.paletteTag = paletteTag;
-            LoadCompressedSpritePalette(&gTrainerFrontPicPaletteTable[species]);
+            LoadCompressedSpritePalette(&gTrainerFrontPicTable[species].palette);
         }
     }
 }
@@ -136,7 +133,7 @@ static u16 CreatePicSprite(u16 species, bool8 isShiny, u32 personality, bool8 is
     }
     sCreatingSpriteTemplate.tileTag = 0xFFFF;
     sCreatingSpriteTemplate.oam = &gUnknown_8453184;
-    AssignSpriteAnimsTable(isTrainer);
+    AssignSpriteAnimsTable(species, isTrainer);
     sCreatingSpriteTemplate.images = images;
     sCreatingSpriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
     sCreatingSpriteTemplate.callback = DummyPicSpriteCallback;
@@ -189,7 +186,7 @@ static void LoadPicPaletteBySlot(u16 species, bool8 isShiny, u8 paletteSlot, boo
     if (!isTrainer)
         LoadCompressedPalette(GetMonSpritePalFromSpecies(species, isShiny), paletteSlot * 0x10, 0x20);
     else
-        LoadCompressedPalette(gTrainerFrontPicPaletteTable[species].data, paletteSlot * 0x10, 0x20);
+        LoadCompressedPalette(gTrainerFrontPicTable[species].palette.data, paletteSlot * 0x10, 0x20);
 }
 
 u16 CreateTrainerCardSprite(u16 species, bool8 isShiny, u32 personality, bool8 isFrontPic, u16 destX, u16 destY, u8 paletteSlot, u8 windowId, bool8 isTrainer)

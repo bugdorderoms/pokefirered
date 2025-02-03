@@ -28,7 +28,7 @@
   "object_events": [
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_FISHER",
+      "graphics_id": "OBJ_EVENT_GFX_FISHER",
       "x": 7,
       "y": 27,
       "elevation": 3,
@@ -42,7 +42,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_FISHER",
+      "graphics_id": "OBJ_EVENT_GFX_FISHER",
       "x": 16,
       "y": 26,
       "elevation": 3,
@@ -56,7 +56,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_SWIMMER_M_WATER",
+      "graphics_id": "OBJ_EVENT_GFX_SWIMMER_M_WATER",
       "x": 12,
       "y": 44,
       "elevation": 1,
@@ -70,7 +70,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_SWIMMER_F_WATER",
+      "graphics_id": "OBJ_EVENT_GFX_SWIMMER_F_WATER",
       "x": 14,
       "y": 35,
       "elevation": 1,
@@ -84,7 +84,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_TUBER_M_WATER",
+      "graphics_id": "OBJ_EVENT_GFX_TUBER_M_WATER",
       "x": 15,
       "y": 35,
       "elevation": 1,
@@ -98,15 +98,19 @@
     },
     {
       "type": "clone",
-	  "graphics_id": "OBJ_EVENT_GFX_FAT_MAN",
+      "graphics_id": "OBJ_EVENT_GFX_FAT_MAN",
       "x": 13,
       "y": -3,
       "target_local_id": 2,
-	  "target_map": "MAP_PALLET_TOWN"
+      "target_map": "MAP_PALLET_TOWN"
     }
   ],
-  "warp_events": [],
-  "coord_events": [],
+  "warp_events": [
+
+  ],
+  "coord_events": [
+
+  ],
   "bg_events": [
     {
       "type": "hidden_item",

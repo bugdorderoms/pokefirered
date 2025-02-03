@@ -37,10 +37,9 @@ extern u8 gExpandedPlaceholder_Groudon[];
 extern u8 gExpandedPlaceholder_Red[];
 extern u8 gExpandedPlaceholder_Green[];
 
-u8 *StringCopy_Nickname(u8 *dest, const u8 *src)
+static inline u8 *StringCopy_WithLimit(u8 *dest, const u8 *src, u8 limit)
 {
-    u8 i;
-    u32 limit = POKEMON_NAME_LENGTH;
+	u8 i;
 
     for (i = 0; i < limit; i++)
     {
@@ -49,39 +48,36 @@ u8 *StringCopy_Nickname(u8 *dest, const u8 *src)
         if (dest[i] == EOS)
             return &dest[i];
     }
-
     dest[i] = EOS;
     return &dest[i];
 }
 
-u8 *StringGet_Nickname(u8 *str)
+static inline u8 *StringGet_WithLimit(u8 *str, u8 limit)
 {
-    u8 i;
-    u32 limit = POKEMON_NAME_LENGTH;
+	u8 i;
 
     for (i = 0; i < limit; i++)
+	{
         if (str[i] == EOS)
             return &str[i];
-
+	}
     str[i] = EOS;
     return &str[i];
 }
 
+u8 *StringCopy_Nickname(u8 *dest, const u8 *src)
+{
+	return StringCopy_WithLimit(dest, src, POKEMON_NAME_LENGTH);
+}
+
+u8 *StringGet_Nickname(u8 *str)
+{
+    return StringGet_WithLimit(str, POKEMON_NAME_LENGTH);
+}
+
 u8 *StringCopy7(u8 *dest, const u8 *src)
 {
-    s32 i;
-    s32 limit = 7;
-
-    for (i = 0; i < limit; i++)
-    {
-        dest[i] = src[i];
-
-        if (dest[i] == EOS)
-            return &dest[i];
-    }
-
-    dest[i] = EOS;
-    return &dest[i];
+	return StringCopy_WithLimit(dest, src, 7);
 }
 
 u8 *StringCopy(u8 *dest, const u8 *src)
@@ -92,7 +88,6 @@ u8 *StringCopy(u8 *dest, const u8 *src)
         dest++;
         src++;
     }
-
     *dest = EOS;
     return dest;
 }
@@ -139,10 +134,10 @@ s32 StringCompare(const u8 *str1, const u8 *str2)
     {
         if (*str1 == EOS)
             return 0;
+		
         str1++;
         str2++;
     }
-
     return *str1 - *str2;
 }
 
@@ -152,38 +147,44 @@ s32 StringCompareN(const u8 *str1, const u8 *str2, u32 n)
     {
         if (*str1 == EOS)
             return 0;
+		
         str1++;
         str2++;
+		
         if (--n == 0)
             return 0;
     }
-
     return *str1 - *str2;
 }
 
 u8 *ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode, u8 n)
 {
     enum { WAITING_FOR_NONZERO_DIGIT, WRITING_DIGITS, WRITING_SPACES } state;
-    s32 powerOfTen;
-    s32 largestPowerOfTen = sPowersOfTen[n - 1];
-
-    state = WAITING_FOR_NONZERO_DIGIT;
-
-    if (mode == STR_CONV_MODE_RIGHT_ALIGN)
-        state = WRITING_SPACES;
-
-    if (mode == STR_CONV_MODE_LEADING_ZEROS)
-        state = WRITING_DIGITS;
+    s32 powerOfTen, largestPowerOfTen = sPowersOfTen[n - 1];
 	
-	if (value < 0) // This will allows display negative numbers
+	switch (mode)
+	{
+		case STR_CONV_MODE_RIGHT_ALIGN:
+			state = WRITING_SPACES;
+			break;
+		case STR_CONV_MODE_LEADING_ZEROS:
+			state = WRITING_DIGITS;
+			break;
+		default:
+			state = WAITING_FOR_NONZERO_DIGIT;
+			break;
+	}
+	
+	// Display an "-" before the numbers if they are a negative value
+	if (value < 0)
 	{
 		*dest++ = CHAR_HYPHEN;
 		value *= -1;
 	}
+
     for (powerOfTen = largestPowerOfTen; powerOfTen > 0; powerOfTen /= 10)
     {
-        u8 *out;
-        u8 c;
+        u8 c, *out;
         u16 digit = value / powerOfTen;
         s32 temp = value - (powerOfTen * digit);
 
@@ -211,73 +212,10 @@ u8 *ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode,
             *out = c;
         }
         else if (state == WRITING_SPACES)
-        {
             *dest++ = CHAR_SPACE;
-        }
 
         value = temp;
     }
-
-    *dest = EOS;
-    return dest;
-}
-
-u8 *ConvertIntToHexStringN(u8 *dest, s32 value, enum StringConvertMode mode, u8 n)
-{
-    enum { WAITING_FOR_NONZERO_DIGIT, WRITING_DIGITS, WRITING_SPACES } state;
-    u8 i;
-    s32 powerOfSixteen;
-    s32 largestPowerOfSixteen = 1;
-
-    for (i = 1; i < n; i++)
-        largestPowerOfSixteen *= 16;
-
-    state = WAITING_FOR_NONZERO_DIGIT;
-
-    if (mode == STR_CONV_MODE_RIGHT_ALIGN)
-        state = WRITING_SPACES;
-
-    if (mode == STR_CONV_MODE_LEADING_ZEROS)
-        state = WRITING_DIGITS;
-
-    for (powerOfSixteen = largestPowerOfSixteen; powerOfSixteen > 0; powerOfSixteen /= 16)
-    {
-        u8 *out;
-        u8 c;
-        u32 digit = value / powerOfSixteen;
-        s32 temp = value % powerOfSixteen;
-
-        if (state == WRITING_DIGITS)
-        {
-            out = dest++;
-
-            if (digit <= 0xF)
-                c = sDigits[digit];
-            else
-                c = CHAR_QUESTION_MARK;
-
-            *out = c;
-        }
-        else if (digit != 0 || powerOfSixteen == 1)
-        {
-            state = WRITING_DIGITS;
-            out = dest++;
-
-            if (digit <= 0xF)
-                c = sDigits[digit];
-            else
-                c = CHAR_QUESTION_MARK;
-
-            *out = c;
-        }
-        else if (state == WRITING_SPACES)
-        {
-            *dest++ = CHAR_SPACE;
-        }
-
-        value = temp;
-    }
-
     *dest = EOS;
     return dest;
 }
@@ -402,9 +340,7 @@ static u8 *ExpandPlaceholder_RivalName(void)
             return gExpandedPlaceholder_Red;
     }
     else
-    {
         return gSaveBlock1Ptr->rivalName;
-    }
 }
 
 static u8 *ExpandPlaceholder_Version(void)
@@ -518,7 +454,6 @@ u8 *StringCopyPadded(u8 *dest, const u8 *src, u8 c, u16 n)
         if (n)
             n--;
     }
-
     n--;
 
     while (n != (u16)-1)
@@ -526,7 +461,6 @@ u8 *StringCopyPadded(u8 *dest, const u8 *src, u8 c, u16 n)
         *dest++ = c;
         n--;
     }
-
     *dest = EOS;
     return dest;
 }
@@ -543,17 +477,15 @@ u8 *StringCopyN_Multibyte(u8 *dest, const u8 *src, u32 n)
     for (i = n - 1; i != -1u; i--)
     {
         if (*src == EOS)
-        {
             break;
-        }
         else
         {
             *dest++ = *src++;
+			
             if (*(src - 1) == 0xF9)
                 *dest++ = *src++;
         }
     }
-
     *dest = EOS;
     return dest;
 }
@@ -566,10 +498,10 @@ u32 StringLength_Multibyte(const u8 *str)
     {
         if (*str == 0xF9)
             str++;
+		
         str++;
         length++;
     }
-
     return length;
 }
 
@@ -593,7 +525,6 @@ u8 *WriteColorChangeControlCode(u8 *dest, u32 colorType, u8 color)
         dest++;
         break;
     }
-
     *dest = color;
     dest++;
     *dest = EOS;
@@ -630,10 +561,11 @@ u8 GetExtCtrlCodeLength(u8 code)
         1,
         1,
     };
-
     u8 length = 0;
+	
     if (code < ARRAY_COUNT(lengths))
         length = lengths[code];
+	
     return length;
 }
 
@@ -644,7 +576,6 @@ static const u8 *SkipExtCtrlCode(const u8 *s)
         s++;
         s += GetExtCtrlCodeLength(*s);
     }
-
     return s;
 }
 
@@ -711,6 +642,7 @@ void StripExtCtrlCodes(u8 *str)
 {
     u16 srcIndex = 0;
     u16 destIndex = 0;
+	
     while (str[srcIndex] != 0xFF)
     {
         if (str[srcIndex] == 0xFC)
@@ -719,9 +651,7 @@ void StripExtCtrlCodes(u8 *str)
             srcIndex += GetExtCtrlCodeLength(str[srcIndex]);
         }
         else
-        {
             str[destIndex++] = str[srcIndex++];
-        }
     }
     str[destIndex] = 0xFF;
 }

@@ -395,7 +395,7 @@ static const u8 sSlotMachineIndices[] = {
 
 u8 GetRandomSlotMachineId(void)
 {
-    return sSlotMachineIndices[RandomMax(ARRAY_COUNT(sSlotMachineIndices))];
+    return RandomElement(sSlotMachineIndices);
 }
 
 bool8 IsThereRoomInAnyBoxForMorePokemon(void)
@@ -660,7 +660,7 @@ static u16 SampleResortGorgeousMon(void)
 
 static u16 SampleResortGorgeousReward(void)
 {
-	return RandomMax(100) >= 30 ? ITEM_LUXURY_BALL : sResortGorgeousDeluxeRewards[RandomMax(ARRAY_COUNT(sResortGorgeousDeluxeRewards))];
+	return RandomPercent(30) ? RandomElement(sResortGorgeousDeluxeRewards) : ITEM_LUXURY_BALL;
 }
 
 bool8 CheckAddCoins(void)

@@ -19,7 +19,7 @@ PokemonTower_6F_EventScript_DefeatedMarowakGhost:: @ 81634F5
 	message PokemonTower_6F_Text_GhostWasCubonesMother
 	waitmessage
 	waitse
-	playmoncry SPECIES_MAROWAK, 0
+	playmoncry SPECIES_MAROWAK, CRY_MODE_NORMAL
 	waitbuttonpress
 	waitmoncry
 	msgbox PokemonTower_6F_Text_MothersSpiritWasCalmed

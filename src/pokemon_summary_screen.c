@@ -5,8 +5,10 @@
 #include "task.h"
 #include "menu_helpers.h"
 #include "link.h"
+#include "battle_move_effects.h"
 #include "overworld.h"
 #include "constants/songs.h"
+#include "constants/sound.h"
 #include "strings.h"
 #include "new_menu_helpers.h"
 #include "menu.h"
@@ -22,6 +24,7 @@
 #include "constants/region_map_sections.h"
 #include "region_map.h"
 #include "field_specials.h"
+#include "pokemon_sprite_visualizer.h"
 #include "party_menu.h"
 #include "constants/battle.h"
 #include "event_data.h"
@@ -34,7 +37,6 @@
 #include "mon_markings.h"
 #include "pokemon_storage_system.h"
 #include "battle_util.h"
-#include "constants/battle_move_effects.h"
 
 static void BufferSelectedMonData(struct Pokemon * mon);
 static void CB2_SetUpPSS(void);
@@ -86,7 +88,7 @@ static void PokeSum_FinishSetup(void);
 static void BufferMonInfo(void);
 static void BufferMonSkills(void);
 static void BufferMonMoves(void);
-static u8 StatusToAilment(u32 status);
+static u8 StatusToAilment(u8 statusId);
 static void BufferMonMoveI(u8);
 static void CreateShinyStarObj(void);
 static void CreatePokerusIconObj(u16, u16);
@@ -1077,6 +1079,13 @@ static void Task_InputHandler_Info(u8 taskId)
             }
             else if (JOY_NEW(B_BUTTON))
                 sMonSummaryScreen->state3270 = PSS_STATE3270_ATEXIT_FADEOUT;
+#if POKEMON_SPRITE_VISUALIZER
+			else if (JOY_NEW(SELECT_BUTTON) && !gMain.inBattle)
+			{
+				sMonSummaryScreen->savedCallback = CB2_PokemonSpriteVisualizer;
+				sMonSummaryScreen->state3270 = PSS_STATE3270_ATEXIT_FADEOUT;
+			}
+#endif
         }
         break;
     case PSS_STATE3270_FLIPPAGES:
@@ -1989,7 +1998,7 @@ static void BufferMonSkills(void)
     StringCopy(sMonSummaryScreen->summary.abilityNameStrBuf, gAbilities[ability].name);
     StringCopy(sMonSummaryScreen->summary.abilityDescStrBuf, gAbilities[ability].description);
 
-    sMonSummaryScreen->curMonStatusAilment = StatusToAilment(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_STATUS));
+    sMonSummaryScreen->curMonStatusAilment = StatusToAilment(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_STATUS_ID));
 	
     if (sMonSummaryScreen->curMonStatusAilment == AILMENT_NONE && CheckPartyPokerus(&sMonSummaryScreen->currentMon, 0))
 		sMonSummaryScreen->curMonStatusAilment = AILMENT_PKRS;
@@ -2010,8 +2019,10 @@ static void BufferMonMoves(void)
 
 static void BufferMonMoveI(u8 i)
 {
+	struct Pokemon *mon = &sMonSummaryScreen->currentMon;
+	
     if (i < MAX_MON_MOVES)
-        sMonSummaryScreen->moveIds[i] = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MOVE1 + i);
+        sMonSummaryScreen->moveIds[i] = GetMonData(mon, MON_DATA_MOVE1 + i);
 
     if (!sMonSummaryScreen->moveIds[i])
     {
@@ -2027,9 +2038,13 @@ static void BufferMonMoveI(u8 i)
 		u16 move = sMonSummaryScreen->moveIds[i];
 		
 		sMonSummaryScreen->numMoves++;
-		
-		sMonSummaryScreen->moveTypes[i] = GetTypeChangingMoveType(&sMonSummaryScreen->currentMon, move);
-		
+
+#if SUMMARY_REAL_MOVE_TYPE
+		sMonSummaryScreen->moveTypes[i] = GetMoveRealType(mon, move, GetMonAbility(mon), GetMonData(mon, MON_DATA_HELD_ITEM), TYPE_CALC_SUMMARY);
+#else
+		sMonSummaryScreen->moveTypes[i] = gBattleMoves[move].type;
+#endif
+
 		StringCopy(sMonSummaryScreen->summary.moveNameStrBufs[i], gBattleMoves[move].name);
 		
 		if (i >= MAX_MON_MOVES && sMonSummaryScreen->mode == PSS_MODE_SELECT_MOVE)
@@ -2039,8 +2054,8 @@ static void BufferMonMoveI(u8 i)
 		}
 		else
 		{
-			ConvertIntToDecimalStringN(sMonSummaryScreen->summary.moveCurPpStrBufs[i], GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PP1 + i), STR_CONV_MODE_LEFT_ALIGN, 3);
-			ConvertIntToDecimalStringN(sMonSummaryScreen->summary.moveMaxPpStrBufs[i], CalculatePPWithBonus(move, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PP_BONUSES), i), STR_CONV_MODE_LEFT_ALIGN, 3);
+			ConvertIntToDecimalStringN(sMonSummaryScreen->summary.moveCurPpStrBufs[i], GetMonData(mon, MON_DATA_PP1 + i), STR_CONV_MODE_LEFT_ALIGN, 3);
+			ConvertIntToDecimalStringN(sMonSummaryScreen->summary.moveMaxPpStrBufs[i], CalculatePPWithBonus(move, GetMonData(mon, MON_DATA_PP_BONUSES), i), STR_CONV_MODE_LEFT_ALIGN, 3);
 		}
 		sMonSkillsPrinterXpos->curPp[i] = GetRightAlignXpos_NDigits(2, sMonSummaryScreen->summary.moveCurPpStrBufs[i]);
 		sMonSkillsPrinterXpos->maxPp[i] = GetRightAlignXpos_NDigits(2, sMonSummaryScreen->summary.moveMaxPpStrBufs[i]);
@@ -3034,26 +3049,17 @@ static void BufferSelectedMonData(struct Pokemon * mon)
         BoxMonToMon(&sMonSummaryScreen->monList.boxMons[GetLastViewedMonIndex()], mon);
 }
 
-static u8 StatusToAilment(u32 status)
+static u8 StatusToAilment(u8 statusId)
 {
+	u8 ailment;
+	
     if (!GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP))
         return AILMENT_FNT;
-
-    if ((status & STATUS1_PSN_ANY) != 0)
-        return AILMENT_PSN;
-
-    if ((status & STATUS1_PARALYSIS) != 0)
-        return AILMENT_PRZ;
-
-    if ((status & STATUS1_SLEEP) != 0)
-        return AILMENT_SLP;
-
-    if ((status & STATUS1_FREEZE) != 0)
-        return AILMENT_FRZ;
-
-    if ((status & STATUS1_BURN) != 0)
-        return AILMENT_BRN;
-
+	
+	ailment = GetAilmentFromStatus(statusId);
+	if (ailment != AILMENT_NONE)
+		return ailment;
+	
     if (CheckPartyPokerus(&sMonSummaryScreen->currentMon, 0))
         return AILMENT_PKRS;
 
@@ -3788,7 +3794,7 @@ static void DestroyMonStatusIconObj(void)
 
 static void UpdateMonStatusIconObj(void)
 {
-    sMonSummaryScreen->curMonStatusAilment = StatusToAilment(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_STATUS));
+    sMonSummaryScreen->curMonStatusAilment = StatusToAilment(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_STATUS_ID));
 
     if (sMonSummaryScreen->curMonStatusAilment == AILMENT_NONE)
     {
@@ -4333,14 +4339,25 @@ static void PokeSum_SeekToNextMon(u8 taskId, s8 direction)
 
 static s8 SeekToNextMonInSingleParty(s8 direction)
 {
+	u8 index;
     s8 seekDelta;
 
-    if (sMonSummaryScreen->curPageIndex == 0)
+    if (sMonSummaryScreen->curPageIndex == PSS_PAGE_INFO)
     {
+#if CIRCULAR_SUMMARY_SCREEN
+		if (sLastViewedMonIndex == sMonSummaryScreen->lastIndex)
+			return -1; // Don't cycle if only one Pokémon in party
+
+		if (direction == -1 && sLastViewedMonIndex == 0)
+			return sMonSummaryScreen->lastIndex;
+		else if (direction == 1 && sLastViewedMonIndex >= sMonSummaryScreen->lastIndex)
+			return 0;
+#else
         if (direction == -1 && sLastViewedMonIndex == 0)
             return -1;
         else if (direction == 1 && sLastViewedMonIndex >= sMonSummaryScreen->lastIndex)
             return -1;
+#endif
         else
             return sLastViewedMonIndex + direction;
     }
@@ -4350,11 +4367,23 @@ static s8 SeekToNextMonInSingleParty(s8 direction)
     {
         seekDelta += direction;
 		
-        if (0 > sLastViewedMonIndex + seekDelta || sLastViewedMonIndex + seekDelta > sMonSummaryScreen->lastIndex)
-            return -1;
+#if CIRCULAR_SUMMARY_SCREEN
+		if (sLastViewedMonIndex == sMonSummaryScreen->lastIndex)
+			return -1; // Don't cycle if only one Pokémon in party
 
-        if (!GetMonData(&sMonSummaryScreen->monList.mons[sLastViewedMonIndex + seekDelta], MON_DATA_IS_EGG))
-            return sLastViewedMonIndex + seekDelta;
+		if (sLastViewedMonIndex + seekDelta < 0)
+			index = sMonSummaryScreen->lastIndex;
+		else if (sLastViewedMonIndex + seekDelta > sMonSummaryScreen->lastIndex)
+			index = 0;
+#else
+        if (sLastViewedMonIndex + seekDelta < 0 || sLastViewedMonIndex + seekDelta > sMonSummaryScreen->lastIndex)
+            return -1;
+#endif
+		else
+			index = sLastViewedMonIndex + seekDelta;
+		
+        if (!GetMonData(&sMonSummaryScreen->monList.mons[index], MON_DATA_IS_EGG))
+            return index; // Don't cycle if selected an Egg
     }
     return -1;
 }
@@ -4539,7 +4568,7 @@ static void PokeSum_UpdateWin1ActiveFlag(u8 curPageIndex)
 static void PokeSum_TryPlayMonCry(void)
 {
     if (!GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_IS_EGG))
-		PlayCry3(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES2), 0, ShouldPlayNormalPokeCry(&sMonSummaryScreen->currentMon) ? 0 : 11);
+		PlayCry_ByMode(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES2), 0, ShouldPlayNormalPokeCry(&sMonSummaryScreen->currentMon) ? CRY_MODE_NORMAL : CRY_MODE_WEAK);
 }
 
 static bool32 CurrentMonIsFromGBA(void)

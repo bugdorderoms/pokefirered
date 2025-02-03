@@ -13,6 +13,7 @@
 #include "field_weather.h"
 #include "constants/maps.h"
 #include "constants/field_weather.h"
+#include "constants/sound.h"
 
 enum CreditsSceneIdx
 {
@@ -1176,7 +1177,7 @@ static bool32 DoCreditsMonScene(void)
         {
             HideBg(2);
             ShowBg(1);
-            PlayCry2(GetCreditsMonSpecies(sCreditsMgr->whichMon), 0, 125, 10);
+            PlayCry_NormalNoDucking(GetCreditsMonSpecies(sCreditsMgr->whichMon), 0, 125, CRY_PRIORITY_NORMAL);
             sCreditsMgr->creditsMonTimer = 128;
             sCreditsMgr->subseqno++;
         }

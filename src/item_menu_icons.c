@@ -474,19 +474,15 @@ static u8 ShowObtainedItemDescription(u16 item)
 
 void CreateItemIconOnFindMessage(void)
 {
-	struct Sprite *sprite1, *sprite2;
-	u16 reg1 = GetGpuReg(REG_OFFSET_DISPCNT), reg2 = GetGpuReg(REG_OFFSET_WINOUT), itemId = gSpecialVar_0x8009;
 	s16 x, y;
+	bool8 itemObtained;
+	struct Sprite *sprite1, *sprite2;
+	u16 itemId = gSpecialVar_0x8009;
 	u8 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2, windowId = 0xFF;
 	
 	// Handle flash
 	if (Overworld_GetFlashLevel() > 0)
-	{
-		SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
-		SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
-		
 		spriteId2 = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
-	}
 	else
 		spriteId2 = MAX_SPRITES;
 	
@@ -496,6 +492,8 @@ void CreateItemIconOnFindMessage(void)
 		
 		if (spriteId2 != MAX_SPRITES)
 			sprite2 = &gSprites[spriteId2];
+		
+		itemObtained = GetSetItemObtained(itemId, FLAG_GET_OBTAINED);
 		
 		if (IS_KEY_ITEM_TM(ItemId_GetPocket(itemId)))
 		{
@@ -516,12 +514,13 @@ void CreateItemIconOnFindMessage(void)
 				
 				StartSpriteAffineAnim(sprite2, 0);
 			}
-			if (!GetSetItemObtained(itemId, FLAG_GET_OBTAINED))
+			
+			if (!itemObtained)
 				windowId = ShowObtainedItemDescription(itemId);
 		}
 		else
 		{
-			if (GetSetItemObtained(itemId, FLAG_GET_OBTAINED))
+			if (itemObtained)
 			{
 				x = 205;
 				y = 132;
@@ -538,9 +537,7 @@ void CreateItemIconOnFindMessage(void)
 		sprite1->y2 = y;
 		sprite1->oam.priority = 0;
 		sprite1->data[0] = windowId;
-		sprite1->data[1] = reg1;
-		sprite1->data[2] = reg2;
-		sprite1->data[3] = spriteId2;
+		sprite1->data[1] = spriteId2;
 		
 		if (spriteId2 != MAX_SPRITES)
 		{
@@ -555,30 +552,15 @@ void CreateItemIconOnFindMessage(void)
 
 void DestroyItemIconOnFindMessage(void)
 {
-	u16 reg1, reg2;
-	u8 windowId, spriteId2, spriteId = gSpecialVar_0x8009;
+	u8 spriteId = gSpecialVar_0x8009;
 	struct Sprite * sprite = &gSprites[spriteId];
+	u8 windowId = sprite->data[0], spriteId2 = sprite->data[1];
 	
-	windowId = sprite->data[0];
-	reg1 = sprite->data[1];
-	reg2 = sprite->data[2];
-	spriteId2 = sprite->data[3];
-	
-	FreeSpriteTilesByTag(ITEMICON_TAG);
-	FreeSpritePaletteByTag(ITEMICON_TAG);
-	FreeSpriteOamMatrix(sprite);
-	DestroySprite(sprite);
+	DestroySpriteAndFreeResources(sprite);
 	
 	if (spriteId2 != MAX_SPRITES)
-	{
-		SetGpuReg(REG_OFFSET_DISPCNT, reg1);
-		SetGpuReg(REG_OFFSET_WINOUT, reg2);
-		
-		FreeSpriteTilesByTag(ITEMICON_TAG);
-		FreeSpritePaletteByTag(ITEMICON_TAG);
-		FreeSpriteOamMatrix(&gSprites[spriteId2]);
-		DestroySprite(&gSprites[spriteId2]);
-	}
+		DestroySpriteAndFreeResources(&gSprites[spriteId2]);
+	
 	if (windowId != 0xFF)
 	{
 		ClearDialogWindowAndFrame(windowId, TRUE);

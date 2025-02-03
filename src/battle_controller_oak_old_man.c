@@ -12,6 +12,7 @@
 #include "util.h"
 #include "constants/battle_anim.h"
 #include "constants/songs.h"
+#include "constants/trainers.h"
 #include "constants/battle_string_ids.h"
 
 static void OakOldManBufferRunCommand(u8 battlerId);
@@ -114,14 +115,14 @@ static void OakOldManBufferExecCompleted(u8 battlerId)
 
 static void OakOldManHandleDrawTrainerPic(u8 battlerId)
 {
-	u32 trainerPicId = (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) ? BACK_PIC_RED + gSaveBlock2Ptr->playerGender : BACK_PIC_OLDMAN;
-	BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicCoords[trainerPicId].size) * 4 + 80, 30);
+	u32 trainerPicId = (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) ? TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender : TRAINER_BACK_PIC_OLD_MAN;
+	BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80, 30);
 }
 
 static void OakOldManHandleTrainerSlide(u8 battlerId)
 {
-	u32 trainerPicId = (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) ? BACK_PIC_RED + gSaveBlock2Ptr->playerGender : BACK_PIC_OLDMAN;
-	BtlController_HandleTrainerSlide(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicCoords[trainerPicId].size) * 4 + 80);
+	u32 trainerPicId = (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) ? TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender : TRAINER_BACK_PIC_OLD_MAN;
+	BtlController_HandleTrainerSlide(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80);
 }
 
 static void OakOldManHandlePrintStringInternal(u8 battlerId, bool8 isSelection)
@@ -204,7 +205,7 @@ static void OakOldManHandleChooseMove(u8 battlerId)
 
 static void OakOldManHandleChooseItem(u8 battlerId)
 {
-	gBattleStruct->itemPartyIndex[battlerId] = 0;
+	gBattleStruct->battlers[battlerId].itemPartyIndex = 0;
 	PlayerHandleChooseItem(battlerId);
 }
 
@@ -287,7 +288,7 @@ static void Intro_TryShinyAnimShowHealthbox(u8 battlerId)
 static void OakOldManHandleIntroTrainerBallThrow(u8 battlerId)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
-		BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F8, BACK_PIC_RED + gSaveBlock2Ptr->playerGender, StartAnimLinearTranslation, 31, Intro_TryShinyAnimShowHealthbox);
+		BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F8, TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender, StartAnimLinearTranslation, 31, Intro_TryShinyAnimShowHealthbox);
     else
     {
         if (gBattleSpritesDataPtr->healthBoxesData[battlerId].partyStatusSummaryShown)
@@ -302,7 +303,7 @@ void OakOldManHandleDrawPartyStatusSummary(u8 battlerId)
 	if (!(gBattleBufferA[battlerId][1] && GetBattlerSide(battlerId) == B_SIDE_PLAYER))
     {
         gBattleSpritesDataPtr->healthBoxesData[battlerId].partyStatusSummaryShown = TRUE;
-        gBattlerStatusSummaryTaskId[battlerId] = CreatePartyStatusSummarySprites(battlerId, (struct HpAndStatus *)&gBattleBufferA[battlerId][4], gBattleBufferA[battlerId][1], gBattleBufferA[battlerId][2]);
+        gBattlerStatusSummaryTaskId[battlerId] = CreatePartyStatusSummarySprites(battlerId, (struct HpAndStatus*)&gBattleBufferA[battlerId][4], gBattleBufferA[battlerId][1], gBattleBufferA[battlerId][2]);
     }
 	BattleControllerComplete(battlerId);
 }

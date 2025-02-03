@@ -1,3 +1,4 @@
+	.include "src/lua_handler.o"
 	.include "src/gpu_regs.o"
 	.include "src/dma3_manager.o"
 	.include "src/bg.o"

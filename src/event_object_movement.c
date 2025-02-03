@@ -978,12 +978,12 @@ static const u8 gUnknown_83A65A9[][4] = {
 
 #include "data/object_events/movement_action_func_tables.h"
 
-#define RandomDelayShort()         ((gMovementDelaysShort[RandomMax(ARRAY_COUNT(gMovementDelaysShort))]))
-#define RandomDelayMedium()        ((gMovementDelaysMedium[RandomMax(ARRAY_COUNT(gMovementDelaysMedium))]))
+#define RandomDelayShort()         RandomElement(gMovementDelaysShort)
+#define RandomDelayMedium()        RandomElement(gMovementDelaysMedium)
 
-#define RandomStandardDirection()  ((gStandardDirections[RandomMax(ARRAY_COUNT(gStandardDirections))]))
-#define RandomUpDownDirection()    ((gUpAndDownDirections[RandomMax(ARRAY_COUNT(gUpAndDownDirections))]))
-#define RandomLeftRightDirection() ((gLeftAndRightDirections[RandomMax(ARRAY_COUNT(gLeftAndRightDirections))]))
+#define RandomStandardDirection()  RandomElement(gStandardDirections)
+#define RandomUpDownDirection()    RandomElement(gUpAndDownDirections)
+#define RandomLeftRightDirection() RandomElement(gLeftAndRightDirections)
 
 static void ClearObjectEvent(struct ObjectEvent *objectEvent)
 {
@@ -1307,6 +1307,7 @@ static void RemoveObjectEvent(struct ObjectEvent *objectEvent)
 void RemoveObjectEventByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup)
 {
     u8 objectEventId;
+	
     if (!TryGetObjectEventIdByLocalIdAndMap(localId, mapNum, mapGroup, &objectEventId))
     {
         FlagSet(GetObjectEventFlagIdByObjectEventId(objectEventId));
@@ -1446,6 +1447,13 @@ static void MakeObjectTemplateFromObjectEventGraphicsInfoWithCallbackIndex(u16 g
 static void MakeObjectTemplateFromObjectEventTemplate(struct ObjectEventTemplate *objectEventTemplate, struct SpriteTemplate *spriteTemplate, const struct SubspriteTable **subspriteTables)
 {
     MakeObjectTemplateFromObjectEventGraphicsInfoWithCallbackIndex(objectEventTemplate->graphicsId, objectEventTemplate->objUnion.normal.movementType, spriteTemplate, subspriteTables);
+}
+
+void BlitObjectEventToWindow(u8 windowId, u16 graphicsId, u8 frameId, u16 paletteOffset, u16 width, u16 height)
+{
+	const struct ObjectEventGraphicsInfo *graphicsInfo = GetObjectEventGraphicsInfo(graphicsId);
+	LoadPalette(sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(graphicsInfo->paletteTag)].data, paletteOffset, 0x20);
+	BlitBitmapToWindow(windowId, graphicsInfo->images[frameId].data, 0, 0, width, height);
 }
 
 u8 AddPseudoObjectEvent(u16 graphicsId, SpriteCallback callback, s16 x, s16 y, u8 subpriority)
@@ -1801,9 +1809,7 @@ const struct ObjectEventGraphicsInfo *GetObjectEventGraphicsInfo(u8 graphicsId)
 static void SetObjectEventDynamicGraphicsId(struct ObjectEvent *objectEvent)
 {
     if (objectEvent->graphicsId >= OBJ_EVENT_GFX_VARS)
-    {
         objectEvent->graphicsId = VarGetObjectEventGraphicsId(objectEvent->graphicsId - OBJ_EVENT_GFX_VARS);
-    }
 }
 
 void ShowOrHideObjectByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup, u8 state)
@@ -1811,9 +1817,7 @@ void ShowOrHideObjectByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup, u8 stat
     u8 objectEventId;
 
     if (!TryGetObjectEventIdByLocalIdAndMap(localId, mapNum, mapGroup, &objectEventId))
-    {
         gObjectEvents[objectEventId].invisible = state;
-    }
 }
 
 void ObjectEventGetLocalIdAndMap(struct ObjectEvent *objectEvent, void *localId, void *mapNum, void *mapGroup)
@@ -2847,8 +2851,7 @@ static bool8 MovementType_FaceUpAndLeft_Step4(struct ObjectEvent *objectEvent, s
 {
     u8 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_NORTH_WEST);
     if (direction == DIR_NONE)
-        direction = gUpAndLeftDirections[RandomMax(ARRAY_COUNT(gUpAndLeftDirections))];
-	
+        direction = RandomElement(gUpAndLeftDirections);
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
     return TRUE;
@@ -2895,7 +2898,7 @@ static bool8 MovementType_FaceUpAndRight_Step4(struct ObjectEvent *objectEvent, 
 {
     u8 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_NORTH_EAST);
     if (direction == DIR_NONE)
-        direction = gUpAndRightDirections[RandomMax(ARRAY_COUNT(gUpAndRightDirections))];
+        direction = RandomElement(gUpAndRightDirections);
 	
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -2943,7 +2946,7 @@ static bool8 MovementType_FaceDownAndLeft_Step4(struct ObjectEvent *objectEvent,
 {
     u8 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_SOUTH_WEST);
     if (direction == DIR_NONE)
-        direction = gDownAndLeftDirections[RandomMax(ARRAY_COUNT(gDownAndLeftDirections))];
+        direction = RandomElement(gDownAndLeftDirections);
 	
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -2991,7 +2994,7 @@ static bool8 MovementType_FaceDownAndRight_Step4(struct ObjectEvent *objectEvent
 {
     u8 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_SOUTH_EAST);
     if (direction == DIR_NONE)
-        direction = gDownAndRightDirections[RandomMax(ARRAY_COUNT(gDownAndRightDirections))];
+        direction = RandomElement(gDownAndRightDirections);
 	
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -3039,7 +3042,7 @@ static bool8 MovementType_FaceDownUpAndLeft_Step4(struct ObjectEvent *objectEven
 {
     u8 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_NORTH_SOUTH_WEST);
     if (direction == DIR_NONE)
-        direction = gDownUpAndLeftDirections[RandomMax(ARRAY_COUNT(gDownUpAndLeftDirections))];
+        direction = RandomElement(gDownUpAndLeftDirections);
 	
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -3087,7 +3090,7 @@ static bool8 MovementType_FaceDownUpAndRight_Step4(struct ObjectEvent *objectEve
 {
     u8 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_NORTH_SOUTH_EAST);
     if (direction == DIR_NONE)
-        direction = gDownUpAndRightDirections[RandomMax(ARRAY_COUNT(gDownUpAndRightDirections))];
+        direction = RandomElement(gDownUpAndRightDirections);
 	
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -3135,7 +3138,7 @@ static bool8 MovementType_FaceUpLeftAndRight_Step4(struct ObjectEvent *objectEve
 {
     u8 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_NORTH_EAST_WEST);
     if (direction == DIR_NONE)
-        direction = gUpLeftAndRightDirections[RandomMax(ARRAY_COUNT(gUpLeftAndRightDirections))];
+        direction = RandomElement(gUpLeftAndRightDirections);
 	
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -3183,7 +3186,7 @@ static bool8 MovementType_FaceDownLeftAndRight_Step4(struct ObjectEvent *objectE
 {
     u8 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_SOUTH_EAST_WEST);
     if (direction == DIR_NONE)
-        direction = gDownLeftAndRightDirections[RandomMax(ARRAY_COUNT(gDownLeftAndRightDirections))];
+        direction = RandomElement(gDownLeftAndRightDirections);
 	
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -6424,8 +6427,7 @@ static bool8 MovementAction_InitAffineAnim_Step0(struct ObjectEvent *objectEvent
 
 static bool8 MovementAction_ClearAffineAnim_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
-    FreeOamMatrix(sprite->oam.matrixNum);
-    sprite->oam.affineMode = ST_OAM_AFFINE_OFF;
+    FreeSpriteOamMatrix(sprite);
     CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
     return TRUE;
 }
@@ -7450,7 +7452,8 @@ static void GetGroundEffectFlags_JumpLanding(struct ObjectEvent *objEvent, u32 *
 
 static void GetGroundEffectFlags_GroundRocks(struct ObjectEvent *objEvent, u32 *flags)
 {
-	if (MetatileBehavior_IsGroundRocks(objEvent->currentMetatileBehavior) || (objEvent->localId == OBJ_EVENT_ID_PLAYER && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE) && JOY_HELD(B_BUTTON)))
+	if (MetatileBehavior_IsGroundRocks(objEvent->currentMetatileBehavior) || (objEvent->localId == OBJ_EVENT_ID_PLAYER
+	&& TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE) && !gSaveBlock2Ptr->waitingTaurosChargeStamina && JOY_HELD(B_BUTTON)))
 		*flags |= GROUND_EFFECT_FLAG_LAND_ON_NORMAL_GROUND;
 }
 

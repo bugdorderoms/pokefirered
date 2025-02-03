@@ -14,7 +14,7 @@ typedef void (*ItemUseFunc)(u8);
 #define ITEM_TYPE_PARTY_MENU_MOVES 4
 
 // Item battle script IDs (need to be non-zero)
-#define EFFECT_ITEM_RESTORE_HP            1 // also revive
+#define EFFECT_ITEM_RESTORE_HP            1
 #define EFFECT_ITEM_CURE_PRIMARY_STATUS   2
 #define EFFECT_ITEM_CURE_SECONDARY_STATUS 3
 #define EFFECT_ITEM_INCREASE_STAT         4
@@ -25,6 +25,8 @@ typedef void (*ItemUseFunc)(u8);
 #define EFFECT_ITEM_RESTORE_PP            9
 #define EFFECT_ITEM_INCREASE_ALL_STATS    10
 #define EFFECT_ITEM_POKE_FLUTE            11
+#define EFFECT_ITEM_REVIVE                12
+#define EFFECT_ITEM_ADRENALINE_ORB        13
 
 enum
 {
@@ -74,8 +76,44 @@ struct Item
 	/*0x20*/ ItemUseFunc fieldUseFunc;
 	/*0x24*/ const u32 *iconPic;
 	/*0x28*/ const u32 *iconPalette;
-    /*0x2C*/ u8 battleUsage; // determine battle script id
-	/*0x2D*/ u8 flingPower;
+	/*0x2C*/ const u8 *itemEffect; // effect on using it on a pokemon
+    /*0x30*/ u8 battleUsage; // determine battle script id
+	/*0x31*/ u8 flingPower;
+};
+
+// For strings printed on item use
+enum
+{
+	ITEMUSE_STRING_NOTHING, // Print fail message
+	ITEMUSE_STRING_PP_RESTORED,
+	ITEMUSE_STRING_POISON_CURED,
+	ITEMUSE_STRING_BURN_HEALED,
+	ITEMUSE_STRING_THAWED,
+	ITEMUSE_STRING_WOKE_UP,
+	ITEMUSE_STRING_SNAPPED_CONFUSION,
+	ITEMUSE_STRING_OVER_INFATUATION,
+	ITEMUSE_STRING_BECAME_HEALTHY,
+	ITEMUSE_STRING_RAISE_DYNAMAX_LEVEL,
+	ITEMUSE_STRING_STAT_CHANGED,
+	ITEMUSE_STRING_PARALYSIS_CURED,
+	ITEMUSE_STRING_LEVELED_UP,
+	ITEMUSE_STRING_GAINED_EXP,
+	ITEMUSE_STRING_GAINED_EXP_LEVELED_UP,
+	ITEMUSE_STRING_CANT_BYPASS_LEVEL_CAP,
+	ITEMUSE_STRING_PP_INCREASED,
+	ITEMUSE_STRING_CHANGE_GMAX_FACTOR,
+	ITEMUSE_STRING_CHANGED_TERA_TYPE,
+	ITEMUSE_STRING_FRIENDSHIP_CHANGED
+};
+
+enum
+{
+	ITEMUSE_COPY_NOTHING, // Don't copy anything
+	ITEMUSE_COPY_STAT_NAME,
+	ITEMUSE_COPY_EXP_AND_LEVEL,
+	ITEMUSE_COPY_GAINED_OR_LOSES,
+	ITEMUSE_COPY_TYPE_NAME,
+	ITEMUSE_COPY_INCREASED_OR_DECREASED
 };
 
 struct BagPocket
@@ -110,7 +148,7 @@ u8 ItemId_GetBattleUsage(u16 itemId);
 u8 ItemId_GetFlingPower(u16 itemId);
 u8 ItemId_GetUsageType(u16 itemId);
 u8 ItemId_GetBattleEffectUsageType(u16 itemId);
-const u8* GetItemEffect(u16 item);
+const u8 *ItemId_GetItemEffect(u16 itemId);
 void ClearBag(void);
 void ClearPCItemSlots(void);
 bool8 AddBagItem(u16 itemId, u16 amount);

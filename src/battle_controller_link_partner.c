@@ -110,7 +110,7 @@ static void SwitchIn_ShowSubstitute(u8 battlerId)
     if (gSprites[gHealthboxSpriteIds[battlerId]].callback == SpriteCallbackDummy)
     {
         if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute)
-            InitAndLaunchSpecialAnimation(battlerId, battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
+            InitAndLaunchSpecialAnimation(battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
 		
         gBattlerControllerFuncs[battlerId] = SwitchIn_WaitAndEnd;
     }
@@ -158,9 +158,9 @@ static u32 GetLinkPartnerTrainerPicId(u8 battlerId)
 	
     if ((gLinkPlayers[playerId].version & 0xFF) == VERSION_RUBY || (gLinkPlayers[playerId].version & 0xFF) == VERSION_SAPPHIRE
      || (gLinkPlayers[playerId].version & 0xFF) == VERSION_EMERALD)
-        return gLinkPlayers[playerId].gender + BACK_PIC_RS_BRENDAN;
+        return gLinkPlayers[playerId].gender + TRAINER_BACK_PIC_RS_BRENDAN;
     else
-        return gLinkPlayers[playerId].gender + BACK_PIC_RED;
+        return gLinkPlayers[playerId].gender + TRAINER_BACK_PIC_RED;
 }
 
 static void LinkPartnerHandleDrawTrainerPic(u8 battlerId)
@@ -173,7 +173,7 @@ static void LinkPartnerHandleDrawTrainerPic(u8 battlerId)
     else // First mon, on the left.
         xPos = 32;
 	
-	BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, FALSE, xPos, (8 - gTrainerBackPicCoords[trainerPicId].size) * 4 + 80, GetBattlerSpriteSubpriority(battlerId));
+	BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, FALSE, xPos, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80, GetBattlerSpriteSubpriority(battlerId));
 }
 
 static void LinkPartnerHandleTrainerSlideBack(u8 battlerId)

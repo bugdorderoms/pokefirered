@@ -10,6 +10,7 @@ void StartRoamerBattle(void);
 void StartOldManTutorialBattle(void);
 void StartScriptedWildBattle(void);
 void StartMarowakBattle(void);
+void StartTotemBattle(s8 *buffs);
 void StartLegendaryBattle(void);
 u8 BattleSetup_GetTerrainId(void);
 const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data);

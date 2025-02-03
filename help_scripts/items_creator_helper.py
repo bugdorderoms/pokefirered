@@ -3,6 +3,7 @@ import glob
 from header import *
 
 # This script generates the files gen_x.h on src/data/item/tms folder, based on the include/constants/tms.h file
+# and pokeballs_graphics.h on the src/data/item folder based on the pokeball graphics in graphics/interface/ball folder
 # and icons.h on the src/data/item folder based on the item graphics in graphics/items/icons
 # and its palettes in graphics/items/icon_palettes folders
 
@@ -20,9 +21,11 @@ tms = []
 def CreateGenFile(gen):
     output = open(f"{file_path}/src/data/item/tms/{gen.lower()}.h", 'w')
     output.write(f"// {donotmodifyheader}\n\n#ifdef __INTELLISENSE__\n"
-                 f"const struct Item gTmsInfo_{FormatExtension(gen)}[] =\n{chr(123)}\n#endif\n")
+                 f"const struct Item gTmsInfo_{FormatExtension(gen)}[] =\n"
+                 "{\n#endif\n")
     output.writelines(tms)
-    output.write(f"\n#ifdef __INTELLISENSE__\n{chr(125)};\n#endif\n")
+    output.write(f"\n#ifdef __INTELLISENSE__\n"
+                 "};\n#endif\n")
     output.close()
     tms.clear()
 
@@ -43,10 +46,35 @@ with open(f"{file_path}/include/constants/tms.h", 'r') as file:
             tm = line.split(" ")[1].strip()
             num = tm.split("_")[1]
             move = tm.removeprefix(f"ITEM_{num}_")
-            tms.append(f"\n\t[{tm}] =\n\t{chr(123)}\n\t\t.name = _({chr(34)}{num}{chr(34)}),\n"
-                       f"\t\t.holdEffectParam = MOVE_{move},\n\t\t.description = (u8*)&gBattleMoves[MOVE_{move}].description,\n"
-                       f"\t\t.price = 3000,\n\t\t.pocket = POCKET_TM_CASE,\n\t\t.type = ITEM_TYPE_PARTY_MENU,\n"
-                       f"\t\t.iconPic = sItemIcon_Tm,\n\t\t.iconPalette = NULL, // Handled by gTypesInfo\n\t{chr(125)},\n")
+            tms.append(f'\n\t[{tm}] ='
+                       '\n\t{\n'
+                       f'\t\t.name = _("{num}"),\n'
+                       f'\t\t.holdEffectParam = MOVE_{move},\n\t\t.description = (u8*)&gBattleMoves[MOVE_{move}].description,\n'
+                       f'\t\t.price = 3000,\n\t\t.pocket = POCKET_TM_CASE,\n\t\t.type = ITEM_TYPE_PARTY_MENU,\n'
+                       f'\t\t.iconPic = sItemIcon_Tm,\n\t\t.iconPalette = NULL, // Handled by gTypesInfo'
+                       '\n\t},\n')
+
+# Create pokeballs_graphics.h
+
+pokeballs = []
+
+# Append ball open graphics
+pokeballs.append(f'static const u32 sOpenPokeballGfx[] = INCBIN_U32("graphics/interface/ball_open.4bpp.lz");\n\n')
+
+# Append all pokeballs graphics and palettes
+for path in glob.glob(f"{file_path}/graphics/interface/ball/*"):
+    if path.endswith(".png"):
+        name = os.path.basename(path.removesuffix(".png"))
+        pokeballs.insert(len(pokeballs) - 2, f'static const u32 sInterfaceGfx_{FormatExtension(name)}Ball[] = INCBIN_U32("graphics/interface/ball/{name}.4bpp.lz");\n')
+    elif path.endswith(".gbapal"):
+        name = os.path.basename(path.removesuffix(".gbapal"))
+        pokeballs.append(f'static const u32 sInterfacePal_{FormatExtension(name)}Ball[] = INCBIN_U32("graphics/interface/ball/{name}.gbapal.lz");\n')
+        pokeballs.append("\n")
+
+pokeballs.pop()
+file = open(f"{file_path}/src/data/item/pokeballs_graphics.h", 'w')
+file.writelines(pokeballs)
+file.close()
 
 # Create icons.h
 

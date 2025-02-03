@@ -660,6 +660,7 @@
 #define TRAINER_CUE_BALL_PAXTON                    742
 
 // Special trainer Ids.
+#define TRAINER_SECRET_BASE                        0x400
 #define TRAINER_UNION_ROOM          			   0xC00
 #define TRAINER_LINK_OPPONENT       			   0x800
 

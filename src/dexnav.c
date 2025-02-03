@@ -16,6 +16,7 @@
 #include "field_player_avatar.h"
 #include "field_screen_effect.h"
 #include "fieldmap.h"
+#include "form_change.h"
 #include "gpu_regs.h"
 #include "graphics.h"
 #include "item.h"
@@ -850,17 +851,27 @@ static void DexNavUpdateSearchWindow(u8 proximity)
 //////////////////////////////
 //// DEXNAV MON GENERATOR ////
 //////////////////////////////
-static bool8 DexNavTryMakeShinyMon(void)
+u8 GetDexNavShinyRollsIncrease(u32 rolls)
 {
-    u32 i, shinyRolls, chainBonus, rndBonus, shinyRate = 0;
-    u8 searchLevel = sDexNavSearchLevel;
-    u8 chain = sCurrentDexNavChain;
+	u8 chain = sCurrentDexNavChain;
+	
+	if (chain == 50)
+		rolls += 5;
+	else if (chain == 100)
+		rolls += 10;
+	
+	if (RandomPercent(4))
+		rolls += 4;
+	
+	return min(rolls, 17);
+}
 
-    chainBonus = (chain == 50) ? 5 : (chain == 100) ? 10 : 0;
-    rndBonus = RandomPercent(4) ? 4 : 0;
-    shinyRolls = 1 + chainBonus + rndBonus + (GetShinyRollsIncrease() - 1);
-
-    if (searchLevel > 200)
+u32 GetDexNavShinyRate(void)
+{
+	u8 searchLevel = sDexNavSearchLevel;
+	u32 shinyRate = 0;
+	
+	if (searchLevel > 200)
     {
         shinyRate += searchLevel - 200;
         searchLevel = 200;
@@ -875,42 +886,30 @@ static bool8 DexNavTryMakeShinyMon(void)
 
     shinyRate /= 100;
 	
-    for (i = 0; i < shinyRolls; i++)
-    {
-        if (RandomMax(10000) < shinyRate)
-            return TRUE;
-    }
-    return FALSE;
+	return shinyRate;
 }
 
-static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityNum, u8 abilityHidden, u16 item, u16* moves)
+static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityNum, u8 abilityHidden, u16 item, u16 *moves)
 {
     struct Pokemon* mon = &gEnemyParty[0];
-    u8 i, perfectIv = MAX_PER_STAT_IVS, iv[3] = {0};
-
-    GenerateWildMon(species, level, FALSE);  // shiny rate bonus handled in CreateBoxMon
-	
-	if (DexNavTryMakeShinyMon())
+	struct PokemonGenerator generator =
 	{
-		i = TRUE;
-		SetMonData(mon, MON_DATA_IS_SHINY, &i);
-	}
-    // Pick random, unique IVs to set to 31. The number of perfect IVs that are assigned is equal to the potential
-    iv[0] = RandomMax(NUM_STATS);               // choose 1st perfect stat
+		.species = species,
+		.level = level,
+		.forcedGender = MON_GENDERLESS,
+		.otIdType = OT_ID_PLAYER_ID,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.shinyType = GENERATE_SHINY_NORMAL,
+		.shinyRollType = SHINY_ROLL_DEXNAV,
+		.forcedNature = NUM_NATURES,
+		.formChanges = gDefaultGeneratorFormChanges,
+		.nPerfectIvs = potential,
+	};
+	memcpy(generator.moves, moves, sizeof(generator.moves));
 	
-    do
-	{
-        iv[1] = RandomMax(NUM_STATS);
-        iv[2] = RandomMax(NUM_STATS);
-    } while ((iv[1] == iv[0])                   // unique 2nd perfect stat
-      || (iv[2] == iv[0] || iv[2] == iv[1]));   // unique 3rd perfect stat
-	  
-    if (potential > 2 && iv[2] != NUM_STATS)
-        SetMonData(mon, MON_DATA_HP_IV + iv[2], &perfectIv);
-    if (potential > 1 && iv[1] != NUM_STATS)
-        SetMonData(mon, MON_DATA_HP_IV + iv[1], &perfectIv);
-    if (potential > 0 && iv[0] != NUM_STATS)
-        SetMonData(mon, MON_DATA_HP_IV + iv[0], &perfectIv);
+    ZeroEnemyPartyMons();
+	CreateMon(mon, generator); // shiny rate bonus handled in CreateBoxMon
 
     // Set ability and hidden ability
     SetMonData(mon, MON_DATA_ABILITY_NUM, &abilityNum);
@@ -918,12 +917,6 @@ static void CreateDexNavWildMon(u16 species, u8 potential, u8 level, u8 abilityN
 
     // Set Held Item
 	SetMonData(mon, MON_DATA_HELD_ITEM, &item);
-
-    // Set moves
-    for (i = 0; i < MAX_MON_MOVES; i++)
-        SetMonMoveSlot(mon, moves[i], i);
-
-    CalculateMonStats(mon);
 }
 
 // gets a random level of the species based on map data.
@@ -1781,7 +1774,7 @@ static void Task_DexNavMain(u8 taskId)
 				VarSet(VAR_DEXNAV_SPECIES, species);
 			    VarSet(VAR_DEXNAV_ENVIRONMENT, sDexNavUiDataPtr->environment);
                 PrintDexNavMessage(DEXNAV_MSG_SEARCH_POKEMON);
-                PlayCry7(species, 0);
+                PlayCry_Normal(species, 0);
 			    return;
 			}
         }

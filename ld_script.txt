@@ -69,9 +69,7 @@ SECTIONS {
         src/battle_script_commands.o(.text);
         src/battle_util2.o(.text);
         src/battle_controller_player.o(.text);
-        src/battle_gfx_sfx_util.o(.text);
         src/battle_controller_opponent.o(.text);
-        src/battle_ai_switch_items.o(.text);
         src/battle_controller_link_opponent.o(.text);
         src/pokemon.o(.text);
         src/trig.o(.text);
@@ -152,14 +150,20 @@ SECTIONS {
         src/fldeff_poison.o(.text);
         src/safari_zone.o(.text);
         src/item_use.o(.text);
+		src/battle_ai_main.o(.text);
+		src/battle_ai_util.o(.text);
+		src/battle_ai_funcs.o(.text);
+		src/battle_ai_switch_items.o(.text);
         src/battle_anim_effects_1.o(.text);
         src/battle_anim_effects_2.o(.text);
         src/battle_anim_water.o(.text);
         src/battle_anim_fire.o(.text);
+		src/battle_anim_grass.o(.text);
         src/battle_anim_electric.o(.text);
         src/battle_anim_ice.o(.text);
         src/battle_anim_fighting.o(.text);
         src/battle_anim_poison.o(.text);
+		src/battle_anim_steel.o(.text);
         src/battle_anim_flying.o(.text);
         src/battle_anim_psychic.o(.text);
         src/battle_anim_bug.o(.text);
@@ -169,6 +173,7 @@ SECTIONS {
         src/battle_anim_dark.o(.text);
         src/battle_anim_ground.o(.text);
         src/battle_anim_normal.o(.text);
+		src/battle_anim_fairy.o(.text);
         src/battle_anim_utility_funcs.o(.text);
         src/battle_intro.o(.text);
         src/bike.o(.text);
@@ -179,7 +184,6 @@ SECTIONS {
         src/heal_location.o(.text);
         src/region_map.o(.text);
         src/image_processing_effects.o(.text);
-        src/battle_ai_script_commands.o(.text);
         src/fldeff_dig.o(.text);
         src/fldeff_flash.o(.text);
         src/field_specials.o(.text);
@@ -285,6 +289,9 @@ SECTIONS {
 		src/battle_gimmicks.o(.text);
 		src/rtc.o(.text);
 		src/daily_events.o(.text);
+		src/lua_handler.o(.text);
+		src/pokemon_sprite_visualizer.o(.text);
+		src/battle_gfx_sfx_util.o(.text);
     } =0
 
     script_data :
@@ -295,7 +302,6 @@ SECTIONS {
         data/battle_scripts_1.o(script_data);
         data/field_effect_scripts.o(script_data);
         data/battle_scripts_2.o(script_data);
-        data/battle_ai_scripts.o(script_data);
     } =0
 
     lib_text :
@@ -381,7 +387,6 @@ SECTIONS {
         src/string_util.o(.rodata);
         src/link.o(.rodata);
         src/main_menu.o(.rodata);
-        src/data.o(.rodata);
         src/battle_bg.o(.rodata);
         src/battle_main.o(.rodata);
         src/battle_util.o(.rodata);
@@ -451,10 +456,12 @@ SECTIONS {
         src/battle_anim_effects_2.o(.rodata);
         src/battle_anim_water.o(.rodata);
         src/battle_anim_fire.o(.rodata);
+		src/battle_anim_grass.o(.rodata);
         src/battle_anim_electric.o(.rodata);
         src/battle_anim_ice.o(.rodata);
         src/battle_anim_fighting.o(.rodata);
         src/battle_anim_poison.o(.rodata);
+		src/battle_anim_steel.o(.rodata);
         src/battle_anim_flying.o(.rodata);
         src/battle_anim_psychic.o(.rodata);
         src/battle_anim_bug.o(.rodata);
@@ -462,11 +469,12 @@ SECTIONS {
         src/battle_anim_ghost.o(.rodata);
         src/battle_anim_dragon.o(.rodata);
         src/battle_anim_dark.o(.rodata);
-		src/pokedex.o(.rodata);
         src/battle_anim_ground.o(.rodata);
         src/battle_anim_normal.o(.rodata);
+		src/battle_anim_fairy.o(.rodata);
         src/battle_anim_utility_funcs.o(.rodata);
         src/battle_intro.o(.rodata);
+		src/pokedex.o(.rodata);
         src/bike.o(.rodata);
         src/easy_chat.o(.rodata);
         src/mon_markings.o(.rodata);
@@ -474,7 +482,6 @@ SECTIONS {
         src/heal_location.o(.rodata);
         src/region_map.o(.rodata);
         src/image_processing_effects.o(.rodata);
-        src/battle_ai_script_commands.o(.rodata);
         src/fldeff_flash.o(.rodata);
         src/field_specials.o(.rodata);
         src/battle_records.o(.rodata);
@@ -574,6 +581,8 @@ SECTIONS {
 		src/coins.o(.rodata);
 		src/battle_gimmicks.o(.rodata);
 		src/rtc.o(.rodata);
+		src/battle_ai_main.o(.rodata);
+		src/pokemon_sprite_visualizer.o(.rodata);
 
         /* These should not be moved to C files */
         src/m4a_tables.o(.rodata);

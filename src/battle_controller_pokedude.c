@@ -181,7 +181,7 @@ static void SwitchIn_CleanShinyAnimShowSubstitute(u8 battlerId)
         FreeSpritePaletteByTag(ANIM_TAG_GOLD_STARS);
 		
         if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute)
-            InitAndLaunchSpecialAnimation(battlerId, battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
+            InitAndLaunchSpecialAnimation(battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
 		
         gBattlerControllerFuncs[battlerId] = SwitchIn_HandleSoundAndEnd;
     }
@@ -207,7 +207,7 @@ static void PokedudeHandleSwitchInAnim(u8 battlerId)
 {
 	BtlController_HandleSwitchInAnim(battlerId, TRUE, SwitchIn_TryShinyAnimShowHealthbox);
 	gActionSelectionCursor[battlerId] = 0;
-    gMoveSelectionCursor[battlerId] = 0;
+    gBattleStruct->battlers[battlerId].moveSelectionCursor = 0;
 }
 
 static void PokedudeHandleDrawTrainerPic(u8 battlerId)
@@ -219,10 +219,10 @@ static void PokedudeHandleDrawTrainerPic(u8 battlerId)
 	
 	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
     {
-		trainerPicId = BACK_PIC_POKEDUDE;
+		trainerPicId = TRAINER_BACK_PIC_POKEDUDE;
 		isFront = FALSE;
 		xPos = 80;
-		yPos = (8 - gTrainerBackPicCoords[trainerPicId].size) * 4 + 80;
+		yPos = (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80;
 		subpriority = 30;
 	}
 	else
@@ -230,7 +230,7 @@ static void PokedudeHandleDrawTrainerPic(u8 battlerId)
 		trainerPicId = TRAINER_PIC_PROFESSOR_OAK;
 		isFront = TRUE;
 		xPos = 176;
-		yPos = (8 - gTrainerFrontPicCoords[trainerPicId].size) * 4 + 40;
+		yPos = (8 - gTrainerFrontPicTable[trainerPicId].coords.size) * 4 + 40;
 		subpriority = GetBattlerSpriteSubpriority(battlerId);
 	}
 	BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, isFront, xPos, yPos, subpriority);
@@ -238,7 +238,7 @@ static void PokedudeHandleDrawTrainerPic(u8 battlerId)
 
 static void PokedudeHandleTrainerSlide(u8 battlerId)
 {
-	BtlController_HandleTrainerSlide(battlerId, BACK_PIC_POKEDUDE, FALSE, 80, (8 - gTrainerBackPicCoords[BACK_PIC_POKEDUDE].size) * 4 + 80);
+	BtlController_HandleTrainerSlide(battlerId, TRAINER_BACK_PIC_POKEDUDE, FALSE, 80, (8 - gTrainerBackPicTable[TRAINER_BACK_PIC_POKEDUDE].coords.size) * 4 + 80);
 }
 
 static void PokedudeHandleChooseAction(u8 battlerId)
@@ -306,7 +306,7 @@ static void PokedudeHandleChooseItem(u8 battlerId)
 {
 	u8 i;
 	
-	gBattleStruct->itemPartyIndex[battlerId] = 0;
+	gBattleStruct->battlers[battlerId].itemPartyIndex = 0;
 	BtlController_HandleChooseItem(battlerId, OpenBagAndChooseItem);
 	
 	for (i = 0; i < 3; ++i)
@@ -385,9 +385,8 @@ static void Intro_TryShinyAnimShowHealthbox(u8 battlerId)
 		if (!gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].triedShinyMonAnim)
 			TryShinyAnimation(BATTLE_PARTNER(battlerId));
 		
-        if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
+        if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
 			ShowHealthBox(BATTLE_PARTNER(battlerId));
-		
 		
         ShowHealthBox(battlerId);
         gBattleSpritesDataPtr->animationData->healthboxSlideInStarted = FALSE;
@@ -397,7 +396,7 @@ static void Intro_TryShinyAnimShowHealthbox(u8 battlerId)
 
 static void PokedudeHandleIntroTrainerBallThrow(u8 battlerId)
 {
-	BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F8, BACK_PIC_POKEDUDE, StartAnimLinearTranslation, 31, Intro_TryShinyAnimShowHealthbox);
+	BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F8, TRAINER_BACK_PIC_POKEDUDE, StartAnimLinearTranslation, 31, Intro_TryShinyAnimShowHealthbox);
 }
 
 /////////////////////
@@ -910,13 +909,13 @@ static void Pokedude_SimulateInputChooseMove(u8 battlerId)
     }
     else
     {
-        if (script_p[gPokedudeBattlerStates[battlerId]->move_idx].cursorPos[battlerId] != gMoveSelectionCursor[battlerId]
+        if (script_p[gPokedudeBattlerStates[battlerId]->move_idx].cursorPos[battlerId] != gBattleStruct->battlers[battlerId].moveSelectionCursor
             && script_p[gPokedudeBattlerStates[battlerId]->move_idx].delay[battlerId] / 2 == gPokedudeBattlerStates[battlerId]->timer)
         {
             PlaySE(SE_SELECT);
-            MoveSelectionDestroyCursorAt(gMoveSelectionCursor[battlerId]);
-            gMoveSelectionCursor[battlerId] = script_p[gPokedudeBattlerStates[battlerId]->move_idx].cursorPos[battlerId];
-            MoveSelectionCreateCursorAt(gMoveSelectionCursor[battlerId], 0);
+            MoveSelectionDestroyCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor);
+            gBattleStruct->battlers[battlerId].moveSelectionCursor = script_p[gPokedudeBattlerStates[battlerId]->move_idx].cursorPos[battlerId];
+            MoveSelectionCreateCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor, 0);
         }
         ++gPokedudeBattlerStates[battlerId]->timer;
     }
@@ -1093,9 +1092,11 @@ void InitPokedudePartyAndOpponent(void)
 	{
 		.otIdType = OT_ID_PLAYER_ID,
 		.shinyType = GENERATE_SHINY_NORMAL,
+		.shinyRollType = SHINY_ROLL_NORMAL,
 		.hasFixedPersonality = FALSE,
 		.fixedPersonality = 0,
 		.formChanges = NULL,
+		.nPerfectIvs = 0,
 	};
     gBattleTypeFlags = BATTLE_TYPE_POKEDUDE;
 	
@@ -1113,10 +1114,8 @@ void InitPokedudePartyAndOpponent(void)
 		generator.level = data[i].level;
 		generator.forcedGender = data[i].gender;
 		generator.forcedNature = data[i].nature;
+		memcpy(generator.moves, data[i].moves, sizeof(generator.moves));
 		
-		for (j = 0; j < MAX_MON_MOVES; ++j)
-			generator.moves[j] = data[i].moves[j];
-
         CreateMon(mon, generator);
 
     } while (data[++i].side != 0xFF);

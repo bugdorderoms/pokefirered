@@ -219,7 +219,7 @@ static void Task_PlayMonCryAfterFormChangeAnim(u8 taskId)
 		case 1:
 			if (++gTasks[taskId].tCryWait >= PLAY_CRY_WAIT_FRAMES)
 			{
-				PlayCry1(sFormChangeAnimData->newSpecies, 0);
+				PlayCry_Normal(sFormChangeAnimData->newSpecies, 0);
 				DestroyTask(taskId);
 				sFormChangeAnimData->finished = TRUE;
 			}

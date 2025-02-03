@@ -31,9 +31,9 @@ void TrySetMonFormChangeCountdown(struct Pokemon *mon);
 u16 GetBattlerFormChangeSpecies(u8 battlerId, u16 species, u16 itemId, u16 formChangeType);
 u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType);
 void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 reloadStats, bool8 reloadAbility);
-void DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType);
+bool8 DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType);
 
-extern const u16 gDeafultGeneratorFormChanges[];
+extern const u16 gDefaultGeneratorFormChanges[];
 
 extern const struct Fusion gFusionsTable[];
 

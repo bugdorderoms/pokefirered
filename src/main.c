@@ -368,7 +368,12 @@ static void VBlankIntr(void)
 #endif
 
     TryReceiveLinkBattleData();
-    Random();
+	
+#if NO_SAVE_STATE_RNG_MANIPULATION
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+#endif
+		Random();
+		
     UpdateWirelessStatusIndicatorSprite();
 
     INTR_CHECK |= INTR_FLAG_VBLANK;

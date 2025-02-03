@@ -10,6 +10,7 @@ void TryRemoveStrengthFlag(void);
 bool8 CheckPlayerInGroundRocks(void);
 void MovePlayerOnRide(u8 newDirection, u16 heldKeys);
 u32 ApplyRideEncounterRateMod(u32 encounterRate);
+void DecreaseTaurosChargeStamina(void);
 
 extern u8 gUsingRideMon; // for summon mon field effect anim
 
