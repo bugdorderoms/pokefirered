@@ -5,6 +5,7 @@
 #include "data.h"
 #include "decompress.h"
 #include "graphics.h"
+#include "battle_gfx_sfx_util.h"
 #include "pokemon_icon.h"
 #include "random.h"
 #include "scanline_effect.h"

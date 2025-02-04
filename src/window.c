@@ -1,4 +1,3 @@
-#include "global.h"
 #include "gflib.h"
 
 const u8 gUnknown_84566A8[] = INCBIN_U8("graphics/unknown/unknown_84566a8.bin");
@@ -20,13 +19,11 @@ static void nullsub_8(void)
 
 bool16 InitWindows(const struct WindowTemplate *templates)
 {
-    int i;
+    int i, j, allocatedBaseBlock;
     void *bgTilemapBuffer;
-    int j;
     u8 bgLayer;
     u16 bgSize;
     u8* allocatedTilemapBuffer;
-    int allocatedBaseBlock;
 
     for (i = 0; i < 4; ++i)
     {

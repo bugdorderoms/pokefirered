@@ -5,6 +5,7 @@
 #include "data.h"
 #include "decompress.h"
 #include "evolution_scene.h"
+#include "battle_gfx_sfx_util.h"
 #include "evolution_graphics.h"
 #include "link.h"
 #include "link_rfu.h"

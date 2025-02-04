@@ -1,5 +1,9 @@
 OBJEVENTGFXDIR := graphics/object_events/pics
 FLDEFFGFXDIR := graphics/field_effects/pics
+SLIDINGPUZZLESDIR := graphics/sliding_puzzle/puzzles
+
+$(SLIDINGPUZZLESDIR)/%.4bpp: $(SLIDINGPUZZLESDIR)/%.png
+	$(GFX) $< $@ -mwidth 4 -mheight 4
 
 $(OBJEVENTGFXDIR)/misc/cut_tree.4bpp: %.4bpp: %.png
 	$(GFX) $< $@ -mwidth 2 -mheight 2

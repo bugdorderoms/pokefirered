@@ -1,5 +1,5 @@
-#include "global.h"
 #include "battle_anim.h"
+#include "global.h"
 #include "gpu_regs.h"
 #include "trig.h"
 

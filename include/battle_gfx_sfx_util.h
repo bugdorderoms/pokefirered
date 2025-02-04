@@ -12,7 +12,7 @@ bool8 IsBattleSEPlaying(u8 battlerId);
 void BattleLoadMonSpriteGfx(u8 battlerId);
 void DecompressGhostFrontPic(u8 battlerId);
 void DecompressTrainerFrontPic(u16 frontPicId, u8 battlerId);
-void DecompressTrainerBackPalette(u16 a1, u8 a2);
+void DecompressTrainerBackPalette(u16 index, u8 palette);
 void FreeTrainerFrontPicPaletteAndTile(u16 frontPicId);
 bool8 BattleLoadAllHealthBoxesGfx(u8 state);
 void LoadBattleBarGfx(void);

@@ -1,11 +1,9 @@
-#include "global.h"
+#include "bag.h"
 #include "gflib.h"
 #include "item_menu.h"
-#include "text_window.h"
-#include "menu_helpers.h"
-#include "new_menu_helpers.h"
 #include "menu.h"
-#include "strings.h"
+#include "new_menu_helpers.h"
+#include "text_window.h"
 
 static const u16 sBagWindowPalF[] = INCBIN_U16("graphics/item_menu/bag_window_pal.gbapal");
 
@@ -221,10 +219,9 @@ void InitBagWindows(void)
         PutWindowTilemap(i);
     }
     ScheduleBgCopyTilemapToVram(0);
+	
     for (i = 0; i < 11; i++)
-    {
         sOpenWindows[i] = 0xFF;
-    }
 }
 
 void BagPrintTextOnWindow(u8 windowId, u8 fontId, const u8 * str, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 colorIdx)
@@ -243,14 +240,12 @@ u8 ShowBagWindow(u8 whichWindow, u8 nItems)
     if (sOpenWindows[whichWindow] == 0xFF)
     {
         sOpenWindows[whichWindow] = AddWindow(&sWindowTemplates[whichWindow + nItems]);
+		
         if (whichWindow != 6)
-        {
             DrawStdFrameWithCustomTileAndPalette(sOpenWindows[whichWindow], FALSE, 0x064, 0xE);
-        }
         else
-        {
             DrawStdFrameWithCustomTileAndPalette(sOpenWindows[whichWindow], FALSE, 0x081, 0xC);
-        }
+
         ScheduleBgCopyTilemapToVram(0);
     }
     return sOpenWindows[whichWindow];
@@ -268,9 +263,8 @@ void HideBagWindow(u8 whichWindow)
 u8 OpenBagWindow(u8 whichWindow)
 {
     if (sOpenWindows[whichWindow] == 0xFF)
-    {
         sOpenWindows[whichWindow] = AddWindow(&sWindowTemplates[whichWindow]);
-    }
+
     return sOpenWindows[whichWindow];
 }
 

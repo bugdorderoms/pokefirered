@@ -1,13 +1,12 @@
-#include "global.h"
-#include "gflib.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_bg.h"
+#include "battle_gfx_sfx_util.h"
 #include "battle_message.h"
 #include "decompress.h"
+#include "gflib.h"
 #include "graphics.h"
 #include "link.h"
-#include "menu.h"
 #include "menu_indicators.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
@@ -18,7 +17,6 @@
 #include "constants/moves.h"
 #include "constants/move_effect_bytes.h"
 #include "constants/songs.h"
-#include "constants/trainers.h"
 
 #define TAG_VS_LETTERS 10000
 

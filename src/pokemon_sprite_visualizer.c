@@ -1,9 +1,9 @@
 // Credits: Gamer2020, AsparagusEduardo, TheXaman, ShinyDragonHunter
-#include "global.h"
-#include "gflib.h"
 #include "battle_anim.h"
+#include "battle_gfx_sfx_util.h"
 #include "battle_interface.h"
 #include "decompress.h"
+#include "gflib.h"
 #include "m4a.h"
 #include "overworld.h"
 #include "pokemon.h"
@@ -768,12 +768,9 @@ static void UpdateYPosOffsetText(struct PokemonSpriteVisualizer *data)
 	u8 backPicCoords = data->constSpriteValues.backPicCoords;
     u8 frontPicCoords = data->constSpriteValues.frontPicCoords;
 	s8 frontPicElevation = data->constSpriteValues.frontPicElevation;
-    s8 offset_back_picCoords = data->offsetsSpriteValues.offset_back_picCoords;
-    s8 offset_front_picCoords = data->offsetsSpriteValues.offset_front_picCoords;
-	s8 offset_front_elevation = data->offsetsSpriteValues.offset_front_elevation;
-    u8 newBackPicCoords = backPicCoords + offset_back_picCoords;
-    u8 newFrontPicCoords = frontPicCoords + offset_front_picCoords;
-	s8 newElevationCoords = frontPicElevation + offset_front_elevation;
+    u8 newBackPicCoords = backPicCoords + data->offsetsSpriteValues.offset_back_picCoords;
+    u8 newFrontPicCoords = frontPicCoords + data->offsetsSpriteValues.offset_front_picCoords;
+	s8 newElevationCoords = frontPicElevation + data->offsetsSpriteValues.offset_front_elevation;
 	
 	FillWindowPixelBuffer(WIN_BOTTOM_RIGHT, PIXEL_FILL(0));
 	
@@ -996,9 +993,7 @@ static u32 CharDigitsToValue(u8 *charDigits, u8 maxDigits)
 
 static void PrintDigitChars(struct PokemonSpriteVisualizer *data)
 {
-	u8 i;
-    u16 species = data->modifyArrows.currValue;
-    u8 text[MODIFY_DIGITS_MAX + POKEMON_NAME_LENGTH + 8];
+	u8 i, text[MODIFY_DIGITS_MAX + POKEMON_NAME_LENGTH + 8];
 
     for (i = 0; i < data->modifyArrows.maxDigits; i++)
         text[i] = data->modifyArrows.charDigits[i];
@@ -1006,7 +1001,7 @@ static void PrintDigitChars(struct PokemonSpriteVisualizer *data)
     text[i++] = CHAR_SPACE;
     text[i++] = CHAR_HYPHEN;
     text[i++] = CHAR_SPACE;
-    GetSpeciesName(&text[i], species);
+    GetSpeciesName(&text[i], data->modifyArrows.currValue);
 
     FillWindowPixelBuffer(WIN_NAME_NUMBERS, PIXEL_FILL(1));
     AddTextPrinterParameterized(WIN_NAME_NUMBERS, 2, text, 6, 0, 0, NULL);
@@ -1190,9 +1185,9 @@ static void UpdateSubmenuOneOptionValue(struct PokemonSpriteVisualizer *data, bo
 
 static void UpdateSubmenuTwoOptionValue(struct PokemonSpriteVisualizer *data, bool8 increment)
 {
+	s8 update;
 	struct Sprite *leftSprite = &gSprites[data->frontShadowSpriteIdPrimary];
 	struct Sprite *rightSprite = &gSprites[data->frontShadowSpriteIdSecondary];
-	s8 update;
 	
 	switch (data->submenuYpos[1])
 	{
@@ -1250,8 +1245,7 @@ static void UpdateSubmenuThreeOptionValue(struct PokemonSpriteVisualizer *data, 
 {
 	if (increment)
 	{
-		data->battleTerrain++;
-		if (data->battleTerrain >= BATTLE_TERRAINS_COUNT)
+		if (++data->battleTerrain >= BATTLE_TERRAINS_COUNT)
 			data->battleTerrain = 0;
 	}
 	else

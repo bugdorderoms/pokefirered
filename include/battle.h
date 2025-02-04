@@ -9,7 +9,6 @@
 #include "battle_script_commands.h"
 #include "battle_main.h"
 #include "battle_ai.h"
-#include "battle_gfx_sfx_util.h"
 #include "battle_util2.h"
 #include "battle_bg.h"
 #include "constants/battle_script_commands.h"

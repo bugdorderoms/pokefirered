@@ -4,6 +4,7 @@
 #include "battle_controllers.h"
 #include "battle_interface.h"
 #include "battle_message.h"
+#include "battle_gfx_sfx_util.h"
 #include "item_menu.h"
 #include "link.h"
 #include "party_menu.h"

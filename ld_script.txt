@@ -292,6 +292,7 @@ SECTIONS {
 		src/lua_handler.o(.text);
 		src/pokemon_sprite_visualizer.o(.text);
 		src/battle_gfx_sfx_util.o(.text);
+		src/sliding_puzzles.o(.text);
     } =0
 
     script_data :
@@ -583,6 +584,7 @@ SECTIONS {
 		src/rtc.o(.rodata);
 		src/battle_ai_main.o(.rodata);
 		src/pokemon_sprite_visualizer.o(.rodata);
+		src/sliding_puzzles.o(.rodata);
 
         /* These should not be moved to C files */
         src/m4a_tables.o(.rodata);

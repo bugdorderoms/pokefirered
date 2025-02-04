@@ -5,6 +5,7 @@
 #include "pokeball.h"
 #include "data.h"
 #include "util.h"
+#include "battle_gfx_sfx_util.h"
 #include "m4a.h"
 #include "link.h"
 #include "event_data.h"

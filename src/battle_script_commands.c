@@ -7,6 +7,7 @@
 #include "money.h"
 #include "battle_main.h"
 #include "battle_gimmicks.h"
+#include "battle_gfx_sfx_util.h"
 #include "battle_setup.h"
 #include "pokemon_icon.h"
 #include "mail.h"

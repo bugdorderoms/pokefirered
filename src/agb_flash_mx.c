@@ -60,7 +60,7 @@ u16 EraseFlashChip_MX(void)
     u16 result;
     u16 readFlash1Buffer[0x20];
 
-    REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash->wait[0];
+    REG_WAITCNT = (REG_WAITCNT & ~(WAITCNT_SRAM_MASK)) | gFlash->wait[0];
 
     FLASH_WRITE(0x5555, 0xAA);
     FLASH_WRITE(0x2AAA, 0x55);
@@ -73,7 +73,7 @@ u16 EraseFlashChip_MX(void)
 
     result = WaitForFlashWrite(3, FLASH_BASE, 0xFF);
 
-    REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_8;
+    REG_WAITCNT = (REG_WAITCNT & ~(WAITCNT_SRAM_MASK)) | WAITCNT_SRAM_8;
 
     return result;
 }
@@ -94,7 +94,7 @@ u16 EraseFlashSector_MX(u16 sectorNum)
     numTries = 0;
 
 try_erase:
-    REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash->wait[0];
+    REG_WAITCNT = (REG_WAITCNT & ~(WAITCNT_SRAM_MASK)) | gFlash->wait[0];
 
     addr = FLASH_BASE + (sectorNum << gFlash->sector.shift);
 
@@ -117,7 +117,7 @@ try_erase:
     goto try_erase;
 
 done:
-    REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_8;
+    REG_WAITCNT = (REG_WAITCNT & ~(WAITCNT_SRAM_MASK)) | WAITCNT_SRAM_8;
 
     return result;
 }
@@ -137,7 +137,7 @@ u16 ProgramFlashByte_MX(u16 sectorNum, u32 offset, u8 data)
 
     SetReadFlash1(readFlash1Buffer);
 
-    REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash->wait[0];
+    REG_WAITCNT = (REG_WAITCNT & ~(WAITCNT_SRAM_MASK)) | gFlash->wait[0];
 
     FLASH_WRITE(0x5555, 0xAA);
     FLASH_WRITE(0x2AAA, 0x55);
@@ -176,7 +176,7 @@ u16 ProgramFlashSector_MX(u16 sectorNum, void *src)
 
     SetReadFlash1(readFlash1Buffer);
 
-    REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash->wait[0];
+    REG_WAITCNT = (REG_WAITCNT & ~(WAITCNT_SRAM_MASK)) | gFlash->wait[0];
 
     gFlashNumRemainingBytes = gFlash->sector.size;
     dest = FLASH_BASE + (sectorNum << gFlash->sector.shift);

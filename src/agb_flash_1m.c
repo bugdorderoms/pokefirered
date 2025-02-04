@@ -16,7 +16,7 @@ u16 IdentifyFlash(void)
     u16 flashId;
     const struct FlashSetupInfo * const *setupInfo;
 
-    REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_8;
+    REG_WAITCNT = (REG_WAITCNT & ~(WAITCNT_SRAM_MASK)) | WAITCNT_SRAM_8;
 
     flashId = ReadFlashId();
 

@@ -25,6 +25,7 @@
 #include "battle_anim.h"
 #include "battle_scripts.h"
 #include "battle_message.h"
+#include "battle_gfx_sfx_util.h"
 #include "battle_controllers.h"
 #include "battle_ai_util.h"
 #include "calculate_base_damage.h"

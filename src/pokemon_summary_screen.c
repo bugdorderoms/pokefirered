@@ -6,6 +6,7 @@
 #include "menu_helpers.h"
 #include "link.h"
 #include "battle_move_effects.h"
+#include "battle_gfx_sfx_util.h"
 #include "overworld.h"
 #include "constants/songs.h"
 #include "constants/sound.h"

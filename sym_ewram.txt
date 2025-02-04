@@ -127,3 +127,4 @@
 	.include "src/form_change_anim.o"
 	.include "src/rtc.o"
 	.include "src/battle_ai_main.o"
+	.include "src/sliding_puzzles.o"

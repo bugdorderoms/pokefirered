@@ -8,6 +8,7 @@
 #include "form_change.h"
 #include "pokemon_storage_system.h"
 #include "event_data.h"
+#include "battle_gfx_sfx_util.h"
 #include "random.h"
 #include "constants/moves.h"
 #include "menu.h"

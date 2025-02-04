@@ -11,6 +11,7 @@
 #include "menu.h"
 #include "data.h"
 #include "battle.h"
+#include "battle_gfx_sfx_util.h"
 #include "script.h"
 #include "evolution.h"
 #include "event_data.h"
