@@ -1,5 +1,6 @@
 #include "global.h"
 #include "battle.h"
+#include "battle_anim.h"
 #include "battle_interface.h"
 #include "battle_move_effects.h"
 #include "battle_util.h"
@@ -1123,17 +1124,22 @@ u8 TypeCalc(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 setAbilityFla
 	return CalcTypeEffectivenessMultiplier(move, moveType, GetBattlerAbility(attacker), defender, setAbilityFlags, flags);
 }
 
-// Calc effectiveness betwen a party mon's move and a battler
+// Calc effectiveness betwen a party mon's move and the defender
 u8 AI_TypeCalc(struct Pokemon *mon, u16 move, u8 defender)
 {
-	u8 moveType;
-	u16 flags, item, atkAbility = GetMonAbility(mon);
+	u8 effectiveness, battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+	struct BattlePokemon savedCopy = gBattleMons[battler];
+	u32 status3 = gStatuses3[battler];
+	u16 flags;
 	
-	if (IsNeutralizingGasOnField(atkAbility, TRUE))
-		atkAbility = ABILITY_NONE;
+	// Overrrides the opponent's mon data with the ones of its party for the calculation
+	CopyPokemonToBattleMon(battler, mon, &gBattleMons[battler], TRUE);
+	gStatuses3[battler] = 0;
 	
-	item = IsAbilityOrBattleEffectBlockingItemEffect(atkAbility) ? ITEM_NONE : GetMonData(mon, MON_DATA_HELD_ITEM);
-	moveType = GetMoveRealType(mon, move, atkAbility, item, 0);
+	effectiveness = TypeCalc(move, GetBattlerMoveType(battler, move), battler, defender, FALSE, &flags);
 	
-	return CalcTypeEffectivenessMultiplier(move, moveType, atkAbility, defender, FALSE, &flags);
+	gBattleMons[battler] = savedCopy;
+	gStatuses3[battler] = status3;
+	
+	return effectiveness;
 }

@@ -1155,6 +1155,7 @@ static u8 DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u8 *parentS
     return noDittoParent;
 }
 
+#if INCENSE_ITEM_BREEDING
 static void AlterEggSpeciesWithIncenseItem(u16 *species, u16 fatherItem, u16 motherItem)
 {
     if (*species == SPECIES_WYNAUT || *species == SPECIES_AZURILL)
@@ -1179,6 +1180,7 @@ static void AlterEggSpeciesWithIncenseItem(u16 *species, u16 fatherItem, u16 mot
 			*species = SPECIES_SNORLAX;
     }
 }
+#endif
 
 // Sets the initial data for the egg, after ii's used when the egg is hatched and given to the player
 static void SetInitialEggData(struct Pokemon *mon, u16 species, u32 personality)

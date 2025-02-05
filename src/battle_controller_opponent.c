@@ -238,6 +238,8 @@ static void OpponentHandleChooseAction(u8 battlerId)
     BattleControllerComplete(battlerId);
 }
 
+#if DOUBLE_WILD_ATTACK_NATURAL_ENEMY
+
 // based off: https://bulbapedia.bulbagarden.net/wiki/Pokémon_predation#Known_predatory_relation
 // The first species attacks the second.
 static const u16 sEnemyPreySpecies[][2] =
@@ -406,6 +408,7 @@ static bool8 IsAllySpeciesNaturalEnemy(u16 speciesAttacker, u16 speciesAttackerP
 	}
 	return FALSE;
 }
+#endif
 
 static void OpponentHandleChooseMove(u8 battlerId)
 {
@@ -468,8 +471,7 @@ static void OpponentHandleChooseMove(u8 battlerId)
 			} while (!CanTargetBattler(battlerId, target, move, moveTarget));
 			
 #if DOUBLE_WILD_ATTACK_NATURAL_ENEMY
-			if (moveTarget != MOVE_TARGET_BOTH && moveTarget != MOVE_TARGET_FOES_AND_ALLY && moveTarget != MOVE_TARGET_OPPONENTS && moveTarget != MOVE_TARGET_SELECTED_OPPONENT
-			&& CanTargetBattler(battlerId, BATTLE_PARTNER(battlerId), move, moveTarget))
+			if (moveTarget != MOVE_TARGET_BOTH && moveTarget != MOVE_TARGET_FOES_AND_ALLY && moveTarget != MOVE_TARGET_OPPONENTS && CanTargetBattler(battlerId, BATTLE_PARTNER(battlerId), move, moveTarget))
 			{
 				speciesAttacker = gBattleMons[battlerId].species;
 				speciesAttackerPartner = gBattleMons[BATTLE_PARTNER(battlerId)].species;

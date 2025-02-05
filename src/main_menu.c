@@ -731,6 +731,7 @@ static void DrawPartyMonIcons(void)
 	}
 }
 
+#if TRAINER_ICON_ON_MAIN_MENU
 // Create a window on bg1 for the icon of the player
 static void DrawPlayerOverworldIcon(void)
 {
@@ -742,6 +743,7 @@ static void DrawPlayerOverworldIcon(void)
 	PutWindowTilemap(windowId);
 	CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
+#endif
 
 static void PrintContinueStats(void)
 {

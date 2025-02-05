@@ -188,7 +188,7 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 				gBattlerAttacker = gBattleStruct->battlers[battlerId].futureSightAttacker;
 				gCurrentMove = gBattleStruct->battlers[battlerId].futureSightMove;
 				gSpecialStatuses[gBattlerAttacker].dmg = 0xFFFF;
-				SetTypeBeforeUsingMove(gCurrentMove, gBattlerAttacker);
+				gBattleStruct->dynamicMoveType = GetBattlerMoveType(gBattlerAttacker, gCurrentMove);
 				BattleScriptExecute(BattleScript_MonTookFutureAttack);
 				RemoveBattleEffectFromBattlerQueueList(battlerId, id);
 				effect = TRUE;

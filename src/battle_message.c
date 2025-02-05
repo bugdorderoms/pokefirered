@@ -757,6 +757,11 @@ const u16 gAdrenalineOrbUsedStringIds[] =
 	[B_MSG_BUT_HAD_NO_EFFECT]  = STRINGID_BUTNOEFFECT
 };
 
+const u16 gStartingStatusStringIds[] =
+{
+	[B_MSG_TAILWIND_BLEW_TRAINER_TEAM] = STRINGID_TAILWINDBLEWBEHINDATKTEAM
+};
+
 // String tables
 static const u8 *const sBattleStatNamesTable[] =
 {

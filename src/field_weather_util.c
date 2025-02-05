@@ -9,6 +9,7 @@
 // So, the player need change map "X" times to have a chance to activate it.
 #define RANDOM_WEATHER_DELAY 40
 
+#if DYNAMIC_WEATHER
 static u8 TryStartDynamicWeather(void)
 {
 	u32 weatherChance;
@@ -73,6 +74,7 @@ static u8 TryStartDynamicWeather(void)
 	}
 	return newWeather;
 }
+#endif
 
 static void UpdateRainCounter(u8 newWeather, u8 oldWeather)
 {

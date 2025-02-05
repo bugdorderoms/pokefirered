@@ -978,7 +978,7 @@ static struct
 {
     const u8 *text;
     TaskFunc func;
-} const sCursorOptions[] =
+} const sCursorOptions[MENU_FIELD_MOVES] =
 {
     [MENU_SUMMARY] = {gText_Summary5, CursorCB_Summary},
     [MENU_NICKNAME] = {gText_Nickname, CursorCB_Nickname},
@@ -1002,15 +1002,6 @@ static struct
     [MENU_STORE] = {gText_Store, CursorCB_Store},
     [MENU_REGISTER] = {gText_Register, CursorCB_Register},
     [MENU_TRADE1] = {gText_Trade4, CursorCB_Trade1},
-    [MENU_FIELD_MOVES + FIELD_MOVE_FLASH] = {gBattleMoves[MOVE_FLASH].name, CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_CUT] = {gBattleMoves[MOVE_CUT].name, CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_WATERFALL] = {gBattleMoves[MOVE_WATERFALL].name, CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_TELEPORT] = {gBattleMoves[MOVE_TELEPORT].name, CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_DIG] = {gBattleMoves[MOVE_DIG].name, CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_MILK_DRINK] = {gBattleMoves[MOVE_MILK_DRINK].name, CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_SOFT_BOILED] = {gBattleMoves[MOVE_SOFT_BOILED].name, CursorCB_FieldMove},
-    [MENU_FIELD_MOVES + FIELD_MOVE_SWEET_SCENT] = {gBattleMoves[MOVE_SWEET_SCENT].name, CursorCB_FieldMove},
-	[MENU_FIELD_MOVES + FIELD_MOVE_DEFOG] = {gBattleMoves[MOVE_DEFOG].name, CursorCB_FieldMove},
 };
 
 static const u8 sPartyMenuAction_SummarySwitchCancel[] = {MENU_SUMMARY, MENU_SWITCH, MENU_CANCEL1};

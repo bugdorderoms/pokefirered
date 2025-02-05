@@ -270,10 +270,12 @@ static void HandleChooseActionAfterDma3(u8 battlerId)
     {
         gBattle_BG0_X = 0;
         gBattle_BG0_Y = 160;
+		
 #if WEATHER_ICON_IN_BATTLE
 		if (!(gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_POKEDUDE)))
 			TryCreateWeatherAnimIcon();
 #endif
+
         if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
 			gBattlerControllerFuncs[battlerId] = OakOldMan_SimulateInputChooseAction;
 		else if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
@@ -563,6 +565,7 @@ static void HandleInputChooseAction(u8 battlerId)
     if (JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
+		
 #if WEATHER_ICON_IN_BATTLE
         ShowOrHideWeatherAnimIcon(TRUE); // hide icon
 #endif
@@ -646,6 +649,7 @@ static void HandleInputChooseAction(u8 battlerId)
 // MOVE SELECTION DISPLAYERS //
 ///////////////////////////////
 
+#if EFFECTIVENESS_ON_MENU
 static const u16 sEffectivenessColours[] =
 {
     // super effective colors
@@ -673,6 +677,7 @@ static const u16 sEffectivenessColours[] =
     RGB(15, 15, 15),
     RGB_BLACK,
 };
+#endif
 
 static void MoveSelectionDisplayMoveNames(u8 battlerId)
 {
@@ -724,13 +729,13 @@ static void MoveSelectionDisplayMoveType(u8 battlerId)
     u8 target, effect, type;
     
 #if BATTLE_MENU_REAL_MOVE_TYPE
-	type = GetBattlerMoveRealType(battlerId, move, 0);
+	type = GetBattlerMoveType(battlerId, move);
 #else
 	type = gBattleMoves[move].type;
 #endif
 	
     txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfaceType);
-   
+	
 #if EFFECTIVENESS_ON_MENU
     target = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT); // default target
     effect = flags = 0;

@@ -693,11 +693,11 @@ static void SaveStatToString(u8 caseId, u8 *dest, u8 color)
 			ConvertIntToDecimalStringN(dest, GetNationalPokedexCount(FLAG_GET_CAUGHT), STR_CONV_MODE_LEFT_ALIGN, 4);
 			break;
 		case SAVE_STAT_DATE:
-			dest = ConvertIntToDecimalStringN(dest, gRtcLocation.year, STR_CONV_MODE_LEFT_ALIGN, 4);
+			dest = ConvertIntToDecimalStringN(dest, gRtcLocation.day, STR_CONV_MODE_LEADING_ZEROS, 2);
 			*dest++ = CHAR_SLASH;
 			dest = ConvertIntToDecimalStringN(dest, gRtcLocation.month, STR_CONV_MODE_LEADING_ZEROS, 2);
 			*dest++ = CHAR_SLASH;
-			ConvertIntToDecimalStringN(dest, gRtcLocation.day, STR_CONV_MODE_LEADING_ZEROS, 2);
+			ConvertIntToDecimalStringN(dest, gRtcLocation.year, STR_CONV_MODE_LEFT_ALIGN, 4);
 			break;
 	}
 }

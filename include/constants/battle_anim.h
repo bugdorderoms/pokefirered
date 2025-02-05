@@ -428,6 +428,7 @@
 #define B_ANIM_SPIT_OUT_PREY         0x2B
 #define B_ANIM_SILENT_FORM_CHANGE    0x2C // Same as B_ANIM_FORM_CHANGE, but with no sound effects
 #define B_ANIM_TOTEM_BOOST           0x2D
+#define B_ANIM_TAILWIND              0x2E
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0

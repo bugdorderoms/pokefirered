@@ -134,8 +134,6 @@ static void PokeSum_DestroyMonMarkingsSprite(void);
 static void PokeSum_UpdateMonMarkingsAnim(void);
 static s8 SeekToNextMonInSingleParty(s8 direction);
 static s8 SeekToNextMonInMultiParty(s8 direction);
-static u8 GetStatColor(u8 statiD);
-static void PokeSum_PrintMonIvs(void);
 
 struct PokemonSummaryScreenData
 {
@@ -175,7 +173,7 @@ struct PokemonSummaryScreenData
         u8 statValueStrBufs[5][5];
         u8 moveCurPpStrBufs[MAX_MON_MOVES + 1][11];
         u8 moveMaxPpStrBufs[MAX_MON_MOVES + 1][11];
-        u8 moveNameStrBufs[MAX_MON_MOVES + 1][MOVE_NAME_LENGTH + 1];
+        const u8 *moveNameStrBufs[MAX_MON_MOVES + 1];
         u8 movePowerStrBufs[MAX_MON_MOVES + 1][5];
         u8 moveAccuracyStrBufs[MAX_MON_MOVES + 1][5];
         u8 expPointsStrBuf[9];
@@ -2027,7 +2025,7 @@ static void BufferMonMoveI(u8 i)
 
     if (!sMonSummaryScreen->moveIds[i])
     {
-        StringCopy(sMonSummaryScreen->summary.moveNameStrBufs[i], gText_PokeSum_OneHyphen);
+        sMonSummaryScreen->summary.moveNameStrBufs[i] = gText_PokeSum_OneHyphen;
         StringCopy(sMonSummaryScreen->summary.moveCurPpStrBufs[i], gText_PokeSum_TwoHyphens);
         StringCopy(sMonSummaryScreen->summary.movePowerStrBufs[i], gText_ThreeHyphens);
         StringCopy(sMonSummaryScreen->summary.moveAccuracyStrBufs[i], gText_ThreeHyphens);
@@ -2040,13 +2038,12 @@ static void BufferMonMoveI(u8 i)
 		
 		sMonSummaryScreen->numMoves++;
 
-#if SUMMARY_REAL_MOVE_TYPE
-		sMonSummaryScreen->moveTypes[i] = GetMoveRealType(mon, move, GetMonAbility(mon), GetMonData(mon, MON_DATA_HELD_ITEM), TYPE_CALC_SUMMARY);
-#else
-		sMonSummaryScreen->moveTypes[i] = gBattleMoves[move].type;
-#endif
-
-		StringCopy(sMonSummaryScreen->summary.moveNameStrBufs[i], gBattleMoves[move].name);
+		if (gBattleMoves[move].effect == EFFECT_HIDDEN_POWER)
+			sMonSummaryScreen->moveTypes[i] = GetHiddenPowerType(mon);
+		else
+			sMonSummaryScreen->moveTypes[i] = gBattleMoves[move].type;
+		
+		sMonSummaryScreen->summary.moveNameStrBufs[i] = gBattleMoves[move].name;
 		
 		if (i >= MAX_MON_MOVES && sMonSummaryScreen->mode == PSS_MODE_SELECT_MOVE)
 		{
@@ -2245,14 +2242,17 @@ static void PrintInfoPage(void)
 
 static u8 GetStatColor(u8 statId)
 {
+#if NATURE_COLOURS
 	u8 nature = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_NATURE);
 	
 	if (gNaturesInfo[nature].statUpId == statId) // stat increased
 		return 4; // color red
 	else if (gNaturesInfo[nature].statDownId == statId) // stat decreased
 		return 5; // color blue
-	else // stat unmodified
-		return 0; // no color
+		
+	// stat unmodified
+#endif
+	return 0; // no color
 }
 
 static void PrintSkillsPage(void)
@@ -2262,15 +2262,8 @@ static void PrintSkillsPage(void)
     AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 14 + sMonSkillsPrinterXpos->curHpStr, 4, sLevelNickTextColors[0], TEXT_SPEED_FF, sMonSummaryScreen->summary.curHpStrBuf);
 	
     for (i = STAT_ATK; i < NUM_STATS; i++)
-    {
-#if NATURE_COLOURS
-	    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 50 + sMonSkillsPrinterXpos->statsStr[i - 1], sStatsPosY[i], 
-					 sLevelNickTextColors[GetStatColor(i)], TEXT_SPEED_FF, sMonSummaryScreen->summary.statValueStrBufs[i - 1]);
-#else
-	    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 50 + sMonSkillsPrinterXpos->statsStr[i - 1], sStatsPosY[i], 
-					 sLevelNickTextColors[0], TEXT_SPEED_FF, sMonSummaryScreen->summary.statValueStrBufs[i - 1]);
-#endif
-    }
+		AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 50 + sMonSkillsPrinterXpos->statsStr[i - 1], sStatsPosY[i], 
+									 sLevelNickTextColors[GetStatColor(i)], TEXT_SPEED_FF, sMonSummaryScreen->summary.statValueStrBufs[i - 1]);
 }
 
 #define GetMoveNamePrinterYpos(x) ((x) * 28 + 5)
@@ -2540,6 +2533,7 @@ static void PokeSum_PrintSelectedMoveStats(void)
     }
 }
 
+#if IVS_IN_THE_SUMMARY
 static void PokeSum_PrintMonIvs(void)
 {
 	u8 i;
@@ -2548,6 +2542,7 @@ static void PokeSum_PrintMonIvs(void)
 	for (i = 0; i < NUM_STATS; i++)
 		BlitMoveInfoIcon(3, (GetMonData(mon, MON_DATA_HP_IV + i) / 2) + 29, 6, sStatsPosY[i] + 1);
 }
+#endif
 
 static void PokeSum_PrintAbilityDataOrMoveTypes(void)
 {

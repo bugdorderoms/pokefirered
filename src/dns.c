@@ -32,6 +32,8 @@
  * requires the paletteNum and the colourNum of each colour slot,   *
  * as well as the RGB 15 bit colour that's gonna be used as         *
  * "light colour".                                                  */
+ 
+#if LIT_UP_WINDOWS
 static const struct lightingColour sLightingColours[] =
 {
     {
@@ -75,6 +77,7 @@ static const struct lightingColour sLightingColours[] =
         .lightColour = RGB2(22, 21, 3),
     },
 };
+#endif
 
 /* Maptypes that are not affected by DNS */
 static const u8 sDNSMapExceptions[] =
@@ -361,6 +364,7 @@ void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 
 	}
 }
 
+#if LIT_UP_WINDOWS
 static void DoDNSLightningWindowsEffect(void)
 {
 	u8 i;
@@ -389,6 +393,7 @@ static void DoDNSLightningWindowsEffect(void)
 		gMain.tilesetPaletteReloaded = TRUE;
 	}
 }
+#endif
 
 u8 GetDNSTimeLapse(void)
 {

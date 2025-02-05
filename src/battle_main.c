@@ -236,43 +236,45 @@ static const struct ScanlineEffectParams sIntroScanlineParams16Bit =
 	.initState = 1
 };
 
+#if USE_DNS_IN_BATTLE
 static const struct DNSPalExceptions sCombatPalExceptions =  
 {
     .pal = {
-        DNS_PAL_EXCEPTION,  //0
-        DNS_PAL_EXCEPTION,  //1
-        DNS_PAL_ACTIVE,     //2
-        DNS_PAL_ACTIVE,     //3
-        DNS_PAL_ACTIVE,     //4
-        DNS_PAL_EXCEPTION,  //5
-        DNS_PAL_EXCEPTION,  //6
-        DNS_PAL_ACTIVE,     //7
-        DNS_PAL_EXCEPTION,  //8
-        DNS_PAL_EXCEPTION,  //9
-        DNS_PAL_ACTIVE,     //10
-        DNS_PAL_ACTIVE,     //11
-        DNS_PAL_ACTIVE,     //12
-        DNS_PAL_ACTIVE,     //13
-        DNS_PAL_ACTIVE,     //14
-        DNS_PAL_ACTIVE,     //15
-        DNS_PAL_EXCEPTION,  //16
-        DNS_PAL_EXCEPTION,  //17
-        DNS_PAL_EXCEPTION,  //18
-        DNS_PAL_EXCEPTION,  //19
-        DNS_PAL_EXCEPTION,  //20
-        DNS_PAL_EXCEPTION,  //21
-        DNS_PAL_EXCEPTION,  //22
-        DNS_PAL_EXCEPTION,  //23
-        DNS_PAL_EXCEPTION,  //24
-        DNS_PAL_EXCEPTION,  //25
-        DNS_PAL_EXCEPTION,  //26
-        DNS_PAL_EXCEPTION,  //27
-        DNS_PAL_EXCEPTION,  //28
-        DNS_PAL_EXCEPTION,  //29
-        DNS_PAL_EXCEPTION,  //30
-        DNS_PAL_EXCEPTION,  //31
+        DNS_PAL_EXCEPTION,  // 0
+        DNS_PAL_EXCEPTION,  // 1
+        DNS_PAL_ACTIVE,     // 2
+        DNS_PAL_ACTIVE,     // 3
+        DNS_PAL_ACTIVE,     // 4
+        DNS_PAL_EXCEPTION,  // 5
+        DNS_PAL_EXCEPTION,  // 6
+        DNS_PAL_ACTIVE,     // 7
+        DNS_PAL_EXCEPTION,  // 8
+        DNS_PAL_EXCEPTION,  // 9
+        DNS_PAL_ACTIVE,     // 10
+        DNS_PAL_ACTIVE,     // 11
+        DNS_PAL_ACTIVE,     // 12
+        DNS_PAL_ACTIVE,     // 13
+        DNS_PAL_ACTIVE,     // 14
+        DNS_PAL_ACTIVE,     // 15
+        DNS_PAL_EXCEPTION,  // 16
+        DNS_PAL_EXCEPTION,  // 17
+        DNS_PAL_EXCEPTION,  // 18
+        DNS_PAL_EXCEPTION,  // 19
+        DNS_PAL_EXCEPTION,  // 20
+        DNS_PAL_EXCEPTION,  // 21
+        DNS_PAL_EXCEPTION,  // 22
+        DNS_PAL_EXCEPTION,  // 23
+        DNS_PAL_EXCEPTION,  // 24
+        DNS_PAL_EXCEPTION,  // 25
+        DNS_PAL_EXCEPTION,  // 26
+        DNS_PAL_EXCEPTION,  // 27
+        DNS_PAL_EXCEPTION,  // 28
+        DNS_PAL_EXCEPTION,  // 29
+        DNS_PAL_EXCEPTION,  // 30
+        DNS_PAL_EXCEPTION,  // 31
     }
 };
+#endif
 
 const struct OamData gOamData_BattlerOpponent =
 {
@@ -2370,10 +2372,10 @@ enum
 {
 	FIRST_TURN_EVENT_ORDER,
 	FIRST_TURN_EVENT_OVERWORLD_WEATHER,
+	FIRST_TURN_EVENT_BATTLE_CHALLENGE,
 	FIRST_TURN_EVENT_PRIMAL_REVERSION,
 	FIRST_TURN_EVENT_RAID_BATTLE_REVEAL,
 	FIRST_TURN_EVENT_DYNAMAX_SWIRL,
-	FIRST_TURN_EVENT_BATTLE_CHALLENGE,
 	FIRST_TURN_EVENT_UNNERVE, // Also Neutralizing Gas
 	FIRST_TURN_EVENT_SWITCHIN_ABILITIES,
 	FIRST_TURN_EVENT_SWITCHIN_ITEMS,
@@ -2421,6 +2423,9 @@ static void TryDoEventsBeforeFirstTurn(void)
 				++gBattleStruct->firstTurnEventsState;
 				break;
 			case FIRST_TURN_EVENT_BATTLE_CHALLENGE:
+				if (TryBattleChallengeStartingStatus())
+					BattleScriptPushCursorAndCallback(BattleScript_BattleChallengeStartingStatus);
+					
 				++gBattleStruct->firstTurnEventsState;
 				break;
 			case FIRST_TURN_EVENT_UNNERVE:
@@ -2482,6 +2487,7 @@ static void TryDoEventsBeforeFirstTurn(void)
 					}
 					gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
 				}
+				gBattlerAttacker = 0; // It may can be changed by one of the cases above
 				TurnValuesCleanUp(FALSE);
 				memset(&gSpecialStatuses, 0, sizeof(gSpecialStatuses));
 				gBattleStruct->absentBattlerFlags = gAbsentBattlerFlags;
@@ -3645,8 +3651,7 @@ static void HandleAction_UseMove(void)
         gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
 	
 	// Set dynamic move type
-	SetTypeBeforeUsingMove(gCurrentMove, gBattlerAttacker);
-	moveType = gBattleStruct->dynamicMoveType;
+	moveType = gBattleStruct->dynamicMoveType = GetBattlerMoveType(gBattlerAttacker, gCurrentMove);
 	
     // Choose target
 	moveTarget = GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove);

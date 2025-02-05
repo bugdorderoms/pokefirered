@@ -90,7 +90,7 @@
 #define NUM_MOVEINFO_SUBMENUS 3
 
 // If this setting is enabled, the naming screen will automatically switch to lower case when you start typing the first character.
-#define PAGE_SWAP TRUE
+#define NAMING_SCREEN_PAGE_SWAP TRUE
 
 // If this setting is enabled, the Pokémon Center animation will not count unhatched eggs.
 #define NO_HEAL_EGGS TRUE
@@ -98,10 +98,6 @@
 // If this setting is enabled, the color of a move's type name will change based on its effectiveness in battle.
 // To do so, go to "src/battle_controller_player.c" and edit each effectiveness's color in "sEffectivenessColours".
 #define EFFECTIVENESS_ON_MENU TRUE
-
-// If this setting is enabled, the real move type will be displayed on the pokemon summary screen.
-// This only affects moves that displays it in the original games, like Hidden Power and Ivy cudgel.
-#define SUMMARY_REAL_MOVE_TYPE TRUE
 
 // If this setting is enabled, the real move type will be displayed on the battle menu.
 #define BATTLE_MENU_REAL_MOVE_TYPE TRUE

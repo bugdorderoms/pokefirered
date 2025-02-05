@@ -62,7 +62,6 @@
 #define PLAYER_NAME_LENGTH           7
 #define MAIL_WORDS_COUNT             9
 #define EASY_CHAT_BATTLE_WORDS_COUNT 6
-#define MOVE_NAME_LENGTH             16
 #define DEX_CATEGORY_NAME_LENGTH     13
 #define MYSTERY_GIFT_CODE_LENGTH     10
 

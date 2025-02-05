@@ -32,10 +32,6 @@ enum
 	STAT_CHANGE_FAIL_FLOWER_VEIL,
 };
 
-// Flags for GetMoveRealType
-#define TYPE_CALC_SUMMARY      (1 << 0)
-#define TYPE_CALC_ANTICIPATION (1 << 1)
-
 // Flags for CheckMoveLimitations
 #define MOVE_LIMITATION_IGNORE_NO_PP    (1 << 0)
 #define MOVE_LIMITATION_IGNORE_IMPRISON (1 << 1)
@@ -75,8 +71,8 @@ enum
 
 #define WEATHER_HAS_EFFECT ((!ABILITY_ON_FIELD(ABILITY_CLOUD_NINE) && !ABILITY_ON_FIELD(ABILITY_AIR_LOCK)))
 
-#define BATTLE_ALIVE_SIDE            0
-#define BATTLE_ALIVE_EXCEPT_BATTLER  1
+#define BATTLE_ALIVE_SIDE           0
+#define BATTLE_ALIVE_EXCEPT_BATTLER 1
 
 #define IS_WHOLE_SIDE_ALIVE(battler) ((CountAliveMonsInBattle(battler, BATTLE_ALIVE_SIDE) >= NUM_BATTLERS_PER_SIDE))
 
@@ -132,10 +128,8 @@ u8 CanBePoisoned(u8 attacker, u8 defender, u32 flags);
 u8 CanBeBurned(u8 attacker, u8 defender, u32 flags);
 bool8 CanBeFrozen(u8 attacker, u8 defender, u32 flags);
 u8 CanBeParalyzed(u8 attacker, u8 defender, u32 flags);
-bool8 IsAbilityOrBattleEffectBlockingItemEffect(u16 ability);
 u16 GetBattlerItem(u8 battlerId);
 u8 GetBattlerItemHoldEffect(u8 battler, bool8 checkNegating);
-bool8 IsNeutralizingGasOnField(u16 ability, bool8 forAI);
 u16 GetBattlerAbility(u8 battler);
 u16 SetBattlerAbility(u8 battlerId, u16 newAbility);
 u16 SuppressBattlerAbility(u8 battlerId);
@@ -194,9 +188,7 @@ struct Pokemon *GetBattlerIllusionPartyIndexPtr(u8 battlerId);
 u8 CountAliveMonsInBattle(u8 battlerId, u8 caseId);
 void CalculatePayDayMoney(void);
 s32 GetDrainedBigRootHp(u8 battlerId, s32 hp);
-void SetTypeBeforeUsingMove(u16 move, u8 battler);
-u8 GetBattlerMoveRealType(u8 battler, u16 move, u8 flags);
-u8 GetMoveRealType(struct Pokemon *mon, u16 move, u16 ability, u16 item, u8 flags);
+u8 GetBattlerMoveType(u8 battlerId, u16 move);
 bool8 TryTransformIntoBattler(u8 battler1, u8 battler2);
 bool8 TryDisableMove(u8 battlerId, u8 movePos, u16 move);
 bool8 CanSafeguardProtectBattler(u8 attacker, u8 defender);
@@ -235,6 +227,7 @@ bool8 TryInitSosCall(void);
 const struct SosCall GetSosCallRateTable(void);
 bool8 IsBattlerTotemPokemon(u8 battlerId);
 void SwapBattlersPositions(u8 battler1, u8 battler2);
+bool8 TryBattleChallengeStartingStatus(void);
 
 static inline bool8 CanBattlerSwitch(u8 battlerId)
 {

@@ -278,7 +278,7 @@ struct AdditionalEffect
 	bool8 onChargeTurnOnly:1; // Effect applies only on the chaging turn of a two turns move
     bool8 onlyIfTargetRaisedStats:1; // Effect applies only if target was raised its stat
 	bool8 onFinalMultiHitOnly:1; // Effect applies only on the final hit of a miltihit move
-	bool8 afterTargetItemsOnly:1; // Effect applies only after the target items take effect
+	bool8 onMoveEndOnly:1; // Effect applies only at ATK49_SECOND_MOVE_EFFECT on cmd moveend
 };
 
 #define EFFECTS_ARR(...) (const struct AdditionalEffect[]) {__VA_ARGS__}
@@ -286,16 +286,17 @@ struct AdditionalEffect
 
 struct BattleMove
 {
-	/*0x00*/ u8 name[MOVE_NAME_LENGTH + 1];
-	/*0x11*/ u8 power;
-    /*0x12*/ u16 effect;
-	/*0x14*/ const u8 *description;
-	/*0x18*/ const u8 *animScript;
-    /*0x1C*/ u8 type;
-    /*0x1D*/ u8 accuracy;
-    /*0x1E*/ u8 pp;
-	/*0x1F*/ u8 target;
-	/*0x20*/ union {
+	/*0x00*/ const u8 *name;
+	/*0x04*/ const u8 *description;
+	/*0x08*/ const u8 *animScript;
+	/*0x0C*/ u16 effect;
+	/*0x0E*/ u8 power;
+    /*0x0F*/ u8 type;
+    /*0x10*/ u8 accuracy;
+    /*0x11*/ u8 pp;
+	/*0x12*/ u8 target;
+	/*0x13*/ s8 priority;
+	/*0x14*/ union {
 				struct { u8 percentage; } absorb;
 				struct { u8 trappingId; } bind;
 				struct { u8 amount; } fixedDamage;
@@ -310,12 +311,11 @@ struct BattleMove
 				struct { u16 stringId; u16 weather; } twoTurns;
 				struct { u16 stringId; u16 animationId; } futureAttack;
 			 } argument;
-	/*0x24*/ s8 priority;
-	/*0x25*/ u8 split;
-	/*0x26*/ u8 zMoveEffect;
-    /*0x27*/ struct MoveFlags flags;
-	const struct AdditionalEffect *additionalEffects; // primary/secondary effects
-	u8 numAdditionalEffects;
+	/*0x18*/ u8 split;
+	/*0x19*/ u8 zMoveEffect;
+    /*0x1A*/ struct MoveFlags flags;
+			 const struct AdditionalEffect *additionalEffects; // primary/secondary effects
+			 u8 numAdditionalEffects;
 };
 
 extern const struct BattleMove gBattleMoves[];

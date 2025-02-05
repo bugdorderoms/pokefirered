@@ -3239,11 +3239,19 @@ static void Task_HandleSelectionMenuInput(u8 taskId)
         case MENU_B_PRESSED:
             PlaySE(SE_SELECT);
             PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[2]);
-            sCursorOptions[sPartyMenuInternal->actions[sPartyMenuInternal->numActions - 1]].func(taskId);
+			
+			if (sPartyMenuInternal->actions[sPartyMenuInternal->numActions - 1] >= MENU_FIELD_MOVES)
+				CursorCB_FieldMove(taskId);
+			else
+				sCursorOptions[sPartyMenuInternal->actions[sPartyMenuInternal->numActions - 1]].func(taskId);
             break;
         default:
             PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[2]);
-            sCursorOptions[sPartyMenuInternal->actions[input]].func(taskId);
+			
+			if (sPartyMenuInternal->actions[input] >= MENU_FIELD_MOVES)
+				CursorCB_FieldMove(taskId);
+			else
+				sCursorOptions[sPartyMenuInternal->actions[input]].func(taskId);
             break;
         }
     }
@@ -4384,8 +4392,13 @@ static u8 DisplaySelectionWindow(u8 windowType)
     fontAttribute = GetFontAttribute(2, FONTATTR_LETTER_SPACING);
 	
     for (i = 0; i < sPartyMenuInternal->numActions; ++i)
-        AddTextPrinterParameterized4(sPartyMenuInternal->windowId[0], 2, cursorDimension, (i * 16) + 2, fontAttribute, 0, sFontColorTable[sPartyMenuInternal->actions[i] >= MENU_FIELD_MOVES ? 4 : 3], 0, sCursorOptions[sPartyMenuInternal->actions[i]].text);
-
+	{
+		u8 action = sPartyMenuInternal->actions[i];
+		bool8 isFieldMove = (action >= MENU_FIELD_MOVES);
+		const u8 *text = isFieldMove ? gBattleMoves[sFieldMoves[action - MENU_FIELD_MOVES]].name : sCursorOptions[action].text;
+		
+        AddTextPrinterParameterized4(sPartyMenuInternal->windowId[0], 2, cursorDimension, (i * 16) + 2, fontAttribute, 0, sFontColorTable[isFieldMove ? 4 : 3], 0, text);
+	}
     Menu_InitCursorInternal(sPartyMenuInternal->windowId[0], 2, 0, 2, 16, sPartyMenuInternal->numActions, 0, 1);
     ScheduleBgCopyTilemapToVram(2);
 	

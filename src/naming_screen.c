@@ -1055,9 +1055,8 @@ static void sub_809E7F0(struct Sprite *sprite)
 static void sub_809E83C(struct Sprite *sprite)
 {
     const s16 arr[] = {2, 3, 2, 1};
-    u8 var;
+    u8 var = GetTextCaretPosition();
 
-    var = GetTextCaretPosition();
     if (var != (u8)sprite->data[0])
     {
         sprite->y2 = 0;
@@ -1067,11 +1066,11 @@ static void sub_809E83C(struct Sprite *sprite)
     else
     {
         sprite->y2 = arr[sprite->data[1]];
-        sprite->data[2]++;
-        if (sprite->data[2] > 8)
+
+        if (++sprite->data[2] > 8)
         {
+			sprite->data[2] = 0;
             sprite->data[1] = (sprite->data[1] + 1) & 3;
-            sprite->data[2] = 0;
         }
     }
 }
@@ -1434,7 +1433,7 @@ static void KeyboardKeyHandler_Character(u8 event)
             SetInputState(INPUT_STATE_DISABLED);
             sNamingScreenData->state = MAIN_STATE_MOVE_TO_OK_BUTTON;
         }
-#if PAGE_SWAP
+#if NAMING_SCREEN_PAGE_SWAP
         else if (GetTextCaretPosition() == 1 && sNamingScreenData->currentPage == KBPAGE_LETTERS_UPPER)
             sNamingScreenData->state = MAIN_STATE_START_PAGE_SWAP;
 #endif

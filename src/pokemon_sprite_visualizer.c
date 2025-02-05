@@ -18,6 +18,8 @@
 #include "constants/songs.h"
 #include "gba/m4a_internal.h"
 
+#if POKEMON_SPRITE_VISUALIZER
+
 // Windows
 enum
 {
@@ -1258,3 +1260,5 @@ static void UpdateSubmenuThreeOptionValue(struct PokemonSpriteVisualizer *data, 
 	LoadBattleTerrainGfx(data->battleTerrain);
 	PrintBattleBgName(data->battleTerrain);
 }
+
+#endif

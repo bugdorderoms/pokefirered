@@ -124,7 +124,7 @@ static void SetBattlerData(u8 attacker)
 				
 				if (move)
 				{
-					u8 moveType = AI_THINKING->moveTypes[attacker][i] = GetBattlerMoveRealType(attacker, move, 0);
+					u8 moveType = AI_THINKING->moveTypes[attacker][i] = GetBattlerMoveType(attacker, move);
 					
 					AI_THINKING->totalAccuracy[attacker][defender][i] = CalcMoveTotalAccuracy(move, attacker, defender);
 					AI_THINKING->effectiveness[attacker][defender][i] = TypeCalc(move, moveType, attacker, defender, FALSE, &flags);

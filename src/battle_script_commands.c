@@ -660,6 +660,7 @@ static const struct SpriteTemplate sSpriteTemplate_MonIconOnLvlUpBox =
     .callback = SpriteCB_MonIconOnLvlUpBox
 };
 
+#if EXP_BLOCK
 static const u8 sExpBlockLevels[] =
 {
     16, //badge 1
@@ -671,6 +672,7 @@ static const u8 sExpBlockLevels[] =
     45, //badge 7
     50, //badge 8
 };
+#endif
 
 static const struct PickupItem sPickupItems[] =
 {
@@ -1903,7 +1905,7 @@ static bool8 CanApplyAdditionalEffect(const struct AdditionalEffect *additionalE
 		return FALSE;
 	
 	// Certain additional effects only apply later on
-	if (additionalEffect->afterTargetItemsOnly)
+	if (additionalEffect->onMoveEndOnly)
 	{
 		gBattleStruct->moveEffect2.moveEffectByte = additionalEffect->moveEffect;
 		gBattleStruct->moveEffect2.affectsUser = additionalEffect->self;
@@ -4630,7 +4632,7 @@ static void CallAnotherMove(u16 move)
 {
 	gCurrentMove = move;
 	gBattlerTarget = GetMoveTarget(move, 0);
-	SetTypeBeforeUsingMove(move, gBattlerAttacker);
+	gBattleStruct->dynamicMoveType = GetBattlerMoveType(gBattlerAttacker, move);
 	gBattleStruct->atkCancellerTracker = CANCELLER_RECALL_CASEID;
 	gBattleStruct->moveEffect.moveEffectByte = MOVE_EFFECT_NONE;
 	gSpecialStatuses[gBattlerAttacker].parentalBondState = PARENTAL_BOND_OFF;
@@ -6036,7 +6038,10 @@ static void atk83_handletrainerslidecase(void)
 			
 		    // Save sprite Id's, because trainer slide in will overwrite gBattlerSpriteIds variable.
 			for (i = 0; i < NUM_BATTLERS_PER_SIDE; i++, battlerId = BATTLE_PARTNER(battlerId))
+			{
 				gBattleStruct->battlers[battlerId].savedSpriteId = gBattlerSpriteIds[battlerId];
+				HideBattlerShadowSprite(battlerId);
+			}
 		    break;
 		case ATK83_TRAINER_SLIDE_CASE_SLIDE_IN:
 		    battlerId = GetBattlerAtPosition(cmd->battlerOrPosition);
@@ -6062,7 +6067,10 @@ static void atk83_handletrainerslidecase(void)
 				gBattlerSpriteIds[battlerId] = gBattleStruct->battlers[battlerId].savedSpriteId;
 				
 				if (IsBattlerAlive(battlerId))
+				{
 					BattleLoadMonSpriteGfx(battlerId);
+					SetBattlerShadowSpriteCallback(battlerId);
+				}
 			}
 		    break;
 	}
@@ -7394,7 +7402,7 @@ static void atkBA_jumpifnopursuitswitchdmg(void)
         gCurrMovePos = gChosenMovePos = gBattleStruct->battlers[gBattlerTarget].chosenMovePosition;
         gBattleScripting.animTurn = 1;
         gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED | HITMARKER_NO_ATTACKSTRING);
-		SetTypeBeforeUsingMove(gCurrentMove, gBattlerTarget);
+		gBattleStruct->dynamicMoveType = GetBattlerMoveType(gBattlerTarget, gCurrentMove);
 		gBattlescriptCurrInstr = cmd->nextInstr;
     }
     else

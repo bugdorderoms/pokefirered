@@ -271,4 +271,10 @@ const struct BattleAnimTable gBattleAnims_General[] =
 		.script = gGeneralAnim_TotemBoost,
 		.hideHpBoxes = TRUE,
 	},
+	[B_ANIM_TAILWIND] =
+	{
+		.script = gMoveAnim_TAILWIND,
+		.ignoreSemiInvulnerability = TRUE,
+		.ignoreSubstitute = TRUE,
+	},
 };

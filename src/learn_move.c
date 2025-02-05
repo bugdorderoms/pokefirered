@@ -127,7 +127,7 @@ struct LearnMoveGfxResources
 	u16 listMenuScrollPos;
     u16 listMenuScrollRow;
     u16 learnableMoves[MAX_LV_UP_MOVES];
-    u8 listMenuStrbufs[MAX_LV_UP_MOVES + 1][MOVE_NAME_LENGTH + 1];
+    const u8 *listMenuStrbufs[MAX_LV_UP_MOVES + 1];
     u8 listMenuTaskId;
     u8 bg1TilemapBuffer[BG_SCREEN_SIZE];
     u8 textColor[3];
@@ -586,9 +586,7 @@ static void MoveRelearnerStateMachine(void)
         if (!gPaletteFade.active)
         {
             if (sMoveRelearner->selectedMoveSlot == 4)
-            {
                 sMoveRelearner->state = 24;
-            }
             else
             {
                 move = GetMonData(&gPlayerParty[sMoveRelearner->selectedPartyMember], MON_DATA_MOVE1 + sMoveRelearner->selectedMoveSlot);
@@ -691,17 +689,15 @@ static void SpawnListMenuScrollIndicatorSprites(void)
 static void MoveRelearnerInitListMenuBuffersEtc(void)
 {
     int i;
-    s32 count;
-    u8 nickname[POKEMON_NAME_LENGTH + 1];
-
-    count = sMoveRelearner->numLearnableMoves = GetMoveRelearnerMoves(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves);
+	u8 nickname[POKEMON_NAME_LENGTH + 1];
+    s32 count = sMoveRelearner->numLearnableMoves = GetMoveRelearnerMoves(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves);
 
     for (i = 0; i < sMoveRelearner->numLearnableMoves; i++)
-        StringCopy(sMoveRelearner->listMenuStrbufs[i], gBattleMoves[sMoveRelearner->learnableMoves[i]].name);
+        sMoveRelearner->listMenuStrbufs[i] = gBattleMoves[sMoveRelearner->learnableMoves[i]].name;
 	
     GetMonData(&gPlayerParty[sMoveRelearner->selectedPartyMember], MON_DATA_NICKNAME, nickname);
     StringCopy_Nickname(gStringVar1, nickname);
-    StringCopy(sMoveRelearner->listMenuStrbufs[sMoveRelearner->numLearnableMoves], gFameCheckerText_Cancel);
+    sMoveRelearner->listMenuStrbufs[sMoveRelearner->numLearnableMoves] = gFameCheckerText_Cancel;
     sMoveRelearner->numLearnableMoves++;
 	
     for (i = 0; i < count; i++)
@@ -764,9 +760,7 @@ static void PrintMoveInfo(u16 move)
     BlitMoveInfoIcon(2, gBattleMoves[move].split + 26, 1, 19);
 
     if (gBattleMoves[move].power < 2)
-    {
         PrintTextOnWindow(3, gText_ThreeHyphens, 1, 4, 0, 0);
-    }
     else
     {
         ConvertIntToDecimalStringN(buffer, gBattleMoves[move].power, STR_CONV_MODE_RIGHT_ALIGN, 3);
@@ -774,9 +768,7 @@ static void PrintMoveInfo(u16 move)
     }
 
     if (gBattleMoves[move].accuracy == 0)
-    {
         PrintTextOnWindow(3, gText_ThreeHyphens, 1, 18, 0, 1);
-    }
     else
     {
         ConvertIntToDecimalStringN(buffer, gBattleMoves[move].accuracy, STR_CONV_MODE_RIGHT_ALIGN, 3);

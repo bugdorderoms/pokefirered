@@ -3899,6 +3899,12 @@ BattleScript_OverworldWeatherStarts::
 	playanimation2 BS_ATTACKER, sB_ANIM_ARG1
 	end3
 
+BattleScript_BattleChallengeStartingStatus::
+	printfromtable gStartingStatusStringIds
+	waitmessage B_WAIT_TIME_LONG
+	playanimation2 BS_ATTACKER, sB_ANIM_ARG1
+	end3
+
 BattleScript_Pausex20::
 	pause B_WAIT_TIME_SHORT
 	return

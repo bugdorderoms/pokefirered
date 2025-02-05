@@ -1,8 +1,6 @@
 from PIL import Image
 from pathlib import Path
 
-output = []
-
 def get_coords_size(image, start_y=0, get_x=False):
     for y in range(64):
         for x in range(64):
@@ -19,12 +17,12 @@ def get_draw_boundary(image, get_x=False):
     return (get_coords_size(image, get_x=get_x) + second_pixels_start_pos, second_pixels_start_pos)
 
 file_path = Path(__file__).parent
-file_names = ['front', 'back']
+output = []
 
 for file in file_path.glob('*.PNG'):
     file_name = file.stem
 
-    if file_name in file_names:
+    if file_name in ['front', 'back']:
         img = Image.open(file)
 
         # Get pic coords size and y offset

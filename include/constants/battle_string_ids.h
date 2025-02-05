@@ -648,4 +648,7 @@
 #define B_MSG_MAKES_WILD_NERVOUS 0
 #define B_MSG_BUT_HAD_NO_EFFECT  1
 
+// gStartingStatusStringIds
+#define B_MSG_TAILWIND_BLEW_TRAINER_TEAM 0
+
 #endif // GUARD_BATTLE_STRING_IDS_H

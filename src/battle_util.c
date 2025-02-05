@@ -463,7 +463,7 @@ static u16 GetBattlerSupressedAbility(u8 battler, bool8 forAI)
 }
 
 // Check Neutralizing Gas on field blocking the ability
-bool8 IsNeutralizingGasOnField(u16 ability, bool8 forAI)
+static bool8 IsNeutralizingGasOnField(u16 ability, bool8 forAI)
 {
 	u8 i;
 	bool8 foundOnField = FALSE;
@@ -551,16 +551,9 @@ void CheckSetBattlerUnburden(u8 battler)
 		gDisableStructs[battler].unburdenBoost = TRUE;
 }
 
-bool8 IsAbilityOrBattleEffectBlockingItemEffect(u16 ability)
-{
-	if (ability == ABILITY_KLUTZ || (gFieldStatus & STATUS_FIELD_MAGIC_ROOM))
-		return TRUE;
-	return FALSE;
-}
-
 static bool8 BattlerHeldItemCanBeUsed(u8 battlerId)
 {
-	if ((gStatuses3[battlerId] & STATUS3_EMBARGO) || IsAbilityOrBattleEffectBlockingItemEffect(GetBattlerAbility(battlerId)))
+	if ((gStatuses3[battlerId] & STATUS3_EMBARGO) || GetBattlerAbility(battlerId) == ABILITY_KLUTZ || (gFieldStatus & STATUS_FIELD_MAGIC_ROOM))
 		return FALSE;
 	return TRUE;
 }
@@ -1405,7 +1398,7 @@ bool8 DoEndTurnEffects(void)
 				IncrementSideBasedEndTurnEffects();
 				break;
 			case ENDTURN_TAILWIND_ENDS:
-			    if ((gSideStatuses[side] & SIDE_STATUS_TAILWIND) && --gSideTimers[side].tailwindTimer == 0)
+			    if ((gSideStatuses[side] & SIDE_STATUS_TAILWIND) && gSideTimers[side].tailwindTimer > 0 && --gSideTimers[side].tailwindTimer == 0)
 				{
 					gSideStatuses[side] &= ~(SIDE_STATUS_TAILWIND);
 					gBattlerAttacker = gSideTimers[side].tailwindBattlerId;
@@ -2602,7 +2595,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 						case ABILITY_ANTICIPATION:
 							if (!gSpecialStatuses[battler].switchInAbilityDone)
 							{
-								u8 j;
+								u8 j, type;
 								u16 flags, move;
 								
 								for (i = 0; i < MAX_BATTLERS_COUNT; i++)
@@ -2617,7 +2610,12 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 												++effect;
 											else if (move && !IS_MOVE_STATUS(move))
 											{
-												if (TypeCalc(move, GetBattlerMoveRealType(i, move, TYPE_CALC_ANTICIPATION), i, battler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
+												if (gBattleMoves[move].effect == EFFECT_HIDDEN_POWER)
+													type = GetHiddenPowerType(GetBattlerPartyIndexPtr(i));
+												else
+													type = gBattleMoves[move].type;
+												
+												if (TypeCalc(move, type, i, battler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
 													++effect;
 											}
 										}
@@ -5529,7 +5527,7 @@ s32 GetDrainedBigRootHp(u8 battlerId, s32 hp)
 	return hp * -1;
 }
 
-static bool8 IsAffectedByWeather(u8 holdEffect, u16 weatherFlags)
+bool8 IsBattlerWeatherAffected(u8 battlerId, u16 weatherFlags)
 {
 	if (WEATHER_HAS_EFFECT && (gBattleWeather & weatherFlags))
 	{
@@ -5538,88 +5536,64 @@ static bool8 IsAffectedByWeather(u8 holdEffect, u16 weatherFlags)
 	return FALSE;
 }
 
-bool8 IsBattlerWeatherAffected(u8 battlerId, u16 weatherFlags)
-{
-	return IsAffectedByWeather(GetBattlerItemHoldEffect(battlerId, TRUE), weatherFlags);
-}
-
-void SetTypeBeforeUsingMove(u16 move, u8 battler)
-{
-	gBattleStruct->dynamicMoveType = GetBattlerMoveRealType(battler, move, 0);
-}
-
-// Summary - Hidden Power, Natural Gift
-// Anticipation - Hidden Power
-u8 GetMoveRealType(struct Pokemon *mon, u16 move, u16 ability, u16 item, u8 flags)
+u8 GetBattlerMoveType(u8 battlerId, u16 move)
 {
 	u8 type = gBattleMoves[move].type;
+	u16 item = GetBattlerItem(battlerId);
 	
 	if (move != MOVE_STRUGGLE)
 	{
-		// Check move effects
+		// These move effects are'nt affected by type change abilities
 		switch (gBattleMoves[move].effect)
 		{
 			case EFFECT_HIDDEN_POWER:
-				return GetHiddenPowerType(mon);
+				return GetHiddenPowerType(GetBattlerPartyIndexPtr(battlerId));
 			case EFFECT_WEATHER_BALL:
-				if (!(flags & (TYPE_CALC_SUMMARY | TYPE_CALC_ANTICIPATION)))
-				{
-					u8 holdEffect = ItemId_GetHoldEffect(item);
-					
-					if (IsAffectedByWeather(holdEffect, B_WEATHER_RAIN_ANY))
-						type = TYPE_WATER;
-					else if (IsAffectedByWeather(holdEffect, B_WEATHER_SANDSTORM))
-						type = TYPE_ROCK;
-					else if (IsAffectedByWeather(holdEffect, B_WEATHER_SUN_ANY))
-						type = TYPE_FIRE;
-					else if (IsAffectedByWeather(holdEffect, B_WEATHER_HAIL))
-						type = TYPE_ICE;
-				}
+				if (IsBattlerWeatherAffected(battlerId, B_WEATHER_RAIN_ANY))
+					type = TYPE_WATER;
+				else if (IsBattlerWeatherAffected(battlerId, B_WEATHER_SANDSTORM))
+					type = TYPE_ROCK;
+				else if (IsBattlerWeatherAffected(battlerId, B_WEATHER_SUN_ANY))
+					type = TYPE_FIRE;
+				else if (IsBattlerWeatherAffected(battlerId, B_WEATHER_HAIL))
+					type = TYPE_ICE;
 				return type;
-			case EFFECT_NATURAL_GIFT: // Display its type on summary
-				if (!(flags & TYPE_CALC_ANTICIPATION) && ItemId_GetPocket(item) == POCKET_BERRY_POUCH)
+			case EFFECT_NATURAL_GIFT:
+				if (ItemId_GetPocket(item) == POCKET_BERRY_POUCH)
 					type = gNaturalGiftTable[ITEM_TO_BERRY(item)].type;
 				return type;
 		}
 		
-		// Check abilities
-		if (!(flags & (TYPE_CALC_SUMMARY | TYPE_CALC_ANTICIPATION)))
+		// Check type changing abilities
+		switch (GetBattlerAbility(battlerId))
 		{
-			switch (ability)
-			{
-				case ABILITY_NORMALIZE:
-					if (type != TYPE_NORMAL)
-						type = TYPE_NORMAL;
-					break;
-				case ABILITY_REFRIGERATE:
-					if (type == TYPE_NORMAL)
-						type = TYPE_ICE;
-					break;
-				case ABILITY_PIXILATE:
-					if (type == TYPE_NORMAL)
-						type = TYPE_FAIRY;
-					break;
-				case ABILITY_AERILATE:
-					if (type == TYPE_NORMAL)
-						type = TYPE_FLYING;
-					break;
-				case ABILITY_GALVANIZE:
-					if (type == TYPE_NORMAL)
-						type = TYPE_ELECTRIC;
-					break;
-				case ABILITY_LIQUID_VOICE:
-					if (gBattleMoves[move].flags.soundMove)
-						type = TYPE_WATER;
-					break;
-			}
+			case ABILITY_NORMALIZE:
+				if (type != TYPE_NORMAL)
+					type = TYPE_NORMAL;
+				break;
+			case ABILITY_REFRIGERATE:
+				if (type == TYPE_NORMAL)
+					type = TYPE_ICE;
+				break;
+			case ABILITY_PIXILATE:
+				if (type == TYPE_NORMAL)
+					type = TYPE_FAIRY;
+				break;
+			case ABILITY_AERILATE:
+				if (type == TYPE_NORMAL)
+					type = TYPE_FLYING;
+				break;
+			case ABILITY_GALVANIZE:
+				if (type == TYPE_NORMAL)
+					type = TYPE_ELECTRIC;
+				break;
+			case ABILITY_LIQUID_VOICE:
+				if (gBattleMoves[move].flags.soundMove)
+					type = TYPE_WATER;
+				break;
 		}
 	}
 	return type;
-}
-
-u8 GetBattlerMoveRealType(u8 battler, u16 move, u8 flags)
-{
-	return GetMoveRealType(GetBattlerPartyIndexPtr(battler), move, GetBattlerAbility(battler), GetBattlerItem(battler), flags);
 }
 
 // Try transform battler1 into battler2
@@ -6272,4 +6246,25 @@ void SwapBattlersPositions(u8 battler1, u8 battler2)
 	
 	if (side == B_SIDE_OPPONENT && gBattleStruct->sos.totemBattlerId != MAX_BATTLERS_COUNT) // Totem slot was swapped
 		gBattleStruct->sos.totemBattlerId = BATTLE_PARTNER(gBattleStruct->sos.totemBattlerId);
+}
+
+bool8 TryBattleChallengeStartingStatus(void)
+{
+	bool8 effect = FALSE;
+	
+	switch (gBattleStruct->battleChallenge)
+	{
+		case TRAINER_CHALLENGE_INFINITE_TAILWIND:
+			if (!(gSideStatuses[B_SIDE_OPPONENT] & SIDE_STATUS_TAILWIND))
+			{
+				gSideStatuses[B_SIDE_OPPONENT] |= SIDE_STATUS_TAILWIND;
+				gSideTimers[B_SIDE_OPPONENT].tailwindTimer = 0;
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TAILWIND_BLEW_TRAINER_TEAM;
+				gBattleScripting.animArg1 = B_ANIM_TAILWIND;
+				gBattlerAttacker = 1;
+				effect = TRUE;
+			}
+			break;
+	}
+	return effect;
 }
