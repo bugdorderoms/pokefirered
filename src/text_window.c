@@ -59,11 +59,6 @@ void TextWindow_SetStdFrame0_WithPal(u8 windowId, u16 destOffset, u8 palIdx)
     LoadPalette(stdpal_get(3), palIdx, 32);
 }
 
-void sub_814FF6C(u8 windowId, u16 destOffset)
-{
-    LoadBgTiles(GetWindowAttribute(windowId, WINDOW_BG), gStdFrame0, 0x120, destOffset);
-}
-
 void TextWindow_LoadTilesStdFrame1(u8 windowId, u16 destOffset)
 {
     LoadBgTiles(GetWindowAttribute(windowId, WINDOW_BG), gStdFrame1, 0x280, destOffset);

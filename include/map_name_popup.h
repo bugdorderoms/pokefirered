@@ -3,7 +3,7 @@
 
 #include "global.h"
 
-void ShowMapNamePopup(bool32 palIntoFadedBuffer);
+void ShowMapNamePopup(void);
 void DismissMapNamePopup(void);
 bool32 IsMapNamePopupTaskActive(void);
 

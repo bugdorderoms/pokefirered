@@ -53,6 +53,7 @@ void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 
 u8 GetDNSTimeLapse(void);
 u8 GetDNSTimeLapseDayOrNight(void);
 u8 DNSGetCurrentSeason(void);
+u8 *DNSCopyCurrentSeasonName(u8 *dest);
 bool8 IsMapDNSException(void);
 u8 DNSGetMoonPhase(void);
 

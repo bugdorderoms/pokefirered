@@ -1,215 +1,221 @@
+// Credits: BSBob, psf, ravepossum
 #include "global.h"
 #include "gflib.h"
 #include "task.h"
+#include "menu.h"
+#include "rtc.h"
+#include "dns.h"
 #include "event_data.h"
+#include "new_menu_helpers.h"
 #include "text_window.h"
 #include "region_map.h"
 #include "strings.h"
 
-static void Task_MapNamePopup(u8 taskId);
-static u16 MapNamePopupCreateWindow(bool32 palIntoFadedBuffer);
-static void MapNamePopupPrintMapNameOnWindow(u16 windowId);
-static u8 *MapNamePopupAppendFloorNum(u8 *dest, s8 flags);
-
-#define tState              data[0]
-#define tTimer              data[1]
-#define tPos                data[2]
-#define tReshow             data[3]
-#define tWindowId           data[4]
-#define tWindowExists       data[5]
-#define tWindowCleared      data[6]
-#define tWindowDestroyed    data[7]
-#define tPalIntoFadedBuffer data[8]
-
-void ShowMapNamePopup(bool32 palIntoFadedBuffer)
+// States and data defines for Task_MapNamePopUpWindow
+enum
 {
-    u8 taskId;
-    if (FlagGet(FLAG_DONT_SHOW_MAP_NAME_POPUP) != TRUE)
+	STATE_PRINT,
+    STATE_SLIDE_IN,
+    STATE_WAIT,
+    STATE_SLIDE_OUT,
+    STATE_ERASE,
+    STATE_END
+};
+
+static const u8 sMapPopUpPrimary[] = INCBIN_U8("graphics/map_popup/primary.4bpp");
+static const u8 sMapPopUpSecondary[] = INCBIN_U8("graphics/map_popup/secondary.4bpp");
+static const u16 sMapPopUpPalette[] = INCBIN_U16("graphics/map_popup/palette.gbapal");
+
+static void Task_MapNamePopup(u8 taskId);
+static void ShowMapNamePopUpWindow(struct Task *task);
+static void HideMapNamePopUpWindow(void);
+static void MapNamePopupPrintTextOnWindows(u8 primaryWindowId, u8 secondaryWindowId);
+
+static EWRAM_DATA u8 sMapPopUpTaskId = 0;
+
+static const struct WindowTemplate sMapPopUpWindows[2] =
+{
+	// Top popup
+	{
+		.bg = 0,
+		.tilemapLeft = 0,
+		.tilemapTop = 0,
+		.width = 30,
+		.height = 3,
+		.paletteNum = 13,
+		.baseBlock = 0x107,
+	},
+	// Down popup
+	{
+		.bg = 0,
+		.tilemapLeft = 0,
+		.tilemapTop = 17,
+		.width = 30,
+		.height = 3,
+		.paletteNum = 13,
+		.baseBlock = 0x161,
+	}
+};
+
+#define tState             data[0]
+#define tTimer             data[1]
+#define tPos               data[2]
+#define tReshow            data[3]
+#define tPrintTimer        data[4]
+#define tPrimaryWindowId   data[5]
+#define tSecondaryWindowId data[6]
+
+#define MAP_POPUP_SLIDE_SPEED 2
+#define MAP_POPUP_INITIAL_Y   24
+
+void ShowMapNamePopup(void)
+{
+    if (!FlagGet(FLAG_DONT_SHOW_MAP_NAME_POPUP))
     {
-        taskId = FindTaskIdByFunc(Task_MapNamePopup);
+		u8 taskId = FindTaskIdByFunc(Task_MapNamePopup);
+		
         if (taskId == 0xFF)
         {
-            taskId = CreateTask(Task_MapNamePopup, 90);
-            ChangeBgX(0,  0x0000, 0);
-            ChangeBgY(0, -0x1081, 0);
-            gTasks[taskId].tState = 0;
-            gTasks[taskId].tPos = 0;
-            gTasks[taskId].tPalIntoFadedBuffer = palIntoFadedBuffer;
+            sMapPopUpTaskId = CreateTask(Task_MapNamePopup, 90);
+            gTasks[sMapPopUpTaskId].tState = STATE_PRINT;
+            gTasks[sMapPopUpTaskId].tPos = MAP_POPUP_INITIAL_Y;
         }
         else
         {
-            if (gTasks[taskId].tState != 4)
-                gTasks[taskId].tState = 4;
+            if (gTasks[taskId].tState != STATE_SLIDE_OUT)
+                gTasks[taskId].tState = STATE_SLIDE_OUT;
+			
             gTasks[taskId].tReshow = TRUE;
         }
     }
 }
 
-static void Task_MapNamePopup(u8 taskId)
+bool32 IsMapNamePopupTaskActive(void)
 {
-    struct Task * task = &gTasks[taskId];
-    switch (task->tState)
-    {
-    case 0:
-        task->tWindowId = MapNamePopupCreateWindow(task->tPalIntoFadedBuffer);
-        task->tWindowExists = TRUE;
-        task->tState = 1;
-        break;
-    case 1:
-        if (IsDma3ManagerBusyWithBgCopy())
-            break;
-        // fallthrough
-    case 2:
-        task->tPos -= 2;
-        if (task->tPos <= -24)
-        {
-            task->tState = 3;
-            task->tTimer = 0;
-        }
-        break;
-    case 3:
-        task->tTimer++;
-        if (task->tTimer > 120)
-        {
-            task->tTimer = 0;
-            task->tState = 4;
-        }
-        break;
-    case 4:
-        task->tPos += 2;
-        if (task->tPos >= 0)
-        {
-            if (task->tReshow)
-            {
-                MapNamePopupPrintMapNameOnWindow(task->tWindowId);
-                CopyWindowToVram(task->tWindowId, COPYWIN_GFX);
-                task->tState = 1;
-                task->tReshow = FALSE;
-            }
-            else
-            {
-                task->tState = 6;
-                return;
-            }
-        }
-    case 5:
-        break;
-    case 6:
-        if (task->tWindowExists && !task->tWindowCleared)
-        {
-            rbox_fill_rectangle(task->tWindowId);
-            CopyWindowToVram(task->tWindowId, COPYWIN_MAP);
-            task->tWindowCleared = TRUE;
-        }
-        task->tState = 7;
-        return;
-    case 7:
-        if (!IsDma3ManagerBusyWithBgCopy())
-        {
-            if (task->tWindowExists)
-            {
-                RemoveWindow(task->tWindowId);
-                task->tWindowExists = FALSE;
-                task->tWindowDestroyed = TRUE;
-            }
-            task->tState = 8;
-            ChangeBgY(0, 0x00000000, 0);
-        }
-        return;
-    case 8:
-        DestroyTask(taskId);
-        return;
-    }
-    SetGpuReg(REG_OFFSET_BG0VOFS, task->tPos);
+    return FuncIsActiveTask(Task_MapNamePopup);
 }
 
 void DismissMapNamePopup(void)
 {
-    u8 taskId;
-    s16 *data;
-    taskId = FindTaskIdByFunc(Task_MapNamePopup);
+    u8 taskId = FindTaskIdByFunc(Task_MapNamePopup);
+	
     if (taskId != 0xFF)
     {
-        data = gTasks[taskId].data;
-        if (tState < 6)
-            tState = 6;
+        if (gTasks[taskId].tState < STATE_ERASE)
+            gTasks[taskId].tState = STATE_ERASE;
     }
 }
 
-bool32 IsMapNamePopupTaskActive(void)
+static void HBlankCB_DoublePopupWindow(void)
 {
-    return FindTaskIdByFunc(Task_MapNamePopup) != 0xFF ? TRUE : FALSE;
-}
+    u16 offset = gTasks[sMapPopUpTaskId].tPos;
+    u16 scanline = REG_VCOUNT;
 
-static u16 MapNamePopupCreateWindow(bool32 palintoFadedBuffer)
-{
-    struct WindowTemplate windowTemplate = {
-        .bg = 0,
-        .tilemapLeft = 1,
-        .tilemapTop = 29,
-        .width = 14,
-        .height = 2,
-        .paletteNum = 0xD,
-        .baseBlock = 0x001
-    };
-    u16 windowId;
-    u16 r6 = 0x01D;
-	
-    if (gMapHeader.floorNum != 0)
-    {
-        if (gMapHeader.floorNum != 0x7F)
-        {
-            windowTemplate.width += 5;
-            r6 = 0x027;
-        }
-        else
-        {
-            // ROOFTOP
-            windowTemplate.width += 8;
-            r6 = 0x02D;
-        }
-    }
-    windowId = AddWindow(&windowTemplate);
-    if (palintoFadedBuffer)
-    {
-        LoadPalette(stdpal_get(3), 0xd0, 0x20);
-    }
+    if (scanline < 80 || scanline > 160)
+        REG_BG0VOFS = offset;
     else
-    {
-        CpuCopy16(stdpal_get(3), &gPlttBufferUnfaded[0xd0], 0x20);
-    }
-    sub_814FF6C(windowId, r6);
-    DrawTextBorderOuter(windowId, r6, 0xD);
-    PutWindowTilemap(windowId);
-    MapNamePopupPrintMapNameOnWindow(windowId);
-    CopyWindowToVram(windowId, COPYWIN_BOTH);
-    return windowId;
+        REG_BG0VOFS = 512 - offset;
 }
 
-static void MapNamePopupPrintMapNameOnWindow(u16 windowId)
+static void Task_MapNamePopup(u8 taskId)
 {
-    u8 mapName[25];
-    u32 maxWidth = 112;
-    u32 xpos;
-    u8 *ptr = GetMapName(mapName, gMapHeader.regionMapSectionId);
+    struct Task *task = &gTasks[taskId];
 	
-    if (gMapHeader.floorNum != 0)
+    switch (task->tState)
     {
-        ptr = MapNamePopupAppendFloorNum(ptr, gMapHeader.floorNum);
-        maxWidth = gMapHeader.floorNum != 0x7F ? 152 : 176;
-    }
-    xpos = (maxWidth - GetStringWidth(2, mapName, -1)) / 2;
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
-    AddTextPrinterParameterized(windowId, 2, mapName, xpos, 2, TEXT_SPEED_FF, NULL);
+		case STATE_PRINT:
+			if (++task->tPrintTimer > 30)
+			{
+				task->tPrintTimer = 0;
+				ShowMapNamePopUpWindow(task);
+				EnableInterrupts(INTR_FLAG_HBLANK);
+				SetHBlankCallback(HBlankCB_DoublePopupWindow);
+				task->tState = STATE_SLIDE_IN;
+			}
+			break;
+		case STATE_SLIDE_IN:
+			task->tPos -= MAP_POPUP_SLIDE_SPEED;
+			
+			if (task->tPos <= 0)
+			{
+				task->tPos = 0;
+				task->tTimer = 0;
+				task->tState = STATE_WAIT;
+			}
+			break;
+		case STATE_WAIT:
+			if (++task->tTimer > 120)
+			{
+				task->tTimer = 0;
+				task->tState = STATE_SLIDE_OUT;
+			}
+			break;
+		case STATE_SLIDE_OUT:
+			task->tPos += MAP_POPUP_SLIDE_SPEED;
+			
+			if (task->tPos >= MAP_POPUP_INITIAL_Y)
+			{
+				task->tPos = MAP_POPUP_INITIAL_Y;
+				
+				if (task->tReshow)
+				{
+					task->tReshow = FALSE;
+					task->tTimer = 0;
+					task->tState = STATE_PRINT;
+				}
+				else
+					task->tState = STATE_ERASE;
+			}
+			break;
+		case STATE_ERASE:
+			ClearStdWindowAndFrame(task->tPrimaryWindowId, TRUE);
+			RemoveWindow(task->tPrimaryWindowId);
+			
+			ClearStdWindowAndFrame(task->tSecondaryWindowId, TRUE);
+			RemoveWindow(task->tSecondaryWindowId);
+			
+			task->tState = STATE_END;
+			break;
+		case STATE_END:
+			HideMapNamePopUpWindow();
+			DestroyTask(taskId);
+			break;
+	}
+}
+
+static void ShowMapNamePopUpWindow(struct Task *task)
+{
+	LoadPalette(sMapPopUpPalette, 0xd0, 0x20);
+	
+	task->tPrimaryWindowId = AddWindow(&sMapPopUpWindows[0]);
+	task->tSecondaryWindowId = AddWindow(&sMapPopUpWindows[1]);
+	
+	CopyToWindowPixelBuffer(task->tPrimaryWindowId, sMapPopUpPrimary, sizeof(sMapPopUpPrimary), 0);
+	CopyToWindowPixelBuffer(task->tSecondaryWindowId, sMapPopUpSecondary, sizeof(sMapPopUpSecondary), 0);
+	
+	PutWindowTilemap(task->tPrimaryWindowId);
+	PutWindowTilemap(task->tSecondaryWindowId);
+	
+	MapNamePopupPrintTextOnWindows(task->tPrimaryWindowId, task->tSecondaryWindowId);
+}
+
+static void HideMapNamePopUpWindow(void)
+{
+	DisableInterrupts(INTR_FLAG_HBLANK);
+	SetHBlankCallback(NULL);
+	SetGpuReg_ForcedBlank(REG_OFFSET_BG0VOFS, 0);
 }
 
 static u8 *MapNamePopupAppendFloorNum(u8 *dest, s8 floorNum)
 {
     if (floorNum == 0)
         return dest;
+	
     *dest++ = CHAR_SPACE;
+	
     if (floorNum == 0x7F)
         return StringCopy(dest, gText_Rooftop2);
+	
     if (floorNum < 0)
     {
         *dest++ = CHAR_B;
@@ -221,12 +227,71 @@ static u8 *MapNamePopupAppendFloorNum(u8 *dest, s8 floorNum)
     return dest;
 }
 
-#undef tPalIntoFadedBuffer
-#undef tWindowDestroyed
-#undef tWindowCleared
-#undef tWindowExists
-#undef tWindowId
-#undef tReshow
-#undef tPos
-#undef tTimer
+static u8 *FormatDecimalTimeToMeridiemSystem(u8 *txtPtr)
+{
+	u8 hour = gRtcLocation.hour;
+	
+	if (hour == 0)
+		txtPtr = ConvertIntToDecimalStringN(txtPtr, 12, STR_CONV_MODE_LEADING_ZEROS, 2);
+	else if (hour < 13)
+		txtPtr = ConvertIntToDecimalStringN(txtPtr, hour, STR_CONV_MODE_LEADING_ZEROS, 2);
+	else
+		txtPtr = ConvertIntToDecimalStringN(txtPtr, hour - 12, STR_CONV_MODE_LEADING_ZEROS, 2);
+	
+	*txtPtr++ = CHAR_COLON;
+	txtPtr = ConvertIntToDecimalStringN(txtPtr, gRtcLocation.minute, STR_CONV_MODE_LEADING_ZEROS, 2);
+	*txtPtr++ = CHAR_SPACE;
+	txtPtr = StringCopy(txtPtr, hour < 12 ? COMPOUND_STRING("AM") : COMPOUND_STRING("PM"));
+	
+	return txtPtr;
+}
+
+static s32 GetStringRightAlignXOffset(u8 fontId, const u8 *str, s32 totalWidth, u8 letterSpacing)
+{
+	s32 stringWidth = GetStringWidth(fontId, str, letterSpacing);
+	
+    if (totalWidth > stringWidth)
+        return totalWidth - stringWidth;
+    else
+        return 0;
+}
+
+static void MapNamePopupPrintTextOnWindows(u8 primaryWindowId, u8 secondaryWindowId)
+{
+    u8 mapDisplayHeader[25];
+	u8 *ptr, *withoutPrefixPtr;
+	
+	mapDisplayHeader[0] = EXT_CTRL_CODE_BEGIN;
+    mapDisplayHeader[1] = EXT_CTRL_CODE_HIGHLIGHT;
+    mapDisplayHeader[2] = TEXT_COLOR_TRANSPARENT;
+	
+	withoutPrefixPtr = &(mapDisplayHeader[3]);
+	
+	// Print map name
+	ptr = GetMapName(withoutPrefixPtr, gMapHeader.regionMapSectionId);
+	
+	if (gMapHeader.floorNum != 0)
+        ptr = MapNamePopupAppendFloorNum(ptr, gMapHeader.floorNum);
+	
+	AddTextPrinterParameterized(primaryWindowId, 2, mapDisplayHeader, 8, 2, TEXT_SPEED_FF, NULL);
+	
+	// Print time and season
+	ptr = FormatDecimalTimeToMeridiemSystem(withoutPrefixPtr);
+	*ptr++ = CHAR_SPACE;
+	*ptr++ = CHAR_HYPHEN;
+	*ptr++ = CHAR_SPACE;
+	ptr = DNSCopyCurrentSeasonName(ptr);
+	
+	AddTextPrinterParameterized(secondaryWindowId, 0, mapDisplayHeader, GetStringRightAlignXOffset(0, mapDisplayHeader, DISPLAY_WIDTH, 0) - 5, 8, TEXT_SPEED_FF, NULL);
+	
+	CopyWindowToVram(primaryWindowId, COPYWIN_BOTH);
+	CopyWindowToVram(secondaryWindowId, COPYWIN_BOTH);
+}
+
 #undef tState
+#undef tTimer
+#undef tPos
+#undef tReshow
+#undef tPrintTimer
+#undef tPrimaryWindowId
+#undef tSecondaryWindowId

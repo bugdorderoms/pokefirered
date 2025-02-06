@@ -3,6 +3,7 @@
 #include "task.h"
 #include "main.h"
 #include "dns.h"
+#include "string_util.h"
 #include "rtc.h"
 #include "fieldmap.h"
 #include "overworld.h"
@@ -256,6 +257,14 @@ static const u8 sSeasonsByMonth[MONTH_COUNT] =
 	[MONTH_DEC - 1] = SEASON_SPRING
 };
 
+static const u8 sSeasonNames[][7] =
+{
+	[SEASON_SUMMER] = _("Summer"),
+	[SEASON_AUTUMN] = _("Autumn"),
+	[SEASON_WINTER] = _("Winter"),
+	[SEASON_SPRING] = _("Spring")
+};
+
 /***********************************************
  * --------- DNS CONFIGURATION END ----------- *
  * ******************************************* */
@@ -450,6 +459,11 @@ u8 GetDNSTimeLapseDayOrNight(void)
 u8 DNSGetCurrentSeason(void)
 {
 	return sSeasonsByMonth[gRtcLocation.month - 1];
+}
+
+u8 *DNSCopyCurrentSeasonName(u8 *dest)
+{
+	return StringCopy(dest, sSeasonNames[DNSGetCurrentSeason()]);
 }
 
 // Based off: https://blog.eletrogate.com/relogio-de-fases-lunares-com-o-arduino/

@@ -128,3 +128,4 @@
 	.include "src/rtc.o"
 	.include "src/battle_ai_main.o"
 	.include "src/sliding_puzzles.o"
+	.include "src/map_name_popup.o"

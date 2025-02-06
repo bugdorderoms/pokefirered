@@ -733,8 +733,9 @@ void LoadMapFromCameraTransition(u8 mapGroup, u8 mapNum)
     DoCurrentWeather();
     ResetFieldTasksArgs();
     RunOnResumeMapScript();
+	
     if (GetLastUsedWarpMapSectionId() != gMapHeader.regionMapSectionId)
-        ShowMapNamePopup(TRUE);
+        ShowMapNamePopup();
 }
 
 static void LoadMapFromWarp(void)
@@ -1528,7 +1529,7 @@ void CB2_ReturnToFieldFromDiploma(void)
 static void FieldCB_ShowMapNameOnContinue(void)
 {
     if (gMapHeader.showMapName)
-        ShowMapNamePopup(FALSE);
+        ShowMapNamePopup();
 	
     FieldCB_WarpExitFadeFromBlack();
 }
@@ -1754,7 +1755,7 @@ static bool32 LoadMapInStepsLocal(u8 *state)
             MapPreview_StartForestTransition(gMapHeader.regionMapSectionId);
         }
         else if (gMapHeader.showMapName)
-            ShowMapNamePopup(FALSE);
+            ShowMapNamePopup();
         (*state)++;
         break;
     case 13:
