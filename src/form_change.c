@@ -95,7 +95,6 @@ static u16 GetSpeciesForm(u16 formChangeType, u16 species, u32 personality, u16 
 						break;
 					case FORM_CHANGE_SWITCH_OUT:
 					case FORM_CHANGE_START_BATTLE:
-					case FORM_CHANGE_WITHDRAW:
 					case FORM_CHANGE_FAINT_TARGET:
 					case FORM_CHANGE_COUNTDOWN:
 					    targetSpecies = formsTable[i].targetSpecies;

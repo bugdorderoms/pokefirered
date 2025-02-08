@@ -1146,6 +1146,7 @@ gSpecialAnim_SwitchOutMon::
 gSpecialAnim_BallThrow::
 	createvisualtask AnimTask_LoadOrFreeBallGfx, 2, TRUE @ Load ball gfx
 	playsewithpan SE_BALL_THROW, SOUND_PAN_ABOVE
+NormalBallThrowAnim::
 	createvisualtask AnimTask_ThrowBall, 2
 	createvisualtask AnimTask_IsBallBlockedByTrainerOrDodged, 2
 	jumpreteq -1, BallThrowTrainerBlock @ Trainer blocked
@@ -1186,6 +1187,11 @@ gSpecialAnim_SubstituteToMon::
 gSpecialAnim_MonToSubstitute::
 	createvisualtask AnimTask_SwapMonSpriteToFromSubstitute, 2, FALSE
 	end
+
+gSpecialAnim_CriticalCaptureBallThrow::
+	createvisualtask AnimTask_LoadOrFreeBallGfx, 2, TRUE @ Load ball gfx
+	playsewithpan SE_FALL, SOUND_PAN_ABOVE
+	goto NormalBallThrowAnim
 
 @@@@@@@@@@@@@@@@@@@
 @ MOVE ANIMATIONS @

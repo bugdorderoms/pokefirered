@@ -1223,9 +1223,6 @@ static u8 GetEncounterLevelFromMapData(u16 species, u8 environment)
     if (!max)
         return MON_LEVEL_NONEXISTENT;
 
-    if (min == max)
-		return min;
-	
 	return RandomRange(min, max);
 }
 

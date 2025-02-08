@@ -56,20 +56,19 @@
 
 // Helper for accessing command arguments and advancing gBattlescriptCurrInstr.
 //
-// For example jumpifability is defined as:
+// For example sethword is defined as:
 //
-//     .macro jumpifability battler:req, ability:req, ptr:req
-//	   .byte 0x1e
-//	   .byte \battler
-//     .2byte \ability
-//     .4byte \ptr
-//	   .endm
+//     .macro sethword memPtr:req, value:req
+//     .byte 0x32
+//     .4byte \memPtr
+//     .2byte \value
+//     .endm
 //
 // Which corresponds to:
 //
-//     CMD_ARGS(u8 battler, u16 ability, const u8 *ptr);
+//     CMD_ARGS(u16 *memPtr, u16 value);
 //
-// The arguments can be accessed as cmd->battler, cmd->ability and cmd->ptr.
+// The arguments can be accessed as cmd->memPtr and cmd->value.
 // gBattlescriptCurrInstr = cmd->nextInstr; advances to the next instruction.
 #define CMD_ARGS(...) const struct __attribute__((packed)) { u8 opcode; RECURSIVELY(R_FOR_EACH(APPEND_SEMICOLON, __VA_ARGS__)) const u8 nextInstr[0]; } *const cmd UNUSED = (const void *)gBattlescriptCurrInstr
 #define VARIOUS_ARGS(...) CMD_ARGS(u8 battler, u8 id, ##__VA_ARGS__)
@@ -211,7 +210,7 @@ static void atk6C_drawlvlupbox(void);
 static void atk6D_nop(void);
 static void atk6E_nop(void);
 static void atk6F_makevisible(void);
-static void atk70_recordbattlerability(void);
+static void atk70_nop(void);
 static void atk71_nop(void);
 static void atk72_jumpifplayerran(void);
 static void atk73_hpthresholds(void);
@@ -470,7 +469,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk6D_nop,
     atk6E_nop,
     atk6F_makevisible,
-    atk70_recordbattlerability,
+    atk70_nop,
     atk71_nop,
     atk72_jumpifplayerran,
     atk73_hpthresholds,
@@ -1121,9 +1120,9 @@ static void atk02_attackstring(void)
     {
         if (!(gHitMarker & (HITMARKER_NO_ATTACKSTRING | HITMARKER_ATTACKSTRING_PRINTED)))
         {
-			BattleAI_RecordMoveUsed(gBattlerAttacker, FindMoveSlotInBattlerMoveset(gBattlerAttacker, gCurrentMove));
+			gHitMarker |= HITMARKER_ATTACKSTRING_PRINTED;
             PrepareStringBattle(STRINGID_USEDMOVE, gBattlerAttacker);
-            gHitMarker |= HITMARKER_ATTACKSTRING_PRINTED;
+            BattleAI_RecordMoveUsed(gBattlerAttacker, gCurrMovePos);
         }
         gBattleCommunication[MSG_DISPLAY] = FALSE;
 		gBattlescriptCurrInstr = cmd->nextInstr;
@@ -1248,7 +1247,7 @@ bool8 CalcMoveIsCritical(u8 battlerAtk, u8 battlerDef, u16 move)
 		if (critStage >= ARRAY_COUNT(sCriticalHitChance))
 			critStage = ARRAY_COUNT(sCriticalHitChance) - 1;
 		
-		if (!(RandomMax(sCriticalHitChance[critStage])))
+		if (!RandomMax(sCriticalHitChance[critStage]))
 			return TRUE;
 	}
 	return FALSE;
@@ -1380,7 +1379,7 @@ static void atk09_attackanimation(void)
 			u8 moveTarget = GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove);
 			
             if (((moveTarget == MOVE_TARGET_BOTH || moveTarget == MOVE_TARGET_FOES_AND_ALLY || moveTarget == MOVE_TARGET_DEPENDS)
-				&& gBattleScripting.animTargetsHit) || gSpecialStatuses[gBattlerAttacker].parentalBondState == PARENTAL_BOND_2ND_HIT)
+			&& gBattleScripting.animTargetsHit) || gSpecialStatuses[gBattlerAttacker].parentalBondState == PARENTAL_BOND_2ND_HIT)
                 return;
 			
             if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
@@ -1499,8 +1498,8 @@ static void atk0C_datahpupdate(void)
 	    
         if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
         {
-			if (!(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && SubsBlockMove(gBattlerAttacker, battlerId, gCurrentMove)
-			&& gDisableStructs[battlerId].substituteHP) // Check Substitute
+			// Check Substitute
+			if (!(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && SubsBlockMove(gBattlerAttacker, battlerId, gCurrentMove) && gDisableStructs[battlerId].substituteHP)
 			{
 				if (gDisableStructs[battlerId].substituteHP >= gBattleMoveDamage)
 				{
@@ -2022,12 +2021,12 @@ static void atk18_clearbattlerstatus(void)
 	CMD_ARGS(u8 battler, u8 statusId, u32 status);
 
     u8 battlerId = GetBattlerForBattleScript(cmd->battler);
-	u32 status = cmd->status;
+	u32 statusToClear = cmd->status;
 	
 	switch (cmd->statusId)
 	{
 		case ID_STATUS2:
-		    gBattleMons[battlerId].status2 &= ~(status);
+		    gBattleMons[battlerId].status2 &= ~(statusToClear);
 			break;
 	}
 	gBattlescriptCurrInstr = cmd->nextInstr;
@@ -2108,6 +2107,23 @@ static void atk1A_jumpifweathercheckchargeeffects(void)
 		gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
+enum
+{
+	FAINT_EFFECT_REMOVE_ILLUSION,
+	FAINT_EFFECT_PLAY_CRY,
+	FAINT_EFFECT_FAINT_ANIMATION,
+	FAINT_EFFECT_PRINT_STRING,
+	FAINT_EFFECT_CLEAR_FLAGS,
+	FAINT_EFFECT_RESTORE_COMMANDER_SPRITE,
+	FAINT_EFFECT_REVERT_FORM_STEP1,
+	FAINT_EFFECT_REVERT_FORM_STEP2,
+	FAINT_EFFECT_REVERT_FORM_STEP3,
+	FAINT_EFFECT_ACTIVATE_SOUL_HEART,
+	FAINT_EFFECT_ACTIVATE_RECEIVER,
+	FAINT_EFFECT_TRY_FIRST_MON_DOWN_TRAINER_SLIDE,
+	FAINT_EFFECT_END,
+};
+
 static void RestoreCommanderBattlerSprite(u8 battlerId)
 {
 	gStatuses3[battlerId] &= ~(STATUS3_COMMANDING);
@@ -2125,27 +2141,27 @@ static void atk1B_doeffectsonfaint(void)
 		
 		switch (gBattleCommunication[FAINT_EFFECTS_STATE])
 		{
-			case 0: // Remove Illusion
+			case FAINT_EFFECT_REMOVE_ILLUSION:
 				TryRemoveIllusion(battlerId);
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
-			case 1: // Play fainting cry and wait
+			case FAINT_EFFECT_PLAY_CRY:
 				BtlController_EmitFaintingCry(battlerId, BUFFER_A);
 				MarkBattlerForControllerExec(battlerId);
 				BattleScriptCall(BattleScript_Pausex40);
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
-			case 2: // Do faint animation
+			case FAINT_EFFECT_FAINT_ANIMATION:
 				BtlController_EmitFaintAnimation(battlerId, BUFFER_A);
 				MarkBattlerForControllerExec(battlerId);
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
-			case 3: // Faint string
+			case FAINT_EFFECT_PRINT_STRING:
 				gBattleScripting.battler = battlerId;
 				BattleScriptCall(BattleScript_PrintBattlerFainted);
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
-			case 4: // Clear battle effects
+			case FAINT_EFFECT_CLEAR_FLAGS:
 				gBattleMons[battlerId].status1.id = STATUS1_NONE;
 				
 				BtlController_EmitSetMonData(battlerId, BUFFER_A, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[battlerId].status1), &gBattleMons[battlerId].status1);
@@ -2158,7 +2174,7 @@ static void atk1B_doeffectsonfaint(void)
 				
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
-			case 5: // Restore Commander battler sprite
+			case FAINT_EFFECT_RESTORE_COMMANDER_SPRITE:
 				if (IsBattlerBeingCommanded(battlerId)) // Battler is being commanded, restore ally sprite
 					RestoreCommanderBattlerSprite(BATTLE_PARTNER(battlerId));
 				else if (gStatuses3[battlerId] & STATUS3_COMMANDING) // Battler is commanding, restore its sprite
@@ -2166,13 +2182,13 @@ static void atk1B_doeffectsonfaint(void)
 					
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
-			case 6: // Revert forms, first step
+			case FAINT_EFFECT_REVERT_FORM_STEP1:
 				if (DoSpecialFormChange(battlerId, gBattlerPartyIndexes[battlerId], FORM_CHANGE_FAINT))
 					++gBattleCommunication[FAINT_EFFECTS_STATE];
 				else
-					gBattleCommunication[FAINT_EFFECTS_STATE] += 3; // Skip fainting form change
+					gBattleCommunication[FAINT_EFFECTS_STATE] = FAINT_EFFECT_REVERT_FORM_STEP3 + 1; // Skip fainting form change
 				break;
-			case 7: // Revert forms, second step
+			case FAINT_EFFECT_REVERT_FORM_STEP2:
 			{
 				struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
 				
@@ -2184,7 +2200,7 @@ static void atk1B_doeffectsonfaint(void)
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
 			}
-			case 8: // Revert forms, final step
+			case FAINT_EFFECT_REVERT_FORM_STEP3:
 			{
 				struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
 				u16 newHP = min(GetMonData(mon, MON_DATA_MAX_HP), GetMonData(mon, MON_DATA_HP));
@@ -2195,7 +2211,7 @@ static void atk1B_doeffectsonfaint(void)
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
 			}
-			case 9: // Try activate Soul Heart
+			case FAINT_EFFECT_ACTIVATE_SOUL_HEART:
 				while (gBattleStruct->soulHeartBattlerId < gBattlersCount)
 				{
 					gBattleScripting.battler = gBattleStruct->soulHeartBattlerId++;
@@ -2211,7 +2227,7 @@ static void atk1B_doeffectsonfaint(void)
 				gBattleStruct->soulHeartBattlerId = 0;
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
-			case 10: // Try activate Receiver and Power Of Alchemy
+			case FAINT_EFFECT_ACTIVATE_RECEIVER:
 				if (!gAbilities[gBattleMons[battlerId].ability].cantBeCopied && IsBattlerAlive(BATTLE_PARTNER(battlerId)))
 				{
 					u16 ability = GetBattlerAbility(BATTLE_PARTNER(battlerId));
@@ -2224,13 +2240,13 @@ static void atk1B_doeffectsonfaint(void)
 				}
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
-			case 11:
+			case FAINT_EFFECT_TRY_FIRST_MON_DOWN_TRAINER_SLIDE:
 				if (ShouldDoTrainerSlide(battlerId, TRAINER_SLIDE_FIRST_MON_DOWN))
 					BattleScriptCall(BattleScript_TrainerSlideMsg);
 				
 				++gBattleCommunication[FAINT_EFFECTS_STATE];
 				break;
-			case 12: // End command
+			case FAINT_EFFECT_END:
 				gBattlescriptCurrInstr = cmd->nextInstr;
 				break;
 		}
@@ -2284,13 +2300,15 @@ static void atk1D_jumpbasedonstatus1(void)
 
 static void atk1E_jumpifability(void)
 {
-	CMD_ARGS(u8 battler, u16 ability, const u8 *ptr);
+	CMD_ARGS(u8 battler, u16 ability, const u8 *ptr, bool8 record);
 
     u8 battlerId = GetBattlerForBattleScript(cmd->battler);
 
 	if (GetBattlerAbility(battlerId) == cmd->ability)
 	{
-		gBattleScripting.battlerWithAbility = battlerId;
+		if (cmd->record)
+			BattleAI_RecordAbility(battlerId);
+		
 		gBattlescriptCurrInstr = cmd->ptr;
     }
 	else
@@ -2667,13 +2685,17 @@ static void atk24_checkteamslot(void)
 
 static void atk25_jumpifabilityonside(void)
 {
-	CMD_ARGS(u8 battler, u16 ability, const u8 *ptr);
+	CMD_ARGS(u8 battler, u16 ability, const u8 *ptr, bool8 record);
 
 	u8 ret = ABILITY_ON_SIDE(GetBattlerForBattleScript(cmd->battler), cmd->ability);
 	
 	if (ret)
 	{
 		gBattleScripting.battler = ret - 1;
+		
+		if (cmd->record)
+			BattleAI_RecordAbility(gBattleScripting.battler);
+		
 		gBattlescriptCurrInstr = cmd->ptr;
 	}
 	else
@@ -2957,12 +2979,12 @@ static void atk42_trysetsleep(void)
 			gBattlescriptCurrInstr = BattleScript_AbilityPreventSleep;
 			break;
 		case STATUS_CHANGE_FAIL_SWEET_VEIL_ON_SIDE:
-			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gBattleScripting.battler = gBattleScripting.battlerWithAbility;
 			gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
 			break;
 		case STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE:
 		    gEffectBattler = battlerId;
-			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gBattleScripting.battler = gBattleScripting.battlerWithAbility;
 			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 			break;
 	}
@@ -5055,10 +5077,9 @@ static void atk6F_makevisible(void)
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
-static void atk70_recordbattlerability(void)
+static void atk70_nop(void)
 {
-	CMD_ARGS(u8 battler);
-    BattleAI_RecordAbility(GetBattlerForBattleScript(cmd->battler));
+	CMD_ARGS();
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
@@ -6108,11 +6129,11 @@ static void atk84_trysetpoison(void)
 			break;
 		case STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE:
 		    gEffectBattler = battlerId;
-			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gBattleScripting.battler = gBattleScripting.battlerWithAbility;
 			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 			break;
 		case STATUS_CHANGE_FAIL_PASTEL_VEIL_ON_SIDE:
-			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gBattleScripting.battler = gBattleScripting.battlerWithAbility;
 			gBattlescriptCurrInstr = BattleScript_TeamProtectedByPastelVeil;
 			break;
 	}
@@ -6296,7 +6317,7 @@ static void atk8A_displaystatchangestring(void)
 		    script = BattleScript_AbilityNoStatLoss;
 		    break;
 		case STAT_CHANGE_FAIL_FLOWER_VEIL:
-		    gBattleScripting.battler = gBattleScripting.savedBattler;
+		    gBattleScripting.battler = gBattleScripting.battlerWithAbility;
 			script = BattleScript_TeamProtectedByFlowerVeilStatChange;
 			break;
 		case STAT_CHANGE_FAIL_MIST:
@@ -6547,7 +6568,7 @@ static void atk97_tryinfatuating(void)
 		    gBattlescriptCurrInstr = BattleScript_ObliviousPrevents;
 			break;
 		case STATUS_CHANGE_FAIL_AROMA_VEIL_ON_SIDE:
-		    gBattleScripting.battler = gBattleScripting.savedBattler;
+		    gBattleScripting.battler = gBattleScripting.battlerWithAbility;
 			gBattlescriptCurrInstr = BattleScript_AromaVeilProtects;
 			break;
 		case STATUS_CHANGE_FAIL_ALREADY_STATUSED:
@@ -6980,7 +7001,7 @@ static void atkAC_trysetburn(void)
 			break;
 		case STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE:
 		    gEffectBattler = battlerId;
-			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gBattleScripting.battler = gBattleScripting.battlerWithAbility;
 			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 			break;
 	}
@@ -7242,7 +7263,7 @@ static void atkB6_trysetparalyze(void)
 			break;
 		case STATUS_CHANGE_FAIL_FLOWER_VEIL_ON_SIDE:
 		    gEffectBattler = battlerId;
-			gBattleScripting.battler = gBattleScripting.savedBattler;
+			gBattleScripting.battler = gBattleScripting.battlerWithAbility;
 			gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 			break;
 	}
@@ -8158,6 +8179,31 @@ static void DoMonCaughtEffects(void)
 	gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
 }
 
+static bool8 CalcCriticalCaptureChance(u32 odds)
+{
+    u16 numCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
+
+    if (numCaught <= (NATIONAL_DEX_END * 30) / 650)
+        odds = 0;
+    else if (numCaught <= (NATIONAL_DEX_END * 150) / 650)
+        odds /= 2;
+    else if (numCaught <= (NATIONAL_DEX_END * 300) / 650)
+        ;   // odds = (odds * 100) / 100;
+    else if (numCaught <= (NATIONAL_DEX_END * 450) / 650)
+        odds = (odds * 150) / 100;
+    else if (numCaught <= (NATIONAL_DEX_END * 600) / 650)
+        odds *= 2;
+    else
+        odds = (odds * 250) / 100;
+
+    if (CheckBagHasItem(ITEM_CATCHING_CHARM, 1))
+        odds = (odds * 120) / 100;
+
+    odds /= 6;
+	
+    return (RandomMax(255) < odds);
+}
+
 static void atkEF_handleballthrow(void)
 {
 	CMD_ARGS();
@@ -8189,7 +8235,7 @@ static void atkEF_handleballthrow(void)
         }
         else
         {
-			u8 catchRate, shakes;
+			u8 catchRate, shakes, maxShakes;
 			s32 ballMultiplier;
 			u32 odds;
 			s8 ballAdition = 0;
@@ -8346,23 +8392,40 @@ static void atkEF_handleballthrow(void)
             }
             else // mon may be caught, calculate shakes
             {
-                odds = Sqrt(Sqrt(16711680 / odds));
-                odds = 1048560 / odds;
+				gBattleSpritesDataPtr->animationData->isCriticalCapture = FALSE;
+				gBattleSpritesDataPtr->animationData->criticalCaptureSuccess = FALSE;
+				
+				if (CalcCriticalCaptureChance(odds))
+				{
+					gBattleSpritesDataPtr->animationData->isCriticalCapture = TRUE;
+					maxShakes = BALL_1_SHAKE; // Critical capture doesn't guarantee capture
+				}
+				else
+					maxShakes = BALL_3_SHAKES_SUCCESS;
 				
 				if (gLastUsedItem == ITEM_MASTER_BALL)
-					shakes = BALL_3_SHAKES_SUCCESS;
+					shakes = maxShakes;
 				else
-					for (shakes = 0; shakes < 4 && Random() < odds; ++shakes);
-				
+				{
+					odds = Sqrt(Sqrt(16711680 / odds));
+					odds = 1048560 / odds;
+					
+					for (shakes = 0; shakes < maxShakes && Random() < odds; ++shakes);
+				}
                 BtlController_EmitBallThrowAnim(gBattlerAttacker, BUFFER_A, shakes);
                 MarkBattlerForControllerExec(gBattlerAttacker);
 				
-				if (shakes == BALL_3_SHAKES_SUCCESS) // mon caught
+				if (shakes == maxShakes) // mon caught
+				{
+					if (gBattleSpritesDataPtr->animationData->isCriticalCapture)
+						gBattleSpritesDataPtr->animationData->criticalCaptureSuccess = TRUE;
+					
 					DoMonCaughtEffects();
+				}
                 else // not caught
                 {
 					gBattleStruct->lastFailedBallThrow = gLastUsedItem;
-                    gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
+                    gBattleCommunication[MULTISTRING_CHOOSER] = gBattleSpritesDataPtr->animationData->isCriticalCapture ? BALL_3_SHAKES_FAIL : shakes;
                     gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
                 }
             }

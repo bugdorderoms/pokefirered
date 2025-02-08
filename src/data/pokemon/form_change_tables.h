@@ -798,7 +798,6 @@ static const struct FormChange sGiratinaFormChangeTable[] =
 
 static const struct FormChange sShayminFormChangeTable[] =
 {
-	FORM_CHANGE(FORM_CHANGE_WITHDRAW, SPECIES_SHAYMIN, 0, 0),
 	FORM_CHANGE(FORM_CHANGE_TIME, SPECIES_SHAYMIN, TIME_NIGHT, 0),
 	FORM_CHANGE(FORM_CHANGE_USE_ITEM, SPECIES_SHAYMIN_SKY, ITEM_GRACIDEA, SPECIES_SHAYMIN),
 	FORM_CHANGE_END,
@@ -1081,7 +1080,6 @@ static const struct FormChange sFlorgesFormChangeTable[] =
 
 static const struct FormChange sFurfrouFormChangeTable[] =
 {
-	FORM_CHANGE(FORM_CHANGE_WITHDRAW, SPECIES_FURFROU, 0, 0),
 	FORM_CHANGE(FORM_CHANGE_USE_ITEM, SPECIES_FURFROU, ITEM_FASHION_CASE, 3), // forms are handled by multichoice
 	FORM_CHANGE(FORM_CHANGE_COUNTDOWN, SPECIES_FURFROU, 5, 0),
 	FORM_CHANGE_END,
@@ -1146,7 +1144,6 @@ static const struct FormChange sDiancieFormChangeTable[] =
 
 static const struct FormChange sHoopaFormChangeTable[] =
 {
-	FORM_CHANGE(FORM_CHANGE_WITHDRAW, SPECIES_HOOPA, 0, 0),
 	FORM_CHANGE(FORM_CHANGE_USE_ITEM, SPECIES_HOOPA_UNBOUND, ITEM_PRISON_BOTTLE, SPECIES_HOOPA),
 	FORM_CHANGE(FORM_CHANGE_COUNTDOWN, SPECIES_HOOPA, 3, 0),
 	FORM_CHANGE_END,

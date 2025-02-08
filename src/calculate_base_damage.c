@@ -498,12 +498,13 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			break;
 		case EFFECT_REVENGE:
 			if ((gProtectStructs[attacker].physicalDmg && gProtectStructs[attacker].physicalBattlerId == defender)
-			    || (gProtectStructs[attacker].specialDmg && gProtectStructs[attacker].specialBattlerId == defender))
+			|| (gProtectStructs[attacker].specialDmg && gProtectStructs[attacker].specialBattlerId == defender))
 				basePower *= 2;
 		    break;
 		case EFFECT_KNOCK_OFF:
 			if (gBattleMons[defender].item && CanBattlerGetOrLoseItem(defender, gBattleMons[defender].item))
-				basePower = (15 * basePower) / 10;;
+				basePower = (15 * basePower) / 10;
+			break;
 		case EFFECT_SPIT_UP:
 			basePower = 100 * gDisableStructs[attacker].stockpileCounter;
 			break;

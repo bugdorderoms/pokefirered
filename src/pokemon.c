@@ -1227,6 +1227,9 @@ u32 GetMonData(struct Pokemon *mon, s32 field, u8* data)
     case MON_DATA_MAIL:
         ret = mon->mail;
         break;
+	case MON_DATA_FORM_COUNTDOWN:
+	    ret = mon->formCountdown;
+		break;
     default:
         ret = GetBoxMonData(&mon->box, field, data);
         break;
@@ -1431,9 +1434,6 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
 	case MON_DATA_EVOLUTION_TRACKER:
 	    retVal = boxMon->evolutionTracker;
 		break;
-	case MON_DATA_FORM_COUNTDOWN:
-	    retVal = boxMon->formCountdown;
-		break;
     default:
         break;
     }
@@ -1483,6 +1483,9 @@ void SetMonData(struct Pokemon *mon, s32 field, const void *dataArg)
     case MON_DATA_MAIL:
         SET8(mon->mail);
         break;
+	case MON_DATA_FORM_COUNTDOWN:
+		SET8(mon->formCountdown);
+		break;
     default:
         SetBoxMonData(&mon->box, field, data);
         break;
@@ -1636,9 +1639,6 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
 		break;
 	case MON_DATA_EVOLUTION_TRACKER:
 	    SET16(boxMon->evolutionTracker);
-		break;
-	case MON_DATA_FORM_COUNTDOWN:
-		SET8(boxMon->formCountdown);
 		break;
     case MON_DATA_IVS:
     {

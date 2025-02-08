@@ -571,7 +571,7 @@ struct BattleScripting
     /*0x15*/ u8 animArg2;
     /*0x16*/ u8 tripleKickPower;
     /*0x17*/ u8 atk49_state;
-    /*0x18*/ u8 battlerWithAbility;
+    /*0x18*/ u8 battlerWithAbility; // To save the battle that has an side protect ability
     /*0x19*/ u8 battler;
     /*0x1A*/ u8 animTurn;
     /*0x1B*/ u8 animTargetsHit;
@@ -584,9 +584,8 @@ struct BattleScripting
     /*0x22*/ u8 reshowMainState; // for reshow battle screen after menu
     /*0x23*/ u8 reshowHelperState; // for reshow battle screen after menu
     /*0x24*/ u8 field_23; // does something with hp calc
-	/*0x25*/ u8 savedBattler; // Multiuse
-	/*0x26*/ u8 switchinEffectState;
-	/*0x27*/ bool8 expOnCatch;
+	/*0x25*/ u8 switchinEffectState;
+	/*0x26*/ bool8 expOnCatch;
 };
 
 struct BattleSpriteInfo
@@ -608,7 +607,8 @@ struct BattleAnimationInfo
 	/*0x4*/ u8 healthboxSlideInStarted:1;
 			u8 battlerSpriteVisibility:1;
 			u8 ballThrowCaseId:4;
-			u8 unused:2;
+			u8 isCriticalCapture:1;
+			u8 criticalCaptureSuccess:1;
     /*0x5*/ u8 particleCounter;
 };
 

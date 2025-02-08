@@ -1255,10 +1255,14 @@ void BtlController_HandleFaintAnimation(u8 battlerId)
 	}
 }
 
-void BtlController_HandleBallThrowAnim(u8 battlerId, u8 animId)
+void BtlController_HandleBallThrowAnim(u8 battlerId, u8 animId, bool8 allowCriticalCapture)
 {
     gBattleSpritesDataPtr->animationData->ballThrowCaseId = gBattleBufferA[battlerId][1];
     gDoingBattleAnim = TRUE;
+	
+	if (allowCriticalCapture && gBattleSpritesDataPtr->animationData->isCriticalCapture)
+		animId = B_ANIM_CRITICAL_CAPTURE_THROW;
+	
     InitAndLaunchSpecialAnimation(battlerId, GetCatchingBattler(), animId);
     gBattlerControllerFuncs[battlerId] = CompleteOnSpecialAnimDone;
 }

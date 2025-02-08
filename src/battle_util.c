@@ -172,7 +172,7 @@ const u16 gInobedientStringIds[] =
 	                                                             \
 	if (ret)                                                     \
 	{                                                            \
-		gBattleScripting.savedBattler = ret - 1;                 \
+		gBattleScripting.battlerWithAbility = ret - 1;           \
 		return retValue;                                         \
 	}                                                            \
 }
@@ -2176,12 +2176,12 @@ bool8 HasNoMonsToSwitch(u8 battler, u8 partyIdBattlerOn1, u8 partyIdBattlerOn2)
             playerId = GetBattlerMultiplayerId(battler);
             flankId = GetLinkTrainerFlankId(playerId);
 			
-            for (i = flankId * (PARTY_SIZE / 2); i < flankId * (PARTY_SIZE / 2) + (PARTY_SIZE / 2); ++i)
+            for (i = flankId * MULTI_PARTY_SIZE; i < flankId * MULTI_PARTY_SIZE + MULTI_PARTY_SIZE; ++i)
             {
                 if (MonCanBattle(&party[i]))
                     break;
             }
-            return (i == flankId * (PARTY_SIZE / 2) + (PARTY_SIZE / 2));
+            return (i == flankId * MULTI_PARTY_SIZE + MULTI_PARTY_SIZE);
         }
         else
         {
@@ -5016,13 +5016,13 @@ u8 CountUsablePartyMons(u8 battlerId, u8 *viableMons)
 	{
 		if (GetLinkTrainerFlankId(GetBattlerMultiplayerId(battlerId)) == 1)
 		{
-			firstMonId = PARTY_SIZE / 2;
+			firstMonId = MULTI_PARTY_SIZE;
 			lastMonId = PARTY_SIZE;
 		}
 		else
 		{
 			firstMonId = 0;
-			lastMonId = PARTY_SIZE / 2;
+			lastMonId = MULTI_PARTY_SIZE;
 		}
 		battlerIn2 = gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)];
 	}

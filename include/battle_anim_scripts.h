@@ -21,6 +21,7 @@ extern const u8 gSpecialAnim_BallThrow[];
 extern const u8 gSpecialAnim_SafariBallThrow[];
 extern const u8 gSpecialAnim_SubstituteToMon[];
 extern const u8 gSpecialAnim_MonToSubstitute[];
+extern const u8 gSpecialAnim_CriticalCaptureBallThrow[];
 
 // General animations
 extern const u8 gGeneralAnim_FormChange[];

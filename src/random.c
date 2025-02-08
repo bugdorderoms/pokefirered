@@ -16,10 +16,10 @@ u16 Random(void)
 
 u16 RandomRange(u16 min, u16 max)
 {
-	return (Random() & (max - min)) + min;
-}
-
-bool8 RandomPercent(u16 percentage)
-{
-	return (RandomMax(100) < percentage);
+	u16 temp;
+	
+	if (min > max)
+		SWAP(min, max, temp);
+	
+    return RandomMax(max - min + 1) + min;
 }

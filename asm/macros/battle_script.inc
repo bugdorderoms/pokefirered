@@ -157,11 +157,12 @@
 	.4byte \ptr
 	.endm
 
-	.macro jumpifability battler:req, ability:req, ptr:req
+	.macro jumpifability battler:req, ability:req, ptr:req, record=FALSE
 	.byte 0x1e
 	.byte \battler
 	.2byte \ability
 	.4byte \ptr
+	.byte \record
 	.endm
 
 	.macro jumpifsideaffecting battler:req, sidestatus:req, ptr:req
@@ -204,11 +205,12 @@
 	.4byte \ptr
 	.endm
 
-	.macro jumpifabilityonside battler:req, abilityId:req, ptr:req
+	.macro jumpifabilityonside battler:req, abilityId:req, ptr:req, record=FALSE
 	.byte 0x25
 	.byte \battler
 	.2byte \abilityId
 	.4byte \ptr
+	.byte \record
 	.endm
 
 	.macro setmoveeffect effect:req, affectsUser=FALSE, certain=FALSE
@@ -654,9 +656,8 @@
 	.byte \battler
 	.endm
 
-	.macro recordbattlerability battler:req
+	.macro nop70
 	.byte 0x70
-	.byte \battler
 	.endm
 
 	.macro nop71

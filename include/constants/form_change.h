@@ -56,7 +56,10 @@
 
 // form change when the pokemon is send out to pc or withdraw from daycare.
 // no param is necessary
-#define FORM_CHANGE_WITHDRAW      0x000C
+
+// form change that sets a countdown, when it reaches 0 the pokemon will revert form. It also revert form if send to pc or withdraw from daycare.
+// param = num days
+#define FORM_CHANGE_COUNTDOWN     0x000C
 
 // form change based on current time. (It's only called when the battle start, it don't revert to it's original form when the battle ends)
 // param = TIME_FORM_DAY or TIME_FORM_NIGHT
@@ -92,11 +95,7 @@
 
 // form change based on the current region the player is in.
 // param = region (REGIONS_COUNT is used to determine that this form is applied to all other regions that are not listed below)
-#define FORM_CHANGE_REGION 0x0014
-
-// form change that sets a countdown, when it reaches 0 the pokemon will revert form.
-// param = num days
-#define FORM_CHANGE_COUNTDOWN 0x0015
+#define FORM_CHANGE_REGION        0x0014
 
 // battle mechanic forms. TODO:
 

@@ -20,6 +20,7 @@ static const u8* const sBattleAnims_Special[] =
 	[B_ANIM_SAFARI_BALL_THROW]       = gSpecialAnim_SafariBallThrow,
 	[B_ANIM_SUBSTITUTE_TO_MON]       = gSpecialAnim_SubstituteToMon,
 	[B_ANIM_MON_TO_SUBSTITUTE]       = gSpecialAnim_MonToSubstitute,
+	[B_ANIM_CRITICAL_CAPTURE_THROW]  = gSpecialAnim_CriticalCaptureBallThrow,
 };
 
 const struct BattleAnimTable gBattleAnims_General[] =

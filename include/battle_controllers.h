@@ -222,7 +222,7 @@ void BtlController_HandleDrawTrainerPic(u8 battlerId, u32 trainerPicId, bool8 is
 void BtlController_HandleTrainerSlide(u8 battlerId, u32 trainerPicId, bool8 isFront, s16 xPos, s16 yPos);
 void BtlController_HandleTrainerSlideBack(u8 battlerId, s16 data0, bool8 animateSprite);
 void BtlController_HandleFaintAnimation(u8 battlerId);
-void BtlController_HandleBallThrowAnim(u8 battlerId, u8 animId);
+void BtlController_HandleBallThrowAnim(u8 battlerId, u8 animId, bool8 allowCriticalCapture);
 void BtlController_HandleMoveAnimation(u8 battlerId);
 void BtlController_HandlePrintString(u8 battlerId, u16 stringId, bool8 isSelection);
 void BtlController_HandleChooseAction(u8 battlerId, const u8 *actionsStr, const u8 *whatDoStr, void(*controllerFunc)(u8));

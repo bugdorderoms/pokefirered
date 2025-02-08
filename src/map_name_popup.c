@@ -109,9 +109,8 @@ void DismissMapNamePopup(void)
 static void HBlankCB_DoublePopupWindow(void)
 {
     u16 offset = gTasks[sMapPopUpTaskId].tPos;
-    u16 scanline = REG_VCOUNT;
 
-    if (scanline < 80 || scanline > 160)
+    if (REG_VCOUNT < 80 || REG_VCOUNT > 160)
         REG_BG0VOFS = offset;
     else
         REG_BG0VOFS = 512 - offset;

@@ -45,6 +45,7 @@ static void SpriteCB_ThrowBall_TenFrameDelay(struct Sprite *);
 static void SpriteCB_ThrowBall_ShrinkMon(struct Sprite *);
 static void SpriteCB_ThrowBall_InitialFall(struct Sprite *);
 static void SpriteCB_ThrowBall_Bounce(struct Sprite *);
+static void SpriteCB_ThrowBall_CriticalCapture(struct Sprite *);
 static void SpriteCB_ThrowBall_DelayThenBreakOut(struct Sprite *);
 static void SpriteCB_ThrowBall_InitShake(struct Sprite *);
 static void SpriteCB_ThrowBall_DoShake(struct Sprite *);
@@ -539,26 +540,65 @@ static void SpriteCB_ThrowBall_ShrinkMon(struct Sprite *sprite)
 
 static void SpriteCB_ThrowBall_InitialFall(struct Sprite *sprite)
 {
-    int angle;
-
     if (sprite->animEnded)
     {
         sprite->data[3] = 0;
         sprite->data[4] = 40;
         sprite->data[5] = 0;
-        angle = 0;
-        sprite->y += Cos(angle, 40);
-        sprite->y2 = -Cos(angle, sprite->data[4]);
+        sprite->y += Cos(0, 40);
+        sprite->y2 = -Cos(0, sprite->data[4]);
+        sprite->callback = gBattleSpritesDataPtr->animationData->isCriticalCapture ? SpriteCB_ThrowBall_CriticalCapture : SpriteCB_ThrowBall_Bounce;
+    }
+}
+
+static void SpriteCB_ThrowBall_CriticalCapture(struct Sprite *sprite)
+{
+	bool8 lastBounce = FALSE;
+	int bounceCount = sprite->data[3] >> 8;
+
+    if (bounceCount == 0)
+        PlaySE(SE_BALL);
+	
+	switch (sprite->data[3] & 0xFF)
+	{
+		case 0:
+			if (bounceCount < 3)
+				sprite->x2++;
+			
+			if (++sprite->data[5] >= 3)
+				sprite->data[3] += 257;
+			
+			break;
+		case 1:
+			if (bounceCount < 3 || sprite->x2 != 0)
+				sprite->x2--;
+
+			if (--sprite->data[5] <= 0)
+			{
+				sprite->data[5] = 0;
+				sprite->data[3] &= -0x100;
+			}
+			
+			if (bounceCount >= 6)
+				lastBounce = TRUE;
+			
+			break;
+	}
+	
+	if (lastBounce)
+    {
+        sprite->data[3] = 0;
+        sprite->data[4] = 40; // Starting max height
+        sprite->data[5] = 0;
         sprite->callback = SpriteCB_ThrowBall_Bounce;
     }
 }
 
 static void SpriteCB_ThrowBall_Bounce(struct Sprite *sprite)
 {
-    bool8 lastBounce;
+    bool8 lastBounce = FALSE;
     int bounceCount;
 
-    lastBounce = FALSE;
     switch (sprite->data[3] & 0xFF)
     {
     case 0:
@@ -730,26 +770,30 @@ static void SpriteCB_ThrowBall_DoShake(struct Sprite *sprite)
         }
         break;
     case 5:
+		sprite->affineAnimPaused = TRUE;
+		
         sprite->data[3] += 0x100;
         state = sprite->data[3] >> 8;
-        if (state == gBattleSpritesDataPtr->animationData->ballThrowCaseId)
-        {
-            sprite->affineAnimPaused = TRUE;
-            sprite->callback = SpriteCB_ThrowBall_DelayThenBreakOut;
-        }
-        else
-        {
-            if (gBattleSpritesDataPtr->animationData->ballThrowCaseId == BALL_3_SHAKES_SUCCESS && state == 3)
-            {
-                sprite->callback = SpriteCB_ThrowBall_InitClick;
-                sprite->affineAnimPaused = TRUE;
-            }
-            else
-            {
-                sprite->data[3]++;
-                sprite->affineAnimPaused = TRUE;
-            }
-        }
+		
+		if (gBattleSpritesDataPtr->animationData->isCriticalCapture)
+		{
+			if (gBattleSpritesDataPtr->animationData->criticalCaptureSuccess)
+				sprite->callback = SpriteCB_ThrowBall_InitClick;
+			else
+				sprite->callback = SpriteCB_ThrowBall_DelayThenBreakOut;
+		}
+		else
+		{
+			if (state == gBattleSpritesDataPtr->animationData->ballThrowCaseId)
+				sprite->callback = SpriteCB_ThrowBall_DelayThenBreakOut;
+			else
+			{
+				if (gBattleSpritesDataPtr->animationData->ballThrowCaseId == BALL_3_SHAKES_SUCCESS && state == 3)
+					sprite->callback = SpriteCB_ThrowBall_InitClick;
+				else
+					sprite->data[3]++;
+			}
+		}
         break;
     case 6:
     default:

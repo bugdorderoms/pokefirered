@@ -101,7 +101,7 @@ static void SafariBufferExecCompleted(u8 battlerId)
 
 void SafariHandleBallThrowAnim(u8 battlerId)
 {
-	BtlController_HandleBallThrowAnim(battlerId, B_ANIM_SAFARI_BALL_THROW);
+	BtlController_HandleBallThrowAnim(battlerId, B_ANIM_SAFARI_BALL_THROW, FALSE);
 }
 
 static void HandleChooseActionAfterDma3(u8 battlerId)

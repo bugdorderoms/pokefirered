@@ -34,8 +34,8 @@
 #define sBATTLE_STYLE gBattleScripting + 0x1F
 #define sLVLBOX_STATE gBattleScripting + 0x20
 #define sLEARNMOVE_STATE gBattleScripting + 0x21
-#define sSWITCHIN_EFFECTS_STATE gBattleScripting + 0x26
-#define sEXP_CATCH gBattleScripting + 0x27
+#define sSWITCHIN_EFFECTS_STATE gBattleScripting + 0x25
+#define sEXP_CATCH gBattleScripting + 0x26
 
 // array entries for battle communication
 #define MULTIUSE_STATE                      0

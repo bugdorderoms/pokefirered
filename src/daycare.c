@@ -428,7 +428,7 @@ static u16 TakeSelectedPokemonFromDaycare(struct DaycareMon *daycareMon)
 
     GetBoxMonNickname(&daycareMon->mon, gStringVar1);
     BoxMonToMon(&daycareMon->mon, &pokemon);
-    species = DoOverworldFormChange(&pokemon, FORM_CHANGE_WITHDRAW);
+    species = DoOverworldFormChange(&pokemon, FORM_CHANGE_COUNTDOWN);
 
     if (GetMonData(&pokemon, MON_DATA_LEVEL) != MAX_LEVEL)
     {

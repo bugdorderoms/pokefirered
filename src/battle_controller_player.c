@@ -242,7 +242,7 @@ static void PlayerHandleTrainerSlideBack(u8 battlerId)
 
 void PlayerHandleBallThrowAnim(u8 battlerId)
 {
-	BtlController_HandleBallThrowAnim(battlerId, B_ANIM_BALL_THROW);
+	BtlController_HandleBallThrowAnim(battlerId, B_ANIM_BALL_THROW, !(gBattleTypeFlags & BATTLE_TYPE_POKEDUDE));
 }
 
 static void PlayerHandlePrintStringInternal(u8 battlerId, bool8 isSelection)

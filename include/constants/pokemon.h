@@ -173,7 +173,6 @@
 #define SPECIES_FLAG_PARADOX      (1 << 7)
 #define SPECIES_FLAG_TERASTAL     (1 << 8)
 #define SPECIES_FLAG_CANT_TRADE   (1 << 9)
-#define SPECIES_FLAG_TOTEM        (1 << 10)
 // Those species flags cause the pokemon to be created with 3 perfect ivs
 #define SPECIES_PERFECT_IVS_FLAGS (SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_MYTHICAL | SPECIES_FLAG_ULTRA_BEAST | SPECIES_FLAG_PARADOX)
 

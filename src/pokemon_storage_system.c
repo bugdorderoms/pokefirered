@@ -57,7 +57,7 @@ void SetBoxMonAt(u8 boxId, u8 boxPosition, struct BoxPokemon * src)
 {
     if (IsValidBoxIdAndPosition(boxId, boxPosition))
 	{
-		DoOverworldFormChange((struct Pokemon*)src, FORM_CHANGE_WITHDRAW);
+		DoOverworldFormChange((struct Pokemon*)src, FORM_CHANGE_COUNTDOWN);
         gPokemonStoragePtr->boxes[boxId][boxPosition] = *src;
 	}
 }

@@ -55,8 +55,7 @@ struct BoxPokemon
 	/*0x3B*/ u8 ppBonuses;
 	/*0x3C*/ u16 evolutionTracker:10; // Values up to 1023
 	         u16 shiny:1;
-			 u16 formCountdown:3;
-			 u16 unused:2;
+			 u16 unused:5;
 };
 
 struct Status1
@@ -68,7 +67,7 @@ struct Status1
 struct Pokemon
 {
     struct BoxPokemon box;
-    struct Status1 status;
+	struct Status1 status;
     u8 level;
     u8 mail;
     u16 hp;
@@ -78,6 +77,8 @@ struct Pokemon
     u16 speed;
     u16 spAttack;
     u16 spDefense;
+	u8 formCountdown:3;
+	u8 unused:5;
 };
 
 struct PokemonStorage
