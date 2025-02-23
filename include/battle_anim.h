@@ -240,6 +240,7 @@ void SetSpriteNextToMonHead(u8 battler, struct Sprite* sprite);
 
 // battle_anim_effects_2.c
 extern const union AffineAnimCmd *const gGrowingRingAffineAnimTable[];
+extern const union AffineAnimCmd* const gAffineAnimTable_MaxFlutterby[];
 
 void Anim_SwordsDanceBlade(struct Sprite *);
 void AnimSonicBoomProjectile(struct Sprite *);
@@ -263,6 +264,7 @@ void AnimJaggedMusicNote(struct Sprite *);
 void AnimPerishSongMusicNote2(struct Sprite *);
 void AnimPerishSongMusicNote(struct Sprite *);
 void AnimGuardRing(struct Sprite *);
+void AnimMaxFlutterby(struct Sprite *);
 
 // battle_anim_effects_3.c
 extern const struct SpriteTemplate gWishStarSpriteTemplate;
@@ -279,7 +281,6 @@ void AnimClappingHand(struct Sprite *);
 void AnimClappingHand2(struct Sprite *);
 void AnimRapidSpin(struct Sprite *);
 void AnimTriAttackTriangle(struct Sprite *);
-void AnimBatonPassPokeball(struct Sprite *);
 void AnimWishStar(struct Sprite *);
 void AnimMiniTwinklingStar(struct Sprite *);
 void AnimSwallowBlueOrb(struct Sprite *);
@@ -480,6 +481,8 @@ void AnimTask_DragonDanceWaver(u8 taskId);
 void AnimOutrageFlame(struct Sprite *sprite);
 
 // ghost.c
+extern const union AffineAnimCmd *const gAffineAnims_ShadowBall[];
+
 void AnimTask_NightShadeClone(u8 taskId);
 void AnimTask_NightmareClone(u8 taskId);
 void AnimTask_SpiteTargetShadow(u8 taskId);
@@ -499,6 +502,7 @@ void AnimTask_SeismicTossBgAccelerateDownAtEnd(u8 taskId);
 
 void AnimParticleInVortex(struct Sprite *sprite);
 void AnimFallingRock(struct Sprite *sprite);
+void AnimRockFragment(struct Sprite *sprite);
 
 // psychic.c
 extern const union AffineAnimCmd *const gAffineAnims_LusterPurgeCircle[];
@@ -532,6 +536,7 @@ void AnimBite(struct Sprite *sprite);
 void AnimTask_AnimateGustTornadoPalette(u8 taskId);
 void AnimTask_DrillPeckHitSplats(u8 taskId);
 
+void AnimSkyAttackBird(struct Sprite *sprite);
 void DestroyAnimSpriteAfterTimer(struct Sprite *sprite);
 
 // steel.c
@@ -547,6 +552,8 @@ void AnimDizzyPunchDuck(struct Sprite *sprite);
 void AnimSpriteOnMonForDuration(struct Sprite *sprite);
 void AnimStompFoot(struct Sprite *sprite);
 void AnimSlidingKick(struct Sprite *sprite);
+void AnimSuperpowerFireball(struct Sprite *sprite);
+bool8 GetSpriteOrientationBasedOnBattlers(void);
 
 // ice.c
 extern const union AnimCmd *const gAnims_SmallBubblePair[];
@@ -596,6 +603,7 @@ extern const union AffineAnimCmd *const gBulletSeedAffineAnimTable[];
 void AnimBulletSeed(struct Sprite *);
 void AnimPetalDanceFlower(struct Sprite *);
 void AnimMoveTwisterParticle(struct Sprite *);
+void AnimNeedleArmSpike(struct Sprite *);
 
 // battle_anim_utility_funcs.c
 void AnimTask_BlendSelected(u8 taskId);

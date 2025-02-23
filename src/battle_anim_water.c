@@ -514,6 +514,17 @@ const struct SpriteTemplate gSchoolingSmallBubblesSpriteTemplate =
     .callback = AnimParticleInVortex,
 };
 
+const struct SpriteTemplate gAquaRingBubblesSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SMALL_BUBBLES,
+    .paletteTag = ANIM_TAG_SMALL_BUBBLES,
+    .oam = &gOamData_AffineOff_ObjBlend_16x16,
+    .anims = sAnims_WaterBubble,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSmallBubblePair,
+};
+
 // Creates the Rain Dance's water drop sprites or the ion sprite in Ion Deluge's anim.
 // arg 0: which sprite to create
 // arg 1: creation delay

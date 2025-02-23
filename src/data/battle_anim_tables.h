@@ -278,4 +278,8 @@ const struct BattleAnimTable gBattleAnims_General[] =
 		.ignoreSemiInvulnerability = TRUE,
 		.ignoreSubstitute = TRUE,
 	},
+	[B_ANIM_AQUA_RING_HEAL] =
+	{
+		.script = gGeneralAnim_AquaRingHeal,
+	},
 };

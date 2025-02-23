@@ -20,7 +20,6 @@ static void AnimWhirlwindLine(struct Sprite *sprite);
 static void AnimWhirlwindLine_Step(struct Sprite *sprite);
 static void AnimBounceBallShrink(struct Sprite *sprite);
 static void AnimBounceBallLand(struct Sprite *sprite);
-static void AnimSkyAttackBird(struct Sprite *sprite);
 static void AnimSkyAttackBird_Step(struct Sprite *sprite);
 static void AnimTask_AnimateGustTornadoPalette_Step(u8 taskId);
 static void AnimFallingFeather_Step(struct Sprite *sprite);
@@ -29,6 +28,7 @@ static void AirCutterProjectileStep2(u8 taskId);
 static void AnimAirWaveProjectile(struct Sprite *sprite);
 static void AnimAirWaveProjectile_Step1(struct Sprite *sprite);
 static void AnimAirWaveProjectile_Step2(struct Sprite *sprite);
+static void AnimAirSlashBlade(struct Sprite *sprite);
 
 const struct SpriteTemplate gEllipticalGustSpriteTemplate =
 {
@@ -320,6 +320,47 @@ const struct SpriteTemplate gAirWaveProjectileSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimAirWaveProjectile,
+};
+
+static const union AffineAnimCmd sAirSlashBladeOnPlayerSideAffineAnimCmds[] =
+{
+    AFFINEANIMCMD_FRAME(4, 4, 0, 64), // Double in size
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sAirSlashBladeOnOpponentSideAffineAnimCmds[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 128, 1), // 180 degree turn
+	AFFINEANIMCMD_FRAME(4, 4, 0, 64), // Double in size
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sAirSlashBladeAffineAnimTable[] =
+{
+	sAirSlashBladeOnOpponentSideAffineAnimCmds,
+	sAirSlashBladeOnPlayerSideAffineAnimCmds
+};
+
+const struct SpriteTemplate gAirSlashBladeSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PUNISHMENT_BLADES,
+    .paletteTag = ANIM_TAG_PUNISHMENT_BLADES,
+    .oam = &gOamData_AffineDouble_ObjBlend_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAirSlashBladeAffineAnimTable,
+    .callback = AnimAirSlashBlade,
+};
+
+const struct SpriteTemplate gBraveBirdBirdSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BIRD,
+    .paletteTag = ANIM_TAG_JAGGED_MUSIC_NOTE,
+    .oam = &gOamData_AffineNormal_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSkyAttackBird,
 };
 
 // Animates the elliptical gust sprite on the target. Used by MOVE_GUST.
@@ -885,7 +926,8 @@ static void AnimBounceBallLand(struct Sprite *sprite)
 }
 
 // Animates the Sky Attacker bird moving from the attacker's pos to the target's pos and then off screen.
-static void AnimSkyAttackBird(struct Sprite *sprite)
+// No args.
+void AnimSkyAttackBird(struct Sprite *sprite)
 {
     u16 rotation;
     s16 posx = sprite->x;
@@ -1119,4 +1161,15 @@ static void AnimAirWaveProjectile_Step2(struct Sprite *sprite)
         gTasks[sprite->data[7]].data[1]--;
         DestroySprite(sprite);
     }
+}
+
+// Creates the slices on MOVE_AIR_SLASH's anim moving from the attacker to the target. It flips the sprite depending on what side and poke are using it.
+// arg 0: duration step 1 (attacker -> center)
+// arg 1: duration step 2 (spin center)
+// arg 2: duration step 3 (center -> target)
+static void AnimAirSlashBlade(struct Sprite *sprite)
+{
+	StartSpriteAffineAnim(sprite, GetSpriteOrientationBasedOnBattlers());
+	sprite->callback = AnimShadowBall;
+	sprite->callback(sprite);
 }

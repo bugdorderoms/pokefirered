@@ -611,11 +611,9 @@ static void RideTransition_MoveDirection(u8 direction, u16 heldKeys)
 
 static void UpdateStoutlandSearchAndTaurosCharge(u16 heldKeys)
 {
-	u8 taskId;
-	
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE))
 	{
-		taskId = FindTaskIdByFunc(Task_StoutlandSearch);
+		u8 taskId = FindTaskIdByFunc(Task_StoutlandSearch);
 		
 		if (heldKeys & B_BUTTON)
 		{
@@ -628,9 +626,10 @@ static void UpdateStoutlandSearchAndTaurosCharge(u16 heldKeys)
 				gTasks[taskId].data[8] = TRUE;
 		}
 	}
-	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE) && !gSaveBlock2Ptr->waitingTaurosChargeStamina)
+	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE))
 	{
-		if ((heldKeys & B_BUTTON) && gPlayerAvatar.runningState == MOVING && CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_ROCK_SMASH_ROCK))
+		if (!gSaveBlock2Ptr->waitingTaurosChargeStamina && (heldKeys & B_BUTTON) && gPlayerAvatar.runningState == MOVING
+		&& CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_ROCK_SMASH_ROCK))
 			ScriptContext1_SetupScript(EventScript_UseRockSmash);
 	}
 }

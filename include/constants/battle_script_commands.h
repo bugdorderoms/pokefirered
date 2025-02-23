@@ -6,8 +6,8 @@
 #define STATUS_CHANGE_FLAG_CHECK_UPROAR          (1 << 1)
 #define STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS (1 << 2)
 #define STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE     (1 << 3)
-#define STATUS_CHANGE_FLAG_ALL                   (STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_CHECK_UPROAR            \
-                                                | STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS | STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE)
+#define STATUS_CHANGE_FLAG_ALL                   (STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_CHECK_UPROAR             \
+                                                 | STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS | STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE)
 #define STATUS_CHANGE_FLAG_NO_SYNCHRONISE        (1 << 4)
 
 #define STAT_CHANGE_FLAG_SELF_INFLICT    (1 << 0) // The stat change is self inflicted. So, can't be bounced back by Mirror Armor or blocked by any effect
@@ -111,33 +111,18 @@
 #define MOVEEND_TO            2 // loop from first to specified cases
 #define MOVEEND_FUTURE_ATTACK 3 // only cases that occours on a future attack hit
 
-// atk47, prefaintmoveend cases
-#define ATK47_SET_UP                 0
-#define ATK47_ATTACKER_ABILITIES     1
-#define ATK47_PROTECTION_EFFECTS     2
-#define ATK47_RAGE                   3
-#define ATK47_SYNCHRONIZE_TARGET     4
-#define ATK47_BEAK_BLAST             5
-#define ATK47_SYNCHRONIZE_ATTACKER   6
-#define ATK47_TARGET_ABILITIES       7
-#define ATK47_SYNCHRONIZE_ATTACKER_2 8
-#define ATK47_TARGET_CONTACT_ITEMS   9
-#define ATK47_COUNT                  10
-
-// Atk48
-// Used when there's multiple buffs
-#define BIT_ATK     (1 << 0)
-#define BIT_DEF     (1 << 1)
-#define BIT_SPEED   (1 << 2)
-#define BIT_SPATK   (1 << 3)
-#define BIT_SPDEF   (1 << 4)
-#define BIT_ACC     (1 << 5)
-#define BIT_EVASION (1 << 6)
-
-#define ATK48_STAT_NEGATIVE      (1 << 0) // Used when there's multiples negative stat buffs
-#define ATK48_IGNORE_ANIM_PLAYED (1 << 1) // Play stat anim even if disabled, for Defiant
-#define ATK48_SET_ANIM_PLAYED    (1 << 2) // Used when there's multiples buffs, play the anim only on the first buff
-#define ATK48_CLEAR_ANIM_PLAYED  (1 << 3) // Reset anim played, for the next stat buff that can occours
+// atk48, prefaintmoveend cases
+#define ATK48_SET_UP                 0
+#define ATK48_ATTACKER_ABILITIES     1
+#define ATK48_PROTECTION_EFFECTS     2
+#define ATK48_RAGE                   3
+#define ATK48_SYNCHRONIZE_TARGET     4
+#define ATK48_BEAK_BLAST             5
+#define ATK48_SYNCHRONIZE_ATTACKER   6
+#define ATK48_TARGET_ABILITIES       7
+#define ATK48_SYNCHRONIZE_ATTACKER_2 8
+#define ATK48_TARGET_CONTACT_ITEMS   9
+#define ATK48_COUNT                  10
 
 // Atk49, moveend cases
 #define ATK49_SKY_DROP                  0
@@ -176,9 +161,35 @@
 // Atk50, a flag used for the openpartyscreen command
 #define OPEN_PARTY_ALLOW_CANCEL     0x80
 
+// atk60, a flag used for the handleabilitypopup command
+#define ATK60_UPDATE_POP_UP 0x40
+#define ATK60_REMOVE_POP_UP 0x80
+
+// Atk66
+// Used when there's multiple buffs
+#define BIT_ATK     (1 << 0)
+#define BIT_DEF     (1 << 1)
+#define BIT_SPEED   (1 << 2)
+#define BIT_SPATK   (1 << 3)
+#define BIT_SPDEF   (1 << 4)
+#define BIT_ACC     (1 << 5)
+#define BIT_EVASION (1 << 6)
+
+#define ATK66_STAT_NEGATIVE      (1 << 0) // Used when there's multiples negative stat buffs
+#define ATK66_IGNORE_ANIM_PLAYED (1 << 1) // Play stat anim even if disabled, for Defiant
+#define ATK66_SET_ANIM_PLAYED    (1 << 2) // Used when there's multiples buffs, play the anim only on the first buff
+#define ATK66_CLEAR_ANIM_PLAYED  (1 << 3) // Reset anim played, for the next stat buff that can occours
+
 // Atk6A, flags
 #define ATK6A_FLAG_CHECK_CHEEK_POUCH    (1 << 0) // Try activate Cheek pouch
 #define ATK6A_FLAG_DONT_CHECK_SYMBIOSIS (1 << 1) // Don't check Symbiosis
+
+// Atk6B, trainerslide cases
+#define ATK6B_TRAINER_SLIDE_CASE_SAVE_SPRITES    0
+#define ATK6B_TRAINER_SLIDE_CASE_SLIDE_IN        1
+#define ATK6B_TRAINER_SLIDE_CASE_PRINT_STRING    2
+#define ATK6B_TRAINER_SLIDE_CASE_SLIDE_OUT       3
+#define ATK6B_TRAINER_SLIDE_CASE_RESTORE_SPRITES 4
 
 // Atk76, various cases
 #define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       0
@@ -187,7 +198,7 @@
 #define VARIOUS_GET_BATTLER_SIDE                    3
 #define VARIOUS_TRY_LAST_MON_TRAINER_SLIDE          4
 #define VARIOUS_RESET_INTIMIDATE_TRACE_BITS         5
-#define VARIOUS_UPDATE_CHOICE_MOVE_ON_LVL_UP        6
+#define VARIOUS_JUMP_IF_DEFIANT_ACTIVATE            6
 #define VARIOUS_RESET_PLAYER_FAINTED_FLAG           7
 #define VARIOUS_TRY_SET_DESTINY_BOND                8
 #define VARIOUS_JUMP_IF_NOT_FIRST_TURN              9
@@ -218,11 +229,8 @@
 #define VARIOUS_TRY_STATUS_TRANSFER                 34
 #define VARIOUS_TRY_BRING_DOWN_IN_AIR               35
 #define VARIOUS_TRY_SET_GRAVITY                     36
-#define VARIOUS_JUMP_IF_CANT_GIVE_NICK              37
+#define VARIOUS_TRY_SWAP_ABILITIES                  37
 #define VARIOUS_JUMP_IF_NO_DAMAGE                   38
-#define VARIOUS_JUMP_IF_ENDEAVOR_FAIL               39
-#define VARIOUS_TRY_SWAP_ABILITIES                  40
-#define VARIOUS_JUMP_IF_DEFIANT_ACTIVATE            41
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN       0
@@ -233,16 +241,5 @@
 #define ATK48_DMG_ATK_LEVEL         5
 #define ATK48_DMG_BIG_ROOT          6
 #define ATK80_DMG_HEALTH_DIFFERENCE 7
-
-// Atk83, trainerslide cases
-#define ATK83_TRAINER_SLIDE_CASE_SAVE_SPRITES    0
-#define ATK83_TRAINER_SLIDE_CASE_SLIDE_IN        1
-#define ATK83_TRAINER_SLIDE_CASE_PRINT_STRING    2
-#define ATK83_TRAINER_SLIDE_CASE_SLIDE_OUT       3
-#define ATK83_TRAINER_SLIDE_CASE_RESTORE_SPRITES 4
-
-// atkFC, a flag used for the handleabilitypopup command
-#define ATKFC_UPDATE_POP_UP 0x40
-#define ATKFC_REMOVE_POP_UP 0x80
 
 #endif // GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H

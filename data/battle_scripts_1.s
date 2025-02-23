@@ -348,7 +348,7 @@ BattleScript_EffectGrowthAttackUp2::
     setstatchanger STAT_ATK, +2
 BattleScript_EffectGrowthDoAttackUp::
     statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_ATK | BIT_SPATK, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_SPATK, ATK66_SET_ANIM_PLAYED
     jumpifweatheraffected BS_ATTACKER, B_WEATHER_SUN_ANY, BattleScript_EffectGrowthSpAttackUp2
 	setstatchanger STAT_SPATK, +1
 	goto BattleScript_EffectGrowthDoSpAttackUp
@@ -356,7 +356,7 @@ BattleScript_EffectGrowthSpAttackUp2::
     setstatchanger STAT_SPATK, +2
 BattleScript_EffectGrowthDoSpAttackUp::
     statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	goto BattleScript_MoveEnd
 
 @ EFFECT_SET_POISON @
@@ -435,7 +435,7 @@ BattleScript_EffectRage::
 	call BattleScript_EffectHitFromAtkString_Ret
 	jumpifmovehadnoeffect BattleScript_MoveEndFromFaint
 	jumpifsubstituteblocks BattleScript_MoveEndFromFaint
-	setragestatus
+	setstatusfromargument BS_ATTACKER, BattleScript_MoveEndFromFaint
 	goto BattleScript_MoveEndFromFaint
 
 BattleScript_RageMiss::
@@ -504,19 +504,22 @@ BattleScript_EffectDefenseUp::
 	setstatchanger STAT_DEF, +1
 	goto BattleScript_EffectUserStatUp
 
-@ EFFECT_EVASION_UP_SET_MINIMIZE @
+@ EFFECT_EVASION_UP_SET_ATTACKER_STATUS @
 
-BattleScript_EffectEvasionUpSetMinimize::
+BattleScript_EffectEvasionUpSetAttackerStatus::
 	attackcanceler
-	setminimize
+	jumpifmovehadnoeffect BattleScript_EffectSetAttackerStatusDoEvasionUp
+	setstatusfromargument BS_ATTACKER, BattleScript_EffectSetAttackerStatusDoEvasionUp
+BattleScript_EffectSetAttackerStatusDoEvasionUp::
 	setstatchanger STAT_EVASION, +1
 	goto BattleScript_EffectUserStatUpAfterAtkCanceler
 
-@ EFFECT_DEFENSE_UP_SET_DEFENSE_CURL @
+@ EFFECT_DEFENSE_UP_SET_ATTACKER_STATUS @
 
-BattleScript_EffectDefenseUpSetDefenseCurl::
+BattleScript_EffectDefenseUpSetAttackerStatus::
 	attackcanceler
-	setdefensecurlbit
+	setstatusfromargument BS_ATTACKER, BattleScript_EffectSetAttackerStatusDoDefenseUp
+BattleScript_EffectSetAttackerStatusDoDefenseUp::
 	setstatchanger STAT_DEF, +1
 	goto BattleScript_EffectUserStatUpAfterAtkCanceler
 
@@ -562,17 +565,18 @@ BattleScript_EffectSetReflect::
 	trysetreflect BattleScript_ButItFailed
 	goto BattleScript_PrintReflectLightScreenSafeguardString
 
-@ EFFECT_FOCUS_ENERGY @
+@ EFFECT_SET_ATTACKER_STATUS @
 
-BattleScript_EffectFocusEnergy::
+BattleScript_EffectSetAttackerStatus::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstatus2 BS_ATTACKER, STATUS2_FOCUS_ENERGY, BattleScript_ButItFailed
-	setfocusenergy
+	setstatusfromargument BS_ATTACKER, BattleScript_ButItFailed
+BattleScript_DoAnimAndPrintSetStatusString::
 	attackanimation
 	waitstate
-	printstring STRINGID_ATKGETTINGPUMPED
+BattleScript_PrintStatusFromArgumentStringAndEnd::
+	printfromtable gSetStatusFromArgumentStringIds
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
@@ -809,10 +813,8 @@ BattleScript_EffectNightmare::
 BattleScript_NightmareWorked::
 	attackanimation
 	waitstate
-	setnightmare
-	printstring STRINGID_DEFBEGANHAVINGNIGHTMARE
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
+	setstatusfromargument BS_TARGET, BattleScript_PrintStatusFromArgumentStringAndEnd
+	goto BattleScript_PrintStatusFromArgumentStringAndEnd
 
 @ EFFECT_SNORE @
 
@@ -849,22 +851,23 @@ BattleScript_EffectCurseDoSpeedDown::
 	statchangeanimandstring
 	setstatchanger STAT_ATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_ATK | BIT_DEF, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_DEF, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_DEF, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	goto BattleScript_MoveEnd
 
 BattleScript_GhostCurse::
 	accuracycheck BattleScript_ButItFailed
-	cursetarget BattleScript_ButItFailed
+	setstatusfromargument BS_TARGET, BattleScript_ButItFailed
+	manipulatedamage ATK80_DMG_HALF_USER_HP
 	setbyte sB_ANIM_TURN, 0
 	attackanimation
 	waitstate
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
-	printstring STRINGID_ATKCUTHPANDLAIDCURSEONDEF
+	printfromtable gSetStatusFromArgumentStringIds
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_ATTACKER
 	goto BattleScript_MoveEnd
@@ -939,20 +942,16 @@ BattleScript_EffectSpikes::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-@ EFFECT_FORESIGHT @
+@ EFFECT_SET_TARGET_STATUS @
 
-BattleScript_EffectForesight::
+BattleScript_EffectSetTargetStatus::
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed
 	attackstring
 	ppreduce
-	trysetforesight BattleScript_ButItFailed
-BattleScript_IdentifiedFoeMove::
-	attackanimation
-	waitstate
-	printstring STRINGID_DEFWASIDENTIFIED
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
+BattleScript_TrySetTargetStatusAndDoAnim::
+	setstatusfromargument BS_TARGET, BattleScript_ButItFailed
+	goto BattleScript_DoAnimAndPrintSetStatusString
 
 @ EFFECT_DESTINY_BOND @
 
@@ -1087,7 +1086,7 @@ BattleScript_DoMoveAnimAndJumpToCalledMove::
 	waitstate
 	setbyte sB_ANIM_TURN, 0
 	setbyte sB_ANIM_TARGETS_HIT, 0
-	jumptocalledmove FALSE
+	jumptocalledmove
 
 @ EFFECT_HEAL_BELL @
 
@@ -1283,10 +1282,10 @@ BattleScript_EffectStockpile::
 	jumpifmovehadnoeffect BattleScript_MoveEnd
 	setstatchanger STAT_DEF, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPDEF, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	goto BattleScript_MoveEnd
 
 @ EFFECT_SPIT_UP @
@@ -1340,12 +1339,7 @@ BattleScript_EffectTorment::
 	ppreduce
 	jumpifabilityonside BS_TARGET, ABILITY_AROMA_VEIL, BattleScript_AromaVeilProtects
 	accuracycheck BattleScript_ButItFailed
-	settorment BattleScript_ButItFailed
-	attackanimation
-	waitstate
-	printstring STRINGID_DEFSUBJECTEDTOTORMENT
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
+	goto BattleScript_TrySetTargetStatusAndDoAnim
 
 @ EFFECT_FLATTER @
 
@@ -1392,10 +1386,10 @@ BattleScript_EffectMementoTryAtkDown::
 	waitstate
     setstatchanger STAT_ATK, -2
 	statbuffchange 0, BattleScript_EffectMementoFaintAttacker
-	statchangeanimandstring BIT_ATK | BIT_SPATK, ATK48_STAT_NEGATIVE | ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_SPATK, ATK66_STAT_NEGATIVE | ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPATK, -2
 	statbuffchange
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 BattleScript_EffectMementoFaintAttacker::
 	instantfaintattacker
     waitstate
@@ -1523,19 +1517,6 @@ BattleScript_EffectAssist::
 	assistattackselect BattleScript_ButItFailedPpReduce
 	goto BattleScript_DoMoveAnimAndJumpToCalledMove
 
-@ EFFECT_INGRAIN @
-
-BattleScript_EffectIngrain::
-	attackcanceler
-	attackstring
-	ppreduce
-	trysetroots BattleScript_ButItFailed
-	attackanimation
-	waitstate
-	printstring STRINGID_ATKPLANTEDROOTS
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
 @ EFFECT_MAGIC_COAT @
 
 BattleScript_EffectMagicCoat::
@@ -1613,19 +1594,6 @@ BattleScript_EffectSkillSwap::
 	switchinabilities BS_TARGET
 	goto BattleScript_MoveEnd
 
-@ EFFECT_IMPRISON @
-
-BattleScript_EffectImprison::
-	attackcanceler
-	attackstring
-	ppreduce
-	tryimprison BattleScript_ButItFailed
-	attackanimation
-	waitstate
-	printstring STRINGID_ATKSEALEDOPPONENTSMOVE
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
 @ EFFECT_REFRESH @
 
 BattleScript_EffectRefresh::
@@ -1642,19 +1610,6 @@ BattleScript_EffectRefreshWorked::
 	waitstate
 	updatestatusicon BS_ATTACKER
 	printstring STRINGID_BUFF2CUREDOFITSBUFF1
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
-@ EFFECT_GRUDGE @
-
-BattleScript_EffectGrudge::
-	attackcanceler
-	attackstring
-	ppreduce
-	trysetgrudge BattleScript_ButItFailed
-	attackanimation
-	waitstate
-	printstring STRINGID_ATKWANTSTARGETTOBEARGRUDGE
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
@@ -1725,10 +1680,10 @@ BattleScript_EffectTickleTryLowerAtk::
 	waitstate
 	setstatchanger STAT_ATK, -1
 	statbuffchange 0, BattleScript_MoveEnd
-	statchangeanimandstring BIT_ATK | BIT_DEF, ATK48_STAT_NEGATIVE | ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_DEF, ATK66_STAT_NEGATIVE | ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_DEF, -1
 	statbuffchange
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	goto BattleScript_MoveEnd
 
 @ EFFECT_COSMIC_POWER @
@@ -1744,10 +1699,10 @@ BattleScript_EffectCosmicPowerTryDefUp::
 	waitstate
 	setstatchanger STAT_DEF, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPDEF, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	goto BattleScript_MoveEnd
 
 @ EFFECT_HOWL @
@@ -1792,10 +1747,10 @@ BattleScript_EffectBulkUpTryAttackUp::
 	waitstate
 	setstatchanger STAT_ATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_ATK | BIT_DEF, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_DEF, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_DEF, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	goto BattleScript_MoveEnd
 
 @ EFFECT_CALM_MIND @
@@ -1811,10 +1766,10 @@ BattleScript_EffectCalmMindTrySpAtkUp::
 	waitstate
 	setstatchanger STAT_SPATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_SPATK | BIT_SPDEF, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_SPATK | BIT_SPDEF, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPDEF, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	goto BattleScript_MoveEnd
 
 @ EFFECT_DRAGON_DANCE @
@@ -1830,10 +1785,10 @@ BattleScript_EffectDragonDanceTryAtkUp::
 	waitstate
 	setstatchanger STAT_ATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_ATK | BIT_SPEED, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_SPEED, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPEED, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	goto BattleScript_MoveEnd
 
 @ EFFECT_ROOST @
@@ -1868,16 +1823,6 @@ BattleScript_GravityLoopIncrement::
     addbyte sBATTLER, 1
     jumpifbytenotequal sBATTLER, gBattlersCount, BattleScript_GravityBringDownLoop
 	goto BattleScript_MoveEnd
-
-@ EFFECT_MIRACLE_EYE @
-
-BattleScript_EffectMiracleEye::
-    attackcanceler
-	accuracycheck BattleScript_PrintMoveMissed
-	attackstring
-	ppreduce
-	trysetmiracleeye BattleScript_ButItFailed
-	goto BattleScript_IdentifiedFoeMove
 
 @ EFFECT_HEALING_WISH @
 
@@ -2143,6 +2088,25 @@ BattleScript_EffectToxicSpikes::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+@ EFFECT_MAGNET_RISE @
+
+BattleScript_EffectMagnetRise::
+	attackcanceler
+	attackstring
+	ppreduce
+	trysetmagnetrise BattleScript_ButItFailed
+	attackanimation
+	waitstate
+	printstring STRINGID_LEVITATEDWITHELECTROMAGNETISM
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ EFFECT_SPECIAL_ATTACK_UP_2 @
+
+BattleScript_EffectSpecialAttackUp2::
+    setstatchanger STAT_SPATK, +2
+	goto BattleScript_EffectUserStatUp
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2214,30 +2178,30 @@ BattleScript_MoveEffectWrap::
 BattleScript_MoveEffectStockpileWoreOff::
     stockpile 1, BattleScript_StockpileWoreOffTrySpDef @ Reset Def buff
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK48_STAT_NEGATIVE | ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK66_STAT_NEGATIVE | ATK66_SET_ANIM_PLAYED
 BattleScript_StockpileWoreOffTrySpDef::
     stockpile 2, BattleScript_StockpileWoreOffEnd @ Reset Sp Def buff
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 BattleScript_StockpileWoreOffEnd::
 	return
 
 BattleScript_MoveEffectAtkDefDown::
     setstatchanger STAT_ATK, -1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_ATK | BIT_DEF, ATK48_STAT_NEGATIVE | ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_DEF, ATK66_STAT_NEGATIVE | ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_DEF, -1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	return
 
 BattleScript_MoveEffectDefSpDefDown::
     setstatchanger STAT_DEF, -1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK48_STAT_NEGATIVE | ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK66_STAT_NEGATIVE | ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPDEF, -1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	return
 
 BattleScript_TargetStatusHeal::
@@ -2307,7 +2271,7 @@ BattleScript_DefiantCompetitive::
     loadabilitypopup BS_EFFECT_BATTLER
 	swapattackerwithtarget
     statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_IGNORE_ANIM_PLAYED @ Ignore it if set
+	statchangeanimandstring 0, ATK66_IGNORE_ANIM_PLAYED @ Ignore it if set
 	swapattackerwithtarget
 	removeabilitypopup BS_EFFECT_BATTLER
     goto BattleScript_EndStatChangeString
@@ -2539,19 +2503,19 @@ BattleScript_AngerShellBoost::
     loadabilitypopup BS_ATTACKER
 	setstatchanger STAT_ATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_ATK | BIT_SPATK | BIT_SPEED, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_SPATK | BIT_SPEED, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPEED, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	setstatchanger STAT_DEF, -1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK48_STAT_NEGATIVE | ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK66_STAT_NEGATIVE | ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPDEF, -1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	removeabilitypopup BS_ATTACKER
 BattleScript_AngerShellEnd::
 	swapattackerwithtarget
@@ -2933,6 +2897,13 @@ BattleScript_PoisonTouchActivation::
 	removeabilitypopup BS_ATTACKER
 	return
 	
+BattleScript_ToxicChainActivation::
+	waitstate
+	loadabilitypopup BS_ATTACKER
+	call BattleScript_MoveEffectToxic
+	removeabilitypopup BS_ATTACKER
+	return
+
 BattleScript_PoisonPuppeteerActivation::
     waitstate
 	loadabilitypopup BS_ATTACKER
@@ -3292,19 +3263,19 @@ BattleScript_CommanderActivates::
 BattleScript_CommanderDoStatsUp::
     setstatchanger STAT_ATK, +2
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_ATK | BIT_DEF | BIT_SPEED | BIT_SPATK | BIT_SPDEF, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_DEF | BIT_SPEED | BIT_SPATK | BIT_SPDEF, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_DEF, +2
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPEED, +2
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPATK, +2
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPDEF, +2
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 BattleScript_CommanderEnd::
 	removeabilitypopup BS_SCRIPTING
 	restoreattacker
@@ -3327,13 +3298,13 @@ BattleScript_BattleBondBoost::
     loadabilitypopup BS_ATTACKER
 	setstatchanger STAT_ATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_ATK | BIT_SPATK | BIT_SPEED, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_SPATK | BIT_SPEED, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPEED, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 	removeabilitypopup BS_ATTACKER
 	return
 
@@ -3577,7 +3548,8 @@ BattleScript_AsleepMoveEnd::
 BattleScript_IgnoresAndUsesRandomMove::
 	printstring STRINGID_ATKIGNOREDORDERS
 	waitmessage B_WAIT_TIME_LONG
-	jumptocalledmove TRUE
+	copyhword gChosenMove, gCalledMove
+	jumptocalledmove
 
 BattleScript_IgnoresAndFallsAsleep::
 	printstring STRINGID_ATKBEGANTONAP
@@ -3668,9 +3640,9 @@ BattleScript_WishButFullHp::
 	call BattleScript_AlreadyAtFullHp_Ret
 	end2
 
-BattleScript_IngrainTurnHeal::
-	playanimation BS_ATTACKER, B_ANIM_INGRAIN_HEAL
-	printstring STRINGID_ATKABSORBEDNUTRIENTS
+BattleScript_EndTurnHeal::
+	playanimation2 BS_ATTACKER, sB_ANIM_ARG1
+	printfromtable gEndTurnHealStringIds
 	waitmessage B_WAIT_TIME_LONG
 	manipulatedamage ATK48_DMG_BIG_ROOT
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
@@ -3755,6 +3727,11 @@ BattleScript_EncoredNoMore::
 
 BattleScript_DisabledNoMore::
 	printstring STRINGID_ATKDISABLEDNOMORE
+	waitmessage B_WAIT_TIME_LONG
+	end2
+
+BattleScript_MagnetRiseEnds::
+	printstring STRINGID_ATKELECTROMAGNETISMWOREOFF
 	waitmessage B_WAIT_TIME_LONG
 	end2
 
@@ -4111,19 +4088,19 @@ BattleScript_AllStatsUp::
 BattleScript_AllStatsUpDoStatsUp::
     setstatchanger STAT_ATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring BIT_ATK | BIT_DEF | BIT_SPEED | BIT_SPATK | BIT_SPDEF, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring BIT_ATK | BIT_DEF | BIT_SPEED | BIT_SPATK | BIT_SPDEF, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_DEF, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPEED, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_SET_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
 	setstatchanger STAT_SPDEF, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
-	statchangeanimandstring 0, ATK48_CLEAR_ANIM_PLAYED
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
 BattleScript_AllStatsUpRet::
     return
 
@@ -4152,14 +4129,14 @@ BattleScript_TrainerSlideMsgEnd2::
     end2
 
 BattleScript_TrainerSlideMsg::
-    handletrainerslidecase BS_SCRIPTING, ATK83_TRAINER_SLIDE_CASE_SAVE_SPRITES
-	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK83_TRAINER_SLIDE_CASE_SLIDE_IN
+    handletrainerslidecase BS_SCRIPTING, ATK6B_TRAINER_SLIDE_CASE_SAVE_SPRITES
+	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK6B_TRAINER_SLIDE_CASE_SLIDE_IN
 	waitstate
-	handletrainerslidecase BS_SCRIPTING, ATK83_TRAINER_SLIDE_CASE_PRINT_STRING
+	handletrainerslidecase BS_SCRIPTING, ATK6B_TRAINER_SLIDE_CASE_PRINT_STRING
 	waitmessage B_WAIT_TIME_LONG
-	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK83_TRAINER_SLIDE_CASE_SLIDE_OUT
+	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK6B_TRAINER_SLIDE_CASE_SLIDE_OUT
 	waitstate
-	handletrainerslidecase BS_SCRIPTING, ATK83_TRAINER_SLIDE_CASE_RESTORE_SPRITES
+	handletrainerslidecase BS_SCRIPTING, ATK6B_TRAINER_SLIDE_CASE_RESTORE_SPRITES
 	return
 
 BattleScript_ItemUnveiledGhost::
@@ -4206,7 +4183,7 @@ BattleScript_LearnedNewMove::
 	fanfare MUS_LEVEL_UP
 	printstring STRINGID_PKMNLEARNEDMOVE
 	waitmessage B_WAIT_TIME_LONG
-	updatechoicemoveonlvlup BS_ATTACKER
+	updatechoicemoveonlvlup
 	goto BattleScript_LearnMoveLoop
 
 BattleScript_LearnMoveReturn::
@@ -4301,7 +4278,7 @@ BattleScript_LinkBattleFaintedMonEnd::
 
 BattleScript_LocalTrainerBattleWon::
 	printstring STRINGID_PLAYERDEFEATEDTRAINER1
-	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK83_TRAINER_SLIDE_CASE_SLIDE_IN
+	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK6B_TRAINER_SLIDE_CASE_SLIDE_IN
 	waitstate
 	printstring STRINGID_TRAINER1LOSETEXT
 	getmoneyreward BattleScript_LocalTrainerBattleWonGotMoney
@@ -4331,7 +4308,7 @@ BattleScript_RivalBattleLost::
 	returnatktoball
 	waitstate
 BattleScript_RivalBattleLostSkipMonRecall::
-	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK83_TRAINER_SLIDE_CASE_SLIDE_IN
+	handletrainerslidecase B_POSITION_OPPONENT_LEFT, ATK6B_TRAINER_SLIDE_CASE_SLIDE_IN
 	waitstate
 	printstring STRINGID_TRAINER1WINTEXT
 	jumpifbyte CMP_EQUAL, sMULTIUSE_STATE, 2, BattleScript_LocalBattleLostPrintWhiteOut

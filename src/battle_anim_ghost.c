@@ -82,7 +82,7 @@ static const union AffineAnimCmd sAffineAnim_ShadowBall[] =
     AFFINEANIMCMD_JUMP(0),
 };
 
-static const union AffineAnimCmd *const sAffineAnims_ShadowBall[] =
+const union AffineAnimCmd *const gAffineAnims_ShadowBall[] =
 {
     sAffineAnim_ShadowBall,
 };
@@ -94,7 +94,7 @@ const struct SpriteTemplate gShadowBallSpriteTemplate =
     .oam = &gOamData_AffineNormal_ObjNormal_32x32,
     .anims = gDummySpriteAnimTable,
     .images = NULL,
-    .affineAnims = sAffineAnims_ShadowBall,
+    .affineAnims = gAffineAnims_ShadowBall,
     .callback = AnimShadowBall,
 };
 
@@ -128,6 +128,17 @@ const struct SpriteTemplate gDestinyBondWhiteShadowSpriteTemplate =
 {
     .tileTag = ANIM_TAG_WHITE_SHADOW,
     .paletteTag = ANIM_TAG_WHITE_SHADOW,
+    .oam = &gOamData_AffineOff_ObjBlend_64x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimDestinyBondWhiteShadow,
+};
+
+const struct SpriteTemplate gDestinyBondBlackShadowSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_WHITE_SHADOW,
+    .paletteTag = ANIM_TAG_QUICK_GUARD,
     .oam = &gOamData_AffineOff_ObjBlend_64x32,
     .anims = gDummySpriteAnimTable,
     .images = NULL,
@@ -191,17 +202,6 @@ const struct SpriteTemplate gGrudgeFlameSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimGrudgeFlame,
-};
-
-const struct SpriteTemplate gGravityBlackHoleSpriteTemplate =
-{
-    .tileTag = ANIM_TAG_SHADOW_BALL,
-    .paletteTag = ANIM_TAG_SHADOW_BALL,
-    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
-    .anims = gDummySpriteAnimTable,
-    .images = NULL,
-    .affineAnims = sAffineAnims_ShadowBall,
-    .callback = AnimSpriteOnMonForDuration,
 };
 
 // Animates the Confuse Ray ball bouncing from the attacker's position to the target's position.
@@ -779,6 +779,7 @@ static void AnimDestinyBondWhiteShadow(struct Sprite *sprite)
 // Animates Destiny Bond's shadow.
 // arg 0: duration (?)
 // arg 1: hit both (boolean) (if set, creates an extra shadow in double battles)
+// arg 2: black shadow (boolean) (if set, creates an black shadow instead of white)
 void AnimTask_DestinyBondWhiteShadow(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
@@ -808,7 +809,10 @@ void AnimTask_DestinyBondWhiteShadow(u8 taskId)
 			if (!IsBattlerSpriteVisible(battler))
 				continue;
 			
-            spriteId = CreateSprite(&gDestinyBondWhiteShadowSpriteTemplate, baseX, baseY, 55);
+			if (!gBattleAnimArgs[2])
+				spriteId = CreateSprite(&gDestinyBondWhiteShadowSpriteTemplate, baseX, baseY, 55);
+			else
+				spriteId = CreateSprite(&gDestinyBondBlackShadowSpriteTemplate, baseX, baseY, 55);
             
             if (spriteId != MAX_SPRITES)
             {

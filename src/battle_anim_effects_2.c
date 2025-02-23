@@ -49,6 +49,7 @@ static void AnimOrbitScatterStep(struct Sprite *);
 static void AnimMovementWaves_Step(struct Sprite *);
 static void AnimJaggedMusicNote_Step(struct Sprite *);
 static void AnimPerishSongMusicNote_Step(struct Sprite *);
+static void AnimMaxFlutterbyStep(struct Sprite *sprite);
 
 // Data
 static const union AffineAnimCmd sSwordsDanceBladeAffineAnimCmds[] =
@@ -211,17 +212,6 @@ static const union AnimCmd *const sCoinAnimTable[] =
     sCoinAnimCmds,
 };
 
-static const union AffineAnimCmd sFallingCoinAffineAnimCmds[] =
-{
-    AFFINEANIMCMD_FRAME(0, 0, 10, 1),
-    AFFINEANIMCMD_JUMP(0),
-};
-
-static const union AffineAnimCmd *const sFallingCoinAffineAnimTable[] =
-{
-    sFallingCoinAffineAnimCmds,
-};
-
 const struct SpriteTemplate gCoinThrowSpriteTemplate =    
 {
     .tileTag = ANIM_TAG_COIN,
@@ -240,7 +230,7 @@ const struct SpriteTemplate gFallingCoinSpriteTemplate =
     .oam = &gOamData_AffineNormal_ObjNormal_16x16,
     .anims = sCoinAnimTable,
     .images = NULL,
-    .affineAnims = sFallingCoinAffineAnimTable,
+    .affineAnims = gAffineAnims_ShadowBall,
     .callback = AnimFallingCoin,
 };
 
@@ -961,6 +951,47 @@ const struct SpriteTemplate gGuardRingSpriteTemplate =
     .images = NULL,
     .affineAnims = sGuardRingAffineAnimTable,
     .callback = AnimGuardRing,
+};
+
+const struct SpriteTemplate gBlueGuardRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_GUARD_RING,
+    .paletteTag = ANIM_TAG_WATER_ORB,
+    .oam = &gOamData_AffineDouble_ObjBlend_64x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sGuardRingAffineAnimTable,
+    .callback = AnimGuardRing,
+};
+
+const struct SpriteTemplate gPowerGemGemSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_POWER_GEM,
+    .paletteTag = ANIM_TAG_POWER_GEM,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = AnimDirtScatter,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_MaxFlutterbyPulsate[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 0, 4),
+	AFFINEANIMCMD_FRAME(-16, -16, 0, 4),
+	AFFINEANIMCMD_JUMP(0),
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_MaxFlutterbyGrow[] =
+{
+	AFFINEANIMCMD_FRAME(8, 8, 0, 16), // Double in size
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gAffineAnimTable_MaxFlutterby[] =
+{
+	sSpriteAffineAnim_MaxFlutterbyPulsate,
+	sSpriteAffineAnim_MaxFlutterbyGrow,
 };
 
 // Animates a sword that rises into the air after a brief pause. And then do the given affine anim.
@@ -2802,4 +2833,35 @@ void AnimGuardRing(struct Sprite *sprite)
 
     sprite->callback = StartAnimLinearTranslation;
     StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+// Animates the butterflies in Max Flutterby.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: wave amplitude
+// arg 3: se to play when start moving (play specified se if set)
+void AnimMaxFlutterby(struct Sprite *sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, FALSE);
+	
+	sprite->data[0] = 16; // speed delay
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+	sprite->data[5] = gBattleAnimArgs[2];
+	sprite->data[6] = gBattleAnimArgs[3];
+	sprite->callback = AnimMaxFlutterbyStep;
+}
+
+static void AnimMaxFlutterbyStep(struct Sprite *sprite)
+{
+	// Wait until dynamax growth anim ends
+	if (!FuncIsActiveTask(AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds))
+	{
+		if (sprite->data[6] > MUS_DUMMY)
+			PlaySE(sprite->data[6]);
+		
+		StartSpriteAffineAnim(sprite, 1);
+		InitAnimArcTranslation(sprite);
+		sprite->callback = DestroyAnimSpriteAfterHorizontalTranslation;
+	}
 }

@@ -127,17 +127,6 @@ const struct SpriteTemplate gIceCrystalSpiralInwardSmall =
     .callback = AnimFireSpiralInward,
 };
 
-static const union AffineAnimCmd sAffineAnim_IceBeamInnerCrystal[] =
-{
-    AFFINEANIMCMD_FRAME(0x0, 0x0, 10, 1),
-    AFFINEANIMCMD_JUMP(0),
-};
-
-static const union AffineAnimCmd *const sAffineAnims_IceBeamInnerCrystal[] =
-{
-    sAffineAnim_IceBeamInnerCrystal,
-};
-
 const struct SpriteTemplate gIceBeamInnerCrystalSpriteTemplate =
 {
     .tileTag = ANIM_TAG_ICE_CRYSTALS,
@@ -145,7 +134,7 @@ const struct SpriteTemplate gIceBeamInnerCrystalSpriteTemplate =
     .oam = &gOamData_AffineNormal_ObjBlend_8x16,
     .anims = sAnims_IceCrystalLarge,
     .images = NULL,
-    .affineAnims = sAffineAnims_IceBeamInnerCrystal,
+    .affineAnims = gAffineAnims_ShadowBall,
     .callback = AnimIceBeamParticle,
 };
 
@@ -458,6 +447,28 @@ const struct SpriteTemplate gIcicleSpearSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimMissileArc,
+};
+
+const struct SpriteTemplate gIceShardSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ICE_CRYSTALS,
+    .paletteTag = ANIM_TAG_ICE_CRYSTALS,
+    .oam = &gOamData_AffineDouble_ObjNormal_8x8,
+    .anims = sAnims_IceCrystalSmall,
+    .images = NULL,
+    .affineAnims = gAffineAnimTable_MaxFlutterby,
+    .callback = AnimMaxFlutterby,
+};
+
+const struct SpriteTemplate gShadowSneakHitSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_IMPACT,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineNormal_ObjBlend_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_IceCrystalHit,
+    .callback = AnimIceEffectParticle,
 };
 
 // Animates the ice particles in Ice Beam.

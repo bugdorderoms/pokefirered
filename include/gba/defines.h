@@ -21,6 +21,7 @@
 #endif
 
 #define ALIGNED(n) __attribute__((aligned(n)))
+#define ALIGNED_NO_PADDING(n) __attribute__((packed, aligned(n)))
 
 #define SOUND_INFO_PTR (*(struct SoundInfo **)0x3007FF0)
 #define INTR_CHECK     (*(u16 *)0x3007FF8)

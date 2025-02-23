@@ -190,14 +190,14 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 		.battleScript = BattleScript_EffectDefenseUp,
 	},
 	
-	[EFFECT_EVASION_UP_SET_MINIMIZE] =
+	[EFFECT_EVASION_UP_SET_ATTACKER_STATUS] =
 	{
-		.battleScript = BattleScript_EffectEvasionUpSetMinimize,
+		.battleScript = BattleScript_EffectEvasionUpSetAttackerStatus,
 	},
 	
-	[EFFECT_DEFENSE_UP_SET_DEFENSE_CURL] =
+	[EFFECT_DEFENSE_UP_SET_ATTACKER_STATUS] =
 	{
-		.battleScript = BattleScript_EffectDefenseUpSetDefenseCurl,
+		.battleScript = BattleScript_EffectDefenseUpSetAttackerStatus,
 	},
 	
 	[EFFECT_DEFENSE_UP_2] =
@@ -222,9 +222,9 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 		.affectsUserSide = TRUE,
 	},
 	
-	[EFFECT_FOCUS_ENERGY] =
+	[EFFECT_SET_ATTACKER_STATUS] =
 	{
-		.battleScript = BattleScript_EffectFocusEnergy,
+		.battleScript = BattleScript_EffectSetAttackerStatus,
 	},
 	
 	[EFFECT_BIDE] =
@@ -370,9 +370,9 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 		.battleScript = BattleScript_EffectSpikes,
 	},
 	
-	[EFFECT_FORESIGHT] =
+	[EFFECT_SET_TARGET_STATUS] =
 	{
-		.battleScript = BattleScript_EffectForesight,
+		.battleScript = BattleScript_EffectSetTargetStatus,
 	},
 	
 	[EFFECT_DESTINY_BOND] =
@@ -620,11 +620,6 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 		.callOtherMove = TRUE,
 	},
 	
-	[EFFECT_INGRAIN] =
-	{
-		.battleScript = BattleScript_EffectIngrain,
-	},
-	
 	[EFFECT_MAGIC_COAT] =
 	{
 		.battleScript = BattleScript_EffectMagicCoat,
@@ -671,19 +666,9 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 		.battleScript = BattleScript_EffectSkillSwap,
 	},
 	
-	[EFFECT_IMPRISON] =
-	{
-		.battleScript = BattleScript_EffectImprison,
-	},
-	
 	[EFFECT_REFRESH] =
 	{
 		.battleScript = BattleScript_EffectRefresh,
-	},
-	
-	[EFFECT_GRUDGE] =
-	{
-		.battleScript = BattleScript_EffectGrudge,
 	},
 	
 	[EFFECT_SNATCH] =
@@ -763,11 +748,6 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 	[EFFECT_GRAVITY] =
 	{
 		.battleScript = BattleScript_EffectGravity,
-	},
-	
-	[EFFECT_MIRACLE_EYE] =
-	{
-		.battleScript = BattleScript_EffectMiracleEye,
 	},
 	
 	[EFFECT_GYRO_BALL] =
@@ -919,6 +899,16 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 	[EFFECT_HEART_SWAP] =
 	{
 		.battleScript = BattleScript_EffectSplitSwap,
+	},
+	
+	[EFFECT_MAGNET_RISE] =
+	{
+		.battleScript = BattleScript_EffectMagnetRise,
+	},
+	
+	[EFFECT_SPECIAL_ATTACK_UP_2] =
+	{
+		.battleScript = BattleScript_EffectSpecialAttackUp2,
 	},
 	
 	/*

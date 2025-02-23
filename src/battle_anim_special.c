@@ -1361,7 +1361,7 @@ void AnimTask_SafariGetReaction(u8 taskId)
 
 void AnimTask_GetTrappedMoveAnimId(u8 taskId)
 {
-	gBattleAnimArgs[ARG_RET_ID] = gBattleMoves[gAnimDisableStructPtr->wrappedMove].argument.bind.trappingId;
+	gBattleAnimArgs[ARG_RET_ID] = gBattleMoves[gAnimDisableStructPtr->wrappedMove].argument.bindTrapId;
     DestroyAnimVisualTask(taskId);
 }
 

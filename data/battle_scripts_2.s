@@ -115,7 +115,6 @@ BattleScript_ItemSetMist::
 
 BattleScript_ItemSetFocusEnergy::
     call BattleScript_UseItemMessage
-    setfocusenergy
     playmoveanimation BS_ATTACKER, MOVE_FOCUS_ENERGY
 	waitstate
     printstring STRINGID_ATKGETTINGPUMPED
@@ -273,7 +272,7 @@ BattleScript_LeftoverWallyPrepToThrow::
 	waitmessage B_WAIT_TIME_LONG
 	returnatktoball
 	waitstate
-	handletrainerslidecase B_POSITION_PLAYER_LEFT, ATK83_TRAINER_SLIDE_CASE_SLIDE_IN
+	handletrainerslidecase B_POSITION_PLAYER_LEFT, ATK6B_TRAINER_SLIDE_CASE_SLIDE_IN
 	waitstate
 	printstring STRINGID_YOUTHROWABALLNOWRIGHT
 	waitmessage B_WAIT_TIME_LONG

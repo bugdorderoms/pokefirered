@@ -48,12 +48,12 @@ void BattleAI_SetupAILogicData(void)
 			AI_DATA->aiFlags = AI_FLAG_SAFARI;
 		else if (gBattleTypeFlags & BATTLE_TYPE_ROAMER)
 			AI_DATA->aiFlags = AI_FLAG_ROAMER;
-		else 
+		else
 		{
 			if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER)) // Wild
 			{
 				averageLevel = 0;
-				count = 1;
+				count = 0;
 				
 				for (i = 0; i < PARTY_SIZE; i++)
 				{

@@ -498,6 +498,17 @@ static const u8 sMistBallBlendCoeefs[] =
     0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
 };
 
+const struct SpriteTemplate gGravityBlackHoleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SHADOW_BALL,
+    .paletteTag = ANIM_TAG_SHADOW_BALL,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
 static const union AffineAnimCmd sAffineAnim_PowerTrick[] =
 {
     AFFINEANIMCMD_FRAME(0x0, 0x0, 20, 1),
@@ -517,6 +528,17 @@ const struct SpriteTemplate gPowerTrickSpriteTemplate =
     .anims = gDummySpriteAnimTable,
     .images = NULL,
     .affineAnims = sAffineAnims_PowerTrick,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
+const struct SpriteTemplate gPsychoCutBladeWheelSpriteTemplate =    
+{
+    .tileTag = ANIM_TAG_PUNISHMENT_BLADES,
+    .paletteTag = ANIM_TAG_PUNISHMENT_BLADES,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
     .callback = AnimSpriteOnMonForDuration,
 };
 

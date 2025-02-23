@@ -284,7 +284,7 @@ bool8 DoMoveEffect(bool8 primary, const u8 *scriptStr, u32 flags)
 				gDisableStructs[gEffectBattler].wrapTurns = RandomRange(4, 5);
 				gDisableStructs[gEffectBattler].wrappedBy = gBattleScripting.battler;
 				gDisableStructs[gEffectBattler].wrappedMove = gCurrentMove;
-				gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument.bind.trappingId;
+				gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument.bindTrapId;
 				effect = 2;
 			}
 			break;
@@ -364,10 +364,10 @@ bool8 DoMoveEffect(bool8 primary, const u8 *scriptStr, u32 flags)
 		    effect = 2;
 			break;
 		case MOVE_EFFECT_CURE_STATUS1:
-		    if (gBattleMons[gEffectBattler].status1.id == gBattleMoves[gCurrentMove].argument.cureStatus.statusId)
+		    if (gBattleMons[gEffectBattler].status1.id == gBattleMoves[gCurrentMove].argument.status)
 			{
 				ClearBattlerStatus(gEffectBattler);
-				gBattleCommunication[MULTISTRING_CHOOSER] = gNonVolatileStatusConditions[gBattleMoves[gCurrentMove].argument.cureStatus.statusId - 1].statusCuredByMoveMultistringId;
+				gBattleCommunication[MULTISTRING_CHOOSER] = gNonVolatileStatusConditions[gBattleMoves[gCurrentMove].argument.status - 1].statusCuredByMoveMultistringId;
 				effect = 2;
 			}
 			break;

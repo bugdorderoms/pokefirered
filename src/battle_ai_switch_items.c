@@ -23,7 +23,7 @@ static bool8 ShouldSwitchIfNoOneMoveIsEffective(u8 battlerId)
 	
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 	{
-		if (IsBattlerAlive(i) && GetBattlerSide(i) != GetBattlerSide(battlerId))
+		if (IsBattlerAlive(i) && !IsBattlerAlly(battlerId, i))
 		{
 			for (j = 0; j < MAX_MON_MOVES; j++)
 			{

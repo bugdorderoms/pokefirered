@@ -60,6 +60,8 @@ static void AnimThoughtBubbleStep(struct Sprite *);
 static void AnimMetronomeFingerStep(struct Sprite *);
 static void AnimFollowMeFingerStep1(struct Sprite *);
 static void AnimFollowMeFingerStep2(struct Sprite *);
+static void AnimHorizontalSlice(struct Sprite *);
+static void AnimHorizontalSliceStep(struct Sprite *);
 
 static const union AnimCmd sPowderParticlesAnimCmds[] =
 {
@@ -636,6 +638,17 @@ const struct SpriteTemplate gCuttingSliceSpriteTemplate =
 {
     .tileTag = ANIM_TAG_CUT,
     .paletteTag = ANIM_TAG_CUT,
+    .oam = &gOamData_AffineOff_ObjBlend_32x32,
+    .anims = sCuttingSliceAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimCuttingSlice,
+};
+
+const struct SpriteTemplate gRedCuttingSliceSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_CUT,
+    .paletteTag = ANIM_TAG_JAGGED_MUSIC_NOTE,
     .oam = &gOamData_AffineOff_ObjBlend_32x32,
     .anims = sCuttingSliceAnimTable,
     .images = NULL,
@@ -1441,6 +1454,48 @@ const struct SpriteTemplate gLastResortSparklesSpriteTemplate =
     .callback = AnimGrantingStars,
 };
 
+static const union AffineAnimCmd sAffineAnim_NightSlashSliceLeft[] =
+{
+    AFFINEANIMCMD_FRAME(32, 32, 0, 1), // Increase size by 1/4
+	AFFINEANIMCMD_FRAME(0, 0, -32, 1), // Rotate
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sAffineAnim_NightSlashSliceRight[] =
+{
+    AFFINEANIMCMD_FRAME(32, 32, 0, 1), // Increase size by 1/4
+	AFFINEANIMCMD_FRAME(0, 0, 96, 1), // Rotate
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sAffineAnims_NightSlashSlice[] =
+{
+    sAffineAnim_NightSlashSliceLeft,
+	sAffineAnim_NightSlashSliceRight
+};
+
+const struct SpriteTemplate gNightSlashSliceSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_CUT,
+    .paletteTag = ANIM_TAG_CUT,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = sCuttingSliceAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_NightSlashSlice,
+    .callback = AnimHorizontalSlice,
+};
+
+const struct SpriteTemplate gPowerGemWheelSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_POWER_GEM,
+    .paletteTag = ANIM_TAG_POWER_GEM,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sSwiftStarAffineAnimTable,
+    .callback = AnimFireSpiralOutward,
+};
+
 // Animates the falling particles that horizontally wave back and forth. Used by Sleep Powder, Stun Spore, and Poison Powder.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset
@@ -1703,7 +1758,7 @@ void AnimTranslateLinearSingleSineWave(struct Sprite* sprite)
     sprite->data[5] = gBattleAnimArgs[5];
     InitAnimArcTranslation(sprite);
 	
-    if (GetBattlerSide(gBattleAnimAttacker) == GetBattlerSide(gBattleAnimTarget))
+    if (IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget))
         sprite->data[0] = 1;
     else
         sprite->data[0] = 0;
@@ -1968,7 +2023,7 @@ void AnimPresent(struct Sprite* sprite)
 {
     InitSpritePosToAnimAttacker(sprite, FALSE);
 	
-	sprite->data[3] = GetBattlerSide(gBattleAnimAttacker) == GetBattlerSide(gBattleAnimTarget) ? 1 : 3;
+	sprite->data[3] = IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget) ? 1 : 3;
 	sprite->data[6] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
 	sprite->data[7] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y) + 10;
 	
@@ -2044,7 +2099,7 @@ void AnimItemSteal(struct Sprite* sprite)
 {
     InitSpritePosToAnimTarget(sprite, FALSE);
 	
-    if (GetBattlerSide(gBattleAnimTarget) == GetBattlerSide(gBattleAnimAttacker))
+    if (IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget))
         sprite->data[3] = 1;
     else
         sprite->data[3] = 3;
@@ -2183,7 +2238,6 @@ static void AnimTrickBagStep3(struct Sprite* sprite)
 void AnimFlyingParticle(struct Sprite* sprite)
 {
     u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[6]);
- 
 
     if (GetBattlerSide(battler) != B_SIDE_PLAYER)
     {
@@ -3813,4 +3867,37 @@ void AnimTask_MegaEvolutionUpdateAttackerSprite(u8 taskId)
 			DestroyAnimVisualTask(taskId);
 			break;
 	}
+}
+
+// Creates a sprite that moves left or right along the target.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: slice distance
+// arg 3: speed
+// arg 4: direction (FALSE = move right, TRUE = move left)
+// arg 5: affine anim num
+static void AnimHorizontalSlice(struct Sprite *sprite)
+{
+	StartSpriteAffineAnim(sprite, gBattleAnimArgs[5]);
+	
+	sprite->x2 = gBattleAnimArgs[0];
+	sprite->y2 = gBattleAnimArgs[1];
+	
+	sprite->data[0] = gBattleAnimArgs[2];
+	sprite->data[1] = gBattleAnimArgs[3];
+	sprite->data[2] = gBattleAnimArgs[4];
+	sprite->callback = AnimHorizontalSliceStep;
+}
+
+static void AnimHorizontalSliceStep(struct Sprite *sprite)
+{
+	if (sprite->data[2])
+		sprite->x2 -= sprite->data[1];
+	else
+		sprite->x2 += sprite->data[1];
+	
+	sprite->data[3] += sprite->data[1];
+	
+	if (sprite->data[3] >= sprite->data[0])
+		DestroyAnimSprite(sprite);
 }

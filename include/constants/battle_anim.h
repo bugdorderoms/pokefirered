@@ -19,19 +19,19 @@
 #define ANIM_TAG_GUST                       (ANIM_SPRITES_START + 9)
 #define ANIM_TAG_ICE_CUBE                   (ANIM_SPRITES_START + 10)
 #define ANIM_TAG_SPARK_2                    (ANIM_SPRITES_START + 11)
-#define ANIM_TAG_ORANGE                     (ANIM_SPRITES_START + 12) // unused
+#define ANIM_TAG_FORCE_PALM                 (ANIM_SPRITES_START + 12)
 #define ANIM_TAG_YELLOW_BALL                (ANIM_SPRITES_START + 13)
 #define ANIM_TAG_LOCK_ON                    (ANIM_SPRITES_START + 14)
 #define ANIM_TAG_TIED_BAG                   (ANIM_SPRITES_START + 15)
 #define ANIM_TAG_BLACK_SMOKE                (ANIM_SPRITES_START + 16)
 #define ANIM_TAG_BLACK_BALL                 (ANIM_SPRITES_START + 17)
 #define ANIM_TAG_CONVERSION                 (ANIM_SPRITES_START + 18)
-#define ANIM_TAG_GLASS                      (ANIM_SPRITES_START + 19) // unused
+#define ANIM_TAG_PURPLE_DRAKE               (ANIM_SPRITES_START + 19)
 #define ANIM_TAG_HORN_HIT                   (ANIM_SPRITES_START + 20)
 #define ANIM_TAG_HIT                        (ANIM_SPRITES_START + 21)
 #define ANIM_TAG_HIT_2                      (ANIM_SPRITES_START + 22)
 #define ANIM_TAG_BLUE_SHARDS                (ANIM_SPRITES_START + 23) // unused
-#define ANIM_TAG_CLOSING_EYE                (ANIM_SPRITES_START + 24) // unused
+#define ANIM_TAG_ENERGY_BALL                (ANIM_SPRITES_START + 24)
 #define ANIM_TAG_WAVING_HAND                (ANIM_SPRITES_START + 25) // unused
 #define ANIM_TAG_HIT_DUPLICATE              (ANIM_SPRITES_START + 26) // unused
 #define ANIM_TAG_LEER                       (ANIM_SPRITES_START + 27)
@@ -51,7 +51,7 @@
 #define ANIM_TAG_SCRATCH_2                  (ANIM_SPRITES_START + 41) // unused
 #define ANIM_TAG_BUBBLE_BURST_2             (ANIM_SPRITES_START + 42) // unused
 #define ANIM_TAG_ICE_CHUNK                  (ANIM_SPRITES_START + 43)
-#define ANIM_TAG_GLASS_2                    (ANIM_SPRITES_START + 44) // unused
+#define ANIM_TAG_POWER_GEM                  (ANIM_SPRITES_START + 44)
 #define ANIM_TAG_PINK_HEART_2               (ANIM_SPRITES_START + 45) // unused
 #define ANIM_TAG_SAP_DRIP                   (ANIM_SPRITES_START + 46) // unused
 #define ANIM_TAG_SAP_DRIP_2                 (ANIM_SPRITES_START + 47) // unused
@@ -61,13 +61,13 @@
 #define ANIM_TAG_MONSTER_FOOT               (ANIM_SPRITES_START + 51)
 #define ANIM_TAG_HUMANOID_HAND              (ANIM_SPRITES_START + 52) // unused
 #define ANIM_TAG_NOISE_LINE                 (ANIM_SPRITES_START + 53)
-#define ANIM_TAG_YELLOW_UNK                 (ANIM_SPRITES_START + 54) // unused
+#define ANIM_TAG_DRAGON_PULSE_RING          (ANIM_SPRITES_START + 54)
 #define ANIM_TAG_RED_FIST                   (ANIM_SPRITES_START + 55) // unused
 #define ANIM_TAG_SLAM_HIT                   (ANIM_SPRITES_START + 56)
 #define ANIM_TAG_RING                       (ANIM_SPRITES_START + 57) // unused
 #define ANIM_TAG_ROCKS                      (ANIM_SPRITES_START + 58)
 #define ANIM_TAG_Z                          (ANIM_SPRITES_START + 59) // unused
-#define ANIM_TAG_YELLOW_UNK_2               (ANIM_SPRITES_START + 60) // unused
+#define ANIM_TAG_FLASH_CANNON_BALL          (ANIM_SPRITES_START + 60)
 #define ANIM_TAG_AIR_SLASH                  (ANIM_SPRITES_START + 61) // unused
 #define ANIM_TAG_SPINNING_GREEN_ORBS        (ANIM_SPRITES_START + 62) // unused
 #define ANIM_TAG_LEAF                       (ANIM_SPRITES_START + 63)
@@ -91,7 +91,7 @@
 #define ANIM_TAG_PINK_GLOVE                 (ANIM_SPRITES_START + 81) // unused
 #define ANIM_TAG_BLUE_LINES                 (ANIM_SPRITES_START + 82) // unused
 #define ANIM_TAG_IMPACT_3                   (ANIM_SPRITES_START + 83) // unused
-#define ANIM_TAG_IMPACT_2                   (ANIM_SPRITES_START + 84) // unused
+#define ANIM_TAG_IMPACT_2                   (ANIM_SPRITES_START + 84)
 #define ANIM_TAG_RETICLE                    (ANIM_SPRITES_START + 85) // unused
 #define ANIM_TAG_BREATH                     (ANIM_SPRITES_START + 86)
 #define ANIM_TAG_ANGER                      (ANIM_SPRITES_START + 87)
@@ -99,7 +99,7 @@
 #define ANIM_TAG_VINE                       (ANIM_SPRITES_START + 89) // unused
 #define ANIM_TAG_SWORD_2                    (ANIM_SPRITES_START + 90) // unused
 #define ANIM_TAG_CLAPPING                   (ANIM_SPRITES_START + 91) // unused
-#define ANIM_TAG_RED_TUBE                   (ANIM_SPRITES_START + 92)
+#define ANIM_TAG_RED_TUBE                   (ANIM_SPRITES_START + 92) // unused
 #define ANIM_TAG_AMNESIA                    (ANIM_SPRITES_START + 93)
 #define ANIM_TAG_STRING_2                   (ANIM_SPRITES_START + 94) // unused
 #define ANIM_TAG_PENCIL_2                   (ANIM_SPRITES_START + 95) // unused
@@ -266,7 +266,7 @@
 #define ANIM_TAG_METEOR                     (ANIM_SPRITES_START + 256)
 #define ANIM_TAG_FLAT_ROCK                  (ANIM_SPRITES_START + 257)
 #define ANIM_TAG_MAGNIFYING_GLASS           (ANIM_SPRITES_START + 258)
-#define ANIM_TAG_BROWN_ORB                  (ANIM_SPRITES_START + 259) // unused
+#define ANIM_TAG_BROWN_ORB                  (ANIM_SPRITES_START + 259)
 #define ANIM_TAG_METAL_SOUND_WAVES          (ANIM_SPRITES_START + 260)
 #define ANIM_TAG_FLYING_DIRT                (ANIM_SPRITES_START + 261)
 #define ANIM_TAG_ICICLE_SPEAR               (ANIM_SPRITES_START + 262)
@@ -321,6 +321,8 @@
 #define ANIM_TAG_MEGA_SYMBOL                (ANIM_SPRITES_START + 311)
 #define ANIM_TAG_SMALL_FISH                 (ANIM_SPRITES_START + 312)
 #define ANIM_TAG_PUNISHMENT_BLADES          (ANIM_SPRITES_START + 313)
+#define ANIM_TAG_AVALANCHE_ROCKS            (ANIM_SPRITES_START + 314)
+#define ANIM_TAG_MUD_BOMB                   (ANIM_SPRITES_START + 315)
 
 // battlers
 #define ANIM_ATTACKER    0
@@ -380,6 +382,11 @@
 #define BG_MISTY_TERRAIN        28
 #define BG_ELECTRIC_TERRAIN     29
 #define BG_PSYCHIC_TERRAIN      30
+#define BG_FIRE                 31
+#define BG_FOCUS_BLAST          32
+#define BG_AURA_SPHERE          33
+#define BG_GIGA_IMPACT_PLAYER   34
+#define BG_GIGA_IMPACT_OPPONENT 35
 
 // table ids for general animations
 #define B_ANIM_FORM_CHANGE           0x0
@@ -429,6 +436,7 @@
 #define B_ANIM_SILENT_FORM_CHANGE    0x2C // Same as B_ANIM_FORM_CHANGE, but with no sound effects
 #define B_ANIM_TOTEM_BOOST           0x2D
 #define B_ANIM_TAILWIND              0x2E
+#define B_ANIM_AQUA_RING_HEAL        0x2F
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0

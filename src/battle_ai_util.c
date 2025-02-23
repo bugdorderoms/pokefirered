@@ -254,7 +254,7 @@ bool8 ShouldAIIncreaseCriticalChance(u8 attacker, u8 defender)
 bool8 TargetImuneToMove(u8 attacker, u8 defender, u8 moveSlot)
 {
 	if (AI_THINKING->effectiveness[attacker][defender][moveSlot] == TYPE_MUL_NO_EFFECT || AbilityBattleEffects(ABILITYEFFECT_WOULD_BLOCK_MOVE, defender)
-	|| (GetBattlerSide(attacker) != GetBattlerSide(defender) && AbilityBattleEffects(ABILITYEFFECT_WOULD_ABSORB_MOVE, defender)))
+	|| (!IsBattlerAlly(attacker, defender) && AbilityBattleEffects(ABILITYEFFECT_WOULD_ABSORB_MOVE, defender)))
 		return TRUE;
 	
 	return FALSE;

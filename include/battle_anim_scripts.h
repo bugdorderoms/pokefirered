@@ -60,6 +60,7 @@ extern const u8 gGeneralAnim_Schooling[];
 extern const u8 gGeneralAnim_SpitOutPrey[];
 extern const u8 gGeneralAnim_SilentFormChange[];
 extern const u8 gGeneralAnim_TotemBoost[];
+extern const u8 gGeneralAnim_AquaRingHeal[];
 
 // Move animations
 extern const u8 gMoveAnim_NONE[];

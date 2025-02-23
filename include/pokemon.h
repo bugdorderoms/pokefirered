@@ -222,52 +222,48 @@ struct SpeciesInfo
 
 struct MoveFlags
 {
-	/*0x00*/ u8 makesContact:1; // A move with this flag will makes contact.
-	/*0x00*/ u8 danceMove:1; // A move with this flag can be affected by Dancer.
-	/*0x00*/ u8 magicCoatAffected:1; // A move with this flag can be reflected by Magic Coat.
-	/*0x00*/ u8 snatchAffected:1; // A move with this flag can be stealed by Snatch.
-	/*0x00*/ u8 thawUser:1; // A move with this flag will thaw the user when used.
-	/*0x00*/ u8 kingsRockAffected:1; // A move with this flag can be affected by Kings Rock.
-	/*0x00*/ u8 gravityBanned:1; // A move with this flag can't be selected while gravity is in effect.
-	/*0x00*/ u8 forbiddenProtect:1; // A move with this flag will ignore the target's protect effects.
+	/*0x00*/ bool8 makesContact:1; // A move with this flag will makes contact.
+	/*0x00*/ bool8 danceMove:1; // A move with this flag can be affected by Dancer.
+	/*0x00*/ bool8 magicCoatAffected:1; // A move with this flag can be reflected by Magic Coat.
+	/*0x00*/ bool8 snatchAffected:1; // A move with this flag can be stealed by Snatch.
+	/*0x00*/ bool8 thawUser:1; // A move with this flag will thaw the user when used.
+	/*0x00*/ bool8 kingsRockAffected:1; // A move with this flag can be affected by Kings Rock.
+	/*0x00*/ bool8 gravityBanned:1; // A move with this flag can't be selected while gravity is in effect.
+	/*0x00*/ bool8 forbiddenProtect:1; // A move with this flag will ignore the target's protect effects.
 	// end of byte
-	/*0x01*/ u8 punchMove:1; // A move with this flag can be affected by Iron Fist.
-	/*0x01*/ u8 forbiddenMeFirst:1; // A move with this flag can't be executed by Me First.
-	/*0x01*/ u8 bitingMove:1; // A move with this flag can be affected by Strong Jaw.
-	/*0x01*/ u8 pulseMove:1; // A move with this flag can be affected by Mega Launcher.
-	/*0x01*/ u8 targetStatStagesIgnored:1; // A move with this flag will ignore the target Defense and Evasion stat stages.
-	/*0x01*/ u8 forbiddenMimic:1; // A move with this flag can't be copied by Mimic.
-	/*0x01*/ u8 hitUnderground:1; // If target is undergrounded, can hit and deal double damage.
-	/*0x01*/ u8 hitUnderwater:1; // If target is in underwater, can hit and deal double damage.
+	/*0x01*/ bool8 punchMove:1; // A move with this flag can be affected by Iron Fist.
+	/*0x01*/ bool8 forbiddenMeFirst:1; // A move with this flag can't be executed by Me First.
+	/*0x01*/ bool8 bitingMove:1; // A move with this flag can be affected by Strong Jaw.
+	/*0x01*/ bool8 pulseMove:1; // A move with this flag can be affected by Mega Launcher.
+	/*0x01*/ bool8 targetStatStagesIgnored:1; // A move with this flag will ignore the target Defense and Evasion stat stages.
+	/*0x01*/ bool8 forbiddenMimic:1; // A move with this flag can't be copied by Mimic.
+	/*0x01*/ bool8 hitUnderground:1; // If target is undergrounded, can hit and deal double damage.
+	/*0x01*/ bool8 hitUnderwater:1; // If target is in underwater, can hit and deal double damage.
 	// end of byte
-	/*0x02*/ u8 soundMove:1; // A move with this flag will makes sound.
-	/*0x02*/ u8 ballisticMove:1; // A move with this flag will be blocked by Bulletproof.
-	/*0x02*/ u8 protectionMove:1; // A move with this flag can set a protect like effect.
-	/*0x02*/ u8 powderMove:1; // A move with this flag can be blocked by Overcoat, etc.
-	/*0x02*/ u8 ignoreAbilities:1; // A move with this flag will ignore all ignoreable abilities.
-	/*0x02*/ u8 dmgMinimize:1; // A move with this flag will deal double damage and aways hit the target if it was used Minimize.
-	/*0x02*/ u8 hitInAir:1; // If target is in the air, can hit.
-	/*0x02*/ u8 hitInAirDoubleDmg:1; // If target is in the air, can hit and deal double damage.
+	/*0x02*/ bool8 soundMove:1; // A move with this flag will makes sound.
+	/*0x02*/ bool8 ballisticMove:1; // A move with this flag will be blocked by Bulletproof.
+	/*0x02*/ bool8 protectionMove:1; // A move with this flag can set a protect like effect.
+	/*0x02*/ bool8 powderMove:1; // A move with this flag can be blocked by Overcoat, etc.
+	/*0x02*/ bool8 ignoreAbilities:1; // A move with this flag will ignore all ignoreable abilities.
+	/*0x02*/ bool8 dmgMinimize:1; // A move with this flag will deal double damage and aways hit the target if it was used Minimize.
+	/*0x02*/ bool8 hitInAir:1; // If target is in the air, can hit.
+	/*0x02*/ bool8 hitInAirDoubleDmg:1; // If target is in the air, can hit and deal double damage.
 	// end of byte
-	/*0x03*/ u8 makeGrounded:1; // A move with this flag makes Ground type moves do 1x damage to flying and levitating targets.
-	/*0x03*/ u8 hitSubstitute:1; // A move with this flag will ignore the target's Substitute.
-	/*0x03*/ u8 slicingMove:1; // A move with this flag can be affected by Sharpness.
-	/*0x03*/ u8 windMove:1; // A move with this flag can be affected by Wind Rider, etc.
-	/*0x03*/ u8 forbiddenParentalBond:1; // A move with this flag can't become a multi-hit move due to Parental Bond.
-	/*0x03*/ u8 forbiddenMirrorMove:1; // A move with this flag can't be affected by Mirror Move.
-	/*0x03*/ u8 forbiddenMetronome:1; // A move with this flag can't be called by Metronome.
-	/*0x03*/ u8 forbiddenAssist:1; // A move with this flag can't be executed by Assist.
+	/*0x03*/ bool8 makeGrounded:1; // A move with this flag makes Ground type moves do 1x damage to flying and levitating targets.
+	/*0x03*/ bool8 hitSubstitute:1; // A move with this flag will ignore the target's Substitute.
+	/*0x03*/ bool8 slicingMove:1; // A move with this flag can be affected by Sharpness.
+	/*0x03*/ bool8 windMove:1; // A move with this flag can be affected by Wind Rider, etc.
+	/*0x03*/ bool8 forbiddenParentalBond:1; // A move with this flag can't become a multi-hit move due to Parental Bond.
+	/*0x03*/ bool8 forbiddenMirrorMove:1; // A move with this flag can't be affected by Mirror Move.
+	/*0x03*/ bool8 forbiddenMetronome:1; // A move with this flag can't be called by Metronome.
+	/*0x03*/ bool8 forbiddenAssist:1; // A move with this flag can't be executed by Assist.
 	// end of byte
-	/*0x04*/ u8 forbiddenSleepTalk:1; // A move with this flag can't be executed by Sleep Talk.
-	/*0x04*/ u8 forbiddenCopycat:1; // A move with this flag can't be copied by Copycat.
-	/*0x04*/ u8 forbiddenInstruct:1; // A move with this flag can't be executed by Instruct.
-	/*0x04*/ u8 hasQuietBGM:1; // A move with this flag will have a quiet BGM on its battle anim.
-	/*0x04*/ u8 strikeCount:4; // Num hits the move will do, max 15 hits. Defaults to 1 if not set. May apply its effect on each hit.
-	// end of byte
-	/*0x05*/ u8 recoilDivisor:3; // Used by moves that have a recoil damage, also if set, its affected by Reckless.
-	/*0x05*/ u8 forcePressure:1; // A move with this flag will force the extra PP consuption from Pressure.
-	/*0x05*/ u8 critStage:2; // Max +3 crit stages. Used by moves with a high chance to be critical.
-	/*0x05*/ u8 unused:2;
+	/*0x04*/ bool8 forbiddenSleepTalk:1; // A move with this flag can't be executed by Sleep Talk.
+	/*0x04*/ bool8 forbiddenCopycat:1; // A move with this flag can't be copied by Copycat.
+	/*0x04*/ bool8 forbiddenInstruct:1; // A move with this flag can't be executed by Instruct.
+	/*0x04*/ bool8 hasQuietBGM:1; // A move with this flag will have a quiet BGM on its battle anim.
+	/*0x04*/ bool8 forcePressure:1; // A move with this flag will force the extra PP consuption from Pressure.
+	/*0x04*/ bool8 unused:3;
 	// end of byte
 };
 
@@ -280,6 +276,7 @@ struct AdditionalEffect
     bool8 onlyIfTargetRaisedStats:1; // Effect applies only if target was raised its stat
 	bool8 onFinalMultiHitOnly:1; // Effect applies only on the final hit of a miltihit move
 	bool8 onMoveEndOnly:1; // Effect applies only at ATK49_SECOND_MOVE_EFFECT on cmd moveend
+	bool8 unused:3;
 };
 
 #define EFFECTS_ARR(...) (const struct AdditionalEffect[]) {__VA_ARGS__}
@@ -292,53 +289,48 @@ struct BattleMove
 	/*0x08*/ const u8 *animScript;
 	/*0x0C*/ u16 effect;
 	/*0x0E*/ u8 power;
-    /*0x0F*/ u8 type;
-    /*0x10*/ u8 accuracy;
-    /*0x11*/ u8 pp;
-	/*0x12*/ u8 target;
-	/*0x13*/ s8 priority;
+    /*0x0F*/ u8 pp;
+	/*0x10*/ u32 type:5; // Up to 32
+			 u32 split:2;
+			 u32 accuracy:7;
+			 s32 priority:4;
+			 u32 strikeCount:4; // Max 15 hits. Defaults to 1 if not set. May apply its effect on each hit.
+			 u32 critStage:2; // Max +3 crit stages.
+			 u32 recoilDivisor:3; // Used by moves that have a recoil damage, also if set, its affected by Reckless.
+			 u32 numAdditionalEffects:2; // Max 3 effects.
+			 u32 unused:3;
 	/*0x14*/ union {
-				struct { u8 percentage; } absorb;
-				struct { u8 trappingId; } bind;
-				struct { u8 amount; } fixedDamage;
-				struct { u8 increment; } tripleKick;
-				struct { u8 ppToDeduct; } spite;
-				struct { u8 split; } counterAttack;
-				struct { u8 statusId; } cureStatus;
-				struct { u16 abilityId; } setAbility;
-				struct { u8 weatherId; u16 stringId; } setWeather;
-				struct { u16 weather; u16 debuffWeather; } neverMissInWeather;
-				struct { u16 stringId; u16 status; } semiInvulnerable;
-				struct { u16 stringId; u16 weather; } twoTurns;
+				struct { u16 stringId; u16 statusOrweather; } twoTurns; // Weather for two turns moves, status for semi invulnerable moves
 				struct { u16 stringId; u16 animationId; } futureAttack;
+				struct { u16 weather; u16 debuffWeather; } neverMissInWeather;
+				struct { u16 weatherId; u16 stringId; } setWeather;
+				struct { u8 statusId; u8 status; u16 stringId; } setStatus;
+				u32 status;
+				u16 bindTrapId;
+				u16 amount;
+				u16 stringId;
+				u16 abilityId;
+				u16 counterSplit;
 			 } argument;
-	/*0x18*/ u8 split;
+	/*0x18*/ u8 target;
 	/*0x19*/ u8 zMoveEffect;
     /*0x1A*/ struct MoveFlags flags;
 			 const struct AdditionalEffect *additionalEffects; // primary/secondary effects
-			 u8 numAdditionalEffects;
 };
 
 extern const struct BattleMove gBattleMoves[];
 
-struct BattleMoveEffect
+struct ALIGNED_NO_PADDING(2) BattleMoveEffect
 {
 	const u8 *battleScript;
-	u32 normalizeUnaffected:1; // Move effects with this flag will not change type if affected by Normalize and similar abilities.
-	u32 twoTurnsEffect:1; // Move effects with this flag will be considered a Two turns effect.
-	u32 semiInvulnerableEffect:1; // Move effects with this flag will cause the battler to be semi invulnerable.
-	u32 healingEffect:1; // Move effects with this flag can't be used while affected by Heal Block, also Triage gives priority to it.
-	u32 affectsUserSide:1; // Tipycally used to show the entire side on chose the move, but it's still used to determine protect like effects.
-	u32 callOtherMove:1; // Move effects with this flag will be considered a effect of a "Move that call other moves".
-	u32 noEffectiveness:1; // Move effects with this flag will not display the "Its super effective" and "Its not very effective" message.
-	u32 unused:1;
-	// end of byte
-	u32 unused2:8;
-	// end of byte
-	u32 unused3:8;
-	// end of byte
-	u32 unused4:8;
-	// end of byte
+	u16 normalizeUnaffected:1; // Move effects with this flag will not change type if affected by Normalize and similar abilities.
+	u16 twoTurnsEffect:1; // Move effects with this flag will be considered a Two turns effect.
+	u16 semiInvulnerableEffect:1; // Move effects with this flag will cause the battler to be semi invulnerable.
+	u16 healingEffect:1; // Move effects with this flag can't be used while affected by Heal Block, also Triage gives priority to it.
+	u16 affectsUserSide:1; // Tipycally used to show the entire side on chose the move, but it's still used to determine protect like effects.
+	u16 callOtherMove:1; // Move effects with this flag will be considered a effect of a "Move that call other moves".
+	u16 noEffectiveness:1; // Move effects with this flag will not display the "Its super effective" and "Its not very effective" message.
+	u16 unused:9;
 };
 
 extern const struct BattleMoveEffect gBattleMoveEffects[];
@@ -347,30 +339,23 @@ extern const struct BattleMoveEffect gBattleMoveEffects[];
 #define GET_MOVE_MOVEEFFECT_TABLE(move) GET_MOVEEFFECT_TABLE(gBattleMoves[move].effect)
 #define GET_MOVE_BATTLESCRIPT(move) GET_MOVE_MOVEEFFECT_TABLE(move).battleScript
 
-struct Ability
+struct ALIGNED_NO_PADDING(2) Ability
 {
-	const u8 *description;
-	u8 name[ABILITY_NAME_LENGTH + 1];
-	u8 cantBeCopied:1; // Can't be copied by Role Play.
-	u8 cantBeSwapped:1; // Can't be swapped by Skill Swap or Wandering Spirit.
-	u8 cantBeTraced:1; // Can't be copied by Trace
-	u8 cantBeSuppressed:1; // Can't be suppressed by Gastro Acid or Neutralizing Gas.
-	u8 cantBeOverwritten:1; // Can't be replaced by Entrainment, Worry Seed or Simple Beam (but can be by Mummy).
-	u8 breakable:1; // Can be bypassed by Mold Breaker.
-	u8 unused:2;
-	u16 unused2;
+	/*0x00*/ const u8 *description;
+	/*0x04*/ u8 name[ABILITY_NAME_LENGTH + 1];
+	/*0x15*/ u8 cantBeCopied:1; // Can't be copied by Role Play.
+		     u8 cantBeSwapped:1; // Can't be swapped by Skill Swap or Wandering Spirit.
+		     u8 cantBeTraced:1; // Can't be copied by Trace.
+		     u8 cantBeSuppressed:1; // Can't be suppressed by Gastro Acid or Neutralizing Gas.
+		     u8 cantBeOverwritten:1; // Can't be replaced by Entrainment, Worry Seed or Simple Beam (but can be by Mummy).
+		     u8 breakable:1; // Can be bypassed by Mold Breaker.
+		     u8 unused:2;
 };
 
 struct TypeInfo
 {
 	const u32 *tmPalette;
 	u8 name[TYPE_NAME_LENGTH + 1];
-};
-
-struct __attribute__((packed)) LevelUpMove
-{
-    u16 move;
-    u8 level;
 };
 
 enum
@@ -393,6 +378,20 @@ enum
     GROWTH_SLOW
 };
 
+struct NatureInfo
+{
+	const u8 *name;
+	u8 statUpId;
+	u8 statDownId;
+	s8 flavor[FLAVOR_COUNT];
+};
+
+struct __attribute__((packed)) LevelUpMove
+{
+    u16 move;
+    u8 level;
+};
+
 enum
 {
     GENERATE_SHINY_NORMAL,
@@ -405,14 +404,6 @@ enum
 	SHINY_ROLL_NORMAL,
 	SHINY_ROLL_DEXNAV,
 	SHINY_ROLL_SOS_CALL,
-};
-
-struct NatureInfo
-{
-	const u8 *name;
-	u8 statUpId;
-	u8 statDownId;
-	s8 flavor[FLAVOR_COUNT];
 };
 
 #define GENERATOR_FORMS(...) (const u16[]) { __VA_ARGS__, FORM_CHANGE_TERMINATOR }

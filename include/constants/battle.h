@@ -120,6 +120,7 @@
 #define STATUS2_NIGHTMARE                (1 << 22)
 #define STATUS2_CURSED                   (1 << 23)
 #define STATUS2_FORESIGHT                (1 << 24)
+#define STATUS2_AQUA_RING                (1 << 25)
 
 // per-battler statuses
 // These are removed after exiting the battle or switching out
@@ -145,6 +146,7 @@
 #define STATUS3_HEAL_BLOCK              (1 << 19)
 #define STATUS3_GASTRO_ACID             (1 << 20)
 #define STATUS3_MAGNET_RISE             (1 << 21)
+#define STATUS3_SMACKED_DOWN            (1 << 22)
 #define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
 
 // Not really sure what a "hitmarker" is.

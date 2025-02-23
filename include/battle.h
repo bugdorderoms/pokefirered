@@ -150,9 +150,10 @@ struct DisableStruct
 	/*0x15*/ u8 wrappedBy;
 	/*0x16*/ u16 wrappedMove;
 	/*0x18*/ u8 roostActive:1;
-			 u8 commanderActivated:1;
 			 u8 usedMoveIndices:4; // As flag using gBitTable
-			 u8 unused:2;
+			 u8 magnetRiseTimer:3;
+	/*0x19*/ u8 commanderActivated:1;
+			 u8 unused:7;
 };
 
 extern struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT];
@@ -565,7 +566,7 @@ struct BattleScripting
     /*0x04*/ s32 bideDmg;
 	/*0x08*/ s32 savedDmg;
     /*0x0C*/ u8 multihitString[6]; // for the "Hit X time(s)!" string
-    /*0x12*/ u8 atk47_state;
+    /*0x12*/ u8 atk48_state;
     /*0x27*/ bool8 bypassAbilityPopUp; // don't show ability pop up
     /*0x14*/ u8 animArg1;
     /*0x15*/ u8 animArg2;
@@ -579,7 +580,7 @@ struct BattleScripting
     /*0x1D*/ bool8 illusionNickHack;
     /*0x1E*/ u8 atk23_state; // give exp state
     /*0x1F*/ u8 battleStyle;
-    /*0x20*/ u8 atk6C_state; // lvl up box state
+    /*0x20*/ u8 atk5C_state; // lvl up box state
     /*0x21*/ u8 learnMoveState;
     /*0x22*/ u8 reshowMainState; // for reshow battle screen after menu
     /*0x23*/ u8 reshowHelperState; // for reshow battle screen after menu
@@ -606,9 +607,10 @@ struct BattleAnimationInfo
 	/*0x2*/ s16 ballShakeThing;
 	/*0x4*/ u8 healthboxSlideInStarted:1;
 			u8 battlerSpriteVisibility:1;
-			u8 ballThrowCaseId:4;
+			u8 ballThrowCaseId:3;
 			u8 isCriticalCapture:1;
 			u8 criticalCaptureSuccess:1;
+			u8 unused:1;
     /*0x5*/ u8 particleCounter;
 };
 

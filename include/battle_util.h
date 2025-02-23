@@ -78,6 +78,7 @@ enum
 
 #define IS_MULTIHIT_FINAL_STRIKE ((gBattleStruct->pursuitSwitchDmg || gMultiHitCounter <= 1))
 
+#define IsBattlerAlly(battler1, battler2) ((GetBattlerSide(battler1) == GetBattlerSide(battler2)))
 #define IsDoubleBattleForBattler(battlerId) ((IsDoubleBattleOnSide(GetBattlerSide(battlerId))))
 
 u8 GetBattlerForBattleScript(u8 caseId);

@@ -935,6 +935,7 @@ void BoxMonToMon(struct BoxPokemon *src, struct Pokemon *dest)
     dest->box = *src;
     SetMonData(dest, MON_DATA_STATUS_ID, &value);
 	SetMonData(dest, MON_DATA_STATUS_COUNTER, &value);
+	SetMonData(dest, MON_DATA_FORM_COUNTDOWN, &value);
     SetMonData(dest, MON_DATA_HP, &value);
     SetMonData(dest, MON_DATA_MAX_HP, &value);
     value = 255;

@@ -372,6 +372,54 @@ const struct SpriteTemplate gPunishmentPurpleHitSpriteTemplate =
     .callback = AnimHitSplatBasic,
 };
 
+const struct SpriteTemplate gPurpleHitSplatSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_IMPACT,
+    .paletteTag = ANIM_TAG_SHADOW_BALL,
+    .oam = &gOamData_AffineNormal_ObjBlend_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_HitSplat,
+    .callback = AnimHitSplatBasic,
+};
+
+static const union AnimCmd sSpriteAnimCmds_ShotHitBall[] =
+{
+    ANIMCMD_FRAME(64, 4),
+	ANIMCMD_FRAME(48, 4),
+	ANIMCMD_FRAME(32, 4),
+	ANIMCMD_FRAME(16, 4),
+	ANIMCMD_FRAME(0, 4),
+	ANIMCMD_END,
+};
+
+static const union AnimCmd *const sSpriteAnimTable_ShotHitBall[] =
+{
+    sSpriteAnimCmds_ShotHitBall
+};
+
+static const union AffineAnimCmd sAffineAnim_ShotHitBall[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, -32, 1), // 45 degree turn
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sAffineAnims_ShotHitBall[] =
+{
+    sAffineAnim_ShotHitBall
+};
+
+const struct SpriteTemplate gShotHitBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_IMPACT_2,
+    .paletteTag = ANIM_TAG_IMPACT_2,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = sSpriteAnimTable_ShotHitBall,
+    .images = NULL,
+    .affineAnims = sAffineAnims_ShotHitBall,
+    .callback = AnimShadowBall,
+};
+
 // Moves a spinning sprite around the mon's head.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset

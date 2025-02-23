@@ -257,6 +257,28 @@ const struct SpriteTemplate gFlingItemSpriteTemplate =
     .callback = AnimMissileArc,
 };
 
+const struct SpriteTemplate gDarkPulseRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PURPLE_RING,
+    .paletteTag = ANIM_TAG_PURPLE_RING,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = TranslateAnimSpriteToTargetMonLocation,
+};
+
+const struct SpriteTemplate gShadowClawSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_CLAW_SLASH,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_ClawSlash,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimClawSlash,
+};
+
 // Fade the attacker's sprite from visible to invisible.
 // arg 0: fade delay
 void AnimTask_AttackerFadeToInvisible(u8 taskId)

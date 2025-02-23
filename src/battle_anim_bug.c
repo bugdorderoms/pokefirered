@@ -374,7 +374,7 @@ static void AnimTranslateStinger(struct Sprite *sprite)
         gBattleAnimArgs[3] = -gBattleAnimArgs[3];
     }
 	
-    if (GetBattlerSide(gBattleAnimAttacker) == GetBattlerSide(gBattleAnimTarget))
+    if (IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget))
     {
 		if ((GetBattlerPosition(gBattleAnimTarget) & BIT_FLANK) == B_FLANK_LEFT)
         {

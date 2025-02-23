@@ -24,7 +24,6 @@ static void AnimSuperpowerOrb_Step(struct Sprite *sprite);
 static void AnimSuperpowerRock(struct Sprite *sprite);
 static void AnimSuperpowerRock_Step(struct Sprite *sprite);
 static void AnimSuperpowerRock_Step2(struct Sprite *sprite);
-static void AnimSuperpowerFireball(struct Sprite *sprite);
 static void AnimArmThrustHit(struct Sprite *sprite);
 static void AnimRevengeScratch(struct Sprite *sprite);
 static void AnimFocusPunchFist(struct Sprite *sprite);
@@ -36,6 +35,11 @@ static void AnimCircularPunchOrKick_Step(struct Sprite *sprite);
 static void AnimBreathPuff(struct Sprite *sprite);
 static void AnimLeftRightMovementSprite(struct Sprite *sprite);
 static void AnimLeftRightMovementSprite_Step(struct Sprite *sprite);
+static void AnimForcePalmHand(struct Sprite *sprite);
+static void AnimForcePalmHand_Step1(struct Sprite *sprite);
+static void AnimForcePalmHand_Step2(struct Sprite *sprite);
+static void AnimForcePalmHand_Step3(struct Sprite *sprite);
+static void AnimForcePalmHand_Step4(struct Sprite *sprite);
 
 static const union AnimCmd sAnim_HandOrFoot[] =
 {
@@ -522,7 +526,7 @@ static const union AffineAnimCmd sAffineAnimCmds_MachPunchFist[] =
 
 static const union AffineAnimCmd sAffineAnimCmds_FeintFist[] =
 {
-	AFFINEANIMCMD_FRAME(256, 256, 0, 1), //Double sprite size
+	AFFINEANIMCMD_FRAME(256, 256, 0, 1), // Double sprite size
 	AFFINEANIMCMD_FRAME(-16, -16, 0, 16), // Gradually decrease size
 	AFFINEANIMCMD_END,
 };
@@ -601,6 +605,88 @@ const struct SpriteTemplate gLeftRightMovingFistSpriteTemplate =
     .callback = AnimLeftRightMovementSprite,
 };
 
+const struct SpriteTemplate gForcePalmHandSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FORCE_PALM,
+    .paletteTag = ANIM_TAG_FORCE_PALM,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimForcePalmHand,
+};
+
+static const union AffineAnimCmd sAffineAnimCmds_AuraSphereBall[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 0, 0), // Start at 1 pixel
+	AFFINEANIMCMD_FRAME(16, 16, 0, 15),
+	// Pulsate
+	AFFINEANIMCMD_FRAME(-8, -8, 10, 3), // Shrinl and spin
+	AFFINEANIMCMD_FRAME(8, 8, 10, 3), // Grow and spin
+	AFFINEANIMCMD_JUMP(2),
+};
+
+const union AffineAnimCmd* const sAffineAnims_AuraSphereBall[] =
+{
+	sAffineAnimCmds_AuraSphereBall
+};
+
+const struct SpriteTemplate gAuraSphereBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_AURA_SPHERE,
+    .paletteTag = ANIM_TAG_AURA_SPHERE,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_AuraSphereBall,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
+static const union AffineAnimCmd sAffineAnimCmds_DrainPunchFist[] =
+{
+	AFFINEANIMCMD_FRAME(256, 256, 0, 1), // Double sprite size
+	AFFINEANIMCMD_FRAME(-32, -32, 0, 8), // Decrease size for 8 frames
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const sAffineAnims_DrainPunchFist[] =
+{
+	sAffineAnimCmds_DrainPunchFist
+};
+
+const struct SpriteTemplate gDrainPunchFistSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_HANDS_AND_FEET,
+    .paletteTag = ANIM_TAG_VERTICAL_HEX,
+    .oam = &gOamData_AffineDouble_ObjBlend_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_DrainPunchFist,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
+static const union AffineAnimCmd sAffineAnim_BulletPunch[] =
+{
+	AFFINEANIMCMD_FRAME(-128, -128, 0, 1), // Half size
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const sAffineAnimTable_BulletPunch[] =
+{
+	sAffineAnim_BulletPunch,
+};
+
+const struct SpriteTemplate gBulletPunchFistSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_HANDS_AND_FEET,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = sAnims_HandOrFoot,
+    .images = NULL,
+    .affineAnims = sAffineAnimTable_BulletPunch,
+    .callback = AnimBasicFistOrFoot,
+};
+
 // Animates the High Jump Kick sprite sliding to the target.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset
@@ -646,23 +732,24 @@ static void AnimBasicFistOrFoot(struct Sprite *sprite)
 // arg 3: final y pixel slide
 static void AnimKarateChopHand(struct Sprite *sprite)
 {
-	u8 defSide;
-	bool8 hFlip;
-	
 	InitSpritePosToAnimTarget(sprite, TRUE);
-	
-	defSide = GetBattlerSide(gBattleAnimTarget);
-	
-	if (GetBattlerSide(gBattleAnimAttacker) != defSide)
-		hFlip = (defSide != B_SIDE_PLAYER);
-	else
-		hFlip = ((GetBattlerPosition(gBattleAnimTarget) & BIT_FLANK) != B_FLANK_LEFT);
-	
-	StartSpriteAnim(sprite, hFlip);
-	
+	StartSpriteAnim(sprite, GetSpriteOrientationBasedOnBattlers());
+
     sprite->data[0] = gBattleAnimArgs[2];
 	sprite->data[4] = gBattleAnimArgs[3];
     sprite->callback = AnimStompFootStep;
+}
+
+bool8 GetSpriteOrientationBasedOnBattlers(void)
+{
+	bool8 shouldFlip;
+	
+	if (!IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget))
+		shouldFlip = (GetBattlerSide(gBattleAnimTarget) != B_SIDE_PLAYER);
+	else
+		shouldFlip = ((GetBattlerPosition(gBattleAnimTarget) & BIT_FLANK) != B_FLANK_LEFT);
+	
+	return shouldFlip;
 }
 
 // Displays a basic fist or foot sprite for a given duration, with random positions.
@@ -766,7 +853,7 @@ static void AnimCrossChopHandStep(struct Sprite *sprite)
 // arg 5: sin amplitude
 void AnimSlidingKick(struct Sprite *sprite)
 {
-    if (GetBattlerSide(gBattleAnimAttacker) == GetBattlerSide(gBattleAnimTarget) && GetBattlerPosition(gBattleAnimTarget) < B_POSITION_PLAYER_RIGHT)
+    if (IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget) && GetBattlerPosition(gBattleAnimTarget) < B_POSITION_PLAYER_RIGHT)
         gBattleAnimArgs[0] = -gBattleAnimArgs[0];
 	
     InitSpritePosToAnimTarget(sprite, TRUE);
@@ -1003,6 +1090,7 @@ static void AnimBrickBreakWallShard_Step(struct Sprite *sprite)
 
 // Animates MOVE_SUPERPOWER's growing power orb.
 // arg 0: anim battler
+// arg 1: set sprite priority (boolean)
 static void AnimSuperpowerOrb(struct Sprite *sprite)
 {
     if (gBattleAnimArgs[0] == ANIM_ATTACKER)
@@ -1010,12 +1098,16 @@ static void AnimSuperpowerOrb(struct Sprite *sprite)
         sprite->x = GetBattlerSpriteCoord(gBattlerAttacker, BATTLER_COORD_X);
         sprite->y = GetBattlerSpriteCoord(gBattlerAttacker, BATTLER_COORD_Y_PIC_OFFSET);
 		
-        sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimAttacker);
+		if (gBattleAnimArgs[1])
+			sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimAttacker);
+		
         sprite->data[7] = gBattleAnimTarget;
     }
     else
     {
-        sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
+		if (gBattleAnimArgs[1])
+			sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
+		
         sprite->data[7] = gBattleAnimAttacker;
     }
     sprite->data[0] = 0;
@@ -1102,7 +1194,7 @@ static void AnimSuperpowerRock_Step2(struct Sprite *sprite)
 
 // Animates MOVE_SUPERPOWER's fire ball sprite.
 // arg 0: anim battler
-static void AnimSuperpowerFireball(struct Sprite *sprite)
+void AnimSuperpowerFireball(struct Sprite *sprite)
 {
     u8 battler;
 
@@ -1376,4 +1468,62 @@ static void AnimLeftRightMovementSprite_Step(struct Sprite *sprite)
 			
 			break;
 	}
+}
+
+// Creates an sprite on the target that moves linearly in some direction and wobbles at the end
+// arg 0: initial x offset
+// arg 1: initial y offset
+// arg 2: final x offset
+// arg 3: final y offset
+// arg 4: motion speed delay
+// arg 5: pause before motion
+static void AnimForcePalmHand(struct Sprite *sprite)
+{
+	u8 battler = GetBattlerForAnimScript(ANIM_TARGET);
+	
+	InitSpritePosToAnimTarget(sprite, TRUE);
+	
+	sprite->data[0] = gBattleAnimArgs[4];
+	sprite->data[2] = GetBattlerSpriteCoord(battler, BATTLER_COORD_X) + gBattleAnimArgs[2];
+	sprite->data[4] = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+	sprite->data[5] = gBattleAnimArgs[5];
+	sprite->data[6] = 0;
+	sprite->callback = AnimForcePalmHand_Step1;
+}
+
+static void AnimForcePalmHand_Step1(struct Sprite *sprite)
+{
+	if (++sprite->data[6] >= sprite->data[5])
+	{
+		sprite->callback = StartAnimLinearTranslation;
+		StoreSpriteCallbackInData6(sprite, AnimForcePalmHand_Step2);
+	}
+}
+
+static void AnimForcePalmHand_Step2(struct Sprite *sprite)
+{
+	sprite->data[0] = 0;
+	sprite->callback = AnimForcePalmHand_Step3;
+}
+
+static void AnimForcePalmHand_Step3(struct Sprite *sprite)
+{
+	if (++sprite->data[0] >= 8)
+	{
+		sprite->data[0] = 0;
+		sprite->callback = AnimForcePalmHand_Step4;
+	}
+	else
+		sprite->x--;
+}
+
+static void AnimForcePalmHand_Step4(struct Sprite *sprite)
+{
+	if (++sprite->data[0] >= 8)
+	{
+		sprite->data[0] = 6;
+		sprite->callback = DestroyAnimSpriteAfterTimer;
+	}
+	else
+		sprite->x++;
 }

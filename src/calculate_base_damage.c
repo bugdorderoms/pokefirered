@@ -431,8 +431,8 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 		case EFFECT_TRIPLE_KICK:
 		    if (damageStruct->flags & FLAG_AI_DAMAGE_CALC)
 			{
-				for (i = 0; i < gBattleMoves[move].flags.strikeCount; i++)
-					basePower += gBattleMoves[move].argument.tripleKick.increment; // Get max possible dmg
+				for (i = 0; i < gBattleMoves[move].strikeCount; i++)
+					basePower += gBattleMoves[move].argument.amount; // Get max possible dmg
 			}
 			else
 				basePower += gBattleScripting.tripleKickPower;
@@ -450,7 +450,7 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			break;
 		}
 		case EFFECT_SKIP_CHARGING_IN_WEATHER:
-		    if (IsBattlerWeatherAffected(attacker, (B_WEATHER_ANY & ~(gBattleMoves[move].argument.twoTurns.weather | B_WEATHER_STRONG_WINDS))))
+		    if (IsBattlerWeatherAffected(attacker, (B_WEATHER_ANY & ~(gBattleMoves[move].argument.twoTurns.statusOrweather | B_WEATHER_STRONG_WINDS))))
 				basePower /= 2;
 			break;
 		case EFFECT_ROLLOUT:
@@ -492,8 +492,8 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			basePower = (gBattleMons[attacker].hp * basePower) / gBattleMons[attacker].maxHP;
 			break;
 		case EFFECT_CURE_STATUS1_FROM_ARG:
-			if (!SubsBlockMove(attacker, defender, move) && (gBattleMons[defender].status1.id == gBattleMoves[move].argument.cureStatus.statusId
-			|| (gBattleMoves[move].argument.cureStatus.statusId == STATUS1_SLEEP && damageStruct->defAbility == ABILITY_COMATOSE)))
+			if (!SubsBlockMove(attacker, defender, move) && (gBattleMons[defender].status1.id == gBattleMoves[move].argument.status
+			|| (gBattleMoves[move].argument.status == STATUS1_SLEEP && damageStruct->defAbility == ABILITY_COMATOSE)))
 				basePower *= 2;
 			break;
 		case EFFECT_REVENGE:
@@ -599,7 +599,7 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 				basePower = (12 * basePower) / 10;
 			break;
 		case ABILITY_RECKLESS:
-		    if ((move != MOVE_STRUGGLE && gBattleMoves[move].flags.recoilDivisor) || moveEffect == EFFECT_RECOIL_IF_MISS)
+		    if ((move != MOVE_STRUGGLE && gBattleMoves[move].recoilDivisor) || moveEffect == EFFECT_RECOIL_IF_MISS)
 				basePower = (12 * basePower) / 10;
 			break;
 		case ABILITY_RIVALRY:
@@ -1088,15 +1088,34 @@ static u8 CalcTypeEffectivenessMultiplierInternal(u16 move, u8 moveType, u16 atk
 	
 	if (!IS_MOVE_STATUS(move) || move == MOVE_THUNDER_WAVE)
 	{
-		if (moveType == TYPE_GROUND && !IsBattlerGrounded(defender) && defAbility == ABILITY_LEVITATE)
+		// Check special ground immunities
+		if (moveType == TYPE_GROUND && !IsBattlerGrounded(defender))
 	    {
-	    	multiplier = TYPE_MUL_NO_EFFECT;
-	    	*flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
-	    	
-	    	if (setAbilityFlags)
-	    		gBattleCommunication[MISS_TYPE] = B_MSG_ABILITY_AVOID;
+			bool8 immune = FALSE;
+			
+			if (defAbility == ABILITY_LEVITATE)
+			{
+				immune = TRUE;
+				
+				if (setAbilityFlags)
+					gBattleCommunication[MISS_TYPE] = B_MSG_ABILITY_AVOID;
+			}
+			else if (gStatuses3[defender] & STATUS3_MAGNET_RISE)
+			{
+				immune = TRUE;
+				
+				if (setAbilityFlags)
+					gBattleCommunication[MISS_TYPE] = B_MSG_MAGNET_RISE_AVOID;
+			}
+			
+			if (immune)
+			{
+				multiplier = TYPE_MUL_NO_EFFECT;
+				*flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+			}
 	    }
 	    
+		// Check Wonder Guard
 	    if (!IS_MOVE_STATUS(move) && defAbility == ABILITY_WONDER_GUARD && multiplier != TYPE_MUL_SUPER_EFFECTIVE)
 	    {
 	    	multiplier = TYPE_MUL_NO_EFFECT;

@@ -14,8 +14,6 @@ struct MonIconSpriteTemplate
     u16 paletteTag;
 };
 
-static u8 CreateMonIconSprite(const struct MonIconSpriteTemplate * template, s16 x, s16 y, u8 subpriority);
-
 const u16 gMonIconPalettes[][16] = {
     INCBIN_U16("graphics/pokemon/icon_palettes/icon_palette_0.gbapal"),
     INCBIN_U16("graphics/pokemon/icon_palettes/icon_palette_1.gbapal"),
@@ -118,17 +116,22 @@ static const u16 sSpriteImageSizes[][4] = {
 u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subpriority)
 {
     u8 spriteId;
-    struct MonIconSpriteTemplate iconTemplate =
-	{
-		.oam = &sMonIconOamData,
-		.image = GetMonIconPtr(species),
-		.anims = sMonIconAnims,
-		.affineAnims = sMonIconAffineAnims,
-		.callback = callback,
-		.paletteTag = POKE_ICON_BASE_PAL_TAG + gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex,
-	};
-
-    spriteId = CreateMonIconSprite(&iconTemplate, x, y, subpriority);
+	struct SpriteFrameImage image = { NULL, sSpriteImageSizes[sMonIconOamData.shape][sMonIconOamData.size] };
+    struct SpriteTemplate spriteTemplate =
+    {
+        .tileTag = SPRITE_INVALID_TAG,
+        .paletteTag = POKE_ICON_BASE_PAL_TAG + GetValidMonIconPalIndex(species),
+        .oam = &sMonIconOamData,
+        .anims = sMonIconAnims,
+        .images = &image,
+        .affineAnims = sMonIconAffineAnims,
+        .callback = callback,
+    };
+    spriteId = CreateSprite(&spriteTemplate, x, y, subpriority);
+	
+    gSprites[spriteId].animPaused = TRUE;
+    gSprites[spriteId].animBeginning = FALSE;
+    gSprites[spriteId].images = (const struct SpriteFrameImage *)GetMonIconPtr(species);
 
     UpdateMonIconFrame(&gSprites[spriteId]);
 
@@ -271,28 +274,6 @@ u8 UpdateMonIconFrame(struct Sprite * sprite)
         sprite->animDelayCounter--;
 
     return result;
-}
-
-static u8 CreateMonIconSprite(const struct MonIconSpriteTemplate * iconTemplate, s16 x, s16 y, u8 subpriority)
-{
-    u8 spriteId;
-    struct SpriteFrameImage image = { NULL, sSpriteImageSizes[iconTemplate->oam->shape][iconTemplate->oam->size] };
-    struct SpriteTemplate spriteTemplate =
-    {
-        .tileTag = SPRITE_INVALID_TAG,
-        .paletteTag = iconTemplate->paletteTag,
-        .oam = iconTemplate->oam,
-        .anims = iconTemplate->anims,
-        .images = &image,
-        .affineAnims = iconTemplate->affineAnims,
-        .callback = iconTemplate->callback,
-    };
-    spriteId = CreateSprite(&spriteTemplate, x, y, subpriority);
-    gSprites[spriteId].animPaused = TRUE;
-    gSprites[spriteId].animBeginning = FALSE;
-    gSprites[spriteId].images = (const struct SpriteFrameImage *)iconTemplate->image;
-	
-    return spriteId;
 }
 
 void SetPartyHPBarSprite(struct Sprite * sprite, u8 animNum)

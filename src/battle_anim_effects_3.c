@@ -65,7 +65,7 @@ static void AnimRecycleStep(struct Sprite *);
 static void AnimTask_SlackOffSquishStep(u8);
 static void SmokescreenImpact_Callback(struct Sprite * sprite);
 static void SmokescreenImpact_Callback_DestroySprite(struct Sprite * sprite);
-static void AnimBatonPassHand(struct Sprite *sprite);
+static void AnimBatonPassPokeball(struct Sprite *sprite);
 static void AnimTask_SnatchOpposingMonMove(u8 taskId);
 static void AnimTask_SnatchPartnerMove(u8 taskId);
 static void AnimHealingWishStar(struct Sprite *sprite);
@@ -1155,55 +1155,15 @@ static const union AffineAnimCmd sSlackOffSquishAffineAnimCmds[] =
     AFFINEANIMCMD_END,
 };
 
-static const union AffineAnimCmd sAffineAnim_BatonPassRedTube[] =
+const struct SpriteTemplate gBatonPassPokeballSpriteTemplate =
 {
-    AFFINEANIMCMD_FRAME(0x0, 0x0, 5, 1),
-    AFFINEANIMCMD_JUMP(0),
-};
-
-static const union AffineAnimCmd *const sAffineAnims_BatonPassRedTube[] =
-{
-    sAffineAnim_BatonPassRedTube,
-};
-
-const struct SpriteTemplate gBatonPassRedTubeSpriteTemplate =
-{
-    .tileTag = ANIM_TAG_RED_TUBE,
-    .paletteTag = ANIM_TAG_RED_TUBE,
-    .oam = &gOamData_AffineDouble_ObjNormal_32x8,
+    .tileTag = ANIM_TAG_POKEBALL,
+    .paletteTag = ANIM_TAG_POKEBALL,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
     .anims = gDummySpriteAnimTable,
     .images = NULL,
-    .affineAnims = sAffineAnims_BatonPassRedTube,
-    // .callback = AnimBoneHitProjectile,
-};
-
-static const union AnimCmd sBatonPassHandAnimCmds1[] =    
-{
-    ANIMCMD_FRAME(0, 0, .hFlip = TRUE),
-    ANIMCMD_END,
-};
-
-static const union AnimCmd sBatonPassHandAnimCmds2[] =    
-{
-    ANIMCMD_FRAME(0, 0),
-    ANIMCMD_END,
-};
-
-static const union AnimCmd *const sBatonPassHandAnimTable[] =    
-{
-    sBatonPassHandAnimCmds1,
-	sBatonPassHandAnimCmds2,
-};
-
-const struct SpriteTemplate gBatonPassHandSpriteTemplate =
-{
-    .tileTag = ANIM_TAG_TAG_HAND,
-    .paletteTag = ANIM_TAG_TAG_HAND,
-    .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = sBatonPassHandAnimTable,
-    .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = AnimBatonPassHand,
+    .callback = AnimBatonPassPokeball,
 };
 
 static const union AffineAnimCmd sSquishTargetAffineAnimCmds[] =
@@ -1312,6 +1272,17 @@ const struct SpriteTemplate gPunishmentBladeSpriteTemplate =
     .images = NULL,
     .affineAnims = sAffineAnims_PunishmentBlade,
     .callback = AnimKnockOffStrike,
+};
+
+const struct SpriteTemplate gVacuumWaveWhiteSmokeSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BLACK_SMOKE,
+    .paletteTag = ANIM_TAG_ICE_CHUNK,
+    .oam = &gOamData_AffineOff_ObjNormal_32x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimBlackSmoke,
 };
 
 // Animates the Smokescreen's black smokes moving on the target.
@@ -4506,7 +4477,7 @@ void AnimTask_GetFrustrationPowerLevel(u8 taskId)
 // No args.
 void AnimTask_SnatchMonMove(u8 taskId)
 {
-	gTasks[taskId].func = (GetBattlerSide(gBattleAnimAttacker) == GetBattlerSide(gBattleAnimTarget)) ? AnimTask_SnatchPartnerMove : AnimTask_SnatchOpposingMonMove;
+	gTasks[taskId].func = IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget) ? AnimTask_SnatchPartnerMove : AnimTask_SnatchOpposingMonMove;
 	gTasks[taskId].func(taskId);
 }
 
@@ -4946,21 +4917,6 @@ static void AnimTask_SlackOffSquishStep(u8 taskId)
         DestroyAnimVisualTask(taskId);
 }
 
-// Animates the hand sprite in MOVE_BATON_PASS's anim.
-// arg 0: anim battler
-// arg 1: x pixel offset
-// arg 2: y pixel offset
-// arg 3: initial delay amount
-// arg 4: duration
-// arg 5: respectMonPicOffsets
-// arg 6: affine anim num
-static void AnimBatonPassHand(struct Sprite *sprite)
-{
-	StartSpriteAnim(sprite, GetBattlerSide(GetBattlerForAnimScript(gBattleAnimArgs[0])));
-	sprite->callback = AnimSpriteOnMonForDuration;
-	sprite->callback(sprite);
-}
-
 // Squishes the target sprite vertically, and then back.
 // No args.
 void AnimTask_SquishTarget(u8 taskId)
@@ -5026,4 +4982,51 @@ static void AnimHealingWishStar_Step(struct Sprite *sprite)
 	newY = sprite->y + sprite->y2 + 8;
     if (newY > sprite->data[1])
         DestroyAnimSprite(sprite);
+}
+
+// Animates the pokeball sprite on MOVE_BATON_PASS's anim.
+// No args.
+static void AnimBatonPassPokeball(struct Sprite *sprite)
+{
+	u8 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
+
+    switch (sprite->data[0])
+    {
+    case 0:
+        sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
+        sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+		
+        PrepareBattlerSpriteForRotScale(spriteId, ST_OAM_OBJ_NORMAL);
+		
+        sprite->data[1] = 256;
+        sprite->data[2] = 256;
+        sprite->data[0]++;
+        break;
+    case 1:
+        sprite->data[1] += 96;
+        sprite->data[2] -= 26;
+        SetSpriteRotScale(spriteId, sprite->data[1], sprite->data[2], 0);
+
+        if (++sprite->data[3] == 5)
+            sprite->data[0]++;
+        // fall through
+    case 2:
+        sprite->data[1] += 96;
+        sprite->data[2] += 48;
+        SetSpriteRotScale(spriteId, sprite->data[1], sprite->data[2], 0);
+
+        if (++sprite->data[3] == 9)
+        {
+            sprite->data[3] = 0;
+            gSprites[spriteId].invisible = TRUE;
+            ResetSpriteRotScale(spriteId);
+            sprite->data[0]++;
+        }
+        break;
+    case 3:
+        sprite->y2 -= 6;
+        if (sprite->y + sprite->y2 < -32)
+            DestroyAnimSprite(sprite);
+        break;
+    }
 }

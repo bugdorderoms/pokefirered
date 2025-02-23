@@ -7,7 +7,6 @@
 #include "constants/songs.h"
 
 static void AnimFallingRock_Step(struct Sprite *sprite);
-static void AnimRockFragment(struct Sprite *sprite);
 static void AnimDirtParticleAcrossScreen(struct Sprite *sprite);
 static void AnimRaiseSprite(struct Sprite *sprite);
 static void AnimTask_Rollout_Step(u8 taskId);
@@ -286,6 +285,17 @@ const struct SpriteTemplate gRockSmashRockSpriteTemplate =
     .callback = AnimSpriteOnMonForDuration,
 };
 
+const struct SpriteTemplate gFallingIceRockSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_AVALANCHE_ROCKS,
+    .paletteTag = ANIM_TAG_AVALANCHE_ROCKS,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_FlyingRock,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimFallingRock,
+};
+
 // Animates a falling rock into the target.
 // arg 0: x pos
 // arg 1: sprite anim num
@@ -333,7 +343,7 @@ static void AnimFallingRock_Step(struct Sprite *sprite)
 // arg 3: final y pixel offset
 // arg 4: duration
 // arg 5: sprite anim num
-static void AnimRockFragment(struct Sprite *sprite)
+void AnimRockFragment(struct Sprite *sprite)
 {
     StartSpriteAnim(sprite, gBattleAnimArgs[5]);
     AnimateSprite(sprite);
@@ -584,7 +594,7 @@ void AnimTask_Rollout(u8 taskId)
     var0 = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
     var1 = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y) + 24;
     var2 = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
-    var3 = GetBattlerSide(gBattleAnimAttacker) == GetBattlerSide(gBattleAnimTarget) ? var1 : GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y) + 24;
+    var3 = IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget) ? var1 : GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y) + 24;
     var4 = gBattleAnimArgs[ARG_RET_ID];
 	
     if (var4 == 1)

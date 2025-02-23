@@ -1093,8 +1093,8 @@ void TryAddPokeballIconToHealthbox(u8 healthboxSpriteId, bool8 noStatus)
 	struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
 	
 	if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(GetMonData(mon, MON_DATA_SPECIES)), FLAG_GET_CAUGHT)
-		&& !(gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_TRAINER))
-		&& GetBattlerSide(battlerId) != B_SIDE_PLAYER && !CheckBattleTypeGhost(mon, battlerId))
+	&& !(gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_TRAINER))
+	&& GetBattlerSide(battlerId) != B_SIDE_PLAYER && !CheckBattleTypeGhost(mon, battlerId))
 	{
 		healthBarSpriteId = gSprites[healthboxSpriteId].hMain_HealthBarSpriteId;
 		

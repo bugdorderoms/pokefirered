@@ -293,6 +293,28 @@ const struct SpriteTemplate gGrowingChargeOrbSpriteTemplate =
     .callback = AnimGrowingChargeOrb,
 };
 
+const struct SpriteTemplate gZenHeadbuttCircleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_CIRCLE_OF_LIGHT,
+    .paletteTag = ANIM_TAG_WATER_IMPACT,
+    .oam = &gOamData_AffineNormal_ObjBlend_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_GrowingElectricOrb,
+    .callback = AnimGrowingChargeOrb,
+};
+
+const struct SpriteTemplate gZenHeadbuttLaunchBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_CIRCLE_OF_LIGHT,
+    .paletteTag = ANIM_TAG_WATER_IMPACT,
+    .oam = &gOamData_AffineNormal_ObjBlend_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_GrowingElectricOrb,
+    .callback = AnimSuperpowerFireball,
+};
+
 static const union AnimCmd sAnim_ElectricPuff[] =
 {
     ANIMCMD_FRAME(0, 3),

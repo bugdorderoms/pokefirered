@@ -1933,8 +1933,9 @@ void SwitchInClearSetData(u8 battlerId)
 	if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
 	{
 		// Status passed by Baton Pass
-		gBattleMons[battlerId].status2 &= (STATUS2_CONFUSION | STATUS2_FOCUS_ENERGY | STATUS2_SUBSTITUTE | STATUS2_ESCAPE_PREVENTION | STATUS2_CURSED);
-        gStatuses3[battlerId] &= (STATUS3_LEECHSEED | STATUS3_PERISH_SONG | STATUS3_POWER_TRICK | STATUS3_HEAL_BLOCK | STATUS3_EMBARGO | STATUS3_ROOTED | STATUS3_GASTRO_ACID);
+		gBattleMons[battlerId].status2 &= (STATUS2_CONFUSION | STATUS2_FOCUS_ENERGY | STATUS2_SUBSTITUTE | STATUS2_ESCAPE_PREVENTION | STATUS2_CURSED | STATUS2_AQUA_RING);
+        gStatuses3[battlerId] &= (STATUS3_LEECHSEED | STATUS3_PERISH_SONG | STATUS3_POWER_TRICK | STATUS3_HEAL_BLOCK | STATUS3_EMBARGO | STATUS3_ROOTED | STATUS3_GASTRO_ACID
+								 | STATUS3_MAGNET_RISE);
         
 		HANDLE_POWER_TRICK_SWAP(battlerId)
 		
@@ -1947,6 +1948,7 @@ void SwitchInClearSetData(u8 battlerId)
 		gDisableStructs[battlerId].embargoTimer = disableStructCopy.embargoTimer;
 		gDisableStructs[battlerId].healBlockTimer = disableStructCopy.healBlockTimer;
 		gDisableStructs[battlerId].leechSeedBattler = disableStructCopy.leechSeedBattler;
+		gDisableStructs[battlerId].magnetRiseTimer = disableStructCopy.magnetRiseTimer;
 	}
 	else
 	{
@@ -2497,7 +2499,7 @@ static void TryDoEventsBeforeFirstTurn(void)
 				for (i = 0; i < BATTLE_COMMUNICATION_ENTRIES_COUNT; ++i)
 					gBattleCommunication[i] = 0;
 				
-				gBattleScripting.atk47_state = 0;
+				gBattleScripting.atk48_state = 0;
 				gBattleScripting.atk49_state = 0;
 				
 				gMoveResultFlags = 0;
@@ -2560,7 +2562,7 @@ void BattleTurnPassed(void)
     gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING | HITMARKER_UNABLE_TO_USE_MOVE | HITMARKER_PLAYER_FAINTED | HITMARKER_PASSIVE_DAMAGE);
     gBattleScripting.animTurn = 0;
     gBattleScripting.animTargetsHit = 0;
-	gBattleScripting.atk47_state = 0;
+	gBattleScripting.atk48_state = 0;
     gBattleScripting.atk49_state = 0;
     gBattleMoveDamage = 0;
     gMoveResultFlags = 0;
@@ -4036,7 +4038,7 @@ static void HandleAction_ActionFinished(void)
     gBattleStruct->battlers[gBattlerAttacker].lastLandedMove = 0;
     gBattleStruct->battlers[gBattlerAttacker].lastHitMoveType = 0;
     gBattleStruct->dynamicMoveType = 0;
-	gBattleScripting.atk47_state = 0;
+	gBattleScripting.atk48_state = 0;
     gBattleScripting.atk49_state = 0;
     gBattleStruct->moveEffect.moveEffectByte = MOVE_EFFECT_NONE;
     gBattleCommunication[ACTIONS_CONFIRMED_COUNT] = 0;

@@ -23,7 +23,6 @@ static void AnimIngrainRoot(struct Sprite* sprite);
 static void AnimRootFlickerOut(struct Sprite *);
 static void AnimIngrainOrb(struct Sprite* sprite);
 static void AnimFrenzyPlantRoot(struct Sprite *sprite);
-static void AnimNeedleArmSpike(struct Sprite* sprite);
 
 static const u16 sMagicalLeafBlendColors[] =
 {
@@ -434,6 +433,28 @@ const struct SpriteTemplate gSuckerPunchSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimSlidingKick,
+};
+
+const struct SpriteTemplate gSeedBombSeedSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SEED,
+    .paletteTag = ANIM_TAG_SEED,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gBulletSeedAffineAnimTable,
+    .callback = AnimMissileArc,
+};
+
+const struct SpriteTemplate gEnergyBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ENERGY_BALL,
+    .paletteTag = ANIM_TAG_ENERGY_BALL,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = AnimShadowBall,
 };
 
 // Shoots a leaf upward, then floats it downward while swaying back and forth.
@@ -1198,7 +1219,7 @@ static void AnimFrenzyPlantRoot(struct Sprite *sprite)
 // arg 2: x slide
 // arg 3: y slide
 // arg 4: duration
-static void AnimNeedleArmSpike(struct Sprite* sprite)
+void AnimNeedleArmSpike(struct Sprite* sprite)
 {
     u8 a, b;
     u16 c, x, y;

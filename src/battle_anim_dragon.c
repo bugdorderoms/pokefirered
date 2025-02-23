@@ -129,6 +129,17 @@ const struct SpriteTemplate gDragonRageFirePlumeSpriteTemplate =
     .callback = AnimDragonRageFirePlume,
 };
 
+const struct SpriteTemplate gEarthPowerFirePlumeSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FIRE_PLUME,
+    .paletteTag = ANIM_TAG_FIRE_PLUME,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_DragonRageFirePlume,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimDragonRageFirePlume,
+};
+
 static const union AnimCmd sAnim_DragonRageFire[] =
 {
     ANIMCMD_FRAME(16, 3),
@@ -203,6 +214,39 @@ const struct SpriteTemplate gDragonDanceBlackSmokeSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimParticleInVortex,
+};
+
+const struct SpriteTemplate gDragonPulseRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_DRAGON_PULSE_RING,
+    .paletteTag = ANIM_TAG_DRAGON_PULSE_RING,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = TranslateAnimSpriteToTargetMonLocation,
+};
+
+const struct SpriteTemplate gDragonPulseBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FLASH_CANNON_BALL,
+    .paletteTag = ANIM_TAG_FLASH_CANNON_BALL,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = TranslateAnimSpriteToTargetMonLocation,
+};
+
+const struct SpriteTemplate gPurpleDrakeSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PURPLE_DRAKE,
+    .paletteTag = ANIM_TAG_PURPLE_DRAKE,
+    .oam = &gOamData_AffineNormal_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSkyAttackBird,
 };
 
 // Animates MOVE_OUTRAGE's flame sprite.

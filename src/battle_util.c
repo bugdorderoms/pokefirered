@@ -663,11 +663,11 @@ void BattleScriptPushCursorAndCallback(const u8 *BS_ptr)
 
 static u8 GetImprisonedMovesCount(u8 battlerId, u16 move)
 {
-    u8 i, imprisonedMoves = 0, battlerSide = GetBattlerSide(battlerId);
+    u8 i, imprisonedMoves = 0;
 
     for (i = 0; i < gBattlersCount; ++i)
     {
-        if ((gStatuses3[i] & STATUS3_IMPRISONED_OTHERS) && battlerSide != GetBattlerSide(i))
+        if ((gStatuses3[i] & STATUS3_IMPRISONED_OTHERS) && !IsBattlerAlly(battlerId, i))
         {
 			if (FindMoveSlotInBattlerMoveset(i, move) != MAX_MON_MOVES)
 				++imprisonedMoves;
@@ -1085,17 +1085,29 @@ bool8 DoEndTurnEffects(void)
 			    IncrementBattlerBasedEndTurnEffects();
 				break;
 			case ENDTURN_AQUA_RING_HEAL:
-			    IncrementBattlerBasedEndTurnEffects();
+			    if (IsBattlerAlive(gBattlerAttacker) && (gBattleMons[gBattlerAttacker].status2 & STATUS2_AQUA_RING) && !(gStatuses3[gBattlerAttacker] & STATUS3_HEAL_BLOCK)
+				&& !BATTLER_MAX_HP(gBattlerAttacker))
+				{
+					gBattleScripting.animArg1 = B_ANIM_AQUA_RING_HEAL;
+					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_BUFF1_RESTORED_HEALTH;
+					PrepareMoveBuffer(gBattleTextBuff1, MOVE_AQUA_RING);
+					goto DO_1_16_HP_HEAL;
+				}
+				IncrementBattlerBasedEndTurnEffects();
 				break;
 			case ENDTURN_INGRAIN_HEAL:
 			    if (IsBattlerAlive(gBattlerAttacker) && (gStatuses3[gBattlerAttacker] & STATUS3_ROOTED) && !(gStatuses3[gBattlerAttacker] & STATUS3_HEAL_BLOCK)
 				&& !BATTLER_MAX_HP(gBattlerAttacker))
                 {
+					gBattleScripting.animArg1 = B_ANIM_INGRAIN_HEAL;
+					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ABSORBED_NUTRIENTS;
+					
+					DO_1_16_HP_HEAL:
                     gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 16;
                     if (gBattleMoveDamage == 0)
                         gBattleMoveDamage = 1;
 					// Sing change handled in battle script
-                    BattleScriptExecute(BattleScript_IngrainTurnHeal);
+                    BattleScriptExecute(BattleScript_EndTurnHeal);
                     effect = TRUE;
                 }
 			    IncrementBattlerBasedEndTurnEffects();
@@ -1285,7 +1297,13 @@ bool8 DoEndTurnEffects(void)
 			    ++gBattleStruct->turnEffectsTracker;
 				break;
 			case ENDTURN_MAGNET_RISE_ENDS:
-			    IncrementBattlerBasedEndTurnEffects();
+			    if (IsBattlerAlive(gBattlerAttacker) && (gStatuses3[gBattlerAttacker] & STATUS3_MAGNET_RISE) && --gDisableStructs[gBattlerAttacker].magnetRiseTimer == 0)
+				{
+					gStatuses3[gBattlerAttacker] &= ~(STATUS3_MAGNET_RISE);
+					BattleScriptExecute(BattleScript_MagnetRiseEnds);
+					effect = TRUE;
+				}
+				IncrementBattlerBasedEndTurnEffects();
 				break;
 			case ENDTURN_TELEKINESIS_ENDS:
 			    IncrementBattlerBasedEndTurnEffects();
@@ -2071,7 +2089,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 				break;
 			case CANCELLER_PRANKSTER: // check Prankster
 			    if (GetBattlerAbility(gBattlerAttacker) == ABILITY_PRANKSTER && IS_MOVE_STATUS(gCurrentMove) && IsBattlerAlive(gBattlerTarget)
-				&& IsBattlerOfType(gBattlerTarget, TYPE_DARK) && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
+				&& IsBattlerOfType(gBattlerTarget, TYPE_DARK) && !IsBattlerAlly(gBattlerAttacker, gBattlerTarget))
 				{
 					u8 moveTarget = GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove);
 					
@@ -2141,10 +2159,10 @@ u8 AtkCanceller_UnableToUseMove(void)
 						gBattleCommunication[MULTIUSE_STATE] = 0; // For later
 						PrepareByteNumberBuffer(gBattleScripting.multihitString, 1, 0);
 					}
-					else if (gBattleMoves[gCurrentMove].flags.strikeCount > 1)
+					else if (gBattleMoves[gCurrentMove].strikeCount > 1)
 					{
 						gBattleScripting.tripleKickPower = 0;
-						gMultiHitCounter = gBattleMoves[gCurrentMove].flags.strikeCount;
+						gMultiHitCounter = gBattleMoves[gCurrentMove].strikeCount;
 						PrepareByteNumberBuffer(gBattleScripting.multihitString, 1, 0);
 					}
 				}
@@ -2600,23 +2618,26 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 								
 								for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 								{
-									if (IsBattlerAlive(i) && GetBattlerSide(i) != GetBattlerSide(battler))
+									if (IsBattlerAlive(i) && !IsBattlerAlly(battler, i))
 									{
 										for (j = 0; j < MAX_MON_MOVES; j++)
 										{
 											move = gBattleMons[i].moves[j];
 											
-											if (gBattleMoves[move].effect == EFFECT_OHKO)
-												++effect;
-											else if (move && !IS_MOVE_STATUS(move))
+											if (move)
 											{
-												if (gBattleMoves[move].effect == EFFECT_HIDDEN_POWER)
-													type = GetHiddenPowerType(GetBattlerPartyIndexPtr(i));
-												else
-													type = gBattleMoves[move].type;
-												
-												if (TypeCalc(move, type, i, battler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
+												if (gBattleMoves[move].effect == EFFECT_OHKO)
 													++effect;
+												else if (!IS_MOVE_STATUS(move))
+												{
+													if (gBattleMoves[move].effect == EFFECT_HIDDEN_POWER)
+														type = GetHiddenPowerType(GetBattlerPartyIndexPtr(i));
+													else
+														type = gBattleMoves[move].type;
+													
+													if (TypeCalc(move, type, i, battler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
+														++effect;
+												}
 											}
 										}
 									}
@@ -2680,7 +2701,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 								
 								for (i = 0, count = 0; i < MAX_BATTLERS_COUNT; i++)
 								{
-									if (IsBattlerAlive(i) && GetBattlerSide(i) != GetBattlerSide(battler))
+									if (IsBattlerAlive(i) && !IsBattlerAlly(battler, i))
 									{
 										for (j = 0; j < MAX_MON_MOVES; j++)
 										{
@@ -3195,9 +3216,9 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 				    	case ABILITY_QUEENLY_MAJESTY:
 				    	case ABILITY_DAZZLING:
 				    	case ABILITY_ARMOR_TAIL:
-				    	    if (GetChosenMovePriority(gBattlerAttacker) > 0 && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(battler)
+				    	    if (GetChosenMovePriority(gBattlerAttacker) > 0 && !IsBattlerAlly(gBattlerAttacker, battler) && !IsZMove(gCurrentMove)
 				    		&& moveTarget != MOVE_TARGET_OPPONENTS_FIELD && (moveTarget != MOVE_TARGET_ALL_BATTLERS || gCurrentMove == MOVE_PERISH_SONG
-				    		|| gCurrentMove == MOVE_FLOWER_SHIELD || gCurrentMove == MOVE_ROTOTILLER) && !IsZMove(gCurrentMove))
+				    		|| gCurrentMove == MOVE_FLOWER_SHIELD || gCurrentMove == MOVE_ROTOTILLER))
 				    			++effect;
 				    		break;
 						case ABILITY_GOOD_AS_GOLD:
@@ -3348,23 +3369,26 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 				switch (ability)
 				{
 					case ABILITY_STENCH: // Stench check is taken care of in King's Rock check
-					    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && !gProtectStructs[battler].confusionSelfDmg && IsBattlerAlive(gBattlerTarget) && BATTLER_DAMAGED(gBattlerTarget)
-						&& !SubsBlockMove(battler, gBattlerTarget, gCurrentMove) && RandomPercent(10) && !MoveHasMoveEffect(gCurrentMove, MOVE_EFFECT_FLINCH, FALSE))
+					    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && RandomPercent(10) && !gProtectStructs[battler].confusionSelfDmg && IsBattlerAlive(gBattlerTarget)
+						&& BATTLER_DAMAGED(gBattlerTarget) && !MoveHasMoveEffect(gCurrentMove, MOVE_EFFECT_FLINCH, FALSE))
 						{
 							SetMoveEffect(MOVE_EFFECT_FLINCH, FALSE, FALSE);
 							
-							if (DoMoveEffect(FALSE, NULL, STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE)) // Substitute already checked
+							if (DoMoveEffect(FALSE, NULL, 0))
 							    ++effect;
 						}
 						break;
 					case ABILITY_POISON_TOUCH:
-						SetMoveEffect(MOVE_EFFECT_POISON, FALSE, FALSE);
-						
 					    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && RandomPercent(30) && !gProtectStructs[battler].confusionSelfDmg && IsBattlerAlive(gBattlerTarget)
-						&& !SubsBlockMove(battler, gBattlerTarget, gCurrentMove) && BATTLER_DAMAGED(gBattlerTarget) && DoMoveEffect(FALSE, NULL, STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE)) // Substitute already checked
+						&& BATTLER_DAMAGED(gBattlerTarget))
 						{
-							BattleScriptCall(BattleScript_PoisonTouchActivation);
-							++effect;
+							SetMoveEffect(MOVE_EFFECT_POISON, FALSE, FALSE);
+							
+							if (DoMoveEffect(FALSE, NULL, 0))
+							{
+								BattleScriptCall(BattleScript_PoisonTouchActivation);
+								++effect;
+							}
 						}
 						break;
 					case ABILITY_GULP_MISSILE: // Catch prey
@@ -3378,6 +3402,19 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 								// Play an silent form change animation if underwater
 								gBattleScripting.animArg1 = (gStatuses3[battler] & STATUS3_UNDERWATER) ? B_ANIM_SILENT_FORM_CHANGE : B_ANIM_FORM_CHANGE;
 								BattleScriptCall(BattleScript_GulpMissileCatchPrey);
+								++effect;
+							}
+						}
+						break;
+					case ABILITY_TOXIC_CHAIN:
+						if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && RandomPercent(30) && !gProtectStructs[battler].confusionSelfDmg && IsBattlerAlive(gBattlerTarget)
+						&& BATTLER_DAMAGED(gBattlerTarget))
+						{
+							SetMoveEffect(MOVE_EFFECT_TOXIC, FALSE, FALSE);
+							
+							if (DoMoveEffect(FALSE, NULL, 0))
+							{
+								BattleScriptCall(BattleScript_ToxicChainActivation);
 								++effect;
 							}
 						}
@@ -4850,7 +4887,7 @@ u8 CheckAbilityInBattle(u8 mode, u8 battlerId, u16 abilityId)
 		case CHECK_ABILITY_ON_SIDE:
 		    for (i = 0; i < gBattlersCount; i++)
 			{
-				if (IsBattlerAlive(i) && GetBattlerSide(i) == GetBattlerSide(battlerId) && GetBattlerAbility(i) == abilityId)
+				if (IsBattlerAlive(i) && IsBattlerAlly(battlerId, i) && GetBattlerAbility(i) == abilityId)
 				{
 					ret = i + 1;
 					break;
@@ -4889,7 +4926,7 @@ bool8 IsBattlerGrounded(u8 battlerId)
 {
 	if ((gStatuses3[battlerId] & STATUS3_ROOTED) || (gFieldStatus & STATUS_FIELD_GRAVITY))
 		return TRUE;
-	else if (GetBattlerAbility(battlerId) == ABILITY_LEVITATE || IsBattlerOfType(battlerId, TYPE_FLYING))
+	else if (GetBattlerAbility(battlerId) == ABILITY_LEVITATE || IsBattlerOfType(battlerId, TYPE_FLYING) || (gStatuses3[battlerId] & STATUS3_MAGNET_RISE))
 		return FALSE;
 	return TRUE;
 }
@@ -5374,7 +5411,10 @@ const u8 *PokemonUseItemEffectsBattle(u8 battlerId, u16 itemId, bool8 *canUse)
 			break;
 		case EFFECT_ITEM_SET_FOCUS_ENERGY:
 		    if (!(gBattleMons[battlerId].status2 & STATUS2_FOCUS_ENERGY))
+			{
+				gBattleMons[battlerId].status2 |= STATUS2_FOCUS_ENERGY;
 				*canUse = TRUE;
+			}
 			break;
 		case EFFECT_ITEM_SET_MIST:
 		    if (!(gSideStatuses[GetBattlerSide(battlerId)] & SIDE_STATUS_MIST))
@@ -5475,16 +5515,12 @@ u8 CountAliveMonsInBattle(u8 battlerId, u8 caseId)
     switch (caseId)
     {
     case BATTLE_ALIVE_SIDE:
-	{
-		u8 side = GetBattlerSide(battlerId);
-		
         for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         {
-            if (IsBattlerAlive(i) && GetBattlerSide(i) == side)
+            if (IsBattlerAlive(i) && IsBattlerAlly(battlerId, i))
                 retVal++;
         }
         break;
-	}
 	case BATTLE_ALIVE_EXCEPT_BATTLER:
 	    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         {
@@ -5950,11 +5986,11 @@ bool8 IsPlayerBagDisabled(void)
 
 bool8 CanTargetBattler(u8 attacker, u8 defender, u16 move, u8 moveTarget)
 {
-	u8 atkSide = GetBattlerSide(attacker), defSide = GetBattlerSide(defender);
+	bool8 isTargetAlly = IsBattlerAlly(attacker, defender);
 	
-	if (moveTarget == MOVE_TARGET_SELECTED_OPPONENT && atkSide == defSide)
+	if (moveTarget == MOVE_TARGET_SELECTED_OPPONENT && isTargetAlly)
 		return FALSE; // Can only target opponents, not allies
-	else if (gBattleMoves[move].effect == EFFECT_HIT_ENEMY_HEAL_ALLY && atkSide == defSide && (gStatuses3[defender] & STATUS3_HEAL_BLOCK))
+	else if (gBattleMoves[move].effect == EFFECT_HIT_ENEMY_HEAL_ALLY && isTargetAlly && (gStatuses3[defender] & STATUS3_HEAL_BLOCK))
 		return FALSE; // Pokémon affected by Heal Block cannot target allies with Pollen Puff
 	else
 		return TRUE;
@@ -6200,7 +6236,7 @@ bool8 TryInitSosCall(void)
 					if (gBattleStruct->sos.calls < 31) // Increment num of calls for help
 						gBattleStruct->sos.calls++;
 					
-					CreateSosAlly(species, gBattleMons[caller].level - 5 + RandomMax(10), ally, playerBattler);
+					CreateSosAlly(species, gBattleMons[caller].level - 2 + RandomMax(5), ally, playerBattler);
 					gBattleCommunication[MULTISTRING_CHOOSER] = IsBattlerTotemPokemon(caller) ? B_MSG_CALLED_ITS_ALLY : B_MSG_CALLED_FOR_HELP;
 					BattleScriptExecute(BattleScript_SosCallForHelp);
 				}

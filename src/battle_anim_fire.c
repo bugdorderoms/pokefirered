@@ -31,6 +31,8 @@ static u16 GetEruptionLaunchRockInitialYPos(u8 spriteId);
 static void InitEruptionLaunchRockCoordData(struct Sprite *sprite, s16 x, s16 y);
 static void UpdateEruptionLaunchRockPos(struct Sprite *sprite);
 static void AnimTask_MoveHeatWaveTargets_Step(u8 taskId);
+static void AnimMoveSpriteUpwardsForDuration(struct Sprite *sprite);
+static void AnimMoveSpriteUpwardsForDuration_Step(struct Sprite *sprite);
 
 static const union AnimCmd sAnim_FireSpiralSpread_0[] =
 {
@@ -396,6 +398,17 @@ const struct SpriteTemplate gFireSpinSpriteTemplate =
     .callback = AnimParticleInVortex,
 };
 
+const struct SpriteTemplate gFlameBuffSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SMALL_EMBER,
+    .paletteTag = ANIM_TAG_SMALL_EMBER,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimMoveSpriteUpwardsForDuration,
+};
+
 // Directions for shaking up/down or left/right in AnimTask_ShakeTargetInPattern
 // First pattern results in larger shakes, second results in faster oscillation
 static const s8 sShakeDirsPattern0[10] =
@@ -406,6 +419,17 @@ static const s8 sShakeDirsPattern0[10] =
 static const s8 sShakeDirsPattern1[10] =
 {
     -1, 0, 1, 0, -1, 1, 0, -1, 0, 1,
+};
+
+const struct SpriteTemplate gPowerGemBladeSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PUNISHMENT_BLADES,
+    .paletteTag = ANIM_TAG_AIR_WAVE_2,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = sAnims_FireSpiralSpread,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = AnimFireSpread,
 };
 
 // For the first stage of Fire Punch and Ice Punch
@@ -531,7 +555,7 @@ static void AnimSunlightRay(struct Sprite *sprite)
 // arg 6: ? (TODO: something related to which mon the pixel offsets are based on) (boolean)
 static void AnimEmberFlare(struct Sprite *sprite)
 {
-    if (GetBattlerSide(gBattleAnimAttacker) == GetBattlerSide(gBattleAnimTarget) && (GetBattlerPosition(gBattleAnimAttacker) & BIT_FLANK) != B_FLANK_RIGHT)
+    if (IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget) && (GetBattlerPosition(gBattleAnimAttacker) & BIT_FLANK) != B_FLANK_RIGHT)
 		gBattleAnimArgs[2] = -gBattleAnimArgs[2];
 	
     sprite->callback = AnimTravelDiagonally;
@@ -1150,4 +1174,29 @@ void AnimTask_ShakeTargetInPattern(u8 taskId)
         gSprites[spriteId].y2 = 0;
         DestroyAnimVisualTask(taskId);
     }
+}
+
+// Moves the particle upwards on the given target, for the specified duration.
+// arg 0: anim battler
+// arg 1: x pixel offset
+// arg 2: y pixel offset
+// arg 3: speed
+// arg 4: duration
+static void AnimMoveSpriteUpwardsForDuration(struct Sprite *sprite)
+{
+	u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+	
+	sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X) + gBattleAnimArgs[1];
+	sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y) + gBattleAnimArgs[2];
+
+	sprite->data[1] = gBattleAnimArgs[3];
+	sprite->data[2] = gBattleAnimArgs[4];
+	sprite->callback = AnimMoveSpriteUpwardsForDuration_Step;
+}
+
+static void AnimMoveSpriteUpwardsForDuration_Step(struct Sprite *sprite)
+{
+	sprite->y -= sprite->data[1];
+	if (sprite->data[0]++ > sprite->data[2])
+		DestroyAnimSprite(sprite);
 }
