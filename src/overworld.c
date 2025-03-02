@@ -2777,7 +2777,7 @@ static const u8 *TryInteractWithPlayer(struct TradeRoomPlayer *player)
         else
             return CableClub_EventScript_ReadTrainerCardColored;
     }
-    return GetInteractedLinkPlayerScript(&otherPlayerPos, player->field_C, player->facing);
+    return GetInteractedLinkPlayerScript(&otherPlayerPos, player->facing);
 }
 
 // This returns which direction to force the player to look when one of

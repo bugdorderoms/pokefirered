@@ -341,6 +341,11 @@ void PlayCry_ReleaseDouble(u16 species, s8 pan, u8 mode)
     }
 }
 
+static bool8 ShouldUseHighPitchMonCry(u16 species)
+{
+	return (gSpeciesInfo[species].flags & (SPECIES_FLAG_MEGA | SPECIES_FLAG_GIGANTAMAX));
+}
+
 void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
 {
     bool8 reverse = FALSE;
@@ -349,22 +354,28 @@ void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
     u32 pitch = 15360;
     u32 chorus = 0;
 	u16 cryId;
-
+	
     switch (mode)
     {
     case CRY_MODE_NORMAL:
+		if (ShouldUseHighPitchMonCry(species))
+			goto HIGH_PITCH;
         break;
     case CRY_MODE_DOUBLES:
-        length = 20;
+        if (ShouldUseHighPitchMonCry(species))
+			pitch = 15600;
+		
+		length = 20;
         release = 225;
         break;
     case CRY_MODE_ENCOUNTER:
         release = 225;
-        pitch = 15600;
+        pitch = ShouldUseHighPitchMonCry(species) ? 15800 : 15600;
         chorus = 20;
         volume = 90;
         break;
     case CRY_MODE_HIGH_PITCH:
+	HIGH_PITCH:
         length = 50;
         release = 200;
         pitch = 15800;
@@ -375,47 +386,51 @@ void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
         length = 25;
         reverse = TRUE;
         release = 100;
-        pitch = 15600;
+        pitch = ShouldUseHighPitchMonCry(species) ? 15800 : 15600;
         chorus = 192;
         volume = 90;
         break;
     case CRY_MODE_FAINT:
         release = 200;
-        pitch = 14440;
+        pitch = ShouldUseHighPitchMonCry(species) ? 15200 : 14440;
         break;
     case CRY_MODE_ECHO_END:
         release = 220;
-        pitch = 15555;
+        pitch = ShouldUseHighPitchMonCry(species) ? 15800 : 15555;
         chorus = 192;
         volume = 90; // FR/LG changed this from 70 to 90
         break;
     case CRY_MODE_ROAR_1:
         length = 10;
         release = 100;
-        pitch = 14848;
+        pitch = ShouldUseHighPitchMonCry(species) ? 15000 : 14848;
         break;
     case CRY_MODE_ROAR_2:
         length = 60;
         release = 225;
-        pitch = 15616;
+        pitch = ShouldUseHighPitchMonCry(species) ? 15816 : 15616;
         break;
     case CRY_MODE_GROWL_1:
         length = 15;
         reverse = TRUE;
         release = 125;
-        pitch = 15200;
+        pitch = ShouldUseHighPitchMonCry(species) ? 15600 : 15200;
         break;
     case CRY_MODE_GROWL_2:
         length = 100;
         release = 225;
-        pitch = 15200;
+        pitch = ShouldUseHighPitchMonCry(species) ? 15600 : 15200;
         break;
 	case CRY_MODE_WEAK:
-        pitch = 15000;
+        pitch = ShouldUseHighPitchMonCry(species) ? 15200 : 15000;
         break;
     case CRY_MODE_WEAK_DOUBLES:
-        length = 20;
+		if (ShouldUseHighPitchMonCry(species))
+			pitch = 15600;
+		
+		length = 20;
         release = 225;
+		break;
     }
 
     SetPokemonCryVolume(volume);
