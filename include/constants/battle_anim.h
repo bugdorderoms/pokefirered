@@ -387,6 +387,7 @@
 #define BG_AURA_SPHERE          33
 #define BG_GIGA_IMPACT_PLAYER   34
 #define BG_GIGA_IMPACT_OPPONENT 35
+#define BG_TRICK_ROOM           36
 
 // table ids for general animations
 #define B_ANIM_FORM_CHANGE           0x0

@@ -1785,6 +1785,7 @@ static const struct BattleAnimBackground sBattleAnimBackgroundTable[] =
 	[BG_AURA_SPHERE] = {gBattleAnimBgImage_FocusBlast, gBattleAnimBgPalette_AuraSphere, gBattleAnimBgTilemap_FocusBlast},
 	[BG_GIGA_IMPACT_PLAYER] = {gBattleAnimBgImage_GigaImpact, gBattleAnimBgPalette_GigaImpact, gBattleAnimBgTilemap_GigaImpactPlayer},
 	[BG_GIGA_IMPACT_OPPONENT] = {gBattleAnimBgImage_GigaImpact, gBattleAnimBgPalette_GigaImpact, gBattleAnimBgTilemap_GigaImpactOpponent},
+	[BG_TRICK_ROOM] = {gBattleAnimBgImage_FieldRoom, gBattleAnimBgPalette_TrickRoom, gBattleAnimBgTilemap_FieldRoom},
 };
 
 static void (*const sScriptCmdTable[])(void) =

@@ -12245,3 +12245,144 @@ gMoveAnim_MIRROR_SHOT::
 	createvisualtask AnimTask_Flash, 2
 	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 3, 16, 1
 	end
+
+@ Credits: Lixdel and Skeli
+gMoveAnim_FLASH_CANNON::
+	loadspritegfx ANIM_TAG_FLASH_CANNON_BALL
+	loadspritegfx ANIM_TAG_ELECTRIC_ORBS
+	loadspritegfx ANIM_TAG_CIRCLE_OF_LIGHT
+	loadspritegfx ANIM_TAG_HANDS_AND_FEET @ Black color
+	monbg ANIM_ATTACKER
+	setalpha 13, 8
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_ELECTRIC_ORBS, 0, 16, 16, RGB(29, 29, 28) @ Light gray color
+	loopsewithpan SE_M_CHARGE, SOUND_PAN_ATTACKER, 7, 20
+	createsprite gFlashCannonChargeSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 0
+	call FlashCannonTopRightBottomLeftChargeOrb
+	call FlashCannonTopRightBottomLeftChargeOrb
+	call FlashCannonTopBottomChargeOrb
+	call FlashCannonTopBottomChargeOrb
+	call FlashCannonLeftRightChargeOrb
+	call FlashCannonLeftRightChargeOrb
+	call FlashCannonTopLeftBottomRightChargeOrb
+	call FlashCannonTopLeftBottomRightChargeOrb
+	call FlashCannonTopRightBottomLeftChargeOrb
+	call FlashCannonTopRightBottomLeftChargeOrb
+	call FlashCannonTopBottomChargeOrb
+	call FlashCannonTopBottomChargeOrb
+	call FlashCannonLeftRightChargeOrb
+	call FlashCannonLeftRightChargeOrb
+	call FlashCannonTopLeftBottomRightChargeOrb
+	call FlashCannonTopLeftBottomRightChargeOrb
+	call FlashCannonTopRightBottomLeftChargeOrb
+	call FlashCannonTopRightBottomLeftChargeOrb
+	call FlashCannonTopBottomChargeOrb
+	call FlashCannonTopBottomChargeOrb
+	call FlashCannonLeftRightChargeOrb
+	call FlashCannonLeftRightChargeOrb
+	call FlashCannonTopLeftBottomRightChargeOrb
+	call FlashCannonTopLeftBottomRightChargeOrb
+	call FlashCannonTopLeftBottomRightChargeOrb
+	call FlashCannonTopLeftBottomRightChargeOrb
+	call FlashCannonTopRightBottomLeftChargeOrb
+	call FlashCannonTopRightBottomLeftChargeOrb
+	call FlashCannonTopBottomChargeOrb
+	waitforvisualfinish
+	stopsound
+	playsewithpan SE_M_PAY_DAY, SOUND_PAN_ATTACKER
+	createsprite gFlashCannonBallSpriteTemplate, ANIM_TARGET, 2, 0, 0, 21
+	waitforvisualfinish
+	clearmonbg ANIM_ATTACKER
+	playsewithpan SE_M_LEER, SOUND_PAN_TARGET
+	createvisualtask AnimTask_Flash, 2
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_TARGET, 1, 16, 0, RGB_RED
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 15, 1
+	end
+
+FlashCannonTopRightBottomLeftChargeOrb::
+	createsprite gFlashCannonChargeOrbSpriteTemplate, ANIM_ATTACKER, 2, 25, -40, 0, 0, 30, 20
+	createsprite gFlashCannonChargeOrbSpriteTemplate, ANIM_ATTACKER, 2, -25, 40, 0, 0, 30, -20
+	delay 3
+	return
+
+FlashCannonTopBottomChargeOrb::
+	createsprite gFlashCannonChargeOrbSpriteTemplate, ANIM_ATTACKER, 2, 5, -40, 0, 0, 30, 10
+	createsprite gFlashCannonChargeOrbSpriteTemplate, ANIM_ATTACKER, 2, -5, 40, 0, 0, 30, 10
+	delay 3
+	return
+
+FlashCannonLeftRightChargeOrb::
+	createsprite gFlashCannonChargeOrbSpriteTemplate, ANIM_ATTACKER, 2, -40, 5, 0, 0, 30, -10
+	createsprite gFlashCannonChargeOrbSpriteTemplate, ANIM_ATTACKER, 2, 40, -5, 0, 0, 30, 10
+	delay 3
+	return
+
+FlashCannonTopLeftBottomRightChargeOrb::
+	createsprite gFlashCannonChargeOrbSpriteTemplate, ANIM_ATTACKER, 2, -25, -40, 0, 0, 30, -20
+	createsprite gFlashCannonChargeOrbSpriteTemplate, ANIM_ATTACKER, 2, 25, 20, 0, 0, 30, 20
+	delay 3
+	return
+
+@ Credits: Skeli
+gMoveAnim_ROCK_CLIMB::
+	loadspritegfx ANIM_TAG_IMPACT
+	loadspritegfx ANIM_TAG_MUD_SAND
+	loadspritegfx ANIM_TAG_SMALL_ROCK
+	monbg ANIM_DEF_SIDE
+	splitbgprio ANIM_TARGET
+	setalpha 12, 8
+	createvisualtask AnimTask_Splash, 2, ANIM_ATTACKER, 3
+	delay 8
+	loopsewithpan SE_M_TAIL_WHIP, SOUND_PAN_ATTACKER, 38, 3
+	call RockClimbRock
+	delay 16
+	call RockClimbRock
+	delay 16
+	call RockClimbRock
+	delay 16
+	call RockClimbRock
+	waitforvisualfinish
+	setargret 1
+	createvisualtask AnimTask_Rollout, 2
+	waitforvisualfinish
+	createvisualtask AnimTask_ShakeTargetBasedOnMovePowerOrDmg, 2, FALSE, 1, 30, TRUE, FALSE
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_TARGET, 4, 0, 0, ANIM_TARGET, 2
+	playsewithpan SE_M_MEGA_KICK2, SOUND_PAN_TARGET
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	blendoff
+	end
+
+RockClimbRock::
+	createsprite gDropRockSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 0
+	createsprite gDropRockSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 1, 0
+	createsprite gDropRockSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 2, 0
+	createsprite gDropRockSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 3, 0
+	return
+
+@ Credits: Lixdel
+gMoveAnim_DEFOG::
+	playsewithpan SE_M_HAZE, SOUND_PAN_ABOVE
+	createvisualtask AnimTask_LoadMistTiles, 5
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_TARGET, 3, 0, 16, RGB_WHITE
+	delay 8
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 4, 0, 70, 0
+	delay 70
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_TARGET, 2, 16, 0, RGB_WHITE
+	end
+
+@ Credits: Skeli
+gMoveAnim_TRICK_ROOM::
+	call SummonRoomAttackerScaleAnim
+	fadetobg BG_TRICK_ROOM
+	waitbgfadein
+	delay 64
+	blendoff
+	restorebg
+	waitbgfadein
+	end
+
+SummonRoomAttackerScaleAnim::
+	setalpha 8, 8
+	playsewithpan SE_M_SUPERSONIC, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 15, ANIM_ATTACKER, ST_OAM_OBJ_BLEND
+	return

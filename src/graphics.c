@@ -1084,6 +1084,10 @@ const u32 gBattleAnimBgImage_GigaImpact[] = INCBIN_U32("graphics/battle_anims/ba
 const u32 gBattleAnimBgTilemap_GigaImpactPlayer[] = INCBIN_U32("graphics/battle_anims/backgrounds/giga_impact_player.bin.lz");
 const u32 gBattleAnimBgTilemap_GigaImpactOpponent[] = INCBIN_U32("graphics/battle_anims/backgrounds/giga_impact_opponent.bin.lz");
 
+const u32 gBattleAnimBgImage_FieldRoom[] = INCBIN_U32("graphics/battle_anims/backgrounds/field_room.4bpp.lz");
+const u32 gBattleAnimBgTilemap_FieldRoom[] = INCBIN_U32("graphics/battle_anims/backgrounds/field_room.bin.lz");
+const u32 gBattleAnimBgPalette_TrickRoom[] = INCBIN_U32("graphics/battle_anims/backgrounds/trick_room.gbapal.lz");
+
 const u32 gBattleAnimSpritePal_Slash2[] = INCBIN_U32("graphics/battle_anims/sprites/slash_2.gbapal.lz");
 
 const u32 gBattleAnimSpriteGfx_WhiteShadow[] = INCBIN_U32("graphics/battle_anims/sprites/white_shadow.4bpp.lz");

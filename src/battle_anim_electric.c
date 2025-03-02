@@ -26,6 +26,7 @@ static void AnimTask_ElectricChargingParticles_Step(u8 taskId);
 static void AnimElectricChargeParticle(struct Sprite *sprite);
 static bool8 CreateShockWaveLightningSprite(struct Task *task, u8 taskId);
 static void AnimShockWaveLightning(struct Sprite *sprite);
+static void AnimMoongeistBeamChargeOrb(struct Sprite *sprite);
 
 static const union AnimCmd sAnim_Lightning[] =
 {
@@ -425,6 +426,28 @@ const struct SpriteTemplate gMegaEvolutionSmokeSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimParticleInVortex,
+};
+
+const struct SpriteTemplate gFlashCannonChargeSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_CIRCLE_OF_LIGHT,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineNormal_ObjBlend_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_GrowingElectricOrb,
+    .callback = AnimGrowingChargeOrb,
+};
+
+const struct SpriteTemplate gFlashCannonChargeOrbSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ELECTRIC_ORBS,
+    .paletteTag = ANIM_TAG_ELECTRIC_ORBS,
+    .oam = &gOamData_AffineOff_ObjNormal_8x8,
+    .anims = sAnims_ElectricChargingParticles,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimMoongeistBeamChargeOrb,
 };
 
 // Animates the lightning sprite falling into the target.
@@ -1231,4 +1254,25 @@ static void AnimShockWaveLightning(struct Sprite *sprite)
         --gTasks[sprite->data[6]].data[sprite->data[7]];
         DestroySprite(sprite);
     }
+}
+
+// Animates Moongeist Beam's charge orb sprites.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: final x pixel offset
+// arg 3: final y pixel offset
+// arg 4: duration
+// arg 5: wave amplitude
+static void AnimMoongeistBeamChargeOrb(struct Sprite *sprite)
+{
+	sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X) + gBattleAnimArgs[0];
+	sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[1];
+	
+	sprite->data[0] = gBattleAnimArgs[4];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X) + gBattleAnimArgs[2];
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+	sprite->data[5] = gBattleAnimArgs[5];
+	
+	InitAnimArcTranslation(sprite);
+	sprite->callback = AnimMissileArcStep;
 }

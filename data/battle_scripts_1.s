@@ -2107,6 +2107,39 @@ BattleScript_EffectSpecialAttackUp2::
     setstatchanger STAT_SPATK, +2
 	goto BattleScript_EffectUserStatUp
 
+@ EFFECT_DEFOG @
+
+BattleScript_EffectDefog::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifsubstituteblocks BattleScript_EffectDefogTryClear
+	jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_EVASION, MIN_STAT_STAGES, BattleScript_EffectDefogTryStatDown
+BattleScript_EffectDefogTryClear::
+	trydefogclear BattleScript_ButItFailed @ Fail if do not clear anything
+BattleScript_EffectDefogTryStatDown::
+	accuracycheck BattleScript_MoveMissedPause
+	attackanimation
+	waitstate
+	setstatchanger STAT_EVASION, -1
+	statbuffchange
+	statchangeanimandstring
+	trydefogclear NULL
+	goto BattleScript_MoveEnd
+
+@ EFFECT_TRICK_ROOM @
+
+BattleScript_EffectTrickRoom::
+	attackcanceler
+	attackstring
+	ppreduce
+	attackanimation
+	waitstate
+	settrickroom
+	printstring STRINGID_ATKTWISTEDTHEDIMENSIONS
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4416,6 +4449,17 @@ BattleScript_TotemBoost::
 BattleScript_DoTotemBoost::
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
 	displaystatchangestring @ No animation
+	return
+
+BattleScript_FogFree::
+	printstring STRINGID_PKMNBLEWAWAYFOGWITHCURRMOVE
+	waitmessage B_WAIT_TIME_LONG
+	call BattleScript_WeatherChangeAbilitiesLoop
+	return
+
+BattleScript_BarriersFree::
+	printstring STRINGID_PKMNBLEWAWAYBARRIERS
+	waitmessage B_WAIT_TIME_LONG
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@

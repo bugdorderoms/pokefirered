@@ -289,7 +289,7 @@ static void atkBB_nop(void);
 static void atkBC_maxattackhalvehp(void);
 static void atkBD_nop(void);
 static void atkBE_rapidspinfree(void);
-static void atkBF_nop(void);
+static void atkBF_trydefogclear(void);
 static void atkC0_recoverbasedonweather(void);
 static void atkC1_nop(void);
 static void atkC2_nop(void);
@@ -548,7 +548,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atkBC_maxattackhalvehp,
     atkBD_nop,
     atkBE_rapidspinfree,
-    atkBF_nop,
+    atkBF_trydefogclear,
     atkC0_recoverbasedonweather,
     atkC1_nop,
     atkC2_nop,
@@ -2294,17 +2294,13 @@ static void atk21_jumpifability(void)
 
 static void atk22_jumpifabilityonside(void)
 {
-	CMD_ARGS(u8 battler, u16 ability, const u8 *ptr, bool8 record);
+	CMD_ARGS(u8 battler, u16 ability, const u8 *ptr);
 
 	u8 ret = ABILITY_ON_SIDE(GetBattlerForBattleScript(cmd->battler), cmd->ability);
 	
 	if (ret)
 	{
 		gBattleScripting.battler = ret - 1;
-		
-		if (cmd->record)
-			BattleAI_RecordAbility(gBattleScripting.battler);
-		
 		gBattlescriptCurrInstr = cmd->ptr;
 	}
 	else
@@ -7695,16 +7691,59 @@ static void atkBE_rapidspinfree(void)
         gStatuses3[battlerId] &= ~(STATUS3_LEECHSEED);
 		BattleScriptCall(BattleScript_LeechSeedFree);
     }
-    else if (TryRemoveEntryHazards(battlerId))
+    else if (TryRemoveEntryHazards(battlerId, TRUE, FALSE))
 		BattleScriptCall(BattleScript_SpikesFree);
     else
         gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
-static void atkBF_nop(void)
+static void atkBF_trydefogclear(void)
 {
-	CMD_ARGS();
-    gBattlescriptCurrInstr = cmd->nextInstr;
+	CMD_ARGS(const u8 *failPtr);
+	
+	bool8 clear = (cmd->failPtr == NULL);
+	bool8 effect = FALSE;
+	
+	if (gBattleWeather & B_WEATHER_FOG)
+	{
+		if (clear)
+		{
+			gBattleWeather = B_WEATHER_NONE;
+			BattleScriptCall(BattleScript_FogFree);
+		}
+		effect = TRUE;
+	}
+	else if (TryRemoveEntryHazards(gBattlerTarget, clear, TRUE))
+	{
+		if (clear)
+			BattleScriptCall(BattleScript_SpikesFree);
+
+		effect = TRUE;
+	}
+	else if (TryRemoveScreens(gBattlerTarget, clear, FALSE) || (gSideStatuses[GetBattlerSide(gBattlerTarget)] & (SIDE_STATUS_MIST | SIDE_STATUS_SAFEGUARD)))
+	{
+		if (clear)
+		{
+			gSideStatuses[GetBattlerSide(gBattlerTarget)] &= ~(SIDE_STATUS_MIST | SIDE_STATUS_SAFEGUARD);
+			BattleScriptCall(BattleScript_BarriersFree);
+		}
+		effect = TRUE;
+	}
+	
+	if (!clear)
+	{
+		if (!effect)
+			gBattlescriptCurrInstr = cmd->failPtr;
+		else
+			gBattlescriptCurrInstr = cmd->nextInstr;
+	}
+	else
+	{
+		if (effect)
+			gBattleScripting.battler = gBattlerAttacker; // For the string
+		else
+			gBattlescriptCurrInstr = cmd->nextInstr;
+	}
 }
 
 static void atkC0_recoverbasedonweather(void)
@@ -8984,7 +9023,7 @@ void BS_RemoveScreens(void)
 {
 	NATIVE_ARGS();
 
-	if (TryRemoveScreens(gBattlerTarget, FALSE))
+	if (TryRemoveScreens(gBattlerTarget, TRUE, FALSE))
     {
         gBattleScripting.animTurn = 1;
         gBattleScripting.animTargetsHit = 1;
@@ -9400,4 +9439,12 @@ void BS_TrySetMagnetRise(void)
 	}
 	else
 		gBattlescriptCurrInstr = cmd->failPtr;
+}
+
+void BS_SetTrickRoom(void)
+{
+	NATIVE_ARGS();
+	gFieldStatus ^= STATUS_FIELD_TRICK_ROOM;
+	gFieldTimers.trickRoomTimer = 5;
+	gBattlescriptCurrInstr = cmd->nextInstr;
 }

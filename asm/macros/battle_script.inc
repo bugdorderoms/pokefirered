@@ -190,12 +190,11 @@
 	.byte \record
 	.endm
 
-    .macro jumpifabilityonside battler:req, abilityId:req, ptr:req, record=FALSE
+    .macro jumpifabilityonside battler:req, abilityId:req, ptr:req
 	.byte 0x22
 	.byte \battler
 	.2byte \abilityId
 	.4byte \ptr
-	.byte \record
 	.endm
 
 	.macro getexp battler:req
@@ -1033,8 +1032,9 @@
 	.byte \battler
 	.endm
 
-	.macro nopbf
+	.macro trydefogclear failPtr:req
 	.byte 0xbf
+	.4byte \failPtr
 	.endm
 
 	.macro recoverbasedonweather failPtr:req
@@ -1751,6 +1751,10 @@
 	.macro trysetmagnetrise failPtr:req
 	callfunction BS_TrySetMagnetRise
 	.4byte \failPtr
+	.endm
+	
+	.macro settrickroom
+	callfunction BS_SetTrickRoom
 	.endm
 	
 @ helpful macros

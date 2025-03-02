@@ -911,6 +911,16 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 		.battleScript = BattleScript_EffectSpecialAttackUp2,
 	},
 	
+	[EFFECT_DEFOG] =
+	{
+		.battleScript = BattleScript_EffectDefog,
+	},
+	
+	[EFFECT_TRICK_ROOM] =
+	{
+		.battleScript = BattleScript_EffectTrickRoom,
+	},
+	
 	/*
 	[EFFECT_CHANGE_TYPE_ON_ITEM] =
 	{

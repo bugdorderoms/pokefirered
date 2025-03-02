@@ -146,6 +146,8 @@ extern const u8 BattleScript_EffectSuckerPunch[];
 extern const u8 BattleScript_EffectToxicSpikes[];
 extern const u8 BattleScript_EffectMagnetRise[];
 extern const u8 BattleScript_EffectSpecialAttackUp2[];
+extern const u8 BattleScript_EffectDefog[];
+extern const u8 BattleScript_EffectTrickRoom[];
 // Other scripts
 extern const u8 BattleScript_HitFromCritCalc[];
 extern const u8 BattleScript_MoveEnd[];
@@ -209,6 +211,8 @@ extern const u8 BattleScript_AllStatsUp[];
 extern const u8 BattleScript_WrapFree[];
 extern const u8 BattleScript_LeechSeedFree[];
 extern const u8 BattleScript_SpikesFree[];
+extern const u8 BattleScript_FogFree[];
+extern const u8 BattleScript_BarriersFree[];
 extern const u8 BattleScript_MonTookFutureAttack[];
 extern const u8 BattleScript_NoPPForMove[];
 extern const u8 BattleScript_MoveUsedIsTormented[];

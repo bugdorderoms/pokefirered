@@ -3032,7 +3032,7 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
 {
     s8 battler1Priority, battler2Priority;
     s32 battler1Bracket, battler2Bracket;
-    u32 battler1Speed, battler2Speed;
+    u32 battler1Speed, battler2Speed, temp;
   
     // priority check
     if (!ignoreChosenMoves) 
@@ -3064,12 +3064,15 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
     battler1Speed = GetBattlerTotalSpeed(battler1);
     battler2Speed = GetBattlerTotalSpeed(battler2);
     
-    if (battler1Speed > battler2Speed)
-        return ATTACKER_STRIKES_FIRST;
-    else if (battler1Speed < battler2Speed)
-        return DEFENDER_STRIKES_FIRST;
-    else
+	if (battler1Speed == battler2Speed) // Same speeds
 		return RandomPercent(50) ? ATTACKER_STRIKES_FIRST : SPEED_TIE;
+	else
+	{
+		if (battler1Speed > battler2Speed)
+			return (gFieldStatus & STATUS_FIELD_TRICK_ROOM) ? DEFENDER_STRIKES_FIRST : ATTACKER_STRIKES_FIRST;
+		else
+			return (gFieldStatus & STATUS_FIELD_TRICK_ROOM) ? ATTACKER_STRIKES_FIRST : DEFENDER_STRIKES_FIRST;
+	}
 }
 
 s8 GetChosenMovePriority(u8 battler)
@@ -3223,7 +3226,7 @@ static void SetActionsAndBattlersTurnOrder(void)
             {
                 if (i != battlerId)
                 {
-                    gActionsByTurnOrder[turnOrderId] = gBattleStruct->battlers[battlerId].chosenAction;
+                    gActionsByTurnOrder[turnOrderId] = gBattleStruct->battlers[i].chosenAction;
                     gBattlerByTurnOrder[turnOrderId] = i;
                     ++turnOrderId;
                 }
@@ -3802,15 +3805,22 @@ static void HandleAction_UseItem(void)
 
 static u32 GetSideAverageSpeed(u8 battler)
 {
+	u8 i, numBattlers = 0;
 	u32 speed = 0;
 	
-	if (IsBattlerAlive(battler))
-		speed += GetBattlerTotalSpeed(battler);
+	for (i = battler; i < NUM_BATTLERS_PER_SIDE; i = BATTLE_PARTNER(i))
+	{
+		if (IsBattlerAlive(i))
+		{
+			speed += GetBattlerTotalSpeed(i);
+			numBattlers++;
+		}
+	}
 	
-	if (IsBattlerAlive(BATTLE_PARTNER(battler)))
-		speed += GetBattlerTotalSpeed(BATTLE_PARTNER(battler));
+	if (numBattlers)
+		speed /= numBattlers;
 	
-	return speed / 2;
+	return speed;
 }
 
 bool8 TryRunFromBattle(u8 battler)
@@ -3823,19 +3833,19 @@ bool8 TryRunFromBattle(u8 battler)
     {
         gLastUsedItem = gBattleMons[battler].item;
         gProtectStructs[battler].fleeFlag = 1;
-        ++effect;
+        effect = TRUE;
     }
 	else if (IsBattlerOfType(battler, TYPE_GHOST))
-		++effect;
+		effect = TRUE;
     else if (GetBattlerAbility(battler) == ABILITY_RUN_AWAY)
     {
         gProtectStructs[battler].fleeFlag = 2;
-        ++effect;
+        effect = TRUE;
     }
     else if (IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE)
     {
         if (GetBattlerSide(battler) == B_SIDE_PLAYER)
-            ++effect;
+            effect = TRUE;
     }
     else
     {
@@ -3846,10 +3856,10 @@ bool8 TryRunFromBattle(u8 battler)
 		{
 			speedVar = (battlerSpeed * 128) / (escapeFromSpeed) + (gBattleStruct->runTries * 30);
 			if (speedVar > (Random() & 0xFF))
-				++effect;
+				effect = TRUE;
 		}
 		else // same speed or faster
-			++effect;
+			effect = TRUE;
 
         ++gBattleStruct->runTries;
     }
@@ -3866,7 +3876,7 @@ static void HandleAction_Run(void)
 {
 	u8 battlerId;
 	
-    gBattlerAttacker = gBattlerByTurnOrder[gCurrentTurnActionNumber];
+    gBattlerAttacker = gCurrentTurnActionBattlerId;
 
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {

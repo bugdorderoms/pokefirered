@@ -10353,8 +10353,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_FLASH_CANNON] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Flash Cannon"),
+        .description = COMPOUND_STRING("It gathers all its\n"
+                                       "energy and releases\n"
+                                       "it. It may lower\n"
+                                       "the foe's Sp. Def."),
+		.animScript = gMoveAnim_FLASH_CANNON,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_STEEL,
         .accuracy = 100,
@@ -10363,7 +10368,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
 		.additionalEffects = ADDITIONAL_EFFECTS({
@@ -10375,8 +10379,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_ROCK_CLIMB] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Rock Climb"),
+        .description = COMPOUND_STRING("It attacks the foe\n"
+                                       "by smashing into it\n"
+                                       "with force. It may\n"
+                                       "confuse the foe."),
+		.animScript = gMoveAnim_ROCK_CLIMB,
+		.effect = EFFECT_HIT,
         .power = 90,
         .type = TYPE_NORMAL,
         .accuracy = 85,
@@ -10386,7 +10395,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
 		.additionalEffects = ADDITIONAL_EFFECTS({
@@ -10398,8 +10406,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_DEFOG] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_DEFOG,
+		.name = COMPOUND_STRING("Defog"),
+        .description = COMPOUND_STRING("It reduces the\n"
+                                       "foe's evasion stat.\n"
+                                       "It also removes\n"
+                                       "fog, reflect, etc."),
+		.animScript = gMoveAnim_DEFOG,
+		.effect = EFFECT_DEFOG,
         .type = TYPE_FLYING,
         .pp = 15,
         .target = MOVE_TARGET_SELECTED,
@@ -10413,8 +10426,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_TRICK_ROOM] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_TRICK_ROOM,
+		.name = COMPOUND_STRING("Trick Room"),
+        .description = COMPOUND_STRING("Creates a bizarre\n"
+                                       "area in which, for\n"
+                                       "five turns, slower\n"
+                                       "Pokémon move first."),
+		.animScript = gMoveAnim_TRICK_ROOM,
+		.effect = EFFECT_TRICK_ROOM,
         .type = TYPE_PSYCHIC,
         .pp = 5,
         .target = MOVE_TARGET_ALL_BATTLERS,

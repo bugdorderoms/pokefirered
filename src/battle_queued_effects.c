@@ -182,7 +182,7 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 	switch (id)
 	{
 		case B_BATTLER_QUEUED_FUTURE_SIGHT:
-		    if (gBattleStruct->battlers[battlerId].futureSightCounter != 0 && --gBattleStruct->battlers[battlerId].futureSightCounter == 0)
+		    if (gBattleStruct->battlers[battlerId].futureSightCounter > 0 && --gBattleStruct->battlers[battlerId].futureSightCounter == 0)
 			{
 				gBattlerTarget = battlerId;
 				gBattlerAttacker = gBattleStruct->battlers[battlerId].futureSightAttacker;
@@ -195,7 +195,7 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 			}
 			break;
 		case B_BATTLER_QUEUED_WISH:
-		    if (gBattleStruct->battlers[battlerId].wishCounter != 0 && --gBattleStruct->battlers[battlerId].wishCounter == 0)
+		    if (gBattleStruct->battlers[battlerId].wishCounter > 0 && --gBattleStruct->battlers[battlerId].wishCounter == 0)
 			{
 				if (!(gStatuses3[battlerId] & STATUS3_HEAL_BLOCK))
 				{

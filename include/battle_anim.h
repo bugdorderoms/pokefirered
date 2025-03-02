@@ -569,6 +569,7 @@ void InitSwirlingFogAnim(struct Sprite *sprite);
 // bug.c
 void AnimStringWrap(struct Sprite *sprite);
 void AnimMissileArc(struct Sprite *sprite);
+void AnimMissileArcStep(struct Sprite *sprite);
 
 // electric.c
 void AnimTask_ElectricBolt(u8 taskId);

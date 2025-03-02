@@ -10,7 +10,6 @@ static void AnimStringWrap_Step(struct Sprite *sprite);
 static void AnimSpiderWeb(struct Sprite *sprite);
 static void AnimSpiderWeb_Step(struct Sprite *sprite);
 static void AnimTranslateStinger(struct Sprite *sprite);
-static void AnimMissileArcStep(struct Sprite *sprite);
 
 static const union AffineAnimCmd sAffineAnim_MegahornHorn_0[] =
 {
@@ -421,7 +420,7 @@ void AnimMissileArc(struct Sprite *sprite)
     sprite->invisible = TRUE;
 }
 
-static void AnimMissileArcStep(struct Sprite *sprite)
+void AnimMissileArcStep(struct Sprite *sprite)
 {
     sprite->invisible = FALSE;
 

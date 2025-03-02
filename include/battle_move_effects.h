@@ -177,6 +177,8 @@ enum
 	EFFECT_HEART_SWAP,
 	EFFECT_MAGNET_RISE,
 	EFFECT_SPECIAL_ATTACK_UP_2,
+	EFFECT_DEFOG,
+	EFFECT_TRICK_ROOM,
 	EFFECTS_COUNT,
 };
 
@@ -210,7 +212,6 @@ enum
 #define EFFECT_BULLDOZE                     232
 #define EFFECT_FOUL_PLAY                    233
 #define EFFECT_PSYSHOCK                     234
-#define EFFECT_TRICK_ROOM                   241
 #define EFFECT_WONDER_ROOM                  242
 #define EFFECT_MAGIC_ROOM                   243
 #define EFFECT_STEALTH_ROCK                 247
@@ -252,7 +253,6 @@ enum
 #define EFFECT_FINAL_GAMBIT                 296
 #define EFFECT_CHANGE_TYPE_ON_ITEM          297
 #define EFFECT_AUTOTOMIZE                   298
-#define EFFECT_DEFOG                        300
 #define EFFECT_HIT_ENEMY_HEAL_ALLY          301
 #define EFFECT_SMACK_DOWN                   302
 #define EFFECT_SYNCHRONOISE                 303
