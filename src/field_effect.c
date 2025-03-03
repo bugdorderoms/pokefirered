@@ -503,12 +503,6 @@ u8 CreateTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpriority)
     return CreateSprite(&spriteTemplate, x, y, subpriority);
 }
 
-static void LoadTrainerGfx_TrainerCard(u8 gender, u16 palOffset, u8 *dest)
-{
-    LZDecompressVram(gTrainerFrontPicTable[gender].pic.data, dest);
-    LoadCompressedPalette(gTrainerFrontPicTable[gender].palette.data, palOffset, 0x20);
-}
-
 static u8 AddNewGameBirchObject(s16 x, s16 y, u8 subpriority)
 {
     LoadSpritePalette(&sNewGameOakObjectPaletteInfo);

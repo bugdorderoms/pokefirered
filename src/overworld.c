@@ -2969,27 +2969,6 @@ static void InitLinkPlayerObjectEventPos(struct ObjectEvent *objEvent, s16 x, s1
     ObjectEventUpdateZCoord(objEvent);
 }
 
-static void SetLinkPlayerObjectRange(u8 linkPlayerId, u8 dir)
-{
-    if (gLinkPlayerObjectEvents[linkPlayerId].active)
-    {
-        struct ObjectEvent *objEvent = &gObjectEvents[gLinkPlayerObjectEvents[linkPlayerId].objEventId];
-        linkDirection(objEvent) = dir;
-    }
-}
-
-static void DestroyLinkPlayerObject(u8 linkPlayerId)
-{
-    struct LinkPlayerObjectEvent *linkPlayerObjEvent = &gLinkPlayerObjectEvents[linkPlayerId];
-    struct ObjectEvent *objEvent = &gObjectEvents[linkPlayerObjEvent->objEventId];
-	
-    if (objEvent->spriteId != MAX_SPRITES)
-        DestroySprite(&gSprites[objEvent->spriteId]);
-	
-    linkPlayerObjEvent->active = FALSE;
-    objEvent->active = FALSE;
-}
-
 // Returns the spriteId corresponding to this player.
 static u8 GetSpriteForLinkedPlayer(u8 linkPlayerId)
 {
@@ -3012,11 +2991,6 @@ static u8 GetLinkPlayerFacingDirection(u8 linkPlayerId)
 static u8 GetLinkPlayerElevation(u8 linkPlayerId)
 {
     return gObjectEvents[gLinkPlayerObjectEvents[linkPlayerId].objEventId].currentElevation;
-}
-
-static s32 GetLinkPlayerObjectStepTimer(u8 linkPlayerId)
-{
-    return 16 - (s8)gObjectEvents[gLinkPlayerObjectEvents[linkPlayerId].objEventId].directionSequenceIndex;
 }
 
 static u8 GetLinkPlayerIdAt(s16 x, s16 y)

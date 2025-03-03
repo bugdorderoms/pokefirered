@@ -496,7 +496,8 @@ u16 GetBattlerAbility(u8 battler)
 	bool8 forAI = BattleAI_IsRunning();
 	u16 ability = GetBattlerSupressedAbility(battler, forAI);
 	
-	if (IsNeutralizingGasOnField(ability, forAI))
+	// Can't suppress self
+	if (ability != ABILITY_NEUTRALIZING_GAS && IsNeutralizingGasOnField(ability, forAI))
 		return ABILITY_NONE;
 	
 	if (gAbilities[ability].breakable && battler != gCurrentTurnActionBattlerId)
@@ -5868,23 +5869,37 @@ bool8 TryRemoveEntryHazards(u8 battlerId, bool8 clear, bool8 fromBothSides)
 
 void SaveAttackerToStack(u8 battlerId)
 {
-	gBattleStruct->savedAttackerStack[gBattleStruct->savedAttackerStackCount++] = gBattlerAttacker;
+	DebugPrintfLevel(MGBA_LOG_INFO, "SaveAttackerToStack called.");
+	
+	if (gBattleStruct->savedAttackerStackCount < ARRAY_COUNT(gBattleStruct->savedAttackerStack))
+		gBattleStruct->savedAttackerStack[gBattleStruct->savedAttackerStackCount++] = gBattlerAttacker;
+	else
+		DebugPrintfLevel(MGBA_LOG_WARN, "Attempting to exceed savedAttackerStack array size!");
+	
 	gBattlerAttacker = battlerId;
 }
 
 void RestoreAttackerFromStack(void)
 {
+	DebugPrintfLevel(MGBA_LOG_INFO, "RestoreAttackerFromStack called.");
 	gBattlerAttacker = gBattleStruct->savedAttackerStack[--gBattleStruct->savedAttackerStackCount];
 }
 
 void SaveTargetToStack(u8 battlerId)
 {
-	gBattleStruct->savedTargetStack[gBattleStruct->savedTargetStackCount++] = gBattlerTarget;
+	DebugPrintfLevel(MGBA_LOG_INFO, "SaveTargetToStack called.");
+	
+	if (gBattleStruct->savedTargetStackCount < ARRAY_COUNT(gBattleStruct->savedTargetStack))
+		gBattleStruct->savedTargetStack[gBattleStruct->savedTargetStackCount++] = gBattlerTarget;
+	else
+		DebugPrintfLevel(MGBA_LOG_WARN, "Attempting to exceed savedTargetStack array size!");
+	
 	gBattlerTarget = battlerId;
 }
 
 void RestoreTargetFromStack(void)
 {
+	DebugPrintfLevel(MGBA_LOG_INFO, "RestoreTargetFromStack called.");
 	gBattlerTarget = gBattleStruct->savedTargetStack[--gBattleStruct->savedTargetStackCount];
 }
 

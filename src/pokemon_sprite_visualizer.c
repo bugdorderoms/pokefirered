@@ -18,7 +18,7 @@
 #include "constants/songs.h"
 #include "gba/m4a_internal.h"
 
-#if POKEMON_SPRITE_VISUALIZER
+#ifndef NDEBUG
 
 // Windows
 enum

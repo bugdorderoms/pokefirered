@@ -1156,7 +1156,7 @@ void BtlController_HandleDrawTrainerPic(u8 battlerId, u32 trainerPicId, bool8 is
 	else
 		DecompressTrainerBackPalette(trainerPicId, battlerId);
 	
-    SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(battlerId));
+    SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, battlerId, GetBattlerPosition(battlerId));
     gBattlerSpriteIds[battlerId] = CreateSprite(&gMultiuseSpriteTemplate, xPos, yPos, subpriority);
     gSprites[gBattlerSpriteIds[battlerId]].x2 = isFront ? -240 : 240;
     gSprites[gBattlerSpriteIds[battlerId]].data[0] = isFront ? 2 : -2;
@@ -1182,7 +1182,7 @@ void BtlController_HandleTrainerSlide(u8 battlerId, u32 trainerPicId, bool8 isFr
 	else
 		DecompressTrainerBackPalette(trainerPicId, battlerId);
 	
-	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(battlerId));
+	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, battlerId, GetBattlerPosition(battlerId));
     gBattlerSpriteIds[battlerId] = CreateSprite(&gMultiuseSpriteTemplate, xPos, yPos, 30);
 	
 	if (isFront)

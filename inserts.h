@@ -180,9 +180,6 @@
 // or when on the first Pokémon and you press up, it will go to the last.
 #define CIRCULAR_SUMMARY_SCREEN TRUE
 
-// If this setting is enabled, when you press SELECT on the summary screen, an battle preview of the Pokémon's sprites will be displayed.
-#define POKEMON_SPRITE_VISUALIZER TRUE
-
 // If this setting is enabled, it will draw the current trainer's overworld sprite on the main menu window that matches its gender.
 #define TRAINER_ICON_ON_MAIN_MENU FALSE
 

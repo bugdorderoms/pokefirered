@@ -68,15 +68,6 @@ bool8 gLinkVSyncDisabled;
 u32 IntrMain_Buffer[0x200];
 u8 gPcmDmaCounter;
 
-// These variables are not defined in RS or Emerald, and are never read.
-// They were likely used to debug the audio engine and VCount interrupt.
-// Define NDEBUG in include/config.h to remove these variables.
-#ifndef NDEBUG
-u8 sVcountAfterSound;
-u8 sVcountAtIntr;
-u8 sVcountBeforeSound;
-#endif
-
 static IntrFunc * const sTimerIntrFunc = gIntrTable + 0x7;
 
 EWRAM_DATA u8 gDecompressionBuffer[0x4000] = {0};
@@ -146,7 +137,13 @@ void AgbMain()
 
     SetNotInSaveFailedScreen();
 
-    AGBPrintInit();
+#ifndef NDEBUG
+#if (LOG_HANDLER == LOG_HANDLER_MGBA_PRINT)
+    (void) MgbaOpen();
+#elif (LOG_HANDLER == LOG_HANDLER_AGB_PRINT)
+    AGBPrintfInit();
+#endif
+#endif
 
 #if REVISION == 1
     if (gFlashMemoryPresent != TRUE)
@@ -359,14 +356,7 @@ static void VBlankIntr(void)
 
     gPcmDmaCounter = gSoundInfo.pcmDmaCounter;
 
-#ifndef NDEBUG
-    sVcountBeforeSound = REG_VCOUNT;
-#endif
     m4aSoundMain();
-#ifndef NDEBUG
-    sVcountAfterSound = REG_VCOUNT;
-#endif
-
     TryReceiveLinkBattleData();
 	
 #if NO_SAVE_STATE_RNG_MANIPULATION
@@ -398,9 +388,6 @@ static void HBlankIntr(void)
 
 static void VCountIntr(void)
 {
-#ifndef NDEBUG
-    sVcountAtIntr = REG_VCOUNT;
-#endif
     m4aSoundVSync();
     INTR_CHECK |= INTR_FLAG_VCOUNT;
     gMain.intrCheck |= INTR_FLAG_VCOUNT;

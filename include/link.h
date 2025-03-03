@@ -231,7 +231,6 @@ bool8 SendBlock(u8, const void *, u16);
 u8 GetBlockReceivedStatus(void);
 void ResetBlockReceivedFlags(void);
 void ResetBlockReceivedFlag(u8);
-void SetLinkDebugValues(u32, u32);
 u8 GetSavedPlayerCount(void);
 u8 GetLinkPlayerCount_2(void);
 bool8 IsLinkMaster(void);

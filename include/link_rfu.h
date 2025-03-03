@@ -31,9 +31,6 @@
 #define BACKUP_QUEUE_NUM_SLOTS 2
 #define BACKUP_QUEUE_SLOT_LENGTH 14
 
-#define UNUSED_QUEUE_NUM_SLOTS 2
-#define UNUSED_QUEUE_SLOT_LENGTH 256
-
 #define RFU_PACKET_SIZE 6
 
 #define RFU_STATUS_OK                   0
@@ -126,15 +123,6 @@ struct RfuBackupQueue
     /* 0x1c */ vu8 recv_slot;
     /* 0x1d */ vu8 send_slot;
     /* 0x1e */ vu8 count;
-};
-
-struct RfuUnusedQueue
-{
-    /* 0x000 */ u8 slots[UNUSED_QUEUE_NUM_SLOTS][UNUSED_QUEUE_SLOT_LENGTH];
-    /* 0x200 */ vu8 recv_slot;
-    /* 0x201 */ vu8 send_slot;
-    /* 0x202 */ vu8 count;
-    /* 0x203 */ vu8 full;
 };
 
 typedef struct UnkRfuStruct_2

@@ -95,6 +95,7 @@ void ResetMenuAndMonGlobals(void)
     ResetSpecialVars();
 }
 
+#ifndef NDEBUG
 static void Debug_NewGameGiveAllItems(void)
 {
 	u16 i;
@@ -116,6 +117,7 @@ static void Debug_NewGameFillPokedex(void)
 		GetSetPokedexFlag(i, FLAG_SET_CAUGHT);
 	}
 }
+#endif
 
 void NewGameInitData(void)
 {
@@ -135,7 +137,9 @@ void NewGameInitData(void)
     InitPlayerTrainerId();
     PlayTimeCounter_Reset();
     ClearPokedexFlags();
-	// Debug_NewGameFillPokedex();
+#ifndef NDEBUG
+	Debug_NewGameFillPokedex();
+#endif
     InitEventData();
     ResetFameChecker();
     SetMoney(&gSaveBlock1Ptr->money, 3000);
@@ -149,7 +153,9 @@ void NewGameInitData(void)
     ClearBag();
 	EnablePlayerBag();
     NewGameInitPCItems();
-	// Debug_NewGameGiveAllItems();
+#ifndef NDEBUG
+	Debug_NewGameGiveAllItems();
+#endif
     InitEasyChatPhrases();
     ResetTrainerFanClub();
     UnionRoomChat_InitializeRegisteredTexts();

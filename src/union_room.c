@@ -121,7 +121,7 @@ static void HandleCancelTrade(bool32 unlockObjs);
 static void UR_EnableScriptContext2AndFreezeObjectEvents(void);
 static u8 GetSinglePartnerSpriteGenderParam(s32 linkPlayer);
 static u8 GetActivePartnerSpriteGenderParam(struct UnkStruct_URoom * uroom);
-static void ViewURoomPartnerTrainerCard(u8 *dest, struct UnkStruct_URoom * uRoom, bool8 parent_child);
+static void ViewURoomPartnerTrainerCard(struct UnkStruct_URoom * uRoom, bool8 parent_child);
 
 #define _8456CD8(a, b) ((a) | ((b) << 8))
 
@@ -1335,10 +1335,6 @@ static void Task_TryJoinLinkGroup(u8 taskId)
             id = ListMenu_ProcessInput(data->listTaskId);
             if (JOY_NEW(A_BUTTON) && id != -1)
             {
-                // this unused variable along with the assignment is needed to match
-                u32 unusedVar;
-                unusedVar  = data->field_0->arr[id].gname_uname.gname.activity;
-
                 if (data->field_0->arr[id].groupScheduledAnim == UNION_ROOM_SPAWN_IN && !data->field_0->arr[id].gname_uname.gname.started)
                 {
                     u32 var = IsTryingToTradeWithHoennTooSoon(data, id);
@@ -2382,7 +2378,7 @@ static void Task_RunUnionRoom(u8 taskId)
             {
                 if (sPlayerCurrActivity == ACTIVITY_CARD)
                 {
-                    ViewURoomPartnerTrainerCard(gStringVar4, data, MODE_CHILD);
+                    ViewURoomPartnerTrainerCard(data, MODE_CHILD);
                     data->state = 40;
                 }
                 else
@@ -2567,7 +2563,7 @@ static void Task_RunUnionRoom(u8 taskId)
             else if (sPlayerCurrActivity == (ACTIVITY_CARD | IN_UNION_ROOM))
             {
                 Rfu_SendPacket(data->playerSendBuffer);
-                ViewURoomPartnerTrainerCard(gStringVar4, data, MODE_PARENT);
+                ViewURoomPartnerTrainerCard(data, MODE_PARENT);
                 data->state = 40;
             }
             else
@@ -4046,7 +4042,7 @@ static u8 GetActivePartnerSpriteGenderParam(struct UnkStruct_URoom * uroom)
     return retVal;
 }
 
-static void ViewURoomPartnerTrainerCard(u8 *unused, struct UnkStruct_URoom * uroom, bool8 parent_child)
+static void ViewURoomPartnerTrainerCard(struct UnkStruct_URoom * uroom, bool8 parent_child)
 {
     struct TrainerCard * trainerCard = &gTrainerCards[GetMultiplayerId() ^ 1];
     s32 i;

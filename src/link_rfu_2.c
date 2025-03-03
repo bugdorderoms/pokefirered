@@ -71,7 +71,6 @@ static u8 GetPartnerIndexByNameAndTrainerID(const u8 *trainerName, u16 trainerId
 static void RfuReqDisconnectSlot(u32 bmDisconnectSlot);
 static void sub_80FBE20(u32 a0, u32 a1);
 static void sub_80FC028(u8 taskId);
-static void Debug_PrintEmpty(void);
 static void Task_idle(u8 taskId);
 
 static const INIT_PARAM sRfuReqConfigTemplate = {
@@ -181,43 +180,11 @@ static const u16 sAcceptedSerialNos[] = {
     0xFFFF
 };
 
-static const char sUnref_843EC92[][15] = {
-    "RFU WAIT",
-    "RFU BOOT",
-    "RFU ERROR",
-    "RFU RESET",
-    "RFU CONFIG",
-    "RFU START",
-    "RFU SC POLL",
-    "RFU SP POLL",
-    "RFU START",
-    "RFU SEND ERR",
-    "RFU CP POLL"
-};
-
-static const char sUnref_843ED37[][16] = {
-    "              ",
-    "RECOVER START ",
-    "DISSCONECT    ",
-    "RECOVER SUUSES",
-    "RECOVER FAILED"
-};
-
 static const TaskFunc gUnknown_843ED88[] = {
     sub_80FA834,
     Task_ExchangeLinkPlayers,
     sub_80FACF0
 };
-
-static void Debug_PrintString(const void *string, u8 x, u8 y)
-{
-    // debug?
-}
-
-static void Debug_PrintNum(u16 num, u8 x, u8 y, u8 ndigits)
-{
-
-}
 
 void ResetLinkRfuGFLayer(void)
 {
@@ -404,7 +371,6 @@ static void Task_JoinGroupSearchForParent(u8 taskId)
         DestroyTask(taskId);
         if (sRfuDebug.unk_0f == 0)
         {
-            Debug_PrintEmpty();
             sRfuDebug.unk_0f++;
         }
         CreateTask(sub_80FA834, 5);
@@ -2143,8 +2109,6 @@ static void LmanCallback_Parent2(u8 msg, u8 param_count)
     }
 }
 
-static const u8 unref_843EDF3[] = _("　あきと");
-
 static void LmanCallback_Child(u8 msg, u8 param_count)
 {
     switch (msg)
@@ -2182,13 +2146,11 @@ static void LmanCallback_Child(u8 msg, u8 param_count)
             Rfu.linkLossRecoveryState = 4;
         if (Rfu.recvStatus != RFU_STATUS_LEAVE_GROUP)
             RfuSetStatus(RFU_STATUS_CONNECTION_ERROR, msg);
-        Debug_PrintString("LINK LOSS DISCONNECT!", 5, 5);
         if (gReceivedRemoteLinkPlayers == 1)
             GetLinkmanErrorParams(msg);
         break;
     case LMAN_MSG_LINK_LOSS_DETECTED_AND_START_RECOVERY:
         Rfu.linkLossRecoveryState = 1;
-        Debug_PrintString("LINK LOSS RECOVERY NOW", 5, 5);
         break;
     case LMAN_MSG_LINK_RECOVERY_SUCCESSED:
         Rfu.linkLossRecoveryState = 3;
@@ -2783,105 +2745,6 @@ bool32 sub_80FC1CC(void)
     }
 
     return TRUE;
-}
-
-static void Debug_PrintEmpty(void)
-{
-    s32 i;
-
-    for (i = 0; i < 20; i++)
-        Debug_PrintString("                              ", 0, i);
-}
-
-static const char gUnknown_843EE47[16] = {
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    '\0'
-};
-
-static const char gUnknown_843EE57[9] = {
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    '\0'
-};
-
-static const char gUnknown_843EE60[] = {' ', '\0'};
-static const char gUnknown_843EE62[] = {'*', '\0'};
-
-static void Debug_PrintStatus(void)
-{
-    s32 i, j;
-
-    Debug_PrintNum(GetBlockReceivedStatus(), 0x1C, 0x13, 2);
-    Debug_PrintNum(gRfuLinkStatus->connSlotFlag, 0x14, 1, 1);
-    Debug_PrintNum(gRfuLinkStatus->linkLossSlotFlag, 0x17, 1, 1);
-    if (Rfu.parent_child == MODE_PARENT)
-    {
-        for (i = 0; i < RFU_CHILD_MAX; i++)
-        {
-            if ((gRfuLinkStatus->getNameFlag >> i) & 1)
-            {
-                Debug_PrintNum(gRfuLinkStatus->partner[i].serialNo, 1, i + 3, 4);
-                Debug_PrintString((void *) &gRfuLinkStatus->partner[i].gname, 6, i + 3);
-                Debug_PrintString(gRfuLinkStatus->partner[i].uname, 0x16, i + 3);
-            }
-        }
-        for (i = 0; i < RFU_CHILD_MAX; i++)
-        {
-            for (j = 0; j < 14; j++)
-            {
-                Debug_PrintNum(Rfu.main_UNI_recvBuffer[i][j], j * 2, i + 11, 2);
-            }
-        }
-        Debug_PrintString("NOWSLOT", 1, 0xF);
-    }
-    else if (gRfuLinkStatus->connSlotFlag != 0 && gRfuLinkStatus->getNameFlag != 0)
-    {
-        for (i = 0; i < RFU_CHILD_MAX; i++)
-        {
-            Debug_PrintNum(0, 1, i + 3, 4);
-            Debug_PrintString(gUnknown_843EE47, 6, i + 3);
-            Debug_PrintString(gUnknown_843EE57, 0x16, i + 3);
-        }
-        Debug_PrintNum(gRfuLinkStatus->partner[Rfu.child_slot].serialNo, 1, 3, 4);
-        Debug_PrintString(gRfuLinkStatus->partner[Rfu.child_slot].gname, 6, 3);
-        Debug_PrintString(gRfuLinkStatus->partner[Rfu.child_slot].uname, 0x16, 3);
-    }
-    else
-    {
-        for (i = 0; i < gRfuLinkStatus->findParentCount; i++)
-        {
-            if (gRfuLinkStatus->partner[i].slot != 0xFF)
-            {
-                Debug_PrintNum(gRfuLinkStatus->partner[i].serialNo, 1, i + 3, 4);
-                Debug_PrintNum(gRfuLinkStatus->partner[i].id, 6, i + 3, 4);
-                Debug_PrintString(gRfuLinkStatus->partner[i].uname, 0x16, i + 3);
-            }
-        }
-        for (; i < RFU_CHILD_MAX; i++)
-        {
-            Debug_PrintNum(0, 1, i + 3, 4);
-            Debug_PrintString(gUnknown_843EE47, 6, i + 3);
-            Debug_PrintString(gUnknown_843EE57, 0x16, i + 3);
-        }
-    }
-}
-
-static const char gUnknown_843EE6C[][12] = {
-    "           ",
-    "CLOCK DRIFT",
-    "BUSY SEND  ",
-    "CMD REJECT ",
-    "CLOCK SLAVE"
-};
-
-static const char gUnknown_843EEA8[][8] = {
-    "CHILD ",
-    "PARENT",
-    "SEARCH"
-};
-
-static u32 GetRfuSendQueueLength(void)
-{
-    return Rfu.sendQueue.count;
 }
 
 u32 GetRfuRecvQueueLength(void)

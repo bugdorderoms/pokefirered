@@ -215,7 +215,7 @@ static void CreateBattlerSprite(u8 battler)
         {
 			u16 backPicId = gSaveBlock2Ptr->playerGender == MALE ? TRAINER_BACK_PIC_RED : TRAINER_BACK_PIC_LEAF;
 			
-            SetMultiuseSpriteTemplateToTrainerBack(backPicId, battlerPosition);
+            SetMultiuseSpriteTemplateToTrainerBack(backPicId, battler, battlerPosition);
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 0x50,
                                                       (8 - gTrainerBackPicTable[backPicId].coords.size) * 4 + 80,
                                                       GetBattlerSpriteSubpriority(0));
@@ -225,7 +225,7 @@ static void CreateBattlerSprite(u8 battler)
         }
         else if ((gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL) && battlerPosition == B_POSITION_PLAYER_LEFT)
         {
-            SetMultiuseSpriteTemplateToTrainerBack(TRAINER_BACK_PIC_OLD_MAN, battlerPosition);
+            SetMultiuseSpriteTemplateToTrainerBack(TRAINER_BACK_PIC_OLD_MAN, battler, battlerPosition);
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 0x50, (8 - gTrainerBackPicTable[TRAINER_BACK_PIC_OLD_MAN].coords.size) * 4 + 80, GetBattlerSpriteSubpriority(0));
             gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
             gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;

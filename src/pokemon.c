@@ -1173,11 +1173,11 @@ void SetMultiuseSpriteTemplateToPokemon(u16 speciesTag, u8 battlerPosition)
     gMultiuseSpriteTemplate.anims = gSpriteAnimTable_82349BC;
 }
 
-void SetMultiuseSpriteTemplateToTrainerBack(u16 trainerSpriteId, u8 battlerPosition)
+void SetMultiuseSpriteTemplateToTrainerBack(u16 trainerSpriteId, u8 battlerId, u8 battlerPosition)
 {
     gMultiuseSpriteTemplate.paletteTag = trainerSpriteId;
 	
-    if (battlerPosition == B_POSITION_PLAYER_LEFT || battlerPosition == B_POSITION_PLAYER_RIGHT)
+    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
     {
         gMultiuseSpriteTemplate = gSpriteTemplates_TrainerBackpics[trainerSpriteId];
         gMultiuseSpriteTemplate.anims = gTrainerBackPicTable[trainerSpriteId].anims;

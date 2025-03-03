@@ -1078,7 +1078,7 @@ static void Task_InputHandler_Info(u8 taskId)
             }
             else if (JOY_NEW(B_BUTTON))
                 sMonSummaryScreen->state3270 = PSS_STATE3270_ATEXIT_FADEOUT;
-#if POKEMON_SPRITE_VISUALIZER
+#ifndef NDEBUG
 			else if (JOY_NEW(SELECT_BUTTON) && !gMain.inBattle)
 			{
 				sMonSummaryScreen->savedCallback = CB2_PokemonSpriteVisualizer;

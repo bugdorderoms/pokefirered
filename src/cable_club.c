@@ -165,16 +165,6 @@ static bool32 sub_8080990(u8 taskId)
     return FALSE;
 }
 
-static void sub_80809C4(u8 taskId)
-{
-    gTasks[taskId].data[0]++;
-    if (gTasks[taskId].data[0] == 10)
-    {
-        Link_PrepareCmd0xCCCC_Rfu0xA100(2);
-        DestroyTask(taskId);
-    }
-}
-
 static void Task_Linkup0(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
@@ -862,12 +852,6 @@ void EnterColosseumPlayerSpot(void)
         CreateEnterCableClubSeatTaskWithFollowupFunc(Task_StartWiredCableClubBattle);
 }
 
-static void Debug_CreateTaskEnterCableClubSeat(void)
-{
-    CreateTask(Task_EnterCableClubSeat, 80);
-    ScriptContext1_Stop();
-}
-
 void Script_ShowLinkTrainerCard(void)
 {
     ShowTrainerCardInLink(gSpecialVar_0x8006, CB2_ReturnToFieldContinueScriptPlayMapMusic);
@@ -897,19 +881,4 @@ void Task_WaitForReceivedRemoteLinkPlayers5SecondTimeout(u8 taskId)
     }
     if (gReceivedRemoteLinkPlayers)
         DestroyTask(taskId);
-}
-
-static void sub_8081AE4(u8 taskId)
-{
-    if (!gReceivedRemoteLinkPlayers)
-    {
-        EnableBothScriptContexts();
-        DestroyTask(taskId);
-    }
-}
-
-static void sub_8081B08(u8 taskId)
-{
-    SetCloseLinkCallback();
-    gTasks[taskId].func = sub_8081AE4;
 }
