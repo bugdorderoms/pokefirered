@@ -3026,10 +3026,19 @@ static s32 GetBattlerBracket(u8 battler, u8 action, u16 move)
 	u16 holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battler].item);
 	u16 ability = GetBattlerAbility(battler);
     
+	gSpecialStatuses[battler].quickClawActivated = FALSE;
+	gSpecialStatuses[battler].quickDrawActivated = FALSE;
+	
 	if (ability == ABILITY_QUICK_DRAW && sQuickDrawRandomNumber < 30 && action == B_ACTION_USE_MOVE && !IS_MOVE_STATUS(move))
+	{
+		gSpecialStatuses[battler].quickDrawActivated = TRUE;
 		return 1;
+	}
 	else if (holdEffect == HOLD_EFFECT_QUICK_CLAW && sQuickClawRandomNumber < holdEffectParam)
+	{
+		gSpecialStatuses[battler].quickClawActivated = TRUE;
         return 1;
+	}
     else if (ability == ABILITY_STALL || (ability == ABILITY_MYCELIUM_MIGHT && action == B_ACTION_USE_MOVE && IS_MOVE_STATUS(move)))
         return -1;
 	
@@ -3252,6 +3261,7 @@ static void SetActionsAndBattlersTurnOrder(void)
                     ++turnOrderId;
                 }
             }
+			gBattleStruct->quickClawBattlerId = 0;
 			gBattleStruct->focusPunchBattlerId = 0;
             gBattleMainFunc = CheckFocusPunch_ClearVarsBeforeTurnStarts;
             return;
@@ -3293,6 +3303,7 @@ static void SetActionsAndBattlersTurnOrder(void)
             }
         }
     }
+	gBattleStruct->quickClawBattlerId = 0;
 	gBattleStruct->focusPunchBattlerId = 0;
     gBattleMainFunc = CheckFocusPunch_ClearVarsBeforeTurnStarts;
 }
@@ -3335,6 +3346,37 @@ static void CheckFocusPunch_ClearVarsBeforeTurnStarts(void)
 {
     if (!(gHitMarker & HITMARKER_RUN))
     {
+		while (gBattleStruct->quickClawBattlerId < gBattlersCount)
+		{
+			u8 battler = gBattlerByTurnOrder[gBattleStruct->quickClawBattlerId];
+			u8 action = gActionsByTurnOrder[gBattleStruct->quickClawBattlerId];
+			
+			if (gSpecialStatuses[battler].quickDrawActivated)
+			{
+				gSpecialStatuses[battler].quickDrawActivated = FALSE;
+				
+				if (action == B_ACTION_USE_MOVE)
+				{
+					gBattlerAttacker = battler;
+					BattleScriptExecute(BattleScript_QuickDrawActivation);
+					return;
+				}
+			}
+			else if (gSpecialStatuses[battler].quickClawActivated)
+			{
+				gSpecialStatuses[battler].quickClawActivated = FALSE;
+				
+				if (action != B_ACTION_USE_ITEM)
+				{
+					gBattlerAttacker = battler;
+					gLastUsedItem = gBattleMons[battler].item;
+					BattleScriptExecute(BattleScript_QuickClawActivation);
+					return;
+				}
+			}
+			gBattleStruct->quickClawBattlerId++;
+		}
+		
         while (gBattleStruct->focusPunchBattlerId < gBattlersCount)
         {
             gBattlerAttacker = gBattleStruct->focusPunchBattlerId++;

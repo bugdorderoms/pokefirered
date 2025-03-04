@@ -211,7 +211,8 @@ struct SpecialStatus
 			 u8 multiHitOn:1;
 			 u8 parentalBondState:2;
 			 u8 hitBySuperEffective:1; // For sos battles
-			 u8 unused:2;
+			 u8 quickClawActivated:1;
+			 u8 quickDrawActivated:1;
 	/*0x10*/ u8 changedStatsBattlerId;
 };
 
@@ -485,7 +486,8 @@ struct BattleStruct
     /*0x075*/ u8 linkBattleVsSpriteId_S;
 	/*0x076*/ u16 lastFailedBallThrow; // For Ball Fetch
 	/*0x078*/ u8 battleChallenge;
-	/*0x079*/ struct {
+	/*0x079*/ u8 quickClawBattlerId;
+	/*0x07A*/ struct {
 				  u8 calls:5;
 				  u8 usedAdrenalineOrb:1;
 				  u8 lastCallFailed:1;

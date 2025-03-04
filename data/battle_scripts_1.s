@@ -3386,6 +3386,14 @@ BattleScript_DancerActivates::
 	removeabilitypopup BS_ATTACKER
 	jumptocalledmove FALSE
 
+BattleScript_QuickDrawActivation::
+	flushmessagebox
+	loadabilitypopup BS_ATTACKER
+	printstring STRINGID_ATKCANACTFASTER
+	waitmessage B_WAIT_TIME_LONG
+	removeabilitypopup BS_ATTACKER
+	end2
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ ATTACKCANCELLER BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4560,6 +4568,15 @@ BattleScript_HangedOnMsg::
 	printstring STRINGID_DEFHUNGONUSINGLASTITEM
 	waitmessage B_WAIT_TIME_LONG
 	return
+
+BattleScript_QuickClawActivation::
+	flushmessagebox
+	playanimation BS_ATTACKER, B_ANIM_ITEM_EFFECT
+	printstring STRINGID_ATKCANACTFASTERWITHLASTITEM
+	waitmessage B_WAIT_TIME_LONG
+	end2
+
+
 
 
 

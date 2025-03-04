@@ -2840,22 +2840,13 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 								
 								if (IsBattlerAlive(partner))
 								{
-									if (CountBattlerStatIncreases(partner, FALSE)) // Does it copies accuracy and evasion or negative stat stages ?
-									{
-										CopyBattlerStatChanges(battler, partner);
-										++effect;
-									}
-									
-									if (CopyBattlerCritModifier(battler, partner)) // It can also copy Focus Energy status
-										++effect;
-	
-									if (effect)
-									{
-										PrepareMonNickWithPrefixBuffer(gBattleTextBuff1, partner, gBattlerPartyIndexes[partner]);
-										gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_COPIED_STAT_CHANGES;
-										BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
-										gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-									}
+									CopyBattlerStatChanges(battler, partner);
+									CopyBattlerCritModifier(battler, partner);
+									PrepareMonNickWithPrefixBuffer(gBattleTextBuff1, partner, gBattlerPartyIndexes[partner]);
+									gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_COPIED_STAT_CHANGES;
+									BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+									gSpecialStatuses[battler].switchInAbilityDone = TRUE;
+									++effect;
 								}
 							}
 							break;
