@@ -153,7 +153,8 @@
 #define ATK49_SUBSTITUTE                25
 #define ATK49_EVOLUTIONS_TRACKER        26
 #define ATK49_CLEAR_BITS                27
-#define ATK49_COUNT                     28
+#define ATK49_DANCER                    28
+#define ATK49_COUNT                     29
 
 // Atk4F, a flag used for the jumpifcantswitch command
 #define ATK4F_DONT_CHECK_STATUSES   0x80

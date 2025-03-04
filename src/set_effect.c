@@ -372,7 +372,7 @@ bool8 DoMoveEffect(bool8 primary, const u8 *scriptStr, u32 flags)
 			}
 			break;
 		case MOVE_EFFECT_THRASH:
-		    if (!(gBattleMons[gEffectBattler].status2 & STATUS2_LOCK_CONFUSE))
+		    if (!gBattleStruct->dancer.inProgress && !(gBattleMons[gEffectBattler].status2 & STATUS2_LOCK_CONFUSE))
 			{
 				gBattleMons[gEffectBattler].status2 |= STATUS2_MULTIPLETURNS;
 				gBattleMons[gEffectBattler].status2 |= STATUS2_LOCK_CONFUSE_TURN(RandomRange(2, 3));

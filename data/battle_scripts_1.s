@@ -3380,6 +3380,12 @@ BattleScript_SymbiosisActivation::
 	restorebattlers
 	return
 
+BattleScript_DancerActivates::
+	loadabilitypopup BS_ATTACKER
+	pause B_WAIT_TIME_LONG
+	removeabilitypopup BS_ATTACKER
+	jumptocalledmove FALSE
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ ATTACKCANCELLER BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

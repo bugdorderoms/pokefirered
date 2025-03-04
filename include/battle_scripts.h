@@ -458,6 +458,7 @@ extern const u8 BattleScript_TotemBoost[];
 extern const u8 BattleScript_PrintAbilityMadeIneffective[];
 extern const u8 BattleScript_BattleChallengeStartingStatus[];
 extern const u8 BattleScript_MagnetRiseEnds[];
+extern const u8 BattleScript_DancerActivates[];
 
 extern const u8 *const gBattlescriptsForUsingItem[];
 

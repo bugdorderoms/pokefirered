@@ -466,7 +466,8 @@ struct BattleStruct
 	/*0x042*/ u16 strongWindsMessageState:2;
 	/*0x042*/ u16 pursuitSwitchDmg:1;
 	/*0x042*/ u16 hasFetchedBall:1; // For Ball Fetch
-	/*0x042*/ u16 unused:3; // unused
+	/*0x042*/ u16 attackAnimPlayed:1; // For Dancer
+	/*0x042*/ u16 unused:2; // unused
 	/*0x042*/ u16 savedAttackerStackCount:4;
 	/*0x042*/ u16 savedTargetStackCount:4;
 	/*0x044*/ u8 savedAttackerStack[10];
@@ -498,6 +499,14 @@ struct BattleStruct
 				  u8 arrowTaskId; // Submenu arrow task id
 				  u16 submenuState; // Determine which string will be show on the submenu info
 			  } moveInfo;
+			  struct Dancer
+			  {
+				  bool8 inProgress;
+			      u8 battlersLoopCounter;
+				  u8 savedAttacker;
+				  u8 savedTarget;
+			      u8 turnOrder[MAX_BATTLERS_COUNT];
+			  } dancer;
 			  struct BattlerState battlers[MAX_BATTLERS_COUNT];
 			  struct SideState sides[B_SIDE_COUNT];
 	          struct MoveEffect moveEffect;
@@ -763,7 +772,6 @@ extern u8 gLeveledUpInBattle;
 extern u8 gActionsByTurnOrder[MAX_BATTLERS_COUNT];
 extern u8 gBattleTerrain;
 extern struct MultiBattlePokemonTx gMultiPartnerParty[PARTY_SIZE / 2];
-extern u16 gRandomTurnNumber;
 extern u8 gPartyCriticalHits[PARTY_SIZE];
 extern u8 gBattlerTarget;
 extern u8 gAbsentBattlerFlags;

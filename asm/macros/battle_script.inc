@@ -1730,8 +1730,9 @@
 	.byte \battler
 	.endm
 	
-	.macro jumptocalledmove
+	.macro jumptocalledmove updateStartValues=TRUE
 	callfunction BS_JumpToCalledMove
+	.byte \updateStartValues
 	.endm
 	
 	.macro updatechoicemoveonlvlup

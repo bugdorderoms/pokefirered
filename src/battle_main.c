@@ -148,7 +148,8 @@ EWRAM_DATA u16 gBattlerPartyIndexes[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gBattlerPositions[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gBattleCommunication[BATTLE_COMMUNICATION_ENTRIES_COUNT] = {0};
 EWRAM_DATA u16 gPauseCounterBattle = 0;
-EWRAM_DATA u16 gRandomTurnNumber = 0;
+static EWRAM_DATA u8 sQuickClawRandomNumber = 0;
+static EWRAM_DATA u8 sQuickDrawRandomNumber = 0;
 EWRAM_DATA u8 gBattlersCount = 0;
 EWRAM_DATA u8 gBattleOutcome = 0;
 EWRAM_DATA u16 gBattleWeather = 0;
@@ -2315,6 +2316,12 @@ static void BattleIntroPlayerSendsOutMonAnimation(void)
     }
 }
 
+static void UpdateQuickClawRandomNumber(void)
+{
+	sQuickClawRandomNumber = RandomMax(100);
+	sQuickDrawRandomNumber = RandomMax(100);
+}
+
 static bool8 TryStartOverworldWeather(void)
 {
 	bool8 effect = FALSE;
@@ -2503,7 +2510,7 @@ static void TryDoEventsBeforeFirstTurn(void)
 				gBattleScripting.atk49_state = 0;
 				
 				gMoveResultFlags = 0;
-				gRandomTurnNumber = Random();
+				UpdateQuickClawRandomNumber();
 				
 				gBattleStruct->turnEffectsTracker = 0;
 				gBattleStruct->turnEffectsBattlerId = 0;
@@ -2635,7 +2642,7 @@ static void ClearActionsAndMovesForNextTurn(void)
     gBattleStruct->absentBattlerFlags = gAbsentBattlerFlags;
 	gBattleStruct->throwingPokeBall = FALSE;
 	
-	gRandomTurnNumber = Random();
+	UpdateQuickClawRandomNumber();
 	CalculatePayDayMoney();
 	
 	gBattleMainFunc = HandleTurnActionSelectionState;
@@ -3013,19 +3020,20 @@ void SwapTurnOrder(u8 id1, u8 id2)
     SWAP(gBattlerByTurnOrder[id1], gBattlerByTurnOrder[id2], temp);
 }
 
-static s32 GetBattlerBracket(u8 battler)
+static s32 GetBattlerBracket(u8 battler, u8 action, u16 move)
 {
     u8 holdEffect = GetBattlerItemHoldEffect(battler, TRUE);
 	u16 holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battler].item);
 	u16 ability = GetBattlerAbility(battler);
-    s32 bracket = 0;
+    
+	if (ability == ABILITY_QUICK_DRAW && sQuickDrawRandomNumber < 30 && action == B_ACTION_USE_MOVE && !IS_MOVE_STATUS(move))
+		return 1;
+	else if (holdEffect == HOLD_EFFECT_QUICK_CLAW && sQuickClawRandomNumber < holdEffectParam)
+        return 1;
+    else if (ability == ABILITY_STALL || (ability == ABILITY_MYCELIUM_MIGHT && action == B_ACTION_USE_MOVE && IS_MOVE_STATUS(move)))
+        return -1;
 	
-    if (holdEffect == HOLD_EFFECT_QUICK_CLAW && gRandomTurnNumber < (0xFFFF * holdEffectParam) / 100)
-        bracket = 1;
-    else if (ability == ABILITY_STALL || (ability == ABILITY_MYCELIUM_MIGHT && IS_MOVE_STATUS(gBattleStruct->battlers[battler].chosenMove)))
-        bracket = -1;
-	
-    return bracket;
+    return 0;
 }
 
 u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
@@ -3037,24 +3045,34 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
     // priority check
     if (!ignoreChosenMoves) 
     {
+		u8 battler1ChosenAction = gBattleStruct->battlers[battler1].chosenAction;
+		u8 battler2ChosenAction = gBattleStruct->battlers[battler2].chosenAction;
+		u16 battler1ChosenMove = gBattleStruct->battlers[battler1].chosenMove;
+		u16 battler2ChosenMove = gBattleStruct->battlers[battler2].chosenMove;
+		
 		battler1Priority = battler2Priority = 0;
 		
-		if (gBattleStruct->battlers[battler1].chosenAction == B_ACTION_USE_MOVE)
-			battler1Priority = GetChosenMovePriority(battler1);
+		if (battler1ChosenAction == B_ACTION_USE_MOVE)
+			battler1Priority = GetMovePriority(battler1, battler1ChosenMove);
 		
-		if (gBattleStruct->battlers[battler2].chosenAction == B_ACTION_USE_MOVE)
-			battler2Priority = GetChosenMovePriority(battler2);
+		if (battler2ChosenAction == B_ACTION_USE_MOVE)
+			battler2Priority = GetMovePriority(battler2, battler2ChosenMove);
         
         if (battler1Priority > battler2Priority) 
             return ATTACKER_STRIKES_FIRST;
         else if (battler1Priority < battler2Priority)
             return DEFENDER_STRIKES_FIRST;
+		
+		battler1Bracket = GetBattlerBracket(battler1, battler1ChosenAction, battler1ChosenMove);
+		battler2Bracket = GetBattlerBracket(battler2, battler2ChosenAction, battler2ChosenMove);
     }
+	else
+	{
+		battler1Bracket = GetBattlerBracket(battler1, B_ACTION_NONE, MOVE_NONE);
+		battler2Bracket = GetBattlerBracket(battler2, B_ACTION_NONE, MOVE_NONE);
+	}
     
-    // bracket check
-    battler1Bracket = GetBattlerBracket(battler1);
-    battler2Bracket = GetBattlerBracket(battler2);
-    
+	// bracket check
     if (battler1Bracket > battler2Bracket) 
         return ATTACKER_STRIKES_FIRST;
     else if (battler1Bracket < battler2Bracket)
@@ -3068,21 +3086,24 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
 		return RandomPercent(50) ? ATTACKER_STRIKES_FIRST : SPEED_TIE;
 	else
 	{
+		if (gFieldStatus & STATUS_FIELD_TRICK_ROOM)
+			SWAP(battler1Speed, battler2Speed, temp);
+		
 		if (battler1Speed > battler2Speed)
-			return (gFieldStatus & STATUS_FIELD_TRICK_ROOM) ? DEFENDER_STRIKES_FIRST : ATTACKER_STRIKES_FIRST;
+			return ATTACKER_STRIKES_FIRST;
 		else
-			return (gFieldStatus & STATUS_FIELD_TRICK_ROOM) ? ATTACKER_STRIKES_FIRST : DEFENDER_STRIKES_FIRST;
+			return DEFENDER_STRIKES_FIRST;
 	}
-}
-
-s8 GetChosenMovePriority(u8 battler)
-{
-	return GetMovePriority(battler, gProtectStructs[battler].noValidMoves ? MOVE_STRUGGLE : gBattleMons[battler].moves[gBattleStruct->battlers[battler].chosenMovePosition]);
 }
 
 s8 GetMovePriority(u8 battler, u16 move)
 {
-    s8 priority = gBattleMoves[move].priority;
+    s8 priority;
+	
+	if (gProtectStructs[battler].noValidMoves)
+		move = MOVE_STRUGGLE;
+
+	priority = gBattleMoves[move].priority;
 	
 	switch (GetBattlerAbility(battler))
 	{
@@ -3279,6 +3300,8 @@ static void SetActionsAndBattlersTurnOrder(void)
 static void TurnValuesCleanUp(bool8 var0)
 {
 	u8 battlerId, side;
+	
+	gBattleStruct->dancer.inProgress = FALSE;
 	
     for (battlerId = 0; battlerId < gBattlersCount; ++battlerId)
     {
@@ -3602,7 +3625,7 @@ void RunBattleScriptCommands(void)
 
 static void HandleAction_UseMove(void)
 {
-    u8 i, attackerSide, opposingSide, moveTarget, moveType;
+    u8 i, opposingSide, moveTarget, moveType;
     
     gBattlerAttacker = gCurrentTurnActionBattlerId;
 	
@@ -3615,6 +3638,7 @@ static void HandleAction_UseMove(void)
     gBattleStruct->atkCancellerTracker = 0;
 	gBattleStruct->magnitudeBasePower = 0;
 	gBattleStruct->strongWindsMessageState = 0;
+	gBattleStruct->dancer.inProgress = FALSE;
     gMoveResultFlags = 0;
     gMultiHitCounter = 0;
 	gBattleScripting.savedDmg = 0;
@@ -3628,7 +3652,7 @@ static void HandleAction_UseMove(void)
         gProtectStructs[gBattlerAttacker].noValidMoves = FALSE;
         gCurrentMove = gChosenMove = MOVE_STRUGGLE;
         gHitMarker |= HITMARKER_NO_PPDEDUCT;
-        gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(MOVE_STRUGGLE, 0);
+        GetMoveTarget(MOVE_STRUGGLE, 0);
     }
     else if ((gBattleMons[gBattlerAttacker].status2 & (STATUS2_MULTIPLETURNS | STATUS2_RECHARGE))) // Move locked
         gCurrentMove = gChosenMove = gBattleStruct->battlers[gBattlerAttacker].lockedMove;
@@ -3645,12 +3669,12 @@ static void HandleAction_UseMove(void)
 			gDisableStructs[gBattlerAttacker].encoreTimer = 0;
 			gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
 		}
-		gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(gCurrentMove, 0);
+		GetMoveTarget(gCurrentMove, 0);
     }
     else if (gBattleMons[gBattlerAttacker].moves[gCurrMovePos] != gBattleStruct->battlers[gBattlerAttacker].chosenMove)
     {
         gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
-        gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(gCurrentMove, 0);
+        GetMoveTarget(gCurrentMove, 0);
     }
     else
         gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
@@ -3661,11 +3685,10 @@ static void HandleAction_UseMove(void)
     // Choose target
 	moveTarget = GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove);
 	
-	attackerSide = GetBattlerSide(gBattlerAttacker);
     opposingSide = GetBattlerSide(BATTLE_OPPOSITE(gBattlerAttacker));
 	
 	// Check Follow Me
-	if (IsBattlerAffectedByFollowMe(gBattlerAttacker, opposingSide, gCurrentMove) && attackerSide != GetBattlerSide(gSideTimers[opposingSide].followmeTarget)
+	if (IsBattlerAffectedByFollowMe(gBattlerAttacker, opposingSide, gCurrentMove) && !IsBattlerAlly(gBattlerAttacker, gSideTimers[opposingSide].followmeTarget)
 	&& (moveTarget == MOVE_TARGET_SELECTED || moveTarget == MOVE_TARGET_SELECTED_OPPONENT))
 	{
 	    gBattlerTarget = gSideTimers[opposingSide].followmeTarget;
@@ -3685,7 +3708,7 @@ static void HandleAction_UseMove(void)
 			{
 				u8 turnOrderNum = GetBattlerTurnOrderNum(i);
 				
-				if (turnOrderNum < var && attackerSide != GetBattlerSide(i) && gBattleStruct->battlers[gBattlerAttacker].moveTarget != i)
+				if (turnOrderNum < var && !IsBattlerAlly(gBattlerAttacker, i) && gBattleStruct->battlers[gBattlerAttacker].moveTarget != i)
 				{
 					u16 ability = GetBattlerAbility(i);
 					
@@ -3712,7 +3735,7 @@ static void HandleAction_UseMove(void)
             
 			if (!IsBattlerAlive(gBattlerTarget))
             {
-                if (attackerSide != GetBattlerSide(gBattlerTarget))
+                if (!IsBattlerAlly(gBattlerAttacker, gBattlerTarget))
                     gBattlerTarget = BATTLE_PARTNER(gBattlerTarget);
                 else
                 {
@@ -3739,7 +3762,7 @@ static void HandleAction_UseMove(void)
 	{
 		gBattlerTarget = GetRandomTarget(gBattlerAttacker);
 		
-        if ((gAbsentBattlerFlags & gBitTable[gBattlerTarget]) && attackerSide != GetBattlerSide(gBattlerTarget))
+        if ((gAbsentBattlerFlags & gBitTable[gBattlerTarget]) && !IsBattlerAlly(gBattlerAttacker, gBattlerTarget))
             gBattlerTarget = BATTLE_PARTNER(gBattlerTarget);
     }
 	else if (IsDoubleBattleOnSide(opposingSide) && moveTarget == MOVE_TARGET_FOES_AND_ALLY)
@@ -3756,7 +3779,7 @@ static void HandleAction_UseMove(void)
 		
         if (!IsBattlerAlive(gBattlerTarget))
         {
-            if (attackerSide != GetBattlerSide(gBattlerTarget))
+            if (!IsBattlerAlly(gBattlerAttacker, gBattlerTarget))
                 gBattlerTarget = BATTLE_PARTNER(gBattlerTarget);
             else
             {

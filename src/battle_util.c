@@ -2080,6 +2080,22 @@ u8 AtkCanceller_UnableToUseMove(void)
 				}
 				++gBattleStruct->atkCancellerTracker;
 				break;
+			case CANCELLER_DANCER:
+				if (gBattleStruct->dancer.inProgress)
+				{
+					if (((gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS) && gCurrentMove != gBattleStruct->battlers[gBattlerAttacker].lockedMove)
+					|| (gBattleStruct->battlers[gBattlerAttacker].choicedMove && gCurrentMove != gBattleStruct->battlers[gBattlerAttacker].choicedMove)
+					|| (gDisableStructs[gBattlerAttacker].encoredMove && gCurrentMove != gDisableStructs[gBattlerAttacker].encoredMove))
+						++effect;
+					
+					if (effect)
+					{
+						gBattlescriptCurrInstr = BattleScript_ButItFailedAtkStringPpReduce;
+						gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+					}
+				}
+				++gBattleStruct->atkCancellerTracker;
+				break;
 			case CANCELLER_PRIMAL_WEATHER: // primal weather
 			    if (!IS_MOVE_STATUS(gCurrentMove))
 				{
@@ -3240,7 +3256,7 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 				    	case ABILITY_QUEENLY_MAJESTY:
 				    	case ABILITY_DAZZLING:
 				    	case ABILITY_ARMOR_TAIL:
-				    	    if (GetChosenMovePriority(gBattlerAttacker) > 0 && !IsBattlerAlly(gBattlerAttacker, battler) && !IsZMove(gCurrentMove)
+				    	    if (GetMovePriority(gBattlerAttacker, gCurrentMove) > 0 && !IsBattlerAlly(gBattlerAttacker, battler) && !IsZMove(gCurrentMove)
 				    		&& moveTarget != MOVE_TARGET_OPPONENTS_FIELD && (moveTarget != MOVE_TARGET_ALL_BATTLERS || gCurrentMove == MOVE_PERISH_SONG
 				    		|| gCurrentMove == MOVE_FLOWER_SHIELD || gCurrentMove == MOVE_ROTOTILLER))
 				    			++effect;
@@ -4556,7 +4572,9 @@ u8 GetMoveTarget(u16 move, u8 setTarget)
 			targetBattler = gBattlerAttacker;
 			break;
 	}
-    gBattleStruct->battlers[gBattlerAttacker].moveTarget = targetBattler;
+	
+	if (!gBattleStruct->dancer.inProgress)
+		gBattleStruct->battlers[gBattlerAttacker].moveTarget = targetBattler;
 	
     return targetBattler;
 }
@@ -4609,7 +4627,8 @@ u8 IsMonDisobedient(void)
     u8 levelCapLevel = GetCurrentLevelCapLevel();
 
     if (levelCapLevel == MAX_LEVEL || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKEDUDE)) || GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT
-	|| !IsOtherTrainer(gBattleMons[gBattlerAttacker].otId, gBattleMons[gBattlerAttacker].otName) || gBattleMons[gBattlerAttacker].level <= levelCapLevel)
+	|| !IsOtherTrainer(gBattleMons[gBattlerAttacker].otId, gBattleMons[gBattlerAttacker].otName) || gBattleMons[gBattlerAttacker].level <= levelCapLevel
+	|| gBattleStruct->dancer.inProgress)
         return 0;
 
     calc = (gBattleMons[gBattlerAttacker].level + levelCapLevel) * (Random() & 255) >> 8;

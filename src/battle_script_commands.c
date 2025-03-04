@@ -810,7 +810,7 @@ static void atk00_attackcanceler(void)
 		return;
 	
 	// Check no PP for move
-    if (!gBattleMons[gBattlerAttacker].pp[gCurrMovePos] && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS) 
+    if (!gBattleMons[gBattlerAttacker].pp[gCurrMovePos] && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS) && !gBattleStruct->dancer.inProgress
 	&& gCurrentMove != MOVE_STRUGGLE && !(gHitMarker & (HITMARKER_ALLOW_NO_PP | HITMARKER_NO_ATTACKSTRING)))
     {
         gBattlescriptCurrInstr = BattleScript_NoPPForMove;
@@ -1154,7 +1154,7 @@ static void atk03_ppreduce(void)
 		
 		// Decreases the PP
         if (!(gHitMarker & (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING)) && (gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS)
-		&& gBattleMons[gBattlerAttacker].pp[gCurrMovePos])
+		&& gBattleMons[gBattlerAttacker].pp[gCurrMovePos] && !gBattleStruct->dancer.inProgress)
         {
             if (gBattleMons[gBattlerAttacker].pp[gCurrMovePos] > ppToDeduct)
                 gBattleMons[gBattlerAttacker].pp[gCurrMovePos] -= ppToDeduct;
@@ -1370,6 +1370,9 @@ static void atk09_attackanimation(void)
 		
         if (!IsBattleAnimationsOn() && gBattleMoves[gCurrentMove].effect != EFFECT_TRANSFORM && gBattleMoves[gCurrentMove].effect != EFFECT_SUBSTITUTE)
         {
+			if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
+				gBattleStruct->attackAnimPlayed = TRUE;
+			
 			BattleScriptCall(BattleScript_Pausex20);
             ++gBattleScripting.animTurn;
             ++gBattleScripting.animTargetsHit;
@@ -1384,6 +1387,8 @@ static void atk09_attackanimation(void)
 			
             if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
             {
+				gBattleStruct->attackAnimPlayed = TRUE;
+				
                 BtlController_EmitMoveAnimation(gBattlerAttacker, BUFFER_A, gCurrentMove, gBattleScripting.animTurn, gBattleMovePower, gBattleMoveDamage, gBattleMons[gBattlerAttacker].friendship, &gDisableStructs[gBattlerAttacker]);
                 MarkBattlerForControllerExec(gBattlerAttacker);
 				
@@ -3156,7 +3161,7 @@ static u8 GetNextTarget(u8 moveTarget, bool8 excludeCurrent)
 
 static void SetNextTarget(u8 nextTarget)
 {
-	gBattleStruct->battlers[gBattlerAttacker].moveTarget = gBattlerTarget = nextTarget;
+	gBattlerTarget = nextTarget;
 	gHitMarker |= HITMARKER_NO_ATTACKSTRING;
 	gBattleScripting.atk48_state = gBattleScripting.atk49_state = 0;
 	MoveValuesCleanUp();
@@ -3272,7 +3277,7 @@ static void atk49_moveend(void)
 					++gBattleScripting.atk49_state;
 				break;
 			case ATK49_UPDATE_LAST_MOVES:
-			    if (state != MOVEEND_FUTURE_ATTACK)
+			    if (state != MOVEEND_FUTURE_ATTACK && !gBattleStruct->dancer.inProgress)
 				{
 					if (!gBattleStruct->pursuitSwitchDmg && (gHitMarker & HITMARKER_SWAP_ATTACKER_TARGET))
 					{
@@ -3623,8 +3628,62 @@ static void atk49_moveend(void)
 				gBattleStruct->meFirstBoost = FALSE;
 				gBattleStruct->poisonPuppeteerConfusion = FALSE;
 				gBattleStruct->moveEffect.additionalEffectsCounter = 0;
-				gProtectStructs[gBattlerAttacker].usesBouncedMove = FALSE;
 				++gBattleScripting.atk49_state;
+				break;
+			case ATK49_DANCER:
+				if (gBattleStruct->dancer.battlersLoopCounter == gBattlersCount)
+				{
+					gBattleStruct->dancer.battlersLoopCounter = 0;
+					gBattleStruct->dancer.inProgress = FALSE;
+					memset(gBattleStruct->dancer.turnOrder, 0, sizeof(gBattleStruct->dancer.turnOrder));
+					gBattleStruct->attackAnimPlayed = FALSE;
+					gProtectStructs[gBattleStruct->dancer.savedAttacker].usesBouncedMove = FALSE;
+					++gBattleScripting.atk49_state;
+					break;
+				}
+				
+				if (!gBattleStruct->dancer.inProgress && !gBattleStruct->pursuitSwitchDmg && gBattleStruct->attackAnimPlayed && ABILITY_ON_FIELD(ABILITY_DANCER)
+				&& !gProtectStructs[gBattlerAttacker].usesBouncedMove && gBattleMoves[gCurrentMove].flags.danceMove)
+				{
+					gBattleStruct->dancer.inProgress = TRUE;
+					gBattleStruct->dancer.savedAttacker = gBattlerAttacker;
+					gBattleStruct->dancer.savedTarget = gBattlerTarget;
+					gBattleStruct->dancer.battlersLoopCounter = 0;
+					
+					for (i = 0; i < gBattlersCount; ++i)
+						gBattleStruct->dancer.turnOrder[i] = i;
+					
+					SortBattlersBySpeed(gBattleStruct->dancer.turnOrder, TRUE);
+				}
+				else if (!gBattleStruct->dancer.inProgress)
+				{
+					gBattleStruct->attackAnimPlayed = FALSE;
+					gProtectStructs[gBattlerAttacker].usesBouncedMove = FALSE;
+					++gBattleScripting.atk49_state;
+					break;
+				}
+				
+				i = gBattleStruct->dancer.turnOrder[gBattleStruct->dancer.battlersLoopCounter];
+				
+				if (i != gBattleStruct->dancer.savedAttacker && IsBattlerAlive(i) && GetBattlerAbility(i) == ABILITY_DANCER && !(gStatuses3[i] & STATUS3_SEMI_INVULNERABLE))
+				{
+					gBattlerAttacker = i;
+					
+					if (IsBattlerAlly(gBattlerAttacker, gBattleStruct->dancer.savedAttacker) && GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove) == MOVE_TARGET_SELECTED
+					&& IsBattlerAlive(gBattleStruct->dancer.savedTarget))
+						gBattlerTarget = gBattleStruct->dancer.savedTarget; // Target the same as partner's target
+					else
+						gBattlerTarget = GetMoveTarget(gCurrentMove, 0);
+					
+					gCalledMove = gCurrentMove;
+					gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING | HITMARKER_ATTACKSTRING_PRINTED);
+					gBattleStruct->atkCancellerTracker = 0;
+					gBattleScripting.atk48_state = gBattleScripting.atk49_state = 0;
+					gBattlescriptCurrInstr = BattleScript_DancerActivates;
+					++gBattleStruct->dancer.battlersLoopCounter;
+					return;
+				}
+				++gBattleStruct->dancer.battlersLoopCounter;
 				break;
 		}
 		
@@ -4939,15 +4998,19 @@ static void atk62_hidepartystatussummary(void)
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
-static void CallAnotherMove(u16 move)
+static void CallAnotherMove(u16 move, bool8 updateStartValues)
 {
 	gCurrentMove = move;
-	gBattlerTarget = GetMoveTarget(move, 0);
 	gBattleStruct->dynamicMoveType = GetBattlerMoveType(gBattlerAttacker, move);
-	gBattleStruct->atkCancellerTracker = CANCELLER_RECALL_CASEID;
-	gBattleStruct->moveEffect.moveEffectByte = MOVE_EFFECT_NONE;
-	gSpecialStatuses[gBattlerAttacker].parentalBondState = PARENTAL_BOND_OFF;
-	gMultiHitCounter = 0;
+	
+	if (updateStartValues)
+	{
+		gBattlerTarget = GetMoveTarget(move, 0);
+		gBattleStruct->atkCancellerTracker = CANCELLER_RECALL_CASEID;
+		gBattleStruct->moveEffect.moveEffectByte = MOVE_EFFECT_NONE;
+		gSpecialStatuses[gBattlerAttacker].parentalBondState = PARENTAL_BOND_OFF;
+		gMultiHitCounter = 0;
+	}
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 	gBattlescriptCurrInstr = GET_MOVE_BATTLESCRIPT(move);
 }
@@ -6262,7 +6325,7 @@ static void atk7C_trymirrormove(void)
         gBattlescriptCurrInstr = cmd->nextInstr;
 		return;
     }
-	CallAnotherMove(newMove);
+	CallAnotherMove(newMove, TRUE);
 }
 
 static void atk7D_tryacupressure(void)
@@ -8912,7 +8975,7 @@ void BS_CallTerrainAttack(void)
 {
 	NATIVE_ARGS();
 	PrepareMoveBuffer(gBattleTextBuff1, gCurrentMove);
-	CallAnotherMove(gBattleTerrainTable[gBattleTerrain].naturePowerMove);
+	CallAnotherMove(gBattleTerrainTable[gBattleTerrain].naturePowerMove, TRUE);
 	BattleScriptCall(BattleScript_NaturePowerString);
 }
 
@@ -8983,7 +9046,7 @@ void BS_Metronome(void)
 	    
         if (!gBattleMoves[move].flags.forbiddenMetronome)
 		{
-			CallAnotherMove(move);
+			CallAnotherMove(move, TRUE);
             return;
         }
     }
@@ -9389,8 +9452,8 @@ void BS_TryTeleport(void)
 
 void BS_JumpToCalledMove(void)
 {
-	NATIVE_ARGS();
-	CallAnotherMove(gCalledMove);
+	NATIVE_ARGS(bool8 updateStartValues);
+	CallAnotherMove(gCalledMove, cmd->updateStartValues);
 }
 
 void BS_UpdateChoiceMoveOnLvlUp(void)

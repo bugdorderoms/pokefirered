@@ -15598,6 +15598,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 		{
 			.snatchAffected = TRUE,
 			.soundMove = TRUE,
+			.danceMove = TRUE,
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
 			.forbiddenMetronome = TRUE,
