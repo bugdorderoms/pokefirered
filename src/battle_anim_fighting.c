@@ -740,9 +740,9 @@ static void AnimKarateChopHand(struct Sprite *sprite)
     sprite->callback = AnimStompFootStep;
 }
 
-bool8 GetSpriteOrientationBasedOnBattlers(void)
+bool32 GetSpriteOrientationBasedOnBattlers(void)
 {
-	bool8 shouldFlip;
+	bool32 shouldFlip;
 	
 	if (!IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget))
 		shouldFlip = (GetBattlerSide(gBattleAnimTarget) != B_SIDE_PLAYER);
@@ -758,7 +758,7 @@ bool8 GetSpriteOrientationBasedOnBattlers(void)
 // arg 2: anim num (if < 0 then choose one at random)
 static void AnimFistOrFootRandomPos(struct Sprite *sprite)
 {
-    u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
     s16 x, y;
 
     if (gBattleAnimArgs[2] < 0)
@@ -766,8 +766,8 @@ static void AnimFistOrFootRandomPos(struct Sprite *sprite)
 	
     StartSpriteAnim(sprite, gBattleAnimArgs[2]);
 	
-    sprite->x = GetBattlerSpriteCoord(battler, 2);
-    sprite->y = GetBattlerSpriteCoord(battler, 3);
+    sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X);
+    sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET);
 
     x = RandomMax(GetBattlerSpriteCoordAttr(battler, BATTLER_COORD_ATTR_WIDTH) / 2);
     y = RandomMax(GetBattlerSpriteCoordAttr(battler, BATTLER_COORD_ATTR_HEIGHT) / 4);
@@ -988,7 +988,7 @@ void AnimDizzyPunchDuck(struct Sprite *sprite)
 // arg 6: affine anim num
 void AnimSpriteOnMonForDuration(struct Sprite *sprite)
 {
-	u8 battlerId = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+	u32 battlerId = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 	
 	sprite->x = GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X);
 	sprite->y = GetBattlerSpriteCoord(battlerId, gBattleAnimArgs[5] ? BATTLER_COORD_Y_PIC_OFFSET : BATTLER_COORD_Y);
@@ -1046,7 +1046,7 @@ static void AnimSpriteOnMonForDuration_Step(struct Sprite *sprite)
 // arg 3: y pixel offset
 static void AnimBrickBreakWallShard(struct Sprite *sprite)
 {
-	u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+	u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 	
     sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X) + gBattleAnimArgs[2];
     sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y) + gBattleAnimArgs[3];
@@ -1196,7 +1196,7 @@ static void AnimSuperpowerRock_Step2(struct Sprite *sprite)
 // arg 0: anim battler
 void AnimSuperpowerFireball(struct Sprite *sprite)
 {
-    u8 battler;
+    u32 battler;
 
     if (gBattleAnimArgs[0] == ANIM_ATTACKER)
     {
@@ -1231,7 +1231,7 @@ void AnimSuperpowerFireball(struct Sprite *sprite)
 // arg 3: initial sprite anim num
 static void AnimArmThrustHit(struct Sprite *sprite)
 {
-    u8 turn;
+    u32 turn;
 
     sprite->x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
     sprite->y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
@@ -1479,7 +1479,7 @@ static void AnimLeftRightMovementSprite_Step(struct Sprite *sprite)
 // arg 5: pause before motion
 static void AnimForcePalmHand(struct Sprite *sprite)
 {
-	u8 battler = GetBattlerForAnimScript(ANIM_TARGET);
+	u32 battler = GetBattlerForAnimScript(ANIM_TARGET);
 	
 	InitSpritePosToAnimTarget(sprite, TRUE);
 	

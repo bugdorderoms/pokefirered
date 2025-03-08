@@ -39,7 +39,7 @@
 // Make ai try predict an protection move
 
 // Decrease score if move will fail
-s8 BattleAIFunc_CheckBadMove(u8 attacker, u8 defender, u8 moveSlot, u16 move, s8 score)
+s32 BattleAIFunc_CheckBadMove(u32 attacker, u32 defender, u32 moveSlot, u32 move, s32 score)
 {
 	if (TargetImuneToMove(attacker, defender, moveSlot))
 		CHANGE_SCORE(-10);
@@ -82,7 +82,7 @@ s8 BattleAIFunc_CheckBadMove(u8 attacker, u8 defender, u8 moveSlot, u16 move, s8
 	return score;
 }
 
-s8 BattleAIFunc_CheckViability(u8 attacker, u8 defender, u8 moveSlot, u16 move, s8 score)
+s32 BattleAIFunc_CheckViability(u32 attacker, u32 defender, u32 moveSlot, u32 move, s32 score)
 {
 	switch (gBattleMoves[move].effect)
 	{
@@ -159,12 +159,12 @@ s8 BattleAIFunc_CheckViability(u8 attacker, u8 defender, u8 moveSlot, u16 move, 
 	return score;
 }
 
-s8 BattleAIFunc_Safari(u8 attacker, u8 defender, u8 moveSlot, u16 move, s8 score)
+s32 BattleAIFunc_Safari(u32 attacker, u32 defender, u32 moveSlot, u32 move, s32 score)
 {
 	return score;
 }
 
-s8 BattleAIFunc_Roamer(u8 attacker, u8 defender, u8 moveSlot, u16 move, s8 score)
+s32 BattleAIFunc_Roamer(u32 attacker, u32 defender, u32 moveSlot, u32 move, s32 score)
 {
 	return score;
 }

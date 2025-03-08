@@ -62,18 +62,18 @@ static void Task_HandleCopyReceivedLinkBuffersData(u8 taskId);
 static void SetBattlePartyIds(void);
 static void InitSinglePlayerBtlControllers(void);
 static void InitLinkBtlControllers(void);
-static u32 GetBattlerMonData(u8 battlerId, struct Pokemon *party, u8 monId, u8 *dst);
-static void SetBattlerMonData(u8 battlerId, struct Pokemon *party, u8 monId);
-static void DoSwitchOutAnimation(u8 battlerId);
-static void FreeMonSprite(u8 battlerId);
-static void CompleteOnBattlerSpriteCallbackDummy(u8 battlerId);
-static void FreeTrainerSpriteAfterSlide(u8 battlerId);
-static void FreeMonSpriteAfterFaintAnim(u8 battlerId);
-static void HideHealthboxAfterMonFaint(u8 battlerId);
-static void CompleteOnSpecialAnimDone(u8 battlerId);
-static void DoMoveAnimation(u8 battlerId);
-static void CompleteOnInactiveTextPrinter(u8 battlerId);
-static void CompleteOnHealthbarDone(u8 battlerId);
+static u32 GetBattlerMonData(u32 battlerId, struct Pokemon *party, u32 monId, u8 *dst);
+static void SetBattlerMonData(u32 battlerId, struct Pokemon *party, u32 monId);
+static void DoSwitchOutAnimation(u32 battlerId);
+static void FreeMonSprite(u32 battlerId);
+static void CompleteOnBattlerSpriteCallbackDummy(u32 battlerId);
+static void FreeTrainerSpriteAfterSlide(u32 battlerId);
+static void FreeMonSpriteAfterFaintAnim(u32 battlerId);
+static void HideHealthboxAfterMonFaint(u32 battlerId);
+static void CompleteOnSpecialAnimDone(u32 battlerId);
+static void DoMoveAnimation(u32 battlerId);
+static void CompleteOnInactiveTextPrinter(u32 battlerId);
+static void CompleteOnHealthbarDone(u32 battlerId);
 static void Task_GiveExpToMon(u8 taskId);
 static void Task_PrepareToGiveExpWithExpBar(u8 taskId);
 static void Task_GiveExpWithExpBar(u8 taskId);
@@ -81,13 +81,13 @@ static void Task_LaunchLvlUpAnim(u8 taskId);
 static void Task_UpdateLvlInHealthbox(u8 taskId);
 static void Task_TryCreateVerticalStripes(u8 taskId);
 static void Task_CreateLevelUpVerticalStripes(u8 taskId);
-static void CompleteOnFinishedStatusAnimation(u8 battlerId);
+static void CompleteOnFinishedStatusAnimation(u32 battlerId);
 static void SpriteCB_FreePlayerSpriteLoadMonSprite(struct Sprite *sprite);
 static void SpriteCB_FreeOpponentSprite(struct Sprite *sprite);
 static void Task_StartSendOutAnim(u8 taskId);
-static void EndDrawPartyStatusSummary(u8 battlerId);
-static void CompleteOnFinishedBattleAnimation(u8 battlerId);
-static void StartSendOutAnim(u8 battlerId, bool8 dontClearSubstituteBit);
+static void EndDrawPartyStatusSummary(u32 battlerId);
+static void CompleteOnFinishedBattleAnimation(u32 battlerId);
+static void StartSendOutAnim(u32 battlerId, bool32 dontClearSubstituteBit);
 
 static EWRAM_DATA u8 sLinkSendTaskId = 0;
 static EWRAM_DATA u8 sLinkReceiveTaskId = 0;
@@ -195,7 +195,7 @@ static void Task_HandleSendLinkBuffersData(u8 taskId)
 static void Task_HandleCopyReceivedLinkBuffersData(u8 taskId)
 {
     u16 blockSize;
-    u8 battlerId;
+    u32 battlerId;
 
     if (gTasks[taskId].data[15] != gTasks[taskId].data[14])
     {
@@ -237,8 +237,8 @@ static void Task_HandleCopyReceivedLinkBuffersData(u8 taskId)
 
 void TryReceiveLinkBattleData(void)
 {
-    u8 i, *recvBuffer;
-    s32 j;
+    u8 *recvBuffer;
+    u32 i, j;
 
     if (gReceivedRemoteLinkPlayers && (gBattleTypeFlags & BATTLE_TYPE_LINK_ESTABLISHED) && (gLinkPlayers[0].linkType == 0x2211))
     {
@@ -274,7 +274,7 @@ void TryReceiveLinkBattleData(void)
 
 void SetUpBattleVars(void)
 {
-    u8 i;
+    u32 i;
 
     gBattleMainFunc = BattleDummy;
 	
@@ -292,8 +292,6 @@ void SetUpBattleVars(void)
 
 void InitBtlControllers(void)
 {
-    u8 i;
-
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
         InitLinkBtlControllers();
     else
@@ -303,12 +301,14 @@ void InitBtlControllers(void)
 	
     if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
 	{
+		u32 i;
+		
         for (i = 0; i < gBattlersCount; ++i)
             BufferBattlePartyCurrentOrderBySide(i, 0);
 	}
 }
 
-static void SetLinkBattleEndCallbacks(u8 battlerId)
+static void SetLinkBattleEndCallbacks(u32 battlerId)
 {
 	if (!gWirelessCommType)
     {
@@ -331,7 +331,7 @@ static void SetLinkBattleEndCallbacks(u8 battlerId)
     }
 }
 
-void SetBattleEndCallbacks(u8 battlerId)
+void SetBattleEndCallbacks(u32 battlerId)
 {
 	if (!gPaletteFade.active)
     {
@@ -356,7 +356,7 @@ void SetBattleEndCallbacks(u8 battlerId)
 
 static void SetBattlePartyIds(void)
 {
-    u8 i, j;
+    u32 i, j;
 	struct Pokemon *party;
 
     if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
@@ -435,7 +435,7 @@ static void InitSinglePlayerBtlControllers(void)
 
 static void InitLinkBtlControllers(void)
 {
-    u8 i, multiplayerId;
+    u32 i, multiplayerId;
 
     if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
     {
@@ -570,7 +570,7 @@ static void InitLinkBtlControllers(void)
 // CONTROLLER EMITTERS //
 /////////////////////////
 
-void PrepareBufferDataTransferLink(u8 battlerId, u8 bufferId, u16 size, u8 *data)
+void PrepareBufferDataTransferLink(u32 battlerId, u32 bufferId, u16 size, u8 *data)
 {
     s32 i, alignedSize = size - size % 4 + 4;
 
@@ -594,9 +594,9 @@ void PrepareBufferDataTransferLink(u8 battlerId, u8 bufferId, u16 size, u8 *data
     gTasks[sLinkSendTaskId].data[14] = gTasks[sLinkSendTaskId].data[14] + alignedSize + LINK_BUFF_DATA;
 }
 
-static void PrepareBufferDataTransfer(u8 battlerId, u8 bufferId, u8 *data, u16 size)
+static void PrepareBufferDataTransfer(u32 battlerId, u32 bufferId, u8 *data, u16 size)
 {
-    s32 i;
+    u32 i;
 
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
         PrepareBufferDataTransferLink(battlerId, bufferId, size, data);
@@ -616,7 +616,7 @@ static void PrepareBufferDataTransfer(u8 battlerId, u8 bufferId, u8 *data, u16 s
     }
 }
 
-void BtlController_EmitGetMonData(u8 battlerId, u8 bufferId, u8 requestId, u8 monToCheck)
+void BtlController_EmitGetMonData(u32 battlerId, u32 bufferId, u32 requestId, u32 monToCheck)
 {
     sBattleBuffersTransferData[0] = CONTROLLER_GETMONDATA;
     sBattleBuffersTransferData[1] = requestId;
@@ -625,9 +625,9 @@ void BtlController_EmitGetMonData(u8 battlerId, u8 bufferId, u8 requestId, u8 mo
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitSetMonData(u8 battlerId, u8 bufferId, u8 requestId, u8 monToCheck, u8 bytes, void *data)
+void BtlController_EmitSetMonData(u32 battlerId, u32 bufferId, u32 requestId, u32 monToCheck, u32 bytes, void *data)
 {
-	s32 i;
+	u32 i;
     sBattleBuffersTransferData[0] = CONTROLLER_SETMONDATA;
     sBattleBuffersTransferData[1] = requestId;
     sBattleBuffersTransferData[2] = monToCheck;
@@ -636,9 +636,9 @@ void BtlController_EmitSetMonData(u8 battlerId, u8 bufferId, u8 requestId, u8 mo
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 3 + bytes);
 }
 
-void BtlController_EmitSetRawMonData(u8 battlerId, u8 bufferId, u8 offset, u8 bytes, void *data)
+void BtlController_EmitSetRawMonData(u32 battlerId, u32 bufferId, u32 offset, u32 bytes, void *data)
 {
-	s32 i;
+	u32 i;
     sBattleBuffersTransferData[0] = CONTROLLER_SETRAWMONDATA;
     sBattleBuffersTransferData[1] = offset;
     sBattleBuffersTransferData[2] = bytes;
@@ -647,7 +647,7 @@ void BtlController_EmitSetRawMonData(u8 battlerId, u8 bufferId, u8 offset, u8 by
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, bytes + 3);
 }
 
-void BtlController_EmitLoadMonSprite(u8 battlerId, u8 bufferId)
+void BtlController_EmitLoadMonSprite(u32 battlerId, u32 bufferId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_LOADMONSPRITE;
     sBattleBuffersTransferData[1] = CONTROLLER_LOADMONSPRITE;
@@ -656,7 +656,7 @@ void BtlController_EmitLoadMonSprite(u8 battlerId, u8 bufferId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitSwitchInAnim(u8 battlerId, u8 bufferId, u8 partyId, bool8 dontClearSubstituteBit)
+void BtlController_EmitSwitchInAnim(u32 battlerId, u32 bufferId, u32 partyId, bool32 dontClearSubstituteBit)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_SWITCHINANIM;
     sBattleBuffersTransferData[1] = partyId;
@@ -665,14 +665,14 @@ void BtlController_EmitSwitchInAnim(u8 battlerId, u8 bufferId, u8 partyId, bool8
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitReturnMonToBall(u8 battlerId, u8 bufferId, u8 arg1)
+void BtlController_EmitReturnMonToBall(u32 battlerId, u32 bufferId, u32 arg1)
 {
     sBattleBuffersTransferData[0] = CONTROLLER_RETURNMONTOBALL;
     sBattleBuffersTransferData[1] = arg1;
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 2);
 }
 
-void BtlController_EmitDrawTrainerPic(u8 battlerId, u8 bufferId)
+void BtlController_EmitDrawTrainerPic(u32 battlerId, u32 bufferId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_DRAWTRAINERPIC;
     sBattleBuffersTransferData[1] = CONTROLLER_DRAWTRAINERPIC;
@@ -681,7 +681,7 @@ void BtlController_EmitDrawTrainerPic(u8 battlerId, u8 bufferId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitTrainerSlide(u8 battlerId, u8 bufferId)
+void BtlController_EmitTrainerSlide(u32 battlerId, u32 bufferId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_TRAINERSLIDE;
     sBattleBuffersTransferData[1] = CONTROLLER_TRAINERSLIDE;
@@ -690,7 +690,7 @@ void BtlController_EmitTrainerSlide(u8 battlerId, u8 bufferId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitTrainerSlideBack(u8 battlerId, u8 bufferId)
+void BtlController_EmitTrainerSlideBack(u32 battlerId, u32 bufferId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_TRAINERSLIDEBACK;
     sBattleBuffersTransferData[1] = CONTROLLER_TRAINERSLIDEBACK;
@@ -699,7 +699,7 @@ void BtlController_EmitTrainerSlideBack(u8 battlerId, u8 bufferId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitFaintAnimation(u8 battlerId, u8 bufferId)
+void BtlController_EmitFaintAnimation(u32 battlerId, u32 bufferId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_FAINTANIMATION;
     sBattleBuffersTransferData[1] = CONTROLLER_FAINTANIMATION;
@@ -708,14 +708,14 @@ void BtlController_EmitFaintAnimation(u8 battlerId, u8 bufferId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitBallThrowAnim(u8 battlerId, u8 bufferId, u8 caseId)
+void BtlController_EmitBallThrowAnim(u32 battlerId, u32 bufferId, u32 caseId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_BALLTHROWANIM;
     sBattleBuffersTransferData[1] = caseId;
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 2);
 }
 
-void BtlController_EmitMoveAnimation(u8 battlerId, u8 bufferId, u16 move, u8 turnOfMove, u16 movePower, s32 dmg, u8 friendship, struct DisableStruct *disableStructPtr)
+void BtlController_EmitMoveAnimation(u32 battlerId, u32 bufferId, u32 move, u32 turnOfMove, u32 movePower, s32 dmg, u32 friendship, struct DisableStruct *disableStructPtr)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_MOVEANIMATION;
     sBattleBuffersTransferData[1] = move;
@@ -728,7 +728,7 @@ void BtlController_EmitMoveAnimation(u8 battlerId, u8 bufferId, u16 move, u8 tur
     sBattleBuffersTransferData[8] = (dmg & 0x00FF0000) >> 16;
     sBattleBuffersTransferData[9] = (dmg & 0xFF000000) >> 24;
     sBattleBuffersTransferData[10] = friendship;
-    sBattleBuffersTransferData[11] = gMultiHitCounter; // multihit in pokeem
+    sBattleBuffersTransferData[11] = gMultiHitCounter;
     if (WEATHER_HAS_EFFECT)
     {
         sBattleBuffersTransferData[12] = gBattleWeather;
@@ -745,9 +745,9 @@ void BtlController_EmitMoveAnimation(u8 battlerId, u8 bufferId, u16 move, u8 tur
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 16 + sizeof(struct DisableStruct));
 }
 
-void BtlController_EmitPrintString(u8 battlerId, u8 bufferId, u16 stringId)
+void BtlController_EmitPrintString(u32 battlerId, u32 bufferId, u32 stringId)
 {
-	s32 i;
+	u32 i;
     struct BattleMsgData *stringInfo;
 
     sBattleBuffersTransferData[0] = CONTROLLER_PRINTSTRING;
@@ -774,9 +774,9 @@ void BtlController_EmitPrintString(u8 battlerId, u8 bufferId, u16 stringId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, sizeof(struct BattleMsgData) + 4);
 }
 
-void BtlController_EmitPrintSelectionString(u8 battlerId, u8 bufferId, u16 stringId)
+void BtlController_EmitPrintSelectionString(u32 battlerId, u32 bufferId, u32 stringId)
 {
-	s32 i;
+	u32 i;
     struct BattleMsgData *stringInfo;
 
     sBattleBuffersTransferData[0] = CONTROLLER_PRINTSELECTIONSTRING;
@@ -800,7 +800,7 @@ void BtlController_EmitPrintSelectionString(u8 battlerId, u8 bufferId, u16 strin
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, sizeof(struct BattleMsgData) + 4);
 }
 
-void BtlController_EmitChooseAction(u8 battlerId, u8 bufferId, u8 arg1, u16 arg2)
+void BtlController_EmitChooseAction(u32 battlerId, u32 bufferId, u32 arg1, u32 arg2)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_CHOOSEACTION;
     sBattleBuffersTransferData[1] = arg1;
@@ -809,9 +809,9 @@ void BtlController_EmitChooseAction(u8 battlerId, u8 bufferId, u8 arg1, u16 arg2
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitChooseMove(u8 battlerId, u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData)
+void BtlController_EmitChooseMove(u32 battlerId, u32 bufferId, bool32 isDoubleBattle, bool32 NoPpNumber, struct ChooseMoveStruct *movePpData)
 {
-	s32 i;
+	u32 i;
     sBattleBuffersTransferData[0] = CONTROLLER_CHOOSEMOVE;
     sBattleBuffersTransferData[1] = isDoubleBattle;
     sBattleBuffersTransferData[2] = NoPpNumber;
@@ -821,18 +821,18 @@ void BtlController_EmitChooseMove(u8 battlerId, u8 bufferId, bool8 isDoubleBattl
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, sizeof(*movePpData) + 4);
 }
 
-void BtlController_EmitChooseItem(u8 battlerId, u8 bufferId, u8 *arg1)
+void BtlController_EmitChooseItem(u32 battlerId, u32 bufferId, u8 *arg1)
 {
-	s32 i;
+	u32 i;
     sBattleBuffersTransferData[0] = CONTROLLER_OPENBAG;
     for (i = 0; i < 3; ++i)
         sBattleBuffersTransferData[1 + i] = arg1[i];
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitChoosePokemon(u8 battlerId, u8 bufferId, u8 caseId, u8 arg2, u8* arg4)
+void BtlController_EmitChoosePokemon(u32 battlerId, u32 bufferId, u32 caseId, u32 arg2, u8* arg4)
 {
-	s32 i;
+	u32 i;
     sBattleBuffersTransferData[0] = CONTROLLER_CHOOSEPOKEMON;
     sBattleBuffersTransferData[1] = caseId;
     sBattleBuffersTransferData[2] = arg2;
@@ -841,7 +841,7 @@ void BtlController_EmitChoosePokemon(u8 battlerId, u8 bufferId, u8 caseId, u8 ar
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 8);
 }
 
-void BtlController_EmitHealthBarUpdate(u8 battlerId, u8 bufferId, u16 hpValue)
+void BtlController_EmitHealthBarUpdate(u32 battlerId, u32 bufferId, u16 hpValue)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_HEALTHBARUPDATE;
     sBattleBuffersTransferData[1] = 0;
@@ -850,7 +850,7 @@ void BtlController_EmitHealthBarUpdate(u8 battlerId, u8 bufferId, u16 hpValue)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitExpUpdate(u8 battlerId, u8 bufferId, u8 partyId, u16 expPoints)
+void BtlController_EmitExpUpdate(u32 battlerId, u32 bufferId, u32 partyId, u16 expPoints)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_EXPUPDATE;
     sBattleBuffersTransferData[1] = partyId;
@@ -859,7 +859,7 @@ void BtlController_EmitExpUpdate(u8 battlerId, u8 bufferId, u8 partyId, u16 expP
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitStatusIconUpdate(u8 battlerId, u8 bufferId, u8 status1Id, u32 status2)
+void BtlController_EmitStatusIconUpdate(u32 battlerId, u32 bufferId, u32 status1Id, u32 status2)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_STATUSICONUPDATE;
     sBattleBuffersTransferData[1] = status1Id;
@@ -870,7 +870,7 @@ void BtlController_EmitStatusIconUpdate(u8 battlerId, u8 bufferId, u8 status1Id,
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 6);
 }
 
-void BtlController_EmitStatusAnimation(u8 battlerId, u8 bufferId, u8 animStatusId, u32 status)
+void BtlController_EmitStatusAnimation(u32 battlerId, u32 bufferId, u32 animStatusId, u32 status)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_STATUSANIMATION;
     sBattleBuffersTransferData[1] = animStatusId;
@@ -881,9 +881,9 @@ void BtlController_EmitStatusAnimation(u8 battlerId, u8 bufferId, u8 animStatusI
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 6);
 }
 
-void BtlController_EmitDataTransfer(u8 battlerId, u8 bufferId, u16 size, void *data)
+void BtlController_EmitDataTransfer(u32 battlerId, u32 bufferId, u16 size, void *data)
 {
-	s32 i;
+	u32 i;
     sBattleBuffersTransferData[0] = CONTROLLER_DATATRANSFER;
     sBattleBuffersTransferData[1] = CONTROLLER_DATATRANSFER;
     sBattleBuffersTransferData[2] = size;
@@ -893,7 +893,7 @@ void BtlController_EmitDataTransfer(u8 battlerId, u8 bufferId, u16 size, void *d
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, size + 4);
 }
 
-void BtlController_EmitTwoReturnValues(u8 battlerId, u8 bufferId, u8 arg1, u16 arg2)
+void BtlController_EmitTwoReturnValues(u32 battlerId, u32 bufferId, u32 arg1, u32 arg2)
 {
     sBattleBuffersTransferData[0] = CONTROLLER_TWORETURNVALUES;
     sBattleBuffersTransferData[1] = arg1;
@@ -902,9 +902,9 @@ void BtlController_EmitTwoReturnValues(u8 battlerId, u8 bufferId, u8 arg1, u16 a
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitChosenMonReturnValue(u8 battlerId, u8 bufferId, u8 b, u8 *c)
+void BtlController_EmitChosenMonReturnValue(u32 battlerId, u32 bufferId, u32 b, u8 *c)
 {
-	s32 i;
+	u32 i;
     sBattleBuffersTransferData[0] = CONTROLLER_CHOSENMONRETURNVALUE;
     sBattleBuffersTransferData[1] = b;
     for (i = 0; i < 3; ++i)
@@ -912,7 +912,7 @@ void BtlController_EmitChosenMonReturnValue(u8 battlerId, u8 bufferId, u8 b, u8 
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 5);
 }
 
-void BtlController_EmitOneReturnValue(u8 battlerId, u8 bufferId, u16 arg1)
+void BtlController_EmitOneReturnValue(u32 battlerId, u32 bufferId, u32 arg1)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_ONERETURNVALUE;
     sBattleBuffersTransferData[1] = arg1;
@@ -921,7 +921,7 @@ void BtlController_EmitOneReturnValue(u8 battlerId, u8 bufferId, u16 arg1)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitPlaySE(u8 battlerId, u8 bufferId, u16 songId)
+void BtlController_EmitPlaySE(u32 battlerId, u32 bufferId, u32 songId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_EFFECTIVENESSSOUND;
     sBattleBuffersTransferData[1] = songId;
@@ -930,7 +930,7 @@ void BtlController_EmitPlaySE(u8 battlerId, u8 bufferId, u16 songId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitPlayFanfare(u8 battlerId, u8 bufferId, u16 songId)
+void BtlController_EmitPlayFanfare(u32 battlerId, u32 bufferId, u32 songId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_PLAYFANFAREORBGM;
     sBattleBuffersTransferData[1] = songId;
@@ -939,7 +939,7 @@ void BtlController_EmitPlayFanfare(u8 battlerId, u8 bufferId, u16 songId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitFaintingCry(u8 battlerId, u8 bufferId)
+void BtlController_EmitFaintingCry(u32 battlerId, u32 bufferId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_FAINTINGCRY;
     sBattleBuffersTransferData[1] = CONTROLLER_FAINTINGCRY;
@@ -948,14 +948,14 @@ void BtlController_EmitFaintingCry(u8 battlerId, u8 bufferId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitIntroSlide(u8 battlerId, u8 bufferId, u8 terrainId)
+void BtlController_EmitIntroSlide(u32 battlerId, u32 bufferId, u32 terrainId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_INTROSLIDE;
     sBattleBuffersTransferData[1] = terrainId;
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 2);
 }
 
-void BtlController_EmitIntroTrainerBallThrow(u8 battlerId, u8 bufferId)
+void BtlController_EmitIntroTrainerBallThrow(u32 battlerId, u32 bufferId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_INTROTRAINERBALLTHROW;
     sBattleBuffersTransferData[1] = CONTROLLER_INTROTRAINERBALLTHROW;
@@ -964,19 +964,19 @@ void BtlController_EmitIntroTrainerBallThrow(u8 battlerId, u8 bufferId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitDrawPartyStatusSummary(u8 battlerId, u8 bufferId, struct HpAndStatus *hpAndStatus, u8 param)
+void BtlController_EmitDrawPartyStatusSummary(u32 battlerId, u32 bufferId, struct HpAndStatus *hpAndStatus, u8 param)
 {
-	s32 i;
+	u32 i;
     sBattleBuffersTransferData[0] = CONTROLLER_DRAWPARTYSTATUSSUMMARY;
     sBattleBuffersTransferData[1] = param & 0x7F;
     sBattleBuffersTransferData[2] = (param & 0x80) >> 7;
     sBattleBuffersTransferData[3] = CONTROLLER_DRAWPARTYSTATUSSUMMARY;
-    for (i = 0; i < (s32)(sizeof(struct HpAndStatus) * PARTY_SIZE); ++i)
+    for (i = 0; i < (u32)(sizeof(struct HpAndStatus) * PARTY_SIZE); ++i)
         sBattleBuffersTransferData[4 + i] = *(i + (u8 *)(hpAndStatus));
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, sizeof(struct HpAndStatus) * PARTY_SIZE + 4);
 }
 
-void BtlController_EmitHidePartyStatusSummary(u8 battlerId, u8 bufferId)
+void BtlController_EmitHidePartyStatusSummary(u32 battlerId, u32 bufferId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_HIDEPARTYSTATUSSUMMARY;
     sBattleBuffersTransferData[1] = CONTROLLER_HIDEPARTYSTATUSSUMMARY;
@@ -985,7 +985,7 @@ void BtlController_EmitHidePartyStatusSummary(u8 battlerId, u8 bufferId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitEndBounceEffect(u8 battlerId, u8 bufferId)
+void BtlController_EmitEndBounceEffect(u32 battlerId, u32 bufferId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_ENDBOUNCE;
     sBattleBuffersTransferData[1] = CONTROLLER_ENDBOUNCE;
@@ -994,7 +994,7 @@ void BtlController_EmitEndBounceEffect(u8 battlerId, u8 bufferId)
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitSpriteInvisibility(u8 battlerId, u8 bufferId, bool8 isInvisible)
+void BtlController_EmitSpriteInvisibility(u32 battlerId, u32 bufferId, bool32 isInvisible)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_SPRITEINVISIBILITY;
     sBattleBuffersTransferData[1] = isInvisible;
@@ -1003,7 +1003,7 @@ void BtlController_EmitSpriteInvisibility(u8 battlerId, u8 bufferId, bool8 isInv
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitBattleAnimation(u8 battlerId, u8 bufferId, u8 animationId, u16 argument)
+void BtlController_EmitBattleAnimation(u32 battlerId, u32 bufferId, u32 animationId, u32 argument)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_BATTLEANIMATION;
     sBattleBuffersTransferData[1] = animationId;
@@ -1012,21 +1012,21 @@ void BtlController_EmitBattleAnimation(u8 battlerId, u8 bufferId, u8 animationId
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 4);
 }
 
-void BtlController_EmitLinkStandbyMsg(u8 battlerId, u8 bufferId, u8 arg1)
+void BtlController_EmitLinkStandbyMsg(u32 battlerId, u32 bufferId, u32 arg1)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_LINKSTANDBYMSG;
     sBattleBuffersTransferData[1] = arg1;
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 2);
 }
 
-void BtlController_EmitResetActionMoveSelection(u8 battlerId, u8 bufferId, u8 caseId)
+void BtlController_EmitResetActionMoveSelection(u32 battlerId, u32 bufferId, u32 caseId)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_RESETACTIONMOVESELECTION;
     sBattleBuffersTransferData[1] = caseId;
     PrepareBufferDataTransfer(battlerId, bufferId, sBattleBuffersTransferData, 2);
 }
 
-void BtlController_EmitEndLinkBattle(u8 battlerId, u8 bufferId, u8 battleOutcome)
+void BtlController_EmitEndLinkBattle(u32 battlerId, u32 bufferId, u32 battleOutcome)
 {
 	sBattleBuffersTransferData[0] = CONTROLLER_ENDLINKBATTLE;
     sBattleBuffersTransferData[1] = battleOutcome;
@@ -1037,18 +1037,18 @@ void BtlController_EmitEndLinkBattle(u8 battlerId, u8 bufferId, u8 battleOutcome
 // GENERAL CONTROLLERS //
 /////////////////////////
 
-void ControllerDummy(u8 battlerId) { }
+void ControllerDummy(u32 battlerId) { }
 
-void BattleControllerComplete(u8 battlerId)
+void BattleControllerComplete(u32 battlerId)
 {
 	gBattlerControllerEndFuncs[battlerId](battlerId);
 }
 
-void BtlController_HandleGetMonData(u8 battlerId)
+void BtlController_HandleGetMonData(u32 battlerId)
 {
-	u8 i, monToCheck, monData[sizeof(struct Pokemon) * 2 + 56]; // this allows to get full data of two pokemon, trying to get more will result in overwriting data
+	u8 monData[sizeof(struct Pokemon) * 2 + 56]; // this allows to get full data of two pokemon, trying to get more will result in overwriting data
     struct Pokemon *party = GetBattlerParty(battlerId);
-	u32 size = 0;
+	u32 i, monToCheck, size = 0;
 	
     if (!gBattleBufferA[battlerId][2])
         size += GetBattlerMonData(battlerId, party, gBattlerPartyIndexes[battlerId], monData);
@@ -1068,9 +1068,9 @@ void BtlController_HandleGetMonData(u8 battlerId)
     BattleControllerComplete(battlerId);
 }
 
-void BtlController_HandleSetMonData(u8 battlerId)
+void BtlController_HandleSetMonData(u32 battlerId)
 {
-	u8 i, monToCheck;
+	u32 i, monToCheck;
 	struct Pokemon *party = GetBattlerParty(battlerId);
 
     if (!gBattleBufferA[battlerId][2])
@@ -1090,9 +1090,10 @@ void BtlController_HandleSetMonData(u8 battlerId)
     BattleControllerComplete(battlerId);
 }
 
-void BtlController_HandleSetRawMonData(u8 battlerId)
+void BtlController_HandleSetRawMonData(u32 battlerId)
 {
-	u8 i, *dst = (u8 *)GetBattlerPartyIndexPtr(battlerId) + gBattleBufferA[battlerId][1];
+	u32 i;
+	u8 *dst = (u8 *)GetBattlerPartyIndexPtr(battlerId) + gBattleBufferA[battlerId][1];
 
     for (i = 0; i < gBattleBufferA[battlerId][2]; ++i)
         dst[i] = gBattleBufferA[battlerId][3 + i];
@@ -1100,10 +1101,10 @@ void BtlController_HandleSetRawMonData(u8 battlerId)
     BattleControllerComplete(battlerId);
 }
 
-void BtlController_HandleLoadMonSprite(u8 battlerId, bool8 setSpecies, void(*controllerFunc)(u8))
+void BtlController_HandleLoadMonSprite(u32 battlerId, bool32 setSpecies, void(*controllerFunc)(u32))
 {
 	struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
-	u16 species = GetMonData(mon, MON_DATA_SPECIES);
+	u32 species = GetMonData(mon, MON_DATA_SPECIES);
 	
 	BattleLoadMonSpriteGfx(battlerId);
 	SetMultiuseSpriteTemplateToPokemon(species, GetBattlerPosition(battlerId));
@@ -1121,7 +1122,7 @@ void BtlController_HandleLoadMonSprite(u8 battlerId, bool8 setSpecies, void(*con
 	gBattlerControllerFuncs[battlerId] = controllerFunc;
 }
 
-void BtlController_HandleSwitchInAnim(u8 battlerId, bool8 loadSprite, void(*controllerFunc)(u8))
+void BtlController_HandleSwitchInAnim(u32 battlerId, bool32 loadSprite, void(*controllerFunc)(u32))
 {
 	if (loadSprite)
 		ClearTemporarySpeciesSpriteData(battlerId, gBattleBufferA[battlerId][2]);
@@ -1135,7 +1136,7 @@ void BtlController_HandleSwitchInAnim(u8 battlerId, bool8 loadSprite, void(*cont
     gBattlerControllerFuncs[battlerId] = controllerFunc;
 }
 
-void BtlController_HandleReturnMonToBall(u8 battlerId)
+void BtlController_HandleReturnMonToBall(u32 battlerId)
 {
 	if (!gBattleBufferA[battlerId][1])
     {
@@ -1149,7 +1150,7 @@ void BtlController_HandleReturnMonToBall(u8 battlerId)
     }
 }
 
-void BtlController_HandleDrawTrainerPic(u8 battlerId, u32 trainerPicId, bool8 isFront, s16 xPos, s16 yPos, u8 subpriority)
+void BtlController_HandleDrawTrainerPic(u32 battlerId, u32 trainerPicId, bool32 isFront, s16 xPos, s16 yPos, u32 subpriority)
 {
 	if (isFront)
 		DecompressTrainerFrontPic(trainerPicId, battlerId);
@@ -1175,7 +1176,7 @@ void BtlController_HandleDrawTrainerPic(u8 battlerId, u32 trainerPicId, bool8 is
     gBattlerControllerFuncs[battlerId] = CompleteOnBattlerSpriteCallbackDummy;
 }
 
-void BtlController_HandleTrainerSlide(u8 battlerId, u32 trainerPicId, bool8 isFront, s16 xPos, s16 yPos)
+void BtlController_HandleTrainerSlide(u32 battlerId, u32 trainerPicId, bool32 isFront, s16 xPos, s16 yPos)
 {
 	if (isFront)
 		DecompressTrainerFrontPic(trainerPicId, battlerId);
@@ -1205,7 +1206,7 @@ void BtlController_HandleTrainerSlide(u8 battlerId, u32 trainerPicId, bool8 isFr
     gBattlerControllerFuncs[battlerId] = CompleteOnBattlerSpriteCallbackDummy;
 }
 
-void BtlController_HandleTrainerSlideBack(u8 battlerId, s16 data0, bool8 animateSprite)
+void BtlController_HandleTrainerSlideBack(u32 battlerId, s16 data0, bool32 animateSprite)
 {
 	SetSpritePrimaryCoordsFromSecondaryCoords(&gSprites[gBattlerSpriteIds[battlerId]]);
     gSprites[gBattlerSpriteIds[battlerId]].data[0] = data0;
@@ -1220,7 +1221,7 @@ void BtlController_HandleTrainerSlideBack(u8 battlerId, s16 data0, bool8 animate
     gBattlerControllerFuncs[battlerId] = FreeTrainerSpriteAfterSlide;
 }
 
-void BtlController_HandleFaintAnimation(u8 battlerId)
+void BtlController_HandleFaintAnimation(u32 battlerId)
 {
 	switch (gBattleSpritesDataPtr->healthBoxesData[battlerId].animationState)
 	{
@@ -1255,7 +1256,7 @@ void BtlController_HandleFaintAnimation(u8 battlerId)
 	}
 }
 
-void BtlController_HandleBallThrowAnim(u8 battlerId, u8 animId, bool8 allowCriticalCapture)
+void BtlController_HandleBallThrowAnim(u32 battlerId, u32 animId, bool32 allowCriticalCapture)
 {
     gBattleSpritesDataPtr->animationData->ballThrowCaseId = gBattleBufferA[battlerId][1];
     gDoingBattleAnim = TRUE;
@@ -1267,7 +1268,7 @@ void BtlController_HandleBallThrowAnim(u8 battlerId, u8 animId, bool8 allowCriti
     gBattlerControllerFuncs[battlerId] = CompleteOnSpecialAnimDone;
 }
 
-void BtlController_HandleMoveAnimation(u8 battlerId)
+void BtlController_HandleMoveAnimation(u32 battlerId)
 {
 	if (!IsBattleSEPlaying(battlerId))
     {
@@ -1284,7 +1285,7 @@ void BtlController_HandleMoveAnimation(u8 battlerId)
     }
 }
 
-void BtlController_HandlePrintString(u8 battlerId, u16 stringId, bool8 isSelection)
+void BtlController_HandlePrintString(u32 battlerId, u32 stringId, bool32 isSelection)
 {
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
@@ -1297,9 +1298,9 @@ void BtlController_HandlePrintString(u8 battlerId, u16 stringId, bool8 isSelecti
 	gBattlerControllerFuncs[battlerId] = CompleteOnInactiveTextPrinter;
 }
 
-void BtlController_HandleChooseAction(u8 battlerId, const u8 *actionsStr, const u8 *whatDoStr, void(*controllerFunc)(u8))
+void BtlController_HandleChooseAction(u32 battlerId, const u8 *actionsStr, const u8 *whatDoStr, void(*controllerFunc)(u32))
 {
-	u8 i;
+	u32 i;
 
     gBattlerControllerFuncs[battlerId] = controllerFunc;
 	
@@ -1314,16 +1315,16 @@ void BtlController_HandleChooseAction(u8 battlerId, const u8 *actionsStr, const 
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_ACTION_PROMPT);
 }
 
-void BtlController_HandleChooseItem(u8 battlerId, void(*controllerFunc)(u8))
+void BtlController_HandleChooseItem(u32 battlerId, void(*controllerFunc)(u32))
 {
     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
     gBattlerControllerFuncs[battlerId] = controllerFunc;
     gBattlerInMenuId = battlerId;
 }
 
-void BtlController_HandleChoosePokemon(u8 battlerId, void(*controllerFunc)(u8))
+void BtlController_HandleChoosePokemon(u32 battlerId, void(*controllerFunc)(u32))
 {
-	u8 i;
+	u32 i;
 
     gBattleControllerData[battlerId] = CreateTask(TaskDummy, 0xFF);
     gTasks[gBattleControllerData[battlerId]].data[0] = gBattleBufferA[battlerId][1] & 0xF;
@@ -1338,7 +1339,7 @@ void BtlController_HandleChoosePokemon(u8 battlerId, void(*controllerFunc)(u8))
     gBattlerInMenuId = battlerId;
 }
 
-void BtlController_HandleHealthbarUpdate(u8 battlerId, bool8 updateHpText)
+void BtlController_HandleHealthbarUpdate(u32 battlerId, bool32 updateHpText)
 {
 	s16 hpVal = gBattleBufferA[battlerId][2] | (gBattleBufferA[battlerId][3] << 8);
 	struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
@@ -1353,21 +1354,21 @@ void BtlController_HandleHealthbarUpdate(u8 battlerId, bool8 updateHpText)
 		SetBattleBarStruct(battlerId, maxHP, 0, hpVal);
 		
 		if (updateHpText)
-			UpdateHpTextInHealthbox(gHealthboxSpriteIds[battlerId], HP_CURRENT, 0, maxHP);
+			UpdateHpTextInHealthbox(gHealthboxSpriteIds[battlerId], 0, maxHP);
 	}
 	gBattleControllerData[battlerId] = updateHpText;
     gBattlerControllerFuncs[battlerId] = CompleteOnHealthbarDone;
 }
 
-void BtlController_HandleExpUpdate(u8 battlerId)
+void BtlController_HandleExpUpdate(u32 battlerId)
 {
-	u8 monId = gBattleBufferA[battlerId][1];
+	u32 monId = gBattleBufferA[battlerId][1];
 
     if (GetMonData(&gPlayerParty[monId], MON_DATA_LEVEL) >= MAX_LEVEL)
         BattleControllerComplete(battlerId);
     else
     {
-        u8 taskId;
+        u32 taskId;
 
         LoadBattleBarGfx();
 
@@ -1380,7 +1381,7 @@ void BtlController_HandleExpUpdate(u8 battlerId)
     }
 }
 
-void BtlController_HandleStatusIconUpdate(u8 battlerId)
+void BtlController_HandleStatusIconUpdate(u32 battlerId)
 {
 	if (!IsBattleSEPlaying(battlerId))
     {
@@ -1390,7 +1391,7 @@ void BtlController_HandleStatusIconUpdate(u8 battlerId)
     }
 }
 
-void BtlController_HandleStatusAnimation(u8 battlerId)
+void BtlController_HandleStatusAnimation(u32 battlerId)
 {
 	if (!IsBattleSEPlaying(battlerId))
     {
@@ -1400,34 +1401,34 @@ void BtlController_HandleStatusAnimation(u8 battlerId)
     }
 }
 
-void BtlController_HandlePlaySE(u8 battlerId)
+void BtlController_HandlePlaySE(u32 battlerId)
 {
     PlaySE12WithPanning(gBattleBufferA[battlerId][1] | (gBattleBufferA[battlerId][2] << 8), GetBattlerSide(battlerId) == B_SIDE_PLAYER ? SOUND_PAN_ATTACKER : SOUND_PAN_TARGET);
     BattleControllerComplete(battlerId);
 }
 
-void BtlController_HandlePlayFanfare(u8 battlerId)
+void BtlController_HandlePlayFanfare(u32 battlerId)
 {
 	PlayFanfare(gBattleBufferA[battlerId][1] | (gBattleBufferA[battlerId][2] << 8));
 	BattleControllerComplete(battlerId);
 }
 
-void BtlController_HandleFaintingCry(u8 battlerId)
+void BtlController_HandleFaintingCry(u32 battlerId)
 {
     PlayCry_ByMode(GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES), GetBattlerSide(battlerId) == B_SIDE_PLAYER ? -25 : 25, CRY_MODE_FAINT);
     BattleControllerComplete(battlerId);
 }
 
-void BtlController_HandleIntroSlide(u8 battlerId)
+void BtlController_HandleIntroSlide(u32 battlerId)
 {
 	HandleIntroSlide(gBattleBufferA[battlerId][1]);
     gIntroSlideFlags |= (INTRO_SLIDE_FLAG_SLIDE_IN_COUNTER | INTRO_SLIDE_FLAG_SLIDE_IN_STARTED);
 	BattleControllerComplete(battlerId);
 }
 
-void BtlController_HandleIntroTrainerBallThrow(u8 battlerId, u16 loadPicTag, u32 trainerPicId, void(*spriteCallback)(struct Sprite *), u8 delay, void(*controllerFunc)(u8))
+void BtlController_HandleIntroTrainerBallThrow(u32 battlerId, u32 loadPicTag, u32 trainerPicId, void(*spriteCallback)(struct Sprite *), u32 delay, void(*controllerFunc)(u32))
 {
-	u8 paletteNum, taskId, side = GetBattlerSide(battlerId);
+	u32 paletteNum, taskId, side = GetBattlerSide(battlerId);
 
     SetSpritePrimaryCoordsFromSecondaryCoords(&gSprites[gBattlerSpriteIds[battlerId]]);
 	
@@ -1465,7 +1466,7 @@ void BtlController_HandleIntroTrainerBallThrow(u8 battlerId, u16 loadPicTag, u32
     gBattlerControllerFuncs[battlerId] = ControllerDummy;
 }
 
-void BtlController_HandleDrawPartyStatusSummary(u8 battlerId)
+void BtlController_HandleDrawPartyStatusSummary(u32 battlerId)
 {
 	if (gBattleBufferA[battlerId][1] && GetBattlerSide(battlerId) == B_SIDE_PLAYER)
         BattleControllerComplete(battlerId);
@@ -1493,21 +1494,21 @@ void BtlController_HandleDrawPartyStatusSummary(u8 battlerId)
     }
 }
 
-void BtlController_HandleHidePartyStatusSummary(u8 battlerId)
+void BtlController_HandleHidePartyStatusSummary(u32 battlerId)
 {
 	if (gBattleSpritesDataPtr->healthBoxesData[battlerId].partyStatusSummaryShown)
         gTasks[gBattlerStatusSummaryTaskId[battlerId]].func = Task_HidePartyStatusSummary;
     BattleControllerComplete(battlerId);
 }
 
-void BtlController_HandleEndBounceEffect(u8 battlerId)
+void BtlController_HandleEndBounceEffect(u32 battlerId)
 {
 	EndBounceEffect(battlerId, BOUNCE_HEALTHBOX);
     EndBounceEffect(battlerId, BOUNCE_MON);
 	BattleControllerComplete(battlerId);
 }
 
-void BtlController_HandleSpriteInvisibility(u8 battlerId)
+void BtlController_HandleSpriteInvisibility(u32 battlerId)
 {
 	if (IsBattlerSpritePresent(battlerId))
     {
@@ -1517,7 +1518,7 @@ void BtlController_HandleSpriteInvisibility(u8 battlerId)
 	BattleControllerComplete(battlerId);
 }
 
-void BtlController_HandleBattleAnimation(u8 battlerId)
+void BtlController_HandleBattleAnimation(u32 battlerId)
 {
 	if (!IsBattleSEPlaying(battlerId))
     {
@@ -1528,7 +1529,7 @@ void BtlController_HandleBattleAnimation(u8 battlerId)
     }
 }
 
-void BtlController_HandleEndLinkBattle(u8 battlerId, u8 battleOutcome, void(*controllerFunc)(u8))
+void BtlController_HandleEndLinkBattle(u32 battlerId, u32 battleOutcome, void(*controllerFunc)(u32))
 {
 	gBattleOutcome = battleOutcome;
     FadeOutMapMusic(5);
@@ -1543,7 +1544,7 @@ void BtlController_HandleEndLinkBattle(u8 battlerId, u8 battleOutcome, void(*con
 // ULTILITY FUNCTIONS //
 ////////////////////////
 
-void CompleteOnBattlerSpritePosX_0(u8 battlerId)
+void CompleteOnBattlerSpritePosX_0(u32 battlerId)
 {
     if (gSprites[gBattlerSpriteIds[battlerId]].x2 == 0)
         BattleControllerComplete(battlerId);
@@ -1564,7 +1565,7 @@ void CompleteOnBattlerSpritePosX_0(u8 battlerId)
 	dst[size + 3] = (value & 0xFF000000) >> 24; \
 	size += 4
 
-static u32 GetBattlerMonData(u8 battlerId, struct Pokemon *party, u8 monId, u8 *dst)
+static u32 GetBattlerMonData(u32 battlerId, struct Pokemon *party, u32 monId, u8 *dst)
 {
 	struct BattlePokemon battleMon;
 	struct MovePpInfo moveData;
@@ -1684,7 +1685,7 @@ static u32 GetBattlerMonData(u8 battlerId, struct Pokemon *party, u8 monId, u8 *
 	return size;
 }
 
-static void SetBattlerMonData(u8 battlerId, struct Pokemon *party, u8 monId)
+static void SetBattlerMonData(u32 battlerId, struct Pokemon *party, u32 monId)
 {
 	 struct BattlePokemon *battlePokemon;
 	 struct MovePpInfo *moveData;
@@ -1695,7 +1696,7 @@ static void SetBattlerMonData(u8 battlerId, struct Pokemon *party, u8 monId)
 	 {
 		 case REQUEST_ALL_BATTLE:
 		 {
-			u8 val;
+			u32 val;
 			
 			battlePokemon = (struct BattlePokemon *)&gBattleBufferA[battlerId][3];
 			
@@ -1819,7 +1820,7 @@ static void SetBattlerMonData(u8 battlerId, struct Pokemon *party, u8 monId)
 			break;
 		case REQUEST_STATUS_BATTLE:
 		{
-			u8 val;
+			u32 val;
 			
 			status = (struct Status1 *)&gBattleBufferA[battlerId][3];
 			
@@ -1846,7 +1847,7 @@ static void SetBattlerMonData(u8 battlerId, struct Pokemon *party, u8 monId)
 	 }
 }
 
-void TryShinyAnimAfterMonAnim(u8 battlerId)
+void TryShinyAnimAfterMonAnim(u32 battlerId)
 {
 	if (gSprites[gBattlerSpriteIds[battlerId]].animEnded && gSprites[gBattlerSpriteIds[battlerId]].x2 == 0)
     {
@@ -1863,7 +1864,7 @@ void TryShinyAnimAfterMonAnim(u8 battlerId)
     }
 }
 
-void WaitForMonAnimAfterLoad(u8 battlerId)
+void WaitForMonAnimAfterLoad(u32 battlerId)
 {
 	if (gSprites[gBattlerSpriteIds[battlerId]].animEnded && gSprites[gBattlerSpriteIds[battlerId]].x2 == 0)
         BattleControllerComplete(battlerId);
@@ -1878,7 +1879,7 @@ void Task_BltController_RestoreBgmAfterCry(u8 taskId)
     }
 }
 
-static void FreeMonSpriteAfterSwitchOutAnim(u8 battlerId)
+static void FreeMonSpriteAfterSwitchOutAnim(u32 battlerId)
 {
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].specialAnimActive)
     {
@@ -1887,7 +1888,7 @@ static void FreeMonSpriteAfterSwitchOutAnim(u8 battlerId)
     }
 }
 
-static void DoSwitchOutAnimation(u8 battlerId)
+static void DoSwitchOutAnimation(u32 battlerId)
 {
 	switch (gBattleSpritesDataPtr->healthBoxesData[battlerId].animationState)
     {
@@ -1908,7 +1909,7 @@ static void DoSwitchOutAnimation(u8 battlerId)
     }
 }
 
-static void FreeMonSprite(u8 battlerId)
+static void FreeMonSprite(u32 battlerId)
 {
 	DestroySpriteAndFreeMatrix(&gSprites[gBattlerSpriteIds[battlerId]]);
 	
@@ -1918,13 +1919,13 @@ static void FreeMonSprite(u8 battlerId)
 	SetHealthboxSpriteInvisible(gHealthboxSpriteIds[battlerId]);
 }
 
-static void CompleteOnBattlerSpriteCallbackDummy(u8 battlerId)
+static void CompleteOnBattlerSpriteCallbackDummy(u32 battlerId)
 {
 	if (gSprites[gBattlerSpriteIds[battlerId]].callback == SpriteCallbackDummy)
         BattleControllerComplete(battlerId);
 }
 
-static void FreeTrainerSpriteAfterSlide(u8 battlerId)
+static void FreeTrainerSpriteAfterSlide(u32 battlerId)
 {
 	if (gSprites[gBattlerSpriteIds[battlerId]].callback == SpriteCallbackDummy)
     {
@@ -1939,7 +1940,7 @@ static void FreeTrainerSpriteAfterSlide(u8 battlerId)
     }
 }
 
-static void FreeMonSpriteAfterFaintAnim(u8 battlerId)
+static void FreeMonSpriteAfterFaintAnim(u32 battlerId)
 {
 	if (gSprites[gBattlerSpriteIds[battlerId]].y + gSprites[gBattlerSpriteIds[battlerId]].y2 > DISPLAY_HEIGHT)
     {
@@ -1949,7 +1950,7 @@ static void FreeMonSpriteAfterFaintAnim(u8 battlerId)
     }
 }
 
-static void HideHealthboxAfterMonFaint(u8 battlerId)
+static void HideHealthboxAfterMonFaint(u32 battlerId)
 {
 	if (!gSprites[gBattlerSpriteIds[battlerId]].inUse)
     {
@@ -1958,13 +1959,13 @@ static void HideHealthboxAfterMonFaint(u8 battlerId)
     }
 }
 
-static void CompleteOnSpecialAnimDone(u8 battlerId)
+static void CompleteOnSpecialAnimDone(u32 battlerId)
 {
 	if (!gDoingBattleAnim)
 		BattleControllerComplete(battlerId);
 }
 
-static void DoMoveAnimation(u8 battlerId)
+static void DoMoveAnimation(u32 battlerId)
 {
     switch (gBattleSpritesDataPtr->healthBoxesData[battlerId].animationState)
     {
@@ -2011,15 +2012,15 @@ static void DoMoveAnimation(u8 battlerId)
     }
 }
 
-static void CompleteOnInactiveTextPrinter(u8 battlerId)
+static void CompleteOnInactiveTextPrinter(u32 battlerId)
 {
 	if (!IsTextPrinterActive(0))
 		BattleControllerComplete(battlerId);
 }
 
-static void CompleteOnHealthbarDone(u8 battlerId)
+static void CompleteOnHealthbarDone(u32 battlerId)
 {
-	s16 hpValue = MoveBattleBar(battlerId, gHealthboxSpriteIds[battlerId], HEALTH_BAR);
+	s16 hpValue = MoveBattleBar(battlerId, HEALTH_BAR);
 
     SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
 	
@@ -2039,13 +2040,13 @@ static void CompleteOnHealthbarDone(u8 battlerId)
 	else
 	{
 		if (gBattleControllerData[battlerId]) // Update hp text
-			UpdateHpTextInHealthbox(gHealthboxSpriteIds[battlerId], HP_CURRENT, hpValue, gBattleMons[battlerId].maxHP);
+			UpdateHpTextInHealthbox(gHealthboxSpriteIds[battlerId], hpValue, gBattleMons[battlerId].maxHP);
 	}
 }
 
 static void Task_GiveExpToMon(u8 taskId)
 {
-    u8 monId = gTasks[taskId].tExpTask_monId, battlerId = gTasks[taskId].tExpTask_battler;
+    u32 monId = gTasks[taskId].tExpTask_monId, battlerId = gTasks[taskId].tExpTask_battler;
     s16 gainedExp = gTasks[taskId].tExpTask_gainedExp;
 
     if (IsDoubleBattleForBattler(battlerId) || monId != gBattlerPartyIndexes[battlerId]) // Give exp without moving the expbar.
@@ -2082,8 +2083,8 @@ static void Task_GiveExpToMon(u8 taskId)
 static void Task_PrepareToGiveExpWithExpBar(u8 taskId)
 {
     struct Pokemon *mon = &gPlayerParty[gTasks[taskId].tExpTask_monId];
-    u8 level = GetMonData(mon, MON_DATA_LEVEL);
-    u16 species = GetMonData(mon, MON_DATA_SPECIES);
+    u32 level = GetMonData(mon, MON_DATA_LEVEL);
+    u32 species = GetMonData(mon, MON_DATA_SPECIES);
     u32 exp = GetMonData(mon, MON_DATA_EXP);
     u32 currLvlExp = gExperienceTables[gSpeciesInfo[species].growthRate][level];
     u32 expToNextLvl;
@@ -2101,10 +2102,10 @@ static void Task_GiveExpWithExpBar(u8 taskId)
         ++gTasks[taskId].tExpTask_frames;
     else
     {
-        u8 monId = gTasks[taskId].tExpTask_monId;
+        u32 monId = gTasks[taskId].tExpTask_monId;
         s16 gainedExp = gTasks[taskId].tExpTask_gainedExp;
-        u8 battlerId = gTasks[taskId].tExpTask_battler;
-        s16 newExpPoints = MoveBattleBar(battlerId, gHealthboxSpriteIds[battlerId], EXP_BAR);
+        u32 battlerId = gTasks[taskId].tExpTask_battler;
+        s16 newExpPoints = MoveBattleBar(battlerId, EXP_BAR);
 		
         SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
 		
@@ -2138,7 +2139,7 @@ static void Task_GiveExpWithExpBar(u8 taskId)
 
 static void Task_LaunchLvlUpAnim(u8 taskId)
 {
-	u8 battlerId = gTasks[taskId].tExpTask_battler;
+	u32 battlerId = gTasks[taskId].tExpTask_battler;
 
     if (IsDoubleBattleForBattler(battlerId) && gTasks[taskId].tExpTask_monId == gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)])
         battlerId = BATTLE_PARTNER(battlerId);
@@ -2150,7 +2151,7 @@ static void Task_LaunchLvlUpAnim(u8 taskId)
 
 static void Task_UpdateLvlInHealthbox(u8 taskId)
 {
-	u8 battlerId = gTasks[taskId].tExpTask_battler;
+	u32 battlerId = gTasks[taskId].tExpTask_battler;
 
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].specialAnimActive)
     {
@@ -2165,7 +2166,7 @@ static void Task_UpdateLvlInHealthbox(u8 taskId)
 
 static void Task_TryCreateVerticalStripes(u8 taskId)
 {
-	u8 battlerId = gTasks[taskId].tExpTask_battler;
+	u32 battlerId = gTasks[taskId].tExpTask_battler;
 	
 	if (IsBattlerSpriteVisible(battlerId))
 		gTasks[taskId].func = Task_CreateLevelUpVerticalStripes;
@@ -2179,8 +2180,7 @@ static void Task_TryCreateVerticalStripes(u8 taskId)
 static void Task_CreateLevelUpVerticalStripes(u8 taskId)
 {
 	s16 *data = gTasks[taskId].data;
-    u8 battlerId = tExpTask_battler;
-    u16 bgPriorityRank = GetBattlerSpriteBGPriorityRank(battlerId);
+    u32 battlerId = tExpTask_battler;
     bool32 isOnBg2 = (GetBattlerSpriteBGPriorityRank(battlerId) ^ 1);
     struct Sprite *sprite = &gSprites[gBattlerSpriteIds[battlerId]];
 
@@ -2248,7 +2248,7 @@ static void Task_CreateLevelUpVerticalStripes(u8 taskId)
     }
 }
 
-static void CompleteOnFinishedStatusAnimation(u8 battlerId)
+static void CompleteOnFinishedStatusAnimation(u32 battlerId)
 {
 	if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].statusAnimActive)
 		BattleControllerComplete(battlerId);
@@ -2256,7 +2256,7 @@ static void CompleteOnFinishedStatusAnimation(u8 battlerId)
 
 static void SpriteCB_FreePlayerSpriteLoadMonSprite(struct Sprite *sprite)
 {
-	u8 battlerId = sprite->data[5];
+	u32 battlerId = sprite->data[5];
 	
 	FreeSpritePaletteByTag(GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum));
 	
@@ -2274,7 +2274,7 @@ static void SpriteCB_FreeOpponentSprite(struct Sprite *sprite)
 
 static void Task_StartSendOutAnim(u8 taskId)
 {
-	u8 battlerId = gTasks[taskId].tSendOutTask_Battler;
+	u32 battlerId = gTasks[taskId].tSendOutTask_Battler;
 	
 	if (gTasks[taskId].tSendOutTask_Delay && gTasks[taskId].tSendOutTask_Frames < gTasks[taskId].tSendOutTask_Delay)
 		++gTasks[taskId].tSendOutTask_Frames;
@@ -2303,7 +2303,7 @@ static void Task_StartSendOutAnim(u8 taskId)
     }
 }
 
-void ShowHealthBox(u8 battlerId)
+void ShowHealthBox(u32 battlerId)
 {
 	DestroySprite(&gSprites[gBattleControllerData[battlerId]]);
 	UpdateHealthboxAttribute(battlerId, HEALTHBOX_ALL);
@@ -2312,7 +2312,7 @@ void ShowHealthBox(u8 battlerId)
 	SetBattlerShadowSpriteCallback(battlerId);
 }
 
-static void EndDrawPartyStatusSummary(u8 battlerId)
+static void EndDrawPartyStatusSummary(u32 battlerId)
 {
 	if (gBattleSpritesDataPtr->healthBoxesData[battlerId].partyStatusDelayTimer++ > 92)
     {
@@ -2321,16 +2321,16 @@ static void EndDrawPartyStatusSummary(u8 battlerId)
     }
 }
 
-static void CompleteOnFinishedBattleAnimation(u8 battlerId)
+static void CompleteOnFinishedBattleAnimation(u32 battlerId)
 {
 	if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].animFromTableActive)
 		BattleControllerComplete(battlerId);
 }
 
-static void StartSendOutAnim(u8 battlerId, bool8 dontClearSubstituteBit)
+static void StartSendOutAnim(u32 battlerId, bool32 dontClearSubstituteBit)
 {
-	u16 species;
-	bool8 isOpponent = (GetBattlerSide(battlerId) == B_SIDE_OPPONENT);
+	u32 species;
+	bool32 isOpponent = (GetBattlerSide(battlerId) == B_SIDE_OPPONENT);
 	
 	ClearTemporarySpeciesSpriteData(battlerId, dontClearSubstituteBit);
     gBattlerPartyIndexes[battlerId] = gBattleBufferA[battlerId][1];

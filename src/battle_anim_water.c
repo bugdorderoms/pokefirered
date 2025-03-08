@@ -35,9 +35,9 @@ static void AnimTask_CreateSurfWave_Step2(u8);
 static void AnimTask_SurfWaveScanlineEffect(u8);
 static void AnimTask_WaterSpoutLaunch_Step(u8);
 static void AnimTask_WaterSpoutRain_Step(u8);
-static u8 GetWaterSpoutPowerForAnim(void);
-static void CreateWaterSpoutLaunchDroplets(struct Task*, u8);
-static void CreateWaterSpoutRainDroplet(struct Task*, u8);
+static u32 GetWaterSpoutPowerForAnim(void);
+static void CreateWaterSpoutLaunchDroplets(struct Task*, u32);
+static void CreateWaterSpoutRainDroplet(struct Task*, u32);
 static void AnimTask_WaterSport_Step(u8);
 static void CreateWaterSportDroplet(struct Task*);
 static void CreateWaterPulseRingBubbles(struct Sprite*, s32, s32);
@@ -531,7 +531,7 @@ const struct SpriteTemplate gAquaRingBubblesSpriteTemplate =
 // arg 2: duration
 void AnimTask_CreateRaindrops(u8 taskId) 
 {
-     u8 x, y;
+    u32 x, y;
 
     if (gTasks[taskId].data[0] == 0)
     {
@@ -617,8 +617,8 @@ static void AnimWaterBubbleProjectile(struct Sprite *sprite)
 
 static void AnimWaterBubbleProjectile_Step1(struct Sprite *sprite)
 {
-    u8 otherSpriteId = sprite->data[5];
-    u8 timer = gSprites[otherSpriteId].data[4];
+    u32 otherSpriteId = sprite->data[5];
+    u32 timer = gSprites[otherSpriteId].data[4];
     u16 trigIndex = gSprites[otherSpriteId].data[3];
 
     sprite->data[0] = 1;
@@ -701,8 +701,7 @@ void AnimTask_RotateAuroraRingColors(u8 taskId)
 
 static void AnimTask_RotateAuroraRingColors_Step(u8 taskId)
 {
-    int i;
-    u16 tempPlt, palIndex;
+    u32 i, tempPlt, palIndex;
 
     if (++gTasks[taskId].data[10] == 3)
     {
@@ -817,8 +816,8 @@ static void AnimSmallBubblePair_Step(struct Sprite *sprite)
 void AnimTask_CreateSurfWave(u8 taskId)
 {
     struct BattleAnimBgData animBg;
-    u8 taskId2;
-	bool8 opponentSide = (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_OPPONENT);
+    u32 taskId2;
+	bool32 opponentSide = (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_OPPONENT);
 
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 16));
@@ -876,8 +875,7 @@ void AnimTask_CreateSurfWave(u8 taskId)
 
 static void AnimTask_CreateSurfWave_Step1(u8 taskId)
 {
-	u8 i;
-    u16 rgbBuffer;
+	u32 i, rgbBuffer;
     struct BattleAnimBgData animBg;
 
     gBattle_BG1_X += gTasks[taskId].data[0];
@@ -1160,12 +1158,12 @@ static void AnimTask_WaterSpoutLaunch_Step(u8 taskId)
 }
 
 // Returns a value 0-3 relative to which quarter HP the attacker is in A higher number results in more water sprites during the Water Spout animation.
-static u8 GetWaterSpoutPowerForAnim(void)
+static u32 GetWaterSpoutPowerForAnim(void)
 {
-	u8 i;
+	u32 i;
 	struct Pokemon *mon = GetBattlerPartyIndexPtr(gBattleAnimAttacker);
-    u16 hp = GetMonData(mon, MON_DATA_MAX_HP);
-    u16 maxhp = GetMonData(mon, MON_DATA_MAX_HP) / 4;
+    u32 hp = GetMonData(mon, MON_DATA_MAX_HP);
+    u32 maxhp = GetMonData(mon, MON_DATA_MAX_HP) / 4;
 
     for (i = 0; i < 3; i++)
     {
@@ -1175,15 +1173,15 @@ static u8 GetWaterSpoutPowerForAnim(void)
     return 3;
 }
 
-static void CreateWaterSpoutLaunchDroplets(struct Task *task, u8 taskId)
+static void CreateWaterSpoutLaunchDroplets(struct Task *task, u32 taskId)
 {
-    s16 i;
+    u32 i;
     s16 attackerCoordX = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
     s16 attackerCoordY = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
     s16 trigIndex = 172;
-    u8 subpriority = GetBattlerSpriteSubpriority(gBattleAnimAttacker) - 1;
+    u32 subpriority = GetBattlerSpriteSubpriority(gBattleAnimAttacker) - 1;
     s16 increment = 4 - task->data[1];
-    u8 spriteId;
+    u32 spriteId;
 
     if (increment <= 0)
         increment = 1;
@@ -1262,7 +1260,7 @@ void AnimTask_WaterSpoutRain(u8 taskId)
 static void AnimTask_WaterSpoutRain_Step(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
-    u8 taskId2;
+    u32 taskId2;
 
     switch (task->data[0])
     {
@@ -1305,10 +1303,10 @@ static void AnimTask_WaterSpoutRain_Step(u8 taskId)
     }
 }
 
-static void CreateWaterSpoutRainDroplet(struct Task *task, u8 taskId)
+static void CreateWaterSpoutRainDroplet(struct Task *task, u32 taskId)
 {
     u16 yPosArg = ((gSineTable[task->data[8]] + 3) >> 4) + task->data[6];
-    u8 spriteId = CreateSprite(&gSmallWaterOrbSpriteTemplate, task->data[7], 0, 0);
+    u32 spriteId = CreateSprite(&gSmallWaterOrbSpriteTemplate, task->data[7], 0, 0);
 
     if (spriteId != MAX_SPRITES)
     {
@@ -1461,7 +1459,7 @@ static void AnimTask_WaterSport_Step(u8 taskId)
 
 static void CreateWaterSportDroplet(struct Task *task)
 {
-    u8 spriteId;
+    u32 spriteId;
 
     if (++task->data[2] > 1)
     {
@@ -1500,7 +1498,7 @@ static void AnimWaterSportDroplet(struct Sprite *sprite)
 
 static void AnimWaterSportDroplet_Step(struct Sprite *sprite)
 {
-    u16 i;
+    u32 i;
 
     if (TranslateAnimHorizontalArc(sprite))
     {
@@ -1577,8 +1575,8 @@ void AnimWaterPulseRing(struct Sprite *sprite)
 
 static void AnimWaterPulseRing_Step(struct Sprite *sprite)
 {
-    int xDiff = sprite->data[1] - sprite->x;
-    int yDiff = sprite->data[2] - sprite->y;
+    s32 xDiff = sprite->data[1] - sprite->x;
+    s32 yDiff = sprite->data[2] - sprite->y;
 
     sprite->x2 = (sprite->data[0] * xDiff) / sprite->data[3];
     sprite->y2 = (sprite->data[0] * yDiff) / sprite->data[3];
@@ -1598,9 +1596,9 @@ static void AnimWaterPulseRing_Step(struct Sprite *sprite)
 static void CreateWaterPulseRingBubbles(struct Sprite *sprite, s32 xDiff, s32 yDiff)
 {
     s16 combinedX, combinedY;
-    s16 i, something;
+    s16 something;
     s16 somethingRandomX, somethingRandomY;
-    u8 spriteId;
+    u32 i, spriteId;
 
     something = sprite->data[0] / 2;
     combinedX = sprite->x + sprite->x2;
@@ -1729,7 +1727,7 @@ static void AnimDiveWaterSplash(struct Sprite *sprite)
     {
     case 0:
 	{
-		u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+		u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 		
 		sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X);
 		sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y);
@@ -1772,7 +1770,7 @@ static void AnimDiveWaterSplash(struct Sprite *sprite)
 // arg 1: anim battler
 static void AnimSprayWaterDroplet(struct Sprite *sprite)
 {
-	u8 battler;
+	u32 battler;
     s32 v1 = 0x1FF & Random();
     s32 v2 = 0x7F & Random();
 

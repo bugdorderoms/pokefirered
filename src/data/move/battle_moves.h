@@ -10447,8 +10447,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_DRACO_METEOR] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Draco Meteor"),
+        .description = COMPOUND_STRING("Comets are summoned\n"
+                                       "from the sky. It\n"
+                                       "sharply reduces the\n"
+                                       "user's Sp. Atk."),
+		.animScript = gMoveAnim_DRACO_METEOR,
+		.effect = EFFECT_HIT,
 		.power = 130,
         .type = TYPE_DRAGON,
         .accuracy = 90,
@@ -10469,8 +10474,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_DISCHARGE] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Discharge"),
+        .description = COMPOUND_STRING("A electricity is\n"
+                                       "loosed to strike\n"
+                                       "all Pokémon. It\n"
+                                       "may cause paralysis."),
+		.animScript = gMoveAnim_DISCHARGE,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_ELECTRIC,
         .accuracy = 100,
@@ -10479,7 +10489,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
 		.additionalEffects = ADDITIONAL_EFFECTS({

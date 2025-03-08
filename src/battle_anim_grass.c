@@ -559,9 +559,9 @@ static void AnimMoveTwisterParticleStep(struct Sprite* sprite)
         DestroyAnimSprite(sprite);
 }
 
-static s16 LeafBladeGetPosFactor(struct Sprite* sprite)
+static s32 LeafBladeGetPosFactor(struct Sprite* sprite)
 {
-    s16 var = 8;
+    s32 var = 8;
     
     if (sprite->data[4] < sprite->y)
         var = -var;
@@ -794,7 +794,7 @@ static void AnimTask_LeafBladeStep(u8 taskId)
 
 static void AnimTask_LeafBladeStep2(u8 taskId)
 {
-	u8 spriteId;
+	u32 spriteId;
     s16 spriteX;
     s16 spriteY;
 	struct Task *task = &gTasks[taskId];
@@ -897,7 +897,7 @@ void AnimBulletSeed(struct Sprite *sprite)
 
 static void AnimBulletSeed_Step1(struct Sprite *sprite)
 {
-    int i;
+    u32 i;
     s16* ptr;
     
 	if (sprite->data[5] > MUS_DUMMY)
@@ -1025,7 +1025,7 @@ static void AnimSporeParticleStep(struct Sprite* sprite)
         sprite->oam.priority = GetBattlerSpriteBGPriority(sprite->data[3]);
     else
     {
-        u8 priority = GetBattlerSpriteBGPriority(sprite->data[3]) + 1;
+        u32 priority = GetBattlerSpriteBGPriority(sprite->data[3]) + 1;
         if (priority > 3)
             priority = 3;
 
@@ -1038,9 +1038,9 @@ static void AnimSporeParticleStep(struct Sprite* sprite)
         DestroyAnimSprite(sprite);
 }
 
-static void CreateCottonSporeSporeSprite(u8 animBattler, s16 y, s16 waveOffset)
+static void CreateCottonSporeSporeSprite(u32 animBattler, s16 y, s16 waveOffset)
 {
-	u8 battlerId = GetBattlerForAnimScript(animBattler);
+	u32 battlerId = GetBattlerForAnimScript(animBattler);
 	
 	gBattleAnimArgs[0] = 0;
 	gBattleAnimArgs[1] = y;
@@ -1058,7 +1058,7 @@ static void CreateCottonSporeSporeSprite(u8 animBattler, s16 y, s16 waveOffset)
 // So it creates 3 * 3 spores, with a delay of 12 betwhen each spore creation.
 void AnimTask_CreateCottonSporeSpores(u8 taskId)
 {
-	u8 i, argId;
+	u32 i, argId;
 	s16 y, waveOffset;
 	struct Task *task = &gTasks[taskId];
 
@@ -1221,15 +1221,16 @@ static void AnimFrenzyPlantRoot(struct Sprite *sprite)
 // arg 4: duration
 void AnimNeedleArmSpike(struct Sprite* sprite)
 {
-    u8 a, b;
-    u16 c, x, y;
+    u32 a, b;
+	u16 c;
+    u32 x, y;
 	s16 targetX, targetY;
 
     if (gBattleAnimArgs[4] == 0)
         DestroyAnimSprite(sprite);
     else
     {
-		u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+		u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 		
         a = GetBattlerSpriteCoord(battler, BATTLER_COORD_X);
         b = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET);

@@ -22,7 +22,7 @@ struct BattleBackground
 extern const struct BgTemplate gBattleBgTemplates[];
 extern const struct BattleBackground gBattleTerrainTable[BATTLE_TERRAINS_COUNT];
 
-void LoadBattleTerrainGfx(u8 terrain);
+void LoadBattleTerrainGfx(u32 terrain);
 void InitBattleBgsVideo(void);
 void DrawBattleEntryBackground(void);
 void InitLinkBattleVsScreen(u8 taskId);
@@ -30,7 +30,7 @@ void LoadBattleMenuWindowGfx(void);
 void LoadBattleTextboxAndBackground(void);
 void BattleInitBgsAndWindows(void);
 void DrawMainBattleBackground(void);
-void CreateBattleMoveInfoWindowsAndArrows(u16 move);
+void CreateBattleMoveInfoWindowsAndArrows(u32 move);
 void DestroyBattleMoveInfoWindows(void);
 
 #endif // GUARD_BATTLE_BG_H

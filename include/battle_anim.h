@@ -159,30 +159,30 @@ extern const struct OamData gOamData_AffineDouble_ObjBlend_32x64;
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
 
-u8 GetBattlerForAnimScript(u8 animBattler);
-void ChangeAnimBattlerSpriteVisibility(u8 animBattler, bool8 invisible);
-void MoveBattlerSpriteToBG(u8 battlerId, bool8 toBG_2);
-void ResetBattleAnimBg(bool8 to_BG2);
+u32 GetBattlerForAnimScript(u32 animBattler);
+void ChangeAnimBattlerSpriteVisibility(u32 animBattler, bool32 invisible);
+void MoveBattlerSpriteToBG(u32 battlerId, bool32 toBG_2);
+void ResetBattleAnimBg(bool32 to_BG2);
 void ClearBattleAnimationVars(void);
-void DoMoveAnim(u16 move);
-void LaunchBattleAnimation(u8 animType, u16 animId);
+void DoMoveAnim(u32 move);
+void LaunchBattleAnimation(u32 animType, u32 animId);
 void DestroyAnimSprite(struct Sprite *sprite);
-void DestroyAnimVisualTask(u8 taskId);
-void DestroyAnimSoundTask(u8 taskId);
+void DestroyAnimVisualTask(u32 taskId);
+void DestroyAnimSoundTask(u32 taskId);
 s8 BattleAnimAdjustPanning(s8 pan);
 s8 BattleAnimAdjustPanning2(s8 pan);
 s16 CalculatePanIncrement(s16 sourcePan, s16 targetPan, s16 incrementPan);
-bool8 IsBattlerSpriteVisible(u8 battlerId);
-s16 KeepPanInRange(s16 a, s32 oldPan);
-void RelocateBattleBgPal(u16 paletteNum, u16 *dest, s32 offset, u8 largeScreen);
-void CreateItemBagSprite(const struct SpriteTemplate *template, s16 x, s16 y, u8 subpriority);
+bool32 IsBattlerSpriteVisible(u32 battlerId);
+s16 KeepPanInRange(s16 panArg);
+void RelocateBattleBgPal(u32 paletteNum, u16 *dest, s32 offset, bool32 largeScreen);
+void CreateItemBagSprite(const struct SpriteTemplate *template, s16 x, s16 y, u32 subpriority);
 void Task_ClearMonBg(u8 taskId);
-void LoadMoveBg(u16 bgId);
+void LoadMoveBg(u32 bgId);
 
 // battle_intro.c
-void SetAnimBgAttribute(u8 bgId, u8 attributeId, u8 value);
-s32 GetAnimBgAttribute(u8 bgId, u8 attributeId);
-void HandleIntroSlide(u8 terrain);
+void SetAnimBgAttribute(u32 bgId, u32 attributeId, u32 value);
+s32 GetAnimBgAttribute(u32 bgId, u32 attributeId);
+void HandleIntroSlide(u32 terrain);
 void BattleIntroSlide1(u8 taskId);
 void BattleIntroSlide2(u8 taskId);
 void BattleIntroSlide3(u8 taskId);
@@ -236,7 +236,7 @@ void AnimSlowFlyingMusicNotes(struct Sprite *);
 void AnimThoughtBubble(struct Sprite *);
 void AnimMetronomeFinger(struct Sprite *);
 void AnimFollowMeFinger(struct Sprite *);
-void SetSpriteNextToMonHead(u8 battler, struct Sprite* sprite);
+void SetSpriteNextToMonHead(u32 battler, struct Sprite* sprite);
 
 // battle_anim_effects_2.c
 extern const union AffineAnimCmd *const gGrowingRingAffineAnimTable[];
@@ -307,10 +307,10 @@ void AnimKnockOffStrike(struct Sprite *);
 void AnimRecycle(struct Sprite *);
 
 // battle_anim_special.c
-void TryShinyAnimation(u8 battler);
+void TryShinyAnimation(u32 battler);
 void IncrementBattleParticleCounter(void);
-void DoLoadHealthboxPalsForLevelUp(u8 *, u8 *, u8 battlerId);
-void DoFreeHealthboxPalsForLevelUp(u8 batterId);
+void DoLoadHealthboxPalsForLevelUp(u8 *, u8 *, u32 battlerId);
+void DoFreeHealthboxPalsForLevelUp(u32 batterId);
 
 enum
 {
@@ -332,7 +332,7 @@ enum
 };
 
 // battle_anim_status_effects.s
-void LaunchStatusAnimation(u8 battlerId, u8 statusAnimId);
+void LaunchStatusAnimation(u32 battlerId, u32 statusAnimId);
 
 // battle_anim_mons.c
 void AnimTask_BlendMonInAndOut(u8 task);
@@ -340,13 +340,13 @@ void AnimTask_BlendPalInAndOutByTag(u8 taskId);
 void AnimTask_AttackerPunchWithTrace(u8 taskId);
 void AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds(u8 taskId);
 
-u8 GetBattlerSpriteCoord(u8 battlerId, u8 coordType);
-u8 GetBattlerSpriteCoord2(u8 battlerId, u8 coordType);
-u8 GetBattlerSpriteDefault_Y(u8 battlerId);
-u8 GetBattlerYCoordWithElevation(u8 battlerId);
-u8 GetSubstituteSpriteDefault_Y(u8 battlerId);
-u8 GetGhostSpriteDefault_Y(u8 battlerId);
-u8 GetAnimBattlerSpriteId(u8 animBattler);
+u32 GetBattlerSpriteCoord(u32 battlerId, u32 coordType);
+u32 GetBattlerSpriteCoord2(u32 battlerId, u32 coordType);
+u32 GetBattlerSpriteDefault_Y(u32 battlerId);
+u32 GetBattlerYCoordWithElevation(u32 battlerId);
+u32 GetSubstituteSpriteDefault_Y(u32 battlerId);
+u32 GetGhostSpriteDefault_Y(u32 battlerId);
+u32 GetAnimBattlerSpriteId(u32 animBattler);
 void StoreSpriteCallbackInData6(struct Sprite *sprite, SpriteCallback callback);
 void TranslateSpriteInCircleOverDuration(struct Sprite *sprite);
 void TranslateSpriteInGrowingCircleOverDuration(struct Sprite *sprite);
@@ -366,72 +366,73 @@ void SetSpriteCoordsToAnimAttackerCoords(struct Sprite *sprite);
 void SetAnimSpriteInitialXOffset(struct Sprite *sprite, s16 xOffset);
 void InitAnimArcTranslation(struct Sprite *sprite);
 void DestroyAnimSpriteAfterHorizontalTranslation(struct Sprite *sprite);
-bool8 TranslateAnimHorizontalArc(struct Sprite *sprite);
-bool8 TranslateAnimVerticalArc(struct Sprite *sprite);
+bool32 TranslateAnimHorizontalArc(struct Sprite *sprite);
+bool32 TranslateAnimVerticalArc(struct Sprite *sprite);
 void SetSpritePrimaryCoordsFromSecondaryCoords(struct Sprite *sprite);
-void InitSpritePosToAnimTarget(struct Sprite *sprite, bool8 respectMonPicOffsets);
-void InitSpritePosToAnimAttacker(struct Sprite *sprite, bool8 respectMonPicOffsets);
-void InitSpritePosToAnimBattler(struct Sprite *sprite, u8 battler, bool8 respectMonPicOffsets);
-u8 GetBattlerAtPosition(u8 position);
-bool8 IsBattlerSpritePresent(u8 battlerId);
+void InitSpritePosToAnimTarget(struct Sprite *sprite, bool32 respectMonPicOffsets);
+void InitSpritePosToAnimAttacker(struct Sprite *sprite, bool32 respectMonPicOffsets);
+void InitSpritePosToAnimBattler(struct Sprite *sprite, u32 battler, bool32 respectMonPicOffsets);
+void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool32 respectMonPicOffsets);
+u32 GetBattlerAtPosition(u32 position);
+bool32 IsBattlerSpritePresent(u32 battlerId);
 void GetBattleAnimBgData(struct BattleAnimBgData *animBgData, u32 bgId);
 void GetBattleAnimBgDataByPriorityRank(struct BattleAnimBgData *animBgData);
 void InitBattleAnimBg(u32 bgId);
 void AnimLoadCompressedBgGfx(u32 bgId, const u32 *src, u32 tilesOffset);
 void InitAnimBgTilemapBuffer(u32 bgId, const void *src);
 void AnimLoadCompressedBgTilemap(u32 bgId, const u32 *src);
-void ToggleBg3Mode(bool8 arg0);
+void ToggleBg3Mode(bool32 arg0);
 void StartSpriteLinearTranslationFromCurrentPos(struct Sprite *sprite);
 void InitSpriteDataForLinearTranslation(struct Sprite *sprite);
 void InitAnimLinearTranslation(struct Sprite *sprite);
 void StartAnimLinearTranslation(struct Sprite *sprite);
 void PlayerThrowBall_StartAnimLinearTranslation(struct Sprite *sprite);
-bool8 AnimTranslateLinear(struct Sprite *sprite);
+bool32 AnimTranslateLinear(struct Sprite *sprite);
 void RunLinearTranslation_ThenceSetCBtoStoredInData6(struct Sprite *sprite);
 void BattleAnim_InitLinearTranslationWithDuration(struct Sprite *sprite);
 void BattleAnim_InitAndRunLinearTranslationWithDuration(struct Sprite *sprite);
 void InitAndRunAnimFastLinearTranslation(struct Sprite *sprite);
-bool8 AnimFastTranslateLinear(struct Sprite *sprite);
+bool32 AnimFastTranslateLinear(struct Sprite *sprite);
 void InitAnimFastLinearTranslationWithSpeed(struct Sprite *sprite);
 void InitAndStartAnimFastLinearTranslationWithSpeed(struct Sprite *sprite);
 void DestroyAnimSpriteWhenLinearTranslationEnds(struct Sprite *sprite);
-void SetSpriteRotScale(u8 spriteId, s16 xScale, s16 yScale, u16 rotation);
-void PrepareBattlerSpriteForRotScale(u8 spriteId, u8 objMode);
-void ResetSpriteRotScale(u8 spriteId);
-void SetBattlerSpriteYOffsetFromRotation(u8 spriteId);
-void TrySetSpriteRotScale(struct Sprite *sprite, bool8 recalcCenterVector, s16 xScale, s16 yScale, u16 rotation);
+void SetSpriteRotScale(u32 spriteId, s16 xScale, s16 yScale, u16 rotation);
+void PrepareBattlerSpriteForRotScale(u32 spriteId, u32 objMode);
+void ResetSpriteRotScale(u32 spriteId);
+void SetBattlerSpriteYOffsetFromRotation(u32 spriteId);
+void TrySetSpriteRotScale(struct Sprite *sprite, bool32 recalcCenterVector, s16 xScale, s16 yScale, u16 rotation);
 void TryResetSpriteAffineState(struct Sprite *sprite);
 u16 ArcTan2Neg(s16 a, s16 b);
-void SetGreyscaleOrOriginalPalette(u16 paletteNum, bool8 restoreOriginalColor);
-u32 SelectBattleAnimSpriteAndBgPalettes(bool8 battleBackground, bool8 attacker, bool8 target, bool8 attackerPartner, bool8 targetPartner, bool8 a6, bool8 a7);
-u32 SelectBattlerSpritePalettes(bool8 playerLeft, bool8 playerRight, bool8 foeLeft, bool8 foeRight);
+void SetGreyscaleOrOriginalPalette(u32 paletteNum, bool32 restoreOriginalColor);
+u32 SelectBattleAnimSpriteAndBgPalettes(bool32 battleBackground, bool32 attacker, bool32 target, bool32 attackerPartner, bool32 targetPartner, bool32 a6, bool32 a7);
+u32 SelectBattlerSpritePalettes(bool32 playerLeft, bool32 playerRight, bool32 foeLeft, bool32 foeRight);
 void AnimSpriteOnMonPos(struct Sprite *sprite);
 void TranslateAnimSpriteToTargetMonLocation(struct Sprite *sprite);
 void AnimThrowProjectile(struct Sprite *sprite);
 void AnimTravelDiagonally(struct Sprite *sprite);
-s16 CloneBattlerSpriteWithBlend(u8 animBattler);
+s32 CloneBattlerSpriteWithBlend(u32 animBattler);
 void DestroySpriteWithActiveSheet(struct Sprite *sprite);
-void PrepareAffineAnimInTaskData(struct Task *task, u8 spriteId, const union AffineAnimCmd *affineAnimCmds);
-bool8 RunAffineAnimFromTaskData(struct Task *task);
-void SetBattlerSpriteYOffsetFromYScale(u8 spriteId);
-void SetBattlerSpriteYOffsetFromOtherYScale(u8 spriteId, u8 otherSpriteId);
+void PrepareAffineAnimInTaskData(struct Task *task, u32 spriteId, const union AffineAnimCmd *affineAnimCmds);
+bool32 RunAffineAnimFromTaskData(struct Task *task);
+void SetBattlerSpriteYOffsetFromYScale(u32 spriteId);
+void SetBattlerSpriteYOffsetFromOtherYScale(u32 spriteId, u32 otherSpriteId);
 void StorePointerInVars(s16 *lo, s16 *hi, const void *ptr);
 void *LoadPointerFromVars(s16 lo, s16 hi);
-void BattleAnimHelper_SetSpriteSquashParams(struct Task *task, u8 spriteId, s16 xScale0, s16 yScale0, s16 xScale1, s16 yScale1, u16 duration);
-u8 BattleAnimHelper_RunSpriteSquash(struct Task *task);
+void BattleAnimHelper_SetSpriteSquashParams(struct Task *task, u32 spriteId, s16 xScale0, s16 yScale0, s16 xScale1, s16 yScale1, u16 duration);
+u32 BattleAnimHelper_RunSpriteSquash(struct Task *task);
 void ResetSpritePriorityOfAllVisibleBattlers(void);
-u8 GetBattlerSpriteSubpriority(u8 battlerId);
-u8 GetBattlerSpriteBGPriority(u8 battlerId);
+u32 GetBattlerSpriteSubpriority(u32 battlerId);
+u32 GetBattlerSpriteBGPriority(u32 battlerId);
 void DestroyAnimSpriteWhenAnimEnds(struct Sprite *sprite);
 void DestroyAnimSpriteWhenAffineAnimEnds(struct Sprite *sprite);
 
 // Returns 2 if player left or opp right
 // Returns 1 if player right or opp left
-u8 GetBattlerSpriteBGPriorityRank(u8 battlerId);
-u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, s16 x, s16 y, u8 subpriority, u32 personality, bool8 isShiny, bool8 transformPalFade);
-s16 GetBattlerSpriteCoordAttr(u8 battlerId, u8 attr);
-void SetAverageBattlerPositions(u8 battlerId, bool8 respectMonPicOffsets, s16 *x, s16 *y);
-u8 CreateCloneOfSpriteInWindowMode(u8 spriteId, s32 species);
+u32 GetBattlerSpriteBGPriorityRank(u32 battlerId);
+u32 CreateAdditionalMonSpriteForMoveAnim(u32 species, bool32 isBackpic, s16 x, s16 y, u32 subpriority, u32 personality, bool32 isShiny, bool32 transformPalFade);
+s16 GetBattlerSpriteCoordAttr(u32 battlerId, u32 attr);
+void SetAverageBattlerPositions(u32 battlerId, bool32 respectMonPicOffsets, s16 *x, s16 *y);
+u32 CreateCloneOfSpriteInWindowMode(u32 spriteId);
 void SpriteCB_TrackOffsetFromAttackerAndWaitAnim(struct Sprite *sprite);
 
 // battle_anim_mon_movement.c
@@ -553,7 +554,7 @@ void AnimSpriteOnMonForDuration(struct Sprite *sprite);
 void AnimStompFoot(struct Sprite *sprite);
 void AnimSlidingKick(struct Sprite *sprite);
 void AnimSuperpowerFireball(struct Sprite *sprite);
-bool8 GetSpriteOrientationBasedOnBattlers(void);
+bool32 GetSpriteOrientationBasedOnBattlers(void);
 
 // ice.c
 extern const union AnimCmd *const gAnims_SmallBubblePair[];
@@ -628,7 +629,7 @@ void AnimTask_SetAnimAttackerAndTargetForEffectTgt(u8 taskId);
 void AnimTask_SetAnimTargetFromArg(u8 taskId);
 void AnimTask_SetAttackerInvisibleWaitForSignal(u8 taskId);
 
-void StartMonScrollingBgMask(u8 taskId, u16 yMovementSpeed, u8 battler1, bool8 bothMons, u8 targetBlendCoeff, u8 blendDelay, u8 duration, const u32 *gfx, const u32 *tilemap, const u32 *palette);
+void StartMonScrollingBgMask(u32 taskId, u32 yMovementSpeed, u32 battler1, bool32 bothMons, u32 targetBlendCoeff, u32 blendDelay, u32 duration, const u32 *gfx, const u32 *tilemap, const u32 *palette);
 
 extern const struct UCoords8 gBattlerCoords[][MAX_BATTLERS_COUNT];
 

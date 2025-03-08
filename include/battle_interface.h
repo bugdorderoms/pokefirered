@@ -141,14 +141,6 @@ enum
     HEALTHBOX_GFX_117, //unknown_D1300C
 };
 
-// Args for UpdateHpTextInHealthbox
-enum
-{
-    HP_CURRENT,
-    HP_MAX,
-	HP_BOTH,
-};
-
 // Args for MoveBattleBar
 enum
 {
@@ -211,26 +203,26 @@ enum
 #define ENEMY_SHADOW_Y_OFFSET                   27
 
 void Task_HidePartyStatusSummary(u8 taskId);
-u8 CreateBattlerHealthboxSprites(u8 battlerId);
-u8 CreateSafariPlayerHealthboxSprites(void);
-void SetBattleBarStruct(u8 battlerId, s32 maxVal, s32 currVal, s32 receivedValue);
-void SetHealthboxSpriteInvisible(u8 healthboxSpriteId);
-void SetHealthboxSpriteVisible(u8 healthboxSpriteId);
-void DestoryHealthboxSprite(u8 healthboxSpriteId);
-void UpdateOamPriorityInAllHealthboxes(u8 priority, bool8 hideHpBoxes);
-void InitBattlerHealthboxCoords(u8 battlerId);
-void UpdateHpTextInHealthbox(u8 healthboxSpriteId, u8 maxOrCurrent, s16 currHP, s16 maxHP);
+u32 CreateBattlerHealthboxSprites(u32 battlerId);
+u32 CreateSafariPlayerHealthboxSprites(void);
+void SetBattleBarStruct(u32 battlerId, s32 maxVal, s32 currVal, s32 receivedValue);
+void SetHealthboxSpriteInvisible(u32 healthboxSpriteId);
+void SetHealthboxSpriteVisible(u32 healthboxSpriteId);
+void DestoryHealthboxSprite(u32 healthboxSpriteId);
+void UpdateOamPriorityInAllHealthboxes(u32 priority, bool32 hideHpBoxes);
+void InitBattlerHealthboxCoords(u32 battlerId);
+void UpdateHpTextInHealthbox(u32 healthboxSpriteId, s16 currHP, s16 maxHP);
 void SwapHpBarsWithHpText(void);
-u8 CreatePartyStatusSummarySprites(u8 battlerId, struct HpAndStatus *partyInfo, u8 isSwitchingMons, bool8 isBattleStart);
-void UpdateHealthboxAttribute(u8 battlerId, u8 elementId);
-u8 GetScaledHPFraction(s16 hp, s16 maxhp, u8 scale);
-u8 GetHPBarLevel(s16 hp, s16 maxhp);
-void TryAddPokeballIconToHealthbox(u8 spriteId, bool8 noStatus);
-s32 MoveBattleBar(u8 battler, u8 healthboxSpriteId, u8 whichBar);
-void StartHealthboxSlideIn(u8 battler);
+u32 CreatePartyStatusSummarySprites(u32 battlerId, struct HpAndStatus *partyInfo, bool32 isSwitchingMons, bool32 isBattleStart);
+void UpdateHealthboxAttribute(u32 battlerId, u32 elementId);
+u8 GetScaledHPFraction(s16 hp, s16 maxhp, u32 scale);
+u32 GetHPBarLevel(s16 hp, s16 maxhp);
+void TryAddPokeballIconToHealthbox(u32 spriteId, bool32 noStatus);
+s32 MoveBattleBar(u32 battler, u32 whichBar);
+void StartHealthboxSlideIn(u32 battler);
 void TryCreateWeatherAnimIcon(void);
-void ShowOrHideWeatherAnimIcon(bool8 hide);
-void CreateMoveInfoTriggerSprite(u8 battlerId);
-void ShowOrHideMoveInfoTriggerSprite(bool8 hide);
+void ShowOrHideWeatherAnimIcon(bool32 hide);
+void CreateMoveInfoTriggerSprite(u32 battlerId);
+void ShowOrHideMoveInfoTriggerSprite(bool32 hide);
 
 #endif // GUARD_BATTLE_INTERFACE_H

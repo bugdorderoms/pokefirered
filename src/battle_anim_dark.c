@@ -12,7 +12,7 @@ static void AnimClawSlash(struct Sprite *sprite);
 static void AnimTask_AttackerFadeToInvisible_Step(u8 taskId);
 static void AnimTask_AttackerFadeFromInvisible_Step(u8 taskId);
 static void AnimBite_Step(struct Sprite *sprite);
-static void SetPriorityForAllVisibleBattlers(u8 priority);
+static void SetPriorityForAllVisibleBattlers(u32 priority);
 static void AnimTask_MoveAttackerMementoShadow_Step(u8 taskId);
 static void DoMementoShadowEffect(struct Task *task);
 static void AnimTask_MoveTargetMementoShadow_Step(u8 taskId);
@@ -298,7 +298,7 @@ void AnimTask_AttackerFadeToInvisible(u8 taskId)
 
 static void AnimTask_AttackerFadeToInvisible_Step(u8 taskId)
 {
-    u8 blendA, blendB;
+    u32 blendA, blendB;
 
     if (gTasks[taskId].data[2] == (u8)gTasks[taskId].data[0])
     {
@@ -338,7 +338,7 @@ void AnimTask_AttackerFadeFromInvisible(u8 taskId)
 
 static void AnimTask_AttackerFadeFromInvisible_Step(u8 taskId)
 {
-    u8 blendA, blendB;
+    u32 blendA, blendB;
 
     if (gTasks[taskId].data[2] == (u8)gTasks[taskId].data[0])
     {
@@ -410,7 +410,7 @@ static void AnimBite_Step(struct Sprite *sprite)
 // arg 2: which sprite
 static void AnimTearDrop(struct Sprite *sprite)
 {
-    u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
     s8 xOffset = 20;
 	
     sprite->oam.tileNum += gBattleAnimArgs[2] * 4;
@@ -450,11 +450,10 @@ static void AnimTearDrop(struct Sprite *sprite)
 // No args.
 void AnimTask_MoveAttackerMementoShadow(u8 taskId)
 {
+	u32 i, pos;
+	s32 var0;
     struct ScanlineEffectParams scanlineParams;
     struct BattleAnimBgData animBg;
-    u16 i;
-    u8 pos;
-    s32 var0;
     struct Task *task = &gTasks[taskId];
 
     task->data[7] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y) + 31;
@@ -590,8 +589,7 @@ void AnimTask_MoveTargetMementoShadow(u8 taskId)
 {
     struct BattleAnimBgData animBg;
     struct ScanlineEffectParams scanlineParams;
-    u8 x;
-    u16 i;
+    u32 x, i;
     struct Task *task = &gTasks[taskId];
 
     switch (task->data[0])
@@ -755,8 +753,8 @@ static void AnimTask_MoveTargetMementoShadow_Step(u8 taskId)
 
 static void DoMementoShadowEffect(struct Task *task)
 {
-    s32 var0, var1, var4;
-    s16 i, var2 = task->data[5] - task->data[4];
+    s32 i, var0, var1, var4;
+    s16 var2 = task->data[5] - task->data[4];
 
     if (var2 != 0)
     {
@@ -797,13 +795,13 @@ static void DoMementoShadowEffect(struct Task *task)
     }
 }
 
-static void SetPriorityForAllVisibleBattlers(u8 priority)
+static void SetPriorityForAllVisibleBattlers(u32 priority)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
     {
-        u8 spriteId = GetAnimBattlerSpriteId(i);
+        u32 spriteId = GetAnimBattlerSpriteId(i);
 
         if (spriteId != 0xFF)
             gSprites[spriteId].oam.priority = priority;
@@ -814,7 +812,7 @@ static void SetPriorityForAllVisibleBattlers(u8 priority)
 // No args.
 void AnimTask_InitMementoShadow(u8 taskId)
 {
-    bool8 toBG2 = (GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker) ^ 1);
+    bool32 toBG2 = (GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker) ^ 1);
 
     MoveBattlerSpriteToBG(gBattleAnimAttacker, toBG2);
     gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].invisible = FALSE;
@@ -831,7 +829,7 @@ void AnimTask_InitMementoShadow(u8 taskId)
 // No args.
 void AnimTask_EndMementoShadow(u8 taskId)
 {
-    bool8 toBG2 = (GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker) ^ 1);
+    bool32 toBG2 = (GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker) ^ 1);
     
     ResetBattleAnimBg(toBG2);
 	
@@ -861,8 +859,8 @@ static void AnimClawSlash(struct Sprite *sprite)
 // arg 1: set original (boolean)
 void AnimTask_SetGreyscaleOrOriginalPal(u8 taskId)
 {
-    u8 spriteId, position, battler;
-    bool8 calcSpriteId = FALSE;
+    u32 spriteId, position, battler;
+    bool32 calcSpriteId = FALSE;
 
     switch (gBattleAnimArgs[0])
     {
@@ -933,8 +931,7 @@ static void TormentAttacker_Step(u8 taskId)
 {
     int var0, var1;
     s16 x, y;
-    u16 i, j;
-    u8 spriteId;
+    u32 i, j, spriteId;
     struct Task *task = &gTasks[taskId];
 
     switch (task->data[0])
@@ -1042,7 +1039,7 @@ static void TormentAttacker_Callback(struct Sprite *sprite)
 // arg 0: anim battler
 static void AnimTauntFinger(struct Sprite* sprite)
 {
-    u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
     
     SetSpriteNextToMonHead(battler, sprite);
 	

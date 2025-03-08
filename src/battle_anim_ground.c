@@ -15,7 +15,7 @@ static void AnimMudSportDirtRising(struct Sprite *sprite);
 static void AnimMudSportDirtFalling(struct Sprite *sprite);
 static void AnimTask_DigDisappear(u8 taskId);
 static void AnimTask_DigBounceMovement(u8 taskId);
-static void SetDigScanlineEffect(u8 useBg1, s16 y, s16 endY);
+static void SetDigScanlineEffect(u32 useBg1, s16 y, s16 endY);
 static void AnimTask_DigSetVisibleUnderground(u8 taskId);
 static void AnimTask_DigRiseUpFromHole(u8 taskId);
 static void AnimTask_HorizontalShakeTerrain(u8 taskId);
@@ -226,7 +226,7 @@ static void AnimBoneHitProjectile(struct Sprite *sprite)
 // arg 4: target y pixel offset
 void AnimDirtScatter(struct Sprite *sprite)
 {
-    u8 targetXPos, targetYPos;
+    u32 targetXPos, targetYPos;
     s16 xOffset, yOffset;
 
     InitSpritePosToAnimAttacker(sprite, TRUE);
@@ -324,7 +324,7 @@ void AnimTask_DigDownMovement(u8 taskId)
 
 static void AnimTask_DigBounceMovement(u8 taskId)
 {
-    u8 var0;
+    u32 var0;
     struct Task *task = &gTasks[taskId];
 
     switch (task->data[0])
@@ -399,7 +399,7 @@ static void AnimTask_DigBounceMovement(u8 taskId)
 
 static void AnimTask_DigDisappear(u8 taskId)
 {
-    u8 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
+    u32 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
 
     gSprites[spriteId].x2 = 0;
     gSprites[spriteId].y2 = 0;
@@ -442,7 +442,7 @@ static void AnimTask_DigSetVisibleUnderground(u8 taskId)
 
 static void AnimTask_DigRiseUpFromHole(u8 taskId)
 {
-    u8 var0;
+    u32 var0;
     struct Task *task = &gTasks[taskId];
 
     switch (task->data[0])
@@ -480,7 +480,7 @@ static void AnimTask_DigRiseUpFromHole(u8 taskId)
     }
 }
 
-static void SetDigScanlineEffect(bool8 useBG1, s16 y, s16 endY)
+static void SetDigScanlineEffect(u32 useBG1, s16 y, s16 endY)
 {
     s16 bgX;
     struct ScanlineEffectParams scanlineParams;
@@ -526,8 +526,8 @@ static void SetDigScanlineEffect(bool8 useBG1, s16 y, s16 endY)
 // arg 5: duration
 static void AnimFissureDirtPlumeParticle(struct Sprite *sprite)
 {
-    s8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
-    s16 xOffset = 24;
+    u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    s32 xOffset = 24;
 
     if (gBattleAnimArgs[1] == 1)
     {
@@ -552,7 +552,7 @@ static void AnimFissureDirtPlumeParticle(struct Sprite *sprite)
 // arg 2: duration
 static void AnimDigDirtMound(struct Sprite *sprite)
 {
-    s8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 
     sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X) - 16 + (gBattleAnimArgs[1] * 32);
     sprite->y = GetBattlerYCoordWithElevation(battler) + 32;
@@ -570,7 +570,7 @@ static void AnimDigDirtMound(struct Sprite *sprite)
 // arg 2: Length of time to shake for
 void AnimTask_HorizontalShake(u8 taskId)
 {
-    u16 i;
+    u32 i;
     struct Task *task = &gTasks[taskId];
 
     if (gBattleAnimArgs[1])
@@ -665,7 +665,7 @@ static void AnimTask_HorizontalShakeTerrain(u8 taskId)
 
 static void AnimTask_HorizontalShakeBattlers(u8 taskId)
 {
-    u16 i;
+    u32 i;
     struct Task *task = &gTasks[taskId];
 
     switch (task->data[0])
@@ -712,7 +712,8 @@ static void AnimTask_HorizontalShakeBattlers(u8 taskId)
 
 static void AnimTask_HorizontalShakeBattlersDoShake(struct Task *task)
 {
-    u16 i, xOffset;
+	u32 i;
+    u16 xOffset;
 
     if (!(task->data[2] & 1))
         xOffset = (task->data[14] / 2) + (task->data[14] & 1);
@@ -736,7 +737,7 @@ void AnimTask_IsPowerOver99(u8 taskId)
 // arg 1: task subpriority
 void AnimTask_PositionFissureBgOnBattler(u8 taskId)
 {
-	u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+	u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
     struct Task *newTask = &gTasks[CreateTask(AnimTask_PositionFissureBgOnBattler_Step, gBattleAnimArgs[1])];
     
     newTask->data[1] = (32 - GetBattlerSpriteCoord(battler, BATTLER_COORD_X)) & 0x1FF;

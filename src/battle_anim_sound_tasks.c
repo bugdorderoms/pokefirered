@@ -54,7 +54,7 @@ static void SoundTask_FireBlastStep(u8 taskId)
             PlaySE12WithPanning(gTasks[taskId].data[0], pan);
         }
         pan += panIncrement;
-        gTasks[taskId].data[2] = KeepPanInRange(pan, panIncrement);
+        gTasks[taskId].data[2] = KeepPanInRange(pan);
     }
 }
 
@@ -81,25 +81,19 @@ static void SoundTask_FireBlastStep2(u8 taskId)
 // arg 6: next se play delay
 void SoundTask_LoopSEAdjustPanning(u8 taskId)
 {
-    u16 songId = gBattleAnimArgs[0];
-    s8 targetPan = gBattleAnimArgs[2];
-    s8 panIncrement = gBattleAnimArgs[3];
-    u8 r10 = gBattleAnimArgs[4];
-    u8 r7 = gBattleAnimArgs[5];
-    u8 r9 = gBattleAnimArgs[6];
+    s8 targetPan = BattleAnimAdjustPanning(gBattleAnimArgs[2]);
     s8 sourcePan = BattleAnimAdjustPanning(gBattleAnimArgs[1]);
 
-    targetPan = BattleAnimAdjustPanning(targetPan);
-    gTasks[taskId].data[0] = songId;
+    gTasks[taskId].data[0] = gBattleAnimArgs[0];
     gTasks[taskId].data[1] = sourcePan;
     gTasks[taskId].data[2] = targetPan;
-    gTasks[taskId].data[3] = CalculatePanIncrement(sourcePan, targetPan, panIncrement);
-    gTasks[taskId].data[4] = r10;
-    gTasks[taskId].data[5] = r7;
-    gTasks[taskId].data[6] = r9;
+    gTasks[taskId].data[3] = CalculatePanIncrement(sourcePan, targetPan, gBattleAnimArgs[3]);
+    gTasks[taskId].data[4] = gBattleAnimArgs[4];
+    gTasks[taskId].data[5] = gBattleAnimArgs[5];
+    gTasks[taskId].data[6] = gBattleAnimArgs[6];
     gTasks[taskId].data[10] = 0;
     gTasks[taskId].data[11] = sourcePan;
-    gTasks[taskId].data[12] = r9;
+    gTasks[taskId].data[12] = gBattleAnimArgs[6];
     gTasks[taskId].func = SoundTask_LoopSEAdjustPanning_Step;
     SoundTask_LoopSEAdjustPanning_Step(taskId);
 }
@@ -129,7 +123,7 @@ static void SoundTask_LoopSEAdjustPanning_Step(u8 taskId)
         oldPan = gTasks[taskId].data[11];
 		
         gTasks[taskId].data[11] = dPan + oldPan;
-        gTasks[taskId].data[11] = KeepPanInRange(gTasks[taskId].data[11], oldPan);
+        gTasks[taskId].data[11] = KeepPanInRange(gTasks[taskId].data[11]);
     }
 }
 
@@ -137,8 +131,7 @@ static void SoundTask_LoopSEAdjustPanning_Step(u8 taskId)
 // arg 0: anim battler
 void SoundTask_PlayCryHighPitch(u8 taskId)
 {
-    u16 species;
-    u8 battlerId = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    u32 species, battlerId = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 
     // Check if battler is visible.
     if ((gBattleAnimArgs[0] == ANIM_TARGET || gBattleAnimArgs[0] == ANIM_DEF_PARTNER) && !IsBattlerSpriteVisible(battlerId))
@@ -161,8 +154,7 @@ void SoundTask_PlayCryHighPitch(u8 taskId)
 void SoundTask_PlayDoubleCry(u8 taskId)
 {
 	s8 pan;
-    u8 battlerId = GetBattlerForAnimScript(gBattleAnimArgs[0]);
-	u16 species;
+    u32 species, battlerId = GetBattlerForAnimScript(gBattleAnimArgs[0]);
     
     // Check if battler is visible.
     if ((gBattleAnimArgs[0] == ANIM_TARGET || gBattleAnimArgs[0] == ANIM_DEF_PARTNER) && !IsBattlerSpriteVisible(battlerId))
@@ -213,7 +205,7 @@ void SoundTask_WaitForCry(u8 taskId)
 // No args.
 void SoundTask_PlayCryWithEcho(u8 taskId)
 {
-    u16 species = gAnimBattlerSpecies[gBattleAnimAttacker];
+    u32 species = gAnimBattlerSpecies[gBattleAnimAttacker];
 
     if (species)
     {
@@ -266,18 +258,13 @@ void SoundTask_PlaySE2WithPanning(u8 taskId)
 // arg 3: (?)
 void SoundTask_AdjustPanningVar(u8 taskId)
 {
-    s8 targetPan = gBattleAnimArgs[1];
-    s8 panIncrement = gBattleAnimArgs[2];
-    u16 r9 = gBattleAnimArgs[3];
+    s8 targetPan = BattleAnimAdjustPanning(gBattleAnimArgs[1]);
     s8 sourcePan = BattleAnimAdjustPanning(gBattleAnimArgs[0]);
 
-    targetPan = BattleAnimAdjustPanning(targetPan);
-    panIncrement = CalculatePanIncrement(sourcePan, targetPan, panIncrement);
-	
     gTasks[taskId].data[1] = sourcePan;
     gTasks[taskId].data[2] = targetPan;
-    gTasks[taskId].data[3] = panIncrement;
-    gTasks[taskId].data[5] = r9;
+    gTasks[taskId].data[3] = CalculatePanIncrement(sourcePan, targetPan, gBattleAnimArgs[2]);
+    gTasks[taskId].data[5] = gBattleAnimArgs[3];
     gTasks[taskId].data[10] = 0;
     gTasks[taskId].data[11] = sourcePan;
     gTasks[taskId].func = SoundTask_AdjustPanningVar_Step;
@@ -296,7 +283,7 @@ static void SoundTask_AdjustPanningVar_Step(u8 taskId)
 		panIncrement = gTasks[taskId].data[3];
 		
         gTasks[taskId].data[11] = panIncrement + oldPan; 
-        gTasks[taskId].data[11] = KeepPanInRange(gTasks[taskId].data[11], oldPan);
+        gTasks[taskId].data[11] = KeepPanInRange(gTasks[taskId].data[11]);
     }
     gAnimCustomPanning = gTasks[taskId].data[11];
 	

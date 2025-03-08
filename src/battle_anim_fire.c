@@ -26,8 +26,8 @@ static void AnimFireRing_Step1(struct Sprite *sprite);
 static void AnimFireRing_Step2(struct Sprite *sprite);
 static void AnimFireRing_Step3(struct Sprite *sprite);
 static void AnimTask_EruptionLaunchRocks_Step(u8 taskId);
-static void CreateEruptionLaunchRocks(u8 spriteId, u8 taskId, u8 a3);
-static u16 GetEruptionLaunchRockInitialYPos(u8 spriteId);
+static void CreateEruptionLaunchRocks(u32 spriteId, u32 taskId, u32 a3);
+static u16 GetEruptionLaunchRockInitialYPos(u32 spriteId);
 static void InitEruptionLaunchRockCoordData(struct Sprite *sprite, s16 x, s16 y);
 static void UpdateEruptionLaunchRockPos(struct Sprite *sprite);
 static void AnimTask_MoveHeatWaveTargets_Step(u8 taskId);
@@ -796,10 +796,10 @@ static void AnimTask_EruptionLaunchRocks_Step(u8 taskId)
     }
 }
 
-static void CreateEruptionLaunchRocks(u8 spriteId, u8 taskId, u8 a3)
+static void CreateEruptionLaunchRocks(u32 spriteId, u32 taskId, u32 a3)
 {
-    u16 i, j;
-    s8 sign;
+    u32 i, j;
+    s32 sign;
     u16 y = GetEruptionLaunchRockInitialYPos(spriteId);
     u16 x = gSprites[spriteId].x;
 
@@ -816,7 +816,7 @@ static void CreateEruptionLaunchRocks(u8 spriteId, u8 taskId, u8 a3)
 	
     for (i = 0, j = 0; i <= 6; ++i)
     {
-        u8 spriteId = CreateSprite(&gEruptionLaunchRockSpriteTemplate, x, y, 2);
+        u32 spriteId = CreateSprite(&gEruptionLaunchRockSpriteTemplate, x, y, 2);
 
         if (spriteId != MAX_SPRITES)
         {
@@ -845,7 +845,7 @@ static void AnimEruptionLaunchRock(struct Sprite *sprite)
     }
 }
 
-static u16 GetEruptionLaunchRockInitialYPos(u8 spriteId)
+static u16 GetEruptionLaunchRockInitialYPos(u32 spriteId)
 {
     u16 var1 = gSprites[spriteId].y + gSprites[spriteId].y2 + gSprites[spriteId].centerToCornerVecY;
 
@@ -1147,7 +1147,7 @@ void AnimTask_BlendBackground(u8 taskId)
 void AnimTask_ShakeTargetInPattern(u8 taskId)
 {
     s8 val;
-    u8 spriteId;
+    u32 spriteId;
 	
 	switch (gTasks[taskId].data[0])
 	{
@@ -1184,7 +1184,7 @@ void AnimTask_ShakeTargetInPattern(u8 taskId)
 // arg 4: duration
 static void AnimMoveSpriteUpwardsForDuration(struct Sprite *sprite)
 {
-	u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+	u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 	
 	sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X) + gBattleAnimArgs[1];
 	sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y) + gBattleAnimArgs[2];

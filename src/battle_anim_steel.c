@@ -57,10 +57,10 @@ const struct SpriteTemplate gFlashCannonBallSpriteTemplate =
 // Custom color argument is used in MOVE_POISON_TAIL to make the mon turn purplish/pinkish as if became cloaked in poison.
 void AnimTask_MetallicShine(u8 taskId)
 {
-    u8 spriteId, newSpriteId;
-    u16 paletteNum;
+    u32 spriteId, newSpriteId;
+    u32 paletteNum;
     struct BattleAnimBgData animBg;
-    bool8 priorityChanged;
+    bool32 priorityChanged;
 
     gBattle_WIN0H = 0;
     gBattle_WIN0V = 0;
@@ -90,7 +90,7 @@ void AnimTask_MetallicShine(u8 taskId)
         }
     }
     spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
-    newSpriteId = CreateCloneOfSpriteInWindowMode(spriteId, GetMonData(GetBattlerPartyIndexPtr(gBattleAnimAttacker), MON_DATA_SPECIES));
+    newSpriteId = CreateCloneOfSpriteInWindowMode(spriteId);
 	
     GetBattleAnimBgData(&animBg, 1);
     AnimLoadCompressedBgTilemap(animBg.bgId, gMetalShineTilemap);

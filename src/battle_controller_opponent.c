@@ -18,21 +18,21 @@
 #include "constants/songs.h"
 #include "constants/battle_string_ids.h"
 
-static void OpponentBufferRunCommand(u8 battlerId);
-static void OpponentBufferExecCompleted(u8 battlerId);
-static void OpponentHandleLoadMonSprite(u8 battlerId);
-static void OpponentHandleSwitchInAnim(u8 battlerId);
-static void OpponentHandleDrawTrainerPic(u8 battlerId);
-static void OpponentHandleTrainerSlide(u8 battlerId);
-static void OpponentHandlePrintString(u8 battlerId);
-static void OpponentHandleChooseAction(u8 battlerId);
-static void OpponentHandleChooseMove(u8 battlerId);
-static void OpponentHandleChooseItem(u8 battlerId);
-static void OpponentHandleChoosePokemon(u8 battlerId);
-static void OpponentHandleIntroTrainerBallThrow(u8 battlerId);
-static void OpponentHandleEndLinkBattle(u8 battlerId);
+static void OpponentBufferRunCommand(u32 battlerId);
+static void OpponentBufferExecCompleted(u32 battlerId);
+static void OpponentHandleLoadMonSprite(u32 battlerId);
+static void OpponentHandleSwitchInAnim(u32 battlerId);
+static void OpponentHandleDrawTrainerPic(u32 battlerId);
+static void OpponentHandleTrainerSlide(u32 battlerId);
+static void OpponentHandlePrintString(u32 battlerId);
+static void OpponentHandleChooseAction(u32 battlerId);
+static void OpponentHandleChooseMove(u32 battlerId);
+static void OpponentHandleChooseItem(u32 battlerId);
+static void OpponentHandleChoosePokemon(u32 battlerId);
+static void OpponentHandleIntroTrainerBallThrow(u32 battlerId);
+static void OpponentHandleEndLinkBattle(u32 battlerId);
 
-static void (*const sOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u8) =
+static void (*const sOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
 	[CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
@@ -76,13 +76,13 @@ static void (*const sOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u8) =
 	[CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 
-void SetControllerToOpponent(u8 battlerId)
+void SetControllerToOpponent(u32 battlerId)
 {
 	gBattlerControllerFuncs[battlerId] = OpponentBufferRunCommand;
 	gBattlerControllerEndFuncs[battlerId] = OpponentBufferExecCompleted;
 }
 
-static void OpponentBufferRunCommand(u8 battlerId)
+static void OpponentBufferRunCommand(u32 battlerId)
 {
 	if (gBattleControllerExecFlags & gBitTable[battlerId])
     {
@@ -93,7 +93,7 @@ static void OpponentBufferRunCommand(u8 battlerId)
     }
 }
 
-static void OpponentBufferExecCompleted(u8 battlerId)
+static void OpponentBufferExecCompleted(u32 battlerId)
 {
 	gBattlerControllerFuncs[battlerId] = OpponentBufferRunCommand;
     gBattleControllerExecFlags &= ~(gBitTable[battlerId]);
@@ -103,10 +103,9 @@ static void OpponentBufferExecCompleted(u8 battlerId)
 // BATTLE CONTROLLERS //
 ////////////////////////
 
-static void OpponentHandleLoadMonSprite(u8 battlerId)
+static void OpponentHandleLoadMonSprite(u32 battlerId)
 {
-    u16 species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
-    u8 y;
+    u32 y, species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
 
     if (gBattleTypeFlags & BATTLE_TYPE_GHOST)
     {
@@ -134,7 +133,7 @@ static void OpponentHandleLoadMonSprite(u8 battlerId)
     gBattlerControllerFuncs[battlerId] = TryShinyAnimAfterMonAnim;
 }
 
-static void SwitchIn_HandleSoundAndEnd(u8 battlerId)
+static void SwitchIn_HandleSoundAndEnd(u32 battlerId)
 {
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].specialAnimActive && !IsCryPlayingOrClearCrySongs())
     {
@@ -143,7 +142,7 @@ static void SwitchIn_HandleSoundAndEnd(u8 battlerId)
     }
 }
 
-static void SwitchIn_ShowSubstitute(u8 battlerId)
+static void SwitchIn_ShowSubstitute(u32 battlerId)
 {
     if (gSprites[gHealthboxSpriteIds[battlerId]].callback == SpriteCallbackDummy)
     {
@@ -154,7 +153,7 @@ static void SwitchIn_ShowSubstitute(u8 battlerId)
     }
 }
 
-static void SwitchIn_ShowHealthbox(u8 battlerId)
+static void SwitchIn_ShowHealthbox(u32 battlerId)
 {
     if (gBattleSpritesDataPtr->healthBoxesData[battlerId].finishedShinyMonAnim)
     {
@@ -171,7 +170,7 @@ static void SwitchIn_ShowHealthbox(u8 battlerId)
     }
 }
 
-static void SwitchIn_TryShinyAnim(u8 battlerId)
+static void SwitchIn_TryShinyAnim(u32 battlerId)
 {
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
         TryShinyAnimation(battlerId);
@@ -184,7 +183,7 @@ static void SwitchIn_TryShinyAnim(u8 battlerId)
     }
 }
 
-static void OpponentHandleSwitchInAnim(u8 battlerId)
+static void OpponentHandleSwitchInAnim(u32 battlerId)
 {
 	gBattleStruct->battlers[battlerId].monToSwitchIntoId = PARTY_SIZE;
 	BtlController_HandleSwitchInAnim(battlerId, FALSE, SwitchIn_TryShinyAnim);
@@ -195,24 +194,24 @@ static inline u32 GetOpponentTrainerPicId(void)
 	return gTrainers[gTrainerBattleOpponent_A].trainerPic;
 }
 
-static void OpponentHandleDrawTrainerPic(u8 battlerId)
+static void OpponentHandleDrawTrainerPic(u32 battlerId)
 {
 	u32 trainerPicId = GetOpponentTrainerPicId();
 	BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, TRUE, 176, (8 - gTrainerFrontPicTable[trainerPicId].coords.size) * 4 + 40, GetBattlerSpriteSubpriority(battlerId));
 }
 
-static void OpponentHandleTrainerSlide(u8 battlerId)
+static void OpponentHandleTrainerSlide(u32 battlerId)
 {
 	u32 trainerPicId = GetOpponentTrainerPicId();
 	BtlController_HandleTrainerSlide(battlerId, trainerPicId, TRUE, 176, (8 - gTrainerFrontPicTable[trainerPicId].coords.size) * 4 + 40);
 }
 
-void OpponentHandleTrainerSlideBack(u8 battlerId)
+void OpponentHandleTrainerSlideBack(u32 battlerId)
 {
 	BtlController_HandleTrainerSlideBack(battlerId, 35, FALSE);
 }
 
-static void OpponentHandlePrintString(u8 battlerId)
+static void OpponentHandlePrintString(u32 battlerId)
 {
 	u16 *stringId = (u16 *)(&gBattleBufferA[battlerId][2]);
 	
@@ -232,7 +231,7 @@ static void OpponentHandlePrintString(u8 battlerId)
     }
 }
 
-static void OpponentHandleChooseAction(u8 battlerId)
+static void OpponentHandleChooseAction(u32 battlerId)
 {
 	BattleAI_ChooseAction(battlerId);
     BattleControllerComplete(battlerId);
@@ -384,7 +383,7 @@ static const u16 sNaturalEnemySpecies[][2] =
 	{SPECIES_ELEKID,          SPECIES_TOGEDEMARU},
 };
 
-static bool8 IsAllySpeciesPrey(u16 speciesAttacker, u16 speciesAttackerPartner)
+static bool32 IsAllySpeciesPrey(u32 speciesAttacker, u32 speciesAttackerPartner)
 {
 	u32 i;
 	
@@ -396,7 +395,7 @@ static bool8 IsAllySpeciesPrey(u16 speciesAttacker, u16 speciesAttackerPartner)
 	return FALSE;
 }
 
-static bool8 IsAllySpeciesNaturalEnemy(u16 speciesAttacker, u16 speciesAttackerPartner)
+static bool32 IsAllySpeciesNaturalEnemy(u32 speciesAttacker, u32 speciesAttackerPartner)
 {
 	u32 i;
 	
@@ -410,9 +409,9 @@ static bool8 IsAllySpeciesNaturalEnemy(u16 speciesAttacker, u16 speciesAttackerP
 }
 #endif
 
-static void OpponentHandleChooseMove(u8 battlerId)
+static void OpponentHandleChooseMove(u32 battlerId)
 {
-	u8 moveTarget;
+	u32 moveTarget;
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
 	
     if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER)))
@@ -449,8 +448,8 @@ static void OpponentHandleChooseMove(u8 battlerId)
     }
     else
     {
-		u8 target, chosenMoveId;
-        u16 move, speciesAttacker, speciesAttackerPartner;
+		u32 target, chosenMoveId;
+        u32 move, speciesAttacker, speciesAttackerPartner;
 
         do
         {
@@ -488,15 +487,15 @@ static void OpponentHandleChooseMove(u8 battlerId)
 	BattleControllerComplete(battlerId);
 }
 
-static void OpponentHandleChooseItem(u8 battlerId)
+static void OpponentHandleChooseItem(u32 battlerId)
 {
     BtlController_EmitOneReturnValue(battlerId, BUFFER_B, gBattleStruct->battlers[battlerId].chosenItem);
     BattleControllerComplete(battlerId);
 }
 
-static void OpponentHandleChoosePokemon(u8 battlerId)
+static void OpponentHandleChoosePokemon(u32 battlerId)
 {
-	s32 chosenMonId;
+	u32 chosenMonId;
 
     if (*(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) == PARTY_SIZE)
     {
@@ -504,7 +503,7 @@ static void OpponentHandleChoosePokemon(u8 battlerId)
 
         if (chosenMonId == PARTY_SIZE)
         {
-            s32 battler1, battler2;
+            u32 battler1, battler2;
 
             if (!IsDoubleBattleOnSide(B_SIDE_OPPONENT))
                 battler2 = battler1 = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
@@ -530,12 +529,12 @@ static void OpponentHandleChoosePokemon(u8 battlerId)
     BattleControllerComplete(battlerId);
 }
 
-void OpponentHandleHealthbarUpdate(u8 battlerId)
+void OpponentHandleHealthbarUpdate(u32 battlerId)
 {
 	BtlController_HandleHealthbarUpdate(battlerId, FALSE);
 }
 
-static void Intro_DelayAndEnd(u8 battlerId)
+static void Intro_DelayAndEnd(u32 battlerId)
 {
     if (--gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay == 0xFF)
     {
@@ -544,9 +543,9 @@ static void Intro_DelayAndEnd(u8 battlerId)
     }
 }
 
-static void Intro_WaitForShinyAnimAndHealthbox(u8 battlerId)
+static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
 {
-    bool8 var = FALSE;
+    bool32 var = FALSE;
 
     if (!IsDoubleBattleForBattler(battlerId) || (((gBattleTypeFlags & BATTLE_TYPE_MULTI) && (gBattleTypeFlags & BATTLE_TYPE_DOUBLE))))
     {
@@ -579,7 +578,7 @@ static void Intro_WaitForShinyAnimAndHealthbox(u8 battlerId)
     }
 }
 
-static void Intro_TryShinyAnimShowHealthbox(u8 battlerId)
+static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
 {
 	if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive && !gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].ballAnimActive)
     {
@@ -598,14 +597,14 @@ static void Intro_TryShinyAnimShowHealthbox(u8 battlerId)
     }
 }
 
-static void OpponentHandleIntroTrainerBallThrow(u8 battlerId)
+static void OpponentHandleIntroTrainerBallThrow(u32 battlerId)
 {
 	BtlController_HandleIntroTrainerBallThrow(battlerId, 0x0000, 0, StartAnimLinearTranslation, 0, Intro_TryShinyAnimShowHealthbox);
 }
 
-static void OpponentHandleEndLinkBattle(u8 battlerId)
+static void OpponentHandleEndLinkBattle(u32 battlerId)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_LINK && !(gBattleTypeFlags & BATTLE_TYPE_IS_MASTER))
+	if ((gBattleTypeFlags & BATTLE_TYPE_LINK) && !(gBattleTypeFlags & BATTLE_TYPE_IS_MASTER))
     {
         gMain.inBattle = FALSE;
         gMain.callback1 = gPreBattleCallback1;

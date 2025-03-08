@@ -198,8 +198,8 @@ static EWRAM_DATA u8 sOpenWindows[11] = {};
 
 void InitBagWindows(void)
 {
-    u8 i, count;
-	bool8 isPcItems = (gBagMenuState.location == ITEMMENULOCATION_ITEMPC);
+    u32 i, count;
+	bool32 isPcItems = (gBagMenuState.location == ITEMMENULOCATION_ITEMPC);
     
 	InitWindows(isPcItems ? sDefaultBagWindowsDeposit : sDefaultBagWindowsStd);
     DeactivateAllTextPrinters();
@@ -210,7 +210,7 @@ void InitBagWindows(void)
     LoadPalette(sBagWindowPalF, 0xF0, 0x20);
 	
 	count = ARRAY_COUNT(sDefaultBagWindowsStd);
-	if (isPcItems)
+	if (isPcItems) // Excludes from loading the sort button window if in PC
 		count--;
 	
     for (i = 0; i < count; i++)
@@ -224,7 +224,7 @@ void InitBagWindows(void)
         sOpenWindows[i] = 0xFF;
 }
 
-void BagPrintTextOnWindow(u8 windowId, u8 fontId, const u8 * str, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 colorIdx)
+void BagPrintTextOnWindow(u32 windowId, u32 fontId, const u8 * str, u32 x, u32 y, u32 letterSpacing, u32 lineSpacing, u32 speed, u32 colorIdx)
 {
     AddTextPrinterParameterized4(windowId, fontId, x, y, letterSpacing, lineSpacing, sTextColors[colorIdx], speed, str);
 }
@@ -235,7 +235,7 @@ void BagPrintTextOnWin1CenteredColor0(const u8 * str)
     AddTextPrinterParameterized3(2, 1, x / 2, 1, sTextColors[0], 0, str);
 }
 
-u8 ShowBagWindow(u8 whichWindow, u8 nItems)
+u32 ShowBagWindow(u32 whichWindow, u32 nItems)
 {
     if (sOpenWindows[whichWindow] == 0xFF)
     {
@@ -251,7 +251,7 @@ u8 ShowBagWindow(u8 whichWindow, u8 nItems)
     return sOpenWindows[whichWindow];
 }
 
-void HideBagWindow(u8 whichWindow)
+void HideBagWindow(u32 whichWindow)
 {
     ClearStdWindowAndFrameToTransparent(sOpenWindows[whichWindow], FALSE);
     ClearWindowTilemap(sOpenWindows[whichWindow]);
@@ -260,7 +260,7 @@ void HideBagWindow(u8 whichWindow)
     sOpenWindows[whichWindow] = 0xFF;
 }
 
-u8 OpenBagWindow(u8 whichWindow)
+u32 OpenBagWindow(u32 whichWindow)
 {
     if (sOpenWindows[whichWindow] == 0xFF)
         sOpenWindows[whichWindow] = AddWindow(&sWindowTemplates[whichWindow]);
@@ -268,7 +268,7 @@ u8 OpenBagWindow(u8 whichWindow)
     return sOpenWindows[whichWindow];
 }
 
-void CloseBagWindow(u8 whichWindow)
+void CloseBagWindow(u32 whichWindow)
 {
     if (sOpenWindows[whichWindow] != 0xFF)
     {
@@ -281,12 +281,12 @@ void CloseBagWindow(u8 whichWindow)
     }
 }
 
-u8 GetBagWindow(u8 whichWindow)
+u32 GetBagWindow(u32 whichWindow)
 {
     return sOpenWindows[whichWindow];
 }
 
-void BagCreateYesNoMenuRight(u8 taskId, const struct YesNoFuncTable * ptrs, bool8 isTop)
+void BagCreateYesNoMenuRight(u32 taskId, const struct YesNoFuncTable * ptrs, bool32 isTop)
 {
     CreateYesNoMenuWithCallbacks(taskId, &sWindowTemplates[isTop ? 4 : 3], 2, 0, 2, 0x064, 0x0E, ptrs);
 }

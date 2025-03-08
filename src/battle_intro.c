@@ -14,7 +14,7 @@ extern const u8 gBattleIntroRegOffsBgCnt[];
 
 static void BattleIntroSlideLink(u8 taskId);
 
-void SetAnimBgAttribute(u8 bgId, u8 attributeId, u8 value)
+void SetAnimBgAttribute(u32 bgId, u32 attributeId, u32 value)
 {
     if (bgId < 4)
     {
@@ -48,7 +48,7 @@ void SetAnimBgAttribute(u8 bgId, u8 attributeId, u8 value)
     }
 }
 
-s32 GetAnimBgAttribute(u8 bgId, u8 attributeId)
+s32 GetAnimBgAttribute(u32 bgId, u32 attributeId)
 {
     u16 bgCnt;
 
@@ -77,9 +77,9 @@ s32 GetAnimBgAttribute(u8 bgId, u8 attributeId)
     return 0;
 }
 
-void HandleIntroSlide(u8 terrain)
+void HandleIntroSlide(u32 terrain)
 {
-    u8 taskId = CreateTask((gBattleTypeFlags & BATTLE_TYPE_LINK) ? BattleIntroSlideLink : gBattleTerrainTable[terrain].introSlideFunc, 0);
+    u32 taskId = CreateTask((gBattleTypeFlags & BATTLE_TYPE_LINK) ? BattleIntroSlideLink : gBattleTerrainTable[terrain].introSlideFunc, 0);
 
     gTasks[taskId].data[0] = 0;
     gTasks[taskId].data[1] = terrain;

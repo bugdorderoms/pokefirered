@@ -20,8 +20,8 @@
 // Return values of GetWhoStrikesFirst
 enum
 {
-	ATTACKER_STRIKES_FIRST,
-	DEFENDER_STRIKES_FIRST,
+	BATTLER1_STRIKES_FIRST,
+	BATTLER2_STRIKES_FIRST,
 	SPEED_TIE,
 };
 
@@ -77,10 +77,9 @@ void BattleMainCB2(void);
 void CB2_SosCall(void);
 void FreeRestoreBattleData(void);
 void VBlankCB_Battle(void);
-void SpriteCB_VsLetterDummy(struct Sprite *sprite);
 void SpriteCB_VsLetterInit(struct Sprite *sprite);
 void CB2_InitEndLinkBattle(void);
-u32 GetBattleBgAttribute(u8 arrayId, u8 caseId);
+u32 GetBattleBgAttribute(u32 arrayId, u32 caseId);
 void SpriteCB_EnemyMon(struct Sprite *sprite);
 void SpriteCallbackDummy2(struct Sprite *sprite);
 void SpriteCB_FaintOpponentMon(struct Sprite *sprite);
@@ -89,23 +88,23 @@ void SpriteCb_HideAsMoveTarget(struct Sprite *sprite);
 void SpriteCB_AllyMon(struct Sprite *sprite);
 void SpriteCB_SetToDummy3(struct Sprite *sprite);
 void SpriteCB_FaintSlideAnim(struct Sprite *sprite);
-void DoBounceEffect(u8 battler, u8 which, s8 delta, s8 amplitude);
-void EndBounceEffect(u8 battler, u8 which);
+void DoBounceEffect(u32 battler, u32 which, s8 delta, s8 amplitude);
+void EndBounceEffect(u32 battler, u32 which);
 void SpriteCB_PlayerThrowInit(struct Sprite *sprite);
 void UpdatePlayerPosInThrowAnim(struct Sprite *sprite);
 void BattleDummy(void);
 void BeginBattleIntro(void);
-void SwitchInClearSetData(u8 battlerId);
-void FaintClearSetData(u8 battlerId);
+void SwitchInClearSetData(u32 battlerId);
+void FaintClearSetData(u32 battlerId);
 void BattleTurnPassed(void);
-u8 IsRunningFromBattleImpossible(u8 battlerId, bool8 checkIngrain);
-void UpdatePartyOwnerOnSwitch_NonMulti(u8 battler);
-void SwapTurnOrder(u8 id1, u8 id2);
-u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves);
-s8 GetMovePriority(u8 battler, u16 move);
-u32 GetBattlerTotalSpeed(u8 battler);
+u32 IsRunningFromBattleImpossible(u32 battlerId, bool32 checkIngrain);
+void UpdatePartyOwnerOnSwitch_NonMulti(u32 battler);
+void SwapTurnOrder(u32 id1, u32 id2);
+u32 GetWhoStrikesFirst(u32 battler1, u32 battler2, bool32 ignoreChosenMoves);
+s8 GetMovePriority(u32 battler, u32 move);
+u32 GetBattlerTotalSpeed(u32 battler);
 void RunBattleScriptCommands_PopCallbacksStack(void);
 void RunBattleScriptCommands(void);
-bool8 TryRunFromBattle(u8 battler);
+bool32 TryRunFromBattle(u32 battler);
 
 #endif // GUARD_BATTLE_MAIN_H

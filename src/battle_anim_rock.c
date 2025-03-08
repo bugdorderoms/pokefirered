@@ -569,8 +569,8 @@ static void AnimRaiseSprite(struct Sprite *sprite)
 // No args.
 void AnimTask_SetRolloutAnimTimer(u8 taskId)
 {
-    u8 retVal = 5 - gAnimDisableStructPtr->rolloutTimer;
-    u8 var0 = retVal - 1;
+    u32 retVal = 5 - gAnimDisableStructPtr->rolloutTimer;
+    u32 var0 = retVal - 1;
 
     if (var0 > 4)
         retVal = 1;
@@ -585,10 +585,10 @@ void AnimTask_SetRolloutAnimTimer(u8 taskId)
 // No args.
 void AnimTask_Rollout(u8 taskId)
 {
-    u16 var0, var1, var2, var3;
-    u8 var4;
+	u8 var4;
+    u32 var0, var1, var2, var3;
     s32 var5;
-    s16 pan1, pan2;
+	s16 pan1, pan2;
     struct Task *task = &gTasks[taskId];
 
     var0 = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
@@ -696,7 +696,7 @@ static void CreateRolloutSprite(struct Task *task)
     const struct SpriteTemplate *spriteTemplate;
     s32 tileNum;
     u16 x, y;
-    u8 spriteId;
+    u32 spriteId;
 
     switch (task->data[1])
     {
@@ -745,7 +745,7 @@ static void AnimRolloutParticle(struct Sprite *sprite)
 {
     if (TranslateAnimHorizontalArc(sprite))
     {
-        u8 taskId = FindTaskIdByFunc(AnimTask_Rollout_Step);
+        u32 taskId = FindTaskIdByFunc(AnimTask_Rollout_Step);
 
         if (taskId != TAIL_SENTINEL)
             --gTasks[taskId].data[11];

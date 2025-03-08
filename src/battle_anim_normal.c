@@ -9,7 +9,7 @@ static void AnimConfusionDuck(struct Sprite *sprite);
 static void AnimSimplePaletteBlend(struct Sprite *sprite);
 static void AnimComplexPaletteBlend(struct Sprite *sprite);
 static void AnimShakeMonOrBattleTerrain(struct Sprite *sprite);
-static void AnimShakeMonOrBattleTerrain_UpdateCoordOffsetEnabled(u8 dontShakeBattler);
+static void AnimShakeMonOrBattleTerrain_UpdateCoordOffsetEnabled(u32 dontShakeBattler);
 static void AnimShakeMonOrBattleTerrain_Step(struct Sprite *sprite);
 static void AnimHitSplatBasic(struct Sprite *sprite);
 static void AnimHitSplatHandleInvert(struct Sprite *sprite);
@@ -26,11 +26,11 @@ static void AnimComplexPaletteBlendStep2(struct Sprite *sprite);
 static void AnimShellSmashShell(struct Sprite *sprite);
 static void AnimShellSmashShell_Step(struct Sprite *sprite);
 static void AnimClampShell(struct Sprite *sprite);
-static void BlendColorCycle(u8 taskId, u8 initialBlendAmount, u8 targetBlendAmount);
+static void BlendColorCycle(u32 taskId, u32 initialBlendAmount, u32 targetBlendAmount);
 static void AnimTask_BlendColorCycleLoop(u8 taskId);
-static void BlendColorCycleExclude(u8 taskId, u8 initialBlendAmount, u8 targetBlendAmount);
+static void BlendColorCycleExclude(u32 taskId, u32 initialBlendAmount, u32 targetBlendAmount);
 static void AnimTask_BlendColorCycleExcludeLoop(u8 taskId);
-static void BlendColorCycleByTag(u8 taskId, u8 initialBlendAmount, u8 targetBlendAmount);
+static void BlendColorCycleByTag(u32 taskId, u32 initialBlendAmount, u32 targetBlendAmount);
 static void AnimTask_BlendColorCycleByTagLoop(u8 taskId);
 static void sub_80B9FD8(u8 taskId);
 static void sub_80BA090(u8 taskId);
@@ -484,13 +484,13 @@ static void AnimSimplePaletteBlend(struct Sprite *sprite)
 //   6: F_PAL_ANIM_2, BG palette 9
 u32 UnpackSelectedBattleAnimPalettes(s16 selector)
 {
-    u8 battleBackground = selector & 1;
-    u8 attacker = (selector >> 1) & 1;
-    u8 target = (selector >> 2) & 1;
-    u8 attackerPartner = (selector >> 3) & 1;
-    u8 targetPartner = (selector >> 4) & 1;
-    u8 arg5 = (selector >> 5) & 1;
-    u8 arg6 = (selector >> 6) & 1;
+    bool32 battleBackground = (selector & 1);
+    bool32 attacker = ((selector >> 1) & 1);
+    bool32 target = ((selector >> 2) & 1);
+    bool32 attackerPartner = ((selector >> 3) & 1);
+    bool32 targetPartner = ((selector >> 4) & 1);
+    bool32 arg5 = ((selector >> 5) & 1);
+    bool32 arg6 = ((selector >> 6) & 1);
 
     return SelectBattleAnimSpriteAndBgPalettes(battleBackground, attacker, target, attackerPartner, targetPartner, arg5, arg6);
 }
@@ -575,7 +575,7 @@ void AnimTask_BlendColorCycle(u8 taskId)
     gTasks[taskId].func = AnimTask_BlendColorCycleLoop;
 }
 
-static void BlendColorCycle(u8 taskId, u8 initialBlendAmount, u8 targetBlendAmount)
+static void BlendColorCycle(u32 taskId, u32 initialBlendAmount, u32 targetBlendAmount)
 {
     BeginNormalPaletteFade(UnpackSelectedBattleAnimPalettes(gTasks[taskId].data[0]), gTasks[taskId].data[1], initialBlendAmount, targetBlendAmount, gTasks[taskId].data[5]);
     --gTasks[taskId].data[2];
@@ -584,7 +584,7 @@ static void BlendColorCycle(u8 taskId, u8 initialBlendAmount, u8 targetBlendAmou
 
 static void AnimTask_BlendColorCycleLoop(u8 taskId)
 {
-    u8 initialBlendAmount, targetBlendAmount;
+    u32 initialBlendAmount, targetBlendAmount;
 
     if (!gPaletteFade.active)
     {
@@ -614,7 +614,7 @@ static void AnimTask_BlendColorCycleLoop(u8 taskId)
 // See AnimTask_BlendColorCycle. Same, but excludes Attacker and Target.
 void AnimTask_BlendColorCycleExclude(u8 taskId)
 {
-    u8 battler;
+    u32 battler;
     u32 selectedPalettes = 0xE;
 	
 	for (battler = 0; battler < gBattlersCount; ++battler)
@@ -637,7 +637,7 @@ void AnimTask_BlendColorCycleExclude(u8 taskId)
     gTasks[taskId].func = AnimTask_BlendColorCycleExcludeLoop;
 }
 
-static void BlendColorCycleExclude(u8 taskId, u8 initialBlendAmount, u8 targetBlendAmount)
+static void BlendColorCycleExclude(u32 taskId, u32 initialBlendAmount, u32 targetBlendAmount)
 {
     BeginNormalPaletteFade(((u16)gTasks[taskId].data[9] << 16) | (u16)gTasks[taskId].data[10], gTasks[taskId].data[1], initialBlendAmount, targetBlendAmount, gTasks[taskId].data[5]);
     --gTasks[taskId].data[2];
@@ -646,7 +646,7 @@ static void BlendColorCycleExclude(u8 taskId, u8 initialBlendAmount, u8 targetBl
 
 static void AnimTask_BlendColorCycleExcludeLoop(u8 taskId)
 {
-    u8 initialBlendAmount, targetBlendAmount;
+    u32 initialBlendAmount, targetBlendAmount;
 
     if (!gPaletteFade.active)
     {
@@ -693,7 +693,7 @@ void AnimTask_BlendColorCycleByTag(u8 taskId)
     gTasks[taskId].func = AnimTask_BlendColorCycleByTagLoop;
 }
 
-static void BlendColorCycleByTag(u8 taskId, u8 initialBlendAmount, u8 targetBlendAmount)
+static void BlendColorCycleByTag(u32 taskId, u32 initialBlendAmount, u32 targetBlendAmount)
 {
     BeginNormalPaletteFade(1 << (IndexOfSpritePaletteTag(gTasks[taskId].data[0]) + 16), gTasks[taskId].data[1], initialBlendAmount, targetBlendAmount, gTasks[taskId].data[5]);
     --gTasks[taskId].data[2];
@@ -702,7 +702,7 @@ static void BlendColorCycleByTag(u8 taskId, u8 initialBlendAmount, u8 targetBlen
 
 static void AnimTask_BlendColorCycleByTagLoop(u8 taskId)
 {
-    u8 initialBlendAmount, targetBlendAmount;
+    u32 initialBlendAmount, targetBlendAmount;
 
     if (!gPaletteFade.active)
     {
@@ -887,7 +887,7 @@ static void AnimShakeMonOrBattleTerrain(struct Sprite *sprite)
 
 static void AnimShakeMonOrBattleTerrain_Step(struct Sprite *sprite)
 {
-    u8 i;
+    u32 i;
     u16 var0;
 
     if (sprite->data[3] > 0)
@@ -917,7 +917,7 @@ static void AnimShakeMonOrBattleTerrain_Step(struct Sprite *sprite)
     }
 }
 
-static void AnimShakeMonOrBattleTerrain_UpdateCoordOffsetEnabled(u8 dontShakeBattler)
+static void AnimShakeMonOrBattleTerrain_UpdateCoordOffsetEnabled(u32 dontShakeBattler)
 {
 	// Shake both
     gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].coordOffsetEnabled = FALSE;
@@ -928,7 +928,7 @@ static void AnimShakeMonOrBattleTerrain_UpdateCoordOffsetEnabled(u8 dontShakeBat
         gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].coordOffsetEnabled = TRUE;
         gSprites[gBattlerSpriteIds[gBattleAnimTarget]].coordOffsetEnabled = TRUE;
     }
-    else // Coose one to don't shake
+    else // Chose one to don't shake
 		gSprites[gBattlerSpriteIds[dontShakeBattler == ANIM_ATTACKER ? gBattleAnimAttacker : gBattleAnimTarget]].coordOffsetEnabled = TRUE;
 }
 
@@ -1031,13 +1031,18 @@ static void AnimHitSplatHandleInvert(struct Sprite *sprite)
 // Creates a hit splat sprite on given battler, with random positions.
 // arg 0: anim battler
 // arg 1: afine anim num (if -1 then choose at random)
+// arg 2: if hit both (boolean) (centred)
 static void AnimHitSplatRandom(struct Sprite *sprite)
 {
     if (gBattleAnimArgs[1] == -1)
         gBattleAnimArgs[1] = RandomMax(4);
 	
     StartSpriteAffineAnim(sprite, gBattleAnimArgs[1]);
-	InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[0], FALSE);
+	
+	if (gBattleAnimArgs[2] && IsDoubleBattleForBattler(GetBattlerForAnimScript(gBattleAnimArgs[0])))
+		InitSpritePosToAnimTargetsCentre(sprite, FALSE);
+	else
+		InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[0], FALSE);
     
     sprite->x2 += RandomMax(48) - 24;
     sprite->y2 += RandomMax(24) - 12;

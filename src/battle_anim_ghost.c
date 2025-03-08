@@ -320,12 +320,12 @@ static void AnimConfuseRayBallSpiral(struct Sprite *sprite)
 
 static void AnimConfuseRayBallSpiral_Step(struct Sprite *sprite)
 {
-    u16 temp1;
+    u32 temp1;
 
     sprite->x2 = Sin(sprite->data[0], 32);
     sprite->y2 = Cos(sprite->data[0], 8);
 	
-    temp1 = sprite->data[0] - 65;
+    temp1 = (u16)(sprite->data[0] - 65);
     if (temp1 <= 130)
         sprite->oam.priority = 2;
     else
@@ -344,7 +344,7 @@ static void AnimConfuseRayBallSpiral_Step(struct Sprite *sprite)
 // arg 0: duration (?)
 void AnimTask_NightShadeClone(u8 taskId)
 {
-    u8 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
+    u32 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
 
     SetGpuReg(REG_OFFSET_BLDCNT, (BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL));
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 0x10));
@@ -379,7 +379,7 @@ static void AnimTask_NightShadeClone_Step(u8 taskId)
 
 static void AnimTask_NightShadeClone_Step2(u8 taskId)
 {
-    u8 spriteId;
+    u32 spriteId;
 
     if (gTasks[taskId].data[1] > 0)
         --gTasks[taskId].data[1];
@@ -483,7 +483,7 @@ static void AnimLick(struct Sprite *sprite)
 
 static void AnimLickStep(struct Sprite *sprite)
 {
-    bool8 blinkVisibility = FALSE, endAnim = FALSE;
+    bool32 blinkVisibility = FALSE, endAnim = FALSE;
 
     if (sprite->animEnded)
     {
@@ -639,7 +639,7 @@ static void AnimTask_SpiteTargetShadow_Step(u8 taskId)
 {
     s16 startLine;
     struct Task *task = &gTasks[taskId];
-    u8 position = GetBattlerSpriteBGPriorityRank(gBattleAnimTarget);
+    u32 position = GetBattlerSpriteBGPriorityRank(gBattleAnimTarget);
 
     switch (task->data[15])
     {
@@ -736,7 +736,7 @@ static void AnimTask_SpiteTargetShadow_Step2(u8 taskId)
 static void AnimTask_SpiteTargetShadow_Step3(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
-    u8 rank = GetBattlerSpriteBGPriorityRank(gBattleAnimTarget);
+    u32 rank = GetBattlerSpriteBGPriorityRank(gBattleAnimTarget);
 
     switch (task->data[15])
     {
@@ -783,7 +783,7 @@ static void AnimDestinyBondWhiteShadow(struct Sprite *sprite)
 void AnimTask_DestinyBondWhiteShadow(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
-    u8 battler, spriteId;
+    u32 battler, spriteId;
     s16 baseX, baseY;
     s16 x, y;
 
@@ -836,7 +836,7 @@ void AnimTask_DestinyBondWhiteShadow(u8 taskId)
 
 static void AnimTask_DestinyBondWhiteShadow_Step(u8 taskId)
 {
-    u16 i;
+    u32 i;
     struct Task *task = &gTasks[taskId];
 
     switch (task->data[0])
@@ -1082,7 +1082,7 @@ static void AnimCurseNail_Step3(struct Sprite *sprite)
 // No args.
 static void AnimGhostStatusSprite(struct Sprite *sprite)
 {
-    u16 coeffB, coeffA;
+    u32 coeffB, coeffA;
 
     sprite->x2 = Sin(sprite->data[0], 12);
 	
@@ -1130,7 +1130,7 @@ static void AnimGhostStatusSprite(struct Sprite *sprite)
 void AnimTask_GrudgeFlames(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
-	u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+	u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 
     task->data[0] = 0;
     task->data[1] = 16;
@@ -1153,8 +1153,7 @@ void AnimTask_GrudgeFlames(u8 taskId)
 
 static void AnimTask_GrudgeFlames_Step(u8 taskId)
 {
-    u16 i;
-    u8 spriteId;
+    u32 i, spriteId;
     struct Task *task = &gTasks[taskId];
 
     switch (task->data[0])
@@ -1227,7 +1226,7 @@ static void AnimTask_GrudgeFlames_Step(u8 taskId)
 
 static void AnimGrudgeFlame(struct Sprite *sprite)
 {
-    u16 index;
+    u32 index;
 
     if (!sprite->data[1])
         sprite->data[2] += 2;
@@ -1237,7 +1236,7 @@ static void AnimGrudgeFlame(struct Sprite *sprite)
     sprite->data[2] &= 0xFF;
     sprite->x2 = Sin(sprite->data[2], sprite->data[3]);
 	
-    index = sprite->data[2] - 65;
+    index = (u16)(sprite->data[2] - 65);
     if (index < 127)
         sprite->oam.priority = gTasks[sprite->data[0]].data[5] + 1;
     else
@@ -1325,7 +1324,7 @@ static void AnimTask_GhostGetOutAttackerEffect_Step(u8 taskId)
         GetBattleAnimBgData(&animBgData, 2);
         gMonSpritesGfxPtr->multiUseBuffer = AllocZeroed(0x2000);
         LZDecompressWram(gBattleAnimBgTilemap_ScaryFacePlayer, gMonSpritesGfxPtr->multiUseBuffer);
-        RelocateBattleBgPal(animBgData.paletteId, gMonSpritesGfxPtr->multiUseBuffer, 256, 0);
+        RelocateBattleBgPal(animBgData.paletteId, gMonSpritesGfxPtr->multiUseBuffer, 256, FALSE);
         CopyToBgTilemapBufferRect_ChangePalette(animBgData.bgId, gMonSpritesGfxPtr->multiUseBuffer, 0, 0, 0x20, 0x20, 0x11);
         CopyBgTilemapBufferToVram(2);
         FREE_AND_SET_NULL(gMonSpritesGfxPtr->multiUseBuffer);
@@ -1463,9 +1462,9 @@ void AnimTask_SetUpCurseBackground(u8 taskId)
 {
     s32 newSpriteId;
     u16 bg1Cnt;
-    u8 spriteId;
+    u32 spriteId;
     struct BattleAnimBgData animBgData;
-	bool8 changedPriority;
+	bool32 changedPriority;
 
     gBattle_WIN0H = 0;
     gBattle_WIN0V = 0;
@@ -1501,7 +1500,7 @@ void AnimTask_SetUpCurseBackground(u8 taskId)
         }
     }
     spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
-    newSpriteId = CreateCloneOfSpriteInWindowMode(spriteId, GetMonData(GetBattlerPartyIndexPtr(gBattleAnimAttacker), MON_DATA_SPECIES));
+    newSpriteId = CreateCloneOfSpriteInWindowMode(spriteId);
 	
     GetBattleAnimBgData(&animBgData, 1);
     AnimLoadCompressedBgTilemap(animBgData.bgId, gFile_graphics_battle_anims_masks_curse_tilemap);

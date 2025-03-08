@@ -548,8 +548,8 @@ const struct SpriteTemplate gPsychoCutBladeWheelSpriteTemplate =
 // arg 2: anim tag
 static void AnimDefensiveWall(struct Sprite *sprite)
 {
-    u8 battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-    bool8 toBG2 = (GetBattlerSpriteBGPriorityRank(battler) ^ 1);
+    u32 battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+    bool32 toBG2 = (GetBattlerSpriteBGPriorityRank(battler) ^ 1);
     
     if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_PLAYER)
     {
@@ -629,7 +629,7 @@ static void AnimDefensiveWall_Step3(struct Sprite *sprite)
 	
     if (--sprite->data[3] == -1)
     {
-        u8 battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+        u32 battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 
         if (IsBattlerSpriteVisible(battler))
             gSprites[gBattlerSpriteIds[battler]].invisible = FALSE;
@@ -646,8 +646,8 @@ static void AnimDefensiveWall_Step3(struct Sprite *sprite)
 
 static void AnimDefensiveWall_Step4(struct Sprite *sprite)
 {
-    u8 battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-    bool8 toBG2 = (GetBattlerSpriteBGPriorityRank(battler) ^ 1);
+    u32 battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+    bool32 toBG2 = (GetBattlerSpriteBGPriorityRank(battler) ^ 1);
 
     if (IsBattlerSpriteVisible(battler))
         ResetBattleAnimBg(toBG2);
@@ -810,7 +810,7 @@ static void AnimTask_Teleport_Step(u8 taskId)
 // No args.
 void AnimTask_ImprisonOrbs(u8 taskId)
 {
-    u16 var0, var1;
+    u32 var0, var1;
     struct Task *task = &gTasks[taskId];
 
     task->data[3] = 16;
@@ -830,8 +830,7 @@ void AnimTask_ImprisonOrbs(u8 taskId)
 
 static void AnimTask_ImprisonOrbs_Step(u8 taskId)
 {
-    u16 i;
-    u8 spriteId;
+    u32 i, spriteId;
     struct Task *task = &gTasks[taskId];
 
     switch (task->data[0])
@@ -952,7 +951,7 @@ void AnimTask_SkillSwap(u8 taskId)
 
 static void AnimTask_SkillSwapOrbs(u8 taskId)
 {
-    u8 spriteId;
+    u32 spriteId;
 	s16 x, y;
     struct Task *task = &gTasks[taskId];
 
@@ -1011,7 +1010,7 @@ static void AnimSkillSwapOrb(struct Sprite *sprite)
 void AnimTask_ExtrasensoryDistortion(u8 taskId)
 {
     s16 i;
-    u8 yOffset = GetBattlerYCoordWithElevation(gBattleAnimTarget);
+    u32 yOffset = GetBattlerYCoordWithElevation(gBattleAnimTarget);
     struct ScanlineEffectParams scanlineParams;
     struct Task *task = &gTasks[taskId];
     
@@ -1104,8 +1103,8 @@ static void AnimTask_ExtrasensoryDistortion_Step(u8 taskId)
 // arg 0: anim battler
 void AnimTask_TransparentCloneGrowAndShrink(u8 taskId)
 {
-    s16 spriteId;
-    s16 matrixNum = AllocOamMatrix();
+    s32 spriteId;
+    s32 matrixNum = AllocOamMatrix();
     struct Task *task = &gTasks[taskId];
     
     if (matrixNum == 0xFF)
@@ -1232,8 +1231,7 @@ void AnimTask_SetPsychicBackground(u8 taskId)
 
 static void SetPsychicBackground_Step(u8 taskId)
 {
-    u8 i, paletteIndex;
-    u16 lastColor;
+    u32 i, paletteIndex, lastColor;
 
     if (++gTasks[taskId].data[5] == 4)
     {
@@ -1282,12 +1280,9 @@ void AnimTask_RolePlaySilhouette(u8 taskId)
 {
 	struct Pokemon *targetMon = GetBattlerPartyIndexPtr(gBattleAnimTarget);
     u32 personality = GetMonData(targetMon, MON_DATA_PERSONALITY);
-    bool8 isShiny = GetMonData(targetMon, MON_DATA_IS_SHINY);
-    u16 species;
+    bool32 isBackPic, isShiny = GetMonData(targetMon, MON_DATA_IS_SHINY);
+    u32 species, priority, spriteId;
     s16 xOffset;
-    u32 priority;
-    u8 spriteId;
-	bool8 isBackPic;
 	
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
     {
@@ -1342,7 +1337,7 @@ static void AnimTask_RolePlaySilhouetteStep1(u8 taskId)
 
 static void AnimTask_RolePlaySilhouetteStep2(u8 taskId)
 {
-    u8 spriteId = gTasks[taskId].data[0];
+    u32 spriteId = gTasks[taskId].data[0];
     
     gTasks[taskId].data[10] -= 16;
     gTasks[taskId].data[11] += 128;

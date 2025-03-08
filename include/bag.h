@@ -4,13 +4,13 @@
 #include "menu_helpers.h"
 
 void InitBagWindows(void);
-void BagPrintTextOnWindow(u8 windowId, u8 fontId, const u8 * str, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 colorIdx);
+void BagPrintTextOnWindow(u32 windowId, u32 fontId, const u8 * str, u32 x, u32 y, u32 letterSpacing, u32 lineSpacing, u32 speed, u32 colorIdx);
 void BagPrintTextOnWin1CenteredColor0(const u8 * str);
-u8 ShowBagWindow(u8 whichWindow, u8 nItems);
-void HideBagWindow(u8 whichWindow);
-u8 OpenBagWindow(u8 whichWindow);
-void CloseBagWindow(u8 whichWindow);
-u8 GetBagWindow(u8 whichWindow);
-void BagCreateYesNoMenuRight(u8 taskId, const struct YesNoFuncTable * ptrs, bool8 isTop);
+u32 ShowBagWindow(u32 whichWindow, u32 nItems);
+void HideBagWindow(u32 whichWindow);
+u32 OpenBagWindow(u32 whichWindow);
+void CloseBagWindow(u32 whichWindow);
+u32 GetBagWindow(u32 whichWindow);
+void BagCreateYesNoMenuRight(u32 taskId, const struct YesNoFuncTable * ptrs, bool32 isTop);
 
 #endif //GUARD_BAG_H

@@ -1236,13 +1236,13 @@ const u8 *const gBattleStringsTable[] =
 // String buffer helpers
 
 // Get nickname, checking for Illusion
-static inline void GetBattlerNick(u8 battlerId, u8 *dst)
+static inline void GetBattlerNick(u32 battlerId, u8 *dst)
 {
     GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_NICKNAME, dst);
     StringGet_Nickname(dst);
 }
 
-static const u8 *GetEnemyPokemonPrefix(u8 battlerId)
+static const u8 *GetEnemyPokemonPrefix(u32 battlerId)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 		return sText_FoePkmnPrefix;
@@ -1268,10 +1268,10 @@ static const u8 *GetEnemyPokemonPrefix(u8 battlerId)
     GetBattlerNick(battlerId, text);                                                                                         \
     toCpy = text
 
-static void IllusionNickHack(u8 battlerId, u8 partyId, u8 *dst)
+static void IllusionNickHack(u32 battlerId, u32 partyId, u8 *dst)
 {
 	struct Pokemon *mon = &gEnemyParty[partyId];
-	u8 id = GetPartyMonIdForIllusion(battlerId, gEnemyParty, gEnemyPartyCount, mon);
+	u32 id = GetPartyMonIdForIllusion(battlerId, gEnemyParty, gEnemyPartyCount, mon);
 	
 	if (id != PARTY_SIZE)
 		GetMonData(&gEnemyParty[id], MON_DATA_NICKNAME, dst);
@@ -1282,7 +1282,7 @@ static void IllusionNickHack(u8 battlerId, u8 partyId, u8 *dst)
 	}
 }
 
-static void HandlePartyMonNickBuffer(u8 battlerId, u8 partyId, u8 *dst, bool8 activeInBattle)
+static void HandlePartyMonNickBuffer(u32 battlerId, u32 partyId, u8 *dst, bool32 activeInBattle)
 {
 	if (activeInBattle) // If in battle, handle Illusion nickname
 		GetBattlerNick(battlerId, dst);
@@ -1299,7 +1299,7 @@ static void HandlePartyMonNickBuffer(u8 battlerId, u8 partyId, u8 *dst, bool8 ac
 }
 
 // String buffers
-void BufferStringBattle(u8 battlerId, u16 stringId)
+void BufferStringBattle(u32 battlerId, u32 stringId)
 {
 	s32 i;
     const u8 *stringPtr = NULL;
@@ -1544,7 +1544,7 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
 	// This buffer may hold either the name of a trainer, Pokémon, or item.
 	u8 text[max(max(max(32, 11), POKEMON_NAME_LENGTH + 1), ITEM_NAME_LENGTH)];
 	u8 *dst = gDisplayedStringBattle;
-	bool8 copyTrainer1Name = FALSE;
+	bool32 copyTrainer1Name = FALSE;
 	u32 dstId = 0;
 	const u8 *toCpy = NULL;
 	
@@ -1696,7 +1696,7 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
 					break;
 				case B_TXT_ITEM_USE_SPECIES_NAME:
 				{
-					u8 battler = GetItemUseBattler(gBattlerAttacker);
+					u32 battler = GetItemUseBattler(gBattlerAttacker);
 					HandlePartyMonNickBuffer(battler, gBattleStruct->battlers[gBattlerAttacker].itemPartyIndex, text, (battler != MAX_BATTLERS_COUNT));
 					toCpy = text;
 					break;
@@ -1860,7 +1860,7 @@ void BattlePutTextOnWindow(const u8 *text, u8 windowId)
 {
 	struct BattleWindowText textInfo;
     struct TextPrinterTemplate printerTemplate;
-    u8 speed;
+    u32 speed;
     int x;
     u8 textFlags = (windowId & (B_TEXT_FLAG_NPC_CONTEXT_FONT | B_TEXT_FLAG_WINDOW_CLEAR));
     
@@ -1936,14 +1936,14 @@ void BattlePutTextOnWindow(const u8 *text, u8 windowId)
     }
 }
 
-bool8 BattleStringShouldBeColored(u16 stringId)
+bool32 BattleStringShouldBeColored(u32 stringId)
 {
     if (stringId == STRINGID_TRAINER1LOSETEXT || stringId == STRINGID_TRAINER1WINTEXT)
         return TRUE;
     return FALSE;
 }
 
-static u8 GetCurrentPpToMaxPpState(u8 currentPp, u8 maxPp)
+static u32 GetCurrentPpToMaxPpState(u32 currentPp, u32 maxPp)
 {
     if (maxPp == currentPp)
         return 3;
@@ -1973,11 +1973,11 @@ static u8 GetCurrentPpToMaxPpState(u8 currentPp, u8 maxPp)
     return 0;
 }
 
-void SetPpNumbersPaletteInMoveSelection(u8 battlerId)
+void SetPpNumbersPaletteInMoveSelection(u32 battlerId)
 {
     struct ChooseMoveStruct *chooseMoveStruct = (struct ChooseMoveStruct*)(&gBattleBufferA[battlerId][4]);
-	u8 moveSelectionCursor = gBattleStruct->battlers[battlerId].moveSelectionCursor;
-    u8 var = GetCurrentPpToMaxPpState(chooseMoveStruct->currentPp[moveSelectionCursor], chooseMoveStruct->maxPp[moveSelectionCursor]);
+	u32 moveSelectionCursor = gBattleStruct->battlers[battlerId].moveSelectionCursor;
+    u32 var = GetCurrentPpToMaxPpState(chooseMoveStruct->currentPp[moveSelectionCursor], chooseMoveStruct->maxPp[moveSelectionCursor]);
 
     gPlttBufferUnfaded[92] = gUnknown_8D2FBB4[(var * 2) + 0];
     gPlttBufferUnfaded[91] = gUnknown_8D2FBB4[(var * 2) + 1];
@@ -1985,33 +1985,3 @@ void SetPpNumbersPaletteInMoveSelection(u8 battlerId)
     CpuCopy16(&gPlttBufferUnfaded[92], &gPlttBufferFaded[92], sizeof(u16));
     CpuCopy16(&gPlttBufferUnfaded[91], &gPlttBufferFaded[91], sizeof(u16));
 }
-
-/*
-static const u8* TryGetStatusString(u8 *src)
-{
-    u32 i;
-    u8 status[] = _("$$$$$$$");
-    u32 chars1, chars2;
-    u8* statusPtr;
-
-    statusPtr = status;
-    for (i = 0; i < 8; i++)
-    {
-        if (*src == EOS)
-            break;
-        *statusPtr = *src;
-        src++;
-        statusPtr++;
-    }
-
-    chars1 = *(u32*)(&status[0]);
-    chars2 = *(u32*)(&status[4]);
-
-    for (i = 0; i < ARRAY_COUNT(gStatusConditionStringsTable); i++)
-    {
-        if (chars1 == *(u32*)(&gStatusConditionStringsTable[i][0][0])
-            && chars2 == *(u32*)(&gStatusConditionStringsTable[i][0][4]))
-            return gStatusConditionStringsTable[i][1];
-    }
-    return NULL;
-}*/

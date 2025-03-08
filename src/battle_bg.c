@@ -20,7 +20,7 @@
 
 #define TAG_VS_LETTERS 10000
 
-static u8 GetBattleTerrainOverride(void);
+static u32 GetBattleTerrainOverride(void);
 
 #include "data/battle_backgrounds.h"
 
@@ -79,7 +79,7 @@ static const struct SpriteTemplate sVsLetter_V_SpriteTemplate = {
     .oam = &gOamData_82482A0,
     .anims = gDummySpriteAnimTable,
     .affineAnims = gAffineAnimTable_82482E0,
-    .callback = SpriteCB_VsLetterDummy
+    .callback = SpriteCallbackDummy
 };
 
 static const struct SpriteTemplate sVsLetter_S_SpriteTemplate = {
@@ -88,7 +88,7 @@ static const struct SpriteTemplate sVsLetter_S_SpriteTemplate = {
     .oam = &gOamData_82482A8,
     .anims = gDummySpriteAnimTable,
     .affineAnims = gAffineAnimTable_82482E0,
-    .callback = SpriteCB_VsLetterDummy
+    .callback = SpriteCallbackDummy
 };
 
 static const struct CompressedSpriteSheet sVsLettersSpriteSheet = {
@@ -373,7 +373,7 @@ static const struct {
     {MAP_BATTLE_SCENE_LINK,     BATTLE_TERRAIN_LINK}
 };
 
-static u8 GetBattleTerrainByMapScene(u8 mapBattleScene)
+static u32 GetBattleTerrainByMapScene(u32 mapBattleScene)
 {
     u32 i;
 	
@@ -385,7 +385,7 @@ static u8 GetBattleTerrainByMapScene(u8 mapBattleScene)
     return BATTLE_TERRAIN_PLAIN;
 }
 
-void LoadBattleTerrainGfx(u8 terrain)
+void LoadBattleTerrainGfx(u32 terrain)
 {
     if (terrain >= BATTLE_TERRAINS_COUNT)
         terrain = BATTLE_TERRAIN_PLAIN;
@@ -395,7 +395,7 @@ void LoadBattleTerrainGfx(u8 terrain)
     LoadCompressedPalette(gBattleTerrainTable[terrain].palette, 0x20, 0x60);
 }
 
-static void LoadBattleTerrainEntryGfx(u8 terrain)
+static void LoadBattleTerrainEntryGfx(u32 terrain)
 {
     if (terrain >= BATTLE_TERRAINS_COUNT)
         terrain = BATTLE_TERRAIN_PLAIN;
@@ -472,9 +472,9 @@ void LoadBattleTextboxAndBackground(void)
     DrawMainBattleBackground();
 }
 
-static void DrawLinkBattleParticipantPokeballs(u8 taskId, u8 multiplayerId, u8 bgId, u8 destX, u8 destY)
+static void DrawLinkBattleParticipantPokeballs(u32 taskId, u32 multiplayerId, u32 bgId, u32 destX, u32 destY)
 {
-    s32 i;
+    u32 i;
     u16 pokeballStatuses = 0;
     u16 tiles[6];
 
@@ -606,7 +606,7 @@ void InitLinkBattleVsScreen(u8 taskId)
 {
     struct LinkPlayer *linkPlayer;
     u8 *name;
-    s32 i, palId;
+    u32 i, palId;
 
     switch (gTasks[taskId].data[0])
     {
@@ -641,7 +641,7 @@ void InitLinkBattleVsScreen(u8 taskId)
         }
         else
         {
-            u8 temp, playerId = gBattleStruct->multiplayerId, opponentId = BATTLE_OPPOSITE(playerId);
+            u32 temp, playerId = gBattleStruct->multiplayerId, opponentId = BATTLE_OPPOSITE(playerId);
 
             if (gLinkPlayers[playerId].id != 0)
 				SWAP(playerId, opponentId, temp);
@@ -750,9 +750,9 @@ void DrawBattleEntryBackground(void)
     }
 }
 
-static u8 GetBattleTerrainOverride(void)
+static u32 GetBattleTerrainOverride(void)
 {
-    u8 battleScene;
+    u32 battleScene;
 	
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
         return BATTLE_TERRAIN_LINK;
@@ -775,9 +775,9 @@ static u8 GetBattleTerrainOverride(void)
 
 #define NUM_TOPBAR_REMOVE_LINES 5 // Num lines to remove on top bar
 
-static void DrawMoveInfoWindowBorder(u8 windowId)
+static void DrawMoveInfoWindowBorder(u32 windowId)
 {
-	u8 i, pixelsCount;
+	u32 i, pixelsCount;
 	
 	// Remove some pixels on top
 	FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, 0, WindowWidthPx(windowId), NUM_TOPBAR_REMOVE_LINES);
@@ -791,10 +791,11 @@ static void DrawMoveInfoWindowBorder(u8 windowId)
 		FillWindowPixelRect(windowId, PIXEL_FILL(0), 73 + pixelsCount, NUM_TOPBAR_REMOVE_LINES + i, 16 - pixelsCount, 1);
 }
 
-void CreateBattleMoveInfoWindowsAndArrows(u16 move)
+void CreateBattleMoveInfoWindowsAndArrows(u32 move)
 {
-	u8 i, colors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
-	bool8 isNameWindow;
+	u8 colors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
+	u32 i;
+	bool32 isNameWindow;
 	
 	// Create windows
 	for (i = 0; i < 2; i++)
@@ -818,7 +819,7 @@ void CreateBattleMoveInfoWindowsAndArrows(u16 move)
 
 void DestroyBattleMoveInfoWindows(void)
 {
-	u8 i;
+	u32 i;
 	
 	// Destroy windows
 	for (i = 0; i < 2; i++)

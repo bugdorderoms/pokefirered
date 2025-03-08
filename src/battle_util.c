@@ -968,7 +968,7 @@ bool8 DoEndTurnEffects(void)
 				{
 					for (j = i + 1; j < gBattlersCount; j++)
 					{
-						if (GetWhoStrikesFirst(gBattlerByTurnOrder[i], gBattlerByTurnOrder[j], TRUE) != ATTACKER_STRIKES_FIRST)
+						if (GetWhoStrikesFirst(gBattlerByTurnOrder[i], gBattlerByTurnOrder[j], TRUE) != BATTLER1_STRIKES_FIRST)
 							SwapTurnOrder(i, j);
 					}
 				}
@@ -2316,8 +2316,8 @@ static bool8 IsSwitchInAbilityBlockedByGhostBattle(u16 ability)
 {
 	if (IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE)
 	{
-		if (ability == ABILITY_TRACE || ability == ABILITY_DOWNLOAD || ability == ABILITY_FOREWARN || ability == ABILITY_UNNERVE || ability == ABILITY_FRISK
-		|| ability == ABILITY_IMPOSTER || ability == ABILITY_ANTICIPATION || ability == ABILITY_INTIMIDATE || ability == ABILITY_SUPERSWEET_SYRUP)
+		if (ability == ABILITY_TRACE || ability == ABILITY_DOWNLOAD || ability == ABILITY_FOREWARN || ability == ABILITY_ANTICIPATION || ability == ABILITY_SUPERSWEET_SYRUP
+		|| ability == ABILITY_FRISK || ability == ABILITY_IMPOSTER || ability == ABILITY_INTIMIDATE)
 			return TRUE;
 	}
 	return FALSE;
@@ -3206,21 +3206,27 @@ u8 AbilityBattleEffects(u8 caseId, u8 battler)
 			    // Prints message only. separate from ABILITYEFFECT_ON_SWITCHIN bc activates before entry hazards
 				for (i = 0; i < gBattlersCount; i++)
 				{
-					if (IsBattlerAlive(i) && (GetBattlerAbility(i) == ABILITY_UNNERVE || GetBattlerAbility(i) == ABILITY_AS_ONE_ICE_RIDER
-					|| GetBattlerAbility(i) == ABILITY_AS_ONE_SHADOW_RIDER) && !gSpecialStatuses[i].switchInAbilityDone)
+					if (IsBattlerAlive(i) && !gSpecialStatuses[i].switchInAbilityDone)
 					{
-						gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-						if (GetBattlerAbility(i) == ABILITY_UNNERVE)
+						u16 abilityId = GetBattlerAbility(i);
+						
+						if (abilityId == ABILITY_UNNERVE || abilityId == ABILITY_AS_ONE_ICE_RIDER || abilityId == ABILITY_AS_ONE_SHADOW_RIDER)
 						{
-							PrepareMonTeamPrefixBuffer(gBattleTextBuff1, BATTLE_OPPOSITE(battler));
-							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_NERVOUS_TO_EAT; // Unnerve message
+							gSpecialStatuses[battler].switchInAbilityDone = TRUE;
+							
+							if (abilityId == ABILITY_UNNERVE)
+							{
+								PrepareMonTeamPrefixBuffer(gBattleTextBuff1, BATTLE_OPPOSITE(battler));
+								gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_NERVOUS_TO_EAT; // Unnerve message
+							}
+							else
+								gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_HAS_TWO_ABILITIES; // As One message
+							
+							gBattleScripting.battler = battler = i;
+							BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
+							++effect;
+							break;
 						}
-						else
-							gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_HAS_TWO_ABILITIES; // As One message
-						gBattleScripting.battler = battler = i;
-						BattleScriptPushCursorAndCallback(BattleScript_DisplaySwitchInMsg);
-						++effect;
-						break;
 					}
 				}
 				break;

@@ -11,12 +11,12 @@
 // Z-MOVE //
 ////////////
 
-bool8 IsZMove(u16 move);
+bool32 IsZMove(u32 move);
 
 /////////////
 // DYNAMAX //
 /////////////
 
-bool8 IsMaxMove(u16 move);
+bool32 IsMaxMove(u32 move);
 
 #endif // GUARD_BATTLE_GIMMICKS_H

@@ -33,23 +33,12 @@ struct BlockTransfer
     u8 multiplayerId;
 };
 
-struct LinkTestBGInfo
-{
-    u32 screenBaseBlock;
-    u32 paletteNum;
-    u32 dummy_8;
-    u32 dummy_C;
-};
-
 #define SIO_MULTI_CNT ((struct SioMultiCnt *)REG_ADDR_SIOCNT)
 
 static struct BlockTransfer sBlockSend;
 ALIGNED(8) static struct BlockTransfer sBlockRecv[MAX_LINK_PLAYERS];
 static u32 sBlockSendDelayCounter;
-static u32 gUnknown_3000E4C;
-static u8 gUnknown_3000E50;
 static u32 sPlayerDataExchangeStatus;
-static u32 gUnknown_3000E58;
 static u8 sLinkTestLastBlockSendPos;
 ALIGNED(8) static u8 sLinkTestLastBlockRecvPos[MAX_LINK_PLAYERS];
 // File break?
@@ -61,19 +50,13 @@ static u8 sChecksumAvailable;
 static u8 sHandshakePlayerCount;
 
 u16 gLinkPartnersHeldKeys[6];
-u32 gLinkDebugSeed;
 struct LinkPlayerBlock gLocalLinkPlayerBlock;
 bool8 gLinkErrorOccurred;
-u32 gLinkDebugFlags;
-u32 gFiller_3003EB4;
 bool8 gRemoteLinkPlayersNotReceived[MAX_LINK_PLAYERS];
 u8 gBlockReceivedStatus[MAX_LINK_PLAYERS];
-u32 gFiller_3003EC0;
 u16 gLinkHeldKeys;
 u16 gRecvCmds[MAX_RFU_PLAYERS][CMD_LENGTH];
 u32 gLinkStatus;
-bool8 gLinkAllAcked5FFF;
-bool8 gUnknown_3003F28;
 bool8 gLinkCommand2FFEAck[MAX_LINK_PLAYERS];
 bool8 gLinkCommand5FFFAck[MAX_LINK_PLAYERS];
 u16 gLinkCmd5FFFparam;
@@ -83,21 +66,14 @@ u8 gSavedLinkPlayerCount;
 u16 gSendCmd[CMD_LENGTH];
 u8 gSavedMultiplayerId;
 bool8 gReceivedRemoteLinkPlayers;
-struct LinkTestBGInfo gLinkTestBGInfo;
 void (*gLinkCallback)(void);
 u8 gShouldAdvanceLinkState;
-u16 gLinkTestBlockChecksums[MAX_LINK_PLAYERS];
 u8 gBlockRequestType;
-u32 gFiller_3003F94; // file
-u32 gFiller_3003F98; // boundary
-u32 gFiller_3003F9C; // here?
 u8 gLastSendQueueCount;
 struct Link gLink;
 u8 gLastRecvQueueCount;
 u16 gLinkSavedIme;
 
-EWRAM_DATA bool8 gLinkTestDebugValuesEnabled = FALSE; // never read
-EWRAM_DATA bool8 gUnknown_2022111 = FALSE;
 EWRAM_DATA u32 gUnknown_2022114 = 0;
 EWRAM_DATA u16 gBlockRecvBuffer[MAX_RFU_PLAYERS][BLOCK_BUFFER_SIZE / 2] = {};
 EWRAM_DATA u8 gBlockSendBuffer[BLOCK_BUFFER_SIZE] = {};
@@ -113,7 +89,6 @@ EWRAM_DATA struct {
     u8 lastSendQueueCount;
     u8 unk_06;
 } sLinkErrorBuffer = {};
-static EWRAM_DATA u16 sStartSend5FFFfailures = 0;
 static EWRAM_DATA void *sLinkErrorBgTilemapBuffer = NULL;
 
 static void InitLocalLinkPlayer(void);
@@ -290,9 +265,6 @@ void OpenLink(void)
         gSuppressLinkErrorMessage = FALSE;
         ResetBlockReceivedFlags();
         ResetBlockSend();
-        gUnknown_3000E4C = 0;
-        gUnknown_3003F28 = FALSE;
-        gLinkAllAcked5FFF = FALSE;
         gLinkCmd5FFFparam = 0;
         CreateTask(Task_TriggerHandshake, 2);
     }
@@ -391,10 +363,8 @@ void ProcessRecvCmds(u8 unused)
             gLinkPartnersHeldKeys[i] = gRecvCmds[i][1];
             break;
         case LINKCMD_0x5555:
-            gUnknown_3003F28 = TRUE;
             break;
         case LINKCMD_0x5566:
-            gUnknown_3003F28 = TRUE;
             break;
         case LINKCMD_INIT_BLOCK:
         {
@@ -1034,11 +1004,6 @@ bool8 IsLinkMaster(void)
     return EXTRACT_MASTER(gLinkStatus);
 }
 
-u8 sub_800AA74(void)
-{
-    return gUnknown_3000E50;
-}
-
 void Link_StartSend5FFFwithParam(u16 a0)
 {
     if (gWirelessCommType == 1)
@@ -1050,7 +1015,6 @@ void Link_StartSend5FFFwithParam(u16 a0)
         if (gLinkCallback == NULL)
         {
             gLinkCallback = LinkCB_BuildCommand5FFF;
-            gLinkAllAcked5FFF = FALSE;
             gLinkCmd5FFFparam = a0;
         }
     }
@@ -1064,14 +1028,9 @@ void SetCloseLinkCallback(void)
     }
     else
     {
-        if (gLinkCallback != NULL)
-        {
-            sStartSend5FFFfailures++;
-        }
-        else
+        if (gLinkCallback == NULL)
         {
             gLinkCallback = LinkCB_BuildCommand5FFF;
-            gLinkAllAcked5FFF = FALSE;
             gLinkCmd5FFFparam = 0;
         }
     }
@@ -1107,23 +1066,17 @@ static void LinkCB_WaitAckCommand5FFF(void)
         gLinkVSyncDisabled = TRUE;
         CloseLink();
         gLinkCallback = NULL;
-        gLinkAllAcked5FFF = TRUE;
     }
 }
 
 void SetLinkStandbyCallback(void)
 {
     if (gWirelessCommType == 1)
-    {
         Rfu_SetLinkStandbyCallback();
-    }
     else
     {
         if (gLinkCallback == NULL)
-        {
             gLinkCallback = LinkFunc_Send2FFE_1;
-        }
-        gLinkAllAcked5FFF = FALSE;
     }
 }
 

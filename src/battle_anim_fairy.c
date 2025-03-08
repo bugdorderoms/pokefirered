@@ -510,10 +510,8 @@ static void AnimMoonlightSparkleStep(struct Sprite* sprite)
 // No args.
 void AnimTask_FadeScreenBlue(u8 taskId)
 {
-    int a = SelectBattleAnimSpriteAndBgPalettes(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE) & 0xFFFF;
-    int b;
-    int c;
-    int d;
+    u32 a = SelectBattleAnimSpriteAndBgPalettes(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE) & 0xFFFF;
+    u32 b, c, d;
 
     gTasks[taskId].data[0] = 0;
     gTasks[taskId].data[1] = 0;
@@ -549,13 +547,13 @@ static void AnimTask_FadeScreenBlueStep(u8 taskId)
     case 0:
         if (++task->data[1] > 0)
         {
-            u16 i, j, color, bitmask, r3;
+            u32 i, j, color, bitmask, r3;
 			
             task->data[1] = 0;
 			
             if (++task->data[2] <= 15)
             {
-                u16 red, green, blue;
+                u32 red, green, blue;
 
                 task->data[4] += task->data[7];
                 task->data[5] += task->data[8];
@@ -590,7 +588,7 @@ static void AnimTask_FadeScreenBlueStep(u8 taskId)
     case 1:
         if (!gPaletteFade.active)
         {
-            u8 spriteId;
+            u32 spriteId;
 			
             for (spriteId = 0; spriteId < MAX_SPRITES; spriteId++)
             {

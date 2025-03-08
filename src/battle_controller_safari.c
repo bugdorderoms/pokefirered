@@ -12,15 +12,15 @@
 #include "constants/battle_anim.h"
 #include "constants/songs.h"
 
-static void SafariBufferRunCommand(u8 battlerId);
-static void SafariBufferExecCompleted(u8 battlerId);
-static void SafariHandleChooseAction(u8 battlerId);
-static void HandleInputChooseAction(u8 battlerId);
-static void SafariHandleChooseItem(u8 battlerId);
-static void SafariHandleStatusIconUpdate(u8 battlerId);
-static void SafariHandleIntroTrainerBallThrow(u8 battlerId);
+static void SafariBufferRunCommand(u32 battlerId);
+static void SafariBufferExecCompleted(u32 battlerId);
+static void SafariHandleChooseAction(u32 battlerId);
+static void HandleInputChooseAction(u32 battlerId);
+static void SafariHandleChooseItem(u32 battlerId);
+static void SafariHandleStatusIconUpdate(u32 battlerId);
+static void SafariHandleIntroTrainerBallThrow(u32 battlerId);
 
-static void (*const sSafariBufferCommands[CONTROLLER_CMDS_COUNT])(u8) =
+static void (*const sSafariBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
 	[CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
@@ -64,13 +64,13 @@ static void (*const sSafariBufferCommands[CONTROLLER_CMDS_COUNT])(u8) =
 	[CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 
-void SetControllerToSafari(u8 battlerId)
+void SetControllerToSafari(u32 battlerId)
 {
 	gBattlerControllerFuncs[battlerId] = SafariBufferRunCommand;
 	gBattlerControllerEndFuncs[battlerId] = SafariBufferExecCompleted;
 }
 
-static void SafariBufferRunCommand(u8 battlerId)
+static void SafariBufferRunCommand(u32 battlerId)
 {
     if (gBattleControllerExecFlags & gBitTable[battlerId])
     {
@@ -81,7 +81,7 @@ static void SafariBufferRunCommand(u8 battlerId)
     }
 }
 
-static void SafariBufferExecCompleted(u8 battlerId)
+static void SafariBufferExecCompleted(u32 battlerId)
 {
     gBattlerControllerFuncs[battlerId] = SafariBufferRunCommand;
 	
@@ -99,12 +99,12 @@ static void SafariBufferExecCompleted(u8 battlerId)
 // BATTLE CONTROLLERS //
 ////////////////////////
 
-void SafariHandleBallThrowAnim(u8 battlerId)
+void SafariHandleBallThrowAnim(u32 battlerId)
 {
 	BtlController_HandleBallThrowAnim(battlerId, B_ANIM_SAFARI_BALL_THROW, FALSE);
 }
 
-static void HandleChooseActionAfterDma3(u8 battlerId)
+static void HandleChooseActionAfterDma3(u32 battlerId)
 {
     if (!IsDma3ManagerBusyWithBgCopy())
     {
@@ -114,12 +114,12 @@ static void HandleChooseActionAfterDma3(u8 battlerId)
     }
 }
 
-static void SafariHandleChooseAction(u8 battlerId)
+static void SafariHandleChooseAction(u32 battlerId)
 {
 	BtlController_HandleChooseAction(battlerId, gText_SafariMenu, gText_WhatWillPlayerThrow, HandleChooseActionAfterDma3);
 }
 
-static void CompleteWhenChoosePokeblock(u8 battlerId)
+static void CompleteWhenChoosePokeblock(u32 battlerId)
 {
     if (gMain.callback2 == BattleMainCB2 && !gPaletteFade.active)
     {
@@ -128,36 +128,36 @@ static void CompleteWhenChoosePokeblock(u8 battlerId)
     }
 }
 
-static void SafariOpenPokeblockCase(u8 battlerId)
+static void SafariOpenPokeblockCase(u32 battlerId)
 {
 	if (!gPaletteFade.active)
         gBattlerControllerFuncs[battlerId] = CompleteWhenChoosePokeblock;
 }
 
-static void SafariHandleChooseItem(u8 battlerId)
+static void SafariHandleChooseItem(u32 battlerId)
 {
 	BtlController_HandleChooseItem(battlerId, SafariOpenPokeblockCase);
 }
 
-static void SafariHandleStatusIconUpdate(u8 battlerId)
+static void SafariHandleStatusIconUpdate(u32 battlerId)
 {
 	UpdateHealthboxAttribute(battlerId, HEALTHBOX_SAFARI_BALLS_TEXT);
     BattleControllerComplete(battlerId);
 }
 
-void SafariHandleFaintingCry(u8 battlerId)
+void SafariHandleFaintingCry(u32 battlerId)
 {
     PlayCry_Normal(GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES), 25);
     BattleControllerComplete(battlerId);
 }
 
-static void CompleteOnHealthboxSpriteCallbackDummy(u8 battlerId)
+static void CompleteOnHealthboxSpriteCallbackDummy(u32 battlerId)
 {
     if (gSprites[gHealthboxSpriteIds[battlerId]].callback == SpriteCallbackDummy)
         BattleControllerComplete(battlerId);
 }
 
-static void SafariHandleIntroTrainerBallThrow(u8 battlerId)
+static void SafariHandleIntroTrainerBallThrow(u32 battlerId)
 {
 	UpdateHealthboxAttribute(battlerId, HEALTHBOX_SAFARI_ALL_TEXT);
     StartHealthboxSlideIn(battlerId);
@@ -169,7 +169,7 @@ static void SafariHandleIntroTrainerBallThrow(u8 battlerId)
 // INPUT //
 ///////////
 
-static void HandleInputChooseAction(u8 battlerId)
+static void HandleInputChooseAction(u32 battlerId)
 {
 	if (JOY_NEW(A_BUTTON))
     {

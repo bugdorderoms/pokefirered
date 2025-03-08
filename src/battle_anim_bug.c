@@ -428,7 +428,7 @@ void AnimMissileArcStep(struct Sprite *sprite)
         DestroyAnimSprite(sprite);
     else
     {
-		u8 i;
+		u32 i;
         s16 tempData[8];
         u16 *data = sprite->data;
         u16 x1 = sprite->x;

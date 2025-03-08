@@ -195,10 +195,10 @@ static const struct UCoords8 sAbilityPopUpCoords[][MAX_BATTLERS_COUNT] =
 	}
 };
 
-void DoLoadHealthboxPalsForLevelUp(u8 *paletteId1, u8 *paletteId2, u8 battler)
+void DoLoadHealthboxPalsForLevelUp(u8 *paletteId1, u8 *paletteId2, u32 battler)
 {
-    u8 healthBoxSpriteId = gHealthboxSpriteIds[battler], healthBarSpriteId = gSprites[healthBoxSpriteId].hMain_HealthBarSpriteId;
-    u16 offset1, offset2;
+    u32 healthBoxSpriteId = gHealthboxSpriteIds[battler], healthBarSpriteId = gSprites[healthBoxSpriteId].hMain_HealthBarSpriteId;
+    u32 offset1, offset2;
 
     *paletteId1 = AllocSpritePalette(TAG_HEALTHBOX_PALS_1);
     *paletteId2 = AllocSpritePalette(TAG_HEALTHBOX_PALS_2);
@@ -221,10 +221,10 @@ void AnimTask_LoadHealthboxPalsForLevelUp(u8 taskId)
     DestroyAnimVisualTask(taskId);
 }
 
-void DoFreeHealthboxPalsForLevelUp(u8 battler)
+void DoFreeHealthboxPalsForLevelUp(u32 battler)
 {
-    u8 healthBoxSpriteId = gHealthboxSpriteIds[battler];
-    u8 paletteId1, paletteId2;
+    u32 healthBoxSpriteId = gHealthboxSpriteIds[battler];
+    u32 paletteId1, paletteId2;
 
     FreeSpritePaletteByTag(TAG_HEALTHBOX_PALS_1);
     FreeSpritePaletteByTag(TAG_HEALTHBOX_PALS_2);
@@ -252,13 +252,14 @@ void AnimTask_FlashHealthboxOnLevelUp(u8 taskId)
 
 static void AnimTask_FlashHealthboxOnLevelUp_Step(u8 taskId)
 {
-    u8 paletteNum;
-    int paletteOffset, colorOffset;
+    u32 paletteNum, paletteOffset, colorOffset;
 
     gTasks[taskId].data[0]++;
+	
     if (gTasks[taskId].data[0]++ >= gTasks[taskId].data[11])
     {
         gTasks[taskId].data[0] = 0;
+		
         paletteNum = IndexOfSpritePaletteTag(TAG_HEALTHBOX_PALS_1);
         colorOffset = gTasks[taskId].data[10] == 0 ? 6 : 2;
 		
@@ -290,7 +291,7 @@ static void AnimTask_FlashHealthboxOnLevelUp_Step(u8 taskId)
 
 void AnimTask_SwitchOutShrinkMon(u8 taskId)
 {
-    u8 spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
+    u32 spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
 
     switch (gTasks[taskId].data[0])
     {
@@ -316,8 +317,8 @@ void AnimTask_SwitchOutShrinkMon(u8 taskId)
 
 void AnimTask_SwitchOutBallEffect(u8 taskId)
 {
-    u8 ballId, spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
-    u8 x, y;
+    u32 ballId, spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
+    u32 x, y;
 
     switch (gTasks[taskId].data[0])
     {
@@ -340,7 +341,7 @@ void AnimTask_SwitchOutBallEffect(u8 taskId)
 
 void AnimTask_LoadOrFreeBallGfx(u8 taskId)
 {
-	u8 ballId = ItemIdToBallId(gLastUsedItem);
+	u32 ballId = ItemIdToBallId(gLastUsedItem);
 	
 	if (gBattleAnimArgs[0])
 		LoadBallGfx(ballId);
@@ -369,7 +370,7 @@ void AnimTask_IsBallBlockedByTrainerOrDodged(u8 taskId)
 
 void AnimTask_ThrowBall(u8 taskId)
 {
-    u8 spriteId = CreateBallSprite(ItemIdToBallId(gLastUsedItem), 32, 80, 29);
+    u32 spriteId = CreateBallSprite(ItemIdToBallId(gLastUsedItem), 32, 80, 29);
 	
     gSprites[spriteId].data[0] = 34;
     gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
@@ -388,8 +389,8 @@ static void AnimTask_ThrowBall_WaitAnimObjComplete(u8 taskId)
 
 void AnimTask_ThrowBallSpecial(u8 taskId)
 {
-    int x, y;
-    u8 spriteId;
+    u32 x, y;
+    u32 spriteId;
 
     if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
     {
@@ -450,8 +451,7 @@ static void SpriteCB_ThrowBall_Init(struct Sprite *sprite)
 
 static void SpriteCB_ThrowBall_ArcFlight(struct Sprite *sprite)
 {
-    int i;
-    u8 ballId;
+    u32 i, ballId;
 
     if (TranslateAnimHorizontalArc(sprite))
     {
@@ -494,8 +494,7 @@ static void SpriteCB_ThrowBall_TenFrameDelay(struct Sprite *sprite)
 
 static void SpriteCB_ThrowBall_ShrinkMon(struct Sprite *sprite)
 {
-    u8 spriteId;
-    u8 taskId;
+    u32 spriteId, taskId;
     u16 shrinkDistance, shrinkDelta;
 	
     spriteId = gBattlerSpriteIds[gBattleAnimTarget];
@@ -553,7 +552,7 @@ static void SpriteCB_ThrowBall_InitialFall(struct Sprite *sprite)
 
 static void SpriteCB_ThrowBall_CriticalCapture(struct Sprite *sprite)
 {
-	bool8 lastBounce = FALSE;
+	bool32 lastBounce = FALSE;
 	int bounceCount = sprite->data[3] >> 8;
 
     if (bounceCount == 0)
@@ -596,7 +595,7 @@ static void SpriteCB_ThrowBall_CriticalCapture(struct Sprite *sprite)
 
 static void SpriteCB_ThrowBall_Bounce(struct Sprite *sprite)
 {
-    bool8 lastBounce = FALSE;
+    bool32 lastBounce = FALSE;
     int bounceCount;
 
     switch (sprite->data[3] & 0xFF)
@@ -829,9 +828,8 @@ static void SpriteCB_ThrowBall_InitClick(struct Sprite *sprite)
 
 static void SpriteCB_ThrowBall_DoClick(struct Sprite *sprite)
 {
-    u8 *battler = &gBattleAnimTarget;
-
     sprite->data[4]++;
+	
     if (sprite->data[4] == 40)
     {
         PlaySE(SE_BALL_CLICK);
@@ -851,7 +849,7 @@ static void SpriteCB_ThrowBall_DoClick(struct Sprite *sprite)
     }
     else if (sprite->data[4] == 315)
     {
-        DestroySpriteAndFreeMatrix(&gSprites[gBattlerSpriteIds[*battler]]);
+        DestroySpriteAndFreeMatrix(&gSprites[gBattlerSpriteIds[gBattleAnimTarget]]);
         sprite->data[0] = 0;
         sprite->callback = SpriteCB_ThrowBall_FinishClick;
     }
@@ -859,7 +857,7 @@ static void SpriteCB_ThrowBall_DoClick(struct Sprite *sprite)
 
 static void SpriteCB_ThrowBall_FinishClick(struct Sprite *sprite)
 {
-    u8 paletteIndex;
+    u32 paletteIndex;
 
     switch (sprite->data[0])
     {
@@ -909,7 +907,7 @@ static void BattleAnimObj_SignalEnd(struct Sprite *sprite)
 
 static void SpriteCB_ThrowBall_BeginBreakOut(struct Sprite *sprite)
 {
-    u8 ballId = ItemIdToBallId(gLastUsedItem);
+    u32 ballId = ItemIdToBallId(gLastUsedItem);
 
     StartSpriteAnim(sprite, 1);
     StartSpriteAffineAnim(sprite, 0);
@@ -959,7 +957,7 @@ static void SpriteCB_ThrowBall_RunBreakOut(struct Sprite *sprite)
 
 static void TrainerBallBlock(struct Sprite *sprite)
 {
-    int i;
+    u32 i;
 
     SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
 	
@@ -1024,9 +1022,8 @@ void IncrementBattleParticleCounter(void)
 
 void AnimTask_SwapMonSpriteToFromSubstitute(u8 taskId)
 {
-    u8 spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
-    u32 x;
-    bool8 done;
+    u32 x, spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
+    bool32 done;
 
     switch (gTasks[taskId].data[10])
     {
@@ -1086,8 +1083,6 @@ void AnimTask_SwapMonSpriteToFromSubstitute(u8 taskId)
 
 void AnimTask_SubstituteFadeToInvisible(u8 taskId)
 {
-    u8 spriteId;
-
     switch (gTasks[taskId].data[15])
     {
     case 0:
@@ -1110,8 +1105,7 @@ void AnimTask_SubstituteFadeToInvisible(u8 taskId)
         }
         break;
     case 2:
-        spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
-        RequestDma3Fill(0, (void *)OBJ_VRAM0 + gSprites[spriteId].oam.tileNum * TILE_SIZE_4BPP, 0x800, DMA3_32BIT);
+        RequestDma3Fill(0, (void *)OBJ_VRAM0 + gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].oam.tileNum * TILE_SIZE_4BPP, 0x800, DMA3_32BIT);
         ClearBehindSubstituteBit(gBattleAnimAttacker);
         DestroyAnimVisualTask(taskId);
         break;
@@ -1126,9 +1120,9 @@ void AnimTask_IsAttackerBehindSubstitute(u8 taskId)
     DestroyAnimVisualTask(taskId);
 }
 
-void TryShinyAnimation(u8 battler)
+void TryShinyAnimation(u32 battler)
 {
-    u8 taskId1, taskId2;
+    u32 taskId1, taskId2;
 
     gBattleSpritesDataPtr->healthBoxesData[battler].triedShinyMonAnim = TRUE;
 
@@ -1138,7 +1132,7 @@ void TryShinyAnimation(u8 battler)
         {
             if (GetSpriteTileStartByTag(ANIM_TAG_GOLD_STARS) == 0xFFFF)
             {
-				u16 index = GET_TRUE_SPRITE_INDEX(ANIM_TAG_GOLD_STARS);
+				u32 index = GET_TRUE_SPRITE_INDEX(ANIM_TAG_GOLD_STARS);
 				
                 LoadCompressedSpriteSheetUsingHeap(&gBattleAnimPicTable[index]);
                 LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[index]);
@@ -1152,14 +1146,14 @@ void TryShinyAnimation(u8 battler)
             return;
         }
     }
-    gBattleSpritesDataPtr->healthBoxesData[battler].finishedShinyMonAnim = 1;
+    gBattleSpritesDataPtr->healthBoxesData[battler].finishedShinyMonAnim = TRUE;
 }
 
 static void AnimTask_ShinySparkles(u8 taskId)
 {
-    u8 battler;
-    u8 x, y;
-    u8 spriteId;
+    u32 battler;
+    u32 x, y;
+    u32 spriteId;
     u16 counter;
     s16 state;
     u8 pan;
@@ -1224,15 +1218,10 @@ static void AnimTask_ShinySparkles(u8 taskId)
 
 static void AnimTask_ShinySparkles_WaitSparkles(u8 taskId)
 {
-    u8 battler;
-
-    if (gTasks[taskId].data[12] == FALSE)
+    if (!gTasks[taskId].data[12])
     {
-        if (gTasks[taskId].data[1] == TRUE)
-        {
-            battler = gTasks[taskId].data[0];
-            gBattleSpritesDataPtr->healthBoxesData[battler].finishedShinyMonAnim = 1;
-        }
+        if (gTasks[taskId].data[1])
+            gBattleSpritesDataPtr->healthBoxesData[gTasks[taskId].data[0]].finishedShinyMonAnim = 1;
 
         DestroyTask(taskId);
     }
@@ -1273,7 +1262,7 @@ static void SpriteCB_ShinySparkles_2(struct Sprite *sprite)
 
 void AnimTask_LoadOrFreeBaitGfx(u8 taskId)
 {
-	u16 index = ANIM_TAG_SAFARI_BAIT;
+	u32 index = ANIM_TAG_SAFARI_BAIT;
 	
 	if (gBattleAnimArgs[0])
 	{
@@ -1405,8 +1394,9 @@ static void RestoreAbilityPopUpOverwrittenPixels(u8 * tiles)
 
 static u8* AddTextPrinterAndCreateWindowOnAbilityPopUp(const u8* str, u32 x, u32 y, u32 bgColor, u32 fgColor, u32 shadowColor, u32* WindowId)
 {
+	u32 i;
 	u8 *tiledata, *buffer = AllocZeroed(16);
-	u8 i, colours[3] = {bgColor, fgColor, shadowColor};
+	u8 colours[3] = {bgColor, fgColor, shadowColor};
 	struct WindowTemplate template = {0};
 	template.width = 16;
 	template.height = 2;
@@ -1457,12 +1447,11 @@ static void AbilityPopUpPrinter(const u8 * str, u8 * tiledata, u8 * tiledata2, u
 	RemoveWindow(WindowId);
 }
 
-static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprite2)
+static void PrintBattlerAndAbilityOnAbilityPopUp(u32 battler, u32 sprite, u32 sprite2)
 {
-    int i;
+    u32 i, ability;
     u8 pokemonName[POKEMON_NAME_LENGTH + 3] = {0};
     u8 *textPtr;
-    u16 ability;
 	
 	GetMonData(GetBattlerIllusionPartyIndexPtr(battler), MON_DATA_NICKNAME, gStringVar1);
     
@@ -1503,8 +1492,8 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u8 battler, u8 sprite, u8 sprit
 
 static void SpriteCB_AbilityPopUp(struct Sprite * sprite)
 {
-	u8 battlerId = sprite->tBattler;
-	bool8 slideEnded;
+	u32 battlerId = sprite->tBattler;
+	bool32 slideEnded;
 	
 	switch (sprite->tState)
 	{
@@ -1584,7 +1573,7 @@ static void SpriteCB_AbilityPopUp(struct Sprite * sprite)
 void AnimTask_CreateAbilityPopUp(u8 taskId)
 {
 	s16 x, y;
-    u8 position, spriteId1, spriteId2, battler = gBattleAnimAttacker;
+    u32 position, spriteId1, spriteId2, battler = gBattleAnimAttacker;
 	const struct SpriteTemplate sSpriteTemplate_AbilityPopUp =
 	{
 		.tileTag = ANIM_TAG_ABILITY_POP_UP + battler,

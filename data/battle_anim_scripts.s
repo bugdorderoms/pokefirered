@@ -29,21 +29,40 @@ InfatuationHearts::
 
 ElectricityEffect::
 	playsewithpan SE_M_THUNDERBOLT2, SOUND_PAN_TARGET
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 5, 0, 5, 0
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 5, 0, 5, 0, FALSE
 	delay 2
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -5, 10, 5, 1
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -5, 10, 5, 1, FALSE
 	delay 2
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 15, 20, 5, 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 15, 20, 5, 2, FALSE
 	delay 2
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -15, -10, 5, 0
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -15, -10, 5, 0, FALSE
 	delay 2
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 25, 0, 5, 1
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 25, 0, 5, 1, FALSE
 	delay 2
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -8, 8, 5, 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -8, 8, 5, 2, FALSE
 	delay 2
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 2, -8, 5, 0
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 2, -8, 5, 0, FALSE
 	delay 2
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -20, 15, 5, 1
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -20, 15, 5, 1, FALSE
+	return
+
+ElectricityEffectCentred::
+	playsewithpan SE_M_THUNDERBOLT2, SOUND_PAN_TARGET
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 5, 0, 5, 0, TRUE
+	delay 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -5, 10, 5, 1, TRUE
+	delay 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 15, 20, 5, 2, TRUE
+	delay 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -15, -10, 5, 0, TRUE
+	delay 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 25, 0, 5, 1, TRUE
+	delay 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -8, 8, 5, 2, TRUE
+	delay 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 2, -8, 5, 0, TRUE
+	delay 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -20, 15, 5, 1, TRUE
 	return
 
 FireSpreadEffect::
@@ -5534,7 +5553,7 @@ gMoveAnim_FLAIL::
 	createvisualtask AnimTask_FlailMovement, 2, ANIM_ATTACKER
 	loopsewithpan SE_M_HEADBUTT, SOUND_PAN_ATTACKER, 8, 2
 	waitforvisualfinish
-	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 3
+	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 3, FALSE
 	createvisualtask AnimTask_ShakeTargetBasedOnMovePowerOrDmg, 2, FALSE, 1, 30, TRUE, FALSE
 	playsewithpan SE_M_MEGA_KICK2, SOUND_PAN_TARGET
 	waitforvisualfinish
@@ -7447,7 +7466,7 @@ gMoveAnim_TWISTER::
 	end
 
 TwisterRandomHit::
-	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 3
+	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 3, FALSE
 	playsewithpan SE_M_COMET_PUNCH, SOUND_PAN_TARGET
 	delay 4
 	return
@@ -8700,7 +8719,7 @@ LusterPurgeLightBgEffect::
 	return
 
 LusterPurgeRandomHit::
-	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 2
+	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 2, FALSE
 	createvisualtask SoundTask_PlaySE1WithPanning, 5, SE_M_HYPER_BEAM, SOUND_PAN_TARGET
 	delay 3
 	return
@@ -10619,7 +10638,7 @@ AnimPluckBite::
 	end
 
 PluckRandomBite::
-	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 2
+	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 2, FALSE
 	playsewithpan SE_M_BITE, SOUND_PAN_TARGET
 	delay 4
 	return
@@ -12076,22 +12095,22 @@ gMoveAnim_THUNDER_FANG::
 	createsprite gSharpTeethSpriteTemplate, ANIM_ATTACKER, 2, 0, -32, 0, 0, 819, 10
 	createsprite gSharpTeethSpriteTemplate, ANIM_ATTACKER, 2, 0, 32, 4, 0, -819, 10
 	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_SHARP_TEETH, 1, 0, 10, RGB(30, 31, 1) @ Yellow color
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 5, 0, 5, 0
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -5, 10, 5, 1
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 5, 0, 5, 0, FALSE
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -5, 10, 5, 1, FALSE
 	delay 10
 	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, ANIM_TARGET, 2
 	playsewithpan SE_M_THUNDERBOLT2, SOUND_PAN_TARGET
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 15, 20, 5, 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 15, 20, 5, 2, FALSE
 	delay 1
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -15, -10, 5, 0
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -15, -10, 5, 0, FALSE
 	delay 1
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 25, 0, 5, 1
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 25, 0, 5, 1, FALSE
 	delay 1
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -8, 8, 5, 2
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -8, 8, 5, 2, FALSE
 	delay 1
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 2, -8, 5, 0
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, 2, -8, 5, 0, FALSE
 	delay 1
-	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -20, 15, 5, 1
+	createsprite gElectricitySpriteTemplate, ANIM_TARGET, 2, -20, 15, 5, 1, FALSE
 	createvisualtask AnimTask_BlendSelected, 10, F_PAL_TARGET, 2, 9, 0, RGB(30, 31, 1) @ Yellow color
 	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 0, 4, 7, 1
 	waitforvisualfinish
@@ -12385,4 +12404,144 @@ SummonRoomAttackerScaleAnim::
 	setalpha 8, 8
 	playsewithpan SE_M_SUPERSONIC, SOUND_PAN_ATTACKER
 	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 15, ANIM_ATTACKER, ST_OAM_OBJ_BLEND
+	return
+
+@ Credits: Skeli
+gMoveAnim_DRACO_METEOR::
+	loadspritegfx ANIM_TAG_ROCKS
+	loadspritegfx ANIM_TAG_WATER_ORB
+	loadspritegfx ANIM_TAG_FIRE_PLUME
+	loadspritegfx ANIM_TAG_FAIRY_LOCK_CHAINS @ Gray color
+	monbg ANIM_TARGET
+	setalpha 12, 8
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 0, 12, RGB(1, 2, 11) @ Royal purple color
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_WATER_ORB, 0, 10, 10, RGB(15, 0, 26) @ Purple color
+	waitforvisualfinish
+	playsewithpan SE_FALL, SOUND_PAN_ATTACKER
+	call DracoMeteor1
+	delay 7
+	call DracoMeteor2
+	stopsound
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 7, 4, 2
+	createsprite gEarthPowerFirePlumeSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, 40, 32
+	createvisualtask AnimTask_HorizontalShake, 5, MAX_BATTLERS_COUNT + 1, 2, 1
+	delay 7
+	call DracoMeteor3
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 7, 4, 2
+	createsprite gEarthPowerFirePlumeSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, -8, 32
+	delay 7
+	call DracoMeteor4
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 7, 4, 2
+	createsprite gEarthPowerFirePlumeSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, 21, 32
+	delay 7
+	call DracoMeteor1
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 7, 4, 2
+	createsprite gEarthPowerFirePlumeSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, -8, 32
+	createvisualtask AnimTask_HorizontalShake, 5, MAX_BATTLERS_COUNT + 1, 2, 1
+	delay 7
+	call DracoMeteor2
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 7, 4, 2
+	createsprite gEarthPowerFirePlumeSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, 40, 32
+	delay 7
+	call DracoMeteor3
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 7, 4, 2
+	createsprite gEarthPowerFirePlumeSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, -8, 32
+	delay 15
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 7, 4, 2
+	createsprite gEarthPowerFirePlumeSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, 21, 32
+	createvisualtask AnimTask_HorizontalShake, 5, MAX_BATTLERS_COUNT + 1, 2, 1
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 12, 0, RGB(1, 2, 11) @ Royal purple color
+	waitforvisualfinish
+	clearmonbg ANIM_TARGET
+	blendoff
+	end
+
+DracoMeteor1::
+	createsprite gDracoMeteorRockSpriteTemplate, ANIM_TARGET, 3, -48, -64, 40, 32, 25, TRUE
+	delay 2
+	createsprite gDracoMeteorRockTailSpriteTemplate, ANIM_TARGET, 3, -48, -64, 40, 32, 25, FALSE
+	delay 2
+	createsprite gDracoMeteorRockTailSpriteTemplate, ANIM_TARGET, 3, -48, -64, 40, 32, 25, FALSE
+	return
+
+DracoMeteor2::
+	createsprite gDracoMeteorRockSpriteTemplate, ANIM_TARGET, 3, -112, -64, -8, 32, 25, TRUE
+	delay 2
+	createsprite gDracoMeteorRockTailSpriteTemplate, ANIM_TARGET, 3, -112, -64, -8, 32, 25, FALSE
+	delay 2
+	createsprite gDracoMeteorRockTailSpriteTemplate, ANIM_TARGET, 3, -112, -64, -8, 32, 25, FALSE
+	return
+
+DracoMeteor3::
+	createsprite gDracoMeteorRockSpriteTemplate, ANIM_TARGET, 3, -80, -64, 24, 32, 25, TRUE
+	delay 2
+	createsprite gDracoMeteorRockTailSpriteTemplate, ANIM_TARGET, 3, -80, -64, 24, 32, 25, FALSE
+	delay 2
+	createsprite gDracoMeteorRockTailSpriteTemplate, ANIM_TARGET, 3, -80, -64, 24, 32, 25, FALSE
+	return
+
+DracoMeteor4::
+	createsprite gDracoMeteorRockSpriteTemplate, ANIM_TARGET, 3, -80, -64, -8, 32, 25, TRUE
+	delay 2
+	createsprite gDracoMeteorRockTailSpriteTemplate, ANIM_TARGET, 3, -80, -64, -8, 32, 25, FALSE
+	delay 2
+	createsprite gDracoMeteorRockTailSpriteTemplate, ANIM_TARGET, 3, -80, -64, -8, 32, 25, FALSE
+	return
+
+@ Credits: Skeli
+gMoveAnim_DISCHARGE::
+	loadspritegfx ANIM_TAG_IMPACT
+	loadspritegfx ANIM_TAG_SPARK_2
+	loadspritegfx ANIM_TAG_WHITE_CIRCLE_OF_LIGHT
+	monbg ANIM_TARGET
+	setalpha 12, 8
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_BG | F_PAL_ATTACKER, -31, 1, 5, 5, RGB(31, 31, 22) @ White color
+	playsewithpan SE_M_THUNDERBOLT2, SOUND_PAN_ATTACKER
+	call SparkElectricity1
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_BG | F_PAL_ATTACKER, -31, 1, 0, 0, RGB(31, 31, 22) @ White color
+	delay 10
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_BG | F_PAL_ATTACKER, -31, 1, 5, 5, RGB(31, 31, 22) @ White color
+	playsewithpan SE_M_THUNDERBOLT2, SOUND_PAN_ATTACKER
+	createsprite gSparkElectricitySpriteTemplate, ANIM_ATTACKER, 0, 100, 24, 60, 10, ANIM_ATTACKER, TRUE, FALSE
+	createsprite gSparkElectricitySpriteTemplate, ANIM_ATTACKER, 0, 170, 24, 42, 11, ANIM_ATTACKER, TRUE, TRUE
+	playsewithpan SE_M_SOLAR_BEAM, SOUND_PAN_ATTACKER
+	createsprite gLusterPurgeCircleSpriteTemplate, ANIM_ATTACKER, 41, 0, 0, ANIM_ATTACKER, TRUE
+	delay 20
+	createvisualtask AnimTask_BlendExcept, 5, F_PAL_NO_EXCEPTIONS, 2, 0, 16, RGB_WHITE
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_WHITE_CIRCLE_OF_LIGHT, 2, 0, 16, RGB_WHITE
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_IMPACT, 0, 12, 12, RGB(0, 0, 23) @ Blue color
+	waitforvisualfinish
+	call DischargeRandomHit
+	call DischargeRandomHit
+	call DischargeRandomHit
+	call DischargeRandomHit
+	call DischargeRandomHit
+	call DischargeRandomHit
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendExcept, 5, F_PAL_NO_EXCEPTIONS, 2, 16, 0, RGB_WHITE
+	createvisualtask AnimTask_HorizontalShake, 5, ANIM_TARGET, 5, 14
+	createvisualtask AnimTask_HorizontalShake, 5, ANIM_DEF_PARTNER, 5, 14
+	createvisualtask AnimTask_HorizontalShake, 5, ANIM_ATK_PARTNER, 5, 14
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_DEF_SIDE | F_PAL_ATK_PARTNER, 2, 2, 0, 12, RGB(30, 31, 1) @ Yellow color
+	call ElectricityEffectCentred
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BATTLERS_2, 2, 0, 0, RGB_BLACK
+	waitforvisualfinish
+	clearmonbg ANIM_TARGET
+	blendoff
+	end
+
+DischargeRandomHit::
+	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 2, TRUE
+	createvisualtask SoundTask_PlaySE1WithPanning, 5, SE_M_HYPER_BEAM, SOUND_PAN_TARGET
+	delay 3
 	return

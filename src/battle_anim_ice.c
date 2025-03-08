@@ -34,7 +34,7 @@ static void InitIceBallParticle(struct Sprite *sprite);
 static void AnimIceBallParticle(struct Sprite *sprite);
 static void AnimTask_Haze2(u8 taskId);
 static void AnimTask_Hail2(u8 taskId);
-static bool8 GenerateHailParticle(u8 hailStructId, u8 affineAnimNum, u8 taskId, u8 c);
+static bool32 GenerateHailParticle(u32 hailStructId, u32 affineAnimNum, u32 taskId, u32 c);
 
 static const union AnimCmd sAnim_IceCrystalLarge[] =
 {
@@ -534,7 +534,7 @@ static void AnimFlickerIceEffectParticle(struct Sprite *sprite)
 // arg 5: multiple targets
 static void AnimSwirlingSnowball_Step1(struct Sprite *sprite)
 {
-    s32 i;
+    u32 i;
     s16 tempDataHolder[8];
 
     InitSpritePosToAnimAttacker(sprite, TRUE);
@@ -632,7 +632,7 @@ static void AnimSwirlingSnowball_End(struct Sprite *sprite)
 // arg 7: multiple targets
 static void AnimMoveParticleBeyondTarget(struct Sprite *sprite)
 {
-    s32 i;
+    u32 i;
     s16 tempDataHolder[8];
 
     InitSpritePosToAnimAttacker(sprite, TRUE);
@@ -731,7 +731,7 @@ static void AnimWaveFromCenterOfTarget(struct Sprite *sprite)
 // arg 5: both mons (boolean)
 void InitSwirlingFogAnim(struct Sprite *sprite)
 {
-	u8  battler = GetBattlerForAnimScript(gBattleAnimArgs[4]);
+	u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[4]);
 	s16 tempVar;
 	
 	InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[4], FALSE);
@@ -928,12 +928,12 @@ static void AnimTask_Hail2(u8 taskId)
     }
 }
 
-static bool8 GenerateHailParticle(u8 hailStructId, u8 affineAnimNum, u8 taskId, u8 c)
+static bool32 GenerateHailParticle(u32 hailStructId, u32 affineAnimNum, u32 taskId, u32 c)
 {
-    u8 id;
+    u32 id;
     s16 battlerX, battlerY;
     s16 spriteX;
-    bool8 possibleBool = FALSE;
+    bool32 possibleBool = FALSE;
     s8 unk = sHailCoordData[hailStructId].unk3;
 
     if (unk != 2)
@@ -1031,7 +1031,7 @@ static void AnimHailContinue(struct Sprite *sprite)
 // arg 5: arc height (negative)
 static void InitIceBallAnim(struct Sprite *sprite)
 {
-    u8 animNum = gBattleAnimArgs[ARG_RET_ID];
+    u32 animNum = gBattleAnimArgs[ARG_RET_ID];
 
     if (animNum > 4)
         animNum = 4;

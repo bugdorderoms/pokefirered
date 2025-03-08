@@ -23,7 +23,7 @@ static void AnimGuillotinePincerStep2(struct Sprite *);
 static void AnimRazorWindTornado(struct Sprite *sprite);
 static void AnimTask_GrowAndGreyscaleStep(u8 taskId);
 static void AnimTask_MinimizeStep1(u8);
-static void CreateMinimizeSprite(struct Task *, u8);
+static void CreateMinimizeSprite(struct Task *, u32);
 static void ClonedMinizeSprite_Step(struct Sprite *);
 static void AnimTask_SplashStep(u8);
 static void ThrashMoveMon(u8);
@@ -1246,7 +1246,7 @@ static void AnimGuillotinePincerStep2(struct Sprite *sprite)
 // arg 1: duration
 void AnimTask_GrowAndGreyscale(u8 taskId)
 {
-    u8 spriteId = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
+    u32 spriteId = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
     
     PrepareBattlerSpriteForRotScale(spriteId, ST_OAM_OBJ_BLEND);
     SetSpriteRotScale(spriteId, 0xD0, 0xD0, 0);
@@ -1272,7 +1272,7 @@ static void AnimTask_GrowAndGreyscaleStep(u8 taskId)
 void AnimTask_Minimize(u8 taskId)
 {
     struct Task* task = &gTasks[taskId];
-    u8 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
+    u32 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
     
     task->data[0] = spriteId;
     PrepareBattlerSpriteForRotScale(spriteId, ST_OAM_OBJ_NORMAL);
@@ -1358,10 +1358,10 @@ static void AnimTask_MinimizeStep1(u8 taskId)
     }
 }
 
-static void CreateMinimizeSprite(struct Task* task, u8 taskId)
+static void CreateMinimizeSprite(struct Task* task, u32 taskId)
 {
-    u16 matrixNum;
-    s16 spriteId = CloneBattlerSpriteWithBlend(ANIM_ATTACKER);
+    u32 matrixNum;
+    s32 spriteId = CloneBattlerSpriteWithBlend(ANIM_ATTACKER);
     
     if (spriteId >= 0)
     {
@@ -1485,7 +1485,7 @@ void AnimTask_GrowAndShrink(u8 taskId)
 // arg 2: y pixel offset
 void AnimAngerMark(struct Sprite *sprite)
 {
-    u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
     
     if (GetBattlerSide(battler) == B_SIDE_OPPONENT)
         gBattleAnimArgs[1] = -gBattleAnimArgs[1];
@@ -1763,8 +1763,7 @@ static void AnimPencil_Step(struct Sprite *sprite)
 // arg 3: respectMonPicOffsets (boolean) (This arg is inverted in base game)
 void AnimBlendThinRing(struct Sprite *sprite)
 {
-    u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[2]);
-    u8 r4;
+    u32 r4, battler = GetBattlerForAnimScript(gBattleAnimArgs[2]);
 
     if (IsDoubleBattleForBattler(battler) && IsBattlerSpriteVisible(BATTLE_PARTNER(battler)))
     {
@@ -1791,13 +1790,13 @@ void AnimBlendThinRing(struct Sprite *sprite)
 // arg 4: final y pixel offset
 void AnimHyperVoiceRing(struct Sprite *sprite)
 {
-    u16 r9 = 0;
-    u16 r6 = 0;
+    u32 r9 = 0;
+    u32 r6 = 0;
     s16 sp0 = 0;
     s16 sp1 = 0;
-    u8 sp4 = gBattleAnimArgs[2] ? BATTLER_COORD_Y_PIC_OFFSET : BATTLER_COORD_Y;
-    u8 battler1 = GetBattlerForAnimScript(ANIM_ATTACKER);
-    u8 battler2 = GetBattlerForAnimScript(ANIM_TARGET);
+    u32 sp4 = gBattleAnimArgs[2] ? BATTLER_COORD_Y_PIC_OFFSET : BATTLER_COORD_Y;
+    u32 battler1 = GetBattlerForAnimScript(ANIM_ATTACKER);
+    u32 battler2 = GetBattlerForAnimScript(ANIM_TARGET);
 
     if (GetBattlerSide(battler1) != B_SIDE_PLAYER)
     {
@@ -1860,7 +1859,7 @@ void AnimHyperVoiceRing(struct Sprite *sprite)
 // arg 5: blend coefficient
 void AnimUproarRing(struct Sprite *sprite)
 {
-    u8 index = IndexOfSpritePaletteTag(ANIM_TAG_THIN_RING);
+    u32 index = IndexOfSpritePaletteTag(ANIM_TAG_THIN_RING);
     
     if (index != 0xFF)
         BlendPalette(((index << 20) + 0x1010000) >> 16, 15, gBattleAnimArgs[5], gBattleAnimArgs[4]);
@@ -1876,8 +1875,6 @@ void AnimUproarRing(struct Sprite *sprite)
 // arg 2: cracked egg part (0 = up part, 1 = left part)
 void AnimSoftBoiledEgg(struct Sprite *sprite)
 {
-    s16 r1;
-    
     InitSpritePosToAnimAttacker(sprite, FALSE);
 	
     sprite->data[0] = 0x380;
@@ -1888,8 +1885,6 @@ void AnimSoftBoiledEgg(struct Sprite *sprite)
 
 static void AnimSoftBoiledEgg_Step1(struct Sprite *sprite)
 {
-    s16 add;
-    
     sprite->y2 -= (sprite->data[0] >> 8);
     sprite->x2 = sprite->data[1] >> 8;
 	
@@ -2183,7 +2178,7 @@ static void SpeedDust_Step1(u8 taskId)
     case 0:
         if (++task->data[1] > 4)
         {
-            u8 spriteId;
+            u32 spriteId;
 			
             task->data[1] = 0;
 			
@@ -2229,7 +2224,7 @@ void AnimSpeedDust(struct Sprite *sprite)
 // No args.
 void AnimTask_LoadMusicNotesPals(u8 taskId)
 {
-    u8 i, paletteNums[3];
+    u32 i, paletteNums[3];
 
     paletteNums[0] = IndexOfSpritePaletteTag(ANIM_TAG_MUSIC_NOTES_2);
 	
@@ -2252,7 +2247,7 @@ void AnimTask_LoadMusicNotesPals(u8 taskId)
 // No args.
 void AnimTask_FreeMusicNotesPals(u8 taskId)
 {
-    u8 i;
+    u32 i;
     
     for (i = 0; i < 3; i++)
         FreeSpritePaletteByTag(gMusicNotePaletteTagsTable[i]);
@@ -2260,9 +2255,9 @@ void AnimTask_FreeMusicNotesPals(u8 taskId)
     DestroyAnimVisualTask(taskId);
 }
 
-static void SetMusicNotePalette(struct Sprite *sprite, u8 a, u8 b)
+static void SetMusicNotePalette(struct Sprite *sprite, u32 a, u32 b)
 {
-    u8 tile = (b & 1) ? 32 : 0;
+    u32 tile = (b & 1) ? 32 : 0;
     sprite->oam.tileNum += tile + (a << 2);
     sprite->oam.paletteNum = IndexOfSpritePaletteTag(gMusicNotePaletteTagsTable[b >> 1]);
 }
@@ -2295,8 +2290,6 @@ void AnimHealBellMusicNote(struct Sprite *sprite)
 // No args.
 void AnimTask_FakeOut(u8 taskId)
 {
-    u16 win0v = 0;
-
     gBattle_WIN0H = 0xF0;
     gBattle_WIN0V = 0xA0;
 	
@@ -2307,7 +2300,7 @@ void AnimTask_FakeOut(u8 taskId)
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG3 | BLDCNT_EFFECT_DARKEN);
     SetGpuReg(REG_OFFSET_BLDY, BLDCNT_TGT1_OBJ);
 	
-    gTasks[taskId].data[0] = win0v;
+    gTasks[taskId].data[0] = 0;
     gTasks[taskId].data[1] = gBattle_WIN0H;
     gTasks[taskId].func = FakeOutStep1;
 }
@@ -2366,7 +2359,7 @@ void AnimTask_StretchBattlerUp(u8 taskId)
 			break;
 		case 1:
 		{
-			u8 spriteId = gTasks[taskId].data[1];
+			u32 spriteId = gTasks[taskId].data[1];
 			
 			gSprites[spriteId].x2 = -gSprites[spriteId].x2;
 			
@@ -2646,7 +2639,7 @@ void AnimFurySwipes(struct Sprite *sprite)
 // arg 2: second anim delay
 void AnimMovementWaves(struct Sprite *sprite)
 {
-	u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+	u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 	
     sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X);
     sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET);
@@ -2689,7 +2682,7 @@ void AnimTask_UproarDistortion(u8 taskId)
 void AnimJaggedMusicNote(struct Sprite *sprite)
 {
     int var1;
-    u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 
     if (GetBattlerSide(battler) == B_SIDE_OPPONENT)
         gBattleAnimArgs[1] = -gBattleAnimArgs[1];

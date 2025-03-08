@@ -8,15 +8,15 @@
 #include "util.h"
 #include "constants/battle_anim.h"
 
-static void LinkPartnerBufferRunCommand(u8 battlerId);
-static void LinkPartnerBufferExecCompleted(u8 battlerId);
-static void LinkPartnerHandleLoadMonSprite(u8 battlerId);
-static void LinkPartnerHandleSwitchInAnim(u8 battlerId);
-static void LinkPartnerHandleDrawTrainerPic(u8 battlerId);
-static void LinkPartnerHandleTrainerSlideBack(u8 battlerId);
-static void LinkPartnerHandleIntroTrainerBallThrow(u8 battlerId);
+static void LinkPartnerBufferRunCommand(u32 battlerId);
+static void LinkPartnerBufferExecCompleted(u32 battlerId);
+static void LinkPartnerHandleLoadMonSprite(u32 battlerId);
+static void LinkPartnerHandleSwitchInAnim(u32 battlerId);
+static void LinkPartnerHandleDrawTrainerPic(u32 battlerId);
+static void LinkPartnerHandleTrainerSlideBack(u32 battlerId);
+static void LinkPartnerHandleIntroTrainerBallThrow(u32 battlerId);
 
-static void (*const sLinkPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u8) =
+static void (*const sLinkPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
 	[CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
@@ -60,13 +60,13 @@ static void (*const sLinkPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u8) =
 	[CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 
-void SetControllerToLinkPartner(u8 battlerId)
+void SetControllerToLinkPartner(u32 battlerId)
 {
 	gBattlerControllerFuncs[battlerId] = LinkPartnerBufferRunCommand;
 	gBattlerControllerEndFuncs[battlerId] = LinkPartnerBufferExecCompleted;
 }
 
-static void LinkPartnerBufferRunCommand(u8 battlerId)
+static void LinkPartnerBufferRunCommand(u32 battlerId)
 {
     if (gBattleControllerExecFlags & gBitTable[battlerId])
     {
@@ -77,7 +77,7 @@ static void LinkPartnerBufferRunCommand(u8 battlerId)
     }
 }
 
-static void LinkPartnerBufferExecCompleted(u8 battlerId)
+static void LinkPartnerBufferExecCompleted(u32 battlerId)
 {
 	gBattlerControllerFuncs[battlerId] = LinkPartnerBufferRunCommand;
 	
@@ -95,18 +95,18 @@ static void LinkPartnerBufferExecCompleted(u8 battlerId)
 // BATTLE CONTROLLERS //
 ////////////////////////
 
-static void LinkPartnerHandleLoadMonSprite(u8 battlerId)
+static void LinkPartnerHandleLoadMonSprite(u32 battlerId)
 {
     BtlController_HandleLoadMonSprite(battlerId, FALSE, WaitForMonAnimAfterLoad);
 }
 
-static void SwitchIn_WaitAndEnd(u8 battlerId)
+static void SwitchIn_WaitAndEnd(u32 battlerId)
 {
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].specialAnimActive)
         BattleControllerComplete(battlerId);
 }
 
-static void SwitchIn_ShowSubstitute(u8 battlerId)
+static void SwitchIn_ShowSubstitute(u32 battlerId)
 {
     if (gSprites[gHealthboxSpriteIds[battlerId]].callback == SpriteCallbackDummy)
     {
@@ -117,7 +117,7 @@ static void SwitchIn_ShowSubstitute(u8 battlerId)
     }
 }
 
-static void SwitchIn_ShowHealthbox(u8 battlerId)
+static void SwitchIn_ShowHealthbox(u32 battlerId)
 {
     if (gBattleSpritesDataPtr->healthBoxesData[battlerId].finishedShinyMonAnim)
     {
@@ -136,7 +136,7 @@ static void SwitchIn_ShowHealthbox(u8 battlerId)
     }
 }
 
-static void SwitchIn_TryShinyAnim(u8 battlerId)
+static void SwitchIn_TryShinyAnim(u32 battlerId)
 {
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
         TryShinyAnimation(battlerId);
@@ -148,14 +148,14 @@ static void SwitchIn_TryShinyAnim(u8 battlerId)
     }
 }
 
-static void LinkPartnerHandleSwitchInAnim(u8 battlerId)
+static void LinkPartnerHandleSwitchInAnim(u32 battlerId)
 {
 	BtlController_HandleSwitchInAnim(battlerId, TRUE, SwitchIn_TryShinyAnim);
 }
 
-static u32 GetLinkPartnerTrainerPicId(u8 battlerId)
+static u32 GetLinkPartnerTrainerPicId(u32 battlerId)
 {
-	u8 playerId = GetBattlerMultiplayerId(battlerId);
+	u32 playerId = GetBattlerMultiplayerId(battlerId);
 	
     if ((gLinkPlayers[playerId].version & 0xFF) == VERSION_RUBY || (gLinkPlayers[playerId].version & 0xFF) == VERSION_SAPPHIRE
      || (gLinkPlayers[playerId].version & 0xFF) == VERSION_EMERALD)
@@ -164,7 +164,7 @@ static u32 GetLinkPartnerTrainerPicId(u8 battlerId)
         return gLinkPlayers[playerId].gender + TRAINER_BACK_PIC_RED;
 }
 
-static void LinkPartnerHandleDrawTrainerPic(u8 battlerId)
+static void LinkPartnerHandleDrawTrainerPic(u32 battlerId)
 {
 	s16 xPos;
     u32 trainerPicId = GetLinkPartnerTrainerPicId(battlerId);
@@ -177,12 +177,12 @@ static void LinkPartnerHandleDrawTrainerPic(u8 battlerId)
 	BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, FALSE, xPos, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80, GetBattlerSpriteSubpriority(battlerId));
 }
 
-static void LinkPartnerHandleTrainerSlideBack(u8 battlerId)
+static void LinkPartnerHandleTrainerSlideBack(u32 battlerId)
 {
 	BtlController_HandleTrainerSlideBack(battlerId, 35, FALSE);
 }
 
-static void Intro_DelayAndEnd(u8 battlerId)
+static void Intro_DelayAndEnd(u32 battlerId)
 {
     if (--gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay == 0xFF)
     {
@@ -191,7 +191,7 @@ static void Intro_DelayAndEnd(u8 battlerId)
     }
 }
 
-static void Intro_WaitForHealthbox(u8 battlerId)
+static void Intro_WaitForHealthbox(u32 battlerId)
 {
     bool32 var = FALSE;
 
@@ -213,7 +213,7 @@ static void Intro_WaitForHealthbox(u8 battlerId)
     }
 }
 
-static void Intro_ShowHealthbox(u8 battlerId)
+static void Intro_ShowHealthbox(u32 battlerId)
 {
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive && !gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].ballAnimActive)
     {
@@ -231,7 +231,7 @@ static void Intro_ShowHealthbox(u8 battlerId)
     }
 }
 
-static void LinkPartnerHandleIntroTrainerBallThrow(u8 battlerId)
+static void LinkPartnerHandleIntroTrainerBallThrow(u32 battlerId)
 {
 	BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F9, GetLinkPartnerTrainerPicId(battlerId), StartAnimLinearTranslation, 24, Intro_ShowHealthbox);
 }

@@ -99,7 +99,7 @@
 #define ANIM_TAG_VINE                       (ANIM_SPRITES_START + 89) // unused
 #define ANIM_TAG_SWORD_2                    (ANIM_SPRITES_START + 90) // unused
 #define ANIM_TAG_CLAPPING                   (ANIM_SPRITES_START + 91) // unused
-#define ANIM_TAG_RED_TUBE                   (ANIM_SPRITES_START + 92) // unused
+#define ANIM_TAG_FAIRY_LOCK_CHAINS          (ANIM_SPRITES_START + 92)
 #define ANIM_TAG_AMNESIA                    (ANIM_SPRITES_START + 93)
 #define ANIM_TAG_STRING_2                   (ANIM_SPRITES_START + 94) // unused
 #define ANIM_TAG_PENCIL_2                   (ANIM_SPRITES_START + 95) // unused

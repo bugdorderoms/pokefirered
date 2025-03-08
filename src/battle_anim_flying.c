@@ -398,8 +398,7 @@ void AnimTask_AnimateGustTornadoPalette(u8 taskId)
 
 static void AnimTask_AnimateGustTornadoPalette_Step(u8 taskId)
 {
-    u8 data2;
-    u16 temp;
+    u32 data2, temp;
     s32 i, base;
 
     if (gTasks[taskId].data[10]++ == gTasks[taskId].data[1])
@@ -580,7 +579,7 @@ struct FeatherDanceData
 // arg 7: anim battler
 static void AnimFallingFeather(struct Sprite *sprite)
 {
-    u8 matrixNum, sinIndex, battler = GetBattlerForAnimScript(gBattleAnimArgs[7]);
+    u32 matrixNum, sinIndex, battler = GetBattlerForAnimScript(gBattleAnimArgs[7]);
     s16 spriteCoord, sinVal;
     struct FeatherDanceData *data = (struct FeatherDanceData *)sprite->data;
 	
@@ -826,7 +825,7 @@ static void AnimFallingFeather_Step(struct Sprite *sprite)
 // arg 4: anim id
 static void AnimWhirlwindLine(struct Sprite *sprite)
 {
-    u16 arg;
+    u32 arg;
 	
 	InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[2], FALSE);
 	
@@ -1023,12 +1022,12 @@ void AnimTask_AirCutterProjectile(u8 taskId)
 	
     if (gBattleAnimArgs[4] >= 64)
     {
-        u16 var = GetBattlerSpriteSubpriority(gBattleAnimTarget) + (gBattleAnimArgs[4] - 64);
+        u32 var = GetBattlerSpriteSubpriority(gBattleAnimTarget) + (gBattleAnimArgs[4] - 64);
         gTasks[taskId].data[2] = var;
     }
     else
     {
-        u16 var = GetBattlerSpriteSubpriority(gBattleAnimTarget) - gBattleAnimArgs[4];
+        u32 var = GetBattlerSpriteSubpriority(gBattleAnimTarget) - gBattleAnimArgs[4];
         gTasks[taskId].data[2] = var;
     }
 
@@ -1042,7 +1041,7 @@ static void AirCutterProjectileStep1(u8 taskId)
 {
     if (gTasks[taskId].data[0]-- <= 0)
     {
-        u8 spriteId = CreateSprite(&gAirWaveProjectileSpriteTemplate, gTasks[taskId].data[9], gTasks[taskId].data[10], gTasks[taskId].data[2] - gTasks[taskId].data[1]);
+        u32 spriteId = CreateSprite(&gAirWaveProjectileSpriteTemplate, gTasks[taskId].data[9], gTasks[taskId].data[10], gTasks[taskId].data[2] - gTasks[taskId].data[1]);
         struct Sprite *sprite = &gSprites[spriteId];
 
         switch (gTasks[taskId].data[4])

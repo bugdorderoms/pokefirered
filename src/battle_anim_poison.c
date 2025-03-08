@@ -357,9 +357,9 @@ static void AnimAcidPoisonDroplet(struct Sprite *sprite)
 // arg 0: which battler
 void AnimTask_AcidArmor(u8 taskId)
 {
-    u8 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    u32 i, battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+	s16 y;
     u16 bgX, bgY;
-    s16 y, i;
     struct ScanlineEffectParams scanlineParams;
     struct Task *task = &gTasks[taskId];
 

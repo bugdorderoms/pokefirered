@@ -11,10 +11,10 @@
 // SWITCH //
 ////////////
 
-static bool8 ShouldSwitchIfNoOneMoveIsEffective(u8 battlerId)
+static bool32 ShouldSwitchIfNoOneMoveIsEffective(u32 battlerId)
 {
-	u8 i, j, k, unusableMoves = 0;
-	u8 battlerIn2, battlerIn1 = battlerId;
+	u32 i, j, k, unusableMoves = 0;
+	u32 battlerIn2, battlerIn1 = battlerId;
 	
 	if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
 		battlerIn2 = BATTLE_PARTNER(battlerId);
@@ -53,11 +53,11 @@ static bool8 ShouldSwitchIfNoOneMoveIsEffective(u8 battlerId)
 	return FALSE;
 }
 
-bool8 BattleAI_ShouldSwitch(u8 battlerId)
+bool32 BattleAI_ShouldSwitch(u32 battlerId)
 {
 	if (CanBattlerEscape(battlerId, TRUE) && !IsAbilityPreventingSwitchOut(battlerId) && !(gStatuses3[battlerId] & STATUS3_COMMANDING) && !IsBattlerBeingCommanded(battlerId))
 	{
-		u8 i, availableToSwitch, battlerIn2, battlerIn1 = battlerId;
+		u32 i, availableToSwitch, battlerIn2, battlerIn1 = battlerId;
 		
 		if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
 			battlerIn2 = BATTLE_PARTNER(battlerId);
@@ -85,18 +85,18 @@ bool8 BattleAI_ShouldSwitch(u8 battlerId)
 	return FALSE;
 }
 
-bool8 BattleAI_SwitchIfBadMoves(u8 battlerId, bool8 doubles)
+bool32 BattleAI_SwitchIfBadMoves(u32 battlerId, bool32 doubles)
 {
 	return FALSE;
 }
 
-u8 GetMostSuitableMonToSwitchInto(u8 battlerId)
+u32 GetMostSuitableMonToSwitchInto(u32 battlerId)
 {
 	if (gBattleStruct->battlers[battlerId].monToSwitchIntoId != PARTY_SIZE)
 		return gBattleStruct->battlers[battlerId].monToSwitchIntoId;
 	else
 	{
-		u8 i, battlerIn2, battlerIn1 = battlerId;
+		u32 i, battlerIn2, battlerIn1 = battlerId;
 		
 		if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
 			battlerIn2 = BATTLE_PARTNER(battlerId);
@@ -124,10 +124,10 @@ u8 GetMostSuitableMonToSwitchInto(u8 battlerId)
 #define MAX_ITEM_PRIORITY 10
 
 // How higher more priority takes over other item effects
-bool8 BattleAI_ShouldUseItem(u8 battlerId)
+bool32 BattleAI_ShouldUseItem(u32 battlerId)
 {
-	u8 i, j, partyId, itemPriority, chosenItemIndex, numUsableItems, itemPriorities[MAX_TRAINER_ITEMS];
-	u16 holdEffectParam, item, usableItems[MAX_TRAINER_ITEMS];
+	u32 i, j, partyId, itemPriority, chosenItemIndex, numUsableItems, itemPriorities[MAX_TRAINER_ITEMS];
+	u32 holdEffectParam, item, usableItems[MAX_TRAINER_ITEMS];
 	
 	// Item effects are'nt blocked
 	if (!IsItemUseBlockedByBattleEffect(battlerId))
@@ -174,7 +174,7 @@ bool8 BattleAI_ShouldUseItem(u8 battlerId)
 					case EFFECT_ITEM_INCREASE_ALL_STATS:
 						if (gBattleMons[battlerId].hp >= gBattleMons[battlerId].maxHP / 2)
 						{
-							u8 count = 0;
+							u32 count = 0;
 							
 							for (j = STAT_ATK; j < NUM_STATS; j++)
 							{

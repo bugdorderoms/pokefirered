@@ -56,22 +56,22 @@ struct AiThinking
 #define AI_THINKING (gBattleResources->aiThinking)
 
 // battle_ai_main
-bool8 BattleAI_IsRunning(void);
+bool32 BattleAI_IsRunning(void);
 void BattleAI_SetupAILogicData(void);
-void BattleAI_ChooseAction(u8 battlerId);
-void BattleAI_ComputeMovesScore(u8 battlerId);
+void BattleAI_ChooseAction(u32 battlerId);
+void BattleAI_ComputeMovesScore(u32 battlerId);
 void BattleAI_SetAILogicDataForTurn(void);
 
 // battle_ai_switch_items
-bool8 BattleAI_ShouldSwitch(u8 battlerId);
-u8 GetMostSuitableMonToSwitchInto(u8 battlerId);
-bool8 BattleAI_SwitchIfBadMoves(u8 battlerId, bool8 doubles);
-bool8 BattleAI_ShouldUseItem(u8 battlerId);
+bool32 BattleAI_ShouldSwitch(u32 battlerId);
+u32 GetMostSuitableMonToSwitchInto(u32 battlerId);
+bool32 BattleAI_SwitchIfBadMoves(u32 battlerId, bool32 doubles);
+bool32 BattleAI_ShouldUseItem(u32 battlerId);
 
 // battle_ai_funcs
-s8 BattleAIFunc_CheckBadMove(u8 attacker, u8 defender, u8 moveSlot, u16 move, s8 score);
-s8 BattleAIFunc_CheckViability(u8 attacker, u8 defender, u8 moveSlot, u16 move, s8 score);
-s8 BattleAIFunc_Safari(u8 attacker, u8 defender, u8 moveSlot, u16 move, s8 score);
-s8 BattleAIFunc_Roamer(u8 attacker, u8 defender, u8 moveSlot, u16 move, s8 score);
+s32 BattleAIFunc_CheckBadMove(u32 attacker, u32 defender, u32 moveSlot, u32 move, s32 score);
+s32 BattleAIFunc_CheckViability(u32 attacker, u32 defender, u32 moveSlot, u32 move, s32 score);
+s32 BattleAIFunc_Safari(u32 attacker, u32 defender, u32 moveSlot, u32 move, s32 score);
+s32 BattleAIFunc_Roamer(u32 attacker, u32 defender, u32 moveSlot, u32 move, s32 score);
 
 #endif // GUARD_BATTLE_AI_H
