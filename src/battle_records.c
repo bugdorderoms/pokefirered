@@ -24,11 +24,11 @@ static void Task_WaitFadeIn(u8 taskId);
 static void Task_WaitButton(u8 taskId);
 static void Task_FadeOut(u8 taskId);
 static void Task_DestroyAndReturnToField(u8 taskId);
-static void ClearWindowCommitAndRemove(u8 windowId);
+static void ClearWindowCommitAndRemove(u32 windowId);
 static void ResetGpu(void);
 static void StopAllRunningTasks(void);
 static void PrintBattleRecords(void);
-static void LoadFrameGfxOnBg(u8 bgId);
+static void LoadFrameGfxOnBg(u32 bgId);
 
 static const u16 sTiles[] = INCBIN_U16("graphics/battle_records/bg_tiles.4bpp");
 static const u16 sPalette[] = INCBIN_U16("graphics/battle_records/bg_tiles.gbapal");
@@ -185,7 +185,7 @@ static void Task_DestroyAndReturnToField(u8 taskId)
     }
 }
 
-static void ClearWindowCommitAndRemove(u8 windowId)
+static void ClearWindowCommitAndRemove(u32 windowId)
 {
     FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
     ClearWindowTilemap(windowId);
@@ -257,10 +257,11 @@ static void ClearLinkBattleRecord(struct LinkBattleRecord *record)
 
 void ClearLinkBattleRecords(void)
 {
-    s32 i;
+    u32 i;
 
     for (i = 0; i < LINK_B_RECORDS_COUNT; i++)
         ClearLinkBattleRecord(&gSaveBlock2Ptr->linkBattleRecords.entries[i]);
+	
     SetGameStat(GAME_STAT_LINK_BATTLE_WINS, 0);
     SetGameStat(GAME_STAT_LINK_BATTLE_LOSSES, 0);
     SetGameStat(GAME_STAT_LINK_BATTLE_DRAWS, 0);
@@ -323,7 +324,7 @@ static void UpdateLinkBattleRecord(struct LinkBattleRecord * record, s32 outcome
 
 static void UpdateLinkBattleGameStats(s32 outcome)
 {
-    u8 statId;
+    u32 statId;
 
     switch (outcome)
     {
@@ -373,7 +374,7 @@ static void AddOpponentLinkBattleRecord(struct LinkBattleRecords * records, cons
     SortLinkBattleRecords(records);
 }
 
-static void IncTrainerCardWinCount(s32 battlerId)
+static void IncTrainerCardWinCount(u32 battlerId)
 {
     u16 *wins = &gTrainerCards[battlerId].rse.linkBattleWins;
     (*wins)++;
@@ -381,7 +382,7 @@ static void IncTrainerCardWinCount(s32 battlerId)
         *wins = 9999;
 }
 
-static void IncTrainerCardLossCount(s32 battlerId)
+static void IncTrainerCardLossCount(u32 battlerId)
 {
     u16 *losses = &gTrainerCards[battlerId].rse.linkBattleLosses;
     (*losses)++;
@@ -520,7 +521,7 @@ static void PrintBattleRecords(void)
     CopyWindowToVram(0, COPYWIN_BOTH);
 }
 
-static void LoadFrameGfxOnBg(u8 bg)
+static void LoadFrameGfxOnBg(u32 bg)
 {
     LoadBgTiles(bg, sTiles, 0xC0, 0);
     CopyToBgTilemapBufferRect(bg, sTilemap, 0, 0, 32, 32);

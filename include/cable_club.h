@@ -9,8 +9,8 @@
 
 // Exported ROM declarations
 void Task_WaitForReceivedRemoteLinkPlayers5SecondTimeout(u8 taskId);
-u8 CreateTask_ReestablishLinkInCableClubRoom(void);
+u32 CreateTask_ReestablishLinkInCableClubRoom(void);
 void CB2_ReturnFromCableClubBattle(void);
-bool32 GetSeeingLinkPlayerCardMsg(u8 who);
+bool32 GetSeeingLinkPlayerCardMsg(u32 who);
 
 #endif //GUARD_CABLE_CLUB_H

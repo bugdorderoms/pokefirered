@@ -37,9 +37,9 @@ const u8 gEntryHazardsQueuedEffectIds[] =
 };
 
 // Functions
-static u8 FindQueuedEffectInList(u8 count, struct QueuedEffect *queuedEffectsList, u8 id, u8 entryNoFound)
+static u32 FindQueuedEffectInList(u32 count, struct QueuedEffect *queuedEffectsList, u32 id, u32 entryNoFound)
 {
-	u8 i;
+	u32 i;
 	
 	for (i = 0; i < count; i++)
 	{
@@ -49,19 +49,19 @@ static u8 FindQueuedEffectInList(u8 count, struct QueuedEffect *queuedEffectsLis
 	return entryNoFound;
 }
 
-static inline u8 FindQueuedEffectInBattlerList(u8 battlerId, u8 id)
+static inline u32 FindQueuedEffectInBattlerList(u32 battlerId, u32 id)
 {
 	return FindQueuedEffectInList(gBattleStruct->battlers[battlerId].queuedEffectsCount, gBattleStruct->battlers[battlerId].queuedEffectsList, id, B_BATTLER_QUEUED_COUNT);
 }
 
-static inline u8 FindQueuedEffectInSideList(u8 side, u8 id)
+static inline u32 FindQueuedEffectInSideList(u32 side, u32 id)
 {
 	return FindQueuedEffectInList(gBattleStruct->sides[side].queuedEffectsCount, gBattleStruct->sides[side].queuedEffectsList, id, B_SIDE_QUEUED_COUNT);
 }
 
-bool8 TryDoQueuedBattleEffectsInBattlerList(u8 battlerId, const u8 *list, bool8(*func)(u8, u8))
+bool32 TryDoQueuedBattleEffectsInBattlerList(u32 battlerId, const u8 *list, bool32(*func)(u32, u32))
 {
-	u8 i, j;
+	u32 i, j;
 	
 	for (i = 0; i < gBattleStruct->battlers[battlerId].queuedEffectsCount; i++)
 	{
@@ -79,9 +79,9 @@ bool8 TryDoQueuedBattleEffectsInBattlerList(u8 battlerId, const u8 *list, bool8(
 	return FALSE;
 }
 
-bool8 TryDoQueuedBattleEffectsInSideList(u8 battlerId, const u8 *list, bool8(*func)(u8, u8, u8))
+bool32 TryDoQueuedBattleEffectsInSideList(u32 battlerId, const u8 *list, bool32(*func)(u32, u32, u32))
 {
-	u8 i, j, side = GetBattlerSide(battlerId);
+	u32 i, j, side = GetBattlerSide(battlerId);
 	
 	for (i = 0; i < gBattleStruct->sides[side].queuedEffectsCount; i++)
 	{
@@ -99,7 +99,7 @@ bool8 TryDoQueuedBattleEffectsInSideList(u8 battlerId, const u8 *list, bool8(*fu
 	return FALSE;
 }
 
-void AddBattleEffectToBattlerQueueList(u8 battlerId, u8 id)
+void AddBattleEffectToBattlerQueueList(u32 battlerId, u32 id)
 {
 	if (FindQueuedEffectInBattlerList(battlerId, id) == B_BATTLER_QUEUED_COUNT)
 	{
@@ -109,7 +109,7 @@ void AddBattleEffectToBattlerQueueList(u8 battlerId, u8 id)
 	}
 }
 
-void AddBattleEffectToSideQueueList(u8 side, u8 id)
+void AddBattleEffectToSideQueueList(u32 side, u32 id)
 {
 	if (FindQueuedEffectInSideList(side, id) == B_SIDE_QUEUED_COUNT)
 	{
@@ -119,10 +119,10 @@ void AddBattleEffectToSideQueueList(u8 side, u8 id)
 	}
 }
 
-void RemoveBattleEffectFromBattlerQueueList(u8 battlerId, u8 id)
+void RemoveBattleEffectFromBattlerQueueList(u32 battlerId, u32 id)
 {
-	u8 i, temp, pos = FindQueuedEffectInBattlerList(battlerId, id);
-	bool8 temp2;
+	u32 i, temp, pos = FindQueuedEffectInBattlerList(battlerId, id);
+	bool32 temp2;
 	
 	if (pos != B_BATTLER_QUEUED_COUNT)
 	{
@@ -138,10 +138,10 @@ void RemoveBattleEffectFromBattlerQueueList(u8 battlerId, u8 id)
 	}
 }
 
-void RemoveBattleEffectFromSideQueueList(u8 side, u8 id)
+void RemoveBattleEffectFromSideQueueList(u32 side, u32 id)
 {
-	u8 i, temp, pos = FindQueuedEffectInSideList(side, id);
-	bool8 temp2;
+	u32 i, temp, pos = FindQueuedEffectInSideList(side, id);
+	bool32 temp2;
 	
 	if (pos != B_SIDE_QUEUED_COUNT)
 	{
@@ -159,7 +159,7 @@ void RemoveBattleEffectFromSideQueueList(u8 side, u8 id)
 
 void ResetAllQueuedEffectsDone(void)
 {
-	u8 i, j;
+	u32 i, j;
 	
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 	{
@@ -175,9 +175,9 @@ void ResetAllQueuedEffectsDone(void)
 }
 
 // Checkers
-bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
+bool32 QueuedEffects_DoWishFutureSight(u32 battlerId, u32 id)
 {
-	bool8 effect = FALSE;
+	bool32 effect = FALSE;
 	
 	switch (id)
 	{
@@ -210,12 +210,12 @@ bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id)
 	return effect;
 }
 
-bool8 QueuedEffects_DoSeaOfFireAndGMaxEffects(u8 battlerId, u8 side, u8 id)
+bool32 QueuedEffects_DoSeaOfFireAndGMaxEffects(u32 battlerId, u32 side, u32 id)
 {
 	return FALSE;
 }
 
-static void SetDmgHazardsBattleScript(u8 multistringId)
+static void SetDmgHazardsBattleScript(u32 multistringId)
 {
 	gBattleCommunication[MULTISTRING_CHOOSER] = multistringId;
 	
@@ -231,10 +231,10 @@ static void SetDmgHazardsBattleScript(u8 multistringId)
 	gHitMarker |= (HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE);
 }
 
-bool8 QueuedEffects_DoEntryHazardsEffects(u8 battlerId, u8 side, u8 id)
+bool32 QueuedEffects_DoEntryHazardsEffects(u32 battlerId, u32 side, u32 id)
 {
-	u16 currMove;
-	bool8 badPoison, effect = FALSE;
+	u32 currMove;
+	bool32 badPoison, effect = FALSE;
 	
 	if (IsBattlerGrounded(battlerId) && GetBattlerAbility(battlerId) != ABILITY_MAGIC_GUARD)
 	{

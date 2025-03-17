@@ -232,6 +232,13 @@ SetFissureBackground::
 	waitbgfadein
 	return
 
+SetLeafStormBackground::
+	fadetobg BG_LEAF_STORM
+	waitbgfadeout
+	createvisualtask AnimTask_StartSlidingBg, 5, -4096, 0, FALSE
+	waitbgfadein
+	return
+
 UnsetScrollingBg::
 	restorebg
 	waitbgfadeout
@@ -3130,6 +3137,21 @@ gMoveAnim_RAZOR_LEAF::
 	setalpha 12, 8
 	delay 1
 	loopsewithpan SE_M_POISON_POWDER, SOUND_PAN_ATTACKER, 10, 5
+	call RazorLeafRisingLeafs
+	delay 60
+	playsewithpan SE_M_RAZOR_WIND2, SOUND_PAN_ATTACKER
+	createsprite gRazorLeafCutterSpriteTemplate, ANIM_TARGET, 3, 20, -10, 20, 0, 22, 20, TRUE
+	createsprite gRazorLeafCutterSpriteTemplate, ANIM_TARGET, 3, 20, -10, 20, 0, 22, -20, TRUE
+	delay 20
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 8, 1
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_DEF_PARTNER, 2, 0, 8, 1
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	blendoff
+	end
+
+RazorLeafRisingLeafs::
 	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, -3, -2, 10
 	delay 2
 	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, -1, -1, 15
@@ -3149,18 +3171,7 @@ gMoveAnim_RAZOR_LEAF::
 	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, 2, -6, 11
 	delay 2
 	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, -3, -5, 8
-	delay 60
-	playsewithpan SE_M_RAZOR_WIND2, SOUND_PAN_ATTACKER
-	createsprite gRazorLeafCutterSpriteTemplate, ANIM_TARGET, 3, 20, -10, 20, 0, 22, 20, TRUE
-	createsprite gRazorLeafCutterSpriteTemplate, ANIM_TARGET, 3, 20, -10, 20, 0, 22, -20, TRUE
-	delay 20
-	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
-	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 8, 1
-	createvisualtask AnimTask_ShakeMon2, 2, ANIM_DEF_PARTNER, 2, 0, 8, 1
-	waitforvisualfinish
-	clearmonbg ANIM_DEF_SIDE
-	blendoff
-	end
+	return
 
 @ Credits: Blackuser
 gMoveAnim_SOLAR_BEAM::
@@ -9900,10 +9911,7 @@ gMoveAnim_FRENZY_PLANT::
 	monbg ANIM_TARGET
 	splitbgprio ANIM_TARGET
 	setalpha 12, 8
-	fadetobg BG_LEAF_STORM
-	waitbgfadeout
-	createvisualtask AnimTask_StartSlidingBg, 5, 61440, 0, FALSE
-	waitbgfadein
+	call SetLeafStormBackground
 	createsprite gFrenzyPlantRootSpriteTemplate, ANIM_ATTACKER, 2, 10, 8, 2, 0, 0, 100
 	playsewithpan SE_M_SCRATCH, SOUND_PAN_ATTACKER
 	delay 5
@@ -10109,25 +10117,7 @@ gMoveAnim_MAGICAL_LEAF::
 	delay 1
 	loopsewithpan SE_M_POISON_POWDER, SOUND_PAN_ATTACKER, 10, 5
 	createvisualtask AnimTask_CycleMagicalLeafPal, 5
-	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, -3, -2, 10
-	delay 2
-	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, -1, -1, 15
-	delay 2
-	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, -4, -4, 7
-	delay 2
-	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, 3, -3, 11
-	delay 2
-	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, -1, -6, 8
-	delay 2
-	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, 2, -1, 12
-	delay 2
-	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, -3, -4, 13
-	delay 2
-	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, 4, -5, 7
-	delay 2
-	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, 2, -6, 11
-	delay 2
-	createsprite gRazorLeafParticleSpriteTemplate, ANIM_ATTACKER, 2, -3, -5, 8
+	call RazorLeafRisingLeafs
 	delay 60
 	playsewithpan SE_M_RAZOR_WIND2, SOUND_PAN_ATTACKER
 	createsprite gRazorLeafCutterSpriteTemplate, ANIM_TARGET, 3, 20, -10, 20, 0, 32, 20, FALSE
@@ -12544,4 +12534,80 @@ DischargeRandomHit::
 	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 2, TRUE
 	createvisualtask SoundTask_PlaySE1WithPanning, 5, SE_M_HYPER_BEAM, SOUND_PAN_TARGET
 	delay 3
+	return
+
+@ Credits: Skeli
+gMoveAnim_LAVA_PLUME::
+	loadspritegfx ANIM_TAG_SMALL_EMBER
+	loadspritegfx ANIM_TAG_PINK_CLOUD
+	loadspritegfx ANIM_TAG_HANDS_AND_FEET @ Black color
+	monbg ANIM_ATTACKER
+	loopsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_ATTACKER, 8, 3
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 2, 2, 0, 15, RGB_BLACK
+	createsprite gOutrageFlameSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 1280, 0, 3
+	createsprite gLavaPlumeSmokeSpriteTemplate, ANIM_ATTACKER, 122, 3, -14, 18, 46
+	createsprite gOutrageFlameSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, -1280, 0, 3
+	createsprite gLavaPlumeSmokeSpriteTemplate, ANIM_ATTACKER, 121, 3, 14, -14, 46
+	createsprite gOutrageFlameSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 0, 1280, 3
+	createsprite gLavaPlumeSmokeSpriteTemplate, ANIM_ATTACKER, 120, 3, -12, -10, 46
+	createsprite gOutrageFlameSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 0, -1280, 3
+	createsprite gLavaPlumeSmokeSpriteTemplate, ANIM_ATTACKER, 119, 3, 14, 14, 46
+	createsprite gLavaPlumeSmokeSpriteTemplate, ANIM_ATTACKER, 118, 3, 0, 0, 46
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 40, 1
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_DEF_PARTNER, 2, 0, 40, 1
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATK_PARTNER, 2, 0, 40, 1
+	createsprite gOutrageFlameSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 1280, 768, 3
+	createsprite gOutrageFlameSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, -1280, 768, 3
+	createsprite gLavaPlumeSmokeSpriteTemplate, ANIM_ATTACKER, 123, 3, 4, 4, 30
+	createsprite gOutrageFlameSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 1280, -768, 3
+	createsprite gOutrageFlameSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, -1280, -768, 3
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATK_PARTNER | F_PAL_DEF_SIDE, 1, 0, 9, RGB_RED
+	call OutrageFlames
+	call OutrageFlames
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATK_PARTNER | F_PAL_DEF_SIDE, 1, 9, 0, RGB_RED
+	waitforvisualfinish
+	clearmonbg ANIM_ATTACKER
+	end
+
+@ Credits: Skeli
+gMoveAnim_LEAF_STORM::
+	loadspritegfx ANIM_TAG_LEAF
+	call SetLeafStormBackground
+	loopsewithpan SE_M_POISON_POWDER, SOUND_PAN_ATTACKER, 10, 3
+	call RazorLeafRisingLeafs
+	delay 16
+	loopsewithpan SE_M_POISON_POWDER, SOUND_PAN_ATTACKER, 10, 8
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 0, 2, 46, 1
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	call ThrowLeafStormLeafs
+	waitforvisualfinish
+	call UnsetScrollingBg
+	end
+
+ThrowLeafStormLeafs::
+	createsprite gLeafStormParticleSpriteTemplate, ANIM_TARGET, 2, 15, 15, 20, 0, 0
+	createsprite gLeafStormParticleSpriteTemplate, ANIM_TARGET, 2, 15, 15, 20, 10, 5
+	createsprite gLeafStormParticleSpriteTemplate, ANIM_TARGET, 2, 15, 15, 20, -10, -5
+	createsprite gLeafStormParticleSpriteTemplate, ANIM_TARGET, 2, 15, 15, 20, 20, 10
+	createsprite gLeafStormParticleSpriteTemplate, ANIM_TARGET, 2, 15, 15, 20, -20, -10
+	delay 2
 	return

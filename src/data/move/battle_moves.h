@@ -10500,8 +10500,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_LAVA_PLUME] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Lava Plume"),
+        .description = COMPOUND_STRING("An inferno of\n"
+                                       "flames washes over\n"
+                                       "all Pokémon. It\n"
+                                       "may inflict burns."),
+        .animScript = gMoveAnim_LAVA_PLUME,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_FIRE,
         .accuracy = 100,
@@ -10510,7 +10515,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
 		.additionalEffects = ADDITIONAL_EFFECTS({
@@ -10522,8 +10526,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_LEAF_STORM] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Leaf Storm"),
+        .description = COMPOUND_STRING("A storm of leaves\n"
+                                       "is whipped up. It\n"
+                                       "sharply reduces the\n"
+                                       "user's Sp. Atk."),
+		.animScript = gMoveAnim_LEAF_STORM,
+		.effect = EFFECT_HIT,
 		.power = 130,
         .type = TYPE_GRASS,
         .accuracy = 90,

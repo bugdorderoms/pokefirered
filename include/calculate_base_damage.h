@@ -5,12 +5,12 @@
 
 // Damage calc
 s32 CalculateConfusionDamage(void);
-s32 CalculateMoveDamage(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 isCrit);
-s32 AI_CalcMoveDamage(u16 move, u8 attacker, u8 defender, u8 moveType, u8 effectiveness);
+s32 CalculateMoveDamage(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 isCrit);
+s32 AI_CalcMoveDamage(u32 move, u32 attacker, u32 defender, u32 moveType, u32 effectiveness);
 
 // Type calc
-u8 GetTypeModifier(u8 atkType, u8 defType);
-u8 TypeCalc(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 setAbilityFlags, u16 *flags);
-u8 AI_TypeCalc(struct Pokemon *mon, u16 move, u8 defender);
+u32 GetTypeModifier(u32 atkType, u32 defType);
+u32 TypeCalc(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 setAbilityFlags, u16 *flags);
+u32 AI_TypeCalc(struct Pokemon *mon, u32 move, u32 defender);
 
 #endif // GUARD_CALCULATE_BASE_DAMAGE_H

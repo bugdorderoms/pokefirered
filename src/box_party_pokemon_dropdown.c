@@ -48,7 +48,7 @@ static const struct {
     }
 };
 
-static void PushMap1(u8 idx)
+static void PushMap1(u32 idx)
 {
     int i;
     int run = sBoxPartyPokemonDropdownPtr[idx].mapSize * sBoxPartyPokemonDropdownPtr[idx].src1Height;
@@ -58,7 +58,7 @@ static void PushMap1(u8 idx)
         CopyToBgTilemapBufferRect(sBoxPartyPokemonDropdownPtr[idx].bgId, addr, sBoxPartyPokemonDropdownPtr[idx].map1Rect.destX2, sBoxPartyPokemonDropdownPtr[idx].map1Rect.destY2 + i, sBoxPartyPokemonDropdownPtr[idx].map1Rect.width, 1);
 }
 
-static void PushMap2(u8 idx)
+static void PushMap2(u32 idx)
 {
     int i;
     int run = sBoxPartyPokemonDropdownPtr[idx].mapSize * sBoxPartyPokemonDropdownPtr[idx].src2Width;
@@ -68,9 +68,9 @@ static void PushMap2(u8 idx)
         CopyToBgTilemapBufferRect(sBoxPartyPokemonDropdownPtr[idx].bgId, addr, sBoxPartyPokemonDropdownPtr[idx].map2Rect.destX2, sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY2 + i, sBoxPartyPokemonDropdownPtr[idx].map2Rect.width, 1);
 }
 
-void AllocBoxPartyPokemonDropdowns(u8 num)
+void AllocBoxPartyPokemonDropdowns(u32 num)
 {
-    u16 i;
+    u32 i;
 	
     sBoxPartyPokemonDropdownPtr = Alloc(num * sizeof(struct BPPD_Struct));
     sBoxPartyPokemonDropdownCount = sBoxPartyPokemonDropdownPtr == NULL ? 0 : num;
@@ -84,10 +84,10 @@ void FreeBoxPartyPokemonDropdowns(void)
     Free(sBoxPartyPokemonDropdownPtr);
 }
 
-void SetBoxPartyPokemonDropdownMap2(u8 idx, u8 bgId, const void * src, u16 width, u16 height)
+void SetBoxPartyPokemonDropdownMap2(u32 idx, u32 bgId, const void * src, u16 width, u16 height)
 {
     u16 screenSize;
-    u16 bgType;
+    u32 bgType;
 
     if (idx < sBoxPartyPokemonDropdownCount)
     {
@@ -112,7 +112,7 @@ void SetBoxPartyPokemonDropdownMap2(u8 idx, u8 bgId, const void * src, u16 width
     }
 }
 
-void SetBoxPartyPokemonDropdownMap2Pos(u8 idx, u16 x, u16 y)
+void SetBoxPartyPokemonDropdownMap2Pos(u32 idx, u16 x, u16 y)
 {
     if (idx < sBoxPartyPokemonDropdownCount)
     {
@@ -121,7 +121,7 @@ void SetBoxPartyPokemonDropdownMap2Pos(u8 idx, u16 x, u16 y)
     }
 }
 
-void SetBoxPartyPokemonDropdownMap2Rect(u8 idx, u16 x, u16 y, u16 width, u16 height)
+void SetBoxPartyPokemonDropdownMap2Rect(u32 idx, u16 x, u16 y, u16 width, u16 height)
 {
     if (idx < sBoxPartyPokemonDropdownCount)
     {
@@ -132,7 +132,7 @@ void SetBoxPartyPokemonDropdownMap2Rect(u8 idx, u16 x, u16 y, u16 width, u16 hei
     }
 }
 
-void AdjustBoxPartyPokemonDropdownPos(u8 idx, u8 op, s8 param)
+void AdjustBoxPartyPokemonDropdownPos(u32 idx, u32 op, s8 param)
 {
     if (idx < sBoxPartyPokemonDropdownCount)
     {
@@ -164,7 +164,7 @@ void AdjustBoxPartyPokemonDropdownPos(u8 idx, u8 op, s8 param)
     }
 }
 
-void CopyBoxPartyPokemonDropdownToBgTilemapBuffer(u8 idx)
+void CopyBoxPartyPokemonDropdownToBgTilemapBuffer(u32 idx)
 {
     if (idx < sBoxPartyPokemonDropdownCount)
     {

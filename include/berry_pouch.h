@@ -16,8 +16,8 @@ enum BerryPouchType
 
 void BerryPouch_StartFadeToExitCallback(u8 taskId);
 void BerryPouch_SetExitCallback(void (*exitCallback)(void));
-void InitBerryPouch(u8 type, void (*savedCallback)(void), u8 allowSelect);
-void DisplayItemMessageInBerryPouch(u8 taskId, u8 fontId, const u8 * str, TaskFunc followUpFunc);
+void InitBerryPouch(u32 type, void (*savedCallback)(void), u32 allowSelect);
+void DisplayItemMessageInBerryPouch(u32 taskId, u32 fontId, const u8 * str, TaskFunc followUpFunc);
 void Task_BerryPouch_DestroyDialogueWindowAndRefreshListMenu(u8 taskId);
 void BerryPouch_CursorResetToTop(void);
 

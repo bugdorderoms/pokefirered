@@ -1,6 +1,7 @@
 #include "global.h"
 #include "battle.h"
 #include "battle_anim.h"
+#include "battle_gimmicks.h"
 #include "battle_interface.h"
 #include "battle_move_effects.h"
 #include "battle_util.h"
@@ -33,15 +34,15 @@ struct DamageCalc
 	u8 moveSplit;
 };
 
-static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageStruct);
-static u16 CalcBaseAttackStat(u8 attacker, u8 defender, struct DamageCalc *damageStruct);
-static u16 CalcBaseDefenseStat(u8 attacker, u8 defender, struct DamageCalc *damageStruct);
+static u16 GetMoveBasePower(u32 attacker, u32 defender, struct DamageCalc *damageStruct);
+static u16 CalcBaseAttackStat(u32 attacker, u32 defender, struct DamageCalc *damageStruct);
+static u16 CalcBaseDefenseStat(u32 attacker, u32 defender, struct DamageCalc *damageStruct);
 
 ///////////////////////////////
 // GLOBAL DAMAGE CALCULATION //
 ///////////////////////////////
 
-static struct DamageCalc *PopulateDamageStruct(u8 attacker, u8 defender, u16 move, u8 moveType, u8 effectiveness, bool8 isCrit, u8 flags)
+static struct DamageCalc *PopulateDamageStruct(u32 attacker, u32 defender, u32 move, u32 moveType, u32 effectiveness, bool32 isCrit, u32 flags)
 {
 	struct DamageCalc *damageStruct = AllocZeroed(sizeof(struct DamageCalc));
 	damageStruct->atkAbility = GetBattlerAbility(attacker);
@@ -127,11 +128,12 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
 }
 */
 
-static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageStruct, u16 basePower, bool8 randomFactor)
+static s32 CalculateDamage(u32 attacker, u32 defender, struct DamageCalc *damageStruct, u16 basePower, bool32 randomFactor)
 {
 	u16 baseAttack = CalcBaseAttackStat(attacker, defender, damageStruct);
 	u16 baseDefense = CalcBaseDefenseStat(attacker, defender, damageStruct);
-	u16 move = damageStruct->move;
+	u32 move = damageStruct->move;
+	bool32 isConfusionDmg = (damageStruct->flags & FLAG_CONFUSION_DAMAGE);
 	s32 damage;
 	
 	gBattleMovePower = basePower;
@@ -177,7 +179,7 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 	}
 	
 	// Stab modifier
-	if (!(damageStruct->flags & FLAG_CONFUSION_DAMAGE) && IsBattlerOfType(attacker, damageStruct->moveType))
+	if (!isConfusionDmg && IsBattlerOfType(attacker, damageStruct->moveType))
 	{
 		if (damageStruct->atkAbility == ABILITY_ADAPTABILITY)
 			damage *= 2;
@@ -189,7 +191,7 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 	damage = (damage * damageStruct->effectiveness) / TYPE_MUL_NORMAL;
 	
 	// Burn modifier
-	if (!(damageStruct->flags & FLAG_CONFUSION_DAMAGE) && gBattleMons[attacker].status1.id == STATUS1_BURN && damageStruct->moveSplit == SPLIT_PHYSICAL
+	if (!isConfusionDmg && gBattleMons[attacker].status1.id == STATUS1_BURN && damageStruct->moveSplit == SPLIT_PHYSICAL
 	&& gBattleMoves[move].effect != EFFECT_FACADE && damageStruct->atkAbility != ABILITY_GUTS)
 	    damage /= 2;
 	
@@ -213,10 +215,12 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 		damage *= 2;
 	
 	// Screens modifier
-	if (!damageStruct->isCrit && damageStruct->atkAbility != ABILITY_INFILTRATOR && !(damageStruct->flags & FLAG_CONFUSION_DAMAGE))
+	if (!damageStruct->isCrit && damageStruct->atkAbility != ABILITY_INFILTRATOR && !isConfusionDmg)
 	{
-		if (((gSideStatuses[GetBattlerSide(defender)] & SIDE_STATUS_LIGHTSCREEN) && damageStruct->moveSplit == SPLIT_SPECIAL)
-		|| ((gSideStatuses[GetBattlerSide(defender)] & SIDE_STATUS_REFLECT) && damageStruct->moveSplit == SPLIT_PHYSICAL))
+		u32 side = GetBattlerSide(defender);
+		
+		if (((gSideStatuses[side] & SIDE_STATUS_LIGHTSCREEN) && damageStruct->moveSplit == SPLIT_SPECIAL)
+		|| ((gSideStatuses[side] & SIDE_STATUS_REFLECT) && damageStruct->moveSplit == SPLIT_PHYSICAL))
 		{
 			if (IsDoubleBattleForBattler(defender))
 				damage = (damage * 66) / 100;
@@ -229,7 +233,7 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 	
 	
 	// Others damage modifiers
-	if (!(damageStruct->flags & FLAG_CONFUSION_DAMAGE))
+	if (!isConfusionDmg)
 	{
 		// Check attacker's abilities
 		switch (damageStruct->atkAbility)
@@ -316,7 +320,7 @@ static s32 CalculateDamage(u8 attacker, u8 defender, struct DamageCalc *damageSt
 	return damage;
 }
 
-s32 CalculateMoveDamage(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 isCrit)
+s32 CalculateMoveDamage(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 isCrit)
 {
 	u16 flags;
 	struct DamageCalc *damageStruct = PopulateDamageStruct(attacker, defender, move, moveType, TypeCalc(move, moveType, attacker, defender, FALSE, &flags), isCrit, 0);
@@ -328,11 +332,11 @@ s32 CalculateMoveDamage(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 i
 // Silk Scarf, Choice Band, Thick Club and Light Ball boosts don't apply
 s32 CalculateConfusionDamage(void)
 {
-	u8 battler = gBattlerTarget = gBattlerAttacker;
+	u32 battler = gBattlerTarget = gBattlerAttacker;
 	return CalculateDamage(battler, battler, PopulateDamageStruct(battler, battler, MOVE_NONE, TYPE_MYSTERY, TYPE_MUL_NORMAL, FALSE, FLAG_CONFUSION_DAMAGE), 40, TRUE);
 }
 
-s32 AI_CalcMoveDamage(u16 move, u8 attacker, u8 defender, u8 moveType, u8 effectiveness)
+s32 AI_CalcMoveDamage(u32 move, u32 attacker, u32 defender, u32 moveType, u32 effectiveness)
 {
 	struct DamageCalc *damageStruct = PopulateDamageStruct(attacker, defender, move, moveType, effectiveness, CalcMoveIsCritical(attacker, defender, move), FLAG_AI_DAMAGE_CALC);
 	return CalculateDamage(attacker, defender, damageStruct, GetMoveBasePower(attacker, defender, damageStruct), FALSE);
@@ -362,10 +366,9 @@ static const u8 sFlailHpScaleToPowerTable[] =
     48, 20
 };
 
-static inline u16 GetSupremeOverlordModifier(u8 battlerId)
+static inline u32 GetSupremeOverlordModifier(u32 battlerId)
 {
-	u8 i;
-	u16 modifier = 0;
+	u32 i, modifier = 0;
 	
 	if (gDisableStructs[battlerId].supremeOverlordBoost > 0)
 	{
@@ -375,14 +378,14 @@ static inline u16 GetSupremeOverlordModifier(u8 battlerId)
 	return modifier;
 }
 
-static inline u16 GetBeatUpPower(u8 battler, bool8 forAI)
+static inline u16 GetBeatUpPower(u32 battler, bool32 forAI)
 {
 	if (!forAI)
 		return (gSpeciesInfo[GetMonData(&GetBattlerParty(battler)[gBattleCommunication[0] - 1], MON_DATA_SPECIES)].baseAttack / 10) + 5;
 	else // Calc max possible damage
 	{
 		u32 power = 0;
-		u8 i, numHits = GetNumBeatUpHits(battler);
+		u32 i, numHits = GetNumBeatUpHits(battler);
 		
 		for (i = 0; i < numHits; i++)
 			power += (gSpeciesInfo[GetMonData(&GetBattlerParty(battler)[i], MON_DATA_SPECIES)].baseAttack / 10) + 5;
@@ -393,12 +396,13 @@ static inline u16 GetBeatUpPower(u8 battler, bool8 forAI)
 	}
 }
 
-static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageStruct)
+static u16 GetMoveBasePower(u32 attacker, u32 defender, struct DamageCalc *damageStruct)
 {
-	u16 move = damageStruct->move;
-	u16 basePower = gBattleMoves[move].power;
-	u16 moveEffect = gBattleMoves[move].effect;
 	u32 i;
+	u32 move = damageStruct->move;
+	u16 basePower = gBattleMoves[move].power;
+	u32 moveEffect = gBattleMoves[move].effect;
+	bool32 forAI = (damageStruct->flags & FLAG_AI_DAMAGE_CALC);
 	
 	// Moves
 	switch (move)
@@ -429,7 +433,7 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			break;
 		}
 		case EFFECT_TRIPLE_KICK:
-		    if (damageStruct->flags & FLAG_AI_DAMAGE_CALC)
+		    if (forAI)
 			{
 				for (i = 0; i < gBattleMoves[move].strikeCount; i++)
 					basePower += gBattleMoves[move].argument.amount; // Get max possible dmg
@@ -439,7 +443,7 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			break;
 		case EFFECT_FLAIL:
 		{
-			u8 hpFracion = GetScaledHPFraction(gBattleMons[attacker].hp, gBattleMons[attacker].maxHP, 48);
+			u32 hpFracion = GetScaledHPFraction(gBattleMons[attacker].hp, gBattleMons[attacker].maxHP, 48);
 			
 			for (i = 0; i < sizeof(sFlailHpScaleToPowerTable); i += 2)
 			{
@@ -468,20 +472,20 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			basePower = 10 * (gBattleMons[attacker].friendship) / 25;
 			break;
 		case EFFECT_PRESENT:
-			basePower = (damageStruct->flags & FLAG_AI_DAMAGE_CALC) ? 120 : gBattleStruct->presentBasePower;
+			basePower = forAI ? 120 : gBattleStruct->presentBasePower;
 			break;
 		case EFFECT_FRUSTRATION:
 			basePower = 10 * (255 - gBattleMons[attacker].friendship) / 25;
 			break;
 		case EFFECT_MAGNITUDE:
-			basePower = (damageStruct->flags & FLAG_AI_DAMAGE_CALC) ? 50 : gBattleStruct->magnitudeBasePower;
+			basePower = forAI ? 50 : gBattleStruct->magnitudeBasePower;
 			break;
 		case EFFECT_PURSUIT:
 			if (gBattleStruct->pursuitSwitchDmg)
 				basePower *= 2;
 			break;
 		case EFFECT_BEAT_UP:
-		    basePower = GetBeatUpPower(attacker, (damageStruct->flags & FLAG_AI_DAMAGE_CALC));
+		    basePower = GetBeatUpPower(attacker, forAI);
 			break;
 		case EFFECT_FACADE:
 			if (gBattleMons[attacker].status1.id == STATUS1_PARALYSIS || gBattleMons[attacker].status1.id == STATUS1_BURN || gBattleMons[attacker].status1.id == STATUS1_POISON
@@ -604,7 +608,7 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 			break;
 		case ABILITY_RIVALRY:
 		{
-			u8 atkGender = GetBattlerGender(attacker), defGender = GetBattlerGender(defender);
+			u32 atkGender = GetBattlerGender(attacker), defGender = GetBattlerGender(defender);
 			
 		    if (atkGender != MON_GENDERLESS && defGender != MON_GENDERLESS)
 			{
@@ -717,7 +721,7 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 	
 	// Water/Mud Sport
 	if (((gFieldStatus & STATUS_FIELD_WATERSPORT) && damageStruct->moveType == TYPE_FIRE)
-		|| ((gFieldStatus & STATUS_FIELD_MUDSPORT) && damageStruct->moveType == TYPE_ELECTRIC))
+	|| ((gFieldStatus & STATUS_FIELD_MUDSPORT) && damageStruct->moveType == TYPE_ELECTRIC))
 	    basePower = (basePower * 33) / 100;
 	
 	// Me First
@@ -734,11 +738,11 @@ static u16 GetMoveBasePower(u8 attacker, u8 defender, struct DamageCalc *damageS
 // BASE ATTACK CALCULATION //
 /////////////////////////////
 
-static u16 CalcBaseAttackStat(u8 attacker, u8 defender, struct DamageCalc *damageStruct)
+static u16 CalcBaseAttackStat(u32 attacker, u32 defender, struct DamageCalc *damageStruct)
 {
-	u8 statStages;
+	u32 statStages;
 	u16 baseAttack;
-	u16 move = damageStruct->move;
+	u32 move = damageStruct->move;
 	
 	if (damageStruct->moveSplit == SPLIT_PHYSICAL)
 	{
@@ -783,7 +787,7 @@ static u16 CalcBaseAttackStat(u8 attacker, u8 defender, struct DamageCalc *damag
 			    if (gDisableStructs[attacker].slowStartTimer)
 				{
 					// Halves Sp. Attack of type based Z-Moves
-					if (damageStruct->moveSplit == SPLIT_PHYSICAL || (damageStruct->moveSplit == SPLIT_SPECIAL && move >= FIRST_Z_MOVE && move <= LAST_TYPED_Z_MOVE))
+					if (damageStruct->moveSplit == SPLIT_PHYSICAL || (damageStruct->moveSplit == SPLIT_SPECIAL && IsTypeBasedZMove(move)))
 						baseAttack /= 2;
 				}
 			    break;
@@ -889,9 +893,9 @@ static u16 CalcBaseAttackStat(u8 attacker, u8 defender, struct DamageCalc *damag
 // BASE DEFENSE CALCULATION //
 //////////////////////////////
 
-static u16 CalcBaseDefenseStat(u8 attacker, u8 defender, struct DamageCalc *damageStruct)
+static u16 CalcBaseDefenseStat(u32 attacker, u32 defender, struct DamageCalc *damageStruct)
 {
-	u8 statStages;
+	u32 statStages;
 	u16 baseDefense;
 	
 	if (damageStruct->moveSplit == SPLIT_PHYSICAL)
@@ -977,7 +981,7 @@ static u16 CalcBaseDefenseStat(u8 attacker, u8 defender, struct DamageCalc *dama
 ////////////////////////////////////
 
 // Update effectiveness result for the type calc
-static void UpdateMoveResults(u8 *multiplier, u8 mod, u16 move, u16 *flags)
+static void UpdateMoveResults(u32 *multiplier, u32 mod, u32 move, u16 *flags)
 {
     switch (mod)
     {
@@ -1012,9 +1016,9 @@ static void UpdateMoveResults(u8 *multiplier, u8 mod, u16 move, u16 *flags)
 }
 
 // Get effectiveness betwen two types
-u8 GetTypeModifier(u8 atkType, u8 defType)
+u32 GetTypeModifier(u32 atkType, u32 defType)
 {
-	u8 modifier = gTypeEffectivenessTable[atkType][defType];
+	u32 modifier = gTypeEffectivenessTable[atkType][defType];
 	
 	if (gBattleStruct->battleChallenge == TRAINER_CHALLENGE_INVERSE_BATTLE)
 	{
@@ -1032,9 +1036,9 @@ u8 GetTypeModifier(u8 atkType, u8 defType)
 	return modifier;
 }
 
-static void MulByTypeEffectiveness(u16 move, u8 moveType, u16 atkAbility, u8 defender, u8 defenderType, u8 *multiplier, bool8 setAbilityFlags, u16 *flags)
+static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 defender, u32 defenderType, u32 *multiplier, bool32 setAbilityFlags, u16 *flags)
 {
-	u8 mod = GetTypeModifier(moveType, defenderType);
+	u32 mod = GetTypeModifier(moveType, defenderType);
 	
 	// Check Foresight and Scrappy on Ghost types
 	if ((moveType == TYPE_FIGHTING || moveType == TYPE_NORMAL) && defenderType == TYPE_GHOST && mod == TYPE_MUL_NO_EFFECT && (move == MOVE_GLARE
@@ -1069,9 +1073,9 @@ static void MulByTypeEffectiveness(u16 move, u8 moveType, u16 atkAbility, u8 def
 	UpdateMoveResults(multiplier, mod, move, flags);
 }
 
-static u8 CalcTypeEffectivenessMultiplierInternal(u16 move, u8 moveType, u16 atkAbility, u8 defender, u8 multiplier, bool8 setAbilityFlags, u16 *flags)
+static u32 CalcTypeEffectivenessMultiplierInternal(u32 move, u32 moveType, u32 atkAbility, u32 defender, u32 multiplier, bool32 setAbilityFlags, u16 *flags)
 {
-	u16 defAbility;
+	u32 defAbility;
 	u8 types[3];
 	
 	GetBattlerTypes(defender, types);
@@ -1091,7 +1095,7 @@ static u8 CalcTypeEffectivenessMultiplierInternal(u16 move, u8 moveType, u16 atk
 		// Check special ground immunities
 		if (moveType == TYPE_GROUND && !IsBattlerGrounded(defender))
 	    {
-			bool8 immune = FALSE;
+			bool32 immune = FALSE;
 			
 			if (defAbility == ABILITY_LEVITATE)
 			{
@@ -1128,9 +1132,9 @@ static u8 CalcTypeEffectivenessMultiplierInternal(u16 move, u8 moveType, u16 atk
 	return multiplier;
 }
 
-static u8 CalcTypeEffectivenessMultiplier(u16 move, u8 moveType, u16 atkAbility, u8 defender, bool8 setAbilityFlags, u16 *flags)
+static u32 CalcTypeEffectivenessMultiplier(u32 move, u32 moveType, u32 atkAbility, u32 defender, bool32 setAbilityFlags, u16 *flags)
 {
-	u8 multiplier = TYPE_MUL_NORMAL;
+	u32 multiplier = TYPE_MUL_NORMAL;
 	
 	if (move != MOVE_STRUGGLE && moveType != TYPE_MYSTERY)
 	{
@@ -1139,15 +1143,15 @@ static u8 CalcTypeEffectivenessMultiplier(u16 move, u8 moveType, u16 atkAbility,
 	return multiplier;
 }
 
-u8 TypeCalc(u16 move, u8 moveType, u8 attacker, u8 defender, bool8 setAbilityFlags, u16 *flags)
+u32 TypeCalc(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 setAbilityFlags, u16 *flags)
 {
 	return CalcTypeEffectivenessMultiplier(move, moveType, GetBattlerAbility(attacker), defender, setAbilityFlags, flags);
 }
 
 // Calc effectiveness betwen a party mon's move and the defender
-u8 AI_TypeCalc(struct Pokemon *mon, u16 move, u8 defender)
+u32 AI_TypeCalc(struct Pokemon *mon, u32 move, u32 defender)
 {
-	u8 effectiveness, battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+	u32 effectiveness, battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 	struct BattlePokemon savedCopy = gBattleMons[battler];
 	u32 status3 = gStatuses3[battler];
 	u16 flags;

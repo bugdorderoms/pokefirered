@@ -40,14 +40,14 @@ enum
 };
 
 void BikeClearState(u32 directionHistory, u32 abStartSelectHistory);
-bool8 IsBikingDisallowedByPlayer(void);
-void GetOnOffBike(u8 flags);
+bool32 IsBikingDisallowedByPlayer(void);
+void GetOnOffBike(u32 flags);
 s16 GetPlayerSpeed(void);
-void MovePlayerOnBike(u8 direction, u16 newKeys, u16 heldKeys);
-bool8 MetatileBehaviorForbidsBiking(u8 metatileBehavior);
+void MovePlayerOnBike(u32 direction, u16 newKeys, u16 heldKeys);
+bool32 MetatileBehaviorForbidsBiking(u32 metatileBehavior);
 void Bike_HandleBumpySlopeJump(void);
 void Bike_UpdateBikeCounterSpeed(u8 counter);
-bool8 IsPlayerNotUsingAcroBikeOnBumpySlope(void);
-u8 GetBikeCollision(u8);
+bool32 IsPlayerNotUsingAcroBikeOnBumpySlope(void);
+u32 GetBikeCollision(u32);
 
 #endif //GUARD_BIKE_H

@@ -31,16 +31,16 @@ extern const u8 gSeaOfFireAndGMaxQueuedEffectIds[];
 extern const u8 gEntryHazardsQueuedEffectIds[];
 
 void ResetAllQueuedEffectsDone(void);
-void AddBattleEffectToBattlerQueueList(u8 battlerId, u8 id);
-void AddBattleEffectToSideQueueList(u8 side, u8 id);
-void RemoveBattleEffectFromBattlerQueueList(u8 battlerId, u8 id);
-void RemoveBattleEffectFromSideQueueList(u8 side, u8 id);
-bool8 TryDoQueuedBattleEffectsInBattlerList(u8 battlerId, const u8 *list, bool8(*func)(u8, u8));
-bool8 TryDoQueuedBattleEffectsInSideList(u8 battlerId, const u8 *list, bool8(*func)(u8, u8, u8));
+void AddBattleEffectToBattlerQueueList(u32 battlerId, u32 id);
+void AddBattleEffectToSideQueueList(u32 side, u32 id);
+void RemoveBattleEffectFromBattlerQueueList(u32 battlerId, u32 id);
+void RemoveBattleEffectFromSideQueueList(u32 side, u32 id);
+bool32 TryDoQueuedBattleEffectsInBattlerList(u32 battlerId, const u8 *list, bool32(*func)(u32, u32));
+bool32 TryDoQueuedBattleEffectsInSideList(u32 battlerId, const u8 *list, bool32(*func)(u32, u32, u32));
 
 // Checkers
-bool8 QueuedEffects_DoWishFutureSight(u8 battlerId, u8 id);
-bool8 QueuedEffects_DoSeaOfFireAndGMaxEffects(u8 battlerId, u8 side, u8 id);
-bool8 QueuedEffects_DoEntryHazardsEffects(u8 battlerId, u8 side, u8 id);
+bool32 QueuedEffects_DoWishFutureSight(u32 battlerId, u32 id);
+bool32 QueuedEffects_DoSeaOfFireAndGMaxEffects(u32 battlerId, u32 side, u32 id);
+bool32 QueuedEffects_DoEntryHazardsEffects(u32 battlerId, u32 side, u32 id);
 
 #endif // GUARD_BATTLE_QUEUED_EFFECTS_H

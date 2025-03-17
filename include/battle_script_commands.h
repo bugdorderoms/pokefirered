@@ -51,19 +51,19 @@ enum
 #define WINDOW_CLEAR            0x1
 #define WINDOW_x80              0x80
 
-bool8 UproarWakeUpCheck(void);
-u8 IsUproarActive(void);
-u8 GetHitDamageResult(u8 battlerId, u16 move, bool8 checkSturdy);
-u16 GetOHKOChance(u8 attacker, u8 target, u16 move);
-bool8 KanOHKOBattler(u8 attacker, u8 target, u16 move, bool8 checkKOAcc);
-bool8 JumpIfMoveAffectedByProtect(u8 addr, const u8 *jumpStr);
+bool32 UproarWakeUpCheck(void);
+u32 IsUproarActive(void);
+u32 GetHitDamageResult(u32 battlerId, u32 move, bool32 checkSturdy);
+u16 GetOHKOChance(u32 attacker, u32 target, u32 move);
+bool32 KanOHKOBattler(u32 attacker, u32 target, u32 move, bool32 checkKOAcc);
+bool32 JumpIfMoveAffectedByProtect(u32 addr, const u8 *jumpStr);
 bool32 IsMonGettingExpSentOut(void);
 void BattleCreateYesNoCursorAt(void);
 void BattleDestroyYesNoCursorAt(void);
-void HandleBattleWindow(u8 xStart, u8 yStart, u8 xEnd, u8 yEnd, u8 flags);
+void HandleBattleWindow(u32 xStart, u32 yStart, u32 xEnd, u32 yEnd, u32 flags);
 void BufferMoveToLearnIntoBattleTextBuff2(void);
-u8 GetCurrentLevelCapLevel(void);
-u32 CalcMoveTotalAccuracy(u16 move, u8 attacker, u8 defender);
+u32 GetCurrentLevelCapLevel(void);
+u32 CalcMoveTotalAccuracy(u32 move, u32 attacker, u32 defender);
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 

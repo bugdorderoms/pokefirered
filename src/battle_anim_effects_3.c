@@ -1285,6 +1285,17 @@ const struct SpriteTemplate gVacuumWaveWhiteSmokeSpriteTemplate =
     .callback = AnimBlackSmoke,
 };
 
+const struct SpriteTemplate gLavaPlumeSmokeSpriteTemplate =    
+{
+    .tileTag = ANIM_TAG_PINK_CLOUD,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sSmokeBallEscapeCloudAffineAnimTable,
+    .callback = AnimSmokeBallEscapeCloud,
+};
+
 // Animates the Smokescreen's black smokes moving on the target.
 // arg 0: x offset
 // arg 1: y offset

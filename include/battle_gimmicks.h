@@ -12,6 +12,7 @@
 ////////////
 
 bool32 IsZMove(u32 move);
+bool32 IsTypeBasedZMove(u32 move);
 
 /////////////
 // DYNAMAX //

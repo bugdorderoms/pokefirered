@@ -37,7 +37,7 @@ static void Task_Linkup_6a(u8 taskId);
 static void Task_Linkup_7(u8 taskId);
 static void Task_Linkup_Canceled(u8 taskId);
 static void Task_Linkup_ErroredOut(u8 taskId);
-static bool8 Task_Linkup_TimedOut(u8 taskId);
+static bool32 Task_Linkup_TimedOut(u32 taskId);
 static void Task_ReestablishLinkInCableClubRoom_0(u8 taskId);
 static void Task_ReestablishLinkInCableClubRoom_1(u8 taskId);
 static void Task_ReestablishLinkInCableClubRoom_Master(u8 taskId);
@@ -60,9 +60,10 @@ static const u8 *const sStarsMessagePtrs[] = {
     gUnknown_841DFA0
 };
 
-static void CreateLinkupTask(u8 lower, u8 higher)
+static void CreateLinkupTask(u32 lower, u32 higher)
 {
     u8 taskId;
+	
     if (FindTaskIdByFunc(Task_Linkup0) == 0xFF)
     {
         taskId = CreateTask(Task_Linkup0, 80);
@@ -71,7 +72,7 @@ static void CreateLinkupTask(u8 lower, u8 higher)
     }
 }
 
-static void PrintNewCountOnLinkPlayerCountDisplayWindow(u16 windowId, s32 num)
+static void PrintNewCountOnLinkPlayerCountDisplayWindow(u32 windowId, s32 num)
 {
     ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_LEFT_ALIGN, 1);
     SetStdWindowBorderStyle(windowId, FALSE);
@@ -80,26 +81,28 @@ static void PrintNewCountOnLinkPlayerCountDisplayWindow(u16 windowId, s32 num)
     CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
 
-static void DestroyLinkPlayerCountDisplayWindow(u16 windowId)
+static void DestroyLinkPlayerCountDisplayWindow(u32 windowId)
 {
     ClearStdWindowAndFrame(windowId, FALSE);
     CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
 
-static void UpdateLinkPlayerCountDisplay(u8 taskId, u8 num)
+static void UpdateLinkPlayerCountDisplay(u32 taskId, u32 num)
 {
     s16 *data = gTasks[taskId].data;
+	
     if (num != data[3])
     {
         if (num < 2)
             DestroyLinkPlayerCountDisplayWindow(data[5]);
         else
             PrintNewCountOnLinkPlayerCountDisplayWindow(data[5], num);
+		
         data[3] = num;
     }
 }
 
-static u16 sub_8080844(u8 lower, u8 higher)
+static u32 sub_8080844(u32 lower, u32 higher)
 {
     switch (GetLinkPlayerDataExchangeStatusTimed(lower, higher))
     {
@@ -119,7 +122,7 @@ static u16 sub_8080844(u8 lower, u8 higher)
     }
 }
 
-static bool32 sub_80808BC(u8 taskId)
+static bool32 sub_80808BC(u32 taskId)
 {
     if (HasLinkErrorOccurred() == TRUE)
     {
@@ -129,7 +132,7 @@ static bool32 sub_80808BC(u8 taskId)
     return FALSE;
 }
 
-static bool32 sub_80808F0(u8 taskId)
+static bool32 sub_80808F0(u32 taskId)
 {
     if (JOY_NEW(B_BUTTON) && !IsLinkConnectionEstablished())
     {
@@ -140,12 +143,11 @@ static bool32 sub_80808F0(u8 taskId)
     return FALSE;
 }
 
-static bool32 sub_808093C(u8 taskId)
+static bool32 sub_808093C(u32 taskId)
 {
     if (IsLinkConnectionEstablished())
-    {
         SetSuppressLinkErrorMessage(TRUE);
-    }
+
     if (JOY_NEW(B_BUTTON))
     {
         gLinkType = 0;
@@ -155,9 +157,9 @@ static bool32 sub_808093C(u8 taskId)
     return FALSE;
 }
 
-static bool32 sub_8080990(u8 taskId)
+static bool32 sub_8080990(u32 taskId)
 {
-    if (GetSioMultiSI() == TRUE)
+    if (GetSioMultiSI())
     {
         gTasks[taskId].func = Task_Linkup_ErroredOut;
         return TRUE;
@@ -168,6 +170,7 @@ static bool32 sub_8080990(u8 taskId)
 static void Task_Linkup0(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
+	
     if (data[0] == 0)
     {
         OpenLinkTimed();
@@ -176,20 +179,21 @@ static void Task_Linkup0(u8 taskId)
         data[5] = AddWindow(&gUnknown_83C6AB0);
     }
     else if (data[0] > 9)
-    {
         gTasks[taskId].func = Task_Linkup1;
-    }
+
     data[0]++;
 }
 
 static void Task_Linkup1(u8 taskId)
 {
-    u8 linkPlayerCount = GetLinkPlayerCount_2();
+    u32 linkPlayerCount = GetLinkPlayerCount_2();
+	
     if (sub_80808F0(taskId) != TRUE && sub_808093C(taskId) != TRUE && linkPlayerCount >= 2)
     {
         SetSuppressLinkErrorMessage(TRUE);
         gTasks[taskId].data[3] = 0;
-        if (IsLinkMaster() == TRUE)
+		
+        if (IsLinkMaster())
         {
             PlaySE(SE_PIN);
             ShowFieldAutoScrollMessage(CableClub_Text_WhenAllPlayersReadyAConfirmBCancel);
@@ -217,9 +221,11 @@ static void Task_LinkupMaster_3(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
     s32 linkPlayerCount = GetLinkPlayerCount_2();
+	
     if (sub_80808F0(taskId) != TRUE && sub_8080990(taskId) != TRUE && sub_80808BC(taskId) != TRUE)
     {
         UpdateLinkPlayerCountDisplay(taskId, linkPlayerCount);
+		
         if (JOY_NEW(A_BUTTON) && linkPlayerCount >= data[1])
         {
             sub_800A900(linkPlayerCount);
@@ -256,20 +262,17 @@ static void Task_LinkupMaster_4(u8 taskId)
 
 static void Task_LinkupMaster_5(u8 taskId)
 {
-    u8 lower = gTasks[taskId].data[1];
-    u8 higher = gTasks[taskId].data[2];
-    u16 *res;
+    u32 lower = gTasks[taskId].data[1];
+    u32 higher = gTasks[taskId].data[2];
+
     if (sub_80808BC(taskId) != TRUE && Task_Linkup_TimedOut(taskId) != TRUE)
     {
         if (GetLinkPlayerCount_2() != GetSavedPlayerCount())
-        {
             gTasks[taskId].func = Task_Linkup_ErroredOut;
-        }
         else
         {
-            res = &gSpecialVar_Result;
-            *res = sub_8080844(lower, higher);
-            if (*res)
+            gSpecialVar_Result = sub_8080844(lower, higher);
+            if (gSpecialVar_Result)
                 gTasks[taskId].func = Task_LinkupMaster_6;
         }
     }
@@ -277,13 +280,15 @@ static void Task_LinkupMaster_5(u8 taskId)
 
 static void Task_LinkupSlave_2(u8 taskId)
 {
-    u8 lower = gTasks[taskId].data[1];
-    u8 higher = gTasks[taskId].data[2];
+    u32 lower = gTasks[taskId].data[1];
+    u32 higher = gTasks[taskId].data[2];
     u16 *res;
+	
     if (sub_80808F0(taskId) != TRUE && sub_80808BC(taskId) != TRUE)
     {
         res = &gSpecialVar_Result;
         *res = sub_8080844(lower, higher);
+		
         if (*res)
         {
             if (*res == 3 || *res == 4)
@@ -312,8 +317,7 @@ static void Task_LinkupSlave_2(u8 taskId)
 
 static bool32 AnyConnectedPartnersPlayingRS(void)
 {
-    int i;
-    u16 version;
+    u32 i, version;
 
     for (i = 0; i < GetLinkPlayerCount(); i++)
     {
@@ -330,10 +334,11 @@ static void Task_LinkupMaster_6(u8 taskId)
     {
         if (gSpecialVar_Result == 4)
         {
-            if (AnyConnectedPartnersPlayingRS() == TRUE)
+            if (AnyConnectedPartnersPlayingRS())
                 CloseLink();
             else
                 SetCloseLinkCallback();
+			
             HideFieldMessageBox();
             gTasks[taskId].func = Task_Linkup_7;
         }
@@ -363,14 +368,14 @@ static void Task_LinkupMaster_6(u8 taskId)
 
 static void Task_Linkup_6a(u8 taskId)
 {
-    u8 i;
-    u16 version;
-    u8 * dest;
+    u32 i, version;
+	
     if (sub_80808BC(taskId) != TRUE && GetBlockReceivedStatus() == sub_800A8A4())
     {
         for(i = 0; i < GetLinkPlayerCount(); i++)
         {
             version = gLinkPlayers[i].version & 0xFF;
+			
             if (version != VERSION_FIRE_RED && version != VERSION_LEAF_GREEN)
             {
                 const struct TrainerCardRSE * src = (const struct TrainerCardRSE *)gBlockRecvBuffer[i];
@@ -386,6 +391,7 @@ static void Task_Linkup_6a(u8 taskId)
         SetSuppressLinkErrorMessage(FALSE);
         ResetBlockReceivedFlags();
         HideFieldMessageBox();
+		
         if (gSpecialVar_Result == 1)
         {
             DestroyLinkPlayerCountDisplayWindow(gTasks[taskId].data[5]);
@@ -429,10 +435,9 @@ static void Task_Linkup_ErroredOut(u8 taskId)
     DestroyTask(taskId);
 }
 
-static bool8 Task_Linkup_TimedOut(u8 taskId)
+static bool32 Task_Linkup_TimedOut(u32 taskId)
 {
-    gTasks[taskId].data[4]++;
-    if (gTasks[taskId].data[4] > 600)
+    if (++gTasks[taskId].data[4] > 600)
     {
         gTasks[taskId].func = Task_Linkup_ErroredOut;
         return TRUE;
@@ -442,16 +447,16 @@ static bool8 Task_Linkup_TimedOut(u8 taskId)
 
 void TryBattleLinkup(void)
 {
-    u8 lower, higher;
+    u32 lower, higher;
+	
     higher = lower = 2;
+	
     switch (gSpecialVar_0x8004)
     {
     case USING_SINGLE_BATTLE:
-        higher = lower = 2;
         gLinkType = LINKTYPE_SINGLE_BATTLE;
         break;
     case USING_DOUBLE_BATTLE:
-        higher = lower = 2;
         gLinkType = LINKTYPE_DOUBLE_BATTLE;
         break;
     case USING_MULTI_BATTLE:
@@ -469,10 +474,11 @@ void TryTradeLinkup(void)
     CreateLinkupTask(2, 2);
 }
 
-u8 CreateTask_ReestablishLinkInCableClubRoom(void)
+u32 CreateTask_ReestablishLinkInCableClubRoom(void)
 {
     if (FuncIsActiveTask(Task_ReestablishLinkInCableClubRoom_0))
         return 0xFF;
+	
     switch (gSpecialVar_0x8004)
     {
     case USING_SINGLE_BATTLE:
@@ -497,6 +503,7 @@ u8 CreateTask_ReestablishLinkInCableClubRoom(void)
 static void Task_ReestablishLinkInCableClubRoom_0(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
+	
     if (data[0] == 0)
     {
         OpenLink();
@@ -505,22 +512,14 @@ static void Task_ReestablishLinkInCableClubRoom_0(u8 taskId)
     }
     else if (data[0] > 9)
         gTasks[taskId].func = Task_ReestablishLinkInCableClubRoom_1;
+	
     data[0]++;
 }
 
 static void Task_ReestablishLinkInCableClubRoom_1(u8 taskId)
 {
     if (GetLinkPlayerCount_2() >= 2)
-    {
-        if (IsLinkMaster() == TRUE)
-        {
-            gTasks[taskId].func = Task_ReestablishLinkInCableClubRoom_Master;
-        }
-        else
-        {
-            gTasks[taskId].func = Task_ReestablishLinkInCableClubRoom_2;
-        }
-    }
+		gTasks[taskId].func = IsLinkMaster() ? Task_ReestablishLinkInCableClubRoom_Master : Task_ReestablishLinkInCableClubRoom_2;
 }
 
 static void Task_ReestablishLinkInCableClubRoom_Master(u8 taskId)
@@ -534,7 +533,7 @@ static void Task_ReestablishLinkInCableClubRoom_Master(u8 taskId)
 
 static void Task_ReestablishLinkInCableClubRoom_2(u8 taskId)
 {
-    if (gReceivedRemoteLinkPlayers == TRUE && IsLinkPlayerDataExchangeComplete() == TRUE)
+    if (gReceivedRemoteLinkPlayers && IsLinkPlayerDataExchangeComplete())
     {
         sub_800A9A4();
         StartSendingKeysToLink();
@@ -545,6 +544,7 @@ static void Task_ReestablishLinkInCableClubRoom_2(u8 taskId)
 static void Task_StartWiredCableClubBattle(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
+	
     switch (task->data[0])
     {
     case 0:
@@ -575,6 +575,7 @@ static void Task_StartWiredCableClubBattle(u8 taskId)
             PlayMapChosenOrBattleBGM(MUS_RS_VS_GYM_LEADER);
         else
             PlayMapChosenOrBattleBGM(MUS_RS_VS_TRAINER);
+		
         switch (gSpecialVar_0x8004)
         {
         case USING_SINGLE_BATTLE:
@@ -600,7 +601,8 @@ static void Task_StartWiredCableClubBattle(u8 taskId)
 static void Task_StartWirelessCableClubBattle(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
-    int i;
+    u32 i;
+	
     switch (data[0])
     {
     case 0:
@@ -630,8 +632,7 @@ static void Task_StartWirelessCableClubBattle(u8 taskId)
         }
         break;
     case 4:
-        data[1]++;
-        if (data[1] > 20)
+        if (++data[1] > 20)
             data[0] = 5;
         break;
     case 5:
@@ -647,7 +648,9 @@ static void Task_StartWirelessCableClubBattle(u8 taskId)
             PlayMapChosenOrBattleBGM(MUS_RS_VS_GYM_LEADER);
         else
             PlayMapChosenOrBattleBGM(MUS_RS_VS_TRAINER);
+		
         gLinkPlayers[0].linkType = LINKTYPE_BATTLE;
+		
         switch (gSpecialVar_0x8004)
         {
         case USING_SINGLE_BATTLE:
@@ -687,23 +690,20 @@ static void sub_8081624(void)
 
 void CB2_ReturnFromCableClubBattle(void)
 {
-    gBattleTypeFlags &= (u16)~BATTLE_TYPE_LINK_ESTABLISHED;
+    gBattleTypeFlags &= (u16)~(BATTLE_TYPE_LINK_ESTABLISHED);
     ResetMapMusic();
     LoadPlayerParty();
     SavePlayerBag();
     UpdateTrainerFansAfterLinkBattle();
+	
     if (gSpecialVar_0x8004 != USING_MULTI_BATTLE)
-    {
         TryRecordLinkBattleOutcome(gLocalLinkPlayerId ^ 1);
-    }
-    if (InUnionRoom() == TRUE)
-    {
+
+    if (InUnionRoom())
         gMain.savedCallback = sub_8081624;
-    }
     else
-    {
         gMain.savedCallback = CB2_ReturnToFieldFromMultiplayer;
-    }
+
     SetMainCallback2(CB2_SetUpSaveAfterLinkBattle);
 }
 
@@ -725,6 +725,7 @@ void ExitLinkRoom(void)
 static void Task_EnterCableClubSeat(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
+	
     switch (task->data[0])
     {
     case 0:
@@ -766,14 +767,14 @@ static void Task_EnterCableClubSeat(u8 taskId)
 
 static void CreateEnterCableClubSeatTaskWithFollowupFunc(TaskFunc followUpFunc)
 {
-    u8 taskId = CreateTask(Task_EnterCableClubSeat, 80);
-    SetTaskFuncWithFollowupFunc(taskId, Task_EnterCableClubSeat, followUpFunc);
+    SetTaskFuncWithFollowupFunc(CreateTask(Task_EnterCableClubSeat, 80), Task_EnterCableClubSeat, followUpFunc);
     ScriptContext1_Stop();
 }
 
 static void Task_StartWiredCableClubTrade(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
+	
     switch (task->data[0])
     {
     case 0:
@@ -806,6 +807,7 @@ static void Task_StartWiredCableClubTrade(u8 taskId)
 static void Task_StartWirelessCableClubTrade(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
+	
     switch (data[0])
     {
     case 0:
@@ -846,6 +848,7 @@ void EnterTradeSeat(void)
 void EnterColosseumPlayerSpot(void)
 {
     gLinkType = LINKTYPE_BATTLE;
+	
     if (gWirelessCommType)
         CreateEnterCableClubSeatTaskWithFollowupFunc(Task_StartWirelessCableClubBattle);
     else
@@ -857,14 +860,18 @@ void Script_ShowLinkTrainerCard(void)
     ShowTrainerCardInLink(gSpecialVar_0x8006, CB2_ReturnToFieldContinueScriptPlayMapMusic);
 }
 
-bool32 GetSeeingLinkPlayerCardMsg(u8 who)
+bool32 GetSeeingLinkPlayerCardMsg(u32 who)
 {
-    u8 stars;
+    u32 stars;
+	
     gSpecialVar_0x8006 = who;
+	
     StringCopy(gStringVar1, gLinkPlayers[who].name);
+	
     stars = GetTrainerCardStars(who);
     if (stars == 0)
         return FALSE;
+	
     StringCopy(gStringVar2, sStarsMessagePtrs[stars - 1]);
     return TRUE;
 }
@@ -872,8 +879,8 @@ bool32 GetSeeingLinkPlayerCardMsg(u8 who)
 void Task_WaitForReceivedRemoteLinkPlayers5SecondTimeout(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
-    task->data[0]++;
-    if (task->data[0] > 300)
+
+    if (++task->data[0] > 300)
     {
         CloseLink();
         SetMainCallback2(CB2_LinkError);

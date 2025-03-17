@@ -170,18 +170,18 @@ void BuyMenuInitWindows(bool32 isSellingTM)
         PutWindowTilemap(6);
 }
 
-void BuyMenuPrint(u8 windowId, u8 font, const u8 *text, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 color)
+void BuyMenuPrint(u32 windowId, u32 font, const u8 *text, u32 x, u32 y, u32 letterSpacing, u32 lineSpacing, u32 speed, u32 color)
 {
     AddTextPrinterParameterized4(windowId, font, x, y, letterSpacing, lineSpacing, sShopBuyMenuTextColors[color], speed, text);
 }
 
-void BuyMenuDisplayMessage(u8 taskId, const u8 *text, TaskFunc callback)
+void BuyMenuDisplayMessage(u32 taskId, const u8 *text, TaskFunc callback)
 {
     DisplayMessageAndContinueTask(taskId, 2, 0x13, 0xE, GetMartUnk16_4(), GetTextSpeedSetting(), text, callback);
     ScheduleBgCopyTilemapToVram(0);
 }
 
-void BuyMenuConfirmPurchase(u8 taskId, const struct YesNoFuncTable *yesNo)
+void BuyMenuConfirmPurchase(u32 taskId, const struct YesNoFuncTable *yesNo)
 {
     CreateYesNoMenuWithCallbacks(taskId, &sShopBuyMenuYesNoWindowTemplate, 2, 0, 2, 1, 0xD, yesNo);
 }

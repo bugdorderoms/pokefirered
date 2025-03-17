@@ -457,6 +457,17 @@ const struct SpriteTemplate gEnergyBallSpriteTemplate =
     .callback = AnimShadowBall,
 };
 
+const struct SpriteTemplate gLeafStormParticleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_LEAF,
+    .paletteTag = ANIM_TAG_LEAF,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = sRazorLeafParticleAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimDirtScatter,
+};
+
 // Shoots a leaf upward, then floats it downward while swaying back and forth.
 // arg 0: upward x delta per frame
 // arg 1: upward y delta per frame

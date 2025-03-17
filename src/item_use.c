@@ -789,7 +789,7 @@ bool8 ExecuteTableBasedItemEffect(u8 partyMonIndex, u16 item)
 
 bool8 CanUseItemInBattle(bool8 fromBagMenu, u16 itemId)
 {
-	bool8 canUse = FALSE;
+	bool32 canUse = FALSE;
 	const u8* failStr = NULL;
 	
 	if (!IsItemUseBlockedByBattleEffect(fromBagMenu ? gBattlerInMenuId : GetBattleMonForItemUse(gBattlerInMenuId, GetPartyIdFromBattleSlot(gPartyMenu.slotId)))

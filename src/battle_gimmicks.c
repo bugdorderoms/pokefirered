@@ -17,6 +17,11 @@ bool32 IsZMove(u32 move)
 	return (move >= FIRST_Z_MOVE && move <= LAST_Z_MOVE);
 }
 
+bool32 IsTypeBasedZMove(u32 move)
+{
+	return (move >= FIRST_Z_MOVE && move <= LAST_TYPED_Z_MOVE);
+}
+
 /////////////
 // DYNAMAX //
 /////////////

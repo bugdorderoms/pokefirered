@@ -15,8 +15,8 @@ u8 GetMartUnk16_4(void);
 
 // buy_menu_helper
 void BuyMenuInitWindows(bool32 isSellingTM);
-void BuyMenuPrint(u8 windowId, u8 font, const u8 *text, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 color);
-void BuyMenuDisplayMessage(u8 taskId, const u8 *text, TaskFunc callback);
-void BuyMenuConfirmPurchase(u8 taskId, const struct YesNoFuncTable *yesNo);
+void BuyMenuPrint(u32 windowId, u32 font, const u8 *text, u32 x, u32 y, u32 letterSpacing, u32 lineSpacing, u32 speed, u32 color);
+void BuyMenuDisplayMessage(u32 taskId, const u8 *text, TaskFunc callback);
+void BuyMenuConfirmPurchase(u32 taskId, const struct YesNoFuncTable *yesNo);
 
 #endif // GUARD_SHOP_H

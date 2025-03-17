@@ -55,13 +55,13 @@ struct TrainerBattleParameter
 
 static void DoSafariBattle(void);
 static void DoGhostBattle(void);
-static void DoStandardWildBattle(bool8 isDouble);
+static void DoStandardWildBattle(bool32 isDouble);
 static void CB2_EndWildBattle(void);
 static void CB2_EndScriptedWildBattle(void);
 static void CB2_EndMarowakBattle(void);
 static void CB2_EndTrainerBattle(void);
-static u8 GetWildBattleTransition(void);
-static u8 GetTrainerBattleTransition(void);
+static u32 GetWildBattleTransition(void);
+static u32 GetTrainerBattleTransition(void);
 static bool32 IsPlayerDefeated(u32 battleOutcome);
 
 static EWRAM_DATA u16 sTrainerBattleMode = 0;
@@ -199,17 +199,17 @@ static void Task_BattleStart(u8 taskId)
     }
 }
 
-static void CreateBattleStartTask(u8 transition, u16 song) // song == 0 means default music for current map
+static void CreateBattleStartTask(u32 transition, u32 song) // song == 0 means default music for current map
 {
     gTasks[CreateTask(Task_BattleStart, 1)].tTransition = transition;
     PlayMapChosenOrBattleBGM(song);
 }
 
-static bool8 CheckSilphScopeInPokemonTower(u16 mapGroup, u16 mapNum)
+static bool32 CheckSilphScopeInPokemonTower(u32 mapGroup, u32 mapNum)
 {
     if (mapGroup == MAP_GROUP(POKEMON_TOWER_1F) && (mapNum == MAP_NUM(POKEMON_TOWER_1F) || mapNum == MAP_NUM(POKEMON_TOWER_2F) || mapNum == MAP_NUM(POKEMON_TOWER_3F)
 	|| mapNum == MAP_NUM(POKEMON_TOWER_4F) || mapNum == MAP_NUM(POKEMON_TOWER_5F) || mapNum == MAP_NUM(POKEMON_TOWER_6F) || mapNum == MAP_NUM(POKEMON_TOWER_7F))
-    && !(CheckBagHasItem(ITEM_SILPH_SCOPE, 1)))
+    && !CheckBagHasItem(ITEM_SILPH_SCOPE, 1))
         return TRUE;
     else
         return FALSE;
@@ -254,7 +254,7 @@ static void DoGhostBattle(void)
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
 }
 
-static void DoStandardWildBattle(bool8 isDouble)
+static void DoStandardWildBattle(bool32 isDouble)
 {
     ScriptContext2_Enable();
     FreezeObjectEvents();
@@ -333,7 +333,7 @@ void StartScriptedWildBattle(void)
 
 void StartTotemBattle(s8 *buffs)
 {
-	u8 i;
+	u32 i;
 	
 	ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
@@ -390,8 +390,7 @@ void StartMarowakBattle(void)
 
 void StartLegendaryBattle(void)
 {
-	u8 transition = B_TRANSITION_BLUR;
-    u16 mus;
+	u32 mus, transition = B_TRANSITION_BLUR;
     
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
@@ -465,9 +464,9 @@ static void CB2_EndMarowakBattle(void)
     }
 }
 
-u8 BattleSetup_GetTerrainId(void)
+u32 BattleSetup_GetTerrainId(void)
 {
-    u16 tileBehavior;
+    u32 tileBehavior;
     s16 x, y;
 	
 	if (gIsFishingEncounter)
@@ -524,9 +523,9 @@ u8 BattleSetup_GetTerrainId(void)
     return BATTLE_TERRAIN_PLAIN;
 }
 
-static u8 GetBattleTransitionTypeByMap(void)
+static u32 GetBattleTransitionTypeByMap(void)
 {
-    u16 tileBehavior;
+    u32 tileBehavior;
     s16 x, y;
 	
     if (Overworld_GetFlashLevel())
@@ -552,8 +551,7 @@ static u8 GetBattleTransitionTypeByMap(void)
 
 static u32 GetSumOfPlayerPartyLevel(void)
 {
-	u8 i;
-    u32 sum;
+    u32 i, sum;
 
     for (i = 0, sum = 0; i < PARTY_SIZE; ++i)
     {
@@ -563,7 +561,7 @@ static u32 GetSumOfPlayerPartyLevel(void)
     return sum;
 }
 
-u8 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx)
+u32 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx)
 {
 #if DYNAMIC_LEVEL
 	return GetPlayerPartyHighestLevel();
@@ -571,11 +569,10 @@ u8 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx)
 	return partyIdx.lvl;
 }
 
-static u32 GetSumOfEnemyPartyLevel(u16 opponentId)
+static u32 GetSumOfEnemyPartyLevel(u32 opponentId)
 {
 	const struct TrainerMon *party = gTrainers[opponentId].party;
-    u8 i, numMons = gTrainers[opponentId].partySize;
-    u32 sum;
+    u32 i, sum, numMons = gTrainers[opponentId].partySize;
 	
 	for (i = 0, sum = 0; i < numMons; i++)
 		sum += GetTrainerPartyMonLevel(party[i]);
@@ -583,12 +580,12 @@ static u32 GetSumOfEnemyPartyLevel(u16 opponentId)
     return sum;
 }
 
-static u8 GetWildBattleTransition(void)
+static u32 GetWildBattleTransition(void)
 {
 	return sBattleTransitionTable_Wild[GetBattleTransitionTypeByMap()][(GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel()) ? 0 : 1];
 }
 
-static u8 GetTrainerBattleTransition(void)
+static u32 GetTrainerBattleTransition(void)
 {
     if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_ELITE_FOUR)
     {
@@ -608,7 +605,7 @@ static u8 GetTrainerBattleTransition(void)
 	return sBattleTransitionTable_Trainer[GetBattleTransitionTypeByMap()][(GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A) < GetSumOfPlayerPartyLevel()) ? 0 : 1];
 }
 
-static u16 GetTrainerAFlag(void)
+static u32 GetTrainerAFlag(void)
 {
     return TRAINER_FLAGS_START + gTrainerBattleOpponent_A;
 }
@@ -661,7 +658,7 @@ static inline void SetPtr(const void *ptr, const void *value)
 
 static void TrainerBattleLoadArgs(const struct TrainerBattleParameter *specs, const u8 *data)
 {
-    while (1)
+    while (TRUE)
     {
         switch (specs->ptrType)
         {
@@ -748,7 +745,7 @@ const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
     }
 }
 
-void ConfigureAndSetUpOneTrainerBattle(u8 trainerEventObjId, const u8 *trainerScript)
+void ConfigureAndSetUpOneTrainerBattle(u32 trainerEventObjId, const u8 *trainerScript)
 {
     gSelectedObjectEvent = trainerEventObjId;
     gSpecialVar_LastTalked = gObjectEvents[trainerEventObjId].localId;
@@ -768,12 +765,12 @@ void SetUpTrainerMovement(void)
     SetTrainerMovementType(objectEvent, GetTrainerFacingDirectionMovementType(objectEvent->facingDirection));
 }
 
-u8 GetTrainerBattleMode(void)
+u32 GetTrainerBattleMode(void)
 {
     return sTrainerBattleMode;
 }
 
-u16 GetRivalBattleFlags(void)
+u32 GetRivalBattleFlags(void)
 {
     return sRivalBattleFlags;
 }
@@ -788,17 +785,17 @@ void SetBattledTrainerFlag(void)
     FlagSet(GetTrainerAFlag());
 }
 
-bool8 HasTrainerBeenFought(u16 trainerId)
+bool32 HasTrainerBeenFought(u32 trainerId)
 {
     return FlagGet(TRAINER_FLAGS_START + trainerId);
 }
 
-void SetTrainerFlag(u16 trainerId)
+void SetTrainerFlag(u32 trainerId)
 {
     FlagSet(TRAINER_FLAGS_START + trainerId);
 }
 
-void ClearTrainerFlag(u16 trainerId)
+void ClearTrainerFlag(u32 trainerId)
 {
     FlagClear(TRAINER_FLAGS_START + trainerId);
 }

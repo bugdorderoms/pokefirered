@@ -3055,7 +3055,6 @@ u32 GetWhoStrikesFirst(u32 battler1, u32 battler2, bool32 ignoreChosenMoves)
     s32 battler1Bracket, battler2Bracket;
     u32 battler1Speed, battler2Speed, temp;
   
-    // priority check
     if (!ignoreChosenMoves) 
     {
 		u32 battler1ChosenAction = gBattleStruct->battlers[battler1].chosenAction;
@@ -3063,6 +3062,7 @@ u32 GetWhoStrikesFirst(u32 battler1, u32 battler2, bool32 ignoreChosenMoves)
 		u32 battler1ChosenMove = gBattleStruct->battlers[battler1].chosenMove;
 		u32 battler2ChosenMove = gBattleStruct->battlers[battler2].chosenMove;
 		
+		// priority check
 		battler1Priority = battler2Priority = 0;
 		
 		if (battler1ChosenAction == B_ACTION_USE_MOVE)

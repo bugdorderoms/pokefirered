@@ -5,6 +5,6 @@
 
 void AllocateBattleResources(void);
 void FreeBattleResources(void);
-void AdjustFriendshipOnBattleFaint(u8 bank);
+void AdjustFriendshipOnBattleFaint(u32 battlerId);
 
 #endif // GUARD_BATTLE_UTIL_H

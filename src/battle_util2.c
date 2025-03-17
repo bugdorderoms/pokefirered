@@ -9,7 +9,7 @@ void AllocateBattleResources(void)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
     {
-        s32 i;
+        u32 i;
 
         for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
             gPokedudeBattlerStates[i] = AllocZeroed(sizeof(struct PokedudeBattlerState));
@@ -33,12 +33,10 @@ void FreeBattleResources(void)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
     {
-        s32 i;
+        u32 i;
 
         for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
-        {
             FREE_AND_SET_NULL(gPokedudeBattlerStates[i]);
-        }
     }
     if (gBattleResources != NULL)
     {
@@ -56,9 +54,9 @@ void FreeBattleResources(void)
     }
 }
 
-void AdjustFriendshipOnBattleFaint(u8 battlerId)
+void AdjustFriendshipOnBattleFaint(u32 battlerId)
 {
-	u8 i, friendshipEvent, level = 0;
+	u32 i, friendshipEvent, level = 0;
 	
 	for (i = 0; i < gBattlersCount; i++)
 	{
