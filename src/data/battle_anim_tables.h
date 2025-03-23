@@ -282,4 +282,20 @@ const struct BattleAnimTable gBattleAnims_General[] =
 	{
 		.script = gGeneralAnim_AquaRingHeal,
 	},
+	[B_ANIM_RED_PRIMAL_REVERSION] =
+	{
+		.script = gGeneralAnim_RedPrimalReversion,
+		.hideHpBoxes = TRUE,
+		.shouldBePlayed = TRUE,
+		.substituteRecede = TRUE,
+		.changeForm = TRUE,
+	},
+	[B_ANIM_BLUE_PRIMAL_REVERSION] =
+	{
+		.script = gGeneralAnim_BluePrimalReversion,
+		.hideHpBoxes = TRUE,
+		.shouldBePlayed = TRUE,
+		.substituteRecede = TRUE,
+		.changeForm = TRUE,
+	},
 };

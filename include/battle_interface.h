@@ -200,6 +200,12 @@ enum
 // Move info trigger
 #define TAG_MOVEINFO_TRIGGER_GFX                0xD70E
 
+// Gimmick trigger
+#define TAG_GIMMICK_TRIGGER_GFX                 0xD70F
+
+// Gimmick indicator
+#define TAG_GIMMICK_INDICATOR_GFX               0xD710
+
 #define ENEMY_SHADOW_Y_OFFSET                   27
 
 void Task_HidePartyStatusSummary(u8 taskId);

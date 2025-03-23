@@ -97,7 +97,7 @@
 // param = region (REGIONS_COUNT is used to determine that this form is applied to all other regions that are not listed below)
 #define FORM_CHANGE_REGION        0x0014
 
-// battle mechanic forms. TODO:
+// battle mechanic forms.
 
 // form change for terastalization in battle.
 // param = type

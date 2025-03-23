@@ -9,6 +9,7 @@
 #include "menu.h"
 #include "strings.h"
 #include "pokedex.h"
+#include "pokemon_icon.h"
 #include "pokemon_summary_screen.h"
 #include "safari_zone.h"
 #include "constants/songs.h"
@@ -303,65 +304,71 @@ enum
 // There's also the third sprite under name of healthbarSprite that refers to the healthbar visible on the healtbox.
 u32 CreateBattlerHealthboxSprites(u32 a)
 {
-    u32 healthboxLeftSpriteId, healthboxRightSpriteId, healthbarSpriteId, healthbarType = HEALTHBAR_TYPE_PLAYER_SINGLE;
+	u32 position = GetBattlerPosition(a), side = GetBattlerSide(a);
+    u32 healthbarType, healthboxLeftSpriteId, healthboxRightSpriteId, healthbarSpriteId;
     struct Sprite *sprite;
-
+	
+	// Create healthbox
     if (!IsDoubleBattleForBattler(a))
     {
-        if (GetBattlerSide(a) == B_SIDE_PLAYER)
-        {
-            healthboxLeftSpriteId = CreateSprite(&sHealthboxPlayerSpriteTemplates[0], 240, 160, 1);
+		if (side == B_SIDE_PLAYER)
+		{
+			healthboxLeftSpriteId = CreateSprite(&sHealthboxPlayerSpriteTemplates[0], 240, 160, 1);
             healthboxRightSpriteId = CreateSpriteAtEnd(&sHealthboxPlayerSpriteTemplates[0], 240, 160, 1);
 
             gSprites[healthboxLeftSpriteId].oam.shape = SPRITE_SHAPE(64x64);
             gSprites[healthboxRightSpriteId].oam.shape = SPRITE_SHAPE(64x64);
             gSprites[healthboxRightSpriteId].oam.tileNum += 64;
-        }
-        else
-        {
-            healthboxLeftSpriteId = CreateSprite(&sHealthboxOpponentSpriteTemplates[0], 240, 160, 1);
+			healthbarType = HEALTHBAR_TYPE_PLAYER_SINGLE;
+		}
+		else
+		{
+			healthboxLeftSpriteId = CreateSprite(&sHealthboxOpponentSpriteTemplates[0], 240, 160, 1);
             healthboxRightSpriteId = CreateSpriteAtEnd(&sHealthboxOpponentSpriteTemplates[0], 240, 160, 1);
 
             gSprites[healthboxRightSpriteId].oam.tileNum += 32;
             healthbarType = HEALTHBAR_TYPE_OPPONENT;
-        }
-        gSprites[healthboxLeftSpriteId].hMain_HealthBoxOtherSpriteId = healthboxRightSpriteId;
-        gSprites[healthboxRightSpriteId].hOther_HealthBoxSpriteId = healthboxLeftSpriteId;
-        gSprites[healthboxRightSpriteId].callback = SpriteCB_HealthBoxOther;
+		}
     }
     else
     {
-        if (GetBattlerSide(a) == B_SIDE_PLAYER)
+        if (side == B_SIDE_PLAYER)
         {
-            healthboxLeftSpriteId = CreateSprite(&sHealthboxPlayerSpriteTemplates[GetBattlerPosition(a) / 2], 240, 160, 1);
-            healthboxRightSpriteId = CreateSpriteAtEnd(&sHealthboxPlayerSpriteTemplates[GetBattlerPosition(a) / 2], 240, 160, 1);
+            healthboxLeftSpriteId = CreateSprite(&sHealthboxPlayerSpriteTemplates[position / 2], 240, 160, 1);
+            healthboxRightSpriteId = CreateSpriteAtEnd(&sHealthboxPlayerSpriteTemplates[position / 2], 240, 160, 1);
             healthbarType = HEALTHBAR_TYPE_PLAYER_DOUBLE;
         }
         else
         {
-            healthboxLeftSpriteId = CreateSprite(&sHealthboxOpponentSpriteTemplates[GetBattlerPosition(a) / 2], 240, 160, 1);
-            healthboxRightSpriteId = CreateSpriteAtEnd(&sHealthboxOpponentSpriteTemplates[GetBattlerPosition(a) / 2], 240, 160, 1);
+            healthboxLeftSpriteId = CreateSprite(&sHealthboxOpponentSpriteTemplates[position / 2], 240, 160, 1);
+            healthboxRightSpriteId = CreateSpriteAtEnd(&sHealthboxOpponentSpriteTemplates[position / 2], 240, 160, 1);
             healthbarType = HEALTHBAR_TYPE_OPPONENT;
         }
-		gSprites[healthboxLeftSpriteId].hMain_HealthBoxOtherSpriteId = healthboxRightSpriteId;
-		gSprites[healthboxRightSpriteId].hOther_HealthBoxSpriteId = healthboxLeftSpriteId;
 		gSprites[healthboxRightSpriteId].oam.tileNum += 32;
-		gSprites[healthboxRightSpriteId].callback = SpriteCB_HealthBoxOther;
     }
-    healthbarSpriteId = CreateSpriteAtEnd(&gUnknown_82602F8[gBattlerPositions[a]], 140, 60, 0);
+	
+	// Create healthbar
+	healthbarSpriteId = CreateSpriteAtEnd(&gUnknown_82602F8[position], 140, 60, 0);
     sprite = &gSprites[healthbarSpriteId];
-    SetSubspriteTables(sprite, &gUnknown_82603C4[GetBattlerSide(a)]);
+    SetSubspriteTables(sprite, &gUnknown_82603C4[side]);
     sprite->subspriteMode = SUBSPRITES_IGNORE_PRIORITY;
     sprite->oam.priority = 1;
-    CpuCopy32(GetHealthboxElementGfxPtr(HEALTHBOX_GFX_1), OBJ_VRAM0 + sprite->oam.tileNum * 32, 64);
-
-    gSprites[healthboxLeftSpriteId].hMain_HealthBarSpriteId = healthbarSpriteId;
-    gSprites[healthboxLeftSpriteId].hMain_Battler = a;
-    gSprites[healthboxLeftSpriteId].invisible = TRUE;
-    gSprites[healthboxRightSpriteId].invisible = TRUE;
-    sprite->hBar_HealthBoxSpriteId = healthboxLeftSpriteId;
+	sprite->hBar_HealthBoxSpriteId = healthboxLeftSpriteId;
     sprite->hBar_Type = healthbarType;
     sprite->invisible = TRUE;
+    CpuCopy32(GetHealthboxElementGfxPtr(HEALTHBOX_GFX_1), OBJ_VRAM0 + sprite->oam.tileNum * 32, 64);
+	
+	// Set healthbox left params
+	gSprites[healthboxLeftSpriteId].hMain_HealthBoxOtherSpriteId = healthboxRightSpriteId;
+	gSprites[healthboxLeftSpriteId].hMain_HealthBarSpriteId = healthbarSpriteId;
+	gSprites[healthboxLeftSpriteId].hMain_IndicatorSpriteId = CreateGimmickIndicatorSprite(a);
+    gSprites[healthboxLeftSpriteId].hMain_Battler = a;
+    gSprites[healthboxLeftSpriteId].invisible = TRUE;
+	
+	// Set healthbox right params
+    gSprites[healthboxRightSpriteId].hOther_HealthBoxSpriteId = healthboxLeftSpriteId;
+    gSprites[healthboxRightSpriteId].callback = SpriteCB_HealthBoxOther;
+    gSprites[healthboxRightSpriteId].invisible = TRUE;
 
     return healthboxLeftSpriteId;
 }
@@ -475,6 +482,7 @@ void SetHealthboxSpriteInvisible(u32 healthboxSpriteId)
     gSprites[healthboxSpriteId].invisible = TRUE;
     gSprites[gSprites[healthboxSpriteId].hMain_HealthBarSpriteId].invisible = TRUE;
     gSprites[gSprites[healthboxSpriteId].hMain_HealthBoxOtherSpriteId].invisible = TRUE;
+	SetGimmickIndicatorSpriteVisibility(gSprites[healthboxSpriteId].hMain_IndicatorSpriteId, TRUE);
 }
 
 void SetHealthboxSpriteVisible(u32 healthboxSpriteId)
@@ -482,10 +490,12 @@ void SetHealthboxSpriteVisible(u32 healthboxSpriteId)
     gSprites[healthboxSpriteId].invisible = FALSE;
     gSprites[gSprites[healthboxSpriteId].hMain_HealthBarSpriteId].invisible = FALSE;
     gSprites[gSprites[healthboxSpriteId].hMain_HealthBoxOtherSpriteId].invisible = FALSE;
+	SetGimmickIndicatorSpriteVisibility(gSprites[healthboxSpriteId].hMain_IndicatorSpriteId, FALSE);
 }
 
 void DestoryHealthboxSprite(u32 healthboxSpriteId)
 {
+	DestroyMonIcon(&gSprites[gSprites[healthboxSpriteId].hMain_IndicatorSpriteId]);
     DestroySprite(&gSprites[gSprites[healthboxSpriteId].hMain_HealthBoxOtherSpriteId]);
     DestroySprite(&gSprites[gSprites[healthboxSpriteId].hMain_HealthBarSpriteId]);
     DestroySprite(&gSprites[healthboxSpriteId]);
@@ -502,6 +512,7 @@ void UpdateOamPriorityInAllHealthboxes(u32 priority, bool32 hideHpBoxes)
         gSprites[healthboxLeftSpriteId].oam.priority = priority;
         gSprites[gSprites[healthboxLeftSpriteId].hMain_HealthBoxOtherSpriteId].oam.priority = priority;
         gSprites[gSprites[healthboxLeftSpriteId].hMain_HealthBarSpriteId].oam.priority = priority;
+		gSprites[gSprites[healthboxLeftSpriteId].hMain_IndicatorSpriteId].oam.priority = priority;
 
 		if (IsBattlerAlive(i))
 		{
@@ -549,27 +560,40 @@ void InitBattlerHealthboxCoords(u32 battler)
 static void UpdateLvlInHealthbox(u32 healthboxSpriteId, u32 lvl)
 {
     u32 windowId, spriteTileNum, xPos, battlerId = gSprites[healthboxSpriteId].hMain_Battler;
-	u8 text[16] = _("{LV_2}");
-    u8 *windowTileData, *objVram = ConvertIntToDecimalStringN(text + 2, lvl, STR_CONV_MODE_LEFT_ALIGN, 3);
-
-    xPos = 5 * (3 - (objVram - (text + 2)));
-
+	u32 indicatorSpriteId = gSprites[healthboxSpriteId].hMain_IndicatorSpriteId;
+	u8 text[16];
+    u8 *windowTileData, *objVram;
+	
+	// Don't print Lv char if mon has a gimmick with an indicator active.
+	if (GetGimmickIndicatorId(battlerId) != GIMMICK_INDICATOR_NONE)
+	{
+		objVram = ConvertIntToDecimalStringN(text, lvl, STR_CONV_MODE_LEFT_ALIGN, 3);
+		xPos = 5 * (3 - (objVram - (text + 2))) - 1;
+		UpdateIndicatorLevelData(indicatorSpriteId, lvl);
+	}
+	else
+	{
+		text[0] = CHAR_EXTRA_EMOJI;
+        text[1] = CHAR_LV_2;
+		
+		objVram = ConvertIntToDecimalStringN(text + 2, lvl, STR_CONV_MODE_LEFT_ALIGN, 3);
+		xPos = 5 * (3 - (objVram - (text + 2)));
+	}
     windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(text, 0, xPos, 3, &windowId);
     spriteTileNum = gSprites[healthboxSpriteId].oam.tileNum * TILE_SIZE_4BPP;
-
+	
+	objVram = (void*)(OBJ_VRAM0);
+	
     if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
     {
-        objVram = (void*)(OBJ_VRAM0);
         if (!IsDoubleBattleForBattler(battlerId))
             objVram += spriteTileNum + 0x820;
         else
             objVram += spriteTileNum + 0x420;
     }
     else
-    {
-        objVram = (void*)(OBJ_VRAM0);
         objVram += spriteTileNum + 0x400;
-    }
+
     TextIntoHealthboxObject(objVram, windowTileData, 3);
     RemoveWindow(windowId);
 }

@@ -5,6 +5,7 @@
 #include "battle_util.h"
 #include "trainer_slide.h"
 #include "constants/pokemon.h"
+#include "constants/trainer_slides.h"
 
 static u8 GetEnemyTeamCount(bool8 onlyAlive)
 {

@@ -5404,6 +5404,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_RED_ORB] =
 	{
 		.name = _("Red Orb"),
+		.holdEffectParam = GIMMICK_INDICATOR_OMEGA,
 		.description = sItemDesc_RedOrb,
 		.price = 10000,
 		.pocket = POCKET_ITEMS,
@@ -5416,6 +5417,7 @@ const struct Item gItems[ITEMS_COUNT] =
 	[ITEM_BLUE_ORB] =
 	{
 		.name = _("Blue Orb"),
+		.holdEffectParam = GIMMICK_INDICATOR_ALPHA,
 		.description = sItemDesc_BlueOrb,
 		.price = 10000,
 		.pocket = POCKET_ITEMS,

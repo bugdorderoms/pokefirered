@@ -1,5 +1,6 @@
 #include "battle.h"
 #include "battle_anim.h"
+#include "battle_gimmicks.h"
 #include "battle_gfx_sfx_util.h"
 #include "battle_interface.h"
 #include "battle_move_effects.h"
@@ -286,7 +287,7 @@ static void Task_HandleBattleTableAnimation(u8 taskId)
 			gTasks[taskId].tState++;
 			break;
 		case 1:
-			if (!gBattleSpritesDataPtr->healthBoxesData[gTasks[taskId].tBattlerId].specialAnimActive)
+			if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].specialAnimActive)
 			{
 				if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute && gBattleSpritesDataPtr->battlerData[battlerId].flag_x8
 				&& gTasks[taskId].tSubstituteRecede && gTasks[taskId].tChangeMonForm)
@@ -313,7 +314,7 @@ static void Task_HandleBattleTableAnimation(u8 taskId)
 			}
 			break;
 		case 3:
-			gBattleSpritesDataPtr->healthBoxesData[gTasks[taskId].tBattlerId].animFromTableActive = FALSE;
+			gBattleSpritesDataPtr->healthBoxesData[battlerId].animFromTableActive = FALSE;
 			DestroyTask(taskId);
 			break;
 	}
@@ -449,6 +450,7 @@ bool32 BattleLoadAllHealthBoxesGfx(u32 state)
 		case 1:
 			LoadSpritePalette(&gSpritePalettes_HealthBoxHealthBar[0]);
 			LoadSpritePalette(&gSpritePalettes_HealthBoxHealthBar[1]);
+			LoadSpritePalette(&gSpritePalette_GimmickIndicator);
 			break;
 		case 2:
 			if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)

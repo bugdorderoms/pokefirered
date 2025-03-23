@@ -30,7 +30,7 @@
 #define ANIM_TAG_HORN_HIT                   (ANIM_SPRITES_START + 20)
 #define ANIM_TAG_HIT                        (ANIM_SPRITES_START + 21)
 #define ANIM_TAG_HIT_2                      (ANIM_SPRITES_START + 22)
-#define ANIM_TAG_BLUE_SHARDS                (ANIM_SPRITES_START + 23) // unused
+#define ANIM_TAG_OMEGA_STONE                (ANIM_SPRITES_START + 23)
 #define ANIM_TAG_ENERGY_BALL                (ANIM_SPRITES_START + 24)
 #define ANIM_TAG_WAVING_HAND                (ANIM_SPRITES_START + 25) // unused
 #define ANIM_TAG_HIT_DUPLICATE              (ANIM_SPRITES_START + 26) // unused
@@ -73,7 +73,7 @@
 #define ANIM_TAG_LEAF                       (ANIM_SPRITES_START + 63)
 #define ANIM_TAG_FINGER                     (ANIM_SPRITES_START + 64)
 #define ANIM_TAG_POISON_POWDER              (ANIM_SPRITES_START + 65)
-#define ANIM_TAG_BROWN_TRIANGLE             (ANIM_SPRITES_START + 66) // unused
+#define ANIM_TAG_OMEGA_SYMBOL               (ANIM_SPRITES_START + 66)
 #define ANIM_TAG_SLEEP_POWDER               (ANIM_SPRITES_START + 67)
 #define ANIM_TAG_STUN_SPORE                 (ANIM_SPRITES_START + 68)
 #define ANIM_TAG_ANCHOR                     (ANIM_SPRITES_START + 69)
@@ -89,7 +89,7 @@
 #define ANIM_TAG_SHOCK                      (ANIM_SPRITES_START + 79)
 #define ANIM_TAG_BELL_2                     (ANIM_SPRITES_START + 80) // unused
 #define ANIM_TAG_PINK_GLOVE                 (ANIM_SPRITES_START + 81) // unused
-#define ANIM_TAG_BLUE_LINES                 (ANIM_SPRITES_START + 82) // unused
+#define ANIM_TAG_ALPHA_STONE                (ANIM_SPRITES_START + 82)
 #define ANIM_TAG_IMPACT_3                   (ANIM_SPRITES_START + 83) // unused
 #define ANIM_TAG_IMPACT_2                   (ANIM_SPRITES_START + 84)
 #define ANIM_TAG_RETICLE                    (ANIM_SPRITES_START + 85) // unused
@@ -118,7 +118,7 @@
 #define ANIM_TAG_WATER_DROPLET_2            (ANIM_SPRITES_START + 108) // unused
 #define ANIM_TAG_SEED_2                     (ANIM_SPRITES_START + 109) // unused
 #define ANIM_TAG_SPROUT                     (ANIM_SPRITES_START + 110) // unused
-#define ANIM_TAG_RED_WAND                   (ANIM_SPRITES_START + 111) // unused
+#define ANIM_TAG_ALPHA_SYMBOL               (ANIM_SPRITES_START + 111)
 #define ANIM_TAG_PURPLE_GREEN_UNK           (ANIM_SPRITES_START + 112) // unused
 #define ANIM_TAG_WATER_COLUMN               (ANIM_SPRITES_START + 113) // unused
 #define ANIM_TAG_MUD_UNK                    (ANIM_SPRITES_START + 114) // unused
@@ -438,6 +438,8 @@
 #define B_ANIM_TOTEM_BOOST           0x2D
 #define B_ANIM_TAILWIND              0x2E
 #define B_ANIM_AQUA_RING_HEAL        0x2F
+#define B_ANIM_RED_PRIMAL_REVERSION  0x30
+#define B_ANIM_BLUE_PRIMAL_REVERSION 0x31
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0

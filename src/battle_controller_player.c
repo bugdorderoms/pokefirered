@@ -308,6 +308,13 @@ static void HandleChooseMoveAfterDma3(u32 battlerId)
 void PlayerHandleChooseMove(u32 battlerId)
 {
 	InitMoveSelectionsVarsAndStrings(battlerId);
+	gBattleStruct->playerSelectedGimmick = FALSE;
+	
+	if (!IsGimmickTriggerSpriteActive())
+		gBattleStruct->gimmickTriggerSpriteId = 0xFF;
+	
+	CreateGimmickTriggerSprite(battlerId);
+	
     gBattlerControllerFuncs[battlerId] = HandleChooseMoveAfterDma3;
 }
 
@@ -879,6 +886,16 @@ static u32 PreviewDeterminativeMoveTargets(u32 battlerId, struct ChooseMoveStruc
 	return moveTarget;
 }
 
+static void PlayerEmitMoveUsed(u32 battlerId)
+{
+	if (gBattleStruct->playerSelectedGimmick)
+		BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, gBattleStruct->battlers[battlerId].moveSelectionCursor | RET_GIMMICK | (gMultiUsePlayerCursor << 8));
+	else
+		BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, gBattleStruct->battlers[battlerId].moveSelectionCursor | (gMultiUsePlayerCursor << 8));
+	
+	BattleControllerComplete(battlerId);
+}
+
 void HandleInputChooseMove(u32 battlerId)
 {
     u32 canSelectTarget = 0;
@@ -954,8 +971,8 @@ void HandleInputChooseMove(u32 battlerId)
 			    gBattlerControllerFuncs[battlerId] = HandleInputShowEntireFieldTargets;
 				break;
 			default:
-			    BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, gBattleStruct->battlers[battlerId].moveSelectionCursor | (gMultiUsePlayerCursor << 8));
-				BattleControllerComplete(battlerId);
+				HideGimmickTriggerSprite();
+				PlayerEmitMoveUsed(battlerId);
 				break;
 		}
     }
@@ -963,6 +980,8 @@ void HandleInputChooseMove(u32 battlerId)
     {
         PlaySE(SE_SELECT);
 		ShowOrHideMoveInfoTriggerSprite(TRUE); // Hide trigger
+		gBattleStruct->playerSelectedGimmick = FALSE;
+		HideGimmickTriggerSprite();
         BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, 0xFFFF);
         BattleControllerComplete(battlerId);
         ResetPaletteFade();
@@ -1032,6 +1051,15 @@ void HandleInputChooseMove(u32 battlerId)
             gBattlerControllerFuncs[battlerId] = HandleMoveSwitching;
         }
     }
+	else if (JOY_NEW(START_BUTTON))
+	{
+		if (gBattleStruct->battlers[battlerId].usableGimmick != GIMMICK_NONE && !HasTrainerUsedGimmick(battlerId, gBattleStruct->battlers[battlerId].usableGimmick))
+		{
+			gBattleStruct->playerSelectedGimmick ^= TRUE;
+			PlaySE(gBattleStruct->playerSelectedGimmick ? SE_PC_LOGIN : SE_PC_OFF);
+			ChangeGimmickTriggerSprite(gBattleStruct->gimmickTriggerSpriteId, gBattleStruct->playerSelectedGimmick);
+		}
+	}
 #if BATTLE_MOVE_INFO
 	else if (JOY_NEW(L_BUTTON))
 	{
@@ -1085,8 +1113,8 @@ static void HandleInputShowTargets(u32 battlerId)
     {
         PlaySE(SE_SELECT);
         HideAllTargets(battlerId, TRUE);
-		BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, gBattleStruct->battlers[battlerId].moveSelectionCursor | (gMultiUsePlayerCursor << 8));
-        BattleControllerComplete(battlerId);
+		HideGimmickTriggerSprite();
+		PlayerEmitMoveUsed(battlerId);
     }
     else if (JOY_NEW(B_BUTTON))
     {
@@ -1105,8 +1133,8 @@ static void HandleInputShowEntireFieldTargets(u32 battlerId)
     {
         PlaySE(SE_SELECT);
         HideAllTargets(battlerId, FALSE);
-		BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, gBattleStruct->battlers[battlerId].moveSelectionCursor | (gMultiUsePlayerCursor << 8));
-        BattleControllerComplete(battlerId);
+		HideGimmickTriggerSprite();
+		PlayerEmitMoveUsed(battlerId);
     }
     else if (JOY_NEW(B_BUTTON))
     {
@@ -1140,9 +1168,9 @@ static void HandleInputChooseTarget(u32 battlerId)
     {
         PlaySE(SE_SELECT);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
-        BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, gBattleStruct->battlers[battlerId].moveSelectionCursor | (gMultiUsePlayerCursor << 8));
-        EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
-        BattleControllerComplete(battlerId);
+		EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
+		HideGimmickTriggerSprite();
+		PlayerEmitMoveUsed(battlerId);
     }
     else if (JOY_NEW(B_BUTTON))
     {

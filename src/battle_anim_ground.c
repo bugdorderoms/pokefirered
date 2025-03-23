@@ -249,6 +249,26 @@ void AnimDirtScatter(struct Sprite *sprite)
     StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
+// Launches a sprite upwards like they were being shot from a geyser.
+// arg 0: anim battler
+// arg 1: initial x pixel offset
+// arg 2: initial y pixel offset
+void AnimGeyserSprite(struct Sprite *sprite)
+{
+	u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+	
+	if (IsBattlerSpriteVisible(battler))
+	{
+		sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X) + gBattleAnimArgs[1];
+		sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[2];
+		
+		sprite->data[0] = gBattleAnimArgs[1] > 0 ? 1 : -1;
+		sprite->callback = AnimMudSportDirtRising;
+	}
+	else
+		DestroyAnimSprite(sprite);
+}
+
 // Moves a particle of dirt in the Mud Sport animation. The dirt can either be rising upward, or falling down.
 // arg 0: FALSE = dirt is rising into the air, TRUE = dirt is falling down
 // arg 1: initial x pixel offset

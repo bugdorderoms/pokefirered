@@ -61,6 +61,8 @@ extern const u8 gGeneralAnim_SpitOutPrey[];
 extern const u8 gGeneralAnim_SilentFormChange[];
 extern const u8 gGeneralAnim_TotemBoost[];
 extern const u8 gGeneralAnim_AquaRingHeal[];
+extern const u8 gGeneralAnim_RedPrimalReversion[];
+extern const u8 gGeneralAnim_BluePrimalReversion[];
 
 // Move animations
 extern const u8 gMoveAnim_NONE[];

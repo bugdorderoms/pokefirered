@@ -4931,7 +4931,7 @@ u32 CheckAbilityInBattle(u32 mode, u32 battlerId, u32 abilityId)
 // Don't call Neutralizing Gas and Unnerve here bc at the point this function is called the two abilities already has ben called before
 bool32 DoSwitchInAbilitiesItems(u32 battlerId)
 {
-	if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, battlerId) || TryActivateCommander(BATTLE_PARTNER(battlerId), TRUE)
+	if (TryPrimalReversion(battlerId) || AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, battlerId) || TryActivateCommander(BATTLE_PARTNER(battlerId), TRUE)
 	|| AbilityBattleEffects(ABILITYEFFECT_ON_WEATHER, battlerId) || AbilityBattleEffects(ABILITYEFFECT_ON_TERRAIN, battlerId)
     || ItemBattleEffects(ITEMEFFECT_ON_SWITCH_IN, battlerId, FALSE))
 		return TRUE;
@@ -5015,7 +5015,10 @@ void SortBattlersBySpeed(u8 *battlers, bool32 slowToFast)
 	u32 currSpeed, speeds[MAX_BATTLERS_COUNT] = {0};
 	
 	for (i = 0; i < gBattlersCount; i++)
-		speeds[i] = GetBattlerTotalSpeed(battlers[i]);
+	{
+		battlers[i] = i;
+		speeds[i] = GetBattlerTotalSpeed(i);
+	}
 	
 	for (i = 1; i < gBattlersCount; i++)
 	{
@@ -6357,4 +6360,42 @@ bool32 TryBattleChallengeStartingStatus(void)
 			break;
 	}
 	return effect;
+}
+
+bool32 IsPartnerMonFromSameTrainer(u32 battler)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
+		return FALSE;
+	else
+		return TRUE;
+}
+
+bool32 TryPrimalReversion(u32 battler)
+{
+	u32 whichPrimal, targetSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_PRIMAL);
+	
+	if (targetSpecies)
+	{
+		DoBattleFormChange(battler, targetSpecies, TRUE, TRUE, TRUE);
+		
+		gBattleStruct->battlers[battler].gimmickInProgress = TRUE;
+		gLastUsedItem = gBattleMons[battler].item;
+		whichPrimal = ItemId_GetHoldEffectParam(gLastUsedItem);
+		
+		switch (whichPrimal)
+		{
+			case GIMMICK_INDICATOR_OMEGA:
+				gBattleScripting.animArg1 = B_ANIM_RED_PRIMAL_REVERSION;
+				break;
+			case GIMMICK_INDICATOR_ALPHA:
+				gBattleScripting.animArg1 = B_ANIM_BLUE_PRIMAL_REVERSION;
+				break;
+		}
+		SetSpecialGimmickIndicatorId(battler, whichPrimal);
+		
+		gBattleScripting.battler = battler;
+        BattleScriptPushCursorAndCallback(BattleScript_PrimalReversion);
+		return TRUE;
+	}
+	return FALSE;
 }

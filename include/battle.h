@@ -5,6 +5,7 @@
 #include "global.h"
 #include "constants/battle.h"
 #include "battle_util.h"
+#include "battle_gimmicks.h"
 #include "battle_queued_effects.h"
 #include "battle_script_commands.h"
 #include "battle_main.h"
@@ -367,8 +368,8 @@ struct BattlerState
 	/*0x22*/ u16 chosenMove;
 	/*0x24*/ u16 lockedMove;
 	/*0x26*/ u8 queuedEffectsCount:7;
-			 u8 unused:1;
-	/*0x27*/ u8 moveSelectionCursor;
+			 u8 toActivateGimmick:1; // Stores whether it should activate a gimmick at start of turn
+	/*0x27*/ u8 usableGimmick; // First usable gimmick that can be selected
 	/*0x28*/ s32 bideTakenDamage;
 	/*0x2C*/ u16 lastPrintedMove;
 	/*0x2E*/ u16 lastMove;
@@ -379,6 +380,11 @@ struct BattlerState
 	/*0x36*/ u8 lastHitBattler;
 	/*0x37*/ u8 bideTakenDamageBattler;
 	/*0x38*/ u8 lastUsedMoveType;
+	/*0x39*/ u8 moveSelectionCursor;
+	/*0x3A*/ u8 focusPunchDone:1;
+			 u8 gimmickInProgress:1;
+			 u8 unused:6;
+	         bool8 activatedGimmick[GIMMICKS_COUNT]; // Stores whether a trainer has used gimmick
 			 struct QueuedEffect queuedEffectsList[B_BATTLER_QUEUED_COUNT + 1];
 			 struct {
 				 u8 partyId;
@@ -399,6 +405,8 @@ struct PartyState
 		     u8 appearedInBattle:1; // For Burmy form change
 		     u8 allowedToChangeFormInWeather:1; // For Ice Face
 		     u8 unused:2;
+	/*0x03*/ u8 activeGimmick; // Stores the active gimmick for this party member
+	/*0x04*/ u8 specialGimmickIndicatorId;
 };
 
 struct SideState
@@ -415,7 +423,7 @@ struct SideState
 struct BattleStruct
 {
 	/*0x000*/ u8 pickupStack[MAX_BATTLERS_COUNT]; // For Pickup gen5 effect
-	/*0x004*/ u8 focusPunchBattlerId;
+	/*0x004*/ u8 gimmickTriggerSpriteId;
 	/*0x005*/ u8 turnEffectsBattlerId;
 	/*0x006*/ u8 faintedActionsBattlerId;
 	/*0x007*/ u8 switchInByTurnOrderCounter;
@@ -468,7 +476,8 @@ struct BattleStruct
 	/*0x042*/ u16 pursuitSwitchDmg:1;
 	/*0x042*/ u16 hasFetchedBall:1; // For Ball Fetch
 	/*0x042*/ u16 attackAnimPlayed:1; // For Dancer
-	/*0x042*/ u16 unused:2; // unused
+	/*0x042*/ u16 playerSelectedGimmick:1; // Used to toggle trigger and update battle UI
+	/*0x042*/ u16 effectsBeforeUsingMoveDone:1;
 	/*0x042*/ u16 savedAttackerStackCount:4;
 	/*0x042*/ u16 savedTargetStackCount:4;
 	/*0x044*/ u8 savedAttackerStack[10];

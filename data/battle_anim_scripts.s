@@ -959,6 +959,7 @@ gGeneralAnim_MegaEvolution::
 	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_MEGA_EVOLUTION_STONE, 4, 0, 16, RGB_WHITE
 	waitforvisualfinish
 	call MegaEvolutionFadeIn
+	clearmonbg ANIM_ATK_SIDE
 	blendoff
 	createsprite gMegaEvolutionSymbolSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_ATTACKER, TRUE
 	delay 2
@@ -1005,7 +1006,6 @@ MegaEvolutionFadeIn::
 	createvisualtask AnimTask_HorizontalShake, 5, ANIM_ATTACKER, 5, 14
 	createvisualtask SoundTask_PlayCryHighPitch, 1, ANIM_ATTACKER
 	waitforvisualfinish
-	clearmonbg ANIM_ATTACKER
 	return
 
 @ Credits: Blackuser
@@ -1192,6 +1192,78 @@ gGeneralAnim_AquaRingHeal::
 	clearmonbg ANIM_ATTACKER
 	blendoff
 	end
+
+@ Credits: Skeli
+gGeneralAnim_RedPrimalReversion::
+	loadspritegfx ANIM_TAG_OMEGA_STONE
+	loadspritegfx ANIM_TAG_OMEGA_SYMBOL
+	loadspritegfx ANIM_TAG_SMALL_EMBER
+	monbg ANIM_ATTACKER
+	setalpha 12, 8
+	playsewithpan SE_M_SOLAR_BEAM, SOUND_PAN_ATTACKER
+	createsprite gOmegaStoneSpriteTemplate, ANIM_ATTACKER, 32, 0, 0, ANIM_ATTACKER, TRUE
+	delay 20
+	createvisualtask AnimTask_BlendExcept, 5, F_PAL_NO_EXCEPTIONS, 2, 0, 16, RGB_WHITE
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_OMEGA_STONE, 4, 0, 16, RGB_WHITE
+	waitforvisualfinish
+	call MegaEvolutionFadeIn
+	createvisualtask AnimTask_FadeOutParticles, 2, 2
+	createsprite gOmegaSymbolSpriteTemplate, ANIM_ATTACKER, 32, 0, 0, ANIM_ATTACKER, TRUE
+	call PrimalReversionFireGeyser
+	call PrimalReversionFireGeyser
+	waitforvisualfinish
+	clearmonbg ANIM_ATK_SIDE
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BATTLERS_2, 2, 0, 0, RGB_WHITE
+	waitforvisualfinish
+	blendoff
+	end
+
+PrimalReversionFireGeyser::
+	createsprite gFireGeyserSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -4, 24
+	delay 1
+	createsprite gFireGeyserSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -61427, 24
+	delay 1
+	createsprite gFireGeyserSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 4, 24
+	delay 1
+	createsprite gFireGeyserSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -16, 24
+	delay 1
+	return
+
+@ Credits: Skeli
+gGeneralAnim_BluePrimalReversion::
+	loadspritegfx ANIM_TAG_ALPHA_STONE
+	loadspritegfx ANIM_TAG_ALPHA_SYMBOL
+	loadspritegfx ANIM_TAG_WATER_ORB
+	monbg ANIM_ATK_SIDE
+	setalpha 12, 8
+	playsewithpan SE_M_SOLAR_BEAM, SOUND_PAN_ATTACKER
+	createsprite gAlphaStoneSpriteTemplate, ANIM_ATTACKER, 32, 0, 0, ANIM_ATTACKER, TRUE
+	delay 20
+	createvisualtask AnimTask_BlendExcept, 5, F_PAL_NO_EXCEPTIONS, 2, 0, 16, RGB_WHITE
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_ALPHA_STONE, 4, 0, 16, RGB_WHITE
+	waitforvisualfinish
+	call MegaEvolutionFadeIn
+	createvisualtask AnimTask_FadeOutParticles, 2, 2
+	createsprite gAlphaSymbolSpriteTemplate, ANIM_ATTACKER, 32, 0, 0, ANIM_ATTACKER, TRUE
+	call PrimalReversionWaterGeyser
+	call PrimalReversionWaterGeyser
+	waitforvisualfinish
+	clearmonbg ANIM_ATK_SIDE
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BATTLERS_2, 2, 0, 0, RGB_WHITE
+	waitforvisualfinish
+	blendoff
+	end
+
+PrimalReversionWaterGeyser::
+	createsprite gWaterGeyserSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -4, 24
+	delay 1
+	createsprite gWaterGeyserSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -61427, 24
+	delay 1
+	createsprite gWaterGeyserSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 4, 24
+	delay 1
+	createsprite gWaterGeyserSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -16, 24
+	delay 1
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@
 @ SPECIAL ANIMATIONS @

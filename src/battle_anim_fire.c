@@ -432,6 +432,30 @@ const struct SpriteTemplate gPowerGemBladeSpriteTemplate =
     .callback = AnimFireSpread,
 };
 
+static const union AnimCmd sAnim_FireGeyser[] =
+{
+    ANIMCMD_FRAME(16, 2),
+    ANIMCMD_FRAME(32, 2),
+    ANIMCMD_FRAME(48, 2),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd *const sAnims_FireGeyser[] =
+{
+    sAnim_FireGeyser,
+};
+
+const struct SpriteTemplate gFireGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SMALL_EMBER,
+    .paletteTag = ANIM_TAG_SMALL_EMBER,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_FireGeyser,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
+};
+
 // For the first stage of Fire Punch and Ice Punch
 // arg 0: initial position angle around circle (0-256)
 void AnimFireSpiralInward(struct Sprite *sprite)

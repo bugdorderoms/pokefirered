@@ -12,6 +12,7 @@
 #include "constants/global.h"
 #include "constants/battle_string_ids.h"
 #include "constants/move_effect_bytes.h"
+#include "constants/trainer_slides.h"
 	.include "asm/macros/battle_script.inc"
 	.section script_data, "aw", %progbits
 
@@ -3388,10 +3389,10 @@ BattleScript_DancerActivates::
 
 BattleScript_QuickDrawActivation::
 	flushmessagebox
-	loadabilitypopup BS_ATTACKER
-	printstring STRINGID_ATKCANACTFASTER
+	loadabilitypopup BS_SCRIPTING
+	printstring STRINGID_PKMNCANACTFASTER
 	waitmessage B_WAIT_TIME_LONG
-	removeabilitypopup BS_ATTACKER
+	removeabilitypopup BS_SCRIPTING
 	end2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4295,7 +4296,7 @@ BattleScript_FaintedMonChooseAnother::
 	switchinanim BS_FAINTED, FALSE
 	waitstate
 	resetplayerfainted
-	trydolastmontrainerslide BS_FAINTED
+	trydotrainerslide BS_FAINTED, TRAINER_SLIDE_LAST_MON_SEND_OUT
 	switchineffects BS_FAINTED
 	jumpifbattletype BATTLE_TYPE_DOUBLE, BattleScript_FaintedMonEnd
 	cancelallactions
@@ -4458,6 +4459,7 @@ BattleScript_TotemBoost::
 	printstring STRINGID_ATKAURAFLAREDTOLIFE
 	waitmessage B_WAIT_TIME_LONG
 	applyqueuedstatboosts BS_ATTACKER, BattleScript_DoTotemBoost
+	restoreattacker
 	end2
 
 BattleScript_DoTotemBoost::
@@ -4475,6 +4477,15 @@ BattleScript_BarriersFree::
 	printstring STRINGID_PKMNBLEWAWAYBARRIERS
 	waitmessage B_WAIT_TIME_LONG
 	return
+
+BattleScript_PrimalReversion::
+	pause B_WAIT_TIME_SHORT
+	playanimation2 BS_SCRIPTING, sB_ANIM_ARG1
+	waitstate
+	updategimmickindicator BS_SCRIPTING
+	printstring STRINGID_PKMNREVERTEDTOITSPRIMALSTATE
+	waitmessage B_WAIT_TIME_LONG
+	end3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@
 @ ACTION BATTLE SCRIPTS @
@@ -4538,7 +4549,7 @@ BattleScript_FocusPunchSetUp::
 	playanimation BS_ATTACKER, B_ANIM_FOCUS_PUNCH_SETUP
 	printstring STRINGID_ATKTIGHTENINGFOCUS
 	waitmessage B_WAIT_TIME_LONG
-	end2
+	end3
 
 BattleScript_GotAwaySafely::
 	printstring STRINGID_GOTAWAYSAFELY
@@ -4559,6 +4570,19 @@ BattleScript_PrintFailedToRunString::
 	waitmessage B_WAIT_TIME_LONG
 	end2
 
+BattleScript_MegaEvolution::
+	flushmessagebox
+	trydotrainerslide BS_SCRIPTING, TRAINER_SLIDE_MEGA_EVOLUTION
+	printfromtable gMegaEvolutionStringIds
+	waitmessage B_WAIT_TIME_LONG
+	playanimation BS_SCRIPTING, B_ANIM_MEGA_EVOLUTION
+	waitstate
+	updategimmickindicator BS_SCRIPTING
+	printstring STRINGID_PKMNMEGAEVOLVED
+	waitmessage B_WAIT_TIME_LONG
+	switchinabilities BS_SCRIPTING
+	end3
+
 @@@@@@@@@@@@@@@@@@@@@@@
 @ ITEM BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@
@@ -4571,8 +4595,8 @@ BattleScript_HangedOnMsg::
 
 BattleScript_QuickClawActivation::
 	flushmessagebox
-	playanimation BS_ATTACKER, B_ANIM_ITEM_EFFECT
-	printstring STRINGID_ATKCANACTFASTERWITHLASTITEM
+	playanimation BS_SCRIPTING, B_ANIM_ITEM_EFFECT
+	printstring STRINGID_PKMNCANACTFASTERWITHLASTITEM
 	waitmessage B_WAIT_TIME_LONG
 	end2
 

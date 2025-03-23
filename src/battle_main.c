@@ -50,6 +50,7 @@
 #include "constants/items.h"
 #include "constants/moves.h"
 #include "constants/pokemon.h"
+#include "constants/trainer_slides.h"
 #include "constants/songs.h"
 #include "constants/battle_string_ids.h"
 #include "constants/weather.h"
@@ -109,7 +110,7 @@ static void TryDoEventsBeforeFirstTurn(void);
 static void HandleTurnActionSelectionState(void);
 static void RunTurnActionsFunctions(void);
 static void SetActionsAndBattlersTurnOrder(void);
-static void CheckFocusPunch_ClearVarsBeforeTurnStarts(void);
+static void CheckChangingTurnOrderEffects(void);
 static void HandleEndTurn_FinishBattle(void);
 static void FreeResetData_ReturnToOvOrDoEvolutions(void);
 static void ReturnFromBattleToOverworld(void);
@@ -1990,6 +1991,9 @@ void FaintClearSetData(u32 battlerId)
 	// Clear battler effects
 	ClearBattlerEffectsOnFaintOrSwitch(battlerId);
 	
+	// Remove active gimmick
+	RemoveActiveGimmick(battlerId, GetActiveGimmick(battlerId));
+	
 	// Clear disable struct
     memset(&gDisableStructs[battlerId], 0, sizeof(struct DisableStruct));
 	gDisableStructs[battlerId].isFirstTurn = 2;
@@ -2455,8 +2459,12 @@ static void TryDoEventsBeforeFirstTurn(void)
 			case FIRST_TURN_EVENT_SWITCHIN_ABILITIES: // From the fastest mon to slowest
 				while (gBattleStruct->switchInByTurnOrderCounter < gBattlersCount)
 				{
-					if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBattlerByTurnOrder[gBattleStruct->switchInByTurnOrderCounter++]))
+					u32 battler = gBattlerByTurnOrder[gBattleStruct->switchInByTurnOrderCounter];
+					
+					if (TryPrimalReversion(battler) || AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, battler))
 						return;
+					
+					gBattleStruct->switchInByTurnOrderCounter++;
 				}
 				gBattleStruct->switchInByTurnOrderCounter = 0;
 				++gBattleStruct->firstTurnEventsState;
@@ -2476,7 +2484,7 @@ static void TryDoEventsBeforeFirstTurn(void)
 			case FIRST_TURN_EVENT_TOTEM_BOOST:
 				if ((gBattleTypeFlags & BATTLE_TYPE_TOTEM) && gQueuedStatBoosts[gBattleStruct->sos.totemBattlerId].stats)
 				{
-					gBattlerAttacker = gBattleStruct->sos.totemBattlerId;
+					SaveAttackerToStack(gBattleStruct->sos.totemBattlerId);
 					BattleScriptExecute(BattleScript_TotemBoost);
 					return;
 				}
@@ -2507,7 +2515,6 @@ static void TryDoEventsBeforeFirstTurn(void)
 					}
 					gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
 				}
-				gBattlerAttacker = 0; // It may can be changed by one of the cases above
 				TurnValuesCleanUp(FALSE);
 				memset(&gSpecialStatuses, 0, sizeof(gSpecialStatuses));
 				gBattleStruct->absentBattlerFlags = gAbsentBattlerFlags;
@@ -2521,6 +2528,7 @@ static void TryDoEventsBeforeFirstTurn(void)
 				gBattleScripting.atk49_state = 0;
 				
 				gMoveResultFlags = 0;
+				AssignUsableGimmicks();
 				UpdateQuickClawRandomNumber();
 				
 				gBattleStruct->turnEffectsTracker = 0;
@@ -2594,6 +2602,7 @@ void BattleTurnPassed(void)
         gBattleMainFunc = RunTurnActionsFunctions;
         return;
     }
+	AssignUsableGimmicks();
 	
 	if (gBattleTypeFlags & BATTLE_TYPE_SOS)
 	{
@@ -2859,6 +2868,7 @@ static void HandleTurnActionSelectionState(void)
                 case B_ACTION_CANCEL_PARTNER:
                     gBattleCommunication[battlerId] = STATE_WAIT_SET_BEFORE_ACTION;
                     gBattleCommunication[GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battlerId)))] = STATE_BEFORE_ACTION_CHOSEN;
+					gBattleStruct->battlers[BATTLE_PARTNER(GetBattlerPosition(battlerId))].toActivateGimmick = FALSE;
                     BtlController_EmitEndBounceEffect(battlerId, BUFFER_A);
                     MarkBattlerForControllerExec(battlerId);
                     return;
@@ -2908,9 +2918,13 @@ static void HandleTurnActionSelectionState(void)
                         }
                         else
                         {
-                            gBattleStruct->battlers[battlerId].chosenMovePosition = gBattleBufferB[battlerId][2];
+                            gBattleStruct->battlers[battlerId].chosenMovePosition = gBattleBufferB[battlerId][2] & ~(RET_GIMMICK);
                             gBattleStruct->battlers[battlerId].chosenMove = gBattleMons[battlerId].moves[gBattleStruct->battlers[battlerId].chosenMovePosition];
                             gBattleStruct->battlers[battlerId].moveTarget = gBattleBufferB[battlerId][3];
+							
+							if (gBattleBufferB[battlerId][2] & RET_GIMMICK)
+								gBattleStruct->battlers[battlerId].toActivateGimmick = TRUE;
+							
                             ++gBattleCommunication[battlerId];
                         }
                         break;
@@ -3265,10 +3279,6 @@ static void SetActionsAndBattlersTurnOrder(void)
                     ++turnOrderId;
                 }
             }
-			gBattleStruct->quickClawBattlerId = 0;
-			gBattleStruct->focusPunchBattlerId = 0;
-            gBattleMainFunc = CheckFocusPunch_ClearVarsBeforeTurnStarts;
-            return;
         }
         else
         {
@@ -3310,8 +3320,7 @@ static void SetActionsAndBattlersTurnOrder(void)
         }
     }
 	gBattleStruct->quickClawBattlerId = 0;
-	gBattleStruct->focusPunchBattlerId = 0;
-    gBattleMainFunc = CheckFocusPunch_ClearVarsBeforeTurnStarts;
+    gBattleMainFunc = CheckChangingTurnOrderEffects;
 }
 
 static void TurnValuesCleanUp(bool32 var0)
@@ -3348,73 +3357,157 @@ static void TurnValuesCleanUp(bool32 var0)
 		gSideTimers[side].followmeSet = FALSE;
 }
 
-static void CheckFocusPunch_ClearVarsBeforeTurnStarts(void)
+static void CheckChangingTurnOrderEffects(void)
 {
+	u32 i, battler;
+	
     if (!(gHitMarker & HITMARKER_RUN))
     {
 		while (gBattleStruct->quickClawBattlerId < gBattlersCount)
 		{
-			u32 battler = gBattlerByTurnOrder[gBattleStruct->quickClawBattlerId];
-			u32 action = gActionsByTurnOrder[gBattleStruct->quickClawBattlerId];
+			battler = gBattleStruct->quickClawBattlerId++;
 			
-			if (gSpecialStatuses[battler].quickDrawActivated)
+			if (gBattleStruct->battlers[battler].chosenAction == B_ACTION_USE_MOVE && gBattleMoves[gBattleStruct->battlers[battler].chosenMove].effect != EFFECT_FOCUS_PUNCH
+			&& gBattleMons[battler].status1.id != STATUS1_SLEEP && !gDisableStructs[battler].truantCounter && !gProtectStructs[battler].noValidMoves)
 			{
-				gSpecialStatuses[battler].quickDrawActivated = FALSE;
-				
-				if (action == B_ACTION_USE_MOVE)
+				if (gSpecialStatuses[battler].quickDrawActivated)
 				{
-					gBattlerAttacker = battler;
+					gSpecialStatuses[battler].quickDrawActivated = FALSE;
+					gBattleScripting.battler = battler;
 					BattleScriptExecute(BattleScript_QuickDrawActivation);
 					return;
 				}
-			}
-			else if (gSpecialStatuses[battler].quickClawActivated)
-			{
-				gSpecialStatuses[battler].quickClawActivated = FALSE;
-				
-				if (action != B_ACTION_USE_ITEM)
+				else if (gSpecialStatuses[battler].quickClawActivated)
 				{
-					gBattlerAttacker = battler;
+					gSpecialStatuses[battler].quickClawActivated = FALSE;
+					gBattleScripting.battler = battler;
 					gLastUsedItem = gBattleMons[battler].item;
 					BattleScriptExecute(BattleScript_QuickClawActivation);
 					return;
 				}
 			}
-			gBattleStruct->quickClawBattlerId++;
 		}
-		
-        while (gBattleStruct->focusPunchBattlerId < gBattlersCount)
-        {
-            gBattlerAttacker = gBattleStruct->focusPunchBattlerId++;
-			
-			if (gBattleStruct->battlers[gBattlerAttacker].chosenAction == B_ACTION_USE_MOVE && gBattleMons[gBattlerAttacker].status1.id != STATUS1_SLEEP
-			&& !gDisableStructs[gBattlerAttacker].truantCounter && !gProtectStructs[gBattlerAttacker].noValidMoves)
-			{
-				switch (gBattleMoves[gBattleStruct->battlers[gBattlerAttacker].chosenMove].effect)
-				{
-					case EFFECT_FOCUS_PUNCH:
-					    BattleScriptExecute(BattleScript_FocusPunchSetUp);
-						return;
-				}
-			}
-        }
     }
+	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+		gBattleStruct->battlers[i].focusPunchDone = FALSE;
+	
     TryClearRageStatuses();
     gCurrentTurnActionNumber = 0;
 	gCurrentTurnActionBattlerId = gBattlerByTurnOrder[0];
 	gCurrentActionFuncId = gActionsByTurnOrder[0];
+	gBattleStruct->effectsBeforeUsingMoveDone = FALSE;
     gBattleMainFunc = RunTurnActionsFunctions;
     gBattleStruct->moveEffect.moveEffectByte = MOVE_EFFECT_NONE;
     gBattleCommunication[ACTIONS_CONFIRMED_COUNT] = 0;
     gBattleResources->battleScriptsStack->size = 0;
 }
 
+static void TryChangeTurnOrder(void)
+{
+	u32 i, j;
+	
+	for (i = gCurrentTurnActionNumber; i < gBattlersCount - 1; i++)
+	{
+		for (j = i + 1; j < gBattlersCount; j++)
+		{
+			if (gActionsByTurnOrder[i] == B_ACTION_USE_MOVE && gActionsByTurnOrder[j] == B_ACTION_USE_MOVE)
+			{
+				if (GetWhoStrikesFirst(gBattlerByTurnOrder[i], gBattlerByTurnOrder[j], FALSE) != BATTLER1_STRIKES_FIRST)
+					SwapTurnOrder(i, j);
+			}
+		}
+	}
+}
+
+static bool32 TryActivateGimmick(u32 battler)
+{
+	if (!gProtectStructs[battler].noValidMoves && gBattleStruct->battlers[battler].toActivateGimmick)
+	{
+		gBattleStruct->battlers[battler].toActivateGimmick = FALSE;
+		gBattleStruct->battlers[battler].gimmickInProgress = TRUE;
+		ActivateGimmick(battler);
+		gBattleScripting.battler = battler;
+		return TRUE; // Script called by the function above
+	}
+	return FALSE;
+}
+
+static bool32 TryDoGimmicksBeforeMoves(void)
+{
+	u32 i;
+	
+	if (!(gHitMarker & HITMARKER_RUN))
+	{
+		u8 battlers[MAX_BATTLERS_COUNT];
+		
+		SortBattlersBySpeed(battlers, FALSE);
+		
+		for (i = 0; i < gBattlersCount; i++)
+		{
+			if (TryActivateGimmick(battlers[i]))
+				return TRUE;
+		}
+	}
+	TryChangeTurnOrder();
+	
+	return FALSE;
+}
+
+static bool32 TryDoMoveEffectsBeforeMoves(void)
+{
+	u32 i;
+	
+	if (!(gHitMarker & HITMARKER_RUN))
+	{
+		u8 battlers[MAX_BATTLERS_COUNT];
+		
+		SortBattlersBySpeed(battlers, FALSE);
+		
+		for (i = 0; i < gBattlersCount; i++)
+		{
+			gBattlerAttacker = battlers[i];
+			
+			if (gBattleMons[gBattlerAttacker].status1.id != STATUS1_SLEEP && !gDisableStructs[gBattlerAttacker].truantCounter && !gProtectStructs[gBattlerAttacker].noValidMoves
+			&& !gBattleStruct->battlers[gBattlerAttacker].focusPunchDone)
+			{
+				gBattleStruct->battlers[gBattlerAttacker].focusPunchDone = TRUE;
+				
+				switch (gBattleMoves[gBattleStruct->battlers[gBattlerAttacker].chosenMove].effect)
+				{
+					case EFFECT_FOCUS_PUNCH:
+					    BattleScriptExecute(BattleScript_FocusPunchSetUp);
+						return TRUE;
+				}
+			}
+		}
+	}
+	return FALSE;
+}
+
 static void RunTurnActionsFunctions(void)
 {
     if (gBattleOutcome != 0)
         gCurrentActionFuncId = B_ACTION_FINISHED;
-	
-    gBattleStruct->savedTurnActionNumber = gCurrentTurnActionNumber;
+
+	// Mega Evolve / Focus Punch-like moves after switching, items, running, but before using a move.
+	if (gCurrentActionFuncId == B_ACTION_USE_MOVE && !gBattleStruct->effectsBeforeUsingMoveDone)
+	{
+		if (!gBattleStruct->pursuitSwitchDmg)
+		{
+			if (TryDoGimmicksBeforeMoves())
+				return;
+			else if (TryDoMoveEffectsBeforeMoves())
+				return;
+			
+			gBattleStruct->effectsBeforeUsingMoveDone = TRUE;
+		}
+		else
+		{
+			if (TryActivateGimmick(gBattlerByTurnOrder[gCurrentTurnActionNumber]))
+				return;
+		}
+	}
+	gBattleStruct->savedTurnActionNumber = gCurrentTurnActionNumber;
     sTurnActionsFuncsTable[gCurrentActionFuncId]();
 
     if (gCurrentTurnActionNumber >= gBattlersCount) // everyone did their actions, turn finished

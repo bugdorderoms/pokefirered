@@ -1319,8 +1319,9 @@
 	various \battler, VARIOUS_WAIT_FANFARE
 	.endm
 	
-	.macro trydolastmontrainerslide battler:req
-	various \battler, VARIOUS_TRY_LAST_MON_TRAINER_SLIDE
+	.macro trydotrainerslide battler:req, caseId:req
+	various \battler, VARIOUS_TRY_TRAINER_SLIDE
+	.byte \caseId
     .endm
 
     .macro updatehealthboxattribute battler:req, attributeId:req
@@ -1490,6 +1491,10 @@
 	.macro tryabilitysuppression battler:req, ptr:req
 	various \battler, VARIOUS_TRY_ABILITY_SUPPRESSION
 	.4byte \ptr
+	.endm
+	
+	.macro resetgimmickinprogress battler:req
+	various \battler, VARIOUS_RESET_GIMMICK_IN_PROGRESS
 	.endm
 	
 @ callfunction macros
@@ -1936,4 +1941,9 @@
 	.macro restorebattlers
 	restoreattacker
 	restoretarget
+	.endm
+	
+	.macro updategimmickindicator battler:req
+	resetgimmickinprogress \battler
+	updatehealthboxattribute \battler, HEALTHBOX_ALL
 	.endm

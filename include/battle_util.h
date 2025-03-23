@@ -229,6 +229,8 @@ const struct SosCall GetSosCallRateTable(void);
 bool32 IsBattlerTotemPokemon(u32 battlerId);
 void SwapBattlersPositions(u32 battler1, u32 battler2);
 bool32 TryBattleChallengeStartingStatus(void);
+bool32 IsPartnerMonFromSameTrainer(u32 battler);
+bool32 TryPrimalReversion(u32 battler);
 
 static inline bool32 CanBattlerSwitch(u32 battlerId)
 {

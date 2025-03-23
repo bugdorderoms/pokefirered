@@ -1496,6 +1496,69 @@ const struct SpriteTemplate gPowerGemWheelSpriteTemplate =
     .callback = AnimFireSpiralOutward,
 };
 
+const struct SpriteTemplate gOmegaStoneSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_OMEGA_STONE,
+    .paletteTag = ANIM_TAG_OMEGA_STONE,
+    .oam = &gOamData_AffineDouble_ObjBlend_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_LusterPurgeCircle,
+    .callback = AnimSpriteOnMonPos,
+};
+
+static const union AffineAnimCmd sPrimalReversionSymbolAffineAnimCmds[] =
+{
+    AFFINEANIMCMD_FRAME(16, 16, 0, 0), // Start small
+	AFFINEANIMCMD_FRAME(32, 32, 0, 15), // Grow sprite
+	AFFINEANIMCMD_FRAME(0, 0, 0, 2), // Pause for 2 frames
+	// Pulsate sprite
+	AFFINEANIMCMD_LOOP(0),
+	AFFINEANIMCMD_FRAME(-16, -16, 0, 4),
+	AFFINEANIMCMD_FRAME(16, 16, 0, 4),
+	AFFINEANIMCMD_LOOP(3), // Repeat pulse 3 more times
+	AFFINEANIMCMD_FRAME(-32, -32, 0, 15), // Shrink down again
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sPrimalReversionSymbolAffineAnimTable[] =
+{
+    sPrimalReversionSymbolAffineAnimCmds,
+};
+
+const struct SpriteTemplate gOmegaSymbolSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_OMEGA_SYMBOL,
+    .paletteTag = ANIM_TAG_OMEGA_SYMBOL,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sPrimalReversionSymbolAffineAnimTable,
+    .callback = AnimSpriteOnMonPos,
+};
+
+const struct SpriteTemplate gAlphaStoneSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ALPHA_STONE,
+    .paletteTag = ANIM_TAG_ALPHA_STONE,
+    .oam = &gOamData_AffineDouble_ObjBlend_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_LusterPurgeCircle,
+    .callback = AnimSpriteOnMonPos,
+};
+
+const struct SpriteTemplate gAlphaSymbolSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ALPHA_SYMBOL,
+    .paletteTag = ANIM_TAG_ALPHA_SYMBOL,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sPrimalReversionSymbolAffineAnimTable,
+    .callback = AnimSpriteOnMonPos,
+};
+
 // Animates the falling particles that horizontally wave back and forth. Used by Sleep Powder, Stun Spore, and Poison Powder.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset

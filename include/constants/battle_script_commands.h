@@ -196,7 +196,7 @@
 #define VARIOUS_TRY_COPY_ABILITY                    1
 #define VARIOUS_TRY_RATTLED_ON_INTIMIDATE           2
 #define VARIOUS_GET_BATTLER_SIDE                    3
-#define VARIOUS_TRY_LAST_MON_TRAINER_SLIDE          4
+#define VARIOUS_TRY_TRAINER_SLIDE                   4
 #define VARIOUS_RESET_INTIMIDATE_TRACE_BITS         5
 #define VARIOUS_JUMP_IF_DEFIANT_ACTIVATE            6
 #define VARIOUS_RESET_PLAYER_FAINTED_FLAG           7
@@ -231,6 +231,7 @@
 #define VARIOUS_TRY_SET_GRAVITY                     36
 #define VARIOUS_TRY_SWAP_ABILITIES                  37
 #define VARIOUS_JUMP_IF_NO_DAMAGE                   38
+#define VARIOUS_RESET_GIMMICK_IN_PROGRESS           39
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN       0

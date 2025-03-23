@@ -30,10 +30,24 @@ const u16 gDefaultGeneratorFormChanges[] =
 	FORM_CHANGE_TERMINATOR
 };
 
+static bool32 CheckSpeciesKnowsMove(u32 battlerId, u16 *moves, u32 wantedMove, bool32 checkIsPermanent)
+{
+	u32 i;
+	
+	for (i = 0; i < MAX_MON_MOVES; i++)
+	{
+		if (checkIsPermanent && !MOVE_IS_PERMANENT(battlerId, i)) // Can't Mega Evolve if move isn't permanent, e.g due to Mimic
+			continue;
+		
+		if (wantedMove == moves[i])
+			return TRUE;
+	}
+	return FALSE;
+}
+
 static u16 GetSpeciesForm(u16 formChangeType, u16 species, u32 personality, u16 ability, u16 itemId, u16 *moves, u8 battlerId)
 {
-	u8 i, j;
-	bool8 knowsMove;
+	u8 i;
 	u16 param, targetSpecies = SPECIES_NONE;
 	const struct FormChange *formsTable = gSpeciesInfo[species].formChangeTable;
 
@@ -59,9 +73,9 @@ static u16 GetSpeciesForm(u16 formChangeType, u16 species, u32 personality, u16 
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
 					case FORM_CHANGE_HOLD_ITEM:
-					case FORM_CHANGE_MEGA_EVO: // TODO:
+					case FORM_CHANGE_MEGA_EVO:
 					case FORM_CHANGE_PRIMAL:
-					case FORM_CHANGE_ULTRA_BURST:
+					case FORM_CHANGE_ULTRA_BURST: // TODO:
 					    if (!formsTable[i].param2 || ability == formsTable[i].param2)
 						{
 							if (param == itemId || !param)
@@ -148,15 +162,11 @@ static u16 GetSpeciesForm(u16 formChangeType, u16 species, u32 personality, u16 
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
 					case FORM_CHANGE_KNOW_MOVE:
-					    knowsMove = FALSE;
-						
-						for (j = 0; j < MAX_MON_MOVES; j++)
-						{
-							if (param == moves[j])
-								knowsMove = TRUE;
-						}
+						if (formsTable[i].param2 == CheckSpeciesKnowsMove(battlerId, moves, param, FALSE))
+							targetSpecies = formsTable[i].targetSpecies;
 					
-					    if (formsTable[i].param2 == knowsMove)
+					case FORM_CHANGE_MOVE_MEGA_EVO:
+					    if (CheckSpeciesKnowsMove(battlerId, moves, param, TRUE))
 							targetSpecies = formsTable[i].targetSpecies;
 						break;
 					case FORM_CHANGE_USE_ITEM:
@@ -289,15 +299,15 @@ u16 GetBattlerFormChangeSpecies(u8 battlerId, u16 species, u16 itemId, u16 formC
 
 u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType)
 {
-	u16 item, species, personalitySpecies, targetSpecies = SPECIES_NONE;
+	u16 itemId, species, personalitySpecies, targetSpecies = SPECIES_NONE;
 	
 	if (!(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED)) // no change form if transformed
 	{
-		item = GetBattlerItem(battlerId); // form change items are not affected by Kluts, etc.
+		itemId = GetBattlerItem(battlerId); // form change items are not affected by Kluts, etc.
 		species = gBattleMons[battlerId].species;
 		
-		targetSpecies = GetBattlerFormChangeSpecies(battlerId, species, item, formChangeType);
-		personalitySpecies = GetBattlerFormChangeSpecies(battlerId, targetSpecies, item, FORM_CHANGE_PERSONALITY);
+		targetSpecies = GetBattlerFormChangeSpecies(battlerId, species, itemId, formChangeType);
+		personalitySpecies = GetBattlerFormChangeSpecies(battlerId, targetSpecies, itemId, FORM_CHANGE_PERSONALITY);
 		
 		if (personalitySpecies) // handle minior forms
 		    targetSpecies = personalitySpecies;

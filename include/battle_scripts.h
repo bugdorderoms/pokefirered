@@ -461,6 +461,8 @@ extern const u8 BattleScript_MagnetRiseEnds[];
 extern const u8 BattleScript_DancerActivates[];
 extern const u8 BattleScript_QuickDrawActivation[];
 extern const u8 BattleScript_QuickClawActivation[];
+extern const u8 BattleScript_MegaEvolution[];
+extern const u8 BattleScript_PrimalReversion[];
 
 extern const u8 *const gBattlescriptsForUsingItem[];
 

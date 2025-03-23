@@ -4341,7 +4341,7 @@ static s8 SeekToNextMonInSingleParty(s8 direction)
     if (sMonSummaryScreen->curPageIndex == PSS_PAGE_INFO)
     {
 #if CIRCULAR_SUMMARY_SCREEN
-		if (sLastViewedMonIndex == sMonSummaryScreen->lastIndex)
+		if (sLastViewedMonIndex == sMonSummaryScreen->lastIndex && sMonSummaryScreen->lastIndex == 0)
 			return -1; // Don't cycle if only one Pokémon in party
 
 		if (direction == -1 && sLastViewedMonIndex == 0)
@@ -4364,7 +4364,7 @@ static s8 SeekToNextMonInSingleParty(s8 direction)
         seekDelta += direction;
 		
 #if CIRCULAR_SUMMARY_SCREEN
-		if (sLastViewedMonIndex == sMonSummaryScreen->lastIndex)
+		if (sLastViewedMonIndex == sMonSummaryScreen->lastIndex && sMonSummaryScreen->lastIndex == 0)
 			return -1; // Don't cycle if only one Pokémon in party
 
 		if (sLastViewedMonIndex + seekDelta < 0)

@@ -49,6 +49,7 @@
 #include "constants/songs.h"
 #include "constants/moves.h"
 #include "constants/abilities.h"
+#include "constants/trainer_slides.h"
 #include "constants/pokemon.h"
 #include "constants/maps.h"
 #include "constants/battle_string_ids.h"
@@ -1151,7 +1152,7 @@ static void atk03_ppreduce(void)
 			++ppToDeduct;
 		
 		// Decreases the PP
-        if (!(gHitMarker & (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING)) && (gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS)
+        if (!(gHitMarker & (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING)) && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS)
 		&& gBattleMons[gBattlerAttacker].pp[gCurrMovePos] && !gBattleStruct->dancer.inProgress)
         {
             if (gBattleMons[gBattlerAttacker].pp[gCurrMovePos] > ppToDeduct)
@@ -3566,7 +3567,7 @@ static void atk49_moveend(void)
 				if (!ReceiveSheerForceBoost(gBattlerAttacker, gCurrentMove) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove))
 				{
 					u32 target;
-					u8 battlers[MAX_BATTLERS_COUNT] = {0, 1, 2, 3};
+					u8 battlers[MAX_BATTLERS_COUNT];
 					
 					SortBattlersBySpeed(battlers, FALSE);
 					SetMoveEffect(MOVE_EFFECT_STEAL_ITEM, TRUE, FALSE);
@@ -3644,9 +3645,6 @@ static void atk49_moveend(void)
 					gBattleStruct->dancer.savedAttacker = gBattlerAttacker;
 					gBattleStruct->dancer.savedTarget = gBattlerTarget;
 					gBattleStruct->dancer.battlersLoopCounter = 0;
-					
-					for (i = 0; i < gBattlersCount; ++i)
-						gBattleStruct->dancer.turnOrder[i] = i;
 					
 					SortBattlersBySpeed(gBattleStruct->dancer.turnOrder, TRUE);
 				}
@@ -4178,7 +4176,7 @@ static void atk52_switchineffects(void)
 	switch (gBattleScripting.switchinEffectState)
 	{
 		case SWITCHIN_UPDATE_VARS:
-		    UpdateSentPokesToOpponentValue(battlerId);
+			UpdateSentPokesToOpponentValue(battlerId);
 			
 			gHitMarker &= ~(HITMARKER_FAINTED(battlerId));
 			gSpecialStatuses[battlerId].faintedHasReplacement = FALSE;
@@ -4349,7 +4347,9 @@ static void atk53_switchoutabilities(void)
 			BattleScriptCall(BattleScript_NeutralizingGasExits);
 			return;
 	}
-	DoSpecialFormChange(battlerId, gBattlerPartyIndexes[battlerId], FORM_CHANGE_SWITCH_OUT);
+	
+	if (GetActiveGimmick(battlerId) != GIMMICK_MEGA) // Megas can't revert form when switched out
+		DoSpecialFormChange(battlerId, gBattlerPartyIndexes[battlerId], FORM_CHANGE_SWITCH_OUT);
 	
 	SWAP(gBattlerPartyIndexes[battlerId], gBattleStruct->battlers[battlerId].partyIndex, temp);
 	
@@ -5655,17 +5655,16 @@ static void atk76_various(void)
 			
 			return;
 		}
-		case VARIOUS_TRY_LAST_MON_TRAINER_SLIDE:
+		case VARIOUS_TRY_TRAINER_SLIDE:
 		{
-			VARIOUS_ARGS();
-
-			if (ShouldDoTrainerSlide(battlerId, TRAINER_SLIDE_LAST_MON_SEND_OUT))
-			{
-				gBattlescriptCurrInstr = cmd->nextInstr;
+			VARIOUS_ARGS(u8 caseId);
+			
+			gBattlescriptCurrInstr = cmd->nextInstr;
+			
+			if (ShouldDoTrainerSlide(battlerId, cmd->caseId))
 				BattleScriptCall(BattleScript_TrainerSlideMsg);
-				return;
-			}
-			break;
+			
+			return;
 		}
 		case VARIOUS_UPDATE_HEALTHBOX_ATTRIBUTE:
 		{
@@ -6162,6 +6161,12 @@ static void atk76_various(void)
 				gBattlescriptCurrInstr = cmd->failPtr;
 
 			return;
+		}
+		case VARIOUS_RESET_GIMMICK_IN_PROGRESS:
+		{
+			VARIOUS_ARGS();
+			gBattleStruct->battlers[battlerId].gimmickInProgress = FALSE;
+			break;
 		}
     }
     gBattlescriptCurrInstr = cmd->nextInstr;

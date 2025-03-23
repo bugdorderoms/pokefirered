@@ -475,6 +475,7 @@ void AnimTask_PositionFissureBgOnBattler(u8 taskId);
 
 void AnimSpikes(struct Sprite *);
 void AnimDirtScatter(struct Sprite *sprite);
+void AnimGeyserSprite(struct Sprite *sprite);
 
 // dragon.c
 void AnimTask_DragonDanceWaver(u8 taskId);
