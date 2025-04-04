@@ -47,9 +47,7 @@ void CheckForFlashMemory(void)
         InitFlashTimer();
     }
     else
-    {
         gFlashMemoryPresent = FALSE;
-    }
 }
 
 void ClearSav2(void)
@@ -127,7 +125,7 @@ u32 UseContinueGameWarp(void)
 
 void ClearContinueGameWarpStatus(void)
 {
-    gSaveBlock2Ptr->specialSaveWarpFlags &= ~CONTINUE_GAME_WARP;
+    gSaveBlock2Ptr->specialSaveWarpFlags &= ~(CONTINUE_GAME_WARP);
 }
 
 void SetContinueGameWarpStatus(void)
@@ -141,14 +139,9 @@ void SetContinueGameWarpStatusToDynamicWarp(void)
     gSaveBlock2Ptr->specialSaveWarpFlags |= CONTINUE_GAME_WARP;
 }
 
-void ClearContinueGameWarpStatus2(void)
-{
-    gSaveBlock2Ptr->specialSaveWarpFlags &= ~CONTINUE_GAME_WARP;
-}
-
 void SavePlayerParty(void)
 {
-    int i;
+    u32 i;
 
     gSaveBlock1Ptr->playerPartyCount = gPlayerPartyCount;
 
@@ -158,7 +151,7 @@ void SavePlayerParty(void)
 
 void LoadPlayerParty(void)
 {
-    int i;
+    u32 i;
 
     gPlayerPartyCount = gSaveBlock1Ptr->playerPartyCount;
 
@@ -168,7 +161,7 @@ void LoadPlayerParty(void)
 
 void SaveObjectEvents(void)
 {
-    int i;
+    u32 i;
 
     for (i = 0; i < OBJECT_EVENTS_COUNT; i++)
         gSaveBlock1Ptr->objectEvents[i] = gObjectEvents[i];
@@ -176,7 +169,7 @@ void SaveObjectEvents(void)
 
 void LoadObjectEvents(void)
 {
-    int i;
+    u32 i;
 
     for (i = 0; i < OBJECT_EVENTS_COUNT; i++)
         gObjectEvents[i] = gSaveBlock1Ptr->objectEvents[i];
@@ -196,7 +189,7 @@ void LoadSerializedGame(void)
 
 void LoadPlayerBag(void)
 {
-    int i;
+    u32 i;
 
     // load player items.
     for (i = 0; i < BAG_ITEMS_COUNT; i++)
@@ -227,8 +220,7 @@ void LoadPlayerBag(void)
 
 void SavePlayerBag(void)
 {
-    int i;
-    u32 encryptionKeyBackup;
+    u32 i, encryptionKeyBackup;
 
     // save player items.
     for (i = 0; i < BAG_ITEMS_COUNT; i++)

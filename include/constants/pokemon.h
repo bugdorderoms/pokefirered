@@ -163,16 +163,14 @@
 #define MAX_STAT_STAGES     12
 
 // Species flags
-#define SPECIES_FLAG_LEGENDARY    (1 << 0)
-#define SPECIES_FLAG_MYTHICAL     (1 << 1)
-#define SPECIES_FLAG_ULTRA_BEAST  (1 << 2)
-#define SPECIES_FLAG_MEGA         (1 << 3)
-#define SPECIES_FLAG_PRIMAL       (1 << 4)
-#define SPECIES_FLAG_ULTRA_BURST  (1 << 5)
-#define SPECIES_FLAG_GIGANTAMAX   (1 << 6)
-#define SPECIES_FLAG_PARADOX      (1 << 7)
-#define SPECIES_FLAG_TERASTAL     (1 << 8)
-#define SPECIES_FLAG_CANT_TRADE   (1 << 9)
+#define SPECIES_FLAG_LEGENDARY      Bit(0)
+#define SPECIES_FLAG_MYTHICAL       Bit(1)
+#define SPECIES_FLAG_ULTRA_BEAST    Bit(2)
+#define SPECIES_FLAG_HIGH_PITCH_CRY Bit(3)
+#define SPECIES_FLAG_GIGANTAMAX     Bit(4)
+#define SPECIES_FLAG_PARADOX        Bit(5)
+#define SPECIES_FLAG_TERASTAL       Bit(6)
+#define SPECIES_FLAG_CANT_TRADE     Bit(7)
 // Those species flags cause the pokemon to be created with 3 perfect ivs
 #define SPECIES_PERFECT_IVS_FLAGS (SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_MYTHICAL | SPECIES_FLAG_ULTRA_BEAST | SPECIES_FLAG_PARADOX)
 

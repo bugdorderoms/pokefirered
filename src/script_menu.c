@@ -31,7 +31,7 @@ struct MultichoiceListStruct
 static void Task_MultichoiceMenu_HandleInput(u8 taskId);
 static void Task_YesNoMenu_HandleInput(u8 taskId);
 static void Task_ScriptShowPic(u8 taskId);
-static bool8 PicboxWaitFunc(void);
+static bool32 PicboxWaitFunc(void);
 
 static const struct MenuAction sScriptMultiChoiceMenu_YesNo[] = {
     { gText_Yes },
@@ -1100,9 +1100,9 @@ static void Task_ScriptShowPic(u8 taskId)
 	}
 }
 
-bool8 (*ScriptMenu_GetPicboxWaitFunc(void))(void)
+bool32 (*ScriptMenu_GetPicboxWaitFunc(void))(void)
 {
-	u8 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
+	u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
 	
 	if (taskId == 0xFF)
 		return NULL;
@@ -1112,7 +1112,7 @@ bool8 (*ScriptMenu_GetPicboxWaitFunc(void))(void)
 	return PicboxWaitFunc;
 }
 
-static bool8 PicboxWaitFunc(void)
+static bool32 PicboxWaitFunc(void)
 {
 	return (FindTaskIdByFunc(Task_ScriptShowPic) == 0xFF);
 }

@@ -17,16 +17,16 @@ void DrawRepelMultichoiseMenu(void);
 void HandleRepelUseAnother(void);
 
 // List Menu
-u8 InitFormChangeListMenu(u8 listId);
-u16 GetFormChangeListMenuSpecies(u8 listId);
-void Task_DestroyListMenu(u8 taskId, bool8 enableScripts);
+u32 InitFormChangeListMenu(u32 listId);
+u32 GetFormChangeListMenuSpecies(u32 listId);
+void Task_DestroyListMenu(u32 taskId, bool32 enableScripts);
 
 // Yes No menu
 bool8 ScriptMenu_YesNo(u8 var1, u8 var2);
 
 // Pokemon pic
 bool8 ScriptMenu_ShowPokemonPic(u16 var1, u8 var2, u8 var3);
-bool8 (*ScriptMenu_GetPicboxWaitFunc(void))(void);
+bool32 (*ScriptMenu_GetPicboxWaitFunc(void))(void);
 void PicboxCancel(void);
 void RemovePokemonSpeciesOnPicbox(void);
 void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y);

@@ -33,15 +33,15 @@ void FieldUseFunc_FusionItem(u8 taskId);
 void FieldUseFunc_ChangeAbility(u8 taskId);
 void FieldUseFunc_Mint(u8 taskId);
 void BattleUseFunc_BerryPouch(u8 taskId);
-void ItemUseInBattle_BagMenu(u8 taskId);
-void ItemUseInBattle_PartyMenu(u8 taskId);
-void ItemUseInBattle_PartyMenuChooseMove(u8 taskId);
+void ItemUseInBattle_BagMenu(u32 taskId);
+void ItemUseInBattle_PartyMenu(u32 taskId);
+void ItemUseInBattle_PartyMenuChooseMove(u32 taskId);
 void FieldUseFunc_OakStopsYou(u8 taskId);
 void ItemUseOutOfBattle_EscapeRope(u8 taskId);
 void ItemUseOutOfBattle_Itemfinder(u8 taskId);
 void sub_80A1C44(u8 taskId);
-u8 CanUseEscapeRopeOnCurrMap(void);
-bool8 CanUseItemInBattle(bool8 fromBagMenu, u16 itemId);
-bool8 ExecuteTableBasedItemEffect(u8 partyMonIndex, u16 item);
+bool32 CanUseEscapeRopeOnCurrMap(void);
+bool32 CanUseItemInBattle(bool32 fromBagMenu, u32 itemId);
+bool32 ExecuteTableBasedItemEffect(u32 partyMonIndex, u32 item);
 
 #endif //GUARD_ITEM_USE_H

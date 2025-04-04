@@ -15,8 +15,8 @@
 #include "constants/hold_effects.h"
 #include "constants/moves.h"
 
-#define FLAG_CONFUSION_DAMAGE (1 << 0)
-#define FLAG_AI_DAMAGE_CALC   (1 << 1)
+#define FLAG_CONFUSION_DAMAGE Bit(0)
+#define FLAG_AI_DAMAGE_CALC   Bit(1)
 
 struct DamageCalc
 {

@@ -45,10 +45,9 @@ static bool32 CheckSpeciesKnowsMove(u32 battlerId, u16 *moves, u32 wantedMove, b
 	return FALSE;
 }
 
-static u16 GetSpeciesForm(u16 formChangeType, u16 species, u32 personality, u16 ability, u16 itemId, u16 *moves, u8 battlerId)
+static u32 GetSpeciesForm(u32 formChangeType, u32 species, u32 personality, u32 ability, u32 itemId, u16 *moves, u32 battlerId)
 {
-	u8 i;
-	u16 param, targetSpecies = SPECIES_NONE;
+	u32 i, param, targetSpecies = SPECIES_NONE;
 	const struct FormChange *formsTable = gSpeciesInfo[species].formChangeTable;
 
 	if (formsTable != NULL)
@@ -75,7 +74,7 @@ static u16 GetSpeciesForm(u16 formChangeType, u16 species, u32 personality, u16 
 					case FORM_CHANGE_HOLD_ITEM:
 					case FORM_CHANGE_MEGA_EVO:
 					case FORM_CHANGE_PRIMAL:
-					case FORM_CHANGE_ULTRA_BURST: // TODO:
+					case FORM_CHANGE_ULTRA_BURST:
 					    if (!formsTable[i].param2 || ability == formsTable[i].param2)
 						{
 							if (param == itemId || !param)
@@ -164,7 +163,7 @@ static u16 GetSpeciesForm(u16 formChangeType, u16 species, u32 personality, u16 
 					case FORM_CHANGE_KNOW_MOVE:
 						if (formsTable[i].param2 == CheckSpeciesKnowsMove(battlerId, moves, param, FALSE))
 							targetSpecies = formsTable[i].targetSpecies;
-					
+						break;
 					case FORM_CHANGE_MOVE_MEGA_EVO:
 					    if (CheckSpeciesKnowsMove(battlerId, moves, param, TRUE))
 							targetSpecies = formsTable[i].targetSpecies;
@@ -218,9 +217,9 @@ static u16 GetSpeciesForm(u16 formChangeType, u16 species, u32 personality, u16 
 // OVERWORLD FORM CHANGE //
 ///////////////////////////
 
-u16 GetMonFormChangeSpecies(struct Pokemon *mon, u16 species, u16 formChangeType)
+u32 GetMonFormChangeSpecies(struct Pokemon *mon, u32 species, u32 formChangeType)
 {
-	u8 i;
+	u32 i;
 	u16 moves[MAX_MON_MOVES];
 	
 	for (i = 0; i < MAX_MON_MOVES; i++)
@@ -229,10 +228,10 @@ u16 GetMonFormChangeSpecies(struct Pokemon *mon, u16 species, u16 formChangeType
 	return GetSpeciesForm(formChangeType, species, GetMonData(mon, MON_DATA_PERSONALITY), GetMonAbility(mon), GetMonData(mon, MON_DATA_HELD_ITEM), moves, 0);
 }
 
-u16 DoOverworldFormChange(struct Pokemon *mon, u16 formChangeType)
+u32 DoOverworldFormChange(struct Pokemon *mon, u32 formChangeType)
 {
-	u16 species = GetMonData(mon, MON_DATA_SPECIES);
-	u16 targetSpecies = GetMonFormChangeSpecies(mon, species, formChangeType);
+	u32 species = GetMonData(mon, MON_DATA_SPECIES);
+	u32 targetSpecies = GetMonFormChangeSpecies(mon, species, formChangeType);
 	
 	if (targetSpecies && targetSpecies < NUM_SPECIES && targetSpecies != species)
 	{
@@ -256,10 +255,13 @@ u16 DoOverworldFormChange(struct Pokemon *mon, u16 formChangeType)
 
 void DoPlayerPartyEndBattleFormChange(void)
 {
-	u8 i;
+	u32 i;
 	
 	for (i = 0; i < PARTY_SIZE; i++)
 	{
+		// Try Transform Zacian and Zamazenta's moves into Iron Head
+		TryTransformZacianAndZamazentaIronHead(&gPlayerParty[i], TRUE);
+		
 		DoSpecialFormChange(0xFF, i, FORM_CHANGE_END_BATTLE); // revert battle forms back
 		
 		if (gBattleStruct->sides[B_SIDE_PLAYER].party[i].appearedInBattle) // only change form if appeared in battle
@@ -269,8 +271,7 @@ void DoPlayerPartyEndBattleFormChange(void)
 
 void TrySetMonFormChangeCountdown(struct Pokemon *mon)
 {
-	u8 i;
-	u16 species = GetMonData(mon, MON_DATA_SPECIES);
+	u32 i, species = GetMonData(mon, MON_DATA_SPECIES);
 	const struct FormChange *formsTable = gSpeciesInfo[species].formChangeTable;
 	
 	if (formsTable != NULL)
@@ -290,16 +291,16 @@ void TrySetMonFormChangeCountdown(struct Pokemon *mon)
 // BATTLE FORM CHANGE //
 ////////////////////////
 
-u16 GetBattlerFormChangeSpecies(u8 battlerId, u16 species, u16 itemId, u16 formChangeType)
+u32 GetBattlerFormChangeSpecies(u32 battlerId, u32 species, u32 itemId, u32 formChangeType)
 {
 	u16 moves[MAX_MON_MOVES];
 	GetBattlerMovesArray(battlerId, moves);
 	return GetSpeciesForm(formChangeType, species, gBattleMons[battlerId].personality, GetBattlerAbility(battlerId), itemId, moves, battlerId);
 }
 
-u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType)
+u32 TryDoBattleFormChange(u32 battlerId, u32 formChangeType)
 {
-	u16 itemId, species, personalitySpecies, targetSpecies = SPECIES_NONE;
+	u32 itemId, species, personalitySpecies, targetSpecies = SPECIES_NONE;
 	
 	if (!(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED)) // no change form if transformed
 	{
@@ -318,7 +319,7 @@ u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType)
 	return targetSpecies;
 }
 
-void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 reloadStats, bool8 reloadAbility)
+void DoBattleFormChange(u32 battlerId, u32 newSpecies, bool32 reloadTypes, bool32 reloadStats, bool32 reloadAbility)
 {
 	struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
 	
@@ -348,9 +349,9 @@ void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 r
 	ClearIllusionMon(battlerId);
 }
 
-bool8 SpeciesHasFormChangeType(u16 species, u16 formChangeType)
+bool32 SpeciesHasFormChangeType(u32 species, u32 formChangeType)
 {
-	u8 i;
+	u32 i;
 	const struct FormChange *formsTable = gSpeciesInfo[species].formChangeTable;
 	
 	if (formsTable != NULL)
@@ -366,15 +367,15 @@ bool8 SpeciesHasFormChangeType(u16 species, u16 formChangeType)
 
 static void CalculateMonStatsAfterChangeForm(struct Pokemon *mon)
 {
-	u16 newHP = GetMonData(mon, MON_DATA_HP);
+	u32 newHP = GetMonData(mon, MON_DATA_HP);
 	CalculateMonStats(mon);
 	newHP = min(GetMonData(mon, MON_DATA_MAX_HP), newHP);
 	SetMonData(mon, MON_DATA_HP, &newHP);
 }
 
-bool8 DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType)
+bool32 DoSpecialFormChange(u32 battlerId, u32 partyId, u32 formChangeType)
 {
-	u16 targetSpecies;
+	u32 targetSpecies;
 	struct Pokemon *mon = battlerId == 0xFF ? &gPlayerParty[partyId] : GetBattlerPartyIndexPtr(battlerId);
 	
 	switch (formChangeType)

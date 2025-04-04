@@ -87,11 +87,11 @@
 
 // funcs
 void DexNavGuiInit(MainCallback callback);
-bool8 TryStartDexnavSearch(void);
-bool8 IsDexNavSearchActive(void);
+bool32 TryStartDexnavSearch(void);
+bool32 IsDexNavSearchActive(void);
 void ResetDexNavSearch(void);
-void IncrementOrResetDexNavChain(bool8 increment);
-u8 GetDexNavShinyRollsIncrease(u32 rolls);
+void IncrementOrResetDexNavChain(bool32 increment);
+u32 GetDexNavShinyRollsIncrease(u32 rolls);
 u32 GetDexNavShinyRate(void);
 
 // ewram

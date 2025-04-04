@@ -18,7 +18,7 @@ static void FieldCallback_SweetScent(void);
 static void TrySweetScentEncounter(u8 taskId);
 static void FailSweetScentEncounter(u8 taskId);
 
-bool8 SetUpFieldMove_SweetScent(void)
+bool32 SetUpFieldMove_SweetScent(void)
 {
     gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
     gPostMenuFieldCallback = FieldCallback_SweetScent;
@@ -31,9 +31,9 @@ static void FieldCallback_SweetScent(void)
     gFieldEffectArguments[0] = GetCursorSelectionMonId();
 }
 
-bool8 FldEff_SweetScent(void)
+bool32 FldEff_SweetScent(void)
 {
-    u8 taskId;
+    u32 taskId;
 
     SetWeatherScreenFadeOut();
     taskId = CreateFieldEffectShowMon();
@@ -41,7 +41,7 @@ bool8 FldEff_SweetScent(void)
     return FALSE;
 }
 
-#define SWEET_SCENT_AFFECTED_PALETTES ~(1 << (gSprites[gPlayerAvatar.spriteId].oam.paletteNum + 16) | (1 << 13) | (1 << 14) | (1 << 15))
+#define SWEET_SCENT_AFFECTED_PALETTES ~(Bit(gSprites[gPlayerAvatar.spriteId].oam.paletteNum + 16) | Bit(13) | Bit(14) | Bit(15))
 
 void StartSweetScentFieldEffect(void)
 {

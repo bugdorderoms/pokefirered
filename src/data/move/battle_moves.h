@@ -10553,8 +10553,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_POWER_WHIP] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Power Whip"),
+        .description = COMPOUND_STRING("The user violently\n"
+                                       "whirls its vines or\n"
+                                       "tentacles to lash\n"
+                                       "the target."),
+		.animScript = gMoveAnim_POWER_WHIP,
+		.effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_GRASS,
         .accuracy = 85,
@@ -10571,8 +10576,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_ROCK_WRECKER] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Rock Wrecker"),
+        .description = COMPOUND_STRING("Launches a huge\n"
+                                       "boulder at the foe\n"
+                                       "to attack. It can't\n"
+                                       "move the next turn."),
+		.animScript = gMoveAnim_ROCK_WRECKER,
+		.effect = EFFECT_HIT,
         .power = 150,
         .type = TYPE_ROCK,
         .accuracy = 90,
@@ -10595,8 +10605,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CROSS_POISON] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Cross Poison"),
+        .description = COMPOUND_STRING("A slash attack that\n"
+                                       "may leave the foe\n"
+                                       "poisoned. It has a\n"
+                                       "high critical ratio."),
+		.animScript = gMoveAnim_CROSS_POISON,
+		.effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_POISON,
         .accuracy = 100,
@@ -10607,7 +10622,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 		{
 			.makesContact = TRUE,
 			.kingsRockAffected = TRUE,
-			// .secondaryEffectMove = TRUE,
 			.slicingMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
@@ -10620,8 +10634,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_GUNK_SHOT] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Gunk Shot"),
+        .description = COMPOUND_STRING("The user shoots\n"
+                                       "filthy garbage at\n"
+                                       "the foe. It may\n"
+                                       "also poison the foe."),
+		.animScript = gMoveAnim_GUNK_SHOT,
+		.effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_POISON,
 		.accuracy = 80,
@@ -10630,7 +10649,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
 		.additionalEffects = ADDITIONAL_EFFECTS({
@@ -10642,8 +10660,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_IRON_HEAD] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Iron Head"),
+        .description = COMPOUND_STRING("It slams the foe\n"
+                                       "with its steel-hard\n"
+                                       "head. It may also\n"
+                                       "make the foe flinch."),
+		.animScript = gMoveAnim_IRON_HEAD,
+		.effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_STEEL,
         .accuracy = 100,
@@ -10652,7 +10675,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 		.flags =
 		{
 			.makesContact = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_PHYSICAL,
 		.additionalEffects = ADDITIONAL_EFFECTS({
@@ -10664,8 +10686,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_MAGNET_BOMB] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Magnet Bomb"),
+        .description = COMPOUND_STRING("The user launches\n"
+                                       "steel bombs that\n"
+                                       "stick to the foe.\n"
+                                       "It never misses."),
+		.animScript = gMoveAnim_MAGNET_BOMB,
+		.effect = EFFECT_HIT,
         .power = 60,
         .type = TYPE_STEEL,
         .pp = 20,
@@ -10681,8 +10708,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_STONE_EDGE] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Stone Edge"),
+		.description = COMPOUND_STRING("It stabs the foe\n"
+                                       "with a sharpened\n"
+                                       "stone. It has a\n"
+                                       "high critical ratio."),
+        .animScript = gMoveAnim_STONE_EDGE,
+		.effect = EFFECT_HIT,
         .power = 100,
         .type = TYPE_ROCK,
         .accuracy = 80,
@@ -10699,8 +10731,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CAPTIVATE] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_CAPTIVATE,
+		.name = COMPOUND_STRING("Captivate"),
+        .description = COMPOUND_STRING("Charmes the foes of\n"
+                                       "the opposite gender\n"
+                                       "to harshly lower\n"
+                                       "their Sp. Atk stat."),
+		.animScript = gMoveAnim_CAPTIVATE,
+		.effect = EFFECT_CAPTIVATE,
         .type = TYPE_NORMAL,
         .accuracy = 100,
         .pp = 20,
@@ -10708,7 +10745,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
 		{
 			.magicCoatAffected = TRUE,
-			.forbiddenMirrorMove = TRUE,
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_SPDEF_UP_2,
@@ -10716,8 +10752,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_STEALTH_ROCK] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_STEALTH_ROCK,
+		.name = COMPOUND_STRING("Stealth Rock"),
+        .description = COMPOUND_STRING("Lays a trap of\n"
+                                       "stones around the\n"
+                                       "foe. It hurts foes\n"
+                                       "on switch in."),
+		.animScript = gMoveAnim_STEALTH_ROCK,
+		.effect = EFFECT_STEALTH_ROCK,
         .type = TYPE_ROCK,
         .pp = 20,
         .target = MOVE_TARGET_OPPONENTS_FIELD,
@@ -10734,8 +10775,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_GRASS_KNOT] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_DAMAGE_BASED_TARGET_WEIGHT,
+		.name = COMPOUND_STRING("Grass Knot"),
+        .description = COMPOUND_STRING("Snares the foe with\n"
+                                       "grass and trips it.\n"
+                                       "The heavier the\n"
+                                       "foe, more damage."),
+		.animScript = gMoveAnim_GRASS_KNOT,
+		.effect = EFFECT_DAMAGE_BASED_TARGET_WEIGHT,
         .power = 1,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -10752,8 +10798,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CHATTER] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Chatter"),
+        .description = COMPOUND_STRING("Attacks the foe\n"
+                                       "with sound waves of\n"
+                                       "deafening chatter.\n"
+                                       "It confuses the foe."),
+		.animScript = gMoveAnim_CHATTER,
+		.effect = EFFECT_HIT,
 		.power = 65,
         .type = TYPE_FLYING,
         .accuracy = 100,
@@ -10762,7 +10813,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 		.flags =
 		{
 			.soundMove = TRUE,
-			// .secondaryEffectMove = TRUE,
+			.kingsRockAffected = TRUE,
 			.forbiddenMetronome = TRUE,
 			.forbiddenAssist = TRUE,
 			.forbiddenCopycat = TRUE,
@@ -10781,8 +10832,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_JUDGMENT] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_CHANGE_TYPE_ON_ITEM,
+		.name = COMPOUND_STRING("Judgment"),
+        .description = COMPOUND_STRING("It releases shots\n"
+                                       "of light. Its type\n"
+                                       "varies with the\n"
+                                       "Plate of the user."),
+		.animScript = gMoveAnim_JUDGMENT,
+		.effect = EFFECT_CHANGE_TYPE_ON_ITEM,
         .power = 100,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -10792,15 +10848,20 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 		{
 			.kingsRockAffected = TRUE,
 		},
+		.argument = { .holdEffect = HOLD_EFFECT_PLATE },
         .split = SPLIT_SPECIAL,
-        // .argument = HOLD_EFFECT_PLATE,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_BUG_BITE] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_BUG_BITE,
+		.name = COMPOUND_STRING("Bug Bite"),
+        .description = COMPOUND_STRING("It bites the foe.\n"
+                                       "If holding a Berry,\n"
+                                       "the user eats and\n"
+                                       "gains its effect."),
+		.animScript = gMoveAnim_BUG_BITE,
+		.effect = EFFECT_BUG_BITE,
         .power = 60,
         .type = TYPE_BUG,
         .accuracy = 100,
@@ -10818,27 +10879,40 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CHARGE_BEAM] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_SP_ATTACK_UP_HIT,
+		.name = COMPOUND_STRING("Charge Beam"),
+        .description = COMPOUND_STRING("It fires a bundle\n"
+                                       "of electricity. It\n"
+                                       "may also raise the\n"
+                                       "user's Sp. Atk."),
+		.animScript = gMoveAnim_CHARGE_BEAM,
+		.effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_ELECTRIC,
         .accuracy = 90,
         .pp = 10,
-        // .secondaryEffectChance = 70,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.kingsRockAffected = TRUE,
-			// .secondaryEffectMove = TRUE,
 		},
         .split = SPLIT_SPECIAL,
+		.additionalEffects = ADDITIONAL_EFFECTS({
+			.moveEffect = MOVE_EFFECT_SP_ATK_PLUS_1,
+			.chance = 70,
+			.self = TRUE,
+		}),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_WOOD_HAMMER] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Wood Hammer"),
+        .description = COMPOUND_STRING("It slams its rugged\n"
+                                       "body into the foe\n"
+                                       "to attack. It also\n"
+                                       "damages the user."),
+		.animScript = gMoveAnim_WOOD_HAMMER,
+		.effect = EFFECT_HIT,
         .power = 120,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -10856,8 +10930,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_AQUA_JET] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_HIT,
+		.name = COMPOUND_STRING("Aqua Jet"),
+        .description = COMPOUND_STRING("The user lunges at\n"
+                                       "the foe at a high\n"
+                                       "speed. It is sure\n"
+                                       "to strike first."),
+		.animScript = gMoveAnim_AQUA_JET,
+		.effect = EFFECT_HIT,
         .power = 40,
         .type = TYPE_WATER,
         .accuracy = 100,
@@ -12721,7 +12800,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_FIERY_DANCE] =
     {
 		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_SP_ATTACK_UP_HIT,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_FIRE,
         .accuracy = 100,

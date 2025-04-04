@@ -1040,8 +1040,6 @@ gCryTable::
 	cry Cry_Zygarde10
 	cry Cry_ZygardeComplete
 	cry Cry_HoopaUnbound
-	cry Cry_KyogrePrimal
-	cry Cry_GroudonPrimal
 	cry Cry_OricorioPomPom
 	cry Cry_OricorioPau
 	cry Cry_OricorioSensu
@@ -2108,8 +2106,6 @@ gCryTableReverse::
 	cry_reverse Cry_Zygarde10
 	cry_reverse Cry_ZygardeComplete
 	cry_reverse Cry_HoopaUnbound
-	cry_reverse Cry_KyogrePrimal
-	cry_reverse Cry_GroudonPrimal
 	cry_reverse Cry_OricorioPomPom
 	cry_reverse Cry_OricorioPau
 	cry_reverse Cry_OricorioSensu

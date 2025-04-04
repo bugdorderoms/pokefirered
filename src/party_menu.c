@@ -79,14 +79,14 @@
 #include "constants/songs.h"
 #include "constants/sound.h"
 
-#define PARTY_PAL_SELECTED     (1 << 0)
-#define PARTY_PAL_FAINTED      (1 << 1)
-#define PARTY_PAL_TO_SWITCH    (1 << 2)
-#define PARTY_PAL_MULTI_ALT    (1 << 3)
-#define PARTY_PAL_SWITCHING    (1 << 4)
-#define PARTY_PAL_TO_SOFTBOIL  (1 << 5)
-#define PARTY_PAL_NO_MON       (1 << 6)
-#define PARTY_PAL_UNUSED       (1 << 7)
+#define PARTY_PAL_SELECTED     Bit(0)
+#define PARTY_PAL_FAINTED      Bit(1)
+#define PARTY_PAL_TO_SWITCH    Bit(2)
+#define PARTY_PAL_MULTI_ALT    Bit(3)
+#define PARTY_PAL_SWITCHING    Bit(4)
+#define PARTY_PAL_TO_SOFTBOIL  Bit(5)
+#define PARTY_PAL_NO_MON       Bit(6)
+#define PARTY_PAL_UNUSED       Bit(7)
 
 #define MENU_DIR_DOWN     1
 #define MENU_DIR_UP      -1
@@ -150,7 +150,7 @@ struct ItemUseData
 
 struct MedicineItemData
 {
-	void (*savedItemUseCB)(u8, TaskFunc);
+	void (*savedItemUseCB)(u32, TaskFunc);
 	s16 oldHP;
 	u16 newHP;
 	u8 initialLevel;
@@ -191,7 +191,7 @@ static void CursorCB_Store(u8 taskId);
 static void CursorCB_Register(u8 taskId);
 static void CursorCB_Trade1(u8 taskId);
 static void CursorCB_FieldMove(u8 taskId);
-static bool8 SetUpFieldMove_Waterfall(void);
+static bool32 SetUpFieldMove_Waterfall(void);
 static void CB2_InitPartyMenu(void);
 static void ResetPartyMenu(void);
 static bool8 ShowPartyMenu(void);
@@ -319,14 +319,14 @@ static void Task_HandleFieldMoveExitAreaYesNoInput(u8 taskId);
 static void Task_SetSacredAshCB(u8 taskId);
 static void CB2_ReturnToBagMenu(void);
 static void Task_DisplayHPRestoredMessage(u8 taskId);
-static void Task_LearnedMove(u8 taskId);
+static void Task_LearnedMove(u32 taskId);
 static void Task_ReplaceMoveYesNo(u8 taskId);
 static void Task_DoLearnedMoveFanfareAfterText(u8 taskId);
 static void Task_TryLearningNextMove(u8 taskId);
 static void Task_LearnNextMoveOrClosePartyMenu(u8 taskId);
 static void Task_HandleReplaceMoveYesNoInput(u8 taskId);
 static void StopLearningMovePrompt(u8 taskId);
-static void DisplayPartyMenuForgotMoveMessage(u8 taskId);
+static void DisplayPartyMenuForgotMoveMessage(u32 taskId);
 static void Task_StopLearningMoveYesNo(u8 taskId);
 static void Task_HandleStopLearningMoveYesNoInput(u8 taskId);
 static void Task_DisplayLevelUpStatsPg1(u8 taskId);
@@ -334,7 +334,7 @@ static void Task_DisplayLevelUpStatsPg2(u8 taskId);
 static void UpdateMonDisplayInfoAfterLevelUp(u8 slot, struct Pokemon *mon);
 static void Task_TryLearnNewMoves(u8 taskId);
 static void PartyMenuTryEvolution(u8 taskId);
-static void DisplayMonNeedsToReplaceMove(u8 taskId);
+static void DisplayMonNeedsToReplaceMove(u32 taskId);
 static void DisplayMonLearnedMove(u8 taskId, u16 move);
 static void BufferBagFullCantTakeItemMessage(u16 itemId);
 static void Task_SacredAshDisplayHPRestored(u8 taskId);
@@ -375,8 +375,8 @@ static void CB2_UseMedicineItem(void);
 static void CB2_UseTMItem(void);
 static void CB2_UseTMItemAfterForgetingMove(void);
 static void CB2_UseEvolutionItem(void);
-static bool8 ShouldUseMedicineItemAgain(void);
-static void SetMedicineItemFunc(u8 taskId);
+static bool32 ShouldUseMedicineItemAgain(void);
+static void SetMedicineItemFunc(u32 taskId);
 
 static EWRAM_DATA struct PartyMenuInternal *sPartyMenuInternal = NULL;
 EWRAM_DATA struct PartyMenu gPartyMenu = {0};
@@ -393,7 +393,7 @@ static EWRAM_DATA u16 sPartyMenuItemId = ITEM_NONE;
 ALIGNED(4) EWRAM_DATA u8 gBattlePartyCurrentOrder[PARTY_SIZE / 2] = {0}; // bits 0-3 are the current pos of Slot 1, 4-7 are Slot 2, and so on
 static EWRAM_DATA struct MedicineItemData sMedicineItemData = {0};
 
-void (*gItemUseCB)(u8, TaskFunc);
+void (*gItemUseCB)(u32, TaskFunc);
 
 #include "data/pokemon/learnsets/tutor_learnsets.h"
 #include "data/party_menu.h"
@@ -726,7 +726,7 @@ static void Task_PartyMenuWaitForFade(u8 taskId)
     }
 }
 
-static bool8 CB2_FadeFromPartyMenu(void)
+static bool32 CB2_FadeFromPartyMenu(void)
 {
     FadeInFromBlack();
     CreateTask(Task_PartyMenuWaitForFade, 10);
@@ -2252,7 +2252,7 @@ static void Task_DisplayLevelUpStatsPg1(u8 taskId)
 static void DisplayLevelUpStatsPg2(u8 taskId)
 {
     s16 *arrayPtr = sPartyMenuInternal->data;
-	u8 windowIdArrayId = NUM_STATS + NUM_STATS;
+	u32 windowIdArrayId = NUM_STATS + NUM_STATS;
 
     DrawLevelUpWindowPg2(arrayPtr[windowIdArrayId], &arrayPtr[NUM_STATS], 1, 2, 3);
     CopyWindowToVram(arrayPtr[windowIdArrayId], COPYWIN_GFX);
@@ -2272,7 +2272,7 @@ static void Task_DisplayLevelUpStatsPg2(u8 taskId)
 
 static void Task_TryLearnNewMoves(u8 taskId)
 {
-    u8 ret;
+    u32 ret;
 
     if (WaitFanfare(0) && (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON)))
     {
@@ -2308,7 +2308,7 @@ static void Task_TryLearnNewMoves(u8 taskId)
 
 static void Task_TryLearningNextMove(u8 taskId)
 {
-    u8 ret;
+    u32 ret;
 	
 	for (; sMedicineItemData.initialLevel <= sMedicineItemData.finalLevel; sMedicineItemData.initialLevel++)
 	{
@@ -2480,7 +2480,7 @@ static void FieldCallback_Waterfall(void)
 }
 
 // Unused
-static bool8 SetUpFieldMove_Waterfall(void)
+static bool32 SetUpFieldMove_Waterfall(void)
 {
     s16 x, y;
 
@@ -3532,10 +3532,10 @@ static void Task_ReturnToPartyMenuWhileLearningMove(u8 taskId)
     }
 }
 
-static void ItemUseCB_ReplaceMove(u8 taskId, UNUSED TaskFunc func)
+static void ItemUseCB_ReplaceMove(u32 taskId, UNUSED TaskFunc func)
 {
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    u8 moveIdx = GetMoveSlotToReplace();
+    u32 moveIdx = GetMoveSlotToReplace();
     
     GetMonNickname(mon, gStringVar1);
     StringCopy(gStringVar2, gBattleMoves[GetMonData(mon, moveIdx + MON_DATA_MOVE1)].name);
@@ -3546,7 +3546,7 @@ static void ItemUseCB_ReplaceMove(u8 taskId, UNUSED TaskFunc func)
 
 static void CB2_ReturnToPartyMenuWhileLearningMove(void)
 {
-    u8 moveIdx = GetMoveSlotToReplace();
+    u32 moveIdx = GetMoveSlotToReplace();
     
 	if (sMedicineItemData.finalLevel)
 		SetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_LEVEL, &sMedicineItemData.finalLevel);
@@ -3558,7 +3558,10 @@ static void CB2_ReturnToPartyMenuWhileLearningMove(void)
         gPartyMenu.action = gPartyMenu.learnMoveState;
     }
     else
-        InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, TRUE, PARTY_MSG_NONE, Task_ReturnToPartyMenuWhileLearningMove, gPartyMenu.exitCallback);
+	{
+		bool32 repeatMedicine = (gPartyMenu.action == PARTY_ACTION_USE_ITEM && ShouldUseMedicineItemAgain());
+        InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, repeatMedicine ? PARTY_ACTION_USE_ITEM : PARTY_ACTION_CHOOSE_MON, TRUE, PARTY_MSG_NONE, Task_ReturnToPartyMenuWhileLearningMove, gPartyMenu.exitCallback);
+	}
 }
 
 static void CB2_ShowSummaryScreenToForgetMove(void)
@@ -3634,8 +3637,11 @@ static void Task_HandleStopLearningMoveYesNoInput(u8 taskId)
         {
             if (gPartyMenu.learnMoveState == 2) // never occurs
                 gSpecialVar_Result = FALSE;
-				
-            gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+			
+			if (gPartyMenu.action == PARTY_ACTION_USE_ITEM)
+				SetMedicineItemFunc(taskId);
+			else
+				gTasks[taskId].func = Task_ClosePartyMenuAfterText;
         }
         break;
     case MENU_B_PRESSED:
@@ -3925,7 +3931,7 @@ static void DisplayLearnMoveMessageAndClose(u8 taskId, const u8 *str)
     gTasks[taskId].func = Task_ClosePartyMenuAfterText;
 }
 
-static void DisplayMonNeedsToReplaceMove(u8 taskId)
+static void DisplayMonNeedsToReplaceMove(u32 taskId)
 {
     GetMonNickname(&gPlayerParty[gPartyMenu.slotId], gStringVar1);
     StringCopy(gStringVar2, gBattleMoves[gMoveToLearn].name);
@@ -3966,8 +3972,11 @@ static void Task_LearnNextMoveOrClosePartyMenu(u8 taskId)
         {
             if (gPartyMenu.learnMoveState == 2) // never occurs
                 gSpecialVar_Result = TRUE;
-				
-            Task_ClosePartyMenu(taskId);
+			
+			if (gPartyMenu.action == PARTY_ACTION_USE_ITEM)
+				SetMedicineItemFunc(taskId);
+			else
+				Task_ClosePartyMenu(taskId);
         }
     }
 }
@@ -3997,7 +4006,7 @@ static void Task_PartyMenuReplaceMove(u8 taskId)
     }
 }
 
-static void DisplayPartyMenuForgotMoveMessage(u8 taskId)
+static void DisplayPartyMenuForgotMoveMessage(u32 taskId)
 {
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
     GetMonNickname(mon, gStringVar1);
@@ -6153,10 +6162,10 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 bat
 	return failed;
 }
 
-static void ItemUseCB_MedicineStep(u8 taskId, TaskFunc func)
+static void ItemUseCB_MedicineStep(u32 taskId, TaskFunc func)
 {
 	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-	u16 newHp = sMedicineItemData.newHP;
+	u32 newHp = sMedicineItemData.newHP;
 	
 	gPartyMenuUseExitCallback = TRUE;
 	
@@ -6192,7 +6201,7 @@ static void ItemUseCB_MedicineStep(u8 taskId, TaskFunc func)
 	}
 	else
 	{
-		bool8 leveledUp = (sMedicineItemData.initialLevel != sMedicineItemData.finalLevel);
+		bool32 leveledUp = (sMedicineItemData.initialLevel != sMedicineItemData.finalLevel);
 		
 		if (leveledUp)
 			UpdateMonDisplayInfoAfterLevelUp(gPartyMenu.slotId, mon);
@@ -6211,10 +6220,10 @@ static void ItemUseCB_MedicineStep(u8 taskId, TaskFunc func)
 	}
 }
 
-void ItemUseCB_Medicine(u8 taskId, TaskFunc func)
+void ItemUseCB_Medicine(u32 taskId, TaskFunc func)
 {
 	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    u16 item = gSpecialVar_ItemId;
+    u32 item = gSpecialVar_ItemId;
 	
 	PlaySE(SE_SELECT);
 	
@@ -6241,7 +6250,7 @@ void ItemUseCB_Medicine(u8 taskId, TaskFunc func)
 	}
 }
 
-static bool8 ShouldUseMedicineItemAgain(void)
+static bool32 ShouldUseMedicineItemAgain(void)
 {
 #if REPEATED_MEDICINE_USE
 	if (gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(gSpecialVar_ItemId, 1))
@@ -6251,13 +6260,13 @@ static bool8 ShouldUseMedicineItemAgain(void)
 }
 
 // Sets return to choose mon or close party menu task based if can or not use an medicine item again
-static void SetMedicineItemFunc(u8 taskId)
+static void SetMedicineItemFunc(u32 taskId)
 {
 	gTasks[taskId].func = ShouldUseMedicineItemAgain() ? Task_ReturnToChooseMonForUseMedicineItem : Task_ClosePartyMenuAfterText;
 }
 
 // Battle scripts called in HandleAction_UseItem
-void ItemUseCB_BattleScript(u8 taskId, TaskFunc func)
+void ItemUseCB_BattleScript(u32 taskId, TaskFunc func)
 {
 	PlaySE(SE_SELECT);
 	
@@ -6312,7 +6321,7 @@ static void Task_HandleWhichMoveInput(u8 taskId)
     }
 }
 
-void ItemUseCB_PPRecoveryOneMove(u8 taskId, UNUSED TaskFunc func)
+void ItemUseCB_PPRecoveryOneMove(u32 taskId, UNUSED TaskFunc func)
 {
 	PlaySE(SE_SELECT);
 	DisplayPartyMenuStdMessage(PARTY_MSG_RESTORE_WHICH_MOVE);
@@ -6320,13 +6329,13 @@ void ItemUseCB_PPRecoveryOneMove(u8 taskId, UNUSED TaskFunc func)
 	gTasks[taskId].func = Task_HandleWhichMoveInput;
 }
 
-void ItemUseCB_PPRecoveryAllMoves(u8 taskId, UNUSED TaskFunc func)
+void ItemUseCB_PPRecoveryAllMoves(u32 taskId, UNUSED TaskFunc func)
 {
 	gPartyMenu.data1 = MAX_MON_MOVES;
 	gItemUseCB = ItemUseCB_Medicine;
 }
 
-void ItemUseCB_PPUp(u8 taskId, UNUSED TaskFunc func)
+void ItemUseCB_PPUp(u32 taskId, UNUSED TaskFunc func)
 {
     PlaySE(SE_SELECT);
     DisplayPartyMenuStdMessage(PARTY_MSG_BOOST_PP_WHICH_MOVE);
@@ -6334,7 +6343,7 @@ void ItemUseCB_PPUp(u8 taskId, UNUSED TaskFunc func)
     gTasks[taskId].func = Task_HandleWhichMoveInput;
 }
 
-static void Task_LearnedMove(u8 taskId)
+static void Task_LearnedMove(u32 taskId)
 {
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
 	
@@ -6349,15 +6358,15 @@ static void Task_LearnedMove(u8 taskId)
     gTasks[taskId].func = Task_DoLearnedMoveFanfareAfterText;
 }
 
-static void ItemUseCB_TMStep(u8 taskId, UNUSED TaskFunc func)
+static void ItemUseCB_TMStep(u32 taskId, UNUSED TaskFunc func)
 {
 	Task_LearnedMove(taskId);
 }
 
-void ItemUseCB_TM(u8 taskId, UNUSED TaskFunc func)
+void ItemUseCB_TM(u32 taskId, UNUSED TaskFunc func)
 {
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-	u16 move = ItemId_GetHoldEffectParam(gSpecialVar_ItemId);
+	u32 move = ItemId_GetHoldEffectParam(gSpecialVar_ItemId);
 	
     PlaySE(SE_SELECT);
 	
@@ -6456,7 +6465,7 @@ static void UseSacredAsh(u8 taskId)
 	}
 }
 
-void ItemUseCB_SacredAsh(u8 taskId, UNUSED TaskFunc func)
+void ItemUseCB_SacredAsh(u32 taskId, UNUSED TaskFunc func)
 {
     sPartyMenuInternal->tUsedOnSlot = FALSE;
     sPartyMenuInternal->tHadEffect = FALSE;
@@ -6468,7 +6477,7 @@ void ItemUseCB_SacredAsh(u8 taskId, UNUSED TaskFunc func)
 #undef tHadEffect
 #undef tLastSlotUsed
 
-void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc func)
+void ItemUseCB_EvolutionStone(u32 taskId, TaskFunc func)
 {
     PlaySE(SE_SELECT);
 	
@@ -6483,10 +6492,10 @@ void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc func)
 		Task_DoUseItemAnim(taskId);
 }
 
-void ItemUseCB_FormChange(u8 taskId, TaskFunc func)
+void ItemUseCB_FormChange(u32 taskId, TaskFunc func)
 {
 	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    u16 species = GetMonData(mon, MON_DATA_SPECIES), newSpecies = GetMonFormChangeSpecies(mon, species, FORM_CHANGE_USE_ITEM);
+    u32 species = GetMonData(mon, MON_DATA_SPECIES), newSpecies = GetMonFormChangeSpecies(mon, species, FORM_CHANGE_USE_ITEM);
 	
 	PlaySE(SE_SELECT);
 	
@@ -6534,7 +6543,7 @@ static void Task_FormChangeListMenu_HandleInput(u8 taskId)
 static void Task_FormChangeListMenu(u8 taskId)
 {
 	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-	u16 newSpecies;
+	u32 newSpecies;
 	
 	switch (gTasks[taskId].data[0])
 	{
@@ -6586,13 +6595,13 @@ static void Task_FormChangeListMenu(u8 taskId)
 	gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
 }
 
-void ItemUseCB_FormChangeListMenu(u8 taskId, TaskFunc func)
+void ItemUseCB_FormChangeListMenu(u32 taskId, TaskFunc func)
 {
 	gTasks[taskId].data[0] = 0;
 	gTasks[taskId].func = Task_FormChangeListMenu;
 }
 
-static u16 GetFusionData(u8 caseId, u16 data)
+static u32 GetFusionData(u32 caseId, u32 data)
 {
 	u32 i;
 	
@@ -6622,7 +6631,7 @@ static u16 GetFusionData(u8 caseId, u16 data)
 	return SPECIES_NONE;
 }
 
-static bool8 CheckMonAlreadyFusedWithSpecies(u16 masterSpecies, u16 otherSpecies)
+static bool32 CheckMonAlreadyFusedWithSpecies(u32 masterSpecies, u32 otherSpecies)
 {
 	struct Pokemon *mon = GetBaseMonForFusedSpecies();
 	
@@ -6641,7 +6650,7 @@ static bool8 CheckMonAlreadyFusedWithSpecies(u16 masterSpecies, u16 otherSpecies
 
 static void Task_FusionItemStep(u8 taskId)
 {
-	u16 species, newSpecies;
+	u32 species, newSpecies;
 	
 	if (!gPaletteFade.active && !sub_80BF748())
 	{
@@ -6676,10 +6685,10 @@ static void Task_FusionItemStep(u8 taskId)
 	}
 }
 
-void ItemUseCB_Fusion(u8 taskId, TaskFunc func)
+void ItemUseCB_Fusion(u32 taskId, TaskFunc func)
 {
 	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-	u16 masterSpecies, species = GetMonData(mon, MON_DATA_SPECIES);
+	u32 masterSpecies, species = GetMonData(mon, MON_DATA_SPECIES);
 	
 	PlaySE(SE_SELECT);
 	
@@ -6716,7 +6725,7 @@ void ItemUseCB_Fusion(u8 taskId, TaskFunc func)
 
 #define tStep data[0]
 
-static void ItemUseCB_ChangeAbilityStep(u8 taskId, TaskFunc func)
+static void ItemUseCB_ChangeAbilityStep(u32 taskId, TaskFunc func)
 {
 	StringCopy(gStringVar2, gAbilities[sMedicineItemData.stringData].name);
 	ItemUseDoEffectsAndDisplayMessage(taskId, gText_AbilityChanged);
@@ -6724,10 +6733,10 @@ static void ItemUseCB_ChangeAbilityStep(u8 taskId, TaskFunc func)
 
 static void Task_AbilityChange(u8 taskId)
 {
-	u16 species;
+	u32 species;
 	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-	bool8 failed, toHidden = ItemId_GetHoldEffectParam(gSpecialVar_ItemId), isHidden = GetMonData(mon, MON_DATA_ABILITY_HIDDEN);
-	u8 abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM), newAbilityNum = abilityNum ^ 1;
+	bool32 failed, toHidden = ItemId_GetHoldEffectParam(gSpecialVar_ItemId), isHidden = GetMonData(mon, MON_DATA_ABILITY_HIDDEN);
+	u32 abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM), newAbilityNum = abilityNum ^ 1;
 	
 	switch (sPartyMenuInternal->tStep)
 	{
@@ -6793,14 +6802,14 @@ static void Task_AbilityChange(u8 taskId)
 	}
 }
 
-void ItemUseCB_ChangeAbility(u8 taskId, TaskFunc func)
+void ItemUseCB_ChangeAbility(u32 taskId, TaskFunc func)
 {
 	ResetMedicineItemData(0);
 	sPartyMenuInternal->tStep = 0;
 	gTasks[taskId].func = Task_AbilityChange;
 }
 
-static void ItemUseCB_NatureChangeStep(u8 taskId, TaskFunc func)
+static void ItemUseCB_NatureChangeStep(u32 taskId, TaskFunc func)
 {
 	StringCopy(gStringVar2, gNaturesInfo[sMedicineItemData.stringData].name);
 	ItemUseDoEffectsAndDisplayMessage(taskId, gText_NatureChanged);
@@ -6809,7 +6818,7 @@ static void ItemUseCB_NatureChangeStep(u8 taskId, TaskFunc func)
 static void Task_NatureChange(u8 taskId)
 {
 	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-	u8 newNature = ItemId_GetHoldEffectParam(gSpecialVar_ItemId);
+	u32 newNature = ItemId_GetHoldEffectParam(gSpecialVar_ItemId);
 	
 	switch (sPartyMenuInternal->tStep)
 	{
@@ -6855,7 +6864,7 @@ static void Task_NatureChange(u8 taskId)
 	}
 }
 
-void ItemUseCB_Mint(u8 taskId, TaskFunc func)
+void ItemUseCB_Mint(u32 taskId, TaskFunc func)
 {
 	ResetMedicineItemData(0);
 	sPartyMenuInternal->tStep = 0;

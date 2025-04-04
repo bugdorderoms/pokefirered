@@ -233,15 +233,14 @@ static bool32 WipeSector(u32 sector)
 
 static bool32 WipeDamagedSectors(u32 damagedSectors)
 {
-    int i;
+    u32 i;
+	
     for (i = 0; i < 32; i++)
     {
-        if (damagedSectors & (1 << i))
+        if (damagedSectors & Bit(i))
         {
             if (!WipeSector(i))
-            {
-                damagedSectors &= ~(1 << i);
-            }
+                damagedSectors &= ~(Bit(i));
         }
     }
     if (damagedSectors == 0)

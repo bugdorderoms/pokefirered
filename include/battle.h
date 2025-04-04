@@ -42,14 +42,14 @@
 #define B_ACTION_NONE                      0xFF
 
 #define MOVE_TARGET_SELECTED          0
-#define MOVE_TARGET_DEPENDS           (1 << 0)
-#define MOVE_TARGET_OPPONENTS         (1 << 1) // Same as Both foes, but with no script re-execution
-#define MOVE_TARGET_RANDOM            (1 << 2)
-#define MOVE_TARGET_OPPONENTS_FIELD   (1 << 3)
-#define MOVE_TARGET_BOTH              (1 << 4)
-#define MOVE_TARGET_USER              (1 << 5)
-#define MOVE_TARGET_ALLY              (1 << 6)
-#define MOVE_TARGET_SELECTED_OPPONENT (1 << 7) // Same as selected, but can't select an ally
+#define MOVE_TARGET_DEPENDS           Bit(0)
+#define MOVE_TARGET_OPPONENTS         Bit(1) // Same as Both foes, but with no script re-execution
+#define MOVE_TARGET_RANDOM            Bit(2)
+#define MOVE_TARGET_OPPONENTS_FIELD   Bit(3)
+#define MOVE_TARGET_BOTH              Bit(4)
+#define MOVE_TARGET_USER              Bit(5)
+#define MOVE_TARGET_ALLY              Bit(6)
+#define MOVE_TARGET_SELECTED_OPPONENT Bit(7) // Same as selected, but can't select an ally
 #define MOVE_TARGET_USER_OR_ALLY      (MOVE_TARGET_USER | MOVE_TARGET_ALLY)
 #define MOVE_TARGET_FOES_AND_ALLY     (MOVE_TARGET_BOTH | MOVE_TARGET_ALLY)
 #define MOVE_TARGET_ALL_BATTLERS      (MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_USER)
@@ -59,8 +59,12 @@
 #define TRAINER_MON_MALE   1
 #define TRAINER_MON_FEMALE 2
 
-#define TRAINER_CHALLENGE_INVERSE_BATTLE    1
-#define TRAINER_CHALLENGE_INFINITE_TAILWIND 2
+#define TRAINER_CHALLENGE_INVERSE_BATTLE      1
+#define TRAINER_CHALLENGE_INFINITE_TAILWIND   2
+#define TRAINER_CHALLENGE_INFINITE_MIST       3
+#define TRAINER_CHALLENGE_INFINITE_SAFEGUARD  4
+#define TRAINER_CHALLENGE_INFINITE_TRICK_ROOM 5
+#define TRAINER_CHALLENGE_INFINITE_GRAVITY    6
 
 struct TrainerMon
 {
@@ -151,7 +155,7 @@ struct DisableStruct
 	/*0x15*/ u8 wrappedBy;
 	/*0x16*/ u16 wrappedMove;
 	/*0x18*/ u8 roostActive:1;
-			 u8 usedMoveIndices:4; // As flag using gBitTable
+			 u8 usedMoveIndices:4; // bit flags
 			 u8 magnetRiseTimer:3;
 	/*0x19*/ u8 commanderActivated:1;
 			 u8 unused:7;
@@ -185,7 +189,8 @@ struct ProtectStruct
 			 u8 flinchImmobility:1;
 			 u8 usesBouncedMove:1;
 			 u8 usedGravityBannedMove:1;
-			 u8 unused:4;
+			 u8 opportunistState:2; // 2 - to copy stats. 1 - stats copied (do not repeat). 0 - no stats to copy
+			 u8 unused:2;
 	/*0x0D*/ u8 helpingHandUses;
 };
 
@@ -307,15 +312,16 @@ struct StatChange
 	u8 result;
 	const u8* str; // Jump str if fail
 	u8 mirrorArmorState:2; // 1 - reflected, 2 - pop up displayed
+	u8 multipleQueuedBoostsState:2; // 1 - set anim played, 2 - clear anim played
 	bool8 maxOut:1;
 	bool8 statAnimPlayed:1;
-	u8 unused:4;
+	u8 unused:2;
 };
 
 struct QueuedStatBoost
 {
 	u8 stats; // bitfield for each battle stat that is set if the stat changes
-	s8 statChanges[NUM_BATTLE_STATS];
+	s8 statChanges[NUM_BATTLE_STATS - 1]; // Excludes HP
 };
 
 struct BattleItemEffect
@@ -345,7 +351,7 @@ struct BattlerState
 	/*0x03*/ u8 chosenMovePosition;
 	/*0x04*/ u8 monToSwitchIntoId;
 	/*0x05*/ u8 itemPartyIndex; // For item use
-	/*0x06*/ u8 targetsDone; // For moves hiting multiples pokemon, as flag using gBitTable
+	/*0x06*/ u8 targetsDone; // For moves hiting multiples pokemon, bit flags
 	/*0x07*/ u8 payDayLevel; // To store player mon's levels when using pay day, this is unused for opponents
 	/*0x08*/ u8 aiMoveOrAction;
 	/*0x09*/ u8 aiChosenTarget;
@@ -384,7 +390,7 @@ struct BattlerState
 	/*0x3A*/ u8 focusPunchDone:1;
 			 u8 gimmickInProgress:1;
 			 u8 unused:6;
-	         bool8 activatedGimmick[GIMMICKS_COUNT]; // Stores whether a trainer has used gimmick
+	         bool8 activatedGimmick[ROUND_BITS_TO_BYTES(GIMMICKS_COUNT)]; // Stores whether a trainer has used gimmick
 			 struct QueuedEffect queuedEffectsList[B_BATTLER_QUEUED_COUNT + 1];
 			 struct {
 				 u8 partyId;
@@ -453,7 +459,7 @@ struct BattleStruct
 	/*0x014*/ u8 zMoveMsgDone:1;
 	/*0x014*/ u8 dynamaxMsgDone:1;
 	/*0x014*/ u8 firstSuperEffectiveHitTakenMsgState:2;
-	/*0x015*/ u8 switchInAbilityPostponed; // For switch in abilities, as flag using gBitTable
+	/*0x015*/ u8 switchInAbilityPostponed; // For switch in abilities, bit flags
 	/*0x016*/ u8 safariEscapeFactor;
     /*0x017*/ u8 safariCatchFactor;
 	/*0x018*/ u8 safariGoNearCounter;
@@ -483,7 +489,7 @@ struct BattleStruct
 	/*0x044*/ u8 savedAttackerStack[10];
 	/*0x054*/ u8 savedTargetStack[10];
 	/*0x064*/ u8 weatherIconSpriteId;
-	/*0x065*/ u8 field_DA; // battle tower related
+	/*0x065*/ u8 quickClawBattlerId;
 	/*0x066*/ u8 AI_monToSwitchIntoId[2]; // AI related
 	/*0x068*/ void (*savedCallback)(void);
 	/*0x06C*/ const u8 *trainerSlideMsg;
@@ -495,8 +501,7 @@ struct BattleStruct
     /*0x075*/ u8 linkBattleVsSpriteId_S;
 	/*0x076*/ u16 lastFailedBallThrow; // For Ball Fetch
 	/*0x078*/ u8 battleChallenge;
-	/*0x079*/ u8 quickClawBattlerId;
-	/*0x07A*/ struct {
+	/*0x079*/ struct {
 				  u8 calls:5;
 				  u8 usedAdrenalineOrb:1;
 				  u8 lastCallFailed:1;
@@ -532,6 +537,12 @@ struct BattleStruct
 
 extern struct BattleStruct *gBattleStruct;
 
+#define GetSideParty(side) ((side == B_SIDE_PLAYER ? gPlayerParty : gEnemyParty))
+
+#define IsBattlerAlly(battler1, battler2) ((GetBattlerSide(battler1) == GetBattlerSide(battler2)))
+
+#define IsDoubleBattleForBattler(battlerId) ((IsDoubleBattleOnSide(GetBattlerSide(battlerId))))
+
 #define APPLY_STAT_MOD(var, mon, stat, statIndex)                           \
 {                                                                           \
     (var) = (stat) * (gStatStageRatios)[(mon)->statStages[(statIndex)]][0]; \
@@ -547,7 +558,7 @@ extern struct BattleStruct *gBattleStruct;
 
 #define HANDLE_POWER_TRICK_SWAP(battlerId)                                         \
 {                                                                                  \
-	u16 temp;                                                                      \
+	u32 temp;                                                                      \
 	                                                                               \
 	if (gStatuses3[battlerId] & STATUS3_POWER_TRICK)                               \
 		SWAP(gBattleMons[battlerId].attack, gBattleMons[battlerId].defense, temp); \
@@ -578,7 +589,7 @@ extern struct BattleStruct *gBattleStruct;
     })
 
 // Used to exclude moves learned temporarily by Transform or Mimic
-#define MOVE_IS_PERMANENT(battler, moveSlot) (!(gBattleMons[battler].status2 & STATUS2_TRANSFORMED) && !(gDisableStructs[battler].mimickedMoves & gBitTable[moveSlot]))
+#define MOVE_IS_PERMANENT(battler, moveSlot) (!(gBattleMons[battler].status2 & STATUS2_TRANSFORMED) && !(gDisableStructs[battler].mimickedMoves & Bit(moveSlot)))
 
 struct BattleScripting
 {

@@ -108,7 +108,7 @@ u16 *gBGTilemapBuffers1;
 u16 *gBGTilemapBuffers2;
 u16 *gBGTilemapBuffers3;
 void (*gFieldCallback)(void);
-bool8 (*gFieldCallback2)(void);
+bool32 (*gFieldCallback2)(void);
 u16 gHeldKeyCodeToSend;
 u8 gLocalLinkPlayerId;
 u8 gFieldLinkPlayerCount;
@@ -2033,7 +2033,7 @@ void Overworld_CreditsMainCB(void)
         SetFieldVBlankCallback();
 }
 
-static bool8 FieldCB2_Credits_WaitFade(void)
+static bool32 FieldCB2_Credits_WaitFade(void)
 {
     if (gPaletteFade.active)
         return TRUE;

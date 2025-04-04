@@ -32,7 +32,6 @@ struct SortComparator
 };
 
 extern const u8 gMiscBlank_Gfx[];
-extern const u32 gBitTable[];
 
 u8 CreateInvisibleSpriteWithCallback(void (*)(struct Sprite *));
 void StoreWordInTwoHalfwords(u16 *, unsigned);

@@ -57,6 +57,10 @@ extern const struct SpritePalette gSpritePalette_GimmickIndicator;
 bool32 CanMegaEvolve(u32 battler);
 void ActivateMegaEvolution(u32 battler);
 
+// Ultra Burst
+bool32 CanUltraBurst(u32 battler);
+void ActivateUltraBurst(u32 battler);
+
 // Z-Move
 bool32 IsZMove(u32 move);
 bool32 IsTypeBasedZMove(u32 move);

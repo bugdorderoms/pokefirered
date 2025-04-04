@@ -4145,14 +4145,6 @@ Cry_HoopaUnbound::
 	.incbin "sound/direct_sound_samples/cries/hoopa_unbound.bin"
 
 	.align 2
-Cry_KyogrePrimal::
-	.incbin "sound/direct_sound_samples/cries/kyogre_primal.bin"
-
-	.align 2
-Cry_GroudonPrimal::
-	.incbin "sound/direct_sound_samples/cries/groudon_primal.bin"
-
-	.align 2
 Cry_OricorioPomPom::
 	.incbin "sound/direct_sound_samples/cries/oricorio_pom_pom.bin"
 

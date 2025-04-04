@@ -13,7 +13,7 @@ struct ScriptContext
     u8 stackDepth;
     u8 mode;
     u8 comparisonResult;
-    u8 (*nativePtr)(void);
+    bool32 (*nativePtr)(void);
     const u8 *scriptPtr;
     const u8 *stack[20];
     ScrCmdFunc *cmdTable;
@@ -24,7 +24,7 @@ struct ScriptContext
 #define ScriptReadByte(ctx) (*(ctx->scriptPtr++))
 
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd);
-void SetupNativeScript(struct ScriptContext *ctx, bool8 (*ptr)(void));
+void SetupNativeScript(struct ScriptContext *ctx, bool32 (*ptr)(void));
 void StopScript(struct ScriptContext *ctx);
 bool8 RunScriptCommand(struct ScriptContext *ctx);
 u8 ScriptPush(struct ScriptContext *ctx, const u8 *ptr);

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "event_data.h"
 #include "item_menu.h"
+#include "util.h"
 #include "field_player_avatar.h"
 
 #define NUM_SPECIAL_FLAGS (SPECIAL_FLAGS_END - SPECIAL_FLAGS_START + 1)
@@ -52,7 +53,7 @@ void ClearTempFieldEventData(void)
 
 void ResetMysteryGiftFlags(void)
 {
-	u16 i;
+	u32 i;
 	
 	for (i = FLAG_MYSTERY_GIFT_1; i <= FLAG_MYSTERY_GIFT_15; i++)
 		FlagClear(i);
@@ -60,13 +61,13 @@ void ResetMysteryGiftFlags(void)
 
 void ClearDailyEventFlags(void)
 {
-	u16 i;
+	u32 i;
 	
 	for (i = FLAG_0x0B2; i <= FLAG_0x0BB; i++)
 		FlagClear(i);
 }
 
-u16 *GetVarPointer(u16 idx)
+u16 *GetVarPointer(u32 idx)
 {
     if (idx < VARS_START)
         return NULL;
@@ -77,7 +78,7 @@ u16 *GetVarPointer(u16 idx)
     return gSpecialVars[idx - SPECIAL_VARS_START];
 }
 
-u16 VarGet(u16 idx)
+u32 VarGet(u32 idx)
 {
     u16 *ptr = GetVarPointer(idx);
     if (ptr == NULL)
@@ -85,7 +86,7 @@ u16 VarGet(u16 idx)
     return *ptr;
 }
 
-bool8 VarSet(u16 idx, u16 val)
+bool32 VarSet(u32 idx, u32 val)
 {
     u16 *ptr = GetVarPointer(idx);
     if (ptr == NULL)
@@ -94,7 +95,7 @@ bool8 VarSet(u16 idx, u16 val)
     return TRUE;
 }
 
-u8 VarGetObjectEventGraphicsId(u8 idx)
+u32 VarGetObjectEventGraphicsId(u32 idx)
 {
     return VarGet(VAR_OBJ_GFX_ID_0 + idx);
 }
@@ -110,28 +111,28 @@ u8 *GetFlagAddr(u16 idx)
     return &sSpecialFlags[(idx - SPECIAL_FLAGS_START) / 8];
 }
 
-bool8 FlagSet(u16 idx)
+bool32 FlagSet(u32 idx)
 {
     u8 *ptr = GetFlagAddr(idx);
     if (ptr != NULL)
-        *ptr |= 1 << (idx & 7);
+        *ptr |= Bit(idx & 7);
     return FALSE;
 }
 
-bool8 FlagClear(u16 idx)
+bool32 FlagClear(u32 idx)
 {
     u8 *ptr = GetFlagAddr(idx);
     if (ptr != NULL)
-        *ptr &= ~(1 << (idx & 7));
+        *ptr &= ~(Bit(idx & 7));
     return FALSE;
 }
 
-bool8 FlagGet(u16 idx)
+bool32 FlagGet(u32 idx)
 {
     u8 *ptr = GetFlagAddr(idx);
     if (ptr == NULL)
         return FALSE;
-    if (!(*ptr & 1 << (idx & 7)))
+    if (!(*ptr & Bit(idx & 7)))
         return FALSE;
     return TRUE;
 }

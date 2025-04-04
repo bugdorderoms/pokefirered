@@ -33,9 +33,9 @@ enum
 };
 
 // Flags for CheckMoveLimitations
-#define MOVE_LIMITATION_IGNORE_NO_PP    (1 << 0)
-#define MOVE_LIMITATION_IGNORE_IMPRISON (1 << 1)
-#define MOVE_LIMITATION_ALL_MOVES_MASK  ((1 << MAX_MON_MOVES) - 1) // Mask when all moves are unusable
+#define MOVE_LIMITATION_IGNORE_NO_PP    Bit(0)
+#define MOVE_LIMITATION_IGNORE_IMPRISON Bit(1)
+#define MOVE_LIMITATION_ALL_MOVES_MASK  (Bit(MAX_MON_MOVES) - 1) // Mask when all moves are unusable
 
 // Cases for AbilityBattleEffects
 #define ABILITYEFFECT_ON_SWITCHIN       0
@@ -52,6 +52,7 @@ enum
 #define ABILITYEFFECT_ON_WEATHER        11
 #define ABILITYEFFECT_SYNCHRONIZE       12
 #define ABILITYEFFECT_ON_TERRAIN        13
+#define ABILITYEFFECT_OPPORTUNIST       14
 
 // Cases for CheckAbilityInBattle
 #define CHECK_ABILITY_ON_FIELD                0
@@ -77,9 +78,6 @@ enum
 #define IS_WHOLE_SIDE_ALIVE(battler) ((CountAliveMonsInBattle(battler, BATTLE_ALIVE_SIDE) >= NUM_BATTLERS_PER_SIDE))
 
 #define IS_MULTIHIT_FINAL_STRIKE ((gBattleStruct->pursuitSwitchDmg || gMultiHitCounter <= 1))
-
-#define IsBattlerAlly(battler1, battler2) ((GetBattlerSide(battler1) == GetBattlerSide(battler2)))
-#define IsDoubleBattleForBattler(battlerId) ((IsDoubleBattleOnSide(GetBattlerSide(battlerId))))
 
 u32 GetBattlerForBattleScript(u32 caseId);
 void MarkBattlerForControllerExec(u32 battlerId);
@@ -213,7 +211,6 @@ void RestoreTargetFromStack(void);
 void GetBattlerMovesArray(u32 battlerId, u16 *moves);
 u32 FindMoveSlotInBattlerMoveset(u32 battlerId, u32 move);
 bool32 CanUseLastResort(u32 battlerId);
-bool32 TrySetToxicSpikesOnBattlerSide(u32 battlerId);
 void TryUpdateEvolutionTracker(u32 evoMode, u32 upAmount, u32 data);
 bool32 IsMultiBattle(void);
 bool32 IsDoubleBattleOnSide(u32 side);

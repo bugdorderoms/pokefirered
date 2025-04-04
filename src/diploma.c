@@ -23,7 +23,7 @@ static EWRAM_DATA struct Diploma *gDiploma = NULL;
 
 static void DiplomaBgInit(void);
 static void DiplomaPrintText(void);
-static u8 DiplomaLoadGfx(void);
+static bool32 DiplomaLoadGfx(void);
 static void DiplomaVblankHandler(void);
 static void CB2_Diploma(void);
 static void Task_WaitForExit(u8);
@@ -102,9 +102,7 @@ static void Task_DiplomaInit(u8 taskId)
         break;
     case 2:
         if (!DiplomaLoadGfx())
-        {
             return;
-        }
         break;
     case 3:
         CopyToBgTilemapBuffer(1, sDiplomaTilemap, 0, 0);
@@ -141,9 +139,7 @@ static void Task_WaitForExit(u8 taskId)
     {
     case 0:
         if (WaitFanfare(0))
-        {
             gDiploma->state++;
-        }
         break;
     case 1:
         if (JOY_NEW(A_BUTTON))
@@ -160,12 +156,13 @@ static void Task_WaitForExit(u8 taskId)
 
 static void Task_DiplomaReturnToOverworld(u8 taskId)
 {
-    if (gPaletteFade.active)
-        return;
-    DestroyTask(taskId);
-    FreeAllWindowBuffers();
-    FREE_AND_SET_NULL(gDiploma);
-    SetMainCallback2(CB2_ReturnToFieldFromDiploma);
+    if (!gPaletteFade.active)
+	{
+		DestroyTask(taskId);
+		FreeAllWindowBuffers();
+		FREE_AND_SET_NULL(gDiploma);
+		SetMainCallback2(CB2_ReturnToFieldFromDiploma);
+	}
 }
 
 static void DiplomaBgInit(void)
@@ -197,7 +194,7 @@ static void DiplomaVblankHandler(void)
     FillBgTilemapBufferRect_Palette0(1, 0, 0, 0, 30, 20);
 }
 
-static u8 DiplomaLoadGfx(void)
+static bool32 DiplomaLoadGfx(void)
 {
     switch (gDiploma->gfxStep)
     {
@@ -209,17 +206,16 @@ static u8 DiplomaLoadGfx(void)
         break;
     case 2:
         if (!(FreeTempTileDataBuffersIfPossible() == 1))
-        {
             break;
-        }
-        return 0;
+		
+        return FALSE;
     case 3:
         LoadPalette(sDiplomaPal, 0, 0x40);
     default:
-        return 1;
+        return TRUE;
     }
     gDiploma->gfxStep++;
-    return 0;
+    return FALSE;
 }
 
 static void DiplomaPrintText(void)

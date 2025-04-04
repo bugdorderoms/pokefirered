@@ -26,6 +26,12 @@ static const u8 sMapPopUpPrimary[] = INCBIN_U8("graphics/map_popup/primary.4bpp"
 static const u8 sMapPopUpSecondary[] = INCBIN_U8("graphics/map_popup/secondary.4bpp");
 static const u16 sMapPopUpPalette[] = INCBIN_U16("graphics/map_popup/palette.gbapal");
 
+// Credit to RubbishKat for those sprites that i recreate here.
+static const u8 sNewMoonGfx[] = INCBIN_U8("graphics/map_popup/new_moon.4bpp");
+static const u8 sCrescentMoonGfx[] = INCBIN_U8("graphics/map_popup/crescent_moon.4bpp");
+static const u8 sFullMoonGfx[] = INCBIN_U8("graphics/map_popup/full_moon.4bpp");
+static const u8 sWaningMoonGfx[] = INCBIN_U8("graphics/map_popup/waning_moon.4bpp");
+
 static void Task_MapNamePopup(u8 taskId);
 static void ShowMapNamePopUpWindow(struct Task *task);
 static void HideMapNamePopUpWindow(void);
@@ -55,6 +61,14 @@ static const struct WindowTemplate sMapPopUpWindows[2] =
 		.paletteNum = 13,
 		.baseBlock = 0x161,
 	}
+};
+
+static const u8 *const sMoonPhaseIcons[] =
+{
+	[PHASE_NEW_MOON]      = sNewMoonGfx,
+	[PHASE_CRESCENT_MOON] = sCrescentMoonGfx,
+	[PHASE_FULL_MOON]     = sFullMoonGfx,
+	[PHASE_WANING_MOON]   = sWaningMoonGfx,
 };
 
 #define tState             data[0]
@@ -191,6 +205,8 @@ static void ShowMapNamePopUpWindow(struct Task *task)
 	
 	CopyToWindowPixelBuffer(task->tPrimaryWindowId, sMapPopUpPrimary, sizeof(sMapPopUpPrimary), 0);
 	CopyToWindowPixelBuffer(task->tSecondaryWindowId, sMapPopUpSecondary, sizeof(sMapPopUpSecondary), 0);
+	
+	BlitBitmapToWindow(task->tSecondaryWindowId, sMoonPhaseIcons[DNSGetMoonPhase()], 129, 7, 16, 16);
 	
 	PutWindowTilemap(task->tPrimaryWindowId);
 	PutWindowTilemap(task->tSecondaryWindowId);

@@ -90,7 +90,7 @@ static void CreateStartMenuWindowAndList(void);
 static void RemoveStartMenuWindow(void);
 static u8 SetUpStartMenuItems(void);
 static u8 DoLoadStartMenuItems(const struct StartMenuOption *options, u8 maxOptions);
-static void StartMenu_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list);
+static void StartMenu_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list);
 static bool8 StartMenu_CanStartSelectedIndexAction(u8 index);
 static void StartMenu_FadeScreenIfLeavingOverworld(u8 index);
 static void DrawClockBox(void);
@@ -192,7 +192,7 @@ static void DrawStartMenuInOneGo(void)
     while (!DoDrawStartMenu());
 }
 
-static bool8 FieldCB2_DrawStartMenu(void)
+static bool32 FieldCB2_DrawStartMenu(void)
 {
     if (!DoDrawStartMenu())
         return FALSE;
@@ -406,7 +406,7 @@ void Task_StartMenuHandleInput(u8 taskId)
     }
 }
 
-static void StartMenu_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list)
+static void StartMenu_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list)
 {
 	if (!onInit)
 		PlaySE(SE_SELECT);
@@ -1067,7 +1067,7 @@ static void Task_SaveGameAfterLinkBattle(u8 taskId)
         case LINK_SAVE_STATE_WAIT_WRITE_SAVEBLOCK1:
             if (WriteSaveBlock1Sector())
             {
-                ClearContinueGameWarpStatus2();
+                ClearContinueGameWarpStatus();
                 tState = LINK_SAVE_STATE_START_FADE_OUT;
             }
             break;

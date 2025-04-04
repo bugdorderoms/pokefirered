@@ -1085,7 +1085,7 @@ static const u16 sFieldMoves[] =
 
 static struct
 {
-    bool8 (*fieldMoveFunc)(void);
+    bool32 (*fieldMoveFunc)(void);
     u8 msgId;
 } const sFieldMoveCursorCallbacks[] =
 {

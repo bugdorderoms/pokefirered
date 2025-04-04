@@ -270,7 +270,7 @@ static const u8 sSeasonNames[][7] =
  * ******************************************* */
 
 // Functions
-static u16 GetDNSFilter(void);
+static u32 GetDNSFilter(void);
 static void DoDNSLightningWindowsEffect(void);
 
 // DNS palette buffer in EWRAM
@@ -288,9 +288,9 @@ ALIGNED(4) EWRAM_DATA static u16 sDNSPaletteDmaBuffer[PLTT_BUFFER_SIZE] = {0};
  * Author: Xhyz/Samu                                    *
  ****************************************************** */
 
-bool8 IsMapDNSException(void)
+bool32 IsMapDNSException(void)
 {
-	u8 i, mapType = gMapHeader.mapType;
+	u32 i, mapType = gMapHeader.mapType;
 	
 	for (i = 0; i < ARRAY_COUNT(sDNSMapExceptions); i++)
 	{
@@ -323,10 +323,9 @@ void DNSTransferPlttBuffer(void *src, void *dest)
 	DmaCopy16(3, src, dest, PLTT_SIZE);
 }
 
-static bool8 IsSpritePaletteTagDNSException(u8 palNum, const u16 *tagExceptions, u8 tagExceptionsCount)
+static bool32 IsSpritePaletteTagDNSException(u32 palNum, const u16 *tagExceptions, u32 tagExceptionsCount)
 {
-	u8 i;
-	u16 tag = GetSpritePaletteTagByPaletteNum(palNum);
+	u32 i, tag = GetSpritePaletteTagByPaletteNum(palNum);
 
 	for (i = 0; i < tagExceptionsCount; i++)
 	{
@@ -336,7 +335,7 @@ static bool8 IsSpritePaletteTagDNSException(u8 palNum, const u16 *tagExceptions,
 	return FALSE;
 }
 
-static inline u16 DNSApplyProportionalFilterToColour(u16 colour, u16 filter)
+static inline u32 DNSApplyProportionalFilterToColour(u32 colour, u32 filter)
 {
 	u32 red, green, blue;
     
@@ -347,10 +346,10 @@ static inline u16 DNSApplyProportionalFilterToColour(u16 colour, u16 filter)
 	return RGB2(red <= 31 ? red : 0, green <= 31 ? green : 0, blue <= 31 ? blue : 0);
 }
 
-void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 *tagExceptions, u8 tagExceptionsCount)
+void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 *tagExceptions, u32 tagExceptionsCount)
 {
-	u8 palNum, colNum;
-	u16 colourSlot, rgbFilter = GetDNSFilter();
+	u32 palNum, colNum;
+	u32 colourSlot, rgbFilter = GetDNSFilter();
 	
 	for (palNum = 0; palNum < 32; palNum++)
 	{
@@ -376,9 +375,8 @@ void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 
 #if LIT_UP_WINDOWS
 static void DoDNSLightningWindowsEffect(void)
 {
-	u8 i;
-	u16 colourSlot;
-	bool8 fadeActive = gPaletteFade.active;
+	u32 i, colourSlot;
+	bool32 fadeActive = gPaletteFade.active;
 	
 	if (LIT_UP_TIME)
 	{
@@ -404,9 +402,9 @@ static void DoDNSLightningWindowsEffect(void)
 }
 #endif
 
-u8 GetDNSTimeLapse(void)
+u32 GetDNSTimeLapse(void)
 {
-	u8 hour = gRtcLocation.hour;
+	u32 hour = gRtcLocation.hour;
 	
 	if (hour < DAWN_OF_DAY_START)
         return TIME_MIDNIGHT;
@@ -422,9 +420,9 @@ u8 GetDNSTimeLapse(void)
         return TIME_NIGHT;
 }
 
-static u16 GetDNSFilter(void)
+static u32 GetDNSFilter(void)
 {
-	u8 minutes = gRtcLocation.minute;
+	u32 minutes = gRtcLocation.minute;
 	
 	switch (GetDNSTimeLapse())
 	{
@@ -443,7 +441,7 @@ static u16 GetDNSFilter(void)
 	}
 }
 
-u8 GetDNSTimeLapseDayOrNight(void)
+u32 GetDNSTimeLapseDayOrNight(void)
 {
 	switch (GetDNSTimeLapse())
 	{
@@ -456,7 +454,7 @@ u8 GetDNSTimeLapseDayOrNight(void)
 	}
 }
 
-u8 DNSGetCurrentSeason(void)
+u32 DNSGetCurrentSeason(void)
 {
 	return sSeasonsByMonth[gRtcLocation.month - 1];
 }
@@ -467,9 +465,9 @@ u8 *DNSCopyCurrentSeasonName(u8 *dest)
 }
 
 // Based off: https://blog.eletrogate.com/relogio-de-fases-lunares-com-o-arduino/
-u8 DNSGetMoonPhase(void)
+u32 DNSGetMoonPhase(void)
 {
-	u8 month = gRtcLocation.month;
+	u32 month = gRtcLocation.month;
 	int moonPhase, year = gRtcLocation.year - (int)((MONTH_COUNT - month) / 10);
 	f64 yearDays, monthDays, leapYear, julianaDate;
 	
@@ -495,16 +493,16 @@ u8 DNSGetMoonPhase(void)
 	switch (moonPhase)
 	{
 		case 0:
-		    moonPhase = PHASE_NEW_MOON;
-			break;
-		case 1 ... 3:
-		    moonPhase = PHASE_CRESCENT_MOON;
-			break;
-		case 4:
 		    moonPhase = PHASE_FULL_MOON;
 			break;
-		case 5 ... 7:
+		case 1 ... 3:
 		    moonPhase = PHASE_WANING_MOON;
+			break;
+		case 4:
+		    moonPhase = PHASE_NEW_MOON;
+			break;
+		case 5 ... 7:
+		    moonPhase = PHASE_CRESCENT_MOON;
 			break;
 	}
 	return moonPhase;

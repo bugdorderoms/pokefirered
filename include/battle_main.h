@@ -4,8 +4,8 @@
 #include "constants/abilities.h"
 #include "constants/pokemon.h"
 
-#define INTRO_SLIDE_FLAG_SLIDE_IN_COUNTER (1 << 0)
-#define INTRO_SLIDE_FLAG_SLIDE_IN_STARTED (1 << 1)
+#define INTRO_SLIDE_FLAG_SLIDE_IN_COUNTER Bit(0)
+#define INTRO_SLIDE_FLAG_SLIDE_IN_STARTED Bit(1)
 
 // defines for the type effectiveness multipliers
 #define TYPE_MUL_NO_EFFECT       0

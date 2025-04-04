@@ -795,10 +795,8 @@ u8 GetMultiplayerId(void)
 
 u8 bitmask_all_link_players_but_self(void)
 {
-    u8 mpId;
-
-    mpId = GetMultiplayerId();
-    return ((1 << MAX_LINK_PLAYERS) - 1) ^ (1 << mpId);
+    u8 mpId = GetMultiplayerId();
+    return (Bit(MAX_LINK_PLAYERS) - 1) ^ Bit(mpId);
 }
 
 bool8 SendBlock(u8 unused, const void *src, u16 size)
@@ -907,26 +905,22 @@ static void LinkCB_RequestPlayerDataExchange(void)
 u8 sub_800A8A4(void)
 {
     int i;
-    u8 flags;
+    u8 flags = 0;
 
-    flags = 0;
     for (i = 0; i < gSavedLinkPlayerCount; i++)
-    {
-        flags |= (1 << i);
-    }
+        flags |= Bit(i);
+
     return flags;
 }
 
 u8 sub_800A8D4(void)
 {
     int i;
-    u8 flags;
+    u8 flags = 0;
 
-    flags = 0;
     for (i = 0; i < GetLinkPlayerCount(); i++)
-    {
-        flags |= (1 << i);
-    }
+        flags |= Bit(i);
+
     return flags;
 }
 

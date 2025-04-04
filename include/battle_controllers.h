@@ -128,7 +128,7 @@ enum
 
 // Special return values in gBattleBufferB from Battle Controller functions.
 #define RET_VALUE_LEVELED_UP   11
-#define RET_GIMMICK            (1 << 7)
+#define RET_GIMMICK            Bit(7)
 
 struct MovePpInfo
 {
@@ -151,10 +151,10 @@ struct ChooseMoveStruct
     u8 maxPp[MAX_MON_MOVES];
 };
 
-#define FIRST_BATTLE_MSG_FLAG_INFLICT_DMG (1 << 0) // Inflicting damage is key
-#define FIRST_BATTLE_MSG_FLAG_STAT_CHG    (1 << 1) // Lowering stats is advantageous
-#define FIRST_BATTLE_MSG_FLAG_HP_RESTORE  (1 << 2) // Keep an eye on your HP
-#define FIRST_BATTLE_MSG_FLAG_PARTY_MENU  (1 << 3)
+#define FIRST_BATTLE_MSG_FLAG_INFLICT_DMG Bit(0) // Inflicting damage is key
+#define FIRST_BATTLE_MSG_FLAG_STAT_CHG    Bit(1) // Lowering stats is advantageous
+#define FIRST_BATTLE_MSG_FLAG_HP_RESTORE  Bit(2) // Keep an eye on your HP
+#define FIRST_BATTLE_MSG_FLAG_PARTY_MENU  Bit(3)
 
 // general functions
 void HandleLinkBattleSetup(void);

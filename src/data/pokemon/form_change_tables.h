@@ -1224,6 +1224,13 @@ static const struct FormChange sMimikyuFormChangeTable[] =
 	FORM_CHANGE_END,
 };
 
+static const struct FormChange sNecrozmaFormChangeTable[] =
+{
+	FORM_CHANGE(FORM_CHANGE_ULTRA_BURST, SPECIES_NECROZMA_ULTRA, ITEM_ULTRANECROZIUM_Z),
+	FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+	FORM_CHANGE_END,
+};
+
 static const struct FormChange sMelmetalFormChangeTable[] =
 {
 	FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_MELMETAL_GIGA),

@@ -118,15 +118,15 @@ static const struct SpriteTemplate sSpriteTemplate_FldEff_CutGrass = {
     .callback = SpriteCallback_CutGrass_Init
 };
 
-static u8 MetatileAtCoordsIsGrassTile(s16 x, s16 y)
+static bool32 MetatileAtCoordsIsGrassTile(s16 x, s16 y)
 {
     return TestMetatileAttributeBit(MapGridGetMetatileAttributeAt(x, y, METATILE_ATTRIBUTE_TERRAIN), TILE_TERRAIN_GRASS);
 }
 
-static bool8 GetCutGrassRange(u8 *range)
+static bool32 GetCutGrassRange(u32 *range)
 {
-	u16 ability = GetMonAbility(&gPlayerParty[GetCursorSelectionMonId()]);
-	bool8 hasHyperCutter = (ability == ABILITY_HYPER_CUTTER);
+	u32 ability = GetMonAbility(&gPlayerParty[GetCursorSelectionMonId()]);
+	bool32 hasHyperCutter = (ability == ABILITY_HYPER_CUTTER);
 	
 	if (hasHyperCutter)
 		*range = CUT_SIDE + 2;
@@ -136,12 +136,12 @@ static bool8 GetCutGrassRange(u8 *range)
 	return hasHyperCutter;
 }
 
-bool8 SetUpFieldMove_Cut(void)
+bool32 SetUpFieldMove_Cut(void)
 {
     s16 x, y;
-    u8 i, j;
-	u8 cutRange;
-	bool8 hasHyperCutter;
+    u32 i, j;
+	u32 cutRange;
+	bool32 hasHyperCutter;
 	
     sScheduleOpenDottedHole = FALSE;
 	
@@ -199,9 +199,9 @@ static void FieldCallback_CutGrass(void)
     gFieldEffectArguments[0] = GetCursorSelectionMonId();
 }
 
-bool8 FldEff_UseCutOnGrass(void)
+bool32 FldEff_UseCutOnGrass(void)
 {
-    u8 taskId = CreateFieldEffectShowMon();
+    u32 taskId = CreateFieldEffectShowMon();
     FLDEFF_SET_FUNC_TO_DATA(FieldMoveCallback_CutGrass);
     IncrementGameStat(GAME_STAT_USED_CUT);
     return FALSE;
@@ -213,9 +213,9 @@ static void FieldCallback_CutTree(void)
     ScriptContext1_SetupScript(EventScript_FldEffCut);
 }
 
-bool8 FldEff_UseCutOnTree(void)
+bool32 FldEff_UseCutOnTree(void)
 {
-    u8 taskId = CreateFieldEffectShowMon();
+    u32 taskId = CreateFieldEffectShowMon();
     FLDEFF_SET_FUNC_TO_DATA(FieldMoveCallback_CutTree);
     IncrementGameStat(GAME_STAT_USED_CUT);
     return FALSE;
@@ -231,11 +231,11 @@ static void FieldMoveCallback_CutGrass(void)
         FieldEffectStart(FLDEFF_CUT_GRASS);
 }
 
-bool8 FldEff_CutGrass(void)
+bool32 FldEff_CutGrass(void)
 {
-    u8 i, j;
-	u8 cutRange;
-	bool8 hasHyperCutter;
+    u32 i, j;
+	u32 cutRange;
+	bool32 hasHyperCutter;
     s16 x, y;
     u8 pos;
 
@@ -279,12 +279,13 @@ bool8 FldEff_CutGrass(void)
 
 static void SetCutGrassMetatileAt(s16 x, s16 y)
 {
-    u16 i = 0;
-    u16 metatileId = MapGridGetMetatileIdAt(x, y);
-    while (1)
+    u32 i = 0, metatileId = MapGridGetMetatileIdAt(x, y);
+	
+    while (TRUE)
     {
         if (sCutGrassMetatileMapping[i][0] == 0xFFFF)
             return;
+		
         if (sCutGrassMetatileMapping[i][0] == metatileId)
         {
             MapGridSetMetatileIdAt(x, y, sCutGrassMetatileMapping[i][1]);
@@ -319,11 +320,11 @@ static void SpriteCallback_CutGrass_Run(struct Sprite * sprite)
 
 static void SpriteCallback_CutGrass_Cleanup(struct Sprite * sprite)
 {
-    u8 i;
+    u32 i;
+	
     for (i = 1; i < CUT_GRASS_SPRITE_COUNT; i++)
-    {
         DestroySprite(&gSprites[sCutGrassSpriteArrayPtr[i]]);
-    }
+
     FieldEffectStop(&gSprites[sCutGrassSpriteArrayPtr[0]], FLDEFF_CUT_GRASS);
     Free(sCutGrassSpriteArrayPtr);
     ClearPlayerHeldMovementAndUnfreezeObjectEvents();
@@ -337,7 +338,7 @@ static void FieldMoveCallback_CutTree(void)
     EnableBothScriptContexts();
 }
 
-u8 CreateFieldEffectShowMon(void)
+u32 CreateFieldEffectShowMon(void)
 {
     GetXYCoordsOneStepInFrontOfPlayer(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
     return CreateTask(Task_FieldEffectShowMon_Init, 8);
@@ -345,7 +346,7 @@ u8 CreateFieldEffectShowMon(void)
 
 static void Task_FieldEffectShowMon_Init(u8 taskId)
 {
-    u8 mapObjId = gPlayerAvatar.objectEventId;
+    u32 mapObjId = gPlayerAvatar.objectEventId;
 
     ScriptContext2_Enable();
     gPlayerAvatar.preventStep = TRUE;

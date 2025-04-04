@@ -10,9 +10,9 @@
 static void FieldCallback_Dig(void);
 static void sub_80C9AFC(void);
 
-bool8 SetUpFieldMove_Dig(void)
+bool32 SetUpFieldMove_Dig(void)
 {
-    if (CanUseEscapeRopeOnCurrMap() == TRUE)
+    if (CanUseEscapeRopeOnCurrMap())
     {
         gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
         gPostMenuFieldCallback = FieldCallback_Dig;
@@ -28,9 +28,9 @@ static void FieldCallback_Dig(void)
     gFieldEffectArguments[0] = GetCursorSelectionMonId();
 }
 
-bool8 FldEff_UseDig(void)
+bool32 FldEff_UseDig(void)
 {
-    u8 taskId = CreateFieldEffectShowMon();
+    u32 taskId = CreateFieldEffectShowMon();
 
     FLDEFF_SET_FUNC_TO_DATA(sub_80C9AFC);
     SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);

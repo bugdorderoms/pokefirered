@@ -981,7 +981,7 @@ static void ChatEntryRoutine_SaveAndExit(void)
         if (!RunDisplaySubtask(0))
         {
             PlaySE(SE_SAVE);
-            ClearContinueGameWarpStatus2();
+            ClearContinueGameWarpStatus();
             sWork->routineState = 10;
         }
         break;

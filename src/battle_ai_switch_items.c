@@ -142,7 +142,7 @@ bool32 BattleAI_ShouldUseItem(u32 battlerId)
 			usableItems[numUsableItems] = item = gTrainers[gTrainerBattleOpponent_A].items[i];
 			
 			// Ignore items that was already used or that dont exist
-			if (item && item < ITEMS_COUNT && !(AI_DATA->usedItemsIndices & gBitTable[i]))
+			if (item && item < ITEMS_COUNT && !(AI_DATA->usedItemsIndices & Bit(i)))
 			{
 				holdEffectParam = ItemId_GetHoldEffectParam(item);
 				
@@ -219,7 +219,7 @@ bool32 BattleAI_ShouldUseItem(u32 battlerId)
 					chosenItemIndex = i;
 			}
 			
-			AI_DATA->usedItemsIndices |= gBitTable[chosenItemIndex];
+			AI_DATA->usedItemsIndices |= Bit(chosenItemIndex);
 			
 			gBattleStruct->battlers[battlerId].chosenItem = usableItems[chosenItemIndex];
 			

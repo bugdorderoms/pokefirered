@@ -44,11 +44,11 @@
 #include "constants/sound.h"
 #include "constants/field_weather.h"
 
-static EWRAM_DATA void (*sItemUseOnFieldCB)(u8 taskId) = NULL;
+static EWRAM_DATA void (*sItemUseOnFieldCB)(u32 taskId) = NULL;
 
-static bool8 FieldCB2_UseItemFromField(void);
-static void ItemUseOnFieldCB_Bicycle(u8 taskId);
-static void ItemUseOnFieldCB_Honey(u8 taskId);
+static bool32 FieldCB2_UseItemFromField(void);
+static void ItemUseOnFieldCB_Bicycle(u32 taskId);
+static void ItemUseOnFieldCB_Honey(u32 taskId);
 static void Task_PlayPokeFlute(u8 taskId);
 static void Task_UseRepel(u8 taskId);
 static void RemoveUsedItem(void);
@@ -62,9 +62,9 @@ static void (*const sExitCallbackByItemType[])(void) = {
 	CB2_ShowPartyMenuForItemUse
 };
 
-static void Task_FadeOuFromBackToField(u8 taskId)
+static void Task_FadeOuFromBackToField(u32 taskId)
 {
-    u8 itemType = ItemId_GetType(gSpecialVar_ItemId) - 1;
+    u32 itemType = ItemId_GetType(gSpecialVar_ItemId) - 1;
 
     if (ItemId_GetPocket(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
     {
@@ -94,7 +94,7 @@ static void FieldCB_FadeInFromBlack(void)
     CreateTask(Task_WaitFadeIn_CallItemUseOnFieldCB, 8);
 }
 
-static void SetUpItemUseOnFieldCallback(u8 taskId)
+static void SetUpItemUseOnFieldCallback(u32 taskId)
 {
     if (gTasks[taskId].data[3] != 1) // Go from bag to the field
     {
@@ -105,7 +105,7 @@ static void SetUpItemUseOnFieldCallback(u8 taskId)
         sItemUseOnFieldCB(taskId);
 }
 
-static void DisplayItemMessageInCurrentContext(u8 taskId, bool8 inField, u8 fontId, const u8 * str)
+static void DisplayItemMessageInCurrentContext(u32 taskId, bool32 inField, u32 fontId, const u8 * str)
 {
     StringExpandPlaceholders(gStringVar4, str);
 	
@@ -115,7 +115,7 @@ static void DisplayItemMessageInCurrentContext(u8 taskId, bool8 inField, u8 font
         DisplayItemMessageOnField(taskId, fontId, gStringVar4, Task_ItemUse_CloseMessageBoxAndReturnToField);
 }
 
-static void PrintNotTheTimeToUseThat(u8 taskId, bool8 inField)
+static void PrintNotTheTimeToUseThat(u32 taskId, bool32 inField)
 {
     DisplayItemMessageInCurrentContext(taskId, inField, 4, gText_OakForbidsUseOfItemHere);
 }
@@ -152,7 +152,7 @@ static void Task_ItemUseWaitForFade(u8 taskId)
     }
 }
 
-static bool8 FieldCB2_UseItemFromField(void)
+static bool32 FieldCB2_UseItemFromField(void)
 {
     FreezeObjectEvents();
     ScriptContext2_Enable();
@@ -178,13 +178,13 @@ void FieldUseFunc_OrangeMail(u8 taskId)
 void FieldUseFunc_MachBike(u8 taskId)
 {
     s16 x, y;
-    u8 behavior;
+    u32 behavior;
 
     PlayerGetDestCoords(&x, &y);
     behavior = MapGridGetMetatileBehaviorAt(x, y);
 
     if (FlagGet(FLAG_SYS_ON_CYCLING_ROAD) || MetatileBehavior_IsVerticalRail(behavior) || MetatileBehavior_IsHorizontalRail(behavior)
-     || MetatileBehavior_IsIsolatedVerticalRail(behavior) || MetatileBehavior_IsIsolatedHorizontalRail(behavior) || MetatileBehavior_IsGroundRocks(behavior))
+    || MetatileBehavior_IsIsolatedVerticalRail(behavior) || MetatileBehavior_IsIsolatedHorizontalRail(behavior) || MetatileBehavior_IsGroundRocks(behavior))
         DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, gUnknown_8416451);
     else if (Overworld_IsBikingAllowed() == TRUE && !IsBikingDisallowedByPlayer())
     {
@@ -195,7 +195,7 @@ void FieldUseFunc_MachBike(u8 taskId)
         PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
 }
 
-static void ItemUseOnFieldCB_Bicycle(u8 taskId)
+static void ItemUseOnFieldCB_Bicycle(u32 taskId)
 {
     if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
         PlaySE(SE_BIKE_BELL);
@@ -206,10 +206,10 @@ static void ItemUseOnFieldCB_Bicycle(u8 taskId)
     DestroyTask(taskId);
 }
 
-static bool8 ItemUseCheckFunc_Rod(void)
+static bool32 ItemUseCheckFunc_Rod(void)
 {
     s16 x, y;
-    u16 behavior;
+    u32 behavior;
 
     GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
     behavior = MapGridGetMetatileBehaviorAt(x, y);
@@ -230,7 +230,7 @@ static bool8 ItemUseCheckFunc_Rod(void)
     return FALSE;
 }
 
-static void ItemUseOnFieldCB_Rod(u8 taskId)
+static void ItemUseOnFieldCB_Rod(u32 taskId)
 {
     StartFishing(ItemId_GetHoldEffectParam(gSpecialVar_ItemId));
     DestroyTask(taskId);
@@ -262,8 +262,8 @@ void FieldUseFunc_CoinCase(u8 taskId)
 
 void FieldUseFunc_PokeFlute(u8 taskId)
 {
-    bool8 wokeSomeoneUp = FALSE;
-    u8 i, partyCount;
+    bool32 wokeSomeoneUp = FALSE;
+    u32 i, partyCount;
 	
 	RemoveBagItem(gSpecialVar_ItemId, 1);
 	
@@ -488,14 +488,12 @@ static void Task_UsedBlackWhiteFlute(u8 taskId)
     }
 }
 
-bool8 CanUseEscapeRopeOnCurrMap(void)
+bool32 CanUseEscapeRopeOnCurrMap(void)
 {
-    if (gMapHeader.allowEscaping)
-        return TRUE;
-	return FALSE;
+    return gMapHeader.allowEscaping;
 }
 
-static void ItemUseOnFieldCB_EscapeRope(u8 taskId)
+static void ItemUseOnFieldCB_EscapeRope(u32 taskId)
 {
     Overworld_ResetStateForLeavingMap();
     RemoveUsedItem();
@@ -586,9 +584,9 @@ void FieldUseFunc_FameChecker(u8 taskId)
 void FieldUseFunc_VsSeeker(u8 taskId)
 {
     if ((gMapHeader.mapType != MAP_TYPE_ROUTE && gMapHeader.mapType != MAP_TYPE_TOWN && gMapHeader.mapType != MAP_TYPE_CITY)
-		|| (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(VIRIDIAN_FOREST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(VIRIDIAN_FOREST)
-		|| gSaveBlock1Ptr->location.mapNum == MAP_NUM(MT_EMBER_EXTERIOR) || gSaveBlock1Ptr->location.mapNum == MAP_NUM(THREE_ISLAND_BERRY_FOREST)
-		|| gSaveBlock1Ptr->location.mapNum == MAP_NUM(SIX_ISLAND_PATTERN_BUSH))))
+	|| (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(VIRIDIAN_FOREST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(VIRIDIAN_FOREST)
+	|| gSaveBlock1Ptr->location.mapNum == MAP_NUM(MT_EMBER_EXTERIOR) || gSaveBlock1Ptr->location.mapNum == MAP_NUM(THREE_ISLAND_BERRY_FOREST)
+	|| gSaveBlock1Ptr->location.mapNum == MAP_NUM(SIX_ISLAND_PATTERN_BUSH))))
         PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
     else
     {
@@ -603,7 +601,7 @@ void FieldUseFunc_Honey(u8 taskId)
     SetUpItemUseOnFieldCallback(taskId);
 }
 
-static void ItemUseOnFieldCB_Honey(u8 taskId)
+static void ItemUseOnFieldCB_Honey(u32 taskId)
 {
     RemoveUsedItem();
     gTasks[taskId].data[0] = 0;
@@ -729,7 +727,7 @@ void FieldUseFunc_Mint(u8 taskId)
     Task_FadeOuFromBackToField(taskId);
 }
 
-static void ItemUse_SwitchToPartyMenuInBattle(u8 taskId)
+static void ItemUse_SwitchToPartyMenuInBattle(u32 taskId)
 {
     if (ItemId_GetPocket(gSpecialVar_ItemId) == POCKET_BERRY_POUCH)
     {
@@ -743,19 +741,19 @@ static void ItemUse_SwitchToPartyMenuInBattle(u8 taskId)
     }
 }
 
-void ItemUseInBattle_PartyMenu(u8 taskId)
+void ItemUseInBattle_PartyMenu(u32 taskId)
 {
     gItemUseCB = ItemUseCB_BattleScript;
     ItemUse_SwitchToPartyMenuInBattle(taskId);
 }
 
-void ItemUseInBattle_PartyMenuChooseMove(u8 taskId)
+void ItemUseInBattle_PartyMenuChooseMove(u32 taskId)
 {
     gItemUseCB = ItemUseCB_PPRecoveryOneMove;
     ItemUse_SwitchToPartyMenuInBattle(taskId);
 }
 
-void ItemUseInBattle_BagMenu(u8 taskId)
+void ItemUseInBattle_BagMenu(u32 taskId)
 {
 	PlaySE(SE_SELECT);
 	
@@ -779,7 +777,7 @@ void FieldUseFunc_OakStopsYou(u8 taskId)
         PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
 }
 
-bool8 ExecuteTableBasedItemEffect(u8 partyMonIndex, u16 item)
+bool32 ExecuteTableBasedItemEffect(u32 partyMonIndex, u32 item)
 {
 	if (gMain.inBattle)
 		gBattleStruct->battlers[gBattlerInMenuId].usedReviveItem = FALSE;
@@ -787,7 +785,7 @@ bool8 ExecuteTableBasedItemEffect(u8 partyMonIndex, u16 item)
 	return PokemonUseItemEffects(&gPlayerParty[partyMonIndex], item, partyMonIndex, GetBattleMonForItemUse(gBattlerInMenuId, GetPartyIdFromBattleSlot(partyMonIndex)));
 }
 
-bool8 CanUseItemInBattle(bool8 fromBagMenu, u16 itemId)
+bool32 CanUseItemInBattle(bool32 fromBagMenu, u32 itemId)
 {
 	bool32 canUse = FALSE;
 	const u8* failStr = NULL;

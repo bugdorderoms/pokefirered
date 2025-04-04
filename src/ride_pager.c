@@ -62,7 +62,7 @@ static void CreateRidePagerMultichoiceWindow(u8 taskId);
 static void UpdateRidePagerMonPic(u8 ride);
 static void PrintRideDescInMessageWindow(u8 ride);
 static void Task_RidePagerHandleInput(u8 taskId);
-static void RidePager_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list);
+static void RidePager_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list);
 static void DestroyRidePagerWindow(u8 taskId, bool8 useRide);
 static void SharpedoPaddleCallback(u8 taskId);
 static void CharizardGlideCallback(u8 taskId);
@@ -332,9 +332,9 @@ static void Task_RidePagerHandleInput(u8 taskId)
 	}
 }
 
-static void RidePager_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list)
+static void RidePager_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list)
 {
-	u8 taskId;
+	u32 taskId;
 	
 	if (!onInit)
 	{
@@ -613,23 +613,22 @@ static void UpdateStoutlandSearchAndTaurosCharge(u16 heldKeys)
 {
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE))
 	{
-		u8 taskId = FindTaskIdByFunc(Task_StoutlandSearch);
+		u32 taskId = FindTaskIdByFunc(Task_StoutlandSearch);
 		
 		if (heldKeys & B_BUTTON)
 		{
 			if (taskId == 0xFF && !IsMapNamePopupTaskActive())
-				gTasks[CreateTask(Task_StoutlandSearch, 80)].data[7] = MAX_SPRITES;
+				gTasks[CreateTask(Task_StoutlandSearch, 80)].tStartSpriteId = MAX_SPRITES;
 		}
 		else
 		{
 			if (taskId != 0xFF)
-				gTasks[taskId].data[8] = TRUE;
+				gTasks[taskId].tDestroyStar = TRUE;
 		}
 	}
 	else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE))
 	{
-		if (!gSaveBlock2Ptr->waitingTaurosChargeStamina && (heldKeys & B_BUTTON) && gPlayerAvatar.runningState == MOVING
-		&& CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_ROCK_SMASH_ROCK))
+		if (!gSaveBlock2Ptr->waitingTaurosChargeStamina && (heldKeys & B_BUTTON) && gPlayerAvatar.runningState == MOVING && CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_ROCK_SMASH_ROCK))
 			ScriptContext1_SetupScript(EventScript_UseRockSmash);
 	}
 }

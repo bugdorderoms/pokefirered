@@ -233,7 +233,7 @@ void StopFanfareByFanfareNum(u8 fanfareNum)
     m4aSongNumStop(sFanfares[fanfareNum].songNum);
 }
 
-bool8 IsFanfareTaskInactive(void)
+bool32 IsFanfareTaskInactive(void)
 {
     if (FuncIsActiveTask(Task_Fanfare))
         return FALSE;
@@ -276,13 +276,14 @@ void FadeOutBGMTemporarily(u8 speed)
     m4aMPlayFadeOutTemporarily(&gMPlayInfo_BGM, speed);
 }
 
-bool8 IsBGMPausedOrStopped(void)
+bool32 IsBGMPausedOrStopped(void)
 {
     if (gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_PAUSE)
         return TRUE;
-    if (!(gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_TRACK))
+    else if (!(gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_TRACK))
         return TRUE;
-    return FALSE;
+	else
+		return FALSE;
 }
 
 void FadeInBGM(u8 speed)
@@ -341,11 +342,6 @@ void PlayCry_ReleaseDouble(u16 species, s8 pan, u8 mode)
     }
 }
 
-static bool8 ShouldUseHighPitchMonCry(u16 species)
-{
-	return (gSpeciesInfo[species].flags & (SPECIES_FLAG_MEGA | SPECIES_FLAG_GIGANTAMAX));
-}
-
 void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
 {
     bool8 reverse = FALSE;
@@ -355,27 +351,22 @@ void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
     u32 chorus = 0;
 	u16 cryId;
 	
+	if ((mode == CRY_MODE_NORMAL || mode == CRY_MODE_DOUBLES) && (gSpeciesInfo[species].flags & SPECIES_FLAG_HIGH_PITCH_CRY))
+		mode = CRY_MODE_HIGH_PITCH;
+	
     switch (mode)
     {
-    case CRY_MODE_NORMAL:
-		if (ShouldUseHighPitchMonCry(species))
-			goto HIGH_PITCH;
-        break;
     case CRY_MODE_DOUBLES:
-        if (ShouldUseHighPitchMonCry(species))
-			pitch = 15600;
-		
 		length = 20;
         release = 225;
         break;
     case CRY_MODE_ENCOUNTER:
         release = 225;
-        pitch = ShouldUseHighPitchMonCry(species) ? 15800 : 15600;
+        pitch = 15600;
         chorus = 20;
         volume = 90;
         break;
     case CRY_MODE_HIGH_PITCH:
-	HIGH_PITCH:
         length = 50;
         release = 200;
         pitch = 15800;
@@ -386,48 +377,45 @@ void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
         length = 25;
         reverse = TRUE;
         release = 100;
-        pitch = ShouldUseHighPitchMonCry(species) ? 15800 : 15600;
+        pitch = 15600;
         chorus = 192;
         volume = 90;
         break;
     case CRY_MODE_FAINT:
         release = 200;
-        pitch = ShouldUseHighPitchMonCry(species) ? 15200 : 14440;
+        pitch = 14440;
         break;
     case CRY_MODE_ECHO_END:
         release = 220;
-        pitch = ShouldUseHighPitchMonCry(species) ? 15800 : 15555;
+        pitch = 15555;
         chorus = 192;
         volume = 90; // FR/LG changed this from 70 to 90
         break;
     case CRY_MODE_ROAR_1:
         length = 10;
         release = 100;
-        pitch = ShouldUseHighPitchMonCry(species) ? 15000 : 14848;
+        pitch = 14848;
         break;
     case CRY_MODE_ROAR_2:
         length = 60;
         release = 225;
-        pitch = ShouldUseHighPitchMonCry(species) ? 15816 : 15616;
+        pitch = 15616;
         break;
     case CRY_MODE_GROWL_1:
         length = 15;
         reverse = TRUE;
         release = 125;
-        pitch = ShouldUseHighPitchMonCry(species) ? 15600 : 15200;
+        pitch = 15200;
         break;
     case CRY_MODE_GROWL_2:
         length = 100;
         release = 225;
-        pitch = ShouldUseHighPitchMonCry(species) ? 15600 : 15200;
+        pitch = 15200;
         break;
 	case CRY_MODE_WEAK:
-        pitch = ShouldUseHighPitchMonCry(species) ? 15200 : 15000;
+        pitch = 15000;
         break;
     case CRY_MODE_WEAK_DOUBLES:
-		if (ShouldUseHighPitchMonCry(species))
-			pitch = 15600;
-		
 		length = 20;
         release = 225;
 		break;
@@ -446,7 +434,7 @@ void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
     gMPlay_PokemonCry = SetPokemonCryTone(reverse ? &gCryTableReverse[cryId] : &gCryTable[cryId]);
 }
 
-bool8 IsCryFinished(void)
+bool32 IsCryFinished(void)
 {
 	if (!FuncIsActiveTask(Task_DuckBGMForPokemonCry))
 	{

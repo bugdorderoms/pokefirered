@@ -9,7 +9,7 @@
 #define RGB2(r, g, b) (((b) << 10) | ((g) << 5) | (r))
 #define _RGB(r, g, b) ((((b) & 0x1F) << 10) + (((g) & 0x1F) << 5) + ((r) & 0x1F))
 
-#define RGB_ALPHA       (1 << 15)
+#define RGB_ALPHA       Bit(15)
 #define IS_ALPHA(color) ((color) & RGB_ALPHA)
 
 #define RGB_BLACK      RGB(0, 0, 0)

@@ -339,12 +339,12 @@ void StartTotemBattle(s8 *buffs)
     gMain.savedCallback = CB2_EndScriptedWildBattle;
 	gBattleTypeFlags = (BATTLE_TYPE_TOTEM | BATTLE_TYPE_SOS);
 	
-	for (i = STAT_ATK; i < NUM_BATTLE_STATS; i++)
+	for (i = 0; i < NUM_BATTLE_STATS - 1; i++)
 	{
-		if (buffs[i] != 0)
+		if (buffs[i + 1] != 0)
 		{
-			gQueuedStatBoosts[B_POSITION_OPPONENT_LEFT].stats |= gBitTable[i];
-			gQueuedStatBoosts[B_POSITION_OPPONENT_LEFT].statChanges[i] = buffs[i];
+			gQueuedStatBoosts[B_POSITION_OPPONENT_LEFT].stats |= Bit(i);
+			gQueuedStatBoosts[B_POSITION_OPPONENT_LEFT].statChanges[i] = buffs[i + 1];
 		}
 	}
 	CreateBattleStartTask(GetWildBattleTransition(), 0);

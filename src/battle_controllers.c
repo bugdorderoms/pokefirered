@@ -210,7 +210,7 @@ static void Task_HandleCopyReceivedLinkBuffersData(u8 taskId)
 		switch (gLinkBattleRecvBuffer[gTasks[taskId].data[15] + 0])
         {
         case 0:
-            if (gBattleControllerExecFlags & gBitTable[battlerId])
+            if (gBattleControllerExecFlags & Bit(battlerId))
                 return;
 			
             memcpy(gBattleBufferA[battlerId], &gLinkBattleRecvBuffer[gTasks[taskId].data[15] + LINK_BUFF_DATA], blockSize);
@@ -228,7 +228,7 @@ static void Task_HandleCopyReceivedLinkBuffersData(u8 taskId)
             memcpy(gBattleBufferB[battlerId], &gLinkBattleRecvBuffer[gTasks[taskId].data[15] + LINK_BUFF_DATA], blockSize);
             break;
         case 2:
-            gBattleControllerExecFlags &= ~(gBitTable[battlerId] << (gLinkBattleRecvBuffer[gTasks[taskId].data[15] + LINK_BUFF_DATA] * 4));
+            gBattleControllerExecFlags &= ~(Bit(battlerId) << (gLinkBattleRecvBuffer[gTasks[taskId].data[15] + LINK_BUFF_DATA] * 4));
             break;
         }
         gTasks[taskId].data[15] = gTasks[taskId].data[15] + blockSize + LINK_BUFF_DATA;
@@ -246,7 +246,7 @@ void TryReceiveLinkBattleData(void)
 		
         for (i = 0; i < GetLinkPlayerCount(); ++i)
         {
-            if (GetBlockReceivedStatus() & gBitTable[i])
+            if (GetBlockReceivedStatus() & Bit(i))
             {
                 ResetBlockReceivedFlag(i);
                 recvBuffer = (u8 *)gBlockRecvBuffer[i];

@@ -135,9 +135,9 @@ static void DexScreen_CreateCategoryPageSpeciesList(u8 category, u8 pageNum);
 static u8 DexScreen_PageNumberToRenderablePages(u16 page);
 static void DexScreen_InputHandler_StartToCry(void);
 static void DexScreen_PrintStringWithAlignment(const u8 *str, s32 mode);
-static void MoveCursorFunc_DexModeSelect(s32 itemIndex, bool8 onInit, struct ListMenu *list);
-static void ItemPrintFunc_DexModeSelect(u8 windowId, u32 itemId, u8 y);
-static void ItemPrintFunc_OrderedListMenu(u8 windowId, u32 species, u8 y);
+static void MoveCursorFunc_DexModeSelect(s32 itemIndex, bool32 onInit, struct ListMenu *list);
+static void ItemPrintFunc_DexModeSelect(u32 windowId, u32 itemId, u32 y);
+static void ItemPrintFunc_OrderedListMenu(u32 windowId, u32 species, u32 y);
 static void Task_DexScreen_RegisterMonToPokedex(u8 taskId);
 static s8 CompareSpeciesAlphabetically(struct ListMenuItem *dexSlot1, struct ListMenuItem *dexSlot2);
 static s8 CompareSpeciesByType(struct ListMenuItem *dexSlot1, struct ListMenuItem *dexSlot2);
@@ -1125,7 +1125,7 @@ static void DexScreen_InitGfxForTopMenu(void)
     CopyWindowToVram(sPokedexScreenData->dexCountsWindowId, COPYWIN_GFX);
 }
 
-static void MoveCursorFunc_DexModeSelect(s32 itemIndex, bool8 onInit, struct ListMenu *list)
+static void MoveCursorFunc_DexModeSelect(s32 itemIndex, bool32 onInit, struct ListMenu *list)
 {
     if (!onInit)
         PlaySE(SE_SELECT);
@@ -1144,7 +1144,7 @@ static void MoveCursorFunc_DexModeSelect(s32 itemIndex, bool8 onInit, struct Lis
     CopyWindowToVram(sPokedexScreenData->selectionIconWindowId, COPYWIN_GFX);
 }
 
-static void ItemPrintFunc_DexModeSelect(u8 windowId, u32 itemId, u8 y)
+static void ItemPrintFunc_DexModeSelect(u32 windowId, u32 itemId, u32 y)
 {
     if (itemId >= DEX_CATEGORY_COUNT || sPokedexScreenData->unlockedCategories & (1 << itemId))
         ListMenuOverrideSetColors(TEXT_COLOR_WHITE, TEXT_COLOR_TRANSPARENT, TEXT_COLOR_LIGHT_GRAY);
@@ -1524,9 +1524,9 @@ static u8 DexScreen_CreateDexOrderScrollArrows(void)
     return AddScrollIndicatorArrowPair(&template, &sPokedexScreenData->modeSelectCursorPosBak);
 }
 
-static void ItemPrintFunc_OrderedListMenu(u8 windowId, u32 species, u8 y)
+static void ItemPrintFunc_OrderedListMenu(u32 windowId, u32 species, u32 y)
 {
-    u8 type1;
+    u32 type1;
 	
     DexScreen_PrintMonDexNo(sPokedexScreenData->numericalOrderWindowId, 0, species, 12, y);
 	

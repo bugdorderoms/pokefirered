@@ -298,4 +298,36 @@ const struct BattleAnimTable gBattleAnims_General[] =
 		.substituteRecede = TRUE,
 		.changeForm = TRUE,
 	},
+	[B_ANIM_ULTRA_BURST] =
+	{
+		.script = gGeneralAnim_UltraBurst,
+		.hideHpBoxes = TRUE,
+		.shouldBePlayed = TRUE,
+		.substituteRecede = TRUE,
+		.changeForm = TRUE,
+	},
+	[B_ANIM_MIST] =
+	{
+		.script = gMoveAnim_MIST,
+		.ignoreSemiInvulnerability = TRUE,
+		.ignoreSubstitute = TRUE,
+	},
+	[B_ANIM_SAFEGUARD] =
+	{
+		.script = gMoveAnim_SAFEGUARD,
+		.ignoreSemiInvulnerability = TRUE,
+		.ignoreSubstitute = TRUE,
+	},
+	[B_ANIM_TRICK_ROOM] =
+	{
+		.script = gGeneralAnim_TrickRoom,
+		.ignoreSemiInvulnerability = TRUE,
+		.ignoreSubstitute = TRUE,
+	},
+	[B_ANIM_GRAVITY] =
+	{
+		.script = gGeneralAnim_Gravity,
+		.ignoreSemiInvulnerability = TRUE,
+		.ignoreSubstitute = TRUE,
+	},
 };

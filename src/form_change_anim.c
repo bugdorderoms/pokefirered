@@ -55,7 +55,7 @@ static const TaskFunc sFormChangeAnimsTable[] =
 // isFusion = Determines if white screen flash occours at the final animation
 // icon1 = The sprite of the mon icon
 // icon2 = The sprite of the second mon icon, when fusing
-void DoFormChangeAnim(u8 animId, u16 species, bool8 isFusion, struct Sprite *icon1, struct Sprite *icon2)
+void DoFormChangeAnim(u32 animId, u32 species, bool32 isFusion, struct Sprite *icon1, struct Sprite *icon2)
 {
 	sFormChangeAnimData = AllocZeroed(sizeof(struct FormChangeAnimData));
 	
@@ -74,7 +74,7 @@ void DoFormChangeAnim(u8 animId, u16 species, bool8 isFusion, struct Sprite *ico
 }
 
 // Check if form change anim ends
-bool8 IsFormChangeAnimFinished(void)
+bool32 IsFormChangeAnimFinished(void)
 {
 	if (sFormChangeAnimData != NULL)
 	{
@@ -96,7 +96,7 @@ static void UpdateIconForFormChange(void)
 }
 
 // Create a sprite
-static struct Sprite *CreateSpriteForFormChangeAnim(const struct SpriteTemplate *template, struct Sprite *linker, s8 addrX, s8 addrY, u8 subpriority)
+static struct Sprite *CreateSpriteForFormChangeAnim(const struct SpriteTemplate *template, struct Sprite *linker, s8 addrX, s8 addrY, u32 subpriority)
 {
 	struct Sprite *sprite = &gSprites[CreateSprite(template, linker->oam.x + 16 + addrX, linker->oam.y + 16 + addrY, subpriority)];
 	sprite->oam.priority = linker->oam.priority - 1;
@@ -114,7 +114,7 @@ static void DestroyFormChangeAnimSprite(struct Sprite *sprite)
 // Destroy all sprites at a time
 static void DestroyAllFormChangeSpritesCreated(void)
 {
-	u8 i;
+	u32 i;
 	
 	for (i = 0; i < NUM_FORM_CHANGE_ANIM_SPRITES; i++)
 	{
@@ -227,7 +227,7 @@ static void Task_PlayMonCryAfterFormChangeAnim(u8 taskId)
 	}
 }
 
-static void InitPlayMonCryAfterFormChangeTask(u8 taskId)
+static void InitPlayMonCryAfterFormChangeTask(u32 taskId)
 {
 	sFormChangeAnimData->stepId = 0;
 	gTasks[taskId].func = Task_PlayMonCryAfterFormChangeAnim;
@@ -245,7 +245,7 @@ static void InitPlayMonCryAfterFormChangeTask(u8 taskId)
 #define tMosaicData2 data[1]
 #define tAnimWait    data[2]
 
-static void InitOrResetIconsForMosaicAnim(u8 taskId, bool8 init)
+static void InitOrResetIconsForMosaicAnim(u32 taskId, bool32 init)
 {
 	sFormChangeAnimData->icon1->oam.mosaic = init;
 	
@@ -370,12 +370,12 @@ static const struct Coords8 sGracideaFlowersDelta[NUM_FORM_CHANGE_ANIM_SPRITES] 
 	{.x =  10, .y =  13},
 };
 
-static inline struct Sprite *CreateGracideaFlowerSprite(struct Sprite *linker, s8 addrX, s8 addrY, u8 idx)
+static inline struct Sprite *CreateGracideaFlowerSprite(struct Sprite *linker, s8 addrX, s8 addrY, u32 idx)
 {
 	return CreateSpriteForFormChangeAnim(&sSpriteTemplate_GracideaFlower, linker, addrX, addrY, idx & 1);
 }
 
-static bool8 CreateGracideaFlowerSprites(u8 idx)
+static bool32 CreateGracideaFlowerSprites(u32 idx)
 {
 	if (idx < NUM_FORM_CHANGE_ANIM_SPRITES)
 	{
@@ -634,7 +634,7 @@ static void SpriteCB_LightAbsorption(struct Sprite *sprite)
 	}
 }
 
-static struct Sprite *CreateLightAbsorptionSprite(struct Sprite *linker, s8 x, s8 y, u8 idx, bool8 secondFrame)
+static struct Sprite *CreateLightAbsorptionSprite(struct Sprite *linker, s8 x, s8 y, u32 idx, bool32 secondFrame)
 {
 	struct Sprite *sprite = CreateSpriteForFormChangeAnim(&sSpriteTemplate_LightAbsorption, linker, 0, 0, idx & 1);
 	StartSpriteAnim(sprite, secondFrame);
@@ -651,7 +651,7 @@ static struct Sprite *CreateLightAbsorptionSprite(struct Sprite *linker, s8 x, s
 	return sprite;
 }
 
-static bool8 CreateLightAbsorptionSprites(u8 idx)
+static bool32 CreateLightAbsorptionSprites(u32 idx)
 {
 	if (idx < NUM_FORM_CHANGE_ANIM_SPRITES)
 	{
@@ -883,7 +883,7 @@ static void SpriteCB_FallingFeather(struct Sprite *sprite)
 	}
 }
 
-static struct Sprite *CreateFeatherSprite(struct Sprite *linker, s8 x, u8 idx)
+static struct Sprite *CreateFeatherSprite(struct Sprite *linker, s8 x, u32 idx)
 {
 	struct Sprite *sprite = CreateSpriteForFormChangeAnim(&sSpriteTemplate_FallingFeather, linker, x, -2, 0);
 	sprite->data[3] = idx & 1 ? 1 : -1;
@@ -891,7 +891,7 @@ static struct Sprite *CreateFeatherSprite(struct Sprite *linker, s8 x, u8 idx)
 	return sprite;
 }
 
-static bool8 CreateFeatherSprites(u8 id)
+static bool32 CreateFeatherSprites(u32 id)
 {
 	if (id < NUM_FORM_CHANGE_ANIM_SPRITES)
 	{

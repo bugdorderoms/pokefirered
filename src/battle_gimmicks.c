@@ -7,6 +7,7 @@
 #include "item.h"
 #include "palette.h"
 #include "pokemon_icon.h"
+#include "util.h"
 #include "constants/battle_string_ids.h"
 #include "constants/hold_effects.h"
 #include "constants/moves.h"
@@ -14,6 +15,12 @@
 /////////////////////
 // GIMMICKS SYSTEM //
 /////////////////////
+
+enum
+{
+	FLAG_GET_ACTIVATED,
+	FLAG_SET_ACTIVATED
+};
 
 struct GimmickInfo
 {
@@ -88,24 +95,40 @@ bool32 IsGimmickActiveOrSelected(u32 battler, u32 gimmick)
 	return (GetActiveGimmick(battler) == gimmick || IsGimmickSelected(battler, gimmick));
 }
 
+// Gets or set where a battler has activated the gimmick.
+static bool32 GetSetActivatedGimmick(u32 battlerId, u32 gimmick, u32 caseId)
+{
+	u32 index = gimmick / 8, mask = Bit(gimmick % 8);
+	
+	switch (caseId)
+	{
+		case FLAG_GET_ACTIVATED:
+			return (gBattleStruct->battlers[battlerId].activatedGimmick[index] & mask);
+		case FLAG_SET_ACTIVATED:
+			gBattleStruct->battlers[battlerId].activatedGimmick[index] |= mask;
+			break;
+	}
+	return FALSE;
+}
+
 // Returns whether a trainer has used a gimmick during a battle.
 bool32 HasTrainerUsedGimmick(u32 battler, u32 gimmick)
 {
 	// Check whether partner battler has used gimmick or plans to during turn.
-	if (IsDoubleBattleForBattler(battler) && IsPartnerMonFromSameTrainer(battler) && (gBattleStruct->battlers[BATTLE_PARTNER(battler)].activatedGimmick[gimmick]
+	if (IsDoubleBattleForBattler(battler) && IsPartnerMonFromSameTrainer(battler) && (GetSetActivatedGimmick(BATTLE_PARTNER(battler), gimmick, FLAG_GET_ACTIVATED)
 	|| (gBattleStruct->battlers[BATTLE_PARTNER(battler)].toActivateGimmick && gBattleStruct->battlers[BATTLE_PARTNER(battler)].usableGimmick == gimmick)))
 		return TRUE;
 	else // Otherwise, return whether current battler has used gimmick.
-		return gBattleStruct->battlers[battler].activatedGimmick[gimmick];
+		return GetSetActivatedGimmick(battler, gimmick, FLAG_GET_ACTIVATED);
 }
 
 // Sets a gimmick as used by a trainer with checks for Multi Battles.
 void SetGimmickAsActivated(u32 battler, u32 gimmick)
 {
-	gBattleStruct->battlers[battler].activatedGimmick[gimmick] = TRUE;
+	GetSetActivatedGimmick(battler, gimmick, FLAG_SET_ACTIVATED);
 	
 	if (IsDoubleBattleForBattler(battler) && IsPartnerMonFromSameTrainer(battler))
-		gBattleStruct->battlers[BATTLE_PARTNER(battler)].activatedGimmick[gimmick] = TRUE;
+		GetSetActivatedGimmick(BATTLE_PARTNER(battler), gimmick, FLAG_SET_ACTIVATED);
 }
 
 // Executes a gimmick's activation function.
@@ -289,7 +312,7 @@ void ChangeGimmickTriggerSprite(u32 triggerSpriteId, bool32 lightUp)
 		gSprites[triggerSpriteId].sLightUp = lightUp;
 		
 		triggerPal = sGimmicksInfo[gSprites[triggerSpriteId].sGimmick].triggerPal;
-		dest = &gPlttBufferFaded[16 * 16 + IndexOfSpritePaletteTag(TAG_GIMMICK_TRIGGER_GFX) * 16];
+		dest = &gPlttBufferFaded[(IndexOfSpritePaletteTag(TAG_GIMMICK_TRIGGER_GFX) + 16) * 16];
 		
 		for (i = TRIGGER_LIGHT_UP_START_PAL_INDEX; i < 16; i++)
 			dest[i] = lightUp ? LightUpGimmickTriggerPalette(triggerPal[i]) : triggerPal[i];
@@ -512,6 +535,32 @@ void ActivateMegaEvolution(u32 battler)
 	
 	DoBattleFormChange(battler, targetSpecies, TRUE, TRUE, TRUE);
 	BattleScriptExecute(BattleScript_MegaEvolution);
+}
+
+/////////////////
+// ULTRA BURST //
+/////////////////
+
+bool32 CanUltraBurst(u32 battler)
+{
+	if (!TrainerHasGimmickKeyItem(battler, ITEM_Z_RING))
+		return FALSE;
+	else if (HasTrainerUsedGimmick(battler, GIMMICK_ULTRA_BURST))
+		return FALSE;
+	else if (GetActiveGimmick(battler) != GIMMICK_NONE)
+		return FALSE;
+	else if (gStatuses3[battler] & STATUS3_SKY_DROPPED)
+		return FALSE;
+	else if (TryDoBattleFormChange(battler, FORM_CHANGE_ULTRA_BURST))
+		return TRUE;
+	else
+		return FALSE;
+}
+
+void ActivateUltraBurst(u32 battler)
+{
+	DoBattleFormChange(battler, TryDoBattleFormChange(battler, FORM_CHANGE_ULTRA_BURST), TRUE, TRUE, TRUE);
+	BattleScriptExecute(BattleScript_UltraBurst);
 }
 
 ////////////

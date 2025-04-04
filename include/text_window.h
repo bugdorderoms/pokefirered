@@ -21,7 +21,6 @@ void DrawTextBorderOuter(u8 windowId, u16 tileStart, u8 palette);
 void DrawTextBorderInner(u8 windowId, u16 tileNum, u8 palNum);
 void TextWindow_LoadTilesStdFrame1(u8 windowId, u16 destOffset);
 void LoadSignpostWindowGfx(u8 windowId, u16 destOffset, u8 palIdx);
-void PrintTextOnWindow(u8 windowId, const u8 *str, u8 x, u8 y, s32 speed, s32 colorIdx);
 void LoadDexNavWindowGfx(u8 windowId, u16 destOffset, u8 palOffset);
 
 #endif // GUARD_TEXT_WINDOW_H

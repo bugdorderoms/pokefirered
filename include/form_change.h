@@ -21,24 +21,24 @@ enum
 };
 
 // overworld form change
-u16 GetMonFormChangeSpecies(struct Pokemon *mon, u16 species, u16 formChangeType);
-u16 DoOverworldFormChange(struct Pokemon *mon, u16 formChangeType);
+u32 GetMonFormChangeSpecies(struct Pokemon *mon, u32 species, u32 formChangeType);
+u32 DoOverworldFormChange(struct Pokemon *mon, u32 formChangeType);
 void DoPlayerPartyEndBattleFormChange(void);
-bool8 SpeciesHasFormChangeType(u16 species, u16 formChangeType);
+bool32 SpeciesHasFormChangeType(u32 species, u32 formChangeType);
 void TrySetMonFormChangeCountdown(struct Pokemon *mon);
 
 // battle form change
-u16 GetBattlerFormChangeSpecies(u8 battlerId, u16 species, u16 itemId, u16 formChangeType);
-u16 TryDoBattleFormChange(u8 battlerId, u16 formChangeType);
-void DoBattleFormChange(u8 battlerId, u16 newSpecies, bool8 reloadTypes, bool8 reloadStats, bool8 reloadAbility);
-bool8 DoSpecialFormChange(u8 battlerId, u8 partyId, u16 formChangeType);
+u32 GetBattlerFormChangeSpecies(u32 battlerId, u32 species, u32 itemId, u32 formChangeType);
+u32 TryDoBattleFormChange(u32 battlerId, u32 formChangeType);
+void DoBattleFormChange(u32 battlerId, u32 newSpecies, bool32 reloadTypes, bool32 reloadStats, bool32 reloadAbility);
+bool32 DoSpecialFormChange(u32 battlerId, u32 partyId, u32 formChangeType);
 
 extern const u16 gDefaultGeneratorFormChanges[];
 
 extern const struct Fusion gFusionsTable[];
 
 // form change animations
-void DoFormChangeAnim(u8 animId, u16 species, bool8 isFusion, struct Sprite *icon1, struct Sprite *icon2);
-bool8 IsFormChangeAnimFinished(void);
+void DoFormChangeAnim(u32 animId, u32 species, bool32 isFusion, struct Sprite *icon1, struct Sprite *icon2);
+bool32 IsFormChangeAnimFinished(void);
 
 #endif // GUARD_FORM_CHANGE_H

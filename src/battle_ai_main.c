@@ -11,10 +11,10 @@
 #include "constants/battle.h"
 #include "constants/moves.h"
 
-#define AI_ACTION_DONT_ATTACK (1 << 0)
-#define AI_ACTION_FLEE        (1 << 1)
-#define AI_ACTION_WATCH       (1 << 2)
-#define AI_ACTION_DONE        (1 << 3)
+#define AI_ACTION_DONT_ATTACK Bit(0)
+#define AI_ACTION_FLEE        Bit(1)
+#define AI_ACTION_WATCH       Bit(2)
+#define AI_ACTION_DONE        Bit(3)
 
 static u32 BattleAI_ChooseMoveOrAction_Singles(u32 battlerId);
 static u32 BattleAI_ChooseMoveOrAction_Doubles(u32 battlerId);
@@ -106,7 +106,7 @@ static void SetBattlerData(u32 attacker)
 	// Don't consider moves that can't be used
 	for (i = 0; i < MAX_MON_MOVES; i++)
 	{
-		if (AI_THINKING->moveLimitations[attacker] & gBitTable[i])
+		if (AI_THINKING->moveLimitations[attacker] & Bit(i))
 			AI_THINKING->moves[attacker][i] = MOVE_NONE;
 	}
 	
@@ -224,7 +224,7 @@ static void BattleAI_InitMovesScore(u32 battlerId)
 	
 	for (i = 0; i < MAX_MON_MOVES; i++)
 	{
-		AI_THINKING->score[battlerId][i] = (AI_THINKING->moveLimitations[battlerId] & gBitTable[i]) ? 0 : 100;
+		AI_THINKING->score[battlerId][i] = (AI_THINKING->moveLimitations[battlerId] & Bit(i)) ? 0 : 100;
 		AI_THINKING->simulatedRNG[battlerId][i] = 100 - (Random() % 16);
 	}
 	AI_THINKING->action[battlerId] = 0;

@@ -13,17 +13,17 @@
 
 // Exported ROM declarations
 
-u8 CreateWarpArrowSprite(void);
-void SetSurfBlob_BobState(u8, u8);
-void SetSurfBlob_DontSyncAnim(u8, u8);
-void StartAshFieldEffect(s16, s16, u16, s16);
+u32 CreateWarpArrowSprite(void);
+void SetSurfBlob_BobState(u32, u8);
+void SetSurfBlob_DontSyncAnim(u32, u8);
+void StartAshFieldEffect(s16, s16, u32, s16);
 void StartRevealDisguise(struct ObjectEvent *);
-bool8 UpdateRevealDisguise(struct ObjectEvent *);
-void SetUpReflection(struct ObjectEvent*, struct Sprite*, u8);
-u32 StartFieldEffectForObjectEvent(u8, struct ObjectEvent*);
-u8 FindTallGrassFieldEffectSpriteId(u8 localId, u8 mapNum, u8 mapGroup, s16 x, s16 y);
-void ShowWarpArrowSprite(u8 spriteId, u8 direction, s16 x, s16 y);
-void SetSurfBlob_PlayerOffset(u8 spriteId, u8 hasOffset, s16 offset);
+bool32 UpdateRevealDisguise(struct ObjectEvent *);
+void SetUpReflection(struct ObjectEvent*, struct Sprite*, bool32);
+u32 StartFieldEffectForObjectEvent(u32, struct ObjectEvent*);
+u32 FindTallGrassFieldEffectSpriteId(u32 localId, u32 mapNum, u32 mapGroup, s16 x, s16 y);
+void ShowWarpArrowSprite(u32 spriteId, u32 direction, s16 x, s16 y);
+void SetSurfBlob_PlayerOffset(u32 spriteId, u8 hasOffset, s16 offset);
 void UpdateJumpImpactEffect(struct Sprite * sprite);
 void UpdateShadowFieldEffect(struct Sprite * sprite);
 void UpdateBubblesFieldEffect(struct Sprite * sprite);
@@ -39,7 +39,7 @@ void UpdateLongGrassFieldEffect(struct Sprite * sprite);
 void UpdateSandPileFieldEffect(struct Sprite * sprite);
 void UpdateDisguiseFieldEffect(struct Sprite * sprite);
 void UpdateHotSpringsWaterFieldEffect(struct Sprite * sprite);
-void LoadFieldEffectPalette(u8 fieldEffect);
-void FieldEffectFreePaletteIfUnused(u8 paletteNum);
+void LoadFieldEffectPalette(u32 fieldEffect);
+void FieldEffectFreePaletteIfUnused(u32 paletteNum);
 
 #endif //GUARD_FIELD_EFFECT_HELPERS_H

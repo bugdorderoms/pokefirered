@@ -87,7 +87,7 @@ void SetControllerToOakOrOldMan(u32 battlerId)
 
 static void OakOldManBufferRunCommand(u32 battlerId)
 {
-	if (gBattleControllerExecFlags & gBitTable[battlerId])
+	if (gBattleControllerExecFlags & Bit(battlerId))
     {
         if (gBattleBufferA[battlerId][0] < ARRAY_COUNT(sOakOldManBufferCommands))
             sOakOldManBufferCommands[gBattleBufferA[battlerId][0]](battlerId);
@@ -107,7 +107,7 @@ static void OakOldManBufferExecCompleted(u32 battlerId)
         gBattleBufferA[battlerId][0] = CONTROLLER_TERMINATOR_NOP;
     }
     else
-        gBattleControllerExecFlags &= ~(gBitTable[battlerId]);
+        gBattleControllerExecFlags &= ~(Bit(battlerId));
 }
 
 ////////////////////////
@@ -332,7 +332,7 @@ void OakOldManHandleInputChooseMove(u32 battlerId)
 {
     HandleInputChooseMove(battlerId); // Player input
 	
-    if (!(gBattleControllerExecFlags & gBitTable[battlerId]))
+    if (!(gBattleControllerExecFlags & Bit(battlerId)))
         BattleControllerComplete(battlerId);
 }
 
@@ -428,7 +428,7 @@ void PrintOakText_KeepAnEyeOnHP(u32 battlerId)
     case 1:
         if (!gPaletteFade.active)
         {
-            BeginNormalPaletteFade((gBitTable[gBattleStruct->simulatedInputState[1]] | gBitTable[gBattleStruct->simulatedInputState[3]]) << 16, 4, 8, 0, RGB_BLACK);
+            BeginNormalPaletteFade((Bit(gBattleStruct->simulatedInputState[1]) | Bit(gBattleStruct->simulatedInputState[3])) << 16, 4, 8, 0, RGB_BLACK);
             ++gBattleStruct->simulatedInputState[0];
         }
         break;
@@ -447,7 +447,7 @@ void PrintOakText_KeepAnEyeOnHP(u32 battlerId)
     case 4:
         if (!IsTextPrinterActive(24))
         {
-            BeginNormalPaletteFade((gBitTable[gBattleStruct->simulatedInputState[1]] | gBitTable[gBattleStruct->simulatedInputState[3]]) << 16, 4, 0, 8, RGB_BLACK);
+            BeginNormalPaletteFade((Bit(gBattleStruct->simulatedInputState[1]) | Bit(gBattleStruct->simulatedInputState[3])) << 16, 4, 0, 8, RGB_BLACK);
             ++gBattleStruct->simulatedInputState[0];
         }
         break;
@@ -497,7 +497,7 @@ static void PrintOakText_ForPetesSake(u32 battlerId)
     case 3:
         if (!IsTextPrinterActive(24))
         {
-            BeginNormalPaletteFade((gBitTable[gBattleStruct->simulatedInputState[1]] | gBitTable[gBattleStruct->simulatedInputState[3]]) << 16, 4, 8, 0, RGB_BLACK);
+            BeginNormalPaletteFade((Bit(gBattleStruct->simulatedInputState[1]) | Bit(gBattleStruct->simulatedInputState[3])) << 16, 4, 8, 0, RGB_BLACK);
             ++gBattleStruct->simulatedInputState[0];
         }
         break;
@@ -512,7 +512,7 @@ static void PrintOakText_ForPetesSake(u32 battlerId)
     case 5:
         if (!IsTextPrinterActive(24))
         {
-            BeginNormalPaletteFade((gBitTable[gBattleStruct->simulatedInputState[1]] | gBitTable[gBattleStruct->simulatedInputState[3]]) << 16, 4, 0, 8, RGB_BLACK);
+            BeginNormalPaletteFade((Bit(gBattleStruct->simulatedInputState[1]) | Bit(gBattleStruct->simulatedInputState[3])) << 16, 4, 0, 8, RGB_BLACK);
             ++gBattleStruct->simulatedInputState[0];
         }
         break;

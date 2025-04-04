@@ -17,17 +17,15 @@ void InitFieldMessageBox(void)
 static void Task_RunFieldMessageBoxPrinter(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
+	
     switch (task->data[0])
     {
     case 0:
         if (!IsMsgSignPost())
-        {
             LoadStdWindowFrameGfx();
-        }
         else
-        {
             LoadSignPostWindowFrameGfx();
-        }
+
         task->data[0]++;
         break;
     case 1:
@@ -35,7 +33,7 @@ static void Task_RunFieldMessageBoxPrinter(u8 taskId)
         task->data[0]++;
         break;
     case 2:
-        if (RunTextPrinters_CheckPrinter0Active() != TRUE)
+        if (!RunTextPrinters_CheckPrinter0Active())
         {
             sMessageBoxType = 0;
             DestroyTask(taskId);
@@ -51,19 +49,21 @@ static void textbox_fdecode_auto_and_task_add(const u8 *str)
     CreateTask(Task_RunFieldMessageBoxPrinter, 80);
 }
 
-bool8 ShowFieldMessage(const u8 *str)
+bool32 ShowFieldMessage(const u8 *str)
 {
     if (sMessageBoxType != 0)
         return FALSE;
+	
     textbox_fdecode_auto_and_task_add(str);
     sMessageBoxType = 2;
     return TRUE;
 }
 
-bool8 ShowFieldAutoScrollMessage(const u8 *str)
+bool32 ShowFieldAutoScrollMessage(const u8 *str)
 {
     if (sMessageBoxType != 0)
         return FALSE;
+	
     sMessageBoxType = 3;
     textbox_fdecode_auto_and_task_add(str);
     return TRUE;
@@ -71,22 +71,21 @@ bool8 ShowFieldAutoScrollMessage(const u8 *str)
 
 void HideFieldMessageBox(void)
 {
-	u8 taskId = FindTaskIdByFunc(Task_RunFieldMessageBoxPrinter);
+	u32 taskId = FindTaskIdByFunc(Task_RunFieldMessageBoxPrinter);
+	
     if (taskId != 0xFF)
         DestroyTask(taskId);
+	
     ClearDialogWindowAndFrame(0, TRUE);
     sMessageBoxType = 0;
 }
 
-u8 textbox_any_visible(void)
+u32 textbox_any_visible(void)
 {
     return sMessageBoxType;
 }
 
-bool8 IsFieldMessageBoxHidden(void)
+bool32 IsFieldMessageBoxHidden(void)
 {
-    if (sMessageBoxType == 0)
-        return TRUE;
-    else
-        return FALSE;
+    return (sMessageBoxType == 0);
 }

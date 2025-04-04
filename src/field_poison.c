@@ -10,10 +10,10 @@
 #include "field_poison.h"
 #include "constants/battle.h"
 
-static void FaintFromFieldPoison(u8 partyIdx)
+static void FaintFromFieldPoison(u32 partyIdx)
 {
     struct Pokemon *pokemon = &gPlayerParty[partyIdx];
-    u8 status = STATUS1_NONE;
+    u32 status = STATUS1_NONE;
 	
 #if POISON_SURVIVAL == FALSE
     AdjustFriendship(pokemon, FRIENDSHIP_EVENT_FAINT_OUTSIDE_BATTLE);
@@ -24,7 +24,7 @@ static void FaintFromFieldPoison(u8 partyIdx)
     StringGet_Nickname(gStringVar1);
 }
 
-static bool32 MonFaintedFromPoison(u8 partyIdx)
+static bool32 MonFaintedFromPoison(u32 partyIdx)
 {
     struct Pokemon *pokemon = &gPlayerParty[partyIdx];
 	
@@ -46,6 +46,7 @@ static bool32 MonFaintedFromPoison(u8 partyIdx)
 static void Task_TryFieldPoisonWhiteOut(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
+	
     switch (tState)
     {
     case 0:
@@ -85,10 +86,9 @@ void TryFieldPoisonWhiteOut(void)
     ScriptContext1_Stop();
 }
 
-s32 DoPoisonFieldEffect(void)
+u32 DoPoisonFieldEffect(void)
 {
-    int i;
-    u32 hp, numPoisoned, numFainted;
+    u32 i, hp, numPoisoned, numFainted;
     struct Pokemon *pokemon;
 
     for (i = 0, numPoisoned = 0, numFainted = 0; i < PARTY_SIZE; i++)
@@ -112,9 +112,12 @@ s32 DoPoisonFieldEffect(void)
     }
     if (numFainted || numPoisoned)
         FldEffPoison_Start();
+	
     if (numFainted)
         return FLDPSN_FNT;
+	
     if (numPoisoned)
         return FLDPSN_PSN;
+	
     return FLDPSN_NONE;
 }

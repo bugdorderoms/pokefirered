@@ -9,7 +9,7 @@ u32 GetNoOfHitsToKOBattler(u32 attacker, u32 defender, u32 moveIndex);
 u32 GetNoOfHitsToKOBattlerDmg(s32 dmg, u32 battler);
 u32 GetNoOfHitsToKOBattlerHigherDamage(u32 attacker, u32 defender);
 u32 GetNumMovesWithSplitInBattlerMoveset(u32 battlerId, u32 split);
-bool32 BattlerHasMoveEffectInMoveset(u32 battler, u32 moveEffect);
+bool32 HasMoveEffectInMoveset(u16 *moveset, u32 moveEffect);
 bool32 SideHasMoveEffectInMovesetThatAffectsTarget(u32 attacker, u32 target, u32 moveEffect);
 bool32 TargetImuneToMove(u32 attacker, u32 defender, u32 moveSlot);
 bool32 AIIsFaster(u32 battler1, u32 battler2);
@@ -25,6 +25,8 @@ u32 GetScoreForInflictParalyze(u32 attacker, u32 defender);
 
 #define BattlerHasPhysicalMove(battlerId) ((GetNumMovesWithSplitInBattlerMoveset(battlerId, SPLIT_PHYSICAL) > 0))
 #define BattlerHasSpecialMove(battlerId) ((GetNumMovesWithSplitInBattlerMoveset(battlerId, SPLIT_SPECIAL) > 0))
+
+#define AI_BattlerHasMoveEffectInMoveset(battler, moveEffect) HasMoveEffectInMoveset(AI_THINKING->moves[battler], moveEffect)
 
 #define BattlerHasMoveWithFlagInMoveset(var, battlerId, flag)                                              \
 {                                                                                                          \

@@ -921,12 +921,23 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 		.battleScript = BattleScript_EffectTrickRoom,
 	},
 	
-	/*
+	[EFFECT_CAPTIVATE] =
+	{
+		.battleScript = BattleScript_EffectCaptivate,
+	},
+	
+	[EFFECT_STEALTH_ROCK] =
+	{
+		.battleScript = BattleScript_EffectStealthRock,
+	},
+	
 	[EFFECT_CHANGE_TYPE_ON_ITEM] =
 	{
+		.battleScript = BattleScript_EffectHit,
 		.normalizeUnaffected = TRUE,
 	},
 	
+	/*
 	[EFFECT_TERRAIN_PULSE] =
 	{
 		.normalizeUnaffected = TRUE,

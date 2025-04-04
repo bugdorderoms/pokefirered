@@ -54,7 +54,7 @@ static void CB2_TradeEvolutionSceneUpdate(void);
 static void EvoDummyFunc(void);
 static void VBlankCB_EvolutionScene(void);
 static void DestroyMovingBackgroundTasks(void);
-static void InitMovingBackgroundTask(bool8 isLink);
+static void InitMovingBackgroundTask(bool32 isLink);
 static void Task_MovingBackgroundPos(u8 taskId);
 static void ResetBgRegsAfterMovingBackgroundCancel(void);
 
@@ -147,6 +147,7 @@ static void CB2_BeginEvolutionScene(void)
 static void Task_BeginEvolutionScene(u8 taskId)
 {
 	struct Task *task;
+	
     switch (gTasks[taskId].tState)
     {
     case 0:
@@ -165,9 +166,9 @@ static void Task_BeginEvolutionScene(u8 taskId)
 }
 
 // Handle evolving by using a evolution stone or leveled up by Rare Candy/Exp. Candies
-void BeginEvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, bool8 canStopEvo, u8 partyId)
+void BeginEvolutionScene(struct Pokemon* mon, u32 speciesToEvolve, bool32 canStopEvo, u32 partyId)
 {
-    u8 taskId = CreateTask(Task_BeginEvolutionScene, 0);
+    u32 taskId = CreateTask(Task_BeginEvolutionScene, 0);
     gTasks[taskId].tState = 0;
     gTasks[taskId].tPostEvoSpecies = speciesToEvolve;
     gTasks[taskId].tBits = canStopEvo ? TASK_BIT_CAN_STOP : 0;
@@ -176,12 +177,11 @@ void BeginEvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, bool8 canStop
 }
 
 // Do the evolution scene
-void EvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 bits, u8 partyId)
+void EvolutionScene(struct Pokemon* mon, u32 speciesToEvolve, u32 bits, u32 partyId)
 {
     u8 name[20];
-    u16 currSpecies;
-	bool8 isShiny;
-    u8 id;
+    u32 id, currSpecies;
+	bool32 isShiny;
 
     SetHBlankCallback(NULL);
     SetVBlankCallback(NULL);
@@ -272,8 +272,7 @@ void EvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 bits, u8 partyI
 
 static void CB2_EvolutionSceneLoadGraphics(void)
 {
-    u8 id;
-    u16 postEvoSpecies;
+    u32 id, postEvoSpecies;
     struct Pokemon* Mon;
 
     SetHBlankCallback(NULL);
@@ -337,7 +336,7 @@ static void CB2_EvolutionSceneLoadGraphics(void)
 static void CB2_TradeEvolutionSceneLoadGraphics(void)
 {
     struct Pokemon* Mon;
-    u16 postEvoSpecies = gTasks[sEvoStructPtr->evoTaskId].tPostEvoSpecies;
+    u32 postEvoSpecies = gTasks[sEvoStructPtr->evoTaskId].tPostEvoSpecies;
 
     switch (gMain.state)
     {
@@ -384,7 +383,7 @@ static void CB2_TradeEvolutionSceneLoadGraphics(void)
         break;
     case 5:
         {
-            u8 id;
+            u32 id;
 
             SetMultiuseSpriteTemplateToPokemon(postEvoSpecies, 1);
             gMultiuseSpriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
@@ -417,10 +416,10 @@ static void CB2_TradeEvolutionSceneLoadGraphics(void)
 }
 
 // Handle evolving by trading it with another Pokémon
-void TradeEvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 preEvoSpriteId, u8 partyId)
+void TradeEvolutionScene(struct Pokemon* mon, u32 speciesToEvolve, u32 preEvoSpriteId, u32 partyId)
 {
     u8 name[20];
-    u8 id;
+    u32 id;
 
     GetMonData(mon, MON_DATA_NICKNAME, name);
     StringCopy_Nickname(gStringVar1, name);
@@ -487,9 +486,8 @@ static void CB2_TradeEvolutionSceneUpdate(void)
     RunTasks();
 }
 
-static void TryMonCreationEvolution(u16 preEvoSpecies, struct Pokemon* mon)
+static void TryMonCreationEvolution(u32 preEvoSpecies, struct Pokemon* mon)
 {
-	u8 i;
 	const u8 *evolutions = gSpeciesInfo[preEvoSpecies].evolutions;
 	
     if (evolutions != NULL && gPlayerPartyCount < PARTY_SIZE)
@@ -501,7 +499,7 @@ static void TryMonCreationEvolution(u16 preEvoSpecies, struct Pokemon* mon)
 			else
 			{
 				u32 data = 0;
-				u16 natDexNum, species = READ_16(evolutions + 1);
+				u32 natDexNum, species = READ_16(evolutions + 1);
 				struct Pokemon* newMon = &gPlayerParty[gPlayerPartyCount];
 				
 				CopyMon(newMon, mon, sizeof(struct Pokemon));
@@ -680,7 +678,7 @@ static void Task_EvolutionScene(u8 taskId)
                 GetMonData(mon, MON_DATA_NICKNAME, text);
                 StringCopy_Nickname(gBattleTextBuff1, text);
 
-            if (var == MON_HAS_MAX_MOVES)
+				if (var == MON_HAS_MAX_MOVES)
                     gTasks[taskId].tState = 22;
                 else if (var == MON_ALREADY_KNOWS_MOVE)
                     break;
@@ -1279,7 +1277,7 @@ static void Task_MovingBackgroundPalettes(u8 taskId)
         DestroyTask(taskId);
 }
 
-static void LaunchTask_MovingBackgroundPos(bool8 isLink)
+static void LaunchTask_MovingBackgroundPos(bool32 isLink)
 {
 	gTasks[CreateTask(Task_MovingBackgroundPos, 7)].data[2] = isLink ? 1 : 0;
 }
@@ -1287,7 +1285,6 @@ static void LaunchTask_MovingBackgroundPos(bool8 isLink)
 static void Task_MovingBackgroundPos(u8 taskId)
 {
     u16 *outer_X, *outer_Y;
-
     u16 *inner_X = &gBattle_BG1_X;
     u16 *inner_Y = &gBattle_BG1_Y;
 
@@ -1325,20 +1322,18 @@ static void Task_MovingBackgroundPos(u8 taskId)
 
 static void InitMovingBgValues(u16 *movingBgs)
 {
-    s32 i, j;
+    u32 i, j;
 
     for (i = 0; i < 50; i++)
     {
         for (j = 0; j < 16; j++)
-        {
             movingBgs[i * 16 + j] = sMovingBgPals[sMovingBgPalIndices[i][j]];
-        }
     }
 }
 
-static void InitMovingBackgroundTask(bool8 isLink)
+static void InitMovingBackgroundTask(bool32 isLink)
 {
-    u8 innerBgId = 1, outerBgId = isLink ? 3 : 2;
+    u32 innerBgId = 1, outerBgId = isLink ? 3 : 2;
 
     sEvoMovingBgPtr = AllocZeroed(0x640);
     InitMovingBgValues(sEvoMovingBgPtr);
@@ -1369,14 +1364,13 @@ static void InitMovingBackgroundTask(bool8 isLink)
         SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(8, 8));
         SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_BG3_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP);
     }
-
     CreateTask(Task_MovingBackgroundPalettes, 5);
     LaunchTask_MovingBackgroundPos(isLink);
 }
 
 void IsMovingBackgroundTaskRunning(void)
 {
-    u8 taskId = FindTaskIdByFunc(Task_MovingBackgroundPalettes);
+    u32 taskId = FindTaskIdByFunc(Task_MovingBackgroundPalettes);
 
     if (taskId != 0xFF)
         gTasks[taskId].data[6] = 1;
@@ -1386,7 +1380,7 @@ void IsMovingBackgroundTaskRunning(void)
 
 static void DestroyMovingBackgroundTasks(void)
 {
-    u8 taskId = FindTaskIdByFunc(Task_MovingBackgroundPalettes);
+    u32 taskId = FindTaskIdByFunc(Task_MovingBackgroundPalettes);
 
     if (taskId  != 0xFF)
         DestroyTask(taskId);

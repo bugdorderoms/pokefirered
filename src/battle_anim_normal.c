@@ -420,6 +420,17 @@ const struct SpriteTemplate gShotHitBallSpriteTemplate =
     .callback = AnimShadowBall,
 };
 
+const struct SpriteTemplate gGunkShotHitSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_WATER_IMPACT,
+    .paletteTag = ANIM_TAG_POISON_JAB,
+    .oam = &gOamData_AffineNormal_ObjBlend_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_HitSplat,
+    .callback = AnimHitSplatBasic,
+};
+
 // Moves a spinning sprite around the mon's head.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset

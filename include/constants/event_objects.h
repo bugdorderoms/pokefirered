@@ -190,8 +190,8 @@
 #define SHADOW_SIZE_L   2
 #define SHADOW_SIZE_XL  3
 
-#define F_INANIMATE                        (1 << 6)
-#define F_DISABLE_REFLECTION_PALETTE_LOAD  (1 << 7)
+#define F_INANIMATE                        Bit(6)
+#define F_DISABLE_REFLECTION_PALETTE_LOAD  Bit(7)
 
 #define TRACKS_NONE       0
 #define TRACKS_FOOT       1

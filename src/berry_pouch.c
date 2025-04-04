@@ -77,8 +77,8 @@ static bool32 BerryPouchLoadGfx(void);
 static bool32 AllocateListMenuBuffers(void);
 static void SetUpListMenuTemplate(void);
 static void GetBerryNameAndIndexForMenu(u8 * dest, u32 itemId);
-static void BerryPouchMoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list);
-static void BerryPouchItemPrintFunc(u8 windowId, u32 itemId, u8 y);
+static void BerryPouchMoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list);
+static void BerryPouchItemPrintFunc(u32 windowId, u32 itemId, u32 y);
 static void BerryPouchSetArrowCursorAt(u32 y, u32 colorIdx);
 static void PrintSelectedBerryDescription(s32 itemIndex);
 static void CreateScrollIndicatorArrows_BerryPouchList(void);
@@ -680,9 +680,9 @@ static void CopySelectedListMenuItemName(s16 itemIdx, u8 * dest)
     StringCopy(dest, &sListMenuStrbuf[itemIdx * 27]);
 }
 
-static void BerryPouchMoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list)
+static void BerryPouchMoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list)
 {
-    if (onInit != TRUE)
+    if (!onInit)
     {
         PlaySE(SE_BAG_CURSOR);
         StartBerryPouchSpriteWobbleAnim();
@@ -693,7 +693,7 @@ static void BerryPouchMoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMen
     PrintSelectedBerryDescription(itemIndex);
 }
 
-static void BerryPouchItemPrintFunc(u8 windowId, u32 itemId, u8 y)
+static void BerryPouchItemPrintFunc(u32 windowId, u32 itemId, u32 y)
 {
     if (itemId != -2 && sResources->listMenuNumItems != itemId)
     {

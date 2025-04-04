@@ -10,17 +10,17 @@
 #define AI_CHOICE_SWITCH (MAX_MON_MOVES + 2)
 
 // Basic ai basic flags, they are always set for all trainers
-#define AI_FLAG_CHECK_BAD_MOVE        (1 << 0) // Decrease score based if move will fail
-#define AI_FLAG_CHECK_VIABILITY       (1 << 1) // Increase score based on how much the move will be effective
-#define AI_FLAG_TRY_TO_FAINT          (1 << 2)
+#define AI_FLAG_CHECK_BAD_MOVE        Bit(0) // Decrease score based if move will fail
+#define AI_FLAG_CHECK_VIABILITY       Bit(1) // Increase score based on how much the move will be effective
+#define AI_FLAG_TRY_TO_FAINT          Bit(2)
 // Others ai flags
-#define AI_FLAG_OMNISCIENT            (1 << 3) // Causes the ai to always know the user's items, moves, etc.
-#define AI_FLAG_SAFARI                (1 << 4) // Safari mon thinking
-#define AI_FLAG_ROAMER                (1 << 5) // Roamer mon try flee
-#define AI_FLAG_PREFER_STRONGEST_MOVE (1 << 6)
-#define AI_FLAG_PREDICT_SWITCH        (1 << 7)
-#define AI_FLAG_DOUBLE_BATTLE         (1 << 8)
-#define AI_FLAG_HP_AWARE              (1 << 9)
+#define AI_FLAG_OMNISCIENT            Bit(3) // Causes the ai to always know the user's items, moves, etc.
+#define AI_FLAG_SAFARI                Bit(4) // Safari mon thinking
+#define AI_FLAG_ROAMER                Bit(5) // Roamer mon try flee
+#define AI_FLAG_PREFER_STRONGEST_MOVE Bit(6)
+#define AI_FLAG_PREDICT_SWITCH        Bit(7)
+#define AI_FLAG_DOUBLE_BATTLE         Bit(8)
+#define AI_FLAG_HP_AWARE              Bit(9)
 
 struct AiData
 {

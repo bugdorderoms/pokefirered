@@ -23,6 +23,8 @@ static void AnimIngrainRoot(struct Sprite* sprite);
 static void AnimRootFlickerOut(struct Sprite *);
 static void AnimIngrainOrb(struct Sprite* sprite);
 static void AnimFrenzyPlantRoot(struct Sprite *sprite);
+static void AnimWoodHammer(struct Sprite *sprite);
+static void AnimWoodHammerStep(struct Sprite *sprite);
 
 static const u16 sMagicalLeafBlendColors[] =
 {
@@ -466,6 +468,102 @@ const struct SpriteTemplate gLeafStormParticleSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimDirtScatter,
+};
+
+static const union AnimCmd sAnim_PowerWhipVineOnPlayer[] =
+{
+    ANIMCMD_FRAME(0, 3, .hFlip = TRUE),
+	ANIMCMD_FRAME(16, 3, .hFlip = TRUE),
+	ANIMCMD_FRAME(32, 3, .hFlip = TRUE),
+	ANIMCMD_FRAME(48, 3, .hFlip = TRUE),
+	ANIMCMD_FRAME(64, 3, .hFlip = TRUE),
+	ANIMCMD_END
+};
+
+static const union AnimCmd sAnim_PowerWhipVineOnOpponent[] =
+{
+    ANIMCMD_FRAME(0, 3),
+	ANIMCMD_FRAME(16, 3),
+	ANIMCMD_FRAME(32, 3),
+	ANIMCMD_FRAME(48, 3),
+	ANIMCMD_FRAME(64, 3),
+	ANIMCMD_END
+};
+
+static const union AnimCmd *const sAnims_PowerWhipVine[] =
+{
+    sAnim_PowerWhipVineOnPlayer,
+	sAnim_PowerWhipVineOnOpponent
+};
+
+const struct SpriteTemplate gPowerWhipVineSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_VINE_2,
+    .paletteTag = ANIM_TAG_VINE_2,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_PowerWhipVine,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimWhipHit,
+};
+
+const struct SpriteTemplate gGrassKnotSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_RAZOR_LEAF,
+    .paletteTag = ANIM_TAG_RAZOR_LEAF,
+    .oam = &gOamData_AffineOff_ObjNormal_32x16,
+    .anims = sRazorLeafCutterAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSlidingKick,
+};
+
+static const union AffineAnimCmd sWoodHammerAffineAnimCmd_BackwardsRotateAndScale[] = 
+{
+    AFFINEANIMCMD_FRAME(5, 5, 2, 40),
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sWoodHammerAffineAnimCmd_BackwardsRotateAndScaleFlipped[] = 
+{
+	AFFINEANIMCMD_FRAME(-256, -256, 0, 0),
+    AFFINEANIMCMD_FRAME(-5, 5, -2, 40),
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sWoodHammerAffineAnimCmd_PunchClockwise[] = 
+{
+    AFFINEANIMCMD_FRAME(456, 456, 80, 0),
+    AFFINEANIMCMD_FRAME(0, 0, -16, 7),
+	AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sWoodHammerAffineAnimCmd_PunchCounterClockwise[] = 
+{
+    AFFINEANIMCMD_FRAME(-456, 456, -80, 0),
+    AFFINEANIMCMD_FRAME(0, 0, 16, 7),
+	AFFINEANIMCMD_END
+};
+
+// Animations 0, 2 are for the player side attacking
+// Animations 1, 3 are for the opponent side attacking (flipped)
+static const union AffineAnimCmd *const sWoodHammerAffineAnimTable[] = 
+{
+    sWoodHammerAffineAnimCmd_BackwardsRotateAndScale,
+    sWoodHammerAffineAnimCmd_BackwardsRotateAndScaleFlipped,
+    sWoodHammerAffineAnimCmd_PunchClockwise,
+    sWoodHammerAffineAnimCmd_PunchCounterClockwise
+};
+
+const struct SpriteTemplate gWoodHammerSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_WOOD_HAMMER,
+    .paletteTag = ANIM_TAG_WOOD_HAMMER,
+    .oam = &gOamData_AffineDouble_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sWoodHammerAffineAnimTable,
+    .callback = AnimWoodHammer,
 };
 
 // Shoots a leaf upward, then floats it downward while swaying back and forth.
@@ -1279,4 +1377,46 @@ void AnimNeedleArmSpike(struct Sprite* sprite)
 		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
         sprite->callback = AnimMoveSpriteOverDurationFast;
     }
+}
+
+// Animates MOVE_WOOD_HAMMER's hammer sprite.
+// No args.
+static void AnimWoodHammer(struct Sprite *sprite)
+{
+	if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+	{
+		sprite->x += 40;
+		sprite->data[0] = 1;
+	}
+	else
+	{
+		sprite->x -= 40;
+		sprite->data[0] = 0;
+	}
+	StartSpriteAffineAnim(sprite, sprite->data[0]);
+	
+	sprite->data[1] = 37;
+	sprite->callback = AnimWoodHammerStep;
+}
+
+static void AnimWoodHammerStep(struct Sprite *sprite)
+{
+	if (sprite->affineAnimEnded)
+	{
+		if (sprite->data[1])
+		{
+			sprite->data[1]--;
+			
+			if (sprite->data[1] & 1)
+			{
+				if ((sprite->data[1] / 2) & 1)
+					sprite->x2++;
+				else
+					sprite->x2--;
+			}
+			return;
+		}
+		StartSpriteAffineAnim(sprite, sprite->data[0] + 2);
+		sprite->callback = DestroyAnimSpriteWhenAffineAnimEnds;
+	}
 }

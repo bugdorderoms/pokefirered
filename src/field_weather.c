@@ -21,18 +21,18 @@ struct WeatherCallbacks
     void (*initVars)(void);
     void (*main)(void);
     void (*initAll)(void);
-    bool8 (*finish)(void);
+    bool32 (*finish)(void);
 };
 
 static void Task_WeatherMain(u8 taskId);
 static void Task_WeatherInit(u8 taskId);
 static void None_Init(void);
 static void None_Main(void);
-static bool8 None_Finish(void);
+static bool32 None_Finish(void);
 static void UpdateWeatherGammaShift(void);
-static void ApplyGammaShift(u8 gammaType, u8 startPalIndex, u8 numPalettes, s8 gammaIndex);
+static void ApplyGammaShift(u32 gammaType, u32 startPalIndex, u32 numPalettes, s8 gammaIndex);
 static void FadeInScreenWithWeather(void);
-static bool8 FadeInScreen_RainSnowShade(void);
+static bool32 FadeInScreen_RainSnowShade(void);
 static void DoNothing(void);
 
 static EWRAM_DATA struct Weather sWeather = {};
@@ -133,7 +133,7 @@ void StartWeather(void)
     }
 }
 
-void SetNextWeather(u8 weather)
+void SetNextWeather(u32 weather)
 {
     if (weather != WEATHER_RAIN && weather != WEATHER_RAIN_THUNDERSTORM && weather != WEATHER_DOWNPOUR)
         PlayRainStoppingSoundEffect();
@@ -146,7 +146,7 @@ void SetNextWeather(u8 weather)
     gWeatherPtr->finishStep = 0;
 }
 
-void SetCurrentAndNextWeather(u8 weather)
+void SetCurrentAndNextWeather(u32 weather)
 {
     PlayRainStoppingSoundEffect();
     gWeatherPtr->currWeather = weather;
@@ -196,9 +196,9 @@ static void None_Main(void)
 {
 }
 
-static u8 None_Finish(void)
+static bool32 None_Finish(void)
 {
-    return 0;
+    return FALSE;
 }
 
 // When the weather is changing, it gradually updates the palettes
@@ -250,7 +250,7 @@ static void FadeInScreenWithWeather(void)
     }
 }
 
-static bool8 FadeInScreen_RainSnowShade(void)
+static bool32 FadeInScreen_RainSnowShade(void)
 {
     if (gWeatherPtr->fadeScreenCounter == 16)
         return FALSE;
@@ -268,10 +268,11 @@ static bool8 FadeInScreen_RainSnowShade(void)
 static void DoNothing(void)
 { }
 
-static void ApplyGammaShift(u8 gammaType, u8 startPalIndex, u8 numPalettes, s8 gammaIndex)
+static void ApplyGammaShift(u32 gammaType, u32 startPalIndex, u32 numPalettes, s8 gammaIndex)
 {
-    u8 i, r, g, b, blendCoeff, curPalIndex = startPalIndex;
-    u16 fadeColor, palOffset = startPalIndex * 16;
+	u32 i, curPalIndex = startPalIndex;
+    u8 r, g, b, blendCoeff;
+    u32 fadeColor, palOffset = startPalIndex * 16;
 	
 	numPalettes += startPalIndex;
 	
@@ -357,7 +358,7 @@ void WeatherShiftGammaIfPalStateIdle(s8 gammaIndex)
     }
 }
 
-void WeatherBeginGammaFade(u8 gammaIndex, u8 gammaTargetIndex, u8 gammaStepDelay)
+void WeatherBeginGammaFade(u32 gammaIndex, u32 gammaTargetIndex, u32 gammaStepDelay)
 {
     if (gWeatherPtr->palProcessingState == WEATHER_PAL_STATE_IDLE)
     {
@@ -370,15 +371,15 @@ void WeatherBeginGammaFade(u8 gammaIndex, u8 gammaTargetIndex, u8 gammaStepDelay
     }
 }
 
-void FadeScreen(u8 mode, s8 delay)
+void FadeScreen(u32 mode, s8 delay)
 {
 	FadeSelectedPals(mode, delay, PALETTES_ALL);
 }
 
-void FadeSelectedPals(u8 mode, s8 delay, u32 selectedPalettes)
+void FadeSelectedPals(u32 mode, s8 delay, u32 selectedPalettes)
 {
     u32 fadeColor;
-    bool8 fadeOut, useWeatherPal;
+    bool32 fadeOut, useWeatherPal;
 
     switch (mode)
     {
@@ -441,15 +442,15 @@ void FadeSelectedPals(u8 mode, s8 delay, u32 selectedPalettes)
     }
 }
 
-bool8 IsWeatherNotFadingIn(void)
+bool32 IsWeatherNotFadingIn(void)
 {
     return (gWeatherPtr->palProcessingState != WEATHER_PAL_STATE_SCREEN_FADING_IN);
 }
 
-void UpdateSpritePaletteWithWeather(u8 spritePaletteIndex)
+void UpdateSpritePaletteWithWeather(u32 spritePaletteIndex)
 {
-    u16 paletteIndex = 16 + spritePaletteIndex;
-    u16 i;
+    u32 paletteIndex = 16 + spritePaletteIndex;
+    u32 i;
 
     switch (gWeatherPtr->palProcessingState)
     {
@@ -472,7 +473,7 @@ void UpdateSpritePaletteWithWeather(u8 spritePaletteIndex)
     }
 }
 
-void ApplyWeatherGammaShiftToPal(u8 paletteIndex)
+void ApplyWeatherGammaShiftToPal(u32 paletteIndex)
 {
     ApplyGammaShift(GAMMA_NORMAL, paletteIndex, 1, gWeatherPtr->gammaIndex);
 }
@@ -488,7 +489,7 @@ void LoadWeatherSpritePalette(const struct SpritePalette *palette)
 	UpdateSpritePaletteWithWeather(15);
 }
 
-void Weather_SetBlendCoeffs(u8 eva, u8 evb)
+void Weather_SetBlendCoeffs(u32 eva, u32 evb)
 {
     gWeatherPtr->currBlendEVA = eva;
     gWeatherPtr->currBlendEVB = evb;
@@ -497,7 +498,7 @@ void Weather_SetBlendCoeffs(u8 eva, u8 evb)
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(eva, evb));
 }
 
-void Weather_SetTargetBlendCoeffs(u8 eva, u8 evb, int delay)
+void Weather_SetTargetBlendCoeffs(u32 eva, u32 evb, int delay)
 {
     gWeatherPtr->targetBlendEVA = eva;
     gWeatherPtr->targetBlendEVB = evb;
@@ -506,7 +507,7 @@ void Weather_SetTargetBlendCoeffs(u8 eva, u8 evb, int delay)
     gWeatherPtr->blendUpdateCounter = 0;
 }
 
-bool8 Weather_UpdateBlend(void)
+bool32 Weather_UpdateBlend(void)
 {
     if (gWeatherPtr->currBlendEVA == gWeatherPtr->targetBlendEVA && gWeatherPtr->currBlendEVB == gWeatherPtr->targetBlendEVB)
         return TRUE;
@@ -540,12 +541,12 @@ bool8 Weather_UpdateBlend(void)
     return FALSE;
 }
 
-u8 GetCurrentWeather(void)
+u32 GetCurrentWeather(void)
 {
     return gWeatherPtr->currWeather;
 }
 
-void SetRainStrengthFromSoundEffect(u16 soundEffect)
+void SetRainStrengthFromSoundEffect(u32 soundEffect)
 {
     if (gWeatherPtr->palProcessingState != WEATHER_PAL_STATE_SCREEN_FADING_OUT)
     {

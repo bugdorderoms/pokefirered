@@ -54,9 +54,6 @@
 // param = NATURE_FORM_AMPED or NATURE_FORM_LOW_KEY
 #define FORM_CHANGE_NATURE        0x000B
 
-// form change when the pokemon is send out to pc or withdraw from daycare.
-// no param is necessary
-
 // form change that sets a countdown, when it reaches 0 the pokemon will revert form. It also revert form if send to pc or withdraw from daycare.
 // param = num days
 #define FORM_CHANGE_COUNTDOWN     0x000C

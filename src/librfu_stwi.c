@@ -1,4 +1,5 @@
 #include "librfu.h"
+#include "util.h"
 
 static void STWI_intr_timer(void);
 static u16 STWI_init(u8 request);
@@ -642,7 +643,7 @@ static s32 STWI_reset_ClockCounter(void)
     gSTWIStatus->state = 5; // slave receive req init
     gSTWIStatus->reqLength = 0;
     gSTWIStatus->reqNext = 0;
-    REG_SIODATA32 = (1 << 31);
+    REG_SIODATA32 = Bit(31);
     REG_SIOCNT = 0;
     REG_SIOCNT = SIO_INTR_ENABLE | SIO_32BIT_MODE | SIO_115200_BPS;
     REG_SIOCNT = (SIO_INTR_ENABLE | SIO_32BIT_MODE | SIO_115200_BPS) + 0x7F;

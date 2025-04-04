@@ -1553,7 +1553,7 @@ static void SpriteCB_AbilityPopUp(struct Sprite * sprite)
 				{
 					if (sprite->tDestroy)
 					{
-						gActiveAbilityPopUps &= ~(gBitTable[battlerId]);
+						gActiveAbilityPopUps &= ~(Bit(battlerId));
 						gAbilityPopUpIds[battlerId][0] = 0;
 						gAbilityPopUpIds[battlerId][1] = 0;
 						FreeSpriteTilesByTag(ANIM_TAG_ABILITY_POP_UP + battlerId);
@@ -1597,7 +1597,7 @@ void AnimTask_CreateAbilityPopUp(u8 taskId)
 	LoadSpriteSheet((const struct SpriteSheet*)&gBattleAnimPicTable[GET_TRUE_SPRITE_INDEX(ANIM_TAG_ABILITY_POP_UP + battler)]);
     LoadSpritePalette((const struct SpritePalette*)&gBattleAnimPaletteTable[GET_TRUE_SPRITE_INDEX(ANIM_TAG_ABILITY_POP_UP)]);
 	
-    gActiveAbilityPopUps |= gBitTable[battler];
+    gActiveAbilityPopUps |= Bit(battler);
     
 	position = GetBattlerPosition(battler);
 	
@@ -1632,24 +1632,18 @@ void AnimTask_CreateAbilityPopUp(u8 taskId)
 
 void AnimTask_HideAbilityPopUp(u8 taskId)
 {
-	if (gActiveAbilityPopUps & gBitTable[gBattleAnimAttacker])
-	{
-		gSprites[gAbilityPopUpIds[gBattleAnimAttacker][0]].tFrames = 0;
-		gSprites[gAbilityPopUpIds[gBattleAnimAttacker][0]].tDestroy = gBattleAnimArgs[0];
-		gSprites[gAbilityPopUpIds[gBattleAnimAttacker][1]].tFrames = 0;
-		gSprites[gAbilityPopUpIds[gBattleAnimAttacker][1]].tDestroy = gBattleAnimArgs[0];
-	}
+	gSprites[gAbilityPopUpIds[gBattleAnimAttacker][0]].tFrames = 0;
+	gSprites[gAbilityPopUpIds[gBattleAnimAttacker][0]].tDestroy = gBattleAnimArgs[0];
+	gSprites[gAbilityPopUpIds[gBattleAnimAttacker][1]].tFrames = 0;
+	gSprites[gAbilityPopUpIds[gBattleAnimAttacker][1]].tDestroy = gBattleAnimArgs[0];
     DestroyAnimVisualTask(taskId);
 }
 
 void AnimTask_UpdateAbilityPopUp(u8 taskId)
 {
-	if (gActiveAbilityPopUps & gBitTable[gBattleAnimAttacker])
-	{
-		PrintBattlerAndAbilityOnAbilityPopUp(gBattleAnimAttacker, gAbilityPopUpIds[gBattleAnimAttacker][0], gAbilityPopUpIds[gBattleAnimAttacker][1]);
-		gSprites[gAbilityPopUpIds[gBattleAnimAttacker][0]].tState = 0;
-		gSprites[gAbilityPopUpIds[gBattleAnimAttacker][1]].tState = 0;
-	}
+	PrintBattlerAndAbilityOnAbilityPopUp(gBattleAnimAttacker, gAbilityPopUpIds[gBattleAnimAttacker][0], gAbilityPopUpIds[gBattleAnimAttacker][1]);
+	gSprites[gAbilityPopUpIds[gBattleAnimAttacker][0]].tState = 0;
+	gSprites[gAbilityPopUpIds[gBattleAnimAttacker][1]].tState = 0;
 	DestroyAnimVisualTask(taskId);
 }
 

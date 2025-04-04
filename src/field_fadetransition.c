@@ -33,11 +33,11 @@ static void Task_Teleport2Warp(u8 taskId);
 static void Task_TeleportWarp(u8 taskId);
 static void Task_DoorWarp(u8 taskId);
 static void Task_StairWarp(u8 taskId);
-static void sub_807EBBC(u8 a0, s16 *a1, s16 *a2);
+static void sub_807EBBC(u32 a0, s16 *a1, s16 *a2);
 static void sub_807EAC4(s16, s16, s16*, s16*, s16*);
 static void sub_807EC34(u8 taskId);
 static void sub_807ECBC(s16 *, s16 *, s16 *, s16 *, s16 *);
-static bool8 sub_807EDA0(s16 *, s16 *, s16 *, s16 *, s16 *);
+static bool32 sub_807EDA0(s16 *, s16 *, s16 *, s16 *, s16 *);
 
 static inline void palette_bg_faded_fill_white(void)
 {
@@ -136,6 +136,7 @@ void FieldCB_ContinueScript(void)
 static void task_mpl_807DD60(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
+	
     switch (task->data[0])
     {
     case 0:
@@ -170,6 +171,7 @@ void FieldCB_ReturnToFieldCableLink(void)
 static void Task_ReturnToFieldRecordMixing(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
+	
     switch (task->data[0])
     {
     case 0:
@@ -202,7 +204,7 @@ void FieldCB_ReturnToFieldWirelessLink(void)
     CreateTask(Task_ReturnToFieldRecordMixing, 10);
 }
 
-static void sub_807DE78(bool8 a0)
+static void sub_807DE78(bool32 a0)
 {
     s16 x, y;
     u32 behavior;
@@ -434,7 +436,7 @@ void FadeTransition_FadeInOnReturnToStartMenu(void)
     ScriptContext2_Enable();
 }
 
-bool8 FieldCB_ReturnToFieldOpenStartMenu(void)
+bool32 FieldCB_ReturnToFieldOpenStartMenu(void)
 {
     SetUpReturnToStartMenu();
     return FALSE;
@@ -484,9 +486,9 @@ void DoDiveWarp(void)
     CreateTask(Task_Teleport2Warp, 10);
 }
 
-void DoStairWarp(u16 metatileBehavior, u16 delay)
+void DoStairWarp(u32 metatileBehavior, u32 delay)
 {
-    u8 taskId = CreateTask(Task_StairWarp, 10);
+    u32 taskId = CreateTask(Task_StairWarp, 10);
     gTasks[taskId].data[1] = metatileBehavior;
     gTasks[taskId].data[15] = delay;
     Task_StairWarp(taskId);
@@ -519,7 +521,7 @@ void DoFallWarp(void)
     gFieldCallback = FieldCB_FallWarpExit;
 }
 
-void DoEscalatorWarp(u8 metatileBehavior)
+void DoEscalatorWarp(u32 metatileBehavior)
 {
     ScriptContext2_Enable();
     StartEscalatorWarp(metatileBehavior, 10);
@@ -548,6 +550,7 @@ void DoTeleportWarp(void)
 static void Task_CableClubWarp(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
+	
     switch (task->data[0])
     {
     case 0:
@@ -578,6 +581,7 @@ void DoCableClubWarp(void)
 static void Task_ReturnFromLinkRoomWarp(u8 taskId)
 {
     s16 * data = gTasks[taskId].data;
+	
     switch (data[0])
     {
     case 0:
@@ -613,6 +617,7 @@ void ReturnFromLinkRoom(void)
 static void Task_Teleport2Warp(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
+	
     switch (task->data[0])
     {
     case 0:
@@ -635,6 +640,7 @@ static void Task_Teleport2Warp(u8 taskId)
 static void Task_TeleportWarp(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
+	
     switch (task->data[0])
     {
     case 0:
@@ -668,6 +674,7 @@ static void Task_DoorWarp(u8 taskId)
     struct Task *task = &gTasks[taskId];
     s16 * xp = &task->data[2];
     s16 * yp = &task->data[3];
+	
     switch (task->data[0])
     {
     case 0:
@@ -696,9 +703,8 @@ static void Task_DoorWarp(u8 taskId)
         break;
     case 3:
         if (task->data[1] < 0 || gTasks[task->data[1]].isActive != TRUE)
-        {
             task->data[0] = 4;
-        }
+
         break;
     case 4:
         TryFadeOutOldMapMusic();
@@ -750,8 +756,8 @@ static void Task_StairWarp(u8 taskId)
         break;
     case 2:
         sub_807EAC4(data[2], data[3], &data[4], &data[5], &data[6]);
-        data[15]++;
-        if (data[15] >= 12)
+
+        if (++data[15] >= 12)
         {
             WarpFadeOutScreen();
             data[0]++;
@@ -759,6 +765,7 @@ static void Task_StairWarp(u8 taskId)
         break;
     case 3:
         sub_807EAC4(data[2], data[3], &data[4], &data[5], &data[6]);
+		
         if (!gPaletteFade.active && IsNotWaitingForBGMStop())
             data[0]++;
         break;
@@ -775,6 +782,7 @@ static void sub_807EAC4(s16 a0, s16 a1, s16 *a2, s16 *a3, s16 *a4)
 {
     if (a1 > 0 || *a4 > 6)
         *a3 += a1;
+	
     *a2 += a0;
     (*a4)++;
     gSprites[gPlayerAvatar.spriteId].x2 = *a2 >> 5;
@@ -784,7 +792,7 @@ static void sub_807EAC4(s16 a0, s16 a1, s16 *a2, s16 *a3, s16 *a4)
         ObjectEventForceSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], GetWalkInPlaceNormalMovementAction(GetPlayerFacingDirection()));
 }
 
-static void sub_807EBBC(u8 a0, s16 *a1, s16 *a2)
+static void sub_807EBBC(u32 a0, s16 *a1, s16 *a2)
 {
     if (MetatileBehavior_IsDirectionalUpRightStairWarp(a0))
     {
@@ -816,6 +824,7 @@ static void sub_807EBBC(u8 a0, s16 *a1, s16 *a2)
 static void sub_807EC34(u8 taskId)
 {
     s16 * data = gTasks[taskId].data;
+	
     switch (data[0])
     {
     default:
@@ -843,17 +852,21 @@ static void sub_807EC34(u8 taskId)
 static void sub_807ECBC(s16 *a0, s16 *a1, s16 *a2, s16 *a3, s16 *a4)
 {
     s16 x, y;
-    u8 behavior;
+    u32 behavior;
     s32 r1;
     struct Sprite *sprite;
+	
     PlayerGetDestCoords(&x, &y);
     behavior = MapGridGetMetatileBehaviorAt(x, y);
+	
 	r1 = (MetatileBehavior_IsDirectionalDownRightStairWarp(behavior) || MetatileBehavior_IsDirectionalUpRightStairWarp(behavior)) ? 3 : 4;
     ObjectEventForceSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], GetWalkInPlaceSlowMovementAction(r1));
+	
     sub_807EBBC(behavior, a0, a1);
     *a2 = *a0 * 16;
     *a3 = *a1 * 16;
     *a4 = 16;
+	
     sprite = &gSprites[gPlayerAvatar.spriteId];
     sprite->x2 = *a2 >> 5;
     sprite->y2 = *a3 >> 5;
@@ -861,7 +874,7 @@ static void sub_807ECBC(s16 *a0, s16 *a1, s16 *a2, s16 *a3, s16 *a4)
     *a1 *= -1;
 }
 
-static bool8 sub_807EDA0(s16 *a0, s16 *a1, s16 *a2, s16 *a3, s16 *a4)
+static bool32 sub_807EDA0(s16 *a0, s16 *a1, s16 *a2, s16 *a3, s16 *a4)
 {
     struct Sprite *sprite = &gSprites[gPlayerAvatar.spriteId];
 	
@@ -893,7 +906,7 @@ static void Task_FieldMoveWaitForFade(u8 taskId)
 }
 
 // For field moves
-bool8 FieldCallback_PrepareFadeInFromMenu(void)
+bool32 FieldCallback_PrepareFadeInFromMenu(void)
 {
     FadeInFromBlack();
     CreateTask(Task_FieldMoveWaitForFade, 8);

@@ -2547,7 +2547,7 @@ static void CB2_HandleTradeEnded(void)
     case 52:
         if (AfterLinkTradeSaveFailed())
         {
-            ClearContinueGameWarpStatus2();
+            ClearContinueGameWarpStatus();
             gMain.state = 4;
         }
         else

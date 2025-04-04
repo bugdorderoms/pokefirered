@@ -9,41 +9,41 @@ gTasks[taskId].data[9] = (u32)func;
 
 extern struct MapPosition gPlayerFacingPosition;
 
-bool8 CheckObjectGraphicsInFrontOfPlayer(u8 graphicsId);
-u8 CreateFieldEffectShowMon(void);
+bool32 CheckObjectGraphicsInFrontOfPlayer(u32 graphicsId);
+u32 CreateFieldEffectShowMon(void);
 
 // flash
-u8 MapTransitionIsExit(u8 lightLevel, u8 mapType);
-u8 MapTransitionIsEnter(u8 mapType1, u8 mapType2);
-bool8 SetUpFieldMove_Flash(void);
+bool32 MapTransitionIsExit(u32 lightLevel, u32 mapType);
+bool32 MapTransitionIsEnter(u32 mapType1, u32 mapType2);
+bool32 SetUpFieldMove_Flash(void);
 void CB2_DoChangeMap(void);
 
 // cut
-bool8 SetUpFieldMove_Cut(void);
+bool32 SetUpFieldMove_Cut(void);
 
 // dig
-bool8 SetUpFieldMove_Dig(void);
-bool8 FldEff_UseDig(void);
+bool32 SetUpFieldMove_Dig(void);
+bool32 FldEff_UseDig(void);
 
 // poison
 void FldEffPoison_Start(void);
 bool32 FldEffPoison_IsActive(void);
 
 // teleport
-bool8 SetUpFieldMove_Teleport(void);
-bool8 FldEff_UseTeleport(void);
+bool32 SetUpFieldMove_Teleport(void);
+bool32 FldEff_UseTeleport(void);
 
 // softboiled
-bool8 SetUpFieldMove_SoftBoiled(void);
-void ChooseMonForSoftboiled(u8 taskId);
-void Task_TryUseSoftboiledOnPartyMon(u8 taskId);
+bool32 SetUpFieldMove_SoftBoiled(void);
+void ChooseMonForSoftboiled(u32 taskId);
+void Task_TryUseSoftboiledOnPartyMon(u32 taskId);
 
 // sweetscent
-bool8 SetUpFieldMove_SweetScent(void);
-bool8 FldEff_SweetScent(void);
+bool32 SetUpFieldMove_SweetScent(void);
+bool32 FldEff_SweetScent(void);
 void StartSweetScentFieldEffect(void);
 
 // defog
-bool8 SetUpFieldMove_Defog(void);
+bool32 SetUpFieldMove_Defog(void);
 
 #endif // GUARD_FLDEFF_H

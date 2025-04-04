@@ -69,7 +69,7 @@ bool8 ScrCmd_nop(struct ScriptContext * ctx)
     return FALSE;
 }
 
-static bool8 WaitPlayerForFindItemAnim(void)
+static bool32 WaitPlayerForFindItemAnim(void)
 {
 	struct ObjectEvent * playerObj = &gObjectEvents[gPlayerAvatar.objectEventId];
 	
@@ -111,7 +111,7 @@ static void Task_EndPlayerFindItemAnim(u8 taskId)
 	}
 }
 
-static bool8 EndPlayerFindItemAnim(void)
+static bool32 EndPlayerFindItemAnim(void)
 {
 	if (!FuncIsActiveTask(Task_EndPlayerFindItemAnim))
 	{
@@ -136,7 +136,7 @@ bool8 ScrCmd_end(struct ScriptContext * ctx)
 
 bool8 ScrCmd_gotonative(struct ScriptContext * ctx)
 {
-    bool8 (*func)(void) = (bool8 (*)(void))ScriptReadWord(ctx);
+    bool32 (*func)(void) = (bool32 (*)(void))ScriptReadWord(ctx);
     SetupNativeScript(ctx, func);
     return TRUE;
 }
@@ -658,7 +658,7 @@ bool8 ScrCmd_setflashradius(struct ScriptContext * ctx)
     return FALSE;
 }
 
-static bool8 IsPaletteNotActive(void)
+static bool32 IsPaletteNotActive(void)
 {
     if (!gPaletteFade.active)
         return TRUE;
@@ -683,7 +683,7 @@ bool8 ScrCmd_fadescreenspeed(struct ScriptContext * ctx)
     return TRUE;
 }
 
-static bool8 RunPauseTimer(void)
+static bool32 RunPauseTimer(void)
 {
     sPauseCounter--;
 
@@ -934,7 +934,7 @@ bool8 ScrCmd_playse(struct ScriptContext * ctx)
     return FALSE;
 }
 
-static bool8 WaitForSoundEffectFinish(void)
+static bool32 WaitForSoundEffectFinish(void)
 {
     if (!IsSEPlaying())
         return TRUE;
@@ -954,14 +954,9 @@ bool8 ScrCmd_playfanfare(struct ScriptContext * ctx)
     return FALSE;
 }
 
-static bool8 WaitForFanfareFinish(void)
-{
-    return IsFanfareTaskInactive();
-}
-
 bool8 ScrCmd_waitfanfare(struct ScriptContext * ctx)
 {
-    SetupNativeScript(ctx, WaitForFanfareFinish);
+    SetupNativeScript(ctx, IsFanfareTaskInactive);
     return TRUE;
 }
 
@@ -1040,7 +1035,7 @@ bool8 ScrCmd_applymovement_at(struct ScriptContext * ctx)
     return FALSE;
 }
 
-static bool8 WaitForMovementFinish(void)
+static bool32 WaitForMovementFinish(void)
 {
     return ScriptMovement_IsObjectMovementFinished(sMovingNpcId, sMovingNpcMapId, sMovingNpcMapBank);
 }
@@ -1143,7 +1138,7 @@ bool8 ScrCmd_showobject_at(struct ScriptContext * ctx)
     u8 mapGroup = ScriptReadByte(ctx);
     u8 mapNum = ScriptReadByte(ctx);
 
-    ShowOrHideObjectByLocalIdAndMap(localId, mapNum, mapGroup, 0);
+    ShowOrHideObjectByLocalIdAndMap(localId, mapNum, mapGroup, FALSE);
     return FALSE;
 }
 
@@ -1153,7 +1148,7 @@ bool8 ScrCmd_hideobject_at(struct ScriptContext * ctx)
     u8 mapGroup = ScriptReadByte(ctx);
     u8 mapNum = ScriptReadByte(ctx);
 
-    ShowOrHideObjectByLocalIdAndMap(localId, mapNum, mapGroup, 1);
+    ShowOrHideObjectByLocalIdAndMap(localId, mapNum, mapGroup, TRUE);
     return FALSE;
 }
 
@@ -1231,9 +1226,7 @@ bool8 ScrCmd_turnvobject(struct ScriptContext * ctx)
 bool8 ScrCmd_lockall(struct ScriptContext * ctx)
 {
     if (IsUpdateLinkStateCBActive())
-    {
         return FALSE;
-    }
     else
     {
         ScriptFreezeObjectEvents();
@@ -1329,7 +1322,7 @@ bool8 ScrCmd_closemessage(struct ScriptContext * ctx)
     return FALSE;
 }
 
-static bool8 WaitForAorBPress(void)
+static bool32 WaitForAorBPress(void)
 {
     if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
         return TRUE;
@@ -1435,7 +1428,7 @@ bool8 ScrCmd_showmonpic(struct ScriptContext * ctx)
 
 bool8 ScrCmd_hidemonpic(struct ScriptContext * ctx)
 {
-    bool8 (*func)(void) = ScriptMenu_GetPicboxWaitFunc();
+    bool32 (*func)(void) = ScriptMenu_GetPicboxWaitFunc();
 
     if (func == NULL)
         return FALSE;
@@ -1974,7 +1967,7 @@ bool8 ScrCmd_setfieldeffectarg(struct ScriptContext * ctx)
     return FALSE;
 }
 
-static bool8 WaitForFieldEffectFinish(void)
+static bool32 WaitForFieldEffectFinish(void)
 {
     if (!FieldEffectActiveListContains(sFieldEffectScriptId))
         return TRUE;
@@ -2056,7 +2049,7 @@ bool8 ScrCmd_closedoor(struct ScriptContext * ctx)
     return FALSE;
 }
 
-static bool8 IsDoorAnimationStopped(void)
+static bool32 IsDoorAnimationStopped(void)
 {
     if (!FieldIsDoorAnimationRunning())
         return TRUE;

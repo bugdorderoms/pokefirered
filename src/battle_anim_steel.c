@@ -49,6 +49,17 @@ const struct SpriteTemplate gFlashCannonBallSpriteTemplate =
     .callback = AnimShadowBall,
 };
 
+const struct SpriteTemplate gMagnetBombRockBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BLACK_BALL_2,
+    .paletteTag = ANIM_TAG_BLACK_BALL_2,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimNeedleArmSpike,
+};
+
 // Makes the attacker metallic and shining.
 // Used by MOVE_HARDEN and MOVE_IRON_DEFENSE.
 // arg 0: if true won't change battler's palette back

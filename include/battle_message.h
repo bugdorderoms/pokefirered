@@ -227,6 +227,8 @@ static inline void PrepareMonTeamPrefixBuffer(u8 *textVar, u32 battlerId)
 	textVar[3] = B_BUFF_EOS;
 }
 
+#define PrepareBattlerNickWithPrefixBuffer(textVar, battlerId) PrepareMonNickWithPrefixBuffer(textVar, battlerId, gBattlerPartyIndexes[battlerId])
+
 extern const u8* const gBattleStringsTable[];
 
 extern const u16 gMissStringIds[];

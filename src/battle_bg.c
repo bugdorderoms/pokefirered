@@ -793,8 +793,8 @@ static void DrawMoveInfoWindowBorder(u32 windowId)
 
 void CreateBattleMoveInfoWindowsAndArrows(u32 move)
 {
-	u8 colors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
 	u32 i;
+	u8 colors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
 	bool32 isNameWindow;
 	
 	// Create windows

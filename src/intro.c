@@ -108,23 +108,23 @@ static void SpriteCB_TrailingSparkles(struct Sprite * sprite);
 static void SpriteCB_TrailingSparkles2(struct Sprite * sprite);
 static void SpriteCB_RevealGameFreakTextSparkles(struct Sprite * sprite);
 static void CreateNidorinoAnimSprite(struct IntroSequenceData * ptr);
-static void StartNidorinoAnimSpriteSlideIn(struct Sprite * sprite, s16 x0, s16 x1, u16 speed);
+static void StartNidorinoAnimSpriteSlideIn(struct Sprite * sprite, s16 x0, s16 x1, u32 speed);
 static void SpriteCB_NidorinoAnimSpriteSlideIn(struct Sprite * sprite);
 static bool32 IsNidorinoAnimSpriteSlideInRunning(struct IntroSequenceData * ptr);
 static void FightScene4_NidorinoRearsUp(struct IntroSequenceData * ptr);
 static void SpriteCB_NidorinoRearsUp(struct Sprite * sprite);
 static void FightScene4_StartNidorinoRecoilAnim(struct IntroSequenceData * ptr);
 static void SpriteCB_NidorinoRecoil(struct Sprite * sprite);
-static bool8 FightScene4_NidorinoAnimIsRunning(struct IntroSequenceData * ptr);
+static bool32 FightScene4_NidorinoAnimIsRunning(struct IntroSequenceData * ptr);
 static void CreateNidorinoRecoilDustSprites(s16 a1, s16 a2, s16 a3);
 static void SpriteCB_NidorinoRecoilDust(struct Sprite * sprite);
-static void StartSpriteHopToPosAnim(struct Sprite * sprite, u16 a1, s16 a2, u8 a3);
+static void StartSpriteHopToPosAnim(struct Sprite * sprite, u32 a1, s16 a2, u32 a3);
 static void SpriteCB_HopToPos(struct Sprite * sprite);
 static void StartNidorinoAnim_LaunchSelfAtGengarAnim(struct IntroSequenceData * ptr);
 static void SpriteCB_NidorinoAnim_LaunchSelfAtGengar(struct Sprite * sprite);
 static void LoadFightSceneSpriteTilesAndPals(void);
-static void StartBlendTask(u8 eva_start, u8 evb_start, u8 eva_end, u8 evb_end, u8 ev_step, u8 priority);
-static bool8 IsBlendTaskActive(void);
+static void StartBlendTask(u32 eva_start, u32 evb_start, u32 eva_end, u32 evb_end, u32 ev_step, u32 priority);
+static bool32 IsBlendTaskActive(void);
 
 #if REVISION >= 1
 static void Rev1_GameFreakScene_CreatePresentsText(void);
@@ -775,7 +775,7 @@ static void CB2_WaitFadeBeforeSetUpIntro(void)
         SetMainCallback2(CB2_SetUpIntro);
 }
 
-static void load_copyright_graphics(u16 charBase, u16 screenBase, u16 palOffset)
+static void load_copyright_graphics(u32 charBase, u32 screenBase, u32 palOffset)
 {
     LZDecompressVram(sCopyrightGraphicsTiles, (void *)BG_VRAM + charBase);
     LZDecompressVram(sCopyrightGraphicsMap, (void *)BG_VRAM + screenBase);
@@ -787,7 +787,7 @@ static void SerialCb_CopyrightScreen(void)
     GameCubeMultiBoot_HandleSerialInterrupt(&sGcmb);
 }
 
-static bool8 RunCopyrightScreen(void)
+static bool32 RunCopyrightScreen(void)
 {
     switch (gMain.state)
     {
@@ -1256,8 +1256,7 @@ static void Task_FightScene1_GrassyFieldAnim(u8 taskId)
 
 static void FightScene1_SignalEndGrassyFieldAnim(void)
 {
-    u8 taskId = FindTaskIdByFunc(Task_FightScene1_GrassyFieldAnim);
-    gTasks[taskId].data[2] = TRUE;
+    gTasks[FindTaskIdByFunc(Task_FightScene1_GrassyFieldAnim)].data[2] = TRUE;
 }
 
 static void Task_FightScene1_ZoomEffect(u8 taskId)
@@ -1375,7 +1374,7 @@ static void Task_FightScene2_CameraVertPanEffect(u8 taskId)
 
 static void CreateMonStaticSprites(struct IntroSequenceData * this)
 {
-    u8 spriteId;
+    u32 spriteId;
 
     this->gengarStaticSprite = NULL;
     this->nidorinoStaticSprite = NULL;
@@ -1472,13 +1471,13 @@ static void FightScene3_StartBg1Scroll(void)
 
 static void FightScene3_SlowBg1Scroll(void)
 {
-    u8 taskId = FindTaskIdByFunc(Task_FightScene3_Bg1Scroll);
-    gTasks[taskId].data[0] = 1;
+    gTasks[FindTaskIdByFunc(Task_FightScene3_Bg1Scroll)].data[0] = 1;
 }
 
 static void Task_FightScene3_ForestBgScroll(u8 taskId)
 {
     s16 * data = gTasks[taskId].data;
+	
     if (data[0] == 0)
     {
         data[1]++;
@@ -1493,25 +1492,23 @@ static void Task_FightScene3_ForestBgScroll(u8 taskId)
 
 static void FightScene3_PauseForestBgScroll(void)
 {
-    u8 taskId = FindTaskIdByFunc(Task_FightScene3_ForestBgScroll);
-    gTasks[taskId].data[0] = 1;
+    gTasks[FindTaskIdByFunc(Task_FightScene3_ForestBgScroll)].data[0] = 1;
 }
 
 static void FightScene3_ResumeForestBgScroll(void)
 {
-    u8 taskId = FindTaskIdByFunc(Task_FightScene3_ForestBgScroll);
-    gTasks[taskId].data[0] = 0;
+    gTasks[FindTaskIdByFunc(Task_FightScene3_ForestBgScroll)].data[0] = 0;
 }
 
-static bool8 FightScene3_GetForestBgScrollState(void)
+static bool32 FightScene3_GetForestBgScrollState(void)
 {
-    u8 taskId = FindTaskIdByFunc(Task_FightScene3_ForestBgScroll);
-    return gTasks[taskId].data[2];
+    return gTasks[FindTaskIdByFunc(Task_FightScene3_ForestBgScroll)].data[2];
 }
 
 static void CreateGrassSprite(struct IntroSequenceData * this)
 {
-    u8 spriteId = CreateSprite(&sSpriteTemplate_Grass, 296, 112, 7);
+    u32 spriteId = CreateSprite(&sSpriteTemplate_Grass, 296, 112, 7);
+	
     if (spriteId != MAX_SPRITES)
     {
         this->grassSprite = &gSprites[spriteId];
@@ -1699,14 +1696,15 @@ static void FightScene_CalcCenterToCornerVec(struct Sprite * sprite)
 
 static void CreateGengarBackSprite(struct IntroSequenceData * this)
 {
-    int i;
+    u32 i;
 
     // Not using a subsprite table for this
     for (i = 0; i < 4; i++)
     {
         int x = (i & 1) * 48 + 49;
         int y = (i / 2) * 64 + 72;
-        u8 spriteId = CreateSprite(&sSpriteTemplate_GengarBack, x, y, 8);
+        u32 spriteId = CreateSprite(&sSpriteTemplate_GengarBack, x, y, 8);
+		
         if (spriteId != MAX_SPRITES)
         {
             StartSpriteAnim(&gSprites[spriteId], i);
@@ -1733,7 +1731,7 @@ static void SpriteCB_DummyButNotDummy(struct Sprite * sprite)
 
 static void FightScene4_StartGengarAffineAnim(struct IntroSequenceData * this)
 {
-    int i;
+    u32 i;
 
     for (i = 0; i < 4; i++)
     {
@@ -1766,15 +1764,14 @@ static void IntroCB_CleanUp(struct IntroSequenceData * this)
 
 static void GameFreakScene_LoadGfxCreateStar(void)
 {
-    int i;
-    u8 spriteId;
+    u32 i, spriteId;
     static EWRAM_DATA u32 sTrailingSparklesRngSeed = 0;
 
     for (i = 0; i < ARRAY_COUNT(sSpriteSheets_GameFreakScene); i++)
-    {
         LoadCompressedSpriteSheet(&sSpriteSheets_GameFreakScene[i]);
-    }
+
     LoadSpritePalettes(sSpritePalettes_GameFreakScene);
+	
     sLargeStarXSpeed = 0x60;
     sLargeStarYSpeed = 0x10;
     sTrailingSparklesXmodMask = 0x07;
@@ -1785,8 +1782,10 @@ static void GameFreakScene_LoadGfxCreateStar(void)
     sTrailingSparklesYspeed = 1;
     sTrailingSparklesXprecision = 5;
     sTrailingSparklesYprecision = 5;
+	
     if (sTrailingSparklesRngSeed == 0)
         sTrailingSparklesRngSeed = 354128453;
+	
     spriteId = CreateSprite(&sSpriteTemplate_LargeStar, 0xF8, 0x37, 0);
     if (spriteId != MAX_SPRITES)
     {
@@ -1802,7 +1801,7 @@ static void GameFreakScene_TrailingSparklesGen(s16 x, s16 y, u16 a2)
 {
     static EWRAM_DATA s16 sYmod = 0;
 
-    u8 spriteId;
+    u32 spriteId;
     s16 xMod = (a2 & sTrailingSparklesXmodMask) + 2;
     s16 yMod = sYmod;
     sYmod++;
@@ -1831,8 +1830,7 @@ static void GameFreakScene_StartTrailingSparkleSpawner(void)
 static void Task_GameFreakScene_TrailingSparkleSpawner(u8 taskId)
 {
     s16 * data = gTasks[taskId].data;
-    u8 r6;
-    u8 spriteId;
+    u32 r6, spriteId;
 
     data[2]++, data[3]++;
     if (data[2] > 6)
@@ -1867,7 +1865,7 @@ static void GameFreakScene_StartRevealGameFreakTextSparklesSpawner(void)
 static void Task_RevealGameFreakTextSparklesSpawner(u8 taskId)
 {
     s16 * data = gTasks[taskId].data;
-    u8 r2;
+    u32 r2;
 
     if (data[0] == 0)
     {
@@ -1887,23 +1885,25 @@ static void Task_RevealGameFreakTextSparklesSpawner(u8 taskId)
 
 static struct Sprite * CreateGameFreakLogoArtSprite(void)
 {
-    u8 spriteId = CreateSprite(&sSpriteTemplate_GameFreakLogoArt, 120, 70, 4);
-    return &gSprites[spriteId];
+    return &gSprites[CreateSprite(&sSpriteTemplate_GameFreakLogoArt, 120, 70, 4)];
 }
+
 #if REVISION >= 1
 static void Rev1_GameFreakScene_CreatePresentsText(void)
 {
-    int i;
+    u32 i;
+	
     for (i = 0; i < 2; i++)
-    {
         gSprites[CreateSprite(&sSpriteTemplate_PresentsText, 0x68 + 32 * i, 0x6c, 5)].oam.tileNum += i * 4;
-    }
 }
 #endif
+
 static void FightScene4_StartGengarAttack(struct IntroSequenceData * this)
 {
-    u8 taskId;
+    u32 taskId;
+	
     this->gengarAttackLanded = FALSE;
+	
     taskId = CreateTask(Task_FightScene4_GengarAttack, 4);
     SetWordTaskArg(taskId, 5, (uintptr_t)this);
     gTasks[taskId].data[3] = 64;
@@ -1923,6 +1923,7 @@ static void Task_FightScene4_GengarAttack(u8 taskId)
     s16 * data = gTasks[taskId].data;
     int b, c;
     int angle;
+	
     switch (data[0])
     {
     case 0:
@@ -1990,10 +1991,11 @@ static void Task_FightScene4_GengarAttack(u8 taskId)
 
 static void FightScene4_CreateGengarSwipeSprites(void)
 {
-    u8 spriteId;
+    u32 spriteId;
     
-    spriteId = CreateSprite(&sSpriteTemplate_GengarSwipe, 132,  78, 6);
+    CreateSprite(&sSpriteTemplate_GengarSwipe, 132,  78, 6);
     spriteId = CreateSprite(&sSpriteTemplate_GengarSwipe, 132, 118, 6);
+	
     if (spriteId != MAX_SPRITES)
     {
         gSprites[spriteId].oam.shape = ST_OAM_H_RECTANGLE;
@@ -2006,6 +2008,7 @@ static void FightScene4_CreateGengarSwipeSprites(void)
 static void SpriteCB_GengarSwipe(struct Sprite * sprite)
 {
     sprite->invisible ^= TRUE;
+	
     if (sprite->animEnded)
         DestroySprite(sprite);
 }
@@ -2139,11 +2142,10 @@ static void SpriteCB_RevealGameFreakTextSparkles(struct Sprite * sprite)
 
 static void CreateNidorinoAnimSprite(struct IntroSequenceData * this)
 {
-    u8 spriteId = CreateSprite(&sSpriteTemplate_NidorinoAnim, 0, 0, 9);
-    this->nidorinoAnimSprite = &gSprites[spriteId];
+    this->nidorinoAnimSprite = &gSprites[CreateSprite(&sSpriteTemplate_NidorinoAnim, 0, 0, 9)];
 }
 
-static void StartNidorinoAnimSpriteSlideIn(struct Sprite * sprite, s16 x0, s16 x1, u16 speed)
+static void StartNidorinoAnimSpriteSlideIn(struct Sprite * sprite, s16 x0, s16 x1, u32 speed)
 {
     sprite->data[0] = x0 << 4;
     sprite->data[1] = ((x1 - x0) << 4) / speed;
@@ -2174,7 +2176,7 @@ static void SpriteCB_NidorinoAnimSpriteSlideIn(struct Sprite * sprite)
 
 static bool32 IsNidorinoAnimSpriteSlideInRunning(struct IntroSequenceData * ptr)
 {
-    return ptr->nidorinoAnimSprite->callback == SpriteCB_NidorinoAnimSpriteSlideIn ? TRUE : FALSE;
+    return (ptr->nidorinoAnimSprite->callback == SpriteCB_NidorinoAnimSpriteSlideIn);
 }
 
 static void FightScene4_NidorinoRearsUp(struct IntroSequenceData * ptr)
@@ -2297,19 +2299,19 @@ static void SpriteCB_NidorinoRecoil(struct Sprite * sprite)
     }
 }
 
-static bool8 FightScene4_NidorinoAnimIsRunning(struct IntroSequenceData * ptr)
+static bool32 FightScene4_NidorinoAnimIsRunning(struct IntroSequenceData * ptr)
 {
     return ptr->nidorinoAnimSprite->callback == SpriteCallbackDummy ? FALSE : TRUE;
 }
 
 static void CreateNidorinoRecoilDustSprites(s16 x, s16 y, s16 seed)
 {
-    int i;
-    u8 spriteId;
+    u32 i, spriteId;
 
     for (i = 0; i < 2; i++)
     {
         spriteId = CreateSprite(&sSpriteTemplate_NidorinoRecoilDust, x - 22, y + 24, 10);
+		
         if (spriteId != MAX_SPRITES)
         {
             gSprites[spriteId].data[3] = (seed % 13) + 8;
@@ -2348,7 +2350,7 @@ static void SpriteCB_NidorinoRecoilDust(struct Sprite * sprite)
     }
 }
 
-static void StartSpriteHopToPosAnim(struct Sprite * sprite, u16 a1, s16 a2, u8 a3)
+static void StartSpriteHopToPosAnim(struct Sprite * sprite, u32 a1, s16 a2, u32 a3)
 {
     sprite->data[0] = 0;
     sprite->data[1] = a1;
@@ -2472,14 +2474,12 @@ static void SpriteCB_NidorinoAnim_LaunchSelfAtGengar(struct Sprite * sprite)
 
 static void LoadFightSceneSpriteTilesAndPals(void)
 {
-    int i;
+    u32 i;
     
     for (i = 0; i < ARRAY_COUNT(sFightSceneSpriteSheets); i++)
-    {
         LoadCompressedSpriteSheet(&sFightSceneSpriteSheets[i]);
-    }
-    // sFightSceneSpritePalettes is not properly terminated, so this
-    // call exhibits undefined behavior.
+
+    // sFightSceneSpritePalettes is not properly terminated, so this call exhibits undefined behavior.
     LoadSpritePalettes(sFightSceneSpritePalettes);
 }
 
@@ -2522,9 +2522,9 @@ static void Task_SmoothBlendLayers(u8 taskId)
     }
 }
 
-static void StartBlendTask(u8 eva_start, u8 evb_start, u8 eva_end, u8 evb_end, u8 ev_step, u8 priority)
+static void StartBlendTask(u32 eva_start, u32 evb_start, u32 eva_end, u32 evb_end, u32 ev_step, u32 priority)
 {
-    u8 taskId = CreateTask(Task_SmoothBlendLayers, priority);
+    u32 taskId = CreateTask(Task_SmoothBlendLayers, priority);
     gTasks[taskId].tEvA = eva_start << 8;
     gTasks[taskId].tEvB = evb_start << 8;
     gTasks[taskId].tEvAEnd = eva_end;
@@ -2535,7 +2535,7 @@ static void StartBlendTask(u8 eva_start, u8 evb_start, u8 eva_end, u8 evb_end, u
     SetGpuReg(REG_OFFSET_BLDALPHA, (evb_start << 8) | eva_start);
 }
 
-static bool8 IsBlendTaskActive(void)
+static bool32 IsBlendTaskActive(void)
 {
     return FuncIsActiveTask(Task_SmoothBlendLayers);
 }

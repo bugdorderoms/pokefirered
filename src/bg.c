@@ -223,7 +223,7 @@ static void ShowBgInternal(u32 bg)
                 (sGpuBgConfigs.configs[bg].screenSize << 14);
         SetGpuReg((bg << 1) + 0x8, value);
 
-        sGpuBgConfigs.bgVisibilityAndMode |= 1 << (bg + 8);
+        sGpuBgConfigs.bgVisibilityAndMode |= Bit(bg + 8);
         sGpuBgConfigs.bgVisibilityAndMode &= DISPCNT_ALL_BG_AND_MODE_BITS;
     }
 }
@@ -232,7 +232,7 @@ static void HideBgInternal(u32 bg)
 {
     if (!IsInvalidBg(bg))
     {
-        sGpuBgConfigs.bgVisibilityAndMode &= ~(1 << (bg + 8));
+        sGpuBgConfigs.bgVisibilityAndMode &= ~(Bit(bg + 8));
         sGpuBgConfigs.bgVisibilityAndMode &= DISPCNT_ALL_BG_AND_MODE_BITS;
     }
 }
@@ -281,13 +281,13 @@ int BgTileAllocOp(int bg, int offset, int count, int mode)
         start = GetBgControlAttribute(bg, BG_CTRL_ATTR_CHARBASEINDEX) * (BG_CHAR_SIZE / TILE_SIZE_4BPP) + offset;
         end = start + count;
         for (i = start; i < end; i++)
-            gpu_tile_allocation_map_bg[i / 8] |= 1 << (i % 8);
+            gpu_tile_allocation_map_bg[i / 8] |= Bit(i % 8);
         break;
     case BG_TILE_FREE:
         start = GetBgControlAttribute(bg, BG_CTRL_ATTR_CHARBASEINDEX) * (BG_CHAR_SIZE / TILE_SIZE_4BPP) + offset;
         end = start + count;
         for (i = start; i < end; i++)
-            gpu_tile_allocation_map_bg[i / 8] &= ~(1 << (i % 8));
+            gpu_tile_allocation_map_bg[i / 8] &= ~(Bit(i % 8));
         break;
     }
     return 0;
@@ -340,7 +340,7 @@ void InitBgsFromTemplates(u32 bgMode, const struct BgTemplate *templates, u32 nu
 
 static inline void SetDmaBitfieldInCursorPos(u8 pos)
 {
-	sDmaBusyBitfield[pos / 0x20] |= (1 << (pos % 0x20));
+	sDmaBusyBitfield[pos / 0x20] |= Bit(pos % 0x20);
 }
 
 u16 LoadBgTiles(u32 bg, const void* src, u16 size, u16 destOffset)
@@ -387,12 +387,12 @@ bool32 IsDma3ManagerBusyWithBgCopy(void)
         u8 div = i / 0x20;
         u8 mod = i % 0x20;
 
-        if ((sDmaBusyBitfield[div] & (1 << mod)))
+        if (sDmaBusyBitfield[div] & Bit(mod))
         {
             if (WaitDma3Request(i) == -1)
                 return TRUE;
 			
-            sDmaBusyBitfield[div] &= ~(1 << mod);
+            sDmaBusyBitfield[div] &= ~(Bit(mod));
         }
     }
     return FALSE;

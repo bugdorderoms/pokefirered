@@ -74,8 +74,7 @@ static bool8 HandleLoadTMCaseGraphicsAndPalettes(void);
 static void CreateTMCaseListMenuBuffers(void);
 static void InitTMCaseListMenuItems(void);
 static void GetTMNumberAndMoveString(u8 * dest, u16 itemId);
-static void TMCase_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list);
-static void TMCase_ItemPrintFunc(u8 windowId, u32 itemId, u8 y);
+static void TMCase_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list);
 static void TMCase_MoveCursor_UpdatePrintedDescription(s32 itemIndex);
 static void PrintListMenuCursorAt_WithColorIdx(u8 a0, u8 a1);
 static void CreateTMCaseScrollIndicatorArrowPair_Main(void);
@@ -511,7 +510,7 @@ static void InitTMCaseListMenuItems(void)
     gMultiuseListMenuTemplate.fillValue = 0;
     gMultiuseListMenuTemplate.cursorShadowPal = 3;
     gMultiuseListMenuTemplate.moveCursorFunc = TMCase_MoveCursorFunc;
-    gMultiuseListMenuTemplate.itemPrintFunc = TMCase_ItemPrintFunc;
+    gMultiuseListMenuTemplate.itemPrintFunc = NULL;
     gMultiuseListMenuTemplate.cursorKind = 0;
     gMultiuseListMenuTemplate.scrollMultiple = 0;
 }
@@ -528,16 +527,16 @@ static void GetTMNumberAndMoveString(u8 * dest, u16 itemId)
     StringCopy(dest, gStringVar4);
 }
 
-static void TMCase_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list)
+static void TMCase_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list)
 {
-    u16 itemId;
+    u32 itemId;
 
     if (itemIndex == -2)
         itemId = 0;
     else
         itemId = BagGetItemIdByPocketPosition(POCKET_TM_CASE, itemIndex);
 
-    if (onInit != TRUE)
+    if (!onInit)
     {
         PlaySE(SE_SELECT);
         InitSelectedTMSpriteData(sTMCaseDynamicResources->tmSpriteId, itemId);
@@ -545,8 +544,6 @@ static void TMCase_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *
     TMCase_MoveCursor_UpdatePrintedDescription(itemIndex);
     TMCase_MoveCursor_UpdatePrintedTMInfo(itemId);
 }
-
-static void TMCase_ItemPrintFunc(u8 windowId, u32 itemId, u8 y) {}
 
 static void TMCase_MoveCursor_UpdatePrintedDescription(s32 itemIndex)
 {
@@ -1385,7 +1382,7 @@ static void TintTMSpriteByType(u8 type)
     LoadPalette(sTMSpritePaletteBuffer + sTMSpritePaletteOffsetByType[type], 0x100 | palIndex, 0x20);
     if (sTMCaseStaticResources.tmCaseMenuType == 4)
     {
-        BlendPalettes(1 << (0x10 + palIndex), 4, RGB_BLACK);
+        BlendPalettes(Bit(0x10 + palIndex), 4, RGB_BLACK);
     }
 }
 

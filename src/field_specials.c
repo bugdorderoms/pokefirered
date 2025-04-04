@@ -99,15 +99,15 @@ struct ListMenuTemplate sFieldSpecialsListMenuTemplate;
 u16 sFieldSpecialsListMenuScrollBuffer;
 
 static void Task_AnimatePcTurnOn(u8 taskId);
-static void PcTurnOnUpdateMetatileId(bool16 flag);
+static void PcTurnOnUpdateMetatileId(bool32 flag);
 static void Task_ShakeScreen(u8 taskId);
-static u16 SampleResortGorgeousMon(void);
-static u16 SampleResortGorgeousReward(void);
+static u32 SampleResortGorgeousMon(void);
+static u32 SampleResortGorgeousReward(void);
 static void Task_ElevatorShake(u8 taskId);
-static void AnimateElevatorWindowView(u16 nfloors, bool8 direction);
+static void AnimateElevatorWindowView(u32 nfloors, u32 direction);
 static void Task_AnimateElevatorWindowView(u8 taskId);
 static void CreateScriptListMenu(void);
-static void ScriptListMenuMoveCursorFunction(s32 nothing, bool8 is, struct ListMenu * used);
+static void ScriptListMenuMoveCursorFunction(s32 nothing, bool32 is, struct ListMenu * used);
 static void Task_ListMenuHandleInput(u8 taskId);
 static void Task_SuspendListMenu(u8 taskId);
 static void Task_RedrawScrollArrowsAndWaitInput(u8 taskId);
@@ -118,7 +118,7 @@ static void ChangePokemonNickname_CB(void);
 static void Task_RunPokemonLeagueLightingEffect(u8 taskId);
 static void Task_CancelPokemonLeagueLightingEffect(u8 taskId);
 static void Task_DoDeoxysTriangleInteraction(u8 taskId);
-static void MoveDeoxysObject(u8 num);
+static void MoveDeoxysObject(u32 num);
 static void Task_WaitDeoxysFieldEffect(u8 taskId);
 static void Task_WingFlapSound(u8 taskId);
 
@@ -198,6 +198,7 @@ void ForcePlayerOntoBike(void)
 {
     if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_ON_FOOT))
         SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_MACH_BIKE);
+	
     Overworld_SetSavedMusic(MUS_CYCLING);
     Overworld_ChangeMusicTo(MUS_CYCLING);
 }
@@ -212,7 +213,7 @@ void BufferBigGuyOrBigGirlString(void)
 	StringCopy(gStringVar1, gSaveBlock2Ptr->playerGender == MALE ? COMPOUND_STRING("Big guy") : COMPOUND_STRING("Big girl"));
 }
 
-u8 GetBattleOutcome(void)
+u32 GetBattleOutcome(void)
 {
     return gBattleOutcome;
 }
@@ -222,7 +223,7 @@ void SetHiddenItemFlag(void)
     FlagSet(gSpecialVar_0x8004);
 }
 
-u8 GetLeadMonFriendship(void)
+u32 GetLeadMonFriendship(void)
 {
     struct Pokemon * pokemon = &gPlayerParty[GetLeadMonIndex()];
 	
@@ -252,9 +253,9 @@ void ShowTownMap(void)
 
 void AnimatePcTurnOn(void)
 {
-    u8 taskId;
+    u32 taskId;
 
-    if (FuncIsActiveTask(Task_AnimatePcTurnOn) != TRUE)
+    if (!FuncIsActiveTask(Task_AnimatePcTurnOn))
     {
         taskId = CreateTask(Task_AnimatePcTurnOn, 8);
         gTasks[taskId].tState = 0;
@@ -266,6 +267,7 @@ void AnimatePcTurnOn(void)
 static void Task_AnimatePcTurnOn(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
+	
     if (tTimer == 6)
     {
         PcTurnOnUpdateMetatileId(tState & 1);
@@ -281,9 +283,9 @@ static void Task_AnimatePcTurnOn(u8 taskId)
 #undef tState
 #undef tTimer
 
-static void PcTurnOnUpdateMetatileId(bool16 flickerOff)
+static void PcTurnOnUpdateMetatileId(bool32 flickerOff)
 {
-    u16 metatileId = 0;
+    u32 metatileId = 0;
     s8 deltaX = 0;
     s8 deltaY = 0;
 
@@ -302,6 +304,7 @@ static void PcTurnOnUpdateMetatileId(bool16 flickerOff)
         deltaY = -1;
         break;
     }
+	
     if (flickerOff)
     {
         if (gSpecialVar_0x8004 == 0)
@@ -325,7 +328,7 @@ static void PcTurnOnUpdateMetatileId(bool16 flickerOff)
 
 void AnimatePcTurnOff(void)
 {
-    u16 metatileId = 0;
+    u32 metatileId = 0;
     s8 deltaX = 0;
     s8 deltaY = 0;
 
@@ -357,7 +360,7 @@ void AnimatePcTurnOff(void)
 
 void SpawnCameraObject(void)
 {
-    u8 objectEventId = SpawnSpecialObjectEventParameterized(OBJ_EVENT_GFX_YOUNGSTER, 8, OBJ_EVENT_ID_CAMERA, gSaveBlock1Ptr->pos.x + 7, gSaveBlock1Ptr->pos.y + 7, 3);
+    u32 objectEventId = SpawnSpecialObjectEventParameterized(OBJ_EVENT_GFX_YOUNGSTER, 8, OBJ_EVENT_ID_CAMERA, gSaveBlock1Ptr->pos.x + 7, gSaveBlock1Ptr->pos.y + 7, 3);
     gObjectEvents[objectEventId].invisible = TRUE;
     CameraObjectSetFollowedObjectId(gObjectEvents[objectEventId].spriteId);
 }
@@ -393,14 +396,14 @@ static const u8 sSlotMachineIndices[] = {
     5
 };
 
-u8 GetRandomSlotMachineId(void)
+u32 GetRandomSlotMachineId(void)
 {
     return RandomElement(sSlotMachineIndices);
 }
 
-bool8 IsThereRoomInAnyBoxForMorePokemon(void)
+bool32 IsThereRoomInAnyBoxForMorePokemon(void)
 {
-    u16 i, j;
+    u32 i, j;
 
     for (i = 0; i < TOTAL_BOXES_COUNT; i++)
     {
@@ -427,7 +430,7 @@ void ShakeScreen(void)
      * 0x8006 = num interations
      * 0x8007 = duration of an iteration
      */
-    u8 taskId = CreateTask(Task_ShakeScreen, 9);
+    u32 taskId = CreateTask(Task_ShakeScreen, 9);
     gTasks[taskId].tXtrans = gSpecialVar_0x8005;
     gTasks[taskId].tTimer = 0;
     gTasks[taskId].tNremain = gSpecialVar_0x8006;
@@ -463,9 +466,9 @@ static void Task_ShakeScreen(u8 taskId)
 #undef tTimer
 #undef tXtrans
 
-u8 GetLeadMonIndex(void)
+u32 GetLeadMonIndex(void)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; i < CalculatePlayerPartyCount(); i++)
     {
@@ -475,12 +478,12 @@ u8 GetLeadMonIndex(void)
     return 0;
 }
 
-u16 GetPartyMonSpecies(void)
+u32 GetPartyMonSpecies(void)
 {
     return GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_SPECIES2, NULL);
 }
 
-bool8 IsMonOTNameNotPlayers(void)
+bool32 IsMonOTNameNotPlayers(void)
 {
     GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_OT_NAME, gStringVar1);
     
@@ -499,13 +502,16 @@ void DoPicboxCancel(void)
 
 void SetVermilionTrashCans(void)
 {
-    u16 idx = RandomMax(15) + 1;
+    u32 idx = RandomMax(15) + 1;
+	
     gSpecialVar_0x8004 = idx;
     gSpecialVar_0x8005 = idx;
+	
     switch (gSpecialVar_0x8004)
     {
     case 1:
         idx = RandomMax(2);
+		
         if (idx == 0)
             gSpecialVar_0x8005 += 1;
         else
@@ -515,6 +521,7 @@ void SetVermilionTrashCans(void)
     case 3:
     case 4:
         idx = RandomMax(3);
+		
         if (idx == 0)
             gSpecialVar_0x8005 += 1;
         else if (idx == 1)
@@ -524,6 +531,7 @@ void SetVermilionTrashCans(void)
         break;
     case 5:
         idx = RandomMax(2);
+		
         if (idx == 0)
             gSpecialVar_0x8005 += 5;
         else
@@ -531,6 +539,7 @@ void SetVermilionTrashCans(void)
         break;
     case 6:
         idx = RandomMax(3);
+		
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else if (idx == 1)
@@ -542,6 +551,7 @@ void SetVermilionTrashCans(void)
     case 8:
     case 9:
         idx = RandomMax(4);
+		
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else if (idx == 1)
@@ -553,6 +563,7 @@ void SetVermilionTrashCans(void)
         break;
     case 10:
         idx = RandomMax(3);
+		
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else if (idx == 1)
@@ -562,6 +573,7 @@ void SetVermilionTrashCans(void)
         break;
     case 11:
         idx = RandomMax(2);
+		
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else
@@ -571,6 +583,7 @@ void SetVermilionTrashCans(void)
     case 13:
     case 14:
         idx = RandomMax(3);
+		
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else if (idx == 1)
@@ -580,12 +593,14 @@ void SetVermilionTrashCans(void)
         break;
     case 15:
         idx = RandomMax(2);
+		
         if (idx == 0)
             gSpecialVar_0x8005 -= 5;
         else
             gSpecialVar_0x8005 -= 1;
         break;
     }
+	
     if (gSpecialVar_0x8005 > 15)
     {
         if (gSpecialVar_0x8004 % 5 == 1)
@@ -608,7 +623,8 @@ static const u16 sResortGorgeousDeluxeRewards[] = {
 
 void IncrementResortGorgeousStepCounter(void)
 {
-    u16 var4035;
+    u32 var4035;
+	
     if (VarGet(VAR_RESORT_GORGEOUS_REQUESTED_MON) != SPECIES_NONE)
     {
         var4035 = VarGet(VAR_RESORT_GOREGEOUS_STEP_COUNTER) + 1;
@@ -625,7 +641,7 @@ void IncrementResortGorgeousStepCounter(void)
 
 void SampleResortGorgeousMonAndReward(void)
 {
-    u16 requestedSpecies = VarGet(VAR_RESORT_GORGEOUS_REQUESTED_MON);
+    u32 requestedSpecies = VarGet(VAR_RESORT_GORGEOUS_REQUESTED_MON);
 	
     if (requestedSpecies == SPECIES_NONE || requestedSpecies == 0xFFFF)
     {
@@ -636,10 +652,9 @@ void SampleResortGorgeousMonAndReward(void)
     StringCopy(gStringVar1, gSpeciesInfo[requestedSpecies].name);
 }
 
-static u16 SampleResortGorgeousMon(void)
+static u32 SampleResortGorgeousMon(void)
 {
-    u16 i;
-    u16 species;
+    u32 i, species;
 	
     for (i = 0; i < 100; i++)
     {
@@ -648,6 +663,7 @@ static u16 SampleResortGorgeousMon(void)
         if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
             return species;
     }
+	
     while (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
     {
         if (species == SPECIES_BULBASAUR)
@@ -658,12 +674,12 @@ static u16 SampleResortGorgeousMon(void)
     return species;
 }
 
-static u16 SampleResortGorgeousReward(void)
+static u32 SampleResortGorgeousReward(void)
 {
 	return RandomPercent(30) ? RandomElement(sResortGorgeousDeluxeRewards) : ITEM_LUXURY_BALL;
 }
 
-bool8 CheckAddCoins(void)
+bool32 CheckAddCoins(void)
 {
 	return (gSpecialVar_Result + gSpecialVar_0x8006 <= 9999);
 }
@@ -759,7 +775,8 @@ static const u8 sElevatorWindowAnimDuration[] = {
 
 void GetElevatorFloor(void)
 {
-    u16 floor = 4;
+    u32 floor = 4;
+	
     if (gSaveBlock1Ptr->dynamicWarp.mapGroup == MAP_GROUP(ROCKET_HIDEOUT_B1F))
     {
         switch (gSaveBlock1Ptr->dynamicWarp.mapNum)
@@ -832,7 +849,7 @@ void GetElevatorFloor(void)
     VarSet(VAR_ELEVATOR_FLOOR, floor);
 }
 
-u16 InitElevatorFloorSelectMenuPos(void)
+u32 InitElevatorFloorSelectMenuPos(void)
 {
     sElevatorScroll = 0;
     sElevatorCursorPos = 0;
@@ -932,9 +949,11 @@ void AnimateElevator(void)
 {
     u16 nfloors;
     s16 *data = gTasks[CreateTask(Task_ElevatorShake, 9)].data;
+	
     data[1] = 0;
     data[2] = 0;
     data[4] = 1;
+	
     if (gSpecialVar_0x8005 > gSpecialVar_0x8006)
     {
         nfloors = gSpecialVar_0x8005 - gSpecialVar_0x8006;
@@ -947,6 +966,7 @@ void AnimateElevator(void)
     }
     if (nfloors > 8)
         nfloors = 8;
+	
     data[5] = sElevatorAnimationDuration[nfloors];
     SetCameraPanningCallback(NULL);
     AnimateElevatorWindowView(nfloors, data[6]);
@@ -956,7 +976,9 @@ void AnimateElevator(void)
 static void Task_ElevatorShake(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
+	
     data[1]++;
+	
     if ((data[1] % 3) == 0)
     {
         data[1] = 0;
@@ -995,10 +1017,11 @@ void CloseElevatorCurrentFloorWindow(void)
     RemoveWindow(sElevatorCurrentFloorWindowId);
 }
 
-static void AnimateElevatorWindowView(u16 nfloors, u8 direction)
+static void AnimateElevatorWindowView(u32 nfloors, u32 direction)
 {
-    u8 taskId;
-    if (FuncIsActiveTask(Task_AnimateElevatorWindowView) != TRUE)
+    u32 taskId;
+	
+    if (!FuncIsActiveTask(Task_AnimateElevatorWindowView))
     {
         taskId = CreateTask(Task_AnimateElevatorWindowView, 8);
         gTasks[taskId].data[0] = 0;
@@ -1010,20 +1033,19 @@ static void AnimateElevatorWindowView(u16 nfloors, u8 direction)
 
 static void Task_AnimateElevatorWindowView(u8 taskId)
 {
-    u8 i;
-    u8 j;
+    u32 i, j;
     s16 *data = gTasks[taskId].data;
+	
     if (data[1] == 6)
     {
         data[0]++;
+		
         if (data[2] == 0)
         {
             for (i = 0; i < 3; i++)
             {
                 for (j = 0; j < 3; j++)
-                {
                     MapGridSetMetatileIdAt(j + 8, i + 7, sElevatorWindowMetatilesGoingUp[i][data[0] % 3] | METATILE_COLLISION_MASK);
-                }
             }
         }
         else
@@ -1031,13 +1053,13 @@ static void Task_AnimateElevatorWindowView(u8 taskId)
             for (i = 0; i < 3; i++)
             {
                 for (j = 0; j < 3; j++)
-                {
                     MapGridSetMetatileIdAt(j + 8, i + 7, sElevatorWindowMetatilesGoingDown[i][data[0] % 3] | METATILE_COLLISION_MASK);
-                }
             }
         }
         DrawWholeMapView();
+		
         data[1] = 0;
+		
         if (data[0] == data[3])
             DestroyTask(taskId);
     }
@@ -1181,9 +1203,10 @@ static const struct FormChangeListMenuActions sFormChangeMenuLabels[] = {
 	FORMS_LIST(Furfrou),
 };
 
-static u8 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const struct FieldSpecialListMenu *menuListTemplate)
+static u32 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const struct FieldSpecialListMenu *menuListTemplate)
 {
-	u8 i, width, mwidth, windowHeight, taskId = CreateTask(Task_ListMenuHandleInput, 8);
+	u8 width, mwidth, windowHeight;
+	u32 i, taskId = CreateTask(Task_ListMenuHandleInput, 8);
 	struct Task * task = &gTasks[taskId];
 	struct WindowTemplate template;
 	
@@ -1195,6 +1218,7 @@ static u8 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const stru
 	task->data[7] = menuListTemplate->cursorPos;
 	task->data[8] = menuListTemplate->itemsAbove;
 	task->data[5] = (task->data[0] * 2);
+	
 	windowHeight = task->data[5] - 1;
 	if (task->data[5] >= 14)
 	{
@@ -1241,7 +1265,7 @@ static u8 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const stru
 void ListMenu(void)
 {
 	struct FieldSpecialListMenu menuList;
-	u8 itemsAbove, unknown;
+	u32 itemsAbove, unknown;
 	
 	ScriptContext2_Enable();
 	
@@ -1269,7 +1293,7 @@ void ListMenu(void)
 	InitFieldSpecialListMenu(sListMenuLabels[gSpecialVar_0x8000].list, &menuList);
 }
 
-u8 InitFormChangeListMenu(u8 listId)
+u32 InitFormChangeListMenu(u32 listId)
 {
 	struct FieldSpecialListMenu menuList =
 	{
@@ -1287,7 +1311,7 @@ u8 InitFormChangeListMenu(u8 listId)
 	return InitFieldSpecialListMenu(sFormChangeMenuLabels[listId].list, &menuList);
 }
 
-u16 GetFormChangeListMenuSpecies(u8 listId)
+u32 GetFormChangeListMenuSpecies(u32 listId)
 {
 	return sFormChangeMenuLabels[listId].forms[gSpecialVar_Result];
 }
@@ -1314,11 +1338,13 @@ static void CreateScriptListMenu(void)
     sFieldSpecialsListMenuTemplate.cursorKind = 0;
 }
 
-static void ScriptListMenuMoveCursorFunction(s32 nothing, bool8 is, struct ListMenu * used)
+static void ScriptListMenuMoveCursorFunction(s32 nothing, bool32 is, struct ListMenu * used)
 {
-    u8 taskId;
+    u32 taskId;
     struct Task * task;
+	
     PlaySE(SE_SELECT);
+	
     taskId = FindTaskIdByFunc(Task_ListMenuHandleInput);
     if (taskId != 0xFF)
     {
@@ -1330,12 +1356,9 @@ static void ScriptListMenuMoveCursorFunction(s32 nothing, bool8 is, struct ListM
 
 static void Task_ListMenuHandleInput(u8 taskId)
 {
-    s32 input;
-    struct Task * task;
-
-    task = &gTasks[taskId];
-    task++;task--;
-    input = ListMenu_ProcessInput(task->data[14]);
+	struct Task * task = &gTasks[taskId];
+    s32 input = ListMenu_ProcessInput(task->data[14]);
+    
     switch (input)
     {
     case -1:
@@ -1348,10 +1371,9 @@ static void Task_ListMenuHandleInput(u8 taskId)
     default:
         gSpecialVar_Result = input;
         PlaySE(SE_SELECT);
+		
         if (task->data[6] == 0 || input == task->data[1] - 1)
-        {
             Task_DestroyListMenu(taskId, TRUE);
-        }
         else
         {
             Task_ListMenuRemoveScrollIndicatorArrowPair(taskId);
@@ -1362,7 +1384,7 @@ static void Task_ListMenuHandleInput(u8 taskId)
     }
 }
 
-void Task_DestroyListMenu(u8 taskId, bool8 enableScripts)
+void Task_DestroyListMenu(u32 taskId, bool32 enableScripts)
 {
     struct Task * task = &gTasks[taskId];
     Task_ListMenuRemoveScrollIndicatorArrowPair(taskId);
@@ -1394,7 +1416,8 @@ static void Task_SuspendListMenu(u8 taskId)
 
 void ReturnToListMenu(void)
 {
-    u8 taskId = FindTaskIdByFunc(Task_SuspendListMenu);
+    u32 taskId = FindTaskIdByFunc(Task_SuspendListMenu);
+	
     if (taskId == 0xFF)
         EnableBothScriptContexts();
     else
@@ -1417,6 +1440,7 @@ static void Task_CreateMenuRemoveScrollIndicatorArrowPair(u8 taskId)
         .tileTag = 2000,
         .palTag = 100
     };
+	
     if (task->data[0] != task->data[1])
     {
         template.firstX = 4 * task->data[4] + 8 * task->data[2];
@@ -1432,6 +1456,7 @@ static void Task_CreateMenuRemoveScrollIndicatorArrowPair(u8 taskId)
 static void Task_ListMenuRemoveScrollIndicatorArrowPair(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
+	
     if (task->data[0] != task->data[1])
         RemoveScrollIndicatorArrowPair(task->data[12]);
 }
@@ -1447,14 +1472,14 @@ static const u16 sStarterSpecies[] = {
     SPECIES_CHARMANDER
 };
 
-static u16 GetStarterSpeciesById(u16 idx)
+static u32 GetStarterSpeciesById(u32 idx)
 {
     if (idx >= ARRAY_COUNT(sStarterSpecies))
         idx = 0;
     return sStarterSpecies[idx];
 }
 
-u16 GetStarterSpecies(void)
+u32 GetStarterSpecies(void)
 {
     return GetStarterSpeciesById(VarGet(VAR_STARTER_MON));
 }
@@ -1470,9 +1495,10 @@ void ResetContextNpcTextColor(void)
     gSpecialVar_TextColor = 0xFF;
 }
 
-u8 ContextNpcGetTextColor(void)
+u32 ContextNpcGetTextColor(void)
 {
-    u8 gfxId;
+    u32 gfxId;
+	
     if (gSpecialVar_TextColor != 0xFF)
         return gSpecialVar_TextColor;
     else if (gSelectedObjectEvent == 0)
@@ -1482,11 +1508,12 @@ u8 ContextNpcGetTextColor(void)
         gfxId = gObjectEvents[gSelectedObjectEvent].graphicsId;
         if (gfxId >= OBJ_EVENT_GFX_VAR_0)
             gfxId = VarGetObjectEventGraphicsId(gfxId - OBJ_EVENT_GFX_VAR_0);
+		
         return GetColorFromTextColorTable(gfxId);
     }
 }
 
-void TV_PrintIntToStringVar(u8 varidx, s32 number)
+void TV_PrintIntToStringVar(u32 varidx, s32 number)
 {
     s32 n = CountDigits(number);
     ConvertIntToDecimalStringN(sStringVarPtrs[varidx], number, STR_CONV_MODE_LEFT_ALIGN, n);
@@ -1514,10 +1541,12 @@ s32 CountDigits(s32 number)
         return 1;
 }
 
-bool8 NameRaterWasNicknameChanged(void)
+bool32 NameRaterWasNicknameChanged(void)
 {
     struct Pokemon * pokemon = &gPlayerParty[gSpecialVar_0x8004];
+	
     GetMonData(pokemon, MON_DATA_NICKNAME, gStringVar1);
+	
     if (StringCompare(gStringVar3, gStringVar1) == 0)
         return FALSE;
     else
@@ -1527,14 +1556,11 @@ bool8 NameRaterWasNicknameChanged(void)
 void ChangeBoxPokemonNickname(void)
 {
     struct BoxPokemon * pokemon = GetBoxedMonPtr(gSpecialVar_MonBoxId, gSpecialVar_MonBoxPos);
-    u16 species;
-    u8 gender;
 
     GetBoxMonData(pokemon, MON_DATA_NICKNAME, gStringVar3);
     GetBoxMonData(pokemon, MON_DATA_NICKNAME, gStringVar2);
-    species = GetBoxMonData(pokemon, MON_DATA_SPECIES, NULL);
-    gender = GetBoxMonGender(pokemon);
-    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar2, species, gender, ChangeBoxPokemonNickname_CB);
+
+    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar2, GetBoxMonData(pokemon, MON_DATA_SPECIES, NULL), GetBoxMonGender(pokemon), ChangeBoxPokemonNickname_CB);
 }
 
 static void ChangeBoxPokemonNickname_CB(void)
@@ -1545,14 +1571,12 @@ static void ChangeBoxPokemonNickname_CB(void)
 
 void ChangePokemonNickname(void)
 {
-    u16 species;
-    u8 gender;
-
-    GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_NICKNAME, gStringVar3);
-    GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_NICKNAME, gStringVar2);
-    species = GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_SPECIES, NULL);
-    gender = GetMonGender(&gPlayerParty[gSpecialVar_0x8004]);
-    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar2, species, gender, ChangePokemonNickname_CB);
+	struct Pokemon * pokemon = &gPlayerParty[gSpecialVar_0x8004];
+	
+    GetMonData(pokemon, MON_DATA_NICKNAME, gStringVar3);
+    GetMonData(pokemon, MON_DATA_NICKNAME, gStringVar2);
+	
+    DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar2, GetMonData(pokemon, MON_DATA_SPECIES, NULL), GetMonGender(pokemon), ChangePokemonNickname_CB);
 }
 
 static void ChangePokemonNickname_CB(void)
@@ -1580,29 +1604,31 @@ u32 GetPlayerTrainerId(void)
     return (gSaveBlock2Ptr->playerTrainerId[3] << 24) | (gSaveBlock2Ptr->playerTrainerId[2] << 16) | (gSaveBlock2Ptr->playerTrainerId[1] << 8) | gSaveBlock2Ptr->playerTrainerId[0];
 }
 
-u8 GetUnlockedSeviiAreas(void)
+u32 GetUnlockedSeviiAreas(void)
 {
-    u8 result = 0;
-    if (FlagGet(FLAG_WORLD_MAP_ONE_ISLAND) == TRUE)
+    u32 result = 0;
+	
+    if (FlagGet(FLAG_WORLD_MAP_ONE_ISLAND))
         result |= 1 << 0;
-    if (FlagGet(FLAG_WORLD_MAP_TWO_ISLAND) == TRUE)
+    if (FlagGet(FLAG_WORLD_MAP_TWO_ISLAND))
         result |= 1 << 1;
-    if (FlagGet(FLAG_WORLD_MAP_THREE_ISLAND) == TRUE)
+    if (FlagGet(FLAG_WORLD_MAP_THREE_ISLAND))
         result |= 1 << 2;
-    if (FlagGet(FLAG_WORLD_MAP_FOUR_ISLAND) == TRUE)
+    if (FlagGet(FLAG_WORLD_MAP_FOUR_ISLAND))
         result |= 1 << 3;
-    if (FlagGet(FLAG_WORLD_MAP_FIVE_ISLAND) == TRUE)
+    if (FlagGet(FLAG_WORLD_MAP_FIVE_ISLAND))
         result |= 1 << 4;
-    if (FlagGet(FLAG_WORLD_MAP_SIX_ISLAND) == TRUE)
+    if (FlagGet(FLAG_WORLD_MAP_SIX_ISLAND))
         result |= 1 << 5;
-    if (FlagGet(FLAG_WORLD_MAP_SEVEN_ISLAND) == TRUE)
+    if (FlagGet(FLAG_WORLD_MAP_SEVEN_ISLAND))
         result |= 1 << 6;
+	
     return result;
 }
 
 void UpdateTrainerCardPhotoIcons(void)
 {
-    u8 i, partyCount = CalculatePlayerPartyCount();
+    u32 i, partyCount = CalculatePlayerPartyCount();
 
     for (i = 0; i < partyCount; i++)
 		VarSet(VAR_TRAINER_CARD_MON_ICON_1 + i, GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL));
@@ -1610,44 +1636,49 @@ void UpdateTrainerCardPhotoIcons(void)
     VarSet(VAR_TRAINER_CARD_MON_ICON_TINT_IDX, gSpecialVar_0x8004);
 }
 
-u16 StickerManGetBragFlags(void)
+u32 StickerManGetBragFlags(void)
 {
-    u16 result = 0;
-    u32 numEggs;
+    u32 result = 0, numEggs = GetGameStat(GAME_STAT_HATCHED_EGGS);
+	
     gSpecialVar_0x8004 = GetGameStat(GAME_STAT_ENTERED_HOF);
-    numEggs = GetGameStat(GAME_STAT_HATCHED_EGGS);
     gSpecialVar_0x8006 = GetGameStat(GAME_STAT_LINK_BATTLE_WINS);
+	
     if (numEggs > 0xFFFF)
         gSpecialVar_0x8005 = 0xFFFF;
     else
         gSpecialVar_0x8005 = numEggs;
+	
     if (gSpecialVar_0x8004 != 0)
         result |= 1 << 0;
     if (gSpecialVar_0x8005 != 0)
         result |= 1 << 1;
     if (gSpecialVar_0x8006 != 0)
         result |= 1 << 2;
+	
     return result;
 }
 
-u16 GetHiddenItemAttr(u32 hiddenItem, u8 attr)
+u16 GetHiddenItemAttr(u32 hiddenItem, u32 attr)
 {
-    if (attr == 0)
-        return hiddenItem & 0xFFFF;
-    else if (attr == 1)
-        return ((hiddenItem >> 16) & 0xFF) + 1000;
-    else if (attr == 2)
-        return (hiddenItem >> 24) & 0x7F;
-    else if (attr == 3)
-        return (hiddenItem >> 31) & 0x01;
-    else
-        return 1;
+	switch (attr)
+	{
+		case HIDDEN_ITEM_ID:
+			return hiddenItem & 0xFFFF;
+		case HIDDEN_ITEM_FLAG:
+			return ((hiddenItem >> 16) & 0xFF) + 1000;
+		case HIDDEN_ITEM_QUANTITY:
+			return (hiddenItem >> 24) & 0x7F;
+		case HIDDEN_ITEM_UNDERFOOT:
+			return (hiddenItem >> 31) & 0x01;
+		default:
+			return 1;
+	}
 }
 
-bool8 DoesPlayerPartyContainSpecies(void)
+bool32 DoesPlayerPartyContainSpecies(void)
 {
-    u8 partyCount = CalculatePlayerPartyCount();
-    u8 i;
+    u32 i, partyCount = CalculatePlayerPartyCount();
+
     for (i = 0; i < partyCount; i++)
     {
         if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) == gSpecialVar_0x8004)
@@ -1656,32 +1687,33 @@ bool8 DoesPlayerPartyContainSpecies(void)
     return FALSE;
 }
 
-void SetPCBoxToSendMon(u8 boxId)
+void SetPCBoxToSendMon(u32 boxId)
 {
     sPCBoxToSendMon = boxId;
 }
 
-u16 GetPCBoxToSendMon(void)
+u32 GetPCBoxToSendMon(void)
 {
     return sPCBoxToSendMon;
 }
 
-bool8 ShouldShowBoxWasFullMessage(void)
+bool32 ShouldShowBoxWasFullMessage(void)
 {
-    if (FlagGet(FLAG_SHOWN_BOX_WAS_FULL_MESSAGE))
+    if (FlagGet(FLAG_SHOWN_BOX_WAS_FULL_MESSAGE) || StorageGetCurrentBox() == VarGet(VAR_PC_BOX_TO_SEND_MON))
         return FALSE;
-    if (StorageGetCurrentBox() == VarGet(VAR_PC_BOX_TO_SEND_MON))
-        return FALSE;
+
     FlagSet(FLAG_SHOWN_BOX_WAS_FULL_MESSAGE);
     return TRUE;
 }
 
-bool8 IsDestinationBoxFull(void)
+bool32 IsDestinationBoxFull(void)
 {
-    s32 i;
-    s32 j;
+    s32 i, j;
+
     SetPCBoxToSendMon(VarGet(VAR_PC_BOX_TO_SEND_MON));
+	
     i = StorageGetCurrentBox();
+	
     do
     {
         for (j = 0; j < IN_BOX_COUNT; j++)
@@ -1690,14 +1722,19 @@ bool8 IsDestinationBoxFull(void)
             {
                 if (GetPCBoxToSendMon() != i)
                     FlagClear(FLAG_SHOWN_BOX_WAS_FULL_MESSAGE);
+				
                 VarSet(VAR_PC_BOX_TO_SEND_MON, i);
+				
                 return ShouldShowBoxWasFullMessage();
             }
         }
         i++;
+		
         if (i == TOTAL_BOXES_COUNT)
             i = 0;
+		
     } while (i != StorageGetCurrentBox());
+	
     return FALSE;
 }
 
@@ -1725,10 +1762,11 @@ const u16 sPokeCenter1FMaps[] = {
     MAP_UNDEFINED
 };
 
-bool8 UsedPokemonCenterWarp(void)
+bool32 UsedPokemonCenterWarp(void)
 {
-    s32 i;
+    u32 i;
     u16 mapno = (gLastUsedWarp.mapGroup << 8) + gLastUsedWarp.mapNum;
+	
     for (i = 0; sPokeCenter1FMaps[i] != MAP_UNDEFINED; i++)
     {
         if (sPokeCenter1FMaps[i] == mapno)
@@ -1737,7 +1775,7 @@ bool8 UsedPokemonCenterWarp(void)
     return FALSE;
 }
 
-bool8 BufferTMHMMoveName(void)
+bool32 BufferTMHMMoveName(void)
 {
     // 8004 = item ID
     if (ItemId_GetPocket(gSpecialVar_0x8004) == POCKET_TM_CASE)
@@ -1750,7 +1788,7 @@ bool8 BufferTMHMMoveName(void)
 
 void RunMassageCooldownStepCounter(void)
 {
-    u16 count = VarGet(VAR_MASSAGE_COOLDOWN_STEP_COUNTER);
+    u32 count = VarGet(VAR_MASSAGE_COOLDOWN_STEP_COUNTER);
     if (count < 500)
         VarSet(VAR_MASSAGE_COOLDOWN_STEP_COUNTER, count + 1);
 }
@@ -1815,12 +1853,11 @@ static const u8 sChampionRoomLightingTimers[] = {
 
 void DoPokemonLeagueLightingEffect(void)
 {
-    u8 taskId = CreateTask(Task_RunPokemonLeagueLightingEffect, 8);
+    u32 taskId = CreateTask(Task_RunPokemonLeagueLightingEffect, 8);
     s16 *data = gTasks[taskId].data;
-    if (FlagGet(FLAG_TEMP_3) == TRUE)
-    {
+	
+    if (FlagGet(FLAG_TEMP_3))
         gTasks[taskId].func = Task_CancelPokemonLeagueLightingEffect;
-    }
     else
     {
         if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(POKEMON_LEAGUE_CHAMPIONS_ROOM) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(POKEMON_LEAGUE_CHAMPIONS_ROOM))
@@ -1866,29 +1903,29 @@ static void Task_RunPokemonLeagueLightingEffect(u8 taskId)
 static void Task_CancelPokemonLeagueLightingEffect(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
-    if (FlagGet(FLAG_TEMP_4) != FALSE)
+	
+    if (FlagGet(FLAG_TEMP_4))
     {
         if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(POKEMON_LEAGUE_CHAMPIONS_ROOM) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(POKEMON_LEAGUE_CHAMPIONS_ROOM))
-        {
             LoadPalette(sChampionRoomLightingPalettes[8], 0x70, 0x20);
-        }
         else
-        {
             LoadPalette(sEliteFourLightingPalettes[11], 0x70, 0x20);
-        }
+
         Fieldmap_ApplyGlobalTintToPaletteSlot(7, 1);
+		
         if (gPaletteFade.active)
-        {
             BlendPalettes(0x00000080, 16, RGB_BLACK);
-        }
+
         DestroyTask(taskId);
     }
 }
 
 void StopPokemonLeagueLightingEffectTask(void)
 {
-    if (FuncIsActiveTask(Task_RunPokemonLeagueLightingEffect))
-        DestroyTask(FindTaskIdByFunc(Task_RunPokemonLeagueLightingEffect));
+	u32 taskId = FindTaskIdByFunc(Task_RunPokemonLeagueLightingEffect);
+	
+    if (taskId != 0xFF)
+        DestroyTask(taskId);
 }
 
 const struct CapeBrinkTutor gCapeBrinkCompatibleSpecies[3] =
@@ -1898,15 +1935,15 @@ const struct CapeBrinkTutor gCapeBrinkCompatibleSpecies[3] =
 	{SPECIES_BLASTOISE, MOVE_HYDRO_CANNON, FLAG_TUTOR_HYDRO_CANNON}
 };
 
-bool8 CapeBrinkGetMoveToTeachLeadPokemon(void)
+bool32 CapeBrinkGetMoveToTeachLeadPokemon(void)
 {
     // Returns:
     //   8005 = Move index
     //   8006 = Num moves known by lead mon
     //   8007 = Index of lead mon
     //   to specialvar = whether a move can be taught in the first place
-    u8 i, j, numMovesKnown = 0;
-    u8 leadMonSlot = GetLeadMonIndex();
+    u32 i, j, numMovesKnown = 0;
+    u32 leadMonSlot = GetLeadMonIndex();
 	
     gSpecialVar_0x8007 = leadMonSlot;
 	
@@ -1916,7 +1953,7 @@ bool8 CapeBrinkGetMoveToTeachLeadPokemon(void)
         {
             if (GetMonData(&gPlayerParty[leadMonSlot], MON_DATA_SPECIES2, NULL) == gCapeBrinkCompatibleSpecies[i].species)
             {
-                u16 move = gCapeBrinkCompatibleSpecies[i].move;
+                u32 move = gCapeBrinkCompatibleSpecies[i].move;
 				
 				StringCopy(gStringVar2, gBattleMoves[move].name);
 				gSpecialVar_0x8005 = move;
@@ -1939,14 +1976,14 @@ bool8 CapeBrinkGetMoveToTeachLeadPokemon(void)
 	return FALSE;
 }
 
-bool8 HasLearnedAllMovesFromCapeBrinkTutor(void)
+bool32 HasLearnedAllMovesFromCapeBrinkTutor(void)
 {
     // 8005 is set by CapeBrinkGetMoveToTeachLeadPokemon
-    u8 i, num = 0;
+    u32 i, num = 0;
 	
 	for (i = 0; i < ARRAY_COUNT(gCapeBrinkCompatibleSpecies); i++)
 	{
-		u16 flagId = gCapeBrinkCompatibleSpecies[i].flagId;
+		u32 flagId = gCapeBrinkCompatibleSpecies[i].flagId;
 		
 		if (gSpecialVar_0x8005 == gCapeBrinkCompatibleSpecies[i].move)
 			FlagSet(flagId);
@@ -1957,7 +1994,7 @@ bool8 HasLearnedAllMovesFromCapeBrinkTutor(void)
 	return (num == ARRAY_COUNT(gCapeBrinkCompatibleSpecies));
 }
 
-bool8 CutMoveRuinValleyCheck(void)
+bool32 CutMoveRuinValleyCheck(void)
 {
     if (FlagGet(FLAG_USED_CUT_ON_RUIN_VALLEY_BRAILLE) != TRUE
      && gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SIX_ISLAND_RUIN_VALLEY)
@@ -2029,6 +2066,7 @@ static void Task_DoDeoxysTriangleInteraction(u8 taskId)
 {
     u16 r5;
     u16 r6;
+	
     if (FlagGet(FLAG_SYS_DEOXYS_AWAKENED) == TRUE)
     {
         gSpecialVar_Result = 3;
@@ -2039,7 +2077,9 @@ static void Task_DoDeoxysTriangleInteraction(u8 taskId)
     {
         r5 = VarGet(VAR_DEOXYS_INTERACTION_NUM);
         r6 = VarGet(VAR_DEOXYS_INTERACTION_STEP_COUNTER);
+		
         VarSet(VAR_DEOXYS_INTERACTION_STEP_COUNTER, 0);
+		
         if (r5 != 0 && sDeoxysStepCaps[r5 - 1] < r6)
         {
             MoveDeoxysObject(0);
@@ -2065,26 +2105,31 @@ static void Task_DoDeoxysTriangleInteraction(u8 taskId)
     }
 }
 
-static void MoveDeoxysObject(u8 num)
+static void MoveDeoxysObject(u32 num)
 {
     u8 mapObjId;
+	
     LoadPalette(sDeoxysObjectPals[num], 0x1A0, 0x08);
     ApplyGlobalFieldPaletteTint(10);
     TryGetObjectEventIdByLocalIdAndMap(1, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, &mapObjId);
+	
     if (num == 0)
         PlaySE(SE_M_CONFUSE_RAY);
     else
         PlaySE(SE_DEOXYS_MOVE);
+	
     CreateTask(Task_WaitDeoxysFieldEffect, 8);
     gFieldEffectArguments[0] = 1;
     gFieldEffectArguments[1] = 56;
     gFieldEffectArguments[2] = 2;
     gFieldEffectArguments[3] = sDeoxysCoords[num][0];
     gFieldEffectArguments[4] = sDeoxysCoords[num][1];
+	
     if (num == 0)
         gFieldEffectArguments[5] = 60;
     else
         gFieldEffectArguments[5] = 5;
+	
     FieldEffectStart(FLDEFF_MOVE_DEOXYS_ROCK);
     Overworld_SetMapObjTemplateCoords(1, sDeoxysCoords[num][0], sDeoxysCoords[num][1]);
 }
@@ -2100,20 +2145,17 @@ static void Task_WaitDeoxysFieldEffect(u8 taskId)
 
 void IncrementBirthIslandRockStepCount(void)
 {
-    u16 count = VarGet(VAR_DEOXYS_INTERACTION_STEP_COUNTER);
     if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(BIRTH_ISLAND_EXTERIOR) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(BIRTH_ISLAND_EXTERIOR))
     {
+		u16 count = VarGet(VAR_DEOXYS_INTERACTION_STEP_COUNTER);
         count++;
-        if (count > 99)
-            VarSet(VAR_DEOXYS_INTERACTION_STEP_COUNTER, 0);
-        else
-            VarSet(VAR_DEOXYS_INTERACTION_STEP_COUNTER, count);
+		VarSet(VAR_DEOXYS_INTERACTION_STEP_COUNTER, count > 99 ? 0 : count);
     }
 }
 
 void SetDeoxysTrianglePalette(void)
 {
-    u8 num = VarGet(VAR_DEOXYS_INTERACTION_NUM);
+    u32 num = VarGet(VAR_DEOXYS_INTERACTION_NUM);
     LoadPalette(sDeoxysObjectPals[num], 0x1A0, 0x08);
     ApplyGlobalFieldPaletteTint(10);
 }
@@ -2131,15 +2173,14 @@ void BrailleCursorToggle(void)
 		DestroyTextCursorSprite(sBrailleTextCursorSpriteID);
 }
 
-bool8 PlayerPartyContainsSpeciesWithPlayerID(void)
+bool32 PlayerPartyContainsSpeciesWithPlayerID(void)
 {
     // 8004 = species
-    u8 playerCount = CalculatePlayerPartyCount();
-    u8 i;
+    u32 i, playerCount = CalculatePlayerPartyCount();
+	
     for (i = 0; i < playerCount; i++)
     {
-        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) == gSpecialVar_0x8004 
-            && GetPlayerTrainerId() == GetMonData(&gPlayerParty[i], MON_DATA_OT_ID, NULL))
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) == gSpecialVar_0x8004 && GetPlayerTrainerId() == GetMonData(&gPlayerParty[i], MON_DATA_OT_ID, NULL))
             return TRUE;
     }
     return FALSE;
@@ -2152,6 +2193,7 @@ bool8 PlayerPartyContainsSpeciesWithPlayerID(void)
 void UpdateLoreleiDollCollection(void)
 {
     u32 numHofClears = GetGameStat(GAME_STAT_ENTERED_HOF);
+	
     if (numHofClears >= 25)
     {
         FlagClear(FLAG_HIDE_LORELEI_HOUSE_MEOWTH_DOLL);
@@ -2183,7 +2225,9 @@ void LoopWingFlapSound(void)
 static void Task_WingFlapSound(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
+	
     data[1]++;
+	
     if (data[1] == gSpecialVar_0x8005)
     {
         data[0]++;
@@ -2196,7 +2240,7 @@ static void Task_WingFlapSound(u8 taskId)
 
 void ChooseItemFromBag(void)
 {
-	u8 pocket = VarGet(VAR_TEMP_0);
+	u32 pocket = VarGet(VAR_TEMP_0);
 	
 	PlayRainStoppingSoundEffect();
 	
@@ -2238,7 +2282,7 @@ void SetCB2WhiteOut(void)
     SetMainCallback2(CB2_WhiteOut);
 }
 
-bool8 GetPokedexCount(void)
+bool32 GetPokedexCount(void)
 {
     if (gSpecialVar_0x8004 == 0)
     {
@@ -2253,12 +2297,12 @@ bool8 GetPokedexCount(void)
     return FlagGet(FLAG_SYS_POKEDEX_GET);
 }
 
-bool8 HasAllKantoMons(void)
+bool32 HasAllKantoMons(void)
 {
 	return HasAllRegionMons(REGION_KANTO);
 }
 
-static const u8 *GetProfOaksRatingMessageByCount(u16 count)
+static const u8 *GetProfOaksRatingMessageByCount(u32 count)
 {
     gSpecialVar_Result = FALSE;
 
@@ -2326,9 +2370,9 @@ void FreeSymbolsIconGraphics(void)
 	FreeSpritePaletteByTag(TAG_8x8_SYMBOLS);
 }
 
-u8 Create8x8SymbolSprite(s16 x, s16 y, u8 subpriority, u8 symbolId)
+u32 Create8x8SymbolSprite(s16 x, s16 y, u32 subpriority, u32 symbolId)
 {
-	u8 spriteId = CreateSprite(&s8x8SymbolSpriteTemplate, x, y, subpriority);
+	u32 spriteId = CreateSprite(&s8x8SymbolSpriteTemplate, x, y, subpriority);
 	
 	StartSpriteAnim(&gSprites[spriteId], symbolId);
 	

@@ -148,6 +148,8 @@ extern const u8 BattleScript_EffectMagnetRise[];
 extern const u8 BattleScript_EffectSpecialAttackUp2[];
 extern const u8 BattleScript_EffectDefog[];
 extern const u8 BattleScript_EffectTrickRoom[];
+extern const u8 BattleScript_EffectCaptivate[];
+extern const u8 BattleScript_EffectStealthRock[];
 // Other scripts
 extern const u8 BattleScript_HitFromCritCalc[];
 extern const u8 BattleScript_MoveEnd[];
@@ -345,6 +347,8 @@ extern const u8 BattleScript_DrySkinSunActivates[];
 extern const u8 BattleScript_Frisk[];
 extern const u8 BattleScript_SwitchInAbilityMsgRet[];
 extern const u8 BattleScript_DisplaySwitchInMsg[];
+extern const u8 BattleScript_AsOneSwitchInActivation[];
+extern const u8 BattleScript_AsOneSwitchInActivationRet[];
 extern const u8 BattleScript_MoveStatRaise[];
 extern const u8 BattleScript_MoveStatRaise_PPLoss[];
 extern const u8 BattleScript_PickpocketActivation[];
@@ -374,6 +378,8 @@ extern const u8 BattleScript_IllusionOff[];
 extern const u8 BattleScript_ImposterActivates[];
 extern const u8 BattleScript_MummyActivates[];
 extern const u8 BattleScript_RaiseStatOnFaintingTarget[];
+extern const u8 BattleScript_AsOneIceRiderActivation[];
+extern const u8 BattleScript_AsOneShadowRiderActivation[];
 extern const u8 BattleScript_TargetAbilityStatRaiseRet[];
 extern const u8 BattleScript_ZenModeActivatesPause[];
 extern const u8 BattleScript_ZenModeActivates[];
@@ -463,6 +469,8 @@ extern const u8 BattleScript_QuickDrawActivation[];
 extern const u8 BattleScript_QuickClawActivation[];
 extern const u8 BattleScript_MegaEvolution[];
 extern const u8 BattleScript_PrimalReversion[];
+extern const u8 BattleScript_UltraBurst[];
+extern const u8 BattleScript_OpportunistActivates[];
 
 extern const u8 *const gBattlescriptsForUsingItem[];
 

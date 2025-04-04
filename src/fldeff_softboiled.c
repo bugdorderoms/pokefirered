@@ -14,13 +14,13 @@ static void sub_80E5934(u8 taskId);
 extern const u8 gUnknown_84169F8[];
 extern const u8 gText_PkmnHPRestoredByVar2[];
 
-bool8 SetUpFieldMove_SoftBoiled(void)
+bool32 SetUpFieldMove_SoftBoiled(void)
 {
-	u8 partyId = GetCursorSelectionMonId();
+	u32 partyId = GetCursorSelectionMonId();
 	return (GetMonData(&gPlayerParty[partyId], MON_DATA_HP) > GetMonData(&gPlayerParty[partyId], MON_DATA_MAX_HP) / 5);
 }
 
-void ChooseMonForSoftboiled(u8 taskId)
+void ChooseMonForSoftboiled(u32 taskId)
 {
     gPartyMenu.action = 10;
     gPartyMenu.slotId2 = gPartyMenu.slotId;
@@ -29,12 +29,11 @@ void ChooseMonForSoftboiled(u8 taskId)
     gTasks[taskId].func = Task_HandleChooseMonInput;
 }
 
-void Task_TryUseSoftboiledOnPartyMon(u8 taskId)
+void Task_TryUseSoftboiledOnPartyMon(u32 taskId)
 {
-    u8 r8 = gPartyMenu.slotId;
-    u8 r5 = gPartyMenu.slotId2;
-    u16 curHp;
-    s16 delta;
+    u32 r8 = gPartyMenu.slotId;
+    u32 r5 = gPartyMenu.slotId2;
+    u32 curHp;
 
     if (r5 > 6)
     {
@@ -45,10 +44,9 @@ void Task_TryUseSoftboiledOnPartyMon(u8 taskId)
     else
     {
         curHp = GetMonData(&gPlayerParty[r5], MON_DATA_HP);
+		
         if (curHp == 0 || r8 == r5 || GetMonData(&gPlayerParty[r5], MON_DATA_MAX_HP) == curHp)
-        {
             sub_80E5934(taskId);
-        }
         else
         {
             PlaySE(SE_USE_ITEM);

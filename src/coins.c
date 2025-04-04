@@ -18,7 +18,7 @@ void SetCoins(u16 coinAmount)
     gSaveBlock1Ptr->coins = coinAmount ^ gSaveBlock2Ptr->encryptionKey;
 }
 
-bool8 AddCoins(u16 toAdd)
+bool32 AddCoins(u16 toAdd)
 {
     u16 coins = GetCoins();
     if (coins >= MAX_COINS)
@@ -37,7 +37,7 @@ bool8 AddCoins(u16 toAdd)
     return TRUE;
 }
 
-bool8 RemoveCoins(u16 toSub)
+bool32 RemoveCoins(u16 toSub)
 {
     u16 coins = GetCoins();
     if (coins >= toSub)
@@ -55,7 +55,7 @@ void PrintCoinsString(u32 coinAmount)
     AddTextPrinterParameterized(sCoinsWindowId, 0, gStringVar4, 64 - GetStringWidth(0, gStringVar4, 0), 0xC, 0, NULL);
 }
 
-void ShowCoinsWindow(u32 coinAmount, u8 x, u8 y)
+void ShowCoinsWindow(u32 coinAmount, u32 x, u32 y)
 {
     struct WindowTemplate template = SetWindowTemplateFields(0, x + 1, y + 1, 8, 3, 0xF, 0x20);
 

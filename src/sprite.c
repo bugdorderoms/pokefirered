@@ -11,14 +11,14 @@
     (sSpriteTileRanges + 1)[index * 2] = count;    \
 }
 
-#define ALLOC_SPRITE_TILE(n)                              \
-{                                                         \
-    gSpriteTileAllocBitmap[(n) >> 3] |= (1 << ((n) & 7)); \
+#define ALLOC_SPRITE_TILE(n)                          \
+{                                                     \
+    gSpriteTileAllocBitmap[(n) >> 3] |= Bit((n) & 7); \
 }
 
-#define FREE_SPRITE_TILE(n)                                \
-{                                                          \
-    gSpriteTileAllocBitmap[(n) >> 3] &= ~(1 << ((n) & 7)); \
+#define FREE_SPRITE_TILE(n)                              \
+{                                                        \
+    gSpriteTileAllocBitmap[(n) >> 3] &= ~(Bit((n) & 7)); \
 }
 
 #define SPRITE_TILE_IS_ALLOCATED(n) ((gSpriteTileAllocBitmap[(n) >> 3] >> ((n) & 7)) & 1)
@@ -352,7 +352,7 @@ void BuildOamBuffer(void)
 		}
 		
 		if (sprite->oam.affineMode & ST_OAM_AFFINE_ON_MASK)
-            matrices |= 1 << sprite->oam.matrixNum;
+            matrices |= Bit(sprite->oam.matrixNum);
 		
 		if (sprite->coordOffsetEnabled)
 		{
@@ -698,17 +698,17 @@ u8 SpriteTileAllocBitmapOp(u16 bit, u8 op)
 
     if (op == 0) // clear
     {
-        val = ~(1 << val);
+        val = ~(Bit(val));
         gSpriteTileAllocBitmap[index] &= val;
     }
     else if (op == 1) // set
     {
-        val = (1 << val);
+        val = Bit(val);
         gSpriteTileAllocBitmap[index] |= val;
     }
     else // check
     {
-        retVal = 1 << shift;
+        retVal = Bit(shift);
         retVal &= gSpriteTileAllocBitmap[index];
     }
 

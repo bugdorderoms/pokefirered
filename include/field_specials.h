@@ -30,32 +30,32 @@ struct CapeBrinkTutor
 
 #define TAG_8x8_SYMBOLS 0x0066
 
-u8 GetLeadMonIndex(void);
+u32 GetLeadMonIndex(void);
 s32 CountDigits(s32 number);
-void TV_PrintIntToStringVar(u8 varidx, s32 number);
-u16 GetStarterSpecies(void);
+void TV_PrintIntToStringVar(u32 varidx, s32 number);
+u32 GetStarterSpecies(void);
 void StopPokemonLeagueLightingEffectTask(void);
-u8 ContextNpcGetTextColor(void);
-void SetPCBoxToSendMon(u8);
-u16 GetPCBoxToSendMon(void);
-bool8 IsDestinationBoxFull(void);
-bool8 ShouldShowBoxWasFullMessage(void);
-u16 GetHiddenItemAttr(u32 hiddenItem, u8 attr);
-u8 GetUnlockedSeviiAreas(void);
+u32 ContextNpcGetTextColor(void);
+void SetPCBoxToSendMon(u32);
+u32 GetPCBoxToSendMon(void);
+bool32 IsDestinationBoxFull(void);
+bool32 ShouldShowBoxWasFullMessage(void);
+u16 GetHiddenItemAttr(u32 hiddenItem, u32 attr);
+u32 GetUnlockedSeviiAreas(void);
 u32 GetPlayerTrainerId(void);
-bool8 CutMoveRuinValleyCheck(void);
+bool32 CutMoveRuinValleyCheck(void);
 void CutMoveOpenDottedHoleDoor(void);
 void RunMassageCooldownStepCounter(void);
 void IncrementResortGorgeousStepCounter(void);
 void IncrementBirthIslandRockStepCount(void);
 void ResetFieldTasksArgs(void);
-bool8 UsedPokemonCenterWarp(void);
+bool32 UsedPokemonCenterWarp(void);
 void UpdateTrainerCardPhotoIcons(void);
 void UpdateTrainerFansAfterLinkBattle(void);
 void ResetTrainerFanClub(void);
 void LoadSymbolsIconGraphics(void);
 void FreeSymbolsIconGraphics(void);
-u8 Create8x8SymbolSprite(s16 x, s16 y, u8 subpriority, u8 symbolId);
+u32 Create8x8SymbolSprite(s16 x, s16 y, u32 subpriority, u32 symbolId);
 void DisablePlayerBag(void);
 void EnablePlayerBag(void);
 

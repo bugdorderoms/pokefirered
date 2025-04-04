@@ -104,8 +104,8 @@ static void RecolorItemDescriptionBox(bool32 a0);
 static void BuyMenuDrawGraphics(void);
 static bool8 BuyMenuBuildListMenuTemplate(void);
 static void PokeMartWriteNameAndIdAt(struct ListMenuItem *list, u16 index, u8* dst);
-static void BuyMenuPrintItemDescriptionAndShowItemIcon(s32 item, bool8 onInit, struct ListMenu *list);
-static void BuyMenuPrintPriceInList(u8 windowId, u32 itemId, u8 y);
+static void BuyMenuPrintItemDescriptionAndShowItemIcon(s32 item, bool32 onInit, struct ListMenu *list);
+static void BuyMenuPrintPriceInList(u32 windowId, u32 itemId, u32 y);
 static void LoadTmHmNameInMart(s32 item);
 static void BuyMenuPrintCursor(u8 listTaskId, u8 a1);
 static void BuyMenuPrintCursorAtYPosition(u8 y, u8 a1);
@@ -734,11 +734,11 @@ static void PokeMartWriteNameAndIdAt(struct ListMenuItem *list, u16 index, u8* d
     list->index = index;
 }
 
-static void BuyMenuPrintItemDescriptionAndShowItemIcon(s32 item, bool8 onInit, struct ListMenu *list)
+static void BuyMenuPrintItemDescriptionAndShowItemIcon(s32 item, bool32 onInit, struct ListMenu *list)
 {
     const u8 *description;
     
-    if (onInit != TRUE)
+    if (!onInit)
         PlaySE(SE_SELECT);
 
     if (item != INDEX_CANCEL)
@@ -747,9 +747,11 @@ static void BuyMenuPrintItemDescriptionAndShowItemIcon(s32 item, bool8 onInit, s
         description = gText_QuitShopping;
     
     FillWindowPixelBuffer(5, PIXEL_FILL(0));
+	
     if (gShopData.martType != 1)
     {
         DestroyItemMenuIcon(gShopData.itemSlot ^ 1);
+		
         if (item != INDEX_CANCEL)
             CreateItemMenuIcon(item, gShopData.itemSlot);
         else
@@ -766,7 +768,7 @@ static void BuyMenuPrintItemDescriptionAndShowItemIcon(s32 item, bool8 onInit, s
     }
 }
 
-static void BuyMenuPrintPriceInList(u8 windowId, u32 item, u8 y)
+static void BuyMenuPrintPriceInList(u32 windowId, u32 item, u32 y)
 {
     s32 x;
     u8 *loc;

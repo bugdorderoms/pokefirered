@@ -471,6 +471,17 @@ const struct SpriteTemplate gShadowSneakHitSpriteTemplate =
     .callback = AnimIceEffectParticle,
 };
 
+const struct SpriteTemplate gChatterMusicNotesSpriteTemplate =    
+{
+    .tileTag = ANIM_TAG_MUSIC_NOTES,
+    .paletteTag = ANIM_TAG_MUSIC_NOTES,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = gMusicNotesAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_IceCrystalHit,
+    .callback = AnimIceEffectParticle,
+};
+
 // Animates the ice particles in Ice Beam.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset

@@ -192,6 +192,7 @@ BattleScript_EffectTargetStatDown::
 	accuracycheck BattleScript_PrintMoveMissed
 	attackstring
 	ppreduce
+BattleScript_EffectTargetStatDownAfterAttackString::
 	statbuffchange STAT_CHANGE_FLAG_UPDATE_RESULT
 	goto BattleScript_EffectUserStatUpDoAnim
 
@@ -2141,6 +2142,32 @@ BattleScript_EffectTrickRoom::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+@ EFFECT_CAPTIVATE @
+
+BattleScript_EffectCaptivate::
+	attackcanceler
+	jumpifsubstituteblocks BattleScript_ButItFailedAtkStringPpReduce
+	accuracycheck BattleScript_PrintMoveMissed
+	attackstring
+	ppreduce
+	jumpifability BS_TARGET, ABILITY_OBLIVIOUS, BattleScript_ObliviousPrevents
+	jumpifcaptivatefail BattleScript_NotAffected
+	setstatchanger STAT_SPATK, -2
+	goto BattleScript_EffectTargetStatDownAfterAttackString
+
+@ EFFECT_STEALTH_ROCK @
+
+BattleScript_EffectStealthRock::
+	attackcanceler
+	trysetstealthrock BattleScript_ButItFailedAtkStringPpReduce
+	attackstring
+	ppreduce
+	attackanimation
+	waitstate
+	printstring STRINGID_POINTEDSTONESFLOAT
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2915,13 +2942,24 @@ BattleScript_CuteCharmActivates::
 BattleScript_DisplaySwitchInMsg::
     call BattleScript_SwitchInAbilityMsgRet
 	end3
-	
+
 BattleScript_SwitchInAbilityMsgRet::
     pause B_WAIT_TIME_SHORT
     loadabilitypopup BS_SCRIPTING
     printfromtable gSwitchInAbilitiesMsgStringIds
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_SCRIPTING
+	return
+
+BattleScript_AsOneSwitchInActivation::
+	call BattleScript_AsOneSwitchInActivationRet
+	end3
+
+BattleScript_AsOneSwitchInActivationRet::
+	pause B_WAIT_TIME_SHORT
+	call BattleScript_AsOneMessage
+	setabilityoverride BS_SCRIPTING, ABILITY_UNNERVE
+	call BattleScript_SwitchInAbilityMsgRet
 	return
 
 BattleScript_PoisonTouchActivation::
@@ -2950,7 +2988,6 @@ BattleScript_GulpMissileSpitUpPrey::
 	waitstate
 	setbyte sBYPASS_ABILITY_POP_UP, TRUE
 	jumpifability BS_ATTACKER, ABILITY_MAGIC_GUARD, BattleScript_ApplySecondaryEffect, TRUE
-	waitstate
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
@@ -3225,6 +3262,25 @@ BattleScript_CottonDownIncrement::
 	removeabilitypopup BS_TARGET
 	return
 
+BattleScript_AsOneMessage::
+	loadabilitypopup BS_SCRIPTING
+	printstring STRINGID_PKMNHASTWOABILITIES
+	waitmessage B_WAIT_TIME_LONG
+	removeabilitypopup BS_SCRIPTING
+	return
+
+BattleScript_AsOneIceRiderActivation::
+	call BattleScript_AsOneMessage
+	setabilityoverride BS_SCRIPTING, ABILITY_CHILLING_NEIGH
+	pause B_WAIT_TIME_SHORT
+	return
+
+BattleScript_AsOneShadowRiderActivation::
+	call BattleScript_AsOneMessage
+	setabilityoverride BS_SCRIPTING, ABILITY_GRIM_NEIGH
+	pause B_WAIT_TIME_SHORT
+	return
+
 BattleScript_RaiseStatOnFaintingTarget::
     loadabilitypopup BS_ATTACKER
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
@@ -3343,12 +3399,16 @@ BattleScript_BattleBondBoost::
 	return
 
 BattleScript_ToxicDebrisActivation::
-	playanimation BS_ATTACKER, B_ANIM_SET_TOXIC_SPIKES
+	swapattackerwithtarget
+	trysettoxicspikes BattleScript_ToxicDebrisActivationRet
+	playanimation BS_TARGET, B_ANIM_SET_TOXIC_SPIKES
 	waitstate
-    loadabilitypopup BS_TARGET
+    loadabilitypopup BS_ATTACKER
 	printstring STRINGID_POISONSPIKESSCATTERED
 	waitmessage B_WAIT_TIME_LONG
-	removeabilitypopup BS_TARGET
+	removeabilitypopup BS_ATTACKER
+BattleScript_ToxicDebrisActivationRet::
+	swapattackerwithtarget
 	return
 	
 BattleScript_Hospitality::
@@ -3394,6 +3454,19 @@ BattleScript_QuickDrawActivation::
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_SCRIPTING
 	end2
+
+BattleScript_OpportunistActivates::
+	pause B_WAIT_TIME_SHORT
+	loadabilitypopup BS_ATTACKER
+	applyqueuedstatboosts BS_ATTACKER, BattleScript_DoOpportunistBoost
+	removeabilitypopup BS_ATTACKER
+	restoreattacker
+	end3
+
+BattleScript_DoOpportunistBoost::
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK66_QUEUED_BOOST_ANIM
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ ATTACKCANCELLER BATTLE SCRIPTS @
@@ -3900,6 +3973,7 @@ BattleScript_BattleChallengeStartingStatus::
 	printfromtable gStartingStatusStringIds
 	waitmessage B_WAIT_TIME_LONG
 	playanimation2 BS_ATTACKER, sB_ANIM_ARG1
+	restoreattacker
 	end3
 
 BattleScript_Pausex20::
@@ -4458,6 +4532,7 @@ BattleScript_TotemBoost::
 	waitstate
 	printstring STRINGID_ATKAURAFLAREDTOLIFE
 	waitmessage B_WAIT_TIME_LONG
+	setbyte sMULTIUSE_STATE, 0
 	applyqueuedstatboosts BS_ATTACKER, BattleScript_DoTotemBoost
 	restoreattacker
 	end2
@@ -4581,6 +4656,17 @@ BattleScript_MegaEvolution::
 	printstring STRINGID_PKMNMEGAEVOLVED
 	waitmessage B_WAIT_TIME_LONG
 	switchinabilities BS_SCRIPTING
+	end3
+
+BattleScript_UltraBurst::
+	flushmessagebox
+	printstring STRINGID_BRIGHTLIGHTBURSTOUTOFPKMN
+	waitmessage B_WAIT_TIME_LONG
+	playanimation BS_SCRIPTING, B_ANIM_ULTRA_BURST
+	waitstate
+	updategimmickindicator BS_SCRIPTING
+	printstring STRINGID_PKMNREGAINPOWERWITHULTRABURST
+	waitmessage B_WAIT_TIME_LONG
 	end3
 
 @@@@@@@@@@@@@@@@@@@@@@@

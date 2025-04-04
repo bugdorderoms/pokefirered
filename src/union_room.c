@@ -63,14 +63,14 @@ static struct UnkStruct_URoom * sURoom;
 static void Task_TryBecomeLinkLeader(u8 taskId);
 static void Leader_DestroyResources(struct UnkStruct_Leader * leader);
 static bool8 Leader_SetStateIfMemberListChanged(struct UnkStruct_Leader * leader, u32 state1, u32 state2);
-static void ItemPrintFunc_PossibleGroupMembers(u8 windowId, u32 itemId, u8 y);
+static void ItemPrintFunc_PossibleGroupMembers(u32 windowId, u32 itemId, u32 y);
 static u8 LeaderUpdateGroupMembership(struct UnkStruct_Main0 * main0);
 static u8 UnionRoomLeaderField0CompactionAndCount(struct UnkStruct_Main0 * main0);
 static void Task_TryJoinLinkGroup(u8 taskId);
 static u32 IsTryingToTradeWithHoennTooSoon(struct UnkStruct_Group * group, s32 id);
 static void AskToJoinRfuGroup(struct UnkStruct_Group * group, s32 id);
 static void Task_ListenToWireless(u8 taskId);
-static void ListMenuItemPrintFunc_UnionRoomGroups(u8 windowId, u32 itemId, u8 y);
+static void ListMenuItemPrintFunc_UnionRoomGroups(u32 windowId, u32 itemId, u32 y);
 static u8 GetNewLeaderCandidate(void);
 static void CreateTask_RunScriptAndFadeToActivity(void);
 static void CreateTask_StartActivity(void);
@@ -103,8 +103,7 @@ static bool32 PlayerIsTalkingToUnionRoomAide(void);
 static u32 GetResponseIdx_InviteToURoomActivity(s32 activity);
 static u32 ConvPartnerUnameAndGetWhetherMetAlready(struct UnkStruct_x20 * unkX20);
 static s32 UnionRoomGetPlayerInteractionResponse(struct UnkStruct_Main0 * main0, u8 overrideGender, u8 playerIdx, u32 playerGender);
-static void nullsub_92(u8 windowId, u32 itemId, u8 y);
-static void TradeBoardListMenuItemPrintFunc(u8 windowId, u32 itemId, u8 y);
+static void TradeBoardListMenuItemPrintFunc(u32 windowId, u32 itemId, u32 y);
 static s32 GetIndexOfNthTradeBoardOffer(struct UnkStruct_x20 * x20, s32 n);
 static s32 GetUnionRoomPlayerGender(s32 playerIdx, struct UnkStruct_Main0 * main0);
 static s32 IsRequestedTypeAndSpeciesInPlayerParty(u32 type, u32 species);
@@ -496,7 +495,7 @@ static const struct ListMenuItem gUnknown_8456F9C[] = {
 static const struct ListMenuTemplate gUnknown_845701C = {
     .items = gUnknown_8456F9C,
     .moveCursorFunc = ListMenuDefaultCursorMoveFunc,
-    .itemPrintFunc = nullsub_92,
+    .itemPrintFunc = NULL,
     .totalItems = 16,
     .maxShowed = 4,
     .windowId = 0,
@@ -1157,10 +1156,10 @@ static bool8 Leader_SetStateIfMemberListChanged(struct UnkStruct_Leader * data, 
     return FALSE;
 }
 
-static void ItemPrintFunc_PossibleGroupMembers(u8 windowId, u32 itemId, u8 y)
+static void ItemPrintFunc_PossibleGroupMembers(u32 windowId, u32 itemId, u32 y)
 {
     struct UnkStruct_Leader * data = sUnionRoomMain.leader;
-    u8 var = 0;
+    u32 var = 0;
 
     switch (data->field_0->arr[itemId].groupScheduledAnim)
     {
@@ -1172,7 +1171,6 @@ static void ItemPrintFunc_PossibleGroupMembers(u8 windowId, u32 itemId, u8 y)
         var = UR_COLOR_RED_WHT_LTR;
         break;
     }
-
     PrintGroupMemberCandidateOnWindowWithColor(windowId, 0, y, &data->field_0->arr[itemId], var, itemId);
 }
 
@@ -1648,12 +1646,10 @@ static u8 URoomGroupListGetTextColor(struct UnkStruct_Group * data, u32 id)
     return UR_COLOR_DKE_WHT_LTE;
 }
 
-static void ListMenuItemPrintFunc_UnionRoomGroups(u8 windowId, u32 itemId, u8 y)
+static void ListMenuItemPrintFunc_UnionRoomGroups(u32 windowId, u32 itemId, u32 y)
 {
     struct UnkStruct_Group * data = sUnionRoomMain.group;
-    u8 color_idx = URoomGroupListGetTextColor(data, itemId);
-
-    PrintUnionRoomGroupOnWindow(windowId, 8, y, &data->field_0->arr[itemId], color_idx, itemId);
+    PrintUnionRoomGroupOnWindow(windowId, 8, y, &data->field_0->arr[itemId], URoomGroupListGetTextColor(data, itemId), itemId);
 }
 
 static u8 GetNewLeaderCandidate(void)
@@ -2700,7 +2696,7 @@ static void Task_RunUnionRoom(u8 taskId)
             switch (var5)
             {
             case -2:
-            case 18:
+            case NUMBER_OF_MON_TYPES - 1:
                 ResetUnionRoomTrade(&sUnionRoomTrade);
                 RfuUpdatePlayerGnameStateAndSend(0, 0, 0);
                 UnionRoom_ScheduleFieldMessageAndExit(gUnknown_8458D54);
@@ -3667,10 +3663,6 @@ static s32 UnionRoomGetPlayerInteractionResponse(struct UnkStruct_Main0 * main0,
     }
 }
 
-static void nullsub_92(u8 windowId, u32 itemId, u8 y)
-{
-}
-
 static void TradeBoardPrintItemInfo(u8 windowId, u8 y, struct GFtgtGname * gname, const u8 * uname, u8 colorIdx)
 {
     u8 level_t[4];
@@ -3692,7 +3684,7 @@ static void TradeBoardPrintItemInfo(u8 windowId, u8 y, struct GFtgtGname * gname
     }
 }
 
-static void TradeBoardListMenuItemPrintFunc(u8 windowId, u32 itemId, u8 y)
+static void TradeBoardListMenuItemPrintFunc(u32 windowId, u32 itemId, u32 y)
 {
     struct UnkStruct_Leader * leader = sUnionRoomMain.leader;
     struct GFtgtGname * rfu;

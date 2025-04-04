@@ -11,8 +11,6 @@
 static EWRAM_DATA u8 sWindowIds[3] = {};
 static EWRAM_DATA struct ListMenuItem * sListMenuItems = NULL;
 
-static void MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu * list);
-
 static const struct WindowTemplate sWindowTemplates[] = {
     {
         .bg = 0,
@@ -73,14 +71,17 @@ void MailboxPC_RemoveWindow(u8 winIdx)
     sWindowIds[winIdx] = 0xFF;
 }
 
-static void ItemPrintFunc(u8 windowId, u32 itemId, u8 y)
+static void ItemPrintFunc(u32 windowId, u32 itemId, u32 y)
 {
     u8 strbuf[30];
+	
     if (itemId != -2)
     {
         StringCopy(strbuf, gSaveBlock1Ptr->mail[itemId + PARTY_SIZE].playerName);
+		
         if (StringLength(strbuf) <= 5)
             ConvertInternationalString(strbuf, LANGUAGE_JAPANESE);
+		
         AddTextPrinterParameterized4(windowId, 2, 8, y, 0, 0, sTextColor, -1, strbuf);
     }
 }
@@ -110,17 +111,11 @@ u8 MailboxPC_InitListMenu(struct PlayerPCItemPageStruct * playerPcStruct)
     gMultiuseListMenuTemplate.cursorPal = 2;
     gMultiuseListMenuTemplate.fillValue = 1;
     gMultiuseListMenuTemplate.cursorShadowPal = 3;
-    gMultiuseListMenuTemplate.moveCursorFunc = MoveCursorFunc;
+    gMultiuseListMenuTemplate.moveCursorFunc = ListMenuDefaultCursorMoveFunc;
     gMultiuseListMenuTemplate.itemPrintFunc = ItemPrintFunc;
     gMultiuseListMenuTemplate.cursorKind = 0;
     gMultiuseListMenuTemplate.scrollMultiple = 0;
     return ListMenuInit(&gMultiuseListMenuTemplate, playerPcStruct->cursorPos, playerPcStruct->itemsAbove);
-}
-
-static void MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu * list)
-{
-    if (onInit != TRUE)
-        PlaySE(SE_SELECT);
 }
 
 void MailboxPC_AddScrollIndicatorArrows(struct PlayerPCItemPageStruct * playerPcStruct)

@@ -190,19 +190,19 @@ static const union AffineAnimCmd* const sSpriteAffineAnimTable_KeyItemTM[] =
 
 void ResetItemMenuIconState(void)
 {
-    u16 i;
+    u32 i;
 
     for (i = 0; i < ARRAY_COUNT(sItemMenuIconSpriteIds); i++)
         sItemMenuIconSpriteIds[i] = 0xFF;
 }
 
-void CreateBagOrSatchelSprite(u8 animNum)
+void CreateBagOrSatchelSprite(u32 animNum)
 {
     sItemMenuIconSpriteIds[0] = CreateSprite(&sSpriteTemplate_BagOrSatchel, 40, 68, 0);
     SetBagVisualPocketId(animNum);
 }
 
-void SetBagVisualPocketId(u8 animNum)
+void SetBagVisualPocketId(u32 animNum)
 {
     struct Sprite * sprite = &gSprites[sItemMenuIconSpriteIds[0]];
     sprite->y2 = -5;
@@ -221,6 +221,7 @@ static void SpriteCB_BagVisualSwitchingPockets(struct Sprite * sprite)
 void ShakeBagSprite(void)
 {
     struct Sprite * sprite = &gSprites[sItemMenuIconSpriteIds[0]];
+	
     if (sprite->affineAnimEnded)
     {
         StartSpriteAffineAnim(sprite, 1);
@@ -239,12 +240,13 @@ static void SpriteCB_ShakeBagSprite(struct Sprite * sprite)
 
 void ItemMenuIcons_CreateInsertIndicatorBarHidden(void)
 {
-    u8 i;
+    u32 i;
     u8 * ptr = &sItemMenuIconSpriteIds[1];
 
     for (i = 0; i < 9; i++)
     {
         ptr[i] = CreateSprite(&gUnknown_83D4250, i * 16 + 0x60, 7, 0);
+		
         switch (i)
         {
         case 0:
@@ -260,20 +262,18 @@ void ItemMenuIcons_CreateInsertIndicatorBarHidden(void)
     }
 }
 
-void ItemMenuIcons_ToggleInsertIndicatorBarVisibility(bool8 invisible)
+void ItemMenuIcons_ToggleInsertIndicatorBarVisibility(bool32 invisible)
 {
-    u8 i;
+    u32 i;
     u8 * ptr = &sItemMenuIconSpriteIds[1];
 
     for (i = 0; i < 9; i++)
-    {
         gSprites[ptr[i]].invisible = invisible;
-    }
 }
 
-void ItemMenuIcons_MoveInsertIndicatorBar(s16 x, u16 y)
+void ItemMenuIcons_MoveInsertIndicatorBar(s16 x, u32 y)
 {
-    u8 i;
+    u32 i;
     u8 * ptr = &sItemMenuIconSpriteIds[1];
 
     for (i = 0; i < 9; i++)
@@ -283,7 +283,7 @@ void ItemMenuIcons_MoveInsertIndicatorBar(s16 x, u16 y)
     }
 }
 
-static bool8 TryAllocItemIconTilesBuffers(void)
+static bool32 TryAllocItemIconTilesBuffers(void)
 {
     void ** ptr1, ** ptr2;
 
@@ -303,23 +303,23 @@ static bool8 TryAllocItemIconTilesBuffers(void)
 
 static void CopyItemIconPicTo4x4Buffer(const void * src, void * dest)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < 3; i++)
         CpuCopy16(src + 0x60 * i, dest + 0xA0 + 0x80 * i, 0x60);
 }
 
-u8 AddItemIconObject(u16 tilesTag, u16 paletteTag, u16 itemId)
+u32 AddItemIconObject(u32 tilesTag, u32 paletteTag, u32 itemId)
 {
     return AddItemIconObjectWithCustomObjectTemplate(&sSpriteTemplate_ItemIcon, tilesTag, paletteTag, itemId);
 }
 
-u8 AddItemIconObjectWithCustomObjectTemplate(const struct SpriteTemplate * origTemplate, u16 tilesTag, u16 paletteTag, u16 itemId)
+u32 AddItemIconObjectWithCustomObjectTemplate(const struct SpriteTemplate * origTemplate, u32 tilesTag, u32 paletteTag, u32 itemId)
 {
     struct SpriteTemplate template;
     struct SpriteSheet spriteSheet;
     struct CompressedSpritePalette spritePalette;
-    u8 spriteId;
+    u32 spriteId;
 
     if (!TryAllocItemIconTilesBuffers())
         return MAX_SPRITES;
@@ -345,15 +345,16 @@ u8 AddItemIconObjectWithCustomObjectTemplate(const struct SpriteTemplate * origT
     return spriteId;
 }
 
-void CreateItemMenuIcon(u16 itemId, u8 idx)
+void CreateItemMenuIcon(u32 itemId, u32 idx)
 {
     u8 * ptr = &sItemMenuIconSpriteIds[10];
-    u8 spriteId;
+    u32 spriteId;
 
     if (ptr[idx] == 0xFF)
     {
         FreeSpriteTilesByTag(ITEMICON_TAG + idx);
         FreeSpritePaletteByTag(ITEMICON_TAG + idx);
+		
         spriteId = AddItemIconObject(ITEMICON_TAG + idx, ITEMICON_TAG + idx, itemId);
         if (spriteId != MAX_SPRITES)
         {
@@ -364,7 +365,7 @@ void CreateItemMenuIcon(u16 itemId, u8 idx)
     }
 }
 
-void DestroyItemMenuIcon(u8 idx)
+void DestroyItemMenuIcon(u32 idx)
 {
     u8 * ptr = &sItemMenuIconSpriteIds[10];
 
@@ -375,7 +376,7 @@ void DestroyItemMenuIcon(u8 idx)
     }
 }
 
-const u32 *GetItemIconPic(u16 itemId)
+const u32 *GetItemIconPic(u32 itemId)
 {
 	if (itemId == ITEMS_COUNT)
 		return gItemIcon_ReturnToFieldArrow;
@@ -388,7 +389,7 @@ const u32 *GetItemIconPic(u16 itemId)
 	}
 }
 
-const u32 *GetItemIconPalette(u16 itemId)
+const u32 *GetItemIconPalette(u32 itemId)
 {
 	if (itemId == ITEMS_COUNT)
 		return gItemIconPalette_ReturnToFieldArrow;
@@ -404,15 +405,16 @@ const u32 *GetItemIconPalette(u16 itemId)
 	}
 }
 
-void sub_80989A0(u16 itemId, u8 idx)
+void sub_80989A0(u32 itemId, u32 idx)
 {
     u8 * ptr = &sItemMenuIconSpriteIds[10];
-    u8 spriteId;
+    u32 spriteId;
 
     if (ptr[idx] == 0xFF)
     {
         FreeSpriteTilesByTag(ITEMICON_TAG + idx);
         FreeSpritePaletteByTag(ITEMICON_TAG + idx);
+		
         spriteId = AddItemIconObject(ITEMICON_TAG + idx, ITEMICON_TAG + idx, itemId);
         if (spriteId != MAX_SPRITES)
         {
@@ -428,11 +430,10 @@ void sub_80989A0(u16 itemId, u8 idx)
 
 #define IS_KEY_ITEM_TM(pocket) ((pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE))
 
-static u8 ShowObtainedItemDescription(u16 item)
+static u32 ShowObtainedItemDescription(u32 item)
 {
 	struct WindowTemplate template;
-	s16 textX, textY, maxChars, windowHeight, numLines;
-	u8 windowId;
+	u32 textX, textY, windowId, maxChars, windowHeight, numLines;
 	
 	if (IS_KEY_ITEM_TM(ItemId_GetPocket(item)))
 	{
@@ -475,10 +476,10 @@ static u8 ShowObtainedItemDescription(u16 item)
 void CreateItemIconOnFindMessage(void)
 {
 	s16 x, y;
-	bool8 itemObtained;
+	bool32 itemObtained;
 	struct Sprite *sprite1, *sprite2;
-	u16 itemId = gSpecialVar_0x8009;
-	u8 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2, windowId = 0xFF;
+	u32 itemId = gSpecialVar_0x8009;
+	u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2, windowId = 0xFF;
 	
 	// Handle flash
 	if (Overworld_GetFlashLevel() > 0)
@@ -552,9 +553,9 @@ void CreateItemIconOnFindMessage(void)
 
 void DestroyItemIconOnFindMessage(void)
 {
-	u8 spriteId = gSpecialVar_0x8009;
+	u32 spriteId = gSpecialVar_0x8009;
 	struct Sprite * sprite = &gSprites[spriteId];
-	u8 windowId = sprite->data[0], spriteId2 = sprite->data[1];
+	u32 windowId = sprite->data[0], spriteId2 = sprite->data[1];
 	
 	DestroySpriteAndFreeResources(sprite);
 	

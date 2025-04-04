@@ -456,6 +456,28 @@ const struct SpriteTemplate gFireGeyserSpriteTemplate =
     .callback = AnimGeyserSprite,
 };
 
+static const union AnimCmd sAnim_SmallWood[] =
+{
+    ANIMCMD_FRAME(64, 1),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd *const sAnims_SmallWood[] =
+{
+    sAnim_SmallWood
+};
+
+const struct SpriteTemplate gSmallWoodParticleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SMALL_WOOD,
+    .paletteTag = ANIM_TAG_SMALL_WOOD,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = sAnims_SmallWood,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = AnimFireSpread,
+};
+
 // For the first stage of Fire Punch and Ice Punch
 // arg 0: initial position angle around circle (0-256)
 void AnimFireSpiralInward(struct Sprite *sprite)

@@ -8,7 +8,6 @@ void *gWindowBgTilemapBuffers[4];
 EWRAM_DATA struct Window gWindows[WINDOWS_MAX] = {0};
 
 static u8 GetNumActiveWindowsOnBg(u8 bgId);
-static u32 WindowHeightPx(u8 windowId);
 
 static const struct WindowTemplate sDummyWindowTemplate = {0xFF, 0, 0, 0, 0, 0, 0};
 
@@ -547,7 +546,7 @@ u32 WindowWidthPx(u8 windowId)
 	return gWindows[windowId].window.width * 8;
 }
 
-static u32 WindowHeightPx(u8 windowId)
+u32 WindowHeightPx(u8 windowId)
 {
 	return gWindows[windowId].window.height * 8;
 }

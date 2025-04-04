@@ -61,20 +61,19 @@ static void Task_RunTimeBasedEvents(u8 taskId)
 void SetUpFieldTasks(void)
 {
     if (!FuncIsActiveTask(Task_RunPerStepCallback))
-    {
         gTasks[CreateTask(Task_RunPerStepCallback, 0x50)].data[0] = 0;
-    }
 
     if (!FuncIsActiveTask(Task_RunTimeBasedEvents))
         CreateTask(Task_RunTimeBasedEvents, 0x50);
 }
 
-void ActivatePerStepCallback(u8 callbackId)
+void ActivatePerStepCallback(u32 callbackId)
 {
-    u8 taskId = FindTaskIdByFunc(Task_RunPerStepCallback);
-    if (taskId != 0xff)
+    u32 taskId = FindTaskIdByFunc(Task_RunPerStepCallback);
+	
+    if (taskId != 0xFF)
     {
-        s32 i;
+        u32 i;
         s16 *data = gTasks[taskId].data;
 
         for (i = 0; i < 16; i++)
@@ -86,18 +85,11 @@ void ActivatePerStepCallback(u8 callbackId)
 
 void ResetFieldTasksArgs(void)
 {
-    u8 taskId;
-    s16 *data;
+    u32 taskId = FindTaskIdByFunc(Task_RunTimeBasedEvents);
 
-    taskId = FindTaskIdByFunc(Task_RunPerStepCallback);
-    if (taskId != 0xff)
+    if (taskId != 0xFF)
     {
-        data = gTasks[taskId].data;
-    }
-    taskId = FindTaskIdByFunc(Task_RunTimeBasedEvents);
-    if (taskId != 0xff)
-    {
-        data = gTasks[taskId].data;
+        s16 *data = gTasks[taskId].data;
         data[1] = 0;
         data[2] = 0;
     }
@@ -109,7 +101,7 @@ static void DummyPerStepCallback(u8 taskId)
 
 static void MarkIcefallCaveCoordVisited(s16 x, s16 y)
 {
-	u8 i;
+	u32 i;
 	
     for (i = 0; i < ARRAY_COUNT(sIcefallCaveIceTileCoords); ++i)
     {
@@ -123,11 +115,11 @@ static void MarkIcefallCaveCoordVisited(s16 x, s16 y)
 
 void SetIcefallCaveCrackedIceMetatiles(void)
 {
-	u8 i;
+	u32 i;
 	
     for (i = 0; i < ARRAY_COUNT(sIcefallCaveIceTileCoords); ++i)
     {
-        if (FlagGet(i + 1) == TRUE)
+        if (FlagGet(i + 1))
             MapGridSetMetatileIdAt(sIcefallCaveIceTileCoords[i][0] + 7, sIcefallCaveIceTileCoords[i][1] + 7, METATILE_SeafoamIslands_CrackedIce);
     }
 }
@@ -135,9 +127,9 @@ void SetIcefallCaveCrackedIceMetatiles(void)
 static void IcefallCaveIcePerStepCallback(u8 taskId)
 {
     s16 x, y;
-    u8 tileBehavior;
-    u16 *iceStepCount;
+    u32 tileBehavior;
     s16 *data = gTasks[taskId].data;
+	
     switch (data[1])
     {
         case 0:
@@ -148,12 +140,15 @@ static void IcefallCaveIcePerStepCallback(u8 taskId)
             break;
         case 1:
             PlayerGetDestCoords(&x, &y);
+			
             if (x != data[2] || y != data[3])
             {
                 data[2] = x;
                 data[3] = y;
+				
                 tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
-                if (MetatileBehavior_IsThinIce(tileBehavior) == TRUE)
+				
+                if (MetatileBehavior_IsThinIce(tileBehavior))
                 {
                     MarkIcefallCaveCoordVisited(x, y);
                     data[6] = 4;
@@ -161,7 +156,7 @@ static void IcefallCaveIcePerStepCallback(u8 taskId)
                     data[4] = x;
                     data[5] = y;
                 }
-                else if (MetatileBehavior_IsCrackedIce(tileBehavior) == TRUE)
+                else if (MetatileBehavior_IsCrackedIce(tileBehavior))
                 {
                     data[6] = 4;
                     data[1] = 3;
@@ -177,9 +172,11 @@ static void IcefallCaveIcePerStepCallback(u8 taskId)
             {
                 x = data[4];
                 y = data[5];
+				
                 PlaySE(SE_ICE_CRACK);
                 MapGridSetMetatileIdAt(x, y, METATILE_SeafoamIslands_CrackedIce);
                 CurrentMapDrawMetatileAt(x, y);
+				
                 data[1] = 1;
             }
             break;
@@ -190,10 +187,12 @@ static void IcefallCaveIcePerStepCallback(u8 taskId)
             {
                 x = data[4];
                 y = data[5];
+				
                 PlaySE(SE_ICE_BREAK);
                 MapGridSetMetatileIdAt(x, y, METATILE_SeafoamIslands_IceHole);
                 CurrentMapDrawMetatileAt(x, y);
                 VarSet(VAR_TEMP_1, 1);
+				
                 data[1] = 1;
             }
             break;
@@ -204,14 +203,16 @@ static void IcefallCaveIcePerStepCallback(u8 taskId)
 static void AshGrassPerStepCallback(u8 taskId)
 {
     s16 x, y;
-    u16 *ashGatherCount;
     s16 *data = gTasks[taskId].data;
+	
     PlayerGetDestCoords(&x, &y);
+	
     if (x != data[1] || y != data[2])
     {
         data[1] = x;
         data[2] = y;
-        if (MetatileBehavior_ReturnFalse_4((u8)MapGridGetMetatileBehaviorAt(x, y)))
+		
+        if (MetatileBehavior_ReturnFalse_4(MapGridGetMetatileBehaviorAt(x, y)))
 			StartAshFieldEffect(x, y, MapGridGetMetatileIdAt(x, y) == 0x20a ? 0x212 : 0x206, 4);
     }
 }
@@ -226,10 +227,12 @@ static void SetCrackedFloorHoleMetatile(s16 x, s16 y)
 static void CrackedFloorPerStepCallback(u8 taskId)
 {
     s16 x, y;
-    u16 behavior;
+    u32 behavior;
     s16 *data = gTasks[taskId].data;
+	
     PlayerGetDestCoords(&x, &y);
     behavior = MapGridGetMetatileBehaviorAt(x, y);
+	
     if (data[4] != 0 && (--data[4]) == 0)
         SetCrackedFloorHoleMetatile(data[5], data[6]);
 
@@ -240,6 +243,7 @@ static void CrackedFloorPerStepCallback(u8 taskId)
     {
         data[2] = x;
         data[3] = y;
+		
         if (MetatileBehavior_ReturnFalse_13(behavior))
         {
             if (GetPlayerSpeed() != 4)

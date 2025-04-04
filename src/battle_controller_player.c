@@ -12,6 +12,7 @@
 #include "pokeball.h"
 #include "battle_main.h"
 #include "strings.h"
+#include "battle_ai_util.h"
 #include "pokemon_special_anim.h"
 #include "task.h"
 #include "util.h"
@@ -109,7 +110,7 @@ void SetControllerToPlayer(u32 battlerId)
 
 static void PlayerBufferRunCommand(u32 battlerId)
 {
-    if (gBattleControllerExecFlags & gBitTable[battlerId])
+    if (gBattleControllerExecFlags & Bit(battlerId))
     {
         if (gBattleBufferA[battlerId][0] < ARRAY_COUNT(sPlayerBufferCommands))
             sPlayerBufferCommands[gBattleBufferA[battlerId][0]](battlerId);
@@ -129,7 +130,7 @@ static void PlayerBufferExecCompleted(u32 battlerId)
         gBattleBufferA[battlerId][0] = CONTROLLER_TERMINATOR_NOP;
     }
     else
-        gBattleControllerExecFlags &= ~(gBitTable[battlerId]);
+        gBattleControllerExecFlags &= ~(Bit(battlerId));
 }
 
 ////////////////////////
@@ -636,7 +637,7 @@ static void HandleInputChooseAction(u32 battlerId)
     else if (JOY_NEW(B_BUTTON))
     {
         if (IsDoubleBattleForBattler(battlerId) && GetBattlerPosition(battlerId) == B_POSITION_PLAYER_RIGHT
-         && !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)]) && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
+         && !(gAbsentBattlerFlags & Bit(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))) && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
         {
 			// Return item to bag if partner had selected one.
             if (gBattleBufferA[battlerId][1] == B_ACTION_USE_ITEM)
@@ -856,28 +857,28 @@ static u32 PreviewDeterminativeMoveTargets(u32 battlerId, struct ChooseMoveStruc
 			case MOVE_TARGET_OPPONENTS_FIELD:
 			case MOVE_TARGET_OPPONENTS:
 			case MOVE_TARGET_SELECTED_OPPONENT:
-                bitMask = (gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] | gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)]) << 16; 
+                bitMask = (Bit(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) | Bit(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))) << 16; 
 				startY = 8;
 				break;
 			case MOVE_TARGET_USER:
 			    if (!GET_MOVE_MOVEEFFECT_TABLE(move).affectsUserSide)
 				{
-					bitMask = (gBitTable[battlerId]) << 16;
+					bitMask = (Bit(battlerId)) << 16;
 					startY = 8;
 					break;
 				}
 				// fallthrough
 			case MOVE_TARGET_USER_OR_ALLY:
-			    bitMask = (gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] | gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)]) << 16;
+			    bitMask = (Bit(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)) | Bit(GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT))) << 16;
 				startY = 8;
 				break;
 			case MOVE_TARGET_ALLY:
-			    bitMask = (gBitTable[GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battlerId)))]) << 16;
+			    bitMask = (Bit(GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battlerId))))) << 16;
 			    startY = 8;
 				break;
 			case MOVE_TARGET_FOES_AND_ALLY:
-				bitMask = (gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] | gBitTable[GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battlerId)))] 
-				| gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)]) << 16;
+				bitMask = (Bit(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) | Bit(GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battlerId))))
+				| Bit(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))) << 16;
 				startY = 8;
 				break;
         }
@@ -957,7 +958,7 @@ void HandleInputChooseMove(u32 battlerId)
 				
 				if (moveTarget == MOVE_TARGET_USER || moveTarget == MOVE_TARGET_ALL_BATTLERS || moveTarget == MOVE_TARGET_USER_OR_ALLY)
 					gMultiUsePlayerCursor = battlerId;
-				else if (gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)])
+				else if (gAbsentBattlerFlags & Bit(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
 					gMultiUsePlayerCursor = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 				else
 					gMultiUsePlayerCursor = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
@@ -1041,7 +1042,7 @@ void HandleInputChooseMove(u32 battlerId)
     }
     else if (JOY_NEW(SELECT_BUTTON))
     {
-        if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
+        if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & BATTLE_TYPE_LINK) && !HasMoveEffectInMoveset(moveInfo->moves, EFFECT_CONVERSION)) // To not abuse Conversion's effect
         {
             MoveSelectionCreateCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor, 29);
 			ShowOrHideMoveInfoTriggerSprite(TRUE); // Hide trigger sprite
@@ -1222,7 +1223,7 @@ static void HandleInputChooseTarget(u32 battlerId)
 					    ++i;
 						break;
 				}
-				if ((gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor]) || !CanTargetBattler(battlerId, gMultiUsePlayerCursor, move, moveTarget))
+				if ((gAbsentBattlerFlags & Bit(gMultiUsePlayerCursor)) || !CanTargetBattler(battlerId, gMultiUsePlayerCursor, move, moveTarget))
 					i = 0;
 				
 			} while (i == 0);
@@ -1270,7 +1271,7 @@ static void HandleInputChooseTarget(u32 battlerId)
 					    ++i;
 						break;
 				}
-				if ((gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor]) || !CanTargetBattler(battlerId, gMultiUsePlayerCursor, move, moveTarget))
+				if ((gAbsentBattlerFlags & Bit(gMultiUsePlayerCursor)) || !CanTargetBattler(battlerId, gMultiUsePlayerCursor, move, moveTarget))
 					i = 0;
 				
 			} while (i == 0);
@@ -1310,10 +1311,10 @@ static void HandleMoveSwitching(u32 battlerId)
             i = moveInfo->maxPp[gBattleStruct->battlers[battlerId].moveSelectionCursor];
             moveInfo->maxPp[gBattleStruct->battlers[battlerId].moveSelectionCursor] = moveInfo->maxPp[gMultiUsePlayerCursor];
             moveInfo->maxPp[gMultiUsePlayerCursor] = i;
-            if (gDisableStructs[battlerId].mimickedMoves & gBitTable[gBattleStruct->battlers[battlerId].moveSelectionCursor])
+            if (gDisableStructs[battlerId].mimickedMoves & Bit(gBattleStruct->battlers[battlerId].moveSelectionCursor))
             {
-                gDisableStructs[battlerId].mimickedMoves &= ~(gBitTable[gBattleStruct->battlers[battlerId].moveSelectionCursor]);
-                gDisableStructs[battlerId].mimickedMoves |= gBitTable[gMultiUsePlayerCursor];
+                gDisableStructs[battlerId].mimickedMoves &= ~(Bit(gBattleStruct->battlers[battlerId].moveSelectionCursor));
+                gDisableStructs[battlerId].mimickedMoves |= Bit(gMultiUsePlayerCursor);
             }
             MoveSelectionDisplayMoveNames(battlerId);
             for (i = 0; i < MAX_MON_MOVES; ++i)

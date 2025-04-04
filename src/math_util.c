@@ -1,5 +1,6 @@
 #include "global.h"
 #include "math_util.h"
+#include "util.h"
 
 s16 Q_8_8_mul(s16 x, s16 y)
 {
@@ -17,7 +18,7 @@ s16 Q_N_S_mul(u8 s, s16 x, s16 y)
 
     result = x;
     result *= y;
-    result /= (1 << s);
+    result /= Bit(s);
     return result;
 }
 

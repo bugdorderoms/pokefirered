@@ -962,8 +962,9 @@
 	.byte \caseId
 	.endm
 
-	.macro nopaf
+	.macro trysettoxicspikes ptr:req
 	.byte 0xaf
+	.4byte \ptr
 	.endm
 
 	.macro trysetspikes ptr:req
@@ -971,8 +972,9 @@
 	.4byte \ptr
 	.endm
 
-	.macro nopb1
+	.macro trysetstealthrock ptr:req
 	.byte 0xb1
+	.4byte \ptr
 	.endm
 
 	.macro trysetperishsong ptr:req
@@ -1689,11 +1691,6 @@
 	.4byte \ptr
 	.endm
 	
-	.macro trysettoxicspikes ptr:req
-	callfunction BS_TrySetToxicSpikes
-	.4byte \ptr
-	.endm
-	
 	.macro getfutureattackanim
 	callfunction BS_GetFutureAttackAnim
 	.endm
@@ -1761,6 +1758,17 @@
 	
 	.macro settrickroom
 	callfunction BS_SetTrickRoom
+	.endm
+	
+	.macro setabilityoverride battler:req, ability:req
+	callfunction BS_SetAbilityOverride
+	.byte \battler
+	.2byte \ability
+	.endm
+	
+	.macro jumpifcaptivatefail ptr:req
+	callfunction BS_JumpIfCaptivateFail
+	.4byte \ptr
 	.endm
 	
 @ helpful macros

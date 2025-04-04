@@ -18,6 +18,9 @@ static void AnimRockBlastRock(struct Sprite *sprite);
 static void AnimRockScatter(struct Sprite *sprite);
 static void AnimRockScatter_Step(struct Sprite *sprite);
 static void AnimParticleInVortex_Step(struct Sprite *sprite);
+static void AnimStoneEdgeRock(struct Sprite *sprite);
+static void AnimStoneEdgeRock_Step1(struct Sprite *sprite);
+static void AnimStoneEdgeRock_Step2(struct Sprite *sprite);
 static void AnimTask_LoadSandstormBackground_Step(u8 taskId);
 
 static const union AnimCmd sAnim_FlyingRock_0[] =
@@ -294,6 +297,39 @@ const struct SpriteTemplate gFallingIceRockSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimFallingRock,
+};
+
+const struct SpriteTemplate gRockWreckerBigRockSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BIGGEST_ROCK,
+    .paletteTag = ANIM_TAG_BIGGEST_ROCK,
+    .oam = &gOamData_AffineOff_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSuperpowerFireball,
+};
+
+const struct SpriteTemplate gStoneEdgeRockSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_STEALTH_ROCK,
+    .paletteTag = ANIM_TAG_STEALTH_ROCK,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimStoneEdgeRock,
+};
+
+const struct SpriteTemplate gStealthRockSpriteTemplate =    
+{
+    .tileTag = ANIM_TAG_STEALTH_ROCK,
+    .paletteTag = ANIM_TAG_STEALTH_ROCK,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSpikes,
 };
 
 // Animates a falling rock into the target.
@@ -896,4 +932,33 @@ void AnimTask_SeismicTossBgAccelerateDownAtEnd(u8 taskId)
         ToggleBg3Mode(TRUE);
         DestroyAnimVisualTask(taskId);
     }
+}
+
+// Animates MOVE_STONE_EDGE's rocks.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+static void AnimStoneEdgeRock(struct Sprite *sprite)
+{
+	InitSpritePosToAnimTarget(sprite, TRUE);
+	sprite->data[0] = sprite->data[1] = 20; // Timer
+	sprite->callback = AnimStoneEdgeRock_Step1;
+}
+
+static void AnimStoneEdgeRock_Step1(struct Sprite *sprite)
+{
+	if (--sprite->data[0] > 0)
+	{
+		if ((sprite->data[0] & 3) == 0)
+			++sprite->y;
+	}
+	else
+		sprite->callback = AnimStoneEdgeRock_Step2;
+}
+
+static void AnimStoneEdgeRock_Step2(struct Sprite *sprite)
+{
+	if (--sprite->data[1] > 0)
+		sprite->y -= 4;
+	else
+		DestroyAnimSprite(sprite);
 }

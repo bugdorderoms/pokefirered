@@ -1559,6 +1559,68 @@ const struct SpriteTemplate gAlphaSymbolSpriteTemplate =
     .callback = AnimSpriteOnMonPos,
 };
 
+static const union AffineAnimCmd sUltraBurstSymbolAffineAnimCmds[] =
+{
+    AFFINEANIMCMD_FRAME(16, 16, 0, 0), // Start small
+	AFFINEANIMCMD_FRAME(32, 32, 0, 15), // Grow sprite
+	AFFINEANIMCMD_FRAME(0, 0, 0, 2), // Pause for 2 frames
+	// Pulsate sprite
+	AFFINEANIMCMD_LOOP(0),
+	AFFINEANIMCMD_FRAME(-16, -16, 0, 4),
+	AFFINEANIMCMD_FRAME(16, 16, 0, 4),
+	AFFINEANIMCMD_LOOP(7), // Repeat pulse 7 more times
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sUltraBurstSymbolAffineAnimTable[] =
+{
+    sUltraBurstSymbolAffineAnimCmds,
+};
+
+const struct SpriteTemplate gUltraBurstSymbolSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ULTRA_BURST_SYMBOL,
+    .paletteTag = ANIM_TAG_ULTRA_BURST_SYMBOL,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sUltraBurstSymbolAffineAnimTable,
+    .callback = AnimSpriteOnMonPos,
+};
+
+const struct SpriteTemplate gJudgmentBlackOrbSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ORBS,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = sPowerAbsorptionOrbAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimNeedleArmSpike,
+};
+
+const struct SpriteTemplate gJudgmentBlackSpikeSpriteTemplate =    
+{
+    .tileTag = ANIM_TAG_GREEN_SPIKE,
+    .paletteTag = ANIM_TAG_GUST,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimNeedleArmSpike,
+};
+
+const struct SpriteTemplate gChargeBeamOrbSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ORBS,
+    .paletteTag = ANIM_TAG_ELECTRIC_ORBS,
+    .oam = &gOamData_AffineOff_ObjNormal_8x8,
+    .anims = sSolarbeamBigOrbAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimHyperBeamOrb,
+};
+
 // Animates the falling particles that horizontally wave back and forth. Used by Sleep Powder, Stun Spore, and Poison Powder.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset

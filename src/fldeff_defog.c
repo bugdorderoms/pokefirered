@@ -12,9 +12,9 @@
 static void FieldCallback_Defog(void);
 static void FldEff_UseDefog(void);
 
-bool8 SetUpFieldMove_Defog(void)
+bool32 SetUpFieldMove_Defog(void)
 {
-	u8 weather = GetCurrentWeather();
+	u32 weather = GetCurrentWeather();
 	
 	if (weather == WEATHER_FOG_HORIZONTAL || weather == WEATHER_FOG_DIAGONAL)
 	{
@@ -27,7 +27,7 @@ bool8 SetUpFieldMove_Defog(void)
 
 static void FieldCallback_Defog(void)
 {
-	u8 taskId = CreateFieldEffectShowMon();
+	u32 taskId = CreateFieldEffectShowMon();
 	gSpecialVar_Result = gFieldEffectArguments[0] = GetCursorSelectionMonId();
 	FLDEFF_SET_FUNC_TO_DATA(FldEff_UseDefog);
 }

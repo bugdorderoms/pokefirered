@@ -56,7 +56,7 @@ static void SetupBytecodeScript(struct ScriptContext *ctx, const u8 *ptr)
     ctx->mode = SCRIPT_MODE_BYTECODE;
 }
 
-void SetupNativeScript(struct ScriptContext *ctx, bool8 (*ptr)(void))
+void SetupNativeScript(struct ScriptContext *ctx, bool32 (*ptr)(void))
 {
     ctx->mode = SCRIPT_MODE_NATIVE;
     ctx->nativePtr = ptr;

@@ -311,6 +311,7 @@ struct BattleMove
 				u16 stringId;
 				u16 abilityId;
 				u16 counterSplit;
+				u16 holdEffect;
 			 } argument;
 	/*0x18*/ u8 target;
 	/*0x19*/ u8 zMoveEffect;
@@ -556,6 +557,7 @@ u8 FindMoveSlotInBoxMonMoveset(struct BoxPokemon *boxMon, u16 move);
 void DrawSpeciesFootprint(u8 windowId, u16 species, u8 x, u8 y);
 void UpdatePartyFormChangeCountdown(u32 daysSince);
 void CopyPokemonToBattleMon(u8 battlerId, struct Pokemon *mon, struct BattlePokemon *dst, bool8 setAllData);
+void TryTransformZacianAndZamazentaIronHead(struct Pokemon *mon, bool32 transformBack);
 
 static inline u8 GetNatureFromPersonality(u32 personality)
 {

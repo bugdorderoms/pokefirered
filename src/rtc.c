@@ -85,23 +85,23 @@ static const u16 sCumDaysByMonthLeapYear[MONTH_COUNT] =
 // RTC //
 /////////
 
-#define RTCINFO_FREQUENCY (1 << 0) // Frequency interrupt enable
-#define RTCINFO_PERMINUTE (1 << 1) // Per-minute interrupt enable
-#define RTCINFO_ALARM     (1 << 2) // Alarm interrupt enable
-#define RTCINFO_UNUSED1   (1 << 3)
-#define RTCINFO_UNUSED2   (1 << 4)
-#define RTCINFO_UNUSED3   (1 << 5)
-#define RTCINFO_24HOUR    (1 << 6) // 0: 12-hour mode, 1: 24-hour mode
-#define RTCINFO_POWER     (1 << 7) // Power on or power failure occurred
+#define RTCINFO_FREQUENCY Bit(0) // Frequency interrupt enable
+#define RTCINFO_PERMINUTE Bit(1) // Per-minute interrupt enable
+#define RTCINFO_ALARM     Bit(2) // Alarm interrupt enable
+#define RTCINFO_UNUSED1   Bit(3)
+#define RTCINFO_UNUSED2   Bit(4)
+#define RTCINFO_UNUSED3   Bit(5)
+#define RTCINFO_24HOUR    Bit(6) // 0: 12-hour mode, 1: 24-hour mode
+#define RTCINFO_POWER     Bit(7) // Power on or power failure occurred
 
-#define RTC_ERR_12HOUR_CLOCK   0x0010
-#define RTC_ERR_POWER_FAILURE  0x0020
-#define RTC_ERR_INVALID_YEAR   0x0040
-#define RTC_ERR_INVALID_MONTH  0x0080
-#define RTC_ERR_INVALID_DAY    0x0100
-#define RTC_ERR_INVALID_HOUR   0x0200
-#define RTC_ERR_INVALID_MINUTE 0x0400
-#define RTC_ERR_INVALID_SECOND 0x0800
+#define RTC_ERR_12HOUR_CLOCK   Bit(4)
+#define RTC_ERR_POWER_FAILURE  Bit(5)
+#define RTC_ERR_INVALID_YEAR   Bit(6)
+#define RTC_ERR_INVALID_MONTH  Bit(7)
+#define RTC_ERR_INVALID_DAY    Bit(8)
+#define RTC_ERR_INVALID_HOUR   Bit(9)
+#define RTC_ERR_INVALID_MINUTE Bit(10)
+#define RTC_ERR_INVALID_SECOND Bit(11)
 
 #define RTC_ERR_FLAG_MASK      0x0FF0
 
@@ -282,16 +282,16 @@ u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 
 // SIIRTC //
 ////////////
 
-#define STATUS_FREQUENCY 0x02 // Frequency interrupt enable
-#define STATUS_PERMINUTE 0x08 // Per-minute interrupt enable
-#define STATUS_ALARM     0x20 // Alarm interrupt enable
-#define STATUS_24HOUR    0x40 // 0: 12-hour mode, 1: 24-hour mode
-#define STATUS_POWER     0x80 // Power on or power failure occurred
+#define STATUS_FREQUENCY Bit(1) // Frequency interrupt enable
+#define STATUS_PERMINUTE Bit(3) // Per-minute interrupt enable
+#define STATUS_ALARM     Bit(5) // Alarm interrupt enable
+#define STATUS_24HOUR    Bit(6) // 0: 12-hour mode, 1: 24-hour mode
+#define STATUS_POWER     Bit(7) // Power on or power failure occurred
 
-#define TEST_MODE 0x80 // flag in the "second" byte
+#define TEST_MODE Bit(7) // flag in the "second" byte
 
-#define ALARM_AM 0x00
-#define ALARM_PM 0x80
+#define ALARM_AM 0
+#define ALARM_PM Bit(7)
 
 #define OFFSET_YEAR         offsetof(struct SiiRtcInfo, year)
 #define OFFSET_MONTH        offsetof(struct SiiRtcInfo, month)
@@ -323,9 +323,9 @@ u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 
 #define CMD_TIME     CMD(3)
 #define CMD_ALARM    CMD(4)
 
-#define SCK_HI (1 << 0)
-#define SIO_HI (1 << 1)
-#define CS_HI  (1 << 2)
+#define SCK_HI Bit(0)
+#define SIO_HI Bit(1)
+#define CS_HI  Bit(2)
 
 #define DIR_0_IN    0
 #define DIR_0_OUT   1

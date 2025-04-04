@@ -58,8 +58,8 @@ static void DrawOptionMenuBg(void);
 static void PrintOptionMenuHeader(void);
 static u8 CreateOptionsListMenu(void);
 static void OptionMenu_PickSwitchCancel(void);
-static void Options_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list);
-static void Options_ItemPrintFunc(u8 windowId, u32 itemId, u8 y);
+static void Options_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list);
+static void Options_ItemPrintFunc(u32 windowId, u32 itemId, u32 y);
 static void Task_OptionMenu(u8 taskId);
 static bool8 OptionMenu_ProcessInput(u8 taskId);
 static void CloseAndSaveOptionMenu(u8 taskId);
@@ -501,14 +501,14 @@ static void UpdateOptionsText(u8 windowId, u32 itemId, u8 y)
     CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
 
-static void Options_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list)
+static void Options_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list)
 {
 	u16 maxLetterHeight = GetFontAttribute(0, FONTATTR_MAX_LETTER_HEIGHT), y = (itemIndex - list->cursorPos) * maxLetterHeight + 0x3A;
     SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(y, y + maxLetterHeight));
     SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0x10, 0xE0));
 }
 
-static void Options_ItemPrintFunc(u8 windowId, u32 itemId, u8 y)
+static void Options_ItemPrintFunc(u32 windowId, u32 itemId, u32 y)
 {
 	UpdateOptionsText(windowId, itemId, y);
 }

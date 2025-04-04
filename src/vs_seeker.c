@@ -510,9 +510,9 @@ static void VsSeekerSetStepCounterFullyCharged(void)
     gSaveBlock1Ptr->trainerRematchStepCounter |= (100 << 8);
 }
 
-void Task_VsSeeker_0(u8 taskId)
+void Task_VsSeeker_0(u32 taskId)
 {
-   u8 i;
+   u32 i;
 
    for (i = 0; i < 16; i++)
       gTasks[taskId].data[i] = 0;

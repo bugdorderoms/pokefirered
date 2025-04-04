@@ -4,11 +4,11 @@
 #include "pokemon.h"
 #include "rtc.h"
 
-static bool8 CanDoDailyEvents(void)
+static bool32 CanDoDailyEvents(void)
 {
 	struct DailyEvent *dailyData = &gSaveBlock2Ptr->dailyEvent;
-	u8 dailyDay = dailyData->day;
-	u8 dailyMonth = dailyData->month;
+	u32 dailyDay = dailyData->day;
+	u32 dailyMonth = dailyData->month;
 	u32 dailyYear = dailyData->year + dailyData->century * 100;
 	
 	if (dailyYear > gRtcLocation.year

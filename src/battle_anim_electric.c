@@ -236,42 +236,53 @@ static const struct SpriteTemplate gElectricChargingParticlesSpriteTemplate =
 
 static const union AffineAnimCmd sAffineAnim_GrowingElectricOrb_0[] =
 {
-    AFFINEANIMCMD_FRAME(0x10, 0x10, 0, 0),
-    AFFINEANIMCMD_FRAME(0x4, 0x4, 0, 60),
-    AFFINEANIMCMD_FRAME(0x100, 0x100, 0, 0),
+    AFFINEANIMCMD_FRAME(16, 16, 0, 0),
+    AFFINEANIMCMD_FRAME(4, 4, 0, 60),
+    AFFINEANIMCMD_FRAME(256, 256, 0, 0),
     AFFINEANIMCMD_LOOP(0),
-    AFFINEANIMCMD_FRAME(-0x4, -0x4, 0, 5),
-    AFFINEANIMCMD_FRAME(0x4, 0x4, 0, 5),
+    AFFINEANIMCMD_FRAME(-4, -4, 0, 5),
+    AFFINEANIMCMD_FRAME(4, 4, 0, 5),
     AFFINEANIMCMD_LOOP(10),
     AFFINEANIMCMD_END,
 };
 
 static const union AffineAnimCmd sAffineAnim_GrowingElectricOrb_1[] =
 {
-    AFFINEANIMCMD_FRAME(0x10, 0x10, 0, 0),
-    AFFINEANIMCMD_FRAME(0x8, 0x8, 0, 30),
-    AFFINEANIMCMD_FRAME(0x100, 0x100, 0, 0),
-    AFFINEANIMCMD_FRAME(-0x4, -0x4, 0, 5),
-    AFFINEANIMCMD_FRAME(0x4, 0x4, 0, 5),
+    AFFINEANIMCMD_FRAME(16, 16, 0, 0),
+    AFFINEANIMCMD_FRAME(8, 8, 0, 30),
+    AFFINEANIMCMD_FRAME(256, 256, 0, 0),
+    AFFINEANIMCMD_FRAME(-4, -4, 0, 5),
+    AFFINEANIMCMD_FRAME(4, 4, 0, 5),
     AFFINEANIMCMD_JUMP(3),
 };
 
 static const union AffineAnimCmd sAffineAnim_GrowingElectricOrb_2[] =
 {
-    AFFINEANIMCMD_FRAME(0x10, 0x10, 0, 0),
-    AFFINEANIMCMD_FRAME(0x8, 0x8, 0, 30),
-    AFFINEANIMCMD_FRAME(-0x8, -0x8, 0, 30),
+    AFFINEANIMCMD_FRAME(16, 16, 0, 0),
+    AFFINEANIMCMD_FRAME(8, 8, 0, 30),
+    AFFINEANIMCMD_FRAME(-8, -8, 0, 30),
     AFFINEANIMCMD_END,
 };
 
 static const union AffineAnimCmd sAffineAnim_GrowingElectricOrb_3[] =
 {
-    AFFINEANIMCMD_FRAME(0x10, 0x10, 0, 0),
-    AFFINEANIMCMD_FRAME(0x8, 0x8, 0, 18),
+    AFFINEANIMCMD_FRAME(16, 16, 0, 0),
+    AFFINEANIMCMD_FRAME(8, 8, 0, 18),
     AFFINEANIMCMD_LOOP(0),
-    AFFINEANIMCMD_FRAME(-0x5, -0x5, 0, 8),
-    AFFINEANIMCMD_FRAME(0x5, 0x5, 0, 8),
+    AFFINEANIMCMD_FRAME(-5, -5, 0, 8),
+    AFFINEANIMCMD_FRAME(5, 5, 0, 8),
     AFFINEANIMCMD_LOOP(5),
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sAffineAnim_GrowingElectricOrb_4[] =
+{
+    AFFINEANIMCMD_FRAME(16, 16, 0, 0),
+    AFFINEANIMCMD_FRAME(8, 8, 0, 15),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 120),
+    AFFINEANIMCMD_FRAME(24, 24, 0, 5),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 10),
+    AFFINEANIMCMD_FRAME(-16, -16, 0, 15),
     AFFINEANIMCMD_END,
 };
 
@@ -281,6 +292,7 @@ static const union AffineAnimCmd *const sAffineAnims_GrowingElectricOrb[] =
     sAffineAnim_GrowingElectricOrb_1,
     sAffineAnim_GrowingElectricOrb_2,
 	sAffineAnim_GrowingElectricOrb_3,
+	sAffineAnim_GrowingElectricOrb_4,
 };
 
 const struct SpriteTemplate gGrowingChargeOrbSpriteTemplate =

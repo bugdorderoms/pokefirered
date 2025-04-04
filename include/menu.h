@@ -18,8 +18,8 @@ struct MenuAction
 };
 
 // list_menu
-void ListMenuLoadStdPalAt(u8 palOffset, u8 palId);
-void BlitMoveInfoIcon(u8 windowId, u8 iconId, u16 x, u16 y);
+void ListMenuLoadStdPalAt(u32 palOffset, u32 palId);
+void BlitMoveInfoIcon(u32 windowId, u32 iconId, u32 x, u32 y);
 
 // menu
 s8 Menu_ProcessInputGridLayout(void);

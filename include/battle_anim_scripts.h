@@ -63,6 +63,9 @@ extern const u8 gGeneralAnim_TotemBoost[];
 extern const u8 gGeneralAnim_AquaRingHeal[];
 extern const u8 gGeneralAnim_RedPrimalReversion[];
 extern const u8 gGeneralAnim_BluePrimalReversion[];
+extern const u8 gGeneralAnim_UltraBurst[];
+extern const u8 gGeneralAnim_TrickRoom[];
+extern const u8 gGeneralAnim_Gravity[];
 
 // Move animations
 extern const u8 gMoveAnim_NONE[];

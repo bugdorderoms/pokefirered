@@ -22,20 +22,20 @@ static void ApplyImageEffect_BlurRight(void);
 static void ApplyImageEffect_BlurDown(void);
 static void ApplyImageEffect_Shimmer(void);
 static void ApplyImageEffect_Grayscale(void);
-static void ApplyImageEffect_PersonalityColor(u8);
-static void ApplyImageEffect_RedChannelGrayscale(u8);
-static void ApplyImageEffect_RedChannelGrayscaleHighlight(u8);
+static void ApplyImageEffect_PersonalityColor(u32);
+static void ApplyImageEffect_RedChannelGrayscale(u32);
+static void ApplyImageEffect_RedChannelGrayscaleHighlight(u32);
 static void AddPointillismPoints(u16);
-static u16 ConvertColorToGrayscale(u16*);
-static u16 QuantizePixel_Blur(u16*, u16*, u16*);
-static u16 QuantizePixel_PersonalityColor(u16*, u8);
-static u16 QuantizePixel_BlackAndWhite(u16*);
-static u16 QuantizePixel_BlackOutline(u16*, u16*);
-static u16 QuantizePixel_Invert(u16*);
-static u16 QuantizePixel_BlurHard(u16*, u16*, u16*);
-static u16 QuantizePixel_MotionBlur(u16*, u16*);
-static u16 GetColorFromPersonality(u8);
-static void QuantizePalette_Standard(bool8);
+static u32 ConvertColorToGrayscale(u16*);
+static u32 QuantizePixel_Blur(u16*, u16*, u16*);
+static u32 QuantizePixel_PersonalityColor(u16*, u32);
+static u32 QuantizePixel_BlackAndWhite(u16*);
+static u32 QuantizePixel_BlackOutline(u16*, u16*);
+static u32 QuantizePixel_Invert(u16*);
+static u32 QuantizePixel_BlurHard(u16*, u16*, u16*);
+static u32 QuantizePixel_MotionBlur(u16*, u16*);
+static u32 GetColorFromPersonality(u32);
+static void QuantizePalette_Standard(bool32);
 static void SetPresetPalette_PrimaryColors(void);
 static void QuantizePalette_PrimaryColors(void);
 static void SetPresetPalette_Grayscale(void);
@@ -44,10 +44,10 @@ static void SetPresetPalette_GrayscaleSmall(void);
 static void QuantizePalette_GrayscaleSmall(void);
 static void SetPresetPalette_BlackAndWhite(void);
 static void QuantizePalette_BlackAndWhite(void);
-static u16 QuantizePixel_Standard(u16*);
-static u16 QuantizePixel_GrayscaleSmall(u16*);
-static u16 QuantizePixel_Grayscale(u16*);
-static u16 QuantizePixel_PrimaryColors(u16*);
+static u32 QuantizePixel_Standard(u16*);
+static u32 QuantizePixel_GrayscaleSmall(u16*);
+static u32 QuantizePixel_Grayscale(u16*);
+static u32 QuantizePixel_PrimaryColors(u16*);
 
 #include "data/pointillism_points.h"
 
@@ -118,14 +118,15 @@ void ApplyImageProcessingEffects(struct ImageProcessingContext *context)
     }
 }
 
-static void ApplyImageEffect_RedChannelGrayscale(u8 delta)
+static void ApplyImageEffect_RedChannelGrayscale(u32 delta)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (!(0x8000 & *pixel))
@@ -143,14 +144,15 @@ static void ApplyImageEffect_RedChannelGrayscale(u8 delta)
     }
 }
 
-static void ApplyImageEffect_RedChannelGrayscaleHighlight(u8 highlight)
+static void ApplyImageEffect_RedChannelGrayscaleHighlight(u32 highlight)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (!(0x8000 & *pixel))
@@ -168,18 +170,20 @@ static void ApplyImageEffect_RedChannelGrayscaleHighlight(u8 highlight)
 static void ApplyImageEffect_Pointillism(void)
 {
     u32 i;
+	
     for (i = 0; i < ARRAY_COUNT(sPointillismPoints); i++)
         AddPointillismPoints(i);
 }
 
 static void ApplyImageEffect_Grayscale(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (!(0x8000 & *pixel))
@@ -190,7 +194,7 @@ static void ApplyImageEffect_Grayscale(void)
 
 static void ApplyImageEffect_Blur(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (i = 0; i < gCanvasColumnEnd; i++)
     {
@@ -214,14 +218,15 @@ static void ApplyImageEffect_Blur(void)
     }
 }
 
-static void ApplyImageEffect_PersonalityColor(u8 personality)
+static void ApplyImageEffect_PersonalityColor(u32 personality)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (!(0x8000 & *pixel))
@@ -232,12 +237,13 @@ static void ApplyImageEffect_PersonalityColor(u8 personality)
 
 static void ApplyImageEffect_BlackAndWhite(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (!(0x8000 & *pixel))
@@ -248,21 +254,22 @@ static void ApplyImageEffect_BlackAndWhite(void)
 
 static void ApplyImageEffect_BlackOutline(void)
 {
-    u8 i, j;
+    u32 i, j;
     u16 *pixel;
 
     // Handle top row of pixels first.
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
+		
         pixel = &pixelRow[gCanvasColumnStart];
         *pixel = QuantizePixel_BlackOutline(pixel, pixel + 1);
+		
         for (i = 1, pixel++; i < gCanvasColumnEnd - 1; i++, pixel++)
         {
             *pixel = QuantizePixel_BlackOutline(pixel, pixel + 1);
             *pixel = QuantizePixel_BlackOutline(pixel, pixel - 1);
         }
-
         *pixel = QuantizePixel_BlackOutline(pixel, pixel - 1);
     }
 
@@ -270,26 +277,28 @@ static void ApplyImageEffect_BlackOutline(void)
     for (i = 0; i < gCanvasColumnEnd; i++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][gCanvasRowStart * gCanvasWidth];
+		
         pixel = &pixelRow[gCanvasColumnStart + i];
         *pixel = QuantizePixel_BlackOutline(pixel, pixel + gCanvasWidth);
+		
         for (j = 1, pixel += gCanvasWidth; j < gCanvasRowEnd - 1; j++, pixel += gCanvasWidth)
         {
             *pixel = QuantizePixel_BlackOutline(pixel, pixel + gCanvasWidth);
             *pixel = QuantizePixel_BlackOutline(pixel, pixel - gCanvasWidth);
         }
-
         *pixel = QuantizePixel_BlackOutline(pixel, pixel - gCanvasWidth);
     }
 }
 
 static void ApplyImageEffect_Invert(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (!(0x8000 & *pixel))
@@ -300,7 +309,7 @@ static void ApplyImageEffect_Invert(void)
 
 static void ApplyImageEffect_Shimmer(void)
 {
-    u8 i, j;
+    u32 i, j;
     u16 *pixel;
     u16 prevPixel;
 
@@ -321,6 +330,7 @@ static void ApplyImageEffect_Shimmer(void)
         pixel = &(*gCanvasPixels)[0][j];
         prevPixel = *pixel;
         *pixel = 0x8000;
+		
         for (i = 1, pixel += 64; i < 63; i++, pixel += 64)
         {
             if (!(0x8000 & *pixel))
@@ -334,6 +344,7 @@ static void ApplyImageEffect_Shimmer(void)
         pixel = &(*gCanvasPixels)[0][j];
         prevPixel = *pixel;
         *pixel = 0x8000;
+		
         for (i = 1, pixel += 64; i < 63; i++, pixel += 64)
         {
             if (!(0x8000 & *pixel))
@@ -342,7 +353,6 @@ static void ApplyImageEffect_Shimmer(void)
                 prevPixel = *pixel;
             }
         }
-
         *pixel = 0x8000;
     }
 
@@ -350,6 +360,7 @@ static void ApplyImageEffect_Shimmer(void)
     // The above blur causes the outline areas to darken, which makes
     // this inversion give the effect of light outlines.
     pixel = (*gCanvasPixels)[0];
+	
     for (i = 0; i < 64; i++)
     {
         for (j = 0; j < 64; j++, pixel++)
@@ -362,13 +373,14 @@ static void ApplyImageEffect_Shimmer(void)
 
 static void ApplyImageEffect_BlurRight(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
         u16 prevPixel = *pixel;
+		
         for (i = 1, pixel++; i < gCanvasColumnEnd - 1; i++, pixel++)
         {
             if (!(0x8000 & *pixel))
@@ -382,13 +394,14 @@ static void ApplyImageEffect_BlurRight(void)
 
 static void ApplyImageEffect_BlurDown(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (i = 0; i < gCanvasColumnEnd; i++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][gCanvasRowStart * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart + i];
         u16 prevPixel = *pixel;
+		
         for (j = 1, pixel += gCanvasWidth; j < gCanvasRowEnd - 1; j++, pixel += gCanvasWidth)
         {
             if (!(0x8000 & *pixel))
@@ -409,8 +422,8 @@ struct PointillismPoint
 
 static void AddPointillismPoints(u16 arg0)
 {
-    u8 i;
-    bool8 offsetDownLeft;
+    u32 i;
+    bool32 offsetDownLeft;
     u8 colorType;
     struct PointillismPoint points[6];
 
@@ -420,6 +433,7 @@ static void AddPointillismPoints(u16 arg0)
 
     colorType = (sPointillismPoints[arg0][2] >> 1) & 3;
     offsetDownLeft = sPointillismPoints[arg0][2] & 1;
+	
     for (i = 1; i < points[0].delta; i++)
     {
         if (!offsetDownLeft)
@@ -497,7 +511,7 @@ static void AddPointillismPoints(u16 arg0)
     }
 }
 
-static u16 ConvertColorToGrayscale(u16 *color)
+static u32 ConvertColorToGrayscale(u16 *color)
 {
     u16 red = *color & 0x1F;
     u16 green = (*color >> 5) & 0x1F;
@@ -509,7 +523,7 @@ static u16 ConvertColorToGrayscale(u16 *color)
 
 // The dark colors are the colored edges of the Cool painting effect.
 // Everything else is white.
-static u16 QuantizePixel_PersonalityColor(u16 *color, u8 personality)
+static u32 QuantizePixel_PersonalityColor(u16 *color, u32 personality)
 {
     u16 red = *color & 0x1F;
     u16 green = (*color >> 5) & 0x1F;
@@ -523,7 +537,7 @@ static u16 QuantizePixel_PersonalityColor(u16 *color, u8 personality)
 
 // Based on the given value, which comes from the first 8 bits of
 // the mon's personality value, return a color.
-static u16 GetColorFromPersonality(u8 personality)
+static u32 GetColorFromPersonality(u32 personality)
 {
     u16 red = 0;
     u16 green = 0;
@@ -570,11 +584,10 @@ static u16 GetColorFromPersonality(u8 personality)
         red = 0;
         break;
     }
-
     return RGB2(red, green, blue);
 }
 
-static u16 QuantizePixel_BlackAndWhite(u16 *color)
+static u32 QuantizePixel_BlackAndWhite(u16 *color)
 {
     u16 red = *color & 0x1F;
     u16 green = (*color >> 5) & 0x1F;
@@ -586,22 +599,22 @@ static u16 QuantizePixel_BlackAndWhite(u16 *color)
         return RGB_WHITE;
 }
 
-static u16 QuantizePixel_BlackOutline(u16 *pixelA, u16 *pixelB)
+static u32 QuantizePixel_BlackOutline(u16 *pixelA, u16 *pixelB)
 {
     if (*pixelA != RGB_BLACK)
     {
         if (*pixelA & 0x8000)
             return 0x8000;
+		
         if (*pixelB & 0x8000)
             return RGB_BLACK;
 
         return *pixelA;
     }
-
     return RGB_BLACK;
 }
 
-static u16 QuantizePixel_Invert(u16 *color)
+static u32 QuantizePixel_Invert(u16 *color)
 {
     u16 red = *color & 0x1F;
     u16 green = (*color >> 5) & 0x1F;
@@ -614,12 +627,11 @@ static u16 QuantizePixel_Invert(u16 *color)
     return RGB2(red, green, blue);
 }
 
-static u16 QuantizePixel_MotionBlur(u16 *prevPixel, u16 *curPixel)
+static u32 QuantizePixel_MotionBlur(u16 *prevPixel, u16 *curPixel)
 {
     u16 pixelChannels[2][3];
     u16 diffs[3];
-    u8 i;
-    u16 largestDiff;
+    u32 i, largestDiff;
     u16 red, green, blue;
 
     if (*prevPixel == *curPixel)
@@ -672,7 +684,7 @@ static u16 QuantizePixel_MotionBlur(u16 *prevPixel, u16 *curPixel)
     return RGB2(red, green, blue);
 }
 
-static u16 QuantizePixel_Blur(u16 *prevPixel, u16 *curPixel, u16 *nextPixel)
+static u32 QuantizePixel_Blur(u16 *prevPixel, u16 *curPixel, u16 *nextPixel)
 {
     u16 red, green, blue;
     u16 prevAvg, curAvg, nextAvg;
@@ -716,7 +728,7 @@ static u16 QuantizePixel_Blur(u16 *prevPixel, u16 *curPixel, u16 *nextPixel)
     return RGB2(red, green, blue);
 }
 
-static u16 QuantizePixel_BlurHard(u16 *prevPixel, u16 *curPixel, u16 *nextPixel)
+static u32 QuantizePixel_BlurHard(u16 *prevPixel, u16 *curPixel, u16 *nextPixel)
 {
     u16 red, green, blue;
     u16 prevAvg, curAvg, nextAvg;
@@ -762,7 +774,7 @@ static u16 QuantizePixel_BlurHard(u16 *prevPixel, u16 *curPixel, u16 *nextPixel)
 
 void ConvertImageProcessingToGBA(struct ImageProcessingContext *context)
 {
-    u16 i, j, k;
+    u32 i, j, k;
     u16 *src, *dest, *src_, *dest_;
     u16 width, height;
 
@@ -877,27 +889,29 @@ static void SetPresetPalette_BlackAndWhite(void)
 
 static void SetPresetPalette_GrayscaleSmall(void)
 {
-    u8 i;
+    u32 i;
 
     gCanvasPalette[0] = RGB2(0, 0, 0);
     gCanvasPalette[1] = RGB2(0, 0, 0);
+	
     for (i = 0; i < 14; i++)
         gCanvasPalette[i + 2] = RGB2(2 * (i + 2), 2 * (i + 2), 2 * (i + 2));
 }
 
 static void SetPresetPalette_Grayscale(void)
 {
-    u8 i;
+    u32 i;
 
     gCanvasPalette[0] = RGB2(0, 0, 0);
+	
     for (i = 0; i < 32; i++)
         gCanvasPalette[i + 1] = RGB2(i, i, i);
 }
 
-static void QuantizePalette_Standard(bool8 useLimitedPalette)
+static void QuantizePalette_Standard(bool32 useLimitedPalette)
 {
-    u8 i, j;
-    u16 maxIndex = useLimitedPalette ? 0xDF : 0xFF;
+    u32 i, j;
+    u32 maxIndex = useLimitedPalette ? 0xDF : 0xFF;
 
     for (i = 0; i < maxIndex; i++)
         gCanvasPalette[i] = RGB_BLACK;
@@ -908,16 +922,16 @@ static void QuantizePalette_Standard(bool8 useLimitedPalette)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (*pixel & 0x8000)
-            {
                 *pixel = gCanvasPaletteStart;
-            }
             else
             {
-                u16 quantizedColor = QuantizePixel_Standard(pixel);
-                u8 curIndex = 1;
+                u32 quantizedColor = QuantizePixel_Standard(pixel);
+                u32 curIndex = 1;
+				
                 if (curIndex < maxIndex)
                 {
                     if (gCanvasPalette[curIndex] == RGB_BLACK)
@@ -970,18 +984,17 @@ static void QuantizePalette_Standard(bool8 useLimitedPalette)
 
 static void QuantizePalette_BlackAndWhite(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (*pixel & 0x8000)
-            {
                 *pixel = gCanvasPaletteStart;
-            }
             else
             {
                 if (QuantizePixel_BlackAndWhite(pixel) == RGB_BLACK)
@@ -1001,12 +1014,13 @@ static void QuantizePalette_BlackAndWhite(void)
 
 static void QuantizePalette_GrayscaleSmall(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (*pixel & 0x8000)
@@ -1019,12 +1033,13 @@ static void QuantizePalette_GrayscaleSmall(void)
 
 static void QuantizePalette_Grayscale(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (*pixel & 0x8000)
@@ -1037,12 +1052,13 @@ static void QuantizePalette_Grayscale(void)
 
 static void QuantizePalette_PrimaryColors(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (j = 0; j < gCanvasRowEnd; j++)
     {
         u16 *pixelRow = &(*gCanvasPixels)[0][(gCanvasRowStart + j) * gCanvasWidth];
         u16 *pixel = &pixelRow[gCanvasColumnStart];
+		
         for (i = 0; i < gCanvasColumnEnd; i++, pixel++)
         {
             if (*pixel & 0x8000)
@@ -1054,7 +1070,7 @@ static void QuantizePalette_PrimaryColors(void)
 }
 
 // Quantizes the pixel's color channels to nearest multiple of 4, and clamps to [6, 30].
-static u16 QuantizePixel_Standard(u16 *pixel)
+static u32 QuantizePixel_Standard(u16 *pixel)
 {
     u16 red = *pixel & 0x1F;
     u16 green = (*pixel >> 5) & 0x1F;
@@ -1085,7 +1101,7 @@ static u16 QuantizePixel_Standard(u16 *pixel)
     return RGB2(red, green, blue);
 }
 
-static u16 QuantizePixel_PrimaryColors(u16* color)
+static u32 QuantizePixel_PrimaryColors(u16* color)
 {
     u16 red = *color & 0x1F;
     u16 green = (*color >> 5) & 0x1F;
@@ -1135,18 +1151,12 @@ static u16 QuantizePixel_PrimaryColors(u16* color)
                     return 7;
             }
             else
-            {
                 return 10;
-            }
         }
         else if (blue > 11)
-        {
             return 13;
-        }
         else
-        {
             return 4;
-        }
     }
 
     if (green > 19)
@@ -1161,9 +1171,7 @@ static u16 QuantizePixel_PrimaryColors(u16* color)
                     return 7;
             }
             else
-            {
                 return 11;
-            }
         }
         else
         {
@@ -1187,32 +1195,30 @@ static u16 QuantizePixel_PrimaryColors(u16* color)
             }
         }
         else if (green > 11)
-        {
             return 12;
-        }
 
         if (blue > 11)
             return 15;
         else
             return 6;
     }
-
     return 3;
 }
 
-static u16 QuantizePixel_GrayscaleSmall(u16 *color)
+static u32 QuantizePixel_GrayscaleSmall(u16 *color)
 {
     u16 red = *color & 0x1F;
     u16 green = (*color >> 5) & 0x1F;
     u16 blue = (*color >> 10) & 0x1F;
     u16 average = ((red + green + blue) / 3) & 0x1E;
+	
     if (average == 0)
         return 1;
     else
         return average / 2;
 }
 
-static u16 QuantizePixel_Grayscale(u16 *color)
+static u32 QuantizePixel_Grayscale(u16 *color)
 {
     u16 red = *color & 0x1F;
     u16 green = (*color >> 5) & 0x1F;

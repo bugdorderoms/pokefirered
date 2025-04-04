@@ -235,7 +235,7 @@ void DoOutwardBarnDoorWipe(void)
     gTasks[CreateTask(Task_BarnDoorWipe, 80)].tDirection = DIR_WIPE_OUT;
 }
 
-static void BarnDoorWipeSaveGpuRegs(u8 taskId)
+static void BarnDoorWipeSaveGpuRegs(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
     data[0] = GetGpuReg(REG_OFFSET_DISPCNT);
@@ -249,7 +249,7 @@ static void BarnDoorWipeSaveGpuRegs(u8 taskId)
     data[8] = GetGpuReg(REG_OFFSET_WIN1V);
 }
 
-static void BarnDoorWipeLoadGpuRegs(u8 taskId)
+static void BarnDoorWipeLoadGpuRegs(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
     SetGpuReg(REG_OFFSET_DISPCNT, data[0]);
@@ -266,6 +266,7 @@ static void BarnDoorWipeLoadGpuRegs(u8 taskId)
 void Task_BarnDoorWipe(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
+	
     switch (tState)
     {
         case 0:
@@ -297,9 +298,8 @@ void Task_BarnDoorWipe(u8 taskId)
             break;
         case 2:
             if (!FuncIsActiveTask(Task_BarnDoorWipeChild))
-            {
                 tState = 3;
-            }
+
             break;
         case 3:
             BarnDoorWipeLoadGpuRegs(taskId);
@@ -317,6 +317,7 @@ static void Task_BarnDoorWipeChild(u8 taskId)
     {
         lhs = tChildOffset;
         rhs = DISPLAY_WIDTH - tChildOffset;
+		
         if (lhs > DISPLAY_WIDTH / 2)
         {
             DestroyTask(taskId);
@@ -327,6 +328,7 @@ static void Task_BarnDoorWipeChild(u8 taskId)
     {
         lhs = DISPLAY_WIDTH / 2 - tChildOffset;
         rhs = DISPLAY_WIDTH / 2 + tChildOffset;
+		
         if (lhs < 0)
         {
             DestroyTask(taskId);
@@ -335,14 +337,11 @@ static void Task_BarnDoorWipeChild(u8 taskId)
     }
     SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, lhs));
     SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(rhs, DISPLAY_WIDTH));
+	
     if (lhs < 90)
-    {
         tChildOffset += 4;
-    }
     else
-    {
         tChildOffset += 2;
-    }
 }
 
 #undef tState
@@ -351,9 +350,9 @@ static void Task_BarnDoorWipeChild(u8 taskId)
 #undef DIR_WIPE_OUT
 #undef tChildOffset
 
-static bool8 PrintWhiteOutRecoveryMessage(u8 taskId, const u8 *text, u8 x, u8 y)
+static bool32 PrintWhiteOutRecoveryMessage(u32 taskId, const u8 *text, u32 x, u32 y)
 {
-    u8 windowId = gTasks[taskId].data[1];
+    u32 windowId = gTasks[taskId].data[1];
 
     switch (gTasks[taskId].data[2])
     {
@@ -366,6 +365,7 @@ static bool8 PrintWhiteOutRecoveryMessage(u8 taskId, const u8 *text, u8 x, u8 y)
         break;
     case 1:
         RunTextPrinters();
+		
         if (!IsTextPrinterActive(windowId))
         {
             gTasks[taskId].data[2] = 0;
@@ -378,7 +378,7 @@ static bool8 PrintWhiteOutRecoveryMessage(u8 taskId, const u8 *text, u8 x, u8 y)
 
 static void Task_RushInjuredPokemonToCenter(u8 taskId)
 {
-    u8 windowId;
+    u32 windowId;
     const struct HealLocation *loc;
 
     switch (gTasks[taskId].data[0])

@@ -9,13 +9,6 @@ static const struct GimmickInfo sGimmicksInfo[GIMMICKS_COUNT] =
         .activateGimmick = ActivateMegaEvolution,
 		.indicatorId = GIMMICK_INDICATOR_MEGA,
     },
-    /*[GIMMICK_Z_MOVE] =
-    {
-        .triggerSheet = &sSpriteSheet_ZMoveTrigger,
-        .triggerPal = sZMoveTriggerPal,
-        .canActivate = CanUseZMove,
-        .activateGimmick = ActivateZMove,
-    },
     [GIMMICK_ULTRA_BURST] =
     {
         .triggerSheet = &sSpriteSheet_BurstTrigger,
@@ -23,6 +16,13 @@ static const struct GimmickInfo sGimmicksInfo[GIMMICKS_COUNT] =
         .canActivate = CanUltraBurst,
         .activateGimmick = ActivateUltraBurst,
 		.indicatorId = GIMMICK_INDICATOR_ULTRA_BURST,
+    },
+	/*[GIMMICK_Z_MOVE] =
+    {
+        .triggerSheet = &sSpriteSheet_ZMoveTrigger,
+        .triggerPal = sZMoveTriggerPal,
+        .canActivate = CanUseZMove,
+        .activateGimmick = ActivateZMove,
     },
     [GIMMICK_DYNAMAX] =
     {

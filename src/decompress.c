@@ -3,7 +3,7 @@
 #include "decompress.h"
 #include "pokemon.h"
 
-u16 LoadCompressedSpriteSheet(const struct CompressedSpriteSheet *src)
+u32 LoadCompressedSpriteSheet(const struct CompressedSpriteSheet *src)
 {
     struct SpriteSheet dest;
     LZDecompressWram(src->data, gDecompressionBuffer);
@@ -13,7 +13,7 @@ u16 LoadCompressedSpriteSheet(const struct CompressedSpriteSheet *src)
     return LoadSpriteSheet(&dest);
 }
 
-bool8 LoadCompressedSpriteSheetUsingHeap(const struct CompressedSpriteSheet* src)
+bool32 LoadCompressedSpriteSheetUsingHeap(const struct CompressedSpriteSheet* src)
 {
     struct SpriteSheet dest;
     void* buffer;
@@ -40,7 +40,7 @@ void LoadCompressedSpritePalette(const struct CompressedSpritePalette *src)
     LoadSpritePalette(&dest);
 }
 
-bool8 LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette *src)
+bool32 LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette *src)
 {
     struct SpritePalette dest;
     void* buffer;
@@ -61,7 +61,7 @@ void LoadMonPalette(struct Pokemon *mon)
 	LoadMonPaletteFromSpecies(GetMonData(mon, MON_DATA_SPECIES2), GetMonData(mon, MON_DATA_IS_SHINY));
 }
 
-void LoadMonPaletteFromSpecies(u16 species, bool8 isShiny)
+void LoadMonPaletteFromSpecies(u32 species, bool32 isShiny)
 {
 	struct SpritePalette dest;
 
@@ -71,7 +71,7 @@ void LoadMonPaletteFromSpecies(u16 species, bool8 isShiny)
     LoadSpritePalette(&dest);
 }
 
-void LoadSpecialPokePic(u16 species, u32 personality, bool8 isFrontPic, void *dest)
+void LoadSpecialPokePic(u32 species, u32 personality, bool32 isFrontPic, void *dest)
 {
 	species = SanitizeSpeciesId(species);
 	LZDecompressWram(isFrontPic ? gSpeciesInfo[species].frontPic : gSpeciesInfo[species].backPic, dest);

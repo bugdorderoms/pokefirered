@@ -22,7 +22,7 @@ struct LuaHandler
 	u8 action;
 };
 
-void ProcessLuaAction(u8 action, u32 argument);
-u8 GetLuaActionProcessStatus(void);
+void ProcessLuaAction(u32 action, u32 argument);
+u32 GetLuaActionProcessStatus(void);
 
 #endif // GUARD_LUA_HANDLER_H

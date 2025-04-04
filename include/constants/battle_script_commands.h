@@ -151,9 +151,10 @@
 #define ATK49_EMERGENCY_EXIT            23
 #define ATK49_PICKPOCKET                24
 #define ATK49_SUBSTITUTE                25
-#define ATK49_CLEAR_BITS                26
-#define ATK49_DANCER                    27
-#define ATK49_COUNT                     28
+#define ATK49_OPPORTUNIST               26
+#define ATK49_CLEAR_BITS                27
+#define ATK49_DANCER                    28
+#define ATK49_COUNT                     29
 
 // Atk4F, a flag used for the jumpifcantswitch command
 #define ATK4F_DONT_CHECK_STATUSES   0x80
@@ -179,6 +180,7 @@
 #define ATK66_IGNORE_ANIM_PLAYED (1 << 1) // Play stat anim even if disabled, for Defiant
 #define ATK66_SET_ANIM_PLAYED    (1 << 2) // Used when there's multiples buffs, play the anim only on the first buff
 #define ATK66_CLEAR_ANIM_PLAYED  (1 << 3) // Reset anim played, for the next stat buff that can occours
+#define ATK66_QUEUED_BOOST_ANIM  (1 << 4) // Check for multiple buffs from queued stat boost
 
 // Atk6A, flags
 #define ATK6A_FLAG_CHECK_CHEEK_POUCH    (1 << 0) // Try activate Cheek pouch

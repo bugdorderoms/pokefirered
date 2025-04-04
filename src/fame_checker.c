@@ -63,49 +63,48 @@ static void MainCB2_LoadFameChecker(void);
 static void LoadUISpriteSheetsAndPalettes(void);
 static void Task_WaitFadeOnInit(u8 taskId);
 static void Task_TopMenuHandleInput(u8 taskId);
-static bool8 TryExitPickMode(u8 taskId);
+static bool32 TryExitPickMode(u32 taskId);
 static void MessageBoxPrintEmptyText(void);
 static void Task_EnterPickMode(u8 taskId);
 static void Task_ExitPickMode(u8 taskId);
 static void Task_FlavorTextDisplayHandleInput(u8 taskId);
-static void FC_MoveSelectorCursor(u8 taskId, s8 dx, s8 dy);
+static void FC_MoveSelectorCursor(u32 taskId, s8 dx, s8 dy);
 static void GetPickModeText(void);
-static void PrintSelectedNameInBrightGreen(u8 taskId);
+static void PrintSelectedNameInBrightGreen(u32 taskId);
 static void WipeMsgBoxAndTransfer(void);
 static void Setup_DrawMsgAndListBoxes(void);
-static void FC_PutWindowTilemapAndCopyWindowToVramMode3(u8 windowId);
-static bool8 SetMessageSelectorIconObjMode(u8 taskId, u8 objMode);
+static void FC_PutWindowTilemapAndCopyWindowToVramMode3(u32 windowId);
+static bool32 SetMessageSelectorIconObjMode(u32 taskId, u32 objMode);
 static void Task_StartToCloseFameChecker(u8 taskId);
 static void Task_DestroyAssetsAndCloseFameChecker(u8 taskId);
-static void FC_DestroyWindow(u8 windowId);
-static void PrintUIHelp(u8 state);
-static bool8 CreateAllFlavorTextIcons(u8 who);
+static void FC_DestroyWindow(u32 windowId);
+static void PrintUIHelp(u32 state);
+static void CreateAllFlavorTextIcons(u32 who);
 static void FCSetup_ClearVideoRegisters(void);
 static void FCSetup_ResetTasksAndSpriteResources(void);
-static bool8 HasUnlockedAllFlavorTextsForCurrentPerson(void);
-static u8 CreateFlavorTextIconSelectorCursorSprite(s16 where);
-static void SpriteCB_DestroyFlavorTextIconSelectorCursor(struct Sprite *sprite);
-static u8 PlaceQuestionMarkTile(u8 x, u8 y);
+static bool32 HasUnlockedAllFlavorTextsForCurrentPerson(void);
+static u32 CreateFlavorTextIconSelectorCursorSprite(s16 where);
+static u32 PlaceQuestionMarkTile(u8 x, u8 y);
 static void FreeNonTrainerPicTiles(void);
-static u8 CreatePersonPicSprite(u8 fcPersonIdx);
-static void DestroyPersonPicSprite(u8 taskId, u16 who);
-static void UpdateIconDescriptionBox(u8 whichText);
+static u32 CreatePersonPicSprite(u32 fcPersonIdx);
+static void DestroyPersonPicSprite(u32 taskId, u16 who);
+static void UpdateIconDescriptionBox(u32 whichText);
 static void UpdateIconDescriptionBoxOff(void);
 static void FC_CreateListMenu(void);
 static void SpriteCB_FCSpinningPokeball(struct Sprite * sprite);
 static void InitListMenuTemplate(void);
-static void FC_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu * list);
+static void FC_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu * list);
 static void Task_SwitchToPickMode(u8 taskId);
 static void PrintCancelDescription(void);
 static void FC_DoMoveCursor(s32 itemIndex, bool8 onInit);
-static u8 FC_PopulateListMenu(void);
+static u32 FC_PopulateListMenu(void);
 static void FC_CreateScrollIndicatorArrowPair(void);
 static void FreeListMenuSelectorArrowPairResources(void);
 static u16 FameCheckerGetCursorY(void);
-static void HandleFlavorTextModeSwitch(bool8 state);
+static void HandleFlavorTextModeSwitch(bool32 state);
 static void Task_FCOpenOrCloseInfoBox(u8 taskId);
-static void UpdateInfoBoxTilemap(u8 bg, s16 state);
-static void PlaceListMenuCursor(bool8 isActive);
+static void UpdateInfoBoxTilemap(u32 bg, s16 state);
+static void PlaceListMenuCursor(bool32 isActive);
 static void DestroyAllFlavorTextIcons(void);
 
 static const u16 sFameCheckerTilemap[] = INCBIN_U16("graphics/fame_checker/tilemap1.bin");
@@ -700,21 +699,21 @@ static void Task_WaitFadeOnInit(u8 taskId)
 static void Task_TopMenuHandleInput(u8 taskId)
 {
     u16 cursorPos;
-    u8 i;
+    u32 i;
     struct Task *task = &gTasks[taskId];
 	
     if (FindTaskIdByFunc(Task_FCOpenOrCloseInfoBox) == 0xFF)
     {
         RunTextPrinters();
+		
         if ((JOY_NEW(SELECT_BUTTON)) && !sFameCheckerData->inPickMode && sFameCheckerData->savedCallback != CB2_BagMenuFromStartMenu)
             task->func = Task_StartToCloseFameChecker;
         else if (JOY_NEW(START_BUTTON))
         {
             cursorPos = FameCheckerGetCursorY();
-            if (TryExitPickMode(taskId) == TRUE)
-            {
+			
+            if (TryExitPickMode(taskId))
                 PlaySE(SE_M_LOCK_ON);
-            }
             else if (cursorPos != sFameCheckerData->numUnlockedPersons - 1) // anything but CANCEL
             {
                 PlaySE(SE_M_LOCK_ON);
@@ -735,6 +734,7 @@ static void Task_TopMenuHandleInput(u8 taskId)
         else if (JOY_NEW(A_BUTTON))
         {
             cursorPos = ListMenu_ProcessInput(0);
+			
             if (cursorPos == sFameCheckerData->numUnlockedPersons - 1) // CANCEL
                 task->func = Task_StartToCloseFameChecker;
             else if (sFameCheckerData->inPickMode)
@@ -745,7 +745,9 @@ static void Task_TopMenuHandleInput(u8 taskId)
             else if (sFameCheckerData->personHasUnlockedPanels)
             {
                 PlaySE(SE_SELECT);
+				
                 task->data[0] = CreateFlavorTextIconSelectorCursorSprite(task->data[1]);
+				
                 for (i = 0; i < 6; i++)
                 {
                     if (i != task->data[1])
@@ -754,6 +756,7 @@ static void Task_TopMenuHandleInput(u8 taskId)
                 gIconDescriptionBoxIsOpen = 0xFF;
                 PlaceListMenuCursor(FALSE);
                 PrintUIHelp(2);
+				
                 if (gSprites[sFameCheckerData->spriteIds[task->data[1]]].data[1] != 0xFF) // not a ? tile
                 {
                     PrintSelectedNameInBrightGreen(taskId);
@@ -765,7 +768,7 @@ static void Task_TopMenuHandleInput(u8 taskId)
         }
         else if (JOY_NEW(B_BUTTON))
         {
-            if (TryExitPickMode(taskId) != TRUE)
+            if (!TryExitPickMode(taskId))
                 task->func = Task_StartToCloseFameChecker;
         }
         else
@@ -773,19 +776,24 @@ static void Task_TopMenuHandleInput(u8 taskId)
     }
 }
 
-static bool8 TryExitPickMode(u8 taskId)
+static bool32 TryExitPickMode(u32 taskId)
 {
-    struct Task *task = &gTasks[taskId];
     if (sFameCheckerData->inPickMode)
     {
+		struct Task *task = &gTasks[taskId];
+		
         gSprites[task->data[2]].data[0] = 2;
         gSprites[task->data[2]].x2 += 10;
         gSprites[task->data[3]].data[0] = 2;
         gSprites[task->data[3]].x2 += 10;
+		
         WipeMsgBoxAndTransfer();
+		
         task->func = Task_ExitPickMode;
+		
         MessageBoxPrintEmptyText();
         sFameCheckerData->pickModeOverCancel = FALSE;
+		
         return TRUE;
     }
     return FALSE;
@@ -799,6 +807,7 @@ static void MessageBoxPrintEmptyText(void)
 static void Task_EnterPickMode(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
+	
     if (gSprites[task->data[2]].data[0] == 0)
     {
         GetPickModeText();
@@ -812,18 +821,23 @@ static void Task_EnterPickMode(u8 taskId)
 static void Task_ExitPickMode(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
+	
     if (GetBgX(1) != 0)
         ChangeBgX(1, 0xA00, 2);
     else
         ChangeBgX(1, 0x000, 0);
+	
     if (gSprites[task->data[2]].data[0] == 0)
     {
         if (sFameCheckerData->personHasUnlockedPanels)
             PrintUIHelp(0);
+		
         UpdateInfoBoxTilemap(1, 4);
         UpdateInfoBoxTilemap(2, 2);
+		
         sFameCheckerData->inPickMode = FALSE;
         DestroyPersonPicSprite(taskId, FameCheckerGetCursorY());
+		
         task->func = Task_TopMenuHandleInput;
         gSprites[task->data[3]].callback = DestroySpriteAndFreeMatrix;
     }
@@ -834,6 +848,7 @@ static void Task_FlavorTextDisplayHandleInput(u8 taskId)
     struct Task *task = &gTasks[taskId];
 
     RunTextPrinters();
+	
     if (JOY_NEW(A_BUTTON) && !IsTextPrinterActive(2))
     {
         if (gSprites[sFameCheckerData->spriteIds[task->data[1]]].data[1] != 0xFF)
@@ -841,18 +856,24 @@ static void Task_FlavorTextDisplayHandleInput(u8 taskId)
     }
     if (JOY_NEW(B_BUTTON))
     {
-        u8 i;
+        u32 i;
+		
         PlaySE(SE_SELECT);
+		
         for (i = 0; i < 6; i++)
             SetMessageSelectorIconObjMode(sFameCheckerData->spriteIds[i], ST_OAM_OBJ_NORMAL);
+		
         WipeMsgBoxAndTransfer();
-        gSprites[task->data[0]].callback = SpriteCB_DestroyFlavorTextIconSelectorCursor;
+        gSprites[task->data[0]].callback = DestroySprite;
+		
         if (gIconDescriptionBoxIsOpen != 0xFF)
             UpdateIconDescriptionBoxOff();
+		
         PlaceListMenuCursor(TRUE);
         PrintUIHelp(0);
         FC_CreateScrollIndicatorArrowPair();
         MessageBoxPrintEmptyText();
+		
         task->func = Task_TopMenuHandleInput;
     }
     else if (JOY_NEW(DPAD_UP) || JOY_NEW(DPAD_DOWN))
@@ -896,17 +917,22 @@ static void Task_FlavorTextDisplayHandleInput(u8 taskId)
     }
 }
 
-static void FC_MoveSelectorCursor(u8 taskId, s8 dx, s8 dy)
+static void FC_MoveSelectorCursor(u32 taskId, s8 dx, s8 dy)
 {
-    u8 i;
+    u32 i;
     s16 *data = gTasks[taskId].data;
+	
     PlaySE(SE_M_SWAGGER2);
+	
     gSprites[data[0]].x += dx;
     gSprites[data[0]].y += dy;
+	
     for (i = 0; i < 6; i++)
         SetMessageSelectorIconObjMode(sFameCheckerData->spriteIds[i], ST_OAM_OBJ_BLEND);
+	
     FillWindowPixelRect(FCWINDOWID_MSGBOX, PIXEL_FILL(1), 0, 0, 0xd0, 0x20);
     MessageBoxPrintEmptyText();
+	
     if (SetMessageSelectorIconObjMode(sFameCheckerData->spriteIds[data[1]], ST_OAM_OBJ_NORMAL) == TRUE)
     {
         PrintSelectedNameInBrightGreen(taskId);
@@ -920,6 +946,7 @@ static void GetPickModeText(void)
 {
     s32 whichText;
     u16 who = FameCheckerGetCursorY();
+	
     if (gSaveBlock1Ptr->fameChecker[sFameCheckerData->unlockedPersons[who]].pickState != FCPICKSTATE_COLORED)
     {
         WipeMsgBoxAndTransfer();
@@ -935,7 +962,7 @@ static void GetPickModeText(void)
     }
 }
 
-static void PrintSelectedNameInBrightGreen(u8 taskId)
+static void PrintSelectedNameInBrightGreen(u32 taskId)
 {
     FillWindowPixelRect(FCWINDOWID_MSGBOX, PIXEL_FILL(1), 0, 0, 0xd0, 0x20);
     StringExpandPlaceholders(gStringVar4, sFameCheckerFlavorTextPointers[sFameCheckerData->unlockedPersons[FameCheckerGetCursorY()] * 6 + gTasks[taskId].data[1]]);
@@ -957,13 +984,13 @@ static void Setup_DrawMsgAndListBoxes(void)
     FC_PutWindowTilemapAndCopyWindowToVramMode3(FCWINDOWID_LIST);
 }
 
-static void FC_PutWindowTilemapAndCopyWindowToVramMode3(u8 windowId)
+static void FC_PutWindowTilemapAndCopyWindowToVramMode3(u32 windowId)
 {
     PutWindowTilemap(windowId);
     CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
 
-static bool8 SetMessageSelectorIconObjMode(u8 spriteId, u8 objMode)
+static bool32 SetMessageSelectorIconObjMode(u32 spriteId, u32 objMode)
 {
     if (gSprites[spriteId].data[1] != 0xFF)
     {
@@ -982,8 +1009,6 @@ static void Task_StartToCloseFameChecker(u8 taskId)
 
 static void Task_DestroyAssetsAndCloseFameChecker(u8 taskId)
 {
-    u8 i;
-
     if (!gPaletteFade.active)
     {
         if (sFameCheckerData->inPickMode)
@@ -1015,7 +1040,7 @@ static void Task_DestroyAssetsAndCloseFameChecker(u8 taskId)
     }
 }
 
-static void FC_DestroyWindow(u8 windowId)
+static void FC_DestroyWindow(u32 windowId)
 {
     FillWindowPixelBuffer(windowId, 0);
     ClearWindowTilemap(windowId);
@@ -1023,9 +1048,9 @@ static void FC_DestroyWindow(u8 windowId)
     RemoveWindow(windowId);
 }
 
-static u8 AdjustGiovanniIndexIfBeatenInGym(u8 a0)
+static u32 AdjustGiovanniIndexIfBeatenInGym(u32 a0)
 {
-    if (HasTrainerBeenFought(TRAINER_LEADER_GIOVANNI) == TRUE)
+    if (HasTrainerBeenFought(TRAINER_LEADER_GIOVANNI))
     {
         if (a0 == 9)
             return FAMECHECKER_GIOVANNI;
@@ -1035,7 +1060,7 @@ static u8 AdjustGiovanniIndexIfBeatenInGym(u8 a0)
     return a0;
 }
 
-static void PrintUIHelp(u8 state)
+static void PrintUIHelp(u32 state)
 {
     const u8 * src;
 	
@@ -1056,23 +1081,24 @@ static void PrintUIHelp(u8 state)
 
 static void DestroyAllFlavorTextIcons(void)
 {
-    u8 i;
+    u32 i;
+	
     for (i = 0; i < 6; i++)
-    {
         DestroySprite(&gSprites[sFameCheckerData->spriteIds[i]]);
-    }
 }
 
-static bool8 CreateAllFlavorTextIcons(u8 who)
+static void CreateAllFlavorTextIcons(u32 who)
 {
-    bool8 result = FALSE;
-    u8 i;
+	u32 i;
+    bool32 result = FALSE;
+
     for (i = 0; i < 6; i++)
     {
         if ((gSaveBlock1Ptr->fameChecker[sFameCheckerData->unlockedPersons[who]].flavorTextFlags >> i) & 1)
         {
             sFameCheckerData->spriteIds[i] = sub_805EB44(sFameCheckerArrayNpcGraphicsIds[sFameCheckerData->unlockedPersons[who] * 6 + i], i,
                 47 * (i % 3) + 0x72, 27 * (i / 3) + 0x2F);
+			
             result = TRUE;
         }
         else
@@ -1081,7 +1107,8 @@ static bool8 CreateAllFlavorTextIcons(u8 who)
             gSprites[sFameCheckerData->spriteIds[i]].data[1] = 0xFF;
         }
     }
-    if (result == TRUE)
+	
+    if (result)
     {
         sFameCheckerData->personHasUnlockedPanels = TRUE;
 		PrintUIHelp(sFameCheckerData->inPickMode ? 1 : 0);
@@ -1091,12 +1118,12 @@ static bool8 CreateAllFlavorTextIcons(u8 who)
         sFameCheckerData->personHasUnlockedPanels = FALSE;
         PrintUIHelp(1);
     }
-    return result;
 }
 
 void ResetFameChecker(void)
 {
-    u8 i;
+    u32 i;
+	
     for (i = 0; i < NUM_FAMECHECKER_PERSONS; i++)
     {
         gSaveBlock1Ptr->fameChecker[i].pickState = FCPICKSTATE_NO_DRAW;
@@ -1167,9 +1194,9 @@ void UpdatePickStateFromSpecialVar8005(void)
     }
 }
 
-static bool8 HasUnlockedAllFlavorTextsForCurrentPerson(void)
+static bool32 HasUnlockedAllFlavorTextsForCurrentPerson(void)
 {
-    u8 i, who = sFameCheckerData->unlockedPersons[FameCheckerGetCursorY()];
+    u32 i, who = sFameCheckerData->unlockedPersons[FameCheckerGetCursorY()];
 	
     for (i = 0; i < 6; i++)
     {
@@ -1179,19 +1206,14 @@ static bool8 HasUnlockedAllFlavorTextsForCurrentPerson(void)
     return TRUE;
 }
 
-static u8 CreateFlavorTextIconSelectorCursorSprite(s16 where)
+static u32 CreateFlavorTextIconSelectorCursorSprite(s16 where)
 {
     return CreateSprite(&sSpriteTemplate_SelectorCursor, 114 + 47 * (where % 3), 34 + 27 * (where >= 3), 0);
 }
 
-static void SpriteCB_DestroyFlavorTextIconSelectorCursor(struct Sprite * sprite)
+static u32 PlaceQuestionMarkTile(u8 x, u8 y)
 {
-    DestroySprite(sprite);
-}
-
-static u8 PlaceQuestionMarkTile(u8 x, u8 y)
-{
-    u8 spriteId = CreateSprite(&sQuestionMarkTileSpriteTemplate, x, y, 8);
+    u32 spriteId = CreateSprite(&sQuestionMarkTileSpriteTemplate, x, y, 8);
     gSprites[spriteId].oam.priority = 2;
     gSprites[spriteId].oam.paletteNum = 2;
     return spriteId;
@@ -1229,9 +1251,9 @@ static void SpriteCB_FCSpinningPokeball(struct Sprite * sprite)
     }
 }
 
-static u8 CreatePersonPicSprite(u8 fcPersonIdx)
+static u32 CreatePersonPicSprite(u32 fcPersonIdx)
 {
-    u8 spriteId;
+    u32 spriteId;
 	
 	switch (fcPersonIdx)
 	{
@@ -1257,15 +1279,17 @@ static u8 CreatePersonPicSprite(u8 fcPersonIdx)
 	}
 	gSprites[spriteId].oam.paletteNum = 6;
     gSprites[spriteId].callback = SpriteCB_FCSpinningPokeball;
+	
     if (gSaveBlock1Ptr->fameChecker[fcPersonIdx].pickState == FCPICKSTATE_SILHOUETTE)
         LoadPalette(sSilhouettePalette, 0x160, 0x20);
+	
     return spriteId;
 }
 
-static void DestroyPersonPicSprite(u8 taskId, u16 who)
+static void DestroyPersonPicSprite(u32 taskId, u16 who)
 {
     s16 * data = gTasks[taskId].data;
-	u8 unlockedPersonId;
+	u32 unlockedPersonId;
 	
     if (who == sFameCheckerData->numUnlockedPersons - 1)
         who -= 1;
@@ -1278,7 +1302,7 @@ static void DestroyPersonPicSprite(u8 taskId, u16 who)
         FreeAndDestroyTrainerPicSprite(data[2]);
 }
 
-static void UpdateIconDescriptionBox(u8 whichText)
+static void UpdateIconDescriptionBox(u32 whichText)
 {
     u32 idx = 6 * sFameCheckerData->unlockedPersons[FameCheckerGetCursorY()] + whichText;
 	
@@ -1328,10 +1352,10 @@ static void InitListMenuTemplate(void)
     gFameChecker_ListMenuTemplate.cursorKind = 0;
 }
 
-static void FC_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list)
+static void FC_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list)
 {
     u16 listMenuTopIdx;
-    u8 taskId;
+    u32 taskId;
     u16 personIdx = sFameCheckerData->listMenuTopIdx2 + sFameCheckerData->listMenuDrawnSelIdx;
 	
     sLastMenuIdx = 0;
@@ -1341,14 +1365,18 @@ static void FC_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list
     if (taskId != 0xFF)
     {
         struct Task *task = &gTasks[taskId];
+		
         PlaySE(SE_SELECT);
+		
         task->data[1] = 0;
         ListMenuGetScrollAndRow(sFameCheckerData->listMenuTaskId, &listMenuTopIdx, NULL);
         sFameCheckerData->listMenuTopIdx = listMenuTopIdx;
+		
         if (itemIndex != sFameCheckerData->numUnlockedPersons - 1)
         {
             DestroyAllFlavorTextIcons();
             CreateAllFlavorTextIcons(itemIndex);
+			
             if (sFameCheckerData->inPickMode)
             {
                 if (!sFameCheckerData->pickModeOverCancel)
@@ -1374,6 +1402,7 @@ static void FC_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list
         else
         {
             PrintCancelDescription();
+			
             if (sFameCheckerData->inPickMode)
             {
                 gSprites[task->data[2]].invisible = TRUE;
@@ -1381,11 +1410,10 @@ static void FC_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list
             }
             else
             {
-                u8 i;
+                u32 i;
+				
                 for (i = 0; i < 6; i++)
-                {
                     gSprites[sFameCheckerData->spriteIds[i]].invisible = TRUE;
-                }
             }
         }
     }
@@ -1430,14 +1458,13 @@ static void FC_DoMoveCursor(s32 itemIndex, bool8 onInit)
     sFameCheckerData->listMenuTopIdx2 = listY;
 }
 
-static u8 FC_PopulateListMenu(void)
+static u32 FC_PopulateListMenu(void)
 {
-    u8 nitems = 0;
-    u8 i;
+    u32 i, nitems = 0;
 
     for (i = 0; i < NUM_FAMECHECKER_PERSONS; i++)
     {
-        u8 fameCheckerIdx = AdjustGiovanniIndexIfBeatenInGym(i);
+        u32 fameCheckerIdx = AdjustGiovanniIndexIfBeatenInGym(i);
 		
         if (gSaveBlock1Ptr->fameChecker[fameCheckerIdx].pickState != FCPICKSTATE_NO_DRAW)
         {
@@ -1498,16 +1525,18 @@ static u16 FameCheckerGetCursorY(void)
     return listY + cursorY;
 }
 
-static void HandleFlavorTextModeSwitch(bool8 state)
+static void HandleFlavorTextModeSwitch(bool32 state)
 {
     if (sFameCheckerData->viewingFlavorText != state)
     {
-        u8 taskId = FindTaskIdByFunc(Task_FCOpenOrCloseInfoBox);
+        u32 taskId = FindTaskIdByFunc(Task_FCOpenOrCloseInfoBox);
         if (taskId == 0xFF)
             taskId = CreateTask(Task_FCOpenOrCloseInfoBox, 8);
+		
         gTasks[taskId].data[0] = 0;
         gTasks[taskId].data[1] = 4;
-        if (state == TRUE)
+		
+        if (state)
         {
             gTasks[taskId].data[2] = 1;
             sFameCheckerData->viewingFlavorText = TRUE;
@@ -1523,6 +1552,7 @@ static void HandleFlavorTextModeSwitch(bool8 state)
 static void Task_FCOpenOrCloseInfoBox(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
+	
     switch (task->data[0])
     {
         case 0:
@@ -1543,7 +1573,7 @@ static void Task_FCOpenOrCloseInfoBox(u8 taskId)
     }
 }
 
-static void UpdateInfoBoxTilemap(u8 bg, s16 state)
+static void UpdateInfoBoxTilemap(u32 bg, s16 state)
 {
 	switch (state)
 	{
@@ -1604,7 +1634,7 @@ static void UpdateInfoBoxTilemap(u8 bg, s16 state)
     CopyBgTilemapBufferToVram(bg);
 }
 
-static void PlaceListMenuCursor(bool8 isActive)
+static void PlaceListMenuCursor(bool32 isActive)
 {
 	AddTextPrinterParameterized4(FCWINDOWID_LIST, 2, 0, ListMenuGetYCoordForPrintingArrowCursor(sFameCheckerData->listMenuTaskId), 0, 0, isActive ? sTextColor_DkGrey : sTextColor_White, 0, gText_SelectorArrow2);
 }

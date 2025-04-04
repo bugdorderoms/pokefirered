@@ -179,6 +179,9 @@ enum
 	EFFECT_SPECIAL_ATTACK_UP_2,
 	EFFECT_DEFOG,
 	EFFECT_TRICK_ROOM,
+	EFFECT_CAPTIVATE,
+	EFFECT_STEALTH_ROCK,
+	EFFECT_CHANGE_TYPE_ON_ITEM,
 	EFFECTS_COUNT,
 };
 
@@ -214,7 +217,6 @@ enum
 #define EFFECT_PSYSHOCK                     234
 #define EFFECT_WONDER_ROOM                  242
 #define EFFECT_MAGIC_ROOM                   243
-#define EFFECT_STEALTH_ROCK                 247
 #define EFFECT_TELEKINESIS                  248
 #define EFFECT_POWER_SPLIT                  252
 #define EFFECT_GUARD_SPLIT                  253
@@ -251,7 +253,6 @@ enum
 #define EFFECT_CLEAR_SMOG                   294
 #define EFFECT_HIT_SWITCH_TARGET            295
 #define EFFECT_FINAL_GAMBIT                 296
-#define EFFECT_CHANGE_TYPE_ON_ITEM          297
 #define EFFECT_AUTOTOMIZE                   298
 #define EFFECT_HIT_ENEMY_HEAL_ALLY          301
 #define EFFECT_SMACK_DOWN                   302
@@ -270,7 +271,6 @@ enum
 #define EFFECT_SPARKLING_ARIA               318
 #define EFFECT_AROMATIC_MIST                320
 #define EFFECT_POWDER                       321
-#define EFFECT_SP_ATTACK_UP_HIT             322
 #define EFFECT_BELCH                        323
 #define EFFECT_PARTING_SHOT                 324
 #define EFFECT_SPECTRAL_THIEF               325
@@ -339,7 +339,6 @@ enum
 #define EFFECT_PLEDGE                       390
 #define EFFECT_FUSION_COMBO                 393
 #define EFFECT_ALWAYS_CRIT 397
-#define EFFECT_CAPTIVATE 399
 #define EFFECT_FELL_STINGER 400
 #define EFFECT_INFERNAL_PARADE 401
 #define EFFECT_PLACEHOLDER 0

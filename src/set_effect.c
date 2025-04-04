@@ -555,6 +555,7 @@ u8 CheckStatDecreaseBlockEffects(u8 attacker, u8 target, u8 statId, u8 flags)
 // onlyChecks = used for playstatchangeanimation to check if other stats can be changed
 bool8 ChangeStatBuffs(u8 flags, bool8 onlyChecks)
 {
+	u8 i;
 	u8 result = STAT_CHANGE_WORKED;
 	u8 statId = gBattleStruct->statChange.statId;
 	s8 buff = gBattleStruct->statChange.buff;
@@ -620,6 +621,27 @@ bool8 ChangeStatBuffs(u8 flags, bool8 onlyChecks)
 					gBattleMons[gEffectBattler].statStages[statId] += buff;
 					if (gBattleMons[gEffectBattler].statStages[statId] > MAX_STAT_STAGES)
 						gBattleMons[gEffectBattler].statStages[statId] = MAX_STAT_STAGES;
+				}
+				
+				// Track queued stat boost for Opportunist
+				for (i = 0; i < gBattlersCount; i++)
+				{
+					if (IsBattlerAlive(i) && !IsBattlerAlly(gEffectBattler, i))
+					{
+						bool32 opportunistActivated = FALSE;
+						
+						if (GetBattlerAbility(i) == ABILITY_OPPORTUNIST && gProtectStructs[gEffectBattler].opportunistState == 0) // Don't activate on other mon's Opportunist raises
+						{
+							gProtectStructs[i].opportunistState = 2; // Set stats to copy
+							opportunistActivated = TRUE;
+						}
+						
+						if (opportunistActivated)
+						{
+							gQueuedStatBoosts[i].stats |= Bit(statId - 1);
+							gQueuedStatBoosts[i].statChanges[statId - 1] += buff;
+						}
+					}
 				}
 			}
 		}

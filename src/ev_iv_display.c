@@ -44,9 +44,9 @@ static void CB2_EvIvDisplay(void);
 static void VBlank_EvIvDisplay(void);
 static void CreateShadowBox(void);
 static void CreateMonIconSprites(void);
-static void CreateHandSprite(u8 taskId);
+static void CreateHandSprite(u32 taskId);
 static void PrintInfoText(void);
-static void PrintMonStats(u8 taskId);
+static void PrintMonStats(u32 taskId);
 static void Task_LoadEvIvDisplay(u8 taskId);
 static void Task_EvIvDisplay_HandleInput(u8 taskId);
 static void Task_WaitFadeAndCloseEvIvDisplay(u8 taskId);
@@ -207,7 +207,7 @@ static const u8 sDarkGrayTextColor[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK
 
 void ShowEvIvDisplay(MainCallback exitCallback)
 {
-	u8 taskId;
+	u32 taskId;
 	
 	ResetSpriteData();
 	ResetPaletteFade();
@@ -367,7 +367,7 @@ static void Task_LoadEvIvDisplay(u8 taskId)
 	tCallbackStep++;
 }
 
-static void CreateHandSprite(u8 taskId)
+static void CreateHandSprite(u32 taskId)
 {
 	LoadSpriteSheet(&sEvIvHandSpriteSheet);
 	LoadSpritePalette(&sEvIvHandSpritePalette);
@@ -379,7 +379,7 @@ static void CreateHandSprite(u8 taskId)
 
 static void CreateMonIconSprites(void)
 {
-	u8 i;
+	u32 i;
 	
 	for (i = 0; i < gPlayerPartyCount; i++)
 		CreateMonIcon(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2), SpriteCB_MonIcon, GET_HAND_POS_X(i), GET_HAND_POS_Y(i) + 10, 1);
@@ -387,7 +387,7 @@ static void CreateMonIconSprites(void)
 
 static void SpriteCB_Hand(struct Sprite *sprite)
 {
-	u8 partyId = gTasks[sprite->data[0]].tCurrMonId;
+	u32 partyId = gTasks[sprite->data[0]].tCurrMonId;
 	sprite->x = GET_HAND_POS_X(partyId);
 	sprite->y = GET_HAND_POS_Y(partyId);
 }
@@ -407,7 +407,7 @@ static void SpriteCB_Hand(struct Sprite *sprite)
 
 static void PrintInfoText(void)
 {
-	u8 i;
+	u32 i;
 	
 	FillWindowPixelBuffer(WIN_INSTRUCTIONS, PIXEL_FILL(0));
 	FillWindowPixelBuffer(WIN_TITLE, PIXEL_FILL(0));
@@ -436,12 +436,12 @@ static void PrintInfoText(void)
 	PutWindowTilemap(WIN_STAT_NAMES);
 }
 
-static void PrintMonStats(u8 taskId)
+static void PrintMonStats(u32 taskId)
 {
 	s16 *data = gTasks[taskId].data;
-	u8 i, ev, iv;
+	u32 i, ev, iv;
 	struct Pokemon *mon = &gPlayerParty[tCurrMonId];
-	bool8 isEgg = GetMonData(mon, MON_DATA_IS_EGG);
+	bool32 isEgg = GetMonData(mon, MON_DATA_IS_EGG);
 	
 	FillWindowPixelBuffer(WIN_HIDDEN_POWER_TYPE, PIXEL_FILL(0));
 	FillWindowPixelBuffer(WIN_POKEMON_NAME, PIXEL_FILL(0));

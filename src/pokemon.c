@@ -66,6 +66,7 @@ EWRAM_DATA struct Pokemon gPlayerParty[PARTY_SIZE] = {};
 EWRAM_DATA struct SpriteTemplate gMultiuseSpriteTemplate = {0};
 
 static u8 GetLevelFromMonExp(struct Pokemon *mon);
+static bool32 CheckZacianZamazentaKnowsIronHead(struct Pokemon *mon, u32 species, u32 move);
 
 // Item
 #include "data/item/icons.h"
@@ -101,14 +102,31 @@ struct SpindaSpot
 {
     u8 x, y;
     u16 image[16];
-};
-
-static const struct SpindaSpot sSpindaSpotGraphics[] =
+} static const sSpindaSpotGraphics[] =
 {
     {16,  7, INCBIN_U16("graphics/spinda_spots/spot_0.bin")},
     {40,  8, INCBIN_U16("graphics/spinda_spots/spot_1.bin")},
     {22, 25, INCBIN_U16("graphics/spinda_spots/spot_2.bin")},
     {34, 26, INCBIN_U16("graphics/spinda_spots/spot_3.bin")}
+};
+
+struct
+{
+	u16 species;
+	u16 origMove;
+	u16 newMove;
+} static const sZacianZamazentaMoves[] =
+{
+	{
+		.species = SPECIES_ZACIAN_CROWNED_SWORD,
+		.origMove = MOVE_IRON_HEAD,
+		.newMove = MOVE_BEHEMOTH_BLADE
+	},
+	{
+		.species = SPECIES_ZAMAZENTA_CROWNED_SHIELD,
+		.origMove = MOVE_IRON_HEAD,
+		.newMove = MOVE_BEHEMOTH_BASH
+	},
 };
 
 const u8 gPPUpGetMask[] = { 0x03, 0x0c, 0x30, 0xc0 }; // Masks for getting PP Up count, also PP Max values
@@ -992,6 +1010,12 @@ void SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot)
 	SetMonMoveSlotInternal(mon, slot, move, gBattleMoves[move].pp);
 }
 
+static void SetMonMoveSlot_KeepPP(struct Pokemon *mon, u16 move, u8 slot)
+{
+	u8 pp = min(GetMonData(mon, MON_DATA_PP1 + slot, NULL), CalculatePPWithBonus(move, GetMonData(mon, MON_DATA_PP_BONUSES, NULL), slot));
+	SetMonMoveSlotInternal(mon, slot, move, pp);
+}
+
 void DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move)
 {
 	s32 i;
@@ -1069,6 +1093,10 @@ u8 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove)
                 return MON_DONT_FIND_MOVE_TO_LEARN;
         }
     }
+	
+	// Don't try to learn Iron Head again if transformed.
+	if (CheckZacianZamazentaKnowsIronHead(mon, species, gLevelUpLearnsets[species][sLearningMoveTableID].move))
+		return MON_DONT_FIND_MOVE_TO_LEARN;
 	
     if (gLevelUpLearnsets[species][sLearningMoveTableID].level == level)
     {
@@ -1427,7 +1455,7 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
             {
                 u16 move = moves[i];
                 if (boxMon->move1 == move || boxMon->move2 == move || boxMon->move3 == move || boxMon->move4 == move)
-                    retVal |= gBitTable[i];
+                    retVal |= Bit(i);
                 i++;
             }
         }
@@ -1899,19 +1927,19 @@ static const u8 *HandleEvolutionRequirements(u8 partyId, struct Pokemon *mon, co
 				
 				*targetSpecies = READ_16(evolutions + 1);
 				
-				if (*evoBits & gBitTable[0])
+				if (*evoBits & Bit(0))
 					SetMonData(mon, MON_DATA_HELD_ITEM, &zero);
 				
-				if (*evoBits & gBitTable[1])
+				if (*evoBits & Bit(1))
 					SetMonData(mon, MON_DATA_EVOLUTION_TRACKER, &zero);
 				
-				if (*evoBits & gBitTable[2])
+				if (*evoBits & Bit(2))
 					*targetSpecies = GetMonFormChangeSpecies(mon, *targetSpecies, FORM_CHANGE_REGION);
 				
-				if (*evoBits & gBitTable[3])
+				if (*evoBits & Bit(3))
 					*targetSpecies = GetMonFormChangeSpecies(mon, *targetSpecies, FORM_CHANGE_NATURE);
 				
-				if (*evoBits & gBitTable[4])
+				if (*evoBits & Bit(4))
 					*targetSpecies = GetMonFormChangeSpecies(mon, *targetSpecies, FORM_CHANGE_PERSONALITY);
 			}
 			*passes = TRUE;
@@ -1950,7 +1978,7 @@ static const u8 *HandleEvolutionRequirements(u8 partyId, struct Pokemon *mon, co
 			break;
 		case EVO_REQ_ITEM_HOLD:
 		    if (GetMonData(mon, MON_DATA_HELD_ITEM, NULL) == READ_16(evolutions + 1))
-				*evoBits |= gBitTable[0]; // Signal to remove held item
+				*evoBits |= Bit(0); // Signal to remove held item
 			else
 				*passes = FALSE;
 			
@@ -2046,17 +2074,17 @@ static const u8 *HandleEvolutionRequirements(u8 partyId, struct Pokemon *mon, co
 		    evolutions += 2;
 			break;
 		case EVO_REGIONAL_FORM:
-		    *evoBits |= gBitTable[2]; // Signal to apply regional forms
+		    *evoBits |= Bit(2); // Signal to apply regional forms
 			break;
 		case EVO_NATURE_FORM:
-		    *evoBits |= gBitTable[3]; // Signal to apply nature forms
+		    *evoBits |= Bit(3); // Signal to apply nature forms
 			break;
 		case EVO_PERSONALITY_FORM:
-		    *evoBits |= gBitTable[4]; // Signal to apply personality forms
+		    *evoBits |= Bit(4); // Signal to apply personality forms
 			break;
 		case EVO_REQ_FOLLOW_STEPS:
 		    if (GetMonData(mon, MON_DATA_EVOLUTION_TRACKER, NULL) >= READ_16(evolutions + 1))
-				*evoBits |= gBitTable[1]; // Signal to reset evolution tracker
+				*evoBits |= Bit(1); // Signal to reset evolution tracker
 			else
 				*passes = FALSE;
 			
@@ -2116,7 +2144,7 @@ u16 GetEvolutionTargetSpecies(u8 partyId, u8 type, u16 evolutionItem, struct Pok
 					case EVO_REQ_DEFEAT_SPECIES_X_TIMES:
 					case EVO_REQ_USE_MOVE_X_TIMES:
 						if (GetMonData(mon, MON_DATA_EVOLUTION_TRACKER, NULL) >= evolutions[3])
-							evoBits |= gBitTable[1]; // Signal to reset evolution tracker
+							evoBits |= Bit(1); // Signal to reset evolution tracker
 						else
 							passes = FALSE;
 						
@@ -2124,7 +2152,7 @@ u16 GetEvolutionTargetSpecies(u8 partyId, u8 type, u16 evolutionItem, struct Pok
 						break;
 					case EVO_REQ_RECOIL_DAMAGE:
 					    if (GetMonData(mon, MON_DATA_EVOLUTION_TRACKER, NULL) >= READ_16(evolutions + 1))
-							evoBits |= gBitTable[1]; // Signal to reset evolution tracker
+							evoBits |= Bit(1); // Signal to reset evolution tracker
 						else
 							passes = FALSE;
 						
@@ -2465,7 +2493,7 @@ void RandomlyGivePartyPokerus(struct Pokemon *party)
 		}
 		while (GetMonData(mon, MON_DATA_IS_EGG, NULL));
 		
-		if (!CheckPartyHasHadPokerus(party, gBitTable[rnd]))
+		if (!CheckPartyHasHadPokerus(party, Bit(rnd)))
 		{
 			do
 			{
@@ -3069,4 +3097,43 @@ void CopyPokemonToBattleMon(u8 battlerId, struct Pokemon *mon, struct BattlePoke
 		TryResetBattlerStatChanges(battlerId);
 		gBattleMons[battlerId].status2 = 0;
 	}
+}
+
+void TryTransformZacianAndZamazentaIronHead(struct Pokemon *mon, bool32 transformBack)
+{
+	u32 i, j, species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	
+	for (i = 0; i < ARRAY_COUNT(sZacianZamazentaMoves); i++)
+	{
+		if (sZacianZamazentaMoves[i].species == species)
+		{
+			for (j = 0; j < MAX_MON_MOVES; j++)
+			{
+				u32 move = GetMonData(mon, MON_DATA_MOVE1 + j, NULL);
+				
+				if (transformBack)
+				{
+					if (sZacianZamazentaMoves[i].newMove == move)
+						SetMonMoveSlot_KeepPP(mon, sZacianZamazentaMoves[i].origMove, j);
+				}
+				else
+				{
+					if (sZacianZamazentaMoves[i].origMove == move)
+						SetMonMoveSlot_KeepPP(mon, sZacianZamazentaMoves[i].newMove, j);
+				}
+			}
+		}
+	}
+}
+
+static bool32 CheckZacianZamazentaKnowsIronHead(struct Pokemon *mon, u32 species, u32 move)
+{
+	u32 i;
+	
+	for (i = 0; i < ARRAY_COUNT(sZacianZamazentaMoves); i++)
+	{
+		if (sZacianZamazentaMoves[i].species == species && sZacianZamazentaMoves[i].origMove == move && FindMoveSlotInMoveset(mon, sZacianZamazentaMoves[i].newMove))
+			return TRUE;
+	}
+	return FALSE;
 }

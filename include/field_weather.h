@@ -123,30 +123,30 @@ struct Weather
 
 extern struct Weather *const gWeatherPtr;
 
-void FadeScreen(u8 mode, s8 delay);
-void FadeSelectedPals(u8 mode, s8 delay, u32 selectedPalettes);
-void SetSav1Weather(u8 weather);
-void SetNextWeather(u8 weather);
-void SetCurrentAndNextWeather(u8 weather);
+void FadeScreen(u32 mode, s8 delay);
+void FadeSelectedPals(u32 mode, s8 delay, u32 selectedPalettes);
+void SetSav1Weather(u32 weather);
+void SetNextWeather(u32 weather);
+void SetCurrentAndNextWeather(u32 weather);
 void DoCurrentWeather(void);
 void SetSav1WeatherFromCurrMapHeader(void);
 void PlayRainStoppingSoundEffect(void);
-u8 GetCurrentWeather(void);
+u32 GetCurrentWeather(void);
 void StartWeather(void);
 void ResumePausedWeather(void);
-bool8 IsWeatherNotFadingIn(void);
+bool32 IsWeatherNotFadingIn(void);
 void SetWeatherScreenFadeOut(void);
 void WeatherProcessingIdle(void);
-void UpdateSpritePaletteWithWeather(u8 palIdx);
-void Weather_SetBlendCoeffs(u8 eva, u8 evb);
-void Weather_SetTargetBlendCoeffs(u8 eva, u8 evb, int delay);
-bool8 Weather_UpdateBlend(void);
+void UpdateSpritePaletteWithWeather(u32 palIdx);
+void Weather_SetBlendCoeffs(u32 eva, u32 evb);
+void Weather_SetTargetBlendCoeffs(u32 eva, u32 evb, int delay);
+bool32 Weather_UpdateBlend(void);
 void LoadWeatherDefaultPalette(void);
 void LoadWeatherSpritePalette(const struct SpritePalette *palette);
-void SetRainStrengthFromSoundEffect(u16 soundEffect);
+void SetRainStrengthFromSoundEffect(u32 soundEffect);
 void WeatherShiftGammaIfPalStateIdle(s8 gammaIndex);
-void WeatherBeginGammaFade(u8 gammaIndex, u8 gammaTargetIndex, u8 gammaStepDelay);
-void ApplyWeatherGammaShiftToPal(u8 paletteIndex);
+void WeatherBeginGammaFade(u32 gammaIndex, u32 gammaTargetIndex, u32 gammaStepDelay);
+void ApplyWeatherGammaShiftToPal(u32 paletteIndex);
 
 extern const u16 gSandstormWeatherPalette[];
 extern const u16 gCloudWeatherPalette[];

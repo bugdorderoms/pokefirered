@@ -6,7 +6,7 @@
 #include "event_data.h"
 #include "constants/event_objects.h"
 
-bool8 walkrun_is_standing_still(void)
+bool32 walkrun_is_standing_still(void)
 {
 	return (gPlayerAvatar.tileTransitionState != 1);
 }
@@ -20,7 +20,7 @@ void Task_WaitPlayerStopMoving(u8 taskId)
     }
 }
 
-bool8 NativeScript_WaitPlayerStopMoving(void)
+bool32 NativeScript_WaitPlayerStopMoving(void)
 {
     if (FuncIsActiveTask(Task_WaitPlayerStopMoving))
         return FALSE;
@@ -57,7 +57,7 @@ void Task_WaitPlayerAndTargetNPCStopMoving(u8 taskId)
         DestroyTask(taskId);
 }
 
-bool8 NativeScript_WaitPlayerAndTargetNPCStopMoving(void)
+bool32 NativeScript_WaitPlayerAndTargetNPCStopMoving(void)
 {
     if (FuncIsActiveTask(Task_WaitPlayerAndTargetNPCStopMoving))
         return FALSE;
@@ -70,7 +70,7 @@ bool8 NativeScript_WaitPlayerAndTargetNPCStopMoving(void)
 
 void LockSelectedObjectEvent(void)
 {
-    u8 taskId = CreateTask(Task_WaitPlayerAndTargetNPCStopMoving, 80);
+    u32 taskId = CreateTask(Task_WaitPlayerAndTargetNPCStopMoving, 80);
 
     FreezeObjectEventsExceptOne(gSelectedObjectEvent);
 

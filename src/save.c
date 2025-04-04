@@ -109,13 +109,13 @@ static bool8 CheckSetSectorDamagedStatus(u8 caseId, u8 sectorNum)
     switch (caseId)
     {
     case ENABLE:
-        gDamagedSaveSectors |= (1 << sectorNum);
+        gDamagedSaveSectors |= Bit(sectorNum);
         break;
     case DISABLE:
-        gDamagedSaveSectors &= ~(1 << sectorNum);
+        gDamagedSaveSectors &= ~(Bit(sectorNum));
         break;
     case CHECK:
-        if (gDamagedSaveSectors & (1 << sectorNum))
+        if (gDamagedSaveSectors & Bit(sectorNum))
             return TRUE;
         break;
     }
@@ -462,7 +462,7 @@ static u8 GetSaveValidStatus(const struct SaveBlockChunk *locations)
     u8 slot1Status;
     u8 slot2Status;
     u32 validSectors;
-    const u32 ALL_SECTORS = (1 << NUM_SECTORS_PER_SAVE_SLOT) - 1;  // bitmask of all saveblock sectors
+    const u32 ALL_SECTORS = (Bit(NUM_SECTORS_PER_SAVE_SLOT)) - 1;  // bitmask of all saveblock sectors
 
     // check save slot 1.
     validSectors = 0;
@@ -479,7 +479,7 @@ static u8 GetSaveValidStatus(const struct SaveBlockChunk *locations)
 			if (gFastSaveSection->checksum == checksum)
             {
                 slot1saveCounter = gFastSaveSection->counter;
-                validSectors |= 1 << gFastSaveSection->id;
+                validSectors |= Bit(gFastSaveSection->id);
             }
         }
     }
@@ -509,7 +509,7 @@ static u8 GetSaveValidStatus(const struct SaveBlockChunk *locations)
 			if (gFastSaveSection->checksum == checksum)
             {
                 slot2saveCounter = gFastSaveSection->counter;
-                validSectors |= 1 << gFastSaveSection->id;
+                validSectors |= Bit(gFastSaveSection->id);
             }
         }
     }
@@ -828,7 +828,7 @@ void Task_LinkSave(u8 taskId)
         gTasks[taskId].data[0] = 7;
         break;
     case 7:
-        ClearContinueGameWarpStatus2();
+        ClearContinueGameWarpStatus();
         SetLinkStandbyCallback();
         gTasks[taskId].data[0] = 8;
         break;

@@ -24,9 +24,9 @@ struct FieldInput
 void ClearPoisonStepCounter(void);
 int SetCableClubWarp(void);
 void HandleBoulderFallThroughOrCoverHole(struct ObjectEvent *);
-bool8 dive_warp(struct MapPosition * pos, u16 behavior);
-bool8 IsDirectionalStairWarpMetatileBehavior(u16 metatileBehavior, u8 playerDirection);
-const u8 *GetInteractedLinkPlayerScript(struct MapPosition *position, u8 direction);
+bool32 dive_warp(struct MapPosition * pos, u32 behavior);
+bool32 IsDirectionalStairWarpMetatileBehavior(u32 metatileBehavior, u32 playerDirection);
+const u8 *GetInteractedLinkPlayerScript(struct MapPosition *position, u32 direction);
 const u8 *GetCoordEventScriptAtMapPosition(struct MapPosition *position);
 void FieldClearPlayerInput(struct FieldInput *input);
 int ProcessPlayerFieldInput(struct FieldInput *input);

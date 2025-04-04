@@ -41,7 +41,7 @@ bool32 AIShouldConsiderMoveForBattler(u32 attacker, u32 defender, u32 move)
 /////////////////////////
 bool32 BattleAI_KnowsBattlerItem(u32 battlerId)
 {
-	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPlayerItems & gBitTable[gBattlerPartyIndexes[battlerId]]))
+	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPlayerItems & Bit(gBattlerPartyIndexes[battlerId])))
 		return FALSE;
 	return TRUE;
 }
@@ -49,12 +49,12 @@ bool32 BattleAI_KnowsBattlerItem(u32 battlerId)
 void BattleAI_RecordHoldEffect(u32 battlerId)
 {
 	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-		AI_DATA->knownPlayerItems |= gBitTable[gBattlerPartyIndexes[battlerId]];
+		AI_DATA->knownPlayerItems |= Bit(gBattlerPartyIndexes[battlerId]);
 }
 
 bool32 BattleAI_KnowsBattlerMoveIndex(u32 battlerId, u32 moveIndex)
 {
-	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPlayerMoves[gBattlerPartyIndexes[battlerId]] & gBitTable[moveIndex]))
+	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPlayerMoves[gBattlerPartyIndexes[battlerId]] & Bit(moveIndex)))
 		return FALSE;
 	return TRUE;
 }
@@ -62,24 +62,24 @@ bool32 BattleAI_KnowsBattlerMoveIndex(u32 battlerId, u32 moveIndex)
 void BattleAI_RecordMoveUsed(u32 battlerId, u32 moveSlot)
 {
 	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && moveSlot != MAX_MON_MOVES)
-		AI_DATA->knownPlayerMoves[gBattlerPartyIndexes[battlerId]] |= gBitTable[moveSlot];
+		AI_DATA->knownPlayerMoves[gBattlerPartyIndexes[battlerId]] |= Bit(moveSlot);
 }
 
 bool32 BattleAI_KnowsBattlerPartyIndex(u32 battlerId)
 {
-	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPartyIndices & gBitTable[gBattlerPartyIndexes[battlerId]]))
+	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPartyIndices & Bit(gBattlerPartyIndexes[battlerId])))
 		return FALSE;
 	return TRUE;
 }
 
 void BattleAI_RecordPartyIndex(u32 battlerId)
 {
-	AI_DATA->knownPartyIndices |= gBitTable[gBattlerPartyIndexes[battlerId]];
+	AI_DATA->knownPartyIndices |= Bit(gBattlerPartyIndexes[battlerId]);
 }
 
 bool32 BattleAI_KnowsBattlerAbility(u32 battlerId)
 {
-	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPlayerAbilities & gBitTable[gBattlerPartyIndexes[battlerId]]))
+	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPlayerAbilities & Bit(gBattlerPartyIndexes[battlerId])))
 		return FALSE;
 	return TRUE;
 }
@@ -87,7 +87,7 @@ bool32 BattleAI_KnowsBattlerAbility(u32 battlerId)
 void BattleAI_RecordAbility(u32 battlerId)
 {
 	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-		AI_DATA->knownPlayerAbilities |= gBitTable[gBattlerPartyIndexes[battlerId]];
+		AI_DATA->knownPlayerAbilities |= Bit(gBattlerPartyIndexes[battlerId]);
 }
 
 ////////////////////////////////////////
@@ -240,7 +240,7 @@ bool32 ShouldAIIncreaseCriticalChance(u32 attacker, u32 defender)
 	if (!(gBattleMons[attacker].status2 & STATUS2_FOCUS_ENERGY))
 	{
 		// Prefer copy critical chance using Psych Up
-		if ((gBattleMons[defender].status2 & STATUS2_FOCUS_ENERGY) && BattlerHasMoveEffectInMoveset(attacker, EFFECT_PSYCH_UP))
+		if ((gBattleMons[defender].status2 & STATUS2_FOCUS_ENERGY) && AI_BattlerHasMoveEffectInMoveset(attacker, EFFECT_PSYCH_UP))
 			return FALSE;
 		
 		return RandomPercent(30);
@@ -272,13 +272,13 @@ static bool32 BattlerHasMoveEffectInMovesetThatAffectsTarget(u32 attacker, u32 t
 	return FALSE;
 }
 
-bool32 BattlerHasMoveEffectInMoveset(u32 battler, u32 moveEffect)
+bool32 HasMoveEffectInMoveset(u16 *moveset, u32 moveEffect)
 {
 	u32 i;
 
 	for (i = 0; i < MAX_MON_MOVES; i++)
 	{
-		if (AI_THINKING->moves[battler][i] && gBattleMoves[AI_THINKING->moves[battler][i]].effect == moveEffect)
+		if (moveset[i] && gBattleMoves[moveset[i]].effect == moveEffect)
 			return TRUE;
 	}
 	return FALSE;
@@ -320,8 +320,8 @@ bool32 BadIdeaToBurn(u32 attacker, u32 defender)
 	|| (ability == ABILITY_GUTS && BattlerHasPhysicalMove(defender))
 	|| (ability == ABILITY_HYDRATION && IsBattlerWeatherAffected(defender, B_WEATHER_RAIN_ANY) && gBattleStruct->weatherDuration > 1)
 	|| (IsBattlerAlive(BATTLE_PARTNER(defender)) && GetBattlerAbility(BATTLE_PARTNER(defender)) == ABILITY_HEALER)
-	|| BattlerHasMoveEffectInMoveset(defender, EFFECT_FACADE)
-	|| BattlerHasMoveEffectInMoveset(defender, EFFECT_PSYCHO_SHIFT))
+	|| AI_BattlerHasMoveEffectInMoveset(defender, EFFECT_FACADE)
+	|| AI_BattlerHasMoveEffectInMoveset(defender, EFFECT_PSYCHO_SHIFT))
 		return TRUE;
 		
 	return FALSE;
@@ -401,8 +401,8 @@ bool32 BadIdeaToParalyze(u32 attacker, u32 defender)
 	|| (ability == ABILITY_GUTS && BattlerHasPhysicalMove(defender))
 	|| (ability == ABILITY_HYDRATION && IsBattlerWeatherAffected(defender, B_WEATHER_RAIN_ANY) && gBattleStruct->weatherDuration > 1)
 	|| (IsBattlerAlive(BATTLE_PARTNER(defender)) && GetBattlerAbility(BATTLE_PARTNER(defender)) == ABILITY_HEALER)
-	|| BattlerHasMoveEffectInMoveset(defender, EFFECT_FACADE)
-	|| BattlerHasMoveEffectInMoveset(defender, EFFECT_PSYCHO_SHIFT))
+	|| AI_BattlerHasMoveEffectInMoveset(defender, EFFECT_FACADE)
+	|| AI_BattlerHasMoveEffectInMoveset(defender, EFFECT_PSYCHO_SHIFT))
 		return TRUE;
 	
 	return FALSE;

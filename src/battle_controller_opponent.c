@@ -84,7 +84,7 @@ void SetControllerToOpponent(u32 battlerId)
 
 static void OpponentBufferRunCommand(u32 battlerId)
 {
-	if (gBattleControllerExecFlags & gBitTable[battlerId])
+	if (gBattleControllerExecFlags & Bit(battlerId))
     {
         if (gBattleBufferA[battlerId][0] < ARRAY_COUNT(sOpponentBufferCommands))
             sOpponentBufferCommands[gBattleBufferA[battlerId][0]](battlerId);
@@ -96,7 +96,7 @@ static void OpponentBufferRunCommand(u32 battlerId)
 static void OpponentBufferExecCompleted(u32 battlerId)
 {
 	gBattlerControllerFuncs[battlerId] = OpponentBufferRunCommand;
-    gBattleControllerExecFlags &= ~(gBitTable[battlerId]);
+    gBattleControllerExecFlags &= ~(Bit(battlerId));
 }
 
 ////////////////////////
@@ -439,7 +439,7 @@ static void OpponentHandleChooseMove(u32 battlerId)
 			else if (moveTarget == MOVE_TARGET_BOTH)
 			{
 				gBattlerTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-				if (gAbsentBattlerFlags & gBitTable[gBattlerTarget])
+				if (gAbsentBattlerFlags & Bit(gBattlerTarget))
 					gBattlerTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 			}
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, (gBattleStruct->battlers[battlerId].aiMoveOrAction) | (gBattlerTarget << 8));

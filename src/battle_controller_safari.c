@@ -72,7 +72,7 @@ void SetControllerToSafari(u32 battlerId)
 
 static void SafariBufferRunCommand(u32 battlerId)
 {
-    if (gBattleControllerExecFlags & gBitTable[battlerId])
+    if (gBattleControllerExecFlags & Bit(battlerId))
     {
         if (gBattleBufferA[battlerId][0] < ARRAY_COUNT(sSafariBufferCommands))
             sSafariBufferCommands[gBattleBufferA[battlerId][0]](battlerId);
@@ -92,7 +92,7 @@ static void SafariBufferExecCompleted(u32 battlerId)
         gBattleBufferA[battlerId][0] = CONTROLLER_TERMINATOR_NOP;
     }
     else
-        gBattleControllerExecFlags &= ~(gBitTable[battlerId]);
+        gBattleControllerExecFlags &= ~(Bit(battlerId));
 }
 
 ////////////////////////

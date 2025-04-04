@@ -36,7 +36,7 @@ void move_tilemap_camera_to_upper_left_corner(void);
 void CameraUpdate(void);
 void FieldUpdateBgTilemapScroll(void);
 void ResetCameraUpdateInfo(void);
-u32 InitCameraUpdateCallback(u8 trackedSpriteId);
+void InitCameraUpdateCallback(u32 trackedSpriteId);
 void CameraUpdateNoObjectRefresh(void);
 
 #endif //GUARD_FIELD_CAMERA_H

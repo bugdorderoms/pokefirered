@@ -10,10 +10,10 @@
 #define RANDOM_WEATHER_DELAY 40
 
 #if DYNAMIC_WEATHER
-static u8 TryStartDynamicWeather(void)
+static u32 TryStartDynamicWeather(void)
 {
 	u32 weatherChance;
-	u8 newWeather = gSaveBlock1Ptr->weather;
+	u32 newWeather = gSaveBlock1Ptr->weather;
 	
 	if (++gSaveBlock1Ptr->weatherDelay == RANDOM_WEATHER_DELAY) // Wait weather delay
 	{
@@ -76,15 +76,15 @@ static u8 TryStartDynamicWeather(void)
 }
 #endif
 
-static void UpdateRainCounter(u8 newWeather, u8 oldWeather)
+static void UpdateRainCounter(u32 newWeather, u32 oldWeather)
 {
     if (newWeather != oldWeather && (newWeather == WEATHER_RAIN || newWeather == WEATHER_RAIN_THUNDERSTORM))
         IncrementGameStat(GAME_STAT_GOT_RAINED_ON);
 }
 
-void SetSav1Weather(u8 weather)
+void SetSav1Weather(u32 weather)
 {
-    u8 oldWeather = gSaveBlock1Ptr->weather;
+    u32 oldWeather = gSaveBlock1Ptr->weather;
     gSaveBlock1Ptr->weather = weather;
     UpdateRainCounter(gSaveBlock1Ptr->weather, oldWeather);
 }

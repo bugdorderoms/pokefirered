@@ -53,8 +53,8 @@ enum ListMenuFields
 struct ListMenuTemplate
 {
     /*0x00*/ const struct ListMenuItem *items;
-    /*0x04*/ void (* moveCursorFunc)(s32 itemIndex, bool8 onInit, struct ListMenu *list);
-    /*0x08*/ void (* itemPrintFunc)(u8 windowId, u32 itemId, u8 y);
+    /*0x04*/ void (*moveCursorFunc)(s32 itemIndex, bool32 onInit, struct ListMenu *list);
+    /*0x08*/ void (*itemPrintFunc)(u32 windowId, u32 itemId, u32 y);
     /*0x0C*/ u16 totalItems;
     /*0x0E*/ u8 maxShowed;
 	/*0x0F*/ u8 textNarrowWidth;
@@ -92,15 +92,15 @@ struct ListMenuWindowRect
 
 extern struct ListMenuTemplate gMultiuseListMenuTemplate;
 
-u8 ListMenuInit(const struct ListMenuTemplate *listMenuTemplate, u16 cursorPos, u16 itemsAbove);
-u8 ListMenuInitInRect(const struct ListMenuTemplate *listMenuTemplate, const struct ListMenuWindowRect *rect, u16 cursorPos, u16 itemsAbove);
-s32 ListMenu_ProcessInput(u8 listTaskId);
-void DestroyListMenuTask(u8 listTaskId, u16 *cursorPos, u16 *itemsAbove);
-void RedrawListMenu(u8 listTaskId);
-void ListMenuGetScrollAndRow(u8 listTaskId, u16 *cursorPos, u16 *itemsAbove);
-u16 ListMenuGetYCoordForPrintingArrowCursor(u8 listTaskId);
-void ListMenuOverrideSetColors(u8 cursorPal, u8 fillValue, u8 cursorShadowPal);
-void ListMenuDefaultCursorMoveFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list);
-void ListMenuSetTemplateField(u8 taskId, u8 field, s32 value);
+u32 ListMenuInit(const struct ListMenuTemplate *listMenuTemplate, u16 cursorPos, u16 itemsAbove);
+u32 ListMenuInitInRect(const struct ListMenuTemplate *listMenuTemplate, const struct ListMenuWindowRect *rect, u16 cursorPos, u16 itemsAbove);
+s32 ListMenu_ProcessInput(u32 listTaskId);
+void DestroyListMenuTask(u32 listTaskId, u16 *cursorPos, u16 *itemsAbove);
+void RedrawListMenu(u32 listTaskId);
+void ListMenuGetScrollAndRow(u32 listTaskId, u16 *cursorPos, u16 *itemsAbove);
+u16 ListMenuGetYCoordForPrintingArrowCursor(u32 listTaskId);
+void ListMenuOverrideSetColors(u32 cursorPal, u32 fillValue, u32 cursorShadowPal);
+void ListMenuDefaultCursorMoveFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list);
+void ListMenuSetTemplateField(u32 taskId, u32 field, s32 value);
 
 #endif //GUARD_LIST_MENU_H

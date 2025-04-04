@@ -45,6 +45,10 @@
 
 // useful math macros
 
+// Rounding value for Q4.12 fixed-point format
+#define UQ_4_12_SHIFT (12)
+#define UQ_4_12_ROUND ((1) << (UQ_4_12_SHIFT - 1))
+
 // Converts a number to Q8.8 fixed-point format
 #define Q_8_8(n) ((s16)((n) * 256))
 
@@ -53,6 +57,7 @@
 
 // Converts a number to Q4.12 fixed-point format
 #define Q_4_12(n)  ((s16)((n) * 4096))
+#define UQ_4_12(n) ((u32)((n) * 4096 + 0.5))
 
 // Converts a number from Q4.12 fixed-point format
 #define Q_4_12_TO_INT(n) ((s16)((n) >> 12))
@@ -68,6 +73,12 @@
 
 // Converts a number from Q24.8 fixed-point format
 #define Q_24_8_TO_INT(n) ((s32)((n) >> 8))
+
+static inline u32 uq4_12_multiply(u32 a, u32 b)
+{
+    u32 product = (u32) a * b;
+    return (product + UQ_4_12_ROUND) >> UQ_4_12_SHIFT;
+}
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) >= (b) ? (a) : (b))
@@ -133,41 +144,43 @@
 #define R_FOR_EACH_(macro, a, ...) macro(a) __VA_OPT__(R_FOR_EACH_P PARENS (macro, __VA_ARGS__))
 #define R_FOR_EACH_P() R_FOR_EACH_
 
+#define Bit(n) (1 << (n))
+
 /* (Credit to MGriffin) A rather monstrous way of finding the set bit in a word.
 Invalid input causes a compiler error. Sample: https://cexplore.karathan.at/z/x1hm7B */
 #define BIT_INDEX(n) \
-    (n) == (1 << 0) ? 0 : \
-    (n) == (1 << 1) ? 1 : \
-    (n) == (1 << 2) ? 2 : \
-    (n) == (1 << 3) ? 3 : \
-    (n) == (1 << 4) ? 4 : \
-    (n) == (1 << 5) ? 5 : \
-    (n) == (1 << 6) ? 6 : \
-    (n) == (1 << 7) ? 7 : \
-    (n) == (1 << 8) ? 8 : \
-    (n) == (1 << 9) ? 9 : \
-    (n) == (1 << 10) ? 10 : \
-    (n) == (1 << 11) ? 11 : \
-    (n) == (1 << 12) ? 12 : \
-    (n) == (1 << 13) ? 13 : \
-    (n) == (1 << 14) ? 14 : \
-    (n) == (1 << 15) ? 15 : \
-    (n) == (1 << 16) ? 16 : \
-    (n) == (1 << 17) ? 17 : \
-    (n) == (1 << 18) ? 18 : \
-    (n) == (1 << 19) ? 19 : \
-    (n) == (1 << 20) ? 20 : \
-    (n) == (1 << 21) ? 21 : \
-    (n) == (1 << 22) ? 22 : \
-    (n) == (1 << 23) ? 23 : \
-    (n) == (1 << 24) ? 24 : \
-    (n) == (1 << 25) ? 25 : \
-    (n) == (1 << 26) ? 26 : \
-    (n) == (1 << 27) ? 27 : \
-    (n) == (1 << 28) ? 28 : \
-    (n) == (1 << 29) ? 29 : \
-    (n) == (1 << 30) ? 30 : \
-    (n) == (1 << 31) ? 31 : \
+    (n) == Bit(0) ? 0 : \
+    (n) == Bit(1) ? 1 : \
+    (n) == Bit(2) ? 2 : \
+    (n) == Bit(3) ? 3 : \
+    (n) == Bit(4) ? 4 : \
+    (n) == Bit(5) ? 5 : \
+    (n) == Bit(6) ? 6 : \
+    (n) == Bit(7) ? 7 : \
+    (n) == Bit(8) ? 8 : \
+    (n) == Bit(9) ? 9 : \
+    (n) == Bit(10) ? 10 : \
+    (n) == Bit(11) ? 11 : \
+    (n) == Bit(12) ? 12 : \
+    (n) == Bit(13) ? 13 : \
+    (n) == Bit(14) ? 14 : \
+    (n) == Bit(15) ? 15 : \
+    (n) == Bit(16) ? 16 : \
+    (n) == Bit(17) ? 17 : \
+    (n) == Bit(18) ? 18 : \
+    (n) == Bit(19) ? 19 : \
+    (n) == Bit(20) ? 20 : \
+    (n) == Bit(21) ? 21 : \
+    (n) == Bit(22) ? 22 : \
+    (n) == Bit(23) ? 23 : \
+    (n) == Bit(24) ? 24 : \
+    (n) == Bit(25) ? 25 : \
+    (n) == Bit(26) ? 26 : \
+    (n) == Bit(27) ? 27 : \
+    (n) == Bit(28) ? 28 : \
+    (n) == Bit(29) ? 29 : \
+    (n) == Bit(30) ? 30 : \
+    (n) == Bit(31) ? 31 : \
     *(u32 *)NULL
 
 #define COMPRESS_BITS_0 0, 1

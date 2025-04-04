@@ -126,7 +126,7 @@ void SetControllerToPokedude(u32 battlerId)
 
 static void PokedudeBufferRunCommand(u32 battlerId)
 {
-	if (gBattleControllerExecFlags & gBitTable[battlerId])
+	if (gBattleControllerExecFlags & Bit(battlerId))
     {
         if (gBattleBufferA[battlerId][0] < ARRAY_COUNT(sPokedudeBufferCommands))
         {
@@ -149,7 +149,7 @@ static void PokedudeBufferExecCompleted(u32 battlerId)
         gBattleBufferA[battlerId][0] = CONTROLLER_TERMINATOR_NOP;
     }
     else
-        gBattleControllerExecFlags &= ~(gBitTable[battlerId]);
+        gBattleControllerExecFlags &= ~(Bit(battlerId));
 }
 
 ////////////////////////
@@ -1036,7 +1036,7 @@ static void PokedudeAction_PrintMessageWithHealthboxPals(u32 battlerId)
     case 1:
         if (!gPaletteFade.active)
         {
-            BeginNormalPaletteFade((gBitTable[gBattleStruct->pdHealthboxPal2] | gBitTable[gBattleStruct->pdHealthboxPal1]) << 16, 4, 8, 0, RGB_BLACK);
+            BeginNormalPaletteFade((Bit(gBattleStruct->pdHealthboxPal2) | Bit(gBattleStruct->pdHealthboxPal1)) << 16, 4, 8, 0, RGB_BLACK);
             ++gPokedudeBattlerStates[battlerId]->timer;
         }
         break;
@@ -1056,7 +1056,7 @@ static void PokedudeAction_PrintMessageWithHealthboxPals(u32 battlerId)
         if (!IsTextPrinterActive(24) && JOY_NEW(A_BUTTON))
         {
             PlaySE(SE_SELECT);
-            BeginNormalPaletteFade((gBitTable[gBattleStruct->pdHealthboxPal2] | gBitTable[gBattleStruct->pdHealthboxPal1]) << 16, 4, 0, 8, RGB_BLACK);
+            BeginNormalPaletteFade((Bit(gBattleStruct->pdHealthboxPal2) | Bit(gBattleStruct->pdHealthboxPal1)) << 16, 4, 0, 8, RGB_BLACK);
             ++gPokedudeBattlerStates[battlerId]->timer;
         }
         break;

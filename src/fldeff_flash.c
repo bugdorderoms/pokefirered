@@ -19,12 +19,12 @@ struct FlashStruct
     bool8 isEnter;
     bool8 isExit;
     void (*func1)(void);
-    void (*func2)(u8 mapSecId);
+    void (*func2)(u32 mapSecId);
 };
 
 static void FieldCallback_Flash(void);
 static void FldEff_UseFlash(void);
-static bool8 TryDoMapTransition(void);
+static bool32 TryDoMapTransition(void);
 static void FlashTransition_Exit(void);
 static void Task_FlashTransition_Exit_0(u8 taskId);
 static void Task_FlashTransition_Exit_1(u8 taskId);
@@ -36,7 +36,7 @@ static void Task_FlashTransition_Enter_0(u8 taskId);
 static void Task_FlashTransition_Enter_1(u8 taskId);
 static void Task_FlashTransition_Enter_2(u8 taskId);
 static void Task_FlashTransition_Enter_3(u8 taskId);
-static void RunMapPreviewScreen(u8 mapsecId);
+static void RunMapPreviewScreen(u32 mapsecId);
 static void Task_MapPreviewScreen_0(u8 taskId);
 
 static const struct FlashStruct sTransitionTypes[] = {
@@ -161,7 +161,7 @@ static const u16 sCaveTransitionPalette_Gradient[] = INCBIN_U16("graphics/field_
 static const u32 sCaveTransitionTilemap[] = INCBIN_U32("graphics/field_effects/flash_effect_map.bin.lz");
 static const u32 sCaveTransitionTiles[] = INCBIN_U32("graphics/field_effects/flash_effect_tiles.4bpp.lz");
 
-bool8 SetUpFieldMove_Flash(void)
+bool32 SetUpFieldMove_Flash(void)
 {
     if (!gMapHeader.cave || FlagGet(FLAG_SYS_FLASH_ACTIVE))
         return FALSE;
@@ -173,7 +173,7 @@ bool8 SetUpFieldMove_Flash(void)
 
 static void FieldCallback_Flash(void)
 {
-    u8 taskId = CreateFieldEffectShowMon();
+    u32 taskId = CreateFieldEffectShowMon();
     gFieldEffectArguments[0] = GetCursorSelectionMonId();
     gTasks[taskId].data[8] = ((uintptr_t)FldEff_UseFlash) >> 16;
     gTasks[taskId].data[9] = ((uintptr_t)FldEff_UseFlash);
@@ -231,11 +231,11 @@ void CB2_DoChangeMap(void)
         SetMainCallback2(gMain.savedCallback);
 }
 
-static bool8 TryDoMapTransition(void)
+static bool32 TryDoMapTransition(void)
 {
-    u8 fromType = GetLastUsedWarpMapType();
-    u8 toType = GetCurrentMapType();
-    u8 i;
+    u32 fromType = GetLastUsedWarpMapType();
+    u32 toType = GetCurrentMapType();
+    u32 i;
 	
     if (GetLastUsedWarpMapSectionId() != gMapHeader.regionMapSectionId && MapHasPreviewScreen(gMapHeader.regionMapSectionId, MAP_PREVIEW_TYPE_CAVE) == TRUE)
     {
@@ -253,9 +253,9 @@ static bool8 TryDoMapTransition(void)
     return FALSE;
 }
 
-bool8 MapTransitionIsEnter(u8 _fromType, u8 _toType)
+bool32 MapTransitionIsEnter(u32 _fromType, u32 _toType)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; sTransitionTypes[i].fromType != 0; i++)
     {
@@ -265,9 +265,9 @@ bool8 MapTransitionIsEnter(u8 _fromType, u8 _toType)
     return FALSE;
 }
 
-bool8 MapTransitionIsExit(u8 _fromType, u8 _toType)
+bool32 MapTransitionIsExit(u32 _fromType, u32 _toType)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; sTransitionTypes[i].fromType != 0; i++)
     {
@@ -307,11 +307,11 @@ static void Task_FlashTransition_Exit_1(u8 taskId)
 static void Task_FlashTransition_Exit_2(u8 taskId)
 {
     u16 r4 = gTasks[taskId].data[1];
+	
     SetGpuReg(REG_OFFSET_BLDALPHA, (16 << 8) + r4);
+	
     if (r4 <= 16)
-    {
         gTasks[taskId].data[1]++;
-    }
     else
     {
         gTasks[taskId].data[2] = 0;
@@ -322,7 +322,9 @@ static void Task_FlashTransition_Exit_2(u8 taskId)
 static void Task_FlashTransition_Exit_3(u8 taskId)
 {
     u16 r4;
+	
     SetGpuReg(REG_OFFSET_BLDALPHA, (16 << 8) + 16);
+	
     r4 = gTasks[taskId].data[2];
     if (r4 < 8)
     {
@@ -375,8 +377,8 @@ static void Task_FlashTransition_Enter_1(u8 taskId)
 
 static void Task_FlashTransition_Enter_2(u8 taskId)
 {
-    u16 r4;
-    r4 = gTasks[taskId].data[2];
+    u16 r4 = gTasks[taskId].data[2];
+
     if (r4 < 16)
     {
         gTasks[taskId].data[2]++;
@@ -394,11 +396,11 @@ static void Task_FlashTransition_Enter_2(u8 taskId)
 static void Task_FlashTransition_Enter_3(u8 taskId)
 {
     u16 r4 = 16 - gTasks[taskId].data[1];
+	
     SetGpuReg(REG_OFFSET_BLDALPHA, (16 << 8) + r4);
+	
     if (r4 != 0)
-    {
         gTasks[taskId].data[1]++;
-    }
     else
     {
         LoadPalette(sCaveTransitionPalette_Black, 0x00, 0x20);
@@ -406,7 +408,7 @@ static void Task_FlashTransition_Enter_3(u8 taskId)
     }
 }
 
-static void RunMapPreviewScreen(u8 mapSecId)
+static void RunMapPreviewScreen(u32 mapSecId)
 {
     gTasks[CreateTask(Task_MapPreviewScreen_0, 0)].data[3] = mapSecId;
 }
@@ -414,6 +416,7 @@ static void RunMapPreviewScreen(u8 mapSecId)
 static void Task_MapPreviewScreen_0(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
+	
     switch (data[0])
     {
     case 0:

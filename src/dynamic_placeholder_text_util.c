@@ -98,7 +98,7 @@ void DynamicPlaceholderTextUtil_Reset(void)
     while ((intptr_t)ptr2 >= (intptr_t)ptr);
 }
 
-void DynamicPlaceholderTextUtil_SetPlaceholderPtr(u8 idx, const u8 *ptr)
+void DynamicPlaceholderTextUtil_SetPlaceholderPtr(u32 idx, const u8 *ptr)
 {
     if (idx < ARRAY_COUNT(sStringPointers))
         sStringPointers[idx] = ptr;
@@ -124,12 +124,12 @@ u8 *DynamicPlaceholderTextUtil_ExpandPlaceholders(u8 *dest, const u8 *src)
     return dest;
 }
 
-const u8 *DynamicPlaceholderTextUtil_GetPlaceholderPtr(u8 idx)
+const u8 *DynamicPlaceholderTextUtil_GetPlaceholderPtr(u32 idx)
 {
     return sStringPointers[idx];
 }
 
-u8 GetColorFromTextColorTable(u16 graphicId)
+u32 GetColorFromTextColorTable(u32 graphicId)
 {
     return graphicId >> 1 >= ARRAY_COUNT(sTextColorTable) ? 3 : (sTextColorTable[graphicId >> 1] >> ((graphicId & 1) << 2)) & 0xF;
 }

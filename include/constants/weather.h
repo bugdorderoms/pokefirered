@@ -15,11 +15,11 @@
 #define WEATHER_CLOUDS             11
 
 // Weathers as bits
-#define BIT_WEATHER_RAIN         (1 << 0)
-#define BIT_WEATHER_SNOW         (1 << 1)
-#define BIT_WEATHER_FOG          (1 << 2)
-#define BIT_WEATHER_VOLCANIC_ASH (1 << 3)
-#define BIT_WEATHER_SANDSTORM    (1 << 4)
-#define BIT_WEATHER_UNDERWATER   (1 << 5)
+#define BIT_WEATHER_RAIN         Bit(0)
+#define BIT_WEATHER_SNOW         Bit(1)
+#define BIT_WEATHER_FOG          Bit(2)
+#define BIT_WEATHER_VOLCANIC_ASH Bit(3)
+#define BIT_WEATHER_SANDSTORM    Bit(4)
+#define BIT_WEATHER_UNDERWATER   Bit(5)
 
 #endif  // GUARD_CONSTANTS_WEATHER_H

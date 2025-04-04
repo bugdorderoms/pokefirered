@@ -80,7 +80,6 @@ static void TeachyTvSetupBg(void);
 static void TeachyTvLoadGraphic(void);
 static void TeachyTvPostBattleFadeControl(u8);
 static void TeachyTvOptionListController(u8);
-static void TeachyTvAudioByInput(s32, bool8, struct ListMenu *);
 static void TeachyTvQuitFadeControlAndTaskDel(u8 taskId);
 static void TeachyTvRenderMsgAndSwitchClusterFuncs(u8 taskId);
 static void TeachyTvClearBg1EndGraphicText(void);
@@ -547,7 +546,8 @@ static u8 TeachyTvSetupWindow(void)
 {
     gMultiuseListMenuTemplate = sListMenuTemplate;
     gMultiuseListMenuTemplate.windowId = 1;
-    gMultiuseListMenuTemplate.moveCursorFunc = TeachyTvAudioByInput;
+    gMultiuseListMenuTemplate.moveCursorFunc = ListMenuDefaultCursorMoveFunc;
+	
     if (!CheckBagHasItem(ITEM_TM_CASE, 1))
     {
         gMultiuseListMenuTemplate.items = sListMenuItems_NoTMCase;
@@ -555,11 +555,7 @@ static u8 TeachyTvSetupWindow(void)
         gMultiuseListMenuTemplate.maxShowed = 5;
         gMultiuseListMenuTemplate.upText_Y = (gMultiuseListMenuTemplate.upText_Y + 8) & 0xF;
     }
-    return ListMenuInit(
-               &gMultiuseListMenuTemplate,
-               sStaticResources.scrollOffset,
-               sStaticResources.selectedRow
-    );
+    return ListMenuInit(&gMultiuseListMenuTemplate, sStaticResources.scrollOffset, sStaticResources.selectedRow);
 }
 
 static void TeachyTvSetupScrollIndicatorArrowPair(void)
@@ -582,12 +578,6 @@ static void TeachyTvRemoveScrollIndicatorArrowPair(void)
         RemoveScrollIndicatorArrowPair(sResources->scrollIndicatorArrowPairId);
         sResources->scrollIndicatorArrowPairId = 0xFF;
     }
-}
-
-static void TeachyTvAudioByInput(s32 notUsed, bool8 play, struct ListMenu *notUsedAlt)
-{
-    if (play != TRUE)
-        PlaySE(SE_SELECT);
 }
 
 static void TeachyTvInitIo(void)

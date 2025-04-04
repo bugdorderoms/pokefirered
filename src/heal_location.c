@@ -24,7 +24,7 @@
 
 #include "data/heal_locations.h"
 
-static u32 GetHealLocationIndexFromMapGroupAndNum(u16 mapGroup, u16 mapNum)
+static u32 GetHealLocationIndexFromMapGroupAndNum(u32 mapGroup, u32 mapNum)
 {
     u32 i;
 

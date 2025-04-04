@@ -4,11 +4,11 @@
 #include "global.h"
 
 void PrintCoinsString(u32 coinAmount);
-void ShowCoinsWindow(u32 coinAmount, u8 x, u8 y);
+void ShowCoinsWindow(u32 coinAmount, u32 x, u32 y);
 void HideCoinsWindow(void);
 u16 GetCoins(void);
 void SetCoins(u16 coinAmount);
-bool8 AddCoins(u16 toAdd);
-bool8 RemoveCoins(u16 toSub);
+bool32 AddCoins(u16 toAdd);
+bool32 RemoveCoins(u16 toSub);
 
 #endif // GUARD_COINS_H
