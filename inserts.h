@@ -31,7 +31,7 @@
 // If this setting is enabled, all participating Pokémon in a battle will receive full experience points.
 #define FULL_EXP_FOR_PARTICIPATING TRUE
 
-// If this setting is enabled, Pichu eggs will hatch with the Volt Tackle move.
+// If this setting is enabled, Pichu's eggs will hatch with the Volt Tackle move.
 #define VOLT_TACKLE_BY_BREEDING TRUE
 
 // If this setting is enabled, some species's eggs will change depending if it's parents are holding a specific incense item.
@@ -73,7 +73,7 @@
 #define RANDOM_SOS_CALLS FALSE
 
 // If this setting is enabled, in a double wild battle where two natural enemies are present, the opposing Pokémon will attack each other
-// instead of the player's Pokémon. To do so, go to "src/battle_controller_opponent.c" and edit the natural enemies in "sNaturalEnemySpecies".
+// instead of the player's Pokémon. To do so, go to "src/battle_controller_opponent.c" and edit the natural enemies in "sEnemyPreySpecies" and "sNaturalEnemySpecies".
 #define DOUBLE_WILD_ATTACK_NATURAL_ENEMY TRUE
 
 // If this setting is enabled, when a Pokémon's trainer blocks a Poké Ball, the item will not be lost and will return to the player's bag,
@@ -83,7 +83,7 @@
 // If this setting is enabled, when using a medicine item on a Pokémon, it will remain in the party menu instead of returning to the bag.
 #define REPEATED_MEDICINE_USE TRUE
 
-// If this setting is enabled, pressing the L button while choosing a move will display its information.
+// If this setting is enabled, pressing the L button while choosing a move will display its informations.
 #define BATTLE_MOVE_INFO TRUE
 
 // This setting determines the number of submenus to display move information.
@@ -138,8 +138,7 @@
 // This setting determines the price divisor when selling an item. It's 2 in Generation III games, but 4 in Pokémon Legends Arceus. 
 #define ITEM_SELL_DIVISOR 2
 
-// If this setting is enabled, when searching for a Pokémon on the Dexnav you must need to press the A button to creeping.
-// Otherwise, the Pokémon will run away.
+// If this setting is enabled, when searching for a Pokémon on the Dexnav you must need to press the A button to creeping, otherwise, the Pokémon will run away.
 #define DEXNAV_CREEPING_SEARCH TRUE
 
 // If this setting is enabled, random weathers will start on enter maps that don't have a weather defined.
@@ -150,7 +149,10 @@
 // Otherwise, it will increase it's Attack, Sp. Attack and Speed by one stage each.
 #define BATTLE_BOND_TRANSFORM TRUE
 
-// Value of friendship the Pokémon must have to trigger its evolution, in Generation IX onward it was decreased from 220 to 160.
+// Minimum value of friendship the Pokémon must have to be able to trigger its Mega Evolution, If 0 it will be able to Mega evolve regardless of friendship.
+#define MEGA_EVO_FRIENDSHIP_THRESHOLD 0
+
+// Minimum value of friendship the Pokémon must have to trigger its evolution, in Generation IX onward it was decreased from 220 to 160.
 #define FRIENDSHIP_EVO_THRESHOLD 220
 
 // If this setting is enabled, evolutions will be able to requires a moon phase in order to evolve.

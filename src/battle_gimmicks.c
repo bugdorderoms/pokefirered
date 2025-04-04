@@ -47,12 +47,15 @@ void AssignUsableGimmicks(void)
 	{
 		gBattleStruct->battlers[battler].usableGimmick = GIMMICK_NONE;
 		
-		for (gimmick = 0; gimmick < GIMMICKS_COUNT; gimmick++)
+		if (GetActiveGimmick(battler) == GIMMICK_NONE)
 		{
-			if (CanActivateGimmick(battler, gimmick))
+			for (gimmick = 0; gimmick < GIMMICKS_COUNT; gimmick++)
 			{
-				gBattleStruct->battlers[battler].usableGimmick = gimmick;
-				break;
+				if (!HasTrainerUsedGimmick(battler, gimmick) && CanActivateGimmick(battler, gimmick))
+				{
+					gBattleStruct->battlers[battler].usableGimmick = gimmick;
+					break;
+				}
 			}
 		}
 	}
@@ -504,14 +507,14 @@ bool32 CanMegaEvolve(u32 battler)
 {
 	if (!TrainerHasGimmickKeyItem(battler, ITEM_MEGA_BRACELET))
 		return FALSE;
-	else if (HasTrainerUsedGimmick(battler, GIMMICK_MEGA))
-		return FALSE;
-	else if (GetActiveGimmick(battler) != GIMMICK_NONE)
-		return FALSE;
 	else if (gStatuses3[battler] & STATUS3_SKY_DROPPED)
 		return FALSE;
 	else if (GetBattlerItemHoldEffect(battler, FALSE) == HOLD_EFFECT_Z_CRYSTAL)
 		return FALSE;
+#if MEGA_EVO_FRIENDSHIP_THRESHOLD != 0
+	else if (gBattleMons[battler].friendship < MEGA_EVO_FRIENDSHIP_THRESHOLD)
+		return FALSE;
+#endif
 	else if (TryDoBattleFormChange(battler, FORM_CHANGE_MEGA_EVO))
 		return TRUE;
 	else if (TryDoBattleFormChange(battler, FORM_CHANGE_MOVE_MEGA_EVO))
@@ -544,10 +547,6 @@ void ActivateMegaEvolution(u32 battler)
 bool32 CanUltraBurst(u32 battler)
 {
 	if (!TrainerHasGimmickKeyItem(battler, ITEM_Z_RING))
-		return FALSE;
-	else if (HasTrainerUsedGimmick(battler, GIMMICK_ULTRA_BURST))
-		return FALSE;
-	else if (GetActiveGimmick(battler) != GIMMICK_NONE)
 		return FALSE;
 	else if (gStatuses3[battler] & STATUS3_SKY_DROPPED)
 		return FALSE;
