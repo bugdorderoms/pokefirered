@@ -18,16 +18,16 @@ struct MapPreviewScreen
     u8 type;
 };
 
-u16 MapPreview_CreateMapNameWindow(u8 id);
-void MapPreview_SetFlag(u16 a0);
-u16 MapPreview_GetDuration(u8 id);
-bool8 MapHasPreviewScreen(u8 mapsec, u8 type);
+u32 MapPreview_CreateMapNameWindow(u32 id);
+void MapPreview_SetFlag(u32 a0);
+u32 MapPreview_GetDuration(u32 id);
+bool32 MapHasPreviewScreen(u32 mapsec, u32 type);
 bool32 ForestMapPreviewScreenIsRunning(void);
-const struct MapPreviewScreen *GetDungeonMapPreviewScreenInfo(u8 mapsec);
+const struct MapPreviewScreen *GetDungeonMapPreviewScreenInfo(u32 mapsec);
 void MapPreview_InitBgs(void);
-void MapPreview_LoadGfx(u8 mapsec);
+void MapPreview_LoadGfx(u32 mapsec);
 bool32 MapPreview_IsGfxLoadFinished(void);
-void MapPreview_Unload(s32 windowId);
-void MapPreview_StartForestTransition(u8 mapsec);
+void MapPreview_Unload(u32 windowId);
+void MapPreview_StartForestTransition(u32 mapsec);
 
 #endif //GUARD_MAP_PREVIEW_SCREEN_H

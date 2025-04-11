@@ -47,15 +47,20 @@ struct InGameTrade
 {
 	/*0x00*/ u16 species;
     /*0x02*/ u8 nickname[POKEMON_NAME_LENGTH + 1];
-    /*0x0D*/ u8 ivs[NUM_STATS];
-    /*0x13*/ u8 abilityNum;
-    /*0x14*/ u32 otId;
-    /*0x18*/ u32 personality;
-    /*0x1C*/ u16 heldItem;
-	/*0x1E*/ u16 requestedSpecies;
-    /*0x20*/ u8 mailNum;
-    /*0x21*/ u8 otName[11];
-    /*0x2C*/ u8 otGender;
+    /*0x0F*/ u8 ivs[NUM_STATS];
+    /*0x15*/ u16 abilityNum:1;
+	         u16 abilityHidden:1;
+	         u16 mailNum:4; // Max 15 mail messages, only necessary if the heldItem is a mail
+	         u16 otGender:1;
+	         u16 gMaxFactor:1;
+	         u16 ballId:NUM_POKEBALL_BITS;
+			 u16 shinyType:2;
+	/*0x17*/ u16 dynamaxLevel:4;
+			 u16 teraType:NUM_TYPES_BITS; // 0 = random
+			 u16 nature:NUM_NATURE_BITS; // 0 = random
+	/*0x19*/ u16 heldItem;
+	/*0x1B*/ u8 otName[11];
+	/*0x26*/ u16 requestedSpecies;
 };
 
 struct TradeAnimationResources
@@ -130,7 +135,7 @@ static void SpriteCB_TradePokeball_Outbound(struct Sprite * sprite);
 static void SpriteCB_TradePokeball_Outbound2(struct Sprite * sprite);
 static void SpriteCB_TradePokeball_Inbound(struct Sprite * sprite);
 static void BufferInGameTradeMonName(void);
-static void GetInGameTradeMail(struct Mail * mail, const struct InGameTrade * inGameTrade);
+static void GetInGameTradeMail(struct Mail * mail, const struct InGameTrade * inGameTrade, u32 otId);
 static void CB2_RunTradeAnim_LinkTrade(void);
 static void CB2_WaitAndAckTradeComplete(void);
 static void CB2_HandleTradeEnded(void);
@@ -1208,6 +1213,7 @@ static void TradeBufferOTnameAndNicknames(void)
     u8 nickname[20];
     u8 mpId;
     const struct InGameTrade * inGameTrade;
+	
     if (sTradeData->isLinkTrade)
     {
         mpId = GetMultiplayerId();
@@ -2332,6 +2338,7 @@ static void SpriteCB_TradePokeball_Inbound(struct Sprite * sprite)
     if (sprite->data[2] == 0)
     {
         sprite->y += 4;
+		
         if (sprite->y > sprite->data[3])
         {
             sprite->data[2]++;
@@ -2343,108 +2350,58 @@ static void SpriteCB_TradePokeball_Inbound(struct Sprite * sprite)
     {
         if (sprite->data[0] == 66)
             PlaySE(SE_BALL_BOUNCE_2);
+		
         if (sprite->data[0] == 92)
             PlaySE(SE_BALL_BOUNCE_3);
+		
         if (sprite->data[0] == 107)
             PlaySE(SE_BALL_BOUNCE_4);
+		
         sprite->y2 += sTradeBallVerticalVelocityTable[sprite->data[0]];
-        sprite->data[0]++;
-        if (sprite->data[0] == 108)
+
+        if (++sprite->data[0] == 108)
             sprite->callback = SpriteCallbackDummy;
     }
 }
 
-u16 GetInGameTradeSpeciesInfo(void)
+// Populates gStringVar1 with the name of the requested species and gStringVar2 with the name of the offered species.
+// Returns the requested species.
+u32 GetInGameTradeSpeciesInfo(void)
 {
-    // Populates gStringVar1 with the name of the requested species and
-    // gStringVar2 with the name of the offered species.
-    // Returns the requested species.
     const struct InGameTrade * inGameTrade = &sInGameTrades[gSpecialVar_0x8004];
     StringCopy(gStringVar1, gSpeciesInfo[inGameTrade->requestedSpecies].name);
     StringCopy(gStringVar2, gSpeciesInfo[inGameTrade->species].name);
     return inGameTrade->requestedSpecies;
 }
 
+// Populates gStringVar1 with the nickname of the sent Pokemon and gStringVar2 with the name of the offered species.
 static void BufferInGameTradeMonName(void)
 {
-    // Populates gStringVar1 with the nickname of the sent Pokemon and
-    // gStringVar2 with the name of the offered species.
-    u8 nickname[30];
-    const struct InGameTrade * inGameTrade = &sInGameTrades[gSpecialVar_0x8004];
+    u8 nickname[POKEMON_NAME_LENGTH + 1];
     GetMonData(&gPlayerParty[gSpecialVar_0x8005], MON_DATA_NICKNAME, nickname);
     StringCopy_Nickname(gStringVar1, nickname);
-    StringCopy(gStringVar2, gSpeciesInfo[inGameTrade->species].name);
+    StringCopy(gStringVar2, gSpeciesInfo[sInGameTrades[gSpecialVar_0x8004].species].name);
 }
 
-static void CreateInGameTradePokemonInternal(u8 playerSlot, u8 inGameTradeIdx)
+static void GetInGameTradeMail(struct Mail * mail, const struct InGameTrade * inGameTrade, u32 otId)
 {
-    const struct InGameTrade * inGameTrade = &sInGameTrades[inGameTradeIdx];
-    u8 level = GetMonData(&gPlayerParty[playerSlot], MON_DATA_LEVEL);
-    struct Mail mail;
-    u8 mailNum, metLocation = METLOC_IN_GAME_TRADE;
-    struct Pokemon * tradeMon = &gEnemyParty[0];
-	struct PokemonGenerator generator =
-	{
-		.species = inGameTrade->species,
-		.level = level,
-		.shinyType = GENERATE_SHINY_NORMAL,
-		.shinyRollType = SHINY_ROLL_NORMAL,
-		.forcedGender = MON_GENDERLESS,
-		.otIdType = OT_ID_PRESET,
-		.fixedOtId = inGameTrade->otId,
-		.hasFixedPersonality = TRUE,
-		.fixedPersonality = inGameTrade->personality,
-		.forcedNature = NUM_NATURES,
-		.formChanges = NULL,
-		.moves = {0},
-		.nPerfectIvs = 0,
-	};
+    u32 i;
 	
-    CreateMon(tradeMon, generator);
-    SetMonData(tradeMon, MON_DATA_HP_IV, &inGameTrade->ivs[0]);
-    SetMonData(tradeMon, MON_DATA_ATK_IV, &inGameTrade->ivs[1]);
-    SetMonData(tradeMon, MON_DATA_DEF_IV, &inGameTrade->ivs[2]);
-    SetMonData(tradeMon, MON_DATA_SPEED_IV, &inGameTrade->ivs[3]);
-    SetMonData(tradeMon, MON_DATA_SPATK_IV, &inGameTrade->ivs[4]);
-    SetMonData(tradeMon, MON_DATA_SPDEF_IV, &inGameTrade->ivs[5]);
-    SetMonData(tradeMon, MON_DATA_NICKNAME, inGameTrade->nickname);
-    SetMonData(tradeMon, MON_DATA_OT_NAME, inGameTrade->otName);
-    SetMonData(tradeMon, MON_DATA_OT_GENDER, &inGameTrade->otGender);
-    SetMonData(tradeMon, MON_DATA_ABILITY_NUM, &inGameTrade->abilityNum);
-    SetMonData(tradeMon, MON_DATA_MET_LOCATION, &metLocation);
-    mailNum = 0;
-    if (inGameTrade->heldItem != ITEM_NONE)
-    {
-        if (ItemIsMail(inGameTrade->heldItem))
-        {
-            GetInGameTradeMail(&mail, inGameTrade);
-            gLinkPartnerMail[0] = mail;
-            SetMonData(tradeMon, MON_DATA_MAIL, &mailNum);
-            SetMonData(tradeMon, MON_DATA_HELD_ITEM, &inGameTrade->heldItem);
-        }
-        else
-        {
-            SetMonData(tradeMon, MON_DATA_HELD_ITEM, &inGameTrade->heldItem);
-        }
-    }
-    CalculateMonStats(&gEnemyParty[0]);
-}
-
-static void GetInGameTradeMail(struct Mail * mail, const struct InGameTrade * inGameTrade)
-{
-    int i;
     for (i = 0; i < MAIL_WORDS_COUNT; i++)
         mail->words[i] = sInGameTradeMailMessages[inGameTrade->mailNum][i];
+	
     StringCopy(mail->playerName, inGameTrade->otName);
-    mail->trainerId[0] = inGameTrade->otId >> 24;
-    mail->trainerId[1] = inGameTrade->otId >> 16;
-    mail->trainerId[2] = inGameTrade->otId >> 8;
-    mail->trainerId[3] = inGameTrade->otId;
+	
+    mail->trainerId[0] = otId >> 24;
+    mail->trainerId[1] = otId >> 16;
+    mail->trainerId[2] = otId >> 8;
+    mail->trainerId[3] = otId;
+	
     mail->species = inGameTrade->species;
     mail->itemId = inGameTrade->heldItem;
 }
 
-u16 GetTradeSpecies(void)
+u32 GetTradeSpecies(void)
 {
     if (GetMonData(&gPlayerParty[gSpecialVar_0x8005], MON_DATA_IS_EGG))
         return SPECIES_NONE;
@@ -2454,7 +2411,87 @@ u16 GetTradeSpecies(void)
 
 void CreateInGameTradePokemon(void)
 {
-    CreateInGameTradePokemonInternal(gSpecialVar_0x8005, gSpecialVar_0x8004);
+	u32 value;
+	struct Pokemon *tradeMon = &gEnemyParty[0];
+	const struct InGameTrade * inGameTrade = &sInGameTrades[gSpecialVar_0x8004];
+	struct PokemonGenerator generator =
+	{
+		.species = inGameTrade->species,
+		.level = GetMonData(&gPlayerParty[gSpecialVar_0x8005], MON_DATA_LEVEL),
+		.shinyType = inGameTrade->shinyType,
+		.shinyRollType = SHINY_ROLL_NORMAL,
+		.forcedGender = MON_GENDERLESS,
+		.otIdType = OT_ID_RANDOM,
+		.fixedOtId = 0,
+		.hasFixedPersonality = FALSE,
+		.fixedPersonality = 0,
+		.forcedNature = inGameTrade->nature != 0 ? inGameTrade->nature - 1 : NUM_NATURES,
+		.formChanges = NULL,
+		.moves = {0},
+		.nPerfectIvs = 0,
+	};
+	CreateMon(tradeMon, generator);
+	
+	// Set ivs
+	for (value = 0; value < NUM_STATS; value++)
+	{
+		if (inGameTrade->ivs[value] != USE_RANDOM_IVS)
+			SetMonData(tradeMon, MON_DATA_HP_IV + value, &inGameTrade->ivs[value]);
+	}
+	// Set nickname
+	SetMonData(tradeMon, MON_DATA_NICKNAME, inGameTrade->nickname);
+	
+	// Set ot name and gender
+    SetMonData(tradeMon, MON_DATA_OT_NAME, inGameTrade->otName);
+	value = inGameTrade->otGender;
+    SetMonData(tradeMon, MON_DATA_OT_GENDER, &value);
+	
+	// Set ability num and hidden
+	value = inGameTrade->abilityNum;
+    SetMonData(tradeMon, MON_DATA_ABILITY_NUM, &value);
+	value = inGameTrade->abilityHidden;
+	SetMonData(tradeMon, MON_DATA_ABILITY_HIDDEN, &value);
+	
+	// Set dynamax level and g max factor
+	value = inGameTrade->dynamaxLevel;
+    SetMonData(tradeMon, MON_DATA_DYNAMAX_LEVEL, &value);
+	value = inGameTrade->gMaxFactor;
+	SetMonData(tradeMon, MON_DATA_HAS_GMAX_FACTOR, &value);
+	
+	// Set met location
+	value = METLOC_IN_GAME_TRADE;
+	SetMonData(tradeMon, MON_DATA_MET_LOCATION, &value);
+	
+	// Set pokeball
+	if (inGameTrade->ballId)
+	{
+		value = inGameTrade->ballId;
+		SetMonData(tradeMon, MON_DATA_POKEBALL, &value);
+	}
+	
+	// Set tera type
+	if (inGameTrade->teraType)
+	{
+		value = inGameTrade->teraType - 1;
+		SetMonData(tradeMon, MON_DATA_TERA_TYPE, &value);
+	}
+	
+	// Set held item
+	if (inGameTrade->heldItem)
+    {
+        if (ItemIsMail(inGameTrade->heldItem))
+        {
+			struct Mail mail;
+			
+            GetInGameTradeMail(&mail, inGameTrade, GetMonData(tradeMon, MON_DATA_OT_ID));
+            gLinkPartnerMail[0] = mail;
+			
+			value = 0;
+            SetMonData(tradeMon, MON_DATA_MAIL, &value);
+        }
+		SetMonData(tradeMon, MON_DATA_HELD_ITEM, &inGameTrade->heldItem);
+    }
+    CalculateMonStats(tradeMon);
 }
 
 static void CB2_RunTradeAnim_LinkTrade(void)

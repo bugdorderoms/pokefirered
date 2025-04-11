@@ -23,34 +23,34 @@ void BlitMoveInfoIcon(u32 windowId, u32 iconId, u32 x, u32 y);
 
 // menu
 s8 Menu_ProcessInputGridLayout(void);
-u8 MultichoiceGrid_InitCursor(u8 windowId, u8 fontId, u8 left, u8 top, u8 optionWidth, u8 cols, u8 rows, u8 cursorPos);
-void MultichoiceGrid_PrintItems(u8 windowId, u8 fontId, u8 itemWidth, u8 itemHeight, u8 cols, u8 rows, const struct MenuAction *strs);
+u32 MultichoiceGrid_InitCursor(u32 windowId, u32 fontId, u32 left, u32 top, u32 optionWidth, u32 cols, u32 rows, u32 cursorPos);
+void MultichoiceGrid_PrintItems(u32 windowId, u32 fontId, u32 itemWidth, u32 itemHeight, u32 cols, u32 rows, const struct MenuAction *strs);
 void DestroyYesNoMenu(void);
 s8 Menu_ProcessInputNoWrapClearOnChoose(void);
-void CreateYesNoMenu(const struct WindowTemplate *window, u8 fontId, u8 left, u8 top, u16 baseTileNum, u8 paletteNum, u8 initialCursorPos);
-void AddItemMenuActionTextPrinters(u8 windowId, u8 fontId, u8 left, u8 top, u8 letterSpacing, u8 lineHeight, u8 itemCount, const struct MenuAction *strs, const u8 *orderArray);
-void UnionRoomAndTradeMenuPrintOptions(u8 windowId, u8 fontId, u8 lineHeight, u8 itemCount, const struct MenuAction *strs);
+void CreateYesNoMenu(const struct WindowTemplate *window, u32 fontId, u32 left, u32 top, u32 baseTileNum, u32 paletteNum, u32 initialCursorPos);
+void AddItemMenuActionTextPrinters(u32 windowId, u32 fontId, u32 left, u32 top, u32 letterSpacing, u32 lineHeight, u32 itemCount, const struct MenuAction *strs, const u8 *orderArray);
+void UnionRoomAndTradeMenuPrintOptions(u32 windowId, u32 fontId, u32 lineHeight, u32 itemCount, const struct MenuAction *strs);
 
-void PrintTextArray(u8 windowId, u8 fontId, u8 left, u8 top, u8 lineHeight, u8 itemCount, const struct MenuAction *strs);
+void PrintTextArray(u32 windowId, u32 fontId, u32 left, u32 top, u32 lineHeight, u32 itemCount, const struct MenuAction *strs);
 s8 Menu_ProcessInputNoWrapAround_other(void);
 s8 Menu_ProcessInput_other(void);
 s8 Menu_ProcessInputNoWrapAround(void);
 s8 Menu_ProcessInput(void);
-u8 Menu_GetCursorPos(void);
-u8 Menu_MoveCursorNoWrapAround(s8 cursorDelta);
-u8 Menu_MoveCursor(s8 cursorDelta);
-u8 Menu_InitCursor(u8 windowId, u8 fontId, u8 left, u8 top, u8 cursorHeight, u8 numChoices, u8 initialCursorPos);
-u8 Menu_InitCursorInternal(u8 windowId, u8 fontId, u8 left, u8 top, u8 cursorHeight, u8 numChoices, u8 initialCursorPos, bool8 APressMuted);
-void TopBarWindowPrintTwoStrings(const u8 *string, const u8 *string2, bool8 fgColorChooser, u8 notUsed, bool8 copyToVram);
-void TopBarWindowPrintString(const u8 *string, u8 unUsed, bool8 copyToVram);
+u32 Menu_GetCursorPos(void);
+u32 Menu_MoveCursorNoWrapAround(s8 cursorDelta);
+u32 Menu_MoveCursor(s8 cursorDelta);
+u32 Menu_InitCursor(u32 windowId, u32 fontId, u32 left, u32 top, u32 cursorHeight, u32 numChoices, u32 initialCursorPos);
+u32 Menu_InitCursorInternal(u32 windowId, u32 fontId, u32 left, u32 top, u32 cursorHeight, u32 numChoices, u32 initialCursorPos, bool32 APressMuted);
+void TopBarWindowPrintTwoStrings(const u8 *string, const u8 *string2, bool32 fgColorChooser, bool32 copyToVram);
+void TopBarWindowPrintString(const u8 *string, bool32 copyToVram);
 void ClearTopBarWindow(void);
 void DestroyTopBarWindow(void);
-u8 CreateTopBarWindowLoadPalette(u8 bg, u8 width, u8 yPos, u8 palette, u16 baseTile);
-void ClearStdWindowAndFrameToTransparent(u8 windowId, bool8 copyToVram);
-void DrawStdFrameWithCustomTileAndPalette(u8 windowId, bool8 copyToVram, u16 baseTileNum, u8 paletteNum);
-void ClearDialogWindowAndFrameToTransparent(u8 windowId, bool8 copyToVram);
-void DrawDialogFrameWithCustomTileAndPalette(u8 windowId, bool8 copyToVram, u16 tileNum, u8 paletteNum);
-struct WindowTemplate SetWindowTemplateFields(u8 bg, u8 left, u8 top, u8 width, u8 height, u8 paletteNum, u16 baseBlock);
-void Menu_PrintFormatIntlPlayerName(u8 windowId, const u8 * src, u16 x, u16 y);
+u32 CreateTopBarWindowLoadPalette(u32 bg, u32 width, u32 yPos, u32 palette, u32 baseTile);
+void ClearStdWindowAndFrameToTransparent(u32 windowId, bool32 copyToVram);
+void DrawStdFrameWithCustomTileAndPalette(u32 windowId, bool32 copyToVram, u32 baseTileNum, u32 paletteNum);
+void ClearDialogWindowAndFrameToTransparent(u32 windowId, bool32 copyToVram);
+void DrawDialogFrameWithCustomTileAndPalette(u32 windowId, bool32 copyToVram, u32 tileNum, u32 paletteNum);
+struct WindowTemplate SetWindowTemplateFields(u32 bg, u32 left, u32 top, u32 width, u32 height, u32 paletteNum, u32 baseBlock);
+void Menu_PrintFormatIntlPlayerName(u32 windowId, const u8 * src, u32 x, u32 y);
 
 #endif // GUARD_MENU_H

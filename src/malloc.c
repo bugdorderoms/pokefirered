@@ -29,7 +29,7 @@ struct MemBlock {
     u8 data[0];
 };
 
-void PutMemBlockHeader(void *block, struct MemBlock *prev, struct MemBlock *next, u32 size)
+static void PutMemBlockHeader(void *block, struct MemBlock *prev, struct MemBlock *next, u32 size)
 {
     struct MemBlock *header = (struct MemBlock *)block;
 
@@ -40,7 +40,7 @@ void PutMemBlockHeader(void *block, struct MemBlock *prev, struct MemBlock *next
     header->next = next;
 }
 
-void PutFirstMemBlockHeader(void *block, u32 size)
+static void PutFirstMemBlockHeader(void *block, u32 size)
 {
     PutMemBlockHeader(block, (struct MemBlock *)block, (struct MemBlock *)block, size - sizeof(struct MemBlock));
 }
@@ -56,7 +56,7 @@ static void *AllocInternal(void *heapStart, u32 size)
     if (size & 3)
         size = 4 * ((size / 4) + 1);
 
-    for (;;)
+    while (TRUE)
 	{
         // Loop through the blocks looking for unused block that's big enough.
         if (!pos->flag)
@@ -114,8 +114,10 @@ void FreeInternal(void *heapStart, void *p)
 	{
         struct MemBlock *head = (struct MemBlock *)heapStart;
         struct MemBlock *pos = (struct MemBlock *)((u8 *)p - sizeof(struct MemBlock));
+		
         AGB_ASSERT_EX(pos->magic_number == MALLOC_SYSTEM_ID, ABSPATH("gflib/malloc.c"), 204);
         AGB_ASSERT_EX(pos->flag == TRUE, ABSPATH("gflib/malloc.c"), 205);
+		
         pos->flag = FALSE;
 
         // If the freed block isn't the last one, merge with the next block
@@ -125,9 +127,11 @@ void FreeInternal(void *heapStart, void *p)
             if (!pos->next->flag)
 			{
                 AGB_ASSERT_EX(pos->next->magic_number == MALLOC_SYSTEM_ID, ABSPATH("gflib/malloc.c"), 211);
+				
                 pos->size += sizeof(struct MemBlock) + pos->next->size;
                 pos->next->magic_number = 0;
                 pos->next = pos->next->next;
+				
                 if (pos->next != head)
                     pos->next->prev = pos;
             }

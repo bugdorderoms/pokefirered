@@ -8,16 +8,16 @@
 
 #define ITEM_TO_BALL(itemId) (itemId - 1)
 
-u8 ItemIdToBallId(u16 itemId);
-void LoadBallGfx(u8 ballId);
-void FreeBallGfx(u8 ballId);
-u8 CreateBallSprite(u8 ballId, s16 x, s16 y, u8 subpriority);
-void DoPokeballSendOutAnimation(u8 battlerId, u8 kindOfThrow);
-u16 GetBattlerPokeballItemId(u8 battlerId);
-void CreatePokeballSpriteToReleaseMon(u8 monSpriteId, u8 battlerId, u8 x, u8 y, u8 oamPriority, u8 subpriortiy, u8 g, u32 h);
-u8 CreateTradePokeballSprite(u8 monSpriteId, u8 battlerId, u8 x, u8 y, u8 oamPriority, u8 subpriortiy, u8 g, u32 h);
-u8 LaunchBallStarsTask(u8 x, u8 y, u8 priority, u8 subpriority, u8 ballId);
-u8 LaunchBallFadeMonTask(bool8 unFadeLater, u8 battlerId, u32 arg2, u8 ballId);
+u32 ItemIdToBallId(u32 itemId);
+void LoadBallGfx(u32 ballId);
+void FreeBallGfx(u32 ballId);
+u32 CreateBallSprite(u32 ballId, s16 x, s16 y, u32 subpriority);
+void DoPokeballSendOutAnimation(u32 battlerId, u32 kindOfThrow);
+u32 GetBattlerPokeballItemId(u32 battlerId);
+void CreatePokeballSpriteToReleaseMon(u32 monSpriteId, u32 battlerId, u32 x, u32 y, u32 oamPriority, u32 subpriortiy, u32 g, u32 h);
+u32 CreateTradePokeballSprite(u32 monSpriteId, u32 battlerId, u32 x, u32 y, u32 oamPriority, u32 subpriortiy, u32 g, u32 h);
+u32 LaunchBallStarsTask(u8 x, u8 y, u32 priority, u32 subpriority, u32 ballId);
+u32 LaunchBallFadeMonTask(bool32 unFadeLater, u32 battlerId, u32 arg2, u32 ballId);
 void CreateStarsWhenBallClicks(struct Sprite *sprite);
 
 #endif // GUARD_POKEBALL_H

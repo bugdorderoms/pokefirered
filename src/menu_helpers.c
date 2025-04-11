@@ -18,7 +18,7 @@ static EWRAM_DATA u8 gUnknown_20399D0 = {0};
 
 static void Task_ContinueTaskAfterMessagePrints(u8 taskId);
 
-void DisplayMessageAndContinueTask(u8 taskId, u8 windowId, u16 tileNum, u8 paletteNum, u8 fontId, u8 textSpeed, const u8 *string, void *taskFunc)
+void DisplayMessageAndContinueTask(u32 taskId, u32 windowId, u32 tileNum, u32 paletteNum, u32 fontId, u32 textSpeed, const u8 *string, void *taskFunc)
 {
     gUnknown_20399D0 = windowId;
     DrawDialogFrameWithCustomTileAndPalette(windowId, TRUE, tileNum, paletteNum);
@@ -32,7 +32,7 @@ void DisplayMessageAndContinueTask(u8 taskId, u8 windowId, u16 tileNum, u8 palet
     gTasks[taskId].func = Task_ContinueTaskAfterMessagePrints;
 }
 
-bool16 RunTextPrinters_CheckActive(u8 textPrinterId)
+bool32 RunTextPrinters_CheckActive(u32 textPrinterId)
 {
     RunTextPrinters();
     return IsTextPrinterActive(textPrinterId);
@@ -60,44 +60,44 @@ static void Task_CallYesOrNoCallback(u8 taskId)
     }
 }
 
-void CreateYesNoMenuWithCallbacks(u8 taskId, const struct WindowTemplate *template, u8 fontId, u8 left, u8 top, u16 tileStart, u8 palette, const struct YesNoFuncTable *yesNo)
+void CreateYesNoMenuWithCallbacks(u32 taskId, const struct WindowTemplate *template, u32 fontId, u32 left, u32 top, u32 tileStart, u32 palette, const struct YesNoFuncTable *yesNo)
 {
     CreateYesNoMenu(template, fontId, left, top, tileStart, palette, 0);
     gUnknown_20399C8 = yesNo;
     gTasks[taskId].func = Task_CallYesOrNoCallback;
 }
 
-bool8 CanWriteMailHere(u16 itemId)
+bool32 CanWriteMailHere(u32 itemId)
 {
-    if (IsUpdateLinkStateCBActive() != TRUE && InUnionRoom() != TRUE)
+    if (!IsUpdateLinkStateCBActive() && !InUnionRoom())
         return TRUE;
-    else if (ItemIsMail(itemId) != TRUE)
+    else if (!ItemIsMail(itemId))
         return TRUE;
     else
         return FALSE;
 }
 
-bool8 MenuHelpers_LinkSomething(void)
+bool32 MenuHelpers_LinkSomething(void)
 {
-    if (IsUpdateLinkStateCBActive() == TRUE || gReceivedRemoteLinkPlayers == 1)
+    if (IsUpdateLinkStateCBActive() || gReceivedRemoteLinkPlayers == 1)
         return TRUE;
     else
         return FALSE;
 }
 
-bool8 MenuHelpers_CallLinkSomething(void)
+bool32 MenuHelpers_CallLinkSomething(void)
 {
     if (!MenuHelpers_LinkSomething())
         return FALSE;
     else
-        return (u8)Overworld_LinkRecvQueueLengthMoreThan2();
+        return Overworld_LinkRecvQueueLengthMoreThan2();
 }
 
-bool8 sub_80BF748(void)
+bool32 sub_80BF748(void)
 {
-    if (MenuHelpers_CallLinkSomething() == TRUE)
+    if (MenuHelpers_CallLinkSomething())
         return TRUE;
-    else if (LinkRecvQueueLengthMoreThan2() != TRUE)
+    else if (!LinkRecvQueueLengthMoreThan2())
         return FALSE;
     else
         return TRUE;
@@ -127,7 +127,7 @@ void ResetAllBgsCoordinatesAndBgCntRegs(void)
 	ResetAllBgsPos();
 }
 
-bool8 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u16 qmax)
+bool32 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u32 qmax)
 {
     s16 valBefore = (*quantity_p);
 
@@ -138,9 +138,7 @@ bool8 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u16 qmax)
             (*quantity_p) = 1;
 
         if ((*quantity_p) == valBefore)
-        {
             return FALSE;
-        }
         else
         {
             PlaySE(SE_SELECT);
@@ -152,10 +150,9 @@ bool8 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u16 qmax)
         (*quantity_p)--;
         if ((*quantity_p) <= 0)
             (*quantity_p) = qmax;
+		
         if ((*quantity_p) == valBefore)
-        {
             return FALSE;
-        }
         else
         {
             PlaySE(SE_SELECT);
@@ -167,10 +164,9 @@ bool8 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u16 qmax)
         (*quantity_p) += 10;
         if ((*quantity_p) > qmax)
             (*quantity_p) = qmax;
+		
         if ((*quantity_p) == valBefore)
-        {
             return FALSE;
-        }
         else
         {
             PlaySE(SE_SELECT);
@@ -182,10 +178,9 @@ bool8 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u16 qmax)
         (*quantity_p) -= 10;
         if ((*quantity_p) <= 0)
             (*quantity_p) = 1;
+		
         if ((*quantity_p) == valBefore)
-        {
             return FALSE;
-        }
         else
         {
             PlaySE(SE_SELECT);
@@ -195,7 +190,7 @@ bool8 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u16 qmax)
     return FALSE;
 }
 
-u8 GetDialogBoxFontId(void)
+u32 GetDialogBoxFontId(void)
 {
     if (!ContextNpcGetTextColor())
         return 4;

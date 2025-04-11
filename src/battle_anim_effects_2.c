@@ -975,6 +975,17 @@ const struct SpriteTemplate gBlueGuardRingSpriteTemplate =
     .callback = AnimGuardRing,
 };
 
+const struct SpriteTemplate gYellowGuardRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_GUARD_RING,
+    .paletteTag = ANIM_TAG_SMALL_EMBER,
+    .oam = &gOamData_AffineDouble_ObjBlend_64x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sGuardRingAffineAnimTable,
+    .callback = AnimGuardRing,
+};
+
 const struct SpriteTemplate gPowerGemGemSpriteTemplate =
 {
     .tileTag = ANIM_TAG_POWER_GEM,
@@ -1003,6 +1014,17 @@ const union AffineAnimCmd* const gAffineAnimTable_MaxFlutterby[] =
 {
 	sSpriteAffineAnim_MaxFlutterbyPulsate,
 	sSpriteAffineAnim_MaxFlutterbyGrow,
+};
+
+const struct SpriteTemplate gDefendOrderThinRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_THIN_RING,
+    .paletteTag = ANIM_TAG_VERTICAL_HEX,
+    .oam = &gOamData_AffineDouble_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sHyperVoiceRingAffineAnimTable,
+    .callback = AnimSpriteOnMonPos,
 };
 
 // Animates a sword that rises into the air after a brief pause. And then do the given affine anim.
@@ -2868,4 +2890,40 @@ static void AnimMaxFlutterbyStep(struct Sprite *sprite)
 		InitAnimArcTranslation(sprite);
 		sprite->callback = DestroyAnimSpriteAfterHorizontalTranslation;
 	}
+}
+
+void AnimTask_AllBattlersInvisibleExceptAttackerAndTarget(u8 taskId)
+{
+	u32 i, spriteId;
+	u32 attackerSpriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER), targetSpriteId = GetAnimBattlerSpriteId(ANIM_TARGET);
+	
+	for (i = 0; i < gBattlersCount; i++)
+	{
+		spriteId = gBattlerSpriteIds[i];
+		
+		if (spriteId == attackerSpriteId || spriteId == targetSpriteId)
+			continue;
+		
+		if (spriteId == 0xFF || !IsBattlerSpriteVisible(i)) // Keep visibility of those that are already hidden
+			gBattleSpritesDataPtr->battlerData[i].keepInvisible = TRUE;
+		else
+			gSprites[spriteId].invisible = TRUE;
+	}
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_AllBattlersVisible(u8 taskId)
+{
+	u32 i, spriteId;
+	
+	for (i = 0; i < gBattlersCount; i++)
+	{
+		spriteId = gBattlerSpriteIds[i];
+		
+		if (spriteId == 0xFF || !IsBattlerSpriteVisible(i) || gBattleSpritesDataPtr->battlerData[i].keepInvisible)
+			gBattleSpritesDataPtr->battlerData[i].keepInvisible = FALSE;
+		else
+			gSprites[spriteId].invisible = FALSE;
+	}
+	DestroyAnimVisualTask(taskId);
 }

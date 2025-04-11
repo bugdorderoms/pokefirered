@@ -13,39 +13,39 @@
 #define STD_WINDOW_BASE_TILE_NUM 0x214
 
 void ClearScheduledBgCopiesToVram(void);
-void ScheduleBgCopyTilemapToVram(u8 bgId);
+void ScheduleBgCopyTilemapToVram(u32 bgId);
 void DoScheduledBgTilemapCopiesToVram(void);
 void ResetTempTileDataBuffers(void);
-bool8 FreeTempTileDataBuffersIfPossible(void);
-void *DecompressAndCopyTileDataToVram(u8 bgId, const void *src, u32 size, u16 offset, u8 mode);
-void *DecompressAndCopyTileDataToVram2(u8 bgId, const void *src, u32 size, u16 offset, u8 mode);
-void DecompressAndLoadBgGfxUsingHeap(u8 bgId, const void *src, u32 size, u16 offset, u8 mode);
-void DecompressAndLoadBgGfxUsingHeap2(u8 bgId, const void *src, u32 size, u16 offset, u8 mode);
+bool32 FreeTempTileDataBuffersIfPossible(void);
+void *DecompressAndCopyTileDataToVram(u32 bgId, const void *src, u32 size, u16 offset, u32 mode);
+void *DecompressAndCopyTileDataToVram2(u32 bgId, const void *src, u32 size, u16 offset, u32 mode);
+void DecompressAndLoadBgGfxUsingHeap(u32 bgId, const void *src, u32 size, u16 offset, u32 mode);
+void DecompressAndLoadBgGfxUsingHeap2(u32 bgId, const void *src, u32 size, u16 offset, u32 mode);
 void * MallocAndDecompress(const void * src, u32 * size);
-void SetBgTilemapPalette(u8 bgId, u8 left, u8 top, u8 width, u8 height, u8 palette);
-void CopyToBufferFromBgTilemap(u8 bgId, u16 *dest, u8 left, u8 top, u8 width, u8 height);
+void SetBgTilemapPalette(u32 bgId, u32 left, u32 top, u32 width, u32 height, u32 palette);
+void CopyToBufferFromBgTilemap(u32 bgId, u16 *dest, u32 left, u32 top, u32 width, u32 height);
 void InitStandardTextBoxWindows(void);
 void InitTextBoxGfxAndPrinters(void);
-u16 RunTextPrinters_CheckPrinter0Active(void);
-void AddTextPrinterDiffStyle(bool8 allowSkippingDelayWithButtonPress);
-void AddTextPrinterForMessage(bool8 allowSkippingDelayWithButtonPress);
-void AddTextPrinterWithCustomSpeedForMessage(bool8 allowSkippingDelayWithButtonPress, u8 speed);
+bool32 RunTextPrinters_CheckPrinter0Active(void);
+void AddTextPrinterDiffStyle(bool32 allowSkippingDelayWithButtonPress);
+void AddTextPrinterForMessage(bool32 allowSkippingDelayWithButtonPress);
+void AddTextPrinterWithCustomSpeedForMessage(bool32 allowSkippingDelayWithButtonPress, u32 speed);
 void LoadStdWindowFrameGfx(void);
-void DrawDialogueFrame(u8 windowId, bool8 copyToVram);
-void DrawStdWindowFrame(u8 windowId, bool8 copyToVram);
-void ClearDialogWindowAndFrame(u8 windowId, bool8 copyToVram);
-void ClearStdWindowAndFrame(u8 windowId, bool8 copyToVram);
-void EraseFieldMessageBox(bool8 copyToVram);
-void SetStdWindowBorderStyle(u8 windowId, bool8 copyToVram);
-void LoadMessageBoxAndFrameGfx(u8 windowId, bool8 copyToVram);
-void DisplayItemMessageOnField(u8 taskId, u8 fontId, const u8 *src, TaskFunc callback);
+void DrawDialogueFrame(u32 windowId, bool32 copyToVram);
+void DrawStdWindowFrame(u32 windowId, bool32 copyToVram);
+void ClearDialogWindowAndFrame(u32 windowId, bool32 copyToVram);
+void ClearStdWindowAndFrame(u32 windowId, bool32 copyToVram);
+void EraseFieldMessageBox(bool32 copyToVram);
+void SetStdWindowBorderStyle(u32 windowId, bool32 copyToVram);
+void LoadMessageBoxAndFrameGfx(u32 windowId, bool32 copyToVram);
+void DisplayItemMessageOnField(u32 taskId, u32 fontId, const u8 *src, TaskFunc callback);
 void DisplayYesNoMenuDefaultYes(void);
 void DisplayYesNoMenuDefaultNo(void);
-u8 GetTextSpeedSetting(void);
+u32 GetTextSpeedSetting(void);
 void LoadSignPostWindowFrameGfx(void);
 void SetDefaultFontsPointer(void);
 
-static inline void Menu_LoadStdPalAt(u16 offset, u16 size)
+static inline void Menu_LoadStdPalAt(u32 offset, u32 size)
 {
     LoadPalette(gTMCaseMainWindowPalette, offset, size);
 }

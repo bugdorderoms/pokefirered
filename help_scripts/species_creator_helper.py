@@ -74,14 +74,18 @@ def AppendRegionDefinesToPokedex(currentRegion, firstDexSpecies, lastDexSpecies)
         pokedex.append(f'\n#define DEX_START_{currentRegion} NATIONAL_DEX_{firstDexSpecies}\n'
                        f'#define DEX_END_{currentRegion} NATIONAL_DEX_{lastDexSpecies}\n')
 
-with open(f'{file_path}/include/constants/species.h', 'r') as speciesFile:
+with open(f'{file_path}/include/constants/species.h', 'r+') as speciesFile:
     num = 0
+    num_species = 0
     forms = False
     lastSpecies = 'NONE'
     firstDexSpecies = 'NONE'
     currentRegion = 'none'
 
-    for line in speciesFile:
+    lines = speciesFile.readlines()
+    speciesFile.seek(0)
+
+    for line in lines:
         line = line.strip()
 
         # Start of species forms. Ends pokedex.h edition, start adding cry of species's forms
@@ -91,6 +95,7 @@ with open(f'{file_path}/include/constants/species.h', 'r') as speciesFile:
             cries.append('\n// Forms cry ids\n')
             cry_table_normal.append('\n\t@ Forms cry start\n')
             cry_table_reverse.append('\n\t@ Forms cry start\n')
+            num_species = num - 1 # Last base species num
             forms = True
 
         if line.startswith('// Region: '): # Start of region, copy string to output files
@@ -105,6 +110,8 @@ with open(f'{file_path}/include/constants/species.h', 'r') as speciesFile:
             species = line.removeprefix('#define SPECIES_').split()[0]
 
             if forms:
+                num_species += 1
+                
                 # Check if form has an alternate cry by checking if it has: // Form cry. At end of its define
                 if line.endswith('// Form cry'):
                     AppendToCryFiles(species, num)
@@ -119,6 +126,13 @@ with open(f'{file_path}/include/constants/species.h', 'r') as speciesFile:
                     firstDexSpecies = species
 
                 num += 1
+        
+        elif line.startswith('#define NUM_SPECIES SPECIES_EGG'): # Append to the end of the file the number of species
+            num_species += 1 # count for SPECIES_EGG
+            print(f'{num_species} species found on file!')
+            line = f'#define NUM_SPECIES SPECIES_EGG // {num_species} species'
+
+        speciesFile.write(line + '\n')
 
 donotmodifytext = GetDontModifyHeader(__file__)
 

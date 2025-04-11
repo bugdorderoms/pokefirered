@@ -35,7 +35,7 @@ static const u8 sWaningMoonGfx[] = INCBIN_U8("graphics/map_popup/waning_moon.4bp
 static void Task_MapNamePopup(u8 taskId);
 static void ShowMapNamePopUpWindow(struct Task *task);
 static void HideMapNamePopUpWindow(void);
-static void MapNamePopupPrintTextOnWindows(u8 primaryWindowId, u8 secondaryWindowId);
+static void MapNamePopupPrintTextOnWindows(u32 primaryWindowId, u32 secondaryWindowId);
 
 static EWRAM_DATA u8 sMapPopUpTaskId = 0;
 
@@ -86,7 +86,7 @@ void ShowMapNamePopup(void)
 {
     if (!FlagGet(FLAG_DONT_SHOW_MAP_NAME_POPUP))
     {
-		u8 taskId = FindTaskIdByFunc(Task_MapNamePopup);
+		u32 taskId = FindTaskIdByFunc(Task_MapNamePopup);
 		
         if (taskId == 0xFF)
         {
@@ -111,7 +111,7 @@ bool32 IsMapNamePopupTaskActive(void)
 
 void DismissMapNamePopup(void)
 {
-    u8 taskId = FindTaskIdByFunc(Task_MapNamePopup);
+    u32 taskId = FindTaskIdByFunc(Task_MapNamePopup);
 	
     if (taskId != 0xFF)
     {
@@ -244,7 +244,7 @@ static u8 *MapNamePopupAppendFloorNum(u8 *dest, s8 floorNum)
 
 static u8 *FormatDecimalTimeToMeridiemSystem(u8 *txtPtr)
 {
-	u8 hour = gRtcLocation.hour;
+	u32 hour = gRtcLocation.hour;
 	
 	if (hour == 0)
 		txtPtr = ConvertIntToDecimalStringN(txtPtr, 12, STR_CONV_MODE_LEADING_ZEROS, 2);
@@ -261,7 +261,7 @@ static u8 *FormatDecimalTimeToMeridiemSystem(u8 *txtPtr)
 	return txtPtr;
 }
 
-static s32 GetStringRightAlignXOffset(u8 fontId, const u8 *str, s32 totalWidth, u8 letterSpacing)
+static s32 GetStringRightAlignXOffset(u32 fontId, const u8 *str, s32 totalWidth, u32 letterSpacing)
 {
 	s32 stringWidth = GetStringWidth(fontId, str, letterSpacing);
 	
@@ -271,7 +271,7 @@ static s32 GetStringRightAlignXOffset(u8 fontId, const u8 *str, s32 totalWidth, 
         return 0;
 }
 
-static void MapNamePopupPrintTextOnWindows(u8 primaryWindowId, u8 secondaryWindowId)
+static void MapNamePopupPrintTextOnWindows(u32 primaryWindowId, u32 secondaryWindowId)
 {
     u8 mapDisplayHeader[25];
 	u8 *ptr, *withoutPrefixPtr;

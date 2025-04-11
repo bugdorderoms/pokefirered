@@ -478,6 +478,28 @@ const struct SpriteTemplate gSmallWoodParticleSpriteTemplate =
     .callback = AnimFireSpread,
 };
 
+const struct SpriteTemplate gSpacialRendBladeSpiralSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PUNISHMENT_BLADES,
+    .paletteTag = ANIM_TAG_PUNISHMENT_BLADES,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = sAnims_BasicFire,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimFireSpiralOutward,
+};
+
+const struct SpriteTemplate gSpacialRendBladeSpreadSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PUNISHMENT_BLADES,
+    .paletteTag = ANIM_TAG_PUNISHMENT_BLADES,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = sAnims_FireSpiralSpread,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = AnimFireSpread,
+};
+
 // For the first stage of Fire Punch and Ice Punch
 // arg 0: initial position angle around circle (0-256)
 void AnimFireSpiralInward(struct Sprite *sprite)

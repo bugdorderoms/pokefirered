@@ -22,20 +22,20 @@ enum
     FLAG_SET_CAUGHT
 };
 
-u16 GetNationalPokedexCount(u8 caseId);
-u16 GetRegionPokedexCount(u8 region, u8 caseId);
-u16 GetCurrentRegionPokedexCount(u8 caseId);
-bool16 HasAllMons(void);
-bool16 HasAllRegionMons(u8 region);
-bool16 HasAllCurrentRegionMons(void);
-u16 GetNumMonsInRegionPokedex(u8 region);
-u16 GetNumMonsInCurrentRegionPokedex(void);
-const u8 *GetRegionName(u8 region);
+u32 GetNationalPokedexCount(u32 caseId);
+u32 GetRegionPokedexCount(u32 region, u32 caseId);
+u32 GetCurrentRegionPokedexCount(u32 caseId);
+bool32 HasAllMons(void);
+bool32 HasAllRegionMons(u32 region);
+bool32 HasAllCurrentRegionMons(void);
+u32 GetNumMonsInRegionPokedex(u32 region);
+u32 GetNumMonsInCurrentRegionPokedex(void);
+const u8 *GetRegionName(u32 region);
 const u8 *GetCurrentRegionName(void);
-bool8 GetSetPokedexFlag(u16 nationalNum, u8 caseId);
-void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality);
-u16 SpeciesToNationalPokedexNum(u16 species);
-u8 DexScreen_RegisterMonToPokedex(u16 species);
+bool32 GetSetPokedexFlag(u32 nationalNum, u32 caseId);
+void HandleSetPokedexFlag(u32 nationalNum, u32 caseId, u32 personality);
+u32 SpeciesToNationalPokedexNum(u32 species);
+u32 DexScreen_RegisterMonToPokedex(u32 species);
 
 extern const struct Region gRegions[];
 

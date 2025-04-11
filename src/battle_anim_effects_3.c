@@ -1174,6 +1174,14 @@ static const union AffineAnimCmd sSquishTargetAffineAnimCmds[] =
     AFFINEANIMCMD_END,
 };
 
+static const union AffineAnimCmd sCompressTargetHorizontallyAffineAnimCmds[] =
+{
+    AFFINEANIMCMD_FRAME(64, 0, 0, 16), // Compress
+    AFFINEANIMCMD_FRAME(0, 0, 0, 64),
+    AFFINEANIMCMD_FRAME(-64, 0, 0, 16),
+    AFFINEANIMCMD_END,
+};
+
 static const union AnimCmd sHealingWishGreenStarAnimCmds[] =
 {
     ANIMCMD_FRAME(0, 4),
@@ -5032,4 +5040,12 @@ static void AnimBatonPassPokeball(struct Sprite *sprite)
             DestroyAnimSprite(sprite);
         break;
     }
+}
+
+// Compress the target's sprite horizontally, and then back.
+// No args.
+void AnimTask_CompressTargetHorizontally(u8 taskId)
+{
+	PrepareAffineAnimInTaskData(&gTasks[taskId], GetAnimBattlerSpriteId(ANIM_TARGET), sCompressTargetHorizontallyAffineAnimCmds);
+    gTasks[taskId].func = AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds;
 }

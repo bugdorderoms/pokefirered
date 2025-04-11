@@ -52,7 +52,8 @@ struct MailGfxData
     u16 textpals[2];
 };
 
-struct MailViewResources {
+struct MailViewResources
+{
     u8 messageLinesBuffer[8][26];
     u8 authorNameBuffer[12];
     void (*savedCallback)(void);
@@ -436,21 +437,21 @@ static const struct MailAttrStruct sMessageLayouts_5x2[] = {
     },
 };
 
-void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool8 messageExists)
+void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool32 messageExists)
 {
     sMailViewResources = AllocZeroed(sizeof(struct MailViewResources));
     sMailViewResources->mailArrangementType = 1;
     sMailViewResources->copyEasyChatWord = CopyEasyChatWord;
     sMailViewResources->convertEasyChatWordsToString = ConvertEasyChatWordsToString;
+	
     if (ItemIsMail(mail->itemId))
-    {
         sMailViewResources->mailType = ItemId_GetHoldEffectParam(mail->itemId);
-    }
     else
     {
         sMailViewResources->mailType = ITEM_TO_MAIL(ITEM_ORANGE_MAIL);
         messageExists = FALSE;
     }
+	
     switch (sMailViewResources->mailArrangementType)
     {
     case 0:
@@ -461,6 +462,7 @@ void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool8 messageExis
         sMailViewResources->messageLayout = &sMessageLayouts_5x2[sMailViewResources->mailType];
         break;
     }
+	
     if (mail->species != SPECIES_NONE && mail->species < NUM_SPECIES)
     {
         switch (sMailViewResources->mailType)
@@ -477,18 +479,17 @@ void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool8 messageExis
         }
     }
     else
-    {
         sMailViewResources->monIconType = MAIL_ICON_NONE;
-    }
+
     sMailViewResources->mail = mail;
     sMailViewResources->savedCallback = savedCallback;
     sMailViewResources->messageExists = messageExists;
     SetMainCallback2(CB2_InitMailView);
 }
 
-static bool8 DoInitMailView(void)
+static bool32 DoInitMailView(void)
 {
-    u16 iconId;
+    u32 iconId;
 
     switch (gMain.state)
     {
@@ -583,6 +584,7 @@ static bool8 DoInitMailView(void)
         break;
     case 17:
         iconId = SanitizeSpeciesId(sMailViewResources->mail->species);
+		
         switch (sMailViewResources->monIconType)
         {
         case MAIL_ICON_BEAD:
@@ -615,17 +617,17 @@ static void CB2_InitMailView(void)
 {
     do
     {
-        if (DoInitMailView() == TRUE)
+        if (DoInitMailView())
         {
             SetMainCallback2(CB2_RunShowMailCB);
             break;
         }
-    } while (MenuHelpers_LinkSomething() != TRUE);
+    } while (!MenuHelpers_LinkSomething());
 }
 
 static void BufferMailMessage(void)
 {
-    u16 i;
+    u32 i;
     u8 j;
 	
     for (i = 0, j = 0; i < sMailViewResources->messageLayout->numRows; i++)
@@ -633,6 +635,7 @@ static void BufferMailMessage(void)
         ConvertEasyChatWordsToString(sMailViewResources->messageLinesBuffer[i], &sMailViewResources->mail->words[j], sMailViewResources->messageLayout->linesLayout[i].numWordsInLine, 1);
         j += sMailViewResources->messageLayout->linesLayout[i].numWordsInLine;
     }
+	
     if (sMailViewResources->mailArrangementType == 0)
     {
         StringCopy(StringCopy(sMailViewResources->authorNameBuffer, sMailViewResources->mail->playerName), gText_From); // ???
@@ -641,8 +644,10 @@ static void BufferMailMessage(void)
     else
     {
         StringCopy(sMailViewResources->authorNameBuffer, sMailViewResources->mail->playerName);
+		
         if (StringLength(sMailViewResources->authorNameBuffer) < 6)
             ConvertInternationalString(sMailViewResources->authorNameBuffer, LANGUAGE_JAPANESE);
+		
         sMailViewResources->nameX = sMailViewResources->messageLayout->nameX;
     }
 }
@@ -650,13 +655,14 @@ static void BufferMailMessage(void)
 static void AddMailMessagePrinters(void)
 {
     u8 y = 0;
-    u16 i;
-    u32 width;
+    u32 i;
 
     PutWindowTilemap(0);
     PutWindowTilemap(1);
+	
     FillWindowPixelBuffer(0, PIXEL_FILL(0));
     FillWindowPixelBuffer(1, PIXEL_FILL(0));
+	
     for (i = 0; i < sMailViewResources->messageLayout->numRows; i++)
     {
         if (sMailViewResources->messageLinesBuffer[i][0] != EOS && sMailViewResources->messageLinesBuffer[i][0] != CHAR_SPACE)
@@ -665,10 +671,10 @@ static void AddMailMessagePrinters(void)
             y += sMailViewResources->messageLayout->linesLayout[i].lineHeight;
         }
     }
-    width = GetStringWidth(1, gText_From, 0);
     AddTextPrinterParameterized3(1, 1, sMailViewResources->nameX, sMailViewResources->messageLayout->nameY, sTextColor, 0, gText_From);
-    AddTextPrinterParameterized3(1, 1, sMailViewResources->nameX + width, sMailViewResources->messageLayout->nameY, sTextColor, 0, sMailViewResources->authorNameBuffer);
-    CopyWindowToVram(0, COPYWIN_BOTH);
+    AddTextPrinterParameterized3(1, 1, sMailViewResources->nameX + GetStringWidth(1, gText_From, 0), sMailViewResources->messageLayout->nameY, sTextColor, 0, sMailViewResources->authorNameBuffer);
+    
+	CopyWindowToVram(0, COPYWIN_BOTH);
     CopyWindowToVram(1, COPYWIN_BOTH);
 }
 
@@ -709,11 +715,12 @@ static void ShowMailCB_Teardown(void)
     if (!UpdatePaletteFade())
     {
         SetMainCallback2(sMailViewResources->savedCallback);
+		
         switch (sMailViewResources->monIconType)
         {
         case MAIL_ICON_BEAD:
         case MAIL_ICON_DREAM:
-            SafeFreeMonIconPalette(sMailViewResources->mail->species);
+            FreeMonIconPalette(sMailViewResources->mail->species);
             DestroyMonIcon(&gSprites[sMailViewResources->monIconSpriteId]);
             break;
         }

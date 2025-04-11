@@ -43,14 +43,15 @@ void SetTrainerId(u32 trainerId, u8 *dst)
 
 void CopyTrainerId(u8 *dst, u8 *src)
 {
-    s32 i;
+    u32 i;
+	
     for (i = 0; i < 4; i++)
         dst[i] = src[i];
 }
 
 static void InitPlayerTrainerId(void)
 {
-    u32 trainerId = (Random() << 0x10) | GetGeneratedTrainerIdLower();
+    u32 trainerId = (Random() << 16) | GetGeneratedTrainerIdLower();
     SetTrainerId(trainerId, gSaveBlock2Ptr->playerTrainerId);
 }
 
@@ -98,7 +99,7 @@ void ResetMenuAndMonGlobals(void)
 #ifndef NDEBUG
 static void Debug_NewGameGiveAllItems(void)
 {
-	u16 i;
+	u32 i;
 	
 	for (i = ITEM_NONE + 1; i < ITEMS_COUNT; i++)
 	{
@@ -109,7 +110,7 @@ static void Debug_NewGameGiveAllItems(void)
 
 static void Debug_NewGameFillPokedex(void)
 {
-	u16 i;
+	u32 i;
 	
 	for (i = NATIONAL_DEX_NONE + 1; i <= NATIONAL_DEX_END; i++)
 	{
@@ -170,4 +171,12 @@ void NewGameInitData(void)
 	ResetMysteryGiftFlags();
 	gSaveBlock2Ptr->waitingTaurosChargeStamina = FALSE;
 	gSaveBlock2Ptr->taurosChargeStamina = TAUROS_CHARGE_STAMINA;
+	
+	// Debug data's
+	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress species=%u", NUM_SPECIES_BITS);
+	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress natures=%u", NUM_NATURE_BITS);
+	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress types=%u", NUM_TYPES_BITS);
+	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress poke balls=%u", NUM_POKEBALL_BITS);
+	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress items=%u", NUM_ITEM_BITS);
+	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress moves=%u", NUM_MOVES_BITS);
 }

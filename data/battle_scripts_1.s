@@ -3699,6 +3699,13 @@ BattleScript_NoPPForMove::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+BattleScript_MoveUsedSignatureMove::
+	attackstring
+	ppreduce
+    printstring STRINGID_BUTATKCANTUSETHEMOVE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@
 @ ENDTURN BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@

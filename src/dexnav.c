@@ -351,7 +351,7 @@ static void RemoveDexNavWindowAndGfx(void)
 	
 	// free graphics and palettes
 	FreeSymbolsIconGraphics();
-    SafeFreeMonIconPalette(sDexNavSearchDataPtr->species);
+    FreeMonIconPalette(sDexNavSearchDataPtr->species);
 	
 	// remove window
     ClearStdWindowAndFrameToTransparent(sDexNavSearchDataPtr->windowId, TRUE);
@@ -611,7 +611,7 @@ static void Task_InitDexNavSearch(u8 taskId)
     if (script != NULL)
     {
 		Free(sDexNavSearchDataPtr);
-        SafeFreeMonIconPalette(species);
+        FreeMonIconPalette(species);
         ScriptContext1_SetupScript(script);
         DestroyTask(taskId);
     }

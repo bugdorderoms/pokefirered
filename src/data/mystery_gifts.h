@@ -1,5 +1,3 @@
-#define MG_MON_NATURE(nature) (nature + 1)
-
 #define MG_GIVE_POKEMON(pokemon) 		   \
 	.type = MG_TYPE_GIVE_POKEMON,		   \
 	.present = { .GivePokemon = pokemon }, \
@@ -31,7 +29,7 @@ static const struct MGPokemon sMysteryGift_GiveDarkraiAndZoruaEgg[] =
 		.abilityNum = 0,
 		.abilityHidden = FALSE,
 		.shinyType = GENERATE_SHINY_FORCED, // Always shiny
-		.nature = MG_MON_NATURE(NATURE_ADAMANT),
+		.nature = TRADE_MON_NATURE(NATURE_ADAMANT),
 		.isEgg = FALSE,
 	},
 	{
@@ -45,7 +43,7 @@ static const struct MGPokemon sMysteryGift_GiveDarkraiAndZoruaEgg[] =
 		.abilityNum = 1,
 		.abilityHidden = TRUE,
 		.shinyType = GENERATE_SHINY_LOCKED, // Never shiny
-		.nature = MG_MON_NATURE(NATURE_MILD),
+		.nature = TRADE_MON_NATURE(NATURE_MILD),
 		.isEgg = TRUE,
 	}
 };

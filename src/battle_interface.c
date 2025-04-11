@@ -6,6 +6,7 @@
 #include "battle_message.h"
 #include "decompress.h"
 #include "graphics.h"
+#include "math_util.h"
 #include "menu.h"
 #include "strings.h"
 #include "pokedex.h"

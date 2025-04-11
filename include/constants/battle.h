@@ -147,7 +147,8 @@
 #define STATUS3_GASTRO_ACID           (1 << 20)
 #define STATUS3_MAGNET_RISE           (1 << 21)
 #define STATUS3_SMACKED_DOWN          (1 << 22)
-#define STATUS3_SEMI_INVULNERABLE     (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
+#define STATUS3_VANISHED              (1 << 23)
+#define STATUS3_SEMI_INVULNERABLE     (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER | STATUS3_VANISHED)
 
 // Not really sure what a "hitmarker" is.
 #define HITMARKER_SKIP_DMG_TRACK       (1 << 0)
@@ -277,12 +278,17 @@
 #define B_WAIT_TIME_SHORT 0x20
 
 // For trapping Wrap-like moves, for the string and end turn animation.
-#define TRAP_ID_BIND      0
-#define TRAP_ID_WRAP      1
-#define TRAP_ID_FIRE_SPIN 2
-#define TRAP_ID_WHIRLPOOL 3
-#define TRAP_ID_CLAMP     4
-#define TRAP_ID_SAND_TOMB 5
+#define TRAP_ID_BIND        0
+#define TRAP_ID_WRAP        1
+#define TRAP_ID_FIRE_SPIN   2
+#define TRAP_ID_WHIRLPOOL   3
+#define TRAP_ID_CLAMP       4
+#define TRAP_ID_SAND_TOMB   5
+#define TRAP_ID_MAGMA_STORM 6
+
+// For heal replacement moves, like Healing Wish and Lunar Dance.
+#define HR_CASE_HEALING_WISH 0
+#define HR_CASE_LUNAR_DANCE  1
 
 // Window Ids for sTextOnWindowsInfo_Normal
 #define B_WIN_MSG                 0

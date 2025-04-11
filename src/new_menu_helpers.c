@@ -167,11 +167,11 @@ static const u8 gMenuCursorDimensions[][2] =
     [FONT_SMALL_NARROWER] = { 8,   8 },
 };
 
-static u16 CopyDecompressedTileDataToVram(u8 bgId, const void *src, u16 size, u16 offset, u8 mode);
-static void WindowFunc_DrawDialogueFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum);
-static void WindowFunc_DrawStandardFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum);
-static void WindowFunc_ClearDialogWindowAndFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum);
-static void WindowFunc_ClearStdWindowAndFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum);
+static u16 CopyDecompressedTileDataToVram(u32 bgId, const void *src, u16 size, u16 offset, u32 mode);
+static void WindowFunc_DrawDialogueFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum);
+static void WindowFunc_DrawStandardFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum);
+static void WindowFunc_ClearDialogWindowAndFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum);
+static void WindowFunc_ClearStdWindowAndFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum);
 static void Task_FreeBufAfterCopyingTileDataToVram(u8 taskId);
 
 void ClearScheduledBgCopiesToVram(void)
@@ -179,7 +179,7 @@ void ClearScheduledBgCopiesToVram(void)
     memset(sScheduledBgCopiesToVram, 0, sizeof(sScheduledBgCopiesToVram));
 }
 
-void ScheduleBgCopyTilemapToVram(u8 bgId)
+void ScheduleBgCopyTilemapToVram(u32 bgId)
 {
     sScheduledBgCopiesToVram[bgId] = TRUE;
 }
@@ -210,17 +210,17 @@ void DoScheduledBgTilemapCopiesToVram(void)
 
 void ResetTempTileDataBuffers(void)
 {
-    int i;
+    u32 i;
 
-    for (i = 0; i < (s32)ARRAY_COUNT(sTempTileDataBuffers); i++)
+    for (i = 0; i < ARRAY_COUNT(sTempTileDataBuffers); i++)
         sTempTileDataBuffers[i] = NULL;
 	
     sTempTileDataBufferCursor = 0;
 }
 
-bool8 FreeTempTileDataBuffersIfPossible(void)
+bool32 FreeTempTileDataBuffersIfPossible(void)
 {
-    int i;
+    u32 i;
 
     if (!IsDma3ManagerBusyWithBgCopy())
     {
@@ -236,7 +236,7 @@ bool8 FreeTempTileDataBuffersIfPossible(void)
 	return TRUE;
 }
 
-void *DecompressAndCopyTileDataToVram(u8 bgId, const void *src, u32 size, u16 offset, u8 mode)
+void *DecompressAndCopyTileDataToVram(u32 bgId, const void *src, u32 size, u16 offset, u32 mode)
 {
     u32 sizeOut;
 
@@ -245,6 +245,7 @@ void *DecompressAndCopyTileDataToVram(u8 bgId, const void *src, u32 size, u16 of
         void *ptr = MallocAndDecompress(src, &sizeOut);
         if (!size)
             size = sizeOut;
+		
         if (ptr)
         {
             CopyDecompressedTileDataToVram(bgId, ptr, size, offset, mode);
@@ -255,7 +256,7 @@ void *DecompressAndCopyTileDataToVram(u8 bgId, const void *src, u32 size, u16 of
     return NULL;
 }
 
-void *DecompressAndCopyTileDataToVram2(u8 bgId, const void *src, u32 size, u16 offset, u8 mode)
+void *DecompressAndCopyTileDataToVram2(u32 bgId, const void *src, u32 size, u16 offset, u32 mode)
 {
     u32 sizeOut;
 
@@ -264,6 +265,7 @@ void *DecompressAndCopyTileDataToVram2(u8 bgId, const void *src, u32 size, u16 o
         void *ptr = MallocAndDecompress(src, &sizeOut);
         if (sizeOut > size)
             sizeOut = size;
+		
         if (ptr)
         {
             CopyDecompressedTileDataToVram(bgId, ptr, sizeOut, offset, mode);
@@ -274,31 +276,33 @@ void *DecompressAndCopyTileDataToVram2(u8 bgId, const void *src, u32 size, u16 o
     return NULL;
 }
 
-void DecompressAndLoadBgGfxUsingHeap(u8 bgId, const void *src, u32 size, u16 offset, u8 mode)
+void DecompressAndLoadBgGfxUsingHeap(u32 bgId, const void *src, u32 size, u16 offset, u32 mode)
 {
     u32 sizeOut;
 
     void *ptr = MallocAndDecompress(src, &sizeOut);
     if (!size)
         size = sizeOut;
+	
     if (ptr)
     {
-        u8 taskId = CreateTask(Task_FreeBufAfterCopyingTileDataToVram, 0);
+        u32 taskId = CreateTask(Task_FreeBufAfterCopyingTileDataToVram, 0);
         gTasks[taskId].data[0] = CopyDecompressedTileDataToVram(bgId, ptr, size, offset, mode);
         SetWordTaskArg(taskId, 1, (u32)ptr);
     }
 }
 
-void DecompressAndLoadBgGfxUsingHeap2(u8 bgId, const void *src, u32 size, u16 offset, u8 mode)
+void DecompressAndLoadBgGfxUsingHeap2(u32 bgId, const void *src, u32 size, u16 offset, u32 mode)
 {
     u32 sizeOut;
 
     void *ptr = MallocAndDecompress(src, &sizeOut);
     if (sizeOut > size)
         sizeOut = size;
+	
     if (ptr)
     {
-        u8 taskId = CreateTask(Task_FreeBufAfterCopyingTileDataToVram, 0);
+        u32 taskId = CreateTask(Task_FreeBufAfterCopyingTileDataToVram, 0);
         gTasks[taskId].data[0] = CopyDecompressedTileDataToVram(bgId, ptr, sizeOut, offset, mode);
         SetWordTaskArg(taskId, 1, (u32)ptr);
     }
@@ -330,7 +334,7 @@ void *MallocAndDecompress(const void *src, u32 *size)
     return ptr;
 }
 
-static u16 CopyDecompressedTileDataToVram(u8 bgId, const void *src, u16 size, u16 offset, u8 mode)
+static u16 CopyDecompressedTileDataToVram(u32 bgId, const void *src, u16 size, u16 offset, u32 mode)
 {
     switch (mode)
     {
@@ -343,31 +347,27 @@ static u16 CopyDecompressedTileDataToVram(u8 bgId, const void *src, u16 size, u1
     return LoadBgTilemap(bgId, src, size, offset);
 }
 
-void SetBgTilemapPalette(u8 bgId, u8 left, u8 top, u8 width, u8 height, u8 palette)
+void SetBgTilemapPalette(u32 bgId, u32 left, u32 top, u32 width, u32 height, u32 palette)
 {
-    u8 i, j;
+    u32 i, j;
     u16 *ptr = GetBgTilemapBuffer(bgId);
 
     for (i = top; i < top + height; i++)
     {
         for (j = left; j < left + width; j++)
-        {
             ptr[(i * 32) + j] = (ptr[(i * 32) + j] & 0xFFF) | (palette << 12);
-        }
     }
 }
 
-void CopyToBufferFromBgTilemap(u8 bgId, u16 *dest, u8 left, u8 top, u8 width, u8 height)
+void CopyToBufferFromBgTilemap(u32 bgId, u16 *dest, u32 left, u32 top, u32 width, u32 height)
 {
-    u8 i,j;
+    u32 i, j;
     const u16 *src = GetBgTilemapBuffer(bgId);
 
     for (i = 0; i < height; i++)
     {
         for (j = 0; j < width; j++)
-        {
             dest[(i * width) + j] = src[(i + top) * 32 + j + left];
-        }
     }
 }
 
@@ -384,15 +384,15 @@ void InitTextBoxGfxAndPrinters(void)
     LoadStdWindowFrameGfx();
 }
 
-u16 RunTextPrinters_CheckPrinter0Active(void)
+bool32 RunTextPrinters_CheckPrinter0Active(void)
 {
     RunTextPrinters();
     return IsTextPrinterActive(0);
 }
 
-void AddTextPrinterDiffStyle(bool8 allowSkippingDelayWithButtonPress)
+void AddTextPrinterDiffStyle(bool32 allowSkippingDelayWithButtonPress)
 {
-    u8 result;
+    u32 result;
     void *nptr = NULL;
 
     gTextFlags.canABSpeedUpPrint = allowSkippingDelayWithButtonPress;    
@@ -406,12 +406,12 @@ void AddTextPrinterDiffStyle(bool8 allowSkippingDelayWithButtonPress)
         AddTextPrinterParameterized2(0, 2, gStringVar4, GetTextSpeedSetting(), nptr, 2, 1, 3);
 }
 
-void AddTextPrinterForMessage(bool8 allowSkippingDelayWithButtonPress)
+void AddTextPrinterForMessage(bool32 allowSkippingDelayWithButtonPress)
 {
 	AddTextPrinterWithCustomSpeedForMessage(allowSkippingDelayWithButtonPress, GetTextSpeedSetting());
 }
 
-void AddTextPrinterWithCustomSpeedForMessage(bool8 allowSkippingDelayWithButtonPress, u8 speed)
+void AddTextPrinterWithCustomSpeedForMessage(bool32 allowSkippingDelayWithButtonPress, u32 speed)
 {
     gTextFlags.canABSpeedUpPrint = allowSkippingDelayWithButtonPress;
     AddTextPrinterParameterized2(0, 2, gStringVar4, speed, NULL, 2, 1, 3);
@@ -424,49 +424,49 @@ void LoadStdWindowFrameGfx(void)
     TextWindow_SetUserSelectedFrame(0, STD_WINDOW_BASE_TILE_NUM, STD_WINDOW_PALETTE_NUM * 0x10);
 }
 
-void DrawDialogueFrame(u8 windowId, bool8 copyToVram)
+void DrawDialogueFrame(u32 windowId, bool32 copyToVram)
 {
     CallWindowFunction(windowId, WindowFunc_DrawDialogueFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     PutWindowTilemap(windowId);
 	
-    if (copyToVram == TRUE)
+    if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
 
-void DrawStdWindowFrame(u8 windowId, bool8 copyToVram)
+void DrawStdWindowFrame(u32 windowId, bool32 copyToVram)
 {
     CallWindowFunction(windowId, WindowFunc_DrawStandardFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     PutWindowTilemap(windowId);
 	
-    if (copyToVram == TRUE)
+    if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
 
-void ClearDialogWindowAndFrame(u8 windowId, bool8 copyToVram)
+void ClearDialogWindowAndFrame(u32 windowId, bool32 copyToVram)
 {
     CallWindowFunction(windowId, WindowFunc_ClearDialogWindowAndFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     ClearWindowTilemap(windowId);
 	
-    if (copyToVram == TRUE)
+    if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
 
-void ClearStdWindowAndFrame(u8 windowId, bool8 copyToVram)
+void ClearStdWindowAndFrame(u32 windowId, bool32 copyToVram)
 {
     CallWindowFunction(windowId, WindowFunc_ClearStdWindowAndFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     ClearWindowTilemap(windowId);
 	
-    if (copyToVram == TRUE)
+    if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
 
-static void WindowFunc_DrawStandardFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum)
+static void WindowFunc_DrawStandardFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum)
 {
-    int i;
+    u32 i;
 
     FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 0, tilemapLeft - 1, tilemapTop - 1, 1, 1, STD_WINDOW_PALETTE_NUM);
     FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 1, tilemapLeft, tilemapTop - 1, width, 1, STD_WINDOW_PALETTE_NUM);
@@ -482,7 +482,7 @@ static void WindowFunc_DrawStandardFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u
     FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 8, tilemapLeft + width, tilemapTop + height, 1, 1, STD_WINDOW_PALETTE_NUM);
 }
 
-static void WindowFunc_DrawDialogueFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum)
+static void WindowFunc_DrawDialogueFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum)
 {
     if (!IsMsgSignPost())
     {
@@ -544,36 +544,36 @@ static void WindowFunc_DrawDialogueFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u
     }
 }
 
-static void WindowFunc_ClearStdWindowAndFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum)
+static void WindowFunc_ClearStdWindowAndFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum)
 {
     FillBgTilemapBufferRect(bg, 0, tilemapLeft - 1, tilemapTop - 1, width + 2, height + 2, STD_WINDOW_PALETTE_NUM);
 }
 
-static void WindowFunc_ClearDialogWindowAndFrame(u8 bg, u8 tilemapLeft, u8 tilemapTop, u8 width, u8 height, u8 paletteNum)
+static void WindowFunc_ClearDialogWindowAndFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum)
 {
     FillBgTilemapBufferRect(bg, 0, tilemapLeft - 2, tilemapTop - 1, width + 4, height + 2, STD_WINDOW_PALETTE_NUM);
 }
 
-void EraseFieldMessageBox(bool8 copyToVram)
+void EraseFieldMessageBox(bool32 copyToVram)
 {
     FillBgTilemapBufferRect(0, 0, 0, 0, 0x20, 0x20, 0x11);
 	
-    if (copyToVram == TRUE)
+    if (copyToVram)
         CopyBgTilemapBufferToVram(0);
 }
 
-void SetStdWindowBorderStyle(u8 windowId, bool8 copyToVram)
+void SetStdWindowBorderStyle(u32 windowId, bool32 copyToVram)
 {
     DrawStdFrameWithCustomTileAndPalette(windowId, copyToVram, STD_WINDOW_BASE_TILE_NUM, STD_WINDOW_PALETTE_NUM);
 }
 
-void LoadMessageBoxAndFrameGfx(u8 windowId, bool8 copyToVram)
+void LoadMessageBoxAndFrameGfx(u32 windowId, bool32 copyToVram)
 {
 	TextWindow_LoadResourcesStdFrame0(windowId, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
     DrawDialogFrameWithCustomTileAndPalette(windowId, copyToVram, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM);
 }
 
-void DisplayItemMessageOnField(u8 taskId, u8 fontId, const u8 *string, TaskFunc callback)
+void DisplayItemMessageOnField(u32 taskId, u32 fontId, const u8 *string, TaskFunc callback)
 {
     LoadStdWindowFrameGfx();
     DisplayMessageAndContinueTask(taskId, 0, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM, fontId, GetTextSpeedSetting(), string, callback);
@@ -590,7 +590,7 @@ void DisplayYesNoMenuDefaultNo(void)
     CreateYesNoMenu(&sYesNo_WindowTemplate, 2, 0, 2, STD_WINDOW_BASE_TILE_NUM, STD_WINDOW_PALETTE_NUM, 1);
 }
 
-u8 GetTextSpeedSetting(void)
+u32 GetTextSpeedSetting(void)
 {
     if (gSaveBlock2Ptr->optionsTextSpeed > OPTIONS_TEXT_SPEED_FAST)
         gSaveBlock2Ptr->optionsTextSpeed = OPTIONS_TEXT_SPEED_MID;
@@ -610,9 +610,9 @@ void SetDefaultFontsPointer(void)
     SetFontsPointer(&gFontInfos[0]);
 }
 
-u8 GetFontAttribute(u8 fontId, u8 attributeId)
+u32 GetFontAttribute(u32 fontId, u32 attributeId)
 {
-    int result = 0;
+    u32 result = 0;
 
     switch (attributeId)
     {
@@ -644,7 +644,7 @@ u8 GetFontAttribute(u8 fontId, u8 attributeId)
     return result;
 }
 
-u8 GetMenuCursorDimensionByFont(u8 fontId, u8 whichDimension)
+u32 GetMenuCursorDimensionByFont(u32 fontId, u32 whichDimension)
 {
     return gMenuCursorDimensions[fontId][whichDimension];
 }

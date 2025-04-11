@@ -3806,7 +3806,7 @@ static void HandleAction_UseMove(void)
         gProtectStructs[gBattlerAttacker].noValidMoves = FALSE;
         gCurrentMove = gChosenMove = MOVE_STRUGGLE;
         gHitMarker |= HITMARKER_NO_PPDEDUCT;
-        GetMoveTarget(MOVE_STRUGGLE, 0);
+        gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(MOVE_STRUGGLE, 0);
     }
     else if ((gBattleMons[gBattlerAttacker].status2 & (STATUS2_MULTIPLETURNS | STATUS2_RECHARGE))) // Move locked
         gCurrentMove = gChosenMove = gBattleStruct->battlers[gBattlerAttacker].lockedMove;
@@ -3823,12 +3823,12 @@ static void HandleAction_UseMove(void)
 			gDisableStructs[gBattlerAttacker].encoreTimer = 0;
 			gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
 		}
-		GetMoveTarget(gCurrentMove, 0);
+		gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(gCurrentMove, 0);
     }
     else if (gBattleMons[gBattlerAttacker].moves[gCurrMovePos] != gBattleStruct->battlers[gBattlerAttacker].chosenMove)
     {
         gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
-        GetMoveTarget(gCurrentMove, 0);
+        gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(gCurrentMove, 0);
     }
     else
         gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];

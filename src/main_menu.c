@@ -77,14 +77,14 @@ static void Task_HandleMenuInput(u8 taskId);
 static void Task_ExecuteMainMenuSelection(u8 taskId);
 static void Task_ReturnToTileScreen(u8 taskId);
 static void Task_SaveErrorStatus_RunPrinterThenWaitButton(u8 taskId);
-static void PrintSaveErrorStatus(u8 taskId, const u8 *str);
+static void PrintSaveErrorStatus(u32 taskId, const u8 *str);
 static void LoadUserFrameToBg0(void);
 static void SetStdFrame0OnBg0(void);
 static void MainMenu_DrawWindow(const struct WindowTemplate * windowTemplate);
 static void MainMenu_EraseErrorWindow(void);
-static bool8 HandleMenuInput(u8 taskId);
+static bool32 HandleMenuInput(u32 taskId);
 static void PrintContinueStats(void);
-static void MoveWindowByMenuTypeAndCursorPos(u8 menuType, u8 cursorPos);
+static void MoveWindowByMenuTypeAndCursorPos(u32 menuType, u32 cursorPos);
 
 static const u16 sBgPal00[] = INCBIN_U16("graphics/main_menu/unk_8234648.gbapal");
 static const u16 sBgPal15[] = INCBIN_U16("graphics/main_menu/unk_8234668.gbapal");
@@ -347,7 +347,7 @@ static void Task_WaitFadeAndPrintMainMenuText(u8 taskId)
 		Task_PrintMainMenuText(taskId);
 }
 
-static void PrintMainMenuHeaderTextCentered(u8 windowId, const u8 *str)
+static void PrintMainMenuHeaderTextCentered(u32 windowId, const u8 *str)
 {
 	u32 x = 192 - GetStringWidth(2, str, -1);
 	AddTextPrinterParameterized3(windowId, 2, x / 2, 2, sTextColor1, -1, str);
@@ -440,7 +440,7 @@ static void Task_HandleMenuInput(u8 taskId)
 		gTasks[taskId].func = Task_UpdateVisualSelection;
 }
 
-static void MainMenu_ScrollBgs(u32 value, u8 op)
+static void MainMenu_ScrollBgs(u32 value, u32 op)
 {
 	ChangeBgY(0, value, op);
 	ChangeBgY(1, value, op);
@@ -475,9 +475,9 @@ static void Task_MainMenuScrollBg(u8 taskId)
 	}
 }
 
-static bool8 MainMenu_CanScrollBg(u8 taskId, bool8 scrollDown)
+static bool32 MainMenu_CanScrollBg(u32 taskId, bool32 scrollDown)
 {
-	u8 i;
+	u32 i;
 	s16 *data = gTasks[taskId].data;
 	
 	for (i = 0; i < ARRAY_COUNT(sMainMenuBgScrollData); i++)
@@ -497,7 +497,7 @@ static bool8 MainMenu_CanScrollBg(u8 taskId, bool8 scrollDown)
 	return FALSE;
 }
 
-static bool8 HandleMenuInput(u8 taskId)
+static bool32 HandleMenuInput(u32 taskId)
 {
 	if (JOY_NEW(A_BUTTON))
 	{
@@ -538,7 +538,7 @@ static bool8 HandleMenuInput(u8 taskId)
 }
 
 // Update selection window
-static void MoveWindowByMenuTypeAndCursorPos(u8 menuType, u8 cursorPos)
+static void MoveWindowByMenuTypeAndCursorPos(u32 menuType, u32 cursorPos)
 {
 	u16 win0vTop, win0vBot;
 	
@@ -586,7 +586,7 @@ static void MoveWindowByMenuTypeAndCursorPos(u8 menuType, u8 cursorPos)
 
 static void Task_ExecuteMainMenuSelection(u8 taskId)
 {
-	u8 action, cursorPos = gTasks[taskId].tCursorPos;
+	u32 action, cursorPos = gTasks[taskId].tCursorPos;
 	
 	if (!gPaletteFade.active)
 	{
@@ -666,7 +666,8 @@ static void Task_ReturnToTileScreen(u8 taskId)
 
 static void PrintPlayerName(void)
 {
-    u8 i, name[PLAYER_NAME_LENGTH + 1], *ptr = name;
+	u32 i;
+    u8 name[PLAYER_NAME_LENGTH + 1], *ptr = name;
 
     AddTextPrinterParameterized3(CONTINUE_WINDOW_CONTINUE, 2, 2, 16, sTextColor2, -1, COMPOUND_STRING("Player"));
 
@@ -712,8 +713,7 @@ static void PrintBadgeCount(void)
 // Create different windows on bg1 for each pokemon icon
 static void DrawPartyMonIcons(void)
 {
-	u8 i, windowId;
-	u16 species;
+	u32 i, windowId, species;
 	struct WindowTemplate template;
 
 	LoadMonIconPalettesAt(0x30);
@@ -722,7 +722,7 @@ static void DrawPartyMonIcons(void)
 	{
 		species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
 		
-		template = SetWindowTemplateFields(1, 3 + (i * 4), 10, 4, 4, GetValidMonIconPalIndex(species) + 3, 0x001 + (i * 4 * 4));
+		template = SetWindowTemplateFields(1, 3 + (i * 4), 10, 4, 4, GetMonIconPalIndex(species) + 3, 0x001 + (i * 4 * 4));
 		windowId = AddWindow(&template);
 		FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
 		LoadMonIconGraphicsInWindow(windowId, species);
@@ -736,7 +736,7 @@ static void DrawPartyMonIcons(void)
 static void DrawPlayerOverworldIcon(void)
 {
 	struct WindowTemplate template = SetWindowTemplateFields(1, 23, 2, 2, 4, 6, 0x001 + (PARTY_SIZE * 4 * 4));
-	u8 windowId = AddWindow(&template);
+	u32 windowId = AddWindow(&template);
 	
 	FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
 	BlitObjectEventToWindow(windowId, GetPlayerAvatarGraphicsIdByStateIdAndGender(PLAYER_AVATAR_STATE_NORMAL, gSaveBlock2Ptr->playerGender), 0, 0x60, 16, 32);
@@ -768,7 +768,7 @@ static void PrintMessageOnErrorWindow(const u8 *str)
     SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(115, 157));
 }
 
-static void PrintSaveErrorStatus(u8 taskId, const u8 *str)
+static void PrintSaveErrorStatus(u32 taskId, const u8 *str)
 {
 	PrintMessageOnErrorWindow(str);
     MainMenu_InitFadeToDisplayBgs();
@@ -824,6 +824,6 @@ static void MainMenu_EraseErrorWindow(void)
 	const struct WindowTemplate * windowTemplate = &sMainMenuWinTemplates[ERROR_WINDOW_MESSAGE];
 	
 	FillBgTilemapBufferRect(windowTemplate->bg, 0x000, windowTemplate->tilemapLeft - 1, windowTemplate->tilemapTop - 1,
-		windowTemplate->tilemapLeft + windowTemplate->width + 1, windowTemplate->tilemapTop + windowTemplate->height + 1, 2);
+		                    windowTemplate->tilemapLeft + windowTemplate->width + 1, windowTemplate->tilemapTop + windowTemplate->height + 1, 2);
     CopyBgTilemapBufferToVram(windowTemplate->bg);
 }

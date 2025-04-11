@@ -56,14 +56,14 @@ static void CB2_DoLoadOptionMenu(void);
 static void InitOptionMenuBg(void);
 static void DrawOptionMenuBg(void);
 static void PrintOptionMenuHeader(void);
-static u8 CreateOptionsListMenu(void);
+static u32 CreateOptionsListMenu(void);
 static void OptionMenu_PickSwitchCancel(void);
 static void Options_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list);
 static void Options_ItemPrintFunc(u32 windowId, u32 itemId, u32 y);
 static void Task_OptionMenu(u8 taskId);
-static bool8 OptionMenu_ProcessInput(u8 taskId);
-static void CloseAndSaveOptionMenu(u8 taskId);
-static void UpdateOptionsText(u8 windowId, u32 itemId, u8 y);
+static bool32 OptionMenu_ProcessInput(u32 taskId);
+static void CloseAndSaveOptionMenu(u32 taskId);
+static void UpdateOptionsText(u32 windowId, u32 itemId, u32 y);
 
 static EWRAM_DATA struct OptionMenu *sOptionMenuPtr = NULL;
 
@@ -204,7 +204,7 @@ static const struct Option sOptionMenuOptions[MENUITEM_COUNT] =
 	[MENUITEM_CANCEL]         = OPTION("Cancel",        NULL)
 };
 
-static void LoadOrSaveOptions(bool8 load)
+static void LoadOrSaveOptions(bool32 load)
 {
 	if (load)
 	{
@@ -327,7 +327,7 @@ static void InitOptionMenuBg(void)
 
 static void DrawOptionMenuBg(void)
 {
-    u8 h = 2;
+    u32 h = 2;
     
     FillBgTilemapBufferRect(1, 0x1B3, 1, 2, 1, 1, 3);
     FillBgTilemapBufferRect(1, 0x1B4, 2, 2, 0x1B, 1, 3);
@@ -366,9 +366,9 @@ static void OptionMenu_PickSwitchCancel(void)
     CopyWindowToVram(WIN_INSTRUCTIONS, COPYWIN_BOTH);
 }
 
-static u8 CreateOptionsListMenu(void)
+static u32 CreateOptionsListMenu(void)
 {
-	u8 i;
+	u32 i;
 	
 	sOptionMenuPtr->itemsList = AllocZeroed(sizeof(struct ListMenuItem) * MENUITEM_COUNT);
 	
@@ -436,10 +436,10 @@ static void Task_OptionMenu(u8 taskId)
     }
 }
 
-static bool8 OptionMenu_ProcessInput(u8 taskId)
+static bool32 OptionMenu_ProcessInput(u32 taskId)
 {
 	s8 rightLeftMove = 0;
-	u8 itemId, listMenuTaskId = gTasks[taskId].data[0];
+	u32 itemId, listMenuTaskId = gTasks[taskId].data[0];
 	
 	ListMenu_ProcessInput(listMenuTaskId);
 	ListMenuGetScrollAndRow(listMenuTaskId, &sOptionMenuPtr->cursorPos, &sOptionMenuPtr->itemsAbove);
@@ -470,7 +470,7 @@ static bool8 OptionMenu_ProcessInput(u8 taskId)
 				sOptionMenuPtr->option[itemId]--;
 			
 			UpdateOptionsText(WIN_OPTIONS, itemId, ListMenuGetYCoordForPrintingArrowCursor(listMenuTaskId));
-		}   
+		}
 	}
 	
 	if (JOY_NEW(A_BUTTON | B_BUTTON))
@@ -479,12 +479,13 @@ static bool8 OptionMenu_ProcessInput(u8 taskId)
 	return FALSE;
 }
 
-static void UpdateOptionsText(u8 windowId, u32 itemId, u8 y)
+static void UpdateOptionsText(u32 windowId, u32 itemId, u32 y)
 {
 	// Update text
 	if (sOptionMenuOptions[itemId].options != NULL)
 	{
-		u8 x = 0x82, color[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_LIGHT_RED, TEXT_COLOR_RED};
+		u32 x = 0x82;
+		u8 color[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_LIGHT_RED, TEXT_COLOR_RED};
 		
 		FillWindowPixelRect(windowId, PIXEL_FILL(1), x, y, 0x46, GetFontAttribute(0, FONTATTR_MAX_LETTER_HEIGHT));
 		AddTextPrinterParameterized3(windowId, 0, x, y, color, -1, sOptionMenuOptions[itemId].options[sOptionMenuPtr->option[itemId]]);
@@ -513,7 +514,7 @@ static void Options_ItemPrintFunc(u32 windowId, u32 itemId, u32 y)
 	UpdateOptionsText(windowId, itemId, y);
 }
 
-static void CloseAndSaveOptionMenu(u8 taskId)
+static void CloseAndSaveOptionMenu(u32 taskId)
 {
     gFieldCallback = FieldCB_DefaultWarpExit;
     SetMainCallback2(gMain.savedCallback);

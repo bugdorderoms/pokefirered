@@ -29,18 +29,15 @@ const struct Region gRegions[REGIONS_COUNT] =
 	REGION(PALDEA, "Paldea"),
 };
 
-bool8 GetSetPokedexFlag(u16 nationalDexNo, u8 caseId)
+bool32 GetSetPokedexFlag(u32 nationalDexNo, u32 caseId)
 {
-	u8 index;
-    u8 bit;
-    u8 mask;
-    bool8 retVal = FALSE;
+	u32 index, mask;
+    bool32 retVal = FALSE;
 
     nationalDexNo--;
 	
     index = nationalDexNo / 8;
-    bit = nationalDexNo % 8;
-    mask = 1 << bit;
+    mask = Bit(nationalDexNo % 8);
 	
     switch (caseId)
     {
@@ -62,7 +59,7 @@ bool8 GetSetPokedexFlag(u16 nationalDexNo, u8 caseId)
     return retVal;
 }
 
-void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality)
+void HandleSetPokedexFlag(u32 nationalNum, u32 caseId, u32 personality)
 {
     if (!GetSetPokedexFlag(nationalNum, caseId == FLAG_SET_SEEN ? FLAG_GET_SEEN : FLAG_GET_CAUGHT))
     {
@@ -73,9 +70,9 @@ void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality)
     }
 }
 
-u16 GetNationalPokedexCount(u8 caseId)
+u32 GetNationalPokedexCount(u32 caseId)
 {
-    u16 i, count;
+    u32 i, count;
 
     for (i = 0, count = 0; i < NATIONAL_DEX_END; i++)
     {
@@ -85,9 +82,9 @@ u16 GetNationalPokedexCount(u8 caseId)
     return count;
 }
 
-u16 GetRegionPokedexCount(u8 region, u8 caseId)
+u32 GetRegionPokedexCount(u32 region, u32 caseId)
 {
-	u16 i, count = 0;
+	u32 i, count = 0;
 	
 	for (i = gRegions[region].dexStart; i < gRegions[region].dexEnd + 1; i++)
 	{
@@ -97,14 +94,14 @@ u16 GetRegionPokedexCount(u8 region, u8 caseId)
 	return count;
 }
 
-u16 GetCurrentRegionPokedexCount(u8 caseId)
+u32 GetCurrentRegionPokedexCount(u32 caseId)
 {
 	return GetRegionPokedexCount(gMapSectionsInfo[GetCurrentRegionMapSectionId()].region, caseId);
 }
 
-bool16 HasAllMons(void)
+bool32 HasAllMons(void)
 {
-    u16 i;
+    u32 i;
 
     for (i = 0; i < NATIONAL_DEX_END; i++)
     {
@@ -114,9 +111,9 @@ bool16 HasAllMons(void)
     return TRUE;
 }
 
-bool16 HasAllRegionMons(u8 region)
+bool32 HasAllRegionMons(u32 region)
 {
-	u16 i;
+	u32 i;
 	
 	for (i = gRegions[region].dexStart; i < gRegions[region].dexEnd + 1; i++)
 	{
@@ -126,22 +123,22 @@ bool16 HasAllRegionMons(u8 region)
 	return TRUE;
 }
 
-bool16 HasAllCurrentRegionMons(void)
+bool32 HasAllCurrentRegionMons(void)
 {
 	return HasAllRegionMons(gMapSectionsInfo[GetCurrentRegionMapSectionId()].region);
 }
 
-u16 GetNumMonsInRegionPokedex(u8 region)
+u32 GetNumMonsInRegionPokedex(u32 region)
 {
 	return gRegions[region].dexEnd - gRegions[region].dexStart + 1;
 }
 
-u16 GetNumMonsInCurrentRegionPokedex(void)
+u32 GetNumMonsInCurrentRegionPokedex(void)
 {
 	return GetNumMonsInRegionPokedex(gMapSectionsInfo[GetCurrentRegionMapSectionId()].region);
 }
 
-const u8 *GetRegionName(u8 region)
+const u8 *GetRegionName(u32 region)
 {
 	return gRegions[region].name;
 }
@@ -151,7 +148,7 @@ const u8 *GetCurrentRegionName(void)
 	return GetRegionName(gMapSectionsInfo[GetCurrentRegionMapSectionId()].region);
 }
 
-u16 SpeciesToNationalPokedexNum(u16 species)
+u32 SpeciesToNationalPokedexNum(u32 species)
 {
 	return gSpeciesInfo[species].natDexNum;
 }

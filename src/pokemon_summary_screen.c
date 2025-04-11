@@ -3606,7 +3606,7 @@ static void DestroyBallIconObj(void)
 static void PokeSum_CreateMonIconSprite(void)
 {
     u16 species = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES2);
-    SafeLoadMonIconPalette(species);
+    LoadMonIconPalette(species);
 	sMonSummaryScreen->monIconSpriteId = CreateMonIcon(species, SpriteCallbackDummy, 24, 32, 0);
     PokeSum_ShowOrHideMonIconSprite(TRUE);
 }
@@ -3618,7 +3618,7 @@ static void PokeSum_ShowOrHideMonIconSprite(bool8 invisible)
 
 static void PokeSum_DestroyMonIconSprite(void)
 {
-    SafeFreeMonIconPalette(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES2));
+    FreeMonIconPalette(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES2));
     DestroyMonIcon(&gSprites[sMonSummaryScreen->monIconSpriteId]);
 }
 

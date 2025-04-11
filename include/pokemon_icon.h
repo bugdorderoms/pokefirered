@@ -8,24 +8,20 @@
 extern const struct SpritePalette gMonIconPaletteTable[];
 extern const u16 gMonIconPalettes[][16];
 
-const u8 *GetMonIconPtr(u16 speciesId);
-const u8 *GetMonIconTiles(u16 iconSpecies);
-const u16 *GetValidMonIconPalettePtr(u16 speciesId);
-void LoadMonIconPalettes(void);
-void FreeMonIconPalettes(void);
+u32 CreateMonIcon(u32 species, SpriteCallback callback, s16 x, s16 y, u32 subpriority);
 void DestroyMonIcon(struct Sprite *);
 void SpriteCB_MonIcon(struct Sprite *);
-u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subpriority);
-u8 UpdateMonIconFrame(struct Sprite * sprite);
-void LoadMonIconPalette(u16 iconId);
-void FreeMonIconPalette(u16 iconId);
-void SetPartyHPBarSprite(struct Sprite * sprite, u8 animNum);
-u8 GetMonIconPaletteIndexFromSpecies(u16 species);
-void LoadMonIconGraphicsInWindow(u8 windowId, u16 species);
-void LoadMonIconPaletteIdxAt(u8 palIdx, u16 offset);
-void LoadMonIconPalettesAt(u16 offset);
-u8 GetValidMonIconPalIndex(u16 species);
-void SafeLoadMonIconPalette(u16 species);
-void SafeFreeMonIconPalette(u16 species);
+u32 UpdateMonIconFrame(struct Sprite * sprite);
+void SetPartyHPBarSprite(struct Sprite * sprite, u32 animNum);
+const u8 *GetMonIconPtr(u32 species);
+void LoadMonIconPalettes(void);
+void FreeMonIconPalettes(void);
+void LoadMonIconPalette(u32 iconId);
+void FreeMonIconPalette(u32 iconId);
+void LoadMonIconPaletteIdxAt(u32 palIdx, u32 offset);
+void LoadMonIconPalettesAt(u32 offset);
+u32 GetMonIconPalIndex(u32 species);
+const u16 *GetMonIconPalettePtr(u32 speciesId);
+void LoadMonIconGraphicsInWindow(u32 windowId, u32 species);
 
 #endif // GUARD_POKEMON_ICON_H

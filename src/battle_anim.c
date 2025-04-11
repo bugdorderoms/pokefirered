@@ -23,7 +23,8 @@ EWRAM_DATA u8 gAnimSoundTaskCount = 0;
 EWRAM_DATA struct DisableStruct *gAnimDisableStructPtr = NULL;
 EWRAM_DATA s32 gAnimMoveDmg = 0;
 EWRAM_DATA u16 gAnimMovePower = 0;
-EWRAM_DATA static u16 sAnimSpriteIndexArray[ANIM_SPRITE_INDEX_COUNT] = {0};
+EWRAM_DATA static u16 sAnimSpriteGfxIndexArray[ANIM_SPRITE_INDEX_COUNT] = {0};
+EWRAM_DATA static u16 sAnimSpritePalIndexArray[ANIM_SPRITE_INDEX_COUNT] = {0};
 EWRAM_DATA u8 gAnimFriendship = 0;
 EWRAM_DATA u16 gWeatherMoveAnim = 0;
 EWRAM_DATA s16 gBattleAnimArgs[ANIM_ARGS_COUNT] = {0};
@@ -38,7 +39,7 @@ EWRAM_DATA u16 gAnimBattlerSpecies[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gAnimCustomPanning = 0;
 
 // Function Declarations
-static void AddSpriteIndex(u32 index);
+static void AddSpriteIndex(u32 index, u32 which);
 static void ClearSpriteIndex(u32 index);
 static void WaitAnimFrameCount(void);
 static void RunAnimScriptCommand(void);
@@ -92,8 +93,8 @@ static void ScriptCmd_monbgprio_29(void);
 static void ScriptCmd_monbgprio_2A(void);
 static void ScriptCmd_invisible(void);
 static void ScriptCmd_visible(void);
-static void ScriptCmd_doublebattle_2D(void);
-static void ScriptCmd_doublebattle_2E(void);
+static void ScriptCmd_loadspriteimg(void);
+static void ScriptCmd_loadspritepal(void);
 static void ScriptCmd_stopsound(void);
 
 // Data
@@ -1170,7 +1171,7 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_Rocks, 0x0C00, ANIM_TAG_ROCKS},
     {gBattleAnimSpriteGfx_Z, 0x0100, ANIM_TAG_Z},
     {gBattleAnimSpriteGfx_FlashCannonBall, 0x0200, ANIM_TAG_FLASH_CANNON_BALL},
-    {gBattleAnimSpriteGfx_AirSlash, 0x0180, ANIM_TAG_AIR_SLASH},
+    {gBattleAnimSpriteGfx_Bee, 0x0080, ANIM_TAG_BEE},
     {gBattleAnimSpriteGfx_SpinningGreenOrbs, 0x0800, ANIM_TAG_SPINNING_GREEN_ORBS},
     {gBattleAnimSpriteGfx_Leaf, 0x0480, ANIM_TAG_LEAF},
     {gBattleAnimSpriteGfx_Finger, 0x0200, ANIM_TAG_FINGER},
@@ -1388,7 +1389,7 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_Gem3, 0x0800, ANIM_TAG_GEM_3},
     {gBattleAnimSpriteGfx_SlamHit2, 0x1000, ANIM_TAG_SLAM_HIT_2},
     {gBattleAnimSpriteGfx_Recycle, 0x0800, ANIM_TAG_RECYCLE},
-    {gBattleAnimSpriteGfx_RedParticles, 0x00a0, ANIM_TAG_RED_PARTICLES},
+    {gBattleAnimSpriteGfx_BerryEaten, 0x0200, ANIM_TAG_BERRY_EATEN},
     {gBattleAnimSpriteGfx_Protect, 0x0800, ANIM_TAG_PROTECT},
     {gBattleAnimSpriteGfx_DirtMound, 0x0200, ANIM_TAG_DIRT_MOUND},
     {gBattleAnimSpriteGfx_Shock3, 0x0600, ANIM_TAG_SHOCK_3},
@@ -1490,7 +1491,7 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_Rocks, ANIM_TAG_ROCKS},
     {gBattleAnimSpritePal_Z, ANIM_TAG_Z},
     {gBattleAnimSpritePal_FlashCannonBall, ANIM_TAG_FLASH_CANNON_BALL},
-    {gBattleAnimSpritePal_AirSlash, ANIM_TAG_AIR_SLASH},
+    {gBattleAnimSpritePal_Bee, ANIM_TAG_BEE},
     {gBattleAnimSpritePal_SpinningGreenOrbs, ANIM_TAG_SPINNING_GREEN_ORBS},
     {gBattleAnimSpritePal_Leaf, ANIM_TAG_LEAF},
     {gBattleAnimSpritePal_Finger, ANIM_TAG_FINGER},
@@ -1708,7 +1709,7 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_Gem1, ANIM_TAG_GEM_3},
     {gBattleAnimSpritePal_SlamHit2, ANIM_TAG_SLAM_HIT_2},
     {gBattleAnimSpritePal_Recycle, ANIM_TAG_RECYCLE},
-    {gBattleAnimSpritePal_RedParticles, ANIM_TAG_RED_PARTICLES},
+    {gBattleAnimSpritePal_BerryEaten, ANIM_TAG_BERRY_EATEN},
     {gBattleAnimSpritePal_Protect, ANIM_TAG_PROTECT},
     {gBattleAnimSpritePal_DirtMound, ANIM_TAG_DIRT_MOUND},
     {gBattleAnimSpritePal_Shock3, ANIM_TAG_SHOCK_3},
@@ -1788,6 +1789,9 @@ static const struct BattleAnimBackground sBattleAnimBackgroundTable[] =
 	[BG_TRICK_ROOM] = {gBattleAnimBgImage_FieldRoom, gBattleAnimBgPalette_TrickRoom, gBattleAnimBgTilemap_FieldRoom},
 	[BG_ROCK_WRECKER] = {gBattleAnimBgImage_RockWrecker, gBattleAnimBgPalette_RockWrecker, gBattleAnimBgTilemap_RockWrecker},
 	[BG_GUNK_SHOT] = {gBattleAnimBgImage_FocusBlast, gBattleAnimBgPalette_GunkShot, gBattleAnimBgTilemap_FocusBlast},
+	[BG_SPACIAL_REND_PLAYER] = {gBattleAnimBgImage_SpacialRend, gBattleAnimBgPalette_SpacialRend, gBattleAnimBgTilemap_GigaImpactPlayer},
+	[BG_SPACIAL_REND_OPPONENT] = {gBattleAnimBgImage_SpacialRend, gBattleAnimBgPalette_SpacialRend, gBattleAnimBgTilemap_GigaImpactOpponent},
+	[BG_DARK_VOID] = {gBattleAnimBgImage_Waterfall, gBattleAnimBgPalette_DarkVoid, gBattleAnimBgTilemap_Waterfall},
 };
 
 static void (*const sScriptCmdTable[])(void) =
@@ -1837,8 +1841,8 @@ static void (*const sScriptCmdTable[])(void) =
     ScriptCmd_monbgprio_2A,
     ScriptCmd_invisible,
     ScriptCmd_visible,
-    ScriptCmd_doublebattle_2D,
-    ScriptCmd_doublebattle_2E,
+    ScriptCmd_loadspriteimg,
+    ScriptCmd_loadspritepal,
     ScriptCmd_stopsound
 };
 
@@ -1858,7 +1862,10 @@ void ClearBattleAnimationVars(void)
     
     // Clear index array.
     for (i = 0; i < ANIM_SPRITE_INDEX_COUNT; i++)
-        sAnimSpriteIndexArray[i] |= 0xFFFF;
+	{
+        sAnimSpriteGfxIndexArray[i] = 0xFFFF;
+		sAnimSpritePalIndexArray[i] = 0xFFFF;
+	}
 
     // Clear anim args.
     for (i = 0; i < ANIM_ARGS_COUNT; i++)
@@ -1928,8 +1935,10 @@ void LaunchBattleAnimation(u32 animType, u32 animId)
         gBattleAnimArgs[i] = 0;
 	
 	for (i = 0; i < ANIM_SPRITE_INDEX_COUNT; i++)
-        sAnimSpriteIndexArray[i] = 0xFFFF;
-	
+	{
+        sAnimSpriteGfxIndexArray[i] = 0xFFFF;
+		sAnimSpritePalIndexArray[i] = 0xFFFF;
+	}
     sMonAnimTaskIdArray[0] = 0xFF;
     sMonAnimTaskIdArray[1] = (s8)-1;
     gAnimScriptActive = TRUE;
@@ -1982,17 +1991,36 @@ void DestroyAnimSoundTask(u32 taskId)
     gAnimSoundTaskCount--;
 }
 
-static void AddSpriteIndex(u32 index)
+// 0 - both sprite and palette
+// 1 - only sprite
+// 2 - only palette
+static void AddSpriteIndex(u32 index, u32 which)
 {
     u32 i;
+	bool32 found = FALSE;
 
     for (i = 0; i < ANIM_SPRITE_INDEX_COUNT; i++)
     {
-        if (sAnimSpriteIndexArray[i] == 0xFFFF)
-        {
-            sAnimSpriteIndexArray[i] = index;
-            return;
-        }
+		if (which == 0 || which == 1)
+		{
+			if (sAnimSpriteGfxIndexArray[i] == 0xFFFF)
+			{
+				sAnimSpriteGfxIndexArray[i] = index;
+				found = TRUE;
+			}
+		}
+		
+		if (which == 0 || which == 2)
+		{
+			if (sAnimSpritePalIndexArray[i] == 0xFFFF)
+			{
+				sAnimSpritePalIndexArray[i] = index;
+				found = TRUE;
+			}
+		}
+		
+		if (found)
+			return;
     }
 }
 
@@ -2002,11 +2030,11 @@ static void ClearSpriteIndex(u32 index)
 
     for (i = 0; i < ANIM_SPRITE_INDEX_COUNT; i++)
     {
-        if (sAnimSpriteIndexArray[i] == index)
-        {
-            sAnimSpriteIndexArray[i] = 0xFFFF;
-            return;
-        }
+        if (sAnimSpriteGfxIndexArray[i] == index)
+            sAnimSpriteGfxIndexArray[i] = 0xFFFF;
+		
+		if (sAnimSpritePalIndexArray[i] == index)
+			sAnimSpritePalIndexArray[i] = 0xFFFF;
     }
 }
 
@@ -2039,7 +2067,7 @@ static void ScriptCmd_loadspritegfx(void)
     LoadCompressedSpriteSheetUsingHeap(&gBattleAnimPicTable[index]);
     LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[index]);
 	
-    AddSpriteIndex(index);
+    AddSpriteIndex(index, 0);
 	
     sAnimFramesToWait = 1;
     gAnimScriptCallback = WaitAnimFrameCount;
@@ -2067,7 +2095,7 @@ void CreateItemBagSprite(const struct SpriteTemplate *template, s16 x, s16 y, u3
 {
 	struct Sprite *sprite = &gSprites[AddItemIconObjectWithCustomObjectTemplate(template, template->tileTag, template->paletteTag, gLastUsedItem)];
 	
-	AddSpriteIndex(GET_TRUE_SPRITE_INDEX(template->tileTag));
+	AddSpriteIndex(GET_TRUE_SPRITE_INDEX(template->tileTag), 0);
 		
 	sprite->x = x;
 	sprite->y = y;
@@ -2247,12 +2275,17 @@ static void ScriptCmd_end(void)
 
     for (i = 0; i < ANIM_SPRITE_INDEX_COUNT; i++)
     {
-        if (sAnimSpriteIndexArray[i] != 0xFFFF)
-        {
-            FreeSpriteTilesByTag(gBattleAnimPicTable[sAnimSpriteIndexArray[i]].tag);
-            FreeSpritePaletteByTag(gBattleAnimPicTable[sAnimSpriteIndexArray[i]].tag);
-            sAnimSpriteIndexArray[i] = 0xFFFF; // set terminator.
-        }
+        if (sAnimSpriteGfxIndexArray[i] != 0xFFFF)
+		{
+			FreeSpriteTilesByTag(gBattleAnimPicTable[sAnimSpriteGfxIndexArray[i]].tag);
+			sAnimSpriteGfxIndexArray[i] = 0xFFFF; // set terminator.
+		}
+		
+		if (sAnimSpritePalIndexArray[i] != 0xFFFF)
+		{
+			FreeSpritePaletteByTag(gBattleAnimPicTable[sAnimSpritePalIndexArray[i]].tag);
+			sAnimSpritePalIndexArray[i] = 0xFFFF; // set terminator.
+		}
     }
 	m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 256);
 	ResetSpritePriorityOfAllVisibleBattlers();
@@ -3215,48 +3248,38 @@ static void ScriptCmd_visible(void)
 	sBattleAnimScriptPtr += 2;
 }
 
-static void GetAnimBattlerBgPriorityRankAndSpriteId(u32 wantedBattler, u32 *priority, u32 *spriteId)
+static void ScriptCmd_loadspriteimg(void)
 {
-	*priority = GetBattlerSpriteBGPriorityRank(wantedBattler == ANIM_ATTACKER ? gBattleAnimAttacker : gBattleAnimTarget);
-	*spriteId = GetAnimBattlerSpriteId(wantedBattler);
+	u32 index;
+
+    sBattleAnimScriptPtr++;
+    index = GET_TRUE_SPRITE_INDEX(READ_16(sBattleAnimScriptPtr));
+	
+    LoadCompressedSpriteSheetUsingHeap(&gBattleAnimPicTable[index]);
+	
+    AddSpriteIndex(index, 1);
+	
+    sAnimFramesToWait = 1;
+    gAnimScriptCallback = WaitAnimFrameCount;
+	
+	sBattleAnimScriptPtr += 2;
 }
 
-static void ScriptCmd_doublebattle_2D(void)
+static void ScriptCmd_loadspritepal(void)
 {
-    u32 wantedBattler, priority, spriteId;
+    u32 index;
 
-    wantedBattler = sBattleAnimScriptPtr[1];
-    sBattleAnimScriptPtr += 2;
+    sBattleAnimScriptPtr++;
+    index = GET_TRUE_SPRITE_INDEX(READ_16(sBattleAnimScriptPtr));
 	
-    if (IsDoubleBattleForBattler(GetBattlerForAnimScript(wantedBattler)) && IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget))
-    {
-		GetAnimBattlerBgPriorityRankAndSpriteId(wantedBattler, &priority, &spriteId);
-		
-        if (spriteId != 0xFF)
-        {
-            gSprites[spriteId].invisible = FALSE;
-            if (priority == 2)
-                gSprites[spriteId].oam.priority = 3;
-
-            ResetBattleAnimBg((priority != 1));
-        }
-    }
-}
-
-static void ScriptCmd_doublebattle_2E(void)
-{
-    u32 wantedBattler, priority, spriteId;
-
-    wantedBattler = sBattleAnimScriptPtr[1];
-    sBattleAnimScriptPtr += 2;
+    LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[index]);
 	
-    if (IsDoubleBattleForBattler(GetBattlerForAnimScript(wantedBattler)) && IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget))
-    {
-		GetAnimBattlerBgPriorityRankAndSpriteId(wantedBattler, &priority, &spriteId);
-        
-        if (spriteId != 0xFF && priority == 2)
-            gSprites[spriteId].oam.priority = 2;
-    }
+    AddSpriteIndex(index, 2);
+	
+    sAnimFramesToWait = 1;
+    gAnimScriptCallback = WaitAnimFrameCount;
+	
+	sBattleAnimScriptPtr += 2;
 }
 
 static void ScriptCmd_stopsound(void)

@@ -1621,6 +1621,28 @@ const struct SpriteTemplate gChargeBeamOrbSpriteTemplate =
     .callback = AnimHyperBeamOrb,
 };
 
+const struct SpriteTemplate gDarkVoidPurpleSparklesSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SPARKLE_2,
+    .paletteTag = ANIM_TAG_POISON_BUBBLE,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sGrantingStarsAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGrantingStars,
+};
+
+const struct SpriteTemplate gSeedFlareGreenOrbsSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ORBS,
+    .paletteTag = ANIM_TAG_RAZOR_LEAF,
+    .oam = &gOamData_AffineNormal_ObjBlend_16x16,
+    .anims = sPowerAbsorptionOrbAnimTable,
+    .images = NULL,
+    .affineAnims = sPowerAbsorptionOrbAffineAnimTable,
+    .callback = AnimPowerAbsorptionOrb,
+};
+
 // Animates the falling particles that horizontally wave back and forth. Used by Sleep Powder, Stun Spore, and Poison Powder.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset
@@ -2716,18 +2738,25 @@ static void AnimMilkBottleStep2(struct Sprite* sprite)
 // arg 5: duration
 void AnimGrantingStars(struct Sprite* sprite)
 {
-    if (gBattleAnimArgs[2] == ANIM_ATTACKER)
-        SetSpriteCoordsToAnimAttackerCoords(sprite);
-
-    SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
+	u32 animBattler = gBattleAnimArgs[2];
 	
-    sprite->y += gBattleAnimArgs[1];
-	
-    sprite->data[0] = gBattleAnimArgs[5];
-    sprite->data[1] = gBattleAnimArgs[3];
-    sprite->data[2] = gBattleAnimArgs[4];
-    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
-    sprite->callback = TranslateSpriteLinearFixedPoint;
+	if (!IsBattlerSpriteVisible(GetBattlerForAnimScript(animBattler)))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		if (animBattler == ANIM_ATTACKER)
+			SetSpriteCoordsToAnimAttackerCoords(sprite);
+		
+		SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
+		
+		sprite->y += gBattleAnimArgs[1];
+		
+		sprite->data[0] = gBattleAnimArgs[5];
+		sprite->data[1] = gBattleAnimArgs[3];
+		sprite->data[2] = gBattleAnimArgs[4];
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+		sprite->callback = TranslateSpriteLinearFixedPoint;
+	}
 }
 
 // Animates little sparkling yellow stars on the given battler.

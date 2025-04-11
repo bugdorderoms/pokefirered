@@ -18,6 +18,6 @@ struct OakSpeechNidoranFStruct
 extern struct OakSpeechNidoranFStruct *gOakSpeechNidoranResources;
 
 void StartNewGameScene(void);
-void CreatePikaOrGrassPlatformSpriteAndLinkToCurrentTask(u8 taskId, u8 state);
+void CreatePikaOrGrassPlatformSpriteAndLinkToCurrentTask(u32 taskId, u32 state);
 
 #endif //GUARD_OAK_SPEECH_H

@@ -157,11 +157,11 @@ static void Task_ShowAreaMarkers(u8 taskId)
     gSprites[data->spr_id].invisible = FALSE;
 }
 
-u8 Ctor_PokedexAreaMarkers(u16 species, u16 tilesTag, u8 palIdx, u8 y)
+u32 Ctor_PokedexAreaMarkers(u32 species, u32 tilesTag, u32 palIdx, u32 y)
 {
     struct SpriteTemplate spriteTemplate;
     struct CompressedSpriteSheet spriteSheet;
-    u8 taskId;
+    u32 taskId;
     struct PAM_TaskData * data;
     struct Subsprite * subsprites;
 
@@ -205,7 +205,7 @@ u8 Ctor_PokedexAreaMarkers(u16 species, u16 tilesTag, u8 palIdx, u8 y)
     return taskId;
 }
 
-void Dtor_PokedexAreaMarkers(u8 taskId)
+void Dtor_PokedexAreaMarkers(u32 taskId)
 {
     struct PAM_TaskData * data = (void *)gTasks[taskId].data;
 	
@@ -236,7 +236,7 @@ void SetAreaSubsprite(s32 i, s32 whichArea, struct Subsprite * subsprites)
     subsprites[i].y = sSubspriteLookupTable[whichArea][2];
 }
 
-u8 PokedexAreaMarkers_Any(u8 taskId)
+u32 PokedexAreaMarkers_Any(u32 taskId)
 {
     struct PAM_TaskData * data = (void *)gTasks[taskId].data;
     return data->subsprites.subspriteCount;

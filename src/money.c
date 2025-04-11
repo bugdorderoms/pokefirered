@@ -2,6 +2,7 @@
 #include "gflib.h"
 #include "event_data.h"
 #include "menu.h"
+#include "money.h"
 #include "text_window.h"
 #include "strings.h"
 
@@ -19,7 +20,7 @@ void SetMoney(u32* moneyPtr, u32 newValue)
     *moneyPtr = gSaveBlock2Ptr->encryptionKey ^ newValue;
 }
 
-bool8 IsEnoughMoney(u32* moneyPtr, u32 cost)
+bool32 IsEnoughMoney(u32* moneyPtr, u32 cost)
 {
     if (GetMoney(moneyPtr) >= cost)
         return TRUE;
@@ -33,9 +34,7 @@ void AddMoney(u32* moneyPtr, u32 toAdd)
 
     // can't have more money than MAX
     if (toSet + toAdd > MAX_MONEY)
-    {
         toSet = MAX_MONEY;
-    }
     else
     {
         toSet += toAdd;
@@ -43,7 +42,6 @@ void AddMoney(u32* moneyPtr, u32 toAdd)
         if (toSet < GetMoney(moneyPtr))
             toSet = MAX_MONEY;
     }
-
     SetMoney(moneyPtr, toSet);
 }
 
@@ -60,7 +58,7 @@ void RemoveMoney(u32* moneyPtr, u32 toSub)
     SetMoney(moneyPtr, toSet);
 }
 
-bool8 IsEnoughForCostInVar0x8005(void)
+bool32 IsEnoughForCostInVar0x8005(void)
 {
     return IsEnoughMoney(&gSaveBlock1Ptr->money, gSpecialVar_0x8005);
 }
@@ -70,24 +68,12 @@ void SubtractMoneyFromVar0x8005(void)
     RemoveMoney(&gSaveBlock1Ptr->money, gSpecialVar_0x8005);
 }
 
-void PrintMoneyAmountInMoneyBox(u8 windowId, int amount, u8 speed)
+void PrintMoneyAmountInMoneyBox(u32 windowId, u32 amount, u32 speed)
 {
-    u8 *txtPtr;
-    s32 strLength;
-
-    ConvertIntToDecimalStringN(gStringVar1, amount, STR_CONV_MODE_LEFT_ALIGN, 6);
-
-    strLength = 6 - StringLength(gStringVar1);
-    txtPtr = gStringVar4;
-
-    while (strLength-- != 0)
-        *(txtPtr++) = 0;
-
-    StringExpandPlaceholders(txtPtr, gText_PokedollarVar1);
-    AddTextPrinterParameterized(windowId, 0, gStringVar4, 64 - GetStringWidth(0, gStringVar4, 0), 0xC, speed, NULL);
+	PrintMoneyAmount(windowId, 64 - GetStringWidth(0, gStringVar4, 0), 0xC, amount, speed);
 }
 
-void PrintMoneyAmount(u8 windowId, u8 x, u8 y, int amount, u8 speed)
+void PrintMoneyAmount(u32 windowId, u32 x, u32 y, u32 amount, u32 speed)
 {
     u8 *txtPtr;
     s32 strLength;
@@ -104,19 +90,19 @@ void PrintMoneyAmount(u8 windowId, u8 x, u8 y, int amount, u8 speed)
     AddTextPrinterParameterized(windowId, 0, gStringVar4, x, y, speed, NULL);
 }
 
-void PrintMoneyAmountInMoneyBoxWithBorder(u8 windowId, u16 tileStart, u8 pallete, int amount)
+void PrintMoneyAmountInMoneyBoxWithBorder(u32 windowId, u32 tileStart, u32 pallete, u32 amount)
 {
     DrawStdFrameWithCustomTileAndPalette(windowId, FALSE, tileStart, pallete);
     AddTextPrinterParameterized(windowId, 2, gText_TrainerCardMoney, 0, 0, 0xFF, 0);
     PrintMoneyAmountInMoneyBox(windowId, amount, 0);
 }
 
-void ChangeAmountInMoneyBox(int amount)
+void ChangeAmountInMoneyBox(u32 amount)
 {
     PrintMoneyAmountInMoneyBox(sMoneyBoxWindowId, amount, 0);
 }
 
-void DrawMoneyBox(int amount, u8 x, u8 y)
+void DrawMoneyBox(u32 amount, u32 x, u32 y)
 {
     struct WindowTemplate template = SetWindowTemplateFields(0, x + 1, y + 1, 8, 3, 15, 8);
 

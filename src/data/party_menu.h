@@ -796,40 +796,10 @@ static const union AnimCmd sSmallPokeballAnim_Open[] =
     ANIMCMD_FRAME(4, 0),
     ANIMCMD_END
 };
-
-static const union AnimCmd sSmallPokeballAnim_Blank1[] =
-{
-    ANIMCMD_FRAME(8, 0),
-    ANIMCMD_END
-};
-
-static const union AnimCmd sSmallPokeballAnim_Blank2[] =
-{
-    ANIMCMD_FRAME(12, 0),
-    ANIMCMD_END
-};
-
-static const union AnimCmd sSmallPokeballAnim_Blank3[] =
-{
-    ANIMCMD_FRAME(16, 0),
-    ANIMCMD_END
-};
-
-static const union AnimCmd sSmallPokeballAnim_Blank4[] =
-{
-    ANIMCMD_FRAME(20, 0),
-    ANIMCMD_END
-};
-
-// The blanks below are never used. See SpriteCB_BounceConfirmCancelButton, where they were intended to be used
 static const union AnimCmd *const sSpriteAnimTable_MenuPokeballSmall[] =
 {
     sSmallPokeballAnim_Closed,
-    sSmallPokeballAnim_Open,
-    sSmallPokeballAnim_Blank1,
-    sSmallPokeballAnim_Blank2,
-    sSmallPokeballAnim_Blank3,
-    sSmallPokeballAnim_Blank4,
+    sSmallPokeballAnim_Open
 };
 
 static const struct CompressedSpriteSheet sSpriteSheet_MenuPokeballSmall =

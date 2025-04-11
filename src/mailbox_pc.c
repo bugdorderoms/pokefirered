@@ -41,19 +41,21 @@ static const struct WindowTemplate sWindowTemplates[] = {
 
 static const u8 sTextColor[3] = {1, 2, 3};
 
-bool8 MailboxPC_InitBuffers(u8 num)
+bool32 MailboxPC_InitBuffers(u32 num)
 {
-    u8 i;
+    u32 i;
 
     sListMenuItems = Alloc(sizeof(struct ListMenuItem) * (num + 1));
     if (sListMenuItems == NULL)
         return FALSE;
+	
     for (i = 0; i < ARRAY_COUNT(sWindowIds); i++)
         sWindowIds[i] = 0xFF;
+	
     return TRUE;
 }
 
-u8 MailboxPC_GetAddWindow(u8 winIdx)
+u32 MailboxPC_GetAddWindow(u32 winIdx)
 {
     if (sWindowIds[winIdx] == 0xFF)
     {
@@ -63,7 +65,7 @@ u8 MailboxPC_GetAddWindow(u8 winIdx)
     return sWindowIds[winIdx];
 }
 
-void MailboxPC_RemoveWindow(u8 winIdx)
+void MailboxPC_RemoveWindow(u32 winIdx)
 {
     ClearStdWindowAndFrameToTransparent(sWindowIds[winIdx], FALSE);
     ClearWindowTilemap(sWindowIds[winIdx]);
@@ -86,9 +88,10 @@ static void ItemPrintFunc(u32 windowId, u32 itemId, u32 y)
     }
 }
 
-u8 MailboxPC_InitListMenu(struct PlayerPCItemPageStruct * playerPcStruct)
+u32 MailboxPC_InitListMenu(struct PlayerPCItemPageStruct * playerPcStruct)
 {
-    u16 i;
+    u32 i;
+	
     for (i = 0; i < playerPcStruct->count; i++)
     {
         sListMenuItems[i].label = COMPOUND_STRING("");

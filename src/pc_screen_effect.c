@@ -16,33 +16,33 @@
 #define tBldCntBak  data[7]
 #define tBldYBak    data[8]
 
-static void BeginPCScreenEffect(TaskFunc func, u16 speed, u8 priority);
+static void BeginPCScreenEffect(TaskFunc func, u32 speed, u32 priority);
 static void Task_PCScreenEffect_TurnOn(u8 taskId);
 static void Task_PCScreenEffect_TurnOff(u8 taskId);
 
-void BeginPCScreenEffect_TurnOn(u16 speed, u8 priority)
+void BeginPCScreenEffect_TurnOn(u32 speed, u32 priority)
 {
     BeginPCScreenEffect(Task_PCScreenEffect_TurnOn, speed, priority);
 }
 
-void BeginPCScreenEffect_TurnOff(u16 speed, u8 priority)
+void BeginPCScreenEffect_TurnOff(u32 speed, u32 priority)
 {
     BeginPCScreenEffect(Task_PCScreenEffect_TurnOff, speed, priority);
 }
 
-bool8 IsPCScreenEffectRunning_TurnOn(void)
+bool32 IsPCScreenEffectRunning_TurnOn(void)
 {
     return FuncIsActiveTask(Task_PCScreenEffect_TurnOn);
 }
 
-bool8 IsPCScreenEffectRunning_TurnOff(void)
+bool32 IsPCScreenEffectRunning_TurnOff(void)
 {
     return FuncIsActiveTask(Task_PCScreenEffect_TurnOff);
 }
 
-static void BeginPCScreenEffect(TaskFunc func, u16 speed, u8 priority)
+static void BeginPCScreenEffect(TaskFunc func, u32 speed, u32 priority)
 {
-    u8 taskId = CreateTask(func, priority);
+    u32 taskId = CreateTask(func, priority);
 
     gTasks[taskId].tState = 0;
     gTasks[taskId].tXSpeed = speed == 0 ? 16 : speed;

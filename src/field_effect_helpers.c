@@ -6,6 +6,7 @@
 #include "field_effect_helpers.h"
 #include "field_weather.h"
 #include "fieldmap.h"
+#include "math_util.h"
 #include "metatile_behavior.h"
 #include "palette.h"
 #include "constants/field_effects.h"

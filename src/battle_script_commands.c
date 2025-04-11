@@ -725,7 +725,12 @@ static void MoveValuesCleanUp(void)
 static bool32 NoTargetPresent(void)
 {
 	if (!IsBattlerAlive(gBattlerTarget))
-		gBattlerTarget = GetMoveTarget(gCurrentMove, 0);
+	{
+		u32 newTarget = GetMoveTarget(gCurrentMove, 0);
+		
+		if (IsBattlerAlive(newTarget))
+			gBattlerTarget = newTarget;
+	}
 	
 	switch (GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove))
 	{
@@ -956,7 +961,8 @@ static bool32 AccuracyCalcHelper(const u8 *jumpStr)
 		JumpIfMoveFailed(6, jumpStr);
 	else if ((!gBattleMoves[gCurrentMove].flags.hitInAir && !gBattleMoves[gCurrentMove].flags.hitInAirDoubleDmg && (gStatuses3[gBattlerTarget] & STATUS3_ON_AIR))
 		|| (!gBattleMoves[gCurrentMove].flags.hitUnderground && (gStatuses3[gBattlerTarget] & STATUS3_UNDERGROUND))
-	    || (!gBattleMoves[gCurrentMove].flags.hitUnderwater && (gStatuses3[gBattlerTarget] & STATUS3_UNDERWATER))) // Check if semi-invulnerable
+	    || (!gBattleMoves[gCurrentMove].flags.hitUnderwater && (gStatuses3[gBattlerTarget] & STATUS3_UNDERWATER))
+		|| (gStatuses3[gBattlerTarget] & STATUS3_VANISHED)) // Check if semi-invulnerable
 	{
 		gMoveResultFlags |= MOVE_RESULT_MISSED;
 		JumpIfMoveFailed(6, jumpStr);
@@ -4165,7 +4171,7 @@ enum
 	SWITCHIN_UNNERVE,
 	SWITCHIN_HEALING_WISH,
 	SWITCHIN_LUNAR_DANCE,
-	SWITCHIN_HEAL_REPLACEMENT,
+	SWITCHIN_Z_HEALING_WISH,
 	SWITCHIN_HAZARDS,
 	SWITCHIN_EMERGENCY_EXIT,
 	SWITCHIN_TRUANT,
@@ -4233,7 +4239,9 @@ static void atk52_switchineffects(void)
 			break;
 		}
 		case SWITCHIN_HEALING_WISH:
-		    if (gBattleStruct->battlers[battlerId].storedHealingWish && (!BATTLER_MAX_HP(battlerId) || gBattleMons[battlerId].status1.id))
+		    ++gBattleScripting.switchinEffectState;
+			
+			if (gBattleStruct->battlers[battlerId].storedHealingWish && (!BATTLER_MAX_HP(battlerId) || gBattleMons[battlerId].status1.id))
 			{
 				gBattleStruct->battlers[battlerId].storedHealingWish = FALSE;
 				gBattleScripting.battler = battlerId;
@@ -4241,20 +4249,24 @@ static void atk52_switchineffects(void)
 				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_HEALING_WISH_TRUE;
 				gBattleScripting.animArg1 = B_ANIM_HEALING_WISH_HEAL;
 				BattleScriptCall(BattleScript_HealingWishActivates);
+				return;
 			}
-			++gBattleScripting.switchinEffectState;
-			break;
+			// Fallthrough
 		case SWITCHIN_LUNAR_DANCE:
-		    if (gBattleStruct->battlers[battlerId].storedLunarDance && (!BATTLER_MAX_HP(battlerId) || gBattleMons[battlerId].status1.id || !IsBattlerPPMaxed(battlerId)))
+		    ++gBattleScripting.switchinEffectState;
+			
+			if (gBattleStruct->battlers[battlerId].storedLunarDance && (!BATTLER_MAX_HP(battlerId) || gBattleMons[battlerId].status1.id || !IsBattlerPPMaxed(battlerId)))
 			{
 				gBattleStruct->battlers[battlerId].storedLunarDance = FALSE;
 				gBattleScripting.battler = battlerId;
 				gBattleMoveDamage = gBattleMons[battlerId].maxHP * -1;
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CLOAKED_IN_MOONLIGHT;
+				gBattleScripting.animArg1 = B_ANIM_LUNAR_DANCE_HEAL;
 				BattleScriptCall(BattleScript_LunarDanceActivates);
+				return;
 			}
-		    ++gBattleScripting.switchinEffectState;
-			break;
-		case SWITCHIN_HEAL_REPLACEMENT: // TODO: Z-Healing Wish
+			// Fallthrough
+		case SWITCHIN_Z_HEALING_WISH: // TODO
 		    ++gBattleScripting.switchinEffectState;
 			break;
 		case SWITCHIN_HAZARDS:
@@ -4843,7 +4855,7 @@ static void PutMonIconOnLvlUpBox(void)
     iconSheet.size = 0x200;
     iconSheet.tag = MON_ICON_LVLUP_BOX_TAG;
 	
-    iconPalSheet.data = GetValidMonIconPalettePtr(species);
+    iconPalSheet.data = GetMonIconPalettePtr(species);
     iconPalSheet.tag = MON_ICON_LVLUP_BOX_TAG;
 	
     LoadSpriteSheet(&iconSheet);
@@ -5018,6 +5030,10 @@ static void CallAnotherMove(u32 move, bool32 updateStartValues)
 	if (updateStartValues)
 	{
 		gBattlerTarget = GetMoveTarget(move, 0);
+		
+		if (!gBattleStruct->dancer.inProgress)
+			gBattleStruct->battlers[gBattlerAttacker].moveTarget = gBattlerTarget;
+		
 		gBattleStruct->atkCancellerTracker = CANCELLER_RECALL_CASEID;
 		gBattleStruct->moveEffect.moveEffectByte = MOVE_EFFECT_NONE;
 		gSpecialStatuses[gBattlerAttacker].parentalBondState = PARENTAL_BOND_OFF;
@@ -7334,7 +7350,7 @@ static void atkA9_trychoosesleeptalkmove(void)
     {
         do
             movePosition = RandomMax(MAX_MON_MOVES);
-        while (Bit(movePosition) & unusableMovesBits);
+        while (unusableMovesBits & Bit(movePosition));
 		
 		gCurrMovePos = movePosition;
         gCalledMove = gBattleMons[gBattlerAttacker].moves[movePosition];
@@ -9231,13 +9247,13 @@ void BS_SetHealingWish(void)
 {
 	NATIVE_ARGS();
 
-	switch (gCurrentMove)
+	switch (gBattleMoves[gCurrentMove].argument.healReplacementCase)
 	{
-		case MOVE_LUNAR_DANCE:
-		    gBattleStruct->battlers[gBattlerAttacker].storedLunarDance = TRUE;
-			break;
-		default:
+		case HR_CASE_HEALING_WISH:
 		    gBattleStruct->battlers[gBattlerAttacker].storedHealingWish = TRUE;
+			break;
+		case HR_CASE_LUNAR_DANCE:
+		    gBattleStruct->battlers[gBattlerAttacker].storedLunarDance = TRUE;
 			break;
 	}
 	gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP;

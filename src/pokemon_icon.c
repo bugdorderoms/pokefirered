@@ -113,14 +113,14 @@ static const u16 sSpriteImageSizes[][4] = {
     },
 };
 
-u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subpriority)
+u32 CreateMonIcon(u32 species, SpriteCallback callback, s16 x, s16 y, u32 subpriority)
 {
-    u8 spriteId;
+    u32 spriteId;
 	struct SpriteFrameImage image = { NULL, sSpriteImageSizes[sMonIconOamData.shape][sMonIconOamData.size] };
     struct SpriteTemplate spriteTemplate =
     {
         .tileTag = SPRITE_INVALID_TAG,
-        .paletteTag = POKE_ICON_BASE_PAL_TAG + GetValidMonIconPalIndex(species),
+        .paletteTag = POKE_ICON_BASE_PAL_TAG + GetMonIconPalIndex(species),
         .oam = &sMonIconOamData,
         .anims = sMonIconAnims,
         .images = &image,
@@ -138,16 +138,6 @@ u8 CreateMonIcon(u16 species, SpriteCallback callback, s16 x, s16 y, u8 subprior
     return spriteId;
 }
 
-const u8 *GetMonIconTiles(u16 species)
-{
-    return gSpeciesInfo[species].icon;
-}
-
-const u8 *GetMonIconPtr(u16 species)
-{
-    return GetMonIconTiles(SanitizeSpeciesId(species));
-}
-
 void DestroyMonIcon(struct Sprite * sprite)
 {
     struct SpriteFrameImage image = { NULL, sSpriteImageSizes[sprite->oam.shape][sprite->oam.size] };
@@ -155,95 +145,14 @@ void DestroyMonIcon(struct Sprite * sprite)
     DestroySprite(sprite);
 }
 
-void LoadMonIconPalettes(void)
-{
-    u8 i;
-	
-    for (i = 0; i < ARRAY_COUNT(gMonIconPaletteTable); i++)
-        LoadSpritePalette(&gMonIconPaletteTable[i]);
-}
-
-void SafeLoadMonIconPalette(u16 species)
-{
-    u8 palIndex = gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex;
-	
-    if (IndexOfSpritePaletteTag(gMonIconPaletteTable[palIndex].tag) == 0xFF)
-        LoadSpritePalette(&gMonIconPaletteTable[palIndex]);
-}
-
-void LoadMonIconPalette(u16 species)
-{
-    u8 palIndex = gSpeciesInfo[species].iconPaletteIndex;
-	
-    if (IndexOfSpritePaletteTag(gMonIconPaletteTable[palIndex].tag) == 0xFF)
-        LoadSpritePalette(&gMonIconPaletteTable[palIndex]);
-}
-
-void FreeMonIconPalettes(void)
-{
-    u8 i;
-	
-    for (i = 0; i < ARRAY_COUNT(gMonIconPaletteTable); i++)
-        FreeSpritePaletteByTag(gMonIconPaletteTable[i].tag);
-}
-
-void SafeFreeMonIconPalette(u16 species)
-{
-    FreeSpritePaletteByTag(gMonIconPaletteTable[gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex].tag);
-}
-
-void FreeMonIconPalette(u16 species)
-{
-    FreeSpritePaletteByTag(gMonIconPaletteTable[gSpeciesInfo[species].iconPaletteIndex].tag);
-}
-
 void SpriteCB_MonIcon(struct Sprite * sprite)
 {
     UpdateMonIconFrame(sprite);
 }
 
-void LoadMonIconGraphicsInWindow(u8 windowId, u16 species)
+u32 UpdateMonIconFrame(struct Sprite * sprite)
 {
-	BlitBitmapToWindow(windowId, GetMonIconPtr(species), 0, 0, 32, 32);
-}
-
-void LoadMonIconPaletteIdxAt(u8 palIdx, u16 offset)
-{
-	LoadPalette(gMonIconPaletteTable[palIdx].data, offset, 0x20);
-}
-
-void LoadMonIconPalettesAt(u16 offset)
-{
-    int i;
-	
-    if (offset <= 0x100 - 0x60)
-    {
-        for (i = 0; i < (int)ARRAY_COUNT(gMonIconPaletteTable); i++)
-        {
-			LoadMonIconPaletteIdxAt(i, offset);
-            offset += 0x10;
-        }
-    }
-}
-
-const u16 *GetValidMonIconPalettePtr(u16 species)
-{
-    return gMonIconPaletteTable[gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex].data;
-}
-
-u8 GetValidMonIconPalIndex(u16 species)
-{
-    return gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex;
-}
-
-u8 GetMonIconPaletteIndexFromSpecies(u16 species)
-{
-    return gSpeciesInfo[species].iconPaletteIndex;
-}
-
-u8 UpdateMonIconFrame(struct Sprite * sprite)
-{
-    u8 result = 0;
+    u32 result = 0;
 
     if (sprite->animDelayCounter == 0)
     {
@@ -276,9 +185,77 @@ u8 UpdateMonIconFrame(struct Sprite * sprite)
     return result;
 }
 
-void SetPartyHPBarSprite(struct Sprite * sprite, u8 animNum)
+void SetPartyHPBarSprite(struct Sprite * sprite, u32 animNum)
 {
     sprite->animNum = animNum;
     sprite->animDelayCounter = 0;
     sprite->animCmdIndex = 0;
+}
+
+const u8 *GetMonIconPtr(u32 species)
+{
+    return gSpeciesInfo[SanitizeSpeciesId(species)].icon;
+}
+
+void LoadMonIconPalettes(void)
+{
+    u32 i;
+	
+    for (i = 0; i < ARRAY_COUNT(gMonIconPaletteTable); i++)
+        LoadSpritePalette(&gMonIconPaletteTable[i]);
+}
+
+void FreeMonIconPalettes(void)
+{
+    u32 i;
+	
+    for (i = 0; i < ARRAY_COUNT(gMonIconPaletteTable); i++)
+        FreeSpritePaletteByTag(gMonIconPaletteTable[i].tag);
+}
+
+void LoadMonIconPalette(u32 species)
+{
+    u32 palIndex = gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex;
+	
+    if (IndexOfSpritePaletteTag(gMonIconPaletteTable[palIndex].tag) == 0xFF)
+        LoadSpritePalette(&gMonIconPaletteTable[palIndex]);
+}
+
+void FreeMonIconPalette(u32 species)
+{
+    FreeSpritePaletteByTag(gMonIconPaletteTable[GetMonIconPalIndex(species)].tag);
+}
+
+void LoadMonIconPaletteIdxAt(u32 palIdx, u32 offset)
+{
+	LoadPalette(gMonIconPaletteTable[palIdx].data, offset, 0x20);
+}
+
+void LoadMonIconPalettesAt(u32 offset)
+{
+    u32 i;
+	
+    if (offset <= 0x100 - 0x60)
+    {
+        for (i = 0; i < ARRAY_COUNT(gMonIconPaletteTable); i++)
+        {
+			LoadMonIconPaletteIdxAt(i, offset);
+            offset += 0x10;
+        }
+    }
+}
+
+u32 GetMonIconPalIndex(u32 species)
+{
+    return gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex;
+}
+
+const u16 *GetMonIconPalettePtr(u32 species)
+{
+    return gMonIconPaletteTable[GetMonIconPalIndex(species)].data;
+}
+
+void LoadMonIconGraphicsInWindow(u32 windowId, u32 species)
+{
+	BlitBitmapToWindow(windowId, GetMonIconPtr(species), 0, 0, 32, 32);
 }

@@ -8,13 +8,13 @@ void m4aSoundVSyncOn(void);
 
 void m4aSoundInit(void);
 void m4aSoundMain(void);
-void m4aSongNumStart(u16 n);
-void m4aSongNumStop(u16 n);
+void m4aSongNumStart(u32 n);
+void m4aSongNumStop(u32 n);
 void m4aMPlayAllStop(void);
 void m4aMPlayContinue(struct MusicPlayerInfo *mplayInfo);
-void m4aMPlayFadeOut(struct MusicPlayerInfo *mplayInfo, u16 speed);
-void m4aMPlayFadeOutTemporarily(struct MusicPlayerInfo *mplayInfo, u16 speed);
-void m4aMPlayFadeIn(struct MusicPlayerInfo *mplayInfo, u16 speed);
+void m4aMPlayFadeOut(struct MusicPlayerInfo *mplayInfo, u32 speed);
+void m4aMPlayFadeOutTemporarily(struct MusicPlayerInfo *mplayInfo, u32 speed);
+void m4aMPlayFadeIn(struct MusicPlayerInfo *mplayInfo, u32 speed);
 void m4aMPlayImmInit(struct MusicPlayerInfo *mplayInfo);
 
 extern struct MusicPlayerInfo gMPlayInfo_BGM;

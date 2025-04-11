@@ -88,7 +88,7 @@ void AgbMain()
 #if MODERN
     // Modern compilers are liberal with the stack on entry to this function,
     // so RegisterRamReset may crash if it resets IWRAM.
-    RegisterRamReset(RESET_ALL & ~RESET_IWRAM);
+    RegisterRamReset(RESET_ALL & ~(RESET_IWRAM));
     asm("mov\tr1, #0xC0\n"
         "\tlsl\tr1, r1, #0x12\n"
         "\tmov\tr2, #0xFC\n"
@@ -146,25 +146,25 @@ void AgbMain()
 #endif
 
 #if REVISION == 1
-    if (gFlashMemoryPresent != TRUE)
+    if (!gFlashMemoryPresent)
         SetMainCallback2(CB2_FlashNotDetectedScreen);
 #endif
 
     gLinkTransferringData = FALSE;
 
-    for (;;)
+    while (TRUE)
     {
 		RtcCalcLocalTime();
         ReadKeys();
             
-        if (gSoftResetDisabled == FALSE && (gMain.heldKeysRaw & A_BUTTON) && (gMain.heldKeysRaw & B_START_SELECT) == B_START_SELECT)
+        if (!gSoftResetDisabled && (gMain.heldKeysRaw & A_BUTTON) && (gMain.heldKeysRaw & B_START_SELECT) == B_START_SELECT)
         {
             rfu_REQ_stopMode();
             rfu_waitREQComplete();
             DoSoftReset();
         }
 
-        if (Overworld_SendKeysToLinkIsRunning() == TRUE)
+        if (Overworld_SendKeysToLinkIsRunning())
         {
             gLinkTransferringData = TRUE;
             UpdateLinkAndCallCallbacks();
@@ -175,7 +175,7 @@ void AgbMain()
             gLinkTransferringData = FALSE;
             UpdateLinkAndCallCallbacks();
 
-            if (Overworld_RecvKeysFromLinkIsRunning() == 1)
+            if (Overworld_RecvKeysFromLinkIsRunning())
             {
                 gMain.newKeys = 0;
                 ClearSpriteCopyRequests();
@@ -184,7 +184,6 @@ void AgbMain()
                 gLinkTransferringData = FALSE;
             }
         }
-
         PlayTimeCounter_Update();
         MapMusicMain();
         WaitForVBlank();
@@ -266,7 +265,8 @@ void InitKeys(void)
 static void ReadKeys(void)
 {
     u16 keyInput = REG_KEYINPUT ^ KEYS_MASK;
-    gMain.newKeysRaw = keyInput & ~gMain.heldKeysRaw;
+	
+    gMain.newKeysRaw = keyInput & ~(gMain.heldKeysRaw);
     gMain.newKeys = gMain.newKeysRaw;
     gMain.newAndRepeatedKeys = gMain.newKeysRaw;
     
@@ -280,11 +280,8 @@ static void ReadKeys(void)
             gMain.keyRepeatCounter = gKeyRepeatContinueDelay;
         }
     }
-    else
-    {
-        // If there is no input or the input has changed, reset the counter.
+    else // If there is no input or the input has changed, reset the counter.
         gMain.keyRepeatCounter = gKeyRepeatStartDelay;
-    }
 
     gMain.heldKeysRaw = keyInput;
     gMain.heldKeys = gMain.heldKeysRaw;
@@ -295,7 +292,7 @@ static void ReadKeys(void)
 
 void InitIntrHandlers(void)
 {
-    int i;
+    u32 i;
 
     for (i = 0; i < INTR_COUNT; i++)
         gIntrTable[i] = gIntrTableTemplate[i];
@@ -413,7 +410,7 @@ static void IntrDummy(void)
 
 static void WaitForVBlank(void)
 {
-    gMain.intrCheck &= ~INTR_FLAG_VBLANK;
+    gMain.intrCheck &= ~(INTR_FLAG_VBLANK);
 	
 	if (!gWirelessCommType)
 		VBlankIntrWait();

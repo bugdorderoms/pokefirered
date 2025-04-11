@@ -821,7 +821,7 @@ static void Task_HofPC_DrawSpritesPrintText(u8 taskId)
     StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Hall Of Fame No. {STR_VAR_1}"));
 
     TopBarWindowPrintTwoStrings(gStringVar4, gTasks[taskId].data[0] <= 0 ? COMPOUND_STRING("{DPAD_UPDOWN}Pick {A_BUTTON}{B_BUTTON}Cancel")
-	: COMPOUND_STRING("{DPAD_UPDOWN}Pick {A_BUTTON}NEXT {B_BUTTON}Cancel"), 0, 0, TRUE);
+	: COMPOUND_STRING("{DPAD_UPDOWN}Pick {A_BUTTON}NEXT {B_BUTTON}Cancel"), FALSE, TRUE);
 
     gTasks[taskId].func = Task_HofPC_PrintMonInfo;
 }
@@ -943,7 +943,7 @@ static void Task_HofPC_HandleExit(u8 taskId)
 
 static void Task_HofPC_PrintDataIsCorrupted(u8 taskId)
 {
-    TopBarWindowPrintString(COMPOUND_STRING("{A_BUTTON}Exit"), 8, TRUE);
+    TopBarWindowPrintString(COMPOUND_STRING("{A_BUTTON}Exit"), TRUE);
     DrawDialogueFrame(0, 0);
     AddTextPrinterParameterized2(0, 2, COMPOUND_STRING("The Hall Of Fame data is\ncorrupted."), 0, NULL, 2, 1, 3);
     CopyWindowToVram(0, COPYWIN_BOTH);

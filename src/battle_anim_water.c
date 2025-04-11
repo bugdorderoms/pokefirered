@@ -536,6 +536,17 @@ const struct SpriteTemplate gWaterGeyserSpriteTemplate =
     .callback = AnimGeyserSprite,
 };
 
+const struct SpriteTemplate gBeesTrapSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BEE,
+    .paletteTag = ANIM_TAG_BEE,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = sSchoolingFishAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimParticleInVortex,
+};
+
 // Creates the Rain Dance's water drop sprites or the ion sprite in Ion Deluge's anim.
 // arg 0: which sprite to create
 // arg 1: creation delay

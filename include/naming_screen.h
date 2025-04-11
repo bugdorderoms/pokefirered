@@ -10,6 +10,6 @@
 #define NAMING_SCREEN_RIVAL         4
 #define NAMING_SCREEN_MYSTERY_GIFT  5
 
-void DoNamingScreen(u8 templateNum, u8 *destBuffer, u16 monSpecies, u16 monGender, MainCallback returnCallback);
+void DoNamingScreen(u32 templateNum, u8 *destBuffer, u32 monSpecies, u32 monGender, MainCallback returnCallback);
 
 #endif // GUARD_NAMING_SCREEN_H

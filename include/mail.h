@@ -7,6 +7,6 @@
 
 #define ITEM_TO_MAIL(itemId) (itemId - ITEM_ORANGE_MAIL)
 
-void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool8 messageExists);
+void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool32 messageExists);
 
 #endif // GUARD_MAIL_H

@@ -6,13 +6,13 @@
 #include "constants/songs.h"
 
 static void Task_MinigameCountdown(u8 taskId);
-static bool32 RunMinigameCountdownDigitsAnim(u8 spriteId);
-static void StartStartGraphic(u8 spriteId1, u8 spriteId2, u8 spriteId3);
-static bool32 IsStartGraphicAnimRunning(u8 spriteId);
+static bool32 RunMinigameCountdownDigitsAnim(u32 spriteId);
+static void StartStartGraphic(u32 spriteId2, u32 spriteId3);
+static bool32 IsStartGraphicAnimRunning(u32 spriteId);
 static void SpriteCB_Start(struct Sprite * sprite);
-static void Load321StartGfx(u16 tilesTag, u16 palTag);
-static u8 CreateNumberSprite(u16 tilesTag, u16 palTag, s16 x, s16 y, u8 subpriority);
-static void CreateStartSprite(u16 tilesTag, u16 palTag, s16 x, s16 y, u8 subpriority, s16 * spriteId2_p, s16 * spriteId3_p);
+static void Load321StartGfx(u32 tilesTag, u32 palTag);
+static u32 CreateNumberSprite(u32 tilesTag, u32 palTag, s16 x, s16 y, u32 subpriority);
+static void CreateStartSprite(u32 tilesTag, u32 palTag, s16 x, s16 y, u32 subpriority, s16 * spriteId2_p, s16 * spriteId3_p);
 
 #define tState       data[0]
 #define tTilesTag    data[2]
@@ -24,9 +24,9 @@ static void CreateStartSprite(u16 tilesTag, u16 palTag, s16 x, s16 y, u8 subprio
 #define tSpriteId2   data[8]
 #define tSpriteId3   data[9]
 
-void StartMinigameCountdown(u16 tilesTag, u16 palTag, s16 x, s16 y, u8 subpriority)
+void StartMinigameCountdown(u32 tilesTag, u32 palTag, s16 x, s16 y, u32 subpriority)
 {
-    u8 taskId = CreateTask(Task_MinigameCountdown, 80);
+    u32 taskId = CreateTask(Task_MinigameCountdown, 80);
     gTasks[taskId].tTilesTag = tilesTag;
     gTasks[taskId].tPalTag = palTag;
     gTasks[taskId].tX = x;
@@ -54,7 +54,7 @@ static void Task_MinigameCountdown(u8 taskId)
     case 1:
         if (!RunMinigameCountdownDigitsAnim(tSpriteId1))
         {
-            StartStartGraphic(tSpriteId1, tSpriteId2, tSpriteId3);
+            StartStartGraphic(tSpriteId2, tSpriteId3);
             DestroySpriteAndFreeMatrix(&gSprites[tSpriteId1]);
             tState++;
         }
@@ -72,7 +72,7 @@ static void Task_MinigameCountdown(u8 taskId)
     }
 }
 
-static bool32 RunMinigameCountdownDigitsAnim(u8 spriteId)
+static bool32 RunMinigameCountdownDigitsAnim(u32 spriteId)
 {
     struct Sprite * sprite = &gSprites[spriteId];
 
@@ -86,6 +86,7 @@ static bool32 RunMinigameCountdownDigitsAnim(u8 spriteId)
     case 1:
         if (sprite->data[2] == 0)
             PlaySE(SE_BALL_BOUNCE_2);
+		
         if (++sprite->data[2] >= 20)
         {
             sprite->data[2] = 0;
@@ -107,6 +108,7 @@ static bool32 RunMinigameCountdownDigitsAnim(u8 spriteId)
         break;
     case 4:
         sprite->y -= 4;
+		
         if (++sprite->data[2] >= 8)
         {
             if (sprite->data[4] < 2)
@@ -124,6 +126,7 @@ static bool32 RunMinigameCountdownDigitsAnim(u8 spriteId)
         break;
     case 5:
         sprite->y += 4;
+		
         if (++sprite->data[2] >= 8)
         {
             sprite->data[2] = 0;
@@ -144,7 +147,7 @@ static bool32 RunMinigameCountdownDigitsAnim(u8 spriteId)
     return TRUE;
 }
 
-static void StartStartGraphic(u8 spriteId1, u8 spriteId2, u8 spriteId3)
+static void StartStartGraphic(u32 spriteId2, u32 spriteId3)
 {
     gSprites[spriteId2].y2 = -40;
     gSprites[spriteId3].y2 = -40;
@@ -154,9 +157,9 @@ static void StartStartGraphic(u8 spriteId1, u8 spriteId2, u8 spriteId3)
     gSprites[spriteId3].callback = SpriteCB_Start;
 }
 
-static bool32 IsStartGraphicAnimRunning(u8 spriteId)
+static bool32 IsStartGraphicAnimRunning(u32 spriteId)
 {
-    return gSprites[spriteId].callback == SpriteCB_Start;
+    return (gSprites[spriteId].callback == SpriteCB_Start);
 }
 
 static void SpriteCB_Start(struct Sprite * sprite)
@@ -213,7 +216,7 @@ static void SpriteCB_Start(struct Sprite * sprite)
 static const u16 sSpritePal_321Start[] = INCBIN_U16("graphics/link_games/unk_847a348.gbapal");
 static const u16 sSpriteSheet_321Start[] = INCBIN_U16("graphics/link_games/unk_847a348.4bpp.lz");
 
-static void Load321StartGfx(u16 tilesTag, u16 palTag)
+static void Load321StartGfx(u32 tilesTag, u32 palTag)
 {
     struct CompressedSpriteSheet spriteSheet = {(const void *)sSpriteSheet_321Start, 0xE00};
     struct SpritePalette spritePalette = {sSpritePal_321Start};
@@ -301,7 +304,7 @@ static const union AffineAnimCmd *const sAffineAnimTable_Numbers[] = {
     sAffineAnim_Numbers_3
 };
 
-static u8 CreateNumberSprite(u16 tilesTag, u16 palTag, s16 x, s16 y, u8 subpriority)
+static u32 CreateNumberSprite(u32 tilesTag, u32 palTag, s16 x, s16 y, u32 subpriority)
 {
     struct SpriteTemplate spriteTemplate = {
         .oam = &sOamData_Numbers,
@@ -314,7 +317,7 @@ static u8 CreateNumberSprite(u16 tilesTag, u16 palTag, s16 x, s16 y, u8 subprior
     return CreateSprite(&spriteTemplate, x, y, subpriority);
 }
 
-static void CreateStartSprite(u16 tilesTag, u16 palTag, s16 x, s16 y, u8 subpriority, s16 * spriteId2_p, s16 * spriteId3_p)
+static void CreateStartSprite(u32 tilesTag, u32 palTag, s16 x, s16 y, u32 subpriority, s16 * spriteId2_p, s16 * spriteId3_p)
 {
     struct SpriteTemplate spriteTemplate = {
         .oam = &sOamData_Start,

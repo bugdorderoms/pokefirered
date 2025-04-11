@@ -25,6 +25,7 @@
 #include "constants/songs.h"
 #include "text_window.h"
 #include "trig.h"
+#include "math_util.h"
 #include "m4a.h"
 #include "util.h"
 #include "graphics.h"

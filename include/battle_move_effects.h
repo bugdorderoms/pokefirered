@@ -221,7 +221,6 @@ enum
 #define EFFECT_POWER_SPLIT                  252
 #define EFFECT_GUARD_SPLIT                  253
 #define EFFECT_STICKY_WEB                   254
-#define EFFECT_SPECIAL_DEFENSE_DOWN_HIT_2   258
 #define EFFECT_SIMPLE_BEAM                  259
 #define EFFECT_ENTRAINMENT                  260
 #define EFFECT_HEAL_PULSE                   261
@@ -335,7 +334,6 @@ enum
 #define EFFECT_STEEL_BEAM                   386
 #define EFFECT_EXTREME_EVOBOOST             387
 #define EFFECT_DAMAGE_SET_TERRAIN           388 // genesis supernova
-#define EFFECT_DARK_VOID                    389
 #define EFFECT_PLEDGE                       390
 #define EFFECT_FUSION_COMBO                 393
 #define EFFECT_ALWAYS_CRIT 397

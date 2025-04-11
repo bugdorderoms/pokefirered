@@ -23,12 +23,14 @@
 // Flag IDs for sending link data
 #define INITIATE_TRADE  1
 #define CANCEL_TRADE    2
+
 #define WANTS_TO_TRADE   1
 #define WANTS_TO_CANCEL  2
+
 #define READY_FINISH_TRADE  1
 #define FINISH_TRADE        2
 
-// Return values for CanTradeSelectedMon and CanSpinTradeMon
+// Return values for TestWhetherSelectedMonCanBeTraded and CanSpinTradeMon
 #define CAN_TRADE_MON           0
 #define CANT_TRADE_LAST_MON     1
 #define CANT_TRADE_NATIONAL     2

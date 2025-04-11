@@ -166,7 +166,7 @@ static void CB2_CheckMail(void)
 {
     struct Mail mail;
     mail.itemId = gSpecialVar_ItemId;
-    ReadMail(&mail, CB2_BagMenuFromStartMenu, 0);
+    ReadMail(&mail, CB2_BagMenuFromStartMenu, FALSE);
 }
 
 void FieldUseFunc_OrangeMail(u8 taskId)

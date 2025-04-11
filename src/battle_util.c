@@ -1881,6 +1881,20 @@ u32 AtkCanceller_UnableToUseMove(void)
 				}
 				++gBattleStruct->atkCancellerTracker;
 				break;
+			case CANCELLER_SIGNATURE_MOVE:
+				switch (gCurrentMove)
+				{
+					case MOVE_DARK_VOID:
+						if (SpeciesToNationalPokedexNum(gBattleMons[gBattlerAttacker].species) != NATIONAL_DEX_DARKRAI)
+						{
+							gBattlescriptCurrInstr = BattleScript_MoveUsedSignatureMove;
+							gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+							++effect;
+						}
+						break;
+				}
+				++gBattleStruct->atkCancellerTracker;
+				break;
 			case CANCELLER_GRAVITY: // check gravity banned move
 			case CANCELLER_GRAVITY_2:
 			    if ((gFieldStatus & STATUS_FIELD_GRAVITY) && gBattleMoves[gCurrentMove].flags.gravityBanned)
@@ -2045,7 +2059,7 @@ u32 AtkCanceller_UnableToUseMove(void)
 							gBattlerTarget = gBattleStruct->battlers[gBattlerAttacker].bideTakenDamageBattler;
 							
 							if (!IsBattlerAlive(gBattlerTarget))
-								gBattlerTarget = GetMoveTarget(gCurrentMove, MOVE_TARGET_SELECTED + 1);
+								gBattlerTarget = gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(gCurrentMove, MOVE_TARGET_SELECTED + 1);
 							
 							gBattlescriptCurrInstr = BattleScript_BideAttack;
 						}
@@ -2479,16 +2493,23 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
 							}
 							break;
 						case ABILITY_IMPOSTER:
-							if (IsBattlerAlive(BATTLE_OPPOSITE(battler)) && !gDisableStructs[battler].imposterActivated && TryTransformIntoBattler(battler, BATTLE_OPPOSITE(battler)))
+						{
+							u32 opposingBattler = BATTLE_OPPOSITE(battler);
+							
+							if (IsDoubleBattleForBattler(opposingBattler))
+								opposingBattler = BATTLE_PARTNER(opposingBattler);
+							
+							if (IsBattlerAlive(opposingBattler) && !gDisableStructs[battler].imposterActivated && TryTransformIntoBattler(battler, opposingBattler))
 							{
 								gDisableStructs[battler].imposterActivated = TRUE;
 								SaveAttackerToStack(battler);
-								SaveTargetToStack(BATTLE_OPPOSITE(battler));
+								SaveTargetToStack(opposingBattler);
 								gBattleStruct->battlers[battler].abilityOverride = ability;
 								BattleScriptPushCursorAndCallback(BattleScript_ImposterActivates);
 								++effect;
 							}
 							break;
+						}
 						case ABILITY_TURBOBLAZE:
 							if (!gSpecialStatuses[battler].switchInAbilityDone)
 							{
@@ -3430,7 +3451,8 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
 						}
 						break;
 					case ABILITY_GULP_MISSILE: // Catch prey
-					    if (GetActiveGimmick(battler) != GIMMICK_DYNAMAX && ((gCurrentMove == MOVE_SURF && BATTLER_DAMAGED(gBattlerTarget)) || (gStatuses3[battler] & STATUS3_UNDERWATER)))
+					    if (IsBattlerAlive(battler) && GetActiveGimmick(battler) != GIMMICK_DYNAMAX && ((gCurrentMove == MOVE_SURF && BATTLER_DAMAGED(gBattlerTarget))
+						|| (gStatuses3[battler] & STATUS3_UNDERWATER)))
 						{
 							u32 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_HP);
 							
@@ -4570,10 +4592,6 @@ u32 GetMoveTarget(u32 move, u32 setTarget)
 			targetBattler = gBattlerAttacker;
 			break;
 	}
-	
-	if (!gBattleStruct->dancer.inProgress)
-		gBattleStruct->battlers[gBattlerAttacker].moveTarget = targetBattler;
-	
     return targetBattler;
 }
 
@@ -4818,6 +4836,7 @@ bool32 IsBattlerAlive(u32 battlerId)
 {
 	if (battlerId >= gBattlersCount || gBattleMons[battlerId].hp == 0 || (gAbsentBattlerFlags & Bit(battlerId)))
 		return FALSE;
+	
 	return TRUE;
 }
 
@@ -5559,9 +5578,9 @@ u32 CountAliveMonsInBattle(u32 battlerId, u32 caseId)
     switch (caseId)
     {
     case BATTLE_ALIVE_SIDE:
-        for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+        for (i = 0; i < NUM_BATTLERS_PER_SIDE; i++, battlerId = BATTLE_PARTNER(battlerId))
         {
-            if (IsBattlerAlive(i) && IsBattlerAlly(battlerId, i))
+            if (IsBattlerAlive(battlerId)) // Can't use IsBattlerAlly bc battlerId may be invalid
                 retVal++;
         }
         break;

@@ -6,6 +6,7 @@
 #include "battle_queued_effects.h"
 #include "battle_scripts.h"
 #include "calculate_base_damage.h"
+#include "math_util.h"
 #include "set_effect.h"
 #include "constants/battle_string_ids.h"
 #include "constants/moves.h"
@@ -255,9 +256,9 @@ static u32 GetDmgBasedOnHazardType(u32 battlerId, u32 hazardType)
 	
 	GetBattlerTypes(battlerId, types);
 	
-	multiplier = uq4_12_multiply(multiplier, ModifierToUq412(GetTypeModifier(hazardType, types[0])));
+	multiplier = uq4_12_mul(multiplier, ModifierToUq412(GetTypeModifier(hazardType, types[0])));
 	if (types[0] != types[1])
-		multiplier = uq4_12_multiply(multiplier, ModifierToUq412(GetTypeModifier(hazardType, types[1])));
+		multiplier = uq4_12_mul(multiplier, ModifierToUq412(GetTypeModifier(hazardType, types[1])));
 	
 	switch (multiplier)
 	{

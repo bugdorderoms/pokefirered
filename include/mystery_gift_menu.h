@@ -9,6 +9,6 @@ enum
 	MYSTERY_GIFT_CODE_SUCCESS, // Success on receive the gift
 };
 
-u8 GetMysteryGiftCodeState(const u8 *code);
+u32 GetMysteryGiftCodeState(const u8 *code);
 
 #endif //GUARD_MYSTERY_GIFT_MENU_H

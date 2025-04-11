@@ -1369,10 +1369,7 @@ static void PrintPokemonIconsOnCard(void)
         for (i = 0; i < PARTY_SIZE; i++)
         {
             if (sTrainerCardDataPtr->trainerCard.monSpecies[i])
-            {
-                u8 monSpecies = GetMonIconPaletteIndexFromSpecies(sTrainerCardDataPtr->trainerCard.monSpecies[i]);
-                WriteSequenceToBgTilemapBuffer(3, 16 * i + 224, xOffsets[i] + 3, 15, 4, 4, paletteSlots[monSpecies], 1);
-            }
+                WriteSequenceToBgTilemapBuffer(3, 16 * i + 224, xOffsets[i] + 3, 15, 4, 4, paletteSlots[GetMonIconPalIndex(sTrainerCardDataPtr->trainerCard.monSpecies[i])], 1);
         }
     }
 }
@@ -1382,6 +1379,7 @@ static void LoadMonIconGfx(void)
     u8 i;
 
     CpuCopy16(gMonIconPalettes, sTrainerCardDataPtr->monIconPals, 2 * ARRAY_COUNT(sTrainerCardDataPtr->monIconPals));
+	
     switch (sTrainerCardDataPtr->trainerCard.monIconTint)
     {
     case MON_ICON_TINT_NORMAL:
@@ -1396,12 +1394,10 @@ static void LoadMonIconGfx(void)
         TintPalette_SepiaTone(sTrainerCardDataPtr->monIconPals, 96);
         break;
     }
-
     LoadPalette(sTrainerCardDataPtr->monIconPals, 80, 192);
+	
     for (i = 0; i < PARTY_SIZE; i++)
-    {
-        LoadBgTiles(3, GetMonIconTiles(sTrainerCardDataPtr->trainerCard.monSpecies[i]), 512, 16 * i + 32);
-    }
+        LoadBgTiles(3, GetMonIconPtr(sTrainerCardDataPtr->trainerCard.monSpecies[i]), 512, 16 * i + 32);
 }
 
 static void PrintStickersOnCard(void)

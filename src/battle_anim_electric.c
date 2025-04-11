@@ -462,6 +462,17 @@ const struct SpriteTemplate gFlashCannonChargeOrbSpriteTemplate =
     .callback = AnimMoongeistBeamChargeOrb,
 };
 
+const struct SpriteTemplate gSeedFlareGreenChargeSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_CIRCLE_OF_LIGHT,
+    .paletteTag = ANIM_TAG_LEAF,
+    .oam = &gOamData_AffineNormal_ObjBlend_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_GrowingElectricOrb,
+    .callback = AnimGrowingChargeOrb,
+};
+
 // Animates the lightning sprite falling into the target.
 // arg 0: x pos
 // arg 1: y pos
@@ -489,24 +500,6 @@ static void AnimSparkElectricity(struct Sprite *sprite)
 {
     u32 matrixNum, battler = GetBattlerForAnimScript(gBattleAnimArgs[4]);
     s16 sineVal;
-
-    /* relevant for future aditions ?
-	switch (gBattleAnimArgs[4])
-    {
-    case 0:
-        battler = gBattleAnimAttacker;
-        break;
-    case 1:
-    default:
-        battler = gBattleAnimTarget;
-        break;
-    case 2:
-		battler = IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)) ? BATTLE_PARTNER(gBattleAnimAttacker) : gBattleAnimAttacker;
-        break;
-    case 3:
-		battler = IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimAttacker)) ? BATTLE_PARTNER(gBattleAnimTarget) : gBattleAnimTarget;
-        break;
-    }*/
 	
 	sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X);
 	sprite->y = GetBattlerSpriteCoord(battler, gBattleAnimArgs[5] ? BATTLER_COORD_Y_PIC_OFFSET : BATTLER_COORD_Y);

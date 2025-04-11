@@ -259,14 +259,14 @@
 	.byte \battler
 	.endm
 
-	.macro doublebattle_2D battler:req
+	.macro loadspriteimg tag:req
 	.byte 0x2d
-	.byte \battler
+	.2byte \tag
 	.endm
 
-	.macro doublebattle_2E battler:req
+	.macro loadspritepal tag:req
 	.byte 0x2e
-	.byte \battler
+	.2byte \tag
 	.endm
 
 	.macro stopsound

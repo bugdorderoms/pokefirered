@@ -133,7 +133,7 @@ static const struct {
     bool32 (*apply)(void);
 } sForcedMovementFuncs[] = {
     {MetatileBehavior_IsUnknownMovement48, ForcedMovement_Slip},
-    {MetatileBehavior_IsIce_2,             ForcedMovement_Slip},
+    {MetatileBehavior_IsIce,               ForcedMovement_Slip},
     {MetatileBehavior_IsWalkSouth,         ForcedMovement_WalkSouth},
     {MetatileBehavior_IsWalkNorth,         ForcedMovement_WalkNorth},
     {MetatileBehavior_IsWalkWest,          ForcedMovement_WalkWest},

@@ -7,10 +7,10 @@
 
 static EWRAM_DATA struct PokemonMarkMenu * sMenu = NULL;
 
-static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 paletteTag);
+static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u32 tilesTag, u32 paletteTag);
 static void SpriteCB_MarkingIcon(struct Sprite * sprite);
 static void SpriteCB_Cursor(struct Sprite * sprite);
-static struct Sprite * CreateMonMarkingSprite(u16 tilesTag, u16 paletteTag, const u16 *palette, u16 size);
+static struct Sprite * CreateMonMarkingSprite(u32 tilesTag, u32 paletteTag, const u16 *palette, u32 size);
 
 static const u16 sMonMarkingsPal[] = INCBIN_U16("graphics/misc/mon_markings.gbapal");
 static const u16 sMonMarkingsTiles[] = INCBIN_U16("graphics/misc/mon_markings.4bpp");
@@ -221,30 +221,37 @@ static void GetUserFrameForMonMarkings(void)
     CpuFill16(0, sMenu->menuWindowSpriteTiles, sizeof(sMenu->menuWindowSpriteTiles));
 }
 
-static bool8 DoLoadMonMarkingsFrameGfx(void)
+static bool32 DoLoadMonMarkingsFrameGfx(void)
 {
-    u16 i;
+    u32 i;
     u8 *menuWindowSpriteTiles = &sMenu->menuWindowSpriteTiles[256 * sMenu->tileLoadState];
+	
     switch (sMenu->tileLoadState)
     {
     case 0:
         CpuFastCopy(sMenu->frameTiles + 0x00, menuWindowSpriteTiles, 0x20);
+		
         for (i = 0; i < 6; i++)
             CpuFastCopy(sMenu->frameTiles + 0x20, menuWindowSpriteTiles + 0x20 * (i + 1), 0x20);
+		
         CpuFastCopy(sMenu->frameTiles + 0x40, menuWindowSpriteTiles + 0x20 * 7, 0x20);
         sMenu->tileLoadState++;
         break;
     default:
         CpuFastCopy(sMenu->frameTiles + 0x60, menuWindowSpriteTiles + 0x00, 0x20);
+		
         for (i = 0; i < 6; i++)
             CpuFastCopy(sMenu->frameTiles + 0x80, menuWindowSpriteTiles + 0x20 * (i + 1), 0x20);
+		
         CpuFastCopy(sMenu->frameTiles + 0xA0, menuWindowSpriteTiles + 0x20 * 7, 0x20);
         sMenu->tileLoadState++;
         break;
     case 13:
         CpuFastCopy(sMenu->frameTiles + 0xC0, menuWindowSpriteTiles + 0x00, 0x20);
+		
         for (i = 0; i < 6; i++)
             CpuFastCopy(sMenu->frameTiles + 0xE0, menuWindowSpriteTiles + 0x20 * (i + 1), 0x20);
+		
         CpuFastCopy(sMenu->frameTiles + 0x100, menuWindowSpriteTiles + 0x20 * 7, 0x20);
         sMenu->tileLoadState++;
         return FALSE;
@@ -257,13 +264,12 @@ static bool8 DoLoadMonMarkingsFrameGfx(void)
 void LoadMonMarkingsFrameGfx(void)
 {
     GetUserFrameForMonMarkings();
-	
     while (DoLoadMonMarkingsFrameGfx()) {}
 }
 
-void DrawMonMarkingsMenu(u8 markings, s16 x, s16 y)
+void DrawMonMarkingsMenu(u32 markings, s16 x, s16 y)
 {
-    u16 i;
+    u32 i;
 	
     sMenu->cursorPos = 0;
     sMenu->markings = markings;
@@ -276,7 +282,7 @@ void DrawMonMarkingsMenu(u8 markings, s16 x, s16 y)
 
 void TeardownMonMarkingsMenu(void)
 {
-    u16 i;
+    u32 i;
 	
     for (i = 0; i < 3; i++)
         FreeSpriteTilesByTag(sMenu->baseTileTag + i);
@@ -298,37 +304,45 @@ void TeardownMonMarkingsMenu(void)
     }
     if (sMenu->unkSprite != NULL)
         DestroySprite(sMenu->unkSprite);
+	
     if (sMenu->menuTextSprite != NULL)
         DestroySprite(sMenu->menuTextSprite);
 }
 
-bool8 MonMarkingsHandleInput(void)
+bool32 MonMarkingsHandleInput(void)
 {
-    u16 i;
+    u32 i;
 	
     if (JOY_NEW(DPAD_UP))
     {
         PlaySE(SE_SELECT);
+		
         if (--sMenu->cursorPos < 0)
             sMenu->cursorPos = 5;
+		
         return TRUE;
     }
     if (JOY_NEW(DPAD_DOWN))
     {
         PlaySE(SE_SELECT);
+		
         if (++sMenu->cursorPos > 5)
             sMenu->cursorPos = 0;
+		
         return TRUE;
     }
     if (JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
+		
         switch (sMenu->cursorPos)
         {
         case 4:
             sMenu->markings = 0;
+			
             for (i = 0; i < 4; i++)
                 sMenu->markings |= sMenu->markingsArray[i] << i;
+			
             return FALSE;
         case 5:
             return FALSE;
@@ -344,10 +358,9 @@ bool8 MonMarkingsHandleInput(void)
     return TRUE;
 }
 
-static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 paletteTag)
+static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u32 tilesTag, u32 paletteTag)
 {
-    u16 i;
-    u8 spriteId;
+    u32 i, spriteId;
     struct SpriteSheet sheets[] = {
         {
             .data = sMenu->menuWindowSpriteTiles,
@@ -383,6 +396,7 @@ static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 palette
     for (i = 0; i < 2; i++)
     {
         spriteId = CreateSprite(&sprTemplate, x + 32, y + 32, 1);
+		
         if (spriteId != MAX_SPRITES)
         {
             sMenu->menuWindowSprites[i] = &gSprites[spriteId];
@@ -394,7 +408,6 @@ static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 palette
             return;
         }
     }
-
     sMenu->menuWindowSprites[1]->y = y + 96;
 
     sprTemplate.tileTag++;
@@ -406,6 +419,7 @@ static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 palette
     for (i = 0; i < 4; i++)
     {
         spriteId = CreateSprite(&sprTemplate, x + 32, y + 16 + 16 * i, 0);
+		
         if (spriteId != MAX_SPRITES)
         {
             sMenu->menuMarkingSprites[i] = &gSprites[spriteId];
@@ -417,7 +431,6 @@ static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 palette
             return;
         }
     }
-
     sprTemplate.callback = SpriteCallbackDummy;
 
     spriteId = CreateSprite(&sprTemplate, 0, 0, 0);
@@ -433,9 +446,7 @@ static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 palette
         CalcCenterToCornerVec(sMenu->menuTextSprite, 1, 2, 0);
     }
     else
-    {
         sMenu->menuTextSprite = NULL;
-    }
 
     sprTemplate.callback = SpriteCB_Cursor;
 
@@ -448,9 +459,7 @@ static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u16 tilesTag, u16 palette
         StartSpriteAnim(sMenu->unkSprite, 8);
     }
     else
-    {
         sMenu->unkSprite = NULL;
-    }
 }
 
 static void SpriteCB_MarkingIcon(struct Sprite * sprite)
@@ -466,23 +475,25 @@ static void SpriteCB_Cursor(struct Sprite * sprite)
     sprite->y = 16 * sMenu->cursorPos + sprite->data[0];
 }
 
-struct Sprite * CreateMonMarkingSprite_SelectCombo(u16 tileTag, u16 paletteTag, const u16 *palette)
+struct Sprite * CreateMonMarkingSprite_SelectCombo(u32 tileTag, u32 paletteTag, const u16 *palette)
 {
     if (palette == NULL)
         palette = sMonMarkingsPal;
+	
     return CreateMonMarkingSprite(tileTag, paletteTag, palette, 16);
 }
 
-struct Sprite * CreateMonMarkingSprite_AllOff(u16 tileTag, u16 paletteTag, const u16 *palette)
+struct Sprite * CreateMonMarkingSprite_AllOff(u32 tileTag, u32 paletteTag, const u16 *palette)
 {
     if (palette == NULL)
         palette = sMonMarkingsPal;
+	
     return CreateMonMarkingSprite(tileTag, paletteTag, palette, 1);
 }
 
-static struct Sprite * CreateMonMarkingSprite(u16 tileTag, u16 paletteTag, const u16 *palette, u16 size)
+static struct Sprite * CreateMonMarkingSprite(u32 tileTag, u32 paletteTag, const u16 *palette, u32 size)
 {
-    u8 spriteId;
+    u32 spriteId;
     struct SpriteTemplate sprTemplate;
     struct SpriteSheet sheet = { sMonMarkingsTiles, 0x80, tileTag };
     struct SpritePalette sprPalette = { palette, paletteTag };
@@ -507,7 +518,7 @@ static struct Sprite * CreateMonMarkingSprite(u16 tileTag, u16 paletteTag, const
         return NULL;
 }
 
-void RequestDma3LoadMonMarking(u8 markings, void * dest)
+void RequestDma3LoadMonMarking(u32 markings, void * dest)
 {
     RequestDma3Copy(&sMonMarkingsTiles[64 * markings], dest, 0x80, DMA3_32BIT);
 }

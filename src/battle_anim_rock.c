@@ -332,6 +332,46 @@ const struct SpriteTemplate gStealthRockSpriteTemplate =
     .callback = AnimSpikes,
 };
 
+static const union AffineAnimCmd sAffineAnim_CrushGripHandOnOpponent[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 0, 1),
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sAffineAnim_CrushGripHandOnPlayer[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 96, 1), // 180 degree turn
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sAffineAnims_CrushGripHand[] =
+{
+    sAffineAnim_CrushGripHandOnOpponent,
+    sAffineAnim_CrushGripHandOnPlayer,
+};
+
+const struct SpriteTemplate gCrushGripHandSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FORCE_PALM,
+    .paletteTag = ANIM_TAG_FORCE_PALM,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_CrushGripHand,
+    .callback = AnimRockBlastRock,
+};
+
+const struct SpriteTemplate gSeedFlareGreenWavesSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FLYING_DIRT,
+    .paletteTag = ANIM_TAG_LEAF,
+    .oam = &gOamData_AffineOff_ObjNormal_32x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimDirtParticleAcrossScreen,
+};
+
 // Animates a falling rock into the target.
 // arg 0: x pos
 // arg 1: sprite anim num
@@ -545,6 +585,7 @@ static void AnimDirtParticleAcrossScreen(struct Sprite *sprite)
         {
 			gBattleAnimArgs[1] = -gBattleAnimArgs[1];
 			
+			sprite->data[5] = TRUE; // From right to left
             sprite->oam.matrixNum = ST_OAM_HFLIP;
             sprite->x = 304;            
         }
@@ -556,7 +597,6 @@ static void AnimDirtParticleAcrossScreen(struct Sprite *sprite)
 		
         sprite->data[1] = gBattleAnimArgs[1];
         sprite->data[2] = gBattleAnimArgs[2];
-		sprite->data[5] = gBattleAnimArgs[3];
     }
     else
     {
@@ -571,7 +611,7 @@ static void AnimDirtParticleAcrossScreen(struct Sprite *sprite)
 		
         if (!sprite->data[5])
         {
-            if (sprite->x + sprite->x2 > 272)
+            if (sprite->x + sprite->x2 > DISPLAY_WIDTH + 32)
                 sprite->callback = DestroyAnimSprite;
         }
         else

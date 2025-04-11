@@ -9,6 +9,7 @@
 #include "title_screen.h"
 #include "data.h"
 #include "item.h"
+#include "trade_scene.h"
 #include "list_menu.h"
 #include "script_pokemon_util.h"
 #include "link_rfu.h"
@@ -45,11 +46,11 @@ struct MGPokemon
 	u16 moves[MAX_MON_MOVES];
 	u8 ivs[NUM_STATS];
 	u8 level; // Irrelevant if it's a egg
-	u8 ballId:6; // Up to 63 poke balls, irrelevant if it's a egg
+	u8 ballId:NUM_POKEBALL_BITS; // Irrelevant if it's a egg
+	u8 shinyType:2;
 	u8 abilityNum:1;
 	u8 abilityHidden:1;
-	u8 shinyType:2;
-	u8 nature:5; // 0 = Random, Up to 31 natures
+	u8 nature:NUM_TYPES_BITS; // 0 = Random
 	u8 isEgg:1;
 };
 
@@ -80,11 +81,11 @@ struct MysteryGift
 	/*0x12*/ u16 flag; // If it's 0 the code always can be used
 };
 
-static u8 MysteryGift_GivePokemon(struct MysteryGift mysteryGift);
-static u8 MysteryGift_GiveItem(struct MysteryGift mysteryGift);
-static u8 MysteryGift_UnlockFeature(struct MysteryGift mysteryGift);
+static u32 MysteryGift_GivePokemon(struct MysteryGift mysteryGift);
+static u32 MysteryGift_GiveItem(struct MysteryGift mysteryGift);
+static u32 MysteryGift_UnlockFeature(struct MysteryGift mysteryGift);
 
-static u8 (*const sMysteryGiftGivePresentFuncs[MG_TYPES_COUNT])(struct MysteryGift) =
+static u32 (*const sMysteryGiftGivePresentFuncs[MG_TYPES_COUNT])(struct MysteryGift) =
 {
 	[MG_TYPE_GIVE_POKEMON]   = MysteryGift_GivePokemon,
 	[MG_TYPE_GIVE_ITEM]      = MysteryGift_GiveItem,
@@ -93,7 +94,7 @@ static u8 (*const sMysteryGiftGivePresentFuncs[MG_TYPES_COUNT])(struct MysteryGi
 
 #include "data/mystery_gifts.h"
 
-u8 GetMysteryGiftCodeState(const u8 *code)
+u32 GetMysteryGiftCodeState(const u8 *code)
 {
 	u32 i;
 	
@@ -111,15 +112,16 @@ u8 GetMysteryGiftCodeState(const u8 *code)
 	return MYSTERY_GIFT_CODE_INVALID;
 }
 
-static inline void TrySetMysteryGiftFlag(u16 flag)
+static inline void TrySetMysteryGiftFlag(u32 flag)
 {
 	if (flag != 0) // Set flag if code is't infinite
 		FlagSet(flag);
 }
 
-static u8 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
+static u32 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
 {
-	u8 i, j, nature, *ivs;
+	u32 i, j, nature;
+	u8 *ivs;
 	u16 moves[MAX_MON_MOVES];
 	struct Pokemon *mon;
 	const struct MGPokemon *mgPokemon = mysteryGift.present.GivePokemon;
@@ -172,9 +174,9 @@ static u8 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
 	}
 }
 
-static u8 MysteryGift_GiveItem(struct MysteryGift mysteryGift)
+static u32 MysteryGift_GiveItem(struct MysteryGift mysteryGift)
 {
-	u16 i;
+	u32 i;
 	const struct MGItem *mgItem = mysteryGift.present.GiveItem;
 	
 	for (i = 0; i < mysteryGift.presentsCount; i++)
@@ -194,7 +196,7 @@ static u8 MysteryGift_GiveItem(struct MysteryGift mysteryGift)
 	return MYSTERY_GIFT_CODE_SUCCESS;
 }
 
-static u8 MysteryGift_UnlockFeature(struct MysteryGift mysteryGift)
+static u32 MysteryGift_UnlockFeature(struct MysteryGift mysteryGift)
 {
 	const struct MGFeatureUnlock *mgFeature = mysteryGift.present.FeatureUnlock;
 	

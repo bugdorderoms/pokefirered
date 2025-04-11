@@ -540,6 +540,7 @@ SECTIONS {
         src/menu_indicators.o(.rodata);
         src/pokedex_area_markers.o(.rodata);
         src/pokemon_summary_screen.o(.rodata);
+		src/new_game.o(.rodata);
         src/wild_pokemon_area.o(.rodata);
         src/dynamic_placeholder_text_util.o(.rodata);
         src/berry_pouch.o(.rodata);

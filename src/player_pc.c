@@ -33,7 +33,7 @@ static void Task_TopMenuHandleInput(u8 taskId);
 static void Task_PlayerPcItemStorage(u8 taskId);
 static void Task_PlayerPcMailbox(u8 taskId);
 static void Task_PlayerPcTurnOff(u8 taskId);
-static void Task_CreateItemStorageSubmenu(u8 taskId, u8 cursorPos);
+static void Task_CreateItemStorageSubmenu(u32 taskId, u32 cursorPos);
 static void PrintStringOnWindow0WithDialogueFrame(const u8 *str);
 static void Task_TopMenu_ItemStorageSubmenu_HandleInput(u8 taskId);
 static void Task_PlayerPcDepositItem(u8 taskId);
@@ -44,7 +44,7 @@ static void CB2_ReturnFromWithdrawMenu(void);
 static void Task_WithdrawItemBeginFade(u8 taskId);
 static void Task_PlayerPcCancel(u8 taskId);
 static void Task_SetPageItemVars(u8 taskId);
-static u8 CountPCMail(void);
+static u32 CountPCMail(void);
 static void PCMailCompaction(void);
 static void Task_DrawMailboxPcMenu(u8 taskId);
 static void Task_MailboxPcHandleInput(u8 taskId);
@@ -129,7 +129,7 @@ static const struct WindowTemplate sWindowTemplate_ItemStorageSubmenu = {
 
 void NewGameInitPCItems(void)
 {
-    u8 i;
+    u32 i;
 	
 	ClearPCItemSlots();
 	
@@ -204,7 +204,7 @@ static void Task_ReturnToTopMenu(u8 taskId)
 
 static void Task_PlayerPcItemStorage(u8 taskId)
 {
-    Task_CreateItemStorageSubmenu(taskId, FALSE);
+    Task_CreateItemStorageSubmenu(taskId, 0);
     gTasks[taskId].func = Task_TopMenu_ItemStorageSubmenu_HandleInput;
 }
 
@@ -243,7 +243,7 @@ static void Task_PlayerPcTurnOff(u8 taskId)
     DestroyTask(taskId);
 }
 
-static void Task_CreateItemStorageSubmenu(u8 taskId, u8 cursorPos)
+static void Task_CreateItemStorageSubmenu(u32 taskId, u32 cursorPos)
 {
     s16 *data = gTasks[taskId].data;
     
@@ -389,9 +389,9 @@ static void Task_SetPageItemVars(u8 taskId)
 	gPlayerPcMenuManager.pageItems = gPlayerPcMenuManager.count >= 8 ? 8 : gPlayerPcMenuManager.count + 1;
 }
 
-static u8 CountPCMail(void)
+static u32 CountPCMail(void)
 {
-    u8 i, count;
+    u32 i, count;
 
     for (i = PC_MAIL_NUM(0), count = 0; i < MAIL_COUNT; i++)
     {
@@ -403,7 +403,7 @@ static u8 CountPCMail(void)
 
 static void PCMailCompaction(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (i = PC_MAIL_NUM(0); i < MAIL_COUNT - 1; i++)
     {
@@ -421,7 +421,7 @@ static void PCMailCompaction(void)
 
 static void Task_DrawMailboxPcMenu(u8 taskId)
 {
-    u8 windowId = MailboxPC_GetAddWindow(0);
+    u32 windowId = MailboxPC_GetAddWindow(0);
     s32 width = GetStringWidth(2, gText_Mailbox, 0);
 	
     MailboxPC_GetAddWindow(1);
@@ -501,7 +501,7 @@ static void Task_DestroyMailboxPcViewAndCancel(u8 taskId)
 
 static void Task_DrawMailSubmenu(u8 taskId)
 {
-    u8 windowId = MailboxPC_GetAddWindow(2);
+    u32 windowId = MailboxPC_GetAddWindow(2);
     PrintTextArray(windowId, 2, GetMenuCursorDimensionByFont(2, 0), 2, 16, 4, sMenuActions_MailSubmenu);
     Menu_InitCursor(windowId, 2, 0, 2, 16, 4, 0);
     ScheduleBgCopyTilemapToVram(0);
@@ -539,7 +539,7 @@ static void Task_WaitFadeAndReadSelectedMail(u8 taskId)
     {
         MailboxPC_DestroyListMenuBuffer();
         CleanupOverworldWindowsAndTilemaps();
-        ReadMail(&SELECTED_MAIL, CB2_SetCbToReturnToMailbox, 1);
+        ReadMail(&SELECTED_MAIL, CB2_SetCbToReturnToMailbox, TRUE);
         DestroyTask(taskId);
     }
 }
@@ -552,7 +552,7 @@ static void Task_WaitFadeAndReturnToMailboxPcInputHandler(u8 taskId)
 
 static void CB2_ReturnToMailbox(void)
 {
-    u8 taskId;
+    u32 taskId;
     
     LoadStdWindowFrameGfx();
     taskId = CreateTask(Task_WaitFadeAndReturnToMailboxPcInputHandler, 0);
@@ -625,9 +625,7 @@ static void Task_TryPutMailInBag_DestroyMsgIfSuccessful(u8 taskId)
 static void Task_PlayerPcGiveMailToMon(u8 taskId)
 {
     if (CalculatePlayerPartyCount() == 0)
-    {
         Task_Error_NoPokemon(taskId);
-    }
     else
     {
         FadeScreen(FADE_TO_BLACK, 0);
@@ -648,8 +646,8 @@ static void Task_WaitFadeAndGoToPartyMenu(u8 taskId)
 
 static void CB2_ReturnToMailboxPc_UpdateScrollVariables(void)
 {
-    u8 taskId = CreateTask(Task_WaitFadeAndReturnToMailboxPcInputHandler, 0);
-    u8 count = gPlayerPcMenuManager.count;
+    u32 taskId = CreateTask(Task_WaitFadeAndReturnToMailboxPcInputHandler, 0);
+    u32 count = gPlayerPcMenuManager.count;
     
     gPlayerPcMenuManager.count = CountPCMail();
     PCMailCompaction();

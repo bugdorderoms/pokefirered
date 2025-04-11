@@ -398,7 +398,7 @@ static void sub_80956A4(u8 x, u8 y)
     u16 species = GetCurrentBoxMonData(position, MON_DATA_SPECIES2);
 
     if (species != SPECIES_NONE)
-        BlitBitmapRectToWindow4BitTo8Bit(gPSSData->field_2200, GetMonIconPtr(species), 0, 0, 32, 32, 24 * x, 24 * y, 32, 32, GetValidMonIconPalIndex(species) + 8);
+        BlitBitmapRectToWindow4BitTo8Bit(gPSSData->field_2200, GetMonIconPtr(species), 0, 0, 32, 32, 24 * x, 24 * y, 32, 32, GetMonIconPalIndex(species) + 8);
 }
 
 static void sub_809572C(u8 x, u8 y)

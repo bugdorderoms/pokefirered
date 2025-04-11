@@ -689,9 +689,9 @@ void HandleLowHpMusicChange(struct Pokemon *mon, u32 battlerId)
     {
         gBattleSpritesDataPtr->battlerData[battlerId].lowHpSong = FALSE;
 		
-        if (!IsDoubleBattleForBattler(battlerId))
-            m4aSongNumStop(SE_LOW_HEALTH);
-        else if (IsDoubleBattleForBattler(battlerId) && !gBattleSpritesDataPtr->battlerData[BATTLE_PARTNER(battlerId)].lowHpSong)
+		m4aSongNumStop(SE_LOW_HEALTH);
+		
+        if (IsDoubleBattleForBattler(battlerId) && !gBattleSpritesDataPtr->battlerData[BATTLE_PARTNER(battlerId)].lowHpSong)
             m4aSongNumStop(SE_LOW_HEALTH);
     }
 }

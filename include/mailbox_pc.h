@@ -3,10 +3,10 @@
 
 #include "player_pc.h"
 
-bool8 MailboxPC_InitBuffers(u8 num);
-u8 MailboxPC_GetAddWindow(u8 winIdx);
-void MailboxPC_RemoveWindow(u8 winIdx);
-u8 MailboxPC_InitListMenu(struct PlayerPCItemPageStruct * playerPcStruct);
+bool32 MailboxPC_InitBuffers(u32 num);
+u32 MailboxPC_GetAddWindow(u32 winIdx);
+void MailboxPC_RemoveWindow(u32 winIdx);
+u32 MailboxPC_InitListMenu(struct PlayerPCItemPageStruct * playerPcStruct);
 void MailboxPC_AddScrollIndicatorArrows(struct PlayerPCItemPageStruct * playerPcStruct);
 void MailboxPC_DestroyListMenuBuffer(void);
 

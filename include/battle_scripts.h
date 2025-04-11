@@ -471,6 +471,7 @@ extern const u8 BattleScript_MegaEvolution[];
 extern const u8 BattleScript_PrimalReversion[];
 extern const u8 BattleScript_UltraBurst[];
 extern const u8 BattleScript_OpportunistActivates[];
+extern const u8 BattleScript_MoveUsedSignatureMove[];
 
 extern const u8 *const gBattlescriptsForUsingItem[];
 

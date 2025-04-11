@@ -68,7 +68,7 @@
 #define ANIM_TAG_ROCKS                      (ANIM_SPRITES_START + 58)
 #define ANIM_TAG_Z                          (ANIM_SPRITES_START + 59) // unused
 #define ANIM_TAG_FLASH_CANNON_BALL          (ANIM_SPRITES_START + 60)
-#define ANIM_TAG_AIR_SLASH                  (ANIM_SPRITES_START + 61) // unused
+#define ANIM_TAG_BEE                        (ANIM_SPRITES_START + 61)
 #define ANIM_TAG_SPINNING_GREEN_ORBS        (ANIM_SPRITES_START + 62) // unused
 #define ANIM_TAG_LEAF                       (ANIM_SPRITES_START + 63)
 #define ANIM_TAG_FINGER                     (ANIM_SPRITES_START + 64)
@@ -286,7 +286,7 @@
 #define ANIM_TAG_GEM_3                      (ANIM_SPRITES_START + 276) // unused
 #define ANIM_TAG_SLAM_HIT_2                 (ANIM_SPRITES_START + 277)
 #define ANIM_TAG_RECYCLE                    (ANIM_SPRITES_START + 278)
-#define ANIM_TAG_RED_PARTICLES              (ANIM_SPRITES_START + 279) // unused
+#define ANIM_TAG_BERRY_EATEN                (ANIM_SPRITES_START + 279)
 #define ANIM_TAG_PROTECT                    (ANIM_SPRITES_START + 280)
 #define ANIM_TAG_DIRT_MOUND                 (ANIM_SPRITES_START + 281)
 #define ANIM_TAG_SHOCK_3                    (ANIM_SPRITES_START + 282)
@@ -351,45 +351,48 @@
 #define SOUND_PAN_TARGET    63
 
 // move background ids
-#define BG_DARK 				0
-#define BG_GHOST 				1
-#define BG_PSYCHIC 				2
-#define BG_IMPACT_OPPONENT		3
-#define BG_IMPACT_PLAYER 		4
-#define BG_DRILL 				5
-#define BG_HIGHSPEED_OPPONENT 	6
-#define BG_HIGHSPEED_PLAYER 	7
-#define BG_THUNDER 				8
-#define BG_GUILLOTINE_OPPONENT 	9
-#define BG_GUILLOTINE_PLAYER 	10
-#define BG_ICE 					11
-#define BG_COSMIC 				12
-#define BG_IN_AIR 				13
-#define BG_SKY 					14
-#define BG_AURORA 				15
-#define BG_FISSURE 				16
-#define BG_BUG_OPPONENT 		17
-#define BG_BUG_PLAYER 			18
-#define BG_SOLARBEAM_OPPONENT 	19
-#define BG_SOLARBEAM_PLAYER 	20
-#define BG_WATER                21
-#define BG_HYDRO_CANNON         22
-#define BG_HYPER_BEAM           23
-#define BG_WATERFALL            24
-#define BG_NIGHTMARE            25
-#define BG_LEAF_STORM           26
-#define BG_GRASSY_TERRAIN       27
-#define BG_MISTY_TERRAIN        28
-#define BG_ELECTRIC_TERRAIN     29
-#define BG_PSYCHIC_TERRAIN      30
-#define BG_FIRE                 31
-#define BG_FOCUS_BLAST          32
-#define BG_AURA_SPHERE          33
-#define BG_GIGA_IMPACT_PLAYER   34
-#define BG_GIGA_IMPACT_OPPONENT 35
-#define BG_TRICK_ROOM           36
-#define BG_ROCK_WRECKER         37
-#define BG_GUNK_SHOT            38
+#define BG_DARK 				 0
+#define BG_GHOST 				 1
+#define BG_PSYCHIC 				 2
+#define BG_IMPACT_OPPONENT		 3
+#define BG_IMPACT_PLAYER 		 4
+#define BG_DRILL 				 5
+#define BG_HIGHSPEED_OPPONENT 	 6
+#define BG_HIGHSPEED_PLAYER 	 7
+#define BG_THUNDER 				 8
+#define BG_GUILLOTINE_OPPONENT 	 9
+#define BG_GUILLOTINE_PLAYER 	 10
+#define BG_ICE 					 11
+#define BG_COSMIC 				 12
+#define BG_IN_AIR 				 13
+#define BG_SKY 					 14
+#define BG_AURORA 				 15
+#define BG_FISSURE 				 16
+#define BG_BUG_OPPONENT 		 17
+#define BG_BUG_PLAYER 			 18
+#define BG_SOLARBEAM_OPPONENT 	 19
+#define BG_SOLARBEAM_PLAYER 	 20
+#define BG_WATER                 21
+#define BG_HYDRO_CANNON          22
+#define BG_HYPER_BEAM            23
+#define BG_WATERFALL             24
+#define BG_NIGHTMARE             25
+#define BG_LEAF_STORM            26
+#define BG_GRASSY_TERRAIN        27
+#define BG_MISTY_TERRAIN         28
+#define BG_ELECTRIC_TERRAIN      29
+#define BG_PSYCHIC_TERRAIN       30
+#define BG_FIRE                  31
+#define BG_FOCUS_BLAST           32
+#define BG_AURA_SPHERE           33
+#define BG_GIGA_IMPACT_PLAYER    34
+#define BG_GIGA_IMPACT_OPPONENT  35
+#define BG_TRICK_ROOM            36
+#define BG_ROCK_WRECKER          37
+#define BG_GUNK_SHOT             38
+#define BG_SPACIAL_REND_PLAYER   39
+#define BG_SPACIAL_REND_OPPONENT 40
+#define BG_DARK_VOID             41
 
 // table ids for general animations
 #define B_ANIM_FORM_CHANGE           0x0
@@ -447,6 +450,7 @@
 #define B_ANIM_SAFEGUARD             0x34
 #define B_ANIM_TRICK_ROOM            0x35
 #define B_ANIM_GRAVITY               0x36
+#define B_ANIM_LUNAR_DANCE_HEAL      0x37
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0

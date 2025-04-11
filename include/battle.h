@@ -629,7 +629,8 @@ struct BattleSpriteInfo
             u8 behindSubstitute:1;
             u8 flag_x8:1;
             u8 hpNumbersNoBars:1;
-			u8 unused:3;
+			u8 keepInvisible:1;
+			u8 unused:2;
 };
 
 struct BattleAnimationInfo

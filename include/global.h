@@ -43,43 +43,6 @@
     b = temp;               \
 }
 
-// useful math macros
-
-// Rounding value for Q4.12 fixed-point format
-#define UQ_4_12_SHIFT (12)
-#define UQ_4_12_ROUND ((1) << (UQ_4_12_SHIFT - 1))
-
-// Converts a number to Q8.8 fixed-point format
-#define Q_8_8(n) ((s16)((n) * 256))
-
-// Converts a number from Q8.8 fixed-point format
-#define Q_8_8_TO_INT(n) ((s16)((n) >> 8))
-
-// Converts a number to Q4.12 fixed-point format
-#define Q_4_12(n)  ((s16)((n) * 4096))
-#define UQ_4_12(n) ((u32)((n) * 4096 + 0.5))
-
-// Converts a number from Q4.12 fixed-point format
-#define Q_4_12_TO_INT(n) ((s16)((n) >> 12))
-
-// Converts a number to QN.S fixed-point format (16-bits)
-#define Q_N_S(s, n) ((s16)((n) * (1 << (s))))
-
-// converts a number from QN.S fixed-point format (16-bits)
-#define Q_N_S_TO_INT(s, n) ((s16)((n) >> (s)))
-
-// Converts a number to Q24.8 fixed-point format
-#define Q_24_8(n) ((s32)((n) << 8))
-
-// Converts a number from Q24.8 fixed-point format
-#define Q_24_8_TO_INT(n) ((s32)((n) >> 8))
-
-static inline u32 uq4_12_multiply(u32 a, u32 b)
-{
-    u32 product = (u32) a * b;
-    return (product + UQ_4_12_ROUND) >> UQ_4_12_SHIFT;
-}
-
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) >= (b) ? (a) : (b))
 
@@ -201,6 +164,47 @@ Input must be of the form (upper << lower) where upper can be up to 3, lower up 
 
 /* Will read a compressed bit stored by COMPRESS_BIT into a single byte */
 #define UNCOMPRESS_BITS(compressed) ((compressed >> 5) << (compressed & 0x1F))
+
+// __builtin_clz implementation.
+// Counts the number of leading zeros of an integer.
+#define clz(x) \
+    (((x) == 0) ? 32 : \
+	((x) & Bit(31)) ? 0 : \
+    ((x) & Bit(30)) ? 1 : \
+    ((x) & Bit(29)) ? 2 : \
+    ((x) & Bit(28)) ? 3 : \
+    ((x) & Bit(27)) ? 4 : \
+    ((x) & Bit(26)) ? 5 : \
+    ((x) & Bit(25)) ? 6 : \
+    ((x) & Bit(24)) ? 7 : \
+    ((x) & Bit(23)) ? 8 : \
+    ((x) & Bit(22)) ? 9 : \
+    ((x) & Bit(21)) ? 10 : \
+    ((x) & Bit(20)) ? 11 : \
+    ((x) & Bit(19)) ? 12 : \
+    ((x) & Bit(18)) ? 13 : \
+    ((x) & Bit(17)) ? 14 : \
+    ((x) & Bit(16)) ? 15 : \
+    ((x) & Bit(15)) ? 16 : \
+    ((x) & Bit(14)) ? 17 : \
+    ((x) & Bit(13)) ? 18 : \
+    ((x) & Bit(12)) ? 19 : \
+    ((x) & Bit(11)) ? 20 : \
+    ((x) & Bit(10)) ? 21 : \
+    ((x) & Bit(9)) ? 22 : \
+    ((x) & Bit(8)) ? 23 : \
+    ((x) & Bit(7)) ? 24 : \
+    ((x) & Bit(6)) ? 25 : \
+    ((x) & Bit(5)) ? 26 : \
+    ((x) & Bit(4)) ? 27 : \
+    ((x) & Bit(3)) ? 28 : \
+    ((x) & Bit(2)) ? 29 : \
+    ((x) & Bit(1)) ? 30 : \
+    31)
+
+// This macro can be used to determine the number of bits required to store a value,
+// which is useful for optimizing memory usage in data structures.
+#define BITS_REQUIRED(value) ((value) == 0 ? 1 : (sizeof(value) * 8 - clz(value)))
 
 // This macro is required to prevent the compiler from optimizing
 // a dpad up/down check in sub_812CAD8 (fame_checker.c).
