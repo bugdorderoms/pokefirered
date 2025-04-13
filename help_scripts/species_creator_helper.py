@@ -165,7 +165,6 @@ cries_data_file.close()
 frontpics = []
 backpics = []
 palettes = []
-shiny_palettes = []
 icons = []
 footprints = []
 
@@ -183,17 +182,14 @@ for path in glob.glob(dir + '/**', recursive=True):
     if os.path.exists(f'{path}\\front.png'):
         frontpics.append(f'static const u32 sMonFrontPic_{formatedExtension}[] = INCBIN_U32("graphics/pokemon/{extension}/front.4bpp.lz");\n')
     
-    # Append palette
-    if os.path.exists(f'{path}\\normal.pal'):
-        palettes.append(f'static const u32 sMonPalette_{formatedExtension}[] = INCBIN_U32("graphics/pokemon/{extension}/normal.gbapal.lz");\n')
-
     # Append back pic
     if os.path.exists(f'{path}\\back.png'):
         backpics.append(f'static const u32 sMonBackPic_{formatedExtension}[] = INCBIN_U32("graphics/pokemon/{extension}/back.4bpp.lz");\n')
-    
-    # Append shiny palette
-    if os.path.exists(f'{path}\\shiny.pal'):
-        shiny_palettes.append(f'static const u32 sMonShinyPalette_{formatedExtension}[] = INCBIN_U32("graphics/pokemon/{extension}/shiny.gbapal.lz");\n')
+
+    # Append all palettes found
+    for pal in glob.glob(f'{path}\\*.pal'):
+        pal = pal.removeprefix(path + '\\').replace('\\', '/').removesuffix('.pal')
+        palettes.append(f'static const u32 sMonPalette_{formatedExtension}{FormatExtension(pal)}[] = INCBIN_U32("graphics/pokemon/{extension}/{pal}.gbapal.lz");\n')
 
     # Append icon
     if os.path.exists(f'{path}\\icon.png'):
@@ -211,12 +207,9 @@ output.writelines(frontpics)
 # Write back pics
 output.write('\n// Back pics\n')
 output.writelines(backpics)
-# Write normal palettes
+# Write palettes
 output.write('\n// Palettes\n')
 output.writelines(palettes)
-# Write shiny palettes
-output.write('\n// Shiny palettes\n')
-output.writelines(shiny_palettes)
 # Write icons
 output.write('\n// Icons\n')
 output.writelines(icons)

@@ -1693,7 +1693,7 @@ static bool8 DoTradeAnim_Cable(void)
     case 72: // Only if in-game trade
         TradeMons(gSpecialVar_0x8005, 0);
         gCB2_AfterEvolution = CB2_RunTradeAnim_InGameTrade;
-        evoTarget = GetEvolutionTargetSpecies(gSelectedTradeMonPositions[0], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]]);
+        evoTarget = GetEvolutionTargetSpecies(gSelectedTradeMonPositions[0], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]], FALSE);
         if (evoTarget != SPECIES_NONE)
         {
             TradeEvolutionScene(&gPlayerParty[gSelectedTradeMonPositions[0]], evoTarget, sTradeData->pokePicSpriteIdxs[1], gSelectedTradeMonPositions[0]);
@@ -2201,7 +2201,7 @@ static bool8 DoTradeAnim_Wireless(void)
     case 72: // Only if in-game trade
         TradeMons(gSpecialVar_0x8005, 0);
         gCB2_AfterEvolution = CB2_RunTradeAnim_InGameTrade;
-        evoTarget = GetEvolutionTargetSpecies(gSelectedTradeMonPositions[0], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]]);
+        evoTarget = GetEvolutionTargetSpecies(gSelectedTradeMonPositions[0], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]], FALSE);
         if (evoTarget != SPECIES_NONE)
         {
             TradeEvolutionScene(&gPlayerParty[gSelectedTradeMonPositions[0]], evoTarget, sTradeData->pokePicSpriteIdxs[1], gSelectedTradeMonPositions[0]);
@@ -2244,7 +2244,7 @@ static void CB2_TryEvolveAfterTrade(void)
         break;
     case 4:
         gCB2_AfterEvolution = CB2_HandleTradeEnded;
-        evoSpecies = GetEvolutionTargetSpecies(gSelectedTradeMonPositions[0], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]]);
+        evoSpecies = GetEvolutionTargetSpecies(gSelectedTradeMonPositions[0], EVO_MODE_TRADE, ITEM_NONE, &gPlayerParty[gSelectedTradeMonPositions[1]], FALSE);
         if (evoSpecies != SPECIES_NONE)
             TradeEvolutionScene(&gPlayerParty[gSelectedTradeMonPositions[0]], evoSpecies, sTradeData->pokePicSpriteIdxs[1], gSelectedTradeMonPositions[0]);
         else

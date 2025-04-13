@@ -6,8 +6,8 @@
 #define EVO_REQ_LEVEL                  0x01 // Requires levels up or reach specified level to evolve
 #define EVO_REQ_ITEM                   0x02 // Requires specific item be used on it to evolve
 #define EVO_REQ_TRADE_WITH_SPECIES     0x03 // Requires being traded with specific species to evolve
+#define EVO_REQ_SPIN_FOR_DURATION      0x04 // Requires the player to spin in any/given direction for X amount of seconds
 // Evo requirement commands
-#define EVO_REQ_FRIENDSHIP             0x04 // Requires high friendship to evolve
 #define EVO_REQ_TIME                   0x05 // Requires specific time to evolve
 #define EVO_REQ_STAT_X_STAT            0x06 // Requires one stat to be X compared to other stat to evolve
 #define EVO_REQ_GENDER                 0x07 // Requires specific gender to evolve
@@ -28,6 +28,7 @@
 #define EVO_REQ_MOON_PHASE             0x16 // Requires specific phase of the moon to evolve
 #define EVO_REQ_DAMAGE_HP              0x17 // Requires being damaged by an specific amount to evolve
 #define EVO_REQ_FOLLOW_STEPS           0x18 // Requires X steps following the player in the overworld to evolve
+#define EVO_REQ_FRIENDSHIP             0x19 // Requires high friendship to evolve
 #define EVOLUTIONS_END                 0xFF // Marks the end of evolution table
 
 // Evo requirement macros
@@ -49,6 +50,12 @@
     EVO_REQ_TRADE_WITH_SPECIES,         \
 	(u8)species,                        \
 	(species & 0xFF00) >> 8
+
+#define REQ_SPIN_FOR_DURATION(direction, cmp, seconds) \
+	EVO_REQ_SPIN_FOR_DURATION,                         \
+	direction,                                         \
+	cmp,                                               \
+	seconds
 
 #define REQ_FRIENDSHIP \
     EVO_REQ_FRIENDSHIP
@@ -148,8 +155,8 @@
 #define EVO_MODE_NORMAL         0 // Levels up
 #define EVO_MODE_TRADE          1 // Trade
 #define EVO_MODE_ITEM_USE       2 // Use item
-#define EVO_MODE_ITEM_CHECK     3 // If an Everstone is being held, still want to show that the stone *could* be used on that Pokémon to evolve
-#define EVO_MODE_BATTLE_SPECIAL 4 // Evolves without levels up
+#define EVO_MODE_BATTLE_SPECIAL 3 // Evolves without levels up
+#define EVO_MODE_SPIN           4 // Player needs to spin
 
 extern const u8 gEvolutionCmdArgumentsSize[];
 

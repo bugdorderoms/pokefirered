@@ -430,6 +430,7 @@ extern const struct SpeciesInfo gSpeciesInfo[];
 extern const u8 gStatStageRatios[][2];
 extern struct SpriteTemplate gMultiuseSpriteTemplate;
 extern struct PokemonStorage* gPokemonStoragePtr;
+extern u8 gTriedEvolving;
 extern const u32 gExperienceTables[][MAX_LEVEL + 1];
 extern const struct LevelUpMove *const gLevelUpLearnsets[];
 extern const u8 gFacilityClassToPicIndex[];
@@ -490,7 +491,7 @@ void GetSpeciesName(u8 *name, u32 species);
 u8 CalculatePPWithBonus(u32 move, u32 ppBonuses, u32 moveIndex);
 void RemoveMonPPBonus(struct Pokemon *mon, u32 moveIndex);
 bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 battleMonId);
-u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct Pokemon *tradePartner);
+u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct Pokemon *tradePartner, bool32 onlyChecking);
 void DrawSpindaSpots(u32 species, u32 personality, u8 *dest, bool32 isFrontPic);
 void EvolutionRenameMon(struct Pokemon *mon, u32 oldSpecies, u32 newSpecies);
 u32 GetPlayerFlankId(void);
@@ -541,6 +542,7 @@ void DrawSpeciesFootprint(u32 windowId, u32 species, u32 x, u32 y);
 void UpdatePartyFormChangeCountdown(u32 daysSince);
 void CopyPokemonToBattleMon(u32 battlerId, struct Pokemon *mon, struct BattlePokemon *dst, bool32 setAllData);
 void TryTransformZacianAndZamazentaIronHead(struct Pokemon *mon, bool32 transformBack);
+void TriggerSpecialOverworldEvo(void);
 
 static inline u32 GetNatureFromPersonality(u32 personality)
 {

@@ -37,6 +37,7 @@
 #include "overworld.h"
 #include "battle_anim_scripts.h"
 #include "dns.h"
+#include "field_player_avatar.h"
 #include "util.h"
 #include "oak_speech.h"
 #include "form_change.h"
@@ -64,6 +65,7 @@ EWRAM_DATA u8 gEnemyPartyCount = 0;
 EWRAM_DATA struct Pokemon gEnemyParty[PARTY_SIZE] = {};
 EWRAM_DATA struct Pokemon gPlayerParty[PARTY_SIZE] = {};
 EWRAM_DATA struct SpriteTemplate gMultiuseSpriteTemplate = {0};
+EWRAM_DATA u8 gTriedEvolving = 0;
 
 static u32 GetLevelFromMonExp(struct Pokemon *mon);
 static bool32 CheckZacianZamazentaKnowsIronHead(struct Pokemon *mon, u32 species, u32 move);
@@ -1889,7 +1891,7 @@ const u8 gEvolutionCmdArgumentsSize[EVOLUTIONS_END] =
 	[EVO_REQ_LEVEL]                  = 1, // Level
 	[EVO_REQ_ITEM]                   = 2, // Item
 	[EVO_REQ_TRADE_WITH_SPECIES]     = 2, // Species
-	[EVO_REQ_FRIENDSHIP]             = 0, // No args
+	[EVO_REQ_SPIN_FOR_DURATION]      = 1 + 1 + 1, // Direction/cmp/X seconds
 	[EVO_REQ_TIME]                   = 1, // Time
 	[EVO_REQ_STAT_X_STAT]            = 1 + 1 + 1, // Stat/cmp/stat
 	[EVO_REQ_GENDER]                 = 1, // Gender
@@ -1910,9 +1912,10 @@ const u8 gEvolutionCmdArgumentsSize[EVOLUTIONS_END] =
 	[EVO_REQ_MOON_PHASE]             = 1, // Moon phase
 	[EVO_REQ_DAMAGE_HP]              = 2, // Damage amount
 	[EVO_REQ_FOLLOW_STEPS]           = 2, // Steps
+	[EVO_REQ_FRIENDSHIP]             = 0, // No args
 };
 
-static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, const u8 *evolutions, u32 *targetSpecies, bool32 *passes, u32 *evoBits)
+static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, const u8 *evolutions, u32 *targetSpecies, bool32 *passes, u32 *evoBits, bool32 onlyChecking)
 {
 	u32 j;
 	
@@ -1921,15 +1924,18 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
 		case EVO_TARGET_SPECIES:
 		    if (*passes) // Only get target species if all checks passes
 			{
-				u32 zero = 0;
-				
 				*targetSpecies = READ_16(evolutions + 1);
 				
-				if (*evoBits & Bit(0))
-					SetMonData(mon, MON_DATA_HELD_ITEM, &zero);
-				
-				if (*evoBits & Bit(1))
-					SetMonData(mon, MON_DATA_EVOLUTION_TRACKER, &zero);
+				if (!onlyChecking)
+				{
+					u32 zero = 0;
+					
+					if (*evoBits & Bit(0))
+						SetMonData(mon, MON_DATA_HELD_ITEM, &zero);
+					
+					if (*evoBits & Bit(1))
+						SetMonData(mon, MON_DATA_EVOLUTION_TRACKER, &zero);
+				}
 				
 				if (*evoBits & Bit(2))
 					*targetSpecies = GetMonFormChangeSpecies(mon, *targetSpecies, FORM_CHANGE_REGION);
@@ -2096,7 +2102,7 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
 	return evolutions;
 }
 
-u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct Pokemon *tradePartner)
+u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct Pokemon *tradePartner, bool32 onlyChecking)
 {
 	bool32 passes;
 	u32 evoBits;
@@ -2106,8 +2112,11 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
 	u32 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	const u8 *evolutions = gSpeciesInfo[species].evolutions;
 	
-	if (evolutions == NULL || (ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) == HOLD_EFFECT_PREVENT_EVOLVE && type != EVO_MODE_ITEM_CHECK)
-	|| (SpeciesHasFormChangeType(species, FORM_CHANGE_GIGANTAMAX) && GetMonData(mon, MON_DATA_HAS_GMAX_FACTOR, NULL))) // non-fully-evolved Pokémon can't evolve if it has the gigantamax factor
+	if (evolutions == NULL
+	// If an Everstone is being held, still want to show that the stone *could* be used on that Pokémon to evolve
+	|| (ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) == HOLD_EFFECT_PREVENT_EVOLVE && type == EVO_MODE_ITEM_USE && !onlyChecking)
+	// Non-fully-evolved Pokémon can't evolve if it has the gigantamax factor
+	|| (SpeciesHasFormChangeType(species, FORM_CHANGE_GIGANTAMAX) && GetMonData(mon, MON_DATA_HAS_GMAX_FACTOR, NULL)))
 		return targetSpecies;
 	
 	passes = TRUE;
@@ -2127,7 +2136,7 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
 						++evolutions;
 						break;
 					default:
-					    evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits);
+					    evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
 						break;
 				}
 				++evolutions;
@@ -2164,7 +2173,7 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
 						evolutions += 2;
 						break;
 					default:
-					    evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits);
+					    evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
 						break;
 				}
 				++evolutions;
@@ -2193,14 +2202,13 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
 						evolutions += 2;
 						break;
 					default:
-					    evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits);
+					    evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
 						break;
 				}
 				++evolutions;
 			}
 			break;
 		case EVO_MODE_ITEM_USE:
-		case EVO_MODE_ITEM_CHECK:
 		    while (evolutions[0] != EVOLUTIONS_END)
 			{
 				switch (evolutions[0])
@@ -2212,7 +2220,27 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
 						evolutions += 2;
 						break;
 					default:
-					    evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits);
+					    evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
+						break;
+				}
+			    ++evolutions;
+			}
+			break;
+		case EVO_MODE_SPIN:
+			while (evolutions[0] != EVOLUTIONS_END)
+			{
+				switch (evolutions[0])
+				{
+					case EVO_REQ_SPIN_FOR_DURATION:
+					    if (evolutions[1] != SPIN_DIRECTION_ANY && evolutions[1] != gPlayerSpinData.spinDirection) // Check direction
+							passes = FALSE;
+						else if (evolutions[3] && !JumpBasedOnKind(gPlayerSpinData.VBlanksSpinning / 60, evolutions[2], evolutions[3])) // Check duration
+							passes = FALSE;
+
+						evolutions += 3;
+						break;
+					default:
+					    evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
 						break;
 				}
 			    ++evolutions;
@@ -2220,6 +2248,32 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
 			break;
 	}
     return targetSpecies;
+}
+
+void TriggerSpecialOverworldEvo(void)
+{
+	u32 i, method = gSpecialVar_0x8000;
+	
+	for (i = 0; i < PARTY_SIZE; i++)
+	{
+		u32 targetSpecies = GetEvolutionTargetSpecies(i, method, ITEM_NONE, NULL, FALSE);
+		
+		if (targetSpecies && !(gTriedEvolving & Bit(i)))
+		{
+			gTriedEvolving |= Bit(i);
+			
+			if (gMain.callback2 == TriggerSpecialOverworldEvo)
+				EvolutionScene(&gPlayerParty[i], targetSpecies, TASK_BIT_LEARN_MOVE, i);
+			else
+				BeginEvolutionScene(&gPlayerParty[i], targetSpecies, TASK_BIT_LEARN_MOVE, i);
+			
+			gCB2_AfterEvolution = TriggerSpecialOverworldEvo;
+			return;
+		}
+	}
+	gTriedEvolving = 0;
+	ResetSpinTimer();
+	SetMainCallback2(CB2_ReturnToField);
 }
 
 void DrawSpindaSpots(u32 species, u32 personality, u8 *dest, bool32 isFrontPic)

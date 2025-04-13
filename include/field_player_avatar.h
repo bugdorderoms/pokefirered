@@ -3,6 +3,16 @@
 
 #include "global.h"
 
+enum
+{
+	SPIN_DIRECTION_NONE,
+    SPIN_DIRECTION_CLOCKWISE,
+    SPIN_DIRECTION_COUNTER_CLOCKWISE,
+};
+
+// For readability
+#define SPIN_DIRECTION_ANY SPIN_DIRECTION_NONE
+
 void ClearPlayerAvatarInfo(void);
 void SetPlayerAvatarExtraStateTransition(u32, u32);
 u32 GetPlayerAvatarGenderByGraphicsId(u32);
@@ -52,6 +62,9 @@ void InitPlayerAvatar(s16 x, s16 y, u32 direction, u32 gender);
 void PlayerUseAcroBikeOnBumpySlope(u32 direction);
 u32 GetRSAvatarGraphicsIdByGender(u32 gender);
 bool32 ForcedMovement_None(void);
+void UpdateSpinData(void);
+void ResetSpinTimer(void);
+bool32 CanTriggerSpinEvolution(void);
 
 static inline u32 GetPlayerMovementDirection(void)
 {

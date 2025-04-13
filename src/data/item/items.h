@@ -217,6 +217,13 @@ static const u8 sItemDesc_PeatBlock[]         = _("A block of muddy material tha
 static const u8 sItemDesc_SyrupyApple[]       = _("A peculiar apple that can make a\ncertain species of Pokémon evolve.\nIt's exceptionally syrupy.");
 static const u8 sItemDesc_MetalAlloy[]        = _("A peculiar metal that can make\ncertain species of Pokémon evolve.\nIt is composed of many layers.");
 static const u8 sItemDesc_MasterpieceTeacup[] = _("A teacup that can make a certain\nspecies of Pokémon evolve. The tea\ndrunk from it is delicious.");
+static const u8 sItemDesc_StrawberrySweet[]   = _("A strawberry-shaped sweet. When a\nMilcery holds this, it spins around\nhappily.");
+static const u8 sItemDesc_LoveSweet[]         = _("A heart-shaped sweet. When a\nMilcery holds this, it spins around\nhappily.");
+static const u8 sItemDesc_BerrySweet[]        = _("A berry-shaped sweet. When a\nMilcery holds this, it spins around\nhappily.");
+static const u8 sItemDesc_CloverSweet[]       = _("A clover-shaped sweet. When a\nMilcery holds this, it spins around\nhappily.");
+static const u8 sItemDesc_FlowerSweet[]       = _("A flower-shaped sweet. When a\nMilcery holds this, it spins around\nhappily.");
+static const u8 sItemDesc_StarSweet[]         = _("A star-shaped sweet. When a Milcery\nholds this, it spins around happily.");
+static const u8 sItemDesc_RibbonSweet[]       = _("A ribbon-shaped sweet. When a\nMilcery holds this, it spins around\nhappily.");
 static const u8 sItemDesc_SmokeBall[]         = _("An item to be held by a Pokémon.\nIt enables the holder to flee from\nany wild Pokémon without fail.");
 static const u8 sItemDesc_Everstone[]         = _("An item to be held by a Pokémon. A\nPokémon holding this peculiar\nstone is prevented from evolving.");
 static const u8 sItemDesc_FocusBand[]         = _("An item to be held by a Pokémon.\nThe holder may endure a potential\nKO attack, surviving with 1 HP.");
@@ -2186,6 +2193,97 @@ const struct Item gItems[ITEMS_COUNT] =
 		.type = ITEM_TYPE_PARTY_MENU,
 		.fieldUseFunc = FieldUseFunc_EvoItem,
 		.usageType = ITEM_TYPE_EVOLUTION_ITEM,
+	},
+	[ITEM_STRAWBERRY_SWEET] =
+	{
+		.name = _("Strawberry Sweet"),
+		.description = sItemDesc_StrawberrySweet,
+		.price = 500,
+		.pocket = POCKET_ITEMS,
+		.type = ITEM_TYPE_BAG_MENU,
+		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.usageType = ITEM_TYPE_HELD_ITEM,
+		.flingPower = 10,
+		.iconPic = sItemIcon_StrawberrySweet,
+		.iconPalette = sItemIconPalette_StrawberrySweet,
+	},
+	[ITEM_LOVE_SWEET] =
+	{
+		.name = _("Love Sweet"),
+		.description = sItemDesc_LoveSweet,
+		.price = 500,
+		.pocket = POCKET_ITEMS,
+		.type = ITEM_TYPE_BAG_MENU,
+		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.usageType = ITEM_TYPE_HELD_ITEM,
+		.flingPower = 10,
+		.iconPic = sItemIcon_LoveSweet,
+		.iconPalette = sItemIconPalette_LoveSweet,
+	},
+	[ITEM_BERRY_SWEET] =
+	{
+		.name = _("Berry Sweet"),
+		.description = sItemDesc_BerrySweet,
+		.price = 500,
+		.pocket = POCKET_ITEMS,
+		.type = ITEM_TYPE_BAG_MENU,
+		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.usageType = ITEM_TYPE_HELD_ITEM,
+		.flingPower = 10,
+		.iconPic = sItemIcon_BerrySweet,
+		.iconPalette = sItemIconPalette_BerrySweet,
+	},
+	[ITEM_CLOVER_SWEET] =
+	{
+		.name = _("Clover Sweet"),
+		.description = sItemDesc_CloverSweet,
+		.price = 500,
+		.pocket = POCKET_ITEMS,
+		.type = ITEM_TYPE_BAG_MENU,
+		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.usageType = ITEM_TYPE_HELD_ITEM,
+		.flingPower = 10,
+		.iconPic = sItemIcon_CloverSweet,
+		.iconPalette = sItemIconPalette_CloverSweet,
+	},
+	[ITEM_FLOWER_SWEET] =
+	{
+		.name = _("Flower Sweet"),
+		.description = sItemDesc_FlowerSweet,
+		.price = 500,
+		.pocket = POCKET_ITEMS,
+		.type = ITEM_TYPE_BAG_MENU,
+		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.usageType = ITEM_TYPE_HELD_ITEM,
+		.flingPower = 10,
+		.iconPic = sItemIcon_FlowerSweet,
+		.iconPalette = sItemIconPalette_FlowerSweet,
+	},
+	[ITEM_STAR_SWEET] =
+	{
+		.name = _("Star Sweet"),
+		.description = sItemDesc_StarSweet,
+		.price = 500,
+		.pocket = POCKET_ITEMS,
+		.type = ITEM_TYPE_BAG_MENU,
+		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.usageType = ITEM_TYPE_HELD_ITEM,
+		.flingPower = 10,
+		.iconPic = sItemIcon_StarSweet,
+		.iconPalette = sItemIconPalette_StarSweet,
+	},
+	[ITEM_RIBBON_SWEET] =
+	{
+		.name = _("Ribbon Sweet"),
+		.description = sItemDesc_RibbonSweet,
+		.price = 500,
+		.pocket = POCKET_ITEMS,
+		.type = ITEM_TYPE_BAG_MENU,
+		.fieldUseFunc = FieldUseFunc_OakStopsYou,
+		.usageType = ITEM_TYPE_HELD_ITEM,
+		.flingPower = 10,
+		.iconPic = sItemIcon_RibbonSweet,
+		.iconPalette = sItemIconPalette_RibbonSweet,
 	},
 	[ITEM_HEALTH_WING] =
 	{

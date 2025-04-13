@@ -1,4 +1,5 @@
 #include "play_time.h"
+#include "field_player_avatar.h"
 
 static u8 sPlayTimeCounterState;
 
@@ -39,7 +40,11 @@ void PlayTimeCounter_Update(void)
 {
     if (sPlayTimeCounterState == PLAYTIME_RUNNING)
     {
-        if (++gSaveBlock2Ptr->playTimeVBlanks > 59)
+		gSaveBlock2Ptr->playTimeVBlanks++;
+		
+		UpdateSpinData();
+		
+        if (gSaveBlock2Ptr->playTimeVBlanks > 59)
         {
             gSaveBlock2Ptr->playTimeVBlanks = 0;
 			

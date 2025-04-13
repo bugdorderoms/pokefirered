@@ -29,7 +29,7 @@ bool32 IsDirectionalStairWarpMetatileBehavior(u32 metatileBehavior, u32 playerDi
 const u8 *GetInteractedLinkPlayerScript(struct MapPosition *position, u32 direction);
 const u8 *GetCoordEventScriptAtMapPosition(struct MapPosition *position);
 void FieldClearPlayerInput(struct FieldInput *input);
-int ProcessPlayerFieldInput(struct FieldInput *input);
+bool32 ProcessPlayerFieldInput(struct FieldInput *input);
 void FieldInput_HandleCancelSignpost(struct FieldInput * input);
 void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys);
 void HandleBoulderActivateVictoryRoadSwitch(u16 x, u16 y);

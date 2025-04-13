@@ -166,12 +166,12 @@ static void Task_BeginEvolutionScene(u8 taskId)
 }
 
 // Handle evolving by using a evolution stone or leveled up by Rare Candy/Exp. Candies
-void BeginEvolutionScene(struct Pokemon* mon, u32 speciesToEvolve, bool32 canStopEvo, u32 partyId)
+void BeginEvolutionScene(struct Pokemon* mon, u32 speciesToEvolve, u32 bits, u32 partyId)
 {
     u32 taskId = CreateTask(Task_BeginEvolutionScene, 0);
     gTasks[taskId].tState = 0;
     gTasks[taskId].tPostEvoSpecies = speciesToEvolve;
-    gTasks[taskId].tBits = canStopEvo ? TASK_BIT_CAN_STOP : 0;
+    gTasks[taskId].tBits = bits;
     gTasks[taskId].tPartyId = partyId;
     SetMainCallback2(CB2_BeginEvolutionScene);
 }

@@ -6,6 +6,7 @@
 #include "dexnav.h"
 #include "event_object_movement.h"
 #include "event_scripts.h"
+#include "evolution.h"
 #include "fieldmap.h"
 #include "field_camera.h"
 #include "field_control_avatar.h"
@@ -143,7 +144,7 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
 		input->dpadDirection = DIR_EAST;
 }
 
-int ProcessPlayerFieldInput(struct FieldInput *input)
+bool32 ProcessPlayerFieldInput(struct FieldInput *input)
 {
     struct MapPosition position;
     u32 playerDirection;
@@ -228,7 +229,13 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
 	
     if (input->pressedLButton && DoLRButtonAction(TRUE))
         return TRUE;
-
+	
+	if (CanTriggerSpinEvolution())
+	{
+		gSpecialVar_0x8000 = EVO_MODE_SPIN;
+		TriggerSpecialOverworldEvo();
+		return TRUE;
+	}
     return FALSE;
 }
 

@@ -1256,14 +1256,14 @@ const struct LevelUpMove *const gLevelUpLearnsets[NUM_SPECIES] =
     // Toxtricity
     [SPECIES_TOXTRICITY_LOW_KEY] = sToxtricityLowKeyLevelUpLearnset,
     // Alcremie
-    [SPECIES_ALCREMIE_RUBY_CREAM] = sAlcremieLevelUpLearnset,
+    /*[SPECIES_ALCREMIE_RUBY_CREAM] = sAlcremieLevelUpLearnset,
     [SPECIES_ALCREMIE_MATCHA_CREAM] = sAlcremieLevelUpLearnset,
     [SPECIES_ALCREMIE_MINT_CREAM] = sAlcremieLevelUpLearnset,
     [SPECIES_ALCREMIE_LEMON_CREAM] = sAlcremieLevelUpLearnset,
     [SPECIES_ALCREMIE_SALTED_CREAM] = sAlcremieLevelUpLearnset,
     [SPECIES_ALCREMIE_RUBY_SWIRL] = sAlcremieLevelUpLearnset,
     [SPECIES_ALCREMIE_CARAMEL_SWIRL] = sAlcremieLevelUpLearnset,
-    [SPECIES_ALCREMIE_RAINBOW_SWIRL] = sAlcremieLevelUpLearnset,
+    [SPECIES_ALCREMIE_RAINBOW_SWIRL] = sAlcremieLevelUpLearnset,*/
     // Eiscue
     [SPECIES_EISCUE_NOICE_FACE] = sEiscueLevelUpLearnset,
     // Indeedee

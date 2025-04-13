@@ -217,8 +217,6 @@ EWRAM_DATA struct BattleResources *gBattleResources = NULL;
 EWRAM_DATA u32 gFieldStatus = 0;
 EWRAM_DATA struct FieldTimer gFieldTimers = {0};
 EWRAM_DATA struct QueuedStatBoost gQueuedStatBoosts[MAX_BATTLERS_COUNT] = {0};
-// Static rams
-EWRAM_DATA static u8 sTriedEvolving = 0;
 
 // IWRAM vars
 void (*gPreBattleCallback1)(void);
@@ -3699,16 +3697,16 @@ static void TryEvolvePokemon(void)
 	
 	for (i = 0; i < PARTY_SIZE; i++)
 	{
-		if (!(sTriedEvolving & Bit(i)))
+		if (!(gTriedEvolving & Bit(i)))
 		{
-			sTriedEvolving |= Bit(i);
+			gTriedEvolving |= Bit(i);
 			
-			species = GetEvolutionTargetSpecies(i, EVO_MODE_BATTLE_SPECIAL, ITEM_NONE, NULL);
+			species = GetEvolutionTargetSpecies(i, EVO_MODE_BATTLE_SPECIAL, ITEM_NONE, NULL, FALSE);
 			
 			if (!species && (gLeveledUpInBattle & Bit(i)))
 			{
 				gLeveledUpInBattle &= ~(Bit(i));
-				species = GetEvolutionTargetSpecies(i, EVO_MODE_NORMAL, ITEM_NONE, NULL);
+				species = GetEvolutionTargetSpecies(i, EVO_MODE_NORMAL, ITEM_NONE, NULL, FALSE);
 			}
 			
 			if (species)
@@ -3719,7 +3717,7 @@ static void TryEvolvePokemon(void)
 			}
 		}
 	}
-	sTriedEvolving = 0;
+	gTriedEvolving = 0;
     gLeveledUpInBattle = 0;
     gBattleMainFunc = ReturnFromBattleToOverworld;
 }

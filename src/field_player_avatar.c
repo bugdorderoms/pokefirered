@@ -4,6 +4,7 @@
 #include "dexnav.h"
 #include "event_data.h"
 #include "event_object_movement.h"
+#include "evolution.h"
 #include "fieldmap.h"
 #include "field_camera.h"
 #include "field_control_avatar.h"
@@ -30,6 +31,7 @@
 static EWRAM_DATA u8 sTeleportSavedFacingDirection = DIR_NONE;
 EWRAM_DATA struct ObjectEvent gObjectEvents[OBJECT_EVENTS_COUNT] = {};
 EWRAM_DATA struct PlayerAvatar gPlayerAvatar = {};
+EWRAM_DATA struct SpinData gPlayerSpinData = {};
 
 static bool32 ObjectEventCB2_NoMovement2(struct ObjectEvent * object, struct Sprite * sprite);
 static bool32 TryUpdatePlayerSpinDirection(void);
@@ -449,6 +451,104 @@ static bool32 ForcedMovement_0xBC(void)
     return TRUE;
 }
 
+/////////////////
+// PLAYER SPIN //
+/////////////////
+
+void UpdateSpinData(void)
+{
+    if (gPlayerSpinData.spinTimeout != 0)
+    {
+        gPlayerSpinData.spinTimeout--;
+		
+        if (gPlayerSpinData.VBlanksSpinning < 2048)
+            gPlayerSpinData.VBlanksSpinning++;
+		
+        if (gPlayerSpinData.spinTimeout == 0 && gPlayerSpinData.spinDirection != SPIN_DIRECTION_NONE)
+            gPlayerSpinData.triggerEvo = TRUE;
+    }
+}
+
+void ResetSpinTimer(void)
+{
+    gPlayerSpinData.spinTimeout = 0;
+    gPlayerSpinData.VBlanksSpinning = 0;
+    gPlayerSpinData.spinDirection = SPIN_DIRECTION_NONE;
+    gPlayerSpinData.spinHistory0 = DIR_NONE;
+    gPlayerSpinData.spinHistory1 = DIR_NONE;
+    gPlayerSpinData.spinHistory2 = DIR_NONE;
+    gPlayerSpinData.spinHistory3 = DIR_NONE;
+}
+
+static const u8 sClockwiseDirections[4][4] =
+{
+    { DIR_NORTH, DIR_EAST, DIR_SOUTH, DIR_WEST, },
+    { DIR_EAST, DIR_SOUTH, DIR_WEST, DIR_NORTH, },
+    { DIR_SOUTH, DIR_WEST, DIR_NORTH, DIR_EAST, },
+    { DIR_WEST, DIR_NORTH, DIR_EAST, DIR_SOUTH, },
+};
+
+static const u8 sCounterClockwiseDirections[4][4] =
+{
+    { DIR_NORTH, DIR_WEST, DIR_SOUTH, DIR_EAST, },
+    { DIR_WEST, DIR_SOUTH, DIR_EAST, DIR_NORTH, },
+    { DIR_SOUTH, DIR_EAST, DIR_NORTH, DIR_WEST, },
+    { DIR_EAST, DIR_NORTH, DIR_WEST, DIR_SOUTH, },
+};
+
+static void WindUpSpinTimer(u32 direction)
+{
+	u32 i;
+	
+    gPlayerSpinData.spinTimeout = 60;
+    gPlayerSpinData.spinHistory0 = gPlayerSpinData.spinHistory1;
+    gPlayerSpinData.spinHistory1 = gPlayerSpinData.spinHistory2;
+    gPlayerSpinData.spinHistory2 = gPlayerSpinData.spinHistory3;
+    gPlayerSpinData.spinHistory3 = direction;
+
+    for (i = 0; i < ARRAY_COUNT(sClockwiseDirections); i++)
+    {
+        if (gPlayerSpinData.spinHistory0 == sClockwiseDirections[i][0]
+		&& gPlayerSpinData.spinHistory1 == sClockwiseDirections[i][1]
+		&& gPlayerSpinData.spinHistory2 == sClockwiseDirections[i][2]
+		&& gPlayerSpinData.spinHistory3 == sClockwiseDirections[i][3])
+        {
+            gPlayerSpinData.spinDirection = SPIN_DIRECTION_CLOCKWISE;
+            return;
+        }
+    }
+	
+    for (i = 0; i < ARRAY_COUNT(sCounterClockwiseDirections); i++)
+    {
+        if (gPlayerSpinData.spinHistory0 == sCounterClockwiseDirections[i][0]
+		&& gPlayerSpinData.spinHistory1 == sCounterClockwiseDirections[i][1]
+		&& gPlayerSpinData.spinHistory2 == sCounterClockwiseDirections[i][2]
+		&& gPlayerSpinData.spinHistory3 == sCounterClockwiseDirections[i][3])
+        {
+            gPlayerSpinData.spinDirection = SPIN_DIRECTION_COUNTER_CLOCKWISE;
+            return;
+        }
+    }
+    gPlayerSpinData.spinDirection = SPIN_DIRECTION_NONE;
+}
+
+bool32 CanTriggerSpinEvolution(void)
+{
+    u32 i;
+	
+    if (gPlayerSpinData.triggerEvo)
+    {
+		gPlayerSpinData.triggerEvo = FALSE;
+		
+		for (i = 0; i < PARTY_SIZE; i++)
+		{
+			if (GetEvolutionTargetSpecies(i, EVO_MODE_SPIN, ITEM_NONE, NULL, TRUE))
+				return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 ///////////////////////////
 // PLAYER INPUT HANDLERS //
 ///////////////////////////
@@ -490,6 +590,7 @@ static void PlayerNotOnBikeNotMoving(u32 direction, u16 heldKeys)
 
 static void PlayerNotOnBikeTurningInPlace(u32 direction, u16 heldKeys)
 {
+	WindUpSpinTimer(direction);
     PlayerTurnInPlace(direction);
 }
 
@@ -508,6 +609,8 @@ static void PlayerNotOnBikeMoving(u32 direction, u16 heldKeys)
 
         return;
     }
+	ResetSpinTimer(); // Everything below will move the player a space, reset the timer.
+	
     gPlayerAvatar.creeping = FALSE;
 
     if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))

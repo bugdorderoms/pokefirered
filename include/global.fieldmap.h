@@ -381,10 +381,23 @@ struct Camera
 	bool8 active;
 };
 
+struct SpinData
+{
+    u32 triggerEvo:1;
+    u32 spinDirection:2;
+    u32 spinTimeout:6;
+    u32 spinHistory0:3;
+    u32 spinHistory1:3;
+    u32 spinHistory2:3;
+    u32 spinHistory3:3;
+    u32 VBlanksSpinning:11; //34,1 seconds
+};
+
 extern struct ObjectEvent gObjectEvents[OBJECT_EVENTS_COUNT];
 extern u8 gSelectedObjectEvent;
 extern struct MapHeader gMapHeader;
 extern struct PlayerAvatar gPlayerAvatar;
 extern struct Camera gCamera;
+extern struct SpinData gPlayerSpinData;
 
 #endif // GUARD_GLOBAL_FIELDMAP_H

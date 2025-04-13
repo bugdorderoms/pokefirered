@@ -138,9 +138,16 @@
 #define ITEM_SYRUPY_APPLE             (PROTEIN_ITEMS_END + 37)
 #define ITEM_METAL_ALLOY              (PROTEIN_ITEMS_END + 38)
 #define ITEM_MASTERPIECE_TEACUP       (PROTEIN_ITEMS_END + 39)
+#define ITEM_STRAWBERRY_SWEET         (PROTEIN_ITEMS_END + 40)
+#define ITEM_LOVE_SWEET               (PROTEIN_ITEMS_END + 41)
+#define ITEM_BERRY_SWEET              (PROTEIN_ITEMS_END + 42)
+#define ITEM_CLOVER_SWEET             (PROTEIN_ITEMS_END + 43)
+#define ITEM_FLOWER_SWEET             (PROTEIN_ITEMS_END + 44)
+#define ITEM_STAR_SWEET               (PROTEIN_ITEMS_END + 45)
+#define ITEM_RIBBON_SWEET             (PROTEIN_ITEMS_END + 46)
 
 // In case you want to add new evolution items, all the indexes below this will be updated with the corrected index
-#define EVOLUTION_ITEMS_END           ITEM_MASTERPIECE_TEACUP
+#define EVOLUTION_ITEMS_END           ITEM_RIBBON_SWEET
 
 // Wings
 #define ITEM_HEALTH_WING              (EVOLUTION_ITEMS_END + 1)

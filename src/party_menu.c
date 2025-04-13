@@ -1573,7 +1573,7 @@ static bool32 DisplayPartyPokemonDataForTeachMoveOrEvolutionItem(u32 slot)
 			    DisplayPartyPokemonDataToTeachMove(slot, ItemId_GetHoldEffectParam(item), TRUE);
 				break;
 			case ITEMUSE_FOLLOWUP_EVOLUTION_ITEM:
-			    if (!GetMonData(&gPlayerParty[slot], MON_DATA_IS_EGG) && GetEvolutionTargetSpecies(slot, EVO_MODE_ITEM_CHECK, item, NULL))
+			    if (!GetMonData(&gPlayerParty[slot], MON_DATA_IS_EGG) && GetEvolutionTargetSpecies(slot, EVO_MODE_ITEM_USE, item, NULL, TRUE))
 					return FALSE;
 				DisplayPartyPokemonDescriptionData(slot, PARTYBOX_DESC_NO_USE);
 				break;
@@ -2408,7 +2408,7 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 
 static void PartyMenuTryEvolution(u32 taskId)
 {
-    u32 targetSpecies = GetEvolutionTargetSpecies(gPartyMenu.slotId, EVO_MODE_NORMAL, ITEM_NONE, NULL);
+    u32 targetSpecies = GetEvolutionTargetSpecies(gPartyMenu.slotId, EVO_MODE_NORMAL, ITEM_NONE, NULL, FALSE);
 	
 	sMedicineItemData.initialLevel = sMedicineItemData.finalLevel = 0;
 	
@@ -2416,7 +2416,7 @@ static void PartyMenuTryEvolution(u32 taskId)
     {
         FreePartyPointers();
         gCB2_AfterEvolution = gPartyMenu.exitCallback;
-        BeginEvolutionScene(&gPlayerParty[gPartyMenu.slotId], targetSpecies, TRUE, gPartyMenu.slotId);
+        BeginEvolutionScene(&gPlayerParty[gPartyMenu.slotId], targetSpecies, TASK_BIT_CAN_STOP, gPartyMenu.slotId);
         DestroyTask(taskId);
     }
     else
@@ -5666,7 +5666,7 @@ static void CB2_UseEvolutionItem(void)
 {
 	u32 slot = gPartyMenu.slotId;
 	gCB2_AfterEvolution = gPartyMenu.exitCallback;
-	BeginEvolutionScene(&gPlayerParty[slot], GetEvolutionTargetSpecies(slot, EVO_MODE_ITEM_USE, gSpecialVar_ItemId, NULL), FALSE, slot);
+	BeginEvolutionScene(&gPlayerParty[slot], GetEvolutionTargetSpecies(slot, EVO_MODE_ITEM_USE, gSpecialVar_ItemId, NULL, FALSE), 0, slot);
 	RemoveBagItem(gSpecialVar_ItemId, 1);
 }
 
@@ -6464,7 +6464,7 @@ void ItemUseCB_EvolutionStone(u32 taskId, TaskFunc func)
 {
     PlaySE(SE_SELECT);
 	
-	if (!GetEvolutionTargetSpecies(gPartyMenu.slotId, EVO_MODE_ITEM_USE, gSpecialVar_ItemId, NULL))
+	if (!GetEvolutionTargetSpecies(gPartyMenu.slotId, EVO_MODE_ITEM_USE, gSpecialVar_ItemId, NULL, FALSE))
     {
         gPartyMenuUseExitCallback = FALSE;
         DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
