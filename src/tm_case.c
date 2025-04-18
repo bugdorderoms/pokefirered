@@ -615,8 +615,10 @@ static void TMCaseSetup_GetTMCount(void)
     struct BagPocket * pocket = &gBagPockets[POCKET_TM_CASE - 1];
     u16 i;
 
-    BagPocketCompaction(pocket->itemSlots, pocket->capacity);
+    BagPocketCompaction(pocket);
+	
     sTMCaseDynamicResources->numTMs = 0;
+	
     for (i = 0; i < pocket->capacity; i++)
     {
         if (pocket->itemSlots[i].itemId == ITEM_NONE)

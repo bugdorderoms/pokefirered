@@ -156,7 +156,7 @@ void SortPocketAndPlaceHMsFirst(struct BagPocket * pocket);
 u32 BagGetItemIdByPocketPosition(u32 pocketId, u32 itemId);
 u32 BagGetQuantityByPocketPosition(u32 pocketId, u32 itemId);
 u32 BagGetQuantityByItemId(u32 item);
-void BagPocketCompaction(struct ItemSlot * slots, u32 capacity);
+void BagPocketCompaction(struct BagPocket * pocket);
 u16 GetPcItemQuantity(u16 *);
 void SetBagPocketsPointers(void);
 

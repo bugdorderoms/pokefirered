@@ -5,7 +5,10 @@
 #include "battle_interface.h"
 #include "battle_message.h"
 #include "decompress.h"
+#include "field_specials.h"
 #include "graphics.h"
+#include "item.h"
+#include "item_menu_icons.h"
 #include "math_util.h"
 #include "menu.h"
 #include "strings.h"
@@ -47,8 +50,15 @@ static void TextIntoHealthboxObject(void *dest, u8 *windowTileData, s32 windowWi
 static void SpriteCB_HealthboxSlideInDelayed(struct Sprite *sprite);
 static void SpriteCB_HealthboxSlideIn(struct Sprite *sprite);
 static void SpriteCB_InterfaceTrigger(struct Sprite *sprite);
+static void SpriteCB_LastUsedBall(struct Sprite *sprite);
+static void ShowOrHideLastUsedBallBallSprite(bool32 hide);
 
 static const u8 sMoveInfoTriggerGfx[] = INCBIN_U8("graphics/battle_interface/move_info_trigger.4bpp");
+static const u8 sTeamPreviewTriggerGfx[] = INCBIN_U8("graphics/battle_interface/team_preview_trigger.4bpp");
+static const u8 sTeamPreviewBgTiles[] = INCBIN_U8("graphics/battle_interface/team_preview_background.4bpp.lz");
+static const u8 sTeamPreviewBgTilemap[] = INCBIN_U8("graphics/battle_interface/team_preview_background.bin.lz");
+static const u8 sTeamPreviewStatusIconsGfx[] = INCBIN_U8("graphics/battle_interface/team_preview_status_icons.4bpp");
+static const u8 sLastUsedBallThrowGfx[] = INCBIN_U8("graphics/battle_interface/last_used_ball_throw.4bpp");
 
 static const struct OamData gOamData_8260270 = {
     .shape = SPRITE_SHAPE(64x32),
@@ -284,12 +294,90 @@ static const struct SpriteSheet sSpriteSheet_MoveInfoTrigger =
 static const struct SpriteTemplate sSpriteTemplate_MoveInfoTrigger =
 {
 	.tileTag = TAG_MOVEINFO_TRIGGER_GFX,
-    .paletteTag = TAG_MOVEINFO_TRIGGER_GFX,
+    .paletteTag = TAG_HEALTHBOX_PAL,
     .oam = &sOam_WeatherIcon,
     .anims = gDummySpriteAnimTable,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = SpriteCB_InterfaceTrigger
+};
+
+static const struct OamData sOam_TeamPreviewTrigger =
+{
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x32),
+    .size = SPRITE_SIZE(32x32),
+	.priority = 1,
+};
+
+static const struct SpriteSheet sTeamPreviewTriggerSpriteSheet =
+{
+	sTeamPreviewTriggerGfx, sizeof(sTeamPreviewTriggerGfx), GFX_TAG_TEAM_PREVIEW_TRIGGER
+};
+
+static const struct SpriteTemplate sTeamPreviewTriggerSpriteTemplate =
+{
+	.tileTag = GFX_TAG_TEAM_PREVIEW_TRIGGER,
+	.paletteTag = TAG_HEALTHBOX_PAL,
+	.oam = &sOam_TeamPreviewTrigger,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_InterfaceTrigger
+};
+
+static const struct OamData sOam_TeamPreviewStatusIcon =
+{
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(8x8),
+    .size = SPRITE_SIZE(8x8),
+	.priority = 0,
+};
+
+static const struct SpriteSheet sTeamPreviewStatusIconsSpriteSheet =
+{
+	sTeamPreviewStatusIconsGfx, sizeof(sTeamPreviewStatusIconsGfx), POKE_ICON_BASE_PAL_TAG + 4
+};
+
+static const struct SpriteTemplate sTeamPreviewStatusIconTemplate =
+{
+	.tileTag = POKE_ICON_BASE_PAL_TAG + 4,
+	.paletteTag = POKE_ICON_BASE_PAL_TAG, // Use poke icon pal 0
+	.oam = &sOam_TeamPreviewStatusIcon,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+
+static const struct OamData sOam_LastUsedBallTrigger =
+{
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x64),
+    .size = SPRITE_SIZE(32x64),
+	.priority = 1,
+};
+
+static const struct SpriteSheet sLastUsedBallThrowSpriteSheet =
+{
+	sLastUsedBallThrowGfx, sizeof(sLastUsedBallThrowGfx), GFX_TAG_LAST_USED_BALL_THROW
+};
+
+static const struct SpriteTemplate sLastUsedBallThrowSpriteTemplate =
+{
+	.tileTag = GFX_TAG_LAST_USED_BALL_THROW,
+	.paletteTag = GFX_TAG_ABILITY_POP_UP,
+	.oam = &sOam_LastUsedBallTrigger,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_InterfaceTrigger
 };
 
 enum
@@ -1646,7 +1734,7 @@ u8 GetScaledHPFraction(s16 hp, s16 maxhp, u32 scale)
 
 u32 GetHPBarLevel(s16 hp, s16 maxhp)
 {
-    u8 result;
+    u32 result;
 
     if (hp == maxhp)
         result = HP_BAR_FULL;
@@ -1663,7 +1751,6 @@ u32 GetHPBarLevel(s16 hp, s16 maxhp)
         else
             result = HP_BAR_EMPTY;
     }
-
     return result;
 }
 
@@ -1691,7 +1778,7 @@ static u8* AddTextPrinterAndCreateWindowOnHealthbox(const u8 *str, u32 fontId, u
 static void TextIntoHealthboxObject(void *dest, u8 *windowTileData, s32 windowWidth)
 {
     CpuCopy32(windowTileData + 256, dest + 256, windowWidth * TILE_SIZE_4BPP);
-// + 256 as that prevents the top 4 blank rows of sHealthboxWindowTemplate from being copied
+	// + 256 as that prevents the top 4 blank rows of sHealthboxWindowTemplate from being copied
     if (windowWidth > 0)
     {
         do
@@ -1713,10 +1800,12 @@ static void SafariTextIntoHealthboxObject(void *dest, u8 *windowTileData, u32 wi
 #define sInitialX         data[1]
 #define sFinalX           data[2]
 #define sSlideSpeedAndDir data[3] // < 0 = slide to right, > 0 = slide to left
+#define sFreePalette      data[4] // Some icons use healthbox palette, so don't free those
 
-#define WEATHER_ICON_X_POS   256
-#define WEATHER_ICON_Y_POS   15
-#define WEATHER_ICON_X_SLIDE 32
+#define TRIGGER_X_SLIDE 32
+
+#define WEATHER_ICON_X_POS 256
+#define WEATHER_ICON_Y_POS 15
 
 void TryCreateWeatherAnimIcon(void)
 {
@@ -1730,16 +1819,20 @@ void TryCreateWeatherAnimIcon(void)
 
 			gBattleStruct->weatherIconSpriteId = CreateSprite(&sSpriteTemplate_WeatherIcon, WEATHER_ICON_X_POS, WEATHER_ICON_Y_POS, 0);
 			gSprites[gBattleStruct->weatherIconSpriteId].sInitialX = WEATHER_ICON_X_POS;
-			gSprites[gBattleStruct->weatherIconSpriteId].sFinalX = WEATHER_ICON_X_POS - WEATHER_ICON_X_SLIDE;
+			gSprites[gBattleStruct->weatherIconSpriteId].sFinalX = WEATHER_ICON_X_POS - TRIGGER_X_SLIDE;
 			gSprites[gBattleStruct->weatherIconSpriteId].sSlideSpeedAndDir = 1; // Move 1px per frame
+			gSprites[gBattleStruct->weatherIconSpriteId].sFreePalette = TRUE;
 		}
 		ShowOrHideWeatherAnimIcon(FALSE); // show icon
 	}
+	else
+		gBattleStruct->weatherIconSpriteId = MAX_SPRITES;
 }
 
 void ShowOrHideWeatherAnimIcon(bool32 hide)
 {
-	gSprites[gBattleStruct->weatherIconSpriteId].sHide = hide;
+	if (gBattleStruct->weatherIconSpriteId != MAX_SPRITES)
+		gSprites[gBattleStruct->weatherIconSpriteId].sHide = hide;
 }
 
 static void SpriteCB_InterfaceTrigger(struct Sprite *sprite)
@@ -1764,7 +1857,10 @@ static void SpriteCB_InterfaceTrigger(struct Sprite *sprite)
 		else // destroy sprite
 		{
 			FreeSpriteTiles(sprite);
-			FreeSpritePalette(sprite);
+			
+			if (sprite->sFreePalette)
+				FreeSpritePalette(sprite);
+			
 			DestroySprite(sprite);
 		}
 	}
@@ -1788,11 +1884,10 @@ static void SpriteCB_InterfaceTrigger(struct Sprite *sprite)
 	}
 }
 
-#define MOVEINFO_TRIGGER_X_POS   -16
-#define MOVEINFO_TRIGGER_Y_POS   100
-#define MOVEINFO_TRIGGER_X_SLIDE 32
+#define MOVEINFO_TRIGGER_X_POS -16
+#define MOVEINFO_TRIGGER_Y_POS 100
 
-void CreateMoveInfoTriggerSprite(u32 battlerId)
+void CreateMoveInfoTriggerSprite(void)
 {
 	if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
 	{
@@ -1802,9 +1897,8 @@ void CreateMoveInfoTriggerSprite(u32 battlerId)
 			
 			gBattleStruct->moveInfo.triggerSpriteId = CreateSprite(&sSpriteTemplate_MoveInfoTrigger, MOVEINFO_TRIGGER_X_POS, MOVEINFO_TRIGGER_Y_POS, 0);
 			gSprites[gBattleStruct->moveInfo.triggerSpriteId].oam.priority = 1;
-			gSprites[gBattleStruct->moveInfo.triggerSpriteId].oam.paletteNum = gSprites[gHealthboxSpriteIds[battlerId]].oam.paletteNum; // Same palette as healthbox
 			gSprites[gBattleStruct->moveInfo.triggerSpriteId].sInitialX = MOVEINFO_TRIGGER_X_POS;
-			gSprites[gBattleStruct->moveInfo.triggerSpriteId].sFinalX = MOVEINFO_TRIGGER_X_POS + MOVEINFO_TRIGGER_X_SLIDE;
+			gSprites[gBattleStruct->moveInfo.triggerSpriteId].sFinalX = MOVEINFO_TRIGGER_X_POS + TRIGGER_X_SLIDE;
 			gSprites[gBattleStruct->moveInfo.triggerSpriteId].sSlideSpeedAndDir = -2; // Move 2px per frame
 		}
 		ShowOrHideMoveInfoTriggerSprite(FALSE); // show trigger
@@ -1819,7 +1913,444 @@ void ShowOrHideMoveInfoTriggerSprite(bool32 hide)
 		gSprites[gBattleStruct->moveInfo.triggerSpriteId].sHide = hide;
 }
 
+#define TEAM_PREVIEW_TRIGGER_POS_X -16
+#define TEAM_PREVIEW_TRIGGER_POS_Y 88
+
+void TryLoadTeamPreviewTrigger(void)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	{
+		if (GetSpriteTileStartByTag(GFX_TAG_TEAM_PREVIEW_TRIGGER) == 0xFFFF)
+		{
+			LoadSpriteSheet(&sTeamPreviewTriggerSpriteSheet);
+			
+			gBattleStruct->teamPreviewTriggerSpriteId = CreateSprite(&sTeamPreviewTriggerSpriteTemplate, TEAM_PREVIEW_TRIGGER_POS_X, TEAM_PREVIEW_TRIGGER_POS_Y, 1);
+			gSprites[gBattleStruct->teamPreviewTriggerSpriteId].sInitialX = TEAM_PREVIEW_TRIGGER_POS_X;
+			gSprites[gBattleStruct->teamPreviewTriggerSpriteId].sFinalX = TEAM_PREVIEW_TRIGGER_POS_X + TRIGGER_X_SLIDE;
+			gSprites[gBattleStruct->teamPreviewTriggerSpriteId].sSlideSpeedAndDir = -2; // Move 2px per frame
+		}
+		ShowOrHideTeamPreviewTrigger(FALSE); // Show trigger
+	}
+	else
+		gBattleStruct->teamPreviewTriggerSpriteId = MAX_SPRITES;
+}
+
+void ShowOrHideTeamPreviewTrigger(bool32 hide)
+{
+	if (gBattleStruct->teamPreviewTriggerSpriteId != MAX_SPRITES)
+		gSprites[gBattleStruct->teamPreviewTriggerSpriteId].sHide = hide;
+}
+
+#define LAST_BALL_WIN_POS_X -16
+#define LAST_BALL_WIN_POS_Y 70
+
+#define LAST_USED_BALL_X     (LAST_BALL_WIN_POS_X - 8)
+#define LAST_USED_BALL_Y     (LAST_BALL_WIN_POS_Y)
+#define LAST_USED_BALL_Y_BNC (LAST_USED_BALL_Y - 2)
+
+void TryAddLastUsedBallTrigger(void)
+{
+	u32 ballId;
+	
+	// we're out of the last used ball, so just set it to the first ball in the bag
+	if (gLastThrownBall && !CheckBagHasItem(gLastThrownBall, 1))
+	{
+		struct BagPocket *pocket = &gBagPockets[POCKET_POKE_BALLS - 1];
+		
+		BagPocketCompaction(pocket);
+		
+		ballId = pocket->itemSlots[0].itemId;
+		if (ballId)
+			gBallToDisplay = ballId;
+	}
+	
+	if (CanThrowLastUsedBall())
+	{
+		if (GetSpriteTileStartByTag(GFX_TAG_LAST_USED_BALL_THROW) == 0xFFFF)
+		{
+			// Create trigger
+			LoadSpriteSheet(&sLastUsedBallThrowSpriteSheet);
+			LoadSpritePalette(&gSpritePalette_AbilityPopUp);
+			
+			gBattleStruct->lastUsedBall.triggerSpriteId = CreateSprite(&sLastUsedBallThrowSpriteTemplate, LAST_BALL_WIN_POS_X, LAST_BALL_WIN_POS_Y, 5);
+			gSprites[gBattleStruct->lastUsedBall.triggerSpriteId].sInitialX = LAST_BALL_WIN_POS_X;
+			gSprites[gBattleStruct->lastUsedBall.triggerSpriteId].sFinalX = LAST_BALL_WIN_POS_X + TRIGGER_X_SLIDE;
+			gSprites[gBattleStruct->lastUsedBall.triggerSpriteId].sSlideSpeedAndDir = -1; // Move 1px per frame
+			gSprites[gBattleStruct->lastUsedBall.triggerSpriteId].sFreePalette = TRUE;
+			
+			// Create item icon
+			gBattleStruct->lastUsedBall.ballSpriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, gBallToDisplay);
+			gSprites[gBattleStruct->lastUsedBall.ballSpriteId].x = LAST_USED_BALL_X;
+			gSprites[gBattleStruct->lastUsedBall.ballSpriteId].y = LAST_USED_BALL_Y;
+			gSprites[gBattleStruct->lastUsedBall.ballSpriteId].callback = SpriteCB_LastUsedBall;
+		}
+		gBattleStruct->lastUsedBall.arrowsVisible = TRUE; // Aways starts visible
+		ShowOrHideLastUsedBall(FALSE); // show trigger
+	}
+	else
+	{
+		gBattleStruct->lastUsedBall.triggerSpriteId = MAX_SPRITES;
+		gBattleStruct->lastUsedBall.ballSpriteId = MAX_SPRITES;
+	}
+}
+
+void ShowOrHideLastUsedBall(bool32 hide)
+{
+	if (gBattleStruct->lastUsedBall.triggerSpriteId != MAX_SPRITES)
+		gSprites[gBattleStruct->lastUsedBall.triggerSpriteId].sHide = hide;
+	
+	ShowOrHideLastUsedBallBallSprite(hide);
+	ChangeLastBallCycleArrowsColor(FALSE); // Default the arrows to be invisible
+	
+	gBattleStruct->lastUsedBall.menuPresent = hide ^ TRUE;
+}
+
 #undef sHide
 #undef sInitialX
 #undef sFinalX
 #undef sSlideSpeedAndDir
+
+static bool32 CanShowEnemyMonIcon(u32 partyId)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+		return TRUE; // Can always see link opponent's team
+	else
+		return gBattleStruct->sides[B_SIDE_OPPONENT].party[partyId].appearedInBattle;
+}
+
+static bool32 EntireEnemyTeamRevealed(void)
+{
+	u32 i;
+	
+	for (i = 0; i < PARTY_SIZE; i++)
+	{
+		if (IsMonValidSpecies(&gEnemyParty[i]) && !CanShowEnemyMonIcon(i))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+static void LoadFaintedMonPalette(void)
+{
+	u16 faintedIconPal[16];
+	struct SpritePalette faintedIconSpritePalette = {faintedIconPal, POKE_ICON_BASE_PAL_TAG + 3};
+	memset(faintedIconPal, RGB_WHITE, sizeof(faintedIconPal));
+	LoadSpritePalette(&faintedIconSpritePalette);
+}
+
+// Task defines
+#define tLoaded               data[0]
+#define tMonIconSpriteIds(n)  data[n + 1]
+
+// Mon icon defines
+#define sHeldItemSpriteId   data[0]
+#define sStatusIconSpriteId data[1]
+
+static void Task_DisplayTeamPreview(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+	u32 i, faintedIconPalId;
+	const u8 *string;
+	
+	if (!tLoaded)
+	{
+		tLoaded = TRUE;
+		
+		gBattle_BG0_Y = 0;
+		gBattle_BG1_X = 0;
+		gBattle_BG1_Y = 0;
+		
+		LZDecompressVram(sTeamPreviewBgTiles, (void*)(BG_CHAR_ADDR(1)));
+		LZDecompressVram(sTeamPreviewBgTilemap, (void*)(BG_SCREEN_ADDR(28)));
+		
+		REG_BG1CNT |= BGCNT_CHARBASE(1);
+		REG_DISPCNT |= DISPCNT_BG1_ON; // Can't use ShowBg bc that resets the charbase
+		
+		// Load graphics
+		LoadSymbolsIconGraphics();
+		LoadSpriteSheet(&sTeamPreviewStatusIconsSpriteSheet);
+		LoadMonIconPalettes();
+		LoadFaintedMonPalette();
+		
+		faintedIconPalId = IndexOfSpritePaletteTag(POKE_ICON_BASE_PAL_TAG + 3);
+		
+		for (i = 0; i < PARTY_SIZE; i++)
+		{
+			u32 species, status;
+			bool32 isDead;
+			s16 x, y;
+			struct Pokemon *mon = &gEnemyParty[i];
+			
+			tMonIconSpriteIds(i) = MAX_SPRITES;
+			
+			if (IsMonValidSpecies(mon))
+			{
+				if (!CanShowEnemyMonIcon(i))
+					species = SPECIES_NONE; // Question mark
+				else if (GetMonAbility(mon) == ABILITY_ILLUSION && !EntireEnemyTeamRevealed()) // Check Illusion
+				{
+					u32 battler = GetBattlerIdFromPartySlot(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), i);
+					
+					if (battler != MAX_BATTLERS_COUNT)
+						species = GetMonData(GetBattlerIllusionPartyIndexPtr(battler), MON_DATA_SPECIES);
+				}
+				else
+					species = GetMonData(mon, MON_DATA_SPECIES);
+				
+				x = 80 + (40 * (i % (PARTY_SIZE / 2)));
+				y = 36 + (40 * (i / (PARTY_SIZE / 2)));
+				isDead = (GetMonData(mon, MON_DATA_HP) == 0);
+				
+				tMonIconSpriteIds(i) = CreateMonIcon(species, isDead ? SpriteCallbackDummy : SpriteCB_MonIcon, x, y, 1);
+				if (tMonIconSpriteIds(i) != MAX_SPRITES)
+				{
+					struct Sprite *sprite = &gSprites[tMonIconSpriteIds(i)];
+					
+					sprite->oam.priority = 0;
+					sprite->sHeldItemSpriteId = MAX_SPRITES;
+					sprite->sStatusIconSpriteId = MAX_SPRITES;
+					
+					if (species)
+					{
+						if (isDead)
+							sprite->oam.paletteNum = faintedIconPalId;
+						else
+						{
+							if (GetMonData(mon, MON_DATA_HELD_ITEM))
+								sprite->sHeldItemSpriteId = Create8x8SymbolSprite(x + 4, y + 12, 0, SYMBOL_HELDITEM);
+							
+							status = GetMonData(mon, MON_DATA_STATUS_ID);
+							
+							if (status)
+							{
+								sprite->sStatusIconSpriteId = CreateSprite(&sTeamPreviewStatusIconTemplate, x - 8, y - 5, 0);
+								
+								if (sprite->sStatusIconSpriteId != MAX_SPRITES)
+									gSprites[sprite->sStatusIconSpriteId].oam.tileNum += (status - 1);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		// Update textbox
+		if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+		{
+			if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
+				string = COMPOUND_STRING("{B_LINK_OPPONENT1_NAME}'s team\n{B_LINK_OPPONENT2_NAME}'s team");
+			else
+				string = COMPOUND_STRING("{B_LINK_OPPONENT1_NAME}'s team");
+		}
+		else
+			string = COMPOUND_STRING("{B_TRAINER1_CLASS} {B_TRAINER1_NAME}'s team");
+		
+		BattleStringExpandPlaceholdersToDisplayedString(string);
+		BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MSG);
+	}
+}
+
+void DisplayInBattleTeamPreview(void)
+{
+	CreateTask(Task_DisplayTeamPreview, 0);
+}
+
+void HideInBattleTeamPreview(void)
+{
+	u32 i, taskId = FindTaskIdByFunc(Task_DisplayTeamPreview);
+	s16 *data = gTasks[taskId].data;
+	
+	// Hide bg
+	gBattle_BG0_Y = 160; // Show action selection
+	RequestDma3Fill(0, (void*)(BG_SCREEN_ADDR(28)), 0x1000, DMA3_32BIT);
+	
+	// Destroy sprites
+	for (i = 0; i < PARTY_SIZE; i++)
+	{
+		if (tMonIconSpriteIds(i) != MAX_SPRITES)
+		{
+			struct Sprite *monIcon = &gSprites[tMonIconSpriteIds(i)];
+			
+			if (monIcon->sHeldItemSpriteId != MAX_SPRITES)
+				DestroySprite(&gSprites[monIcon->sHeldItemSpriteId]);
+			
+			if (monIcon->sStatusIconSpriteId != MAX_SPRITES)
+				DestroySprite(&gSprites[monIcon->sStatusIconSpriteId]);
+			
+			DestroyMonIcon(monIcon);
+		}
+	}
+	// Free graphics
+	FreeSymbolsIconGraphics();
+	FreeMonIconPalettes();
+	FreeSpritePaletteByTag(POKE_ICON_BASE_PAL_TAG + 3);
+	FreeSpriteTilesByTag(POKE_ICON_BASE_PAL_TAG + 4);
+	
+	BattlePutTextOnWindow(gText_EmptyString, B_WIN_MSG);
+	DestroyTask(taskId);
+}
+
+bool32 CanThrowLastUsedBall(void)
+{
+	if (!CanThrowBall())
+		return FALSE;
+	else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		return FALSE;
+	else if (!CheckBagHasItem(gBallToDisplay, 1))
+		return FALSE;
+	else
+		return TRUE;
+}
+
+// Task defines
+#define tState      data[0]
+#define tIsSameBall data[1]
+
+// Sprite defines
+#define sBounce     data[0]
+#define sMoving     data[1]
+#define sHide       data[2]
+#define sTimer      data[3]
+
+static void ShowOrHideLastUsedBallBallSprite(bool32 hide)
+{
+	if (gBattleStruct->lastUsedBall.ballSpriteId != MAX_SPRITES)
+		gSprites[gBattleStruct->lastUsedBall.ballSpriteId].sHide = hide;
+}
+
+static void SpriteCB_LastUsedBall(struct Sprite *sprite)
+{
+	if (sprite->sHide)
+	{
+		if (sprite->y < LAST_USED_BALL_Y)
+			sprite->y++;
+		
+		if (sprite->x != LAST_USED_BALL_X)
+			sprite->x--;
+		
+		if (sprite->x == LAST_USED_BALL_X)
+			DestroyItemIconObj(sprite, ITEMICON_TAG, ITEMICON_TAG);
+	}
+	else
+	{
+		if (sprite->x != LAST_USED_BALL_X + TRIGGER_X_SLIDE)
+			sprite->x++;
+	}
+}
+
+static void SpriteCB_LastUsedBallBounce(struct Sprite *sprite)
+{
+	if ((sprite->sTimer++ % 4) != 0) // Change the image every 4 frame
+		return;
+		
+	if (sprite->sBounce)
+	{
+		if (sprite->y > LAST_USED_BALL_Y_BNC)
+			sprite->y--;
+		else
+			sprite->sMoving = FALSE;
+	}
+	else
+	{
+		if (sprite->y < LAST_USED_BALL_Y)
+			sprite->y++;
+		else
+			sprite->sMoving = FALSE;
+	}
+}
+
+static void Task_BounceBall(u8 taskId)
+{
+	struct Sprite *sprite = &gSprites[gBattleStruct->lastUsedBall.ballSpriteId];
+	struct Task *task = &gTasks[taskId];
+	
+	switch (task->tState)
+	{
+		case 0: // Bounce up
+			sprite->sBounce = TRUE;
+			sprite->sMoving = TRUE;
+			sprite->callback = SpriteCB_LastUsedBallBounce;
+			task->tState = task->tIsSameBall ? 3 : 1;
+			break;
+		case 1: // Destroy icon
+			if (!sprite->sMoving)
+			{
+				DestroyItemIconObj(sprite, ITEMICON_TAG, ITEMICON_TAG);
+				task->tState++;
+			}
+			// fallthrough
+		case 2: // Create new icon
+			if (!sprite->inUse)
+			{
+				gBattleStruct->lastUsedBall.ballSpriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, gBallToDisplay);
+				gSprites[gBattleStruct->lastUsedBall.ballSpriteId].x = LAST_USED_BALL_X + TRIGGER_X_SLIDE;
+				gSprites[gBattleStruct->lastUsedBall.ballSpriteId].y = LAST_USED_BALL_Y_BNC;
+				task->tState++;
+			}
+			// fallthrough
+		case 3: // Bounce down
+			if (!sprite->sMoving)
+			{
+				sprite->sBounce = FALSE;
+				sprite->sMoving = TRUE;
+				sprite->callback = SpriteCB_LastUsedBallBounce;
+				task->tState++;
+			}
+			break;
+		case 4: // Destroy task
+			if (!sprite->sMoving)
+			{
+				sprite->callback = SpriteCB_LastUsedBall;
+				gBattleStruct->lastUsedBall.ballSwapping = FALSE;
+				DestroyTask(taskId);
+			}
+			break;
+	}
+}
+
+void SwapBallToDisplay(bool32 isSameBall)
+{
+	gTasks[CreateTask(Task_BounceBall, 10)].tIsSameBall = isSameBall;
+}
+
+void ChangeLastBallCycleArrowsColor(bool32 showArrows)
+{
+	u32 paletteNum;
+	struct PlttData *defaultPlttArrow;
+    struct PlttData *defaultPlttOutline;
+    struct PlttData *pltArrow;
+    struct PlttData *pltOutline;
+	
+	// Don't wast time doing this every time, only if necessary
+	if (gBattleStruct->lastUsedBall.triggerSpriteId != MAX_SPRITES && gBattleStruct->lastUsedBall.arrowsVisible != showArrows)
+	{
+		gBattleStruct->lastUsedBall.arrowsVisible ^= TRUE;
+		
+		paletteNum = (16 + gSprites[gBattleStruct->lastUsedBall.triggerSpriteId].oam.paletteNum) * 16;
+		
+		pltArrow = (struct PlttData *)&gPlttBufferFaded[paletteNum + 8]; // Arrow color is in idx 8
+		pltOutline = (struct PlttData *)&gPlttBufferFaded[paletteNum + 9]; // Arrow outline is in idx 9
+		
+		if (!showArrows)
+		{
+			defaultPlttArrow = (struct PlttData *)&gPlttBufferFaded[paletteNum + 6]; // Background color is idx 6
+			pltArrow->r = defaultPlttArrow->r;
+			pltArrow->g = defaultPlttArrow->g;
+			pltArrow->b = defaultPlttArrow->b;
+			pltOutline->r = defaultPlttArrow->r;
+			pltOutline->g = defaultPlttArrow->g;
+			pltOutline->b = defaultPlttArrow->b;
+		}
+		else
+		{
+			defaultPlttArrow = (struct PlttData *)&gPlttBufferFaded[paletteNum + 2]; // Grey color is idx 2
+			defaultPlttOutline = (struct PlttData *)&gPlttBufferFaded[paletteNum + 5]; // Light grey color for outline is idx 5
+			pltArrow->r = defaultPlttArrow->r;
+			pltArrow->g = defaultPlttArrow->g;
+			pltArrow->b = defaultPlttArrow->b;
+			pltOutline->r = defaultPlttOutline->r;
+			pltOutline->g = defaultPlttOutline->g;
+			pltOutline->b = defaultPlttOutline->b;
+		}
+	}
+}

@@ -328,6 +328,9 @@ const u8 gBattleInterfaceGfx_Status4[] = INCBIN_U8("graphics/battle_interface/st
 const u8 gUnknown_8D12A44[] = INCBIN_U8("graphics/battle_interface/unknown_D12A44.4bpp");
 const u8 gUnknown_8D12A64[] = INCBIN_U8("graphics/battle_interface/unknown_D12A64.4bpp");
 
+const u8 gBattleInterface_AbilityPopUp[] = INCBIN_U8("graphics/battle_interface/ability_pop_up.4bpp");
+const u16 gBattleInterface_AbilityPopUpPal[] = INCBIN_U16("graphics/battle_interface/ability_pop_up.gbapal");
+
 const u32 gBattleAnimSpriteGfx_FurySwipes[] = INCBIN_U32("graphics/battle_anims/sprites/fury_swipes.4bpp.lz");
 const u32 gBattleAnimSpritePal_FurySwipes[] = INCBIN_U32("graphics/battle_anims/sprites/fury_swipes.gbapal.lz");
 
@@ -486,9 +489,6 @@ const u32 gBattleAnimSpritePal_WhirlwindLines[] = INCBIN_U32("graphics/battle_an
 
 const u32 gBattleAnimSpriteGfx_GoldRing[] = INCBIN_U32("graphics/battle_anims/sprites/gold_ring.4bpp.lz");
 const u32 gBattleAnimSpritePal_GoldRing[] = INCBIN_U32("graphics/battle_anims/sprites/gold_ring.gbapal.lz");
-
-const u32 gBattleAnimSpriteGfx_AbilityPopUp[] = INCBIN_U32("graphics/battle_interface/ability_pop_up.4bpp");
-const u32 gBattleAnimSpritePal_AbilityPopUp[] = INCBIN_U32("graphics/battle_interface/ability_pop_up.gbapal");
 
 const u32 gBattleAnimSpritePal_BlueRing2[] = INCBIN_U32("graphics/battle_anims/sprites/blue_ring_2.gbapal.lz");
 const u32 gBattleAnimSpritePal_PurpleRing[] = INCBIN_U32("graphics/battle_anims/sprites/purple_ring.gbapal.lz");

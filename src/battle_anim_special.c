@@ -115,6 +115,12 @@ static const struct SpriteTemplate sItemThrowSpriteTemplate =
     .callback = AnimThrowItemProjectile,
 };
 
+const struct SpritePalette gSpritePalette_AbilityPopUp =
+{
+	.data = gBattleInterface_AbilityPopUpPal,
+	.tag = GFX_TAG_ABILITY_POP_UP
+};
+
 static const struct OamData sOamData_AbilityPopUp =
 {
 	.shape = ST_OAM_H_RECTANGLE,
@@ -1374,7 +1380,7 @@ void AnimTask_GetBattlersFromArg(u8 taskId)
 static void RestoreAbilityPopUpOverwrittenPixels(u8 * tiles)
 {
 	u32 i, j, pixelCount;
-	const u8 *src, *PopUpImg = (u8 *)gBattleAnimSpriteGfx_AbilityPopUp;
+	const u8 *src, *popUpImg = gBattleInterface_AbilityPopUp;
 	u8 *dest, *buffer = AllocZeroed(0x800);
 	
 	CpuCopy32(tiles, buffer, 0x800);
@@ -1382,7 +1388,7 @@ static void RestoreAbilityPopUpOverwrittenPixels(u8 * tiles)
 	for (i = 0; i < ARRAY_COUNT(sAbilityPopUpOverwrittenPixelsTable); i++)
 	{
 		dest = buffer + sAbilityPopUpOverwrittenPixelsTable[i][0];
-		src = PopUpImg + sAbilityPopUpOverwrittenPixelsTable[i][0];
+		src = popUpImg + sAbilityPopUpOverwrittenPixelsTable[i][0];
 		pixelCount = sAbilityPopUpOverwrittenPixelsTable[i][1];
 		
 		for (j = 0; j < pixelCount; j++)
@@ -1556,9 +1562,7 @@ static void SpriteCB_AbilityPopUp(struct Sprite * sprite)
 						gActiveAbilityPopUps &= ~(Bit(battlerId));
 						gAbilityPopUpIds[battlerId][0] = 0;
 						gAbilityPopUpIds[battlerId][1] = 0;
-						FreeSpriteTilesByTag(ANIM_TAG_ABILITY_POP_UP + battlerId);
-						FreeSpritePaletteByTag(ANIM_TAG_ABILITY_POP_UP);
-						DestroySprite(sprite);
+						DestroySpriteAndFreeResources(sprite);
 					}
 					else
 						sprite->tState = 2;
@@ -1574,10 +1578,21 @@ void AnimTask_CreateAbilityPopUp(u8 taskId)
 {
 	s16 x, y;
     u32 position, spriteId1, spriteId2, battler = gBattleAnimAttacker;
+	u32 gfxTag = GFX_TAG_ABILITY_POP_UP + battler;
+	
+	// Resources
+	const struct SpriteSheet sSpriteSheet_AbilityPopUp =
+	{
+		.data = gBattleInterface_AbilityPopUp,
+		.size = 0x0800,
+		.tag = gfxTag
+	};
+	
+	// Sprite templates
 	const struct SpriteTemplate sSpriteTemplate_AbilityPopUp =
 	{
-		.tileTag = ANIM_TAG_ABILITY_POP_UP + battler,
-		.paletteTag = ANIM_TAG_ABILITY_POP_UP,
+		.tileTag = gfxTag,
+		.paletteTag = GFX_TAG_ABILITY_POP_UP,
 		.oam = &sOamData_AbilityPopUp,
 		.anims = sSpriteAnimTable_AbilityPopUp,
 		.images = NULL,
@@ -1586,16 +1601,16 @@ void AnimTask_CreateAbilityPopUp(u8 taskId)
 	};
 	const struct SpriteTemplate sSpriteTemplate_AbilityPopUp2 =
 	{
-		.tileTag = ANIM_TAG_ABILITY_POP_UP + battler,
-		.paletteTag = ANIM_TAG_ABILITY_POP_UP,
+		.tileTag = gfxTag,
+		.paletteTag = GFX_TAG_ABILITY_POP_UP,
 		.oam = &sOamData_AbilityPopUp,
 		.anims = sSpriteAnimTable_AbilityPopUp2,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCB_AbilityPopUp
 	};
-	LoadSpriteSheet((const struct SpriteSheet*)&gBattleAnimPicTable[GET_TRUE_SPRITE_INDEX(ANIM_TAG_ABILITY_POP_UP + battler)]);
-    LoadSpritePalette((const struct SpritePalette*)&gBattleAnimPaletteTable[GET_TRUE_SPRITE_INDEX(ANIM_TAG_ABILITY_POP_UP)]);
+	LoadSpriteSheet(&sSpriteSheet_AbilityPopUp);
+    LoadSpritePalette(&gSpritePalette_AbilityPopUp);
 	
     gActiveAbilityPopUps |= Bit(battler);
     

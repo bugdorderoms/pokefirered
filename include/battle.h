@@ -39,6 +39,7 @@
 #define B_ACTION_FINISHED                  12
 #define B_ACTION_CANCEL_PARTNER            12 // when choosing an action
 #define B_ACTION_NOTHING_FAINTED           13 // when choosing an action
+#define B_ACTION_THROW_BALL                14 // throw last used ball
 #define B_ACTION_NONE                      0xFF
 
 #define MOVE_TARGET_SELECTED          0
@@ -480,7 +481,7 @@ struct BattleStruct
 	/*0x042*/ u16 poisonPuppeteerConfusion:1;
 	/*0x042*/ u16 strongWindsMessageState:2;
 	/*0x042*/ u16 pursuitSwitchDmg:1;
-	/*0x042*/ u16 hasFetchedBall:1; // For Ball Fetch
+	/*0x042*/ u16 unused:1; // unused
 	/*0x042*/ u16 attackAnimPlayed:1; // For Dancer
 	/*0x042*/ u16 playerSelectedGimmick:1; // Used to toggle trigger and update battle UI
 	/*0x042*/ u16 effectsBeforeUsingMoveDone:1;
@@ -499,9 +500,9 @@ struct BattleStruct
 	/*0x073*/ u8 absentBattlerFlags;
 	/*0x074*/ u8 linkBattleVsSpriteId_V;
     /*0x075*/ u8 linkBattleVsSpriteId_S;
-	/*0x076*/ u16 lastFailedBallThrow; // For Ball Fetch
-	/*0x078*/ u8 battleChallenge;
-	/*0x079*/ struct {
+	/*0x076*/ u8 battleChallenge;
+	/*0x077*/ u8 teamPreviewTriggerSpriteId;
+	/*0x078*/ struct {
 				  u8 calls:5;
 				  u8 usedAdrenalineOrb:1;
 				  u8 lastCallFailed:1;
@@ -515,6 +516,17 @@ struct BattleStruct
 				  u8 arrowTaskId; // Submenu arrow task id
 				  u16 submenuState; // Determine which string will be show on the submenu info
 			  } moveInfo;
+			  struct {
+				  u8 triggerSpriteId;
+				  u8 ballSpriteId;
+				  u16 lastFailedBallThrow; // For Ball Fetch
+				  bool8 hasFetchedBall:1; // For Ball Fetch
+				  bool8 menuPresent:1; // Last used ball menu is present
+				  bool8 ballSwapping:1; // Ball swap in progrees
+				  bool8 arrowsVisible:1; // Are arrows visible
+				  bool8 ackBallUseBtn:1;
+				  bool8 unused:3;
+			  } lastUsedBall;
 			  struct Dancer
 			  {
 				  bool8 inProgress;
@@ -801,5 +813,7 @@ extern u8 gAbsentBattlerFlags;
 extern u32 gFieldStatus;
 extern struct FieldTimer gFieldTimers;
 extern struct QueuedStatBoost gQueuedStatBoosts[MAX_BATTLERS_COUNT];
+extern u16 gBallToDisplay;
+extern u16 gLastThrownBall;
 
 #endif // GUARD_BATTLE_H

@@ -18,6 +18,7 @@ void DestroyItemMenuIcon(u32 a0);
 void CreateItemMenuIcon(u32 itemId, u32 a0);
 u32 AddItemIconObject(u32 tilesTag, u32 paletteTag, u32 itemId);
 u32 AddItemIconObjectWithCustomObjectTemplate(const struct SpriteTemplate * origTemplate, u32 tilesTag, u32 paletteTag, u32 itemId);
+void DestroyItemIconObj(struct Sprite *sprite, u32 tilesTag, u32 paletteTag);
 void sub_80989A0(u32 itemId, u32 idx);
 void ItemMenuIcons_MoveInsertIndicatorBar(s16 x, u32 y);
 void ItemMenuIcons_ToggleInsertIndicatorBarVisibility(bool32 invisible);

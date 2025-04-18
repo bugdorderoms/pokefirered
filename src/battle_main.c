@@ -74,6 +74,7 @@ static void HandleEndTurn_BattleLost(void);
 static void HandleEndTurn_RanFromBattle(void);
 static void HandleEndTurn_MonFled(void);
 static void HandleEndTurn_FinishBattle(void);
+static void HandleAction_LastUsedBallThrow(void);
 static void ClearActionsAndMovesForNextTurn(void);
 static void TryCallSosAlly(void);
 static void CB2_InitBattleInternal(void);
@@ -157,6 +158,8 @@ EWRAM_DATA u16 gBattleWeather = 0;
 EWRAM_DATA u16 gIntroSlideFlags = 0;
 EWRAM_DATA u8 gSentPokesToOpponent[2] = {0};
 EWRAM_DATA u16 gLastUsedItem = 0;
+EWRAM_DATA u16 gBallToDisplay = 0;
+EWRAM_DATA u16 gLastThrownBall = 0;
 EWRAM_DATA u16 gPaydayMoney = 0;
 EWRAM_DATA u8 gBattlerStatusSummaryTaskId[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gExpShareExp = 0;
@@ -458,6 +461,7 @@ static void (*const sTurnActionsFuncsTable[])(void) =
     [B_ACTION_TRY_FINISH] = HandleAction_TryFinish,
     [B_ACTION_FINISHED] = HandleAction_ActionFinished,
     [B_ACTION_NOTHING_FAINTED] = HandleAction_NothingIsFainted,
+	[B_ACTION_THROW_BALL] = HandleAction_LastUsedBallThrow,
 };
 
 static void (*const sEndTurnFuncsTable[])(void) =
@@ -2131,20 +2135,23 @@ static void BattleIntroDrawTrainersOrMonsSprites(void)
 			{
 				mon = &mon[j];
 				
-				// Try revert shaymin
-				DoOverworldFormChange(mon, FORM_CHANGE_TIME);
-				
-				// Save original species for battle form changes
-				gBattleMonForms[i][j] = GetMonData(mon, MON_DATA_SPECIES);
-				
-				// Transform Xerneas into active form
-				DoOverworldFormChange(mon, FORM_CHANGE_START_BATTLE);
-				
-				// Save mon items
-				gBattleStruct->itemEffects.savedItems[i][j] = GetMonData(mon, MON_DATA_HELD_ITEM);
-				
-				// Try Transform Zacian and Zamazenta's Iron Head into their moves
-				TryTransformZacianAndZamazentaIronHead(mon, FALSE);
+				if (IsMonValidSpecies(mon))
+				{
+					// Try revert shaymin
+					DoOverworldFormChange(mon, FORM_CHANGE_TIME);
+					
+					// Save original species for battle form changes
+					gBattleMonForms[i][j] = GetMonData(mon, MON_DATA_SPECIES);
+					
+					// Transform Xerneas into active form
+					DoOverworldFormChange(mon, FORM_CHANGE_START_BATTLE);
+					
+					// Save mon items
+					gBattleStruct->itemEffects.savedItems[i][j] = GetMonData(mon, MON_DATA_HELD_ITEM);
+					
+					// Try Transform Zacian and Zamazenta's Iron Head into their moves
+					TryTransformZacianAndZamazentaIronHead(mon, FALSE);
+				}
 			}
 		}
         gBattleMainFunc = BattleIntroDrawPartySummaryScreens;
@@ -2989,6 +2996,10 @@ static void HandleTurnActionSelectionState(void)
 				case B_ACTION_OLDMAN_THROW:
                     ++gBattleCommunication[battlerId];
                     break;
+				case B_ACTION_THROW_BALL:
+					gBattleStruct->throwingPokeBall = TRUE;
+					++gBattleCommunication[battlerId];
+                    break;
                 }
             }
             break;
@@ -3297,7 +3308,8 @@ static void SetActionsAndBattlersTurnOrder(void)
         {
             for (battlerId = 0; battlerId < gBattlersCount; ++battlerId)
             {
-                if (gBattleStruct->battlers[battlerId].chosenAction == B_ACTION_USE_ITEM || gBattleStruct->battlers[battlerId].chosenAction == B_ACTION_SWITCH)
+                if (gBattleStruct->battlers[battlerId].chosenAction == B_ACTION_USE_ITEM || gBattleStruct->battlers[battlerId].chosenAction == B_ACTION_SWITCH
+				|| gBattleStruct->battlers[battlerId].chosenAction == B_ACTION_THROW_BALL)
                 {
                     gActionsByTurnOrder[turnOrderId] = gBattleStruct->battlers[battlerId].chosenAction;
                     gBattlerByTurnOrder[turnOrderId] = battlerId;
@@ -3307,7 +3319,8 @@ static void SetActionsAndBattlersTurnOrder(void)
 			
             for (battlerId = 0; battlerId < gBattlersCount; ++battlerId)
             {
-                if (gBattleStruct->battlers[battlerId].chosenAction != B_ACTION_USE_ITEM && gBattleStruct->battlers[battlerId].chosenAction != B_ACTION_SWITCH)
+                if (gBattleStruct->battlers[battlerId].chosenAction != B_ACTION_USE_ITEM && gBattleStruct->battlers[battlerId].chosenAction != B_ACTION_SWITCH
+				&& gBattleStruct->battlers[battlerId].chosenAction != B_ACTION_THROW_BALL)
                 {
                     gActionsByTurnOrder[turnOrderId] = gBattleStruct->battlers[battlerId].chosenAction;
                     gBattlerByTurnOrder[turnOrderId] = battlerId;
@@ -3323,7 +3336,8 @@ static void SetActionsAndBattlersTurnOrder(void)
                     u32 battler2 = gBattlerByTurnOrder[j];
 
                     if (gActionsByTurnOrder[i] != B_ACTION_USE_ITEM && gActionsByTurnOrder[j] != B_ACTION_USE_ITEM
-					&& gActionsByTurnOrder[i] != B_ACTION_SWITCH && gActionsByTurnOrder[j] != B_ACTION_SWITCH)
+					&& gActionsByTurnOrder[i] != B_ACTION_SWITCH && gActionsByTurnOrder[j] != B_ACTION_SWITCH
+					&& gActionsByTurnOrder[i] != B_ACTION_THROW_BALL && gActionsByTurnOrder[j] != B_ACTION_THROW_BALL)
 					{
                         if (GetWhoStrikesFirst(battler1, battler2, FALSE) != BATTLER1_STRIKES_FIRST)
                             SwapTurnOrder(i, j);
@@ -4228,4 +4242,15 @@ static void HandleAction_ActionFinished(void)
     gBattleStruct->moveEffect.moveEffectByte = MOVE_EFFECT_NONE;
     gBattleCommunication[ACTIONS_CONFIRMED_COUNT] = 0;
     gBattleResources->battleScriptsStack->size = 0;
+}
+
+static void HandleAction_LastUsedBallThrow(void)
+{
+	gBattlerAttacker = gCurrentTurnActionBattlerId;
+    gBattle_BG0_X = 0;
+    gBattle_BG0_Y = 0;
+	gLastUsedItem = gBallToDisplay;
+	RemoveBagItem(gLastUsedItem, 1);
+	gBattlescriptCurrInstr = BattleScript_ThrowBall;
+	gCurrentActionFuncId = B_ACTION_EXEC_SCRIPT;
 }

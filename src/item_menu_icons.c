@@ -345,6 +345,13 @@ u32 AddItemIconObjectWithCustomObjectTemplate(const struct SpriteTemplate * orig
     return spriteId;
 }
 
+void DestroyItemIconObj(struct Sprite *sprite, u32 tilesTag, u32 paletteTag)
+{
+	FreeSpriteTilesByTag(tilesTag);
+	FreeSpritePaletteByTag(paletteTag);
+	DestroySpriteAndFreeMatrix(sprite);
+}
+
 void CreateItemMenuIcon(u32 itemId, u32 idx)
 {
     u8 * ptr = &sItemMenuIconSpriteIds[10];
@@ -557,10 +564,10 @@ void DestroyItemIconOnFindMessage(void)
 	struct Sprite * sprite = &gSprites[spriteId];
 	u32 windowId = sprite->data[0], spriteId2 = sprite->data[1];
 	
-	DestroySpriteAndFreeResources(sprite);
+	DestroyItemIconObj(sprite, ITEMICON_TAG, ITEMICON_TAG);
 	
 	if (spriteId2 != MAX_SPRITES)
-		DestroySpriteAndFreeResources(&gSprites[spriteId2]);
+		DestroyItemIconObj(&gSprites[spriteId2], ITEMICON_TAG, ITEMICON_TAG);
 	
 	if (windowId != 0xFF)
 	{

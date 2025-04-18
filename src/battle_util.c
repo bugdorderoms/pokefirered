@@ -3191,11 +3191,11 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
 						++effect;
 						break;
 					case ABILITY_BALL_FETCH:
-						if (!gBattleMons[battler].item && !gBattleStruct->hasFetchedBall && gBattleStruct->lastFailedBallThrow)
+						if (!gBattleMons[battler].item && !gBattleStruct->lastUsedBall.hasFetchedBall && gBattleStruct->lastUsedBall.lastFailedBallThrow)
 						{
-							gBattleStruct->hasFetchedBall = TRUE;
-							gLastUsedItem = gBattleStruct->lastFailedBallThrow;
-							GiveItemToBattler(battler, gBattleStruct->lastFailedBallThrow);
+							gBattleStruct->lastUsedBall.hasFetchedBall = TRUE;
+							gLastUsedItem = gBattleStruct->lastUsedBall.lastFailedBallThrow;
+							GiveItemToBattler(battler, gLastUsedItem);
 							BattleScriptPushCursorAndCallback(BattleScript_Pickup);
 							++effect;
 						}
@@ -5404,24 +5404,24 @@ bool32 IsBattlerAffectedByFollowMe(u32 battlerId, u32 opposingSide, u32 move)
 	return TRUE;
 }
 
+// It check though all battlers of the slot's side and returns the battler of the partyId.
+u32 GetBattlerIdFromPartySlot(u32 slot, u32 partyId)
+{
+	u32 i;
+	
+	for (i = 0; i < NUM_BATTLERS_PER_SIDE; i++, slot = BATTLE_PARTNER(slot))
+	{
+		if (partyId == gBattlerPartyIndexes[slot])
+			return slot;
+	}
+	return MAX_BATTLERS_COUNT;
+}
+
 // battlerId = the battler using the item
 // partyIndex = the party index the item effect get applyed
 u32 GetBattleMonForItemUse(u32 battlerId, u32 partyIndex)
 {
-	u32 i, battleMonId = MAX_BATTLERS_COUNT;
-	
-	if (gMain.inBattle)
-	{
-		for (i = 0; i < gBattlersCount; i++)
-		{
-			if (partyIndex == gBattlerPartyIndexes[i])
-			{
-				battleMonId = i;
-				break;
-			}
-		}
-	}
-	return battleMonId;
+	return gMain.inBattle ? GetBattlerIdFromPartySlot(battlerId, partyIndex) : MAX_BATTLERS_COUNT;
 }
 
 u32 GetItemUseBattler(u32 battlerId)
@@ -5459,6 +5459,11 @@ static u32 GetBallThrowableState(void)
 		return BALL_THROW_UNABLE_SEMI_INVULNERABLE;
 	else
 		return BALL_THROW_SUCCESS;
+}
+
+bool32 CanThrowBall(void)
+{
+	return (GetBallThrowableState() == BALL_THROW_SUCCESS);
 }
 
 const u8 *PokemonUseItemEffectsBattle(u32 battlerId, u32 itemId, bool32 *canUse)
@@ -5923,7 +5928,7 @@ bool32 TryRemoveEntryHazards(u32 battlerId, bool32 clear, bool32 fromBothSides)
 
 void SaveAttackerToStack(u32 battlerId)
 {
-	DebugPrintfLevel(MGBA_LOG_INFO, "SaveAttackerToStack called.");
+	DebugPrintf("SaveAttackerToStack called.");
 	
 	if (gBattleStruct->savedAttackerStackCount < ARRAY_COUNT(gBattleStruct->savedAttackerStack))
 		gBattleStruct->savedAttackerStack[gBattleStruct->savedAttackerStackCount++] = gBattlerAttacker;
@@ -5935,13 +5940,13 @@ void SaveAttackerToStack(u32 battlerId)
 
 void RestoreAttackerFromStack(void)
 {
-	DebugPrintfLevel(MGBA_LOG_INFO, "RestoreAttackerFromStack called.");
+	DebugPrintf("RestoreAttackerFromStack called.");
 	gBattlerAttacker = gBattleStruct->savedAttackerStack[--gBattleStruct->savedAttackerStackCount];
 }
 
 void SaveTargetToStack(u32 battlerId)
 {
-	DebugPrintfLevel(MGBA_LOG_INFO, "SaveTargetToStack called.");
+	DebugPrintf("SaveTargetToStack called.");
 	
 	if (gBattleStruct->savedTargetStackCount < ARRAY_COUNT(gBattleStruct->savedTargetStack))
 		gBattleStruct->savedTargetStack[gBattleStruct->savedTargetStackCount++] = gBattlerTarget;
@@ -5953,7 +5958,7 @@ void SaveTargetToStack(u32 battlerId)
 
 void RestoreTargetFromStack(void)
 {
-	DebugPrintfLevel(MGBA_LOG_INFO, "RestoreTargetFromStack called.");
+	DebugPrintf("RestoreTargetFromStack called.");
 	gBattlerTarget = gBattleStruct->savedTargetStack[--gBattleStruct->savedTargetStackCount];
 }
 

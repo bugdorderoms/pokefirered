@@ -106,12 +106,12 @@ bool32 IsPocketNotEmpty(u32 pocketId)
 
 bool32 CheckBagHasItem(u32 itemId, u32 count)
 {
-    u32 i, pocket;
+    u32 i, pocket = ItemId_GetPocket(itemId);
 
-    if (ItemId_GetPocket(itemId) == 0)
+    if (pocket == 0)
         return FALSE;
 
-    pocket = ItemId_GetPocket(itemId) - 1;
+    pocket--;
 	
     // Check for item slots that contain the item
     for (i = 0; i < gBagPockets[pocket].capacity; i++)
@@ -136,12 +136,12 @@ bool32 CheckBagHasItem(u32 itemId, u32 count)
 
 bool32 CheckBagHasSpace(u32 itemId, u32 count)
 {
-    u32 i, pocket;
+    u32 i, pocket = ItemId_GetPocket(itemId);
 
-    if (ItemId_GetPocket(itemId) == 0)
+    if (pocket == 0)
         return FALSE;
 
-    pocket = ItemId_GetPocket(itemId) - 1;
+    pocket--;
 	
     // Check for item slots that contain the item
     for (i = 0; i < gBagPockets[pocket].capacity; i++)
@@ -170,13 +170,13 @@ bool32 CheckBagHasSpace(u32 itemId, u32 count)
 
 bool32 AddBagItem(u32 itemId, u32 count)
 {
-    u32 i, pocket;
+    u32 i, pocket = ItemId_GetPocket(itemId);
     s8 idx;
 
-    if (ItemId_GetPocket(itemId) == 0)
+    if (pocket == 0)
         return FALSE;
 
-    pocket = ItemId_GetPocket(itemId) - 1;
+    pocket--;
 	
     for (i = 0; i < gBagPockets[pocket].capacity; i++)
     {
@@ -233,15 +233,12 @@ bool32 AddBagItem(u32 itemId, u32 count)
 
 bool32 RemoveBagItem(u32 itemId, u32 count)
 {
-    u32 i, pocket;
+    u32 i, pocket = ItemId_GetPocket(itemId);
 
-    if (ItemId_GetPocket(itemId) == 0)
+    if (pocket == 0 || !itemId)
         return FALSE;
 
-    if (itemId == ITEM_NONE)
-        return FALSE;
-
-    pocket = ItemId_GetPocket(itemId) - 1;
+    pocket--;
 	
     // Check for item slots that contain the item
     for (i = 0; i < gBagPockets[pocket].capacity; i++)
@@ -420,16 +417,16 @@ void SwapItemSlots(struct ItemSlot * a, struct ItemSlot * b)
     *b = c;
 }
 
-void BagPocketCompaction(struct ItemSlot * slots, u32 capacity)
+void BagPocketCompaction(struct BagPocket * pocket)
 {
     u32 i, j;
 
-    for (i = 0; i < capacity - 1; i++)
+    for (i = 0; i < pocket->capacity - 1; i++)
     {
-        for (j = i + 1; j < capacity; j++)
+        for (j = i + 1; j < pocket->capacity; j++)
         {
-            if (GetBagItemQuantity(&slots[i].quantity) == 0)
-                SwapItemSlots(&slots[i], &slots[j]);
+            if (GetBagItemQuantity(&pocket->itemSlots[i].quantity) == 0)
+                SwapItemSlots(&pocket->itemSlots[i], &pocket->itemSlots[j]);
         }
     }
 }

@@ -230,7 +230,7 @@ u32 GetMonFormChangeSpecies(struct Pokemon *mon, u32 species, u32 formChangeType
 
 u32 DoOverworldFormChange(struct Pokemon *mon, u32 formChangeType)
 {
-	u32 species = GetMonData(mon, MON_DATA_SPECIES);
+	u32 species = GetMonData(mon, MON_DATA_SPECIES2);
 	u32 targetSpecies = GetMonFormChangeSpecies(mon, species, formChangeType);
 	
 	if (targetSpecies && targetSpecies < NUM_SPECIES && targetSpecies != species)
@@ -259,19 +259,22 @@ void DoPlayerPartyEndBattleFormChange(void)
 	
 	for (i = 0; i < PARTY_SIZE; i++)
 	{
-		// Try Transform Zacian and Zamazenta's moves into Iron Head
-		TryTransformZacianAndZamazentaIronHead(&gPlayerParty[i], TRUE);
-		
-		DoSpecialFormChange(0xFF, i, FORM_CHANGE_END_BATTLE); // revert battle forms back
-		
-		if (gBattleStruct->sides[B_SIDE_PLAYER].party[i].appearedInBattle) // only change form if appeared in battle
-			DoOverworldFormChange(&gPlayerParty[i], FORM_CHANGE_TERRAIN); // update Burmy form
+		if (IsMonValidSpecies(&gPlayerParty[i]))
+		{
+			// Try Transform Zacian and Zamazenta's moves into Iron Head
+			TryTransformZacianAndZamazentaIronHead(&gPlayerParty[i], TRUE);
+			
+			DoSpecialFormChange(0xFF, i, FORM_CHANGE_END_BATTLE); // revert battle forms back
+			
+			if (gBattleStruct->sides[B_SIDE_PLAYER].party[i].appearedInBattle) // only change form if appeared in battle
+				DoOverworldFormChange(&gPlayerParty[i], FORM_CHANGE_TERRAIN); // update Burmy form
+		}
 	}
 }
 
 void TrySetMonFormChangeCountdown(struct Pokemon *mon)
 {
-	u32 i, species = GetMonData(mon, MON_DATA_SPECIES);
+	u32 i, species = GetMonData(mon, MON_DATA_SPECIES2);
 	const struct FormChange *formsTable = gSpeciesInfo[species].formChangeTable;
 	
 	if (formsTable != NULL)

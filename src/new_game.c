@@ -173,10 +173,10 @@ void NewGameInitData(void)
 	gSaveBlock2Ptr->taurosChargeStamina = TAUROS_CHARGE_STAMINA;
 	
 	// Debug data's
-	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress species=%u", NUM_SPECIES_BITS);
-	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress natures=%u", NUM_NATURE_BITS);
-	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress types=%u", NUM_TYPES_BITS);
-	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress poke balls=%u", NUM_POKEBALL_BITS);
-	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress items=%u", NUM_ITEM_BITS);
-	DebugPrintfLevel(MGBA_LOG_INFO, "Num bits required to compress moves=%u", NUM_MOVES_BITS);
+	DebugPrintf("Num bits required to compress species=%u", NUM_SPECIES_BITS);
+	DebugPrintf("Num bits required to compress natures=%u", NUM_NATURE_BITS);
+	DebugPrintf("Num bits required to compress types=%u", NUM_TYPES_BITS);
+	DebugPrintf("Num bits required to compress poke balls=%u", NUM_POKEBALL_BITS);
+	DebugPrintf("Num bits required to compress items=%u", NUM_ITEM_BITS);
+	DebugPrintf("Num bits required to compress moves=%u", NUM_MOVES_BITS);
 }

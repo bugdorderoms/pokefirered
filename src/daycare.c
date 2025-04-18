@@ -423,16 +423,22 @@ static void ApplyDaycareExperience(struct Pokemon *mon)
 
 static u32 TakeSelectedPokemonFromDaycare(struct DaycareMon *daycareMon)
 {
-    u32 species, experience;
+    u32 species, experience, maxExp, lvlCap;
     struct Pokemon pokemon;
 
     GetBoxMonNickname(&daycareMon->mon, gStringVar1);
     BoxMonToMon(&daycareMon->mon, &pokemon);
     species = DoOverworldFormChange(&pokemon, FORM_CHANGE_COUNTDOWN);
+	lvlCap = GetCurrentLevelCapLevel();
 
-    if (GetMonData(&pokemon, MON_DATA_LEVEL) != MAX_LEVEL)
+    if (GetMonData(&pokemon, MON_DATA_LEVEL) < lvlCap)
     {
         experience = GetMonData(&pokemon, MON_DATA_EXP) + daycareMon->steps;
+		maxExp = gExperienceTables[gSpeciesInfo[species].growthRate][lvlCap];
+		
+		if (experience > maxExp)
+			experience = maxExp;
+		
         SetMonData(&pokemon, MON_DATA_EXP, &experience);
         ApplyDaycareExperience(&pokemon);
     }

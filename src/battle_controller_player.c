@@ -56,6 +56,10 @@ static void MoveInfoPrintSubmenuString(u32 battlerId, u32 stateId);
 static void MoveInfoPrintPowerAndAccuracy(u32 battlerId, u32 move);
 static void MoveInfoPrintPriorityAndCategory(u32 battlerId, u32 move);
 static void MoveInfoPrintMoveTarget(u32 battlerId, u32 move);
+static void ChangeBattlerSpritesInvisibilities(bool32 invisible);
+static void HandleInputTeamPreview(u32 battlerId);
+static u32 GetPrevBall(u32 ballId);
+static u32 GetNextBall(u32 ballId);
 
 static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
@@ -270,18 +274,27 @@ static void HandleChooseActionAfterDma3(u32 battlerId)
     {
         gBattle_BG0_X = 0;
         gBattle_BG0_Y = 160;
-		
-#if WEATHER_ICON_IN_BATTLE
-		if (!(gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_POKEDUDE)))
-			TryCreateWeatherAnimIcon();
-#endif
 
         if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
 			gBattlerControllerFuncs[battlerId] = OakOldMan_SimulateInputChooseAction;
 		else if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
 			gBattlerControllerFuncs[battlerId] = Pokedude_SimulateInputChooseAction;
 		else
+		{
+#if WEATHER_ICON_IN_BATTLE
+			TryCreateWeatherAnimIcon();
+#endif
+
+#if BATTLE_TEAM_PREVIEW
+			TryLoadTeamPreviewTrigger();
+#endif
+
+#if LAST_USED_BALL_THROW
+			TryAddLastUsedBallTrigger();
+#endif
+
 			gBattlerControllerFuncs[battlerId] = HandleInputChooseAction;
+		}
     }
 }
 
@@ -569,12 +582,93 @@ static void HandleInputChooseAction(u32 battlerId)
     DoBounceEffect(battlerId, BOUNCE_HEALTHBOX, 7, 1);
     DoBounceEffect(battlerId, BOUNCE_MON, 7, 1);
 	
+#if LAST_USED_BALL_THROW
+	if (gBattleStruct->lastUsedBall.ballSwapping)
+		return; // Can't choose action while ball is swapping
+	
+	if (!gBattleStruct->lastUsedBall.menuPresent)
+		gBattleStruct->lastUsedBall.ackBallUseBtn = FALSE;
+	else if (JOY_NEW(R_BUTTON))
+	{
+		ChangeLastBallCycleArrowsColor(TRUE);
+		gBattleStruct->lastUsedBall.ackBallUseBtn = TRUE;
+	}
+	
+	if (gBattleStruct->lastUsedBall.ackBallUseBtn)
+	{
+		bool32 isSameBall, holdingButton = JOY_HELD(R_BUTTON);
+		u32 newBall;
+		
+		if (holdingButton && JOY_NEW(DPAD_DOWN | DPAD_RIGHT))
+		{
+			newBall = GetNextBall(gBallToDisplay);
+			
+			if (newBall)
+			{
+				PlaySE(SE_SELECT);
+				
+				gBattleStruct->lastUsedBall.ballSwapping = TRUE;
+				
+				if (gBallToDisplay == newBall)
+					isSameBall = TRUE;
+				else
+				{
+					gBallToDisplay = newBall;
+					isSameBall = FALSE;
+				}
+				SwapBallToDisplay(isSameBall);
+			}
+		}
+		else if (holdingButton && JOY_NEW(DPAD_UP | DPAD_LEFT))
+		{
+			newBall = GetPrevBall(gBallToDisplay);
+				
+			if (newBall)
+			{
+				PlaySE(SE_SELECT);
+				gBattleStruct->lastUsedBall.ballSwapping = TRUE;
+				
+				if (gBallToDisplay == newBall)
+					isSameBall = TRUE;
+				else
+				{
+					gBallToDisplay = newBall;
+					isSameBall = FALSE;
+				}
+				SwapBallToDisplay(isSameBall);
+			}
+		}
+		else if (holdingButton && JOY_NEW(B_BUTTON)) // Failsafe to cancel the action
+		{
+			gBattleStruct->lastUsedBall.ackBallUseBtn = FALSE;
+			ChangeLastBallCycleArrowsColor(FALSE);
+		}
+		else if (!holdingButton && CanThrowLastUsedBall())
+		{
+			PlaySE(SE_SELECT);
+			gBattleStruct->lastUsedBall.ackBallUseBtn = FALSE;
+			ShowOrHideLastUsedBall(TRUE); // hide trigger
+			BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_THROW_BALL, 0);
+			BattleControllerComplete(battlerId);
+		}
+		return;
+	}
+#endif
+	
     if (JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
 		
 #if WEATHER_ICON_IN_BATTLE
         ShowOrHideWeatherAnimIcon(TRUE); // hide icon
+#endif
+
+#if BATTLE_TEAM_PREVIEW
+		ShowOrHideTeamPreviewTrigger(TRUE); // hide trigger
+#endif
+
+#if LAST_USED_BALL_THROW
+		ShowOrHideLastUsedBall(TRUE); // hide trigger
 #endif
 
         switch (gActionSelectionCursor[battlerId])
@@ -637,7 +731,7 @@ static void HandleInputChooseAction(u32 battlerId)
     else if (JOY_NEW(B_BUTTON))
     {
         if (IsDoubleBattleForBattler(battlerId) && GetBattlerPosition(battlerId) == B_POSITION_PLAYER_RIGHT
-         && !(gAbsentBattlerFlags & Bit(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))) && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
+		&& !(gAbsentBattlerFlags & Bit(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))) && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
         {
 			// Return item to bag if partner had selected one.
             if (gBattleBufferA[battlerId][1] == B_ACTION_USE_ITEM)
@@ -650,6 +744,19 @@ static void HandleInputChooseAction(u32 battlerId)
     }
     else if (JOY_NEW(START_BUTTON))
         SwapHpBarsWithHpText();
+#if BATTLE_TEAM_PREVIEW
+	else if (JOY_NEW(L_BUTTON))
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		{
+			PlaySE(SE_SELECT);
+			UpdateOamPriorityInAllHealthboxes(0, TRUE);
+			ChangeBattlerSpritesInvisibilities(TRUE);
+			DisplayInBattleTeamPreview();
+			gBattlerControllerFuncs[battlerId] = HandleInputTeamPreview;
+		}
+	}
+#endif
 }
 
 ///////////////////////////////
@@ -814,7 +921,7 @@ void InitMoveSelectionsVarsAndStrings(u32 battlerId)
 
 static void SetPlayerChooseMoveInput(u32 battlerId)
 {
-	CreateMoveInfoTriggerSprite(battlerId);
+	CreateMoveInfoTriggerSprite();
 	gBattlerControllerFuncs[battlerId] = HandleInputChooseMove;
 }
 
@@ -1538,4 +1645,83 @@ static void HandleInputMoveInfo(u32 battlerId)
 		PlaySE(SE_SELECT);
 		MoveInfoPrintSubmenuString(battlerId, ++gBattleStruct->moveInfo.submenuState);
 	}
+}
+
+//////////////////
+// TEAM PREVIEW //
+//////////////////
+
+static void ChangeBattlerSpritesInvisibilities(bool32 invisible)
+{
+	u32 i, spriteId;
+	
+	for (i = 0; i < gBattlersCount; i++)
+	{
+		spriteId = gBattlerSpriteIds[i];
+		
+		if (spriteId == 0xFF || !IsBattlerSpriteVisible(i))
+			gBattleSpritesDataPtr->battlerData[i].keepInvisible = invisible;
+		else
+			gSprites[spriteId].invisible = invisible;
+	}
+}
+
+static void HandleInputTeamPreview(u32 battlerId)
+{
+	if (JOY_NEW(A_BUTTON | B_BUTTON | L_BUTTON | DPAD_ANY))
+	{
+		PlaySE(SE_SELECT);
+		UpdateOamPriorityInAllHealthboxes(1, FALSE);
+		ChangeBattlerSpritesInvisibilities(FALSE);
+		HideInBattleTeamPreview();
+		gBattlerControllerFuncs[battlerId] = HandleChooseActionAfterDma3;
+	}
+}
+
+//////////////////////////
+// LAST USED BALL THROW //
+//////////////////////////
+
+static u32 GetPrevBall(u32 ballId)
+{
+	u32 i, prevBall;
+	struct BagPocket *pocket = &gBagPockets[POCKET_POKE_BALLS - 1];
+	
+	BagPocketCompaction(pocket);
+	
+	for (i = 0; i < pocket->capacity; i++)
+	{
+		if (pocket->itemSlots[i].itemId == ballId)
+		{
+			if (i != 0)
+			{
+				prevBall = pocket->itemSlots[i - 1].itemId;
+				if (prevBall)
+					return prevBall;
+			}
+			break;
+		}
+	}
+	return ITEM_NONE;
+}
+
+static u32 GetNextBall(u32 ballId)
+{
+	u32 i, nextBall;
+	struct BagPocket *pocket = &gBagPockets[POCKET_POKE_BALLS - 1];
+	
+	BagPocketCompaction(pocket);
+	
+	for (i = 1; i < pocket->capacity; i++)
+	{
+		if (pocket->itemSlots[i - 1].itemId == ballId)
+		{
+			nextBall = pocket->itemSlots[i].itemId;
+			if (nextBall)
+				return nextBall;
+			else
+				break;
+		}
+	}
+	return ITEM_NONE;
 }

@@ -9,7 +9,7 @@
 #define hMain_HealthBoxSlideSpeedX   data[4] // For slide anim
 #define hMain_HealthBarSpriteId      data[5] // Holds sprite id of healthbar
 #define hMain_Battler                data[6] // Holds the battler id
-#define hMain_IndicatorSpriteId      data[7] // Holds indicator sprite id
+#define hMain_IndicatorSpriteId      data[7] // Holds gimmick indicator sprite id
 
 // data fields for healthboxRight
 #define hOther_HealthBoxSpriteId     data[5] // Holds sprite id of healthboxMain
@@ -194,17 +194,13 @@ enum
 #define TAG_PARTY_SUMMARY_BALL_PLAYER_PAL       TAG_PARTY_SUMMARY_BALL_PLAYER_TILE
 #define TAG_PARTY_SUMMARY_BALL_OPPONENT_PAL     TAG_PARTY_SUMMARY_BALL_OPPONENT_TILE
 
-// Weather icon
-#define TAG_WEATHER_ICON_GFX                    0xD70D
-
-// Move info trigger
-#define TAG_MOVEINFO_TRIGGER_GFX                0xD70E
-
-// Gimmick trigger
-#define TAG_GIMMICK_TRIGGER_GFX                 0xD70F
-
-// Gimmick indicator
-#define TAG_GIMMICK_INDICATOR_GFX               0xD710
+#define GFX_TAG_ABILITY_POP_UP                  0xD70D // Ability pop up. One tag per battler
+#define TAG_WEATHER_ICON_GFX                    (GFX_TAG_ABILITY_POP_UP + MAX_BATTLERS_COUNT) // Weather icon
+#define TAG_MOVEINFO_TRIGGER_GFX                (TAG_WEATHER_ICON_GFX + 1) // Move info trigger
+#define TAG_GIMMICK_TRIGGER_GFX                 (TAG_MOVEINFO_TRIGGER_GFX + 1) // Gimmick trigger
+#define TAG_GIMMICK_INDICATOR_GFX               (TAG_GIMMICK_TRIGGER_GFX + 1) // Gimmick indicator
+#define GFX_TAG_TEAM_PREVIEW_TRIGGER            (TAG_GIMMICK_INDICATOR_GFX + 1) // Team preview trigger
+#define GFX_TAG_LAST_USED_BALL_THROW            (GFX_TAG_TEAM_PREVIEW_TRIGGER + 1) // Last used ball throw
 
 #define ENEMY_SHADOW_Y_OFFSET                   27
 
@@ -228,7 +224,18 @@ s32 MoveBattleBar(u32 battler, u32 whichBar);
 void StartHealthboxSlideIn(u32 battler);
 void TryCreateWeatherAnimIcon(void);
 void ShowOrHideWeatherAnimIcon(bool32 hide);
-void CreateMoveInfoTriggerSprite(u32 battlerId);
+void CreateMoveInfoTriggerSprite(void);
 void ShowOrHideMoveInfoTriggerSprite(bool32 hide);
+void TryLoadTeamPreviewTrigger(void);
+void ShowOrHideTeamPreviewTrigger(bool32 hide);
+void DisplayInBattleTeamPreview(void);
+void HideInBattleTeamPreview(void);
+bool32 CanThrowLastUsedBall(void);
+void TryAddLastUsedBallTrigger(void);
+void ShowOrHideLastUsedBall(bool32 hide);
+void SwapBallToDisplay(bool32 isSameBall);
+void ChangeLastBallCycleArrowsColor(bool32 showArrows);
+
+extern const struct SpritePalette gSpritePalette_AbilityPopUp;
 
 #endif // GUARD_BATTLE_INTERFACE_H

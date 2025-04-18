@@ -2373,9 +2373,7 @@ void FreeSymbolsIconGraphics(void)
 u32 Create8x8SymbolSprite(s16 x, s16 y, u32 subpriority, u32 symbolId)
 {
 	u32 spriteId = CreateSprite(&s8x8SymbolSpriteTemplate, x, y, subpriority);
-	
 	StartSpriteAnim(&gSprites[spriteId], symbolId);
-	
 	return spriteId;
 }
 

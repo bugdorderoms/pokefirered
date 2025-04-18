@@ -2517,10 +2517,9 @@ static void atk23_getexp(void)
 					AdjustFriendship(&gPlayerParty[gBattleStruct->expGetterMonId], FRIENDSHIP_EVENT_GROW_LEVEL);
 
 					// Update battle mon structure after level up
-					if (gBattlerPartyIndexes[0] == gBattleStruct->expGetterMonId && IsBattlerAlive(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)))
-						UpdateBattlerStatsOnLvlUp(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT));
-					else if (IsDoubleBattleOnSide(B_SIDE_PLAYER) && gBattlerPartyIndexes[2] == gBattleStruct->expGetterMonId && IsBattlerAlive(GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)))
-						UpdateBattlerStatsOnLvlUp(GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT));
+					battler = GetBattlerIdFromPartySlot(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gBattleStruct->expGetterMonId);
+					if (IsBattlerAlive(battler))
+						UpdateBattlerStatsOnLvlUp(battler);
 
 					gBattleScripting.atk23_state = 5;
 				}
@@ -4490,19 +4489,13 @@ static void atk59_handlelearnnewmove(void)
 			gBattlescriptCurrInstr = cmd->nextInstr;
 			break;
 		default:
-			battlerId = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-	    
-			if (gBattlerPartyIndexes[battlerId] == gBattleStruct->expGetterMonId && !(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED))
+			battlerId = GetBattlerIdFromPartySlot(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gBattleStruct->expGetterMonId);
+			
+			if (battlerId != MAX_BATTLERS_COUNT && !(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED))
 				GiveMoveToBattler(battlerId, gMoveToLearn);
 			
-			if (IsDoubleBattleForBattler(battlerId))
-			{
-				battlerId = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
-			
-				if (gBattlerPartyIndexes[battlerId] == gBattleStruct->expGetterMonId && !(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED))
-					GiveMoveToBattler(battlerId, gMoveToLearn);
-			}
 			gBattlescriptCurrInstr = cmd->learnedMovePtr;
+			break;
 	}
 }
 
@@ -4569,7 +4562,7 @@ static void atk5A_yesnoboxlearnmove(void)
     case 3:
         if (!gPaletteFade.active && gMain.callback2 == BattleMainCB2)
         {
-            u32 movePosition = GetMoveSlotToReplace();
+            u32 battler, movePosition = GetMoveSlotToReplace();
 
             if (movePosition == MAX_MON_MOVES)
                 gBattleScripting.learnMoveState = 4;
@@ -4579,16 +4572,12 @@ static void atk5A_yesnoboxlearnmove(void)
 				RemoveMonPPBonus(&gPlayerParty[gBattleStruct->expGetterMonId], movePosition);
 				SetMonMoveSlot(&gPlayerParty[gBattleStruct->expGetterMonId], gMoveToLearn, movePosition);
 				
-				if (gBattlerPartyIndexes[0] == gBattleStruct->expGetterMonId && MOVE_IS_PERMANENT(0, movePosition))
+				battler = GetBattlerIdFromPartySlot(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gBattleStruct->expGetterMonId);
+				
+				if (battler != MAX_BATTLERS_COUNT && MOVE_IS_PERMANENT(battler, movePosition))
 				{
-					RemoveBattlerPPBonus(0, movePosition);
-					SetBattlerMoveSlot(0, gMoveToLearn, movePosition);
-				}
-
-				if (IsDoubleBattleOnSide(B_SIDE_PLAYER) && gBattlerPartyIndexes[2] == gBattleStruct->expGetterMonId && MOVE_IS_PERMANENT(2, movePosition))
-				{
-					RemoveBattlerPPBonus(2, movePosition);
-					SetBattlerMoveSlot(2, gMoveToLearn, movePosition);
+					RemoveBattlerPPBonus(battler, movePosition);
+					SetBattlerMoveSlot(battler, gMoveToLearn, movePosition);
 				}
 				gBattlescriptCurrInstr = cmd->learnedMovePtr;
             }
@@ -4882,9 +4871,7 @@ static void SpriteCB_MonIconOnLvlUpBox(struct Sprite* sprite)
 
 bool32 IsMonGettingExpSentOut(void)
 {
-    if (gBattlerPartyIndexes[0] == gBattleStruct->expGetterMonId || (IsDoubleBattleOnSide(B_SIDE_PLAYER) && gBattlerPartyIndexes[2] == gBattleStruct->expGetterMonId))
-        return TRUE;
-	return FALSE;
+	return (GetBattlerIdFromPartySlot(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gBattleStruct->expGetterMonId) != MAX_BATTLERS_COUNT);
 }
 
 static void atk5D_getmoneyreward(void)
@@ -7430,14 +7417,9 @@ static void atkAE_healpartystatus(void)
 			{
 				u32 partyId = gBattleCommunication[MULTIUSE_STATE]++;
 				
-				if (partyId == gBattlerPartyIndexes[gBattlerAttacker])
-					gBattleScripting.battler = gBattlerAttacker;
-				else if (IsBattlerAlive(BATTLE_PARTNER(gBattlerAttacker)) && partyId == gBattlerPartyIndexes[BATTLE_PARTNER(gBattlerAttacker)])
-					gBattleScripting.battler = BATTLE_PARTNER(gBattlerAttacker);
-				else
-					gBattleScripting.battler = MAX_BATTLERS_COUNT;
+				gBattleScripting.battler = GetBattlerIdFromPartySlot(gBattlerAttacker, partyId);
 				
-				if (gBattleScripting.battler != MAX_BATTLERS_COUNT)
+				if (IsBattlerAlive(gBattleScripting.battler))
 				{
 					if (gBattleMons[gBattleScripting.battler].status1.id)
 					{
@@ -8396,6 +8378,8 @@ static void atkEF_handleballthrow(void)
 			u32 odds, shakes, maxShakes;
 			s8 ballAdition = 0;
 			
+			gBallToDisplay = gLastThrownBall = gLastUsedItem;
+			
 			// Get ball catch Rate
 			if (gLastUsedItem == ITEM_SAFARI_BALL)
 				catchRate = gBattleStruct->safariCatchFactor * 1275 / 100;
@@ -8580,7 +8564,7 @@ static void atkEF_handleballthrow(void)
 				}
                 else // not caught
                 {
-					gBattleStruct->lastFailedBallThrow = gLastUsedItem;
+					gBattleStruct->lastUsedBall.lastFailedBallThrow = gLastUsedItem;
                     gBattleCommunication[MULTISTRING_CHOOSER] = gBattleSpritesDataPtr->animationData->isCriticalCapture ? BALL_3_SHAKES_FAIL : shakes;
                     gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
                 }
@@ -9512,10 +9496,10 @@ void BS_UpdateChoiceMoveOnLvlUp(void)
 {
 	NATIVE_ARGS();
 	
-	if (gBattlerPartyIndexes[0] == gBattleStruct->expGetterMonId || gBattlerPartyIndexes[2] == gBattleStruct->expGetterMonId)
+	u32 battlerId = GetBattlerIdFromPartySlot(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gBattleStruct->expGetterMonId);
+	
+	if (battlerId != MAX_BATTLERS_COUNT)
 	{
-		u32 battlerId = gBattlerPartyIndexes[0] == gBattleStruct->expGetterMonId ? 0 : 2;
-		
 		if (FindMoveSlotInBattlerMoveset(battlerId, gBattleStruct->battlers[battlerId].choicedMove) == MAX_MON_MOVES)
 			gBattleStruct->battlers[battlerId].choicedMove = MOVE_NONE;
 	}

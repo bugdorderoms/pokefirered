@@ -319,17 +319,14 @@ static void DestroyItemIconSprite(struct Sprite *cursorSprite, u8 direction)
 	
 	if (spriteId != MAX_SPRITES)
 	{
-		DestroySpriteAndFreeMatrix(&gSprites[spriteId]);
-	    FreeSpriteTilesByTag(ITEMICON_INITIAL_TAG + direction);
-	    FreeSpritePaletteByTag(ITEMICON_INITIAL_TAG + direction);
+		u32 tag = ITEMICON_INITIAL_TAG + direction;
+		DestroyItemIconObj(&gSprites[spriteId], tag, tag);
 	}
 }
 
 static void DestroyCursorSprite(struct Sprite *sprite)
 {
-	DestroySpriteAndFreeMatrix(sprite);
-	FreeSpriteTilesByTag(CURSOR_TAG);
-	FreeSpritePaletteByTag(BOX_TAG);
+	DestroyItemIconObj(sprite, CURSOR_TAG, BOX_TAG);
 }
 
 void InitRegisteredItemsToChoose(u8 menuLocation)

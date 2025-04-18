@@ -1399,10 +1399,10 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_Slash, 0x0800, ANIM_TAG_SLASH_2},
     {gBattleAnimSpriteGfx_SlamHit, 0x1000, ANIM_TAG_WHIP_HIT},
     {gBattleAnimSpriteGfx_GoldRing, 0x0100, ANIM_TAG_BLUE_RING_2},
-	{gBattleAnimSpriteGfx_AbilityPopUp, 0x0800, ANIM_TAG_ABILITY_POP_UP},
-	{gBattleAnimSpriteGfx_AbilityPopUp, 0x0800, ANIM_TAG_ABILITY_POP_UP2},
-	{gBattleAnimSpriteGfx_AbilityPopUp, 0x0800, ANIM_TAG_ABILITY_POP_UP3},
-	{gBattleAnimSpriteGfx_AbilityPopUp, 0x0800, ANIM_TAG_ABILITY_POP_UP4},
+	{gBattleAnimSpriteGfx_SmallFish, 0x0080, ANIM_TAG_SMALL_FISH},
+	{gBattleAnimSpriteGfx_PunishmentBlades, 0x1400, ANIM_TAG_PUNISHMENT_BLADES},
+	{gBattleAnimSpriteGfx_Rocks, 0x0C00, ANIM_TAG_AVALANCHE_ROCKS},
+	{gBattleAnimSpriteGfx_MudBomb, 0x0800, ANIM_TAG_MUD_BOMB},
 	{gBattleAnimSpriteGfx_QuickGuardHand, 0x0200, ANIM_TAG_QUICK_GUARD},
 	{gBattleAnimSpriteGfx_Drill, 0x0800, ANIM_TAG_DRILL},
 	{gBattleAnimSpriteGfx_SmallRock, 0x0080, ANIM_TAG_SMALL_ROCK},
@@ -1422,10 +1422,6 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
 	{gBattleAnimSpriteGfx_MegaEvoStone, 0x0800, ANIM_TAG_MEGA_EVOLUTION_STONE},
 	{gBattleAnimSpriteGfx_MegaEvoOrbs, 0x0180, ANIM_TAG_MEGA_EVOLUTION_ORBS},
 	{gBattleAnimSpriteGfx_MegaEvoSymbol, 0x0200, ANIM_TAG_MEGA_SYMBOL},
-	{gBattleAnimSpriteGfx_SmallFish, 0x0080, ANIM_TAG_SMALL_FISH},
-	{gBattleAnimSpriteGfx_PunishmentBlades, 0x1400, ANIM_TAG_PUNISHMENT_BLADES},
-	{gBattleAnimSpriteGfx_Rocks, 0x0C00, ANIM_TAG_AVALANCHE_ROCKS},
-	{gBattleAnimSpriteGfx_MudBomb, 0x0800, ANIM_TAG_MUD_BOMB},
 };
 
 const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
@@ -1719,10 +1715,10 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_Slash2, ANIM_TAG_SLASH_2},
     {gBattleAnimSpritePal_WhipHit, ANIM_TAG_WHIP_HIT},
     {gBattleAnimSpritePal_BlueRing2, ANIM_TAG_BLUE_RING_2},
-	{gBattleAnimSpritePal_AbilityPopUp, ANIM_TAG_ABILITY_POP_UP},
-	{gBattleAnimSpritePal_AbilityPopUp, ANIM_TAG_ABILITY_POP_UP},
-	{gBattleAnimSpritePal_AbilityPopUp, ANIM_TAG_ABILITY_POP_UP},
-	{gBattleAnimSpritePal_AbilityPopUp, ANIM_TAG_ABILITY_POP_UP},
+	{gBattleAnimSpritePal_SmallFish, ANIM_TAG_SMALL_FISH},
+	{gBattleAnimSpritePal_PunishmentBlades, ANIM_TAG_PUNISHMENT_BLADES},
+	{gBattleAnimSpritePal_AvalancheRocks, ANIM_TAG_AVALANCHE_ROCKS},
+	{gBattleAnimSpritePal_MudBomb, ANIM_TAG_MUD_BOMB},
 	{gBattleAnimSpritePal_QuickGuardHand, ANIM_TAG_QUICK_GUARD},
 	{gBattleAnimSpritePal_Drill, ANIM_TAG_DRILL},
 	{gBattleAnimSpritePal_SmallRock, ANIM_TAG_SMALL_ROCK},
@@ -1742,10 +1738,6 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
 	{gBattleAnimSpritePal_MegaEvoStone, ANIM_TAG_MEGA_EVOLUTION_STONE},
 	{gBattleAnimSpritePal_MegaEvoOrbs, ANIM_TAG_MEGA_EVOLUTION_ORBS},
 	{gBattleAnimSpritePal_MegaEvoSymbol, ANIM_TAG_MEGA_SYMBOL},
-	{gBattleAnimSpritePal_SmallFish, ANIM_TAG_SMALL_FISH},
-	{gBattleAnimSpritePal_PunishmentBlades, ANIM_TAG_PUNISHMENT_BLADES},
-	{gBattleAnimSpritePal_AvalancheRocks, ANIM_TAG_AVALANCHE_ROCKS},
-	{gBattleAnimSpritePal_MudBomb, ANIM_TAG_MUD_BOMB},
 };
 
 static const struct BattleAnimBackground sBattleAnimBackgroundTable[] =

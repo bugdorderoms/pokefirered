@@ -187,3 +187,10 @@
 
 // If this setting is enabled, catching a wild Pokémon will give you experience points.
 #define EXP_ON_CAUGHT TRUE
+
+// If this setting is enabled, in a trainer battle pressing the L button while choosing an action will display the enemy's team.
+#define BATTLE_TEAM_PREVIEW TRUE
+
+// If this setting is enabled, in a wild battle pressing the R button while choosing an action will throw the last used ball.
+// If holding the R button you can choose which ball use.
+#define LAST_USED_BALL_THROW TRUE

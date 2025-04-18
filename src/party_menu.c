@@ -1797,10 +1797,9 @@ static void CreatePartyMonHeldItemSpriteParameterized(u32 slot, u32 species, u32
 static u32 DestroyPartyMonHeldItemSprite(u32 slot, struct PartyMenuBox *menuBox)
 {
 	u32 priority = gSprites[menuBox->itemSpriteId].oam.priority;
+	u32 tag = GET_ITEM_SPRITE_TAG(slot);
 	
-	FreeSpriteTilesByTag(GET_ITEM_SPRITE_TAG(slot));
-	FreeSpritePaletteByTag(GET_ITEM_SPRITE_TAG(slot));
-	DestroySprite(&gSprites[menuBox->itemSpriteId]);
+	DestroyItemIconObj(&gSprites[menuBox->itemSpriteId], tag, tag);
 	
 	return priority;
 }

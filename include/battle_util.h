@@ -179,6 +179,7 @@ bool32 IsBattlerAffectedByFollowMe(u32 battlerId, u32 opposingSide, u32 move);
 u32 GetItemUseBattler(u32 battlerId);
 u32 GetBattleMonForItemUse(u32 battlerId, u32 partyIndex);
 bool32 IsItemUseBlockedByBattleEffect(u32 battlerId);
+bool32 CanThrowBall(void);
 const u8 *PokemonUseItemEffectsBattle(u32 battlerId, u32 itemId, bool32 *canUse);
 bool32 IsBattleAnimationsOn(void);
 struct Pokemon *GetBattlerParty(u32 battlerId);
@@ -228,6 +229,7 @@ void SwapBattlersPositions(u32 battler1, u32 battler2);
 bool32 TryBattleChallengeStartingStatus(void);
 bool32 IsPartnerMonFromSameTrainer(u32 battler);
 bool32 TryPrimalReversion(u32 battler);
+u32 GetBattlerIdFromPartySlot(u32 slot, u32 partyId);
 
 static inline bool32 CanBattlerSwitch(u32 battlerId)
 {
