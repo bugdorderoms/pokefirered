@@ -779,7 +779,7 @@ static u8 GetMapBaseEncounterCooldown(u8 encounterType)
 	return 8 - (monInfo->encounterRate / 10);
 }
 
-static bool8 IsLeadMonHoldingEncounterRateModDownItem(void)
+static bool32 IsLeadMonHoldingEncounterRateModDownItem(void)
 {
     if (sWildEncounterData.leadMonHeldItem == ITEM_CLEANSE_TAG)
         return TRUE;
@@ -787,9 +787,9 @@ static bool8 IsLeadMonHoldingEncounterRateModDownItem(void)
         return FALSE;
 }
 
-static u8 GetLeadMonAbilityEncounterRateModType(void)
+static u32 GetLeadMonAbilityEncounterRateModType(void)
 {
-    u8 effectId = 0;
+    u32 effectId = 0;
 	
 	switch (GetMonAbility(&gPlayerParty[0]))
 	{
@@ -804,9 +804,13 @@ static u8 GetLeadMonAbilityEncounterRateModType(void)
 				effectId = 1;
 			break;
 		case ABILITY_SNOW_CLOAK:
-			if (GetCurrentWeather() == WEATHER_SNOW)
+		{
+			u32 weather = GetCurrentWeather();
+			
+			if (weather == WEATHER_SNOW || weather == WEATHER_SNOWSTORM)
 				effectId = 1;
 			break;
+		}
 		case ABILITY_ILLUMINATE:
 		case ABILITY_ARENA_TRAP:
 		case ABILITY_NO_GUARD:

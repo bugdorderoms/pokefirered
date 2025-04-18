@@ -2378,6 +2378,7 @@ static bool32 TryStartOverworldWeather(void)
 			}
 			break;
 		case WEATHER_SNOW:
+		case WEATHER_SNOWSTORM:
 		    if (!(gBattleWeather & B_WEATHER_HAIL))
 			{
 				gBattleWeather = B_WEATHER_HAIL;

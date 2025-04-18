@@ -14,6 +14,7 @@
 
 static const struct SpritePalette sSandstormSpritePalette = {gSandstormWeatherPalette, GFXTAG_SANDSTORM};
 static const struct SpritePalette sCloudsSpritePalette    = {gCloudWeatherPalette, GFXTAG_CLOUD};
+static const struct SpritePalette sSnowstormSpritePalette = {gSnowstormWeatherPalette, GFXTAG_SNOWSTORM};
 
 //------------------------------------------------------------------------------
 // WEATHER_RAIN
@@ -1369,11 +1370,11 @@ bool32 Sandstorm_Finish(void)
     return TRUE;
 }
 
-// Regular sandstorm sprites
+// Regular sandstorm and snowstorm sprites
 #define tSpriteColumn  data[0]
 #define tSpriteRow     data[1]
 
-// Swirly sandstorm sprites
+// Swirly sandstorm and snowstorm sprites
 #define tRadius        data[0]
 #define tWaveIndex     data[1]
 #define tRadiusCounter data[2]
@@ -1516,6 +1517,222 @@ static void UpdateSandstormSwirlSprite(struct Sprite *sprite)
     {
         sprite->tRadiusCounter = 0;
         sprite->tRadius++;
+    }
+}
+
+//------------------------------------------------------------------------------
+// WEATHER_SNOWSTORM
+//------------------------------------------------------------------------------
+
+static void UpdateSnowstormWaveIndex(void);
+static void UpdateSnowstormMovement(void);
+static void CreateSnowstormSprites(void);
+static void CreateSwirlSnowstormSprites(void);
+static void DestroySnowstormSprites(void);
+static void UpdateSnowstormSprite(struct Sprite *);
+
+#define MIN_SNOWSTORM_WAVE_INDEX 0x20
+
+static const struct SpriteTemplate sSnowstormSpriteTemplate = {
+    .tileTag = GFXTAG_SNOWSTORM,
+    .paletteTag = GFXTAG_SNOWSTORM,
+    .oam = &sSandstormSpriteOamData,
+    .anims = sSandstormSpriteAnimCmds,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = UpdateSnowstormSprite,
+};
+
+static const struct SpriteSheet sSnowstormSpriteSheet = {
+    .data = gWeatherSandstormTiles,
+    .size = 0x0a00,
+    .tag = GFXTAG_SNOWSTORM,
+};
+
+void Snowstorm_InitVars(void)
+{
+    gWeatherPtr->initStep = 0;
+    gWeatherPtr->weatherGfxLoaded = 0;
+    gWeatherPtr->gammaTargetIndex = 0;
+    gWeatherPtr->gammaStepDelay = 20;
+	
+    if (!gWeatherPtr->snowstormSpritesCreated)
+    {
+        gWeatherPtr->snowstormXOffset = gWeatherPtr->snowstormYOffset = 0;
+        gWeatherPtr->snowstormWaveIndex = 8;
+        gWeatherPtr->snowstormWaveCounter = 0;
+        Weather_SetBlendCoeffs(0, 16);
+    }
+}
+
+void Snowstorm_InitAll(void)
+{
+    Snowstorm_InitVars();
+    while (!gWeatherPtr->weatherGfxLoaded)
+        Snowstorm_Main();
+}
+
+void Snowstorm_Main(void)
+{
+    UpdateSnowstormMovement();
+    UpdateSnowstormWaveIndex();
+
+    if (gWeatherPtr->snowstormWaveIndex >= 0x80 - MIN_SNOWSTORM_WAVE_INDEX)
+        gWeatherPtr->snowstormWaveIndex = MIN_SNOWSTORM_WAVE_INDEX;
+
+    switch (gWeatherPtr->initStep)
+    {
+    case 0:
+        CreateSnowstormSprites();
+        CreateSwirlSnowstormSprites();
+        gWeatherPtr->initStep++;
+        break;
+    case 1:
+        Weather_SetTargetBlendCoeffs(16, 0, 0);
+        gWeatherPtr->initStep++;
+        break;
+    case 2:
+        if (Weather_UpdateBlend())
+        {
+            gWeatherPtr->weatherGfxLoaded = TRUE;
+            gWeatherPtr->initStep++;
+        }
+        break;
+    }
+}
+
+bool32 Snowstorm_Finish(void)
+{
+    UpdateSnowstormMovement();
+    UpdateSnowstormWaveIndex();
+	
+    switch (gWeatherPtr->finishStep)
+    {
+    case 0:
+        Weather_SetTargetBlendCoeffs(0, 16, 0);
+        gWeatherPtr->finishStep++;
+        break;
+    case 1:
+        if (Weather_UpdateBlend())
+            gWeatherPtr->finishStep++;
+        break;
+    case 2:
+        DestroySnowstormSprites();
+        gWeatherPtr->finishStep++;
+        break;
+    default:
+        return FALSE;
+    }
+    return TRUE;
+}
+
+static void UpdateSnowstormWaveIndex(void)
+{
+    if (++gWeatherPtr->snowstormWaveCounter > 4)
+    {
+        gWeatherPtr->snowstormWaveIndex++;
+        gWeatherPtr->snowstormWaveCounter = 0;
+    }
+}
+
+static void UpdateSnowstormMovement(void)
+{
+    gWeatherPtr->snowstormXOffset -= gSineTable[gWeatherPtr->snowstormWaveIndex] * 4;
+    gWeatherPtr->snowstormYOffset -= gSineTable[gWeatherPtr->snowstormWaveIndex];
+    gWeatherPtr->snowstormBaseSpritesX = (gSpriteCoordOffsetX + (gWeatherPtr->snowstormXOffset >> 8)) & 0xFF;
+    gWeatherPtr->snowstormPosY = gSpriteCoordOffsetY + (gWeatherPtr->snowstormYOffset >> 8);
+}
+
+static void DestroySnowstormSprites(void)
+{
+    u32 i;
+
+    if (gWeatherPtr->snowstormSpritesCreated)
+    {
+        for (i = 0; i < NUM_SNOWSTORM_SPRITES; i++)
+        {
+            if (gWeatherPtr->snowstormSprites1[i])
+                DestroySprite(gWeatherPtr->snowstormSprites1[i]);
+        }
+        gWeatherPtr->snowstormSpritesCreated = FALSE;
+        FreeSpriteTilesByTag(GFXTAG_SNOWSTORM);
+    }
+    if (gWeatherPtr->snowstormSwirlSpritesCreated)
+    {
+        for (i = 0; i < NUM_SWIRL_SANDSTORM_SPRITES; i++)
+        {
+            if (gWeatherPtr->snowstormSprites2[i] != NULL)
+                DestroySprite(gWeatherPtr->snowstormSprites2[i]);
+        }
+        gWeatherPtr->snowstormSwirlSpritesCreated = FALSE;
+    }
+	FreeSpritePaletteByTag(GFXTAG_SNOWSTORM);
+}
+
+static void CreateSnowstormSprites(void)
+{
+    u32 i, spriteId;
+
+    if (!gWeatherPtr->snowstormSpritesCreated)
+    {
+        LoadSpriteSheet(&sSnowstormSpriteSheet);
+        LoadWeatherSpritePalette(&sSnowstormSpritePalette);
+		
+        for (i = 0; i < NUM_SNOWSTORM_SPRITES; i++)
+        {
+            spriteId = CreateSpriteAtEnd(&sSnowstormSpriteTemplate, 0, (i / 5) * 64, 1);
+			
+            if (spriteId != MAX_SPRITES)
+            {
+                gWeatherPtr->snowstormSprites1[i] = &gSprites[spriteId];
+                gWeatherPtr->snowstormSprites1[i]->tSpriteColumn = i % 5;
+                gWeatherPtr->snowstormSprites1[i]->tSpriteRow = i / 5;
+            }
+            else
+                gWeatherPtr->snowstormSprites1[i] = NULL;
+        }
+        gWeatherPtr->snowstormSpritesCreated = TRUE;
+    }
+}
+
+static void CreateSwirlSnowstormSprites(void)
+{
+    u32 i, spriteId;
+
+    if (!gWeatherPtr->snowstormSwirlSpritesCreated)
+    {
+        for (i = 0; i < NUM_SWIRL_SNOWSTORM_SPRITES; i++)
+        {
+            spriteId = CreateSpriteAtEnd(&sSnowstormSpriteTemplate, i * 48 + 24, 208, 1);
+			
+            if (spriteId != MAX_SPRITES)
+            {
+                gWeatherPtr->snowstormSprites2[i] = &gSprites[spriteId];
+                gWeatherPtr->snowstormSprites2[i]->oam.size = ST_OAM_SIZE_2;
+                gWeatherPtr->snowstormSprites2[i]->tSpriteRow = i * 51;
+                gWeatherPtr->snowstormSprites2[i]->tRadius = 8;
+                gWeatherPtr->snowstormSprites2[i]->tRadiusCounter = 0;
+                gWeatherPtr->snowstormSprites2[i]->tEntranceDelay = sSwirlEntranceDelays[i];
+                StartSpriteAnim(gWeatherPtr->snowstormSprites2[i], 1);
+                CalcCenterToCornerVec(gWeatherPtr->snowstormSprites2[i], SPRITE_SHAPE(32x32), SPRITE_SIZE(32x32), ST_OAM_AFFINE_OFF);
+                gWeatherPtr->snowstormSprites2[i]->callback = WaitSandSwirlSpriteEntrance;
+            }
+            else
+                gWeatherPtr->snowstormSprites2[i] = NULL;
+        }
+		gWeatherPtr->snowstormSwirlSpritesCreated = TRUE;
+    }
+}
+
+static void UpdateSnowstormSprite(struct Sprite *sprite)
+{
+    sprite->y2 = gWeatherPtr->snowstormPosY;
+    sprite->x = gWeatherPtr->snowstormBaseSpritesX + 32 + sprite->tSpriteColumn * 64;
+	
+    if (sprite->x > 271)
+    {
+        sprite->x = gWeatherPtr->snowstormBaseSpritesX + 480 - (4 - sprite->tSpriteColumn) * 64;
+        sprite->x &= 0x1FF;
     }
 }
 

@@ -59,4 +59,9 @@ void Clouds_InitVars(void);
 void Clouds_Main(void);
 bool32 Clouds_Finish(void);
 
+void Snowstorm_InitAll(void);
+void Snowstorm_InitVars(void);
+void Snowstorm_Main(void);
+bool32 Snowstorm_Finish(void);
+
 #endif //GUARD_FIELD_WEATHER_EFFECTS_H

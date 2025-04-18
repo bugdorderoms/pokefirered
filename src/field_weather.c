@@ -41,6 +41,7 @@ struct Weather *const gWeatherPtr = &sWeather;
 const u16 gDefaultWeatherSpritePalette[] = INCBIN_U16("graphics/weather/default.gbapal");
 const u16 gSandstormWeatherPalette[] = INCBIN_U16("graphics/weather/sandstorm.gbapal");
 const u16 gCloudWeatherPalette[] = INCBIN_U16("graphics/weather/cloud.gbapal");
+const u16 gSnowstormWeatherPalette[] = INCBIN_U16("graphics/weather/snowstorm.gbapal");
 const u8 gWeatherFogDiagonalTiles[] = INCBIN_U8("graphics/weather/fog_diagonal.4bpp");
 const u8 gWeatherFogHorizontalTiles[] = INCBIN_U8("graphics/weather/fog_horizontal.4bpp");
 const u8 gWeatherSnow1Tiles[] = INCBIN_U8("graphics/weather/snow0.4bpp");
@@ -66,6 +67,7 @@ static const struct WeatherCallbacks sWeatherFuncs[] = {
     [WEATHER_DOWNPOUR]           = {Downpour_InitVars, Thunderstorm_Main, Downpour_InitAll, Thunderstorm_Finish},
     [WEATHER_UNDERWATER_BUBBLES] = {Bubbles_InitVars, Bubbles_Main, Bubbles_InitAll, Bubbles_Finish},
 	[WEATHER_CLOUDS]             = {Clouds_InitVars, Clouds_Main, Clouds_InitAll, Clouds_Finish},
+	[WEATHER_SNOWSTORM]          = {Snowstorm_InitVars, Snowstorm_Main, Snowstorm_InitAll, Snowstorm_Finish},
 };
 
 static void (*const sWeatherPalStateFuncs[])(void) = {
@@ -124,6 +126,8 @@ void StartWeather(void)
         gWeatherPtr->sandstormSwirlSpritesCreated = FALSE;
         gWeatherPtr->bubblesSpritesCreated = FALSE;
 		gWeatherPtr->cloudSpritesCreated = FALSE;
+		gWeatherPtr->snowstormSpritesCreated = FALSE;
+		gWeatherPtr->snowstormSwirlSpritesCreated = FALSE;
         Weather_SetBlendCoeffs(16, 0);
         gWeatherPtr->currWeather = WEATHER_NONE;
         gWeatherPtr->palProcessingState = WEATHER_PAL_STATE_IDLE;

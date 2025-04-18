@@ -2014,7 +2014,7 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
 			if ((weatherBits & BIT_WEATHER_RAIN) && (weather == WEATHER_RAIN || weather == WEATHER_RAIN_THUNDERSTORM || weather == WEATHER_DOWNPOUR))
 				hasWeather = TRUE;
 			
-			if ((weatherBits & BIT_WEATHER_SNOW) && weather == WEATHER_SNOW)
+			if ((weatherBits & BIT_WEATHER_SNOW) && (weather == WEATHER_SNOW || weather == WEATHER_SNOWSTORM))
 				hasWeather = TRUE;
 			
 			if ((weatherBits & BIT_WEATHER_FOG) && (weather == WEATHER_FOG_HORIZONTAL || weather == WEATHER_FOG_DIAGONAL))

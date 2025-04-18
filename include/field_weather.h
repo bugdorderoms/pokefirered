@@ -16,6 +16,7 @@ enum
 	GFXTAG_FOG_D,
     GFXTAG_BUBBLE,
 	GFXTAG_CLOUD,
+	GFXTAG_SNOWSTORM,
 };
 
 struct Weather
@@ -37,7 +38,9 @@ struct Weather
 	u8 isDownpour:1;
 	u8 bubblesSpritesCreated:1;
 	u8 cloudSpritesCreated:1;
-	u8 unused:5; // can be used to add new weathers
+	u8 snowstormSpritesCreated:1;
+	u8 snowstormSwirlSpritesCreated:1;
+	u8 unused:3; // can be used to add new weathers
 	u8 taskId;
 	
 	u8 palProcessingState;
@@ -111,6 +114,16 @@ struct Weather
 	u16 bubblesCoordsIndex;
     u16 bubblesSpriteCount;
 	
+	u32 snowstormXOffset;
+	
+    u32 snowstormYOffset;
+	
+	u16 snowstormWaveCounter;
+	u16 snowstormBaseSpritesX;
+	
+	u16 snowstormPosY;
+	u16 snowstormWaveIndex;
+	
 	struct Sprite *rainSprites[NUM_RAIN_SPRITES];
 	struct Sprite *snowflakeSprites[NUM_SNOWFLAKE_SPRITES];
 	struct Sprite *fogHSprites[NUM_FOG_HORIZONTAL_SPRITES];
@@ -119,6 +132,8 @@ struct Weather
 	struct Sprite *sandstormSprites2[NUM_SWIRL_SANDSTORM_SPRITES];
 	struct Sprite *fogDSprites[NUM_FOG_DIAGONAL_SPRITES];
 	struct Sprite *cloudSprites[NUM_CLOUD_SPRITES];
+	struct Sprite *snowstormSprites1[NUM_SNOWSTORM_SPRITES];
+	struct Sprite *snowstormSprites2[NUM_SWIRL_SNOWSTORM_SPRITES];
 };
 
 extern struct Weather *const gWeatherPtr;
@@ -150,6 +165,7 @@ void ApplyWeatherGammaShiftToPal(u32 paletteIndex);
 
 extern const u16 gSandstormWeatherPalette[];
 extern const u16 gCloudWeatherPalette[];
+extern const u16 gSnowstormWeatherPalette[];
 extern const u8 gWeatherFogDiagonalTiles[];
 extern const u8 gWeatherFogHorizontalTiles[];
 extern const u8 gWeatherSnow1Tiles[];

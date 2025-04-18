@@ -37,7 +37,12 @@ static u32 TryStartDynamicWeather(void)
 	    			break;
 	    		case SEASON_WINTER:
 				    weatherChance = 100; // Set default chance to 100%
-				    newWeather = WEATHER_SNOW; // Always init a snow
+					
+					// Always init a snow or snowstorm
+					if (RandomPercent(40)) // 40% chance that becames a snowstorm
+						newWeather = WEATHER_SNOWSTORM;
+					else
+						newWeather = WEATHER_SNOW;
 	    			break;
 	    		case SEASON_AUTUMN:
 	    		    weatherChance = 5; // Set default chance to 5%
@@ -47,8 +52,8 @@ static u32 TryStartDynamicWeather(void)
 	    			break;
 	    	}
 	    	
-	    	// Snow weather are't affected by the time of day
-	    	if (newWeather != WEATHER_SNOW)
+	    	// Snow and snowstorm weathers are't affected by the time of day
+	    	if (newWeather != WEATHER_SNOW && newWeather != WEATHER_SNOWSTORM)
 	    	{
 	    		// Get chance modification by time of day
 	    	    switch (GetDNSTimeLapse())

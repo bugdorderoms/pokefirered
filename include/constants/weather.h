@@ -3,7 +3,7 @@
 
 #define WEATHER_NONE               0
 #define WEATHER_RAIN               1
-#define WEATHER_SNOW               2
+#define WEATHER_SNOW               2 // snowflakes
 #define WEATHER_RAIN_THUNDERSTORM  3
 #define WEATHER_FOG_HORIZONTAL     4
 #define WEATHER_VOLCANIC_ASH       5
@@ -13,6 +13,7 @@
 #define WEATHER_DOWNPOUR           9
 #define WEATHER_UNDERWATER_BUBBLES 10
 #define WEATHER_CLOUDS             11
+#define WEATHER_SNOWSTORM          12
 
 // Weathers as bits
 #define BIT_WEATHER_RAIN         Bit(0)
