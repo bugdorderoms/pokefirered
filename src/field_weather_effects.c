@@ -2335,3 +2335,109 @@ static void UpdateCloudSprite(struct Sprite *sprite)
 }
 
 #undef tMovementDelay
+
+//------------------------------------------------------------------------------
+// WEATHER_DROUGHT
+//------------------------------------------------------------------------------
+
+static void DroughtStateInit(void);
+static void DroughtStateRun(void);
+
+void Drought_InitVars(void)
+{
+	gWeatherPtr->initStep = 0;
+	gWeatherPtr->noShadows = FALSE;
+    gWeatherPtr->weatherGfxLoaded = FALSE;
+    gWeatherPtr->gammaTargetIndex = 0;
+    gWeatherPtr->gammaStepDelay = 0;
+	Weather_SetBlendCoeffs(8, BASE_SHADOW_INTENSITY);
+}
+
+void Drought_InitAll(void)
+{
+	Drought_InitVars();
+	while (!gWeatherPtr->weatherGfxLoaded)
+		Drought_Main();
+}
+
+void Drought_Main(void)
+{
+	switch (gWeatherPtr->initStep)
+	{
+		case 0:
+			if (gWeatherPtr->palProcessingState != WEATHER_PAL_STATE_CHANGING_WEATHER)
+				gWeatherPtr->initStep++;
+			break;
+		case 1:
+			DroughtStateInit();
+			gWeatherPtr->initStep++;
+			break;
+		case 2:
+			DroughtStateRun();
+			
+			if (gWeatherPtr->droughtBrightnessStage == 6)
+			{
+				gWeatherPtr->weatherGfxLoaded = TRUE;
+				gWeatherPtr->initStep++;
+			}
+			break;
+		default:
+			DroughtStateRun();
+			break;
+	}
+}
+
+bool32 Drought_Finish(void)
+{
+	return FALSE;
+}
+
+static void DroughtStateInit(void)
+{
+	gWeatherPtr->droughtBrightnessStage = 0;
+	gWeatherPtr->droughtTimer = 0;
+	gWeatherPtr->droughtState = 0;
+	gWeatherPtr->droughtLastBrightnessStage = 0;
+}
+
+static void DroughtStateRun(void)
+{
+	switch (gWeatherPtr->droughtState)
+	{
+		case 0:
+			if (++gWeatherPtr->droughtTimer > 5)
+			{
+				gWeatherPtr->droughtTimer = 0;
+				WeatherShiftGammaIfPalStateIdle(-gWeatherPtr->droughtBrightnessStage - 1);
+				
+				if (++gWeatherPtr->droughtBrightnessStage > 5)
+				{
+					gWeatherPtr->droughtLastBrightnessStage = gWeatherPtr->droughtBrightnessStage;
+					gWeatherPtr->droughtTimer = 60;
+					gWeatherPtr->droughtState++;
+				}
+			}
+			break;
+		case 1:
+			gWeatherPtr->droughtTimer = (gWeatherPtr->droughtTimer + 3) & 0x7F;
+			gWeatherPtr->droughtBrightnessStage = ((gSineTable[gWeatherPtr->droughtTimer] - 1) >> 6) + 2;
+			
+			if (gWeatherPtr->droughtBrightnessStage != gWeatherPtr->droughtLastBrightnessStage)
+				WeatherShiftGammaIfPalStateIdle(-gWeatherPtr->droughtBrightnessStage - 1);
+			
+			gWeatherPtr->droughtLastBrightnessStage = gWeatherPtr->droughtBrightnessStage;
+			break;
+		case 2:
+			if (++gWeatherPtr->droughtTimer > 5)
+			{
+				gWeatherPtr->droughtTimer = 0;
+				--gWeatherPtr->droughtBrightnessStage;
+				
+				WeatherShiftGammaIfPalStateIdle(-gWeatherPtr->droughtBrightnessStage - 1);
+				
+				if (gWeatherPtr->droughtBrightnessStage == 3)
+					gWeatherPtr->droughtState = 0;
+			}
+			break;
+	}
+}

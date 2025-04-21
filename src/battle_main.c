@@ -2388,6 +2388,16 @@ static bool32 TryStartOverworldWeather(void)
 				effect = TRUE;
 			}
 			break;
+		case WEATHER_DROUGHT:
+			if (!(gBattleWeather & B_WEATHER_SUN_ANY))
+			{
+				gBattleWeather = B_WEATHER_SUN_NORMAL;
+				gBattleStruct->weatherDuration = 0;
+				gBattleScripting.animArg1 = B_ANIM_SUN_CONTINUES;
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SUN_TURN_HARSH;
+				effect = TRUE;
+			}
+			break;
 #if FOG_IN_BATTLE
 		case WEATHER_FOG_HORIZONTAL:
 		case WEATHER_FOG_DIAGONAL:

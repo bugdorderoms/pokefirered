@@ -41,11 +41,6 @@ void Shade_InitVars(void);
 void Shade_Main(void);
 bool32 Shade_Finish(void);
 
-void Drought_InitAll(void);
-void Drought_InitVars(void);
-void Drought_Main(void);
-bool32 Drought_Finish(void);
-
 void Downpour_InitVars(void);
 void Downpour_InitAll(void);
 
@@ -63,5 +58,10 @@ void Snowstorm_InitAll(void);
 void Snowstorm_InitVars(void);
 void Snowstorm_Main(void);
 bool32 Snowstorm_Finish(void);
+
+void Drought_InitAll(void);
+void Drought_InitVars(void);
+void Drought_Main(void);
+bool32 Drought_Finish(void);
 
 #endif //GUARD_FIELD_WEATHER_EFFECTS_H

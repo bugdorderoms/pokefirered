@@ -58,6 +58,13 @@ static u32 TryStartDynamicWeather(void)
 	    		// Get chance modification by time of day
 	    	    switch (GetDNSTimeLapse())
 	    	    {
+					case TIME_DAY:
+						if (RandomPercent(65)) // 65% chance starts a drought
+						{
+							newWeather = WEATHER_DROUGHT;
+							weatherChance = 50; // Set default chance to 50%
+						}
+						break;
 	    	    	case TIME_NIGHTFALL:
 	    	    	    weatherChance += 4; // +4% chance
 	    	    		break;

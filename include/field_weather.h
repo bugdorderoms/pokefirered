@@ -125,6 +125,12 @@ struct Weather
 	u16 snowstormPosY;
 	u16 snowstormWaveIndex;
 	
+	s16 droughtBrightnessStage;
+    s16 droughtLastBrightnessStage;
+	
+    s16 droughtTimer;
+    s16 droughtState;
+	
 	struct Sprite *rainSprites[NUM_RAIN_SPRITES];
 	struct Sprite *snowflakeSprites[NUM_SNOWFLAKE_SPRITES];
 	struct Sprite *fogHSprites[NUM_FOG_HORIZONTAL_SPRITES];

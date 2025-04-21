@@ -2029,6 +2029,9 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
 			if ((weatherBits & BIT_WEATHER_UNDERWATER) && weather == WEATHER_UNDERWATER_BUBBLES)
 				hasWeather = TRUE;
 			
+			if ((weatherBits & BIT_WEATHER_DROUGHT) && weather == WEATHER_DROUGHT)
+				hasWeather = TRUE;
+			
 			if (!hasWeather)
 				*passes = FALSE;
 			
