@@ -1147,7 +1147,10 @@ static bool32 EscalatorWarpEffect_2(struct Task * task)
     if (!ObjectEventIsMovementOverridden(objectEvent) || ObjectEventClearHeldMovementIfFinished(objectEvent))
     {
         ObjectEventSetHeldMovement(objectEvent, GetFaceDirectionMovementAction(GetPlayerFacingDirection()));
-        task->data[0]++;
+        
+		objectEvent->noShadow = TRUE; // hide shadow for cleaner movement
+		
+		task->data[0]++;
         task->data[2] = 0;
         task->data[3] = 0;
 		
@@ -1272,6 +1275,7 @@ static bool32 EscalatorWarpInEffect_1(struct Task * task)
     u32 behavior;
 	
     CameraObjectReset2();
+	objectEvent->noShadow = TRUE;
     ObjectEventSetHeldMovement(objectEvent, GetFaceDirectionMovementAction(DIR_EAST));
     PlayerGetDestCoords(&x, &y);
     behavior = MapGridGetMetatileBehaviorAt(x, y);
@@ -1365,7 +1369,9 @@ static bool32 EscalatorWarpInEffect_6(struct Task * task)
 static bool32 EscalatorWarpInEffect_7(struct Task * task)
 {
     struct ObjectEvent * objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
-
+	
+	objectEvent->noShadow = FALSE;
+	
     if (ObjectEventClearHeldMovementIfFinished(objectEvent))
     {
         CameraObjectReset1();
@@ -3074,7 +3080,7 @@ static void UseFlyEffect_7(struct Task * task)
         struct ObjectEvent * objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
         ObjectEventClearHeldMovementIfActive(objectEvent);
         objectEvent->inanimate = FALSE;
-        objectEvent->hasShadow = FALSE;
+        objectEvent->noShadow = TRUE;
         SetFlyBirdPlayerSpriteId(task->data[1], objectEvent->spriteId);
         StartSpriteAnim(&gSprites[task->data[1]], gSaveBlock2Ptr->playerGender * 2 + 1);
         sub_80877FC(&gSprites[task->data[1]], 0);
@@ -3302,6 +3308,7 @@ static void FlyInEffect_1(struct Task * task)
         ObjectEventTurn(objectEvent, DIR_WEST);
         StartSpriteAnim(&gSprites[objectEvent->spriteId], ANIM_GET_ON_OFF_POKEMON_WEST);
         objectEvent->invisible = FALSE;
+		objectEvent->noShadow = TRUE;
         task->data[1] = CreateFlyBirdSprite();
         StartFlyBirdSwoopDown(task->data[1]);
         SetFlyBirdPlayerSpriteId(task->data[1], objectEvent->spriteId);

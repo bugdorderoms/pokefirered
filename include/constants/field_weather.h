@@ -24,4 +24,8 @@
 #define FADE_FROM_WHITE  2
 #define FADE_TO_WHITE    3
 
+// Shadows values
+#define BASE_SHADOW_INTENSITY 12
+#define SHADOW_COLOR_INDEX    9 // This color index of weather palettes should be reserved for shadows
+
 #endif // GUARD_CONSTANTS_FIELD_WEATHER_H

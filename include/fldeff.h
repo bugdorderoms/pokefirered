@@ -9,6 +9,7 @@ gTasks[taskId].data[9] = (u32)func;
 
 extern struct MapPosition gPlayerFacingPosition;
 
+u32 FldEff_Shadow(void);
 bool32 CheckObjectGraphicsInFrontOfPlayer(u32 graphicsId);
 u32 CreateFieldEffectShowMon(void);
 

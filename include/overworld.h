@@ -102,6 +102,7 @@ void SetWarpDestinationToMapWarp(s8 mapGroup, s8 mapNum, s8 warpNum);
 void c2_load_new_map(void);
 void SetWarpDestinationToDynamicWarp(void);
 void mapldr_default(void);
+bool32 CurrentMapHasShadows(void);
 
 u32 GetGameStat(u32 statId);
 void SetGameStat(u32 statId, u32 value);

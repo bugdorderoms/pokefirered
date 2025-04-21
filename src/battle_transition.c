@@ -593,9 +593,7 @@ static void BT_Phase1Task(u8 taskId)
         BT_CreatePhase1SubTask(0, 0, 2, 2, 2);
     }
     else if (BT_IsPhase1Done())
-    {
         DestroyTask(taskId);
-    }
 }
 
 #define tInterval data[1]
@@ -775,8 +773,11 @@ static bool32 BT_Phase2BigPokeball_Init(struct Task *task)
     sTransitionStructPtr->win0V = WIN_RANGE(0, 0xA0);
     sTransitionStructPtr->bldCnt = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD;
     sTransitionStructPtr->bldAlpha = (task->tEvb << 8) | task->tEva;
+	UpdateShadowColor(RGB_GRAY);
+	
     for (i = 0; i < 160; ++i)
         gScanlineEffectRegBuffers[1][i] = 0xF0;
+	
     SetVBlankCallback(VBCB_BT_Phase2BigPokeball1);
     BT_GetBg0TilemapAndTilesetBase(&tilemapAddr, &tilesetAddr);
     CpuFill16(0, tilemapAddr, 0x800);
@@ -2513,12 +2514,14 @@ static void VBCB_BT_Phase2BlackDoodles(void)
 #undef trCurrentPtY
 
 #define tFadeOutDelay data[1]
-#define tFadeInDelay data[2]
-#define tBlinkTimes data[3]
+#define tFadeInDelay  data[2]
+#define tBlinkTimes   data[3]
 #define tFadeOutSpeed data[4]
-#define tFadeInSpeed data[5]
+#define tFadeInSpeed  data[5]
 #define tDelayCounter data[6]
-#define tCoeff data[7]
+#define tCoeff        data[7]
+#define tBldCntSaved  data[8]
+#define tShadowColor  data[9]
 
 static void BT_CreatePhase1SubTask(s16 fadeOutDelay, s16 fadeInDelay, s16 blinkTimes, s16 fadeOutSpeed, s16 fadeInSpeed)
 {
@@ -2549,12 +2552,21 @@ static bool32 BT_Phase1_FadeOut(struct Task *task)
         task->tCoeff += task->tFadeOutSpeed;
         if (task->tCoeff > 16)
             task->tCoeff = 16;
-        BlendPalettes(-1, task->tCoeff, RGB(11, 11, 11));
+		
+		task->tShadowColor = GetShadowColor();
+		
+        BlendPalettes(PALETTES_ALL, task->tCoeff, RGB(11, 11, 11));
+		
+		UpdateShadowColor(task->tShadowColor);
     }
     if (task->tCoeff > 15)
     {
+		// Save BLDCNT and turn off targets temporarily
+        task->tBldCntSaved = GetGpuReg(REG_OFFSET_BLDCNT);
+        SetGpuReg(REG_OFFSET_BLDCNT, task->tBldCntSaved & ~(BLDCNT_TGT2_BG_ALL));
+		UpdateShadowColor(RGB(11, 11, 11));
+		task->tDelayCounter = task->tFadeInDelay;
         ++task->tState;
-        task->tDelayCounter = task->tFadeInDelay;
     }
     return FALSE;
 }
@@ -2568,13 +2580,16 @@ static bool32 BT_Phase1_FadeIn(struct Task *task)
         if (task->tCoeff < 0)
             task->tCoeff = 0;
         BlendPalettes(PALETTES_ALL, task->tCoeff, RGB(11, 11, 11));
+		
+		// Restore BLDCNT
+        SetGpuReg(REG_OFFSET_BLDCNT, task->tBldCntSaved);
+		UpdateShadowColor(task->tShadowColor);
     }
+	
     if (task->tCoeff == 0)
     {
         if (--task->tBlinkTimes == 0)
-        {
             DestroyTask(FindTaskIdByFunc(BT_Phase1SubTask));
-        }
         else
         {
             task->tDelayCounter = task->tFadeOutDelay;

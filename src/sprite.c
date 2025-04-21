@@ -1442,9 +1442,28 @@ void LoadSpriteSheets(const struct SpriteSheet *sheets)
         LoadSpriteSheet(&sheets[i]);
 }
 
+// Like LoadSpriteSheet, but checks if already loaded, and uses template image frames
+u16 LoadSpriteSheetByTemplate(const struct SpriteTemplate *template)
+{
+    u16 tileStart;
+    struct SpriteSheet sheet;
+	
+    // error if template is null or tile tag or images not set
+    if (!template || template->tileTag == 0xFFFF || !template->images)
+        return 0xFFFF;
+	
+    if ((tileStart = GetSpriteTileStartByTag(template->tileTag)) != 0xFFFF) // return if already loaded
+        return tileStart;
+	
+    sheet.data = template->images[0].data;
+    sheet.size = template->images[0].size;
+    sheet.tag = template->tileTag;
+    return LoadSpriteSheet(&sheet);
+}
+
 void FreeSpriteTilesByTag(u16 tag)
 {
-    u8 index = IndexOfSpriteTileTag(tag);
+    u32 index = IndexOfSpriteTileTag(tag);
 	
     if (index != 0xFF)
     {

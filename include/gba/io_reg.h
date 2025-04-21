@@ -600,13 +600,16 @@
 #define BLDCNT_TGT2_BG1      (1 << 9)
 #define BLDCNT_TGT2_BG2      (1 << 10)
 #define BLDCNT_TGT2_BG3      (1 << 11)
+#define BLDCNT_TGT2_BG_ALL   (BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3)
 #define BLDCNT_TGT2_OBJ      (1 << 12)
 #define BLDCNT_TGT2_BD       (1 << 13)
-#define BLDCNT_TGT2_ALL      (BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD)
+#define BLDCNT_TGT2_ALL      (BLDCNT_TGT2_BG_ALL | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD)
 
 // BLDALPHA
 #define BLDALPHA_BLEND(target1, target2) (((target2) << 8) | (target1))
 #define BLDALPHA_BLEND2(target1, target2) ((target1) | ((target2) << 8))
+#define BLDALPHA_TGT1(bld) ((bld) & 0x1F)
+#define BLDALPHA_TGT2(bld) (((bld) >> 8) & 0x1F)
 
 // SOUNDCNT_H
 #define SOUND_CGB_MIX_QUARTER 0x0000

@@ -4,6 +4,7 @@
 #include "field_effect.h"
 #include "field_weather.h"
 #include "field_weather_effects.h"
+#include "map_preview_screen.h"
 #include "task.h"
 #include "trig.h"
 #include "constants/field_weather.h"
@@ -15,6 +16,8 @@ enum
 	GAMMA_NORMAL,
 	GAMMA_BLEND,
 };
+
+#define WEATHER_PALETTE_INDEX 15
 
 struct WeatherCallbacks
 {
@@ -40,7 +43,6 @@ struct Weather *const gWeatherPtr = &sWeather;
 
 const u16 gDefaultWeatherSpritePalette[] = INCBIN_U16("graphics/weather/default.gbapal");
 const u16 gSandstormWeatherPalette[] = INCBIN_U16("graphics/weather/sandstorm.gbapal");
-const u16 gCloudWeatherPalette[] = INCBIN_U16("graphics/weather/cloud.gbapal");
 const u16 gSnowstormWeatherPalette[] = INCBIN_U16("graphics/weather/snowstorm.gbapal");
 const u8 gWeatherFogDiagonalTiles[] = INCBIN_U8("graphics/weather/fog_diagonal.4bpp");
 const u8 gWeatherFogHorizontalTiles[] = INCBIN_U8("graphics/weather/fog_horizontal.4bpp");
@@ -192,8 +194,10 @@ static void Task_WeatherMain(u8 taskId)
 
 static void None_Init(void)
 {
+	gWeatherPtr->noShadows = FALSE;
     gWeatherPtr->gammaTargetIndex = 0;
     gWeatherPtr->gammaStepDelay = 0;
+	Weather_SetBlendCoeffs(8, BASE_SHADOW_INTENSITY);
 }
 
 static void None_Main(void)
@@ -489,12 +493,17 @@ void LoadWeatherDefaultPalette(void)
 
 void LoadWeatherSpritePalette(const struct SpritePalette *palette)
 {
-	LoadSpritePaletteAtIndex(palette, 15);
-	UpdateSpritePaletteWithWeather(15);
+	LoadSpritePaletteAtIndex(palette, WEATHER_PALETTE_INDEX);
+	UpdateSpritePaletteWithWeather(WEATHER_PALETTE_INDEX);
 }
 
 void Weather_SetBlendCoeffs(u32 eva, u32 evb)
 {
+	if (ForestMapPreviewScreenIsRunning())
+	{
+		eva = 16;
+		evb = 0;
+	}
     gWeatherPtr->currBlendEVA = eva;
     gWeatherPtr->currBlendEVB = evb;
     gWeatherPtr->targetBlendEVA = eva;
@@ -599,4 +608,15 @@ void SetWeatherScreenFadeOut(void)
 void WeatherProcessingIdle(void)
 {
     gWeatherPtr->palProcessingState = WEATHER_PAL_STATE_IDLE;
+}
+
+u32 GetShadowColor(void)
+{
+	return gPlttBufferFaded[((WEATHER_PALETTE_INDEX + 16) * 16) + SHADOW_COLOR_INDEX];
+}
+
+void UpdateShadowColor(u32 color)
+{
+	u32 index = ((WEATHER_PALETTE_INDEX + 16) * 16) + SHADOW_COLOR_INDEX;
+	gPlttBufferUnfaded[index] = gPlttBufferFaded[index] = color;
 }

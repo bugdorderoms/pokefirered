@@ -2055,7 +2055,7 @@ static void BattleIntroPrepareBackgroundSlide(void)
 static void BattleIntroDrawTrainersOrMonsSprites(void)
 {
     u32 i, j, battlerId;
-	struct Pokemon *mon;
+	struct Pokemon *party, *mon;
 
     if (!gBattleControllerExecFlags)
     {
@@ -2129,11 +2129,11 @@ static void BattleIntroDrawTrainersOrMonsSprites(void)
 		
 		for (i = 0; i < B_SIDE_COUNT; i++)
 		{
-			mon = GetSideParty(i);
+			party = GetSideParty(i);
 			
 			for (j = 0; j < PARTY_SIZE; j++)
 			{
-				mon = &mon[j];
+				mon = &party[j];
 				
 				if (IsMonValidSpecies(mon))
 				{
@@ -2409,6 +2409,7 @@ enum
 {
 	FIRST_TURN_EVENT_ORDER,
 	FIRST_TURN_EVENT_OVERWORLD_WEATHER,
+	FIRST_TURN_EVENT_OVERWORLD_TERRAIN,
 	FIRST_TURN_EVENT_BATTLE_CHALLENGE,
 	FIRST_TURN_EVENT_RAID_BATTLE_REVEAL,
 	FIRST_TURN_EVENT_DYNAMAX_SWIRL,
@@ -2449,6 +2450,9 @@ static void TryDoEventsBeforeFirstTurn(void)
 				if (TryStartOverworldWeather())
 					BattleScriptPushCursorAndCallback(BattleScript_OverworldWeatherStarts);
 
+				++gBattleStruct->firstTurnEventsState;
+				break;
+			case FIRST_TURN_EVENT_OVERWORLD_TERRAIN:
 				++gBattleStruct->firstTurnEventsState;
 				break;
 			case FIRST_TURN_EVENT_BATTLE_CHALLENGE:
@@ -3646,7 +3650,7 @@ static void HandleEndTurn_MonFled(void)
 
 static void HandleEndTurn_FinishBattle(void)
 {
-	u32 i, status;
+	u32 i, j, status;
 	
     if (gCurrentActionFuncId == B_ACTION_TRY_FINISH || gCurrentActionFuncId == B_ACTION_FINISHED)
     {
@@ -3665,10 +3669,15 @@ static void HandleEndTurn_FinishBattle(void)
 		{
             ClearRematchStateByTrainerId();
 			
-			for (i = 0; i < PARTY_SIZE; i++)
+			for (i = 0; i < B_SIDE_COUNT; i++)
 			{
-				SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &gBattleStruct->itemEffects.savedItems[B_SIDE_PLAYER][i]);
-				SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &gBattleStruct->itemEffects.savedItems[B_SIDE_OPPONENT][i]);
+				struct Pokemon *party = GetSideParty(i);
+				
+				for (j = 0; j < PARTY_SIZE; j++)
+				{
+					if (IsMonValidSpecies(&party[j]))
+						SetMonData(&party[j], MON_DATA_HELD_ITEM, &gBattleStruct->itemEffects.savedItems[i][j]);
+				}
 			}
 		}
         BeginFastPaletteFade(FAST_FADE_OUT_TO_BLACK);

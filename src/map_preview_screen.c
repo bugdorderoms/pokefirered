@@ -90,18 +90,20 @@ void MapPreview_StartForestTransition(u32 mapsec)
 
     gTasks[taskId].data[2] = GetBgAttribute(0, BG_ATTR_PRIORITY);
     gTasks[taskId].data[4] = GetGpuReg(REG_OFFSET_BLDCNT);
-    gTasks[taskId].data[5] = GetGpuReg(REG_OFFSET_BLDALPHA);
+	gTasks[taskId].data[5] = GetGpuReg(REG_OFFSET_BLDALPHA);
     gTasks[taskId].data[3] = GetGpuReg(REG_OFFSET_DISPCNT);
     gTasks[taskId].data[6] = GetGpuReg(REG_OFFSET_WININ);
     gTasks[taskId].data[7] = GetGpuReg(REG_OFFSET_WINOUT);
     gTasks[taskId].data[10] = MapPreview_GetDuration(mapsec);
     gTasks[taskId].data[8] = 16;
     gTasks[taskId].data[9] = 0;
+	gTasks[taskId].data[12] = BLDALPHA_TGT1(gTasks[taskId].data[5]) - 1;
+	gTasks[taskId].data[13] = BLDALPHA_TGT2(gTasks[taskId].data[5]) + 1;
 	
     SetBgAttribute(0, BG_ATTR_PRIORITY, 0);
 	
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD);
-    SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(16, 0));
+    SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(gTasks[taskId].data[8], gTasks[taskId].data[9]));
     SetGpuRegBits(REG_OFFSET_WININ, WININ_WIN0_CLR | WININ_WIN1_CLR);
     SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WIN01_CLR);
 	
@@ -127,7 +129,7 @@ u32 MapPreview_CreateMapNameWindow(u32 mapsec)
 
 bool32 ForestMapPreviewScreenIsRunning(void)
 {
-    return !FuncIsActiveTask(Task_RunMapPreviewScreenForest);
+    return FuncIsActiveTask(Task_RunMapPreviewScreenForest);
 }
 
 static void Task_RunMapPreviewScreenForest(u8 taskId)
@@ -172,23 +174,27 @@ static void Task_RunMapPreviewScreenForest(u8 taskId)
         case 0:
             data[9]++;
 			
-            if (data[9] > 16)
-                data[9] = 16;
+            if (data[9] > data[12])
+                data[9] = data[12];
             break;
         case 1:
             data[8]--;
 			
-            if (data[8] < 0)
-                data[8] = 0;
-			
+            if (data[8] < data[13])
+                data[8] = data[13];
             break;
         }
         data[1] = (data[1] + 1) % 3;
 		
         SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(data[8], data[9]));
 		
-        if (data[8] == 0 && data[9] == 16)
+		// Gradually whiten shadow color
+		data[14] = 11 + data[9];
+		UpdateShadowColor(RGB(data[14], data[14], data[14]));
+		
+        if (data[8] == data[13] && data[9] == data[12])
         {
+			UpdateShadowColor(RGB_BLACK);
             FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, 32, 32);
             CopyBgTilemapBufferToVram(0);
             data[0]++;
@@ -203,11 +209,10 @@ static void Task_RunMapPreviewScreenForest(u8 taskId)
 			
             SetGpuReg(REG_OFFSET_DISPCNT, data[3]);
             SetGpuReg(REG_OFFSET_BLDCNT, data[4]);
-            SetGpuReg(REG_OFFSET_BLDALPHA, data[5]);
             SetGpuReg(REG_OFFSET_WININ, data[6]);
             SetGpuReg(REG_OFFSET_WINOUT, data[7]);
 			
-            DestroyTask(taskId);
+			DestroyTask(taskId);
         }
         break;
     }

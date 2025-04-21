@@ -35,6 +35,7 @@ static const u8 sWaningMoonGfx[] = INCBIN_U8("graphics/map_popup/waning_moon.4bp
 static void Task_MapNamePopup(u8 taskId);
 static void ShowMapNamePopUpWindow(struct Task *task);
 static void HideMapNamePopUpWindow(void);
+static void DestroyMapNamePopUpWindow(s16 *src);
 static void MapNamePopupPrintTextOnWindows(u32 primaryWindowId, u32 secondaryWindowId);
 
 static EWRAM_DATA u8 sMapPopUpTaskId = 0;
@@ -181,12 +182,8 @@ static void Task_MapNamePopup(u8 taskId)
 			}
 			break;
 		case STATE_ERASE:
-			ClearStdWindowAndFrame(task->tPrimaryWindowId, TRUE);
-			RemoveWindow(task->tPrimaryWindowId);
-			
-			ClearStdWindowAndFrame(task->tSecondaryWindowId, TRUE);
-			RemoveWindow(task->tSecondaryWindowId);
-			
+			DestroyMapNamePopUpWindow(&task->tPrimaryWindowId);
+			DestroyMapNamePopUpWindow(&task->tSecondaryWindowId);
 			task->tState = STATE_END;
 			break;
 		case STATE_END:
@@ -196,12 +193,18 @@ static void Task_MapNamePopup(u8 taskId)
 	}
 }
 
+static void TryAddMapNamePopUpWindow(s16 *dest, u32 whichWindow)
+{
+	if (*dest != 0xFF)
+		*dest = AddWindow(&sMapPopUpWindows[whichWindow]);
+}
+
 static void ShowMapNamePopUpWindow(struct Task *task)
 {
 	LoadPalette(sMapPopUpPalette, 0xd0, 0x20);
 	
-	task->tPrimaryWindowId = AddWindow(&sMapPopUpWindows[0]);
-	task->tSecondaryWindowId = AddWindow(&sMapPopUpWindows[1]);
+	TryAddMapNamePopUpWindow(&task->tPrimaryWindowId, 0);
+	TryAddMapNamePopUpWindow(&task->tSecondaryWindowId, 1);
 	
 	CopyToWindowPixelBuffer(task->tPrimaryWindowId, sMapPopUpPrimary, sizeof(sMapPopUpPrimary), 0);
 	CopyToWindowPixelBuffer(task->tSecondaryWindowId, sMapPopUpSecondary, sizeof(sMapPopUpSecondary), 0);
@@ -212,6 +215,16 @@ static void ShowMapNamePopUpWindow(struct Task *task)
 	PutWindowTilemap(task->tSecondaryWindowId);
 	
 	MapNamePopupPrintTextOnWindows(task->tPrimaryWindowId, task->tSecondaryWindowId);
+}
+
+static void DestroyMapNamePopUpWindow(s16 *src)
+{
+	if (*src != 0xFF)
+	{
+		ClearStdWindowAndFrame(*src, TRUE);
+		RemoveWindow(*src);
+		*src = 0xFF;
+	}
 }
 
 static void HideMapNamePopUpWindow(void)

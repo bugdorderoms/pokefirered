@@ -41,5 +41,6 @@ void UpdateDisguiseFieldEffect(struct Sprite * sprite);
 void UpdateHotSpringsWaterFieldEffect(struct Sprite * sprite);
 void LoadFieldEffectPalette(u32 fieldEffect);
 void FieldEffectFreePaletteIfUnused(u32 paletteNum);
+void SetUpShadow(struct ObjectEvent *objectEvent);
 
 #endif //GUARD_FIELD_EFFECT_HELPERS_H

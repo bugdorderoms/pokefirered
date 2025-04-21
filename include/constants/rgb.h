@@ -20,6 +20,7 @@
 #define RGB_YELLOW     RGB(31, 31, 0)
 #define RGB_MAGENTA    RGB(31, 0, 31)
 #define RGB_CYAN       RGB(0, 31, 31)
+#define RGB_GRAY       RGB(15, 15, 15)
 #define RGB_WHITEALPHA (RGB_WHITE | RGB_ALPHA)
 
 #endif // GUARD_RGB_H

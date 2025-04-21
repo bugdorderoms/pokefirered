@@ -21,6 +21,7 @@ enum
 
 struct Weather
 {
+	u16 noShadows:1; // Certain weathers require blend coeffs that do not work nice with shadows
 	u16 readyForInit:1;
 	u16 fadeInActive:1;
 	u16 fadeInCounter:2;
@@ -34,13 +35,13 @@ struct Weather
 	u16 ashSpritesCreated:1;
 	u16 sandstormSpritesCreated:1;
     u16 sandstormSwirlSpritesCreated:1;
-	u16 fogDSpritesCreated:1;
+	u8 fogDSpritesCreated:1;
 	u8 isDownpour:1;
 	u8 bubblesSpritesCreated:1;
 	u8 cloudSpritesCreated:1;
 	u8 snowstormSpritesCreated:1;
 	u8 snowstormSwirlSpritesCreated:1;
-	u8 unused:3; // can be used to add new weathers
+	u8 unused:2; // can be used to add new weathers
 	u8 taskId;
 	
 	u8 palProcessingState;
@@ -162,9 +163,10 @@ void SetRainStrengthFromSoundEffect(u32 soundEffect);
 void WeatherShiftGammaIfPalStateIdle(s8 gammaIndex);
 void WeatherBeginGammaFade(u32 gammaIndex, u32 gammaTargetIndex, u32 gammaStepDelay);
 void ApplyWeatherGammaShiftToPal(u32 paletteIndex);
+u32 GetShadowColor(void);
+void UpdateShadowColor(u32 color);
 
 extern const u16 gSandstormWeatherPalette[];
-extern const u16 gCloudWeatherPalette[];
 extern const u16 gSnowstormWeatherPalette[];
 extern const u8 gWeatherFogDiagonalTiles[];
 extern const u8 gWeatherFogHorizontalTiles[];

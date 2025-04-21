@@ -178,16 +178,28 @@ const u16 gShadowVerticalOffsets[] = {
 
 u32 FldEff_Shadow(void)
 {
-    u32 objectEventId = GetObjectEventIdByLocalIdAndMap(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    const struct ObjectEventGraphicsInfo * graphicsInfo = GetObjectEventGraphicsInfo(gObjectEvents[objectEventId].graphicsId);
-    u32 spriteId;
-
-	LoadFieldEffectPalette(gShadowEffectTemplateIds[graphicsInfo->shadowSize]);
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[gShadowEffectTemplateIds[graphicsInfo->shadowSize]], 0, 0, 0x94);
+	s32 i;
+	u32 objectEventId, spriteId;
+	const struct ObjectEventGraphicsInfo * graphicsInfo;
+	
+	// Search backwards, bc of CreateSpriteAtEnd
+	for (i = MAX_SPRITES - 1; i > -1; i--)
+	{
+		// Check if a shadow sprite already exists
+		if (gSprites[i].callback == UpdateShadowFieldEffect && gSprites[i].data[0] == gFieldEffectArguments[0] && gSprites[i].data[1] == gFieldEffectArguments[1]
+		&& gSprites[i].data[2] == gFieldEffectArguments[2])
+			return 0;
+	}
+	objectEventId = GetObjectEventIdByLocalIdAndMap(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
+	graphicsInfo = GetObjectEventGraphicsInfo(gObjectEvents[objectEventId].graphicsId);
+	
+	LoadSpriteSheetByTemplate(gFieldEffectObjectTemplatePointers[gShadowEffectTemplateIds[graphicsInfo->shadowSize]]);
+	spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[gShadowEffectTemplateIds[graphicsInfo->shadowSize]], 0, 0, 0x94);
 	
     if (spriteId != MAX_SPRITES)
     {
         gSprites[spriteId].coordOffsetEnabled = TRUE;
+		gSprites[spriteId].oam.objMode = ST_OAM_OBJ_BLEND;
         gSprites[spriteId].data[0] = gFieldEffectArguments[0];
         gSprites[spriteId].data[1] = gFieldEffectArguments[1];
         gSprites[spriteId].data[2] = gFieldEffectArguments[2];
@@ -212,10 +224,18 @@ void UpdateShadowFieldEffect(struct Sprite * sprite)
         sprite->oam.priority = linkedSprite->oam.priority;
         sprite->x = linkedSprite->x;
         sprite->y = linkedSprite->y + sprite->data[3];
+		sprite->invisible = linkedSprite->invisible;
 		
-        if (!objectEvent->active || !objectEvent->hasShadow || MetatileBehavior_IsPokeGrass(objectEvent->currentMetatileBehavior)
-		|| MetatileBehavior_IsSurfable(objectEvent->currentMetatileBehavior) || MetatileBehavior_IsSurfable(objectEvent->previousMetatileBehavior)
-		|| MetatileBehavior_IsReflective(objectEvent->currentMetatileBehavior) || MetatileBehavior_IsReflective(objectEvent->previousMetatileBehavior))
+		if (objectEvent->jumpDone)
+		{
+			objectEvent->jumpDone = FALSE;
+			objectEvent->noShadow = TRUE;
+		}
+		
+        if (!objectEvent->active || objectEvent->noShadow || objectEvent->inHotSprings || objectEvent->inSandPile || gWeatherPtr->noShadows
+		|| MetatileBehavior_IsPokeGrass(objectEvent->currentMetatileBehavior) || MetatileBehavior_IsSurfable(objectEvent->currentMetatileBehavior)
+		|| MetatileBehavior_IsReflective(objectEvent->currentMetatileBehavior) || MetatileBehavior_IsPuddle(objectEvent->currentMetatileBehavior)
+		|| MetatileBehavior_IsSurfable(objectEvent->previousMetatileBehavior) || MetatileBehavior_IsReflective(objectEvent->previousMetatileBehavior))
             FieldEffectStop(sprite, FLDEFF_SHADOW);
     }
 }

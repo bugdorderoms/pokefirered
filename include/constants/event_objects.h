@@ -197,8 +197,9 @@
 #define TRACKS_FOOT       1
 #define TRACKS_BIKE_TIRE  2
 
-#define OBJ_EVENT_ID_PLAYER  0xFF
-#define OBJ_EVENT_ID_CAMERA  0x7F
+#define OBJ_EVENT_ID_DYNAMIC_BASE 0xF0 // Used for link player OWs in CreateLinkPlayerSprite
+#define OBJ_EVENT_ID_PLAYER       0xFF
+#define OBJ_EVENT_ID_CAMERA       0x7F
 
 #define OBJ_KIND_NORMAL 0
 #define OBJ_KIND_CLONE  255

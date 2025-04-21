@@ -18,6 +18,7 @@
 #include "field_weather.h"
 #include "fieldmap.h"
 #include "fldeff.h"
+#include "field_effect_helpers.h"
 #include "heal_location.h"
 #include "item_menu_icons.h"
 #include "link.h"
@@ -3135,6 +3136,8 @@ static void CreateLinkPlayerSprite(u32 linkPlayerId, u32 gameVersion)
         sprite->coordOffsetEnabled = TRUE;
         sprite->data[0] = linkPlayerId;
         objEvent->triggerGroundEffectsOnMove = FALSE;
+		objEvent->localId = OBJ_EVENT_ID_DYNAMIC_BASE + linkPlayerId;
+        SetUpShadow(objEvent);
     }
 }
 
@@ -3160,4 +3163,11 @@ static void SpriteCB_LinkPlayer(struct Sprite *sprite)
         sprite->invisible = ((sprite->data[7] & 4) >> 2);
         sprite->data[7]++;
     }
+}
+
+bool32 CurrentMapHasShadows(void)
+{
+    // Add all conditionals here for maps that shouldn't have shadows
+    // By default only cave maps are excluded from having shadows under object events
+    return (gMapHeader.mapType != MAP_TYPE_UNDERGROUND);
 }

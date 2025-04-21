@@ -462,7 +462,7 @@ void FieldCB_SafariZoneRanOutOfBalls(void)
 
 bool32 FieldFadeTransitionBackgroundEffectIsFinished(void)
 {
-	return (IsWeatherNotFadingIn() && ForestMapPreviewScreenIsRunning());
+	return (IsWeatherNotFadingIn() && !ForestMapPreviewScreenIsRunning());
 }
 
 void DoWarp(void)
@@ -747,7 +747,8 @@ static void Task_StairWarp(u8 taskId)
                 TryFadeOutOldMapMusic();
                 PlayRainStoppingSoundEffect();
                 gSprites[gPlayerAvatar.spriteId].oam.priority = 1;
-				ObjectEventForceSetHeldMovement(&gObjectEvents[gPlayerAvatar.objectEventId], GetWalkInPlaceNormalMovementAction(GetPlayerFacingDirection()));
+				ObjectEventForceSetHeldMovement(playerObj, GetWalkInPlaceNormalMovementAction(GetPlayerFacingDirection()));
+				playerObj->noShadow = TRUE;
 				sub_807EBBC((u8)data[1], &data[2], &data[3]);
                 PlaySE(SE_EXIT);
                 data[0]++;
@@ -770,7 +771,8 @@ static void Task_StairWarp(u8 taskId)
             data[0]++;
         break;
     default:
-        gFieldCallback = FieldCB_DefaultWarpExit;
+        gObjectEvents[gPlayerAvatar.objectEventId].noShadow = FALSE;
+		gFieldCallback = FieldCB_DefaultWarpExit;
         WarpIntoMap();
         SetMainCallback2(CB2_LoadMap);
         DestroyTask(taskId);
