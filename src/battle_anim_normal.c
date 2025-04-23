@@ -431,6 +431,50 @@ const struct SpriteTemplate gGunkShotHitSpriteTemplate =
     .callback = AnimHitSplatBasic,
 };
 
+const struct SpriteTemplate gGuardSplitOrbSwap1SpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BLUEGREEN_ORB,
+    .paletteTag = ANIM_TAG_BLUEGREEN_ORB,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_HitSplat,
+    .callback = AnimMimicOrb,
+};
+
+const struct SpriteTemplate gGuardSplitOrbSwap2SpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BLUEGREEN_ORB,
+    .paletteTag = ANIM_TAG_BLUEGREEN_ORB,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_HitSplat,
+    .callback = AnimMissileArc,
+};
+
+const struct SpriteTemplate gPowerSplitOrbSwap1SpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BLUEGREEN_ORB,
+    .paletteTag = ANIM_TAG_RED_HEART,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_HitSplat,
+    .callback = AnimMimicOrb,
+};
+
+const struct SpriteTemplate gPowerSplitOrbSwap2SpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BLUEGREEN_ORB,
+    .paletteTag = ANIM_TAG_RED_HEART,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_HitSplat,
+    .callback = AnimMissileArc,
+};
+
 // Moves a spinning sprite around the mon's head.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset

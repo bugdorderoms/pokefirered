@@ -389,6 +389,7 @@
 #define BG_SPACIAL_REND_PLAYER   39
 #define BG_SPACIAL_REND_OPPONENT 40
 #define BG_DARK_VOID             41
+#define BG_WONDER_ROOM           42
 
 // table ids for general animations
 #define B_ANIM_FORM_CHANGE           0x0
@@ -447,6 +448,7 @@
 #define B_ANIM_TRICK_ROOM            0x35
 #define B_ANIM_GRAVITY               0x36
 #define B_ANIM_LUNAR_DANCE_HEAL      0x37
+#define B_ANIM_WONDER_ROOM           0x38
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0

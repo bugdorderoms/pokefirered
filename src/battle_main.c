@@ -3193,7 +3193,7 @@ u32 GetBattlerTotalSpeed(u32 battler)
 {
 	u32 holdEffectParam, monSpeed;
 	
-	APPLY_STAT_MOD(monSpeed, &gBattleMons[battler], gBattleMons[battler].speed, STAT_SPEED);
+	APPLY_MON_STAT_MOD(monSpeed, &gBattleMons[battler], gBattleMons[battler].speed, STAT_SPEED);
 
 	switch (GetBattlerAbility(battler))
 	{
@@ -3376,6 +3376,7 @@ static void TurnValuesCleanUp(bool32 var0)
         if (var0)
 		{
             gProtectStructs[battlerId].protected = FALSE;
+			gSideStatuses[GetBattlerSide(battlerId)] &= ~(SIDE_STATUS_WIDE_GUARD);
 			memset(&gQueuedStatBoosts[battlerId], 0, sizeof(struct QueuedStatBoost));
 		}
         else

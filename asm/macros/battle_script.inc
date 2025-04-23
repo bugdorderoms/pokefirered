@@ -1771,6 +1771,10 @@
 	.4byte \ptr
 	.endm
 	
+	.macro setwonderroom
+	callfunction BS_SetWonderRoom
+	.endm
+	
 @ helpful macros
 	.macro copybyte dst:req, src:req
 	copyarray \dst, \src, 0x1

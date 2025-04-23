@@ -150,6 +150,8 @@ extern const u8 BattleScript_EffectDefog[];
 extern const u8 BattleScript_EffectTrickRoom[];
 extern const u8 BattleScript_EffectCaptivate[];
 extern const u8 BattleScript_EffectStealthRock[];
+extern const u8 BattleScript_EffectAttackAccuracyUp[];
+extern const u8 BattleScript_EffectWonderRoom[];
 // Other scripts
 extern const u8 BattleScript_HitFromCritCalc[];
 extern const u8 BattleScript_MoveEnd[];

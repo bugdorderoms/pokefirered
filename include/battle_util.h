@@ -63,7 +63,7 @@ enum
 #define ABILITY_ON_SIDE(battlerId, abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_SIDE, battlerId, abilityId)))
 #define ABILITY_ON_OPPOSING_SIDE(battlerId, abilityId) ABILITY_ON_SIDE(BATTLE_OPPOSITE(battlerId), abilityId)
 #define ABILITY_ON_FIELD(abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_FIELD, 0, abilityId)))
-#define ABILITY_ON_FIELD_EXCPET_BATTLER(battlerId, abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_FIELD_EXCEPT_BATTLER, battlerId, abilityId)))
+#define ABILITY_ON_FIELD_EXCEPT_BATTLER(battlerId, abilityId) ((CheckAbilityInBattle(CHECK_ABILITY_ON_FIELD_EXCEPT_BATTLER, battlerId, abilityId)))
 
 // Cases for ItemBattleEffects
 #define ITEMEFFECT_ON_SWITCH_IN                 0x0
@@ -174,7 +174,7 @@ bool32 IsBattlerAffectedBySpore(u32 battlerId);
 void RemoveOrAddBattlerOnPickupStack(u32 battlerId, bool32 addToStack);
 u32 GetBattlerOnTopOfPickupStack(u32 battlerId);
 bool32 TryRecycleBattlerItem(u32 battlerRecycler, u32 itemBattler);
-u32 GetBattlerHighestStatId(u32 battlerId);
+u32 GetBattlerHighestStatId(u32 battlerId, bool32 checkWonderRoom);
 bool32 IsBattlerAffectedByFollowMe(u32 battlerId, u32 opposingSide, u32 move);
 u32 GetItemUseBattler(u32 battlerId);
 u32 GetBattleMonForItemUse(u32 battlerId, u32 partyIndex);

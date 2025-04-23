@@ -1369,6 +1369,11 @@ gGeneralAnim_LunarDanceHeal::
 	blendoff
 	end
 
+@ Credits: Blackuser
+gGeneralAnim_WonderRoom::
+	call WonderRoom
+	end
+
 @@@@@@@@@@@@@@@@@@@@@@
 @ SPECIAL ANIMATIONS @
 @@@@@@@@@@@@@@@@@@@@@@
@@ -13775,3 +13780,244 @@ ShadowForceAttack::
 	clearmonbg ANIM_TARGET
 	blendoff
 	goto ShadowForceEnd
+
+@@@@@@@@@@@@@@@@@@@@@@@ GEN V @@@@@@@@@@@@@@@@@@@@@@@
+
+@ Credits: Skeli
+gMoveAnim_HONE_CLAWS::
+	loadspritegfx ANIM_TAG_CLAW_SLASH
+	loadspritegfx ANIM_TAG_SPARKLE_2
+	monbg ANIM_ATTACKER
+	setalpha 12, 8
+	call HoneClawsSlashes
+	call GrantingStarsEffect
+	call HoneClawsSlashes
+	call GrantingStarsEffect
+	call HoneClawsSlashes
+	waitforvisualfinish
+	clearmonbg ANIM_ATTACKER
+	blendoff
+	end
+
+HoneClawsSlashes::
+	playsewithpan SE_M_SCRATCH, SOUND_PAN_ATTACKER
+	createsprite gClawSlashSpriteTemplate, ANIM_TARGET, 2, 10, -22, 1
+	createsprite gClawSlashSpriteTemplate, ANIM_TARGET, 2, 10, -6, 1
+	createsprite gClawSlashSpriteTemplate, ANIM_TARGET, 2, 10, 10, 1
+	delay 16
+	playsewithpan SE_M_SCRATCH, SOUND_PAN_ATTACKER
+	createsprite gClawSlashSpriteTemplate, ANIM_TARGET, 2, -10, -22, 0
+	createsprite gClawSlashSpriteTemplate, ANIM_TARGET, 2, -10, -6, 0
+	createsprite gClawSlashSpriteTemplate, ANIM_TARGET, 2, -10, 10, 0
+	delay 16
+	return
+
+@ Credits: Lixdel
+gMoveAnim_WIDE_GUARD::
+	loadspriteimg ANIM_TAG_CONVERSION
+	loadspritepal ANIM_TAG_WATER_ORB @ Blue color
+	monbg ANIM_ATTACKER
+	setalpha 12, 8
+	createvisualtask AnimTask_RockMonBackAndForth, 5, ANIM_ATTACKER, 3, 0
+	waitplaysewithpan SE_M_REFLECT, SOUND_PAN_ATTACKER, 16
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, -24, -24
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, -8, -24
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, 8, -24
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, 24, -24
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, -24, -8
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, -8, -8
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, 8, -8
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, 24, -8
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, -24, 8
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, -8, 8
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, 8, 8
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, 24, 8
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, -24, 24
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, -8, 24
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, 8, 24
+	delay 3
+	createsprite gBlueConversionSpriteTemplate, ANIM_ATTACKER, 2, 24, 24
+	delay 20
+	playsewithpan SE_M_SWIFT, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_ConversionAlphaBlend, 5
+	waitforvisualfinish
+	clearmonbg ANIM_ATTACKER
+	blendoff
+	end
+
+@ Credits: Skeli
+gMoveAnim_GUARD_SPLIT::
+	loadspritegfx ANIM_TAG_BLUEGREEN_ORB
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 0, 12, RGB_BLACK
+	loopsewithpan SE_M_REVERSAL, SOUND_PAN_ATTACKER, 24, 3
+	call GuardSplitLaunchOrbs
+	call GuardSplitLaunchOrbs
+	call GuardSplitLaunchOrbs
+	call GuardSplitLaunchOrbs
+	call GuardSplitLaunchOrbs
+	call GuardSplitLaunchOrbs
+	call GuardSplitLaunchOrbs
+	call GuardSplitLaunchOrbs
+	call GuardSplitLaunchOrbs
+	call GuardSplitLaunchOrbs
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 12, 0, RGB_BLACK
+	end
+
+GuardSplitLaunchOrbs::
+	createsprite gGuardSplitOrbSwap1SpriteTemplate, ANIM_TARGET, 2, -12, 0
+	createsprite gGuardSplitOrbSwap2SpriteTemplate, ANIM_TARGET, 0, 0, 0, 0, 0, 30, 0
+	delay 5
+	return
+
+@ Credits: Skeli
+gMoveAnim_POWER_SPLIT::
+	loadspriteimg ANIM_TAG_BLUEGREEN_ORB
+	loadspritepal ANIM_TAG_RED_HEART
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 0, 12, RGB_BLACK
+	loopsewithpan SE_M_REVERSAL, SOUND_PAN_ATTACKER, 24, 3
+	call PowerSplitLaunchOrbs
+	call PowerSplitLaunchOrbs
+	call PowerSplitLaunchOrbs
+	call PowerSplitLaunchOrbs
+	call PowerSplitLaunchOrbs
+	call PowerSplitLaunchOrbs
+	call PowerSplitLaunchOrbs
+	call PowerSplitLaunchOrbs
+	call PowerSplitLaunchOrbs
+	call PowerSplitLaunchOrbs
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 12, 0, RGB_BLACK
+	end
+
+PowerSplitLaunchOrbs::
+	createsprite gPowerSplitOrbSwap1SpriteTemplate, ANIM_TARGET, 2, -12, 0
+	createsprite gPowerSplitOrbSwap2SpriteTemplate, ANIM_TARGET, 0, 0, 0, 0, 0, 30, 0
+	delay 5
+	return
+
+@ Credits: Skeli
+gMoveAnim_WONDER_ROOM::
+	call SummonRoomAttackerScaleAnim
+	call WonderRoom
+	blendoff
+	end
+
+WonderRoom:
+	fadetobg BG_WONDER_ROOM
+	waitbgfadein
+	delay 64
+	restorebg
+	waitbgfadein
+	return
+
+@ Credits: Lixdel
+gMoveAnim_PSYSHOCK::
+	loadspritegfx ANIM_TAG_ORBS
+	loadspriteimg ANIM_TAG_IMPACT
+	loadspritepal ANIM_TAG_FLAT_ROCK @ Brown color
+	monbg ANIM_DEF_SIDE
+	call SetPsychicBackground
+	setalpha 12, 8
+	createvisualtask AnimTask_BlendParticle, 2, ANIM_TAG_ORBS, 0, 10, 10, 0x7C7F @ Pink purple color
+	playsewithpan SE_M_SUPERSONIC, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 1, 0, 28, 1
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 4, 2, 0, 8, RGB_WHITE
+	createsprite gPsyshockOrbsVortexSpriteTemplate, ANIM_TARGET, 2, 0, 28, 384, 50, 8, 50, ANIM_TARGET
+	delay 1
+	createsprite gPsyshockOrbsVortexSpriteTemplate, ANIM_TARGET, 2, 0, 32, 240, 40, 11, -46, ANIM_TARGET
+	delay 1
+	createsprite gPsyshockOrbsVortexSpriteTemplate, ANIM_TARGET, 2, 0, 33, 416, 40, 4, 42, ANIM_TARGET
+	delay 1
+	createsprite gPsyshockOrbsVortexSpriteTemplate, ANIM_TARGET, 2, 0, 31, 288, 45, 6, -42, ANIM_TARGET
+	delay 1
+	createsprite gPsyshockOrbsVortexSpriteTemplate, ANIM_TARGET, 2, 0, 28, 448, 45, 11, 46, ANIM_TARGET
+	delay 1
+	createsprite gPsyshockOrbsVortexSpriteTemplate, ANIM_TARGET, 2, 0, 33, 464, 50, 10, -50, ANIM_TARGET
+	waitforvisualfinish
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_TARGET
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 0, -32, 16
+	delay 1
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 2, 32, 1
+	playsewithpan SE_M_COMET_PUNCH, SOUND_PAN_TARGET
+	createsprite gPsyshockHitSplatSpriteTemplate, ANIM_TARGET, 2, -10, -10, FALSE
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 20, 20, 16
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, -27, 0, 16
+	delay 5
+	playsewithpan SE_M_COMET_PUNCH, SOUND_PAN_TARGET
+	createsprite gPsyshockHitSplatSpriteTemplate, ANIM_TARGET, 2, 10, 20, FALSE
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 22, -22, 16
+	delay 1
+	playsewithpan SE_M_COMET_PUNCH, SOUND_PAN_TARGET
+	createsprite gPsyshockHitSplatSpriteTemplate, ANIM_TARGET, 2, -5, 10, FALSE
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 0, 28, 16
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, -18, -18, 16
+	delay 5
+	playsewithpan SE_M_COMET_PUNCH, SOUND_PAN_TARGET
+	createsprite gPsyshockHitSplatSpriteTemplate, ANIM_TARGET, 2, 17, -12, FALSE
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 30, 0, 16
+	delay 1
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, -19, 19, 16
+	delay 1
+	playsewithpan SE_M_COMET_PUNCH, SOUND_PAN_TARGET
+	createsprite gPsyshockHitSplatSpriteTemplate, ANIM_TARGET, 2, -15, 15, FALSE
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, -27, 0, 16
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 0, -32, 16
+	delay 1
+	playsewithpan SE_M_COMET_PUNCH, SOUND_PAN_TARGET
+	createsprite gPsyshockHitSplatSpriteTemplate, ANIM_TARGET, 2, 0, 0, FALSE
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, -19, 19, 16
+	delay 1
+	playsewithpan SE_M_COMET_PUNCH, SOUND_PAN_TARGET
+	createsprite gPsyshockHitSplatSpriteTemplate, ANIM_TARGET, 2, 20, 2, FALSE
+	createsprite gPsyshockOrbsHitSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 30, 0, 16
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	blendoff
+	call UnsetScrollingBg
+	end
+
+@ Credits: Skeli
+gMoveAnim_VENOSHOCK::
+	loadspritegfx ANIM_TAG_POISON_BUBBLE
+	loopsewithpan SE_M_BUBBLE3, SOUND_PAN_TARGET, 3, 10
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 0, -32, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 22, -22, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 30, 0, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 20, 20, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 0, 28, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, -19, 19, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, -27, 0, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, -18, -18, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 0, -25, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 17, -17, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 23, 0, 16
+	delay 2
+	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 16, 16, 16
+	delay 2
+	call PoisonBubblesEffect
+	end

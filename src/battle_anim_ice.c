@@ -493,6 +493,50 @@ const struct SpriteTemplate gAttackOrderHitSpriteTemplate =
     .callback = AnimIceEffectParticle,
 };
 
+static const union AnimCmd sPsyshockOrbAnimCmds[] =
+{
+    ANIMCMD_FRAME(8, 1),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd *const sPsyshockOrbAnimTable[] =
+{
+    sPsyshockOrbAnimCmds
+};
+
+const struct SpriteTemplate gPsyshockOrbsVortexSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ORBS,
+    .paletteTag = ANIM_TAG_ORBS,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = sPsyshockOrbAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimParticleInVortex,
+};
+
+const struct SpriteTemplate gPsyshockOrbsHitSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ORBS,
+    .paletteTag = ANIM_TAG_ORBS,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = sPsyshockOrbAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimNeedleArmSpike,
+};
+
+const struct SpriteTemplate gPsyshockHitSplatSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_IMPACT,
+    .paletteTag = ANIM_TAG_FLAT_ROCK,
+    .oam = &gOamData_AffineNormal_ObjBlend_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_IceCrystalHit,
+    .callback = AnimIceEffectParticle,
+};
+
 // Animates the ice particles in Ice Beam.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset

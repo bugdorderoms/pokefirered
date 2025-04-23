@@ -1058,6 +1058,8 @@ const u32 gBattleAnimBgImage_FieldRoom[] = INCBIN_U32("graphics/battle_anims/bac
 const u32 gBattleAnimBgTilemap_FieldRoom[] = INCBIN_U32("graphics/battle_anims/backgrounds/field_room.bin.lz");
 const u32 gBattleAnimBgPalette_TrickRoom[] = INCBIN_U32("graphics/battle_anims/backgrounds/trick_room.gbapal.lz");
 
+const u32 gBattleAnimBgPalette_WonderRoom[] = INCBIN_U32("graphics/battle_anims/backgrounds/wonder_room.gbapal.lz");
+
 const u32 gBattleAnimBgImage_RockWrecker[] = INCBIN_U32("graphics/battle_anims/backgrounds/rock_wrecker.4bpp.lz");
 const u32 gBattleAnimBgTilemap_RockWrecker[] = INCBIN_U32("graphics/battle_anims/backgrounds/rock_wrecker.bin.lz");
 const u32 gBattleAnimBgPalette_RockWrecker[] = INCBIN_U32("graphics/battle_anims/backgrounds/rock_wrecker.gbapal.lz");

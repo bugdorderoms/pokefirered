@@ -182,6 +182,13 @@ enum
 	EFFECT_CAPTIVATE,
 	EFFECT_STEALTH_ROCK,
 	EFFECT_CHANGE_TYPE_ON_ITEM,
+	EFFECT_ATTACK_ACCURACY_UP,
+	EFFECT_WIDE_GUARD,
+	EFFECT_GUARD_SPLIT,
+	EFFECT_POWER_SPLIT,
+	EFFECT_WONDER_ROOM,
+	EFFECT_PSYSHOCK,
+	EFFECT_VENOSHOCK,
 	EFFECTS_COUNT,
 };
 
@@ -210,16 +217,11 @@ enum
 #define EFFECT_ELECTRO_BALL                 224
 #define EFFECT_ECHOED_VOICE                 226
 #define EFFECT_ROUND                        228
-#define EFFECT_VENOSHOCK                    230
 #define EFFECT_RETALIATE                    231
 #define EFFECT_BULLDOZE                     232
 #define EFFECT_FOUL_PLAY                    233
-#define EFFECT_PSYSHOCK                     234
-#define EFFECT_WONDER_ROOM                  242
 #define EFFECT_MAGIC_ROOM                   243
 #define EFFECT_TELEKINESIS                  248
-#define EFFECT_POWER_SPLIT                  252
-#define EFFECT_GUARD_SPLIT                  253
 #define EFFECT_STICKY_WEB                   254
 #define EFFECT_SIMPLE_BEAM                  259
 #define EFFECT_ENTRAINMENT                  260
@@ -232,7 +234,6 @@ enum
 #define EFFECT_GRASSY_TERRAIN               267
 #define EFFECT_ELECTRIC_TERRAIN             268
 #define EFFECT_PSYCHIC_TERRAIN              269
-#define EFFECT_ATTACK_ACCURACY_UP           270
 #define EFFECT_ATTACK_SPATK_UP              271
 #define EFFECT_HURRICANE                    272
 #define EFFECT_TWO_TYPED_MOVE               273

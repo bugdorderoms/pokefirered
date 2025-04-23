@@ -2168,6 +2168,38 @@ BattleScript_EffectStealthRock::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+@ EFFECT_ATTACK_ACCURACY_UP @
+
+BattleScript_EffectAttackAccuracyUp::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectAtkAccUpTryAtkUp
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_ACC, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
+BattleScript_EffectAtkAccUpTryAtkUp::
+	attackanimation
+	waitstate
+	setstatchanger STAT_ATK, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring BIT_ATK | BIT_ACC, ATK66_SET_ANIM_PLAYED
+	setstatchanger STAT_ACC, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
+	goto BattleScript_MoveEnd
+
+@ EFFECT_WONDER_ROOM @
+
+BattleScript_EffectWonderRoom::
+	attackcanceler
+	attackstring
+	ppreduce
+	attackanimation
+	waitstate
+	setwonderroom
+	printstring STRINGID_BIZARREAREASWAPBUFF1ANDBUFF2
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

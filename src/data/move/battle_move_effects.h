@@ -937,6 +937,42 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 		.normalizeUnaffected = TRUE,
 	},
 	
+	[EFFECT_ATTACK_ACCURACY_UP] =
+	{
+		.battleScript = BattleScript_EffectAttackAccuracyUp,
+	},
+	
+	[EFFECT_WIDE_GUARD] =
+	{
+		.battleScript = BattleScript_EffectProtect,
+		.affectsUserSide = TRUE,
+	},
+	
+	[EFFECT_GUARD_SPLIT] =
+	{
+		.battleScript = BattleScript_EffectSplitSwap,
+	},
+	
+	[EFFECT_POWER_SPLIT] =
+	{
+		.battleScript = BattleScript_EffectSplitSwap,
+	},
+	
+	[EFFECT_WONDER_ROOM] =
+	{
+		.battleScript = BattleScript_EffectWonderRoom,
+	},
+	
+	[EFFECT_PSYSHOCK] =
+	{
+		.battleScript = BattleScript_EffectHit,
+	},
+	
+	[EFFECT_VENOSHOCK] =
+	{
+		.battleScript = BattleScript_EffectHit,
+	},
+	
 	/*
 	[EFFECT_TERRAIN_PULSE] =
 	{

@@ -566,6 +566,10 @@ static u16 GetMoveBasePower(u32 attacker, u32 defender, struct DamageCalc *damag
 			if (basePower > 200)
 				basePower = 200;
 			break;
+		case EFFECT_VENOSHOCK:
+			if (gBattleMons[defender].status1.id == STATUS1_POISON || gBattleMons[defender].status1.id == STATUS1_TOXIC_POISON)
+				basePower *= 2;
+			break;
 	}
 	
 	if (basePower == 0)
@@ -760,8 +764,7 @@ static u16 CalcBaseAttackStat(u32 attacker, u32 defender, struct DamageCalc *dam
 		statStages = DEFAULT_STAT_STAGES;
 	
 	// Calc base attack stat
-	baseAttack *= gStatStageRatios[statStages][0];
-    baseAttack /= gStatStageRatios[statStages][1];
+	APPLY_STAT_MOD(baseAttack, baseAttack, statStages);
 	
 	// Calculate base attack modifiers
 	if (!(damageStruct->flags & FLAG_CONFUSION_DAMAGE))
@@ -873,11 +876,11 @@ static u16 CalcBaseAttackStat(u32 attacker, u32 defender, struct DamageCalc *dam
 		}
 		
 		// Ruin abilities
-		if (damageStruct->moveSplit == SPLIT_PHYSICAL && ABILITY_ON_FIELD_EXCPET_BATTLER(attacker, ABILITY_TABLETS_OF_RUIN)
+		if (damageStruct->moveSplit == SPLIT_PHYSICAL && ABILITY_ON_FIELD_EXCEPT_BATTLER(attacker, ABILITY_TABLETS_OF_RUIN)
 		&& damageStruct->atkAbility != ABILITY_TABLETS_OF_RUIN)
 			baseAttack = (baseAttack * 75) / 100;
 		
-		if (damageStruct->moveSplit == SPLIT_SPECIAL && ABILITY_ON_FIELD_EXCPET_BATTLER(attacker, ABILITY_VESSEL_OF_RUIN)
+		if (damageStruct->moveSplit == SPLIT_SPECIAL && ABILITY_ON_FIELD_EXCEPT_BATTLER(attacker, ABILITY_VESSEL_OF_RUIN)
 		&& damageStruct->atkAbility != ABILITY_VESSEL_OF_RUIN)
 			baseAttack = (baseAttack * 75) / 100;
 	}
@@ -897,15 +900,19 @@ static u16 CalcBaseDefenseStat(u32 attacker, u32 defender, struct DamageCalc *da
 {
 	u32 statStages;
 	u16 baseDefense;
+	u32 defense = gBattleMons[defender].defense, spDefense = gBattleMons[defender].spDefense;
 	
-	if (damageStruct->moveSplit == SPLIT_PHYSICAL)
+	if (gFieldStatus & STATUS_FIELD_WONDER_ROOM)
+		SWAP(defense, spDefense, statStages);
+	
+	if (damageStruct->moveSplit == SPLIT_PHYSICAL || (gBattleMoves[damageStruct->move].effect == EFFECT_PSYSHOCK && gBattleMoves[damageStruct->move].argument.split == SPLIT_PHYSICAL))
 	{
-		baseDefense = gBattleMons[defender].defense;
+		baseDefense = defense;
 		statStages = gBattleMons[defender].statStages[STAT_DEF];
 	}
 	else
 	{
-		baseDefense = gBattleMons[defender].spDefense;
+		baseDefense = spDefense;
 		statStages = gBattleMons[defender].statStages[STAT_SPDEF];
 	}
 	
@@ -914,8 +921,7 @@ static u16 CalcBaseDefenseStat(u32 attacker, u32 defender, struct DamageCalc *da
 		statStages = DEFAULT_STAT_STAGES;
 	
 	// Calc base defense stat
-	baseDefense *= gStatStageRatios[statStages][0];
-    baseDefense /= gStatStageRatios[statStages][1];
+	APPLY_STAT_MOD(baseDefense, baseDefense, statStages);
 	
 	// Calculate base defense modifiers
 	if (!(damageStruct->flags & FLAG_CONFUSION_DAMAGE))
@@ -950,11 +956,11 @@ static u16 CalcBaseDefenseStat(u32 attacker, u32 defender, struct DamageCalc *da
 		}
 		
 		// Ruin abilities
-		if (damageStruct->moveSplit == SPLIT_PHYSICAL && ABILITY_ON_FIELD_EXCPET_BATTLER(defender, ABILITY_SWORD_OF_RUIN)
+		if (damageStruct->moveSplit == SPLIT_PHYSICAL && ABILITY_ON_FIELD_EXCEPT_BATTLER(defender, ABILITY_SWORD_OF_RUIN)
 		&& damageStruct->defAbility != ABILITY_SWORD_OF_RUIN)
 			baseDefense = (baseDefense * 75) / 100;
 		
-		if (damageStruct->moveSplit == SPLIT_SPECIAL && ABILITY_ON_FIELD_EXCPET_BATTLER(defender, ABILITY_BEADS_OF_RUIN)
+		if (damageStruct->moveSplit == SPLIT_SPECIAL && ABILITY_ON_FIELD_EXCEPT_BATTLER(defender, ABILITY_BEADS_OF_RUIN)
 		&& damageStruct->defAbility != ABILITY_BEADS_OF_RUIN)
 			baseDefense = (baseDefense * 75) / 100;
 	}

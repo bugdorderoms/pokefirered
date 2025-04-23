@@ -1506,7 +1506,17 @@ bool32 DoEndTurnEffects(void)
 			    ++gBattleStruct->turnEffectsTracker;
 				break;
 			case ENDTURN_WONDER_ROOM_ENDS:
-			    ++gBattleStruct->turnEffectsTracker;
+			    if ((gFieldStatus & STATUS_FIELD_WONDER_ROOM) && gFieldTimers.wonderRoomTimer > 0 && --gFieldTimers.wonderRoomTimer == 0)
+				{
+					gFieldStatus &= ~(STATUS_FIELD_WONDER_ROOM);
+					PrepareMoveBuffer(gBattleTextBuff1, MOVE_WONDER_ROOM);
+					PrepareStatBuffer(gBattleTextBuff2, STAT_DEF);
+					PrepareStatBuffer(gBattleTextBuff3, STAT_SPDEF);
+					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WONDER_ROOM_WORE_OFF;
+					BattleScriptExecute(BattleScript_FieldStatusWoreOff);
+					effect = TRUE;
+				}
+				++gBattleStruct->turnEffectsTracker;
 				break;
 			case ENDTURN_MAGIC_ROOM_ENDS:
 			    ++gBattleStruct->turnEffectsTracker;
@@ -2715,10 +2725,10 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
 								{
 									if (IsBattlerAlive(opposingBattler))
 									{
-										APPLY_STAT_MOD(var, &gBattleMons[opposingBattler], gBattleMons[opposingBattler].defense, STAT_DEF);
+										APPLY_MON_STAT_MOD(var, &gBattleMons[opposingBattler], gBattleMons[opposingBattler].defense, STAT_DEF);
 										def += var;
 										
-										APPLY_STAT_MOD(var, &gBattleMons[opposingBattler], gBattleMons[opposingBattler].spDefense, STAT_SPDEF);
+										APPLY_MON_STAT_MOD(var, &gBattleMons[opposingBattler], gBattleMons[opposingBattler].spDefense, STAT_SPDEF);
 										spDef += var;
 									}
 								}
@@ -4903,10 +4913,21 @@ bool32 IsMoveMakingContact(u32 battler, u32 move)
 // Check if defender is protected from attacker's move
 bool32 IsBattlerProtected(u32 attacker, u32 defender, u32 move)
 {
+	u32 moveTarget;
+	
 	if (GetBattlerAbility(attacker) == ABILITY_UNSEEN_FIST && IsMoveMakingContact(attacker, move))
 		return FALSE;
-	else if (gProtectStructs[defender].protected && !gBattleMoves[move].flags.forbiddenProtect)
-		return TRUE;
+	
+	if (!gBattleMoves[move].flags.forbiddenProtect)
+	{
+		if (gProtectStructs[defender].protected)
+			return TRUE;
+		
+		moveTarget = GetBattlerMoveTargetType(attacker, move);
+		
+		if ((gSideStatuses[GetBattlerSide(defender)] & SIDE_STATUS_WIDE_GUARD) && (moveTarget == MOVE_TARGET_BOTH || moveTarget == MOVE_TARGET_FOES_AND_ALLY))
+			return TRUE;
+	}
 	return FALSE;
 }
 
@@ -5359,20 +5380,29 @@ bool32 TryRecycleBattlerItem(u32 battlerRecycler, u32 itemBattler)
 	return FALSE;
 }
 
+#define GET_STAT_VAL(battlerId, statId) (&gBattleMons[battlerId].attack + ((statId - 1) * 2)) // -1 bc STAT_ATK is 1, and not 0
+
 // Protosynthesis count stat stages, but Beast Boost not. Probably if it be available in SV it will be changed to count too, so just count it...
-u32 GetBattlerHighestStatId(u32 battlerId)
+u32 GetBattlerHighestStatId(u32 battlerId, bool32 checkWonderRoom)
 {
 	u32 i, temp, highestStat, highestStatId;
 	u8 statIds[NUM_STATS];
-	u16 *statVal, stats[NUM_STATS];
+	u16 stats[NUM_STATS];
 	
 	// Put the stats and ids into the array
 	for (i = STAT_ATK; i < NUM_STATS; i++)
 	{
-		statVal = &gBattleMons[battlerId].attack + ((i - 1) * 2); // -1 bc STAT_ATK is 1, and not 0
-		APPLY_STAT_MOD(stats[i], &gBattleMons[battlerId], *statVal, i);
+		stats[i] = *GET_STAT_VAL(battlerId, i);
 		statIds[i] = i;
 	}
+	// Check Wonder Room
+	if (checkWonderRoom && (gFieldStatus & STATUS_FIELD_WONDER_ROOM))
+		SWAP(stats[STAT_DEF], stats[STAT_SPDEF], temp);
+	
+	// Apply stat mod to the stats
+	for (i = STAT_ATK; i < NUM_STATS; i++)
+		APPLY_MON_STAT_MOD(stats[i], &gBattleMons[battlerId], *GET_STAT_VAL(battlerId, i), i);
+
 	// Put stats in order of Attack, Defense, Sp. Atk, Sp. Def and Speed
 	// without this the order will be Attack, Defense, Speed, Sp. Atk and Sp. Def. What this loop does is only move the Speed to the end of the array
 	for (i = STAT_SPEED; i < NUM_STATS - 1; i++)
@@ -6363,6 +6393,7 @@ void SwapBattlersPositions(u32 battler1, u32 battler2)
 	SwapStructData(&gDisableStructs[battler1], &gDisableStructs[battler2], data, sizeof(struct DisableStruct));
 	SwapStructData(&gSpecialStatuses[battler1], &gSpecialStatuses[battler2], data, sizeof(struct SpecialStatus));
 	SwapStructData(&gProtectStructs[battler1], &gProtectStructs[battler2], data, sizeof(struct ProtectStruct));
+	SwapStructData(&gQueuedStatBoosts[battler1], &gQueuedStatBoosts[battler2], data, sizeof(struct QueuedStatBoost));
 	SwapStructData(&gBattleSpritesDataPtr->battlerData[battler1], &gBattleSpritesDataPtr->battlerData[battler2], data, sizeof(struct BattleSpriteInfo));
 	SwapStructData(&gBattleStruct->battlers[battler1], &gBattleStruct->battlers[battler2], data, sizeof(struct BattlerState));
 	SwapStructData(&gBattleStruct->sides[side].party[gBattlerPartyIndexes[battler1]], &gBattleStruct->sides[side].party[gBattlerPartyIndexes[battler2]], data, sizeof(struct PartyState));
@@ -6429,6 +6460,18 @@ bool32 TryBattleChallengeStartingStatus(void)
 				gFieldTimers.gravityTimer = 0;
 				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_GRAVITY_INTENSIFIED;
 				gBattleScripting.animArg1 = B_ANIM_GRAVITY;
+				effect = TRUE;
+			}
+			break;
+		case TRAINER_CHALLENGE_INFINITE_WONDER_ROOM:
+			if (!(gFieldStatus & STATUS_FIELD_WONDER_ROOM))
+			{
+				gFieldStatus |= STATUS_FIELD_WONDER_ROOM;
+				gFieldTimers.wonderRoomTimer = 0;
+				PrepareStatBuffer(gBattleTextBuff1, STAT_DEF);
+				PrepareStatBuffer(gBattleTextBuff2, STAT_SPDEF);
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CREATE_PERMANENT_BIZARRE_AREA;
+				gBattleScripting.animArg1 = B_ANIM_WONDER_ROOM;
 				effect = TRUE;
 			}
 			break;

@@ -60,12 +60,13 @@
 #define TRAINER_MON_MALE   1
 #define TRAINER_MON_FEMALE 2
 
-#define TRAINER_CHALLENGE_INVERSE_BATTLE      1
-#define TRAINER_CHALLENGE_INFINITE_TAILWIND   2
-#define TRAINER_CHALLENGE_INFINITE_MIST       3
-#define TRAINER_CHALLENGE_INFINITE_SAFEGUARD  4
-#define TRAINER_CHALLENGE_INFINITE_TRICK_ROOM 5
-#define TRAINER_CHALLENGE_INFINITE_GRAVITY    6
+#define TRAINER_CHALLENGE_INVERSE_BATTLE       1
+#define TRAINER_CHALLENGE_INFINITE_TAILWIND    2
+#define TRAINER_CHALLENGE_INFINITE_MIST        3
+#define TRAINER_CHALLENGE_INFINITE_SAFEGUARD   4
+#define TRAINER_CHALLENGE_INFINITE_TRICK_ROOM  5
+#define TRAINER_CHALLENGE_INFINITE_GRAVITY     6
+#define TRAINER_CHALLENGE_INFINITE_WONDER_ROOM 7
 
 struct TrainerMon
 {
@@ -254,7 +255,8 @@ struct FieldTimer
 			 u16 mudSportTimer:3;
 			 u16 gravityTimer:3;
 			 u16 trickRoomTimer:3;
-			 u16 unused:4;
+			 u16 wonderRoomTimer:3;
+			 u16 unused:1;
 };
 
 extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];
@@ -555,11 +557,13 @@ extern struct BattleStruct *gBattleStruct;
 
 #define IsDoubleBattleForBattler(battlerId) ((IsDoubleBattleOnSide(GetBattlerSide(battlerId))))
 
-#define APPLY_STAT_MOD(var, mon, stat, statIndex)                           \
-{                                                                           \
-    (var) = (stat) * (gStatStageRatios)[(mon)->statStages[(statIndex)]][0]; \
-    (var) /= (gStatStageRatios)[(mon)->statStages[(statIndex)]][1];         \
+#define APPLY_STAT_MOD(var, stat, statStages)             \
+{                                                         \
+    (var) = (stat) * (gStatStageRatios)[(statStages)][0]; \
+    (var) /= (gStatStageRatios)[(statStages)][1];         \
 }
+
+#define APPLY_MON_STAT_MOD(var, mon, stat, statIndex) APPLY_STAT_MOD((var), (stat), (mon)->statStages[(statIndex)])
 
 #define IS_MOVE_PHYSICAL(move)((GetMoveSplit(move) == SPLIT_PHYSICAL))
 #define IS_MOVE_SPECIAL(move)((GetMoveSplit(move) == SPLIT_SPECIAL))

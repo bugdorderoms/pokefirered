@@ -292,7 +292,7 @@ struct BattleMove
 				u16 amount;
 				u16 stringId;
 				u16 abilityId;
-				u16 counterSplit;
+				u16 split;
 				u16 holdEffect;
 				u16 healReplacementCase;
 			 } argument;

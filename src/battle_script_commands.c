@@ -3494,8 +3494,8 @@ static void atk49_moveend(void)
 							if ((state != MOVEEND_FUTURE_ATTACK || gBattleStruct->battlers[gBattlerTarget].futureSightAttacker == gBattlerPartyIndexes[gBattlerAttacker])
 							&& !NoAliveMonsForEitherParty() && !IsBattlerAlive(gBattlerTarget) && !IS_MOVE_STATUS(gCurrentMove))
 							{
-								u32 highestStatId = GetBattlerHighestStatId(gBattlerAttacker);
-				
+								u32 highestStatId = GetBattlerHighestStatId(gBattlerAttacker, TRUE);
+								
 								if (CompareStat(gBattlerAttacker, highestStatId, MAX_STAT_STAGES, CMP_LESS_THAN))
 								{
 									SetStatChanger(highestStatId, +1);
@@ -5589,6 +5589,16 @@ static void atk75_setsplitswap(void)
 			
 			gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SWITCHED_ALL_STAT_CHANGES;
 			break;
+		case EFFECT_GUARD_SPLIT:
+			gBattleMons[gBattlerAttacker].defense = gBattleMons[gBattlerTarget].defense = max(1, (gBattleMons[gBattlerAttacker].defense + gBattleMons[gBattlerTarget].defense) / 2);
+			gBattleMons[gBattlerAttacker].spDefense = gBattleMons[gBattlerTarget].spDefense = max(1, (gBattleMons[gBattlerAttacker].spDefense + gBattleMons[gBattlerTarget].spDefense) / 2);
+			gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SHARED_ITS_GUARD;
+			break;
+		case EFFECT_POWER_SPLIT:
+			gBattleMons[gBattlerAttacker].attack = gBattleMons[gBattlerTarget].attack = max(1, (gBattleMons[gBattlerAttacker].attack + gBattleMons[gBattlerTarget].attack) / 2);
+			gBattleMons[gBattlerAttacker].spAttack = gBattleMons[gBattlerTarget].spAttack = max(1, (gBattleMons[gBattlerAttacker].spAttack + gBattleMons[gBattlerTarget].spAttack) / 2);
+			gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SHARED_ITS_POWER;
+			break;
 	}
 	gBattlescriptCurrInstr = cmd->nextInstr;
 }
@@ -6234,6 +6244,10 @@ static void atk77_setprotectlike(void)
 			case EFFECT_ENDURE:
 				gProtectStructs[gBattlerAttacker].endured = TRUE;
 				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_BRACED_ITSELF;
+				break;
+			case EFFECT_WIDE_GUARD:
+				gSideStatuses[GetBattlerSide(gBattlerAttacker)] |= SIDE_STATUS_WIDE_GUARD;
+				gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_PROTECTED_TEAM;
 				break;
 		}
 		++gDisableStructs[gBattlerAttacker].protectUses;
@@ -7123,7 +7137,7 @@ static void atkA1_trycounterattack(void)
 {
 	CMD_ARGS(const u8 *failPtr);
 
-	switch (gBattleMoves[gCurrentMove].argument.counterSplit)
+	switch (gBattleMoves[gCurrentMove].argument.split)
 	{
 		case SPLIT_PHYSICAL:
 		    if (TryCounterAttack(gProtectStructs[gBattlerAttacker].physicalBattlerId, gProtectStructs[gBattlerAttacker].physicalDmg, 2))
@@ -9565,4 +9579,14 @@ void BS_JumpIfCaptivateFail(void)
 		gBattlescriptCurrInstr = cmd->failPtr;
 	else
 		gBattlescriptCurrInstr = cmd->nextInstr;
+}
+
+void BS_SetWonderRoom(void)
+{
+	NATIVE_ARGS();
+	gFieldStatus ^= STATUS_FIELD_WONDER_ROOM;
+	gFieldTimers.wonderRoomTimer = 5;
+	PrepareStatBuffer(gBattleTextBuff1, STAT_DEF);
+	PrepareStatBuffer(gBattleTextBuff2, STAT_SPDEF);
+	gBattlescriptCurrInstr = cmd->nextInstr;
 }

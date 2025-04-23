@@ -1020,6 +1020,17 @@ const struct SpriteTemplate gConversionSpriteTemplate =
     .callback = AnimConversion,
 };
 
+const struct SpriteTemplate gBlueConversionSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_CONVERSION,
+    .paletteTag = ANIM_TAG_WATER_ORB,
+    .oam = &gOamData_AffineDouble_ObjBlend_8x8,
+    .anims = sConversionAnimTable,
+    .images = NULL,
+    .affineAnims = sConversionAffineAnimTable,
+    .callback = AnimConversion,
+};
+
 static const union AnimCmd sConversion2AnimCmds[] =
 {
     ANIMCMD_FRAME(0, 5),

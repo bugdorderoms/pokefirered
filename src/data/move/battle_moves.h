@@ -1655,7 +1655,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenMeFirst = TRUE,
 		},
-		.argument = { .counterSplit = SPLIT_PHYSICAL },
+		.argument = { .split = SPLIT_PHYSICAL },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -5814,7 +5814,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 			.forbiddenCopycat = TRUE,
 			.forbiddenMeFirst = TRUE,
 		},
-		.argument = { .counterSplit = SPLIT_SPECIAL },
+		.argument = { .split = SPLIT_SPECIAL },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -8879,7 +8879,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 		{
 			.forbiddenMeFirst = TRUE,
 		},
-		.argument = { .counterSplit = SPLIT_STATUS }, // Counter both physical and special
+		.argument = { .split = SPLIT_STATUS }, // Counter both physical and special
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -11306,8 +11306,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_HONE_CLAWS] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_ATTACK_ACCURACY_UP,
+		.name = COMPOUND_STRING("Hone Claws"),
+        .description = COMPOUND_STRING("The user sharpens\n"
+                                       "its claws to boost\n"
+                                       "its Attack stat and\n"
+                                       "accuracy."),
+		.animScript = gMoveAnim_HONE_CLAWS,
+		.effect = EFFECT_ATTACK_ACCURACY_UP,
         .type = TYPE_DARK,
         .pp = 15,
         .target = MOVE_TARGET_USER,
@@ -11323,8 +11328,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_WIDE_GUARD] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_PROTECT,
+		.name = COMPOUND_STRING("Wide Guard"),
+        .description = COMPOUND_STRING("The user and its\n"
+                                       "allies are\n"
+                                       "protected from wide\n"
+                                       "ranging attacks."),
+		.animScript = gMoveAnim_WIDE_GUARD,
+		.effect = EFFECT_WIDE_GUARD,
         .type = TYPE_ROCK,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -11336,7 +11346,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 			.forbiddenProtect = TRUE,
 			.forbiddenMirrorMove = TRUE,
 			.forbiddenMetronome = TRUE,
-			// .affectsUserSide = TRUE, // Potects the whole side.
 		},
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_DEF_UP_1,
@@ -11344,8 +11353,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_GUARD_SPLIT] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_GUARD_SPLIT,
+		.name = COMPOUND_STRING("Guard Split"),
+        .description = COMPOUND_STRING("Employs its psychic\n"
+                                       "power to average\n"
+                                       "its Def and Sp. Def\n"
+                                       "with its foe."),
+		.animScript = gMoveAnim_GUARD_SPLIT,
+		.effect = EFFECT_GUARD_SPLIT,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -11359,8 +11373,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_POWER_SPLIT] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_POWER_SPLIT,
+		.name = COMPOUND_STRING("Power Split"),
+        .description = COMPOUND_STRING("Employs its psychic\n"
+                                       "power to average\n"
+                                       "its Atk and Sp. Atk\n"
+                                       "with its foe."),
+		.animScript = gMoveAnim_POWER_SPLIT,
+		.effect = EFFECT_POWER_SPLIT,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -11374,8 +11393,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_WONDER_ROOM] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_WONDER_ROOM,
+		.name = COMPOUND_STRING("Wonder Room"),
+        .description = COMPOUND_STRING("Creates a area in\n"
+                                       "which Pokémon's\n"
+                                       "Def and Sp. Def are\n"
+                                       "swapped for 5 turns."),
+		.animScript = gMoveAnim_WONDER_ROOM,
+		.effect = EFFECT_WONDER_ROOM,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_ALL_BATTLERS,
@@ -11389,8 +11413,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_PSYSHOCK] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_PSYSHOCK,
+		.name = COMPOUND_STRING("Psyshock"),
+        .description = COMPOUND_STRING("Materializes an odd\n"
+                                       "wave to attack the\n"
+                                       "target. It deals\n"
+                                       "physical damage."),
+		.animScript = gMoveAnim_PSYSHOCK,
+		.effect = EFFECT_PSYSHOCK,
         .power = 80,
         .type = TYPE_PSYCHIC,
         .accuracy = 100,
@@ -11400,14 +11429,20 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 		{
 			.kingsRockAffected = TRUE,
 		},
+		.argument = { .split = SPLIT_PHYSICAL },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_VENOSHOCK] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_VENOSHOCK,
+		.name = COMPOUND_STRING("Venoshock"),
+        .description = COMPOUND_STRING("Drenches the foe in\n"
+                                       "a poisonous liquid.\n"
+                                       "It doubles power if\n"
+                                       "the foe is poisoned."),
+		.animScript = gMoveAnim_VENOSHOCK,
+		.effect = EFFECT_VENOSHOCK,
         .power = 65,
         .type = TYPE_POISON,
         .accuracy = 100,

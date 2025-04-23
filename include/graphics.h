@@ -833,6 +833,7 @@ extern const u32 gBattleAnimBgPalette_TrickRoom[];
 extern const u32 gBattleAnimBgPalette_RockWrecker[];
 extern const u32 gBattleAnimBgPalette_SpacialRend[];
 extern const u32 gBattleAnimBgPalette_DarkVoid[];
+extern const u32 gBattleAnimBgPalette_WonderRoom[];
 extern const u32 gBattleAnimBgTilemap_Dark[];
 extern const u32 gBattleAnimBgTilemap_Ghost[];
 extern const u32 gBattleAnimBgTilemap_Psychic[];

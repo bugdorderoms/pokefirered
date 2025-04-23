@@ -261,6 +261,17 @@ const struct SpriteTemplate gGunkShotPumpSpriteTemplate =
     .callback = AnimToTargetInSinWave,
 };
 
+const struct SpriteTemplate gVenoshockPoisonSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_POISON_BUBBLE,
+    .paletteTag = ANIM_TAG_POISON_BUBBLE,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = sAnims_SludgeBombHit,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimNeedleArmSpike,
+};
+
 // Animates a sludge project.
 // arg 0: initial x offset
 // arg 1: initial y offset

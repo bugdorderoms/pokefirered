@@ -335,4 +335,10 @@ const struct BattleAnimTable gBattleAnims_General[] =
 		.script = gGeneralAnim_LunarDanceHeal,
 		.hideHpBoxes = TRUE,
 	},
+	[B_ANIM_WONDER_ROOM] =
+	{
+		.script = gGeneralAnim_WonderRoom,
+		.ignoreSemiInvulnerability = TRUE,
+		.ignoreSubstitute = TRUE,
+	},
 };

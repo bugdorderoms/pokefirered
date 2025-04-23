@@ -67,6 +67,7 @@ extern const u8 gGeneralAnim_UltraBurst[];
 extern const u8 gGeneralAnim_TrickRoom[];
 extern const u8 gGeneralAnim_Gravity[];
 extern const u8 gGeneralAnim_LunarDanceHeal[];
+extern const u8 gGeneralAnim_WonderRoom[];
 
 // Move animations
 extern const u8 gMoveAnim_NONE[];
