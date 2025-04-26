@@ -36,13 +36,6 @@ enum
 	PHASE_WANING_MOON,
 };
 
-struct lightingColour
-{
-    u8 paletteNum;
-    u8 colourNum;
-    u16 lightColour;
-};
-
 struct DNSPalExceptions
 {
     bool8 pal[32];

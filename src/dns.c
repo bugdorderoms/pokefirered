@@ -27,59 +27,6 @@
  * options, to understand how the dns works.            *
  * ******************************************************/
 
-/* This array contains the colours used for the windows or other    *
- * tiles that have to be illuminated at night.                      *
- * You can add or remove light slots as you whish, each entry       *
- * requires the paletteNum and the colourNum of each colour slot,   *
- * as well as the RGB 15 bit colour that's gonna be used as         *
- * "light colour".                                                  */
- 
-#if LIT_UP_WINDOWS
-static const struct lightingColour sLightingColours[] =
-{
-    {
-        .paletteNum = 0,
-        .colourNum = 1,
-        .lightColour = RGB2(30, 30, 5),
-    },
-    {
-        .paletteNum = 0,
-        .colourNum = 2,
-        .lightColour = RGB2(26, 25, 4),
-    },
-    {
-        .paletteNum = 0,
-        .colourNum = 3,
-        .lightColour = RGB2(22, 21, 3),
-    },
-    {
-        .paletteNum = 1,
-        .colourNum = 1,
-        .lightColour = RGB2(30, 30, 5),
-    },
-    {
-        .paletteNum = 1,
-        .colourNum = 2,
-        .lightColour = RGB2(26, 25, 4),
-    },
-    {
-        .paletteNum = 6,
-        .colourNum = 1,
-        .lightColour = RGB2(30, 30, 5),
-    },
-    {
-        .paletteNum = 6,
-        .colourNum = 2,
-        .lightColour = RGB2(26, 25, 4),
-    },
-    {
-        .paletteNum = 6,
-        .colourNum = 3,
-        .lightColour = RGB2(22, 21, 3),
-    },
-};
-#endif
-
 /* Maptypes that are not affected by DNS */
 static const u8 sDNSMapExceptions[] =
 {
@@ -373,25 +320,45 @@ void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 
 }
 
 #if LIT_UP_WINDOWS
+static void TryLightningUpTilesetPalettes(struct Tileset const *tileset, bool32 fadeActive)
+{
+	u32 i, colorSlot;
+	const struct LightningColor *lightColors;
+	
+	if (tileset && tileset->lightningColors)
+	{
+		i = 0;
+		while (TRUE)
+		{
+			lightColors = &tileset->lightningColors[i];
+			
+			// End of table
+			if (lightColors->color == RGB_BLACK)
+				break;
+			
+			colorSlot = lightColors->paletteNum * 16 + lightColors->colorSlot;
+			
+			if (fadeActive || (gPlttBufferUnfaded[colorSlot] != RGB_BLACK && gPlttBufferFaded[colorSlot] == RGB_BLACK))
+			{
+				sDNSPaletteDmaBuffer[colorSlot] = gPlttBufferFaded[colorSlot];
+				gPlttBufferUnfaded[colorSlot] = lightColors->color;
+			}
+			else
+				sDNSPaletteDmaBuffer[colorSlot] = lightColors->color;
+			
+			i++;
+		}
+	}
+}
+
 static void DoDNSLightningWindowsEffect(void)
 {
-	u32 i, colourSlot;
 	bool32 fadeActive = gPaletteFade.active;
 	
 	if (LIT_UP_TIME)
 	{
-		for (i = 0; i < ARRAY_COUNT(sLightingColours); i++)
-		{
-			colourSlot = sLightingColours[i].paletteNum * 16 + sLightingColours[i].colourNum;
-			
-			if (fadeActive || (gPlttBufferUnfaded[colourSlot] != RGB_BLACK && gPlttBufferFaded[colourSlot] == RGB_BLACK))
-			{
-				sDNSPaletteDmaBuffer[colourSlot] = gPlttBufferFaded[colourSlot];
-				gPlttBufferUnfaded[colourSlot] = sLightingColours[i].lightColour;
-			}
-			else
-				sDNSPaletteDmaBuffer[colourSlot] = sLightingColours[i].lightColour;
-		}
+		TryLightningUpTilesetPalettes(gMapHeader.mapLayout->primaryTileset, fadeActive);
+		TryLightningUpTilesetPalettes(gMapHeader.mapLayout->secondaryTileset, fadeActive);
 		gMain.tilesetPaletteReloaded = FALSE;
 	}
 	else if (!fadeActive && !gMain.tilesetPaletteReloaded)

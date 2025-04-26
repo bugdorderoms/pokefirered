@@ -273,7 +273,6 @@ void UpdateTallGrassFieldEffect(struct Sprite * sprite)
 	u8 localId;
     u8 mapNum = sprite->data[5] >> 8;
     u8 mapGroup = sprite->data[5];
-    u32 metatileBehavior;
     u8 objectEventId;
     struct ObjectEvent * objectEvent;
 
@@ -286,9 +285,9 @@ void UpdateTallGrassFieldEffect(struct Sprite * sprite)
     localId = sprite->data[3] >> 8;
     mapNum = sprite->data[3];
     mapGroup = sprite->data[4];
-    metatileBehavior = MapGridGetMetatileBehaviorAt(sprite->data[1], sprite->data[2]);
 	
-    if (TryGetObjectEventIdByLocalIdAndMap(localId, mapNum, mapGroup, &objectEventId) || !MetatileBehavior_IsTallGrass_2(metatileBehavior) || (sprite->data[7] && sprite->animEnded))
+    if (TryGetObjectEventIdByLocalIdAndMap(localId, mapNum, mapGroup, &objectEventId) || !MetatileBehavior_IsTallGrass_2(MapGridGetMetatileBehaviorAt(sprite->data[1], sprite->data[2]))
+	|| (sprite->data[7] && sprite->animEnded))
         FieldEffectStop(sprite, FLDEFF_TALL_GRASS);
     else
     {
