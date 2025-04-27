@@ -1234,8 +1234,10 @@ bool32 DoEndTurnEffects(void)
 						gBattlescriptCurrInstr = BattleScript_WrapTurnDmg;
                     }
                     else  // Broke free
-                        gBattlescriptCurrInstr = BattleScript_WrapEnds;
-						
+					{
+						gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FREED_FROM_EFFECT;
+                        gBattlescriptCurrInstr = BattleScript_EndTurnEffectEnds;
+					}
                     BattleScriptExecute(gBattlescriptCurrInstr);
                     effect = TRUE;
                 }
@@ -1263,7 +1265,8 @@ bool32 DoEndTurnEffects(void)
                     {
                         gDisableStructs[gBattlerAttacker].encoredMove = MOVE_NONE;
                         gDisableStructs[gBattlerAttacker].encoreTimer = 0;
-                        BattleScriptExecute(BattleScript_EncoredNoMore);
+						gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_NO_MORE_ENCORED;
+                        BattleScriptExecute(BattleScript_EndTurnEffectEnds);
                         effect = TRUE;
                     }
                 }
@@ -1281,7 +1284,8 @@ bool32 DoEndTurnEffects(void)
                     else if (--gDisableStructs[gBattlerAttacker].disableTimer == 0) // Disable ends
                     {
                         gDisableStructs[gBattlerAttacker].disabledMove = MOVE_NONE;
-                        BattleScriptExecute(BattleScript_DisabledNoMore);
+						gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_NO_MORE_DISABLED;
+                        BattleScriptExecute(BattleScript_EndTurnEffectEnds);
                         effect = TRUE;
                     }
                 }
@@ -1308,20 +1312,30 @@ bool32 DoEndTurnEffects(void)
 				&& --gDisableStructs[gBattlerAttacker].magnetRiseTimer == 0)
 				{
 					gStatuses3[gBattlerAttacker] &= ~(STATUS3_MAGNET_RISE);
-					BattleScriptExecute(BattleScript_MagnetRiseEnds);
+					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ELETROMAGNETISM_WORE_OFF;
+					BattleScriptExecute(BattleScript_EndTurnEffectEnds);
 					effect = TRUE;
 				}
 				IncrementBattlerBasedEndTurnEffects();
 				break;
 			case ENDTURN_TELEKINESIS_ENDS:
-			    IncrementBattlerBasedEndTurnEffects();
+			    if (IsBattlerAlive(gBattlerAttacker) && (gStatuses3[gBattlerAttacker] & STATUS3_TELEKINESIS) && gDisableStructs[gBattlerAttacker].telekinesisTimer > 0
+				&& --gDisableStructs[gBattlerAttacker].telekinesisTimer == 0)
+				{
+					gStatuses3[gBattlerAttacker] &= ~(STATUS3_TELEKINESIS);
+					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FREED_FROM_TELEKINESIS;
+					BattleScriptExecute(BattleScript_EndTurnEffectEnds);
+					effect = TRUE;
+				}
+				IncrementBattlerBasedEndTurnEffects();
 				break;
 			case ENDTURN_HEAL_BLOCK_ENDS:
 			    if (IsBattlerAlive(gBattlerAttacker) && (gStatuses3[gBattlerAttacker] & STATUS3_HEAL_BLOCK) && gDisableStructs[gBattlerAttacker].healBlockTimer > 0
 				&& --gDisableStructs[gBattlerAttacker].healBlockTimer == 0)
 				{
 					gStatuses3[gBattlerAttacker] &= ~(STATUS3_HEAL_BLOCK);
-					BattleScriptExecute(BattleScript_HealBlockEnds);
+					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_HEAL_BLOCK_WORE_OFF;
+					BattleScriptExecute(BattleScript_EndTurnEffectEnds);
 					effect = TRUE;
 				}
 			    IncrementBattlerBasedEndTurnEffects();
@@ -1331,7 +1345,8 @@ bool32 DoEndTurnEffects(void)
 				&& --gDisableStructs[gBattlerAttacker].embargoTimer == 0)
 				{
 					gStatuses3[gBattlerAttacker] &= ~(STATUS3_EMBARGO);
-					BattleScriptExecute(BattleScript_EmbargoEnds);
+					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CAN_USE_ITEMS_AGAIN;
+					BattleScriptExecute(BattleScript_EndTurnEffectEnds);
 					effect = TRUE;
 				}
 			    IncrementBattlerBasedEndTurnEffects();
@@ -1365,7 +1380,8 @@ bool32 DoEndTurnEffects(void)
 					else
 					{
 						--gDisableStructs[gBattlerAttacker].perishSongTimer;
-						gBattlescriptCurrInstr = BattleScript_PerishSongCountGoesDown;
+						gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_PERISH_COUNT_FELL;
+						gBattlescriptCurrInstr = BattleScript_EndTurnEffectEnds;
 					}
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect = TRUE;
@@ -1468,7 +1484,7 @@ bool32 DoEndTurnEffects(void)
 				{
 					gFieldStatus &= ~(STATUS_FIELD_TRICK_ROOM);
 					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TWISTED_DIMENSIONS_NORMALISED;
-					BattleScriptExecute(BattleScript_FieldStatusWoreOff);
+					BattleScriptExecute(BattleScript_EndTurnEffectEnds);
 					effect = TRUE;
 				}
 				++gBattleStruct->turnEffectsTracker;
@@ -1478,7 +1494,7 @@ bool32 DoEndTurnEffects(void)
 				{
 					gFieldStatus &= ~(STATUS_FIELD_GRAVITY);
 					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_GRAVITY_NORMALIZED;
-					BattleScriptExecute(BattleScript_FieldStatusWoreOff);
+					BattleScriptExecute(BattleScript_EndTurnEffectEnds);
 					effect = TRUE;
 				}
 			    ++gBattleStruct->turnEffectsTracker;
@@ -1489,7 +1505,7 @@ bool32 DoEndTurnEffects(void)
 					gFieldStatus &= ~(STATUS_FIELD_WATERSPORT);
 					PrepareMoveBuffer(gBattleTextBuff1, MOVE_WATER_SPORT);
 					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FIELD_EFFECTS_WORE_OFF;
-					BattleScriptExecute(BattleScript_FieldStatusWoreOff);
+					BattleScriptExecute(BattleScript_EndTurnEffectEnds);
 					effect = TRUE;
 				}
 			    ++gBattleStruct->turnEffectsTracker;
@@ -1500,7 +1516,7 @@ bool32 DoEndTurnEffects(void)
 					gFieldStatus &= ~(STATUS_FIELD_MUDSPORT);
 					PrepareMoveBuffer(gBattleTextBuff1, MOVE_MUD_SPORT);
 					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FIELD_EFFECTS_WORE_OFF;
-					BattleScriptExecute(BattleScript_FieldStatusWoreOff);
+					BattleScriptExecute(BattleScript_EndTurnEffectEnds);
 					effect = TRUE;
 				}
 			    ++gBattleStruct->turnEffectsTracker;
@@ -1513,13 +1529,21 @@ bool32 DoEndTurnEffects(void)
 					PrepareStatBuffer(gBattleTextBuff2, STAT_DEF);
 					PrepareStatBuffer(gBattleTextBuff3, STAT_SPDEF);
 					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WONDER_ROOM_WORE_OFF;
-					BattleScriptExecute(BattleScript_FieldStatusWoreOff);
+					BattleScriptExecute(BattleScript_EndTurnEffectEnds);
 					effect = TRUE;
 				}
 				++gBattleStruct->turnEffectsTracker;
 				break;
 			case ENDTURN_MAGIC_ROOM_ENDS:
-			    ++gBattleStruct->turnEffectsTracker;
+			    if ((gFieldStatus & STATUS_FIELD_MAGIC_ROOM) && gFieldTimers.magicRoomTimer > 0 && --gFieldTimers.magicRoomTimer == 0)
+				{
+					gFieldStatus &= ~(STATUS_FIELD_MAGIC_ROOM);
+					PrepareMoveBuffer(gBattleTextBuff1, MOVE_MAGIC_ROOM);
+					gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MAGIC_ROOM_WORE_OFF;
+					BattleScriptExecute(BattleScript_EndTurnEffectEnds);
+					effect = TRUE;
+				}
+				++gBattleStruct->turnEffectsTracker;
 				break;
 			case ENDTURN_TERRAIN_ENDS:
 			    ++gBattleStruct->turnEffectsTracker;
@@ -5007,9 +5031,10 @@ bool32 IsBattlerGrounded(u32 battlerId)
 {
 	if ((gStatuses3[battlerId] & STATUS3_ROOTED) || (gFieldStatus & STATUS_FIELD_GRAVITY))
 		return TRUE;
-	else if (GetBattlerAbility(battlerId) == ABILITY_LEVITATE || IsBattlerOfType(battlerId, TYPE_FLYING) || (gStatuses3[battlerId] & STATUS3_MAGNET_RISE))
+	else if (GetBattlerAbility(battlerId) == ABILITY_LEVITATE || IsBattlerOfType(battlerId, TYPE_FLYING) || (gStatuses3[battlerId] & (STATUS3_TELEKINESIS | STATUS3_MAGNET_RISE)))
 		return FALSE;
-	return TRUE;
+	else
+		return TRUE;
 }
 
 bool32 CanBattlerGetOrLoseItem(u32 battlerId, u32 itemId)
@@ -5292,7 +5317,7 @@ u32 CanBeInfatuatedBy(u32 battlerIdAtk, u32 battlerIdDef)
 
 u32 GetBattlerWeight(u32 battlerId)
 {
-	u32 weight = gSpeciesInfo[gBattleMons[battlerId].species].weight;
+	u32 i, weight = gSpeciesInfo[gBattleMons[battlerId].species].weight;
 	
 	switch (GetBattlerAbility(battlerId))
 	{
@@ -5303,6 +5328,18 @@ u32 GetBattlerWeight(u32 battlerId)
 			weight /= 2;
 			break;
 	}
+	
+	for (i = 0; i < gDisableStructs[battlerId].autotomizeCount; i++)
+	{
+		if (weight > 1000)
+			weight -= 1000;
+		else if (weight <= 1000)
+		{
+			weight = 1;
+			break;
+		}
+	}
+	
 	if (weight == 0)
 		weight = 1;
 	
@@ -5426,12 +5463,16 @@ bool32 IsBattlerAffectedByFollowMe(u32 battlerId, u32 opposingSide, u32 move)
 {
 	u32 atkAbility = GetBattlerAbility(battlerId);
 	
-	if (!gSideTimers[opposingSide].followmeSet || !IsBattlerAlive(gSideTimers[opposingSide].followmeTarget) || atkAbility == ABILITY_PROPELLER_TAIL
-	|| atkAbility == ABILITY_STALWART || gBattleMoves[move].effect == EFFECT_SKY_DROP || gBattleMoves[move].effect == EFFECT_FUTURE_SIGHT
-	|| (gStatuses3[gSideTimers[opposingSide].followmeTarget] & STATUS3_SKY_DROPPED))
-	    return FALSE;
-		
-	return TRUE;
+	if (!gSideTimers[opposingSide].followmeSet || !IsBattlerAlive(gSideTimers[opposingSide].followmeTarget) || (gStatuses3[gSideTimers[opposingSide].followmeTarget] & STATUS3_SKY_DROPPED))
+		return FALSE;
+	else if (atkAbility == ABILITY_PROPELLER_TAIL || atkAbility == ABILITY_STALWART)
+		return FALSE;
+	else if (gBattleMoves[move].effect == EFFECT_SKY_DROP || gBattleMoves[move].effect == EFFECT_FUTURE_SIGHT)
+		return FALSE;
+	else if (gSideTimers[opposingSide].followmePowder && !IsBattlerAffectedBySpore(battlerId))
+		return FALSE;
+	else
+		return TRUE;
 }
 
 // It check though all battlers of the slot's side and returns the battler of the partyId.

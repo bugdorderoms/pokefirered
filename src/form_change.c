@@ -349,6 +349,11 @@ void DoBattleFormChange(u32 battlerId, u32 newSpecies, bool32 reloadTypes, bool3
 	if (reloadTypes)
 		SetBattlerInitialTypes(battlerId);
 	
+	gDisableStructs[battlerId].autotomizeCount = 0;
+	
+	if (gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].suppressEnemyShadow)
+		gStatuses3[battlerId] &= ~(STATUS3_TELEKINESIS);
+	
 	ClearIllusionMon(battlerId);
 }
 

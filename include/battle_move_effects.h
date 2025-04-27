@@ -189,6 +189,9 @@ enum
 	EFFECT_WONDER_ROOM,
 	EFFECT_PSYSHOCK,
 	EFFECT_VENOSHOCK,
+	EFFECT_AUTOTOMIZE,
+	EFFECT_TELEKINESIS,
+	EFFECT_MAGIC_ROOM,
 	EFFECTS_COUNT,
 };
 
@@ -220,8 +223,6 @@ enum
 #define EFFECT_RETALIATE                    231
 #define EFFECT_BULLDOZE                     232
 #define EFFECT_FOUL_PLAY                    233
-#define EFFECT_MAGIC_ROOM                   243
-#define EFFECT_TELEKINESIS                  248
 #define EFFECT_STICKY_WEB                   254
 #define EFFECT_SIMPLE_BEAM                  259
 #define EFFECT_ENTRAINMENT                  260
@@ -253,7 +254,6 @@ enum
 #define EFFECT_CLEAR_SMOG                   294
 #define EFFECT_HIT_SWITCH_TARGET            295
 #define EFFECT_FINAL_GAMBIT                 296
-#define EFFECT_AUTOTOMIZE                   298
 #define EFFECT_HIT_ENEMY_HEAL_ALLY          301
 #define EFFECT_SMACK_DOWN                   302
 #define EFFECT_SYNCHRONOISE                 303

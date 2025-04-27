@@ -279,6 +279,17 @@ const struct SpriteTemplate gShadowClawSpriteTemplate =
     .callback = AnimClawSlash,
 };
 
+const struct SpriteTemplate gMetalBitsSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_METAL_BITS,
+    .paletteTag = ANIM_TAG_METAL_BITS,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_TearDrop,
+    .callback = AnimTearDrop,
+};
+
 // Fade the attacker's sprite from visible to invisible.
 // arg 0: fade delay
 void AnimTask_AttackerFadeToInvisible(u8 taskId)

@@ -160,7 +160,9 @@ struct DisableStruct
 			 u8 usedMoveIndices:4; // bit flags
 			 u8 magnetRiseTimer:3;
 	/*0x19*/ u8 commanderActivated:1;
-			 u8 unused:7;
+			 u8 telekinesisTimer:2;
+			 u8 unused:5;
+	/*0x1A*/ u8 autotomizeCount;
 };
 
 extern struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT];
@@ -243,7 +245,8 @@ struct SideTimer
 	/*0x07*/ u8 luckyChantBattlerId;
 	/*0x08*/ u8 tailwindBattlerId;
 	/*0x09*/ u8 followmeSet:1;
-			 u8 unused:7;
+			 u8 followmePowder:1;
+			 u8 unused:6;
 	/*0x0A*/ u8 followmeTarget;
 };
 
@@ -251,12 +254,13 @@ extern struct SideTimer gSideTimers[B_SIDE_COUNT];
 
 struct FieldTimer
 {
-	/*0x00*/ u16 waterSportTimer:3;
-			 u16 mudSportTimer:3;
-			 u16 gravityTimer:3;
-			 u16 trickRoomTimer:3;
-			 u16 wonderRoomTimer:3;
-			 u16 unused:1;
+	/*0x00*/ u32 waterSportTimer:3;
+			 u32 mudSportTimer:3;
+			 u32 gravityTimer:3;
+			 u32 trickRoomTimer:3;
+			 u32 wonderRoomTimer:3;
+			 u32 magicRoomTimer:3;
+			 u32 unused:14;
 };
 
 extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];

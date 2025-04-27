@@ -11458,8 +11458,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_AUTOTOMIZE] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_AUTOTOMIZE,
+		.name = COMPOUND_STRING("Autotomize"),
+        .description = COMPOUND_STRING("Sheds part of its\n"
+                                       "body to make itself\n"
+                                       "lighter and sharply\n"
+                                       "raise its Speed."),
+		.animScript = gMoveAnim_AUTOTOMIZE,
+		.effect = EFFECT_AUTOTOMIZE,
         .type = TYPE_STEEL,
         .pp = 15,
         .target = MOVE_TARGET_USER,
@@ -11475,8 +11480,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_RAGE_POWDER] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_FOLLOW_ME,
+		.name = COMPOUND_STRING("Rage Powder"),
+        .description = COMPOUND_STRING("It scatters powder\n"
+                                       "to draw attention\n"
+                                       "to itself. Pokémon\n"
+                                       "aim only at it."),
+		.animScript = gMoveAnim_RAGE_POWDER,
+		.effect = EFFECT_FOLLOW_ME,
         .type = TYPE_BUG,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -11496,14 +11506,20 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_TELEKINESIS] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_TELEKINESIS,
+		.name = COMPOUND_STRING("Telekinesis"),
+        .description = COMPOUND_STRING("Makes the foe float\n"
+                                       "with its psychic\n"
+                                       "power. It is easier\n"
+                                       "to hit for 3 turns."),
+		.animScript = gMoveAnim_TELEKINESIS,
+		.effect = EFFECT_TELEKINESIS,
         .type = TYPE_PSYCHIC,
         .pp = 15,
         .target = MOVE_TARGET_SELECTED,
         .flags =
 		{
 			.magicCoatAffected = TRUE,
+			.forbiddenMirrorMove = TRUE,
 			.gravityBanned = TRUE,
 		},
         .split = SPLIT_STATUS,
@@ -11512,8 +11528,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_MAGIC_ROOM] =
     {
-		.name = COMPOUND_STRING("-"),
-        .effect = EFFECT_MAGIC_ROOM,
+		.name = COMPOUND_STRING("Magic Room"),
+        .description = COMPOUND_STRING("Creates a area in\n"
+                                       "which Pokémon's\n"
+                                       "items lose their\n"
+                                       "effects for 5 turns."),
+		.animScript = gMoveAnim_MAGIC_ROOM,
+		.effect = EFFECT_MAGIC_ROOM,
         .type = TYPE_PSYCHIC,
         .pp = 10,
         .target = MOVE_TARGET_ALL_BATTLERS,

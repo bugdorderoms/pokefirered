@@ -1135,7 +1135,7 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_Hit, 0x0A00, ANIM_TAG_HIT_2},
     {gBattleAnimSpriteGfx_OmegaStone, 0x0800, ANIM_TAG_OMEGA_STONE},
     {gBattleAnimSpriteGfx_EnergyBall, 0x0200, ANIM_TAG_ENERGY_BALL},
-    {gBattleAnimSpriteGfx_WavingHand, 0x0A00, ANIM_TAG_WAVING_HAND},
+    {gBattleAnimSpriteGfx_HeartStamp, 0x0400, ANIM_TAG_HEART_STAMP},
     {gBattleAnimSpriteGfx_WoodHammer, 0x0800, ANIM_TAG_WOOD_HAMMER},
     {gBattleAnimSpriteGfx_Leer, 0x0A00, ANIM_TAG_LEER},
     {gBattleAnimSpriteGfx_BlueBurst, 0x0A00, ANIM_TAG_BLUE_BURST},
@@ -1384,9 +1384,9 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_Sparkle6, 0x0080, ANIM_TAG_SPARKLE_6},
     {gBattleAnimSpriteGfx_Splash, 0x0800, ANIM_TAG_SPLASH},
     {gBattleAnimSpriteGfx_SweatBead, 0x0020, ANIM_TAG_SWEAT_BEAD},
-    {gBattleAnimSpriteGfx_Gem1, 0x0800, ANIM_TAG_GEM_1},
-    {gBattleAnimSpriteGfx_Gem2, 0x0800, ANIM_TAG_GEM_2},
-    {gBattleAnimSpriteGfx_Gem3, 0x0800, ANIM_TAG_GEM_3},
+    {gBattleAnimSpriteGfx_MetalBits, 0x0140, ANIM_TAG_METAL_BITS},
+    {gBattleAnimSpriteGfx_MegaEvoOrbs, 0x0180, ANIM_TAG_MEGA_EVOLUTION_ORBS},
+	{gBattleAnimSpriteGfx_MegaEvoSymbol, 0x0200, ANIM_TAG_MEGA_SYMBOL},
     {gBattleAnimSpriteGfx_SlamHit2, 0x1000, ANIM_TAG_SLAM_HIT_2},
     {gBattleAnimSpriteGfx_Recycle, 0x0800, ANIM_TAG_RECYCLE},
     {gBattleAnimSpriteGfx_BerryEaten, 0x0200, ANIM_TAG_BERRY_EATEN},
@@ -1420,8 +1420,6 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
 	{gBattleAnimSpriteGfx_ChainLink, 0x0400, ANIM_TAG_CHAIN_LINK},
 	{gBattleAnimSpriteGfx_PowerTrick, 0x0800, ANIM_TAG_POWER_TRICK},
 	{gBattleAnimSpriteGfx_MegaEvoStone, 0x0800, ANIM_TAG_MEGA_EVOLUTION_STONE},
-	{gBattleAnimSpriteGfx_MegaEvoOrbs, 0x0180, ANIM_TAG_MEGA_EVOLUTION_ORBS},
-	{gBattleAnimSpriteGfx_MegaEvoSymbol, 0x0200, ANIM_TAG_MEGA_SYMBOL},
 };
 
 const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
@@ -1451,7 +1449,7 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_Hit2, ANIM_TAG_HIT_2},
     {gBattleAnimSpritePal_OmegaStone, ANIM_TAG_OMEGA_STONE},
     {gBattleAnimSpritePal_EnergyBall, ANIM_TAG_ENERGY_BALL},
-    {gBattleAnimSpritePal_WavingHand, ANIM_TAG_WAVING_HAND},
+    {gBattleAnimSpritePal_HeartStamp, ANIM_TAG_HEART_STAMP},
     {gBattleAnimSpritePal_WoodHammer, ANIM_TAG_WOOD_HAMMER},
     {gBattleAnimSpritePal_Leer, ANIM_TAG_LEER},
     {gBattleAnimSpritePal_BlueBurst, ANIM_TAG_BLUE_BURST},
@@ -1700,9 +1698,9 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_Sparkle6, ANIM_TAG_SPARKLE_6},
     {gBattleAnimSpritePal_Splash, ANIM_TAG_SPLASH},
     {gBattleAnimSpritePal_Splash, ANIM_TAG_SWEAT_BEAD},
-    {gBattleAnimSpritePal_Gem1, ANIM_TAG_GEM_1},
-    {gBattleAnimSpritePal_Gem1, ANIM_TAG_GEM_2},
-    {gBattleAnimSpritePal_Gem1, ANIM_TAG_GEM_3},
+    {gBattleAnimSpritePal_MetalBits, ANIM_TAG_METAL_BITS},
+	{gBattleAnimSpritePal_MegaEvoOrbs, ANIM_TAG_MEGA_EVOLUTION_ORBS},
+	{gBattleAnimSpritePal_MegaEvoSymbol, ANIM_TAG_MEGA_SYMBOL},
     {gBattleAnimSpritePal_SlamHit2, ANIM_TAG_SLAM_HIT_2},
     {gBattleAnimSpritePal_Recycle, ANIM_TAG_RECYCLE},
     {gBattleAnimSpritePal_BerryEaten, ANIM_TAG_BERRY_EATEN},
@@ -1736,8 +1734,6 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
 	{gBattleAnimSpritePal_ChainLink, ANIM_TAG_CHAIN_LINK},
 	{gBattleAnimSpritePal_PowerTrick, ANIM_TAG_POWER_TRICK},
 	{gBattleAnimSpritePal_MegaEvoStone, ANIM_TAG_MEGA_EVOLUTION_STONE},
-	{gBattleAnimSpritePal_MegaEvoOrbs, ANIM_TAG_MEGA_EVOLUTION_ORBS},
-	{gBattleAnimSpritePal_MegaEvoSymbol, ANIM_TAG_MEGA_SYMBOL},
 };
 
 static const struct BattleAnimBackground sBattleAnimBackgroundTable[] =
@@ -1785,6 +1781,7 @@ static const struct BattleAnimBackground sBattleAnimBackgroundTable[] =
 	[BG_SPACIAL_REND_OPPONENT] = {gBattleAnimBgImage_SpacialRend, gBattleAnimBgPalette_SpacialRend, gBattleAnimBgTilemap_GigaImpactOpponent},
 	[BG_DARK_VOID] = {gBattleAnimBgImage_Waterfall, gBattleAnimBgPalette_DarkVoid, gBattleAnimBgTilemap_Waterfall},
 	[BG_WONDER_ROOM] = {gBattleAnimBgImage_FieldRoom, gBattleAnimBgPalette_WonderRoom, gBattleAnimBgTilemap_FieldRoom},
+	[BG_MAGIC_ROOM] = {gBattleAnimBgImage_FieldRoom, gBattleAnimBgPalette_MagicRoom, gBattleAnimBgTilemap_FieldRoom},
 };
 
 static void (*const sScriptCmdTable[])(void) =

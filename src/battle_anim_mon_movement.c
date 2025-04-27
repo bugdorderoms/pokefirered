@@ -727,9 +727,10 @@ static void AnimTask_SlideOffScreen_Step(u8 taskId)
 // arg 2: wave period
 // arg 3: num sways
 // arg 4: which mon
+// arg 5: invert direction on side
 void AnimTask_SwayMon(u8 taskId)
 {
-    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
+    if (gBattleAnimArgs[5] && GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         gBattleAnimArgs[1] = -gBattleAnimArgs[1];
 	
     gTasks[taskId].data[0] = gBattleAnimArgs[0];
@@ -738,6 +739,7 @@ void AnimTask_SwayMon(u8 taskId)
     gTasks[taskId].data[3] = gBattleAnimArgs[3];
     gTasks[taskId].data[4] = GetAnimBattlerSpriteId(gBattleAnimArgs[4]);
 	gTasks[taskId].data[5] = GetBattlerForAnimScript(gBattleAnimArgs[4]);
+	gTasks[taskId].data[6] = gBattleAnimArgs[5];
     gTasks[taskId].data[12] = 1;
     gTasks[taskId].func = AnimTask_SwayMonStep;
 }
@@ -753,7 +755,7 @@ static void AnimTask_SwayMonStep(u8 taskId)
 
     if (gTasks[taskId].data[0] == 0)
         gSprites[spriteId].x2 = sineValue;
-    else if (GetBattlerSide(gTasks[taskId].data[5]) == B_SIDE_PLAYER)
+    else if (gTasks[taskId].data[6] && GetBattlerSide(gTasks[taskId].data[5]) == B_SIDE_PLAYER)
         gSprites[spriteId].y2 = abs(sineValue);
     else
         gSprites[spriteId].y2 = -abs(sineValue);

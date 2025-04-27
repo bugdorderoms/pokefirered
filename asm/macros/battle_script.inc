@@ -1775,6 +1775,20 @@
 	callfunction BS_SetWonderRoom
 	.endm
 	
+	.macro trybecamenimble jumpPtr:req
+	callfunction BS_TryBecameNimble
+	.4byte \jumpPtr
+	.endm
+	
+	.macro trysettelekinesis failPtr:req
+	callfunction BS_TrySetTelekinesis
+	.4byte \failPtr
+	.endm
+	
+	.macro setmagicroom
+	callfunction BS_SetMagicRoom
+	.endm
+	
 @ helpful macros
 	.macro copybyte dst:req, src:req
 	copyarray \dst, \src, 0x1

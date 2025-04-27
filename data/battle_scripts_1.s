@@ -2200,6 +2200,49 @@ BattleScript_EffectWonderRoom::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+@ EFFECT_AUTOTOMIZE @
+
+BattleScript_EffectAutotomize::
+	attackcanceler
+	attackstring
+	ppreduce
+	setstatchanger STAT_SPEED, +2
+	statbuffchange STAT_CHANGE_FLAG_UPDATE_RESULT | STAT_CHANGE_FLAG_SELF_INFLICT
+	attackanimation
+	waitstate
+	statchangeanimandstring
+	trybecamenimble BattleScript_MoveEnd
+	printstring STRINGID_ATKBECAMENIMBLE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ EFFECT_TELEKINESIS @
+
+BattleScript_EffectTelekinesis::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	attackstring
+	ppreduce
+	trysettelekinesis BattleScript_ButItFailed
+	attackanimation
+	waitstate
+	printstring STRINGID_DEFWASHURLEDINTOTHEAIR
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ EFFECT_MAGIC_ROOM @
+
+BattleScript_EffectMagicRoom::
+	attackcanceler
+	attackstring
+	ppreduce
+	attackanimation
+	waitstate
+	setmagicroom
+	printstring STRINGID_BIZARREAREABLOCKITEMEFFECTS
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3875,33 +3918,10 @@ BattleScript_WrapTurnDmg::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_DoTurnDmgEnd2
 
-BattleScript_WrapEnds::
-	printstring STRINGID_ATKFREEDFROMBUFF1
-	waitmessage B_WAIT_TIME_LONG
-	end2
-	
-BattleScript_EncoredNoMore::
-	printstring STRINGID_ATKENCOREENDED
-	waitmessage B_WAIT_TIME_LONG
-	end2
-
-BattleScript_DisabledNoMore::
-	printstring STRINGID_ATKDISABLEDNOMORE
-	waitmessage B_WAIT_TIME_LONG
-	end2
-
-BattleScript_MagnetRiseEnds::
-	printstring STRINGID_ATKELECTROMAGNETISMWOREOFF
-	waitmessage B_WAIT_TIME_LONG
-	end2
-
-BattleScript_HealBlockEnds::
-    printstring STRINGID_ATKHEALBLOCKWOREOFF
-	waitmessage B_WAIT_TIME_LONG
-	end2
-
-BattleScript_EmbargoEnds::
-    printstring STRINGID_ATKCANUSEITEMSAGAIN
+BattleScript_SideStatusWoreOff::
+    pause B_WAIT_TIME_SHORT
+BattleScript_EndTurnEffectEnds::
+	printfromtable gEndTurnEffectsEndStringIds
 	waitmessage B_WAIT_TIME_LONG
 	end2
 
@@ -3917,22 +3937,6 @@ BattleScript_PerishSongTakesLife::
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	tryfaintmon BS_ATTACKER
-	end2
-
-BattleScript_PerishSongCountGoesDown::
-	printstring STRINGID_ATKPERISHCOUNTFELLTOBUFF1
-	waitmessage B_WAIT_TIME_LONG
-	end2
-	
-BattleScript_SideStatusWoreOff::
-    pause B_WAIT_TIME_SHORT
-    printfromtable gSideStatusWoreOffStringIds
-	waitmessage B_WAIT_TIME_LONG
-	end2
-
-BattleScript_FieldStatusWoreOff::
-    printfromtable gFieldStatusWoreOffStringIds
-	waitmessage B_WAIT_TIME_LONG
 	end2
 
 BattleScript_PrintUproarOverTurns::

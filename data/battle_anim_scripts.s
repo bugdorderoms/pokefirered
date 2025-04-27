@@ -523,7 +523,7 @@ gGeneralAnim_BaitThrow::
 	createsprite gSafariBaitSpriteTemplate, ANIM_TARGET, 3, -18, 12, 0, 32
 	delay 50
 	loopsewithpan SE_M_TAIL_WHIP, SOUND_PAN_TARGET, 19, 2
-	createvisualtask AnimTask_SwayMon, 5, 1, 8, 1536, 2, ANIM_TARGET
+	createvisualtask AnimTask_SwayMon, 5, 1, 8, 1536, 2, ANIM_TARGET, TRUE
 	waitforvisualfinish
 	createvisualtask AnimTask_LoadOrFreeBaitGfx, 2, FALSE @ Free bait gfx
 	end
@@ -695,7 +695,7 @@ gGeneralAnim_SnatchMove::
 	createvisualtask AnimTask_SetAnimAttackerAndTargetForEffectTgt, 2
 	call SnatchMoveTrySwapFromSubstitute
 	delay 1
-	createvisualtask AnimTask_SwayMon, 2, 0, 5, 5120, 4, ANIM_TARGET
+	createvisualtask AnimTask_SwayMon, 2, 0, 5, 5120, 4, ANIM_TARGET, TRUE
 	waitforvisualfinish
 	playsewithpan SE_M_DOUBLE_TEAM, SOUND_PAN_ATTACKER
 	createvisualtask AnimTask_SnatchMonMove, 2
@@ -1877,7 +1877,7 @@ FlyUnleash::
 	goto FlyEnd
 
 gMoveAnim_BIND::
-	createvisualtask AnimTask_SwayMon, 5, 0, 6, 3328, 4, ANIM_ATTACKER
+	createvisualtask AnimTask_SwayMon, 5, 0, 6, 3328, 4, ANIM_ATTACKER, TRUE
 BindWrap::
 	playsewithpan SE_M_BIND, SOUND_PAN_TARGET
 	call BindWrapSqueezeTarget
@@ -2811,7 +2811,7 @@ gMoveAnim_PSYBEAM::
 	createsoundtask SoundTask_LoopSEAdjustPanning, SE_M_PSYBEAM2, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 3, 4, 0, 15
 	call PsybeamRings
 	call PsybeamRings
-	createvisualtask AnimTask_SwayMon, 5, 0, 6, 2048, 4, ANIM_TARGET
+	createvisualtask AnimTask_SwayMon, 5, 0, 6, 2048, 4, ANIM_TARGET, TRUE
 	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 2, 2, 0, 12, RGB(31, 18, 31) @ Purple color
 	call PsybeamRings
 	call PsybeamRings
@@ -2838,7 +2838,7 @@ gMoveAnim_BUBBLE_BEAM::
 	splitbgprio ANIM_TARGET
 	setalpha 12, 8
 	call BulbblebeamCreateBubbles
-	createvisualtask AnimTask_SwayMon, 5, 0, 3, 3072, 8, ANIM_TARGET
+	createvisualtask AnimTask_SwayMon, 5, 0, 3, 3072, 8, ANIM_TARGET, TRUE
 	call BulbblebeamCreateBubbles
 	call BulbblebeamCreateBubbles
 	waitforvisualfinish
@@ -4115,7 +4115,7 @@ gMoveAnim_SCREECH::
 	call ScreechRing
 	call ScreechRing
 	delay 16
-	createvisualtask AnimTask_SwayMon, 5, 0, 6, 2048, 2, ANIM_TARGET
+	createvisualtask AnimTask_SwayMon, 5, 0, 6, 2048, 2, ANIM_TARGET, TRUE
 	end
 
 ScreechRing::
@@ -5738,7 +5738,7 @@ CurseGhostShakeFromNail::
 	return
 
 CurseStats::
-	createvisualtask AnimTask_SwayMon, 5, 0, 10, 1536, 3, ANIM_ATTACKER
+	createvisualtask AnimTask_SwayMon, 5, 0, 10, 1536, 3, ANIM_ATTACKER, TRUE
 	waitforvisualfinish
 	delay 10
 	playsewithpan SE_M_DRAGON_RAGE, SOUND_PAN_ATTACKER
@@ -6684,7 +6684,7 @@ gMoveAnim_MEAN_LOOK::
 gMoveAnim_ATTRACT::
 	loadspritegfx ANIM_TAG_RED_HEART
 	loopsewithpan SE_M_CHARM, SOUND_PAN_ATTACKER, 12, 3
-	createvisualtask AnimTask_SwayMon, 5, 0, 12, 4096, 4, ANIM_ATTACKER
+	createvisualtask AnimTask_SwayMon, 5, 0, 12, 4096, 4, ANIM_ATTACKER, TRUE
 	delay 15
 	createsprite gRedHeartProjectileSpriteTemplate, ANIM_TARGET, 3, 20, -8
 	waitforvisualfinish
@@ -6712,7 +6712,7 @@ gMoveAnim_ATTRACT::
 
 gMoveAnim_SLEEP_TALK::
 	loadspritegfx ANIM_TAG_LETTER_Z
-	createvisualtask AnimTask_SwayMon, 5, 0, 4, 4096, 2, ANIM_ATTACKER
+	createvisualtask AnimTask_SwayMon, 5, 0, 4, 4096, 2, ANIM_ATTACKER, TRUE
 	call SleepTalkLetterSound
 	createsprite gLetterZSpriteTemplate, ANIM_TARGET, 2, 0, 5, -1
 	delay 6
@@ -7019,7 +7019,7 @@ Frustration_Strongest::
 	createsprite gAngerMarkSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 20, -28
 	waitforvisualfinish
 	delay 10
-	createvisualtask AnimTask_SwayMon, 5, 0, 16, 6144, 8, ANIM_ATTACKER
+	createvisualtask AnimTask_SwayMon, 5, 0, 16, 6144, 8, ANIM_ATTACKER, TRUE
 	delay 5
 	createvisualtask AnimTask_ShakeMon2, 5, ANIM_TARGET, 4, 0, 30, 1
 	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, 0
@@ -7332,7 +7332,7 @@ gMoveAnim_ENCORE::
 	createsprite gClappingHand2SpriteTemplate, ANIM_ATTACKER, 3, 2, 0, TRUE, 9
 	delay 16
 	createvisualtask SoundTask_PlaySE2WithPanning, 5, SE_M_ENCORE2, SOUND_PAN_TARGET
-	createvisualtask AnimTask_SwayMon, 5, 1, 8, 1536, 5, ANIM_TARGET
+	createvisualtask AnimTask_SwayMon, 5, 1, 8, 1536, 5, ANIM_TARGET, TRUE
 	waitforvisualfinish
 	createvisualtask AnimTask_HardwarePaletteFade, 2, BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ | BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN, 3, 10, 0, TRUE
 	waitforvisualfinish
@@ -7753,7 +7753,7 @@ gMoveAnim_PSYCH_UP::
 	setalpha 12, 8
 	loopsewithpan SE_M_PSYBEAM2, SOUND_PAN_ATTACKER, 5, 10
 	createsprite gPsychUpSpiralSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, ANIM_ATTACKER, TRUE
-	createvisualtask AnimTask_SwayMon, 5, 0, 5, 2560, 8, ANIM_ATTACKER
+	createvisualtask AnimTask_SwayMon, 5, 0, 5, 2560, 8, ANIM_ATTACKER, TRUE
 	delay 131
 	playsewithpan SE_M_PSYBEAM, SOUND_PAN_ATTACKER
 	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_ATTACKER, ST_OAM_OBJ_BLEND
@@ -9763,7 +9763,7 @@ gMoveAnim_TICKLE::
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_ATTACKER, 0, 16, 0, RGB_BLACK
 	waitforvisualfinish
 	delay 20
-	createvisualtask AnimTask_SwayMon, 3, 0, 6, 1280, 3, ANIM_ATTACKER
+	createvisualtask AnimTask_SwayMon, 3, 0, 6, 1280, 3, ANIM_ATTACKER, TRUE
 	delay 12
 	createvisualtask AnimTask_RockMonBackAndForth, 3, ANIM_TARGET, 6, 2
 	loopsewithpan SE_M_TAIL_WHIP, SOUND_PAN_TARGET, 8, 8
@@ -14020,4 +14020,84 @@ gMoveAnim_VENOSHOCK::
 	createsprite gVenoshockPoisonSpriteTemplate, ANIM_TARGET, 2, ANIM_TARGET, FALSE, 16, 16, 16
 	delay 2
 	call PoisonBubblesEffect
+	end
+
+@ Credits: Skeli
+gMoveAnim_AUTOTOMIZE::
+	loadspritegfx ANIM_TAG_METAL_BITS
+	monbg ANIM_ATK_SIDE
+	setalpha 12, 8
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 24, 6, 4, 4
+	createvisualtask AnimTask_CloneBattlerSpriteWithBlend, 2, ANIM_ATTACKER, 4, 7, 10
+	playsewithpan SE_ELEVATOR, SOUND_PAN_ATTACKER
+	createsprite gMetalBitsSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 1
+	createsprite gMetalBitsSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 1, 1
+	delay 12
+	createsprite gMetalBitsSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 2, 1
+	createsprite gMetalBitsSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 3, 1
+	delay 12
+	createsprite gMetalBitsSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 1
+	createsprite gMetalBitsSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 1, 1
+	delay 12
+	createsprite gMetalBitsSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 2, 1
+	createsprite gMetalBitsSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 3, 1
+	delay 24
+	waitforvisualfinish
+	stopsound
+	clearmonbg ANIM_ATK_SIDE
+	blendoff
+	end
+
+@ Credits: Skeli
+gMoveAnim_RAGE_POWDER::
+	loadspriteimg ANIM_TAG_SPORE
+	loadspritepal ANIM_TAG_HEART_STAMP @ Red color
+	monbg ANIM_ATK_SIDE
+	splitbgprio ANIM_ATTACKER
+	loopsewithpan SE_M_POISON_POWDER, SOUND_PAN_ATTACKER, 18, 10
+	call RagePowder
+	call RagePowder
+	call RagePowder
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 2, 2, 0, 11, RGB_RED
+	waitforvisualfinish
+	clearmonbg ANIM_ATK_SIDE
+	end
+
+RagePowder::
+	createsprite gRagePowderSporeSpriteTemplate, ANIM_ATTACKER, 2, 0, -20, 85, 80, FALSE, ANIM_ATTACKER
+	delay 12
+	createsprite gRagePowderSporeSpriteTemplate, ANIM_ATTACKER, 2, 0, -10, 170, 80, FALSE, ANIM_ATTACKER
+	delay 12
+	createsprite gRagePowderSporeSpriteTemplate, ANIM_ATTACKER, 2, 0, -15, 0, 80, FALSE, ANIM_ATTACKER
+	delay 12
+	return
+
+@ Credits: Lixdel and Blackuser
+gMoveAnim_TELEKINESIS::
+	loadspritegfx ANIM_TAG_SPARKLE_4
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 0, 9, RGB_BLACK
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATTACKER, 1, 0, 9, RGB_WHITE
+	delay 18
+	playsewithpan SE_M_DETECT, SOUND_PAN_ATTACKER
+	createsprite gDisableSparkleSpriteTemplate, ANIM_ATTACKER, 13, 20, -20
+	waitforvisualfinish
+	loopsewithpan SE_M_SUPERSONIC, SOUND_PAN_TARGET, 10, 3
+	createvisualtask AnimTask_TelekinesisRotation, 5, ANIM_TARGET
+	createvisualtask AnimTask_SwayMon, 5, 1, 24, 208, 1, ANIM_TARGET, FALSE
+	waitforvisualfinish
+	delay 10
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 9, 0, RGB_BLACK
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATTACKER, 2, 9, 0, RGB_WHITE
+	end
+
+@ Credits: Skeli
+gMoveAnim_MAGIC_ROOM::
+	call SummonRoomAttackerScaleAnim
+	fadetobg BG_MAGIC_ROOM
+	waitbgfadein
+	delay 64
+	restorebg
+	waitbgfadein
+	blendoff
 	end

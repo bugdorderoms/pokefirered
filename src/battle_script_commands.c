@@ -971,6 +971,8 @@ static bool32 AccuracyCalcHelper(const u8 *jumpStr)
 		JumpIfMoveFailed(6, jumpStr);
 	else if ((gStatuses3[gBattlerTarget] & STATUS3_MINIMIZED) && gBattleMoves[gCurrentMove].flags.dmgMinimize) // Check never misses on minimize 
 		JumpIfMoveFailed(6, jumpStr);
+	else if ((gStatuses3[gBattlerTarget] & STATUS3_TELEKINESIS) && gBattleMoves[gCurrentMove].effect != EFFECT_OHKO) // Check Telekinesis
+		JumpIfMoveFailed(6, jumpStr);
 	else if (!gBattleMoves[gCurrentMove].accuracy) // Check moves that never misses
 	    JumpIfMoveFailed(6, jumpStr);
 	else
@@ -9028,6 +9030,7 @@ void BS_SetForcedTarget(void)
 	u32 side = GetBattlerSide(gBattlerAttacker);
 	gSideTimers[side].followmeSet = TRUE;
     gSideTimers[side].followmeTarget = gBattlerAttacker;
+	gSideTimers[side].followmePowder = gBattleMoves[gCurrentMove].flags.powderMove;
 	gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
@@ -9588,5 +9591,41 @@ void BS_SetWonderRoom(void)
 	gFieldTimers.wonderRoomTimer = 5;
 	PrepareStatBuffer(gBattleTextBuff1, STAT_DEF);
 	PrepareStatBuffer(gBattleTextBuff2, STAT_SPDEF);
+	gBattlescriptCurrInstr = cmd->nextInstr;
+}
+
+void BS_TryBecameNimble(void)
+{
+	NATIVE_ARGS(const u8 *jumpPtr);
+	
+	if (gBattleStruct->statChange.result == STAT_CHANGE_WORKED && GetBattlerWeight(gBattlerAttacker) > 1)
+	{
+		gDisableStructs[gBattlerAttacker].autotomizeCount++;
+		gBattlescriptCurrInstr = cmd->nextInstr;
+	}
+	else
+		gBattlescriptCurrInstr = cmd->jumpPtr;
+}
+
+void BS_TrySetTelekinesis(void)
+{
+	NATIVE_ARGS(const u8 *failPtr);
+	
+	if (!gSpeciesInfo[GetMonData(GetBattlerPartyIndexPtr(gBattlerTarget), MON_DATA_SPECIES)].suppressEnemyShadow && !(gFieldStatus & STATUS_FIELD_GRAVITY)
+	&& !(gStatuses3[gBattlerTarget] & (STATUS3_TELEKINESIS | STATUS3_ROOTED | STATUS3_SMACKED_DOWN)))
+	{
+		gStatuses3[gBattlerTarget] |= STATUS3_TELEKINESIS;
+		gDisableStructs[gBattlerTarget].telekinesisTimer = 3;
+		gBattlescriptCurrInstr = cmd->nextInstr;
+	}
+	else
+		gBattlescriptCurrInstr = cmd->failPtr;
+}
+
+void BS_SetMagicRoom(void)
+{
+	NATIVE_ARGS();
+	gFieldStatus ^= STATUS_FIELD_MAGIC_ROOM;
+	gFieldTimers.magicRoomTimer = 5;
 	gBattlescriptCurrInstr = cmd->nextInstr;
 }

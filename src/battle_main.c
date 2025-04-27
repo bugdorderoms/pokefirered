@@ -1951,12 +1951,16 @@ void SwitchInClearSetData(u32 battlerId)
 		// Status passed by Baton Pass
 		gBattleMons[battlerId].status2 &= (STATUS2_CONFUSION | STATUS2_FOCUS_ENERGY | STATUS2_SUBSTITUTE | STATUS2_ESCAPE_PREVENTION | STATUS2_CURSED | STATUS2_AQUA_RING);
         gStatuses3[battlerId] &= (STATUS3_LEECHSEED | STATUS3_PERISH_SONG | STATUS3_POWER_TRICK | STATUS3_HEAL_BLOCK | STATUS3_EMBARGO | STATUS3_ROOTED | STATUS3_GASTRO_ACID
-								 | STATUS3_MAGNET_RISE);
+								 | STATUS3_MAGNET_RISE | STATUS3_TELEKINESIS);
         
 		HANDLE_POWER_TRICK_SWAP(battlerId)
 		
 		if (gAbilities[gBattleMons[battlerId].ability].cantBeSuppressed)
 			gStatuses3[battlerId] &= ~(STATUS3_GASTRO_ACID);
+		
+		// Only Mega Evolved pokémons remove this effect on Baton Pass's switch in
+		if (GetActiveGimmick(battlerId) == GIMMICK_MEGA && gSpeciesInfo[GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES)].suppressEnemyShadow)
+			gStatuses3[battlerId] &= ~(STATUS3_TELEKINESIS);
 		
 		gDisableStructs[battlerId].substituteHP = disableStructCopy.substituteHP;
         gDisableStructs[battlerId].perishSongTimer = disableStructCopy.perishSongTimer;
@@ -1965,6 +1969,7 @@ void SwitchInClearSetData(u32 battlerId)
 		gDisableStructs[battlerId].healBlockTimer = disableStructCopy.healBlockTimer;
 		gDisableStructs[battlerId].leechSeedBattler = disableStructCopy.leechSeedBattler;
 		gDisableStructs[battlerId].magnetRiseTimer = disableStructCopy.magnetRiseTimer;
+		gDisableStructs[battlerId].telekinesisTimer = disableStructCopy.telekinesisTimer;
 	}
 	else
 	{

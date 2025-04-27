@@ -973,6 +973,21 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
 		.battleScript = BattleScript_EffectHit,
 	},
 	
+	[EFFECT_AUTOTOMIZE] =
+	{
+		.battleScript = BattleScript_EffectAutotomize,
+	},
+	
+	[EFFECT_TELEKINESIS] =
+	{
+		.battleScript = BattleScript_EffectTelekinesis,
+	},
+	
+	[EFFECT_MAGIC_ROOM] =
+	{
+		.battleScript = BattleScript_EffectMagicRoom,
+	},
+	
 	/*
 	[EFFECT_TERRAIN_PULSE] =
 	{

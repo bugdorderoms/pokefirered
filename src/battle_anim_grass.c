@@ -566,6 +566,17 @@ const struct SpriteTemplate gWoodHammerSpriteTemplate =
     .callback = AnimWoodHammer,
 };
 
+const struct SpriteTemplate gRagePowderSporeSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SPORE,
+    .paletteTag = ANIM_TAG_HEART_STAMP,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = sSporeParticleAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSporeParticle,
+};
+
 // Shoots a leaf upward, then floats it downward while swaying back and forth.
 // arg 0: upward x delta per frame
 // arg 1: upward y delta per frame

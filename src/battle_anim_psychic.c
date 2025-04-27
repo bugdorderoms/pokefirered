@@ -284,6 +284,19 @@ static const union AffineAnimCmd sAffineAnim_Teleport[] =
     AFFINEANIMCMD_END,
 };
 
+static const union AffineAnimCmd sAffineAnim_TelekinesisRotation[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 0, 8),
+	AFFINEANIMCMD_LOOP(0),
+	AFFINEANIMCMD_FRAME(0, 0, 0, 4),
+	AFFINEANIMCMD_FRAME(0, 0, -1, 18),
+    AFFINEANIMCMD_FRAME(0, 0, 1, 18),
+	AFFINEANIMCMD_FRAME(0, 0, 1, 18),
+	AFFINEANIMCMD_FRAME(0, 0, -1, 18),
+	AFFINEANIMCMD_LOOP(1),
+    AFFINEANIMCMD_END,
+};
+
 static const struct SpriteTemplate sImprisonOrbSpriteTemplate =
 {
     .tileTag = ANIM_TAG_HOLLOW_ORB,
@@ -762,6 +775,7 @@ static void AnimQuestionMarkStep2(struct Sprite *sprite)
 }
 
 // Animates the Meditate attacker's stretch effect.
+// No args.
 void AnimTask_MeditateStretchAttacker(u8 taskId)
 {
     PrepareAffineAnimInTaskData(&gTasks[taskId], GetAnimBattlerSpriteId(ANIM_ATTACKER), sAffineAnim_MeditateStretchAttacker);
@@ -769,6 +783,7 @@ void AnimTask_MeditateStretchAttacker(u8 taskId)
 }
 
 // Animates the teleport effect.
+// No args.
 void AnimTask_Teleport(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
@@ -1457,4 +1472,12 @@ static void AnimTask_OverlayFogTiles(u8 taskId)
         DestroyAnimVisualTaskAndDisableBlend(taskId);
         break;
     }
+}
+
+// Animates Telekinesis rotation effect.
+// arg 0: anim battler
+void AnimTask_TelekinesisRotation(u8 taskId)
+{
+    PrepareAffineAnimInTaskData(&gTasks[taskId], GetAnimBattlerSpriteId(gBattleAnimArgs[0]), sAffineAnim_TelekinesisRotation);
+    gTasks[taskId].func = AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds;
 }

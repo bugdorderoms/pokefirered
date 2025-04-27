@@ -32,7 +32,7 @@
 #define ANIM_TAG_HIT_2                      (ANIM_SPRITES_START + 22)
 #define ANIM_TAG_OMEGA_STONE                (ANIM_SPRITES_START + 23)
 #define ANIM_TAG_ENERGY_BALL                (ANIM_SPRITES_START + 24)
-#define ANIM_TAG_WAVING_HAND                (ANIM_SPRITES_START + 25) // unused
+#define ANIM_TAG_HEART_STAMP                (ANIM_SPRITES_START + 25)
 #define ANIM_TAG_WOOD_HAMMER                (ANIM_SPRITES_START + 26)
 #define ANIM_TAG_LEER                       (ANIM_SPRITES_START + 27)
 #define ANIM_TAG_BLUE_BURST                 (ANIM_SPRITES_START + 28) // unused
@@ -281,9 +281,9 @@
 #define ANIM_TAG_SPARKLE_6                  (ANIM_SPRITES_START + 271)
 #define ANIM_TAG_SPLASH                     (ANIM_SPRITES_START + 272)
 #define ANIM_TAG_SWEAT_BEAD                 (ANIM_SPRITES_START + 273)
-#define ANIM_TAG_GEM_1                      (ANIM_SPRITES_START + 274) // unused
-#define ANIM_TAG_GEM_2                      (ANIM_SPRITES_START + 275) // unused
-#define ANIM_TAG_GEM_3                      (ANIM_SPRITES_START + 276) // unused
+#define ANIM_TAG_METAL_BITS                 (ANIM_SPRITES_START + 274)
+#define ANIM_TAG_MEGA_EVOLUTION_ORBS        (ANIM_SPRITES_START + 275)
+#define ANIM_TAG_MEGA_SYMBOL                (ANIM_SPRITES_START + 276)
 #define ANIM_TAG_SLAM_HIT_2                 (ANIM_SPRITES_START + 277)
 #define ANIM_TAG_RECYCLE                    (ANIM_SPRITES_START + 278)
 #define ANIM_TAG_BERRY_EATEN                (ANIM_SPRITES_START + 279)
@@ -317,8 +317,6 @@
 #define ANIM_TAG_CHAIN_LINK                 (ANIM_SPRITES_START + 307)
 #define ANIM_TAG_POWER_TRICK                (ANIM_SPRITES_START + 308)
 #define ANIM_TAG_MEGA_EVOLUTION_STONE       (ANIM_SPRITES_START + 309)
-#define ANIM_TAG_MEGA_EVOLUTION_ORBS        (ANIM_SPRITES_START + 310)
-#define ANIM_TAG_MEGA_SYMBOL                (ANIM_SPRITES_START + 311)
 
 // battlers
 #define ANIM_ATTACKER    0
@@ -390,6 +388,7 @@
 #define BG_SPACIAL_REND_OPPONENT 40
 #define BG_DARK_VOID             41
 #define BG_WONDER_ROOM           42
+#define BG_MAGIC_ROOM            43
 
 // table ids for general animations
 #define B_ANIM_FORM_CHANGE           0x0
