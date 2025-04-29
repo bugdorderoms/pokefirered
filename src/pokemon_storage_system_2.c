@@ -22,11 +22,11 @@ struct PSS_MenuStringPtrs
 static EWRAM_DATA u8 sPreviousBoxOption = 0;
 static EWRAM_DATA struct UnkPSSStruct_2002370 *sBoxSelectionPopupSpriteManager = NULL;
 
-static void PSS_CreatePCMenu(u8 whichMenu, s16 *windowIdPtr);
+static void PSS_CreatePCMenu(u32 whichMenu, s16 *windowIdPtr);
 static void UpdateBoxNameAndCountSprite_WraparoundRight(void);
 static void UpdateBoxNameAndCountSprite_WraparoundLeft(void);
 static void PrintBoxNameAndCountToSprite(void);
-static void PrintToSpriteWithTagUnk0240(const u8 *a0, u16 x, u16 y);
+static void PrintToSpriteWithTagUnk0240(const u8 *a0, u32 x, u32 y);
 static void sub_808CD64(struct Sprite * sprite);
 
 // Forward declarations
@@ -79,10 +79,10 @@ static const union AffineAnimCmd *const gUnknown_83CDA90[] = {
     gUnknown_83CDA80
 };
 
-void DrawTextWindowAndBufferTiles(const u8 *string, void *dst, u8 zero1, u8 zero2, u8 *buffer, s32 bytesToBuffer)
+void DrawTextWindowAndBufferTiles(const u8 *string, void *dst, u32 zero1, u32 zero2, u8 *buffer, s32 bytesToBuffer)
 {
     s32 i, tileBytesToBuffer, remainingBytes;
-    u16 windowId;
+    u32 windowId;
     u8 txtColor[3];
     u8 *tileData1, *tileData2;
     struct WindowTemplate winTemplate = {0};
@@ -124,10 +124,10 @@ void DrawTextWindowAndBufferTiles(const u8 *string, void *dst, u8 zero1, u8 zero
     RemoveWindow(windowId);
 }
 
-static void PrintStringToBufferCopyNow(const u8 *string, void *dst, u16 rise, u8 bgClr, u8 fgClr, u8 shClr, u8 *buffer)
+static void PrintStringToBufferCopyNow(const u8 *string, void *dst, u32 rise, u32 bgClr, u32 fgClr, u32 shClr, u8 *buffer)
 {
     u32 var;
-    u8 windowId;
+    u32 windowId;
     u8 txtColor[3];
     u8 *tileData1, *tileData2;
     struct WindowTemplate winTemplate = {0};
@@ -152,33 +152,33 @@ static void PrintStringToBufferCopyNow(const u8 *string, void *dst, u16 rise, u8
     RemoveWindow(windowId);
 }
 
-static u8 CountMonsInBox(u8 boxId)
+static u32 CountMonsInBox(u32 boxId)
 {
-    u16 i, count;
+    u32 i, count;
 
     for (i = 0, count = 0; i < IN_BOX_COUNT; i++)
     {
-        if (GetBoxMonDataAt(boxId, i, MON_DATA_SPECIES) != SPECIES_NONE)
+        if (GetBoxMonDataAt(boxId, i, MON_DATA_SPECIES))
             count++;
     }
     return count;
 }
 
-s16 GetFirstFreeBoxSpot(u8 boxId)
+s16 GetFirstFreeBoxSpot(u32 boxId)
 {
-    u16 i;
+    u32 i;
 
     for (i = 0; i < IN_BOX_COUNT; i++)
     {
-        if (GetBoxMonDataAt(boxId, i, MON_DATA_SPECIES) == SPECIES_NONE)
+        if (!GetBoxMonDataAt(boxId, i, MON_DATA_SPECIES))
             return i;
     }
     return -1; // all spots are taken
 }
 
-u8 CountPartyNonEggMons(void)
+u32 CountPartyNonEggMons(void)
 {
-    u16 i, count;
+    u32 i, count;
 
     for (i = 0, count = 0; i < PARTY_SIZE; i++)
     {
@@ -188,9 +188,9 @@ u8 CountPartyNonEggMons(void)
     return count;
 }
 
-u8 CountPartyAliveNonEggMonsExcept(u8 slotToIgnore)
+u32 CountPartyAliveNonEggMonsExcept(u32 slotToIgnore)
 {
-    u16 i, count;
+    u32 i, count;
 
     for (i = 0, count = 0; i < PARTY_SIZE; i++)
     {
@@ -200,14 +200,14 @@ u8 CountPartyAliveNonEggMonsExcept(u8 slotToIgnore)
     return count;
 }
 
-u16 CountPartyAliveNonEggMons_IgnoreVar0x8004Slot(void)
+u32 CountPartyAliveNonEggMons_IgnoreVar0x8004Slot(void)
 {
     return CountPartyAliveNonEggMonsExcept(gSpecialVar_0x8004);
 }
 
-u8 CountPartyMons(void)
+u32 CountPartyMons(void)
 {
-    u16 i, count;
+    u32 i, count;
 
     for (i = 0, count = 0; i < PARTY_SIZE; i++)
     {
@@ -330,7 +330,7 @@ static void Task_PokemonStorageSystemPC(u8 taskId)
 
 void ShowPokemonStorageSystemPC(void)
 {
-    u8 taskId = CreateTask(Task_PokemonStorageSystemPC, 80);
+    u32 taskId = CreateTask(Task_PokemonStorageSystemPC, 80);
     gTasks[taskId].data[0] = 0;
     gTasks[taskId].data[1] = 0;
     ScriptContext2_Enable();
@@ -338,7 +338,7 @@ void ShowPokemonStorageSystemPC(void)
 
 static void FieldCb_ReturnToPcMenu(void)
 {
-    u8 taskId;
+    u32 taskId;
     MainCallback vblankCb = gMain.vblankCallback;
 
     SetVBlankCallback(NULL);
@@ -363,7 +363,7 @@ static const struct WindowTemplate sUnknown_83CDA48 = {
     .baseBlock = 0x001
 };
 
-static void PSS_CreatePCMenu(u8 whichMenu, s16 *windowIdPtr)
+static void PSS_CreatePCMenu(u32 whichMenu, s16 *windowIdPtr)
 {
     s16 windowId = AddWindow(&sUnknown_83CDA48);
 
@@ -383,7 +383,7 @@ void Cb2_ExitPSS(void)
 
 void ResetPokemonStorageSystem(void)
 {
-    u16 boxId, boxPosition;
+    u32 boxId, boxPosition;
 
     SetCurrentBox(0);
 	
@@ -392,16 +392,18 @@ void ResetPokemonStorageSystem(void)
         for (boxPosition = 0; boxPosition < IN_BOX_COUNT; boxPosition++)
             ZeroBoxMonAt(boxId, boxPosition);
     }
+	
     for (boxId = 0; boxId < TOTAL_BOXES_COUNT; boxId++)
     {
         u8 *dest = StringCopy(GetBoxNamePtr(boxId), gText_Box);
         ConvertIntToDecimalStringN(dest, boxId + 1, STR_CONV_MODE_LEFT_ALIGN, 2);
     }
+	
     for (boxId = 0; boxId < TOTAL_BOXES_COUNT; boxId++)
         SetBoxWallpaper(boxId, boxId % 4);
 }
 
-void LoadBoxSelectionPopupSpriteGfx(struct UnkPSSStruct_2002370 *a0, u16 tileTag, u16 palTag, u8 a3, bool32 loadPal)
+void LoadBoxSelectionPopupSpriteGfx(struct UnkPSSStruct_2002370 *a0, u32 tileTag, u32 palTag, u32 a3, bool32 loadPal)
 {
     struct SpritePalette palette = {
         sBoxSelectionPopupPalette, palTag
@@ -433,12 +435,12 @@ void FreeBoxSelectionPopupSpriteGfx(void)
     FreeSpriteTilesByTag(sBoxSelectionPopupSpriteManager->tilesTag + 1);
 }
 
-void sub_808C940(u8 curBox)
+void sub_808C940(u32 curBox)
 {
-    u16 i;
-    u8 spriteId;
+    u32 i, spriteId;
     struct SpriteTemplate template;
     struct OamData oamData = {};
+	
     oamData.size = SPRITE_SIZE(64x64);
     oamData.paletteNum = 1;
     template = (struct SpriteTemplate){
@@ -462,10 +464,10 @@ void sub_808C940(u8 curBox)
 		
 		for (i = 0; i < 4; i++)
 		{
-			u16 r5;
+			u32 r5 = 0;
+			
 			spriteId = CreateSprite(&template, 124, 80, sBoxSelectionPopupSpriteManager->subpriority);
 			sBoxSelectionPopupSpriteManager->unk_0004[i] = gSprites + spriteId;
-			r5 = 0;
 			
 			if (i & 2)
 			{
@@ -497,13 +499,14 @@ void sub_808C940(u8 curBox)
 
 void sub_808C950(void)
 {
-    u16 i;
+    u32 i;
 	
     if (sBoxSelectionPopupSpriteManager->unk_0000)
     {
         DestroySprite(sBoxSelectionPopupSpriteManager->unk_0000);
         sBoxSelectionPopupSpriteManager->unk_0000 = NULL;
     }
+	
     for (i = 0; i < 4; i++)
     {
         if (sBoxSelectionPopupSpriteManager->unk_0004[i])
@@ -512,6 +515,7 @@ void sub_808C950(void)
             sBoxSelectionPopupSpriteManager->unk_0004[i] = NULL;
         }
     }
+	
     for (i = 0; i < 2; i++)
     {
         if (sBoxSelectionPopupSpriteManager->unk_0020[i])
@@ -519,7 +523,7 @@ void sub_808C950(void)
     }
 }
 
-u8 HandleBoxChooseSelectionInput(void)
+u32 HandleBoxChooseSelectionInput(void)
 {
     if (JOY_NEW(B_BUTTON))
     {
@@ -560,7 +564,7 @@ static void UpdateBoxNameAndCountSprite_WraparoundLeft(void)
 
 static void PrintBoxNameAndCountToSprite(void)
 {
-    u8 nPokemonInBox = CountMonsInBox(sBoxSelectionPopupSpriteManager->curBox);
+    u32 nPokemonInBox = CountMonsInBox(sBoxSelectionPopupSpriteManager->curBox);
     u8 *boxName = StringCopy(sBoxSelectionPopupSpriteManager->strbuf, GetBoxNamePtr(sBoxSelectionPopupSpriteManager->curBox));
 
     while (boxName < sBoxSelectionPopupSpriteManager->strbuf + BOX_NAME_LENGTH)
@@ -574,9 +578,9 @@ static void PrintBoxNameAndCountToSprite(void)
     PrintToSpriteWithTagUnk0240(sBoxSelectionPopupSpriteManager->strbuf, 3, 3);
 }
 
-static void PrintToSpriteWithTagUnk0240(const u8 *str, u16 x, u16 y)
+static void PrintToSpriteWithTagUnk0240(const u8 *str, u32 x, u32 y)
 {
-    u16 tileStart = GetSpriteTileStartByTag(sBoxSelectionPopupSpriteManager->tilesTag);
+    u32 tileStart = GetSpriteTileStartByTag(sBoxSelectionPopupSpriteManager->tilesTag);
     PrintStringToBufferCopyNow(str, (void *)(OBJ_VRAM0 + tileStart * 32 + 256 * y + 32 * x), 0x100, TEXT_COLOR_RED, TEXT_DYNAMIC_COLOR_6, TEXT_DYNAMIC_COLOR_5, sBoxSelectionPopupSpriteManager->buffer);
 }
 

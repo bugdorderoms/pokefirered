@@ -9,10 +9,10 @@ void InitRoamer(void);
 void UpdateLocationHistoryForRoamer(void);
 void RoamerMoveToOtherLocationSet(void);
 void RoamerMove(void);
-u8 TryStartRoamerEncounter(void);
+bool32 TryStartRoamerEncounter(void);
 void UpdateRoamerHPStatus(struct Pokemon *mon);
 void SetRoamerInactive(void);
-u16 GetRoamerLocationMapSectionId(void);
-u16 GetRoamerSpecies(void);
+u32 GetRoamerLocationMapSectionId(void);
+u32 GetRoamerSpecies(void);
 
 #endif // GUARD_ROAMER_H

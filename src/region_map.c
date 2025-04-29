@@ -21,7 +21,7 @@
 #include "constants/poke_ride.h"
 #include "constants/regions.h"
 
-#define MAP_WIDTH 22
+#define MAP_WIDTH  22
 #define MAP_HEIGHT 15
 
 #define CANCEL_BUTTON_X 21
@@ -195,7 +195,7 @@ struct MapCursor
     s16 verticalMove;
     u16 moveCounter;
     u8 snapId;
-    u8 (*inputHandler)(void);
+    u32 (*inputHandler)(void);
     u16 selectedMapsec;
     u16 selectedMapsecType;
     u16 selectedDungeonType;
@@ -264,92 +264,92 @@ static EWRAM_DATA struct FlyMap * sFlyMap = NULL;
 
 static void InitRegionMapType(void);
 static void CB2_OpenRegionMap(void);
-static bool8 LoadRegionMapGfx(void);
+static bool32 LoadRegionMapGfx(void);
 static void CreateMainMapTask(void);
 static void Task_RegionMap(u8);
 static void SaveMainMapTask(u8);
-static void FreeRegionMap(u8);
+static void FreeRegionMap(u32);
 static void CB2_RegionMap(void);
 static void SetRegionMapVBlankCB(void);
 static void InitRegionMapBgs(void);
 static void ResetOamForRegionMap(void);
-static void SetBg0andBg3Hidden(bool8);
+static void SetBg0andBg3Hidden(bool32);
 static void UpdateMapsecNameBox(void);
 static void DisplayCurrentMapName(void);
 static void DrawDungeonNameBox(void);
 static void DisplayCurrentDungeonName(void);
-static void BufferRegionMapBg(u8, u16 *);
-static void InitSwitchMapMenu(u8, u8, TaskFunc);
+static void BufferRegionMapBg(u32, u16 *);
+static void InitSwitchMapMenu(u32, u32, TaskFunc);
 static void Task_SwitchMapMenu(u8);
-static void FreeSwitchMapMenu(u8);
-static bool8 sub_80C12EC(void);
-static void LoadSwitchMapTilemap(u8, u16 *);
+static void FreeSwitchMapMenu(u32);
+static bool32 sub_80C12EC(void);
+static void LoadSwitchMapTilemap(u32, u16 *);
 static void DrawSwitchMapSelectionHighlight(void);
-static bool8 DimScreenForSwitchMapMenu(void);
-static bool8 HandleSwitchMapInput(void);
-static bool8 CreateSwitchMapCursor(void);
-static void CreateSwitchMapCursorSubsprite(u8, u16, u16);
+static bool32 DimScreenForSwitchMapMenu(void);
+static bool32 HandleSwitchMapInput(void);
+static bool32 CreateSwitchMapCursor(void);
+static void CreateSwitchMapCursorSubsprite(u32, u32, u32);
 static void FreeSwitchMapCursor(void);
-static void InitDungeonMapPreview(u8, TaskFunc);
+static void InitDungeonMapPreview(u32, TaskFunc);
 static void Task_DungeonMapPreview(u8);
 static void Task_DrawDungeonMapPreviewFlavorText(u8);
-static void FreeDungeonMapPreview(u8);
+static void FreeDungeonMapPreview(u32);
 static void InitScreenForDungeonMapPreview(void);
-static bool8 UpdateDungeonMapPreview(bool8);
-static void InitMapOpenAnim(u8, TaskFunc);
+static bool32 UpdateDungeonMapPreview(bool32);
+static void InitMapOpenAnim(u32, TaskFunc);
 static void InitScreenForMapOpenAnim(void);
 static void Task_MapOpenAnim(u8);
 static void FreeMapOpenCloseAnim(void);
 static void FreeMapEdgeSprites(void);
-static bool8 MoveMapEdgesOutward(void);
+static bool32 MoveMapEdgesOutward(void);
 static void sub_80C2B48(void);
-static void DoMapCloseAnim(u8);
+static void DoMapCloseAnim(u32);
 static void Task_MapCloseAnim(u8);
-static bool8 MoveMapEdgesInward(void);
-static void CreateMapCursor(u16, u16);
+static bool32 MoveMapEdgesInward(void);
+static void CreateMapCursor(u32, u32);
 static void CreateMapCursorSprite(void);
-static void SetMapCursorInvisibility(bool8);
+static void SetMapCursorInvisibility(bool32);
 static void FreeMapCursor(void);
-static u8 HandleRegionMapInput(void);
-static u8 MoveMapCursor(void);
-static u8 GetRegionMapInput(void);
+static u32 HandleRegionMapInput(void);
+static u32 MoveMapCursor(void);
+static u32 GetRegionMapInput(void);
 static void SnapToIconOrButton(void);
-static u16 GetMapsecUnderCursor(void);
-static u16 GetDungeonMapsecUnderCursor(void);
-static u8 GetMapsecType(u8);
-static u8 GetDungeonMapsecType(u8);
-static u8 GetSelectedMapsecType(u8);
+static u32 GetMapsecUnderCursor(void);
+static u32 GetDungeonMapsecUnderCursor(void);
+static u32 GetMapsecType(u32);
+static u32 GetDungeonMapsecType(u32);
+static u32 GetSelectedMapsecType(u32);
 static void GetPlayerPositionOnRegionMap_HandleOverrides(void);
-static u8 GetSelectedMapSection(u8, u8, s16, s16);
-static void CreatePlayerIcon(u16, u16);
+static u32 GetSelectedMapSection(u32, u32, s16, s16);
+static void CreatePlayerIcon(u32, u32);
 static void CreatePlayerIconSprite(void);
-static void SetPlayerIconInvisibility(bool8);
+static void SetPlayerIconInvisibility(bool32);
 static void FreePlayerIcon(void);
-static void InitMapIcons(u8, TaskFunc);
+static void InitMapIcons(u32, TaskFunc);
 static void LoadMapIcons(u8);
-static void FinishMapIconLoad(u8);
+static void FinishMapIconLoad(u32);
 static void CreateFlyIcons(void);
 static void CreateDungeonIcons(void);
-static void SetFlyIconInvisibility(u8, u8, bool8);
-static void SetDungeonIconInvisibility(u8, u8, bool8);
+static void SetFlyIconInvisibility(u32, u32, bool32);
+static void SetDungeonIconInvisibility(u32, u32, bool32);
 static void FreeMapIcons(void);
-static bool8 SaveRegionMapGpuRegs(u8);
-static bool8 SetRegionMapGpuRegs(u8);
+static void SaveRegionMapGpuRegs(u32);
+static void SetRegionMapGpuRegs(u32);
 static void ResetGpuRegs(void);
 static void SetBldCnt(u8, u16, u16);
-static void SetBldY(u16);
+static void SetBldY(u32);
 static void SetBldAlpha(u16, u16);
-static void SetWinIn(u16, u16);
-static void SetWinOut(u16);
-static void SetGpuWindowDims(u8, const struct GpuWindowParams *);
+static void SetWinIn(u32, u32);
+static void SetWinOut(u32);
+static void SetGpuWindowDims(u32, const struct GpuWindowParams *);
 static void FreeAndResetGpuRegs(void);
 static void PrintTopBarTextLeft(const u8 *);
 static void PrintTopBarTextRight(const u8 *);
-static void ClearOrDrawTopBar(bool8);
+static void ClearOrDrawTopBar(bool32);
 static void Task_FlyMap(u8);
 static void InitFlyMap(void);
-static void FreeFlyMap(u8);
-static void SetFlyWarpDestination(u16);
+static void FreeFlyMap(u32);
+static void SetFlyWarpDestination(u32);
 
 #include "data/region_map/region_map_entry_strings.h"
 #include "data/map_previews.h"
@@ -818,9 +818,9 @@ static const u8 sMapFlyDestinations[][3] = {
     [MAPSEC_EMBER_SPA           - MAPSECS_KANTO] = {MAP(PALLET_TOWN),                           0},
 };
 
-static void RegionMap_DarkenPalette(u16 *pal, u16 size, u16 tint)
+static void RegionMap_DarkenPalette(u16 *pal, u32 size, u32 tint)
 {
-    int i;
+    u32 i;
     int r, g, b;
 
     for (i = 0; i < size; i++)
@@ -847,7 +847,7 @@ static void sub_80BFEA0(void)
     LoadPalette(&sRegionMap_Pal[0x2F], 0x2F, sizeof(sRegionMap_Pal[0x2F]));
 }
 
-void InitRegionMapWithExitCB(u8 type, MainCallback cb)
+void InitRegionMapWithExitCB(u32 type, MainCallback cb)
 {
     sRegionMap = AllocZeroed(sizeof(struct RegionMap));
 	
@@ -871,9 +871,7 @@ void InitRegionMapWithExitCB(u8 type, MainCallback cb)
 
 static void InitRegionMapType(void)
 {
-    u8 i;
-    u8 j;
-    u8 region;
+    u32 i, j, region;
 
     switch (sRegionMap->type)
     {
@@ -884,6 +882,7 @@ static void InitRegionMapType(void)
         sRegionMap->mainTask = Task_FlyMap;
         break;
     }
+	
     for (i = 0; i < MAPPERM_COUNT; i++)
         sRegionMap->permissions[i] = sRegionMapPermissions[sRegionMap->type][i];
 
@@ -912,12 +911,12 @@ static void InitRegionMapType(void)
     sRegionMap->selectedRegion = sRegionMap->playersRegion = region;
 }
 
-static inline bool8 GetRegionMapPermission(u8 attr)
+static inline bool32 GetRegionMapPermission(u32 attr)
 {
     return sRegionMap->permissions[attr];
 }
 
-static inline u8 GetSelectedRegionMap(void)
+static inline u32 GetSelectedRegionMap(void)
 {
     return sRegionMap->selectedRegion;
 }
@@ -974,7 +973,7 @@ static void CB2_OpenRegionMap(void)
     sRegionMap->openState++;
 }
 
-static bool8 LoadRegionMapGfx(void)
+static bool32 LoadRegionMapGfx(void)
 {
     switch (sRegionMap->loadGfxState)
     {
@@ -1046,7 +1045,7 @@ static void PlaySEForSelectedMapsec(void)
     if (SelectedMapsecSEEnabled())
     {
         if ((GetSelectedMapsecType(LAYER_MAP) != MAPSECTYPE_ROUTE && GetSelectedMapsecType(LAYER_MAP) != MAPSECTYPE_NONE) 
-         || (GetSelectedMapsecType(LAYER_DUNGEON) != MAPSECTYPE_ROUTE && GetSelectedMapsecType(LAYER_DUNGEON) != MAPSECTYPE_NONE))
+        || (GetSelectedMapsecType(LAYER_DUNGEON) != MAPSECTYPE_ROUTE && GetSelectedMapsecType(LAYER_DUNGEON) != MAPSECTYPE_NONE))
             PlaySE(SE_DEX_SCROLL);
 			
         if (sMapCursor->x == SWITCH_BUTTON_X && sMapCursor->y == SWITCH_BUTTON_Y && GetRegionMapPermission(MAPPERM_HAS_SWITCH_BUTTON))
@@ -1166,7 +1165,7 @@ static void SaveMainMapTask(u8 taskId)
     gTasks[taskId].func = sRegionMap->mainTask;
 }
 
-static void FreeRegionMap(u8 taskId)
+static void FreeRegionMap(u32 taskId)
 {
     if (GetRegionMapPermission(MAPPERM_HAS_OPEN_ANIM))
         FreeMapOpenCloseAnim();
@@ -1228,7 +1227,7 @@ static void ResetOamForRegionMap(void)
     ScanlineEffect_Stop();
 }
 
-static void SetBg0andBg3Hidden(bool8 hide)
+static void SetBg0andBg3Hidden(bool32 hide)
 {
     switch (hide)
     {
@@ -1282,7 +1281,7 @@ static void DrawDungeonNameBox(void)
 
 static void DisplayCurrentDungeonName(void)
 {
-    u16 mapsecId;
+    u32 mapsecId;
     
     SetDispCnt(WIN_DUNGEON_NAME, TRUE);
     ClearWindowTilemap(WIN_DUNGEON_NAME);
@@ -1308,11 +1307,10 @@ static void ClearMapsecNameText(void)
     CopyWindowToVram(WIN_DUNGEON_NAME, COPYWIN_BOTH);
 }
 
-static void BufferRegionMapBg(u8 bg, u16 *map)
+static void BufferRegionMapBg(u32 bg, u16 *map)
 {
-    s16 i;
-    s16 j;
-    u8 whichMap;
+    u32 i, j;
+    u32 whichMap;
     u16 *buffer = sRegionMap->bgTilemapBuffers[bg];
 	
     for (i = 0; i < 20; i++)
@@ -1325,12 +1323,14 @@ static void BufferRegionMapBg(u8 bg, u16 *map)
                 buffer[32 * i + j] = map[0];
         }
     }
+	
     if (GetRegionMapPermission(MAPPERM_HAS_SWITCH_BUTTON))
     {
         WriteSequenceToBgTilemapBuffer(0, 0x0F0, 0x18, 14, 3, 1, 0x3, 0x001);
         WriteSequenceToBgTilemapBuffer(0, 0x100, 0x18, 15, 3, 1, 0x3, 0x001);
         WriteSequenceToBgTilemapBuffer(0, 0x110, 0x18, 16, 3, 1, 0x3, 0x001);
     }
+	
     if (sSwitchMapMenu != NULL)
         whichMap = sSwitchMapMenu->currentSelection;
     else
@@ -1343,12 +1343,12 @@ static void BufferRegionMapBg(u8 bg, u16 *map)
         FillBgTilemapBufferRect_Palette0(0, 0x003, 21, 16, 3, 3);
 }
 
-static inline u8 GetRegionMapPlayerIsOn(void)
+static inline u32 GetRegionMapPlayerIsOn(void)
 {
     return sRegionMap->playersRegion;
 }
 
-static void InitSwitchMapMenu(u8 whichMap, u8 taskId, TaskFunc taskFunc)
+static void InitSwitchMapMenu(u32 whichMap, u32 taskId, TaskFunc taskFunc)
 {
     sSwitchMapMenu = AllocZeroed(sizeof(struct SwitchMapMenu));
 	
@@ -1390,7 +1390,7 @@ static void ResetGpuRegsForSwitchMapMenu(void)
     SetBldAlpha(16 - sSwitchMapMenu->alpha, sSwitchMapMenu->alpha);
 }
 
-static bool8 sub_80C1014(void)
+static bool32 sub_80C1014(void)
 {
     if (sSwitchMapMenu->alpha < 16)
     {
@@ -1401,7 +1401,7 @@ static bool8 sub_80C1014(void)
 	return TRUE;
 }
 
-static bool8 sub_80C1058(void)
+static bool32 sub_80C1058(void)
 {
     if (sSwitchMapMenu->alpha >= 2)
     {
@@ -1494,7 +1494,7 @@ static void Task_SwitchMapMenu(u8 taskId)
     }
 }
 
-static void FreeSwitchMapMenu(u8 taskId)
+static void FreeSwitchMapMenu(u32 taskId)
 {
     gTasks[taskId].func = sSwitchMapMenu->exitTask;
     HideBg(2);
@@ -1506,7 +1506,7 @@ static void FreeSwitchMapMenu(u8 taskId)
     FREE_IF_NOT_NULL(sSwitchMapMenu);
 }
 
-static bool8 sub_80C12EC(void)
+static bool32 sub_80C12EC(void)
 {
     if (sSwitchMapMenu->blendY != 0)
     {
@@ -1521,10 +1521,9 @@ static bool8 sub_80C12EC(void)
     }
 }
 
-static void LoadSwitchMapTilemap(u8 bg, u16 *map)
+static void LoadSwitchMapTilemap(u32 bg, u16 *map)
 {
-    s16 i;
-    s16 j;
+    u32 i, j;
     u16 *buffer = sRegionMap->bgTilemapBuffers[bg];
 	
     for (i = 0; i < 20; i++)
@@ -1554,7 +1553,7 @@ static void DrawSwitchMapSelectionHighlight(void)
     SetGpuWindowDims(1, &data);
 }
 
-static bool8 DimScreenForSwitchMapMenu(void)
+static bool32 DimScreenForSwitchMapMenu(void)
 {
     if (sSwitchMapMenu->blendY < (BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2))
     {
@@ -1565,10 +1564,11 @@ static bool8 DimScreenForSwitchMapMenu(void)
 	return TRUE;
 }
 
-static bool8 HandleSwitchMapInput(void)
+static bool32 HandleSwitchMapInput(void)
 {
-    bool8 changedSelection = FALSE;
+    bool32 changedSelection = FALSE;
     struct GpuWindowParams data;
+	
     data.left = sSwitchMapMenu->highlight.left = 72;
     data.top = sSwitchMapMenu->highlight.top = 8 * (sSwitchMapMenu->yOffset + 4 * sSwitchMapMenu->currentSelection);
     data.right = sSwitchMapMenu->highlight.right = 168;
@@ -1601,6 +1601,7 @@ static bool8 HandleSwitchMapInput(void)
         SetDungeonIconInvisibility(0xFF, ARRAY_COUNT(sMapIcons->dungeonIcons), TRUE);
         return TRUE;
     }
+	
     if (changedSelection)
     {
         BufferRegionMapBg(0, sRegionMap->layouts[sSwitchMapMenu->currentSelection]);
@@ -1622,7 +1623,7 @@ static void SpriteCB_SwitchMapCursor(struct Sprite * sprite)
     sprite->y = sSwitchMapMenu->highlight.top + 16;
 }
 
-static bool8 CreateSwitchMapCursor(void)
+static bool32 CreateSwitchMapCursor(void)
 {
     switch (sSwitchMapMenu->cursorLoadState)
     {
@@ -1643,9 +1644,9 @@ static bool8 CreateSwitchMapCursor(void)
     return FALSE;
 }
 
-static void CreateSwitchMapCursorSubsprite(u8 whichSprite, u16 tileTag, u16 palTag)
+static void CreateSwitchMapCursorSubsprite(u32 whichSprite, u32 tileTag, u32 palTag)
 {
-    u8 spriteId;
+    u32 spriteId;
 
     struct SpriteSheet spriteSheet = {
         .data = sSwitchMapMenu->cursorSubsprite[whichSprite].tiles,
@@ -1679,7 +1680,7 @@ static void CreateSwitchMapCursorSubsprite(u8 whichSprite, u16 tileTag, u16 palT
 
 static void FreeSwitchMapCursor(void)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; i < ARRAY_COUNT(sSwitchMapMenu->cursorSubsprite); i++)
     {
@@ -1692,7 +1693,7 @@ static void FreeSwitchMapCursor(void)
     }
 }
 
-static const u8 *GetDungeonFlavorText(u16 mapsec)
+static const u8 *GetDungeonFlavorText(u32 mapsec)
 {
 	if (gMapSectionsInfo[mapsec].desc != NULL)
 		return gMapSectionsInfo[mapsec].desc;
@@ -1700,7 +1701,7 @@ static const u8 *GetDungeonFlavorText(u16 mapsec)
 		return gText_RegionMap_NoData;
 }
 
-static const u8 *GetDungeonName(u16 mapsec)
+static const u8 *GetDungeonName(u32 mapsec)
 {
 	if (gMapSectionsInfo[mapsec].name != NULL)
 		return gMapSectionsInfo[mapsec].name;
@@ -1708,9 +1709,9 @@ static const u8 *GetDungeonName(u16 mapsec)
 		return gText_RegionMap_NoData;
 }
 
-static void InitDungeonMapPreview(u8 taskId, TaskFunc taskFunc)
+static void InitDungeonMapPreview(u32 taskId, TaskFunc taskFunc)
 {
-    u8 mapsec;
+    u32 mapsec;
 	
     sDungeonMapPreview = AllocZeroed(sizeof(struct DungeonMapPreview));
     mapsec = GetDungeonMapsecUnderCursor();
@@ -1733,7 +1734,7 @@ static void InitDungeonMapPreview(u8 taskId, TaskFunc taskFunc)
     gTasks[taskId].func = Task_DungeonMapPreview;
 }
 
-static bool8 LoadMapPreviewGfx(void)
+static bool32 LoadMapPreviewGfx(void)
 {
     switch (sDungeonMapPreview->loadState)
     {
@@ -1865,7 +1866,7 @@ static void Task_DrawDungeonMapPreviewFlavorText(u8 taskId)
     }
 }
 
-static void FreeDungeonMapPreview(u8 taskId)
+static void FreeDungeonMapPreview(u32 taskId)
 {
     gTasks[taskId].func = sDungeonMapPreview->savedTask;
     HideBg(2);
@@ -1897,7 +1898,7 @@ static void InitScreenForDungeonMapPreview(void)
     sDungeonMapPreview->bottomIncrement = (136 - sDungeonMapPreview->bottom) / 8;
 }
 
-static bool8 UpdateDungeonMapPreview(bool8 a0)
+static bool32 UpdateDungeonMapPreview(bool32 a0)
 {
     struct GpuWindowParams data;
 
@@ -1942,9 +1943,9 @@ static bool8 UpdateDungeonMapPreview(bool8 a0)
     return FALSE;
 }
 
-static void CreateMapEdgeSprite(u8 mapEdgeNum, u8 tileTag, u8 palTag)
+static void CreateMapEdgeSprite(u32 mapEdgeNum, u32 tileTag, u32 palTag)
 {
-    u8 spriteId;
+    u32 spriteId;
 	
     struct SpriteSheet spriteSheet = {
         .data = sMapOpenCloseAnim->mapEdges[mapEdgeNum],
@@ -1976,9 +1977,9 @@ static void CreateMapEdgeSprite(u8 mapEdgeNum, u8 tileTag, u8 palTag)
     gSprites[spriteId].invisible = TRUE;
 }
 
-static void InitMapOpenAnim(u8 taskId, TaskFunc taskFunc)
+static void InitMapOpenAnim(u32 taskId, TaskFunc taskFunc)
 {
-    u8 i;
+    u32 i;
 
     sMapOpenCloseAnim = AllocZeroed(sizeof(struct MapOpenCloseAnim));
 	
@@ -1996,9 +1997,9 @@ static void InitMapOpenAnim(u8 taskId, TaskFunc taskFunc)
     gTasks[taskId].func = Task_MapOpenAnim;
 }
 
-static void SetMapEdgeInvisibility(u8 mapEdgeNum, bool8 invisible)
+static void SetMapEdgeInvisibility(u32 mapEdgeNum, bool32 invisible)
 {
-    u8 i;
+    u32 i;
 	
     if (mapEdgeNum == ARRAY_COUNT(sMapOpenCloseAnim->mapEdges))
     {
@@ -2009,7 +2010,7 @@ static void SetMapEdgeInvisibility(u8 mapEdgeNum, bool8 invisible)
         sMapOpenCloseAnim->mapEdges[mapEdgeNum]->sprite->invisible = invisible;
 }
 
-static bool8 LoadMapEdgeGfx(void)
+static bool32 LoadMapEdgeGfx(void)
 {
     switch (sMapOpenCloseAnim->loadGfxState)
     {
@@ -2079,14 +2080,14 @@ static void sub_80C253C(void)
     SetDispCnt(0, FALSE);
 }
 
-static void FinishMapOpenAnim(u8 taskId)
+static void FinishMapOpenAnim(u32 taskId)
 {
     gTasks[taskId].func = sMapOpenCloseAnim->exitTask;
 }
 
 static void FreeMapOpenCloseAnim(void)
 {
-    u8 i;
+    u32 i;
 	
     FreeMapEdgeSprites();
 	
@@ -2098,7 +2099,7 @@ static void FreeMapOpenCloseAnim(void)
 
 static void FreeMapEdgeSprites(void)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; i < ARRAY_COUNT(sMapOpenCloseAnim->mapEdges); i++)
     {
@@ -2219,7 +2220,7 @@ static void Task_MapOpenAnim(u8 taskId)
     }
 }
 
-static bool8 MoveMapEdgesOutward(void)
+static bool32 MoveMapEdgesOutward(void)
 {
     sub_80C2B48();
 	
@@ -2298,7 +2299,7 @@ static void sub_80C2B9C(void)
     SetDispCnt(0, FALSE);
 }
 
-static void DoMapCloseAnim(u8 taskId)
+static void DoMapCloseAnim(u32 taskId)
 {
     gTasks[taskId].func = Task_MapCloseAnim;
 }
@@ -2373,8 +2374,7 @@ static void Task_MapCloseAnim(u8 taskId)
     }
 }
 
-
-static bool8 MoveMapEdgesInward(void)
+static bool32 MoveMapEdgesInward(void)
 {
     sub_80C2B48();
 	
@@ -2444,7 +2444,7 @@ static void SpriteCB_MapCursor(struct Sprite * sprite)
     }
 }
 
-static void CreateMapCursor(u16 tileTag, u16 palTag)
+static void CreateMapCursor(u32 tileTag, u32 palTag)
 {
     sMapCursor = AllocZeroed(sizeof(struct MapCursor));
     LZDecompressWram(sMapCursor_Gfx, sMapCursor->tiles);
@@ -2487,7 +2487,7 @@ static void CreateMapCursorSprite(void)
     SetMapCursorInvisibility(TRUE);
 }
 
-static void SetMapCursorInvisibility(bool8 invisibile)
+static void SetMapCursorInvisibility(bool32 invisibile)
 {
     sMapCursor->sprite->invisible = invisibile;
 }
@@ -2503,9 +2503,9 @@ static void FreeMapCursor(void)
     FREE_IF_NOT_NULL(sMapCursor);
 }
 
-static u8 HandleRegionMapInput(void)
+static u32 HandleRegionMapInput(void)
 {
-    u8 input = MAP_INPUT_NONE;
+    u32 input = MAP_INPUT_NONE;
 	
     sMapCursor->horizontalMove = 0;
     sMapCursor->verticalMove = 0;
@@ -2581,7 +2581,7 @@ static u8 HandleRegionMapInput(void)
     return input;
 }
 
-static u8 MoveMapCursor(void)
+static u32 MoveMapCursor(void)
 {
     if (sMapCursor->moveCounter != 0)
         return MAP_INPUT_MOVE_CONT;
@@ -2604,7 +2604,7 @@ static u8 MoveMapCursor(void)
     return MAP_INPUT_MOVE_END;
 }
 
-static u8 GetRegionMapInput(void)
+static u32 GetRegionMapInput(void)
 {
     return sMapCursor->inputHandler();
 }
@@ -2661,9 +2661,9 @@ static void SnapToIconOrButton(void)
     sMapCursor->selectedMapsec = GetSelectedMapSection(GetSelectedRegionMap(), LAYER_MAP, sMapCursor->y, sMapCursor->x);
 }
 
-static u16 GetMapsecUnderCursor(void)
+static u32 GetMapsecUnderCursor(void)
 {
-    u8 mapsec;
+    u32 mapsec;
 	
     if (sMapCursor->y < 0 || sMapCursor->y >= MAP_HEIGHT || sMapCursor->x < 0 || sMapCursor->x >= MAP_WIDTH)
         return MAPSEC_NONE;
@@ -2676,9 +2676,9 @@ static u16 GetMapsecUnderCursor(void)
     return mapsec;
 }
 
-static u16 GetDungeonMapsecUnderCursor(void)
+static u32 GetDungeonMapsecUnderCursor(void)
 {
-    u8 mapsec;
+    u32 mapsec;
 	
     if (sMapCursor->y < 0 || sMapCursor->y >= MAP_HEIGHT || sMapCursor->x < 0 || sMapCursor->x >= MAP_WIDTH)
         return MAPSEC_NONE;
@@ -2691,7 +2691,7 @@ static u16 GetDungeonMapsecUnderCursor(void)
     return mapsec;
 }
 
-static u8 GetMapsecType(u8 mapsec)
+static u32 GetMapsecType(u32 mapsec)
 {
     switch (mapsec)
     {
@@ -2744,7 +2744,7 @@ static u8 GetMapsecType(u8 mapsec)
     }
 }
 
-static u8 GetDungeonMapsecType(u8 mapsec)
+static u32 GetDungeonMapsecType(u32 mapsec)
 {
     switch (mapsec)
     {
@@ -2817,7 +2817,7 @@ static u8 GetDungeonMapsecType(u8 mapsec)
     }
 }
 
-static u8 GetSelectedMapsecType(u8 layer)
+static u32 GetSelectedMapsecType(u32 layer)
 {
     switch (layer)
     {
@@ -3072,7 +3072,7 @@ static void GetPlayerPositionOnRegionMap_HandleOverrides(void)
     sMapCursor->selectedMapsec = GetSelectedMapSection(GetSelectedRegionMap(), LAYER_MAP, sMapCursor->y, sMapCursor->x);
 }
 
-static u8 GetSelectedMapSection(u8 whichMap, u8 layer, s16 y, s16 x)
+static u32 GetSelectedMapSection(u32 whichMap, u32 layer, s16 y, s16 x)
 {
     switch (whichMap)
     {
@@ -3089,7 +3089,7 @@ static u8 GetSelectedMapSection(u8 whichMap, u8 layer, s16 y, s16 x)
     }
 }
 
-static void CreatePlayerIcon(u16 tileTag, u16 palTag)
+static void CreatePlayerIcon(u32 tileTag, u32 palTag)
 {
     sPlayerIcon = AllocZeroed(sizeof(struct PlayerIcon));
 	
@@ -3134,7 +3134,7 @@ static void CreatePlayerIconSprite(void)
     SetPlayerIconInvisibility(TRUE);
 }
 
-static void SetPlayerIconInvisibility(bool8 invisible)
+static void SetPlayerIconInvisibility(bool32 invisible)
 {
     sPlayerIcon->sprite->invisible = invisible;
 }
@@ -3150,7 +3150,7 @@ static void FreePlayerIcon(void)
     FREE_IF_NOT_NULL(sPlayerIcon);
 }
 
-static void InitMapIcons(u8 taskId, TaskFunc taskFunc)
+static void InitMapIcons(u32 taskId, TaskFunc taskFunc)
 {
     sMapIcons = AllocZeroed(sizeof(struct MapIcons));
     sMapIcons->exitTask = taskFunc;
@@ -3193,14 +3193,14 @@ static void LoadMapIcons(u8 taskId)
     }
 }
 
-static void FinishMapIconLoad(u8 taskId)
+static void FinishMapIconLoad(u32 taskId)
 {
     gTasks[taskId].func = sMapIcons->exitTask;
 }
 
-static void CreateFlyIconSprite(u8 whichMap, u8 numIcons, u16 x, u16 y, u8 tileTag, u8 palTag)
+static void CreateFlyIconSprite(u32 whichMap, u32 numIcons, u16 x, u16 y, u32 tileTag, u32 palTag)
 {
-    u8 spriteId;
+    u32 spriteId;
 	
     struct SpriteSheet spriteSheet = {
         .data = sMapIcons->flyIconTiles,
@@ -3231,10 +3231,9 @@ static void CreateFlyIconSprite(u8 whichMap, u8 numIcons, u16 x, u16 y, u8 tileT
     sMapIcons->flyIcons[numIcons].region = whichMap;
 }
 
-static void CreateDungeonIconSprite(u8 whichMap, u8 numIcons, u16 x, u16 y, u8 tileTag, u8 palTag)
+static void CreateDungeonIconSprite(u32 whichMap, u32 numIcons, u16 x, u16 y, u32 tileTag, u32 palTag)
 {
-    u8 spriteId;
-    u8 mapsec;
+    u32 spriteId, mapsec;
     s16 offset = 0;
 	
     struct SpriteSheet spriteSheet = {
@@ -3272,11 +3271,13 @@ static void CreateDungeonIconSprite(u8 whichMap, u8 numIcons, u16 x, u16 y, u8 t
 
 static void CreateFlyIcons(void)
 {
-    u16 i, y, x;
-    u8 numIcons = 0;
+    u32 i, y, x;
+    u32 numIcons;
 	
     if (GetRegionMapPermission(MAPPERM_HAS_FLY_DESTINATIONS))
     {
+		numIcons = 0;
+		
         for (i = 0; i < REGIONMAP_COUNT; i++)
         {
             for (y = 0; y < MAP_HEIGHT; y++)
@@ -3296,9 +3297,8 @@ static void CreateFlyIcons(void)
 
 static void CreateDungeonIcons(void)
 {
-    u16 i, y, x;
-    u8 numIcons = 0;
-    u8 mapsec;
+    u32 i, y, x;
+    u32 mapsec, numIcons = 0;
 	
     for (i = 0; i < REGIONMAP_COUNT; i++)
     {
@@ -3322,9 +3322,9 @@ static void CreateDungeonIcons(void)
     }
 }
 
-static void SetFlyIconInvisibility(u8 whichMap, u8 iconNum, bool8 invisible)
+static void SetFlyIconInvisibility(u32 whichMap, u32 iconNum, bool32 invisible)
 {
-    u8 i;
+    u32 i;
 	
     if (iconNum == ARRAY_COUNT(sMapIcons->flyIcons))
     {
@@ -3342,9 +3342,9 @@ static void SetFlyIconInvisibility(u8 whichMap, u8 iconNum, bool8 invisible)
     }
 }
 
-static void SetDungeonIconInvisibility(u8 whichMap, u8 iconNum, bool8 invisible)
+static void SetDungeonIconInvisibility(u32 whichMap, u32 iconNum, bool32 invisible)
 {
-    u8 i;
+    u32 i;
 	
     if (iconNum == ARRAY_COUNT(sMapIcons->dungeonIcons))
     {
@@ -3364,7 +3364,7 @@ static void SetDungeonIconInvisibility(u8 whichMap, u8 iconNum, bool8 invisible)
 
 static void FreeMapIcons(void)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; i < ARRAY_COUNT(sMapIcons->flyIcons); i++)
     {
@@ -3387,10 +3387,10 @@ static void FreeMapIcons(void)
     FREE_IF_NOT_NULL(sMapIcons);
 }
 
-static bool8 SaveRegionMapGpuRegs(u8 idx)
+static void SaveRegionMapGpuRegs(u32 idx)
 {
     if (sRegionMapGpuRegs[idx] != NULL)
-        return FALSE;
+        return;
 	
     sRegionMapGpuRegs[idx] = AllocZeroed(sizeof(struct RegionMapGpuRegs));
     sRegionMapGpuRegs[idx]->bldcnt = GetGpuReg(REG_OFFSET_BLDCNT);
@@ -3402,14 +3402,12 @@ static bool8 SaveRegionMapGpuRegs(u8 idx)
     sRegionMapGpuRegs[idx]->win1h = GetGpuReg(REG_OFFSET_WIN1H);
     sRegionMapGpuRegs[idx]->win0v = GetGpuReg(REG_OFFSET_WIN0V);
     sRegionMapGpuRegs[idx]->win1v = GetGpuReg(REG_OFFSET_WIN1V);
-	
-    return TRUE;
 }
 
-static bool8 SetRegionMapGpuRegs(u8 idx)
+static void SetRegionMapGpuRegs(u32 idx)
 {
     if (sRegionMapGpuRegs[idx] == NULL)
-        return FALSE;
+        return;
 	
     SetGpuReg(REG_OFFSET_BLDCNT, sRegionMapGpuRegs[idx]->bldcnt);
     SetGpuReg(REG_OFFSET_BLDY, sRegionMapGpuRegs[idx]->bldy);
@@ -3421,13 +3419,11 @@ static bool8 SetRegionMapGpuRegs(u8 idx)
     SetGpuReg(REG_OFFSET_WIN0V, sRegionMapGpuRegs[idx]->win0v);
     SetGpuReg(REG_OFFSET_WIN1V, sRegionMapGpuRegs[idx]->win1v);
     FREE_IF_NOT_NULL(sRegionMapGpuRegs[idx]);
-	
-    return TRUE;
 }
 
 static void FreeRegionMapGpuRegs(void)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; i < ARRAY_COUNT(sRegionMapGpuRegs); i++)
         FREE_IF_NOT_NULL(sRegionMapGpuRegs[i]);
@@ -3453,7 +3449,7 @@ static void SetBldCnt(u8 tgt2, u16 tgt1, u16 effect)
     SetGpuReg(REG_OFFSET_BLDCNT, regval);
 }
 
-static void SetBldY(u16 tgt)
+static void SetBldY(u32 tgt)
 {
     SetGpuReg(REG_OFFSET_BLDY, tgt);
 }
@@ -3465,19 +3461,19 @@ static void SetBldAlpha(u16 tgt2, u16 tgt1)
     SetGpuReg(REG_OFFSET_BLDALPHA, regval);
 }
 
-static void SetWinIn(u16 b, u16 a)
+static void SetWinIn(u32 b, u32 a)
 {
     u16 regval = a << 8;
     regval |= b;
     SetGpuReg(REG_OFFSET_WININ, regval);
 }
 
-static void SetWinOut(u16 regval)
+static void SetWinOut(u32 regval)
 {
     SetGpuReg(REG_OFFSET_WINOUT, regval);
 }
 
-void SetDispCnt(u8 idx, bool8 clear)
+void SetDispCnt(u32 idx, bool32 clear)
 {
     u16 data[sizeof(sWinFlags) / 2];
     memcpy(data, sWinFlags, sizeof(sWinFlags));
@@ -3493,7 +3489,7 @@ void SetDispCnt(u8 idx, bool8 clear)
     }
 }
 
-static void SetGpuWindowDims(u8 winIdx, const struct GpuWindowParams *data)
+static void SetGpuWindowDims(u32 winIdx, const struct GpuWindowParams *data)
 {
     SetGpuReg(sWinRegs[winIdx][0], WIN_RANGE(data->top, data->bottom));
     SetGpuReg(sWinRegs[winIdx][1], WIN_RANGE(data->left, data->right));
@@ -3505,7 +3501,7 @@ static void FreeAndResetGpuRegs(void)
     ResetGpuRegs();
 }
 
-static bool32 IsCeladonDeptStoreMapsec(u16 mapsec)
+static bool32 IsCeladonDeptStoreMapsec(u32 mapsec)
 {
     if (sRegionMap != NULL)
         return FALSE;
@@ -3525,7 +3521,7 @@ static bool32 IsCeladonDeptStoreMapsec(u16 mapsec)
 		return TRUE;
 }
 
-u8 *GetMapName(u8 *dst0, u16 mapsec)
+u8 *GetMapName(u8 *dst0, u32 mapsec)
 {
     if (mapsec - MAPSECS_KANTO <= MAPSEC_SPECIAL_AREA - MAPSECS_KANTO)
 		return StringCopy(dst0, IsCeladonDeptStoreMapsec(mapsec) ? sMapsecName_CELADONDEPT : gMapSectionsInfo[mapsec].name);
@@ -3547,7 +3543,7 @@ static void PrintTopBarTextRight(const u8 *str)
     CopyWindowToVram(WIN_TOPBAR_RIGHT, COPYWIN_BOTH);
 }
 
-static void ClearOrDrawTopBar(bool8 clear)
+static void ClearOrDrawTopBar(bool32 clear)
 {
     if (!clear)
     {
@@ -3683,7 +3679,7 @@ static void InitFlyMap(void)
     sFlyMap->state = 0;
 }
 
-static void FreeFlyMap(u8 taskId)
+static void FreeFlyMap(u32 taskId)
 {
     if (GetRegionMapPermission(MAPPERM_HAS_OPEN_ANIM))
         FreeMapOpenCloseAnim();
@@ -3711,9 +3707,9 @@ static void FreeFlyMap(u8 taskId)
     FREE_IF_NOT_NULL(sFlyMap);
 }
 
-static void SetFlyWarpDestination(u16 mapsec)
+static void SetFlyWarpDestination(u32 mapsec)
 {
-    u16 idx = mapsec - MAPSECS_KANTO;
+    u32 idx = mapsec - MAPSECS_KANTO;
 	
     if (sMapFlyDestinations[idx][2])
         SetWarpDestinationToHealLocation(sMapFlyDestinations[idx][2]);

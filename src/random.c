@@ -14,9 +14,9 @@ u16 Random(void)
     return gRngValue >> 16;
 }
 
-u16 RandomRange(u16 min, u16 max)
+u16 RandomRange(u32 min, u32 max)
 {
-	u16 temp;
+	u32 temp;
 	
 	if (min > max)
 		SWAP(min, max, temp);

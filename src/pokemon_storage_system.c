@@ -5,55 +5,55 @@
 #include "constants/form_change.h"
 
 // Functions here are general utility functions.
-u8 StorageGetCurrentBox(void)
+u32 StorageGetCurrentBox(void)
 {
     return gPokemonStoragePtr->currentBox;
 }
 
-void SetCurrentBox(u8 boxId)
+void SetCurrentBox(u32 boxId)
 {
     if (boxId < TOTAL_BOXES_COUNT)
         gPokemonStoragePtr->currentBox = boxId;
 }
 
-static inline bool8 IsValidBoxIdAndPosition(u8 boxId, u8 boxPosition)
+static inline bool32 IsValidBoxIdAndPosition(u32 boxId, u32 boxPosition)
 {
 	return (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT);
 }
 
-u32 GetAndCopyBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request, void *dst)
+u32 GetAndCopyBoxMonDataAt(u32 boxId, u32 boxPosition, s32 request, void *dst)
 {
 	return IsValidBoxIdAndPosition(boxId, boxPosition) ? GetBoxMonData(&gPokemonStoragePtr->boxes[boxId][boxPosition], request, dst) : 0;
 }
 
-u32 GetBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request)
+u32 GetBoxMonDataAt(u32 boxId, u32 boxPosition, s32 request)
 {
 	return GetAndCopyBoxMonDataAt(boxId, boxPosition, request, NULL);
 }
 
-static void SetBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request, const void *value)
+static void SetBoxMonDataAt(u32 boxId, u32 boxPosition, s32 request, const void *value)
 {
     if (IsValidBoxIdAndPosition(boxId, boxPosition))
         SetBoxMonData(&gPokemonStoragePtr->boxes[boxId][boxPosition], request, value);
 }
 
-u32 GetCurrentBoxMonData(u8 boxPosition, s32 request)
+u32 GetCurrentBoxMonData(u32 boxPosition, s32 request)
 {
     return GetBoxMonDataAt(gPokemonStoragePtr->currentBox, boxPosition, request);
 }
 
-void SetCurrentBoxMonData(u8 boxPosition, s32 request, const void *value)
+void SetCurrentBoxMonData(u32 boxPosition, s32 request, const void *value)
 {
     SetBoxMonDataAt(gPokemonStoragePtr->currentBox, boxPosition, request, value);
 }
 
-void SetBoxMonNickAt(u8 boxId, u8 boxPosition, const u8 *nick)
+void SetBoxMonNickAt(u32 boxId, u32 boxPosition, const u8 *nick)
 {
     if (IsValidBoxIdAndPosition(boxId, boxPosition))
         SetBoxMonData(&gPokemonStoragePtr->boxes[boxId][boxPosition], MON_DATA_NICKNAME, nick);
 }
 
-void SetBoxMonAt(u8 boxId, u8 boxPosition, struct BoxPokemon * src)
+void SetBoxMonAt(u32 boxId, u32 boxPosition, struct BoxPokemon * src)
 {
     if (IsValidBoxIdAndPosition(boxId, boxPosition))
 	{
@@ -62,40 +62,40 @@ void SetBoxMonAt(u8 boxId, u8 boxPosition, struct BoxPokemon * src)
 	}
 }
 
-void ZeroBoxMonAt(u8 boxId, u8 boxPosition)
+void ZeroBoxMonAt(u32 boxId, u32 boxPosition)
 {
     if (IsValidBoxIdAndPosition(boxId, boxPosition))
         ZeroBoxMonData(&gPokemonStoragePtr->boxes[boxId][boxPosition]);
 }
 
-void BoxMonAtToMon(u8 boxId, u8 boxPosition, struct Pokemon * dst)
+void BoxMonAtToMon(u32 boxId, u32 boxPosition, struct Pokemon * dst)
 {
     if (IsValidBoxIdAndPosition(boxId, boxPosition))
         BoxMonToMon(&gPokemonStoragePtr->boxes[boxId][boxPosition], dst);
 }
 
-struct BoxPokemon * GetBoxedMonPtr(u8 boxId, u8 boxPosition)
+struct BoxPokemon * GetBoxedMonPtr(u32 boxId, u32 boxPosition)
 {
 	return IsValidBoxIdAndPosition(boxId, boxPosition) ? &gPokemonStoragePtr->boxes[boxId][boxPosition] : NULL;
 }
 
-u8 *GetBoxNamePtr(u8 boxId)
+u8 *GetBoxNamePtr(u32 boxId)
 {
 	return (boxId < TOTAL_BOXES_COUNT) ? gPokemonStoragePtr->boxNames[boxId] : NULL;
 }
 
-u8 GetBoxWallpaper(u8 boxId)
+u32 GetBoxWallpaper(u32 boxId)
 {
     return (boxId < TOTAL_BOXES_COUNT) ? gPokemonStoragePtr->boxWallpapers[boxId] : 0;
 }
 
-void SetBoxWallpaper(u8 boxId, u8 wallpaperId)
+void SetBoxWallpaper(u32 boxId, u32 wallpaperId)
 {
     if (boxId < TOTAL_BOXES_COUNT && wallpaperId < WALLPAPER_COUNT)
         gPokemonStoragePtr->boxWallpapers[boxId] = wallpaperId;
 }
 
-s16 SeekToNextMonInBox(struct BoxPokemon * boxMons, s8 curIndex, u8 maxIndex, u8 flags)
+s16 SeekToNextMonInBox(struct BoxPokemon * boxMons, s8 curIndex, u32 maxIndex, u32 flags)
 {
     // flags:
     // bit 0: Allow eggs
@@ -120,8 +120,7 @@ s16 SeekToNextMonInBox(struct BoxPokemon * boxMons, s8 curIndex, u8 maxIndex, u8
     {
         for (i = curIndex + adder; i >= 0 && i <= maxIndex; i += adder)
         {
-            if (GetBoxMonData(&boxMons[i], MON_DATA_SPECIES) != SPECIES_NONE
-                && !GetBoxMonData(&boxMons[i], MON_DATA_IS_EGG))
+            if (GetBoxMonData(&boxMons[i], MON_DATA_SPECIES) != SPECIES_NONE && !GetBoxMonData(&boxMons[i], MON_DATA_IS_EGG))
                 return i;
         }
     }

@@ -121,12 +121,12 @@ void ResetMapMusic(void)
     sMapMusicFadeInSpeed = 0;
 }
 
-u16 GetCurrentMapMusic(void)
+u32 GetCurrentMapMusic(void)
 {
     return sCurrentMapMusic;
 }
 
-void PlayNewMapMusic(u16 songNum)
+void PlayNewMapMusic(u32 songNum)
 {
     sCurrentMapMusic = songNum;
     sNextMapMusic = 0;
@@ -140,16 +140,17 @@ void StopMapMusic(void)
     sMapMusicState = 1;
 }
 
-void FadeOutMapMusic(u8 speed)
+void FadeOutMapMusic(u32 speed)
 {
     if (IsNotWaitingForBGMStop())
         FadeOutBGM(speed);
+	
     sCurrentMapMusic = 0;
     sNextMapMusic = 0;
     sMapMusicState = 5;
 }
 
-void FadeOutAndPlayNewMapMusic(u16 songNum, u8 speed)
+void FadeOutAndPlayNewMapMusic(u32 songNum, u32 speed)
 {
     FadeOutMapMusic(speed);
     sCurrentMapMusic = 0;
@@ -157,7 +158,7 @@ void FadeOutAndPlayNewMapMusic(u16 songNum, u8 speed)
     sMapMusicState = 6;
 }
 
-void FadeOutAndFadeInNewMapMusic(u16 songNum, u8 fadeOutSpeed, u8 fadeInSpeed)
+void FadeOutAndFadeInNewMapMusic(u32 songNum, u32 fadeOutSpeed, u32 fadeInSpeed)
 {
     FadeOutMapMusic(fadeOutSpeed);
     sCurrentMapMusic = 0;
@@ -166,7 +167,7 @@ void FadeOutAndFadeInNewMapMusic(u16 songNum, u8 fadeOutSpeed, u8 fadeInSpeed)
     sMapMusicFadeInSpeed = fadeInSpeed;
 }
 
-static void FadeInNewMapMusic(u16 songNum, u8 speed)
+static void FadeInNewMapMusic(u32 songNum, u32 speed)
 {
     FadeInNewBGM(songNum, speed);
     sCurrentMapMusic = songNum;
@@ -175,7 +176,7 @@ static void FadeInNewMapMusic(u16 songNum, u8 speed)
     sMapMusicFadeInSpeed = 0;
 }
 
-bool8 IsNotWaitingForBGMStop(void)
+bool32 IsNotWaitingForBGMStop(void)
 {
     if (sMapMusicState == 6)
         return FALSE;
@@ -186,14 +187,14 @@ bool8 IsNotWaitingForBGMStop(void)
     return TRUE;
 }
 
-void PlayFanfareByFanfareNum(u8 fanfareNum)
+void PlayFanfareByFanfareNum(u32 fanfareNum)
 {
 	m4aMPlayStop(&gMPlayInfo_BGM);
 	sFanfareCounter = sFanfares[fanfareNum].duration;
 	m4aSongNumStart(sFanfares[fanfareNum].songNum);
 }
 
-void PlayFanfare(u16 songNum)
+void PlayFanfare(u32 songNum)
 {
     u32 i;
 	
@@ -210,7 +211,7 @@ void PlayFanfare(u16 songNum)
     CreateFanfareTask();
 }
 
-bool8 WaitFanfare(bool8 stop)
+bool32 WaitFanfare(bool32 stop)
 {
     if (sFanfareCounter)
     {
@@ -228,7 +229,7 @@ bool8 WaitFanfare(bool8 stop)
     }
 }
 
-void StopFanfareByFanfareNum(u8 fanfareNum)
+void StopFanfareByFanfareNum(u32 fanfareNum)
 {
     m4aSongNumStop(sFanfares[fanfareNum].songNum);
 }
@@ -258,12 +259,14 @@ static void CreateFanfareTask(void)
         CreateTask(Task_Fanfare, 80);
 }
 
-void FadeInNewBGM(u16 songNum, u8 speed)
+void FadeInNewBGM(u32 songNum, u32 speed)
 {
     if (gDisableMusic)
         songNum = 0;
+	
     if (songNum == 0xFFFF)
         songNum = 0;
+	
     m4aSongNumStart(songNum);
     m4aMPlayImmInit(&gMPlayInfo_BGM);
     m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 0);
@@ -271,7 +274,7 @@ void FadeInNewBGM(u16 songNum, u8 speed)
     m4aMPlayFadeIn(&gMPlayInfo_BGM, speed);
 }
 
-void FadeOutBGMTemporarily(u8 speed)
+void FadeOutBGMTemporarily(u32 speed)
 {
     m4aMPlayFadeOutTemporarily(&gMPlayInfo_BGM, speed);
 }
@@ -286,24 +289,24 @@ bool32 IsBGMPausedOrStopped(void)
 		return FALSE;
 }
 
-void FadeInBGM(u8 speed)
+void FadeInBGM(u32 speed)
 {
     m4aMPlayFadeIn(&gMPlayInfo_BGM, speed);
 }
 
-void FadeOutBGM(u8 speed)
+void FadeOutBGM(u32 speed)
 {
     m4aMPlayFadeOut(&gMPlayInfo_BGM, speed);
 }
 
-bool8 IsBGMStopped(void)
+bool32 IsBGMStopped(void)
 {
     if (!(gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_TRACK))
         return TRUE;
     return FALSE;
 }
 
-static void PlayCry_WithDucking(u16 species, s8 pan, u8 mode)
+static void PlayCry_WithDucking(u32 species, s8 pan, u32 mode)
 {
 	m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
     PlayCryInternal(species, pan, CRY_VOLUME, CRY_PRIORITY_NORMAL, mode);
@@ -311,17 +314,17 @@ static void PlayCry_WithDucking(u16 species, s8 pan, u8 mode)
     RestoreBGMVolumeAfterPokemonCry();
 }
 
-void PlayCry_Normal(u16 species, s8 pan)
+void PlayCry_Normal(u32 species, s8 pan)
 {
 	PlayCry_WithDucking(species, pan, CRY_MODE_NORMAL);
 }
 
-void PlayCry_NormalNoDucking(u16 species, s8 pan, s8 volume, u8 priority)
+void PlayCry_NormalNoDucking(u32 species, s8 pan, s8 volume, u32 priority)
 {
     PlayCryInternal(species, pan, volume, priority, CRY_MODE_NORMAL);
 }
 
-void PlayCry_ByMode(u16 species, s8 pan, u8 mode)
+void PlayCry_ByMode(u32 species, s8 pan, u32 mode)
 {
     if (mode == CRY_MODE_DOUBLES)
         PlayCryInternal(species, pan, CRY_VOLUME, CRY_PRIORITY_NORMAL, mode);
@@ -329,27 +332,22 @@ void PlayCry_ByMode(u16 species, s8 pan, u8 mode)
 		PlayCry_WithDucking(species, pan, mode);
 }
 
-void PlayCry_ReleaseDouble(u16 species, s8 pan, u8 mode)
+void PlayCry_ReleaseDouble(u32 species, s8 pan, u32 mode)
 {
-    if (mode == CRY_MODE_DOUBLES)
-        PlayCryInternal(species, pan, CRY_VOLUME, CRY_PRIORITY_NORMAL, mode);
-    else
-    {
-        if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
-            m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
-		
-        PlayCryInternal(species, pan, CRY_VOLUME, CRY_PRIORITY_NORMAL, mode);
-    }
+    if (mode != CRY_MODE_DOUBLES && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
+	
+    PlayCryInternal(species, pan, CRY_VOLUME, CRY_PRIORITY_NORMAL, mode);
 }
 
-void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
+void PlayCryInternal(u32 species, s8 pan, s8 volume, u32 priority, u32 mode)
 {
-    bool8 reverse = FALSE;
+    bool32 reverse = FALSE;
     u32 release = 0;
     u32 length = 140;
     u32 pitch = 15360;
     u32 chorus = 0;
-	u16 cryId;
+	u32 cryId;
 	
 	if ((mode == CRY_MODE_NORMAL || mode == CRY_MODE_DOUBLES) && (gSpeciesInfo[species].flags & SPECIES_FLAG_HIGH_PITCH_CRY))
 		mode = CRY_MODE_HIGH_PITCH;
@@ -455,12 +453,10 @@ void StopCry(void)
     m4aMPlayStop(gMPlay_PokemonCry);
 }
 
-bool8 IsCryPlayingOrClearCrySongs(void)
+bool32 IsCryPlayingOrClearCrySongs(void)
 {
     if (IsPokemonCryPlaying(gMPlay_PokemonCry))
-    {
         return TRUE;
-    }
     else
     {
         ClearPokemonCrySongs();
@@ -468,12 +464,9 @@ bool8 IsCryPlayingOrClearCrySongs(void)
     }
 }
 
-bool8 IsCryPlaying(void)
+bool32 IsCryPlaying(void)
 {
-    if (IsPokemonCryPlaying(gMPlay_PokemonCry))
-        return TRUE;
-    else
-        return FALSE;
+    return IsPokemonCryPlaying(gMPlay_PokemonCry);
 }
 
 static void Task_DuckBGMForPokemonCry(u8 taskId)
@@ -493,26 +486,25 @@ static void Task_DuckBGMForPokemonCry(u8 taskId)
 
 static void RestoreBGMVolumeAfterPokemonCry(void)
 {
-    if (FuncIsActiveTask(Task_DuckBGMForPokemonCry) != TRUE)
+    if (!FuncIsActiveTask(Task_DuckBGMForPokemonCry))
         CreateTask(Task_DuckBGMForPokemonCry, 80);
 }
 
-void PlayBGM(u16 songNum)
+void PlayBGM(u32 songNum)
 {
-    if (gDisableMusic)
+    if (gDisableMusic || songNum == 0xFFFF)
         songNum = 0;
-    if (songNum == 0xFFFF)
-        songNum = 0;
+	
     m4aSongNumStart(songNum);
 }
 
-void PlaySE(u16 songNum)
+void PlaySE(u32 songNum)
 {
-    if(gDisableMapMusicChangeOnMapLoad == 0)
+    if (gDisableMapMusicChangeOnMapLoad == 0)
         m4aSongNumStart(songNum);
 }
 
-void PlaySE12WithPanning(u16 songNum, s8 pan)
+void PlaySE12WithPanning(u32 songNum, s8 pan)
 {
     m4aSongNumStart(songNum);
     m4aMPlayImmInit(&gMPlayInfo_SE1);
@@ -521,14 +513,14 @@ void PlaySE12WithPanning(u16 songNum, s8 pan)
     m4aMPlayPanpotControl(&gMPlayInfo_SE2, 0xFFFF, pan);
 }
 
-void PlaySE1WithPanning(u16 songNum, s8 pan)
+void PlaySE1WithPanning(u32 songNum, s8 pan)
 {
     m4aSongNumStart(songNum);
     m4aMPlayImmInit(&gMPlayInfo_SE1);
     m4aMPlayPanpotControl(&gMPlayInfo_SE1, 0xFFFF, pan);
 }
 
-void PlaySE2WithPanning(u16 songNum, s8 pan)
+void PlaySE2WithPanning(u32 songNum, s8 pan)
 {
     m4aSongNumStart(songNum);
     m4aMPlayImmInit(&gMPlayInfo_SE2);
@@ -541,7 +533,7 @@ void SE12PanpotControl(s8 pan)
     m4aMPlayPanpotControl(&gMPlayInfo_SE2, 0xFFFF, pan);
 }
 
-bool8 IsSEPlaying(void)
+bool32 IsSEPlaying(void)
 {
     if ((gMPlayInfo_SE1.status & MUSICPLAYER_STATUS_PAUSE) && (gMPlayInfo_SE2.status & MUSICPLAYER_STATUS_PAUSE))
         return FALSE;
@@ -550,7 +542,7 @@ bool8 IsSEPlaying(void)
     return TRUE;
 }
 
-bool8 IsBGMPlaying(void)
+bool32 IsBGMPlaying(void)
 {
     if (gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_PAUSE)
         return FALSE;
@@ -559,7 +551,7 @@ bool8 IsBGMPlaying(void)
     return TRUE;
 }
 
-bool8 IsSpecialSEPlaying(void)
+bool32 IsSpecialSEPlaying(void)
 {
     if (gMPlayInfo_SE3.status & MUSICPLAYER_STATUS_PAUSE)
         return FALSE;

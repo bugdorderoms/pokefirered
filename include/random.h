@@ -12,7 +12,7 @@ extern u32 gRngValue;
 
 void SeedRng(u16 seed); // Sets the initial seed value of the pseudorandom number generator
 u16 Random(void); // Returns a 16-bit pseudorandom number
-u16 RandomRange(u16 min, u16 max); // Returns a 16-bit pseudorandom number betwen min(inclusive) and max(inclusive)
+u16 RandomRange(u32 min, u32 max); // Returns a 16-bit pseudorandom number betwen min(inclusive) and max(inclusive)
 
 // Returns a 32-bit pseudorandom number
 #define Random32() (Random() | (Random() << 16))
@@ -24,7 +24,7 @@ u16 RandomRange(u16 min, u16 max); // Returns a 16-bit pseudorandom number betwe
 #define RandomElement(table) ((table[RandomMax(ARRAY_COUNT(table))]))
 
 // Returns where a pseudorandom percentage chance will occours
-static inline bool8 RandomPercent(u16 percentage)
+static inline bool32 RandomPercent(u32 percentage)
 {
 	return (RandomMax(100) < percentage);
 }

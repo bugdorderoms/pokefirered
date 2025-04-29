@@ -9,14 +9,14 @@
 #include "trig.h"
 #include "constants/items.h"
 
-static u8 sub_80961D8(void);
-static bool32 sub_8096210(u8 cursorArea, u8 cursorPos);
-static u8 sub_8096258(u8 cursorArea, u8 cursorPos);
-static void sub_80962F0(u8 id, u8 cursorArea, u8 cursorPos);
-static void sub_8096408(u8 id, const u32 * tiles, const u32 * pal);
-static void sub_80964B8(u8 id, u8 affineAnimNo);
-static void sub_80964E8(u8 id, u8 command, u8 cursorArea, u8 cursorPos);
-static void sub_8096624(u8 id, bool8 show);
+static u32 sub_80961D8(void);
+static bool32 sub_8096210(u32 cursorArea, u32 cursorPos);
+static u32 sub_8096258(u32 cursorArea, u32 cursorPos);
+static void sub_80962F0(u32 id, u32 cursorArea, u32 cursorPos);
+static void sub_8096408(u32 id, const u32 * tiles, const u32 * pal);
+static void sub_80964B8(u32 id, u32 affineAnimNo);
+static void sub_80964E8(u32 id, u32 command, u32 cursorArea, u32 cursorPos);
+static void sub_8096624(u32 id, bool32 show);
 static void sub_8096898(u32 x);
 static void sub_809692C(struct Sprite * sprite);
 static void sub_8096958(struct Sprite * sprite);
@@ -109,7 +109,7 @@ static const struct SpriteTemplate gUnknown_83D3728 = {
 void sub_8095B5C(void)
 {
     s32 i;
-    u8 spriteId;
+    u32 spriteId;
     struct CompressedSpriteSheet spriteSheet;
     struct SpriteTemplate spriteTemplate;
     static u32 gUnknown_3000FE8[0x61];
@@ -139,13 +139,11 @@ void sub_8095B5C(void)
     gPSSData->movingItem = ITEM_NONE;
 }
 
-void sub_8095C84(u8 cursorArea, u8 cursorPos)
+void sub_8095C84(u32 cursorArea, u32 cursorPos)
 {
-    u16 heldItem;
+    u32 heldItem;
 
-    if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
-        return;
-    if (sub_8096210(cursorArea, cursorPos))
+    if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS || sub_8096210(cursorArea, cursorPos))
         return;
 
     switch (cursorArea)
@@ -164,11 +162,11 @@ void sub_8095C84(u8 cursorArea, u8 cursorPos)
         return;
     }
 
-    if (heldItem != ITEM_NONE)
+    if (heldItem)
     {
         const u32 *tiles = GetItemIconPic(heldItem);
         const u32 *pal = GetItemIconPalette(heldItem);
-        u8 id = sub_80961D8();
+        u32 id = sub_80961D8();
 
         sub_80962F0(id, cursorArea, cursorPos);
         sub_8096408(id, tiles, pal);
@@ -177,9 +175,9 @@ void sub_8095C84(u8 cursorArea, u8 cursorPos)
     }
 }
 
-void sub_8095D44(u8 cursorArea, u8 cursorPos)
+void sub_8095D44(u32 cursorArea, u32 cursorPos)
 {
-    u8 id;
+    u32 id;
 
     if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
         return;
@@ -189,22 +187,21 @@ void sub_8095D44(u8 cursorArea, u8 cursorPos)
     sub_80964E8(id, 0, cursorArea, cursorPos);
 }
 
-void Item_FromMonToMoving(u8 cursorArea, u8 cursorPos)
+void Item_FromMonToMoving(u32 cursorArea, u32 cursorPos)
 {
-    u8 id;
-    u16 item;
+    u32 id, item;
 
     if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
         return;
 
     id = sub_8096258(cursorArea, cursorPos);
-    item = 0;
+    item = ITEM_NONE;
     sub_80964B8(id, 3);
     sub_80964E8(id, 1, cursorArea, cursorPos);
     sub_80962F0(id, 2, 0);
 	gPSSData->movingItem = gPSSData->cursorMonItem;
 	
-    if (cursorArea  == CURSOR_AREA_IN_BOX)
+    if (cursorArea == CURSOR_AREA_IN_BOX)
     {
         SetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM, &item);
         SetBoxMonIconObjMode(cursorPos, ST_OAM_OBJ_BLEND);
@@ -216,11 +213,11 @@ void Item_FromMonToMoving(u8 cursorArea, u8 cursorPos)
     }
 }
 
-void sub_8095E2C(u16 item)
+void sub_8095E2C(u32 item)
 {
     const u32 *tiles = GetItemIconPic(item);
     const u32 *pal = GetItemIconPalette(item);
-    u8 id = sub_80961D8();
+    u32 id = sub_80961D8();
 
     sub_8096408(id, tiles, pal);
     sub_80964B8(id, 6);
@@ -230,10 +227,9 @@ void sub_8095E2C(u16 item)
     gPSSData->movingItem = item;
 }
 
-void Item_SwitchMonsWithMoving(u8 cursorArea, u8 cursorPos)
+void Item_SwitchMonsWithMoving(u32 cursorArea, u32 cursorPos)
 {
-    u8 id;
-    u16 item;
+    u32 id, item;
 
     if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
         return;
@@ -241,6 +237,7 @@ void Item_SwitchMonsWithMoving(u8 cursorArea, u8 cursorPos)
     id = sub_8096258(cursorArea, cursorPos);
     sub_80964B8(id, 3);
     sub_80964E8(id, 3, CURSOR_AREA_BOX, 0);
+	
     if (cursorArea == CURSOR_AREA_IN_BOX)
     {
         item = GetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM);
@@ -253,15 +250,14 @@ void Item_SwitchMonsWithMoving(u8 cursorArea, u8 cursorPos)
         SetMonData(&gPlayerParty[cursorPos], MON_DATA_HELD_ITEM, &gPSSData->movingItem);
         gPSSData->movingItem = item;
     }
-
     id = sub_8096258(2, 0);
     sub_80964B8(id, 4);
     sub_80964E8(id, 4, cursorArea, cursorPos);
 }
 
-void Item_GiveMovingToMon(u8 cursorArea, u8 cursorPos)
+void Item_GiveMovingToMon(u32 cursorArea, u32 cursorPos)
 {
-    u8 id;
+    u32 id;
 
     if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
         return;
@@ -269,6 +265,7 @@ void Item_GiveMovingToMon(u8 cursorArea, u8 cursorPos)
     id = sub_8096258(2, 0);
     sub_80964B8(id, 4);
     sub_80964E8(id, 2, cursorArea, cursorPos);
+	
     if (cursorArea == CURSOR_AREA_IN_BOX)
     {
         SetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM, &gPSSData->movingItem);
@@ -282,19 +279,19 @@ void Item_GiveMovingToMon(u8 cursorArea, u8 cursorPos)
 	gPSSData->movingItem = ITEM_NONE;
 }
 
-void Item_TakeMons(u8 cursorArea, u8 cursorPos)
+void Item_TakeMons(u32 cursorArea, u32 cursorPos)
 {
-    u8 id;
-    u16 item;
+    u32 id, item;
 
     if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
         return;
 
-    item = 0;
+    item = ITEM_NONE;
     id = sub_8096258(cursorArea, cursorPos);
     sub_80964B8(id, 2);
     sub_80964E8(id, 0, cursorArea, cursorPos);
-    if (cursorArea  == CURSOR_AREA_IN_BOX)
+	
+    if (cursorArea == CURSOR_AREA_IN_BOX)
     {
 		gPSSData->movingItem = GetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM);
         SetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM, &item);
@@ -313,7 +310,7 @@ void sub_8096088(void)
 {
     if (gPSSData->boxOption == BOX_OPTION_MOVE_ITEMS)
     {
-        u8 id = sub_8096258(2, 0);
+        u32 id = sub_8096258(2, 0);
         sub_80964B8(id, 5);
         sub_80964E8(id, 0, CURSOR_AREA_BOX, 0);
     }
@@ -333,7 +330,7 @@ void sub_80960C0(void)
     }
 }
 
-bool8 sub_809610C(void)
+bool32 sub_809610C(void)
 {
     s32 i;
 
@@ -343,15 +340,15 @@ bool8 sub_809610C(void)
         {
             if (!gPSSData->itemIconSprites[i].sprite->affineAnimEnded && gPSSData->itemIconSprites[i].sprite->affineAnimBeginning)
                 return TRUE;
+			
             if (gPSSData->itemIconSprites[i].sprite->callback != SpriteCallbackDummy && gPSSData->itemIconSprites[i].sprite->callback != sub_80969BC)
                 return TRUE;
         }
     }
-
     return FALSE;
 }
 
-bool8 IsActiveItemMoving(void)
+bool32 IsActiveItemMoving(void)
 {
     s32 i;
 
@@ -363,18 +360,17 @@ bool8 IsActiveItemMoving(void)
                 return TRUE;
         }
     }
-
     return FALSE;
 }
 
-u16 GetMovingItem(void)
+u32 GetMovingItem(void)
 {
     return gPSSData->movingItem;
 }
 
-static u8 sub_80961D8(void)
+static u32 sub_80961D8(void)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < MAX_ITEM_ICONS; i++)
     {
@@ -384,55 +380,46 @@ static u8 sub_80961D8(void)
             return i;
         }
     }
-
     return MAX_ITEM_ICONS;
 }
 
-static bool32 sub_8096210(u8 cursorArea, u8 cursorPos)
+static bool32 sub_8096210(u32 cursorArea, u32 cursorPos)
 {
     s32 i;
 
     for (i = 0; i < MAX_ITEM_ICONS; i++)
     {
-        if (gPSSData->itemIconSprites[i].active
-            && gPSSData->itemIconSprites[i].cursorArea == cursorArea
-            && gPSSData->itemIconSprites[i].cursorPos == cursorPos)
+        if (gPSSData->itemIconSprites[i].active && gPSSData->itemIconSprites[i].cursorArea == cursorArea && gPSSData->itemIconSprites[i].cursorPos == cursorPos)
             return TRUE;
     }
-
     return FALSE;
 }
 
-static u8 sub_8096258(u8 cursorArea, u8 cursorPos)
+static u32 sub_8096258(u32 cursorArea, u32 cursorPos)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < MAX_ITEM_ICONS; i++)
     {
-        if (gPSSData->itemIconSprites[i].active
-            && gPSSData->itemIconSprites[i].cursorArea == cursorArea
-            && gPSSData->itemIconSprites[i].cursorPos == cursorPos)
+        if (gPSSData->itemIconSprites[i].active && gPSSData->itemIconSprites[i].cursorArea == cursorArea && gPSSData->itemIconSprites[i].cursorPos == cursorPos)
             return i;
     }
-
     return MAX_ITEM_ICONS;
 }
 
-static u8 sub_80962A8(struct Sprite *sprite)
+static u32 sub_80962A8(struct Sprite *sprite)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < MAX_ITEM_ICONS; i++)
     {
-        if (gPSSData->itemIconSprites[i].active
-            && gPSSData->itemIconSprites[i].sprite == sprite)
+        if (gPSSData->itemIconSprites[i].active && gPSSData->itemIconSprites[i].sprite == sprite)
             return i;
     }
-
     return MAX_ITEM_ICONS;
 }
 
-static void sub_80962F0(u8 id, u8 cursorArea, u8 cursorPos)
+static void sub_80962F0(u32 id, u32 cursorArea, u32 cursorPos)
 {
     u8 row, column;
 
@@ -444,6 +431,7 @@ static void sub_80962F0(u8 id, u8 cursorArea, u8 cursorPos)
     case CURSOR_AREA_IN_BOX:
         row = cursorPos % IN_BOX_ROWS;
         column = cursorPos / IN_BOX_ROWS;
+		
         gPSSData->itemIconSprites[id].sprite->x = (24 * row) + 112;
         gPSSData->itemIconSprites[id].sprite->y = (24 * column) + 56;
         gPSSData->itemIconSprites[id].sprite->oam.priority = 2;
@@ -462,12 +450,11 @@ static void sub_80962F0(u8 id, u8 cursorArea, u8 cursorPos)
         gPSSData->itemIconSprites[id].sprite->oam.priority = 1;
         break;
     }
-
     gPSSData->itemIconSprites[id].cursorArea = cursorArea;
     gPSSData->itemIconSprites[id].cursorPos = cursorPos;
 }
 
-static void sub_8096408(u8 id, const u32 *itemTiles, const u32 *itemPal)
+static void sub_8096408(u32 id, const u32 *itemTiles, const u32 *itemPal)
 {
     s32 i;
 
@@ -484,15 +471,13 @@ static void sub_8096408(u8 id, const u32 *itemTiles, const u32 *itemPal)
     LoadPalette(gPSSData->field_42C4, gPSSData->itemIconSprites[id].palIndex, 0x20);
 }
 
-static void sub_80964B8(u8 id, u8 animNum)
+static void sub_80964B8(u32 id, u32 animNum)
 {
-    if (id >= MAX_ITEM_ICONS)
-        return;
-
-    StartSpriteAffineAnim(gPSSData->itemIconSprites[id].sprite, animNum);
+    if (id < MAX_ITEM_ICONS)
+		StartSpriteAffineAnim(gPSSData->itemIconSprites[id].sprite, animNum);
 }
 
-static void sub_80964E8(u8 id, u8 command, u8 cursorArea, u8 cursorPos)
+static void sub_80964E8(u32 id, u32 command, u32 cursorArea, u32 cursorPos)
 {
     if (id >= MAX_ITEM_ICONS)
         return;
@@ -531,13 +516,13 @@ static void sub_80964E8(u8 id, u8 command, u8 cursorArea, u8 cursorPos)
     }
 }
 
-static void sub_8096624(u8 id, bool8 show)
+static void sub_8096624(u32 id, bool32 show)
 {
-    if (id >= MAX_ITEM_ICONS)
-        return;
-
-    gPSSData->itemIconSprites[id].active = show;
-    gPSSData->itemIconSprites[id].sprite->invisible = (show == FALSE);
+    if (id < MAX_ITEM_ICONS)
+	{
+		gPSSData->itemIconSprites[id].active = show;
+		gPSSData->itemIconSprites[id].sprite->invisible = (show == FALSE);
+	}
 }
 
 void PrintItemDescription(void)
@@ -560,7 +545,7 @@ void sub_80966F4(void)
     sub_8096898(0);
 }
 
-bool8 sub_8096728(void)
+bool32 sub_8096728(void)
 {
     s32 i, var;
 
@@ -570,15 +555,13 @@ bool8 sub_8096728(void)
     gPSSData->field_2236--;
     var = 25 - gPSSData->field_2236;
     for (i = 0; i < var; i++)
-    {
         WriteSequenceToBgTilemapBuffer(0, GetBgAttribute(0, BG_ATTR_BASETILE) + 0x14 + gPSSData->field_2236 + i, i, 12, 1, 8, 15, 25);
-    }
 
     sub_8096898(var);
     return (gPSSData->field_2236 != 0);
 }
 
-bool8 sub_80967C0(void)
+bool32 sub_80967C0(void)
 {
     s32 i, var;
 
@@ -591,9 +574,7 @@ bool8 sub_80967C0(void)
     gPSSData->field_2236++;
     var = 25 - gPSSData->field_2236;
     for (i = 0; i < var; i++)
-    {
         WriteSequenceToBgTilemapBuffer(0, GetBgAttribute(0, BG_ATTR_BASETILE) + 0x14 + gPSSData->field_2236 + i, i, 12, 1, 8, 15, 25);
-    }
 
     sub_8096898(var);
 

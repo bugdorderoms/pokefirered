@@ -8,7 +8,7 @@
 
 static EWRAM_DATA u8 sEscalatorTaskId = 0;
 
-static void SetEscalatorMetatile(u8 taskId, const s16 *metatileIds, u16 metatileMasks);
+static void SetEscalatorMetatile(u32 taskId, const s16 *metatileIds, u32 metatileMasks);
 static void Task_DrawEscalator(u8 taskId);
 static void Task_DrawTeleporterHousing(u8 taskId);
 static void Task_DrawTeleporterCable(u8 taskId);
@@ -72,10 +72,10 @@ static const u16 sEscalatorMetatiles_TopNextRail[ESCALATOR_STAGES] =
 #define tPlayerX          data[4]
 #define tPlayerY          data[5]
 
-static void SetEscalatorMetatile(u8 taskId, const s16 *metatileIds, u16 metatileMasks)
+static void SetEscalatorMetatile(u32 taskId, const s16 *metatileIds, u32 metatileMasks)
 {
     s16 x, y, transitionStage;
-    s16 i, j;
+    u32 i, j;
     
     x = gTasks[taskId].tPlayerX - 1;
     y = gTasks[taskId].tPlayerY - 1;
@@ -123,7 +123,7 @@ static void SetEscalatorMetatile(u8 taskId, const s16 *metatileIds, u16 metatile
 static void Task_DrawEscalator(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
-    u16 state;
+    u32 state;
     
     tDrawingEscalator = TRUE;
 
@@ -150,10 +150,8 @@ static void Task_DrawEscalator(u8 taskId)
         break;
     case 6:
         SetEscalatorMetatile(taskId, sEscalatorMetatiles_TopNextRail, 0);
-    default:
-        break;
+		break;
     }
-    
     tState = (tState + 1) & 7;
     state = tState & 7;
 
@@ -166,27 +164,20 @@ static void Task_DrawEscalator(u8 taskId)
     }
 }
 
-static u8 CreateEscalatorTask(bool16 goingUp)
+void StartEscalator(bool32 goingUp)
 {
-    u8 taskId;
-    s16 *data;
+	u32 taskId = CreateTask(Task_DrawEscalator, 0);
+    s16 *data = gTasks[taskId].data;
 
-    taskId = CreateTask(Task_DrawEscalator, 0);
-    data = gTasks[taskId].data;
     PlayerGetDestCoords(&tPlayerX, &tPlayerY);
+	
     tState = 0;
     tTransitionStage = 0;
     tGoingUp = goingUp;
+	
+	sEscalatorTaskId = taskId;
+	
     Task_DrawEscalator(taskId);
-    return taskId;
-}
-
-void StartEscalator(bool8 goingUp)
-{
-    u8 taskId;
-    
-    taskId = CreateEscalatorTask(goingUp);
-    sEscalatorTaskId = taskId;
 }
 
 void StopEscalator(void)
@@ -194,18 +185,17 @@ void StopEscalator(void)
     DestroyTask(sEscalatorTaskId);
 }
 
-bool8 IsEscalatorMoving(void)
+bool32 IsEscalatorMoving(void)
 {    
-    if (gTasks[sEscalatorTaskId].tDrawingEscalator == FALSE)
+    if (!gTasks[sEscalatorTaskId].tDrawingEscalator)
     {
         if (gTasks[sEscalatorTaskId].tTransitionStage != LAST_ESCALATOR_STAGE)
             return TRUE;
+		
         return FALSE;
     }
     else
-    {
         return TRUE;
-    }
 }
 
 #undef tState
@@ -222,26 +212,24 @@ bool8 IsEscalatorMoving(void)
 
 void AnimateTeleporterHousing(void)
 {
-    u8 taskId;
-    s16 *data;
+    u32 taskId = CreateTask(Task_DrawTeleporterHousing, 0);
+    s16 *data = gTasks[taskId].data;
     
-    taskId = CreateTask(Task_DrawTeleporterHousing, 0);
-    gTasks[taskId].tTimer = 0;
-    gTasks[taskId].tState = 0;
-    data = gTasks[taskId].data;
+    tTimer = 0;
+    tState = 0;
     PlayerGetDestCoords(&tX, &tY);
 
     // Set the coords of whichever teleporter is being animated
     // 0 for the right teleporter, 1 for the left teleporter
     if (gSpecialVar_0x8004 == 0)
     {
-        gTasks[taskId].tX += 6;
-        gTasks[taskId].tY -= 5;
+        tX += 6;
+        tY -= 5;
     }
     else
     {
-        gTasks[taskId].tX -= 1;
-        gTasks[taskId].tY -= 5;
+        tX -= 1;
+        tY -= 5;
     }    
 }
 
@@ -277,23 +265,24 @@ static void Task_DrawTeleporterHousing(u8 taskId)
     
     MapGridSetMetatileIdAt(tX, tY, METATILE_SeaCottage_Teleporter_Light_Green | METATILE_COLLISION_MASK);
     MapGridSetMetatileIdAt(tX, tY + 2, METATILE_SeaCottage_Teleporter_Door | METATILE_COLLISION_MASK);
+	
     CurrentMapDrawMetatileAt(tX, tY);
     CurrentMapDrawMetatileAt(tX, tY + 2);
+	
     DestroyTask(taskId);
 }
 
 void AnimateTeleporterCable(void)
 {
-    u8 taskId;
-    s16 *data;
+    u32 taskId = CreateTask(Task_DrawTeleporterCable, 0);
+    s16 *data = gTasks[taskId].data;
     
-    taskId = CreateTask(Task_DrawTeleporterCable, 0);
-    gTasks[taskId].tTimer = 0;
-    gTasks[taskId].tState = 0;
-    data = gTasks[taskId].data;
+    tTimer = 0;
+    tState = 0;
+	
     PlayerGetDestCoords(&tX, &tY);
-    gTasks[taskId].tX += 4;
-    gTasks[taskId].tY -= 5;
+    tX += 4;
+    tY -= 5;
 }
 
 static void Task_DrawTeleporterCable(u8 taskId)
@@ -316,7 +305,6 @@ static void Task_DrawTeleporterCable(u8 taskId)
                 DestroyTask(taskId);
                 return;
             }
-            
             tX--;
         }
 

@@ -13,8 +13,8 @@
 #include "gba/flash_internal.h"
 #include "gba/m4a_internal.h"
 
-static u8 HandleWriteSector(u16 sectorId, const struct SaveBlockChunk *locations);
-static u8 GetSaveValidStatus(const struct SaveBlockChunk *locations);
+static u32 HandleWriteSector(u16 sectorId, const struct SaveBlockChunk *locations);
+static u32 GetSaveValidStatus(const struct SaveBlockChunk *locations);
 
 // Divide save blocks into individual chunks to be written to flash sectors
 /*
@@ -91,7 +91,7 @@ EWRAM_DATA struct SaveSection gSaveDataBuffer = {0};
 
 void ClearSaveData(void)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < TOTAL_FLASH_SECTORS; i++)
         EraseFlashSector(i);
@@ -104,7 +104,7 @@ void Save_ResetSaveCounters(void)
     gDamagedSaveSectors = 0;
 }
 
-static bool8 CheckSetSectorDamagedStatus(u8 caseId, u8 sectorNum)
+static bool32 CheckSetSectorDamagedStatus(u32 caseId, u32 sectorNum)
 {
     switch (caseId)
     {
@@ -122,10 +122,9 @@ static bool8 CheckSetSectorDamagedStatus(u8 caseId, u8 sectorNum)
     return FALSE;
 }
 
-static u8 WriteSaveSectorOrSlot(u16 sectorId, const struct SaveBlockChunk *locations)
+static u32 WriteSaveSectorOrSlot(u16 sectorId, const struct SaveBlockChunk *locations)
 {
-    u32 status;
-    u8 i;
+    u32 i, status;
 
     gFastSaveSection = &gSaveDataBuffer;
 
@@ -154,10 +153,9 @@ static u8 WriteSaveSectorOrSlot(u16 sectorId, const struct SaveBlockChunk *locat
     return status;
 }
 
-static u16 CalculateChecksum(void *data, u16 size)
+static u16 CalculateChecksum(void *data, u32 size)
 {
-    u16 i;
-    u32 checksum = 0;
+    u32 i, checksum = 0;
 
     for (i = 0; i < (size / 4); i++)
     {
@@ -169,7 +167,7 @@ static u16 CalculateChecksum(void *data, u16 size)
     return ((checksum >> 16) + checksum);
 }
 
-static u8 TryWriteSector(u8 sectorNum, u8 *data)
+static u32 TryWriteSector(u32 sectorNum, u8 *data)
 {
 	if (ProgramFlashSectorAndVerify(sectorNum, data)) // is damaged?
     {
@@ -183,9 +181,10 @@ static u8 TryWriteSector(u8 sectorNum, u8 *data)
     }
 }
 
-static u8 HandleWriteSector(u16 sectorId, const struct SaveBlockChunk *locations)
+static u32 HandleWriteSector(u16 sectorId, const struct SaveBlockChunk *locations)
 {
-    u16 i, sectorNum, size;
+	u32 i, size;
+    u16 sectorNum;
     u8 *data;
 
     // select sector number
@@ -213,9 +212,9 @@ static u8 HandleWriteSector(u16 sectorId, const struct SaveBlockChunk *locations
     return TryWriteSector(sectorNum, gFastSaveSection->data);
 }
 
-static u8 HandleWriteSectorNBytes(u8 sectorId, u8 *data, u16 size)
+static u32 HandleWriteSectorNBytes(u32 sectorId, u8 *data, u32 size)
 {
-    u16 i;
+    u32 i;
     struct SaveSection *sector = &gSaveDataBuffer;
 
     for (i = 0; i < sizeof(struct SaveSection); i++)
@@ -248,9 +247,9 @@ static void RestoreSaveBackupVarsAndIncrement(void)
     gSaveCounter++;
 }
 
-static u8 HandleWriteIncrementalSector(u16 numSectors, const struct SaveBlockChunk *locations)
+static u32 HandleWriteIncrementalSector(u32 numSectors, const struct SaveBlockChunk *locations)
 {
-    u8 status;
+    u32 status;
 
     if (gIncrementalSectorId < numSectors - 1)
     {
@@ -271,11 +270,11 @@ static u8 HandleWriteIncrementalSector(u16 numSectors, const struct SaveBlockChu
     return status;
 }
 
-static u8 HandleReplaceSector(u16 sectorId, const struct SaveBlockChunk *locations)
+static u32 HandleReplaceSector(u16 sectorId, const struct SaveBlockChunk *locations)
 {
-    u16 i, sectorNum, size;
+	u32 i, size, status;
+    u16 sectorNum;
     u8 *data;
-    u8 status;
 
     // select sector number
     sectorNum = sectorId + gFirstSaveSector;
@@ -345,9 +344,9 @@ static u8 HandleReplaceSector(u16 sectorId, const struct SaveBlockChunk *locatio
     }
 }
 
-static u8 HandleReplaceSectorAndVerify(u16 sectorId, const struct SaveBlockChunk *locations)
+static u32 HandleReplaceSectorAndVerify(u16 sectorId, const struct SaveBlockChunk *locations)
 {
-    u8 status = SAVE_STATUS_OK;
+    u32 status = SAVE_STATUS_OK;
 
     HandleReplaceSector(sectorId - 1, locations);
 
@@ -360,7 +359,7 @@ static u8 HandleReplaceSectorAndVerify(u16 sectorId, const struct SaveBlockChunk
     return status;
 }
 
-static u8 CopySectorSignatureByte(u16 sectorId)
+static u32 CopySectorSignatureByte(u16 sectorId)
 {
     u16 sector;
 
@@ -385,7 +384,7 @@ static u8 CopySectorSignatureByte(u16 sectorId)
     }
 }
 
-static u8 WriteSectorSignatureByte(u16 sectorId)
+static u32 WriteSectorSignatureByte(u16 sectorId)
 {
     u16 sector;
 
@@ -415,7 +414,7 @@ static void ReadFlashSector(u8 sectorId, struct SaveSection *locations)
 
 static void CopySaveSlotData(const struct SaveBlockChunk *locations)
 {
-    u16 id, i, j, checksum;
+    u32 id, i, j;
     u16 sector = NUM_SECTORS_PER_SAVE_SLOT * (gSaveCounter % NUM_SAVE_SLOTS);
 
     for (i = 0; i < NUM_SECTORS_PER_SAVE_SLOT; i++)
@@ -426,9 +425,7 @@ static void CopySaveSlotData(const struct SaveBlockChunk *locations)
         if (id == 0)
             gFirstSaveSector = i;
 		
-        checksum = CalculateChecksum(gFastSaveSection->data, locations[id].size);
-		
-        if (gFastSaveSection->signature == FILE_SIGNATURE && gFastSaveSection->checksum == checksum)
+        if (gFastSaveSection->signature == FILE_SIGNATURE && gFastSaveSection->checksum == CalculateChecksum(gFastSaveSection->data, locations[id].size))
         {
             for (j = 0; j < locations[id].size; j++)
                 locations[id].data[j] = gFastSaveSection->data[j];
@@ -436,9 +433,9 @@ static void CopySaveSlotData(const struct SaveBlockChunk *locations)
     }
 }
 
-static u8 TryLoadSaveSlot(u16 sectorId, const struct SaveBlockChunk *locations)
+static u32 TryLoadSaveSlot(u16 sectorId, const struct SaveBlockChunk *locations)
 {
-    u8 status;
+    u32 status;
 	
     gFastSaveSection = &gSaveDataBuffer;
 	
@@ -452,15 +449,14 @@ static u8 TryLoadSaveSlot(u16 sectorId, const struct SaveBlockChunk *locations)
     return status;
 }
 
-static u8 GetSaveValidStatus(const struct SaveBlockChunk *locations)
+static u32 GetSaveValidStatus(const struct SaveBlockChunk *locations)
 {
-    u16 sector;
-    bool8 signatureValid;
-    u16 checksum;
+    u32 sector;
+    bool32 signatureValid;
     u32 slot1saveCounter = 0;
     u32 slot2saveCounter = 0;
-    u8 slot1Status;
-    u8 slot2Status;
+    u32 slot1Status;
+    u32 slot2Status;
     u32 validSectors;
     const u32 ALL_SECTORS = (Bit(NUM_SECTORS_PER_SAVE_SLOT)) - 1;  // bitmask of all saveblock sectors
 
@@ -474,9 +470,8 @@ static u8 GetSaveValidStatus(const struct SaveBlockChunk *locations)
         if (gFastSaveSection->signature == FILE_SIGNATURE)
         {
             signatureValid = TRUE;
-            checksum = CalculateChecksum(gFastSaveSection->data, locations[gFastSaveSection->id].size);
-            
-			if (gFastSaveSection->checksum == checksum)
+
+			if (gFastSaveSection->checksum == CalculateChecksum(gFastSaveSection->data, locations[gFastSaveSection->id].size))
             {
                 slot1saveCounter = gFastSaveSection->counter;
                 validSectors |= Bit(gFastSaveSection->id);
@@ -504,9 +499,8 @@ static u8 GetSaveValidStatus(const struct SaveBlockChunk *locations)
 		if (gFastSaveSection->signature == FILE_SIGNATURE)
         {
             signatureValid = TRUE;
-            checksum = CalculateChecksum(gFastSaveSection->data, locations[gFastSaveSection->id].size);
-            
-			if (gFastSaveSection->checksum == checksum)
+
+			if (gFastSaveSection->checksum == CalculateChecksum(gFastSaveSection->data, locations[gFastSaveSection->id].size))
             {
                 slot2saveCounter = gFastSaveSection->counter;
                 validSectors |= Bit(gFastSaveSection->id);
@@ -576,18 +570,16 @@ static u8 GetSaveValidStatus(const struct SaveBlockChunk *locations)
     return SAVE_STATUS_INVALID;
 }
 
-static u8 TryLoadSaveSector(u8 sectorId, u8 *data, u16 size)
+static u32 TryLoadSaveSector(u32 sectorId, u8 *data, u32 size)
 {
-    u16 i;
+    u32 i;
     struct SaveSection *section = &gSaveDataBuffer;
 
     ReadFlashSector(sectorId, section);
 	
     if (section->signature == FILE_SIGNATURE)
     {
-        u16 checksum = CalculateChecksum(section->data, size);
-        
-		if (section->id == checksum)
+		if (section->id == CalculateChecksum(section->data, size))
         {
             for (i = 0; i < size; i++)
                 data[i] = section->data[i];
@@ -621,9 +613,9 @@ static void UpdateSaveAddresses(void)
     }
 }
 
-void HandleSavingData(u8 saveType)
+void HandleSavingData(u32 saveType)
 {
-    u8 i;
+    u32 i;
     u32 *backupPtr = gMain.vblankCounter1;
     u8 *tempAddr;
 
@@ -664,7 +656,7 @@ void HandleSavingData(u8 saveType)
     gMain.vblankCounter1 = backupPtr;
 }
 
-void TrySavingData(u8 saveType)
+void TrySavingData(u32 saveType)
 {
     if (!gFlashMemoryPresent)
 		gSaveSucceeded = SAVE_STATUS_ERROR;
@@ -692,9 +684,9 @@ void SaveGame_AfterLinkTrade(void)
 	}
 }
 
-bool8 AfterLinkTradeSaveFailed(void) 
+bool32 AfterLinkTradeSaveFailed(void) 
 {
-    u8 status = HandleWriteIncrementalSector(NUM_SECTORS_PER_SAVE_SLOT, gRamSaveSectionLocations);
+    u32 status = HandleWriteIncrementalSector(NUM_SECTORS_PER_SAVE_SLOT, gRamSaveSectionLocations);
 	
     if (gDamagedSaveSectors)
         DoSaveFailedScreen(SAVE_NORMAL);
@@ -732,9 +724,9 @@ void WriteSaveBlock2(void)
 // Used in conjunction with WriteSaveBlock2 to write both for certain link saves.
 // This is called repeatedly in a task, writing one sector of SaveBlock1 each time it is called.
 // Returns TRUE when all sectors of SaveBlock1 have been written.
-bool8 WriteSaveBlock1Sector(void)
+bool32 WriteSaveBlock1Sector(void)
 {
-	bool8 finished;
+	bool32 finished;
     u16 sectorId = ++gIncrementalSectorId;
 	
     if (sectorId <= SECTOR_ID_SAVEBLOCK1_END)
@@ -754,9 +746,9 @@ bool8 WriteSaveBlock1Sector(void)
     return finished;
 }
 
-u8 Save_LoadGameData(u8 saveType)
+u32 Save_LoadGameData(u32 saveType)
 {
-    u8 result;
+    u32 result;
 
     if (!gFlashMemoryPresent)
     {
@@ -782,7 +774,6 @@ u8 Save_LoadGameData(u8 saveType)
             result = TryLoadSaveSector(SECTOR_ID_HOF_2, gDecompressionBuffer + SECTOR_DATA_SIZE, SECTOR_DATA_SIZE);
         break;
     }
-
     return result;
 }
 
@@ -859,7 +850,7 @@ void Task_LinkSave(u8 taskId)
 
 void ResetSaveHeap(void)
 {
-    u16 imeBackup = REG_IME;
+    u32 imeBackup = REG_IME;
     
     REG_IME = 0;
     RegisterRamReset(RESET_EWRAM);

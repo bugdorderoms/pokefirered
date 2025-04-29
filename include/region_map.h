@@ -21,9 +21,9 @@ struct MapSectionInfo
     const u8 *desc; // For some dungeons in the Town Map
 };
 
-u8 *GetMapName(u8 *dest, u16 mapsec);
-void InitRegionMapWithExitCB(u8 a0, void (*a1)(void));
-void SetDispCnt(u8 idx, bool8 clear);
+u8 *GetMapName(u8 *dest, u32 mapsec);
+void InitRegionMapWithExitCB(u32 a0, MainCallback a1);
+void SetDispCnt(u32 idx, bool32 clear);
 
 extern const struct MapSectionInfo gMapSectionsInfo[];
 

@@ -4,14 +4,14 @@
 
 // Rtc
 static void RtcGetRawInfo(struct SiiRtcInfo *rtc);
-static u16 RtcCheckInfo(struct SiiRtcInfo *rtc);
+static u32 RtcCheckInfo(struct SiiRtcInfo *rtc);
 static void UpdateClockFromRtc(struct SiiRtcInfo *rtc);
 static u32 ConvertBcdToBinary(u8 bcd);
 // SiiRtc
 static void SiiRtcUnprotect(void);
 static u8 SiiRtcProbe(void);
-static bool8 SiiRtcGetStatus(struct SiiRtcInfo *rtc);
-static bool8 SiiRtcGetDateTime(struct SiiRtcInfo *rtc);
+static bool32 SiiRtcGetStatus(struct SiiRtcInfo *rtc);
+static bool32 SiiRtcGetDateTime(struct SiiRtcInfo *rtc);
 
 // Ew ram
 static EWRAM_DATA u16 sRTCErrorStatus = 0;
@@ -165,16 +165,16 @@ static void RtcGetRawInfo(struct SiiRtcInfo *rtc)
 	RtcGetDateTime(rtc);
 }
 
-static bool8 IsLeapYear(u32 year)
+static bool32 IsLeapYear(u32 year)
 {
 	if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
 		return TRUE;
 	return FALSE;
 }
 
-static u16 RtcCheckInfo(struct SiiRtcInfo *rtc)
+static u32 RtcCheckInfo(struct SiiRtcInfo *rtc)
 {
-	u16 errorFlags = 0;
+	u32 errorFlags = 0;
 	u32 year, month, day, hour, minute, second;
 	
 	if (rtc->status & RTCINFO_POWER)
@@ -245,16 +245,16 @@ static u32 ConvertBcdToBinary(u8 bcd)
 		return (bcd & 0xF) <= 9 ? (10 * ((bcd >> 4) & 0xF)) + (bcd & 0xF) : 0xFF;
 }
 
-static inline bool8 IsDate1BeforeDate2(u32 y1, u8 m1, u8 d1, u32 y2, u8 m2, u8 d2)
+static inline bool32 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2)
 {
 	return y1 < y2 ? TRUE : (y1 == y2 ? (m1 < m2 ? TRUE : (m1 == m2 ? d1 < d2 : FALSE)) : FALSE);
 }
 
-u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 endMonth, u8 endDay)
+u32 GetDayDifference(u32 startYear, u32 startMonth, u32 startDay, u32 endYear, u32 endMonth, u32 endDay)
 {
 	const u16 *cumDays;
 	u32 year, totalDays = 0;
-	bool8 isLeapYear;
+	bool32 isLeapYear;
 	
 	if (!IsDate1BeforeDate2(startYear, startMonth, startDay, endYear, endMonth, endDay))
 		return totalDays;
@@ -346,9 +346,10 @@ static void SiiRtcUnprotect(void)
 	sSiiRTCLocked = FALSE;
 }
 
-static int WriteCommand(u8 value)
+static int WriteCommand(u32 value)
 {
-	u8 i, temp;
+	u32 i;
+	u8 temp;
 
 	for (i = 0; i < 8; i++)
 	{
@@ -362,9 +363,10 @@ static int WriteCommand(u8 value)
 	return 0;
 }
 
-static int WriteData(u8 value)
+static int WriteData(u32 value)
 {
-	u8 i, temp;
+	u32 i;
+	u8 temp;
 
 	for (i = 0; i < 8; i++)
 	{
@@ -380,7 +382,8 @@ static int WriteData(u8 value)
 
 static u8 ReadData(void)
 {
-	u8 i, temp, value = 0;
+	u32 i;
+	u8 temp, value = 0;
 
 	for (i = 0; i < 8; i++)
 	{
@@ -397,9 +400,9 @@ static u8 ReadData(void)
 	return value;
 }
 
-static bool8 SiiRtcGetStatus(struct SiiRtcInfo *rtc)
+static bool32 SiiRtcGetStatus(struct SiiRtcInfo *rtc)
 {
-	u8 statusData;
+	u32 statusData;
 	
 	if (!sSiiRTCLocked)
 	{
@@ -429,9 +432,9 @@ static bool8 SiiRtcGetStatus(struct SiiRtcInfo *rtc)
 	return FALSE;
 }
 
-static bool8 SiiRtcSetStatus(struct SiiRtcInfo *rtc)
+static bool32 SiiRtcSetStatus(struct SiiRtcInfo *rtc)
 {
-	u8 statusData;
+	u32 statusData;
 	
 	if (!sSiiRTCLocked)
 	{
@@ -458,9 +461,9 @@ static bool8 SiiRtcSetStatus(struct SiiRtcInfo *rtc)
 	return FALSE;
 }
 
-static bool8 SiiRtcGetTime(struct SiiRtcInfo *rtc)
+static bool32 SiiRtcGetTime(struct SiiRtcInfo *rtc)
 {
-	u8 i;
+	u32 i;
 	
 	if (!sSiiRTCLocked)
 	{
@@ -490,9 +493,9 @@ static bool8 SiiRtcGetTime(struct SiiRtcInfo *rtc)
 	return FALSE;
 }
 
-static bool8 SiiRtcGetDateTime(struct SiiRtcInfo *rtc)
+static bool32 SiiRtcGetDateTime(struct SiiRtcInfo *rtc)
 {
-	u8 i;
+	u32 i;
 	
 	if (!sSiiRTCLocked)
 	{
@@ -522,7 +525,7 @@ static bool8 SiiRtcGetDateTime(struct SiiRtcInfo *rtc)
 	return FALSE;
 }
 
-static bool8 SiiRtcReset(void)
+static bool32 SiiRtcReset(void)
 {
 	struct SiiRtcInfo rtc;
 	rtc.status = RTCINFO_24HOUR;

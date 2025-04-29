@@ -91,14 +91,14 @@ static const u8 sTriAttackEffects[] =
 	MOVE_EFFECT_PARALYSIS
 };
 
-void SetMoveEffect(u8 moveEffect, bool8 affectsUser, bool8 certain)
+void SetMoveEffect(u32 moveEffect, bool32 affectsUser, bool32 certain)
 {
 	gBattleStruct->moveEffect.moveEffectByte = moveEffect;
 	gBattleStruct->moveEffect.affectsUser = affectsUser;
 	gBattleStruct->moveEffect.certain = certain;
 }
 
-static bool8 IsStatLoweringMoveEffect(u8 moveEffect)
+static bool32 IsStatLoweringMoveEffect(u32 moveEffect)
 {
 	if ((moveEffect >= MOVE_EFFECT_ATK_MINUS_1 && moveEffect <= MOVE_EFFECT_EVS_MINUS_1) || (moveEffect >= MOVE_EFFECT_ATK_MINUS_2 && moveEffect <= MOVE_EFFECT_EVS_MINUS_2))
 		return TRUE;
@@ -110,14 +110,14 @@ static bool8 IsStatLoweringMoveEffect(u8 moveEffect)
 // certain = if the effect always be applyed (e.g has 100% chance)
 // primary = if the effect is the main use (e.g. Thunder Wave)
 // scriptStr = if set, then the function will call the scripts of sucess/fail
-bool8 DoMoveEffect(bool8 primary, const u8 *scriptStr, u32 flags)
+bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
 {
-	u8 statId;
+	u32 statId;
 	s8 buff;
-	u8 moveEffect = gBattleStruct->moveEffect.moveEffectByte;
-	bool8 affectsUser = gBattleStruct->moveEffect.affectsUser;
-	bool8 certain = gBattleStruct->moveEffect.certain;
-	u8 ret, effect = 0;
+	u32 moveEffect = gBattleStruct->moveEffect.moveEffectByte;
+	bool32 affectsUser = gBattleStruct->moveEffect.affectsUser;
+	bool32 certain = gBattleStruct->moveEffect.certain;
+	u32 ret, effect = 0;
 	
 	if (affectsUser)
 	{
@@ -397,7 +397,7 @@ bool8 DoMoveEffect(bool8 primary, const u8 *scriptStr, u32 flags)
 				}
 				else
 				{
-					u16 itemId = gBattleMons[gEffectBattler].item;
+					u32 itemId = gBattleMons[gEffectBattler].item;
 	
 #if STEAL_WILD_ITEM_TO_BAG
 					if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && GetBattlerSide(gBattleScripting.battler) == B_SIDE_PLAYER && GetBattlerSide(gEffectBattler) == B_SIDE_OPPONENT
@@ -477,7 +477,7 @@ bool8 DoMoveEffect(bool8 primary, const u8 *scriptStr, u32 flags)
 	}
 }
 
-bool8 CheckSecondaryEffectsBlockers(u8 attacker, u8 defender, u16 move, u8 moveEffect, bool8 affectsUser, bool8 primary, u32 flags)
+bool32 CheckSecondaryEffectsBlockers(u32 attacker, u32 defender, u32 move, u32 moveEffect, bool32 affectsUser, bool32 primary, u32 flags)
 {
 	// Check Safeguard, Flower Veil and Shield Dust preventing the effect
 	if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD))
@@ -511,7 +511,7 @@ bool8 CheckSecondaryEffectsBlockers(u8 attacker, u8 defender, u16 move, u8 moveE
 // STAT CHANGE //
 /////////////////
 
-void SetStatChanger(u8 statId, s8 buff)
+void SetStatChanger(u32 statId, s8 buff)
 {
 	gBattleStruct->statChange.statId = statId;
 	gBattleStruct->statChange.buff = buff;
@@ -519,7 +519,7 @@ void SetStatChanger(u8 statId, s8 buff)
 	gBattleStruct->statChange.mirrorArmorState = 0;
 }
 
-u8 CheckStatDecreaseBlockEffects(u8 attacker, u8 target, u8 statId, u8 flags)
+u32 CheckStatDecreaseBlockEffects(u32 attacker, u32 target, u32 statId, u32 flags)
 {
 	if ((gSideStatuses[GetBattlerSide(target)] & SIDE_STATUS_MIST) && GetBattlerAbility(attacker) != ABILITY_INFILTRATOR) // Check Mist
 		return STAT_CHANGE_FAIL_MIST;
@@ -553,13 +553,13 @@ u8 CheckStatDecreaseBlockEffects(u8 attacker, u8 target, u8 statId, u8 flags)
 }
 
 // onlyChecks = used for playstatchangeanimation to check if other stats can be changed
-bool8 ChangeStatBuffs(u8 flags, bool8 onlyChecks)
+bool32 ChangeStatBuffs(u32 flags, bool32 onlyChecks)
 {
-	u8 i;
-	u8 result = STAT_CHANGE_WORKED;
-	u8 statId = gBattleStruct->statChange.statId;
+	u32 i;
+	u32 result = STAT_CHANGE_WORKED;
+	u32 statId = gBattleStruct->statChange.statId;
 	s8 buff = gBattleStruct->statChange.buff;
-	bool8 selfInflict;
+	bool32 selfInflict;
 	
 	gBattleStruct->statChange.maxOut = (buff == +6 || buff == -6);
 	gBattleStruct->statChange.flags = flags; // For playstatchangeanimation
@@ -575,8 +575,8 @@ bool8 ChangeStatBuffs(u8 flags, bool8 onlyChecks)
 		// Check Mirror Armor
 		if (!onlyChecks && GetBattlerAbility(gEffectBattler) == ABILITY_MIRROR_ARMOR && buff < 0 && !(flags & STAT_CHANGE_FLAG_NO_MIRROR_ARMOR))
 		{
-			u8 temp;
-			bool8 worked;
+			u32 temp;
+			bool32 worked;
 			
 			flags |= STAT_CHANGE_FLAG_NO_MIRROR_ARMOR;
 			++gBattleStruct->statChange.mirrorArmorState; // Bounced back

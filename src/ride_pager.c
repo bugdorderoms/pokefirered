@@ -58,12 +58,11 @@ struct Ride
 #define RIDE_PAGER_MON_PIC_Y 1
 
 static void Task_InitRidePager(u8 taskId);
-static void CreateRidePagerMultichoiceWindow(u8 taskId);
-static void UpdateRidePagerMonPic(u8 ride);
-static void PrintRideDescInMessageWindow(u8 ride);
+static void CreateRidePagerMultichoiceWindow(u32 taskId);
+static void PrintRideDescInMessageWindow(u32 ride);
 static void Task_RidePagerHandleInput(u8 taskId);
 static void RidePager_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list);
-static void DestroyRidePagerWindow(u8 taskId, bool8 useRide);
+static void DestroyRidePagerWindow(u32 taskId, bool32 useRide);
 static void SharpedoPaddleCallback(u8 taskId);
 static void CharizardGlideCallback(u8 taskId);
 static void PlayerToPokeRideCallback(u8 taskId);
@@ -100,9 +99,9 @@ static const struct Ride sPokeRidesTable[] =
 	RIDE(CHARIZARD, "Charizard Glide",  CharizardGlideCallback,   "This Charizard flies you\nto other places."),
 };
 
-u8 CountObtainedPokeRides(void)
+u32 CountObtainedPokeRides(void)
 {
-	u8 i, count = 0;
+	u32 i, count = 0;
 	
 	for (i = RIDE_NONE; i < NUM_RIDE_POKEMON; i++)
 	{
@@ -112,7 +111,7 @@ u8 CountObtainedPokeRides(void)
 	return count;
 }
 
-bool8 PlayerHasObtainedSharpedoPaddle(void)
+bool32 PlayerHasObtainedSharpedoPaddle(void)
 {
 	if (FlagGet(sPokeRidesTable[RIDE_SHARPEDO - 1].flagId) && !TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
 		return TRUE;
@@ -120,12 +119,12 @@ bool8 PlayerHasObtainedSharpedoPaddle(void)
 		return FALSE;
 }
 
-u16 RideToSpeciesId(u8 ride)
+u32 RideToSpeciesId(u32 ride)
 {
 	return sPokeRidesTable[ride - 1].species;
 }
 
-bool8 TryDismountPokeRide(void)
+bool32 TryDismountPokeRide(void)
 {
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_RIDE_ANY))
 	{
@@ -140,7 +139,7 @@ bool8 TryDismountPokeRide(void)
 	return TRUE;
 }
 
-bool8 CheckPlayerInGroundRocks(void)
+bool32 CheckPlayerInGroundRocks(void)
 {
 	s16 x, y;
 	
@@ -157,7 +156,7 @@ void TryRemoveStrengthFlag(void)
 
 u32 ApplyRideEncounterRateMod(u32 encounterRate)
 {
-	u8 i;
+	u32 i;
 	
 	for (i = RIDE_NONE; i < NUM_RIDE_POKEMON; i++)
 	{
@@ -222,9 +221,9 @@ static void Task_InitRidePager(u8 taskId)
 	}
 }
 
-static void CreateRidePagerMultichoiceWindow(u8 taskId)
+static void CreateRidePagerMultichoiceWindow(u32 taskId)
 {
-	u8 i, maxShowed, count = 0;
+	u32 i, maxShowed, count = 0;
 	s16 *data = gTasks[taskId].data;
 	struct WindowTemplate template;
 	struct ListMenuItem rides[NUM_RIDE_POKEMON];
@@ -280,7 +279,7 @@ static void CreateRidePagerMultichoiceWindow(u8 taskId)
 	tScrollId = AddScrollIndicatorArrowPairParameterized(SCROLL_ARROW_UP, 60, 5, 108, count - maxShowed, 110, 110, &tCursorPos);
 }
 
-static void PrintRideDescInMessageWindow(u8 ride)
+static void PrintRideDescInMessageWindow(u32 ride)
 {
 	StringExpandPlaceholders(gStringVar4, sPokeRidesTable[ride - 1].desc);
 	FillWindowPixelBuffer(0, PIXEL_FILL(1));
@@ -346,7 +345,7 @@ static void RidePager_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMe
 	}
 }
 
-static void DestroyRidePagerWindow(u8 taskId, bool8 useRide)
+static void DestroyRidePagerWindow(u32 taskId, bool32 useRide)
 {
 	s16 *data = gTasks[taskId].data;
 	
@@ -375,14 +374,14 @@ static void DestroyRidePagerWindow(u8 taskId, bool8 useRide)
 static void PlayerToPokeRideCallback(u8 taskId)
 {
 	s16 x, y, *data = gTasks[taskId].data;
-	u8 behavior;
+	u32 behavior;
 	
 	PlayerGetDestCoords(&x, &y);
 	behavior = MapGridGetMetatileBehaviorAt(x, y);
 	
 	if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER | PLAYER_AVATAR_FLAG_SURFING) && !InUnionRoom() && !FlagGet(FLAG_SYS_ON_CYCLING_ROAD)
-	    && !MetatileBehavior_IsVerticalRail(behavior) && !MetatileBehavior_IsHorizontalRail(behavior) && !MetatileBehavior_IsIsolatedVerticalRail(behavior)
-	    && !MetatileBehavior_IsIsolatedHorizontalRail(behavior) && !MetatileBehavior_IsGroundRocks(behavior) && Overworld_IsBikingAllowed())
+	&& !MetatileBehavior_IsVerticalRail(behavior) && !MetatileBehavior_IsHorizontalRail(behavior) && !MetatileBehavior_IsIsolatedVerticalRail(behavior)
+	&& !MetatileBehavior_IsIsolatedHorizontalRail(behavior) && !MetatileBehavior_IsGroundRocks(behavior) && Overworld_IsBikingAllowed())
 	{
 		gBikeCameraAheadPanback = FALSE;
 		
@@ -502,43 +501,43 @@ static void CharizardGlideCallback(u8 taskId)
 // RIDE MOVEMENT //
 ///////////////////
 
-static u8 GetRideMovementInput(u8 *newDirection);
-static u8 RideInputHandler_Normal(u8 *newDirection);
-static u8 RideInputHandler_Turning(u8 *newDirection);
-static void RideTransition_FaceDirection(u8 direction, u16 heldKeys);
-static void RideTransition_MoveDirection(u8 direction, u16 heldKeys);
+static u32 GetRideMovementInput(u32 *newDirection);
+static u32 RideInputHandler_Normal(u32 *newDirection);
+static u32 RideInputHandler_Turning(u32 *newDirection);
+static void RideTransition_FaceDirection(u32 direction, u16 heldKeys);
+static void RideTransition_MoveDirection(u32 direction, u16 heldKeys);
 static void UpdateStoutlandSearchAndTaurosCharge(u16 heldKeys);
 
-static void (*const sRideTransitions[])(u8, u16) =
+static void (*const sRideTransitions[])(u32, u16) =
 {
     [BIKE_TRANS_FACE_DIRECTION] = RideTransition_FaceDirection,
     [BIKE_TRANS_TURNING]        = RideTransition_FaceDirection,
     [BIKE_TRANS_MOVE]           = RideTransition_MoveDirection,
 };
 
-static u8 (*const sRideInputHandlers[])(u8 *) =
+static u32 (*const sRideInputHandlers[])(u32 *) =
 {
     [BIKE_STATE_NORMAL]  = RideInputHandler_Normal,
     [BIKE_STATE_TURNING] = RideInputHandler_Turning,
 };
 
-void MovePlayerOnRide(u8 newDirection, u16 heldKeys)
+void MovePlayerOnRide(u32 newDirection, u16 heldKeys)
 {
-	u8 input = GetRideMovementInput(&newDirection);
+	u32 input = GetRideMovementInput(&newDirection);
 	
 	UpdateStoutlandSearchAndTaurosCharge(heldKeys);
 	
 	sRideTransitions[input](newDirection, heldKeys);
 }
 
-static u8 GetRideMovementInput(u8 *newDirection)
+static u32 GetRideMovementInput(u32 *newDirection)
 {
 	return sRideInputHandlers[gPlayerAvatar.acroBikeState](newDirection);
 }
 
-static u8 RideInputHandler_Normal(u8 *newDirection)
+static u32 RideInputHandler_Normal(u32 *newDirection)
 {
-	u8 direction = GetPlayerMovementDirection();
+	u32 direction = GetPlayerMovementDirection();
 
 	gPlayerAvatar.bikeFrameCounter = 0;
 	
@@ -565,7 +564,7 @@ static u8 RideInputHandler_Normal(u8 *newDirection)
 	}
 }
 
-static u8 RideInputHandler_Turning(u8 *newDirection)
+static u32 RideInputHandler_Turning(u32 *newDirection)
 {
 	*newDirection = gPlayerAvatar.newDirBackup;
 	gPlayerAvatar.runningState = TURN_DIRECTION;
@@ -575,14 +574,14 @@ static u8 RideInputHandler_Turning(u8 *newDirection)
 	return BIKE_TRANS_TURNING;
 }
 
-static void RideTransition_FaceDirection(u8 direction, u16 heldKeys)
+static void RideTransition_FaceDirection(u32 direction, u16 heldKeys)
 {
 	PlayerFaceDirection(direction);
 }
 
-static void RideTransition_MoveDirection(u8 direction, u16 heldKeys)
+static void RideTransition_MoveDirection(u32 direction, u16 heldKeys)
 {
-	u8 collision = GetBikeCollision(direction);
+	u32 collision = GetBikeCollision(direction);
 	
 	if (collision > COLLISION_NONE && collision <= COLLISION_WHEELIE_HOP)
 	{

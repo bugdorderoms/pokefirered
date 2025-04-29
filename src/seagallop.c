@@ -35,7 +35,7 @@ static void CreateFerrySprite(void);
 static void SpriteCB_Ferry(struct Sprite * sprite);
 static void CreateWakeSprite(s16 x);
 static void SpriteCB_Wake(struct Sprite * sprite);
-static bool8 GetDirectionOfTravel(void);
+static u32 GetDirectionOfTravel(void);
 
 static const u16 sWaterTiles[] = INCBIN_U16("graphics/seagallop/water.4bpp");
 static const u16 sWaterPal[] = INCBIN_U16("graphics/seagallop/water.gbapal");
@@ -178,6 +178,7 @@ void DoSeagallopFerryScene(void)
 static void CB2_SetUpSeagallopScene(void)
 {
     void ** ptr;
+	
     switch (gMain.state)
     {
     case 0:
@@ -200,20 +201,18 @@ static void CB2_SetUpSeagallopScene(void)
         break;
     case 3:
         LoadBgTiles(3, sWaterTiles, sizeof(sWaterTiles), 0);
+		
         if (GetDirectionOfTravel() == DIRN_EASTBOUND)
-        {
             CopyToBgTilemapBufferRect(3, sWaterTilemap_EB, 0, 0, 32, 32);
-        }
         else
-        {
             CopyToBgTilemapBufferRect(3, sWaterTilemap_WB, 0, 0, 32, 32);
-        }
+
         LoadPalette(sWaterPal, 0x40, 0x20);
         LoadPalette(stdpal_get(2), 0xF0, 0x20);
         gMain.state++;
         break;
     case 4:
-        if (IsDma3ManagerBusyWithBgCopy() != DIRN_EASTBOUND)
+        if (!IsDma3ManagerBusyWithBgCopy())
         {
             ShowBg(0);
             ShowBg(3);
@@ -270,13 +269,9 @@ static void Task_Seagallop_0(u8 taskId)
 static void ScrollBG(void)
 {
     if (GetDirectionOfTravel() == DIRN_EASTBOUND)
-    {
         ChangeBgX(3, 0x600, 1);
-    }
     else
-    {
         ChangeBgX(3, 0x600, 2);
-    }
 }
 
 static void Task_Seagallop_1(u8 taskId)
@@ -284,6 +279,7 @@ static void Task_Seagallop_1(u8 taskId)
     struct Task * task = &gTasks[taskId];
 
     ScrollBG();
+	
     if (++task->data[1] == 140)
     {
         Overworld_FadeOutMapMusic();
@@ -295,6 +291,7 @@ static void Task_Seagallop_1(u8 taskId)
 static void Task_Seagallop_2(u8 taskId)
 {
     ScrollBG();
+	
     if (IsNotWaitingForBGMStop() && !gPaletteFade.active)
     {
         Task_Seagallop_3();
@@ -326,7 +323,6 @@ static void ResetGPU(void)
 {
     void * dest = (void *) VRAM;
     DmaClearLarge16(3, dest, VRAM_SIZE, 0x1000);
-
     DmaClear32(3, (void *)OAM, OAM_SIZE);
     DmaClear16(3, (void *)PLTT, PLTT_SIZE);
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
@@ -381,12 +377,12 @@ static void FreeFerrySpriteResources(void)
 
 static void CreateFerrySprite(void)
 {
-    u8 spriteId = CreateSprite(&sFerrySpriteTemplate, 0, 92, 0);
+    u32 spriteId = CreateSprite(&sFerrySpriteTemplate, 0, 92, 0);
+	
     gSprites[spriteId].data[0] = 48;
+	
     if (GetDirectionOfTravel() == DIRN_EASTBOUND)
-    {
         StartSpriteAnim(&gSprites[spriteId], 1);
-    }
     else
     {
         gSprites[spriteId].x = 240;
@@ -398,50 +394,45 @@ static void SpriteCB_Ferry(struct Sprite * sprite)
 {
     sprite->data[1] += sprite->data[0];
     sprite->x2 = sprite->data[1] >> 4;
+	
     if (sprite->data[2] % 5 == 0)
-    {
         CreateWakeSprite(sprite->x + sprite->x2);
-    }
+
     sprite->data[2]++;
+	
     if ((u16)(300 + sprite->x2) > 600)
-    {
         DestroySprite(sprite);
-    }
 }
 
 static void CreateWakeSprite(s16 x)
 {
-    u8 spriteId = CreateSprite(&sWakeSpriteTemplate, x, 92, 8);
+    u32 spriteId = CreateSprite(&sWakeSpriteTemplate, x, 92, 8);
+	
     if (spriteId != MAX_SPRITES)
     {
         if (GetDirectionOfTravel() == DIRN_EASTBOUND)
-        {
             StartSpriteAnim(&gSprites[spriteId], 1);
-        }
     }
 }
 
 static void SpriteCB_Wake(struct Sprite * sprite)
 {
     if (sprite->animEnded)
-    {
         DestroySprite(sprite);
-    }
 }
 
-static bool8 GetDirectionOfTravel(void)
+static u32 GetDirectionOfTravel(void)
 {
     if (gSpecialVar_0x8004 >= ARRAY_COUNT(sTravelDirectionMatrix))
-    {
         return DIRN_EASTBOUND;
-    }
+
     return (sTravelDirectionMatrix[gSpecialVar_0x8004] >> gSpecialVar_0x8006) & 1;
 }
 
 // For "All aboard SEAGALLOP HI-SPEED ##" text
-u8 GetSeagallopNumber(void)
+u32 GetSeagallopNumber(void)
 {
-    u16 originId, destId;
+    u32 originId, destId;
 
     originId = gSpecialVar_0x8004;
     destId = gSpecialVar_0x8006;
@@ -458,35 +449,22 @@ u8 GetSeagallopNumber(void)
     if (originId == SEAGALLOP_BIRTH_ISLAND || destId == SEAGALLOP_BIRTH_ISLAND)
         return 12;
 
-    if ((originId == SEAGALLOP_ONE_ISLAND 
-      || originId == SEAGALLOP_TWO_ISLAND 
-      || originId == SEAGALLOP_THREE_ISLAND) 
-      && (destId == SEAGALLOP_ONE_ISLAND 
-       || destId == SEAGALLOP_TWO_ISLAND 
-       || destId == SEAGALLOP_THREE_ISLAND))
+    if ((originId == SEAGALLOP_ONE_ISLAND || originId == SEAGALLOP_TWO_ISLAND || originId == SEAGALLOP_THREE_ISLAND) 
+	&& (destId == SEAGALLOP_ONE_ISLAND || destId == SEAGALLOP_TWO_ISLAND || destId == SEAGALLOP_THREE_ISLAND))
         return 2;
 
-    if ((originId == SEAGALLOP_FOUR_ISLAND 
-      || originId == SEAGALLOP_FIVE_ISLAND) 
-      && (destId == SEAGALLOP_FOUR_ISLAND 
-       || destId == SEAGALLOP_FIVE_ISLAND))
+    if ((originId == SEAGALLOP_FOUR_ISLAND || originId == SEAGALLOP_FIVE_ISLAND) && (destId == SEAGALLOP_FOUR_ISLAND || destId == SEAGALLOP_FIVE_ISLAND))
         return 3;
 
-    if ((originId == SEAGALLOP_SIX_ISLAND 
-      || originId == SEAGALLOP_SEVEN_ISLAND) 
-      && (destId == SEAGALLOP_SIX_ISLAND 
-       || destId == SEAGALLOP_SEVEN_ISLAND))
+    if ((originId == SEAGALLOP_SIX_ISLAND || originId == SEAGALLOP_SEVEN_ISLAND) && (destId == SEAGALLOP_SIX_ISLAND || destId == SEAGALLOP_SEVEN_ISLAND))
         return 5;
 
     return 6;
 }
 
-bool8 IsPlayerLeftOfVermilionSailor(void)
+bool32 IsPlayerLeftOfVermilionSailor(void)
 {
-    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(VERMILION_CITY) 
-       && gSaveBlock1Ptr->location.mapNum == MAP_NUM(VERMILION_CITY) 
-       && gSaveBlock1Ptr->pos.x < 24)
+    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(VERMILION_CITY) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(VERMILION_CITY) && gSaveBlock1Ptr->pos.x < 24)
         return TRUE;
-
     return FALSE;
 }

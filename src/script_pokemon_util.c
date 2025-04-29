@@ -16,12 +16,12 @@
 
 void HealPlayerParty(void)
 {
-    u8 i, status = STATUS1_NONE;
+    u32 i, status = STATUS1_NONE;
 
     // restore HP.
-    for(i = 0; i < gPlayerPartyCount; i++)
+    for (i = 0; i < gPlayerPartyCount; i++)
     {
-        u16 maxHP = GetMonData(&gPlayerParty[i], MON_DATA_MAX_HP);
+        u32 maxHP = GetMonData(&gPlayerParty[i], MON_DATA_MAX_HP);
 		
         SetMonData(&gPlayerParty[i], MON_DATA_HP, &maxHP);
 		MonRestorePP(&gPlayerParty[i]);
@@ -29,11 +29,9 @@ void HealPlayerParty(void)
     }
 }
 
-u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shinyType, bool8 hiddenAbility, u8 nature, u8 gender, u16 *moves)
+u32 ScriptGiveMon(u32 species, u32 level, u32 item, u8 *ivs, u32 pokeBall, u32 shinyType, bool32 hiddenAbility, u32 nature, u32 gender, u16 *moves)
 {
-	u8 i;
-    u16 nationalDexNum;
-    int sentToPc;
+    u32 i, nationalDexNum, sentToPc;
     struct Pokemon *mon = AllocZeroed(sizeof(struct Pokemon));
 	struct PokemonGenerator generator =
 	{
@@ -84,10 +82,9 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u8 *ivs, u16 pokeBall, u8 shin
     return sentToPc;
 }
 
-u8 ScriptGiveEgg(u16 species, u8 *ivs, u8 shinyType, bool8 hiddenAbility, u8 nature, u16 *moves)
+u32 ScriptGiveEgg(u32 species, u8 *ivs, u32 shinyType, bool32 hiddenAbility, u32 nature, u16 *moves)
 {
-	u8 i;
-	bool8 sentToPc;
+	u32 i, sentToPc;
     struct Pokemon *mon = AllocZeroed(sizeof(struct Pokemon));
 	struct PokemonGenerator generator =
 	{
@@ -127,7 +124,7 @@ void HasEnoughMonsForDoubleBattle(void)
 	gSpecialVar_Result = GetMonsStateToDoubles();
 }
 
-void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 level2, u16 item2)
+void CreateScriptedWildMon(u32 species, u32 level, u32 item, u32 species2, u32 level2, u32 item2)
 {
 	struct PokemonGenerator generator =
 	{
@@ -160,7 +157,7 @@ void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16 species2, u8 lev
 	}
 }
 
-void ScriptSetMonMoveSlot(u8 monIndex, u16 move, u8 slot)
+void ScriptSetMonMoveSlot(u32 monIndex, u32 move, u32 slot)
 {
     if (monIndex > PARTY_SIZE)
         monIndex = gPlayerPartyCount - 1;
@@ -193,7 +190,7 @@ void ChooseHalfPartyForBattle(void)
 
 void ReducePlayerPartyToThree(void)
 {
-	u8 i;
+	u32 i;
     struct Pokemon * party = AllocZeroed((PARTY_SIZE / 2) * sizeof(struct Pokemon));
 
     // copy the selected pokemon according to the order.

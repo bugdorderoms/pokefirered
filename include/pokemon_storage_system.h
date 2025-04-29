@@ -27,18 +27,18 @@ enum
     WALLPAPER_COUNT
 };
 
-u8 *GetBoxNamePtr(u8 boxNumber);
-struct BoxPokemon *GetBoxedMonPtr(u8 boxId, u8 monPosition);
-void SetBoxMonNickAt(u8 boxId, u8 monPosition, const u8 *newNick);
+u8 *GetBoxNamePtr(u32 boxNumber);
+struct BoxPokemon *GetBoxedMonPtr(u32 boxId, u32 monPosition);
+void SetBoxMonNickAt(u32 boxId, u32 monPosition, const u8 *newNick);
 s16 CompactPartySlots(void);
-u32 GetBoxMonDataAt(u8 boxId, u8 monPosition, s32 request);
-void ZeroBoxMonAt(u8 boxId, u8 monPosition);
+u32 GetBoxMonDataAt(u32 boxId, u32 monPosition, s32 request);
+void ZeroBoxMonAt(u32 boxId, u32 monPosition);
 void Cb2_ReturnToPSS(void);
 void ResetPokemonStorageSystem(void);
-u8 StorageGetCurrentBox(void);
-void DrawTextWindowAndBufferTiles(const u8 *string, void *dst, u8 zero1, u8 zero2, u8 *buffer, s32 bytesToBuffer);
-u8 CountPartyNonEggMons(void);
+u32 StorageGetCurrentBox(void);
+void DrawTextWindowAndBufferTiles(const u8 *string, void *dst, u32 zero1, u32 zero2, u8 *buffer, s32 bytesToBuffer);
+u32 CountPartyNonEggMons(void);
 void UpdatePcMonIconSpecies(void);
-s16 SeekToNextMonInBox(struct BoxPokemon * boxMons, s8 curIndex, u8 maxIndex, u8 flags);
+s16 SeekToNextMonInBox(struct BoxPokemon * boxMons, s8 curIndex, u32 maxIndex, u32 flags);
 
 #endif // GUARD_POKEMON_STORAGE_SYSTEM_H

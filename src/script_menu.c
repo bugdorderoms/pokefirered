@@ -655,9 +655,9 @@ static u16 GetStringTilesWide(const u8 *str)
     return (GetStringWidth(1, str, 0) + 7) / 8;
 }
 
-static u8 GetMenuWidthFromList(const struct MenuAction * items, u8 count)
+static u32 GetMenuWidthFromList(const struct MenuAction * items, u32 count)
 {
-    u16 i;
+    u32 i;
     u8 width = GetStringTilesWide(items[0].text);
     u8 tmp;
 
@@ -670,24 +670,24 @@ static u8 GetMenuWidthFromList(const struct MenuAction * items, u8 count)
     return width;
 }
 
-static u8 CreateMultichoiceWindow(u8 bg, u8 x, u8 y, u8 width, u8 height, u16 baseBlock, u8 palNum)
+static u32 CreateMultichoiceWindow(u32 bg, u8 x, u8 y, u8 width, u8 height, u16 baseBlock, u32 palNum)
 {
 	struct WindowTemplate template = SetWindowTemplateFields(bg, x + 1, y + 1, width, height, palNum, baseBlock);
-	u8 windowId = AddWindow(&template);
+	u32 windowId = AddWindow(&template);
 	
     PutWindowTilemap(windowId);
 	
     return windowId;
 }
 
-static void DestroyMultichoiceWindow(u8 windowId)
+static void DestroyMultichoiceWindow(u32 windowId)
 {
 	ClearWindowTilemap(windowId);
     ClearStdWindowAndFrameToTransparent(windowId, TRUE);
     RemoveWindow(windowId);
 }
 
-bool8 ScriptMenu_Multichoice(u8 x, u8 y, u8 mcId, bool8 ignoreBPress, u8 defaultOpt, u8 perRowItems)
+bool32 ScriptMenu_Multichoice(u8 x, u8 y, u32 mcId, bool32 ignoreBPress, u32 defaultOpt, u32 perRowItems)
 {
 	if (!FuncIsActiveTask(Task_MultichoiceMenu_HandleInput))
 	{
@@ -700,9 +700,9 @@ bool8 ScriptMenu_Multichoice(u8 x, u8 y, u8 mcId, bool8 ignoreBPress, u8 default
 #define tIgnoreBPress data[0]
 #define tWindowId     data[1]
 
-static u8 CreateMultichoiceInputTask(bool8 ignoreBPress, u8 windowId)
+static u32 CreateMultichoiceInputTask(bool32 ignoreBPress, u32 windowId)
 {
-	u8 taskId = CreateTask(Task_MultichoiceMenu_HandleInput, 80);
+	u32 taskId = CreateTask(Task_MultichoiceMenu_HandleInput, 80);
 	
 	gTasks[taskId].tIgnoreBPress = ignoreBPress;
 	gTasks[taskId].tWindowId = windowId;
@@ -710,14 +710,15 @@ static u8 CreateMultichoiceInputTask(bool8 ignoreBPress, u8 windowId)
 	return taskId;
 }
 
-static void InitDefaultMultichoiceOnLeftTop(const struct MenuAction * items, u8 count)
+static void InitDefaultMultichoiceOnLeftTop(const struct MenuAction * items, u32 count)
 {
 	InitMultichoice(items, count, 0, 0, 0, FALSE, 0, 1, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
 }
 
-u8 InitMultichoice(const struct MenuAction * items, u8 count, u8 bg, u8 x, u8 y, bool8 ignoreBPress, u8 defaultOpt, u8 perRowItems, u16 baseBlock, u8 palNum)
+u32 InitMultichoice(const struct MenuAction * items, u32 count, u32 bg, u8 x, u8 y, bool32 ignoreBPress, u32 defaultOpt, u32 perRowItems, u16 baseBlock, u32 palNum)
 {
-	u8 width, rowCount, windowId, taskId = 0xFF;
+	u32 windowId, taskId = 0xFF;
+	u8 width, rowCount;
 	
 	gSpecialVar_Result = SCR_MENU_UNSET;
 	
@@ -765,7 +766,7 @@ static void Task_MultichoiceMenu_HandleInput(u8 taskId)
 
 static void CreatePCMenuMultichoice(void)
 {
-	u8 nItems = 0;
+	u32 nItems = 0;
 	struct MenuAction menuItems[5]; // max of items
 	
 	// "Bill" or "Someone"'s PC
@@ -790,7 +791,7 @@ static void CreatePCMenuMultichoice(void)
 	InitDefaultMultichoiceOnLeftTop(menuItems, nItems);
 }
 
-bool8 CreatePCMenu(void)
+bool32 CreatePCMenu(void)
 {
 	if (!FuncIsActiveTask(Task_MultichoiceMenu_HandleInput))
 	{
@@ -810,7 +811,7 @@ void DrawSeagallopDestinationMenu(void)
 {
 	// 8004 = Starting location
     // 8005 = Page (0: Verm, One, Two, Three, Four, Other, Exit; 1: Four, Five, Six, Seven, Other, Exit)
-	u8 i, windowId, defaultOpt, cursorWidth, nItems = 5, y = 0;
+	u32 i, windowId, defaultOpt, cursorWidth, nItems = 5, y = 0;
 	
 	if (gSpecialVar_0x8005 == 1)
 	{
@@ -845,7 +846,7 @@ void DrawSeagallopDestinationMenu(void)
 	ScheduleBgCopyTilemapToVram(0);
 }
 
-u16 GetSelectedSeagallopDestination(void)
+u32 GetSelectedSeagallopDestination(void)
 {
 	// 8004 = Starting location
     // 8005 = Page (0: Verm, One, Two, Three, Four, Other, Exit; 1: Four, Five, Six, Seven, Other, Exit)
@@ -897,7 +898,7 @@ u16 GetSelectedSeagallopDestination(void)
 
 void DrawRepelMultichoiseMenu(void)
 {
-	u8 i, count;
+	u32 i, count;
 	u16 repelItems[] = {ITEM_REPEL, ITEM_SUPER_REPEL, ITEM_MAX_REPEL};
 	struct MenuAction menuItems[3]; // max of items
 	
@@ -927,7 +928,7 @@ void HandleRepelUseAnother(void)
 #undef tIgnoreBPress
 #undef tWindowId
 
-bool8 ScriptMenu_YesNo(u8 unused, u8 stuff)
+bool32 ScriptMenu_YesNo(void)
 {
     if (!FuncIsActiveTask(Task_YesNoMenu_HandleInput))
 	{
@@ -963,14 +964,14 @@ static void Task_YesNoMenu_HandleInput(u8 taskId)
 	}
 }
 
-static u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y)
+static u32 CreateMonSprite_PicBox(u32 species, s16 x, s16 y)
 {
     return CreateMonPicSprite(species, FALSE, 0x8000, TRUE, 8 * x + 40, 8 * y + 40, 0, species);
 }
 
-static u8 CreateMenuMonPic(u16 species, u8 x, u8 y)
+static u32 CreateMenuMonPic(u32 species, u8 x, u8 y)
 {
-	u8 spriteId = CreateMonSprite_PicBox(species, x, y), spriteId2 = MAX_SPRITES;
+	u32 spriteId = CreateMonSprite_PicBox(species, x, y), spriteId2 = MAX_SPRITES;
 	
 	if (Overworld_GetFlashLevel() > 0)
 	{
@@ -990,9 +991,9 @@ static u8 CreateMenuMonPic(u16 species, u8 x, u8 y)
 	return spriteId;
 }
 
-static u8 CreateMenuItemPic(u16 itemId, u16 x, u16 y)
+static u32 CreateMenuItemPic(u32 itemId, u16 x, u16 y)
 {
-	u8 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2 = MAX_SPRITES;
+	u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2 = MAX_SPRITES;
 	
 	x = 8 * x + 16;
 	y = 8 * y + 16;
@@ -1024,7 +1025,7 @@ enum
 	PIC_TYPE_ITEM,
 };
 
-static void DestroyPicboxPic(u8 picType, u8 spriteId)
+static void DestroyPicboxPic(u32 picType, u32 spriteId)
 {
 	struct Sprite *sprite = &gSprites[spriteId];
 	
@@ -1054,7 +1055,7 @@ static void DestroyPicboxPic(u8 picType, u8 spriteId)
 #define tState     data[2]
 #define tPicType   data[3]
 
-static void CreatePicBox(u8 spriteId, s16 x, s16 y, u8 width, u8 height, u8 picType)
+static void CreatePicBox(u32 spriteId, s16 x, s16 y, u8 width, u8 height, u32 picType)
 {
 	s16 *data = gTasks[CreateTask(Task_ScriptShowPic, 80)].data;
 	
@@ -1067,7 +1068,7 @@ static void CreatePicBox(u8 spriteId, s16 x, s16 y, u8 width, u8 height, u8 picT
 	ScheduleBgCopyTilemapToVram(0);
 }
 
-bool8 ScriptMenu_ShowPokemonPic(u16 species, u8 x, u8 y)
+bool32 ScriptMenu_ShowPokemonPic(u32 species, u8 x, u8 y)
 {
 	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
 		return FALSE;
@@ -1119,7 +1120,7 @@ static bool32 PicboxWaitFunc(void)
 
 void PicboxCancel(void)
 {
-	u8 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
+	u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
 	s16 *data;
 	
 	if (taskId != 0xFF)
@@ -1143,23 +1144,23 @@ void PicboxCancel(void)
 
 void RemovePokemonSpeciesOnPicbox(void)
 {
-	u8 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
+	u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
 	
 	if (taskId != 0xFF)
 		DestroyPicboxPic(PIC_TYPE_POKEMON, gTasks[taskId].tSpriteId);
 }
 
-void UpdatePokemonSpeciesOnPicbox(u16 species, u8 x, u8 y)
+void UpdatePokemonSpeciesOnPicbox(u32 species, u8 x, u8 y)
 {
-	u8 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
+	u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
 	
 	if (taskId != 0xFF)
 		gTasks[taskId].tSpriteId = CreateMenuMonPic(species, x, y);
 }
 
-bool8 OpenMuseumFossilPic(void)
+bool32 OpenMuseumFossilPic(void)
 {
-	u8 spriteId;
+	u32 spriteId;
 	
 	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
 		return FALSE;
@@ -1187,9 +1188,9 @@ bool8 OpenMuseumFossilPic(void)
 	}
 }
 
-bool8 CloseMuseumFossilPic(void)
+bool32 CloseMuseumFossilPic(void)
 {
-	u8 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
+	u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
 	
     if (taskId == 0xFF)
         return FALSE;
@@ -1199,7 +1200,7 @@ bool8 CloseMuseumFossilPic(void)
     return TRUE;
 }
 
-bool8 ScriptMenu_ShowItemPic(u16 itemId, u8 x, u8 y)
+bool32 ScriptMenu_ShowItemPic(u32 itemId, u8 x, u8 y)
 {
 	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
 		return FALSE;

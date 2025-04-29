@@ -813,12 +813,10 @@
 	.byte 0x6d
 	.endm
 
-	@ Displays a YES/NO multichoice box at the specified coordinates, and blocks script execution until the user makes a selection.
+	@ Displays a YES/NO multichoice box, and blocks script execution until the user makes a selection.
 	@ Their selection is stored in VAR_RESULT as NO (0) or YES (1). Pressing B is equivalent to answering NO
-	.macro yesnobox x:req, y:req
+	.macro yesnobox
 	.byte 0x6e
-	.byte \x
-	.byte \y
 	.endm
 
 	@ Displays a multichoice box from which the user can choose a selection, and blocks script execution until a selection is made.

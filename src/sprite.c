@@ -37,10 +37,9 @@ struct OamDimensions
     s8 height;
 };
 
-static u8 CreateSpriteAt(u8 index, const struct SpriteTemplate *template, s16 x, s16 y, u8 subpriority);
+static u32 CreateSpriteAt(u32 index, const struct SpriteTemplate *template, s16 x, s16 y, u32 subpriority);
 static void ResetOamMatrices(void);
 static void ResetSprite(struct Sprite *sprite);
-s16 AllocSpriteTiles(u16 tileCount);
 static void RequestSpriteFrameImageCopy(u16 index, u16 tileNum, const struct SpriteFrameImage *images);
 static void ResetAllSprites(void);
 static void BeginAnim(struct Sprite *sprite);
@@ -54,34 +53,34 @@ static void ContinueAnimLoop(struct Sprite *sprite);
 static void JumpToTopOfAnimLoop(struct Sprite *sprite);
 static void BeginAffineAnim(struct Sprite *sprite);
 static void ContinueAffineAnim(struct Sprite *sprite);
-static void AffineAnimDelay(u8 matrixNum, struct Sprite *sprite);
-static void AffineAnimCmd_loop(u8 matrixNum, struct Sprite *sprite);
-static void BeginAffineAnimLoop(u8 matrixNum, struct Sprite *sprite);
-static void ContinueAffineAnimLoop(u8 matrixNum, struct Sprite *sprite);
-static void JumpToTopOfAffineAnimLoop(u8 matrixNum, struct Sprite *sprite);
-static void AffineAnimCmd_jump(u8 matrixNum, struct Sprite *sprite);
-static void AffineAnimCmd_end(u8 matrixNum, struct Sprite *sprite);
-static void AffineAnimCmd_frame(u8 matrixNum, struct Sprite *sprite);
-static void CopyOamMatrix(u8 destMatrixIndex, struct OamMatrix *srcMatrix);
-static u8 GetSpriteMatrixNum(struct Sprite *sprite);
+static void AffineAnimDelay(u32 matrixNum, struct Sprite *sprite);
+static void AffineAnimCmd_loop(u32 matrixNum, struct Sprite *sprite);
+static void BeginAffineAnimLoop(u32 matrixNum, struct Sprite *sprite);
+static void ContinueAffineAnimLoop(u32 matrixNum, struct Sprite *sprite);
+static void JumpToTopOfAffineAnimLoop(u32 matrixNum, struct Sprite *sprite);
+static void AffineAnimCmd_jump(u32 matrixNum, struct Sprite *sprite);
+static void AffineAnimCmd_end(u32 matrixNum, struct Sprite *sprite);
+static void AffineAnimCmd_frame(u32 matrixNum, struct Sprite *sprite);
+static void CopyOamMatrix(u32 destMatrixIndex, struct OamMatrix *srcMatrix);
+static u32 GetSpriteMatrixNum(struct Sprite *sprite);
 static void SetSpriteOamFlipBits(struct Sprite *sprite, u8 hFlip, u8 vFlip);
-static void AffineAnimStateRestartAnim(u8 matrixNum);
-static void AffineAnimStateStartAnim(u8 matrixNum, u8 animNum);
-static void AffineAnimStateReset(u8 matrixNum);
-static void ApplyAffineAnimFrameAbsolute(u8 matrixNum, struct AffineAnimFrameCmd *frameCmd);
+static void AffineAnimStateRestartAnim(u32 matrixNum);
+static void AffineAnimStateStartAnim(u32 matrixNum, u32 animNum);
+static void AffineAnimStateReset(u32 matrixNum);
+static void ApplyAffineAnimFrameAbsolute(u32 matrixNum, struct AffineAnimFrameCmd *frameCmd);
 static void DecrementAnimDelayCounter(struct Sprite *sprite);
-static bool8 DecrementAffineAnimDelayCounter(struct Sprite *sprite, u8 matrixNum);
-static void ApplyAffineAnimFrameRelativeAndUpdateMatrix(u8 matrixNum, struct AffineAnimFrameCmd *frameCmd);
+static bool32 DecrementAffineAnimDelayCounter(struct Sprite *sprite, u32 matrixNum);
+static void ApplyAffineAnimFrameRelativeAndUpdateMatrix(u32 matrixNum, struct AffineAnimFrameCmd *frameCmd);
 static s16 ConvertScaleParam(s16 scale);
-static void GetAffineAnimFrame(u8 matrixNum, struct Sprite *sprite, struct AffineAnimFrameCmd *frameCmd);
-static void ApplyAffineAnimFrame(u8 matrixNum, struct AffineAnimFrameCmd *frameCmd);
-static u8 IndexOfSpriteTileTag(u16 tag);
-static void AllocSpriteTileRange(u16 tag, u16 start, u16 count);
+static void GetAffineAnimFrame(u32 matrixNum, struct Sprite *sprite, struct AffineAnimFrameCmd *frameCmd);
+static void ApplyAffineAnimFrame(u32 matrixNum, struct AffineAnimFrameCmd *frameCmd);
+static u32 IndexOfSpriteTileTag(u32 tag);
+static void AllocSpriteTileRange(u32 tag, u16 start, u16 count);
 static void obj_update_pos2(struct Sprite* sprite, s32 a1, s32 a2);
 
 typedef void (*AnimFunc)(struct Sprite *);
 typedef void (*AnimCmdFunc)(struct Sprite *);
-typedef void (*AffineAnimCmdFunc)(u8 matrixNum, struct Sprite *);
+typedef void (*AffineAnimCmdFunc)(u32 matrixNum, struct Sprite *);
 
 #define DUMMY_OAM_DATA        \
 {                             \
@@ -304,7 +303,7 @@ void ResetSpriteData(void)
 
 void AnimateSprites(void)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; i < MAX_SPRITES; i++)
     {
@@ -323,7 +322,7 @@ void AnimateSprites(void)
 void BuildOamBuffer(void)
 {
 	struct Sprite *sprite;
-	bool8 oamLoadDisabled;
+	bool32 oamLoadDisabled;
 	u32 i, stride, index, priority;
 	s32 y, currSprite;
 	u8 oamIndex;
@@ -430,9 +429,9 @@ void BuildOamBuffer(void)
     gShouldProcessSpriteCopyRequests = TRUE;
 }
 
-u8 CreateSprite(const struct SpriteTemplate *template, s16 x, s16 y, u8 subpriority)
+u32 CreateSprite(const struct SpriteTemplate *template, s16 x, s16 y, u32 subpriority)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < MAX_SPRITES; i++)
 	{
@@ -442,9 +441,9 @@ u8 CreateSprite(const struct SpriteTemplate *template, s16 x, s16 y, u8 subprior
     return MAX_SPRITES;
 }
 
-u8 CreateSpriteAtEnd(const struct SpriteTemplate *template, s16 x, s16 y, u8 subpriority)
+u32 CreateSpriteAtEnd(const struct SpriteTemplate *template, s16 x, s16 y, u32 subpriority)
 {
-    s16 i;
+    s32 i;
 
     for (i = MAX_SPRITES - 1; i > -1; i--)
 	{
@@ -454,9 +453,9 @@ u8 CreateSpriteAtEnd(const struct SpriteTemplate *template, s16 x, s16 y, u8 sub
     return MAX_SPRITES;
 }
 
-u8 CreateInvisibleSprite(void (*callback)(struct Sprite *))
+u32 CreateInvisibleSprite(void (*callback)(struct Sprite *))
 {
-    u8 index = CreateSprite(&gDummySpriteTemplate, 0, 0, 31);
+    u32 index = CreateSprite(&gDummySpriteTemplate, 0, 0, 31);
 
     if (index == MAX_SPRITES)
         return MAX_SPRITES;
@@ -468,7 +467,7 @@ u8 CreateInvisibleSprite(void (*callback)(struct Sprite *))
     }
 }
 
-u8 CreateSpriteAt(u8 index, const struct SpriteTemplate *template, s16 x, s16 y, u8 subpriority)
+u32 CreateSpriteAt(u32 index, const struct SpriteTemplate *template, s16 x, s16 y, u32 subpriority)
 {
     struct Sprite *sprite = &gSprites[index];
 
@@ -521,9 +520,9 @@ u8 CreateSpriteAt(u8 index, const struct SpriteTemplate *template, s16 x, s16 y,
     return index;
 }
 
-u8 CreateSpriteAndAnimate(const struct SpriteTemplate *template, s16 x, s16 y, u8 subpriority)
+u32 CreateSpriteAndAnimate(const struct SpriteTemplate *template, s16 x, s16 y, u32 subpriority)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < MAX_SPRITES; i++)
     {
@@ -531,7 +530,7 @@ u8 CreateSpriteAndAnimate(const struct SpriteTemplate *template, s16 x, s16 y, u
 
         if (!gSprites[i].inUse)
         {
-            u8 index = CreateSpriteAt(i, template, x, y, subpriority);
+            u32 index = CreateSpriteAt(i, template, x, y, subpriority);
 
             if (index == MAX_SPRITES)
                 return MAX_SPRITES;
@@ -553,7 +552,7 @@ void DestroySprite(struct Sprite *sprite)
     {
         if (!sprite->usingSheet)
         {
-            u16 i;
+            u32 i;
             u16 tileEnd = (sprite->images->size / TILE_SIZE_4BPP) + sprite->oam.tileNum;
 			
             for (i = sprite->oam.tileNum; i < tileEnd; i++)
@@ -563,9 +562,9 @@ void DestroySprite(struct Sprite *sprite)
     }
 }
 
-void ResetOamRange(u8 a, u8 b)
+void ResetOamRange(u32 a, u32 b)
 {
-    u8 i;
+    u32 i;
 
     for (i = a; i < b; i++)
     {
@@ -582,7 +581,7 @@ void LoadOam(void)
 
 void ClearSpriteCopyRequests(void)
 {
-    u8 i;
+    u32 i;
 
     gShouldProcessSpriteCopyRequests = FALSE;
     gSpriteCopyRequestCount = 0;
@@ -597,7 +596,7 @@ void ClearSpriteCopyRequests(void)
 
 void ResetOamMatrices(void)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; i < OAM_MATRIX_COUNT; i++)
     {
@@ -609,7 +608,7 @@ void ResetOamMatrices(void)
     }
 }
 
-void SetOamMatrix(u8 matrixNum, u16 a, u16 b, u16 c, u16 d)
+void SetOamMatrix(u32 matrixNum, u16 a, u16 b, u16 c, u16 d)
 {
     gOamMatrices[matrixNum].a = a;
     gOamMatrices[matrixNum].b = b;
@@ -622,7 +621,7 @@ void ResetSprite(struct Sprite *sprite)
     *sprite = sDummySprite;
 }
 
-void CalcCenterToCornerVec(struct Sprite *sprite, u8 shape, u8 size, u8 affineMode)
+void CalcCenterToCornerVec(struct Sprite *sprite, u32 shape, u32 size, u32 affineMode)
 {
     u8 x = sCenterToCornerVecTable[shape][size][0];
     u8 y = sCenterToCornerVecTable[shape][size][1];
@@ -689,7 +688,7 @@ s16 AllocSpriteTiles(u16 tileCount)
     return start;
 }
 
-u8 SpriteTileAllocBitmapOp(u16 bit, u8 op)
+u8 SpriteTileAllocBitmapOp(u16 bit, u32 op)
 {
     u8 index = bit / 8;
     u8 shift = bit % 8;
@@ -711,7 +710,6 @@ u8 SpriteTileAllocBitmapOp(u16 bit, u8 op)
         retVal = Bit(shift);
         retVal &= gSpriteTileAllocBitmap[index];
     }
-
     return retVal;
 }
 
@@ -719,7 +717,7 @@ void FreeSpriteTilesIfNotUsingSheet(struct Sprite *sprite)
 {
     if (!sprite->usingSheet)
     {
-        int i;
+        u32 i;
         int end = (sprite->images[0].size / TILE_SIZE_4BPP) + sprite->oam.tileNum;
 
         for (i = sprite->oam.tileNum; i < end; i++)
@@ -735,7 +733,7 @@ void ProcessSpriteCopyRequests(void)
 {
     if (gShouldProcessSpriteCopyRequests)
     {
-        u8 i = 0;
+        u32 i = 0;
 
         while (gSpriteCopyRequestCount > 0)
         {
@@ -743,7 +741,6 @@ void ProcessSpriteCopyRequests(void)
             gSpriteCopyRequestCount--;
             i++;
         }
-
         gShouldProcessSpriteCopyRequests = FALSE;
     }
 }
@@ -759,7 +756,7 @@ void RequestSpriteFrameImageCopy(u16 index, u16 tileNum, const struct SpriteFram
     }
 }
 
-void RequestSpriteCopy(const u8 *src, u8 *dest, u16 size)
+void RequestSpriteCopy(const u8 *src, u8 *dest, u32 size)
 {
     if (gSpriteCopyRequestCount < MAX_SPRITE_COPY_REQUESTS)
     {
@@ -1002,7 +999,6 @@ void JumpToTopOfAnimLoop(struct Sprite *sprite)
                 break;
             sprite->animCmdIndex--;
         }
-
         sprite->animCmdIndex--;
     }
 }
@@ -1012,13 +1008,15 @@ void BeginAffineAnim(struct Sprite *sprite)
     if ((sprite->oam.affineMode & ST_OAM_AFFINE_ON_MASK) && sprite->affineAnims[0][0].type != 32767)
     {
         struct AffineAnimFrameCmd frameCmd;
-        u8 matrixNum = GetSpriteMatrixNum(sprite);
+        u32 matrixNum = GetSpriteMatrixNum(sprite);
+		
         AffineAnimStateRestartAnim(matrixNum);
         GetAffineAnimFrame(matrixNum, sprite, &frameCmd);
         sprite->affineAnimBeginning = FALSE;
         sprite->affineAnimEnded = FALSE;
         ApplyAffineAnimFrame(matrixNum, &frameCmd);
         sAffineAnimStates[matrixNum].delayCounter = frameCmd.duration;
+		
         if (sprite->flags_f)
             obj_update_pos2(sprite, sprite->data[6], sprite->data[7]);
     }
@@ -1028,7 +1026,7 @@ void ContinueAffineAnim(struct Sprite *sprite)
 {
     if (sprite->oam.affineMode & ST_OAM_AFFINE_ON_MASK)
     {
-        u8 matrixNum = GetSpriteMatrixNum(sprite);
+        u32 matrixNum = GetSpriteMatrixNum(sprite);
 
         if (sAffineAnimStates[matrixNum].delayCounter)
             AffineAnimDelay(matrixNum, sprite);
@@ -1038,6 +1036,7 @@ void ContinueAffineAnim(struct Sprite *sprite)
         {
             s16 type;
             s16 funcIndex;
+			
             sAffineAnimStates[matrixNum].animCmdIndex++;
             type = sprite->affineAnims[sAffineAnimStates[matrixNum].animNum][sAffineAnimStates[matrixNum].animCmdIndex].type;
             funcIndex = 3;
@@ -1045,12 +1044,13 @@ void ContinueAffineAnim(struct Sprite *sprite)
                 funcIndex = type - 32765;
             sAffineAnimCmdFuncs[funcIndex](matrixNum, sprite);
         }
+		
         if (sprite->flags_f)
             obj_update_pos2(sprite, sprite->data[6], sprite->data[7]);
     }
 }
 
-void AffineAnimDelay(u8 matrixNum, struct Sprite *sprite)
+void AffineAnimDelay(u32 matrixNum, struct Sprite *sprite)
 {
     if (!DecrementAffineAnimDelayCounter(sprite, matrixNum))
     {
@@ -1060,7 +1060,7 @@ void AffineAnimDelay(u8 matrixNum, struct Sprite *sprite)
     }
 }
 
-void AffineAnimCmd_loop(u8 matrixNum, struct Sprite *sprite)
+void AffineAnimCmd_loop(u32 matrixNum, struct Sprite *sprite)
 {
     if (sAffineAnimStates[matrixNum].loopCounter)
         ContinueAffineAnimLoop(matrixNum, sprite);
@@ -1068,21 +1068,21 @@ void AffineAnimCmd_loop(u8 matrixNum, struct Sprite *sprite)
         BeginAffineAnimLoop(matrixNum, sprite);
 }
 
-void BeginAffineAnimLoop(u8 matrixNum, struct Sprite *sprite)
+void BeginAffineAnimLoop(u32 matrixNum, struct Sprite *sprite)
 {
     sAffineAnimStates[matrixNum].loopCounter = sprite->affineAnims[sAffineAnimStates[matrixNum].animNum][sAffineAnimStates[matrixNum].animCmdIndex].loop.count;
     JumpToTopOfAffineAnimLoop(matrixNum, sprite);
     ContinueAffineAnim(sprite);
 }
 
-void ContinueAffineAnimLoop(u8 matrixNum, struct Sprite *sprite)
+void ContinueAffineAnimLoop(u32 matrixNum, struct Sprite *sprite)
 {
     sAffineAnimStates[matrixNum].loopCounter--;
     JumpToTopOfAffineAnimLoop(matrixNum, sprite);
     ContinueAffineAnim(sprite);
 }
 
-void JumpToTopOfAffineAnimLoop(u8 matrixNum, struct Sprite *sprite)
+void JumpToTopOfAffineAnimLoop(u32 matrixNum, struct Sprite *sprite)
 {
     if (sAffineAnimStates[matrixNum].loopCounter)
     {
@@ -1094,12 +1094,11 @@ void JumpToTopOfAffineAnimLoop(u8 matrixNum, struct Sprite *sprite)
                 break;
             sAffineAnimStates[matrixNum].animCmdIndex--;
         }
-
         sAffineAnimStates[matrixNum].animCmdIndex--;
     }
 }
 
-void AffineAnimCmd_jump(u8 matrixNum, struct Sprite *sprite)
+void AffineAnimCmd_jump(u32 matrixNum, struct Sprite *sprite)
 {
     struct AffineAnimFrameCmd frameCmd;
     sAffineAnimStates[matrixNum].animCmdIndex = sprite->affineAnims[sAffineAnimStates[matrixNum].animNum][sAffineAnimStates[matrixNum].animCmdIndex].jump.target;
@@ -1108,7 +1107,7 @@ void AffineAnimCmd_jump(u8 matrixNum, struct Sprite *sprite)
     sAffineAnimStates[matrixNum].delayCounter = frameCmd.duration;
 }
 
-void AffineAnimCmd_end(u8 matrixNum, struct Sprite *sprite)
+void AffineAnimCmd_end(u32 matrixNum, struct Sprite *sprite)
 {
     struct AffineAnimFrameCmd dummyFrameCmd = {0};
     sprite->affineAnimEnded = TRUE;
@@ -1116,7 +1115,7 @@ void AffineAnimCmd_end(u8 matrixNum, struct Sprite *sprite)
     ApplyAffineAnimFrameRelativeAndUpdateMatrix(matrixNum, &dummyFrameCmd);
 }
 
-void AffineAnimCmd_frame(u8 matrixNum, struct Sprite *sprite)
+void AffineAnimCmd_frame(u32 matrixNum, struct Sprite *sprite)
 {
     struct AffineAnimFrameCmd frameCmd;
     GetAffineAnimFrame(matrixNum, sprite, &frameCmd);
@@ -1124,7 +1123,7 @@ void AffineAnimCmd_frame(u8 matrixNum, struct Sprite *sprite)
     sAffineAnimStates[matrixNum].delayCounter = frameCmd.duration;
 }
 
-void CopyOamMatrix(u8 destMatrixIndex, struct OamMatrix *srcMatrix)
+void CopyOamMatrix(u32 destMatrixIndex, struct OamMatrix *srcMatrix)
 {
     gOamMatrices[destMatrixIndex].a = srcMatrix->a;
     gOamMatrices[destMatrixIndex].b = srcMatrix->b;
@@ -1132,9 +1131,9 @@ void CopyOamMatrix(u8 destMatrixIndex, struct OamMatrix *srcMatrix)
     gOamMatrices[destMatrixIndex].d = srcMatrix->d;
 }
 
-u8 GetSpriteMatrixNum(struct Sprite *sprite)
+u32 GetSpriteMatrixNum(struct Sprite *sprite)
 {
-    u8 matrixNum = 0;
+    u32 matrixNum = 0;
 	
     if (sprite->oam.affineMode & ST_OAM_AFFINE_ON_MASK)
         matrixNum = sprite->oam.matrixNum;
@@ -1164,8 +1163,8 @@ static s32 affine_get_new_pos2(s32 baseDim, s32 xformed, s32 modifier)
 static void obj_update_pos2(struct Sprite *sprite, s32 xmod, s32 ymod)
 {
     s32 dim, baseDim, xFormed;
-
     u32 matrixNum = sprite->oam.matrixNum;
+	
     if (xmod != 0x800)
     {
         dim = sOamDimensionsCopy[sprite->oam.shape][sprite->oam.size][0];
@@ -1189,14 +1188,14 @@ void SetSpriteOamFlipBits(struct Sprite *sprite, u8 hFlip, u8 vFlip)
     sprite->oam.matrixNum |= (((vFlip ^ sprite->vFlip) & 1) << 4);
 }
 
-void AffineAnimStateRestartAnim(u8 matrixNum)
+void AffineAnimStateRestartAnim(u32 matrixNum)
 {
     sAffineAnimStates[matrixNum].animCmdIndex = 0;
     sAffineAnimStates[matrixNum].delayCounter = 0;
     sAffineAnimStates[matrixNum].loopCounter = 0;
 }
 
-void AffineAnimStateStartAnim(u8 matrixNum, u8 animNum)
+void AffineAnimStateStartAnim(u32 matrixNum, u32 animNum)
 {
     sAffineAnimStates[matrixNum].animNum = animNum;
     sAffineAnimStates[matrixNum].animCmdIndex = 0;
@@ -1207,7 +1206,7 @@ void AffineAnimStateStartAnim(u8 matrixNum, u8 animNum)
     sAffineAnimStates[matrixNum].rotation = 0;
 }
 
-void AffineAnimStateReset(u8 matrixNum)
+void AffineAnimStateReset(u32 matrixNum)
 {
     sAffineAnimStates[matrixNum].animNum = 0;
     sAffineAnimStates[matrixNum].animCmdIndex = 0;
@@ -1218,7 +1217,7 @@ void AffineAnimStateReset(u8 matrixNum)
     sAffineAnimStates[matrixNum].rotation = 0;
 }
 
-void ApplyAffineAnimFrameAbsolute(u8 matrixNum, struct AffineAnimFrameCmd *frameCmd)
+void ApplyAffineAnimFrameAbsolute(u32 matrixNum, struct AffineAnimFrameCmd *frameCmd)
 {
     sAffineAnimStates[matrixNum].xScale = frameCmd->xScale;
     sAffineAnimStates[matrixNum].yScale = frameCmd->yScale;
@@ -1231,7 +1230,7 @@ void DecrementAnimDelayCounter(struct Sprite *sprite)
         sprite->animDelayCounter--;
 }
 
-bool8 DecrementAffineAnimDelayCounter(struct Sprite *sprite, u8 matrixNum)
+bool32 DecrementAffineAnimDelayCounter(struct Sprite *sprite, u32 matrixNum)
 {
     if (!sprite->affineAnimPaused)
         --sAffineAnimStates[matrixNum].delayCounter;
@@ -1239,7 +1238,7 @@ bool8 DecrementAffineAnimDelayCounter(struct Sprite *sprite, u8 matrixNum)
     return sprite->affineAnimPaused;
 }
 
-void ApplyAffineAnimFrameRelativeAndUpdateMatrix(u8 matrixNum, struct AffineAnimFrameCmd *frameCmd)
+void ApplyAffineAnimFrameRelativeAndUpdateMatrix(u32 matrixNum, struct AffineAnimFrameCmd *frameCmd)
 {
     struct ObjAffineSrcData srcData;
     struct OamMatrix matrix;
@@ -1259,7 +1258,7 @@ s16 ConvertScaleParam(s16 scale)
     return SAFE_DIV(val, scale);
 }
 
-void GetAffineAnimFrame(u8 matrixNum, struct Sprite *sprite, struct AffineAnimFrameCmd *frameCmd)
+void GetAffineAnimFrame(u32 matrixNum, struct Sprite *sprite, struct AffineAnimFrameCmd *frameCmd)
 {
     frameCmd->xScale = sprite->affineAnims[sAffineAnimStates[matrixNum].animNum][sAffineAnimStates[matrixNum].animCmdIndex].frame.xScale;
     frameCmd->yScale = sprite->affineAnims[sAffineAnimStates[matrixNum].animNum][sAffineAnimStates[matrixNum].animCmdIndex].frame.yScale;
@@ -1267,7 +1266,7 @@ void GetAffineAnimFrame(u8 matrixNum, struct Sprite *sprite, struct AffineAnimFr
     frameCmd->duration = sprite->affineAnims[sAffineAnimStates[matrixNum].animNum][sAffineAnimStates[matrixNum].animCmdIndex].frame.duration;
 }
 
-void ApplyAffineAnimFrame(u8 matrixNum, struct AffineAnimFrameCmd *frameCmd)
+void ApplyAffineAnimFrame(u32 matrixNum, struct AffineAnimFrameCmd *frameCmd)
 {
     struct AffineAnimFrameCmd dummyFrameCmd = {0};
 
@@ -1283,22 +1282,22 @@ void ApplyAffineAnimFrame(u8 matrixNum, struct AffineAnimFrameCmd *frameCmd)
     }
 }
 
-void StartSpriteAnim(struct Sprite *sprite, u8 animNum)
+void StartSpriteAnim(struct Sprite *sprite, u32 animNum)
 {
     sprite->animNum = animNum;
     sprite->animBeginning = TRUE;
     sprite->animEnded = FALSE;
 }
 
-void StartSpriteAnimIfDifferent(struct Sprite *sprite, u8 animNum)
+void StartSpriteAnimIfDifferent(struct Sprite *sprite, u32 animNum)
 {
     if (sprite->animNum != animNum)
         StartSpriteAnim(sprite, animNum);
 }
 
-void SeekSpriteAnim(struct Sprite *sprite, u8 animCmdIndex)
+void SeekSpriteAnim(struct Sprite *sprite, u32 animCmdIndex)
 {
-    u8 temp = sprite->animPaused;
+    bool32 temp = sprite->animPaused;
     sprite->animCmdIndex = animCmdIndex - 1;
     sprite->animDelayCounter = 0;
     sprite->animBeginning = FALSE;
@@ -1310,27 +1309,27 @@ void SeekSpriteAnim(struct Sprite *sprite, u8 animCmdIndex)
     sprite->animPaused = temp;
 }
 
-void StartSpriteAffineAnim(struct Sprite *sprite, u8 animNum)
+void StartSpriteAffineAnim(struct Sprite *sprite, u32 animNum)
 {
     AffineAnimStateStartAnim(GetSpriteMatrixNum(sprite), animNum);
     sprite->affineAnimBeginning = TRUE;
     sprite->affineAnimEnded = FALSE;
 }
 
-void StartSpriteAffineAnimIfDifferent(struct Sprite *sprite, u8 animNum)
+void StartSpriteAffineAnimIfDifferent(struct Sprite *sprite, u32 animNum)
 {
     if (sAffineAnimStates[GetSpriteMatrixNum(sprite)].animNum != animNum)
         StartSpriteAffineAnim(sprite, animNum);
 }
 
-void ChangeSpriteAffineAnim(struct Sprite *sprite, u8 animNum)
+void ChangeSpriteAffineAnim(struct Sprite *sprite, u32 animNum)
 {
     sAffineAnimStates[GetSpriteMatrixNum(sprite)].animNum = animNum;
     sprite->affineAnimBeginning = TRUE;
     sprite->affineAnimEnded = FALSE;
 }
 
-void ChangeSpriteAffineAnimIfDifferent(struct Sprite *sprite, u8 animNum)
+void ChangeSpriteAffineAnimIfDifferent(struct Sprite *sprite, u32 animNum)
 {
     if (sAffineAnimStates[GetSpriteMatrixNum(sprite)].animNum != animNum)
         ChangeSpriteAffineAnim(sprite, animNum);
@@ -1349,7 +1348,7 @@ void SetSpriteSheetFrameTileNum(struct Sprite *sprite)
 
 void ResetAffineAnimData(void)
 {
-    u8 i;
+    u32 i;
 
     gAffineAnimsDisabled = 0;
     gOamMatrixAllocBitmap = 0;
@@ -1360,9 +1359,9 @@ void ResetAffineAnimData(void)
         AffineAnimStateReset(i);
 }
 
-u8 AllocOamMatrix(void)
+u32 AllocOamMatrix(void)
 {
-    u8 i = 0;
+    u32 i = 0;
     u32 bit = 1;
     u32 bitmap = gOamMatrixAllocBitmap;
 
@@ -1373,17 +1372,15 @@ u8 AllocOamMatrix(void)
             gOamMatrixAllocBitmap |= bit;
             return i;
         }
-
         i++;
         bit <<= 1;
     }
-
     return 0xFF;
 }
 
-void FreeOamMatrix(u8 matrixNum)
+void FreeOamMatrix(u32 matrixNum)
 {
-    u8 i = 0;
+    u32 i = 0;
     u32 bit = 1;
 
     while (i < matrixNum)
@@ -1391,14 +1388,13 @@ void FreeOamMatrix(u8 matrixNum)
         i++;
         bit <<= 1;
     }
-
-    gOamMatrixAllocBitmap &= ~bit;
+    gOamMatrixAllocBitmap &= ~(bit);
     SetOamMatrix(matrixNum, 0x100, 0, 0, 0x100);
 }
 
 void InitSpriteAffineAnim(struct Sprite *sprite)
 {
-    u8 matrixNum = AllocOamMatrix();
+    u32 matrixNum = AllocOamMatrix();
 	
     if (matrixNum != 0xFF)
     {
@@ -1409,7 +1405,7 @@ void InitSpriteAffineAnim(struct Sprite *sprite)
     }
 }
 
-void SetOamMatrixRotationScaling(u8 matrixNum, s16 xScale, s16 yScale, u16 rotation)
+void SetOamMatrixRotationScaling(u32 matrixNum, s16 xScale, s16 yScale, u16 rotation)
 {
     struct ObjAffineSrcData srcData;
     struct OamMatrix matrix;
@@ -1436,7 +1432,7 @@ u16 LoadSpriteSheet(const struct SpriteSheet *sheet)
 
 void LoadSpriteSheets(const struct SpriteSheet *sheets)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; sheets[i].data != NULL; i++)
         LoadSpriteSheet(&sheets[i]);
@@ -1445,7 +1441,7 @@ void LoadSpriteSheets(const struct SpriteSheet *sheets)
 // Like LoadSpriteSheet, but checks if already loaded, and uses template image frames
 u16 LoadSpriteSheetByTemplate(const struct SpriteTemplate *template)
 {
-    u16 tileStart;
+    u32 tileStart;
     struct SpriteSheet sheet;
 	
     // error if template is null or tile tag or images not set
@@ -1461,17 +1457,18 @@ u16 LoadSpriteSheetByTemplate(const struct SpriteTemplate *template)
     return LoadSpriteSheet(&sheet);
 }
 
-void FreeSpriteTilesByTag(u16 tag)
+void FreeSpriteTilesByTag(u32 tag)
 {
     u32 index = IndexOfSpriteTileTag(tag);
 	
     if (index != 0xFF)
     {
-        u16 i;
+        u32 i;
         u16 *rangeStarts;
         u16 *rangeCounts;
         u16 start;
         u16 count;
+		
         rangeStarts = sSpriteTileRanges;
         start = rangeStarts[index * 2];
         rangeCounts = sSpriteTileRanges + 1;
@@ -1486,7 +1483,7 @@ void FreeSpriteTilesByTag(u16 tag)
 
 void FreeSpriteTileRanges(void)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < MAX_SPRITES; i++)
     {
@@ -1495,9 +1492,9 @@ void FreeSpriteTileRanges(void)
     }
 }
 
-u16 GetSpriteTileStartByTag(u16 tag)
+u32 GetSpriteTileStartByTag(u32 tag)
 {
-    u8 index = IndexOfSpriteTileTag(tag);
+    u32 index = IndexOfSpriteTileTag(tag);
 	
     if (index == 0xFF)
         return 0xFFFF;
@@ -1505,9 +1502,9 @@ u16 GetSpriteTileStartByTag(u16 tag)
     return sSpriteTileRanges[index * 2];
 }
 
-u8 IndexOfSpriteTileTag(u16 tag)
+u32 IndexOfSpriteTileTag(u32 tag)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < MAX_SPRITES; i++)
 	{
@@ -1517,9 +1514,9 @@ u8 IndexOfSpriteTileTag(u16 tag)
     return 0xFF;
 }
 
-u16 GetSpriteTileTagByTileStart(u16 start)
+u32 GetSpriteTileTagByTileStart(u32 start)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < MAX_SPRITES; i++)
     {
@@ -1529,16 +1526,16 @@ u16 GetSpriteTileTagByTileStart(u16 start)
     return 0xFFFF;
 }
 
-void AllocSpriteTileRange(u16 tag, u16 start, u16 count)
+void AllocSpriteTileRange(u32 tag, u16 start, u16 count)
 {
-    u8 freeIndex = IndexOfSpriteTileTag(0xFFFF);
+    u32 freeIndex = IndexOfSpriteTileTag(0xFFFF);
     sSpriteTileRangeTags[freeIndex] = tag;
     SET_SPRITE_TILE_RANGE(freeIndex, start, count);
 }
 
 void FreeAllSpritePalettes(void)
 {
-    u8 i;
+    u32 i;
 	
     gReservedSpritePaletteCount = 0;
 	
@@ -1546,15 +1543,15 @@ void FreeAllSpritePalettes(void)
         sSpritePaletteTags[i] = 0xFFFF;
 }
 
-void LoadSpritePaletteAtIndex(const struct SpritePalette *palette, u8 index)
+void LoadSpritePaletteAtIndex(const struct SpritePalette *palette, u32 index)
 {
 	sSpritePaletteTags[index] = palette->tag;
     LoadPalette(palette->data, index * 16 + 0x100, 32);
 }
 
-u8 LoadSpritePalette(const struct SpritePalette *palette)
+u32 LoadSpritePalette(const struct SpritePalette *palette)
 {
-    u8 index = IndexOfSpritePaletteTag(palette->tag);
+    u32 index = IndexOfSpritePaletteTag(palette->tag);
 
     if (index != 0xFF)
         return index;
@@ -1572,7 +1569,7 @@ u8 LoadSpritePalette(const struct SpritePalette *palette)
 
 void LoadSpritePalettes(const struct SpritePalette *palettes)
 {
-    u8 i;
+    u32 i;
 	
     for (i = 0; palettes[i].data != NULL; i++)
 	{
@@ -1581,9 +1578,9 @@ void LoadSpritePalettes(const struct SpritePalette *palettes)
 	}
 }
 
-u8 AllocSpritePalette(u16 tag)
+u32 AllocSpritePalette(u32 tag)
 {
-    u8 index = IndexOfSpritePaletteTag(0xFFFF);
+    u32 index = IndexOfSpritePaletteTag(0xFFFF);
 	
     if (index == 0xFF)
         return 0xFF;
@@ -1594,9 +1591,9 @@ u8 AllocSpritePalette(u16 tag)
     }
 }
 
-u8 IndexOfSpritePaletteTag(u16 tag)
+u32 IndexOfSpritePaletteTag(u32 tag)
 {
-    u8 i;
+    u32 i;
 	
     for (i = gReservedSpritePaletteCount; i < 16; i++)
 	{
@@ -1606,14 +1603,14 @@ u8 IndexOfSpritePaletteTag(u16 tag)
     return 0xFF;
 }
 
-u16 GetSpritePaletteTagByPaletteNum(u8 paletteNum)
+u32 GetSpritePaletteTagByPaletteNum(u32 paletteNum)
 {
     return sSpritePaletteTags[paletteNum];
 }
 
-void FreeSpritePaletteByTag(u16 tag)
+void FreeSpritePaletteByTag(u32 tag)
 {
-    u8 index = IndexOfSpritePaletteTag(tag);
+    u32 index = IndexOfSpritePaletteTag(tag);
     if (index != 0xFF)
         sSpritePaletteTags[index] = 0xFFFF;
 }
@@ -1625,28 +1622,28 @@ void SetSubspriteTables(struct Sprite *sprite, const struct SubspriteTable *subs
     sprite->subspriteMode = SUBSPRITES_ON;
 }
 
-bool8 AddSpriteToOamBuffer(struct Sprite *sprite, u8 *oamIndex)
+bool32 AddSpriteToOamBuffer(struct Sprite *sprite, u8 *oamIndex)
 {
     if (*oamIndex >= gOamLimit)
-        return 1;
+        return TRUE;
 
     if (!sprite->subspriteTables || sprite->subspriteMode == SUBSPRITES_OFF)
     {
         gMain.oamBuffer[*oamIndex] = sprite->oam;
         (*oamIndex)++;
-        return 0;
+        return FALSE;
     }
     else
         return AddSubspritesToOamBuffer(sprite, &gMain.oamBuffer[*oamIndex], oamIndex);
 }
 
-bool8 AddSubspritesToOamBuffer(struct Sprite *sprite, struct OamData *destOam, u8 *oamIndex)
+bool32 AddSubspritesToOamBuffer(struct Sprite *sprite, struct OamData *destOam, u8 *oamIndex)
 {
     const struct SubspriteTable *subspriteTable;
     struct OamData *oam;
 
     if (*oamIndex >= gOamLimit)
-        return 1;
+        return TRUE;
 
     subspriteTable = &sprite->subspriteTables[sprite->subspriteTableNum];
     oam = &sprite->oam;
@@ -1655,17 +1652,16 @@ bool8 AddSubspritesToOamBuffer(struct Sprite *sprite, struct OamData *destOam, u
     {
         *destOam = *oam;
         (*oamIndex)++;
-        return 0;
     }
     else
     {
-        u16 tileNum;
+        u32 tileNum;
         u16 baseX;
         u16 baseY;
-        u8 subspriteCount;
+        u32 subspriteCount;
         u8 hFlip;
         u8 vFlip;
-        u8 i;
+        u32 i;
 
         tileNum = oam->tileNum;
         subspriteCount = subspriteTable->subspriteCount;
@@ -1714,6 +1710,5 @@ bool8 AddSubspritesToOamBuffer(struct Sprite *sprite, struct OamData *destOam, u
                 destOam[i].priority = subspriteTable->subsprites[i].priority;
         }
     }
-
-    return 0;
+    return FALSE;
 }

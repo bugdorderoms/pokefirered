@@ -67,22 +67,22 @@ static const u32 sCursor_Gfx[] = INCBIN_U32("graphics/sliding_puzzle/cursor.4bpp
 static const u16 sCursor_Pal[] = INCBIN_U16("graphics/sliding_puzzle/cursor.gbapal");
 
 static void CB2_LoadSlidingPuzzle(void);
-static void DrawInstructionsBar(u8 msgId);
+static void DrawInstructionsBar(u32 msgId);
 static void CreateCursorSprite(void);
 static void CreateTileSprites(void);
 static void SpriteCB_Cursor(struct Sprite *sprite);
 static void MoveCursor_SlidingPuzzle(s8 deltaX, s8 deltaY);
-static bool8 CursorIsOnTile(void);
-static bool8 CursorIsOnImmovableTile(void);
+static bool32 CursorIsOnTile(void);
+static bool32 CursorIsOnImmovableTile(void);
 static void SelectTile(void);
 static void PlaceTile(void);
-static void RotateTile(u8 rotDir);
+static void RotateTile(u32 rotDir);
 static void Task_SlidingPuzzle_WaitFadeIn(u8 taskId);
 static void Task_SlidingPuzzle_HandleInput(u8 taskId);
 static void Task_SlidingPuzzle_Glow(u8 taskId);
 static void Task_SlidingPuzzle_Solved(u8 taskId);
 static void CheckForSolution(void);
-static void ExitSlidingPuzzle(u8 taskId);
+static void ExitSlidingPuzzle(u32 taskId);
 
 static EWRAM_DATA struct SlidingPuzzle *sSlidingPuzzle = NULL;
 
@@ -244,7 +244,7 @@ static void CB2_LoadSlidingPuzzle(void)
 
 static void CreateCursorSprite(void)
 {
-	u8 spriteId = 0xFF;
+	u32 spriteId = 0xFF;
 
     if (!sSlidingPuzzle->solved)
     {
@@ -272,17 +272,17 @@ static void SpriteCB_Cursor(struct Sprite *sprite)
 
 static void CreateTileSprites(void)
 {
-	u8 row, col, puzzleId = sSlidingPuzzle->solved ? PUZZLE_SOLVED : sSlidingPuzzle->puzzleId;
+	u32 row, col, puzzleId = sSlidingPuzzle->solved ? PUZZLE_SOLVED : sSlidingPuzzle->puzzleId;
 	
     for (row = 0; row < NUM_ROWS; ++row)
     {
         for (col = 0; col < NUM_COLS; ++col)
         {
-            u8 tile = sPuzzleLayouts[puzzleId][row][col];
+            u32 tile = sPuzzleLayouts[puzzleId][row][col];
 			
             if (tile)
             {
-                u8 spriteId = CreateSprite(&sSpriteTemplate_Tiles, sColumnXCoords[col], sRowYCoords[row], 2);
+                u32 spriteId = CreateSprite(&sSpriteTemplate_Tiles, sColumnXCoords[col], sRowYCoords[row], 2);
                 struct Sprite *sprite = &gSprites[spriteId];
 				
                 sprite->sAnimating = FALSE;
@@ -305,7 +305,7 @@ static void CreateTileSprites(void)
 
 static void CheckForSolution(void)
 {
-	u8 row, col;
+	u32 row, col;
 	
     for (row = 0; row < NUM_ROWS; row++)
     {
@@ -323,7 +323,7 @@ static void CheckForSolution(void)
     sSlidingPuzzle->solved = TRUE;
 }
 
-static void DrawInstructionsBar(u8 msgId)
+static void DrawInstructionsBar(u32 msgId)
 {
 	FillWindowPixelBuffer(0, PIXEL_FILL(15));
     AddTextPrinterParameterized3(0, 0, 2, 1, sTextColor_Instructions, 0, sInstructions[msgId]);
@@ -469,13 +469,13 @@ static void Task_SlidingPuzzle_Exit(u8 taskId)
     }
 }
 
-static void ExitSlidingPuzzle(u8 taskId)
+static void ExitSlidingPuzzle(u32 taskId)
 {
 	BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_SlidingPuzzle_Exit;
 }
 
-static void MoveCursorSprite_SlidingPuzzle(s8 deltaX, s8 deltaY, u8 spriteId)
+static void MoveCursorSprite_SlidingPuzzle(s8 deltaX, s8 deltaY, u32 spriteId)
 {
 	struct Sprite *sprite = &gSprites[spriteId];
     s8 row = sprite->sRow + deltaY;
@@ -511,7 +511,7 @@ static void MoveCursor_SlidingPuzzle(s8 deltaX, s8 deltaY)
     }
 }
 
-static bool8 CursorIsOnTile(void)
+static bool32 CursorIsOnTile(void)
 {
     struct Sprite *cursor = &gSprites[sSlidingPuzzle->cursorSpriteId];
 
@@ -521,7 +521,7 @@ static bool8 CursorIsOnTile(void)
     return FALSE;
 }
 
-static bool8 CursorIsOnImmovableTile(void)
+static bool32 CursorIsOnImmovableTile(void)
 {
 	struct Sprite *cursor = &gSprites[sSlidingPuzzle->cursorSpriteId];
 
@@ -534,7 +534,7 @@ static bool8 CursorIsOnImmovableTile(void)
 static void SelectTile(void)
 {
 	struct Sprite *cursor = &gSprites[sSlidingPuzzle->cursorSpriteId];
-    u8 tile = sSlidingPuzzle->heldTile;
+    u32 tile = sSlidingPuzzle->heldTile;
 	
     if (tile)
         gSprites[tile].subpriority = 2;
@@ -563,10 +563,10 @@ static void PlaceTile(void)
     CheckForSolution();
 }
 
-static void RotateTile(u8 rotDir)
+static void RotateTile(u32 rotDir)
 {
 	struct Sprite *sprite = &gSprites[sSlidingPuzzle->heldTile];
-    u8 affineAnimation;
+    u32 affineAnimation;
 
     if (rotDir == ROTATE_ANTICLOCKWISE)
     {

@@ -35,7 +35,7 @@ void ExitSafariMode(void)
     gSafariZoneStepCounter = 0;
 }
 
-bool8 SafariZoneTakeStep(void)
+bool32 SafariZoneTakeStep(void)
 {
 	if (GetSafariZoneFlag())
 	{

@@ -5,7 +5,7 @@
 
 struct ScriptContext;
 
-typedef bool8 (*ScrCmdFunc)(struct ScriptContext *);
+typedef bool32 (*ScrCmdFunc)(struct ScriptContext *);
 typedef u8 Script[];
 
 struct ScriptContext
@@ -26,8 +26,8 @@ struct ScriptContext
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd);
 void SetupNativeScript(struct ScriptContext *ctx, bool32 (*ptr)(void));
 void StopScript(struct ScriptContext *ctx);
-bool8 RunScriptCommand(struct ScriptContext *ctx);
-u8 ScriptPush(struct ScriptContext *ctx, const u8 *ptr);
+bool32 RunScriptCommand(struct ScriptContext *ctx);
+bool32 ScriptPush(struct ScriptContext *ctx, const u8 *ptr);
 const u8 *ScriptPop(struct ScriptContext *ctx);
 void ScriptJump(struct ScriptContext *ctx, const u8 *ptr);
 void ScriptCall(struct ScriptContext *ctx, const u8 *ptr);
@@ -36,10 +36,10 @@ u16 ScriptReadHalfword(struct ScriptContext *ctx);
 u32 ScriptReadWord(struct ScriptContext *ctx);
 void ScriptContext2_Enable(void);
 void ScriptContext2_Disable(void);
-bool8 ScriptContext2_IsEnabled(void);
+bool32 ScriptContext2_IsEnabled(void);
 void ScriptContext1_Init(void);
-bool8 ScriptContext1_IsScriptSetUp(void);
-bool8 ScriptContext2_RunScript(void);
+bool32 ScriptContext1_IsScriptSetUp(void);
+bool32 ScriptContext2_RunScript(void);
 void ScriptContext1_SetupScript(const u8 *ptr);
 void ScriptContext1_Stop(void);
 void EnableBothScriptContexts(void);
@@ -52,20 +52,20 @@ void RunOnTransitionMapScript(void);
 void RunOnResumeMapScript(void);
 void RunOnReturnToFieldMapScript(void);
 void RunOnDiveWarpMapScript(void);
-bool8 TryRunOnFrameMapScript(void);
+bool32 TryRunOnFrameMapScript(void);
 void TryRunOnWarpIntoMapScript(void);
 u32 CalculateRamScriptChecksum(void);
 void ClearRamScript(void);
-bool8 InitRamScript(u8 *script, u16 scriptSize, u8 mapGroup, u8 mapNum, u8 objectId);
-const u8 *GetRamScript(u8 objectId, const u8 *script);
+bool32 InitRamScript(u8 *script, u32 scriptSize, u32 mapGroup, u32 mapNum, u32 objectId);
+const u8 *GetRamScript(u32 objectId, const u8 *script);
 void ClearMsgBoxCancelableState(void);
 void MsgSetSignPost(void);
 void MsgSetNotSignPost(void);
-bool8 IsMsgSignPost(void);
+bool32 IsMsgSignPost(void);
 void ResetFacingNpcOrSignPostVars(void);
-bool8 CanWalkAwayToCancelMsgBox(void);
+bool32 CanWalkAwayToCancelMsgBox(void);
 void SetWalkingIntoSignVars(void);
-bool8 IsMsgBoxWalkawayDisabled(void);
+bool32 IsMsgBoxWalkawayDisabled(void);
 
 extern const u8 *gRAMScriptPtr;
 extern u8 gWalkAwayFromSignInhibitTimer;

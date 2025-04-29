@@ -3,8 +3,8 @@
 
 #include "global.h"
 
-void StartEscalator(bool8 goingUp);
+void StartEscalator(bool32 goingUp);
 void StopEscalator(void);
-bool8 IsEscalatorMoving(void);
+bool32 IsEscalatorMoving(void);
 
 #endif // GUARD_SPECIAL_FIELD_ANIM_H

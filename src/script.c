@@ -34,7 +34,7 @@ extern void *gNullScriptPtr;
 
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd)
 {
-    s32 i;
+    u32 i;
 
     ctx->mode = SCRIPT_MODE_STOPPED;
     ctx->scriptPtr = NULL;
@@ -68,7 +68,7 @@ void StopScript(struct ScriptContext *ctx)
     ctx->scriptPtr = NULL;
 }
 
-bool8 RunScriptCommand(struct ScriptContext *ctx)
+bool32 RunScriptCommand(struct ScriptContext *ctx)
 {
     // FRLG disabled this check, where-as it is present
     // in Ruby/Sapphire and Emerald. Why did the programmers
@@ -91,7 +91,7 @@ bool8 RunScriptCommand(struct ScriptContext *ctx)
         }
         ctx->mode = SCRIPT_MODE_BYTECODE;
     case SCRIPT_MODE_BYTECODE:
-        while (1)
+        while (TRUE)
         {
             u8 cmdCode;
             ScrCmdFunc *cmdFunc;
@@ -104,7 +104,7 @@ bool8 RunScriptCommand(struct ScriptContext *ctx)
 
             if (ctx->scriptPtr == gNullScriptPtr)
             {
-                while (1)
+                while (TRUE)
                     asm("svc 2"); // HALT
             }
 
@@ -122,21 +122,18 @@ bool8 RunScriptCommand(struct ScriptContext *ctx)
                 return TRUE;
         }
     }
-
     return TRUE;
 }
 
-u8 ScriptPush(struct ScriptContext *ctx, const u8 *ptr)
+bool32 ScriptPush(struct ScriptContext *ctx, const u8 *ptr)
 {
     if (ctx->stackDepth + 1 >= SCRIPT_STACK_SIZE)
-    {
-        return 1;
-    }
+        return TRUE;
     else
     {
         ctx->stack[ctx->stackDepth] = ptr;
         ctx->stackDepth++;
-        return 0;
+        return FALSE;
     }
 }
 
@@ -191,7 +188,7 @@ void ScriptContext2_Disable(void)
     sScriptContext2Enabled = FALSE;
 }
 
-bool8 ScriptContext2_IsEnabled(void)
+bool32 ScriptContext2_IsEnabled(void)
 {
     return sScriptContext2Enabled;
 }
@@ -206,7 +203,7 @@ void EnableMsgBoxWalkaway(void)
     sMsgBoxWalkawayDisabled = FALSE;
 }
 
-bool8 IsMsgBoxWalkawayDisabled(void)
+bool32 IsMsgBoxWalkawayDisabled(void)
 {
     return sMsgBoxWalkawayDisabled;
 }
@@ -222,12 +219,9 @@ void ClearMsgBoxCancelableState(void)
     sMsgBoxIsCancelable = FALSE;
 }
 
-bool8 CanWalkAwayToCancelMsgBox(void)
+bool32 CanWalkAwayToCancelMsgBox(void)
 {
-    if(sMsgBoxIsCancelable == TRUE)
-        return TRUE;
-    else
-        return FALSE;
+    return sMsgBoxIsCancelable;
 }
 
 void MsgSetSignPost(void)
@@ -240,12 +234,9 @@ void MsgSetNotSignPost(void)
     sMsgIsSignPost = FALSE;
 }
 
-bool8 IsMsgSignPost(void)
+bool32 IsMsgSignPost(void)
 {
-    if(sMsgIsSignPost == TRUE)
-        return TRUE;
-    else
-        return FALSE;
+    return sMsgIsSignPost;
 }
 
 void ResetFacingNpcOrSignPostVars(void)
@@ -254,12 +245,9 @@ void ResetFacingNpcOrSignPostVars(void)
     MsgSetNotSignPost();
 }
 
-bool8 ScriptContext1_IsScriptSetUp(void)
+bool32 ScriptContext1_IsScriptSetUp(void)
 {
-    if (sScriptContext1Status == 0)
-        return TRUE;
-    else
-        return FALSE;
+    return (sScriptContext1Status == 0);
 }
 
 void ScriptContext1_Init(void)
@@ -268,13 +256,13 @@ void ScriptContext1_Init(void)
     sScriptContext1Status = 2;
 }
 
-bool8 ScriptContext2_RunScript(void)
+bool32 ScriptContext2_RunScript(void)
 {
     if (sScriptContext1Status == 2)
-        return 0;
+        return FALSE;
 
     if (sScriptContext1Status == 1)
-        return 0;
+        return FALSE;
 
     ScriptContext2_Enable();
 
@@ -282,10 +270,9 @@ bool8 ScriptContext2_RunScript(void)
     {
         sScriptContext1Status = 2;
         ScriptContext2_Disable();
-        return 0;
+        return FALSE;
     }
-
-    return 1;
+    return TRUE;
 }
 
 void ScriptContext1_SetupScript(const u8 *ptr)
@@ -313,7 +300,7 @@ void ScriptContext2_RunNewScript(const u8 *ptr)
 {
     InitScriptContext(&sScriptContext2, &gScriptCmdTable, &gScriptCmdTableEnd);
     SetupBytecodeScript(&sScriptContext2, ptr);
-    while (RunScriptCommand(&sScriptContext2) == TRUE);
+    while (RunScriptCommand(&sScriptContext2));
 }
 
 u8 *mapheader_get_tagged_pointer(u8 tag)
@@ -323,7 +310,7 @@ u8 *mapheader_get_tagged_pointer(u8 tag)
     if (mapScripts == NULL)
         return NULL;
 
-    while (1)
+    while (TRUE)
     {
         if (*mapScripts == 0)
             return NULL;
@@ -350,18 +337,21 @@ u8 *mapheader_get_first_match_from_tagged_ptr_list(u8 tag)
     if (ptr == NULL)
         return NULL;
 
-    while (1)
+    while (TRUE)
     {
         u16 varIndex1;
         u16 varIndex2;
+		
         varIndex1 = ptr[0] | (ptr[1] << 8);
         if (!varIndex1)
             return NULL;
+		
         ptr += 2;
         varIndex2 = ptr[0] | (ptr[1] << 8);
         ptr += 2;
         if (VarGet(varIndex1) == VarGet(varIndex2))
             return (u8 *)(ptr[0] + (ptr[1] << 8) + (ptr[2] << 16) + (ptr[3] << 24));
+		
         ptr += 4;
     }
 }
@@ -391,15 +381,15 @@ void RunOnDiveWarpMapScript(void)
     mapheader_run_script_by_tag(6);
 }
 
-bool8 TryRunOnFrameMapScript(void)
+bool32 TryRunOnFrameMapScript(void)
 {
     u8 *ptr = mapheader_get_first_match_from_tagged_ptr_list(2);
 	
     if (!ptr)
-        return 0;
+        return FALSE;
 
     ScriptContext1_SetupScript(ptr);
-    return 1;
+    return TRUE;
 }
 
 void TryRunOnWarpIntoMapScript(void)
@@ -419,7 +409,7 @@ void ClearRamScript(void)
     CpuFill32(0, &gSaveBlock1Ptr->ramScript, sizeof(struct RamScript));
 }
 
-bool8 InitRamScript(u8 *script, u16 scriptSize, u8 mapGroup, u8 mapNum, u8 objectId)
+bool32 InitRamScript(u8 *script, u32 scriptSize, u32 mapGroup, u32 mapNum, u32 objectId)
 {
     struct RamScriptData *scriptData = &gSaveBlock1Ptr->ramScript.data;
 
@@ -437,10 +427,12 @@ bool8 InitRamScript(u8 *script, u16 scriptSize, u8 mapGroup, u8 mapNum, u8 objec
     return TRUE;
 }
 
-const u8 *GetRamScript(u8 objectId, const u8 *script)
+const u8 *GetRamScript(u32 objectId, const u8 *script)
 {
     struct RamScriptData *scriptData = &gSaveBlock1Ptr->ramScript.data;
+	
     gRAMScriptPtr = NULL;
+	
     if (scriptData->magic != RAM_SCRIPT_MAGIC)
         return script;
     if (scriptData->mapGroup != gSaveBlock1Ptr->location.mapGroup)
@@ -449,6 +441,7 @@ const u8 *GetRamScript(u8 objectId, const u8 *script)
         return script;
     if (scriptData->objectId != objectId)
         return script;
+	
     if (CalculateRamScriptChecksum() != gSaveBlock1Ptr->ramScript.checksum)
     {
         ClearRamScript();

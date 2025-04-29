@@ -15,7 +15,7 @@ void ResetSafariZoneFlag(void);
 void EnterSafariMode(void);
 void ExitSafariMode(void);
 
-bool8 SafariZoneTakeStep(void);
+bool32 SafariZoneTakeStep(void);
 void SafariZoneRetirePrompt(void);
 
 void CB2_EndSafariBattle(void);

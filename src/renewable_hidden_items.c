@@ -14,7 +14,7 @@ struct RenewableHiddenItemData
     u8 common[MAX_HIDDEN_ITEMS_PER_GROUP];   // 60%
 };
 
-#define HIDDEN_ID(flag)(flag - FLAG_HIDDEN_ITEMS_START)
+#define HIDDEN_ID(flag) (flag - FLAG_HIDDEN_ITEMS_START)
 #define NO_ITEM 0xFF
 
 static const struct RenewableHiddenItemData sRenewableHiddenItems[] =
@@ -533,7 +533,7 @@ static const struct RenewableHiddenItemData sRenewableHiddenItems[] =
 
 void SetAllRenewableItemFlags(void)
 {
-    u8 i, j;
+    u32 i, j;
 
     for (i = 0; i < ARRAY_COUNT(sRenewableHiddenItems); i++)
     {
@@ -555,7 +555,7 @@ void SetAllRenewableItemFlags(void)
 
 void IncrementRenewableHiddenItemStepCounter(void)
 {
-    u16 var = VarGet(VAR_RENEWABLE_ITEM_STEP_COUNTER);
+    u32 var = VarGet(VAR_RENEWABLE_ITEM_STEP_COUNTER);
 	
     if (var < 1500)
         VarSet(VAR_RENEWABLE_ITEM_STEP_COUNTER, var + 1);
@@ -563,9 +563,9 @@ void IncrementRenewableHiddenItemStepCounter(void)
 
 static void SampleRenewableItemFlags(void)
 {
-    u8 i, j;
+    u32 i, j;
     const u8 * flags;
-    u16 rval;
+    u32 rval;
 
     for (i = 0; i < ARRAY_COUNT(sRenewableHiddenItems); i++)
     {
@@ -588,7 +588,7 @@ static void SampleRenewableItemFlags(void)
 
 void TryRegenerateRenewableHiddenItems(void)
 {
-    u8 i, found_map = 0xFF;
+    u32 i, found_map = 0xFF;
 	
     for (i = 0; i < ARRAY_COUNT(sRenewableHiddenItems); i++)
     {

@@ -3,14 +3,7 @@
 
 #include "main.h"
 
-void ShowSelectMovePokemonSummaryScreen(struct Pokemon *, u8, u8, MainCallback, u16);
-u8 GetMoveSlotToReplace(void);
-u8 GetLastViewedMonIndex(void);
-void ShowPokemonSummaryScreen(struct Pokemon * party, u8 cursorPos, u8 lastIdx, void (*callback)(void), u8 a4);
-void SetPokemonSummaryScreenMode(u8);
-
-// The Pokemon Summary Screen can operate in different modes. Certain features,
-// such as move re-ordering, are available in the different modes.
+// The Pokemon Summary Screen can operate in different modes. Certain features, such as move re-ordering, are available in the different modes.
 enum PokemonSummaryScreenMode
 {
     PSS_MODE_NORMAL,
@@ -51,5 +44,11 @@ enum PokemonSummaryScreenState3270
 #define TAG_PSS_UNK_A1 0xA1
 #define TAG_PSS_UNK_A2 0xA2
 #define TAG_PSS_UNK_A3 0xA3
+
+void ShowSelectMovePokemonSummaryScreen(struct Pokemon *, u32, u32, MainCallback, u32);
+u32 GetMoveSlotToReplace(void);
+u32 GetLastViewedMonIndex(void);
+void ShowPokemonSummaryScreen(struct Pokemon * party, u32 cursorPos, u32 lastIdx, MainCallback callback, u32 a4);
+void SetPokemonSummaryScreenMode(u32);
 
 #endif // GUARD_POKEMON_SUMMARY_SCREEN_H

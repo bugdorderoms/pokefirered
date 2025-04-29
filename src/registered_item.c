@@ -59,11 +59,11 @@ static void SpriteCB_SelectItem_Close(struct Sprite *sprite);
 static void SpriteCB_SelectItem_ReturnToOverworld(struct Sprite *sprite);
 static void SpriteCB_SelectItem_Register(struct Sprite *sprite);
 static void SpriteCB_SelectItem_ReturnToBag(struct Sprite *sprite);
-static u8 DirectionToAnimNum(u8 direction);
-static u8 GetItemSpriteIdByDirection(struct Sprite *sprite, u8 direction);
-static void SetDataToSlideAnim(struct Sprite *sprite, u8 direction);
+static u32 DirectionToAnimNum(u32 direction);
+static u32 GetItemSpriteIdByDirection(struct Sprite *sprite, u32 direction);
+static void SetDataToSlideAnim(struct Sprite *sprite, u32 direction);
 static void GeneralCursorMovement(struct Sprite *sprite);
-static void HandleSelectItemAction(struct Sprite *sprite, u8 direction);
+static void HandleSelectItemAction(struct Sprite *sprite, u32 direction);
 static void InitAffinAnimsAndHandleExitAction(struct Sprite *sprite);
 
 // Do different actions depending on the menu location
@@ -242,9 +242,9 @@ static const struct SpriteTemplate sItemTemplate =
 };
 
 // functions that makes the game load more than 1 registered item
-bool8 IsAllRegisteredItemSlotsFree(void)
+bool32 IsAllRegisteredItemSlotsFree(void)
 {
-	u8 i;
+	u32 i;
 
 	TryRemoveRegisteredItems();
 	
@@ -256,9 +256,9 @@ bool8 IsAllRegisteredItemSlotsFree(void)
 	return TRUE;
 }
 
-u8 FindRegisteredItemSlot(u16 itemId)
+u32 FindRegisteredItemSlot(u32 itemId)
 {
-	u8 i;
+	u32 i;
 	
 	for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
 	{
@@ -270,7 +270,7 @@ u8 FindRegisteredItemSlot(u16 itemId)
 
 void TryRemoveRegisteredItems(void)
 {
-	u8 i;
+	u32 i;
 	
 	for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
 	{
@@ -292,10 +292,10 @@ void TryRemoveRegisteredItems(void)
 #define sMenuLocation            data[2]
 #define sBoxSpriteIds(direction) data[direction + 3]
 
-static void CreateItemSpriteAndLinkToBox(struct Sprite *cursorSprite, u8 direction)
+static void CreateItemSpriteAndLinkToBox(struct Sprite *cursorSprite, u32 direction)
 {
-	u8 spriteId, boxSpriteId = cursorSprite->sBoxSpriteIds(direction);
-	u16 tag;
+	u32 spriteId, boxSpriteId = cursorSprite->sBoxSpriteIds(direction);
+	u32 tag;
 
 	if (gSaveBlock1Ptr->registeredItem[direction])
 	{
@@ -313,9 +313,9 @@ static void CreateItemSpriteAndLinkToBox(struct Sprite *cursorSprite, u8 directi
 	gSprites[boxSpriteId].sItemSpriteId = spriteId;
 }
 
-static void DestroyItemIconSprite(struct Sprite *cursorSprite, u8 direction)
+static void DestroyItemIconSprite(struct Sprite *cursorSprite, u32 direction)
 {
-	u8 spriteId = GetItemSpriteIdByDirection(cursorSprite, direction);
+	u32 spriteId = GetItemSpriteIdByDirection(cursorSprite, direction);
 	
 	if (spriteId != MAX_SPRITES)
 	{
@@ -329,9 +329,9 @@ static void DestroyCursorSprite(struct Sprite *sprite)
 	DestroyItemIconObj(sprite, CURSOR_TAG, BOX_TAG);
 }
 
-void InitRegisteredItemsToChoose(u8 menuLocation)
+void InitRegisteredItemsToChoose(u32 menuLocation)
 {
-	u8 i;
+	u32 i;
 	struct Sprite *cursorSprite;
 	
 	LoadSpriteSheet(&sBoxSpriteSheet);
@@ -362,14 +362,14 @@ static void SpriteCB_WaitAffinAnimsAndInitCursor(struct Sprite *sprite)
 	}
 }
 
-static void DoActionByMenuType(struct Sprite *sprite, u8 action)
+static void DoActionByMenuType(struct Sprite *sprite, u32 action)
 {
 	sRegisterItemActionsByMenuType[sprite->sMenuLocation][action](sprite);
 }
 
 static void SpriteCB_SelectItem_HandleInput(struct Sprite *sprite)
 {
-	u8 direction;
+	u32 direction;
 	
 	if (JOY_NEW(A_BUTTON)) // Press A
 	    DoActionByMenuType(sprite, REGISTERITEM_ACTION_PRESSA);
@@ -390,7 +390,7 @@ static void SpriteCB_SelectItem_HandleInput(struct Sprite *sprite)
 
 static void SpriteCB_SelectItem_Use(struct Sprite *sprite)
 {
-	u8 direction = sprite->sCursorDirection;
+	u32 direction = sprite->sCursorDirection;
 	
 	if (gSaveBlock1Ptr->registeredItem[direction])
 	{
@@ -427,8 +427,8 @@ static void SpriteCB_SelectItem_ReturnToOverworld(struct Sprite *sprite)
 
 static void SpriteCB_SelectItem_Register(struct Sprite *sprite)
 {
-	u8 direction = sprite->sCursorDirection;
-	u16 oldItem = gSaveBlock1Ptr->registeredItem[direction];
+	u32 direction = sprite->sCursorDirection;
+	u32 oldItem = gSaveBlock1Ptr->registeredItem[direction];
 	
 	PlaySE(oldItem ? SE_SWITCH : SE_SELECT);
 	gSaveBlock1Ptr->registeredItem[direction] = gSpecialVar_ItemId;
@@ -449,7 +449,7 @@ static void SpriteCB_SelectItem_ReturnToBag(struct Sprite *sprite)
 
 static void SpriteCB_MoveItem_HandleInput(struct Sprite *sprite)
 {
-	u8 firstItem, secondItem, direction = sprite->sCursorToSwitch;
+	u32 firstItem, secondItem, direction = sprite->sCursorToSwitch;
 	
 	if (!gSprites[sprite->sBoxSpriteIds(direction)].sNumFramesToAdd)
 	{
@@ -492,7 +492,7 @@ static void SpriteCB_MoveItem_HandleInput(struct Sprite *sprite)
 
 static void SpriteCB_HandleItemSelection(struct Sprite *sprite)
 {
-	u8 i;
+	u32 i;
 	
 	if (gSprites[sprite->sBoxSpriteIds(0)].affineAnimEnded)
 	{
@@ -510,8 +510,8 @@ static void SpriteCB_HandleItemSelection(struct Sprite *sprite)
 
 static void SpriteCB_HandleSwitchItems(struct Sprite *sprite)
 {
-	u16 temp;
-	u8 firstDirection = sprite->sCursorDirection, secondDirection = sprite->sCursorToSwitch;
+	u32 temp;
+	u32 firstDirection = sprite->sCursorDirection, secondDirection = sprite->sCursorToSwitch;
 	
 	SWAP(gSaveBlock1Ptr->registeredItem[firstDirection], gSaveBlock1Ptr->registeredItem[secondDirection], temp);
 	
@@ -523,8 +523,8 @@ static void SpriteCB_HandleSwitchItems(struct Sprite *sprite)
 
 static void SpriteCB_WaitAffinAnimsAndSwitchItems(struct Sprite *sprite)
 {
-	u8 firstDirection = sprite->sCursorDirection, secondDirection = sprite->sCursorToSwitch;
-	u8 firstItem = GetItemSpriteIdByDirection(sprite, firstDirection), secondItem = GetItemSpriteIdByDirection(sprite, secondDirection);
+	u32 firstDirection = sprite->sCursorDirection, secondDirection = sprite->sCursorToSwitch;
+	u32 firstItem = GetItemSpriteIdByDirection(sprite, firstDirection), secondItem = GetItemSpriteIdByDirection(sprite, secondDirection);
 	
 	if ((firstItem != MAX_SPRITES && gSprites[firstItem].affineAnimEnded) || (secondItem != MAX_SPRITES && gSprites[secondItem].affineAnimEnded)) // wait anim ends to continue
 	{
@@ -539,7 +539,7 @@ static void SpriteCB_WaitAffinAnimsAndSwitchItems(struct Sprite *sprite)
 
 static void SpriteCB_WaitAffinAnimsAndReturnToInput(struct Sprite *sprite)
 {
-	u8 firstItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorDirection), secondItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorToSwitch);
+	u32 firstItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorDirection), secondItem = GetItemSpriteIdByDirection(sprite, sprite->sCursorToSwitch);
 	
 	if ((firstItem != MAX_SPRITES && gSprites[firstItem].affineAnimEnded) || (secondItem != MAX_SPRITES && gSprites[secondItem].affineAnimEnded)) // wait anim ends to continue
 		sprite->callback = SpriteCB_SelectItem_HandleInput;
@@ -562,9 +562,9 @@ static void SpriteCB_MoveSpriteToSwitchMode(struct Sprite *sprite)
 	sprite->callback = SpriteCallbackDummy;
 }
 
-static void SetDataToSlideAnim(struct Sprite *sprite, u8 direction)
+static void SetDataToSlideAnim(struct Sprite *sprite, u32 direction)
 {
-	u8 itemSpriteId;
+	u32 itemSpriteId;
 	s16 addX = 0, addY = 0;
 	
 	switch (direction)
@@ -601,7 +601,7 @@ static void SetDataToSlideAnim(struct Sprite *sprite, u8 direction)
 
 static void InitAffinAnimsAndHandleExitAction(struct Sprite *sprite)
 {
-	u8 i, spriteId;
+	u32 i, spriteId;
 	
 	for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
 	{
@@ -628,7 +628,7 @@ static void GeneralCursorMovement(struct Sprite *sprite)
 		HandleSelectItemAction(sprite, CURSORDIRECTION_LEFT);
 }
 
-static void HandleSelectItemAction(struct Sprite *sprite, u8 direction)
+static void HandleSelectItemAction(struct Sprite *sprite, u32 direction)
 {
 	PlaySE(SE_SELECT);
 	sprite->sCursorDirection = direction;
@@ -637,12 +637,12 @@ static void HandleSelectItemAction(struct Sprite *sprite, u8 direction)
 	StartSpriteAffineAnim(sprite, DirectionToAnimNum(direction));
 }
 
-static u8 GetItemSpriteIdByDirection(struct Sprite *sprite, u8 direction)
+static u32 GetItemSpriteIdByDirection(struct Sprite *sprite, u32 direction)
 {
 	return gSprites[sprite->sBoxSpriteIds(direction)].sItemSpriteId;
 }
 
-static u8 DirectionToAnimNum(u8 direction)
+static u32 DirectionToAnimNum(u32 direction)
 {
 	if (direction == CURSORDIRECTION_RIGT || direction == CURSORDIRECTION_DOWN)
 		direction ^= 3;

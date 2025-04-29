@@ -10,9 +10,9 @@
 
 static void CB2_ReshowBattleScreenAfterMenu(void);
 static void ReshowBattleScreen_TurnOnDisplay(void);
-static bool8 LoadBattlerSpriteGfx(u8 battlerId);
-static void CreateBattlerSprite(u8 battlerId);
-static void CreateHealthboxSprite(u8 battlerId);
+static bool32 LoadBattlerSpriteGfx(u32 battlerId);
+static void CreateBattlerSprite(u32 battlerId);
+static void CreateHealthboxSprite(u32 battlerId);
 
 void ReshowBattleScreenAfterMenu(void)
 {
@@ -152,9 +152,9 @@ static void ReshowBattleScreen_TurnOnDisplay(void)
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_OBJWIN_ON);
 }
 
-static bool8 LoadBattlerSpriteGfx(u8 battler)
+static bool32 LoadBattlerSpriteGfx(u32 battler)
 {
-	u8 battlerPosition;
+	u32 battlerPosition;
 	
     if (battler < gBattlersCount)
     {
@@ -185,11 +185,11 @@ static bool8 LoadBattlerSpriteGfx(u8 battler)
     return TRUE;
 }
 
-static void CreateBattlerSprite(u8 battler)
+static void CreateBattlerSprite(u32 battler)
 {
     if (battler < gBattlersCount)
     {
-        u8 posY, battlerPosition = GetBattlerPosition(battler);
+        u32 posY, battlerPosition = GetBattlerPosition(battler);
 
         if (IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE)
             posY = GetGhostSpriteDefault_Y(battler);
@@ -213,7 +213,7 @@ static void CreateBattlerSprite(u8 battler)
         }
         else if ((gBattleTypeFlags & BATTLE_TYPE_SAFARI) && battlerPosition == B_POSITION_PLAYER_LEFT)
         {
-			u16 backPicId = gSaveBlock2Ptr->playerGender == MALE ? TRAINER_BACK_PIC_RED : TRAINER_BACK_PIC_LEAF;
+			u32 backPicId = gSaveBlock2Ptr->playerGender == MALE ? TRAINER_BACK_PIC_RED : TRAINER_BACK_PIC_LEAF;
 			
             SetMultiuseSpriteTemplateToTrainerBack(backPicId, battler, battlerPosition);
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 0x50,
@@ -247,11 +247,11 @@ static void CreateBattlerSprite(u8 battler)
     }
 }
 
-static void CreateHealthboxSprite(u8 battler)
+static void CreateHealthboxSprite(u32 battler)
 {
     if (battler < gBattlersCount)
     {
-        u8 healthboxSpriteId, battlerPosition = GetBattlerPosition(battler);
+        u32 healthboxSpriteId, battlerPosition = GetBattlerPosition(battler);
 
         if ((gBattleTypeFlags & BATTLE_TYPE_SAFARI) && battlerPosition == B_POSITION_PLAYER_LEFT)
             healthboxSpriteId = CreateSafariPlayerHealthboxSprites();

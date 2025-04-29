@@ -13,9 +13,9 @@ enum
 #define BOX_TAG 0x1078
 #define ITEMICON_INITIAL_TAG 0x1088
 
-bool8 IsAllRegisteredItemSlotsFree(void);
-u8 FindRegisteredItemSlot(u16 itemId);
+bool32 IsAllRegisteredItemSlotsFree(void);
+u32 FindRegisteredItemSlot(u32 itemId);
 void TryRemoveRegisteredItems(void);
-void InitRegisteredItemsToChoose(u8 menuLocation);
+void InitRegisteredItemsToChoose(u32 menuLocation);
 
 #endif // GUARD_REGISTERED_ITEM_H

@@ -24,7 +24,7 @@ Std_MsgboxDefault:: @ 81A4E54
 Std_MsgboxYesNo:: @ 81A4E5C
 	message 0x0
 	waitmessage
-	yesnobox 20, 8
+	yesnobox
 	return
 
 Std_ReceivedItem:: @ 81A4E66
@@ -52,9 +52,6 @@ EventScript_ReceivedItemFanfare2:: @ 81A4EA6
 
 EventScript_ReceivedItemWaitFanfare:: @ 81A4EAA
 	delay 50
-	return
-
-EventScript_UnusedReturn:: @ 81A4EAE
 	return
 
 EventScript_AskSaveGame:: @ 81A4EAF

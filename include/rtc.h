@@ -50,7 +50,7 @@ struct Rtc
 
 void RtcInit(void);
 void RtcCalcLocalTime(void);
-u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 endMonth, u8 endDay);
+u32 GetDayDifference(u32 startYear, u32 startMonth, u32 startDay, u32 endYear, u32 endMonth, u32 endDay);
 
 extern struct Rtc gRtcLocation;
 

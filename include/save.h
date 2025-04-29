@@ -89,15 +89,15 @@ extern struct SaveSection gSaveDataBuffer;
 
 void ClearSaveData(void);
 void Save_ResetSaveCounters(void);
-void HandleSavingData(u8 saveType);
-void TrySavingData(u8 saveType);
+void HandleSavingData(u32 saveType);
+void TrySavingData(u32 saveType);
 void SaveGame_AfterLinkTrade(void);
-bool8 AfterLinkTradeSaveFailed(void);
+bool32 AfterLinkTradeSaveFailed(void);
 void ClearSaveAfterLinkTradeSaveFailure(void);
 void LinkTradeSetLastSectorSignature(void);
 void WriteSaveBlock2(void);
-bool8 WriteSaveBlock1Sector(void);
-u8 Save_LoadGameData(u8 saveType);
+bool32 WriteSaveBlock1Sector(void);
+u32 Save_LoadGameData(u32 saveType);
 void Task_LinkSave(u8 taskId);
 void ResetSaveHeap(void);
 

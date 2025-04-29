@@ -58,7 +58,7 @@ void SetNotInSaveFailedScreen(void)
     sIsInSaveFailedScreen = FALSE;
 }
 
-void DoSaveFailedScreen(u8 saveType)
+void DoSaveFailedScreen(u32 saveType)
 {
     sSaveType = saveType;
     sIsInSaveFailedScreen = TRUE;
@@ -131,7 +131,7 @@ bool32 RunSaveFailedScreen(void)
 
 static void BlankPalettes(void)
 {
-    int i;
+    u32 i;
     for (i = 0; i < BG_PLTT_SIZE; i += sizeof(u16))
     {
         *((u16 *)(BG_PLTT + i)) = RGB_BLACK;
@@ -149,9 +149,9 @@ static void RequestDmaCopyFromCharBuffer(void)
     RequestDma3Copy(gDecompressionBuffer + 0x020, (void *)BG_CHAR_ADDR(3) + 0x20, 0x2300, DMA3_16BIT);
 }
 
-static void FillBgMapBufferRect(u16 baseBlock, u8 left, u8 top, u8 width, u8 height, u16 blockOffset)
+static void FillBgMapBufferRect(u16 baseBlock, u32 left, u32 top, u32 width, u32 height, u16 blockOffset)
 {
-    u16 i, j;
+    u32 i, j;
 
     for (i = top; i < top + height; i++)
     {
@@ -184,24 +184,29 @@ static void PrintTextOnSaveFailedScreen(const u8 *str)
 
 static bool32 TryWipeDamagedSectors(void)
 {
-    int i = 0;
+    u32 i;
+	
     for (i = 0; gDamagedSaveSectors != 0 && i < 3; i++)
     {
         if (WipeDamagedSectors(gDamagedSaveSectors))
             return FALSE;
+		
         HandleSavingData(sSaveType);
     }
+	
     if (gDamagedSaveSectors != 0)
         return FALSE;
+	
     return TRUE;
 }
 
-static bool16 VerifySectorWipe(u32 sector)
+static bool32 VerifySectorWipe(u32 sector)
 {
     u16 sector0 = sector;
-    u16 i;
-    u32 *saveDataBuffer = (void *)&gSaveDataBuffer;
+    u32 i, *saveDataBuffer = (void *)&gSaveDataBuffer;
+	
     ReadFlash(sector0, 0, saveDataBuffer, 0x1000);
+	
     for (i = 0; i < 0x1000 / sizeof(u32); i++, saveDataBuffer++)
     {
         if (*saveDataBuffer != 0)
@@ -213,7 +218,7 @@ static bool16 VerifySectorWipe(u32 sector)
 static bool32 WipeSector(u32 sector)
 {
     bool32 result;
-    u16 i, j;
+    u32 i, j;
 
     i = 0;
     while (i < 130)

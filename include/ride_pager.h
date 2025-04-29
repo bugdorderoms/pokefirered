@@ -2,13 +2,13 @@
 #define GUARD_RIDE_PAGER_H
 
 void InitRidePager(void);
-u8 CountObtainedPokeRides(void);
-bool8 PlayerHasObtainedSharpedoPaddle(void);
-u16 RideToSpeciesId(u8 ride);
-bool8 TryDismountPokeRide(void);
+u32 CountObtainedPokeRides(void);
+bool32 PlayerHasObtainedSharpedoPaddle(void);
+u32 RideToSpeciesId(u32 ride);
+bool32 TryDismountPokeRide(void);
 void TryRemoveStrengthFlag(void);
-bool8 CheckPlayerInGroundRocks(void);
-void MovePlayerOnRide(u8 newDirection, u16 heldKeys);
+bool32 CheckPlayerInGroundRocks(void);
+void MovePlayerOnRide(u32 newDirection, u16 heldKeys);
 u32 ApplyRideEncounterRateMod(u32 encounterRate);
 void DecreaseTaurosChargeStamina(void);
 

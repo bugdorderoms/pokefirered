@@ -56,7 +56,7 @@ static const u8 *const sMenuTexts[] = {
     [PC_TEXT_SIMPLE]     = gPCText_Simple,
 };
 
-void SetMenuText(u8 textId)
+void SetMenuText(u32 textId)
 {
     if (gPSSData->menuItemsCount < MAX_MENU_ITEMS)
     {
@@ -73,7 +73,7 @@ void SetMenuText(u8 textId)
     }
 }
 
-s8 sub_8094E50(u8 arg0)
+s8 sub_8094E50(u32 arg0)
 {
     if (arg0 >= gPSSData->menuItemsCount)
         return -1;
@@ -94,12 +94,6 @@ void AddMenu(void)
     Menu_InitCursor(gPSSData->field_CB0, 1, 0, 2, 16, gPSSData->menuItemsCount, 0);
     ScheduleBgCopyTilemapToVram(0);
     gPSSData->field_CAE = 0;
-}
-
-bool8 sub_8094F90(void)
-{
-    // Some debug flag?
-    return FALSE;
 }
 
 s16 sub_8094F94(void)
