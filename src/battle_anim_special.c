@@ -1477,8 +1477,8 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u32 battler, u32 sprite, u32 sp
     textPtr[1] = CHAR_s;
     textPtr[2] = EOS;
     
-    AbilityPopUpPrinter((const u8*) pokemonName, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP),
-			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP), 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_WHITE);
+    AbilityPopUpPrinter((const u8*)pokemonName, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP),
+			            (void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP), 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_WHITE);
     
 	BattleAI_RecordAbility(battler);
 	
@@ -1491,7 +1491,7 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u32 battler, u32 sprite, u32 sp
 		ability = gBattleMons[battler].ability;
 	
     AbilityPopUpPrinter(gAbilities[ability].name, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP) + 256,
-			(void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP) + 256, 4, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_LIGHT_BLUE, TEXT_COLOR_WHITE);
+			            (void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP) + 256, 4, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_RED, TEXT_COLOR_WHITE);
 
     RestoreAbilityPopUpOverwrittenPixels((void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP));
 }

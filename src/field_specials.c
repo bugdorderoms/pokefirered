@@ -2155,8 +2155,7 @@ void IncrementBirthIslandRockStepCount(void)
 
 void SetDeoxysTrianglePalette(void)
 {
-    u32 num = VarGet(VAR_DEOXYS_INTERACTION_NUM);
-    LoadPalette(sDeoxysObjectPals[num], 0x1A0, 0x08);
+    LoadPalette(sDeoxysObjectPals[VarGet(VAR_DEOXYS_INTERACTION_NUM)], 0x1A0, 0x08);
     ApplyGlobalFieldPaletteTint(10);
 }
 

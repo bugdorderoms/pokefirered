@@ -73,6 +73,7 @@ gSpecials:: @ 815FD60
 	def_special DisablePlayerBag
 	def_special EnablePlayerBag
 	def_special DoSlidingPuzzle
+	def_special ShowVoltorbFlip
 
 	@ Party specials
 	def_special ChoosePartyMon

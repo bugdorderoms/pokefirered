@@ -274,7 +274,7 @@ void CB2_FlashNotDetectedScreen(void)
 			DeactivateAllTextPrinters();
 			ResetTasks();
 			ResetPaletteFade();
-			ResetBgsAndClearDma3BusyFlags(0);
+			ResetBgsAndClearDma3BusyFlags(FALSE);
 			break;
 		case 3: // Init bgs
 			InitBgsFromTemplates(0, sFlashNotDetectedBgTemplates, ARRAY_COUNT(sFlashNotDetectedBgTemplates));

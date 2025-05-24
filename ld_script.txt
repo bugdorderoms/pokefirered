@@ -292,6 +292,7 @@ SECTIONS {
 		src/pokemon_sprite_visualizer.o(.text);
 		src/battle_gfx_sfx_util.o(.text);
 		src/sliding_puzzles.o(.text);
+		src/voltorb_flip.o(.text);
     } =0
 
     script_data :
@@ -585,6 +586,7 @@ SECTIONS {
 		src/battle_ai_main.o(.rodata);
 		src/pokemon_sprite_visualizer.o(.rodata);
 		src/sliding_puzzles.o(.rodata);
+		src/voltorb_flip.o(.rodata);
 
         /* These should not be moved to C files */
         src/m4a_tables.o(.rodata);

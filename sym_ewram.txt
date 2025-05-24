@@ -129,3 +129,4 @@
 	.include "src/battle_ai_main.o"
 	.include "src/sliding_puzzles.o"
 	.include "src/map_name_popup.o"
+	.include "src/voltorb_flip.o"
