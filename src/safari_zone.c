@@ -37,15 +37,15 @@ void ExitSafariMode(void)
 
 bool32 SafariZoneTakeStep(void)
 {
-	if (GetSafariZoneFlag())
-	{
-		if (--gSafariZoneStepCounter == 0)
-		{
-			ScriptContext1_SetupScript(SafariZone_EventScript_TimesUp);
-			return TRUE;
-		}
-	}
-	return FALSE;
+    if (GetSafariZoneFlag())
+    {
+        if (--gSafariZoneStepCounter == 0)
+        {
+            ScriptContext1_SetupScript(SafariZone_EventScript_TimesUp);
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 void SafariZoneRetirePrompt(void)

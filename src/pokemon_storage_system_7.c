@@ -61,7 +61,7 @@ static const struct WindowTemplate gUnknown_83D35D4 = {
 bool32 sub_8095050(void)
 {
     sMoveMonsPtr = Alloc(sizeof(*sMoveMonsPtr));
-	
+    
     if (sMoveMonsPtr != NULL)
     {
         gPSSData->field_2200 = AddWindow8Bit(&gUnknown_83D35D4);
@@ -432,22 +432,22 @@ static void sub_80957C8(void)
     sMoveMonsPtr->minColumn = min(sMoveMonsPtr->fromColumn, sMoveMonsPtr->toColumn);
     sMoveMonsPtr->rowsTotal = abs(sMoveMonsPtr->fromRow - sMoveMonsPtr->toRow) + 1;
     sMoveMonsPtr->columsTotal = abs(sMoveMonsPtr->fromColumn - sMoveMonsPtr->toColumn) + 1;
-	
+    
     boxId = StorageGetCurrentBox();
     monArrayId = 0;
     rowCount = sMoveMonsPtr->minRow + sMoveMonsPtr->rowsTotal;
     columnCount = sMoveMonsPtr->minColumn + sMoveMonsPtr->columsTotal;
-	
+    
     for (i = sMoveMonsPtr->minColumn; i < columnCount; i++)
     {
         u8 boxPosition = (IN_BOX_ROWS * i) + sMoveMonsPtr->minRow;
-		
+        
         for (j = sMoveMonsPtr->minRow; j < rowCount; j++)
         {
             struct BoxPokemon *boxMon = GetBoxedMonPtr(boxId, boxPosition);
             if (boxMon != NULL)
                 sMoveMonsPtr->boxMons[monArrayId] = *boxMon;
-			
+            
             monArrayId++;
             boxPosition++;
         }
@@ -464,7 +464,7 @@ static void sub_80958A0(void)
     for (i = sMoveMonsPtr->minColumn; i < columnCount; i++)
     {
         u8 boxPosition = (IN_BOX_ROWS * i) + sMoveMonsPtr->minRow;
-		
+        
         for (j = sMoveMonsPtr->minRow; j < rowCount; j++)
         {
             DestroyBoxMonIconAtPosition(boxPosition);
@@ -484,12 +484,12 @@ static void sub_8095918(void)
     for (i = sMoveMonsPtr->minColumn; i < columnCount; i++)
     {
         u8 boxPosition = (IN_BOX_ROWS * i) + sMoveMonsPtr->minRow;
-		
+        
         for (j = sMoveMonsPtr->minRow; j < rowCount; j++)
         {
             if (GetBoxMonData(&sMoveMonsPtr->boxMons[monArrayId], MON_DATA_SANITY_HAS_SPECIES))
                 sub_80901EC(boxPosition);
-			
+            
             monArrayId++;
             boxPosition++;
         }
@@ -507,12 +507,12 @@ static void sub_80959A8(void)
     for (i = sMoveMonsPtr->minColumn; i < columnCount; i++)
     {
         u8 boxPosition = (IN_BOX_ROWS * i) + sMoveMonsPtr->minRow;
-		
+        
         for (j = sMoveMonsPtr->minRow; j < rowCount; j++)
         {
             if (GetBoxMonData(&sMoveMonsPtr->boxMons[monArrayId], MON_DATA_SANITY_HAS_SPECIES))
                 SetBoxMonAt(boxId, boxPosition, &sMoveMonsPtr->boxMons[monArrayId]);
-			
+            
             boxPosition++;
             monArrayId++;
         }
@@ -544,7 +544,7 @@ bool32 sub_8095ABC(void)
     for (i = sMoveMonsPtr->minColumn; i < columnCount; i++)
     {
         u8 boxPosition = (IN_BOX_ROWS * i) + sMoveMonsPtr->minRow;
-		
+        
         for (j = sMoveMonsPtr->minRow; j < rowCount; j++)
         {
             if (GetBoxMonData(&sMoveMonsPtr->boxMons[monArrayId], MON_DATA_SANITY_HAS_SPECIES) && GetCurrentBoxMonData(boxPosition, MON_DATA_SANITY_HAS_SPECIES))

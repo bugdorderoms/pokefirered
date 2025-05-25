@@ -1,5 +1,5 @@
 .equ LOCALID_MUSEUM_GUIDE, 2
-.equ LOCALID_GYM_GUIDE,    5
+.equ LOCALID_GYM_GUIDE,	5
 .equ LOCALID_AIDE,         7
 
 PewterCity_MapScripts:: @ 8165B8E

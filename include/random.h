@@ -26,7 +26,7 @@ u16 RandomRange(u32 min, u32 max); // Returns a 16-bit pseudorandom number betwe
 // Returns where a pseudorandom percentage chance will occours
 static inline bool32 RandomPercent(u32 percentage)
 {
-	return (RandomMax(100) < percentage);
+    return (RandomMax(100) < percentage);
 }
 
 #endif // GUARD_RANDOM_H

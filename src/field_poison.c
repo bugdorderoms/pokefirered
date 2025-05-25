@@ -14,7 +14,7 @@ static void FaintFromFieldPoison(u32 partyIdx)
 {
     struct Pokemon *pokemon = &gPlayerParty[partyIdx];
     u32 status = STATUS1_NONE;
-	
+    
 #if POISON_SURVIVAL == FALSE
     AdjustFriendship(pokemon, FRIENDSHIP_EVENT_FAINT_OUTSIDE_BATTLE);
 #endif
@@ -27,15 +27,15 @@ static void FaintFromFieldPoison(u32 partyIdx)
 static bool32 MonFaintedFromPoison(u32 partyIdx)
 {
     struct Pokemon *pokemon = &gPlayerParty[partyIdx];
-	
-	if (IsMonValidSpecies(pokemon) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS_ID)) == AILMENT_PSN &&
+    
+    if (IsMonValidSpecies(pokemon) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS_ID)) == AILMENT_PSN &&
 #if POISON_SURVIVAL
-		GetMonData(pokemon, MON_DATA_HP) == 1
+        GetMonData(pokemon, MON_DATA_HP) == 1
 #else
-		!GetMonData(pokemon, MON_DATA_HP)
+        !GetMonData(pokemon, MON_DATA_HP)
 #endif
-	)
-		return TRUE;
+    )
+        return TRUE;
 
     return FALSE;
 }
@@ -43,10 +43,10 @@ static bool32 MonFaintedFromPoison(u32 partyIdx)
 #define tState   data[0]
 #define tPartyId data[1]
 
-static void Task_TryFieldPoisonWhiteOut(u8 taskId)
+static void Task_TryFieldPoisonWhiteOut(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
-	
+    
     switch (tState)
     {
     case 0:
@@ -55,7 +55,7 @@ static void Task_TryFieldPoisonWhiteOut(u8 taskId)
             if (MonFaintedFromPoison(tPartyId))
             {
                 FaintFromFieldPoison(tPartyId);
-				
+                
 #if POISON_SURVIVAL
                 ShowFieldMessage(gText_PkmnPoisonSurvived);
 #else
@@ -93,31 +93,31 @@ u32 DoPoisonFieldEffect(void)
 
     for (i = 0, numPoisoned = 0, numFainted = 0; i < PARTY_SIZE; i++)
     {
-		pokemon = &gPlayerParty[i];
-		
+        pokemon = &gPlayerParty[i];
+        
         if (GetMonData(pokemon, MON_DATA_SANITY_HAS_SPECIES) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS_ID)) == AILMENT_PSN)
         {
             hp = GetMonData(pokemon, MON_DATA_HP);
-			
+            
 #if POISON_SURVIVAL
             if (hp == 1 || --hp == 1)
 #else
             if (hp == 0 || --hp == 0)
-#endif			
-				numFainted++;
-			
+#endif            
+                numFainted++;
+            
             SetMonData(pokemon, MON_DATA_HP, &hp);
             numPoisoned++;
         }
     }
     if (numFainted || numPoisoned)
         FldEffPoison_Start();
-	
+    
     if (numFainted)
         return FLDPSN_FNT;
-	
+    
     if (numPoisoned)
         return FLDPSN_PSN;
-	
+    
     return FLDPSN_NONE;
 }

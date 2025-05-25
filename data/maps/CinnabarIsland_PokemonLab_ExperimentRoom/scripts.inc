@@ -1,6 +1,6 @@
 .equ HELIX_FOSSIL, 1
 .equ DOME_FOSSIL,  2
-.equ OLD_AMBER,    3
+.equ OLD_AMBER,	3
 
 CinnabarIsland_PokemonLab_ExperimentRoom_MapScripts:: @ 816E400
 	.byte 0

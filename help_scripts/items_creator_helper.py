@@ -46,13 +46,13 @@ with open(f'{file_path}/include/constants/tms.h', 'r') as file:
             tm = line.split(' ')[1].strip()
             num = tm.split('_')[1]
             move = tm.removeprefix(f'ITEM_{num}_')
-            tms.append(f'\n\t[{tm}] ='
-                       '\n\t{\n'
-                       f'\t\t.name = _("{num}"),\n'
-                       f'\t\t.holdEffectParam = MOVE_{move},\n\t\t.description = (u8*)&gBattleMoves[MOVE_{move}].description,\n'
-                       f'\t\t.price = 3000,\n\t\t.pocket = POCKET_TM_CASE,\n\t\t.type = ITEM_TYPE_PARTY_MENU,\n'
-                       f'\t\t.iconPic = sItemIcon_Tm,\n\t\t.iconPalette = NULL, // Handled by gTypesInfo'
-                       '\n\t},\n')
+            tms.append(f'\n    [{tm}] ='
+                        '\n    {\n'
+                       f'        .name = _("{num}"),\n'
+                       f'        .holdEffectParam = MOVE_{move},\n        .description = (u8*)&gBattleMoves[MOVE_{move}].description,\n'
+                       f'        .price = 3000,\n        .pocket = POCKET_TM_CASE,\n        .type = ITEM_TYPE_PARTY_MENU,\n'
+                       f'        .iconPic = sItemIcon_Tm,\n        .iconPalette = NULL, // Handled by gTypesInfo'
+                        '\n    },\n')
 
 # Create pokeballs_graphics.h
 
@@ -62,16 +62,12 @@ pokeballs = []
 pokeballs.append(f'static const u32 sOpenPokeballGfx[] = INCBIN_U32("graphics/interface/ball_open.4bpp.lz");\n\n')
 
 # Append all pokeballs graphics and palettes
-for path in glob.glob(f'{file_path}/graphics/interface/ball/*'):
-    if path.endswith('.png'):
-        name = os.path.basename(path.removesuffix('.png'))
-        pokeballs.insert(len(pokeballs) - 2, f'static const u32 sInterfaceGfx_{FormatExtension(name)}Ball[] = INCBIN_U32("graphics/interface/ball/{name}.4bpp.lz");\n')
-    elif path.endswith('.gbapal'):
-        name = os.path.basename(path.removesuffix('.gbapal'))
-        pokeballs.append(f'static const u32 sInterfacePal_{FormatExtension(name)}Ball[] = INCBIN_U32("graphics/interface/ball/{name}.gbapal.lz");\n')
-        pokeballs.append('\n')
+for path in glob.glob(f'{file_path}/graphics/interface/ball/*.png'):
+    name = os.path.basename(path.removesuffix('.png'))
+    formated_name = FormatExtension(name)
+    pokeballs.append(f'static const u32 sInterfaceGfx_{formated_name}Ball[] = INCBIN_U32("graphics/interface/ball/{name}.4bpp.lz");\n')
+    pokeballs.append(f'static const u32 sInterfacePal_{formated_name}Ball[] = INCBIN_U32("graphics/interface/ball/{name}.gbapal.lz");\n\n')
 
-pokeballs.pop()
 file = open(f'{file_path}/src/data/item/pokeballs_graphics.h', 'w')
 file.writelines(pokeballs)
 file.close()

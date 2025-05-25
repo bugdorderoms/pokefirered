@@ -19,16 +19,16 @@ struct WirelessCommunicationStatusScreenStruct
     u32 counts[4];
     u32 lastCounts[4];
     u32 activities[16];
-    u8 taskId;
+    u32 taskId;
     u8 rfuTaskId;
 };
 
 static struct WirelessCommunicationStatusScreenStruct * sWCSS;
 
 static void CB2_InitWirelessCommunicationScreen(void);
-static void Task_WirelessCommunicationScreen(u8 taskId);
+static void Task_WirelessCommunicationScreen(u32 taskId);
 static void WCSS_AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 * str, u8 x, u8 y, u8 palIdx);
-static bool32 UpdateCommunicationCounts(u32 * counts, u32 * lastCounts, u32 * activities, u8 taskId);
+static bool32 UpdateCommunicationCounts(u32 * counts, u32 * lastCounts, u32 * activities, u32 taskId);
 
 static const u16 sWCSS_Palettes[][16] = {
     INCBIN_U16("graphics/misc/unk_846f4d0.gbapal"),
@@ -258,7 +258,7 @@ static void PrintHeaderTexts(void)
     CopyWindowToVram(1, COPYWIN_GFX);
 }
 
-static void Task_WirelessCommunicationScreen(u8 taskId)
+static void Task_WirelessCommunicationScreen(u32 taskId)
 {
     s32 i;
     switch (gTasks[taskId].data[0])
@@ -392,7 +392,7 @@ static bool32 HaveCountsChanged(const u32 * newCounts, const u32 * prevCounts)
     return FALSE;
 }
 
-static bool32 UpdateCommunicationCounts(u32 * counts, u32 * lastCounts, u32 * activities, u8 taskId)
+static bool32 UpdateCommunicationCounts(u32 * counts, u32 * lastCounts, u32 * activities, u32 taskId)
 {
     bool32 activitiesUpdated = FALSE;
     u32 buffer[4] = {0, 0, 0, 0};

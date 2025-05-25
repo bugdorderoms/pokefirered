@@ -75,7 +75,7 @@ static void InitChatWork(struct UnionRoomChat * unionRoomChat);
 static void CB2_LoadInterface(void);
 static void VBlankCB_UnionRoomChatMain(void);
 static void CB2_UnionRoomChatMain(void);
-static void Task_HandlePlayerInput(u8 taskId);
+static void Task_HandlePlayerInput(u32 taskId);
 static void ChatEntryRoutine_Join(void);
 static void ChatEntryRoutine_HandleInput(void);
 static void ChatEntryRoutine_Switch(void);
@@ -103,7 +103,7 @@ static void PrepareSendBuffer_Chat(u8 *ptr);
 static void PrepareSendBuffer_Leave(u8 *ptr);
 static void PrepareSendBuffer_Drop(u8 *ptr);
 static void PrepareSendBuffer_Disband(u8 *ptr);
-static void Task_ReceiveChatMessage(u8 taskId);
+static void Task_ReceiveChatMessage(u32 taskId);
 
 static void (*const sChatEntryRoutines[])(void) = {
     [CHATENTRYROUTINE_JOIN] = ChatEntryRoutine_Join,
@@ -402,7 +402,7 @@ static void CB2_UnionRoomChatMain(void)
     UpdatePaletteFade();
 }
 
-static void Task_HandlePlayerInput(u8 taskId)
+static void Task_HandlePlayerInput(u32 taskId)
 {
     switch (sWork->exitType)
     {
@@ -1436,7 +1436,7 @@ void UnionRoomChat_InitializeRegisteredTexts(void)
 #define tLinkPlayerCount     data[4]
 #define tNextState           data[5]
 
-static void Task_ReceiveChatMessage(u8 taskId)
+static void Task_ReceiveChatMessage(u32 taskId)
 {
     u8 *buffer;
     s16 *data = gTasks[taskId].data;

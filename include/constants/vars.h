@@ -227,7 +227,7 @@
 #define VAR_0x40B2                 0x40B2
 #define VAR_0x40B3                 0x40B3
 #define VAR_PORTHOLE               0x40B4
-#define VAR_0x40B5       		   0x40B5
+#define VAR_0x40B5                  0x40B5
 #define VAR_0x40B6                 0x40B6
 #define VAR_0x40B7                 0x40B7
 #define VAR_0x40B8                 0x40B8

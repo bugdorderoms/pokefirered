@@ -29,7 +29,7 @@ void ScanlineEffect_Stop(void)
 {
     gScanlineEffect.state = 0;
     DmaStop(0);
-	
+    
     if (gScanlineEffect.waveTaskId != 0xFF)
     {
         DestroyTask(gScanlineEffect.waveTaskId);
@@ -121,7 +121,7 @@ static void CopyValue32Bit(void)
 #define tRegOffset            data[6]
 #define tApplyBattleBgOffsets data[7]
 
-static void TaskFunc_UpdateWavePerFrame(u8 taskId)
+static void TaskFunc_UpdateWavePerFrame(u32 taskId)
 {
     int value = 0;
     u32 i;
@@ -167,9 +167,9 @@ static void TaskFunc_UpdateWavePerFrame(u8 taskId)
         if (gTasks[taskId].tFramesUntilMove != 0)
         {
             gTasks[taskId].tFramesUntilMove--;
-			
+            
             offset = gTasks[taskId].tSrcBufferOffset + 320;
-			
+            
             for (i = gTasks[taskId].tStartLine; i < gTasks[taskId].tEndLine; i++)
             {
                 gScanlineEffectRegBuffers[gScanlineEffect.srcBuffer][i] = gScanlineEffectRegBuffers[0][offset] + value;
@@ -179,9 +179,9 @@ static void TaskFunc_UpdateWavePerFrame(u8 taskId)
         else
         {
             gTasks[taskId].tFramesUntilMove = gTasks[taskId].tDelayInterval;
-			
+            
             offset = gTasks[taskId].tSrcBufferOffset + 320;
-			
+            
             for (i = gTasks[taskId].tStartLine; i < gTasks[taskId].tEndLine; i++)
             {
                 gScanlineEffectRegBuffers[gScanlineEffect.srcBuffer][i] = gScanlineEffectRegBuffers[0][offset] + value;

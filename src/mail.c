@@ -233,100 +233,100 @@ static const struct MailEcWordLayout sLayout_3x3[] = {
 
 static const struct MailAttrStruct sMessageLayouts_3x3[] = {
     [ITEM_TO_MAIL(ITEM_ORANGE_MAIL)]  = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_HARBOR_MAIL)]  = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_GLITTER_MAIL)] = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_MECH_MAIL)]    = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_WOOD_MAIL)]    = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_WAVE_MAIL)]    = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_BEAD_MAIL)]    = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_SHADOW_MAIL)]  = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_TROPIC_MAIL)]  = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_DREAM_MAIL)]   = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_FAB_MAIL)]     = {
-    	.numRows = 3,
-    	.nameY = 8,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 4,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 8,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 4,
+        .linesLayout = sLayout_3x3
     },
     [ITEM_TO_MAIL(ITEM_RETRO_MAIL)]   = {
-    	.numRows = 3,
-    	.nameY = 0,
-    	.nameX = 0,
-    	.messageTop = 2,
-    	.messageLeft = 0,
-    	.linesLayout = sLayout_3x3
+        .numRows = 3,
+        .nameY = 0,
+        .nameX = 0,
+        .messageTop = 2,
+        .messageLeft = 0,
+        .linesLayout = sLayout_3x3
     },
 };
 
@@ -340,100 +340,100 @@ static const struct MailEcWordLayout sLayout_5x2[] = {
 
 static const struct MailAttrStruct sMessageLayouts_5x2[] = {
     [ITEM_TO_MAIL(ITEM_ORANGE_MAIL)]  = {
-      	.numRows = 5,
-      	.nameY = 0,
-      	.nameX = 8,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 0,
+          .nameX = 8,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_HARBOR_MAIL)]  = {
-      	.numRows = 5,
-      	.nameY = 3,
-      	.nameX = 14,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 3,
+          .nameX = 14,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_GLITTER_MAIL)] = {
-      	.numRows = 5,
-      	.nameY = 0,
-      	.nameX = 16,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 0,
+          .nameX = 16,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_MECH_MAIL)]    = {
-      	.numRows = 5,
-      	.nameY = 0,
-      	.nameX = 14,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 0,
+          .nameX = 14,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_WOOD_MAIL)]    = {
-      	.numRows = 5,
-      	.nameY = 3,
-      	.nameX = 12,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 3,
+          .nameX = 12,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_WAVE_MAIL)]    = {
-      	.numRows = 5,
-      	.nameY = 0,
-      	.nameX = 18,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 0,
+          .nameX = 18,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_BEAD_MAIL)]    = {
-      	.numRows = 5,
-      	.nameY = 0,
-      	.nameX = 20,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 0,
+          .nameX = 20,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_SHADOW_MAIL)]  = {
-      	.numRows = 5,
-      	.nameY = 6,
-      	.nameX = 20,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 6,
+          .nameX = 20,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_TROPIC_MAIL)]  = {
-      	.numRows = 5,
-      	.nameY = 0,
-      	.nameX = 16,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 0,
+          .nameX = 16,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_DREAM_MAIL)]   = {
-      	.numRows = 5,
-      	.nameY = 0,
-      	.nameX = 14,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 0,
+          .nameX = 14,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_FAB_MAIL)]     = {
-      	.numRows = 5,
-      	.nameY = 8,
-      	.nameX = 16,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 8,
+          .nameX = 16,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
     [ITEM_TO_MAIL(ITEM_RETRO_MAIL)]   = {
-      	.numRows = 5,
-      	.nameY = 0,
-      	.nameX = 16,
-      	.messageTop = 3,
-      	.messageLeft = 8,
-      	.linesLayout = sLayout_5x2
+          .numRows = 5,
+          .nameY = 0,
+          .nameX = 16,
+          .messageTop = 3,
+          .messageLeft = 8,
+          .linesLayout = sLayout_5x2
     },
 };
 
@@ -443,7 +443,7 @@ void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool32 messageExi
     sMailViewResources->mailArrangementType = 1;
     sMailViewResources->copyEasyChatWord = CopyEasyChatWord;
     sMailViewResources->convertEasyChatWordsToString = ConvertEasyChatWordsToString;
-	
+    
     if (ItemIsMail(mail->itemId))
         sMailViewResources->mailType = ItemId_GetHoldEffectParam(mail->itemId);
     else
@@ -451,7 +451,7 @@ void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool32 messageExi
         sMailViewResources->mailType = ITEM_TO_MAIL(ITEM_ORANGE_MAIL);
         messageExists = FALSE;
     }
-	
+    
     switch (sMailViewResources->mailArrangementType)
     {
     case 0:
@@ -462,7 +462,7 @@ void ReadMail(struct Mail * mail, void (*savedCallback)(void), bool32 messageExi
         sMailViewResources->messageLayout = &sMessageLayouts_5x2[sMailViewResources->mailType];
         break;
     }
-	
+    
     if (mail->species != SPECIES_NONE && mail->species < NUM_SPECIES)
     {
         switch (sMailViewResources->mailType)
@@ -584,7 +584,7 @@ static bool32 DoInitMailView(void)
         break;
     case 17:
         iconId = SanitizeSpeciesId(sMailViewResources->mail->species);
-		
+        
         switch (sMailViewResources->monIconType)
         {
         case MAIL_ICON_BEAD:
@@ -629,13 +629,13 @@ static void BufferMailMessage(void)
 {
     u32 i;
     u8 j;
-	
+    
     for (i = 0, j = 0; i < sMailViewResources->messageLayout->numRows; i++)
     {
         ConvertEasyChatWordsToString(sMailViewResources->messageLinesBuffer[i], &sMailViewResources->mail->words[j], sMailViewResources->messageLayout->linesLayout[i].numWordsInLine, 1);
         j += sMailViewResources->messageLayout->linesLayout[i].numWordsInLine;
     }
-	
+    
     if (sMailViewResources->mailArrangementType == 0)
     {
         StringCopy(StringCopy(sMailViewResources->authorNameBuffer, sMailViewResources->mail->playerName), gText_From); // ???
@@ -644,10 +644,10 @@ static void BufferMailMessage(void)
     else
     {
         StringCopy(sMailViewResources->authorNameBuffer, sMailViewResources->mail->playerName);
-		
+        
         if (StringLength(sMailViewResources->authorNameBuffer) < 6)
             ConvertInternationalString(sMailViewResources->authorNameBuffer, LANGUAGE_JAPANESE);
-		
+        
         sMailViewResources->nameX = sMailViewResources->messageLayout->nameX;
     }
 }
@@ -659,10 +659,10 @@ static void AddMailMessagePrinters(void)
 
     PutWindowTilemap(0);
     PutWindowTilemap(1);
-	
+    
     FillWindowPixelBuffer(0, PIXEL_FILL(0));
     FillWindowPixelBuffer(1, PIXEL_FILL(0));
-	
+    
     for (i = 0; i < sMailViewResources->messageLayout->numRows; i++)
     {
         if (sMailViewResources->messageLinesBuffer[i][0] != EOS && sMailViewResources->messageLinesBuffer[i][0] != CHAR_SPACE)
@@ -674,7 +674,7 @@ static void AddMailMessagePrinters(void)
     AddTextPrinterParameterized3(1, 1, sMailViewResources->nameX, sMailViewResources->messageLayout->nameY, sTextColor, 0, gText_From);
     AddTextPrinterParameterized3(1, 1, sMailViewResources->nameX + GetStringWidth(1, gText_From, 0), sMailViewResources->messageLayout->nameY, sTextColor, 0, sMailViewResources->authorNameBuffer);
     
-	CopyWindowToVram(0, COPYWIN_BOTH);
+    CopyWindowToVram(0, COPYWIN_BOTH);
     CopyWindowToVram(1, COPYWIN_BOTH);
 }
 
@@ -715,7 +715,7 @@ static void ShowMailCB_Teardown(void)
     if (!UpdatePaletteFade())
     {
         SetMainCallback2(sMailViewResources->savedCallback);
-		
+        
         switch (sMailViewResources->monIconType)
         {
         case MAIL_ICON_BEAD:

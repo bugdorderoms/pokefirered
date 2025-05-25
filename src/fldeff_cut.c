@@ -36,10 +36,10 @@ static void SpriteCallback_CutGrass_Init(struct Sprite * sprite);
 static void SpriteCallback_CutGrass_Run(struct Sprite * sprite);
 static void SpriteCallback_CutGrass_Cleanup(struct Sprite * sprite);
 static void FieldMoveCallback_CutTree(void);
-static void Task_FieldEffectShowMon_Init(u8 taskId);
-static void Task_FieldEffectShowMon_WaitFldeff(u8 taskId);
-static void Task_FieldEffectShowMon_WaitPlayerAnim(u8 taskId);
-static void Task_FieldEffectShowMon_Cleanup(u8 taskId);
+static void Task_FieldEffectShowMon_Init(u32 taskId);
+static void Task_FieldEffectShowMon_WaitFldeff(u32 taskId);
+static void Task_FieldEffectShowMon_WaitPlayerAnim(u32 taskId);
+static void Task_FieldEffectShowMon_Cleanup(u32 taskId);
 
 static const u16 sCutGrassMetatileMapping[][2] = {
     {
@@ -125,26 +125,26 @@ static bool32 MetatileAtCoordsIsGrassTile(s16 x, s16 y)
 
 static bool32 GetCutGrassRange(u32 *range)
 {
-	u32 ability = GetMonAbility(&gPlayerParty[GetCursorSelectionMonId()]);
-	bool32 hasHyperCutter = (ability == ABILITY_HYPER_CUTTER);
-	
-	if (hasHyperCutter)
-		*range = CUT_SIDE + 2;
-	else
-		*range = CUT_SIDE;
-	
-	return hasHyperCutter;
+    u32 ability = GetMonAbility(&gPlayerParty[GetCursorSelectionMonId()]);
+    bool32 hasHyperCutter = (ability == ABILITY_HYPER_CUTTER);
+    
+    if (hasHyperCutter)
+        *range = CUT_SIDE + 2;
+    else
+        *range = CUT_SIDE;
+    
+    return hasHyperCutter;
 }
 
 bool32 SetUpFieldMove_Cut(void)
 {
     s16 x, y;
     u32 i, j;
-	u32 cutRange;
-	bool32 hasHyperCutter;
-	
+    u32 cutRange;
+    bool32 hasHyperCutter;
+    
     sScheduleOpenDottedHole = FALSE;
-	
+    
     if (CutMoveRuinValleyCheck())
     {
         sScheduleOpenDottedHole = TRUE;
@@ -163,21 +163,21 @@ bool32 SetUpFieldMove_Cut(void)
     else
     {
         PlayerGetDestCoords(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
-		
-		hasHyperCutter = GetCutGrassRange(&cutRange);
-		
+        
+        hasHyperCutter = GetCutGrassRange(&cutRange);
+        
         for (i = 0; i < cutRange; i++)
         {
             y = gPlayerFacingPosition.y - 1 + i;
-			if (hasHyperCutter)
-				--y;
-			
+            if (hasHyperCutter)
+                --y;
+            
             for (j = 0; j < cutRange; j++)
             {
                 x = gPlayerFacingPosition.x - 1 + j;
-				if (hasHyperCutter)
-					--x;
-				
+                if (hasHyperCutter)
+                    --x;
+                
                 if (MapGridGetZCoordAt(x, y) == gPlayerFacingPosition.height)
                 {
                     if (MetatileAtCoordsIsGrassTile(x, y))
@@ -225,7 +225,7 @@ static void FieldMoveCallback_CutGrass(void)
 {
     FieldEffectActiveListRemove(FLDEFF_USE_CUT_ON_GRASS);
     
-	if (sScheduleOpenDottedHole)
+    if (sScheduleOpenDottedHole)
         CutMoveOpenDottedHoleDoor();
     else
         FieldEffectStart(FLDEFF_CUT_GRASS);
@@ -234,29 +234,29 @@ static void FieldMoveCallback_CutGrass(void)
 bool32 FldEff_CutGrass(void)
 {
     u32 i, j;
-	u32 cutRange;
-	bool32 hasHyperCutter;
+    u32 cutRange;
+    bool32 hasHyperCutter;
     s16 x, y;
     u8 pos;
 
     PlaySE(SE_M_CUT);
     pos = gFieldEffectArguments[1] - 1;
     PlayerGetDestCoords(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
-	
-	hasHyperCutter = GetCutGrassRange(&cutRange);
-	
+    
+    hasHyperCutter = GetCutGrassRange(&cutRange);
+    
     for (i = 0; i < cutRange; i++)
     {
         y = gPlayerFacingPosition.y - 1 + i;
-		if (hasHyperCutter)
-			--y;
-		
+        if (hasHyperCutter)
+            --y;
+        
         for (j = 0; j < cutRange; j++)
         {
             x = gPlayerFacingPosition.x - 1 + j;
-			if (hasHyperCutter)
-				--x;
-			
+            if (hasHyperCutter)
+                --x;
+            
             if (MapGridGetZCoordAt(x, y) == gPlayerFacingPosition.height)
             {
                 if (MetatileAtCoordsIsGrassTile(x, y) == TRUE)
@@ -280,12 +280,12 @@ bool32 FldEff_CutGrass(void)
 static void SetCutGrassMetatileAt(s16 x, s16 y)
 {
     u32 i = 0, metatileId = MapGridGetMetatileIdAt(x, y);
-	
+    
     while (TRUE)
     {
         if (sCutGrassMetatileMapping[i][0] == 0xFFFF)
             return;
-		
+        
         if (sCutGrassMetatileMapping[i][0] == metatileId)
         {
             MapGridSetMetatileIdAt(x, y, sCutGrassMetatileMapping[i][1]);
@@ -321,7 +321,7 @@ static void SpriteCallback_CutGrass_Run(struct Sprite * sprite)
 static void SpriteCallback_CutGrass_Cleanup(struct Sprite * sprite)
 {
     u32 i;
-	
+    
     for (i = 1; i < CUT_GRASS_SPRITE_COUNT; i++)
         DestroySprite(&gSprites[sCutGrassSpriteArrayPtr[i]]);
 
@@ -344,13 +344,13 @@ u32 CreateFieldEffectShowMon(void)
     return CreateTask(Task_FieldEffectShowMon_Init, 8);
 }
 
-static void Task_FieldEffectShowMon_Init(u8 taskId)
+static void Task_FieldEffectShowMon_Init(u32 taskId)
 {
     u32 mapObjId = gPlayerAvatar.objectEventId;
 
     ScriptContext2_Enable();
     gPlayerAvatar.preventStep = TRUE;
-	
+    
     if (!ObjectEventIsMovementOverridden(&gObjectEvents[mapObjId]) || ObjectEventClearHeldMovementIfFinished(&gObjectEvents[mapObjId]))
     {
         if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
@@ -368,7 +368,7 @@ static void Task_FieldEffectShowMon_Init(u8 taskId)
     }
 }
 
-static void Task_FieldEffectShowMon_WaitPlayerAnim(u8 taskId)
+static void Task_FieldEffectShowMon_WaitPlayerAnim(u32 taskId)
 {
     if (ObjectEventCheckHeldMovementStatus(&gObjectEvents[gPlayerAvatar.objectEventId]))
     {
@@ -377,26 +377,26 @@ static void Task_FieldEffectShowMon_WaitPlayerAnim(u8 taskId)
     }
 }
 
-static void Task_FieldEffectShowMon_WaitFldeff(u8 taskId)
+static void Task_FieldEffectShowMon_WaitFldeff(u32 taskId)
 {
     if (!FieldEffectActiveListContains(FLDEFF_FIELD_MOVE_SHOW_MON))
     {
         gFieldEffectArguments[1] = GetPlayerFacingDirection();
-		switch (gFieldEffectArguments[1])
-		{
-			case DIR_SOUTH:
-				gFieldEffectArguments[2] = 0;
-				break;
-			case DIR_NORTH:
-				gFieldEffectArguments[2] = 1;
-				break;
-			case DIR_WEST:
-				gFieldEffectArguments[2] = 2;
-				break;
-			case DIR_EAST:
-				gFieldEffectArguments[2] = 3;
-				break;
-		}
+        switch (gFieldEffectArguments[1])
+        {
+            case DIR_SOUTH:
+                gFieldEffectArguments[2] = 0;
+                break;
+            case DIR_NORTH:
+                gFieldEffectArguments[2] = 1;
+                break;
+            case DIR_WEST:
+                gFieldEffectArguments[2] = 2;
+                break;
+            case DIR_EAST:
+                gFieldEffectArguments[2] = 3;
+                break;
+        }
         ObjectEventSetGraphicsId(&gObjectEvents[gPlayerAvatar.objectEventId], GetPlayerAvatarGraphicsIdByCurrentState());
         StartSpriteAnim(&gSprites[gPlayerAvatar.spriteId], gFieldEffectArguments[2]);
         FieldEffectActiveListRemove(FLDEFF_FIELD_MOVE_SHOW_MON);
@@ -404,7 +404,7 @@ static void Task_FieldEffectShowMon_WaitFldeff(u8 taskId)
     }
 }
 
-static void Task_FieldEffectShowMon_Cleanup(u8 taskId)
+static void Task_FieldEffectShowMon_Cleanup(u32 taskId)
 {
     FLDEFF_CALL_FUNC_IN_DATA();
     gPlayerAvatar.preventStep = FALSE;

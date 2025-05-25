@@ -60,24 +60,24 @@ void SetBagPocketsPointers(void)
 
 u8 *CopyItemName(u32 itemId, u8 * dest)
 {
-	return StringCopy(dest, ItemId_GetName(itemId));
+    return StringCopy(dest, ItemId_GetName(itemId));
 }
 
 u8 *CopyItemNameHandlePlural(u32 itemId, u32 quantity, u8 *dest)
 {
-	u8 *end = CopyItemName(itemId, dest);
-	
-	if (quantity > 1)
-	{
-		if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH) // Print diferent sufix if it's a berry
-		{
-			if (StringLength(dest) != 0)
-				return StringCopy(end - 1, COMPOUND_STRING("ies"));
-		}
-		else if (ItemId_GetPocket(itemId) != POCKET_KEY_ITEMS) // All items have a sufix, except Key items
-			return StringCopy(end, COMPOUND_STRING("s"));
-	}
-	return end;
+    u8 *end = CopyItemName(itemId, dest);
+    
+    if (quantity > 1)
+    {
+        if (ItemId_GetPocket(itemId) == POCKET_BERRY_POUCH) // Print diferent sufix if it's a berry
+        {
+            if (StringLength(dest) != 0)
+                return StringCopy(end - 1, COMPOUND_STRING("ies"));
+        }
+        else if (ItemId_GetPocket(itemId) != POCKET_KEY_ITEMS) // All items have a sufix, except Key items
+            return StringCopy(end, COMPOUND_STRING("s"));
+    }
+    return end;
 }
 
 static s8 BagPocketGetFirstEmptySlot(u32 pocketId)
@@ -112,7 +112,7 @@ bool32 CheckBagHasItem(u32 itemId, u32 count)
         return FALSE;
 
     pocket--;
-	
+    
     // Check for item slots that contain the item
     for (i = 0; i < gBagPockets[pocket].capacity; i++)
     {
@@ -142,7 +142,7 @@ bool32 CheckBagHasSpace(u32 itemId, u32 count)
         return FALSE;
 
     pocket--;
-	
+    
     // Check for item slots that contain the item
     for (i = 0; i < gBagPockets[pocket].capacity; i++)
     {
@@ -161,7 +161,7 @@ bool32 CheckBagHasSpace(u32 itemId, u32 count)
                 return FALSE;
         }
     }
-	
+    
     if (BagPocketGetFirstEmptySlot(pocket) != -1)
         return TRUE;
 
@@ -177,7 +177,7 @@ bool32 AddBagItem(u32 itemId, u32 count)
         return FALSE;
 
     pocket--;
-	
+    
     for (i = 0; i < gBagPockets[pocket].capacity; i++)
     {
         if (gBagPockets[pocket].itemSlots[i].itemId == itemId)
@@ -203,10 +203,10 @@ bool32 AddBagItem(u32 itemId, u32 count)
     if (pocket == POCKET_TM_CASE - 1 && !CheckBagHasItem(ITEM_TM_CASE, 1))
     {
         idx = BagPocketGetFirstEmptySlot(POCKET_KEY_ITEMS - 1);
-		
+        
         if (idx == -1)
             return FALSE;
-		
+        
         gBagPockets[POCKET_KEY_ITEMS - 1].itemSlots[idx].itemId = ITEM_TM_CASE;
         SetBagItemQuantity(&gBagPockets[POCKET_KEY_ITEMS - 1].itemSlots[idx].quantity, 1);
     }
@@ -214,10 +214,10 @@ bool32 AddBagItem(u32 itemId, u32 count)
     if (pocket == POCKET_BERRY_POUCH - 1 && !CheckBagHasItem(ITEM_BERRY_POUCH, 1))
     {
         idx = BagPocketGetFirstEmptySlot(POCKET_KEY_ITEMS - 1);
-		
+        
         if (idx == -1)
             return FALSE;
-		
+        
         gBagPockets[POCKET_KEY_ITEMS - 1].itemSlots[idx].itemId = ITEM_BERRY_POUCH;
         SetBagItemQuantity(&gBagPockets[POCKET_KEY_ITEMS - 1].itemSlots[idx].quantity, 1);
     }
@@ -239,7 +239,7 @@ bool32 RemoveBagItem(u32 itemId, u32 count)
         return FALSE;
 
     pocket--;
-	
+    
     // Check for item slots that contain the item
     for (i = 0; i < gBagPockets[pocket].capacity; i++)
     {
@@ -347,7 +347,7 @@ bool32 AddPCItem(u32 itemId, u32 count)
         if (gSaveBlock1Ptr->pcItems[i].itemId == itemId)
         {
             quantity = GetPcItemQuantity(&gSaveBlock1Ptr->pcItems[i].quantity);
-			
+            
             if (quantity + count <= 999)
             {
                 quantity += count;
@@ -443,19 +443,19 @@ void SortPocketAndPlaceHMsFirst(struct BagPocket * pocket)
         if (pocket->itemSlots[i].itemId == ITEM_NONE && GetBagItemQuantity(&pocket->itemSlots[i].quantity) == 0)
             return;
     }
-	
+    
     for (k = 0; k < pocket->capacity; k++)
         pocket->itemSlots[k].quantity = GetBagItemQuantity(&pocket->itemSlots[k].quantity);
-	
+    
     buff = AllocZeroed(pocket->capacity * sizeof(struct ItemSlot));
-	
+    
     CpuCopy16(pocket->itemSlots + i, buff, (j - i) * sizeof(struct ItemSlot));
     CpuCopy16(pocket->itemSlots, buff + (j - i), i * sizeof(struct ItemSlot));
     CpuCopy16(buff, pocket->itemSlots, pocket->capacity * sizeof(struct ItemSlot));
-	
+    
     for (k = 0; k < pocket->capacity; k++)
         SetBagItemQuantity(&pocket->itemSlots[k].quantity, pocket->itemSlots[k].quantity);
-	
+    
     Free(buff);
 }
 
@@ -498,7 +498,7 @@ u32 BagGetQuantityByItemId(u32 itemId)
 
 static inline u32 SanitizeItemId(u32 itemId)
 {
-	return itemId >= ITEMS_COUNT ? ITEM_NONE : itemId;
+    return itemId >= ITEMS_COUNT ? ITEM_NONE : itemId;
 }
 
 const u8 * ItemId_GetName(u32 itemId)
@@ -536,7 +536,7 @@ u32 ItemId_GetType(u32 itemId)
     return gItems[SanitizeItemId(itemId)].type;
 }
 
-ItemUseFunc ItemId_GetFieldFunc(u32 itemId)
+TaskFunc ItemId_GetFieldFunc(u32 itemId)
 {
     return gItems[SanitizeItemId(itemId)].fieldUseFunc;
 }
@@ -553,55 +553,55 @@ u32 ItemId_GetFlingPower(u32 itemId)
 
 u32 ItemId_GetUsageType(u32 itemId)
 {
-	return gItems[SanitizeItemId(itemId)].usageType;
+    return gItems[SanitizeItemId(itemId)].usageType;
 }
 
 u32 ItemId_GetBattleEffectUsageType(u32 itemId)
 {
-	u32 type = ITEM_TYPE_NONE, battleUsage = ItemId_GetBattleUsage(itemId);
-	
-	if (battleUsage)
-	{
-		switch (battleUsage)
-		{
-			case EFFECT_ITEM_REVIVE:
-			case EFFECT_ITEM_RESTORE_HP:
-			case EFFECT_ITEM_CURE_PRIMARY_STATUS:
-			case EFFECT_ITEM_CURE_SECONDARY_STATUS:
-			    type = ITEM_TYPE_PARTY_MENU;
-				break;
-			case EFFECT_ITEM_RESTORE_PP:
-			    type = ITEM_TYPE_PARTY_MENU_MOVES;
-				break;
-			default:
-			    type = ITEM_TYPE_BAG_MENU; // used direct on the battler
-				break;
-		}
-	}
-	return type;
+    u32 type = ITEM_TYPE_NONE, battleUsage = ItemId_GetBattleUsage(itemId);
+    
+    if (battleUsage)
+    {
+        switch (battleUsage)
+        {
+            case EFFECT_ITEM_REVIVE:
+            case EFFECT_ITEM_RESTORE_HP:
+            case EFFECT_ITEM_CURE_PRIMARY_STATUS:
+            case EFFECT_ITEM_CURE_SECONDARY_STATUS:
+                type = ITEM_TYPE_PARTY_MENU;
+                break;
+            case EFFECT_ITEM_RESTORE_PP:
+                type = ITEM_TYPE_PARTY_MENU_MOVES;
+                break;
+            default:
+                type = ITEM_TYPE_BAG_MENU; // used direct on the battler
+                break;
+        }
+    }
+    return type;
 }
 
 const u8 *ItemId_GetItemEffect(u32 itemId)
 {
-	return gItems[SanitizeItemId(itemId)].itemEffect;
+    return gItems[SanitizeItemId(itemId)].itemEffect;
 }
 
 void ResetItemFlags(void)
 {
-	memset(&gSaveBlock2Ptr->itemFlags, 0, sizeof(gSaveBlock2Ptr->itemFlags));
+    memset(&gSaveBlock2Ptr->itemFlags, 0, sizeof(gSaveBlock2Ptr->itemFlags));
 }
 
 bool32 GetSetItemObtained(u32 item, u32 caseId)
 {
     u32 index = item / 8, mask = Bit(item % 8);
-	
+    
     switch (caseId)
     {
-	    case FLAG_GET_OBTAINED:
-			return gSaveBlock2Ptr->itemFlags[index] & mask;
-	    case FLAG_SET_OBTAINED:
-			gSaveBlock2Ptr->itemFlags[index] |= mask;
-			return TRUE;
+        case FLAG_GET_OBTAINED:
+            return gSaveBlock2Ptr->itemFlags[index] & mask;
+        case FLAG_SET_OBTAINED:
+            gSaveBlock2Ptr->itemFlags[index] |= mask;
+            return TRUE;
     }
     return FALSE;
 }

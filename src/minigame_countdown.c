@@ -5,7 +5,7 @@
 #include "trig.h"
 #include "constants/songs.h"
 
-static void Task_MinigameCountdown(u8 taskId);
+static void Task_MinigameCountdown(u32 taskId);
 static bool32 RunMinigameCountdownDigitsAnim(u32 spriteId);
 static void StartStartGraphic(u32 spriteId2, u32 spriteId3);
 static bool32 IsStartGraphicAnimRunning(u32 spriteId);
@@ -39,7 +39,7 @@ bool32 IsMinigameCountdownRunning(void)
     return FuncIsActiveTask(Task_MinigameCountdown);
 }
 
-static void Task_MinigameCountdown(u8 taskId)
+static void Task_MinigameCountdown(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -86,7 +86,7 @@ static bool32 RunMinigameCountdownDigitsAnim(u32 spriteId)
     case 1:
         if (sprite->data[2] == 0)
             PlaySE(SE_BALL_BOUNCE_2);
-		
+        
         if (++sprite->data[2] >= 20)
         {
             sprite->data[2] = 0;
@@ -108,7 +108,7 @@ static bool32 RunMinigameCountdownDigitsAnim(u32 spriteId)
         break;
     case 4:
         sprite->y -= 4;
-		
+        
         if (++sprite->data[2] >= 8)
         {
             if (sprite->data[4] < 2)
@@ -126,7 +126,7 @@ static bool32 RunMinigameCountdownDigitsAnim(u32 spriteId)
         break;
     case 5:
         sprite->y += 4;
-		
+        
         if (++sprite->data[2] >= 8)
         {
             sprite->data[2] = 0;
@@ -240,17 +240,17 @@ static const struct OamData sOamData_Start = {
 
 static const union AnimCmd sAnim_Numbers_Three[] = {
     ANIMCMD_FRAME( 0, 1),
-	ANIMCMD_END
+    ANIMCMD_END
 };
 
 static const union AnimCmd sAnim_Numbers_Two[] = {
     ANIMCMD_FRAME(16, 1),
-	ANIMCMD_END
+    ANIMCMD_END
 };
 
 static const union AnimCmd sAnim_Numbers_One[] = {
     ANIMCMD_FRAME(32, 1),
-	ANIMCMD_END
+    ANIMCMD_END
 };
 
 static const union AnimCmd *const sAnimTable_Numbers[] = {
@@ -276,25 +276,25 @@ static const union AnimCmd *const sAnimTable_Start[] = {
 
 static const union AffineAnimCmd sAffineAnim_Numbers_0[] = {
     AFFINEANIMCMD_FRAME(0x100, 0x100, 0, 0),
-	AFFINEANIMCMD_END
+    AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd sAffineAnim_Numbers_1[] = {
     AFFINEANIMCMD_FRAME(0x100, 0x100, 0, 0),
-	AFFINEANIMCMD_FRAME( 0x10, -0x10, 0, 8),
-	AFFINEANIMCMD_END
+    AFFINEANIMCMD_FRAME( 0x10, -0x10, 0, 8),
+    AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd sAffineAnim_Numbers_2[] = {
     AFFINEANIMCMD_FRAME(-0x12,  0x12, 0, 8),
-	AFFINEANIMCMD_END
+    AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd sAffineAnim_Numbers_3[] = {
     AFFINEANIMCMD_FRAME(  0x6,  -0x6, 0, 8),
-	AFFINEANIMCMD_FRAME( -0x4,   0x4, 0, 8),
-	AFFINEANIMCMD_FRAME(0x100, 0x100, 0, 0),
-	AFFINEANIMCMD_END
+    AFFINEANIMCMD_FRAME( -0x4,   0x4, 0, 8),
+    AFFINEANIMCMD_FRAME(0x100, 0x100, 0, 0),
+    AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd *const sAffineAnimTable_Numbers[] = {

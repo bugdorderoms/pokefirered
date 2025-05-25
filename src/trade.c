@@ -34,16 +34,16 @@ struct TradeMenuResources
     /*0x0000*/ u8 bg2hofs;
     /*0x0001*/ u8 bg3hofs;
     /*0x0002*/ u8 partyIcons[2][PARTY_SIZE];
-	/*0x000E*/ u8 tradeMenuCursorSpriteIdx;
+    /*0x000E*/ u8 tradeMenuCursorSpriteIdx;
     /*0x000F*/ u8 tradeMenuCursorPosition;
     /*0x0010*/ u8 partyCounts[2];
     /*0x0012*/ bool8 tradeMenuOptionsActive[13];
-	/*0x001F*/ bool8 battleableFlags[2][PARTY_SIZE];
+    /*0x001F*/ bool8 battleableFlags[2][PARTY_SIZE];
     /*0x002B*/ bool8 eggFlags[2][PARTY_SIZE];
     /*0x0037*/ u8 hpBarLevels[2][PARTY_SIZE];
     /*0x0043*/ u8 state;
     /*0x0044*/ u16 cursorStartTile;
-	/*0x0046*/ u8 tradeMenuCBnum;
+    /*0x0046*/ u8 tradeMenuCBnum;
     /*0x0047*/ u8 menuRedrawState[2];
     /*0x0049*/ u8 menuRedrawCursorPos[2];
     /*0x004B*/ u8 unk_78;
@@ -52,7 +52,7 @@ struct TradeMenuResources
     /*0x004E*/ u8 unk_7B;
     /*0x004F*/ u8 otherPlayerCursorPosition;
     /*0x0050*/ u16 linkData[20];
-	/*0x0078*/ u16 tilemapBuffer[BG_SCREEN_SIZE / 2];
+    /*0x0078*/ u16 tilemapBuffer[BG_SCREEN_SIZE / 2];
     /*0x0878*/ u8 loadUISpritesState;
     /*0x0879*/ struct {
         bool8 active;
@@ -83,29 +83,29 @@ static EWRAM_DATA struct TradeMenuResources * sTradeMenuResourcesPtr = NULL;
 static void CB2_ReturnFromLinkTrade2(void);
 static void VblankCB_Trade(void);
 static void CB2_TradeMenu(void);
-static void LoadTradeBackgroundGfxAndPals(u8 state);
+static void LoadTradeBackgroundGfxAndPals(u32 state);
 static void SetTradeMenuOptionActiveFlags(void);
-static u8 shedinja_maker_maybe(void);
+static u32 shedinja_maker_maybe(void);
 static void CB1_HandleBlockReceive(void);
 static void RunTradeMenuCallback(void);
-static void SignalRedrawTradeMenus(u8 a0);
-static void HandleRedrawTradeMenuOnSide(u8 side);
-static u8 GetNicknameStringWidthByPartyAndMonIdx(u8 *str, u8 whichParty, u8 partyIdx);
-static void BuildMovesString(u8 *str, u8 whichParty, u8 partyIdx);
-static void PrintPartyNicknames(u8 side);
-static void PrintLevelAndGenderDirectlyOnVram(u8 a0, u8 partyIdx, u8 a2, u8 a3, u8 a4, u8 a5);
-static void PrintPartyLevelsAndGendersDirectlyOnVram(u8 side);
+static void SignalRedrawTradeMenus(u32 a0);
+static void HandleRedrawTradeMenuOnSide(u32 side);
+static u32 GetNicknameStringWidthByPartyAndMonIdx(u8 *str, u32 whichParty, u32 partyIdx);
+static void BuildMovesString(u8 *str, u32 whichParty, u32 partyIdx);
+static void PrintPartyNicknames(u32 side);
+static void PrintLevelAndGenderDirectlyOnVram(u32 a0, u32 partyIdx, u32 a2, u32 a3, u32 a4, u32 a5);
+static void PrintPartyLevelsAndGendersDirectlyOnVram(u32 side);
 static void PrintTradePartnerPartyNicknames(void);
-static void RedrawPartyWindow(u8 a0);
-static void TradeMenuAction_Summary(u8 taskId);
-static void TradeMenuAction_Trade(u8 taskId);
-static void ScheduleLinkTaskWithDelay(u16 delay, u8 kind);
+static void RedrawPartyWindow(u32 a0);
+static void TradeMenuAction_Summary(u32 taskId);
+static void TradeMenuAction_Trade(u32 taskId);
+static void ScheduleLinkTaskWithDelay(u32 delay, u32 kind);
 static void RunScheduledLinkTasks(void);
-static void PrintTradeErrorOrStatusMessage(u8 strIdx);
-static bool8 LoadUISprites(void);
+static void PrintTradeErrorOrStatusMessage(u32 strIdx);
+static bool32 LoadUISprites(void);
 static void RenderTextToVramViaBuffer(const u8 *name, u8 *a1);
-static void ComputePartyTradeableFlags(u8 side);
-static void ComputePartyHPBarLevels(u8 side);
+static void ComputePartyTradeableFlags(u32 side);
+static void ComputePartyHPBarLevels(u32 side);
 static void SetMonIconsAnimByHPBarLevel(void);
 static u32 TestWhetherSelectedMonCanBeTraded(struct Pokemon * party, u32 partyCount, u32 cursorPos);
 
@@ -424,8 +424,8 @@ static const u8 *const sTradeUITextPtrs[] = {
 };
 
 static const struct MenuAction sMenuAction_SummaryTrade[] = {
-    {gUnknown_841E10A, { .void_u8 = TradeMenuAction_Summary }},
-    {gUnknown_841E112, { .void_u8 = TradeMenuAction_Trade }}
+    {gUnknown_841E10A, { .void_u32 = TradeMenuAction_Summary }},
+    {gUnknown_841E112, { .void_u32 = TradeMenuAction_Trade }}
 };
 
 static const u8 *const sTradeErrorOrStatusMessagePtrs[] = {
@@ -636,20 +636,7 @@ static const struct WindowTemplate sWindowTemplate_YesNo = {
     .baseBlock = 0x24e
 };
 
-static const u8 gUnknown_8261FCC[][13] = {
-    _("かいめの そうしん"),
-    _("かいめの じゅしん"),
-    _("ポケモンアイコンセット"),
-    _("OBJテキストセット"),
-    _("セルセット"),
-    _("OBJテキストADD"),
-    _("システムメッセージADD"),
-    _("はいけいセット")
-};
-
 static const u8 gJPText_Shedinja[] = _("ヌケニン");
-static const u8 gUnknown_8262039[] = _("こうかんせいりつ     ");
-static const u8 gUnknown_8262047[] = _("だめだたらしいよ     ");
 
 static const u8 gUnknown_8262055[][2] = {
     { 4,  3},
@@ -658,8 +645,7 @@ static const u8 gUnknown_8262055[][2] = {
 
 static void InitTradeMenuResources(void)
 {
-    int i;
-    static u16 dummy;
+    u32 i;
 
     ResetSpriteData();
     FreeAllSpritePalettes();
@@ -672,10 +658,11 @@ static void InitTradeMenuResources(void)
     ResetBgsAndClearDma3BusyFlags(FALSE);
     InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
     SetBgTilemapBuffer(1, sTradeMenuResourcesPtr->tilemapBuffer);
+
     if (InitWindows(sWindowTemplates))
     {
         DeactivateAllTextPrinters();
-        dummy = 590; // ?
+
         for (i = 0; i < ARRAY_COUNT(sWindowTemplates) - 1; i++)
         {
             ClearWindowTilemap(i);
@@ -685,6 +672,7 @@ static void InitTradeMenuResources(void)
         TextWindow_SetStdFrame0_WithPal(0, 0x014, 0xC0);
         TextWindow_SetUserSelectedFrame(2, 0x001, 0xE0);
         LoadMonIconPalettes();
+
         sTradeMenuResourcesPtr->state = 0;
         sTradeMenuResourcesPtr->tradeMenuCBnum = 0;
         sTradeMenuResourcesPtr->menuRedrawState[0] = 0;
@@ -702,10 +690,9 @@ void CB2_ReturnFromLinkTrade(void)
 
 static void CB2_ReturnFromLinkTrade2(void)
 {
-    int i;
+    u32 i, id;
     struct SpriteTemplate temp;
-	struct PokemonGenerator generator;
-    u8 id;
+    struct PokemonGenerator generator;
     s32 width;
     u32 xPos;
     u8 *name;
@@ -718,28 +705,26 @@ static void CB2_ReturnFromLinkTrade2(void)
         sSpriteTextTileBuffer = AllocZeroed(0xE00);
 
         for (i = 0; i < 14; i++)
-        {
             sSpriteTextTilePtrs[i] = &sSpriteTextTileBuffer[i * 256];
-        }
 
         gMain.state++;
         break;
     case 1:
         gPaletteFade.bufferTransferDisabled = FALSE;
-		
-		generator.species = SPECIES_NONE;
-		generator.level = 0;
-		generator.forcedGender = MON_GENDERLESS;
-		generator.otIdType = OT_ID_PLAYER_ID;
-		generator.hasFixedPersonality = FALSE;
-		generator.fixedPersonality = 0;
-		generator.shinyType = GENERATE_SHINY_NORMAL;
-		generator.shinyRollType = SHINY_ROLL_NORMAL;
-		generator.forcedNature = NUM_NATURES;
-		generator.nPerfectIvs = 0;
-		generator.formChanges = NULL;
-		memset(generator.moves, MOVE_NONE, sizeof(generator.moves));
-		
+        
+        generator.species = SPECIES_NONE;
+        generator.level = 0;
+        generator.forcedGender = MON_GENDERLESS;
+        generator.otIdType = OT_ID_PLAYER_ID;
+        generator.hasFixedPersonality = FALSE;
+        generator.fixedPersonality = 0;
+        generator.shinyType = GENERATE_SHINY_NORMAL;
+        generator.shinyRollType = SHINY_ROLL_NORMAL;
+        generator.forcedNature = NUM_NATURES;
+        generator.nPerfectIvs = 0;
+        generator.formChanges = NULL;
+        memset(generator.moves, MOVE_NONE, sizeof(generator.moves));
+        
         for (i = 0; i < PARTY_SIZE; i++)
             CreateMon(&gEnemyParty[i], generator);
 
@@ -771,8 +756,7 @@ static void CB2_ReturnFromLinkTrade2(void)
         }
         break;
     case 2:
-        sTradeMenuResourcesPtr->loadUISpritesState++;
-        if (sTradeMenuResourcesPtr->loadUISpritesState > 11)
+        if (++sTradeMenuResourcesPtr->loadUISpritesState > 11)
         {
             sTradeMenuResourcesPtr->loadUISpritesState = 0;
             gMain.state++;
@@ -976,9 +960,8 @@ static void CB2_ReturnFromLinkTrade2(void)
 
 void CB2_ReturnToTradeMenuFromSummary(void)
 {
-    int i;
+    u32 i, id;
     struct SpriteTemplate temp;
-    u8 id;
     s32 width;
     u32 xPos;
     u8 *name;
@@ -1173,10 +1156,9 @@ static void TradeMenuCB_10(void)
     {
         gSelectedTradeMonPositions[0] = sTradeMenuResourcesPtr->tradeMenuCursorPosition;
         gSelectedTradeMonPositions[1] = sTradeMenuResourcesPtr->otherPlayerCursorPosition;
+
         if (gWirelessCommType != 0)
-        {
             sTradeMenuResourcesPtr->tradeMenuCBnum = 16;
-        }
         else
         {
             Link_StartSend5FFFwithParam(32);
@@ -1188,6 +1170,7 @@ static void TradeMenuCB_10(void)
 static void TradeMenuCB_13(void)
 {
     gMain.savedCallback = CB2_ReturnFromLinkTrade;
+
     if (gWirelessCommType != 0)
     {
         if (IsLinkRfuTaskFinished())
@@ -1228,9 +1211,9 @@ static void CB2_TradeMenu(void)
     UpdatePaletteFade();
 }
 
-static void LoadTradeBackgroundGfxAndPals(u8 state)
+static void LoadTradeBackgroundGfxAndPals(u32 state)
 {
-    int i;
+    u32 i;
 
     switch (state)
     {
@@ -1262,7 +1245,8 @@ static void LoadTradeBackgroundGfxAndPals(u8 state)
 
 static void SetTradeMenuOptionActiveFlags(void)
 {
-    int i;
+    u32 i;
+
     for (i = 0; i < PARTY_SIZE; i++)
     {
         if (i < sTradeMenuResourcesPtr->partyCounts[0])
@@ -1271,35 +1255,32 @@ static void SetTradeMenuOptionActiveFlags(void)
             sTradeMenuResourcesPtr->tradeMenuOptionsActive[i] = TRUE;
         }
         else
-        {
             sTradeMenuResourcesPtr->tradeMenuOptionsActive[i] = FALSE;
-        }
+
         if (i < sTradeMenuResourcesPtr->partyCounts[1])
         {
             gSprites[sTradeMenuResourcesPtr->partyIcons[1][i]].invisible = FALSE;
             sTradeMenuResourcesPtr->tradeMenuOptionsActive[i + 6] = TRUE;
         }
         else
-        {
             sTradeMenuResourcesPtr->tradeMenuOptionsActive[i + 6] = FALSE;
-        }
     }
     sTradeMenuResourcesPtr->tradeMenuOptionsActive[12] = TRUE;
 }
 
 static void Trade_Memcpy(void *dest, const void *src, size_t size)
 {
-    int i;
+    u32 i;
     char *_dest = dest;
     const char *_src = src;
+
     for (i = 0; i < size; i++)
         _dest[i] = _src[i];
 }
 
-static bool8 shedinja_maker_maybe(void)
+static bool32 shedinja_maker_maybe(void)
 {
-    u8 id = GetMultiplayerId();
-    int i;
+    u32 i, id = GetMultiplayerId();
     struct Pokemon * mon;
 
     switch (sTradeMenuResourcesPtr->state)
@@ -1313,9 +1294,7 @@ static bool8 shedinja_maker_maybe(void)
         if (IsLinkTaskFinished())
         {
             if (GetBlockReceivedStatus() == 0)
-            {
                 sTradeMenuResourcesPtr->state++;
-            }
             else
             {
                 ResetBlockReceivedFlags();
@@ -1325,9 +1304,8 @@ static bool8 shedinja_maker_maybe(void)
         break;
     case 3:
         if (id == 0)
-        {
             Link_PrepareCmd0xCCCC_Rfu0xA100(1);
-        }
+
         sTradeMenuResourcesPtr->state++;
         break;
     case 4:
@@ -1344,9 +1322,8 @@ static bool8 shedinja_maker_maybe(void)
         break;
     case 7:
         if (id == 0)
-        {
             Link_PrepareCmd0xCCCC_Rfu0xA100(1);
-        }
+
         sTradeMenuResourcesPtr->state++;
         break;
     case 8:
@@ -1363,9 +1340,8 @@ static bool8 shedinja_maker_maybe(void)
         break;
     case 11:
         if (id == 0)
-        {
             Link_PrepareCmd0xCCCC_Rfu0xA100(1);
-        }
+
         sTradeMenuResourcesPtr->state++;
         break;
     case 12:
@@ -1382,9 +1358,8 @@ static bool8 shedinja_maker_maybe(void)
         break;
     case 15:
         if (id == 0)
-        {
             Link_PrepareCmd0xCCCC_Rfu0xA100(3);
-        }
+
         sTradeMenuResourcesPtr->state++;
         break;
     case 16:
@@ -1400,9 +1375,8 @@ static bool8 shedinja_maker_maybe(void)
         break;
     case 19:
         if (id == 0)
-        {
             Link_PrepareCmd0xCCCC_Rfu0xA100(4);
-        }
+
         sTradeMenuResourcesPtr->state++;
         break;
     case 20:
@@ -1416,7 +1390,7 @@ static bool8 shedinja_maker_maybe(void)
         for (i = 0, mon = gEnemyParty; i < PARTY_SIZE; mon++, i++)
         {
             u8 name[POKEMON_NAME_LENGTH + 1];
-            u16 species = GetMonData(mon, MON_DATA_SPECIES);
+            u32 species = GetMonData(mon, MON_DATA_SPECIES);
 
             if (species != SPECIES_NONE)
             {
@@ -1425,9 +1399,7 @@ static bool8 shedinja_maker_maybe(void)
                     GetMonData(mon, MON_DATA_NICKNAME, name);
 
                     if (!StringCompareWithoutExtCtrlCodes(name, gJPText_Shedinja))
-                    {
                         SetMonData(mon, MON_DATA_NICKNAME, gSpeciesInfo[SPECIES_SHEDINJA].name);
-                    }
                 }
             }
         }
@@ -1437,8 +1409,7 @@ static bool8 shedinja_maker_maybe(void)
     case 10:
     case 14:
     case 18:
-        sTradeMenuResourcesPtr->loadUISpritesState++;
-        if (sTradeMenuResourcesPtr->loadUISpritesState > 10)
+        if (++sTradeMenuResourcesPtr->loadUISpritesState > 10)
         {
             sTradeMenuResourcesPtr->loadUISpritesState = 0;
             sTradeMenuResourcesPtr->state++;
@@ -1453,7 +1424,7 @@ static void PrintIsThisTradeOkay(void)
     RenderTextToVramViaBuffer(gText_IsThisTradeOkay, (u8 *)OBJ_VRAM0 + sTradeMenuResourcesPtr->cursorStartTile * 32);
 }
 
-static void Master_HandleBlockReceivedStatus(u8 mpId, u8 blockReceivedFlags)
+static void Master_HandleBlockReceivedStatus(u32 blockReceivedFlags)
 {
     if (blockReceivedFlags & 1)
     {
@@ -1497,7 +1468,7 @@ static void Master_HandleBlockReceivedStatus(u8 mpId, u8 blockReceivedFlags)
     }
 }
 
-static void Slave_HandleBlockReceivedStatus(u8 mpId, u8 blockReceivedFlags)
+static void Slave_HandleBlockReceivedStatus(u32 blockReceivedFlags)
 {
     if (blockReceivedFlags & 1)
     {
@@ -1604,40 +1575,39 @@ static void Master_HandleCommunication(void)
 
 static void CB1_HandleBlockReceive(void)
 {
-    u8 mpId = GetMultiplayerId();
-    u8 status;
+    u32 status, mpId = GetMultiplayerId();
+
     if ((status = GetBlockReceivedStatus()))
     {
         if (mpId == 0)
-            Master_HandleBlockReceivedStatus(mpId, status);
+            Master_HandleBlockReceivedStatus(status);
         else
-            Slave_HandleBlockReceivedStatus(mpId, status);
+            Slave_HandleBlockReceivedStatus(status);
     }
+
     if (mpId == 0)
         Master_HandleCommunication();
 }
 
-static u8 TradeMenuGetNewCursorLocation(u8 oldPosition, u8 direction)
+static u32 TradeMenuGetNewCursorLocation(u32 oldPosition, u32 direction)
 {
-    int i;
-    u8 newPosition = 0;
+    u32 i, newPosition = 0;
 
     for (i = 0; i < 6; i++)
     {
-    if (sTradeMenuResourcesPtr->tradeMenuOptionsActive[sCursorMoveDestinations[oldPosition][direction][i]] == TRUE)
+        if (sTradeMenuResourcesPtr->tradeMenuOptionsActive[sCursorMoveDestinations[oldPosition][direction][i]])
         {
             newPosition = sCursorMoveDestinations[oldPosition][direction][i];
             break;
         }
     }
-
     return newPosition;
 }
 
 
-static void TradeMenuMoveCursor(u8 *tradeMenuCursorPosition, u8 direction)
+static void TradeMenuMoveCursor(u8 *tradeMenuCursorPosition, u32 direction)
 {
-    u8 newPosition = TradeMenuGetNewCursorLocation(*tradeMenuCursorPosition, direction);
+    u32 newPosition = TradeMenuGetNewCursorLocation(*tradeMenuCursorPosition, direction);
 
     if (newPosition == 12) // CANCEL
     {
@@ -1653,9 +1623,7 @@ static void TradeMenuMoveCursor(u8 *tradeMenuCursorPosition, u8 direction)
     }
 
     if (*tradeMenuCursorPosition != newPosition)
-    {
         PlaySE(SE_SELECT);
-    }
 
     *tradeMenuCursorPosition = newPosition;
 }
@@ -1672,31 +1640,21 @@ static void CommunicatePlayerSelectedMonForTrade(void)
         SendBlock(bitmask_all_link_players_but_self(), sTradeMenuResourcesPtr->linkData, 20);
     }
     else
-    {
         sTradeMenuResourcesPtr->unk_78 = 1;
-    }
 }
 
 static void TradeMenuCB_0(void)
 {
-    int i;
+    u32 i;
 
     if (JOY_REPT(DPAD_UP))
-    {
         TradeMenuMoveCursor(&sTradeMenuResourcesPtr->tradeMenuCursorPosition, 0);
-    }
     else if (JOY_REPT(DPAD_DOWN))
-    {
         TradeMenuMoveCursor(&sTradeMenuResourcesPtr->tradeMenuCursorPosition, 1);
-    }
     else if (JOY_REPT(DPAD_LEFT))
-    {
         TradeMenuMoveCursor(&sTradeMenuResourcesPtr->tradeMenuCursorPosition, 2);
-    }
     else if (JOY_REPT(DPAD_RIGHT))
-    {
         TradeMenuMoveCursor(&sTradeMenuResourcesPtr->tradeMenuCursorPosition, 3);
-    }
 
     if (JOY_NEW(A_BUTTON))
     {
@@ -1724,10 +1682,12 @@ static void TradeMenuCB_0(void)
             RenderTextToVramViaBuffer(sTradeUITextPtrs[TRADEUITEXT_ASKCANCEL], (void *)OBJ_VRAM0 + sTradeMenuResourcesPtr->cursorStartTile * 32);
         }
     }
+
     if (JOY_NEW(R_BUTTON))
     {
         for (i = 0; i < 10; i++)
             sTradeMenuResourcesPtr->linkData[i] = i;
+
         SendBlock(bitmask_all_link_players_but_self(), sTradeMenuResourcesPtr->linkData, 20);
     }
 }
@@ -1801,11 +1761,11 @@ static void TradeMenuCB_2(void)
     }
 }
 
-static u8 PlayerHasEnoughPokemonToTrade(u8 *flags, u8 partyCount, u8 cursorPos)
+static u32 PlayerHasEnoughPokemonToTrade(u8 *flags, u32 partyCount, u32 cursorPos)
 {
     s32 i;
-    u8 count = 0;
-	
+    u32 count = 0;
+    
     for (i = 0; i < partyCount; i++)
     {
         if (cursorPos != i)
@@ -1813,18 +1773,17 @@ static u8 PlayerHasEnoughPokemonToTrade(u8 *flags, u8 partyCount, u8 cursorPos)
     }
     if (count != 0)
         count = 1;
+    
     return count;
 }
 
 static void CommunicateWhetherMonCanBeTraded(void)
 {
-    int i;
+    u32 i;
     u8 arr[12];
 
     for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[0]; i++)
-    {
         arr[i] = sTradeMenuResourcesPtr->battleableFlags[0][i];
-    }
 
     switch (PlayerHasEnoughPokemonToTrade(arr, sTradeMenuResourcesPtr->partyCounts[0], sTradeMenuResourcesPtr->tradeMenuCursorPosition))
     {
@@ -1836,10 +1795,10 @@ static void CommunicateWhetherMonCanBeTraded(void)
     case 1:
         ScheduleLinkTaskWithDelay(3, 1);
         sTradeMenuResourcesPtr->linkData[0] = 0xBBBB;
+
         if (IsLinkTaskFinished())
-        {
             SendBlock(bitmask_all_link_players_but_self(), sTradeMenuResourcesPtr->linkData, 20);
-        }
+
         break;
     case 2:
         ScheduleLinkTaskWithDelay(3, 8);
@@ -1861,6 +1820,7 @@ static void TradeMenuCB_3(void)
     case 1:
     case MENU_B_PRESSED:
         ScheduleLinkTaskWithDelay(3, 1);
+
         if (IsLinkTaskFinished())
         {
             sTradeMenuResourcesPtr->linkData[0] = 0xBBCC;
@@ -1874,7 +1834,7 @@ static void TradeMenuCB_3(void)
 
 static void CommitWindows(void)
 {
-    int i;
+    u32 i;
 
     for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[1] - 4; i++)
     {
@@ -1938,7 +1898,7 @@ static void TradeMenuCB_14(void)
 
 static void TradeMenuCB_8(void)
 {
-    int i;
+    u32 i;
 
     if (JOY_NEW(A_BUTTON))
     {
@@ -1951,7 +1911,6 @@ static void TradeMenuCB_8(void)
             FillWindowPixelBuffer(i + 14, PIXEL_FILL(0));
             rbox_fill_rectangle(i + 14);
         }
-
         RedrawPartyWindow(0);
         RedrawPartyWindow(1);
         sTradeMenuResourcesPtr->tradeMenuCBnum = 0;
@@ -1964,13 +1923,9 @@ static void TradeMenuCB_11(void)
     if (!gPaletteFade.active)
     {
         if (gWirelessCommType)
-        {
             SetLinkStandbyCallback();
-        }
         else
-        {
             Link_StartSend5FFFwithParam(12);
-        }
 
         sTradeMenuResourcesPtr->tradeMenuCBnum = 12;
     }
@@ -2068,9 +2023,9 @@ static void RunTradeMenuCallback(void)
     }
 }
 
-static void SignalRedrawTradeMenus(u8 monIdx)
+static void SignalRedrawTradeMenus(u32 monIdx)
 {
-    u8 whichParty = monIdx / PARTY_SIZE;
+    u32 whichParty = monIdx / PARTY_SIZE;
 
     if (sTradeMenuResourcesPtr->menuRedrawState[whichParty] == 0)
     {
@@ -2079,15 +2034,13 @@ static void SignalRedrawTradeMenus(u8 monIdx)
     }
 }
 
-static void HandleRedrawTradeMenuOnSide(u8 side)
+static void HandleRedrawTradeMenuOnSide(u32 side)
 {
     s8 nameStringWidth;
     u8 nickname[20];
     u8 movesString[56];
-    u8 i;
-    u8 partyIdx;
-    u8 whichParty;
-    u8 monIdx = sTradeMenuResourcesPtr->menuRedrawCursorPos[side];
+    u32 i, partyIdx, whichParty;
+    u32 monIdx = sTradeMenuResourcesPtr->menuRedrawCursorPos[side];
 
     whichParty = 1;
     if (sTradeMenuResourcesPtr->menuRedrawCursorPos[side] < PARTY_SIZE)
@@ -2099,14 +2052,10 @@ static void HandleRedrawTradeMenuOnSide(u8 side)
     {
     case 1:
         for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[side]; i++)
-        {
             gSprites[sTradeMenuResourcesPtr->partyIcons[0][i + (whichParty * PARTY_SIZE)]].invisible = TRUE;
-        }
 
         for (i = 0; i < 6; i++)
-        {
             ClearWindowTilemap(i + (side * 6 + 2));
-        }
 
         gSprites[sTradeMenuResourcesPtr->partyIcons[0][partyIdx + (whichParty * PARTY_SIZE)]].invisible = FALSE;
         gSprites[sTradeMenuResourcesPtr->partyIcons[0][partyIdx + (whichParty * PARTY_SIZE)]].data[0] = 20;
@@ -2150,34 +2099,32 @@ static void HandleRedrawTradeMenuOnSide(u8 side)
     }
 }
 
-static u8 GetNicknameStringWidthByPartyAndMonIdx(u8 *dest, u8 whichParty, u8 partyIdx)
+static u32 GetNicknameStringWidthByPartyAndMonIdx(u8 *dest, u32 whichParty, u32 partyIdx)
 {
     u8 nickname[POKEMON_NAME_LENGTH];
+
     if (whichParty == 0)
         GetMonData(&gPlayerParty[partyIdx], MON_DATA_NICKNAME, nickname);
     else
         GetMonData(&gEnemyParty[partyIdx], MON_DATA_NICKNAME, nickname);
+
     StringCopy_Nickname(dest, nickname);
     return GetStringWidth(0, dest, GetFontAttribute(0, FONTATTR_LETTER_SPACING));
 }
 
-static void BuildMovesString(u8 *movesString, u8 whichParty, u8 whichMon)
+static void BuildMovesString(u8 *movesString, u32 whichParty, u32 whichMon)
 {
     u16 moves[MAX_MON_MOVES];
-    u16 i;
+    u32 i;
 
     if (!sTradeMenuResourcesPtr->eggFlags[whichParty][whichMon])
     {
         for (i = 0; i < MAX_MON_MOVES; i++)
         {
             if (!whichParty)
-            {
                 moves[i] = GetMonData(&gPlayerParty[whichMon], i + MON_DATA_MOVE1, NULL);
-            }
             else
-            {
                 moves[i] = GetMonData(&gEnemyParty[whichMon], i + MON_DATA_MOVE1, NULL);
-            }
         }
 
         StringCopy(movesString, sText_Dummy);
@@ -2185,9 +2132,7 @@ static void BuildMovesString(u8 *movesString, u8 whichParty, u8 whichMon)
         for (i = 0; i < MAX_MON_MOVES; i++)
         {
             if (moves[i] != MOVE_NONE)
-            {
                 StringAppend(movesString, gBattleMoves[moves[i]].name);
-            }
 
             StringAppend(movesString, sText_Newline);
         }
@@ -2199,24 +2144,24 @@ static void BuildMovesString(u8 *movesString, u8 whichParty, u8 whichMon)
     }
 }
 
-static void PrintPartyMonNickname(u8 whichParty, u8 windowId, const u8 *str)
+static void PrintPartyMonNickname(u32 whichParty, u32 windowId, const u8 *str)
 {
-    u8 xPos;
-    s8 speed;
+    u8 xPos = (64u - GetStringWidth(0, str, GetFontAttribute(0, FONTATTR_LETTER_SPACING))) / 2;
+
     windowId += (whichParty * PARTY_SIZE) + 2;
-    speed = 0;
-    xPos = (64u - GetStringWidth(0, str, GetFontAttribute(0, FONTATTR_LETTER_SPACING))) / 2;
-    AddTextPrinterParameterized3(windowId, 0, xPos, 4, sTextColor_PartyMonNickname, speed, str);
+
+    AddTextPrinterParameterized3(windowId, 0, xPos, 4, sTextColor_PartyMonNickname, 0, str);
     PutWindowTilemap(windowId);
     CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
 
-static void PrintPartyNicknames(u8 whichParty)
+static void PrintPartyNicknames(u32 whichParty)
 {
+    u32 i;
     u8 buff[20];
     u8 nickname[30];
     struct Pokemon * party = whichParty == 0 ? gPlayerParty : gEnemyParty;
-    u8 i;
+
     for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[whichParty]; i++)
     {
         GetMonData(&party[i], MON_DATA_NICKNAME, buff);
@@ -2225,11 +2170,9 @@ static void PrintPartyNicknames(u8 whichParty)
     }
 }
 
-static void PrintLevelAndGenderDirectlyOnVram(u8 whichParty, u8 monIdx, u8 x, u8 y, u8 winLeft, u8 winTop)
+static void PrintLevelAndGenderDirectlyOnVram(u32 whichParty, u32 monIdx, u32 x, u32 y, u32 winLeft, u32 winTop)
 {
-    u8 level;
-    u32 tileNum;
-    u8 gender;
+    u32 level, gender, tileNum;
     u8 nickname[POKEMON_NAME_LENGTH + 2];
 
     CopyToBgTilemapBufferRect_ChangePalette(1, gTradeMenuMonBox_Tilemap, winLeft, winTop, 6, 3, 0);
@@ -2254,9 +2197,7 @@ static void PrintLevelAndGenderDirectlyOnVram(u8 whichParty, u8 monIdx, u8 x, u8
     }
 
     if (sTradeMenuResourcesPtr->eggFlags[whichParty][monIdx])
-    {
         tileNum = 0x480;
-    }
     else
     {
         if (whichParty == 0)
@@ -2286,9 +2227,10 @@ static void PrintLevelAndGenderDirectlyOnVram(u8 whichParty, u8 monIdx, u8 x, u8
     sTradeMenuResourcesPtr->tilemapBuffer[(y - 1) * 32 + x + 1] = tileNum;
 }
 
-static void PrintPartyLevelsAndGendersDirectlyOnVram(u8 whichParty)
+static void PrintPartyLevelsAndGendersDirectlyOnVram(u32 whichParty)
 {
     s32 i;
+
     for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[whichParty]; i++)
     {
         const u8 (*drawCoords)[2];
@@ -2298,20 +2240,13 @@ static void PrintPartyLevelsAndGendersDirectlyOnVram(u8 whichParty)
         drawCoords = drawCoords_p[r0];
         winCoords = sTradeMenuGenderLevelWindowCoords[r0];
 
-        PrintLevelAndGenderDirectlyOnVram(
-            whichParty,
-            i,
-            drawCoords[i][0],
-            drawCoords[i][1],
-            winCoords[i][0],
-            winCoords[i][1]
-        );
+        PrintLevelAndGenderDirectlyOnVram(whichParty, i, drawCoords[i][0], drawCoords[i][1], winCoords[i][0], winCoords[i][1]);
     }
 }
 
-static void ShowTradePartyMonIcons(u8 whichParty)
+static void ShowTradePartyMonIcons(u32 whichParty)
 {
-    int i;
+    u32 i;
 
     for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[whichParty]; i++)
     {
@@ -2329,7 +2264,7 @@ static void PrintTradePartnerPartyNicknames(void)
     PrintPartyNicknames(1);
 }
 
-static void RedrawPartyWindow(u8 whichParty)
+static void RedrawPartyWindow(u32 whichParty)
 {
     CopyToBgTilemapBufferRect_ChangePalette(1, sTradePartyBoxTilemap, 15 * whichParty, 0, 15, 17, 0);
     CopyBgTilemapBufferToVram(1);
@@ -2340,21 +2275,22 @@ static void RedrawPartyWindow(u8 whichParty)
     sTradeMenuResourcesPtr->menuRedrawState[whichParty] = 0;
 }
 
-static void TradeMenuAction_Summary(u8 taskId)
+static void TradeMenuAction_Summary(u32 taskId)
 {
     FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, 30, 20);
     CopyBgTilemapBufferToVram(0);
 }
 
-static void TradeMenuAction_Trade(u8 taskId)
+static void TradeMenuAction_Trade(u32 taskId)
 {
     FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, 30, 20);
     CopyBgTilemapBufferToVram(0);
 }
 
-static void ScheduleLinkTaskWithDelay(u16 delay, u8 kind)
+static void ScheduleLinkTaskWithDelay(u32 delay, u32 kind)
 {
-    int i;
+    u32 i;
+
     for (i = 0; i < 4; i++)
     {
         if (!sTradeMenuResourcesPtr->cron[i].active)
@@ -2369,16 +2305,14 @@ static void ScheduleLinkTaskWithDelay(u16 delay, u8 kind)
 
 static void RunScheduledLinkTasks(void)
 {
-    int i;
+    u32 i;
 
     for (i = 0; i < 4; i++)
     {
         if (sTradeMenuResourcesPtr->cron[i].active)
         {
             if (sTradeMenuResourcesPtr->cron[i].delay != 0)
-            {
                 sTradeMenuResourcesPtr->cron[i].delay--;
-            }
             else
             {
                 switch (sTradeMenuResourcesPtr->cron[i].kind)
@@ -2413,7 +2347,7 @@ static void RunScheduledLinkTasks(void)
     }
 }
 
-static void PrintTradeErrorOrStatusMessage(u8 idx)
+static void PrintTradeErrorOrStatusMessage(u32 idx)
 {
     FillWindowPixelBuffer(0, PIXEL_FILL(1));
     AddTextPrinterParameterized(0, 3, sTradeErrorOrStatusMessagePtrs[idx], 0, 2, 0xFF, NULL);
@@ -2422,7 +2356,7 @@ static void PrintTradeErrorOrStatusMessage(u8 idx)
     CopyWindowToVram(0, COPYWIN_BOTH);
 }
 
-static bool8 LoadUISprites(void)
+static bool32 LoadUISprites(void)
 {
     struct SpriteSheet sheet;
 
@@ -2463,7 +2397,6 @@ static bool8 LoadUISprites(void)
         sTradeMenuResourcesPtr->loadUISpritesState = 0;
         return TRUE;
     }
-
     return FALSE;
 }
 
@@ -2472,9 +2405,9 @@ static void RenderTextToVramViaBuffer(const u8 *name, u8 *dest)
     DrawTextWindowAndBufferTiles(name, dest, 0, 0, gDecompressionBuffer, 6);
 }
 
-static void ComputePartyTradeableFlags(u8 who)
+static void ComputePartyTradeableFlags(u32 who)
 {
-    int i;
+    u32 i;
 
     switch (who)
     {
@@ -2521,40 +2454,31 @@ static void ComputePartyTradeableFlags(u8 who)
     }
 }
 
-static void ComputePartyHPBarLevels(u8 who)
+static void ComputePartyHPBarLevels(u32 who)
 {
-    u16 i, curHp, maxHp;
+    u32 i;
 
     switch (who)
     {
     case 0:
         for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[0]; i++)
-        {
-            curHp = GetMonData(&gPlayerParty[i], MON_DATA_HP);
-            maxHp = GetMonData(&gPlayerParty[i], MON_DATA_MAX_HP);
-            sTradeMenuResourcesPtr->hpBarLevels[0][i] = GetHPBarLevel(curHp, maxHp);
-        }
+            sTradeMenuResourcesPtr->hpBarLevels[0][i] = GetHPBarLevel(GetMonData(&gPlayerParty[i], MON_DATA_HP), GetMonData(&gPlayerParty[i], MON_DATA_MAX_HP));
         break;
     case 1:
         for (i = 0; i < sTradeMenuResourcesPtr->partyCounts[1]; i++)
-        {
-            curHp = GetMonData(&gEnemyParty[i], MON_DATA_HP);
-            maxHp = GetMonData(&gEnemyParty[i], MON_DATA_MAX_HP);
-            sTradeMenuResourcesPtr->hpBarLevels[1][i] = GetHPBarLevel(curHp, maxHp);
-        }
+            sTradeMenuResourcesPtr->hpBarLevels[1][i] = GetHPBarLevel(GetMonData(&gEnemyParty[i], MON_DATA_HP), GetMonData(&gEnemyParty[i], MON_DATA_MAX_HP));
         break;
     }
 }
 
 static void SetMonIconsAnimByHPBarLevel(void)
 {
-    int i, j;
+    u32 i, j;
+
     for (i = 0; i < 2; i++)
     {
         for (j = 0; j < sTradeMenuResourcesPtr->partyCounts[i]; j++)
-        {
             SetPartyHPBarSprite(&gSprites[sTradeMenuResourcesPtr->partyIcons[i][j]], 4 - sTradeMenuResourcesPtr->hpBarLevels[i][j]);
-        }
     }
 }
 
@@ -2573,7 +2497,7 @@ static u32 TestWhetherSelectedMonCanBeTraded(struct Pokemon * party, u32 partyCo
     player = &gLinkPlayers[GetMultiplayerId() ^ 1];
     if ((player->version & 0xFF) != VERSION_RUBY && (player->version & 0xFF) != VERSION_SAPPHIRE)
     {
-		// Does partner not have National Dex
+        // Does partner not have National Dex
         if (!(player->progressFlagsCopy & 0xF))
         {
             if (species2[cursorPos] == SPECIES_EGG)
@@ -2583,18 +2507,18 @@ static u32 TestWhetherSelectedMonCanBeTraded(struct Pokemon * party, u32 partyCo
                 return CANT_TRADE_INVALID_MON;
         }
     }
-	
-	// Can't trade specific species
-	if (gSpeciesInfo[species[cursorPos]].flags & SPECIES_FLAG_CANT_TRADE)
-		return CANT_TRADE_INVALID_MON;
-	
-	// Count alive mons in party, excluding selected trade mon
+    
+    // Can't trade specific species
+    if (gSpeciesInfo[species[cursorPos]].flags & SPECIES_FLAG_CANT_TRADE)
+        return CANT_TRADE_INVALID_MON;
+    
+    // Count alive mons in party, excluding selected trade mon
     for (sum = 0, i = 0; i < partyCount; i++)
     {
         if (i != cursorPos && species2[i] && species2[i] != SPECIES_EGG)
             sum++;
     }
-	return sum > 0 ? CAN_TRADE_MON : CANT_TRADE_LAST_MON;
+    return sum > 0 ? CAN_TRADE_MON : CANT_TRADE_LAST_MON;
 }
 
 s32 Trade_CalcLinkPlayerCompatibilityParam(void)
@@ -2648,96 +2572,70 @@ s32 Trade_CalcLinkPlayerCompatibilityParam(void)
 
 int GetUnionRoomTradeMessageId(struct GFtgtGnameSub playerSub, struct GFtgtGnameSub partnerSub, u16 species1, u16 species2, u8 type)
 {
-    u8 playerHasNationalDex = playerSub.hasNationalDex;
-    u8 playerIsChampion = playerSub.isChampion;
-    u8 partnerHasNationalDex = partnerSub.hasNationalDex;
-    u8 partnerIsChampion = partnerSub.isChampion;
-    u8 partnerVersion = partnerSub.version;
-    bool8 isNotFRLG;
+    bool32 playerHasNationalDex = playerSub.hasNationalDex;
+    bool32 playerIsChampion = playerSub.isChampion;
+    bool32 partnerHasNationalDex = partnerSub.hasNationalDex;
+    bool32 partnerIsChampion = partnerSub.isChampion;
+    u32 partnerVersion = partnerSub.version;
+    bool32 isNotFRLG;
 
     if (partnerVersion == VERSION_FIRE_RED || partnerVersion == VERSION_LEAF_GREEN)
-    {
         isNotFRLG = FALSE;
-    }
     else
-    {
         isNotFRLG = TRUE;
-    }
+
     if (isNotFRLG)
     {
         if (!playerIsChampion)
-        {
             return 8;
-        }
         else if (!partnerIsChampion)
-        {
             return 9;
-        }
     }
+
     if (species2 == SPECIES_EGG)
     {
         if (species1 != species2)
-        {
             return 2;
-        }
     }
     else
     {
         if (gSpeciesInfo[species1].types[0] != type && gSpeciesInfo[species1].types[1] != type)
-        {
             return 1;
-        }
     }
 
     if (species1 == SPECIES_EGG && species1 != species2)
-    {
         return 3;
-    }
 
     if (!playerHasNationalDex)
     {
         if (species1 == SPECIES_EGG)
-        {
             return 6;
-        }
 
         if (species1 > SPECIES_MEW)
-        {
             return 4;
-        }
 
         if (species2 > SPECIES_MEW)
-        {
             return 5;
-        }
     }
 
     if (!partnerHasNationalDex && species1 > SPECIES_MEW)
-    {
         return 7;
-    }
 
     return 0;
 }
 
 int CanRegisterMonForTradingBoard(struct GFtgtGnameSub playerSub, u16 species2, u16 species)
 {
-    u8 canTradeEggAndNational = playerSub.hasNationalDex;
+    bool32 canTradeEggAndNational = playerSub.hasNationalDex;
 
     if (canTradeEggAndNational)
-    {
         return 0;
-    }
 
     if (species2 == SPECIES_EGG)
-    {
         return 2;
-    }
 
     if (species2 > SPECIES_MEW && species2 != SPECIES_EGG)
-    {
         return 1;
-    }
 
     return 0;
 }

@@ -40,14 +40,14 @@ static const struct WindowTemplate sDefaultBagWindowsStd[] = {
         .paletteNum = 0x0f,
         .baseBlock = 0x01f8
     }, {
-		.bg = 0,
+        .bg = 0,
         .tilemapLeft = 0x04,
         .tilemapTop = 0x03,
         .width = 0x06,
         .height = 0x02,
         .paletteNum = 0x00,
         .baseBlock = 0x03B2
-	}, DUMMY_WIN_TEMPLATE
+    }, DUMMY_WIN_TEMPLATE
 };
 
 static const struct WindowTemplate sDefaultBagWindowsDeposit[] = {
@@ -199,27 +199,27 @@ static EWRAM_DATA u8 sOpenWindows[11] = {};
 void InitBagWindows(void)
 {
     u32 i, count;
-	bool32 isPcItems = (gBagMenuState.location == ITEMMENULOCATION_ITEMPC);
+    bool32 isPcItems = (gBagMenuState.location == ITEMMENULOCATION_ITEMPC);
     
-	InitWindows(isPcItems ? sDefaultBagWindowsDeposit : sDefaultBagWindowsStd);
+    InitWindows(isPcItems ? sDefaultBagWindowsDeposit : sDefaultBagWindowsStd);
     DeactivateAllTextPrinters();
     TextWindow_SetUserSelectedFrame(0, 0x64, 0xE0);
     TextWindow_LoadResourcesStdFrame0(0, 0x6D, 0xD0);
     TextWindow_SetStdFrame0_WithPal(0, 0x81, 0xC0);
-	
+    
     LoadPalette(sBagWindowPalF, 0xF0, 0x20);
-	
-	count = ARRAY_COUNT(sDefaultBagWindowsStd);
-	if (isPcItems) // Excludes from loading the sort button window if in PC
-		count--;
-	
+    
+    count = ARRAY_COUNT(sDefaultBagWindowsStd);
+    if (isPcItems) // Excludes from loading the sort button window if in PC
+        count--;
+    
     for (i = 0; i < count; i++)
     {
         FillWindowPixelBuffer(i, 0x00);
         PutWindowTilemap(i);
     }
     ScheduleBgCopyTilemapToVram(0);
-	
+    
     for (i = 0; i < 11; i++)
         sOpenWindows[i] = 0xFF;
 }
@@ -240,7 +240,7 @@ u32 ShowBagWindow(u32 whichWindow, u32 nItems)
     if (sOpenWindows[whichWindow] == 0xFF)
     {
         sOpenWindows[whichWindow] = AddWindow(&sWindowTemplates[whichWindow + nItems]);
-		
+        
         if (whichWindow != 6)
             DrawStdFrameWithCustomTileAndPalette(sOpenWindows[whichWindow], FALSE, 0x064, 0xE);
         else

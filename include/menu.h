@@ -12,8 +12,8 @@ struct MenuAction
 {
     const u8 *text;
     union {
-        void (*void_u8)(u8);
-        u8 (*u8_void)(void);
+        void (*void_u32)(u32);
+        u32 (*u32_void)(void);
     } func;
 };
 

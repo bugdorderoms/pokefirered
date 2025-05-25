@@ -680,8 +680,8 @@ static const u8 *const sActionStringTable[] =
     [PARTY_MSG_BOOST_PP_WHICH_MOVE]    = gText_BoostPp,
     [PARTY_MSG_DO_WHAT_WITH_ITEM]      = gText_DoWhatWithItem,
     [PARTY_MSG_DO_WHAT_WITH_MAIL]      = gText_DoWhatWithMail,
-	[PARTY_MSG_FUSE_WITH_WHICH]        = gText_FuseWithWhich,
-	[PARTY_MSG_DO_WHAT_WITH_MOVES]     = gText_DoWhatWithMoves,
+    [PARTY_MSG_FUSE_WITH_WHICH]        = gText_FuseWithWhich,
+    [PARTY_MSG_DO_WHAT_WITH_MOVES]     = gText_DoWhatWithMoves,
 };
 
 static const u8 *const sDescriptionStringTable[] =
@@ -708,7 +708,7 @@ static const u8 *const sHMDescriptionTable[] =
     [FIELD_MOVE_MILK_DRINK]  = gText_ShareHp,
     [FIELD_MOVE_SOFT_BOILED] = gText_ShareHp,
     [FIELD_MOVE_SWEET_SCENT] = gText_LureWildPokemon,
-	[FIELD_MOVE_DEFOG]       = gText_BlewAwayFog,
+    [FIELD_MOVE_DEFOG]       = gText_BlewAwayFog,
 };
 
 static const struct OamData sOamData_MenuPokeball =
@@ -927,9 +927,9 @@ enum
     MENU_GIVE,
     MENU_TAKE_ITEM,
     MENU_MOVE_ITEM,
-	MENU_MOVES,
-	MENU_REMEMBER_MOVE,
-	MENU_FORGET_MOVE,
+    MENU_MOVES,
+    MENU_REMEMBER_MOVE,
+    MENU_FORGET_MOVE,
     MENU_MAIL,
     MENU_TAKE_MAIL,
     MENU_READ,
@@ -958,9 +958,9 @@ static struct
     [MENU_GIVE] = {gOtherText_Give, CursorCB_Give},
     [MENU_TAKE_ITEM] = {gText_Take, CursorCB_TakeItem},
     [MENU_MOVE_ITEM] = {gText_Move, CursorCB_MoveItem},
-	[MENU_MOVES] = {gText_Moves, CursorCB_Moves},
-	[MENU_REMEMBER_MOVE] = {gText_Remember, CursorCB_RelearnMove},
-	[MENU_FORGET_MOVE] = {gText_Forget, CursorCB_DeleteMove},
+    [MENU_MOVES] = {gText_Moves, CursorCB_Moves},
+    [MENU_REMEMBER_MOVE] = {gText_Remember, CursorCB_RelearnMove},
+    [MENU_FORGET_MOVE] = {gText_Forget, CursorCB_DeleteMove},
     [MENU_MAIL] = {gText_Mail, CursorCB_Mail},
     [MENU_TAKE_MAIL] = {gText_Take2, CursorCB_TakeMail},
     [MENU_READ] = {gText_Read2, CursorCB_Read},
@@ -999,7 +999,7 @@ enum
     ACTIONS_STORE,
     ACTIONS_SUMMARY_ONLY,
     ACTIONS_ITEM,
-	ACTIONS_MOVES,
+    ACTIONS_MOVES,
     ACTIONS_MAIL,
     ACTIONS_REGISTER,
     ACTIONS_TRADE,
@@ -1016,7 +1016,7 @@ static const u8 *const sPartyMenuActions[] =
     [ACTIONS_STORE]         = sPartyMenuAction_StoreSummaryCancel,
     [ACTIONS_SUMMARY_ONLY]  = sPartyMenuAction_SummaryCancel,
     [ACTIONS_ITEM]          = sPartyMenuAction_GiveTakeItemCancel,
-	[ACTIONS_MOVES]         = sPartyMenuAction_RelearnDeleteMoveCancel,
+    [ACTIONS_MOVES]         = sPartyMenuAction_RelearnDeleteMoveCancel,
     [ACTIONS_MAIL]          = sPartyMenuAction_ReadTakeMailCancel,
     [ACTIONS_REGISTER]      = sPartyMenuAction_RegisterSummaryCancel,
     [ACTIONS_TRADE]         = sPartyMenuAction_TradeSummaryCancel1,
@@ -1033,7 +1033,7 @@ static const u8 sPartyMenuActionCounts[] =
     [ACTIONS_STORE]         = ARRAY_COUNT(sPartyMenuAction_StoreSummaryCancel),
     [ACTIONS_SUMMARY_ONLY]  = ARRAY_COUNT(sPartyMenuAction_SummaryCancel),
     [ACTIONS_ITEM]          = ARRAY_COUNT(sPartyMenuAction_GiveTakeItemCancel),
-	[ACTIONS_MOVES]         = ARRAY_COUNT(sPartyMenuAction_RelearnDeleteMoveCancel),
+    [ACTIONS_MOVES]         = ARRAY_COUNT(sPartyMenuAction_RelearnDeleteMoveCancel),
     [ACTIONS_MAIL]          = ARRAY_COUNT(sPartyMenuAction_ReadTakeMailCancel),
     [ACTIONS_REGISTER]      = ARRAY_COUNT(sPartyMenuAction_RegisterSummaryCancel),
     [ACTIONS_TRADE]         = ARRAY_COUNT(sPartyMenuAction_TradeSummaryCancel1),
@@ -1042,15 +1042,15 @@ static const u8 sPartyMenuActionCounts[] =
 static const u16 sFieldMoves[] =
 {
     [FIELD_MOVE_FLASH]       = MOVE_FLASH,
-	[FIELD_MOVE_CUT]         = MOVE_CUT,
-	[FIELD_MOVE_WATERFALL]   = MOVE_WATERFALL,
-	[FIELD_MOVE_TELEPORT]    = MOVE_TELEPORT,
-	[FIELD_MOVE_DIG]         = MOVE_DIG,
-	[FIELD_MOVE_MILK_DRINK]  = MOVE_MILK_DRINK,
-	[FIELD_MOVE_SOFT_BOILED] = MOVE_SOFT_BOILED,
-	[FIELD_MOVE_SWEET_SCENT] = MOVE_SWEET_SCENT,
-	[FIELD_MOVE_DEFOG]       = MOVE_DEFOG,
-	[FIELD_MOVE_END]         = FIELD_MOVE_END
+    [FIELD_MOVE_CUT]         = MOVE_CUT,
+    [FIELD_MOVE_WATERFALL]   = MOVE_WATERFALL,
+    [FIELD_MOVE_TELEPORT]    = MOVE_TELEPORT,
+    [FIELD_MOVE_DIG]         = MOVE_DIG,
+    [FIELD_MOVE_MILK_DRINK]  = MOVE_MILK_DRINK,
+    [FIELD_MOVE_SOFT_BOILED] = MOVE_SOFT_BOILED,
+    [FIELD_MOVE_SWEET_SCENT] = MOVE_SWEET_SCENT,
+    [FIELD_MOVE_DEFOG]       = MOVE_DEFOG,
+    [FIELD_MOVE_END]         = FIELD_MOVE_END
 };
 
 static struct
@@ -1067,7 +1067,7 @@ static struct
     [FIELD_MOVE_MILK_DRINK]   = {SetUpFieldMove_SoftBoiled,  PARTY_MSG_NOT_ENOUGH_HP},
     [FIELD_MOVE_SOFT_BOILED]  = {SetUpFieldMove_SoftBoiled,  PARTY_MSG_NOT_ENOUGH_HP},
     [FIELD_MOVE_SWEET_SCENT]  = {SetUpFieldMove_SweetScent,  PARTY_MSG_CANT_USE_HERE},
-	[FIELD_MOVE_DEFOG]        = {SetUpFieldMove_Defog,       PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_DEFOG]        = {SetUpFieldMove_Defog,       PARTY_MSG_CANT_USE_HERE},
 };
 
 static const u8 *const sUnionRoomTradeMessages[] =

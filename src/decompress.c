@@ -58,12 +58,12 @@ bool32 LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette
 
 void LoadMonPalette(struct Pokemon *mon)
 {
-	LoadMonPaletteFromSpecies(GetMonData(mon, MON_DATA_SPECIES2), GetMonData(mon, MON_DATA_IS_SHINY));
+    LoadMonPaletteFromSpecies(GetMonData(mon, MON_DATA_SPECIES2), GetMonData(mon, MON_DATA_IS_SHINY));
 }
 
 void LoadMonPaletteFromSpecies(u32 species, bool32 isShiny)
 {
-	struct SpritePalette dest;
+    struct SpritePalette dest;
 
     LZDecompressWram(GetMonSpritePalFromSpecies(species, isShiny), gDecompressionBuffer);
     dest.data = (void*)gDecompressionBuffer;
@@ -73,7 +73,7 @@ void LoadMonPaletteFromSpecies(u32 species, bool32 isShiny)
 
 void LoadSpecialPokePic(u32 species, u32 personality, bool32 isFrontPic, void *dest)
 {
-	species = SanitizeSpeciesId(species);
-	LZDecompressWram(isFrontPic ? gSpeciesInfo[species].frontPic : gSpeciesInfo[species].backPic, dest);
+    species = SanitizeSpeciesId(species);
+    LZDecompressWram(isFrontPic ? gSpeciesInfo[species].frontPic : gSpeciesInfo[species].backPic, dest);
     DrawSpindaSpots(species, personality, dest, isFrontPic);
 }

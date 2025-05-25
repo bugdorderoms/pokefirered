@@ -35,7 +35,7 @@ static void sub_8153D48(bool8 a0, u8 a1);
 static void sub_8154324(bool8 a0);
 static void sub_81543E8(struct Sprite * sprite);
 static s16 sub_8154608(u8 a0, u8 a1);
-static void sub_8154A08(u8 taskId);
+static void sub_8154A08(u32 taskId);
 static void sub_8154A2C(void);
 static void sub_8154B34(void);
 static void sub_8154F80(void);
@@ -1097,7 +1097,7 @@ void sub_81549D4(u8 arg0)
     }
 }
 
-static void sub_8154A08(u8 taskId)
+static void sub_8154A08(u32 taskId)
 {
     if (!gUnknown_203F440->finished)
         sub_8155E54()();

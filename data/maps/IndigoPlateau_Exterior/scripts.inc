@@ -1,4 +1,4 @@
-.equ LOCALID_RIVAL,    1
+.equ LOCALID_RIVAL,	1
 .equ LOCALID_PROF_OAK, 2
 
 IndigoPlateau_Exterior_MapScripts:: @ 816723B

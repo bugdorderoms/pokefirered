@@ -6,29 +6,29 @@
 
 enum
 {
-	SORT_BAG_ITEMS,
-	SORT_LIST_MENU_ITEMS,
+    SORT_BAG_ITEMS,
+    SORT_LIST_MENU_ITEMS,
 };
 
 struct SortComparator
 {
-	union
-	{
-		struct
-		{
-			struct ItemSlot *array;
-			struct ItemSlot *aux;
-			s8 (*func)(struct ItemSlot*, struct ItemSlot*);
-		} bagItemSort;
-		
-		struct
-		{
-			struct ListMenuItem *array;
-			struct ListMenuItem *aux;
-			s8 (*func)(struct ListMenuItem*, struct ListMenuItem*);
-		} listMenuItemSort;
-	} sortUnion;
-	u8 kind; // This determine how to acess the union above
+    union
+    {
+        struct
+        {
+            struct ItemSlot *array;
+            struct ItemSlot *aux;
+            s8 (*func)(struct ItemSlot*, struct ItemSlot*);
+        } bagItemSort;
+        
+        struct
+        {
+            struct ListMenuItem *array;
+            struct ListMenuItem *aux;
+            s8 (*func)(struct ListMenuItem*, struct ListMenuItem*);
+        } listMenuItemSort;
+    } sortUnion;
+    u8 kind; // This determine how to acess the union above
 };
 
 extern const u8 gMiscBlank_Gfx[];

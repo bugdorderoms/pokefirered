@@ -34,51 +34,51 @@ static void PrintOakText_ForPetesSake(u32 battlerId);
 static void (*const sOakOldManBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
-	[CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
-	[CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
-	[CONTROLLER_LOADMONSPRITE]            = BattleControllerComplete,
-	[CONTROLLER_SWITCHINANIM]             = BattleControllerComplete,
-	[CONTROLLER_RETURNMONTOBALL]          = BtlController_HandleReturnMonToBall,
-	[CONTROLLER_DRAWTRAINERPIC]           = OakOldManHandleDrawTrainerPic,
-	[CONTROLLER_TRAINERSLIDE]             = OakOldManHandleTrainerSlide,
-	[CONTROLLER_TRAINERSLIDEBACK]         = BattleControllerComplete,
-	[CONTROLLER_FAINTANIMATION]           = BtlController_HandleFaintAnimation,
-	[CONTROLLER_BALLTHROWANIM]            = SafariHandleBallThrowAnim,
-	[CONTROLLER_MOVEANIMATION]            = BtlController_HandleMoveAnimation,
-	[CONTROLLER_PRINTSTRING]              = OakOldManHandlePrintString,
-	[CONTROLLER_PRINTSELECTIONSTRING]     = OakOldManHandlePrintSelectionString,
-	[CONTROLLER_CHOOSEACTION]             = PlayerHandleChooseAction,
-	[CONTROLLER_CHOOSEMOVE]               = OakOldManHandleChooseMove,
-	[CONTROLLER_OPENBAG]                  = OakOldManHandleChooseItem,
-	[CONTROLLER_CHOOSEPOKEMON]            = OakOldManHandleChoosePokemon,
-	[CONTROLLER_HEALTHBARUPDATE]          = PlayerHandleHealthbarUpdate,
-	[CONTROLLER_EXPUPDATE]                = BtlController_HandleExpUpdate,
-	[CONTROLLER_STATUSICONUPDATE]         = BtlController_HandleStatusIconUpdate,
-	[CONTROLLER_STATUSANIMATION]          = BtlController_HandleStatusAnimation,
-	[CONTROLLER_DATATRANSFER]             = BattleControllerComplete,
-	[CONTROLLER_TWORETURNVALUES]          = BattleControllerComplete,
-	[CONTROLLER_CHOSENMONRETURNVALUE]     = BattleControllerComplete,
-	[CONTROLLER_ONERETURNVALUE]           = BattleControllerComplete,
-	[CONTROLLER_EFFECTIVENESSSOUND]       = OakOldManHandlePlaySE,
-	[CONTROLLER_PLAYFANFAREORBGM]         = BtlController_HandlePlayFanfare,
-	[CONTROLLER_FAINTINGCRY]              = SafariHandleFaintingCry,
-	[CONTROLLER_INTROSLIDE]               = BtlController_HandleIntroSlide,
-	[CONTROLLER_INTROTRAINERBALLTHROW]    = OakOldManHandleIntroTrainerBallThrow,
-	[CONTROLLER_DRAWPARTYSTATUSSUMMARY]   = OakOldManHandleDrawPartyStatusSummary,
-	[CONTROLLER_HIDEPARTYSTATUSSUMMARY]   = BattleControllerComplete,
-	[CONTROLLER_ENDBOUNCE]                = BtlController_HandleEndBounceEffect,
-	[CONTROLLER_SPRITEINVISIBILITY]       = BattleControllerComplete,
-	[CONTROLLER_BATTLEANIMATION]          = BtlController_HandleBattleAnimation,
-	[CONTROLLER_LINKSTANDBYMSG]           = PlayerHandleLinkStandbyMsg,
-	[CONTROLLER_RESETACTIONMOVESELECTION] = BattleControllerComplete,
-	[CONTROLLER_ENDLINKBATTLE]            = OakOldManHandleEndLinkBattle,
-	[CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
+    [CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
+    [CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
+    [CONTROLLER_LOADMONSPRITE]            = BattleControllerComplete,
+    [CONTROLLER_SWITCHINANIM]             = BattleControllerComplete,
+    [CONTROLLER_RETURNMONTOBALL]          = BtlController_HandleReturnMonToBall,
+    [CONTROLLER_DRAWTRAINERPIC]           = OakOldManHandleDrawTrainerPic,
+    [CONTROLLER_TRAINERSLIDE]             = OakOldManHandleTrainerSlide,
+    [CONTROLLER_TRAINERSLIDEBACK]         = BattleControllerComplete,
+    [CONTROLLER_FAINTANIMATION]           = BtlController_HandleFaintAnimation,
+    [CONTROLLER_BALLTHROWANIM]            = SafariHandleBallThrowAnim,
+    [CONTROLLER_MOVEANIMATION]            = BtlController_HandleMoveAnimation,
+    [CONTROLLER_PRINTSTRING]              = OakOldManHandlePrintString,
+    [CONTROLLER_PRINTSELECTIONSTRING]     = OakOldManHandlePrintSelectionString,
+    [CONTROLLER_CHOOSEACTION]             = PlayerHandleChooseAction,
+    [CONTROLLER_CHOOSEMOVE]               = OakOldManHandleChooseMove,
+    [CONTROLLER_OPENBAG]                  = OakOldManHandleChooseItem,
+    [CONTROLLER_CHOOSEPOKEMON]            = OakOldManHandleChoosePokemon,
+    [CONTROLLER_HEALTHBARUPDATE]          = PlayerHandleHealthbarUpdate,
+    [CONTROLLER_EXPUPDATE]                = BtlController_HandleExpUpdate,
+    [CONTROLLER_STATUSICONUPDATE]         = BtlController_HandleStatusIconUpdate,
+    [CONTROLLER_STATUSANIMATION]          = BtlController_HandleStatusAnimation,
+    [CONTROLLER_DATATRANSFER]             = BattleControllerComplete,
+    [CONTROLLER_TWORETURNVALUES]          = BattleControllerComplete,
+    [CONTROLLER_CHOSENMONRETURNVALUE]     = BattleControllerComplete,
+    [CONTROLLER_ONERETURNVALUE]           = BattleControllerComplete,
+    [CONTROLLER_EFFECTIVENESSSOUND]       = OakOldManHandlePlaySE,
+    [CONTROLLER_PLAYFANFAREORBGM]         = BtlController_HandlePlayFanfare,
+    [CONTROLLER_FAINTINGCRY]              = SafariHandleFaintingCry,
+    [CONTROLLER_INTROSLIDE]               = BtlController_HandleIntroSlide,
+    [CONTROLLER_INTROTRAINERBALLTHROW]    = OakOldManHandleIntroTrainerBallThrow,
+    [CONTROLLER_DRAWPARTYSTATUSSUMMARY]   = OakOldManHandleDrawPartyStatusSummary,
+    [CONTROLLER_HIDEPARTYSTATUSSUMMARY]   = BattleControllerComplete,
+    [CONTROLLER_ENDBOUNCE]                = BtlController_HandleEndBounceEffect,
+    [CONTROLLER_SPRITEINVISIBILITY]       = BattleControllerComplete,
+    [CONTROLLER_BATTLEANIMATION]          = BtlController_HandleBattleAnimation,
+    [CONTROLLER_LINKSTANDBYMSG]           = PlayerHandleLinkStandbyMsg,
+    [CONTROLLER_RESETACTIONMOVESELECTION] = BattleControllerComplete,
+    [CONTROLLER_ENDLINKBATTLE]            = OakOldManHandleEndLinkBattle,
+    [CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 
 void SetControllerToOakOrOldMan(u32 battlerId)
 {
-	gBattlerControllerFuncs[battlerId] = OakOldManBufferRunCommand;
-	gBattlerControllerEndFuncs[battlerId] = OakOldManBufferExecCompleted;
+    gBattlerControllerFuncs[battlerId] = OakOldManBufferRunCommand;
+    gBattlerControllerEndFuncs[battlerId] = OakOldManBufferExecCompleted;
     gBattleStruct->simulatedInputState[0] = 0;
     gBattleStruct->simulatedInputState[1] = 0;
     gBattleStruct->simulatedInputState[2] = 0;
@@ -87,7 +87,7 @@ void SetControllerToOakOrOldMan(u32 battlerId)
 
 static void OakOldManBufferRunCommand(u32 battlerId)
 {
-	if (gBattleControllerExecFlags & Bit(battlerId))
+    if (gBattleControllerExecFlags & Bit(battlerId))
     {
         if (gBattleBufferA[battlerId][0] < ARRAY_COUNT(sOakOldManBufferCommands))
             sOakOldManBufferCommands[gBattleBufferA[battlerId][0]](battlerId);
@@ -98,8 +98,8 @@ static void OakOldManBufferRunCommand(u32 battlerId)
 
 static void OakOldManBufferExecCompleted(u32 battlerId)
 {
-	gBattlerControllerFuncs[battlerId] = OakOldManBufferRunCommand;
-	
+    gBattlerControllerFuncs[battlerId] = OakOldManBufferRunCommand;
+    
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
         u8 playerId = GetMultiplayerId();
@@ -116,37 +116,37 @@ static void OakOldManBufferExecCompleted(u32 battlerId)
 
 static void OakOldManHandleDrawTrainerPic(u32 battlerId)
 {
-	u32 trainerPicId = (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) ? TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender : TRAINER_BACK_PIC_OLD_MAN;
-	BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80, 30);
+    u32 trainerPicId = (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) ? TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender : TRAINER_BACK_PIC_OLD_MAN;
+    BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80, 30);
 }
 
 static void OakOldManHandleTrainerSlide(u32 battlerId)
 {
-	u32 trainerPicId = (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) ? TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender : TRAINER_BACK_PIC_OLD_MAN;
-	BtlController_HandleTrainerSlide(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80);
+    u32 trainerPicId = (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) ? TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender : TRAINER_BACK_PIC_OLD_MAN;
+    BtlController_HandleTrainerSlide(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80);
 }
 
 static void OakOldManHandlePrintStringInternal(u32 battlerId, bool32 isSelection)
 {
-	u16 *stringId = (u16 *)(&gBattleBufferA[battlerId][2]);
-	
+    u16 *stringId = (u16 *)(&gBattleBufferA[battlerId][2]);
+    
     if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL && *stringId == STRINGID_INTROSENDOUT)
-	{
-		gBattle_BG0_X = 0;
-		gBattle_BG0_Y = 0;
+    {
+        gBattle_BG0_X = 0;
+        gBattle_BG0_Y = 0;
         BattleControllerComplete(battlerId);
-	}
+    }
     else
     {
-		BtlController_HandlePrintString(battlerId, *stringId, isSelection);
-		
+        BtlController_HandlePrintString(battlerId, *stringId, isSelection);
+        
         if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
         {
             switch (*stringId)
             {
             case STRINGID_EFFSTATCHANGED:
                 if (gBattleStruct->statChange.buff < 0 && !(gBattleStruct->statChange.flags & STAT_CHANGE_FLAG_SELF_INFLICT)
-				&& !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_STAT_CHG))
+                && !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_STAT_CHG))
                 {
                     BtlCtrl_OakOldMan_SetState2Flag(FIRST_BATTLE_MSG_FLAG_STAT_CHG);
                     gBattlerControllerFuncs[battlerId] = PrintOakText_LoweringStats;
@@ -168,12 +168,12 @@ static void OakOldManHandlePrintStringInternal(u32 battlerId, bool32 isSelection
 
 static void OakOldManHandlePrintString(u32 battlerId)
 {
-	OakOldManHandlePrintStringInternal(battlerId, FALSE);
+    OakOldManHandlePrintStringInternal(battlerId, FALSE);
 }
 
 static void OakOldManHandlePrintSelectionString(u32 battlerId)
 {
-	if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
+    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
         OakOldManHandlePrintStringInternal(battlerId, TRUE);
     else
         BattleControllerComplete(battlerId);
@@ -181,8 +181,8 @@ static void OakOldManHandlePrintSelectionString(u32 battlerId)
 
 static void OakOldManHandleChooseMove(u32 battlerId)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
-		PlayerHandleChooseMove(battlerId);
+    if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
+        PlayerHandleChooseMove(battlerId);
     else
     {
         switch (gBattleStruct->simulatedInputState[1])
@@ -206,8 +206,8 @@ static void OakOldManHandleChooseMove(u32 battlerId)
 
 static void OakOldManHandleChooseItem(u32 battlerId)
 {
-	gBattleStruct->battlers[battlerId].itemPartyIndex = 0;
-	PlayerHandleChooseItem(battlerId);
+    gBattleStruct->battlers[battlerId].itemPartyIndex = 0;
+    PlayerHandleChooseItem(battlerId);
 }
 
 static void WaitForMonSelection(u32 battlerId)
@@ -218,7 +218,7 @@ static void WaitForMonSelection(u32 battlerId)
             BtlController_EmitChosenMonReturnValue(battlerId, BUFFER_B, gSelectedMonPartyId, gBattlePartyCurrentOrder);
         else
             BtlController_EmitChosenMonReturnValue(battlerId, BUFFER_B, PARTY_SIZE, NULL);
-		
+        
         BattleControllerComplete(battlerId);
     }
 }
@@ -239,13 +239,13 @@ static void OpenPartyMenuToChooseMon(u32 battlerId)
 
 static void OakOldManHandleChoosePokemon(u32 battlerId)
 {
-	BtlController_HandleChoosePokemon(battlerId, OpenPartyMenuToChooseMon);
+    BtlController_HandleChoosePokemon(battlerId, OpenPartyMenuToChooseMon);
 }
 
 void OakOldManHandlePlaySE(u32 battlerId)
 {
-	PlaySE(gBattleBufferA[battlerId][1] | (gBattleBufferA[battlerId][2] << 8));
-	BattleControllerComplete(battlerId);
+    PlaySE(gBattleBufferA[battlerId][1] | (gBattleBufferA[battlerId][2] << 8));
+    BattleControllerComplete(battlerId);
 }
 
 static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
@@ -257,10 +257,10 @@ static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
         gBattleSpritesDataPtr->healthBoxesData[battlerId].finishedShinyMonAnim = FALSE;
         gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].triedShinyMonAnim = FALSE;
         gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].finishedShinyMonAnim = FALSE;
-		
+        
         FreeSpriteTilesByTag(ANIM_TAG_GOLD_STARS);
         FreeSpritePaletteByTag(ANIM_TAG_GOLD_STARS);
-		
+        
         CreateTask(Task_BltController_RestoreBgmAfterCry, 10);
         HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[battlerId]], battlerId);
         gBattlerControllerFuncs[battlerId] = PrintOakText_ForPetesSake;
@@ -271,15 +271,15 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
 {
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive && !gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].ballAnimActive)
     {
-		if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim)
-			TryShinyAnimation(battlerId);
-		
-		if (!gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].triedShinyMonAnim)
-			TryShinyAnimation(BATTLE_PARTNER(battlerId));
-		
+        if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim)
+            TryShinyAnimation(battlerId);
+        
+        if (!gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].triedShinyMonAnim)
+            TryShinyAnimation(BATTLE_PARTNER(battlerId));
+        
         if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
-			ShowHealthBox(BATTLE_PARTNER(battlerId));
-		
+            ShowHealthBox(BATTLE_PARTNER(battlerId));
+        
         ShowHealthBox(battlerId);
         gBattleSpritesDataPtr->animationData->healthboxSlideInStarted = FALSE;
         gBattlerControllerFuncs[battlerId] = Intro_WaitForShinyAnimAndHealthbox;
@@ -289,24 +289,24 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
 static void OakOldManHandleIntroTrainerBallThrow(u32 battlerId)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
-		BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F8, TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender, StartAnimLinearTranslation, 31, Intro_TryShinyAnimShowHealthbox);
+        BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F8, TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender, StartAnimLinearTranslation, 31, Intro_TryShinyAnimShowHealthbox);
     else
     {
         if (gBattleSpritesDataPtr->healthBoxesData[battlerId].partyStatusSummaryShown)
             gTasks[gBattlerStatusSummaryTaskId[battlerId]].func = Task_HidePartyStatusSummary;
-		
+        
         BattleControllerComplete(battlerId);
     }
 }
 
 void OakOldManHandleDrawPartyStatusSummary(u32 battlerId)
 {
-	if (!(gBattleBufferA[battlerId][1] && GetBattlerSide(battlerId) == B_SIDE_PLAYER))
+    if (!(gBattleBufferA[battlerId][1] && GetBattlerSide(battlerId) == B_SIDE_PLAYER))
     {
         gBattleSpritesDataPtr->healthBoxesData[battlerId].partyStatusSummaryShown = TRUE;
         gBattlerStatusSummaryTaskId[battlerId] = CreatePartyStatusSummarySprites(battlerId, (struct HpAndStatus*)&gBattleBufferA[battlerId][4], gBattleBufferA[battlerId][1], gBattleBufferA[battlerId][2]);
     }
-	BattleControllerComplete(battlerId);
+    BattleControllerComplete(battlerId);
 }
 
 static void OakOldManSetBattleEndCallbacks(u32 battlerId)
@@ -321,7 +321,7 @@ static void OakOldManSetBattleEndCallbacks(u32 battlerId)
 
 void OakOldManHandleEndLinkBattle(u32 battlerId)
 {
-	BtlController_HandleEndLinkBattle(battlerId, gBattleBufferA[battlerId][1], (!(gBattleTypeFlags & BATTLE_TYPE_IS_MASTER) && gBattleTypeFlags & BATTLE_TYPE_LINK) ? OakOldManSetBattleEndCallbacks : NULL);
+    BtlController_HandleEndLinkBattle(battlerId, gBattleBufferA[battlerId][1], (!(gBattleTypeFlags & BATTLE_TYPE_IS_MASTER) && gBattleTypeFlags & BATTLE_TYPE_LINK) ? OakOldManSetBattleEndCallbacks : NULL);
 }
 
 ///////////
@@ -331,7 +331,7 @@ void OakOldManHandleEndLinkBattle(u32 battlerId)
 void OakOldManHandleInputChooseMove(u32 battlerId)
 {
     HandleInputChooseMove(battlerId); // Player input
-	
+    
     if (!(gBattleControllerExecFlags & Bit(battlerId)))
         BattleControllerComplete(battlerId);
 }
@@ -342,7 +342,7 @@ void OakOldManHandleInputChooseMove(u32 battlerId)
 
 void OakOldMan_SimulateInputChooseAction(u32 battlerId)
 {
-	// Old Man
+    // Old Man
     switch (gBattleStruct->simulatedInputState[0])
     {
     case 0:
@@ -390,27 +390,27 @@ static void PrintOakTextWithMainBgDarkened(u32 battlerId, const u8 *str, u32 del
 
 static void PrintOakText_LoweringStats(u32 battlerId)
 {
-	PrintOakTextWithMainBgDarkened(battlerId, gText_LoweringStats, 64);
+    PrintOakTextWithMainBgDarkened(battlerId, gText_LoweringStats, 64);
 }
 
 static void PrintOakText_WinEarnsPrizeMoney(u32 battlerId)
 {
-	PrintOakTextWithMainBgDarkened(battlerId, gText_WinEarnsPrizeMoney, 64);
+    PrintOakTextWithMainBgDarkened(battlerId, gText_WinEarnsPrizeMoney, 64);
 }
 
 void PrintOakText_HowDisappointing(u32 battlerId)
 {
-	PrintOakTextWithMainBgDarkened(battlerId, gText_HowDissapointing, 64);
+    PrintOakTextWithMainBgDarkened(battlerId, gText_HowDissapointing, 64);
 }
 
 void PrintOakText_OakNoRunningFromATrainer(u32 battlerId)
 {
-	PrintOakTextWithMainBgDarkened(battlerId, gText_OakNoRunningFromATrainer, 1);
+    PrintOakTextWithMainBgDarkened(battlerId, gText_OakNoRunningFromATrainer, 1);
 }
 
 void PrintOakText_InflictingDamageIsKey(u32 battlerId)
 {
-	PrintOakTextWithMainBgDarkened(battlerId, gText_InflictingDamageIsKey, 1);
+    PrintOakTextWithMainBgDarkened(battlerId, gText_InflictingDamageIsKey, 1);
 }
 
 void PrintOakText_KeepAnEyeOnHP(u32 battlerId)
@@ -545,7 +545,7 @@ static void PrintOakText_ForPetesSake(u32 battlerId)
 
 static void PrintOakTextWithMainBgDarkened(u32 battlerId, const u8 *str, u32 delay)
 {
-	// If delay is 0, it's treated as 256.
+    // If delay is 0, it's treated as 256.
     switch (gBattleStruct->simulatedInputState[0])
     {
     case 0:
@@ -585,7 +585,7 @@ static void PrintOakTextWithMainBgDarkened(u32 battlerId, const u8 *str, u32 del
         if (!gPaletteFade.active)
         {
             BtlCtrl_RemoveVoiceoverMessageFrame();
-			BattleControllerComplete(battlerId);
+            BattleControllerComplete(battlerId);
             gBattleCommunication[MSG_DISPLAY] = FALSE;
             gBattleStruct->simulatedInputState[0] = 0;
         }

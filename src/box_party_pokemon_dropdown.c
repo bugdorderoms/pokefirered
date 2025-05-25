@@ -54,7 +54,7 @@ static void PushMap1(u32 idx)
     int run = sBoxPartyPokemonDropdownPtr[idx].mapSize * sBoxPartyPokemonDropdownPtr[idx].src1Height;
     const void * addr = sBoxPartyPokemonDropdownPtr[idx].src1 + run * sBoxPartyPokemonDropdownPtr[idx].map1Rect.destY2 + sBoxPartyPokemonDropdownPtr[idx].map1Rect.destX2 * sBoxPartyPokemonDropdownPtr[idx].mapSize;
     
-	for (i = 0; i < sBoxPartyPokemonDropdownPtr[idx].map1Rect.height; i++, addr += run)
+    for (i = 0; i < sBoxPartyPokemonDropdownPtr[idx].map1Rect.height; i++, addr += run)
         CopyToBgTilemapBufferRect(sBoxPartyPokemonDropdownPtr[idx].bgId, addr, sBoxPartyPokemonDropdownPtr[idx].map1Rect.destX2, sBoxPartyPokemonDropdownPtr[idx].map1Rect.destY2 + i, sBoxPartyPokemonDropdownPtr[idx].map1Rect.width, 1);
 }
 
@@ -64,18 +64,18 @@ static void PushMap2(u32 idx)
     int run = sBoxPartyPokemonDropdownPtr[idx].mapSize * sBoxPartyPokemonDropdownPtr[idx].src2Width;
     const void * addr = sBoxPartyPokemonDropdownPtr[idx].src2 + run * sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY + sBoxPartyPokemonDropdownPtr[idx].map2Rect.destX * sBoxPartyPokemonDropdownPtr[idx].mapSize;
     
-	for (i = 0; i < sBoxPartyPokemonDropdownPtr[idx].map2Rect.height; i++, addr += run)
+    for (i = 0; i < sBoxPartyPokemonDropdownPtr[idx].map2Rect.height; i++, addr += run)
         CopyToBgTilemapBufferRect(sBoxPartyPokemonDropdownPtr[idx].bgId, addr, sBoxPartyPokemonDropdownPtr[idx].map2Rect.destX2, sBoxPartyPokemonDropdownPtr[idx].map2Rect.destY2 + i, sBoxPartyPokemonDropdownPtr[idx].map2Rect.width, 1);
 }
 
 void AllocBoxPartyPokemonDropdowns(u32 num)
 {
     u32 i;
-	
+    
     sBoxPartyPokemonDropdownPtr = Alloc(num * sizeof(struct BPPD_Struct));
     sBoxPartyPokemonDropdownCount = sBoxPartyPokemonDropdownPtr == NULL ? 0 : num;
     
-	for (i = 0; i < sBoxPartyPokemonDropdownCount; i++)
+    for (i = 0; i < sBoxPartyPokemonDropdownCount; i++)
         sBoxPartyPokemonDropdownPtr[i].src1 = NULL;
 }
 
@@ -100,7 +100,7 @@ void SetBoxPartyPokemonDropdownMap2(u32 idx, u32 bgId, const void * src, u16 wid
         bgType = GetBgAttribute(bgId, BG_ATTR_BGTYPE);
         sBoxPartyPokemonDropdownPtr[idx].src1Height = sBGdims[bgType][screenSize].height;
         sBoxPartyPokemonDropdownPtr[idx].src1Width = sBGdims[bgType][screenSize].width;
-		sBoxPartyPokemonDropdownPtr[idx].mapSize = bgType != 0 ? 1 : 2;
+        sBoxPartyPokemonDropdownPtr[idx].mapSize = bgType != 0 ? 1 : 2;
         sBoxPartyPokemonDropdownPtr[idx].bytesPerRow = width * sBoxPartyPokemonDropdownPtr[idx].mapSize;
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.width = width;
         sBoxPartyPokemonDropdownPtr[idx].map2Rect.height = height;

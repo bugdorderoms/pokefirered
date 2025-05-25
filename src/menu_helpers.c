@@ -16,7 +16,7 @@ static EWRAM_DATA const struct YesNoFuncTable *gUnknown_20399C8 = NULL;
 static EWRAM_DATA TaskFunc gUnknown_20399CC = NULL;
 static EWRAM_DATA u8 gUnknown_20399D0 = {0};
 
-static void Task_ContinueTaskAfterMessagePrints(u8 taskId);
+static void Task_ContinueTaskAfterMessagePrints(u32 taskId);
 
 void DisplayMessageAndContinueTask(u32 taskId, u32 windowId, u32 tileNum, u32 paletteNum, u32 fontId, u32 textSpeed, const u8 *string, void *taskFunc)
 {
@@ -38,13 +38,13 @@ bool32 RunTextPrinters_CheckActive(u32 textPrinterId)
     return IsTextPrinterActive(textPrinterId);
 }
 
-static void Task_ContinueTaskAfterMessagePrints(u8 taskId)
+static void Task_ContinueTaskAfterMessagePrints(u32 taskId)
 {
     if (!RunTextPrinters_CheckActive(gUnknown_20399D0))
         gUnknown_20399CC(taskId);
 }
 
-static void Task_CallYesOrNoCallback(u8 taskId)
+static void Task_CallYesOrNoCallback(u32 taskId)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
@@ -124,7 +124,7 @@ void ResetAllBgsCoordinatesAndBgCntRegs(void)
     SetGpuReg(REG_OFFSET_BG2CNT, 0);
     SetGpuReg(REG_OFFSET_BG1CNT, 0);
     SetGpuReg(REG_OFFSET_BG0CNT, 0);
-	ResetAllBgsPos();
+    ResetAllBgsPos();
 }
 
 bool32 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u32 qmax)
@@ -150,7 +150,7 @@ bool32 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u32 qmax)
         (*quantity_p)--;
         if ((*quantity_p) <= 0)
             (*quantity_p) = qmax;
-		
+        
         if ((*quantity_p) == valBefore)
             return FALSE;
         else
@@ -164,7 +164,7 @@ bool32 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u32 qmax)
         (*quantity_p) += 10;
         if ((*quantity_p) > qmax)
             (*quantity_p) = qmax;
-		
+        
         if ((*quantity_p) == valBefore)
             return FALSE;
         else
@@ -178,7 +178,7 @@ bool32 AdjustQuantityAccordingToDPadInput(s16 *quantity_p, u32 qmax)
         (*quantity_p) -= 10;
         if ((*quantity_p) <= 0)
             (*quantity_p) = 1;
-		
+        
         if ((*quantity_p) == valBefore)
             return FALSE;
         else

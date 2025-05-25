@@ -30,18 +30,18 @@ u32 GetScoreForInflictParalyze(u32 attacker, u32 defender);
 
 #define BattlerHasMoveWithFlagInMoveset(var, battlerId, flag)                                              \
 {                                                                                                          \
-	u32 i;                                                                                                 \
-	                                                                                                       \
-	var = FALSE;                                                                                           \
+    u32 i;                                                                                                 \
                                                                                                            \
-	for (i = 0; i < MAX_MON_MOVES; i++)                                                                    \
-	{                                                                                                      \
-		if (AI_THINKING->moves[battlerId][i] && gBattleMoves[AI_THINKING->moves[battlerId][i]].flags.flag) \
-		{                                                                                                  \
-			var = TRUE;                                                                                    \
-			break;                                                                                         \
-		}                                                                                                  \
-	}                                                                                                      \
+    var = FALSE;                                                                                           \
+                                                                                                           \
+    for (i = 0; i < MAX_MON_MOVES; i++)                                                                    \
+    {                                                                                                      \
+        if (AI_THINKING->moves[battlerId][i] && gBattleMoves[AI_THINKING->moves[battlerId][i]].flags.flag) \
+        {                                                                                                  \
+            var = TRUE;                                                                                    \
+            break;                                                                                         \
+        }                                                                                                  \
+    }                                                                                                      \
 }
 
 bool32 BattleAI_KnowsBattlerItem(u32 battlerId);

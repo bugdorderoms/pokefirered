@@ -15,7 +15,7 @@
 #include "constants/songs.h"
 
 static void LoadBgGfxByAnimType(u32 animType);
-static void Task_ZoomAnim(u8 taskId);
+static void Task_ZoomAnim(u32 taskId);
 static void SetSpriteWithCloseness(struct Sprite * sprite, u32 closeness);
 static bool32 IsZoomSpriteCBActive(struct Sprite * sprite);
 static void MonSpriteZoom_UpdateYPos(struct Sprite * sprite, u32 closeness);
@@ -25,7 +25,7 @@ static void StopMonWiggleAnim(struct PokemonSpecialAnimScene * scene);
 static void SpriteCallback_MonSpriteWiggle(struct Sprite * sprite);
 static void LoadMonSpriteGraphics(u16 *tilees, u16 *palette);
 static struct Sprite * PSA_CreateItemIconObject(u32 itemId);
-static void Task_ItemUseOnMonAnim(u8 taskId);
+static void Task_ItemUseOnMonAnim(u32 taskId);
 static void CreateSprites_UseItem_OutwardSpiralDots(u32 taskId, s16 *data, struct Sprite * sprite);
 static void SpriteCB_OutwardSpiralDots(struct Sprite * sprite);
 static void InitItemIconSpriteState(struct PokemonSpecialAnimScene * scene, struct Sprite * sprite, u32 closeness);
@@ -39,12 +39,12 @@ static u32 AnyStarSpritesActive(void);
 static void SpriteCB_Star(struct Sprite * sprite);
 static void PSAScene_SeedRandomInTask(struct PokemonSpecialAnimScene * scene);
 static void StopMakingOutwardSpiralDots(void);
-static void Task_UseItem_OutwardSpiralDots(u8 taskId);
+static void Task_UseItem_OutwardSpiralDots(u32 taskId);
 static u16 PSAScene_RandomFromTask(u32 taskId);
 static void SpriteCallback_UseItem_OutwardSpiralDots(struct Sprite * sprite);
 static void LoadOutwardSpiralDotsGfx(void);
 static bool32 IsOutwardSpiralDotsTaskRunning(void);
-static void Task_LevelUpVerticalSprites(u8 taskId);
+static void Task_LevelUpVerticalSprites(u32 taskId);
 static void CreateLevelUpVerticalSprite(u32 taskId, s16 *data);
 static void SpriteCB_LevelUpVertical(struct Sprite * sprite);
 
@@ -490,7 +490,7 @@ void PSA_UseTM_CleanUpForCancel(void)
 bool32 PSA_UseTM_RunZoomOutAnim(void)
 {
     struct PokemonSpecialAnimScene * scene = PSA_GetSceneWork();
-	
+    
     switch (scene->state)
     {
     case 0:
@@ -587,7 +587,7 @@ static void LoadBgGfxByAnimType(u32 animType)
 {
     CopyToBgTilemapBuffer(3, sBg3Map_PSA, 0, 0x000);
     DecompressAndCopyTileDataToVram(3, sBg3Tiles_PSA, 0, 0x000, 0);
-	
+    
     if (animType != 4)
         LoadPalette(sBgPals_PSA_Any, 0x00, 0x20);
     else
@@ -601,21 +601,21 @@ void PSA_CreateMonSpriteAtCloseness(u32 closeness)
     void * r9;
     void * r4;
     u32 spriteId;
-	
-	scene->monSpriteY1 = 0x48;
-	scene->monSpriteY2 = 0x68;
+    
+    scene->monSpriteY1 = 0x48;
+    scene->monSpriteY2 = 0x68;
 
     r6 = Alloc(0x2000);
     r9 = Alloc(0x2000);
     r4 = Alloc(0x100);
     if (r6 != NULL && r9 != NULL && r4 != NULL)
     {
-		struct Pokemon * pokemon = PSA_GetPokemon();
+        struct Pokemon * pokemon = PSA_GetPokemon();
 
         LoadSpecialPokePic(GetMonData(pokemon, MON_DATA_SPECIES), GetMonData(pokemon, MON_DATA_PERSONALITY), TRUE, r6);
         LZDecompressWram(GetMonSpritePal(pokemon), r4);
         LoadMonSpriteGraphics(r6, r4);
-		
+        
         spriteId = CreateSprite(&sSpriteTemplate_MonSprite, 120, scene->monSpriteY1, 4);
         if (spriteId != MAX_SPRITES)
         {
@@ -624,7 +624,7 @@ void PSA_CreateMonSpriteAtCloseness(u32 closeness)
         }
         else
             scene->monSprite = NULL;
-		
+        
         scene->lastCloseness = closeness;
     }
     if (r6 != NULL) Free(r6);
@@ -646,7 +646,7 @@ void PSA_SetUpZoomAnim(u32 closeness)
 {
     struct PokemonSpecialAnimScene * scene = PSA_GetSceneWork();
     u32 taskId;
-	
+    
     if (closeness != scene->lastCloseness)
     {
         taskId = CreateTask(Task_ZoomAnim, 4);
@@ -666,11 +666,11 @@ bool32 PSA_IsZoomTaskActive(void)
     return FuncIsActiveTask(Task_ZoomAnim);
 }
 
-static void Task_ZoomAnim(u8 taskId)
+static void Task_ZoomAnim(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
     struct Sprite * sprite = (void *)GetWordTaskArg(taskId, tOff_MonSprite);
-	
+    
     switch (tState)
     {
     case 0:
@@ -685,10 +685,10 @@ static void Task_ZoomAnim(u8 taskId)
         {
             PlaySE(SE_BALL_TRAY_EXIT);
             MonSpriteZoom_UpdateYPos(sprite, tCurrCloseness);
-			
+            
             if (tHasItemSprite)
                 ItemSpriteZoom_UpdateYPos((void *)GetWordTaskArg(taskId, tOff_ItemSprite), tCurrCloseness);
-			
+            
             if (tCurrCloseness == tFinalCloseness)
             {
                 PSA_GetSceneWork()->lastCloseness = tFinalCloseness;
@@ -772,7 +772,7 @@ static void SpriteCallback_MonSpriteWiggle(struct Sprite * sprite)
     {
         sprite->data[7] = 0;
         sprite->data[6]++;
-		
+        
         if (sprite->data[1] != 0 && sprite->data[6] >= sprite->data[1])
         {
             sprite->x2 = 0;
@@ -825,9 +825,9 @@ void PSA_SetUpItemUseOnMonAnim(u32 itemId, u32 closeness, bool32 a2)
 {
     struct PokemonSpecialAnimScene * scene = PSA_GetSceneWork();
     u32 taskId;
-	
+    
     scene->itemIconSprite = PSA_CreateItemIconObject(itemId);
-	
+    
     if (scene->itemIconSprite != NULL)
     {
         InitItemIconSpriteState(scene, scene->itemIconSprite, closeness);
@@ -845,7 +845,7 @@ void PSA_SetUpItemUseOnMonAnim(u32 itemId, u32 closeness, bool32 a2)
 void CreateItemIconSpriteAtMaxCloseness(u32 itemId)
 {
     struct PokemonSpecialAnimScene * scene = PSA_GetSceneWork();
-	
+    
     scene->itemIconSprite = PSA_CreateItemIconObject(itemId);
     if (scene->itemIconSprite != NULL)
     {
@@ -861,7 +861,7 @@ static struct Sprite * PSA_CreateItemIconObject(u32 itemId)
 
     if (spriteId == MAX_SPRITES)
         return NULL;
-	
+    
     gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_DOUBLE;
     gSprites[spriteId].oam.priority = 1;
     gSprites[spriteId].subpriority = 1;
@@ -876,11 +876,11 @@ bool32 PSA_IsItemUseOnMonAnimActive(void)
     return FuncIsActiveTask(Task_ItemUseOnMonAnim);
 }
 
-static void Task_ItemUseOnMonAnim(u8 taskId)
+static void Task_ItemUseOnMonAnim(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
     struct Sprite * sprite = (void *)GetWordTaskArg(taskId, tOff_ItemSprite);
-	
+    
     switch (tState)
     {
     case 0:
@@ -947,9 +947,9 @@ static void CreateSprites_UseItem_OutwardSpiralDots(u32 taskId, s16 *data, struc
     int x = sprite->x + sprite->x2 - 4;
     int y = sprite->y + sprite->y2 - 4;
     u32 i, spriteId;
-	
+    
     BlendPalettes(0x10000 << IndexOfSpritePaletteTag(5), 16, tBlendColor);
-	
+    
     for (i = 0; i < 15; i++)
     {
         spriteId = CreateSprite(&sSpriteTemplate_UseItem_OutwardSpiralDots, x, y, 0);
@@ -967,7 +967,7 @@ static void CreateSprites_UseItem_OutwardSpiralDots(u32 taskId, s16 *data, struc
 static void SpriteCB_OutwardSpiralDots(struct Sprite * sprite)
 {
     s16 *data = sprite->data;
-	
+    
     if (data[0] < 16)
     {
         data[0]++;
@@ -1005,7 +1005,7 @@ static void InitItemIconSpriteState(struct PokemonSpecialAnimScene * scene, stru
     }
     sprite->x -= 4;
     sprite->y -= 4;
-	
+    
     switch (PSA_GetAnimType())
     {
         case 4:
@@ -1085,7 +1085,7 @@ static void StartZoomOutAnimForUseTM(u32 closeness)
 {
     struct PokemonSpecialAnimScene * scene = PSA_GetSceneWork();
     u32 taskId;
-	
+    
     if (closeness != scene->lastCloseness)
     {
         taskId = CreateTask(Task_ZoomAnim, 1);
@@ -1115,12 +1115,12 @@ static void StartZoomOutAnimForUseTM(u32 closeness)
 static void CreateStarSprites(struct PokemonSpecialAnimScene * scene)
 {
     u32 i, spriteId;
-	
+    
     LoadCompressedSpriteSheet(&sSpriteSheet_Star);
     LoadSpritePalette(&sSpritePalette_Star);
-	
+    
     scene->field_0002 = 0;
-	
+    
     for (i = 0; i < 3; i++)
     {
         spriteId = CreateSprite(&sSpriteTemplate_Star, 120 + sStarCoordOffsets[i][0],  scene->monSpriteY2 + sStarCoordOffsets[i][1], 2);
@@ -1190,7 +1190,7 @@ static void StopMakingOutwardSpiralDots(void)
         gTasks[taskId].tState = 1;
 }
 
-static void Task_UseItem_OutwardSpiralDots(u8 taskId)
+static void Task_UseItem_OutwardSpiralDots(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
 
@@ -1201,18 +1201,18 @@ static void Task_UseItem_OutwardSpiralDots(u8 taskId)
         {
             u32 spriteId, x, y, x2, y2, ampl;
             struct Sprite * sprite = PSA_GetSceneWork()->itemIconSprite;
-			
+            
             x = sprite->x + sprite->x2;
             y = sprite->y + sprite->y2;
-			
+            
             ampl = (PSAScene_RandomFromTask(taskId) % 21) + 70;
-			
+            
             x2 = x + ((u32)(gSineTable[tAngle + 0x40] * ampl) >> 8);
             y2 = y + ((u32)(gSineTable[tAngle]        * ampl) >> 8);
-			
+            
             tAngle += 0x4C;
             tAngle &= 0xFF;
-			
+            
             spriteId = CreateSprite(&sSpriteTemplate_UseItem_OutwardSpiralDots, x2, y2, 0);
             if (spriteId != MAX_SPRITES)
             {
@@ -1250,9 +1250,9 @@ static u16 PSAScene_RandomFromTask(u32 taskId)
 static void SpriteCallback_UseItem_OutwardSpiralDots(struct Sprite * sprite)
 {
     int x, y;
-	
+    
     sprite->tsRadius += sprite->tsSpeed;
-	
+    
     if (sprite->tsRadius > 255)
     {
         gTasks[sprite->tsTaskId].tActiveSprCt--;
@@ -1312,19 +1312,19 @@ static bool32 IsOutwardSpiralDotsTaskRunning(void)
 
 void CreateLevelUpVerticalSpritesTask(u16 x, u16 y, u32 tileTag, u32 paletteTag, u32 priority, u32 subpriority)
 {
-	u32 taskId;
+    u32 taskId;
     static struct CompressedSpriteSheet spriteSheet;
     static struct SpritePalette spritePalette;
-	
+    
     spriteSheet.tag = tileTag;
     spriteSheet.data = sSpriteTiles_LevelUpVertical;
     spriteSheet.size = sSpriteTiles_LevelUpVertical[0] >> 8;
-	LoadCompressedSpriteSheet(&spriteSheet);
-	
+    LoadCompressedSpriteSheet(&spriteSheet);
+    
     spritePalette.data = sSpritePals_LevelUpVertical;
     spritePalette.tag = paletteTag;
     LoadSpritePalette(&spritePalette);
-	
+    
     taskId = CreateTask(Task_LevelUpVerticalSprites, 0);
     gTasks[taskId].tXpos = x - 32;
     gTasks[taskId].tYpos = y + 32;
@@ -1332,7 +1332,7 @@ void CreateLevelUpVerticalSpritesTask(u16 x, u16 y, u32 tileTag, u32 paletteTag,
     gTasks[taskId].tPaletteTag = paletteTag;
     gTasks[taskId].tPriority = priority;
     gTasks[taskId].tSubpriority = subpriority;
-	
+    
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_EFFECT_NONE | BLDCNT_TGT2_ALL);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(12, 6));
 }
@@ -1342,10 +1342,10 @@ bool32 LevelUpVerticalSpritesTaskIsRunning(void)
     return FuncIsActiveTask(Task_LevelUpVerticalSprites);
 }
 
-static void Task_LevelUpVerticalSprites(u8 taskId)
+static void Task_LevelUpVerticalSprites(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
-	
+    
     switch (tState)
     {
     case 0:
@@ -1378,12 +1378,12 @@ static void CreateLevelUpVerticalSprite(u32 taskId, s16 *data)
 {
     u32 spriteId;
     struct SpriteTemplate template = sSpriteTemplate_LevelUpVertical;
-	
+    
     template.tileTag = tTileTag;
     template.paletteTag = tPaletteTag;
-	
+    
     tMadeSprCt++;
-	
+    
     spriteId = CreateSprite(&template, ((tMadeSprCt * 219) & 0x3F) + tXpos, tYpos, tSubpriority);
     if (spriteId != MAX_SPRITES)
     {
@@ -1493,7 +1493,7 @@ void DrawLevelUpWindowPg2(u32 windowId, u16 *currStats, u32 bgColor, u32 fgColor
             ndigits = 2;
         else
             ndigits = 1;
-		
+        
         ConvertIntToDecimalStringN(textbuf, statsRearrange[i], STR_CONV_MODE_LEFT_ALIGN, ndigits);
         x = 6 * (4 - ndigits);
         AddTextPrinterParameterized3(windowId, 2, 0, i * 15, textColor, TEXT_SPEED_FF, sLevelUpWindowStatNames[i]);

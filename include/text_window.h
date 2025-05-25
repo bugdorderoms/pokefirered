@@ -9,18 +9,18 @@ struct TilesPal
     u16* pal;
 };
 
-void rbox_fill_rectangle(u8 windowId);
-const u16* stdpal_get(u8 id);
+void rbox_fill_rectangle(u32 windowId);
+const u16* stdpal_get(u32 id);
 const u16* GetOverworldTextboxPalettePtr(void);
-void TextWindow_LoadResourcesStdFrame0(u8 windowId, u16 tileStart, u8 palette);
-void TextWindow_SetStdFrame0_WithPal(u8 windowId, u16 tileStart, u8 palette);
-void TextWindow_SetUserSelectedFrame(u8 windowId, u16 tileStart, u8 palette);
-void LoadUserWindowBorderGfx(u8 windowId, u16 tileStart, u8 palette);
-void DrawWindowBorderWithStdpal3(u8 bgId, u16 tileStart, u8 palette);
-void DrawTextBorderOuter(u8 windowId, u16 tileStart, u8 palette);
-void DrawTextBorderInner(u8 windowId, u16 tileNum, u8 palNum);
-void TextWindow_LoadTilesStdFrame1(u8 windowId, u16 destOffset);
-void LoadSignpostWindowGfx(u8 windowId, u16 destOffset, u8 palIdx);
-void LoadDexNavWindowGfx(u8 windowId, u16 destOffset, u8 palOffset);
+void TextWindow_LoadResourcesStdFrame0(u32 windowId, u16 tileStart, u32 palette);
+void TextWindow_SetStdFrame0_WithPal(u32 windowId, u16 tileStart, u32 palette);
+void TextWindow_SetUserSelectedFrame(u32 windowId, u16 tileStart, u32 palette);
+void LoadUserWindowBorderGfx(u32 windowId, u16 tileStart, u32 palette);
+void DrawWindowBorderWithStdpal3(u32 bgId, u16 tileStart, u32 palette);
+void DrawTextBorderOuter(u32 windowId, u16 tileStart, u32 palette);
+void DrawTextBorderInner(u32 windowId, u16 tileNum, u32 palNum);
+void TextWindow_LoadTilesStdFrame1(u32 windowId, u16 destOffset);
+void LoadSignpostWindowGfx(u32 windowId, u16 destOffset, u32 palIdx);
+void LoadDexNavWindowGfx(u32 windowId, u16 destOffset, u32 palOffset);
 
 #endif // GUARD_TEXT_WINDOW_H

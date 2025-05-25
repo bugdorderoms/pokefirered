@@ -9,9 +9,9 @@
 static EWRAM_DATA u8 sEscalatorTaskId = 0;
 
 static void SetEscalatorMetatile(u32 taskId, const s16 *metatileIds, u32 metatileMasks);
-static void Task_DrawEscalator(u8 taskId);
-static void Task_DrawTeleporterHousing(u8 taskId);
-static void Task_DrawTeleporterCable(u8 taskId);
+static void Task_DrawEscalator(u32 taskId);
+static void Task_DrawTeleporterHousing(u32 taskId);
+static void Task_DrawTeleporterCable(u32 taskId);
 
 #define ESCALATOR_STAGES     3
 #define LAST_ESCALATOR_STAGE (ESCALATOR_STAGES - 1)
@@ -120,7 +120,7 @@ static void SetEscalatorMetatile(u32 taskId, const s16 *metatileIds, u32 metatil
     }
 }
 
-static void Task_DrawEscalator(u8 taskId)
+static void Task_DrawEscalator(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
     u32 state;
@@ -150,7 +150,7 @@ static void Task_DrawEscalator(u8 taskId)
         break;
     case 6:
         SetEscalatorMetatile(taskId, sEscalatorMetatiles_TopNextRail, 0);
-		break;
+        break;
     }
     tState = (tState + 1) & 7;
     state = tState & 7;
@@ -166,17 +166,17 @@ static void Task_DrawEscalator(u8 taskId)
 
 void StartEscalator(bool32 goingUp)
 {
-	u32 taskId = CreateTask(Task_DrawEscalator, 0);
+    u32 taskId = CreateTask(Task_DrawEscalator, 0);
     s16 *data = gTasks[taskId].data;
 
     PlayerGetDestCoords(&tPlayerX, &tPlayerY);
-	
+    
     tState = 0;
     tTransitionStage = 0;
     tGoingUp = goingUp;
-	
-	sEscalatorTaskId = taskId;
-	
+    
+    sEscalatorTaskId = taskId;
+    
     Task_DrawEscalator(taskId);
 }
 
@@ -191,7 +191,7 @@ bool32 IsEscalatorMoving(void)
     {
         if (gTasks[sEscalatorTaskId].tTransitionStage != LAST_ESCALATOR_STAGE)
             return TRUE;
-		
+        
         return FALSE;
     }
     else
@@ -233,7 +233,7 @@ void AnimateTeleporterHousing(void)
     }    
 }
 
-static void Task_DrawTeleporterHousing(u8 taskId)
+static void Task_DrawTeleporterHousing(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
     
@@ -265,10 +265,10 @@ static void Task_DrawTeleporterHousing(u8 taskId)
     
     MapGridSetMetatileIdAt(tX, tY, METATILE_SeaCottage_Teleporter_Light_Green | METATILE_COLLISION_MASK);
     MapGridSetMetatileIdAt(tX, tY + 2, METATILE_SeaCottage_Teleporter_Door | METATILE_COLLISION_MASK);
-	
+    
     CurrentMapDrawMetatileAt(tX, tY);
     CurrentMapDrawMetatileAt(tX, tY + 2);
-	
+    
     DestroyTask(taskId);
 }
 
@@ -279,13 +279,13 @@ void AnimateTeleporterCable(void)
     
     tTimer = 0;
     tState = 0;
-	
+    
     PlayerGetDestCoords(&tX, &tY);
     tX += 4;
     tY -= 5;
 }
 
-static void Task_DrawTeleporterCable(u8 taskId)
+static void Task_DrawTeleporterCable(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
     

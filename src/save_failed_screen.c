@@ -41,16 +41,16 @@ static const struct BgTemplate sFlashNotDetectedBgTemplates[] =
 
 static const struct WindowTemplate sFlashNotDetectedWinTemplates[] =
 {
-	{
-		.bg = 0,
-		.tilemapLeft = 3,
-		.tilemapTop = 2,
-		.width = 24,
-		.height = 16,
-		.paletteNum = 15,
-		.baseBlock = 1,
-	},
-	DUMMY_WIN_TEMPLATE,
+    {
+        .bg = 0,
+        .tilemapLeft = 3,
+        .tilemapTop = 2,
+        .width = 24,
+        .height = 16,
+        .paletteNum = 15,
+        .baseBlock = 1,
+    },
+    DUMMY_WIN_TEMPLATE,
 };
 
 void SetNotInSaveFailedScreen(void)
@@ -185,18 +185,18 @@ static void PrintTextOnSaveFailedScreen(const u8 *str)
 static bool32 TryWipeDamagedSectors(void)
 {
     u32 i;
-	
+    
     for (i = 0; gDamagedSaveSectors != 0 && i < 3; i++)
     {
         if (WipeDamagedSectors(gDamagedSaveSectors))
             return FALSE;
-		
+        
         HandleSavingData(sSaveType);
     }
-	
+    
     if (gDamagedSaveSectors != 0)
         return FALSE;
-	
+    
     return TRUE;
 }
 
@@ -204,9 +204,9 @@ static bool32 VerifySectorWipe(u32 sector)
 {
     u16 sector0 = sector;
     u32 i, *saveDataBuffer = (void *)&gSaveDataBuffer;
-	
+    
     ReadFlash(sector0, 0, saveDataBuffer, 0x1000);
-	
+    
     for (i = 0; i < 0x1000 / sizeof(u32); i++, saveDataBuffer++)
     {
         if (*saveDataBuffer != 0)
@@ -239,7 +239,7 @@ static bool32 WipeSector(u32 sector)
 static bool32 WipeDamagedSectors(u32 damagedSectors)
 {
     u32 i;
-	
+    
     for (i = 0; i < 32; i++)
     {
         if (damagedSectors & Bit(i))
@@ -256,43 +256,43 @@ static bool32 WipeDamagedSectors(u32 damagedSectors)
 
 void CB2_FlashNotDetectedScreen(void)
 {
-	switch (gMain.state)
-	{
-		case 0: // Reset gpu regs
-			SetGpuReg(REG_OFFSET_DISPCNT, 0);
-			SetGpuReg(REG_OFFSET_BLDCNT, 0);
-			SetGpuReg(REG_OFFSET_BG0CNT, 0);
-			SetGpuReg(REG_OFFSET_BG0HOFS, 0);
-			SetGpuReg(REG_OFFSET_BG0VOFS, 0);
-			break;
-		case 1: // Clear graphical rams
-			DmaFill16(3, 0, VRAM, VRAM_SIZE);
-			DmaFill32(3, 0, OAM, OAM_SIZE);
-			DmaFill16(3, 0, PLTT, PLTT_SIZE);
-			break;
-		case 2: // Reset graphical structs
-			DeactivateAllTextPrinters();
-			ResetTasks();
-			ResetPaletteFade();
-			ResetBgsAndClearDma3BusyFlags(FALSE);
-			break;
-		case 3: // Init bgs
-			InitBgsFromTemplates(0, sFlashNotDetectedBgTemplates, ARRAY_COUNT(sFlashNotDetectedBgTemplates));
-			break;
-		case 4: // Init windows
-			InitWindows(sFlashNotDetectedWinTemplates);
-			TextWindow_SetStdFrame0_WithPal(0, 0x214, 0xF0);
-			DrawStdFrameWithCustomTileAndPalette(0, TRUE, 0x214, 15);
-			AddTextPrinterParameterized(0, 2, sText_FlashNotDetected, 8, 1, 0, NULL); // Print text
-			break;
-		case 5: // Update palette
-			TransferPlttBuffer();
-			*(u16*)PLTT = RGB(17, 18, 31); // Set first color to blue for the background
-			// Show bg 0
-			ShowBg(0);
-			break;
-		case 6:
-			return;
-	}
-	++gMain.state;
+    switch (gMain.state)
+    {
+        case 0: // Reset gpu regs
+            SetGpuReg(REG_OFFSET_DISPCNT, 0);
+            SetGpuReg(REG_OFFSET_BLDCNT, 0);
+            SetGpuReg(REG_OFFSET_BG0CNT, 0);
+            SetGpuReg(REG_OFFSET_BG0HOFS, 0);
+            SetGpuReg(REG_OFFSET_BG0VOFS, 0);
+            break;
+        case 1: // Clear graphical rams
+            DmaFill16(3, 0, VRAM, VRAM_SIZE);
+            DmaFill32(3, 0, OAM, OAM_SIZE);
+            DmaFill16(3, 0, PLTT, PLTT_SIZE);
+            break;
+        case 2: // Reset graphical structs
+            DeactivateAllTextPrinters();
+            ResetTasks();
+            ResetPaletteFade();
+            ResetBgsAndClearDma3BusyFlags(FALSE);
+            break;
+        case 3: // Init bgs
+            InitBgsFromTemplates(0, sFlashNotDetectedBgTemplates, ARRAY_COUNT(sFlashNotDetectedBgTemplates));
+            break;
+        case 4: // Init windows
+            InitWindows(sFlashNotDetectedWinTemplates);
+            TextWindow_SetStdFrame0_WithPal(0, 0x214, 0xF0);
+            DrawStdFrameWithCustomTileAndPalette(0, TRUE, 0x214, 15);
+            AddTextPrinterParameterized(0, 2, sText_FlashNotDetected, 8, 1, 0, NULL); // Print text
+            break;
+        case 5: // Update palette
+            TransferPlttBuffer();
+            *(u16*)PLTT = RGB(17, 18, 31); // Set first color to blue for the background
+            // Show bg 0
+            ShowBg(0);
+            break;
+        case 6:
+            return;
+    }
+    ++gMain.state;
 }

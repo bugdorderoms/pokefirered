@@ -37,9 +37,9 @@ extern u8 gExpandedPlaceholder_Groudon[];
 extern u8 gExpandedPlaceholder_Red[];
 extern u8 gExpandedPlaceholder_Green[];
 
-static inline u8 *StringCopy_WithLimit(u8 *dest, const u8 *src, u8 limit)
+u8 *StringCopy_WithLimit(u8 *dest, const u8 *src, u32 limit)
 {
-	u8 i;
+    u32 i;
 
     for (i = 0; i < limit; i++)
     {
@@ -52,32 +52,17 @@ static inline u8 *StringCopy_WithLimit(u8 *dest, const u8 *src, u8 limit)
     return &dest[i];
 }
 
-static inline u8 *StringGet_WithLimit(u8 *str, u8 limit)
+u8 *StringGet_WithLimit(u8 *str, u32 limit)
 {
-	u8 i;
+    u32 i;
 
     for (i = 0; i < limit; i++)
-	{
+    {
         if (str[i] == EOS)
             return &str[i];
-	}
+    }
     str[i] = EOS;
     return &str[i];
-}
-
-u8 *StringCopy_Nickname(u8 *dest, const u8 *src)
-{
-	return StringCopy_WithLimit(dest, src, POKEMON_NAME_LENGTH);
-}
-
-u8 *StringGet_Nickname(u8 *str)
-{
-    return StringGet_WithLimit(str, POKEMON_NAME_LENGTH);
-}
-
-u8 *StringCopy7(u8 *dest, const u8 *src)
-{
-	return StringCopy_WithLimit(dest, src, 7);
 }
 
 u8 *StringCopy(u8 *dest, const u8 *src)
@@ -100,9 +85,9 @@ u8 *StringAppend(u8 *dest, const u8 *src)
     return StringCopy(dest, src);
 }
 
-u8 *StringCopyN(u8 *dest, const u8 *src, u8 n)
+u8 *StringCopyN(u8 *dest, const u8 *src, u32 n)
 {
-    u16 i;
+    u32 i;
 
     for (i = 0; i < n; i++)
         dest[i] = src[i];
@@ -110,7 +95,7 @@ u8 *StringCopyN(u8 *dest, const u8 *src, u8 n)
     return &dest[n];
 }
 
-u8 *StringAppendN(u8 *dest, const u8 *src, u8 n)
+u8 *StringAppendN(u8 *dest, const u8 *src, u32 n)
 {
     while (*dest != EOS)
         dest++;
@@ -134,7 +119,7 @@ s32 StringCompare(const u8 *str1, const u8 *str2)
     {
         if (*str1 == EOS)
             return 0;
-		
+        
         str1++;
         str2++;
     }
@@ -147,44 +132,45 @@ s32 StringCompareN(const u8 *str1, const u8 *str2, u32 n)
     {
         if (*str1 == EOS)
             return 0;
-		
+        
         str1++;
         str2++;
-		
+        
         if (--n == 0)
             return 0;
     }
     return *str1 - *str2;
 }
 
-u8 *ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode, u8 n)
+u8 *ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode, u32 n)
 {
     enum { WAITING_FOR_NONZERO_DIGIT, WRITING_DIGITS, WRITING_SPACES } state;
     s32 powerOfTen, largestPowerOfTen = sPowersOfTen[n - 1];
-	
-	switch (mode)
-	{
-		case STR_CONV_MODE_RIGHT_ALIGN:
-			state = WRITING_SPACES;
-			break;
-		case STR_CONV_MODE_LEADING_ZEROS:
-			state = WRITING_DIGITS;
-			break;
-		default:
-			state = WAITING_FOR_NONZERO_DIGIT;
-			break;
-	}
-	
-	// Display an "-" before the numbers if they are a negative value
-	if (value < 0)
-	{
-		*dest++ = CHAR_HYPHEN;
-		value *= -1;
-	}
+    
+    switch (mode)
+    {
+        case STR_CONV_MODE_RIGHT_ALIGN:
+            state = WRITING_SPACES;
+            break;
+        case STR_CONV_MODE_LEADING_ZEROS:
+            state = WRITING_DIGITS;
+            break;
+        default:
+            state = WAITING_FOR_NONZERO_DIGIT;
+            break;
+    }
+    
+    // Display an "-" before the numbers if they are a negative value
+    if (value < 0)
+    {
+        *dest++ = CHAR_HYPHEN;
+        value *= -1;
+    }
 
     for (powerOfTen = largestPowerOfTen; powerOfTen > 0; powerOfTen /= 10)
     {
-        u8 c, *out;
+        u32 c;
+        u8 *out;
         u16 digit = value / powerOfTen;
         s32 temp = value - (powerOfTen * digit);
 
@@ -224,8 +210,8 @@ u8 *StringExpandPlaceholders(u8 *dest, const u8 *src)
 {
     for (;;)
     {
-        u8 c = *src++;
-        u8 placeholderId;
+        u32 c = *src++;
+        u32 placeholderId;
         u8 *expandedString;
 
         switch (c)
@@ -279,7 +265,7 @@ u8 *StringBraille(u8 *dest, const u8 *src)
 
     for (;;)
     {
-        u8 c = *src++;
+        u32 c = *src++;
 
         switch (c)
         {
@@ -434,7 +420,7 @@ u8 *GetExpandedPlaceholder(u32 id)
         return funcs[id]();
 }
 
-u8 *StringFill(u8 *dest, u8 c, u16 n)
+u8 *StringFill(u8 *dest, u32 c, u16 n)
 {
     u16 i;
 
@@ -445,7 +431,7 @@ u8 *StringFill(u8 *dest, u8 c, u16 n)
     return dest;
 }
 
-u8 *StringCopyPadded(u8 *dest, const u8 *src, u8 c, u16 n)
+u8 *StringCopyPadded(u8 *dest, const u8 *src, u32 c, u16 n)
 {
     while (*src != EOS)
     {
@@ -465,11 +451,6 @@ u8 *StringCopyPadded(u8 *dest, const u8 *src, u8 c, u16 n)
     return dest;
 }
 
-u8 *StringFillWithTerminator(u8 *dest, u16 n)
-{
-    return StringFill(dest, EOS, n);
-}
-
 u8 *StringCopyN_Multibyte(u8 *dest, const u8 *src, u32 n)
 {
     u32 i;
@@ -481,7 +462,7 @@ u8 *StringCopyN_Multibyte(u8 *dest, const u8 *src, u32 n)
         else
         {
             *dest++ = *src++;
-			
+            
             if (*(src - 1) == 0xF9)
                 *dest++ = *src++;
         }
@@ -498,14 +479,14 @@ u32 StringLength_Multibyte(const u8 *str)
     {
         if (*str == 0xF9)
             str++;
-		
+        
         str++;
         length++;
     }
     return length;
 }
 
-u8 *WriteColorChangeControlCode(u8 *dest, u32 colorType, u8 color)
+u8 *WriteColorChangeControlCode(u8 *dest, u32 colorType, u32 color)
 {
     *dest = 0xFC;
     dest++;
@@ -531,7 +512,7 @@ u8 *WriteColorChangeControlCode(u8 *dest, u32 colorType, u8 color)
     return dest;
 }
 
-u8 GetExtCtrlCodeLength(u8 code)
+u32 GetExtCtrlCodeLength(u32 code)
 {
     static const u8 lengths[] =
     {
@@ -561,11 +542,11 @@ u8 GetExtCtrlCodeLength(u8 code)
         1,
         1,
     };
-    u8 length = 0;
-	
+    u32 length = 0;
+    
     if (code < ARRAY_COUNT(lengths))
         length = lengths[code];
-	
+    
     return length;
 }
 
@@ -583,7 +564,7 @@ s32 StringCompareWithoutExtCtrlCodes(const u8 *str1, const u8 *str2)
 {
     s32 retVal = 0;
 
-    while (1)
+    while (TRUE)
     {
         str1 = SkipExtCtrlCode(str1);
         str2 = SkipExtCtrlCode(str2);
@@ -613,7 +594,7 @@ s32 StringCompareWithoutExtCtrlCodes(const u8 *str1, const u8 *str2)
     return retVal;
 }
 
-void ConvertInternationalString(u8 *s, u8 language)
+void ConvertInternationalString(u8 *s, u32 language)
 {
     if (language == LANGUAGE_JAPANESE)
     {
@@ -642,7 +623,7 @@ void StripExtCtrlCodes(u8 *str)
 {
     u16 srcIndex = 0;
     u16 destIndex = 0;
-	
+    
     while (str[srcIndex] != 0xFF)
     {
         if (str[srcIndex] == 0xFC)
@@ -656,77 +637,77 @@ void StripExtCtrlCodes(u8 *str)
     str[destIndex] = 0xFF;
 }
 
-u8 ReformatStringToMaxChars(const u8 *src, u8 fontId, u8 maxChars, bool8 allowsJumpLine)
+u32 ReformatStringToMaxChars(const u8 *src, u32 fontId, u32 maxChars, bool32 allowsJumpLine)
 {
-	u8 buffer[1000], *lineStart, numLines = 1, *dest = gStringVar4, maxWidth = 5 * maxChars;
-	bool8 clearedPrompt = FALSE; // handle logic for prompt clear. "\p".
-	u32 k = 0;
+    u8 buffer[1000], *lineStart, *dest = gStringVar4;
+    u32 k = 0, numLines = 1, maxWidth = 5 * maxChars;
+    bool32 clearedPrompt = FALSE; // handle logic for prompt clear. "\p".
 
-	memset(dest, 0xFF, 1000);
+    memset(dest, 0xFF, 1000);
 
-	lineStart = dest;
-	
-	StringExpandPlaceholders(buffer, src);
-	
-	while (buffer[k] != EOS)
-	{
-		if (GetStringWidth(fontId, lineStart, -1) >= maxWidth)
-		{
-			do
-			{
-				dest--;
-				k--;
-			} while (buffer[k] != CHAR_SPACE && buffer[k] != CHAR_NEWLINE);
-			
-			if (buffer[k + 1] != EOS)
-			{
-				++numLines;
-				
-				if (numLines > 2 && !clearedPrompt && allowsJumpLine)
-					*dest = CHAR_PROMPT_SCROLL;
-				else
-					*dest = CHAR_NEWLINE;
-				
-				clearedPrompt = FALSE;
-			}
-			lineStart = ++dest;
-		}
-		else
-		{
-			*dest = buffer[k];
-			
-			switch (buffer[k])
-			{
-				case CHAR_NEWLINE:
-				    if (allowsJumpLine)
-					{
-						++numLines;
-						
-						if (numLines > 2 && !clearedPrompt)
-							*dest = CHAR_PROMPT_SCROLL;
-						
-						lineStart = dest + 1;
-						clearedPrompt = FALSE;
-					}
-					else if (buffer[k - 1] != CHAR_SPACE)
-						*dest = CHAR_SPACE;
-					else
-						dest--;
-					break;
-				case CHAR_PROMPT_SCROLL:
-				    ++numLines;
-					lineStart = dest + 1;
-					break;
-				case CHAR_PROMPT_CLEAR:
-				    lineStart = dest + 1;
-					clearedPrompt = TRUE;
-					break;
-			}
-			dest++;
-		}
-		k++;
-	}
-	*dest = EOS;
+    lineStart = dest;
+    
+    StringExpandPlaceholders(buffer, src);
+    
+    while (buffer[k] != EOS)
+    {
+        if (GetStringWidth(fontId, lineStart, -1) >= maxWidth)
+        {
+            do
+            {
+                dest--;
+                k--;
+            } while (buffer[k] != CHAR_SPACE && buffer[k] != CHAR_NEWLINE);
+            
+            if (buffer[k + 1] != EOS)
+            {
+                ++numLines;
+                
+                if (numLines > 2 && !clearedPrompt && allowsJumpLine)
+                    *dest = CHAR_PROMPT_SCROLL;
+                else
+                    *dest = CHAR_NEWLINE;
+                
+                clearedPrompt = FALSE;
+            }
+            lineStart = ++dest;
+        }
+        else
+        {
+            *dest = buffer[k];
+            
+            switch (buffer[k])
+            {
+                case CHAR_NEWLINE:
+                    if (allowsJumpLine)
+                    {
+                        ++numLines;
+                        
+                        if (numLines > 2 && !clearedPrompt)
+                            *dest = CHAR_PROMPT_SCROLL;
+                        
+                        lineStart = dest + 1;
+                        clearedPrompt = FALSE;
+                    }
+                    else if (buffer[k - 1] != CHAR_SPACE)
+                        *dest = CHAR_SPACE;
+                    else
+                        dest--;
+                    break;
+                case CHAR_PROMPT_SCROLL:
+                    ++numLines;
+                    lineStart = dest + 1;
+                    break;
+                case CHAR_PROMPT_CLEAR:
+                    lineStart = dest + 1;
+                    clearedPrompt = TRUE;
+                    break;
+            }
+            dest++;
+        }
+        k++;
+    }
+    *dest = EOS;
 
-	return numLines;
+    return numLines;
 }

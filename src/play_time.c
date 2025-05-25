@@ -31,7 +31,7 @@ static void PlayTimeCounter_SetToMax(void)
 void PlayTimeCounter_Start(void)
 {
     sPlayTimeCounterState = PLAYTIME_RUNNING;
-	
+    
     if (gSaveBlock2Ptr->playTimeHours > 999)
         PlayTimeCounter_SetToMax();
 }
@@ -40,22 +40,22 @@ void PlayTimeCounter_Update(void)
 {
     if (sPlayTimeCounterState == PLAYTIME_RUNNING)
     {
-		gSaveBlock2Ptr->playTimeVBlanks++;
-		
-		UpdateSpinData();
-		
+        gSaveBlock2Ptr->playTimeVBlanks++;
+        
+        UpdateSpinData();
+        
         if (gSaveBlock2Ptr->playTimeVBlanks > 59)
         {
             gSaveBlock2Ptr->playTimeVBlanks = 0;
-			
+            
             if (++gSaveBlock2Ptr->playTimeSeconds > 59)
             {
                 gSaveBlock2Ptr->playTimeSeconds = 0;
-				
+                
                 if (++gSaveBlock2Ptr->playTimeMinutes > 59)
                 {
                     gSaveBlock2Ptr->playTimeMinutes = 0;
-					
+                    
                     if (++gSaveBlock2Ptr->playTimeHours > 999)
                         PlayTimeCounter_SetToMax();
                 }

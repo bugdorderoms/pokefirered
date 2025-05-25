@@ -997,7 +997,7 @@ const struct LevelUpMove *const gLevelUpLearnsets[NUM_SPECIES] =
     [SPECIES_DARMANITAN_GALARIAN] = sDarmanitanGalarianLevelUpLearnset,
     [SPECIES_YAMASK_GALARIAN] = sYamaskGalarianLevelUpLearnset,
     [SPECIES_STUNFISK_GALARIAN] = sStunfiskGalarianLevelUpLearnset,
-	// Hisuian Forms
+    // Hisuian Forms
     [SPECIES_GROWLITHE_HISUIAN] = sGrowlitheHisuianLevelUpLearnset,
     [SPECIES_ARCANINE_HISUIAN] = sArcanineHisuianLevelUpLearnset,
     [SPECIES_VOLTORB_HISUIAN] = sVoltorbHisuianLevelUpLearnset,
@@ -1111,8 +1111,8 @@ const struct LevelUpMove *const gLevelUpLearnsets[NUM_SPECIES] =
     [SPECIES_ARCEUS_DRAGON] = sArceusLevelUpLearnset,
     [SPECIES_ARCEUS_DARK] = sArceusLevelUpLearnset,
     [SPECIES_ARCEUS_FAIRY] = sArceusLevelUpLearnset,
-	// Unfezant
-	[SPECIES_UNFEZANT_FEMALE] = sUnfezantLevelUpLearnset,
+    // Unfezant
+    [SPECIES_UNFEZANT_FEMALE] = sUnfezantLevelUpLearnset,
     // Basculin
     [SPECIES_BASCULIN_BLUE_STRIPED] = sBasculinLevelUpLearnset,
     [SPECIES_BASCULIN_WHITE_STRIPED] = sBasculinLevelUpLearnset,
@@ -1127,10 +1127,10 @@ const struct LevelUpMove *const gLevelUpLearnsets[NUM_SPECIES] =
     [SPECIES_SAWSBUCK_SUMMER] = sSawsbuckLevelUpLearnset,
     [SPECIES_SAWSBUCK_AUTUMN] = sSawsbuckLevelUpLearnset,
     [SPECIES_SAWSBUCK_WINTER] = sSawsbuckLevelUpLearnset,
-	// Frillish
-	[SPECIES_FRILLISH_FEMALE] = sFrillishLevelUpLearnset,
-	// Jellicent
-	[SPECIES_JELLICENT_FEMALE] = sJellicentLevelUpLearnset,
+    // Frillish
+    [SPECIES_FRILLISH_FEMALE] = sFrillishLevelUpLearnset,
+    // Jellicent
+    [SPECIES_JELLICENT_FEMALE] = sJellicentLevelUpLearnset,
     // Therian Forms
     [SPECIES_TORNADUS_THERIAN] = sTornadusLevelUpLearnset,
     [SPECIES_THUNDURUS_THERIAN] = sThundurusLevelUpLearnset,
@@ -1169,7 +1169,7 @@ const struct LevelUpMove *const gLevelUpLearnsets[NUM_SPECIES] =
     [SPECIES_VIVILLON_JUNGLE] = sVivillonLevelUpLearnset,
     [SPECIES_VIVILLON_FANCY] = sVivillonLevelUpLearnset,
     [SPECIES_VIVILLON_POKE_BALL] = sVivillonLevelUpLearnset,
-	[SPECIES_PYROAR_FEMALE] = sPyroarLevelUpLearnset,
+    [SPECIES_PYROAR_FEMALE] = sPyroarLevelUpLearnset,
     // Flabébé
     [SPECIES_FLABEBE_YELLOW_FLOWER] = sFlabebeLevelUpLearnset,
     [SPECIES_FLABEBE_ORANGE_FLOWER] = sFlabebeLevelUpLearnset,

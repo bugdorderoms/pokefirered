@@ -77,10 +77,10 @@ static bool32 CursorIsOnImmovableTile(void);
 static void SelectTile(void);
 static void PlaceTile(void);
 static void RotateTile(u32 rotDir);
-static void Task_SlidingPuzzle_WaitFadeIn(u8 taskId);
-static void Task_SlidingPuzzle_HandleInput(u8 taskId);
-static void Task_SlidingPuzzle_Glow(u8 taskId);
-static void Task_SlidingPuzzle_Solved(u8 taskId);
+static void Task_SlidingPuzzle_WaitFadeIn(u32 taskId);
+static void Task_SlidingPuzzle_HandleInput(u32 taskId);
+static void Task_SlidingPuzzle_Glow(u32 taskId);
+static void Task_SlidingPuzzle_Solved(u32 taskId);
 static void CheckForSolution(void);
 static void ExitSlidingPuzzle(u32 taskId);
 
@@ -172,61 +172,61 @@ static void CB2_SlidingPuzzle(void)
 
 static void CB2_LoadSlidingPuzzle(void)
 {
-	switch (gMain.state)
-	{
-		case 0:
-			SetVBlankCallback(NULL);
-			ResetVramOamAndBgCntRegs();
-			break;
-		case 1:
-			ScanlineEffect_Stop();
-			ResetTasks();
-			ResetSpriteData();
-			ResetPaletteFade();
-			FreeAllSpritePalettes();
-			break;
-		case 2:
-			ResetBgsAndClearDma3BusyFlags(FALSE);
-			InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
-			InitWindows(sWindowTemplates);
-			SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_BG_ALL_ON | DISPCNT_OBJ_1D_MAP);
-			
-			ShowBg(0);
-			ShowBg(1);
-			
-			SetGpuReg(REG_OFFSET_BLDCNT, 0);
-			SetGpuReg(REG_OFFSET_BLDALPHA, 0);
-			SetGpuReg(REG_OFFSET_BLDY, 0);
-			break;
-		case 3:
-			LZDecompressVram(sSlidingPuzzle_Gfx, (void *)VRAM);
-			LZDecompressVram(sSlidingPuzzle_Tilemap, (u16 *)BG_SCREEN_ADDR(7));
-			LoadPalette(sSlidingPuzzle_Pal, 0, 32);
-			LoadPalette(stdpal_get(2), 0xD0, 32);
-			
-			LoadCompressedSpriteSheet(&sSpriteSheet_Cursor);
-			LoadSpritePalettes(sSpritePalette_Cursor);
-			break;
-		case 4:
-			sSlidingPuzzle = AllocZeroed(sizeof(struct SlidingPuzzle));
-			sSlidingPuzzle->puzzleId = gSpecialVar_0x8004;
-			sSlidingPuzzle->solved = gSpecialVar_0x8005;
-			
-			DrawInstructionsBar(sSlidingPuzzle->solved ? INSTRUCTION_CONTINUE : INSTRUCTION_NO_SELECTION);
-			LoadCompressedSpriteSheet(&sSpriteSheet_Tiles[sSlidingPuzzle->puzzleId]);
-			
-			CreateCursorSprite();
-			CreateTileSprites();
-			break;
-		case 5:
-			BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
-			EnableInterrupts(INTR_FLAG_VBLANK);
-			SetVBlankCallback(VBlankCB_SlidingPuzzle);
-			SetMainCallback2(CB2_SlidingPuzzle);
-			CreateTask(Task_SlidingPuzzle_WaitFadeIn, 0);
-			return;
-	}
-	gMain.state++;
+    switch (gMain.state)
+    {
+        case 0:
+            SetVBlankCallback(NULL);
+            ResetVramOamAndBgCntRegs();
+            break;
+        case 1:
+            ScanlineEffect_Stop();
+            ResetTasks();
+            ResetSpriteData();
+            ResetPaletteFade();
+            FreeAllSpritePalettes();
+            break;
+        case 2:
+            ResetBgsAndClearDma3BusyFlags(FALSE);
+            InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
+            InitWindows(sWindowTemplates);
+            SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_BG_ALL_ON | DISPCNT_OBJ_1D_MAP);
+            
+            ShowBg(0);
+            ShowBg(1);
+            
+            SetGpuReg(REG_OFFSET_BLDCNT, 0);
+            SetGpuReg(REG_OFFSET_BLDALPHA, 0);
+            SetGpuReg(REG_OFFSET_BLDY, 0);
+            break;
+        case 3:
+            LZDecompressVram(sSlidingPuzzle_Gfx, (void *)VRAM);
+            LZDecompressVram(sSlidingPuzzle_Tilemap, (u16 *)BG_SCREEN_ADDR(7));
+            LoadPalette(sSlidingPuzzle_Pal, 0, 32);
+            LoadPalette(stdpal_get(2), 0xD0, 32);
+            
+            LoadCompressedSpriteSheet(&sSpriteSheet_Cursor);
+            LoadSpritePalettes(sSpritePalette_Cursor);
+            break;
+        case 4:
+            sSlidingPuzzle = AllocZeroed(sizeof(struct SlidingPuzzle));
+            sSlidingPuzzle->puzzleId = gSpecialVar_0x8004;
+            sSlidingPuzzle->solved = gSpecialVar_0x8005;
+            
+            DrawInstructionsBar(sSlidingPuzzle->solved ? INSTRUCTION_CONTINUE : INSTRUCTION_NO_SELECTION);
+            LoadCompressedSpriteSheet(&sSpriteSheet_Tiles[sSlidingPuzzle->puzzleId]);
+            
+            CreateCursorSprite();
+            CreateTileSprites();
+            break;
+        case 5:
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
+            EnableInterrupts(INTR_FLAG_VBLANK);
+            SetVBlankCallback(VBlankCB_SlidingPuzzle);
+            SetMainCallback2(CB2_SlidingPuzzle);
+            CreateTask(Task_SlidingPuzzle_WaitFadeIn, 0);
+            return;
+    }
+    gMain.state++;
 }
 
 // Sprite defines
@@ -244,7 +244,7 @@ static void CB2_LoadSlidingPuzzle(void)
 
 static void CreateCursorSprite(void)
 {
-	u32 spriteId = 0xFF;
+    u32 spriteId = 0xFF;
 
     if (!sSlidingPuzzle->solved)
     {
@@ -262,7 +262,7 @@ static void SpriteCB_Cursor(struct Sprite *sprite)
     if (++sprite->sTimer % 16 == 0)
     {
         sprite->sTimer = 0;
-		
+        
         if (sprite->sAnimating)
             sprite->invisible ^= TRUE;
         else
@@ -272,19 +272,19 @@ static void SpriteCB_Cursor(struct Sprite *sprite)
 
 static void CreateTileSprites(void)
 {
-	u32 row, col, puzzleId = sSlidingPuzzle->solved ? PUZZLE_SOLVED : sSlidingPuzzle->puzzleId;
-	
+    u32 row, col, puzzleId = sSlidingPuzzle->solved ? PUZZLE_SOLVED : sSlidingPuzzle->puzzleId;
+    
     for (row = 0; row < NUM_ROWS; ++row)
     {
         for (col = 0; col < NUM_COLS; ++col)
         {
             u32 tile = sPuzzleLayouts[puzzleId][row][col];
-			
+            
             if (tile)
             {
                 u32 spriteId = CreateSprite(&sSpriteTemplate_Tiles, sColumnXCoords[col], sRowYCoords[row], 2);
                 struct Sprite *sprite = &gSprites[spriteId];
-				
+                
                 sprite->sAnimating = FALSE;
                 sprite->sRow = row;
                 sprite->sCol = col;
@@ -292,10 +292,10 @@ static void CreateTileSprites(void)
                 sprite->sOrientation = sTileOrientations[puzzleId][row][col];
                 if (sprite->sOrientation >= ORIENTATION_MAX)
                     sprite->sOrientation = ORIENTATION_0;
-				
+                
                 StartSpriteAnim(sprite, tile - 1);
                 StartSpriteAffineAnim(sprite, sprite->sOrientation);
-				
+                
                 tile = spriteId;
             }
             sSlidingPuzzle->tiles[row][col] = tile;
@@ -305,8 +305,8 @@ static void CreateTileSprites(void)
 
 static void CheckForSolution(void)
 {
-	u32 row, col;
-	
+    u32 row, col;
+    
     for (row = 0; row < NUM_ROWS; row++)
     {
         for (col = 0; col < NUM_COLS; col++)
@@ -325,142 +325,142 @@ static void CheckForSolution(void)
 
 static void DrawInstructionsBar(u32 msgId)
 {
-	FillWindowPixelBuffer(0, PIXEL_FILL(15));
+    FillWindowPixelBuffer(0, PIXEL_FILL(15));
     AddTextPrinterParameterized3(0, 0, 2, 1, sTextColor_Instructions, 0, sInstructions[msgId]);
     PutWindowTilemap(0);
     CopyWindowToVram(0, COPYWIN_BOTH);
     ScheduleBgCopyTilemapToVram(0);
 }
 
-static void Task_SlidingPuzzle_WaitFadeIn(u8 taskId)
+static void Task_SlidingPuzzle_WaitFadeIn(u32 taskId)
 {
-	if (!gPaletteFade.active)
-		gTasks[taskId].func = sSlidingPuzzle->solved ? Task_SlidingPuzzle_Solved : Task_SlidingPuzzle_HandleInput;
+    if (!gPaletteFade.active)
+        gTasks[taskId].func = sSlidingPuzzle->solved ? Task_SlidingPuzzle_Solved : Task_SlidingPuzzle_HandleInput;
 }
 
-static void Task_SlidingPuzzle_HandleInput(u8 taskId)
+static void Task_SlidingPuzzle_HandleInput(u32 taskId)
 {
-	if (sSlidingPuzzle->solved)
-		gTasks[taskId].func = Task_SlidingPuzzle_Glow;
-	else
-	{
-		// Prevent input while the tile is rotating
-		if (sSlidingPuzzle->heldTile)
-		{
-			struct Sprite *sprite = &gSprites[sSlidingPuzzle->heldTile];
-			
-			if (sprite->sAnimating && !sprite->affineAnimEnded)
-				return;
-		}
-		
-		if (JOY_NEW(B_BUTTON))
-			ExitSlidingPuzzle(taskId);
-		else if (JOY_NEW(DPAD_LEFT))
-			MoveCursor_SlidingPuzzle(-1, 0);
-		else if (JOY_NEW(DPAD_RIGHT))
-			MoveCursor_SlidingPuzzle(1, 0);
-		else if (JOY_NEW(DPAD_UP))
-			MoveCursor_SlidingPuzzle(0, -1);
-		else if (JOY_NEW(DPAD_DOWN))
-			MoveCursor_SlidingPuzzle(0, 1);
-		
-		if (!sSlidingPuzzle->heldTile)
-		{
-			// Not holding a tile
-			if (CursorIsOnTile() && !CursorIsOnImmovableTile())
-			{
-				DrawInstructionsBar(INSTRUCTION_PICK_UP);
-				
-				if (JOY_NEW(A_BUTTON))
-					SelectTile();
-			}
-			else
-				DrawInstructionsBar(INSTRUCTION_NO_SELECTION);
-		}
-		else
-		{
-			// Currently holding a tile
-			if (CursorIsOnTile() && !CursorIsOnImmovableTile())
-			{
-				DrawInstructionsBar(INSTRUCTION_SWAP);
-				
-				if (JOY_NEW(A_BUTTON))
-					SelectTile();
-			}
-			else if (CursorIsOnImmovableTile())
-				DrawInstructionsBar(INSTRUCTION_ROTATE);
-			else
-			{
-				DrawInstructionsBar(INSTRUCTION_PLACE);
-				
-				if (JOY_NEW(A_BUTTON))
-					PlaceTile();
-			}
-	
-			if (JOY_NEW(L_BUTTON))
-				RotateTile(ROTATE_ANTICLOCKWISE);
-			else if (JOY_NEW(R_BUTTON))
-				RotateTile(ROTATE_CLOCKWISE);
-		}
-	}
-}
-
-static void Task_SlidingPuzzle_Glow(u8 taskId)
-{
-	u16 color;
-    s16* data = gTasks[taskId].data;
-	
-    switch (tState)
+    if (sSlidingPuzzle->solved)
+        gTasks[taskId].func = Task_SlidingPuzzle_Glow;
+    else
     {
-		case 0:
-			DrawInstructionsBar(INSTRUCTION_CONTINUE);
-			tState++;
-			break;
-		case 1:
-			DestroySprite(&gSprites[sSlidingPuzzle->cursorSpriteId]);
-			PlayFanfare(MUS_LEVEL_UP);
-			tGlow = 22;
-			tState++;
-			break;
-		case 2:
-			if ((++tTimer % 4) == 0)
-			{
-				if (++tGlow == 31)
-					tState++;
-				
-				color = RGB(tGlow, tGlow, tGlow);
-				LoadPalette(&color, 0x103, sizeof(color));
-			}
-			break;
-		case 3:
-			if ((++tTimer % 4) == 0)
-			{
-				if (--tGlow > 22)
-					color = RGB(tGlow, tGlow, tGlow);
-				else
-				{
-					color = RGB(28, 22, 13);
-					tState++;
-				}
-				LoadPalette(&color, 0x103, sizeof(color));
-			}
-			break;
-		default:
-			if (IsFanfareTaskInactive())
-				gTasks[taskId].func = Task_SlidingPuzzle_Solved;
-			break;
+        // Prevent input while the tile is rotating
+        if (sSlidingPuzzle->heldTile)
+        {
+            struct Sprite *sprite = &gSprites[sSlidingPuzzle->heldTile];
+            
+            if (sprite->sAnimating && !sprite->affineAnimEnded)
+                return;
+        }
+        
+        if (JOY_NEW(B_BUTTON))
+            ExitSlidingPuzzle(taskId);
+        else if (JOY_NEW(DPAD_LEFT))
+            MoveCursor_SlidingPuzzle(-1, 0);
+        else if (JOY_NEW(DPAD_RIGHT))
+            MoveCursor_SlidingPuzzle(1, 0);
+        else if (JOY_NEW(DPAD_UP))
+            MoveCursor_SlidingPuzzle(0, -1);
+        else if (JOY_NEW(DPAD_DOWN))
+            MoveCursor_SlidingPuzzle(0, 1);
+        
+        if (!sSlidingPuzzle->heldTile)
+        {
+            // Not holding a tile
+            if (CursorIsOnTile() && !CursorIsOnImmovableTile())
+            {
+                DrawInstructionsBar(INSTRUCTION_PICK_UP);
+                
+                if (JOY_NEW(A_BUTTON))
+                    SelectTile();
+            }
+            else
+                DrawInstructionsBar(INSTRUCTION_NO_SELECTION);
+        }
+        else
+        {
+            // Currently holding a tile
+            if (CursorIsOnTile() && !CursorIsOnImmovableTile())
+            {
+                DrawInstructionsBar(INSTRUCTION_SWAP);
+                
+                if (JOY_NEW(A_BUTTON))
+                    SelectTile();
+            }
+            else if (CursorIsOnImmovableTile())
+                DrawInstructionsBar(INSTRUCTION_ROTATE);
+            else
+            {
+                DrawInstructionsBar(INSTRUCTION_PLACE);
+                
+                if (JOY_NEW(A_BUTTON))
+                    PlaceTile();
+            }
+    
+            if (JOY_NEW(L_BUTTON))
+                RotateTile(ROTATE_ANTICLOCKWISE);
+            else if (JOY_NEW(R_BUTTON))
+                RotateTile(ROTATE_CLOCKWISE);
+        }
     }
 }
 
-static void Task_SlidingPuzzle_Solved(u8 taskId)
+static void Task_SlidingPuzzle_Glow(u32 taskId)
 {
-	if (JOY_NEW(A_BUTTON | B_BUTTON))
-		ExitSlidingPuzzle(taskId);
+    u16 color;
+    s16* data = gTasks[taskId].data;
+    
+    switch (tState)
+    {
+        case 0:
+            DrawInstructionsBar(INSTRUCTION_CONTINUE);
+            tState++;
+            break;
+        case 1:
+            DestroySprite(&gSprites[sSlidingPuzzle->cursorSpriteId]);
+            PlayFanfare(MUS_LEVEL_UP);
+            tGlow = 22;
+            tState++;
+            break;
+        case 2:
+            if ((++tTimer % 4) == 0)
+            {
+                if (++tGlow == 31)
+                    tState++;
+                
+                color = RGB(tGlow, tGlow, tGlow);
+                LoadPalette(&color, 0x103, sizeof(color));
+            }
+            break;
+        case 3:
+            if ((++tTimer % 4) == 0)
+            {
+                if (--tGlow > 22)
+                    color = RGB(tGlow, tGlow, tGlow);
+                else
+                {
+                    color = RGB(28, 22, 13);
+                    tState++;
+                }
+                LoadPalette(&color, 0x103, sizeof(color));
+            }
+            break;
+        default:
+            if (IsFanfareTaskInactive())
+                gTasks[taskId].func = Task_SlidingPuzzle_Solved;
+            break;
+    }
 }
 
-static void Task_SlidingPuzzle_Exit(u8 taskId)
+static void Task_SlidingPuzzle_Solved(u32 taskId)
 {
-	if (!gPaletteFade.active)
+    if (JOY_NEW(A_BUTTON | B_BUTTON))
+        ExitSlidingPuzzle(taskId);
+}
+
+static void Task_SlidingPuzzle_Exit(u32 taskId)
+{
+    if (!gPaletteFade.active)
     {
         gSpecialVar_Result = sSlidingPuzzle->solved;
         Free(sSlidingPuzzle);
@@ -471,13 +471,13 @@ static void Task_SlidingPuzzle_Exit(u8 taskId)
 
 static void ExitSlidingPuzzle(u32 taskId)
 {
-	BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_SlidingPuzzle_Exit;
 }
 
 static void MoveCursorSprite_SlidingPuzzle(s8 deltaX, s8 deltaY, u32 spriteId)
 {
-	struct Sprite *sprite = &gSprites[spriteId];
+    struct Sprite *sprite = &gSprites[spriteId];
     s8 row = sprite->sRow + deltaY;
     s8 col = sprite->sCol + deltaX;
 
@@ -502,7 +502,7 @@ static void MoveCursorSprite_SlidingPuzzle(s8 deltaX, s8 deltaY, u32 spriteId)
 
 static void MoveCursor_SlidingPuzzle(s8 deltaX, s8 deltaY)
 {
-	MoveCursorSprite_SlidingPuzzle(deltaX, deltaY, sSlidingPuzzle->cursorSpriteId);
+    MoveCursorSprite_SlidingPuzzle(deltaX, deltaY, sSlidingPuzzle->cursorSpriteId);
 
     if (sSlidingPuzzle->heldTile)
     {
@@ -523,7 +523,7 @@ static bool32 CursorIsOnTile(void)
 
 static bool32 CursorIsOnImmovableTile(void)
 {
-	struct Sprite *cursor = &gSprites[sSlidingPuzzle->cursorSpriteId];
+    struct Sprite *cursor = &gSprites[sSlidingPuzzle->cursorSpriteId];
 
     if (sTileOrientations[sSlidingPuzzle->puzzleId][cursor->sRow][cursor->sCol] == IMMOVABLE_TILE)
         return TRUE;
@@ -533,9 +533,9 @@ static bool32 CursorIsOnImmovableTile(void)
 
 static void SelectTile(void)
 {
-	struct Sprite *cursor = &gSprites[sSlidingPuzzle->cursorSpriteId];
+    struct Sprite *cursor = &gSprites[sSlidingPuzzle->cursorSpriteId];
     u32 tile = sSlidingPuzzle->heldTile;
-	
+    
     if (tile)
         gSprites[tile].subpriority = 2;
 
@@ -551,7 +551,7 @@ static void SelectTile(void)
 
 static void PlaceTile(void)
 {
-	struct Sprite *cursor = &gSprites[sSlidingPuzzle->cursorSpriteId];
+    struct Sprite *cursor = &gSprites[sSlidingPuzzle->cursorSpriteId];
 
     sSlidingPuzzle->tiles[cursor->sRow][cursor->sCol] = sSlidingPuzzle->heldTile;
     gSprites[sSlidingPuzzle->heldTile].subpriority = 2;
@@ -565,13 +565,13 @@ static void PlaceTile(void)
 
 static void RotateTile(u32 rotDir)
 {
-	struct Sprite *sprite = &gSprites[sSlidingPuzzle->heldTile];
+    struct Sprite *sprite = &gSprites[sSlidingPuzzle->heldTile];
     u32 affineAnimation;
 
     if (rotDir == ROTATE_ANTICLOCKWISE)
     {
         affineAnimation = sprite->sOrientation + 4;
-		
+        
         if (sprite->sOrientation)
             sprite->sOrientation--;
         else
@@ -584,5 +584,5 @@ static void RotateTile(u32 rotDir)
         sprite->sOrientation = sprite->sOrientation % ORIENTATION_MAX;
     }
     StartSpriteAffineAnim(sprite, affineAnimation);
-	sprite->sAnimating = TRUE;
+    sprite->sAnimating = TRUE;
 }

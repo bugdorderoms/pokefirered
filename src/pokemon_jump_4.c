@@ -16,7 +16,7 @@
 EWRAM_DATA static struct PokemonJump2 *gUnknown_203F3D8 = NULL;
 
 static void sub_8149D80(void (*func)(void));
-static void sub_8149DA4(u8 taskId);
+static void sub_8149DA4(u32 taskId);
 static void sub_8149DC8(void);
 static void sub_8149F64(void);
 static void sub_8149FD0(void);
@@ -36,13 +36,13 @@ static void sub_814AADC(void);
 static void sub_814AC30(bool32 arg0);
 static void sub_814AC94(void);
 static void sub_814ACCC(u8 arg0);
-static void sub_814AD50(u8 taskId);
+static void sub_814AD50(u32 taskId);
 
 static void sub_8149D34(struct PokemonJump2 *);
 
 void sub_8149CEC(struct PokemonJump2 *arg0)
 {
-    u8 taskId;
+    u32 taskId;
 
     gUnknown_203F3D8 = arg0;
     sub_8149D34(gUnknown_203F3D8);
@@ -184,7 +184,7 @@ static void sub_8149D80(void (*func)(void))
     gUnknown_203F3D8->unk0 = 0;
 }
 
-static void sub_8149DA4(u8 taskId)
+static void sub_8149DA4(u32 taskId)
 {
     if (!gUnknown_203F3D8->unk0)
     {
@@ -900,7 +900,7 @@ static bool32 sub_814AD18(void)
     }
 }
 
-static void sub_814AD50(u8 taskId)
+static void sub_814AD50(u32 taskId)
 {
     if (!sub_814AD18())
         DestroyTask(taskId);

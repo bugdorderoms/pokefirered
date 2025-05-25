@@ -78,10 +78,10 @@ static void sub_8147C98(void);
 static s16 GetPokemonJumpSpeciesIdx(u16 species);
 static void sub_8147D2C(struct PokemonJump1_MonInfo *monInfo, struct Pokemon *mon);
 static void sub_8147D6C(void);
-static void sub_8147DA0(u8 taskId);
-static void sub_814807C(u8 taskId);
+static void sub_8147DA0(u32 taskId);
+static void sub_814807C(u32 taskId);
 static void sub_8148104(void);
-static void sub_8148290(u8 taskId);
+static void sub_8148290(u32 taskId);
 static void sub_81482F8(void);
 static bool32 sub_8148344(void);
 static bool32 sub_81483D0(void);
@@ -106,7 +106,7 @@ static bool32 sub_8148B54(void);
 static bool32 sub_8148C80(void);
 static bool32 sub_8148D5C(void);
 static bool32 sub_8148E2C(void);
-static void sub_8148E80(u8 taskId);
+static void sub_8148E80(u32 taskId);
 static void sub_8148F5C(TaskFunc func, u8 taskPriority);
 static void sub_8148F7C(void);
 static void sub_8148F9C(void);
@@ -255,7 +255,7 @@ static const struct PokemonJumpMons
 
 void StartPokemonJump(u16 partyIndex, MainCallback callback)
 {
-    u8 taskId;
+    u32 taskId;
 
     if (gReceivedRemoteLinkPlayers)
     {
@@ -405,7 +405,7 @@ static void sub_8147D84(TaskFunc func)
     gUnknown_203F3D4->unk8 = 0;
 }
 
-static void sub_8147DA0(u8 taskId)
+static void sub_8147DA0(u32 taskId)
 {
     switch (gUnknown_203F3D4->unk8)
     {
@@ -532,7 +532,7 @@ static bool32 (* const gUnknown_846B64C[])(void) =
     sub_814881C,
 };
 
-static void sub_814807C(u8 taskId)
+static void sub_814807C(u32 taskId)
 {
     sub_8147FA0();
     sub_8149534();
@@ -631,7 +631,7 @@ static bool32 (* const gUnknown_846B670[])(void) =
     sub_814881C,
 };
 
-static void sub_8148290(u8 taskId)
+static void sub_8148290(u32 taskId)
 {
     sub_8148174();
     if (gUnknown_203F3D4->unk48)
@@ -1352,7 +1352,7 @@ static bool32 sub_8148E2C(void)
     return TRUE;
 }
 
-static void sub_8148E80(u8 taskId)
+static void sub_8148E80(u32 taskId)
 {
     int i;
     s16 *taskData = gTasks[taskId].data;
@@ -1389,7 +1389,7 @@ static void sub_8148E80(u8 taskId)
 
 static void sub_8148F5C(TaskFunc func, u8 taskPriority)
 {
-    u8 taskId = CreateTask(func, taskPriority);
+    u32 taskId = CreateTask(func, taskPriority);
     SetWordTaskArg(taskId, 14, (uintptr_t)gUnknown_203F3D4);
 }
 

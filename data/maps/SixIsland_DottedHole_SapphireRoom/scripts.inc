@@ -1,5 +1,5 @@
 .equ LOCALID_SAPPHIRE, 1
-.equ LOCALID_THIEF,    2
+.equ LOCALID_THIEF,	2
 
 SixIsland_DottedHole_SapphireRoom_MapScripts:: @ 81641B4
 	.byte 0

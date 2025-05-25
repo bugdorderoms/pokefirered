@@ -225,33 +225,33 @@ static bool32 DoLoadMonMarkingsFrameGfx(void)
 {
     u32 i;
     u8 *menuWindowSpriteTiles = &sMenu->menuWindowSpriteTiles[256 * sMenu->tileLoadState];
-	
+    
     switch (sMenu->tileLoadState)
     {
     case 0:
         CpuFastCopy(sMenu->frameTiles + 0x00, menuWindowSpriteTiles, 0x20);
-		
+        
         for (i = 0; i < 6; i++)
             CpuFastCopy(sMenu->frameTiles + 0x20, menuWindowSpriteTiles + 0x20 * (i + 1), 0x20);
-		
+        
         CpuFastCopy(sMenu->frameTiles + 0x40, menuWindowSpriteTiles + 0x20 * 7, 0x20);
         sMenu->tileLoadState++;
         break;
     default:
         CpuFastCopy(sMenu->frameTiles + 0x60, menuWindowSpriteTiles + 0x00, 0x20);
-		
+        
         for (i = 0; i < 6; i++)
             CpuFastCopy(sMenu->frameTiles + 0x80, menuWindowSpriteTiles + 0x20 * (i + 1), 0x20);
-		
+        
         CpuFastCopy(sMenu->frameTiles + 0xA0, menuWindowSpriteTiles + 0x20 * 7, 0x20);
         sMenu->tileLoadState++;
         break;
     case 13:
         CpuFastCopy(sMenu->frameTiles + 0xC0, menuWindowSpriteTiles + 0x00, 0x20);
-		
+        
         for (i = 0; i < 6; i++)
             CpuFastCopy(sMenu->frameTiles + 0xE0, menuWindowSpriteTiles + 0x20 * (i + 1), 0x20);
-		
+        
         CpuFastCopy(sMenu->frameTiles + 0x100, menuWindowSpriteTiles + 0x20 * 7, 0x20);
         sMenu->tileLoadState++;
         return FALSE;
@@ -270,10 +270,10 @@ void LoadMonMarkingsFrameGfx(void)
 void DrawMonMarkingsMenu(u32 markings, s16 x, s16 y)
 {
     u32 i;
-	
+    
     sMenu->cursorPos = 0;
     sMenu->markings = markings;
-	
+    
     for (i = 0; i < 4; i++)
         sMenu->markingsArray[i] = (sMenu->markings >> i) & 1;
 
@@ -283,13 +283,13 @@ void DrawMonMarkingsMenu(u32 markings, s16 x, s16 y)
 void TeardownMonMarkingsMenu(void)
 {
     u32 i;
-	
+    
     for (i = 0; i < 3; i++)
         FreeSpriteTilesByTag(sMenu->baseTileTag + i);
-	
+    
     FreeSpritePaletteByTag(sMenu->basePaletteTag);
     FreeSpritePaletteByTag(sMenu->basePaletteTag + 1);
-	
+    
     for (i = 0; i < 2; i++)
     {
         if (sMenu->menuWindowSprites[i] == NULL)
@@ -304,7 +304,7 @@ void TeardownMonMarkingsMenu(void)
     }
     if (sMenu->unkSprite != NULL)
         DestroySprite(sMenu->unkSprite);
-	
+    
     if (sMenu->menuTextSprite != NULL)
         DestroySprite(sMenu->menuTextSprite);
 }
@@ -312,37 +312,37 @@ void TeardownMonMarkingsMenu(void)
 bool32 MonMarkingsHandleInput(void)
 {
     u32 i;
-	
+    
     if (JOY_NEW(DPAD_UP))
     {
         PlaySE(SE_SELECT);
-		
+        
         if (--sMenu->cursorPos < 0)
             sMenu->cursorPos = 5;
-		
+        
         return TRUE;
     }
     if (JOY_NEW(DPAD_DOWN))
     {
         PlaySE(SE_SELECT);
-		
+        
         if (++sMenu->cursorPos > 5)
             sMenu->cursorPos = 0;
-		
+        
         return TRUE;
     }
     if (JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
-		
+        
         switch (sMenu->cursorPos)
         {
         case 4:
             sMenu->markings = 0;
-			
+            
             for (i = 0; i < 4; i++)
                 sMenu->markings |= sMenu->markingsArray[i] << i;
-			
+            
             return FALSE;
         case 5:
             return FALSE;
@@ -396,7 +396,7 @@ static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u32 tilesTag, u32 palette
     for (i = 0; i < 2; i++)
     {
         spriteId = CreateSprite(&sprTemplate, x + 32, y + 32, 1);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             sMenu->menuWindowSprites[i] = &gSprites[spriteId];
@@ -419,7 +419,7 @@ static void CreateMonMarkingsMenuSprites(s16 x, s16 y, u32 tilesTag, u32 palette
     for (i = 0; i < 4; i++)
     {
         spriteId = CreateSprite(&sprTemplate, x + 32, y + 16 + 16 * i, 0);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             sMenu->menuMarkingSprites[i] = &gSprites[spriteId];
@@ -479,7 +479,7 @@ struct Sprite * CreateMonMarkingSprite_SelectCombo(u32 tileTag, u32 paletteTag, 
 {
     if (palette == NULL)
         palette = sMonMarkingsPal;
-	
+    
     return CreateMonMarkingSprite(tileTag, paletteTag, palette, 16);
 }
 
@@ -487,7 +487,7 @@ struct Sprite * CreateMonMarkingSprite_AllOff(u32 tileTag, u32 paletteTag, const
 {
     if (palette == NULL)
         palette = sMonMarkingsPal;
-	
+    
     return CreateMonMarkingSprite(tileTag, paletteTag, palette, 1);
 }
 

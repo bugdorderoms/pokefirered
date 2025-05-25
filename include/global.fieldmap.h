@@ -44,9 +44,9 @@ typedef void (*TilesetCB)(void);
 
 struct LightningColor
 {
-	u8 paletteNum;
-	u8 colorSlot;
-	u16 color;
+    u8 paletteNum;
+    u8 colorSlot;
+    u16 color;
 };
 
 struct Tileset
@@ -58,7 +58,7 @@ struct Tileset
     /*0x0c*/ const u16 *metatiles;
     /*0x10*/ TilesetCB callback;
     /*0x14*/ const u32 *metatileAttributes;
-	/*0x18*/ const struct LightningColor *lightningColors;
+    /*0x18*/ const struct LightningColor *lightningColors;
 };
 
 struct MapLayout
@@ -184,7 +184,7 @@ struct MapHeader
     /* 0x19 */ bool8 allowEscaping:1; // Escape Rope and Dig
                bool8 allowRunning:1;
                bool8 showMapName:1;
-			   u8 region:5;
+               u8 region:5;
     /* 0x1A */ s8 floorNum;
     /* 0x1B */ u8 battleType;
 };
@@ -219,7 +219,7 @@ struct ObjectEvent
              /*25*/ u32 disableJumpLandingGroundEffect:1;
              /*26*/ u32 fixedPriority:1;
              /*27*/ u32 hideReflection:1;
-			 /*28*/ u32 jumpDone:1;
+             /*28*/ u32 jumpDone:1;
     /*0x04*/        u8 spriteId;
     /*0x05*/        u8 graphicsId;
     /*0x06*/        u8 movementType;
@@ -387,7 +387,7 @@ struct Camera
 {
     s32 x;
     s32 y;
-	bool8 active;
+    bool8 active;
 };
 
 struct SpinData

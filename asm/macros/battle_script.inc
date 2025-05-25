@@ -34,7 +34,7 @@
 	.byte 0x6
 	.endm
 
-    .macro adjustdamage
+	.macro adjustdamage
 	.byte 0x7
 	.endm
 	
@@ -166,7 +166,7 @@
 	.endm
 
 	.macro jumpbasedontype battler:req, type:req, jumpIfHasType:req, ptr:req
-    .byte 0x1f
+	.byte 0x1f
 	.byte \battler
 	.byte \type
 	.byte \jumpIfHasType
@@ -190,7 +190,7 @@
 	.byte \record
 	.endm
 
-    .macro jumpifabilityonside battler:req, abilityId:req, ptr:req
+	.macro jumpifabilityonside battler:req, abilityId:req, ptr:req
 	.byte 0x22
 	.byte \battler
 	.2byte \abilityId
@@ -1276,7 +1276,7 @@
 	.byte 0xf7
 	.endm
 
-    .macro nopf8
+	.macro nopf8
 	.byte 0xf8
 	.endm
 	 
@@ -1288,7 +1288,7 @@
 	.byte 0xfa 
 	.endm
 	 
-    .macro nopfb
+	.macro nopfb
 	.byte 0xfb
 	.endm
 	
@@ -1324,9 +1324,9 @@
 	.macro trydotrainerslide battler:req, caseId:req
 	various \battler, VARIOUS_TRY_TRAINER_SLIDE
 	.byte \caseId
-    .endm
+	.endm
 
-    .macro updatehealthboxattribute battler:req, attributeId:req
+	.macro updatehealthboxattribute battler:req, attributeId:req
 	various \battler, VARIOUS_UPDATE_HEALTHBOX_ATTRIBUTE
 	.byte \attributeId
 	.endm
@@ -1345,7 +1345,7 @@
 	.4byte \ptr
 	.endm
 
-    .macro jumpifbattleend ptr:req
+	.macro jumpifbattleend ptr:req
 	various BS_ATTACKER, VARIOUS_JUMP_IF_BATTLE_END
 	.4byte \ptr
 	.endm
@@ -1360,20 +1360,20 @@
 	.4byte \ptr
 	.endm
 
-    .macro tryfrisktarget ptr:req
+	.macro tryfrisktarget ptr:req
 	various BS_TARGET, VARIOUS_TRY_FRISK_TARGET
-    .4byte \ptr
-    .endm
+	.4byte \ptr
+	.endm
 
-    .macro switchinabilities battler:req
+	.macro switchinabilities battler:req
 	various \battler, VARIOUS_SWITCHIN_ABILITIES
 	.endm
 
-    .macro tryendneutralizinggas battler:req
+	.macro tryendneutralizinggas battler:req
 	various \battler, VARIOUS_TRY_END_NEUTRALIZING_GAS
 	.endm
 
-    .macro setteleportoutcome battler:req
+	.macro setteleportoutcome battler:req
 	various \battler, VARIOUS_SET_TELEPORT_OUTCOME
 	.endm
 	
@@ -1500,7 +1500,7 @@
 	.endm
 	
 @ callfunction macros
-    .macro setminimize
+	.macro setminimize
 	callfunction BS_SetMinimize
 	.endm
 	
@@ -1818,7 +1818,7 @@
 	jumpifhalfword CMP_NOT_EQUAL, gCurrentMove, \move, \jumpptr
 	.endm
 
-    .macro jumpiftype battler:req, type:req, jumpptr:req
+	.macro jumpiftype battler:req, type:req, jumpptr:req
 	jumpbasedontype \battler, \type, TRUE, \jumpptr
 	.endm
 	
@@ -1870,11 +1870,11 @@
 	setspecialmoveeffect FALSE, \flags
 	.endm
 	
-    .macro loadabilitypopup battler:req
+	.macro loadabilitypopup battler:req
 	handleabilitypopup \battler
 	.endm
 
-    .macro removeabilitypopup battler:req
+	.macro removeabilitypopup battler:req
 	handleabilitypopup ATK60_REMOVE_POP_UP | \battler
 	.endm
 	

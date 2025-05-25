@@ -54,9 +54,9 @@ bool16 ResetAllPicSprites(void)
 static void DecompressPic(u16 species, u32 personality, bool8 isFrontPic, u8 *dest, bool8 isTrainer)
 {
     if (!isTrainer)
-		LoadSpecialPokePic(species, personality, isFrontPic, dest);
+        LoadSpecialPokePic(species, personality, isFrontPic, dest);
     else
-		LZDecompressWram(isFrontPic ? gTrainerFrontPicTable[species].pic.data : gTrainerBackPicTable[species].pic.data, dest);
+        LZDecompressWram(isFrontPic ? gTrainerFrontPicTable[species].pic.data : gTrainerBackPicTable[species].pic.data, dest);
 }
 
 static void AssignSpriteAnimsTable(u16 species, bool8 isTrainer)
@@ -79,7 +79,7 @@ static void LoadPicPaletteByTagOrSlot(u16 species, bool8 isShiny, u8 paletteSlot
         else
         {
             sCreatingSpriteTemplate.paletteTag = paletteTag;
-			LoadMonPaletteFromSpecies(species, isShiny);
+            LoadMonPaletteFromSpecies(species, isShiny);
         }
     }
     else
@@ -110,7 +110,7 @@ static u16 CreatePicSprite(u16 species, bool8 isShiny, u32 personality, bool8 is
         if (!sSpritePics[i].active)
             break;
     }
-	
+    
     if (i == PICS_COUNT)
         return 0xFFFF;
 
@@ -124,7 +124,7 @@ static u16 CreatePicSprite(u16 species, bool8 isShiny, u32 personality, bool8 is
         Free(framePics);
         return 0xFFFF;
     }
-	DecompressPic(species, personality, isFrontPic, framePics, isTrainer);
+    DecompressPic(species, personality, isFrontPic, framePics, isTrainer);
 
     for (j = 0; j < 4; j ++)
     {
@@ -147,7 +147,7 @@ static u16 CreatePicSprite(u16 species, bool8 isShiny, u32 personality, bool8 is
     sSpritePics[i].paletteTag = paletteTag;
     sSpritePics[i].spriteId = spriteId;
     sSpritePics[i].active = TRUE;
-	
+    
     return spriteId;
 }
 
@@ -196,7 +196,7 @@ u16 CreateTrainerCardSprite(u16 species, bool8 isShiny, u32 personality, bool8 i
     framePics = Alloc(4 * 0x800);
     if (framePics)
     {
-		DecompressPic(species, personality, isFrontPic, framePics, isTrainer);
+        DecompressPic(species, personality, isFrontPic, framePics, isTrainer);
         BlitBitmapRectToWindow(windowId, framePics, 0, 0, 0x40, 0x40, destX, destY, 0x40, 0x40);
         LoadPicPaletteBySlot(species, isShiny, paletteSlot, isTrainer);
         Free(framePics);

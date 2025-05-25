@@ -30,11 +30,11 @@
 /* Maptypes that are not affected by DNS */
 static const u8 sDNSMapExceptions[] =
 {
-	MAP_TYPE_NONE,
-	MAP_TYPE_INDOOR,
-	MAP_TYPE_UNDERGROUND,
-	MAP_TYPE_SECRET_BASE,
-	MAP_TYPE_UNDERWATER
+    MAP_TYPE_NONE,
+    MAP_TYPE_INDOOR,
+    MAP_TYPE_UNDERGROUND,
+    MAP_TYPE_SECRET_BASE,
+    MAP_TYPE_UNDERWATER
 };
 
 /*******************************************************/
@@ -190,26 +190,26 @@ static const u16 sNightFilter = RGB2(14, 14, 6);   //19CE
 // The season for each month of the year
 static const u8 sSeasonsByMonth[MONTH_COUNT] =
 {
-	[MONTH_JAN - 1] = SEASON_SUMMER,
-	[MONTH_FEB - 1] = SEASON_SUMMER,
-	[MONTH_MAR - 1] = SEASON_SUMMER,
-	[MONTH_APR - 1] = SEASON_AUTUMN,
-	[MONTH_MAY - 1] = SEASON_AUTUMN,
-	[MONTH_JUN - 1] = SEASON_AUTUMN,
-	[MONTH_JUL - 1] = SEASON_WINTER,
-	[MONTH_AUG - 1] = SEASON_WINTER,
-	[MONTH_SEP - 1] = SEASON_WINTER,
-	[MONTH_OCT - 1] = SEASON_SPRING,
-	[MONTH_NOV - 1] = SEASON_SPRING,
-	[MONTH_DEC - 1] = SEASON_SPRING
+    [MONTH_JAN - 1] = SEASON_SUMMER,
+    [MONTH_FEB - 1] = SEASON_SUMMER,
+    [MONTH_MAR - 1] = SEASON_SUMMER,
+    [MONTH_APR - 1] = SEASON_AUTUMN,
+    [MONTH_MAY - 1] = SEASON_AUTUMN,
+    [MONTH_JUN - 1] = SEASON_AUTUMN,
+    [MONTH_JUL - 1] = SEASON_WINTER,
+    [MONTH_AUG - 1] = SEASON_WINTER,
+    [MONTH_SEP - 1] = SEASON_WINTER,
+    [MONTH_OCT - 1] = SEASON_SPRING,
+    [MONTH_NOV - 1] = SEASON_SPRING,
+    [MONTH_DEC - 1] = SEASON_SPRING
 };
 
 static const u8 sSeasonNames[][7] =
 {
-	[SEASON_SUMMER] = _("Summer"),
-	[SEASON_AUTUMN] = _("Autumn"),
-	[SEASON_WINTER] = _("Winter"),
-	[SEASON_SPRING] = _("Spring")
+    [SEASON_SUMMER] = _("Summer"),
+    [SEASON_AUTUMN] = _("Autumn"),
+    [SEASON_WINTER] = _("Winter"),
+    [SEASON_SPRING] = _("Spring")
 };
 
 /***********************************************
@@ -237,143 +237,143 @@ ALIGNED(4) EWRAM_DATA static u16 sDNSPaletteDmaBuffer[PLTT_BUFFER_SIZE] = {0};
 
 bool32 IsMapDNSException(void)
 {
-	u32 i, mapType = gMapHeader.mapType;
-	
-	for (i = 0; i < ARRAY_COUNT(sDNSMapExceptions); i++)
-	{
-		if (sDNSMapExceptions[i] == mapType)
-			return TRUE;
-	}
-	return FALSE;
+    u32 i, mapType = gMapHeader.mapType;
+    
+    for (i = 0; i < ARRAY_COUNT(sDNSMapExceptions); i++)
+    {
+        if (sDNSMapExceptions[i] == mapType)
+            return TRUE;
+    }
+    return FALSE;
 }
 
 void DNSTransferPlttBuffer(void *src, void *dest)
 {
-	if (!IsMapDNSException() && !(gBattleTypeFlags & BATTLE_TYPE_POKEDUDE))
-	{
-		if (IN_OVERWORLD)
-		{
+    if (!IsMapDNSException() && !(gBattleTypeFlags & BATTLE_TYPE_POKEDUDE))
+    {
+        if (IN_OVERWORLD)
+        {
 #if LIT_UP_WINDOWS
-			DoDNSLightningWindowsEffect();
+            DoDNSLightningWindowsEffect();
 #endif
-			DmaCopy16(3, sDNSPaletteDmaBuffer, dest, PLTT_SIZE);
-			return;
-		}
+            DmaCopy16(3, sDNSPaletteDmaBuffer, dest, PLTT_SIZE);
+            return;
+        }
 #if USE_DNS_IN_BATTLE
-		else if (IN_BATTLE)
-		{
-			DmaCopy16(3, sDNSPaletteDmaBuffer, dest, PLTT_SIZE);
-			return;
-		}
+        else if (IN_BATTLE)
+        {
+            DmaCopy16(3, sDNSPaletteDmaBuffer, dest, PLTT_SIZE);
+            return;
+        }
 #endif
-	}
-	DmaCopy16(3, src, dest, PLTT_SIZE);
+    }
+    DmaCopy16(3, src, dest, PLTT_SIZE);
 }
 
 static bool32 IsSpritePaletteTagDNSException(u32 palNum, const u16 *tagExceptions, u32 tagExceptionsCount)
 {
-	u32 i, tag = GetSpritePaletteTagByPaletteNum(palNum);
+    u32 i, tag = GetSpritePaletteTagByPaletteNum(palNum);
 
-	for (i = 0; i < tagExceptionsCount; i++)
-	{
-		if (tagExceptions[i] == tag)
-			return TRUE;
-	}
-	return FALSE;
+    for (i = 0; i < tagExceptionsCount; i++)
+    {
+        if (tagExceptions[i] == tag)
+            return TRUE;
+    }
+    return FALSE;
 }
 
 static inline u32 DNSApplyProportionalFilterToColour(u32 colour, u32 filter)
 {
-	u32 red, green, blue;
+    u32 red, green, blue;
     
-	red = (colour & 0x1F) * (0x1F - (filter & 0x1F)) >> 5;
-	green = ((colour & 0x3E0) >> 5) * ((0x3E0 - (filter & 0x3E0)) >> 5) >> 5;
-	blue = ((colour & 0x7C00) >> 10) * ((0x7C00 - (filter & 0x7C00)) >> 10) >> 5;
-	
-	return RGB2(red <= 31 ? red : 0, green <= 31 ? green : 0, blue <= 31 ? blue : 0);
+    red = (colour & 0x1F) * (0x1F - (filter & 0x1F)) >> 5;
+    green = ((colour & 0x3E0) >> 5) * ((0x3E0 - (filter & 0x3E0)) >> 5) >> 5;
+    blue = ((colour & 0x7C00) >> 10) * ((0x7C00 - (filter & 0x7C00)) >> 10) >> 5;
+    
+    return RGB2(red <= 31 ? red : 0, green <= 31 ? green : 0, blue <= 31 ? blue : 0);
 }
 
 void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 *tagExceptions, u32 tagExceptionsCount)
 {
-	u32 palNum, colNum;
-	u32 colourSlot, rgbFilter = GetDNSFilter();
-	
-	for (palNum = 0; palNum < 32; palNum++)
-	{
-		if (palExceptionFlags.pal[palNum] && (palNum < 16 || tagExceptions == NULL || !IsSpritePaletteTagDNSException(palNum - 16, tagExceptions, tagExceptionsCount)))
-		{
-			for (colNum = 0; colNum < 16; colNum++)
-			{
-				colourSlot = palNum * 16 + colNum;
-				sDNSPaletteDmaBuffer[colourSlot] = DNSApplyProportionalFilterToColour(gPlttBufferFaded[colourSlot], rgbFilter);
-			}
-		}
-		else
-		{
-			for (colNum = 0; colNum < 16; colNum++)
-			{
-				colourSlot = palNum * 16 + colNum;
-				sDNSPaletteDmaBuffer[colourSlot] = gPlttBufferFaded[colourSlot];
-			}
-		}
-	}
+    u32 palNum, colNum;
+    u32 colourSlot, rgbFilter = GetDNSFilter();
+    
+    for (palNum = 0; palNum < 32; palNum++)
+    {
+        if (palExceptionFlags.pal[palNum] && (palNum < 16 || tagExceptions == NULL || !IsSpritePaletteTagDNSException(palNum - 16, tagExceptions, tagExceptionsCount)))
+        {
+            for (colNum = 0; colNum < 16; colNum++)
+            {
+                colourSlot = palNum * 16 + colNum;
+                sDNSPaletteDmaBuffer[colourSlot] = DNSApplyProportionalFilterToColour(gPlttBufferFaded[colourSlot], rgbFilter);
+            }
+        }
+        else
+        {
+            for (colNum = 0; colNum < 16; colNum++)
+            {
+                colourSlot = palNum * 16 + colNum;
+                sDNSPaletteDmaBuffer[colourSlot] = gPlttBufferFaded[colourSlot];
+            }
+        }
+    }
 }
 
 #if LIT_UP_WINDOWS
 static void TryLightningUpTilesetPalettes(struct Tileset const *tileset, bool32 fadeActive)
 {
-	u32 i, colorSlot;
-	const struct LightningColor *lightColors;
-	
-	if (tileset && tileset->lightningColors)
-	{
-		i = 0;
-		while (TRUE)
-		{
-			lightColors = &tileset->lightningColors[i];
-			
-			// End of table
-			if (lightColors->color == RGB_BLACK)
-				break;
-			
-			colorSlot = lightColors->paletteNum * 16 + lightColors->colorSlot;
-			
-			if (fadeActive || (gPlttBufferUnfaded[colorSlot] != RGB_BLACK && gPlttBufferFaded[colorSlot] == RGB_BLACK))
-			{
-				sDNSPaletteDmaBuffer[colorSlot] = gPlttBufferFaded[colorSlot];
-				gPlttBufferUnfaded[colorSlot] = lightColors->color;
-			}
-			else
-				sDNSPaletteDmaBuffer[colorSlot] = lightColors->color;
-			
-			i++;
-		}
-	}
+    u32 i, colorSlot;
+    const struct LightningColor *lightColors;
+    
+    if (tileset && tileset->lightningColors)
+    {
+        i = 0;
+        while (TRUE)
+        {
+            lightColors = &tileset->lightningColors[i];
+            
+            // End of table
+            if (lightColors->color == RGB_BLACK)
+                break;
+            
+            colorSlot = lightColors->paletteNum * 16 + lightColors->colorSlot;
+            
+            if (fadeActive || (gPlttBufferUnfaded[colorSlot] != RGB_BLACK && gPlttBufferFaded[colorSlot] == RGB_BLACK))
+            {
+                sDNSPaletteDmaBuffer[colorSlot] = gPlttBufferFaded[colorSlot];
+                gPlttBufferUnfaded[colorSlot] = lightColors->color;
+            }
+            else
+                sDNSPaletteDmaBuffer[colorSlot] = lightColors->color;
+            
+            i++;
+        }
+    }
 }
 
 static void DoDNSLightningWindowsEffect(void)
 {
-	bool32 fadeActive = gPaletteFade.active;
-	
-	if (LIT_UP_TIME)
-	{
-		TryLightningUpTilesetPalettes(gMapHeader.mapLayout->primaryTileset, fadeActive);
-		TryLightningUpTilesetPalettes(gMapHeader.mapLayout->secondaryTileset, fadeActive);
-		gMain.tilesetPaletteReloaded = FALSE;
-	}
-	else if (!fadeActive && !gMain.tilesetPaletteReloaded)
-	{
-		LoadMapTilesetPalettes(gMapHeader.mapLayout);
-		gMain.tilesetPaletteReloaded = TRUE;
-	}
+    bool32 fadeActive = gPaletteFade.active;
+    
+    if (LIT_UP_TIME)
+    {
+        TryLightningUpTilesetPalettes(gMapHeader.mapLayout->primaryTileset, fadeActive);
+        TryLightningUpTilesetPalettes(gMapHeader.mapLayout->secondaryTileset, fadeActive);
+        gMain.tilesetPaletteReloaded = FALSE;
+    }
+    else if (!fadeActive && !gMain.tilesetPaletteReloaded)
+    {
+        LoadMapTilesetPalettes(gMapHeader.mapLayout);
+        gMain.tilesetPaletteReloaded = TRUE;
+    }
 }
 #endif
 
 u32 GetDNSTimeLapse(void)
 {
-	u32 hour = gRtcLocation.hour;
-	
-	if (hour < DAWN_OF_DAY_START)
+    u32 hour = gRtcLocation.hour;
+    
+    if (hour < DAWN_OF_DAY_START)
         return TIME_MIDNIGHT;
     else if (hour < MORNING_OF_DAY_START)
         return TIME_DAWN;
@@ -389,88 +389,88 @@ u32 GetDNSTimeLapse(void)
 
 static u32 GetDNSFilter(void)
 {
-	u32 minutes = gRtcLocation.minute;
-	
-	switch (GetDNSTimeLapse())
-	{
-		case TIME_MIDNIGHT:
-			return sMidnightFilters[gRtcLocation.hour < 1 ? minutes >> 3 : 7];
-		case TIME_DAWN:
-		    return sDawnFilters[minutes >> 1];
-		case TIME_DAY:
-		    return sDayFilter;
-		case TIME_SUNSET: 
-		    return sSunsetFilters[minutes >> 1];
-		case TIME_NIGHTFALL:
-		    return sNightfallFilters[minutes >> 1];
-		case TIME_NIGHT:
-	        return sNightFilter;
-	}
+    u32 minutes = gRtcLocation.minute;
+    
+    switch (GetDNSTimeLapse())
+    {
+        case TIME_MIDNIGHT:
+            return sMidnightFilters[gRtcLocation.hour < 1 ? minutes >> 3 : 7];
+        case TIME_DAWN:
+            return sDawnFilters[minutes >> 1];
+        case TIME_DAY:
+            return sDayFilter;
+        case TIME_SUNSET: 
+            return sSunsetFilters[minutes >> 1];
+        case TIME_NIGHTFALL:
+            return sNightfallFilters[minutes >> 1];
+        case TIME_NIGHT:
+            return sNightFilter;
+    }
 }
 
 u32 GetDNSTimeLapseDayOrNight(void)
 {
-	switch (GetDNSTimeLapse())
-	{
-		case TIME_MIDNIGHT:
-		case TIME_NIGHTFALL:
-		case TIME_NIGHT:
-		    return TIME_NIGHT;
-		default:
-			return TIME_DAY;
-	}
+    switch (GetDNSTimeLapse())
+    {
+        case TIME_MIDNIGHT:
+        case TIME_NIGHTFALL:
+        case TIME_NIGHT:
+            return TIME_NIGHT;
+        default:
+            return TIME_DAY;
+    }
 }
 
 u32 DNSGetCurrentSeason(void)
 {
-	return sSeasonsByMonth[gRtcLocation.month - 1];
+    return sSeasonsByMonth[gRtcLocation.month - 1];
 }
 
 u8 *DNSCopyCurrentSeasonName(u8 *dest)
 {
-	return StringCopy(dest, sSeasonNames[DNSGetCurrentSeason()]);
+    return StringCopy(dest, sSeasonNames[DNSGetCurrentSeason()]);
 }
 
 // Based off: https://blog.eletrogate.com/relogio-de-fases-lunares-com-o-arduino/
 u32 DNSGetMoonPhase(void)
 {
-	u32 month = gRtcLocation.month;
-	int moonPhase, year = gRtcLocation.year - (int)((MONTH_COUNT - month) / 10);
-	f64 yearDays, monthDays, leapYear, julianaDate;
-	
-	month += 9;
-	if (month >= MONTH_COUNT)
-		month -= MONTH_COUNT;
-	
-	yearDays = 365.25 * (year + 4172);
-	monthDays = (int)((30.6001 * month) + 0.5);
-	leapYear = (int)((((year / 100) + 4) * 0.75) - 38);
-	
-	julianaDate = yearDays + monthDays + gRtcLocation.day + 59;
-	julianaDate -= leapYear;
-	julianaDate = (int)(julianaDate - 2244116.75);
-	julianaDate /= 29.53;
-	
-	moonPhase = julianaDate;
-	julianaDate -= moonPhase;
-	
-	moonPhase = julianaDate * 8 + 0.5;
-	moonPhase &= 7;
-	
-	switch (moonPhase)
-	{
-		case 0:
-		    moonPhase = PHASE_FULL_MOON;
-			break;
-		case 1 ... 3:
-		    moonPhase = PHASE_WANING_MOON;
-			break;
-		case 4:
-		    moonPhase = PHASE_NEW_MOON;
-			break;
-		case 5 ... 7:
-		    moonPhase = PHASE_CRESCENT_MOON;
-			break;
-	}
-	return moonPhase;
+    u32 month = gRtcLocation.month;
+    int moonPhase, year = gRtcLocation.year - (int)((MONTH_COUNT - month) / 10);
+    f64 yearDays, monthDays, leapYear, julianaDate;
+    
+    month += 9;
+    if (month >= MONTH_COUNT)
+        month -= MONTH_COUNT;
+    
+    yearDays = 365.25 * (year + 4172);
+    monthDays = (int)((30.6001 * month) + 0.5);
+    leapYear = (int)((((year / 100) + 4) * 0.75) - 38);
+    
+    julianaDate = yearDays + monthDays + gRtcLocation.day + 59;
+    julianaDate -= leapYear;
+    julianaDate = (int)(julianaDate - 2244116.75);
+    julianaDate /= 29.53;
+    
+    moonPhase = julianaDate;
+    julianaDate -= moonPhase;
+    
+    moonPhase = julianaDate * 8 + 0.5;
+    moonPhase &= 7;
+    
+    switch (moonPhase)
+    {
+        case 0:
+            moonPhase = PHASE_FULL_MOON;
+            break;
+        case 1 ... 3:
+            moonPhase = PHASE_WANING_MOON;
+            break;
+        case 4:
+            moonPhase = PHASE_NEW_MOON;
+            break;
+        case 5 ... 7:
+            moonPhase = PHASE_CRESCENT_MOON;
+            break;
+    }
+    return moonPhase;
 }

@@ -199,8 +199,8 @@ void Item_FromMonToMoving(u32 cursorArea, u32 cursorPos)
     sub_80964B8(id, 3);
     sub_80964E8(id, 1, cursorArea, cursorPos);
     sub_80962F0(id, 2, 0);
-	gPSSData->movingItem = gPSSData->cursorMonItem;
-	
+    gPSSData->movingItem = gPSSData->cursorMonItem;
+    
     if (cursorArea == CURSOR_AREA_IN_BOX)
     {
         SetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM, &item);
@@ -237,7 +237,7 @@ void Item_SwitchMonsWithMoving(u32 cursorArea, u32 cursorPos)
     id = sub_8096258(cursorArea, cursorPos);
     sub_80964B8(id, 3);
     sub_80964E8(id, 3, CURSOR_AREA_BOX, 0);
-	
+    
     if (cursorArea == CURSOR_AREA_IN_BOX)
     {
         item = GetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM);
@@ -265,7 +265,7 @@ void Item_GiveMovingToMon(u32 cursorArea, u32 cursorPos)
     id = sub_8096258(2, 0);
     sub_80964B8(id, 4);
     sub_80964E8(id, 2, cursorArea, cursorPos);
-	
+    
     if (cursorArea == CURSOR_AREA_IN_BOX)
     {
         SetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM, &gPSSData->movingItem);
@@ -276,7 +276,7 @@ void Item_GiveMovingToMon(u32 cursorArea, u32 cursorPos)
         SetMonData(&gPlayerParty[cursorPos], MON_DATA_HELD_ITEM, &gPSSData->movingItem);
         SetPartyMonIconObjMode(cursorPos, ST_OAM_OBJ_NORMAL);
     }
-	gPSSData->movingItem = ITEM_NONE;
+    gPSSData->movingItem = ITEM_NONE;
 }
 
 void Item_TakeMons(u32 cursorArea, u32 cursorPos)
@@ -290,20 +290,20 @@ void Item_TakeMons(u32 cursorArea, u32 cursorPos)
     id = sub_8096258(cursorArea, cursorPos);
     sub_80964B8(id, 2);
     sub_80964E8(id, 0, cursorArea, cursorPos);
-	
+    
     if (cursorArea == CURSOR_AREA_IN_BOX)
     {
-		gPSSData->movingItem = GetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM);
+        gPSSData->movingItem = GetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM);
         SetCurrentBoxMonData(cursorPos, MON_DATA_HELD_ITEM, &item);
         SetBoxMonIconObjMode(cursorPos, ST_OAM_OBJ_BLEND);
     }
     else
     {
-		gPSSData->movingItem = GetMonData(&gPlayerParty[cursorPos], MON_DATA_HELD_ITEM);
+        gPSSData->movingItem = GetMonData(&gPlayerParty[cursorPos], MON_DATA_HELD_ITEM);
         SetMonData(&gPlayerParty[cursorPos], MON_DATA_HELD_ITEM, &item);
         SetPartyMonIconObjMode(cursorPos, ST_OAM_OBJ_BLEND);
     }
-	gPSSData->movingItem = ITEM_NONE;
+    gPSSData->movingItem = ITEM_NONE;
 }
 
 void sub_8096088(void)
@@ -340,7 +340,7 @@ bool32 sub_809610C(void)
         {
             if (!gPSSData->itemIconSprites[i].sprite->affineAnimEnded && gPSSData->itemIconSprites[i].sprite->affineAnimBeginning)
                 return TRUE;
-			
+            
             if (gPSSData->itemIconSprites[i].sprite->callback != SpriteCallbackDummy && gPSSData->itemIconSprites[i].sprite->callback != sub_80969BC)
                 return TRUE;
         }
@@ -431,7 +431,7 @@ static void sub_80962F0(u32 id, u32 cursorArea, u32 cursorPos)
     case CURSOR_AREA_IN_BOX:
         row = cursorPos % IN_BOX_ROWS;
         column = cursorPos / IN_BOX_ROWS;
-		
+        
         gPSSData->itemIconSprites[id].sprite->x = (24 * row) + 112;
         gPSSData->itemIconSprites[id].sprite->y = (24 * column) + 56;
         gPSSData->itemIconSprites[id].sprite->oam.priority = 2;
@@ -474,7 +474,7 @@ static void sub_8096408(u32 id, const u32 *itemTiles, const u32 *itemPal)
 static void sub_80964B8(u32 id, u32 animNum)
 {
     if (id < MAX_ITEM_ICONS)
-		StartSpriteAffineAnim(gPSSData->itemIconSprites[id].sprite, animNum);
+        StartSpriteAffineAnim(gPSSData->itemIconSprites[id].sprite, animNum);
 }
 
 static void sub_80964E8(u32 id, u32 command, u32 cursorArea, u32 cursorPos)
@@ -519,10 +519,10 @@ static void sub_80964E8(u32 id, u32 command, u32 cursorArea, u32 cursorPos)
 static void sub_8096624(u32 id, bool32 show)
 {
     if (id < MAX_ITEM_ICONS)
-	{
-		gPSSData->itemIconSprites[id].active = show;
-		gPSSData->itemIconSprites[id].sprite->invisible = (show == FALSE);
-	}
+    {
+        gPSSData->itemIconSprites[id].active = show;
+        gPSSData->itemIconSprites[id].sprite->invisible = (show == FALSE);
+    }
 }
 
 void PrintItemDescription(void)

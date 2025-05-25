@@ -60,7 +60,7 @@ static u32 BikeInputHandler_Normal(u32 *direction_p, u16 newKeys, u16 heldKeys)
         {
             gPlayerAvatar.acroBikeState = BIKE_STATE_SLOPE;
             gPlayerAvatar.runningState = MOVING;
-			return *direction_p < DIR_NORTH ? BIKE_TRANS_DOWNHILL : BIKE_TRANS_UPHILL;
+            return *direction_p < DIR_NORTH ? BIKE_TRANS_DOWNHILL : BIKE_TRANS_UPHILL;
         }
         else
         {
@@ -122,7 +122,7 @@ static u32 BikeInputHandler_Slope(u32 *direction_p, u16 newKeys, u16 heldKeys)
         {
             gPlayerAvatar.runningState = MOVING;
             gPlayerAvatar.acroBikeState = BIKE_STATE_SLOPE;
-			return *direction_p < DIR_NORTH ? BIKE_TRANS_DOWNHILL : BIKE_TRANS_UPHILL;
+            return *direction_p < DIR_NORTH ? BIKE_TRANS_DOWNHILL : BIKE_TRANS_UPHILL;
         }
     }
     gPlayerAvatar.acroBikeState = BIKE_STATE_NORMAL;
@@ -176,7 +176,7 @@ static void BikeTransition_MoveDirection(u32 direction)
         else
         {
             if (collision == COLLISION_GROUND_ROCKS)
-				PlayerOnBikeCollide(direction);
+                PlayerOnBikeCollide(direction);
             else if (collision == COLLISION_COUNT || PlayerIsMovingOnRockStairs(direction))
                 PlayerGoSpeed2(direction);
             else
@@ -264,7 +264,7 @@ bool32 IsBikingDisallowedByPlayer(void)
 bool32 IsPlayerNotUsingAcroBikeOnBumpySlope(void)
 {
     if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_ACRO_BIKE) && MetatileBehavior_IsBumpySlope(gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior))
-		return FALSE;
+        return FALSE;
     return TRUE;
 }
 

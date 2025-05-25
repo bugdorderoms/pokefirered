@@ -3,7 +3,7 @@
 	.byte 0x00
 	.endm
 
-    @ Ends the anim of the player when founding an item.
+	@ Ends the anim of the player when founding an item.
 	.macro endplayerfinditemanim
 	.byte 0x01
 	.endm

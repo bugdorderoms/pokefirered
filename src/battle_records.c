@@ -20,10 +20,10 @@ static EWRAM_DATA u16 * sBg3TilemapBuffer_p = NULL;
 static void MainCB2_SetUp(void);
 static void VBlankCB(void);
 static void MainCB2(void);
-static void Task_WaitFadeIn(u8 taskId);
-static void Task_WaitButton(u8 taskId);
-static void Task_FadeOut(u8 taskId);
-static void Task_DestroyAndReturnToField(u8 taskId);
+static void Task_WaitFadeIn(u32 taskId);
+static void Task_WaitButton(u32 taskId);
+static void Task_FadeOut(u32 taskId);
+static void Task_DestroyAndReturnToField(u32 taskId);
 static void ClearWindowCommitAndRemove(u32 windowId);
 static void ResetGpu(void);
 static void StopAllRunningTasks(void);
@@ -129,7 +129,7 @@ static void MainCB2_SetUp(void)
     case 7:
         SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG3_ON);
         SetVBlankCallback(VBlankCB);
-		PrintBattleRecords();
+        PrintBattleRecords();
         CreateTask(Task_WaitFadeIn, 8);
         SetMainCallback2(MainCB2);
         gMain.state = 0;
@@ -152,13 +152,13 @@ static void MainCB2(void)
     UpdatePaletteFade();
 }
 
-static void Task_WaitFadeIn(u8 taskId)
+static void Task_WaitFadeIn(u32 taskId)
 {
     if (!gPaletteFade.active)
         gTasks[taskId].func = Task_WaitButton;
 }
 
-static void Task_WaitButton(u8 taskId)
+static void Task_WaitButton(u32 taskId)
 {
     if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
     {
@@ -167,13 +167,13 @@ static void Task_WaitButton(u8 taskId)
     }
 }
 
-static void Task_FadeOut(u8 taskId)
+static void Task_FadeOut(u32 taskId)
 {
     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_DestroyAndReturnToField;
 }
 
-static void Task_DestroyAndReturnToField(u8 taskId)
+static void Task_DestroyAndReturnToField(u32 taskId)
 {
     if (!gPaletteFade.active)
     {
@@ -261,7 +261,7 @@ void ClearLinkBattleRecords(void)
 
     for (i = 0; i < LINK_B_RECORDS_COUNT; i++)
         ClearLinkBattleRecord(&gSaveBlock2Ptr->linkBattleRecords.entries[i]);
-	
+    
     SetGameStat(GAME_STAT_LINK_BATTLE_WINS, 0);
     SetGameStat(GAME_STAT_LINK_BATTLE_LOSSES, 0);
     SetGameStat(GAME_STAT_LINK_BATTLE_DRAWS, 0);
@@ -295,7 +295,7 @@ static void SortLinkBattleRecords(struct LinkBattleRecords * records)
         for (j = i - 1; j >= 0; j--)
         {
             if (GetLinkBattleRecordTotalBattles(&records->entries[i]) > GetLinkBattleRecordTotalBattles(&records->entries[j]))
-				SWAP(records->entries[i], records->entries[j], tmp);
+                SWAP(records->entries[i], records->entries[j], tmp);
         }
     }
 }
@@ -516,8 +516,8 @@ static void PrintBattleRecords(void)
     AddTextPrinterParameterized4(0, 2, 0x54, 0x30, 0, 2, sTextColor, 0, COMPOUND_STRING("Win{CLEAR_TO 0x30}Lose{CLEAR_TO 0x60}Draw"));
     for (i = 0; i < LINK_B_RECORDS_COUNT; i++)
         PrintOpponentBattleRecord(&gSaveBlock2Ptr->linkBattleRecords.entries[i], 0x3D + 14 * i);
-	
-	PutWindowTilemap(0);
+    
+    PutWindowTilemap(0);
     CopyWindowToVram(0, COPYWIN_BOTH);
 }
 

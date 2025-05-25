@@ -37,7 +37,7 @@
 #define FLAG_TEMP_1F             0x01F
 #define TEMP_FLAGS_END           FLAG_TEMP_1F
 
-#define FLAG_0x020    			 0x020
+#define FLAG_0x020                 0x020
 #define FLAG_SYS_RIDE_PAGER_GET  0x021
 #define FLAG_TAUROS_RIDE_GET     0x022
 #define FLAG_STOUTLAND_RIDE_GET  0x023
@@ -696,8 +696,8 @@
 #define FLAG_0x2A4                                       0x2A4
 #define FLAG_CAN_USE_ROCKET_HIDEOUT_LIFT                 0x2A5
 #define FLAG_GOT_TEA                                     0x2A6
-#define FLAG_0x2A7                           			 0x2A7
-#define FLAG_0x2A8                          			 0x2A8
+#define FLAG_0x2A7                                        0x2A7
+#define FLAG_0x2A8                                       0x2A8
 #define FLAG_0x2A9                                       0x2A9
 #define FLAG_0x2AA                                       0x2AA
 #define FLAG_0x2AB                                       0x2AB
@@ -1003,7 +1003,7 @@
 #define FLAG_0x3D5               0x3D5
 #define FLAG_0x3D6               0x3D6
 #define FLAG_0x3D7               0x3D7
-#define FLAG_0x3D8   			 0x3D8
+#define FLAG_0x3D8                0x3D8
 #define FLAG_MYSTERY_GIFT_1      0x3D9
 #define FLAG_MYSTERY_GIFT_2      0x3DA
 #define FLAG_MYSTERY_GIFT_3      0x3DB
@@ -1382,7 +1382,7 @@
 #define FLAG_0x838                                                  (SYS_FLAGS + 0x38)
 #define FLAG_0x839                                                  (SYS_FLAGS + 0x39)
 #define FLAG_0x83A                                                  (SYS_FLAGS + 0x3A)
-#define FLAG_0x83B                                         			(SYS_FLAGS + 0x3B)
+#define FLAG_0x83B                                                     (SYS_FLAGS + 0x3B)
 #define FLAG_0x83C                                                  (SYS_FLAGS + 0x3C)
 #define FLAG_0x83D                                                  (SYS_FLAGS + 0x3D)
 #define FLAG_OPENED_START_MENU                                      (SYS_FLAGS + 0x3E)

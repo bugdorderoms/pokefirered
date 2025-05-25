@@ -29,7 +29,7 @@ enum
     CONTROLLER_STATUSICONUPDATE,
     CONTROLLER_STATUSANIMATION,
     CONTROLLER_DATATRANSFER,
-	CONTROLLER_TWORETURNVALUES,
+    CONTROLLER_TWORETURNVALUES,
     CONTROLLER_CHOSENMONRETURNVALUE,
     CONTROLLER_ONERETURNVALUE,
     CONTROLLER_EFFECTIVENESSSOUND,
@@ -53,9 +53,9 @@ enum
 // Values given to the emit functions to choose gBattleBufferA or gBattleBufferB
 enum
 {
-	BUFFER_A,
-	BUFFER_B,
-	BUFFER_LINK
+    BUFFER_A,
+    BUFFER_B,
+    BUFFER_LINK
 };
 
 enum
@@ -97,7 +97,7 @@ enum
     REQUEST_PERSONALITY_BATTLE,
     REQUEST_STATUS_BATTLE,
     REQUEST_LEVEL_BATTLE,
-	REQUEST_MAX_HP_BATTLE,
+    REQUEST_MAX_HP_BATTLE,
     REQUEST_HP_BATTLE,
     REQUEST_ATK_BATTLE,
     REQUEST_DEF_BATTLE,
@@ -108,20 +108,20 @@ enum
 
 enum
 {
-	BALL_NO_SHAKES,
-	BALL_1_SHAKE,
-	BALL_2_SHAKES,
-	BALL_3_SHAKES_FAIL,
-	BALL_3_SHAKES_SUCCESS,
-	BALL_TRAINER_BLOCK,
-	BALL_GHOST_DODGE,
+    BALL_NO_SHAKES,
+    BALL_1_SHAKE,
+    BALL_2_SHAKES,
+    BALL_3_SHAKES_FAIL,
+    BALL_3_SHAKES_SUCCESS,
+    BALL_TRAINER_BLOCK,
+    BALL_GHOST_DODGE,
 };
 
 enum
 {
-	RESET_ACTION_MOVE_SELECTION,
-	RESET_ACTION_SELECTION,
-	RESET_MOVE_SELECTION,
+    RESET_ACTION_MOVE_SELECTION,
+    RESET_ACTION_SELECTION,
+    RESET_MOVE_SELECTION,
 };
 
 #define INSTANT_HP_BAR_DROP     0x7FFF
@@ -145,7 +145,7 @@ struct HpAndStatus
 
 struct ChooseMoveStruct
 {
-	u16 species;
+    u16 species;
     u16 moves[MAX_MON_MOVES];
     u8 currentPp[MAX_MON_MOVES];
     u8 maxPp[MAX_MON_MOVES];
@@ -166,7 +166,7 @@ void PrepareBufferDataTransferLink(u32 battlerId, u32 bufferId, u16 size, u8 *da
 void CompleteOnBattlerSpritePosX_0(u32 battlerId);
 void TryShinyAnimAfterMonAnim(u32 battlerId);
 void WaitForMonAnimAfterLoad(u32 battlerId);
-void Task_BltController_RestoreBgmAfterCry(u8 taskId);
+void Task_BltController_RestoreBgmAfterCry(u32 taskId);
 void ShowHealthBox(u32 battlerId);
 
 // emitters

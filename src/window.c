@@ -465,12 +465,12 @@ void SetWindowAttribute(u8 windowId, u8 attributeId, u32 value)
     case WINDOW_BASE_BLOCK:
         gWindows[windowId].window.baseBlock = value;
         break;
-	case WINDOW_HEIGHT:
-	    gWindows[windowId].window.height = value;
-		break;
-	case WINDOW_WIDTH:
-		gWindows[windowId].window.width = value;
-		break;
+    case WINDOW_HEIGHT:
+        gWindows[windowId].window.height = value;
+        break;
+    case WINDOW_WIDTH:
+        gWindows[windowId].window.width = value;
+        break;
     default:
         break;
     }
@@ -516,7 +516,7 @@ static u8 GetNumActiveWindowsOnBg(u8 bgId)
 void FillHelpMessageWindow(u8 windowId)
 {
     const u8* ptr = gUnknown_84566A8;
-	u8 width = (u8)GetWindowAttribute(windowId, WINDOW_WIDTH), height = (u8)GetWindowAttribute(windowId, WINDOW_HEIGHT);
+    u8 width = (u8)GetWindowAttribute(windowId, WINDOW_WIDTH), height = (u8)GetWindowAttribute(windowId, WINDOW_HEIGHT);
     u8* buffer = (u8 *)Alloc(32 * width * height);
     u8 i, j, k;
 
@@ -532,7 +532,7 @@ void FillHelpMessageWindow(u8 windowId)
                     k = 14;
                 else
                     k = 5;
-				
+                
                 CpuCopy32(&ptr[k * 0x20], &buffer[(i * width + j) * 0x20], 32);
             }
         }
@@ -543,10 +543,10 @@ void FillHelpMessageWindow(u8 windowId)
 
 u32 WindowWidthPx(u8 windowId)
 {
-	return gWindows[windowId].window.width * 8;
+    return gWindows[windowId].window.width * 8;
 }
 
 u32 WindowHeightPx(u8 windowId)
 {
-	return gWindows[windowId].window.height * 8;
+    return gWindows[windowId].window.height * 8;
 }

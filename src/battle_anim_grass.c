@@ -14,8 +14,8 @@ static void AnimBulletSeed_Step1(struct Sprite *);
 static void AnimBulletSeed_Step2(struct Sprite *);
 static void AnimPetalDanceBigFlowerStep(struct Sprite *);
 static void AnimPetalDanceSmallFlowerStep(struct Sprite *);
-static void AnimTask_LeafBladeStep(u8 taskId);
-static void AnimTask_LeafBladeStep2(u8 taskId);
+static void AnimTask_LeafBladeStep(u32 taskId);
+static void AnimTask_LeafBladeStep2(u32 taskId);
 static void AnimTask_LeafBladeStep2_Callback(struct Sprite *);
 static void AnimSporeParticle(struct Sprite *);
 static void AnimSporeParticleStep(struct Sprite *);
@@ -179,7 +179,7 @@ const struct SpriteTemplate gRazorLeafCutterSpriteTemplate =
 
 const struct SpriteTemplate gScatterLeafSpriteTemplate =
 {
-	.tileTag = ANIM_TAG_LEAF,
+    .tileTag = ANIM_TAG_LEAF,
     .paletteTag = ANIM_TAG_LEAF,
     .oam = &gOamData_AffineOff_ObjNormal_16x16,
     .anims = sRazorLeafParticleAnimTable,
@@ -473,27 +473,27 @@ const struct SpriteTemplate gLeafStormParticleSpriteTemplate =
 static const union AnimCmd sAnim_PowerWhipVineOnPlayer[] =
 {
     ANIMCMD_FRAME(0, 3, .hFlip = TRUE),
-	ANIMCMD_FRAME(16, 3, .hFlip = TRUE),
-	ANIMCMD_FRAME(32, 3, .hFlip = TRUE),
-	ANIMCMD_FRAME(48, 3, .hFlip = TRUE),
-	ANIMCMD_FRAME(64, 3, .hFlip = TRUE),
-	ANIMCMD_END
+    ANIMCMD_FRAME(16, 3, .hFlip = TRUE),
+    ANIMCMD_FRAME(32, 3, .hFlip = TRUE),
+    ANIMCMD_FRAME(48, 3, .hFlip = TRUE),
+    ANIMCMD_FRAME(64, 3, .hFlip = TRUE),
+    ANIMCMD_END
 };
 
 static const union AnimCmd sAnim_PowerWhipVineOnOpponent[] =
 {
     ANIMCMD_FRAME(0, 3),
-	ANIMCMD_FRAME(16, 3),
-	ANIMCMD_FRAME(32, 3),
-	ANIMCMD_FRAME(48, 3),
-	ANIMCMD_FRAME(64, 3),
-	ANIMCMD_END
+    ANIMCMD_FRAME(16, 3),
+    ANIMCMD_FRAME(32, 3),
+    ANIMCMD_FRAME(48, 3),
+    ANIMCMD_FRAME(64, 3),
+    ANIMCMD_END
 };
 
 static const union AnimCmd *const sAnims_PowerWhipVine[] =
 {
     sAnim_PowerWhipVineOnPlayer,
-	sAnim_PowerWhipVineOnOpponent
+    sAnim_PowerWhipVineOnOpponent
 };
 
 const struct SpriteTemplate gPowerWhipVineSpriteTemplate =
@@ -526,7 +526,7 @@ static const union AffineAnimCmd sWoodHammerAffineAnimCmd_BackwardsRotateAndScal
 
 static const union AffineAnimCmd sWoodHammerAffineAnimCmd_BackwardsRotateAndScaleFlipped[] = 
 {
-	AFFINEANIMCMD_FRAME(-256, -256, 0, 0),
+    AFFINEANIMCMD_FRAME(-256, -256, 0, 0),
     AFFINEANIMCMD_FRAME(-5, 5, -2, 40),
     AFFINEANIMCMD_END
 };
@@ -535,14 +535,14 @@ static const union AffineAnimCmd sWoodHammerAffineAnimCmd_PunchClockwise[] =
 {
     AFFINEANIMCMD_FRAME(456, 456, 80, 0),
     AFFINEANIMCMD_FRAME(0, 0, -16, 7),
-	AFFINEANIMCMD_END
+    AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd sWoodHammerAffineAnimCmd_PunchCounterClockwise[] = 
 {
     AFFINEANIMCMD_FRAME(-456, 456, -80, 0),
     AFFINEANIMCMD_FRAME(0, 0, 16, 7),
-	AFFINEANIMCMD_END
+    AFFINEANIMCMD_END
 };
 
 // Animations 0, 2 are for the player side attacking
@@ -585,7 +585,7 @@ void AnimRazorLeafParticle(struct Sprite* sprite)
 {
     sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
     sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
-	
+    
     sprite->data[0] = gBattleAnimArgs[0];
     sprite->data[1] = gBattleAnimArgs[1];
     sprite->data[2] = gBattleAnimArgs[2];
@@ -601,8 +601,8 @@ static void AnimRazorLeafParticleStep1(struct Sprite* sprite)
         else
             sprite->data[0] = 0;
             
-		sprite->data[1] = 0;
-		sprite->data[2] = 0;
+        sprite->data[1] = 0;
+        sprite->data[2] = 0;
         sprite->callback = AnimRazorLeafParticleStep2;
     }
     else
@@ -623,7 +623,7 @@ static void AnimRazorLeafParticleStep2(struct Sprite* sprite)
     sprite->data[0] += 2;
     sprite->data[0] &= 0xFF;
     ++sprite->data[1];
-	
+    
     if (!(sprite->data[1] & 1))
         sprite->y2++;
 
@@ -661,15 +661,15 @@ static void AnimMoveTwisterParticleStep(struct Sprite* sprite)
         sprite->data[1] -= 2;
     }
     sprite->data[5] += sprite->data[2];
-	
+    
     if (sprite->data[0] < sprite->data[4])
         sprite->data[5] += sprite->data[2];
 
     sprite->data[5] &= 0xFF;
-	
+    
     sprite->x2 = Cos(sprite->data[5], sprite->data[3]);
     sprite->y2 = Sin(sprite->data[5], 5);
-	
+    
     if (sprite->data[5] < 0x80)
         sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget) - 1;
     else
@@ -691,23 +691,23 @@ static s32 LeafBladeGetPosFactor(struct Sprite* sprite)
 
 // Animates Leaf Blade's cross leafs.
 // No args.
-void AnimTask_LeafBlade(u8 taskId)
+void AnimTask_LeafBlade(u32 taskId)
 {
     struct Task *task = &gTasks[taskId];
 
     task->data[4] = GetBattlerSpriteSubpriority(gBattleAnimTarget) - 1;
-	
+    
     task->data[6] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
     task->data[7] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
-	
+    
     task->data[10] = GetBattlerSpriteCoordAttr(gBattleAnimTarget, BATTLER_COORD_ATTR_WIDTH);
     task->data[11] = GetBattlerSpriteCoordAttr(gBattleAnimTarget, BATTLER_COORD_ATTR_HEIGHT);
-	
+    
     task->data[5] = (GetBattlerSide(gBattleAnimTarget) == B_SIDE_OPPONENT) ? 1 : -1;
     task->data[9] = 56 - (task->data[5] * 64);
     task->data[8] = task->data[7] - task->data[9] + task->data[6];
     task->data[2] = CreateSprite(&gLeafBladeSpriteTemplate, task->data[8], task->data[9], task->data[4]);
-	
+    
     if (task->data[2] == MAX_SPRITES)
         DestroyAnimVisualTask(taskId);
 
@@ -721,7 +721,7 @@ void AnimTask_LeafBlade(u8 taskId)
     task->func = AnimTask_LeafBladeStep;
 }
 
-static void AnimTask_LeafBladeStep(u8 taskId)
+static void AnimTask_LeafBladeStep(u32 taskId)
 {
     struct Task* task = &gTasks[taskId];
     struct Sprite* sprite = &gSprites[task->data[2]];
@@ -731,7 +731,7 @@ static void AnimTask_LeafBladeStep(u8 taskId)
     {
     case 4:
         AnimTask_LeafBladeStep2(taskId);
-		
+        
         if (TranslateAnimHorizontalArc(sprite))
         {
             task->data[15] = 5;
@@ -740,7 +740,7 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 8:
         AnimTask_LeafBladeStep2(taskId);
-		
+        
         if (TranslateAnimHorizontalArc(sprite))
         {
             task->data[15] = 9;
@@ -749,7 +749,7 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 0:
         AnimTask_LeafBladeStep2(taskId);
-		
+        
         if (TranslateAnimHorizontalArc(sprite))
         {
             task->data[15] = 1;
@@ -758,17 +758,17 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 1:
         SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
-		
+        
         sprite->data[0] = 10;
         sprite->data[1] = sprite->x;
         sprite->data[2] = task->data[6];
         sprite->data[3] = sprite->y;
         sprite->data[4] = task->data[7];
         sprite->data[5] = LeafBladeGetPosFactor(sprite);
-		
+        
         task->data[4] += 2;
         task->data[3] = a;
-		
+        
         sprite->subpriority = task->data[4];
         StartSpriteAnim(sprite, task->data[3]);
         InitAnimArcTranslation(sprite);
@@ -776,7 +776,7 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 2:
         AnimTask_LeafBladeStep2(taskId);
-		
+        
         if (TranslateAnimHorizontalArc(sprite))
         {
             task->data[15] = 3;
@@ -785,16 +785,16 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 3:
         SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
-		
+        
         sprite->data[0] = 10;
         sprite->data[1] = sprite->x;
         sprite->data[2] = task->data[6] - ((task->data[10] / 2) + 10) * task->data[5];
         sprite->data[3] = sprite->y;
         sprite->data[4] = task->data[7] - ((task->data[11] / 2) + 10) * task->data[5];
         sprite->data[5] = LeafBladeGetPosFactor(sprite);
-		
+        
         task->data[3] = 2;
-		
+        
         sprite->subpriority = task->data[4];
         StartSpriteAnim(sprite, task->data[3]);
         InitAnimArcTranslation(sprite);
@@ -802,17 +802,17 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 5:
         SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
-		
+        
         sprite->data[0] = 10;
         sprite->data[1] = sprite->x;
         sprite->data[2] = task->data[6] + ((task->data[10] / 2) + 10) * task->data[5];
         sprite->data[3] = sprite->y;
         sprite->data[4] = task->data[7] + ((task->data[11] / 2) + 10) * task->data[5];
         sprite->data[5] = LeafBladeGetPosFactor(sprite);
-		
+        
         task->data[4] -= 2;
         task->data[3] = 3;
-		
+        
         sprite->subpriority = task->data[4];
         StartSpriteAnim(sprite, task->data[3]);
         InitAnimArcTranslation(sprite);
@@ -820,7 +820,7 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 6:
         AnimTask_LeafBladeStep2(taskId);
-		
+        
         if (TranslateAnimHorizontalArc(sprite))
         {
             task->data[15] = 7;
@@ -829,17 +829,17 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 7:
         SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
-		
+        
         sprite->data[0] = 10;
         sprite->data[1] = sprite->x;
         sprite->data[2] = task->data[6];
         sprite->data[3] = sprite->y;
         sprite->data[4] = task->data[7];
         sprite->data[5] = LeafBladeGetPosFactor(sprite);
-		
+        
         task->data[4] += 2;
         task->data[3] = 4;
-		
+        
         sprite->subpriority = task->data[4];
         StartSpriteAnim(sprite, task->data[3]);
         InitAnimArcTranslation(sprite);
@@ -847,16 +847,16 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 9:
         SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
-		
+        
         sprite->data[0] = 10;
         sprite->data[1] = sprite->x;
         sprite->data[2] = task->data[6] - ((task->data[10] / 2) + 10) * task->data[5];
         sprite->data[3] = sprite->y;
         sprite->data[4] = task->data[7] + ((task->data[11] / 2) + 10) * task->data[5];
         sprite->data[5] = LeafBladeGetPosFactor(sprite);
-		
+        
         task->data[3] = 5;
-		
+        
         sprite->subpriority = task->data[4];
         StartSpriteAnim(sprite, task->data[3]);
         InitAnimArcTranslation(sprite);
@@ -864,7 +864,7 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 10:
         AnimTask_LeafBladeStep2(taskId);
-		
+        
         if (TranslateAnimHorizontalArc(sprite))
         {
             task->data[15] = 11;
@@ -873,17 +873,17 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 11:
         SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
-		
+        
         sprite->data[0] = 10;
         sprite->data[1] = sprite->x;
         sprite->data[2] = task->data[8];
         sprite->data[3] = sprite->y;
         sprite->data[4] = task->data[9];
         sprite->data[5] = LeafBladeGetPosFactor(sprite);
-		
+        
         task->data[4] -= 2;
         task->data[3] = 6;
-		
+        
         sprite->subpriority = task->data[4];
         StartSpriteAnim(sprite, task->data[3]);
         InitAnimArcTranslation(sprite);
@@ -891,7 +891,7 @@ static void AnimTask_LeafBladeStep(u8 taskId)
         break;
     case 12:
         AnimTask_LeafBladeStep2(taskId);
-		
+        
         if (TranslateAnimHorizontalArc(sprite))
         {
             DestroySprite(sprite);
@@ -912,33 +912,33 @@ static void AnimTask_LeafBladeStep(u8 taskId)
     }
 }
 
-static void AnimTask_LeafBladeStep2(u8 taskId)
+static void AnimTask_LeafBladeStep2(u32 taskId)
 {
-	u32 spriteId;
+    u32 spriteId;
     s16 spriteX;
     s16 spriteY;
-	struct Task *task = &gTasks[taskId];
-	
+    struct Task *task = &gTasks[taskId];
+    
     if (++task->data[14] > 0)
     {
         task->data[14] = 0;
-		
+        
         spriteX = gSprites[task->data[2]].x + gSprites[task->data[2]].x2;
         spriteY = gSprites[task->data[2]].y + gSprites[task->data[2]].y2;
-		
+        
         spriteId = CreateSprite(&gLeafBladeSpriteTemplate, spriteX, spriteY, task->data[4]);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             gSprites[spriteId].data[6] = taskId;
             gSprites[spriteId].data[7] = 12;
-			
+            
             gTasks[taskId].data[12]++;
-			
+            
             gSprites[spriteId].data[0] = task->data[13] & 1;
-			
+            
             gTasks[taskId].data[13]++;
-			
+            
             StartSpriteAnim(&gSprites[spriteId], task->data[3]);
             gSprites[spriteId].subpriority = task->data[4];
             gSprites[spriteId].callback = AnimTask_LeafBladeStep2_Callback;
@@ -951,7 +951,7 @@ static void AnimTask_LeafBladeStep2_Callback(struct Sprite* sprite)
     if (++sprite->data[0] > 1)
     {
         sprite->data[0] = 0;
-		
+        
         sprite->invisible ^= TRUE;
 
         if (++sprite->data[1] > 8)
@@ -964,7 +964,7 @@ static void AnimTask_LeafBladeStep2_Callback(struct Sprite* sprite)
 
 // Animates the palette cycle in Magical Leaf's anim.
 // No args.
-void AnimTask_CycleMagicalLeafPal(u8 taskId)
+void AnimTask_CycleMagicalLeafPal(u32 taskId)
 {
     struct Task* task = &gTasks[taskId];
     
@@ -979,22 +979,22 @@ void AnimTask_CycleMagicalLeafPal(u8 taskId)
         if (++task->data[9] >= 0)
         {
             task->data[9] = 0;
-			
+            
             BlendPalette(task->data[8], 16, task->data[10], sMagicalLeafBlendColors[task->data[11]]);
             BlendPalette(task->data[12], 16, task->data[10], sMagicalLeafBlendColors[task->data[11]]);
-			
+            
             if (++task->data[10] == 17)
             {
                 task->data[10] = 0;
-				
+                
                 if (++task->data[11] == 7)
                     task->data[11] = 0;
             }
         }
         break;
     }
-	
-	// Signal to end the cycle effect
+    
+    // Signal to end the cycle effect
     if (gBattleAnimArgs[ARG_RET_ID] == -1)
         DestroyAnimVisualTask(taskId);
 }
@@ -1009,8 +1009,8 @@ void AnimBulletSeed(struct Sprite *sprite)
     sprite->data[0] = 20;
     sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
     sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
-	sprite->data[5] = gBattleAnimArgs[2];
-	sprite->affineAnimPaused = TRUE;
+    sprite->data[5] = gBattleAnimArgs[2];
+    sprite->affineAnimPaused = TRUE;
     sprite->callback = StartAnimLinearTranslation;
     StoreSpriteCallbackInData6(sprite, AnimBulletSeed_Step1);
 }
@@ -1020,38 +1020,38 @@ static void AnimBulletSeed_Step1(struct Sprite *sprite)
     u32 i;
     s16* ptr;
     
-	if (sprite->data[5] > MUS_DUMMY)
-		PlaySE12WithPanning(sprite->data[5], BattleAnimAdjustPanning(SOUND_PAN_TARGET));
-	
+    if (sprite->data[5] > MUS_DUMMY)
+        PlaySE12WithPanning(sprite->data[5], BattleAnimAdjustPanning(SOUND_PAN_TARGET));
+    
     SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
-	
+    
     ptr = &sprite->data[7];
     for (i = 0; i < 8; i++)
         ptr[i - 7] = 0;
 
     sprite->data[6] = 0xFFF4 - RandomMax(8);
     sprite->data[7] = RandomMax(0xA0) + 0xA0;
-	sprite->affineAnimPaused = FALSE;
+    sprite->affineAnimPaused = FALSE;
     sprite->callback = AnimBulletSeed_Step2;
 }
 
 static void AnimBulletSeed_Step2(struct Sprite *sprite)
 {
     sprite->data[0] += sprite->data[7];
-	
+    
     sprite->x2 = sprite->data[0] >> 8;
     if (sprite->data[7] & 1)
         sprite->x2 = -sprite->x2;
 
     sprite->y2 = Sin(sprite->data[1], sprite->data[6]);
-	
+    
     sprite->data[1] += 8;
-	
+    
     if (sprite->data[1] > 126)
     {
         sprite->data[1] = 0;
         sprite->data[2] /= 2;
-		
+        
         if (++sprite->data[3] == 1)
             DestroyAnimSprite(sprite);
     }
@@ -1083,7 +1083,7 @@ static void AnimPetalDanceBigFlowerStep(struct Sprite* sprite)
     {
         sprite->x2 += Sin(sprite->data[5], 32);
         sprite->y2 += Cos(sprite->data[5], -5);
-		
+        
         if ((u16)(sprite->data[5] - 0x40) < 0x80)
             sprite->subpriority = GetBattlerSpriteSubpriority(gBattleAnimAttacker) - 1;
         else
@@ -1100,7 +1100,7 @@ static void AnimPetalDanceSmallFlowerStep(struct Sprite* sprite)
     if (!AnimTranslateLinear(sprite))
     {
         sprite->x2 += Sin(sprite->data[5], 8);
-		
+        
         if ((u16)(sprite->data[5] - 59) < 5 || (u16)(sprite->data[5] - 187) < 5)
             sprite->oam.matrixNum ^= ST_OAM_HFLIP;
 
@@ -1123,15 +1123,15 @@ static void AnimPetalDanceSmallFlowerStep(struct Sprite* sprite)
 void AnimSporeParticle(struct Sprite* sprite)
 {
     InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[5], TRUE);
-	
+    
     StartSpriteAnim(sprite, gBattleAnimArgs[4]);
-	
+    
     if (gBattleAnimArgs[4])
         sprite->oam.objMode = ST_OAM_OBJ_BLEND;
 
     sprite->data[0] = gBattleAnimArgs[3];
     sprite->data[1] = gBattleAnimArgs[2];
-	sprite->data[3] = GetBattlerForAnimScript(gBattleAnimArgs[5]);
+    sprite->data[3] = GetBattlerForAnimScript(gBattleAnimArgs[5]);
     sprite->callback = AnimSporeParticleStep;
     sprite->callback(sprite);
 }
@@ -1140,7 +1140,7 @@ static void AnimSporeParticleStep(struct Sprite* sprite)
 {
     sprite->x2 = Sin(sprite->data[1], 32);
     sprite->y2 = Cos(sprite->data[1], -3) + ((sprite->data[2] += 24) >> 8);
-	
+    
     if ((u16)(sprite->data[1] - 0x40) < 0x80)
         sprite->oam.priority = GetBattlerSpriteBGPriority(sprite->data[3]);
     else
@@ -1153,80 +1153,80 @@ static void AnimSporeParticleStep(struct Sprite* sprite)
     }
     sprite->data[1] += 2;
     sprite->data[1] &= 0xFF;
-	
+    
     if (--sprite->data[0] == -1)
         DestroyAnimSprite(sprite);
 }
 
 static void CreateCottonSporeSporeSprite(u32 animBattler, s16 y, s16 waveOffset)
 {
-	u32 battlerId = GetBattlerForAnimScript(animBattler);
-	
-	gBattleAnimArgs[0] = 0;
-	gBattleAnimArgs[1] = y;
-	gBattleAnimArgs[2] = waveOffset;
-	gBattleAnimArgs[3] = 80;
-	gBattleAnimArgs[4] = FALSE;
-	gBattleAnimArgs[5] = animBattler;
-	CreateSpriteAndAnimate(&gSporeParticleSpriteTemplate, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X), GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y_PIC_OFFSET), GetBattlerSpriteSubpriority(gBattleAnimAttacker) + 2);
-	gAnimVisualTaskCount++;
+    u32 battlerId = GetBattlerForAnimScript(animBattler);
+    
+    gBattleAnimArgs[0] = 0;
+    gBattleAnimArgs[1] = y;
+    gBattleAnimArgs[2] = waveOffset;
+    gBattleAnimArgs[3] = 80;
+    gBattleAnimArgs[4] = FALSE;
+    gBattleAnimArgs[5] = animBattler;
+    CreateSpriteAndAnimate(&gSporeParticleSpriteTemplate, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X), GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y_PIC_OFFSET), GetBattlerSpriteSubpriority(gBattleAnimAttacker) + 2);
+    gAnimVisualTaskCount++;
 }
 
 // Creates Cotton Spore's spores. Same as above, but creating on both Pokémon if aplicable.
 // args are the initial y pixel offset and the initial wave offset of each spore created.
 // Are created three spores three times, with a delay of 12 frames betwen each spore creation.
 // So it creates 3 * 3 spores, with a delay of 12 betwhen each spore creation.
-void AnimTask_CreateCottonSporeSpores(u8 taskId)
+void AnimTask_CreateCottonSporeSpores(u32 taskId)
 {
-	u32 i, argId;
-	s16 y, waveOffset;
-	struct Task *task = &gTasks[taskId];
+    u32 i, argId;
+    s16 y, waveOffset;
+    struct Task *task = &gTasks[taskId];
 
-	switch (task->data[0])
-	{
-		case 0:
-			task->data[3] = (IsDoubleBattleForBattler(gBattleAnimTarget) && IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimTarget))); // If hit ally
-			
-			// Save spores's positions
-			for (i = 0; i < 3; i++)
-			{
-				argId = i * 2;
-				task->data[5 + argId] = gBattleAnimArgs[argId];
-				task->data[6 + argId] = gBattleAnimArgs[1 + argId];
-			}
-			++task->data[0];
-			// fallthrough
-		case 1:
-			if (--task->data[2] <= 0) // Wait delay until create a spore sprite
-			{
-				task->data[2] = 12;
-				
-				argId = task->data[1] * 2;
-				
-				y = task->data[5 + argId];
-				waveOffset = task->data[6 + argId];
-				
-				CreateCottonSporeSporeSprite(ANIM_TARGET, y, waveOffset);
-				
-				if (task->data[3]) // If creates on ally
-					CreateCottonSporeSporeSprite(ANIM_DEF_PARTNER, y, waveOffset);
-				
-				if (++task->data[1] == 3) // Creates three spores at a time
-				{
-					task->data[1] = 0;
-					
-					if (++task->data[4] == 3) // Num times spore are created
-						DestroyAnimVisualTask(taskId);
-				}
-			}
-			break;
-	}
+    switch (task->data[0])
+    {
+        case 0:
+            task->data[3] = (IsDoubleBattleForBattler(gBattleAnimTarget) && IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimTarget))); // If hit ally
+            
+            // Save spores's positions
+            for (i = 0; i < 3; i++)
+            {
+                argId = i * 2;
+                task->data[5 + argId] = gBattleAnimArgs[argId];
+                task->data[6 + argId] = gBattleAnimArgs[1 + argId];
+            }
+            ++task->data[0];
+            // fallthrough
+        case 1:
+            if (--task->data[2] <= 0) // Wait delay until create a spore sprite
+            {
+                task->data[2] = 12;
+                
+                argId = task->data[1] * 2;
+                
+                y = task->data[5 + argId];
+                waveOffset = task->data[6 + argId];
+                
+                CreateCottonSporeSporeSprite(ANIM_TARGET, y, waveOffset);
+                
+                if (task->data[3]) // If creates on ally
+                    CreateCottonSporeSporeSprite(ANIM_DEF_PARTNER, y, waveOffset);
+                
+                if (++task->data[1] == 3) // Creates three spores at a time
+                {
+                    task->data[1] = 0;
+                    
+                    if (++task->data[4] == 3) // Num times spore are created
+                        DestroyAnimVisualTask(taskId);
+                }
+            }
+            break;
+    }
 }
 
 // In a double battle where spore only affects one battler, Updates the mon sprite background priorities to allow the circling effect controlled by AnimSporeParticle.
 // Used AnimTask_CreateCottonSporeSpores to create spores on both battlers.
 // No args.
-void AnimTask_SporeDoubleBattle(u8 taskId)
+void AnimTask_SporeDoubleBattle(u32 taskId)
 {
     if (IsDoubleBattleForBattler(gBattleAnimTarget))
     {
@@ -1235,7 +1235,7 @@ void AnimTask_SporeDoubleBattle(u8 taskId)
         else
             SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 1);
     }
-	DestroyAnimVisualTask(taskId);
+    DestroyAnimVisualTask(taskId);
 }
 
 // Animates a root that flickers away after some time.
@@ -1248,19 +1248,19 @@ static void AnimIngrainRoot(struct Sprite* sprite)
 {
     if (!sprite->data[0])
     {
-		sprite->data[0]++;
-		
+        sprite->data[0]++;
+        
         sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
         sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y);
-		
+        
         sprite->x2 = gBattleAnimArgs[0];
         sprite->y2 = gBattleAnimArgs[1];
-		
+        
         sprite->subpriority = gBattleAnimArgs[2] + 30;
         StartSpriteAnim(sprite, gBattleAnimArgs[3]);
-		
+        
         sprite->data[2] = gBattleAnimArgs[4];
-		
+        
         if (sprite->y + sprite->y2 > 120)
             sprite->y += sprite->y2 + sprite->y - 120;
     }
@@ -1288,16 +1288,16 @@ static void AnimIngrainOrb(struct Sprite* sprite)
     {
         sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X) + gBattleAnimArgs[0];
         sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y) + gBattleAnimArgs[1];
-		
+        
         sprite->data[1] = gBattleAnimArgs[2];
         sprite->data[2] = gBattleAnimArgs[3];
         sprite->data[3] = gBattleAnimArgs[4];
     }
     sprite->data[0]++;
-	
+    
     sprite->x2 = sprite->data[1] * sprite->data[0];
     sprite->y2 = Sin((sprite->data[0] * 20) & 0xFF, sprite->data[2]);
-	
+    
     if (sprite->data[0] > sprite->data[3])
         DestroyAnimSprite(sprite);
 }
@@ -1318,17 +1318,17 @@ static void AnimFrenzyPlantRoot(struct Sprite *sprite)
 
     targetX -= attackerX;
     targetY -= attackerY;
-	
+    
     sprite->x = attackerX + targetX * gBattleAnimArgs[0] / 100;
     sprite->y = attackerY + targetY * gBattleAnimArgs[0] / 100;
-	
+    
     sprite->x2 = gBattleAnimArgs[1];
     sprite->y2 = gBattleAnimArgs[2];
-	
+    
     sprite->subpriority = gBattleAnimArgs[3] + 30;
-	
+    
     StartSpriteAnim(sprite, gBattleAnimArgs[4]);
-	
+    
     sprite->data[2] = gBattleAnimArgs[5];
     sprite->callback = AnimRootFlickerOut;
 }
@@ -1342,26 +1342,26 @@ static void AnimFrenzyPlantRoot(struct Sprite *sprite)
 void AnimNeedleArmSpike(struct Sprite* sprite)
 {
     u32 a, b;
-	u16 c;
+    u16 c;
     u32 x, y;
-	s16 targetX, targetY;
+    s16 targetX, targetY;
 
     if (gBattleAnimArgs[4] == 0)
         DestroyAnimSprite(sprite);
     else
     {
-		u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
-		
+        u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+        
         a = GetBattlerSpriteCoord(battler, BATTLER_COORD_X);
         b = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET);
         
         sprite->data[2] = gBattleAnimArgs[4];
-		
+        
         if (!gBattleAnimArgs[1])
         {
             sprite->x = gBattleAnimArgs[2] + a;
             sprite->y = gBattleAnimArgs[3] + b;
-			
+            
             targetX = a;
             targetY = b;
         }
@@ -1369,23 +1369,23 @@ void AnimNeedleArmSpike(struct Sprite* sprite)
         {
             sprite->x = a;
             sprite->y = b;
-			
+            
             targetX = gBattleAnimArgs[2] + a;
             targetY = gBattleAnimArgs[3] + b;
         }
         x = sprite->x;
         sprite->data[4] = x * 16;
-		
+        
         y = sprite->y;
         sprite->data[5] = y * 16;
-		
+        
         sprite->data[0] = (targetX - sprite->x) * 16 / sprite->data[2];
         sprite->data[1] = (targetY - sprite->y) * 16 / sprite->data[2];
-		
+        
         c = ArcTan2Neg(targetX - x, targetY - y);
         TrySetSpriteRotScale(sprite, 0, 0x100, 0x100, c);
-		
-		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+        
+        StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
         sprite->callback = AnimMoveSpriteOverDurationFast;
     }
 }
@@ -1394,40 +1394,40 @@ void AnimNeedleArmSpike(struct Sprite* sprite)
 // No args.
 static void AnimWoodHammer(struct Sprite *sprite)
 {
-	if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_OPPONENT)
-	{
-		sprite->x += 40;
-		sprite->data[0] = 1;
-	}
-	else
-	{
-		sprite->x -= 40;
-		sprite->data[0] = 0;
-	}
-	StartSpriteAffineAnim(sprite, sprite->data[0]);
-	
-	sprite->data[1] = 37;
-	sprite->callback = AnimWoodHammerStep;
+    if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+    {
+        sprite->x += 40;
+        sprite->data[0] = 1;
+    }
+    else
+    {
+        sprite->x -= 40;
+        sprite->data[0] = 0;
+    }
+    StartSpriteAffineAnim(sprite, sprite->data[0]);
+    
+    sprite->data[1] = 37;
+    sprite->callback = AnimWoodHammerStep;
 }
 
 static void AnimWoodHammerStep(struct Sprite *sprite)
 {
-	if (sprite->affineAnimEnded)
-	{
-		if (sprite->data[1])
-		{
-			sprite->data[1]--;
-			
-			if (sprite->data[1] & 1)
-			{
-				if ((sprite->data[1] / 2) & 1)
-					sprite->x2++;
-				else
-					sprite->x2--;
-			}
-			return;
-		}
-		StartSpriteAffineAnim(sprite, sprite->data[0] + 2);
-		sprite->callback = DestroyAnimSpriteWhenAffineAnimEnds;
-	}
+    if (sprite->affineAnimEnded)
+    {
+        if (sprite->data[1])
+        {
+            sprite->data[1]--;
+            
+            if (sprite->data[1] & 1)
+            {
+                if ((sprite->data[1] / 2) & 1)
+                    sprite->x2++;
+                else
+                    sprite->x2--;
+            }
+            return;
+        }
+        StartSpriteAffineAnim(sprite, sprite->data[0] + 2);
+        sprite->callback = DestroyAnimSpriteWhenAffineAnimEnds;
+    }
 }

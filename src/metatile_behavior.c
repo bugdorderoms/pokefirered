@@ -4,15 +4,15 @@
 
 static const u8 sTilesSurfable[] =
 {
-	MB_POND_WATER,
-	MB_SEMI_DEEP_WATER,
-	MB_DEEP_WATER,
-	MB_WATERFALL,
-	MB_OCEAN_WATER,
-	MB_1B,
-	MB_EASTWARD_CURRENT,
+    MB_POND_WATER,
+    MB_SEMI_DEEP_WATER,
+    MB_DEEP_WATER,
+    MB_WATERFALL,
+    MB_OCEAN_WATER,
+    MB_1B,
+    MB_EASTWARD_CURRENT,
     MB_WESTWARD_CURRENT,
-	MB_NORTHWARD_CURRENT,
+    MB_NORTHWARD_CURRENT,
     MB_SOUTHWARD_CURRENT,
 };
 
@@ -128,14 +128,14 @@ bool32 MetatileBehavior_IsDeepSouthWarp(u32 metatileBehavior) { return FALSE; }
 
 bool32 MetatileBehavior_IsSurfable(u32 metatileBehavior)
 {
-	u32 i;
-	
-	for (i = 0; i < ARRAY_COUNT(sTilesSurfable); i++)
-	{
-		if (sTilesSurfable[i] == metatileBehavior)
-			return TRUE;
-	}
-	return FALSE;
+    u32 i;
+    
+    for (i = 0; i < ARRAY_COUNT(sTilesSurfable); i++)
+    {
+        if (sTilesSurfable[i] == metatileBehavior)
+            return TRUE;
+    }
+    return FALSE;
 }
 
 bool32 MetatileBehavior_IsSemiDeepWater(u32 metatileBehavior)
@@ -166,7 +166,7 @@ bool32 MetatileBehavior_IsSouthArrowWarp(u32 metatileBehavior)
 bool32 MetatileBehavior_UnusedIsArrowWarp(u32 metatileBehavior)
 {
     return (MetatileBehavior_IsEastArrowWarp(metatileBehavior) || MetatileBehavior_IsWestArrowWarp(metatileBehavior)
-	     || MetatileBehavior_IsNorthArrowWarp(metatileBehavior) || MetatileBehavior_IsSouthArrowWarp(metatileBehavior));
+         || MetatileBehavior_IsNorthArrowWarp(metatileBehavior) || MetatileBehavior_IsSouthArrowWarp(metatileBehavior));
 }
 
 bool32 MetatileBehavior_IsForcedMovementTile(u32 metatileBehavior)

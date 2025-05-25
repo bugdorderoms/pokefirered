@@ -689,10 +689,10 @@
 #define B_MSG_CREATE_PERMANENT_BIZARRE_AREA  5
 
 // gSetStatusFromArgumentStringIds
-#define B_MSG_GET_PUMPED      	          0
-#define B_MSG_BEGAN_NIGHTMARE 	          1
-#define B_MSG_LAID_CURSE      	          2
-#define B_MSG_IDENTIFIED      	          3
+#define B_MSG_GET_PUMPED                    0
+#define B_MSG_BEGAN_NIGHTMARE               1
+#define B_MSG_LAID_CURSE                    2
+#define B_MSG_IDENTIFIED                    3
 #define B_MSG_SUBJECTED_TO_TORMENT        4
 #define B_MSG_PLANTED_ROOTS               5
 #define B_MSG_SEALED_MOVE                 6

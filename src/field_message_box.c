@@ -14,10 +14,10 @@ void InitFieldMessageBox(void)
     gTextFlags.autoScroll = FALSE;
 }
 
-static void Task_RunFieldMessageBoxPrinter(u8 taskId)
+static void Task_RunFieldMessageBoxPrinter(u32 taskId)
 {
     struct Task * task = &gTasks[taskId];
-	
+    
     switch (task->data[0])
     {
     case 0:
@@ -53,7 +53,7 @@ bool32 ShowFieldMessage(const u8 *str)
 {
     if (sMessageBoxType != 0)
         return FALSE;
-	
+    
     textbox_fdecode_auto_and_task_add(str);
     sMessageBoxType = 2;
     return TRUE;
@@ -63,7 +63,7 @@ bool32 ShowFieldAutoScrollMessage(const u8 *str)
 {
     if (sMessageBoxType != 0)
         return FALSE;
-	
+    
     sMessageBoxType = 3;
     textbox_fdecode_auto_and_task_add(str);
     return TRUE;
@@ -71,11 +71,11 @@ bool32 ShowFieldAutoScrollMessage(const u8 *str)
 
 void HideFieldMessageBox(void)
 {
-	u32 taskId = FindTaskIdByFunc(Task_RunFieldMessageBoxPrinter);
-	
+    u32 taskId = FindTaskIdByFunc(Task_RunFieldMessageBoxPrinter);
+    
     if (taskId != 0xFF)
         DestroyTask(taskId);
-	
+    
     ClearDialogWindowAndFrame(0, TRUE);
     sMessageBoxType = 0;
 }

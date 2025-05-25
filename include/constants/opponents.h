@@ -661,8 +661,8 @@
 
 // Special trainer Ids.
 #define TRAINER_SECRET_BASE                        0x400
-#define TRAINER_UNION_ROOM          			   0xC00
-#define TRAINER_LINK_OPPONENT       			   0x800
+#define TRAINER_UNION_ROOM                         0xC00
+#define TRAINER_LINK_OPPONENT                      0x800
 
 // NOTE: Because each Trainer uses a flag to determine when they are defeated, there is 
 //       only space for 25 additional trainers before trainer flag space overflows.

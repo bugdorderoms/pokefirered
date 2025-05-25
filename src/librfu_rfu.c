@@ -133,7 +133,7 @@ u16 rfu_initializeAPI(u32 *APIBuffer, u16 buffByteSize, IntrFunc *sioIntrTable_p
     // is not 4-byte aligned?
     if ((u32)APIBuffer & 3)
         return ERR_RFU_API_BUFF_ADR;
-	
+    
     if (buffByteSize < RFU_API_BUFF_SIZE_RAM)
         return ERR_RFU_API_BUFF_SIZE;
 
@@ -142,7 +142,7 @@ u16 rfu_initializeAPI(u32 *APIBuffer, u16 buffByteSize, IntrFunc *sioIntrTable_p
     gRfuFixed = (void *)APIBuffer + 0xdc; // + sizeof(*gRfuStatic)
     gRfuSlotStatusNI[0] = (void *)APIBuffer + 0x1bc; // + sizeof(*gRfuFixed)
     gRfuSlotStatusUNI[0] = (void *)APIBuffer + 0x37c; // + sizeof(*gRfuSlotStatusNI[0]) * RFU_CHILD_MAX
-	
+    
     for (i = 1; i < RFU_CHILD_MAX; ++i)
     {
         gRfuSlotStatusNI[i] = &gRfuSlotStatusNI[i - 1][1];
@@ -152,7 +152,7 @@ u16 rfu_initializeAPI(u32 *APIBuffer, u16 buffByteSize, IntrFunc *sioIntrTable_p
     gRfuFixed->STWIBuffer = (struct RfuIntrStruct *)&gRfuSlotStatusUNI[3][1];
     STWI_init_all((struct RfuIntrStruct *)&gRfuSlotStatusUNI[3][1], sioIntrTable_p, copyInterruptToRam);
     rfu_STC_clearAPIVariables();
-	
+    
     for (i = 0; i < RFU_CHILD_MAX; ++i)
     {
         gRfuSlotStatusNI[i]->recvBuffer = NULL;
@@ -160,7 +160,7 @@ u16 rfu_initializeAPI(u32 *APIBuffer, u16 buffByteSize, IntrFunc *sioIntrTable_p
         gRfuSlotStatusUNI[i]->recvBuffer = NULL;
         gRfuSlotStatusUNI[i]->recvBufferSize = 0;
     }
-	
+    
     // rfu_REQ_changeMasterSlave is the function next to rfu_STC_fastCopy
 #if LIBRFU_VERSION < 1026
     src = (const u16 *)((uintptr_t)&rfu_STC_fastCopy & ~1);

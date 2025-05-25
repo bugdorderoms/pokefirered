@@ -9,7 +9,7 @@ static void AnimAcidPoisonBubble(struct Sprite *sprite);
 static void AnimSludgeBombHitParticle(struct Sprite *sprite);
 static void AnimSludgeBombHitParticle_Step(struct Sprite *sprite);
 static void AnimAcidPoisonDroplet(struct Sprite *sprite);
-static void AnimTask_AcidArmorStep(u8);
+static void AnimTask_AcidArmorStep(u32);
 
 static const union AnimCmd sAnim_ToxicBubble[] =
 {
@@ -207,9 +207,9 @@ const struct SpriteTemplate gPoisonJabSpriteTemplate =
 static const union AffineAnimCmd sAffineAnim_MudBomb[] =
 {
     AFFINEANIMCMD_FRAME(0, -8, -4, 4), // Compress Vertically
-	AFFINEANIMCMD_FRAME(-8, 8, -4, 4), // Compress Horizontally, Normalize Vertically
-	AFFINEANIMCMD_FRAME(8, -8, -4, 4), // Normalize Horizontally, Compress Vertically
-	AFFINEANIMCMD_JUMP(1),
+    AFFINEANIMCMD_FRAME(-8, 8, -4, 4), // Compress Horizontally, Normalize Vertically
+    AFFINEANIMCMD_FRAME(8, -8, -4, 4), // Normalize Horizontally, Compress Vertically
+    AFFINEANIMCMD_JUMP(1),
 };
 
 static const union AffineAnimCmd *const sAffineAnims_MudBomb[] =
@@ -284,8 +284,8 @@ static void AnimSludgeProjectile(struct Sprite *sprite)
 {
     if (!gBattleAnimArgs[6])
         StartSpriteAnim(sprite, 2);
-	
-	AnimThrowProjectile(sprite);
+    
+    AnimThrowProjectile(sprite);
 }
 
 // Animates the acid projectile in MOVE_ACID's anim.
@@ -302,20 +302,20 @@ static void AnimAcidPoisonBubble(struct Sprite *sprite)
 
     if (!gBattleAnimArgs[3])
         StartSpriteAnim(sprite, 2);
-	
-	if (gBattleAnimArgs[6])
-		SetAverageBattlerPositions(gBattleAnimTarget, TRUE, &x, &y);
-	else
-	{
-		InitSpritePosToAnimTarget(sprite, TRUE);
-		x = sprite->x;
-		y = sprite->y;
-	}
+    
+    if (gBattleAnimArgs[6])
+        SetAverageBattlerPositions(gBattleAnimTarget, TRUE, &x, &y);
+    else
+    {
+        InitSpritePosToAnimTarget(sprite, TRUE);
+        x = sprite->x;
+        y = sprite->y;
+    }
     InitSpritePosToAnimAttacker(sprite, TRUE);
-	
+    
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         gBattleAnimArgs[4] = -gBattleAnimArgs[4];
-	
+    
     sprite->data[0] = gBattleAnimArgs[2];
     sprite->data[2] = x + gBattleAnimArgs[4];
     sprite->data[4] = y + gBattleAnimArgs[5];
@@ -344,10 +344,10 @@ static void AnimSludgeBombHitParticle(struct Sprite *sprite)
 static void AnimSludgeBombHitParticle_Step(struct Sprite *sprite)
 {
     TranslateSpriteLinearFixedPoint(sprite);
-	
+    
     sprite->data[1] -= sprite->data[5];
     sprite->data[2] -= sprite->data[6];
-	
+    
     if (!sprite->data[0])
         DestroyAnimSprite(sprite);
 }
@@ -360,12 +360,12 @@ static void AnimSludgeBombHitParticle_Step(struct Sprite *sprite)
 // arg 4: if hit both foes (boolean)
 static void AnimAcidPoisonDroplet(struct Sprite *sprite)
 {
-	if (gBattleAnimArgs[4])
-		SetAverageBattlerPositions(gBattleAnimTarget, TRUE, &sprite->x, &sprite->y);
-	
+    if (gBattleAnimArgs[4])
+        SetAverageBattlerPositions(gBattleAnimTarget, TRUE, &sprite->x, &sprite->y);
+    
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         gBattleAnimArgs[0] = -gBattleAnimArgs[0];
-	
+    
     sprite->x += gBattleAnimArgs[0];
     sprite->y += gBattleAnimArgs[1];
     sprite->data[0] = gBattleAnimArgs[3];
@@ -377,10 +377,10 @@ static void AnimAcidPoisonDroplet(struct Sprite *sprite)
 
 // Performs a wavy transformation on the mon's sprite, and fades out.
 // arg 0: which battler
-void AnimTask_AcidArmor(u8 taskId)
+void AnimTask_AcidArmor(u32 taskId)
 {
     u32 i, battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
-	s16 y;
+    s16 y;
     u16 bgX, bgY;
     struct ScanlineEffectParams scanlineParams;
     struct Task *task = &gTasks[taskId];
@@ -404,22 +404,22 @@ void AnimTask_AcidArmor(u8 taskId)
 
     task->data[14] = task->data[13] + 66;
     task->data[15] = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
-	
+    
     if (GetBattlerSpriteBGPriorityRank(battler) == 1)
     {
         scanlineParams.dmaDest = &REG_BG1HOFS;
-		
+        
         SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND | BLDCNT_TGT1_BG1);
-		
+        
         bgX = gBattle_BG1_X;
         bgY = gBattle_BG1_Y;
     }
     else
     {
         scanlineParams.dmaDest = &REG_BG2HOFS;
-		
+        
         SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND | BLDCNT_TGT1_BG2);
-		
+        
         bgX = gBattle_BG2_X;
         bgY = gBattle_BG2_Y;
     }
@@ -434,11 +434,11 @@ void AnimTask_AcidArmor(u8 taskId)
     scanlineParams.dmaControl = SCANLINE_EFFECT_DMACNT_32BIT;
     scanlineParams.initState = 1;
     ScanlineEffect_SetParams(scanlineParams);
-	
+    
     task->func = AnimTask_AcidArmorStep;
 }
 
-static void AnimTask_AcidArmorStep(u8 taskId)
+static void AnimTask_AcidArmorStep(u32 taskId)
 {
     struct Task *task = &gTasks[taskId];
     s16 var1;
@@ -465,28 +465,28 @@ static void AnimTask_AcidArmorStep(u8 taskId)
     {
     case 0:
         offset = task->data[14] * 2;
-		
+        
         var1 = 0;
         var2 = 0;
-		
+        
         i = 0;
-		
+        
         task->data[1] = (task->data[1] + 2) & 0xFF;
         sineIndex = task->data[1];
-		
+        
         task->data[9] = 0x7E0 / task->data[6];
         task->data[10] = -((task->data[7] * 2) / task->data[9]);
         task->data[11] = task->data[7];
-		
+        
         var3 = task->data[11] >> 5;
         task->data[12] = var3;
         var0 = task->data[14];
-		
+        
         while (var0 > task->data[13])
         {
             gScanlineEffectRegBuffers[gScanlineEffect.srcBuffer][offset + 1] = (i - var2) + bgY;
             gScanlineEffectRegBuffers[gScanlineEffect.srcBuffer][offset] = bgX + var3 + (gSineTable[sineIndex] >> 5);
-			
+            
             sineIndex = (sineIndex + 10) & 0xFF;
             task->data[11] += task->data[10];
             var3 = task->data[11] >> 5;
@@ -499,7 +499,7 @@ static void AnimTask_AcidArmorStep(u8 taskId)
             var0--;
         }
         var0 *= 2;
-		
+        
         while (var0 >= 0)
         {
             gScanlineEffectRegBuffers[0][var0] = bgX + 240;
@@ -510,14 +510,14 @@ static void AnimTask_AcidArmorStep(u8 taskId)
         if (++task->data[6] > 63)
         {
             task->data[6] = 64;
-			
+            
             if (++task->data[2] & 1)
                 task->data[3]--;
             else
                 task->data[4]++;
 
             SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(task->data[3], task->data[4]));
-			
+            
             if (task->data[3] == 0 && task->data[4] == 16)
             {
                 task->data[2] = 0;
@@ -531,7 +531,7 @@ static void AnimTask_AcidArmorStep(u8 taskId)
     case 1:
         if (++task->data[2] > 12)
         {
-			task->data[2] = 0;
+            task->data[2] = 0;
             gScanlineEffect.state = 3;
             task->data[0]++;
         }
@@ -543,7 +543,7 @@ static void AnimTask_AcidArmorStep(u8 taskId)
             task->data[4]--;
 
         SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(task->data[3], task->data[4]));
-		
+        
         if (task->data[3] == 16 && task->data[4] == 0)
         {
             task->data[2] = 0;

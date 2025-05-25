@@ -3,7 +3,7 @@
 
 #include "union_room.h"
 
-u8 ZeroUnionObjWork(struct UnionObj * ptr);
+void ZeroUnionObjWork(struct UnionObj * ptr);
 void DeleteUnionObjWorkAndStopTask(void);
 void CreateGroupMemberObjectsInvisible(u8 *spriteIds, s32 group);
 void DestroyGroupMemberObjects(u8 *spriteIds);

@@ -24,61 +24,61 @@
 
 enum
 {
-	MG_TYPE_GIVE_POKEMON,
-	MG_TYPE_GIVE_ITEM,
-	MG_TYPE_UNLOCK_FEATURE,
-	// You can add new options of Mystery Gift here
-	MG_TYPES_COUNT, // Used to indicates the end of the table
+    MG_TYPE_GIVE_POKEMON,
+    MG_TYPE_GIVE_ITEM,
+    MG_TYPE_UNLOCK_FEATURE,
+    // You can add new options of Mystery Gift here
+    MG_TYPES_COUNT, // Used to indicates the end of the table
 };
 
 // Features that can be unlocked by using the MG_TYPE_UNLOCK_FEATURE
 enum
 {
-	MG_FEATURE_UNLOCK_POKEDEX,
-	// You can add you new features here to unlock
+    MG_FEATURE_UNLOCK_POKEDEX,
+    // You can add you new features here to unlock
 };
 
 struct MGPokemon
 {
-	const u8 *nickname;
-	u16 species;
-	u16 heldItem; // Irrelevant if it's a egg
-	u16 moves[MAX_MON_MOVES];
-	u8 ivs[NUM_STATS];
-	u8 level; // Irrelevant if it's a egg
-	u8 ballId:NUM_POKEBALL_BITS; // Irrelevant if it's a egg
-	u8 shinyType:2;
-	u8 abilityNum:1;
-	u8 abilityHidden:1;
-	u8 nature:NUM_TYPES_BITS; // 0 = Random
-	u8 isEgg:1;
+    const u8 *nickname;
+    u16 species;
+    u16 heldItem; // Irrelevant if it's a egg
+    u16 moves[MAX_MON_MOVES];
+    u8 ivs[NUM_STATS];
+    u8 level; // Irrelevant if it's a egg
+    u8 ballId:NUM_POKEBALL_BITS; // Irrelevant if it's a egg
+    u8 shinyType:2;
+    u8 abilityNum:1;
+    u8 abilityHidden:1;
+    u8 nature:NUM_TYPES_BITS; // 0 = Random
+    u8 isEgg:1;
 };
 
 struct MGItem
 {
-	u16 itemId;
-	u16 quantity;
+    u16 itemId;
+    u16 quantity;
 };
 
 struct MGFeatureUnlock
 {
-	u16 featureId;
+    u16 featureId;
 };
 
 union MysteryGiftPresent
 {
-	const struct MGPokemon *GivePokemon;
-	const struct MGItem *GiveItem;
-	const struct MGFeatureUnlock *FeatureUnlock;
+    const struct MGPokemon *GivePokemon;
+    const struct MGItem *GiveItem;
+    const struct MGFeatureUnlock *FeatureUnlock;
 };
 
 struct MysteryGift
 {
-	/*0x00*/ u8 code[MYSTERY_GIFT_CODE_LENGTH + 1];
-	/*0x0B*/ u8 type;
-	/*0x0C*/ const union MysteryGiftPresent present; // The type field above determine which struct to use
-	/*0x10*/ u16 presentsCount;
-	/*0x12*/ u16 flag; // If it's 0 the code always can be used
+    /*0x00*/ u8 code[MYSTERY_GIFT_CODE_LENGTH + 1];
+    /*0x0B*/ u8 type;
+    /*0x0C*/ const union MysteryGiftPresent present; // The type field above determine which struct to use
+    /*0x10*/ u16 presentsCount;
+    /*0x12*/ u16 flag; // If it's 0 the code always can be used
 };
 
 static u32 MysteryGift_GivePokemon(struct MysteryGift mysteryGift);
@@ -87,129 +87,129 @@ static u32 MysteryGift_UnlockFeature(struct MysteryGift mysteryGift);
 
 static u32 (*const sMysteryGiftGivePresentFuncs[MG_TYPES_COUNT])(struct MysteryGift) =
 {
-	[MG_TYPE_GIVE_POKEMON]   = MysteryGift_GivePokemon,
-	[MG_TYPE_GIVE_ITEM]      = MysteryGift_GiveItem,
-	[MG_TYPE_UNLOCK_FEATURE] = MysteryGift_UnlockFeature,
+    [MG_TYPE_GIVE_POKEMON]   = MysteryGift_GivePokemon,
+    [MG_TYPE_GIVE_ITEM]      = MysteryGift_GiveItem,
+    [MG_TYPE_UNLOCK_FEATURE] = MysteryGift_UnlockFeature,
 };
 
 #include "data/mystery_gifts.h"
 
 u32 GetMysteryGiftCodeState(const u8 *code)
 {
-	u32 i;
-	
-	for (i = 0; sMysteryGifts[i].type != MG_TYPES_COUNT; i++)
-	{
-		if (!StringCompare(code, sMysteryGifts[i].code))
-		{
-			if (sMysteryGifts[i].flag == 0 || !FlagGet(sMysteryGifts[i].flag)) // Check code is infinite or was't already obtained
-				return sMysteryGiftGivePresentFuncs[sMysteryGifts[i].type](sMysteryGifts[i]);
-			else
-				return MYSTERY_GIFT_CODE_ALREADY_OBTAINED;
-		}
-	}
-	// Code does't exists or is different than expected
-	return MYSTERY_GIFT_CODE_INVALID;
+    u32 i;
+    
+    for (i = 0; sMysteryGifts[i].type != MG_TYPES_COUNT; i++)
+    {
+        if (!StringCompare(code, sMysteryGifts[i].code))
+        {
+            if (sMysteryGifts[i].flag == 0 || !FlagGet(sMysteryGifts[i].flag)) // Check code is infinite or was't already obtained
+                return sMysteryGiftGivePresentFuncs[sMysteryGifts[i].type](sMysteryGifts[i]);
+            else
+                return MYSTERY_GIFT_CODE_ALREADY_OBTAINED;
+        }
+    }
+    // Code does't exists or is different than expected
+    return MYSTERY_GIFT_CODE_INVALID;
 }
 
 static inline void TrySetMysteryGiftFlag(u32 flag)
 {
-	if (flag != 0) // Set flag if code is't infinite
-		FlagSet(flag);
+    if (flag != 0) // Set flag if code is't infinite
+        FlagSet(flag);
 }
 
 static u32 MysteryGift_GivePokemon(struct MysteryGift mysteryGift)
 {
-	u32 i, j, nature;
-	u8 *ivs;
-	u16 moves[MAX_MON_MOVES];
-	struct Pokemon *mon;
-	const struct MGPokemon *mgPokemon = mysteryGift.present.GivePokemon;
-	
-	if (!FlagGet(FLAG_SYS_POKEMON_GET))
-	{
-		StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You'll need to have at least\none Pokémon in your party\pto receive this gift\nusing the code {STR_VAR_1}!"));
-		return MYSTERY_GIFT_CODE_FAILED;
-	}
-	else if (CalculatePlayerPartyCount() + mysteryGift.presentsCount > PARTY_SIZE) // Only give the gift if has enough space in party
-	{
-		StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You'll need space in your party\nto receive this gift\pusing the code {STR_VAR_1}!"));
-		return MYSTERY_GIFT_CODE_FAILED;
-	}
-	else
-	{
-		TrySetMysteryGiftFlag(mysteryGift.flag);
-		PlayFanfare(MUS_LEVEL_UP);
-		
-		for (i = 0; i < mysteryGift.presentsCount; i++)
-		{
-			ivs = (u8*)mgPokemon[i].ivs;
-			nature = mgPokemon[i].nature != 0 ? mgPokemon[i].nature - 1 : NUM_NATURES;
-			
-			for (j = 0; j < MAX_MON_MOVES; j++)
-				moves[j] = mgPokemon[i].moves[j];
-			
-			if (mgPokemon[i].isEgg)
-				ScriptGiveEgg(mgPokemon[i].species, ivs, mgPokemon[i].shinyType, FALSE, nature, moves);
-			else
-				ScriptGiveMon(mgPokemon[i].species, mgPokemon[i].level, mgPokemon[i].heldItem, ivs, mgPokemon[i].ballId, mgPokemon[i].shinyType, FALSE, nature, MON_GENDERLESS, moves);
-			
-			mon = &gPlayerParty[gPlayerPartyCount - 1];
-			
-			if (mgPokemon[i].nickname != NULL)
-				SetMonData(mon, MON_DATA_NICKNAME, mgPokemon[i].nickname);
-			
-			j = mgPokemon[i].abilityNum;
-			SetMonData(mon, MON_DATA_ABILITY_NUM, &j);
-			
-			j = mgPokemon->abilityHidden;
-			SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &j);
-			
-			j = METLOC_SPECIAL_ENCOUNTER;
-			SetMonData(mon, MON_DATA_MET_LOCATION, &j);
-			
-			CalculateMonStats(mon);
-		}
-		return MYSTERY_GIFT_CODE_SUCCESS;
-	}
+    u32 i, j, nature;
+    u8 *ivs;
+    u16 moves[MAX_MON_MOVES];
+    struct Pokemon *mon;
+    const struct MGPokemon *mgPokemon = mysteryGift.present.GivePokemon;
+    
+    if (!FlagGet(FLAG_SYS_POKEMON_GET))
+    {
+        StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You'll need to have at least\none Pokémon in your party\pto receive this gift\nusing the code {STR_VAR_1}!"));
+        return MYSTERY_GIFT_CODE_FAILED;
+    }
+    else if (CalculatePlayerPartyCount() + mysteryGift.presentsCount > PARTY_SIZE) // Only give the gift if has enough space in party
+    {
+        StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You'll need space in your party\nto receive this gift\pusing the code {STR_VAR_1}!"));
+        return MYSTERY_GIFT_CODE_FAILED;
+    }
+    else
+    {
+        TrySetMysteryGiftFlag(mysteryGift.flag);
+        PlayFanfare(MUS_LEVEL_UP);
+        
+        for (i = 0; i < mysteryGift.presentsCount; i++)
+        {
+            ivs = (u8*)mgPokemon[i].ivs;
+            nature = mgPokemon[i].nature != 0 ? mgPokemon[i].nature - 1 : NUM_NATURES;
+            
+            for (j = 0; j < MAX_MON_MOVES; j++)
+                moves[j] = mgPokemon[i].moves[j];
+            
+            if (mgPokemon[i].isEgg)
+                ScriptGiveEgg(mgPokemon[i].species, ivs, mgPokemon[i].shinyType, FALSE, nature, moves);
+            else
+                ScriptGiveMon(mgPokemon[i].species, mgPokemon[i].level, mgPokemon[i].heldItem, ivs, mgPokemon[i].ballId, mgPokemon[i].shinyType, FALSE, nature, MON_GENDERLESS, moves);
+            
+            mon = &gPlayerParty[gPlayerPartyCount - 1];
+            
+            if (mgPokemon[i].nickname != NULL)
+                SetMonData(mon, MON_DATA_NICKNAME, mgPokemon[i].nickname);
+            
+            j = mgPokemon[i].abilityNum;
+            SetMonData(mon, MON_DATA_ABILITY_NUM, &j);
+            
+            j = mgPokemon->abilityHidden;
+            SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &j);
+            
+            j = METLOC_SPECIAL_ENCOUNTER;
+            SetMonData(mon, MON_DATA_MET_LOCATION, &j);
+            
+            CalculateMonStats(mon);
+        }
+        return MYSTERY_GIFT_CODE_SUCCESS;
+    }
 }
 
 static u32 MysteryGift_GiveItem(struct MysteryGift mysteryGift)
 {
-	u32 i;
-	const struct MGItem *mgItem = mysteryGift.present.GiveItem;
-	
-	for (i = 0; i < mysteryGift.presentsCount; i++)
-	{
-		if (!CheckBagHasSpace(mgItem[i].itemId, mgItem[i].quantity)) // Only give gift if has enough space in bag
-		{
-			StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You'll need some space in your\nbag to receive this gift\pusing the code {STR_VAR_1}!"));
-			return MYSTERY_GIFT_CODE_FAILED;
-		}
-	}
-	TrySetMysteryGiftFlag(mysteryGift.flag);
-	PlayFanfare(MUS_LEVEL_UP);
-	
-	for (i = 0; i < mysteryGift.presentsCount; i++)
-		AddBagItem(mgItem[i].itemId, mgItem[i].quantity);
-	
-	return MYSTERY_GIFT_CODE_SUCCESS;
+    u32 i;
+    const struct MGItem *mgItem = mysteryGift.present.GiveItem;
+    
+    for (i = 0; i < mysteryGift.presentsCount; i++)
+    {
+        if (!CheckBagHasSpace(mgItem[i].itemId, mgItem[i].quantity)) // Only give gift if has enough space in bag
+        {
+            StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("You'll need some space in your\nbag to receive this gift\pusing the code {STR_VAR_1}!"));
+            return MYSTERY_GIFT_CODE_FAILED;
+        }
+    }
+    TrySetMysteryGiftFlag(mysteryGift.flag);
+    PlayFanfare(MUS_LEVEL_UP);
+    
+    for (i = 0; i < mysteryGift.presentsCount; i++)
+        AddBagItem(mgItem[i].itemId, mgItem[i].quantity);
+    
+    return MYSTERY_GIFT_CODE_SUCCESS;
 }
 
 static u32 MysteryGift_UnlockFeature(struct MysteryGift mysteryGift)
 {
-	const struct MGFeatureUnlock *mgFeature = mysteryGift.present.FeatureUnlock;
-	
-	switch (mgFeature->featureId)
-	{
-		/* For example
-		case MG_FEATURE_UNLOCK_POKEDEX:
-			FlagSet(FLAG_SYS_POKEDEX_GET);
-			break;*/
-		// Add your new features unlock logic here
-	}
-	TrySetMysteryGiftFlag(mysteryGift.flag);
-	PlayFanfare(MUS_LEVEL_UP);
-	
-	return MYSTERY_GIFT_CODE_SUCCESS;
+    const struct MGFeatureUnlock *mgFeature = mysteryGift.present.FeatureUnlock;
+    
+    switch (mgFeature->featureId)
+    {
+        /* For example
+        case MG_FEATURE_UNLOCK_POKEDEX:
+            FlagSet(FLAG_SYS_POKEDEX_GET);
+            break;*/
+        // Add your new features unlock logic here
+    }
+    TrySetMysteryGiftFlag(mysteryGift.flag);
+    PlayFanfare(MUS_LEVEL_UP);
+    
+    return MYSTERY_GIFT_CODE_SUCCESS;
 }

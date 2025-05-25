@@ -60,29 +60,29 @@ static const u8 sMetatileAttrShifts[METATILE_ATTRIBUTE_COUNT] = {
 
 static u16 MapGridGetBorderTileAt(s32 x, s32 y)
 {
-	const struct MapLayout *mapLayout = gMapHeader.mapLayout;
+    const struct MapLayout *mapLayout = gMapHeader.mapLayout;
     s32 xprime;
     s32 yprime;
-	
-	xprime = x - 7;
+    
+    xprime = x - 7;
     xprime += 8 * mapLayout->borderWidth;
     xprime %= mapLayout->borderWidth;
 
     yprime = y - 7;
     yprime += 8 * mapLayout->borderHeight;
     yprime %= mapLayout->borderHeight;
-	
+    
     return mapLayout->border[xprime + yprime * mapLayout->borderWidth] | METATILE_COLLISION_MASK;
 }
 
 static inline bool32 AreCoordsWithinMapGridBounds(s32 x, s32 y)
 {
-	return (x >= 0 && x < VMap.Xsize && y >= 0 && y < VMap.Ysize);
+    return (x >= 0 && x < VMap.Xsize && y >= 0 && y < VMap.Ysize);
 }
 
 static u16 MapGridGetTileAt(s32 x, s32 y)
 {
-	return AreCoordsWithinMapGridBounds(x, y) ? VMap.map[x + VMap.Xsize * y] : MapGridGetBorderTileAt(x, y);
+    return AreCoordsWithinMapGridBounds(x, y) ? VMap.map[x + VMap.Xsize * y] : MapGridGetBorderTileAt(x, y);
 }
 
 const struct MapHeader * GetMapHeaderFromConnection(struct MapConnection * connection)
@@ -140,12 +140,12 @@ static void InitBackupMapLayoutConnections(struct MapHeader *mapHeader)
     if (mapHeader->connections)
     {
         connection = mapHeader->connections->connections;
-		
+        
         for (i = 0; i < mapHeader->connections->count; i++, connection++)
         {
             struct MapHeader const *cMap = GetMapHeaderFromConnection(connection);
             u32 offset = connection->offset;
-			
+            
             switch (connection->direction)
             {
             case CONNECTION_SOUTH:
@@ -172,7 +172,7 @@ static void InitBackupMapLayoutConnections(struct MapHeader *mapHeader)
 static void FillConnection(s32 x, s32 y, const struct MapHeader *connectedMapHeader, s32 x2, s32 y2, s32 width, s32 height)
 {
     s32 i;
-	s32 mapWidth = connectedMapHeader->mapLayout->width;
+    s32 mapWidth = connectedMapHeader->mapLayout->width;
     u16 *src = &connectedMapHeader->mapLayout->map[mapWidth * y2 + x2];
     u16 *dest = &VMap.map[VMap.Xsize * y + x];
 
@@ -196,12 +196,12 @@ static void FillSouthConnection(struct MapHeader const *mapHeader, struct MapHea
         cWidth = connectedMapHeader->mapLayout->width;
         x = offset + 7;
         y = mapHeader->mapLayout->height + 7;
-		
+        
         if (x < 0)
         {
             x2 = -x;
             x += cWidth;
-			width = x < VMap.Xsize ? x : VMap.Xsize;
+            width = x < VMap.Xsize ? x : VMap.Xsize;
             x = 0;
         }
         else
@@ -233,7 +233,7 @@ static void FillNorthConnection(struct MapHeader const *mapHeader, struct MapHea
         {
             x2 = -x;
             x += cWidth;
-			width = x < VMap.Xsize ? x : VMap.Xsize;
+            width = x < VMap.Xsize ? x : VMap.Xsize;
             x = 0;
         }
         else
@@ -254,7 +254,7 @@ static void FillWestConnection(struct MapHeader const *mapHeader, struct MapHead
     s32 x2, y2;
     s32 height;
     s32 cWidth, cHeight;
-	
+    
     if (connectedMapHeader)
     {
         cWidth = connectedMapHeader->mapLayout->width;
@@ -288,7 +288,7 @@ static void FillEastConnection(struct MapHeader const *mapHeader, struct MapHead
     s32 y2;
     s32 height;
     s32 cHeight;
-	
+    
     if (connectedMapHeader)
     {
         cHeight = connectedMapHeader->mapLayout->height;
@@ -370,13 +370,13 @@ u8 MapGridGetMetatileLayerTypeAt(s16 x, s16 y)
 
 void MapGridSetMetatileIdAt(s32 x, s32 y, u32 metatile)
 {
-	s32 i;
-	
+    s32 i;
+    
     if (AreCoordsWithinMapGridBounds(x, y))
-	{
-		i = x + y * VMap.Xsize;
+    {
+        i = x + y * VMap.Xsize;
         VMap.map[i] = (VMap.map[i] & METATILE_ELEVATION_MASK) | (metatile & ~(METATILE_ELEVATION_MASK));
-	}
+    }
 }
 
 void MapGridSetMetatileEntryAt(s32 x, s32 y, u32 metatile)
@@ -418,7 +418,7 @@ void SaveMapView(void)
 {
     s32 i, j;
     s32 x = gSaveBlock1Ptr->pos.x;
-	s32 y = gSaveBlock1Ptr->pos.y;
+    s32 y = gSaveBlock1Ptr->pos.y;
     u16 *mapView = gSaveBlock2Ptr->mapView;
     s32 width = VMap.Xsize;
 
@@ -435,8 +435,8 @@ static bool32 SavedMapViewIsEmpty(void)
 
     for (i = 0; i < ARRAY_COUNT(gSaveBlock2Ptr->mapView); i++)
         marker |= gSaveBlock2Ptr->mapView[i];
-	
-	return (marker == 0);
+    
+    return (marker == 0);
 }
 
 static inline void ClearSavedMapView(void)
@@ -454,10 +454,10 @@ static void LoadSavedMapView(void)
     if (!SavedMapViewIsEmpty())
     {
         width = VMap.Xsize;
-		
+        
         x = gSaveBlock1Ptr->pos.x;
         y = gSaveBlock1Ptr->pos.y;
-		
+        
         for (i = y; i < y + 14; i++)
         {
             for (j = x; j < x + 15; j++)
@@ -481,7 +481,7 @@ static void MoveMapViewToBackup(u32 direction)
     s32 r9, r8;
     s32 x, y;
     s32 i, j;
-	
+    
     mapView = gSaveBlock2Ptr->mapView;
     width = VMap.Xsize;
     r9 = 0;
@@ -490,7 +490,7 @@ static void MoveMapViewToBackup(u32 direction)
     y0 = gSaveBlock1Ptr->pos.y;
     x2 = 15;
     y2 = 14;
-	
+    
     switch (direction)
     {
     case CONNECTION_NORTH:
@@ -510,12 +510,12 @@ static void MoveMapViewToBackup(u32 direction)
         x2 = 14;
         break;
     }
-	
+    
     for (y = 0; y < y2; y++)
     {
         i = 0;
         j = 0;
-		
+        
         for (x = 0; x < x2; x++)
         {
             desti = width * (y + y0);
@@ -536,16 +536,16 @@ s32 GetMapBorderIdAt(s32 x, s32 y)
         return CONNECTION_INVALID;
 
     if (x >= VMap.Xsize - 8)
-		return gMapConnectionFlags.east ? CONNECTION_EAST : CONNECTION_INVALID;
+        return gMapConnectionFlags.east ? CONNECTION_EAST : CONNECTION_INVALID;
 
     if (x < 7)
-		return gMapConnectionFlags.west ? CONNECTION_WEST : CONNECTION_INVALID;
+        return gMapConnectionFlags.west ? CONNECTION_WEST : CONNECTION_INVALID;
 
     if (y >= VMap.Ysize - 7)
-		return gMapConnectionFlags.south ? CONNECTION_SOUTH : CONNECTION_INVALID;
+        return gMapConnectionFlags.south ? CONNECTION_SOUTH : CONNECTION_INVALID;
 
     if (y < 7)
-		return gMapConnectionFlags.north ? CONNECTION_NORTH : CONNECTION_INVALID;
+        return gMapConnectionFlags.north ? CONNECTION_NORTH : CONNECTION_INVALID;
 
     return CONNECTION_NONE;
 }
@@ -590,9 +590,9 @@ bool32 CameraMove(s32 x, s32 y)
     s32 direction;
     struct MapConnection *connection;
     s32 old_x, old_y;
-	
+    
     gCamera.active = FALSE;
-	direction = GetPostCameraMoveMapBorderId(x, y);
+    direction = GetPostCameraMoveMapBorderId(x, y);
 
     if (direction == CONNECTION_NONE || direction == CONNECTION_INVALID)
     {
@@ -627,7 +627,7 @@ struct MapConnection *GetIncomingConnection(u32 direction, s32 x, s32 y)
         return NULL;
 
     connection = connections->connections;
-	
+    
     for (i = 0; i < connections->count; i++, connection++)
     {
         if (connection->direction == direction && IsPosInIncomingConnectingMap(direction, x, y, connection))
@@ -640,7 +640,7 @@ struct MapConnection *GetIncomingConnection(u32 direction, s32 x, s32 y)
 static bool32 IsPosInIncomingConnectingMap(u32 direction, s32 x, s32 y, struct MapConnection *connection)
 {
     struct MapHeader const *mapHeader = GetMapHeaderFromConnection(connection);
-	
+    
     switch (direction)
     {
     case CONNECTION_SOUTH:
@@ -666,7 +666,7 @@ static bool32 IsCoordInIncomingConnectingMap(s32 coord, s32 srcMax, s32 destMax,
 
 static inline bool32 IsCoordInConnectingMap(s32 coord, s32 max)
 {
-	return (coord >= 0 && coord < max);
+    return (coord >= 0 && coord < max);
 }
 
 static s32 IsPosInConnectingMap(struct MapConnection *connection, s32 x, s32 y)
@@ -690,17 +690,17 @@ struct MapConnection *GetMapConnectionAtPos(s16 x, s16 y)
     struct MapConnection *connection;
     s32 i;
     u8 direction;
-	
+    
     if (!gMapHeader.connections)
         return NULL;
     else
     {
         connection = gMapHeader.connections->connections;
-		
+        
         for (i = 0; i < gMapHeader.connections->count; i++, connection++)
         {
             direction = connection->direction;
-			
+            
             if ((direction == CONNECTION_DIVE || direction == CONNECTION_EMERGE) || (direction == CONNECTION_NORTH && y > 6)
                 || (direction == CONNECTION_SOUTH && y < gMapHeader.mapLayout->height + 7) || (direction == CONNECTION_WEST && x > 6)
                 || (direction == CONNECTION_EAST && x < gMapHeader.mapLayout->width + 7))
@@ -797,7 +797,7 @@ static void LoadTilesetPalette(struct Tileset const *tileset, u16 destOffset, u1
     {
         if (tileset->isSecondary == FALSE)
         {
-			black = RGB_BLACK;
+            black = RGB_BLACK;
             LoadPalette(&black, destOffset, 2);
             LoadPalette(tileset->palettes[0] + 1, destOffset + 1, size - 2);
             Fieldmap_ApplyGlobalTintToPaletteEntries(destOffset + 1, (size - 2) >> 1);

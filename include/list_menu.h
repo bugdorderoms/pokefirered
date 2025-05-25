@@ -57,7 +57,7 @@ struct ListMenuTemplate
     /*0x08*/ void (*itemPrintFunc)(u32 windowId, u32 itemId, u32 y);
     /*0x0C*/ u16 totalItems;
     /*0x0E*/ u8 maxShowed;
-	/*0x0F*/ u8 textNarrowWidth;
+    /*0x0F*/ u8 textNarrowWidth;
     /*0x10*/ u8 windowId;
     /*0x11*/ u8 header_X;
     /*0x12*/ u8 item_X;
@@ -78,7 +78,7 @@ struct ListMenu
     struct ListMenuTemplate template;
     u16 cursorPos;
     u16 itemsAbove;
-    u8 taskId;
+    u32 taskId;
 };
 
 struct ListMenuWindowRect

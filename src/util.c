@@ -201,49 +201,49 @@ u16 CalcCRC16WithTable(const u8 *data, u32 length)
 
 bool8 JumpBasedOnKind(u32 value, u8 cmpKind, u32 cmpTo)
 {
-	bool8 ret = FALSE;
-	
-	switch (cmpKind)
-	{
-		case CMP_EQUAL:
-		    if (value == cmpTo)
-				ret = TRUE;
-			break;
-		case CMP_NOT_EQUAL:
-		    if (value != cmpTo)
-				ret = TRUE;
-			break;
-		case CMP_GREATER_THAN:
-		    if (value > cmpTo)
-				ret = TRUE;
-			break;
-		case CMP_LESS_THAN:
-		    if (value < cmpTo)
-				ret = TRUE;
-			break;
-		case CMP_COMMON_BITS:
-		    if (value & cmpTo)
-				ret = TRUE;
-			break;
-		case CMP_NO_COMMON_BITS:
-		    if (!(value & cmpTo))
-				ret = TRUE;
-			break;
-	}
-	return ret;
+    bool8 ret = FALSE;
+    
+    switch (cmpKind)
+    {
+        case CMP_EQUAL:
+            if (value == cmpTo)
+                ret = TRUE;
+            break;
+        case CMP_NOT_EQUAL:
+            if (value != cmpTo)
+                ret = TRUE;
+            break;
+        case CMP_GREATER_THAN:
+            if (value > cmpTo)
+                ret = TRUE;
+            break;
+        case CMP_LESS_THAN:
+            if (value < cmpTo)
+                ret = TRUE;
+            break;
+        case CMP_COMMON_BITS:
+            if (value & cmpTo)
+                ret = TRUE;
+            break;
+        case CMP_NO_COMMON_BITS:
+            if (!(value & cmpTo))
+                ret = TRUE;
+            break;
+    }
+    return ret;
 }
 
 #define SORT(unionVar)                                                      \
     if (aux == NULL)                                                        \
-		return;                                                             \
+        return;                                                             \
                                                                             \
-	for (k = low; k <= high; ++k)                                           \
-	aux[k] = comparator->sortUnion.unionVar.array[k];                       \
-	                                                                        \
-	/* Merge back to a[low..high] */                                        \
-	for (k = low; k <= high; ++k)                                           \
-	{                                                                       \
-	    if (i > mid)                                                        \
+    for (k = low; k <= high; ++k)                                           \
+        aux[k] = comparator->sortUnion.unionVar.array[k];                   \
+                                                                            \
+    /* Merge back to a[low..high] */                                        \
+    for (k = low; k <= high; ++k)                                           \
+    {                                                                       \
+        if (i > mid)                                                        \
             comparator->sortUnion.unionVar.array[k] = aux[j++];             \
         else if (j > high)                                                  \
             comparator->sortUnion.unionVar.array[k] = aux[i++];             \
@@ -251,8 +251,8 @@ bool8 JumpBasedOnKind(u32 value, u8 cmpKind, u32 cmpTo)
             comparator->sortUnion.unionVar.array[k] = aux[j++];             \
         else                                                                \
             comparator->sortUnion.unionVar.array[k] = aux[i++];             \
-	}                                                                       \
-	Free(aux)
+    }                                                                       \
+    Free(aux)
 
 void MergeSort(struct SortComparator *comparator, u32 low, u32 high)
 {
@@ -264,37 +264,37 @@ void MergeSort(struct SortComparator *comparator, u32 low, u32 high)
     mid = low + (high - low) / 2;
     MergeSort(comparator, low, mid); // Sort left half.
     MergeSort(comparator, mid + 1, high); // Sort right half.
-	
-	// Merge results.
-	i = low;
-	j = mid + 1;
-	
-	switch (comparator->kind)
-	{
-		case SORT_BAG_ITEMS:
-		{
-		    struct ItemSlot *aux = Alloc(sizeof(struct ItemSlot) * (high + 1));
-			
-		    SORT(bagItemSort);
-			return;
-		}
-		case SORT_LIST_MENU_ITEMS:
-		{
-		    struct ListMenuItem *aux = Alloc(sizeof(struct ListMenuItem) * (high + 1));
-			
-		    SORT(listMenuItemSort);
-			return;
-		}
-	}
+    
+    // Merge results.
+    i = low;
+    j = mid + 1;
+    
+    switch (comparator->kind)
+    {
+        case SORT_BAG_ITEMS:
+        {
+            struct ItemSlot *aux = Alloc(sizeof(struct ItemSlot) * (high + 1));
+            
+            SORT(bagItemSort);
+            return;
+        }
+        case SORT_LIST_MENU_ITEMS:
+        {
+            struct ListMenuItem *aux = Alloc(sizeof(struct ListMenuItem) * (high + 1));
+            
+            SORT(listMenuItemSort);
+            return;
+        }
+    }
 }
 
 // Returns -1 if text1 goes before text2 alphabetically, otherwise returns 1
 // Returns 0 if the two texts are identical
 s8 CompareTextAlphabetically(const u8 *text1, const u8 *text2)
 {
-	u8 i;
-	
-	for (i = 0; ; ++i)
+    u8 i;
+    
+    for (i = 0; ; ++i)
     {
         if (text1[i] == EOS && text2[i] != EOS)
             return -1;
@@ -308,5 +308,5 @@ s8 CompareTextAlphabetically(const u8 *text1, const u8 *text2)
         else if (text1[i] > text2[i])
             return 1;
     }
-	return 0;
+    return 0;
 }

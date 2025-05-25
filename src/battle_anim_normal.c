@@ -27,15 +27,15 @@ static void AnimShellSmashShell(struct Sprite *sprite);
 static void AnimShellSmashShell_Step(struct Sprite *sprite);
 static void AnimClampShell(struct Sprite *sprite);
 static void BlendColorCycle(u32 taskId, u32 initialBlendAmount, u32 targetBlendAmount);
-static void AnimTask_BlendColorCycleLoop(u8 taskId);
+static void AnimTask_BlendColorCycleLoop(u32 taskId);
 static void BlendColorCycleExclude(u32 taskId, u32 initialBlendAmount, u32 targetBlendAmount);
-static void AnimTask_BlendColorCycleExcludeLoop(u8 taskId);
+static void AnimTask_BlendColorCycleExcludeLoop(u32 taskId);
 static void BlendColorCycleByTag(u32 taskId, u32 initialBlendAmount, u32 targetBlendAmount);
-static void AnimTask_BlendColorCycleByTagLoop(u8 taskId);
-static void sub_80B9FD8(u8 taskId);
-static void sub_80BA090(u8 taskId);
-static void AnimTask_ShakeBattleTerrain_Step(u8 taskId);
-static void AnimTask_FadeOutParticles_Step(u8 taskId);
+static void AnimTask_BlendColorCycleByTagLoop(u32 taskId);
+static void sub_80B9FD8(u32 taskId);
+static void sub_80BA090(u32 taskId);
+static void AnimTask_ShakeBattleTerrain_Step(u32 taskId);
+static void AnimTask_FadeOutParticles_Step(u32 taskId);
 static void SpriteCB_WeatherBallUp_Step(struct Sprite *sprite);
 
 static const union AnimCmd sAnim_ConfusionDuck_0[] =
@@ -267,13 +267,13 @@ static const union AffineAnimCmd *const sAffineAnims_LeftRightShell[] =
 
 const struct SpriteTemplate gLeftRightShellSpriteTemplate =
 {
-	.tileTag = ANIM_TAG_SHELL,
-	.paletteTag = ANIM_TAG_SHELL,
-	.oam = &gOamData_AffineNormal_ObjBlend_64x64,
-	.anims = sAnims_LeftRightShell,
-	.images = NULL,
-	.affineAnims = sAffineAnims_LeftRightShell,
-	.callback = AnimShellSmashShell,
+    .tileTag = ANIM_TAG_SHELL,
+    .paletteTag = ANIM_TAG_SHELL,
+    .oam = &gOamData_AffineNormal_ObjBlend_64x64,
+    .anims = sAnims_LeftRightShell,
+    .images = NULL,
+    .affineAnims = sAffineAnims_LeftRightShell,
+    .callback = AnimShellSmashShell,
 };
 
 const struct SpriteTemplate gClampShellSpriteTemplate =
@@ -290,9 +290,9 @@ const struct SpriteTemplate gClampShellSpriteTemplate =
 static const union AffineAnimCmd sAffineAnim_ShellSmashStretchAttacker[] =
 {
     AFFINEANIMCMD_FRAME(64, 64, 0, 16),
-	AFFINEANIMCMD_FRAME(0, 0, 0, 48),
-	AFFINEANIMCMD_FRAME(-64, -64, 0, 16),
-	AFFINEANIMCMD_END,
+    AFFINEANIMCMD_FRAME(0, 0, 0, 48),
+    AFFINEANIMCMD_FRAME(-64, -64, 0, 16),
+    AFFINEANIMCMD_END,
 };
 
 static const union AnimCmd sSpriteAnimCmds_WeatherBallUp[] =
@@ -386,11 +386,11 @@ const struct SpriteTemplate gPurpleHitSplatSpriteTemplate =
 static const union AnimCmd sSpriteAnimCmds_ShotHitBall[] =
 {
     ANIMCMD_FRAME(64, 4),
-	ANIMCMD_FRAME(48, 4),
-	ANIMCMD_FRAME(32, 4),
-	ANIMCMD_FRAME(16, 4),
-	ANIMCMD_FRAME(0, 4),
-	ANIMCMD_END,
+    ANIMCMD_FRAME(48, 4),
+    ANIMCMD_FRAME(32, 4),
+    ANIMCMD_FRAME(16, 4),
+    ANIMCMD_FRAME(0, 4),
+    ANIMCMD_END,
 };
 
 static const union AnimCmd *const sSpriteAnimTable_ShotHitBall[] =
@@ -401,7 +401,7 @@ static const union AnimCmd *const sSpriteAnimTable_ShotHitBall[] =
 static const union AffineAnimCmd sAffineAnim_ShotHitBall[] =
 {
     AFFINEANIMCMD_FRAME(0, 0, -32, 1), // 45 degree turn
-	AFFINEANIMCMD_END,
+    AFFINEANIMCMD_END,
 };
 
 static const union AffineAnimCmd *const sAffineAnims_ShotHitBall[] =
@@ -486,7 +486,7 @@ static void AnimConfusionDuck(struct Sprite *sprite)
     sprite->x += gBattleAnimArgs[0];
     sprite->y += gBattleAnimArgs[1];
     sprite->data[0] = gBattleAnimArgs[2];
-	
+    
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         sprite->data[1] = -gBattleAnimArgs[3];
     else
@@ -503,14 +503,14 @@ static void AnimConfusionDuckStep(struct Sprite *sprite)
 {
     sprite->x2 = Cos(sprite->data[0], 30);
     sprite->y2 = Sin(sprite->data[0], 10);
-	
+    
     if ((u16)sprite->data[0] < 128)
         sprite->oam.priority = 1;
     else
         sprite->oam.priority = 3;
-	
+    
     sprite->data[0] = (sprite->data[0] + sprite->data[1]) & 0xFF;
-	
+    
     if (++sprite->data[2] == sprite->data[3])
         DestroyAnimSprite(sprite);
 }
@@ -580,10 +580,10 @@ static void AnimComplexPaletteBlendStep(struct Sprite *sprite)
         --sprite->data[0];
         return;
     }
-	
+    
     if (gPaletteFade.active)
         return;
-	
+    
     if (sprite->data[2] == 0)
     {
         sprite->callback = AnimComplexPaletteBlendStep2;
@@ -594,7 +594,7 @@ static void AnimComplexPaletteBlendStep(struct Sprite *sprite)
         BlendPalettes(selectedPalettes, sprite->data[4], sprite->data[3]);
     else
         BlendPalettes(selectedPalettes, sprite->data[6], sprite->data[5]);
-	
+    
     sprite->data[1] ^= 0x100;
     sprite->data[0] = sprite->data[1] & 0xFF;
     --sprite->data[2];
@@ -617,7 +617,7 @@ static void AnimComplexPaletteBlendStep2(struct Sprite *sprite)
 // arg 3: initial blend amount
 // arg 4: target blend amount
 // arg 5: blend color
-void AnimTask_BlendColorCycle(u8 taskId)
+void AnimTask_BlendColorCycle(u32 taskId)
 {
     gTasks[taskId].data[0] = gBattleAnimArgs[0];
     gTasks[taskId].data[1] = gBattleAnimArgs[1];
@@ -637,7 +637,7 @@ static void BlendColorCycle(u32 taskId, u32 initialBlendAmount, u32 targetBlendA
     gTasks[taskId].data[8] ^= TRUE;
 }
 
-static void AnimTask_BlendColorCycleLoop(u8 taskId)
+static void AnimTask_BlendColorCycleLoop(u32 taskId)
 {
     u32 initialBlendAmount, targetBlendAmount;
 
@@ -655,10 +655,10 @@ static void AnimTask_BlendColorCycleLoop(u8 taskId)
                 initialBlendAmount = gTasks[taskId].data[4];
                 targetBlendAmount = gTasks[taskId].data[3];
             }
-			
+            
             if (gTasks[taskId].data[2] == 1)
                 targetBlendAmount = 0;
-			
+            
             BlendColorCycle(taskId, initialBlendAmount, targetBlendAmount);
         }
         else
@@ -667,16 +667,16 @@ static void AnimTask_BlendColorCycleLoop(u8 taskId)
 }
 
 // See AnimTask_BlendColorCycle. Same, but excludes Attacker and Target.
-void AnimTask_BlendColorCycleExclude(u8 taskId)
+void AnimTask_BlendColorCycleExclude(u32 taskId)
 {
     u32 battler;
     u32 selectedPalettes = 0xE;
-	
-	for (battler = 0; battler < gBattlersCount; ++battler)
-	{
+    
+    for (battler = 0; battler < gBattlersCount; ++battler)
+    {
         if (battler != gBattleAnimAttacker && battler != gBattleAnimTarget)
             selectedPalettes |= 1 << (battler + 16);
-	}
+    }
     gTasks[taskId].data[0] = gBattleAnimArgs[0];
     gTasks[taskId].data[1] = gBattleAnimArgs[1];
     gTasks[taskId].data[2] = gBattleAnimArgs[2];
@@ -686,9 +686,9 @@ void AnimTask_BlendColorCycleExclude(u8 taskId)
     gTasks[taskId].data[8] = 0;
     gTasks[taskId].data[9] = selectedPalettes >> 16;
     gTasks[taskId].data[10] = selectedPalettes & 0xFF;
-	
+    
     BlendColorCycleExclude(taskId, 0, gTasks[taskId].data[4]);
-	
+    
     gTasks[taskId].func = AnimTask_BlendColorCycleExcludeLoop;
 }
 
@@ -699,7 +699,7 @@ static void BlendColorCycleExclude(u32 taskId, u32 initialBlendAmount, u32 targe
     gTasks[taskId].data[8] ^= TRUE;
 }
 
-static void AnimTask_BlendColorCycleExcludeLoop(u8 taskId)
+static void AnimTask_BlendColorCycleExcludeLoop(u32 taskId)
 {
     u32 initialBlendAmount, targetBlendAmount;
 
@@ -720,7 +720,7 @@ static void AnimTask_BlendColorCycleExcludeLoop(u8 taskId)
 
             if (gTasks[taskId].data[2] == 1)
                 targetBlendAmount = 0;
-			
+            
             BlendColorCycleExclude(taskId, initialBlendAmount, targetBlendAmount);
         }
         else
@@ -735,7 +735,7 @@ static void AnimTask_BlendColorCycleExcludeLoop(u8 taskId)
 // arg 3: initial blend amount
 // arg 4: target blend amount
 // arg 5: blend color
-void AnimTask_BlendColorCycleByTag(u8 taskId)
+void AnimTask_BlendColorCycleByTag(u32 taskId)
 {
     gTasks[taskId].data[0] = gBattleAnimArgs[0];
     gTasks[taskId].data[1] = gBattleAnimArgs[1];
@@ -755,7 +755,7 @@ static void BlendColorCycleByTag(u32 taskId, u32 initialBlendAmount, u32 targetB
     gTasks[taskId].data[8] ^= TRUE;
 }
 
-static void AnimTask_BlendColorCycleByTagLoop(u8 taskId)
+static void AnimTask_BlendColorCycleByTagLoop(u32 taskId)
 {
     u32 initialBlendAmount, targetBlendAmount;
 
@@ -776,7 +776,7 @@ static void AnimTask_BlendColorCycleByTagLoop(u8 taskId)
 
             if (gTasks[taskId].data[2] == 1)
                 targetBlendAmount = 0;
-			
+            
             BlendColorCycleByTag(taskId, initialBlendAmount, targetBlendAmount);
         }
         else
@@ -792,7 +792,7 @@ static void AnimTask_BlendColorCycleByTagLoop(u8 taskId)
 // arg 4: initial blend amount
 // arg 5: second blend color (?)
 // arg 6: target blend color
-void AnimTask_FlashAnimTagWithColor(u8 taskId)
+void AnimTask_FlashAnimTagWithColor(u32 taskId)
 {
     gTasks[taskId].data[0] = gBattleAnimArgs[1];
     gTasks[taskId].data[1] = gBattleAnimArgs[1];
@@ -806,7 +806,7 @@ void AnimTask_FlashAnimTagWithColor(u8 taskId)
     gTasks[taskId].func = sub_80B9FD8;
 }
 
-static void sub_80B9FD8(u8 taskId)
+static void sub_80B9FD8(u32 taskId)
 {
     u32 selectedPalettes;
 
@@ -815,29 +815,29 @@ static void sub_80B9FD8(u8 taskId)
         --gTasks[taskId].data[0];
         return;
     }
-	
+    
     if (gPaletteFade.active)
         return;
-	
+    
     if (gTasks[taskId].data[2] == 0)
     {
         gTasks[taskId].func = sub_80BA090;
         return;
     }
     selectedPalettes = 1 << (IndexOfSpritePaletteTag(gTasks[taskId].data[7]) + 16);
-	
+    
     if (gTasks[taskId].data[1] & 0x100)
         BeginNormalPaletteFade(selectedPalettes, 0, gTasks[taskId].data[4], gTasks[taskId].data[4], gTasks[taskId].data[3]);
     else
         BeginNormalPaletteFade(selectedPalettes, 0, gTasks[taskId].data[6], gTasks[taskId].data[6], gTasks[taskId].data[5]);
-	
+    
     gTasks[taskId].data[1] ^= 0x100;
     gTasks[taskId].data[0] = gTasks[taskId].data[1] & 0xFF;
-	
+    
     --gTasks[taskId].data[2];
 }
 
-static void sub_80BA090(u8 taskId)
+static void sub_80BA090(u32 taskId)
 {
     if (!gPaletteFade.active)
     {
@@ -847,51 +847,51 @@ static void sub_80BA090(u8 taskId)
 }
 
 // Simple inverts the screen color.
-void AnimTask_InvertScreenColor(u8 taskId)
+void AnimTask_InvertScreenColor(u32 taskId)
 {
     u32 selectedPalettes = 0;
-	
+    
     if (gBattleAnimArgs[0] & 0x100)
         selectedPalettes = SelectBattleAnimSpriteAndBgPalettes(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE);
     if (gBattleAnimArgs[1] & 0x100)
         selectedPalettes |= (0x10000 << gBattleAnimAttacker);
     if (gBattleAnimArgs[2] & 0x100)
         selectedPalettes |= (0x10000 << gBattleAnimTarget);
-	
+    
     InvertPlttBuffer(selectedPalettes);
     DestroyAnimVisualTask(taskId);
 }
 
 // Fades out all particles by altering the blend alpha.
 // arg 0: fade delay
-void AnimTask_FadeOutParticles(u8 taskId)
+void AnimTask_FadeOutParticles(u32 taskId)
 {
-	SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL); // Blend sprites out
-	SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(16, 0));
-	
-	gTasks[taskId].data[1] = 16;
-	gTasks[taskId].data[2] = 0;
-	gTasks[taskId].data[3] = gBattleAnimArgs[0];
-	gTasks[taskId].data[4] = 0;
-	gTasks[taskId].func = AnimTask_FadeOutParticles_Step;
+    SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL); // Blend sprites out
+    SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(16, 0));
+    
+    gTasks[taskId].data[1] = 16;
+    gTasks[taskId].data[2] = 0;
+    gTasks[taskId].data[3] = gBattleAnimArgs[0];
+    gTasks[taskId].data[4] = 0;
+    gTasks[taskId].func = AnimTask_FadeOutParticles_Step;
 }
 
-static void AnimTask_FadeOutParticles_Step(u8 taskId)
+static void AnimTask_FadeOutParticles_Step(u32 taskId)
 {
-	if (gTasks[taskId].data[1])
-	{
-		if (gTasks[taskId].data[4]++ >= gTasks[taskId].data[3])
-		{
-			gTasks[taskId].data[4] = 0;
-			
-			--gTasks[taskId].data[1];
-			++gTasks[taskId].data[2];
-			
-			SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(gTasks[taskId].data[1], gTasks[taskId].data[2]));
-		}
-	}
-	else
-		DestroyAnimVisualTaskAndDisableBlend(taskId);
+    if (gTasks[taskId].data[1])
+    {
+        if (gTasks[taskId].data[4]++ >= gTasks[taskId].data[3])
+        {
+            gTasks[taskId].data[4] = 0;
+            
+            --gTasks[taskId].data[1];
+            ++gTasks[taskId].data[2];
+            
+            SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(gTasks[taskId].data[1], gTasks[taskId].data[2]));
+        }
+    }
+    else
+        DestroyAnimVisualTaskAndDisableBlend(taskId);
 }
 
 // Shakes the battle terrain or the given mon sprite.
@@ -909,7 +909,7 @@ static void AnimShakeMonOrBattleTerrain(struct Sprite *sprite)
     u16 var0;
 
     sprite->invisible = TRUE;
-	
+    
     sprite->data[0] = -gBattleAnimArgs[0];
     sprite->data[1] = gBattleAnimArgs[1];
     sprite->data[2] = gBattleAnimArgs[1];
@@ -932,11 +932,11 @@ static void AnimShakeMonOrBattleTerrain(struct Sprite *sprite)
     }
     sprite->data[4] = *(u16 *)(sprite->data[6] | (sprite->data[7] << 16));
     sprite->data[5] = gBattleAnimArgs[3];
-	
+    
     var0 = sprite->data[5] - 2;
     if (var0 < 2)
         AnimShakeMonOrBattleTerrain_UpdateCoordOffsetEnabled(gBattleAnimArgs[4]);
-	
+    
     sprite->callback = AnimShakeMonOrBattleTerrain_Step;
 }
 
@@ -948,7 +948,7 @@ static void AnimShakeMonOrBattleTerrain_Step(struct Sprite *sprite)
     if (sprite->data[3] > 0)
     {
         --sprite->data[3];
-		
+        
         if (sprite->data[1] > 0)
             --sprite->data[1];
         else
@@ -962,29 +962,29 @@ static void AnimShakeMonOrBattleTerrain_Step(struct Sprite *sprite)
     {
         *(u16 *)(sprite->data[6] | (sprite->data[7] << 16)) = sprite->data[4];
         var0 = sprite->data[5] - 2;
-		
+        
         if (var0 < 2)
-		{
+        {
             for (i = 0; i < gBattlersCount; ++i)
                 gSprites[gBattlerSpriteIds[i]].coordOffsetEnabled = FALSE;
-		}
+        }
         DestroyAnimSprite(sprite);
     }
 }
 
 static void AnimShakeMonOrBattleTerrain_UpdateCoordOffsetEnabled(u32 dontShakeBattler)
 {
-	// Shake both
+    // Shake both
     gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].coordOffsetEnabled = FALSE;
     gSprites[gBattlerSpriteIds[gBattleAnimTarget]].coordOffsetEnabled = FALSE;
-	
+    
     if (dontShakeBattler > ANIM_TARGET) // Shake no one
     {
         gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].coordOffsetEnabled = TRUE;
         gSprites[gBattlerSpriteIds[gBattleAnimTarget]].coordOffsetEnabled = TRUE;
     }
     else // Chose one to don't shake
-		gSprites[gBattlerSpriteIds[dontShakeBattler == ANIM_ATTACKER ? gBattleAnimAttacker : gBattleAnimTarget]].coordOffsetEnabled = TRUE;
+        gSprites[gBattlerSpriteIds[dontShakeBattler == ANIM_ATTACKER ? gBattleAnimAttacker : gBattleAnimTarget]].coordOffsetEnabled = TRUE;
 }
 
 // Can shake battle terrain back and forth on the X or down and back to original pos on Y (cant shake up from orig pos)
@@ -992,22 +992,22 @@ static void AnimShakeMonOrBattleTerrain_UpdateCoordOffsetEnabled(u32 dontShakeBa
 // arg 1: y offset of shake
 // arg 2: number of shakes
 // arg 3: time between shakes
-void AnimTask_ShakeBattleTerrain(u8 taskId)
+void AnimTask_ShakeBattleTerrain(u32 taskId)
 {
     gTasks[taskId].data[0] = gBattleAnimArgs[0];
     gTasks[taskId].data[1] = gBattleAnimArgs[1];
     gTasks[taskId].data[2] = gBattleAnimArgs[2];
     gTasks[taskId].data[3] = gBattleAnimArgs[3];
     gTasks[taskId].data[8] = gBattleAnimArgs[3];
-	
+    
     gBattle_BG3_X = gBattleAnimArgs[0];
     gBattle_BG3_Y = gBattleAnimArgs[1];
-	
+    
     gTasks[taskId].func = AnimTask_ShakeBattleTerrain_Step;
     gTasks[taskId].func(taskId);
 }
 
-static void AnimTask_ShakeBattleTerrain_Step(u8 taskId)
+static void AnimTask_ShakeBattleTerrain_Step(u32 taskId)
 {
     if (gTasks[taskId].data[3] == 0)
     {
@@ -1022,7 +1022,7 @@ static void AnimTask_ShakeBattleTerrain_Step(u8 taskId)
             gBattle_BG3_Y = -gTasks[taskId].data[1];
 
         gTasks[taskId].data[3] = gTasks[taskId].data[8];
-		
+        
         if (--gTasks[taskId].data[2] == 0)
         {
             gBattle_BG3_X = 0;
@@ -1036,9 +1036,9 @@ static void AnimTask_ShakeBattleTerrain_Step(u8 taskId)
 
 // Shrinks the attacker, pauses, then scales up again.
 // No args.
-void AnimTask_ShellSmashShrinkAttacker(u8 taskId)
+void AnimTask_ShellSmashShrinkAttacker(u32 taskId)
 {
-	PrepareAffineAnimInTaskData(&gTasks[taskId], GetAnimBattlerSpriteId(ANIM_ATTACKER), sAffineAnim_ShellSmashStretchAttacker);
+    PrepareAffineAnimInTaskData(&gTasks[taskId], GetAnimBattlerSpriteId(ANIM_ATTACKER), sAffineAnim_ShellSmashStretchAttacker);
     gTasks[taskId].func = AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds;
 }
 
@@ -1050,8 +1050,8 @@ void AnimTask_ShellSmashShrinkAttacker(u8 taskId)
 static void AnimHitSplatBasic(struct Sprite *sprite)
 {
     StartSpriteAffineAnim(sprite, gBattleAnimArgs[3]);
-	InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[2], TRUE);
-	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+    InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[2], TRUE);
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
     sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
 }
 
@@ -1064,7 +1064,7 @@ static void AnimHitSplatBasic(struct Sprite *sprite)
 static void AnimHitSplatPersistent(struct Sprite *sprite)
 {
     StartSpriteAffineAnim(sprite, gBattleAnimArgs[3]);
-	InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[2], TRUE);
+    InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[2], TRUE);
     sprite->data[0] = gBattleAnimArgs[4];
     sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
     StoreSpriteCallbackInData6(sprite, DestroyAnimSpriteAfterTimer);
@@ -1079,7 +1079,7 @@ static void AnimHitSplatHandleInvert(struct Sprite *sprite)
 {
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         gBattleAnimArgs[1] = -gBattleAnimArgs[1];
-	
+    
     AnimHitSplatBasic(sprite);
 }
 
@@ -1091,13 +1091,13 @@ static void AnimHitSplatRandom(struct Sprite *sprite)
 {
     if (gBattleAnimArgs[1] == -1)
         gBattleAnimArgs[1] = RandomMax(4);
-	
+    
     StartSpriteAffineAnim(sprite, gBattleAnimArgs[1]);
-	
-	if (gBattleAnimArgs[2] && IsDoubleBattleForBattler(GetBattlerForAnimScript(gBattleAnimArgs[0])))
-		InitSpritePosToAnimTargetsCentre(sprite, FALSE);
-	else
-		InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[0], FALSE);
+    
+    if (gBattleAnimArgs[2] && IsDoubleBattleForBattler(GetBattlerForAnimScript(gBattleAnimArgs[0])))
+        InitSpritePosToAnimTargetsCentre(sprite, FALSE);
+    else
+        InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[0], FALSE);
     
     sprite->x2 += RandomMax(48) - 24;
     sprite->y2 += RandomMax(24) - 12;
@@ -1113,13 +1113,13 @@ static void AnimHitSplatRandom(struct Sprite *sprite)
 static void AnimHitSplatOnMonEdge(struct Sprite *sprite)
 {
     sprite->data[0] = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
-	
+    
     sprite->x = gSprites[sprite->data[0]].x + gSprites[sprite->data[0]].x2;
     sprite->y = gSprites[sprite->data[0]].y + gSprites[sprite->data[0]].y2;
-	
+    
     sprite->x2 = gBattleAnimArgs[1];
     sprite->y2 = gBattleAnimArgs[2];
-	
+    
     StartSpriteAffineAnim(sprite, gBattleAnimArgs[3]);
     StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
     sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
@@ -1132,11 +1132,11 @@ static void AnimHitSplatOnMonEdge(struct Sprite *sprite)
 // arg 3: duration
 static void AnimCrossImpact(struct Sprite *sprite)
 {
-	InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[2], TRUE);
-	
+    InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[2], TRUE);
+    
     sprite->data[0] = gBattleAnimArgs[3];
     sprite->callback = WaitAnimForDuration;
-	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
 // Creates a basic hit splat sprite on given battler that switches its visibility each frame.
@@ -1146,7 +1146,7 @@ static void AnimCrossImpact(struct Sprite *sprite)
 // arg 3: sprite affine anim id
 static void AnimFlashingHitSplat(struct Sprite *sprite)
 {
-	InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[2], TRUE);
+    InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[2], TRUE);
     StartSpriteAffineAnim(sprite, gBattleAnimArgs[3]);
     sprite->callback = AnimFlashingHitSplat_Step;
 }
@@ -1154,7 +1154,7 @@ static void AnimFlashingHitSplat(struct Sprite *sprite)
 static void AnimFlashingHitSplat_Step(struct Sprite *sprite)
 {
     sprite->invisible ^= TRUE;
-	
+    
     if (sprite->data[0]++ > 12)
         DestroyAnimSprite(sprite);
 }
@@ -1166,23 +1166,23 @@ static void AnimFlashingHitSplat_Step(struct Sprite *sprite)
 // arg 3: anim num (0 = left shell, 1 = right shell)
 static void AnimShellSmashShell(struct Sprite *sprite)
 {
-	StartSpriteAnim(sprite, gBattleAnimArgs[3]);
-	StartSpriteAffineAnim(sprite, gBattleAnimArgs[3]);
-	
-	sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X) + gBattleAnimArgs[0];
-	sprite->y = GetBattlerSpriteCoord2(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + 2; // Slightly encompass the entire sprite
-	
-	sprite->data[0] = gBattleAnimArgs[2];
-	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X) + gBattleAnimArgs[1];
-	sprite->data[4] = sprite->y;
-	sprite->callback = StartAnimLinearTranslation;
-	StoreSpriteCallbackInData6(sprite, AnimShellSmashShell_Step);
+    StartSpriteAnim(sprite, gBattleAnimArgs[3]);
+    StartSpriteAffineAnim(sprite, gBattleAnimArgs[3]);
+    
+    sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X) + gBattleAnimArgs[0];
+    sprite->y = GetBattlerSpriteCoord2(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + 2; // Slightly encompass the entire sprite
+    
+    sprite->data[0] = gBattleAnimArgs[2];
+    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X) + gBattleAnimArgs[1];
+    sprite->data[4] = sprite->y;
+    sprite->callback = StartAnimLinearTranslation;
+    StoreSpriteCallbackInData6(sprite, AnimShellSmashShell_Step);
 }
 
 static void AnimShellSmashShell_Step(struct Sprite *sprite)
 {
-	if (GetGpuReg(REG_OFFSET_BLDALPHA) >= BLDALPHA_BLEND(0, 8)) // Wait until reach 1/2 fade out
-		DestroyAnimSprite(sprite);
+    if (GetGpuReg(REG_OFFSET_BLDALPHA) >= BLDALPHA_BLEND(0, 8)) // Wait until reach 1/2 fade out
+        DestroyAnimSprite(sprite);
 }
 
 // Move sprite inward for Clamp.
@@ -1195,8 +1195,8 @@ static void AnimShellSmashShell_Step(struct Sprite *sprite)
 // arg 6: anim num (0 = left shell, 1 = right shell)
 static void AnimClampShell(struct Sprite *sprite)
 {
-	StartSpriteAnim(sprite, gBattleAnimArgs[6]);
-	AnimBite(sprite);
+    StartSpriteAnim(sprite, gBattleAnimArgs[6]);
+    AnimBite(sprite);
 }
 
 // Animates the Weather Ball up sprite.
@@ -1205,12 +1205,12 @@ void SpriteCB_WeatherBallUp(struct Sprite *sprite)
 {
     sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
     sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
-	
+    
     if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_PLAYER)
         sprite->data[0] = 5;
     else
         sprite->data[0] = -10;
-	
+    
     sprite->data[1] = -40;
     sprite->callback = SpriteCB_WeatherBallUp_Step;
 }
@@ -1219,13 +1219,13 @@ static void SpriteCB_WeatherBallUp_Step(struct Sprite *sprite)
 {
     sprite->data[2] += sprite->data[0];
     sprite->data[3] += sprite->data[1];
-	
+    
     sprite->x2 = sprite->data[2] / 10;
     sprite->y2 = sprite->data[3] / 10;
-	
+    
     if (sprite->data[1] < -20)
         ++sprite->data[1];
-	
+    
     if (sprite->y + sprite->y2 < -32)
         DestroyAnimSprite(sprite);
 }
@@ -1241,18 +1241,18 @@ void AnimWeatherBallDown(struct Sprite *sprite)
     sprite->data[0] = gBattleAnimArgs[0];
     sprite->data[2] = sprite->x + gBattleAnimArgs[1];
     sprite->data[4] = sprite->y + gBattleAnimArgs[2];
-	
+    
     if (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER)
     {
-		sprite->y = gBattleAnimArgs[2] - 20;
+        sprite->y = gBattleAnimArgs[2] - 20;
         x = (u16)gBattleAnimArgs[1] + 30;
     }
     else
     {
-		sprite->y = gBattleAnimArgs[2] - 80;
+        sprite->y = gBattleAnimArgs[2] - 80;
         x = (u16)gBattleAnimArgs[1] - 30;
     }
-	sprite->x += x;
+    sprite->x += x;
     sprite->callback = StartAnimLinearTranslation;
     StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }

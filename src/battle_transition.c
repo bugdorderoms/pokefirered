@@ -106,27 +106,27 @@ static bool32 BT_WaitForPhase1(struct Task *task);
 static bool32 BT_Phase2LaunchAnimTask(struct Task *task);
 static bool32 BT_WaitForPhase2(struct Task *task);
 
-static void BT_Phase2Blur(u8 taskId);
-static void BT_Phase2DistortedWave(u8 taskId);
-static void BT_Phase2HorizontalCorrugate(u8 taskId);
-static void BT_Phase2BigPokeball(u8 taskId);
-static void BT_Phase2SlidingPokeballs(u8 taskId);
-static void BT_Phase2ClockwiseBlackFade(u8 taskId);
-static void BT_Phase2FullScreenWave(u8 taskId);
-static void BT_Phase2BlackWaveToRight(u8 taskId);
-static void BT_Phase2SlicedScreen(u8 taskId);
-static void BT_Phase2WhiteFadeInStripes(u8 taskId);
-static void BT_Phase2GridSquares(u8 taskId);
-static void BT_Phase2BlackDoodles(u8 taskId);
-static void BT_Phase2StartLoreleiMugshot(u8 taskId);
-static void BT_Phase2StartBrunoMugshot(u8 taskId);
-static void BT_Phase2StartAgathaMugshot(u8 taskId);
-static void BT_Phase2StartLanceMugshot(u8 taskId);
-static void BT_Phase2StartBlueMugshot(u8 taskId);
-static void BT_Phase2AntiClockwiseSpiral(u8 taskId);
-static void BT_Phase1Task(u8 taskId);
-static void BT_Phase2Mugshot(u8 taskId);
-static void BT_Phase1SubTask(u8 taskId);
+static void BT_Phase2Blur(u32 taskId);
+static void BT_Phase2DistortedWave(u32 taskId);
+static void BT_Phase2HorizontalCorrugate(u32 taskId);
+static void BT_Phase2BigPokeball(u32 taskId);
+static void BT_Phase2SlidingPokeballs(u32 taskId);
+static void BT_Phase2ClockwiseBlackFade(u32 taskId);
+static void BT_Phase2FullScreenWave(u32 taskId);
+static void BT_Phase2BlackWaveToRight(u32 taskId);
+static void BT_Phase2SlicedScreen(u32 taskId);
+static void BT_Phase2WhiteFadeInStripes(u32 taskId);
+static void BT_Phase2GridSquares(u32 taskId);
+static void BT_Phase2BlackDoodles(u32 taskId);
+static void BT_Phase2StartLoreleiMugshot(u32 taskId);
+static void BT_Phase2StartBrunoMugshot(u32 taskId);
+static void BT_Phase2StartAgathaMugshot(u32 taskId);
+static void BT_Phase2StartLanceMugshot(u32 taskId);
+static void BT_Phase2StartBlueMugshot(u32 taskId);
+static void BT_Phase2AntiClockwiseSpiral(u32 taskId);
+static void BT_Phase1Task(u32 taskId);
+static void BT_Phase2Mugshot(u32 taskId);
+static void BT_Phase1SubTask(u32 taskId);
 
 static void SpriteCB_BT_Phase2Mugshots(struct Sprite *sprite);
 static void SpriteCB_BT_Phase2SlidingPokeballs(struct Sprite *sprite);
@@ -161,7 +161,7 @@ static void HBCB_BT_Phase2WhiteFadeInStripes(void);
 static void VBCB_BT_Phase2BlackDoodles(void);
 
 static void BT_LaunchTask(u32 transitionId);
-static void BT_TaskMain(u8 taskId);
+static void BT_TaskMain(u32 taskId);
 static void BT_InitCtrlBlk(void);
 static void BT_CreatePhase1SubTask(s16 fadeOutDelay, s16 fadeInDelay, s16 blinkTimes, s16 fadeOutSpeed, s16 fadeInSpeed);
 static bool32 BT_IsPhase1Done(void);
@@ -537,7 +537,7 @@ static void BT_LaunchTask(u32 transitionId)
     gTasks[CreateTask(BT_TaskMain, 2)].tTransitionId = transitionId;
 }
 
-static void BT_TaskMain(u8 taskId)
+static void BT_TaskMain(u32 taskId)
 {
     while (sBT_MainPhases[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -581,11 +581,11 @@ static bool32 BT_Phase2LaunchAnimTask(struct Task *task)
 
 static bool32 BT_WaitForPhase2(struct Task *task)
 {
-	task->tTransitionDone = (FindTaskIdByFunc(sBT_Phase2Tasks[task->tTransitionId]) == TAIL_SENTINEL);
+    task->tTransitionDone = (FindTaskIdByFunc(sBT_Phase2Tasks[task->tTransitionId]) == TAIL_SENTINEL);
     return FALSE;
 }
 
-static void BT_Phase1Task(u8 taskId)
+static void BT_Phase1Task(u32 taskId)
 {
     if (!gTasks[taskId].tState)
     {
@@ -599,7 +599,7 @@ static void BT_Phase1Task(u8 taskId)
 #define tInterval data[1]
 #define tMosaicSize data[2]
 
-static void BT_Phase2Blur(u8 taskId)
+static void BT_Phase2Blur(u32 taskId)
 {
     while (sBT_Phase2BlurFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -646,7 +646,7 @@ static bool32 BT_Phase2Blur_IsDone(struct Task *task)
 #define tTheta data[1]
 #define tAmplitude data[2]
 
-static void BT_Phase2DistortedWave(u8 taskId)
+static void BT_Phase2DistortedWave(u32 taskId)
 {
     while (sBT_Phase2DistortedWaveFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -691,7 +691,7 @@ static void HBCB_BT_Phase2DistortedWave(void)
     REG_BG3HOFS = offset;
 }
 
-static void BT_Phase2HorizontalCorrugate(u8 taskId)
+static void BT_Phase2HorizontalCorrugate(u32 taskId)
 {
     while (sBT_Phase2HorizontalCorrugateFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -751,7 +751,7 @@ static void HBCB_BT_Phase2HorizontalCorrugate(void)
 #define tTheta data[4]
 #define tAmplitude data[5]
 
-static void BT_Phase2BigPokeball(u8 taskId)
+static void BT_Phase2BigPokeball(u32 taskId)
 {
     while (sBT_Phase2BigPokeballFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -773,11 +773,11 @@ static bool32 BT_Phase2BigPokeball_Init(struct Task *task)
     sTransitionStructPtr->win0V = WIN_RANGE(0, 0xA0);
     sTransitionStructPtr->bldCnt = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD;
     sTransitionStructPtr->bldAlpha = (task->tEvb << 8) | task->tEva;
-	UpdateShadowColor(RGB_GRAY);
-	
+    UpdateShadowColor(RGB_GRAY);
+    
     for (i = 0; i < 160; ++i)
         gScanlineEffectRegBuffers[1][i] = 0xF0;
-	
+    
     SetVBlankCallback(VBCB_BT_Phase2BigPokeball1);
     BT_GetBg0TilemapAndTilesetBase(&tilemapAddr, &tilesetAddr);
     CpuFill16(0, tilemapAddr, 0x800);
@@ -938,7 +938,7 @@ static void VBCB_BT_Phase2BigPokeball2(void)
 #undef tAmplitude
 
 // TODO: Document this effect after knowing more about field effects. 
-static void BT_Phase2SlidingPokeballs(u8 taskId)
+static void BT_Phase2SlidingPokeballs(u32 taskId)
 {
     while (sBT_Phase2SlidingPokeballsFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -965,7 +965,7 @@ static bool32 BT_Phase2SlidingPokeballs_SetupFldeffArgs(struct Task *task)
     memcpy(arr0, gUnknown_83FA400, sizeof(gUnknown_83FA400));
     memcpy(arr1, gUnknown_83FA404, sizeof(gUnknown_83FA404));
     rand = RandomMax(2);
-	
+    
     for (i = 0; i <= 4; ++i, rand ^= 1)
     {
         gFieldEffectArguments[0] = arr0[rand];      // x
@@ -1049,7 +1049,7 @@ static void SpriteCB_BT_Phase2SlidingPokeballs(struct Sprite *sprite)
 #define trEndPtX data[4]
 #define trEndPtY data[5]
 
-static void BT_Phase2ClockwiseBlackFade(u8 taskId)
+static void BT_Phase2ClockwiseBlackFade(u32 taskId)
 {
     while (sBT_Phase2ClockwiseBlackFadeFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -1255,7 +1255,7 @@ static void VBCB_BT_Phase2ClockwiseBlackFade(void)
 #define tDelayForFade data[3]
 #define tStartFade data[4]
 
-static void BT_Phase2FullScreenWave(u8 taskId)
+static void BT_Phase2FullScreenWave(u32 taskId)
 {
     while (sBT_Phase2FullScreenWaveFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -1330,7 +1330,7 @@ static void HBCB_BT_Phase2FullScreenWave(void)
 #define tOffset data[1]
 #define tTheta data[2]
 
-static void BT_Phase2BlackWaveToRight(u8 taskId)
+static void BT_Phase2BlackWaveToRight(u32 taskId)
 {
     while (sBT_Phase2BlackWaveToRightFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -1406,7 +1406,7 @@ static void VBCB_BT_Phase2BlackWaveToRight(void)
 
 // Unused
 
-static void BT_Phase2AntiClockwiseSpiral(u8 taskId)
+static void BT_Phase2AntiClockwiseSpiral(u32 taskId)
 {
     while (sBT_Phase2AntiClockwiseSpiralFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -1682,37 +1682,37 @@ static void VBCB_BT_Phase2AntiClockwiseBlackFade(void)
 #define sphasSlideFinished data[6]
 #define spOpponentOrPlayer data[7]
 
-static void BT_Phase2StartLoreleiMugshot(u8 taskId)
+static void BT_Phase2StartLoreleiMugshot(u32 taskId)
 {
     gTasks[taskId].tWhichMugshot = MUGSHOT_LORELEI;
     BT_Phase2Mugshot(taskId);
 }
 
-static void BT_Phase2StartBrunoMugshot(u8 taskId)
+static void BT_Phase2StartBrunoMugshot(u32 taskId)
 {
     gTasks[taskId].tWhichMugshot = MUGSHOT_BRUNO;
     BT_Phase2Mugshot(taskId);
 }
 
-static void BT_Phase2StartAgathaMugshot(u8 taskId)
+static void BT_Phase2StartAgathaMugshot(u32 taskId)
 {
     gTasks[taskId].tWhichMugshot = MUGSHOT_AGATHA;
     BT_Phase2Mugshot(taskId);
 }
 
-static void BT_Phase2StartLanceMugshot(u8 taskId)
+static void BT_Phase2StartLanceMugshot(u32 taskId)
 {
     gTasks[taskId].tWhichMugshot = MUGSHOT_LANCE;
     BT_Phase2Mugshot(taskId);
 }
 
-static void BT_Phase2StartBlueMugshot(u8 taskId)
+static void BT_Phase2StartBlueMugshot(u32 taskId)
 {
     gTasks[taskId].tWhichMugshot = MUGSHOT_BLUE;
     BT_Phase2Mugshot(taskId);
 }
 
-static void BT_Phase2Mugshot(u8 taskId)
+static void BT_Phase2Mugshot(u32 taskId)
 {
     while (sBT_Phase2MugshotFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -1951,7 +1951,7 @@ static void VBCB_BT_Phase2Mugshot2_WhiteFade(void)
 
 static void HBCB_BT_Phase2Mugshot(void)
 {
-	REG_BG0HOFS = REG_VCOUNT < 80 ? sTransitionStructPtr->bg0HOfsOpponent : sTransitionStructPtr->bg0HOfsPlayer;
+    REG_BG0HOFS = REG_VCOUNT < 80 ? sTransitionStructPtr->bg0HOfsOpponent : sTransitionStructPtr->bg0HOfsPlayer;
 }
 
 static void BT_Phase2Mugshots_CreateSprites(struct Task *task)
@@ -2072,7 +2072,7 @@ static s16 BT_IsSpriteSlideFinished(s16 spriteId)
 #define tAcc data[2]
 #define tJerk data[3]
 
-static void BT_Phase2SlicedScreen(u8 taskId)
+static void BT_Phase2SlicedScreen(u32 taskId)
 {
     while (sBT_Phase2SlicedScreenFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -2171,7 +2171,7 @@ static void HBCB_BT_Phase2SlicedScreen(void)
 #define spDelay data[5]
 #define spLastSprite data[6]
 
-static void BT_Phase2WhiteFadeInStripes(u8 taskId)
+static void BT_Phase2WhiteFadeInStripes(u32 taskId)
 {
     while (sBT_Phase2WhiteFadeInStripesFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -2287,7 +2287,7 @@ static void HBCB_BT_Phase2WhiteFadeInStripes(void)
     vu16 index = REG_VCOUNT;
     if (index == 227)
         index = 0;
-	
+    
     REG_BLDY = gScanlineEffectRegBuffers[1][index];
 }
 
@@ -2341,7 +2341,7 @@ static void SpriteCB_BT_Phase2WhiteFadeInStripes(struct Sprite *sprite)
 #define tDelay data[1]
 #define tWhichGrid data[2]
 
-static void BT_Phase2GridSquares(u8 taskId)
+static void BT_Phase2GridSquares(u32 taskId)
 {
     while (sBT_Phase2GridSquaresFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -2398,7 +2398,7 @@ static bool32 BT_Phase2GridSquares_IsDone(struct Task *task)
 #define trCurrentPtX data[2]
 #define trCurrentPtY data[3]
 
-static void BT_Phase2BlackDoodles(u8 taskId)
+static void BT_Phase2BlackDoodles(u32 taskId)
 {
     while (sBT_Phase2BlackDoodlesFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -2536,10 +2536,10 @@ static void BT_CreatePhase1SubTask(s16 fadeOutDelay, s16 fadeInDelay, s16 blinkT
 
 static bool32 BT_IsPhase1Done(void)
 {
-	return (FindTaskIdByFunc(BT_Phase1SubTask) == TAIL_SENTINEL);
+    return (FindTaskIdByFunc(BT_Phase1SubTask) == TAIL_SENTINEL);
 }
 
-static void BT_Phase1SubTask(u8 taskId)
+static void BT_Phase1SubTask(u32 taskId)
 {
     while (sBT_Phase1FadeFuncs[gTasks[taskId].tState](&gTasks[taskId]));
 }
@@ -2552,20 +2552,20 @@ static bool32 BT_Phase1_FadeOut(struct Task *task)
         task->tCoeff += task->tFadeOutSpeed;
         if (task->tCoeff > 16)
             task->tCoeff = 16;
-		
-		task->tShadowColor = GetShadowColor();
-		
+        
+        task->tShadowColor = GetShadowColor();
+        
         BlendPalettes(PALETTES_ALL, task->tCoeff, RGB(11, 11, 11));
-		
-		UpdateShadowColor(task->tShadowColor);
+        
+        UpdateShadowColor(task->tShadowColor);
     }
     if (task->tCoeff > 15)
     {
-		// Save BLDCNT and turn off targets temporarily
+        // Save BLDCNT and turn off targets temporarily
         task->tBldCntSaved = GetGpuReg(REG_OFFSET_BLDCNT);
         SetGpuReg(REG_OFFSET_BLDCNT, task->tBldCntSaved & ~(BLDCNT_TGT2_BG_ALL));
-		UpdateShadowColor(RGB(11, 11, 11));
-		task->tDelayCounter = task->tFadeInDelay;
+        UpdateShadowColor(RGB(11, 11, 11));
+        task->tDelayCounter = task->tFadeInDelay;
         ++task->tState;
     }
     return FALSE;
@@ -2580,12 +2580,12 @@ static bool32 BT_Phase1_FadeIn(struct Task *task)
         if (task->tCoeff < 0)
             task->tCoeff = 0;
         BlendPalettes(PALETTES_ALL, task->tCoeff, RGB(11, 11, 11));
-		
-		// Restore BLDCNT
+        
+        // Restore BLDCNT
         SetGpuReg(REG_OFFSET_BLDCNT, task->tBldCntSaved);
-		UpdateShadowColor(task->tShadowColor);
+        UpdateShadowColor(task->tShadowColor);
     }
-	
+    
     if (task->tCoeff == 0)
     {
         if (--task->tBlinkTimes == 0)

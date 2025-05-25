@@ -31,36 +31,36 @@ static EWRAM_DATA u8 sWhichToReshow = 0;
 static EWRAM_DATA u8 sLastUsedBox = 0;
 static EWRAM_DATA u16 gUnknown_20397BA = ITEM_NONE;
 
-static void Cb_InitPSS(u8 taskId);
-static void Cb_ShowPSS(u8 taskId);
-static void Cb_ReshowPSS(u8 taskId);
-static void Cb_MainPSS(u8 taskId);
-static void Cb_ShowPartyPokemon(u8 taskId);
-static void Cb_HidePartyPokemon(u8 taskId);
-static void Cb_OnSelectedMon(u8 taskId);
-static void Cb_MoveMon(u8 taskId);
-static void Cb_PlaceMon(u8 taskId);
-static void Cb_ShiftMon(u8 taskId);
-static void Cb_WithdrawMon(u8 taskId);
-static void Cb_DepositMenu(u8 taskId);
-static void Cb_ReleaseMon(u8 taskId);
-static void Cb_ShowMarkMenu(u8 taskId);
-static void Cb_TakeItemForMoving(u8 taskId);
-static void Cb_GiveMovingItemToMon(u8 taskId);
-static void Cb_ItemToBag(u8 taskId);
-static void Cb_SwitchSelectedItem(u8 taskId);
-static void Cb_ShowItemInfo(u8 taskId);
-static void Cb_HandleMovingMonFromParty(u8 taskId);
-static void Cb_PrintCantStoreMail(u8 taskId);
-static void Cb_HandleBoxOptions(u8 taskId);
-static void Cb_HandleWallpapers(u8 taskId);
-static void Cb_JumpBox(u8 taskId);
-static void Cb_NameBox(u8 taskId);
-static void Cb_ShowMonSummary(u8 taskId);
-static void Cb_GiveItemFromBag(u8 taskId);
-static void Cb_OnCloseBoxPressed(u8 taskId);
-static void Cb_OnBPressed(u8 taskId);
-static void Cb_ChangeScreen(u8 taskId);
+static void Cb_InitPSS(u32 taskId);
+static void Cb_ShowPSS(u32 taskId);
+static void Cb_ReshowPSS(u32 taskId);
+static void Cb_MainPSS(u32 taskId);
+static void Cb_ShowPartyPokemon(u32 taskId);
+static void Cb_HidePartyPokemon(u32 taskId);
+static void Cb_OnSelectedMon(u32 taskId);
+static void Cb_MoveMon(u32 taskId);
+static void Cb_PlaceMon(u32 taskId);
+static void Cb_ShiftMon(u32 taskId);
+static void Cb_WithdrawMon(u32 taskId);
+static void Cb_DepositMenu(u32 taskId);
+static void Cb_ReleaseMon(u32 taskId);
+static void Cb_ShowMarkMenu(u32 taskId);
+static void Cb_TakeItemForMoving(u32 taskId);
+static void Cb_GiveMovingItemToMon(u32 taskId);
+static void Cb_ItemToBag(u32 taskId);
+static void Cb_SwitchSelectedItem(u32 taskId);
+static void Cb_ShowItemInfo(u32 taskId);
+static void Cb_HandleMovingMonFromParty(u32 taskId);
+static void Cb_PrintCantStoreMail(u32 taskId);
+static void Cb_HandleBoxOptions(u32 taskId);
+static void Cb_HandleWallpapers(u32 taskId);
+static void Cb_JumpBox(u32 taskId);
+static void Cb_NameBox(u32 taskId);
+static void Cb_ShowMonSummary(u32 taskId);
+static void Cb_GiveItemFromBag(u32 taskId);
+static void Cb_OnCloseBoxPressed(u32 taskId);
+static void Cb_OnBPressed(u32 taskId);
+static void Cb_ChangeScreen(u32 taskId);
 static void GiveChosenBagItem(void);
 static void FreePSSData(void);
 static void SetScrollingBackground(void);
@@ -361,7 +361,7 @@ void Cb2_EnterPSS(u32 boxOption)
     ResetTasks();
     sCurrentBoxOption = boxOption;
     gPSSData = Alloc(sizeof(struct PokemonStorageSystemData));
-	
+    
     if (gPSSData == NULL)
         SetMainCallback2(Cb2_ExitPSS);
     else
@@ -380,7 +380,7 @@ void Cb2_ReturnToPSS(void)
 {
     ResetTasks();
     gPSSData = Alloc(sizeof(struct PokemonStorageSystemData));
-	
+    
     if (gPSSData == NULL)
         SetMainCallback2(Cb2_ExitPSS);
     else
@@ -445,16 +445,16 @@ static void SetPSSCallback(TaskFunc newFunc)
     gPSSData->state = 0;
 }
 
-static void Cb_InitPSS(u8 taskId)
+static void Cb_InitPSS(u32 taskId)
 {
     switch (gPSSData->state)
     {
     case 0:
-	    gMain.inPc = TRUE;
+        gMain.inPc = TRUE;
         SetVBlankCallback(NULL);
         SetGpuReg(REG_OFFSET_DISPCNT, 0);
         sub_808CF10();
-		
+        
         if (gPSSData->isReshowingPSS)
         {
             switch (sWhichToReshow)
@@ -538,7 +538,7 @@ static void Cb_InitPSS(u8 taskId)
         break;
     case 10:
         sub_808CFC4();
-		
+        
         if (!gPSSData->isReshowingPSS)
         {
             BlendPalettes(PALETTES_ALL, 0x10, RGB_BLACK);
@@ -557,7 +557,7 @@ static void Cb_InitPSS(u8 taskId)
     gPSSData->state++;
 }
 
-static void Cb_ShowPSS(u8 taskId)
+static void Cb_ShowPSS(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -573,7 +573,7 @@ static void Cb_ShowPSS(u8 taskId)
     }
 }
 
-static void Cb_ReshowPSS(u8 taskId)
+static void Cb_ReshowPSS(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -588,7 +588,7 @@ static void Cb_ReshowPSS(u8 taskId)
     }
 }
 
-static void Cb_MainPSS(u8 taskId)
+static void Cb_MainPSS(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -640,7 +640,7 @@ static void Cb_MainPSS(u8 taskId)
             gPSSData->newCurrBoxId = StorageGetCurrentBox() + 1;
             if (gPSSData->newCurrBoxId >= TOTAL_BOXES_COUNT)
                 gPSSData->newCurrBoxId = 0;
-			
+            
             if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
             {
                 SetUpScrollToBox(gPSSData->newCurrBoxId);
@@ -657,7 +657,7 @@ static void Cb_MainPSS(u8 taskId)
             gPSSData->newCurrBoxId = StorageGetCurrentBox() - 1;
             if (gPSSData->newCurrBoxId < 0)
                 gPSSData->newCurrBoxId = TOTAL_BOXES_COUNT - 1;
-			
+            
             if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
             {
                 SetUpScrollToBox(gPSSData->newCurrBoxId);
@@ -771,7 +771,7 @@ static void Cb_MainPSS(u8 taskId)
         if (!ScrollToBox())
         {
             SetCurrentBox(gPSSData->newCurrBoxId);
-			
+            
             if (!sInPartyMenu && !IsMonBeingMoved())
             {
                 sub_8092F54();
@@ -824,7 +824,7 @@ static void Cb_MainPSS(u8 taskId)
         {
             if (gPSSData->setMosaic)
                 BoxSetMosaic();
-			
+            
             gPSSData->state = 0;
         }
         break;
@@ -842,7 +842,7 @@ static void Cb_MainPSS(u8 taskId)
     }
 }
 
-static void Cb_ShowPartyPokemon(u8 taskId)
+static void Cb_ShowPartyPokemon(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -857,7 +857,7 @@ static void Cb_ShowPartyPokemon(u8 taskId)
     }
 }
 
-static void Cb_HidePartyPokemon(u8 taskId)
+static void Cb_HidePartyPokemon(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -878,14 +878,14 @@ static void Cb_HidePartyPokemon(u8 taskId)
         {
             if (gPSSData->setMosaic)
                 BoxSetMosaic();
-			
+            
             SetPSSCallback(Cb_MainPSS);
         }
         break;
     }
 }
 
-static void Cb_OnSelectedMon(u8 taskId)
+static void Cb_OnSelectedMon(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -893,7 +893,7 @@ static void Cb_OnSelectedMon(u8 taskId)
         if (!BoxGetMosaic())
         {
             PlaySE(SE_SELECT);
-			
+            
             if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
                 PrintStorageActionText(PC_TEXT_IS_SELECTED);
             else if (IsActiveItemMoving() || gPSSData->cursorMonItem != 0)
@@ -906,7 +906,7 @@ static void Cb_OnSelectedMon(u8 taskId)
         }
         break;
     case 1: // debug?
-		gPSSData->state = 2;
+        gPSSData->state = 2;
         break;
     case 2:
         switch (sub_8094F94())
@@ -1026,7 +1026,7 @@ static void Cb_OnSelectedMon(u8 taskId)
     }
 }
 
-static void Cb_MoveMon(u8 taskId)
+static void Cb_MoveMon(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1046,7 +1046,7 @@ static void Cb_MoveMon(u8 taskId)
     }
 }
 
-static void Cb_PlaceMon(u8 taskId)
+static void Cb_PlaceMon(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1066,7 +1066,7 @@ static void Cb_PlaceMon(u8 taskId)
     }
 }
 
-static void Cb_ShiftMon(u8 taskId)
+static void Cb_ShiftMon(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1084,7 +1084,7 @@ static void Cb_ShiftMon(u8 taskId)
     }
 }
 
-static void Cb_WithdrawMon(u8 taskId)
+static void Cb_WithdrawMon(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1136,7 +1136,7 @@ static void Cb_WithdrawMon(u8 taskId)
     }
 }
 
-static void Cb_DepositMenu(u8 taskId)
+static void Cb_DepositMenu(u32 taskId)
 {
     u32 boxId;
 
@@ -1202,7 +1202,7 @@ static void Cb_DepositMenu(u8 taskId)
     }
 }
 
-static void Cb_ReleaseMon(u8 taskId)
+static void Cb_ReleaseMon(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1330,7 +1330,7 @@ static void Cb_ReleaseMon(u8 taskId)
     }
 }
 
-static void Cb_ShowMarkMenu(u8 taskId)
+static void Cb_ShowMarkMenu(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1353,7 +1353,7 @@ static void Cb_ShowMarkMenu(u8 taskId)
     }
 }
 
-static void Cb_TakeItemForMoving(u8 taskId)
+static void Cb_TakeItemForMoving(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1388,7 +1388,7 @@ static void Cb_TakeItemForMoving(u8 taskId)
     }
 }
 
-static void Cb_GiveMovingItemToMon(u8 taskId)
+static void Cb_GiveMovingItemToMon(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1425,7 +1425,7 @@ static void Cb_GiveMovingItemToMon(u8 taskId)
     }
 }
 
-static void Cb_ItemToBag(u8 taskId)
+static void Cb_ItemToBag(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1473,7 +1473,7 @@ static void Cb_ItemToBag(u8 taskId)
     }
 }
 
-static void Cb_SwitchSelectedItem(u8 taskId)
+static void Cb_SwitchSelectedItem(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1515,7 +1515,7 @@ static void Cb_SwitchSelectedItem(u8 taskId)
     }
 }
 
-static void Cb_ShowItemInfo(u8 taskId)
+static void Cb_ShowItemInfo(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1558,7 +1558,7 @@ static void Cb_ShowItemInfo(u8 taskId)
     }
 }
 
-static void Cb_CloseBoxWhileHoldingItem(u8 taskId)
+static void Cb_CloseBoxWhileHoldingItem(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1615,7 +1615,7 @@ static void Cb_CloseBoxWhileHoldingItem(u8 taskId)
     }
 }
 
-static void Cb_HandleMovingMonFromParty(u8 taskId)
+static void Cb_HandleMovingMonFromParty(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1634,7 +1634,7 @@ static void Cb_HandleMovingMonFromParty(u8 taskId)
     }
 }
 
-static void Cb_PrintCantStoreMail(u8 taskId)
+static void Cb_PrintCantStoreMail(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1660,7 +1660,7 @@ static void Cb_PrintCantStoreMail(u8 taskId)
     }
 }
 
-static void Cb_HandleBoxOptions(u8 taskId)
+static void Cb_HandleBoxOptions(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1699,7 +1699,7 @@ static void Cb_HandleBoxOptions(u8 taskId)
     }
 }
 
-static void Cb_HandleWallpapers(u8 taskId)
+static void Cb_HandleWallpapers(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1709,7 +1709,7 @@ static void Cb_HandleWallpapers(u8 taskId)
         gPSSData->state++;
         break;
     case 1:
-		gPSSData->state++;
+        gPSSData->state++;
         break;
     case 2:
         gPSSData->wallpaperSetId = sub_8094F94();
@@ -1765,7 +1765,7 @@ static void Cb_HandleWallpapers(u8 taskId)
     }
 }
 
-static void Cb_JumpBox(u8 taskId)
+static void Cb_JumpBox(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1785,7 +1785,7 @@ static void Cb_JumpBox(u8 taskId)
             ClearBottomWindow();
             sub_808C950();
             FreeBoxSelectionPopupSpriteGfx();
-			
+            
             if (gPSSData->newCurrBoxId == 201 || gPSSData->newCurrBoxId == StorageGetCurrentBox())
             {
                 sub_80920FC(TRUE);
@@ -1810,7 +1810,7 @@ static void Cb_JumpBox(u8 taskId)
     }
 }
 
-static void Cb_NameBox(u8 taskId)
+static void Cb_NameBox(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1830,7 +1830,7 @@ static void Cb_NameBox(u8 taskId)
     }
 }
 
-static void Cb_ShowMonSummary(u8 taskId)
+static void Cb_ShowMonSummary(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1850,7 +1850,7 @@ static void Cb_ShowMonSummary(u8 taskId)
     }
 }
 
-static void Cb_GiveItemFromBag(u8 taskId)
+static void Cb_GiveItemFromBag(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1869,7 +1869,7 @@ static void Cb_GiveItemFromBag(u8 taskId)
     }
 }
 
-static void Cb_OnCloseBoxPressed(u8 taskId)
+static void Cb_OnCloseBoxPressed(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1928,7 +1928,7 @@ static void Cb_OnCloseBoxPressed(u8 taskId)
     }
 }
 
-static void Cb_OnBPressed(u8 taskId)
+static void Cb_OnBPressed(u32 taskId)
 {
     switch (gPSSData->state)
     {
@@ -1987,7 +1987,7 @@ static void Cb_OnBPressed(u8 taskId)
     }
 }
 
-static void Cb_ChangeScreen(u8 taskId)
+static void Cb_ChangeScreen(u32 taskId)
 {
     struct Pokemon * partyMon;
     u32 mode, monIndex, maxMonIndex;
@@ -2097,7 +2097,7 @@ static void sub_808F078(void)
     LoadPalette(gUnknown_8E9C3F8, 0, 0x20);
     LoadPalette(gUnknown_8E9C418, 0x20, 0x20);
     LoadPalette(gUnknown_83CEA10, 0xF0, 0x20);
-	
+    
     if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
         LoadPalette(gUnknown_83CE738, 0x30, 0x20);
     else
@@ -2126,7 +2126,7 @@ static void CreateWaveformSprites(void)
     struct SpriteSheet sheet = sWaveformSpriteSheet;
 
     LoadSpriteSheet(&sheet);
-	
+    
     for (i = 0; i < 2; i++)
         gPSSData->field_D98[i] = &gSprites[CreateSprite(&sSpriteTemplate_Waveform, i * 63 + 8, 9, 2)];
 }
@@ -2142,7 +2142,7 @@ static void RefreshCursorMonData(void)
 static void BoxSetMosaic(void)
 {
     RefreshCursorMonData();
-	
+    
     if (gPSSData->cursorMonSprite)
     {
         gPSSData->cursorMonSprite->oam.mosaic = TRUE;
@@ -2163,9 +2163,9 @@ static void SpriteCB_CursorMon_Mosaic(struct Sprite *sprite)
     sprite->data[0] -= sprite->data[1];
     if (sprite->data[0] < 0)
         sprite->data[0] = 0;
-	
+    
     SetGpuReg(REG_OFFSET_MOSAIC, (sprite->data[0] << 12) | (sprite->data[0] << 8));
-	
+    
     if (sprite->data[0] == 0)
     {
         sprite->oam.mosaic = FALSE;
@@ -2183,7 +2183,7 @@ static void LoadCursorMonSprite(void)
 
     for (i = 0; i < 0x800; i++)
         gPSSData->field_22C4[i] = 0;
-	
+    
     for (i = 0; i < 0x10; i++)
         gPSSData->field_2244[i] = 0;
 
@@ -2236,9 +2236,9 @@ static void PrintCursorMonInfo(void)
 {
     u32 i;
     u16 y;
-	
+    
     FillWindowPixelBuffer(0, PIXEL_FILL(1));
-	
+    
     if (gPSSData->boxOption != BOX_OPTION_MOVE_ITEMS)
     {
         for (i = 0, y = 0; i < 3; i++, y += 14)
@@ -2249,12 +2249,12 @@ static void PrintCursorMonInfo(void)
     else
     {
         AddTextPrinterParameterized(0, 0, gPSSData->cursorMonTexts[3], 6, 0, TEXT_SPEED_FF, NULL);
-		
+        
         for (i = 0, y = 15; i < 3; i++, y += 14)
             AddTextPrinterParameterized(0, 0, gPSSData->cursorMonTexts[i], i == 2 ? 10 : 6, y, TEXT_SPEED_FF, NULL);
     }
     CopyWindowToVram(0, COPYWIN_GFX);
-	
+    
     if (gPSSData->cursorMonSpecies)
     {
         RequestDma3LoadMonMarking(gPSSData->cursorMonMarkings, gPSSData->monMarkingSpriteTileStart);
@@ -2271,14 +2271,14 @@ static void sub_808F5E8(void)
     if (gPSSData->cursorMonSpecies != SPECIES_NONE)
     {
         SetBoxPartyPokemonDropdownMap2Rect(0, 0, 0, 8, 2);
-		
+        
         for (i = 0; i < 2; i++)
             StartSpriteAnimIfDifferent(gPSSData->field_D98[i], i * 2 + 1);
     }
     else
     {
         SetBoxPartyPokemonDropdownMap2Rect(0, 0, 2, 8, 2);
-		
+        
         for (i = 0; i < 2; i++)
             StartSpriteAnim(gPSSData->field_D98[i], i * 2);
     }
@@ -2295,7 +2295,7 @@ static void sub_808F68C(void)
     SetBoxPartyPokemonDropdownMap2Pos(1, 10, 0);
     SetBoxPartyPokemonDropdownMap2Pos(2, 21, 0);
     sub_808F9FC();
-	
+    
     if (sInPartyMenu)
     {
         sub_808F90C(TRUE);
@@ -2329,12 +2329,12 @@ static bool32 ShowPartyMenu(void)
 
     gPSSData->field_2C0--;
     gPSSData->field_2C2++;
-	
+    
     AdjustBoxPartyPokemonDropdownPos(1, 3, 1);
     CopyBoxPartyPokemonDropdownToBgTilemapBuffer(1);
     ScheduleBgCopyTilemapToVram(1);
     sub_8090B98(8);
-	
+    
     if (++gPSSData->field_2C5 == 20)
     {
         sInPartyMenu = TRUE;
@@ -2349,7 +2349,7 @@ static void SetUpHidePartyMenu(void)
     gPSSData->field_2C0 = 0;
     gPSSData->field_2C2 = 22;
     gPSSData->field_2C5 = 0;
-	
+    
     if (gPSSData->boxOption == BOX_OPTION_MOVE_ITEMS)
         sub_80960C0();
 }
@@ -2360,12 +2360,12 @@ static bool32 HidePartyMenu(void)
     {
         gPSSData->field_2C0++;
         gPSSData->field_2C2--;
-		
+        
         AdjustBoxPartyPokemonDropdownPos(1, 3, -1);
         CopyBoxPartyPokemonDropdownToBgTilemapBuffer(1);
         FillBgTilemapBufferRect_Palette0(1, 0x100, 10, gPSSData->field_2C2, 12, 1);
         sub_8090B98(-8);
-		
+        
         if (++gPSSData->field_2C5 != 20)
         {
             ScheduleBgCopyTilemapToVram(1);
@@ -2435,7 +2435,7 @@ static void sub_808F9FC(void)
 
 static void sub_808FA30(u32 pos, bool32 isPartyMon)
 {
-	u32 i, j;
+    u32 i, j;
     u16 index;
     const u16 *data;
 
@@ -2488,7 +2488,7 @@ static bool32 DoShowPartyMenu(void)
         {
             if (gPSSData->setMosaic)
                 BoxSetMosaic();
-			
+            
             gPSSData->showPartyMenuState++;
         }
         break;
@@ -2511,7 +2511,7 @@ static void PrintStorageActionText(u32 id)
     u8 *txtPtr;
 
     DynamicPlaceholderTextUtil_Reset();
-	
+    
     switch (sPCStorageActionTexts[id].format)
     {
     case PC_TEXT_FMT_NORMAL:
@@ -2528,7 +2528,7 @@ static void PrintStorageActionText(u32 id)
         break;
     case PC_TEXT_FMT_ITEM_NAME:
         if (IsActiveItemMoving())
-			txtPtr = CopyItemName(GetMovingItem(), gPSSData->itemName);
+            txtPtr = CopyItemName(GetMovingItem(), gPSSData->itemName);
         else
             txtPtr = StringCopy(gPSSData->itemName, gPSSData->cursorMonTexts[3]);
 
@@ -2573,7 +2573,7 @@ static void AddWallpaperSetsMenu(void)
 static void AddWallpapersMenu(u32 wallpaperSet)
 {
     InitMenu();
-	
+    
     switch (wallpaperSet)
     {
     case 0:
@@ -2637,23 +2637,23 @@ static void sub_808FF70(void)
 
 void UpdatePcMonIconSpecies(void)
 {
-	u32 cursorPos;
-	
-	if (gPSSData->movingItem)
-	{
-		cursorPos = GetBoxCursorPosition();
-		
-		if (sInPartyMenu)
-		{
-			DestroyPartyMonIcon(cursorPos);
-			CreatePcPartyMonIconSprite(cursorPos, GetMonData(&gPlayerParty[cursorPos], MON_DATA_SPECIES2));
-		}
-		else
-		{
-			DestroyBoxMonIconAtPosition(cursorPos);
-			sub_80901EC(cursorPos);
-		}
-		sub_8092F54();
-		RefreshCursorMonData();
-	}
+    u32 cursorPos;
+    
+    if (gPSSData->movingItem)
+    {
+        cursorPos = GetBoxCursorPosition();
+        
+        if (sInPartyMenu)
+        {
+            DestroyPartyMonIcon(cursorPos);
+            CreatePcPartyMonIconSprite(cursorPos, GetMonData(&gPlayerParty[cursorPos], MON_DATA_SPECIES2));
+        }
+        else
+        {
+            DestroyBoxMonIconAtPosition(cursorPos);
+            sub_80901EC(cursorPos);
+        }
+        sub_8092F54();
+        RefreshCursorMonData();
+    }
 }

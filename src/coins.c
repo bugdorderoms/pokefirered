@@ -32,7 +32,7 @@ bool32 AddCoins(u16 toAdd)
     }
     else
         coins = MAX_COINS;
-	
+    
     SetCoins(coins);
     return TRUE;
 }

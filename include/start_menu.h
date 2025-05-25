@@ -3,7 +3,7 @@
 
 void ShowStartMenu(void);
 void SetUpReturnToStartMenu(void);
-void Task_StartMenuHandleInput(u8 taskId);
+void Task_StartMenuHandleInput(u32 taskId);
 void Field_AskSaveTheGame(void);
 void CB2_SetUpSaveAfterLinkBattle(void);
 

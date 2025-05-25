@@ -26,18 +26,18 @@ static void FieldCallback_Flash(void);
 static void FldEff_UseFlash(void);
 static bool32 TryDoMapTransition(void);
 static void FlashTransition_Exit(void);
-static void Task_FlashTransition_Exit_0(u8 taskId);
-static void Task_FlashTransition_Exit_1(u8 taskId);
-static void Task_FlashTransition_Exit_2(u8 taskId);
-static void Task_FlashTransition_Exit_3(u8 taskId);
-static void Task_FlashTransition_Exit_4(u8 taskId);
+static void Task_FlashTransition_Exit_0(u32 taskId);
+static void Task_FlashTransition_Exit_1(u32 taskId);
+static void Task_FlashTransition_Exit_2(u32 taskId);
+static void Task_FlashTransition_Exit_3(u32 taskId);
+static void Task_FlashTransition_Exit_4(u32 taskId);
 static void FlashTransition_Enter(void);
-static void Task_FlashTransition_Enter_0(u8 taskId);
-static void Task_FlashTransition_Enter_1(u8 taskId);
-static void Task_FlashTransition_Enter_2(u8 taskId);
-static void Task_FlashTransition_Enter_3(u8 taskId);
+static void Task_FlashTransition_Enter_0(u32 taskId);
+static void Task_FlashTransition_Enter_1(u32 taskId);
+static void Task_FlashTransition_Enter_2(u32 taskId);
+static void Task_FlashTransition_Enter_3(u32 taskId);
 static void RunMapPreviewScreen(u32 mapsecId);
-static void Task_MapPreviewScreen_0(u8 taskId);
+static void Task_MapPreviewScreen_0(u32 taskId);
 
 static const struct FlashStruct sTransitionTypes[] = {
     {
@@ -236,7 +236,7 @@ static bool32 TryDoMapTransition(void)
     u32 fromType = GetLastUsedWarpMapType();
     u32 toType = GetCurrentMapType();
     u32 i;
-	
+    
     if (GetLastUsedWarpMapSectionId() != gMapHeader.regionMapSectionId && MapHasPreviewScreen(gMapHeader.regionMapSectionId, MAP_PREVIEW_TYPE_CAVE) == TRUE)
     {
         RunMapPreviewScreen(gMapHeader.regionMapSectionId);
@@ -256,7 +256,7 @@ static bool32 TryDoMapTransition(void)
 bool32 MapTransitionIsEnter(u32 _fromType, u32 _toType)
 {
     u32 i;
-	
+    
     for (i = 0; sTransitionTypes[i].fromType != 0; i++)
     {
         if (sTransitionTypes[i].fromType == _fromType && sTransitionTypes[i].toType == _toType)
@@ -268,7 +268,7 @@ bool32 MapTransitionIsEnter(u32 _fromType, u32 _toType)
 bool32 MapTransitionIsExit(u32 _fromType, u32 _toType)
 {
     u32 i;
-	
+    
     for (i = 0; sTransitionTypes[i].fromType != 0; i++)
     {
         if (sTransitionTypes[i].fromType == _fromType && sTransitionTypes[i].toType == _toType)
@@ -282,12 +282,12 @@ static void FlashTransition_Exit(void)
     CreateTask(Task_FlashTransition_Exit_0, 0);
 }
 
-static void Task_FlashTransition_Exit_0(u8 taskId)
+static void Task_FlashTransition_Exit_0(u32 taskId)
 {
     gTasks[taskId].func = Task_FlashTransition_Exit_1;
 }
 
-static void Task_FlashTransition_Exit_1(u8 taskId)
+static void Task_FlashTransition_Exit_1(u32 taskId)
 {
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
     LZDecompressVram(sCaveTransitionTiles, (void *)BG_CHAR_ADDR(3));
@@ -304,12 +304,12 @@ static void Task_FlashTransition_Exit_1(u8 taskId)
     gTasks[taskId].data[1] = 0;
 }
 
-static void Task_FlashTransition_Exit_2(u8 taskId)
+static void Task_FlashTransition_Exit_2(u32 taskId)
 {
     u16 r4 = gTasks[taskId].data[1];
-	
+    
     SetGpuReg(REG_OFFSET_BLDALPHA, (16 << 8) + r4);
-	
+    
     if (r4 <= 16)
         gTasks[taskId].data[1]++;
     else
@@ -319,12 +319,12 @@ static void Task_FlashTransition_Exit_2(u8 taskId)
     }
 }
 
-static void Task_FlashTransition_Exit_3(u8 taskId)
+static void Task_FlashTransition_Exit_3(u32 taskId)
 {
     u16 r4;
-	
+    
     SetGpuReg(REG_OFFSET_BLDALPHA, (16 << 8) + 16);
-	
+    
     r4 = gTasks[taskId].data[2];
     if (r4 < 8)
     {
@@ -339,7 +339,7 @@ static void Task_FlashTransition_Exit_3(u8 taskId)
     }
 }
 
-static void Task_FlashTransition_Exit_4(u8 taskId)
+static void Task_FlashTransition_Exit_4(u32 taskId)
 {
     if (gTasks[taskId].data[2] != 0)
         gTasks[taskId].data[2]--;
@@ -352,12 +352,12 @@ static void FlashTransition_Enter(void)
     CreateTask(Task_FlashTransition_Enter_0, 0);
 }
 
-static void Task_FlashTransition_Enter_0(u8 taskId)
+static void Task_FlashTransition_Enter_0(u32 taskId)
 {
     gTasks[taskId].func = Task_FlashTransition_Enter_1;
 }
 
-static void Task_FlashTransition_Enter_1(u8 taskId)
+static void Task_FlashTransition_Enter_1(u32 taskId)
 {
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
     LZDecompressVram(sCaveTransitionTiles, (void *)BG_CHAR_ADDR(3));
@@ -375,7 +375,7 @@ static void Task_FlashTransition_Enter_1(u8 taskId)
     gTasks[taskId].data[2] = 0;
 }
 
-static void Task_FlashTransition_Enter_2(u8 taskId)
+static void Task_FlashTransition_Enter_2(u32 taskId)
 {
     u16 r4 = gTasks[taskId].data[2];
 
@@ -393,12 +393,12 @@ static void Task_FlashTransition_Enter_2(u8 taskId)
     }
 }
 
-static void Task_FlashTransition_Enter_3(u8 taskId)
+static void Task_FlashTransition_Enter_3(u32 taskId)
 {
     u16 r4 = 16 - gTasks[taskId].data[1];
-	
+    
     SetGpuReg(REG_OFFSET_BLDALPHA, (16 << 8) + r4);
-	
+    
     if (r4 != 0)
         gTasks[taskId].data[1]++;
     else
@@ -413,10 +413,10 @@ static void RunMapPreviewScreen(u32 mapSecId)
     gTasks[CreateTask(Task_MapPreviewScreen_0, 0)].data[3] = mapSecId;
 }
 
-static void Task_MapPreviewScreen_0(u8 taskId)
+static void Task_MapPreviewScreen_0(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
-	
+    
     switch (data[0])
     {
     case 0:

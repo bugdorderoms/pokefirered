@@ -19,8 +19,8 @@ void AllocateBattleResources(void)
     gBattleResources->battleScriptsStack = AllocZeroed(sizeof(*gBattleResources->battleScriptsStack));
     gBattleResources->battleCallbackStack = AllocZeroed(sizeof(*gBattleResources->battleCallbackStack));
     gBattleResources->beforeLvlUp = AllocZeroed(sizeof(*gBattleResources->beforeLvlUp));
-	gBattleResources->aiData = AllocZeroed(sizeof(*gBattleResources->aiData));
-	gBattleResources->aiThinking = AllocZeroed(sizeof(*gBattleResources->aiThinking));
+    gBattleResources->aiData = AllocZeroed(sizeof(*gBattleResources->aiData));
+    gBattleResources->aiThinking = AllocZeroed(sizeof(*gBattleResources->aiThinking));
     gLinkBattleSendBuffer = AllocZeroed(BATTLE_BUFFER_LINK_SIZE);
     gLinkBattleRecvBuffer = AllocZeroed(BATTLE_BUFFER_LINK_SIZE);
     gBattleAnimMons_BgTilesBuffer = AllocZeroed(0x2000);
@@ -44,8 +44,8 @@ void FreeBattleResources(void)
         FREE_AND_SET_NULL(gBattleResources->battleScriptsStack);
         FREE_AND_SET_NULL(gBattleResources->battleCallbackStack);
         FREE_AND_SET_NULL(gBattleResources->beforeLvlUp);
-		FREE_AND_SET_NULL(gBattleResources->aiData);
-		FREE_AND_SET_NULL(gBattleResources->aiThinking);
+        FREE_AND_SET_NULL(gBattleResources->aiData);
+        FREE_AND_SET_NULL(gBattleResources->aiThinking);
         FREE_AND_SET_NULL(gBattleResources);
         FREE_AND_SET_NULL(gLinkBattleSendBuffer);
         FREE_AND_SET_NULL(gLinkBattleRecvBuffer);
@@ -56,18 +56,18 @@ void FreeBattleResources(void)
 
 void AdjustFriendshipOnBattleFaint(u32 battlerId)
 {
-	u32 i, friendshipEvent, level = 0;
-	
-	for (i = 0; i < gBattlersCount; i++)
-	{
-		if (GetBattlerSide(i) == B_SIDE_OPPONENT && gBattleMons[i].level > level)
-			level = gBattleMons[i].level;
-	}
-	
-	if (level > gBattleMons[battlerId].level && level - gBattleMons[battlerId].level > 29)
-		friendshipEvent = FRIENDSHIP_EVENT_FAINT_LARGE;
-	else
-		friendshipEvent = FRIENDSHIP_EVENT_FAINT_SMALL;
-	
-	AdjustFriendship(GetBattlerPartyIndexPtr(battlerId), friendshipEvent);
+    u32 i, friendshipEvent, level = 0;
+    
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if (GetBattlerSide(i) == B_SIDE_OPPONENT && gBattleMons[i].level > level)
+            level = gBattleMons[i].level;
+    }
+    
+    if (level > gBattleMons[battlerId].level && level - gBattleMons[battlerId].level > 29)
+        friendshipEvent = FRIENDSHIP_EVENT_FAINT_LARGE;
+    else
+        friendshipEvent = FRIENDSHIP_EVENT_FAINT_SMALL;
+    
+    AdjustFriendship(GetBattlerPartyIndexPtr(battlerId), friendshipEvent);
 }

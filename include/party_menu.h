@@ -8,9 +8,9 @@
 // Return values of GetItemUseAnimFollowUpCBIdByItemType
 enum
 {
-	ITEMUSE_FOLLOWUP_MEDICINE,
-	ITEMUSE_FOLLOWUP_TM,
-	ITEMUSE_FOLLOWUP_EVOLUTION_ITEM,
+    ITEMUSE_FOLLOWUP_MEDICINE,
+    ITEMUSE_FOLLOWUP_TM,
+    ITEMUSE_FOLLOWUP_EVOLUTION_ITEM,
 };
 
 struct PartyMenu
@@ -41,7 +41,7 @@ void InitPartyMenu(u32 menuType, u32 layout, u32 partyAction, bool32 keepCursorP
 void AnimatePartySlot(u32 slot, u32 animNum);
 u32 GetCursorSelectionMonId(void);
 u32 GetPartyMenuType(void);
-void Task_HandleChooseMonInput(u8 taskId);
+void Task_HandleChooseMonInput(u32 taskId);
 void DisplayPartyMenuMessage(const u8 *str, bool32 keepOpen);
 bool32 IsPartyMenuTextPrinterActive(void);
 void PartyMenuModifyHP(u32 taskId, u32 slot, s8 hpIncrement, s16 hpDifference, TaskFunc task);

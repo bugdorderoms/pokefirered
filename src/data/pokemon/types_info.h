@@ -1,124 +1,124 @@
 const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
 {
-	[TYPE_NORMAL] =
-	{
-		.name = _("Normal"),
-		.tmPalette = sItemIconPalette_TmNormal,
-	},
-	
-	[TYPE_FIGHTING] =
-	{
-		.name = _("Fighting"),
-		.tmPalette = sItemIconPalette_TmFighting,
-	},
-	
+    [TYPE_NORMAL] =
+    {
+        .name = _("Normal"),
+        .tmPalette = sItemIconPalette_TmNormal,
+    },
+    
+    [TYPE_FIGHTING] =
+    {
+        .name = _("Fighting"),
+        .tmPalette = sItemIconPalette_TmFighting,
+    },
+    
     [TYPE_FLYING] =
-	{
-		.name = _("Flying"),
-		.tmPalette = sItemIconPalette_TmFlying,
-	},
-	
+    {
+        .name = _("Flying"),
+        .tmPalette = sItemIconPalette_TmFlying,
+    },
+    
     [TYPE_POISON] =
-	{
-		.name = _("Poison"),
-		.tmPalette = sItemIconPalette_TmPoison,
-	},
-	
+    {
+        .name = _("Poison"),
+        .tmPalette = sItemIconPalette_TmPoison,
+    },
+    
     [TYPE_GROUND] =
-	{
-		.name = _("Ground"),
-		.tmPalette = sItemIconPalette_TmGround,
-	},
-	
+    {
+        .name = _("Ground"),
+        .tmPalette = sItemIconPalette_TmGround,
+    },
+    
     [TYPE_ROCK] =
-	{
-		.name = _("Rock"),
-		.tmPalette = sItemIconPalette_TmRock,
-	},
-	
+    {
+        .name = _("Rock"),
+        .tmPalette = sItemIconPalette_TmRock,
+    },
+    
     [TYPE_BUG] =
-	{
-		.name = _("Bug"),
-		.tmPalette = sItemIconPalette_TmBug,
-	},
-	
+    {
+        .name = _("Bug"),
+        .tmPalette = sItemIconPalette_TmBug,
+    },
+    
     [TYPE_GHOST] =
-	{
-		.name = _("Ghost"),
-		.tmPalette = sItemIconPalette_TmGhost,
-	},
-	
+    {
+        .name = _("Ghost"),
+        .tmPalette = sItemIconPalette_TmGhost,
+    },
+    
     [TYPE_STEEL] =
-	{
-		.name = _("Steel"),
-		.tmPalette = sItemIconPalette_TmSteel,
-	},
+    {
+        .name = _("Steel"),
+        .tmPalette = sItemIconPalette_TmSteel,
+    },
 
     [TYPE_MYSTERY] =
-	{
-		.name = _("???"),
-		.tmPalette = NULL,
-	},
-	
+    {
+        .name = _("???"),
+        .tmPalette = NULL,
+    },
+    
     [TYPE_FIRE] =
-	{
-		.name = _("Fire"),
-		.tmPalette = sItemIconPalette_TmFire,
-	},
-	
+    {
+        .name = _("Fire"),
+        .tmPalette = sItemIconPalette_TmFire,
+    },
+    
     [TYPE_WATER] =
-	{
-		.name = _("Water"),
-		.tmPalette = sItemIconPalette_TmWater,
-	},
-	
+    {
+        .name = _("Water"),
+        .tmPalette = sItemIconPalette_TmWater,
+    },
+    
     [TYPE_GRASS] =
-	{
-		.name = _("Grass"),
-		.tmPalette = sItemIconPalette_TmGrass,
-	},
-	
+    {
+        .name = _("Grass"),
+        .tmPalette = sItemIconPalette_TmGrass,
+    },
+    
     [TYPE_ELECTRIC] =
-	{
-		.name = _("Electric"),
-		.tmPalette = sItemIconPalette_TmElectric,
-	},
-	
+    {
+        .name = _("Electric"),
+        .tmPalette = sItemIconPalette_TmElectric,
+    },
+    
     [TYPE_PSYCHIC] =
-	{
-		.name = _("Psychic"),
-		.tmPalette = sItemIconPalette_TmPsychic,
-	},
-	
+    {
+        .name = _("Psychic"),
+        .tmPalette = sItemIconPalette_TmPsychic,
+    },
+    
     [TYPE_ICE] =
-	{
-		.name = _("Ice"),
-		.tmPalette = sItemIconPalette_TmIce,
-	},
-	
+    {
+        .name = _("Ice"),
+        .tmPalette = sItemIconPalette_TmIce,
+    },
+    
     [TYPE_DRAGON] =
-	{
-		.name = _("Dragon"),
-		.tmPalette = sItemIconPalette_TmDragon,
-	},
+    {
+        .name = _("Dragon"),
+        .tmPalette = sItemIconPalette_TmDragon,
+    },
 
     [TYPE_DARK] =
-	{
-		.name = _("Dark"),
-		.tmPalette = sItemIconPalette_TmDark,
-	},
-	
-	[TYPE_FAIRY] =
-	{
-		.name = _("Fairy"),
-		.tmPalette = sItemIconPalette_TmFairy,
-	},
+    {
+        .name = _("Dark"),
+        .tmPalette = sItemIconPalette_TmDark,
+    },
+    
+    [TYPE_FAIRY] =
+    {
+        .name = _("Fairy"),
+        .tmPalette = sItemIconPalette_TmFairy,
+    },
 
-	[TYPE_STELLAR] =
-	{
-		.name = _("Stellar"),
-		.tmPalette = NULL, // No one move has this type
-	},
+    [TYPE_STELLAR] =
+    {
+        .name = _("Stellar"),
+        .tmPalette = NULL, // No one move has this type
+    },
 };
 
 // TYPE_MUL_SUPER_EFFECTIVE = ×2.0
@@ -127,107 +127,107 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
 // TYPE_MUL_NO_EFFECT       = ×0.0
 const u8 gTypeEffectivenessTable[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES] =
 {
-	                  // TYPE_NORMAL,            TYPE_FIGHTING,            TYPE_FLYING,              TYPE_POISON,              TYPE_GROUND,
-					  // TYPE_ROCK,              TYPE_BUG,                 TYPE_GHOST,               TYPE_STEEL,               TYPE_MYSTERY,
-					  // TYPE_FIRE,              TYPE_WATER,               TYPE_GRASS,               TYPE_ELECTRIC,            TYPE_PSYCHIC,
-					  // TYPE_ICE,               TYPE_DRAGON,              TYPE_DARK,                TYPE_FAIRY,               TYPE_STELLAR
-	[TYPE_NORMAL]   = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-		               TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NO_EFFECT,       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-					 
-	[TYPE_FIGHTING] = {TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-		               TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NO_EFFECT,       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,
-					   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL},
-	
-	[TYPE_FLYING]   = {TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-		               TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_POISON]   = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,
-		               TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NO_EFFECT,       TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL},
-	
-	[TYPE_GROUND]   = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NO_EFFECT,       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
-		               TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
-					   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-					   
-	[TYPE_ROCK]     = {TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_BUG]      = {TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL},
-	
-	[TYPE_GHOST]    = {TYPE_MUL_NO_EFFECT,       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_STEEL]    = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-		               TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL},
-	
-	[TYPE_MYSTERY]  = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_FIRE]     = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-		               TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
-					   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_WATER]    = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE,
-		               TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_GRASS]    = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE,
-		               TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_ELECTRIC] = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NO_EFFECT,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_PSYCHIC]  = {TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NO_EFFECT,       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_ICE]      = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_DRAGON]   = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NO_EFFECT,       TYPE_MUL_NORMAL},
-	
-	[TYPE_DARK]     = {TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL},
-	
-	[TYPE_FAIRY]    = {TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
-					   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
-	
-	[TYPE_STELLAR]  = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-		               TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
-					   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+                      // TYPE_NORMAL,            TYPE_FIGHTING,            TYPE_FLYING,              TYPE_POISON,              TYPE_GROUND,
+                      // TYPE_ROCK,              TYPE_BUG,                 TYPE_GHOST,               TYPE_STEEL,               TYPE_MYSTERY,
+                      // TYPE_FIRE,              TYPE_WATER,               TYPE_GRASS,               TYPE_ELECTRIC,            TYPE_PSYCHIC,
+                      // TYPE_ICE,               TYPE_DRAGON,              TYPE_DARK,                TYPE_FAIRY,               TYPE_STELLAR
+    [TYPE_NORMAL]   = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NO_EFFECT,       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+                     
+    [TYPE_FIGHTING] = {TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NO_EFFECT,       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL},
+    
+    [TYPE_FLYING]   = {TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_POISON]   = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NO_EFFECT,       TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL},
+    
+    [TYPE_GROUND]   = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NO_EFFECT,       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+                       
+    [TYPE_ROCK]     = {TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_BUG]      = {TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL},
+    
+    [TYPE_GHOST]    = {TYPE_MUL_NO_EFFECT,       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_STEEL]    = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL},
+    
+    [TYPE_MYSTERY]  = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_FIRE]     = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_WATER]    = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_GRASS]    = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE,
+                       TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_ELECTRIC] = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NO_EFFECT,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_PSYCHIC]  = {TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NO_EFFECT,       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_ICE]      = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_DRAGON]   = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NO_EFFECT,       TYPE_MUL_NORMAL},
+    
+    [TYPE_DARK]     = {TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL},
+    
+    [TYPE_FAIRY]    = {TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,
+                       TYPE_MUL_NOT_EFFECTIVE,   TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_SUPER_EFFECTIVE, TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
+    
+    [TYPE_STELLAR]  = {TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,
+                       TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL,          TYPE_MUL_NORMAL},
 };

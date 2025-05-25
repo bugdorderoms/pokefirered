@@ -34,7 +34,7 @@ struct ImageProcessingContext
     void *dest;
     u16 quantizeEffect;
     u16 var_16;
-	u8 effect;
+    u8 effect;
     u8 paletteStart;
     u8 columnStart;
     u8 rowStart;

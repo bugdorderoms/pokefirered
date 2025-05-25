@@ -124,7 +124,7 @@ void AgbMain()
     m4aSoundInit();
     EnableVCountIntrAtLine150();
     InitRFU();
-	RtcInit();
+    RtcInit();
     CheckForFlashMemory();
     InitMainCallbacks();
     InitMapMusic();
@@ -154,7 +154,7 @@ void AgbMain()
 
     while (TRUE)
     {
-		RtcCalcLocalTime();
+        RtcCalcLocalTime();
         ReadKeys();
             
         if (!gSoftResetDisabled && (gMain.heldKeysRaw & A_BUTTON) && (gMain.heldKeysRaw & B_START_SELECT) == B_START_SELECT)
@@ -265,7 +265,7 @@ void InitKeys(void)
 static void ReadKeys(void)
 {
     u16 keyInput = REG_KEYINPUT ^ KEYS_MASK;
-	
+    
     gMain.newKeysRaw = keyInput & ~(gMain.heldKeysRaw);
     gMain.newKeys = gMain.newKeysRaw;
     gMain.newAndRepeatedKeys = gMain.newKeysRaw;
@@ -355,13 +355,13 @@ static void VBlankIntr(void)
 
     m4aSoundMain();
     TryReceiveLinkBattleData();
-	
+    
 #if NO_SAVE_STATE_RNG_MANIPULATION
-	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+    if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
 #endif
-	{
-		Random();
-	}
+    {
+        Random();
+    }
     UpdateWirelessStatusIndicatorSprite();
 
     INTR_CHECK |= INTR_FLAG_VBLANK;
@@ -411,11 +411,11 @@ static void IntrDummy(void)
 static void WaitForVBlank(void)
 {
     gMain.intrCheck &= ~(INTR_FLAG_VBLANK);
-	
-	if (!gWirelessCommType)
-		VBlankIntrWait();
-	else
-		while (!(gMain.intrCheck & INTR_FLAG_VBLANK));
+    
+    if (!gWirelessCommType)
+        VBlankIntrWait();
+    else
+        while (!(gMain.intrCheck & INTR_FLAG_VBLANK));
 }
 
 void SetVBlankCounter1Ptr(u32 *ptr)

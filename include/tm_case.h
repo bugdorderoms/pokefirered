@@ -9,10 +9,10 @@ enum TmCaseType
     TMCASE_FROMPOKEMONSTORAGEPC,
     TMCASE_FROMBATTLE,
     TMCASE_NA,
-	TMCASE_CHOOSE_ITEM
+    TMCASE_CHOOSE_ITEM
 };
 
-void InitTMCase(u8 a0, void (* a1)(void), u8 a2);
+void InitTMCase(u32 a0, void (* a1)(void), u32 a2);
 void ResetTMCaseCursorPos(void);
 void Pokedude_InitTMCase(void);
 

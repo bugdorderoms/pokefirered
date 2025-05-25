@@ -15,9 +15,9 @@ enum
 
 struct MapSectionInfo
 {
-	const struct MapPreviewScreen mapPreview; // Set if the Map has a preview screen
-	u8 region; // Region the Map is in
-	const u8 *name; // The Map name
+    const struct MapPreviewScreen mapPreview; // Set if the Map has a preview screen
+    u8 region; // Region the Map is in
+    const u8 *name; // The Map name
     const u8 *desc; // For some dungeons in the Town Map
 };
 

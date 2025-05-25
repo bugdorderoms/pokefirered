@@ -31,8 +31,8 @@ static const struct WindowTemplate gUnknown_83C68E4 = {
 
 static const u8 gUnknown_83C68EC[] = { TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY };
 
-static void Task_EnableScriptAfterMusicFade(u8 taskId);
-static void Task_BarnDoorWipeChild(u8 taskId);
+static void Task_EnableScriptAfterMusicFade(u32 taskId);
+static void Task_BarnDoorWipeChild(u32 taskId);
 
 static void SetFlashScanlineEffectWindowBoundary(u16 *dest, u32 y, s32 left, s32 right)
 {
@@ -42,12 +42,12 @@ static void SetFlashScanlineEffectWindowBoundary(u16 *dest, u32 y, s32 left, s32
             left = 0;
         else if (left > 255)
             left = 255;
-		
+        
         if (right < 0)
             right = 0;
         else if (right > 255)
             right = 255;
-		
+        
         dest[y] = (left << 8) | right;
     }
 }
@@ -118,7 +118,7 @@ void SetFlashScanlineEffectWindowBoundaries(u16 *dest, s32 centerX, s32 centerY,
 #define tFlashRadiusDelta    data[5]
 #define tClearScanlineEffect data[6]
 
-static void UpdateFlashLevelEffect(u8 taskId)
+static void UpdateFlashLevelEffect(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
 
@@ -152,7 +152,7 @@ static void UpdateFlashLevelEffect(u8 taskId)
     }
 }
 
-static void sub_807EF7C(u8 taskId)
+static void sub_807EF7C(u32 taskId)
 {
     if (!FuncIsActiveTask(UpdateFlashLevelEffect))
     {
@@ -169,7 +169,7 @@ static void sub_807EFA4(void)
 
 static u8 sub_807EFC8(s32 centerX, s32 centerY, s32 initialFlashRadius, s32 destFlashRadius, bool32 clearScanlineEffect, u8 delta)
 {
-    u8 taskId = CreateTask(UpdateFlashLevelEffect, 80);
+    u32 taskId = CreateTask(UpdateFlashLevelEffect, 80);
     s16 *data = gTasks[taskId].data;
 
     tCurFlashRadius = initialFlashRadius;
@@ -177,7 +177,7 @@ static u8 sub_807EFC8(s32 centerX, s32 centerY, s32 initialFlashRadius, s32 dest
     tFlashCenterX = centerX;
     tFlashCenterY = centerY;
     tClearScanlineEffect = clearScanlineEffect;
-	tFlashRadiusDelta = initialFlashRadius < destFlashRadius ? delta : -delta;
+    tFlashRadiusDelta = initialFlashRadius < destFlashRadius ? delta : -delta;
     
     return taskId;
 }
@@ -210,7 +210,7 @@ void Script_FadeOutMapMusic(void)
     CreateTask(Task_EnableScriptAfterMusicFade, 80);
 }
 
-static void Task_EnableScriptAfterMusicFade(u8 taskId)
+static void Task_EnableScriptAfterMusicFade(u32 taskId)
 {
     if (IsNotWaitingForBGMStop())
     {
@@ -263,17 +263,17 @@ static void BarnDoorWipeLoadGpuRegs(u32 taskId)
     SetGpuReg(REG_OFFSET_WIN1V, data[8]);
 }
 
-void Task_BarnDoorWipe(u8 taskId)
+void Task_BarnDoorWipe(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
-	
+    
     switch (tState)
     {
         case 0:
             BarnDoorWipeSaveGpuRegs(taskId);
             SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON);
             SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON);
-			
+            
             if (tDirection == DIR_WIPE_IN)
             {
                 SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, 0));
@@ -308,16 +308,16 @@ void Task_BarnDoorWipe(u8 taskId)
     }
 }
 
-static void Task_BarnDoorWipeChild(u8 taskId)
+static void Task_BarnDoorWipeChild(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
     s16 lhs, rhs;
-	
+    
     if (gTasks[FindTaskIdByFunc(Task_BarnDoorWipe)].tDirection == DIR_WIPE_IN)
     {
         lhs = tChildOffset;
         rhs = DISPLAY_WIDTH - tChildOffset;
-		
+        
         if (lhs > DISPLAY_WIDTH / 2)
         {
             DestroyTask(taskId);
@@ -328,7 +328,7 @@ static void Task_BarnDoorWipeChild(u8 taskId)
     {
         lhs = DISPLAY_WIDTH / 2 - tChildOffset;
         rhs = DISPLAY_WIDTH / 2 + tChildOffset;
-		
+        
         if (lhs < 0)
         {
             DestroyTask(taskId);
@@ -337,7 +337,7 @@ static void Task_BarnDoorWipeChild(u8 taskId)
     }
     SetGpuReg(REG_OFFSET_WIN0H, WIN_RANGE(0, lhs));
     SetGpuReg(REG_OFFSET_WIN1H, WIN_RANGE(rhs, DISPLAY_WIDTH));
-	
+    
     if (lhs < 90)
         tChildOffset += 4;
     else
@@ -365,7 +365,7 @@ static bool32 PrintWhiteOutRecoveryMessage(u32 taskId, const u8 *text, u32 x, u3
         break;
     case 1:
         RunTextPrinters();
-		
+        
         if (!IsTextPrinterActive(windowId))
         {
             gTasks[taskId].data[2] = 0;
@@ -376,7 +376,7 @@ static bool32 PrintWhiteOutRecoveryMessage(u32 taskId, const u8 *text, u32 x, u3
     return FALSE;
 }
 
-static void Task_RushInjuredPokemonToCenter(u8 taskId)
+static void Task_RushInjuredPokemonToCenter(u32 taskId)
 {
     u32 windowId;
     const struct HealLocation *loc;

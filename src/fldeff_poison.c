@@ -4,7 +4,7 @@
 #include "field_fadetransition.h"
 #include "constants/songs.h"
 
-static void Task_FieldPoisonEffect(u8 taskId)
+static void Task_FieldPoisonEffect(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
 

@@ -13,19 +13,19 @@ enum HiddenItemAttr
 
 enum
 {
-	SYMBOL_YELLOWSTAR,
-	SYMBOL_WHITESTAR,
-	SYMBOL_POKEBALL,
-	SYMBOL_HELDITEM,
-	SYMBOL_HELDMAIL,
-	SYMBOLS_COUNT
+    SYMBOL_YELLOWSTAR,
+    SYMBOL_WHITESTAR,
+    SYMBOL_POKEBALL,
+    SYMBOL_HELDITEM,
+    SYMBOL_HELDMAIL,
+    SYMBOLS_COUNT
 };
 
 struct CapeBrinkTutor
 {
-	u16 species;
-	u16 move;
-	u16 flagId;
+    u16 species;
+    u16 move;
+    u16 flagId;
 };
 
 #define TAG_8x8_SYMBOLS 0x0066

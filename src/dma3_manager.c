@@ -102,7 +102,7 @@ s16 RequestDma3Copy(const void *src, void *dest, u16 size, u8 mode)
             gDma3Requests[cursor].src = src;
             gDma3Requests[cursor].dest = dest;
             gDma3Requests[cursor].size = size;
-			gDma3Requests[cursor].mode = mode == DMA3_32BIT ? DMA_REQUEST_COPY32 : DMA_REQUEST_COPY16;
+            gDma3Requests[cursor].mode = mode == DMA3_32BIT ? DMA_REQUEST_COPY32 : DMA_REQUEST_COPY16;
 
             gDma3ManagerLocked = FALSE;
             return (s16)cursor;
@@ -136,7 +136,7 @@ s16 RequestDma3Fill(s32 value, void *dest, u16 size, u8 mode)
             gDma3Requests[cursor].size = size;
             gDma3Requests[cursor].mode = mode;
             gDma3Requests[cursor].value = value;
-			gDma3Requests[cursor].mode = mode == DMA3_32BIT ? DMA_REQUEST_FILL32 : DMA_REQUEST_FILL16;
+            gDma3Requests[cursor].mode = mode == DMA3_32BIT ? DMA_REQUEST_FILL32 : DMA_REQUEST_FILL16;
 
             gDma3ManagerLocked = FALSE;
             return (s16)cursor;

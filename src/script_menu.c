@@ -28,9 +28,9 @@ struct MultichoiceListStruct
     u8 count;
 };
 
-static void Task_MultichoiceMenu_HandleInput(u8 taskId);
-static void Task_YesNoMenu_HandleInput(u8 taskId);
-static void Task_ScriptShowPic(u8 taskId);
+static void Task_MultichoiceMenu_HandleInput(u32 taskId);
+static void Task_YesNoMenu_HandleInput(u32 taskId);
+static void Task_ScriptShowPic(u32 taskId);
 static bool32 PicboxWaitFunc(void);
 
 static const struct MenuAction sScriptMultiChoiceMenu_YesNo[] = {
@@ -672,29 +672,29 @@ static u32 GetMenuWidthFromList(const struct MenuAction * items, u32 count)
 
 static u32 CreateMultichoiceWindow(u32 bg, u8 x, u8 y, u8 width, u8 height, u16 baseBlock, u32 palNum)
 {
-	struct WindowTemplate template = SetWindowTemplateFields(bg, x + 1, y + 1, width, height, palNum, baseBlock);
-	u32 windowId = AddWindow(&template);
-	
+    struct WindowTemplate template = SetWindowTemplateFields(bg, x + 1, y + 1, width, height, palNum, baseBlock);
+    u32 windowId = AddWindow(&template);
+    
     PutWindowTilemap(windowId);
-	
+    
     return windowId;
 }
 
 static void DestroyMultichoiceWindow(u32 windowId)
 {
-	ClearWindowTilemap(windowId);
+    ClearWindowTilemap(windowId);
     ClearStdWindowAndFrameToTransparent(windowId, TRUE);
     RemoveWindow(windowId);
 }
 
 bool32 ScriptMenu_Multichoice(u8 x, u8 y, u32 mcId, bool32 ignoreBPress, u32 defaultOpt, u32 perRowItems)
 {
-	if (!FuncIsActiveTask(Task_MultichoiceMenu_HandleInput))
-	{
-		InitMultichoice(gScriptMultiChoiceMenus[mcId].list, gScriptMultiChoiceMenus[mcId].count, 0, x, y, ignoreBPress, defaultOpt, perRowItems, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
-		return TRUE;
-	}
-	return FALSE;
+    if (!FuncIsActiveTask(Task_MultichoiceMenu_HandleInput))
+    {
+        InitMultichoice(gScriptMultiChoiceMenus[mcId].list, gScriptMultiChoiceMenus[mcId].count, 0, x, y, ignoreBPress, defaultOpt, perRowItems, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
+        return TRUE;
+    }
+    return FALSE;
 }
 
 #define tIgnoreBPress data[0]
@@ -702,227 +702,227 @@ bool32 ScriptMenu_Multichoice(u8 x, u8 y, u32 mcId, bool32 ignoreBPress, u32 def
 
 static u32 CreateMultichoiceInputTask(bool32 ignoreBPress, u32 windowId)
 {
-	u32 taskId = CreateTask(Task_MultichoiceMenu_HandleInput, 80);
-	
-	gTasks[taskId].tIgnoreBPress = ignoreBPress;
-	gTasks[taskId].tWindowId = windowId;
-	
-	return taskId;
+    u32 taskId = CreateTask(Task_MultichoiceMenu_HandleInput, 80);
+    
+    gTasks[taskId].tIgnoreBPress = ignoreBPress;
+    gTasks[taskId].tWindowId = windowId;
+    
+    return taskId;
 }
 
 static void InitDefaultMultichoiceOnLeftTop(const struct MenuAction * items, u32 count)
 {
-	InitMultichoice(items, count, 0, 0, 0, FALSE, 0, 1, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
+    InitMultichoice(items, count, 0, 0, 0, FALSE, 0, 1, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
 }
 
 u32 InitMultichoice(const struct MenuAction * items, u32 count, u32 bg, u8 x, u8 y, bool32 ignoreBPress, u32 defaultOpt, u32 perRowItems, u16 baseBlock, u32 palNum)
 {
-	u32 windowId, taskId = 0xFF;
-	u8 width, rowCount;
-	
-	gSpecialVar_Result = SCR_MENU_UNSET;
-	
-	width = GetMenuWidthFromList(items, count) + 1;
-	rowCount = count / perRowItems;
-	
-	windowId = CreateMultichoiceWindow(bg, x, y, width * perRowItems, rowCount * 2, baseBlock, palNum);
-	SetStdWindowBorderStyle(windowId, FALSE);
-	
-	taskId = CreateMultichoiceInputTask(ignoreBPress, windowId);
-	
-	MultichoiceGrid_PrintItems(windowId, 1, width * 8, 16, perRowItems, rowCount, items);
-	MultichoiceGrid_InitCursor(windowId, 1, 0, 1, width * 8, perRowItems, rowCount, defaultOpt);
-	
-	ScheduleBgCopyTilemapToVram(bg);
+    u32 windowId, taskId = 0xFF;
+    u8 width, rowCount;
+    
+    gSpecialVar_Result = SCR_MENU_UNSET;
+    
+    width = GetMenuWidthFromList(items, count) + 1;
+    rowCount = count / perRowItems;
+    
+    windowId = CreateMultichoiceWindow(bg, x, y, width * perRowItems, rowCount * 2, baseBlock, palNum);
+    SetStdWindowBorderStyle(windowId, FALSE);
+    
+    taskId = CreateMultichoiceInputTask(ignoreBPress, windowId);
+    
+    MultichoiceGrid_PrintItems(windowId, 1, width * 8, 16, perRowItems, rowCount, items);
+    MultichoiceGrid_InitCursor(windowId, 1, 0, 1, width * 8, perRowItems, rowCount, defaultOpt);
+    
+    ScheduleBgCopyTilemapToVram(bg);
 
-	return taskId;
+    return taskId;
 }
 
-static void Task_MultichoiceMenu_HandleInput(u8 taskId)
+static void Task_MultichoiceMenu_HandleInput(u32 taskId)
 {
-	s16 *data = gTasks[taskId].data;
-	s8 input = Menu_ProcessInputGridLayout();
-	
-	switch (input)
-	{
-		case -2:
-		    return;
-		case -1:
-		    if (!tIgnoreBPress)
-			{
-				PlaySE(SE_SELECT);
-				gSpecialVar_Result = SCR_MENU_CANCEL;
-				break;
-			}
-			return;
-		default:
-		    gSpecialVar_Result = input;
-			break;
-	}
-	DestroyMultichoiceWindow(tWindowId);
-	EnableBothScriptContexts();
-	DestroyTask(taskId);
+    s16 *data = gTasks[taskId].data;
+    s8 input = Menu_ProcessInputGridLayout();
+    
+    switch (input)
+    {
+        case -2:
+            return;
+        case -1:
+            if (!tIgnoreBPress)
+            {
+                PlaySE(SE_SELECT);
+                gSpecialVar_Result = SCR_MENU_CANCEL;
+                break;
+            }
+            return;
+        default:
+            gSpecialVar_Result = input;
+            break;
+    }
+    DestroyMultichoiceWindow(tWindowId);
+    EnableBothScriptContexts();
+    DestroyTask(taskId);
 }
 
 static void CreatePCMenuMultichoice(void)
 {
-	u32 nItems = 0;
-	struct MenuAction menuItems[5]; // max of items
-	
-	// "Bill" or "Someone"'s PC
-	menuItems[nItems++].text = FlagGet(FLAG_SYS_NOT_SOMEONES_PC) ? gText_BillSPc : gText_SomeoneSPc;
-	
-	// "Player"'s PC
-	StringCopy(gStringVar4, gSaveBlock2Ptr->playerName);
-	StringAppend(gStringVar4, gText_SPc);
-	menuItems[nItems++].text = gStringVar4;
-	
-	// Prof Oak's PC
-	if (FlagGet(FLAG_SYS_POKEDEX_GET))
-		menuItems[nItems++].text = gText_ProfOakSPc;
-	
-	// Hall Of Fame
-	if (FlagGet(FLAG_SYS_GAME_CLEAR))
-		menuItems[nItems++].text = gText_HallOfFame_2;
-	
-	// Log off
-	menuItems[nItems++].text = gText_LogOff;
-	
-	InitDefaultMultichoiceOnLeftTop(menuItems, nItems);
+    u32 nItems = 0;
+    struct MenuAction menuItems[5]; // max of items
+    
+    // "Bill" or "Someone"'s PC
+    menuItems[nItems++].text = FlagGet(FLAG_SYS_NOT_SOMEONES_PC) ? gText_BillSPc : gText_SomeoneSPc;
+    
+    // "Player"'s PC
+    StringCopy(gStringVar4, gSaveBlock2Ptr->playerName);
+    StringAppend(gStringVar4, gText_SPc);
+    menuItems[nItems++].text = gStringVar4;
+    
+    // Prof Oak's PC
+    if (FlagGet(FLAG_SYS_POKEDEX_GET))
+        menuItems[nItems++].text = gText_ProfOakSPc;
+    
+    // Hall Of Fame
+    if (FlagGet(FLAG_SYS_GAME_CLEAR))
+        menuItems[nItems++].text = gText_HallOfFame_2;
+    
+    // Log off
+    menuItems[nItems++].text = gText_LogOff;
+    
+    InitDefaultMultichoiceOnLeftTop(menuItems, nItems);
 }
 
 bool32 CreatePCMenu(void)
 {
-	if (!FuncIsActiveTask(Task_MultichoiceMenu_HandleInput))
-	{
-		CreatePCMenuMultichoice();
-		return TRUE;
-	}
-	return FALSE;
+    if (!FuncIsActiveTask(Task_MultichoiceMenu_HandleInput))
+    {
+        CreatePCMenuMultichoice();
+        return TRUE;
+    }
+    return FALSE;
 }
 
 void ScriptMenu_DisplayPCStartupPrompt(void)
 {
-	LoadMessageBoxAndFrameGfx(0, TRUE);
-	AddTextPrinterParameterized2(0, 2, Text_AccessWhichPC, 0, NULL, 2, 1, 3);
+    LoadMessageBoxAndFrameGfx(0, TRUE);
+    AddTextPrinterParameterized2(0, 2, Text_AccessWhichPC, 0, NULL, 2, 1, 3);
 }
 
 void DrawSeagallopDestinationMenu(void)
 {
-	// 8004 = Starting location
+    // 8004 = Starting location
     // 8005 = Page (0: Verm, One, Two, Three, Four, Other, Exit; 1: Four, Five, Six, Seven, Other, Exit)
-	u32 i, windowId, defaultOpt, cursorWidth, nItems = 5, y = 0;
-	
-	if (gSpecialVar_0x8005 == 1)
-	{
-		defaultOpt = gSpecialVar_0x8004 < SEAGALLOP_FIVE_ISLAND ? SEAGALLOP_FIVE_ISLAND : SEAGALLOP_FOUR_ISLAND;
-		y = 2;
-	}
-	else
-	{
-		defaultOpt = SEAGALLOP_VERMILION_CITY;
-		++nItems;
-	}
-	cursorWidth = GetMenuCursorDimensionByFont(2, 0);
-	windowId = CreateMultichoiceWindow(0, 17, y, 11, nItems * 2, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
-	SetStdWindowBorderStyle(windowId, FALSE);
-	
-	for (i = 0; i < nItems - 2; i++)
-	{
-		if (defaultOpt != gSpecialVar_0x8004)
-			AddTextPrinterParameterized(windowId, 2, sSeagallopDestStrings[defaultOpt], cursorWidth, i * 16 + 2, 0xFF, NULL);
-		else
-			--i;
-		
-		++defaultOpt;
-		
-		if (defaultOpt == SEAGALLOP_CINNABAR_ISLAND)
-			defaultOpt = SEAGALLOP_VERMILION_CITY;
-	}
-	AddTextPrinterParameterized(windowId, 2, gText_Other, cursorWidth, i * 16 + 2, 0xFF, NULL);
-	AddTextPrinterParameterized(windowId, 2, gOtherText_Exit, cursorWidth, (i + 1) * 16 + 2, 0xFF, NULL);
-	Menu_InitCursor(windowId, 2, 0, 2, 16, nItems, 0);
-	CreateMultichoiceInputTask(FALSE, windowId);
-	ScheduleBgCopyTilemapToVram(0);
+    u32 i, windowId, defaultOpt, cursorWidth, nItems = 5, y = 0;
+    
+    if (gSpecialVar_0x8005 == 1)
+    {
+        defaultOpt = gSpecialVar_0x8004 < SEAGALLOP_FIVE_ISLAND ? SEAGALLOP_FIVE_ISLAND : SEAGALLOP_FOUR_ISLAND;
+        y = 2;
+    }
+    else
+    {
+        defaultOpt = SEAGALLOP_VERMILION_CITY;
+        ++nItems;
+    }
+    cursorWidth = GetMenuCursorDimensionByFont(2, 0);
+    windowId = CreateMultichoiceWindow(0, 17, y, 11, nItems * 2, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
+    SetStdWindowBorderStyle(windowId, FALSE);
+    
+    for (i = 0; i < nItems - 2; i++)
+    {
+        if (defaultOpt != gSpecialVar_0x8004)
+            AddTextPrinterParameterized(windowId, 2, sSeagallopDestStrings[defaultOpt], cursorWidth, i * 16 + 2, 0xFF, NULL);
+        else
+            --i;
+        
+        ++defaultOpt;
+        
+        if (defaultOpt == SEAGALLOP_CINNABAR_ISLAND)
+            defaultOpt = SEAGALLOP_VERMILION_CITY;
+    }
+    AddTextPrinterParameterized(windowId, 2, gText_Other, cursorWidth, i * 16 + 2, 0xFF, NULL);
+    AddTextPrinterParameterized(windowId, 2, gOtherText_Exit, cursorWidth, (i + 1) * 16 + 2, 0xFF, NULL);
+    Menu_InitCursor(windowId, 2, 0, 2, 16, nItems, 0);
+    CreateMultichoiceInputTask(FALSE, windowId);
+    ScheduleBgCopyTilemapToVram(0);
 }
 
 u32 GetSelectedSeagallopDestination(void)
 {
-	// 8004 = Starting location
+    // 8004 = Starting location
     // 8005 = Page (0: Verm, One, Two, Three, Four, Other, Exit; 1: Four, Five, Six, Seven, Other, Exit)
-	
-	if (gSpecialVar_Result == SCR_MENU_CANCEL)
-		return SCR_MENU_CANCEL;
-	else if (gSpecialVar_0x8005 == 1)
-	{
-		switch (gSpecialVar_Result)
-		{
-			case 0:
-			    if (gSpecialVar_0x8004 > SEAGALLOP_FOUR_ISLAND)
-					return SEAGALLOP_FOUR_ISLAND;
-				else
-					return SEAGALLOP_FIVE_ISLAND;
-			case 1:
-			    if (gSpecialVar_0x8004 > SEAGALLOP_FIVE_ISLAND)
-					return SEAGALLOP_FIVE_ISLAND;
-				else
-					return SEAGALLOP_SIX_ISLAND;
-			case 2:
-			    if (gSpecialVar_0x8004 > SEAGALLOP_SIX_ISLAND)
-					return SEAGALLOP_SIX_ISLAND;
-				else
-					return SEAGALLOP_SEVEN_ISLAND;
-			case 3:
-			    return SEAGALLOP_MORE;
-			case 4:
-			    return SCR_MENU_CANCEL;
-		}
-	}
-	else
-	{
-		switch (gSpecialVar_Result)
-		{
-			case 4:
-			    return SEAGALLOP_MORE;
-			case 5:
-			    return SCR_MENU_CANCEL;
-			default:
-			    if (gSpecialVar_Result >= gSpecialVar_0x8004)
-					return gSpecialVar_Result + 1;
-				else
-					return gSpecialVar_Result;
-		}
-	}
-	return SEAGALLOP_VERMILION_CITY;
+    
+    if (gSpecialVar_Result == SCR_MENU_CANCEL)
+        return SCR_MENU_CANCEL;
+    else if (gSpecialVar_0x8005 == 1)
+    {
+        switch (gSpecialVar_Result)
+        {
+            case 0:
+                if (gSpecialVar_0x8004 > SEAGALLOP_FOUR_ISLAND)
+                    return SEAGALLOP_FOUR_ISLAND;
+                else
+                    return SEAGALLOP_FIVE_ISLAND;
+            case 1:
+                if (gSpecialVar_0x8004 > SEAGALLOP_FIVE_ISLAND)
+                    return SEAGALLOP_FIVE_ISLAND;
+                else
+                    return SEAGALLOP_SIX_ISLAND;
+            case 2:
+                if (gSpecialVar_0x8004 > SEAGALLOP_SIX_ISLAND)
+                    return SEAGALLOP_SIX_ISLAND;
+                else
+                    return SEAGALLOP_SEVEN_ISLAND;
+            case 3:
+                return SEAGALLOP_MORE;
+            case 4:
+                return SCR_MENU_CANCEL;
+        }
+    }
+    else
+    {
+        switch (gSpecialVar_Result)
+        {
+            case 4:
+                return SEAGALLOP_MORE;
+            case 5:
+                return SCR_MENU_CANCEL;
+            default:
+                if (gSpecialVar_Result >= gSpecialVar_0x8004)
+                    return gSpecialVar_Result + 1;
+                else
+                    return gSpecialVar_Result;
+        }
+    }
+    return SEAGALLOP_VERMILION_CITY;
 }
 
 void DrawRepelMultichoiseMenu(void)
 {
-	u32 i, count;
-	u16 repelItems[] = {ITEM_REPEL, ITEM_SUPER_REPEL, ITEM_MAX_REPEL};
-	struct MenuAction menuItems[3]; // max of items
-	
-	gSpecialVar_Result = FALSE;
-	
-	for (i = 0, count = 0; i < ARRAY_COUNT(repelItems); i++)
-	{
-		if (CheckBagHasItem(repelItems[i], 1))
-		{
-			VarSet(VAR_0x8004 + count, repelItems[i]);
-			menuItems[count++].text = ItemId_GetName(repelItems[i]);
-		}
-	}
-	if (count > 1)
-	{
-		InitDefaultMultichoiceOnLeftTop(menuItems, count);
-		gSpecialVar_Result = TRUE;
-	}
+    u32 i, count;
+    u16 repelItems[] = {ITEM_REPEL, ITEM_SUPER_REPEL, ITEM_MAX_REPEL};
+    struct MenuAction menuItems[3]; // max of items
+    
+    gSpecialVar_Result = FALSE;
+    
+    for (i = 0, count = 0; i < ARRAY_COUNT(repelItems); i++)
+    {
+        if (CheckBagHasItem(repelItems[i], 1))
+        {
+            VarSet(VAR_0x8004 + count, repelItems[i]);
+            menuItems[count++].text = ItemId_GetName(repelItems[i]);
+        }
+    }
+    if (count > 1)
+    {
+        InitDefaultMultichoiceOnLeftTop(menuItems, count);
+        gSpecialVar_Result = TRUE;
+    }
 }
 
 void HandleRepelUseAnother(void)
 {
-	gSpecialVar_0x8004 = VarGet(VAR_0x8004 + gSpecialVar_Result);
-	VarSet(VAR_REPEL_STEP_COUNT, ItemId_GetHoldEffectParam(gSpecialVar_0x8004));
+    gSpecialVar_0x8004 = VarGet(VAR_0x8004 + gSpecialVar_Result);
+    VarSet(VAR_REPEL_STEP_COUNT, ItemId_GetHoldEffectParam(gSpecialVar_0x8004));
 }
 
 #undef tIgnoreBPress
@@ -931,37 +931,37 @@ void HandleRepelUseAnother(void)
 bool32 ScriptMenu_YesNo(void)
 {
     if (!FuncIsActiveTask(Task_YesNoMenu_HandleInput))
-	{
-		gSpecialVar_Result = SCR_MENU_UNSET;
-		DisplayYesNoMenuDefaultYes();
-		CreateTask(Task_YesNoMenu_HandleInput, 80);
-		return TRUE;
-	}
-	return FALSE;
+    {
+        gSpecialVar_Result = SCR_MENU_UNSET;
+        DisplayYesNoMenuDefaultYes();
+        CreateTask(Task_YesNoMenu_HandleInput, 80);
+        return TRUE;
+    }
+    return FALSE;
 }
 
-static void Task_YesNoMenu_HandleInput(u8 taskId)
+static void Task_YesNoMenu_HandleInput(u32 taskId)
 {
-	if (gTasks[taskId].data[2] < 5)
-		++gTasks[taskId].data[2];
-	else
-	{
-		switch (Menu_ProcessInputNoWrapClearOnChoose())
-		{
-			case -2:
-			    return;
-			case -1:
-			case 1:
-			    PlaySE(SE_SELECT);
-				gSpecialVar_Result = FALSE;
-				break;
-			case 0:
-			    gSpecialVar_Result = TRUE;
-				break;
-		}
-		DestroyTask(taskId);
-		EnableBothScriptContexts();
-	}
+    if (gTasks[taskId].data[2] < 5)
+        ++gTasks[taskId].data[2];
+    else
+    {
+        switch (Menu_ProcessInputNoWrapClearOnChoose())
+        {
+            case -2:
+                return;
+            case -1:
+            case 1:
+                PlaySE(SE_SELECT);
+                gSpecialVar_Result = FALSE;
+                break;
+            case 0:
+                gSpecialVar_Result = TRUE;
+                break;
+        }
+        DestroyTask(taskId);
+        EnableBothScriptContexts();
+    }
 }
 
 static u32 CreateMonSprite_PicBox(u32 species, s16 x, s16 y)
@@ -971,83 +971,83 @@ static u32 CreateMonSprite_PicBox(u32 species, s16 x, s16 y)
 
 static u32 CreateMenuMonPic(u32 species, u8 x, u8 y)
 {
-	u32 spriteId = CreateMonSprite_PicBox(species, x, y), spriteId2 = MAX_SPRITES;
-	
-	if (Overworld_GetFlashLevel() > 0)
-	{
-		spriteId2 = CreateMonSprite_PicBox(species, x, y);
-		
-		if (spriteId2 != MAX_SPRITES)
-		{
-			gSprites[spriteId2].callback = SpriteCallbackDummy;
-			gSprites[spriteId2].oam.priority = 0;
-			gSprites[spriteId2].oam.objMode = ST_OAM_OBJ_WINDOW;
-		}
-	}
-	gSprites[spriteId].callback = SpriteCallbackDummy;
-	gSprites[spriteId].oam.priority = 0;
-	gSprites[spriteId].data[0] = spriteId2;
-	
-	return spriteId;
+    u32 spriteId = CreateMonSprite_PicBox(species, x, y), spriteId2 = MAX_SPRITES;
+    
+    if (Overworld_GetFlashLevel() > 0)
+    {
+        spriteId2 = CreateMonSprite_PicBox(species, x, y);
+        
+        if (spriteId2 != MAX_SPRITES)
+        {
+            gSprites[spriteId2].callback = SpriteCallbackDummy;
+            gSprites[spriteId2].oam.priority = 0;
+            gSprites[spriteId2].oam.objMode = ST_OAM_OBJ_WINDOW;
+        }
+    }
+    gSprites[spriteId].callback = SpriteCallbackDummy;
+    gSprites[spriteId].oam.priority = 0;
+    gSprites[spriteId].data[0] = spriteId2;
+    
+    return spriteId;
 }
 
 static u32 CreateMenuItemPic(u32 itemId, u16 x, u16 y)
 {
-	u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2 = MAX_SPRITES;
-	
-	x = 8 * x + 16;
-	y = 8 * y + 16;
-	
-	if (Overworld_GetFlashLevel() > 0)
-	{
-		spriteId2 = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
-		
-		if (spriteId2 != MAX_SPRITES)
-		{
-			gSprites[spriteId2].x = x;
-			gSprites[spriteId2].y = y;
-			gSprites[spriteId2].oam.priority = 0;
-			gSprites[spriteId2].oam.objMode = ST_OAM_OBJ_WINDOW;
-		}
-	}
-	gSprites[spriteId].x = x;
-	gSprites[spriteId].y = y;
-	gSprites[spriteId].oam.priority = 0;
-	gSprites[spriteId].data[0] = spriteId2;
-	
-	return spriteId;
+    u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2 = MAX_SPRITES;
+    
+    x = 8 * x + 16;
+    y = 8 * y + 16;
+    
+    if (Overworld_GetFlashLevel() > 0)
+    {
+        spriteId2 = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
+        
+        if (spriteId2 != MAX_SPRITES)
+        {
+            gSprites[spriteId2].x = x;
+            gSprites[spriteId2].y = y;
+            gSprites[spriteId2].oam.priority = 0;
+            gSprites[spriteId2].oam.objMode = ST_OAM_OBJ_WINDOW;
+        }
+    }
+    gSprites[spriteId].x = x;
+    gSprites[spriteId].y = y;
+    gSprites[spriteId].oam.priority = 0;
+    gSprites[spriteId].data[0] = spriteId2;
+    
+    return spriteId;
 }
 
 enum
 {
-	PIC_TYPE_POKEMON,
-	PIC_TYPE_MUSEUM_FOSSIL,
-	PIC_TYPE_ITEM,
+    PIC_TYPE_POKEMON,
+    PIC_TYPE_MUSEUM_FOSSIL,
+    PIC_TYPE_ITEM,
 };
 
 static void DestroyPicboxPic(u32 picType, u32 spriteId)
 {
-	struct Sprite *sprite = &gSprites[spriteId];
-	
-	switch (picType)
-	{
-		case PIC_TYPE_POKEMON:
-			if (sprite->data[0] != MAX_SPRITES)
-				FreeResourcesAndDestroySprite(&gSprites[sprite->data[0]], sprite->data[0]);
+    struct Sprite *sprite = &gSprites[spriteId];
+    
+    switch (picType)
+    {
+        case PIC_TYPE_POKEMON:
+            if (sprite->data[0] != MAX_SPRITES)
+                FreeResourcesAndDestroySprite(&gSprites[sprite->data[0]], sprite->data[0]);
 
-			FreeResourcesAndDestroySprite(sprite, spriteId);
-			break;
-		case PIC_TYPE_MUSEUM_FOSSIL:
-			DestroySprite(sprite);
-			FreeSpriteTilesByTag(TAG_MUSEUM_FOSSIL_PIC);
-			break;
-		case PIC_TYPE_ITEM:
-			if (sprite->data[0] != MAX_SPRITES)
-				DestroySpriteAndFreeResources(&gSprites[sprite->data[0]]);
+            FreeResourcesAndDestroySprite(sprite, spriteId);
+            break;
+        case PIC_TYPE_MUSEUM_FOSSIL:
+            DestroySprite(sprite);
+            FreeSpriteTilesByTag(TAG_MUSEUM_FOSSIL_PIC);
+            break;
+        case PIC_TYPE_ITEM:
+            if (sprite->data[0] != MAX_SPRITES)
+                DestroySpriteAndFreeResources(&gSprites[sprite->data[0]]);
 
-			DestroySpriteAndFreeResources(sprite);
-			break;
-	}
+            DestroySpriteAndFreeResources(sprite);
+            break;
+    }
 }
 
 #define tWindowId  data[0]
@@ -1057,158 +1057,158 @@ static void DestroyPicboxPic(u32 picType, u32 spriteId)
 
 static void CreatePicBox(u32 spriteId, s16 x, s16 y, u8 width, u8 height, u32 picType)
 {
-	s16 *data = gTasks[CreateTask(Task_ScriptShowPic, 80)].data;
-	
-	tWindowId = CreateMultichoiceWindow(0, x, y, width, height, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
-	tSpriteId = spriteId;
-	tState = 0;
-	tPicType = picType;
-	
-	SetStdWindowBorderStyle(tWindowId, TRUE);
-	ScheduleBgCopyTilemapToVram(0);
+    s16 *data = gTasks[CreateTask(Task_ScriptShowPic, 80)].data;
+    
+    tWindowId = CreateMultichoiceWindow(0, x, y, width, height, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
+    tSpriteId = spriteId;
+    tState = 0;
+    tPicType = picType;
+    
+    SetStdWindowBorderStyle(tWindowId, TRUE);
+    ScheduleBgCopyTilemapToVram(0);
 }
 
 bool32 ScriptMenu_ShowPokemonPic(u32 species, u8 x, u8 y)
 {
-	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
-		return FALSE;
-	else
-	{
-		CreatePicBox(CreateMenuMonPic(species, x, y), x, y, 8, 8, PIC_TYPE_POKEMON);
-		return TRUE;
-	}
+    if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
+        return FALSE;
+    else
+    {
+        CreatePicBox(CreateMenuMonPic(species, x, y), x, y, 8, 8, PIC_TYPE_POKEMON);
+        return TRUE;
+    }
 }
 
-static void Task_ScriptShowPic(u8 taskId)
+static void Task_ScriptShowPic(u32 taskId)
 {
-	s16 *data = gTasks[taskId].data;
-	
-	switch (tState)
-	{
-		case 0:
-		    ++tState;
-			break;
-		case 1:
-		    break;
-		case 2:
-		    DestroyPicboxPic(tPicType, tSpriteId);
-		    ++tState;
-			break;
-		case 3:
-		    DestroyMultichoiceWindow(tWindowId);
-			DestroyTask(taskId);
-			break;
-	}
+    s16 *data = gTasks[taskId].data;
+    
+    switch (tState)
+    {
+        case 0:
+            ++tState;
+            break;
+        case 1:
+            break;
+        case 2:
+            DestroyPicboxPic(tPicType, tSpriteId);
+            ++tState;
+            break;
+        case 3:
+            DestroyMultichoiceWindow(tWindowId);
+            DestroyTask(taskId);
+            break;
+    }
 }
 
 bool32 (*ScriptMenu_GetPicboxWaitFunc(void))(void)
 {
-	u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
-	
-	if (taskId == 0xFF)
-		return NULL;
-	
-	++gTasks[taskId].tState;
-	
-	return PicboxWaitFunc;
+    u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
+    
+    if (taskId == 0xFF)
+        return NULL;
+    
+    ++gTasks[taskId].tState;
+    
+    return PicboxWaitFunc;
 }
 
 static bool32 PicboxWaitFunc(void)
 {
-	return (FindTaskIdByFunc(Task_ScriptShowPic) == 0xFF);
+    return (FindTaskIdByFunc(Task_ScriptShowPic) == 0xFF);
 }
 
 void PicboxCancel(void)
 {
-	u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
-	s16 *data;
-	
-	if (taskId != 0xFF)
-	{
-		data = gTasks[taskId].data;
-		
-		switch (tState)
-		{
-			case 0:
-			case 1:
-			case 2:
-			    DestroyPicboxPic(tPicType, tSpriteId);
-				// fallthrought
-			case 3:
-			    DestroyMultichoiceWindow(tWindowId);
-				DestroyTask(taskId);
-				break;
-		}
-	}
+    u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
+    s16 *data;
+    
+    if (taskId != 0xFF)
+    {
+        data = gTasks[taskId].data;
+        
+        switch (tState)
+        {
+            case 0:
+            case 1:
+            case 2:
+                DestroyPicboxPic(tPicType, tSpriteId);
+                // fallthrought
+            case 3:
+                DestroyMultichoiceWindow(tWindowId);
+                DestroyTask(taskId);
+                break;
+        }
+    }
 }
 
 void RemovePokemonSpeciesOnPicbox(void)
 {
-	u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
-	
-	if (taskId != 0xFF)
-		DestroyPicboxPic(PIC_TYPE_POKEMON, gTasks[taskId].tSpriteId);
+    u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
+    
+    if (taskId != 0xFF)
+        DestroyPicboxPic(PIC_TYPE_POKEMON, gTasks[taskId].tSpriteId);
 }
 
 void UpdatePokemonSpeciesOnPicbox(u32 species, u8 x, u8 y)
 {
-	u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
-	
-	if (taskId != 0xFF)
-		gTasks[taskId].tSpriteId = CreateMenuMonPic(species, x, y);
+    u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
+    
+    if (taskId != 0xFF)
+        gTasks[taskId].tSpriteId = CreateMenuMonPic(species, x, y);
 }
 
 bool32 OpenMuseumFossilPic(void)
 {
-	u32 spriteId;
-	
-	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
-		return FALSE;
-	else
-	{
-		switch (gSpecialVar_0x8004)
-		{
-			case SPECIES_KABUTOPS:
-			    LoadSpriteSheets(sMuseumKabutopsSprSheets);
-				LoadPalette(sMuseumKabutopsSprPalette, 0x1D0, 0x20);
-				break;
-			case SPECIES_AERODACTYL:
-			    LoadSpriteSheets(sMuseumAerodactylSprSheets);
-				LoadPalette(sMuseumAerodactylSprPalette, 0x1D0, 0x20);
-				break;
-			default:
-			    return FALSE;
-		}
-		spriteId = CreateSprite(&sMuseumFossilSprTemplate, gSpecialVar_0x8005 * 8 + 40, gSpecialVar_0x8006 * 8 + 40, 0);
-		gSprites[spriteId].oam.paletteNum = 13;
-		
-		CreatePicBox(spriteId, gSpecialVar_0x8005, gSpecialVar_0x8006, 8, 8, PIC_TYPE_MUSEUM_FOSSIL);
+    u32 spriteId;
+    
+    if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
+        return FALSE;
+    else
+    {
+        switch (gSpecialVar_0x8004)
+        {
+            case SPECIES_KABUTOPS:
+                LoadSpriteSheets(sMuseumKabutopsSprSheets);
+                LoadPalette(sMuseumKabutopsSprPalette, 0x1D0, 0x20);
+                break;
+            case SPECIES_AERODACTYL:
+                LoadSpriteSheets(sMuseumAerodactylSprSheets);
+                LoadPalette(sMuseumAerodactylSprPalette, 0x1D0, 0x20);
+                break;
+            default:
+                return FALSE;
+        }
+        spriteId = CreateSprite(&sMuseumFossilSprTemplate, gSpecialVar_0x8005 * 8 + 40, gSpecialVar_0x8006 * 8 + 40, 0);
+        gSprites[spriteId].oam.paletteNum = 13;
+        
+        CreatePicBox(spriteId, gSpecialVar_0x8005, gSpecialVar_0x8006, 8, 8, PIC_TYPE_MUSEUM_FOSSIL);
 
-		return TRUE;
-	}
+        return TRUE;
+    }
 }
 
 bool32 CloseMuseumFossilPic(void)
 {
-	u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
-	
+    u32 taskId = FindTaskIdByFunc(Task_ScriptShowPic);
+    
     if (taskId == 0xFF)
         return FALSE;
-	
+    
     ++gTasks[taskId].tState;
-	
+    
     return TRUE;
 }
 
 bool32 ScriptMenu_ShowItemPic(u32 itemId, u8 x, u8 y)
 {
-	if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
-		return FALSE;
-	else
-	{
-		CreatePicBox(CreateMenuItemPic(itemId, x, y), x, y, 3, 3, PIC_TYPE_ITEM);
-		return TRUE;
-	}
+    if (FindTaskIdByFunc(Task_ScriptShowPic) != 0xFF)
+        return FALSE;
+    else
+    {
+        CreatePicBox(CreateMenuItemPic(itemId, x, y), x, y, 3, 3, PIC_TYPE_ITEM);
+        return TRUE;
+    }
 }
 
 #undef tWindowId

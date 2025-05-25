@@ -13,15 +13,15 @@ static void AnimFissureDirtPlumeParticle(struct Sprite *sprite);
 static void AnimDigDirtMound(struct Sprite *sprite);
 static void AnimMudSportDirtRising(struct Sprite *sprite);
 static void AnimMudSportDirtFalling(struct Sprite *sprite);
-static void AnimTask_DigDisappear(u8 taskId);
-static void AnimTask_DigBounceMovement(u8 taskId);
+static void AnimTask_DigDisappear(u32 taskId);
+static void AnimTask_DigBounceMovement(u32 taskId);
 static void SetDigScanlineEffect(u32 useBg1, s16 y, s16 endY);
-static void AnimTask_DigSetVisibleUnderground(u8 taskId);
-static void AnimTask_DigRiseUpFromHole(u8 taskId);
-static void AnimTask_HorizontalShakeTerrain(u8 taskId);
-static void AnimTask_HorizontalShakeBattlers(u8 taskId);
+static void AnimTask_DigSetVisibleUnderground(u32 taskId);
+static void AnimTask_DigRiseUpFromHole(u32 taskId);
+static void AnimTask_HorizontalShakeTerrain(u32 taskId);
+static void AnimTask_HorizontalShakeBattlers(u32 taskId);
 static void AnimTask_HorizontalShakeBattlersDoShake(struct Task *task);
-static void AnimTask_PositionFissureBgOnBattler_Step(u8 taskId);
+static void AnimTask_PositionFissureBgOnBattler_Step(u32 taskId);
 static void AnimSpikes_Step1(struct Sprite *);
 static void AnimSpikes_Step2(struct Sprite *);
 
@@ -174,7 +174,7 @@ static void AnimBonemerangProjectile(struct Sprite *sprite)
 {
     sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
     sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
-	
+    
     sprite->data[0] = 20;
     sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
     sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
@@ -187,11 +187,11 @@ static void AnimBonemerangProjectileStep(struct Sprite *sprite)
 {
     if (TranslateAnimHorizontalArc(sprite))
     {
-		SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
-		
+        SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
+        
         sprite->data[0] = 20;
-		sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
-		sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+        sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
+        sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
         sprite->data[5] = 40;
         InitAnimArcTranslation(sprite);
         sprite->callback = DestroyAnimSpriteAfterHorizontalTranslation;
@@ -207,10 +207,10 @@ static void AnimBonemerangProjectileStep(struct Sprite *sprite)
 static void AnimBoneHitProjectile(struct Sprite *sprite)
 {
     InitSpritePosToAnimTarget(sprite, TRUE);
-	
+    
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         gBattleAnimArgs[2] = -gBattleAnimArgs[2];
-	
+    
     sprite->data[0] = gBattleAnimArgs[4];
     sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + gBattleAnimArgs[2];
     sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
@@ -230,18 +230,18 @@ void AnimDirtScatter(struct Sprite *sprite)
     s16 xOffset, yOffset;
 
     InitSpritePosToAnimAttacker(sprite, TRUE);
-	
+    
     targetXPos = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
     targetYPos = GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
-	
+    
     xOffset = RandomMax(32);
-	if (xOffset > 16)
+    if (xOffset > 16)
         xOffset = 16 - xOffset;
-	
+    
     yOffset = RandomMax(32);
     if (yOffset > 16)
         yOffset = 16 - yOffset;
-	
+    
     sprite->data[0] = gBattleAnimArgs[2];
     sprite->data[2] = targetXPos + xOffset;
     sprite->data[4] = targetYPos + yOffset;
@@ -255,18 +255,18 @@ void AnimDirtScatter(struct Sprite *sprite)
 // arg 2: initial y pixel offset
 void AnimGeyserSprite(struct Sprite *sprite)
 {
-	u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
-	
-	if (IsBattlerSpriteVisible(battler))
-	{
-		sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X) + gBattleAnimArgs[1];
-		sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[2];
-		
-		sprite->data[0] = gBattleAnimArgs[1] > 0 ? 1 : -1;
-		sprite->callback = AnimMudSportDirtRising;
-	}
-	else
-		DestroyAnimSprite(sprite);
+    u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    
+    if (IsBattlerSpriteVisible(battler))
+    {
+        sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X) + gBattleAnimArgs[1];
+        sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[2];
+        
+        sprite->data[0] = gBattleAnimArgs[1] > 0 ? 1 : -1;
+        sprite->callback = AnimMudSportDirtRising;
+    }
+    else
+        DestroyAnimSprite(sprite);
 }
 
 // Moves a particle of dirt in the Mud Sport animation. The dirt can either be rising upward, or falling down.
@@ -276,12 +276,12 @@ void AnimGeyserSprite(struct Sprite *sprite)
 static void AnimMudSportDirt(struct Sprite *sprite)
 {
     ++sprite->oam.tileNum;
-	
+    
     if (!gBattleAnimArgs[0])
     {
         sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X) + gBattleAnimArgs[1];
         sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[2];
-		
+        
         sprite->data[0] = gBattleAnimArgs[1] > 0 ? 1 : -1;
         sprite->callback = AnimMudSportDirtRising;
     }
@@ -302,7 +302,7 @@ static void AnimMudSportDirtRising(struct Sprite *sprite)
         sprite->x += sprite->data[0];
     }
     sprite->y -= 4;
-	
+    
     if (sprite->y < -4)
         DestroyAnimSprite(sprite);
 }
@@ -313,7 +313,7 @@ static void AnimMudSportDirtFalling(struct Sprite *sprite)
     {
     case 0:
         sprite->y2 += 4;
-		
+        
         if (sprite->y2 >= 0)
         {
             sprite->y2 = 0;
@@ -324,9 +324,9 @@ static void AnimMudSportDirtFalling(struct Sprite *sprite)
         if (++sprite->data[1] > 0)
         {
             sprite->data[1] = 0;
-			
+            
             sprite->invisible ^= TRUE;
-			
+            
             if (++sprite->data[2] == 10)
                 DestroyAnimSprite(sprite);
         }
@@ -336,13 +336,13 @@ static void AnimMudSportDirtFalling(struct Sprite *sprite)
 
 // Animates the battler's dig down movement.
 // arg 0: dig disappear (boolean)
-void AnimTask_DigDownMovement(u8 taskId)
+void AnimTask_DigDownMovement(u32 taskId)
 {
     gTasks[taskId].func = gBattleAnimArgs[0] ? AnimTask_DigDisappear : AnimTask_DigBounceMovement;
     gTasks[taskId].func(taskId);
 }
 
-static void AnimTask_DigBounceMovement(u8 taskId)
+static void AnimTask_DigBounceMovement(u32 taskId)
 {
     u32 var0;
     struct Task *task = &gTasks[taskId];
@@ -352,7 +352,7 @@ static void AnimTask_DigBounceMovement(u8 taskId)
     case 0:
         task->data[10] = GetAnimBattlerSpriteId(ANIM_ATTACKER);
         task->data[11] = GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker);
-		
+        
         if (task->data[11] == 1)
         {
             task->data[12] = gBattle_BG1_X;
@@ -364,13 +364,13 @@ static void AnimTask_DigBounceMovement(u8 taskId)
             task->data[13] = gBattle_BG2_Y;
         }
         var0 = GetBattlerYCoordWithElevation(gBattleAnimAttacker);
-		
+        
         task->data[14] = var0 - 32;
         task->data[15] = var0 + 32;
-		
+        
         if (task->data[14] < 0)
             task->data[14] = 0;
-		
+        
         gSprites[task->data[10]].invisible = TRUE;
         ++task->data[0];
         break;
@@ -380,14 +380,14 @@ static void AnimTask_DigBounceMovement(u8 taskId)
         break;
     case 2:
         task->data[2] = (task->data[2] + 6) & 0x7F;
-		
+        
         if (++task->data[4] > 2)
         {
             task->data[4] = 0;
             ++task->data[3];
         }
         task->data[5] = task->data[3] + (gSineTable[task->data[2]] >> 4);
-		
+        
         if (task->data[11] == 1)
             gBattle_BG1_Y = task->data[13] - task->data[5];
         else
@@ -396,7 +396,7 @@ static void AnimTask_DigBounceMovement(u8 taskId)
         if (task->data[5] > 63)
         {
             task->data[5] = 120 - task->data[14];
-			
+            
             if (task->data[11] == 1)
                 gBattle_BG1_Y = task->data[13] - task->data[5];
             else
@@ -411,37 +411,37 @@ static void AnimTask_DigBounceMovement(u8 taskId)
         ++task->data[0];
         break;
     case 4:
-		gSprites[task->data[10]].invisible = TRUE;
+        gSprites[task->data[10]].invisible = TRUE;
         DestroyAnimVisualTask(taskId);
         break;
     }
 }
 
-static void AnimTask_DigDisappear(u8 taskId)
+static void AnimTask_DigDisappear(u32 taskId)
 {
     u32 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
 
     gSprites[spriteId].x2 = 0;
     gSprites[spriteId].y2 = 0;
-	gSprites[spriteId].invisible = TRUE;
-	
+    gSprites[spriteId].invisible = TRUE;
+    
     if (GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker) == 1)
         gBattle_BG1_Y = 0;
     else
         gBattle_BG2_Y = 0;
-	
+    
     DestroyAnimVisualTask(taskId);
 }
 
 // Animates the battler's dig up movement.
 // arg 0: dig reappear (boolean)
-void AnimTask_DigUpMovement(u8 taskId)
+void AnimTask_DigUpMovement(u32 taskId)
 {
     gTasks[taskId].func = gBattleAnimArgs[0] ? AnimTask_DigRiseUpFromHole : AnimTask_DigSetVisibleUnderground;
     gTasks[taskId].func(taskId);
 }
 
-static void AnimTask_DigSetVisibleUnderground(u8 taskId)
+static void AnimTask_DigSetVisibleUnderground(u32 taskId)
 {
     struct Task *task = &gTasks[taskId];
 
@@ -456,11 +456,11 @@ static void AnimTask_DigSetVisibleUnderground(u8 taskId)
         break;
     case 1:
         DestroyAnimVisualTask(taskId);
-		break;
+        break;
     }
 }
 
-static void AnimTask_DigRiseUpFromHole(u8 taskId)
+static void AnimTask_DigRiseUpFromHole(u32 taskId)
 {
     u32 var0;
     struct Task *task = &gTasks[taskId];
@@ -471,7 +471,7 @@ static void AnimTask_DigRiseUpFromHole(u8 taskId)
         task->data[10] = GetAnimBattlerSpriteId(ANIM_ATTACKER);
         task->data[11] = GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker);
         task->data[12] = task->data[11] == 1 ? gBattle_BG1_X : gBattle_BG2_X;
-		
+        
         var0 = GetBattlerYCoordWithElevation(gBattleAnimAttacker);
         task->data[14] = var0 - 32;
         task->data[15] = var0 + 32;
@@ -487,7 +487,7 @@ static void AnimTask_DigRiseUpFromHole(u8 taskId)
         break;
     case 3:
         gSprites[task->data[10]].y2 -= 8;
-		
+        
         if (gSprites[task->data[10]].y2 == 0)
         {
             gScanlineEffect.state = 3;
@@ -515,17 +515,17 @@ static void SetDigScanlineEffect(u32 useBG1, s16 y, s16 endY)
         bgX = gBattle_BG2_X;
         scanlineParams.dmaDest = &REG_BG2HOFS;
     }
-	
+    
     if (y < 0)
         y = 0;
-	
+    
     while (y < endY)
     {
         gScanlineEffectRegBuffers[0][y] = bgX;
         gScanlineEffectRegBuffers[1][y] = bgX;
         ++y;
     }
-	
+    
     while (y < 160)
     {
         gScanlineEffectRegBuffers[0][y] = bgX + 240;
@@ -556,7 +556,7 @@ static void AnimFissureDirtPlumeParticle(struct Sprite *sprite)
     }
     sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X) + xOffset;
     sprite->y = GetBattlerYCoordWithElevation(battler) + 30;
-	
+    
     sprite->data[0] = gBattleAnimArgs[5];
     sprite->data[2] = sprite->x + gBattleAnimArgs[2];
     sprite->data[4] = sprite->y + gBattleAnimArgs[3];
@@ -576,10 +576,10 @@ static void AnimDigDirtMound(struct Sprite *sprite)
 
     sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X) - 16 + (gBattleAnimArgs[1] * 32);
     sprite->y = GetBattlerYCoordWithElevation(battler) + 32;
-	
+    
     sprite->oam.tileNum += gBattleAnimArgs[1] * 8;
-	sprite->data[0] = gBattleAnimArgs[2];
-	
+    sprite->data[0] = gBattleAnimArgs[2];
+    
     StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
     sprite->callback = WaitAnimForDuration;
 }
@@ -588,7 +588,7 @@ static void AnimDigDirtMound(struct Sprite *sprite)
 // arg 0: What to shake. 0-3 for any specific battler, MAX_BATTLERS_COUNT for all battlers, MAX_BATTLERS_COUNT + 1 for the terrain
 // arg 1: Shake intensity, used to calculate horizontal pixel offset (if 0, use move power instead)
 // arg 2: Length of time to shake for
-void AnimTask_HorizontalShake(u8 taskId)
+void AnimTask_HorizontalShake(u32 taskId)
 {
     u32 i;
     struct Task *task = &gTasks[taskId];
@@ -599,12 +599,12 @@ void AnimTask_HorizontalShake(u8 taskId)
         task->data[14] = task->data[15] = (gAnimMovePower / 10) + 3;
 
     task->data[3] = gBattleAnimArgs[2];
-	
+    
     switch (gBattleAnimArgs[0])
     {
     case MAX_BATTLERS_COUNT: // Shake all battlers
         task->data[13] = 0;
-		
+        
         for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
         {
             if (IsBattlerSpriteVisible(i))
@@ -615,13 +615,13 @@ void AnimTask_HorizontalShake(u8 taskId)
         }
         task->func = AnimTask_HorizontalShakeBattlers;
         break;
-	case MAX_BATTLERS_COUNT + 1: // Shake terrain
+    case MAX_BATTLERS_COUNT + 1: // Shake terrain
         task->data[13] = gBattle_BG3_X;
         task->func = AnimTask_HorizontalShakeTerrain;
         break;
     default: // Skane specified battler
         task->data[9] = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
-		
+        
         if (task->data[9] == 0xFF)
             DestroyAnimVisualTask(taskId);
         else
@@ -633,7 +633,7 @@ void AnimTask_HorizontalShake(u8 taskId)
     }
 }
 
-static void AnimTask_HorizontalShakeTerrain(u8 taskId)
+static void AnimTask_HorizontalShakeTerrain(u32 taskId)
 {
     struct Task *task = &gTasks[taskId];
 
@@ -643,7 +643,7 @@ static void AnimTask_HorizontalShakeTerrain(u8 taskId)
         if (++task->data[1] > 1)
         {
             task->data[1] = 0;
-			
+            
             if (!(task->data[2] & 1))
                 gBattle_BG3_X = task->data[13] + task->data[15];
             else
@@ -661,7 +661,7 @@ static void AnimTask_HorizontalShakeTerrain(u8 taskId)
         if (++task->data[1] > 1)
         {
             task->data[1] = 0;
-			
+            
             if (!(task->data[2] & 1))
                 gBattle_BG3_X = task->data[13] + task->data[14];
             else
@@ -670,7 +670,7 @@ static void AnimTask_HorizontalShakeTerrain(u8 taskId)
             if (++task->data[2] == 4)
             {
                 task->data[2] = 0;
-				
+                
                 if (--task->data[14] == 0)
                     ++task->data[0];
             }
@@ -683,7 +683,7 @@ static void AnimTask_HorizontalShakeTerrain(u8 taskId)
     }
 }
 
-static void AnimTask_HorizontalShakeBattlers(u8 taskId)
+static void AnimTask_HorizontalShakeBattlers(u32 taskId)
 {
     u32 i;
     struct Task *task = &gTasks[taskId];
@@ -694,9 +694,9 @@ static void AnimTask_HorizontalShakeBattlers(u8 taskId)
         if (++task->data[1] > 1)
         {
             task->data[1] = 0;
-			
+            
             AnimTask_HorizontalShakeBattlersDoShake(task);
-			
+            
             if (++task->data[2] == task->data[3])
             {
                 task->data[2] = 0;
@@ -709,13 +709,13 @@ static void AnimTask_HorizontalShakeBattlers(u8 taskId)
         if (++task->data[1] > 1)
         {
             task->data[1] = 0;
-			
+            
             AnimTask_HorizontalShakeBattlersDoShake(task);
-			
+            
             if (++task->data[2] == 4)
             {
                 task->data[2] = 0;
-				
+                
                 if (--task->data[14] == 0)
                     ++task->data[0];
             }
@@ -724,7 +724,7 @@ static void AnimTask_HorizontalShakeBattlers(u8 taskId)
     case 2:
         for (i = 0; i < task->data[13]; ++i)
             gSprites[task->data[9 + i]].x2 = 0;
-		
+        
         DestroyAnimVisualTask(taskId);
         break;
     }
@@ -732,21 +732,21 @@ static void AnimTask_HorizontalShakeBattlers(u8 taskId)
 
 static void AnimTask_HorizontalShakeBattlersDoShake(struct Task *task)
 {
-	u32 i;
+    u32 i;
     u16 xOffset;
 
     if (!(task->data[2] & 1))
         xOffset = (task->data[14] / 2) + (task->data[14] & 1);
     else
         xOffset = -(task->data[14] / 2);
-	
+    
     for (i = 0; i < task->data[13]; ++i)
         gSprites[task->data[9 + i]].x2 = xOffset;
 }
 
 // Returns where the move's power is over 99. Used by MOVE_MAGNITUDE.
 // No args.
-void AnimTask_IsPowerOver99(u8 taskId)
+void AnimTask_IsPowerOver99(u32 taskId)
 {
     gBattleAnimArgs[ARG_RET_ID] = (gAnimMovePower > 99);
     DestroyAnimVisualTask(taskId);
@@ -755,21 +755,21 @@ void AnimTask_IsPowerOver99(u8 taskId)
 // Positiones the fissure bg.
 // arg 0: anim battler
 // arg 1: task subpriority
-void AnimTask_PositionFissureBgOnBattler(u8 taskId)
+void AnimTask_PositionFissureBgOnBattler(u32 taskId)
 {
-	u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
     struct Task *newTask = &gTasks[CreateTask(AnimTask_PositionFissureBgOnBattler_Step, gBattleAnimArgs[1])];
     
     newTask->data[1] = (32 - GetBattlerSpriteCoord(battler, BATTLER_COORD_X)) & 0x1FF;
     newTask->data[2] = (64 - GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET)) & 0xFF;
-	
+    
     gBattle_BG3_X = newTask->data[1];
     gBattle_BG3_Y = newTask->data[2];
-	
+    
     DestroyAnimVisualTask(taskId);
 }
 
-static void AnimTask_PositionFissureBgOnBattler_Step(u8 taskId)
+static void AnimTask_PositionFissureBgOnBattler_Step(u32 taskId)
 {
     struct Task *task = &gTasks[taskId];
 
@@ -798,7 +798,7 @@ void AnimSpikes(struct Sprite *sprite)
 
     InitSpritePosToAnimAttacker(sprite, TRUE);
     SetAverageBattlerPositions(gBattleAnimTarget, FALSE, &x, &y);
-	
+    
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         gBattleAnimArgs[2] = -gBattleAnimArgs[2];
 

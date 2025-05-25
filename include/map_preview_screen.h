@@ -3,10 +3,10 @@
 
 enum
 {
-	MAP_PREVIEW_TYPE_NONE, // No map preview
-	MAP_PREVIEW_TYPE_CAVE,
-	MAP_PREVIEW_TYPE_FOREST,
-	MAP_PREVIEW_TYPE_ANY,
+    MAP_PREVIEW_TYPE_NONE, // No map preview
+    MAP_PREVIEW_TYPE_CAVE,
+    MAP_PREVIEW_TYPE_FOREST,
+    MAP_PREVIEW_TYPE_ANY,
 };
 
 struct MapPreviewScreen
@@ -14,7 +14,7 @@ struct MapPreviewScreen
     const void * tilesptr;
     const void * tilemapptr;
     const void * palptr;
-	u16 worldMapFlag;
+    u16 worldMapFlag;
     u8 type;
 };
 

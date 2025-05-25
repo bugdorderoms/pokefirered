@@ -40,12 +40,13 @@ void SetFontsPointer(const struct FontInfo *fonts)
 
 void DeactivateAllTextPrinters(void)
 {
-    int printer;
+    u32 printer;
+
     for (printer = 0; printer < NUM_TEXT_PRINTERS; ++printer)
         sTextPrinters[printer].active = 0;
 }
 
-u16 AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16))
+bool32 AddTextPrinterParameterized(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16))
 {
     struct TextPrinterTemplate printerTemplate;
 
@@ -65,7 +66,7 @@ u16 AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 
     return AddTextPrinter(&printerTemplate, speed, callback);
 }
 
-u16 AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 fgColor, u8 bgColor, u8 shadowColor)
+bool32 AddTextPrinterParameterized2(u32 windowId, u32 fontId, const u8 *str, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16), u32 fgColor, u32 bgColor, u32 shadowColor)
 {
     struct TextPrinterTemplate printer;
 
@@ -86,7 +87,7 @@ u16 AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed
     return AddTextPrinter(&printer, speed, callback);
 }
 
-void AddTextPrinterParameterized3(u8 windowId, u8 fontId, u8 x, u8 y, const u8 * color, s8 speed, const u8 * str)
+void AddTextPrinterParameterized3(u32 windowId, u32 fontId, u8 x, u8 y, const u8 * color, s8 speed, const u8 * str)
 {
     struct TextPrinterTemplate printer;
 
@@ -106,7 +107,7 @@ void AddTextPrinterParameterized3(u8 windowId, u8 fontId, u8 x, u8 y, const u8 *
     AddTextPrinter(&printer, speed, NULL);
 }
 
-void AddTextPrinterParameterized4(u8 windowId, u8 fontId, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, const u8 *color, s8 speed, const u8 *str)
+void AddTextPrinterParameterized4(u32 windowId, u32 fontId, u8 x, u8 y, u32 letterSpacing, u32 lineSpacing, const u8 *color, s8 speed, const u8 *str)
 {
     struct TextPrinterTemplate printer;
 
@@ -126,7 +127,7 @@ void AddTextPrinterParameterized4(u8 windowId, u8 fontId, u8 x, u8 y, u8 letterS
     AddTextPrinter(&printer, speed, NULL);
 }
 
-void AddTextPrinterParameterized5(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 letterSpacing, u8 lineSpacing)
+void AddTextPrinterParameterized5(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16), u32 letterSpacing, u32 lineSpacing)
 {
     struct TextPrinterTemplate printer;
 
@@ -146,7 +147,7 @@ void AddTextPrinterParameterized5(u8 windowId, u8 fontId, const u8 *str, u8 x, u
     AddTextPrinter(&printer, speed, callback);
 }
 
-bool16 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16))
+bool32 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16))
 {
     int i;
     u16 j;
@@ -161,9 +162,7 @@ bool16 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u8 speed, void
     sTempTextPrinter.scrollDistance = 0;
 
     for (i = 0; i < 7; ++i)
-    {
         sTempTextPrinter.subUnion.fields[i] = 0;
-    }
 
     sTempTextPrinter.printerTemplate = *textSubPrinter;
     sTempTextPrinter.callback = callback;
@@ -171,6 +170,7 @@ bool16 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u8 speed, void
     sTempTextPrinter.japanese = 0;
 
     GenerateFontHalfRowLookupTable(textSubPrinter->fgColor, textSubPrinter->bgColor, textSubPrinter->shadowColor);
+
     if (speed != TEXT_SPEED_FF && speed != 0x0)
     {
         --sTempTextPrinter.textSpeed;
@@ -179,6 +179,7 @@ bool16 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u8 speed, void
     else
     {
         sTempTextPrinter.textSpeed = 0;
+
         for (j = 0; j < 0x400; ++j)
         {
             if ((u32)RenderFont(&sTempTextPrinter) == 1)
@@ -187,6 +188,7 @@ bool16 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u8 speed, void
 
         if (speed != TEXT_SPEED_FF)
           CopyWindowToVram(sTempTextPrinter.printerTemplate.windowId, COPYWIN_GFX);
+
         sTextPrinters[textSubPrinter->windowId].active = 0;
     }
     return TRUE;
@@ -194,19 +196,21 @@ bool16 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u8 speed, void
 
 void RunTextPrinters(void)
 {
-    int i;
+    u32 i;
     u16 temp;
 
-    for (i = 0; i < 0x20; ++i)
+    for (i = 0; i < NUM_TEXT_PRINTERS; ++i)
     {
-        if (sTextPrinters[i].active != 0)
+        if (sTextPrinters[i].active)
         {
             temp = RenderFont(&sTextPrinters[i]);
-            switch (temp) {
+
+            switch (temp)
+            {
                 case 0:
                     CopyWindowToVram(sTextPrinters[i].printerTemplate.windowId, COPYWIN_GFX);
                 case 3:
-                    if (sTextPrinters[i].callback != 0)
+                    if (sTextPrinters[i].callback != NULL)
                         sTextPrinters[i].callback(&sTextPrinters[i].printerTemplate, temp);
                     break;
                 case 1:
@@ -217,7 +221,7 @@ void RunTextPrinters(void)
     }
 }
 
-bool16 IsTextPrinterActive(u8 id)
+bool32 IsTextPrinterActive(u32 id)
 {
     return sTextPrinters[id].active;
 }
@@ -225,6 +229,7 @@ bool16 IsTextPrinterActive(u8 id)
 u32 RenderFont(struct TextPrinter *textPrinter)
 {
     u32 ret;
+
     while (TRUE)
     {
         ret = gFonts[textPrinter->printerTemplate.fontId].fontFunction(textPrinter);
@@ -233,7 +238,7 @@ u32 RenderFont(struct TextPrinter *textPrinter)
     }
 }
 
-void GenerateFontHalfRowLookupTable(u8 fgColor, u8 bgColor, u8 shadowColor)
+void GenerateFontHalfRowLookupTable(u32 fgColor, u32 bgColor, u32 shadowColor)
 {
     int lutIndex;
     int i, j, k, l;
@@ -246,10 +251,16 @@ void GenerateFontHalfRowLookupTable(u8 fgColor, u8 bgColor, u8 shadowColor)
     lutIndex = 0;
 
     for (i = 0; i < 3; i++)
+    {
         for (j = 0; j < 3; j++)
+        {
             for (k = 0; k < 3; k++)
+            {
                 for (l = 0; l < 3; l++)
                     sFontHalfRowLookupTable[lutIndex++] = (colors[l] << 12) | (colors[k] << 8) | (colors[j] << 4) | colors[i];
+            }
+        }
+    }
 }
 
 void SaveTextColors(u8 *fgColor, u8 *bgColor, u8 *shadowColor)
@@ -275,7 +286,7 @@ void DecompressGlyphTile(const u16 *src, u16 *dest)
     }
 }
 
-u8 GetLastTextColor(u8 colorType)
+u32 GetLastTextColor(u32 colorType)
 {
     switch (colorType)
     {
@@ -317,7 +328,7 @@ u8 GetLastTextColor(u8 colorType)
 void CopyGlyphToWindow(struct TextPrinter *textPrinter)
 {
     int glyphWidth, glyphHeight;
-    u8 sizeType;
+    u32 sizeType;
     
     if (gWindows[textPrinter->printerTemplate.windowId].window.width * 8 - textPrinter->printerTemplate.currentX < gGlyphInfo.width)
         glyphWidth = gWindows[textPrinter->printerTemplate.windowId].window.width * 8 - textPrinter->printerTemplate.currentX;
@@ -359,7 +370,7 @@ void CopyGlyphToWindow(struct TextPrinter *textPrinter)
 void sub_8003614(void * tileData, u16 currentX, u16 currentY, u16 width, u16 height)
 {
     int r0, r1;
-    u8 r2;
+    u32 r2;
     u16 r3;
     
     if (width - currentX < gGlyphInfo.width)

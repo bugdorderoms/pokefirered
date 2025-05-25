@@ -131,7 +131,7 @@ static const struct FontInfo gFontInfos[] =
         .bgColor = 0x2,
         .shadowColor = 0xF,
     },
-	[FONT_NARROWER] = {
+    [FONT_NARROWER] = {
         .fontFunction = FontFunc_Narrower,
         .maxLetterWidth = 5,
         .maxLetterHeight = 16,
@@ -163,7 +163,7 @@ static const u8 gMenuCursorDimensions[][2] =
     [FONT_FEMALE]         = { 8,  14 },
     [FONT_BRAILLE]        = { 8,  16 },
     [FONT_BOLD]           = {},
-	[FONT_NARROWER]       = { 8,  15 },
+    [FONT_NARROWER]       = { 8,  15 },
     [FONT_SMALL_NARROWER] = { 8,   8 },
 };
 
@@ -172,7 +172,7 @@ static void WindowFunc_DrawDialogueFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop
 static void WindowFunc_DrawStandardFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum);
 static void WindowFunc_ClearDialogWindowAndFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum);
 static void WindowFunc_ClearStdWindowAndFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum);
-static void Task_FreeBufAfterCopyingTileDataToVram(u8 taskId);
+static void Task_FreeBufAfterCopyingTileDataToVram(u32 taskId);
 
 void ClearScheduledBgCopiesToVram(void)
 {
@@ -214,7 +214,7 @@ void ResetTempTileDataBuffers(void)
 
     for (i = 0; i < ARRAY_COUNT(sTempTileDataBuffers); i++)
         sTempTileDataBuffers[i] = NULL;
-	
+    
     sTempTileDataBufferCursor = 0;
 }
 
@@ -233,7 +233,7 @@ bool32 FreeTempTileDataBuffersIfPossible(void)
         }
         return FALSE;
     }
-	return TRUE;
+    return TRUE;
 }
 
 void *DecompressAndCopyTileDataToVram(u32 bgId, const void *src, u32 size, u16 offset, u32 mode)
@@ -245,7 +245,7 @@ void *DecompressAndCopyTileDataToVram(u32 bgId, const void *src, u32 size, u16 o
         void *ptr = MallocAndDecompress(src, &sizeOut);
         if (!size)
             size = sizeOut;
-		
+        
         if (ptr)
         {
             CopyDecompressedTileDataToVram(bgId, ptr, size, offset, mode);
@@ -265,7 +265,7 @@ void *DecompressAndCopyTileDataToVram2(u32 bgId, const void *src, u32 size, u16 
         void *ptr = MallocAndDecompress(src, &sizeOut);
         if (sizeOut > size)
             sizeOut = size;
-		
+        
         if (ptr)
         {
             CopyDecompressedTileDataToVram(bgId, ptr, sizeOut, offset, mode);
@@ -283,7 +283,7 @@ void DecompressAndLoadBgGfxUsingHeap(u32 bgId, const void *src, u32 size, u16 of
     void *ptr = MallocAndDecompress(src, &sizeOut);
     if (!size)
         size = sizeOut;
-	
+    
     if (ptr)
     {
         u32 taskId = CreateTask(Task_FreeBufAfterCopyingTileDataToVram, 0);
@@ -299,7 +299,7 @@ void DecompressAndLoadBgGfxUsingHeap2(u32 bgId, const void *src, u32 size, u16 o
     void *ptr = MallocAndDecompress(src, &sizeOut);
     if (sizeOut > size)
         sizeOut = size;
-	
+    
     if (ptr)
     {
         u32 taskId = CreateTask(Task_FreeBufAfterCopyingTileDataToVram, 0);
@@ -308,7 +308,7 @@ void DecompressAndLoadBgGfxUsingHeap2(u32 bgId, const void *src, u32 size, u16 o
     }
 }
 
-static void Task_FreeBufAfterCopyingTileDataToVram(u8 taskId)
+static void Task_FreeBufAfterCopyingTileDataToVram(u32 taskId)
 {
     if (!WaitDma3Request(gTasks[taskId].data[0]))
     {
@@ -397,7 +397,7 @@ void AddTextPrinterDiffStyle(bool32 allowSkippingDelayWithButtonPress)
 
     gTextFlags.canABSpeedUpPrint = allowSkippingDelayWithButtonPress;    
     result = ContextNpcGetTextColor();
-	
+    
     if (result == 0)
         AddTextPrinterParameterized2(0, 4, gStringVar4, GetTextSpeedSetting(), nptr, 8, 1, 3);
     else if (result == 1)
@@ -408,7 +408,7 @@ void AddTextPrinterDiffStyle(bool32 allowSkippingDelayWithButtonPress)
 
 void AddTextPrinterForMessage(bool32 allowSkippingDelayWithButtonPress)
 {
-	AddTextPrinterWithCustomSpeedForMessage(allowSkippingDelayWithButtonPress, GetTextSpeedSetting());
+    AddTextPrinterWithCustomSpeedForMessage(allowSkippingDelayWithButtonPress, GetTextSpeedSetting());
 }
 
 void AddTextPrinterWithCustomSpeedForMessage(bool32 allowSkippingDelayWithButtonPress, u32 speed)
@@ -419,8 +419,8 @@ void AddTextPrinterWithCustomSpeedForMessage(bool32 allowSkippingDelayWithButton
 
 void LoadStdWindowFrameGfx(void)
 {
-	Menu_LoadStdPalAt(STD_WINDOW_PALETTE_NUM * 0x10, 0x14);
-	TextWindow_LoadResourcesStdFrame0(0, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
+    Menu_LoadStdPalAt(STD_WINDOW_PALETTE_NUM * 0x10, 0x14);
+    TextWindow_LoadResourcesStdFrame0(0, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
     TextWindow_SetUserSelectedFrame(0, STD_WINDOW_BASE_TILE_NUM, STD_WINDOW_PALETTE_NUM * 0x10);
 }
 
@@ -429,7 +429,7 @@ void DrawDialogueFrame(u32 windowId, bool32 copyToVram)
     CallWindowFunction(windowId, WindowFunc_DrawDialogueFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     PutWindowTilemap(windowId);
-	
+    
     if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -439,7 +439,7 @@ void DrawStdWindowFrame(u32 windowId, bool32 copyToVram)
     CallWindowFunction(windowId, WindowFunc_DrawStandardFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     PutWindowTilemap(windowId);
-	
+    
     if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -449,7 +449,7 @@ void ClearDialogWindowAndFrame(u32 windowId, bool32 copyToVram)
     CallWindowFunction(windowId, WindowFunc_ClearDialogWindowAndFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     ClearWindowTilemap(windowId);
-	
+    
     if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -459,7 +459,7 @@ void ClearStdWindowAndFrame(u32 windowId, bool32 copyToVram)
     CallWindowFunction(windowId, WindowFunc_ClearStdWindowAndFrame);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     ClearWindowTilemap(windowId);
-	
+    
     if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -471,7 +471,7 @@ static void WindowFunc_DrawStandardFrame(u32 bg, u32 tilemapLeft, u32 tilemapTop
     FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 0, tilemapLeft - 1, tilemapTop - 1, 1, 1, STD_WINDOW_PALETTE_NUM);
     FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 1, tilemapLeft, tilemapTop - 1, width, 1, STD_WINDOW_PALETTE_NUM);
     FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 2, tilemapLeft + width, tilemapTop - 1, 1, 1, STD_WINDOW_PALETTE_NUM);
-	
+    
     for (i = tilemapTop; i < tilemapTop + height; i++)
     {
         FillBgTilemapBufferRect(bg, STD_WINDOW_BASE_TILE_NUM + 3, tilemapLeft - 1, i, 1, 1, STD_WINDOW_PALETTE_NUM);
@@ -557,7 +557,7 @@ static void WindowFunc_ClearDialogWindowAndFrame(u32 bg, u32 tilemapLeft, u32 ti
 void EraseFieldMessageBox(bool32 copyToVram)
 {
     FillBgTilemapBufferRect(0, 0, 0, 0, 0x20, 0x20, 0x11);
-	
+    
     if (copyToVram)
         CopyBgTilemapBufferToVram(0);
 }
@@ -569,7 +569,7 @@ void SetStdWindowBorderStyle(u32 windowId, bool32 copyToVram)
 
 void LoadMessageBoxAndFrameGfx(u32 windowId, bool32 copyToVram)
 {
-	TextWindow_LoadResourcesStdFrame0(windowId, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
+    TextWindow_LoadResourcesStdFrame0(windowId, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM * 0x10);
     DrawDialogFrameWithCustomTileAndPalette(windowId, copyToVram, DLG_WINDOW_BASE_TILE_NUM, DLG_WINDOW_PALETTE_NUM);
 }
 
@@ -594,7 +594,7 @@ u32 GetTextSpeedSetting(void)
 {
     if (gSaveBlock2Ptr->optionsTextSpeed > OPTIONS_TEXT_SPEED_FAST)
         gSaveBlock2Ptr->optionsTextSpeed = OPTIONS_TEXT_SPEED_MID;
-	
+    
     return gUnknown_841F428[gSaveBlock2Ptr->optionsTextSpeed];
 }
 

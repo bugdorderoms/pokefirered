@@ -15,15 +15,15 @@ static const struct TrainerMon sParty_BugCatcherRick[] = {
         .iv = TRAINER_MON_IVS(31, 9, 3, 29, 31, 1),
         .lvl = 6,
         .species = SPECIES_WEEDLE,
-		.nickname = COMPOUND_STRING("Weed"),
-		.ev = TRAINER_MON_EVS(252, 10, 10, 10, 10, 10),
-		.heldItem = ITEM_POISON_BARB,
-		.moves = {MOVE_STRING_SHOT, MOVE_TACKLE},
-		.abilityNum = TRAINER_MON_ABILITY(2), // hidden
-		.nature = TRAINER_MON_NATURE(NATURE_SASSY),
-		.isShiny = TRUE,
-		.ballId = ITEM_MASTER_BALL,
-		.gender = TRAINER_MON_FEMALE,
+        .nickname = COMPOUND_STRING("Weed"),
+        .ev = TRAINER_MON_EVS(252, 10, 10, 10, 10, 10),
+        .heldItem = ITEM_POISON_BARB,
+        .moves = {MOVE_STRING_SHOT, MOVE_TACKLE},
+        .abilityNum = TRAINER_MON_ABILITY(2), // hidden
+        .nature = TRAINER_MON_NATURE(NATURE_SASSY),
+        .isShiny = TRUE,
+        .ballId = ITEM_MASTER_BALL,
+        .gender = TRAINER_MON_FEMALE,
     },
 };*/
 

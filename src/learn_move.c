@@ -121,10 +121,10 @@ struct LearnMoveGfxResources
     u8 spriteIds[2];
     u8 scrollPositionMaybe;
     u8 numLearnableMoves;
-	bool8 scheduleMoveInfoUpdate;
+    bool8 scheduleMoveInfoUpdate;
     u8 selectedPartyMember;
     u8 selectedMoveSlot;
-	u16 listMenuScrollPos;
+    u16 listMenuScrollPos;
     u16 listMenuScrollRow;
     u16 learnableMoves[MAX_LV_UP_MOVES];
     const u8 *listMenuStrbufs[MAX_LV_UP_MOVES + 1];
@@ -132,7 +132,7 @@ struct LearnMoveGfxResources
     u8 bg1TilemapBuffer[BG_SCREEN_SIZE];
     u8 textColor[3];
     u8 selectedIndex;
-	struct ListMenuItem listMenuItems[MAX_LV_UP_MOVES + 1];
+    struct ListMenuItem listMenuItems[MAX_LV_UP_MOVES + 1];
 };
 
 static EWRAM_DATA struct LearnMoveGfxResources * sMoveRelearner = NULL;
@@ -319,22 +319,22 @@ static void VBlankCB_MoveRelearner(void)
 
 void ShowMoveTutorMenu(bool32 fromPartyMenu)
 {
-	sOpenFromPartyMenu = fromPartyMenu;
+    sOpenFromPartyMenu = fromPartyMenu;
     SetMainCallback2(CB2_MoveRelearner_Init);
 }
 
 static void MoveRelearnerLoadBgGfx(void)
 {
     u32 i;
-	
+    
     ResetBgsAndClearDma3BusyFlags(FALSE);
     InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
     ResetTempTileDataBuffers();
-	
+    
     if (InitWindows(sWindowTemplates))
     {
         DeactivateAllTextPrinters();
-		
+        
         for (i = 0; i < ARRAY_COUNT(sWindowTemplates); i++)
         {
             ClearWindowTilemap(i);
@@ -400,7 +400,7 @@ static void CB2_MoveRelearner(void)
 {
     if (!IsTextPrinterActive(7))
         MoveRelearnerStateMachine();
-	
+    
     if (sMoveRelearner->scheduleMoveInfoUpdate)
     {
         PrintMoveInfoHandleCancel_CopyToVram();
@@ -417,13 +417,13 @@ static void PrintTextOnWindow(u32 windowId, const u8 *str, u32 x, u32 y, s32 spe
 {
     s32 letterSpacing = 1;
     s32 lineSpacing = 1;
-	
+    
     if (colorIdx == 0 || colorIdx == 1)
     {
         letterSpacing = 0;
         lineSpacing = 0;
     }
-	
+    
     switch (colorIdx)
     {
     case 0:
@@ -439,7 +439,7 @@ static void PrintTextOnWindow(u32 windowId, const u8 *str, u32 x, u32 y, s32 spe
     }
     if (colorIdx != 1)
         FillWindowPixelBuffer(windowId, PIXEL_FILL(sMoveRelearner->textColor[0]));
-	
+    
     AddTextPrinterParameterized4(windowId, 3, x, y, letterSpacing, lineSpacing, sMoveRelearner->textColor, speed, str);
 }
 
@@ -593,14 +593,14 @@ static void MoveRelearnerStateMachine(void)
         {
             FreeAllWindowBuffers();
             Free(sMoveRelearner);
-			
-			if (sOpenFromPartyMenu)
-			{
-				sOpenFromPartyMenu = FALSE;
-				CB2_ReturnToPartyMenuFromSummaryScreen();
-			}
-			else
-				SetMainCallback2(CB2_ReturnToField);
+            
+            if (sOpenFromPartyMenu)
+            {
+                sOpenFromPartyMenu = FALSE;
+                CB2_ReturnToPartyMenuFromSummaryScreen();
+            }
+            else
+                SetMainCallback2(CB2_ReturnToField);
         }
         break;
     case MENU_STATE_FADE_FROM_SUMMARY_SCREEN:
@@ -657,7 +657,7 @@ static void MoveRelearnerStateMachine(void)
 static void DrawTextBorderOnWindows6and7(void)
 {
     u32 i;
-	
+    
     for (i = 6; i < 8; i++)
         DrawTextBorderOuter(i, 0x001, 0xE);
 }
@@ -673,12 +673,12 @@ static void PrintTeachWhichMoveToStrVar1(void)
 static void InitMoveRelearnerStateVariables(void)
 {
     u32 i;
-	
+    
     sMoveRelearner->state = 0;
     sMoveRelearner->scrollPositionMaybe = 0;
     sMoveRelearner->numLearnableMoves = 0;
     sMoveRelearner->scheduleMoveInfoUpdate = FALSE;
-	
+    
     for (i = 0; i < MAX_LV_UP_MOVES; i++)
         sMoveRelearner->learnableMoves[i] = MOVE_NONE;
 }
@@ -686,7 +686,7 @@ static void InitMoveRelearnerStateVariables(void)
 static void SpriteCB_ListMenuScrollIndicators(struct Sprite * sprite)
 {
     s16 abcissa = (sprite->data[1] * 10) & 0xFF;
-	
+    
     switch (sprite->data[0])
     {
     case 0:
@@ -704,10 +704,10 @@ static void SpriteCB_ListMenuScrollIndicators(struct Sprite * sprite)
 static void SpawnListMenuScrollIndicatorSprites(void)
 {
     u32 i;
-	
+    
     LoadSpriteSheet(&sSpriteSheet_ListMenuScrollIndicators);
     LoadSpritePalette(&sSpritePalette_ListMenuScrollIndicators);
-	
+    
     sMoveRelearner->spriteIds[0] = CreateSprite(&sSpriteTemplate_MoveRelearnerListMenuScrollIndicators, 200, 4, 0);
     StartSpriteAnim(&gSprites[sMoveRelearner->spriteIds[0]], 1);
     gSprites[sMoveRelearner->spriteIds[0]].data[0] = 2;
@@ -716,7 +716,7 @@ static void SpawnListMenuScrollIndicatorSprites(void)
     sMoveRelearner->spriteIds[1] = CreateSprite(&sSpriteTemplate_MoveRelearnerListMenuScrollIndicators, 200, 108, 0);
     gSprites[sMoveRelearner->spriteIds[1]].data[0] = 2;
     gSprites[sMoveRelearner->spriteIds[1]].data[2] = 1;
-	
+    
     for (i = 0; i < 2; i++)
         gSprites[sMoveRelearner->spriteIds[i]].invisible = TRUE;
 }
@@ -724,17 +724,17 @@ static void SpawnListMenuScrollIndicatorSprites(void)
 static void MoveRelearnerInitListMenuBuffersEtc(void)
 {
     u32 i;
-	u8 nickname[POKEMON_NAME_LENGTH + 1];
+    u8 nickname[POKEMON_NAME_LENGTH + 1];
     s32 count = sMoveRelearner->numLearnableMoves = GetMoveRelearnerMoves(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves);
 
     for (i = 0; i < sMoveRelearner->numLearnableMoves; i++)
         sMoveRelearner->listMenuStrbufs[i] = gBattleMoves[sMoveRelearner->learnableMoves[i]].name;
-	
+    
     GetMonData(&gPlayerParty[sMoveRelearner->selectedPartyMember], MON_DATA_NICKNAME, nickname);
     StringCopy_Nickname(gStringVar1, nickname);
     sMoveRelearner->listMenuStrbufs[sMoveRelearner->numLearnableMoves] = gFameCheckerText_Cancel;
     sMoveRelearner->numLearnableMoves++;
-	
+    
     for (i = 0; i < count; i++)
     {
         sMoveRelearner->listMenuItems[i].label = sMoveRelearner->listMenuStrbufs[i];
@@ -750,11 +750,11 @@ static void MoveRelearnerInitListMenuBuffersEtc(void)
 static void MoveRelearnerMenuHandleInput(void)
 {
     ListMenu_ProcessInput(sMoveRelearner->listMenuTaskId);
-	
+    
     if (JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
-		
+        
         if (sMoveRelearner->selectedIndex != 0xFE)
         {
             sMoveRelearner->state = 8;
@@ -777,7 +777,7 @@ static void MoveRelearnerMenuHandleInput(void)
     {
         gSprites[0].invisible = FALSE;
         gSprites[1].invisible = FALSE;
-		
+        
         if (sMoveRelearner->scrollPositionMaybe == 0)
             gSprites[0].invisible = TRUE;
         else if (sMoveRelearner->scrollPositionMaybe == sMoveRelearner->numLearnableMoves - 6)
@@ -794,7 +794,7 @@ static void MoveLearnerInitListMenu(void)
 static void PrintMoveInfo(u32 move)
 {
     u8 buffer[50];
-	
+    
     BlitMoveInfoIcon(2, gBattleMoves[move].type + 1, 1, 4);
     BlitMoveInfoIcon(2, gBattleMoves[move].split + 26, 1, 19);
 
@@ -843,8 +843,8 @@ static void PrintMoveInfoHandleCancel_CopyToVram(void)
         PrintMoveInfo(sMoveRelearner->learnableMoves[sMoveRelearner->selectedIndex]);
     else
     {
-		u32 i;
-		
+        u32 i;
+        
         for (i = 2; i < 6; i++)
         {
             FillWindowPixelBuffer(i, PIXEL_FILL(0));
@@ -872,7 +872,7 @@ static void MoveRelearnerMenu_MoveCursorFunc(s32 itemIndex, bool32 onInit, struc
 static s8 YesNoMenuProcessInput(void)
 {
     s8 input = Menu_ProcessInputNoWrapClearOnChoose();
-	
+    
     if (input != -2)
     {
         PutWindowTilemap(6);

@@ -1,4 +1,4 @@
-.equ LOCALID_RIVAL,    1
+.equ LOCALID_RIVAL,	1
 .equ LOCALID_PROF_OAK, 2
 
 PokemonLeague_ChampionsRoom_MapScripts:: @ 8162AE2

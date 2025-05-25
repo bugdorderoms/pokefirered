@@ -70,7 +70,7 @@ void SubtractMoneyFromVar0x8005(void)
 
 void PrintMoneyAmountInMoneyBox(u32 windowId, u32 amount, u32 speed)
 {
-	PrintMoneyAmount(windowId, 64 - GetStringWidth(0, gStringVar4, 0), 0xC, amount, speed);
+    PrintMoneyAmount(windowId, 64 - GetStringWidth(0, gStringVar4, 0), 0xC, amount, speed);
 }
 
 void PrintMoneyAmount(u32 windowId, u32 x, u32 y, u32 amount, u32 speed)

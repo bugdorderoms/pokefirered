@@ -80,3 +80,4 @@ static const u32 sInterfacePal_TimerBall[] = INCBIN_U32("graphics/interface/ball
 
 static const u32 sInterfaceGfx_UltraBall[] = INCBIN_U32("graphics/interface/ball/ultra.4bpp.lz");
 static const u32 sInterfacePal_UltraBall[] = INCBIN_U32("graphics/interface/ball/ultra.gbapal.lz");
+

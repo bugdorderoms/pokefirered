@@ -26,7 +26,7 @@ struct IntroSequenceData
 {
     IntroCallback callback;
     u8 state;
-    u8 taskId;
+    u32 taskId;
     bool8 gengarAttackLanded;
     u16 data[6];
     struct Sprite * gameFreakLogoArtSprite;
@@ -66,7 +66,7 @@ static void CB2_Intro(void);
 static void VBlankCB_Intro(void);
 static void Intro_ResetGpuRegs(void);
 static void StartIntroSequence(void);
-static void Task_CallIntroCallback(u8 taskId);
+static void Task_CallIntroCallback(u32 taskId);
 static void SetIntroCB(struct IntroSequenceData * ptr, IntroCallback cb);
 static void IntroCB_Init(struct IntroSequenceData * ptr);
 static void IntroCB_OpenWin1ToTheaterDimensions(struct IntroSequenceData * ptr);
@@ -74,17 +74,17 @@ static void IntroCB_GameFreakStar(struct IntroSequenceData * ptr);
 static void IntroCB_GameFreakScene_RevealGameFreakText(struct IntroSequenceData * ptr);
 static void IntroCB_GameFreakScene_CreateGameFreakLogo(struct IntroSequenceData * ptr);
 static void IntroCB_FightScene(struct IntroSequenceData * ptr);
-static void Task_FightScene1_GrassyFieldAnim(u8 taskId);
+static void Task_FightScene1_GrassyFieldAnim(u32 taskId);
 static void FightScene1_SignalEndGrassyFieldAnim(void);
-static void Task_FightScene1_ZoomEffect(u8 taskId);
+static void Task_FightScene1_ZoomEffect(u32 taskId);
 static void IntroCB_FightScene2(struct IntroSequenceData * ptr);
-static void Task_FightScene2_CameraHorizPanEffect(u8 taskId);
-static void Task_FightScene2_CameraVertPanEffect(u8 taskId);
+static void Task_FightScene2_CameraHorizPanEffect(u32 taskId);
+static void Task_FightScene2_CameraVertPanEffect(u32 taskId);
 static void CreateMonStaticSprites(struct IntroSequenceData * ptr);
 static void DestroyStaticMonSprites(struct IntroSequenceData * ptr);
 static void IntroCB_FightScene3(struct IntroSequenceData * ptr);
 static void FightScene3_StartBg1Scroll(void);
-static void Task_FightScene3_ForestBgScroll(u8 taskId);
+static void Task_FightScene3_ForestBgScroll(u32 taskId);
 static void CreateGrassSprite(struct IntroSequenceData * ptr);
 static void SpriteCB_Grass(struct Sprite * sprite);
 static void IntroCB_FightScene4(struct IntroSequenceData * ptr);
@@ -94,15 +94,15 @@ static void FightScene4_StartGengarAffineAnim(struct IntroSequenceData * ptr);
 static void IntroCB_CleanUp(struct IntroSequenceData * ptr);
 static void GameFreakScene_LoadGfxCreateStar(void);
 static void GameFreakScene_StartTrailingSparkleSpawner(void);
-static void Task_GameFreakScene_TrailingSparkleSpawner(u8 taskId);
+static void Task_GameFreakScene_TrailingSparkleSpawner(u32 taskId);
 static void GameFreakScene_StartRevealGameFreakTextSparklesSpawner(void);
-static void Task_RevealGameFreakTextSparklesSpawner(u8 taskId);
+static void Task_RevealGameFreakTextSparklesSpawner(u32 taskId);
 static struct Sprite * CreateGameFreakLogoArtSprite(void);
 static void FightScene4_StartGengarAttack(struct IntroSequenceData * ptr);
-static void Task_FightScene4_GengarAttack(u8 taskId);
+static void Task_FightScene4_GengarAttack(u32 taskId);
 static void FightScene4_CreateGengarSwipeSprites(void);
 static void SpriteCB_GengarSwipe(struct Sprite * sprite);
-static void Task_FightScene3_Bg0Scroll(u8 taskId);
+static void Task_FightScene3_Bg0Scroll(u32 taskId);
 static void SpriteCB_LargeStar(struct Sprite * sprite);
 static void SpriteCB_TrailingSparkles(struct Sprite * sprite);
 static void SpriteCB_TrailingSparkles2(struct Sprite * sprite);
@@ -261,69 +261,69 @@ static const struct BgTemplate sBgTemplates_FightScene2[] = {
 };
 
 static const struct BgTemplate sBgTemplates_FightScene3[] = {
-	{
-	    .bg = 1,
-	    .charBaseIndex = 0,
-	    .mapBaseIndex = 29,
-	    .screenSize = 0,
-	    .paletteMode = 0,
-	    .priority = 1,
-	    .baseTile = 0x000
+    {
+        .bg = 1,
+        .charBaseIndex = 0,
+        .mapBaseIndex = 29,
+        .screenSize = 0,
+        .paletteMode = 0,
+        .priority = 1,
+        .baseTile = 0x000
     }, {
-	    .bg = 0,
-	    .charBaseIndex = 1,
-	    .mapBaseIndex = 30,
-	    .screenSize = 2,
-	    .paletteMode = 0,
-	    .priority = 0,
-	    .baseTile = 0x000
-	}
+        .bg = 0,
+        .charBaseIndex = 1,
+        .mapBaseIndex = 30,
+        .screenSize = 2,
+        .paletteMode = 0,
+        .priority = 0,
+        .baseTile = 0x000
+    }
 };
 
 static const struct WindowTemplate sWindowTemplate[] = {
-	{
-	    .bg = 2,
-	    .tilemapLeft = 6,
-	    .tilemapTop = 4,
-	    .width = 18,
-	    .height = 9,
-	    .paletteNum = 0xD,
-	    .baseBlock = 0x000
+    {
+        .bg = 2,
+        .tilemapLeft = 6,
+        .tilemapTop = 4,
+        .width = 18,
+        .height = 9,
+        .paletteNum = 0xD,
+        .baseBlock = 0x000
     }, DUMMY_WIN_TEMPLATE
 };
 
 static const u8 sGengarBackSpritePos2UpdateMods[][2] = {
-	{0x3f, 0x3f},
-	{0x00, 0x3f},
-	{0x3f, 0x00},
-	{0x00, 0x00}
+    {0x3f, 0x3f},
+    {0x00, 0x3f},
+    {0x3f, 0x00},
+    {0x00, 0x00}
 };
 
 static const struct CompressedSpriteSheet sSpriteSheets_GameFreakScene[] = {
-	{sSpriteTiles_LargeStar, 0x0080, 0},
-	{sSpriteTiles_TrailingSparkles, 0x0080, 1},
-	{sSpriteTiles_RevealGameFreakTextSparkles, 0x0800, 2},
-	{sSpriteTiles_GameFreakLogoArt, 0x0400, 3},
-	{sSpriteTiles_PresentsText, 0x0100, 4}
+    {sSpriteTiles_LargeStar, 0x0080, 0},
+    {sSpriteTiles_TrailingSparkles, 0x0080, 1},
+    {sSpriteTiles_RevealGameFreakTextSparkles, 0x0800, 2},
+    {sSpriteTiles_GameFreakLogoArt, 0x0400, 3},
+    {sSpriteTiles_PresentsText, 0x0100, 4}
 };
 
 static const struct SpritePalette sSpritePalettes_GameFreakScene[] = {
-	{sSpritePals_LargeStar, 0},
-	{sSpritePals_Sparkles, 1},
-	{sSpritePals_GameFreakPresents, 3},
-	{0}
+    {sSpritePals_LargeStar, 0},
+    {sSpritePals_Sparkles, 1},
+    {sSpritePals_GameFreakPresents, 3},
+    {0}
 };
 
 static const struct Coords16 sTrailingSparkleCoords[] = {
-	{0x0048, 0x0050},
-	{0x0088, 0x004a},
-	{0x00a8, 0x0050},
-	{0x0078, 0x0050},
-	{0x0068, 0x0056},
-	{0x0058, 0x004a},
-	{0x00b8, 0x004a},
-	{0x0038, 0x0056},
-	{0x0098, 0x0056}
+    {0x0048, 0x0050},
+    {0x0088, 0x004a},
+    {0x00a8, 0x0050},
+    {0x0078, 0x0050},
+    {0x0068, 0x0056},
+    {0x0058, 0x004a},
+    {0x00b8, 0x004a},
+    {0x0038, 0x0056},
+    {0x0098, 0x0056}
 };
 
 static const struct OamData gOamData_840BC2C = {
@@ -353,24 +353,24 @@ static const struct OamData gOamData_840BC34 = {
 };
 
 static const union AnimCmd gAnimCmd_840BC3C[] = {
-	ANIMCMD_FRAME(0, 4),
-	ANIMCMD_FRAME(1, 4),
-	ANIMCMD_FRAME(2, 4),
-	ANIMCMD_FRAME(3, 4),
-	ANIMCMD_JUMP(0)
+    ANIMCMD_FRAME(0, 4),
+    ANIMCMD_FRAME(1, 4),
+    ANIMCMD_FRAME(2, 4),
+    ANIMCMD_FRAME(3, 4),
+    ANIMCMD_JUMP(0)
 };
 
 static const union AnimCmd gAnimCmd_840BC50[] = {
-	ANIMCMD_FRAME(0, 4),
-	ANIMCMD_FRAME(1, 4),
-	ANIMCMD_FRAME(2, 4),
-	ANIMCMD_FRAME(3, 4),
-	ANIMCMD_END
+    ANIMCMD_FRAME(0, 4),
+    ANIMCMD_FRAME(1, 4),
+    ANIMCMD_FRAME(2, 4),
+    ANIMCMD_FRAME(3, 4),
+    ANIMCMD_END
 };
 
 static const union AnimCmd *const gAnimCmdTable_840BC64[] = {
-	gAnimCmd_840BC3C,
-	gAnimCmd_840BC50
+    gAnimCmd_840BC3C,
+    gAnimCmd_840BC50
 };
 
 static const struct SpriteTemplate sSpriteTemplate_LargeStar = {
@@ -407,15 +407,15 @@ static const struct OamData gOamData_840BC9C = {
 };
 
 static const union AnimCmd gAnimCmd_840BCA4[] = {
-	ANIMCMD_FRAME(0, 8),
-	ANIMCMD_FRAME(16, 8),
-	ANIMCMD_FRAME(32, 8),
-	ANIMCMD_FRAME(48, 8),
-	ANIMCMD_END
+    ANIMCMD_FRAME(0, 8),
+    ANIMCMD_FRAME(16, 8),
+    ANIMCMD_FRAME(32, 8),
+    ANIMCMD_FRAME(48, 8),
+    ANIMCMD_END
 };
 
 static const union AnimCmd *const gAnimCmdTable_840BCB8[] = {
-	gAnimCmd_840BCA4
+    gAnimCmd_840BCA4
 };
 
 static const struct SpriteTemplate sSpriteTemplate_RevealGameFreakTextSparkles = {
@@ -488,52 +488,52 @@ static const struct OamData gOamData_840BD14 = {
 };
 
 static const union AnimCmd gAnimCmd_840BD1C[] = {
-	ANIMCMD_FRAME(0, 1),
-	ANIMCMD_END
+    ANIMCMD_FRAME(0, 1),
+    ANIMCMD_END
 };
 
 static const union AnimCmd gAnimCmd_840BD24[] = {
-	ANIMCMD_FRAME(64, 1),
-	ANIMCMD_END
+    ANIMCMD_FRAME(64, 1),
+    ANIMCMD_END
 };
 
 static const union AnimCmd gAnimCmd_840BD2C[] = {
-	ANIMCMD_FRAME(128, 1),
-	ANIMCMD_END
+    ANIMCMD_FRAME(128, 1),
+    ANIMCMD_END
 };
 
 static const union AnimCmd gAnimCmd_840BD34[] = {
-	ANIMCMD_FRAME(192, 1),
-	ANIMCMD_END
+    ANIMCMD_FRAME(192, 1),
+    ANIMCMD_END
 };
 
 static const union AnimCmd gAnimCmd_840BD3C[] = {
-	ANIMCMD_FRAME(256, 1),
-	ANIMCMD_END
+    ANIMCMD_FRAME(256, 1),
+    ANIMCMD_END
 };
 
 static const union AnimCmd *const sAnimTable_NidorinoAnim[] = {
-	gAnimCmd_840BD1C,
-	gAnimCmd_840BD24,
-	gAnimCmd_840BD2C,
-	gAnimCmd_840BD34,
-	gAnimCmd_840BD3C
+    gAnimCmd_840BD1C,
+    gAnimCmd_840BD24,
+    gAnimCmd_840BD2C,
+    gAnimCmd_840BD34,
+    gAnimCmd_840BD3C
 };
 
 static const union AffineAnimCmd gAffineAnimCmd_840BD58[] = {
-	AFFINEANIMCMD_FRAME(256, 256, 0, 0),
-	AFFINEANIMCMD_END
+    AFFINEANIMCMD_FRAME(256, 256, 0, 0),
+    AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd gAffineAnimCmd_840BD68[] = {
-	AFFINEANIMCMD_FRAME(256, 256, 0, 0),
-	AFFINEANIMCMD_FRAME(32, 32, 0, 8),
-	AFFINEANIMCMD_END
+    AFFINEANIMCMD_FRAME(256, 256, 0, 0),
+    AFFINEANIMCMD_FRAME(32, 32, 0, 8),
+    AFFINEANIMCMD_END
 };
 
 static const union AffineAnimCmd *const sAffineAnimTable_NidorinoAnim[] = {
-	gAffineAnimCmd_840BD58,
-	gAffineAnimCmd_840BD68
+    gAffineAnimCmd_840BD58,
+    gAffineAnimCmd_840BD68
 };
 
 static const struct SpriteTemplate sSpriteTemplate_NidorinoAnim = {
@@ -593,19 +593,19 @@ static const struct OamData gOamData_840BDD8 = {
 };
 
 static const union AnimCmd gAnimCmds_840BDE0[] = {
-	ANIMCMD_FRAME(0, 0),
-	ANIMCMD_END
+    ANIMCMD_FRAME(0, 0),
+    ANIMCMD_END
 };
 
 static const union AnimCmd gAnimCmds_840BDE8[] = {
-	ANIMCMD_FRAME(32, 4),
-	ANIMCMD_FRAME(0, 4),
-	ANIMCMD_END
+    ANIMCMD_FRAME(32, 4),
+    ANIMCMD_FRAME(0, 4),
+    ANIMCMD_END
 };
 
 static const union AnimCmd *const gAnimCmdTable_840BDF4[] = {
-	gAnimCmds_840BDE0,
-	gAnimCmds_840BDE8
+    gAnimCmds_840BDE0,
+    gAnimCmds_840BDE8
 };
 
 static const struct SpriteTemplate sSpriteTemplate_Grass = {
@@ -632,30 +632,30 @@ static const struct OamData gOamData_840BE14 = {
 };
 
 static const union AnimCmd gAnimCmd_840BE1C[] = {
-	ANIMCMD_FRAME(0, 0),
-	ANIMCMD_END
+    ANIMCMD_FRAME(0, 0),
+    ANIMCMD_END
 };
 
 static const union AnimCmd gAnimCmd_840BE24[] = {
-	ANIMCMD_FRAME(64, 0),
-	ANIMCMD_END
+    ANIMCMD_FRAME(64, 0),
+    ANIMCMD_END
 };
 
 static const union AnimCmd gAnimCmd_840BE2C[] = {
-	ANIMCMD_FRAME(96, 0),
-	ANIMCMD_END
+    ANIMCMD_FRAME(96, 0),
+    ANIMCMD_END
 };
 
 static const union AnimCmd gAnimCmd_840BE34[] = {
-	ANIMCMD_FRAME(160, 0),
-	ANIMCMD_END
+    ANIMCMD_FRAME(160, 0),
+    ANIMCMD_END
 };
 
 static const union AnimCmd *const gAnimCmdTable_840BE3C[] = {
-	gAnimCmd_840BE1C,
-	gAnimCmd_840BE24,
-	gAnimCmd_840BE2C,
-	gAnimCmd_840BE34
+    gAnimCmd_840BE1C,
+    gAnimCmd_840BE24,
+    gAnimCmd_840BE2C,
+    gAnimCmd_840BE34
 };
 
 static const struct SpriteTemplate sSpriteTemplate_GengarBack = {
@@ -682,20 +682,20 @@ static const struct OamData gOamData_840BE64 = {
 };
 
 static const union AnimCmd gAnimCmd_840BE6C[] = {
-	ANIMCMD_FRAME(0, 8),
-	ANIMCMD_FRAME(32, 4),
-	ANIMCMD_END
+    ANIMCMD_FRAME(0, 8),
+    ANIMCMD_FRAME(32, 4),
+    ANIMCMD_END
 };
 
 static const union AnimCmd gAnimCmd_840BE78[] = {
-	ANIMCMD_FRAME(64, 8),
-	ANIMCMD_FRAME(72, 4),
-	ANIMCMD_END
+    ANIMCMD_FRAME(64, 8),
+    ANIMCMD_FRAME(72, 4),
+    ANIMCMD_END
 };
 
 static const union AnimCmd *const gAnimCmdTable_840BE84[] = {
-	gAnimCmd_840BE6C,
-	gAnimCmd_840BE78
+    gAnimCmd_840BE6C,
+    gAnimCmd_840BE78
 };
 
 static const struct SpriteTemplate sSpriteTemplate_GengarSwipe = {
@@ -722,15 +722,15 @@ static const struct OamData gOamData_840BEA4 = {
 };
 
 static const union AnimCmd gAnimCmd_840BEAC[] = {
-	ANIMCMD_FRAME(0, 10),
-	ANIMCMD_FRAME(4, 10),
-	ANIMCMD_FRAME(8, 10),
-	ANIMCMD_FRAME(12, 8),
-	ANIMCMD_END
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_FRAME(4, 10),
+    ANIMCMD_FRAME(8, 10),
+    ANIMCMD_FRAME(12, 8),
+    ANIMCMD_END
 };
 
 static const union AnimCmd *const gAnimCmdTable_840BEC0[] = {
-	gAnimCmd_840BEAC
+    gAnimCmd_840BEAC
 };
 
 static const struct SpriteTemplate sSpriteTemplate_NidorinoRecoilDust = {
@@ -744,21 +744,21 @@ static const struct SpriteTemplate sSpriteTemplate_NidorinoRecoilDust = {
 };
 
 static const struct CompressedSpriteSheet sFightSceneSpriteSheets[] = {
-	{sSpriteTiles_GengarStatic, 0x0800, 6},
-	{sSpriteTiles_NidorinoStatic, 0x0800, 7},
-	{sSpriteTiles_NidorinoAnim, 0x2800, 5},
-	{sSpriteTiles_Grass, 0x0800, 8},
-	{sSpriteTiles_GengarBack, 0x1800, 9},
-	{sSpriteTiles_GengarSwipe, 0x0a00, 10},
-	{sSpriteTiles_NidorinoRecoilDust, 0x0200, 11}
+    {sSpriteTiles_GengarStatic, 0x0800, 6},
+    {sSpriteTiles_NidorinoStatic, 0x0800, 7},
+    {sSpriteTiles_NidorinoAnim, 0x2800, 5},
+    {sSpriteTiles_Grass, 0x0800, 8},
+    {sSpriteTiles_GengarBack, 0x1800, 9},
+    {sSpriteTiles_GengarSwipe, 0x0a00, 10},
+    {sSpriteTiles_NidorinoRecoilDust, 0x0200, 11}
 };
 
 static const struct SpritePalette sFightSceneSpritePalettes[] = {
-	{sSpritePals_Gengar, 6},
-	{sSpritePals_Nidorino, 7},
-	{sSpritePals_Grass, 8},
-	{sSpritePals_GengarSwipe, 10},
-	{sSpritePals_NidorinoRecoilDust, 11},
+    {sSpritePals_Gengar, 6},
+    {sSpritePals_Nidorino, 7},
+    {sSpritePals_Grass, 8},
+    {sSpritePals_GengarSwipe, 10},
+    {sSpritePals_NidorinoRecoilDust, 11},
     {0}
 };
 
@@ -969,7 +969,7 @@ static void SetIntroCB(struct IntroSequenceData * ptr, IntroCallback cb)
     ptr->state = 0;
 }
 
-static void Task_CallIntroCallback(u8 taskId)
+static void Task_CallIntroCallback(u32 taskId)
 {
     struct IntroSequenceData * ptr = (void *)GetWordTaskArg(taskId, 0);
     if (JOY_NEW(A_BUTTON | START_BUTTON | SELECT_BUTTON) && ptr->callback != IntroCB_CleanUp)
@@ -1234,7 +1234,7 @@ static void IntroCB_FightScene(struct IntroSequenceData * this)
     }
 }
 
-static void Task_FightScene1_GrassyFieldAnim(u8 taskId)
+static void Task_FightScene1_GrassyFieldAnim(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -1259,7 +1259,7 @@ static void FightScene1_SignalEndGrassyFieldAnim(void)
     gTasks[FindTaskIdByFunc(Task_FightScene1_GrassyFieldAnim)].data[2] = TRUE;
 }
 
-static void Task_FightScene1_ZoomEffect(u8 taskId)
+static void Task_FightScene1_ZoomEffect(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -1360,13 +1360,13 @@ static void IntroCB_FightScene2(struct IntroSequenceData * this)
     }
 }
 
-static void Task_FightScene2_CameraHorizPanEffect(u8 taskId)
+static void Task_FightScene2_CameraHorizPanEffect(u32 taskId)
 {
     ChangeBgX(3, 0x0E0, 2);
     ChangeBgX(0, 0x110, 1);
 }
 
-static void Task_FightScene2_CameraVertPanEffect(u8 taskId)
+static void Task_FightScene2_CameraVertPanEffect(u32 taskId)
 {
     ChangeBgY(2, 0x020, 1);
     ChangeBgY(1, 0x024, 2);
@@ -1456,7 +1456,7 @@ static void IntroCB_FightScene3(struct IntroSequenceData * this)
     }
 }
 
-static void Task_FightScene3_Bg1Scroll(u8 taskId)
+static void Task_FightScene3_Bg1Scroll(u32 taskId)
 {
     if (gTasks[taskId].data[0] == 0)
         ChangeBgX(1, 0x400, 2);
@@ -1474,10 +1474,10 @@ static void FightScene3_SlowBg1Scroll(void)
     gTasks[FindTaskIdByFunc(Task_FightScene3_Bg1Scroll)].data[0] = 1;
 }
 
-static void Task_FightScene3_ForestBgScroll(u8 taskId)
+static void Task_FightScene3_ForestBgScroll(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
-	
+    
     if (data[0] == 0)
     {
         data[1]++;
@@ -1508,7 +1508,7 @@ static bool32 FightScene3_GetForestBgScrollState(void)
 static void CreateGrassSprite(struct IntroSequenceData * this)
 {
     u32 spriteId = CreateSprite(&sSpriteTemplate_Grass, 296, 112, 7);
-	
+    
     if (spriteId != MAX_SPRITES)
     {
         this->grassSprite = &gSprites[spriteId];
@@ -1704,7 +1704,7 @@ static void CreateGengarBackSprite(struct IntroSequenceData * this)
         int x = (i & 1) * 48 + 49;
         int y = (i / 2) * 64 + 72;
         u32 spriteId = CreateSprite(&sSpriteTemplate_GengarBack, x, y, 8);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             StartSpriteAnim(&gSprites[spriteId], i);
@@ -1771,7 +1771,7 @@ static void GameFreakScene_LoadGfxCreateStar(void)
         LoadCompressedSpriteSheet(&sSpriteSheets_GameFreakScene[i]);
 
     LoadSpritePalettes(sSpritePalettes_GameFreakScene);
-	
+    
     sLargeStarXSpeed = 0x60;
     sLargeStarYSpeed = 0x10;
     sTrailingSparklesXmodMask = 0x07;
@@ -1782,10 +1782,10 @@ static void GameFreakScene_LoadGfxCreateStar(void)
     sTrailingSparklesYspeed = 1;
     sTrailingSparklesXprecision = 5;
     sTrailingSparklesYprecision = 5;
-	
+    
     if (sTrailingSparklesRngSeed == 0)
         sTrailingSparklesRngSeed = 354128453;
-	
+    
     spriteId = CreateSprite(&sSpriteTemplate_LargeStar, 0xF8, 0x37, 0);
     if (spriteId != MAX_SPRITES)
     {
@@ -1827,7 +1827,7 @@ static void GameFreakScene_StartTrailingSparkleSpawner(void)
     CreateTask(Task_GameFreakScene_TrailingSparkleSpawner, 1);
 }
 
-static void Task_GameFreakScene_TrailingSparkleSpawner(u8 taskId)
+static void Task_GameFreakScene_TrailingSparkleSpawner(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     u32 r6, spriteId;
@@ -1862,7 +1862,7 @@ static void GameFreakScene_StartRevealGameFreakTextSparklesSpawner(void)
     CreateTask(Task_RevealGameFreakTextSparklesSpawner, 2);
 }
 
-static void Task_RevealGameFreakTextSparklesSpawner(u8 taskId)
+static void Task_RevealGameFreakTextSparklesSpawner(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     u32 r2;
@@ -1892,7 +1892,7 @@ static struct Sprite * CreateGameFreakLogoArtSprite(void)
 static void Rev1_GameFreakScene_CreatePresentsText(void)
 {
     u32 i;
-	
+    
     for (i = 0; i < 2; i++)
         gSprites[CreateSprite(&sSpriteTemplate_PresentsText, 0x68 + 32 * i, 0x6c, 5)].oam.tileNum += i * 4;
 }
@@ -1901,9 +1901,9 @@ static void Rev1_GameFreakScene_CreatePresentsText(void)
 static void FightScene4_StartGengarAttack(struct IntroSequenceData * this)
 {
     u32 taskId;
-	
+    
     this->gengarAttackLanded = FALSE;
-	
+    
     taskId = CreateTask(Task_FightScene4_GengarAttack, 4);
     SetWordTaskArg(taskId, 5, (uintptr_t)this);
     gTasks[taskId].data[3] = 64;
@@ -1918,12 +1918,12 @@ static void FightScene4_ApplyGengarAnim(int a, int b, int c, int d)
     ChangeBgY(0, c << 8, 2);
 }
 
-static void Task_FightScene4_GengarAttack(u8 taskId)
+static void Task_FightScene4_GengarAttack(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     int b, c;
     int angle;
-	
+    
     switch (data[0])
     {
     case 0:
@@ -1995,7 +1995,7 @@ static void FightScene4_CreateGengarSwipeSprites(void)
     
     CreateSprite(&sSpriteTemplate_GengarSwipe, 132,  78, 6);
     spriteId = CreateSprite(&sSpriteTemplate_GengarSwipe, 132, 118, 6);
-	
+    
     if (spriteId != MAX_SPRITES)
     {
         gSprites[spriteId].oam.shape = ST_OAM_H_RECTANGLE;
@@ -2008,12 +2008,12 @@ static void FightScene4_CreateGengarSwipeSprites(void)
 static void SpriteCB_GengarSwipe(struct Sprite * sprite)
 {
     sprite->invisible ^= TRUE;
-	
+    
     if (sprite->animEnded)
         DestroySprite(sprite);
 }
 
-static void Task_FightScene3_Bg0Scroll(u8 taskId)
+static void Task_FightScene3_Bg0Scroll(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     static EWRAM_DATA u32 gUnknown_203AB30 = 0;
@@ -2311,7 +2311,7 @@ static void CreateNidorinoRecoilDustSprites(s16 x, s16 y, s16 seed)
     for (i = 0; i < 2; i++)
     {
         spriteId = CreateSprite(&sSpriteTemplate_NidorinoRecoilDust, x - 22, y + 24, 10);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             gSprites[spriteId].data[3] = (seed % 13) + 8;
@@ -2492,7 +2492,7 @@ static void LoadFightSceneSpriteTilesAndPals(void)
 #define tEvWhich data[6]
 #define tEvStepCount data[8]
 
-static void Task_SmoothBlendLayers(u8 taskId)
+static void Task_SmoothBlendLayers(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 

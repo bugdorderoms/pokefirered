@@ -22,9 +22,9 @@ static EWRAM_DATA void * sBg3TilemapBuffer = NULL;
 static void CB2_SetUpSeagallopScene(void);
 static void VBlankCB_SeaGallop(void);
 static void MainCB2_SeaGallop(void);
-static void Task_Seagallop_0(u8 taskId);
-static void Task_Seagallop_1(u8 taskId);
-static void Task_Seagallop_2(u8 taskId);
+static void Task_Seagallop_0(u32 taskId);
+static void Task_Seagallop_1(u32 taskId);
+static void Task_Seagallop_2(u32 taskId);
 static void Task_Seagallop_3(void);
 static void ResetGPU(void);
 static void ResetAllAssets(void);
@@ -178,7 +178,7 @@ void DoSeagallopFerryScene(void)
 static void CB2_SetUpSeagallopScene(void)
 {
     void ** ptr;
-	
+    
     switch (gMain.state)
     {
     case 0:
@@ -201,7 +201,7 @@ static void CB2_SetUpSeagallopScene(void)
         break;
     case 3:
         LoadBgTiles(3, sWaterTiles, sizeof(sWaterTiles), 0);
-		
+        
         if (GetDirectionOfTravel() == DIRN_EASTBOUND)
             CopyToBgTilemapBufferRect(3, sWaterTilemap_EB, 0, 0, 32, 32);
         else
@@ -261,7 +261,7 @@ static void MainCB2_SeaGallop(void)
     UpdatePaletteFade();
 }
 
-static void Task_Seagallop_0(u8 taskId)
+static void Task_Seagallop_0(u32 taskId)
 {
     gTasks[taskId].func = Task_Seagallop_1;
 }
@@ -274,12 +274,12 @@ static void ScrollBG(void)
         ChangeBgX(3, 0x600, 2);
 }
 
-static void Task_Seagallop_1(u8 taskId)
+static void Task_Seagallop_1(u32 taskId)
 {
     struct Task * task = &gTasks[taskId];
 
     ScrollBG();
-	
+    
     if (++task->data[1] == 140)
     {
         Overworld_FadeOutMapMusic();
@@ -288,10 +288,10 @@ static void Task_Seagallop_1(u8 taskId)
     }
 }
 
-static void Task_Seagallop_2(u8 taskId)
+static void Task_Seagallop_2(u32 taskId)
 {
     ScrollBG();
-	
+    
     if (IsNotWaitingForBGMStop() && !gPaletteFade.active)
     {
         Task_Seagallop_3();
@@ -378,9 +378,9 @@ static void FreeFerrySpriteResources(void)
 static void CreateFerrySprite(void)
 {
     u32 spriteId = CreateSprite(&sFerrySpriteTemplate, 0, 92, 0);
-	
+    
     gSprites[spriteId].data[0] = 48;
-	
+    
     if (GetDirectionOfTravel() == DIRN_EASTBOUND)
         StartSpriteAnim(&gSprites[spriteId], 1);
     else
@@ -394,12 +394,12 @@ static void SpriteCB_Ferry(struct Sprite * sprite)
 {
     sprite->data[1] += sprite->data[0];
     sprite->x2 = sprite->data[1] >> 4;
-	
+    
     if (sprite->data[2] % 5 == 0)
         CreateWakeSprite(sprite->x + sprite->x2);
 
     sprite->data[2]++;
-	
+    
     if ((u16)(300 + sprite->x2) > 600)
         DestroySprite(sprite);
 }
@@ -407,7 +407,7 @@ static void SpriteCB_Ferry(struct Sprite * sprite)
 static void CreateWakeSprite(s16 x)
 {
     u32 spriteId = CreateSprite(&sWakeSpriteTemplate, x, 92, 8);
-	
+    
     if (spriteId != MAX_SPRITES)
     {
         if (GetDirectionOfTravel() == DIRN_EASTBOUND)
@@ -450,7 +450,7 @@ u32 GetSeagallopNumber(void)
         return 12;
 
     if ((originId == SEAGALLOP_ONE_ISLAND || originId == SEAGALLOP_TWO_ISLAND || originId == SEAGALLOP_THREE_ISLAND) 
-	&& (destId == SEAGALLOP_ONE_ISLAND || destId == SEAGALLOP_TWO_ISLAND || destId == SEAGALLOP_THREE_ISLAND))
+    && (destId == SEAGALLOP_ONE_ISLAND || destId == SEAGALLOP_TWO_ISLAND || destId == SEAGALLOP_THREE_ISLAND))
         return 2;
 
     if ((originId == SEAGALLOP_FOUR_ISLAND || originId == SEAGALLOP_FIVE_ISLAND) && (destId == SEAGALLOP_FOUR_ISLAND || destId == SEAGALLOP_FIVE_ISLAND))

@@ -63,7 +63,7 @@ struct UnkSaveSection
 #define SECTOR_ID_HOF_2              29
 #define SECTOR_ID_TRAINER_TOWER_1    30 // Unused
 #define SECTOR_ID_TRAINER_TOWER_2    31 // Unused
-#define TOTAL_FLASH_SECTORS 		 32
+#define TOTAL_FLASH_SECTORS          32
 
 // SetSectorDamagedStatus states
 enum
@@ -98,7 +98,7 @@ void LinkTradeSetLastSectorSignature(void);
 void WriteSaveBlock2(void);
 bool32 WriteSaveBlock1Sector(void);
 u32 Save_LoadGameData(u32 saveType);
-void Task_LinkSave(u8 taskId);
+void Task_LinkSave(u32 taskId);
 void ResetSaveHeap(void);
 
 #endif // GUARD_SAVE_H

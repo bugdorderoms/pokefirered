@@ -87,10 +87,10 @@ enum
 
 struct RegionMap
 {
-	TaskFunc mainTask;
+    TaskFunc mainTask;
     MainCallback savedCallback;
-	u16 layouts[REGIONMAP_COUNT + 1][600];
-	u16 bgTilemapBuffers[3][BG_SCREEN_SIZE];
+    u16 layouts[REGIONMAP_COUNT + 1][600];
+    u16 bgTilemapBuffers[3][BG_SCREEN_SIZE];
     u8 mapName[19];
     u8 dungeonName[19];
     u8 type; // REGIONMAP_TYPE_*
@@ -220,7 +220,7 @@ struct MapIconSprite
     struct Sprite * sprite;
     u16 tileTag;
     u16 palTag;
-	u8 region;
+    u8 region;
 };
 
 struct MapIcons
@@ -266,8 +266,8 @@ static void InitRegionMapType(void);
 static void CB2_OpenRegionMap(void);
 static bool32 LoadRegionMapGfx(void);
 static void CreateMainMapTask(void);
-static void Task_RegionMap(u8);
-static void SaveMainMapTask(u8);
+static void Task_RegionMap(u32);
+static void SaveMainMapTask(u32);
 static void FreeRegionMap(u32);
 static void CB2_RegionMap(void);
 static void SetRegionMapVBlankCB(void);
@@ -280,7 +280,7 @@ static void DrawDungeonNameBox(void);
 static void DisplayCurrentDungeonName(void);
 static void BufferRegionMapBg(u32, u16 *);
 static void InitSwitchMapMenu(u32, u32, TaskFunc);
-static void Task_SwitchMapMenu(u8);
+static void Task_SwitchMapMenu(u32);
 static void FreeSwitchMapMenu(u32);
 static bool32 sub_80C12EC(void);
 static void LoadSwitchMapTilemap(u32, u16 *);
@@ -291,20 +291,20 @@ static bool32 CreateSwitchMapCursor(void);
 static void CreateSwitchMapCursorSubsprite(u32, u32, u32);
 static void FreeSwitchMapCursor(void);
 static void InitDungeonMapPreview(u32, TaskFunc);
-static void Task_DungeonMapPreview(u8);
-static void Task_DrawDungeonMapPreviewFlavorText(u8);
+static void Task_DungeonMapPreview(u32);
+static void Task_DrawDungeonMapPreviewFlavorText(u32);
 static void FreeDungeonMapPreview(u32);
 static void InitScreenForDungeonMapPreview(void);
 static bool32 UpdateDungeonMapPreview(bool32);
 static void InitMapOpenAnim(u32, TaskFunc);
 static void InitScreenForMapOpenAnim(void);
-static void Task_MapOpenAnim(u8);
+static void Task_MapOpenAnim(u32);
 static void FreeMapOpenCloseAnim(void);
 static void FreeMapEdgeSprites(void);
 static bool32 MoveMapEdgesOutward(void);
 static void sub_80C2B48(void);
 static void DoMapCloseAnim(u32);
-static void Task_MapCloseAnim(u8);
+static void Task_MapCloseAnim(u32);
 static bool32 MoveMapEdgesInward(void);
 static void CreateMapCursor(u32, u32);
 static void CreateMapCursorSprite(void);
@@ -326,7 +326,7 @@ static void CreatePlayerIconSprite(void);
 static void SetPlayerIconInvisibility(bool32);
 static void FreePlayerIcon(void);
 static void InitMapIcons(u32, TaskFunc);
-static void LoadMapIcons(u8);
+static void LoadMapIcons(u32);
 static void FinishMapIconLoad(u32);
 static void CreateFlyIcons(void);
 static void CreateDungeonIcons(void);
@@ -346,7 +346,7 @@ static void FreeAndResetGpuRegs(void);
 static void PrintTopBarTextLeft(const u8 *);
 static void PrintTopBarTextRight(const u8 *);
 static void ClearOrDrawTopBar(bool32);
-static void Task_FlyMap(u8);
+static void Task_FlyMap(u32);
 static void InitFlyMap(void);
 static void FreeFlyMap(u32);
 static void SetFlyWarpDestination(u32);
@@ -850,14 +850,14 @@ static void sub_80BFEA0(void)
 void InitRegionMapWithExitCB(u32 type, MainCallback cb)
 {
     sRegionMap = AllocZeroed(sizeof(struct RegionMap));
-	
+    
     if (sRegionMap == NULL)
         SetMainCallback2(CB2_ReturnToField);
     else
     {
-		if (type == REGIONMAP_TYPE_FLY)
-			InitFlyMap();
-		
+        if (type == REGIONMAP_TYPE_FLY)
+            InitFlyMap();
+        
         gUnknown_2031DE0 = TRUE;
         sRegionMap->type = type;
         sRegionMap->mainState = 0;
@@ -882,16 +882,16 @@ static void InitRegionMapType(void)
         sRegionMap->mainTask = Task_FlyMap;
         break;
     }
-	
+    
     for (i = 0; i < MAPPERM_COUNT; i++)
         sRegionMap->permissions[i] = sRegionMapPermissions[sRegionMap->type][i];
 
     if (!FlagGet(FLAG_SYS_SEVII_MAP_123))
         sRegionMap->permissions[MAPPERM_HAS_SWITCH_BUTTON] = FALSE;
-	
+    
     region = REGIONMAP_KANTO;
     j = REGIONMAP_KANTO;
-	
+    
     if (gMapHeader.regionMapSectionId >= MAPSECS_SEVII_123)
     {
         // Mapsec is in Sevii Islands, determine which map to use
@@ -945,7 +945,7 @@ static void CB2_OpenRegionMap(void)
     case 5:
         BufferRegionMapBg(0, sRegionMap->layouts[GetSelectedRegionMap()]);
         CopyBgTilemapBufferToVram(0);
-		
+        
         if (sRegionMap->type != REGIONMAP_TYPE_NORMAL)
         {
             BufferRegionMapBg(1, sRegionMap->layouts[REGIONMAP_COUNT]);
@@ -983,7 +983,7 @@ static bool32 LoadRegionMapGfx(void)
     case 1:
         LoadPalette(sRegionMap_Pal, 0, sizeof(sRegionMap_Pal));
         sub_80BFEA0();
-		
+        
         if (sRegionMap->type != REGIONMAP_TYPE_NORMAL)
         {
             LoadPalette(&sTopBar_Pal[15], 16 * 0, sizeof(sTopBar_Pal[15]));
@@ -998,7 +998,7 @@ static bool32 LoadRegionMapGfx(void)
         break;
     case 3:
         DecompressAndCopyTileDataToVram(0, sRegionMap_Gfx, 0, 0, 0);
-		
+        
         if (sRegionMap->type != REGIONMAP_TYPE_NORMAL)
             DecompressAndCopyTileDataToVram(1, sBackground_Gfx, 0, 0, 0);
         break;
@@ -1047,7 +1047,7 @@ static void PlaySEForSelectedMapsec(void)
         if ((GetSelectedMapsecType(LAYER_MAP) != MAPSECTYPE_ROUTE && GetSelectedMapsecType(LAYER_MAP) != MAPSECTYPE_NONE) 
         || (GetSelectedMapsecType(LAYER_DUNGEON) != MAPSECTYPE_ROUTE && GetSelectedMapsecType(LAYER_DUNGEON) != MAPSECTYPE_NONE))
             PlaySE(SE_DEX_SCROLL);
-			
+            
         if (sMapCursor->x == SWITCH_BUTTON_X && sMapCursor->y == SWITCH_BUTTON_Y && GetRegionMapPermission(MAPPERM_HAS_SWITCH_BUTTON))
             PlaySE(SE_M_SPIT_UP);
         else if (sMapCursor->x == CANCEL_BUTTON_X && sMapCursor->y == CANCEL_BUTTON_Y)
@@ -1060,7 +1060,7 @@ static inline void ResetCursorSnap(void)
     sMapCursor->snapId = 0;
 }
 
-static void Task_RegionMap(u8 taskId)
+static void Task_RegionMap(u32 taskId)
 {
     switch (sRegionMap->mainState)
     {
@@ -1111,11 +1111,11 @@ static void Task_RegionMap(u8 taskId)
             DisplayCurrentDungeonName();
             DrawDungeonNameBox();
             PlaySEForSelectedMapsec();
-			
+            
             if (GetDungeonMapsecUnderCursor() != MAPSEC_NONE)
             {
                 if (GetRegionMapPermission(MAPPERM_HAS_MAP_PREVIEW))
-					PrintTopBarTextRight(GetSelectedMapsecType(LAYER_DUNGEON) == MAPSECTYPE_VISITED ? gText_RegionMap_AButtonGuide : gText_RegionMap_Space);
+                    PrintTopBarTextRight(GetSelectedMapsecType(LAYER_DUNGEON) == MAPSECTYPE_VISITED ? gText_RegionMap_AButtonGuide : gText_RegionMap_Space);
             }
             else
             {
@@ -1142,7 +1142,7 @@ static void Task_RegionMap(u8 taskId)
     case 4:
         if (GetRegionMapPermission(MAPPERM_HAS_OPEN_ANIM))
             DoMapCloseAnim(taskId);
-		sRegionMap->mainState++;
+        sRegionMap->mainState++;
         break;
     case 5:
         BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
@@ -1160,7 +1160,7 @@ static TaskFunc GetMainMapTask(void)
     return sRegionMap->mainTask;
 }
 
-static void SaveMainMapTask(u8 taskId)
+static void SaveMainMapTask(u32 taskId)
 {
     gTasks[taskId].func = sRegionMap->mainTask;
 }
@@ -1169,14 +1169,14 @@ static void FreeRegionMap(u32 taskId)
 {
     if (GetRegionMapPermission(MAPPERM_HAS_OPEN_ANIM))
         FreeMapOpenCloseAnim();
-	
+    
     FreeMapIcons();
     FreeMapCursor();
     FreePlayerIcon();
     FreeAndResetGpuRegs();
     DestroyTask(taskId);
     FreeAllWindowBuffers();
-	SetMainCallback2(sRegionMap->savedCallback == NULL ? gMain.savedCallback : sRegionMap->savedCallback);
+    SetMainCallback2(sRegionMap->savedCallback == NULL ? gMain.savedCallback : sRegionMap->savedCallback);
     FREE_IF_NOT_NULL(sRegionMap);
 }
 
@@ -1252,7 +1252,7 @@ static void UpdateMapsecNameBox(void)
     SetGpuWindowDims(WIN_MAP_NAME, &sMapsecNameWindowDims[WIN_MAP_NAME]);
     SetGpuWindowDims(WIN_DUNGEON_NAME, &sMapsecNameWindowDims[WIN_DUNGEON_NAME]);
     SetDispCnt(WIN_MAP_NAME, FALSE);
-	
+    
     if (GetDungeonMapsecUnderCursor() != MAPSEC_NONE)
         SetDispCnt(WIN_DUNGEON_NAME, FALSE);
 }
@@ -1261,7 +1261,7 @@ static void DisplayCurrentMapName(void)
 {
     ClearWindowTilemap(WIN_MAP_NAME);
     FillWindowPixelBuffer(WIN_MAP_NAME, PIXEL_FILL(0));
-	
+    
     if (GetMapsecUnderCursor() == MAPSEC_NONE)
         SetGpuWindowDims(WIN_MAP_NAME, &sMapsecNameWindowDims[CLEAR_NAME]);
     else
@@ -1285,9 +1285,9 @@ static void DisplayCurrentDungeonName(void)
     
     SetDispCnt(WIN_DUNGEON_NAME, TRUE);
     ClearWindowTilemap(WIN_DUNGEON_NAME);
-	
+    
     mapsecId = GetDungeonMapsecUnderCursor();
-	
+    
     if (mapsecId != MAPSEC_NONE)
     {
          SetDispCnt(WIN_DUNGEON_NAME, FALSE);
@@ -1312,7 +1312,7 @@ static void BufferRegionMapBg(u32 bg, u16 *map)
     u32 i, j;
     u32 whichMap;
     u16 *buffer = sRegionMap->bgTilemapBuffers[bg];
-	
+    
     for (i = 0; i < 20; i++)
     {
         for (j = 0; j < 32; j++)
@@ -1323,22 +1323,22 @@ static void BufferRegionMapBg(u32 bg, u16 *map)
                 buffer[32 * i + j] = map[0];
         }
     }
-	
+    
     if (GetRegionMapPermission(MAPPERM_HAS_SWITCH_BUTTON))
     {
         WriteSequenceToBgTilemapBuffer(0, 0x0F0, 0x18, 14, 3, 1, 0x3, 0x001);
         WriteSequenceToBgTilemapBuffer(0, 0x100, 0x18, 15, 3, 1, 0x3, 0x001);
         WriteSequenceToBgTilemapBuffer(0, 0x110, 0x18, 16, 3, 1, 0x3, 0x001);
     }
-	
+    
     if (sSwitchMapMenu != NULL)
         whichMap = sSwitchMapMenu->currentSelection;
     else
         whichMap = GetSelectedRegionMap();
-	
+    
     if (whichMap == REGIONMAP_SEVII45 && !FlagGet(FLAG_WORLD_MAP_NAVEL_ROCK_EXTERIOR))
         FillBgTilemapBufferRect_Palette0(0, 0x003, 13, 11, 3, 2);
-	
+    
     if (whichMap == REGIONMAP_SEVII67 && !FlagGet(FLAG_WORLD_MAP_BIRTH_ISLAND_EXTERIOR))
         FillBgTilemapBufferRect_Palette0(0, 0x003, 21, 16, 3, 3);
 }
@@ -1351,20 +1351,20 @@ static inline u32 GetRegionMapPlayerIsOn(void)
 static void InitSwitchMapMenu(u32 whichMap, u32 taskId, TaskFunc taskFunc)
 {
     sSwitchMapMenu = AllocZeroed(sizeof(struct SwitchMapMenu));
-	
+    
     if (FlagGet(FLAG_SYS_SEVII_MAP_4567))
         sSwitchMapMenu->maxSelection = 0;
     else if (FlagGet(FLAG_SYS_SEVII_MAP_123))
         sSwitchMapMenu->maxSelection = 1;
     else
         sSwitchMapMenu->maxSelection = 0;
-	
+    
     sSwitchMapMenu->cursorSubsprite[0].x = 88;
     sSwitchMapMenu->cursorSubsprite[1].x = 152;
 
     switch (sSwitchMapMenu->maxSelection)
     {
-	case 0:
+    case 0:
         sSwitchMapMenu->yOffset = 3;
         LZDecompressWram(sSwitchMap_KantoSeviiAll_Tilemap, sSwitchMapMenu->switchMapTilemap);
         break;
@@ -1398,7 +1398,7 @@ static bool32 sub_80C1014(void)
         sSwitchMapMenu->alpha += 2;
         return FALSE;
     }
-	return TRUE;
+    return TRUE;
 }
 
 static bool32 sub_80C1058(void)
@@ -1409,10 +1409,10 @@ static bool32 sub_80C1058(void)
         SetBldAlpha(16 - sSwitchMapMenu->alpha, sSwitchMapMenu->alpha);
         return FALSE;
     }
-	return TRUE;
+    return TRUE;
 }
 
-static void Task_SwitchMapMenu(u8 taskId)
+static void Task_SwitchMapMenu(u32 taskId)
 {
     switch (sSwitchMapMenu->mainState)
     {
@@ -1462,7 +1462,7 @@ static void Task_SwitchMapMenu(u8 taskId)
         if (HandleSwitchMapInput())
         {
             sRegionMap->selectedRegion = sSwitchMapMenu->currentSelection;
-			
+            
             if (GetRegionMapPlayerIsOn() == sSwitchMapMenu->currentSelection)
             {
                 SetPlayerIconInvisibility(FALSE);
@@ -1525,7 +1525,7 @@ static void LoadSwitchMapTilemap(u32 bg, u16 *map)
 {
     u32 i, j;
     u16 *buffer = sRegionMap->bgTilemapBuffers[bg];
-	
+    
     for (i = 0; i < 20; i++)
     {
         for (j = 0; j < 32; j++)
@@ -1561,19 +1561,19 @@ static bool32 DimScreenForSwitchMapMenu(void)
         SetBldY(sSwitchMapMenu->blendY);
         return FALSE;
     }
-	return TRUE;
+    return TRUE;
 }
 
 static bool32 HandleSwitchMapInput(void)
 {
     bool32 changedSelection = FALSE;
     struct GpuWindowParams data;
-	
+    
     data.left = sSwitchMapMenu->highlight.left = 72;
     data.top = sSwitchMapMenu->highlight.top = 8 * (sSwitchMapMenu->yOffset + 4 * sSwitchMapMenu->currentSelection);
     data.right = sSwitchMapMenu->highlight.right = 168;
     data.bottom = sSwitchMapMenu->highlight.bottom = sSwitchMapMenu->highlight.top + 32;
-	
+    
     if (JOY_NEW(DPAD_UP) && sSwitchMapMenu->currentSelection != 0)
     {
         PlaySE(SE_BAG_CURSOR);
@@ -1601,7 +1601,7 @@ static bool32 HandleSwitchMapInput(void)
         SetDungeonIconInvisibility(0xFF, ARRAY_COUNT(sMapIcons->dungeonIcons), TRUE);
         return TRUE;
     }
-	
+    
     if (changedSelection)
     {
         BufferRegionMapBg(0, sRegionMap->layouts[sSwitchMapMenu->currentSelection]);
@@ -1613,7 +1613,7 @@ static bool32 HandleSwitchMapInput(void)
         SetFlyIconInvisibility(sSwitchMapMenu->currentSelection, ARRAY_COUNT(sMapIcons->flyIcons), FALSE);
         SetDungeonIconInvisibility(sSwitchMapMenu->currentSelection, ARRAY_COUNT(sMapIcons->dungeonIcons), FALSE);
     }
-	SetPlayerIconInvisibility((sSwitchMapMenu->currentSelection != GetRegionMapPlayerIsOn()));
+    SetPlayerIconInvisibility((sSwitchMapMenu->currentSelection != GetRegionMapPlayerIsOn()));
     SetGpuWindowDims(1, &data);
     return FALSE;
 }
@@ -1681,7 +1681,7 @@ static void CreateSwitchMapCursorSubsprite(u32 whichSprite, u32 tileTag, u32 pal
 static void FreeSwitchMapCursor(void)
 {
     u32 i;
-	
+    
     for (i = 0; i < ARRAY_COUNT(sSwitchMapMenu->cursorSubsprite); i++)
     {
         if (sSwitchMapMenu->cursorSubsprite[i].sprite != NULL)
@@ -1695,35 +1695,35 @@ static void FreeSwitchMapCursor(void)
 
 static const u8 *GetDungeonFlavorText(u32 mapsec)
 {
-	if (gMapSectionsInfo[mapsec].desc != NULL)
-		return gMapSectionsInfo[mapsec].desc;
-	else
-		return gText_RegionMap_NoData;
+    if (gMapSectionsInfo[mapsec].desc != NULL)
+        return gMapSectionsInfo[mapsec].desc;
+    else
+        return gText_RegionMap_NoData;
 }
 
 static const u8 *GetDungeonName(u32 mapsec)
 {
-	if (gMapSectionsInfo[mapsec].name != NULL)
-		return gMapSectionsInfo[mapsec].name;
-	else
-		return gText_RegionMap_NoData;
+    if (gMapSectionsInfo[mapsec].name != NULL)
+        return gMapSectionsInfo[mapsec].name;
+    else
+        return gText_RegionMap_NoData;
 }
 
 static void InitDungeonMapPreview(u32 taskId, TaskFunc taskFunc)
 {
     u32 mapsec;
-	
+    
     sDungeonMapPreview = AllocZeroed(sizeof(struct DungeonMapPreview));
     mapsec = GetDungeonMapsecUnderCursor();
-	
+    
     if (mapsec == MAPSEC_TANOBY_CHAMBERS)
         mapsec = MAPSEC_MONEAN_CHAMBER;
-	
+    
     sDungeonMapPreview->mapPreviewInfo = GetDungeonMapPreviewScreenInfo(mapsec);
-	
+    
     if (sDungeonMapPreview->mapPreviewInfo == NULL)
         sDungeonMapPreview->mapPreviewInfo = GetDungeonMapPreviewScreenInfo(MAPSEC_ROCK_TUNNEL);
-	
+    
     sDungeonMapPreview->mainState = 0;
     sDungeonMapPreview->loadState = 0;
     sDungeonMapPreview->savedTask = taskFunc;
@@ -1757,7 +1757,7 @@ static bool32 LoadMapPreviewGfx(void)
     return FALSE;
 }
 
-static void Task_DungeonMapPreview(u8 taskId)
+static void Task_DungeonMapPreview(u32 taskId)
 {
     switch (sDungeonMapPreview->mainState)
     {
@@ -1775,7 +1775,7 @@ static void Task_DungeonMapPreview(u8 taskId)
         sDungeonMapPreview->mainState++;
         break;
     case 3:
-		CopyToBgTilemapBufferRect(2, sDungeonMapPreview->tilemap, 0, 0, 32, 20);
+        CopyToBgTilemapBufferRect(2, sDungeonMapPreview->tilemap, 0, 0, 32, 20);
         CopyBgTilemapBufferToVram(2);
         sDungeonMapPreview->mainState++;
         break;
@@ -1806,7 +1806,7 @@ static void Task_DungeonMapPreview(u8 taskId)
 }
 
 // Tints the dungeon preview image in the background and overlays the name and description of the dungeon
-static void Task_DrawDungeonMapPreviewFlavorText(u8 taskId)
+static void Task_DrawDungeonMapPreviewFlavorText(u32 taskId)
 {
     switch (sDungeonMapPreview->drawState)
     {
@@ -1880,7 +1880,7 @@ static void FreeDungeonMapPreview(u32 taskId)
 }
 
 static void InitScreenForDungeonMapPreview(void)
-{	
+{    
     ResetGpuRegs();
     SetBldCnt(0, BLDCNT_TGT1_BG0 | BLDCNT_TGT1_OBJ, BLDCNT_EFFECT_DARKEN);
     SetBldY(sDungeonMapPreview->blendY);
@@ -1911,7 +1911,7 @@ static bool32 UpdateDungeonMapPreview(bool32 a0)
             sDungeonMapPreview->right += sDungeonMapPreview->rightIncrement;
             sDungeonMapPreview->bottom += sDungeonMapPreview->bottomIncrement;
             sDungeonMapPreview->updateCounter++;
-			
+            
             if (sDungeonMapPreview->blendY < (BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2))
                 sDungeonMapPreview->blendY++;
         }
@@ -1929,7 +1929,7 @@ static bool32 UpdateDungeonMapPreview(bool32 a0)
             sDungeonMapPreview->right -= sDungeonMapPreview->rightIncrement;
             sDungeonMapPreview->bottom -= sDungeonMapPreview->bottomIncrement;
             sDungeonMapPreview->updateCounter--;
-			
+            
             if (sDungeonMapPreview->blendY > 0)
                 sDungeonMapPreview->blendY--;
         }
@@ -1946,7 +1946,7 @@ static bool32 UpdateDungeonMapPreview(bool32 a0)
 static void CreateMapEdgeSprite(u32 mapEdgeNum, u32 tileTag, u32 palTag)
 {
     u32 spriteId;
-	
+    
     struct SpriteSheet spriteSheet = {
         .data = sMapOpenCloseAnim->mapEdges[mapEdgeNum],
         .size = 0x400,
@@ -1968,10 +1968,10 @@ static void CreateMapEdgeSprite(u32 mapEdgeNum, u32 tileTag, u32 palTag)
 
     sMapOpenCloseAnim->mapEdges[mapEdgeNum]->tileTag = tileTag;
     sMapOpenCloseAnim->mapEdges[mapEdgeNum]->palTag = palTag;
-	
+    
     LoadSpriteSheet(&spriteSheet);
     LoadSpritePalette(&spritePalette);
-	
+    
     spriteId = CreateSprite(&template, sMapOpenCloseAnim->mapEdges[mapEdgeNum]->x, sMapOpenCloseAnim->mapEdges[mapEdgeNum]->y, 0);
     sMapOpenCloseAnim->mapEdges[mapEdgeNum]->sprite = &gSprites[spriteId];
     gSprites[spriteId].invisible = TRUE;
@@ -1982,7 +1982,7 @@ static void InitMapOpenAnim(u32 taskId, TaskFunc taskFunc)
     u32 i;
 
     sMapOpenCloseAnim = AllocZeroed(sizeof(struct MapOpenCloseAnim));
-	
+    
     for (i = 0; i < ARRAY_COUNT(sMapOpenCloseAnim->mapEdges); i++)
     {
         sMapOpenCloseAnim->mapEdges[i] = AllocZeroed(sizeof(struct MapEdge));
@@ -2000,7 +2000,7 @@ static void InitMapOpenAnim(u32 taskId, TaskFunc taskFunc)
 static void SetMapEdgeInvisibility(u32 mapEdgeNum, bool32 invisible)
 {
     u32 i;
-	
+    
     if (mapEdgeNum == ARRAY_COUNT(sMapOpenCloseAnim->mapEdges))
     {
         for (i = 0; i < ARRAY_COUNT(sMapOpenCloseAnim->mapEdges); i++)
@@ -2088,9 +2088,9 @@ static void FinishMapOpenAnim(u32 taskId)
 static void FreeMapOpenCloseAnim(void)
 {
     u32 i;
-	
+    
     FreeMapEdgeSprites();
-	
+    
     for (i = 0; i < ARRAY_COUNT(sMapOpenCloseAnim->mapEdges); i++)
         FREE_IF_NOT_NULL(sMapOpenCloseAnim->mapEdges[i]);
 
@@ -2100,12 +2100,12 @@ static void FreeMapOpenCloseAnim(void)
 static void FreeMapEdgeSprites(void)
 {
     u32 i;
-	
+    
     for (i = 0; i < ARRAY_COUNT(sMapOpenCloseAnim->mapEdges); i++)
     {
         sMapOpenCloseAnim->mapEdges[i]->x = sMapOpenCloseAnim->mapEdges[i]->sprite->x;
         sMapOpenCloseAnim->mapEdges[i]->y = sMapOpenCloseAnim->mapEdges[i]->sprite->y;
-		
+        
         if (sMapOpenCloseAnim->mapEdges[i]->sprite != NULL)
         {
             DestroySprite(sMapOpenCloseAnim->mapEdges[i]->sprite);
@@ -2115,7 +2115,7 @@ static void FreeMapEdgeSprites(void)
     }
 }
 
-static void Task_MapOpenAnim(u8 taskId)
+static void Task_MapOpenAnim(u32 taskId)
 {
     switch (sMapOpenCloseAnim->openState)
     {
@@ -2172,7 +2172,7 @@ static void Task_MapOpenAnim(u8 taskId)
         break;
     case 9:
         PrintTopBarTextLeft(gText_RegionMap_DPadMove);
-		PrintTopBarTextRight(GetSelectedMapsecType(LAYER_DUNGEON) != MAPSECTYPE_VISITED ? gText_RegionMap_Space : gText_RegionMap_AButtonGuide);
+        PrintTopBarTextRight(GetSelectedMapsecType(LAYER_DUNGEON) != MAPSECTYPE_VISITED ? gText_RegionMap_Space : gText_RegionMap_AButtonGuide);
         ClearOrDrawTopBar(FALSE);
         sMapOpenCloseAnim->openState++;
         break;
@@ -2223,7 +2223,7 @@ static void Task_MapOpenAnim(u8 taskId)
 static bool32 MoveMapEdgesOutward(void)
 {
     sub_80C2B48();
-	
+    
     if (sMapOpenCloseAnim->mapEdges[0]->sprite->x == 0)
         return TRUE;
     else if (sMapOpenCloseAnim->moveState > 17)
@@ -2314,7 +2314,7 @@ static void CreateMapEdgeSprites(void)
     CreateMapEdgeSprite(5, 9, 9);
 }
 
-static void Task_MapCloseAnim(u8 taskId)
+static void Task_MapCloseAnim(u32 taskId)
 {
     switch (sMapOpenCloseAnim->closeState)
     {
@@ -2377,7 +2377,7 @@ static void Task_MapCloseAnim(u8 taskId)
 static bool32 MoveMapEdgesInward(void)
 {
     sub_80C2B48();
-	
+    
     if (sMapOpenCloseAnim->mapEdges[0]->sprite->x == 104)
         return TRUE;
     else if (sMapOpenCloseAnim->moveState > 17)
@@ -2506,7 +2506,7 @@ static void FreeMapCursor(void)
 static u32 HandleRegionMapInput(void)
 {
     u32 input = MAP_INPUT_NONE;
-	
+    
     sMapCursor->horizontalMove = 0;
     sMapCursor->verticalMove = 0;
 
@@ -2545,7 +2545,7 @@ static u32 HandleRegionMapInput(void)
     if (JOY_NEW(A_BUTTON))
     {
         input = MAP_INPUT_A_BUTTON;
-		
+        
         if (sMapCursor->x == CANCEL_BUTTON_X  && sMapCursor->y == CANCEL_BUTTON_Y)
         {
             PlaySE(SE_M_HYPER_BEAM2);
@@ -2585,22 +2585,22 @@ static u32 MoveMapCursor(void)
 {
     if (sMapCursor->moveCounter != 0)
         return MAP_INPUT_MOVE_CONT;
-	
+    
     if (sMapCursor->horizontalMove > 0)
         sMapCursor->x++;
     if (sMapCursor->horizontalMove < 0)
         sMapCursor->x--;
-	
+    
     if (sMapCursor->verticalMove > 0)
         sMapCursor->y++;
     if (sMapCursor->verticalMove < 0)
         sMapCursor->y--;
-	
+    
     sMapCursor->selectedMapsec = GetSelectedMapSection(GetSelectedRegionMap(), LAYER_MAP, sMapCursor->y, sMapCursor->x);
     sMapCursor->selectedMapsecType = GetMapsecType(sMapCursor->selectedMapsec);
     sMapCursor->selectedDungeonType = GetDungeonMapsecType(GetSelectedMapSection(GetSelectedRegionMap(), LAYER_DUNGEON, sMapCursor->y, sMapCursor->x));
     sMapCursor->inputHandler = HandleRegionMapInput;
-	
+    
     return MAP_INPUT_MOVE_END;
 }
 
@@ -2617,10 +2617,10 @@ static void SnapToIconOrButton(void)
     {
         sMapCursor->snapId++;
         sMapCursor->snapId %= 3;
-		
+        
         if (sMapCursor->snapId == 0 && GetSelectedRegionMap() != GetRegionMapPlayerIsOn()) // Player icon not present on this map, skip it
             sMapCursor->snapId++;
-			
+            
         switch (sMapCursor->snapId)
         {
         case 0:
@@ -2642,7 +2642,7 @@ static void SnapToIconOrButton(void)
     {
         sMapCursor->snapId++;
         sMapCursor->snapId %= 2;
-		
+        
         switch (sMapCursor->snapId)
         {
         case 0:
@@ -2664,30 +2664,30 @@ static void SnapToIconOrButton(void)
 static u32 GetMapsecUnderCursor(void)
 {
     u32 mapsec;
-	
+    
     if (sMapCursor->y < 0 || sMapCursor->y >= MAP_HEIGHT || sMapCursor->x < 0 || sMapCursor->x >= MAP_WIDTH)
         return MAPSEC_NONE;
 
     mapsec = GetSelectedMapSection(GetSelectedRegionMap(), LAYER_MAP, sMapCursor->y, sMapCursor->x);
-	
+    
     if ((mapsec == MAPSEC_NAVEL_ROCK || mapsec == MAPSEC_BIRTH_ISLAND) && !FlagGet(FLAG_WORLD_MAP_NAVEL_ROCK_EXTERIOR))
         mapsec = MAPSEC_NONE;
-	
+    
     return mapsec;
 }
 
 static u32 GetDungeonMapsecUnderCursor(void)
 {
     u32 mapsec;
-	
+    
     if (sMapCursor->y < 0 || sMapCursor->y >= MAP_HEIGHT || sMapCursor->x < 0 || sMapCursor->x >= MAP_WIDTH)
         return MAPSEC_NONE;
 
     mapsec = GetSelectedMapSection(GetSelectedRegionMap(), LAYER_DUNGEON, sMapCursor->y, sMapCursor->x);
-	
+    
     if (mapsec == MAPSEC_CERULEAN_CAVE && !FlagGet(FLAG_SYS_CAN_LINK_WITH_RS))
         mapsec = MAPSEC_NONE;
-	
+    
     return mapsec;
 }
 
@@ -2883,23 +2883,23 @@ static void GetPlayerPositionOnRegionMap(void)
         break;
     }
     sMapCursor->selectedMapsec -= MAPSECS_KANTO;
-	
+    
     divisor = width / sMapSectionDimensions[sMapCursor->selectedMapsec][0];
     if (divisor == 0)
         divisor = 1;
-	
+    
     x /= divisor;
     if (x >= sMapSectionDimensions[sMapCursor->selectedMapsec][0])
         x = sMapSectionDimensions[sMapCursor->selectedMapsec][0] - 1;
-	
+    
     divisor = height / sMapSectionDimensions[sMapCursor->selectedMapsec][1];
     if (divisor == 0)
         divisor = 1;
-	
+    
     y /= divisor;
     if (y >= sMapSectionDimensions[sMapCursor->selectedMapsec][1])
         y = sMapSectionDimensions[sMapCursor->selectedMapsec][1] - 1;
-	
+    
     sMapCursor->x = x + sMapSectionTopLeftCorners[sMapCursor->selectedMapsec][0];
     sMapCursor->y = y + sMapSectionTopLeftCorners[sMapCursor->selectedMapsec][1];
 }
@@ -2945,16 +2945,16 @@ static void GetPlayerPositionOnRegionMap_HandleOverrides(void)
 
         if (gSaveBlock1Ptr->location.mapNum == MAP_NUM(UNDERGROUND_PATH_NORTH_ENTRANCE))
             sMapCursor->y = 5;
-		else
-			sMapCursor->y = 7;
+        else
+            sMapCursor->y = 7;
         break;
     case MAPSEC_UNDERGROUND_PATH_2:
         sMapCursor->y = 6;
-		
+        
         if (gSaveBlock1Ptr->location.mapNum == MAP_NUM(UNDERGROUND_PATH_EAST_ENTRANCE))
             sMapCursor->x = 15;
-		else
-			sMapCursor->x = 12;
+        else
+            sMapCursor->x = 12;
         break;
     case MAPSEC_BIRTH_ISLAND:
         sMapCursor->x = 18;
@@ -3092,14 +3092,14 @@ static u32 GetSelectedMapSection(u32 whichMap, u32 layer, s16 y, s16 x)
 static void CreatePlayerIcon(u32 tileTag, u32 palTag)
 {
     sPlayerIcon = AllocZeroed(sizeof(struct PlayerIcon));
-	
-	LZDecompressWram(gSaveBlock2Ptr->playerGender == FEMALE ? sPlayerIcon_Leaf : sPlayerIcon_Red, sPlayerIcon->tiles);
-	
+    
+    LZDecompressWram(gSaveBlock2Ptr->playerGender == FEMALE ? sPlayerIcon_Leaf : sPlayerIcon_Red, sPlayerIcon->tiles);
+    
     sPlayerIcon->tileTag = tileTag;
     sPlayerIcon->palTag = palTag;
     sPlayerIcon->x = sMapCursor->x;
     sPlayerIcon->y = sMapCursor->y;
-	
+    
     CreatePlayerIconSprite();
 }
 
@@ -3154,14 +3154,14 @@ static void InitMapIcons(u32 taskId, TaskFunc taskFunc)
 {
     sMapIcons = AllocZeroed(sizeof(struct MapIcons));
     sMapIcons->exitTask = taskFunc;
-	
+    
     LZDecompressWram(sDungeonIcon, sMapIcons->dungeonIconTiles);
     LZDecompressWram(sFlyIcon, sMapIcons->flyIconTiles);
-	
+    
     gTasks[taskId].func = LoadMapIcons;
 }
 
-static void LoadMapIcons(u8 taskId)
+static void LoadMapIcons(u32 taskId)
 {
     switch (sMapIcons->state)
     {
@@ -3201,7 +3201,7 @@ static void FinishMapIconLoad(u32 taskId)
 static void CreateFlyIconSprite(u32 whichMap, u32 numIcons, u16 x, u16 y, u32 tileTag, u32 palTag)
 {
     u32 spriteId;
-	
+    
     struct SpriteSheet spriteSheet = {
         .data = sMapIcons->flyIconTiles,
         .size = sizeof(sMapIcons->flyIconTiles),
@@ -3223,11 +3223,11 @@ static void CreateFlyIconSprite(u32 whichMap, u32 numIcons, u16 x, u16 y, u32 ti
 
     LoadSpriteSheet(&spriteSheet);
     LoadSpritePalette(&spritePalette);
-	
+    
     spriteId = CreateSprite(&template, 8 * x + 36, 8 * y + 36, 1);
     sMapIcons->flyIcons[numIcons].sprite = &gSprites[spriteId];
     gSprites[spriteId].invisible = TRUE;
-	
+    
     sMapIcons->flyIcons[numIcons].region = whichMap;
 }
 
@@ -3235,7 +3235,7 @@ static void CreateDungeonIconSprite(u32 whichMap, u32 numIcons, u16 x, u16 y, u3
 {
     u32 spriteId, mapsec;
     s16 offset = 0;
-	
+    
     struct SpriteSheet spriteSheet = {
         .data = sMapIcons->dungeonIconTiles,
         .size = sizeof(sMapIcons->dungeonIconTiles),
@@ -3273,11 +3273,11 @@ static void CreateFlyIcons(void)
 {
     u32 i, y, x;
     u32 numIcons;
-	
+    
     if (GetRegionMapPermission(MAPPERM_HAS_FLY_DESTINATIONS))
     {
-		numIcons = 0;
-		
+        numIcons = 0;
+        
         for (i = 0; i < REGIONMAP_COUNT; i++)
         {
             for (y = 0; y < MAP_HEIGHT; y++)
@@ -3299,7 +3299,7 @@ static void CreateDungeonIcons(void)
 {
     u32 i, y, x;
     u32 mapsec, numIcons = 0;
-	
+    
     for (i = 0; i < REGIONMAP_COUNT; i++)
     {
         for (y = 0; y < MAP_HEIGHT; y++)
@@ -3307,12 +3307,12 @@ static void CreateDungeonIcons(void)
             for (x = 0; x < MAP_WIDTH; x++)
             {
                 mapsec = GetSelectedMapSection(i, LAYER_DUNGEON, y, x);
-				
+                
                 if (mapsec == MAPSEC_NONE || (mapsec == MAPSEC_CERULEAN_CAVE && !FlagGet(FLAG_SYS_CAN_LINK_WITH_RS)))
                     continue;
 
                 CreateDungeonIconSprite(i, numIcons, x, y, numIcons + 35, 10);
-				
+                
                 if (GetDungeonMapsecType(mapsec) != 2)
                     StartSpriteAnim(sMapIcons->dungeonIcons[numIcons].sprite, 1);
 
@@ -3325,7 +3325,7 @@ static void CreateDungeonIcons(void)
 static void SetFlyIconInvisibility(u32 whichMap, u32 iconNum, bool32 invisible)
 {
     u32 i;
-	
+    
     if (iconNum == ARRAY_COUNT(sMapIcons->flyIcons))
     {
         // Set for all fly icons
@@ -3345,7 +3345,7 @@ static void SetFlyIconInvisibility(u32 whichMap, u32 iconNum, bool32 invisible)
 static void SetDungeonIconInvisibility(u32 whichMap, u32 iconNum, bool32 invisible)
 {
     u32 i;
-	
+    
     if (iconNum == ARRAY_COUNT(sMapIcons->dungeonIcons))
     {
         // Set for all dungeon icons
@@ -3365,7 +3365,7 @@ static void SetDungeonIconInvisibility(u32 whichMap, u32 iconNum, bool32 invisib
 static void FreeMapIcons(void)
 {
     u32 i;
-	
+    
     for (i = 0; i < ARRAY_COUNT(sMapIcons->flyIcons); i++)
     {
         if (sMapIcons->flyIcons[i].sprite != NULL)
@@ -3391,7 +3391,7 @@ static void SaveRegionMapGpuRegs(u32 idx)
 {
     if (sRegionMapGpuRegs[idx] != NULL)
         return;
-	
+    
     sRegionMapGpuRegs[idx] = AllocZeroed(sizeof(struct RegionMapGpuRegs));
     sRegionMapGpuRegs[idx]->bldcnt = GetGpuReg(REG_OFFSET_BLDCNT);
     sRegionMapGpuRegs[idx]->bldy = GetGpuReg(REG_OFFSET_BLDY);
@@ -3408,7 +3408,7 @@ static void SetRegionMapGpuRegs(u32 idx)
 {
     if (sRegionMapGpuRegs[idx] == NULL)
         return;
-	
+    
     SetGpuReg(REG_OFFSET_BLDCNT, sRegionMapGpuRegs[idx]->bldcnt);
     SetGpuReg(REG_OFFSET_BLDY, sRegionMapGpuRegs[idx]->bldy);
     SetGpuReg(REG_OFFSET_BLDALPHA, sRegionMapGpuRegs[idx]->bldalpha);
@@ -3424,7 +3424,7 @@ static void SetRegionMapGpuRegs(u32 idx)
 static void FreeRegionMapGpuRegs(void)
 {
     u32 i;
-	
+    
     for (i = 0; i < ARRAY_COUNT(sRegionMapGpuRegs); i++)
         FREE_IF_NOT_NULL(sRegionMapGpuRegs[i]);
 }
@@ -3477,7 +3477,7 @@ void SetDispCnt(u32 idx, bool32 clear)
 {
     u16 data[sizeof(sWinFlags) / 2];
     memcpy(data, sWinFlags, sizeof(sWinFlags));
-	
+    
     switch (clear)
     {
     case FALSE:
@@ -3510,35 +3510,35 @@ static bool32 IsCeladonDeptStoreMapsec(u32 mapsec)
     else if (gSaveBlock1Ptr->location.mapGroup != MAP_GROUP(CELADON_CITY_DEPARTMENT_STORE_1F))
         return FALSE;
     else if (gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_1F)
-		&& gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_2F)
-		&& gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_3F)
-		&& gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_4F)
-		&& gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_5F)
-		&& gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_ROOF)
-		&& gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_ELEVATOR))
+        && gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_2F)
+        && gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_3F)
+        && gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_4F)
+        && gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_5F)
+        && gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_ROOF)
+        && gSaveBlock1Ptr->location.mapNum != MAP_NUM(CELADON_CITY_DEPARTMENT_STORE_ELEVATOR))
         return FALSE;
-	else
-		return TRUE;
+    else
+        return TRUE;
 }
 
 u8 *GetMapName(u8 *dst0, u32 mapsec)
 {
     if (mapsec - MAPSECS_KANTO <= MAPSEC_SPECIAL_AREA - MAPSECS_KANTO)
-		return StringCopy(dst0, IsCeladonDeptStoreMapsec(mapsec) ? sMapsecName_CELADONDEPT : gMapSectionsInfo[mapsec].name);
+        return StringCopy(dst0, IsCeladonDeptStoreMapsec(mapsec) ? sMapsecName_CELADONDEPT : gMapSectionsInfo[mapsec].name);
     else
         return StringFill(dst0, CHAR_SPACE, 18);
 }
 
 static void PrintTopBarTextLeft(const u8 *str)
 {
-	FillWindowPixelBuffer(WIN_TOPBAR_LEFT, PIXEL_FILL(GetRegionMapPermission(MAPPERM_HAS_OPEN_ANIM) ? 0 : 15));
+    FillWindowPixelBuffer(WIN_TOPBAR_LEFT, PIXEL_FILL(GetRegionMapPermission(MAPPERM_HAS_OPEN_ANIM) ? 0 : 15));
     AddTextPrinterParameterized3(WIN_TOPBAR_LEFT, 0, 0, 0, sTextColors, 0, str);
     CopyWindowToVram(WIN_TOPBAR_LEFT, COPYWIN_GFX);
 }
 
 static void PrintTopBarTextRight(const u8 *str)
 {
-	FillWindowPixelBuffer(WIN_TOPBAR_RIGHT, PIXEL_FILL(GetRegionMapPermission(MAPPERM_HAS_OPEN_ANIM) ? 0 : 15));
+    FillWindowPixelBuffer(WIN_TOPBAR_RIGHT, PIXEL_FILL(GetRegionMapPermission(MAPPERM_HAS_OPEN_ANIM) ? 0 : 15));
     AddTextPrinterParameterized3(WIN_TOPBAR_RIGHT, 0, 0, 0, sTextColors, 0, str);
     CopyWindowToVram(WIN_TOPBAR_RIGHT, COPYWIN_BOTH);
 }
@@ -3557,7 +3557,7 @@ static void ClearOrDrawTopBar(bool32 clear)
     }
 }
 
-static void Task_FlyMap(u8 taskId)
+static void Task_FlyMap(u32 taskId)
 {
     switch (sFlyMap->state)
     {
@@ -3613,12 +3613,12 @@ static void Task_FlyMap(u8 taskId)
                 PlaySE(SE_DEX_PAGE);
             else
                 PlaySEForSelectedMapsec();
-			
+            
             ResetCursorSnap();
             DisplayCurrentMapName();
             DisplayCurrentDungeonName();
             DrawDungeonNameBox();
-			
+            
             if (sMapCursor->x == CANCEL_BUTTON_X && sMapCursor->y == CANCEL_BUTTON_Y)
             {
                 PlaySE(SE_M_SPIT_UP);
@@ -3666,7 +3666,7 @@ static void Task_FlyMap(u8 taskId)
         {
             if (sFlyMap->selectedDestination)
                 SetFlyWarpDestination(GetMapsecUnderCursor());
-			
+            
             FreeFlyMap(taskId);
         }
         break;
@@ -3683,7 +3683,7 @@ static void FreeFlyMap(u32 taskId)
 {
     if (GetRegionMapPermission(MAPPERM_HAS_OPEN_ANIM))
         FreeMapOpenCloseAnim();
-	
+    
     FreeMapIcons();
     FreeMapCursor();
     FreePlayerIcon();
@@ -3691,7 +3691,7 @@ static void FreeFlyMap(u32 taskId)
     FREE_IF_NOT_NULL(sRegionMap);
     DestroyTask(taskId);
     FreeAllWindowBuffers();
-	
+    
     if (sFlyMap->selectedDestination)
         SetMainCallback2(CB2_ReturnToField);
     else
@@ -3699,7 +3699,7 @@ static void FreeFlyMap(u32 taskId)
         if (gUsingRideMon == RIDE_CHARIZARD)
         {
             gUsingRideMon = RIDE_NONE;
-			SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);
+            SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);
         }
         else
             SetMainCallback2(CB2_ReturnToPartyMenuFromFlyMap);
@@ -3710,7 +3710,7 @@ static void FreeFlyMap(u32 taskId)
 static void SetFlyWarpDestination(u32 mapsec)
 {
     u32 idx = mapsec - MAPSECS_KANTO;
-	
+    
     if (sMapFlyDestinations[idx][2])
         SetWarpDestinationToHealLocation(sMapFlyDestinations[idx][2]);
     else

@@ -55,9 +55,9 @@ struct EasyChatScreen
 static EWRAM_DATA struct EasyChatScreen * sEasyChatScreen = NULL;
 
 static void CB2_EasyChatScreen(void);
-static void Task_InitEasyChat(u8 taskId);
-static void Task_RunEasyChat(u8 taskId);
-static bool8 Task_InitEasyChatInternal(u8 taskId);
+static void Task_InitEasyChat(u32 taskId);
+static void Task_RunEasyChat(u32 taskId);
+static bool8 Task_InitEasyChatInternal(u32 taskId);
 static void DismantleEasyChat(MainCallback cb);
 static bool8 EasyChat_AllocateResources(u8 type, u16 *words);
 static void EasyChat_FreeResources(void);
@@ -102,7 +102,7 @@ static bool32 IsEcWordBufferUninitialized(void);
 
 void DoEasyChatScreen(u8 type, u16 *words, MainCallback callback)
 {
-    u8 taskId;
+    u32 taskId;
     ResetTasks();
     taskId = CreateTask(Task_InitEasyChat, 0);
     gTasks[taskId].data[EZCHAT_TASK_TYPE] = type;
@@ -126,7 +126,7 @@ static void VBlankCallback_EasyChatScreen(void)
     ProcessSpriteCopyRequests();
 }
 
-static void Task_InitEasyChat(u8 taskId)
+static void Task_InitEasyChat(u32 taskId)
 {
     if (!IsUpdateLinkStateCBActive())
     {
@@ -142,7 +142,7 @@ static void Task_InitEasyChat(u8 taskId)
     gTasks[taskId].data[EZCHAT_TASK_STATE] = 0;
 }
 
-static void Task_RunEasyChat(u8 taskId)
+static void Task_RunEasyChat(u32 taskId)
 {
     u16 action;
     s16 *data;
@@ -181,7 +181,7 @@ static void Task_RunEasyChat(u8 taskId)
     }
 }
 
-static bool8 Task_InitEasyChatInternal(u8 taskId)
+static bool8 Task_InitEasyChatInternal(u32 taskId)
 {
     s16 *data;
 

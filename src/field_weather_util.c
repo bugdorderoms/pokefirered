@@ -12,79 +12,79 @@
 #if DYNAMIC_WEATHER
 static u32 TryStartDynamicWeather(void)
 {
-	u32 weatherChance;
-	u32 newWeather = gSaveBlock1Ptr->weather;
-	
-	if (++gSaveBlock1Ptr->weatherDelay == RANDOM_WEATHER_DELAY) // Wait weather delay
-	{
-		gSaveBlock1Ptr->weatherDelay = 0;
-		
-		// only start a random weather if map's weather is WEATHER_NONE or WEATHER_SHADE
-	    if (!IsMapDNSException() && (newWeather == WEATHER_NONE || newWeather == WEATHER_SHADE))
-	    {
-	    	newWeather = WEATHER_RAIN; // Default new weather
-	    	weatherChance = 10; // Default chance
-	    	
-	    	// Get chance modification by season
-	    	switch (DNSGetCurrentSeason())
-	    	{
-	    		case SEASON_SUMMER:
-	    		case SEASON_SPRING:
-	    		    weatherChance += 10; // +10% chance
-	    			
-	    			if (RandomPercent(5)) // 5% chance that becames a heavy rain
-	    				newWeather = WEATHER_RAIN_THUNDERSTORM;
-	    			break;
-	    		case SEASON_WINTER:
-				    weatherChance = 100; // Set default chance to 100%
-					
-					// Always init a snow or snowstorm
-					if (RandomPercent(40)) // 40% chance that becames a snowstorm
-						newWeather = WEATHER_SNOWSTORM;
-					else
-						newWeather = WEATHER_SNOW;
-	    			break;
-	    		case SEASON_AUTUMN:
-	    		    weatherChance = 5; // Set default chance to 5%
-	    			
-	    			if (RandomPercent(2)) // 2% chance that becames a heavy rain
-	    			    newWeather = WEATHER_RAIN_THUNDERSTORM;
-	    			break;
-	    	}
-	    	
-	    	// Snow and snowstorm weathers are't affected by the time of day
-	    	if (newWeather != WEATHER_SNOW && newWeather != WEATHER_SNOWSTORM)
-	    	{
-	    		// Get chance modification by time of day
-	    	    switch (GetDNSTimeLapse())
-	    	    {
-					case TIME_DAY:
-						if (RandomPercent(65)) // 65% chance starts a drought
-						{
-							newWeather = WEATHER_DROUGHT;
-							weatherChance = 50; // Set default chance to 50%
-						}
-						break;
-	    	    	case TIME_NIGHTFALL:
-	    	    	    weatherChance += 4; // +4% chance
-	    	    		break;
-	    	    	case TIME_NIGHT:
-	    	    	    weatherChance += 7; // +7% chance
-	    	    		break;
-	    	    	case TIME_MIDNIGHT:
-	    	    	    weatherChance += 10; // +10% chance
-	    	    		break;
-	    	    }
-	    	}
-	    	
-	    	// Final calculation
-	    	if (newWeather != WEATHER_NONE && RandomPercent(weatherChance))
-	    		gSaveBlock1Ptr->weather = newWeather; // Apply new weather
-	    	else
-	    		newWeather = gSaveBlock1Ptr->weather; // Failed to apply
-	    }
-	}
-	return newWeather;
+    u32 weatherChance;
+    u32 newWeather = gSaveBlock1Ptr->weather;
+    
+    if (++gSaveBlock1Ptr->weatherDelay == RANDOM_WEATHER_DELAY) // Wait weather delay
+    {
+        gSaveBlock1Ptr->weatherDelay = 0;
+        
+        // only start a random weather if map's weather is WEATHER_NONE or WEATHER_SHADE
+        if (!IsMapDNSException() && (newWeather == WEATHER_NONE || newWeather == WEATHER_SHADE))
+        {
+            newWeather = WEATHER_RAIN; // Default new weather
+            weatherChance = 10; // Default chance
+            
+            // Get chance modification by season
+            switch (DNSGetCurrentSeason())
+            {
+                case SEASON_SUMMER:
+                case SEASON_SPRING:
+                    weatherChance += 10; // +10% chance
+                    
+                    if (RandomPercent(5)) // 5% chance that becames a heavy rain
+                        newWeather = WEATHER_RAIN_THUNDERSTORM;
+                    break;
+                case SEASON_WINTER:
+                    weatherChance = 100; // Set default chance to 100%
+                    
+                    // Always init a snow or snowstorm
+                    if (RandomPercent(40)) // 40% chance that becames a snowstorm
+                        newWeather = WEATHER_SNOWSTORM;
+                    else
+                        newWeather = WEATHER_SNOW;
+                    break;
+                case SEASON_AUTUMN:
+                    weatherChance = 5; // Set default chance to 5%
+                    
+                    if (RandomPercent(2)) // 2% chance that becames a heavy rain
+                        newWeather = WEATHER_RAIN_THUNDERSTORM;
+                    break;
+            }
+            
+            // Snow and snowstorm weathers are't affected by the time of day
+            if (newWeather != WEATHER_SNOW && newWeather != WEATHER_SNOWSTORM)
+            {
+                // Get chance modification by time of day
+                switch (GetDNSTimeLapse())
+                {
+                    case TIME_DAY:
+                        if (RandomPercent(65)) // 65% chance starts a drought
+                        {
+                            newWeather = WEATHER_DROUGHT;
+                            weatherChance = 50; // Set default chance to 50%
+                        }
+                        break;
+                    case TIME_NIGHTFALL:
+                        weatherChance += 4; // +4% chance
+                        break;
+                    case TIME_NIGHT:
+                        weatherChance += 7; // +7% chance
+                        break;
+                    case TIME_MIDNIGHT:
+                        weatherChance += 10; // +10% chance
+                        break;
+                }
+            }
+            
+            // Final calculation
+            if (newWeather != WEATHER_NONE && RandomPercent(weatherChance))
+                gSaveBlock1Ptr->weather = newWeather; // Apply new weather
+            else
+                newWeather = gSaveBlock1Ptr->weather; // Failed to apply
+        }
+    }
+    return newWeather;
 }
 #endif
 
@@ -118,6 +118,6 @@ void ResumePausedWeather(void)
 #if DYNAMIC_WEATHER
     SetCurrentAndNextWeather(TryStartDynamicWeather());
 #else
-	SetCurrentAndNextWeather(gSaveBlock1Ptr->weather);
+    SetCurrentAndNextWeather(gSaveBlock1Ptr->weather);
 #endif
 }

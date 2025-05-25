@@ -3,9 +3,9 @@
 
 struct Region
 {
-	u8 name[8];
-	u16 dexStart;
-	u16 dexEnd;
+    u8 name[8];
+    u16 dexStart;
+    u16 dexEnd;
 };
 
 enum

@@ -518,7 +518,7 @@ void MPlayStart(struct MusicPlayerInfo *mplayInfo, struct SongHeader *songHeader
     unk_B = mplayInfo->unk_B;
 
     if (!unk_B || ((!mplayInfo->songHeader || !(mplayInfo->tracks[0].flags & MPT_FLG_START)) && ((mplayInfo->status & MUSICPLAYER_STATUS_TRACK) == 0
-	|| (mplayInfo->status & MUSICPLAYER_STATUS_PAUSE))) || (mplayInfo->priority <= songHeader->priority))
+    || (mplayInfo->status & MUSICPLAYER_STATUS_PAUSE))) || (mplayInfo->priority <= songHeader->priority))
     {
         mplayInfo->ident++;
         mplayInfo->status = 0;

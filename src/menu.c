@@ -39,11 +39,11 @@ void DrawDialogFrameWithCustomTileAndPalette(u32 windowId, bool32 copyToVram, u3
 {
     sTileNum = tileNum;
     sPaletteNum = paletteNum;
-	
+    
     CallWindowFunction(windowId, WindowFunc_DrawDialogFrameWithCustomTileAndPalette);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     PutWindowTilemap(windowId);
-	
+    
     if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -84,7 +84,7 @@ void ClearDialogWindowAndFrameToTransparent(u32 windowId, bool32 copyToVram)
     CallWindowFunction(windowId, WindowFunc_ClearDialogWindowAndFrameNullPalette);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
     ClearWindowTilemap(windowId);
-	
+    
     if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -98,11 +98,11 @@ void DrawStdFrameWithCustomTileAndPalette(u32 windowId, bool32 copyToVram, u32 b
 {
     sTileNum = baseTileNum;
     sPaletteNum = paletteNum;
-	
+    
     CallWindowFunction(windowId, WindowFunc_DrawStdFrameWithCustomTileAndPalette);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     PutWindowTilemap(windowId);
-	
+    
     if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -124,7 +124,7 @@ void ClearStdWindowAndFrameToTransparent(u32 windowId, bool32 copyToVram)
     CallWindowFunction(windowId, WindowFunc_ClearStdWindowAndFrameToTransparent);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
     ClearWindowTilemap(windowId);
-	
+    
     if (copyToVram)
         CopyWindowToVram(windowId, COPYWIN_BOTH);
 }
@@ -146,28 +146,28 @@ u32 CreateTopBarWindowLoadPalette(u32 bg, u32 width, u32 yPos, u32 palette, u32 
     struct WindowTemplate window;
 
     memset(&window, 0, sizeof(window));
-	
+    
     if (bg > 3)
         window.bg = 0;
     else
         window.bg = bg;
-	
+    
     window.tilemapTop = yPos;
     window.height = 2;
     window.tilemapLeft = 0x1E - width;
     window.width = width;
     window.paletteNum = palette;
     window.baseBlock = baseTile;
-	
+    
     sTopBarWindowId = AddWindow(&window);
-	
+    
     if (palette > 15)
         palette = 15 * 16;
     else
         palette *= 16;
-	
+    
     LoadPalette(stdpal_get(2), palette, 0x20);
-	
+    
     return sTopBarWindowId;
 }
 
@@ -179,7 +179,7 @@ void TopBarWindowPrintString(const u8 *string, bool32 copyToVram)
         FillWindowPixelBuffer(sTopBarWindowId, PIXEL_FILL(15));
 
         AddTextPrinterParameterized3(sTopBarWindowId, 0, -20 - GetStringWidth(0, string, 0), 1, gUnknown_8456618, 0, string);
-		
+        
         if (copyToVram)
             CopyWindowToVram(sTopBarWindowId, COPYWIN_BOTH);
     }
@@ -205,12 +205,12 @@ void TopBarWindowPrintTwoStrings(const u8 *string, const u8 *string2, bool32 fgC
         }
         PutWindowTilemap(sTopBarWindowId);
         FillWindowPixelBuffer(sTopBarWindowId, PIXEL_FILL(15));
-		
+        
         if (string2)
             AddTextPrinterParameterized3(sTopBarWindowId, 0, -20 - GetStringWidth(0, string2, 0), 1, color, 0, string2);
 
         AddTextPrinterParameterized4(sTopBarWindowId, 1, 4, 1, 0, 0, color, 0, string);
-		
+        
         if (copyToVram)
             CopyWindowToVram(sTopBarWindowId, COPYWIN_BOTH);
     }
@@ -249,7 +249,7 @@ u32 Menu_InitCursorInternal(u32 windowId, u32 fontId, u32 left, u32 top, u32 cur
     sMenu.fontId = fontId;
     sMenu.optionHeight = cursorHeight;
     sMenu.APressMuted = APressMuted;
-	
+    
     pos = initialCursorPos;
     if (pos < 0 || pos > sMenu.maxCursorPos)
         sMenu.cursorPos = 0;
@@ -282,7 +282,7 @@ u32 Menu_MoveCursor(s8 cursorDelta)
         sMenu.cursorPos = sMenu.minCursorPos;
     else
         sMenu.cursorPos += cursorDelta;
-	
+    
     Menu_RedrawCursor(oldPos, sMenu.cursorPos);
     return sMenu.cursorPos;
 }
@@ -314,10 +314,10 @@ s8 Menu_ProcessInput(void)
     {
         if (!sMenu.APressMuted)
             PlaySE(SE_SELECT);
-		
+        
         return sMenu.cursorPos;
     }
-	
+    
     if (JOY_NEW(B_BUTTON))
         return MENU_B_PRESSED;
 
@@ -327,7 +327,7 @@ s8 Menu_ProcessInput(void)
         Menu_MoveCursor(-1);
         return MENU_NOTHING_CHOSEN;
     }
-	
+    
     if (JOY_NEW(DPAD_DOWN))
     {
         PlaySE(SE_SELECT);
@@ -345,10 +345,10 @@ s8 Menu_ProcessInputNoWrapAround(void)
     {
         if (!sMenu.APressMuted)
             PlaySE(SE_SELECT);
-		
+        
         return sMenu.cursorPos;
     }
-	
+    
     if (JOY_NEW(B_BUTTON))
         return MENU_B_PRESSED;
 
@@ -356,15 +356,15 @@ s8 Menu_ProcessInputNoWrapAround(void)
     {
         if (oldPos != Menu_MoveCursorNoWrapAround(-1))
             PlaySE(SE_SELECT);
-		
+        
         return MENU_NOTHING_CHOSEN;
     }
-	
+    
     if (JOY_NEW(DPAD_DOWN))
     {
         if (oldPos != Menu_MoveCursorNoWrapAround(1))
             PlaySE(SE_SELECT);
-		
+        
         return MENU_NOTHING_CHOSEN;
     }
     return MENU_NOTHING_CHOSEN;
@@ -376,10 +376,10 @@ s8 Menu_ProcessInput_other(void)
     {
         if (!sMenu.APressMuted)
             PlaySE(SE_SELECT);
-		
+        
         return sMenu.cursorPos;
     }
-	
+    
     if (JOY_NEW(B_BUTTON))
         return MENU_B_PRESSED;
 
@@ -389,7 +389,7 @@ s8 Menu_ProcessInput_other(void)
         Menu_MoveCursor(-1);
         return MENU_NOTHING_CHOSEN;
     }
-	
+    
     if (JOY_REPT(DPAD_ANY) == DPAD_DOWN)
     {
         PlaySE(SE_SELECT);
@@ -407,10 +407,10 @@ s8 Menu_ProcessInputNoWrapAround_other(void)
     {
         if (!sMenu.APressMuted)
             PlaySE(SE_SELECT);
-		
+        
         return sMenu.cursorPos;
     }
-	
+    
     if (JOY_NEW(B_BUTTON))
         return MENU_B_PRESSED;
 
@@ -418,15 +418,15 @@ s8 Menu_ProcessInputNoWrapAround_other(void)
     {
         if (oldPos != Menu_MoveCursorNoWrapAround(-1))
             PlaySE(SE_SELECT);
-		
+        
         return MENU_NOTHING_CHOSEN;
     }
-	
+    
     if (JOY_REPT(DPAD_ANY) == DPAD_DOWN)
     {
         if (oldPos != Menu_MoveCursorNoWrapAround(1))
             PlaySE(SE_SELECT);
-		
+        
         return MENU_NOTHING_CHOSEN;
     }
     return MENU_NOTHING_CHOSEN;
@@ -438,7 +438,7 @@ void PrintTextArray(u32 windowId, u32 fontId, u32 left, u32 top, u32 lineHeight,
 
     for (i = 0; i < itemCount; i++)
         AddTextPrinterParameterized(windowId, fontId, strs[i].text, left, (lineHeight * i) + top, 0xFF, NULL);
-	
+    
     CopyWindowToVram(windowId, COPYWIN_GFX);
 }
 
@@ -462,7 +462,7 @@ void AddItemMenuActionTextPrinters(u32 windowId, u32 fontId, u32 left, u32 top, 
     printer.lineSpacing = GetFontAttribute(fontId, FONTATTR_LINE_SPACING);
     printer.x = left;
     printer.currentX = left;
-	
+    
     for (i = 0; i < itemCount; i++)
     {
         printer.currentChar = strs[orderArray[i]].text;
@@ -505,7 +505,7 @@ void CreateYesNoMenu(const struct WindowTemplate *window, u32 fontId, u32 left, 
     textSubPrinter.unk = GetFontAttribute(fontId, FONTATTR_UNKNOWN);
     textSubPrinter.letterSpacing = GetFontAttribute(fontId, FONTATTR_LETTER_SPACING);
     textSubPrinter.lineSpacing = GetFontAttribute(fontId, FONTATTR_LINE_SPACING);
-	
+    
     AddTextPrinter(&textSubPrinter, 0xFF, NULL);
     Menu_InitCursor(sYesNoWindowId, fontId, left, top, GetFontAttribute(fontId, FONTATTR_MAX_LETTER_HEIGHT) + textSubPrinter.lineSpacing, 2, initialCursorPos);
 }
@@ -513,10 +513,10 @@ void CreateYesNoMenu(const struct WindowTemplate *window, u32 fontId, u32 left, 
 s8 Menu_ProcessInputNoWrapClearOnChoose(void)
 {
     s8 result = Menu_ProcessInputNoWrapAround();
-	
+    
     if (result != MENU_NOTHING_CHOSEN)
         DestroyYesNoMenu();
-	
+    
     return result;
 }
 
@@ -528,17 +528,17 @@ void DestroyYesNoMenu(void)
 
 void MultichoiceGrid_PrintItems(u32 windowId, u32 fontId, u32 itemWidth, u32 itemHeight, u32 cols, u32 rows, const struct MenuAction *strs)
 {
-	u32 width, i, j;
+    u32 width, i, j;
     u8 yOffset;
 
     width = GetFontAttribute(fontId, FONTATTR_MAX_LETTER_WIDTH);
     yOffset = (16 - GetFontAttribute(fontId, FONTATTR_MAX_LETTER_HEIGHT)) / 2;
-	
+    
     for (i = 0; i < rows; ++i)
-	{
+    {
         for (j = 0; j < cols; ++j)
             AddTextPrinterParameterized(windowId, fontId, strs[i * cols + j].text, itemWidth * j + width, yOffset + itemHeight * i, 0xFF, 0);
-	}
+    }
     CopyWindowToVram(windowId, COPYWIN_GFX);
 }
 
@@ -548,10 +548,10 @@ static void MultichoiceGrid_RedrawCursor(u32 oldCursorPos, u32 newCursorPos)
     u8 yPos = (oldCursorPos / sMenu.columns) * sMenu.optionHeight + sMenu.top;
     
     FillWindowPixelRect(sMenu.windowId, PIXEL_FILL(1), xPos, yPos, GetMenuCursorDimensionByFont(sMenu.fontId, 0), GetMenuCursorDimensionByFont(sMenu.fontId, 1));
-	
+    
     xPos = (newCursorPos % sMenu.columns) * sMenu.optionWidth + sMenu.left;
     yPos = (newCursorPos / sMenu.columns) * sMenu.optionHeight + sMenu.top;
-	
+    
     AddTextPrinterParameterized(sMenu.windowId, sMenu.fontId, gText_SelectorArrow2, xPos, yPos, 0, 0);
 }
 
@@ -568,7 +568,7 @@ static u32 MultichoiceGrid_MoveCursor(s8 deltaX, s8 deltaY)
         else
             sMenu.cursorPos += deltaX;
     }
-	
+    
     if (deltaY)
     {
         if ((sMenu.cursorPos / sMenu.columns) + deltaY < 0)
@@ -578,13 +578,13 @@ static u32 MultichoiceGrid_MoveCursor(s8 deltaX, s8 deltaY)
         else
             sMenu.cursorPos += (sMenu.columns * deltaY);
     }
-	
+    
     if (sMenu.cursorPos > sMenu.maxCursorPos)
         sMenu.cursorPos = oldPos;
     else
         MultichoiceGrid_RedrawCursor(oldPos, sMenu.cursorPos);
-	
-	return sMenu.cursorPos;
+    
+    return sMenu.cursorPos;
 }
 
 u32 MultichoiceGrid_InitCursor(u32 windowId, u32 fontId, u32 left, u32 top, u32 optionWidth, u32 cols, u32 rows, u32 cursorPos)
@@ -601,15 +601,15 @@ u32 MultichoiceGrid_InitCursor(u32 windowId, u32 fontId, u32 left, u32 top, u32 
     sMenu.optionHeight = 16;
     sMenu.columns = cols;
     sMenu.rows = rows;
-	
+    
     pos = cursorPos;
     if (pos < 0 || pos > sMenu.maxCursorPos)
         sMenu.cursorPos = 0;
     else
         sMenu.cursorPos = pos;
-	
+    
     MultichoiceGrid_MoveCursor(0, 0);
-	
+    
     return sMenu.cursorPos;
 }
 
@@ -622,19 +622,19 @@ static u32 MultichoiceGrid_MoveCursorIfValid(s8 deltaX, s8 deltaY)
         if (((sMenu.cursorPos % sMenu.columns) + deltaX >= 0) && ((sMenu.cursorPos % sMenu.columns) + deltaX < sMenu.columns))
             sMenu.cursorPos += deltaX;
     }
-	
+    
     if (deltaY)
     {
         if (((sMenu.cursorPos / sMenu.columns) + deltaY >= 0) && ((sMenu.cursorPos / sMenu.columns) + deltaY < sMenu.rows))
             sMenu.cursorPos += (sMenu.columns * deltaY);
     }
-	
+    
     if (sMenu.cursorPos > sMenu.maxCursorPos)
         sMenu.cursorPos = oldPos;
     else
         MultichoiceGrid_RedrawCursor(oldPos, sMenu.cursorPos);
-	
-	return sMenu.cursorPos;
+    
+    return sMenu.cursorPos;
 }
 
 s8 Menu_ProcessInputGridLayout(void)
@@ -652,28 +652,28 @@ s8 Menu_ProcessInputGridLayout(void)
     {
         if (oldPos != MultichoiceGrid_MoveCursorIfValid(0, -1))
             PlaySE(SE_SELECT);
-		
+        
         return MENU_NOTHING_CHOSEN;
     }
     else if (JOY_NEW(DPAD_DOWN))
     {
         if (oldPos != MultichoiceGrid_MoveCursorIfValid(0, 1))
             PlaySE(SE_SELECT);
-		
+        
         return MENU_NOTHING_CHOSEN;
     }
     else if (JOY_NEW(DPAD_LEFT))
     {
         if (oldPos != MultichoiceGrid_MoveCursorIfValid(-1, 0))
             PlaySE(SE_SELECT);
-		
+        
         return MENU_NOTHING_CHOSEN;
     }
     else if (JOY_NEW(DPAD_RIGHT))
     {
         if (oldPos != MultichoiceGrid_MoveCursorIfValid(1, 0))
             PlaySE(SE_SELECT);
-		
+        
         return MENU_NOTHING_CHOSEN;
     }
     return MENU_NOTHING_CHOSEN;
@@ -686,7 +686,7 @@ void Menu_PrintFormatIntlPlayerName(u32 windowId, const u8 * src, u32 x, u32 y)
     for (i = 0; gSaveBlock2Ptr->playerName[i] != EOS; i++);
 
     StringExpandPlaceholders(gStringVar4, src);
-	
+    
     if (i != 5)
         AddTextPrinterParameterized(windowId, 2, gStringVar4, x, y, 0xFF, NULL);
     else

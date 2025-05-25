@@ -59,19 +59,19 @@ static void SendLastBlock(void);
 static void CallRfuFunc(void);
 static void UpdateChildStatuses(void);
 static s32 GetRfuRecvStatus(void);
-static void sub_80FA834(u8 taskId);
+static void sub_80FA834(u32 taskId);
 static void ClearSelectedLinkPlayerIds(u16 disconnectMask);
 static void ValidateAndReceivePokemonSioInfo(void * a0);
-static void Task_ExchangeLinkPlayers(u8 taskId);
-static void sub_80FACF0(u8 taskId);
+static void Task_ExchangeLinkPlayers(u32 taskId);
+static void sub_80FACF0(u32 taskId);
 static void GetLinkmanErrorParams(u32 msg);
 static void sub_80FB564(s32 bmConnectedFlag);
 static void sub_80FBB74(void);
 static u8 GetPartnerIndexByNameAndTrainerID(const u8 *trainerName, u16 trainerId);
 static void RfuReqDisconnectSlot(u32 bmDisconnectSlot);
 static void sub_80FBE20(u32 a0, u32 a1);
-static void sub_80FC028(u8 taskId);
-static void Task_idle(u8 taskId);
+static void sub_80FC028(u32 taskId);
+static void Task_idle(u32 taskId);
 
 static const INIT_PARAM sRfuReqConfigTemplate = {
     .maxMFrame = 4,
@@ -234,7 +234,7 @@ void InitRFUAPI(void)
     }
 }
 
-static void Task_LinkLeaderSearchForChildren(u8 taskId)
+static void Task_LinkLeaderSearchForChildren(u32 taskId)
 {
     UpdateChildStatuses();
     switch (Rfu.state)
@@ -326,7 +326,7 @@ static void ReassignPartnerIds(s32 before, s32 after)
     }
 }
 
-static void Task_JoinGroupSearchForParent(u8 taskId)
+static void Task_JoinGroupSearchForParent(u32 taskId)
 {
     switch (Rfu.state)
     {
@@ -404,7 +404,7 @@ static void sub_80F8AEC(void)
     Rfu.parent_child = MODE_PARENT;
 }
 
-static void Task_LinkRfu_UnionRoomListen(u8 taskId)
+static void Task_LinkRfu_UnionRoomListen(u32 taskId)
 {
     if (GetHostRFUtgtGname()->activity == (ACTIVITY_PLYRTALK | IN_UNION_ROOM) && RfuGetStatus() == 4)
     {
@@ -1352,7 +1352,7 @@ static void SendReadyCloseLink(void)
     }
 }
 
-static void Task_TryReadyCloseLink(u8 taskId)
+static void Task_TryReadyCloseLink(u32 taskId)
 {
     if (Rfu.RfuFunc == NULL)
     {
@@ -1624,7 +1624,7 @@ static s32 GetRfuRecvStatus(void)
     return retval;
 }
 
-static void sub_80FA834(u8 taskId)
+static void sub_80FA834(u32 taskId)
 {
     s32 i;
 
@@ -1742,7 +1742,7 @@ static void ValidateAndReceivePokemonSioInfo(void *recvBuffer)
     }
 }
 
-static void Task_ExchangeLinkPlayers(u8 taskId)
+static void Task_ExchangeLinkPlayers(u32 taskId)
 {
     s32 i;
     struct LinkPlayerBlock *r2;
@@ -1821,7 +1821,7 @@ static void Task_ExchangeLinkPlayers(u8 taskId)
     }
 }
 
-static void sub_80FACF0(u8 taskId)
+static void sub_80FACF0(u32 taskId)
 {
     if (Rfu.status == RFU_STATUS_FATAL_ERROR || Rfu.status == RFU_STATUS_CONNECTION_ERROR)
         DestroyTask(taskId);
@@ -2552,7 +2552,7 @@ void sub_80FBD6C(u32 a0)
     }
 }
 
-static void sub_80FBDB8(u8 taskId)
+static void sub_80FBDB8(u32 taskId)
 {
     if (IsSendCmdComplete() && !Rfu.foundNewLeaderMaybe)
     {
@@ -2567,7 +2567,7 @@ static void sub_80FBDB8(u8 taskId)
 
 static void sub_80FBE20(u32 a0, u32 a1)
 {
-    u8 taskId = FindTaskIdByFunc(sub_80FBDB8);
+    u32 taskId = FindTaskIdByFunc(sub_80FBDB8);
     if (taskId == 0xFF)
     {
         taskId = CreateTask(sub_80FBDB8, 5);
@@ -2581,7 +2581,7 @@ static void sub_80FBE20(u32 a0, u32 a1)
     gTasks[taskId].data[1] = a1;
 }
 
-static void Task_RfuReconnectWithParent(u8 taskId)
+static void Task_RfuReconnectWithParent(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
 
@@ -2626,7 +2626,7 @@ static void Task_RfuReconnectWithParent(u8 taskId)
 
 void CreateTask_RfuReconnectWithParent(const u8 *trainerName, u16 trainerId)
 {
-    u8 taskId;
+    u32 taskId;
     s16 *data;
 
     Rfu.status = RFU_STATUS_OK;
@@ -2668,7 +2668,7 @@ static bool32 ShouldRejectPartnerConnectionBasedOnActivity(s16 activity, struct 
     return FALSE;
 }
 
-static void sub_80FC028(u8 taskId)
+static void sub_80FC028(u32 taskId)
 {
     if (Rfu.status == RFU_STATUS_NEW_CHILD_DETECTED)
         DestroyTask(taskId);
@@ -2704,7 +2704,7 @@ static void sub_80FC028(u8 taskId)
 
 void sub_80FC114(const u8 *name, struct GFtgtGname *structPtr, u8 activity)
 {
-    u8 taskId, taskId2;
+    u32 taskId, taskId2;
 
     Rfu.unk_ccf = 0;
     Rfu.status = RFU_STATUS_OK;
@@ -2752,7 +2752,7 @@ u32 GetRfuRecvQueueLength(void)
     return Rfu.recvQueue.count;
 }
 
-static void Task_idle(u8 taskId)
+static void Task_idle(u32 taskId)
 {
 
 }

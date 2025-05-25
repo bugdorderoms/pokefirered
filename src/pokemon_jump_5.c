@@ -380,7 +380,7 @@ void sub_814ADCC(struct PokemonJump2 *arg0, struct PokemonJump1_MonInfo *jumpMon
         LoadCompressedSpritePalette(&spritePalette);
 
         Free(buffer);
-		
+        
         spriteTemplate.tileTag += multiplayerId;
         spriteTemplate.paletteTag += multiplayerId;
         spriteId = CreateSprite(&spriteTemplate, x, y, subpriority);

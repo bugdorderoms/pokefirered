@@ -216,7 +216,7 @@ void DigitObjUtil_PrintNumOn(u32 id, s32 num)
 
     if (sOamWork == NULL || !sOamWork->array[id].isActive)
         return;
-	
+    
     sOamWork->array[id].lastPrinted = num;
     if (num < 0)
     {
@@ -257,7 +257,7 @@ static void DrawNumObjsLeadingZeros(struct DigitPrinter *objWork, s32 num, bool3
         gMain.oamBuffer[oamId].tileNum = (digit * objWork->tilesPerImage) + objWork->tileStart;
         oamId++;
     }
-	gMain.oamBuffer[oamId].affineMode = sign ? ST_OAM_AFFINE_OFF : ST_OAM_AFFINE_ERASE;
+    gMain.oamBuffer[oamId].affineMode = sign ? ST_OAM_AFFINE_OFF : ST_OAM_AFFINE_ERASE;
 }
 
 static void DrawNumObjsMinusInFront(struct DigitPrinter *objWork, s32 num, bool32 sign)
@@ -335,7 +335,7 @@ static void DrawNumObjsMinusInBack(struct DigitPrinter *objWork, s32 num, bool32
         oamId++;
         nsprites++;
     }
-	gMain.oamBuffer[oamId].affineMode = sign ? ST_OAM_AFFINE_OFF : ST_OAM_AFFINE_ERASE;
+    gMain.oamBuffer[oamId].affineMode = sign ? ST_OAM_AFFINE_OFF : ST_OAM_AFFINE_ERASE;
 }
 
 void DigitObjUtil_DeletePrinter(u32 id)
@@ -344,7 +344,7 @@ void DigitObjUtil_DeletePrinter(u32 id)
 
     if (sOamWork == NULL || !sOamWork->array[id].isActive)
         return;
-	
+    
     oamCount = sOamWork->array[id].oamCount + 1;
     oamId = sOamWork->array[id].firstOamId;
 
@@ -399,7 +399,7 @@ static u8 GetFirstOamId(u8 oamCount)
             firstOamId += 1 + sOamWork->array[i].oamCount;
         }
     }
-	return (firstOamId + oamCount + 1 > 128) ? 0xFF : firstOamId;
+    return (firstOamId + oamCount + 1 > 128) ? 0xFF : firstOamId;
 }
 
 static bool32 SharesTileWithAnyActive(u32 id)

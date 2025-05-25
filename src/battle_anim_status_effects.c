@@ -10,11 +10,11 @@
 #include "constants/pokemon.h"
 
 // Function Declarations
-static void AnimTask_FrozenIceCubeStep(u8 taskId);
-static void AnimTask_FrozenIceCubeStep2(u8 taskId);
-static void AnimTask_FrozenIceCubeStep3(u8 taskId);
-static void AnimTask_FrozenIceCubeStep4(u8 taskId);
-static void Task_DoStatusAnimation(u8 taskId);
+static void AnimTask_FrozenIceCubeStep(u32 taskId);
+static void AnimTask_FrozenIceCubeStep2(u32 taskId);
+static void AnimTask_FrozenIceCubeStep3(u32 taskId);
+static void AnimTask_FrozenIceCubeStep4(u32 taskId);
+static void Task_DoStatusAnimation(u32 taskId);
 
 // Data
 static const union AnimCmd sSpriteAnim_DisableSparkle[] =
@@ -69,25 +69,25 @@ static const struct SpriteTemplate sFrozenIceCubeSpriteTemplate =
 
 // Animates the frozen ice cube on the given battler.
 // arg 0: anim battler
-void AnimTask_FrozenIceCube(u8 taskId)
+void AnimTask_FrozenIceCube(u32 taskId)
 {
-	u32 spriteId, battlerId = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    u32 spriteId, battlerId = GetBattlerForAnimScript(gBattleAnimArgs[0]);
 
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 16));
-	
+    
     spriteId = CreateSprite(&sFrozenIceCubeSpriteTemplate, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X) - 32, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y_PIC_OFFSET) - 36, 4);
-	
+    
     if (GetSpriteTileStartByTag(ANIM_TAG_ICE_CUBE) == SPRITE_INVALID_TAG)
         gSprites[spriteId].invisible = TRUE;
     
     SetSubspriteTables(&gSprites[spriteId], sFrozenIceCubeSubspriteTable);
-	
+    
     gTasks[taskId].data[15] = spriteId;
     gTasks[taskId].func = AnimTask_FrozenIceCubeStep;
 }
 
-static void AnimTask_FrozenIceCubeStep(u8 taskId)
+static void AnimTask_FrozenIceCubeStep(u32 taskId)
 {
     if (++gTasks[taskId].data[1] == 10)
     {
@@ -101,7 +101,7 @@ static void AnimTask_FrozenIceCubeStep(u8 taskId)
     }
 }
 
-static void AnimTask_FrozenIceCubeStep2(u8 taskId)
+static void AnimTask_FrozenIceCubeStep2(u32 taskId)
 {
     u32 palIndex = IndexOfSpritePaletteTag(ANIM_TAG_ICE_CUBE);
 
@@ -132,7 +132,7 @@ static void AnimTask_FrozenIceCubeStep2(u8 taskId)
     }
 }
 
-static void AnimTask_FrozenIceCubeStep3(u8 taskId)
+static void AnimTask_FrozenIceCubeStep3(u32 taskId)
 {
     if (--gTasks[taskId].data[1] == -1)
     {
@@ -146,7 +146,7 @@ static void AnimTask_FrozenIceCubeStep3(u8 taskId)
     }
 }
 
-static void AnimTask_FrozenIceCubeStep4(u8 taskId)
+static void AnimTask_FrozenIceCubeStep4(u32 taskId)
 {
     if (++gTasks[taskId].data[1] == 37)
         DestroySpriteAndFreeMatrix(&gSprites[gTasks[taskId].data[15]]);
@@ -154,7 +154,7 @@ static void AnimTask_FrozenIceCubeStep4(u8 taskId)
         DestroyAnimVisualTaskAndDisableBlend(taskId);
 }
 
-void AnimTask_StatsChange(u8 taskId)
+void AnimTask_StatsChange(u32 taskId)
 {
     gBattleAnimArgs[0] = (gBattleStruct->statChange.buff < 0);
     gBattleAnimArgs[1] = gBattleSpritesDataPtr->animationData->animArg;
@@ -173,10 +173,10 @@ void LaunchStatusAnimation(u32 battlerId, u32 statusAnimId)
     gTasks[CreateTask(Task_DoStatusAnimation, 10)].data[0] = battlerId;
 }
 
-static void Task_DoStatusAnimation(u8 taskId)
+static void Task_DoStatusAnimation(u32 taskId)
 {
     gAnimScriptCallback();
-	
+    
     if (!gAnimScriptActive)
     {
         gBattleSpritesDataPtr->healthBoxesData[gTasks[taskId].data[0]].statusAnimActive = FALSE;

@@ -59,7 +59,7 @@ struct SlotMachineState
     u16 slotRewardClass;
     u16 biasCooldown;
     u16 bet;
-    u8 taskId;
+    u32 taskId;
     u8 spinReelsTaskId;
     bool32 reelIsSpinning[3];
     s16 reelPositions[3];
@@ -117,15 +117,15 @@ static void InitSlotMachineState(struct SlotMachineState * ptr);
 static void CB2_InitSlotMachine(void);
 static void CleanSupSlotMachineState(void);
 static void CB2_RunSlotMachine(void);
-static void MainTask_SlotsGameLoop(u8 taskId);
-static void MainTask_NoCoinsGameOver(u8 taskId);
-static void MainTask_ShowHelp(u8 taskId);
-static void MainTask_ConfirmExitGame(u8 taskId);
-static void MainTask_DarnNoPayout(u8 taskId);
-static void MainTask_WinHandlePayout(u8 taskId);
-static void MainTask_ExitSlots(u8 taskId);
+static void MainTask_SlotsGameLoop(u32 taskId);
+static void MainTask_NoCoinsGameOver(u32 taskId);
+static void MainTask_ShowHelp(u32 taskId);
+static void MainTask_ConfirmExitGame(u32 taskId);
+static void MainTask_DarnNoPayout(u32 taskId);
+static void MainTask_WinHandlePayout(u32 taskId);
+static void MainTask_ExitSlots(u32 taskId);
 static void SetMainTask(TaskFunc taskFunc);
-static void Task_SpinReels(u8 taskId);
+static void Task_SpinReels(u32 taskId);
 static void StartReels(void);
 static void StopCurrentReel(u32 whichReel, u32 whichReel2);
 static bool32 IsReelSpinning(u32);
@@ -143,7 +143,7 @@ static void UpdateReelIconSprites(const s16 *, const s16 *);
 static bool32 CreateSlotMachine(void);
 static void DestroySlotMachine(void);
 static struct SlotMachineSetupTaskData * GetSlotMachineSetupTaskDataPtr(void);
-static void Task_SlotMachine(u8 taskId);
+static void Task_SlotMachine(u32 taskId);
 static void SetSlotMachineSetupTask(u32 funcno, u32 taskId);
 static bool32 IsSlotMachineSetupTaskActive(u32 taskId);
 static bool32 SlotsTask_GraphicsInit(u8 *state, struct SlotMachineSetupTaskData * ptr);
@@ -166,7 +166,7 @@ static void Slot_PrintOnWindow0(const u8 * str);
 static void Slot_ClearWindow0(void);
 static void SetLineStatesByBet(u16 * bgTilemapBuffer);
 static void SetLineState(u16 * bgTilemapBuffer, u32 lineId, u32 paletteNo);
-static void Task_FlashWinningLine(u8 taskId);
+static void Task_FlashWinningLine(u32 taskId);
 static void SignalStopWinningLineFlashTask(void);
 static void Slot_CreateYesNoMenu(u32 cursorPos);
 static void Slot_DestroyYesNoMenu(void);
@@ -786,7 +786,7 @@ static const u16 sReelButtonMapTileIdxs[][4] = {
 void PlaySlotMachine(u32 machineIdx, MainCallback savedCallback)
 {
     ResetTasks();
-	
+    
     sSlotMachineState = Alloc(sizeof(*sSlotMachineState));
     if (sSlotMachineState == NULL)
         SetMainCallback2(savedCallback);
@@ -808,7 +808,7 @@ static void InitSlotMachineState(struct SlotMachineState * ptr)
     ptr->currentReel = 0;
     ptr->bet = 0;
     ptr->payout = 0;
-	
+    
     for (i = 0; i < 3; i++)
     {
         ptr->reelIsSpinning[i] = FALSE;
@@ -852,7 +852,7 @@ static void CB2_InitSlotMachine(void)
 static void CleanSupSlotMachineState(void)
 {
     DestroySlotMachine();
-	
+    
     if (sSlotMachineState != NULL)
     {
         Free(sSlotMachineState);
@@ -868,7 +868,7 @@ static void CB2_RunSlotMachine(void)
     UpdatePaletteFade();
 }
 
-static void MainTask_SlotsGameLoop(u8 taskId)
+static void MainTask_SlotsGameLoop(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -890,7 +890,7 @@ static void MainTask_SlotsGameLoop(u8 taskId)
         else if (JOY_NEW(R_BUTTON))
         {
             s32 toAdd = 3 - sSlotMachineState->bet;
-			
+            
             if (GetCoins() >= toAdd)
             {
                 sSlotMachineState->bet = 3;
@@ -950,14 +950,14 @@ static void MainTask_SlotsGameLoop(u8 taskId)
                 sSlotMachineState->slotRewardClass = CalcPayout();
                 sSlotMachineState->bet = 0;
                 sSlotMachineState->currentReel = 0;
-				
+                
                 if (sSlotMachineState->slotRewardClass == SLOT_PAYOUT_NONE)
                     SetMainTask(MainTask_DarnNoPayout);
                 else
                 {
                     if (sSlotMachineState->slotRewardClass == SLOT_PAYOUT_7)
                         IncrementGameStat(GAME_STAT_SLOT_JACKPOTS);
-					
+                    
                     ResetMachineBias();
                     SetMainTask(MainTask_WinHandlePayout);
                 }
@@ -969,7 +969,7 @@ static void MainTask_SlotsGameLoop(u8 taskId)
     }
 }
 
-static void MainTask_NoCoinsGameOver(u8 taskId)
+static void MainTask_NoCoinsGameOver(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -990,7 +990,7 @@ static void MainTask_NoCoinsGameOver(u8 taskId)
     }
 }
 
-static void MainTask_ShowHelp(u8 taskId)
+static void MainTask_ShowHelp(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -1018,7 +1018,7 @@ static void MainTask_ShowHelp(u8 taskId)
     }
 }
 
-static void MainTask_ConfirmExitGame(u8 taskId)
+static void MainTask_ConfirmExitGame(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -1058,7 +1058,7 @@ static void MainTask_ConfirmExitGame(u8 taskId)
     }
 }
 
-static void MainTask_DarnNoPayout(u8 taskId)
+static void MainTask_DarnNoPayout(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -1071,7 +1071,7 @@ static void MainTask_DarnNoPayout(u8 taskId)
         break;
     case 1:
         data[1]++;
-		
+        
         if (data[1] > 60)
         {
             SetSlotMachineSetupTask(SLOTTASK_ANIM_BETTING, 0);
@@ -1087,7 +1087,7 @@ static void MainTask_DarnNoPayout(u8 taskId)
     }
 }
 
-static void MainTask_WinHandlePayout(u8 taskId)
+static void MainTask_WinHandlePayout(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -1098,7 +1098,7 @@ static void MainTask_WinHandlePayout(u8 taskId)
             PlayFanfare(MUS_SLOTS_JACKPOT);
         else
             PlayFanfare(MUS_SLOTS_WIN);
-		
+        
         SetSlotMachineSetupTask(SLOTTASK_SHOW_AMOUNTS, 0);
         SetSlotMachineSetupTask(SLOTTASK_ANIM_WIN, 1);
         data[1] = 8;
@@ -1106,14 +1106,14 @@ static void MainTask_WinHandlePayout(u8 taskId)
         break;
     case 1:
         data[1]++;
-		
+        
         if (data[1] > 120)
         {
             data[1] = 8;
-			
+            
             if (JOY_HELD(A_BUTTON))
                 data[1] = 2;
-			
+            
             data[0]++;
         }
         break;
@@ -1128,25 +1128,25 @@ static void MainTask_WinHandlePayout(u8 taskId)
             else
             {
                 data[1]--;
-				
+                
                 if (data[1] == 0)
                 {
                     if (IsFanfareTaskInactive())
                         PlaySE(SE_PIN);
-					
+                    
                     if (sSlotMachineState->payout != 0)
                     {
                         AddCoins(1);
                         sSlotMachineState->payout--;
                     }
                     data[1] = 8;
-					
+                    
                     if (JOY_HELD(A_BUTTON))
                         data[1] = 2;
                 }
             }
             SetSlotMachineSetupTask(SLOTTASK_SHOW_AMOUNTS, 0);
-			
+            
             if (sSlotMachineState->payout == 0)
                 data[0]++;
         }
@@ -1173,7 +1173,7 @@ static void MainTask_WinHandlePayout(u8 taskId)
     }
 }
 
-static void MainTask_ExitSlots(u8 taskId)
+static void MainTask_ExitSlots(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -1199,7 +1199,7 @@ static void SetMainTask(TaskFunc taskFunc)
     gTasks[sSlotMachineState->taskId].data[0] = 0;
 }
 
-static void Task_SpinReels(u8 taskId)
+static void Task_SpinReels(u32 taskId)
 {
     u32 i;
 
@@ -1259,7 +1259,7 @@ static bool32 IsReelSpinning(u32 whichReel)
 static s16 GetNextReelPosition(u32 whichReel)
 {
     s16 position = sSlotMachineState->reelPositions[whichReel];
-	
+    
     if (sSlotMachineState->reelSubpixel[whichReel] != 0)
     {
         position--;
@@ -1342,12 +1342,12 @@ static void StopReel2(u32 whichReel)
     firstStoppedReelPos = sSlotMachineState->reelPositions[firstStoppedReelId] + 1;
     if (firstStoppedReelPos >= 21)
         firstStoppedReelPos = 0;
-	
+    
     nextPos = GetNextReelPosition(whichReel);
     pos = nextPos + 1;
     if (pos >= 21)
         pos = 0;
-	
+    
     numPossiblePositions = 0;
     for (i = 0; i < 5; i++)
     {
@@ -1360,7 +1360,7 @@ static void StopReel2(u32 whichReel)
         if (pos < 0)
             pos = 20;
     }
-	
+    
     if (numPossiblePositions == 0)
     {
         sSlotMachineState->reel2BiasInPlay = 0;
@@ -1377,7 +1377,7 @@ static void StopReel2(u32 whichReel)
     pos = nextPos - pos;
     if (pos < 0)
         pos += 21;
-	
+    
     sSlotMachineState->reelStopOrder[1] = whichReel;
     sSlotMachineState->destReelPos[whichReel] = pos;
 }
@@ -1394,7 +1394,7 @@ static void StopReel3(u32 whichReel)
     nextPos = GetNextReelPosition(whichReel);
     testPos = nextPos;
     numPossiblePositions = 0;
-	
+    
     for (i = 0; i < 5; i++)
     {
         if (OneReelBiasCheck(whichReel, testPos, sSlotMachineState->machineBias))
@@ -1406,7 +1406,7 @@ static void StopReel3(u32 whichReel)
         if (testPos < 0)
             testPos = 20;
     }
-	
+    
     if (numPossiblePositions == 0)
     {
         if (sSlotMachineState->machineBias == SLOT_PAYOUT_ROCKET || sSlotMachineState->machineBias == SLOT_PAYOUT_7)
@@ -1416,7 +1416,7 @@ static void StopReel3(u32 whichReel)
     }
     else
         pos = possiblePositions[0];
-	
+    
     pos = nextPos - pos;
     if (pos < 0)
         pos += 21;
@@ -1435,11 +1435,11 @@ static bool32 TwoReelBiasCheck(s32 reel0id, s32 reel0pos, s32 reel1id, s32 reel1
     {
         icons[3 * reel0id + i] = sReelIconAnimByReelAndPos[reel0id][reel0pos];
         icons[3 * reel1id + i] = sReelIconAnimByReelAndPos[reel1id][reel1pos];
-		
+        
         reel0pos++;
         if (reel0pos >= 21)
             reel0pos = 0;
-		
+        
         reel1pos++;
         if (reel1pos >= 21)
             reel1pos = 0;
@@ -1507,27 +1507,27 @@ static bool32 OneReelBiasCheck(s32 reelId, s32 reelPos, s32 biasIcon)
     firstStoppedPos = sSlotMachineState->reelPositions[sSlotMachineState->reelStopOrder[0]] + 1;
     secondStoppedPos = sSlotMachineState->reelPositions[sSlotMachineState->reelStopOrder[1]] + 1;
     reelPos++;
-	
+    
     if (firstStoppedPos >= 21)
         firstStoppedPos = 0;
     if (secondStoppedPos >= 21)
         secondStoppedPos = 0;
-	
+    
     if (reelPos >= 21)
         reelPos = 0;
-	
+    
     for (i = 0; i < 3; i++)
     {
         icons[sSlotMachineState->reelStopOrder[0] * 3 + i] = sReelIconAnimByReelAndPos[sSlotMachineState->reelStopOrder[0]][firstStoppedPos];
         icons[sSlotMachineState->reelStopOrder[1] * 3 + i] = sReelIconAnimByReelAndPos[sSlotMachineState->reelStopOrder[1]][secondStoppedPos];
         icons[reelId * 3 + i] = sReelIconAnimByReelAndPos[reelId][reelPos];
-		
+        
         if (++firstStoppedPos >= 21)
             firstStoppedPos = 0;
-		
+        
         if (++secondStoppedPos >= 21)
             secondStoppedPos = 0;
-		
+        
         if (++reelPos >= 21)
             reelPos = 0;
     }
@@ -1620,13 +1620,13 @@ static void CalcSlotBias(void)
     u16 rval = Random() / 4;
     s32 i;
     const u16 * biasChances = sReelBiasChances[sSlotMachineState->machineidx];
-	
+    
     for (i = 0; i < 6; i++)
     {
         if (rval < biasChances[i])
             break;
     }
-	
+    
     if (sSlotMachineState->machineBias < SLOT_PAYOUT_ROCKET)
     {
         if (sSlotMachineState->biasCooldown == 0)
@@ -1680,26 +1680,26 @@ static u16 CalcPayout(void)
         visibleIcons[2 * 3 + i] = sReelIconAnimByReelAndPos[2][reel3pos];
     }
     sSlotMachineState->payout = 0;
-	
+    
     for (i = 0; i < 5; i++)
     {
         if (sSlotMachineState->bet >= sRowAttributes[i][ROWATTR_MINBET])
         {
             int curMatch;
-			
+            
             if (TestReelIconAttribute(1, visibleIcons[sRowAttributes[i][ROWATTR_COL1POS]]))
                 curMatch = TestReelIconAttribute(2, visibleIcons[sRowAttributes[i][ROWATTR_COL2POS]]) ? 2 : 1;
             else if (visibleIcons[sRowAttributes[i][ROWATTR_COL1POS]] == visibleIcons[sRowAttributes[i][ROWATTR_COL2POS]] && visibleIcons[sRowAttributes[i][ROWATTR_COL1POS]] == visibleIcons[sRowAttributes[i][ROWATTR_COL3POS]])
                 curMatch = ReelIconToPayoutRank(visibleIcons[sRowAttributes[i][ROWATTR_COL1POS]]);
             else
                 curMatch = 0;
-			
+            
             if (curMatch != 0)
             {
                 sSlotMachineState->winFlags[i] = TRUE;
                 sSlotMachineState->payout += sPayoutTable[curMatch];
             }
-			
+            
             if (curMatch > bestMatch)
                 bestMatch = curMatch;
         }
@@ -1728,13 +1728,13 @@ static bool32 LoadSpriteGraphicsAndAllocateManager(void)
 
     for (i = 0; i < ARRAY_COUNT(sSpriteSheets); i++)
         LoadCompressedSpriteSheet(&sSpriteSheets[i]);
-	
+    
     LoadSpritePalettes(sSpritePalettes);
-	
+    
     sSlotMachineGfxManager = Alloc(sizeof(*sSlotMachineGfxManager));
     if (sSlotMachineGfxManager == NULL)
         return FALSE;
-	
+    
     InitGfxManager(sSlotMachineGfxManager);
     return TRUE;
 }
@@ -1755,7 +1755,7 @@ static void InitGfxManager(struct SlotMachineGfxManager * manager)
     for (i = 0; i < 3; i++)
     {
         manager->field_00[i] = 0;
-		
+        
         for (j = 0; j < 5; j++)
             manager->reelIconSprites[i][j] = NULL;
     }
@@ -1766,16 +1766,16 @@ static void CreateReelIconSprites(void)
     struct Sprite * sprite;
     u32 i, j;
     u32 animId;
-	
+    
     for (i = 0; i < 3; i++)
     {
         for (j = 0; j < 5; j++)
         {
             sprite = &gSprites[CreateSprite(&sSpriteTemplate_ReelIcons, 80 + 40 * i, 44 + 24 * j, 2)];
-			animId = sReelIconAnimByReelAndPos[i][j];
-			
+            animId = sReelIconAnimByReelAndPos[i][j];
+            
             StartSpriteAnim(sprite, animId);
-			
+            
             sprite->oam.paletteNum = IndexOfSpritePaletteTag(sReelIconPaletteTags[animId]);
             sprite->data[0] = i;
             sprite->data[1] = j;
@@ -1797,7 +1797,7 @@ static void UpdateReelIconSprites(const s16 * reelPosPtr, const s16 * yposPtr)
     {
         reelPos = *reelPosPtr;
         ypos = *yposPtr * 8;
-		
+        
         for (j = 0; j < 5; j++)
         {
             sSlotMachineGfxManager->reelIconSprites[i][j]->y2 = ypos;
@@ -1824,7 +1824,7 @@ static void UpdateReelIconSprites(const s16 * reelPosPtr, const s16 * yposPtr)
 static void HBlankCB_SlotMachine(void)
 {
     s32 vcount = REG_VCOUNT - 0x2B;
-	
+    
     if (vcount < 0x54u)
     {
         *sSlotMachineGfxManager->reelIconAffineParamPtr = sReelIconAffineParams[vcount];
@@ -1845,7 +1845,7 @@ static void CreateScoreDigitSprites(void)
     {
         spriteId = CreateSprite(&sSpriteTemplate_Digits, 0x55 + 7 * i, 30, 0);
         sSlotMachineGfxManager->creditDigitSprites[i] = &gSprites[spriteId];
-		
+        
         spriteId = CreateSprite(&sSpriteTemplate_Digits, 0x85 + 7 * i, 30, 0);
         sSlotMachineGfxManager->payoutDigitSprites[i] = &gSprites[spriteId];
     }
@@ -1863,11 +1863,11 @@ static void UpdateCoinsDisplay(void)
     {
         quotient = coins / divisor;
         StartSpriteAnim(sSlotMachineGfxManager->creditDigitSprites[i], quotient);
-		
+        
         coins -= quotient * divisor;
         quotient = payout / divisor;
         StartSpriteAnim(sSlotMachineGfxManager->payoutDigitSprites[i], quotient);
-		
+        
         payout -= quotient * divisor;
         divisor /= 10;
     }
@@ -1879,7 +1879,7 @@ static void CreateClefairySprites(void)
 
     spriteId = CreateSprite(&sSpriteTemplate_Clefairy, 0x10, 0x88, 1);
     sSlotMachineGfxManager->clefairySprites[0] = &gSprites[spriteId];
-	
+    
     spriteId = CreateSprite(&sSpriteTemplate_Clefairy, 0xE0, 0x88, 1);
     sSlotMachineGfxManager->clefairySprites[1] = &gSprites[spriteId];
     sSlotMachineGfxManager->clefairySprites[1]->hFlip = TRUE;
@@ -1888,7 +1888,7 @@ static void CreateClefairySprites(void)
 static void SetClefairySpriteAnim(u32 animId)
 {
     u32 i;
-	
+    
     for (i = 0; i < 2; i++)
         StartSpriteAnim(sSlotMachineGfxManager->clefairySprites[i], animId);
 }
@@ -1900,10 +1900,10 @@ static bool32 CreateSlotMachine(void)
     struct SlotMachineSetupTaskData * ptr = Alloc(sizeof(struct SlotMachineSetupTaskData));
     if (ptr == NULL)
         return FALSE;
-	
+    
     for (i = 0; i < 8; i++)
         ptr->tasks[i].active = 0;
-	
+    
     ptr->yesNoMenuActive = FALSE;
     SetWordTaskArg(CreateTask(Task_SlotMachine, 2), 0, (uintptr_t)ptr);
     return FALSE;
@@ -1920,7 +1920,7 @@ static void DestroySlotMachine(void)
     FreeAllWindowBuffers();
 }
 
-static void Task_SlotMachine(u8 taskId)
+static void Task_SlotMachine(u32 taskId)
 {
     struct SlotMachineSetupTaskData * ptr = (void *)GetWordTaskArg(taskId, 0);
     u32 i;
@@ -2337,7 +2337,7 @@ static void SetLineState(u16 * bgTilemapBuffer, u32 whichLine, u32 paletteNum)
     }
 }
 
-static void Task_FlashWinningLine(u8 taskId)
+static void Task_FlashWinningLine(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     s32 i;
@@ -2346,7 +2346,7 @@ static void Task_FlashWinningLine(u8 taskId)
     {
     case 0:
         LoadPalette(sBgPal_50, 0x60, 0x20);
-		
+        
         for (i = 0; i < 5; i++)
         {
             if (GetWinFlagByLine(i))
@@ -2377,7 +2377,7 @@ static void Task_FlashWinningLine(u8 taskId)
         else
         {
             data[4]++;
-			
+            
             if (data[4] > 1)
             {
                 data[4] = 0;
@@ -2389,7 +2389,7 @@ static void Task_FlashWinningLine(u8 taskId)
 
         for (i = 0; i < ARRAY_COUNT(sWInningLineFlashPalIdxs); i++)
             gPlttBufferFaded[sWInningLineFlashPalIdxs[i] + 0x60] = gPlttBufferUnfaded[sWInningLineFlashPalIdxs[i] + 0x60];
-		
+        
         break;
     case 2:
         for (i = 0; i < 5; i++)
@@ -2423,7 +2423,7 @@ static void Slot_CreateYesNoMenu(u32 cursorPos)
 static void Slot_DestroyYesNoMenu(void)
 {
     struct SlotMachineSetupTaskData * data = GetSlotMachineSetupTaskDataPtr();
-	
+    
     if (data->yesNoMenuActive)
     {
         DestroyYesNoMenu();
@@ -2454,7 +2454,7 @@ static void SetReelButtonPressed(u32 reel)
         u32 i;
         struct SlotMachineSetupTaskData * data = GetSlotMachineSetupTaskDataPtr();
         u16 * buffer = GetBgTilemapBuffer(2);
-		
+        
         for (i = 0; i < 4; i++)
             buffer[sReelButtonMapTileIdxs[reel][i]] = data->buttonPressedTiles[reel][i];
     }

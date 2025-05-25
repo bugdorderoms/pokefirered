@@ -6,7 +6,7 @@
 #include "task.h"
 #include "text_window.h"
 
-static void Task_ShowPokemonJumpRecords(u8 taskId);
+static void Task_ShowPokemonJumpRecords(u32 taskId);
 static void TruncateToFirstWordOnly(u8 *str);
 static void sub_814B5C4(u16 windowId);
 
@@ -48,7 +48,7 @@ void sub_814B4E8(void)
 
 void ShowPokemonJumpRecords(void)
 {
-    u8 taskId = CreateTask(Task_ShowPokemonJumpRecords, 0);
+    u32 taskId = CreateTask(Task_ShowPokemonJumpRecords, 0);
     Task_ShowPokemonJumpRecords(taskId);
 }
 
@@ -65,7 +65,7 @@ static const struct WindowTemplate gUnknown_846E2CC =
 
 static const u8 *const gUnknown_846E2D4[] = {gText_JumpsInARow, gText_BestScore2, gText_ExcellentsInARow};
 
-static void Task_ShowPokemonJumpRecords(u8 taskId)
+static void Task_ShowPokemonJumpRecords(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
 

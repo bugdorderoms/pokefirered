@@ -16,13 +16,13 @@
 
 struct Pokeball
 {
-	const u32 *interfaceIcon; // LZ77 compressed pixel data.
-	const u32 *interfacePalette; // LZ77 compressed palette data.
-	const TaskFunc animationFunc;
-	u16 fadeColor;
-	u8 particleId:2;
-	u8 particleAnimNum:5;
-	u8 hasOpenPokeballGfx:1;
+    const u32 *interfaceIcon; // LZ77 compressed pixel data.
+    const u32 *interfacePalette; // LZ77 compressed palette data.
+    TaskFunc animationFunc;
+    u16 fadeColor;
+    u8 particleId:2;
+    u8 particleAnimNum:5;
+    u8 hasOpenPokeballGfx:1;
 };
 
 struct CaptureStar
@@ -32,12 +32,12 @@ struct CaptureStar
     s8 amplitude;
 };
 
-#define GET_BALL_TAG(ballId) 	      ((ballId + 55000))
+#define GET_BALL_TAG(ballId)          ((ballId + 55000))
 #define GET_BALL_PARTICLE_TAG(ballId) ((ballId + 65030))
 
 // Function Declarations
-static void Task_DoPokeballSendOutAnim(u8 taskId);
-static void Task_PlayCryWhenReleasedFromBall(u8 taskId);
+static void Task_DoPokeballSendOutAnim(u32 taskId);
+static void Task_PlayCryWhenReleasedFromBall(u32 taskId);
 static void SpriteCB_ReleaseMonFromBall(struct Sprite *sprite);
 static void HandleBallAnimEnd(struct Sprite *sprite);
 static void SpriteCB_PlayerMonSendOut_1(struct Sprite *sprite);
@@ -49,24 +49,24 @@ static void SpriteCB_ReleasedMonFlyOut(struct Sprite *sprite);
 static void SpriteCB_TradePokeball(struct Sprite *sprite);
 static void SpriteCB_TradePokeballSendOff(struct Sprite *sprite);
 static void SpriteCB_TradePokeballEnd(struct Sprite *sprite);
-static void Task_FadeMon_ToBallColor(u8);
-static void Task_FadeMon_ToNormal(u8);
-static void Task_FadeMon_ToNormal_Step(u8);
+static void Task_FadeMon_ToBallColor(u32);
+static void Task_FadeMon_ToNormal(u32);
+static void Task_FadeMon_ToNormal_Step(u32);
 static void SpriteCB_BallCaptureSuccessStar(struct Sprite *sprite);
 static void DestroyBallOpenAnimationParticle(struct Sprite *sprite);
-static void PokeBallOpenParticleAnimation(u8);
+static void PokeBallOpenParticleAnimation(u32);
 static void PokeBallOpenParticleAnimation_Step1(struct Sprite *sprite);
 static void PokeBallOpenParticleAnimation_Step2(struct Sprite *sprite);
-static void GreatBallOpenParticleAnimation(u8);
+static void GreatBallOpenParticleAnimation(u32);
 static void FanOutBallOpenParticles_Step1(struct Sprite *sprite);
-static void SafariBallOpenParticleAnimation(u8);
-static void UltraBallOpenParticleAnimation(u8);
-static void MasterBallOpenParticleAnimation(u8);
-static void DiveBallOpenParticleAnimation(u8);
-static void RepeatBallOpenParticleAnimation(u8);
+static void SafariBallOpenParticleAnimation(u32);
+static void UltraBallOpenParticleAnimation(u32);
+static void MasterBallOpenParticleAnimation(u32);
+static void DiveBallOpenParticleAnimation(u32);
+static void RepeatBallOpenParticleAnimation(u32);
 static void RepeatBallOpenParticleAnimation_Step1(struct Sprite *sprite);
-static void TimerBallOpenParticleAnimation(u8);
-static void PremierBallOpenParticleAnimation(u8);
+static void TimerBallOpenParticleAnimation(u32);
+static void PremierBallOpenParticleAnimation(u32);
 static void PremierBallOpenParticleAnimation_Step1(struct Sprite *sprite);
 
 #include "data/item/pokeballs_graphics.h"
@@ -256,296 +256,296 @@ static const union AnimCmd *const sAnims_BallParticles[] =
 
 static const void *const sBallParticlesTable[][2] =
 {
-	{ gBattleAnimSpriteGfx_Particles, gBattleAnimSpritePal_CircleImpact },
-	{ gBattleAnimSpriteGfx_Particles2, gBattleAnimSpritePal_Particles2 }
+    { gBattleAnimSpriteGfx_Particles, gBattleAnimSpritePal_CircleImpact },
+    { gBattleAnimSpriteGfx_Particles2, gBattleAnimSpritePal_Particles2 }
 };
 
 static const struct Pokeball sPokeballs[POKE_BALL_ITEMS_END] =
 {
-	[ITEM_TO_BALL(ITEM_MASTER_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_MasterBall,
-		.interfacePalette = sInterfacePal_MasterBall,
-		.animationFunc = MasterBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 1,
-		.fadeColor = RGB(23, 20, 28),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_ULTRA_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_UltraBall,
-		.interfacePalette = sInterfacePal_UltraBall,
-		.animationFunc = UltraBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 5,
-		.fadeColor = RGB(31, 31, 15),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_GREAT_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_GreatBall,
-		.interfacePalette = sInterfacePal_GreatBall,
-		.animationFunc = GreatBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 0,
-		.fadeColor = RGB(16, 23, 30),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_POKE_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_PokeBall,
-		.interfacePalette = sInterfacePal_PokeBall,
-		.animationFunc = PokeBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 0,
-		.fadeColor = RGB(31, 22, 30),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_SAFARI_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_SafariBall,
-		.interfacePalette = sInterfacePal_SafariBall,
-		.animationFunc = SafariBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 0,
-		.fadeColor = RGB(23, 30, 20),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_NET_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_NetBall,
-		.interfacePalette = sInterfacePal_NetBall,
-		.animationFunc = SafariBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 2,
-		.fadeColor = RGB(21, 31, 25),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_DIVE_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_DiveBall,
-		.interfacePalette = sInterfacePal_DiveBall,
-		.animationFunc = DiveBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 2,
-		.fadeColor = RGB(12, 25, 30),
-	},
-	
-	[ITEM_TO_BALL(ITEM_NEST_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_NestBall,
-		.interfacePalette = sInterfacePal_NestBall,
-		.animationFunc = UltraBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 3,
-		.fadeColor = RGB(30, 27, 10),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_REPEAT_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_RepeatBall,
-		.interfacePalette = sInterfacePal_RepeatBall,
-		.animationFunc = RepeatBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 5,
-		.fadeColor = RGB(31, 24, 16),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_TIMER_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_TimerBall,
-		.interfacePalette = sInterfacePal_TimerBall,
-		.animationFunc = TimerBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 5,
-		.fadeColor = RGB(29, 30, 30),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_LUXURY_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_LuxuryBall,
-		.interfacePalette = sInterfacePal_LuxuryBall,
-		.animationFunc = GreatBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 4,
-		.fadeColor = RGB(31, 17, 10),
-	},
-	
-	[ITEM_TO_BALL(ITEM_PREMIER_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_PremierBall,
-		.interfacePalette = sInterfacePal_PremierBall,
-		.animationFunc = PremierBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 4,
-		.fadeColor = RGB(31, 9, 10),
-	},
-	
-	[ITEM_TO_BALL(ITEM_PARK_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_ParkBall,
-		.interfacePalette = sInterfacePal_ParkBall,
-		.animationFunc = UltraBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 5,
-		.fadeColor = RGB(31, 31, 15),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_CHERISH_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_CherishBall,
-		.interfacePalette = sInterfacePal_CherishBall,
-		.animationFunc = MasterBallOpenParticleAnimation,
-		.particleId = 1,
-		.particleAnimNum = 0,
-		.fadeColor = RGB(25, 4, 3),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_DUSK_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_DuskBall,
-		.interfacePalette = sInterfacePal_DuskBall,
-		.animationFunc = UltraBallOpenParticleAnimation,
-		.particleId = 1,
-		.particleAnimNum = 2,
-		.fadeColor = RGB(7, 1, 13),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_HEAL_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_HealBall,
-		.interfacePalette = sInterfacePal_HealBall,
-		.animationFunc = PokeBallOpenParticleAnimation,
-		.particleId = 1,
-		.particleAnimNum = 0,
-		.fadeColor = RGB(31, 23, 27),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_QUICK_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_QuickBall,
-		.interfacePalette = sInterfacePal_QuickBall,
-		.animationFunc = UltraBallOpenParticleAnimation,
-		.particleId = 1,
-		.particleAnimNum = 4,
-		.fadeColor = RGB(16, 25, 30),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_FAST_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_FastBall,
-		.interfacePalette = sInterfacePal_FastBall,
-		.animationFunc = GreatBallOpenParticleAnimation,
-		.particleId = 1,
-		.particleAnimNum = 4,
-		.fadeColor = RGB(29, 17, 8),
-		.hasOpenPokeballGfx = TRUE,
-	},
-	
-	[ITEM_TO_BALL(ITEM_LEVEL_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_LevelBall,
-		.interfacePalette = sInterfacePal_LevelBall,
-		.animationFunc = SafariBallOpenParticleAnimation,
-		.particleId = 1,
-		.particleAnimNum = 5,
-		.fadeColor = RGB(24, 4, 4),
-	},
-	
-	[ITEM_TO_BALL(ITEM_LURE_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_LureBall,
-		.interfacePalette = sInterfacePal_LureBall,
-		.animationFunc = GreatBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 2,
-		.fadeColor = RGB(9, 22, 27),
-	},
-	
-	[ITEM_TO_BALL(ITEM_HEAVY_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_HeavyBall,
-		.interfacePalette = sInterfacePal_HeavyBall,
-		.animationFunc = GreatBallOpenParticleAnimation,
-		.particleId = 1,
-		.particleAnimNum = 0,
-		.fadeColor = RGB(7, 11, 20),
-	},
-	
-	[ITEM_TO_BALL(ITEM_LOVE_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_LoveBall,
-		.interfacePalette = sInterfacePal_LoveBall,
-		.animationFunc = GreatBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 3,
-		.fadeColor = RGB(31, 19, 26),
-	},
-	
-	[ITEM_TO_BALL(ITEM_FRIEND_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_FriendBall,
-		.interfacePalette = sInterfacePal_FriendBall,
-		.animationFunc = UltraBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 3,
-		.fadeColor = RGB(17, 24, 7),
-	},
-	
-	[ITEM_TO_BALL(ITEM_MOON_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_MoonBall,
-		.interfacePalette = sInterfacePal_MoonBall,
-		.animationFunc = UltraBallOpenParticleAnimation,
-		.particleId = 1,
-		.particleAnimNum = 4,
-		.fadeColor = RGB(30, 25, 8),
-	},
-	
-	[ITEM_TO_BALL(ITEM_SPORT_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_SportBall,
-		.interfacePalette = sInterfacePal_SportBall,
-		.animationFunc = UltraBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 0,
-		.fadeColor = RGB(31, 31, 15),
-	},
-	
-	[ITEM_TO_BALL(ITEM_BEAST_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_BeastBall,
-		.interfacePalette = sInterfacePal_BeastBall,
-		.animationFunc = UltraBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 5,
-		.fadeColor = RGB(31, 31, 15),
-	},
-	
-	[ITEM_TO_BALL(ITEM_DREAM_BALL)] =
-	{
-		.interfaceIcon = sInterfaceGfx_DreamBall,
-		.interfacePalette = sInterfacePal_DreamBall,
-		.animationFunc = UltraBallOpenParticleAnimation,
-		.particleId = 0,
-		.particleAnimNum = 5,
-		.fadeColor = RGB(31, 31, 15),
-	},
+    [ITEM_TO_BALL(ITEM_MASTER_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_MasterBall,
+        .interfacePalette = sInterfacePal_MasterBall,
+        .animationFunc = MasterBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 1,
+        .fadeColor = RGB(23, 20, 28),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_ULTRA_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_UltraBall,
+        .interfacePalette = sInterfacePal_UltraBall,
+        .animationFunc = UltraBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 5,
+        .fadeColor = RGB(31, 31, 15),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_GREAT_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_GreatBall,
+        .interfacePalette = sInterfacePal_GreatBall,
+        .animationFunc = GreatBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 0,
+        .fadeColor = RGB(16, 23, 30),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_POKE_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_PokeBall,
+        .interfacePalette = sInterfacePal_PokeBall,
+        .animationFunc = PokeBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 0,
+        .fadeColor = RGB(31, 22, 30),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_SAFARI_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_SafariBall,
+        .interfacePalette = sInterfacePal_SafariBall,
+        .animationFunc = SafariBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 0,
+        .fadeColor = RGB(23, 30, 20),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_NET_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_NetBall,
+        .interfacePalette = sInterfacePal_NetBall,
+        .animationFunc = SafariBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 2,
+        .fadeColor = RGB(21, 31, 25),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_DIVE_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_DiveBall,
+        .interfacePalette = sInterfacePal_DiveBall,
+        .animationFunc = DiveBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 2,
+        .fadeColor = RGB(12, 25, 30),
+    },
+    
+    [ITEM_TO_BALL(ITEM_NEST_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_NestBall,
+        .interfacePalette = sInterfacePal_NestBall,
+        .animationFunc = UltraBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 3,
+        .fadeColor = RGB(30, 27, 10),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_REPEAT_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_RepeatBall,
+        .interfacePalette = sInterfacePal_RepeatBall,
+        .animationFunc = RepeatBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 5,
+        .fadeColor = RGB(31, 24, 16),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_TIMER_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_TimerBall,
+        .interfacePalette = sInterfacePal_TimerBall,
+        .animationFunc = TimerBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 5,
+        .fadeColor = RGB(29, 30, 30),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_LUXURY_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_LuxuryBall,
+        .interfacePalette = sInterfacePal_LuxuryBall,
+        .animationFunc = GreatBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 4,
+        .fadeColor = RGB(31, 17, 10),
+    },
+    
+    [ITEM_TO_BALL(ITEM_PREMIER_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_PremierBall,
+        .interfacePalette = sInterfacePal_PremierBall,
+        .animationFunc = PremierBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 4,
+        .fadeColor = RGB(31, 9, 10),
+    },
+    
+    [ITEM_TO_BALL(ITEM_PARK_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_ParkBall,
+        .interfacePalette = sInterfacePal_ParkBall,
+        .animationFunc = UltraBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 5,
+        .fadeColor = RGB(31, 31, 15),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_CHERISH_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_CherishBall,
+        .interfacePalette = sInterfacePal_CherishBall,
+        .animationFunc = MasterBallOpenParticleAnimation,
+        .particleId = 1,
+        .particleAnimNum = 0,
+        .fadeColor = RGB(25, 4, 3),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_DUSK_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_DuskBall,
+        .interfacePalette = sInterfacePal_DuskBall,
+        .animationFunc = UltraBallOpenParticleAnimation,
+        .particleId = 1,
+        .particleAnimNum = 2,
+        .fadeColor = RGB(7, 1, 13),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_HEAL_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_HealBall,
+        .interfacePalette = sInterfacePal_HealBall,
+        .animationFunc = PokeBallOpenParticleAnimation,
+        .particleId = 1,
+        .particleAnimNum = 0,
+        .fadeColor = RGB(31, 23, 27),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_QUICK_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_QuickBall,
+        .interfacePalette = sInterfacePal_QuickBall,
+        .animationFunc = UltraBallOpenParticleAnimation,
+        .particleId = 1,
+        .particleAnimNum = 4,
+        .fadeColor = RGB(16, 25, 30),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_FAST_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_FastBall,
+        .interfacePalette = sInterfacePal_FastBall,
+        .animationFunc = GreatBallOpenParticleAnimation,
+        .particleId = 1,
+        .particleAnimNum = 4,
+        .fadeColor = RGB(29, 17, 8),
+        .hasOpenPokeballGfx = TRUE,
+    },
+    
+    [ITEM_TO_BALL(ITEM_LEVEL_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_LevelBall,
+        .interfacePalette = sInterfacePal_LevelBall,
+        .animationFunc = SafariBallOpenParticleAnimation,
+        .particleId = 1,
+        .particleAnimNum = 5,
+        .fadeColor = RGB(24, 4, 4),
+    },
+    
+    [ITEM_TO_BALL(ITEM_LURE_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_LureBall,
+        .interfacePalette = sInterfacePal_LureBall,
+        .animationFunc = GreatBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 2,
+        .fadeColor = RGB(9, 22, 27),
+    },
+    
+    [ITEM_TO_BALL(ITEM_HEAVY_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_HeavyBall,
+        .interfacePalette = sInterfacePal_HeavyBall,
+        .animationFunc = GreatBallOpenParticleAnimation,
+        .particleId = 1,
+        .particleAnimNum = 0,
+        .fadeColor = RGB(7, 11, 20),
+    },
+    
+    [ITEM_TO_BALL(ITEM_LOVE_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_LoveBall,
+        .interfacePalette = sInterfacePal_LoveBall,
+        .animationFunc = GreatBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 3,
+        .fadeColor = RGB(31, 19, 26),
+    },
+    
+    [ITEM_TO_BALL(ITEM_FRIEND_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_FriendBall,
+        .interfacePalette = sInterfacePal_FriendBall,
+        .animationFunc = UltraBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 3,
+        .fadeColor = RGB(17, 24, 7),
+    },
+    
+    [ITEM_TO_BALL(ITEM_MOON_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_MoonBall,
+        .interfacePalette = sInterfacePal_MoonBall,
+        .animationFunc = UltraBallOpenParticleAnimation,
+        .particleId = 1,
+        .particleAnimNum = 4,
+        .fadeColor = RGB(30, 25, 8),
+    },
+    
+    [ITEM_TO_BALL(ITEM_SPORT_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_SportBall,
+        .interfacePalette = sInterfacePal_SportBall,
+        .animationFunc = UltraBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 0,
+        .fadeColor = RGB(31, 31, 15),
+    },
+    
+    [ITEM_TO_BALL(ITEM_BEAST_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_BeastBall,
+        .interfacePalette = sInterfacePal_BeastBall,
+        .animationFunc = UltraBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 5,
+        .fadeColor = RGB(31, 31, 15),
+    },
+    
+    [ITEM_TO_BALL(ITEM_DREAM_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_DreamBall,
+        .interfacePalette = sInterfacePal_DreamBall,
+        .animationFunc = UltraBallOpenParticleAnimation,
+        .particleId = 0,
+        .particleAnimNum = 5,
+        .fadeColor = RGB(31, 31, 15),
+    },
 };
 
 /////////////////////////
@@ -559,94 +559,94 @@ u32 ItemIdToBallId(u32 itemId)
 
 static void LoadBallSpriteSheetAndPalette(u32 ballId)
 {
-	u32 tag = GET_BALL_TAG(ballId);
-	struct CompressedSpriteSheet sheet;
-	struct CompressedSpritePalette palette;
-	
-	sheet.data = sPokeballs[ballId].interfaceIcon;
-	sheet.size = 0x180;
-	sheet.tag = tag;
-	LoadCompressedSpriteSheetUsingHeap(&sheet);
-	
-	palette.data = sPokeballs[ballId].interfacePalette;
-	palette.tag = tag;
-	LoadCompressedSpritePaletteUsingHeap(&palette);
+    u32 tag = GET_BALL_TAG(ballId);
+    struct CompressedSpriteSheet sheet;
+    struct CompressedSpritePalette palette;
+    
+    sheet.data = sPokeballs[ballId].interfaceIcon;
+    sheet.size = 0x180;
+    sheet.tag = tag;
+    LoadCompressedSpriteSheetUsingHeap(&sheet);
+    
+    palette.data = sPokeballs[ballId].interfacePalette;
+    palette.tag = tag;
+    LoadCompressedSpritePaletteUsingHeap(&palette);
 }
 
 void LoadBallGfx(u32 ballId)
 {
-	u32 tag = GET_BALL_TAG(ballId);
-	
+    u32 tag = GET_BALL_TAG(ballId);
+    
     if (GetSpriteTileStartByTag(tag) == SPRITE_INVALID_TAG)
         LoadBallSpriteSheetAndPalette(ballId);
     
-	if (sPokeballs[ballId].hasOpenPokeballGfx)
-		LZDecompressVram(sOpenPokeballGfx, (void *)(VRAM + 0x10100 + GetSpriteTileStartByTag(tag) * 32));
+    if (sPokeballs[ballId].hasOpenPokeballGfx)
+        LZDecompressVram(sOpenPokeballGfx, (void *)(VRAM + 0x10100 + GetSpriteTileStartByTag(tag) * 32));
 }
 
 void FreeBallGfx(u32 ballId)
 {
-	u32 tag = GET_BALL_TAG(ballId);
+    u32 tag = GET_BALL_TAG(ballId);
     FreeSpriteTilesByTag(tag);
     FreeSpritePaletteByTag(tag);
 }
 
 u32 CreateBallSprite(u32 ballId, s16 x, s16 y, u32 subpriority)
 {
-	u32 tag = GET_BALL_TAG(ballId);
-	struct SpriteTemplate template =
-	{
-		.tileTag = tag,
+    u32 tag = GET_BALL_TAG(ballId);
+    struct SpriteTemplate template =
+    {
+        .tileTag = tag,
         .paletteTag = tag,
         .oam = &sBallOamData,
         .anims = sBallAnimSequences,
         .images = NULL,
         .affineAnims = sBallAffineAnimSequences,
         .callback = SpriteCallbackDummy
-	};
-	return CreateSprite(&template, x, y, subpriority);
+    };
+    return CreateSprite(&template, x, y, subpriority);
 }
 
 static void LoadBallParticleGfx(u32 ballId)
 {
-	struct CompressedSpriteSheet sheet;
-	struct CompressedSpritePalette palette;
-	u32 tag = GET_BALL_PARTICLE_TAG(ballId);
-	
+    struct CompressedSpriteSheet sheet;
+    struct CompressedSpritePalette palette;
+    u32 tag = GET_BALL_PARTICLE_TAG(ballId);
+    
     if (GetSpriteTileStartByTag(tag) == SPRITE_INVALID_TAG)
     {
-		u32 particleId = sPokeballs[ballId].particleId;
-		
-		sheet.data = sBallParticlesTable[particleId][0];
-		sheet.size = 0x100;
-		sheet.tag = tag;
+        u32 particleId = sPokeballs[ballId].particleId;
+        
+        sheet.data = sBallParticlesTable[particleId][0];
+        sheet.size = 0x100;
+        sheet.tag = tag;
         LoadCompressedSpriteSheetUsingHeap(&sheet);
-		
-		palette.data = sBallParticlesTable[particleId][1];
-		palette.tag = tag;
+        
+        palette.data = sBallParticlesTable[particleId][1];
+        palette.tag = tag;
         LoadCompressedSpritePaletteUsingHeap(&palette);
     }
 }
 
 static u32 CreateBallParticleSprite(u32 ballId, s16 x, s16 y, u32 subpriority)
 {
-	u32 tag = GET_BALL_PARTICLE_TAG(ballId);
-	struct SpriteTemplate template =
-	{
-		.tileTag = tag,
+    u32 tag = GET_BALL_PARTICLE_TAG(ballId);
+    struct SpriteTemplate template =
+    {
+        .tileTag = tag,
         .paletteTag = tag,
         .oam = &gOamData_AffineOff_ObjNormal_8x8,
         .anims = sAnims_BallParticles,
         .images = NULL,
         .affineAnims = gDummySpriteAffineAnimTable,
         .callback = SpriteCallbackDummy,
-	};
-	return CreateSprite(&template, x, y, subpriority);
+    };
+    return CreateSprite(&template, x, y, subpriority);
 }
 
 u32 GetBattlerPokeballItemId(u32 battlerId)
 {
-	return GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_POKEBALL);
+    return GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_POKEBALL);
 }
 
 #define tFrames          data[0]
@@ -666,13 +666,13 @@ void DoPokeballSendOutAnimation(u32 battlerId, u32 kindOfThrow)
     
     gDoingBattleAnim = TRUE;
     gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive = TRUE;
-	
+    
     taskId = CreateTask(Task_DoPokeballSendOutAnim, 5);
     gTasks[taskId].tThrowId = kindOfThrow;
     gTasks[taskId].tBattler = battlerId;
 }
 
-static void Task_DoPokeballSendOutAnim(u8 taskId)
+static void Task_DoPokeballSendOutAnim(u32 taskId)
 {
     u32 battlerId, ballId, ballSpriteId;
     s16 x, y;
@@ -684,7 +684,7 @@ static void Task_DoPokeballSendOutAnim(u8 taskId)
     }
     battlerId = gTasks[taskId].tBattler;
     ballId = ItemIdToBallId(GetBattlerPokeballItemId(battlerId));
-	
+    
     LoadBallGfx(ballId);
     
     ballSpriteId = CreateBallSprite(ballId, 32, 80, 29);
@@ -717,7 +717,7 @@ static void Task_DoPokeballSendOutAnim(u8 taskId)
         break;
     }
     gSprites[ballSpriteId].sBattler = gBattlerTarget = battlerId;
-	DestroyTask(taskId);
+    DestroyTask(taskId);
 }
 
 #undef tFrames
@@ -733,7 +733,7 @@ static void Task_DoPokeballSendOutAnim(u8 taskId)
 #define tCryTaskFrames          data[10]
 #define tCryTaskState           data[15]
 
-static void Task_PlayCryWhenReleasedFromBall(u8 taskId)
+static void Task_PlayCryWhenReleasedFromBall(u32 taskId)
 {
     s8 pan = gTasks[taskId].tCryTaskPan;
     u32 species = gTasks[taskId].tCryTaskSpecies;
@@ -749,7 +749,7 @@ static void Task_PlayCryWhenReleasedFromBall(u8 taskId)
             gTasks[taskId].tCryTaskState = gTasks[taskId].data[2] + 1;
         break;
     case 1:
-		PlayCry_ByMode(species, pan, ShouldPlayNormalPokeCry(mon) ? CRY_MODE_NORMAL : CRY_MODE_WEAK);
+        PlayCry_ByMode(species, pan, ShouldPlayNormalPokeCry(mon) ? CRY_MODE_NORMAL : CRY_MODE_WEAK);
         DestroyTask(taskId);
         break;
     case 2:
@@ -760,7 +760,7 @@ static void Task_PlayCryWhenReleasedFromBall(u8 taskId)
     case 20:
         if (gTasks[taskId].tCryTaskFrames == 0)
         {
-			PlayCry_ReleaseDouble(species, pan, ShouldPlayNormalPokeCry(mon) ? CRY_MODE_DOUBLES : CRY_MODE_WEAK_DOUBLES);
+            PlayCry_ReleaseDouble(species, pan, ShouldPlayNormalPokeCry(mon) ? CRY_MODE_DOUBLES : CRY_MODE_WEAK_DOUBLES);
             DestroyTask(taskId);
         }
         else
@@ -791,7 +791,7 @@ static void Task_PlayCryWhenReleasedFromBall(u8 taskId)
             gTasks[taskId].tCryTaskFrames--;
             break;
         }
-		PlayCry_ReleaseDouble(species, pan, ShouldPlayNormalPokeCry(mon) ? CRY_MODE_NORMAL : CRY_MODE_WEAK);
+        PlayCry_ReleaseDouble(species, pan, ShouldPlayNormalPokeCry(mon) ? CRY_MODE_NORMAL : CRY_MODE_WEAK);
         DestroyTask(taskId);
         break;
     }
@@ -803,13 +803,13 @@ static void SpriteCB_ReleaseMonFromBall(struct Sprite *sprite)
 
     StartSpriteAnim(sprite, 1);
     LaunchBallStarsTask(sprite->x, sprite->y - 5, 1, 0x1C, ballId);
-	
+    
     sprite->data[0] = LaunchBallFadeMonTask(TRUE, battlerId, 14, ballId);
     sprite->callback = HandleBallAnimEnd;
 
     if (gMain.inBattle)
     {
-		bool32 isLeftBattlers = (battlerId == GetBattlerAtPosition(B_POSITION_PLAYER_LEFT) || battlerId == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT));
+        bool32 isLeftBattlers = (battlerId == GetBattlerAtPosition(B_POSITION_PLAYER_LEFT) || battlerId == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT));
         struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
         u32 wantedCryCase;
         u32 taskId;
@@ -831,7 +831,7 @@ static void SpriteCB_ReleaseMonFromBall(struct Sprite *sprite)
             wantedCryCase = 1;
         else
             wantedCryCase = 2;
-		
+        
         taskId = CreateTask(Task_PlayCryWhenReleasedFromBall, 3);
         gTasks[taskId].tCryTaskSpecies = GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_SPECIES);
         gTasks[taskId].tCryTaskPan = GetBattlerSide(battlerId) != B_SIDE_PLAYER ? 25 : -25;
@@ -859,10 +859,10 @@ static void HandleBallAnimEnd(struct Sprite *sprite)
     u32 battlerId = sprite->sBattler;
 
     gSprites[gBattlerSpriteIds[battlerId]].invisible = FALSE;
-	
-	if (sprite->animEnded)
-		sprite->invisible = TRUE;
-	
+    
+    if (sprite->animEnded)
+        sprite->invisible = TRUE;
+    
     if (gSprites[gBattlerSpriteIds[battlerId]].affineAnimEnded)
     {
         StartSpriteAffineAnim(&gSprites[gBattlerSpriteIds[battlerId]], 0);
@@ -873,7 +873,7 @@ static void HandleBallAnimEnd(struct Sprite *sprite)
         gSprites[gBattlerSpriteIds[battlerId]].data[1] -= 288;
         gSprites[gBattlerSpriteIds[battlerId]].y2 = gSprites[gBattlerSpriteIds[battlerId]].data[1] >> 8;
     }
-	
+    
     if (sprite->animEnded && affineAnimEnded)
     {
         u32 i, doneBattlers;
@@ -888,7 +888,7 @@ static void HandleBallAnimEnd(struct Sprite *sprite)
             if (!gBattleSpritesDataPtr->healthBoxesData[i].ballAnimActive)
                 doneBattlers++;
         }
-		
+        
         if (doneBattlers == MAX_BATTLERS_COUNT)
         {
             for (i = 0; i < ITEM_TO_BALL(POKE_BALL_ITEMS_END); i++)
@@ -949,7 +949,7 @@ static void SpriteCB_PlayerMonSendOut_2(struct Sprite *sprite)
         if (TranslateAnimHorizontalArc(sprite))
         {
             SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
-			
+            
             sprite->sBattler = sprite->oam.affineParam & 0xFF;
             sprite->data[0] = 0;
 
@@ -977,7 +977,7 @@ static void SpriteCB_OpponentMonSendOut(struct Sprite *sprite)
     if (++sprite->data[0] > 15)
     {
         sprite->data[0] = 0;
-		
+        
         if (sprite->sBattler == GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT) && IsDoubleBattleForBattler(sprite->sBattler) && gBattleSpritesDataPtr->animationData->healthboxSlideInStarted)
             sprite->callback = SpriteCB_ReleaseMon2FromBall;
         else
@@ -994,9 +994,9 @@ static void SpriteCB_OpponentMonSendOut(struct Sprite *sprite)
 void CreatePokeballSpriteToReleaseMon(u32 monSpriteId, u32 battlerId, u32 x, u32 y, u32 oamPriority, u32 subpriortiy, u32 g, u32 h)
 {
     u32 spriteId, ballId = ITEM_TO_BALL(ITEM_POKE_BALL);
-	
-	LoadBallSpriteSheetAndPalette(ballId);
-	
+    
+    LoadBallSpriteSheetAndPalette(ballId);
+    
     spriteId = CreateBallSprite(ballId, x, y, subpriortiy);
     gSprites[spriteId].data[0] = monSpriteId;
     gSprites[spriteId].data[5] = gSprites[monSpriteId].x;
@@ -1060,7 +1060,7 @@ static void SpriteCB_ReleasedMonFlyOut(struct Sprite *sprite)
     var2 = (sprite->data[6] - sprite->y) * sprite->data[7] / 128 + sprite->y;
     gSprites[monSpriteId].x = var1;
     gSprites[monSpriteId].y = var2;
-	
+    
     if (sprite->data[7] < 128)
     {
         s16 sine = -(gSineTable[(u8)sprite->data[7]] / 8);
@@ -1090,7 +1090,7 @@ u32 CreateTradePokeballSprite(u32 monSpriteId, u32 battlerId, u32 x, u32 y, u32 
     u32 spriteId, ballId = ITEM_TO_BALL(ITEM_POKE_BALL);
 
     LoadBallSpriteSheetAndPalette(ballId);
-	
+    
     spriteId = CreateBallSprite(ballId, x, y, subpriortiy);
     gSprites[spriteId].data[0] = monSpriteId;
     gSprites[spriteId].data[1] = g;
@@ -1099,7 +1099,7 @@ u32 CreateTradePokeballSprite(u32 monSpriteId, u32 battlerId, u32 x, u32 y, u32 
     gSprites[spriteId].data[4] = h >> 16;
     gSprites[spriteId].oam.priority = oamPriority;
     gSprites[spriteId].callback = SpriteCB_TradePokeball;
-	
+    
     return spriteId;
 }
 
@@ -1135,7 +1135,7 @@ static void SpriteCB_TradePokeballSendOff(struct Sprite *sprite)
 
     if (++sprite->data[5] == 11)
         PlaySE(SE_BALL_TRADE);
-	
+    
     if (gSprites[monSpriteId].affineAnimEnded)
     {
         StartSpriteAnim(sprite, 2);
@@ -1165,16 +1165,16 @@ u32 LaunchBallStarsTask(u8 x, u8 y, u32 priority, u32 subpriority, u32 ballId)
     u32 taskId;
 
     LoadBallParticleGfx(ballId);
-	
+    
     taskId = CreateTask(sPokeballs[ballId].animationFunc, 5);
     gTasks[taskId].data[1] = x;
     gTasks[taskId].data[2] = y;
     gTasks[taskId].data[3] = priority;
     gTasks[taskId].data[4] = subpriority;
     gTasks[taskId].data[15] = ballId;
-	
+    
     PlaySE(SE_BALL_OPEN);
-	
+    
     return taskId;
 }
 
@@ -1195,7 +1195,7 @@ static void DestroyBallOpenAnimationParticle(struct Sprite *sprite)
         {
             for (i = 0; i < ITEM_TO_BALL(POKE_BALL_ITEMS_END); i++)
             {
-				u32 tag = GET_BALL_PARTICLE_TAG(i);
+                u32 tag = GET_BALL_PARTICLE_TAG(i);
                 FreeSpriteTilesByTag(tag);
                 FreeSpritePaletteByTag(tag);
             }
@@ -1204,16 +1204,16 @@ static void DestroyBallOpenAnimationParticle(struct Sprite *sprite)
     }
 }
 
-static void PokeBallOpenParticleAnimation(u8 taskId)
+static void PokeBallOpenParticleAnimation(u32 taskId)
 {
-	u32 spriteId, ballId;
+    u32 spriteId, ballId;
     u8 var0;
 
     if (gTasks[taskId].data[0] < 16)
     {
-		ballId = gTasks[taskId].data[15];
+        ballId = gTasks[taskId].data[15];
         spriteId = CreateBallParticleSprite(ballId, gTasks[taskId].data[1], gTasks[taskId].data[2], gTasks[taskId].data[4]);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             IncrementBattleParticleCounter();
@@ -1256,9 +1256,9 @@ static void PokeBallOpenParticleAnimation_Step2(struct Sprite *sprite)
         DestroyBallOpenAnimationParticle(sprite);
 }
 
-static void GreatBallOpenParticleAnimation(u8 taskId)
+static void GreatBallOpenParticleAnimation(u32 taskId)
 {
-	u32 i, ballId, spriteId, priority, subpriority;
+    u32 i, ballId, spriteId, priority, subpriority;
     u8 x, y;
 
     if (gTasks[taskId].data[7])
@@ -1266,15 +1266,15 @@ static void GreatBallOpenParticleAnimation(u8 taskId)
     else
     {
         ballId = gTasks[taskId].data[15];
-		x = gTasks[taskId].data[1];
-		y = gTasks[taskId].data[2];
-		priority = gTasks[taskId].data[3];
-		subpriority = gTasks[taskId].data[4];
+        x = gTasks[taskId].data[1];
+        y = gTasks[taskId].data[2];
+        priority = gTasks[taskId].data[3];
+        subpriority = gTasks[taskId].data[4];
 
         for (i = 0; i < 8; i++)
         {
             spriteId = CreateBallParticleSprite(ballId, x, y, subpriority);
-			
+            
             if (spriteId != MAX_SPRITES)
             {
                 IncrementBattleParticleCounter();
@@ -1288,7 +1288,7 @@ static void GreatBallOpenParticleAnimation(u8 taskId)
             }
         }
         gTasks[taskId].data[7] = 8;
-		
+        
         if (++gTasks[taskId].data[0] == 2)
         {
             if (!gMain.inBattle)
@@ -1310,16 +1310,16 @@ static void FanOutBallOpenParticles_Step1(struct Sprite *sprite)
         DestroyBallOpenAnimationParticle(sprite);
 }
 
-static void SafariBallOpenParticleAnimation(u8 taskId)
+static void SafariBallOpenParticleAnimation(u32 taskId)
 {
     u32 i, spriteId, ballId = gTasks[taskId].data[15];
-	u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
+    u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
     u8 x = gTasks[taskId].data[1], y = gTasks[taskId].data[2];
 
     for (i = 0; i < 8; i++)
     {
         spriteId = CreateBallParticleSprite(ballId, x, y, subpriority);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             IncrementBattleParticleCounter();
@@ -1338,16 +1338,16 @@ static void SafariBallOpenParticleAnimation(u8 taskId)
     DestroyTask(taskId);
 }
 
-static void UltraBallOpenParticleAnimation(u8 taskId)
+static void UltraBallOpenParticleAnimation(u32 taskId)
 {
     u32 i, spriteId, ballId = gTasks[taskId].data[15];
-	u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
+    u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
     u8 x = gTasks[taskId].data[1], y = gTasks[taskId].data[2];
 
     for (i = 0; i < 10; i++)
     {
         spriteId = CreateBallParticleSprite(ballId, x, y, subpriority);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             IncrementBattleParticleCounter();
@@ -1366,10 +1366,10 @@ static void UltraBallOpenParticleAnimation(u8 taskId)
     DestroyTask(taskId);
 }
 
-static void MasterBallOpenParticleAnimation(u8 taskId)
+static void MasterBallOpenParticleAnimation(u32 taskId)
 {
     u32 i, j, spriteId, ballId = gTasks[taskId].data[15];
-	u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
+    u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
     u8 x = gTasks[taskId].data[1], y = gTasks[taskId].data[2];
 
     for (j = 0; j < 2; j++)
@@ -1377,7 +1377,7 @@ static void MasterBallOpenParticleAnimation(u8 taskId)
         for (i = 0; i < 8; i++)
         {
             spriteId = CreateBallParticleSprite(ballId, x, y, subpriority);
-			
+            
             if (spriteId != MAX_SPRITES)
             {
                 IncrementBattleParticleCounter();
@@ -1406,16 +1406,16 @@ static void MasterBallOpenParticleAnimation(u8 taskId)
     DestroyTask(taskId);
 }
 
-static void DiveBallOpenParticleAnimation(u8 taskId)
+static void DiveBallOpenParticleAnimation(u32 taskId)
 {
     u32 i, spriteId, ballId = gTasks[taskId].data[15];
-	u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
+    u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
     u8 x = gTasks[taskId].data[1], y = gTasks[taskId].data[2];
 
     for (i = 0; i < 8; i++)
     {
         spriteId = CreateBallParticleSprite(ballId, x, y, subpriority);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             IncrementBattleParticleCounter();
@@ -1434,16 +1434,16 @@ static void DiveBallOpenParticleAnimation(u8 taskId)
     DestroyTask(taskId);
 }
 
-static void RepeatBallOpenParticleAnimation(u8 taskId)
+static void RepeatBallOpenParticleAnimation(u32 taskId)
 {
     u32 i, spriteId, ballId = gTasks[taskId].data[15];
-	u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
+    u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
     u8 x = gTasks[taskId].data[1], y = gTasks[taskId].data[2];
 
     for (i = 0; i < ITEM_TO_BALL(POKE_BALL_ITEMS_END); i++)
     {
         spriteId = CreateBallParticleSprite(ballId, x, y, subpriority);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             IncrementBattleParticleCounter();
@@ -1470,16 +1470,16 @@ static void RepeatBallOpenParticleAnimation_Step1(struct Sprite *sprite)
         DestroyBallOpenAnimationParticle(sprite);
 }
 
-static void TimerBallOpenParticleAnimation(u8 taskId)
+static void TimerBallOpenParticleAnimation(u32 taskId)
 {
     u32 i, spriteId, ballId = gTasks[taskId].data[15];
-	u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
+    u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
     u8 x = gTasks[taskId].data[1], y = gTasks[taskId].data[2];
 
     for (i = 0; i < 8; i++)
     {
         spriteId = CreateBallParticleSprite(ballId, x, y, subpriority);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             IncrementBattleParticleCounter();
@@ -1498,16 +1498,16 @@ static void TimerBallOpenParticleAnimation(u8 taskId)
     DestroyTask(taskId);
 }
 
-static void PremierBallOpenParticleAnimation(u8 taskId)
+static void PremierBallOpenParticleAnimation(u32 taskId)
 {
     u32 i, spriteId, ballId = gTasks[taskId].data[15];
-	u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
+    u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
     u8 x = gTasks[taskId].data[1], y = gTasks[taskId].data[2];
 
     for (i = 0; i < 8; i++)
     {
         spriteId = CreateBallParticleSprite(ballId, x, y, subpriority);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             IncrementBattleParticleCounter();
@@ -1547,11 +1547,11 @@ void CreateStarsWhenBallClicks(struct Sprite *sprite)
         sprite->subpriority = 1;
     }
     LoadBallParticleGfx(ballId);
-	
+    
     for (i = 0; i < 3; i++)
     {
         u32 spriteId = CreateBallParticleSprite(ballId, sprite->x, sprite->y, subpriority);
-		
+        
         if (spriteId != MAX_SPRITES)
         {
             gSprites[spriteId].sTransl_Speed = 24;
@@ -1598,11 +1598,11 @@ u32 LaunchBallFadeMonTask(bool32 unfadeLater, u32 battler, u32 selectedPalettes,
         gTasks[taskId].func = Task_FadeMon_ToNormal;
     }
     BeginNormalPaletteFade(selectedPalettes, 0, 0, 16, RGB_WHITE);
-	
+    
     return taskId;
 }
 
-static void Task_FadeMon_ToBallColor(u8 taskId)
+static void Task_FadeMon_ToBallColor(u32 taskId)
 {
     if (gTasks[taskId].data[2] <= 16)
     {
@@ -1618,7 +1618,7 @@ static void Task_FadeMon_ToBallColor(u8 taskId)
     }
 }
 
-static void Task_FadeMon_ToNormal(u8 taskId)
+static void Task_FadeMon_ToNormal(u32 taskId)
 {
     if (!gPaletteFade.active)
     {
@@ -1628,7 +1628,7 @@ static void Task_FadeMon_ToNormal(u8 taskId)
     }
 }
 
-static void Task_FadeMon_ToNormal_Step(u8 taskId)
+static void Task_FadeMon_ToNormal_Step(u32 taskId)
 {
     if (gTasks[taskId].data[2] <= 16)
     {

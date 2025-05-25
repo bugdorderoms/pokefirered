@@ -71,7 +71,7 @@ static ALIGNED(4) EWRAM_DATA u8 sVariableWindowIds[14] = {};
 static void CB2_InitBerryPouch(void);
 static bool32 RunBerryPouchInit(void);
 static void AbortBerryPouchLoading(void);
-static void Task_AbortBerryPouchLoading_WaitFade(u8 taskId);
+static void Task_AbortBerryPouchLoading_WaitFade(u32 taskId);
 static void BerryPouchInitBgs(void);
 static bool32 BerryPouchLoadGfx(void);
 static bool32 AllocateListMenuBuffers(void);
@@ -86,34 +86,34 @@ static void PrintBerryPouchHeaderCentered(void);
 static void SanitizeListMenuSelectionParams(void);
 static void UpdateListMenuScrollOffset(void);
 static void BerryPouch_DestroyResources(void);
-static void Task_BerryPouchFadeToExitCallback(u8 taskId);
+static void Task_BerryPouchFadeToExitCallback(u32 taskId);
 static void SortAndCountBerries(void);
-static void Task_BerryPouchMain(u8 taskId);
-static void Task_NormalContextMenu(u8 taskId);
-static void Task_NormalContextMenu_HandleInput(u8 taskId);
-static void Task_BerryPouch_Use(u8 taskId);
-static void Task_BerryPouch_Toss(u8 taskId);
-static void Task_AskTossMultiple(u8 taskId);
-static void Task_TossNo(u8 taskId);
-static void Task_Toss_SelectMultiple(u8 taskId);
-static void Task_TossYes(u8 taskId);
-static void Task_WaitButtonThenTossBerries(u8 taskId);
-static void Task_BerryPouch_Give(u8 taskId);
-static void Task_Give_PrintThereIsNoPokemon(u8 taskId);
-static void Task_WaitButtonBeforeDialogueWindowDestruction(u8 taskId);
-static void Task_BerryPouch_Exit(u8 taskId);
-static void Task_ContextMenu_FromPartyGiveMenu(u8 taskId);
-static void Task_ContextMenu_FromPokemonPC(u8 taskId);
-static void Task_ContextMenu_Sell(u8 taskId);
-static void Task_AskSellMultiple(u8 taskId);
-static void Task_SellMultiple_CreateYesNoMenu(u8 taskId);
-static void Task_SellNo(u8 taskId);
-static void Task_Sell_PrintSelectMultipleUI(u8 taskId);
+static void Task_BerryPouchMain(u32 taskId);
+static void Task_NormalContextMenu(u32 taskId);
+static void Task_NormalContextMenu_HandleInput(u32 taskId);
+static void Task_BerryPouch_Use(u32 taskId);
+static void Task_BerryPouch_Toss(u32 taskId);
+static void Task_AskTossMultiple(u32 taskId);
+static void Task_TossNo(u32 taskId);
+static void Task_Toss_SelectMultiple(u32 taskId);
+static void Task_TossYes(u32 taskId);
+static void Task_WaitButtonThenTossBerries(u32 taskId);
+static void Task_BerryPouch_Give(u32 taskId);
+static void Task_Give_PrintThereIsNoPokemon(u32 taskId);
+static void Task_WaitButtonBeforeDialogueWindowDestruction(u32 taskId);
+static void Task_BerryPouch_Exit(u32 taskId);
+static void Task_ContextMenu_FromPartyGiveMenu(u32 taskId);
+static void Task_ContextMenu_FromPokemonPC(u32 taskId);
+static void Task_ContextMenu_Sell(u32 taskId);
+static void Task_AskSellMultiple(u32 taskId);
+static void Task_SellMultiple_CreateYesNoMenu(u32 taskId);
+static void Task_SellNo(u32 taskId);
+static void Task_Sell_PrintSelectMultipleUI(u32 taskId);
 static void SellMultiple_UpdateSellPriceDisplay(s32 price);
-static void Task_Sell_SelectMultiple(u8 taskId);
-static void Task_SellYes(u8 taskId);
-static void Task_SellBerries_PlaySfxAndRemoveBerries(u8 taskId);
-static void Task_SellBerries_WaitButton(u8 taskId);
+static void Task_Sell_SelectMultiple(u32 taskId);
+static void Task_SellYes(u32 taskId);
+static void Task_SellBerries_PlaySfxAndRemoveBerries(u32 taskId);
+static void Task_SellBerries_WaitButton(u32 taskId);
 static void BerryPouchInitWindows(void);
 static void BerryPouchPrint(u32 windowId, u32 fontId, const u8 * str, u32 x, u32 y, u32 letterSpacing, u32 lineSpacing, u32 speed, u32 colorIdx);
 static u32 GetOrCreateVariableWindow(u32 winIdx);
@@ -558,7 +558,7 @@ static void AbortBerryPouchLoading(void)
     SetMainCallback2(CB2_BerryPouchIdle);
 }
 
-static void Task_AbortBerryPouchLoading_WaitFade(u8 taskId)
+static void Task_AbortBerryPouchLoading_WaitFade(u32 taskId)
 {
     if (!gPaletteFade.active)
     {
@@ -643,7 +643,7 @@ static void SetUpListMenuTemplate(void)
     sListMenuItems[i].label = gText_Close;
     sListMenuItems[i].index = i;
     gMultiuseListMenuTemplate.items = sListMenuItems;
-	gMultiuseListMenuTemplate.totalItems = sResources->listMenuNumItems + 1;
+    gMultiuseListMenuTemplate.totalItems = sResources->listMenuNumItems + 1;
     gMultiuseListMenuTemplate.windowId = 0;
     gMultiuseListMenuTemplate.header_X = 0;
     gMultiuseListMenuTemplate.item_X = 9;
@@ -688,7 +688,7 @@ static void BerryPouchMoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMe
         StartBerryPouchSpriteWobbleAnim();
     }
     DestroyItemMenuIcon(sResources->itemMenuIconId ^ 1);
-	sub_80989A0(sResources->listMenuNumItems == itemIndex ? ITEMS_COUNT : BagGetItemIdByPocketPosition(POCKET_BERRY_POUCH, itemIndex), sResources->itemMenuIconId);
+    sub_80989A0(sResources->listMenuNumItems == itemIndex ? ITEMS_COUNT : BagGetItemIdByPocketPosition(POCKET_BERRY_POUCH, itemIndex), sResources->itemMenuIconId);
     sResources->itemMenuIconId ^= 1;
     PrintSelectedBerryDescription(itemIndex);
 }
@@ -725,7 +725,7 @@ static void PrintSelectedBerryDescription(s32 itemIdx)
 {
     FillWindowPixelBuffer(1, PIXEL_FILL(0));
     BerryPouchPrint(1, 2, itemIdx != sResources->listMenuNumItems ? ItemId_GetDescription(BagGetItemIdByPocketPosition(POCKET_BERRY_POUCH, itemIdx))
-	: COMPOUND_STRING("The Berry Pouch will be\nput away."), 0, 2, 2, 0, 0, 0);
+    : COMPOUND_STRING("The Berry Pouch will be\nput away."), 0, 2, 2, 0, 0, 0);
 }
 
 static void SetDescriptionWindowBorderPalette(s32 pal)
@@ -736,7 +736,7 @@ static void SetDescriptionWindowBorderPalette(s32 pal)
 
 static void CreateScrollIndicatorArrows_BerryPouchList(void)
 {
-	sResources->indicatorTaskId = AddScrollIndicatorArrowPairParameterized(2, 160, 8, 120, (sResources->listMenuNumItems + 1) - sResources->listMenuMaxShowed, 110, 110, &sStaticCnt.listMenuScrollOffset);
+    sResources->indicatorTaskId = AddScrollIndicatorArrowPairParameterized(2, 160, 8, 120, (sResources->listMenuNumItems + 1) - sResources->listMenuMaxShowed, 110, 110, &sStaticCnt.listMenuScrollOffset);
 }
 
 static void CreateScrollIndicatorArrows_TossQuantity(void)
@@ -778,16 +778,16 @@ static void SanitizeListMenuSelectionParams(void)
     
     if (sStaticCnt.listMenuScrollOffset != 0 && sStaticCnt.listMenuScrollOffset + sResources->listMenuMaxShowed > numItems)
         sStaticCnt.listMenuScrollOffset = numItems - sResources->listMenuMaxShowed;
-	
+    
     if (sStaticCnt.listMenuScrollOffset + sStaticCnt.listMenuSelectedRow >= numItems)
-		sStaticCnt.listMenuSelectedRow = (numItems == 0 || numItems == 1) ? 0 : numItems - 1;
+        sStaticCnt.listMenuSelectedRow = (numItems == 0 || numItems == 1) ? 0 : numItems - 1;
 }
 
 static void UpdateListMenuScrollOffset(void)
 {
     u8 lim = sResources->listMenuNumItems + 1;
     u32 i;
-	
+    
     if (sStaticCnt.listMenuSelectedRow > 4)
     {
         for (i = 0; i <= sStaticCnt.listMenuSelectedRow - 4; sStaticCnt.listMenuSelectedRow--, sStaticCnt.listMenuScrollOffset++, i++)
@@ -802,28 +802,28 @@ static void BerryPouch_DestroyResources(void)
 {
     if (sResources != NULL)
         Free(sResources);
-	
+    
     if (sListMenuItems != NULL)
         Free(sListMenuItems);
-	
+    
     if (sListMenuStrbuf != NULL)
         Free(sListMenuStrbuf);
-	
+    
     FreeAllWindowBuffers();
 }
 
-void BerryPouch_StartFadeToExitCallback(u8 taskId)
+void BerryPouch_StartFadeToExitCallback(u32 taskId)
 {
     BeginNormalPaletteFade(PALETTES_ALL, -2, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_BerryPouchFadeToExitCallback;
 }
 
-static void Task_BerryPouchFadeToExitCallback(u8 taskId)
+static void Task_BerryPouchFadeToExitCallback(u32 taskId)
 {
     if (!gPaletteFade.active)
     {
         DestroyListMenuTask(gTasks[taskId].data[0], &sStaticCnt.listMenuScrollOffset, &sStaticCnt.listMenuSelectedRow);
-		SetMainCallback2(sResources->exitCallback != NULL ? sResources->exitCallback : sStaticCnt.savedCallback);
+        SetMainCallback2(sResources->exitCallback != NULL ? sResources->exitCallback : sStaticCnt.savedCallback);
         DestroyScrollIndicatorArrows();
         BerryPouch_DestroyResources();
         DestroyTask(taskId);
@@ -837,14 +837,14 @@ static void SortAndCountBerries(void)
 
     SortAndCompactBagPocket(pocket);
     sResources->listMenuNumItems = 0;
-	
+    
     for (i = 0; i < pocket->capacity; i++, sResources->listMenuNumItems++)
     {
         if (pocket->itemSlots[i].itemId == ITEM_NONE)
             break;
     }
-	r2 = sResources->listMenuNumItems + 1;
-	sResources->listMenuMaxShowed = r2 > 7 ? 7 : r2;
+    r2 = sResources->listMenuNumItems + 1;
+    sResources->listMenuMaxShowed = r2 > 7 ? 7 : r2;
 }
 
 void BerryPouch_SetExitCallback(void (*callback)(void))
@@ -871,11 +871,11 @@ static void PrintxQuantityOnWindow(u32 whichWindow, s16 quantity, u32 ndigits)
     BerryPouchPrint(windowId, 0, gStringVar4, 4, 10, 1, 0, 0, 1);
 }
 
-static void Task_BerryPouchMain(u8 taskId)
+static void Task_BerryPouchMain(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     s32 menuInput;
-	
+    
     if (!gPaletteFade.active && MenuHelpers_CallLinkSomething() != TRUE)
     {
         menuInput = ListMenu_ProcessInput(data[0]);
@@ -893,9 +893,9 @@ static void Task_BerryPouchMain(u8 taskId)
             case -1:
                 return;
             case -2:
-				PlaySE(SE_SELECT);
+                PlaySE(SE_SELECT);
                 gSpecialVar_ItemId = 0;
-				BerryPouch_StartFadeToExitCallback(taskId);
+                BerryPouch_StartFadeToExitCallback(taskId);
                 break;
             default:
                 PlaySE(SE_SELECT);
@@ -920,14 +920,14 @@ static void Task_BerryPouchMain(u8 taskId)
     }
 }
 
-static void Task_CleanUpAndReturnToMain(u8 taskId)
+static void Task_CleanUpAndReturnToMain(u32 taskId)
 {
     SetDescriptionWindowBorderPalette(0);
     CreateScrollIndicatorArrows_BerryPouchList();
     gTasks[taskId].func = Task_BerryPouchMain;
 }
 
-static void CreateNormalContextMenu(u8 taskId)
+static void CreateNormalContextMenu(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     u32 windowId;
@@ -939,8 +939,8 @@ static void CreateNormalContextMenu(u8 taskId)
     }
     else if (MenuHelpers_LinkSomething() == TRUE || InUnionRoom() == TRUE)
     {
-		sContextMenuOptions = sOptions_GiveExit;
-		sStaticCnt.contextMenuNumOptions = 2;
+        sContextMenuOptions = sOptions_GiveExit;
+        sStaticCnt.contextMenuNumOptions = 2;
     }
     else
     {
@@ -955,13 +955,13 @@ static void CreateNormalContextMenu(u8 taskId)
     BerryPouchPrint(GetOrCreateVariableWindow(6), 2, gStringVar4, 0, 2, 1, 2, 0, 1);
 }
 
-static void Task_NormalContextMenu(u8 taskId)
+static void Task_NormalContextMenu(u32 taskId)
 {
     CreateNormalContextMenu(taskId);
     gTasks[taskId].func = Task_NormalContextMenu_HandleInput;
 }
 
-static void Task_NormalContextMenu_HandleInput(u8 taskId)
+static void Task_NormalContextMenu_HandleInput(u32 taskId)
 {
     s8 input;
     if (MenuHelpers_CallLinkSomething() != TRUE)
@@ -973,17 +973,17 @@ static void Task_NormalContextMenu_HandleInput(u8 taskId)
             break;
         case -1:
             PlaySE(SE_SELECT);
-            sContextMenuActions[BP_ACTION_EXIT].func.void_u8(taskId);
+            sContextMenuActions[BP_ACTION_EXIT].func.void_u32(taskId);
             break;
         default:
             PlaySE(SE_SELECT);
-            sContextMenuActions[sContextMenuOptions[input]].func.void_u8(taskId);
+            sContextMenuActions[sContextMenuOptions[input]].func.void_u32(taskId);
             break;
         }
     }
 }
 
-static void Task_BerryPouch_Use(u8 taskId)
+static void Task_BerryPouch_Use(u32 taskId)
 {
     DestroyVariableWindow(sStaticCnt.contextMenuNumOptions + 9);
     DestroyVariableWindow(6);
@@ -991,13 +991,13 @@ static void Task_BerryPouch_Use(u8 taskId)
     PutWindowTilemap(1);
     ScheduleBgCopyTilemapToVram(0);
     ScheduleBgCopyTilemapToVram(2);
-	
+    
     if (sStaticCnt.type == BERRYPOUCH_FROMBATTLE)
     {
-		if (ItemId_GetBattleUsage(gSpecialVar_ItemId))
-			ItemUseInBattle(taskId);
-		else
-			FieldUseFunc_OakStopsYou(taskId);
+        if (ItemId_GetBattleUsage(gSpecialVar_ItemId))
+            ItemUseInBattle(taskId);
+        else
+            FieldUseFunc_OakStopsYou(taskId);
     }
     else if (CalculatePlayerPartyCount() == 0 && ItemId_GetType(gSpecialVar_ItemId) == ITEM_TYPE_PARTY_MENU)
         Task_Give_PrintThereIsNoPokemon(taskId);
@@ -1005,17 +1005,17 @@ static void Task_BerryPouch_Use(u8 taskId)
         ItemId_GetFieldFunc(gSpecialVar_ItemId)(taskId);
 }
 
-static void Task_BerryPouch_Toss(u8 taskId)
+static void Task_BerryPouch_Toss(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
-	
+    
     ClearWindowTilemap(sVariableWindowIds[sStaticCnt.contextMenuNumOptions + 9]);
     ClearWindowTilemap(sVariableWindowIds[6]);
     DestroyVariableWindow(sStaticCnt.contextMenuNumOptions + 9);
     DestroyVariableWindow(6);
     PutWindowTilemap(0);
     data[8] = 1;
-	
+    
     if (data[2] == 1)
         Task_AskTossMultiple(taskId);
     else
@@ -1026,7 +1026,7 @@ static void Task_BerryPouch_Toss(u8 taskId)
     }
 }
 
-static void Task_AskTossMultiple(u8 taskId)
+static void Task_AskTossMultiple(u32 taskId)
 {
     ConvertIntToDecimalStringN(gStringVar2, gTasks[taskId].data[8], STR_CONV_MODE_LEFT_ALIGN, 3);
     StringExpandPlaceholders(gStringVar4, gText_ThrowAwayStrVar2OfThisItemQM);
@@ -1034,7 +1034,7 @@ static void Task_AskTossMultiple(u8 taskId)
     CreateYesNoMenuWin(taskId, &sYesNoFuncs_Toss, TRUE);
 }
 
-static void Task_TossNo(u8 taskId)
+static void Task_TossNo(u32 taskId)
 {
     DestroyVariableWindow(7);
     PutWindowTilemap(1);
@@ -1045,10 +1045,10 @@ static void Task_TossNo(u8 taskId)
     Task_CleanUpAndReturnToMain(taskId);
 }
 
-static void Task_Toss_SelectMultiple(u8 taskId)
+static void Task_Toss_SelectMultiple(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
-	
+    
     if (AdjustQuantityAccordingToDPadInput(&data[8], data[2]) == TRUE)
         PrintxQuantityOnWindow(0, data[8], 3);
     else if (JOY_NEW(A_BUTTON))
@@ -1077,7 +1077,7 @@ static void Task_Toss_SelectMultiple(u8 taskId)
     }
 }
 
-static void Task_TossYes(u8 taskId)
+static void Task_TossYes(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     DestroyVariableWindow(7);
@@ -1088,7 +1088,7 @@ static void Task_TossYes(u8 taskId)
     gTasks[taskId].func = Task_WaitButtonThenTossBerries;
 }
 
-static void Task_WaitButtonThenTossBerries(u8 taskId)
+static void Task_WaitButtonThenTossBerries(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
@@ -1108,7 +1108,7 @@ static void Task_WaitButtonThenTossBerries(u8 taskId)
     }
 }
 
-static void Task_BerryPouch_Give(u8 taskId)
+static void Task_BerryPouch_Give(u32 taskId)
 {
     DestroyVariableWindow(sStaticCnt.contextMenuNumOptions + 9);
     DestroyVariableWindow(6);
@@ -1125,12 +1125,12 @@ static void Task_BerryPouch_Give(u8 taskId)
     }
 }
 
-static void Task_Give_PrintThereIsNoPokemon(u8 taskId)
+static void Task_Give_PrintThereIsNoPokemon(u32 taskId)
 {
     DisplayItemMessageInBerryPouch(taskId, 2, gText_ThereIsNoPokemon, Task_WaitButtonBeforeDialogueWindowDestruction);
 }
 
-static void Task_WaitButtonBeforeDialogueWindowDestruction(u8 taskId)
+static void Task_WaitButtonBeforeDialogueWindowDestruction(u32 taskId)
 {
     if (JOY_NEW(A_BUTTON))
     {
@@ -1139,7 +1139,7 @@ static void Task_WaitButtonBeforeDialogueWindowDestruction(u8 taskId)
     }
 }
 
-void Task_BerryPouch_DestroyDialogueWindowAndRefreshListMenu(u8 taskId)
+void Task_BerryPouch_DestroyDialogueWindowAndRefreshListMenu(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     TryDestroyVariableWindow(5);
@@ -1153,7 +1153,7 @@ void Task_BerryPouch_DestroyDialogueWindowAndRefreshListMenu(u8 taskId)
     Task_CleanUpAndReturnToMain(taskId);
 }
 
-static void Task_BerryPouch_Exit(u8 taskId)
+static void Task_BerryPouch_Exit(u32 taskId)
 {
     DestroyVariableWindow(sStaticCnt.contextMenuNumOptions + 9);
     DestroyVariableWindow(6);
@@ -1165,22 +1165,22 @@ static void Task_BerryPouch_Exit(u8 taskId)
     Task_CleanUpAndReturnToMain(taskId);
 }
 
-static void Task_ContextMenu_FromPartyGiveMenu(u8 taskId)
+static void Task_ContextMenu_FromPartyGiveMenu(u32 taskId)
 {
-	sResources->exitCallback = CB2_GiveHoldItem;
-	gTasks[taskId].func = BerryPouch_StartFadeToExitCallback;
+    sResources->exitCallback = CB2_GiveHoldItem;
+    gTasks[taskId].func = BerryPouch_StartFadeToExitCallback;
 }
 
-static void Task_ContextMenu_FromPokemonPC(u8 taskId)
+static void Task_ContextMenu_FromPokemonPC(u32 taskId)
 {
     sResources->exitCallback = Cb2_ReturnToPSS;
     gTasks[taskId].func = BerryPouch_StartFadeToExitCallback;
 }
 
-static void Task_ContextMenu_Sell(u8 taskId)
+static void Task_ContextMenu_Sell(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
-	
+    
     if (ItemId_GetPrice(gSpecialVar_ItemId) == 0)
     {
         CopyItemName(gSpecialVar_ItemId, gStringVar1);
@@ -1206,7 +1206,7 @@ static void Task_ContextMenu_Sell(u8 taskId)
     }
 }
 
-static void Task_AskSellMultiple(u8 taskId)
+static void Task_AskSellMultiple(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     ConvertIntToDecimalStringN(gStringVar3, ItemId_GetPrice(BagGetItemIdByPocketPosition(POCKET_BERRY_POUCH, data[1])) / ITEM_SELL_DIVISOR * data[8], STR_CONV_MODE_LEFT_ALIGN, 6);
@@ -1214,12 +1214,12 @@ static void Task_AskSellMultiple(u8 taskId)
     DisplayItemMessageInBerryPouch(taskId, GetDialogBoxFontId(), gStringVar4, Task_SellMultiple_CreateYesNoMenu);
 }
 
-static void Task_SellMultiple_CreateYesNoMenu(u8 taskId)
+static void Task_SellMultiple_CreateYesNoMenu(u32 taskId)
 {
     CreateYesNoMenuWin(taskId, &sYesNoFuncs_Sell, FALSE);
 }
 
-static void Task_SellNo(u8 taskId)
+static void Task_SellNo(u32 taskId)
 {
     DestroyVariableWindow(2);
     TryDestroyVariableWindow(5);
@@ -1231,7 +1231,7 @@ static void Task_SellNo(u8 taskId)
     Task_CleanUpAndReturnToMain(taskId);
 }
 
-static void Task_Sell_PrintSelectMultipleUI(u8 taskId)
+static void Task_Sell_PrintSelectMultipleUI(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     ConvertIntToDecimalStringN(gStringVar1, 1, STR_CONV_MODE_LEADING_ZEROS, 2);
@@ -1248,7 +1248,7 @@ static void SellMultiple_UpdateSellPriceDisplay(s32 price)
     PrintMoneyAmount(sVariableWindowIds[1], 56, 10, price, 0);
 }
 
-static void Task_Sell_SelectMultiple(u8 taskId)
+static void Task_Sell_SelectMultiple(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     if (AdjustQuantityAccordingToDPadInput(&data[8], data[2]) == TRUE)
@@ -1281,7 +1281,7 @@ static void Task_Sell_SelectMultiple(u8 taskId)
     }
 }
 
-static void Task_SellYes(u8 taskId)
+static void Task_SellYes(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     PutWindowTilemap(0);
@@ -1292,7 +1292,7 @@ static void Task_SellYes(u8 taskId)
     DisplayItemMessageInBerryPouch(taskId, 2, gStringVar4, Task_SellBerries_PlaySfxAndRemoveBerries);
 }
 
-static void Task_SellBerries_PlaySfxAndRemoveBerries(u8 taskId)
+static void Task_SellBerries_PlaySfxAndRemoveBerries(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     PlaySE(SE_SHOP);
@@ -1308,7 +1308,7 @@ static void Task_SellBerries_PlaySfxAndRemoveBerries(u8 taskId)
     gTasks[taskId].func = Task_SellBerries_WaitButton;
 }
 
-static void Task_SellBerries_WaitButton(u8 taskId)
+static void Task_SellBerries_WaitButton(u32 taskId)
 {
     if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
     {

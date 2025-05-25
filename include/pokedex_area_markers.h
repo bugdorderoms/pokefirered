@@ -6,7 +6,7 @@ struct PAM_TaskData
     struct SubspriteTable subsprites;
     void * buffer;
     u16 tilesTag;
-	u8 spr_id;
+    u8 spr_id;
 };
 
 void SetAreaSubsprite(s32 i, s32 whichArea, struct Subsprite * subsprites);

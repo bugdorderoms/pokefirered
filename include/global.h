@@ -169,7 +169,7 @@ Input must be of the form (upper << lower) where upper can be up to 3, lower up 
 // Counts the number of leading zeros of an integer.
 #define clz(x) \
     (((x) == 0) ? 32 : \
-	((x) & Bit(31)) ? 0 : \
+    ((x) & Bit(31)) ? 0 : \
     ((x) & Bit(30)) ? 1 : \
     ((x) & Bit(29)) ? 2 : \
     ((x) & Bit(28)) ? 3 : \
@@ -270,7 +270,7 @@ struct UCoords32
 
 struct Pokedex
 {
-	u32 spindaPersonality; // set when you first see Spinda
+    u32 spindaPersonality; // set when you first see Spinda
     u8 order;
     u8 mode;
     u8 owned[DEX_FLAGS_NO];
@@ -281,7 +281,7 @@ struct PokemonJumpRecords
 {
     u16 jumpsInRow;
     u16 excellentsInRow;
-	u32 bestJumpScore;
+    u32 bestJumpScore;
     u16 gamesWithMaxPlayers;
 };
 
@@ -319,12 +319,12 @@ struct LinkBattleRecords
 
 struct DailyEvent
 {
-	u32 minute:6;
-	u32 hour:5;
-	u32 day:5;
-	u32 month:4;
-	u32 year:7;
-	u32 century:5;
+    u32 minute:6;
+    u32 hour:5;
+    u32 day:5;
+    u32 month:4;
+    u32 year:7;
+    u32 century:5;
 };
 
 #include "constants/game_stat.h"
@@ -338,31 +338,31 @@ struct SaveBlock2
     /*0x009*/ u8 specialSaveWarpFlags;
     /*0x00A*/ u8 playerTrainerId[TRAINER_ID_LENGTH];
     /*0x00E*/ u16 playTimeHours;
-	/*0x010*/ u32 optionsTextSpeed:3; // OPTIONS_TEXT_SPEED_[SLOW/MID/FAST]
-	/*0x010*/ u32 optionsWindowFrameType:5; // Specifies one of the 20 decorative borders for text boxes
-	/*0x010*/ u32 optionsSound:1; // OPTIONS_SOUND_[MONO/STEREO]
-	/*0x010*/ u32 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
-	/*0x010*/ u32 optionsBattleSceneOff:1; // whether battle animations are disabled
-	/*0x010*/ u32 optionsSkipPkmnNickname:1; // whether pokemon nickname prompt are disabled
-	/*0x010*/ u32 optionsDexnavSearchOnR:1; // swap dexnav search and auto run button functions
-	/*0x010*/ u32 expShare:1; // whether exp share is on
-	/*0x010*/ u32 autoRun:1; // whether auto run is on
-	/*0x010*/ u32 waitingTaurosChargeStamina:1;
-	/*0x010*/ u32 unused:16;
-	/*0x014*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
-	/*0x018*/ u32 encryptionKey;
-	/*0x01C*/ u16 mapView[0x100];
-	/*0x21C*/ u8 playTimeMinutes;
-	/*0x21D*/ u8 playTimeSeconds;
-	/*0x21E*/ u8 playTimeVBlanks;
-	/*0x21F*/ u8 taurosChargeStamina;
-	          // from here to down are the structs and data that can be vary in size
-	          u8 itemFlags[ROUND_BITS_TO_BYTES(ITEMS_COUNT)];
+    /*0x010*/ u32 optionsTextSpeed:3; // OPTIONS_TEXT_SPEED_[SLOW/MID/FAST]
+    /*0x010*/ u32 optionsWindowFrameType:5; // Specifies one of the 20 decorative borders for text boxes
+    /*0x010*/ u32 optionsSound:1; // OPTIONS_SOUND_[MONO/STEREO]
+    /*0x010*/ u32 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
+    /*0x010*/ u32 optionsBattleSceneOff:1; // whether battle animations are disabled
+    /*0x010*/ u32 optionsSkipPkmnNickname:1; // whether pokemon nickname prompt are disabled
+    /*0x010*/ u32 optionsDexnavSearchOnR:1; // swap dexnav search and auto run button functions
+    /*0x010*/ u32 expShare:1; // whether exp share is on
+    /*0x010*/ u32 autoRun:1; // whether auto run is on
+    /*0x010*/ u32 waitingTaurosChargeStamina:1;
+    /*0x010*/ u32 unused:16;
+    /*0x014*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
+    /*0x018*/ u32 encryptionKey;
+    /*0x01C*/ u16 mapView[0x100];
+    /*0x21C*/ u8 playTimeMinutes;
+    /*0x21D*/ u8 playTimeSeconds;
+    /*0x21E*/ u8 playTimeVBlanks;
+    /*0x21F*/ u8 taurosChargeStamina;
+              // from here to down are the structs and data that can be vary in size
+              u8 itemFlags[ROUND_BITS_TO_BYTES(ITEMS_COUNT)];
               struct Pokedex pokedex;
               struct LinkBattleRecords linkBattleRecords;
               struct PokemonJumpRecords pokeJump;
               struct BerryPickingResults berryPick;
-			  struct DailyEvent dailyEvent;
+              struct DailyEvent dailyEvent;
 };
 
 extern struct SaveBlock2 *gSaveBlock2Ptr;
@@ -437,7 +437,7 @@ struct DayCare
     struct DaycareMon mons[DAYCARE_MON_COUNT];
     u32 offspringPersonality;
     u8 stepCounter;
-	bool8 pending;
+    bool8 pending;
 };
 
 #include "fame_checker.h"
@@ -457,13 +457,13 @@ struct TrainerNameRecord
 
 enum
 {
-	FUSION_RESHIRAN,
-	FUSION_ZEKROM,
-	FUSION_SOLGALEO,
-	FUSION_LUNALA,
-	FUSION_GLASTRIER,
-	FUSION_SPECTRIER,
-	FUSIONS_COUNT,
+    FUSION_RESHIRAN,
+    FUSION_ZEKROM,
+    FUSION_SOLGALEO,
+    FUSION_LUNALA,
+    FUSION_GLASTRIER,
+    FUSION_SPECTRIER,
+    FUSIONS_COUNT,
 };
 
 struct SaveBlock1
@@ -475,40 +475,40 @@ struct SaveBlock1
     /*0x001C*/ struct WarpData lastHealLocation;
     /*0x0024*/ struct WarpData escapeWarp;
     /*0x002C*/ u16 savedMusic;
-	/*0x002E*/ u8 weatherDelay;
+    /*0x002E*/ u8 weatherDelay;
     /*0x002F*/ u8 weather;
     /*0x0030*/ u16 mapLayoutId;
-	/*0x0032*/ u16 coins;
-	/*0x0034*/ u32 money;
-	/*0x0038*/ u16 registeredItem[REGISTERED_ITEMS_COUNT]; // registered for use with SELECT button
-	/*0x0040*/ u32 gameStats[NUM_GAME_STATS];
-	/*0x0080*/ u16 trainerRematchStepCounter;
-	/*0x0082*/ u16 easyChatProfile[EASY_CHAT_BATTLE_WORDS_COUNT];
-	/*0x008E*/ u8 trainerRematches[MAX_REMATCH_ENTRIES];
-	/*0x00F2*/ u8 additionalPhrases[ROUND_BITS_TO_BYTES(NUM_ADDITIONAL_PHRASES)];
-	/*0x00F7*/ u8 playerPartyCount;
-	/*0x00F8*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
-	/*0x0100*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
-	/*0x01D2*/ u8 flashLevel;
-	           u8 flags[ROUND_BITS_TO_BYTES(FLAGS_COUNT)]; // size of 0x120 bytes
-			   u16 vars[VARS_COUNT]; // size of 0x200 bytes
-			   struct Pokemon playerParty[PARTY_SIZE];
-			   struct ItemSlot pcItems[PC_ITEMS_COUNT];
-			   struct ItemSlot bagPocket_Items[BAG_ITEMS_COUNT];
-			   struct ItemSlot bagPocket_KeyItems[BAG_KEYITEMS_COUNT];
-			   struct ItemSlot bagPocket_PokeBalls[BAG_POKEBALLS_COUNT];
-			   struct ItemSlot bagPocket_TMHM[BAG_TMHM_COUNT];
-			   struct ItemSlot bagPocket_Berries[BAG_BERRIES_COUNT];
-			   struct ObjectEvent objectEvents[OBJECT_EVENTS_COUNT];
-			   struct ObjectEventTemplate objectEventTemplates[OBJECT_EVENT_TEMPLATES_COUNT];
-			   struct Mail mail[MAIL_COUNT];
-			   struct DayCare daycare;
-			   struct Roamer roamer;
-			   struct RamScript ramScript;
-			   struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
-			   struct TrainerNameRecord trainerNameRecords[20];
-			   struct DaycareMon route5DayCareMon;
-			   struct Pokemon fusions[FUSIONS_COUNT];
+    /*0x0032*/ u16 coins;
+    /*0x0034*/ u32 money;
+    /*0x0038*/ u16 registeredItem[REGISTERED_ITEMS_COUNT]; // registered for use with SELECT button
+    /*0x0040*/ u32 gameStats[NUM_GAME_STATS];
+    /*0x0080*/ u16 trainerRematchStepCounter;
+    /*0x0082*/ u16 easyChatProfile[EASY_CHAT_BATTLE_WORDS_COUNT];
+    /*0x008E*/ u8 trainerRematches[MAX_REMATCH_ENTRIES];
+    /*0x00F2*/ u8 additionalPhrases[ROUND_BITS_TO_BYTES(NUM_ADDITIONAL_PHRASES)];
+    /*0x00F7*/ u8 playerPartyCount;
+    /*0x00F8*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
+    /*0x0100*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
+    /*0x01D2*/ u8 flashLevel;
+               u8 flags[ROUND_BITS_TO_BYTES(FLAGS_COUNT)]; // size of 0x120 bytes
+               u16 vars[VARS_COUNT]; // size of 0x200 bytes
+               struct Pokemon playerParty[PARTY_SIZE];
+               struct ItemSlot pcItems[PC_ITEMS_COUNT];
+               struct ItemSlot bagPocket_Items[BAG_ITEMS_COUNT];
+               struct ItemSlot bagPocket_KeyItems[BAG_KEYITEMS_COUNT];
+               struct ItemSlot bagPocket_PokeBalls[BAG_POKEBALLS_COUNT];
+               struct ItemSlot bagPocket_TMHM[BAG_TMHM_COUNT];
+               struct ItemSlot bagPocket_Berries[BAG_BERRIES_COUNT];
+               struct ObjectEvent objectEvents[OBJECT_EVENTS_COUNT];
+               struct ObjectEventTemplate objectEventTemplates[OBJECT_EVENT_TEMPLATES_COUNT];
+               struct Mail mail[MAIL_COUNT];
+               struct DayCare daycare;
+               struct Roamer roamer;
+               struct RamScript ramScript;
+               struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
+               struct TrainerNameRecord trainerNameRecords[20];
+               struct DaycareMon route5DayCareMon;
+               struct Pokemon fusions[FUSIONS_COUNT];
 };
 
 struct MapPosition

@@ -213,7 +213,6 @@ extern struct LinkPlayer gLocalLinkPlayer;
 extern u8 gShouldAdvanceLinkState;
 extern u16 gLinkPartnersHeldKeys[6];
 
-void Task_DestroySelf(u8);
 void OpenLink(void);
 void CloseLink(void);
 u16 LinkMain2(const u16 *);

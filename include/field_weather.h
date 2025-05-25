@@ -9,138 +9,138 @@
 
 enum
 {
-	GFXTAG_RAIN = TAG_WEATHER_START,
+    GFXTAG_RAIN = TAG_WEATHER_START,
     GFXTAG_FOG_H,
     GFXTAG_ASH,
     GFXTAG_SANDSTORM,
-	GFXTAG_FOG_D,
+    GFXTAG_FOG_D,
     GFXTAG_BUBBLE,
-	GFXTAG_CLOUD,
-	GFXTAG_SNOWSTORM,
+    GFXTAG_CLOUD,
+    GFXTAG_SNOWSTORM,
 };
 
 struct Weather
 {
-	u16 noShadows:1; // Certain weathers require blend coeffs that do not work nice with shadows
-	u16 readyForInit:1;
-	u16 fadeInActive:1;
-	u16 fadeInCounter:2;
-	u16 weatherGfxLoaded:1;
-	u16 weatherChangeComplete:1;
-	u16 rainStrength:2;
-	u16 thunderTriggered:1;
-	u16 thunderAllowEnd:1;
-	u16 thunderSkipShort:1;
-	u16 fogHSpritesCreated:1;
-	u16 ashSpritesCreated:1;
-	u16 sandstormSpritesCreated:1;
+    u16 noShadows:1; // Certain weathers require blend coeffs that do not work nice with shadows
+    u16 readyForInit:1;
+    u16 fadeInActive:1;
+    u16 fadeInCounter:2;
+    u16 weatherGfxLoaded:1;
+    u16 weatherChangeComplete:1;
+    u16 rainStrength:2;
+    u16 thunderTriggered:1;
+    u16 thunderAllowEnd:1;
+    u16 thunderSkipShort:1;
+    u16 fogHSpritesCreated:1;
+    u16 ashSpritesCreated:1;
+    u16 sandstormSpritesCreated:1;
     u16 sandstormSwirlSpritesCreated:1;
-	u8 fogDSpritesCreated:1;
-	u8 isDownpour:1;
-	u8 bubblesSpritesCreated:1;
-	u8 cloudSpritesCreated:1;
-	u8 snowstormSpritesCreated:1;
-	u8 snowstormSwirlSpritesCreated:1;
-	u8 unused:2; // can be used to add new weathers
-	u8 taskId;
-	
-	u8 palProcessingState;
-	u8 fadeScreenCounter;
-	u16 fadeDestColor;
-	
-	u8 initStep;
-	u8 finishStep;
-	u8 currWeather;
+    u8 fogDSpritesCreated:1;
+    u8 isDownpour:1;
+    u8 bubblesSpritesCreated:1;
+    u8 cloudSpritesCreated:1;
+    u8 snowstormSpritesCreated:1;
+    u8 snowstormSwirlSpritesCreated:1;
+    u8 unused:2; // can be used to add new weathers
+    u32 taskId;
+    
+    u8 palProcessingState;
+    u8 fadeScreenCounter;
+    u16 fadeDestColor;
+    
+    u8 initStep;
+    u8 finishStep;
+    u8 currWeather;
     u8 nextWeather;
-	
-	s8 gammaIndex;
+    
+    s8 gammaIndex;
     s8 gammaTargetIndex;
     u8 gammaStepDelay;
     u8 gammaStepFrameCounter;
-	
-	u16 currBlendEVA;
+    
+    u16 currBlendEVA;
     u16 currBlendEVB;
-	
+    
     u16 targetBlendEVA;
     u16 targetBlendEVB;
-	
-	u8 blendDelay;
-	u8 blendUpdateCounter;
+    
+    u8 blendDelay;
+    u8 blendUpdateCounter;
     u8 blendFrameCounter;
-	u8 targetRainSpriteCount;
-	
-	u8 rainSpriteCount;
-	u8 rainSpriteVisibleDelay;
-	u16 rainSpriteVisibleCounter;
-	
-	u8 curRainSpriteIndex;
-	u8 targetSnowflakeSpriteCount;
-	u16 snowflakeVisibleCounter;
-	
-	u16 snowflakeTimer;
-	u8 snowflakeSpriteCount;
-	u8 thunderShortRetries;
-	
-	u16 thunderDelay;
-	u16 thunderCounter;
-	
-	u16 fogHScrollCounter;
-	u16 fogHScrollOffset;
-	
-	u16 fogHScrollPosX;
-	u16 ashBaseSpritesX;
-	
-	u32 sandstormXOffset;
-	
+    u8 targetRainSpriteCount;
+    
+    u8 rainSpriteCount;
+    u8 rainSpriteVisibleDelay;
+    u16 rainSpriteVisibleCounter;
+    
+    u8 curRainSpriteIndex;
+    u8 targetSnowflakeSpriteCount;
+    u16 snowflakeVisibleCounter;
+    
+    u16 snowflakeTimer;
+    u8 snowflakeSpriteCount;
+    u8 thunderShortRetries;
+    
+    u16 thunderDelay;
+    u16 thunderCounter;
+    
+    u16 fogHScrollCounter;
+    u16 fogHScrollOffset;
+    
+    u16 fogHScrollPosX;
+    u16 ashBaseSpritesX;
+    
+    u32 sandstormXOffset;
+    
     u32 sandstormYOffset;
-	
-	u16 sandstormWaveCounter;
-	u16 sandstormBaseSpritesX;
-	
-	u16 sandstormPosY;
-	u16 sandstormWaveIndex;
-	
-	u16 fogDScrollXCounter;
+    
+    u16 sandstormWaveCounter;
+    u16 sandstormBaseSpritesX;
+    
+    u16 sandstormPosY;
+    u16 sandstormWaveIndex;
+    
+    u16 fogDScrollXCounter;
     u16 fogDScrollYCounter;
-	
-	u16 fogDXOffset;
+    
+    u16 fogDXOffset;
     u16 fogDYOffset;
-	
-	u16 fogDBaseSpritesX;
+    
+    u16 fogDBaseSpritesX;
     u16 fogDPosY;
-	
-	u16 bubblesDelayIndex;
-	u16 bubblesDelayCounter;
-	
-	u16 bubblesCoordsIndex;
+    
+    u16 bubblesDelayIndex;
+    u16 bubblesDelayCounter;
+    
+    u16 bubblesCoordsIndex;
     u16 bubblesSpriteCount;
-	
-	u32 snowstormXOffset;
-	
+    
+    u32 snowstormXOffset;
+    
     u32 snowstormYOffset;
-	
-	u16 snowstormWaveCounter;
-	u16 snowstormBaseSpritesX;
-	
-	u16 snowstormPosY;
-	u16 snowstormWaveIndex;
-	
-	s16 droughtBrightnessStage;
+    
+    u16 snowstormWaveCounter;
+    u16 snowstormBaseSpritesX;
+    
+    u16 snowstormPosY;
+    u16 snowstormWaveIndex;
+    
+    s16 droughtBrightnessStage;
     s16 droughtLastBrightnessStage;
-	
+    
     s16 droughtTimer;
     s16 droughtState;
-	
-	struct Sprite *rainSprites[NUM_RAIN_SPRITES];
-	struct Sprite *snowflakeSprites[NUM_SNOWFLAKE_SPRITES];
-	struct Sprite *fogHSprites[NUM_FOG_HORIZONTAL_SPRITES];
-	struct Sprite *ashSprites[NUM_ASH_SPRITES];
-	struct Sprite *sandstormSprites1[NUM_SANDSTORM_SPRITES];
-	struct Sprite *sandstormSprites2[NUM_SWIRL_SANDSTORM_SPRITES];
-	struct Sprite *fogDSprites[NUM_FOG_DIAGONAL_SPRITES];
-	struct Sprite *cloudSprites[NUM_CLOUD_SPRITES];
-	struct Sprite *snowstormSprites1[NUM_SNOWSTORM_SPRITES];
-	struct Sprite *snowstormSprites2[NUM_SWIRL_SNOWSTORM_SPRITES];
+    
+    struct Sprite *rainSprites[NUM_RAIN_SPRITES];
+    struct Sprite *snowflakeSprites[NUM_SNOWFLAKE_SPRITES];
+    struct Sprite *fogHSprites[NUM_FOG_HORIZONTAL_SPRITES];
+    struct Sprite *ashSprites[NUM_ASH_SPRITES];
+    struct Sprite *sandstormSprites1[NUM_SANDSTORM_SPRITES];
+    struct Sprite *sandstormSprites2[NUM_SWIRL_SANDSTORM_SPRITES];
+    struct Sprite *fogDSprites[NUM_FOG_DIAGONAL_SPRITES];
+    struct Sprite *cloudSprites[NUM_CLOUD_SPRITES];
+    struct Sprite *snowstormSprites1[NUM_SNOWSTORM_SPRITES];
+    struct Sprite *snowstormSprites2[NUM_SWIRL_SNOWSTORM_SPRITES];
 };
 
 extern struct Weather *const gWeatherPtr;

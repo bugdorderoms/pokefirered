@@ -11,7 +11,7 @@ enum TeachyTvScript
     TTVSCR_REGISTER
 };
 
-void InitTeachyTvController(u8 mode, void (*cb)());
+void InitTeachyTvController(u32 mode, void (*cb)());
 void CB2_ReturnToTeachyTV(void);
 void SetTeachyTvControllerModeToResume(void);
 

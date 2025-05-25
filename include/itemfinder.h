@@ -13,6 +13,6 @@
 #define tDestroyStar       data[8]
 
 void ItemUseOnFieldCB_Itemfinder(u32 taskId);
-void Task_StoutlandSearch(u8 taskId);
+void Task_StoutlandSearch(u32 taskId);
 
 #endif //GUARD_ITEMFINDER_H

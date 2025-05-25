@@ -8,10 +8,10 @@
 
 bool32 walkrun_is_standing_still(void)
 {
-	return (gPlayerAvatar.tileTransitionState != 1);
+    return (gPlayerAvatar.tileTransitionState != 1);
 }
 
-void Task_WaitPlayerStopMoving(u8 taskId)
+void Task_WaitPlayerStopMoving(u32 taskId)
 {
     if (walkrun_is_standing_still())
     {
@@ -37,7 +37,7 @@ void ScriptFreezeObjectEvents(void)
     CreateTask(Task_WaitPlayerStopMoving, 80);
 }
 
-void Task_WaitPlayerAndTargetNPCStopMoving(u8 taskId)
+void Task_WaitPlayerAndTargetNPCStopMoving(u32 taskId)
 {
     struct Task * task = &gTasks[taskId];
 
@@ -92,7 +92,7 @@ void UnionRoom_UnlockPlayerAndChatPartner(void)
 {
     if (gObjectEvents[gSelectedObjectEvent].active)
         ObjectEventClearHeldMovementIfFinished(&gObjectEvents[gSelectedObjectEvent]);
-	
+    
     ClearPlayerHeldMovementAndUnfreezeObjectEvents();
 }
 

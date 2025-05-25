@@ -326,7 +326,7 @@ static void PopulateECGroups(void)
     int i;
 
     sEasyChatSelectionData->numGroups = 0;
-	
+    
     if (GetNationalPokedexCount(FLAG_GET_SEEN))
         sEasyChatSelectionData->groups[sEasyChatSelectionData->numGroups++] = EC_GROUP_POKEMON;
 

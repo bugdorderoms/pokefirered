@@ -48,10 +48,10 @@ bool32 MailboxPC_InitBuffers(u32 num)
     sListMenuItems = Alloc(sizeof(struct ListMenuItem) * (num + 1));
     if (sListMenuItems == NULL)
         return FALSE;
-	
+    
     for (i = 0; i < ARRAY_COUNT(sWindowIds); i++)
         sWindowIds[i] = 0xFF;
-	
+    
     return TRUE;
 }
 
@@ -76,14 +76,14 @@ void MailboxPC_RemoveWindow(u32 winIdx)
 static void ItemPrintFunc(u32 windowId, u32 itemId, u32 y)
 {
     u8 strbuf[30];
-	
+    
     if (itemId != -2)
     {
         StringCopy(strbuf, gSaveBlock1Ptr->mail[itemId + PARTY_SIZE].playerName);
-		
+        
         if (StringLength(strbuf) <= 5)
             ConvertInternationalString(strbuf, LANGUAGE_JAPANESE);
-		
+        
         AddTextPrinterParameterized4(windowId, 2, 8, y, 0, 0, sTextColor, -1, strbuf);
     }
 }
@@ -91,7 +91,7 @@ static void ItemPrintFunc(u32 windowId, u32 itemId, u32 y)
 u32 MailboxPC_InitListMenu(struct PlayerPCItemPageStruct * playerPcStruct)
 {
     u32 i;
-	
+    
     for (i = 0; i < playerPcStruct->count; i++)
     {
         sListMenuItems[i].label = COMPOUND_STRING("");

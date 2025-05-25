@@ -17,8 +17,8 @@
 #define tBldYBak    data[8]
 
 static void BeginPCScreenEffect(TaskFunc func, u32 speed, u32 priority);
-static void Task_PCScreenEffect_TurnOn(u8 taskId);
-static void Task_PCScreenEffect_TurnOff(u8 taskId);
+static void Task_PCScreenEffect_TurnOn(u32 taskId);
+static void Task_PCScreenEffect_TurnOff(u32 taskId);
 
 void BeginPCScreenEffect_TurnOn(u32 speed, u32 priority)
 {
@@ -50,7 +50,7 @@ static void BeginPCScreenEffect(TaskFunc func, u32 speed, u32 priority)
     gTasks[taskId].func(taskId);
 }
 
-static void Task_PCScreenEffect_TurnOn(u8 taskId)
+static void Task_PCScreenEffect_TurnOn(u32 taskId)
 {
     struct Task *task = &gTasks[taskId];
 
@@ -110,7 +110,7 @@ static void Task_PCScreenEffect_TurnOn(u8 taskId)
     ++task->tState;
 }
 
-static void Task_PCScreenEffect_TurnOff(u8 taskId)
+static void Task_PCScreenEffect_TurnOff(u32 taskId)
 {
     struct Task *task = &gTasks[taskId];
 

@@ -15,7 +15,7 @@ static void sub_8090A74(struct Sprite * sprite, u32 idx);
 static void sub_8090AE0(struct Sprite * sprite);
 static void DestroyBoxMonIcon(struct Sprite * sprite);
 static void sub_80911B0(struct Sprite * sprite);
-static void sub_8091420(u8 taskId);
+static void sub_8091420(u32 taskId);
 static s8 sub_80916F4(u32 boxId);
 static void LoadWallpaperGfx(u32 wallpaperId, s8 direction);
 static bool32 WaitForWallpaperGfxLoad(void);
@@ -255,16 +255,16 @@ void sub_808FFAC(void)
     u32 i;
 
     LoadMonIconPalettes();
-	
+    
     for (i = 0; i < MAX_MON_ICONS; i++)
         gPSSData->field_B08[i] = 0;
-	
+    
     for (i = 0; i < MAX_MON_ICONS; i++)
         gPSSData->field_B58[i] = 0;
-	
+    
     for (i = 0; i < PARTY_SIZE; i++)
         gPSSData->partySprites[i] = NULL;
-	
+    
     for (i = 0; i < IN_BOX_COUNT; i++)
         gPSSData->boxMonsSprites[i] = NULL;
 
@@ -405,7 +405,7 @@ static u32 sub_80903A4(u32 boxPosition, u16 times, s16 xDelta)
             if (gPSSData->boxSpecies[boxPosition])
             {
                 gPSSData->boxMonsSprites[boxPosition] = CreateMonIconSprite(gPSSData->boxSpecies[boxPosition], x, y, 2, subpriority);
-				
+                
                 if (gPSSData->boxMonsSprites[boxPosition] != NULL)
                 {
                     gPSSData->boxMonsSprites[boxPosition]->data[1] = times;
@@ -426,17 +426,17 @@ static u32 sub_80903A4(u32 boxPosition, u16 times, s16 xDelta)
             if (gPSSData->boxSpecies[boxPosition] != SPECIES_NONE)
             {
                 gPSSData->boxMonsSprites[boxPosition] = CreateMonIconSprite(gPSSData->boxSpecies[boxPosition], x, y, 2, subpriority);
-				
+                
                 if (gPSSData->boxMonsSprites[boxPosition] != NULL)
                 {
                     gPSSData->boxMonsSprites[boxPosition]->data[1] = times;
                     gPSSData->boxMonsSprites[boxPosition]->data[2] = xDelta;
                     gPSSData->boxMonsSprites[boxPosition]->data[3] = xDest;
                     gPSSData->boxMonsSprites[boxPosition]->callback = sub_80902E0;
-					
+                    
                     if (!GetBoxMonDataAt(gPSSData->field_C5C, boxPosition, MON_DATA_HELD_ITEM))
                         gPSSData->boxMonsSprites[boxPosition]->oam.objMode = ST_OAM_OBJ_BLEND;
-					
+                    
                     count++;
                 }
             }
@@ -455,9 +455,9 @@ static void sub_8090574(u32 boxId, s8 direction)
     gPSSData->field_C60 = 32;
     gPSSData->field_C64 = -(6 * direction);
     gPSSData->field_C66 = 0;
-	
+    
     SetBoxSpeciesAndPersonalities(boxId);
-	
+    
     if (direction > 0)
         gPSSData->field_C68 = 0;
     else
@@ -486,7 +486,7 @@ static bool32 sub_809062C(void)
     case 1:
         gPSSData->field_C62 += gPSSData->field_C64;
         gPSSData->field_C66 += sub_80903A4(gPSSData->field_C68, gPSSData->field_C60, gPSSData->field_C64);
-		
+        
         if ((gPSSData->field_C69 > 0 && gPSSData->field_C68 == IN_BOX_ROWS - 1) || (gPSSData->field_C69 < 0 && gPSSData->field_C68 == 0))
             gPSSData->field_C6A++;
         else
@@ -549,12 +549,12 @@ void CreatePartyMonsSprites(bool32 arg0)
     for (i = 1; i < PARTY_SIZE; i++)
     {
         species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
-		
-		if (species)
-		{
-			CreatePcPartyMonIconSprite(i, species);
-			count++;
-		}
+        
+        if (species)
+        {
+            CreatePcPartyMonIconSprite(i, species);
+            count++;
+        }
         else
             gPSSData->partySprites[i] = NULL;
     }
@@ -580,17 +580,17 @@ void CreatePartyMonsSprites(bool32 arg0)
 
 void CreatePcPartyMonIconSprite(u32 partyId, u32 species)
 {
-	struct Sprite *sprite;
-	
-	if (partyId)
-		sprite = CreateMonIconSprite(species, 152,  8 * (3 * (partyId - 1)) + 16, 1, 12);
-	else
-		sprite = CreateMonIconSprite(species, 104, 64, 1, 12);
-	
-	gPSSData->partySprites[partyId] = sprite;
-	
-	if (gPSSData->partySprites[partyId] != NULL && !GetMonData(&gPlayerParty[partyId], MON_DATA_HELD_ITEM))
-		gPSSData->partySprites[partyId]->oam.objMode = ST_OAM_OBJ_BLEND;
+    struct Sprite *sprite;
+    
+    if (partyId)
+        sprite = CreateMonIconSprite(species, 152,  8 * (3 * (partyId - 1)) + 16, 1, 12);
+    else
+        sprite = CreateMonIconSprite(species, 104, 64, 1, 12);
+    
+    gPSSData->partySprites[partyId] = sprite;
+    
+    if (gPSSData->partySprites[partyId] != NULL && !GetMonData(&gPlayerParty[partyId], MON_DATA_HELD_ITEM))
+        gPSSData->partySprites[partyId]->oam.objMode = ST_OAM_OBJ_BLEND;
 }
 
 void sub_80909F4(void)
@@ -598,7 +598,7 @@ void sub_80909F4(void)
     u32 i, count;
 
     gPSSData->field_C5E = 0;
-	
+    
     for (i = 0, count = 0; i < PARTY_SIZE; i++)
     {
         if (gPSSData->partySprites[i] != NULL)
@@ -676,7 +676,7 @@ void DestroyMovingMonIcon(void)
 
 void sub_8090B98(s16 yDelta)
 {
-	u32 i;
+    u32 i;
     u16 posY;
 
     for (i = 0; i < PARTY_SIZE; i++)
@@ -886,7 +886,7 @@ static void sub_80911B0(struct Sprite *sprite)
 
 static u16 sub_80911D4(u32 species)
 {
-	u32 i;
+    u32 i;
     u16 var;
 
     // Find the currently-allocated slot
@@ -926,7 +926,7 @@ static void sub_8091290(u32 species)
         {
             if (--gPSSData->field_B08[i] == 0)
                 gPSSData->field_B58[i] = 0;
-			
+            
             break;
         }
     }
@@ -973,7 +973,7 @@ bool32 sub_809140C(void)
     return FuncIsActiveTask(sub_8091420);
 }
 
-static void sub_8091420(u8 taskId)
+static void sub_8091420(u32 taskId)
 {
     struct Task *task = &gTasks[taskId];
 
@@ -1312,7 +1312,7 @@ static void sub_8091EB8(struct Sprite *sprite)
 static void sub_8091EF0(void)
 {
     u32 wallpaperId = GetBoxWallpaper(StorageGetCurrentBox());
-	
+    
     if (gPSSData->field_6F8 == 0)
         CpuCopy16(gUnknown_83D29D0[wallpaperId], gPlttBufferUnfaded + gPSSData->field_71C, 4);
     else
@@ -1329,7 +1329,7 @@ static void sub_8091F80(void)
     u32 i;
 
     LoadSpriteSheet(&gUnknown_83D2B54);
-	
+    
     for (i = 0; i < 2; i++)
     {
         u32 spriteId = CreateSprite(&gUnknown_83D2BB4, 0x5c + i * 0x88, 28, 22);
@@ -1354,7 +1354,7 @@ static void sub_809200C(s8 direction)
         gPSSData->field_730[i]->x2 = 0;
         gPSSData->field_730[i]->data[0] = 2;
     }
-	
+    
     if (direction < 0)
     {
         gPSSData->field_730[0]->data[1] = 29;
@@ -1433,7 +1433,7 @@ static void sub_8092164(struct Sprite *sprite)
         sprite->x -= gPSSData->field_2CE;
         if (sprite->x < 73 || sprite->x > 247)
             sprite->invisible = TRUE;
-		
+        
         if (--sprite->data[1] == 0)
         {
             sprite->x = sprite->data[2];

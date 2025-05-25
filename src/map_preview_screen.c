@@ -14,7 +14,7 @@
 static EWRAM_DATA bool8 sHasVisitedMapBefore = FALSE;
 static EWRAM_DATA bool8 sAllocedBg0TilemapBuffer = FALSE;
 
-static void Task_RunMapPreviewScreenForest(u8 taskId);
+static void Task_RunMapPreviewScreenForest(u32 taskId);
 
 static const struct WindowTemplate sMapNameWindow = {
     .bg = 0,
@@ -34,16 +34,16 @@ static const struct BgTemplate sMapPreviewBgTemplate[1] = {
 
 bool32 MapHasPreviewScreen(u32 mapsec, u32 type)
 {
-	u32 mapPreviewType = gMapSectionsInfo[mapsec].mapPreview.type;
-	
-	if (mapPreviewType != MAP_PREVIEW_TYPE_NONE)
-	{
-		if (mapPreviewType == MAP_PREVIEW_TYPE_ANY)
-			return TRUE;
-		else
-			return (mapPreviewType == type);
-	}
-	return FALSE;
+    u32 mapPreviewType = gMapSectionsInfo[mapsec].mapPreview.type;
+    
+    if (mapPreviewType != MAP_PREVIEW_TYPE_NONE)
+    {
+        if (mapPreviewType == MAP_PREVIEW_TYPE_ANY)
+            return TRUE;
+        else
+            return (mapPreviewType == type);
+    }
+    return FALSE;
 }
 
 void MapPreview_InitBgs(void)
@@ -57,7 +57,7 @@ void MapPreview_LoadGfx(u32 mapsec)
     ResetTempTileDataBuffers();
     LoadPalette(gMapSectionsInfo[mapsec].mapPreview.palptr, 0xD0, 0x60);
     DecompressAndCopyTileDataToVram(0, gMapSectionsInfo[mapsec].mapPreview.tilesptr, 0, 0, 0);
-	
+    
     if (GetBgTilemapBuffer(0) == NULL)
     {
         SetBgTilemapBuffer(0, Alloc(BG_SCREEN_SIZE));
@@ -74,7 +74,7 @@ void MapPreview_LoadGfx(u32 mapsec)
 void MapPreview_Unload(u32 windowId)
 {
     RemoveWindow(windowId);
-	
+    
     if (sAllocedBg0TilemapBuffer)
         Free(GetBgTilemapBuffer(0));
 }
@@ -90,23 +90,23 @@ void MapPreview_StartForestTransition(u32 mapsec)
 
     gTasks[taskId].data[2] = GetBgAttribute(0, BG_ATTR_PRIORITY);
     gTasks[taskId].data[4] = GetGpuReg(REG_OFFSET_BLDCNT);
-	gTasks[taskId].data[5] = GetGpuReg(REG_OFFSET_BLDALPHA);
+    gTasks[taskId].data[5] = GetGpuReg(REG_OFFSET_BLDALPHA);
     gTasks[taskId].data[3] = GetGpuReg(REG_OFFSET_DISPCNT);
     gTasks[taskId].data[6] = GetGpuReg(REG_OFFSET_WININ);
     gTasks[taskId].data[7] = GetGpuReg(REG_OFFSET_WINOUT);
     gTasks[taskId].data[10] = MapPreview_GetDuration(mapsec);
     gTasks[taskId].data[8] = 16;
     gTasks[taskId].data[9] = 0;
-	gTasks[taskId].data[12] = BLDALPHA_TGT1(gTasks[taskId].data[5]) - 1;
-	gTasks[taskId].data[13] = BLDALPHA_TGT2(gTasks[taskId].data[5]) + 1;
-	
+    gTasks[taskId].data[12] = BLDALPHA_TGT1(gTasks[taskId].data[5]) - 1;
+    gTasks[taskId].data[13] = BLDALPHA_TGT2(gTasks[taskId].data[5]) + 1;
+    
     SetBgAttribute(0, BG_ATTR_PRIORITY, 0);
-	
+    
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(gTasks[taskId].data[8], gTasks[taskId].data[9]));
     SetGpuRegBits(REG_OFFSET_WININ, WININ_WIN0_CLR | WININ_WIN1_CLR);
     SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WIN01_CLR);
-	
+    
     gTasks[taskId].data[11] = MapPreview_CreateMapNameWindow(mapsec);
     ScriptContext2_Enable();
 }
@@ -118,12 +118,12 @@ u32 MapPreview_CreateMapNameWindow(u32 mapsec)
 
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
     PutWindowTilemap(windowId);
-	
+    
     GetMapName(gStringVar4, mapsec);
-	
+    
     xctr = 104 - GetStringWidth(2, gStringVar4, 0);
     AddTextPrinterParameterized4(windowId, 2, xctr / 2, 2, 0, 0, color, -1, gStringVar4);
-	
+    
     return windowId;
 }
 
@@ -132,7 +132,7 @@ bool32 ForestMapPreviewScreenIsRunning(void)
     return FuncIsActiveTask(Task_RunMapPreviewScreenForest);
 }
 
-static void Task_RunMapPreviewScreenForest(u8 taskId)
+static void Task_RunMapPreviewScreenForest(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
 
@@ -161,7 +161,7 @@ static void Task_RunMapPreviewScreenForest(u8 taskId)
         break;
     case 3:
         data[1]++;
-		
+        
         if (data[1] > data[10])
         {
             data[1] = 0;
@@ -173,28 +173,28 @@ static void Task_RunMapPreviewScreenForest(u8 taskId)
         {
         case 0:
             data[9]++;
-			
+            
             if (data[9] > data[12])
                 data[9] = data[12];
             break;
         case 1:
             data[8]--;
-			
+            
             if (data[8] < data[13])
                 data[8] = data[13];
             break;
         }
         data[1] = (data[1] + 1) % 3;
-		
+        
         SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(data[8], data[9]));
-		
-		// Gradually whiten shadow color
-		data[14] = 11 + data[9];
-		UpdateShadowColor(RGB(data[14], data[14], data[14]));
-		
+        
+        // Gradually whiten shadow color
+        data[14] = 11 + data[9];
+        UpdateShadowColor(RGB(data[14], data[14], data[14]));
+        
         if (data[8] == data[13] && data[9] == data[12])
         {
-			UpdateShadowColor(RGB_BLACK);
+            UpdateShadowColor(RGB_BLACK);
             FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, 32, 32);
             CopyBgTilemapBufferToVram(0);
             data[0]++;
@@ -204,15 +204,15 @@ static void Task_RunMapPreviewScreenForest(u8 taskId)
         if (!IsDma3ManagerBusyWithBgCopy())
         {
             MapPreview_Unload(data[11]);
-			
+            
             SetBgAttribute(0, BG_ATTR_PRIORITY, data[2]);
-			
+            
             SetGpuReg(REG_OFFSET_DISPCNT, data[3]);
             SetGpuReg(REG_OFFSET_BLDCNT, data[4]);
             SetGpuReg(REG_OFFSET_WININ, data[6]);
             SetGpuReg(REG_OFFSET_WINOUT, data[7]);
-			
-			DestroyTask(taskId);
+            
+            DestroyTask(taskId);
         }
         break;
     }
@@ -228,22 +228,22 @@ const struct MapPreviewScreen *GetDungeonMapPreviewScreenInfo(u32 mapsec)
 
 u32 MapPreview_GetDuration(u32 mapsec)
 {
-	u32 flagId, type = gMapSectionsInfo[mapsec].mapPreview.type;
+    u32 flagId, type = gMapSectionsInfo[mapsec].mapPreview.type;
 
     if (type != MAP_PREVIEW_TYPE_NONE)
-	{
-		flagId = gMapSectionsInfo[mapsec].mapPreview.worldMapFlag;
-		
-		if (type == MAP_PREVIEW_TYPE_CAVE)
-			return FlagGet(flagId) ? 40 : 120;
-		else
-			return sHasVisitedMapBefore ? 120 : 40;
-	}
-	return 0;
+    {
+        flagId = gMapSectionsInfo[mapsec].mapPreview.worldMapFlag;
+        
+        if (type == MAP_PREVIEW_TYPE_CAVE)
+            return FlagGet(flagId) ? 40 : 120;
+        else
+            return sHasVisitedMapBefore ? 120 : 40;
+    }
+    return 0;
 }
 
 void MapPreview_SetFlag(u32 flagId)
 {
-	sHasVisitedMapBefore = FlagGet(flagId) ? FALSE : TRUE;
+    sHasVisitedMapBefore = FlagGet(flagId) ? FALSE : TRUE;
     FlagSet(flagId);
 }

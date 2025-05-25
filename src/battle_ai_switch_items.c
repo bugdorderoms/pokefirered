@@ -13,108 +13,108 @@
 
 static bool32 ShouldSwitchIfNoOneMoveIsEffective(u32 battlerId)
 {
-	u32 i, j, k, unusableMoves = 0;
-	u32 battlerIn2, battlerIn1 = battlerId;
-	
-	if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
-		battlerIn2 = BATTLE_PARTNER(battlerId);
-	else
-		battlerIn2 = battlerId;
-	
-	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
-	{
-		if (IsBattlerAlive(i) && !IsBattlerAlly(battlerId, i))
-		{
-			for (j = 0; j < MAX_MON_MOVES; j++)
-			{
-				if (AI_THINKING->moves[battlerId][j] && AI_THINKING->effectiveness[battlerId][i][j] != TYPE_MUL_NO_EFFECT)
-					return FALSE;
-				else
-					++unusableMoves;
-			}
-			
-			if (unusableMoves == MAX_MON_MOVES)
-			{
-				for (j = 0; j < MAX_MON_MOVES; j++)
-				{
-					for (k = 0; k < gEnemyPartyCount; k++)
-					{
-						if (k != gBattlerPartyIndexes[battlerIn1] && k != gBattlerPartyIndexes[battlerIn2] && MonCanBattle(&gEnemyParty[k])
-						&& AI_TypeCalc(&gEnemyParty[k], AI_THINKING->moves[battlerId][j], i) != TYPE_MUL_NO_EFFECT)
-						{
-							gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = k;
-							return TRUE;
-						}
-					}
-				}
-			}
-		}
-	}
-	return FALSE;
+    u32 i, j, k, unusableMoves = 0;
+    u32 battlerIn2, battlerIn1 = battlerId;
+    
+    if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
+        battlerIn2 = BATTLE_PARTNER(battlerId);
+    else
+        battlerIn2 = battlerId;
+    
+    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+    {
+        if (IsBattlerAlive(i) && !IsBattlerAlly(battlerId, i))
+        {
+            for (j = 0; j < MAX_MON_MOVES; j++)
+            {
+                if (AI_THINKING->moves[battlerId][j] && AI_THINKING->effectiveness[battlerId][i][j] != TYPE_MUL_NO_EFFECT)
+                    return FALSE;
+                else
+                    ++unusableMoves;
+            }
+            
+            if (unusableMoves == MAX_MON_MOVES)
+            {
+                for (j = 0; j < MAX_MON_MOVES; j++)
+                {
+                    for (k = 0; k < gEnemyPartyCount; k++)
+                    {
+                        if (k != gBattlerPartyIndexes[battlerIn1] && k != gBattlerPartyIndexes[battlerIn2] && MonCanBattle(&gEnemyParty[k])
+                        && AI_TypeCalc(&gEnemyParty[k], AI_THINKING->moves[battlerId][j], i) != TYPE_MUL_NO_EFFECT)
+                        {
+                            gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = k;
+                            return TRUE;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return FALSE;
 }
 
 bool32 BattleAI_ShouldSwitch(u32 battlerId)
 {
-	if (CanBattlerEscape(battlerId, TRUE) && !IsAbilityPreventingSwitchOut(battlerId) && !(gStatuses3[battlerId] & STATUS3_COMMANDING) && !IsBattlerBeingCommanded(battlerId))
-	{
-		u32 i, availableToSwitch, battlerIn2, battlerIn1 = battlerId;
-		
-		if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
-			battlerIn2 = BATTLE_PARTNER(battlerId);
-		else
-			battlerIn2 = battlerId;
-		
-		for (i = availableToSwitch = 0; i < gEnemyPartyCount; i++)
-		{
-			if (MonCanBattle(&gEnemyParty[i]) && i != gBattlerPartyIndexes[battlerIn1] && i != gBattlerPartyIndexes[battlerIn2]
-			&& i != gBattleStruct->battlers[battlerIn1].monToSwitchIntoId && i != gBattleStruct->battlers[battlerIn2].monToSwitchIntoId)
-				++availableToSwitch;
-		}
-		
-		if (availableToSwitch)
-		{
-			if ((gStatuses3[battlerId] & STATUS3_PERISH_SONG) && gDisableStructs[battlerId].perishSongTimer == 0)
-			{
-				gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = PARTY_SIZE;
-				return TRUE;
-			}
-			else if (ShouldSwitchIfNoOneMoveIsEffective(battlerId))
-				return TRUE;
-		}
-	}
-	return FALSE;
+    if (CanBattlerEscape(battlerId, TRUE) && !IsAbilityPreventingSwitchOut(battlerId) && !(gStatuses3[battlerId] & STATUS3_COMMANDING) && !IsBattlerBeingCommanded(battlerId))
+    {
+        u32 i, availableToSwitch, battlerIn2, battlerIn1 = battlerId;
+        
+        if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
+            battlerIn2 = BATTLE_PARTNER(battlerId);
+        else
+            battlerIn2 = battlerId;
+        
+        for (i = availableToSwitch = 0; i < gEnemyPartyCount; i++)
+        {
+            if (MonCanBattle(&gEnemyParty[i]) && i != gBattlerPartyIndexes[battlerIn1] && i != gBattlerPartyIndexes[battlerIn2]
+            && i != gBattleStruct->battlers[battlerIn1].monToSwitchIntoId && i != gBattleStruct->battlers[battlerIn2].monToSwitchIntoId)
+                ++availableToSwitch;
+        }
+        
+        if (availableToSwitch)
+        {
+            if ((gStatuses3[battlerId] & STATUS3_PERISH_SONG) && gDisableStructs[battlerId].perishSongTimer == 0)
+            {
+                gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = PARTY_SIZE;
+                return TRUE;
+            }
+            else if (ShouldSwitchIfNoOneMoveIsEffective(battlerId))
+                return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 bool32 BattleAI_SwitchIfBadMoves(u32 battlerId, bool32 doubles)
 {
-	return FALSE;
+    return FALSE;
 }
 
 u32 GetMostSuitableMonToSwitchInto(u32 battlerId)
 {
-	if (gBattleStruct->battlers[battlerId].monToSwitchIntoId != PARTY_SIZE)
-		return gBattleStruct->battlers[battlerId].monToSwitchIntoId;
-	else
-	{
-		u32 i, battlerIn2, battlerIn1 = battlerId;
-		
-		if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
-			battlerIn2 = BATTLE_PARTNER(battlerId);
-		else
-			battlerIn2 = battlerId;
-		
-		/*
-		TODO: add logic
-		
-		for (i = 0; i < gEnemyPartyCount; i++)
-		{
-			if (MonCanBattle(&gEnemyParty[i]) && i != gBattlerPartyIndexes[battlerIn1] && i != gBattlerPartyIndexes[battlerIn2])
-			{
-				if ()
-			}
-		}*/
-		return 1;
-	}
+    if (gBattleStruct->battlers[battlerId].monToSwitchIntoId != PARTY_SIZE)
+        return gBattleStruct->battlers[battlerId].monToSwitchIntoId;
+    else
+    {
+        u32 i, battlerIn2, battlerIn1 = battlerId;
+        
+        if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
+            battlerIn2 = BATTLE_PARTNER(battlerId);
+        else
+            battlerIn2 = battlerId;
+        
+        /*
+        TODO: add logic
+        
+        for (i = 0; i < gEnemyPartyCount; i++)
+        {
+            if (MonCanBattle(&gEnemyParty[i]) && i != gBattlerPartyIndexes[battlerIn1] && i != gBattlerPartyIndexes[battlerIn2])
+            {
+                if ()
+            }
+        }*/
+        return 1;
+    }
 }
 
 ///////////
@@ -126,113 +126,113 @@ u32 GetMostSuitableMonToSwitchInto(u32 battlerId)
 // How higher more priority takes over other item effects
 bool32 BattleAI_ShouldUseItem(u32 battlerId)
 {
-	u32 i, j, partyId, itemPriority, chosenItemIndex, numUsableItems, itemPriorities[MAX_TRAINER_ITEMS];
-	u32 holdEffectParam, item, usableItems[MAX_TRAINER_ITEMS];
-	
-	// Item effects are'nt blocked
-	if (!IsItemUseBlockedByBattleEffect(battlerId))
-	{
-		gBattleStruct->battlers[battlerId].itemPartyIndex = PARTY_SIZE;
-		
-		itemPriority = 0;
-		numUsableItems = 0;
-		
-		for (i = 0; i < MAX_TRAINER_ITEMS; i++, itemPriority = 0)
-		{
-			usableItems[numUsableItems] = item = gTrainers[gTrainerBattleOpponent_A].items[i];
-			
-			// Ignore items that was already used or that dont exist
-			if (item && item < ITEMS_COUNT && !(AI_DATA->usedItemsIndices & Bit(i)))
-			{
-				holdEffectParam = ItemId_GetHoldEffectParam(item);
-				
-				switch (ItemId_GetBattleUsage(item))
-				{
-					case EFFECT_ITEM_REVIVE:
-						for (partyId = 0; partyId < gEnemyPartyCount; partyId++)
-						{
-							// Loop through fainted mons
-							if (partyId != gBattlerPartyIndexes[battlerId] && !GetMonData(&gEnemyParty[partyId], MON_DATA_HP)
-								/*&& (IsMonGoodChoiceToSwitchInto(&gEnemyParty[partyId]) || GetNoOfHitsToKOBattlerHigherDamage(defender, attacker) < 3)*/)
-								break;
-						}
-						
-						if (partyId != gEnemyPartyCount)
-						{
-							gBattleStruct->battlers[battlerId].itemPartyIndex = partyId;
-							itemPriority = MAX_ITEM_PRIORITY / holdEffectParam; // Increase based on how much HP the mon will be revived with
-						}
-						break;
-						// Need a party member selector
-					case EFFECT_ITEM_RESTORE_HP:
-					case EFFECT_ITEM_CURE_PRIMARY_STATUS:
-						break;
-					case EFFECT_ITEM_INCREASE_STAT:
-						if (gBattleMons[battlerId].hp >= gBattleMons[battlerId].maxHP / 2 && CompareStat(battlerId, holdEffectParam, MAX_STAT_STAGES, CMP_LESS_THAN))
-							itemPriority = GetStatUpScore(battlerId, MAX_BATTLERS_COUNT, holdEffectParam, GetItemStatChangeStages(item), FALSE); // Increase based on the number of stages
-						break;
-					case EFFECT_ITEM_INCREASE_ALL_STATS:
-						if (gBattleMons[battlerId].hp >= gBattleMons[battlerId].maxHP / 2)
-						{
-							u32 count = 0;
-							
-							for (j = STAT_ATK; j < NUM_STATS; j++)
-							{
-								// Increases how much as has valid stats to increase
-								if (CompareStat(battlerId, j, MAX_STAT_STAGES, CMP_LESS_THAN))
-								{
-									itemPriority += GetStatUpScore(battlerId, MAX_BATTLERS_COUNT, j, +1, FALSE);
-									++count;
-								}
-							}
-							itemPriority /= (count / 2); // Get average score
-						}
-						break;
-					/*case EFFECT_ITEM_SET_FOCUS_ENERGY:
-						if (ShouldAIIncreaseCriticalChance(attacker, defender))
-							itemPriority = 2; // Since it increases two stages, consider 2x a stat up
-						break;*/
-					// The other items cant be used
-					default:
-						break;
-				}
-				
-				if (itemPriority)
-				{
-					if (itemPriority > MAX_ITEM_PRIORITY)
-						itemPriority = MAX_ITEM_PRIORITY;
-					
-					itemPriorities[numUsableItems] = itemPriority;
-					++numUsableItems;
-				}
-			}
-		}
-		
-		// Choose item to use
-		if (numUsableItems)
-		{
-			chosenItemIndex = 0;
-			
-			for (i = 0; i < numUsableItems; i++)
-			{
-				if (itemPriorities[i] > itemPriorities[chosenItemIndex])
-					chosenItemIndex = i;
-			}
-			
-			AI_DATA->usedItemsIndices |= Bit(chosenItemIndex);
-			
-			gBattleStruct->battlers[battlerId].chosenItem = usableItems[chosenItemIndex];
-			
-			// Set selected party ID to current battler if none chosen.
-			if (gBattleStruct->battlers[battlerId].itemPartyIndex == PARTY_SIZE)
-				gBattleStruct->battlers[battlerId].itemPartyIndex = gBattlerPartyIndexes[battlerId];
-			
-			BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_USE_ITEM, 0);
-			
-			return TRUE;
-		}
-	}
-	return FALSE;
+    u32 i, j, partyId, itemPriority, chosenItemIndex, numUsableItems, itemPriorities[MAX_TRAINER_ITEMS];
+    u32 holdEffectParam, item, usableItems[MAX_TRAINER_ITEMS];
+    
+    // Item effects are'nt blocked
+    if (!IsItemUseBlockedByBattleEffect(battlerId))
+    {
+        gBattleStruct->battlers[battlerId].itemPartyIndex = PARTY_SIZE;
+        
+        itemPriority = 0;
+        numUsableItems = 0;
+        
+        for (i = 0; i < MAX_TRAINER_ITEMS; i++, itemPriority = 0)
+        {
+            usableItems[numUsableItems] = item = gTrainers[gTrainerBattleOpponent_A].items[i];
+            
+            // Ignore items that was already used or that dont exist
+            if (item && item < ITEMS_COUNT && !(AI_DATA->usedItemsIndices & Bit(i)))
+            {
+                holdEffectParam = ItemId_GetHoldEffectParam(item);
+                
+                switch (ItemId_GetBattleUsage(item))
+                {
+                    case EFFECT_ITEM_REVIVE:
+                        for (partyId = 0; partyId < gEnemyPartyCount; partyId++)
+                        {
+                            // Loop through fainted mons
+                            if (partyId != gBattlerPartyIndexes[battlerId] && !GetMonData(&gEnemyParty[partyId], MON_DATA_HP)
+                                /*&& (IsMonGoodChoiceToSwitchInto(&gEnemyParty[partyId]) || GetNoOfHitsToKOBattlerHigherDamage(defender, attacker) < 3)*/)
+                                break;
+                        }
+                        
+                        if (partyId != gEnemyPartyCount)
+                        {
+                            gBattleStruct->battlers[battlerId].itemPartyIndex = partyId;
+                            itemPriority = MAX_ITEM_PRIORITY / holdEffectParam; // Increase based on how much HP the mon will be revived with
+                        }
+                        break;
+                        // Need a party member selector
+                    case EFFECT_ITEM_RESTORE_HP:
+                    case EFFECT_ITEM_CURE_PRIMARY_STATUS:
+                        break;
+                    case EFFECT_ITEM_INCREASE_STAT:
+                        if (gBattleMons[battlerId].hp >= gBattleMons[battlerId].maxHP / 2 && CompareStat(battlerId, holdEffectParam, MAX_STAT_STAGES, CMP_LESS_THAN))
+                            itemPriority = GetStatUpScore(battlerId, MAX_BATTLERS_COUNT, holdEffectParam, GetItemStatChangeStages(item), FALSE); // Increase based on the number of stages
+                        break;
+                    case EFFECT_ITEM_INCREASE_ALL_STATS:
+                        if (gBattleMons[battlerId].hp >= gBattleMons[battlerId].maxHP / 2)
+                        {
+                            u32 count = 0;
+                            
+                            for (j = STAT_ATK; j < NUM_STATS; j++)
+                            {
+                                // Increases how much as has valid stats to increase
+                                if (CompareStat(battlerId, j, MAX_STAT_STAGES, CMP_LESS_THAN))
+                                {
+                                    itemPriority += GetStatUpScore(battlerId, MAX_BATTLERS_COUNT, j, +1, FALSE);
+                                    ++count;
+                                }
+                            }
+                            itemPriority /= (count / 2); // Get average score
+                        }
+                        break;
+                    /*case EFFECT_ITEM_SET_FOCUS_ENERGY:
+                        if (ShouldAIIncreaseCriticalChance(attacker, defender))
+                            itemPriority = 2; // Since it increases two stages, consider 2x a stat up
+                        break;*/
+                    // The other items cant be used
+                    default:
+                        break;
+                }
+                
+                if (itemPriority)
+                {
+                    if (itemPriority > MAX_ITEM_PRIORITY)
+                        itemPriority = MAX_ITEM_PRIORITY;
+                    
+                    itemPriorities[numUsableItems] = itemPriority;
+                    ++numUsableItems;
+                }
+            }
+        }
+        
+        // Choose item to use
+        if (numUsableItems)
+        {
+            chosenItemIndex = 0;
+            
+            for (i = 0; i < numUsableItems; i++)
+            {
+                if (itemPriorities[i] > itemPriorities[chosenItemIndex])
+                    chosenItemIndex = i;
+            }
+            
+            AI_DATA->usedItemsIndices |= Bit(chosenItemIndex);
+            
+            gBattleStruct->battlers[battlerId].chosenItem = usableItems[chosenItemIndex];
+            
+            // Set selected party ID to current battler if none chosen.
+            if (gBattleStruct->battlers[battlerId].itemPartyIndex == PARTY_SIZE)
+                gBattleStruct->battlers[battlerId].itemPartyIndex = gBattlerPartyIndexes[battlerId];
+            
+            BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_USE_ITEM, 0);
+            
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 /*
@@ -341,7 +341,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(u8 battlerId)
         u16 monAbility;
 
         if (!MonCanBattle(&gEnemyParty[i]) || i == gBattlerPartyIndexes[battlerIn1] || i == gBattlerPartyIndexes[battlerIn2]
-		|| i == gBattleStruct->monToSwitchIntoId[battlerIn1] || i == gBattleStruct->monToSwitchIntoId[battlerIn2])
+        || i == gBattleStruct->monToSwitchIntoId[battlerIn1] || i == gBattleStruct->monToSwitchIntoId[battlerIn2])
             continue;
             monAbility = GetMonAbility(&gEnemyParty[i]);
         if (absorbingTypeAbility == monAbility && Random() & 1)
@@ -599,9 +599,9 @@ void AI_TrySwitchOrUseItem(u8 battlerId)
 static void ModulateByTypeEffectiveness(u8 atkType, u8 defType1, u8 defType2, u8 *var)
 {
     *var *= GetTypeModifier(atkType, defType1);
-	
-	if (defType1 != defType2)
-		*var *= GetTypeModifier(atkType, defType2);
+    
+    if (defType1 != defType2)
+        *var *= GetTypeModifier(atkType, defType2);
 }
 
 u8 GetMostSuitableMonToSwitchInto(u8 battlerId)
@@ -672,14 +672,14 @@ u8 GetMostSuitableMonToSwitchInto(u8 battlerId)
         {
             for (i = 0; i < MAX_MON_MOVES; ++i)
             {
-				u16 flags;
-				move = GetMonData(&gEnemyParty[bestMonId], MON_DATA_MOVE1 + i);
-				
-				if (move != MOVE_NONE)
-				{
-					if (CalcTypeEffectivenessMultiplier(move, gBattleMoves[move].type, battlerId, opposingBattler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
-						break;
-				}
+                u16 flags;
+                move = GetMonData(&gEnemyParty[bestMonId], MON_DATA_MOVE1 + i);
+                
+                if (move != MOVE_NONE)
+                {
+                    if (CalcTypeEffectivenessMultiplier(move, gBattleMoves[move].type, battlerId, opposingBattler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
+                        break;
+                }
             }
             if (i != MAX_MON_MOVES)
                 return bestMonId; // Has both the typing and at least one super effective move.
@@ -706,10 +706,10 @@ u8 GetMostSuitableMonToSwitchInto(u8 battlerId)
         for (j = 0; j < MAX_MON_MOVES; ++j)
         {
             move = GetMonData(&gEnemyParty[i], MON_DATA_MOVE1 + j);
-			
+            
             if (move != MOVE_NONE && gBattleMoves[move].power != 1)
                 AI_CalcDmg(battlerId, opposingBattler, move);
-			
+            
             if (bestDmg < gBattleMoveDamage)
             {
                 bestDmg = gBattleMoveDamage;

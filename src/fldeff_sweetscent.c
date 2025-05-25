@@ -15,8 +15,8 @@
 static EWRAM_DATA u8 *sPlttBufferBak = NULL;
 
 static void FieldCallback_SweetScent(void);
-static void TrySweetScentEncounter(u8 taskId);
-static void FailSweetScentEncounter(u8 taskId);
+static void TrySweetScentEncounter(u32 taskId);
+static void FailSweetScentEncounter(u32 taskId);
 
 bool32 SetUpFieldMove_SweetScent(void)
 {
@@ -54,7 +54,7 @@ void StartSweetScentFieldEffect(void)
     FieldEffectActiveListRemove(FLDEFF_SWEET_SCENT);
 }
 
-static void TrySweetScentEncounter(u8 taskId)
+static void TrySweetScentEncounter(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
 
@@ -63,7 +63,7 @@ static void TrySweetScentEncounter(u8 taskId)
         if (data[0] == 64)
         {
             data[0] = 0;
-			
+            
             if (TrySweetScentWildEncounter())
             {
                 Free(sPlttBufferBak);
@@ -82,7 +82,7 @@ static void TrySweetScentEncounter(u8 taskId)
     }
 }
 
-static void FailSweetScentEncounter(u8 taskId)
+static void FailSweetScentEncounter(u32 taskId)
 {
     if (!gPaletteFade.active)
     {

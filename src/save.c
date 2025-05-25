@@ -46,7 +46,7 @@ static u32 GetSaveValidStatus(const struct SaveBlockChunk *locations);
 
 struct
 {
-	u16 toAdd;
+    u16 toAdd;
     u16 size;
 } static const sSaveSectionOffsets[NUM_SECTORS_PER_SAVE_SLOT] =
 {
@@ -169,7 +169,7 @@ static u16 CalculateChecksum(void *data, u32 size)
 
 static u32 TryWriteSector(u32 sectorNum, u8 *data)
 {
-	if (ProgramFlashSectorAndVerify(sectorNum, data)) // is damaged?
+    if (ProgramFlashSectorAndVerify(sectorNum, data)) // is damaged?
     {
         CheckSetSectorDamagedStatus(ENABLE, sectorNum); // set damaged sector bits.
         return SAVE_STATUS_ERROR;
@@ -183,7 +183,7 @@ static u32 TryWriteSector(u32 sectorNum, u8 *data)
 
 static u32 HandleWriteSector(u16 sectorId, const struct SaveBlockChunk *locations)
 {
-	u32 i, size;
+    u32 i, size;
     u16 sectorNum;
     u8 *data;
 
@@ -208,7 +208,7 @@ static u32 HandleWriteSector(u16 sectorId, const struct SaveBlockChunk *location
         gFastSaveSection->data[i] = data[i];
 
     gFastSaveSection->checksum = CalculateChecksum(data, size);
-	
+    
     return TryWriteSector(sectorNum, gFastSaveSection->data);
 }
 
@@ -227,7 +227,7 @@ static u32 HandleWriteSectorNBytes(u32 sectorId, u8 *data, u32 size)
 
     sector->id = CalculateChecksum(data, size); // though this appears to be incorrect, it might be some sector checksum instead of a whole save checksum and only appears to be relevent to HOF data, if used.
     
-	return TryWriteSector(sectorId, sector->data);
+    return TryWriteSector(sectorId, sector->data);
 }
 
 static void RestoreSaveBackupVars(void)
@@ -241,7 +241,7 @@ static void RestoreSaveBackupVars(void)
 
 static void RestoreSaveBackupVarsAndIncrement(void)
 {
-	RestoreSaveBackupVars();
+    RestoreSaveBackupVars();
     gFirstSaveSector++;
     gFirstSaveSector %= NUM_SECTORS_PER_SAVE_SLOT;
     gSaveCounter++;
@@ -256,7 +256,7 @@ static u32 HandleWriteIncrementalSector(u32 numSectors, const struct SaveBlockCh
         status = SAVE_STATUS_OK;
         HandleWriteSector(gIncrementalSectorId, locations);
         gIncrementalSectorId++;
-		
+        
         if (gDamagedSaveSectors)
         {
             status = SAVE_STATUS_ERROR;
@@ -272,7 +272,7 @@ static u32 HandleWriteIncrementalSector(u32 numSectors, const struct SaveBlockCh
 
 static u32 HandleReplaceSector(u16 sectorId, const struct SaveBlockChunk *locations)
 {
-	u32 i, size, status;
+    u32 i, size, status;
     u16 sectorNum;
     u8 *data;
 
@@ -420,11 +420,11 @@ static void CopySaveSlotData(const struct SaveBlockChunk *locations)
     for (i = 0; i < NUM_SECTORS_PER_SAVE_SLOT; i++)
     {
         ReadFlashSector(i + sector, gFastSaveSection);
-		
+        
         id = gFastSaveSection->id;
         if (id == 0)
             gFirstSaveSector = i;
-		
+        
         if (gFastSaveSection->signature == FILE_SIGNATURE && gFastSaveSection->checksum == CalculateChecksum(gFastSaveSection->data, locations[id].size))
         {
             for (j = 0; j < locations[id].size; j++)
@@ -436,9 +436,9 @@ static void CopySaveSlotData(const struct SaveBlockChunk *locations)
 static u32 TryLoadSaveSlot(u16 sectorId, const struct SaveBlockChunk *locations)
 {
     u32 status;
-	
+    
     gFastSaveSection = &gSaveDataBuffer;
-	
+    
     if (sectorId != FULL_SAVE_SLOT)
         status = SAVE_STATUS_ERROR;
     else
@@ -466,12 +466,12 @@ static u32 GetSaveValidStatus(const struct SaveBlockChunk *locations)
     for (sector = 0; sector < NUM_SECTORS_PER_SAVE_SLOT; sector++)
     {
         ReadFlashSector(sector, gFastSaveSection);
-		
+        
         if (gFastSaveSection->signature == FILE_SIGNATURE)
         {
             signatureValid = TRUE;
 
-			if (gFastSaveSection->checksum == CalculateChecksum(gFastSaveSection->data, locations[gFastSaveSection->id].size))
+            if (gFastSaveSection->checksum == CalculateChecksum(gFastSaveSection->data, locations[gFastSaveSection->id].size))
             {
                 slot1saveCounter = gFastSaveSection->counter;
                 validSectors |= Bit(gFastSaveSection->id);
@@ -496,11 +496,11 @@ static u32 GetSaveValidStatus(const struct SaveBlockChunk *locations)
     {
         ReadFlashSector(NUM_SECTORS_PER_SAVE_SLOT + sector, gFastSaveSection);
         
-		if (gFastSaveSection->signature == FILE_SIGNATURE)
+        if (gFastSaveSection->signature == FILE_SIGNATURE)
         {
             signatureValid = TRUE;
 
-			if (gFastSaveSection->checksum == CalculateChecksum(gFastSaveSection->data, locations[gFastSaveSection->id].size))
+            if (gFastSaveSection->checksum == CalculateChecksum(gFastSaveSection->data, locations[gFastSaveSection->id].size))
             {
                 slot2saveCounter = gFastSaveSection->counter;
                 validSectors |= Bit(gFastSaveSection->id);
@@ -541,7 +541,7 @@ static u32 GetSaveValidStatus(const struct SaveBlockChunk *locations)
     if (slot1Status == SAVE_STATUS_OK)
     {
         gSaveCounter = slot1saveCounter;
-		
+        
         if (slot2Status == SAVE_STATUS_ERROR)
             return SAVE_STATUS_ERROR;
         else
@@ -551,7 +551,7 @@ static u32 GetSaveValidStatus(const struct SaveBlockChunk *locations)
     if (slot2Status == SAVE_STATUS_OK)
     {
         gSaveCounter = slot2saveCounter;
-		
+        
         if (slot1Status == SAVE_STATUS_ERROR)
             return SAVE_STATUS_ERROR;
         else
@@ -576,14 +576,14 @@ static u32 TryLoadSaveSector(u32 sectorId, u8 *data, u32 size)
     struct SaveSection *section = &gSaveDataBuffer;
 
     ReadFlashSector(sectorId, section);
-	
+    
     if (section->signature == FILE_SIGNATURE)
     {
-		if (section->id == CalculateChecksum(section->data, size))
+        if (section->id == CalculateChecksum(section->data, size))
         {
             for (i = 0; i < size; i++)
                 data[i] = section->data[i];
-			
+            
             return SAVE_STATUS_OK;
         }
         else
@@ -621,13 +621,13 @@ void HandleSavingData(u32 saveType)
 
     gMain.vblankCounter1 = NULL;
     UpdateSaveAddresses();
-	
+    
     switch (saveType)
     {
     case SAVE_HALL_OF_FAME:
         if (GetGameStat(GAME_STAT_ENTERED_HOF) < 999)
             IncrementGameStat(GAME_STAT_ENTERED_HOF);
-		
+        
         tempAddr = gDecompressionBuffer;
         HandleWriteSectorNBytes(SECTOR_ID_HOF_1, tempAddr, SECTOR_DATA_SIZE);
         HandleWriteSectorNBytes(SECTOR_ID_HOF_2, tempAddr + SECTOR_DATA_SIZE, SECTOR_DATA_SIZE);
@@ -639,16 +639,16 @@ void HandleSavingData(u32 saveType)
         break;
     case SAVE_LINK:
         SaveSerializedGame();
-		
-		// only SaveBlock2 and SaveBlock1 (ignores storage in PC)
+        
+        // only SaveBlock2 and SaveBlock1 (ignores storage in PC)
         for(i = SECTOR_ID_SAVEBLOCK2; i <= SECTOR_ID_SAVEBLOCK1_END; i++)
             WriteSaveSectorOrSlot(i, gRamSaveSectionLocations);
-		
+        
         break;
     case SAVE_OVERWRITE_DIFFERENT_FILE:
         for (i = SECTOR_ID_HOF_1; i < TOTAL_FLASH_SECTORS; i++)
             EraseFlashSector(i);
-		
+        
         SaveSerializedGame();
         WriteSaveSectorOrSlot(FULL_SAVE_SLOT, gRamSaveSectionLocations);
         break;
@@ -659,45 +659,45 @@ void HandleSavingData(u32 saveType)
 void TrySavingData(u32 saveType)
 {
     if (!gFlashMemoryPresent)
-		gSaveSucceeded = SAVE_STATUS_ERROR;
-	else
-	{
-		HandleSavingData(saveType);
-		
+        gSaveSucceeded = SAVE_STATUS_ERROR;
+    else
+    {
+        HandleSavingData(saveType);
+        
         if (gDamagedSaveSectors)
-		{
+        {
             DoSaveFailedScreen(saveType);
-			gSaveSucceeded = SAVE_STATUS_ERROR;
-		}
-		else
-			gSaveSucceeded = SAVE_STATUS_OK;
-	}
+            gSaveSucceeded = SAVE_STATUS_ERROR;
+        }
+        else
+            gSaveSucceeded = SAVE_STATUS_OK;
+    }
 }
 
 void SaveGame_AfterLinkTrade(void)
 {
     if (gFlashMemoryPresent)
-	{
-		UpdateSaveAddresses();
-		SaveSerializedGame();
-		RestoreSaveBackupVarsAndIncrement();
-	}
+    {
+        UpdateSaveAddresses();
+        SaveSerializedGame();
+        RestoreSaveBackupVarsAndIncrement();
+    }
 }
 
 bool32 AfterLinkTradeSaveFailed(void) 
 {
     u32 status = HandleWriteIncrementalSector(NUM_SECTORS_PER_SAVE_SLOT, gRamSaveSectionLocations);
-	
+    
     if (gDamagedSaveSectors)
         DoSaveFailedScreen(SAVE_NORMAL);
-	
+    
     return (status == SAVE_STATUS_ERROR);
 }
 
 void ClearSaveAfterLinkTradeSaveFailure(void)
 {
     HandleReplaceSectorAndVerify(NUM_SECTORS_PER_SAVE_SLOT, gRamSaveSectionLocations);
-	
+    
     if (gDamagedSaveSectors)
         DoSaveFailedScreen(SAVE_NORMAL);
 }
@@ -705,7 +705,7 @@ void ClearSaveAfterLinkTradeSaveFailure(void)
 void LinkTradeSetLastSectorSignature(void)
 {
     CopySectorSignatureByte(NUM_SECTORS_PER_SAVE_SLOT);
-	
+    
     if (gDamagedSaveSectors)
         DoSaveFailedScreen(SAVE_NORMAL);
 }
@@ -713,12 +713,12 @@ void LinkTradeSetLastSectorSignature(void)
 void WriteSaveBlock2(void)
 {
     if (gFlashMemoryPresent)
-	{
-		UpdateSaveAddresses();
-		SaveSerializedGame();
-		RestoreSaveBackupVars();
-		HandleReplaceSectorAndVerify(gIncrementalSectorId + 1, gRamSaveSectionLocations);
-	}
+    {
+        UpdateSaveAddresses();
+        SaveSerializedGame();
+        RestoreSaveBackupVars();
+        HandleReplaceSectorAndVerify(gIncrementalSectorId + 1, gRamSaveSectionLocations);
+    }
 }
 
 // Used in conjunction with WriteSaveBlock2 to write both for certain link saves.
@@ -726,14 +726,14 @@ void WriteSaveBlock2(void)
 // Returns TRUE when all sectors of SaveBlock1 have been written.
 bool32 WriteSaveBlock1Sector(void)
 {
-	bool32 finished;
+    bool32 finished;
     u16 sectorId = ++gIncrementalSectorId;
-	
+    
     if (sectorId <= SECTOR_ID_SAVEBLOCK1_END)
     {
         HandleReplaceSectorAndVerify(gIncrementalSectorId + 1, gRamSaveSectionLocations);
         WriteSectorSignatureByte(sectorId);
-		finished = FALSE;
+        finished = FALSE;
     }
     else
     {
@@ -742,7 +742,7 @@ bool32 WriteSaveBlock1Sector(void)
     }
     if (gDamagedSaveSectors)
         DoSaveFailedScreen(SAVE_LINK);
-	
+    
     return finished;
 }
 
@@ -757,7 +757,7 @@ u32 Save_LoadGameData(u32 saveType)
     }
 
     UpdateSaveAddresses();
-	
+    
     switch (saveType)
     {
     case SAVE_NORMAL:
@@ -769,7 +769,7 @@ u32 Save_LoadGameData(u32 saveType)
         break;
     case SAVE_HALL_OF_FAME:
         result = TryLoadSaveSector(SECTOR_ID_HOF_1, gDecompressionBuffer, SECTOR_DATA_SIZE);
-		
+        
         if (result == SAVE_STATUS_OK)
             result = TryLoadSaveSector(SECTOR_ID_HOF_2, gDecompressionBuffer + SECTOR_DATA_SIZE, SECTOR_DATA_SIZE);
         break;
@@ -777,7 +777,7 @@ u32 Save_LoadGameData(u32 saveType)
     return result;
 }
 
-void Task_LinkSave(u8 taskId)
+void Task_LinkSave(u32 taskId)
 {
     switch (gTasks[taskId].data[0])
     {
@@ -861,10 +861,10 @@ void ResetSaveHeap(void)
     ResetMenuAndMonGlobals();
     Save_ResetSaveCounters();
     Save_LoadGameData(SAVE_NORMAL);
-	
+    
     if (gSaveFileStatus == SAVE_STATUS_EMPTY || gSaveFileStatus == SAVE_STATUS_INVALID)
         Sav2_ClearSetDefault();
-	
+    
     SetPokemonCryStereo(gSaveBlock2Ptr->optionsSound);
     InitHeap(gHeap, HEAP_SIZE);
     SetMainCallback2(CB2_ContinueSavedGame);

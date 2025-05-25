@@ -116,7 +116,7 @@ static const u16 sSpriteImageSizes[][4] = {
 u32 CreateMonIcon(u32 species, SpriteCallback callback, s16 x, s16 y, u32 subpriority)
 {
     u32 spriteId;
-	struct SpriteFrameImage image = { NULL, sSpriteImageSizes[sMonIconOamData.shape][sMonIconOamData.size] };
+    struct SpriteFrameImage image = { NULL, sSpriteImageSizes[sMonIconOamData.shape][sMonIconOamData.size] };
     struct SpriteTemplate spriteTemplate =
     {
         .tileTag = SPRITE_INVALID_TAG,
@@ -128,7 +128,7 @@ u32 CreateMonIcon(u32 species, SpriteCallback callback, s16 x, s16 y, u32 subpri
         .callback = callback,
     };
     spriteId = CreateSprite(&spriteTemplate, x, y, subpriority);
-	
+    
     gSprites[spriteId].animPaused = TRUE;
     gSprites[spriteId].animBeginning = FALSE;
     gSprites[spriteId].images = (const struct SpriteFrameImage *)GetMonIconPtr(species);
@@ -200,7 +200,7 @@ const u8 *GetMonIconPtr(u32 species)
 void LoadMonIconPalettes(void)
 {
     u32 i;
-	
+    
     for (i = 0; i < ARRAY_COUNT(gMonIconPaletteTable); i++)
         LoadSpritePalette(&gMonIconPaletteTable[i]);
 }
@@ -208,7 +208,7 @@ void LoadMonIconPalettes(void)
 void FreeMonIconPalettes(void)
 {
     u32 i;
-	
+    
     for (i = 0; i < ARRAY_COUNT(gMonIconPaletteTable); i++)
         FreeSpritePaletteByTag(gMonIconPaletteTable[i].tag);
 }
@@ -216,7 +216,7 @@ void FreeMonIconPalettes(void)
 void LoadMonIconPalette(u32 species)
 {
     u32 palIndex = gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex;
-	
+    
     if (IndexOfSpritePaletteTag(gMonIconPaletteTable[palIndex].tag) == 0xFF)
         LoadSpritePalette(&gMonIconPaletteTable[palIndex]);
 }
@@ -228,18 +228,18 @@ void FreeMonIconPalette(u32 species)
 
 void LoadMonIconPaletteIdxAt(u32 palIdx, u32 offset)
 {
-	LoadPalette(gMonIconPaletteTable[palIdx].data, offset, 0x20);
+    LoadPalette(gMonIconPaletteTable[palIdx].data, offset, 0x20);
 }
 
 void LoadMonIconPalettesAt(u32 offset)
 {
     u32 i;
-	
+    
     if (offset <= 0x100 - 0x60)
     {
         for (i = 0; i < ARRAY_COUNT(gMonIconPaletteTable); i++)
         {
-			LoadMonIconPaletteIdxAt(i, offset);
+            LoadMonIconPaletteIdxAt(i, offset);
             offset += 0x10;
         }
     }
@@ -257,5 +257,5 @@ const u16 *GetMonIconPalettePtr(u32 species)
 
 void LoadMonIconGraphicsInWindow(u32 windowId, u32 species)
 {
-	BlitBitmapToWindow(windowId, GetMonIconPtr(species), 0, 0, 32, 32);
+    BlitBitmapToWindow(windowId, GetMonIconPtr(species), 0, 0, 32, 32);
 }

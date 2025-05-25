@@ -13,8 +13,8 @@
 
 enum
 {
-	GAMMA_NORMAL,
-	GAMMA_BLEND,
+    GAMMA_NORMAL,
+    GAMMA_BLEND,
 };
 
 #define DROUGHT_COLOR_INDEX(color) ((((color) >> 1) & 0xF) | (((color) >> 2) & 0xF0) | (((color) >> 3) & 0xF00))
@@ -29,8 +29,8 @@ struct WeatherCallbacks
     bool32 (*finish)(void);
 };
 
-static void Task_WeatherMain(u8 taskId);
-static void Task_WeatherInit(u8 taskId);
+static void Task_WeatherMain(u32 taskId);
+static void Task_WeatherInit(u32 taskId);
 static void None_Init(void);
 static void None_Main(void);
 static bool32 None_Finish(void);
@@ -71,9 +71,9 @@ static const struct WeatherCallbacks sWeatherFuncs[] = {
     [WEATHER_SHADE]              = {Shade_InitVars, Shade_Main, Shade_InitAll, Shade_Finish},
     [WEATHER_DOWNPOUR]           = {Downpour_InitVars, Thunderstorm_Main, Downpour_InitAll, Thunderstorm_Finish},
     [WEATHER_UNDERWATER_BUBBLES] = {Bubbles_InitVars, Bubbles_Main, Bubbles_InitAll, Bubbles_Finish},
-	[WEATHER_CLOUDS]             = {Clouds_InitVars, Clouds_Main, Clouds_InitAll, Clouds_Finish},
-	[WEATHER_SNOWSTORM]          = {Snowstorm_InitVars, Snowstorm_Main, Snowstorm_InitAll, Snowstorm_Finish},
-	[WEATHER_DROUGHT]            = {Drought_InitVars, Drought_Main, Drought_InitAll, Drought_Finish},
+    [WEATHER_CLOUDS]             = {Clouds_InitVars, Clouds_Main, Clouds_InitAll, Clouds_Finish},
+    [WEATHER_SNOWSTORM]          = {Snowstorm_InitVars, Snowstorm_Main, Snowstorm_InitAll, Snowstorm_Finish},
+    [WEATHER_DROUGHT]            = {Drought_InitVars, Drought_Main, Drought_InitAll, Drought_Finish},
 };
 
 static void (*const sWeatherPalStateFuncs[])(void) = {
@@ -87,7 +87,7 @@ static void (*const sWeatherPalStateFuncs[])(void) = {
 // is because the underlying color shift calculation is slow.
 static const u16 sDroughtWeatherColors[][0x1000] =
 {
-	INCBIN_U16("graphics/weather/drought/colors_0.bin"),
+    INCBIN_U16("graphics/weather/drought/colors_0.bin"),
     INCBIN_U16("graphics/weather/drought/colors_1.bin"),
     INCBIN_U16("graphics/weather/drought/colors_2.bin"),
     INCBIN_U16("graphics/weather/drought/colors_3.bin"),
@@ -97,63 +97,63 @@ static const u16 sDroughtWeatherColors[][0x1000] =
 
 static const u8 sGammaShiftTable[19][32] =
 {
-	// 1
-	0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
-	0x0F, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D,
-	// 2
-	0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-	0x0E, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B,
-	// 3
-	0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x0B, 0x0C,
-	0x0D, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x11, 0x12, 0x13, 0x14, 0x15, 0x15, 0x16, 0x17, 0x18, 0x19,
-	// 4
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0B, 0x0B, 0x0C, 0x0D,
-	0x0E, 0x0E, 0x0F, 0x10, 0x11, 0x11, 0x12, 0x13, 0x14, 0x14, 0x15, 0x16, 0x17, 0x18, 0x18, 0x19,
-	// 5
-	0x01, 0x02, 0x03, 0x03, 0x04, 0x05, 0x06, 0x06, 0x07, 0x08, 0x09, 0x09, 0x0C, 0x0D, 0x0D, 0x0E,
-	0x0F, 0x0F, 0x10, 0x11, 0x12, 0x12, 0x13, 0x14, 0x14, 0x15, 0x16, 0x17, 0x17, 0x18, 0x19, 0x19,
-	// 6
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x07, 0x08, 0x09, 0x0A, 0x0D, 0x0E, 0x0F, 0x0F,
-	0x10, 0x11, 0x11, 0x12, 0x13, 0x13, 0x14, 0x14, 0x15, 0x16, 0x16, 0x17, 0x18, 0x18, 0x19, 0x1A,
-	// 7
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x07, 0x08, 0x09, 0x0A, 0x0F, 0x0F, 0x10, 0x10,
-	0x11, 0x12, 0x12, 0x13, 0x13, 0x14, 0x15, 0x15, 0x16, 0x16, 0x17, 0x18, 0x18, 0x19, 0x1A, 0x1A,
-	// 8
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x07, 0x08, 0x09, 0x0A, 0x10, 0x10, 0x11, 0x12,
-	0x12, 0x13, 0x13, 0x14, 0x14, 0x15, 0x15, 0x16, 0x17, 0x17, 0x18, 0x18, 0x19, 0x19, 0x1A, 0x1B,
-	// 9
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x11, 0x12, 0x12, 0x13,
-	0x13, 0x14, 0x14, 0x15, 0x15, 0x16, 0x16, 0x17, 0x17, 0x18, 0x18, 0x19, 0x19, 0x1A, 0x1A, 0x1B,
-	// 10
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x13, 0x13, 0x13, 0x14,
-	0x14, 0x15, 0x15, 0x16, 0x16, 0x17, 0x17, 0x18, 0x18, 0x18, 0x19, 0x19, 0x1A, 0x1A, 0x1B, 0x1B,
-	// 11
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x14, 0x14, 0x15, 0x15,
-	0x16, 0x16, 0x16, 0x17, 0x17, 0x18, 0x18, 0x18, 0x19, 0x19, 0x1A, 0x1A, 0x1A, 0x1B, 0x1B, 0x1C,
-	// 12
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x15, 0x16, 0x16, 0x16,
-	0x17, 0x17, 0x17, 0x18, 0x18, 0x18, 0x19, 0x19, 0x19, 0x1A, 0x1A, 0x1B, 0x1B, 0x1B, 0x1C, 0x1C,
-	// 13
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x17, 0x17, 0x17, 0x17,
-	0x18, 0x18, 0x18, 0x19, 0x19, 0x19, 0x1A, 0x1A, 0x1A, 0x1A, 0x1B, 0x1B, 0x1B, 0x1C, 0x1C, 0x1C,
-	// 14
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x18, 0x18, 0x18, 0x19,
-	0x19, 0x19, 0x19, 0x1A, 0x1A, 0x1A, 0x1A, 0x1B, 0x1B, 0x1B, 0x1B, 0x1C, 0x1C, 0x1C, 0x1C, 0x1D,
-	// 15
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x19, 0x19, 0x1A, 0x1A,
-	0x1A, 0x1A, 0x1A, 0x1B, 0x1B, 0x1B, 0x1B, 0x1B, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1D, 0x1D, 0x1D,
-	// 16
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x1B, 0x1B, 0x1B, 0x1B,
-	0x1B, 0x1B, 0x1B, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D,
-	// 17
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x1C, 0x1C, 0x1C, 0x1C,
-	0x1C, 0x1C, 0x1C, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1E, 0x1E, 0x1E,
-	// 18
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x1D, 0x1D, 0x1D, 0x1D,
-	0x1D, 0x1D, 0x1D, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E,
-	// 19
-	0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x1F, 0x1F, 0x1F, 0x1F,
-	0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F
+    // 1
+    0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
+    0x0F, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D,
+    // 2
+    0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
+    0x0E, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B,
+    // 3
+    0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x0B, 0x0C,
+    0x0D, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x11, 0x12, 0x13, 0x14, 0x15, 0x15, 0x16, 0x17, 0x18, 0x19,
+    // 4
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0B, 0x0B, 0x0C, 0x0D,
+    0x0E, 0x0E, 0x0F, 0x10, 0x11, 0x11, 0x12, 0x13, 0x14, 0x14, 0x15, 0x16, 0x17, 0x18, 0x18, 0x19,
+    // 5
+    0x01, 0x02, 0x03, 0x03, 0x04, 0x05, 0x06, 0x06, 0x07, 0x08, 0x09, 0x09, 0x0C, 0x0D, 0x0D, 0x0E,
+    0x0F, 0x0F, 0x10, 0x11, 0x12, 0x12, 0x13, 0x14, 0x14, 0x15, 0x16, 0x17, 0x17, 0x18, 0x19, 0x19,
+    // 6
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x07, 0x08, 0x09, 0x0A, 0x0D, 0x0E, 0x0F, 0x0F,
+    0x10, 0x11, 0x11, 0x12, 0x13, 0x13, 0x14, 0x14, 0x15, 0x16, 0x16, 0x17, 0x18, 0x18, 0x19, 0x1A,
+    // 7
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x07, 0x08, 0x09, 0x0A, 0x0F, 0x0F, 0x10, 0x10,
+    0x11, 0x12, 0x12, 0x13, 0x13, 0x14, 0x15, 0x15, 0x16, 0x16, 0x17, 0x18, 0x18, 0x19, 0x1A, 0x1A,
+    // 8
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x07, 0x08, 0x09, 0x0A, 0x10, 0x10, 0x11, 0x12,
+    0x12, 0x13, 0x13, 0x14, 0x14, 0x15, 0x15, 0x16, 0x17, 0x17, 0x18, 0x18, 0x19, 0x19, 0x1A, 0x1B,
+    // 9
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x11, 0x12, 0x12, 0x13,
+    0x13, 0x14, 0x14, 0x15, 0x15, 0x16, 0x16, 0x17, 0x17, 0x18, 0x18, 0x19, 0x19, 0x1A, 0x1A, 0x1B,
+    // 10
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x13, 0x13, 0x13, 0x14,
+    0x14, 0x15, 0x15, 0x16, 0x16, 0x17, 0x17, 0x18, 0x18, 0x18, 0x19, 0x19, 0x1A, 0x1A, 0x1B, 0x1B,
+    // 11
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x14, 0x14, 0x15, 0x15,
+    0x16, 0x16, 0x16, 0x17, 0x17, 0x18, 0x18, 0x18, 0x19, 0x19, 0x1A, 0x1A, 0x1A, 0x1B, 0x1B, 0x1C,
+    // 12
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x15, 0x16, 0x16, 0x16,
+    0x17, 0x17, 0x17, 0x18, 0x18, 0x18, 0x19, 0x19, 0x19, 0x1A, 0x1A, 0x1B, 0x1B, 0x1B, 0x1C, 0x1C,
+    // 13
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x17, 0x17, 0x17, 0x17,
+    0x18, 0x18, 0x18, 0x19, 0x19, 0x19, 0x1A, 0x1A, 0x1A, 0x1A, 0x1B, 0x1B, 0x1B, 0x1C, 0x1C, 0x1C,
+    // 14
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x18, 0x18, 0x18, 0x19,
+    0x19, 0x19, 0x19, 0x1A, 0x1A, 0x1A, 0x1A, 0x1B, 0x1B, 0x1B, 0x1B, 0x1C, 0x1C, 0x1C, 0x1C, 0x1D,
+    // 15
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x19, 0x19, 0x1A, 0x1A,
+    0x1A, 0x1A, 0x1A, 0x1B, 0x1B, 0x1B, 0x1B, 0x1B, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1D, 0x1D, 0x1D,
+    // 16
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x1B, 0x1B, 0x1B, 0x1B,
+    0x1B, 0x1B, 0x1B, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D,
+    // 17
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x1C, 0x1C, 0x1C, 0x1C,
+    0x1C, 0x1C, 0x1C, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1E, 0x1E, 0x1E,
+    // 18
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x1D, 0x1D, 0x1D, 0x1D,
+    0x1D, 0x1D, 0x1D, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E, 0x1E,
+    // 19
+    0x01, 0x02, 0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0A, 0x1F, 0x1F, 0x1F, 0x1F,
+    0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F
 };
 
 // code
@@ -161,7 +161,7 @@ void StartWeather(void)
 {
     if (!FuncIsActiveTask(Task_WeatherMain))
     {
-		LoadWeatherDefaultPalette(); // Make the palette slot used even if it not has an weather
+        LoadWeatherDefaultPalette(); // Make the palette slot used even if it not has an weather
         gWeatherPtr->rainSpriteCount = 0;
         gWeatherPtr->curRainSpriteIndex = 0;
         gWeatherPtr->snowflakeSpriteCount = 0;
@@ -171,9 +171,9 @@ void StartWeather(void)
         gWeatherPtr->sandstormSpritesCreated = FALSE;
         gWeatherPtr->sandstormSwirlSpritesCreated = FALSE;
         gWeatherPtr->bubblesSpritesCreated = FALSE;
-		gWeatherPtr->cloudSpritesCreated = FALSE;
-		gWeatherPtr->snowstormSpritesCreated = FALSE;
-		gWeatherPtr->snowstormSwirlSpritesCreated = FALSE;
+        gWeatherPtr->cloudSpritesCreated = FALSE;
+        gWeatherPtr->snowstormSpritesCreated = FALSE;
+        gWeatherPtr->snowstormSwirlSpritesCreated = FALSE;
         Weather_SetBlendCoeffs(16, 0);
         gWeatherPtr->currWeather = WEATHER_NONE;
         gWeatherPtr->palProcessingState = WEATHER_PAL_STATE_IDLE;
@@ -203,7 +203,7 @@ void SetCurrentAndNextWeather(u32 weather)
     gWeatherPtr->nextWeather = weather;
 }
 
-static void Task_WeatherInit(u8 taskId)
+static void Task_WeatherInit(u32 taskId)
 {
     // Waits until it's ok to initialize weather.
     // When the screen fades in, this is set to TRUE.
@@ -215,7 +215,7 @@ static void Task_WeatherInit(u8 taskId)
     }
 }
 
-static void Task_WeatherMain(u8 taskId)
+static void Task_WeatherMain(u32 taskId)
 {
     if (gWeatherPtr->currWeather != gWeatherPtr->nextWeather)
     {
@@ -238,10 +238,10 @@ static void Task_WeatherMain(u8 taskId)
 
 static void None_Init(void)
 {
-	gWeatherPtr->noShadows = FALSE;
+    gWeatherPtr->noShadows = FALSE;
     gWeatherPtr->gammaTargetIndex = 0;
     gWeatherPtr->gammaStepDelay = 0;
-	Weather_SetBlendCoeffs(8, BASE_SHADOW_INTENSITY);
+    Weather_SetBlendCoeffs(8, BASE_SHADOW_INTENSITY);
 }
 
 static void None_Main(void)
@@ -292,13 +292,13 @@ static void FadeInScreenWithWeather(void)
             gWeatherPtr->palProcessingState = WEATHER_PAL_STATE_IDLE;
         }
         break;
-	case WEATHER_DROUGHT:
-		if (!FadeInScreen_Drought())
-		{
-			gWeatherPtr->gammaIndex = -6;
-			gWeatherPtr->palProcessingState = WEATHER_PAL_STATE_IDLE;
-		}
-		break;
+    case WEATHER_DROUGHT:
+        if (!FadeInScreen_Drought())
+        {
+            gWeatherPtr->gammaIndex = -6;
+            gWeatherPtr->palProcessingState = WEATHER_PAL_STATE_IDLE;
+        }
+        break;
     default:
         if (!gPaletteFade.active)
         {
@@ -326,7 +326,7 @@ static bool32 FadeInScreen_RainSnowShade(void)
 
 static bool32 FadeInScreen_Drought(void)
 {
-	if (gWeatherPtr->fadeScreenCounter == 16)
+    if (gWeatherPtr->fadeScreenCounter == 16)
         return FALSE;
 
     if (++gWeatherPtr->fadeScreenCounter >= 16)
@@ -344,148 +344,148 @@ static void DoNothing(void)
 
 static void ApplyGammaShift(u32 gammaType, u32 startPalIndex, u32 numPalettes, s8 gammaIndex)
 {
-	u32 i, offset, curPalIndex = startPalIndex;
+    u32 i, offset, curPalIndex = startPalIndex;
     u8 r, g, b, blendCoeff;
     u32 fadeColor, palOffset = startPalIndex * 16;
-	
-	numPalettes += startPalIndex;
-	
+    
+    numPalettes += startPalIndex;
+    
     switch (gammaType)
-	{
-		case GAMMA_NORMAL: // Apply gamma shift to colors.
-		    if (gammaIndex > 0)
-			{
-				--gammaIndex;
-				
-				// Loop through the speficied palette range and apply necessary gamma shifts to the colors.
-				while (curPalIndex < numPalettes)
-				{
-					if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
-					{
-						for (i = 0; i < 16; i++)
-						{
-							// Apply gamma shift to the original color.
-							r = sGammaShiftTable[gammaIndex][GET_R(gPlttBufferUnfaded[palOffset])];
-							g = sGammaShiftTable[gammaIndex][GET_G(gPlttBufferUnfaded[palOffset])];
-							b = sGammaShiftTable[gammaIndex][GET_B(gPlttBufferUnfaded[palOffset])];
-							
-							gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
-						}
-					}
-					else
-					{
-						// No palette change.
-						CpuFastCopy(gPlttBufferUnfaded + palOffset, gPlttBufferFaded + palOffset, 16 * sizeof(u16));
-						palOffset += 16;
-					}
-					curPalIndex++;
-				}
-			}
-			// A negative gammIndex value means that the blending will come from the special Drought weather's palette tables.
-			else if (gammaIndex < 0)
-			{
-				gammaIndex = -gammaIndex - 1;
-				
-				// Loop through the speficied palette range and apply necessary gamma shifts to the colors.
-				while (curPalIndex < numPalettes)
-				{
-					if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
-					{
-						for (i = 0; i < 16; i++)
-							gPlttBufferFaded[palOffset++] = sDroughtWeatherColors[gammaIndex][DROUGHT_COLOR_INDEX(gPlttBufferUnfaded[palOffset])];
-					}
-					else
-					{
-						// No palette change.
-						CpuFastCopy(gPlttBufferUnfaded + palOffset, gPlttBufferFaded + palOffset, 16 * sizeof(u16));
-						palOffset += 16;
-					}
-					curPalIndex++;
-				}
-			}
-			else
-			{
-				// No palette blending.
-				CpuFastCopy(gPlttBufferUnfaded + startPalIndex * 16, gPlttBufferFaded + startPalIndex * 16, numPalettes * 16 * sizeof(u16));
-			}
-			break;
-		case GAMMA_BLEND: // Apply gamma shift and blend effect to colors.
-			blendCoeff = 16 - gWeatherPtr->fadeScreenCounter;
-			fadeColor = gWeatherPtr->fadeDestColor;
-			
-			if (gammaIndex != 0)
-			{
-				if (gammaIndex > 0)
-				{
-					--gammaIndex;
-					
-					while (curPalIndex < numPalettes)
-					{
-						if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
-						{
-							for (i = 0; i < 16; i++)
-							{
-								// Apply gamma shift to the original color.
-								r = sGammaShiftTable[gammaIndex][GET_R(gPlttBufferUnfaded[palOffset])];
-								g = sGammaShiftTable[gammaIndex][GET_G(gPlttBufferUnfaded[palOffset])];
-								b = sGammaShiftTable[gammaIndex][GET_B(gPlttBufferUnfaded[palOffset])];
-								
-								// Apply target blend color to the original color.
-								r += ((GET_R(fadeColor) - r) * blendCoeff) >> 4;
-								g += ((GET_G(fadeColor) - g) * blendCoeff) >> 4;
-								b += ((GET_B(fadeColor) - b) * blendCoeff) >> 4;
-								
-								gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
-							}
-						}
-						else
-						{
-							// No gamma shift. Simply blend the colors.
-							BlendPalette(palOffset, 16, blendCoeff, fadeColor);
-							palOffset += 16;
-						}
-						curPalIndex++;
-					}
-				}
-				else // Drought blend
-				{
-					gammaIndex = -gammaIndex - 1;
-					
-					while (curPalIndex < numPalettes)
-					{
-						if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
-						{
-							for (i = 0; i < 16; i++)
-							{
-								r = GET_R(gPlttBufferUnfaded[palOffset]);
-								g = GET_G(gPlttBufferUnfaded[palOffset]);
-								b = GET_B(gPlttBufferUnfaded[palOffset]);
-								
-								offset = ((b & 0x1E) << 7) | ((g & 0x1E) << 3) | ((r & 0x1E) >> 1);
-								r = GET_R(sDroughtWeatherColors[gammaIndex][offset]);
-								g = GET_G(sDroughtWeatherColors[gammaIndex][offset]);
-								b = GET_B(sDroughtWeatherColors[gammaIndex][offset]);
-								
-								// Apply target blend color to the original color.
-								r += ((GET_R(fadeColor) - r) * blendCoeff) >> 4;
-								g += ((GET_G(fadeColor) - g) * blendCoeff) >> 4;
-								b += ((GET_B(fadeColor) - b) * blendCoeff) >> 4;
-								
-								gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
-							}
-						}
-						else
-						{
-							// No gamma shift. Simply blend the colors.
-							BlendPalette(palOffset, 16, blendCoeff, fadeColor);
-							palOffset += 16;
-						}
-						curPalIndex++;
-					}
-				}
-			}
-			break;
-	}
+    {
+        case GAMMA_NORMAL: // Apply gamma shift to colors.
+            if (gammaIndex > 0)
+            {
+                --gammaIndex;
+                
+                // Loop through the speficied palette range and apply necessary gamma shifts to the colors.
+                while (curPalIndex < numPalettes)
+                {
+                    if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
+                    {
+                        for (i = 0; i < 16; i++)
+                        {
+                            // Apply gamma shift to the original color.
+                            r = sGammaShiftTable[gammaIndex][GET_R(gPlttBufferUnfaded[palOffset])];
+                            g = sGammaShiftTable[gammaIndex][GET_G(gPlttBufferUnfaded[palOffset])];
+                            b = sGammaShiftTable[gammaIndex][GET_B(gPlttBufferUnfaded[palOffset])];
+                            
+                            gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
+                        }
+                    }
+                    else
+                    {
+                        // No palette change.
+                        CpuFastCopy(gPlttBufferUnfaded + palOffset, gPlttBufferFaded + palOffset, 16 * sizeof(u16));
+                        palOffset += 16;
+                    }
+                    curPalIndex++;
+                }
+            }
+            // A negative gammIndex value means that the blending will come from the special Drought weather's palette tables.
+            else if (gammaIndex < 0)
+            {
+                gammaIndex = -gammaIndex - 1;
+                
+                // Loop through the speficied palette range and apply necessary gamma shifts to the colors.
+                while (curPalIndex < numPalettes)
+                {
+                    if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
+                    {
+                        for (i = 0; i < 16; i++)
+                            gPlttBufferFaded[palOffset++] = sDroughtWeatherColors[gammaIndex][DROUGHT_COLOR_INDEX(gPlttBufferUnfaded[palOffset])];
+                    }
+                    else
+                    {
+                        // No palette change.
+                        CpuFastCopy(gPlttBufferUnfaded + palOffset, gPlttBufferFaded + palOffset, 16 * sizeof(u16));
+                        palOffset += 16;
+                    }
+                    curPalIndex++;
+                }
+            }
+            else
+            {
+                // No palette blending.
+                CpuFastCopy(gPlttBufferUnfaded + startPalIndex * 16, gPlttBufferFaded + startPalIndex * 16, numPalettes * 16 * sizeof(u16));
+            }
+            break;
+        case GAMMA_BLEND: // Apply gamma shift and blend effect to colors.
+            blendCoeff = 16 - gWeatherPtr->fadeScreenCounter;
+            fadeColor = gWeatherPtr->fadeDestColor;
+            
+            if (gammaIndex != 0)
+            {
+                if (gammaIndex > 0)
+                {
+                    --gammaIndex;
+                    
+                    while (curPalIndex < numPalettes)
+                    {
+                        if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
+                        {
+                            for (i = 0; i < 16; i++)
+                            {
+                                // Apply gamma shift to the original color.
+                                r = sGammaShiftTable[gammaIndex][GET_R(gPlttBufferUnfaded[palOffset])];
+                                g = sGammaShiftTable[gammaIndex][GET_G(gPlttBufferUnfaded[palOffset])];
+                                b = sGammaShiftTable[gammaIndex][GET_B(gPlttBufferUnfaded[palOffset])];
+                                
+                                // Apply target blend color to the original color.
+                                r += ((GET_R(fadeColor) - r) * blendCoeff) >> 4;
+                                g += ((GET_G(fadeColor) - g) * blendCoeff) >> 4;
+                                b += ((GET_B(fadeColor) - b) * blendCoeff) >> 4;
+                                
+                                gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
+                            }
+                        }
+                        else
+                        {
+                            // No gamma shift. Simply blend the colors.
+                            BlendPalette(palOffset, 16, blendCoeff, fadeColor);
+                            palOffset += 16;
+                        }
+                        curPalIndex++;
+                    }
+                }
+                else // Drought blend
+                {
+                    gammaIndex = -gammaIndex - 1;
+                    
+                    while (curPalIndex < numPalettes)
+                    {
+                        if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
+                        {
+                            for (i = 0; i < 16; i++)
+                            {
+                                r = GET_R(gPlttBufferUnfaded[palOffset]);
+                                g = GET_G(gPlttBufferUnfaded[palOffset]);
+                                b = GET_B(gPlttBufferUnfaded[palOffset]);
+                                
+                                offset = ((b & 0x1E) << 7) | ((g & 0x1E) << 3) | ((r & 0x1E) >> 1);
+                                r = GET_R(sDroughtWeatherColors[gammaIndex][offset]);
+                                g = GET_G(sDroughtWeatherColors[gammaIndex][offset]);
+                                b = GET_B(sDroughtWeatherColors[gammaIndex][offset]);
+                                
+                                // Apply target blend color to the original color.
+                                r += ((GET_R(fadeColor) - r) * blendCoeff) >> 4;
+                                g += ((GET_G(fadeColor) - g) * blendCoeff) >> 4;
+                                b += ((GET_B(fadeColor) - b) * blendCoeff) >> 4;
+                                
+                                gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
+                            }
+                        }
+                        else
+                        {
+                            // No gamma shift. Simply blend the colors.
+                            BlendPalette(palOffset, 16, blendCoeff, fadeColor);
+                            palOffset += 16;
+                        }
+                        curPalIndex++;
+                    }
+                }
+            }
+            break;
+    }
 }
 
 void WeatherShiftGammaIfPalStateIdle(s8 gammaIndex)
@@ -512,7 +512,7 @@ void WeatherBeginGammaFade(u32 gammaIndex, u32 gammaTargetIndex, u32 gammaStepDe
 
 void FadeScreen(u32 mode, s8 delay)
 {
-	FadeSelectedPals(mode, delay, PALETTES_ALL);
+    FadeSelectedPals(mode, delay, PALETTES_ALL);
 }
 
 void FadeSelectedPals(u32 mode, s8 delay, u32 selectedPalettes)
@@ -549,7 +549,7 @@ void FadeSelectedPals(u32 mode, s8 delay, u32 selectedPalettes)
     case WEATHER_DOWNPOUR:
     case WEATHER_SNOW:
     case WEATHER_SHADE:
-	case WEATHER_DROUGHT:
+    case WEATHER_DROUGHT:
         useWeatherPal = TRUE;
         break;
     default:
@@ -568,7 +568,7 @@ void FadeSelectedPals(u32 mode, s8 delay, u32 selectedPalettes)
     else
     {
         gWeatherPtr->fadeDestColor = fadeColor;
-		
+        
         if (useWeatherPal)
             gWeatherPtr->fadeScreenCounter = 0;
         else
@@ -608,7 +608,7 @@ void UpdateSpritePaletteWithWeather(u32 spritePaletteIndex)
         BlendPalette(paletteIndex, 16, gPaletteFade.y, gPaletteFade.blendColor);
         break;
     default:
-	    ApplyWeatherGammaShiftToPal(paletteIndex);
+        ApplyWeatherGammaShiftToPal(paletteIndex);
         break;
     }
 }
@@ -620,22 +620,22 @@ void ApplyWeatherGammaShiftToPal(u32 paletteIndex)
 
 void LoadWeatherDefaultPalette(void)
 {
-	LoadWeatherSpritePalette(&sDefaultWeatherSpritePalette);
+    LoadWeatherSpritePalette(&sDefaultWeatherSpritePalette);
 }
 
 void LoadWeatherSpritePalette(const struct SpritePalette *palette)
 {
-	LoadSpritePaletteAtIndex(palette, WEATHER_PALETTE_INDEX);
-	UpdateSpritePaletteWithWeather(WEATHER_PALETTE_INDEX);
+    LoadSpritePaletteAtIndex(palette, WEATHER_PALETTE_INDEX);
+    UpdateSpritePaletteWithWeather(WEATHER_PALETTE_INDEX);
 }
 
 void Weather_SetBlendCoeffs(u32 eva, u32 evb)
 {
-	if (ForestMapPreviewScreenIsRunning())
-	{
-		eva = 16;
-		evb = 0;
-	}
+    if (ForestMapPreviewScreenIsRunning())
+    {
+        eva = 16;
+        evb = 0;
+    }
     gWeatherPtr->currBlendEVA = eva;
     gWeatherPtr->currBlendEVB = evb;
     gWeatherPtr->targetBlendEVA = eva;
@@ -744,11 +744,11 @@ void WeatherProcessingIdle(void)
 
 u32 GetShadowColor(void)
 {
-	return gPlttBufferFaded[((WEATHER_PALETTE_INDEX + 16) * 16) + SHADOW_COLOR_INDEX];
+    return gPlttBufferFaded[((WEATHER_PALETTE_INDEX + 16) * 16) + SHADOW_COLOR_INDEX];
 }
 
 void UpdateShadowColor(u32 color)
 {
-	u32 index = ((WEATHER_PALETTE_INDEX + 16) * 16) + SHADOW_COLOR_INDEX;
-	gPlttBufferUnfaded[index] = gPlttBufferFaded[index] = color;
+    u32 index = ((WEATHER_PALETTE_INDEX + 16) * 16) + SHADOW_COLOR_INDEX;
+    gPlttBufferUnfaded[index] = gPlttBufferFaded[index] = color;
 }

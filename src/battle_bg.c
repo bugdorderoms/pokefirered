@@ -339,16 +339,16 @@ static const struct WindowTemplate gUnknown_8248330[] = {
 
 static const struct WindowTemplate sMoveInfoWindowTemplates[] =
 {
-	{ // Move's name
-		.bg = 0,
+    { // Move's name
+        .bg = 0,
         .tilemapLeft = 0,
         .tilemapTop = 52,
-		.width = 11,
+        .width = 11,
         .height = 2,
-		.paletteNum = 1,
+        .paletteNum = 1,
         .baseBlock = 0x340
-	},
-	{ // Move's description
+    },
+    { // Move's description
         .bg = 0,
         .tilemapLeft = 0,
         .tilemapTop = 54,
@@ -376,7 +376,7 @@ static const struct {
 static u32 GetBattleTerrainByMapScene(u32 mapBattleScene)
 {
     u32 i;
-	
+    
     for (i = 0; i < ARRAY_COUNT(sMapBattleSceneMapping); i++)
     {
         if (mapBattleScene == sMapBattleSceneMapping[i].mapScene)
@@ -442,24 +442,24 @@ void LoadBattleMenuWindowGfx(void)
 
 void DrawMainBattleBackground(void)
 {
-	switch (gFieldStatus & STATUS_FIELD_TERRAINS_ANY)
-	{
-		case STATUS_FIELD_GRASSY_TERRAIN:
-			LoadMoveBg(BG_GRASSY_TERRAIN);
-			break;
-		case STATUS_FIELD_MISTY_TERRAIN:
-			LoadMoveBg(BG_MISTY_TERRAIN);
-			break;
-		case STATUS_FIELD_ELECTRIC_TERRAIN:
-			LoadMoveBg(BG_ELECTRIC_TERRAIN);
-			break;
-		case STATUS_FIELD_PSYCHIC_TERRAIN:
-			LoadMoveBg(BG_PSYCHIC_TERRAIN);
-			break;
-		default:
-			LoadBattleTerrainGfx(GetBattleTerrainOverride());
-			break;
-	}
+    switch (gFieldStatus & STATUS_FIELD_TERRAINS_ANY)
+    {
+        case STATUS_FIELD_GRASSY_TERRAIN:
+            LoadMoveBg(BG_GRASSY_TERRAIN);
+            break;
+        case STATUS_FIELD_MISTY_TERRAIN:
+            LoadMoveBg(BG_MISTY_TERRAIN);
+            break;
+        case STATUS_FIELD_ELECTRIC_TERRAIN:
+            LoadMoveBg(BG_ELECTRIC_TERRAIN);
+            break;
+        case STATUS_FIELD_PSYCHIC_TERRAIN:
+            LoadMoveBg(BG_PSYCHIC_TERRAIN);
+            break;
+        default:
+            LoadBattleTerrainGfx(GetBattleTerrainOverride());
+            break;
+    }
 }
 
 void LoadBattleTextboxAndBackground(void)
@@ -525,8 +525,8 @@ static void DrawLinkBattleParticipantPokeballs(u32 taskId, u32 multiplayerId, u3
     }
     else
     {
-		pokeballStatuses = multiplayerId == gBattleStruct->multiplayerId ? gTasks[taskId].data[3] : gTasks[taskId].data[4];
-		
+        pokeballStatuses = multiplayerId == gBattleStruct->multiplayerId ? gTasks[taskId].data[3] : gTasks[taskId].data[4];
+        
         for (i = 0; i < 6; i++)
             tiles[i] = ((pokeballStatuses & (3 << (i * 2))) >> (i * 2)) + 0x6001;
 
@@ -546,12 +546,12 @@ static void DrawLinkBattleVsScreenOutcomeText(void)
             switch (gLinkPlayers[gBattleStruct->multiplayerId].id)
             {
             case 0:
-			case 2:
+            case 2:
                 BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_LEFT);
                 BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_RIGHT);
                 break;
             case 1:
-			case 3:
+            case 3:
                 BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_RIGHT);
                 BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_LEFT);
                 break;
@@ -562,12 +562,12 @@ static void DrawLinkBattleVsScreenOutcomeText(void)
             switch (gLinkPlayers[gBattleStruct->multiplayerId].id)
             {
             case 0:
-			case 2:
+            case 2:
                 BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_RIGHT);
                 BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_LEFT);
                 break;
             case 1:
-			case 3:
+            case 3:
                 BattlePutTextOnWindow(gText_Win, B_WIN_VS_OUTCOME_LEFT);
                 BattlePutTextOnWindow(gText_Loss, B_WIN_VS_OUTCOME_RIGHT);
                 break;
@@ -602,7 +602,7 @@ static void DrawLinkBattleVsScreenOutcomeText(void)
     }
 }
 
-void InitLinkBattleVsScreen(u8 taskId)
+void InitLinkBattleVsScreen(u32 taskId)
 {
     struct LinkPlayer *linkPlayer;
     u8 *name;
@@ -644,7 +644,7 @@ void InitLinkBattleVsScreen(u8 taskId)
             u32 temp, playerId = gBattleStruct->multiplayerId, opponentId = BATTLE_OPPOSITE(playerId);
 
             if (gLinkPlayers[playerId].id != 0)
-				SWAP(playerId, opponentId, temp);
+                SWAP(playerId, opponentId, temp);
 
             name = gLinkPlayers[playerId].name;
             BattlePutTextOnWindow(name, B_WIN_VS_PLAYER);
@@ -746,14 +746,14 @@ void DrawBattleEntryBackground(void)
                 return;
             }
         }
-		LoadBattleTerrainEntryGfx(GetCurrentMapBattleScene() == MAP_BATTLE_SCENE_NORMAL ? gBattleTerrain : BATTLE_TERRAIN_BUILDING);
+        LoadBattleTerrainEntryGfx(GetCurrentMapBattleScene() == MAP_BATTLE_SCENE_NORMAL ? gBattleTerrain : BATTLE_TERRAIN_BUILDING);
     }
 }
 
 static u32 GetBattleTerrainOverride(void)
 {
     u32 battleScene;
-	
+    
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
         return BATTLE_TERRAIN_LINK;
     else if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
@@ -769,7 +769,7 @@ static u32 GetBattleTerrainOverride(void)
             return BATTLE_TERRAIN_CHAMPION;
     }
     battleScene = GetCurrentMapBattleScene();
-	
+    
     return battleScene == MAP_BATTLE_SCENE_NORMAL ? gBattleTerrain : GetBattleTerrainByMapScene(battleScene);
 }
 
@@ -777,61 +777,61 @@ static u32 GetBattleTerrainOverride(void)
 
 static void DrawMoveInfoWindowBorder(u32 windowId)
 {
-	u32 i, pixelsCount;
-	
-	// Remove some pixels on top
-	FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, 0, WindowWidthPx(windowId), NUM_TOPBAR_REMOVE_LINES);
-	
-	// Draw left circle border
-	for (i = 0, pixelsCount = 1; i < 2; i++, pixelsCount++)
-		FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, (NUM_TOPBAR_REMOVE_LINES + 1) - i, pixelsCount, 1);
-	
-	// Draw right retangle border
-	for (i = 0, pixelsCount = NUM_TOPBAR_REMOVE_LINES; i < 16; i++, pixelsCount++)
-		FillWindowPixelRect(windowId, PIXEL_FILL(0), 73 + pixelsCount, NUM_TOPBAR_REMOVE_LINES + i, 16 - pixelsCount, 1);
+    u32 i, pixelsCount;
+    
+    // Remove some pixels on top
+    FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, 0, WindowWidthPx(windowId), NUM_TOPBAR_REMOVE_LINES);
+    
+    // Draw left circle border
+    for (i = 0, pixelsCount = 1; i < 2; i++, pixelsCount++)
+        FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, (NUM_TOPBAR_REMOVE_LINES + 1) - i, pixelsCount, 1);
+    
+    // Draw right retangle border
+    for (i = 0, pixelsCount = NUM_TOPBAR_REMOVE_LINES; i < 16; i++, pixelsCount++)
+        FillWindowPixelRect(windowId, PIXEL_FILL(0), 73 + pixelsCount, NUM_TOPBAR_REMOVE_LINES + i, 16 - pixelsCount, 1);
 }
 
 void CreateBattleMoveInfoWindowsAndArrows(u32 move)
 {
-	u32 i;
-	u8 colors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
-	bool32 isNameWindow;
-	
-	// Create windows
-	for (i = 0; i < 2; i++)
-	{
-		gBattleStruct->moveInfo.windowIds[i] = AddWindow(&sMoveInfoWindowTemplates[i]);
-		FillWindowPixelBuffer(gBattleStruct->moveInfo.windowIds[i], PIXEL_FILL(15));
-		
-		isNameWindow = (i == 0);
-		
-		if (isNameWindow)
-			DrawMoveInfoWindowBorder(gBattleStruct->moveInfo.windowIds[i]);
-		
-		AddTextPrinterParameterized3(gBattleStruct->moveInfo.windowIds[i], 0, 4, 3, colors, 0xFF, isNameWindow ? gBattleMoves[move].name : gStringVar4);
-		PutWindowTilemap(gBattleStruct->moveInfo.windowIds[i]);
-		CopyWindowToVram(gBattleStruct->moveInfo.windowIds[i], COPYWIN_BOTH);
-	}
-	
-	// Create arrows
-	gBattleStruct->moveInfo.arrowTaskId = AddScrollIndicatorArrowPairParameterized(0, 137, 165, 235, NUM_MOVEINFO_SUBMENUS - 1, 110, 110, &gBattleStruct->moveInfo.submenuState);
+    u32 i;
+    u8 colors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
+    bool32 isNameWindow;
+    
+    // Create windows
+    for (i = 0; i < 2; i++)
+    {
+        gBattleStruct->moveInfo.windowIds[i] = AddWindow(&sMoveInfoWindowTemplates[i]);
+        FillWindowPixelBuffer(gBattleStruct->moveInfo.windowIds[i], PIXEL_FILL(15));
+        
+        isNameWindow = (i == 0);
+        
+        if (isNameWindow)
+            DrawMoveInfoWindowBorder(gBattleStruct->moveInfo.windowIds[i]);
+        
+        AddTextPrinterParameterized3(gBattleStruct->moveInfo.windowIds[i], 0, 4, 3, colors, 0xFF, isNameWindow ? gBattleMoves[move].name : gStringVar4);
+        PutWindowTilemap(gBattleStruct->moveInfo.windowIds[i]);
+        CopyWindowToVram(gBattleStruct->moveInfo.windowIds[i], COPYWIN_BOTH);
+    }
+    
+    // Create arrows
+    gBattleStruct->moveInfo.arrowTaskId = AddScrollIndicatorArrowPairParameterized(0, 137, 165, 235, NUM_MOVEINFO_SUBMENUS - 1, 110, 110, &gBattleStruct->moveInfo.submenuState);
 }
 
 void DestroyBattleMoveInfoWindows(void)
 {
-	u32 i;
-	
-	// Destroy windows
-	for (i = 0; i < 2; i++)
-	{
-		FillWindowPixelBuffer(gBattleStruct->moveInfo.windowIds[i], PIXEL_FILL(15));
-		PutWindowTilemap(gBattleStruct->moveInfo.windowIds[i]);
-		CopyWindowToVram(gBattleStruct->moveInfo.windowIds[i], COPYWIN_BOTH);
-		RemoveWindow(gBattleStruct->moveInfo.windowIds[i]);
-	}
-	
-	// Load moves box
-	CopyToBgTilemapBuffer(0, gBattleTextboxTilemap, 0, 0x000);
+    u32 i;
+    
+    // Destroy windows
+    for (i = 0; i < 2; i++)
+    {
+        FillWindowPixelBuffer(gBattleStruct->moveInfo.windowIds[i], PIXEL_FILL(15));
+        PutWindowTilemap(gBattleStruct->moveInfo.windowIds[i]);
+        CopyWindowToVram(gBattleStruct->moveInfo.windowIds[i], COPYWIN_BOTH);
+        RemoveWindow(gBattleStruct->moveInfo.windowIds[i]);
+    }
+    
+    // Load moves box
+    CopyToBgTilemapBuffer(0, gBattleTextboxTilemap, 0, 0x000);
     CopyBgTilemapBufferToVram(0);
-	BattleInterfaceSetWindowPals();
+    BattleInterfaceSetWindowPals();
 }

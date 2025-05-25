@@ -20,31 +20,31 @@
 // Return values of GetWhoStrikesFirst
 enum
 {
-	BATTLER1_STRIKES_FIRST,
-	BATTLER2_STRIKES_FIRST,
-	SPEED_TIE,
+    BATTLER1_STRIKES_FIRST,
+    BATTLER2_STRIKES_FIRST,
+    SPEED_TIE,
 };
 
 struct NaturalGift
 {
-	u8 type;
-	u8 power;
+    u8 type;
+    u8 power;
 };
 
 struct NonVolatileStatus
 {
-	const u8 *placeholder;
-	u8 ailmentId;
-	u8 healthboxStatusGfx;
-	u16 healthboxStatusPal;
-	u8 animationId;
-	u8 statusCuredByItemMsgId;
-	u8 statusCuredByMoveMultistringId;
+    const u8 *placeholder;
+    u8 ailmentId;
+    u8 healthboxStatusGfx;
+    u16 healthboxStatusPal;
+    u8 animationId;
+    u8 statusCuredByItemMsgId;
+    u8 statusCuredByMoveMultistringId;
 };
 
 struct TrainerClass
 {
-	u8 name[13];
+    u8 name[13];
     u8 moneyMultiplier;
     u8 pokeball;
 };
@@ -57,8 +57,8 @@ struct MultiBattlePokemonTx
     /*0x11*/ u8 level;
     /*0x12*/ u16 hp;
     /*0x14*/ u16 maxhp;
-	/*0x16*/ u8 gender;
-	/*0x17*/ u8 language;
+    /*0x16*/ u8 gender;
+    /*0x17*/ u8 language;
     /*0x18*/ u32 personality;
     /*0x1C*/ struct Status1 status;
 };

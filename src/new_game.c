@@ -44,7 +44,7 @@ void SetTrainerId(u32 trainerId, u8 *dst)
 void CopyTrainerId(u8 *dst, u8 *src)
 {
     u32 i;
-	
+    
     for (i = 0; i < 4; i++)
         dst[i] = src[i];
 }
@@ -62,8 +62,8 @@ static void SetDefaultOptions(void)
     gSaveBlock2Ptr->optionsSound = OPTIONS_SOUND_MONO;
     gSaveBlock2Ptr->optionsBattleStyle = OPTIONS_BATTLE_STYLE_SHIFT;
     gSaveBlock2Ptr->optionsBattleSceneOff = FALSE;
-	gSaveBlock2Ptr->optionsSkipPkmnNickname = FALSE;
-	gSaveBlock2Ptr->optionsDexnavSearchOnR = FALSE;
+    gSaveBlock2Ptr->optionsSkipPkmnNickname = FALSE;
+    gSaveBlock2Ptr->optionsDexnavSearchOnR = FALSE;
 }
 
 static void ClearPokedexFlags(void)
@@ -99,24 +99,24 @@ void ResetMenuAndMonGlobals(void)
 #ifndef NDEBUG
 static void Debug_NewGameGiveAllItems(void)
 {
-	u32 i;
-	
-	for (i = ITEM_NONE + 1; i < ITEMS_COUNT; i++)
-	{
-		if (CheckBagHasSpace(i, 10))
-			AddBagItem(i, 10);
-	}
+    u32 i;
+    
+    for (i = ITEM_NONE + 1; i < ITEMS_COUNT; i++)
+    {
+        if (CheckBagHasSpace(i, 10))
+            AddBagItem(i, 10);
+    }
 }
 
 static void Debug_NewGameFillPokedex(void)
 {
-	u32 i;
-	
-	for (i = NATIONAL_DEX_NONE + 1; i <= NATIONAL_DEX_END; i++)
-	{
-		GetSetPokedexFlag(i, FLAG_SET_SEEN);
-		GetSetPokedexFlag(i, FLAG_SET_CAUGHT);
-	}
+    u32 i;
+    
+    for (i = NATIONAL_DEX_NONE + 1; i <= NATIONAL_DEX_END; i++)
+    {
+        GetSetPokedexFlag(i, FLAG_SET_SEEN);
+        GetSetPokedexFlag(i, FLAG_SET_CAUGHT);
+    }
 }
 #endif
 
@@ -139,7 +139,7 @@ void NewGameInitData(void)
     PlayTimeCounter_Reset();
     ClearPokedexFlags();
 #ifndef NDEBUG
-	Debug_NewGameFillPokedex();
+    Debug_NewGameFillPokedex();
 #endif
     InitEventData();
     ResetFameChecker();
@@ -150,12 +150,12 @@ void NewGameInitData(void)
     ZeroPlayerPartyMons();
     ResetPokemonStorageSystem();
     ClearRoamerData();
-	memset(&gSaveBlock1Ptr->registeredItem, 0, sizeof(gSaveBlock1Ptr->registeredItem));
+    memset(&gSaveBlock1Ptr->registeredItem, 0, sizeof(gSaveBlock1Ptr->registeredItem));
     ClearBag();
-	EnablePlayerBag();
+    EnablePlayerBag();
     NewGameInitPCItems();
 #ifndef NDEBUG
-	Debug_NewGameGiveAllItems();
+    Debug_NewGameGiveAllItems();
 #endif
     InitEasyChatPhrases();
     ResetTrainerFanClub();
@@ -166,17 +166,17 @@ void NewGameInitData(void)
     WarpToPlayersRoom();
     ScriptContext2_RunNewScript(EventScript_ResetAllMapFlags);
     StringCopy(gSaveBlock1Ptr->rivalName, rivalName);
-	ResetItemFlags();
+    ResetItemFlags();
     ClearAllFusedMonSpecies();
-	ResetMysteryGiftFlags();
-	gSaveBlock2Ptr->waitingTaurosChargeStamina = FALSE;
-	gSaveBlock2Ptr->taurosChargeStamina = TAUROS_CHARGE_STAMINA;
-	
-	// Debug data's
-	DebugPrintf("Num bits required to compress species=%u", NUM_SPECIES_BITS);
-	DebugPrintf("Num bits required to compress natures=%u", NUM_NATURE_BITS);
-	DebugPrintf("Num bits required to compress types=%u", NUM_TYPES_BITS);
-	DebugPrintf("Num bits required to compress poke balls=%u", NUM_POKEBALL_BITS);
-	DebugPrintf("Num bits required to compress items=%u", NUM_ITEM_BITS);
-	DebugPrintf("Num bits required to compress moves=%u", NUM_MOVES_BITS);
+    ResetMysteryGiftFlags();
+    gSaveBlock2Ptr->waitingTaurosChargeStamina = FALSE;
+    gSaveBlock2Ptr->taurosChargeStamina = TAUROS_CHARGE_STAMINA;
+    
+    // Debug data's
+    DebugPrintf("Num bits required to compress species=%u", NUM_SPECIES_BITS);
+    DebugPrintf("Num bits required to compress natures=%u", NUM_NATURE_BITS);
+    DebugPrintf("Num bits required to compress types=%u", NUM_TYPES_BITS);
+    DebugPrintf("Num bits required to compress poke balls=%u", NUM_POKEBALL_BITS);
+    DebugPrintf("Num bits required to compress items=%u", NUM_ITEM_BITS);
+    DebugPrintf("Num bits required to compress moves=%u", NUM_MOVES_BITS);
 }

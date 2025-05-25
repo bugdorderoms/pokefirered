@@ -1,13 +1,13 @@
 static const struct GimmickInfo sGimmicksInfo[GIMMICKS_COUNT] =
 {
-	[GIMMICK_NONE] = {0},
+    [GIMMICK_NONE] = {0},
     [GIMMICK_MEGA] =
     {
         .triggerSheet = &sSpriteSheet_MegaTrigger,
         .triggerPal = sMegaTriggerPal,
         .canActivate = CanMegaEvolve,
         .activateGimmick = ActivateMegaEvolution,
-		.indicatorId = GIMMICK_INDICATOR_MEGA,
+        .indicatorId = GIMMICK_INDICATOR_MEGA,
     },
     [GIMMICK_ULTRA_BURST] =
     {
@@ -15,9 +15,9 @@ static const struct GimmickInfo sGimmicksInfo[GIMMICKS_COUNT] =
         .triggerPal = sBurstTriggerPal,
         .canActivate = CanUltraBurst,
         .activateGimmick = ActivateUltraBurst,
-		.indicatorId = GIMMICK_INDICATOR_ULTRA_BURST,
+        .indicatorId = GIMMICK_INDICATOR_ULTRA_BURST,
     },
-	/*[GIMMICK_Z_MOVE] =
+    /*[GIMMICK_Z_MOVE] =
     {
         .triggerSheet = &sSpriteSheet_ZMoveTrigger,
         .triggerPal = sZMoveTriggerPal,
@@ -30,7 +30,7 @@ static const struct GimmickInfo sGimmicksInfo[GIMMICKS_COUNT] =
         .triggerPal = sDynamaxTriggerPal,
         .canActivate = CanDynamax,
         .activateGimmick = ActivateDynamax,
-		.indicatorId = GIMMICK_INDICATOR_DYNAMAX,
+        .indicatorId = GIMMICK_INDICATOR_DYNAMAX,
     },
     [GIMMICK_TERA] =
     {
@@ -38,6 +38,6 @@ static const struct GimmickInfo sGimmicksInfo[GIMMICKS_COUNT] =
         .triggerPal = sTeraTriggerPal,
         .canActivate = CanTerastallize,
         .activateGimmick = ActivateTera,
-		.indicatorId = GIMMICK_INDICATOR_TERA,
+        .indicatorId = GIMMICK_INDICATOR_TERA,
     }*/
 };

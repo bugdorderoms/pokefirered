@@ -7,7 +7,7 @@
 void CB2_InitTradeAnim_LinkTrade(void);
 void CreateInGameTradePokemon(void);
 void DoInGameTradeScene(void);
-void DrawTextOnTradeWindow(u8 windowId, const u8 *str, s8 speed);
+void DrawTextOnTradeWindow(u32 windowId, const u8 *str, s8 speed);
 u32 GetInGameTradeSpeciesInfo(void);
 u32 GetTradeSpecies(void);
 void InitTradeSequenceBgGpuRegs(void);

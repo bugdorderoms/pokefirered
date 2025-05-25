@@ -29,7 +29,7 @@ static u32 GetHealLocationIndexFromMapGroupAndNum(u32 mapGroup, u32 mapNum)
     u32 i;
 
     for (i = 0; i < ARRAY_COUNT(sSpawnPoints); i++)
-	{
+    {
         if (sSpawnPoints[i].group == mapGroup && sSpawnPoints[i].map == mapNum)
             return i + 1;
     }
@@ -40,37 +40,37 @@ const struct HealLocation * GetHealLocation(u32 idx)
 {
     if (idx == 0 || idx > ARRAY_COUNT(sSpawnPoints))
         return NULL;
-	
+    
     return &sSpawnPoints[idx - 1];
 }
 
 void SetWhiteoutRespawnWarpAndHealerNpc(struct WarpData * warp)
 {
     u32 healLocationIdx = GetHealLocationIndexFromMapGroupAndNum(gSaveBlock1Ptr->lastHealLocation.mapGroup, gSaveBlock1Ptr->lastHealLocation.mapNum);
-	
-	warp->mapGroup = sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][0];
-	warp->mapNum = sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][1];
-	warp->warpId = 0xFF;
-	
-	if (sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][0] == MAP_GROUP(PALLET_TOWN_PLAYERS_HOUSE_1F) && sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][1] == MAP_NUM(PALLET_TOWN_PLAYERS_HOUSE_1F))
-	{
-		warp->x = 8;
-		warp->y = 5;
-	}
-	else if (sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][0] == MAP_GROUP(INDIGO_PLATEAU_POKEMON_CENTER_1F) && sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][1] == MAP_NUM(INDIGO_PLATEAU_POKEMON_CENTER_1F))
-	{
-		warp->x = 13;
-		warp->y = 12;
-	}
-	else if (sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][0] == MAP_GROUP(ONE_ISLAND_POKEMON_CENTER_1F) && sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][1] == MAP_NUM(ONE_ISLAND_POKEMON_CENTER_1F))
-	{
-		warp->x = 5;
-		warp->y = 4;
-	}
-	else
-	{
-		warp->x = 7;
-		warp->y = 4;
-	}
-	gSpecialVar_LastTalked = sWhiteoutRespawnHealerNpcIds[healLocationIdx - 1];
+    
+    warp->mapGroup = sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][0];
+    warp->mapNum = sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][1];
+    warp->warpId = 0xFF;
+    
+    if (sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][0] == MAP_GROUP(PALLET_TOWN_PLAYERS_HOUSE_1F) && sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][1] == MAP_NUM(PALLET_TOWN_PLAYERS_HOUSE_1F))
+    {
+        warp->x = 8;
+        warp->y = 5;
+    }
+    else if (sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][0] == MAP_GROUP(INDIGO_PLATEAU_POKEMON_CENTER_1F) && sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][1] == MAP_NUM(INDIGO_PLATEAU_POKEMON_CENTER_1F))
+    {
+        warp->x = 13;
+        warp->y = 12;
+    }
+    else if (sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][0] == MAP_GROUP(ONE_ISLAND_POKEMON_CENTER_1F) && sWhiteoutRespawnHealCenterMapIdxs[healLocationIdx - 1][1] == MAP_NUM(ONE_ISLAND_POKEMON_CENTER_1F))
+    {
+        warp->x = 5;
+        warp->y = 4;
+    }
+    else
+    {
+        warp->x = 7;
+        warp->y = 4;
+    }
+    gSpecialVar_LastTalked = sWhiteoutRespawnHealerNpcIds[healLocationIdx - 1];
 }

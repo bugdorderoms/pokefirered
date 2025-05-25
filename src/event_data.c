@@ -53,28 +53,28 @@ void ClearTempFieldEventData(void)
 
 void ResetMysteryGiftFlags(void)
 {
-	u32 i;
-	
-	for (i = FLAG_MYSTERY_GIFT_1; i <= FLAG_MYSTERY_GIFT_15; i++)
-		FlagClear(i);
+    u32 i;
+    
+    for (i = FLAG_MYSTERY_GIFT_1; i <= FLAG_MYSTERY_GIFT_15; i++)
+        FlagClear(i);
 }
 
 void ClearDailyEventFlags(void)
 {
-	u32 i;
-	
-	for (i = FLAG_0x0B2; i <= FLAG_0x0BB; i++)
-		FlagClear(i);
+    u32 i;
+    
+    for (i = FLAG_0x0B2; i <= FLAG_0x0BB; i++)
+        FlagClear(i);
 }
 
 u16 *GetVarPointer(u32 idx)
 {
     if (idx < VARS_START)
         return NULL;
-	
+    
     if (idx < SPECIAL_VARS_START)
         return &gSaveBlock1Ptr->vars[idx - VARS_START];
-	
+    
     return gSpecialVars[idx - SPECIAL_VARS_START];
 }
 
@@ -104,10 +104,10 @@ u8 *GetFlagAddr(u16 idx)
 {
     if (idx == 0)
         return NULL;
-	
+    
     if (idx < SPECIAL_FLAGS_START)
         return &gSaveBlock1Ptr->flags[idx / 8];
-	
+    
     return &sSpecialFlags[(idx - SPECIAL_FLAGS_START) / 8];
 }
 

@@ -222,7 +222,7 @@ struct PokemonStorageSystemData
     u8 boxOption;
     u8 screenChangeType;
     bool8 isReshowingPSS;
-    u8 taskId;
+    u32 taskId;
     struct UnkStruct_2000020 unk_0020;
     struct UnkStruct_2000028 unk_0028[8];
     u16 field_B0[528 / 2];

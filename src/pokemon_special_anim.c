@@ -19,11 +19,11 @@ static EWRAM_DATA struct PokemonSpecialAnim * sPSAWork = NULL;
 static struct PokemonSpecialAnim * AllocPSA(u32 slotId, u32 itemId, MainCallback callback);
 static void SetUpUseItemAnim_Normal(struct PokemonSpecialAnim * ptr);
 static void SetUpUseItemAnim_ForgetMoveAndLearnTMorHM(struct PokemonSpecialAnim * ptr);
-static void Task_UseItem_Normal(u8 taskId);
-static void Task_ForgetMove(u8 taskId);
-static void Task_UseTM_NoForget(u8 taskId);
-static void Task_MachineSet(u8 taskId);
-static void Task_CleanUp(u8 taskId);
+static void Task_UseItem_Normal(u32 taskId);
+static void Task_ForgetMove(u32 taskId);
+static void Task_UseTM_NoForget(u32 taskId);
+static void Task_MachineSet(u32 taskId);
+static void Task_CleanUp(u32 taskId);
 static u32 GetClosenessFromFriendship(u32 friendship);
 static u32 GetAnimTypeByItemId(u32 itemId);
 
@@ -55,7 +55,7 @@ static struct PokemonSpecialAnim * AllocPSA(u32 slotId, u32 itemId, MainCallback
 
     if (!gMain.inBattle)
         ResetTasks();
-	
+    
     ResetSpriteData();
     FreeAllSpritePalettes();
     ptr = Alloc(sizeof(struct PokemonSpecialAnim));
@@ -76,7 +76,7 @@ static struct PokemonSpecialAnim * AllocPSA(u32 slotId, u32 itemId, MainCallback
     ptr->pokemon = *pokemon;
     ptr->field_00a4 = 0;
     GetMonData(pokemon, MON_DATA_NICKNAME, ptr->nickname);
-	
+    
     if (ptr->animType == 4)
         StringCopy(ptr->nameOfMoveToTeach, gBattleMoves[ItemId_GetHoldEffectParam(itemId)].name);
 
@@ -109,7 +109,7 @@ static void SetUseItemAnimCallback(u32 taskId, TaskFunc func)
 static void SetUpUseItemAnim_Normal(struct PokemonSpecialAnim * ptr)
 {
     u32 taskId;
-	
+    
     switch (ptr->animType)
     {
     case 0:
@@ -140,10 +140,10 @@ static void SetUpUseItemAnim_ForgetMoveAndLearnTMorHM(struct PokemonSpecialAnim 
     ptr->cancelDisabled = FALSE;
 }
 
-static void Task_UseItem_Normal(u8 taskId)
+static void Task_UseItem_Normal(u32 taskId)
 {
     struct PokemonSpecialAnim * ptr = (void *)GetWordTaskArg(taskId, 0);
-	
+    
     if (!ptr->cancelDisabled && JOY_HELD(A_BUTTON | B_BUTTON))
     {
         PSA_UseItem_CleanUpForCancel();
@@ -194,7 +194,7 @@ static void Task_UseItem_Normal(u8 taskId)
         if (!PSA_IsItemUseOnMonAnimActive())
         {
             ptr->cancelDisabled = TRUE;
-			
+            
             if (ptr->closeness == 3)
                 PlayCry_Normal(ptr->species, 0);
 
@@ -246,7 +246,7 @@ static void Task_UseItem_Normal(u8 taskId)
     }
 }
 
-static void Task_ForgetMove(u8 taskId)
+static void Task_ForgetMove(u32 taskId)
 {
     struct PokemonSpecialAnim * ptr = (void *)GetWordTaskArg(taskId, 0);
 
@@ -348,7 +348,7 @@ static void Task_ForgetMove(u8 taskId)
     }
 }
 
-static void Task_UseTM_NoForget(u8 taskId)
+static void Task_UseTM_NoForget(u32 taskId)
 {
     struct PokemonSpecialAnim * ptr = (void *)GetWordTaskArg(taskId, 0);
 
@@ -389,7 +389,7 @@ static void Task_UseTM_NoForget(u8 taskId)
     }
 }
 
-static void Task_MachineSet(u8 taskId)
+static void Task_MachineSet(u32 taskId)
 {
     struct PokemonSpecialAnim * ptr = (void *)GetWordTaskArg(taskId, 0);
 
@@ -462,7 +462,7 @@ static void Task_MachineSet(u8 taskId)
     }
 }
 
-static void Task_CleanUp(u8 taskId)
+static void Task_CleanUp(u32 taskId)
 {
     struct PokemonSpecialAnim * ptr = (void *)GetWordTaskArg(taskId, 0);
 
@@ -488,7 +488,7 @@ static void Task_CleanUp(u8 taskId)
 
 static u32 GetAnimTypeByItemId(u32 itemId)
 {
-	return ItemId_GetPocket(itemId) == POCKET_TM_CASE ? 4 : 0;
+    return ItemId_GetPocket(itemId) == POCKET_TM_CASE ? 4 : 0;
 }
 
 static u32 GetClosenessFromFriendship(u32 friendship)

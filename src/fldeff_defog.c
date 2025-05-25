@@ -14,25 +14,25 @@ static void FldEff_UseDefog(void);
 
 bool32 SetUpFieldMove_Defog(void)
 {
-	u32 weather = GetCurrentWeather();
-	
-	if (weather == WEATHER_FOG_HORIZONTAL || weather == WEATHER_FOG_DIAGONAL)
-	{
-		gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
-		gPostMenuFieldCallback = FieldCallback_Defog;
-		return TRUE;
-	}
-	return FALSE;
+    u32 weather = GetCurrentWeather();
+    
+    if (weather == WEATHER_FOG_HORIZONTAL || weather == WEATHER_FOG_DIAGONAL)
+    {
+        gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
+        gPostMenuFieldCallback = FieldCallback_Defog;
+        return TRUE;
+    }
+    return FALSE;
 }
 
 static void FieldCallback_Defog(void)
 {
-	u32 taskId = CreateFieldEffectShowMon();
-	gSpecialVar_Result = gFieldEffectArguments[0] = GetCursorSelectionMonId();
-	FLDEFF_SET_FUNC_TO_DATA(FldEff_UseDefog);
+    u32 taskId = CreateFieldEffectShowMon();
+    gSpecialVar_Result = gFieldEffectArguments[0] = GetCursorSelectionMonId();
+    FLDEFF_SET_FUNC_TO_DATA(FldEff_UseDefog);
 }
 
 static void FldEff_UseDefog(void)
 {
-	ScriptContext1_SetupScript(EventScript_FldEffDefog);
+    ScriptContext1_SetupScript(EventScript_FldEffDefog);
 }

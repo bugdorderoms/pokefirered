@@ -5,7 +5,7 @@
 
 enum
 {
-	SPIN_DIRECTION_NONE,
+    SPIN_DIRECTION_NONE,
     SPIN_DIRECTION_CLOCKWISE,
     SPIN_DIRECTION_COUNTER_CLOCKWISE,
 };
@@ -78,10 +78,10 @@ static inline u32 PlayerGetZCoord(void)
 
 static inline bool32 TestPlayerAvatarFlags(u32 bm)
 {
-	if (gPlayerAvatar.flags & bm)
-		return TRUE;
-	else
-		return FALSE;
+    if (gPlayerAvatar.flags & bm)
+        return TRUE;
+    else
+        return FALSE;
 }
 
 #endif //GUARD_FIELD_PLAYER_AVATAR_H

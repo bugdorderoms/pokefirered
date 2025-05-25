@@ -64,7 +64,7 @@ void SetSaveBlocksPointers(void)
 {
     u32 offset = (Random()) & ((SAVEBLOCK_MOVE_RANGE - 1) & ~(3));
     struct SaveBlock1** sav1_LocalVar = &gSaveBlock1Ptr;
-	
+    
     gSaveBlock2Ptr = (void*)(&gSaveBlock2) + offset;
     *sav1_LocalVar = (void*)(&gSaveBlock1) + offset;
     gPokemonStoragePtr = (void*)(&gPokemonStorage) + offset;

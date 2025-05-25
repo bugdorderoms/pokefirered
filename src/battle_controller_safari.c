@@ -23,51 +23,51 @@ static void SafariHandleIntroTrainerBallThrow(u32 battlerId);
 static void (*const sSafariBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
-	[CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
-	[CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
-	[CONTROLLER_LOADMONSPRITE]            = BattleControllerComplete,
-	[CONTROLLER_SWITCHINANIM]             = BattleControllerComplete,
-	[CONTROLLER_RETURNMONTOBALL]          = BattleControllerComplete,
-	[CONTROLLER_DRAWTRAINERPIC]           = PlayerHandleDrawTrainerPic,
-	[CONTROLLER_TRAINERSLIDE]             = BattleControllerComplete,
-	[CONTROLLER_TRAINERSLIDEBACK]         = BattleControllerComplete,
-	[CONTROLLER_FAINTANIMATION]           = BattleControllerComplete,
-	[CONTROLLER_BALLTHROWANIM]            = SafariHandleBallThrowAnim,
-	[CONTROLLER_MOVEANIMATION]            = BattleControllerComplete,
-	[CONTROLLER_PRINTSTRING]              = PlayerHandlePrintString,
-	[CONTROLLER_PRINTSELECTIONSTRING]     = PlayerHandlePrintSelectionString,
-	[CONTROLLER_CHOOSEACTION]             = SafariHandleChooseAction,
-	[CONTROLLER_CHOOSEMOVE]               = BattleControllerComplete,
-	[CONTROLLER_OPENBAG]                  = SafariHandleChooseItem,
-	[CONTROLLER_CHOOSEPOKEMON]            = BattleControllerComplete,
-	[CONTROLLER_HEALTHBARUPDATE]          = BattleControllerComplete,
-	[CONTROLLER_EXPUPDATE]                = BattleControllerComplete,
-	[CONTROLLER_STATUSICONUPDATE]         = SafariHandleStatusIconUpdate,
-	[CONTROLLER_STATUSANIMATION]          = BattleControllerComplete,
-	[CONTROLLER_DATATRANSFER]             = BattleControllerComplete,
-	[CONTROLLER_TWORETURNVALUES]          = BattleControllerComplete,
-	[CONTROLLER_CHOSENMONRETURNVALUE]     = BattleControllerComplete,
-	[CONTROLLER_ONERETURNVALUE]           = BattleControllerComplete,
-	[CONTROLLER_EFFECTIVENESSSOUND]       = BtlController_HandlePlaySE,
-	[CONTROLLER_PLAYFANFAREORBGM]         = BtlController_HandlePlayFanfare,
-	[CONTROLLER_FAINTINGCRY]              = SafariHandleFaintingCry,
-	[CONTROLLER_INTROSLIDE]               = BtlController_HandleIntroSlide,
-	[CONTROLLER_INTROTRAINERBALLTHROW]    = SafariHandleIntroTrainerBallThrow,
-	[CONTROLLER_DRAWPARTYSTATUSSUMMARY]   = BattleControllerComplete,
-	[CONTROLLER_HIDEPARTYSTATUSSUMMARY]   = BattleControllerComplete,
-	[CONTROLLER_ENDBOUNCE]                = BattleControllerComplete,
-	[CONTROLLER_SPRITEINVISIBILITY]       = BattleControllerComplete,
-	[CONTROLLER_BATTLEANIMATION]          = BtlController_HandleBattleAnimation,
-	[CONTROLLER_LINKSTANDBYMSG]           = BattleControllerComplete,
-	[CONTROLLER_RESETACTIONMOVESELECTION] = BattleControllerComplete,
-	[CONTROLLER_ENDLINKBATTLE]            = OakOldManHandleEndLinkBattle,
-	[CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
+    [CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
+    [CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
+    [CONTROLLER_LOADMONSPRITE]            = BattleControllerComplete,
+    [CONTROLLER_SWITCHINANIM]             = BattleControllerComplete,
+    [CONTROLLER_RETURNMONTOBALL]          = BattleControllerComplete,
+    [CONTROLLER_DRAWTRAINERPIC]           = PlayerHandleDrawTrainerPic,
+    [CONTROLLER_TRAINERSLIDE]             = BattleControllerComplete,
+    [CONTROLLER_TRAINERSLIDEBACK]         = BattleControllerComplete,
+    [CONTROLLER_FAINTANIMATION]           = BattleControllerComplete,
+    [CONTROLLER_BALLTHROWANIM]            = SafariHandleBallThrowAnim,
+    [CONTROLLER_MOVEANIMATION]            = BattleControllerComplete,
+    [CONTROLLER_PRINTSTRING]              = PlayerHandlePrintString,
+    [CONTROLLER_PRINTSELECTIONSTRING]     = PlayerHandlePrintSelectionString,
+    [CONTROLLER_CHOOSEACTION]             = SafariHandleChooseAction,
+    [CONTROLLER_CHOOSEMOVE]               = BattleControllerComplete,
+    [CONTROLLER_OPENBAG]                  = SafariHandleChooseItem,
+    [CONTROLLER_CHOOSEPOKEMON]            = BattleControllerComplete,
+    [CONTROLLER_HEALTHBARUPDATE]          = BattleControllerComplete,
+    [CONTROLLER_EXPUPDATE]                = BattleControllerComplete,
+    [CONTROLLER_STATUSICONUPDATE]         = SafariHandleStatusIconUpdate,
+    [CONTROLLER_STATUSANIMATION]          = BattleControllerComplete,
+    [CONTROLLER_DATATRANSFER]             = BattleControllerComplete,
+    [CONTROLLER_TWORETURNVALUES]          = BattleControllerComplete,
+    [CONTROLLER_CHOSENMONRETURNVALUE]     = BattleControllerComplete,
+    [CONTROLLER_ONERETURNVALUE]           = BattleControllerComplete,
+    [CONTROLLER_EFFECTIVENESSSOUND]       = BtlController_HandlePlaySE,
+    [CONTROLLER_PLAYFANFAREORBGM]         = BtlController_HandlePlayFanfare,
+    [CONTROLLER_FAINTINGCRY]              = SafariHandleFaintingCry,
+    [CONTROLLER_INTROSLIDE]               = BtlController_HandleIntroSlide,
+    [CONTROLLER_INTROTRAINERBALLTHROW]    = SafariHandleIntroTrainerBallThrow,
+    [CONTROLLER_DRAWPARTYSTATUSSUMMARY]   = BattleControllerComplete,
+    [CONTROLLER_HIDEPARTYSTATUSSUMMARY]   = BattleControllerComplete,
+    [CONTROLLER_ENDBOUNCE]                = BattleControllerComplete,
+    [CONTROLLER_SPRITEINVISIBILITY]       = BattleControllerComplete,
+    [CONTROLLER_BATTLEANIMATION]          = BtlController_HandleBattleAnimation,
+    [CONTROLLER_LINKSTANDBYMSG]           = BattleControllerComplete,
+    [CONTROLLER_RESETACTIONMOVESELECTION] = BattleControllerComplete,
+    [CONTROLLER_ENDLINKBATTLE]            = OakOldManHandleEndLinkBattle,
+    [CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 
 void SetControllerToSafari(u32 battlerId)
 {
-	gBattlerControllerFuncs[battlerId] = SafariBufferRunCommand;
-	gBattlerControllerEndFuncs[battlerId] = SafariBufferExecCompleted;
+    gBattlerControllerFuncs[battlerId] = SafariBufferRunCommand;
+    gBattlerControllerEndFuncs[battlerId] = SafariBufferExecCompleted;
 }
 
 static void SafariBufferRunCommand(u32 battlerId)
@@ -84,7 +84,7 @@ static void SafariBufferRunCommand(u32 battlerId)
 static void SafariBufferExecCompleted(u32 battlerId)
 {
     gBattlerControllerFuncs[battlerId] = SafariBufferRunCommand;
-	
+    
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
         u8 playerId = GetMultiplayerId();
@@ -101,7 +101,7 @@ static void SafariBufferExecCompleted(u32 battlerId)
 
 void SafariHandleBallThrowAnim(u32 battlerId)
 {
-	BtlController_HandleBallThrowAnim(battlerId, B_ANIM_SAFARI_BALL_THROW, FALSE);
+    BtlController_HandleBallThrowAnim(battlerId, B_ANIM_SAFARI_BALL_THROW, FALSE);
 }
 
 static void HandleChooseActionAfterDma3(u32 battlerId)
@@ -116,7 +116,7 @@ static void HandleChooseActionAfterDma3(u32 battlerId)
 
 static void SafariHandleChooseAction(u32 battlerId)
 {
-	BtlController_HandleChooseAction(battlerId, gText_SafariMenu, gText_WhatWillPlayerThrow, HandleChooseActionAfterDma3);
+    BtlController_HandleChooseAction(battlerId, gText_SafariMenu, gText_WhatWillPlayerThrow, HandleChooseActionAfterDma3);
 }
 
 static void CompleteWhenChoosePokeblock(u32 battlerId)
@@ -130,18 +130,18 @@ static void CompleteWhenChoosePokeblock(u32 battlerId)
 
 static void SafariOpenPokeblockCase(u32 battlerId)
 {
-	if (!gPaletteFade.active)
+    if (!gPaletteFade.active)
         gBattlerControllerFuncs[battlerId] = CompleteWhenChoosePokeblock;
 }
 
 static void SafariHandleChooseItem(u32 battlerId)
 {
-	BtlController_HandleChooseItem(battlerId, SafariOpenPokeblockCase);
+    BtlController_HandleChooseItem(battlerId, SafariOpenPokeblockCase);
 }
 
 static void SafariHandleStatusIconUpdate(u32 battlerId)
 {
-	UpdateHealthboxAttribute(battlerId, HEALTHBOX_SAFARI_BALLS_TEXT);
+    UpdateHealthboxAttribute(battlerId, HEALTHBOX_SAFARI_BALLS_TEXT);
     BattleControllerComplete(battlerId);
 }
 
@@ -159,7 +159,7 @@ static void CompleteOnHealthboxSpriteCallbackDummy(u32 battlerId)
 
 static void SafariHandleIntroTrainerBallThrow(u32 battlerId)
 {
-	UpdateHealthboxAttribute(battlerId, HEALTHBOX_SAFARI_ALL_TEXT);
+    UpdateHealthboxAttribute(battlerId, HEALTHBOX_SAFARI_ALL_TEXT);
     StartHealthboxSlideIn(battlerId);
     SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
     gBattlerControllerFuncs[battlerId] = CompleteOnHealthboxSpriteCallbackDummy;
@@ -171,7 +171,7 @@ static void SafariHandleIntroTrainerBallThrow(u32 battlerId)
 
 static void HandleInputChooseAction(u32 battlerId)
 {
-	if (JOY_NEW(A_BUTTON))
+    if (JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
 

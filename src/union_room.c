@@ -60,25 +60,25 @@ static struct UnkStruct_Leader * sLeader;
 static struct UnkStruct_Group * sGroup;
 static struct UnkStruct_URoom * sURoom;
 
-static void Task_TryBecomeLinkLeader(u8 taskId);
+static void Task_TryBecomeLinkLeader(u32 taskId);
 static void Leader_DestroyResources(struct UnkStruct_Leader * leader);
 static bool8 Leader_SetStateIfMemberListChanged(struct UnkStruct_Leader * leader, u32 state1, u32 state2);
 static void ItemPrintFunc_PossibleGroupMembers(u32 windowId, u32 itemId, u32 y);
 static u8 LeaderUpdateGroupMembership(struct UnkStruct_Main0 * main0);
 static u8 UnionRoomLeaderField0CompactionAndCount(struct UnkStruct_Main0 * main0);
-static void Task_TryJoinLinkGroup(u8 taskId);
+static void Task_TryJoinLinkGroup(u32 taskId);
 static u32 IsTryingToTradeWithHoennTooSoon(struct UnkStruct_Group * group, s32 id);
 static void AskToJoinRfuGroup(struct UnkStruct_Group * group, s32 id);
-static void Task_ListenToWireless(u8 taskId);
+static void Task_ListenToWireless(u32 taskId);
 static void ListMenuItemPrintFunc_UnionRoomGroups(u32 windowId, u32 itemId, u32 y);
 static u8 GetNewLeaderCandidate(void);
 static void CreateTask_RunScriptAndFadeToActivity(void);
 static void CreateTask_StartActivity(void);
-static void Task_RunUnionRoom(u8 taskId);
+static void Task_RunUnionRoom(u32 taskId);
 static u16 ReadAsU16(const u8 *data);
 static void ReceiveUnionRoomActivityPacket(struct UnkStruct_URoom * uRoom);
 static bool32 UnionRoom_HandleContactFromOtherPlayer(struct UnkStruct_URoom * uRoom);
-static void Task_InitUnionRoom(u8 taskId);
+static void Task_InitUnionRoom(u32 taskId);
 static u8 HandlePlayerListUpdate(void);
 static u8 CreateTask_SearchForChildOrParent(struct UnkStruct_Main4 * main4, struct UnkStruct_Main4 * arg1, u32 arg2);
 static u8 CreateTask_ListenForPartnersWithCompatibleSerialNos(struct UnkStruct_Main4 * main4, u32 linkGroup);
@@ -384,7 +384,7 @@ static const struct ListMenuItem sListMenuItems_TypeNames[] = {
     {gTypesInfo[TYPE_DRAGON].name,     TYPE_DRAGON},
     {gTypesInfo[TYPE_STEEL].name,       TYPE_STEEL},
     {gTypesInfo[TYPE_DARK].name,         TYPE_DARK},
-	{gTypesInfo[TYPE_FAIRY].name,       TYPE_FAIRY},
+    {gTypesInfo[TYPE_FAIRY].name,       TYPE_FAIRY},
     {gUnknown_8459360,           NUMBER_OF_MON_TYPES - 1} // Excludes Stellar type
 };
 
@@ -715,7 +715,7 @@ static void StringExpandPlaceholders_AwaitingCommFromAnother(u8 *dst, u8 caseId)
 
 void TryBecomeLinkLeader(void)
 {
-    u8 taskId;
+    u32 taskId;
     struct UnkStruct_Leader * dataPtr;
 
     taskId = CreateTask(Task_TryBecomeLinkLeader, 0);
@@ -727,7 +727,7 @@ void TryBecomeLinkLeader(void)
     gSpecialVar_Result = 0;
 }
 
-static void Task_TryBecomeLinkLeader(u8 taskId)
+static void Task_TryBecomeLinkLeader(u32 taskId)
 {
     u32 id, val;
     struct UnkStruct_Leader * data = sUnionRoomMain.leader;
@@ -1261,7 +1261,7 @@ static u8 UnionRoomLeaderField0CompactionAndCount(struct UnkStruct_Main0 * arg0)
 
 void TryJoinLinkGroup(void)
 {
-    u8 taskId;
+    u32 taskId;
     struct UnkStruct_Group * dataPtr;
 
     taskId = CreateTask(Task_TryJoinLinkGroup, 0);
@@ -1273,7 +1273,7 @@ void TryJoinLinkGroup(void)
     gSpecialVar_Result = 0;
 }
 
-static void Task_TryJoinLinkGroup(u8 taskId)
+static void Task_TryJoinLinkGroup(u32 taskId)
 {
     s32 id;
     struct UnkStruct_Group * data = sUnionRoomMain.group;
@@ -1554,7 +1554,7 @@ static void AskToJoinRfuGroup(struct UnkStruct_Group * data, s32 id)
 
 u8 CreateTask_ListenToWireless(void)
 {
-    u8 taskId;
+    u32 taskId;
     struct UnkStruct_Group * dataPtr;
 
     taskId = CreateTask(Task_ListenToWireless, 0);
@@ -1568,7 +1568,7 @@ u8 CreateTask_ListenToWireless(void)
     return taskId;
 }
 
-static void Task_ListenToWireless(u8 taskId)
+static void Task_ListenToWireless(u32 taskId)
 {
     struct UnkStruct_Group * data = sUnionRoomMain.group;
 
@@ -1717,7 +1717,7 @@ static u8 GetNewLeaderCandidate(void)
     return ret;
 }
 
-static void Task_CallCB2ReturnFromLinkTrade(u8 taskId)
+static void Task_CallCB2ReturnFromLinkTrade(u32 taskId)
 {
     CB2_ReturnFromLinkTrade();
     DestroyTask(taskId);
@@ -1725,12 +1725,12 @@ static void Task_CallCB2ReturnFromLinkTrade(u8 taskId)
 
 u8 UnionRoom_CreateTask_CallCB2ReturnFromLinkTrade(void)
 {
-    u8 taskId = CreateTask(Task_CallCB2ReturnFromLinkTrade, 0);
+    u32 taskId = CreateTask(Task_CallCB2ReturnFromLinkTrade, 0);
 
     return taskId;
 }
 
-static void Task_StartUnionRoomTrade(u8 taskId)
+static void Task_StartUnionRoomTrade(u32 taskId)
 {
     u32 monId = GetPartyPositionOfRegisteredMon(&sUnionRoomTrade, GetMultiplayerId());
 
@@ -1770,7 +1770,7 @@ static void Task_StartUnionRoomTrade(u8 taskId)
     }
 }
 
-static void Task_ExchangeCards(u8 taskId)
+static void Task_ExchangeCards(u32 taskId)
 {
     switch (gTasks[taskId].data[0])
     {
@@ -1872,10 +1872,10 @@ static void CB2_TransitionToCableClub(void)
 static void CreateTrainerCardInBuffer(void *dest, bool32 setWonderCard)
 {
     TrainerCard_GenerateCardForLinkPlayer((struct TrainerCard * )dest);
-	*((u16 *)(dest + sizeof(struct TrainerCard))) = 0;
+    *((u16 *)(dest + sizeof(struct TrainerCard))) = 0;
 }
 
-static void Task_StartActivity(u8 taskId)
+static void Task_StartActivity(u32 taskId)
 {
     switch (sPlayerCurrActivity)
     {
@@ -1970,7 +1970,7 @@ static void Task_StartActivity(u8 taskId)
     ScriptContext2_Disable();
 }
 
-static void Task_RunScriptAndFadeToActivity(u8 taskId)
+static void Task_RunScriptAndFadeToActivity(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
     u16 *sendBuff = (u16*)(gBlockSendBuffer);
@@ -2013,7 +2013,7 @@ static void CreateTask_RunScriptAndFadeToActivity(void)
 
 static void CreateTask_StartActivity(void)
 {
-    u8 taskId = CreateTask(Task_StartActivity, 0);
+    u32 taskId = CreateTask(Task_StartActivity, 0);
     gTasks[taskId].data[0] = 0;
 }
 
@@ -2074,7 +2074,7 @@ static void RestoreURoomField0FromDecompressionBuffer(struct UnkStruct_URoom * d
     memcpy(data->field_0, &gDecompressionBuffer[0x3F00], UROOM_MAX_GROUP_COUNT * sizeof(struct UnkStruct_x20));
 }
 
-static void Task_RunUnionRoom(u8 taskId)
+static void Task_RunUnionRoom(u32 taskId)
 {
     u32 id = 0;
     s32 var5 = 0;
@@ -2885,7 +2885,7 @@ void InitUnionRoom(void)
     sUnionRoomPlayerName[0] = EOS;
 }
 
-static void Task_InitUnionRoom(u8 taskId)
+static void Task_InitUnionRoom(u32 taskId)
 {
     s32 i;
     u8 text[32];
@@ -3054,7 +3054,7 @@ static u8 HandlePlayerListUpdate(void)
     return r7;
 }
 
-static void Task_SearchForChildOrParent(u8 taskId)
+static void Task_SearchForChildOrParent(u32 taskId)
 {
     s32 i, j;
     struct UnionGnameUnamePair gname_uname;
@@ -3094,7 +3094,7 @@ static void Task_SearchForChildOrParent(u8 taskId)
 
 static u8 CreateTask_SearchForChildOrParent(struct UnkStruct_Main4 * main4_parent, struct UnkStruct_Main4 * main4_child, u32 linkGroup)
 {
-    u8 taskId = CreateTask(Task_SearchForChildOrParent, 0);
+    u32 taskId = CreateTask(Task_SearchForChildOrParent, 0);
     struct UnkStruct_Main4 ** data = (void *)gTasks[taskId].data;
     data[0] = main4_parent;
     data[1] = main4_child;
@@ -3102,7 +3102,7 @@ static u8 CreateTask_SearchForChildOrParent(struct UnkStruct_Main4 * main4_paren
     return taskId;
 }
 
-static void Task_ListenForPartnersWithCompatibleSerialNos(u8 taskId)
+static void Task_ListenForPartnersWithCompatibleSerialNos(u32 taskId)
 {
     s32 i, j;
     struct UnkStruct_Main4 ** ptr = (void*) gTasks[taskId].data;
@@ -3127,7 +3127,7 @@ static void Task_ListenForPartnersWithCompatibleSerialNos(u8 taskId)
 
 static u8 CreateTask_ListenForPartnersWithCompatibleSerialNos(struct UnkStruct_Main4 * main4, u32 linkGroup)
 {
-    u8 taskId = CreateTask(Task_ListenForPartnersWithCompatibleSerialNos, 0);
+    u32 taskId = CreateTask(Task_ListenForPartnersWithCompatibleSerialNos, 0);
     struct UnkStruct_Main4 ** ptr = (void*) gTasks[taskId].data;
     ptr[0] = main4;
     gTasks[taskId].data[2] = linkGroup;

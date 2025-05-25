@@ -73,11 +73,11 @@ static const u8 sRoamerLocations[][7] = {
 void ClearRoamerData(void)
 {
     u32 i;
-	
+    
     *ROAMER = (struct Roamer){};
     sRoamerLocation[MAP_GRP] = 0;
     sRoamerLocation[MAP_NUM] = 0;
-	
+    
     for (i = 0; i < ARRAY_COUNT(sLocationHistory); i++)
     {
         sLocationHistory[i][MAP_GRP] = 0;
@@ -87,32 +87,32 @@ void ClearRoamerData(void)
 
 u32 GetRoamerSpecies(void)
 {
-	switch (GetStarterSpecies())
-	{
-		case SPECIES_BULBASAUR:
-			return SPECIES_ENTEI;
-		case SPECIES_CHARMANDER:
-			return SPECIES_SUICUNE;
-		case SPECIES_SQUIRTLE:
-			return SPECIES_RAIKOU;
-	}
-	return SPECIES_NONE;
+    switch (GetStarterSpecies())
+    {
+        case SPECIES_BULBASAUR:
+            return SPECIES_ENTEI;
+        case SPECIES_CHARMANDER:
+            return SPECIES_SUICUNE;
+        case SPECIES_SQUIRTLE:
+            return SPECIES_RAIKOU;
+    }
+    return SPECIES_NONE;
 }
 
 static void CreateInitialRoamerMon(void)
 {
-	u32 level = 50;
+    u32 level = 50;
     struct Pokemon *mon = &gEnemyParty[0];
-	
+    
     ROAMER->species = GenerateWildMon(GetRoamerSpecies(), level, FALSE);
     ROAMER->level = level;
     ROAMER->status.id = 0;
-	ROAMER->status.counter = 0;
+    ROAMER->status.counter = 0;
     ROAMER->active = TRUE;
     ROAMER->ivs = GetMonData(mon, MON_DATA_IVS);
     ROAMER->personality = GetMonData(mon, MON_DATA_PERSONALITY);
     ROAMER->hp = GetMonData(mon, MON_DATA_MAX_HP);
-	
+    
     sRoamerLocation[MAP_GRP] = ROAMER_MAP_GROUP;
     sRoamerLocation[MAP_NUM] = sRoamerLocations[RandomMax(NUM_LOCATION_SETS)][0];
 }
@@ -149,7 +149,7 @@ void RoamerMoveToOtherLocationSet(void)
     while (TRUE)
     {
         mapNum = sRoamerLocations[RandomMax(NUM_LOCATION_SETS)][0];
-		
+        
         if (sRoamerLocation[MAP_NUM] != mapNum)
         {
             sRoamerLocation[MAP_NUM] = mapNum;
@@ -175,7 +175,7 @@ void RoamerMove(void)
             if (sRoamerLocation[MAP_NUM] == sRoamerLocations[locSet][0])
             {
                 u8 mapNum;
-				
+                
                 while (TRUE)
                 {
                     // Choose a new map (excluding the first) within this set
@@ -195,33 +195,33 @@ void RoamerMove(void)
 
 static void CreateRoamerMonInstance(void)
 {
-	u32 status;
+    u32 status;
     struct Pokemon *mon = &gEnemyParty[0];
-	struct PokemonGenerator generator =
-	{
-		.species = ROAMER->species,
-		.level = ROAMER->level,
-		.otIdType = OT_ID_PLAYER_ID,
-		.shinyType = GENERATE_SHINY_NORMAL,
-		.shinyRollType = SHINY_ROLL_NORMAL,
-		.forcedGender = MON_GENDERLESS,
-		.hasFixedPersonality = TRUE,
-		.fixedPersonality = ROAMER->personality,
-		.forcedNature = NUM_NATURES,
-		.formChanges = NULL,
-		.moves = {0},
-		.nPerfectIvs = 0,
-	};
+    struct PokemonGenerator generator =
+    {
+        .species = ROAMER->species,
+        .level = ROAMER->level,
+        .otIdType = OT_ID_PLAYER_ID,
+        .shinyType = GENERATE_SHINY_NORMAL,
+        .shinyRollType = SHINY_ROLL_NORMAL,
+        .forcedGender = MON_GENDERLESS,
+        .hasFixedPersonality = TRUE,
+        .fixedPersonality = ROAMER->personality,
+        .forcedNature = NUM_NATURES,
+        .formChanges = NULL,
+        .moves = {0},
+        .nPerfectIvs = 0,
+    };
     ZeroEnemyPartyMons();
     CreateMon(mon, generator);
-	
-	status = ROAMER->status.id;
+    
+    status = ROAMER->status.id;
     SetMonData(mon, MON_DATA_STATUS_ID, &status);
-	status = ROAMER->status.counter;
-	SetMonData(mon, MON_DATA_STATUS_COUNTER, &status);
+    status = ROAMER->status.counter;
+    SetMonData(mon, MON_DATA_STATUS_COUNTER, &status);
     SetMonData(mon, MON_DATA_HP, &ROAMER->hp);
-	SetMonData(mon, MON_DATA_IVS, &ROAMER->ivs);
-	CalculateMonStats(mon);
+    SetMonData(mon, MON_DATA_IVS, &ROAMER->ivs);
+    CalculateMonStats(mon);
 }
 
 static bool32 IsRoamerAt(u32 mapGroup, u32 mapNum)
@@ -239,14 +239,14 @@ bool32 TryStartRoamerEncounter(void)
         CreateRoamerMonInstance();
         return TRUE;
     }
-	return FALSE;
+    return FALSE;
 }
 
 void UpdateRoamerHPStatus(struct Pokemon *mon)
 {
     ROAMER->hp = GetMonData(mon, MON_DATA_HP);
     ROAMER->status.id = GetMonData(mon, MON_DATA_STATUS_ID);
-	ROAMER->status.counter = GetMonData(mon, MON_DATA_STATUS_COUNTER);
+    ROAMER->status.counter = GetMonData(mon, MON_DATA_STATUS_COUNTER);
     RoamerMoveToOtherLocationSet();
 }
 

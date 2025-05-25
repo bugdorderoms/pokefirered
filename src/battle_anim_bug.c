@@ -238,15 +238,15 @@ static void AnimMegahornHorn(struct Sprite *sprite)
     if (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER)
     {
         StartSpriteAffineAnim(sprite, 1);
-		
-		gBattleAnimArgs[0] = -gBattleAnimArgs[0];
+        
+        gBattleAnimArgs[0] = -gBattleAnimArgs[0];
         gBattleAnimArgs[1] = -gBattleAnimArgs[1];
         gBattleAnimArgs[2] = -gBattleAnimArgs[2];
         gBattleAnimArgs[3] = -gBattleAnimArgs[3];
     }
     sprite->x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + gBattleAnimArgs[0];
     sprite->y = GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[1];
-	
+    
     sprite->data[0] = gBattleAnimArgs[4];
     sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + gBattleAnimArgs[2];
     sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
@@ -264,11 +264,11 @@ static void AnimMegahornHorn(struct Sprite *sprite)
 static void AnimTranslateWebThread(struct Sprite *sprite)
 {
     InitSpritePosToAnimAttacker(sprite, TRUE);
-	
+    
     sprite->data[0] = gBattleAnimArgs[2];
     sprite->data[1] = sprite->x;
     sprite->data[3] = sprite->y;
-	
+    
     if (!gBattleAnimArgs[4])
     {
         sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
@@ -285,12 +285,12 @@ static void AnimTranslateWebThread(struct Sprite *sprite)
 static void AnimTranslateWebThread_Step(struct Sprite *sprite)
 {
     if (AnimTranslateLinear(sprite))
-		DestroyAnimSprite(sprite);
-	else
-	{
-		sprite->x2 += Sin(sprite->data[6], sprite->data[5]);
-		sprite->data[6] = (sprite->data[6] + 13) & 0xFF;
-	}
+        DestroyAnimSprite(sprite);
+    else
+    {
+        sprite->x2 += Sin(sprite->data[6], sprite->data[5]);
+        sprite->data[6] = (sprite->data[6] + 13) & 0xFF;
+    }
 }
 
 // Animates the string wraps in the second phase of MOVE_STRING_SHOT and MOVE_SPIDER_WEB.
@@ -299,19 +299,19 @@ static void AnimTranslateWebThread_Step(struct Sprite *sprite)
 // arg 2: if targets both foes
 void AnimStringWrap(struct Sprite *sprite)
 {
-	if (gBattleAnimArgs[2])
-		SetAverageBattlerPositions(gBattleAnimTarget, FALSE, &sprite->x, &sprite->y);
-	
+    if (gBattleAnimArgs[2])
+        SetAverageBattlerPositions(gBattleAnimTarget, FALSE, &sprite->x, &sprite->y);
+    
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         sprite->x -= gBattleAnimArgs[0];
     else
         sprite->x += gBattleAnimArgs[0];
-	
+    
     sprite->y += gBattleAnimArgs[1];
-	
+    
     if (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER)
         sprite->y += 8;
-	
+    
     sprite->callback = AnimStringWrap_Step;
 }
 
@@ -322,7 +322,7 @@ static void AnimStringWrap_Step(struct Sprite *sprite)
         sprite->data[0] = 0;
         sprite->invisible ^= TRUE;
     }
-	
+    
     if (++sprite->data[1] == 51)
         DestroyAnimSprite(sprite);
 }
@@ -368,28 +368,28 @@ static void AnimTranslateStinger(struct Sprite *sprite)
 
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
     {
-		gBattleAnimArgs[1] = -gBattleAnimArgs[1];
+        gBattleAnimArgs[1] = -gBattleAnimArgs[1];
         gBattleAnimArgs[2] = -gBattleAnimArgs[2];
         gBattleAnimArgs[3] = -gBattleAnimArgs[3];
     }
-	
+    
     if (IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget))
     {
-		if ((GetBattlerPosition(gBattleAnimTarget) & BIT_FLANK) == B_FLANK_LEFT)
+        if ((GetBattlerPosition(gBattleAnimTarget) & BIT_FLANK) == B_FLANK_LEFT)
         {
-			gBattleAnimArgs[0] = -gBattleAnimArgs[0];
-			gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+            gBattleAnimArgs[0] = -gBattleAnimArgs[0];
+            gBattleAnimArgs[2] = -gBattleAnimArgs[2];
         }
     }
     InitSpritePosToAnimAttacker(sprite, TRUE);
-	
+    
     lVarX = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + gBattleAnimArgs[2];
     lVarY = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
-	
+    
     rot = ArcTan2Neg(lVarX - sprite->x, lVarY - sprite->y);
     rot += 0xC000;
     TrySetSpriteRotScale(sprite, FALSE, 0x100, 0x100, rot);
-	
+    
     sprite->data[0] = gBattleAnimArgs[4];
     sprite->data[2] = lVarX;
     sprite->data[4] = lVarY;
@@ -407,10 +407,10 @@ static void AnimTranslateStinger(struct Sprite *sprite)
 void AnimMissileArc(struct Sprite *sprite)
 {
     InitSpritePosToAnimAttacker(sprite, TRUE);
-	
+    
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         gBattleAnimArgs[2] = -gBattleAnimArgs[2];
-	
+    
     sprite->data[0] = gBattleAnimArgs[4];
     sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + gBattleAnimArgs[2];
     sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
@@ -428,7 +428,7 @@ void AnimMissileArcStep(struct Sprite *sprite)
         DestroyAnimSprite(sprite);
     else
     {
-		u32 i;
+        u32 i;
         s16 tempData[8];
         u16 *data = sprite->data;
         u16 x1 = sprite->x;
@@ -438,17 +438,17 @@ void AnimMissileArcStep(struct Sprite *sprite)
 
         for (i = 0; i < 8; ++i)
             tempData[i] = data[i];
-		
+        
         x2 += x1;
         y2 += y1;
-		
+        
         if (!TranslateAnimHorizontalArc(sprite))
         {
             u16 rotation = ArcTan2Neg(sprite->x + sprite->x2 - x2, sprite->y + sprite->y2 - y2);
 
             rotation += 0xC000;
             TrySetSpriteRotScale(sprite, FALSE, 0x100, 0x100, rotation);
-			
+            
             for (i = 0; i < 8; ++i)
                 data[i] = tempData[i];
         }
@@ -457,7 +457,7 @@ void AnimMissileArcStep(struct Sprite *sprite)
 
 // Returns where Fury Cutter hits hight.
 // No args.
-void AnimTask_IsFuryCutterHitRight(u8 taskId)
+void AnimTask_IsFuryCutterHitRight(u32 taskId)
 {
     gBattleAnimArgs[ARG_RET_ID] = (gAnimDisableStructPtr->furyCutterCounter & 1);
     DestroyAnimVisualTask(taskId);
@@ -465,7 +465,7 @@ void AnimTask_IsFuryCutterHitRight(u8 taskId)
 
 // Returns the Fury Cutter counter.
 // No args.
-void AnimTask_GetFuryCutterHitCount(u8 taskId)
+void AnimTask_GetFuryCutterHitCount(u32 taskId)
 {
     gBattleAnimArgs[ARG_RET_ID] = gAnimDisableStructPtr->furyCutterCounter;
     DestroyAnimVisualTask(taskId);

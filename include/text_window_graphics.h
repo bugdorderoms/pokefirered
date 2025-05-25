@@ -15,6 +15,6 @@ extern const u16 gTextWindowDexnavFrame[];
 
 extern const struct TextWindowGraphics gUserFrames[];
 
-const struct TextWindowGraphics * GetUserFrameGraphicsInfo(u8 idx);
+const struct TextWindowGraphics * GetUserFrameGraphicsInfo(u32 idx);
 
 #endif //GUARD_TEXT_WINDOW_GRAPHICS_H

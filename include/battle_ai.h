@@ -24,32 +24,32 @@
 
 struct AiData
 {
-	u32 aiFlags;
-	u8 usedItemsIndices; // Indices of the used items by the trainer
-	u8 knownPartyIndices; // Player party indices the ai knows
-	u8 knownPlayerAbilities; // Player party indices the ai knows its abilities
-	u8 knownPlayerItems; // Player party indices the ai knows its items
-	u8 knownPlayerMoves[PARTY_SIZE]; // Player party's move slots indices the ai knowns
+    u32 aiFlags;
+    u8 usedItemsIndices; // Indices of the used items by the trainer
+    u8 knownPartyIndices; // Player party indices the ai knows
+    u8 knownPlayerAbilities; // Player party indices the ai knows its abilities
+    u8 knownPlayerItems; // Player party indices the ai knows its items
+    u8 knownPlayerMoves[PARTY_SIZE]; // Player party's move slots indices the ai knowns
 };
 
 struct AiThinking
 {
-	s8 score[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
-	u8 movesetMoveId[MAX_BATTLERS_COUNT];
-	u8 action[MAX_BATTLERS_COUNT];
-	u8 moveLimitations[MAX_BATTLERS_COUNT];
-	s32 simulatedDmg[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // attacker, target, moveIndex
-	u32 totalSpeeds[MAX_BATTLERS_COUNT];
-	u32 totalAccuracy[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // attacker, target, moveIndex
-	u16 moves[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
-	u8 moveTypes[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
-	u8 effectiveness[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // attacker, target, moveIndex
-	u16 partnerMove;
-	s32 higherDamage[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; // Stores the higher damage a pokemon can receive from the battler
-	
-	// TODO
-	u8 simulatedRNG[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
-	u16 predictedMoves[MAX_BATTLERS_COUNT];
+    s8 score[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
+    u8 movesetMoveId[MAX_BATTLERS_COUNT];
+    u8 action[MAX_BATTLERS_COUNT];
+    u8 moveLimitations[MAX_BATTLERS_COUNT];
+    s32 simulatedDmg[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // attacker, target, moveIndex
+    u32 totalSpeeds[MAX_BATTLERS_COUNT];
+    u32 totalAccuracy[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // attacker, target, moveIndex
+    u16 moves[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
+    u8 moveTypes[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
+    u8 effectiveness[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // attacker, target, moveIndex
+    u16 partnerMove;
+    s32 higherDamage[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; // Stores the higher damage a pokemon can receive from the battler
+    
+    // TODO
+    u8 simulatedRNG[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
+    u16 predictedMoves[MAX_BATTLERS_COUNT];
 };
 
 #define AI_DATA (gBattleResources->aiData)

@@ -16,7 +16,7 @@ const struct Tileset gTileset_PalletTown = {
     .metatiles = gMetatiles_PalletTown,
     .callback = NULL,
     .metatileAttributes = gMetatileAttributes_PalletTown,
-	.lightningColors = gLightningColors_PalletTown
+    .lightningColors = gLightningColors_PalletTown
 };
 
 const struct Tileset gTileset_ViridianCity = {

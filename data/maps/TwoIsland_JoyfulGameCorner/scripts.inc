@@ -1,5 +1,5 @@
-.equ LOCALID_DADDY,    1
-.equ LOCALID_BIKER,    2
+.equ LOCALID_DADDY,	1
+.equ LOCALID_BIKER,	2
 .equ LOCALID_LOSTELLE, 3
 
 TwoIsland_JoyfulGameCorner_MapScripts:: @ 81713D0

@@ -18,17 +18,17 @@ void SetCurrentBox(u32 boxId)
 
 static inline bool32 IsValidBoxIdAndPosition(u32 boxId, u32 boxPosition)
 {
-	return (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT);
+    return (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT);
 }
 
 u32 GetAndCopyBoxMonDataAt(u32 boxId, u32 boxPosition, s32 request, void *dst)
 {
-	return IsValidBoxIdAndPosition(boxId, boxPosition) ? GetBoxMonData(&gPokemonStoragePtr->boxes[boxId][boxPosition], request, dst) : 0;
+    return IsValidBoxIdAndPosition(boxId, boxPosition) ? GetBoxMonData(&gPokemonStoragePtr->boxes[boxId][boxPosition], request, dst) : 0;
 }
 
 u32 GetBoxMonDataAt(u32 boxId, u32 boxPosition, s32 request)
 {
-	return GetAndCopyBoxMonDataAt(boxId, boxPosition, request, NULL);
+    return GetAndCopyBoxMonDataAt(boxId, boxPosition, request, NULL);
 }
 
 static void SetBoxMonDataAt(u32 boxId, u32 boxPosition, s32 request, const void *value)
@@ -56,10 +56,10 @@ void SetBoxMonNickAt(u32 boxId, u32 boxPosition, const u8 *nick)
 void SetBoxMonAt(u32 boxId, u32 boxPosition, struct BoxPokemon * src)
 {
     if (IsValidBoxIdAndPosition(boxId, boxPosition))
-	{
-		DoOverworldFormChange((struct Pokemon*)src, FORM_CHANGE_COUNTDOWN);
+    {
+        DoOverworldFormChange((struct Pokemon*)src, FORM_CHANGE_COUNTDOWN);
         gPokemonStoragePtr->boxes[boxId][boxPosition] = *src;
-	}
+    }
 }
 
 void ZeroBoxMonAt(u32 boxId, u32 boxPosition)
@@ -76,12 +76,12 @@ void BoxMonAtToMon(u32 boxId, u32 boxPosition, struct Pokemon * dst)
 
 struct BoxPokemon * GetBoxedMonPtr(u32 boxId, u32 boxPosition)
 {
-	return IsValidBoxIdAndPosition(boxId, boxPosition) ? &gPokemonStoragePtr->boxes[boxId][boxPosition] : NULL;
+    return IsValidBoxIdAndPosition(boxId, boxPosition) ? &gPokemonStoragePtr->boxes[boxId][boxPosition] : NULL;
 }
 
 u8 *GetBoxNamePtr(u32 boxId)
 {
-	return (boxId < TOTAL_BOXES_COUNT) ? gPokemonStoragePtr->boxNames[boxId] : NULL;
+    return (boxId < TOTAL_BOXES_COUNT) ? gPokemonStoragePtr->boxNames[boxId] : NULL;
 }
 
 u32 GetBoxWallpaper(u32 boxId)
@@ -102,7 +102,7 @@ s16 SeekToNextMonInBox(struct BoxPokemon * boxMons, s8 curIndex, u32 maxIndex, u
     // bit 1: Search backwards
     s16 i;
     s16 adder;
-	
+    
     if (flags == 0 || flags == 1)
         adder = 1;
     else

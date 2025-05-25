@@ -15,9 +15,9 @@ struct ClearSaveDataStruct {
 
 static EWRAM_DATA struct ClearSaveDataStruct * sClearSaveDataState = NULL;
 
-static void Task_DrawClearSaveDataScreen(u8 taskId);
-static void Task_HandleYesNoMenu(u8 taskId);
-static void Task_CleanUpAndSoftReset(u8 taskId);
+static void Task_DrawClearSaveDataScreen(u32 taskId);
+static void Task_HandleYesNoMenu(u32 taskId);
+static void Task_CleanUpAndSoftReset(u32 taskId);
 static void CB2_Sub_SaveClearScreen_Init(void);
 static void SaveClearScreen_GpuInit(void);
 
@@ -85,7 +85,7 @@ void CB2_SaveClearScreen_Init(void)
     SetMainCallback2(CB2_RunClearSaveDataScreen);
 }
 
-static void Task_DrawClearSaveDataScreen(u8 taskId)
+static void Task_DrawClearSaveDataScreen(u32 taskId)
 {
     switch (sClearSaveDataState->unk1)
     {
@@ -122,7 +122,7 @@ static void Task_DrawClearSaveDataScreen(u8 taskId)
     sClearSaveDataState->unk1++;
 }
 
-static void Task_HandleYesNoMenu(u8 taskId)
+static void Task_HandleYesNoMenu(u32 taskId)
 {
     // agbcc refuses to keep &sClearSaveDataState in a register
     // unless explicitly told to do so as such:
@@ -154,7 +154,7 @@ static void Task_HandleYesNoMenu(u8 taskId)
     }
 }
 
-static void Task_CleanUpAndSoftReset(u8 taskId)
+static void Task_CleanUpAndSoftReset(u32 taskId)
 {
     switch (sClearSaveDataState->unk2)
     {

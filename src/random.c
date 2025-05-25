@@ -16,10 +16,10 @@ u16 Random(void)
 
 u16 RandomRange(u32 min, u32 max)
 {
-	u32 temp;
-	
-	if (min > max)
-		SWAP(min, max, temp);
-	
+    u32 temp;
+    
+    if (min > max)
+        SWAP(min, max, temp);
+    
     return RandomMax(max - min + 1) + min;
 }

@@ -86,14 +86,14 @@ bool32 RunScriptCommand(struct ScriptContext *ctx)
         {
             if (ctx->nativePtr())
                 ctx->mode = SCRIPT_MODE_BYTECODE;
-			
+            
             return TRUE;
         }
         ctx->mode = SCRIPT_MODE_BYTECODE;
     case SCRIPT_MODE_BYTECODE:
         while (TRUE)
         {
-            u8 cmdCode;
+            u32 cmdCode;
             ScrCmdFunc *cmdFunc;
 
             if (ctx->scriptPtr == NULL)
@@ -341,17 +341,17 @@ u8 *mapheader_get_first_match_from_tagged_ptr_list(u8 tag)
     {
         u16 varIndex1;
         u16 varIndex2;
-		
+        
         varIndex1 = ptr[0] | (ptr[1] << 8);
         if (!varIndex1)
             return NULL;
-		
+        
         ptr += 2;
         varIndex2 = ptr[0] | (ptr[1] << 8);
         ptr += 2;
         if (VarGet(varIndex1) == VarGet(varIndex2))
             return (u8 *)(ptr[0] + (ptr[1] << 8) + (ptr[2] << 16) + (ptr[3] << 24));
-		
+        
         ptr += 4;
     }
 }
@@ -384,7 +384,7 @@ void RunOnDiveWarpMapScript(void)
 bool32 TryRunOnFrameMapScript(void)
 {
     u8 *ptr = mapheader_get_first_match_from_tagged_ptr_list(2);
-	
+    
     if (!ptr)
         return FALSE;
 
@@ -430,9 +430,9 @@ bool32 InitRamScript(u8 *script, u32 scriptSize, u32 mapGroup, u32 mapNum, u32 o
 const u8 *GetRamScript(u32 objectId, const u8 *script)
 {
     struct RamScriptData *scriptData = &gSaveBlock1Ptr->ramScript.data;
-	
+    
     gRAMScriptPtr = NULL;
-	
+    
     if (scriptData->magic != RAM_SCRIPT_MAGIC)
         return script;
     if (scriptData->mapGroup != gSaveBlock1Ptr->location.mapGroup)
@@ -441,7 +441,7 @@ const u8 *GetRamScript(u32 objectId, const u8 *script)
         return script;
     if (scriptData->objectId != objectId)
         return script;
-	
+    
     if (CalculateRamScriptChecksum() != gSaveBlock1Ptr->ramScript.checksum)
     {
         ClearRamScript();

@@ -11,8 +11,8 @@ static const s8 sIndicatorPositions[][2] =
 
 const struct SpritePalette gSpritePalette_GimmickIndicator =
 {
-	.data = sGimmickIndicatorPal,
-	.tag = TAG_GIMMICK_INDICATOR_GFX,
+    .data = sGimmickIndicatorPal,
+    .tag = TAG_GIMMICK_INDICATOR_GFX,
 };
 
 static const struct OamData sOamData_GimmickIndicator =
@@ -45,9 +45,9 @@ static const union AnimCmd sIndicator_Ultra[] = {
 static const union AnimCmd *const sGimmickIndicators[] = {
     [GIMMICK_INDICATOR_NONE] = sIndicator_Mega, // placeholder
     [GIMMICK_INDICATOR_MEGA] = sIndicator_Mega,
-	[GIMMICK_INDICATOR_OMEGA] = sIndicator_Omega,
-	[GIMMICK_INDICATOR_ALPHA] = sIndicator_Alpha,
-	[GIMMICK_INDICATOR_ULTRA_BURST] = sIndicator_Ultra,
+    [GIMMICK_INDICATOR_OMEGA] = sIndicator_Omega,
+    [GIMMICK_INDICATOR_ALPHA] = sIndicator_Alpha,
+    [GIMMICK_INDICATOR_ULTRA_BURST] = sIndicator_Ultra,
 };
 
 static const u8 ALIGNED(4) sMegaTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/mega_trigger.4bpp");
@@ -94,7 +94,7 @@ static const union AffineAnimCmd sGimmickTriggerAffineAnim_Doubles[] =
 static const union AffineAnimCmd *const sGimmickTriggerAffineAnimTable[] = 
 {
     sGimmickTriggerAffineAnim_Singles,
-	sGimmickTriggerAffineAnim_Doubles
+    sGimmickTriggerAffineAnim_Doubles
 };
 
 static const struct SpriteTemplate sSpriteTemplate_GimmickTrigger =

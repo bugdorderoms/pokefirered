@@ -157,7 +157,7 @@ static const u8 sShopBuyMenuTextColors[][3] =
 
 void BuyMenuInitWindows(bool32 isSellingTM)
 {
-	InitWindows(isSellingTM ? sShopBuyMenuWindowTemplatesTM : sShopBuyMenuWindowTemplatesNormal);
+    InitWindows(isSellingTM ? sShopBuyMenuWindowTemplatesTM : sShopBuyMenuWindowTemplatesNormal);
     DeactivateAllTextPrinters();
     TextWindow_SetUserSelectedFrame(0, 0x1, 0xD0);
     TextWindow_LoadResourcesStdFrame0(0, 0x13, 0xE0);
@@ -165,7 +165,7 @@ void BuyMenuInitWindows(bool32 isSellingTM)
     PutWindowTilemap(0);
     PutWindowTilemap(4);
     PutWindowTilemap(5);
-	
+    
     if (isSellingTM)
         PutWindowTilemap(6);
 }

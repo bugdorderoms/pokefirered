@@ -173,19 +173,19 @@ static const struct SpriteTemplate sSpriteTemplate_ItemIcon = {
 
 static const union AffineAnimCmd sSpriteAffineAnim_KeyItemTM[] =
 {
-	AFFINEANIMCMD_FRAME(0, 0, 128, 1), // Start rotated left
-	AFFINEANIMCMD_FRAME(16, 16, -8, 16), // Double sprite size + rotate right
-	AFFINEANIMCMD_FRAME(0, 0, -3, 8), // End at right 24
-	AFFINEANIMCMD_FRAME(0, 0, 3, 16), // End at left 24
-	AFFINEANIMCMD_FRAME(0, 0, -3, 16), // End at right 24
-	AFFINEANIMCMD_FRAME(0, 0, 3, 16), // End at left 24
-	AFFINEANIMCMD_FRAME(0, 0, -3, 8), // End at 0
-	AFFINEANIMCMD_END,
+    AFFINEANIMCMD_FRAME(0, 0, 128, 1), // Start rotated left
+    AFFINEANIMCMD_FRAME(16, 16, -8, 16), // Double sprite size + rotate right
+    AFFINEANIMCMD_FRAME(0, 0, -3, 8), // End at right 24
+    AFFINEANIMCMD_FRAME(0, 0, 3, 16), // End at left 24
+    AFFINEANIMCMD_FRAME(0, 0, -3, 16), // End at right 24
+    AFFINEANIMCMD_FRAME(0, 0, 3, 16), // End at left 24
+    AFFINEANIMCMD_FRAME(0, 0, -3, 8), // End at 0
+    AFFINEANIMCMD_END,
 };
 
 static const union AffineAnimCmd* const sSpriteAffineAnimTable_KeyItemTM[] =
 {
-	sSpriteAffineAnim_KeyItemTM,
+    sSpriteAffineAnim_KeyItemTM,
 };
 
 void ResetItemMenuIconState(void)
@@ -221,7 +221,7 @@ static void SpriteCB_BagVisualSwitchingPockets(struct Sprite * sprite)
 void ShakeBagSprite(void)
 {
     struct Sprite * sprite = &gSprites[sItemMenuIconSpriteIds[0]];
-	
+    
     if (sprite->affineAnimEnded)
     {
         StartSpriteAffineAnim(sprite, 1);
@@ -246,7 +246,7 @@ void ItemMenuIcons_CreateInsertIndicatorBarHidden(void)
     for (i = 0; i < 9; i++)
     {
         ptr[i] = CreateSprite(&gUnknown_83D4250, i * 16 + 0x60, 7, 0);
-		
+        
         switch (i)
         {
         case 0:
@@ -347,9 +347,9 @@ u32 AddItemIconObjectWithCustomObjectTemplate(const struct SpriteTemplate * orig
 
 void DestroyItemIconObj(struct Sprite *sprite, u32 tilesTag, u32 paletteTag)
 {
-	FreeSpriteTilesByTag(tilesTag);
-	FreeSpritePaletteByTag(paletteTag);
-	DestroySpriteAndFreeMatrix(sprite);
+    FreeSpriteTilesByTag(tilesTag);
+    FreeSpritePaletteByTag(paletteTag);
+    DestroySpriteAndFreeMatrix(sprite);
 }
 
 void CreateItemMenuIcon(u32 itemId, u32 idx)
@@ -361,7 +361,7 @@ void CreateItemMenuIcon(u32 itemId, u32 idx)
     {
         FreeSpriteTilesByTag(ITEMICON_TAG + idx);
         FreeSpritePaletteByTag(ITEMICON_TAG + idx);
-		
+        
         spriteId = AddItemIconObject(ITEMICON_TAG + idx, ITEMICON_TAG + idx, itemId);
         if (spriteId != MAX_SPRITES)
         {
@@ -385,31 +385,31 @@ void DestroyItemMenuIcon(u32 idx)
 
 const u32 *GetItemIconPic(u32 itemId)
 {
-	if (itemId == ITEMS_COUNT)
-		return gItemIcon_ReturnToFieldArrow;
-	else
-	{
-		if (itemId > ITEMS_COUNT)
-			itemId = ITEM_NONE;
-		
-		return gItems[itemId].iconPic;
-	}
+    if (itemId == ITEMS_COUNT)
+        return gItemIcon_ReturnToFieldArrow;
+    else
+    {
+        if (itemId > ITEMS_COUNT)
+            itemId = ITEM_NONE;
+        
+        return gItems[itemId].iconPic;
+    }
 }
 
 const u32 *GetItemIconPalette(u32 itemId)
 {
-	if (itemId == ITEMS_COUNT)
-		return gItemIconPalette_ReturnToFieldArrow;
-	else
-	{
-		if (itemId > ITEMS_COUNT)
-			itemId = ITEM_NONE;
-		
-		if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
-			return gTypesInfo[gBattleMoves[ItemId_GetHoldEffectParam(itemId)].type].tmPalette;
-		else
-			return gItems[itemId].iconPalette;
-	}
+    if (itemId == ITEMS_COUNT)
+        return gItemIconPalette_ReturnToFieldArrow;
+    else
+    {
+        if (itemId > ITEMS_COUNT)
+            itemId = ITEM_NONE;
+        
+        if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
+            return gTypesInfo[gBattleMoves[ItemId_GetHoldEffectParam(itemId)].type].tmPalette;
+        else
+            return gItems[itemId].iconPalette;
+    }
 }
 
 void sub_80989A0(u32 itemId, u32 idx)
@@ -421,7 +421,7 @@ void sub_80989A0(u32 itemId, u32 idx)
     {
         FreeSpriteTilesByTag(ITEMICON_TAG + idx);
         FreeSpritePaletteByTag(ITEMICON_TAG + idx);
-		
+        
         spriteId = AddItemIconObject(ITEMICON_TAG + idx, ITEMICON_TAG + idx, itemId);
         if (spriteId != MAX_SPRITES)
         {
@@ -439,139 +439,139 @@ void sub_80989A0(u32 itemId, u32 idx)
 
 static u32 ShowObtainedItemDescription(u32 item)
 {
-	struct WindowTemplate template;
-	u32 textX, textY, windowId, maxChars, windowHeight, numLines;
-	
-	if (IS_KEY_ITEM_TM(ItemId_GetPocket(item)))
-	{
-		textX = 1;
-		maxChars = 43;
-	}
-	else
-	{
-		textX = 28;
-		maxChars = 39;
-	}
-	numLines = ReformatStringToMaxChars(ItemId_GetDescription(item), 0, maxChars, FALSE);
-	
-	if (numLines == 1)
-	{
-		textY = 4;
-		windowHeight = 3;
-	}
-	else if (numLines >= 3)
-	{
-		textY = 0;
-		windowHeight = 5;
-	}
-	else
-	{
-		textY = 0;
-		windowHeight = 4;
-	}
-	template = SetWindowTemplateFields(0, 1, 1, 28, windowHeight, 14, 0x20);
-	windowId = AddWindow(&template);
-	FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
-	PutWindowTilemap(windowId);
-	DrawStdFrameWithCustomTileAndPalette(windowId, FALSE, 0x214, 14);
-	AddTextPrinterParameterized(windowId, 0, gStringVar4, textX, textY, 0, NULL);
-	GetSetItemObtained(item, FLAG_SET_OBTAINED);
-	
-	return windowId;
+    struct WindowTemplate template;
+    u32 textX, textY, windowId, maxChars, windowHeight, numLines;
+    
+    if (IS_KEY_ITEM_TM(ItemId_GetPocket(item)))
+    {
+        textX = 1;
+        maxChars = 43;
+    }
+    else
+    {
+        textX = 28;
+        maxChars = 39;
+    }
+    numLines = ReformatStringToMaxChars(ItemId_GetDescription(item), 0, maxChars, FALSE);
+    
+    if (numLines == 1)
+    {
+        textY = 4;
+        windowHeight = 3;
+    }
+    else if (numLines >= 3)
+    {
+        textY = 0;
+        windowHeight = 5;
+    }
+    else
+    {
+        textY = 0;
+        windowHeight = 4;
+    }
+    template = SetWindowTemplateFields(0, 1, 1, 28, windowHeight, 14, 0x20);
+    windowId = AddWindow(&template);
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
+    PutWindowTilemap(windowId);
+    DrawStdFrameWithCustomTileAndPalette(windowId, FALSE, 0x214, 14);
+    AddTextPrinterParameterized(windowId, 0, gStringVar4, textX, textY, 0, NULL);
+    GetSetItemObtained(item, FLAG_SET_OBTAINED);
+    
+    return windowId;
 }
 
 void CreateItemIconOnFindMessage(void)
 {
-	s16 x, y;
-	bool32 itemObtained;
-	struct Sprite *sprite1, *sprite2;
-	u32 itemId = gSpecialVar_0x8009;
-	u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2, windowId = 0xFF;
-	
-	// Handle flash
-	if (Overworld_GetFlashLevel() > 0)
-		spriteId2 = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
-	else
-		spriteId2 = MAX_SPRITES;
-	
-	if (spriteId != MAX_SPRITES)
-	{
-		sprite1 = &gSprites[spriteId];
-		
-		if (spriteId2 != MAX_SPRITES)
-			sprite2 = &gSprites[spriteId2];
-		
-		itemObtained = GetSetItemObtained(itemId, FLAG_GET_OBTAINED);
-		
-		if (IS_KEY_ITEM_TM(ItemId_GetPocket(itemId)))
-		{
-			x = 96;
-			y = 48;
-			
-			sprite1->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
-			sprite1->oam.matrixNum = AllocOamMatrix();
-			sprite1->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
-			
-			StartSpriteAffineAnim(sprite1, 0);
-			
-			if (spriteId2 != MAX_SPRITES)
-			{
-				sprite2->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
-				sprite2->oam.matrixNum = AllocOamMatrix();
-				sprite2->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
-				
-				StartSpriteAffineAnim(sprite2, 0);
-			}
-			
-			if (!itemObtained)
-				windowId = ShowObtainedItemDescription(itemId);
-		}
-		else
-		{
-			if (itemObtained)
-			{
-				x = 205;
-				y = 132;
-			}
-			else
-			{
-				x = ITEM_ICON_X;
-				y = ITEM_ICON_Y;
-				
-				windowId = ShowObtainedItemDescription(itemId);
-			}
-		}
-		sprite1->x2 = x;
-		sprite1->y2 = y;
-		sprite1->oam.priority = 0;
-		sprite1->data[0] = windowId;
-		sprite1->data[1] = spriteId2;
-		
-		if (spriteId2 != MAX_SPRITES)
-		{
-			sprite2->x2 = x;
-			sprite2->y2 = y;
-			sprite2->oam.priority = 0;
-			sprite2->oam.objMode = ST_OAM_OBJ_WINDOW;
-		}
-	}
-	gSpecialVar_0x8009 = spriteId; // save sprite id for use later
+    s16 x, y;
+    bool32 itemObtained;
+    struct Sprite *sprite1, *sprite2;
+    u32 itemId = gSpecialVar_0x8009;
+    u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2, windowId = 0xFF;
+    
+    // Handle flash
+    if (Overworld_GetFlashLevel() > 0)
+        spriteId2 = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
+    else
+        spriteId2 = MAX_SPRITES;
+    
+    if (spriteId != MAX_SPRITES)
+    {
+        sprite1 = &gSprites[spriteId];
+        
+        if (spriteId2 != MAX_SPRITES)
+            sprite2 = &gSprites[spriteId2];
+        
+        itemObtained = GetSetItemObtained(itemId, FLAG_GET_OBTAINED);
+        
+        if (IS_KEY_ITEM_TM(ItemId_GetPocket(itemId)))
+        {
+            x = 96;
+            y = 48;
+            
+            sprite1->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
+            sprite1->oam.matrixNum = AllocOamMatrix();
+            sprite1->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
+            
+            StartSpriteAffineAnim(sprite1, 0);
+            
+            if (spriteId2 != MAX_SPRITES)
+            {
+                sprite2->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
+                sprite2->oam.matrixNum = AllocOamMatrix();
+                sprite2->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
+                
+                StartSpriteAffineAnim(sprite2, 0);
+            }
+            
+            if (!itemObtained)
+                windowId = ShowObtainedItemDescription(itemId);
+        }
+        else
+        {
+            if (itemObtained)
+            {
+                x = 205;
+                y = 132;
+            }
+            else
+            {
+                x = ITEM_ICON_X;
+                y = ITEM_ICON_Y;
+                
+                windowId = ShowObtainedItemDescription(itemId);
+            }
+        }
+        sprite1->x2 = x;
+        sprite1->y2 = y;
+        sprite1->oam.priority = 0;
+        sprite1->data[0] = windowId;
+        sprite1->data[1] = spriteId2;
+        
+        if (spriteId2 != MAX_SPRITES)
+        {
+            sprite2->x2 = x;
+            sprite2->y2 = y;
+            sprite2->oam.priority = 0;
+            sprite2->oam.objMode = ST_OAM_OBJ_WINDOW;
+        }
+    }
+    gSpecialVar_0x8009 = spriteId; // save sprite id for use later
 }
 
 void DestroyItemIconOnFindMessage(void)
 {
-	u32 spriteId = gSpecialVar_0x8009;
-	struct Sprite * sprite = &gSprites[spriteId];
-	u32 windowId = sprite->data[0], spriteId2 = sprite->data[1];
-	
-	DestroyItemIconObj(sprite, ITEMICON_TAG, ITEMICON_TAG);
-	
-	if (spriteId2 != MAX_SPRITES)
-		DestroyItemIconObj(&gSprites[spriteId2], ITEMICON_TAG, ITEMICON_TAG);
-	
-	if (windowId != 0xFF)
-	{
-		ClearDialogWindowAndFrame(windowId, TRUE);
-		RemoveWindow(windowId);
-	}
+    u32 spriteId = gSpecialVar_0x8009;
+    struct Sprite * sprite = &gSprites[spriteId];
+    u32 windowId = sprite->data[0], spriteId2 = sprite->data[1];
+    
+    DestroyItemIconObj(sprite, ITEMICON_TAG, ITEMICON_TAG);
+    
+    if (spriteId2 != MAX_SPRITES)
+        DestroyItemIconObj(&gSprites[spriteId2], ITEMICON_TAG, ITEMICON_TAG);
+    
+    if (windowId != 0xFF)
+    {
+        ClearDialogWindowAndFrame(windowId, TRUE);
+        RemoveWindow(windowId);
+    }
 }

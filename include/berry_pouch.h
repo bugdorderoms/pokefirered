@@ -11,14 +11,14 @@ enum BerryPouchType
     BERRYPOUCH_FROMPOKEMONSTORAGEPC,
     BERRYPOUCH_FROMBATTLE,
     BERRYPOUCH_NA,
-	BERRYPOUCH_CHOOSE_ITEM,
+    BERRYPOUCH_CHOOSE_ITEM,
 };
 
-void BerryPouch_StartFadeToExitCallback(u8 taskId);
+void BerryPouch_StartFadeToExitCallback(u32 taskId);
 void BerryPouch_SetExitCallback(void (*exitCallback)(void));
 void InitBerryPouch(u32 type, void (*savedCallback)(void), u32 allowSelect);
 void DisplayItemMessageInBerryPouch(u32 taskId, u32 fontId, const u8 * str, TaskFunc followUpFunc);
-void Task_BerryPouch_DestroyDialogueWindowAndRefreshListMenu(u8 taskId);
+void Task_BerryPouch_DestroyDialogueWindowAndRefreshListMenu(u32 taskId);
 void BerryPouch_CursorResetToTop(void);
 
 #endif //GUARD_BERRY_POUCH_H

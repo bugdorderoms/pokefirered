@@ -204,7 +204,7 @@ enum
 
 #define ENEMY_SHADOW_Y_OFFSET                   27
 
-void Task_HidePartyStatusSummary(u8 taskId);
+void Task_HidePartyStatusSummary(u32 taskId);
 u32 CreateBattlerHealthboxSprites(u32 battlerId);
 u32 CreateSafariPlayerHealthboxSprites(void);
 void SetBattleBarStruct(u32 battlerId, s32 maxVal, s32 currVal, s32 receivedValue);

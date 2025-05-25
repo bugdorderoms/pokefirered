@@ -6,18 +6,18 @@
 #include "new_menu_helpers.h"
 #include "constants/songs.h"
 
-static void sub_80E57E8(u8 taskId);
-static void sub_80E583C(u8 taskId);
-static void sub_80E58A0(u8 taskId);
-static void sub_80E5934(u8 taskId);
+static void sub_80E57E8(u32 taskId);
+static void sub_80E583C(u32 taskId);
+static void sub_80E58A0(u32 taskId);
+static void sub_80E5934(u32 taskId);
 
 extern const u8 gUnknown_84169F8[];
 extern const u8 gText_PkmnHPRestoredByVar2[];
 
 bool32 SetUpFieldMove_SoftBoiled(void)
 {
-	u32 partyId = GetCursorSelectionMonId();
-	return (GetMonData(&gPlayerParty[partyId], MON_DATA_HP) > GetMonData(&gPlayerParty[partyId], MON_DATA_MAX_HP) / 5);
+    u32 partyId = GetCursorSelectionMonId();
+    return (GetMonData(&gPlayerParty[partyId], MON_DATA_HP) > GetMonData(&gPlayerParty[partyId], MON_DATA_MAX_HP) / 5);
 }
 
 void ChooseMonForSoftboiled(u32 taskId)
@@ -44,7 +44,7 @@ void Task_TryUseSoftboiledOnPartyMon(u32 taskId)
     else
     {
         curHp = GetMonData(&gPlayerParty[r5], MON_DATA_HP);
-		
+        
         if (curHp == 0 || r8 == r5 || GetMonData(&gPlayerParty[r5], MON_DATA_MAX_HP) == curHp)
             sub_80E5934(taskId);
         else
@@ -55,13 +55,13 @@ void Task_TryUseSoftboiledOnPartyMon(u32 taskId)
     }
 }
 
-static void sub_80E57E8(u8 taskId)
+static void sub_80E57E8(u32 taskId)
 {
     PlaySE(SE_USE_ITEM);
     PartyMenuModifyHP(taskId, gPartyMenu.slotId2, 1, GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_MAX_HP) / 5, sub_80E583C);
 }
 
-static void sub_80E583C(u8 taskId)
+static void sub_80E583C(u32 taskId)
 {
     GetMonNickname(&gPlayerParty[gPartyMenu.slotId2], gStringVar1);
     StringExpandPlaceholders(gStringVar4, gText_PkmnHPRestoredByVar2);
@@ -70,7 +70,7 @@ static void sub_80E583C(u8 taskId)
     gTasks[taskId].func = sub_80E58A0;
 }
 
-static void sub_80E58A0(u8 taskId)
+static void sub_80E58A0(u32 taskId)
 {
     if (IsPartyMenuTextPrinterActive() != TRUE)
     {
@@ -85,7 +85,7 @@ static void sub_80E58A0(u8 taskId)
     }
 }
 
-static void sub_80E5900(u8 taskId)
+static void sub_80E5900(u32 taskId)
 {
     if (IsPartyMenuTextPrinterActive() != TRUE)
     {
@@ -94,7 +94,7 @@ static void sub_80E5900(u8 taskId)
     }
 }
 
-static void sub_80E5934(u8 taskId)
+static void sub_80E5934(u32 taskId)
 {
     PlaySE(SE_SELECT);
     DisplayPartyMenuMessage(gUnknown_84169F8, 0);

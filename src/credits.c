@@ -130,7 +130,7 @@ struct CreditsResources
 {
     u8 mainseqno;
     u8 subseqno;
-    u8 taskId;
+    u32 taskId;
     u16 timer;
     u16 scrcmdidx;
     u8 canSpeedThrough;
@@ -934,7 +934,7 @@ static s32 RollCredits(void)
             DestroyCreditsWindow();
             sCreditsMgr->subseqno = 0;
             while (!DoOverworldMapScrollScene());
-			
+            
             switch (sCreditsMgr->whichMon)
             {
             case 3:
@@ -1070,7 +1070,7 @@ static u32 GetCreditsMonSpecies(u32 whichMon)
     case CREDITSMON_PIKACHU:
         return SPECIES_PIKACHU;
     }
-	return SPECIES_NONE;
+    return SPECIES_NONE;
 }
 
 static bool32 DoCreditsMonScene(void)
@@ -1235,7 +1235,7 @@ static bool32 DoCopyrightOrTheEndGfxScene(void)
         break;
     case 2:
         ShowBg(0);
-		BeginNormalPaletteFade(PALETTES_ALL, 0, sCreditsMgr->whichMon != 0 ? 0 : 16, 0, RGB_BLACK);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, sCreditsMgr->whichMon != 0 ? 0 : 16, 0, RGB_BLACK);
         sCreditsMgr->subseqno++;
         break;
     case 3:
@@ -1249,7 +1249,7 @@ static bool32 DoCopyrightOrTheEndGfxScene(void)
     return FALSE;
 }
 
-static void Task_MovePlayerAndGroundSprites(u8 taskId)
+static void Task_MovePlayerAndGroundSprites(u32 taskId)
 {
     struct CreditsTaskData * data = (void *)gTasks[taskId].data;
     switch (data->spriteMoveCmd)
@@ -1318,7 +1318,7 @@ static void LoadPlayerOrRivalSprite(u32 whichScene)
         taskId = CreateTask(Task_MovePlayerAndGroundSprites, 0);
         data = (void *)gTasks[taskId].data;
         sCreditsMgr->taskId = taskId;
-		
+        
         switch (sPlayerRivalSpriteParams[whichScene][2])
         {
         default:
@@ -1338,7 +1338,7 @@ static void LoadPlayerOrRivalSprite(u32 whichScene)
         data->spriteMoveCmd = sPlayerRivalSpriteParams[whichScene][2];
         data->playerTilesTag = 0x2000;
         data->field_04 = 0xFFFF;
-		
+        
         switch (sPlayerRivalSpriteParams[whichScene][0])
         {
         case 0:
@@ -1377,7 +1377,7 @@ static void LoadPlayerOrRivalSprite(u32 whichScene)
 
         data->groundTilesTag = 0x2001;
         data->field_0A = 0xFFFF;
-		
+        
         switch (sPlayerRivalSpriteParams[whichScene][1])
         {
         case 0:

@@ -13,10 +13,10 @@ struct MonCoords
 
 struct TrainerPic
 {
-	const struct CompressedSpriteSheet pic;
-	const struct CompressedSpritePalette palette;
-	struct MonCoords coords;
-	const union AnimCmd *const *anims;
+    const struct CompressedSpriteSheet pic;
+    const struct CompressedSpritePalette palette;
+    struct MonCoords coords;
+    const union AnimCmd *const *anims;
 };
 
 #define MON_COORDS_SIZE(width, height)(DIV_ROUND_UP(width, 8) << 4 | DIV_ROUND_UP(height, 8))

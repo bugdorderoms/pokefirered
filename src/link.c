@@ -197,11 +197,6 @@ bool8 IsWirelessAdapterConnected(void)
     return FALSE;
 }
 
-void Task_DestroySelf(u8 taskId)
-{
-    DestroyTask(taskId);
-}
-
 void SetLocalLinkPlayerId(u8 playerId)
 {
     gLocalLinkPlayer.id = playerId;
@@ -242,7 +237,7 @@ void InitLink(void)
     EnableSerial();
 }
 
-void Task_TriggerHandshake(u8 taskId)
+void Task_TriggerHandshake(u32 taskId)
 {
     if (++gTasks[taskId].data[0] == 5)
     {
@@ -1170,7 +1165,6 @@ void CB2_LinkError(void)
         ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON | DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON);
         Menu_LoadStdPalAt(0xF0, 0x20);
         gSoftResetDisabled = FALSE;
-        CreateTask(Task_DestroySelf, 0);
         StopMapMusic();
         gMain.callback1 = NULL;
         RunTasks();

@@ -33,123 +33,123 @@
 
 // Evo requirement macros
 #define EVO_TARGET(species)  \
-	EVO_TARGET_SPECIES,      \
-	(u8)species,             \
-	(species & 0xFF00) >> 8
+    EVO_TARGET_SPECIES,      \
+    (u8)species,             \
+    (species & 0xFF00) >> 8
 
 #define REQ_LEVEL(...)      \
     EVO_REQ_LEVEL,          \
-	DEFAULT(0, __VA_ARGS__)
+    DEFAULT(0, __VA_ARGS__)
 
 #define REQ_ITEM(item)   \
     EVO_REQ_ITEM,        \
     (u8)item,            \
-	(item & 0xFF00) >> 8
+    (item & 0xFF00) >> 8
 
 #define REQ_TRADE_WITH_SPECIES(species) \
     EVO_REQ_TRADE_WITH_SPECIES,         \
-	(u8)species,                        \
-	(species & 0xFF00) >> 8
+    (u8)species,                        \
+    (species & 0xFF00) >> 8
 
 #define REQ_SPIN_FOR_DURATION(direction, cmp, seconds) \
-	EVO_REQ_SPIN_FOR_DURATION,                         \
-	direction,                                         \
-	cmp,                                               \
-	seconds
+    EVO_REQ_SPIN_FOR_DURATION,                         \
+    direction,                                         \
+    cmp,                                               \
+    seconds
 
 #define REQ_FRIENDSHIP \
     EVO_REQ_FRIENDSHIP
 
 #define REQ_TIME(time) \
-	EVO_REQ_TIME,      \
-	time
+    EVO_REQ_TIME,      \
+    time
 
 #define REQ_STAT_X_STAT(stat1, cmp, stat2) \
-	EVO_REQ_STAT_X_STAT,                   \
-	stat1,                                 \
-	cmp,                                   \
-	stat2
+    EVO_REQ_STAT_X_STAT,                   \
+    stat1,                                 \
+    cmp,                                   \
+    stat2
 
 #define REQ_GENDER(gender) \
     EVO_REQ_GENDER,        \
-	gender
+    gender
 
 #define REQ_ITEM_HOLD(item) \
     EVO_REQ_ITEM_HOLD,      \
-	(u8)item,               \
-	(item & 0xFF00) >> 8
+    (u8)item,               \
+    (item & 0xFF00) >> 8
 
 #define REQ_MOVE(move)   \
     EVO_REQ_MOVE,        \
-	(u8)move,            \
-	(move & 0xFF00) >> 8
+    (u8)move,            \
+    (move & 0xFF00) >> 8
 
 #define REQ_MOVE_WITH_TYPE(type) \
     EVO_REQ_MOVE_WITH_TYPE,      \
-	type
+    type
 
 #define REQ_DEFEAT_SPECIES(species, xTimes) \
     EVO_REQ_DEFEAT_SPECIES_X_TIMES,         \
-	(u8)species,                            \
-	(species & 0xFF00) >> 8,                \
-	xTimes
+    (u8)species,                            \
+    (species & 0xFF00) >> 8,                \
+    xTimes
 
 #define REQ_WEATHER(weatherBits) \
     EVO_REQ_WEATHER,             \
-	weatherBits
+    weatherBits
 
 #define REQ_SPECIES_IN_PARTY(species) \
     EVO_REQ_SPECIES_IN_PARTY,         \
-	(u8)species,                      \
-	(species & 0xFF00) >> 8
+    (u8)species,                      \
+    (species & 0xFF00) >> 8
 
 #define REQ_SPECIES_WITH_TYPE(type) \
     EVO_REQ_SPECIES_WITH_TYPE,      \
-	type
+    type
 
 #define REQ_X_CRITICAL_HITS(numCriticals) \
     EVO_REQ_X_CRITICAL_HITS,              \
-	numCriticals
+    numCriticals
 
 #define REQ_USE_MOVE_X_TIMES(move, xTimes) \
     EVO_REQ_USE_MOVE_X_TIMES,              \
-	(u8)move,                              \
-	(move & 0xFF00) >> 8,                  \
-	xTimes
+    (u8)move,                              \
+    (move & 0xFF00) >> 8,                  \
+    xTimes
 
 #define REQ_RECOIL_DAMAGE(damageAmount) \
     EVO_REQ_RECOIL_DAMAGE,              \
-	(u8)damageAmount,                   \
-	(damageAmount & 0xFF00) >> 8
+    (u8)damageAmount,                   \
+    (damageAmount & 0xFF00) >> 8
 
 #define REQ_MOON_PHASE(phase) \
     EVO_REQ_MOON_PHASE,       \
-	phase
+    phase
 
 #define REQ_DAMAGE_HP(damageAmount) \
     EVO_REQ_DAMAGE_HP,              \
-	(u8)damageAmount,               \
-	(damageAmount & 0xFF00) >> 8
+    (u8)damageAmount,               \
+    (damageAmount & 0xFF00) >> 8
 
 #define REQ_FOLLOW_STEPS(numSteps) \
     EVO_REQ_FOLLOW_STEPS,          \
-	(u8)numSteps,                  \
-	(numSteps & 0xFF00) >> 8
+    (u8)numSteps,                  \
+    (numSteps & 0xFF00) >> 8
 
 // Evo special macros
 #define CREATE_SPECIES(species) \
     EVO_CREATE_SPECIES,         \
-	(u8)species,                \
-	(species & 0xFF00) >> 8
+    (u8)species,                \
+    (species & 0xFF00) >> 8
 
 #define REGIONAL_FORM \
     EVO_REGIONAL_FORM
-	
+    
 #define NATURE_FORM \
     EVO_NATURE_FORM
 
 #define PERSONALITY_FORM \
-	EVO_PERSONALITY_FORM
+    EVO_PERSONALITY_FORM
 
 // Modes for GetEvolutionTargetSpecies
 #define EVO_MODE_NORMAL         0 // Levels up

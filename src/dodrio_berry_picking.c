@@ -75,7 +75,7 @@ static bool32 gUnknown_3002044;
 
 static void sub_81508D8(void);
 static void sub_81508EC(struct DodrioStruct * dodrio);
-static void sub_8150A84(u8 taskId);
+static void sub_8150A84(u32 taskId);
 static void sub_8150C78(void);
 static void sub_8150CBC(void);
 static void sub_8150CF4(void);
@@ -91,8 +91,8 @@ static void sub_81512B4(void);
 static void sub_8151488(void);
 static void sub_81514F0(void);
 static void sub_815159C(void);
-static void sub_81516DC(u8 taskId);
-static void sub_8151750(u8 taskId);
+static void sub_81516DC(u32 taskId);
+static void sub_8151750(u32 taskId);
 static void sub_8151B54(void);
 static void sub_8151BA0(void);
 static void sub_8151C5C(void);
@@ -130,7 +130,7 @@ static u8 sub_815327C(u8);
 static void sub_81532B8(void);
 static void sub_815336C(void);
 static u32 sub_8153424(u8 mpId);
-static void Task_ShowDodrioBerryPickingRecords(u8 taskId);
+static void Task_ShowDodrioBerryPickingRecords(u32 taskId);
 static void sub_81538D0(u8 windowId);
 
 // const rom data
@@ -376,7 +376,7 @@ static void sub_81508EC(struct DodrioStruct * data)
     }
 }
 
-static void sub_8150A84(u8 taskId)
+static void sub_8150A84(u32 taskId)
 {
     u8 r4, r5;
 
@@ -449,7 +449,7 @@ static void sub_8150A84(u8 taskId)
     }
 }
 
-static void sub_8150C08(u8 taskId)
+static void sub_8150C08(u32 taskId)
 {
     sub_8151B54();
     sUnknown_8475578[gUnknown_203F3E0->unk18]();
@@ -460,7 +460,7 @@ static void sub_8150C08(u8 taskId)
     sub_8151BA0();
 }
 
-static void sub_8150C40(u8 taskId)
+static void sub_8150C40(u32 taskId)
 {
     sub_8151C5C();
     sUnknown_84755A8[gUnknown_203F3E0->unk18]();
@@ -980,7 +980,7 @@ static void sub_815159C(void)
         }
         break;
     case 2:
-		ResetAllBgsPos();
+        ResetAllBgsPos();
         gUnknown_203F3E0->unk10++;
         break;
     case 3:
@@ -1019,7 +1019,7 @@ static void sub_815159C(void)
     }
 }
 
-static void sub_81516DC(u8 taskId)
+static void sub_81516DC(u32 taskId)
 {
     switch (gUnknown_203F3E0->unk10)
     {
@@ -1053,7 +1053,7 @@ static void sub_81516DC(u8 taskId)
     }
 }
 
-static void sub_8151750(u8 taskId)
+static void sub_8151750(u32 taskId)
 {
     s16 * data = gTasks[taskId].data;
     u8 i;
@@ -2398,7 +2398,7 @@ void IsDodrioInParty(void)
 
 void ShowDodrioBerryPickingRecords(void)
 {
-    u8 taskId = CreateTask(Task_ShowDodrioBerryPickingRecords, 0);
+    u32 taskId = CreateTask(Task_ShowDodrioBerryPickingRecords, 0);
     Task_ShowDodrioBerryPickingRecords(taskId);
 }
 
@@ -2421,7 +2421,7 @@ ALIGNED(4)
 static const u8 sUnknown_84755FC[][2] = {{24}, {40}, {56}};
 static const u8 sUnknown_8475602[][2] = {{24}, {40}, {70}};
 
-static void Task_ShowDodrioBerryPickingRecords(u8 taskId)
+static void Task_ShowDodrioBerryPickingRecords(u32 taskId)
 {
     struct WindowTemplate window;
     s32 i, width, widthCurr;

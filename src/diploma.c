@@ -26,9 +26,9 @@ static void DiplomaPrintText(void);
 static bool32 DiplomaLoadGfx(void);
 static void DiplomaVblankHandler(void);
 static void CB2_Diploma(void);
-static void Task_WaitForExit(u8);
-static void Task_DiplomaInit(u8);
-static void Task_DiplomaReturnToOverworld(u8);
+static void Task_WaitForExit(u32);
+static void Task_DiplomaInit(u32);
+static void Task_DiplomaReturnToOverworld(u32);
 
 static const ALIGNED(4) u8 gUnknown_8415A04[3] = {0, 2, 3};
 
@@ -90,7 +90,7 @@ static void CB2_Diploma(void)
     UpdatePaletteFade();
 }
 
-static void Task_DiplomaInit(u8 taskId)
+static void Task_DiplomaInit(u32 taskId)
 {
     switch (gDiploma->callbackStep)
     {
@@ -108,7 +108,7 @@ static void Task_DiplomaInit(u8 taskId)
         CopyToBgTilemapBuffer(1, sDiplomaTilemap, 0, 0);
         break;
     case 4:
-		SetGpuReg(REG_OFFSET_BG1HOFS, HasAllMons() ? 0x100 : 0);
+        SetGpuReg(REG_OFFSET_BG1HOFS, HasAllMons() ? 0x100 : 0);
         break;
     case 5:
         DiplomaPrintText();
@@ -133,7 +133,7 @@ static void Task_DiplomaInit(u8 taskId)
     gDiploma->callbackStep++;
 }
 
-static void Task_WaitForExit(u8 taskId)
+static void Task_WaitForExit(u32 taskId)
 {
     switch (gDiploma->state)
     {
@@ -154,15 +154,15 @@ static void Task_WaitForExit(u8 taskId)
     }
 }
 
-static void Task_DiplomaReturnToOverworld(u8 taskId)
+static void Task_DiplomaReturnToOverworld(u32 taskId)
 {
     if (!gPaletteFade.active)
-	{
-		DestroyTask(taskId);
-		FreeAllWindowBuffers();
-		FREE_AND_SET_NULL(gDiploma);
-		SetMainCallback2(CB2_ReturnToFieldFromDiploma);
-	}
+    {
+        DestroyTask(taskId);
+        FreeAllWindowBuffers();
+        FREE_AND_SET_NULL(gDiploma);
+        SetMainCallback2(CB2_ReturnToFieldFromDiploma);
+    }
 }
 
 static void DiplomaBgInit(void)
@@ -183,7 +183,7 @@ static void DiplomaVblankHandler(void)
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
     ResetBgsAndClearDma3BusyFlags(0);
     InitBgsFromTemplates(0, gUnknown_8415A08, 2);
-	ResetAllBgsPos();
+    ResetAllBgsPos();
     InitWindows(gUnknown_8415A10);
     DeactivateAllTextPrinters();
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON);
@@ -207,7 +207,7 @@ static bool32 DiplomaLoadGfx(void)
     case 2:
         if (!(FreeTempTileDataBuffersIfPossible() == 1))
             break;
-		
+        
         return FALSE;
     case 3:
         LoadPalette(sDiplomaPal, 0, 0x40);
@@ -224,7 +224,7 @@ static void DiplomaPrintText(void)
     u32 width;
     DynamicPlaceholderTextUtil_Reset();
     DynamicPlaceholderTextUtil_SetPlaceholderPtr(0, gSaveBlock2Ptr->playerName);
-	DynamicPlaceholderTextUtil_SetPlaceholderPtr(1, HasAllMons() ? COMPOUND_STRING("National") : COMPOUND_STRING("Kanto"));
+    DynamicPlaceholderTextUtil_SetPlaceholderPtr(1, HasAllMons() ? COMPOUND_STRING("National") : COMPOUND_STRING("Kanto"));
     FillWindowPixelBuffer(0, 0);
     DynamicPlaceholderTextUtil_ExpandPlaceholders(arr, COMPOUND_STRING("Player: {DYNAMIC 0x00}"));
     width = GetStringWidth(2, arr, -1);
