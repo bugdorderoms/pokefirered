@@ -38,16 +38,8 @@ static void SetFlashScanlineEffectWindowBoundary(u16 *dest, u32 y, s32 left, s32
 {
     if (y <= 160)
     {
-        if (left < 0)
-            left = 0;
-        else if (left > 255)
-            left = 255;
-        
-        if (right < 0)
-            right = 0;
-        else if (right > 255)
-            right = 255;
-        
+        left = clamp(left, 0, 255);
+        right = clamp(right, 0, 255);
         dest[y] = (left << 8) | right;
     }
 }

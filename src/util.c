@@ -17,33 +17,6 @@ static const struct SpriteTemplate gInvisibleSpriteTemplate =
     .callback = SpriteCallbackDummy,
 };
 
-static const u8 sSpriteDimensions[3][4][2] =
-{
-    // square
-    {
-        {1, 1},
-        {2, 2},
-        {4, 4},
-        {8, 8},
-    },
-
-    // horizontal rectangle
-    {
-        {2, 1},
-        {4, 1},
-        {4, 2},
-        {8, 4},
-    },
-
-    // vertical rectangle
-    {
-        {1, 2},
-        {1, 4},
-        {2, 4},
-        {4, 8},
-    },
-};
-
 static const u16 gCrc16Table[] =
 {
     0x0000, 0x1189, 0x2312, 0x329B, 0x4624, 0x57AD, 0x6536, 0x74BF,
@@ -82,12 +55,12 @@ static const u16 gCrc16Table[] =
 
 const u8 gMiscBlank_Gfx[] = INCBIN_U8("graphics/interface/blank.4bpp");
 
-u8 CreateInvisibleSpriteWithCallback(void (*callback)(struct Sprite *))
+u32 CreateInvisibleSpriteWithCallback(void (*callback)(struct Sprite *))
 {
-    u8 sprite = CreateSprite(&gInvisibleSpriteTemplate, 248, 168, 14);
-    gSprites[sprite].invisible = TRUE;
-    gSprites[sprite].callback = callback;
-    return sprite;
+    u32 spriteId = CreateSprite(&gInvisibleSpriteTemplate, 248, 168, 14);
+    gSprites[spriteId].invisible = TRUE;
+    gSprites[spriteId].callback = callback;
+    return spriteId;
 }
 
 void StoreWordInTwoHalfwords(u16 *h, unsigned w)
@@ -101,7 +74,7 @@ void LoadWordFromTwoHalfwords(u16 *h, unsigned *w)
     *w = h[0] | (s16)h[1] << 16;
 }
 
-void SetBgAffineStruct(struct BgAffineSrcData *src, u32 texX, u32 texY, s16 scrX, s16 scrY, s16 sx, s16 sy, u16 alpha)
+static void SetBgAffineStruct(struct BgAffineSrcData *src, u32 texX, u32 texY, s16 scrX, s16 scrY, s16 sx, s16 sy, u16 alpha)
 {
     src->texX = texX;
     src->texY = texY;
@@ -115,73 +88,8 @@ void SetBgAffineStruct(struct BgAffineSrcData *src, u32 texX, u32 texY, s16 scrX
 void DoBgAffineSet(struct BgAffineDstData *dest, u32 texX, u32 texY, s16 scrX, s16 scrY, s16 sx, s16 sy, u16 alpha)
 {
     struct BgAffineSrcData src;
-
     SetBgAffineStruct(&src, texX, texY, scrX, scrY, sx, sy, alpha);
     BgAffineSet(&src, dest, 1);
-}
-
-void CopySpriteTiles(u8 shape, u8 size, u8 *tiles, u16 *tilemap, u8 *output)
-{
-    u8 x, y;
-    s8 i, j;
-    u8 xflip[32];
-    u8 h = sSpriteDimensions[shape][size][1];
-    u8 w = sSpriteDimensions[shape][size][0];
-
-    for (y = 0; y < h; y++)
-    {
-        int filler = 32 - w;
-
-        for (x = 0; x < w; x++)
-        {
-            u16 tile = (*tilemap & 0x3ff) * 32;
-            int attr = *tilemap & 0xc00;
-
-            if (attr == 0)
-            {
-                DmaCopy32Defvars(3, tiles + tile, output, 32);
-            }
-            else if (attr == 0x800)  // yflip
-            {
-                for (i = 0; i < 8; i++)
-                {
-                    u8 requiredForMatching = 0;
-
-                    ++requiredForMatching;
-                    --requiredForMatching;
-                    DmaCopy32Defvars(3, tile + (7 - i) * 4 + tiles, output + i * 4, 4);
-                }
-            }
-            else  // xflip
-            {
-                for (i = 0; i < 8; i++)
-                {
-                    for (j = 0; j < 4; j++)
-                    {
-                        u8 i2 = i * 4;
-                        xflip[i2 + (3 - j)] = (tiles[tile + i2 + j] & 0xf) << 4;
-                        xflip[i2 + (3 - j)] |= tiles[tile + i2 + j] >> 4;
-                    }
-                }
-                if (*tilemap & 0x800)  // yflip
-                {
-                    for (i = 0; i < 8; i++)
-                    {
-                        ++tile;
-                        --tile;
-                        DmaCopy32Defvars(3, (7 - i) * 4 + xflip, output + i * 4, 4);
-                    }
-                }
-                else
-                {
-                    DmaCopy32Defvars(3, xflip, output, 32);
-                }
-            }
-            tilemap++;
-            output += 32;
-        }
-        tilemap += filler;
-    }
 }
 
 u16 CalcCRC16WithTable(const u8 *data, u32 length)
@@ -199,9 +107,9 @@ u16 CalcCRC16WithTable(const u8 *data, u32 length)
     return ~crc;
 }
 
-bool8 JumpBasedOnKind(u32 value, u8 cmpKind, u32 cmpTo)
+bool32 JumpBasedOnKind(u32 value, u32 cmpKind, u32 cmpTo)
 {
-    bool8 ret = FALSE;
+    bool32 ret = FALSE;
     
     switch (cmpKind)
     {
@@ -292,7 +200,7 @@ void MergeSort(struct SortComparator *comparator, u32 low, u32 high)
 // Returns 0 if the two texts are identical
 s8 CompareTextAlphabetically(const u8 *text1, const u8 *text2)
 {
-    u8 i;
+    u32 i;
     
     for (i = 0; ; ++i)
     {

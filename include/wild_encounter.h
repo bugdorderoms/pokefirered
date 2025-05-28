@@ -47,16 +47,16 @@ extern bool8 gIsSurfingEncounter;
 
 void SeedWildEncounterRng(u16 randVal);
 void ResetEncounterRateModifiers(void);
-void ToggleWildEncountersState(bool8 disabled);
-u16 GetCurrentMapWildMonHeaderId(void);
-const struct WildPokemonInfo *GetWildPokemonInfoByHeaderType(u16 headerId, u8 type);
-u16 GenerateWildMon(u16 species, u8 level, bool8 checkWildInfluence);
-bool8 TryStandardWildEncounter(u32 currMetatileAttrs);
-void FishingWildEncounter(u8 rod);
-bool8 DoesCurrentMapHaveFishingMons(void);
-bool8 TrySweetScentWildEncounter(void);
-u16 GetWildMonForAmbientCry(bool8 *isWaterMon);
-bool8 UpdateRepelCounter(void);
-u8 TryGetForcedWildMonNature(struct Pokemon *mon, u16 ability);
+void ToggleWildEncountersState(bool32 disabled);
+u32 GetCurrentMapWildMonHeaderId(void);
+const struct WildPokemonInfo *GetWildPokemonInfoByHeaderType(u16 headerId, u32 type);
+u32 GenerateWildMon(u32 species, u32 level, bool32 checkWildInfluence);
+bool32 TryStandardWildEncounter(u32 currMetatileAttrs);
+void FishingWildEncounter(u32 rod);
+bool32 DoesCurrentMapHaveFishingMons(void);
+bool32 TrySweetScentWildEncounter(void);
+u32 GetWildMonForAmbientCry(bool8 *isWaterMon);
+bool32 UpdateRepelCounter(void);
+u32 TryGetForcedWildMonNature(struct Pokemon *mon, u32 ability);
 
 #endif // GUARD_WILD_ENCOUNTER_H

@@ -37,7 +37,7 @@ extern u8 gExpandedPlaceholder_Groudon[];
 extern u8 gExpandedPlaceholder_Red[];
 extern u8 gExpandedPlaceholder_Green[];
 
-u8 *StringCopy_WithLimit(u8 *dest, const u8 *src, u32 limit)
+static u8 *StringCopy_WithLimit(u8 *dest, const u8 *src, u32 limit)
 {
     u32 i;
 
@@ -52,7 +52,12 @@ u8 *StringCopy_WithLimit(u8 *dest, const u8 *src, u32 limit)
     return &dest[i];
 }
 
-u8 *StringGet_WithLimit(u8 *str, u32 limit)
+u8 *StringCopy_Nickname(u8 *dest, const u8 *src)
+{
+    return StringCopy_WithLimit(dest, src, POKEMON_NAME_LENGTH);
+}
+
+static u8 *StringGet_WithLimit(u8 *str, u32 limit)
 {
     u32 i;
 
@@ -63,6 +68,21 @@ u8 *StringGet_WithLimit(u8 *str, u32 limit)
     }
     str[i] = EOS;
     return &str[i];
+}
+
+u8 *StringGet_Nickname(u8 *str)
+{
+    return StringGet_WithLimit(str, POKEMON_NAME_LENGTH);
+}
+
+u8 *StringCopy7(u8 *dest, const u8 *src)
+{
+    return StringCopy_WithLimit(dest, src, 7);
+}
+
+u8 *StringFillWithTerminator(u8 *dest, u16 n)
+{
+    return StringFill(dest, EOS, n);
 }
 
 u8 *StringCopy(u8 *dest, const u8 *src)

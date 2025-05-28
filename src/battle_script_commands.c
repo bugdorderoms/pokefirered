@@ -914,15 +914,13 @@ static void atk00_attackcanceler(void)
     }
 }
 
-static void JumpIfMoveFailed(u32 adder, const u8 *jumpStr)
+static void JumpIfMoveFailed(const u8 *nextInstr, const u8 *jumpStr)
 {
-    const u8 *BS_ptr = gBattlescriptCurrInstr + adder;
-
     if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
     {
         gBattleStruct->battlers[gBattlerTarget].lastLandedMove = 0;
         gBattleStruct->battlers[gBattlerTarget].lastHitMoveType = 0;
-        BS_ptr = jumpStr;
+        nextInstr = jumpStr;
     }
     else
     {
@@ -931,50 +929,50 @@ static void JumpIfMoveFailed(u32 adder, const u8 *jumpStr)
         if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBattlerTarget))
             return;
     }
-    gBattlescriptCurrInstr = BS_ptr;
+    gBattlescriptCurrInstr = nextInstr;
 }
 
-bool32 JumpIfMoveAffectedByProtect(u32 addr, const u8 *jumpStr)
+bool32 JumpIfMoveAffectedByProtect(const u8 *nextInstr, const u8 *jumpStr)
 {
     if (IsBattlerProtected(gBattlerAttacker, gBattlerTarget, gCurrentMove))
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
-        JumpIfMoveFailed(addr, jumpStr);
+        JumpIfMoveFailed(nextInstr, jumpStr);
         gBattleCommunication[MISS_TYPE] = B_MSG_PROTECTED;
         return TRUE;
     }
     return FALSE;
 }
 
-static bool32 AccuracyCalcHelper(const u8 *jumpStr)
+static bool32 AccuracyCalcHelper(const u8 *nextInstr, const u8 *jumpStr)
 {
     if (gStatuses3[gBattlerTarget] & STATUS3_COMMANDING)
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
-        JumpIfMoveFailed(6, jumpStr);
+        JumpIfMoveFailed(nextInstr, jumpStr);
     }
     else if ((gStatuses3[gBattlerAttacker] & STATUS3_ALWAYS_HITS) && gDisableStructs[gBattlerAttacker].battlerWithSureHit == gBattlerTarget) // Check Lock On
-        JumpIfMoveFailed(6, jumpStr);
+        JumpIfMoveFailed(nextInstr, jumpStr);
     else if (GetBattlerAbility(gBattlerAttacker) == ABILITY_NO_GUARD || GetBattlerAbility(gBattlerTarget) == ABILITY_NO_GUARD) // Check No Guard
-        JumpIfMoveFailed(6, jumpStr);
+        JumpIfMoveFailed(nextInstr, jumpStr);
     else if (IsBattlerOfType(gBattlerAttacker, TYPE_POISON) && gCurrentMove == MOVE_TOXIC)
-        JumpIfMoveFailed(6, jumpStr);
+        JumpIfMoveFailed(nextInstr, jumpStr);
     else if ((!gBattleMoves[gCurrentMove].flags.hitInAir && !gBattleMoves[gCurrentMove].flags.hitInAirDoubleDmg && (gStatuses3[gBattlerTarget] & STATUS3_ON_AIR))
         || (!gBattleMoves[gCurrentMove].flags.hitUnderground && (gStatuses3[gBattlerTarget] & STATUS3_UNDERGROUND))
         || (!gBattleMoves[gCurrentMove].flags.hitUnderwater && (gStatuses3[gBattlerTarget] & STATUS3_UNDERWATER))
         || (gStatuses3[gBattlerTarget] & STATUS3_VANISHED)) // Check if semi-invulnerable
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
-        JumpIfMoveFailed(6, jumpStr);
+        JumpIfMoveFailed(nextInstr, jumpStr);
     }
     else if (gBattleMoves[gCurrentMove].effect == EFFECT_NEVER_MISS_IN_WEATHER && IsBattlerWeatherAffected(gBattlerAttacker, gBattleMoves[gCurrentMove].argument.neverMissInWeather.weather)) // Check never misses on weather
-        JumpIfMoveFailed(6, jumpStr);
+        JumpIfMoveFailed(nextInstr, jumpStr);
     else if ((gStatuses3[gBattlerTarget] & STATUS3_MINIMIZED) && gBattleMoves[gCurrentMove].flags.dmgMinimize) // Check never misses on minimize 
-        JumpIfMoveFailed(6, jumpStr);
+        JumpIfMoveFailed(nextInstr, jumpStr);
     else if ((gStatuses3[gBattlerTarget] & STATUS3_TELEKINESIS) && gBattleMoves[gCurrentMove].effect != EFFECT_OHKO) // Check Telekinesis
-        JumpIfMoveFailed(6, jumpStr);
+        JumpIfMoveFailed(nextInstr, jumpStr);
     else if (!gBattleMoves[gCurrentMove].accuracy) // Check moves that never misses
-        JumpIfMoveFailed(6, jumpStr);
+        JumpIfMoveFailed(nextInstr, jumpStr);
     else
         return FALSE;
     
@@ -1078,7 +1076,7 @@ static void atk01_accuracycheck(void)
     if ((gBattleTypeFlags & BATTLE_TYPE_POKEDUDE) || ((gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) && !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_INFLICT_DMG) 
     && !IS_MOVE_STATUS(gCurrentMove) && GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER) || ((gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
     && !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_STAT_CHG) && IS_MOVE_STATUS(gCurrentMove) && GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER))
-        JumpIfMoveFailed(6, cmd->jumpStr);
+        JumpIfMoveFailed(cmd->nextInstr, cmd->jumpStr);
     else if (cmd->noAccCal)
     {
         if (gStatuses3[gBattlerTarget] & STATUS3_COMMANDING)
@@ -1087,13 +1085,13 @@ static void atk01_accuracycheck(void)
             gBattlescriptCurrInstr = cmd->nextInstr; // Only checks for Lock On, no acc calc
         else if (gStatuses3[gBattlerTarget] & STATUS3_SEMI_INVULNERABLE) // Check semi-invulnerable
             gBattlescriptCurrInstr = cmd->jumpStr;
-        else if (!JumpIfMoveAffectedByProtect(6, cmd->jumpStr)) // Check Protect
+        else if (!JumpIfMoveAffectedByProtect(cmd->nextInstr, cmd->jumpStr)) // Check Protect
             gBattlescriptCurrInstr = cmd->nextInstr;
     }
     else if (gSpecialStatuses[gBattlerAttacker].parentalBondState == PARENTAL_BOND_2ND_HIT || (gSpecialStatuses[gBattlerAttacker].multiHitOn
     && (gBattleMoves[gCurrentMove].effect != EFFECT_TRIPLE_KICK || GetBattlerAbility(gBattlerAttacker) == ABILITY_SKILL_LINK))) // Check Skill Link on multi-hit moves
         gBattlescriptCurrInstr = cmd->nextInstr;
-    else if (JumpIfMoveAffectedByProtect(6, cmd->jumpStr) || AccuracyCalcHelper(cmd->jumpStr)) // Check Protect and effects that cause the move to aways hit
+    else if (JumpIfMoveAffectedByProtect(cmd->nextInstr, cmd->jumpStr) || AccuracyCalcHelper(cmd->nextInstr, cmd->jumpStr)) // Check Protect and effects that cause the move to aways hit
         return;
     else
     {
@@ -1115,7 +1113,7 @@ static void atk01_accuracycheck(void)
                 gProtectStructs[gBattlerAttacker].targetNotAffected = TRUE;
             }
         }
-        JumpIfMoveFailed(6, cmd->jumpStr);
+        JumpIfMoveFailed(cmd->nextInstr, cmd->jumpStr);
     }
 }
 
@@ -4420,6 +4418,11 @@ static void atk56_formchange(void)
 // unify playanimation and playanimation2 into a single function
 static void PlayAnimationInternal(u32 battlerId, u32 animId, u32 argument)
 {
+#if FAST_TRANSFORM_ANIMS
+    if (!IsBattleAnimationsOn() && gBattleAnims_General[animId].changeForm && gBattleAnims_General[animId].resumeIfAnimsOff)
+        animId = B_ANIM_FORM_CHANGE;
+#endif
+
     if (gBattleAnims_General[animId].shouldBePlayed)
     {
         BtlController_EmitBattleAnimation(battlerId, BUFFER_A, animId, argument);
@@ -7357,6 +7360,7 @@ static void atkA9_trychoosesleeptalkmove(void)
         
         gCurrMovePos = movePosition;
         gCalledMove = gBattleMons[gBattlerAttacker].moves[movePosition];
+        gDisableStructs[gBattlerAttacker].usedMoveIndices |= Bit(gCurrMovePos);
         BattleAI_RecordMoveUsed(gBattlerAttacker, movePosition);
         gBattlescriptCurrInstr = cmd->nextInstr;
     }

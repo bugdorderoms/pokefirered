@@ -674,10 +674,7 @@ void TrkVolPitSet(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *tr
         if (track->modT == 2)
             y += track->modM;
 
-        if (y < -128)
-            y = -128;
-        else if (y > 127)
-            y = 127;
+        y = clamp(y, -128, 127);
 
         track->volMR = (u32)((y + 128) * x) >> 8;
         track->volML = (u32)((127 - y) * x) >> 8;

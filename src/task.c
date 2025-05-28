@@ -167,14 +167,14 @@ bool32 FuncIsActiveTask(TaskFunc func)
 
 u32 FindTaskIdByFunc(TaskFunc func)
 {
-    s32 i;
+    u32 i;
 
     for (i = 0; i < NUM_TASKS; i++)
     {
         if (gTasks[i].isActive && gTasks[i].func == func)
-            return (u32)i;
+            return i;
     }
-    return -1;
+    return 0xFF;
 }
 
 u32 GetTaskCount(void)

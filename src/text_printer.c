@@ -46,7 +46,7 @@ void DeactivateAllTextPrinters(void)
         sTextPrinters[printer].active = 0;
 }
 
-bool32 AddTextPrinterParameterized(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16))
+bool32 AddTextPrinterParameterized(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16))
 {
     struct TextPrinterTemplate printerTemplate;
 
@@ -66,7 +66,7 @@ bool32 AddTextPrinterParameterized(u32 windowId, u32 fontId, const u8 *str, u8 x
     return AddTextPrinter(&printerTemplate, speed, callback);
 }
 
-bool32 AddTextPrinterParameterized2(u32 windowId, u32 fontId, const u8 *str, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16), u32 fgColor, u32 bgColor, u32 shadowColor)
+bool32 AddTextPrinterParameterized2(u32 windowId, u32 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u32 fgColor, u32 bgColor, u32 shadowColor)
 {
     struct TextPrinterTemplate printer;
 
@@ -127,7 +127,7 @@ void AddTextPrinterParameterized4(u32 windowId, u32 fontId, u8 x, u8 y, u32 lett
     AddTextPrinter(&printer, speed, NULL);
 }
 
-void AddTextPrinterParameterized5(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16), u32 letterSpacing, u32 lineSpacing)
+void AddTextPrinterParameterized5(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u32 letterSpacing, u32 lineSpacing)
 {
     struct TextPrinterTemplate printer;
 
@@ -147,7 +147,7 @@ void AddTextPrinterParameterized5(u32 windowId, u32 fontId, const u8 *str, u8 x,
     AddTextPrinter(&printer, speed, callback);
 }
 
-bool32 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16))
+bool32 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16))
 {
     int i;
     u16 j;

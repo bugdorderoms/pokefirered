@@ -523,7 +523,7 @@ u32 CheckStatDecreaseBlockEffects(u32 attacker, u32 target, u32 statId, u32 flag
 {
     if ((gSideStatuses[GetBattlerSide(target)] & SIDE_STATUS_MIST) && GetBattlerAbility(attacker) != ABILITY_INFILTRATOR) // Check Mist
         return STAT_CHANGE_FAIL_MIST;
-    else if (!(flags & STAT_CHANGE_FLAG_IGNORE_PROTECT) && JumpIfMoveAffectedByProtect(0, gBattlescriptCurrInstr)) // Check protect
+    else if (!(flags & STAT_CHANGE_FLAG_IGNORE_PROTECT) && JumpIfMoveAffectedByProtect(gBattlescriptCurrInstr, gBattlescriptCurrInstr)) // Check protect
         return STAT_CHANGE_FAIL_PROTECTED;
     else if (IsBattlerProtectedByFlowerVeil(target)) // Check Flower Veil
         return STAT_CHANGE_FAIL_FLOWER_VEIL;
@@ -601,12 +601,9 @@ bool32 ChangeStatBuffs(u32 flags, bool32 onlyChecks)
             buff *= -1; // Invert buff
             break;
     }
-    
+
     // Clamp buff to max and min values
-    if (buff > +6)
-        buff = +6;
-    else if (buff < -6)
-        buff = -6;
+    buff = clamp(buff, -6, +6);
     
     if (buff > 0) // Stat increase
     {

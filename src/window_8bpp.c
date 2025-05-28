@@ -4,17 +4,15 @@
 EWRAM_DATA static struct Window* sWindowPtr = NULL;
 EWRAM_DATA static u16 sWindowSize = 0;
 
-static u8 GetNumActiveWindowsOnBg8Bit(u8 bgId);
-
 static void nullsub_9(void)
 {
 }
 
-u16 AddWindow8Bit(const struct WindowTemplate *template)
+u32 AddWindow8Bit(const struct WindowTemplate *template)
 {
-    u16 windowId;
+    u32 windowId;
     u8* memAddress;
-    u8 bgLayer;
+    u32 bgLayer;
 
     for (windowId = 0; windowId < WINDOWS_MAX; windowId++)
     {
@@ -23,6 +21,7 @@ u16 AddWindow8Bit(const struct WindowTemplate *template)
     }
     if (windowId == WINDOWS_MAX)
         return 0xFF;
+    
     bgLayer = template->bg;
     if (gWindowBgTilemapBuffers[bgLayer] == NULL)
     {
@@ -42,7 +41,7 @@ u16 AddWindow8Bit(const struct WindowTemplate *template)
     memAddress = Alloc((u16)(0x40 * (template->width * template->height)));
     if (memAddress == NULL)
     {
-        if (GetNumActiveWindowsOnBg8Bit(bgLayer) == 0 && gWindowBgTilemapBuffers[bgLayer] != nullsub_9)
+        if (GetNumActiveWindowsOnBg(bgLayer) == 0 && gWindowBgTilemapBuffers[bgLayer] != nullsub_9)
         {
             Free(gWindowBgTilemapBuffers[bgLayer]);
             gWindowBgTilemapBuffers[bgLayer] = NULL;
@@ -57,7 +56,7 @@ u16 AddWindow8Bit(const struct WindowTemplate *template)
     }
 }
 
-void FillWindowPixelBuffer8Bit(u8 windowId, u8 fillValue)
+void FillWindowPixelBuffer8Bit(u32 windowId, u32 fillValue)
 {
     s32 i;
     s32 size;
@@ -67,7 +66,7 @@ void FillWindowPixelBuffer8Bit(u8 windowId, u8 fillValue)
         gWindows[windowId].tileData[i] = fillValue;
 }
 
-void FillWindowPixelRect8Bit(u8 windowId, u8 fillValue, u16 x, u16 y, u16 width, u16 height)
+void FillWindowPixelRect8Bit(u32 windowId, u32 fillValue, u16 x, u16 y, u16 width, u16 height)
 {
     struct Bitmap pixelRect;
 
@@ -78,7 +77,7 @@ void FillWindowPixelRect8Bit(u8 windowId, u8 fillValue, u16 x, u16 y, u16 width,
     FillBitmapRect8Bit(&pixelRect, x, y, width, height, fillValue);
 }
 
-void BlitBitmapRectToWindow4BitTo8Bit(u8 windowId, const u8 *pixels, u16 srcX, u16 srcY, u16 srcWidth, int srcHeight, u16 destX, u16 destY, u16 rectWidth, u16 rectHeight, u8 paletteNum)
+void BlitBitmapRectToWindow4BitTo8Bit(u32 windowId, const u8 *pixels, u16 srcX, u16 srcY, u16 srcWidth, int srcHeight, u16 destX, u16 destY, u16 rectWidth, u16 rectHeight, u32 paletteNum)
 {
     struct Bitmap sourceRect;
     struct Bitmap destRect;
@@ -94,7 +93,7 @@ void BlitBitmapRectToWindow4BitTo8Bit(u8 windowId, const u8 *pixels, u16 srcX, u
     BlitBitmapRect4BitTo8Bit(&sourceRect, &destRect, srcX, srcY, destX, destY, rectWidth, rectHeight, 0, paletteNum);
 }
 
-void CopyWindowToVram8Bit(u8 windowId, u8 mode)
+void CopyWindowToVram8Bit(u32 windowId, u32 mode)
 {
     sWindowPtr = &gWindows[windowId];
     sWindowSize = 0x40 * (sWindowPtr->window.width * sWindowPtr->window.height);
@@ -112,16 +111,4 @@ void CopyWindowToVram8Bit(u8 windowId, u8 mode)
             CopyBgTilemapBufferToVram(sWindowPtr->window.bg);
             break;
     }
-}
-
-static u8 GetNumActiveWindowsOnBg8Bit(u8 bgId)
-{
-    u8 windowsNum = 0;
-    s32 i;
-    for (i = 0; i < WINDOWS_MAX; i++)
-    {
-        if (gWindows[i].window.bg == bgId)
-            windowsNum++;
-    }
-    return windowsNum;
 }

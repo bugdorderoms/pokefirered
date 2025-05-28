@@ -5333,7 +5333,7 @@ u32 GetBattlerWeight(u32 battlerId)
     {
         if (weight > 1000)
             weight -= 1000;
-        else if (weight <= 1000)
+        else
         {
             weight = 1;
             break;

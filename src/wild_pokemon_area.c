@@ -14,11 +14,11 @@ struct SeviiDexArea
     s32 count;
 };
 
-static s32 CountRoamerNests(u16 species, struct Subsprite * subsprites);
-static bool32 PokemonInAnyEncounterTableInMap(const struct WildPokemonHeader * data, s32 species);
-static bool32 PokemonInEncounterTable(const struct WildPokemonInfo * pokemon, s32 species, s32 count);
-static u16 GetMapSecIdFromWildMonHeader(const struct WildPokemonHeader * header);
-static bool32 TryGetMapSecPokedexAreaEntry(u16 mapSecId, const u16 (*lut)[2], s32 count, s32 * lutIdx_p, u16 * tableIdx_p);
+static s32 CountRoamerNests(u32 species, struct Subsprite * subsprites);
+static bool32 PokemonInAnyEncounterTableInMap(const struct WildPokemonHeader * data, u32 species);
+static bool32 PokemonInEncounterTable(const struct WildPokemonInfo * pokemon, u32 species, u32 count);
+static u32 GetMapSecIdFromWildMonHeader(const struct WildPokemonHeader * header);
+static bool32 TryGetMapSecPokedexAreaEntry(u32 mapSecId, const u16 (*lut)[2], s32 count, s32 * lutIdx_p, u16 * tableIdx_p);
 
 static const u16 sDexAreas_Kanto[][2] = {
     { MAPSEC_PALLET_TOWN,          1 },
@@ -147,7 +147,7 @@ static const struct SeviiDexArea sSeviiDexAreas[] = {
     { sDexAreas_Sevii7, 11 }
 };
 
-s32 BuildPokedexAreaSubspriteBuffer(u16 species, struct Subsprite * subsprites)
+s32 BuildPokedexAreaSubspriteBuffer(u32 species, struct Subsprite * subsprites)
 {
     s32 areaCount;
     s32 j;
@@ -167,51 +167,51 @@ s32 BuildPokedexAreaSubspriteBuffer(u16 species, struct Subsprite * subsprites)
     alteringCaveNum = VarGet(VAR_ALTERING_CAVE_WILD_SET);
     if (alteringCaveNum > 8)
         alteringCaveNum = 0;
+
     for (i = 0, areaCount = 0; gWildMonHeaders[i].mapGroup != MAP_GROUP(UNDEFINED); i++)
     {
         mapSecId = GetMapSecIdFromWildMonHeader(&gWildMonHeaders[i]);
+
         if (mapSecId == MAPSEC_ALTERING_CAVE)
         {
             alteringCaveCount++;
             if (alteringCaveNum != alteringCaveCount - 1)
                 continue;
         }
+
         if (PokemonInAnyEncounterTableInMap(&gWildMonHeaders[i], species))
         {
             dexAreaEntryLUTidx = 0;
             while (TryGetMapSecPokedexAreaEntry(mapSecId, sDexAreas_Kanto, 55, &dexAreaEntryLUTidx, &dexAreaSubspriteIdx))
             {
                 if (dexAreaSubspriteIdx != 0)
-                {
                     SetAreaSubsprite(areaCount++, dexAreaSubspriteIdx, subsprites);
-                }
             }
+
             for (j = 0; j < ARRAY_COUNT(sSeviiDexAreas); j++)
             {
                 if ((seviiAreas >> j) & 1)
                 {
                     dexAreaEntryLUTidx = 0;
+
                     while (TryGetMapSecPokedexAreaEntry(mapSecId, sSeviiDexAreas[j].lut, sSeviiDexAreas[j].count, &dexAreaEntryLUTidx, &dexAreaSubspriteIdx))
                     {
                         if (dexAreaSubspriteIdx != 0)
-                        {
                             SetAreaSubsprite(areaCount++, dexAreaSubspriteIdx, subsprites);
-                        }
                     }
                 }
             }
         }
     }
-
     return areaCount;
 }
 
-static s32 CountRoamerNests(u16 species, struct Subsprite * subsprites)
+static s32 CountRoamerNests(u32 species, struct Subsprite * subsprites)
 {
     s32 dexAreaEntryLUTidx = 0;
-    u16 dexAreaSubspriteIdx, roamerLocation = GetRoamerLocationMapSectionId();
+    u16 dexAreaSubspriteIdx;
     
-    if (TryGetMapSecPokedexAreaEntry(roamerLocation, sDexAreas_Kanto, 55, &dexAreaEntryLUTidx, &dexAreaSubspriteIdx))
+    if (TryGetMapSecPokedexAreaEntry(GetRoamerLocationMapSectionId(), sDexAreas_Kanto, 55, &dexAreaEntryLUTidx, &dexAreaSubspriteIdx))
     {
         if (dexAreaSubspriteIdx != 0)
         {
@@ -222,7 +222,7 @@ static s32 CountRoamerNests(u16 species, struct Subsprite * subsprites)
     return 0;
 }
 
-static bool32 PokemonInAnyEncounterTableInMap(const struct WildPokemonHeader * data, s32 species)
+static bool32 PokemonInAnyEncounterTableInMap(const struct WildPokemonHeader * data, u32 species)
 {
     if (PokemonInEncounterTable(data->landMonsInfo, species, LAND_WILD_COUNT))
         return TRUE;
@@ -244,9 +244,10 @@ static bool32 PokemonInAnyEncounterTableInMap(const struct WildPokemonHeader * d
     return FALSE;
 }
 
-static bool32 PokemonInEncounterTable(const struct WildPokemonInfo * info, s32 species, s32 count)
+static bool32 PokemonInEncounterTable(const struct WildPokemonInfo * info, u32 species, u32 count)
 {
-    s32 i;
+    u32 i;
+
     if (info != NULL)
     {
         for (i = 0; i < count; i++)
@@ -258,14 +259,15 @@ static bool32 PokemonInEncounterTable(const struct WildPokemonInfo * info, s32 s
     return FALSE;
 }
 
-static u16 GetMapSecIdFromWildMonHeader(const struct WildPokemonHeader * header)
+static u32 GetMapSecIdFromWildMonHeader(const struct WildPokemonHeader * header)
 {
     return Overworld_GetMapHeaderByGroupAndId(header->mapGroup, header->mapNum)->regionMapSectionId;
 }
 
-static bool32 TryGetMapSecPokedexAreaEntry(u16 mapSecId, const u16 (*lut)[2], s32 count, s32 * lutIdx_p, u16 * tableIdx_p)
+static bool32 TryGetMapSecPokedexAreaEntry(u32 mapSecId, const u16 (*lut)[2], s32 count, s32 * lutIdx_p, u16 * tableIdx_p)
 {
     s32 i;
+
     for (i = *lutIdx_p; i < count; i++)
     {
         if (lut[i][0] == mapSecId)

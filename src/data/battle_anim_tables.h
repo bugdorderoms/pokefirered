@@ -227,6 +227,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .resumeIfAnimsOff = TRUE,
     },
     [B_ANIM_BATTLE_BOND] =
     {
@@ -235,6 +236,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .resumeIfAnimsOff = TRUE,
     },
     [B_ANIM_ZYGARDE_CELL_SWIRL] =
     {
@@ -243,6 +245,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .resumeIfAnimsOff = TRUE,
     },
     [B_ANIM_SCHOOLING] =
     {
@@ -251,6 +254,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .resumeIfAnimsOff = TRUE,
     },
     [B_ANIM_SPIT_OUT_PREY] =
     {
@@ -289,6 +293,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .resumeIfAnimsOff = TRUE,
     },
     [B_ANIM_BLUE_PRIMAL_REVERSION] =
     {
@@ -297,6 +302,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .resumeIfAnimsOff = TRUE,
     },
     [B_ANIM_ULTRA_BURST] =
     {
@@ -305,6 +311,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .resumeIfAnimsOff = TRUE,
     },
     [B_ANIM_MIST] =
     {

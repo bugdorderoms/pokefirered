@@ -2,6 +2,7 @@
 #include "gflib.h"
 #include "battle.h"
 #include "battle_anim.h"
+#include "battle_gfx_sfx_util.h"
 #include "task.h"
 #include "constants/battle_anim.h"
 #include "constants/sound.h"
@@ -205,7 +206,7 @@ void SoundTask_WaitForCry(u32 taskId)
 // No args.
 void SoundTask_PlayCryWithEcho(u32 taskId)
 {
-    u32 species = gAnimBattlerSpecies[gBattleAnimAttacker];
+    u32 species = GetBattlerVisualSpecies(gBattleAnimAttacker);
 
     if (species)
     {

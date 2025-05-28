@@ -668,13 +668,22 @@
 #define ITEM_YELLOW_SHARD             (FOSSIL_ITEMS_END + 15)
 #define ITEM_GREEN_SHARD              (FOSSIL_ITEMS_END + 16)
 
+// Repels
+#define ITEM_REPEL                    (FOSSIL_ITEMS_END + 17)
+#define ITEM_SUPER_REPEL              (FOSSIL_ITEMS_END + 18)
+#define ITEM_MAX_REPEL                (FOSSIL_ITEMS_END + 19)
+
+#define FIRST_REPEL_ITEM              ITEM_REPEL
+#define LAST_REPEL_ITEM               ITEM_MAX_REPEL
+#define NUM_REPEL_ITEMS               LAST_REPEL_ITEM - FIRST_REPEL_ITEM
+
+// In case you want to add new repels, all the indexes below this will be updated with the corrected index
+#define REPEL_ITEMS_END               LAST_REPEL_ITEM
+
 // Others
-#define ITEM_WISHING_PIECE            (FOSSIL_ITEMS_END + 17)
-#define ITEM_HONEY                    (FOSSIL_ITEMS_END + 18)
-#define ITEM_REPEL                    (FOSSIL_ITEMS_END + 19)
-#define ITEM_SUPER_REPEL              (FOSSIL_ITEMS_END + 20)
-#define ITEM_MAX_REPEL                (FOSSIL_ITEMS_END + 21)
-#define ITEM_ESCAPE_ROPE              (FOSSIL_ITEMS_END + 22)
+#define ITEM_WISHING_PIECE            (REPEL_ITEMS_END + 1)
+#define ITEM_HONEY                    (REPEL_ITEMS_END + 2)
+#define ITEM_ESCAPE_ROPE              (REPEL_ITEMS_END + 3)
 
 // In case you want to add new items of custom usage, all the indexes below this will be updated with the corrected index
 #define GENERAL_ITEMS_END             ITEM_ESCAPE_ROPE

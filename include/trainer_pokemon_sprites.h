@@ -3,13 +3,13 @@
 
 #include "global.h"
 
-u16 CreateTrainerCardTrainerPicSprite(u16 species, bool8 isFrontPic, u16 destX, u16 destY, u8 paletteSlot, u8 windowId);
-bool16 ResetAllPicSprites(void);
-u16 CreateTrainerPicSprite(u16 species, bool8 isFrontPic, s16 x, s16 y, u8 paletteSlot, u16 paletteTag);
-u16 FreeAndDestroyMonPicSprite(u16);
-u16 FreeAndDestroyTrainerPicSprite(u16);
-u16 PlayerGenderToFrontTrainerPicId_Debug(u8 gender, bool8 getClass);
-u16 LoadMonPicInWindow(u16 species, bool8 isShiny, u32 personality, bool8 isFrontPic, u8 paletteSlot, u8 windowId);
-u16 CreateMonPicSprite(u16 species, bool8 isShiny, u32 personality, bool8 isFrontPic, s16 x, s16 y, u8 paletteSlot, u16 paletteTag);
+u32 CreateTrainerCardTrainerPicSprite(u32 species, bool32 isFrontPic, u16 destX, u16 destY, u32 paletteSlot, u32 windowId);
+void ResetAllPicSprites(void);
+u32 CreateTrainerPicSprite(u32 species, bool32 isFrontPic, s16 x, s16 y, u32 paletteSlot, u32 paletteTag);
+u32 FreeAndDestroyMonPicSprite(u32);
+u32 FreeAndDestroyTrainerPicSprite(u32);
+u32 PlayerGenderToFrontTrainerPicId_Debug(u32 gender, bool32 getClass);
+u32 LoadMonPicInWindow(u32 species, bool32 isShiny, u32 personality, bool32 isFrontPic, u32 paletteSlot, u32 windowId);
+u32 CreateMonPicSprite(u32 species, bool32 isShiny, u32 personality, bool32 isFrontPic, s16 x, s16 y, u32 paletteSlot, u32 paletteTag);
 
 #endif // GUARD_TRAINER_POKEMON_SPRITES_H

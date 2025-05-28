@@ -7,11 +7,11 @@
 #include "constants/pokemon.h"
 #include "constants/trainer_slides.h"
 
-static u8 GetEnemyTeamCount(bool8 onlyAlive)
+static u32 GetEnemyTeamCount(bool32 onlyAlive)
 {
-    u8 i, count;
+    u32 i, count = 0;
     
-    for (i = 0, count = 0; i < PARTY_SIZE; i++)
+    for (i = 0; i < PARTY_SIZE; i++)
     {
         if (IsMonValidSpecies(&gEnemyParty[i]) && (!onlyAlive || GetMonData(&gEnemyParty[i], MON_DATA_HP, NULL)))
             ++count;
@@ -19,13 +19,15 @@ static u8 GetEnemyTeamCount(bool8 onlyAlive)
     return count;
 }
 
-bool8 ShouldDoTrainerSlide(u8 battlerId, u8 caseId)
+bool32 ShouldDoTrainerSlide(u32 battlerId, u32 caseId)
 {
-    bool8 doSlide = FALSE;
-    u16 trainerId = gTrainerBattleOpponent_A;
+    bool32 doSlide = FALSE;
+    u32 trainerId;
     
     if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && !(gBattleTypeFlags & BATTLE_TYPE_LINK) && GetBattlerSide(battlerId) == B_SIDE_OPPONENT)
     {
+        trainerId = gTrainerBattleOpponent_A;
+
         gBattleScripting.battler = battlerId;
         
         switch (caseId)

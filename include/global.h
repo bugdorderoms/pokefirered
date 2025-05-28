@@ -45,6 +45,7 @@
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) >= (b) ? (a) : (b))
+#define clamp(val, min_val, max_val) (max(min(val, max_val), min_val))
 
 #if MODERN
 #define abs(x) (((x) < 0) ? -(x) : (x))

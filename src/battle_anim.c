@@ -35,7 +35,6 @@ EWRAM_DATA static u8 sAnimBackgroundFadeState = 0;
 EWRAM_DATA static u16 sAnimMoveIndex = 0;
 EWRAM_DATA u8 gBattleAnimAttacker = 0;
 EWRAM_DATA u8 gBattleAnimTarget = 0;
-EWRAM_DATA u16 gAnimBattlerSpecies[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gAnimCustomPanning = 0;
 
 // Function Declarations
@@ -1918,9 +1917,6 @@ void LaunchBattleAnimation(u32 animType, u32 animId)
     ResetSpritePriorityOfAllVisibleBattlers();
     UpdateOamPriorityInAllHealthboxes(0, hideHpBoxes);
     
-    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
-        gAnimBattlerSpecies[i] = GetMonData(GetBattlerPartyIndexPtr(i), MON_DATA_SPECIES);
-    
     for (i = 0; i < ANIM_ARGS_COUNT; i++)
         gBattleAnimArgs[i] = 0;
     
@@ -2100,10 +2096,10 @@ void CreateItemBagSprite(const struct SpriteTemplate *template, s16 x, s16 y, u3
 //  - bit 7: target if set else attacker
 static void ScriptCmd_createsprite(void)
 {
-    u32 i, argVar, subpriorityBattler, argsCount;
+    u32 i, subpriorityBattler, argsCount;
     const struct SpriteTemplate *template;
     s16 subpriority;
-    u8 x, y;
+    u8 x, y, argVar;
 
     sBattleAnimScriptPtr++;
     template = (const struct SpriteTemplate *)(READ_32(sBattleAnimScriptPtr));
@@ -2123,14 +2119,14 @@ static void ScriptCmd_createsprite(void)
     
     if (argVar & ANIMSPRITE_IS_TARGET)
     {
-        argVar ^= ANIMSPRITE_IS_TARGET;
+        argVar &= ~(ANIMSPRITE_IS_TARGET);
         subpriorityBattler = gBattleAnimTarget;
     }
     else
         subpriorityBattler = gBattleAnimAttacker;
     
-    if (argVar >= 0x40)
-        argVar -= 0x40;
+    if (argVar >= 64)
+        argVar -= 64;
     else
         argVar *= -1;
     
@@ -2290,16 +2286,11 @@ static void ScriptCmd_playse(void)
     sBattleAnimScriptPtr += 2;
 }
 
-static u32 GetAdjustedMonBgBattlerId(u32 *animBattler)
+static u32 GetAdjustedMonBgBattlerId(u32 animBattler)
 {
     u32 battlerId;
     
-    if (*animBattler == ANIM_ATTACKER)
-        *animBattler = ANIM_ATK_PARTNER;
-    else if (*animBattler == ANIM_TARGET)
-        *animBattler = ANIM_DEF_PARTNER;
-
-    if (*animBattler == ANIM_ATTACKER || *animBattler == ANIM_ATK_PARTNER)
+    if (animBattler == ANIM_ATTACKER || animBattler == ANIM_ATK_SIDE)
         battlerId = gBattleAnimAttacker;
     else
         battlerId = gBattleAnimTarget;
@@ -2354,7 +2345,7 @@ static void ScriptCmd_monbg(void)
     sBattleAnimScriptPtr++;
     
     animBattler = sBattleAnimScriptPtr[0];
-    battlerId = GetAdjustedMonBgBattlerId(&animBattler);
+    battlerId = GetAdjustedMonBgBattlerId(animBattler);
     
     if (IsBattlerSpriteVisible(battlerId))
         DoMoveBattlerToBg(battlerId, 0);
@@ -2515,7 +2506,7 @@ static void ScriptCmd_clearmonbg(void)
     sBattleAnimScriptPtr++;
     
     animBattlerId = sBattleAnimScriptPtr[0];
-    battlerId = GetAdjustedMonBgBattlerId(&animBattlerId);
+    battlerId = GetAdjustedMonBgBattlerId(animBattlerId);
     
     if (sMonAnimTaskIdArray[0] != 0xFF)
         gSprites[gBattlerSpriteIds[battlerId]].invisible = FALSE;
@@ -2564,7 +2555,7 @@ static void ScriptCmd_monbg_22(void)
     sBattleAnimScriptPtr++;
     
     animBattlerId = sBattleAnimScriptPtr[0];
-    battlerId = GetAdjustedMonBgBattlerId(&animBattlerId);
+    battlerId = GetAdjustedMonBgBattlerId(animBattlerId);
     
     if (IsBattlerSpriteVisible(battlerId))
     {
@@ -2578,7 +2569,6 @@ static void ScriptCmd_monbg_22(void)
         MoveBattlerSpriteToBG(battlerId, IsBattlerToBeMovedToBg2(battlerId));
         gSprites[gBattlerSpriteIds[battlerId]].invisible = FALSE;
     }
-
     sBattleAnimScriptPtr++;
 }
 
@@ -2589,10 +2579,11 @@ static void ScriptCmd_clearmonbg_23(void)
     sBattleAnimScriptPtr++;
     
     animBattlerId = sBattleAnimScriptPtr[0];
-    battlerId = GetAdjustedMonBgBattlerId(&animBattlerId);
+    battlerId = GetAdjustedMonBgBattlerId(animBattlerId);
     
     if (IsBattlerSpriteVisible(battlerId))
         gSprites[gBattlerSpriteIds[battlerId]].invisible = FALSE;
+	
     if (animBattlerId > ANIM_TARGET && IsBattlerSpriteVisible(BATTLE_PARTNER(battlerId)))
         gSprites[gBattlerSpriteIds[BATTLE_PARTNER(battlerId)]].invisible = FALSE;
     else
@@ -2628,7 +2619,7 @@ static void sub_8073558(u32 taskId)
         if (IsBattlerSpriteVisible(battlerId))
             ResetBattleAnimBg(to_BG2);
         
-        if (gTasks[taskId].data[0] > 1 && IsBattlerSpriteVisible(BATTLE_PARTNER(battlerId)))
+        if (gTasks[taskId].data[0] > ANIM_TARGET && IsBattlerSpriteVisible(BATTLE_PARTNER(battlerId)))
             ResetBattleAnimBg(to_BG2 ^ TRUE);
 
         DestroyTask(taskId);

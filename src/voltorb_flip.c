@@ -1271,6 +1271,8 @@ static void ChangeQuitButtonFrame(bool32 selected)
 {
     u32 i;
     
+	sVoltorbFlipState->isCursorOnQuitButton = selected;
+	
     for (i = 0; i < 10; i++)
         FillBgTilemapBufferRect_Palette0(1, sQuitButtonGfxs[selected][i], 22 + (i % 5), 17 + (i / 5), 1, 1);
     
@@ -1281,7 +1283,6 @@ static void ChangePointerFromOrToQuitButton(bool32 moveToButton)
 {
     SetPointerSpriteVisibility(moveToButton);
     ChangeQuitButtonFrame(moveToButton);
-    sVoltorbFlipState->isCursorOnQuitButton = moveToButton;
 }
 
 static void InitVoltorbFlipRound(void)
@@ -1632,7 +1633,7 @@ static u32 GetCoinsChangeValue(u32 value)
     return sDigitsToCoinChangeValue[CountDigits(value) - 1];
 }
 
-static bool32 ChangeCoins(u32 windowId, u16 *dest, u32 targetValue, s8 coinChangeVal)
+static bool32 ChangeCoins(u32 windowId, u16 *dest, u32 targetValue, s32 coinChangeVal)
 {
     bool32 decrease = (coinChangeVal < 0), inProgress = (*dest != targetValue);
     

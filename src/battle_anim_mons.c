@@ -1,6 +1,7 @@
 #include "global.h"
 #include "gflib.h"
 #include "battle_anim.h"
+#include "battle_gfx_sfx_util.h"
 #include "data.h"
 #include "decompress.h"
 #include "pokemon_icon.h"
@@ -9,7 +10,7 @@
 #include "util.h"
 #include "constants/battle_anim.h"
 
-static u32 GetBattlerSpriteFinal_Y(u32 battlerId, u32 species, bool32 a3);
+static u32 GetBattlerSpriteFinal_Y(u32 battlerId, bool32 a3);
 static void PlayerThrowBall_RunLinearTranslation_ThenceSetCBtoStoredInData6(struct Sprite *sprite);
 static void SpriteCB_RunAnimFastLinearTranslation(struct Sprite *sprite);
 static void AnimTask_BlendMonInAndOutSetup(struct Task *task);
@@ -59,8 +60,7 @@ static const struct SpriteSheet sMoveAnimAdtlSprSheet[] =
 
 u32 GetBattlerSpriteCoord(u32 battlerId, u32 coordType)
 {
-    u32 retVal, species;
-    struct BattleSpriteInfo *spriteInfo;
+    u32 retVal;
 
     switch (coordType)
     {
@@ -71,10 +71,7 @@ u32 GetBattlerSpriteCoord(u32 battlerId, u32 coordType)
         retVal = gBattlerCoords[IsDoubleBattleForBattler(battlerId)][GetBattlerPosition(battlerId)].y;
         break;
     default:
-        spriteInfo = gBattleSpritesDataPtr->battlerData;
-        
-        species = spriteInfo[battlerId].transformSpecies ? spriteInfo[battlerId].transformSpecies : GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_SPECIES);
-        retVal = GetBattlerSpriteFinal_Y(battlerId, species, (coordType == BATTLER_COORD_Y_PIC_OFFSET));
+        retVal = GetBattlerSpriteFinal_Y(battlerId, (coordType == BATTLER_COORD_Y_PIC_OFFSET));
         break;
     }
     return retVal;
@@ -82,17 +79,17 @@ u32 GetBattlerSpriteCoord(u32 battlerId, u32 coordType)
 
 static u32 GetBattlerYDelta(u32 battlerId, u32 species)
 {
-    species = SanitizeSpeciesId(species);
     return GetBattlerSide(battlerId) == B_SIDE_PLAYER ? gSpeciesInfo[species].backPicYOffset : gSpeciesInfo[species].frontPicYOffset;
 }
 
-static u32 GetBattlerSpriteFinal_Y(u32 battlerId, u32 species, bool32 a3)
+static u32 GetBattlerSpriteFinal_Y(u32 battlerId, bool32 a3)
 {
     u32 battlerSide = GetBattlerSide(battlerId);
+    u32 species = GetBattlerVisualSpecies(battlerId);
     u32 y = GetBattlerYDelta(battlerId, species) + gBattlerCoords[IsDoubleBattleOnSide(battlerSide)][GetBattlerPosition(battlerId)].y;
-    
+
     if (battlerSide == B_SIDE_OPPONENT)
-        y -= gSpeciesInfo[SanitizeSpeciesId(species)].frontPicElevation;
+        y -= gSpeciesInfo[species].frontPicElevation;
     
     if (a3)
     {
@@ -105,22 +102,6 @@ static u32 GetBattlerSpriteFinal_Y(u32 battlerId, u32 species, bool32 a3)
     return y;
 }
 
-u32 GetBattlerSpriteCoord2(u32 battlerId, u32 coordType)
-{
-    u32 species;
-    struct BattleSpriteInfo *spriteInfo;
-
-    if (coordType == BATTLER_COORD_Y_PIC_OFFSET || coordType == BATTLER_COORD_Y_PIC_OFFSET_DEFAULT)
-    {
-        spriteInfo = gBattleSpritesDataPtr->battlerData;
-        species = spriteInfo[battlerId].transformSpecies ? spriteInfo[battlerId].transformSpecies : gAnimBattlerSpecies[battlerId];
-        
-        return GetBattlerSpriteFinal_Y(battlerId, species, (coordType == BATTLER_COORD_Y_PIC_OFFSET));
-    }
-    else
-        return GetBattlerSpriteCoord(battlerId, coordType);
-}
-
 u32 GetBattlerSpriteDefault_Y(u32 battlerId)
 {
     return GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y_PIC_OFFSET_DEFAULT);
@@ -131,12 +112,8 @@ u32 GetBattlerYCoordWithElevation(u32 battlerId)
     u32 y = GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y);
     
     if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT)
-    {
-        u32 transformSpecies = gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies;
-        u32 species = transformSpecies == SPECIES_NONE ? GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES) : transformSpecies;
-        
-        y -= gSpeciesInfo[SanitizeSpeciesId(species)].frontPicElevation;
-    }
+        y -= gSpeciesInfo[GetBattlerVisualSpecies(battlerId)].frontPicElevation;
+
     return y;
 }
 
@@ -500,7 +477,7 @@ void InitSpritePosToAnimTarget(struct Sprite *sprite, bool32 respectMonPicOffset
 void InitSpritePosToAnimAttacker(struct Sprite *sprite, bool32 respectMonPicOffsets)
 {
     sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
-    sprite->y = GetBattlerSpriteCoord2(gBattleAnimAttacker, respectMonPicOffsets ? BATTLER_COORD_Y_PIC_OFFSET : BATTLER_COORD_Y);
+    sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, respectMonPicOffsets ? BATTLER_COORD_Y_PIC_OFFSET : BATTLER_COORD_Y);
     
     SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
     sprite->y += gBattleAnimArgs[1];
@@ -1397,20 +1374,8 @@ void SetBattlerSpriteYOffsetFromOtherYScale(u32 spriteId, u32 otherSpriteId)
 
 static u32 GetBattlerYDeltaFromSpriteId(u32 spriteId)
 {
-    struct BattleSpriteInfo *spriteInfo = gBattleSpritesDataPtr->battlerData;
-    u32 i, battlerId = gSprites[spriteId].data[0];
-    u32 species;
-
-    for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
-    {
-        if (gBattlerSpriteIds[i] == spriteId)
-        {
-            species = spriteInfo[battlerId].transformSpecies == SPECIES_NONE ? GetMonData(GetBattlerPartyIndexPtr(i), MON_DATA_SPECIES) : spriteInfo[battlerId].transformSpecies;
-            
-            return GetBattlerSide(i) == B_SIDE_PLAYER ? gSpeciesInfo[species].backPicYOffset : gSpeciesInfo[species].frontPicYOffset;
-        }
-    }
-    return 64;
+    u32 battlerId = gSprites[spriteId].data[0];
+    return GetBattlerYDelta(battlerId, GetBattlerVisualSpecies(battlerId));
 }
 
 void StorePointerInVars(s16 *lo, s16 *hi, const void *ptr)
@@ -1532,16 +1497,8 @@ u32 CreateAdditionalMonSpriteForMoveAnim(u32 species, bool32 isBackpic, s16 x, s
 
 s16 GetBattlerSpriteCoordAttr(u32 battlerId, u32 attr)
 {
-    u32 species, size, yOffset;
-    struct BattleSpriteInfo *spriteInfo = gBattleSpritesDataPtr->battlerData;
-    
-    if (!spriteInfo[battlerId].transformSpecies)
-        species = GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES);
-    else
-        species = spriteInfo[battlerId].transformSpecies;
-    
-    species = SanitizeSpeciesId(species);
-    
+    u32 size, yOffset, species = GetBattlerVisualSpecies(battlerId);
+
     if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
     {
         size = gSpeciesInfo[species].frontPicSize;

@@ -88,26 +88,26 @@ static void Task_VsSeeker_1(u32 taskId);
 static void Task_VsSeeker_2(u32 taskId);
 static void GatherNearbyTrainerInfo(void);
 static void Task_VsSeeker_3(u32 taskId);
-static bool8 CanUseVsSeeker(void);
-static u8 GetVsSeekerResponseInArea(const VsSeekerData * vsSeekerData);
+static u32 CanUseVsSeeker(void);
+static u32 GetVsSeekerResponseInArea(const VsSeekerData * vsSeekerData);
 static u8 GetRematchTrainerIdGivenGameState(const u16 *trainerIdxs, u8 rematchIdx);
-static u8 ShouldTryRematchBattleInternal(const VsSeekerData * vsSeekerData, u16 trainerBattleOpponent);
-static u8 HasRematchTrainerAlreadyBeenFought(const VsSeekerData * vsSeekerData, u16 trainerBattleOpponent);
-static int LookupVsSeekerOpponentInArray(const VsSeekerData * array, u16 trainerId);
-static bool8 IsTrainerReadyForRematchInternal(const VsSeekerData * array, u16 trainerIdx);
-static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId);
-static u16 GetTrainerFlagFromScript(const u8 * script);
-static int GetRematchIdx(const VsSeekerData * vsSeekerData, u16 trainerFlagIdx);
+static bool32 ShouldTryRematchBattleInternal(const VsSeekerData * vsSeekerData, u32 trainerBattleOpponent);
+static bool32 HasRematchTrainerAlreadyBeenFought(const VsSeekerData * vsSeekerData, u32 trainerBattleOpponent);
+static int LookupVsSeekerOpponentInArray(const VsSeekerData * array, u32 trainerId);
+static bool32 IsTrainerReadyForRematchInternal(const VsSeekerData * array, u32 trainerIdx);
+static u32 GetRunningBehaviorFromGraphicsId(u32 graphicsId);
+static u32 GetTrainerFlagFromScript(const u8 * script);
+static int GetRematchIdx(const VsSeekerData * vsSeekerData, u32 trainerFlagIdx);
 static bool32 IsThisTrainerRematchable(u32 localId);
 static void ClearAllTrainerRematchStates(void);
-static bool8 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo);
-static u8 GetNextAvailableRematchTrainer(const VsSeekerData * vsSeekerData, u16 trainerFlagNo, u8 * idxPtr);
-static u8 GetRematchableTrainerLocalId(void);
+static bool32 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo);
+static u32 GetNextAvailableRematchTrainer(const VsSeekerData * vsSeekerData, u32 trainerFlagNo, u32 * idxPtr);
+static u32 GetRematchableTrainerLocalId(void);
 static void StartTrainerObjectMovementScript(struct VsSeekerTrainerInfo * trainerInfo, const u8 * script);
-static u8 GetCurVsSeekerResponse(s32 vsSeekerIdx, u16 trainerIdx);
+static u32 GetCurVsSeekerResponse(s32 vsSeekerIdx, u32 trainerIdx);
 static void StartAllRespondantIdleMovements(void);
-static bool8 ObjectEventIdIsSane(u8 objectEventId);
-static u8 GetRandomFaceDirectionMovementType(void);
+static bool32 ObjectEventIdIsSane(u32 objectEventId);
+static u32 GetRandomFaceDirectionMovementType(void);
 
 // rodata
 #define VS_SEEKER_DATA(...) { .trainerIdxs = {__VA_ARGS__}, }
@@ -377,7 +377,7 @@ void VsSeekerFreezeObjectsAfterChargeComplete(void)
 static void Task_ResetObjectsRematchWantedState(u32 taskId)
 {
     struct Task * task = &gTasks[taskId];
-    u8 i;
+    u32 i;
 
     if (task->data[0] == 0 && walkrun_is_standing_still())
     {
@@ -410,8 +410,8 @@ static void Task_ResetObjectsRematchWantedState(u32 taskId)
 
 void VsSeekerResetObjectMovementAfterChargeComplete(void)
 {
-   u8 i;
-   u8 movementType;
+   u32 i;
+   u32 movementType;
    u8 objEventId;
    struct ObjectEventTemplate * templates = gSaveBlock1Ptr->objectEventTemplates;
 
@@ -432,7 +432,7 @@ void VsSeekerResetObjectMovementAfterChargeComplete(void)
    }
 }
 
-bool8 UpdateVsSeekerStepCounter(void)
+bool32 UpdateVsSeekerStepCounter(void)
 {
     u8 x = 0;
 
@@ -470,7 +470,7 @@ void MapResetTrainerRematches(void)
 
 static void ResetMovementOfRematchableTrainers(void)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < OBJECT_EVENTS_COUNT; i++)
     {
@@ -581,7 +581,7 @@ static void GatherNearbyTrainerInfo(void)
 {
     struct ObjectEventTemplate *templates = gSaveBlock1Ptr->objectEventTemplates;
     u8 objectEventId = 0;
-    u8 vsSeekerObjectIdx = 0;
+    u32 vsSeekerObjectIdx = 0;
     s32 objectEventIdx;
 
     for (objectEventIdx = 0; objectEventIdx < gMapHeader.events->objectEventCount; objectEventIdx++)
@@ -622,9 +622,9 @@ static void Task_VsSeeker_3(u32 taskId)
     }
 }
 
-static u8 CanUseVsSeeker(void)
+static u32 CanUseVsSeeker(void)
 {
-    u8 vsSeekerChargeSteps = gSaveBlock1Ptr->trainerRematchStepCounter;
+    u32 vsSeekerChargeSteps = gSaveBlock1Ptr->trainerRematchStepCounter;
     
     if (vsSeekerChargeSteps == 100)
     {
@@ -640,18 +640,18 @@ static u8 CanUseVsSeeker(void)
     }
 }
 
-static u8 GetVsSeekerResponseInArea(const VsSeekerData * vsSeekerData)
+static u32 GetVsSeekerResponseInArea(const VsSeekerData * vsSeekerData)
 {
-    u16 trainerIdx = 0;
-    u16 rval = 0;
-    u8 rematchTrainerIdx;
-    u8 unusedIdx = 0;
-    u8 response = 0;
+    u32 trainerIdx = 0;
+    u32 rval = 0;
+    u32 rematchTrainerIdx;
+    u32 unusedIdx = 0;
+    u32 response = 0;
     s32 vsSeekerIdx = 0;
 
     while (sVsSeeker->trainerInfo[vsSeekerIdx].localId != 0xFF)
     {
-        if (IsTrainerVisibleOnScreen(&sVsSeeker->trainerInfo[vsSeekerIdx]) == TRUE)
+        if (IsTrainerVisibleOnScreen(&sVsSeeker->trainerInfo[vsSeekerIdx]))
         {
             trainerIdx = sVsSeeker->trainerInfo[vsSeekerIdx].trainerIdx;
             
@@ -721,7 +721,7 @@ void ClearRematchStateByTrainerId(void)
 
     if (vsSeekerDataIdx != -1)
     {
-        int i;
+        u32 i;
 
         for (i = 0; i < gMapHeader.events->objectEventCount; i++)
         {
@@ -745,7 +745,7 @@ void ClearRematchStateByTrainerId(void)
     }
 }
 
-static void TryGetRematchTrainerIdGivenGameState(const u16 * trainerIdxs, u8 * rematchIdx_p)
+static void TryGetRematchTrainerIdGivenGameState(const u16 * trainerIdxs, u32 * rematchIdx_p)
 {
     switch (*rematchIdx_p)
     {
@@ -785,7 +785,7 @@ static u8 GetRematchTrainerIdGivenGameState(const u16 *trainerIdxs, u8 rematchId
     return 0;
 }
 
-bool8 ShouldTryRematchBattle(void)
+bool32 ShouldTryRematchBattle(void)
 {
     if (ShouldTryRematchBattleInternal(sVsSeekerData, gTrainerBattleOpponent_A))
         return TRUE;
@@ -793,7 +793,7 @@ bool8 ShouldTryRematchBattle(void)
     return HasRematchTrainerAlreadyBeenFought(sVsSeekerData, gTrainerBattleOpponent_A);
 }
 
-static bool8 ShouldTryRematchBattleInternal(const VsSeekerData *vsSeekerData, u16 trainerBattleOpponent)
+static bool32 ShouldTryRematchBattleInternal(const VsSeekerData *vsSeekerData, u32 trainerBattleOpponent)
 {
     s32 rematchIdx = GetRematchIdx(vsSeekerData, trainerBattleOpponent);
 
@@ -808,7 +808,7 @@ static bool8 ShouldTryRematchBattleInternal(const VsSeekerData *vsSeekerData, u1
     return FALSE;
 }
 
-static bool8 HasRematchTrainerAlreadyBeenFought(const VsSeekerData *vsSeekerData, u16 trainerBattleOpponent)
+static bool32 HasRematchTrainerAlreadyBeenFought(const VsSeekerData *vsSeekerData, u32 trainerBattleOpponent)
 {
     s32 rematchIdx = GetRematchIdx(vsSeekerData, trainerBattleOpponent);
 
@@ -824,10 +824,10 @@ void ClearRematchStateOfLastTalked(void)
     SetBattledTrainerFlag();
 }
 
-static int LookupVsSeekerOpponentInArray(const VsSeekerData * array, u16 trainerId)
+static int LookupVsSeekerOpponentInArray(const VsSeekerData * array, u32 trainerId)
 {
-    int i, j;
-    u16 testTrainerId;
+    u32 i, j;
+    u32 testTrainerId;
 
     for (i = 0; i < ARRAY_COUNT(sVsSeekerData); i++)
     {
@@ -848,9 +848,9 @@ static int LookupVsSeekerOpponentInArray(const VsSeekerData * array, u16 trainer
     return -1;
 }
 
-int GetRematchTrainerId(u16 trainerId)
+u32 GetRematchTrainerId(u32 trainerId)
 {
-    u8 i, j = GetNextAvailableRematchTrainer(sVsSeekerData, trainerId, &i);
+    u32 i, j = GetNextAvailableRematchTrainer(sVsSeekerData, trainerId, &i);
 
     if (!j)
         return 0;
@@ -860,34 +860,36 @@ int GetRematchTrainerId(u16 trainerId)
     return sVsSeekerData[i].trainerIdxs[j];
 }
 
-u8 IsTrainerReadyForRematch(void)
+bool32 IsTrainerReadyForRematch(void)
 {
     return IsTrainerReadyForRematchInternal(sVsSeekerData, gTrainerBattleOpponent_A);
 }
 
-static bool8 IsTrainerReadyForRematchInternal(const VsSeekerData * array, u16 trainerId)
+static bool32 IsTrainerReadyForRematchInternal(const VsSeekerData * array, u32 trainerId)
 {
     int rematchTrainerIdx = LookupVsSeekerOpponentInArray(array, trainerId);
 
     if (rematchTrainerIdx == -1)
         return FALSE;
-    if (rematchTrainerIdx >= ARRAY_COUNT(sVsSeekerData))
+    else if (rematchTrainerIdx >= ARRAY_COUNT(sVsSeekerData))
         return FALSE;
-    if (!IsThisTrainerRematchable(gSpecialVar_LastTalked))
+    else if (!IsThisTrainerRematchable(gSpecialVar_LastTalked))
         return FALSE;
+
     return TRUE;
 }
 
-static bool8 ObjectEventIdIsSane(u8 objectEventId)
+static bool32 ObjectEventIdIsSane(u32 objectEventId)
 {
     struct ObjectEvent *objectEvent = &gObjectEvents[objectEventId];
 
     if (objectEvent->active && gMapHeader.events->objectEventCount >= objectEvent->localId && gSprites[objectEvent->spriteId].data[0] == objectEventId)
         return TRUE;
+
     return FALSE;
 }
 
-static u8 GetRandomFaceDirectionMovementType(void)
+static u32 GetRandomFaceDirectionMovementType(void)
 {
     switch (RandomMax(4))
     {
@@ -904,7 +906,7 @@ static u8 GetRandomFaceDirectionMovementType(void)
     }
 }
 
-static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId)
+static u32 GetRunningBehaviorFromGraphicsId(u32 graphicsId)
 {
     switch (graphicsId)
     {
@@ -951,7 +953,7 @@ static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId)
  * 5c XX YY ZZ ...
  *       -- --
  */
-static u16 GetTrainerFlagFromScript(const u8 *script)
+static u32 GetTrainerFlagFromScript(const u8 *script)
 {
     u16 trainerFlag;
     script += 2;
@@ -960,7 +962,7 @@ static u16 GetTrainerFlagFromScript(const u8 *script)
     return trainerFlag;
 }
 
-static int GetRematchIdx(const VsSeekerData * vsSeekerData, u16 trainerFlagIdx)
+static int GetRematchIdx(const VsSeekerData * vsSeekerData, u32 trainerFlagIdx)
 {
     int i;
 
@@ -981,30 +983,29 @@ static bool32 IsThisTrainerRematchable(u32 localId)
 
 static void ClearAllTrainerRematchStates(void)
 {
-    u8 i;
+    u32 i;
 
     for (i = 0; i < ARRAY_COUNT(gSaveBlock1Ptr->trainerRematches); i++)
         gSaveBlock1Ptr->trainerRematches[i] = 0;
 }
 
-static bool8 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo)
+static bool32 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo)
 {
-    s16 x;
-    s16 y;
+    s16 x, y;
 
     PlayerGetDestCoords(&x, &y);
     x -= 7;
     y -= 7;
 
-    if (x - 7 <= trainerInfo->xCoord && x + 7 >= trainerInfo->xCoord && y - 5 <= trainerInfo->yCoord && y + 5 >= trainerInfo->yCoord && ObjectEventIdIsSane(trainerInfo->objectEventId) == 1)
+    if (x - 7 <= trainerInfo->xCoord && x + 7 >= trainerInfo->xCoord && y - 5 <= trainerInfo->yCoord && y + 5 >= trainerInfo->yCoord && ObjectEventIdIsSane(trainerInfo->objectEventId))
         return TRUE;
     
     return FALSE;
 }
 
-static u8 GetNextAvailableRematchTrainer(const VsSeekerData * vsSeekerData, u16 trainerFlagNo, u8 * idxPtr)
+static u32 GetNextAvailableRematchTrainer(const VsSeekerData * vsSeekerData, u32 trainerFlagNo, u32 * idxPtr)
 {
-    int i, j;
+    u32 i, j;
 
     for (i = 0; i < ARRAY_COUNT(sVsSeekerData); i++)
     {
@@ -1032,13 +1033,13 @@ static u8 GetNextAvailableRematchTrainer(const VsSeekerData * vsSeekerData, u16 
     return 0;
 }
 
-static u8 GetRematchableTrainerLocalId(void)
+static u32 GetRematchableTrainerLocalId(void)
 {
-    u8 i, idx;
+    u32 i, idx;
 
     for (i = 0; sVsSeeker->trainerInfo[i].localId != 0xFF; i++)
     {
-        if (IsTrainerVisibleOnScreen(&sVsSeeker->trainerInfo[i]) == 1)
+        if (IsTrainerVisibleOnScreen(&sVsSeeker->trainerInfo[i]))
         {
             if (HasTrainerBeenFought(sVsSeeker->trainerInfo[i].trainerIdx) != 1 || GetNextAvailableRematchTrainer(sVsSeekerData, sVsSeeker->trainerInfo[i].trainerIdx, &idx))
                 return sVsSeeker->trainerInfo[i].localId;
@@ -1053,13 +1054,13 @@ static void StartTrainerObjectMovementScript(struct VsSeekerTrainerInfo * traine
     ScriptMovement_StartObjectMovementScript(trainerInfo->localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, script);
 }
 
-static u8 GetCurVsSeekerResponse(s32 vsSeekerIdx, u16 trainerIdx)
+static u32 GetCurVsSeekerResponse(s32 vsSeekerIdx, u32 trainerIdx)
 {
     s32 i, j;
 
     for (i = 0; i < vsSeekerIdx; i++)
     {
-        if (IsTrainerVisibleOnScreen(&sVsSeeker->trainerInfo[i]) == 1 && sVsSeeker->trainerInfo[i].trainerIdx == trainerIdx)
+        if (IsTrainerVisibleOnScreen(&sVsSeeker->trainerInfo[i]) && sVsSeeker->trainerInfo[i].trainerIdx == trainerIdx)
         {
             for (j = 0; j < sVsSeeker->numRematchableTrainers; j++)
             {
@@ -1074,7 +1075,7 @@ static u8 GetCurVsSeekerResponse(s32 vsSeekerIdx, u16 trainerIdx)
 
 static void StartAllRespondantIdleMovements(void)
 {
-    u8 dummy = 0;
+    u32 dummy = 0;
     s32 i, j;
 
     for (i = 0; i < sVsSeeker->numRematchableTrainers; i++)
@@ -1085,7 +1086,7 @@ static void StartAllRespondantIdleMovements(void)
             {
                 struct ObjectEvent *objectEvent = &gObjectEvents[sVsSeeker->trainerInfo[j].objectEventId];
 
-                if (ObjectEventIdIsSane(sVsSeeker->trainerInfo[j].objectEventId) == 1)
+                if (ObjectEventIdIsSane(sVsSeeker->trainerInfo[j].objectEventId))
                     SetTrainerMovementType(objectEvent, sVsSeeker->runningBehaviourEtcArray[i]);
                 
                 OverrideMovementTypeForObjectEvent(objectEvent, sVsSeeker->runningBehaviourEtcArray[i]);

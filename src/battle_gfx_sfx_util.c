@@ -784,7 +784,7 @@ static void SpriteCB_EnemyShadow(struct Sprite *shadowSprite)
         shadowSprite->callback = SpriteCB_SetInvisible;
     else
     {
-        u32 species = gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies ? gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies : GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_SPECIES);
+        u32 species = GetBattlerVisualSpecies(battlerId);
         
         if (gSpeciesInfo[species].suppressEnemyShadow || gAnimScriptActive || battlerSprite->invisible || gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute
         || ((gIntroSlideFlags & INTRO_SLIDE_FLAG_SLIDE_IN_STARTED) && (gBattleTypeFlags & BATTLE_TYPE_TRAINER))) // Don't show shadow on intro trainer slide
@@ -919,4 +919,10 @@ bool32 ShouldPlayNormalPokeCry(struct Pokemon *mon)
         return FALSE;
     else
         return TRUE;
+}
+
+u32 GetBattlerVisualSpecies(u32 battlerId)
+{
+    u32 transformSpecies = gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies;
+    return transformSpecies ? transformSpecies : GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_SPECIES);
 }

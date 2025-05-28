@@ -45,12 +45,13 @@ struct BattleAnimTable
 {
     const u8 *script;
     bool8 hideHpBoxes:1; // Animation will hide the battler's hp boxes when played
-    bool8 shouldBePlayed:1; // Animation will ignore battle scenes off will be played regardless
+    bool8 shouldBePlayed:1; // Animation will be played regardless of battle scenes off
     bool8 ignoreSemiInvulnerability:1; // Animation should be played regardless battler is semi invulnerable
     bool8 ignoreSubstitute:1; // Animation should be played regardless battler is behind substitute
     bool8 substituteRecede:1; // Substitute will be removed before doing the anim, being restored at the end
     bool8 changeForm:1; // Animation will change the Pokémon's form, necessary for the substitute out and in animation
-    bool8 unused:2;
+    bool8 resumeIfAnimsOff:1; // Animation will be resumed to B_ANIM_FORM_CHANGE if battle scenes off, only if changeForm is also set
+    bool8 unused:1;
 };
 
 #define ANIM_ARGS_COUNT 8
@@ -78,7 +79,6 @@ extern u8 gBattleAnimAttacker;
 extern u8 gBattleAnimTarget;
 extern u8 gBattlerSpriteIds[MAX_BATTLERS_COUNT];
 extern s32 gAnimMoveDmg;
-extern u16 gAnimBattlerSpecies[MAX_BATTLERS_COUNT];
 extern u8 gAnimCustomPanning;
 extern u8 gActiveAbilityPopUps;
 
@@ -341,7 +341,6 @@ void AnimTask_AttackerPunchWithTrace(u32 taskId);
 void AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds(u32 taskId);
 
 u32 GetBattlerSpriteCoord(u32 battlerId, u32 coordType);
-u32 GetBattlerSpriteCoord2(u32 battlerId, u32 coordType);
 u32 GetBattlerSpriteDefault_Y(u32 battlerId);
 u32 GetBattlerYCoordWithElevation(u32 battlerId);
 u32 GetSubstituteSpriteDefault_Y(u32 battlerId);

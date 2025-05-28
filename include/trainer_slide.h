@@ -3,6 +3,6 @@
 
 #include "global.h"
 
-bool8 ShouldDoTrainerSlide(u8 battlerId, u8 caseId);
+bool32 ShouldDoTrainerSlide(u32 battlerId, u32 caseId);
 
 #endif // GUARD_TRAINER_SLIDE_H

@@ -3,6 +3,7 @@
 
 #include "global.h"
 #include "battle.h"
+#include "task.h"
 
 // Item type IDs (used to determine the exit callback)
 #define ITEM_TYPE_NONE             0

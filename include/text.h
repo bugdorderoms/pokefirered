@@ -137,12 +137,12 @@ extern const u8 gKeypadIconTiles[];
 
 void SetFontsPointer(const struct FontInfo *fonts);
 void DeactivateAllTextPrinters(void);
-bool32 AddTextPrinterParameterized(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16));
-bool32 AddTextPrinterParameterized2(u32 windowId, u32 fontId, const u8 *str, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16), u32 fgColor, u32 bgColor, u32 shadowColor);
+bool32 AddTextPrinterParameterized(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16));
+bool32 AddTextPrinterParameterized2(u32 windowId, u32 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u32 fgColor, u32 bgColor, u32 shadowColor);
 void AddTextPrinterParameterized3(u32 windowId, u32 fontId, u8 x, u8 y, const u8 * color, s8 speed, const u8 * str);
 void AddTextPrinterParameterized4(u32 windowId, u32 fontId, u8 x, u8 y, u32 letterSpacing, u32 lineSpacing, const u8 *color, s8 speed, const u8 *str);
-void AddTextPrinterParameterized5(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16), u32 letterSpacing, u32 lineSpacing);
-bool32 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u32 speed, void (*callback)(struct TextPrinterTemplate *, u16));
+void AddTextPrinterParameterized5(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u32 letterSpacing, u32 lineSpacing);
+bool32 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16));
 void RunTextPrinters(void);
 bool32 IsTextPrinterActive(u32 id);
 u32 RenderFont(struct TextPrinter *textPrinter);

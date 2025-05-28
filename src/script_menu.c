@@ -898,18 +898,17 @@ u32 GetSelectedSeagallopDestination(void)
 
 void DrawRepelMultichoiseMenu(void)
 {
-    u32 i, count;
-    u16 repelItems[] = {ITEM_REPEL, ITEM_SUPER_REPEL, ITEM_MAX_REPEL};
-    struct MenuAction menuItems[3]; // max of items
+    u32 i, count = 0;
+    struct MenuAction menuItems[LAST_REPEL_ITEM - FIRST_REPEL_ITEM];
     
     gSpecialVar_Result = FALSE;
     
-    for (i = 0, count = 0; i < ARRAY_COUNT(repelItems); i++)
+    for (i = FIRST_REPEL_ITEM; i <= LAST_REPEL_ITEM; i++)
     {
-        if (CheckBagHasItem(repelItems[i], 1))
+        if (CheckBagHasItem(i, 1))
         {
-            VarSet(VAR_0x8004 + count, repelItems[i]);
-            menuItems[count++].text = ItemId_GetName(repelItems[i]);
+            VarSet(VAR_0x8004 + count, i);
+            menuItems[count++].text = ItemId_GetName(i);
         }
     }
     if (count > 1)

@@ -56,7 +56,7 @@ u32 IsUproarActive(void);
 u32 GetHitDamageResult(u32 battlerId, u32 move, bool32 checkSturdy);
 u16 GetOHKOChance(u32 attacker, u32 target, u32 move);
 bool32 KanOHKOBattler(u32 attacker, u32 target, u32 move, bool32 checkKOAcc);
-bool32 JumpIfMoveAffectedByProtect(u32 addr, const u8 *jumpStr);
+bool32 JumpIfMoveAffectedByProtect(const u8 *nextInstr, const u8 *jumpStr);
 bool32 IsMonGettingExpSentOut(void);
 void BattleCreateYesNoCursorAt(void);
 void BattleDestroyYesNoCursorAt(void);

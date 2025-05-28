@@ -232,7 +232,7 @@ void AnimDirtScatter(struct Sprite *sprite)
     InitSpritePosToAnimAttacker(sprite, TRUE);
     
     targetXPos = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
-    targetYPos = GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    targetYPos = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
     
     xOffset = RandomMax(32);
     if (xOffset > 16)

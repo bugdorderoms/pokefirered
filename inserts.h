@@ -145,6 +145,10 @@
 // Those weather are choose based on current time and season.
 #define DYNAMIC_WEATHER TRUE
 
+// If this setting is enabled, when a form change animation is played while battle scenes is off
+// it will play the transform animation instead, for fast battles.
+#define FAST_TRANSFORM_ANIMS FALSE
+
 // If this setting is enabled, when a Greninja knocks out a target with a move, it will transform itself into Ash-Greninja.
 // Otherwise, it will increase it's Attack, Sp. Attack and Speed by one stage each.
 #define BATTLE_BOND_TRANSFORM TRUE
