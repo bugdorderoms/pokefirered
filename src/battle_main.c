@@ -538,6 +538,7 @@ static void CB2_InitBattleInternal(void)
     gBattle_BG3_X = 0;
     gBattle_BG3_Y = 0;
     
+    gAbsentBattlerFlags = 0;
     gBattleTerrain = BattleSetup_GetTerrainId();
     InitBattleBgsVideo();
     LoadBattleTextboxAndBackground();
@@ -1319,9 +1320,15 @@ static u32 CreateNPCTrainerParty(u32 trainerNum)
             SetMonData(mon, MON_DATA_POKEBALL, &j);
         }
         
-        if (gTrainers[trainerNum].doubleBattle)
-            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
-        
+        switch (gTrainers[trainerNum].battleType)
+        {
+            case TRAINER_BATTLE_TYPE_DOUBLE:
+                gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+                break;
+            case TRAINER_BATTLE_TYPE_TWO_VS_ONE:
+                gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_VS_ONE);
+                break;
+        }
         gBattleStruct->battleChallenge = gTrainers[trainerNum].battleChallenge;
     }
     return gTrainers[trainerNum].partySize;
@@ -1905,7 +1912,6 @@ static void BattleStartClearSetData(void)
     gBattleMoveDamage = 0;
     gIntroSlideFlags = 0;
     gLeveledUpInBattle = 0;
-    gAbsentBattlerFlags = 0;
     
     // Safari battles can't be double battles, so this don't need to be changed
     catchRate = gSpeciesInfo[GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)].catchRate;

@@ -60,6 +60,10 @@
 #define TRAINER_MON_MALE   1
 #define TRAINER_MON_FEMALE 2
 
+#define TRAINER_BATTLE_TYPE_SINGLE     0
+#define TRAINER_BATTLE_TYPE_DOUBLE     1
+#define TRAINER_BATTLE_TYPE_TWO_VS_ONE 2
+
 #define TRAINER_CHALLENGE_INVERSE_BATTLE       1
 #define TRAINER_CHALLENGE_INFINITE_TAILWIND    2
 #define TRAINER_CHALLENGE_INFINITE_MIST        3
@@ -90,8 +94,8 @@ struct Trainer
     /*0x0C*/ u8 trainerClass;
     /*0x0D*/ u8 trainerPic;
     /*0x0E*/ u8 encounterMusic;
-    /*0x0F*/ u8 doubleBattle:1;
-             u8 battleChallenge:7; // 0 means no challenge, max 126 battle challenges
+    /*0x0F*/ u8 battleType:2;
+             u8 battleChallenge:6; // 0 means no challenge, max 63 battle challenges
     /*0x10*/ u16 items[MAX_TRAINER_ITEMS];
     /*0x18*/ u32 aiFlags;
     /*0x1C*/ const struct TrainerMon *party;

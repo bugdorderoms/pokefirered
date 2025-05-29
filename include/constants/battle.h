@@ -60,7 +60,7 @@
 #define BATTLE_TYPE_POKEDUDE         (1 << 12)
 #define BATTLE_TYPE_WILD_SCRIPTED    (1 << 13)
 #define BATTLE_TYPE_SOS              (1 << 14)
-#define BATTLE_TYPE_TWO_VS_ONE       (1 << 15) // No functionallity for trainer battles at the moment
+#define BATTLE_TYPE_TWO_VS_ONE       (1 << 15)
 #define BATTLE_TYPE_TOTEM            (1 << 16)
 
 #define IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE ((gBattleTypeFlags & BATTLE_TYPE_GHOST) && !(gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))

@@ -6093,8 +6093,8 @@ void TryUpdateEvolutionTracker(u32 evoMode, u32 upAmount, u32 data)
     struct Pokemon *mon = GetBattlerPartyIndexPtr(gBattlerAttacker);
     const u8 *evolutions = gSpeciesInfo[gBattleMons[gBattlerAttacker].species].evolutions;
     
-    if (evolutions != NULL && GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER && !(gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_POKEDUDE
-    | BATTLE_TYPE_LINK | BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_MULTI)) && GetMonData(mon, MON_DATA_EVOLUTION_TRACKER) < 1023)
+    if (evolutions != NULL && !(gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LINK | BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_MULTI))
+    && GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER && GetMonData(mon, MON_DATA_EVOLUTION_TRACKER) < 1023)
     {
         value = min(1023, GetMonData(mon, MON_DATA_EVOLUTION_TRACKER) + upAmount);
         
@@ -6385,22 +6385,15 @@ bool32 TryInitSosCall(void)
                     // Set some quasi-double battle params on the first call
                     if (gBattleStruct->sos.calls == 0)
                     {
-                        gBattlerPositions[B_POSITION_PLAYER_RIGHT] = B_POSITION_PLAYER_RIGHT;
-                        gBattlerControllerFuncs[B_POSITION_PLAYER_RIGHT] = SetControllerToPlayer;
-                        gAbsentBattlerFlags |= Bit(B_POSITION_PLAYER_RIGHT);
-                        
-                        gBattlerPositions[B_POSITION_OPPONENT_RIGHT] = B_POSITION_OPPONENT_RIGHT;
-                        gBattlerControllerFuncs[B_POSITION_OPPONENT_RIGHT] = SetControllerToOpponent;
-                        
                         gBattlerPartyIndexes[ally] = 1;
                         gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_VS_ONE); // If not already set
-                        gBattlersCount = MAX_BATTLERS_COUNT;
+                        InitSinglePlayerBtlControllers(FALSE);
                     }
                     
                     if (gBattleStruct->sos.calls < 31) // Increment num of calls for help
                         gBattleStruct->sos.calls++;
                     
-                    CreateSosAlly(species, gBattleMons[caller].level - 2 + RandomMax(5), ally, playerBattler);
+                    CreateSosAlly(species, clamp(gBattleMons[caller].level - RandomMax(5) + RandomMax(5), 1, MAX_LEVEL), ally, playerBattler);
                     gBattleCommunication[MULTISTRING_CHOOSER] = IsBattlerTotemPokemon(caller) ? B_MSG_CALLED_ITS_ALLY : B_MSG_CALLED_FOR_HELP;
                     BattleScriptExecute(BattleScript_SosCallForHelp);
                 }

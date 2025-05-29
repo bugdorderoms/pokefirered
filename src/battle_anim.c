@@ -2583,7 +2583,7 @@ static void ScriptCmd_clearmonbg_23(void)
     
     if (IsBattlerSpriteVisible(battlerId))
         gSprites[gBattlerSpriteIds[battlerId]].invisible = FALSE;
-	
+    
     if (animBattlerId > ANIM_TARGET && IsBattlerSpriteVisible(BATTLE_PARTNER(battlerId)))
         gSprites[gBattlerSpriteIds[BATTLE_PARTNER(battlerId)]].invisible = FALSE;
     else

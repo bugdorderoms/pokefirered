@@ -1388,7 +1388,7 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
         {
             if (gBattleTypeFlags & BATTLE_TYPE_GHOST)
                 stringPtr = (gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED) ? COMPOUND_STRING("The Ghost appeared!\p") : COMPOUND_STRING("The Ghost appeared!\pDarn!\nThe Ghost can't be ID'd!\p");
-            else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+            else if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
                 stringPtr = COMPOUND_STRING("Wild {B_OPPONENT_MON1_NAME} and {B_OPPONENT_MON2_NAME} appeared!\p");
             else if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
                 stringPtr = COMPOUND_STRING("Wild {B_OPPONENT_MON1_NAME} appeared!{PAUSE 127}"); // Same as bellow, but with a pausse
@@ -1399,9 +1399,12 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
         }
         break;
     case STRINGID_INTROSENDOUT:
-        if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
+    {
+        u32 side = GetBattlerSide(battlerId);
+        
+        if (IsDoubleBattleOnSide(side))
         {
-            if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+            if (side == B_SIDE_PLAYER)
             {
                 if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
                     stringPtr = COMPOUND_STRING("{B_LINK_PARTNER_NAME} sent out {B_LINK_PLAYER_MON2_NAME}!\nGo! {B_LINK_PLAYER_MON1_NAME}!");
@@ -1410,20 +1413,20 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
             }
             else
             {
-                GetBattlerNick(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gBattleTextBuff1);
-                stringPtr = sText_GoPkmn;
-            }
-        }
-        else
-        {
-            if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-            {
                 if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
                     stringPtr = COMPOUND_STRING("{B_LINK_OPPONENT1_NAME} sent out {B_LINK_OPPONENT_MON1_NAME}!\n{B_LINK_OPPONENT2_NAME} sent out {B_LINK_OPPONENT_MON2_NAME}!");
                 else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
                     stringPtr = COMPOUND_STRING("{B_LINK_OPPONENT1_NAME} sent out {B_OPPONENT_MON1_NAME} and {B_OPPONENT_MON2_NAME}!");
                 else
                     stringPtr = COMPOUND_STRING("{B_TRAINER1_CLASS} {B_TRAINER1_NAME} sent out {B_OPPONENT_MON1_NAME} and {B_OPPONENT_MON2_NAME}!{PAUSE 60}");
+            }
+        }
+        else
+        {
+            if (side == B_SIDE_PLAYER)
+            {
+                GetBattlerNick(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gBattleTextBuff1);
+                stringPtr = sText_GoPkmn;
             }
             else
             {
@@ -1439,6 +1442,7 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
             }
         }
         break;
+    }
     case STRINGID_RETURNMON:
         if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
         {

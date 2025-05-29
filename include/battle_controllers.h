@@ -160,6 +160,7 @@ struct ChooseMoveStruct
 void HandleLinkBattleSetup(void);
 void SetUpBattleVars(void);
 void InitBtlControllers(void);
+void InitSinglePlayerBtlControllers(bool32 fromBattleStart);
 void SetBattleEndCallbacks(u32 battlerId);
 void TryReceiveLinkBattleData(void);
 void PrepareBufferDataTransferLink(u32 battlerId, u32 bufferId, u16 size, u8 *data);

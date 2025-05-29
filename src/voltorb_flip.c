@@ -1271,8 +1271,8 @@ static void ChangeQuitButtonFrame(bool32 selected)
 {
     u32 i;
     
-	sVoltorbFlipState->isCursorOnQuitButton = selected;
-	
+    sVoltorbFlipState->isCursorOnQuitButton = selected;
+    
     for (i = 0; i < 10; i++)
         FillBgTilemapBufferRect_Palette0(1, sQuitButtonGfxs[selected][i], 22 + (i % 5), 17 + (i / 5), 1, 1);
     
