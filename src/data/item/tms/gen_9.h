@@ -9,7 +9,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM01"),
         .holdEffectParam = MOVE_TAKE_DOWN,
-        .description = (u8*)&gBattleMoves[MOVE_TAKE_DOWN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -21,7 +21,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM02"),
         .holdEffectParam = MOVE_CHARM,
-        .description = (u8*)&gBattleMoves[MOVE_CHARM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -33,7 +33,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM03"),
         .holdEffectParam = MOVE_FAKE_TEARS,
-        .description = (u8*)&gBattleMoves[MOVE_FAKE_TEARS].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -45,7 +45,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM04"),
         .holdEffectParam = MOVE_AGILITY,
-        .description = (u8*)&gBattleMoves[MOVE_AGILITY].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -57,7 +57,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM05"),
         .holdEffectParam = MOVE_MUD_SLAP,
-        .description = (u8*)&gBattleMoves[MOVE_MUD_SLAP].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -69,7 +69,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM06"),
         .holdEffectParam = MOVE_SCARY_FACE,
-        .description = (u8*)&gBattleMoves[MOVE_SCARY_FACE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -81,7 +81,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM07"),
         .holdEffectParam = MOVE_PROTECT,
-        .description = (u8*)&gBattleMoves[MOVE_PROTECT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -93,7 +93,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM08"),
         .holdEffectParam = MOVE_FIRE_FANG,
-        .description = (u8*)&gBattleMoves[MOVE_FIRE_FANG].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -105,7 +105,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM09"),
         .holdEffectParam = MOVE_THUNDER_FANG,
-        .description = (u8*)&gBattleMoves[MOVE_THUNDER_FANG].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -117,7 +117,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM10"),
         .holdEffectParam = MOVE_ICE_FANG,
-        .description = (u8*)&gBattleMoves[MOVE_ICE_FANG].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -129,7 +129,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM11"),
         .holdEffectParam = MOVE_WATER_PULSE,
-        .description = (u8*)&gBattleMoves[MOVE_WATER_PULSE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -141,7 +141,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM12"),
         .holdEffectParam = MOVE_LOW_KICK,
-        .description = (u8*)&gBattleMoves[MOVE_LOW_KICK].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -153,7 +153,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM13"),
         .holdEffectParam = MOVE_ACID_SPRAY,
-        .description = (u8*)&gBattleMoves[MOVE_ACID_SPRAY].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -165,7 +165,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM14"),
         .holdEffectParam = MOVE_ACROBATICS,
-        .description = (u8*)&gBattleMoves[MOVE_ACROBATICS].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -177,7 +177,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM15"),
         .holdEffectParam = MOVE_STRUGGLE_BUG,
-        .description = (u8*)&gBattleMoves[MOVE_STRUGGLE_BUG].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -189,7 +189,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM16"),
         .holdEffectParam = MOVE_PSYBEAM,
-        .description = (u8*)&gBattleMoves[MOVE_PSYBEAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -201,7 +201,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM17"),
         .holdEffectParam = MOVE_CONFUSE_RAY,
-        .description = (u8*)&gBattleMoves[MOVE_CONFUSE_RAY].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -213,7 +213,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM18"),
         .holdEffectParam = MOVE_THIEF,
-        .description = (u8*)&gBattleMoves[MOVE_THIEF].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -225,7 +225,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM19"),
         .holdEffectParam = MOVE_DISARMING_VOICE,
-        .description = (u8*)&gBattleMoves[MOVE_DISARMING_VOICE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -237,7 +237,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM20"),
         .holdEffectParam = MOVE_TRAILBLAZE,
-        .description = (u8*)&gBattleMoves[MOVE_TRAILBLAZE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -249,7 +249,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM21"),
         .holdEffectParam = MOVE_POUNCE,
-        .description = (u8*)&gBattleMoves[MOVE_POUNCE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -261,7 +261,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM22"),
         .holdEffectParam = MOVE_CHILLING_WATER,
-        .description = (u8*)&gBattleMoves[MOVE_CHILLING_WATER].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -273,7 +273,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM23"),
         .holdEffectParam = MOVE_CHARGE_BEAM,
-        .description = (u8*)&gBattleMoves[MOVE_CHARGE_BEAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -285,7 +285,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM24"),
         .holdEffectParam = MOVE_FIRE_SPIN,
-        .description = (u8*)&gBattleMoves[MOVE_FIRE_SPIN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -297,7 +297,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM25"),
         .holdEffectParam = MOVE_FACADE,
-        .description = (u8*)&gBattleMoves[MOVE_FACADE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -309,7 +309,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM26"),
         .holdEffectParam = MOVE_POISON_TAIL,
-        .description = (u8*)&gBattleMoves[MOVE_POISON_TAIL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -321,7 +321,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM27"),
         .holdEffectParam = MOVE_AERIAL_ACE,
-        .description = (u8*)&gBattleMoves[MOVE_AERIAL_ACE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -333,7 +333,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM28"),
         .holdEffectParam = MOVE_BULLDOZE,
-        .description = (u8*)&gBattleMoves[MOVE_BULLDOZE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -345,7 +345,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM29"),
         .holdEffectParam = MOVE_HEX,
-        .description = (u8*)&gBattleMoves[MOVE_HEX].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -357,7 +357,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM30"),
         .holdEffectParam = MOVE_SNARL,
-        .description = (u8*)&gBattleMoves[MOVE_SNARL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -369,7 +369,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM31"),
         .holdEffectParam = MOVE_METAL_CLAW,
-        .description = (u8*)&gBattleMoves[MOVE_METAL_CLAW].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -381,7 +381,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM32"),
         .holdEffectParam = MOVE_SWIFT,
-        .description = (u8*)&gBattleMoves[MOVE_SWIFT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -393,7 +393,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM33"),
         .holdEffectParam = MOVE_MAGICAL_LEAF,
-        .description = (u8*)&gBattleMoves[MOVE_MAGICAL_LEAF].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -405,7 +405,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM34"),
         .holdEffectParam = MOVE_ICY_WIND,
-        .description = (u8*)&gBattleMoves[MOVE_ICY_WIND].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -417,7 +417,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM35"),
         .holdEffectParam = MOVE_MUD_SHOT,
-        .description = (u8*)&gBattleMoves[MOVE_MUD_SHOT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -429,7 +429,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM36"),
         .holdEffectParam = MOVE_ROCK_TOMB,
-        .description = (u8*)&gBattleMoves[MOVE_ROCK_TOMB].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -441,7 +441,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM37"),
         .holdEffectParam = MOVE_DRAINING_KISS,
-        .description = (u8*)&gBattleMoves[MOVE_DRAINING_KISS].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -453,7 +453,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM38"),
         .holdEffectParam = MOVE_FLAME_CHARGE,
-        .description = (u8*)&gBattleMoves[MOVE_FLAME_CHARGE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -465,7 +465,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM39"),
         .holdEffectParam = MOVE_LOW_SWEEP,
-        .description = (u8*)&gBattleMoves[MOVE_LOW_SWEEP].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -477,7 +477,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM40"),
         .holdEffectParam = MOVE_AIR_CUTTER,
-        .description = (u8*)&gBattleMoves[MOVE_AIR_CUTTER].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -489,7 +489,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM41"),
         .holdEffectParam = MOVE_STORED_POWER,
-        .description = (u8*)&gBattleMoves[MOVE_STORED_POWER].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -501,7 +501,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM42"),
         .holdEffectParam = MOVE_NIGHT_SHADE,
-        .description = (u8*)&gBattleMoves[MOVE_NIGHT_SHADE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -513,7 +513,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM43"),
         .holdEffectParam = MOVE_FLING,
-        .description = (u8*)&gBattleMoves[MOVE_FLING].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -525,7 +525,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM44"),
         .holdEffectParam = MOVE_DRAGON_TAIL,
-        .description = (u8*)&gBattleMoves[MOVE_DRAGON_TAIL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -537,7 +537,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM45"),
         .holdEffectParam = MOVE_VENOSHOCK,
-        .description = (u8*)&gBattleMoves[MOVE_VENOSHOCK].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -549,7 +549,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM46"),
         .holdEffectParam = MOVE_AVALANCHE,
-        .description = (u8*)&gBattleMoves[MOVE_AVALANCHE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -561,7 +561,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM47"),
         .holdEffectParam = MOVE_ENDURE,
-        .description = (u8*)&gBattleMoves[MOVE_ENDURE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -573,7 +573,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM48"),
         .holdEffectParam = MOVE_VOLT_SWITCH,
-        .description = (u8*)&gBattleMoves[MOVE_VOLT_SWITCH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -585,7 +585,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM49"),
         .holdEffectParam = MOVE_SUNNY_DAY,
-        .description = (u8*)&gBattleMoves[MOVE_SUNNY_DAY].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -597,7 +597,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM50"),
         .holdEffectParam = MOVE_RAIN_DANCE,
-        .description = (u8*)&gBattleMoves[MOVE_RAIN_DANCE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -609,7 +609,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM51"),
         .holdEffectParam = MOVE_SANDSTORM,
-        .description = (u8*)&gBattleMoves[MOVE_SANDSTORM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -621,7 +621,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM52"),
         .holdEffectParam = MOVE_SNOWSCAPE,
-        .description = (u8*)&gBattleMoves[MOVE_SNOWSCAPE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -633,7 +633,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM53"),
         .holdEffectParam = MOVE_SMART_STRIKE,
-        .description = (u8*)&gBattleMoves[MOVE_SMART_STRIKE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -645,7 +645,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM54"),
         .holdEffectParam = MOVE_PSYSHOCK,
-        .description = (u8*)&gBattleMoves[MOVE_PSYSHOCK].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -657,7 +657,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM55"),
         .holdEffectParam = MOVE_DIG,
-        .description = (u8*)&gBattleMoves[MOVE_DIG].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -669,7 +669,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM56"),
         .holdEffectParam = MOVE_BULLET_SEED,
-        .description = (u8*)&gBattleMoves[MOVE_BULLET_SEED].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -681,7 +681,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM57"),
         .holdEffectParam = MOVE_FALSE_SWIPE,
-        .description = (u8*)&gBattleMoves[MOVE_FALSE_SWIPE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -693,7 +693,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM58"),
         .holdEffectParam = MOVE_BRICK_BREAK,
-        .description = (u8*)&gBattleMoves[MOVE_BRICK_BREAK].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -705,7 +705,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM59"),
         .holdEffectParam = MOVE_ZEN_HEADBUTT,
-        .description = (u8*)&gBattleMoves[MOVE_ZEN_HEADBUTT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -717,7 +717,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM60"),
         .holdEffectParam = MOVE_U_TURN,
-        .description = (u8*)&gBattleMoves[MOVE_U_TURN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -729,7 +729,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM61"),
         .holdEffectParam = MOVE_SHADOW_CLAW,
-        .description = (u8*)&gBattleMoves[MOVE_SHADOW_CLAW].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -741,7 +741,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM62"),
         .holdEffectParam = MOVE_FOUL_PLAY,
-        .description = (u8*)&gBattleMoves[MOVE_FOUL_PLAY].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -753,7 +753,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM63"),
         .holdEffectParam = MOVE_PSYCHIC_FANGS,
-        .description = (u8*)&gBattleMoves[MOVE_PSYCHIC_FANGS].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -765,7 +765,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM64"),
         .holdEffectParam = MOVE_BULK_UP,
-        .description = (u8*)&gBattleMoves[MOVE_BULK_UP].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -777,7 +777,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM65"),
         .holdEffectParam = MOVE_AIR_SLASH,
-        .description = (u8*)&gBattleMoves[MOVE_AIR_SLASH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -789,7 +789,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM66"),
         .holdEffectParam = MOVE_BODY_SLAM,
-        .description = (u8*)&gBattleMoves[MOVE_BODY_SLAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -801,7 +801,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM67"),
         .holdEffectParam = MOVE_FIRE_PUNCH,
-        .description = (u8*)&gBattleMoves[MOVE_FIRE_PUNCH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -813,7 +813,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM68"),
         .holdEffectParam = MOVE_THUNDER_PUNCH,
-        .description = (u8*)&gBattleMoves[MOVE_THUNDER_PUNCH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -825,7 +825,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM69"),
         .holdEffectParam = MOVE_ICE_PUNCH,
-        .description = (u8*)&gBattleMoves[MOVE_ICE_PUNCH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -837,7 +837,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM70"),
         .holdEffectParam = MOVE_SLEEP_TALK,
-        .description = (u8*)&gBattleMoves[MOVE_SLEEP_TALK].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -849,7 +849,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM71"),
         .holdEffectParam = MOVE_SEED_BOMB,
-        .description = (u8*)&gBattleMoves[MOVE_SEED_BOMB].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -861,7 +861,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM72"),
         .holdEffectParam = MOVE_ELECTRO_BALL,
-        .description = (u8*)&gBattleMoves[MOVE_ELECTRO_BALL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -873,7 +873,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM73"),
         .holdEffectParam = MOVE_DRAIN_PUNCH,
-        .description = (u8*)&gBattleMoves[MOVE_DRAIN_PUNCH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -885,7 +885,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM74"),
         .holdEffectParam = MOVE_REFLECT,
-        .description = (u8*)&gBattleMoves[MOVE_REFLECT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -897,7 +897,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM75"),
         .holdEffectParam = MOVE_LIGHT_SCREEN,
-        .description = (u8*)&gBattleMoves[MOVE_LIGHT_SCREEN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -909,7 +909,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM76"),
         .holdEffectParam = MOVE_ROCK_BLAST,
-        .description = (u8*)&gBattleMoves[MOVE_ROCK_BLAST].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -921,7 +921,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM77"),
         .holdEffectParam = MOVE_WATERFALL,
-        .description = (u8*)&gBattleMoves[MOVE_WATERFALL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -933,7 +933,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM78"),
         .holdEffectParam = MOVE_DRAGON_CLAW,
-        .description = (u8*)&gBattleMoves[MOVE_DRAGON_CLAW].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -945,7 +945,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM79"),
         .holdEffectParam = MOVE_DAZZLING_GLEAM,
-        .description = (u8*)&gBattleMoves[MOVE_DAZZLING_GLEAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -957,7 +957,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM80"),
         .holdEffectParam = MOVE_METRONOME,
-        .description = (u8*)&gBattleMoves[MOVE_METRONOME].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -969,7 +969,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM81"),
         .holdEffectParam = MOVE_GRASS_KNOT,
-        .description = (u8*)&gBattleMoves[MOVE_GRASS_KNOT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -981,7 +981,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM82"),
         .holdEffectParam = MOVE_THUNDER_WAVE,
-        .description = (u8*)&gBattleMoves[MOVE_THUNDER_WAVE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -993,7 +993,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM83"),
         .holdEffectParam = MOVE_POISON_JAB,
-        .description = (u8*)&gBattleMoves[MOVE_POISON_JAB].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1005,7 +1005,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM84"),
         .holdEffectParam = MOVE_STOMPING_TANTRUM,
-        .description = (u8*)&gBattleMoves[MOVE_STOMPING_TANTRUM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1017,7 +1017,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM85"),
         .holdEffectParam = MOVE_REST,
-        .description = (u8*)&gBattleMoves[MOVE_REST].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1029,7 +1029,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM86"),
         .holdEffectParam = MOVE_ROCK_SLIDE,
-        .description = (u8*)&gBattleMoves[MOVE_ROCK_SLIDE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1041,7 +1041,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM87"),
         .holdEffectParam = MOVE_TAUNT,
-        .description = (u8*)&gBattleMoves[MOVE_TAUNT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1053,7 +1053,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM88"),
         .holdEffectParam = MOVE_SWORDS_DANCE,
-        .description = (u8*)&gBattleMoves[MOVE_SWORDS_DANCE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1065,7 +1065,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM89"),
         .holdEffectParam = MOVE_BODY_PRESS,
-        .description = (u8*)&gBattleMoves[MOVE_BODY_PRESS].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1077,7 +1077,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM90"),
         .holdEffectParam = MOVE_SPIKES,
-        .description = (u8*)&gBattleMoves[MOVE_SPIKES].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1089,7 +1089,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM91"),
         .holdEffectParam = MOVE_TOXIC_SPIKES,
-        .description = (u8*)&gBattleMoves[MOVE_TOXIC_SPIKES].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1101,7 +1101,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM92"),
         .holdEffectParam = MOVE_IMPRISON,
-        .description = (u8*)&gBattleMoves[MOVE_IMPRISON].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1113,7 +1113,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM93"),
         .holdEffectParam = MOVE_FLASH_CANNON,
-        .description = (u8*)&gBattleMoves[MOVE_FLASH_CANNON].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1125,7 +1125,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM94"),
         .holdEffectParam = MOVE_DARK_PULSE,
-        .description = (u8*)&gBattleMoves[MOVE_DARK_PULSE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1137,7 +1137,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM95"),
         .holdEffectParam = MOVE_LEECH_LIFE,
-        .description = (u8*)&gBattleMoves[MOVE_LEECH_LIFE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1149,7 +1149,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM96"),
         .holdEffectParam = MOVE_EERIE_IMPULSE,
-        .description = (u8*)&gBattleMoves[MOVE_EERIE_IMPULSE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1161,7 +1161,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM97"),
         .holdEffectParam = MOVE_FLY,
-        .description = (u8*)&gBattleMoves[MOVE_FLY].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1173,7 +1173,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM98"),
         .holdEffectParam = MOVE_SKILL_SWAP,
-        .description = (u8*)&gBattleMoves[MOVE_SKILL_SWAP].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1185,7 +1185,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM99"),
         .holdEffectParam = MOVE_IRON_HEAD,
-        .description = (u8*)&gBattleMoves[MOVE_IRON_HEAD].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1197,7 +1197,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM100"),
         .holdEffectParam = MOVE_DRAGON_DANCE,
-        .description = (u8*)&gBattleMoves[MOVE_DRAGON_DANCE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1209,7 +1209,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM101"),
         .holdEffectParam = MOVE_POWER_GEM,
-        .description = (u8*)&gBattleMoves[MOVE_POWER_GEM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1221,7 +1221,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM102"),
         .holdEffectParam = MOVE_GUNK_SHOT,
-        .description = (u8*)&gBattleMoves[MOVE_GUNK_SHOT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1233,7 +1233,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM103"),
         .holdEffectParam = MOVE_SUBSTITUTE,
-        .description = (u8*)&gBattleMoves[MOVE_SUBSTITUTE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1245,7 +1245,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM104"),
         .holdEffectParam = MOVE_IRON_DEFENSE,
-        .description = (u8*)&gBattleMoves[MOVE_IRON_DEFENSE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1257,7 +1257,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM105"),
         .holdEffectParam = MOVE_X_SCISSOR,
-        .description = (u8*)&gBattleMoves[MOVE_X_SCISSOR].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1269,7 +1269,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM106"),
         .holdEffectParam = MOVE_DRILL_RUN,
-        .description = (u8*)&gBattleMoves[MOVE_DRILL_RUN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1281,7 +1281,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM107"),
         .holdEffectParam = MOVE_WILL_O_WISP,
-        .description = (u8*)&gBattleMoves[MOVE_WILL_O_WISP].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1293,7 +1293,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM108"),
         .holdEffectParam = MOVE_CRUNCH,
-        .description = (u8*)&gBattleMoves[MOVE_CRUNCH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1305,7 +1305,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM109"),
         .holdEffectParam = MOVE_TRICK,
-        .description = (u8*)&gBattleMoves[MOVE_TRICK].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1317,7 +1317,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM110"),
         .holdEffectParam = MOVE_LIQUIDATION,
-        .description = (u8*)&gBattleMoves[MOVE_LIQUIDATION].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1329,7 +1329,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM111"),
         .holdEffectParam = MOVE_GIGA_DRAIN,
-        .description = (u8*)&gBattleMoves[MOVE_GIGA_DRAIN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1341,7 +1341,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM112"),
         .holdEffectParam = MOVE_AURA_SPHERE,
-        .description = (u8*)&gBattleMoves[MOVE_AURA_SPHERE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1353,7 +1353,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM113"),
         .holdEffectParam = MOVE_TAILWIND,
-        .description = (u8*)&gBattleMoves[MOVE_TAILWIND].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1365,7 +1365,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM114"),
         .holdEffectParam = MOVE_SHADOW_BALL,
-        .description = (u8*)&gBattleMoves[MOVE_SHADOW_BALL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1377,7 +1377,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM115"),
         .holdEffectParam = MOVE_DRAGON_PULSE,
-        .description = (u8*)&gBattleMoves[MOVE_DRAGON_PULSE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1389,7 +1389,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM116"),
         .holdEffectParam = MOVE_STEALTH_ROCK,
-        .description = (u8*)&gBattleMoves[MOVE_STEALTH_ROCK].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1401,7 +1401,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM117"),
         .holdEffectParam = MOVE_HYPER_VOICE,
-        .description = (u8*)&gBattleMoves[MOVE_HYPER_VOICE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1413,7 +1413,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM118"),
         .holdEffectParam = MOVE_HEAT_WAVE,
-        .description = (u8*)&gBattleMoves[MOVE_HEAT_WAVE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1425,7 +1425,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM119"),
         .holdEffectParam = MOVE_ENERGY_BALL,
-        .description = (u8*)&gBattleMoves[MOVE_ENERGY_BALL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1437,7 +1437,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM120"),
         .holdEffectParam = MOVE_PSYCHIC,
-        .description = (u8*)&gBattleMoves[MOVE_PSYCHIC].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1449,7 +1449,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM121"),
         .holdEffectParam = MOVE_HEAVY_SLAM,
-        .description = (u8*)&gBattleMoves[MOVE_HEAVY_SLAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1461,7 +1461,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM122"),
         .holdEffectParam = MOVE_ENCORE,
-        .description = (u8*)&gBattleMoves[MOVE_ENCORE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1473,7 +1473,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM123"),
         .holdEffectParam = MOVE_SURF,
-        .description = (u8*)&gBattleMoves[MOVE_SURF].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1485,7 +1485,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM124"),
         .holdEffectParam = MOVE_ICE_SPINNER,
-        .description = (u8*)&gBattleMoves[MOVE_ICE_SPINNER].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1497,7 +1497,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM125"),
         .holdEffectParam = MOVE_FLAMETHROWER,
-        .description = (u8*)&gBattleMoves[MOVE_FLAMETHROWER].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1509,7 +1509,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM126"),
         .holdEffectParam = MOVE_THUNDERBOLT,
-        .description = (u8*)&gBattleMoves[MOVE_THUNDERBOLT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1521,7 +1521,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM127"),
         .holdEffectParam = MOVE_PLAY_ROUGH,
-        .description = (u8*)&gBattleMoves[MOVE_PLAY_ROUGH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1533,7 +1533,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM128"),
         .holdEffectParam = MOVE_AMNESIA,
-        .description = (u8*)&gBattleMoves[MOVE_AMNESIA].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1545,7 +1545,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM129"),
         .holdEffectParam = MOVE_CALM_MIND,
-        .description = (u8*)&gBattleMoves[MOVE_CALM_MIND].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1557,7 +1557,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM130"),
         .holdEffectParam = MOVE_HELPING_HAND,
-        .description = (u8*)&gBattleMoves[MOVE_HELPING_HAND].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1569,7 +1569,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM131"),
         .holdEffectParam = MOVE_POLLEN_PUFF,
-        .description = (u8*)&gBattleMoves[MOVE_POLLEN_PUFF].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1581,7 +1581,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM132"),
         .holdEffectParam = MOVE_BATON_PASS,
-        .description = (u8*)&gBattleMoves[MOVE_BATON_PASS].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1593,7 +1593,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM133"),
         .holdEffectParam = MOVE_EARTH_POWER,
-        .description = (u8*)&gBattleMoves[MOVE_EARTH_POWER].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1605,7 +1605,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM134"),
         .holdEffectParam = MOVE_REVERSAL,
-        .description = (u8*)&gBattleMoves[MOVE_REVERSAL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1617,7 +1617,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM135"),
         .holdEffectParam = MOVE_ICE_BEAM,
-        .description = (u8*)&gBattleMoves[MOVE_ICE_BEAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1629,7 +1629,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM136"),
         .holdEffectParam = MOVE_ELECTRIC_TERRAIN,
-        .description = (u8*)&gBattleMoves[MOVE_ELECTRIC_TERRAIN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1641,7 +1641,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM137"),
         .holdEffectParam = MOVE_GRASSY_TERRAIN,
-        .description = (u8*)&gBattleMoves[MOVE_GRASSY_TERRAIN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1653,7 +1653,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM138"),
         .holdEffectParam = MOVE_PSYCHIC_TERRAIN,
-        .description = (u8*)&gBattleMoves[MOVE_PSYCHIC_TERRAIN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1665,7 +1665,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM139"),
         .holdEffectParam = MOVE_MISTY_TERRAIN,
-        .description = (u8*)&gBattleMoves[MOVE_MISTY_TERRAIN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1677,7 +1677,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM140"),
         .holdEffectParam = MOVE_NASTY_PLOT,
-        .description = (u8*)&gBattleMoves[MOVE_NASTY_PLOT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1689,7 +1689,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM141"),
         .holdEffectParam = MOVE_FIRE_BLAST,
-        .description = (u8*)&gBattleMoves[MOVE_FIRE_BLAST].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1701,7 +1701,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM142"),
         .holdEffectParam = MOVE_HYDRO_PUMP,
-        .description = (u8*)&gBattleMoves[MOVE_HYDRO_PUMP].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1713,7 +1713,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM143"),
         .holdEffectParam = MOVE_BLIZZARD,
-        .description = (u8*)&gBattleMoves[MOVE_BLIZZARD].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1725,7 +1725,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM144"),
         .holdEffectParam = MOVE_FIRE_PLEDGE,
-        .description = (u8*)&gBattleMoves[MOVE_FIRE_PLEDGE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1737,7 +1737,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM145"),
         .holdEffectParam = MOVE_WATER_PLEDGE,
-        .description = (u8*)&gBattleMoves[MOVE_WATER_PLEDGE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1749,7 +1749,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM146"),
         .holdEffectParam = MOVE_GRASS_PLEDGE,
-        .description = (u8*)&gBattleMoves[MOVE_GRASS_PLEDGE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1761,7 +1761,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM147"),
         .holdEffectParam = MOVE_WILD_CHARGE,
-        .description = (u8*)&gBattleMoves[MOVE_WILD_CHARGE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1773,7 +1773,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM148"),
         .holdEffectParam = MOVE_SLUDGE_BOMB,
-        .description = (u8*)&gBattleMoves[MOVE_SLUDGE_BOMB].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1785,7 +1785,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM149"),
         .holdEffectParam = MOVE_EARTHQUAKE,
-        .description = (u8*)&gBattleMoves[MOVE_EARTHQUAKE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1797,7 +1797,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM150"),
         .holdEffectParam = MOVE_STONE_EDGE,
-        .description = (u8*)&gBattleMoves[MOVE_STONE_EDGE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1809,7 +1809,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM151"),
         .holdEffectParam = MOVE_PHANTOM_FORCE,
-        .description = (u8*)&gBattleMoves[MOVE_PHANTOM_FORCE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1821,7 +1821,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM152"),
         .holdEffectParam = MOVE_GIGA_IMPACT,
-        .description = (u8*)&gBattleMoves[MOVE_GIGA_IMPACT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1833,7 +1833,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM153"),
         .holdEffectParam = MOVE_BLAST_BURN,
-        .description = (u8*)&gBattleMoves[MOVE_BLAST_BURN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1845,7 +1845,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM154"),
         .holdEffectParam = MOVE_HYDRO_CANNON,
-        .description = (u8*)&gBattleMoves[MOVE_HYDRO_CANNON].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1857,7 +1857,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM155"),
         .holdEffectParam = MOVE_FRENZY_PLANT,
-        .description = (u8*)&gBattleMoves[MOVE_FRENZY_PLANT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1869,7 +1869,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM156"),
         .holdEffectParam = MOVE_OUTRAGE,
-        .description = (u8*)&gBattleMoves[MOVE_OUTRAGE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1881,7 +1881,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM157"),
         .holdEffectParam = MOVE_OVERHEAT,
-        .description = (u8*)&gBattleMoves[MOVE_OVERHEAT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1893,7 +1893,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM158"),
         .holdEffectParam = MOVE_FOCUS_BLAST,
-        .description = (u8*)&gBattleMoves[MOVE_FOCUS_BLAST].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1905,7 +1905,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM159"),
         .holdEffectParam = MOVE_LEAF_STORM,
-        .description = (u8*)&gBattleMoves[MOVE_LEAF_STORM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1917,7 +1917,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM160"),
         .holdEffectParam = MOVE_HURRICANE,
-        .description = (u8*)&gBattleMoves[MOVE_HURRICANE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1929,7 +1929,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM161"),
         .holdEffectParam = MOVE_TRICK_ROOM,
-        .description = (u8*)&gBattleMoves[MOVE_TRICK_ROOM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1941,7 +1941,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM162"),
         .holdEffectParam = MOVE_BUG_BUZZ,
-        .description = (u8*)&gBattleMoves[MOVE_BUG_BUZZ].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1953,7 +1953,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM163"),
         .holdEffectParam = MOVE_HYPER_BEAM,
-        .description = (u8*)&gBattleMoves[MOVE_HYPER_BEAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1965,7 +1965,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM164"),
         .holdEffectParam = MOVE_BRAVE_BIRD,
-        .description = (u8*)&gBattleMoves[MOVE_BRAVE_BIRD].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1977,7 +1977,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM165"),
         .holdEffectParam = MOVE_FLARE_BLITZ,
-        .description = (u8*)&gBattleMoves[MOVE_FLARE_BLITZ].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -1989,7 +1989,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM166"),
         .holdEffectParam = MOVE_THUNDER,
-        .description = (u8*)&gBattleMoves[MOVE_THUNDER].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2001,7 +2001,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM167"),
         .holdEffectParam = MOVE_CLOSE_COMBAT,
-        .description = (u8*)&gBattleMoves[MOVE_CLOSE_COMBAT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2013,7 +2013,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM168"),
         .holdEffectParam = MOVE_SOLAR_BEAM,
-        .description = (u8*)&gBattleMoves[MOVE_SOLAR_BEAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2025,7 +2025,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM169"),
         .holdEffectParam = MOVE_DRACO_METEOR,
-        .description = (u8*)&gBattleMoves[MOVE_DRACO_METEOR].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2037,7 +2037,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM170"),
         .holdEffectParam = MOVE_STEEL_BEAM,
-        .description = (u8*)&gBattleMoves[MOVE_STEEL_BEAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2049,7 +2049,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM171"),
         .holdEffectParam = MOVE_TERA_BLAST,
-        .description = (u8*)&gBattleMoves[MOVE_TERA_BLAST].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2061,7 +2061,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM172"),
         .holdEffectParam = MOVE_ROAR,
-        .description = (u8*)&gBattleMoves[MOVE_ROAR].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2073,7 +2073,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM173"),
         .holdEffectParam = MOVE_CHARGE,
-        .description = (u8*)&gBattleMoves[MOVE_CHARGE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2085,7 +2085,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM174"),
         .holdEffectParam = MOVE_HAZE,
-        .description = (u8*)&gBattleMoves[MOVE_HAZE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2097,7 +2097,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM175"),
         .holdEffectParam = MOVE_TOXIC,
-        .description = (u8*)&gBattleMoves[MOVE_TOXIC].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2109,7 +2109,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM176"),
         .holdEffectParam = MOVE_SAND_TOMB,
-        .description = (u8*)&gBattleMoves[MOVE_SAND_TOMB].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2121,7 +2121,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM177"),
         .holdEffectParam = MOVE_SPITE,
-        .description = (u8*)&gBattleMoves[MOVE_SPITE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2133,7 +2133,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM178"),
         .holdEffectParam = MOVE_GRAVITY,
-        .description = (u8*)&gBattleMoves[MOVE_GRAVITY].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2145,7 +2145,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM179"),
         .holdEffectParam = MOVE_SMACK_DOWN,
-        .description = (u8*)&gBattleMoves[MOVE_SMACK_DOWN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2157,7 +2157,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM180"),
         .holdEffectParam = MOVE_GYRO_BALL,
-        .description = (u8*)&gBattleMoves[MOVE_GYRO_BALL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2169,7 +2169,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM181"),
         .holdEffectParam = MOVE_KNOCK_OFF,
-        .description = (u8*)&gBattleMoves[MOVE_KNOCK_OFF].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2181,7 +2181,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM182"),
         .holdEffectParam = MOVE_BUG_BITE,
-        .description = (u8*)&gBattleMoves[MOVE_BUG_BITE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2193,7 +2193,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM183"),
         .holdEffectParam = MOVE_SUPER_FANG,
-        .description = (u8*)&gBattleMoves[MOVE_SUPER_FANG].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2205,7 +2205,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM184"),
         .holdEffectParam = MOVE_VACUUM_WAVE,
-        .description = (u8*)&gBattleMoves[MOVE_VACUUM_WAVE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2217,7 +2217,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM185"),
         .holdEffectParam = MOVE_LUNGE,
-        .description = (u8*)&gBattleMoves[MOVE_LUNGE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2229,7 +2229,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM186"),
         .holdEffectParam = MOVE_HIGH_HORSEPOWER,
-        .description = (u8*)&gBattleMoves[MOVE_HIGH_HORSEPOWER].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2241,7 +2241,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM187"),
         .holdEffectParam = MOVE_ICICLE_SPEAR,
-        .description = (u8*)&gBattleMoves[MOVE_ICICLE_SPEAR].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2253,7 +2253,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM188"),
         .holdEffectParam = MOVE_SCALD,
-        .description = (u8*)&gBattleMoves[MOVE_SCALD].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2265,7 +2265,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM189"),
         .holdEffectParam = MOVE_HEAT_CRASH,
-        .description = (u8*)&gBattleMoves[MOVE_HEAT_CRASH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2277,7 +2277,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM190"),
         .holdEffectParam = MOVE_SOLAR_BLADE,
-        .description = (u8*)&gBattleMoves[MOVE_SOLAR_BLADE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2289,7 +2289,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM191"),
         .holdEffectParam = MOVE_UPROAR,
-        .description = (u8*)&gBattleMoves[MOVE_UPROAR].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2301,7 +2301,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM192"),
         .holdEffectParam = MOVE_FOCUS_PUNCH,
-        .description = (u8*)&gBattleMoves[MOVE_FOCUS_PUNCH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2313,7 +2313,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM193"),
         .holdEffectParam = MOVE_WEATHER_BALL,
-        .description = (u8*)&gBattleMoves[MOVE_WEATHER_BALL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2325,7 +2325,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM194"),
         .holdEffectParam = MOVE_GRASSY_GLIDE,
-        .description = (u8*)&gBattleMoves[MOVE_GRASSY_GLIDE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2337,7 +2337,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM195"),
         .holdEffectParam = MOVE_BURNING_JEALOUSY,
-        .description = (u8*)&gBattleMoves[MOVE_BURNING_JEALOUSY].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2349,7 +2349,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM196"),
         .holdEffectParam = MOVE_FLIP_TURN,
-        .description = (u8*)&gBattleMoves[MOVE_FLIP_TURN].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2361,7 +2361,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM197"),
         .holdEffectParam = MOVE_DUAL_WINGBEAT,
-        .description = (u8*)&gBattleMoves[MOVE_DUAL_WINGBEAT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2373,7 +2373,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM198"),
         .holdEffectParam = MOVE_POLTERGEIST,
-        .description = (u8*)&gBattleMoves[MOVE_POLTERGEIST].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2385,7 +2385,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM199"),
         .holdEffectParam = MOVE_LASH_OUT,
-        .description = (u8*)&gBattleMoves[MOVE_LASH_OUT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2397,7 +2397,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM200"),
         .holdEffectParam = MOVE_SCALE_SHOT,
-        .description = (u8*)&gBattleMoves[MOVE_SCALE_SHOT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2409,7 +2409,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM201"),
         .holdEffectParam = MOVE_MISTY_EXPLOSION,
-        .description = (u8*)&gBattleMoves[MOVE_MISTY_EXPLOSION].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2421,7 +2421,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM202"),
         .holdEffectParam = MOVE_PAIN_SPLIT,
-        .description = (u8*)&gBattleMoves[MOVE_PAIN_SPLIT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2433,7 +2433,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM203"),
         .holdEffectParam = MOVE_PSYCH_UP,
-        .description = (u8*)&gBattleMoves[MOVE_PSYCH_UP].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2445,7 +2445,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM204"),
         .holdEffectParam = MOVE_DOUBLE_EDGE,
-        .description = (u8*)&gBattleMoves[MOVE_DOUBLE_EDGE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2457,7 +2457,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM205"),
         .holdEffectParam = MOVE_ENDEAVOR,
-        .description = (u8*)&gBattleMoves[MOVE_ENDEAVOR].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2469,7 +2469,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM206"),
         .holdEffectParam = MOVE_PETAL_BLIZZARD,
-        .description = (u8*)&gBattleMoves[MOVE_PETAL_BLIZZARD].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2481,7 +2481,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM207"),
         .holdEffectParam = MOVE_TEMPER_FLARE,
-        .description = (u8*)&gBattleMoves[MOVE_TEMPER_FLARE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2493,7 +2493,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM208"),
         .holdEffectParam = MOVE_WHIRLPOOL,
-        .description = (u8*)&gBattleMoves[MOVE_WHIRLPOOL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2505,7 +2505,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM209"),
         .holdEffectParam = MOVE_MUDDY_WATER,
-        .description = (u8*)&gBattleMoves[MOVE_MUDDY_WATER].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2517,7 +2517,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM210"),
         .holdEffectParam = MOVE_SUPERCELL_SLAM,
-        .description = (u8*)&gBattleMoves[MOVE_SUPERCELL_SLAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2529,7 +2529,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM211"),
         .holdEffectParam = MOVE_ELECTROWEB,
-        .description = (u8*)&gBattleMoves[MOVE_ELECTROWEB].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2541,7 +2541,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM212"),
         .holdEffectParam = MOVE_TRIPLE_AXEL,
-        .description = (u8*)&gBattleMoves[MOVE_TRIPLE_AXEL].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2553,7 +2553,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM213"),
         .holdEffectParam = MOVE_COACHING,
-        .description = (u8*)&gBattleMoves[MOVE_COACHING].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2565,7 +2565,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM214"),
         .holdEffectParam = MOVE_SLUDGE_WAVE,
-        .description = (u8*)&gBattleMoves[MOVE_SLUDGE_WAVE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2577,7 +2577,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM215"),
         .holdEffectParam = MOVE_SCORCHING_SANDS,
-        .description = (u8*)&gBattleMoves[MOVE_SCORCHING_SANDS].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2589,7 +2589,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM216"),
         .holdEffectParam = MOVE_FEATHER_DANCE,
-        .description = (u8*)&gBattleMoves[MOVE_FEATHER_DANCE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2601,7 +2601,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM217"),
         .holdEffectParam = MOVE_FUTURE_SIGHT,
-        .description = (u8*)&gBattleMoves[MOVE_FUTURE_SIGHT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2613,7 +2613,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM218"),
         .holdEffectParam = MOVE_EXPANDING_FORCE,
-        .description = (u8*)&gBattleMoves[MOVE_EXPANDING_FORCE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2625,7 +2625,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM219"),
         .holdEffectParam = MOVE_SKITTER_SMACK,
-        .description = (u8*)&gBattleMoves[MOVE_SKITTER_SMACK].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2637,7 +2637,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM220"),
         .holdEffectParam = MOVE_METEOR_BEAM,
-        .description = (u8*)&gBattleMoves[MOVE_METEOR_BEAM].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2649,7 +2649,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM221"),
         .holdEffectParam = MOVE_THROAT_CHOP,
-        .description = (u8*)&gBattleMoves[MOVE_THROAT_CHOP].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2661,7 +2661,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM222"),
         .holdEffectParam = MOVE_BREAKING_SWIPE,
-        .description = (u8*)&gBattleMoves[MOVE_BREAKING_SWIPE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2673,7 +2673,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM223"),
         .holdEffectParam = MOVE_METAL_SOUND,
-        .description = (u8*)&gBattleMoves[MOVE_METAL_SOUND].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2685,7 +2685,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM224"),
         .holdEffectParam = MOVE_CURSE,
-        .description = (u8*)&gBattleMoves[MOVE_CURSE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2697,7 +2697,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM225"),
         .holdEffectParam = MOVE_HARD_PRESS,
-        .description = (u8*)&gBattleMoves[MOVE_HARD_PRESS].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2709,7 +2709,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM226"),
         .holdEffectParam = MOVE_DRAGON_CHEER,
-        .description = (u8*)&gBattleMoves[MOVE_DRAGON_CHEER].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2721,7 +2721,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM227"),
         .holdEffectParam = MOVE_ALLURING_VOICE,
-        .description = (u8*)&gBattleMoves[MOVE_ALLURING_VOICE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2733,7 +2733,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM228"),
         .holdEffectParam = MOVE_PSYCHIC_NOISE,
-        .description = (u8*)&gBattleMoves[MOVE_PSYCHIC_NOISE].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2745,7 +2745,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM229"),
         .holdEffectParam = MOVE_UPPER_HAND,
-        .description = (u8*)&gBattleMoves[MOVE_UPPER_HAND].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2757,7 +2757,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM230"),
         .holdEffectParam = MOVE_CUT,
-        .description = (u8*)&gBattleMoves[MOVE_CUT].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,
@@ -2769,7 +2769,7 @@ const struct Item gTmsInfo_Gen9[] =
     {
         .name = _("TM231"),
         .holdEffectParam = MOVE_FLASH,
-        .description = (u8*)&gBattleMoves[MOVE_FLASH].description,
+        .description = NULL, // Handled by gBattleMoves
         .price = 3000,
         .pocket = POCKET_TM_CASE,
         .type = ITEM_TYPE_PARTY_MENU,

@@ -336,7 +336,7 @@ void FieldUseFunc_SacredAsh(u32 taskId)
 
 static void InitTMCaseFromBag(void)
 {
-    InitTMCase(0, CB2_BagMenuFromStartMenu, 0);
+    InitTMCase(TMCASE_FROMFIELD, CB2_BagMenuFromStartMenu, 0);
 }
 
 static void Task_InitTMCaseFromField(u32 taskId)
@@ -345,7 +345,7 @@ static void Task_InitTMCaseFromField(u32 taskId)
     {
         CleanupOverworldWindowsAndTilemaps();
         SetFieldCallback2ForItemUse();
-        InitTMCase(0, CB2_ReturnToField, 1);
+        InitTMCase(TMCASE_FROMFIELD, CB2_ReturnToField, 1);
         DestroyTask(taskId);
     }
 }

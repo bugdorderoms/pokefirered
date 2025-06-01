@@ -523,7 +523,10 @@ u32 ItemId_GetHoldEffectParam(u32 itemId)
 
 const u8 *ItemId_GetDescription(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].description;
+    if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
+        return gBattleMoves[ItemId_GetHoldEffectParam(itemId)].description;
+    else
+        return gItems[SanitizeItemId(itemId)].description;
 }
 
 u32 ItemId_GetPocket(u32 itemId)

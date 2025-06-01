@@ -10,6 +10,7 @@
 #include "list_menu.h"
 #include "tm_case.h"
 #include "item.h"
+#include "pokemon_icon.h"
 #include "item_menu.h"
 #include "link.h"
 #include "money.h"
@@ -24,14 +25,11 @@
 #include "constants/items.h"
 #include "constants/songs.h"
 
-#define TM_CASE_TM_TAG 400
-
 struct UnkStruct_203B10C
 {
     void (* savedCallback)(void);
     u8 tmCaseMenuType;
     u8 unk_05;
-    u8 unk_06;
     u16 selectedRow;
     u16 scrollOffset;
 };
@@ -39,16 +37,15 @@ struct UnkStruct_203B10C
 struct UnkStruct_203B118
 {
     void (* savedCallback)(void);
-    u8 tmSpriteId;
     u8 maxTMsShown;
     u8 numTMs;
-    u8 contextMenuWindowId;
-    u8 scrollIndicatorArrowPairId;
     u16 currItem;
     const u8 * menuActionIndices;
-    u8 numMenuActions;
+    u8 contextMenuWindowId;
+    u8 scrollIndicatorArrowPairId;
     s16 seqId;
-    u8 filler_14[8];
+    u8 numMenuActions;
+    u8 partyIconSpriteIds[PARTY_SIZE];
 };
 
 struct UnkStruct_203B11C
@@ -65,7 +62,6 @@ static EWRAM_DATA struct UnkStruct_203B11C * sPokedudePackBackup = NULL;
 static EWRAM_DATA void * sTilemapBuffer = NULL; // tilemap buffer
 static EWRAM_DATA struct ListMenuItem * sListMenuItemsBuffer = NULL;
 static EWRAM_DATA u8 (* sListMenuStringsBuffer)[29] = NULL;
-static EWRAM_DATA u16 * sTMSpritePaletteBuffer = NULL;
 
 static void CB2_SetUpTMCaseUI_Blocking(void);
 static bool32 DoSetUpTMCaseUI(void);
@@ -119,13 +115,9 @@ static void HandlePrintMoneyOnHand(void);
 static void HandleCreateYesNoMenu(u32 taskId, const struct YesNoFuncTable * ptrs);
 static u32 AddTMContextMenu(u8 * a0, u32 a1);
 static void RemoveTMContextMenu(u8 * a0);
-static u32 CreateTMSprite(u32 itemId);
-static void SetTMSpriteAnim(struct Sprite * sprite, u32 var);
-static void TintTMSpriteByType(u32 type);
-static void UpdateTMSpritePosition(struct Sprite * sprite, u32 var);
-static void InitSelectedTMSpriteData(u32 a0, u32 itemId);
-static void SpriteCB_MoveTMSpriteInCase(struct Sprite * sprite);
-static void LoadTMTypePalettes(void);
+static bool32 IsTMCaseWithPartyIcons(void);
+static void CreateTMCasePartyIcons(u32 itemId);
+static void UpdateTMCasePartyIcons(u32 itemId);
 
 static const struct BgTemplate sBGTemplates[] = {
     {
@@ -188,15 +180,87 @@ static const u8 sTextColors[][3] = {
 };
 
 static const struct WindowTemplate sWindowTemplates[] = {
-    {0x00, 0x0a, 0x01, 0x13, 0x0a, 0x0f, 0x0081},
-    {0x00, 0x0c, 0x0c, 0x12, 0x08, 0x0a, 0x013f},
-    {0x01, 0x05, 0x0f, 0x0f, 0x04, 0x0d, 0x01f9},
-    {0x00, 0x00, 0x01, 0x0a, 0x02, 0x0f, 0x0235},
-    {0x00, 0x01, 0x0d, 0x05, 0x06, 0x0c, 0x0249},
-    {0x00, 0x07, 0x0d, 0x05, 0x06, 0x0c, 0x0267},
-    {0x01, 0x02, 0x0f, 0x1a, 0x04, 0x0b, 0x0285},
-    {0x01, 0x11, 0x09, 0x0c, 0x04, 0x0f, 0x02ed},
-    {0x01, 0x01, 0x01, 0x08, 0x03, 0x0d, 0x031d},
+    {
+        .bg = 0,
+        .tilemapLeft = 14,
+        .tilemapTop = 1,
+        .width = 15,
+        .height = 10,
+        .paletteNum = 15,
+        .baseBlock = 0x081
+    },
+    {
+        .bg = 0,
+        .tilemapLeft = 12,
+        .tilemapTop = 12,
+        .width = 18,
+        .height = 8,
+        .paletteNum = 10,
+        .baseBlock = 0x13f
+    },
+    {
+        .bg = 1,
+        .tilemapLeft = 5,
+        .tilemapTop = 15,
+        .width = 15,
+        .height = 4,
+        .paletteNum = 13,
+        .baseBlock = 0x1f9
+    },
+    {
+        .bg = 0,
+        .tilemapLeft = 0,
+        .tilemapTop = 1,
+        .width = 10,
+        .height = 2,
+        .paletteNum = 15,
+        .baseBlock = 0x235
+    },
+    {
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 13,
+        .width = 5,
+        .height = 6,
+        .paletteNum = 12,
+        .baseBlock = 0x249
+    },
+    {
+        .bg = 0,
+        .tilemapLeft = 7,
+        .tilemapTop = 13,
+        .width = 5,
+        .height = 6,
+        .paletteNum = 12,
+        .baseBlock = 0x267
+    },
+    {
+        .bg = 1,
+        .tilemapLeft = 2,
+        .tilemapTop = 15,
+        .width = 26,
+        .height = 4,
+        .paletteNum = 11,
+        .baseBlock = 0x285
+    },
+    {
+        .bg = 1,
+        .tilemapLeft = 17,
+        .tilemapTop = 9,
+        .width = 12,
+        .height = 4,
+        .paletteNum = 15,
+        .baseBlock = 0x2ed
+    },
+    {
+        .bg = 1,
+        .tilemapLeft = 1,
+        .tilemapTop = 1,
+        .width = 8,
+        .height = 3,
+        .paletteNum = 13,
+        .baseBlock = 0x31d
+    },
     DUMMY_WIN_TEMPLATE
 };
 
@@ -205,62 +269,6 @@ static const struct WindowTemplate sYesNoWindowTemplate = {0x01, 0x15, 0x09, 0x0
 static const struct WindowTemplate sTMContextWindowTemplates[] = {
     {0x01, 0x16, 0x0d, 0x07, 0x06, 0x0f, 0x01cf},
     {0x01, 0x16, 0x0f, 0x07, 0x04, 0x0f, 0x01cf}
-};
-
-static const struct OamData sTMSpriteOamData = {
-    .size = 2,
-    .priority = 2
-};
-
-static const union AnimCmd sTMSpriteAnim0[] = {
-    ANIMCMD_FRAME(0, 0),
-    ANIMCMD_END
-};
-
-static const union AnimCmd sTMSpriteAnim1[] = {
-    ANIMCMD_FRAME(16, 0),
-    ANIMCMD_END
-};
-
-static const union AnimCmd *const sTMSpriteAnims[] = {
-    sTMSpriteAnim0,
-    sTMSpriteAnim1
-};
-
-static const struct CompressedSpriteSheet sTMSpriteSheet = {
-    (const void *)gTMCase_TMSpriteGfx,
-    0x400,
-    TM_CASE_TM_TAG
-};
-
-static const struct SpriteTemplate sTMSpriteTemplate = {
-    TM_CASE_TM_TAG,
-    TM_CASE_TM_TAG,
-    &sTMSpriteOamData,
-    sTMSpriteAnims,
-    NULL,
-    gDummySpriteAffineAnimTable,
-    SpriteCallbackDummy
-};
-
-static const u16 sTMSpritePaletteOffsetByType[] = {
-    [TYPE_NORMAL]   = 0x000,
-    [TYPE_FIRE]     = 0x010,
-    [TYPE_WATER]    = 0x020,
-    [TYPE_GRASS]    = 0x030,
-    [TYPE_ELECTRIC] = 0x040,
-    [TYPE_ROCK]     = 0x050,
-    [TYPE_GROUND]   = 0x060,
-    [TYPE_ICE]      = 0x070,
-    [TYPE_FLYING]   = 0x080,
-    [TYPE_FIGHTING] = 0x090,
-    [TYPE_GHOST]    = 0x0a0,
-    [TYPE_BUG]      = 0x0b0,
-    [TYPE_POISON]   = 0x0c0,
-    [TYPE_PSYCHIC]  = 0x0d0,
-    [TYPE_STEEL]    = 0x0e0,
-    [TYPE_DARK]     = 0x0f0,
-    [TYPE_DRAGON]   = 0x100
 };
 
 void InitTMCase(u32 type, void (* callback)(void), u32 a2)
@@ -395,7 +403,8 @@ static bool32 DoSetUpTMCaseUI(void)
         gMain.state++;
         break;
     case 16:
-        sTMCaseDynamicResources->tmSpriteId = CreateTMSprite(BagGetItemIdByPocketPosition(POCKET_TM_CASE, sTMCaseStaticResources.scrollOffset + sTMCaseStaticResources.selectedRow));
+        if (IsTMCaseWithPartyIcons())
+            CreateTMCasePartyIcons(BagGetItemIdByPocketPosition(POCKET_TM_CASE, sTMCaseStaticResources.scrollOffset + sTMCaseStaticResources.selectedRow));
         gMain.state++;
         break;
     case 17:
@@ -421,7 +430,6 @@ static void ResetBufferPointers_NoFree(void)
     sTilemapBuffer = NULL;
     sListMenuItemsBuffer = NULL;
     sListMenuStringsBuffer = NULL;
-    sTMSpritePaletteBuffer = NULL;
 }
 
 static void LoadBGTemplates(void)
@@ -439,7 +447,8 @@ static void LoadBGTemplates(void)
     ScheduleBgCopyTilemapToVram(1);
     ScheduleBgCopyTilemapToVram(2);
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON);
-    SetGpuReg(REG_OFFSET_BLDCNT, 0);
+    SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG2);
+    SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(4, 3));
     ShowBg(0);
     ShowBg(1);
     ShowBg(2);
@@ -462,7 +471,6 @@ static bool32 HandleLoadTMCaseGraphicsAndPalettes(void)
         }
         break;
     case 2:
-        LZDecompressWram(gUnknown_8E84B70, GetBgTilemapBuffer(1));
         sTMCaseDynamicResources->seqId++;
         break;
     case 3:
@@ -473,11 +481,10 @@ static bool32 HandleLoadTMCaseGraphicsAndPalettes(void)
         sTMCaseDynamicResources->seqId++;
         break;
     case 4:
-        LoadCompressedSpriteSheet(&sTMSpriteSheet);
+        LoadMonIconPalettes();
         sTMCaseDynamicResources->seqId++;
         break;
     default:
-        LoadTMTypePalettes();
         sTMCaseDynamicResources->seqId = 0;
         return TRUE;
     }
@@ -549,7 +556,9 @@ static void TMCase_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu 
     if (!onInit)
     {
         PlaySE(SE_SELECT);
-        InitSelectedTMSpriteData(sTMCaseDynamicResources->tmSpriteId, itemId);
+        
+        if (IsTMCaseWithPartyIcons())
+            UpdateTMCasePartyIcons(itemId);
     }
     TMCase_MoveCursor_UpdatePrintedDescription(itemIndex);
     TMCase_MoveCursor_UpdatePrintedTMInfo(itemId);
@@ -675,8 +684,6 @@ static void DestroyTMCaseBuffers(void)
         Free(sListMenuItemsBuffer);
     if (sListMenuStringsBuffer != NULL)
         Free(sListMenuStringsBuffer);
-    if (sTMSpritePaletteBuffer != NULL)
-        Free(sTMSpritePaletteBuffer);
     FreeAllWindowBuffers();
 }
 
@@ -1296,7 +1303,7 @@ static void TMCase_PrintMessageWithFollowupTask(u32 taskId, u32 windowId, const 
 
 static void PrintStringTMCaseOnWindow3(void)
 {
-    u32 distance = 72 - GetStringWidth(1, gText_TMCase, 0);
+    u32 distance = 104 - GetStringWidth(1, gText_TMCase, 0);
     AddTextPrinterParameterized3(3, 1, distance / 2, 1, sTextColors[0], 0, gText_TMCase);
 }
 
@@ -1382,109 +1389,60 @@ static void RemoveTMContextMenu(u8 * a0)
     *a0 = 0xFF;
 }
 
-static u32 CreateTMSprite(u32 itemId)
+static bool32 IsTMCaseWithPartyIcons(void)
 {
-    u32 animNum, spriteId = CreateSprite(&sTMSpriteTemplate, 0x29, 0x2E, 0);
+    if (sTMCaseStaticResources.tmCaseMenuType == TMCASE_FROMBATTLE || sTMCaseStaticResources.tmCaseMenuType == TMCASE_CHOOSE_ITEM)
+        return FALSE;
+    return TRUE;
+}
+
+static void CreateTMCasePartyIcons(u32 itemId)
+{
+    u32 i, species, spriteId;
     
-    if (itemId == ITEM_NONE)
-        animNum = 0xFF;
-    else
+    for (i = 0; i < PARTY_SIZE; i++)
     {
-        animNum = itemId - NUM_TO_TM(01);
+        species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
         
-        SetTMSpriteAnim(&gSprites[spriteId], animNum);
-        TintTMSpriteByType(gBattleMoves[ItemId_GetHoldEffectParam(itemId)].type);
-    }
-    UpdateTMSpritePosition(&gSprites[spriteId], animNum);
-    
-    return spriteId;
-}
-
-static void SetTMSpriteAnim(struct Sprite * sprite, u32 idx)
-{
-    if (idx > NUM_TECHNICAL_MACHINES)
-        StartSpriteAnim(sprite, 1);
-    else
-        StartSpriteAnim(sprite, 0);
-}
-
-static void TintTMSpriteByType(u32 type)
-{
-    u8 palIndex = IndexOfSpritePaletteTag(TM_CASE_TM_TAG) << 4;
-    LoadPalette(sTMSpritePaletteBuffer + sTMSpritePaletteOffsetByType[type], 0x100 | palIndex, 0x20);
-
-    if (sTMCaseStaticResources.tmCaseMenuType == TMCASE_FROMBATTLE)
-        BlendPalettes(Bit(0x10 + palIndex), 4, RGB_BLACK);
-}
-
-static void UpdateTMSpritePosition(struct Sprite * sprite, u32 var)
-{
-    s32 x, y;
-
-    if (var == 0xFF)
-    {
-        x = 0x1B;
-        y = 0x36;
-        sprite->y2 = 0x14;
-    }
-    else
-    {
-        if (var > NUM_TECHNICAL_MACHINES)
-            var -= NUM_TECHNICAL_MACHINES;
-        
-        x = 0x29 - (((0xE00 * var) / NUM_TECHNICAL_MACHINES) >> 8);
-        y = 0x2E + (((0x800 * var) / NUM_TECHNICAL_MACHINES) >> 8);
-    }
-    sprite->x = x;
-    sprite->y = y;
-}
-
-static void InitSelectedTMSpriteData(u32 spriteId, u32 itemId)
-{
-    gSprites[spriteId].data[0] = itemId;
-    gSprites[spriteId].data[1] = 0;
-    gSprites[spriteId].callback = SpriteCB_MoveTMSpriteInCase;
-}
-
-static void SpriteCB_MoveTMSpriteInCase(struct Sprite * sprite)
-{
-    switch (sprite->data[1])
-    {
-    case 0:
-        if (sprite->y2 >= 20)
+        if (species)
         {
-            if (sprite->data[0] != ITEM_NONE)
+            spriteId = CreateMonIcon(species, SpriteCallbackDummy, 15 + 32 * (i % (PARTY_SIZE / 2)), 44 + 32 * (i / (PARTY_SIZE / 2)), 0);
+            gSprites[spriteId].oam.priority = 2;
+            gSprites[spriteId].data[0] = i;
+        }
+        else
+            spriteId = MAX_SPRITES;
+        
+        sTMCaseDynamicResources->partyIconSpriteIds[i] = spriteId;
+    }
+    UpdateTMCasePartyIcons(itemId);
+}
+
+static void UpdateTMCasePartyIcons(u32 itemId)
+{
+    u32 i, move = ItemId_GetHoldEffectParam(itemId);
+    struct Sprite *sprite;
+    
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        if (sTMCaseDynamicResources->partyIconSpriteIds[i] != MAX_SPRITES)
+        {
+            sprite = &gSprites[sTMCaseDynamicResources->partyIconSpriteIds[i]];
+            
+            if (!CanMonLearnTM(&gPlayerParty[sprite->data[0]], move))
             {
-                sprite->data[1]++;
-                TintTMSpriteByType(gBattleMoves[ItemId_GetHoldEffectParam(sprite->data[0])].type);
-                sprite->data[0] -= NUM_TO_TM(01);
-                SetTMSpriteAnim(sprite, sprite->data[0]);
-                UpdateTMSpritePosition(sprite, sprite->data[0]);
+                sprite->callback = SpriteCallbackDummy;
+                sprite->oam.objMode = ST_OAM_OBJ_BLEND;
             }
             else
-                sprite->callback = SpriteCallbackDummy;
+            {
+                if (FindMoveSlotInMoveset(&gPlayerParty[sprite->data[0]], move) != MAX_MON_MOVES)
+                    sprite->callback = SpriteCallbackDummy;
+                else
+                    sprite->callback = SpriteCB_MonIcon;
+                
+                sprite->oam.objMode = ST_OAM_OBJ_NORMAL;
+            }
         }
-        else
-        {
-            sprite->y2 += 10;
-        }
-        break;
-    case 1:
-        if (sprite->y2 <= 0)
-            sprite->callback = SpriteCallbackDummy;
-        else
-            sprite->y2 -= 10;
     }
-}
-
-static void LoadTMTypePalettes(void)
-{
-    struct SpritePalette spritePalette;
-
-    sTMSpritePaletteBuffer = Alloc(0x110 * sizeof(u16));
-    LZDecompressWram(gUnknown_8E84F20, sTMSpritePaletteBuffer);
-    LZDecompressWram(gUnknown_8E85068, sTMSpritePaletteBuffer + 0x100);
-    spritePalette.data = sTMSpritePaletteBuffer + 0x110;
-    spritePalette.tag = TM_CASE_TM_TAG;
-    LoadSpritePalette(&spritePalette);
 }

@@ -49,7 +49,7 @@ with open(f'{file_path}/include/constants/tms.h', 'r') as file:
             tms.append(f'\n    [{tm}] ='
                         '\n    {\n'
                        f'        .name = _("{num}"),\n'
-                       f'        .holdEffectParam = MOVE_{move},\n        .description = (u8*)&gBattleMoves[MOVE_{move}].description,\n'
+                       f'        .holdEffectParam = MOVE_{move},\n        .description = NULL, // Handled by gBattleMoves\n'
                        f'        .price = 3000,\n        .pocket = POCKET_TM_CASE,\n        .type = ITEM_TYPE_PARTY_MENU,\n'
                        f'        .iconPic = sItemIcon_Tm,\n        .iconPalette = NULL, // Handled by gTypesInfo'
                         '\n    },\n')
