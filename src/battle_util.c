@@ -4762,7 +4762,7 @@ u32 GetHiddenPowerType(struct Pokemon *mon)
     return type;
 }
 
-u32 GetPartyMonIdForIllusion(u32 battler, struct Pokemon *party, u32 partyCount, struct Pokemon *illusionMon)
+u32 GetPartyMonIdForIllusion(u32 battler, struct Pokemon *party, u32 partyCount, struct Pokemon *illusionMon, bool32 canDisguiseAsAlly)
 {
     struct Pokemon *partnerMon;
     s8 i, id;
@@ -4771,7 +4771,7 @@ u32 GetPartyMonIdForIllusion(u32 battler, struct Pokemon *party, u32 partyCount,
     {
         if (&party[partyCount - 1] != illusionMon)
         {
-            if (IsBattlerAlive(BATTLE_PARTNER(battler)))
+            if (!canDisguiseAsAlly && IsBattlerAlive(BATTLE_PARTNER(battler)))
                 partnerMon = &party[gBattlerPartyIndexes[BATTLE_PARTNER(battler)]];
             else
                 partnerMon = illusionMon;
@@ -4789,14 +4789,14 @@ u32 GetPartyMonIdForIllusion(u32 battler, struct Pokemon *party, u32 partyCount,
     return PARTY_SIZE;
 }
 
-static void SetIllusionMon(u32 battler)
+void SetIllusionMon(u32 battler, bool32 canDisguiseAsAlly)
 {
     struct Pokemon *party = GetBattlerParty(battler);
     u32 id;
     
     gBattleStruct->battlers[battler].illusion.set = TRUE;
 
-    id = GetPartyMonIdForIllusion(battler, party, GetBattlerSide(battler) == B_SIDE_PLAYER ? gPlayerPartyCount : gEnemyPartyCount, &party[gBattlerPartyIndexes[battler]]);
+    id = GetPartyMonIdForIllusion(battler, party, GetBattlerSide(battler) == B_SIDE_PLAYER ? gPlayerPartyCount : gEnemyPartyCount, &party[gBattlerPartyIndexes[battler]], canDisguiseAsAlly);
     
     if (id != PARTY_SIZE)
     {
@@ -4813,7 +4813,7 @@ static struct Pokemon *GetIllusionMonPtr(u32 battler)
         return NULL;
     
     if (!gBattleStruct->battlers[battler].illusion.set)
-        SetIllusionMon(battler);
+        SetIllusionMon(battler, FALSE);
     
     if (!gBattleStruct->battlers[battler].illusion.on)
         return NULL;

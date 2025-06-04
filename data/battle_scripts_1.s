@@ -2770,13 +2770,13 @@ BattleScript_GooeyActivates::
 	return
 
 BattleScript_IllusionOff::
-    loadabilitypopup BS_SCRIPTING
 	spriteignore0hp
 	playanimation BS_SCRIPTING, B_ANIM_ILLUSION_OFF
 	waitstate
 	updatehealthboxattribute BS_SCRIPTING, HEALTHBOX_NICK
 	waitstate
 	spriteignore0hp
+	loadabilitypopup BS_SCRIPTING
 	printstring STRINGID_PKMNILLUSIONOFF
 	waitmessage B_WAIT_TIME_LONG
 	removeabilitypopup BS_SCRIPTING

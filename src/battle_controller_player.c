@@ -575,10 +575,23 @@ void ActionSelectionDestroyCursorAt(u32 cursorPosition)
     CopyBgTilemapBufferToVram(0);
 }
 
+static inline void TryHideAllTriggerSprites(void)
+{
+#if WEATHER_ICON_IN_BATTLE
+    ShowOrHideWeatherAnimIcon(TRUE);
+#endif
+
+#if BATTLE_TEAM_PREVIEW
+    ShowOrHideTeamPreviewTrigger(TRUE);
+#endif
+
+#if LAST_USED_BALL_THROW
+    ShowOrHideLastUsedBall(TRUE);
+#endif
+}
+
 static void HandleInputChooseAction(u32 battlerId)
 {
-    u32 itemId = gBattleBufferA[battlerId][2] | (gBattleBufferA[battlerId][3] << 8);
-
     DoBounceEffect(battlerId, BOUNCE_HEALTHBOX, 7, 1);
     DoBounceEffect(battlerId, BOUNCE_MON, 7, 1);
     
@@ -658,18 +671,7 @@ static void HandleInputChooseAction(u32 battlerId)
     if (JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
-        
-#if WEATHER_ICON_IN_BATTLE
-        ShowOrHideWeatherAnimIcon(TRUE); // hide icon
-#endif
-
-#if BATTLE_TEAM_PREVIEW
-        ShowOrHideTeamPreviewTrigger(TRUE); // hide trigger
-#endif
-
-#if LAST_USED_BALL_THROW
-        ShowOrHideLastUsedBall(TRUE); // hide trigger
-#endif
+        TryHideAllTriggerSprites();
 
         switch (gActionSelectionCursor[battlerId])
         {
@@ -735,8 +737,8 @@ static void HandleInputChooseAction(u32 battlerId)
         {
             // Return item to bag if partner had selected one.
             if (gBattleBufferA[battlerId][1] == B_ACTION_USE_ITEM)
-                AddBagItem(itemId, 1);
-            
+                AddBagItem(gBattleBufferA[battlerId][2] | (gBattleBufferA[battlerId][3] << 8), 1);
+
             PlaySE(SE_SELECT);
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_CANCEL_PARTNER, 0);
             BattleControllerComplete(battlerId);

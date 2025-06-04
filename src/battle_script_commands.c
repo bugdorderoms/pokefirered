@@ -9434,6 +9434,7 @@ void BS_SosCallForAlly(void)
     {
         case 0:
             BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+            SetIllusionMon(gEffectBattler, TRUE); // Try disguise the caller mon as the called mon
             SetMainCallback2(CB2_SosCall);
             gBattleCommunication[MULTIUSE_STATE]++;
             break;

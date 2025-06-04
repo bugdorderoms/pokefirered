@@ -1321,7 +1321,7 @@ static const u8 *GetEnemyPokemonPrefix(u32 battlerId)
 static void IllusionNickHack(u32 battlerId, u32 partyId, u8 *dst)
 {
     struct Pokemon *mon = &gEnemyParty[partyId];
-    u32 id = GetPartyMonIdForIllusion(battlerId, gEnemyParty, gEnemyPartyCount, mon);
+    u32 id = GetPartyMonIdForIllusion(battlerId, gEnemyParty, gEnemyPartyCount, mon, FALSE);
     
     if (id != PARTY_SIZE)
         GetMonData(&gEnemyParty[id], MON_DATA_NICKNAME, dst);

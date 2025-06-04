@@ -49,4 +49,4 @@ for file in dir_path.rglob('*.[is][nc]*'):
     if format_file(file, from_tabs_to_spaces=False):
         print(f"Formatted: {file}")
 
-print("End!")
+input('Press any key to continue... ')
