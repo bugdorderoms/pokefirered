@@ -1,1 +1,3 @@
 gTextFlags
+gNpcNameBoxWindowId
+gNpcNameBoxPresent

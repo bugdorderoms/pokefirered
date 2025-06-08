@@ -2,6 +2,8 @@
 #include "gflib.h"
 #include "event_data.h"
 #include "strings.h"
+#include "menu.h"
+#include "text_window.h"
 #include "m4a.h"
 #include "graphics.h"
 #include "dynamic_placeholder_text_util.h"
@@ -28,7 +30,12 @@ static s32 GetGlyphWidth_Female(u16 glyphId, bool32 isJapanese);
 static s32 GetGlyphWidth_Narrower(u16 glyphId, bool32 isJapanese);
 static s32 GetGlyphWidth_SmallNarrower(u16 glyphId, bool32 isJapanese);
 
+static const u8 *CreateNpcNameBoxWindow(const u8 *name);
+static void CloseNpcNameBoxWindow(void);
+
 TextFlags gTextFlags;
+u8 gNpcNameBoxWindowId;
+bool8 gNpcNameBoxPresent;
 
 static const u8 sDownArrowTiles[]         = INCBIN_U8("graphics/fonts/down_arrow.4bpp");
 static const u8 sDarkDownArrowTiles[]     = INCBIN_U8("graphics/fonts/down_arrow_RS.4bpp");
@@ -64,6 +71,17 @@ static const s8 sNarrowerFontIds[] =
     [FONT_BOLD]           = -1,
     [FONT_NARROWER]       = FONT_SMALL_NARROWER,
     [FONT_SMALL_NARROWER] = -1,
+};
+
+static const struct WindowTemplate sNpcNameBoxWindowTemplate =
+{
+    .bg = 0,
+    .tilemapLeft = 2,
+    .tilemapTop = 11,
+    .width = 8,
+    .height = 2,
+    .paletteNum = 15,
+    .baseBlock = 256
 };
 
 static const struct SpriteSheet sUnknown_81EA68C[] =
@@ -863,6 +881,12 @@ u16 RenderText(struct TextPrinter *textPrinter)
             case EXT_CTRL_CODE_ENG:
                 textPrinter->japanese = 0;
                 return 2;
+            case EXT_CTRL_CODE_NPC_NAME:
+                textPrinter->printerTemplate.currentChar = CreateNpcNameBoxWindow(textPrinter->printerTemplate.currentChar);
+                return 2;
+            case EXT_CTRL_CODE_CLOSE_NPC_NAME:
+                CloseNpcNameBoxWindow();
+                return 2;
             }
             break;
         case CHAR_PROMPT_CLEAR:
@@ -959,7 +983,6 @@ u16 RenderText(struct TextPrinter *textPrinter)
     case 4:
         if (textPrinter->scrollDistance)
         {
-    
             if (textPrinter->scrollDistance < sWindowVerticalScrollSpeeds[gSaveBlock2Ptr->optionsTextSpeed])
             {
                 ScrollWindow(textPrinter->printerTemplate.windowId, 0, textPrinter->scrollDistance, PIXEL_FILL(textPrinter->printerTemplate.bgColor));
@@ -1972,4 +1995,49 @@ u8 *WrapFontIdToFit(u8 *start, u8 *end, u32 fontId, u32 width)
     }
     else
         return end;
+}
+
+#define NPC_NAME_LENGTH 12
+
+static const u8 *CreateNpcNameBoxWindow(const u8 *name)
+{
+    u8 dest[NPC_NAME_LENGTH + 1];
+    u32 nChars = 0;
+    
+    // CHAR_NEWLINE indicates the end of the Npc name
+    while (*name != CHAR_NEWLINE)
+    {
+        if (nChars < NPC_NAME_LENGTH)
+            dest[nChars++] = *name;
+        
+        name++;
+    }
+    dest[nChars] = EOS;
+    
+    if (!gNpcNameBoxPresent)
+    {
+        gNpcNameBoxPresent = TRUE;
+        gNpcNameBoxWindowId = AddWindow(&sNpcNameBoxWindowTemplate);
+        TextWindow_SetStdFrame0_WithPal(gNpcNameBoxWindowId, 0x21D, 0xD0);
+        DrawStdFrameWithCustomTileAndPalette(gNpcNameBoxWindowId, FALSE, 0x21D, 0xD);
+    }
+    FillWindowPixelBuffer(gNpcNameBoxWindowId, PIXEL_FILL(1));
+    AddTextPrinterParameterized(gNpcNameBoxWindowId, FONT_SMALL, dest, 0, 0, 0xFF, NULL);
+    PutWindowTilemap(gNpcNameBoxWindowId);
+    CopyWindowToVram(gNpcNameBoxWindowId, COPYWIN_BOTH);
+    
+    return ++name;
+}
+
+#undef NPC_NAME_LENGTH
+
+static void CloseNpcNameBoxWindow(void)
+{
+    if (gNpcNameBoxPresent)
+    {
+        gNpcNameBoxPresent = FALSE;
+        ClearWindowTilemap(gNpcNameBoxWindowId);
+        ClearStdWindowAndFrameToTransparent(gNpcNameBoxWindowId, TRUE);
+        RemoveWindow(gNpcNameBoxWindowId);
+    }
 }

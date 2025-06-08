@@ -246,6 +246,8 @@
 #define EXT_CTRL_CODE_ENG                    0x16
 #define EXT_CTRL_CODE_STOP_BGM               0x17
 #define EXT_CTRL_CODE_RESUME_BGM             0x18
+#define EXT_CTRL_CODE_NPC_NAME               0x19
+#define EXT_CTRL_CODE_CLOSE_NPC_NAME         0x1A
 
 #define TEXT_COLOR_TRANSPARENT  0x0
 #define TEXT_COLOR_WHITE        0x1

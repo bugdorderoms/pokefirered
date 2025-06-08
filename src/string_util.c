@@ -248,17 +248,19 @@ u8 *StringExpandPlaceholders(u8 *dest, const u8 *src)
 
                 switch (c)
                 {
-                    case 0x07:
-                    case 0x09:
-                    case 0x0F:
-                    case 0x15:
-                    case 0x16:
-                    case 0x17:
-                    case 0x18:
+                    case EXT_CTRL_CODE_RESET_FONT:
+                    case EXT_CTRL_CODE_WAIT_BUTTON:
+                    case EXT_CTRL_CODE_FILL_WINDOW:
+                    case EXT_CTRL_CODE_JPN:
+                    case EXT_CTRL_CODE_ENG:
+                    case EXT_CTRL_CODE_STOP_BGM:
+                    case EXT_CTRL_CODE_RESUME_BGM:
+                    case EXT_CTRL_CODE_NPC_NAME:
+                    case EXT_CTRL_CODE_CLOSE_NPC_NAME:
                         break;
-                    case 0x04:
+                    case EXT_CTRL_CODE_COLOR_HIGHLIGHT_SHADOW:
                         *dest++ = *src++;
-                    case 0x0B:
+                    case EXT_CTRL_CODE_PLAY_BGM:
                         *dest++ = *src++;
                     default:
                         *dest++ = *src++;
