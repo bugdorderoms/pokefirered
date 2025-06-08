@@ -426,7 +426,7 @@ u32 GenerateWildMon(u32 species, u32 level, bool32 checkWildInfluence)
         .shinyType = GENERATE_SHINY_NORMAL,
         .shinyRollType = SHINY_ROLL_NORMAL,
         .forcedNature = checkWildInfluence ? TryGetForcedWildMonNature(&gPlayerParty[0], GetMonAbility(&gPlayerParty[0])) : NUM_NATURES,
-        .formChanges = gDefaultGeneratorFormChanges,
+        .formChanges = GENERATOR_FORMS(DEFAULT_GENERATOR_FORMS),
         .moves = {0},
         .nPerfectIvs = 0,
     };

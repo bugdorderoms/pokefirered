@@ -902,7 +902,7 @@ static void CreateDexNavWildMon(u32 species, u32 potential, u32 level, u32 abili
         .shinyType = GENERATE_SHINY_NORMAL,
         .shinyRollType = SHINY_ROLL_DEXNAV,
         .forcedNature = NUM_NATURES,
-        .formChanges = gDefaultGeneratorFormChanges,
+        .formChanges = GENERATOR_FORMS(DEFAULT_GENERATOR_FORMS),
         .nPerfectIvs = potential,
     };
     memcpy(generator.moves, moves, sizeof(generator.moves));

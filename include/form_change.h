@@ -1,6 +1,12 @@
 #ifndef GUARD_FORM_CHANGE_H
 #define GUARD_FORM_CHANGE_H
 
+#define DEFAULT_GENERATOR_FORMS \
+    FORM_CHANGE_GENDER,         \
+    FORM_CHANGE_PERSONALITY,    \
+    FORM_CHANGE_SEASON,         \
+    FORM_CHANGE_NATURE
+
 struct Fusion
 {
     u16 masterSpecies;
@@ -32,8 +38,6 @@ u32 GetBattlerFormChangeSpecies(u32 battlerId, u32 species, u32 itemId, u32 form
 u32 TryDoBattleFormChange(u32 battlerId, u32 formChangeType);
 void DoBattleFormChange(u32 battlerId, u32 newSpecies, bool32 reloadTypes, bool32 reloadStats, bool32 reloadAbility);
 bool32 DoSpecialFormChange(u32 battlerId, u32 partyId, u32 formChangeType);
-
-extern const u16 gDefaultGeneratorFormChanges[];
 
 extern const struct Fusion gFusionsTable[];
 

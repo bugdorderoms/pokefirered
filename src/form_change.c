@@ -19,17 +19,6 @@
 #include "constants/regions.h"
 #include "constants/species.h"
 
-const u16 gDefaultGeneratorFormChanges[] =
-{
-    // No region form, so it's possible to encounter/breed an regional form in another region
-    // FORM_CHANGE_REGION,
-    FORM_CHANGE_GENDER,
-    FORM_CHANGE_PERSONALITY,
-    FORM_CHANGE_SEASON,
-    FORM_CHANGE_NATURE,
-    FORM_CHANGE_TERMINATOR
-};
-
 static bool32 CheckSpeciesKnowsMove(u32 battlerId, u16 *moves, u32 wantedMove, bool32 checkIsPermanent)
 {
     u32 i;

@@ -6318,7 +6318,7 @@ static void CreateSosAlly(u32 species, u32 level, u32 ally, u32 playerBattler)
         .shinyType = GENERATE_SHINY_NORMAL,
         .shinyRollType = SHINY_ROLL_SOS_CALL,
         .forcedNature = TryGetForcedWildMonNature(GetBattlerPartyIndexPtr(playerBattler), GetBattlerAbility(playerBattler)),
-        .formChanges = gDefaultGeneratorFormChanges,
+        .formChanges = GENERATOR_FORMS(DEFAULT_GENERATOR_FORMS),
         .nPerfectIvs = sosCallTable.nPerfectIvs,
         .moves = {0},
     };

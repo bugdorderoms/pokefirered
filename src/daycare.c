@@ -1162,32 +1162,29 @@ static u32 DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u8 *parent
 #if INCENSE_ITEM_BREEDING
 static void AlterEggSpeciesWithIncenseItem(u32 *species, u32 fatherItem, u32 motherItem)
 {
-    if (*species == SPECIES_WYNAUT || *species == SPECIES_AZURILL)
-    {
-        if (*species == SPECIES_WYNAUT && motherItem != ITEM_LAX_INCENSE && fatherItem != ITEM_LAX_INCENSE)
-            *species = SPECIES_WOBBUFFET;
-        else if (*species == SPECIES_AZURILL && motherItem != ITEM_SEA_INCENSE && fatherItem != ITEM_SEA_INCENSE)
-            *species = SPECIES_MARILL;
-        else if (*species == SPECIES_BUDEW && motherItem != ITEM_ROSE_INCENSE && fatherItem != ITEM_ROSE_INCENSE)
-            *species = SPECIES_ROSELIA;
-        else if (*species == SPECIES_CHINGLING && motherItem != ITEM_PURE_INCENSE && fatherItem != ITEM_PURE_INCENSE)
-            *species = SPECIES_CHIMECHO;
-        else if (*species == SPECIES_BONSLY && motherItem != ITEM_ROCK_INCENSE && fatherItem != ITEM_ROCK_INCENSE)
-            *species = SPECIES_SUDOWOODO;
-        else if (*species == SPECIES_MIME_JR && motherItem != ITEM_ODD_INCENSE && fatherItem != ITEM_ODD_INCENSE)
-            *species = SPECIES_MR_MIME;
-        else if (*species == SPECIES_HAPPINY && motherItem != ITEM_LUCK_INCENSE && fatherItem != ITEM_LUCK_INCENSE)
-            *species = SPECIES_CHANSEY;
-        else if (*species == SPECIES_MANTYKE && motherItem != ITEM_WAVE_INCENSE && fatherItem != ITEM_WAVE_INCENSE)
-            *species = SPECIES_MANTINE;
-        else if (*species == SPECIES_MUNCHLAX && motherItem != ITEM_FULL_INCENSE && fatherItem != ITEM_FULL_INCENSE)
-            *species = SPECIES_SNORLAX;
-    }
+    if (*species == SPECIES_WYNAUT && motherItem != ITEM_LAX_INCENSE && fatherItem != ITEM_LAX_INCENSE)
+        *species = SPECIES_WOBBUFFET;
+    else if (*species == SPECIES_AZURILL && motherItem != ITEM_SEA_INCENSE && fatherItem != ITEM_SEA_INCENSE)
+        *species = SPECIES_MARILL;
+    else if (*species == SPECIES_BUDEW && motherItem != ITEM_ROSE_INCENSE && fatherItem != ITEM_ROSE_INCENSE)
+        *species = SPECIES_ROSELIA;
+    else if (*species == SPECIES_CHINGLING && motherItem != ITEM_PURE_INCENSE && fatherItem != ITEM_PURE_INCENSE)
+        *species = SPECIES_CHIMECHO;
+    else if (*species == SPECIES_BONSLY && motherItem != ITEM_ROCK_INCENSE && fatherItem != ITEM_ROCK_INCENSE)
+        *species = SPECIES_SUDOWOODO;
+    else if (*species == SPECIES_MIME_JR && motherItem != ITEM_ODD_INCENSE && fatherItem != ITEM_ODD_INCENSE)
+        *species = SPECIES_MR_MIME;
+    else if (*species == SPECIES_HAPPINY && motherItem != ITEM_LUCK_INCENSE && fatherItem != ITEM_LUCK_INCENSE)
+        *species = SPECIES_CHANSEY;
+    else if (*species == SPECIES_MANTYKE && motherItem != ITEM_WAVE_INCENSE && fatherItem != ITEM_WAVE_INCENSE)
+        *species = SPECIES_MANTINE;
+    else if (*species == SPECIES_MUNCHLAX && motherItem != ITEM_FULL_INCENSE && fatherItem != ITEM_FULL_INCENSE)
+        *species = SPECIES_SNORLAX;
 }
 #endif
 
-// Sets the initial data for the egg, after ii's used when the egg is hatched and given to the player
-static void SetInitialEggData(struct Pokemon *mon, u32 species, u32 personality)
+// Sets the initial data for the egg, after it's used when the egg is hatched and given to the player
+static void SetInitialEggData(struct Pokemon *mon, u32 species, u32 personality, u32 motherItem)
 {
     u32 value;
     struct PokemonGenerator generator =
@@ -1201,7 +1198,7 @@ static void SetInitialEggData(struct Pokemon *mon, u32 species, u32 personality)
         .hasFixedPersonality = TRUE,
         .fixedPersonality = personality,
         .forcedNature = NUM_NATURES,
-        .formChanges = gDefaultGeneratorFormChanges,
+        .formChanges = motherItem != ITEM_EVERSTONE ? GENERATOR_FORMS(FORM_CHANGE_REGION, DEFAULT_GENERATOR_FORMS) : GENERATOR_FORMS(DEFAULT_GENERATOR_FORMS),
         .moves = {0},
         .nPerfectIvs = 0,
     };
@@ -1234,7 +1231,7 @@ void GiveEggFromDaycare(void)
     AlterEggSpeciesWithIncenseItem(&species, fatherItem, motherItem);
 #endif
     
-    SetInitialEggData(&egg, species, daycare->offspringPersonality);
+    SetInitialEggData(&egg, species, daycare->offspringPersonality, GetBoxMonData(&daycare->mons[noDittoParent].mon, MON_DATA_HELD_ITEM));
     
     InheritIVs(&egg, daycare, fatherItem, motherItem);
     BuildEggMoveset(&egg, father, mother, fatherItem, motherItem);
@@ -1405,7 +1402,7 @@ static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, stru
 #define SET_IV_TO_INHERIT(parent, statId)       \
     selectedIvs[selectedIvsCount] = statId;     \
     selectedParents[selectedIvsCount] = parent; \
-    unavailableIvs |= Bit(statId);
+    unavailableIvs |= Bit(statId)
 
 static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare, u32 fatherItem, u32 motherItem)
 {
@@ -1423,17 +1420,17 @@ static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare, u32 fatherI
     {
         i = RandomMax(DAYCARE_MON_COUNT); // Parent
         
-        SET_IV_TO_INHERIT(i, i == 0 ? motherItemHoldEffectParam : fatherItemHoldEffectParam)
+        SET_IV_TO_INHERIT(i, i == 0 ? motherItemHoldEffectParam : fatherItemHoldEffectParam);
         selectedIvsCount++;
     }
     else if (fatherHasPowerItem) // Inherit iv from father
     {
-        SET_IV_TO_INHERIT(1, fatherItemHoldEffectParam)
+        SET_IV_TO_INHERIT(1, fatherItemHoldEffectParam);
         selectedIvsCount++;
     }
     else if (motherHasPowerItem) // Inherit iv from mother
     {
-        SET_IV_TO_INHERIT(0, motherItemHoldEffectParam)
+        SET_IV_TO_INHERIT(0, motherItemHoldEffectParam);
         selectedIvsCount++;
     }
     
@@ -1446,7 +1443,7 @@ static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare, u32 fatherI
 
         } while (unavailableIvs & Bit(iv));
         
-        SET_IV_TO_INHERIT(RandomMax(DAYCARE_MON_COUNT), iv)
+        SET_IV_TO_INHERIT(RandomMax(DAYCARE_MON_COUNT), iv);
     }
 
     // Set each of inherited IVs on the egg mon
