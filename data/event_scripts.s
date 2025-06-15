@@ -34,6 +34,7 @@
 #include "constants/trainer_card.h"
 #include "constants/poke_ride.h"
 #include "constants/sliding_puzzles.h"
+#include "constants/party_menu.h"
 	.include "asm/macros.inc"
 	.include "asm/macros/event.inc"
 	.set FALSE, 0

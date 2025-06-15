@@ -155,7 +155,8 @@ struct SpeciesInfo
             u8 evYield_Speed:2;
  /* 0x19 */ u8 evYield_SpAttack:2;
             u8 evYield_SpDefense:2;
-            u8 growthRate:4; // last bit was unused
+            u8 growthRate:3;
+            u8 pokemonJumpDisallowed:1; // Exclude species that only swim, burrow or fly.
  /* 0x1A */ u8 eggGroup1:4;
             u8 eggGroup2:4;
  /* 0x1B */ u8 friendship;

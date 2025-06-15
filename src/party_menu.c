@@ -1237,15 +1237,16 @@ static void SetPartyMonsAllowedInMinigame(void)
         ptr = &gPartyMenu.data1;
         gPartyMenu.data1 = 0;
         
-        if (gSpecialVar_0x8005 == 0)
+        switch (gSpecialVar_0x8005)
         {
-            for (i = 0; i < gPlayerPartyCount; ++i)
-                *ptr += IsMonAllowedInPokemonJump(&gPlayerParty[i]) << i;
-        }
-        else
-        {
-            for (i = 0; i < gPlayerPartyCount; ++i)
-                *ptr += IsMonAllowedInDodrioBerryPicking(&gPlayerParty[i]) << i;
+            case WIRELESS_MINIGAME_POKEMON_JUMP:
+                for (i = 0; i < gPlayerPartyCount; ++i)
+                    *ptr += IsMonAllowedInPokemonJump(&gPlayerParty[i]) << i;
+                break;
+            case WIRELESS_MINIGAME_BERRY_PICKING:
+                for (i = 0; i < gPlayerPartyCount; ++i)
+                    *ptr += IsMonAllowedInDodrioBerryPicking(&gPlayerParty[i]) << i;
+                break;
         }
     }
 }

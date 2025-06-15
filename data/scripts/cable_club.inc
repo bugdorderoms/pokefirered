@@ -1113,6 +1113,7 @@ JoyfulGameCorner_EventScript_InfoMan2:: @ 81BC060
 	end
 
 CableClub_EventScript_PokemonJumpInfo:: @ 81BC0B0
+	callnative FormatPokemonJumpHeightString
 	msgbox Text_PokemonJumpInfo
 	release
 	end
@@ -1147,12 +1148,12 @@ JoyfulGameCorner_EventScript_MinigameAttendant:: @ 81BC0CE
 	end
 
 CableClub_EventScript_PlayPokemonJump:: @ 81BC13A
-	setvar VAR_0x8005, 0
+	setvar VAR_0x8005, WIRELESS_MINIGAME_POKEMON_JUMP
 	special IsPokemonJumpSpeciesInParty
 	compare VAR_RESULT, FALSE
 	goto_if_eq CableClub_EventScript_NoEligiblePkmn
 	msgbox Text_EnterWhichPokemon
-	setvar VAR_0x8005, 0
+	setvar VAR_0x8005, WIRELESS_MINIGAME_POKEMON_JUMP
 	special ChooseMonForWirelessMinigame
 	waitstate
 	compare VAR_0x8004, PARTY_SIZE
@@ -1165,12 +1166,12 @@ CableClub_EventScript_PlayPokemonJump:: @ 81BC13A
 	end
 
 CableClub_EventScript_PlayDodrioBerryPicking:: @ 81BC184
-	setvar VAR_0x8005, 1
+	setvar VAR_0x8005, WIRELESS_MINIGAME_BERRY_PICKING
 	special IsDodrioInParty
 	compare VAR_RESULT, 0
 	goto_if_eq CableClub_EventScript_NoEligiblePkmn
 	msgbox Text_EnterWhichPokemon
-	setvar VAR_0x8005, 1
+	setvar VAR_0x8005, WIRELESS_MINIGAME_BERRY_PICKING
 	special ChooseMonForWirelessMinigame
 	waitstate
 	compare VAR_0x8004, PARTY_SIZE
@@ -1246,9 +1247,9 @@ CableClub_EventScript_NoEligiblePkmn:: @ 81BC2A6
 	msgbox EventScript_ExplainPokemonJumpRequirements, MSGBOX_YESNO
 	compare VAR_RESULT, NO
 	goto_if_eq CableClub_EventScript_AbortMinigame
-	compare VAR_0x8005, 0
+	compare VAR_0x8005, WIRELESS_MINIGAME_POKEMON_JUMP
 	call_if_eq CableClub_EventScript_ExplainPokemonJumpRequirements
-	compare VAR_0x8005, 1
+	compare VAR_0x8005, WIRELESS_MINIGAME_BERRY_PICKING
 	call_if_eq CableClub_EventScript_ExplainDodrioBerryPickingRequirements
 	goto CableClub_EventScript_AbortMinigame
 	end
@@ -1494,7 +1495,7 @@ Text_PokemonJumpInfo:: @ 81BCD4D
 	.string "“Pokémon JUMP”\p"
 	.string "Make your Pokémon skip the\n"
 	.string "VINE WHIP rope with the A Button.\p"
-	.string "Only mini Pokémon around 28 inches\n"
+	.string "Only mini Pokémon around {STR_VAR_1} m\n"
 	.string "or less may participate.\p"
 	.string "Pokémon that only swim, burrow, or\n"
 	.string "fly are not good at jumping.\p"
