@@ -1173,3 +1173,28 @@ u32 AI_TypeCalc(struct Pokemon *mon, u32 move, u32 defender)
     
     return effectiveness;
 }
+
+// Calc resitance betwhen the mon's types and the battler's types
+u32 AI_GetSwitchInTypeMatchup(struct Pokemon *mon, u32 playerBattler)
+{
+    u32 i, multiplier, battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+    struct BattlePokemon savedCopy = gBattleMons[battler];
+    u32 status3 = gStatuses3[battler];
+    u16 flags;
+    u8 types[3];
+    
+    GetBattlerTypes(playerBattler, types);
+    
+    // Overrrides the opponent's mon data with the ones of its party for the calculation
+    CopyPokemonToBattleMon(battler, mon, &gBattleMons[battler], TRUE);
+    gStatuses3[battler] = 0;
+    
+    multiplier = TYPE_MUL_NORMAL;
+    for (i = 0; i < 3; i++)
+        multiplier = (multiplier * CalcTypeEffectivenessMultiplierInternal(MOVE_NONE, types[i], GetBattlerAbility(playerBattler), battler, multiplier, FALSE, &flags)) / 10;
+
+    gBattleMons[battler] = savedCopy;
+    gStatuses3[battler] = status3;
+    
+    return multiplier;
+}

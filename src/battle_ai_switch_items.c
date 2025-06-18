@@ -4,13 +4,11 @@
 #include "battle_ai_util.h"
 #include "battle_controllers.h"
 #include "calculate_base_damage.h"
+#include "form_change.h"
 #include "item.h"
 #include "util.h"
 
-////////////
-// SWITCH //
-////////////
-
+/*
 static bool32 ShouldSwitchIfNoOneMoveIsEffective(u32 battlerId)
 {
     u32 i, j, k, unusableMoves = 0;
@@ -51,43 +49,105 @@ static bool32 ShouldSwitchIfNoOneMoveIsEffective(u32 battlerId)
         }
     }
     return FALSE;
+}*/
+
+////////////
+// SWITCH //
+////////////
+
+static u32 FindMonThatAbsorbsOpponentsMove(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler);
+static u32 TryPassOnWish(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler);
+static u32 ShouldSwitchIfPerishSong(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler);
+static u32 ShouldSwitchIfWonderGuard(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler);
+static u32 ShouldSwitchIfOnlyBadMovesLeft(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler);
+static u32 ShouldSwitchIfNaturalCureOrRegenerator(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler);
+static u32 ShouldSwitchWhenYawned(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler);
+
+static u32 (*const sAIShouldSwitchFuncs[])(u32, u8*, u32, u32) =
+{
+    FindMonThatAbsorbsOpponentsMove,
+    TryPassOnWish,
+    ShouldSwitchIfPerishSong,
+    ShouldSwitchIfWonderGuard,
+    ShouldSwitchIfOnlyBadMovesLeft,
+    ShouldSwitchIfNaturalCureOrRegenerator,
+    ShouldSwitchWhenYawned,
+};
+
+static bool32 CheckMonAlreadyInBankForSwitching(u32 partyId, u32 battlerIn1, u32 battlerIn2)
+{
+    if (partyId != gBattleStruct->battlers[battlerIn1].monToSwitchIntoId && partyId != gBattleStruct->battlers[battlerIn2].monToSwitchIntoId)
+        return FALSE;
+    
+    return TRUE;
 }
+
+u32 GetViableMonsToSwitchInto(u32 battlerId, u8 *viableMons)
+{
+    return CountUsablePartyMons(battlerId, viableMons, CheckMonAlreadyInBankForSwitching);
+}
+
+#define NO_SWITCH PARTY_SIZE + 1
 
 bool32 BattleAI_ShouldSwitch(u32 battlerId)
 {
     if (CanBattlerEscape(battlerId, TRUE) && !IsAbilityPreventingSwitchOut(battlerId) && !(gStatuses3[battlerId] & STATUS3_COMMANDING) && !IsBattlerBeingCommanded(battlerId))
     {
-        u32 i, availableToSwitch, battlerIn2, battlerIn1 = battlerId;
+        u8 viableMons[PARTY_SIZE];
+        u32 i, availableToSwitch = GetViableMonsToSwitchInto(battlerId, viableMons);
         
-        if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
-            battlerIn2 = BATTLE_PARTNER(battlerId);
-        else
-            battlerIn2 = battlerId;
-        
-        for (i = availableToSwitch = 0; i < gEnemyPartyCount; i++)
+        if (availableToSwitch > 0)
         {
-            if (MonCanBattle(&gEnemyParty[i]) && i != gBattlerPartyIndexes[battlerIn1] && i != gBattlerPartyIndexes[battlerIn2]
-            && i != gBattleStruct->battlers[battlerIn1].monToSwitchIntoId && i != gBattleStruct->battlers[battlerIn2].monToSwitchIntoId)
-                ++availableToSwitch;
-        }
-        
-        if (availableToSwitch)
-        {
-            if ((gStatuses3[battlerId] & STATUS3_PERISH_SONG) && gDisableStructs[battlerId].perishSongTimer == 0)
+            u32 opposingBattler = BATTLE_OPPOSITE(battlerId);
+            
+            for (i = 0; i < ARRAY_COUNT(sAIShouldSwitchFuncs); i++)
             {
-                gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = PARTY_SIZE;
-                return TRUE;
+                u32 id = sAIShouldSwitchFuncs[i](battlerId, viableMons, availableToSwitch, opposingBattler);
+                
+                if (id != NO_SWITCH)
+                {
+                    gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = id;
+                    return TRUE;
+                }
             }
-            else if (ShouldSwitchIfNoOneMoveIsEffective(battlerId))
-                return TRUE;
         }
     }
     return FALSE;
 }
 
-bool32 BattleAI_SwitchIfBadMoves(u32 battlerId, bool32 doubles)
+static u32 GetMostSuitableMonWithTypeMatchup(u32 battlerId, u32 opposingBattler)
 {
-    return FALSE;
+    u8 viableMons[PARTY_SIZE];
+    u32 i, j, id, move, dmg, bestDmg, bestMonId, viableMonsCount = GetViableMonsToSwitchInto(battlerId, viableMons);
+    
+    bestDmg = 0;
+    bestMonId = PARTY_SIZE;
+
+   // Find mon with a good type matchup and moves
+   for (i = 0; i < viableMonsCount; i++)
+   {
+       id = viableMons[i];
+       dmg = AI_GetSwitchInTypeMatchup(&gEnemyParty[id], opposingBattler);
+       
+       // If no mon has good types and moves, switch to the best one found
+       if (bestDmg < dmg)
+       {
+           bestDmg = dmg;
+           bestMonId = id;
+       }
+       
+       if (dmg <= TYPE_MUL_NORMAL)
+       {
+           for (j = 0; j < MAX_MON_MOVES; j++)
+           {
+               move = GetMonData(&gEnemyParty[id], MON_DATA_MOVE1 + j);
+               
+               if (move && AI_TypeCalc(&gEnemyParty[id], move, opposingBattler) == TYPE_MUL_SUPER_EFFECTIVE)
+                   return id;
+           }
+       }
+   }
+   return bestMonId;
 }
 
 u32 GetMostSuitableMonToSwitchInto(u32 battlerId)
@@ -96,25 +156,166 @@ u32 GetMostSuitableMonToSwitchInto(u32 battlerId)
         return gBattleStruct->battlers[battlerId].monToSwitchIntoId;
     else
     {
-        u32 i, battlerIn2, battlerIn1 = battlerId;
+        u32 opposingBattler = BATTLE_OPPOSITE(battlerId);
         
-        if (IsBattlerAlive(BATTLE_PARTNER(battlerId)))
-            battlerIn2 = BATTLE_PARTNER(battlerId);
-        else
-            battlerIn2 = battlerId;
-        
-        /*
-        TODO: add logic
-        
-        for (i = 0; i < gEnemyPartyCount; i++)
+        if (IsDoubleBattleForBattler(opposingBattler))
         {
-            if (MonCanBattle(&gEnemyParty[i]) && i != gBattlerPartyIndexes[battlerIn1] && i != gBattlerPartyIndexes[battlerIn2])
-            {
-                if ()
-            }
-        }*/
-        return 1;
+            if (!IsBattlerAlive(opposingBattler))
+                opposingBattler = BATTLE_PARTNER(opposingBattler);
+        }
+        return GetMostSuitableMonWithTypeMatchup(battlerId, opposingBattler);
     }
+}
+
+static u32 FindMonThatAbsorbsOpponentsMove(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler)
+{
+    u32 i, predictedMove, predictedMoveType;
+    
+    if (gBattleMons[battlerId].statStages[STAT_EVASION] >= (DEFAULT_STAT_STAGES + (DEFAULT_STAT_STAGES / 2)))
+        return NO_SWITCH;
+    
+    predictedMove = AI_THINKING->predictedMoves[opposingBattler];
+    
+    if (!predictedMove || IS_MOVE_STATUS(predictedMove))
+        return NO_SWITCH;
+    
+    predictedMoveType = gBattleMoves[predictedMove].type;
+    for (i = 0; i < availableToSwitch; i++)
+    {
+        u32 un, used;
+        
+        if (CanAbilityAbsorbMove(GetMonAbility(&gEnemyParty[viableMons[i]]), predictedMove, predictedMoveType, opposingBattler, &un, &used))
+            return viableMons[i];
+    }
+    return NO_SWITCH;
+}
+
+static u32 TryPassOnWish(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler)
+{
+    if (gBattleStruct->battlers[battlerId].wishCounter)
+    {
+        u32 i;
+        
+        if (gBattleMons[battlerId].hp < gBattleMons[battlerId].maxHP / 2)
+        {
+            bool32 dontSwitch;
+            
+            if (GetNoOfHitsToKOBattlerHigherDamage(opposingBattler, battlerId) > 1)
+                return NO_SWITCH;
+            
+            BattlerHasMoveWithFlagInMoveset(dontSwitch, battlerId, protectionMove)
+            if (dontSwitch)
+                return NO_SWITCH;
+        }
+        
+        for (i = 0; i < availableToSwitch; i++)
+        {
+            u32 id = viableMons[i];
+            
+            if (GetMonData(&gEnemyParty[id], MON_DATA_HP) < GetMonData(&gEnemyParty[id], MON_DATA_MAX_HP) / 2)
+                return id;
+        }
+    }
+    return NO_SWITCH;
+}
+
+static u32 ShouldSwitchIfPerishSong(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler)
+{
+    if ((gStatuses3[battlerId] & STATUS3_PERISH_SONG) && gDisableStructs[battlerId].perishSongTimer == 0)
+        return PARTY_SIZE;
+    return NO_SWITCH;
+}
+
+static u32 ShouldSwitchIfWonderGuard(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler)
+{
+    u32 i, j, id, move;
+    u16 flags, moves[MAX_MON_MOVES];
+    
+    if (IsDoubleBattleForBattler(battlerId) || GetBattlerAbility(battlerId) != ABILITY_WONDER_GUARD)
+        return NO_SWITCH;
+    
+    // Check battler has a super effective move
+    GetBattlerMovesArray(battlerId, moves);
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        move = moves[i];
+        
+        if (move && !IS_MOVE_STATUS(move) && TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
+            return NO_SWITCH;
+    }
+    
+    // Check party mon has a super effective move
+    for (i = 0; i < availableToSwitch; i++)
+    {
+        id = viableMons[i];
+        
+        for (j = 0; j < MAX_MON_MOVES; j++)
+        {
+            move = GetMonData(&gEnemyParty[id], MON_DATA_MOVE1 + j);
+            
+            if (move && !IS_MOVE_STATUS(move) && AI_TypeCalc(&gEnemyParty[id], move, opposingBattler) == TYPE_MUL_SUPER_EFFECTIVE)
+                return id;
+        }
+    }
+    return NO_SWITCH;
+}
+
+static u32 ShouldSwitchIfOnlyBadMovesLeft(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler)
+{
+    u32 i, move;
+    u16 flags, moves[MAX_MON_MOVES];
+    
+    if ((gBattleMons[battlerId].status2 & STATUS2_DESTINY_BOND) && GetNoOfHitsToKOBattlerHigherDamage(opposingBattler, battlerId) < 2)
+        return NO_SWITCH;
+    
+    GetBattlerMovesArray(battlerId, moves);
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        move = moves[i];
+        
+        if (move && !IS_MOVE_STATUS(move) && TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, &flags) != TYPE_MUL_NO_EFFECT)
+            return NO_SWITCH;
+    }
+    return PARTY_SIZE;
+}
+
+static u32 ShouldSwitchIfNaturalCureOrRegenerator(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler)
+{
+    if (!(gSideStatuses[GetBattlerSide(battlerId)] & SIDE_STATUS_HAZARDS_ANY))
+    {
+        switch (GetBattlerAbility(battlerId))
+        {
+            case ABILITY_NATURAL_CURE:
+                if (gBattleMons[battlerId].status1.id)
+                    return PARTY_SIZE;
+                break;
+            case ABILITY_REGENERATOR:
+                if (gBattleMons[battlerId].hp < gBattleMons[battlerId].maxHP / 2)
+                    return PARTY_SIZE;
+                break;
+            case ABILITY_ZERO_TO_HERO:
+                if (TryDoBattleFormChange(battlerId, FORM_CHANGE_SWITCH_OUT))
+                    return PARTY_SIZE;
+                break;
+        }
+    }
+    return NO_SWITCH;
+}
+
+static u32 ShouldSwitchWhenYawned(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler)
+{
+    if ((gStatuses3[battlerId] & STATUS3_YAWN) && GetBattlerAbility(battlerId) != ABILITY_NATURAL_CURE && gBattleMons[battlerId].hp > gBattleMons[battlerId].maxHP / 4
+    && IsUproarActive() == gBattlersCount && CanBePutToSleep(battlerId, battlerId, 0) == STATUS_CHANGE_WORKED)
+    {
+        // TODO
+        return PARTY_SIZE;
+    }
+    return NO_SWITCH;
+}
+
+bool32 BattleAI_SwitchIfBadMoves(u32 battlerId, bool32 doubles)
+{
+    return FALSE;
 }
 
 ///////////

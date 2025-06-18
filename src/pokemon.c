@@ -2325,38 +2325,20 @@ void EvolutionRenameMon(struct Pokemon *mon, u32 oldSpecies, u32 newSpecies)
         SetMonData(mon, MON_DATA_NICKNAME, gSpeciesInfo[newSpecies].name);
 }
 
-u32 GetPlayerFlankId(void)
-{
-    u32 retVal = 0;
-    
-    switch (gLinkPlayers[GetMultiplayerId()].id)
-    {
-    case 0:
-    case 3:
-        retVal = 0;
-        break;
-    case 1:
-    case 2:
-        retVal = 1;
-        break;
-    }
-    return retVal;
-}
-
 u32 GetLinkTrainerFlankId(u32 linkPlayerId)
 {
     u32 retVal = 0;
     
     switch (gLinkPlayers[linkPlayerId].id)
     {
-    case 0:
-    case 3:
-        retVal = 0;
-        break;
-    case 1:
-    case 2:
-        retVal = 1;
-        break;
+        case B_POSITION_PLAYER_LEFT:
+        case B_POSITION_OPPONENT_RIGHT:
+            retVal = B_FLANK_LEFT;
+            break;
+        case B_POSITION_OPPONENT_LEFT:
+        case B_POSITION_PLAYER_RIGHT:
+            retVal = B_FLANK_RIGHT;
+            break;
     }
     return retVal;
 }

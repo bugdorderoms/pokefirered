@@ -97,7 +97,7 @@ static void SetBattlerData(u32 attacker)
 {
     u32 i, defender;
     
-    AI_THINKING->predictedMoves[attacker] = gBattleStruct->battlers[attacker].lastMove;
+    AI_THINKING->predictedMoves[attacker] = gBattleStruct->battlers[attacker].lastMove == MOVE_UNAVAILABLE ? MOVE_NONE : gBattleStruct->battlers[attacker].lastMove;
     AI_THINKING->moveLimitations[attacker] = CheckMoveLimitations(attacker, 0);
     AI_THINKING->totalSpeeds[attacker] = GetBattlerTotalSpeed(attacker);
     
@@ -163,31 +163,15 @@ void BattleAI_ChooseAction(u32 battlerId)
     {
         if (BattleAI_ShouldSwitch(battlerId))
         {
-            u32 battlerIn1, battlerIn2;
-            
             if (gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] == PARTY_SIZE)
             {
                 u32 id = GetMostSuitableMonToSwitchInto(battlerId);
                 
                 if (id == PARTY_SIZE)
                 {
-                    if (!IsDoubleBattleOnSide(B_SIDE_OPPONENT))
-                    {
-                        battlerIn1 = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-                        battlerIn2 = battlerIn1;
-                    }
-                    else
-                    {
-                        battlerIn1 = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-                        battlerIn2 = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-                    }
-                    
-                    for (id = 0; id < PARTY_SIZE; id++)
-                    {
-                        if (GetMonData(&gEnemyParty[id], MON_DATA_HP) && id != gBattlerPartyIndexes[battlerIn1] && id != gBattlerPartyIndexes[battlerIn2]
-                        && id != gBattleStruct->battlers[battlerIn1].monToSwitchIntoId && id != gBattleStruct->battlers[battlerIn2].monToSwitchIntoId)
-                        break;
-                    }
+                    u8 viableMons[PARTY_SIZE];
+                    GetViableMonsToSwitchInto(battlerId, viableMons);
+                    id = viableMons[0];
                 }
                 gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = id;
             }

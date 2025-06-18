@@ -577,6 +577,7 @@ SECTIONS {
 		src/battle_gimmicks.o(.rodata);
 		src/rtc.o(.rodata);
 		src/battle_ai_main.o(.rodata);
+		src/battle_ai_switch_items.o(.rodata);
 		src/pokemon_sprite_visualizer.o(.rodata);
 		src/sliding_puzzles.o(.rodata);
 		src/voltorb_flip.o(.rodata);

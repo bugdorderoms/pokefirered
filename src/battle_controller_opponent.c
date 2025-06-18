@@ -497,10 +497,10 @@ static void OpponentHandleChoosePokemon(u32 battlerId)
 {
     u32 chosenMonId;
 
-    if (*(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) == PARTY_SIZE)
+    if (gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] == PARTY_SIZE)
     {
-        chosenMonId = 0/*GetMostSuitableMonToSwitchInto(battlerId)*/;
-
+        chosenMonId = GetMostSuitableMonToSwitchInto(battlerId);
+        
         if (chosenMonId == PARTY_SIZE)
         {
             u32 battler1, battler2;
@@ -514,15 +514,15 @@ static void OpponentHandleChoosePokemon(u32 battlerId)
             }
             for (chosenMonId = 0; chosenMonId < PARTY_SIZE; ++chosenMonId)
             {
-                if (GetMonData(&gEnemyParty[chosenMonId], MON_DATA_HP) && chosenMonId != gBattlerPartyIndexes[battler1] && chosenMonId != gBattlerPartyIndexes[battler2])
+                if (MonCanBattle(&gEnemyParty[chosenMonId]) && chosenMonId != gBattlerPartyIndexes[battler1] && chosenMonId != gBattlerPartyIndexes[battler2])
                     break;
             }
         }
     }
     else
     {
-        chosenMonId = *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1));
-        *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) = PARTY_SIZE;
+        chosenMonId = gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1];
+        gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = PARTY_SIZE;
     }
     gBattleStruct->battlers[battlerId].monToSwitchIntoId = chosenMonId;
     BtlController_EmitChosenMonReturnValue(battlerId, BUFFER_B, chosenMonId, NULL);

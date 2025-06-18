@@ -6850,7 +6850,7 @@ static void atk8F_forcerandomswitch(void)
         if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || (atkSide == B_SIDE_OPPONENT && defSide == B_SIDE_PLAYER && IsDoubleBattleOnSide(atkSide)
         && IS_WHOLE_SIDE_ALIVE(gBattlerTarget)) || (atkSide == B_SIDE_PLAYER && defSide == B_SIDE_PLAYER && IsDoubleBattleOnSide(defSide)))
         {
-            u8 validMons[PARTY_SIZE], validMonsCount = CountUsablePartyMons(gBattlerTarget, validMons);
+            u8 validMons[PARTY_SIZE], validMonsCount = CountUsablePartyMons(gBattlerTarget, validMons, NULL);
 
             if (validMonsCount == 0)
                 gBattlescriptCurrInstr = cmd->failPtr;

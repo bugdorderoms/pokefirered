@@ -457,7 +457,7 @@ static void (*const sTurnActionsFuncsTable[])(void) =
     [B_ACTION_SAFARI_GO_NEAR] = HandleAction_ThrowRock,
     [B_ACTION_SAFARI_RUN] = HandleAction_SafariZoneRun,
     [B_ACTION_OLDMAN_THROW] = HandleAction_OldManBallThrow,
-    [B_ACTION_EXEC_SCRIPT] = HandleAction_RunBattleScript,
+    [B_ACTION_EXEC_SCRIPT] = RunBattleScriptCommands,
     [B_ACTION_TRY_FINISH] = HandleAction_TryFinish,
     [B_ACTION_FINISHED] = HandleAction_ActionFinished,
     [B_ACTION_NOTHING_FAINTED] = HandleAction_NothingIsFainted,
@@ -1888,6 +1888,10 @@ static void BattleStartClearSetData(void)
         
         gBattleStruct->pickupStack[i] = 0xFF;
     }
+    
+    for (i = 0; i < NUM_BATTLERS_PER_SIDE; i++)
+        gBattleStruct->AI_monToSwitchIntoId[i] = PARTY_SIZE;
+    
     gBattlerAttacker = 0;
     gBattlerTarget = 0;
     gBattleWeather = 0;

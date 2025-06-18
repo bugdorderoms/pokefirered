@@ -2356,6 +2356,69 @@ bool32 IsBattlerBeingCommanded(u32 battlerId)
     return FALSE;
 }
 
+u32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u32 *statIdToRaise, u32 *statAmount)
+{
+    u32 effect = 0, moveTarget = GetBattlerMoveTargetType(attacker, move);
+    
+    switch (ability)
+    {
+        case ABILITY_VOLT_ABSORB:
+            if (moveType == TYPE_ELECTRIC)
+                effect = 1;
+            break;
+        case ABILITY_WATER_ABSORB:
+        case ABILITY_DRY_SKIN:
+            if (moveType == TYPE_WATER)
+                effect = 1;
+            break;
+        case ABILITY_EARTH_EATER: // Don't absorb Spikes
+            if (moveType == TYPE_GROUND && moveTarget != MOVE_TARGET_OPPONENTS_FIELD)
+                effect = 1;
+            break;
+        case ABILITY_MOTOR_DRIVE:
+            if (moveType == TYPE_ELECTRIC)
+            {
+                *statIdToRaise = STAT_SPEED;
+                effect = 2;
+            }
+            break;
+        case ABILITY_LIGHTNING_ROD:
+            if (moveType == TYPE_ELECTRIC)
+            {
+                *statIdToRaise = STAT_SPATK;
+                effect = 2;
+            }
+            break;
+        case ABILITY_SAP_SIPPER:
+            if (moveType == TYPE_GRASS)
+            {
+                *statIdToRaise = STAT_ATK;
+                effect = 2;
+            }
+            break;
+        case ABILITY_WIND_RIDER:
+            if (gBattleMoves[move].flags.windMove && moveTarget != MOVE_TARGET_USER && moveTarget != MOVE_TARGET_ALL_BATTLERS)
+            {
+                *statIdToRaise = STAT_ATK;
+                effect = 2;
+            }
+            break;
+        case ABILITY_WELL_BAKED_BODY:
+            if (moveType == TYPE_FIRE)
+            {
+                *statIdToRaise = STAT_DEF;
+                *statAmount = +2;
+                effect = 2;
+            }
+            break;
+        case ABILITY_FLASH_FIRE:
+            if (moveType == TYPE_FIRE)
+                effect = 3;
+            break;
+    }
+    return effect;
+}
+
 static bool32 IsSwitchInAbilityBlockedByGhostBattle(u32 ability)
 {
     if (IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE)
@@ -3337,64 +3400,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                 {
                     u32 statId, statAmount = +1;
                     
-                    moveTarget = GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove);
-                    
-                    switch (ability)
-                    {
-                        case ABILITY_VOLT_ABSORB:
-                            if (moveType == TYPE_ELECTRIC)
-                                effect = 1;
-                            break;
-                        case ABILITY_WATER_ABSORB:
-                        case ABILITY_DRY_SKIN:
-                            if (moveType == TYPE_WATER)
-                                effect = 1;
-                            break;
-                        case ABILITY_EARTH_EATER: // Don't absorb Spikes
-                            if (moveType == TYPE_GROUND && moveTarget != MOVE_TARGET_OPPONENTS_FIELD)
-                                effect = 1;
-                            break;
-                        case ABILITY_MOTOR_DRIVE:
-                            if (moveType == TYPE_ELECTRIC)
-                            {
-                                statId = STAT_SPEED;
-                                effect = 2;
-                            }
-                            break;
-                        case ABILITY_LIGHTNING_ROD:
-                            if (moveType == TYPE_ELECTRIC)
-                            {
-                                statId = STAT_SPATK;
-                                effect = 2;
-                            }
-                            break;
-                        case ABILITY_SAP_SIPPER:
-                            if (moveType == TYPE_GRASS)
-                            {
-                                statId = STAT_ATK;
-                                effect = 2;
-                            }
-                            break;
-                        case ABILITY_WIND_RIDER:
-                            if (gBattleMoves[gCurrentMove].flags.windMove && moveTarget != MOVE_TARGET_USER && moveTarget != MOVE_TARGET_ALL_BATTLERS)
-                            {
-                                statId = STAT_ATK;
-                                effect = 2;
-                            }
-                            break;
-                        case ABILITY_WELL_BAKED_BODY:
-                            if (moveType == TYPE_FIRE)
-                            {
-                                statId = STAT_DEF;
-                                statAmount = +2;
-                                effect = 2;
-                            }
-                            break;
-                        case ABILITY_FLASH_FIRE:
-                            if (moveType == TYPE_FIRE)
-                                effect = 3;
-                            break;
-                    }
+                    effect = CanAbilityAbsorbMove(ability, gCurrentMove, moveType, gBattlerAttacker, &statId, &statAmount);
                     
                     if (caseId != ABILITYEFFECT_WOULD_ABSORB_MOVE)
                     {
@@ -4501,12 +4507,6 @@ void ClearFuryCutterDestinyBondGrudge(u32 battlerId)
     gStatuses3[battlerId] &= ~(STATUS3_GRUDGE);
 }
 
-void HandleAction_RunBattleScript(void) // identical to RunBattleScriptCommands
-{
-    if (!gBattleControllerExecFlags)
-        gBattleScriptingCommandsTable[*gBattlescriptCurrInstr]();
-}
-
 u32 GetMoveSplit(u32 move)
 {
     u32 split = gBattleMoves[move].split;
@@ -5150,16 +5150,16 @@ u32 IsAbilityPreventingSwitchOut(u32 battlerId)
     return 0;
 }
 
-u32 CountUsablePartyMons(u32 battlerId, u8 *viableMons)
+u32 CountUsablePartyMons(u32 battlerId, u8 *viableMons, bool32(*excludes)(u32, u32, u32))
 {
     u32 i, numViableMons = 0;
     u32 firstMonId, lastMonId;
-    u32 battlerIn2, battlerIn1 = gBattlerPartyIndexes[battlerId];
+    u32 battlerIn2, battlerIn1 = battlerId;
     struct Pokemon *party;
     
     if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
     {
-        if (GetLinkTrainerFlankId(GetBattlerMultiplayerId(battlerId)) == 1)
+        if (GetLinkTrainerFlankId(GetBattlerMultiplayerId(battlerId)) == B_FLANK_RIGHT)
         {
             firstMonId = MULTI_PARTY_SIZE;
             lastMonId = PARTY_SIZE;
@@ -5169,7 +5169,7 @@ u32 CountUsablePartyMons(u32 battlerId, u8 *viableMons)
             firstMonId = 0;
             lastMonId = MULTI_PARTY_SIZE;
         }
-        battlerIn2 = gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)];
+        battlerIn2 = BATTLE_PARTNER(battlerId);
     }
     else
     {
@@ -5177,7 +5177,7 @@ u32 CountUsablePartyMons(u32 battlerId, u8 *viableMons)
         lastMonId = PARTY_SIZE;
         
         if (IsDoubleBattleForBattler(battlerId))
-            battlerIn2 = gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)];
+            battlerIn2 = BATTLE_PARTNER(battlerId);
         else
             battlerIn2 = battlerIn1;
     }
@@ -5185,7 +5185,7 @@ u32 CountUsablePartyMons(u32 battlerId, u8 *viableMons)
     
     for (i = firstMonId; i < lastMonId; i++)
     {
-        if (i != battlerIn1 && i != battlerIn2 && MonCanBattle(&party[i]))
+        if (MonCanBattle(&party[i]) && i != gBattlerPartyIndexes[battlerIn1] && i != gBattlerPartyIndexes[battlerIn2] && (excludes == NULL || !excludes(i, battlerIn1, battlerIn2)))
             viableMons[numViableMons++] = i;
     }
     return numViableMons;

@@ -107,7 +107,6 @@ void BattleScriptExecute(const u8 *BS_ptr);
 void BattleScriptPushCursorAndCallback(const u8 *BS_ptr);
 u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn);
 void ClearFuryCutterDestinyBondGrudge(u32 battlerId);
-void HandleAction_RunBattleScript(void);
 u32 GetMoveSplit(u32 move);
 u32 GetDefaultMoveTarget(u32 battlerId);
 u32 SetRandomTarget(u32 battlerId);
@@ -158,7 +157,7 @@ bool32 CanStealItem(u32 battlerAtk, u32 battlerDef, u32 itemId);
 void RemoveBattlerItem(u32 battlerId);
 void GiveItemToBattler(u32 battlerId, u32 itemId);
 void SortBattlersBySpeed(u8 *battlers, bool32 slowToFast);
-u32 CountUsablePartyMons(u32 battlerId, u8 *viableMons);
+u32 CountUsablePartyMons(u32 battlerId, u8 *viableMons, bool32(*excludes)(u32, u32, u32));
 bool32 CanBattlerEscape(u32 battlerId, bool32 checkIngrain);
 bool32 CanBattlerSwitchOut(u32 battlerId, bool32 checkEscapePrevention);
 u32 IsAbilityPreventingSwitchOut(u32 battlerId);
@@ -231,11 +230,12 @@ bool32 TryBattleChallengeStartingStatus(void);
 bool32 IsPartnerMonFromSameTrainer(u32 battler);
 bool32 TryPrimalReversion(u32 battler);
 u32 GetBattlerIdFromPartySlot(u32 slot, u32 partyId);
+u32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u32 *statIdToRaise, u32 *statAmount);
 
 static inline bool32 CanBattlerSwitch(u32 battlerId)
 {
     u8 viableMons[PARTY_SIZE];
-    return (CountUsablePartyMons(battlerId, viableMons) > 0);
+    return (CountUsablePartyMons(battlerId, viableMons, NULL) > 0);
 }
 
 #endif // GUARD_BATTLE_UTIL_H

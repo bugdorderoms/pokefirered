@@ -501,7 +501,7 @@ struct BattleStruct
     /*0x054*/ u8 savedTargetStack[10];
     /*0x064*/ u8 weatherIconSpriteId;
     /*0x065*/ u8 quickClawBattlerId;
-    /*0x066*/ u8 AI_monToSwitchIntoId[2]; // AI related
+    /*0x066*/ u8 AI_monToSwitchIntoId[NUM_BATTLERS_PER_SIDE]; // AI related
     /*0x068*/ void (*savedCallback)(void);
     /*0x06C*/ const u8 *trainerSlideMsg;
     /*0x070*/ u8 turnEffectsTracker;

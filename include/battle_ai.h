@@ -46,10 +46,10 @@ struct AiThinking
     u8 effectiveness[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // attacker, target, moveIndex
     u16 partnerMove;
     s32 higherDamage[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; // Stores the higher damage a pokemon can receive from the battler
+    u16 predictedMoves[MAX_BATTLERS_COUNT];
     
     // TODO
     u8 simulatedRNG[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
-    u16 predictedMoves[MAX_BATTLERS_COUNT];
 };
 
 #define AI_DATA (gBattleResources->aiData)
@@ -64,6 +64,7 @@ void BattleAI_SetAILogicDataForTurn(void);
 
 // battle_ai_switch_items
 bool32 BattleAI_ShouldSwitch(u32 battlerId);
+u32 GetViableMonsToSwitchInto(u32 battlerId, u8 *viableMons);
 u32 GetMostSuitableMonToSwitchInto(u32 battlerId);
 bool32 BattleAI_SwitchIfBadMoves(u32 battlerId, bool32 doubles);
 bool32 BattleAI_ShouldUseItem(u32 battlerId);

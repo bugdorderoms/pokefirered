@@ -12,6 +12,7 @@ EXCLUDE_PATHS = {
     # Files
     dir_path / 'asm' / 'macros' / 'map.inc',
     dir_path / 'constants' / 'gba_constants.inc',
+    dir_path / 'src' / 'data' / 'wild_encounters.h'
 }
 
 def should_skip(file):

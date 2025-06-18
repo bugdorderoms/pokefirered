@@ -5788,74 +5788,85 @@ static bool32 ItemUseTryCureStatus(struct Pokemon *mon, u32 statusToHeal, u32 ba
         itemUse->stringCopyData = data;          \
     }
 
+static inline u32 GetArg(const u8 *effectTable, u32 *i, u32 size)
+{
+    u32 val;
+    
+    if (size == 2)
+        val = READ_16(effectTable + *i);
+    else if (size == 4)
+        val = READ_32(effectTable + *i);
+    else
+        val = effectTable[*i];
+    
+    *i += size;
+    
+    return val;
+}
+
+#define GET_ARG(size) GetArg(effectTable, &i, size)
+
 bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 battleMonId)
 {
+    u32 i, stringId;
     struct ItemUseData *itemUse = AllocZeroed(sizeof(struct ItemUseData));
     const u8 *effectTable = ItemId_GetItemEffect(item);
-    u32 i;
-    u16 hp;
-    bool32 curedAllMainStatus, increaseStat, caseWorked, failed = TRUE;
-    // datas for general purpose
-    u8 byte;
-    u16 hword;
-    u32 word;
-    s8 signedbyte;
-    s16 signedhword;
-    s32 signedword;
+    bool32 increaseStat, failed = TRUE;
     
     ResetMedicineItemData(GetMonData(mon, MON_DATA_LEVEL));
     
     if (effectTable != NULL)
     {
-        curedAllMainStatus = FALSE;
-        
-        for (i = 0; effectTable[i] != ITEMEFFECT_END; i++)
+        i = 0;
+        while (GET_ARG(0) != ITEMEFFECT_END)
         {
-            caseWorked = FALSE; // general purpose case flag
-            
-            switch (effectTable[i])
+            switch (GET_ARG(1))
             {
                 case ITEMEFFECT_HEAL_HP:
-                    hp = GetMonData(mon, MON_DATA_HP);
-                    byte = effectTable[++i]; // Heal amount
+                {
+                    u32 hp = GetMonData(mon, MON_DATA_HP), maxHP = GetMonData(mon, MON_DATA_MAX_HP);
+                    u32 newHP, healAmount = GET_ARG(1);
                     
-                    if (hp && hp != GetMonData(mon, MON_DATA_MAX_HP))
+                    if (hp && hp != maxHP)
                     {
-                        switch (byte)
+                        switch (healAmount)
                         {
                             case 0xFF: // restore full HP
-                                word = hword = GetMonData(mon, MON_DATA_MAX_HP);
+                                newHP = maxHP;
                                 break;
                             default: // restore HP amount
-                                hword = byte;
-                                word = hp + hword;
+                                maxHP = healAmount;
+                                newHP = hp + maxHP;
                                 break;
                         }
-                        ItemUseDoHPHeal(mon, hp, word, hword, item, battleMonId);
+                        ItemUseDoHPHeal(mon, hp, newHP, maxHP, item, battleMonId);
                         itemUse->messagePrinted = TRUE; // string are handled separated
                         failed = FALSE;
                     }
                     break;
+                }
                 case ITEMEFFECT_HEAL_HP_PERCENT:
-                    hp = GetMonData(mon, MON_DATA_HP);
-                    byte = effectTable[++i]; // HP percentage
-                    
-                    if (hp && hp != GetMonData(mon, MON_DATA_MAX_HP))
+                {
+                    u32 hp = GetMonData(mon, MON_DATA_HP), maxHP = GetMonData(mon, MON_DATA_MAX_HP);
+                    u32 hpPercent = GET_ARG(1);
+
+                    if (hp && hp != maxHP)
                     {
                         // percent HP amount
-                        hword = (GetMonData(mon, MON_DATA_MAX_HP) * byte) / 100;
-                        if (hword == 0)
-                            hword = 1;
+                        maxHP = (maxHP * hpPercent) / 100;
+                        if (maxHP == 0)
+                            maxHP = 1;
                         
-                        ItemUseDoHPHeal(mon, hp, hp + hword, hword, item, battleMonId);
+                        ItemUseDoHPHeal(mon, hp, hp + maxHP, maxHP, item, battleMonId);
                         itemUse->messagePrinted = TRUE; // string are handled separated
                         failed = FALSE;
                     }
                     break;
+                }
                 case ITEMEFFECT_REVIVE:
-                    hp = GetMonData(mon, MON_DATA_HP);
-                    byte = effectTable[++i]; // HP divisor
-                    
+                {
+                    u32 hp = GetMonData(mon, MON_DATA_HP), newHP, divisor = GET_ARG(1);
+
                     if (!hp)
                     {
                         if (battleMonId != MAX_BATTLERS_COUNT)
@@ -5863,258 +5874,284 @@ bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 
                             if (IsDoubleBattleForBattler(gBattlerInMenuId))
                                 gBattleStruct->battlers[gBattlerInMenuId].usedReviveItem = TRUE; // for revive mon in battle
                         }
-                        hword = GetMonData(mon, MON_DATA_MAX_HP) / byte;
-                        if (hword == 0)
-                            hword = 1;
+                        newHP = GetMonData(mon, MON_DATA_MAX_HP) / divisor;
+                        if (newHP == 0)
+                            newHP = 1;
                         
-                        ItemUseDoHPHeal(mon, hp, hword, hword, item, battleMonId);
+                        ItemUseDoHPHeal(mon, hp, newHP, newHP, item, battleMonId);
                         itemUse->messagePrinted = TRUE; // string are handled separated
                         failed = FALSE;
                     }
                     break;
+                }
                 case ITEMEFFECT_CURE_STATUS:
-                    do
+                {
+                    u32 statusId, statusToCure;
+                    bool32 statusHealed = FALSE, curedAllMainStatus = FALSE, curedConfusion = FALSE;
+                    
+                    while ((statusId = GET_ARG(1)) != ITEMEFFECT_END)
                     {
-                        byte = effectTable[++i]; // Status Id
-                        
-                        switch (byte)
+                        switch (statusId)
                         {
                             case ID_STATUS1:
-                                word = effectTable[++i]; // Status to cure
-                                
-                                if (word) // Don't cure status1
+                                statusToCure = GET_ARG(1);
+
+                                if (statusToCure)
                                 {
-                                    caseWorked = ItemUseTryCureStatus(mon, word, battleMonId);
+                                    statusHealed = ItemUseTryCureStatus(mon, statusToCure, battleMonId);
                                     
-                                    if (caseWorked)
+                                    if (statusHealed)
                                     {
-                                        if (word == STATUS1_ANY) // Heals any status
+                                        if (statusToCure == STATUS1_ANY) // Heals any status
                                         {
                                             curedAllMainStatus = TRUE;
-                                            hword = gNonVolatileStatusConditions[GetMonData(mon, MON_DATA_STATUS_ID) - 1].statusCuredByItemMsgId;
+                                            stringId = gNonVolatileStatusConditions[GetMonData(mon, MON_DATA_STATUS_ID) - 1].statusCuredByItemMsgId;
                                         }
                                         else
-                                            hword = gNonVolatileStatusConditions[word - 1].statusCuredByItemMsgId;
+                                            stringId = gNonVolatileStatusConditions[statusToCure - 1].statusCuredByItemMsgId;
                                     }
                                 }
                                 break;
                             case ID_STATUS2:
-                                word = READ_32(effectTable + i + 1); // Status to cure
-                                i += 4;
-                            
-                                if (battleMonId != MAX_BATTLERS_COUNT && (gBattleMons[battleMonId].status2 & word))
+                                statusToCure = GET_ARG(4);
+                                
+                                if (statusToCure && battleMonId != MAX_BATTLERS_COUNT && (gBattleMons[battleMonId].status2 & statusToCure))
                                 {
-                                    gBattleMons[battleMonId].status2 &= ~(word);
+                                    gBattleMons[battleMonId].status2 &= ~(statusToCure);
                                     
-                                    if (word & STATUS2_CONFUSION)
-                                        hword = ITEMUSE_STRING_SNAPPED_CONFUSION;
-                                    else if (word & STATUS2_INFATUATION)
-                                        hword = ITEMUSE_STRING_OVER_INFATUATION;
+                                    if (statusToCure & STATUS2_CONFUSION)
+                                    {
+                                        curedConfusion = TRUE;
+                                        stringId = ITEMUSE_STRING_SNAPPED_CONFUSION;
+                                    }
+                                    else if (statusToCure & STATUS2_INFATUATION)
+                                        stringId = ITEMUSE_STRING_OVER_INFATUATION;
                                     
-                                    caseWorked = TRUE;
+                                    statusHealed = TRUE;
                                 }
                                 break;
                         }
                         
-                        if (curedAllMainStatus && (word & STATUS2_CONFUSION)) // Print diferent string if tries to cure all main status + confusion at a time
-                            hword = ITEMUSE_STRING_BECAME_HEALTHY;
+                        if (curedAllMainStatus && curedConfusion) // Print diferent string if tries to cure all main status + confusion at a time
+                            stringId = ITEMUSE_STRING_BECAME_HEALTHY;
                     }
-                    while (effectTable[i] != ITEMEFFECT_END);
 
-                    if (caseWorked)
+                    if (statusHealed)
                     {
-                        SET_STRING_TO_PRINT(hword)
+                        SET_STRING_TO_PRINT(stringId)
                         failed = FALSE;
                     }
-                    i++;
                     break;
+                }
                 case ITEMEFFECT_CHANGE_FRIENDSHIP:
-                    byte = effectTable[++i];
-                    hword = (byte & ITEMEFFECT_FRIENDSHIP_MAIN); // if it's main use
+                {
+                    u32 j, flags = GET_ARG(1);
+                    bool32 friendshipChanged, isMainUse = (flags & ITEMEFFECT_FRIENDSHIP_MAIN);
+                    s8 changeVals[3], changeAmount;
                     
-                    if (!gMain.inBattle && (hword || !failed)) // if it's use ins't the main use(like the Pomeg Berry), only apply it's effect if was't failed
+                    for (j = 0; j < 3; j++)
+                        changeVals[j] = GET_ARG(1);
+                    
+                    // if it's use ins't the main use(like the Pomeg Berry), only apply it's effect if was't failed
+                    if (!gMain.inBattle && (isMainUse || !failed))
                     {
-                        if ((byte & ITEMEFFECT_FRIENDSHIP_LOW) && GetMonData(mon, MON_DATA_FRIENDSHIP) < 100
-                        && ModifyMonFriendship(mon, (signedbyte = effectTable[i + 1])))
-                            caseWorked = TRUE;
-                        else if ((byte & ITEMEFFECT_FRIENDSHIP_MID) && GetMonData(mon, MON_DATA_FRIENDSHIP) >= 100
-                        && ModifyMonFriendship(mon, (signedbyte = effectTable[i + 2])))
-                            caseWorked = TRUE;
-                        else if ((byte & ITEMEFFECT_FRIENDSHIP_HIGH) && GetMonData(mon, MON_DATA_FRIENDSHIP) >= 200
-                        && ModifyMonFriendship(mon, (signedbyte = effectTable[i + 3])))
-                            caseWorked = TRUE;
-                            
-                        if (caseWorked && hword)
+                        if ((flags & ITEMEFFECT_FRIENDSHIP_LOW) && GetMonData(mon, MON_DATA_FRIENDSHIP) < 100 && ModifyMonFriendship(mon, (changeAmount = changeVals[0])))
+                            friendshipChanged = TRUE;
+                        else if ((flags & ITEMEFFECT_FRIENDSHIP_MID) && GetMonData(mon, MON_DATA_FRIENDSHIP) >= 100 && ModifyMonFriendship(mon, (changeAmount = changeVals[1])))
+                            friendshipChanged = TRUE;
+                        else if ((flags & ITEMEFFECT_FRIENDSHIP_HIGH) && GetMonData(mon, MON_DATA_FRIENDSHIP) >= 200 && ModifyMonFriendship(mon, (changeAmount = changeVals[2])))
+                            friendshipChanged = TRUE;
+                        else
+                            friendshipChanged = FALSE;
+                           
+                        if (friendshipChanged && isMainUse)
                         {
                             SET_STRING_TO_PRINT(ITEMUSE_STRING_FRIENDSHIP_CHANGED)
-                            SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_INCREASED_OR_DECREASED, signedbyte > 0 ? TRUE : FALSE)
+                            SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_INCREASED_OR_DECREASED, changeAmount > 0 ? TRUE : FALSE)
                             failed = FALSE;
                         }
                     }
-                    i += 3;
                     break;
+                }
                 case ITEMEFFECT_RESTORE_PP:
-                    hword = effectTable[++i]; // PP amount
+                {
+                    u32 j, ppAmount = GET_ARG(1);
+                    bool32 ppRestored = FALSE;
                     
                     if (gPartyMenu.data1 == MAX_MON_MOVES) // Restore all moves PP
                     {
-                        for (byte = 0; byte < MAX_MON_MOVES; byte++)
+                        for (j = 0; j < MAX_MON_MOVES; j++)
                         {
-                            if (ItemUseRestoreMovePP(mon, byte, hword, battleMonId))
-                                caseWorked = TRUE;
+                            if (ItemUseRestoreMovePP(mon, j, ppAmount, battleMonId))
+                                ppRestored = TRUE;
                         }
                     }
-                    else if (ItemUseRestoreMovePP(mon, gPartyMenu.data1, hword, battleMonId)) // Restore one move PP
-                        caseWorked = TRUE;
+                    else if (ItemUseRestoreMovePP(mon, gPartyMenu.data1, ppAmount, battleMonId)) // Restore one move PP
+                        ppRestored = TRUE;
                     
-                    if (caseWorked)
+                    if (ppRestored)
                     {
                         SET_STRING_TO_PRINT(ITEMUSE_STRING_PP_RESTORED)
                         failed = FALSE;
                     }
                     break;
+                }
                 case ITEMEFFECT_UP_DYNAMAX_LEVEL:
-                    byte = GetMonData(mon, MON_DATA_DYNAMAX_LEVEL);
-                    hword = effectTable[++i]; // Amount
-                
-                    if (byte < MAX_DYNAMAX_LEVEL)
+                {
+                    u32 currLevel = GetMonData(mon, MON_DATA_DYNAMAX_LEVEL), upAmount = GET_ARG(1);
+                    
+                    if (currLevel < MAX_DYNAMAX_LEVEL)
                     {
-                        byte += hword;
-                        if (byte > MAX_DYNAMAX_LEVEL)
-                            byte = MAX_DYNAMAX_LEVEL;
-                        SetMonData(mon, MON_DATA_DYNAMAX_LEVEL, &byte);
+                        currLevel += upAmount;
+                        if (currLevel > MAX_DYNAMAX_LEVEL)
+                            currLevel = MAX_DYNAMAX_LEVEL;
+                        SetMonData(mon, MON_DATA_DYNAMAX_LEVEL, &currLevel);
                         
                         SET_STRING_TO_PRINT(ITEMUSE_STRING_RAISE_DYNAMAX_LEVEL)
                         failed = FALSE;
                     }
                     break;
+                }
                 case ITEMEFFECT_CHANGE_EV:
-                    signedbyte = effectTable[++i]; // Stat id
-                    signedhword = effectTable[++i]; // Amount
-                    hword = GetMonEVCount(mon); // total Evs mon has
+                {
+                    u32 statId = GET_ARG(1);
+                    s8 amount = GET_ARG(1);
+                    u32 newVal, toAdd, monTotalEvs = GetMonEVCount(mon);
                     
-                    if (gMain.inBattle || hword >= MAX_TOTAL_EVS || (signedbyte == STAT_HP && GetMonData(mon, MON_DATA_SPECIES) == SPECIES_SHEDINJA))
+                    if (gMain.inBattle || monTotalEvs >= MAX_TOTAL_EVS || (statId == STAT_HP && GetMonData(mon, MON_DATA_SPECIES) == SPECIES_SHEDINJA))
                         break;
                     
-                    byte = GetMonData(mon, MON_DATA_HP_EV + signedbyte);
+                    newVal = GetMonData(mon, MON_DATA_HP_EV + statId);
                     
-                    if (byte < MAX_PER_VITAMIN_EVS)
+                    if (newVal < MAX_PER_VITAMIN_EVS)
                     {
-                        if (byte + signedhword > MAX_PER_VITAMIN_EVS)
-                            word = MAX_PER_VITAMIN_EVS - (byte + signedhword) + signedhword;
+                        if (newVal + amount > MAX_PER_VITAMIN_EVS)
+                            toAdd = MAX_PER_VITAMIN_EVS - (newVal + amount) + amount;
                         else
-                            word = signedhword;
+                            toAdd = amount;
                         
-                        if (hword + word > MAX_TOTAL_EVS)
-                            word += MAX_TOTAL_EVS - (hword + word);
+                        if (monTotalEvs + toAdd > MAX_TOTAL_EVS)
+                            toAdd += MAX_TOTAL_EVS - (monTotalEvs + toAdd);
                         
-                        byte += word;
-                        SetMonData(mon, MON_DATA_HP_EV + signedbyte, &byte);
+                        newVal += toAdd;
+                        SetMonData(mon, MON_DATA_HP_EV + statId, &newVal);
                         CalculateMonStats(mon);
                         
                         SET_STRING_TO_PRINT(ITEMUSE_STRING_STAT_CHANGED)
-                        SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_STAT_NAME, signedbyte)
-                        increaseStat = (signedhword > 0);
+                        SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_STAT_NAME, statId)
+                        increaseStat = (amount > 0);
                         failed = FALSE;
                     }
                     break;
+                }
                 case ITEMEFFECT_GIVE_EXPERIENCE:
-#if EXP_ITEM_LEVEL_CAP
-                    byte = GetCurrentLevelCapLevel();
-#else
-                    byte = MAX_LEVEL;
-#endif
-                    hword = READ_16(effectTable + i + 1);
+                {
+                    u32 maxLevel, newExp, expAmount = GET_ARG(2);
                     
-                    if (sMedicineItemData.initialLevel != byte)
+#if EXP_ITEM_LEVEL_CAP
+                    maxLevel = GetCurrentLevelCapLevel();
+#else
+                    maxLevel = MAX_LEVEL;
+#endif
+
+                    if (sMedicineItemData.initialLevel != maxLevel)
                     {
                         // save the mon old stats
                         GetMonLevelUpWindowStats(mon, sPartyMenuInternal->data);
                         
-                        if (hword == 0) // level up
+                        if (expAmount == 0) // level up
                         {
-                            signedword = ITEMUSE_STRING_LEVELED_UP;
-                            word = gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][sMedicineItemData.initialLevel + 1];
+                            stringId = ITEMUSE_STRING_LEVELED_UP;
+                            newExp = gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][sMedicineItemData.initialLevel + 1];
                         }
                         else // add amount of exp
                         {
-                            signedword = ITEMUSE_STRING_GAINED_EXP;
+                            stringId = ITEMUSE_STRING_GAINED_EXP;
                             
-                            word = GetMonData(mon, MON_DATA_EXP) + hword;
-                            if (word > gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][byte])
-                                word = gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][byte];
+                            newExp = GetMonData(mon, MON_DATA_EXP) + expAmount;
+                            if (newExp > gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][maxLevel])
+                                newExp = gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][maxLevel];
                         }
-                        SetMonData(mon, MON_DATA_EXP, &word);
+                        SetMonData(mon, MON_DATA_EXP, &newExp);
                         CalculateMonStats(mon);
                         sMedicineItemData.finalLevel = GetMonData(mon, MON_DATA_LEVEL);
                         
                         // if leveled up gaining a fixed amount of exp, print a diferent string
-                        if (sMedicineItemData.initialLevel != sMedicineItemData.finalLevel && hword != 0)
-                            signedword = ITEMUSE_STRING_GAINED_EXP_LEVELED_UP;
+                        if (sMedicineItemData.initialLevel != sMedicineItemData.finalLevel && expAmount != 0)
+                            stringId = ITEMUSE_STRING_GAINED_EXP_LEVELED_UP;
                         
-                        SET_STRING_TO_PRINT(signedword)
-                        SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_EXP_AND_LEVEL, hword)
+                        SET_STRING_TO_PRINT(stringId)
+                        SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_EXP_AND_LEVEL, expAmount)
                         failed = FALSE;
                     }
-                    else if (byte != MAX_LEVEL)
+                    else if (maxLevel != MAX_LEVEL)
                         SET_STRING_TO_PRINT(ITEMUSE_STRING_CANT_BYPASS_LEVEL_CAP)
-                    
-                    i += 2;
+
                     break;
+                }
                 case ITEMEFFECT_INCREASE_PP:
-                    signedbyte = GetMonData(mon, MON_DATA_PP_BONUSES);
-                    word = (signedbyte & gPPUpGetMask[gPartyMenu.data1]) >> (gPartyMenu.data1 * 2);
-                    hword = GetMonData(mon, MON_DATA_MOVE1 + gPartyMenu.data1); // move id
-                    byte = CalculatePPWithBonus(hword, signedbyte, gPartyMenu.data1);
-                    
-                    if (effectTable[++i]) // PP max
+                {
+                    u8 ppBonuses = GetMonData(mon, MON_DATA_PP_BONUSES);
+                    u32 newPPBonus = (ppBonuses & gPPUpGetMask[gPartyMenu.data1]) >> (gPartyMenu.data1 * 2);
+                    u32 moveId = GetMonData(mon, MON_DATA_MOVE1 + gPartyMenu.data1);
+                    u32 currPPWithBonus = CalculatePPWithBonus(moveId, ppBonuses, gPartyMenu.data1);
+                    bool32 ppIncreased = FALSE, ppMaxEffect = GET_ARG(1);
+
+                    if (ppMaxEffect) // PP max
                     {
-                        if (word < 3)
+                        if (newPPBonus < 3)
                         {
-                            word = (signedbyte & gPPUpSetMask[gPartyMenu.data1]);
-                            word += gPPUpAddMask[gPartyMenu.data1] * 3;
-                            caseWorked = TRUE;
+                            newPPBonus = (ppBonuses & gPPUpSetMask[gPartyMenu.data1]);
+                            newPPBonus += gPPUpAddMask[gPartyMenu.data1] * 3;
+                            ppIncreased = TRUE;
                         }
                     }
                     else // PP up
                     {
-                        if (word < 3 && byte > 4)
+                        if (newPPBonus < 3 && currPPWithBonus > 4)
                         {
-                            word = signedbyte + gPPUpAddMask[gPartyMenu.data1];
-                            caseWorked = TRUE;
+                            newPPBonus = ppBonuses + gPPUpAddMask[gPartyMenu.data1];
+                            ppIncreased = TRUE;
                         }
                     }
-                    if (caseWorked)
+                    
+                    if (ppIncreased)
                     {
-                        SetMonData(mon, MON_DATA_PP_BONUSES, &word);
-                        word = (CalculatePPWithBonus(hword, word, gPartyMenu.data1) - byte) + GetMonData(mon, MON_DATA_PP1 + gPartyMenu.data1);
-                        SetMonData(mon, MON_DATA_PP1 + gPartyMenu.data1, &word);
+                        SetMonData(mon, MON_DATA_PP_BONUSES, &newPPBonus);
+                        newPPBonus = (CalculatePPWithBonus(moveId, newPPBonus, gPartyMenu.data1) - currPPWithBonus) + GetMonData(mon, MON_DATA_PP1 + gPartyMenu.data1);
+                        SetMonData(mon, MON_DATA_PP1 + gPartyMenu.data1, &newPPBonus);
                         
                         SET_STRING_TO_PRINT(ITEMUSE_STRING_PP_INCREASED)
                         failed = FALSE;
                     }
                     break;
+                }
                 case ITEMEFFECT_GIVE_GMAX_FACTOR:
-                    caseWorked = GetMonData(mon, MON_DATA_HAS_GMAX_FACTOR) ^ TRUE; // switch g max factor bit
-                    SetMonData(mon, MON_DATA_HAS_GMAX_FACTOR, &caseWorked);
+                {
+                    bool32 newVal = GetMonData(mon, MON_DATA_HAS_GMAX_FACTOR) ^ TRUE; // switch g max factor bit
+                    SetMonData(mon, MON_DATA_HAS_GMAX_FACTOR, &newVal);
                     SET_STRING_TO_PRINT(ITEMUSE_STRING_CHANGE_GMAX_FACTOR)
-                    SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_GAINED_OR_LOSES, caseWorked)
+                    SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_GAINED_OR_LOSES, newVal)
                     failed = FALSE;
                     break;
+                }
                 case ITEMEFFECT_SET_TERA_TYPE:
-                    byte = effectTable[++i]; // Type id
+                {
+                    u32 type = GET_ARG(1);
                     
-                    if (GetMonData(mon, MON_DATA_TERA_TYPE) != byte)
+                    if (GetMonData(mon, MON_DATA_TERA_TYPE) != type)
                     {
-                        SetMonData(mon, MON_DATA_TERA_TYPE, &byte);
+                        SetMonData(mon, MON_DATA_TERA_TYPE, &type);
                         SET_STRING_TO_PRINT(ITEMUSE_STRING_CHANGED_TERA_TYPE)
-                        SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_TYPE_NAME, byte)
+                        SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_TYPE_NAME, type)
                         failed = FALSE;
                     }
                     break;
+                }
             }
         }
     }
+    
     if (!gMain.inBattle)
     {
         switch (itemUse->specialStringCopyId)
@@ -6184,7 +6221,7 @@ static void ItemUseCB_MedicineStep(u32 taskId, TaskFunc func)
     }
     else
     {
-        bool32 leveledUp = (sMedicineItemData.initialLevel != sMedicineItemData.finalLevel);
+        bool32 leveledUp = (sMedicineItemData.finalLevel && sMedicineItemData.initialLevel != sMedicineItemData.finalLevel);
         
         if (leveledUp)
             UpdateMonDisplayInfoAfterLevelUp(gPartyMenu.slotId, mon);
@@ -6958,7 +6995,7 @@ static void BufferBattlePartyCurrentOrderInternal(u8 *partyBattleOrder, u32 flan
 // This is only used for the player party
 void BufferBattlePartyCurrentOrder(void)
 {
-    BufferBattlePartyCurrentOrderInternal(gBattlePartyCurrentOrder, GetPlayerFlankId(), GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT));
+    BufferBattlePartyCurrentOrderInternal(gBattlePartyCurrentOrder, GetLinkTrainerFlankId(GetMultiplayerId()), GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT));
 }
 
 void BufferBattlePartyCurrentOrderBySide(u32 battlerId, u32 flankId)

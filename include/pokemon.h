@@ -495,7 +495,6 @@ bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 
 u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct Pokemon *tradePartner, bool32 onlyChecking);
 void DrawSpindaSpots(u32 species, u32 personality, u8 *dest, bool32 isFrontPic);
 void EvolutionRenameMon(struct Pokemon *mon, u32 oldSpecies, u32 newSpecies);
-u32 GetPlayerFlankId(void);
 u32 GetLinkTrainerFlankId(u32 linkPlayerId);
 s32 GetBattlerMultiplayerId(u32 a1);
 void AdjustFriendship(struct Pokemon *mon, u32 event);
