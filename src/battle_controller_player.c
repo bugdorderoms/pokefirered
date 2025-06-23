@@ -601,7 +601,7 @@ static void HandleInputChooseAction(u32 battlerId)
     
     if (!gBattleStruct->lastUsedBall.menuPresent)
         gBattleStruct->lastUsedBall.ackBallUseBtn = FALSE;
-    else if (JOY_NEW(R_BUTTON))
+    else if (JOY_NEW(L_BUTTON))
     {
         ChangeLastBallCycleArrowsColor(TRUE);
         gBattleStruct->lastUsedBall.ackBallUseBtn = TRUE;
@@ -609,7 +609,7 @@ static void HandleInputChooseAction(u32 battlerId)
     
     if (gBattleStruct->lastUsedBall.ackBallUseBtn)
     {
-        bool32 isSameBall, holdingButton = JOY_HELD(R_BUTTON);
+        bool32 isSameBall, holdingButton = JOY_HELD(L_BUTTON);
         u32 newBall;
         
         if (holdingButton && JOY_NEW(DPAD_DOWN | DPAD_RIGHT))
@@ -747,7 +747,7 @@ static void HandleInputChooseAction(u32 battlerId)
     else if (JOY_NEW(START_BUTTON))
         SwapHpBarsWithHpText();
 #if BATTLE_TEAM_PREVIEW
-    else if (JOY_NEW(L_BUTTON))
+    else if (JOY_NEW(R_BUTTON))
     {
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
         {
@@ -1670,7 +1670,7 @@ static void ChangeBattlerSpritesInvisibilities(bool32 invisible)
 
 static void HandleInputTeamPreview(u32 battlerId)
 {
-    if (JOY_NEW(A_BUTTON | B_BUTTON | L_BUTTON | DPAD_ANY))
+    if (JOY_NEW(A_BUTTON | B_BUTTON | R_BUTTON | DPAD_ANY))
     {
         PlaySE(SE_SELECT);
         UpdateOamPriorityInAllHealthboxes(1, FALSE);
