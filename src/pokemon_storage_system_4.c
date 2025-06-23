@@ -310,7 +310,7 @@ static void sub_80900D4(u32 boxId)
     {
         for (boxPosition = 0; boxPosition < IN_BOX_COUNT; boxPosition++)
         {
-            if (GetBoxMonDataAt(boxId, boxPosition, MON_DATA_HELD_ITEM) == 0)
+            if (!GetBoxMonDataAt(boxId, boxPosition, MON_DATA_HELD_ITEM))
                 gPSSData->boxMonsSprites[boxPosition]->oam.objMode = ST_OAM_OBJ_BLEND;
         }
     }
@@ -540,13 +540,9 @@ void SetBoxMonIconObjMode(u32 boxPosition, u32 objMode)
 
 void CreatePartyMonsSprites(bool32 arg0)
 {
-    u32 i, count;
-    u32 species = GetMonData(&gPlayerParty[0], MON_DATA_SPECIES2);
+    u32 i, species, count = 0;
 
-    gPSSData->partySprites[0] = CreateMonIconSprite(species, 104, 64, 1, 12);
-    count = 1;
-
-    for (i = 1; i < PARTY_SIZE; i++)
+    for (i = 0; i < PARTY_SIZE; i++)
     {
         species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2);
         
@@ -567,29 +563,16 @@ void CreatePartyMonsSprites(bool32 arg0)
             gPSSData->partySprites[i]->invisible = TRUE;
         }
     }
-
-    if (gPSSData->boxOption == BOX_OPTION_MOVE_ITEMS)
-    {
-        for (i = 0; i < PARTY_SIZE; i++)
-        {
-            if (gPSSData->partySprites[i] != NULL && !GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM))
-                gPSSData->partySprites[i]->oam.objMode = ST_OAM_OBJ_BLEND;
-        }
-    }
 }
 
 void CreatePcPartyMonIconSprite(u32 partyId, u32 species)
 {
-    struct Sprite *sprite;
-    
-    if (partyId)
-        sprite = CreateMonIconSprite(species, 152,  8 * (3 * (partyId - 1)) + 16, 1, 12);
+    if (partyId == 0)
+        gPSSData->partySprites[partyId] = CreateMonIconSprite(species, 104, 64, 1, 12);
     else
-        sprite = CreateMonIconSprite(species, 104, 64, 1, 12);
+        gPSSData->partySprites[partyId] = CreateMonIconSprite(species, 152,  8 * (3 * (partyId - 1)) + 16, 1, 12);
     
-    gPSSData->partySprites[partyId] = sprite;
-    
-    if (gPSSData->partySprites[partyId] != NULL && !GetMonData(&gPlayerParty[partyId], MON_DATA_HELD_ITEM))
+    if (gPSSData->boxOption == BOX_OPTION_MOVE_ITEMS && !GetMonData(&gPlayerParty[partyId], MON_DATA_HELD_ITEM))
         gPSSData->partySprites[partyId]->oam.objMode = ST_OAM_OBJ_BLEND;
 }
 

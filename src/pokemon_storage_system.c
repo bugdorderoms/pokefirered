@@ -112,7 +112,7 @@ s16 SeekToNextMonInBox(struct BoxPokemon * boxMons, s8 curIndex, u32 maxIndex, u
     {
         for (i = curIndex + adder; i >= 0 && i <= maxIndex; i += adder)
         {
-            if (GetBoxMonData(&boxMons[i], MON_DATA_SPECIES) != SPECIES_NONE)
+            if (GetBoxMonData(&boxMons[i], MON_DATA_SPECIES))
                 return i;
         }
     }
@@ -120,7 +120,7 @@ s16 SeekToNextMonInBox(struct BoxPokemon * boxMons, s8 curIndex, u32 maxIndex, u
     {
         for (i = curIndex + adder; i >= 0 && i <= maxIndex; i += adder)
         {
-            if (GetBoxMonData(&boxMons[i], MON_DATA_SPECIES) != SPECIES_NONE && !GetBoxMonData(&boxMons[i], MON_DATA_IS_EGG))
+            if (GetBoxMonData(&boxMons[i], MON_DATA_SPECIES) && !GetBoxMonData(&boxMons[i], MON_DATA_IS_EGG))
                 return i;
         }
     }

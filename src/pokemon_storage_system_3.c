@@ -2428,7 +2428,7 @@ static void sub_808F9FC(void)
 
     for (i = 1; i < PARTY_SIZE; i++)
     {
-        s32 species = GetMonData(gPlayerParty + i, MON_DATA_SPECIES);
+        u32 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES);
         sub_808FA30(i, (species != SPECIES_NONE));
     }
 }
