@@ -504,26 +504,9 @@ extern const u8 gText_SaveCompletedPressA[];
 extern const u8 gText_WirelessCommunication[];
 extern const u8 gText_DontHaveNewsNewOneInput[];
 
-// Dodrio Berry Picking
-extern const u8 gText_BerryPickingRecords[];
-extern const u8 gText_BerriesPicked[];
-extern const u8 gText_BerriesInRowFivePlayers[];
-extern const u8 gText_BestScore[];
-extern const u8 gText_1Colon[];
-extern const u8 gText_2Colon[];
-extern const u8 gText_3Colon[];
-extern const u8 gText_4Colon[];
-extern const u8 gText_5Colon[];
-extern const u8 gText_SpacePoints[];
-extern const u8 gText_10P30P50P50P[];
-extern const u8 gText_AnnouncingPrizes[];
-extern const u8 gText_AnnouncingRankings[];
-extern const u8 gText_FirstPlacePrize[];
-extern const u8 gText_CantHoldAnyMore[];
-extern const u8 gText_FilledStorageSpace[];
-extern const u8 gText_BerryPickingResults[];
+// wireless minigames
 extern const u8 gText_WantToPlayAgain[];
-extern const u8 gText_CommunicationStandby3[];
+extern const u8 gText_CommunicationStandby[];
 extern const u8 gText_SomeoneDroppedOut[];
 
 // player_pc
@@ -552,7 +535,7 @@ extern const u8 gStartMenuText_Options[];
 extern const u8 gUnknown_84162A9[];
 extern const u8 gText_CurrentLevelCap[];
 extern const u8 gText_SaveError_PleaseExchangeBackupMemory[];
-extern const u8 gText_SavingDontTurnOffThePower2[];
+extern const u8 gText_SavingDontTurnOffThePower[];
 extern const u8 gSaveStatName_Player[];
 extern const u8 gSaveStatName_Badges[];
 extern const u8 gSaveStatName_Seen[];
@@ -770,7 +753,6 @@ extern const u8 gText_XWillBeSentToY[];
 extern const u8 gText_ByeByeVar1[];
 extern const u8 gText_XSentOverY[];
 extern const u8 gText_TakeGoodCareOfX[];
-extern const u8 gText_CommunicationStandby5[];
 extern const u8 gTradeText_Cancel[];
 extern const u8 gTradeText_ChooseAPokemon[];
 extern const u8 gTradeText_Summary[];
@@ -996,7 +978,6 @@ extern const u8 gText_ExitingTheChat[];
 extern const u8 gText_LeaderHasLeftEndingChat[];
 extern const u8 gText_RegisteredTextChanged_OKtoSave[];
 extern const u8 gText_RegisteredTextChanged_AlreadySavedFile[];
-extern const u8 gText_RegisteredTextChanged_SavingDontTurnOff[];
 extern const u8 gText_RegisteredTextChanged_SavedTheGame[];
 extern const u8 gText_IfLeaderLeavesChatWillEnd[];
 extern const u8 gText_Upper[];

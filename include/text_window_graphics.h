@@ -16,5 +16,6 @@ extern const u16 gTextWindowDexnavFrame[];
 extern const struct TextWindowGraphics gUserFrames[];
 
 const struct TextWindowGraphics * GetUserFrameGraphicsInfo(u32 idx);
+void DrawUserFrameGraphicsToBg0(u32 bgOffset, u32 palOffset);
 
 #endif //GUARD_TEXT_WINDOW_GRAPHICS_H

@@ -1167,8 +1167,9 @@ CableClub_EventScript_PlayPokemonJump:: @ 81BC13A
 
 CableClub_EventScript_PlayDodrioBerryPicking:: @ 81BC184
 	setvar VAR_0x8005, WIRELESS_MINIGAME_BERRY_PICKING
-	special IsDodrioInParty
-	compare VAR_RESULT, 0
+	setvar VAR_0x8004, SPECIES_DODRIO
+	specialvar VAR_RESULT, DoesPlayerPartyContainSpecies
+	compare VAR_RESULT, FALSE
 	goto_if_eq CableClub_EventScript_NoEligiblePkmn
 	msgbox Text_EnterWhichPokemon
 	setvar VAR_0x8005, WIRELESS_MINIGAME_BERRY_PICKING

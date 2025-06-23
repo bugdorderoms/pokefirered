@@ -1,4 +1,6 @@
 #include "global.h"
+#include "bg.h"
+#include "palette.h"
 #include "text_window_graphics.h"
 
 const u16 gUnknown_8470B0C[] = INCBIN_U16("graphics/text_window/unk_8470B0C.4bpp");
@@ -55,4 +57,11 @@ const struct TextWindowGraphics * GetUserFrameGraphicsInfo(u32 idx)
         return &gUserFrames[0];
     else
         return &gUserFrames[idx];
+}
+
+void DrawUserFrameGraphicsToBg0(u32 bgOffset, u32 palOffset)
+{
+    const struct TextWindowGraphics * frame = GetUserFrameGraphicsInfo(gSaveBlock2Ptr->optionsWindowFrameType);
+    LoadBgTiles(0, frame->tiles, 0x120, bgOffset);
+    LoadPalette(frame->palette, palOffset, 0x20);
 }

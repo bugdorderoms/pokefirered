@@ -1045,7 +1045,7 @@ static void Task_SaveGameAfterLinkBattle(u32 taskId)
         {
         case LINK_SAVE_STATE_PRINT_SAVING_TEXT:
             FillWindowPixelBuffer(0, PIXEL_FILL(1));
-            AddTextPrinterParameterized2(0, 2, gText_SavingDontTurnOffThePower2, 0xFF, NULL, 2, 1, 3);
+            AddTextPrinterParameterized2(0, 2, gText_SavingDontTurnOffThePower, 0xFF, NULL, 2, 1, 3);
             DrawTextBorderOuter(0, 0x008, 0x0F);
             
             PutWindowTilemap(0);

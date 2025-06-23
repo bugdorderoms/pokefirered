@@ -47551,7 +47551,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_TERAPAGOS,
         .cryId = CRY_ID_TERAPAGOS,
         .formChangeTable = sTerapagosFormChangeTable,
-    },
+    },*/
     
     [SPECIES_EGG] =
     {
@@ -47560,5 +47560,5 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .iconPaletteIndex = 1,
         .frontPic = gMonFrontPic_Egg,
         .palette = gMonPalette_Egg,
-    },*/
+    },
 };

@@ -793,10 +793,7 @@ static void Task_SaveErrorStatus_RunPrinterThenWaitButton(u32 taskId)
 
 static void LoadUserFrameToBg0(void)
 {
-    const struct TextWindowGraphics * frame = GetUserFrameGraphicsInfo(gSaveBlock2Ptr->optionsWindowFrameType);
-    
-    LoadBgTiles(0, frame->tiles, 0x120, 0x1C9);
-    LoadPalette(frame->palette, 0x20, 0x20);
+    DrawUserFrameGraphicsToBg0(0x1C9, 0x20);
     MainMenu_EraseErrorWindow();
 }
 

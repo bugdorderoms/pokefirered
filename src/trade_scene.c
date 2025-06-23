@@ -2527,7 +2527,7 @@ static void CB2_HandleTradeEnded(void)
     {
     case 0:
         gMain.state++;
-        StringExpandPlaceholders(gStringVar4, gText_CommunicationStandby5);
+        StringExpandPlaceholders(gStringVar4, gText_CommunicationStandby);
         DrawTextOnTradeWindow(0, gStringVar4, 0);
         break;
     case 1:
@@ -2554,7 +2554,7 @@ static void CB2_HandleTradeEnded(void)
         break;
     case 2:
         gMain.state = 50;
-        StringExpandPlaceholders(gStringVar4, gText_SavingDontTurnOffThePower2);
+        StringExpandPlaceholders(gStringVar4, gText_SavingDontTurnOffThePower);
         DrawTextOnTradeWindow(0, gStringVar4, 0);
         break;
     case 50:

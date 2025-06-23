@@ -7,6 +7,7 @@
 #include "load_save.h"
 #include "safari_zone.h"
 #include "script.h"
+#include "battle_setup.h"
 #include "script_pokemon_util.h"
 #include "strings.h"
 #include "string_util.h"
@@ -549,24 +550,20 @@ static u32 GetBattleTransitionTypeByMap(void)
     return B_TRANSITION_BIG_POKEBALL;
 }
 
-static u32 GetSumOfPlayerPartyLevel(void)
+u32 GetSumOfPlayerPartyLevel(u32 *nMons)
 {
-    u32 i, sum;
+    u32 i, sum = 0, count = 0;
 
-    for (i = 0, sum = 0; i < PARTY_SIZE; ++i)
+    for (i = 0; i < PARTY_SIZE; ++i)
     {
         if (MonCanBattle(&gPlayerParty[i]))
+        {
             sum += GetMonData(&gPlayerParty[i], MON_DATA_LEVEL);
+            count++;
+        }
     }
+    *nMons = count;
     return sum;
-}
-
-u32 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx)
-{
-#if DYNAMIC_LEVEL
-    return GetPlayerPartyHighestLevel();
-#endif
-    return partyIdx.lvl;
 }
 
 static u32 GetSumOfEnemyPartyLevel(u32 opponentId)
@@ -582,11 +579,14 @@ static u32 GetSumOfEnemyPartyLevel(u32 opponentId)
 
 static u32 GetWildBattleTransition(void)
 {
-    return sBattleTransitionTable_Wild[GetBattleTransitionTypeByMap()][(GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel()) ? 0 : 1];
+    u32 nMons;
+    return sBattleTransitionTable_Wild[GetBattleTransitionTypeByMap()][(GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel(&nMons)) ? 0 : 1];
 }
 
 static u32 GetTrainerBattleTransition(void)
 {
+    u32 nMons;
+    
     if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_ELITE_FOUR)
     {
         if (gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_LORELEI || gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_LORELEI_2)
@@ -602,7 +602,7 @@ static u32 GetTrainerBattleTransition(void)
     if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_CHAMPION)
         return B_TRANSITION_BLUE;
     
-    return sBattleTransitionTable_Trainer[GetBattleTransitionTypeByMap()][(GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A) < GetSumOfPlayerPartyLevel()) ? 0 : 1];
+    return sBattleTransitionTable_Trainer[GetBattleTransitionTypeByMap()][(GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A) < GetSumOfPlayerPartyLevel(&nMons)) ? 0 : 1];
 }
 
 static u32 GetTrainerAFlag(void)

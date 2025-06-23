@@ -258,8 +258,9 @@ static void VBlankCB_OptionMenu(void)
 
 static void OptionsMenu_LoadWindowGraphics(void)
 {
-    LoadBgTiles(1, GetUserFrameGraphicsInfo(sOptionMenuPtr->option[MENUITEM_FRAMETYPE])->tiles, 0x120, 0x1AA);
-    LoadPalette(GetUserFrameGraphicsInfo(sOptionMenuPtr->option[MENUITEM_FRAMETYPE])->palette, 0x20, 0x20);
+    const struct TextWindowGraphics * frame = GetUserFrameGraphicsInfo(sOptionMenuPtr->option[MENUITEM_FRAMETYPE]);
+    LoadBgTiles(1, frame->tiles, 0x120, 0x1AA);
+    LoadPalette(frame->palette, 0x20, 0x20);
 }
 
 static void CB2_DoLoadOptionMenu(void)

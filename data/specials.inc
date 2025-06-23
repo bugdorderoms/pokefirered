@@ -90,7 +90,6 @@ gSpecials:: @ 815FD60
 	def_special IsSelectedMonEgg
 	def_special DoesPlayerPartyContainSpecies
 	def_special PlayerPartyContainsSpeciesWithPlayerID
-	def_special IsDodrioInParty
 	
 	@ Link specials
 	def_special SetCableClubWarp

@@ -32,6 +32,18 @@ void ShowTrainerCantBattleSpeech(void);
 void PlayTrainerEncounterMusic(void);
 const u8 *GetTrainerALoseText(void);
 const u8 *GetTrainerWonSpeech(void);
-u32 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx);
+u32 GetSumOfPlayerPartyLevel(u32 *nMons);
+
+static inline u32 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx)
+{
+#if TRAINER_LEVEL_TYPE == 0
+    return partyIdx.lvl;
+#elif TRAINER_LEVEL_TYPE == 1
+    return GetPlayerPartyHighestLevel();
+#else
+    u32 nMons;
+    return GetSumOfPlayerPartyLevel(&nMons) / nMons;
+#endif
+}
 
 #endif // GUARD_BATTLE_SETUP_H

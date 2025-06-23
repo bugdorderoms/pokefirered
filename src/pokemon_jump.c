@@ -14,6 +14,7 @@
 #include "save.h"
 #include "script.h"
 #include "sound.h"
+#include "strings.h"
 #include "text_window.h"
 #include "trig.h"
 #include "constants/songs.h"
@@ -208,29 +209,21 @@ struct PokemonJump_Player
 struct PokemonJump
 {
     MainCallback exitCallback;
-    
     u8 taskId;
     u8 multiplayerId;
     u8 numPlayers;
     u8 vineState:4;
     u8 prevVineState:4;
-    
     u16 vineTimer;
     u16 vineStateTimer;
-    
     int vineSpeed;
-    
     u8 vineBaseSpeedIdx;
     u8 vineSpeedStage;
     u16 vineSpeedDelay;
-    
     u32 vineSpeedAccel;
-    
     u32 nextVineSpeed;
-    
     u16 mainState;
     u16 helperState;
-    
     u8 nextFuncId;
     u8 atMaxSpeedStage:1;
     u8 initScoreUpdate:1;
@@ -248,21 +241,14 @@ struct PokemonJump
     u16 playAgainState:2;
     u16 playAgainComm:2;
     u16 unused:1;
-    
     u16 excellentsInRow;
     u16 excellentsInRowRecord;
-    
     int linkTimer;
-    
     u32 linkTimerLimit;
-    
     u32 rngSeed;
-    
     u16 prizeItemId;
     u16 prizeItemQuantity;
-    
     u16 timer;
-    
     struct
     {
         u8 funcId;
@@ -2941,7 +2927,7 @@ static void Msg_WantToPlayAgain(void)
     {
         case 0:
             sPokemonJumpGfx->msgWindowId = AddMessageWindow(1, 8, 20, 2);
-            AddTextPrinterParameterized(sPokemonJumpGfx->msgWindowId, FONT_NORMAL, COMPOUND_STRING("Want to play again?"), 0, 2, 0xFF, NULL);
+            AddTextPrinterParameterized(sPokemonJumpGfx->msgWindowId, FONT_NORMAL, gText_WantToPlayAgain, 0, 2, 0xFF, NULL);
             CopyWindowToVram(sPokemonJumpGfx->msgWindowId, COPYWIN_GFX);
             sPokemonJumpGfx->mainState++;
             break;
@@ -2968,7 +2954,7 @@ static void Msg_SavingDontTurnOff(void)
     {
         case 0:
             sPokemonJumpGfx->msgWindowId = AddMessageWindow(2, 7, 26, 4);
-            AddTextPrinterParameterized(sPokemonJumpGfx->msgWindowId, FONT_NORMAL, COMPOUND_STRING("Saving…\nDon't turn off the power."), 0, 2, 0xFF, NULL);
+            AddTextPrinterParameterized(sPokemonJumpGfx->msgWindowId, FONT_NORMAL, gText_SavingDontTurnOffThePower, 0, 2, 0xFF, NULL);
             CopyWindowToVram(sPokemonJumpGfx->msgWindowId, COPYWIN_GFX);
             sPokemonJumpGfx->mainState++;
             break;
@@ -3011,7 +2997,7 @@ static void Msg_SomeoneDroppedOut(void)
     {
         case 0:
             sPokemonJumpGfx->msgWindowId = AddMessageWindow(2, 8, 22, 4);
-            AddTextPrinterParameterized(sPokemonJumpGfx->msgWindowId, FONT_NORMAL, COMPOUND_STRING("Somebody dropped out.\nThe link will be canceled."), 0, 2, 0xFF, NULL);
+            AddTextPrinterParameterized(sPokemonJumpGfx->msgWindowId, FONT_NORMAL, gText_SomeoneDroppedOut, 0, 2, 0xFF, NULL);
             CopyWindowToVram(sPokemonJumpGfx->msgWindowId, COPYWIN_GFX);
             sPokemonJumpGfx->mainState++;
             break;
@@ -3058,7 +3044,7 @@ static void Msg_CommunicationStandby(void)
     {
         case 0:
             sPokemonJumpGfx->msgWindowId = AddMessageWindow(7, 10, 16, 2);
-            AddTextPrinterParameterized(sPokemonJumpGfx->msgWindowId, FONT_NORMAL, COMPOUND_STRING("Communication standby…"), 0, 2, 0xFF, NULL);
+            AddTextPrinterParameterized(sPokemonJumpGfx->msgWindowId, FONT_NORMAL, gText_CommunicationStandby, 0, 2, 0xFF, NULL);
             CopyWindowToVram(sPokemonJumpGfx->msgWindowId, COPYWIN_GFX);
             sPokemonJumpGfx->mainState++;
             break;

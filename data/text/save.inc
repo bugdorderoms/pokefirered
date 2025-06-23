@@ -5,10 +5,6 @@ gText_AlreadySaveFile_WouldLikeToOverwrite:: @ 81C55EA
 	.string "There is already a saved file.\n"
 	.string "Is it okay to overwrite it?$"
 
-gText_SavingDontTurnOffThePower:: @ 81C5625
-	.string "SAVING…\n"
-	.string "DON'T TURN OFF THE POWER.$"
-
 gText_PlayerSavedTheGame:: @ 81C5647
 	.string "{PLAYER} saved the game.$"
 

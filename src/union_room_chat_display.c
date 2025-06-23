@@ -302,7 +302,7 @@ static const struct MessageWindowInfo sMessageWindowInfo[] = {
         .widerBox = TRUE
     },
     [STDMESSAGE_SAVING_NO_OFF] = {
-        .text = gText_RegisteredTextChanged_SavingDontTurnOff,
+        .text = gText_SavingDontTurnOffThePower,
         .boxType = 2,
         .x = 0,
         .y = 0,

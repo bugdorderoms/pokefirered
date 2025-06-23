@@ -2035,7 +2035,6 @@ static void UpdateMonDisplayInfoAfterLevelUp(u32 slot, struct Pokemon *mon)
 {
     struct PartyMenuBox *menuBox = &sPartyMenuBoxes[slot];
     
-    UpdatePartyPokemonAilmentGfxAndLevelCheck(mon, slot);
     DisplayPartyPokemonHPCheck(mon, menuBox, 1);
     DisplayPartyPokemonMaxHPCheck(mon, menuBox, 1);
     DisplayPartyPokemonHPBarCheck(mon, menuBox);
@@ -5716,7 +5715,7 @@ static void Task_SetSacredAshCB(u32 taskId)
 }
 
 // Restore mon's HP
-static void ItemUseDoHPHeal(struct Pokemon *mon, u16 oldHP, u16 newHP, u16 healAmount, u32 item, u32 battleMon)
+static void ItemUseDoHPHeal(struct Pokemon *mon, u16 oldHP, u16 newHP, u16 healAmount, u32 battleMon)
 {
     if (battleMon != MAX_BATTLERS_COUNT) // Use HP heal item in battle, hp restore are handled in the battle script
         gBattleMoveDamage = -healAmount;
@@ -5733,6 +5732,17 @@ static void ItemUseDoHPHeal(struct Pokemon *mon, u16 oldHP, u16 newHP, u16 healA
         else // Basically for Sacred Ash
             SetMonData(mon, MON_DATA_HP, &newHP);
     }
+}
+
+// Revives a mon
+static void ItemUseDoRevive(struct Pokemon *mon, u16 newHP, u32 battleMon)
+{
+    if (battleMon != MAX_BATTLERS_COUNT)
+    {
+        if (IsDoubleBattleForBattler(gBattlerInMenuId))
+            gBattleStruct->battlers[gBattlerInMenuId].usedReviveItem = TRUE; // for revive mon in battle
+    }
+    ItemUseDoHPHeal(mon, 0, newHP, newHP, battleMon);
 }
 
 // Restore mon's move PP
@@ -5839,7 +5849,7 @@ bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 
                                 newHP = hp + maxHP;
                                 break;
                         }
-                        ItemUseDoHPHeal(mon, hp, newHP, maxHP, item, battleMonId);
+                        ItemUseDoHPHeal(mon, hp, newHP, maxHP, battleMonId);
                         itemUse->messagePrinted = TRUE; // string are handled separated
                         failed = FALSE;
                     }
@@ -5857,7 +5867,7 @@ bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 
                         if (maxHP == 0)
                             maxHP = 1;
                         
-                        ItemUseDoHPHeal(mon, hp, hp + maxHP, maxHP, item, battleMonId);
+                        ItemUseDoHPHeal(mon, hp, hp + maxHP, maxHP, battleMonId);
                         itemUse->messagePrinted = TRUE; // string are handled separated
                         failed = FALSE;
                     }
@@ -5869,16 +5879,11 @@ bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 
 
                     if (!hp)
                     {
-                        if (battleMonId != MAX_BATTLERS_COUNT)
-                        {
-                            if (IsDoubleBattleForBattler(gBattlerInMenuId))
-                                gBattleStruct->battlers[gBattlerInMenuId].usedReviveItem = TRUE; // for revive mon in battle
-                        }
                         newHP = GetMonData(mon, MON_DATA_MAX_HP) / divisor;
                         if (newHP == 0)
                             newHP = 1;
                         
-                        ItemUseDoHPHeal(mon, hp, newHP, newHP, item, battleMonId);
+                        ItemUseDoRevive(mon, newHP, battleMonId);
                         itemUse->messagePrinted = TRUE; // string are handled separated
                         failed = FALSE;
                     }
@@ -6046,7 +6051,7 @@ bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 
                 }
                 case ITEMEFFECT_GIVE_EXPERIENCE:
                 {
-                    u32 maxLevel, newExp, expAmount = GET_ARG(2);
+                    u32 species, maxLevel, newExp, expAmount = GET_ARG(2);
                     
 #if EXP_ITEM_LEVEL_CAP
                     maxLevel = GetCurrentLevelCapLevel();
@@ -6059,21 +6064,29 @@ bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 
                         // save the mon old stats
                         GetMonLevelUpWindowStats(mon, sPartyMenuInternal->data);
                         
+                        species = GetMonData(mon, MON_DATA_SPECIES);
+                        
                         if (expAmount == 0) // level up
                         {
                             stringId = ITEMUSE_STRING_LEVELED_UP;
-                            newExp = gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][sMedicineItemData.initialLevel + 1];
+                            newExp = gExperienceTables[gSpeciesInfo[species].growthRate][sMedicineItemData.initialLevel + 1];
                         }
                         else // add amount of exp
                         {
                             stringId = ITEMUSE_STRING_GAINED_EXP;
                             
                             newExp = GetMonData(mon, MON_DATA_EXP) + expAmount;
-                            if (newExp > gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][maxLevel])
-                                newExp = gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][maxLevel];
+                            if (newExp > gExperienceTables[gSpeciesInfo[species].growthRate][maxLevel])
+                                newExp = gExperienceTables[gSpeciesInfo[species].growthRate][maxLevel];
                         }
                         SetMonData(mon, MON_DATA_EXP, &newExp);
                         CalculateMonStats(mon);
+                        
+#if EXP_ITEM_REVIVE
+                        if (!GetMonData(mon, MON_DATA_HP))
+                            ItemUseDoRevive(mon, 1, battleMonId);
+#endif
+                        
                         sMedicineItemData.finalLevel = GetMonData(mon, MON_DATA_LEVEL);
                         
                         // if leveled up gaining a fixed amount of exp, print a diferent string
@@ -6186,6 +6199,7 @@ static void ItemUseCB_MedicineStep(u32 taskId, TaskFunc func)
 {
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
     u32 newHp = sMedicineItemData.newHP;
+    bool32 leveledUp;
     
     gPartyMenuUseExitCallback = TRUE;
     
@@ -6214,15 +6228,15 @@ static void ItemUseCB_MedicineStep(u32 taskId, TaskFunc func)
     if (sMedicineItemData.oldHP == 0)
         AnimatePartySlot(gPartyMenu.slotId, 1);
     
-    if (newHp)
+    leveledUp = (sMedicineItemData.finalLevel && sMedicineItemData.initialLevel != sMedicineItemData.finalLevel);
+    
+    if (newHp && !leveledUp)
     {
         PartyMenuModifyHP(taskId, gPartyMenu.slotId, 1, GetMonData(mon, MON_DATA_HP) - sMedicineItemData.oldHP, Task_DisplayHPRestoredMessage);
         ResetHPTaskData(taskId, sMedicineItemData.oldHP);
     }
     else
     {
-        bool32 leveledUp = (sMedicineItemData.finalLevel && sMedicineItemData.initialLevel != sMedicineItemData.finalLevel);
-        
         if (leveledUp)
             UpdateMonDisplayInfoAfterLevelUp(gPartyMenu.slotId, mon);
         

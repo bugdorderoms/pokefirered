@@ -7,6 +7,9 @@
 // If this setting is enabled, the player can't bypass the current level cap using an EXP item like Rare Candy or any Exp Candy.
 #define EXP_ITEM_LEVEL_CAP TRUE
 
+// If this setting is enabled, the player's Pokémon wll be revived when using an EXP item like Rare Candy or any Exp Candy and it levels up.
+#define EXP_ITEM_REVIVE TRUE
+
 // If this setting is enabled, Pokémons will not faint due to poison while in the overworld.
 #define POISON_SURVIVAL TRUE
 
@@ -131,9 +134,11 @@
 // Otherwise, the Poké Ball will be customizable in the trainer data.
 #define CLASS_BASED_BALLS TRUE
 
-// If this setting is enabled, the captured Pokémon of trainers will have their level based on the player's party Pokémon with highest level.
-// Otherwise, the level will be customizable in the trainer data.
-#define DYNAMIC_LEVEL TRUE
+// This setting determines the type of level the trainer's Pokémon has. Being:
+// 0 - The level will be the one set in the trainer data.
+// 1 - The level will be dynamic based on the player's party Pokémon with highest level.
+// 2 - The level will be the average of the player's party Pokémons levels.
+#define TRAINER_LEVEL_TYPE 2
 
 // This setting determines the price divisor when selling an item. It's 2 in Generation III games, but 4 in Pokémon Legends Arceus. 
 #define ITEM_SELL_DIVISOR 2

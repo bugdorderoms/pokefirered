@@ -261,9 +261,7 @@ SECTIONS {
         src/braille_text.o(.text);
         src/text_window.o(.text);
         src/dodrio_berry_picking.o(.text);
-        src/dodrio_berry_picking_2.o(.text);
         src/battle_controller_pokedude.o(.text);
-        src/dodrio_berry_picking_3.o(.text);
         src/teachy_tv.o(.text);
         src/digit_obj_util.o(.text);
         src/ss_anne.o(.text);
@@ -552,7 +550,6 @@ SECTIONS {
         src/braille_text.o(.rodata);
         src/text_window_graphics.o(.rodata);
         src/dodrio_berry_picking.o(.rodata);
-        src/dodrio_berry_picking_2.o(.rodata);
         src/battle_controller_pokedude.o(.rodata);
         src/teachy_tv.o(.rodata);
         src/digit_obj_util.o(.rodata);
