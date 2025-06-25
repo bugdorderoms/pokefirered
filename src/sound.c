@@ -7,12 +7,6 @@
 #include "constants/sound.h"
 #include "task.h"
 
-struct Fanfare
-{
-    u16 songNum;
-    u16 duration;
-};
-
 // TODO: what are these
 extern u8 gDisableMapMusicChangeOnMapLoad;
 extern u8 gDisableHelpSystemVolumeReduce;
@@ -39,7 +33,18 @@ extern struct MusicPlayerInfo gMPlayInfo_SE3;
 extern struct ToneData gCryTable[];
 extern struct ToneData gCryTableReverse[];
 
-static const struct Fanfare sFanfares[] =
+static void Task_Fanfare(u32 taskId);
+static void CreateFanfareTask(void);
+static void Task_DuckBGMForPokemonCry(u32 taskId);
+static void RestoreBGMVolumeAfterPokemonCry(void);
+
+#define CRY_VOLUME 120 // was 125 in R/S
+
+struct
+{
+    u16 songNum;
+    u16 duration;
+} static const sFanfares[] =
 {
     [FANFARE_LEVEL_UP]      = { MUS_LEVEL_UP,         80 },
     [FANFARE_OBTAIN_ITEM]   = { MUS_OBTAIN_ITEM,     160 },
@@ -57,12 +62,133 @@ static const struct Fanfare sFanfares[] =
     [FANFARE_DEX_EVAL]      = { MUS_DEX_RATING,      196 }
 };
 
-static void Task_Fanfare(u32 taskId);
-static void CreateFanfareTask(void);
-static void Task_DuckBGMForPokemonCry(u32 taskId);
-static void RestoreBGMVolumeAfterPokemonCry(void);
-
-#define CRY_VOLUME 120 // was 125 in R/S
+struct
+{
+    u8 release;
+    u8 length;
+    u8 chorus;
+    bool8 overrideVolume:1;
+    bool8 reverse:1;
+    u32 pitch;
+} static const sCrySoundData[] =
+{
+    [CRY_MODE_NORMAL] =
+    {
+        .release = 0,
+        .length = 140,
+        .pitch = 15360,
+        .chorus = 0,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_DOUBLES] =
+    {
+        .release = 225,
+        .length = 20,
+        .pitch = 15360,
+        .chorus = 0,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_ENCOUNTER] =
+    {
+        .release = 225,
+        .length = 140,
+        .pitch = 15600,
+        .chorus = 20,
+        .overrideVolume = TRUE,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_HIGH_PITCH] =
+    {
+        .release = 200,
+        .length = 50,
+        .pitch = 15800,
+        .chorus = 20,
+        .overrideVolume = TRUE,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_FAINT] =
+    {
+        .release = 200,
+        .length = 140,
+        .pitch = 14440,
+        .chorus = 0,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_ECHO_START] =
+    {
+        .release = 100,
+        .length = 25,
+        .pitch = 15600,
+        .chorus = 192,
+        .overrideVolume = TRUE,
+        .reverse = TRUE,
+    },
+    [CRY_MODE_ECHO_END] =
+    {
+        .release = 220,
+        .length = 140,
+        .pitch = 15555,
+        .chorus = 192,
+        .overrideVolume = TRUE,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_ROAR_1] =
+    {
+        .release = 100,
+        .length = 10,
+        .pitch = 14848,
+        .chorus = 0,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_ROAR_2] =
+    {
+        .release = 225,
+        .length = 60,
+        .pitch = 15616,
+        .chorus = 0,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_GROWL_1] =
+    {
+        .release = 125,
+        .length = 15,
+        .pitch = 15200,
+        .chorus = 0,
+        .reverse = TRUE,
+    },
+    [CRY_MODE_GROWL_2] =
+    {
+        .release = 225,
+        .length = 100,
+        .pitch = 15200,
+        .chorus = 0,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_WEAK] =
+    {
+        .release = 0,
+        .length = 140,
+        .pitch = 15000,
+        .chorus = 0,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_WEAK_DOUBLES] =
+    {
+        .release = 225,
+        .length = 20,
+        .pitch = 15360,
+        .chorus = 0,
+        .reverse = FALSE,
+    },
+    [CRY_MODE_DYNAMAX] =
+    {
+        .release = 255,
+        .length = 255,
+        .pitch = 12150,
+        .chorus = 200,
+        .reverse = FALSE,
+    },
+};
 
 void InitMapMusic(void)
 {
@@ -342,94 +468,25 @@ void PlayCry_ReleaseDouble(u32 species, s8 pan, u32 mode)
 
 void PlayCryInternal(u32 species, s8 pan, s8 volume, u32 priority, u32 mode)
 {
-    bool32 reverse = FALSE;
-    u32 release = 0;
-    u32 length = 140;
-    u32 pitch = 15360;
-    u32 chorus = 0;
     u32 cryId;
     
     if ((mode == CRY_MODE_NORMAL || mode == CRY_MODE_DOUBLES) && (gSpeciesInfo[species].flags & SPECIES_FLAG_HIGH_PITCH_CRY))
         mode = CRY_MODE_HIGH_PITCH;
     
-    switch (mode)
-    {
-    case CRY_MODE_DOUBLES:
-        length = 20;
-        release = 225;
-        break;
-    case CRY_MODE_ENCOUNTER:
-        release = 225;
-        pitch = 15600;
-        chorus = 20;
+    if (sCrySoundData[mode].overrideVolume)
         volume = 90;
-        break;
-    case CRY_MODE_HIGH_PITCH:
-        length = 50;
-        release = 200;
-        pitch = 15800;
-        chorus = 20;
-        volume = 90;
-        break;
-    case CRY_MODE_ECHO_START:
-        length = 25;
-        reverse = TRUE;
-        release = 100;
-        pitch = 15600;
-        chorus = 192;
-        volume = 90;
-        break;
-    case CRY_MODE_FAINT:
-        release = 200;
-        pitch = 14440;
-        break;
-    case CRY_MODE_ECHO_END:
-        release = 220;
-        pitch = 15555;
-        chorus = 192;
-        volume = 90; // FR/LG changed this from 70 to 90
-        break;
-    case CRY_MODE_ROAR_1:
-        length = 10;
-        release = 100;
-        pitch = 14848;
-        break;
-    case CRY_MODE_ROAR_2:
-        length = 60;
-        release = 225;
-        pitch = 15616;
-        break;
-    case CRY_MODE_GROWL_1:
-        length = 15;
-        reverse = TRUE;
-        release = 125;
-        pitch = 15200;
-        break;
-    case CRY_MODE_GROWL_2:
-        length = 100;
-        release = 225;
-        pitch = 15200;
-        break;
-    case CRY_MODE_WEAK:
-        pitch = 15000;
-        break;
-    case CRY_MODE_WEAK_DOUBLES:
-        length = 20;
-        release = 225;
-        break;
-    }
 
     SetPokemonCryVolume(volume);
     SetPokemonCryPanpot(pan);
-    SetPokemonCryPitch(pitch);
-    SetPokemonCryLength(length);
+    SetPokemonCryPitch(sCrySoundData[mode].pitch);
+    SetPokemonCryLength(sCrySoundData[mode].length);
     SetPokemonCryProgress(0);
-    SetPokemonCryRelease(release);
-    SetPokemonCryChorus(chorus);
+    SetPokemonCryRelease(sCrySoundData[mode].release);
+    SetPokemonCryChorus(sCrySoundData[mode].chorus);
     SetPokemonCryPriority(priority);
     
     cryId = gSpeciesInfo[SanitizeSpeciesId(species)].cryId;
-    gMPlay_PokemonCry = SetPokemonCryTone(reverse ? &gCryTableReverse[cryId] : &gCryTable[cryId]);
+    gMPlay_PokemonCry = SetPokemonCryTone(sCrySoundData[mode].reverse ? &gCryTableReverse[cryId] : &gCryTable[cryId]);
 }
 
 bool32 IsCryFinished(void)
