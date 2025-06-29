@@ -150,6 +150,15 @@ static const struct SpriteTemplate sSmokescreenImpactSpriteTemplate =
     .callback = SmokescreenImpact_Callback_DestroySprite
 };
 
+// These coords are subtracted from the target's x and y coords
+static const struct UCoords8 sSmokescreenImpactPosData[] =
+{
+    {16, 16},
+    {0, 16},
+    {16, 0},
+    {0, 0}
+};
+
 static const union AnimCmd sScratchAnimCmds[] =
 {
     ANIMCMD_FRAME(0, 4),
@@ -1335,8 +1344,8 @@ static void AnimBlackSmokeStep(struct Sprite *sprite)
 
 void AnimTask_SmokescreenImpact(u32 taskId)
 {
-    u32 mainSpriteId, spriteId1, spriteId2, spriteId3, spriteId4;
-    struct Sprite *mainSprite;
+    u32 i, mainSpriteId;
+    struct Sprite *mainSprite, *sprite;
     s16 x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + 8;
     s16 y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + 8;
 
@@ -1345,33 +1354,20 @@ void AnimTask_SmokescreenImpact(u32 taskId)
         LoadCompressedSpriteSheetUsingHeap(&sSmokescreenImpactSpriteSheet);
         LoadCompressedSpritePaletteUsingHeap(&sSmokescreenImpactSpritePalette);
     }
-
     mainSpriteId = CreateInvisibleSpriteWithCallback(SmokescreenImpact_Callback);
     mainSprite = &gSprites[mainSpriteId];
-
-    spriteId1 = CreateSprite(&sSmokescreenImpactSpriteTemplate, x - 16, y - 16, 2);
-    gSprites[spriteId1].data[0] = mainSpriteId;
-    mainSprite->data[0]++;
-    AnimateSprite(&gSprites[spriteId1]);
-
-    spriteId2 = CreateSprite(&sSmokescreenImpactSpriteTemplate, x, y - 16, 2);
-    gSprites[spriteId2].data[0] = mainSpriteId;
-    mainSprite->data[0]++;
-    StartSpriteAnim(&gSprites[spriteId2], 1);
-    AnimateSprite(&gSprites[spriteId2]);
-
-    spriteId3 = CreateSprite(&sSmokescreenImpactSpriteTemplate, x - 16, y, 2);
-    gSprites[spriteId3].data[0] = mainSpriteId;
-    mainSprite->data[0]++;
-    StartSpriteAnim(&gSprites[spriteId3], 2);
-    AnimateSprite(&gSprites[spriteId3]);
-
-    spriteId4 = CreateSprite(&sSmokescreenImpactSpriteTemplate, x, y, 2);
-    gSprites[spriteId4].data[0] = mainSpriteId;
-    mainSprite->data[0]++;
-    StartSpriteAnim(&gSprites[spriteId4], 3);
-    AnimateSprite(&gSprites[spriteId4]);
-
+    
+    for (i = 0; i < 4; i++)
+    {
+        sprite = &gSprites[CreateSprite(&sSmokescreenImpactSpriteTemplate, x - sSmokescreenImpactPosData[i].x, y - sSmokescreenImpactPosData[i].y, 2)];
+        sprite->data[0] = mainSpriteId;
+        mainSprite->data[0]++;
+        
+        if (i > 0)
+            StartSpriteAnim(sprite, i);
+        
+        AnimateSprite(sprite);
+    }
     DestroyAnimVisualTask(taskId);
 }
 

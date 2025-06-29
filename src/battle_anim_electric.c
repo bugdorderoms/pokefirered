@@ -473,6 +473,17 @@ const struct SpriteTemplate gSeedFlareGreenChargeSpriteTemplate =
     .callback = AnimGrowingChargeOrb,
 };
 
+const struct SpriteTemplate gElectroBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FLASH_CANNON_BALL,
+    .paletteTag = ANIM_TAG_CIRCLE_OF_LIGHT,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = AnimShadowBall,
+};
+
 // Animates the lightning sprite falling into the target.
 // arg 0: x pos
 // arg 1: y pos

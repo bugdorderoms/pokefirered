@@ -346,7 +346,7 @@ s32 AI_CalcMoveDamage(u32 move, u32 attacker, u32 defender, u32 moveType, u32 ef
 // MOVE BASE POWER CALCULATION //
 /////////////////////////////////
 
-static const u16 sWeightToDamageTable[] =
+static const u16 sWeightToPowerTable[] =
 {
     100, 20,
     250, 40,
@@ -365,6 +365,10 @@ static const u8 sFlailHpScaleToPowerTable[] =
     32, 40,
     48, 20
 };
+
+static const u8 sHeatCrashWeightToPowerTable[] = {40, 40, 60, 80, 100, 120};
+static const u8 sTrumpCardPowerTable[] = {200, 80, 60, 50, 40};
+static const u8 sSpeedDiffToPowerTable[] = {40, 60, 80, 120, 150};
 
 static inline u32 GetSupremeOverlordModifier(u32 battlerId)
 {
@@ -420,14 +424,14 @@ static u16 GetMoveBasePower(u32 attacker, u32 defender, struct DamageCalc *damag
         {
             u32 weight = GetBattlerWeight(defender);
             
-            for (i = 0; sWeightToDamageTable[i] != 0xFFFF; i += 2)
+            for (i = 0; sWeightToPowerTable[i] != 0xFFFF; i += 2)
             {
-                if (sWeightToDamageTable[i] > weight)
+                if (sWeightToPowerTable[i] > weight)
                     break;
             }
             
-            if (sWeightToDamageTable[i] != 0xFFFF)
-                basePower = sWeightToDamageTable[i + 1];
+            if (sWeightToPowerTable[i] != 0xFFFF)
+                basePower = sWeightToPowerTable[i + 1];
             else
                 basePower = 120;
             break;
@@ -538,25 +542,15 @@ static u16 GetMoveBasePower(u32 attacker, u32 defender, struct DamageCalc *damag
                 basePower *= 2;
             break;
         case EFFECT_TRUMP_CARD:
-            switch (gBattleMons[attacker].pp[gBattleStruct->battlers[attacker].chosenMovePosition])
-            {
-                case 0:
-                    basePower = 200;
-                    break;
-                case 1:
-                    basePower = 80;
-                    break;
-                case 2:
-                    basePower = 60;
-                    break;
-                case 3:
-                    basePower = 50;
-                    break;
-                default:
-                    basePower = 40;
-                    break;
-            }
+        {
+            u32 pp = gBattleMons[attacker].pp[gBattleStruct->battlers[attacker].chosenMovePosition];
+            
+            if (pp >= ARRAY_COUNT(sTrumpCardPowerTable))
+                basePower = sTrumpCardPowerTable[ARRAY_COUNT(sTrumpCardPowerTable) - 1];
+            else
+                basePower = sTrumpCardPowerTable[pp];
             break;
+        }
         case EFFECT_WRING_OUT:
             basePower = 120 * (gBattleMons[defender].hp / gBattleMons[defender].maxHP);
             break;
@@ -568,6 +562,30 @@ static u16 GetMoveBasePower(u32 attacker, u32 defender, struct DamageCalc *damag
             break;
         case EFFECT_VENOSHOCK:
             if (gBattleMons[defender].status1.id == STATUS1_POISON || gBattleMons[defender].status1.id == STATUS1_TOXIC_POISON)
+                basePower *= 2;
+            break;
+        case EFFECT_HEAT_CRASH:
+        {
+            u32 weight = GetBattlerWeight(attacker) / GetBattlerWeight(defender);
+            
+            if (weight >= ARRAY_COUNT(sHeatCrashWeightToPowerTable))
+                basePower = sHeatCrashWeightToPowerTable[ARRAY_COUNT(sHeatCrashWeightToPowerTable) - 1];
+            else
+                basePower = sHeatCrashWeightToPowerTable[weight];
+            break;
+        }
+        case EFFECT_ELECTRO_BALL:
+        {
+            u32 speed = GetBattlerTotalSpeed(attacker) / GetBattlerTotalSpeed(defender);
+            
+            if (speed >= ARRAY_COUNT(sSpeedDiffToPowerTable))
+                basePower = sSpeedDiffToPowerTable[ARRAY_COUNT(sSpeedDiffToPowerTable) - 1];
+            else
+                basePower = sSpeedDiffToPowerTable[speed];
+            break;
+        }
+        case EFFECT_ROUND:
+            if (gBattleStruct->roundUsed)
                 basePower *= 2;
             break;
     }
@@ -747,16 +765,33 @@ static u16 CalcBaseAttackStat(u32 attacker, u32 defender, struct DamageCalc *dam
     u32 statStages;
     u16 baseAttack;
     u32 move = damageStruct->move;
-    
-    if (damageStruct->moveSplit == SPLIT_PHYSICAL)
+
+    switch (gBattleMoves[move].effect)
     {
-        baseAttack = gBattleMons[attacker].attack;
-        statStages = gBattleMons[attacker].statStages[STAT_ATK];
-    }
-    else
-    {
-        baseAttack = gBattleMons[attacker].spAttack;
-        statStages = gBattleMons[attacker].statStages[STAT_SPATK];
+        case EFFECT_FOUL_PLAY:
+            if (damageStruct->moveSplit == SPLIT_PHYSICAL)
+            {
+                baseAttack = gBattleMons[defender].attack;
+                statStages = gBattleMons[defender].statStages[STAT_ATK];
+            }
+            else
+            {
+                baseAttack = gBattleMons[defender].spAttack;
+                statStages = gBattleMons[defender].statStages[STAT_SPATK];
+            }
+            break;
+        default:
+            if (damageStruct->moveSplit == SPLIT_PHYSICAL)
+            {
+                baseAttack = gBattleMons[attacker].attack;
+                statStages = gBattleMons[attacker].statStages[STAT_ATK];
+            }
+            else
+            {
+                baseAttack = gBattleMons[attacker].spAttack;
+                statStages = gBattleMons[attacker].statStages[STAT_SPATK];
+            }
+            break;
     }
     
     // Check effects that ignores stat stages
@@ -1082,7 +1117,7 @@ static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 d
 static u32 CalcTypeEffectivenessMultiplierInternal(u32 move, u32 moveType, u32 atkAbility, u32 defender, u32 multiplier, bool32 setAbilityFlags, u16 *flags)
 {
     u32 defAbility;
-    u8 types[3];
+    u32 types[3];
     
     GetBattlerTypes(defender, types);
     
@@ -1181,7 +1216,7 @@ u32 AI_GetSwitchInTypeMatchup(struct Pokemon *mon, u32 playerBattler)
     struct BattlePokemon savedCopy = gBattleMons[battler];
     u32 status3 = gStatuses3[battler];
     u16 flags;
-    u8 types[3];
+    u32 types[3];
     
     GetBattlerTypes(playerBattler, types);
     

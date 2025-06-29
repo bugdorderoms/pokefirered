@@ -6,7 +6,6 @@
 #include "trig.h"
 #include "constants/songs.h"
 
-static void AnimFireSpread(struct Sprite *sprite);
 static void AnimLargeFlame(struct Sprite *sprite);
 static void AnimLargeFlame_Step(struct Sprite *sprite);
 static void AnimFirePlume(struct Sprite *sprite);
@@ -500,6 +499,17 @@ const struct SpriteTemplate gSpacialRendBladeSpreadSpriteTemplate =
     .callback = AnimFireSpread,
 };
 
+const struct SpriteTemplate gFloatingFlameSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SMALL_EMBER,
+    .paletteTag = ANIM_TAG_SMALL_EMBER,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_FireGeyser,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimPetalDanceFlower,
+};
+
 // For the first stage of Fire Punch and Ice Punch
 // arg 0: initial position angle around circle (0-256)
 void AnimFireSpiralInward(struct Sprite *sprite)
@@ -520,7 +530,7 @@ void AnimFireSpiralInward(struct Sprite *sprite)
 // arg 2: x pixel slide offset
 // arg 3: y pixel slide offset
 // arg 4: duration
-static void AnimFireSpread(struct Sprite *sprite)
+void AnimFireSpread(struct Sprite *sprite)
 {
     SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
     

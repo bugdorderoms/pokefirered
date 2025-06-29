@@ -806,16 +806,21 @@
 	.4byte \ptr
 	.endm
 
-	.macro nop8c
+	.macro trysettargettype ptr:req
 	.byte 0x8c
+	.4byte \ptr
 	.endm
 
-	.macro nop8d
+	.macro trycopyability attacker:req, target:req, ptr:req
 	.byte 0x8d
+	.byte \attacker
+	.byte \target
+	.4byte \ptr
 	.endm
 
-	.macro nop8e
+	.macro tryafteryou failPtr:req
 	.byte 0x8e
+	.4byte \failPtr
 	.endm
 
 	.macro forcerandomswitch failPtr:req
@@ -823,8 +828,9 @@
 	.4byte \failPtr
 	.endm
 
-	.macro nop90
+	.macro handleround caseId:req
 	.byte 0x90
+	.byte \caseId
 	.endm
 
 	.macro nop91
@@ -1428,12 +1434,6 @@
 	.4byte \ptr
 	.endm
 	
-	.macro trycopyability ptr:req
-	various BS_ATTACKER, VARIOUS_TRY_COPY_ABILITY
-	.4byte \ptr
-	copyability BS_ATTACKER, BS_TARGET
-	.endm
-	
 	.macro jumpifnodamage ptr:req
 	various BS_ATTACKER, VARIOUS_JUMP_IF_NO_DAMAGE
 	.4byte \ptr
@@ -1497,6 +1497,12 @@
 	
 	.macro resetgimmickinprogress battler:req
 	various \battler, VARIOUS_RESET_GIMMICK_IN_PROGRESS
+	.endm
+	
+	.macro jumpifactivegimmick battler:req, gimmick:req, ptr:req
+	various \battler, VARIOUS_JUMP_IF_ACTIVE_GIMMICK
+	.byte \gimmick
+	.4byte \ptr
 	.endm
 	
 @ callfunction macros
@@ -1787,6 +1793,16 @@
 	
 	.macro setmagicroom
 	callfunction BS_SetMagicRoom
+	.endm
+	
+	.macro tryflameburst failPtr:req
+	callfunction BS_TryFlameBurst
+	.4byte \failPtr
+	.endm
+	
+	.macro jumpifsynchronoisefail failPtr:req
+	callfunction BS_JumpIfSynchronoiseFail
+	.4byte \failPtr
 	.endm
 	
 @ helpful macros

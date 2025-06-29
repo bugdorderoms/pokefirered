@@ -195,7 +195,7 @@
 
 // Atk76, various cases
 #define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       0
-#define VARIOUS_TRY_COPY_ABILITY                    1
+#define VARIOUS_RESET_GIMMICK_IN_PROGRESS           1
 #define VARIOUS_TRY_RATTLED_ON_INTIMIDATE           2
 #define VARIOUS_GET_BATTLER_SIDE                    3
 #define VARIOUS_TRY_TRAINER_SLIDE                   4
@@ -233,16 +233,17 @@
 #define VARIOUS_TRY_SET_GRAVITY                     36
 #define VARIOUS_TRY_SWAP_ABILITIES                  37
 #define VARIOUS_JUMP_IF_NO_DAMAGE                   38
-#define VARIOUS_RESET_GIMMICK_IN_PROGRESS           39
+#define VARIOUS_JUMP_IF_ACTIVE_GIMMICK              39
 
 // Atk80, dmg manipulation
-#define ATK80_DMG_CHANGE_SIGN       0
-#define ATK80_DMG_HALF_USER_HP      1
-#define ATK80_DMG_DRAINED           2
-#define ATK80_DMG_1_8_TARGET_MAX_HP 3
-#define ATK48_DMG_HALF_TARGET_HP    4
-#define ATK48_DMG_ATK_LEVEL         5
-#define ATK48_DMG_BIG_ROOT          6
-#define ATK80_DMG_HEALTH_DIFFERENCE 7
+#define ATK80_DMG_CHANGE_SIGN        0
+#define ATK80_DMG_HALF_USER_HP       1
+#define ATK80_DMG_DRAINED            2
+#define ATK80_DMG_1_8_TARGET_MAX_HP  3
+#define ATK48_DMG_HALF_TARGET_HP     4
+#define ATK48_DMG_ATK_LEVEL          5
+#define ATK48_DMG_BIG_ROOT           6
+#define ATK80_DMG_HEALTH_DIFFERENCE  7
+#define ATK80_DMG_1_16_TARGET_MAX_HP 8
 
 #endif // GUARD_CONSTANTS_BATTLE_SCRIPT_COMMANDS_H

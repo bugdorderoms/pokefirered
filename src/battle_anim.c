@@ -56,7 +56,7 @@ static void ScriptCmd_createvisualtask(void);
 static void ScriptCmd_delay(void);
 static void ScriptCmd_waitforvisualfinish(void);
 static void ScriptCmd_setbgbasedonside(void);
-static void ScriptCmd_nop(void);
+static void ScriptCmd_setbgmvolume(void);
 static void ScriptCmd_end(void);
 static void ScriptCmd_playse(void);
 static void ScriptCmd_monbg(void);
@@ -73,6 +73,7 @@ static void ScriptCmd_fadetobg(void);
 static void ScriptCmd_restorebg(void);
 static void ScriptCmd_waitbgfadeout(void);
 static void ScriptCmd_waitbgfadein(void);
+static void ScriptCmd_nop(void);
 static void ScriptCmd_playsewithpan(void);
 static void ScriptCmd_setpan(void);
 static void ScriptCmd_panse_1B(void);
@@ -1792,7 +1793,7 @@ static void (*const sScriptCmdTable[])(void) =
     ScriptCmd_delay,
     ScriptCmd_waitforvisualfinish,
     ScriptCmd_setbgbasedonside,
-    ScriptCmd_nop,
+    ScriptCmd_setbgmvolume,
     ScriptCmd_end,
     ScriptCmd_playse,
     ScriptCmd_monbg,
@@ -1908,9 +1909,6 @@ void LaunchBattleAnimation(u32 animType, u32 animId)
             
             if (gBattleMoves[animId].effect != EFFECT_TRANSFORM)
                 hideHpBoxes = TRUE;
-            
-            if (gBattleMoves[animId].flags.hasQuietBGM)
-                m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 128);
             
             break;
     }
@@ -2224,7 +2222,12 @@ static void ScriptCmd_setbgbasedonside(void)
         LoadMoveBg(bg);
 }
 
-static void ScriptCmd_nop(void) {}
+static void ScriptCmd_setbgmvolume(void)
+{
+    sBattleAnimScriptPtr++;
+    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, sBattleAnimScriptPtr[0]);
+    sBattleAnimScriptPtr++;
+}
 
 static void StopSound(void)
 {
@@ -2815,6 +2818,8 @@ static void ScriptCmd_waitbgfadein(void)
     else
         sAnimFramesToWait = 1;
 }
+
+static void ScriptCmd_nop(void) {}
 
 s8 BattleAnimAdjustPanning(s8 pan)
 {

@@ -13,6 +13,7 @@
 #include "constants/battle_string_ids.h"
 #include "constants/move_effect_bytes.h"
 #include "constants/trainer_slides.h"
+#include "constants/battle_gimmicks.h"
 	.include "asm/macros/battle_script.inc"
 	.section script_data, "aw", %progbits
 
@@ -1492,9 +1493,10 @@ BattleScript_EffectRolePlay::
 	attackstring
 	ppreduce
 	accuracycheck BattleScript_ButItFailed
-	trycopyability BattleScript_ButItFailed
+	trycopyability BS_ATTACKER, BS_TARGET, BattleScript_ButItFailed
 	attackanimation
 	waitstate
+	copyability BS_ATTACKER, BS_TARGET
 	abilitycopypopup BS_ATTACKER, BS_TARGET, STRINGID_ATKCOPIEDDEFABL
 	tryendeffectonabilitychange BS_ATTACKER
 	switchinabilities BS_ATTACKER
@@ -1586,6 +1588,7 @@ BattleScript_EffectSkillSwap::
 	attackstring
 	ppreduce
 	accuracycheck BattleScript_ButItFailed
+	jumpifactivegimmick BS_TARGET, GIMMICK_DYNAMAX, BattleScript_ButItFailed
 	tryswapabilities BattleScript_ButItFailed
 	attackanimation
 	waitstate
@@ -2243,6 +2246,145 @@ BattleScript_EffectMagicRoom::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+@ EFFECT_FLAME_BURST @
+
+BattleScript_EffectFlameBurst::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	call BattleScript_EffectHitFromAtkString_Ret
+	jumpifmovehadnoeffect BattleScript_MoveEndFromFaint
+	prefaintmoveendall
+	tryfaintmon BS_TARGET
+	savetarget
+	tryflameburst BattleScript_EffectFlameBurstEnd
+	jumpifability BS_TARGET, ABILITY_MAGIC_GUARD, BattleScript_EffectFlameBurstEnd, TRUE
+	manipulatedamage ATK80_DMG_1_16_TARGET_MAX_HP
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE | HITMARKER_PASSIVE_DAMAGE
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	printstring STRINGID_THEBURSTINGFLAMEHITDEF
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+BattleScript_EffectFlameBurstEnd::
+	restoretarget
+	goto BattleScript_MoveEnd
+
+@ EFFECT_QUIVER_DANCE @
+
+BattleScript_EffectQuiverDance::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPATK, MAX_STAT_STAGES, BattleScript_EffectQuiverDanceTrySpAtkUp
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPDEF, MAX_STAT_STAGES, BattleScript_EffectQuiverDanceTrySpAtkUp
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPEED, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
+BattleScript_EffectQuiverDanceTrySpAtkUp::
+	attackanimation
+	waitstate
+	setstatchanger STAT_SPATK, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring BIT_SPATK | BIT_SPDEF | BIT_SPEED, ATK66_SET_ANIM_PLAYED
+	setstatchanger STAT_SPDEF, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
+	setstatchanger STAT_SPEED, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
+	goto BattleScript_MoveEnd
+
+@ EFFECT_SYNCHRONOISE @
+
+BattleScript_EffectSynchronoise::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	attackstring
+	ppreduce
+	jumpifsynchronoisefail BattleScript_NotAffected
+	goto BattleScript_HitFromCritCalc
+
+@ EFFECT_SOAK @
+
+BattleScript_EffectSoak::
+	attackcanceler
+	jumpifsubstituteblocks BattleScript_ButItFailedAtkStringPpReduce
+	accuracycheck BattleScript_PrintMoveMissed
+	attackstring
+	ppreduce
+	attackanimation
+	waitstate
+	trysettargettype BattleScript_ButItFailed
+	printstring STRINGID_PKMNTRANSFORMEDINTOBUFF1TYPE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ EFFECT_COIL @
+
+BattleScript_EffectCoil::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectCoilTryAtkUp
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_DEF, MAX_STAT_STAGES, BattleScript_EffectCoilTryAtkUp
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_ACC, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
+BattleScript_EffectCoilTryAtkUp::
+	attackanimation
+	waitstate
+	setstatchanger STAT_ATK, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring BIT_ATK | BIT_DEF | BIT_ACC, ATK66_SET_ANIM_PLAYED
+	setstatchanger STAT_DEF, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
+	setstatchanger STAT_ACC, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
+	goto BattleScript_MoveEnd
+
+@ EFFECT_ENTRAINMENT @
+
+BattleScript_EffectEntrainment::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	attackstring
+	ppreduce
+	jumpifactivegimmick BS_TARGET, GIMMICK_DYNAMAX, BattleScript_ButItFailed
+	trycopyability BS_TARGET, BS_ATTACKER, BattleScript_ButItFailed
+	attackanimation
+	waitstate
+	copyability BS_TARGET, BS_ATTACKER
+	abilitycopypopup BS_TARGET, BS_ATTACKER, STRINGID_DEFACQUIREDDEFABL
+	tryendeffectonabilitychange BS_TARGET
+	switchinabilities BS_TARGET
+	goto BattleScript_MoveEnd
+
+@ EFFECT_AFTER_YOU @
+
+BattleScript_EffectAfterYou::
+	attackcanceler
+	tryafteryou BattleScript_ButItFailedAtkStringPpReduce
+	accuracycheck BattleScript_ButItFailedAtkStringPpReduce
+	attackstring
+	ppreduce
+	attackanimation
+	waitstate
+	printstring STRINGID_DEFTOOKKINDOFFER
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ EFFECT_ROUND @
+
+BattleScript_EffectRound::
+	attackcanceler
+	handleround 0 @ Try change turn order
+	accuracycheck BattleScript_MoveMissedSetRoundUsed
+	call BattleScript_EffectHitFromAtkString_Ret
+	handleround 1 @ Set round used
+	goto BattleScript_MoveEndFromFaint
+
+BattleScript_MoveMissedSetRoundUsed::
+	handleround 1 @ Set round used
+	goto BattleScript_PrintMoveMissed
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2395,6 +2537,11 @@ BattleScript_SpikesFree::
 BattleScript_MoveEffectKnockOff::
 	playanimation BS_EFFECT_BATTLER, B_ANIM_ITEM_KNOCKOFF
 	printstring STRINGID_PKMNKNOCKEDOFFEFFLASTITEM
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_MoveEffectSmackDown::
+	printstring STRINGID_EFFFELLSTRAIGHTDOWN
 	waitmessage B_WAIT_TIME_LONG
 	return
 

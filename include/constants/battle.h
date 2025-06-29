@@ -121,6 +121,7 @@
 #define STATUS2_CURSED                 (1 << 23)
 #define STATUS2_FORESIGHT              (1 << 24)
 #define STATUS2_AQUA_RING              (1 << 25)
+#define STATUS2_TURN_ORDER_LOCKED      (1 << 26) // For effects like After You and Round
 
 // per-battler statuses
 // These are removed after exiting the battle or switching out

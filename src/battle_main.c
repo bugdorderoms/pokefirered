@@ -3460,23 +3460,6 @@ static void CheckChangingTurnOrderEffects(void)
     gBattleResources->battleScriptsStack->size = 0;
 }
 
-static void TryChangeTurnOrder(void)
-{
-    u32 i, j;
-    
-    for (i = gCurrentTurnActionNumber; i < gBattlersCount - 1; i++)
-    {
-        for (j = i + 1; j < gBattlersCount; j++)
-        {
-            if (gActionsByTurnOrder[i] == B_ACTION_USE_MOVE && gActionsByTurnOrder[j] == B_ACTION_USE_MOVE)
-            {
-                if (GetWhoStrikesFirst(gBattlerByTurnOrder[i], gBattlerByTurnOrder[j], FALSE) != BATTLER1_STRIKES_FIRST)
-                    SwapTurnOrder(i, j);
-            }
-        }
-    }
-}
-
 static bool32 TryActivateGimmick(u32 battler)
 {
     if (!gProtectStructs[battler].noValidMoves && gBattleStruct->battlers[battler].toActivateGimmick)
@@ -3506,8 +3489,6 @@ static bool32 TryDoGimmicksBeforeMoves(void)
                 return TRUE;
         }
     }
-    TryChangeTurnOrder();
-    
     return FALSE;
 }
 
@@ -3825,11 +3806,34 @@ void RunBattleScriptCommands(void)
         gBattleScriptingCommandsTable[gBattlescriptCurrInstr[0]]();
 }
 
+static void TryChangeTurnOrder(void)
+{
+    u32 i, j;
+    
+    for (i = gCurrentTurnActionNumber; i < gBattlersCount - 1; i++)
+    {
+        for (j = i + 1; j < gBattlersCount; j++)
+        {
+            if (gActionsByTurnOrder[i] != B_ACTION_USE_ITEM && gActionsByTurnOrder[j] == B_ACTION_USE_ITEM
+            && gActionsByTurnOrder[i] != B_ACTION_SWITCH && gActionsByTurnOrder[j] == B_ACTION_SWITCH
+            && gActionsByTurnOrder[i] != B_ACTION_THROW_BALL && gActionsByTurnOrder[j] == B_ACTION_THROW_BALL
+            && gActionsByTurnOrder[i] != B_ACTION_FINISHED && gActionsByTurnOrder[j] == B_ACTION_FINISHED
+            && !(gBattleMons[gBattlerByTurnOrder[i]].status2 & STATUS2_TURN_ORDER_LOCKED) && !(gBattleMons[gBattlerByTurnOrder[j]].status2 & STATUS2_TURN_ORDER_LOCKED))
+            {
+                if (GetWhoStrikesFirst(gBattlerByTurnOrder[i], gBattlerByTurnOrder[j], FALSE) != BATTLER1_STRIKES_FIRST)
+                    SwapTurnOrder(i, j);
+            }
+        }
+    }
+}
+
 static void HandleAction_UseMove(void)
 {
     u32 i, opposingSide, moveTarget, moveType;
     
-    gBattlerAttacker = gCurrentTurnActionBattlerId;
+    TryChangeTurnOrder();
+    
+    gBattlerAttacker = gCurrentTurnActionBattlerId = gBattlerByTurnOrder[gCurrentTurnActionNumber];
     
     if ((gBattleStruct->absentBattlerFlags & Bit(gBattlerAttacker)) || !IsBattlerAlive(gBattlerAttacker))
     {

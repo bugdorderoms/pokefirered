@@ -1,6 +1,7 @@
 #include "battle_anim.h"
 #include "global.h"
 #include "gpu_regs.h"
+#include "scanline_effect.h"
 #include "trig.h"
 
 static void AnimMegahornHorn(struct Sprite *sprite);
@@ -10,6 +11,10 @@ static void AnimStringWrap_Step(struct Sprite *sprite);
 static void AnimSpiderWeb(struct Sprite *sprite);
 static void AnimSpiderWeb_Step(struct Sprite *sprite);
 static void AnimTranslateStinger(struct Sprite *sprite);
+static void AnimQuiverDanceOrb(struct Sprite *sprite);
+static void AnimQuiverDanceOrb_Step(struct Sprite *sprite);
+static void AnimTask_QuiverDanceWaver_Step(u32 taskId);
+static void UpdateQuiverDanceScanlineEffect(struct Task *task);
 
 static const union AffineAnimCmd sAffineAnim_MegahornHorn_0[] =
 {
@@ -225,6 +230,17 @@ const struct SpriteTemplate gUTurnBallOutSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimAbsorptionOrb,
+};
+
+const struct SpriteTemplate gQuiverDanceOrbSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_HOLLOW_ORB,
+    .paletteTag = ANIM_TAG_CIRCLE_OF_LIGHT,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimQuiverDanceOrb,
 };
 
 // Animates the horn sprite in MOVE_MEGAHORN's anim.
@@ -469,4 +485,169 @@ void AnimTask_GetFuryCutterHitCount(u32 taskId)
 {
     gBattleAnimArgs[ARG_RET_ID] = gAnimDisableStructPtr->furyCutterCounter;
     DestroyAnimVisualTask(taskId);
+}
+
+// Wavers the attacker back and forth. Progressing vertical wave of scanline shifts. Used by Quiver Dance.
+// No args.
+void AnimTask_QuiverDanceWaver(u32 taskId)
+{
+    struct ScanlineEffectParams sp;
+    struct Task *task = &gTasks[taskId];
+    u32 i, r1;
+
+    if (GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker) == 1)
+    {
+        sp.dmaDest = &REG_BG1HOFS;
+        task->data[2] = gBattle_BG1_X;
+    }
+    else
+    {
+        sp.dmaDest = &REG_BG2HOFS;
+        task->data[2] = gBattle_BG2_X;
+    }
+    sp.dmaControl = SCANLINE_EFFECT_DMACNT_16BIT;
+    sp.initState = 1;
+
+    r1 = GetBattlerYCoordWithElevation(gBattleAnimAttacker);
+    
+    task->data[3] = r1 - 32;
+    task->data[4] = r1 + 32;
+    
+    if (task->data[3] < 0)
+        task->data[3] = 0;
+    
+    for (i = task->data[3]; i <= task->data[4]; ++i)
+    {
+        gScanlineEffectRegBuffers[0][i] = task->data[2];
+        gScanlineEffectRegBuffers[1][i] = task->data[2];
+    }
+    ScanlineEffect_SetParams(sp);
+    task->func = AnimTask_QuiverDanceWaver_Step;
+}
+
+static void AnimTask_QuiverDanceWaver_Step(u32 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+
+    switch (task->data[0])
+    {
+        case 0:
+            if (++task->data[7] > 1)
+            {
+                task->data[7] = 0;
+                
+                if (++task->data[6] == 3)
+                    ++task->data[0];
+            }
+            UpdateQuiverDanceScanlineEffect(task);
+            break;
+        case 1:
+            if (++task->data[1] > 0x3C)
+                ++task->data[0];
+            
+            UpdateQuiverDanceScanlineEffect(task);
+            break;
+        case 2:
+            if (++task->data[7] > 1)
+            {
+                task->data[7] = 0;
+                
+                if (--task->data[6] == 0)
+                    ++task->data[0];
+            }
+            UpdateQuiverDanceScanlineEffect(task);
+            break;
+        case 3:
+            gScanlineEffect.state = 3;
+            ++task->data[0];
+            break;
+        case 4:
+            DestroyAnimVisualTask(taskId);
+            break;
+    }
+}
+
+static void UpdateQuiverDanceScanlineEffect(struct Task *task)
+{
+    u32 i, r3 = task->data[5];
+
+    for (i = task->data[3]; i <= task->data[4]; ++i)
+    {
+        gScanlineEffectRegBuffers[gScanlineEffect.srcBuffer][i] = ((gSineTable[r3] * task->data[6]) >> 7) + task->data[2];
+        r3 = (r3 + 8) & 0xFF;
+    }
+    task->data[5] = (task->data[5] + 9) & 0xFF;
+}
+
+// Animates the circular orbs in Quiver Dance anim.
+// arg 0: wave index
+static void AnimQuiverDanceOrb(struct Sprite *sprite)
+{
+    u32 height, width;
+
+    sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
+    sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+    
+    sprite->data[5] = 1;
+    sprite->data[6] = gBattleAnimArgs[0];
+    
+    height = GetBattlerSpriteCoordAttr(gBattleAnimAttacker, BATTLER_COORD_ATTR_HEIGHT);
+    width = GetBattlerSpriteCoordAttr(gBattleAnimAttacker, BATTLER_COORD_ATTR_WIDTH);
+    
+    if (height > width)
+        sprite->data[7] = height / 2;
+    else
+        sprite->data[7] = width / 2;
+    
+    sprite->x2 = Cos(sprite->data[6], sprite->data[7]);
+    sprite->y2 = Sin(sprite->data[6], sprite->data[7]);
+    
+    sprite->callback = AnimQuiverDanceOrb_Step;
+}
+
+static void AnimQuiverDanceOrb_Step(struct Sprite *sprite)
+{
+    switch (sprite->data[0])
+    {
+        case 0:
+            sprite->data[6] = (sprite->data[6] - sprite->data[5]) & 0xFF;
+            
+            sprite->x2 = Cos(sprite->data[6], sprite->data[7]);
+            sprite->y2 = Sin(sprite->data[6], sprite->data[7]);
+            
+            if (++sprite->data[4] > 5)
+            {
+                sprite->data[4] = 0;
+                
+                if (sprite->data[5] <= 15 && ++sprite->data[5] > 15)
+                    sprite->data[5] = 16;
+            }
+            
+            if (++sprite->data[3] > 0x3C)
+            {
+                sprite->data[3] = 0;
+                ++sprite->data[0];
+            }
+            break;
+        case 1:
+            sprite->data[6] = (sprite->data[6] - sprite->data[5]) & 0xFF;
+            
+            if (sprite->data[7] <= 0x95 && (sprite->data[7] += 8) > 0x95)
+                sprite->data[7] = 0x96;
+            
+            sprite->x2 = Cos(sprite->data[6], sprite->data[7]);
+            sprite->y2 = Sin(sprite->data[6], sprite->data[7]);
+            
+            if (++sprite->data[4] > 5)
+            {
+                sprite->data[4] = 0;
+                
+                if (sprite->data[5] <= 15 && ++sprite->data[5] > 15)
+                    sprite->data[5] = 16;
+            }
+            
+            if (++sprite->data[3] > 20)
+                DestroyAnimSprite(sprite);
+            break;
+    }
 }

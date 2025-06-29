@@ -155,6 +155,14 @@ extern const u8 BattleScript_EffectWonderRoom[];
 extern const u8 BattleScript_EffectAutotomize[];
 extern const u8 BattleScript_EffectTelekinesis[];
 extern const u8 BattleScript_EffectMagicRoom[];
+extern const u8 BattleScript_EffectFlameBurst[];
+extern const u8 BattleScript_EffectQuiverDance[];
+extern const u8 BattleScript_EffectSynchronoise[];
+extern const u8 BattleScript_EffectSoak[];
+extern const u8 BattleScript_EffectCoil[];
+extern const u8 BattleScript_EffectEntrainment[];
+extern const u8 BattleScript_EffectAfterYou[];
+extern const u8 BattleScript_EffectRound[];
 // Other scripts
 extern const u8 BattleScript_HitFromCritCalc[];
 extern const u8 BattleScript_MoveEnd[];
@@ -470,6 +478,7 @@ extern const u8 BattleScript_PrimalReversion[];
 extern const u8 BattleScript_UltraBurst[];
 extern const u8 BattleScript_OpportunistActivates[];
 extern const u8 BattleScript_MoveUsedSignatureMove[];
+extern const u8 BattleScript_MoveEffectSmackDown[];
 
 extern const u8 *const gBattlescriptsForUsingItem[];
 

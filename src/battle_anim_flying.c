@@ -363,6 +363,39 @@ const struct SpriteTemplate gBraveBirdBirdSpriteTemplate =
     .callback = AnimSkyAttackBird,
 };
 
+const struct SpriteTemplate gHeavySlamMetalBodyUpSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ROUND_SHADOW,
+    .paletteTag = ANIM_TAG_GUST,
+    .oam = &gOamData_AffineDouble_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_FlyBallUp,
+    .callback = AnimFlyBallUp,
+};
+
+const struct SpriteTemplate gHeavySlamMetalBodyLandSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ROUND_SHADOW,
+    .paletteTag = ANIM_TAG_GUST,
+    .oam = &gOamData_AffineDouble_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_BounceBallLand,
+    .callback = AnimBounceBallLand,
+};
+
+const struct SpriteTemplate gAirWaveSpreadSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_AIR_WAVE_2,
+    .paletteTag = ANIM_TAG_AIR_WAVE_2,
+    .oam = &gOamData_AffineOff_ObjNormal_32x16,
+    .anims = sAnims_AirWaveCrescent,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimFireSpread,
+};
+
 // Animates the elliptical gust sprite on the target. Used by MOVE_GUST.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset

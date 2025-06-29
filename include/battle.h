@@ -491,7 +491,7 @@ struct BattleStruct
     /*0x042*/ u16 poisonPuppeteerConfusion:1;
     /*0x042*/ u16 strongWindsMessageState:2;
     /*0x042*/ u16 pursuitSwitchDmg:1;
-    /*0x042*/ u16 unused:1; // unused
+    /*0x042*/ u16 roundUsed:1;
     /*0x042*/ u16 attackAnimPlayed:1; // For Dancer
     /*0x042*/ u16 playerSelectedGimmick:1; // Used to toggle trigger and update battle UI
     /*0x042*/ u16 effectsBeforeUsingMoveDone:1;
@@ -598,7 +598,7 @@ extern struct BattleStruct *gBattleStruct;
 
 #define IsBattlerAnyType(battlerId, ...)                                        \
     ({                                                                          \
-        u8 types[3];                                                            \
+        u32 types[3];                                                           \
         GetBattlerTypes(battlerId, types);                                      \
         RECURSIVELY(R_FOR_EACH(IS_BATTLER_ANY_TYPE_HELPER, __VA_ARGS__)) FALSE; \
     })
@@ -607,7 +607,7 @@ extern struct BattleStruct *gBattleStruct;
 
 #define IsBattlerTypeless(battlerId)                                                      \
     ({                                                                                    \
-        u8 types[3];                                                                      \
+        u32 types[3];                                                                     \
         GetBattlerTypes(battlerId, types);                                                \
         types[0] == TYPE_MYSTERY && types[1] == TYPE_MYSTERY && types[2] == TYPE_MYSTERY; \
     })

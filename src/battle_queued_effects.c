@@ -252,7 +252,7 @@ static u32 GetDmgBasedOnHazardType(u32 battlerId, u32 hazardType)
 {
     u32 dmg, multiplier = UQ_4_12(1.0);
     u32 maxHP = gBattleMons[battlerId].maxHP;
-    u8 types[3];
+    u32 types[3];
     
     GetBattlerTypes(battlerId, types);
     

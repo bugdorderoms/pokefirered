@@ -272,6 +272,28 @@ const struct SpriteTemplate gVenoshockPoisonSpriteTemplate =
     .callback = AnimNeedleArmSpike,
 };
 
+const struct SpriteTemplate gGreenAcidPoisonBubbleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_POISON_BUBBLE,
+    .paletteTag = ANIM_TAG_RAZOR_LEAF,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = sAnims_PoisonProjectile,
+    .images = NULL,
+    .affineAnims = sAffineAnims_PoisonProjectile,
+    .callback = AnimAcidPoisonBubble,
+};
+
+const struct SpriteTemplate gGreenAcidPoisonDropletSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_POISON_BUBBLE,
+    .paletteTag = ANIM_TAG_RAZOR_LEAF,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = sAnims_AcidPoisonDroplet,
+    .images = NULL,
+    .affineAnims = gAffineAnims_Droplet,
+    .callback = AnimAcidPoisonDroplet,
+};
+
 // Animates a sludge project.
 // arg 0: initial x offset
 // arg 1: initial y offset

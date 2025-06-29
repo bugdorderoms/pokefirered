@@ -988,6 +988,61 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
         .battleScript = BattleScript_EffectMagicRoom,
     },
     
+    [EFFECT_FLAME_BURST] =
+    {
+        .battleScript = BattleScript_EffectFlameBurst,
+    },
+    
+    [EFFECT_QUIVER_DANCE] =
+    {
+        .battleScript = BattleScript_EffectQuiverDance,
+    },
+    
+    [EFFECT_HEAT_CRASH] =
+    {
+        .battleScript = BattleScript_EffectHit,
+    },
+    
+    [EFFECT_SYNCHRONOISE] =
+    {
+        .battleScript = BattleScript_EffectSynchronoise,
+    },
+    
+    [EFFECT_ELECTRO_BALL] =
+    {
+        .battleScript = BattleScript_EffectHit,
+    },
+    
+    [EFFECT_SOAK] =
+    {
+        .battleScript = BattleScript_EffectSoak,
+    },
+    
+    [EFFECT_COIL] =
+    {
+        .battleScript = BattleScript_EffectCoil,
+    },
+    
+    [EFFECT_FOUL_PLAY] =
+    {
+        .battleScript = BattleScript_EffectHit,
+    },
+    
+    [EFFECT_ENTRAINMENT] =
+    {
+        .battleScript = BattleScript_EffectEntrainment,
+    },
+    
+    [EFFECT_AFTER_YOU] =
+    {
+        .battleScript = BattleScript_EffectAfterYou,
+    },
+    
+    [EFFECT_ROUND] =
+    {
+        .battleScript = BattleScript_EffectRound,
+    },
+    
     /*
     [EFFECT_TERRAIN_PULSE] =
     {

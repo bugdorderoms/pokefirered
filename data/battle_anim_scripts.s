@@ -2424,6 +2424,7 @@ gMoveAnim_ROAR::
 gMoveAnim_SING::
 	loadspritegfx ANIM_TAG_MUSIC_NOTES
 	monbg ANIM_DEF_SIDE
+	setbgmvolume 128
 	createvisualtask AnimTask_MusicNotesRainbowBlend, 2
 	panse_1B SE_M_SING, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 2, 0
 	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 7, 0, 12
@@ -6138,6 +6139,10 @@ gMoveAnim_OCTAZOOKA::
 	createsprite gOctazookaBallSpriteTemplate, ANIM_TARGET, 2, 20, 0, 0, 0, 20, 0
 	waitforvisualfinish
 	playsewithpan SE_M_SELF_DESTRUCT, SOUND_PAN_TARGET
+	call OctazookaSmoke
+	end
+
+OctazookaSmoke::
 	createsprite gOctazookaSmokeSpriteTemplate, ANIM_TARGET, 2, 8, 8, ANIM_TARGET, TRUE
 	delay 2
 	createsprite gOctazookaSmokeSpriteTemplate, ANIM_TARGET, 2, -8, -8, ANIM_TARGET, TRUE
@@ -6145,7 +6150,8 @@ gMoveAnim_OCTAZOOKA::
 	createsprite gOctazookaSmokeSpriteTemplate, ANIM_TARGET, 2, 8, -8, ANIM_TARGET, TRUE
 	delay 2
 	createsprite gOctazookaSmokeSpriteTemplate, ANIM_TARGET, 2, -8, 8, ANIM_TARGET, TRUE
-	end
+	delay 2
+	return
 
 gMoveAnim_SPIKES::
 	loadspritegfx ANIM_TAG_SPIKES
@@ -6224,6 +6230,7 @@ gMoveAnim_DESTINY_BOND::
 
 gMoveAnim_PERISH_SONG::
 	loadspritegfx ANIM_TAG_MUSIC_NOTES_2
+	setbgmvolume 128
 	createsprite gPerishSongMusicNoteSpriteTemplate, ANIM_ATTACKER, 4, 0, 0, 0
 	createsprite gPerishSongMusicNoteSpriteTemplate, ANIM_ATTACKER, 4, 1, 1, 16
 	createsprite gPerishSongMusicNoteSpriteTemplate, ANIM_ATTACKER, 4, 2, 1, 32
@@ -9718,6 +9725,7 @@ MetalSoundRings::
 
 gMoveAnim_GRASS_WHISTLE::
 	loadspritegfx ANIM_TAG_MUSIC_NOTES
+	setbgmvolume 128
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 2, 0, 4, RGB(18, 31, 12) @ Green color
 	waitforvisualfinish
 	createvisualtask AnimTask_MusicNotesRainbowBlend, 2
@@ -10217,9 +10225,9 @@ gMoveAnim_MUD_SHOT::
 	end
 
 MudShotOrbs::
-	createsprite gMudShotOrbSpriteTemplate, ANIM_ATTACKER, 3, 10, 10, 16
+	createsprite gHydroPumpOrbSpriteTemplate, ANIM_ATTACKER, 3, 10, 10, 16
 	delay 2
-	createsprite gMudShotOrbSpriteTemplate, ANIM_ATTACKER, 3, 10, 10, 16
+	createsprite gHydroPumpOrbSpriteTemplate, ANIM_ATTACKER, 3, 10, 10, 16
 	delay 2
 	return
 
@@ -14095,4 +14103,465 @@ gMoveAnim_MAGIC_ROOM::
 	restorebg
 	waitbgfadein
 	blendoff
+	end
+
+@ Credits: Skeli and Blackuser
+gMoveAnim_SMACK_DOWN::
+	loadspritegfx ANIM_TAG_ROCKS
+	loadspritegfx ANIM_TAG_IMPACT
+	playsewithpan SE_M_DOUBLE_TEAM, SOUND_PAN_ATTACKER
+	createsprite gRockBlastRockSpriteTemplate, ANIM_TARGET, 2, 20, 0, 0, 0, 21, -25
+	waitforvisualfinish
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 3, 0, 6, 1
+	createvisualtask AnimTask_SmokescreenImpact, 2
+	fadetobg BG_IN_AIR
+	waitbgfadeout
+	createvisualtask AnimTask_StartSlidingBg, 5, 0, 3072, FALSE
+	waitbgfadein
+	playsewithpan SE_FALL, SOUND_PAN_TARGET
+	delay 32
+	call SeismicTossRockScatter1
+	delay 16
+	call SeismicTossRockScatter2
+	waitforvisualfinish
+	call UnsetScrollingBg
+	end
+
+@ Credits: ghoulslash
+gMoveAnim_STORM_THROW::
+	loadspritegfx ANIM_TAG_IMPACT
+	loadspriteimg ANIM_TAG_THIN_RING
+	loadspritepal ANIM_TAG_JAGGED_MUSIC_NOTE @ Red color
+	monbg ANIM_DEF_SIDE
+	setalpha 12, 8
+	playsewithpan SE_M_VITAL_THROW, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 12, 4, 1, 2
+	waitforvisualfinish
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 20, 0, FALSE, 4
+	delay 1
+	createsprite gStormThrowRingSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, TRUE
+	delay 1
+	createsprite gStormThrowRingSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, TRUE
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, 0
+	playsewithpan SE_M_VITAL_THROW2, SOUND_PAN_TARGET
+	delay 1
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, -24, 0, TRUE, 4
+	waitforvisualfinish
+	delay 3
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 7
+	delay 11
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, 0, 10
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	blendoff
+	end
+
+@ Credits: pokeemerald-expansion
+gMoveAnim_FLAME_BURST::	
+	loadspritegfx ANIM_TAG_SMALL_EMBER
+	loadspritegfx ANIM_TAG_EXPLOSION
+	playsewithpan SE_M_FLAME_WHEEL, SOUND_PAN_ATTACKER
+	createsprite gFlamethrowerFireSpriteTemplate, ANIM_TARGET, 2, 0, 0, 0, 0, 20
+	delay 18
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 2, 2, 0, 12, RGB_RED
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 4, 0, 16, 1
+	playsewithpan SE_M_SELF_DESTRUCT, SOUND_PAN_TARGET
+	createsprite gExplosionSpriteTemplate, ANIM_TARGET, 6, 0, 0, ANIM_TARGET, TRUE
+	call FireSpreadEffectLong
+	delay 3
+	playsewithpan SE_M_SELF_DESTRUCT, SOUND_PAN_TARGET
+	createsprite gExplosionSpriteTemplate, ANIM_TARGET, 6, 14, -14, ANIM_TARGET, TRUE
+	end
+
+@ Credits: Skeli
+gMoveAnim_SLUDGE_WAVE::
+	panse_1B SE_M_WHIRLPOOL, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 2, 0
+	createvisualtask AnimTask_CreateSurfWave, 2, 2
+	end
+
+@ Credits: Skeli
+gMoveAnim_QUIVER_DANCE::
+	loadspriteimg ANIM_TAG_HOLLOW_ORB
+	loadspritepal ANIM_TAG_CIRCLE_OF_LIGHT @ White color
+	monbg ANIM_ATTACKER
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 0, 10, RGB(13, 31, 13) @ Green color
+	waitforvisualfinish
+	createvisualtask AnimTask_QuiverDanceWaver, 5
+	playsewithpan SE_M_TELEPORT, SOUND_PAN_ATTACKER
+	delay 8
+	createsprite gQuiverDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 0
+	createsprite gQuiverDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 43
+	createsprite gQuiverDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 85
+	createsprite gQuiverDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 128
+	createsprite gQuiverDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 170
+	createsprite gQuiverDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 213
+	delay 30
+	playsewithpan SE_M_TELEPORT, SOUND_PAN_ATTACKER
+	delay 30
+	playsewithpan SE_M_TELEPORT, SOUND_PAN_ATTACKER
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 10, 0, RGB(13, 31, 13) @ Green color
+	waitforvisualfinish
+	clearmonbg ANIM_ATTACKER
+	end
+
+@ Credits: Lixdel
+gMoveAnim_HEAVY_SLAM::
+	loadspritegfx ANIM_TAG_GRAY_SMOKE
+	loadspriteimg ANIM_TAG_ROUND_SHADOW
+	loadspritepal ANIM_TAG_GUST @ Silver color
+	playsewithpan SE_M_TAKE_DOWN, SOUND_PAN_ATTACKER
+	createsprite gVerticalDipSpriteTemplate, ANIM_ATTACKER, 2, 6, 1, ANIM_ATTACKER
+	delay 7
+	createsprite gHeavySlamMetalBodyUpSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 13, 336
+	waitforvisualfinish
+	delay 47
+	loopsewithpan SE_M_STRENGTH, SOUND_PAN_TARGET, 8, 2
+	createsprite gHeavySlamMetalBodyLandSpriteTemplate, ANIM_TARGET, 3
+	delay 2
+	createvisualtask AnimTask_SquishTarget, 2
+	delay 7
+	createvisualtask AnimTask_HorizontalShake, 5, MAX_BATTLERS_COUNT + 1, 10, 1
+	createvisualtask AnimTask_HorizontalShake, 5, MAX_BATTLERS_COUNT, 10, 1
+	call OctazookaSmoke
+	call OctazookaSmoke
+	end
+
+@ Credits: Lixdel
+gMoveAnim_SYNCHRONOISE::
+	loadspritegfx ANIM_TAG_AIR_WAVE_2
+	loadspriteimg ANIM_TAG_THIN_RING
+	loadspritepal ANIM_TAG_SPARK_2 @ Yellow color
+	loadspritepal ANIM_TAG_WATER_ORB @ Blue color
+	loadspritepal ANIM_TAG_POISON_BUBBLE @ Violet color
+	monbg ANIM_DEF_SIDE
+	monbgprio_2A ANIM_TARGET
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 0, 12, RGB_BLACK
+	waitforvisualfinish
+	panse_1B SE_M_SCREECH, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 2, 0
+	createsprite gSynchronoiseVioletRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, TRUE, 0, 0
+	delay 1
+	createsprite gSynchronoiseBlueRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, TRUE, 0, 0
+	delay 1
+	createsprite gSynchronoiseYellowRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, TRUE, 0, 0
+	delay 37
+	panse_1B SE_M_SCREECH, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 2, 0
+	createsprite gSynchronoiseBlueRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, TRUE, 0, 0
+	delay 1
+	createsprite gSynchronoiseVioletRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, TRUE, 0, 0
+	delay 1
+	createsprite gSynchronoiseYellowRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, TRUE, 0, 0
+	waitforvisualfinish
+	loopsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET, 3, 5
+	createsprite gAirWaveSpreadSpriteTemplate, ANIM_TARGET, 1, 0, -17, -64, 176, 40
+	createsprite gAirWaveSpreadSpriteTemplate, ANIM_TARGET, 1, 0, -17, -192, 240, 40
+	createsprite gAirWaveSpreadSpriteTemplate, ANIM_TARGET, 1, 0, -17, -64, -160, 40
+	createsprite gAirWaveSpreadSpriteTemplate, ANIM_TARGET, 1, 0, -17, -192, -112, 40
+	createsprite gAirWaveSpreadSpriteTemplate, ANIM_TARGET, 1, 0, -17, 160, 48, 40
+	createsprite gAirWaveSpreadSpriteTemplate, ANIM_TARGET, 1, 0, -17, -224, -32, 40
+	createsprite gAirWaveSpreadSpriteTemplate, ANIM_TARGET, 1, 0, -17, 112, -128, 40
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 12, 0, RGB_BLACK
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	end
+
+@ Credits: ghoulslash
+gMoveAnim_ELECTRO_BALL::
+	loadspritegfx ANIM_TAG_SPARK_2
+	loadspriteimg ANIM_TAG_FLASH_CANNON_BALL
+	loadspritegfx ANIM_TAG_CIRCLE_OF_LIGHT @ Also white color
+	monbg ANIM_ATTACKER
+	setalpha 12, 8
+	playsewithpan SE_M_CHARGE, SOUND_PAN_ATTACKER
+	createsprite gGrowingChargeOrbSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 0
+	delay 25
+	playsewithpan SE_M_CHARGE, SOUND_PAN_ATTACKER
+	delay 20
+	playsewithpan SE_M_CHARGE, SOUND_PAN_ATTACKER
+	delay 15
+	playsewithpan SE_M_CHARGE, SOUND_PAN_ATTACKER
+	delay 16
+	loopsewithpan SE_M_CHARGE, SOUND_PAN_ATTACKER, 6, 5
+	waitforvisualfinish
+	createsprite gElectroBallSpriteTemplate, ANIM_TARGET, 2, 16, 16, 8
+	waitforvisualfinish
+	playsewithpan SE_M_SAND_ATTACK, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 4, 0, 8, 1
+	call ElectricityEffect
+	waitforvisualfinish
+	clearmonbg ANIM_ATTACKER
+	blendoff
+	end
+
+@ Credits: Skeli
+gMoveAnim_SOAK::
+	loadspritegfx ANIM_TAG_WATER_ORB
+	monbg ANIM_TARGET
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_WATER_ORB, 2, 10, 10, RGB(10, 21, 28) @ Darken a little the blue
+	panse_1B SE_M_HYDRO_PUMP, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 2, 0
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, -5, 0, -5, FALSE
+	delay 2
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, 5, 0, 6, FALSE
+	delay 2
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, 19, 0, 10, FALSE
+	delay 2
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, -23, 0, -10, FALSE
+	delay 2
+	call FallingWaterOrbs
+	call FallingWaterOrbs
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 1, 5, 16, 1
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 0, 3, 0, 10, RGB(7, 18, 31) @ Blue color
+	waitforvisualfinish
+	clearmonbg ANIM_TARGET
+	end
+
+FallingWaterOrbs::
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, -20, 0, -10, FALSE
+	delay 2
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, 28, 0, 10, FALSE
+	delay 2
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, -10, 0, -5, FALSE
+	delay 2
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, 10, 0, 6, FALSE
+	delay 2
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, 24, 0, 10, FALSE
+	delay 2
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, -32, 0, -10, FALSE
+	delay 2
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, -20, 0, -10, FALSE
+	delay 2
+	createsprite gFallingWaterOrbSpriteTemplate, ANIM_TARGET, 2, 30, 0, 10, FALSE
+	delay 2
+	return
+
+@ Credits: Skeli
+gMoveAnim_FLAME_CHARGE::
+	loadspritegfx ANIM_TAG_SMALL_EMBER
+	loadspritegfx ANIM_TAG_IMPACT
+	monbg ANIM_TARGET
+	loopsewithpan SE_M_FLAME_WHEEL, SOUND_PAN_ATTACKER, 32, 6
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 12, 6, 6, 3
+	call FlamesSwirl
+	delay 9
+	call FlamesSwirl
+	delay 9
+	call FlamesSwirl
+	delay 9
+	call FlamesSwirl
+	delay 9
+	call FlamesSwirl
+	waitforvisualfinish
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 24, 0, FALSE, 5
+	delay 3
+	playsewithpan SE_M_MEGA_KICK2, SOUND_PAN_TARGET
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, 0
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 6, 0, 8, 1
+	call FireSpreadEffect
+	playsewithpan SE_M_FIRE_PUNCH, SOUND_PAN_TARGET
+	waitforvisualfinish
+	delay 8
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 7
+	waitforvisualfinish
+	clearmonbg ANIM_TARGET
+	end
+
+FlamesSwirl::
+	createsprite gFloatingFlameSpriteTemplate, ANIM_ATTACKER, 2, 0, -24, 8, 140, TRUE
+	return
+
+@ Credits: Skeli
+gMoveAnim_COIL::
+	loadspritegfx ANIM_TAG_TENDRILS
+	loopsewithpan SE_M_SCRATCH, SOUND_PAN_ATTACKER, 6, 4
+	createsprite gConstrictBindingSpriteTemplate, ANIM_ATTACKER, 4, 0, 16, 0, 2
+	delay 7
+	createsprite gConstrictBindingSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, 0, 2
+	createsprite gConstrictBindingSpriteTemplate, ANIM_ATTACKER, 2, 0, 8, 1, 2
+	delay 7
+	createsprite gConstrictBindingSpriteTemplate, ANIM_ATTACKER, 3, 0, -8, 1, 2
+	delay 8
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 3, 0, 6, 1
+	delay 20
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 4, 0, 5, 1
+	createvisualtask AnimTask_StretchBattlerUp, 3, ANIM_ATTACKER
+	playsewithpan SE_M_BIND, SOUND_PAN_ATTACKER
+	setargret -1 @ Signal given to advance the anim to the next step
+	end
+
+@ Credits: Skeli
+gMoveAnim_LOW_SWEEP::
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 24, 6, 1, 5
+	goto gMoveAnim_LOW_KICK
+
+@ Credits: Skeli
+gMoveAnim_ACID_SPRAY::
+	loadspriteimg ANIM_TAG_POISON_BUBBLE
+	loadspritepal ANIM_TAG_RAZOR_LEAF @ Green color
+	monbg ANIM_DEF_SIDE
+	createsprite gGreenAcidPoisonBubbleSpriteTemplate, ANIM_TARGET, 2, 20, 0, 40, TRUE, 0, 0, FALSE
+	playsewithpan SE_M_BUBBLE3, SOUND_PAN_ATTACKER
+	delay 5
+	createsprite gGreenAcidPoisonBubbleSpriteTemplate, ANIM_TARGET, 2, 20, 0, 40, TRUE, 24, 0, FALSE
+	playsewithpan SE_M_BUBBLE3, SOUND_PAN_ATTACKER
+	delay 5
+	createsprite gGreenAcidPoisonBubbleSpriteTemplate, ANIM_TARGET, 2, 20, 0, 40, TRUE, -24, 0, FALSE
+	playsewithpan SE_M_BUBBLE3, SOUND_PAN_ATTACKER
+	delay 15
+	createvisualtask AnimTask_ShakeMon2, 5, ANIM_TARGET, 2, 0, 10, 1
+	createsprite gGreenAcidPoisonDropletSpriteTemplate, ANIM_TARGET, 2, 0, -22, 0, 55, FALSE
+	playsewithpan SE_M_BUBBLE, SOUND_PAN_TARGET
+	delay 10
+	createsprite gGreenAcidPoisonDropletSpriteTemplate, ANIM_TARGET, 2, -10, -24, 0, 55, FALSE
+	playsewithpan SE_M_BUBBLE, SOUND_PAN_TARGET
+	delay 10
+	createsprite gGreenAcidPoisonDropletSpriteTemplate, ANIM_TARGET, 2, 15, -11, 0, 50, FALSE
+	playsewithpan SE_M_BUBBLE, SOUND_PAN_TARGET
+	delay 10
+	createsprite gGreenAcidPoisonDropletSpriteTemplate, ANIM_TARGET, 2, -15, -17, 0, 45, FALSE
+	playsewithpan SE_M_BUBBLE, SOUND_PAN_TARGET
+	delay 10
+	createsprite gGreenAcidPoisonDropletSpriteTemplate, ANIM_TARGET, 2, 10, -22, 0, 50, FALSE
+	playsewithpan SE_M_BUBBLE, SOUND_PAN_TARGET
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	end
+
+@ Credits: ghoulslash and Skeli
+gMoveAnim_FOUL_PLAY::
+	loadspriteimg ANIM_TAG_IMPACT
+	loadspritepal ANIM_TAG_HANDS_AND_FEET @ Black color
+	loadspriteimg ANIM_TAG_THIN_RING
+	loadspritepal ANIM_TAG_POISON_BUBBLE @ Purple color
+	monbg ANIM_DEF_SIDE
+	createsprite gHorizontalLungeSpriteTemplate, ANIM_ATTACKER, 2, 4, 4
+	delay 6
+	playsewithpan SE_M_VITAL_THROW, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 4, 0, 10, 1
+	createsprite gBlackHitSplatSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, ANIM_TARGET, 0
+	createsprite gPurpleThinRingSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, TRUE
+	delay 8
+	playsewithpan SE_M_COMET_PUNCH, SOUND_PAN_TARGET
+	createsprite gPurpleThinRingSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, TRUE
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	end
+
+@ Credits: Lixdel
+gMoveAnim_SIMPLE_BEAM::
+	loadspriteimg ANIM_TAG_GOLD_RING
+	loadspriteimg ANIM_TAG_THIN_RING
+	loadspritepal ANIM_TAG_ROCKS @ Brown color
+	loadspritepal ANIM_TAG_PINK_PETAL @ Pink color
+	monbg ANIM_TARGET
+	splitbgprio ANIM_TARGET
+	setalpha 8, 8
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 0, 12, RGB_BLACK
+	waitforvisualfinish
+	playsewithpan SE_M_BUBBLE_BEAM, SOUND_PAN_TARGET
+	call SimpleBeam1
+	call SimpleBeam1
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_TARGET, 2, 0, 9, RGB_WHITE
+	createvisualtask AnimTask_SwayMon, 5, 0, 6, 2048, 4, ANIM_TARGET, TRUE
+	call SimpleBeam2
+	call SimpleBeam2
+	call SimpleBeam2
+	call SimpleBeam2
+	call SimpleBeam2
+	createsprite gBrownThinRingSpriteTemplate, ANIM_TARGET, 3, 0, 0, ANIM_TARGET, TRUE, RGB_RED, 8
+	delay 2
+	createsprite gPinkThinRingSpriteTemplate, ANIM_TARGET, 3, 0, 0, ANIM_TARGET, TRUE, RGB_RED, 8
+	delay 2
+	stopsound
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_TARGET, 2, 9, 0, RGB_WHITE
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 12, 0, RGB_BLACK
+	waitforvisualfinish
+	clearmonbg ANIM_TARGET
+	blendoff
+	end
+
+SimpleBeam1::
+	createsprite gSimpleBeamBrownRingSpriteTemplate, ANIM_TARGET, 2, 16, 0, 0, 0, 13, 0
+	delay 2
+	createsprite gSimpleBeamPinkRingSpriteTemplate, ANIM_TARGET, 3, 0, 0, 1, 0, 31, 8
+	delay 2
+	return
+
+SimpleBeam2::
+	createsprite gSimpleBeamBrownRingSpriteTemplate, ANIM_TARGET, 2, 16, 0, 0, 0, 13, 0
+	createsprite gBrownThinRingSpriteTemplate, ANIM_TARGET, 3, 0, 0, ANIM_TARGET, TRUE, RGB_RED, 8
+	delay 2
+	createsprite gSimpleBeamPinkRingSpriteTemplate, ANIM_TARGET, 2, 16, 0, 0, 0, 13, 0
+	createsprite gPinkThinRingSpriteTemplate, ANIM_TARGET, 3, 0, 0, ANIM_TARGET, TRUE, RGB_RED, 8
+	delay 2
+	return
+
+@ Credits: Skeli
+gMoveAnim_ENTRAINMENT::
+	createvisualtask AnimTask_TeeterDanceMovement, 5
+	playsewithpan SE_M_TEETER_DANCE, SOUND_PAN_ATTACKER
+	delay 24
+	playsewithpan SE_M_TEETER_DANCE, SOUND_PAN_ATTACKER
+	delay 24
+	playsewithpan SE_M_TEETER_DANCE, SOUND_PAN_ATTACKER
+	delay 24
+	playsewithpan SE_M_TEETER_DANCE, SOUND_PAN_ATTACKER
+	delay 24
+	playsewithpan SE_M_TEETER_DANCE, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 3, 0, 31, 1
+	end
+
+@ Credits: Lixdel
+gMoveAnim_AFTER_YOU::
+	loadspriteimg ANIM_TAG_ANGER
+	loadspritepal ANIM_TAG_CIRCLE_OF_LIGHT @ Green color
+	createvisualtask AnimTask_SwayMon, 5, 1, 15, 1536, 2, ANIM_ATTACKER, TRUE
+	delay 1
+	createsprite gGreenAngerMarkSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -20, -32
+	createsprite gGreenAngerMarkSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -5, -27
+	playsewithpan SE_M_SWAGGER2, SOUND_PAN_ATTACKER
+	delay 20
+	createsprite gGreenAngerMarkSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 20, -32
+	createsprite gGreenAngerMarkSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 35, -27
+	playsewithpan SE_M_SWAGGER2, SOUND_PAN_ATTACKER
+	end
+
+@ Credits: Lixdel
+gMoveAnim_ROUND::
+	loadspritegfx ANIM_TAG_THIN_RING
+	loadspritegfx ANIM_TAG_MUSIC_NOTES
+	monbg ANIM_DEF_SIDE
+	createsprite gHyperVoiceRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, TRUE, 0, 0
+	createvisualtask AnimTask_MusicNotesRainbowBlend, 2
+	panse_1B SE_M_SING, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 2, 0
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 7, 0, 12
+	delay 5
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 6, 1, 12
+	delay 5
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 1, 2, 12
+	delay 5
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 2, 3, 12
+	delay 5
+	createsprite gHyperVoiceRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, TRUE, 0, 0
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 3, 0, 12
+	delay 4
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 2, 1, 12
+	delay 4
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 5, 2, 12
+	delay 4
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 6, 3, 12
+	delay 4
+	createsprite gHyperVoiceRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, TRUE, 0, 0
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 2, 0, 12
+	delay 4
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 2, 1, 12
+	delay 4
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 1, 2, 12
+	delay 4
+	createsprite gWavyMusicNotesSpriteTemplate, ANIM_TARGET, 2, 5, 3, 12
+	waitforvisualfinish
+	createvisualtask AnimTask_MusicNotesClearRainbowBlend, 2
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
 	end

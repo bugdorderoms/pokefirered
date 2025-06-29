@@ -192,6 +192,17 @@ enum
     EFFECT_AUTOTOMIZE,
     EFFECT_TELEKINESIS,
     EFFECT_MAGIC_ROOM,
+    EFFECT_FLAME_BURST,
+    EFFECT_QUIVER_DANCE,
+    EFFECT_HEAT_CRASH,
+    EFFECT_SYNCHRONOISE,
+    EFFECT_ELECTRO_BALL,
+    EFFECT_SOAK,
+    EFFECT_COIL,
+    EFFECT_FOUL_PLAY,
+    EFFECT_ENTRAINMENT,
+    EFFECT_AFTER_YOU,
+    EFFECT_ROUND,
     EFFECTS_COUNT,
 };
 
@@ -215,17 +226,11 @@ enum
 #define EFFECT_FLINCH_MINIMIZE_HIT 150
 #define EFFECT_HEX                          217
 #define EFFECT_ACROBATICS                   220
-#define EFFECT_HEAT_CRASH                   221
 #define EFFECT_STORED_POWER                 223
-#define EFFECT_ELECTRO_BALL                 224
 #define EFFECT_ECHOED_VOICE                 226
-#define EFFECT_ROUND                        228
 #define EFFECT_RETALIATE                    231
 #define EFFECT_BULLDOZE                     232
-#define EFFECT_FOUL_PLAY                    233
 #define EFFECT_STICKY_WEB                   254
-#define EFFECT_SIMPLE_BEAM                  259
-#define EFFECT_ENTRAINMENT                  260
 #define EFFECT_HEAL_PULSE                   261
 #define EFFECT_QUASH                        262
 #define EFFECT_ION_DELUGE                   263
@@ -238,13 +243,9 @@ enum
 #define EFFECT_ATTACK_SPATK_UP              271
 #define EFFECT_HURRICANE                    272
 #define EFFECT_TWO_TYPED_MOVE               273
-#define EFFECT_SPEED_UP_HIT                 275
-#define EFFECT_QUIVER_DANCE                 276
-#define EFFECT_COIL                         277
 #define EFFECT_ELECTRIFY                    278
 #define EFFECT_SCALD                        279
 #define EFFECT_REFLECT_TYPE                 280
-#define EFFECT_SOAK                         281
 #define EFFECT_SHELL_SMASH                  288
 #define EFFECT_SHIFT_GEAR                   289
 #define EFFECT_DEFENSE_UP_3                 290
@@ -255,10 +256,6 @@ enum
 #define EFFECT_HIT_SWITCH_TARGET            295
 #define EFFECT_FINAL_GAMBIT                 296
 #define EFFECT_HIT_ENEMY_HEAL_ALLY          301
-#define EFFECT_SMACK_DOWN                   302
-#define EFFECT_SYNCHRONOISE                 303
-#define EFFECT_FLAME_BURST                  306
-#define EFFECT_AFTER_YOU                    307
 #define EFFECT_BESTOW                       308
 #define EFFECT_ROTOTILLER                   309
 #define EFFECT_FLOWER_SHIELD                310
@@ -337,7 +334,6 @@ enum
 #define EFFECT_DAMAGE_SET_TERRAIN           388 // genesis supernova
 #define EFFECT_PLEDGE                       390
 #define EFFECT_FUSION_COMBO                 393
-#define EFFECT_ALWAYS_CRIT 397
 #define EFFECT_FELL_STINGER 400
 #define EFFECT_INFERNAL_PARADE 401
 #define EFFECT_PLACEHOLDER 0

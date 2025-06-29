@@ -972,7 +972,11 @@ bool32 DoEndTurnEffects(void)
                 {
                     if (gDisableStructs[i].destinyBondCounter)
                         --gDisableStructs[i].destinyBondCounter;
+                    
+                    gBattleMons[i].status2 &= ~(STATUS2_TURN_ORDER_LOCKED);
                 }
+                gBattleStruct->roundUsed = FALSE;
+                
                 ++gBattleStruct->turnEffectsTracker;
                 break;
             case ENDTURN_WEATHER_ENDS:
@@ -5029,7 +5033,7 @@ u32 CountBattlerStatIncreases(u32 battlerId, bool32 countEvasionAccuracy)
 
 bool32 IsBattlerGrounded(u32 battlerId)
 {
-    if ((gStatuses3[battlerId] & STATUS3_ROOTED) || (gFieldStatus & STATUS_FIELD_GRAVITY))
+    if ((gStatuses3[battlerId] & (STATUS3_ROOTED | STATUS3_SMACKED_DOWN)) || (gFieldStatus & STATUS_FIELD_GRAVITY))
         return TRUE;
     else if (GetBattlerAbility(battlerId) == ABILITY_LEVITATE || IsBattlerOfType(battlerId, TYPE_FLYING) || (gStatuses3[battlerId] & (STATUS3_TELEKINESIS | STATUS3_MAGNET_RISE)))
         return FALSE;
@@ -5860,7 +5864,7 @@ bool32 IsBattlerProtectedByFlowerVeil(u32 battlerId)
     return FALSE;
 }
 
-void GetBattlerTypes(u32 battlerId, u8 *types)
+void GetBattlerTypes(u32 battlerId, u32 *types)
 {
     types[0] = gBattleMons[battlerId].type1;
     types[1] = gBattleMons[battlerId].type2;
@@ -5880,7 +5884,7 @@ void GetBattlerTypes(u32 battlerId, u8 *types)
 
 u32 GetBattlerType(u32 battlerId, u32 index)
 {
-    u8 types[3];
+    u32 types[3];
     GetBattlerTypes(battlerId, types);
     return types[index - 1];
 }
@@ -5903,6 +5907,25 @@ void SetBattlerInitialTypes(u32 battlerId)
 {
     u32 species = gBattleMons[battlerId].species;
     SetBattlerTypesInternal(battlerId, gSpeciesInfo[species].types[0], gSpeciesInfo[species].types[1]);
+}
+
+bool32 DoBattlersShareType(u32 battler1, u32 battler2)
+{
+    u32 i, j;
+    u32 battler1Types[3], battler2Types[3];
+    
+    GetBattlerTypes(battler1, battler1Types);
+    GetBattlerTypes(battler2, battler2Types);
+    
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
+            if (battler1Types[i] != TYPE_MYSTERY && battler2Types[j] != TYPE_MYSTERY && battler1Types[i] == battler2Types[j])
+                return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 // Attacker copy Defender's crit modifiers

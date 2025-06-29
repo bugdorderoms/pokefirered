@@ -244,9 +244,8 @@ struct MoveFlags
     /*0x04*/ bool8 forbiddenSleepTalk:1; // A move with this flag can't be executed by Sleep Talk.
     /*0x04*/ bool8 forbiddenCopycat:1; // A move with this flag can't be copied by Copycat.
     /*0x04*/ bool8 forbiddenInstruct:1; // A move with this flag can't be executed by Instruct.
-    /*0x04*/ bool8 hasQuietBGM:1; // A move with this flag will have a quiet BGM on its battle anim.
     /*0x04*/ bool8 forcePressure:1; // A move with this flag will force the extra PP consuption from Pressure.
-    /*0x04*/ bool8 unused:3;
+    /*0x04*/ bool8 unused:4;
     // end of byte
 };
 
@@ -294,6 +293,7 @@ struct BattleMove
                 u16 stringId;
                 u16 abilityId;
                 u16 split;
+                u16 type;
                 u16 holdEffect;
                 u16 healReplacementCase;
              } argument;

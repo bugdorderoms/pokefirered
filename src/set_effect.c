@@ -82,6 +82,7 @@ static const u8 *const sMoveEffectBS_Ptrs[] =
     [MOVE_EFFECT_STEAL_ITEM]         = BattleScript_MoveEffectItemSteal,
     [MOVE_EFFECT_CLEAR_HAZARDS]      = BattleScript_MoveEffectClearHazards,
     [MOVE_EFFECT_KNOCK_OFF]          = BattleScript_MoveEffectKnockOff,
+    [MOVE_EFFECT_SMACK_DOWN]         = BattleScript_MoveEffectSmackDown,
 };
 
 static const u8 sTriAttackEffects[] =
@@ -439,6 +440,14 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
                     
                     effect = 2;
                 }
+            }
+            break;
+        case MOVE_EFFECT_SMACK_DOWN:
+            if (!IsBattlerGrounded(gEffectBattler))
+            {
+                gStatuses3[gEffectBattler] |= STATUS3_SMACKED_DOWN;
+                gStatuses3[gEffectBattler] &= ~(STATUS3_ON_AIR | STATUS3_MAGNET_RISE | STATUS3_TELEKINESIS);
+                effect = 2;
             }
             break;
     }

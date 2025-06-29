@@ -51,8 +51,9 @@
 	.byte \fadeToBg
 	.endm
 
-	.macro hang2
+	.macro setbgmvolume volume:req
 	.byte 0x7
+	.byte \volume
 	.endm
 
 	.macro end

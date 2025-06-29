@@ -925,8 +925,6 @@ const u32 gBattleAnimBgTilemap_InAir[] = INCBIN_U32("graphics/battle_anims/backg
 const u32 gBattleAnimSpriteGfx_Protect[] = INCBIN_U32("graphics/battle_anims/sprites/protect.4bpp.lz");
 const u32 gBattleAnimSpritePal_Protect[] = INCBIN_U32("graphics/battle_anims/sprites/protect.gbapal.lz");
 
-const u32 gBattleAnimBgPalette_MuddyWater[] = INCBIN_U32("graphics/battle_anims/backgrounds/water_muddy.gbapal.lz");
-
 const u32 gFile_graphics_battle_interface_enemy_mon_shadow_sheet[] = INCBIN_U32("graphics/battle_interface/enemy_mon_shadows_sized.4bpp.lz");
 
 const u32 gFile_graphics_battle_interface_ball_status_bar_sheet[] = INCBIN_U32("graphics/battle_interface/ball_status_bar.4bpp.lz");
@@ -993,6 +991,9 @@ const u32 gBattleAnimBgPalette_Surf[] = INCBIN_U32("graphics/battle_anims/backgr
 
 const u32 gBattleAnimBgTilemap_SurfOpponent[] = INCBIN_U32("graphics/battle_anims/backgrounds/surf_opponent.bin.lz");
 const u32 gBattleAnimBgTilemap_SurfPlayer[] = INCBIN_U32("graphics/battle_anims/backgrounds/surf_player.bin.lz");
+
+const u32 gBattleAnimBgPalette_MuddyWater[] = INCBIN_U32("graphics/battle_anims/backgrounds/water_muddy.gbapal.lz");
+const u32 gBattleAnimBgPalette_SludgeWave[] = INCBIN_U32("graphics/battle_anims/backgrounds/water_sludge.gbapal.lz");
 
 const u32 gBattleAnimBgImage_Water[] = INCBIN_U32("graphics/battle_anims/backgrounds/water.4bpp.lz");
 const u32 gBattleAnimBgPalette_Water[] = INCBIN_U32("graphics/battle_anims/backgrounds/water.gbapal.lz");

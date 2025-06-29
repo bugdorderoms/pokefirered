@@ -1,17 +1,7 @@
 #ifndef GUARD_BATTLE_GIMMICKS_H
 #define GUARD_BATTLE_GIMMICKS_H
 
-// Gimmicks
-enum
-{
-    GIMMICK_NONE,
-    GIMMICK_MEGA,
-    GIMMICK_ULTRA_BURST,
-    GIMMICK_Z_MOVE,
-    GIMMICK_DYNAMAX,
-    GIMMICK_TERA,
-    GIMMICKS_COUNT
-};
+#include "constants/battle_gimmicks.h"
 
 // Indicators. Some gimmicks doesn't have an indicator sprite
 enum

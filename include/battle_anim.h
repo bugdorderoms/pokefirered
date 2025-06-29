@@ -477,8 +477,6 @@ void AnimDirtScatter(struct Sprite *sprite);
 void AnimGeyserSprite(struct Sprite *sprite);
 
 // dragon.c
-void AnimTask_DragonDanceWaver(u32 taskId);
-
 void AnimOutrageFlame(struct Sprite *sprite);
 
 // ghost.c
@@ -591,6 +589,7 @@ void AnimTask_MoveHeatWaveTargets(u32 taskId);
 void AnimFireSpiralInward(struct Sprite *sprite);
 void UpdateFireRingCircleOffset(struct Sprite *sprite, s16 addrX, s16 addrY, s8 speed);
 void AnimFireSpiralOutward(struct Sprite *sprite);
+void AnimFireSpread(struct Sprite *sprite);
 
 // water.c
 extern const union AffineAnimCmd *const gAffineAnims_Bubble[];

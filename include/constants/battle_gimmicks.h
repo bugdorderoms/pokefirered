@@ -1,0 +1,13 @@
+#ifndef GUARD_CONSTANTS_BATTLE_GIMMICKS_H
+#define GUARD_CONSTANTS_BATTLE_GIMMICKS_H
+
+// Gimmicks
+#define GIMMICK_NONE        0
+#define GIMMICK_MEGA        1
+#define GIMMICK_ULTRA_BURST 2
+#define GIMMICK_Z_MOVE      3
+#define GIMMICK_DYNAMAX     4
+#define GIMMICK_TERA        5
+#define GIMMICKS_COUNT      6
+
+#endif // GUARD_CONSTANTS_BATTLE_GIMMICKS_H

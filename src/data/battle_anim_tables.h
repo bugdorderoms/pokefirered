@@ -203,7 +203,6 @@ const struct BattleAnimTable gBattleAnims_General[] =
     {
         .script = gGeneralAnim_Commander,
         .shouldBePlayed = TRUE,
-        .ignoreSubstitute = TRUE,
         .substituteRecede = TRUE,
     },
     [B_ANIM_UPDATE_ABILITY_POP_UP] =

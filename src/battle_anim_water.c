@@ -547,6 +547,17 @@ const struct SpriteTemplate gBeesTrapSpriteTemplate =
     .callback = AnimParticleInVortex,
 };
 
+const struct SpriteTemplate gFallingWaterOrbSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_WATER_ORB,
+    .paletteTag = ANIM_TAG_WATER_ORB,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimFallingRock,
+};
+
 // Creates the Rain Dance's water drop sprites or the ion sprite in Ion Deluge's anim.
 // arg 0: which sprite to create
 // arg 1: creation delay
@@ -832,9 +843,10 @@ static void AnimSmallBubblePair_Step(struct Sprite *sprite)
 }
 
 // Creates the Surf wave that surrounds the battle field.
-// arg 0 are:
+// arg 0 is:
 // 0 = Surf palette
 // 1 = Muddy Water palette
+// 2 = Sludge Wave palette
 void AnimTask_CreateSurfWave(u32 taskId)
 {
     struct BattleAnimBgData animBg;
@@ -859,6 +871,9 @@ void AnimTask_CreateSurfWave(u32 taskId)
             break;
         case 1:
             LoadCompressedPalette(gBattleAnimBgPalette_MuddyWater, animBg.paletteId * 16, 32);
+            break;
+        case 2:
+            LoadCompressedPalette(gBattleAnimBgPalette_SludgeWave, animBg.paletteId * 16, 32);
             break;
     }
     taskId2 = CreateTask(AnimTask_SurfWaveScanlineEffect, gTasks[taskId].priority + 1);
