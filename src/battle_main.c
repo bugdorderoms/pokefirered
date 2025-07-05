@@ -36,7 +36,9 @@
 #include "roamer.h"
 #include "wild_encounter.h"
 #include "safari_zone.h"
+#include "test_runner.h"
 #include "scanline_effect.h"
+#include "recorded_battle.h"
 #include "task.h"
 #include "trig.h"
 #include "vs_seeker.h"
@@ -480,7 +482,9 @@ static void (*const sEndTurnFuncsTable[])(void) =
 
 void CB2_InitBattle(void)
 {
-    MoveSaveBlocks_ResetHeap();
+    if (!gTestRunnerEnabled)
+        MoveSaveBlocks_ResetHeap();
+    
     AllocateBattleResources();
     AllocateBattleSpritesData();
     AllocateMonSpritesGfx();
@@ -539,19 +543,19 @@ static void CB2_InitBattleInternal(void)
     gBattle_BG3_Y = 0;
     
     gAbsentBattlerFlags = 0;
-    gBattleTerrain = BattleSetup_GetTerrainId();
+    gBattleTerrain = (gBattleTypeFlags & BATTLE_TYPE_RECORDED) ? BATTLE_TERRAIN_BUILDING : BattleSetup_GetTerrainId();
     InitBattleBgsVideo();
     LoadBattleTextboxAndBackground();
     ResetSpriteData();
     ResetTasks();
     DrawBattleEntryBackground();
     FreeAllSpritePalettes();
-    gReservedSpritePaletteCount = 4;
+    gReservedSpritePaletteCount = MAX_BATTLERS_COUNT;
     SetVBlankCallback(VBlankCB_Battle);
     SetUpBattleVars();
     SetMainCallback2((gBattleTypeFlags & BATTLE_TYPE_MULTI) ? CB2_HandleStartMultiBattle : CB2_HandleStartBattle);
     
-    if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
+    if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
     {
         CreateNPCTrainerParty(gTrainerBattleOpponent_A);
         CalculateEnemyPartyCount();
@@ -703,7 +707,9 @@ static void CB2_HandleStartBattle(void)
         }
         else
         {
-            gBattleTypeFlags |= BATTLE_TYPE_IS_MASTER;
+            if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
+                gBattleTypeFlags |= BATTLE_TYPE_IS_MASTER;
+            
             gBattleCommunication[MULTIUSE_STATE] = 15;
         }
         break;
@@ -1157,12 +1163,23 @@ void BattleMainCB2(void)
     DNSApplyFilters(sCombatPalExceptions, NULL, 0); // Don't need define battle palette tag since none battle sprite was affected by dns.
 #endif
     
-    if ((gBattleTypeFlags & BATTLE_TYPE_POKEDUDE) && JOY_HELD(B_BUTTON))
+    if (JOY_HELD(B_BUTTON))
     {
-        gSpecialVar_Result = gBattleOutcome = B_OUTCOME_DREW;
-        ResetPaletteFade();
-        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
-        SetMainCallback2(CB2_QuitPokedudeBattle);
+        if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
+        {
+            gSpecialVar_Result = gBattleOutcome = B_OUTCOME_DREW;
+            ResetPaletteFade();
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+            SetMainCallback2(CB2_QuitPokedudeBattle);
+        }
+        else if ((gBattleTypeFlags & BATTLE_TYPE_RECORDED) && RecordedBattle_CanStopPlayback())
+        {
+            // Player pressed B during recorded battle playback, end battle
+            gSpecialVar_Result = gBattleOutcome = B_OUTCOME_PLAYER_TELEPORTED;
+            ResetPaletteFade();
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+            SetMainCallback2(CB2_QuitRecordedBattle);
+        }
     }
 }
 
@@ -1218,6 +1235,24 @@ static void CB2_QuitPokedudeBattle(void)
     
     if (!gPaletteFade.active)
     {
+        FreeRestoreBattleData();
+        FreeAllWindowBuffers();
+        SetMainCallback2(gMain.savedCallback);
+    }
+}
+
+void CB2_QuitRecordedBattle(void)
+{
+    UpdatePaletteFade();
+    
+    if (!gPaletteFade.active)
+    {
+        m4aMPlayStop(&gMPlayInfo_SE1);
+        m4aMPlayStop(&gMPlayInfo_SE2);
+        
+        if (gTestRunnerEnabled)
+            TestRunner_Battle_AfterLastTurn();
+        
         FreeRestoreBattleData();
         FreeAllWindowBuffers();
         SetMainCallback2(gMain.savedCallback);
@@ -1337,7 +1372,9 @@ static u32 CreateNPCTrainerParty(u32 trainerNum)
 void VBlankCB_Battle(void)
 {
 #if NO_SAVE_STATE_RNG_MANIPULATION == FALSE
-    Random(); // Change gRngSeed every vblank.
+    // Change gRngSeed every vblank.
+    if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
+        Random();
 #endif
 
     SetGpuReg(REG_OFFSET_BG0HOFS, gBattle_BG0_X);
@@ -2137,7 +2174,7 @@ static void BattleIntroDrawTrainersOrMonsSprites(void)
                     if (!IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE)
                         HandleSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[battlerId].species), FLAG_SET_SEEN, gBattleMons[battlerId].personality);
                 }
-                else if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LINK | BATTLE_TYPE_OLD_MAN_TUTORIAL)))
+                else if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LINK | BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_RECORDED)))
                         HandleSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[battlerId].species), FLAG_SET_SEEN, gBattleMons[battlerId].personality);
             }
         }
@@ -2472,7 +2509,7 @@ static void TryDoEventsBeforeFirstTurn(void)
                 ++gBattleStruct->firstTurnEventsState;
                 break;
             case FIRST_TURN_EVENT_OVERWORLD_WEATHER:
-                if (TryStartOverworldWeather())
+                if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED) && TryStartOverworldWeather())
                     BattleScriptPushCursorAndCallback(BattleScript_OverworldWeatherStarts);
 
                 ++gBattleStruct->firstTurnEventsState;
@@ -2875,6 +2912,7 @@ static void HandleTurnActionSelectionState(void)
                         gBattleCommunication[battlerId] = STATE_SELECTION_SCRIPT;
                         gBattleStruct->battlers[battlerId].selectionScriptFinished = FALSE;
                         gBattleStruct->battlers[battlerId].stateIdAfterSelScript = STATE_BEFORE_ACTION_CHOSEN;
+                        RecordedBattle_ClearBattlerAction(battlerId, 1);
                         return;
                     }
                     else
@@ -2923,7 +2961,7 @@ static void HandleTurnActionSelectionState(void)
                     MarkBattlerForControllerExec(battlerId);
                     return;
                 }
-                if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && !(gBattleTypeFlags & BATTLE_TYPE_LINK) && gBattleBufferB[battlerId][1] == B_ACTION_RUN)
+                if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)) && gBattleBufferB[battlerId][1] == B_ACTION_RUN)
                 {
                     BattleScriptExecute(BattleScript_PrintCantRunFromTrainer);
                     gBattleCommunication[battlerId] = STATE_BEFORE_ACTION_CHOSEN;
@@ -3567,14 +3605,14 @@ static void HandleEndTurn_BattleWon(void)
     
     CalculatePayDayMoney();
     
-    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
     {
         gBattleTextBuff1[0] = gBattleOutcome;
         gBattlerAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
         gBattlescriptCurrInstr = BattleScript_LinkBattleWonOrLost;
         gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
     }
-    else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
+    else if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
     {
         BattleStopLowHpSound();
         gBattlescriptCurrInstr = BattleScript_LocalTrainerBattleWon;
@@ -3602,7 +3640,7 @@ static void HandleEndTurn_BattleLost(void)
     
     CalculatePayDayMoney();
     
-    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
     {
         gBattleTextBuff1[0] = gBattleOutcome;
         gBattlerAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
@@ -3687,6 +3725,10 @@ static void HandleEndTurn_FinishBattle(void)
                 }
             }
         }
+        
+        if (gTestRunnerEnabled)
+            TestRunner_Battle_AfterLastTurn();
+        
         BeginFastPaletteFade(FAST_FADE_OUT_TO_BLACK);
         FadeOutMapMusic(5);
         
@@ -4107,7 +4149,7 @@ static void HandleAction_Run(void)
     
     gBattlerAttacker = gCurrentTurnActionBattlerId;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
     {
         gCurrentTurnActionNumber = gBattlersCount;
         

@@ -94,10 +94,15 @@
 /* You'll never guess what this one does */
 #define APPEND_SEMICOLON(a) a;
 
+// Calls m0/m1/.../m8 depending on how many arguments are passed.Add commentMore actions
+#define VARARG_8(m, ...) CAT(m, NARG_8(__VA_ARGS__))(__VA_ARGS__)
+#define NARG_8(...) NARG_8_(_, ##__VA_ARGS__, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#define NARG_8_(_, a, b, c, d, e, f, g, h, N, ...) N
+
 /* Concatenates the xth VA_ARG at the end of the string */
 #define CONCAT_HELPER(x, y) x ## y
-#define CONCAT_(x, y) CONCAT_HELPER(x, y)
-#define CONCAT(prefix, name, ...) CONCAT_(CONCAT_(prefix, name), __VA_OPT__(__VA_ARGS__))
+#define CAT(x, y) CONCAT_HELPER(x, y)
+#define CONCAT(prefix, name, ...) CAT(CAT(prefix, name), __VA_OPT__(__VA_ARGS__))
 
 /* Useful for deferring expansion until the second scan. See
  * https://www.scs.stanford.edu/~dm/blog/va-opt.html for more info. */

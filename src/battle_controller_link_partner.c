@@ -10,8 +10,6 @@
 
 static void LinkPartnerBufferRunCommand(u32 battlerId);
 static void LinkPartnerBufferExecCompleted(u32 battlerId);
-static void LinkPartnerHandleLoadMonSprite(u32 battlerId);
-static void LinkPartnerHandleSwitchInAnim(u32 battlerId);
 static void LinkPartnerHandleDrawTrainerPic(u32 battlerId);
 static void LinkPartnerHandleTrainerSlideBack(u32 battlerId);
 static void LinkPartnerHandleIntroTrainerBallThrow(u32 battlerId);
@@ -30,13 +28,13 @@ static void (*const sLinkPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_FAINTANIMATION]           = BtlController_HandleFaintAnimation,
     [CONTROLLER_BALLTHROWANIM]            = BattleControllerComplete,
     [CONTROLLER_MOVEANIMATION]            = BtlController_HandleMoveAnimation,
-    [CONTROLLER_PRINTSTRING]              = PlayerHandlePrintString,
+    [CONTROLLER_PRINTSTRING]              = BtlController_HandlePrintString,
     [CONTROLLER_PRINTSELECTIONSTRING]     = BattleControllerComplete,
     [CONTROLLER_CHOOSEACTION]             = BattleControllerComplete,
     [CONTROLLER_CHOOSEMOVE]               = BattleControllerComplete,
     [CONTROLLER_OPENBAG]                  = BattleControllerComplete,
     [CONTROLLER_CHOOSEPOKEMON]            = BattleControllerComplete,
-    [CONTROLLER_HEALTHBARUPDATE]          = OpponentHandleHealthbarUpdate,
+    [CONTROLLER_HEALTHBARUPDATE]          = BtlController_HandleHealthbarUpdateNoHpText,
     [CONTROLLER_EXPUPDATE]                = BattleControllerComplete,
     [CONTROLLER_STATUSICONUPDATE]         = BtlController_HandleStatusIconUpdate,
     [CONTROLLER_STATUSANIMATION]          = BtlController_HandleStatusAnimation,
@@ -95,7 +93,7 @@ static void LinkPartnerBufferExecCompleted(u32 battlerId)
 // BATTLE CONTROLLERS //
 ////////////////////////
 
-static void LinkPartnerHandleLoadMonSprite(u32 battlerId)
+void LinkPartnerHandleLoadMonSprite(u32 battlerId)
 {
     BtlController_HandleLoadMonSprite(battlerId, FALSE, WaitForMonAnimAfterLoad);
 }
@@ -148,47 +146,31 @@ static void SwitchIn_TryShinyAnim(u32 battlerId)
     }
 }
 
-static void LinkPartnerHandleSwitchInAnim(u32 battlerId)
+void LinkPartnerHandleSwitchInAnim(u32 battlerId)
 {
     BtlController_HandleSwitchInAnim(battlerId, TRUE, SwitchIn_TryShinyAnim);
 }
 
 static u32 GetLinkPartnerTrainerPicId(u32 battlerId)
 {
-    u32 playerId = GetBattlerMultiplayerId(battlerId);
-    
-    if ((gLinkPlayers[playerId].version & 0xFF) == VERSION_RUBY || (gLinkPlayers[playerId].version & 0xFF) == VERSION_SAPPHIRE
-     || (gLinkPlayers[playerId].version & 0xFF) == VERSION_EMERALD)
-        return gLinkPlayers[playerId].gender + TRAINER_BACK_PIC_RS_BRENDAN;
-    else
-        return gLinkPlayers[playerId].gender + TRAINER_BACK_PIC_RED;
+    return GetPlayerTrainerPicId(GetBattlerMultiplayerId(battlerId));
 }
 
 static void LinkPartnerHandleDrawTrainerPic(u32 battlerId)
 {
     s16 xPos;
-    u32 trainerPicId = GetLinkPartnerTrainerPicId(battlerId);
 
     if ((GetBattlerPosition(battlerId) & BIT_FLANK) != B_FLANK_LEFT) // Second mon, on the right.
         xPos = 90;
     else // First mon, on the left.
         xPos = 32;
     
-    BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, FALSE, xPos, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80, GetBattlerSpriteSubpriority(battlerId));
+    BtlController_HandleDrawTrainerPic(battlerId, GetLinkPartnerTrainerPicId(battlerId), xPos, GetBattlerSpriteSubpriority(battlerId));
 }
 
 static void LinkPartnerHandleTrainerSlideBack(u32 battlerId)
 {
     BtlController_HandleTrainerSlideBack(battlerId, 35, FALSE);
-}
-
-static void Intro_DelayAndEnd(u32 battlerId)
-{
-    if (--gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay == 0xFF)
-    {
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay = 0;
-        BattleControllerComplete(battlerId);
-    }
 }
 
 static void Intro_WaitForHealthbox(u32 battlerId)

@@ -128,3 +128,4 @@
 	.include "src/sliding_puzzles.o"
 	.include "src/map_name_popup.o"
 	.include "src/voltorb_flip.o"
+	.include "src/recorded_battle.o"

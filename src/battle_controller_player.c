@@ -37,7 +37,6 @@ static void PlayerHandleLoadMonSprite(u32 battlerId);
 static void PlayerHandleSwitchInAnim(u32 battlerId);
 static void PlayerHandleTrainerSlide(u32 battlerId);
 static void PlayerHandleTrainerSlideBack(u32 battlerId);
-static void PlayerHandleChoosePokemon(u32 battlerId);
 static void PlayerHandleTwoReturnValues(u32 battlerId);
 static void PlayerHandleChosenMonReturnValue(u32 battlerId);
 static void PlayerHandleOneReturnValue(u32 battlerId);
@@ -75,13 +74,13 @@ static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_FAINTANIMATION]           = BtlController_HandleFaintAnimation,
     [CONTROLLER_BALLTHROWANIM]            = PlayerHandleBallThrowAnim,
     [CONTROLLER_MOVEANIMATION]            = BtlController_HandleMoveAnimation,
-    [CONTROLLER_PRINTSTRING]              = PlayerHandlePrintString,
-    [CONTROLLER_PRINTSELECTIONSTRING]     = PlayerHandlePrintSelectionString,
+    [CONTROLLER_PRINTSTRING]              = BtlController_HandlePrintString,
+    [CONTROLLER_PRINTSELECTIONSTRING]     = BtlController_HandlePrintSelectionString,
     [CONTROLLER_CHOOSEACTION]             = PlayerHandleChooseAction,
     [CONTROLLER_CHOOSEMOVE]               = PlayerHandleChooseMove,
     [CONTROLLER_OPENBAG]                  = PlayerHandleChooseItem,
     [CONTROLLER_CHOOSEPOKEMON]            = PlayerHandleChoosePokemon,
-    [CONTROLLER_HEALTHBARUPDATE]          = PlayerHandleHealthbarUpdate,
+    [CONTROLLER_HEALTHBARUPDATE]          = BtlController_HandleHealthbarUpdateWithHpText,
     [CONTROLLER_EXPUPDATE]                = BtlController_HandleExpUpdate,
     [CONTROLLER_STATUSICONUPDATE]         = BtlController_HandleStatusIconUpdate,
     [CONTROLLER_STATUSANIMATION]          = BtlController_HandleStatusAnimation,
@@ -197,19 +196,16 @@ static void PlayerHandleSwitchInAnim(u32 battlerId)
     gBattleStruct->battlers[battlerId].moveSelectionCursor = 0;
 }
 
-static u32 GetPlayerTrainerPicId(void)
+u32 GetPlayerTrainerPicId(u32 multiplayerId)
 {
-    u8 playerId;
-    
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
-        playerId = GetMultiplayerId();
+        u32 gameVersion = (gLinkPlayers[multiplayerId].version & 0xFF);
         
-        if ((gLinkPlayers[playerId].version & 0xFF) == VERSION_RUBY || (gLinkPlayers[playerId].version & 0xFF) == VERSION_SAPPHIRE
-         || (gLinkPlayers[playerId].version & 0xFF) == VERSION_EMERALD)
-            return gLinkPlayers[playerId].gender + TRAINER_BACK_PIC_RS_BRENDAN;
+        if (gameVersion == VERSION_RUBY || gameVersion == VERSION_SAPPHIRE || gameVersion == VERSION_EMERALD)
+            return gLinkPlayers[multiplayerId].gender + TRAINER_BACK_PIC_RS_BRENDAN;
         else
-            return gLinkPlayers[playerId].gender + TRAINER_BACK_PIC_RED;
+            return gLinkPlayers[multiplayerId].gender + TRAINER_BACK_PIC_RED;
     }
     else
         return gSaveBlock2Ptr->playerGender + TRAINER_BACK_PIC_RED;
@@ -218,7 +214,6 @@ static u32 GetPlayerTrainerPicId(void)
 void PlayerHandleDrawTrainerPic(u32 battlerId)
 {
     s16 xPos;
-    u32 trainerPicId = GetPlayerTrainerPicId();
 
     if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
     {
@@ -230,13 +225,12 @@ void PlayerHandleDrawTrainerPic(u32 battlerId)
     else
         xPos = 80;
     
-    BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, FALSE, xPos, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80, GetBattlerSpriteSubpriority(battlerId));
+    BtlController_HandleDrawTrainerPic(battlerId, GetPlayerTrainerPicId(GetMultiplayerId()), xPos, GetBattlerSpriteSubpriority(battlerId));
 }
 
 static void PlayerHandleTrainerSlide(u32 battlerId)
 {
-    u32 trainerPicId = GetPlayerTrainerPicId();
-    BtlController_HandleTrainerSlide(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80);
+    BtlController_HandleTrainerSlide(battlerId, GetPlayerTrainerPicId(GetMultiplayerId()), 80);
 }
 
 static void PlayerHandleTrainerSlideBack(u32 battlerId)
@@ -247,25 +241,6 @@ static void PlayerHandleTrainerSlideBack(u32 battlerId)
 void PlayerHandleBallThrowAnim(u32 battlerId)
 {
     BtlController_HandleBallThrowAnim(battlerId, B_ANIM_BALL_THROW, !(gBattleTypeFlags & BATTLE_TYPE_POKEDUDE));
-}
-
-static void PlayerHandlePrintStringInternal(u32 battlerId, bool32 isSelection)
-{
-    u16 *stringId = (u16 *)(&gBattleBufferA[battlerId][2]);
-    BtlController_HandlePrintString(battlerId, *stringId, isSelection);
-}
-
-void PlayerHandlePrintString(u32 battlerId)
-{
-    PlayerHandlePrintStringInternal(battlerId, FALSE);
-}
-
-void PlayerHandlePrintSelectionString(u32 battlerId)
-{
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-        PlayerHandlePrintStringInternal(battlerId, TRUE);
-    else
-        BattleControllerComplete(battlerId);
 }
 
 static void HandleChooseActionAfterDma3(u32 battlerId)
@@ -383,7 +358,7 @@ static void PrintLinkStandbyMsg(void)
     }
 }
 
-static void WaitForMonSelection(u32 battlerId)
+static void Player_WaitForMonSelection(u32 battlerId)
 {
     if (gMain.callback2 == BattleMainCB2 && !gPaletteFade.active)
     {
@@ -405,7 +380,7 @@ static void OpenPartyMenuToChooseMon(u32 battlerId)
     {
         u32 caseId;
 
-        gBattlerControllerFuncs[battlerId] = WaitForMonSelection;
+        gBattlerControllerFuncs[battlerId] = Player_WaitForMonSelection;
         caseId = gTasks[gBattleControllerData[battlerId]].data[0];
         DestroyTask(gBattleControllerData[battlerId]);
         FreeAllWindowBuffers();
@@ -413,14 +388,9 @@ static void OpenPartyMenuToChooseMon(u32 battlerId)
     }
 }
 
-static void PlayerHandleChoosePokemon(u32 battlerId)
+void PlayerHandleChoosePokemon(u32 battlerId)
 {
     BtlController_HandleChoosePokemon(battlerId, OpenPartyMenuToChooseMon);
-}
-
-void PlayerHandleHealthbarUpdate(u32 battlerId)
-{
-    BtlController_HandleHealthbarUpdate(battlerId, TRUE);
 }
 
 static void PlayerHandleTwoReturnValues(u32 battlerId)
@@ -439,15 +409,6 @@ static void PlayerHandleOneReturnValue(u32 battlerId)
 {
     BtlController_EmitOneReturnValue(battlerId, BUFFER_B, 0);
     BattleControllerComplete(battlerId);
-}
-
-static void Intro_DelayAndEnd(u32 battlerId)
-{
-    if (--gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay == 0xFF)
-    {
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay = 0;
-        BattleControllerComplete(battlerId);
-    }
 }
 
 static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)

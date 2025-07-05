@@ -106,5 +106,6 @@ u32 GetBattlerTotalSpeed(u32 battler);
 void RunBattleScriptCommands_PopCallbacksStack(void);
 void RunBattleScriptCommands(void);
 bool32 TryRunFromBattle(u32 battler);
+void CB2_QuitRecordedBattle(void);
 
 #endif // GUARD_BATTLE_MAIN_H

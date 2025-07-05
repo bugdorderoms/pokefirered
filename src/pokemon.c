@@ -33,6 +33,7 @@
 #include "item_use.h"
 #include "pokedex.h"
 #include "strings.h"
+#include "recorded_battle.h"
 #include "decompress.h"
 #include "overworld.h"
 #include "battle_anim_scripts.h"
@@ -2784,7 +2785,7 @@ u32 GetNumberOfRelearnableMoves(struct Pokemon *mon)
 
 static u32 GetBattleBGM(void)
 {
-    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
         return MUS_RS_VS_TRAINER;
     else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
     {
@@ -2961,7 +2962,7 @@ u32 GetPlayerPartyHighestLevel(void)
 
 static u32 GetLinkPlayerArrId(void)
 {
-    u32 linkId = GetMultiplayerId() ^ 1;
+    u32 linkId = (gBattleTypeFlags & BATTLE_TYPE_RECORDED) ? gRecordedBattleMultiplayerId ^ 1 : GetMultiplayerId() ^ 1;
     return (gLinkPlayers[linkId].trainerId & 7) | (gLinkPlayers[linkId].gender << 3);
 }
 

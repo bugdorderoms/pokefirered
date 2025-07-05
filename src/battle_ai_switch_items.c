@@ -331,7 +331,7 @@ bool32 BattleAI_ShouldUseItem(u32 battlerId)
     u32 holdEffectParam, item, usableItems[MAX_TRAINER_ITEMS];
     
     // Item effects are'nt blocked
-    if (!IsItemUseBlockedByBattleEffect(battlerId))
+    if (!IsItemUseBlockedByBattleEffect(battlerId) && !(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
     {
         gBattleStruct->battlers[battlerId].itemPartyIndex = PARTY_SIZE;
         

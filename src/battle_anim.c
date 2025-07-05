@@ -5,6 +5,7 @@
 #include "battle_move_effects.h"
 #include "decompress.h"
 #include "gflib.h"
+#include "test_runner.h"
 #include "graphics.h"
 #include "item_menu_icons.h"
 #include "m4a.h"
@@ -1878,6 +1879,8 @@ void DoMoveAnim(u32 move)
     LaunchBattleAnimation(ANIM_TYPE_MOVE, move);
 }
 
+static void Nop(void) { }
+
 // For test new moves, they will do the gMoveAnim_NONE anim if it does't have one
 static inline const u8 *SanitizeMoveAnim(u32 move)
 {
@@ -1887,8 +1890,20 @@ static inline const u8 *SanitizeMoveAnim(u32 move)
 void LaunchBattleAnimation(u32 animType, u32 animId)
 {
     u32 i;
-    bool32 hideHpBoxes = FALSE;
+    bool32 hideHpBoxes;
     
+    if (gTestRunnerEnabled)
+    {
+        TestRunner_Battle_RecordAnimation(animType, animId);
+        
+        if (gTestRunnerHeadless)
+        {
+            gAnimScriptCallback = Nop;
+            gAnimScriptActive = FALSE;
+            return;
+        }
+    }
+    hideHpBoxes = FALSE;
     sAnimMoveIndex = MOVE_NONE;
     
     switch (animType)

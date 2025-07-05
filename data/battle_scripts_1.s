@@ -4517,7 +4517,7 @@ BattleScript_FaintedMonTryChooseAnother::
 	openpartyscreen BS_FAINTED, BattleScript_FaintedMonEnd
 	switchhandleorder BS_FAINTED, 2
 	jumpifnotbattletype BATTLE_TYPE_TRAINER, BattleScript_FaintedMonChooseAnother
-	jumpifbattletype BATTLE_TYPE_LINK | BATTLE_TYPE_DOUBLE, BattleScript_FaintedMonChooseAnother
+	jumpifbattletype BATTLE_TYPE_LINK | BATTLE_TYPE_DOUBLE | BATTLE_TYPE_RECORDED, BattleScript_FaintedMonChooseAnother
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_PLAYER_FAINTED, BattleScript_FaintedMonChooseAnother
 	jumpifbyte CMP_EQUAL, sBATTLE_STYLE, OPTIONS_BATTLE_STYLE_SET, BattleScript_FaintedMonChooseAnother
 	jumpifcantswitch BS_PLAYER1, BattleScript_FaintedMonChooseAnother
@@ -4642,7 +4642,9 @@ BattleScript_LocalBattleLostPrintTrainersWinText::
 BattleScript_LinkBattleWonOrLost::
 	printstring STRINGID_BATTLEEND
 	waitmessage B_WAIT_TIME_LONG
+	jumpifbattletype BATTLE_TYPE_RECORDED, BattleScript_LinkBattleWonOrLostWaitEnd
 	endlinkbattle
+BattleScript_LinkBattleWonOrLostWaitEnd::
 	waitmessage B_WAIT_TIME_LONG
 	end2
 

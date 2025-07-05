@@ -9,6 +9,7 @@
 #include "event_data.h"
 #include "item.h"
 #include "battle_setup.h"
+#include "recorded_battle.h"
 #include "field_specials.h"
 #include "new_menu_helpers.h"
 #include "battle_controllers.h"
@@ -1378,12 +1379,19 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
     case STRINGID_INTROMSG:
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
         {
-            if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+            if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
             {
                 if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
                     stringPtr = COMPOUND_STRING("{B_LINK_OPPONENT1_NAME} and {B_LINK_OPPONENT2_NAME} want to battle!");
-                else                                                                                        // Link trainer
-                    stringPtr = gTrainerBattleOpponent_A == TRAINER_UNION_ROOM ? sText_Trainer1WantsToBattle : COMPOUND_STRING("{B_LINK_OPPONENT1_NAME} wants to battle!");
+                else // Link trainer
+                {
+                    if (gTrainerBattleOpponent_A == TRAINER_UNION_ROOM)
+                        stringPtr = sText_Trainer1WantsToBattle;
+                    else if (gBattleTypeFlags & BATTLE_TYPE_RECORDED)
+                        stringPtr = COMPOUND_STRING("{B_LINK_OPPONENT1_NAME} wants to battle!{PAUSE 49}");
+                    else
+                        stringPtr = COMPOUND_STRING("{B_LINK_OPPONENT1_NAME} wants to battle!");
+                }
             }
             else
                 stringPtr = sText_Trainer1WantsToBattle;
@@ -1419,7 +1427,7 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
             {
                 if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
                     stringPtr = COMPOUND_STRING("{B_LINK_OPPONENT1_NAME} sent out {B_LINK_OPPONENT_MON1_NAME}!\n{B_LINK_OPPONENT2_NAME} sent out {B_LINK_OPPONENT_MON2_NAME}!");
-                else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+                else if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
                     stringPtr = COMPOUND_STRING("{B_LINK_OPPONENT1_NAME} sent out {B_OPPONENT_MON1_NAME} and {B_OPPONENT_MON2_NAME}!");
                 else
                     stringPtr = COMPOUND_STRING("{B_TRAINER1_CLASS} {B_TRAINER1_NAME} sent out {B_OPPONENT_MON1_NAME} and {B_OPPONENT_MON2_NAME}!{PAUSE 60}");
@@ -1434,7 +1442,7 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
             }
             else
             {
-                if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
+                if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
                     stringPtr = sText_Trainer1SentOutPkmn;
                 else if (gTrainerBattleOpponent_A == TRAINER_UNION_ROOM)
                     stringPtr = sText_Trainer1SentOutPkmn;
@@ -1461,7 +1469,7 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
         }
         else
         {
-            if (gTrainerBattleOpponent_A == TRAINER_LINK_OPPONENT)
+            if (gTrainerBattleOpponent_A == TRAINER_LINK_OPPONENT || (gBattleTypeFlags & BATTLE_TYPE_RECORDED))
             {
                 if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
                     stringPtr = COMPOUND_STRING("{B_LINK_SCR_TRAINER_NAME} withdrew {B_BUFF1}!");
@@ -1486,7 +1494,7 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
         }
         else
         {
-            if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+            if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
             {
                 if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
                     stringPtr = COMPOUND_STRING("{B_LINK_SCR_TRAINER_NAME} sent out {B_BUFF1}!");
@@ -1594,8 +1602,10 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
     u8 text[max(max(max(32, 11), POKEMON_NAME_LENGTH + 1), ITEM_NAME_LENGTH)];
     u8 *dst = gDisplayedStringBattle;
     bool32 copyTrainer1Name = FALSE;
-    u32 dstId = 0;
+    u32 multiplayerId, dstId = 0;
     const u8 *toCpy = NULL;
+    
+    multiplayerId = (gBattleTypeFlags & BATTLE_TYPE_RECORDED) ? gRecordedBattleMultiplayerId : GetMultiplayerId();
     
     while (*src != EOS)
     {
@@ -1649,19 +1659,19 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
                     toCpy = text;
                     break;
                 case B_TXT_LINK_PLAYER_MON1_NAME:
-                    GetBattlerNick(gLinkPlayers[GetMultiplayerId()].id, text);
+                    GetBattlerNick(gLinkPlayers[multiplayerId].id, text);
                     toCpy = text;
                     break;
                 case B_TXT_LINK_OPPONENT_MON1_NAME:
-                    GetBattlerNick(gLinkPlayers[GetMultiplayerId()].id ^ 1, text);
+                    GetBattlerNick(gLinkPlayers[multiplayerId].id ^ 1, text);
                     toCpy = text;
                     break;
                 case B_TXT_LINK_PLAYER_MON2_NAME:
-                    GetBattlerNick(gLinkPlayers[GetMultiplayerId()].id ^ 2, text);
+                    GetBattlerNick(gLinkPlayers[multiplayerId].id ^ 2, text);
                     toCpy = text;
                     break;
                 case B_TXT_LINK_OPPONENT_MON2_NAME:
-                    GetBattlerNick(gLinkPlayers[GetMultiplayerId()].id ^ 3, text);
+                    GetBattlerNick(gLinkPlayers[multiplayerId].id ^ 3, text);
                     toCpy = text;
                     break;
                 case B_TXT_ATK_NAME_WITH_PREFIX:
@@ -1708,7 +1718,7 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
                 case B_TXT_TRAINER1_NAME:
                 COPY_TRAINER1_NAME:
                     if (gTrainerBattleOpponent_A == TRAINER_UNION_ROOM)
-                        toCpy = gLinkPlayers[GetMultiplayerId() ^ 1].name;
+                        toCpy = gLinkPlayers[multiplayerId ^ 1].name;
                     else
                     {
                         if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_RIVAL_EARLY
@@ -1720,22 +1730,25 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
                     }
                     break;
                 case B_TXT_LINK_PLAYER_NAME:
-                    toCpy = gLinkPlayers[GetMultiplayerId()].name;
+                    toCpy = gLinkPlayers[multiplayerId].name;
                     break;
                 case B_TXT_LINK_PARTNER_NAME:
-                    toCpy = gLinkPlayers[GetBattlerMultiplayerId(BATTLE_PARTNER(gLinkPlayers[GetMultiplayerId()].id))].name;
+                    toCpy = gLinkPlayers[GetBattlerMultiplayerId(BATTLE_PARTNER(gLinkPlayers[multiplayerId].id))].name;
                     break;
                 case B_TXT_LINK_OPPONENT1_NAME:
-                    toCpy = gLinkPlayers[GetBattlerMultiplayerId(BATTLE_OPPOSITE(gLinkPlayers[GetMultiplayerId()].id))].name;
+                    toCpy = gLinkPlayers[GetBattlerMultiplayerId(BATTLE_OPPOSITE(gLinkPlayers[multiplayerId].id))].name;
                     break;
                 case B_TXT_LINK_OPPONENT2_NAME:
-                    toCpy = gLinkPlayers[GetBattlerMultiplayerId(BATTLE_PARTNER(BATTLE_OPPOSITE(gLinkPlayers[GetMultiplayerId()].id)))].name;
+                    toCpy = gLinkPlayers[GetBattlerMultiplayerId(BATTLE_PARTNER(BATTLE_OPPOSITE(gLinkPlayers[multiplayerId].id)))].name;
                     break;
                 case B_TXT_LINK_SCR_TRAINER_NAME:
                     toCpy = gLinkPlayers[GetBattlerMultiplayerId(gBattleScripting.battler)].name;
                     break;
                 case B_TXT_PLAYER_NAME:
-                    toCpy = gSaveBlock2Ptr->playerName;
+                    if (gBattleTypeFlags & BATTLE_TYPE_RECORDED)
+                        toCpy = gLinkPlayers[0].name;
+                    else
+                        toCpy = gSaveBlock2Ptr->playerName;
                     break;
                 case B_TXT_TRAINER1_LOSE_TEXT:
                     toCpy = GetTrainerALoseText();
@@ -1961,14 +1974,14 @@ void BattlePutTextOnWindow(const u8 *text, u8 windowId)
     
     gTextFlags.useAlternateDownArrow = (windowId != B_WIN_OAK_OLD_MAN);
 
-    if ((gBattleTypeFlags & BATTLE_TYPE_LINK) || ((gBattleTypeFlags & BATTLE_TYPE_POKEDUDE) && windowId != B_WIN_OAK_OLD_MAN))
+    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)) || ((gBattleTypeFlags & BATTLE_TYPE_POKEDUDE) && windowId != B_WIN_OAK_OLD_MAN))
         gTextFlags.autoScroll = TRUE;
     else
         gTextFlags.autoScroll = FALSE;
 
     if (windowId == B_WIN_MSG || windowId == B_WIN_OAK_OLD_MAN)
     {
-        speed = (gBattleTypeFlags & BATTLE_TYPE_LINK) ? 1 : GetTextSpeedSetting();
+        speed = (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)) ? 1 : GetTextSpeedSetting();
         gTextFlags.canABSpeedUpPrint = TRUE;
     }
     else

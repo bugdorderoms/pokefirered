@@ -7,6 +7,7 @@
 #include "battle_util.h"
 #include "calculate_base_damage.h"
 #include "random.h"
+#include "recorded_battle.h"
 #include "util.h"
 #include "constants/battle.h"
 #include "constants/moves.h"
@@ -43,7 +44,9 @@ void BattleAI_SetupAILogicData(void)
     
     if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
     {
-        if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
+        if (gBattleTypeFlags & BATTLE_TYPE_RECORDED)
+            AI_DATA->aiFlags = GetAiScriptsInRecordedBattle();
+        else if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
             AI_DATA->aiFlags = AI_FLAG_SAFARI;
         else if (gBattleTypeFlags & BATTLE_TYPE_ROAMER)
             AI_DATA->aiFlags = AI_FLAG_ROAMER;

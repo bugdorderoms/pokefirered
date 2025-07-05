@@ -169,6 +169,8 @@ void TryShinyAnimAfterMonAnim(u32 battlerId);
 void WaitForMonAnimAfterLoad(u32 battlerId);
 void Task_BltController_RestoreBgmAfterCry(u32 taskId);
 void ShowHealthBox(u32 battlerId);
+void Intro_DelayAndEnd(u32 battlerId);
+void WaitForMonSelection(u32 battlerId);
 
 // emitters
 void BtlController_EmitGetMonData(u32 battlerId, u32 bufferId, u32 requestId, u32 monToCheck);
@@ -220,17 +222,20 @@ void BtlController_HandleSetRawMonData(u32 battlerId);
 void BtlController_HandleLoadMonSprite(u32 battlerId, bool32 setSpecies, void(*controllerFunc)(u32));
 void BtlController_HandleSwitchInAnim(u32 battlerId, bool32 loadSprite, void(*controllerFunc)(u32));
 void BtlController_HandleReturnMonToBall(u32 battlerId);
-void BtlController_HandleDrawTrainerPic(u32 battlerId, u32 trainerPicId, bool32 isFront, s16 xPos, s16 yPos, u32 subpriority);
-void BtlController_HandleTrainerSlide(u32 battlerId, u32 trainerPicId, bool32 isFront, s16 xPos, s16 yPos);
+void BtlController_HandleDrawTrainerPic(u32 battlerId, u32 trainerPicId, s16 xPos, u32 subpriority);
+void BtlController_HandleTrainerSlide(u32 battlerId, u32 trainerPicId, s16 xPos);
 void BtlController_HandleTrainerSlideBack(u32 battlerId, s16 data0, bool32 animateSprite);
 void BtlController_HandleFaintAnimation(u32 battlerId);
 void BtlController_HandleBallThrowAnim(u32 battlerId, u32 animId, bool32 allowCriticalCapture);
 void BtlController_HandleMoveAnimation(u32 battlerId);
-void BtlController_HandlePrintString(u32 battlerId, u32 stringId, bool32 isSelection);
+void BtlController_HandlePrintStringInternal(u32 battlerId, u32 stringId, bool32 isSelection);
+void BtlController_HandlePrintString(u32 battlerId);
+void BtlController_HandlePrintSelectionString(u32 battlerId);
 void BtlController_HandleChooseAction(u32 battlerId, const u8 *actionsStr, const u8 *whatDoStr, void(*controllerFunc)(u32));
 void BtlController_HandleChooseItem(u32 battlerId, void(*controllerFunc)(u32));
 void BtlController_HandleChoosePokemon(u32 battlerId, void(*controllerFunc)(u32));
-void BtlController_HandleHealthbarUpdate(u32 battlerId, bool32 updateHpText);
+void BtlController_HandleHealthbarUpdateWithHpText(u32 battlerId);
+void BtlController_HandleHealthbarUpdateNoHpText(u32 battlerId);
 void BtlController_HandleExpUpdate(u32 battlerId);
 void BtlController_HandleStatusIconUpdate(u32 battlerId);
 void BtlController_HandleStatusAnimation(u32 battlerId);
@@ -248,14 +253,13 @@ void BtlController_HandleEndLinkBattle(u32 battlerId, u32 battleOutcome, void(*c
 
 // player controller
 void SetControllerToPlayer(u32 battlerId);
+u32 GetPlayerTrainerPicId(u32 multiplayerId);
 void PlayerHandleDrawTrainerPic(u32 battlerId);
 void PlayerHandleBallThrowAnim(u32 battlerId);
-void PlayerHandlePrintString(u32 battlerId);
-void PlayerHandlePrintSelectionString(u32 battlerId);
 void PlayerHandleChooseAction(u32 battlerId);
 void PlayerHandleChooseMove(u32 battlerId);
 void PlayerHandleChooseItem(u32 battlerId);
-void PlayerHandleHealthbarUpdate(u32 battlerId);
+void PlayerHandleChoosePokemon(u32 battlerId);
 void PlayerHandleLinkStandbyMsg(u32 battlerId);
 void PlayerHandleEndLinkBattle(u32 battlerId);
 void ActionSelectionCreateCursorAt(u32 cursorPos);
@@ -268,7 +272,6 @@ void MoveSelectionDestroyCursorAt(u32 cursorPos);
 // opponent controller
 void SetControllerToOpponent(u32 battlerId);
 void OpponentHandleTrainerSlideBack(u32 battlerId);
-void OpponentHandleHealthbarUpdate(u32 battlerId);
 
 // safari controller
 void SetControllerToSafari(u32 battlerId);
@@ -298,8 +301,24 @@ void BtlCtrl_RemoveVoiceoverMessageFrame(void);
 
 // link partner controller
 void SetControllerToLinkPartner(u32 battlerId);
+void LinkPartnerHandleLoadMonSprite(u32 battlerId);
+void LinkPartnerHandleSwitchInAnim(u32 battlerId);
 
 // link opponent controller
 void SetControllerToLinkOpponent(u32 battlerId);
+void LinkOpponentHandleLoadMonSprite(u32 battlerId);
+void LinkOpponentHandleSwitchInAnim(u32 battlerId);
+void LinkOpponentHandleDrawTrainerPic(u32 battlerId);
+void LinkOpponentHandleIntroTrainerBallThrow(u32 battlerId);
+void LinkOpponentHandleEndLinkBattle(u32 battlerId);
+
+// recorded player controller
+void SetControllerToRecordedPlayer(u32 battlerId);
+void RecordedPlayerHandleChooseAction(u32 battlerId);
+void RecordedPlayerHandleChooseMove(u32 battlerId);
+void RecordedPlayerHandleChoosePokemon(u32 battlerId);
+
+// recorded opponent controller
+void SetControllerToRecordedOpponent(u32 battlerId);
 
 #endif // GUARD_BATTLE_CONTROLLERS_H

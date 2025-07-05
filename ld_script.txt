@@ -1,5 +1,6 @@
 gNumMusicPlayers = 4;
 gMaxLines = 0;
+gInitialMainCB2 = c2_copyright_1;
 
 SECTIONS {
     . = 0x2000000;
@@ -287,6 +288,10 @@ SECTIONS {
 		src/battle_gfx_sfx_util.o(.text);
 		src/sliding_puzzles.o(.text);
 		src/voltorb_flip.o(.text);
+		src/recorded_battle.o(.text);
+		src/test_runner_stub.o(.text);
+		src/battle_controller_recorded_player.o(.text);
+		src/battle_controller_recorded_opponent.o(.text);
     } =0
 
     script_data :
@@ -578,6 +583,9 @@ SECTIONS {
 		src/pokemon_sprite_visualizer.o(.rodata);
 		src/sliding_puzzles.o(.rodata);
 		src/voltorb_flip.o(.rodata);
+		src/test_runner_stub.o(.rodata);
+		src/battle_controller_recorded_player.o(.rodata);
+		src/battle_controller_recorded_opponent.o(.rodata);
 
         /* These should not be moved to C files */
         src/m4a_tables.o(.rodata);

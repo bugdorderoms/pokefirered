@@ -86,8 +86,8 @@ static void (*const sPokedudeBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_FAINTANIMATION]           = BtlController_HandleFaintAnimation,
     [CONTROLLER_BALLTHROWANIM]            = PlayerHandleBallThrowAnim,
     [CONTROLLER_MOVEANIMATION]            = BtlController_HandleMoveAnimation,
-    [CONTROLLER_PRINTSTRING]              = PlayerHandlePrintString,
-    [CONTROLLER_PRINTSELECTIONSTRING]     = PlayerHandlePrintSelectionString,
+    [CONTROLLER_PRINTSTRING]              = BtlController_HandlePrintString,
+    [CONTROLLER_PRINTSELECTIONSTRING]     = BtlController_HandlePrintSelectionString,
     [CONTROLLER_CHOOSEACTION]             = PokedudeHandleChooseAction,
     [CONTROLLER_CHOOSEMOVE]               = PokedudeHandleChooseMove,
     [CONTROLLER_OPENBAG]                  = PokedudeHandleChooseItem,
@@ -214,31 +214,26 @@ static void PokedudeHandleSwitchInAnim(u32 battlerId)
 static void PokedudeHandleDrawTrainerPic(u32 battlerId)
 {
     u32 subpriority, trainerPicId;
-    s16 xPos, yPos;
-    bool32 isFront;
+    s16 xPos;
     
     if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
     {
         trainerPicId = TRAINER_BACK_PIC_POKEDUDE;
-        isFront = FALSE;
         xPos = 80;
-        yPos = (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80;
         subpriority = 30;
     }
     else
     {
         trainerPicId = TRAINER_PIC_PROFESSOR_OAK;
-        isFront = TRUE;
         xPos = 176;
-        yPos = (8 - gTrainerFrontPicTable[trainerPicId].coords.size) * 4 + 40;
         subpriority = GetBattlerSpriteSubpriority(battlerId);
     }
-    BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, isFront, xPos, yPos, subpriority);
+    BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, xPos, subpriority);
 }
 
 static void PokedudeHandleTrainerSlide(u32 battlerId)
 {
-    BtlController_HandleTrainerSlide(battlerId, TRAINER_BACK_PIC_POKEDUDE, FALSE, 80, (8 - gTrainerBackPicTable[TRAINER_BACK_PIC_POKEDUDE].coords.size) * 4 + 80);
+    BtlController_HandleTrainerSlide(battlerId, TRAINER_BACK_PIC_POKEDUDE, 80);
 }
 
 static void PokedudeHandleChooseAction(u32 battlerId)
@@ -313,19 +308,6 @@ static void PokedudeHandleChooseItem(u32 battlerId)
         gBattlePartyCurrentOrder[i] = gBattleBufferA[battlerId][i + 1];
 }
 
-static void WaitForMonSelection(u32 battlerId)
-{
-    if (gMain.callback2 == BattleMainCB2 && !gPaletteFade.active)
-    {
-        if (gPartyMenuUseExitCallback)
-            BtlController_EmitChosenMonReturnValue(battlerId, BUFFER_B, gSelectedMonPartyId, gBattlePartyCurrentOrder);
-        else
-            BtlController_EmitChosenMonReturnValue(battlerId, BUFFER_B, PARTY_SIZE, NULL);
-        
-        BattleControllerComplete(battlerId);
-    }
-}
-
 static void OpenPartyMenuToChooseMon(u32 battlerId)
 {
     if (!gPaletteFade.active)
@@ -344,16 +326,10 @@ static void PokedudeHandleChoosePokemon(u32 battlerId)
 
 static void PokedudeHandleHealthbarUpdate(u32 battlerId)
 {
-    BtlController_HandleHealthbarUpdate(battlerId, (GetBattlerSide(battlerId) == B_SIDE_PLAYER));
-}
-
-static void Intro_DelayAndEnd(u32 battlerId)
-{
-    if (--gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay == 255)
-    {
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay = 0;
-        BattleControllerComplete(battlerId);
-    }
+    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
+        BtlController_HandleHealthbarUpdateWithHpText(battlerId);
+    else
+        BtlController_HandleHealthbarUpdateNoHpText(battlerId);
 }
 
 static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)

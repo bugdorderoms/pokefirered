@@ -3,6 +3,7 @@
 #include "event_data.h"
 #include "strings.h"
 #include "menu.h"
+#include "battle.h"
 #include "text_window.h"
 #include "m4a.h"
 #include "graphics.h"
@@ -741,7 +742,7 @@ u16 RenderText(struct TextPrinter *textPrinter)
             return 3;
         }
 
-        if (gTextFlags.autoScroll)
+        if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED) && gTextFlags.autoScroll)
             textPrinter->delayCounter = 1;
         else
             textPrinter->delayCounter = textPrinter->textSpeed;

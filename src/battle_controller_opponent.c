@@ -52,7 +52,7 @@ static void (*const sOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_CHOOSEMOVE]               = OpponentHandleChooseMove,
     [CONTROLLER_OPENBAG]                  = OpponentHandleChooseItem,
     [CONTROLLER_CHOOSEPOKEMON]            = OpponentHandleChoosePokemon,
-    [CONTROLLER_HEALTHBARUPDATE]          = OpponentHandleHealthbarUpdate,
+    [CONTROLLER_HEALTHBARUPDATE]          = BtlController_HandleHealthbarUpdateNoHpText,
     [CONTROLLER_EXPUPDATE]                = BattleControllerComplete,
     [CONTROLLER_STATUSICONUPDATE]         = BtlController_HandleStatusIconUpdate,
     [CONTROLLER_STATUSANIMATION]          = BtlController_HandleStatusAnimation,
@@ -105,32 +105,7 @@ static void OpponentBufferExecCompleted(u32 battlerId)
 
 static void OpponentHandleLoadMonSprite(u32 battlerId)
 {
-    u32 y, species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
-
-    if (gBattleTypeFlags & BATTLE_TYPE_GHOST)
-    {
-        DecompressGhostFrontPic(battlerId);
-        y = GetGhostSpriteDefault_Y(battlerId);
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim = TRUE;
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].finishedShinyMonAnim = TRUE;
-    }
-    else
-    {
-        BattleLoadMonSpriteGfx(battlerId);
-        y = GetBattlerSpriteDefault_Y(battlerId);
-    }
-    SetMultiuseSpriteTemplateToPokemon(species, GetBattlerPosition(battlerId));
-    gBattlerSpriteIds[battlerId] = CreateSprite(&gMultiuseSpriteTemplate, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X), y, GetBattlerSpriteSubpriority(battlerId));
-    gSprites[gBattlerSpriteIds[battlerId]].x2 = -240;
-    gSprites[gBattlerSpriteIds[battlerId]].data[0] = battlerId;
-    gSprites[gBattlerSpriteIds[battlerId]].data[2] = species;
-    gSprites[gBattlerSpriteIds[battlerId]].oam.paletteNum = battlerId;
-    StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerId]], 0);
-    
-    if (!(gBattleTypeFlags & BATTLE_TYPE_GHOST))
-        SetBattlerShadowSpriteCallback(battlerId);
-    
-    gBattlerControllerFuncs[battlerId] = TryShinyAnimAfterMonAnim;
+    BtlController_HandleLoadMonSprite(battlerId, TRUE, TryShinyAnimAfterMonAnim);
 }
 
 static void SwitchIn_HandleSoundAndEnd(u32 battlerId)
@@ -196,14 +171,12 @@ static inline u32 GetOpponentTrainerPicId(void)
 
 static void OpponentHandleDrawTrainerPic(u32 battlerId)
 {
-    u32 trainerPicId = GetOpponentTrainerPicId();
-    BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, TRUE, 176, (8 - gTrainerFrontPicTable[trainerPicId].coords.size) * 4 + 40, GetBattlerSpriteSubpriority(battlerId));
+    BtlController_HandleDrawTrainerPic(battlerId, GetOpponentTrainerPicId(), 176, GetBattlerSpriteSubpriority(battlerId));
 }
 
 static void OpponentHandleTrainerSlide(u32 battlerId)
 {
-    u32 trainerPicId = GetOpponentTrainerPicId();
-    BtlController_HandleTrainerSlide(battlerId, trainerPicId, TRUE, 176, (8 - gTrainerFrontPicTable[trainerPicId].coords.size) * 4 + 40);
+    BtlController_HandleTrainerSlide(battlerId, GetOpponentTrainerPicId(), 176);
 }
 
 void OpponentHandleTrainerSlideBack(u32 battlerId)
@@ -215,7 +188,7 @@ static void OpponentHandlePrintString(u32 battlerId)
 {
     u16 *stringId = (u16 *)(&gBattleBufferA[battlerId][2]);
     
-    BtlController_HandlePrintString(battlerId, *stringId, FALSE);
+    BtlController_HandlePrintStringInternal(battlerId, *stringId, FALSE);
 
     if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
     {
@@ -527,20 +500,6 @@ static void OpponentHandleChoosePokemon(u32 battlerId)
     gBattleStruct->battlers[battlerId].monToSwitchIntoId = chosenMonId;
     BtlController_EmitChosenMonReturnValue(battlerId, BUFFER_B, chosenMonId, NULL);
     BattleControllerComplete(battlerId);
-}
-
-void OpponentHandleHealthbarUpdate(u32 battlerId)
-{
-    BtlController_HandleHealthbarUpdate(battlerId, FALSE);
-}
-
-static void Intro_DelayAndEnd(u32 battlerId)
-{
-    if (--gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay == 0xFF)
-    {
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay = 0;
-        BattleControllerComplete(battlerId);
-    }
 }
 
 static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)

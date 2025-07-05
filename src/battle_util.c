@@ -4680,7 +4680,7 @@ u32 IsMonDisobedient(void)
     s32 calc;
     u32 levelCapLevel = GetCurrentLevelCapLevel();
 
-    if (levelCapLevel == MAX_LEVEL || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKEDUDE)) || GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT
+    if (levelCapLevel == MAX_LEVEL || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_RECORDED)) || GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT
     || !IsOtherTrainer(gBattleMons[gBattlerAttacker].otId, gBattleMons[gBattlerAttacker].otName) || gBattleMons[gBattlerAttacker].level <= levelCapLevel
     || gBattleStruct->dancer.inProgress)
         return 0;
@@ -6166,7 +6166,7 @@ bool32 IsDoubleBattleOnSide(u32 side)
 
 bool32 IsPlayerBagDisabled(void)
 {
-    if ((gBattleTypeFlags & BATTLE_TYPE_LINK) || !FlagGet(FLAG_SYS_BAG_ENABLED))
+    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)) || !FlagGet(FLAG_SYS_BAG_ENABLED))
         return TRUE;
     return FALSE;
 }
@@ -6186,7 +6186,7 @@ bool32 CanTargetBattler(u32 attacker, u32 defender, u32 move, u32 moveTarget)
 bool32 CanReceiveBadgeBoost(u32 battlerId, u32 flagId)
 {
 #if BADGE_BOOST
-    if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) && GetBattlerSide(battlerId) == B_SIDE_PLAYER && FlagGet(flagId))
+    if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)) && GetBattlerSide(battlerId) == B_SIDE_PLAYER && FlagGet(flagId))
         return TRUE;
 #endif
     return FALSE;

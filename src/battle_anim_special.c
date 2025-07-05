@@ -15,6 +15,7 @@
 #include "trig.h"
 #include "util.h"
 #include "menu.h"
+#include "test_runner.h"
 #include "constants/battle_script_commands.h"
 #include "constants/items.h"
 #include "constants/moves.h"
@@ -1489,6 +1490,9 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u32 battler, u32 sprite, u32 sp
     }
     else
         ability = gBattleMons[battler].ability;
+    
+    if (gTestRunnerEnabled)
+        TestRunner_Battle_RecordAbilityPopUp(battler, ability);
     
     AbilityPopUpPrinter(gAbilities[ability].name, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP) + 256,
                         (void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP) + 256, 4, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_RED, TEXT_COLOR_WHITE);

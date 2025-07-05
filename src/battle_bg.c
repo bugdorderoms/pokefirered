@@ -729,7 +729,7 @@ void DrawBattleEntryBackground(void)
     }
     else if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
         LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_GRASS);
-    else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+    else if (gBattleTypeFlags & BATTLE_TYPE_RECORDED)
         LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_BUILDING);
     else
     {

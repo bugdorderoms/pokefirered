@@ -45,27 +45,28 @@
 #define BIT_FLANK 2
 
 // Battle Type Flags
-#define BATTLE_TYPE_DOUBLE           (1 << 0)
-#define BATTLE_TYPE_LINK             (1 << 1)
-#define BATTLE_TYPE_IS_MASTER        (1 << 2) // In not-link battles, it's always set.
-#define BATTLE_TYPE_TRAINER          (1 << 3)
-#define BATTLE_TYPE_FIRST_BATTLE     (1 << 4)
-#define BATTLE_TYPE_LINK_ESTABLISHED (1 << 5) // Set when the link battle setup callback finishes.
-#define BATTLE_TYPE_MULTI            (1 << 6)
-#define BATTLE_TYPE_SAFARI           (1 << 7)
-#define BATTLE_TYPE_OLD_MAN_TUTORIAL (1 << 8)
-#define BATTLE_TYPE_ROAMER           (1 << 9)
-#define BATTLE_TYPE_GHOST_UNVEILED   (1 << 10)
-#define BATTLE_TYPE_GHOST            (1 << 11)
-#define BATTLE_TYPE_POKEDUDE         (1 << 12)
-#define BATTLE_TYPE_WILD_SCRIPTED    (1 << 13)
-#define BATTLE_TYPE_SOS              (1 << 14)
-#define BATTLE_TYPE_TWO_VS_ONE       (1 << 15)
-#define BATTLE_TYPE_TOTEM            (1 << 16)
+#define BATTLE_TYPE_DOUBLE             (1 << 0)
+#define BATTLE_TYPE_LINK               (1 << 1)
+#define BATTLE_TYPE_IS_MASTER          (1 << 2) // In not-link battles, it's always set.
+#define BATTLE_TYPE_TRAINER            (1 << 3)
+#define BATTLE_TYPE_FIRST_BATTLE       (1 << 4)
+#define BATTLE_TYPE_LINK_ESTABLISHED   (1 << 5) // Set when the link battle setup callback finishes.
+#define BATTLE_TYPE_MULTI              (1 << 6)
+#define BATTLE_TYPE_SAFARI             (1 << 7)
+#define BATTLE_TYPE_OLD_MAN_TUTORIAL   (1 << 8)
+#define BATTLE_TYPE_ROAMER             (1 << 9)
+#define BATTLE_TYPE_GHOST_UNVEILED     (1 << 10)
+#define BATTLE_TYPE_GHOST              (1 << 11)
+#define BATTLE_TYPE_POKEDUDE           (1 << 12)
+#define BATTLE_TYPE_WILD_SCRIPTED      (1 << 13)
+#define BATTLE_TYPE_SOS                (1 << 14)
+#define BATTLE_TYPE_TWO_VS_ONE         (1 << 15)
+#define BATTLE_TYPE_TOTEM              (1 << 16)
+#define BATTLE_TYPE_RECORDED           (1 << 17) // This includes BATTLE_TYPE_RECORDED_LINK and BATTLE_TYPE_RECORDED_IS_MASTER from pret, used by the test system
 
 #define IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE ((gBattleTypeFlags & BATTLE_TYPE_GHOST) && !(gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
-#define IS_BATTLE_TYPE_GHOST_WITH_SCOPE    ((gBattleTypeFlags & BATTLE_TYPE_GHOST) && (gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
-#define BATTLE_TYPE_HAS_AI                 ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER)) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
+#define IS_BATTLE_TYPE_GHOST_WITH_SCOPE ((gBattleTypeFlags & BATTLE_TYPE_GHOST) && (gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
+#define BATTLE_TYPE_HAS_AI ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER)) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
 
 #define RIVAL_BATTLE_HEAL_AFTER 1
 #define RIVAL_BATTLE_TUTORIAL   3

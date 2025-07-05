@@ -1,5 +1,6 @@
 gNumMusicPlayers = 4;
 gMaxLines = 0;
+gInitialMainCB2 = c2_copyright_1;
 
 SECTIONS {
     . = 0x2000000;

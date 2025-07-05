@@ -21,6 +21,7 @@
 
 // Converts a number from Q4.12 fixed-point format
 #define Q_4_12_TO_INT(n) ((s16)((n) >> 12))
+#define Q_4_12_ROUND UQ_4_12_ROUND
 
 // Converts a number to QN.S fixed-point format (16-bits)
 #define Q_N_S(s, n) ((s16)((n) * Bit(s)))

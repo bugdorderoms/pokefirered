@@ -5,6 +5,7 @@ GAME_REVISION ?= 1
 GAME_LANGUAGE ?= ENGLISH
 MODERN        ?= 0
 COMPARE       ?= 0
+TEST          ?= 0
 
 # For gbafix
 MAKER_CODE  := 01
@@ -48,4 +49,8 @@ ifeq ($(MODERN), 0)
   BUILD_NAME := $(BUILD_NAME)
 else
   BUILD_NAME := $(BUILD_NAME)_modern
+endif
+
+ifeq (check,$(MAKECMDGOALS))
+  TEST := 1
 endif

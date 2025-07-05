@@ -279,7 +279,7 @@ void BattleIntroSlide3(u32 taskId)
         SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(8, 8));
         SetGpuReg(REG_OFFSET_BLDY, 0);
         gTasks[taskId].data[4] = BLDALPHA_BLEND(8, 8);
-        gTasks[taskId].data[2] = (gBattleTypeFlags & BATTLE_TYPE_LINK) ? 16 : 1;
+        gTasks[taskId].data[2] = (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)) ? 16 : 1;
         ++gTasks[taskId].data[0];
         break;
     case 1:

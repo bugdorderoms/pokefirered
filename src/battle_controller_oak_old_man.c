@@ -25,7 +25,6 @@ static void OakOldManHandlePrintString(u32 battlerId);
 static void OakOldManHandlePrintSelectionString(u32 battlerId);
 static void OakOldManHandleChooseMove(u32 battlerId);
 static void OakOldManHandleChooseItem(u32 battlerId);
-static void OakOldManHandleChoosePokemon(u32 battlerId);
 static void OakOldManHandleIntroTrainerBallThrow(u32 battlerId);
 static void PrintOakText_LoweringStats(u32 battlerId);
 static void PrintOakText_WinEarnsPrizeMoney(u32 battlerId);
@@ -50,8 +49,8 @@ static void (*const sOakOldManBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_CHOOSEACTION]             = PlayerHandleChooseAction,
     [CONTROLLER_CHOOSEMOVE]               = OakOldManHandleChooseMove,
     [CONTROLLER_OPENBAG]                  = OakOldManHandleChooseItem,
-    [CONTROLLER_CHOOSEPOKEMON]            = OakOldManHandleChoosePokemon,
-    [CONTROLLER_HEALTHBARUPDATE]          = PlayerHandleHealthbarUpdate,
+    [CONTROLLER_CHOOSEPOKEMON]            = PlayerHandleChoosePokemon,
+    [CONTROLLER_HEALTHBARUPDATE]          = BtlController_HandleHealthbarUpdateWithHpText,
     [CONTROLLER_EXPUPDATE]                = BtlController_HandleExpUpdate,
     [CONTROLLER_STATUSICONUPDATE]         = BtlController_HandleStatusIconUpdate,
     [CONTROLLER_STATUSANIMATION]          = BtlController_HandleStatusAnimation,
@@ -114,23 +113,29 @@ static void OakOldManBufferExecCompleted(u32 battlerId)
 // BATTLE CONTROLLERS //
 ////////////////////////
 
+static u32 GetOakOldManTrainerPicId(void)
+{
+    if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
+        return GetPlayerTrainerPicId(GetMultiplayerId());
+    else
+        return TRAINER_BACK_PIC_OLD_MAN;
+}
+
 static void OakOldManHandleDrawTrainerPic(u32 battlerId)
 {
-    u32 trainerPicId = (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) ? TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender : TRAINER_BACK_PIC_OLD_MAN;
-    BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80, 30);
+    BtlController_HandleDrawTrainerPic(battlerId, GetOakOldManTrainerPicId(), 80, 30);
 }
 
 static void OakOldManHandleTrainerSlide(u32 battlerId)
 {
-    u32 trainerPicId = (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) ? TRAINER_BACK_PIC_RED + gSaveBlock2Ptr->playerGender : TRAINER_BACK_PIC_OLD_MAN;
-    BtlController_HandleTrainerSlide(battlerId, trainerPicId, FALSE, 80, (8 - gTrainerBackPicTable[trainerPicId].coords.size) * 4 + 80);
+    BtlController_HandleTrainerSlide(battlerId, GetOakOldManTrainerPicId(), 80);
 }
 
 static void OakOldManHandlePrintStringInternal(u32 battlerId, bool32 isSelection)
 {
     u16 *stringId = (u16 *)(&gBattleBufferA[battlerId][2]);
     
-    if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL && *stringId == STRINGID_INTROSENDOUT)
+    if ((gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL) && *stringId == STRINGID_INTROSENDOUT)
     {
         gBattle_BG0_X = 0;
         gBattle_BG0_Y = 0;
@@ -138,7 +143,7 @@ static void OakOldManHandlePrintStringInternal(u32 battlerId, bool32 isSelection
     }
     else
     {
-        BtlController_HandlePrintString(battlerId, *stringId, isSelection);
+        BtlController_HandlePrintStringInternal(battlerId, *stringId, isSelection);
         
         if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
         {
@@ -208,38 +213,6 @@ static void OakOldManHandleChooseItem(u32 battlerId)
 {
     gBattleStruct->battlers[battlerId].itemPartyIndex = 0;
     PlayerHandleChooseItem(battlerId);
-}
-
-static void WaitForMonSelection(u32 battlerId)
-{
-    if (gMain.callback2 == BattleMainCB2 && !gPaletteFade.active)
-    {
-        if (gPartyMenuUseExitCallback)
-            BtlController_EmitChosenMonReturnValue(battlerId, BUFFER_B, gSelectedMonPartyId, gBattlePartyCurrentOrder);
-        else
-            BtlController_EmitChosenMonReturnValue(battlerId, BUFFER_B, PARTY_SIZE, NULL);
-        
-        BattleControllerComplete(battlerId);
-    }
-}
-
-static void OpenPartyMenuToChooseMon(u32 battlerId)
-{
-    if (!gPaletteFade.active)
-    {
-        u32 caseId;
-
-        gBattlerControllerFuncs[battlerId] = WaitForMonSelection;
-        caseId = gTasks[gBattleControllerData[battlerId]].data[0];
-        DestroyTask(gBattleControllerData[battlerId]);
-        FreeAllWindowBuffers();
-        OpenPartyMenuInTutorialBattle(caseId);
-    }
-}
-
-static void OakOldManHandleChoosePokemon(u32 battlerId)
-{
-    BtlController_HandleChoosePokemon(battlerId, OpenPartyMenuToChooseMon);
 }
 
 void OakOldManHandlePlaySE(u32 battlerId)

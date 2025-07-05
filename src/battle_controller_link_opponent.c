@@ -12,11 +12,6 @@
 
 static void LinkOpponentBufferRunCommand(u32 battlerId);
 static void LinkOpponentBufferExecCompleted(u32 battlerId);
-static void LinkOpponentHandleLoadMonSprite(u32 battlerId);
-static void LinkOpponentHandleSwitchInAnim(u32 battlerId);
-static void LinkOpponentHandleDrawTrainerPic(u32 battlerId);
-static void LinkOpponentHandleIntroTrainerBallThrow(u32 battlerId);
-static void LinkOpponentHandleEndLinkBattle(u32 battlerId);
 
 static void (*const sLinkOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
@@ -32,13 +27,13 @@ static void (*const sLinkOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_FAINTANIMATION]           = BtlController_HandleFaintAnimation,
     [CONTROLLER_BALLTHROWANIM]            = BattleControllerComplete,
     [CONTROLLER_MOVEANIMATION]            = BtlController_HandleMoveAnimation,
-    [CONTROLLER_PRINTSTRING]              = PlayerHandlePrintString,
+    [CONTROLLER_PRINTSTRING]              = BtlController_HandlePrintString,
     [CONTROLLER_PRINTSELECTIONSTRING]     = BattleControllerComplete,
     [CONTROLLER_CHOOSEACTION]             = BattleControllerComplete,
     [CONTROLLER_CHOOSEMOVE]               = BattleControllerComplete,
     [CONTROLLER_OPENBAG]                  = BattleControllerComplete,
     [CONTROLLER_CHOOSEPOKEMON]            = BattleControllerComplete,
-    [CONTROLLER_HEALTHBARUPDATE]          = OpponentHandleHealthbarUpdate,
+    [CONTROLLER_HEALTHBARUPDATE]          = BtlController_HandleHealthbarUpdateNoHpText,
     [CONTROLLER_EXPUPDATE]                = BattleControllerComplete,
     [CONTROLLER_STATUSICONUPDATE]         = BtlController_HandleStatusIconUpdate,
     [CONTROLLER_STATUSANIMATION]          = BtlController_HandleStatusAnimation,
@@ -97,7 +92,7 @@ static void LinkOpponentBufferExecCompleted(u32 battlerId)
 // BATTLE CONTROLLERS //
 ////////////////////////
 
-static void LinkOpponentHandleLoadMonSprite(u32 battlerId)
+void LinkOpponentHandleLoadMonSprite(u32 battlerId)
 {
     BtlController_HandleLoadMonSprite(battlerId, FALSE, TryShinyAnimAfterMonAnim);
 }
@@ -152,12 +147,12 @@ static void SwitchIn_TryShinyAnim(u32 battlerId)
     }
 }
 
-static void LinkOpponentHandleSwitchInAnim(u32 battlerId)
+void LinkOpponentHandleSwitchInAnim(u32 battlerId)
 {
     BtlController_HandleSwitchInAnim(battlerId, FALSE, SwitchIn_TryShinyAnim);
 }
 
-static void LinkOpponentHandleDrawTrainerPic(u32 battlerId)
+void LinkOpponentHandleDrawTrainerPic(u32 battlerId)
 {
     u32 playerId, trainerPicId;
     s16 xPos;
@@ -194,16 +189,7 @@ static void LinkOpponentHandleDrawTrainerPic(u32 battlerId)
                 trainerPicId = gFacilityClassToPicIndex[gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_LEAF : FACILITY_CLASS_RED];
         }
     }
-    BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, TRUE, xPos, (8 - gTrainerFrontPicTable[trainerPicId].coords.size) * 4 + 40, GetBattlerSpriteSubpriority(battlerId));
-}
-
-static void Intro_DelayAndEnd(u32 battlerId)
-{
-    if (--gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay == 0xFF)
-    {
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay = 0;
-        BattleControllerComplete(battlerId);
-    }
+    BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, xPos, GetBattlerSpriteSubpriority(battlerId));
 }
 
 static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
@@ -275,12 +261,12 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
     }
 }
 
-static void LinkOpponentHandleIntroTrainerBallThrow(u32 battlerId)
+void LinkOpponentHandleIntroTrainerBallThrow(u32 battlerId)
 {
     BtlController_HandleIntroTrainerBallThrow(battlerId, 0x0000, 0, StartAnimLinearTranslation, 0, Intro_TryShinyAnimShowHealthbox);
 }
 
-static void LinkOpponentHandleEndLinkBattle(u32 battlerId)
+void LinkOpponentHandleEndLinkBattle(u32 battlerId)
 {
     BtlController_HandleEndLinkBattle(battlerId, gBattleBufferA[battlerId][1] == B_OUTCOME_DREW ? gBattleBufferA[battlerId][1] : gBattleBufferA[battlerId][1] ^ B_OUTCOME_DREW, SetBattleEndCallbacks);
 }
