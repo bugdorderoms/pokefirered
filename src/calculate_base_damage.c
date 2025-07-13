@@ -588,6 +588,12 @@ static u16 GetMoveBasePower(u32 attacker, u32 defender, struct DamageCalc *damag
             if (gBattleStruct->roundUsed)
                 basePower *= 2;
             break;
+        case EFFECT_ECHOED_VOICE:
+            basePower = min(200, basePower + (40 * gBattleStruct->echoedVoiceDmgScale));
+            break;
+        case EFFECT_STORED_POWER:
+            basePower += (CountBattlerStatIncreases(attacker, TRUE) * 20);
+            break;
     }
     
     if (basePower == 0)
@@ -952,7 +958,8 @@ static u16 CalcBaseDefenseStat(u32 attacker, u32 defender, struct DamageCalc *da
     }
     
     // Check effects that ignores stat stages
-    if ((damageStruct->isCrit && statStages < DEFAULT_STAT_STAGES) || (!(damageStruct->flags & FLAG_CONFUSION_DAMAGE) && damageStruct->atkAbility == ABILITY_UNAWARE))
+    if ((damageStruct->isCrit && statStages < DEFAULT_STAT_STAGES) || (!(damageStruct->flags & FLAG_CONFUSION_DAMAGE) && (damageStruct->atkAbility == ABILITY_UNAWARE
+    || gBattleMoves[damageStruct->move].flags.targetStatStagesIgnored)))
         statStages = DEFAULT_STAT_STAGES;
     
     // Calc base defense stat

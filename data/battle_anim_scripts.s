@@ -629,7 +629,6 @@ gGeneralAnim_ItemEffect::
 gGeneralAnim_SmokeballEscape::
 	loadspritegfx ANIM_TAG_PINK_CLOUD
 	monbg ANIM_ATK_SIDE
-	setalpha 12, 4
 	playsewithpan SE_BALL_OPEN, SOUND_PAN_ATTACKER
 	createsprite gSmokeBallEscapeCloudSpriteTemplate, ANIM_TARGET, 0, 0, 32, 28, 30
 	delay 4
@@ -643,7 +642,7 @@ gGeneralAnim_SmokeballEscape::
 	createsprite gSmokeBallEscapeCloudSpriteTemplate, ANIM_ATTACKER, 124, 2, 14, -20, 30
 	delay 4
 	playsewithpan SE_BALL_OPEN, SOUND_PAN_ATTACKER
-	createvisualtask AnimTask_AttackerFadeToInvisible, 2, 2
+	createvisualtask AnimTask_AttackerFadeToInvisible, 2, 2, 16, 0
 	createsprite gSmokeBallEscapeCloudSpriteTemplate, ANIM_ATTACKER, 123, 3, 4, 4, 30
 	delay 14
 	playsewithpan SE_BALL_OPEN, SOUND_PAN_ATTACKER
@@ -4128,7 +4127,7 @@ ScreechRing::
 gMoveAnim_DOUBLE_TEAM::
 	monbg ANIM_ATK_SIDE
 	setalpha 12, 8
-	createvisualtask AnimTask_DoubleTeam, 2
+	createvisualtask AnimTask_DoubleTeam, 2, TRUE
 	playsewithpan SE_M_DOUBLE_TEAM, SOUND_PAN_ATTACKER
 	delay 32
 	playsewithpan SE_M_DOUBLE_TEAM, SOUND_PAN_ATTACKER
@@ -5004,7 +5003,7 @@ SkyAttackUnleash::
 	call SetSkyBg
 	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATTACKER, 0, 0, 16, RGB_WHITE
 	delay 4
-	createvisualtask AnimTask_AttackerFadeToInvisible, 5, 0
+	createvisualtask AnimTask_AttackerFadeToInvisible, 5, 0, 16, 0
 	waitforvisualfinish
 	createvisualtask SoundTask_PlaySE2WithPanning, 5, SE_M_SKY_UPPERCUT, SOUND_PAN_ATTACKER
 	createsprite gSkyAttackBirdSpriteTemplate, ANIM_TARGET, 2
@@ -5979,7 +5978,7 @@ gMoveAnim_FAINT_ATTACK::
 	waitbgfadein
 	playsewithpan SE_M_FAINT_ATTACK, SOUND_PAN_ATTACKER
 	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 18, 6, 1, 3
-	createvisualtask AnimTask_AttackerFadeToInvisible, 2, 1
+	createvisualtask AnimTask_AttackerFadeToInvisible, 2, 1, 16, 0
 	waitforvisualfinish
 	clearmonbg ANIM_ATK_SIDE
 	invisible ANIM_ATTACKER
@@ -7597,6 +7596,10 @@ gMoveAnim_HIDDEN_POWER::
 	createsprite gHiddenPowerOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 210
 	delay 52
 	setargret -1 @ Signal to end orbit orbs anim
+	call HiddenPowerOrbsScatter
+	end
+
+HiddenPowerOrbsScatter::
 	playsewithpan SE_M_REFLECT, SOUND_PAN_ATTACKER
 	createvisualtask AnimTask_ScaleMonAndRestore, 5, -7, -7, 11, ANIM_ATTACKER, ST_OAM_OBJ_NORMAL
 	createsprite gHiddenPowerOrbScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0
@@ -7607,7 +7610,7 @@ gMoveAnim_HIDDEN_POWER::
 	createsprite gHiddenPowerOrbScatterSpriteTemplate, ANIM_TARGET, 2, 160, 0
 	createsprite gHiddenPowerOrbScatterSpriteTemplate, ANIM_TARGET, 2, 192, 0
 	createsprite gHiddenPowerOrbScatterSpriteTemplate, ANIM_TARGET, 2, 224, 0
-	end
+	return
 
 gMoveAnim_CROSS_CHOP::
 	loadspritegfx ANIM_TAG_HANDS_AND_FEET
@@ -8859,10 +8862,9 @@ ArmThrustLeft::
 gMoveAnim_CAMOUFLAGE::
 	monbg ANIM_ATK_SIDE
 	splitbgprio ANIM_ATTACKER
-	setalpha 16, 0
 	createvisualtask AnimTask_SetCamouflageBlend, 5, F_PAL_ATTACKER, 3, 0, 14
 	delay 16
-	createvisualtask AnimTask_AttackerFadeToInvisible, 2, 4
+	createvisualtask AnimTask_AttackerFadeToInvisible, 2, 4, 16, 0
 	playsewithpan SE_M_FAINT_ATTACK, SOUND_PAN_ATTACKER
 	waitforvisualfinish
 	delay 8
@@ -8870,8 +8872,8 @@ gMoveAnim_CAMOUFLAGE::
 	waitforvisualfinish
 	createvisualtask AnimTask_AttackerFadeFromInvisible, 2, 1
 	waitforvisualfinish
-	blendoff
 	clearmonbg ANIM_ATK_SIDE
+	blendoff
 	end
 
 gMoveAnim_TAIL_GLOW::
@@ -11858,7 +11860,7 @@ gMoveAnim_DRAGON_RUSH::
 	waitbgfadeout
 	createvisualtask AnimTask_StartSlidingBg, 5, -2304, 0, TRUE
 	waitbgfadein
-	createvisualtask AnimTask_AttackerFadeToInvisible, 5, 0
+	createvisualtask AnimTask_AttackerFadeToInvisible, 5, 0, 16, 0
 	waitforvisualfinish
 	createvisualtask SoundTask_PlaySE2WithPanning, 5, SE_M_SKY_UPPERCUT, SOUND_PAN_ATTACKER
 	createsprite gPurpleDrakeSpriteTemplate, ANIM_TARGET, 2
@@ -12023,7 +12025,7 @@ gMoveAnim_BRAVE_BIRD::
 	loadspritepal ANIM_TAG_JAGGED_MUSIC_NOTE @ Red color
 	monbg ANIM_ATK_SIDE
 	call SetHighSpeedBackground
-	createvisualtask AnimTask_AttackerFadeToInvisible, 5, 0
+	createvisualtask AnimTask_AttackerFadeToInvisible, 5, 0, 16, 0
 	waitforvisualfinish
 	createvisualtask SoundTask_PlaySE2WithPanning, 5, SE_M_SKY_UPPERCUT, SOUND_PAN_ATTACKER
 	createsprite gBraveBirdBirdSpriteTemplate, ANIM_TARGET, 2
@@ -12353,7 +12355,7 @@ gMoveAnim_SHADOW_SNEAK::
 	waitforvisualfinish
 	playsewithpan SE_M_FAINT_ATTACK, SOUND_PAN_ATTACKER
 	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 18, 6, 1, 3
-	createvisualtask AnimTask_AttackerFadeToInvisible, 2, 1
+	createvisualtask AnimTask_AttackerFadeToInvisible, 2, 1, 16, 0
 	waitforvisualfinish
 	clearmonbg ANIM_ATK_SIDE
 	invisible ANIM_ATTACKER
@@ -14564,4 +14566,141 @@ gMoveAnim_ROUND::
 	createvisualtask AnimTask_MusicNotesClearRainbowBlend, 2
 	waitforvisualfinish
 	clearmonbg ANIM_DEF_SIDE
+	end
+
+@ Credits: Skeli
+gMoveAnim_ECHOED_VOICE::
+	loadspritegfx ANIM_TAG_METAL_SOUND_WAVES
+	monbg ANIM_DEF_SIDE
+	monbgprio_2A ANIM_TARGET
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 2, 0, 8, 1
+	call EchoedVoiceWave
+	call EchoedVoiceWave
+	call EchoedVoiceWave
+	call EchoedVoiceWave
+	delay 5
+	createvisualtask AnimTask_ShakeTargetBasedOnMovePowerOrDmg, 2, FALSE, 1, 16, TRUE, FALSE
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	end
+
+EchoedVoiceWave::
+	panse_1B SE_M_UPROAR, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 2, 0
+	createsprite gMetalSoundSpriteTemplate, ANIM_TARGET, 2, 16, 0, 0, 0, 30, 0
+	delay 2
+	return
+
+@ Credits: Skeli
+gMoveAnim_CHIP_AWAY::
+	loadspritegfx ANIM_TAG_IMPACT
+	monbg ANIM_ATK_SIDE
+	setalpha 12, 8
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATTACKER, 2, 0, 9, RGB_WHITE
+	waitforvisualfinish
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 24, 6, 1, 5
+	delay 4
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 5, 0, 6, 1
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_TARGET, 4, 0, 0, ANIM_TARGET, 1
+	playsewithpan SE_M_VITAL_THROW2, SOUND_PAN_TARGET
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATTACKER, 2, 9, 0, RGB_WHITE
+	waitforvisualfinish
+	clearmonbg ANIM_ATK_SIDE
+	blendoff
+	end
+
+@ Credits: Skeli
+gMoveAnim_CLEAR_SMOG::
+	loadspriteimg ANIM_TAG_PURPLE_GAS_CLOUD
+	loadspritepal ANIM_TAG_POWER_GEM @ White color
+	monbg ANIM_DEF_SIDE
+	monbgprio_29
+	setalpha 12, 8
+	loopsewithpan SE_M_MIST, SOUND_PAN_TARGET, 17, 14
+	call ClearSmogCloud
+	call ClearSmogCloud
+	call ClearSmogCloud
+	call ClearSmogCloud
+	call ClearSmogCloud
+	call ClearSmogCloud
+	call ClearSmogCloud
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	blendoff
+	end
+
+ClearSmogCloud::
+	createsprite gClearSmogCloudSpriteTemplate, ANIM_ATTACKER, 2, 0, -24, 48, 240, ANIM_TARGET, FALSE
+	delay 7
+	return
+
+@ Credits: Skeli
+gMoveAnim_STORED_POWER::
+	loadspritegfx ANIM_TAG_RED_ORB
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 0, 12, RGB_BLACK
+	playsewithpan SE_M_SUPERSONIC, SOUND_PAN_TARGET
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATTACKER, 1, 0, 9, RGB_RED
+	delay 64
+	waitsound
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATTACKER, 1, 0, 0, RGB_BLACK
+	call HiddenPowerOrbsScatter
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 8, 0, RGB_BLACK
+	end
+
+@ Credits: Lixdel
+gMoveAnim_QUICK_GUARD::
+	loadspritegfx ANIM_TAG_QUICK_GUARD
+	loadspritegfx ANIM_TAG_SPARKLE_4
+	monbg ANIM_ATTACKER
+	setalpha 12, 8
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 0, 2, 0, 10, RGB_WHITE
+	delay 16
+	createsprite gQuickGuardArmSpriteTemplate, ANIM_TARGET, 3, 14, 0, 8, ANIM_ATTACKER, 1
+	createsprite gQuickGuardArmSpriteTemplate, ANIM_TARGET, 3, -14, 0, 8, ANIM_ATTACKER, 0
+	delay 1
+	createsprite gQuickGuardArmSpriteTemplate, ANIM_TARGET, 3, 14, 0, 8, ANIM_ATTACKER, 1
+	createsprite gQuickGuardArmSpriteTemplate, ANIM_TARGET, 3, -14, 0, 8, ANIM_ATTACKER, 0
+	delay 1
+	createsprite gQuickGuardArmSpriteTemplate, ANIM_TARGET, 3, 14, 0, 8, ANIM_ATTACKER, 1
+	createsprite gQuickGuardArmSpriteTemplate, ANIM_TARGET, 3, -14, 0, 8, ANIM_ATTACKER, 0
+	waitforvisualfinish
+	playsewithpan SE_M_DETECT, SOUND_PAN_ATTACKER
+	createsprite gDisableSparkleSpriteTemplate, ANIM_ATTACKER, 13, 0, -29
+	createsprite gDisableSparkleSpriteTemplate, ANIM_ATTACKER, 13, 22, -20
+	createsprite gDisableSparkleSpriteTemplate, ANIM_ATTACKER, 13, 29, 0
+	createsprite gDisableSparkleSpriteTemplate, ANIM_ATTACKER, 13, -23, -20
+	createsprite gDisableSparkleSpriteTemplate, ANIM_ATTACKER, 13, -30, 0
+	createsprite gDisableSparkleSpriteTemplate, ANIM_ATTACKER, 13, 0, 28
+	createsprite gDisableSparkleSpriteTemplate, ANIM_ATTACKER, 13, 22, 19
+	createsprite gDisableSparkleSpriteTemplate, ANIM_ATTACKER, 13, -22, 19
+	waitforvisualfinish
+	clearmonbg ANIM_ATTACKER
+	blendoff
+	end
+
+@ Credits: Blackuser
+gMoveAnim_ALLY_SWITCH::
+	call SetPsychicBackground
+	monbg ANIM_ATK_SIDE
+	setalpha 12, 4
+	createvisualtask AnimTask_DoubleTeam, 2, FALSE
+	playsewithpan SE_M_DOUBLE_TEAM, SOUND_PAN_ATTACKER
+	delay 32
+	playsewithpan SE_M_DOUBLE_TEAM, SOUND_PAN_ATTACKER
+	delay 24
+	playsewithpan SE_M_DOUBLE_TEAM, SOUND_PAN_ATTACKER
+	delay 16
+	call DoubleTeamSoundEffect
+	createvisualtask AnimTask_AttackerFadeToInvisible, 2, 2, 12, 4
+	call DoubleTeamSoundEffect
+	call DoubleTeamSoundEffect
+	call DoubleTeamSoundEffect
+	call DoubleTeamSoundEffect
+	call DoubleTeamSoundEffect
+	waitforvisualfinish
+	clearmonbg ANIM_ATK_SIDE
+	invisible ANIM_ATTACKER
+	call UnsetScrollingBg
+	createvisualtask AnimTask_AllySwitchDataSwap, 2
+	blendoff
 	end

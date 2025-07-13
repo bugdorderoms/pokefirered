@@ -2195,7 +2195,7 @@ void AnimTask_TransformMon(u32 taskId)
         HandleSpeciesGfxDataChange(gBattleAnimAttacker, GetBattlerForAnimScript(gTasks[taskId].data[10]), gTasks[taskId].data[11]);
         
         GetBattleAnimBgDataByPriorityRank(&animBg);
-        CpuCopy32(gMonSpritesGfxPtr->sprites[GetBattlerPosition(gBattleAnimAttacker)], animBg.bgTiles, 0x800);
+        CpuCopy32(gMonSpritesGfxPtr->battlers[GetBattlerPosition(gBattleAnimAttacker)].sprite, animBg.bgTiles, 0x800);
         LoadBgTiles(1, animBg.bgTiles, 0x800, animBg.tilesOffset);
         
         gTasks[taskId].data[0]++;
@@ -4887,7 +4887,7 @@ static void AnimRecycleStep(struct Sprite *sprite)
 // No args.
 void AnimTask_GetWeather(u32 taskId)
 {
-    gBattleAnimArgs[ARG_RET_ID] = GetCurrentWeatherEnumId(gBattleWeather);
+    gBattleAnimArgs[ARG_RET_ID] = GetCurrentWeatherEnumId(gWeatherMoveAnim);
     DestroyAnimVisualTask(taskId);
 }
 

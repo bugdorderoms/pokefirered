@@ -507,9 +507,10 @@
 	.byte \caseId
 	.endm
 
-	.macro switchineffectsstate battler:req
+	.macro switchineffectsstate battler:req, lastcase:req
 	.byte 0x52
 	.byte \battler
+	.byte \lastcase
 	.endm
 
 	.macro switchoutabilities battler:req
@@ -1805,6 +1806,18 @@
 	.4byte \failPtr
 	.endm
 	
+	.macro handleechoedvoice
+	callfunction BS_HandleEchoedVoice
+	.endm
+	
+	.macro tryallyswitch
+	callfunction BS_TryAllySwitch
+	.endm
+	
+	.macro allyswitchswapbattlers
+	callfunction BS_AllySwitchSwapBattlers
+	.endm
+	
 @ helpful macros
 	.macro copybyte dst:req, src:req
 	copyarray \dst, \src, 0x1
@@ -1972,7 +1985,12 @@
 	
 	.macro switchineffects battler:req
 	setbyte sSWITCHIN_EFFECTS_STATE, 0
-	switchineffectsstate \battler
+	switchineffectsstate \battler, SWITCHIN_COUNT
+	.endm
+	
+	.macro switchineffectshealingwishonly battler:req
+	setbyte sSWITCHIN_EFFECTS_STATE, SWITCHIN_HEALING_WISH
+	switchineffectsstate \battler, SWITCHIN_Z_HEALING_WISH + 1
 	.endm
 	
 	.macro savebattlers

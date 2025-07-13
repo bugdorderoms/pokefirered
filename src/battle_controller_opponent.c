@@ -78,8 +78,8 @@ static void (*const sOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 
 void SetControllerToOpponent(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = OpponentBufferRunCommand;
-    gBattlerControllerEndFuncs[battlerId] = OpponentBufferExecCompleted;
+    gBattlerControllersData[battlerId].func = OpponentBufferRunCommand;
+    gBattlerControllersData[battlerId].endFunc = OpponentBufferExecCompleted;
 }
 
 static void OpponentBufferRunCommand(u32 battlerId)
@@ -95,7 +95,7 @@ static void OpponentBufferRunCommand(u32 battlerId)
 
 static void OpponentBufferExecCompleted(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = OpponentBufferRunCommand;
+    gBattlerControllersData[battlerId].func = OpponentBufferRunCommand;
     gBattleControllerExecFlags &= ~(Bit(battlerId));
 }
 
@@ -124,7 +124,7 @@ static void SwitchIn_ShowSubstitute(u32 battlerId)
         if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute)
             InitAndLaunchSpecialAnimation(battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
         
-        gBattlerControllerFuncs[battlerId] = SwitchIn_HandleSoundAndEnd;
+        gBattlerControllersData[battlerId].func = SwitchIn_HandleSoundAndEnd;
     }
 }
 
@@ -141,7 +141,7 @@ static void SwitchIn_ShowHealthbox(u32 battlerId)
         StartHealthboxSlideIn(battlerId);
         SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
         CopyBattleSpriteInvisibility(battlerId);
-        gBattlerControllerFuncs[battlerId] = SwitchIn_ShowSubstitute;
+        gBattlerControllersData[battlerId].func = SwitchIn_ShowSubstitute;
     }
 }
 
@@ -150,11 +150,11 @@ static void SwitchIn_TryShinyAnim(u32 battlerId)
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
         TryShinyAnimation(battlerId);
     
-    if (gSprites[gBattleControllerData[battlerId]].callback == SpriteCallbackDummy && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
+    if (gSprites[gBattlerControllersData[battlerId].data].callback == SpriteCallbackDummy && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
     {
-        DestroySprite(&gSprites[gBattleControllerData[battlerId]]);
+        DestroySprite(&gSprites[gBattlerControllersData[battlerId].data]);
         SetBattlerShadowSpriteCallback(battlerId);
-        gBattlerControllerFuncs[battlerId] = SwitchIn_ShowHealthbox;
+        gBattlerControllersData[battlerId].func = SwitchIn_ShowHealthbox;
     }
 }
 
@@ -195,10 +195,10 @@ static void OpponentHandlePrintString(u32 battlerId)
         switch (*stringId)
         {
         case STRINGID_TRAINER1WINTEXT:
-            gBattlerControllerFuncs[battlerId] = PrintOakText_HowDisappointing;
+            gBattlerControllersData[battlerId].func = PrintOakText_HowDisappointing;
             break;
         case STRINGID_DONTLEAVEBIRCH:
-            gBattlerControllerFuncs[battlerId] = PrintOakText_OakNoRunningFromATrainer;
+            gBattlerControllersData[battlerId].func = PrintOakText_OakNoRunningFromATrainer;
             break;
         }
     }
@@ -533,7 +533,7 @@ static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
             m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 256);
         
         gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay = 3;
-        gBattlerControllerFuncs[battlerId] = Intro_DelayAndEnd;
+        gBattlerControllersData[battlerId].func = Intro_DelayAndEnd;
     }
 }
 
@@ -552,7 +552,7 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
         
         ShowHealthBox(battlerId);
         gBattleSpritesDataPtr->animationData->healthboxSlideInStarted = FALSE;
-        gBattlerControllerFuncs[battlerId] = Intro_WaitForShinyAnimAndHealthbox;
+        gBattlerControllersData[battlerId].func = Intro_WaitForShinyAnimAndHealthbox;
     }
 }
 

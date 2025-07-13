@@ -294,6 +294,17 @@ const struct SpriteTemplate gGreenAcidPoisonDropletSpriteTemplate =
     .callback = AnimAcidPoisonDroplet,
 };
 
+const struct SpriteTemplate gClearSmogCloudSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PURPLE_GAS_CLOUD,
+    .paletteTag = ANIM_TAG_POWER_GEM,
+    .oam = &gOamData_AffineOff_ObjBlend_32x16,
+    .anims = gAnims_Cloud,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = InitSwirlingFogAnim,
+};
+
 // Animates a sludge project.
 // arg 0: initial x offset
 // arg 1: initial y offset

@@ -154,32 +154,32 @@ const struct SpriteTemplate gSlidingKickSpriteTemplate =
     .callback = AnimSlidingKick,
 };
 
-static const union AnimCmd sAnim_KarateHandLeft[] =
+static const union AffineAnimCmd sAffineAnim_KarateHandLeft[] =
 {
-    ANIMCMD_FRAME(0, 1),
-    ANIMCMD_END,
+    AFFINEANIMCMD_FRAME(0, 0, 64, 1),
+    AFFINEANIMCMD_END,
 };
 
-static const union AnimCmd sAnim_KarateHandRight[] =
+static const union AffineAnimCmd sAffineAnim_KarateHandRight[] =
 {
-    ANIMCMD_FRAME(0, 1, .hFlip = TRUE),
-    ANIMCMD_END,
+    AFFINEANIMCMD_FRAME(0, -512, 64, 1),
+    AFFINEANIMCMD_END,
 };
 
-static const union AnimCmd *const sAnims_KarateHand[] =
+static const union AffineAnimCmd *const sAffineAnims_KarateHand[] =
 {
-    sAnim_KarateHandLeft,
-    sAnim_KarateHandRight
+    sAffineAnim_KarateHandLeft,
+    sAffineAnim_KarateHandRight,
 };
 
 const struct SpriteTemplate gKarateHandSpriteTemplate =
 {
     .tileTag = ANIM_TAG_QUICK_GUARD,
     .paletteTag = ANIM_TAG_QUICK_GUARD,
-    .oam = &gOamData_AffineOff_ObjNormal_32x32,
-    .anims = sAnims_KarateHand,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
     .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
+    .affineAnims = sAffineAnims_KarateHand,
     .callback = AnimKarateChopHand,
 };
 
@@ -455,6 +455,7 @@ const struct SpriteTemplate gFocusPunchFistSpriteTemplate =
 
 static const union AffineAnimCmd sAffineAnim_DoubleSlapSwipe[] =
 {
+    AFFINEANIMCMD_FRAME(0, 0, 64, 1), // Rotate 90° to left
     AFFINEANIMCMD_FRAME(0, 0, 0, 3), // Pause for 3 frames
     AFFINEANIMCMD_FRAME(-28, 0, 0, 8), // Flatten vertically (on its side)
     AFFINEANIMCMD_FRAME(0, 0, 0, 11), // Pause for 11 frames
@@ -466,6 +467,7 @@ static const union AffineAnimCmd sAffineAnim_DoubleSlapSwipe[] =
 
 static const union AffineAnimCmd sAffineAnim_WakeUpSlapSwipe[] =
 {
+    AFFINEANIMCMD_FRAME(0, 0, 64, 1), // Rotate 90° to left
     AFFINEANIMCMD_FRAME(0, 0, 0, 3), // Pause for 3 frames
     AFFINEANIMCMD_FRAME(-32, 0, 0, 7), // Flatten vertically (on its side)
     AFFINEANIMCMD_FRAME(0, 0, 0, 8), // Pause for 8 frames
@@ -473,7 +475,7 @@ static const union AffineAnimCmd sAffineAnim_WakeUpSlapSwipe[] =
     AFFINEANIMCMD_FRAME(32, 0, 0, 7), // Flatten vertically (on its side)
     AFFINEANIMCMD_FRAME(0, 0, 0, 8), // Pause for 8 frames
     AFFINEANIMCMD_FRAME(288, 0, 0, 1), // Unflatten in other direction
-    AFFINEANIMCMD_JUMP(0),
+    AFFINEANIMCMD_JUMP(1),
 };
 
 static const union AffineAnimCmd *const sAffineAnims_SlapSwipes[] =
@@ -687,6 +689,35 @@ const struct SpriteTemplate gBulletPunchFistSpriteTemplate =
     .callback = AnimBasicFistOrFoot,
 };
 
+static const union AnimCmd sAnim_QuickGuardHandLeft[] =
+{
+    ANIMCMD_FRAME(0, 1),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_QuickGuardHandRight[] =
+{
+    ANIMCMD_FRAME(0, 1, .hFlip = TRUE),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd *const sAnims_QuickGuardHand[] =
+{
+    sAnim_QuickGuardHandLeft,
+    sAnim_QuickGuardHandRight,
+};
+
+const struct SpriteTemplate gQuickGuardArmSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_QUICK_GUARD,
+    .paletteTag = ANIM_TAG_QUICK_GUARD,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_QuickGuardHand,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimBasicFistOrFoot,
+};
+
 // Animates the High Jump Kick sprite sliding to the target.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset
@@ -733,8 +764,7 @@ static void AnimBasicFistOrFoot(struct Sprite *sprite)
 static void AnimKarateChopHand(struct Sprite *sprite)
 {
     InitSpritePosToAnimTarget(sprite, TRUE);
-    StartSpriteAnim(sprite, GetSpriteOrientationBasedOnBattlers());
-
+    StartSpriteAffineAnim(sprite, GetSpriteOrientationBasedOnBattlers());
     sprite->data[0] = gBattleAnimArgs[2];
     sprite->data[4] = gBattleAnimArgs[3];
     sprite->callback = AnimStompFootStep;

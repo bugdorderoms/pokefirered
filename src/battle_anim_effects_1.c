@@ -3,6 +3,7 @@
 #include "battle_anim.h"
 #include "battle_gfx_sfx_util.h"
 #include "battle_interface.h"
+#include "reshow_battle_screen.h"
 #include "random.h"
 #include "trig.h"
 #include "util.h"
@@ -3558,16 +3559,16 @@ static void AnimHornHitStep(struct Sprite* sprite)
 }
 
 // Animates the Double Team's attacker clones.
-// No args.
+// arg 0: restore bg visibility on anim end (boolean)
 void AnimTask_DoubleTeam(u32 taskId)
 {
-    u32 i, obj;
-    u16 r3;
-    u16 r4;
+    s32 i, obj;
+    u16 r3, r4;
     struct Task* task = &gTasks[taskId];
     
     task->data[0] = GetAnimBattlerSpriteId(ANIM_ATTACKER);
     task->data[1] = AllocSpritePalette(ANIM_TAG_BENT_SPOON);
+    task->data[2] = gBattleAnimArgs[0];
     
     r3 = (task->data[1] * 16) + 0x100;
     r4 = (gSprites[task->data[0]].oam.paletteNum + 16) << 4;
@@ -3580,7 +3581,7 @@ void AnimTask_DoubleTeam(u32 taskId)
     task->data[3] = 0;
     i = 0;
     
-    while (i < 2 && (obj = CloneBattlerSpriteWithBlend(0)) >= 0)
+    while (i < 2 && (obj = CloneBattlerSpriteWithBlend(ANIM_ATTACKER)) >= 0)
     {
         gSprites[obj].oam.paletteNum = task->data[1];
         gSprites[obj].data[0] = 0;
@@ -3605,11 +3606,13 @@ static void AnimTask_DoubleTeamStep(u32 taskId)
     
     if (!task->data[3])
     {
-        if (GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker) == 1)
-            SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_BG1_ON);
-        else
-            SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_BG2_ON);
-
+        if (task->data[2])
+        {
+            if (GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker) == 1)
+                SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_BG1_ON);
+            else
+                SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_BG2_ON);
+        }
         FreeSpritePaletteByTag(ANIM_TAG_BENT_SPOON);
         DestroyAnimVisualTask(taskId);
     }
@@ -3635,6 +3638,33 @@ static void AnimTask_DoubleTeamCallback(struct Sprite* sprite)
         sprite->data[1] = (sprite->data[1] + sprite->data[5]) & 0xFF;
         sprite->x2 = Sin(sprite->data[1], sprite->data[4]);
     }
+}
+
+static void AnimTask_AllySwitchDataSwap_Step(u32 taskId)
+{
+    // Refresh screen
+    gBattleScripting.reshowMainState = 0;
+    gBattleScripting.reshowHelperState = 0;
+    while (!ReshowBattleScreenAfterAllySwitch());
+    
+    // This is disabled on Double Team's anim, so restore it here
+    if (GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker) == 1)
+        SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_BG1_ON);
+    else
+        SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_BG2_ON);
+    
+    gBattleAnimAttacker = gBattleAnimTarget = BATTLE_PARTNER(gBattleAnimAttacker);
+    
+    DestroyAnimVisualTask(taskId);
+}
+
+// Handles Ally Switch data swap and battle screen update.
+// No args.
+void AnimTask_AllySwitchDataSwap(u32 taskId)
+{
+    SetBattlerSpriteAffineMode(ST_OAM_AFFINE_NORMAL);
+    SwapBattlersPositions(gBattleAnimAttacker, BATTLE_PARTNER(gBattleAnimAttacker));
+    gTasks[taskId].func = AnimTask_AllySwitchDataSwap_Step;
 }
 
 // Starts the rainbow effect for musical notes.

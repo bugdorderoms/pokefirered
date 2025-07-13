@@ -1179,7 +1179,7 @@ void SetMultiuseSpriteTemplateToPokemon(u32 speciesTag, u32 battlerPosition)
         if (battlerPosition >= MAX_BATTLERS_COUNT)
             battlerPosition = 0;
 
-        gMultiuseSpriteTemplate = gMonSpritesGfxPtr->templates[battlerPosition];
+        gMultiuseSpriteTemplate = gMonSpritesGfxPtr->battlers[battlerPosition].template;
     }
     else
     {
@@ -1213,7 +1213,7 @@ void SetMultiuseSpriteTemplateToTrainerBack(u32 trainerSpriteId, u32 battlerId, 
     }
     else
     {
-        gMultiuseSpriteTemplate = gMonSpritesGfxPtr != NULL ? gMonSpritesGfxPtr->templates[battlerPosition] : gSpriteTemplates_Battlers[battlerPosition];
+        gMultiuseSpriteTemplate = gMonSpritesGfxPtr != NULL ? gMonSpritesGfxPtr->battlers[battlerPosition].template : gSpriteTemplates_Battlers[battlerPosition];
         gMultiuseSpriteTemplate.anims = gTrainerFrontPicTable[trainerSpriteId].anims;
     }
 }
@@ -3170,7 +3170,7 @@ static bool32 CheckZacianZamazentaKnowsIronHead(struct Pokemon *mon, u32 species
     
     for (i = 0; i < ARRAY_COUNT(sZacianZamazentaMoves); i++)
     {
-        if (sZacianZamazentaMoves[i].species == species && sZacianZamazentaMoves[i].origMove == move && FindMoveSlotInMoveset(mon, sZacianZamazentaMoves[i].newMove))
+        if (sZacianZamazentaMoves[i].species == species && sZacianZamazentaMoves[i].origMove == move && FindMoveSlotInMoveset(mon, sZacianZamazentaMoves[i].newMove) != MAX_MON_MOVES)
             return TRUE;
     }
     return FALSE;

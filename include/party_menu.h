@@ -91,5 +91,6 @@ void SetBattlerUsedItemForBattleScript(u32 item, bool32 fromBagMenu);
 void CB2_ReturnToPartyMenuFromSummaryScreen(void);
 u8 GetPartyIdFromBattleSlot(u32 slot);
 u32 GetItemUseAnimFollowUpCBIdByItemType(u32 itemId);
+void SwapPartyPokemon(struct Pokemon *mon1, struct Pokemon *mon2);
 
 #endif // GUARD_PARTY_MENU_H

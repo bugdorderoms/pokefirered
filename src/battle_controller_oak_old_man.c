@@ -76,8 +76,8 @@ static void (*const sOakOldManBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 
 void SetControllerToOakOrOldMan(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = OakOldManBufferRunCommand;
-    gBattlerControllerEndFuncs[battlerId] = OakOldManBufferExecCompleted;
+    gBattlerControllersData[battlerId].func = OakOldManBufferRunCommand;
+    gBattlerControllersData[battlerId].endFunc = OakOldManBufferExecCompleted;
     gBattleStruct->simulatedInputState[0] = 0;
     gBattleStruct->simulatedInputState[1] = 0;
     gBattleStruct->simulatedInputState[2] = 0;
@@ -97,7 +97,7 @@ static void OakOldManBufferRunCommand(u32 battlerId)
 
 static void OakOldManBufferExecCompleted(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = OakOldManBufferRunCommand;
+    gBattlerControllersData[battlerId].func = OakOldManBufferRunCommand;
     
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
@@ -154,17 +154,17 @@ static void OakOldManHandlePrintStringInternal(u32 battlerId, bool32 isSelection
                 && !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_STAT_CHG))
                 {
                     BtlCtrl_OakOldMan_SetState2Flag(FIRST_BATTLE_MSG_FLAG_STAT_CHG);
-                    gBattlerControllerFuncs[battlerId] = PrintOakText_LoweringStats;
+                    gBattlerControllersData[battlerId].func = PrintOakText_LoweringStats;
                 }
                 break;
             case STRINGID_PLAYERGOTMONEY:
-                gBattlerControllerFuncs[battlerId] = PrintOakText_WinEarnsPrizeMoney;
+                gBattlerControllersData[battlerId].func = PrintOakText_WinEarnsPrizeMoney;
                 break;
             case STRINGID_TRAINER1WINTEXT:
-                gBattlerControllerFuncs[battlerId] = PrintOakText_HowDisappointing;
+                gBattlerControllersData[battlerId].func = PrintOakText_HowDisappointing;
                 break;
             case STRINGID_DONTLEAVEBIRCH:
-                gBattlerControllerFuncs[battlerId] = PrintOakText_OakNoRunningFromATrainer;
+                gBattlerControllersData[battlerId].func = PrintOakText_OakNoRunningFromATrainer;
                 break;
             }
         }
@@ -236,7 +236,7 @@ static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
         
         CreateTask(Task_BltController_RestoreBgmAfterCry, 10);
         HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[battlerId]], battlerId);
-        gBattlerControllerFuncs[battlerId] = PrintOakText_ForPetesSake;
+        gBattlerControllersData[battlerId].func = PrintOakText_ForPetesSake;
     }
 }
 
@@ -255,7 +255,7 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
         
         ShowHealthBox(battlerId);
         gBattleSpritesDataPtr->animationData->healthboxSlideInStarted = FALSE;
-        gBattlerControllerFuncs[battlerId] = Intro_WaitForShinyAnimAndHealthbox;
+        gBattlerControllersData[battlerId].func = Intro_WaitForShinyAnimAndHealthbox;
     }
 }
 

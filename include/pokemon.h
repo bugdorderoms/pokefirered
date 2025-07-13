@@ -225,7 +225,7 @@ struct MoveFlags
     // end of byte
     /*0x02*/ bool8 soundMove:1; // A move with this flag will makes sound.
     /*0x02*/ bool8 ballisticMove:1; // A move with this flag will be blocked by Bulletproof.
-    /*0x02*/ bool8 protectionMove:1; // A move with this flag can set a protect like effect.
+    /*0x02*/ bool8 usesProtectCounter:1; // A move with this flag will decrease the success rate on each consecutive use.
     /*0x02*/ bool8 powderMove:1; // A move with this flag can be blocked by Overcoat, etc.
     /*0x02*/ bool8 ignoreAbilities:1; // A move with this flag will ignore all ignoreable abilities.
     /*0x02*/ bool8 dmgMinimize:1; // A move with this flag will deal double damage and aways hit the target if it was used Minimize.

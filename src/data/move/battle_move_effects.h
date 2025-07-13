@@ -1043,6 +1043,27 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
         .battleScript = BattleScript_EffectRound,
     },
     
+    [EFFECT_ECHOED_VOICE] =
+    {
+        .battleScript = BattleScript_EffectEchoedVoice,
+    },
+    
+    [EFFECT_STORED_POWER] =
+    {
+        .battleScript = BattleScript_EffectHit,
+    },
+    
+    [EFFECT_QUICK_GUARD] =
+    {
+        .battleScript = BattleScript_EffectProtect,
+        .affectsUserSide = TRUE,
+    },
+    
+    [EFFECT_ALLY_SWITCH] =
+    {
+        .battleScript = BattleScript_EffectAllySwitch,
+    },
+    
     /*
     [EFFECT_TERRAIN_PULSE] =
     {

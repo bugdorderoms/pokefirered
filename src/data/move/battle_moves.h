@@ -4350,7 +4350,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 4,
         .flags =
         {
-            .protectionMove = TRUE,
+            .usesProtectCounter = TRUE,
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
             .forbiddenMetronome = TRUE,
@@ -4709,7 +4709,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 4,
         .flags =
         {
-            .protectionMove = TRUE,
+            .usesProtectCounter = TRUE,
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
             .forbiddenMetronome = TRUE,
@@ -4849,7 +4849,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 4,
         .flags =
         {
-            .protectionMove = TRUE,
+            .usesProtectCounter = TRUE,
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
             .forbiddenMetronome = TRUE,
@@ -11338,7 +11338,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 3,
         .flags =
         {
-            .protectionMove = TRUE,
+            .usesProtectCounter = TRUE,
             .snatchAffected = TRUE,
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
@@ -11974,7 +11974,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_ECHOED_VOICE] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Echoed Voice"),
+        .description = COMPOUND_STRING("It attacks with an\n"
+                                       "echoing voice. If\n"
+                                       "used every turn, it\n"
+                                       "does greater damage."),
+        .animScript = gMoveAnim_ECHOED_VOICE,
         .effect = EFFECT_ECHOED_VOICE,
         .power = 40,
         .type = TYPE_NORMAL,
@@ -11992,7 +11997,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CHIP_AWAY] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Chip Away"),
+        .description = COMPOUND_STRING("The user strikes\n"
+                                       "continually. It\n"
+                                       "ignores the foe's\n"
+                                       "stat changes."),
+        .animScript = gMoveAnim_CHIP_AWAY,
         .effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_NORMAL,
@@ -12011,24 +12021,37 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CLEAR_SMOG] =
     {
-        .name = COMPOUND_STRING("-"),
-        .effect = EFFECT_CLEAR_SMOG,
+        .name = COMPOUND_STRING("Clear Smog"),
+        .description = COMPOUND_STRING("Attacks by throwing\n"
+                                       "a special mud. All\n"
+                                       "stat changes are\n"
+                                       "returned to normal."),
+        .animScript = gMoveAnim_CLEAR_SMOG,
+        .effect = EFFECT_HIT,
         .power = 50,
         .type = TYPE_POISON,
         .pp = 15,
-        // .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .flags =
         {
             .kingsRockAffected = TRUE,
         },
         .split = SPLIT_SPECIAL,
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_CLEAR_SMOG,
+            .chance = 0,
+        }),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_STORED_POWER] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Stored Power"),
+        .description = COMPOUND_STRING("It attacks the foe\n"
+                                       "with stored power.\n"
+                                       "The more the user's\n"
+                                       "stats, more damage."),
+        .animScript = gMoveAnim_STORED_POWER,
         .effect = EFFECT_STORED_POWER,
         .power = 20,
         .type = TYPE_PSYCHIC,
@@ -12045,20 +12068,24 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_QUICK_GUARD] =
     {
-        .name = COMPOUND_STRING("-"),
-        .effect = EFFECT_PROTECT,
+        .name = COMPOUND_STRING("Quick Guard"),
+        .description = COMPOUND_STRING("The user protects\n"
+                                       "itself and its\n"
+                                       "allies from\n"
+                                       "priority moves."),
+        .animScript = gMoveAnim_QUICK_GUARD,
+        .effect = EFFECT_QUICK_GUARD,
         .type = TYPE_FIGHTING,
         .pp = 15,
         .target = MOVE_TARGET_USER,
         .priority = 3,
         .flags =
         {
-            .protectionMove = TRUE,
+            .usesProtectCounter = TRUE,
             .snatchAffected = TRUE,
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
             .forbiddenMetronome = TRUE,
-            // .affectsUserSide = TRUE, // Protects the whole side.
         },
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_DEF_UP_1,
@@ -12066,7 +12093,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_ALLY_SWITCH] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Ally Switch"),
+        .description = COMPOUND_STRING("It teleports using\n"
+                                       "a strange power and\n"
+                                       "switches its place\n"
+                                       "with its ally."),
+        .animScript = gMoveAnim_ALLY_SWITCH,
         .effect = EFFECT_ALLY_SWITCH,
         .type = TYPE_PSYCHIC,
         .pp = 15,
@@ -13721,7 +13753,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 4,
         .flags =
         {
-            .protectionMove = TRUE,
+            .usesProtectCounter = TRUE,
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
             .forbiddenMetronome = TRUE,
@@ -13879,7 +13911,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 4,
         .flags =
         {
-            .protectionMove = TRUE,
+            .usesProtectCounter = TRUE,
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
             .forbiddenMetronome = TRUE,
@@ -14416,7 +14448,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 4,
         .flags =
         {
-            .protectionMove = TRUE,
+            .usesProtectCounter = TRUE,
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
             .forbiddenMetronome = TRUE,
@@ -16292,7 +16324,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 4,
         .flags =
         {
-            .protectionMove = TRUE,
+            .usesProtectCounter = TRUE,
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
             .forbiddenMetronome = TRUE,

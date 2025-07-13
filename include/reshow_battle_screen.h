@@ -4,5 +4,6 @@
 #include "global.h"
 
 void ReshowBattleScreenAfterMenu(void);
+bool32 ReshowBattleScreenAfterAllySwitch(void);
 
 #endif // GUARD_RESHOW_BATTLE_SCREEN_H

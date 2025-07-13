@@ -60,8 +60,8 @@ static void (*const sRecordedPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 
 void SetControllerToRecordedPlayer(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = RecordedPlayerBufferRunCommand;
-    gBattlerControllerEndFuncs[battlerId] = RecordedPlayerBufferExecCompleted;
+    gBattlerControllersData[battlerId].func = RecordedPlayerBufferRunCommand;
+    gBattlerControllersData[battlerId].endFunc = RecordedPlayerBufferExecCompleted;
 }
 
 static void RecordedPlayerBufferRunCommand(u32 battlerId)
@@ -77,7 +77,7 @@ static void RecordedPlayerBufferRunCommand(u32 battlerId)
 
 static void RecordedPlayerBufferExecCompleted(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = RecordedPlayerBufferRunCommand;
+    gBattlerControllersData[battlerId].func = RecordedPlayerBufferRunCommand;
     
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
@@ -156,7 +156,7 @@ static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
             HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)]], BATTLE_PARTNER(battlerId));
         
         gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay = 3;
-        gBattlerControllerFuncs[battlerId] = Intro_DelayAndEnd;
+        gBattlerControllersData[battlerId].func = Intro_DelayAndEnd;
     }
 }
 
@@ -175,7 +175,7 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
         
         ShowHealthBox(battlerId);
         gBattleSpritesDataPtr->animationData->healthboxSlideInStarted = FALSE;
-        gBattlerControllerFuncs[battlerId] = Intro_WaitForShinyAnimAndHealthbox;
+        gBattlerControllersData[battlerId].func = Intro_WaitForShinyAnimAndHealthbox;
     }
 }
 

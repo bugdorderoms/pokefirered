@@ -163,6 +163,8 @@ extern const u8 BattleScript_EffectCoil[];
 extern const u8 BattleScript_EffectEntrainment[];
 extern const u8 BattleScript_EffectAfterYou[];
 extern const u8 BattleScript_EffectRound[];
+extern const u8 BattleScript_EffectEchoedVoice[];
+extern const u8 BattleScript_EffectAllySwitch[];
 // Other scripts
 extern const u8 BattleScript_HitFromCritCalc[];
 extern const u8 BattleScript_MoveEnd[];
@@ -403,6 +405,7 @@ extern const u8 BattleScript_PrimalWeatherBlocksMove[];
 extern const u8 BattleScript_StrongWindsWeakenedAttack[];
 extern const u8 BattleScript_SandSpitActivated[];
 extern const u8 BattleScript_SlowStartEnd[];
+extern const u8 BattleScript_ButItFailedAtkCanceler[];
 extern const u8 BattleScript_ButItFailedAtkStringPpReduce[];
 extern const u8 BattleScript_PerishBodyActivates[];
 extern const u8 BattleScript_WanderingSpiritActivates[];
@@ -479,6 +482,7 @@ extern const u8 BattleScript_UltraBurst[];
 extern const u8 BattleScript_OpportunistActivates[];
 extern const u8 BattleScript_MoveUsedSignatureMove[];
 extern const u8 BattleScript_MoveEffectSmackDown[];
+extern const u8 BattleScript_MoveEffectClearSmog[];
 
 extern const u8 *const gBattlescriptsForUsingItem[];
 

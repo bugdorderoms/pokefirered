@@ -737,7 +737,7 @@ bool32 TrySetCantSelectMoveBattleScript(u32 battlerId)
     if (cantSelect)
     {
         gCurrentMove = move;
-        gSelectionBattleScripts[battlerId] = BattleScript_SelectingNotAllowedMove;
+        gBattlerControllersData[battlerId].selectionScript = BattleScript_SelectingNotAllowedMove;
     }
     
     return cantSelect;
@@ -796,7 +796,7 @@ bool32 AreAllMovesUnusable(u32 battlerId)
     {
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_NO_MOVES;
         gProtectStructs[battlerId].noValidMoves = TRUE;
-        gSelectionBattleScripts[battlerId] = BattleScript_SelectingNotAllowedMove;
+        gBattlerControllersData[battlerId].selectionScript = BattleScript_SelectingNotAllowedMove;
         
         if (IsDoubleBattleForBattler(battlerId))
             gBattleBufferB[battlerId][3] = GetBattlerAtPosition((BATTLE_OPPOSITE(GetBattlerPosition(battlerId))) | (Random() & 2));
@@ -849,7 +849,7 @@ static inline bool32 CheckAndRecordAbility(u32 battlerId, u32 abilityId, u32 abi
 static bool32 IsImmuneToWeatherDamage(u32 battlerId, u32 ability)
 {
     if ((IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE && GetBattlerSide(battlerId) == B_SIDE_OPPONENT) || (gStatuses3[battlerId] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER))
-    || !WEATHER_HAS_EFFECT || CheckAndRecordAbility(battlerId, ability, ABILITY_OVERCOAT) || CheckAndRecordAbility(battlerId, ability, ABILITY_MAGIC_GUARD))
+    || !IsBattlerWeatherAffected(battlerId, B_WEATHER_ANY) || CheckAndRecordAbility(battlerId, ability, ABILITY_OVERCOAT) || CheckAndRecordAbility(battlerId, ability, ABILITY_MAGIC_GUARD))
         return TRUE;
     return FALSE;
 }
@@ -976,6 +976,9 @@ bool32 DoEndTurnEffects(void)
                     gBattleMons[i].status2 &= ~(STATUS2_TURN_ORDER_LOCKED);
                 }
                 gBattleStruct->roundUsed = FALSE;
+                
+                if (gBattleStruct->echoedVoiceCounter && --gBattleStruct->echoedVoiceCounter == 0)
+                    gBattleStruct->echoedVoiceDmgScale = 0;
                 
                 ++gBattleStruct->turnEffectsTracker;
                 break;
@@ -4850,7 +4853,7 @@ bool32 IsUnnerveOnOpposingField(u32 battler)
 
 u16 *GetUsedHeldItemPtr(u32 battler)
 {
-    return &gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].usedHeldItem;
+    return &gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].itemEffects.usedHeldItem;
 }
 
 bool32 NoAliveMonsForParty(struct Pokemon *party)
@@ -4941,7 +4944,7 @@ bool32 IsMoveMakingContact(u32 battler, u32 move)
 // Check if defender is protected from attacker's move
 bool32 IsBattlerProtected(u32 attacker, u32 defender, u32 move)
 {
-    u32 moveTarget;
+    u32 moveTarget, defenderSide;
     
     if (GetBattlerAbility(attacker) == ABILITY_UNSEEN_FIST && IsMoveMakingContact(attacker, move))
         return FALSE;
@@ -4951,9 +4954,13 @@ bool32 IsBattlerProtected(u32 attacker, u32 defender, u32 move)
         if (gProtectStructs[defender].protected)
             return TRUE;
         
-        moveTarget = GetBattlerMoveTargetType(attacker, move);
+        defenderSide = GetBattlerSide(defender);
         
-        if ((gSideStatuses[GetBattlerSide(defender)] & SIDE_STATUS_WIDE_GUARD) && (moveTarget == MOVE_TARGET_BOTH || moveTarget == MOVE_TARGET_FOES_AND_ALLY))
+        if ((gSideStatuses[defenderSide] & SIDE_STATUS_QUICK_GUARD) && GetMovePriority(attacker, move) > 0)
+            return TRUE;
+        
+        moveTarget = GetBattlerMoveTargetType(attacker, move);
+        if ((gSideStatuses[defenderSide] & SIDE_STATUS_WIDE_GUARD) && (moveTarget == MOVE_TARGET_BOTH || moveTarget == MOVE_TARGET_FOES_AND_ALLY))
             return TRUE;
     }
     return FALSE;
@@ -6441,28 +6448,122 @@ static inline void SwapStructData(void *s1, void *s2, void *data, u32 size)
     memcpy(s2, data, size);
 }
 
+#define SWAP_FIELD_BATTLER_ID(field) field = BATTLE_PARTNER(field)
+
 void SwapBattlersPositions(u32 battler1, u32 battler2)
 {
-    u32 temp, side = GetBattlerSide(battler1);
+    u32 i, j, temp, side = GetBattlerSide(battler1);
+    struct Pokemon *party;
     void *data = Alloc(0x200);
     
+    if (data == NULL)
+        SoftReset(1);
+    
+    // General structs and datas
     SwapStructData(&gBattleMons[battler1], &gBattleMons[battler2], data, sizeof(struct BattlePokemon));
     SwapStructData(&gDisableStructs[battler1], &gDisableStructs[battler2], data, sizeof(struct DisableStruct));
     SwapStructData(&gSpecialStatuses[battler1], &gSpecialStatuses[battler2], data, sizeof(struct SpecialStatus));
     SwapStructData(&gProtectStructs[battler1], &gProtectStructs[battler2], data, sizeof(struct ProtectStruct));
     SwapStructData(&gQueuedStatBoosts[battler1], &gQueuedStatBoosts[battler2], data, sizeof(struct QueuedStatBoost));
     SwapStructData(&gBattleSpritesDataPtr->battlerData[battler1], &gBattleSpritesDataPtr->battlerData[battler2], data, sizeof(struct BattleSpriteInfo));
+    SwapStructData(&gBattleSpritesDataPtr->healthBoxesData[battler1], &gBattleSpritesDataPtr->healthBoxesData[battler2], data, sizeof(struct BattleHealthboxInfo));
     SwapStructData(&gBattleStruct->battlers[battler1], &gBattleStruct->battlers[battler2], data, sizeof(struct BattlerState));
     SwapStructData(&gBattleStruct->sides[side].party[gBattlerPartyIndexes[battler1]], &gBattleStruct->sides[side].party[gBattlerPartyIndexes[battler2]], data, sizeof(struct PartyState));
+    SwapStructData(&gBattlerControllersData[battler1], &gBattlerControllersData[battler2], data, sizeof(struct BattlerControllerData));
+    SwapStructData(&gBattleBufferA[battler1], &gBattleBufferA[battler2], data, sizeof(u8) * 0x200);
+    SwapStructData(&gBattleBufferB[battler1], &gBattleBufferB[battler2], data, sizeof(u8) * 0x200);
     
+    Free(data);
+    
+    gBattleControllerExecFlags ^= (Bit(battler1) | Bit(battler2));
     SWAP(gTransformedPersonalities[battler1], gTransformedPersonalities[battler2], temp);
     SWAP(gTransformedShinies[battler1], gTransformedShinies[battler2], temp);
     SWAP(gStatuses3[battler1], gStatuses3[battler2], temp);
-    SWAP(gPartyCriticalHits[gBattlerPartyIndexes[battler1]], gPartyCriticalHits[gBattlerPartyIndexes[battler2]], temp);
+    SWAP(gBattleMonForms[side][gBattlerPartyIndexes[battler1]], gBattleMonForms[side][gBattlerPartyIndexes[battler2]], temp);
     
-    if (side == B_SIDE_OPPONENT && gBattleStruct->sos.totemBattlerId != MAX_BATTLERS_COUNT) // Totem slot was swapped
-        gBattleStruct->sos.totemBattlerId = BATTLE_PARTNER(gBattleStruct->sos.totemBattlerId);
+    // These are slot based, so can't be swapped
+    SWAP(gBattleStruct->battlers[battler1].storedHealingWish, gBattleStruct->battlers[battler2].storedHealingWish, temp);
+    SWAP(gBattleStruct->battlers[battler1].storedLunarDance, gBattleStruct->battlers[battler2].storedLunarDance, temp);
+    
+    // Swap battler that sets up field statuses
+    SWAP_FIELD_BATTLER_ID(gSideTimers[side].reflectBattlerId);
+    SWAP_FIELD_BATTLER_ID(gSideTimers[side].lightscreenBattlerId);
+    SWAP_FIELD_BATTLER_ID(gSideTimers[side].mistBattlerId);
+    SWAP_FIELD_BATTLER_ID(gSideTimers[side].safeguardBattlerId);
+    SWAP_FIELD_BATTLER_ID(gSideTimers[side].luckyChantBattlerId);
+    SWAP_FIELD_BATTLER_ID(gSideTimers[side].tailwindBattlerId);
+    SWAP_FIELD_BATTLER_ID(gSideTimers[side].followmeTarget);
+    
+    // Swap battlers referenced in structs of others battlers on field
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if (!IsBattlerAlly(battler1, i))
+        {
+            SWAP_FIELD_BATTLER_ID(gDisableStructs[i].infatuatedWith);
+            SWAP_FIELD_BATTLER_ID(gDisableStructs[i].battlerPreventingEscape);
+            SWAP_FIELD_BATTLER_ID(gDisableStructs[i].leechSeedBattler);
+            SWAP_FIELD_BATTLER_ID(gDisableStructs[i].wrappedBy);
+            SWAP_FIELD_BATTLER_ID(gProtectStructs[i].physicalBattlerId);
+            SWAP_FIELD_BATTLER_ID(gProtectStructs[i].specialBattlerId);
+            SWAP_FIELD_BATTLER_ID(gSpecialStatuses[i].physicalBattlerId);
+            SWAP_FIELD_BATTLER_ID(gSpecialStatuses[i].specialBattlerId);
+            SWAP_FIELD_BATTLER_ID(gSpecialStatuses[i].changedStatsBattlerId);
+            SWAP_FIELD_BATTLER_ID(gBattleStruct->battlers[i].futureSightAttacker);
+            SWAP_FIELD_BATTLER_ID(gBattleStruct->battlers[i].lastHitBattler);
+            SWAP_FIELD_BATTLER_ID(gBattleStruct->battlers[i].bideTakenDamageBattler);
+            SWAP(gBattleStruct->battlers[i].lastTakenMoveFrom[battler1], gBattleStruct->battlers[i].lastTakenMoveFrom[battler2], temp);
+        }
+    }
+    
+    // Swap side specifics data
+    if (side == B_SIDE_OPPONENT)
+    {
+        // Totem slot was swapped
+        if (gBattleStruct->sos.totemBattlerId != MAX_BATTLERS_COUNT)
+            SWAP_FIELD_BATTLER_ID(gBattleStruct->sos.totemBattlerId);
+        
+        SWAP_FIELD_BATTLER_ID(gBattleStruct->sos.lastCallBattler);
+    }
+    else
+        SWAP(gPartyCriticalHits[gBattlerPartyIndexes[battler1]], gPartyCriticalHits[gBattlerPartyIndexes[battler2]], temp);
+    
+    // Swap battlers on party
+    party = GetSideParty(side);
+    SwapPartyPokemon(&party[gBattlerPartyIndexes[battler1]], &party[gBattlerPartyIndexes[battler2]]);
+    
+    // Swap turn order, so that all the battlers take action
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if (gBattlerByTurnOrder[i] == battler1 || gBattlerByTurnOrder[i] == battler2)
+        {
+            for (j = i + 1; j < gBattlersCount; j++)
+            {
+                if (gBattlerByTurnOrder[j] == battler1 || gBattlerByTurnOrder[j] == battler2)
+                    break;
+            }
+            SWAP(gBattlerByTurnOrder[i], gBattlerByTurnOrder[j], temp);
+            SWAP(gActionsByTurnOrder[i], gActionsByTurnOrder[j], temp);
+            break;
+        }
+    }
+    SWAP_FIELD_BATTLER_ID(gCurrentTurnActionBattlerId);
+    
+    // For Snipe Shot and abilities Stalwart/Propeller Tail - keep the original target.
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        u32 ability;
+        
+        if (!IsBattlerAlly(gBattleStruct->battlers[i].moveTarget, battler1))
+            continue;
+        
+        ability = GetBattlerAbility(i);
+        
+        if (ability == ABILITY_PROPELLER_TAIL || ability == ABILITY_STALWART || gBattleMoves[gBattleStruct->battlers[i].chosenMove].effect == EFFECT_SNIPE_SHOT)
+            SWAP_FIELD_BATTLER_ID(gBattleStruct->battlers[i].moveTarget);
+    }
 }
+
+#undef SWAP_FIELD_BATTLER_ID
 
 bool32 TryBattleChallengeStartingStatus(void)
 {

@@ -903,7 +903,7 @@ static void LoadMonSprites(struct PokemonSpriteVisualizer *data, bool32 clearOld
     LoadMonPaletteFromSpecies(species, data->isShiny);
     
     // Front
-    LoadSpecialPokePic(species, 0xFE, TRUE, gMonSpritesGfxPtr->sprites[B_POSITION_OPPONENT_LEFT]);
+    LoadSpecialPokePic(species, 0xFE, TRUE, gMonSpritesGfxPtr->battlers[B_POSITION_OPPONENT_LEFT].sprite);
     SetMultiuseSpriteTemplateToPokemon(species, B_POSITION_OPPONENT_LEFT);
     gMultiuseSpriteTemplate.paletteTag = species;
     data->frontspriteId = CreateSprite(&gMultiuseSpriteTemplate, gBattlerCoords[FALSE][B_POSITION_OPPONENT_LEFT].x, CalcFrontSpriteYOffset(species, 0, 0), 0);
@@ -913,7 +913,7 @@ static void LoadMonSprites(struct PokemonSpriteVisualizer *data, bool32 clearOld
     CreateEnemyShadow(data, species);
     
     // Back
-    LoadSpecialPokePic(species, 0xFE, FALSE, gMonSpritesGfxPtr->sprites[B_POSITION_PLAYER_RIGHT]);
+    LoadSpecialPokePic(species, 0xFE, FALSE, gMonSpritesGfxPtr->battlers[B_POSITION_PLAYER_RIGHT].sprite);
     SetMultiuseSpriteTemplateToPokemon(species, B_POSITION_PLAYER_RIGHT);
     data->backspriteId = CreateSprite(&gMultiuseSpriteTemplate, VISUALIZER_MON_BACK_X, VISUALIZER_MON_BACK_Y + gSpeciesInfo[species].backPicYOffset, 0);
     gSprites[data->backspriteId].oam.paletteNum = 1;

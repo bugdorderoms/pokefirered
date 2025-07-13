@@ -203,7 +203,7 @@ static u32 TryPassOnWish(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u
             if (GetNoOfHitsToKOBattlerHigherDamage(opposingBattler, battlerId) > 1)
                 return NO_SWITCH;
             
-            BattlerHasMoveWithFlagInMoveset(dontSwitch, battlerId, protectionMove)
+            BattlerHasMoveWithFlagInMoveset(dontSwitch, battlerId, usesProtectCounter)
             if (dontSwitch)
                 return NO_SWITCH;
         }

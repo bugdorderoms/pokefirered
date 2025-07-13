@@ -227,7 +227,7 @@ void EvolutionScene(struct Pokemon* mon, u32 speciesToEvolve, u32 bits, u32 part
     // preEvo sprite
     currSpecies = GetMonData(mon, MON_DATA_SPECIES);
     isShiny = GetMonData(mon, MON_DATA_IS_SHINY);
-    LZDecompressWram(gSpeciesInfo[currSpecies].frontPic, gMonSpritesGfxPtr->sprites[1]);
+    LZDecompressWram(gSpeciesInfo[currSpecies].frontPic, gMonSpritesGfxPtr->battlers[1].sprite);
     LoadCompressedPalette(GetMonSpritePalFromSpecies(currSpecies, isShiny), 0x110, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(currSpecies, 1);
@@ -239,7 +239,7 @@ void EvolutionScene(struct Pokemon* mon, u32 speciesToEvolve, u32 bits, u32 part
     gSprites[id].invisible = TRUE;
 
     // postEvo sprite
-    LZDecompressWram(gSpeciesInfo[speciesToEvolve].frontPic, gMonSpritesGfxPtr->sprites[3]);
+    LZDecompressWram(gSpeciesInfo[speciesToEvolve].frontPic, gMonSpritesGfxPtr->battlers[3].sprite);
     LoadCompressedPalette(GetMonSpritePalFromSpecies(speciesToEvolve, isShiny), 0x120, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(speciesToEvolve, 3);
@@ -309,7 +309,7 @@ static void CB2_EvolutionSceneLoadGraphics(void)
     Mon = &gPlayerParty[gTasks[sEvoStructPtr->evoTaskId].tPartyId];
     postEvoSpecies = gTasks[sEvoStructPtr->evoTaskId].tPostEvoSpecies;
     
-    LZDecompressWram(gSpeciesInfo[postEvoSpecies].frontPic, gMonSpritesGfxPtr->sprites[3]);
+    LZDecompressWram(gSpeciesInfo[postEvoSpecies].frontPic, gMonSpritesGfxPtr->battlers[3].sprite);
     LoadCompressedPalette(GetMonSpritePalFromSpecies(postEvoSpecies, GetMonData(Mon, MON_DATA_IS_SHINY)), 0x120, 0x20);
 
     SetMultiuseSpriteTemplateToPokemon(postEvoSpecies, 3);
@@ -376,7 +376,7 @@ static void CB2_TradeEvolutionSceneLoadGraphics(void)
         {
             Mon = &gPlayerParty[gTasks[sEvoStructPtr->evoTaskId].tPartyId];
             
-            LZDecompressWram(gSpeciesInfo[postEvoSpecies].frontPic, gMonSpritesGfxPtr->sprites[3]);
+            LZDecompressWram(gSpeciesInfo[postEvoSpecies].frontPic, gMonSpritesGfxPtr->battlers[3].sprite);
             LoadCompressedPalette(GetMonSpritePalFromSpecies(postEvoSpecies, GetMonData(Mon, MON_DATA_IS_SHINY)), 0x120, 0x20);
             gMain.state++;
         }
@@ -431,7 +431,7 @@ void TradeEvolutionScene(struct Pokemon* mon, u32 speciesToEvolve, u32 preEvoSpr
     sEvoStructPtr = AllocZeroed(sizeof(struct EvoInfo));
     sEvoStructPtr->preEvoSpriteId = preEvoSpriteId;
 
-    LZDecompressWram(gSpeciesInfo[speciesToEvolve].frontPic, gMonSpritesGfxPtr->sprites[1]);
+    LZDecompressWram(gSpeciesInfo[speciesToEvolve].frontPic, gMonSpritesGfxPtr->battlers[3].sprite);
 
     LoadCompressedPalette(GetMonSpritePalFromSpecies(speciesToEvolve, GetMonData(mon, MON_DATA_IS_SHINY)), 0x120, 0x20);
 

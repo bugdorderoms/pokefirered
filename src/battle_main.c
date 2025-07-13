@@ -146,7 +146,6 @@ EWRAM_DATA u8 gAbsentBattlerFlags = 0;
 EWRAM_DATA u32 gBattleTypeFlags = 0;
 EWRAM_DATA u8 gBattlerSpriteIds[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA const u8 *gBattlescriptCurrInstr = NULL;
-EWRAM_DATA const u8 *gSelectionBattleScripts[MAX_BATTLERS_COUNT] = {NULL};
 static EWRAM_DATA u8 sSelectionScriptBattlerId = 0;
 EWRAM_DATA u16 gBattlerPartyIndexes[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gBattlerPositions[MAX_BATTLERS_COUNT] = {0};
@@ -226,9 +225,7 @@ EWRAM_DATA struct QueuedStatBoost gQueuedStatBoosts[MAX_BATTLERS_COUNT] = {0};
 // IWRAM vars
 void (*gPreBattleCallback1)(void);
 void (*gBattleMainFunc)(void);
-void (*gBattlerControllerFuncs[MAX_BATTLERS_COUNT])(u32);
-void (*gBattlerControllerEndFuncs[MAX_BATTLERS_COUNT])(u32);
-u8 gBattleControllerData[MAX_BATTLERS_COUNT];
+struct BattlerControllerData gBattlerControllersData[MAX_BATTLERS_COUNT];
 u8 gHealthboxSpriteIds[MAX_BATTLERS_COUNT];
 u8 gMultiUsePlayerCursor;
 u8 gNumberOfMovesToChoose;
@@ -1669,7 +1666,7 @@ static void SpriteCB_AnimFaintOpponent(struct Sprite *sprite)
             DestroySpriteAndFreeMatrix(sprite);
         else // Erase bottom part of the sprite to create a smooth illusion of mon falling down.
         {
-            u8 *dst = (u8 *)gMonSpritesGfxPtr->sprites[GetBattlerPosition(sprite->sBattler)] + (sprite->data[3] << 8);
+            u8 *dst = (u8 *)gMonSpritesGfxPtr->battlers[GetBattlerPosition(sprite->sBattler)].sprite + (sprite->data[3] << 8);
 
             for (i = 0; i < 0x100; ++i)
                 *(dst++) = 0;
@@ -1856,7 +1853,7 @@ static void BattleMainCB1(void)
     gBattleMainFunc();
     
     for (i = 0; i < gBattlersCount; ++i)
-        gBattlerControllerFuncs[i](i);
+        gBattlerControllersData[i].func(i);
 }
 
 static void ClearBattlerEffectsOnFaintOrSwitch(u32 battlerId)
@@ -2199,7 +2196,7 @@ static void BattleIntroDrawTrainersOrMonsSprites(void)
                     DoOverworldFormChange(mon, FORM_CHANGE_START_BATTLE);
                     
                     // Save mon items
-                    gBattleStruct->itemEffects.savedItems[i][j] = GetMonData(mon, MON_DATA_HELD_ITEM);
+                    gBattleStruct->sides[i].party[j].itemEffects.savedItem = GetMonData(mon, MON_DATA_HELD_ITEM);
                     
                     // Try Transform Zacian and Zamazenta's Iron Head into their moves
                     TryTransformZacianAndZamazentaIronHead(mon, FALSE);
@@ -2908,7 +2905,7 @@ static void HandleTurnActionSelectionState(void)
                     {
                         sSelectionScriptBattlerId = battlerId;
                         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CANT_USE_ITEM;
-                        gSelectionBattleScripts[battlerId] = BattleScript_ActionSelectionItemsCantBeUsed;
+                        gBattlerControllersData[battlerId].selectionScript = BattleScript_ActionSelectionItemsCantBeUsed;
                         gBattleCommunication[battlerId] = STATE_SELECTION_SCRIPT;
                         gBattleStruct->battlers[battlerId].selectionScriptFinished = FALSE;
                         gBattleStruct->battlers[battlerId].stateIdAfterSelScript = STATE_BEFORE_ACTION_CHOSEN;
@@ -2946,7 +2943,7 @@ static void HandleTurnActionSelectionState(void)
                     {
                         sSelectionScriptBattlerId = battlerId;
                         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_BOX_FULL;
-                        gSelectionBattleScripts[battlerId] = BattleScript_ActionSelectionItemsCantBeUsed;
+                        gBattlerControllersData[battlerId].selectionScript = BattleScript_ActionSelectionItemsCantBeUsed;
                         gBattleCommunication[battlerId] = STATE_SELECTION_SCRIPT;
                         gBattleStruct->battlers[battlerId].selectionScriptFinished = FALSE;
                         gBattleStruct->battlers[battlerId].stateIdAfterSelScript = STATE_BEFORE_ACTION_CHOSEN;
@@ -2969,7 +2966,7 @@ static void HandleTurnActionSelectionState(void)
                 else if (IsRunningFromBattleImpossible(battlerId, TRUE) != BATTLE_RUN_SUCCESS && gBattleBufferB[battlerId][1] == B_ACTION_RUN)
                 {
                     sSelectionScriptBattlerId = battlerId;
-                    gSelectionBattleScripts[battlerId] = BattleScript_PrintCantEscapeFromBattle;
+                    gBattlerControllersData[battlerId].selectionScript = BattleScript_PrintCantEscapeFromBattle;
                     gBattleCommunication[battlerId] = STATE_SELECTION_SCRIPT;
                     gBattleStruct->battlers[battlerId].selectionScriptFinished = FALSE;
                     gBattleStruct->battlers[battlerId].stateIdAfterSelScript = STATE_BEFORE_ACTION_CHOSEN;
@@ -3097,12 +3094,12 @@ static void HandleTurnActionSelectionState(void)
             {
                 gBattlerAttacker = sSelectionScriptBattlerId;
 
-                gBattlescriptCurrInstr = gSelectionBattleScripts[battlerId];
+                gBattlescriptCurrInstr = gBattlerControllersData[battlerId].selectionScript;
                 
                 if (!(gBattleControllerExecFlags & CONTROLLER_ALL_BATTLERS_FLAGS(battlerId)))
                     gBattleScriptingCommandsTable[gBattlescriptCurrInstr[0]]();
                 
-                gSelectionBattleScripts[battlerId] = gBattlescriptCurrInstr;
+                gBattlerControllersData[battlerId].selectionScript = gBattlescriptCurrInstr;
             }
             break;
         case STATE_WAIT_SET_BEFORE_ACTION:
@@ -3429,7 +3426,7 @@ static void TurnValuesCleanUp(bool32 var0)
         if (var0)
         {
             gProtectStructs[battlerId].protected = FALSE;
-            gSideStatuses[GetBattlerSide(battlerId)] &= ~(SIDE_STATUS_WIDE_GUARD);
+            gSideStatuses[GetBattlerSide(battlerId)] &= ~(SIDE_STATUS_PROTECTIONS_ANY);
             memset(&gQueuedStatBoosts[battlerId], 0, sizeof(struct QueuedStatBoost));
         }
         else
@@ -3721,7 +3718,7 @@ static void HandleEndTurn_FinishBattle(void)
                 for (j = 0; j < PARTY_SIZE; j++)
                 {
                     if (IsMonValidSpecies(&party[j]))
-                        SetMonData(&party[j], MON_DATA_HELD_ITEM, &gBattleStruct->itemEffects.savedItems[i][j]);
+                        SetMonData(&party[j], MON_DATA_HELD_ITEM, &gBattleStruct->sides[i].party[j].itemEffects.savedItem);
                 }
             }
         }
@@ -4005,7 +4002,12 @@ static void HandleAction_UseMove(void)
         }
     }
     else if (moveTarget == MOVE_TARGET_ALLY)
-        gBattlerTarget = BATTLE_PARTNER(gBattlerAttacker);
+    {
+        if (IsBattlerAlive(BATTLE_PARTNER(gBattlerAttacker)) && !gProtectStructs[BATTLE_PARTNER(gBattlerAttacker)].usedAllySwitch)
+            gBattlerTarget = BATTLE_PARTNER(gBattlerAttacker);
+        else
+            gBattlerTarget = gBattlerAttacker;
+    }
     else if (IsDoubleBattleOnSide(opposingSide) && moveTarget == MOVE_TARGET_RANDOM)
     {
         gBattlerTarget = GetRandomTarget(gBattlerAttacker);
@@ -4021,6 +4023,8 @@ static void HandleAction_UseMove(void)
                 break;
         }
     }
+    else if (moveTarget == MOVE_TARGET_USER)
+        gBattlerTarget = gBattlerAttacker;
     else
     {
         gBattlerTarget = gBattleStruct->battlers[gBattlerAttacker].moveTarget;
@@ -4040,7 +4044,13 @@ static void HandleAction_UseMove(void)
     }
     SaveBattlersHps(); // For abilities
     
-    gBattlescriptCurrInstr = GET_MOVE_BATTLESCRIPT(gCurrentMove);
+    if (IsBattlerAlly(gBattlerAttacker, gBattlerTarget) && !IsBattlerAlive(gBattlerTarget))
+        gBattlescriptCurrInstr = BattleScript_ButItFailedAtkCanceler;
+    else if ((moveTarget == MOVE_TARGET_ALLY || moveTarget == MOVE_TARGET_USER_OR_ALLY) && gBattlerAttacker == gBattlerTarget && gProtectStructs[BATTLE_PARTNER(gBattlerAttacker)].usedAllySwitch)
+        gBattlescriptCurrInstr = BattleScript_ButItFailedAtkCanceler;
+    else
+        gBattlescriptCurrInstr = GET_MOVE_BATTLESCRIPT(gCurrentMove);
+    
     gCurrentActionFuncId = B_ACTION_EXEC_SCRIPT;
 }
 

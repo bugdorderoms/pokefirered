@@ -24,6 +24,7 @@ EWRAM_DATA u8 gAnimSoundTaskCount = 0;
 EWRAM_DATA struct DisableStruct *gAnimDisableStructPtr = NULL;
 EWRAM_DATA s32 gAnimMoveDmg = 0;
 EWRAM_DATA u16 gAnimMovePower = 0;
+EWRAM_DATA u16 gAnimMoveIndex = 0;
 EWRAM_DATA static u16 sAnimSpriteGfxIndexArray[ANIM_SPRITE_INDEX_COUNT] = {0};
 EWRAM_DATA static u16 sAnimSpritePalIndexArray[ANIM_SPRITE_INDEX_COUNT] = {0};
 EWRAM_DATA u8 gAnimFriendship = 0;
@@ -33,7 +34,6 @@ EWRAM_DATA static u16 sSoundAnimFramesToWait = 0;
 EWRAM_DATA static u8 sMonAnimTaskIdArray[2] = {0};
 EWRAM_DATA u8 gAnimMoveTurn = 0;
 EWRAM_DATA static u8 sAnimBackgroundFadeState = 0;
-EWRAM_DATA static u16 sAnimMoveIndex = 0;
 EWRAM_DATA u8 gBattleAnimAttacker = 0;
 EWRAM_DATA u8 gBattleAnimTarget = 0;
 EWRAM_DATA u8 gAnimCustomPanning = 0;
@@ -1848,6 +1848,7 @@ void ClearBattleAnimationVars(void)
     gAnimSoundTaskCount = 0;
     gAnimDisableStructPtr = NULL;
     gAnimMoveDmg = 0;
+    gAnimMoveIndex = MOVE_NONE;
     gAnimMovePower = 0;
     gAnimFriendship = 0;
     
@@ -1866,7 +1867,6 @@ void ClearBattleAnimationVars(void)
     sMonAnimTaskIdArray[1] = (s8)0xFF;
     gAnimMoveTurn = 0;
     sAnimBackgroundFadeState = 0;
-    sAnimMoveIndex = 0;
     gBattleAnimAttacker = 0;
     gBattleAnimTarget = 0;
     gAnimCustomPanning = 0;
@@ -1896,7 +1896,7 @@ void LaunchBattleAnimation(u32 animType, u32 animId)
     {
         TestRunner_Battle_RecordAnimation(animType, animId);
         
-        if (gTestRunnerHeadless)
+        if (gTestRunnerHeadless && !(animType == ANIM_TYPE_MOVE && (gBattleMoves[animId].effect == EFFECT_TRANSFORM || gBattleMoves[animId].effect == EFFECT_ALLY_SWITCH)))
         {
             gAnimScriptCallback = Nop;
             gAnimScriptActive = FALSE;
@@ -1904,7 +1904,7 @@ void LaunchBattleAnimation(u32 animType, u32 animId)
         }
     }
     hideHpBoxes = FALSE;
-    sAnimMoveIndex = MOVE_NONE;
+    gAnimMoveIndex = MOVE_NONE;
     
     switch (animType)
     {
@@ -1920,9 +1920,9 @@ void LaunchBattleAnimation(u32 animType, u32 animId)
             break;
         case ANIM_TYPE_MOVE:
             sBattleAnimScriptPtr = SanitizeMoveAnim(animId);
-            sAnimMoveIndex = animId;
+            gAnimMoveIndex = animId;
             
-            if (gBattleMoves[animId].effect != EFFECT_TRANSFORM)
+            if (gBattleMoves[gAnimMoveIndex].effect != EFFECT_TRANSFORM)
                 hideHpBoxes = TRUE;
             
             break;
@@ -1939,7 +1939,7 @@ void LaunchBattleAnimation(u32 animType, u32 animId)
         sAnimSpritePalIndexArray[i] = 0xFFFF;
     }
     sMonAnimTaskIdArray[0] = 0xFF;
-    sMonAnimTaskIdArray[1] = (s8)-1;
+    sMonAnimTaskIdArray[1] = 0xFF;
     gAnimScriptActive = TRUE;
     sAnimFramesToWait = 0;
     gAnimScriptCallback = RunAnimScriptCommand;
@@ -2392,7 +2392,7 @@ static void CopyBattlerSpriteToBg(u32 bgId, u32 battlerId, u32 palNum, u8 *tiles
     u32 i, j;
     s32 offset = tilesOffset;
 
-    CpuCopy16(gMonSpritesGfxPtr->sprites[GetBattlerPosition(battlerId)] + BG_SCREEN_SIZE * 0, tilesDest, BG_SCREEN_SIZE);
+    CpuCopy16(gMonSpritesGfxPtr->battlers[GetBattlerPosition(battlerId)].sprite + BG_SCREEN_SIZE * 0, tilesDest, BG_SCREEN_SIZE);
     LoadBgTiles(bgId, tilesDest, 0x1000, tilesOffset);
     
     for (i = 0; i < 8; ++i)

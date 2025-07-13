@@ -732,7 +732,7 @@ static void LoadTradeMonPic(u32 whichParty, u32 action)
         // Load graphics
         species = GetMonData(mon, MON_DATA_SPECIES2);
         personality = GetMonData(mon, MON_DATA_PERSONALITY);
-        LoadSpecialPokePic(species, personality, TRUE, gMonSpritesGfxPtr->sprites[whichParty == 0 ? 1 : whichParty * 2 + 1]);
+        LoadSpecialPokePic(species, personality, TRUE, gMonSpritesGfxPtr->battlers[whichParty == 0 ? 1 : whichParty * 2 + 1].sprite);
         LoadMonPalette(mon);
         sTradeData->tradeSpecies[whichParty] = species;
         sTradeData->monPersonalities[whichParty] = personality;
@@ -1595,7 +1595,7 @@ static bool32 DoTradeAnim_Cable(void)
     case 65:
         if (gSprites[sTradeData->pokeballSpriteId2].callback == SpriteCallbackDummy)
         {
-            LoadSpecialPokePic(sTradeData->tradeSpecies[1], sTradeData->monPersonalities[1], TRUE, gMonSpritesGfxPtr->sprites[3]);
+            LoadSpecialPokePic(sTradeData->tradeSpecies[1], sTradeData->monPersonalities[1], TRUE, gMonSpritesGfxPtr->battlers[3].sprite);
             sTradeData->state++;
         }
         break;
@@ -2103,7 +2103,7 @@ static bool32 DoTradeAnim_Wireless(void)
     case 65:
         if (gSprites[sTradeData->pokeballSpriteId2].callback == SpriteCallbackDummy)
         {
-            LoadSpecialPokePic(sTradeData->tradeSpecies[1], sTradeData->monPersonalities[1], TRUE, gMonSpritesGfxPtr->sprites[3]);
+            LoadSpecialPokePic(sTradeData->tradeSpecies[1], sTradeData->monPersonalities[1], TRUE, gMonSpritesGfxPtr->battlers[3].sprite);
             sTradeData->state++;
         }
         break;

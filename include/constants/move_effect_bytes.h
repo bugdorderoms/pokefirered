@@ -55,8 +55,9 @@
 #define MOVE_EFFECT_CLEAR_HAZARDS       50
 #define MOVE_EFFECT_KNOCK_OFF           51
 #define MOVE_EFFECT_SMACK_DOWN          52
+#define MOVE_EFFECT_CLEAR_SMOG          53
 // TODO
-#define MOVE_EFFECT_UPROAR              53
+#define MOVE_EFFECT_UPROAR              54
 
 // Z-Move effect bytes
 #define Z_EFFECT_NONE                   0

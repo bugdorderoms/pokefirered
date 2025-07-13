@@ -162,6 +162,19 @@
 // Atk50, a flag used for the openpartyscreen command
 #define OPEN_PARTY_ALLOW_CANCEL     0x80
 
+// switchineffects states
+#define SWITCHIN_UPDATE_VARS      0
+#define SWITCHIN_NEUTRALIZING_GAS 1
+#define SWITCHIN_UNNERVE          2
+#define SWITCHIN_HEALING_WISH     3
+#define SWITCHIN_LUNAR_DANCE      4
+#define SWITCHIN_Z_HEALING_WISH   5
+#define SWITCHIN_HAZARDS          6
+#define SWITCHIN_EMERGENCY_EXIT   7
+#define SWITCHIN_TRUANT           8
+#define SWITCHIN_ABILITIES        9
+#define SWITCHIN_COUNT            10
+
 // atk60, a flag used for the handleabilitypopup command
 #define ATK60_UPDATE_POP_UP 0x40
 #define ATK60_REMOVE_POP_UP 0x80

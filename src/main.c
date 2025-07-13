@@ -366,12 +366,13 @@ static void VBlankIntr(void)
     m4aSoundMain();
     TryReceiveLinkBattleData();
     
+    if (!(gBattleTypeFlags & (BATTLE_TYPE_RECORDED
 #if NO_SAVE_STATE_RNG_MANIPULATION
-    if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+    | BATTLE_TYPE_TRAINER
 #endif
+    )))
     {
-        if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
-            Random();
+        Random();
     }
     UpdateWirelessStatusIndicatorSprite();
 

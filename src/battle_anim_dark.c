@@ -292,12 +292,14 @@ const struct SpriteTemplate gMetalBitsSpriteTemplate =
 
 // Fade the attacker's sprite from visible to invisible.
 // arg 0: fade delay
+// arg 1: initial blendA value
+// arg 2: initial blendB value
 void AnimTask_AttackerFadeToInvisible(u32 taskId)
 {
     gTasks[taskId].data[0] = gBattleAnimArgs[0];
-    gTasks[taskId].data[1] = 16;
+    gTasks[taskId].data[1] = BLDALPHA_BLEND(gBattleAnimArgs[1], gBattleAnimArgs[2]);
     
-    SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(16, 0));
+    SetGpuReg(REG_OFFSET_BLDALPHA, gTasks[taskId].data[1]);
     
     if (GetBattlerSpriteBGPriorityRank(gBattleAnimAttacker) == 1)
         SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND | BLDCNT_TGT1_BG1);
@@ -309,14 +311,14 @@ void AnimTask_AttackerFadeToInvisible(u32 taskId)
 
 static void AnimTask_AttackerFadeToInvisible_Step(u32 taskId)
 {
-    u32 blendA, blendB;
+    u8 blendA, blendB;
 
     if (gTasks[taskId].data[2] == (u8)gTasks[taskId].data[0])
     {
         gTasks[taskId].data[2] = 0;
         
         blendA = gTasks[taskId].data[1] >> 8;
-        blendB = gTasks[taskId].data[1];
+        blendB = gTasks[taskId].data[1] & 0xFF;
         
         ++blendA;
         --blendB;
@@ -349,7 +351,7 @@ void AnimTask_AttackerFadeFromInvisible(u32 taskId)
 
 static void AnimTask_AttackerFadeFromInvisible_Step(u32 taskId)
 {
-    u32 blendA, blendB;
+    u8 blendA, blendB;
 
     if (gTasks[taskId].data[2] == (u8)gTasks[taskId].data[0])
     {
@@ -361,7 +363,7 @@ static void AnimTask_AttackerFadeFromInvisible_Step(u32 taskId)
         --blendA;
         ++blendB;
         
-        gTasks[taskId].data[1] = (blendA << 8) | blendB;
+        gTasks[taskId].data[1] = BLDALPHA_BLEND(blendB, blendA);
         SetGpuReg(REG_OFFSET_BLDALPHA, gTasks[taskId].data[1]);
         
         if (blendA == 0)

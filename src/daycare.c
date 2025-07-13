@@ -1579,7 +1579,7 @@ static u32 EggHatchCreateMonSprite(u32 a0, u32 switchID, u32 pokeID, u16* specie
         case 0:
         {
             u32 species = GetMonData(mon, MON_DATA_SPECIES);
-            LoadSpecialPokePic(species, GetMonData(mon, MON_DATA_PERSONALITY), TRUE, gMonSpritesGfxPtr->sprites[(a0 * 2) + 1]);
+            LoadSpecialPokePic(species, GetMonData(mon, MON_DATA_PERSONALITY), TRUE, gMonSpritesGfxPtr->battlers[(a0 * 2) + 1].sprite);
             LoadMonPalette(mon);
             *speciesLoc = species;
             break;

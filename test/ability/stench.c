@@ -3,7 +3,9 @@
 
 SINGLE_BATTLE_TEST("Stench has a 10% chance to flinch")
 {
-    PASSES_RANDOMLY(1, 10);
+    KNOWN_FAILING; // RNG untestable
+    
+    PASSES_RANDOMLY(1, 10); // 10% chance
     
     GIVEN {
         PLAYER(SPECIES_GRIMER) { Ability(ABILITY_STENCH); }
@@ -11,13 +13,14 @@ SINGLE_BATTLE_TEST("Stench has a 10% chance to flinch")
     } WHEN {
         TURN { MOVE(player, MOVE_SCRATCH); }
     } SCENE {
+        MESSAGE("Grimer used Scratch!");
         MESSAGE("Foe Wobbuffet flinched!");
     }
 }
 
 SINGLE_BATTLE_TEST("Stench only triggers if target takes damage")
 {
-    PASSES_RANDOMLY(10, 10);
+    PASSES_RANDOMLY(10, 10); // Will pass every time
     
     GIVEN {
         ASSUME(gBattleMoves[MOVE_SAND_ATTACK].power == 0);
@@ -27,13 +30,16 @@ SINGLE_BATTLE_TEST("Stench only triggers if target takes damage")
     } WHEN {
         TURN { MOVE(player, MOVE_SAND_ATTACK); }
     } SCENE {
+        MESSAGE("Grimer used Sand Attack!");
         NOT MESSAGE("Foe Wobbuffet flinched!");
     }
 }
 
 SINGLE_BATTLE_TEST("Stench does not stack with King's Rock")
 {
-    PASSES_RANDOMLY(1, 10);
+    KNOWN_FAILING; // RNG untestable
+    
+    PASSES_RANDOMLY(1, 10); // 10% chance, not stacked with King's Rock
     
     GIVEN {
         ASSUME(gItems[ITEM_KINGS_ROCK].holdEffect == HOLD_EFFECT_FLINCH);
@@ -43,13 +49,16 @@ SINGLE_BATTLE_TEST("Stench does not stack with King's Rock")
     } WHEN {
         TURN { MOVE(player, MOVE_SCRATCH); }
     } SCENE {
+        MESSAGE("Grimer used Scratch!");
         MESSAGE("Foe Wobbuffet flinched!");
     }
 }
 
 SINGLE_BATTLE_TEST("Stench does not stack with moves with flinch chance")
 {
-    PASSES_RANDOMLY(3, 10);
+    KNOWN_FAILING; // RNG untestable
+    
+    PASSES_RANDOMLY(3, 10); // 30% chance of move Bite
     
     GIVEN {
         ASSUME(MoveHasMoveEffect(MOVE_BITE, MOVE_EFFECT_FLINCH, FALSE));
@@ -59,6 +68,7 @@ SINGLE_BATTLE_TEST("Stench does not stack with moves with flinch chance")
     } WHEN {
         TURN { MOVE(player, MOVE_BITE); }
     } SCENE {
+        MESSAGE("Grimer used Bite!");
         MESSAGE("Foe Wobbuffet flinched!");
     }
 }

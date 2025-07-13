@@ -71,6 +71,7 @@ extern u8 gAnimVisualTaskCount;
 extern u8 gAnimSoundTaskCount;
 extern struct DisableStruct *gAnimDisableStructPtr;
 extern u16 gAnimMovePower;
+extern u16 gAnimMoveIndex;
 extern u8 gAnimFriendship;
 extern u16 gWeatherMoveAnim;
 extern s16 gBattleAnimArgs[ANIM_ARGS_COUNT];

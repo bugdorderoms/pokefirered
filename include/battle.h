@@ -198,7 +198,8 @@ struct ProtectStruct
              u8 usesBouncedMove:1;
              u8 usedGravityBannedMove:1;
              u8 opportunistState:2; // 2 - to copy stats. 1 - stats copied (do not repeat). 0 - no stats to copy
-             u8 unused:2;
+             u8 usedAllySwitch:1;
+             u8 unused:1;
     /*0x0D*/ u8 helpingHandUses;
 };
 
@@ -335,11 +336,6 @@ struct QueuedStatBoost
     s8 statChanges[NUM_BATTLE_STATS - 1]; // Excludes HP
 };
 
-struct BattleItemEffect
-{
-    u16 savedItems[B_SIDE_COUNT][PARTY_SIZE]; // Items of the party members, they are restored at the end of trainer battles
-};
-
 struct SosCall
 {
     u16 chainLength:5;
@@ -414,16 +410,20 @@ struct BattlerState
 
 struct PartyState
 {
-    /*0x00*/ u16 usedHeldItem;
-    /*0x02*/ u8 intrepidSwordActivated:1; // Each party member can activate only once
+    /*0x00*/ u8 intrepidSwordActivated:1; // Each party member can activate only once
              u8 dauntlessShieldActivated:1; // Each party member can activate only once
              u8 zeroToHeroActivated:1;
              u8 battleBondActivated:1;
              u8 appearedInBattle:1; // For Burmy form change
              u8 allowedToChangeFormInWeather:1; // For Ice Face
              u8 unused:2;
-    /*0x03*/ u8 activeGimmick; // Stores the active gimmick for this party member
-    /*0x04*/ u8 specialGimmickIndicatorId;
+    /*0x01*/ u8 activeGimmick; // Stores the active gimmick for this party member
+    /*0x02*/ u8 specialGimmickIndicatorId;
+    /*0x03*/ u8 unused2;
+    /*0x04*/ struct {
+                 u16 savedItem; // Item of this party member, it is restored at the end of trainer battles
+                 u16 usedHeldItem;
+             } itemEffects;
 };
 
 struct SideState
@@ -512,7 +512,10 @@ struct BattleStruct
     /*0x075*/ u8 linkBattleVsSpriteId_S;
     /*0x076*/ u8 battleChallenge;
     /*0x077*/ u8 teamPreviewTriggerSpriteId;
-    /*0x078*/ struct {
+    /*0x078*/ u8 echoedVoiceCounter:2;
+    /*0x078*/ u8 echoedVoiceDmgScale:4;
+    /*0x078*/ u8 unused:2;
+    /*0x079*/ struct {
                   u8 calls:5;
                   u8 usedAdrenalineOrb:1;
                   u8 lastCallFailed:1;
@@ -550,7 +553,6 @@ struct BattleStruct
               struct MoveEffect moveEffect;
               struct MoveEffect moveEffect2;
               struct StatChange statChange;
-              struct BattleItemEffect itemEffects;
     union {
         struct LinkPartnerHeader linkPartnerHeader;
         struct MultiBattlePokemonTx multiBattleMons[PARTY_SIZE / 2];
@@ -721,12 +723,17 @@ extern u8 *gLinkBattleRecvBuffer;
 
 #include "sprite.h"
 
+struct MonSprite
+{
+    void* sprite;
+    struct SpriteTemplate template;
+    struct SpriteFrameImage images[4];
+};
+
 struct MonSpritesGfx
 {
     void* firstDecompressed; // ptr to the decompressed sprite of the first pokemon
-    void* sprites[MAX_BATTLERS_COUNT];
-    struct SpriteTemplate templates[MAX_BATTLERS_COUNT];
-    struct SpriteFrameImage images[MAX_BATTLERS_COUNT][4];
+    struct MonSprite battlers[MAX_BATTLERS_COUNT];
     u8 *barFontGfx;
     u16 *multiUseBuffer;
 };
@@ -738,6 +745,14 @@ struct PokedudeBattlerState
     u8 timer;
     u8 msg_idx;
     u8 saved_bg0y;
+};
+
+struct BattlerControllerData
+{
+    void(*func)(u32);
+    void(*endFunc)(u32);
+    const u8 *selectionScript;
+    u8 data; // Multiuse
 };
 
 extern u16 gBattle_BG0_X;
@@ -775,8 +790,7 @@ extern bool8 gTransformedShinies[MAX_BATTLERS_COUNT];
 extern u8 gBattlerPositions[MAX_BATTLERS_COUNT];
 extern u8 gHealthboxSpriteIds[MAX_BATTLERS_COUNT];
 extern u16 gBattleMonForms[B_SIDE_COUNT][PARTY_SIZE];
-extern void (*gBattlerControllerFuncs[MAX_BATTLERS_COUNT])(u32);
-extern void (*gBattlerControllerEndFuncs[MAX_BATTLERS_COUNT])(u32);
+extern struct BattlerControllerData gBattlerControllersData[MAX_BATTLERS_COUNT];
 extern u32 gBattleControllerExecFlags;
 extern u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200];
 extern u8 gBattleBufferB[MAX_BATTLERS_COUNT][0x200];
@@ -795,7 +809,6 @@ extern u8 gBattlerFainted;
 extern u32 gStatuses3[MAX_BATTLERS_COUNT];
 extern u8 gSentPokesToOpponent[2];
 extern const u8 *gBattlescriptCurrInstr;
-extern const u8 *gSelectionBattleScripts[MAX_BATTLERS_COUNT];
 extern u16 gLastUsedMove;
 extern u8 gBattlerByTurnOrder[MAX_BATTLERS_COUNT];
 extern u8 gBattleCommunication[BATTLE_COMMUNICATION_ENTRIES_COUNT];
@@ -805,7 +818,6 @@ extern u16 gMoveResultFlags;
 extern u8 gCurrentActionFuncId;
 extern u8 gCurrMovePos;
 extern u8 gChosenMovePos;
-extern u8 gBattleControllerData[MAX_BATTLERS_COUNT];
 extern u8 gBattlerStatusSummaryTaskId[MAX_BATTLERS_COUNT];
 extern u8 gMultiUsePlayerCursor;
 extern u8 gNumberOfMovesToChoose;

@@ -14,6 +14,7 @@ struct RecordedBattleSave
     u32 playersTrainerId[MAX_BATTLERS_COUNT];
     u8 playersLanguage[MAX_BATTLERS_COUNT];
     u32 battleFlags;
+    u32 rngSeed;
     u8 playersBattlers[MAX_BATTLERS_COUNT];
     u16 opponentA;
     u16 multiplayerId;

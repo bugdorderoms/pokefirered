@@ -118,8 +118,8 @@ static void (*const sPokedudeBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 
 void SetControllerToPokedude(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = PokedudeBufferRunCommand;
-    gBattlerControllerEndFuncs[battlerId] = PokedudeBufferExecCompleted;
+    gBattlerControllersData[battlerId].func = PokedudeBufferRunCommand;
+    gBattlerControllersData[battlerId].endFunc = PokedudeBufferExecCompleted;
     gBattleStruct->pdScriptNum = gSpecialVar_0x8004;
     gBattleStruct->pdMessageNo = 0;
 }
@@ -140,7 +140,7 @@ static void PokedudeBufferRunCommand(u32 battlerId)
 
 static void PokedudeBufferExecCompleted(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = PokedudeBufferRunCommand;
+    gBattlerControllersData[battlerId].func = PokedudeBufferRunCommand;
     
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
@@ -184,7 +184,7 @@ static void SwitchIn_CleanShinyAnimShowSubstitute(u32 battlerId)
         if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute)
             InitAndLaunchSpecialAnimation(battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
         
-        gBattlerControllerFuncs[battlerId] = SwitchIn_HandleSoundAndEnd;
+        gBattlerControllersData[battlerId].func = SwitchIn_HandleSoundAndEnd;
     }
 }
 
@@ -193,14 +193,14 @@ static void SwitchIn_TryShinyAnimShowHealthbox(u32 battlerId)
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
         TryShinyAnimation(battlerId);
         
-    if (gSprites[gBattleControllerData[battlerId]].callback == SpriteCallbackDummy && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
+    if (gSprites[gBattlerControllersData[battlerId].data].callback == SpriteCallbackDummy && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
     {
-        DestroySprite(&gSprites[gBattleControllerData[battlerId]]);
+        DestroySprite(&gSprites[gBattlerControllersData[battlerId].data]);
         UpdateHealthboxAttribute(battlerId, HEALTHBOX_ALL);
         StartHealthboxSlideIn(battlerId);
         SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
         CopyBattleSpriteInvisibility(battlerId);
-        gBattlerControllerFuncs[battlerId] = SwitchIn_CleanShinyAnimShowSubstitute;
+        gBattlerControllersData[battlerId].func = SwitchIn_CleanShinyAnimShowSubstitute;
     }
 }
 
@@ -241,7 +241,7 @@ static void PokedudeHandleChooseAction(u32 battlerId)
     if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
         PlayerHandleChooseAction(battlerId);
     else
-        gBattlerControllerFuncs[battlerId] = Pokedude_SimulateInputChooseAction;
+        gBattlerControllersData[battlerId].func = Pokedude_SimulateInputChooseAction;
 }
 
 static void PokedudeHandleChooseMoveAfterDma3(u32 battlerId)
@@ -250,7 +250,7 @@ static void PokedudeHandleChooseMoveAfterDma3(u32 battlerId)
     {
         gBattle_BG0_X = 0;
         gBattle_BG0_Y = 320;
-        gBattlerControllerFuncs[battlerId] = Pokedude_SimulateInputChooseMove;
+        gBattlerControllersData[battlerId].func = Pokedude_SimulateInputChooseMove;
     }
 }
 
@@ -259,10 +259,10 @@ static void PokedudeHandleChooseMove(u32 battlerId)
     if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
     {
         InitMoveSelectionsVarsAndStrings(battlerId);
-        gBattlerControllerFuncs[battlerId] = PokedudeHandleChooseMoveAfterDma3;
+        gBattlerControllersData[battlerId].func = PokedudeHandleChooseMoveAfterDma3;
     }
     else
-        gBattlerControllerFuncs[battlerId] = Pokedude_SimulateInputChooseMove;
+        gBattlerControllersData[battlerId].func = Pokedude_SimulateInputChooseMove;
 }
 
 static void CompleteWhenChooseItem(u32 battlerId)
@@ -280,7 +280,7 @@ static void OpenBagAndChooseItem(u32 battlerId)
 
     if (!gPaletteFade.active)
     {
-        gBattlerControllerFuncs[battlerId] = CompleteWhenChooseItem;
+        gBattlerControllersData[battlerId].func = CompleteWhenChooseItem;
         FreeAllWindowBuffers();
         
         switch (gSpecialVar_0x8004)
@@ -312,8 +312,8 @@ static void OpenPartyMenuToChooseMon(u32 battlerId)
 {
     if (!gPaletteFade.active)
     {
-        gBattlerControllerFuncs[battlerId] = WaitForMonSelection;
-        DestroyTask(gBattleControllerData[battlerId]);
+        gBattlerControllersData[battlerId].func = WaitForMonSelection;
+        DestroyTask(gBattlerControllersData[battlerId].data);
         FreeAllWindowBuffers();
         Pokedude_OpenPartyMenuInBattle();
     }
@@ -347,7 +347,7 @@ static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
         
         CreateTask(Task_BltController_RestoreBgmAfterCry, 10);
         HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[battlerId]], battlerId);
-        gBattlerControllerFuncs[battlerId] = Intro_DelayAndEnd;
+        gBattlerControllersData[battlerId].func = Intro_DelayAndEnd;
     }
 }
 
@@ -366,7 +366,7 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
         
         ShowHealthBox(battlerId);
         gBattleSpritesDataPtr->animationData->healthboxSlideInStarted = FALSE;
-        gBattlerControllerFuncs[battlerId] = Intro_WaitForShinyAnimAndHealthbox;
+        gBattlerControllersData[battlerId].func = Intro_WaitForShinyAnimAndHealthbox;
     }
 }
 
@@ -919,7 +919,7 @@ static bool32 HandlePokedudeVoiceoverEtc(u32 battlerId)
     }
     else
     {
-        gBattlerControllerFuncs[battlerId] = header_p[gBattleStruct->pdMessageNo].callback;
+        gBattlerControllersData[battlerId].func = header_p[gBattleStruct->pdMessageNo].callback;
         gPokedudeBattlerStates[battlerId]->timer = 0;
         gPokedudeBattlerStates[battlerId]->msg_idx = header_p[gBattleStruct->pdMessageNo].stringid;
         gBattleStruct->pdMessageNo++;
@@ -945,7 +945,7 @@ static const u8 *GetPokedudeText(void)
 static void ReturnFromPokedudeAction(u32 battlerId)
 {
     gPokedudeBattlerStates[battlerId]->timer = 0;
-    gBattlerControllerFuncs[battlerId] = PokedudeBufferRunCommand;
+    gBattlerControllersData[battlerId].func = PokedudeBufferRunCommand;
 }
 
 static void PokedudeAction_PrintVoiceoverMessage(u32 battlerId)

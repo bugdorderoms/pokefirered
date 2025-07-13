@@ -991,7 +991,7 @@ u32 CalcMoveTotalAccuracy(u32 move, u32 attacker, u32 defender)
     
     // Check effects that ignore the target's evasion stat stages
     if (atkAbility == ABILITY_KEEN_EYE || atkAbility == ABILITY_UNAWARE || atkAbility == ABILITY_ILLUMINATE || atkAbility == ABILITY_MINDS_EYE
-    || ((gBattleMons[defender].status2 & (STATUS2_FORESIGHT | STATUS2_MIRACLE_EYE)) && evasionStatStages > DEFAULT_STAT_STAGES))
+    || gBattleMoves[move].flags.targetStatStagesIgnored || ((gBattleMons[defender].status2 & (STATUS2_FORESIGHT | STATUS2_MIRACLE_EYE)) && evasionStatStages > DEFAULT_STAT_STAGES))
         evasionStatStages = DEFAULT_STAT_STAGES; // Set evasion stages to default
     else
         evasionStatStages = accuracyStatStages + DEFAULT_STAT_STAGES - evasionStatStages;
@@ -1374,7 +1374,8 @@ static void atk09_attackanimation(void)
     {
         gBattlescriptCurrInstr = cmd->nextInstr;
         
-        if (!IsBattleAnimationsOn() && gBattleMoves[gCurrentMove].effect != EFFECT_TRANSFORM && gBattleMoves[gCurrentMove].effect != EFFECT_SUBSTITUTE)
+        if (!IsBattleAnimationsOn() && gBattleMoves[gCurrentMove].effect != EFFECT_TRANSFORM && gBattleMoves[gCurrentMove].effect != EFFECT_SUBSTITUTE
+        && gBattleMoves[gCurrentMove].effect != EFFECT_ALLY_SWITCH)
         {
             if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
                 gBattleStruct->attackAnimPlayed = TRUE;
@@ -4164,21 +4165,6 @@ static bool32 ShouldPostponeSwitchInAbilities(u32 battlerId)
     return FALSE;
 }
 
-enum
-{
-    SWITCHIN_UPDATE_VARS,
-    SWITCHIN_NEUTRALIZING_GAS,
-    SWITCHIN_UNNERVE,
-    SWITCHIN_HEALING_WISH,
-    SWITCHIN_LUNAR_DANCE,
-    SWITCHIN_Z_HEALING_WISH,
-    SWITCHIN_HAZARDS,
-    SWITCHIN_EMERGENCY_EXIT,
-    SWITCHIN_TRUANT,
-    SWITCHIN_ABILITIES,
-    SWITCHIN_COUNT,
-};
-
 static bool32 IsBattlerPPMaxed(u32 battlerId)
 {
     u32 i, move;
@@ -4195,7 +4181,7 @@ static bool32 IsBattlerPPMaxed(u32 battlerId)
 
 static void atk52_switchineffects(void)
 {
-    CMD_ARGS(u8 battler);
+    CMD_ARGS(u8 battler, u8 lastCase);
 
     u32 i, battlerId = GetBattlerForBattleScript(cmd->battler);
     
@@ -4317,9 +4303,11 @@ static void atk52_switchineffects(void)
                     ++gBattlerFainted;
                 }
             }
-            gBattlescriptCurrInstr = cmd->nextInstr;
             break;
     }
+    
+    if (cmd->lastCase == gBattleScripting.switchinEffectState)
+        gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
 static void atk53_switchoutabilities(void)
@@ -6222,13 +6210,12 @@ static void atk76_various(void)
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
-static void atk77_setprotectlike(void)
+static u32 GetProtectLikeFailDivisor(void)
 {
-    CMD_ARGS();
-
-    u32 i, divisor = 1;
+    u32 i, lastMove = gBattleStruct->battlers[gBattlerAttacker].lastResultingMove;
+    u32 divisor = 1;
     
-    if (!gBattleMoves[gBattleStruct->battlers[gBattlerAttacker].lastResultingMove].flags.protectionMove)
+    if (!gBattleMoves[lastMove].flags.usesProtectCounter && gBattleMoves[lastMove].effect != EFFECT_ALLY_SWITCH)
         gDisableStructs[gBattlerAttacker].protectUses = 0;
     
     if (!GET_MOVE_MOVEEFFECT_TABLE(gCurrentMove).affectsUserSide) // effects that protects the user's side increase the fail rate, but can't fail themselves
@@ -6236,8 +6223,14 @@ static void atk77_setprotectlike(void)
         for (i = 0; i < gDisableStructs[gBattlerAttacker].protectUses && i <= 6; ++i)
             divisor *= 3;
     }
-    
-    if ((0xFFFF / divisor) >= Random() && gCurrentTurnActionNumber != (gBattlersCount - 1))
+    return divisor;
+}
+
+static void atk77_setprotectlike(void)
+{
+    CMD_ARGS();
+
+    if ((0xFFFF / GetProtectLikeFailDivisor()) >= Random() && gCurrentTurnActionNumber != (gBattlersCount - 1))
     {
         switch (gBattleMoves[gCurrentMove].effect)
         {
@@ -6251,6 +6244,10 @@ static void atk77_setprotectlike(void)
                 break;
             case EFFECT_WIDE_GUARD:
                 gSideStatuses[GetBattlerSide(gBattlerAttacker)] |= SIDE_STATUS_WIDE_GUARD;
+                gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_PROTECTED_TEAM;
+                break;
+            case EFFECT_QUICK_GUARD:
+                gSideStatuses[GetBattlerSide(gBattlerAttacker)] |= SIDE_STATUS_QUICK_GUARD;
                 gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_PROTECTED_TEAM;
                 break;
         }
@@ -9789,4 +9786,51 @@ void BS_JumpIfSynchronoiseFail(void)
         gBattlescriptCurrInstr = cmd->nextInstr;
     else
         gBattlescriptCurrInstr = cmd->failPtr;
+}
+
+void BS_HandleEchoedVoice(void)
+{
+    NATIVE_ARGS();
+    
+    switch (gBattleStruct->echoedVoiceCounter)
+    {
+        case 0:
+            gBattleStruct->echoedVoiceCounter = 2;
+            gBattleStruct->echoedVoiceDmgScale = 0;
+            break;
+        case 2:
+            break;
+        default:
+            gBattleStruct->echoedVoiceCounter = 2;
+            gBattleStruct->echoedVoiceDmgScale = min(10, gBattleStruct->echoedVoiceDmgScale + 1);
+            break;
+    }
+    gBattlescriptCurrInstr = cmd->nextInstr;
+}
+
+void BS_TryAllySwitch(void)
+{
+    NATIVE_ARGS();
+    
+    if (!IsBattlerAlive(BATTLE_PARTNER(gBattlerAttacker)))
+        gBattlescriptCurrInstr = BattleScript_ButItFailed;
+    else if ((0xFFFF / GetProtectLikeFailDivisor()) >= Random())
+    {
+        ++gDisableStructs[gBattlerAttacker].protectUses;
+        gBattlescriptCurrInstr = cmd->nextInstr;
+    }
+    else
+    {
+        gDisableStructs[gBattlerAttacker].protectUses = 0;
+        gBattlescriptCurrInstr = BattleScript_ButItFailed;
+    }
+}
+
+void BS_AllySwitchSwapBattlers(void)
+{
+    NATIVE_ARGS();
+    gBattleScripting.battler = gBattlerAttacker;
+    gBattlerAttacker = gBattlerTarget = BATTLE_PARTNER(gBattlerAttacker);
+    gProtectStructs[gBattlerAttacker].usedAllySwitch = TRUE;
+    gBattlescriptCurrInstr = cmd->nextInstr;
 }

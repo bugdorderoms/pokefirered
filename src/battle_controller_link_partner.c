@@ -60,8 +60,8 @@ static void (*const sLinkPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 
 void SetControllerToLinkPartner(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = LinkPartnerBufferRunCommand;
-    gBattlerControllerEndFuncs[battlerId] = LinkPartnerBufferExecCompleted;
+    gBattlerControllersData[battlerId].func = LinkPartnerBufferRunCommand;
+    gBattlerControllersData[battlerId].endFunc = LinkPartnerBufferExecCompleted;
 }
 
 static void LinkPartnerBufferRunCommand(u32 battlerId)
@@ -77,7 +77,7 @@ static void LinkPartnerBufferRunCommand(u32 battlerId)
 
 static void LinkPartnerBufferExecCompleted(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = LinkPartnerBufferRunCommand;
+    gBattlerControllersData[battlerId].func = LinkPartnerBufferRunCommand;
     
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
@@ -111,7 +111,7 @@ static void SwitchIn_ShowSubstitute(u32 battlerId)
         if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute)
             InitAndLaunchSpecialAnimation(battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
         
-        gBattlerControllerFuncs[battlerId] = SwitchIn_WaitAndEnd;
+        gBattlerControllersData[battlerId].func = SwitchIn_WaitAndEnd;
     }
 }
 
@@ -130,7 +130,7 @@ static void SwitchIn_ShowHealthbox(u32 battlerId)
         StartHealthboxSlideIn(battlerId);
         SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
         CopyBattleSpriteInvisibility(battlerId);
-        gBattlerControllerFuncs[battlerId] = SwitchIn_ShowSubstitute;
+        gBattlerControllersData[battlerId].func = SwitchIn_ShowSubstitute;
     }
 }
 
@@ -139,10 +139,10 @@ static void SwitchIn_TryShinyAnim(u32 battlerId)
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
         TryShinyAnimation(battlerId);
     
-    if (gSprites[gBattleControllerData[battlerId]].callback == SpriteCallbackDummy && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
+    if (gSprites[gBattlerControllersData[battlerId].data].callback == SpriteCallbackDummy && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
     {
-        DestroySprite(&gSprites[gBattleControllerData[battlerId]]);
-        gBattlerControllerFuncs[battlerId] = SwitchIn_ShowHealthbox;
+        DestroySprite(&gSprites[gBattlerControllersData[battlerId].data]);
+        gBattlerControllersData[battlerId].func = SwitchIn_ShowHealthbox;
     }
 }
 
@@ -191,7 +191,7 @@ static void Intro_WaitForHealthbox(u32 battlerId)
     if (var)
     {
         gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay = 3;
-        gBattlerControllerFuncs[battlerId] = Intro_DelayAndEnd;
+        gBattlerControllersData[battlerId].func = Intro_DelayAndEnd;
     }
 }
 
@@ -208,7 +208,7 @@ static void Intro_ShowHealthbox(u32 battlerId)
 
             ShowHealthBox(battlerId);
             gBattleSpritesDataPtr->animationData->healthboxSlideInStarted = FALSE;
-            gBattlerControllerFuncs[battlerId] = Intro_WaitForHealthbox;
+            gBattlerControllersData[battlerId].func = Intro_WaitForHealthbox;
         }
     }
 }

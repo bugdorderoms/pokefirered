@@ -2385,6 +2385,30 @@ BattleScript_MoveMissedSetRoundUsed::
 	handleround 1 @ Set round used
 	goto BattleScript_PrintMoveMissed
 
+@ EFFECT_ECHOED_VOICE @
+
+BattleScript_EffectEchoedVoice::
+	attackcanceler
+	handleechoedvoice
+	goto BattleScript_HitFromAccCheck
+
+@ EFFECT_ALLY_SWITCH @
+
+BattleScript_EffectAllySwitch::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	attackstring
+	ppreduce
+	tryallyswitch
+	attackanimation
+	waitstate
+	allyswitchswapbattlers
+	printstring STRINGID_ATKANDPKMNSWITCHEDPLACES
+	waitmessage B_WAIT_TIME_LONG
+	switchineffectshealingwishonly BS_SCRIPTING
+	switchineffectshealingwishonly BS_ATTACKER
+	goto BattleScript_MoveEnd
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2542,6 +2566,11 @@ BattleScript_MoveEffectKnockOff::
 
 BattleScript_MoveEffectSmackDown::
 	printstring STRINGID_EFFFELLSTRAIGHTDOWN
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_MoveEffectClearSmog::
+	printstring STRINGID_EFFSTATCHANGESREMOVED
 	waitmessage B_WAIT_TIME_LONG
 	return
 
@@ -4197,6 +4226,8 @@ BattleScript_EffectHitFromEffectiveness_Ret::
 	setadditionaleffects
 	return
 
+BattleScript_ButItFailedAtkCanceler::
+	attackcanceler
 BattleScript_ButItFailedAtkStringPpReduce::
 	attackstring
 BattleScript_ButItFailedPpReduce::

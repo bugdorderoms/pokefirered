@@ -28,7 +28,7 @@
  *          and % 3 is == 0, to make Poison Point and other 1/3s pass. */
 #define RNG_SEED_DEFAULT 0x000002BE
 
-/* Causes the first attack to critical hit if B_CRIT_CHANCE >= GEN_6.
+/* Causes the first attack to critical hit.
  * The 2nd roll % 24 == 0 to be a critical hit at any stage.
  * The other rolls match RNG_SEED_DEFAULT. */
 #define RNG_SEED_CRITICAL_HIT 0x0000A9F4

@@ -92,7 +92,7 @@ static u32 GetSpeciesForm(u32 formChangeType, u32 species, u32 personality, u32 
                             if (!param)
                                 targetSpecies = formsTable[i].targetSpecies;
                         }
-                        else if ((!param && (!gBattleWeather || !WEATHER_HAS_EFFECT)) || IsBattlerWeatherAffected(battlerId, param))
+                        else if ((!param && !IsBattlerWeatherAffected(battlerId, B_WEATHER_ANY)) || IsBattlerWeatherAffected(battlerId, param))
                             targetSpecies = formsTable[i].targetSpecies;
                         break;
                     case FORM_CHANGE_SWITCH_OUT:

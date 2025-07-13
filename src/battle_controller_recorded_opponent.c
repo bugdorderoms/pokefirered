@@ -57,8 +57,8 @@ static void (*const sRecordedOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32)
 
 void SetControllerToRecordedOpponent(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = RecordedOpponentBufferRunCommand;
-    gBattlerControllerEndFuncs[battlerId] = RecordedOpponentBufferExecCompleted;
+    gBattlerControllersData[battlerId].func = RecordedOpponentBufferRunCommand;
+    gBattlerControllersData[battlerId].endFunc = RecordedOpponentBufferExecCompleted;
 }
 
 static void RecordedOpponentBufferRunCommand(u32 battlerId)
@@ -74,7 +74,7 @@ static void RecordedOpponentBufferRunCommand(u32 battlerId)
 
 static void RecordedOpponentBufferExecCompleted(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = RecordedOpponentBufferRunCommand;
+    gBattlerControllersData[battlerId].func = RecordedOpponentBufferRunCommand;
     
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {

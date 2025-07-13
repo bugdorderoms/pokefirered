@@ -106,8 +106,8 @@ static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 
 void SetControllerToPlayer(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = PlayerBufferRunCommand;
-    gBattlerControllerEndFuncs[battlerId] = PlayerBufferExecCompleted;
+    gBattlerControllersData[battlerId].func = PlayerBufferRunCommand;
+    gBattlerControllersData[battlerId].endFunc = PlayerBufferExecCompleted;
     gDoingBattleAnim = FALSE;
 }
 
@@ -124,7 +124,7 @@ static void PlayerBufferRunCommand(u32 battlerId)
 
 static void PlayerBufferExecCompleted(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = PlayerBufferRunCommand;
+    gBattlerControllersData[battlerId].func = PlayerBufferRunCommand;
     
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
@@ -144,7 +144,7 @@ static void PlayerHandleLoadMonSprite(u32 battlerId)
 {
     BattleLoadMonSpriteGfx(battlerId);
     gSprites[gBattlerSpriteIds[battlerId]].oam.paletteNum = battlerId;
-    gBattlerControllerFuncs[battlerId] = CompleteOnBattlerSpritePosX_0;
+    gBattlerControllersData[battlerId].func = CompleteOnBattlerSpritePosX_0;
 }
 
 static void SwitchIn_HandleSoundAndEnd(u32 battlerId)
@@ -169,7 +169,7 @@ static void SwitchIn_CleanShinyAnimShowSubstitute(u32 battlerId)
         if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute)
             InitAndLaunchSpecialAnimation(battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
         
-        gBattlerControllerFuncs[battlerId] = SwitchIn_HandleSoundAndEnd;
+        gBattlerControllersData[battlerId].func = SwitchIn_HandleSoundAndEnd;
     }
 }
 
@@ -178,14 +178,14 @@ static void SwitchIn_TryShinyAnimShowHealthbox(u32 battlerId)
     if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
         TryShinyAnimation(battlerId);
     
-    if (gSprites[gBattleControllerData[battlerId]].callback == SpriteCallbackDummy && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
+    if (gSprites[gBattlerControllersData[battlerId].data].callback == SpriteCallbackDummy && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
     {
-        DestroySprite(&gSprites[gBattleControllerData[battlerId]]);
+        DestroySprite(&gSprites[gBattlerControllersData[battlerId].data]);
         UpdateHealthboxAttribute(battlerId, HEALTHBOX_ALL);
         StartHealthboxSlideIn(battlerId);
         SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
         CopyBattleSpriteInvisibility(battlerId);
-        gBattlerControllerFuncs[battlerId] = SwitchIn_CleanShinyAnimShowSubstitute;
+        gBattlerControllersData[battlerId].func = SwitchIn_CleanShinyAnimShowSubstitute;
     }
 }
 
@@ -251,9 +251,9 @@ static void HandleChooseActionAfterDma3(u32 battlerId)
         gBattle_BG0_Y = 160;
 
         if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
-            gBattlerControllerFuncs[battlerId] = OakOldMan_SimulateInputChooseAction;
+            gBattlerControllersData[battlerId].func = OakOldMan_SimulateInputChooseAction;
         else if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
-            gBattlerControllerFuncs[battlerId] = Pokedude_SimulateInputChooseAction;
+            gBattlerControllersData[battlerId].func = Pokedude_SimulateInputChooseAction;
         else
         {
 #if WEATHER_ICON_IN_BATTLE
@@ -268,7 +268,7 @@ static void HandleChooseActionAfterDma3(u32 battlerId)
             TryAddLastUsedBallTrigger();
 #endif
 
-            gBattlerControllerFuncs[battlerId] = HandleInputChooseAction;
+            gBattlerControllersData[battlerId].func = HandleInputChooseAction;
         }
     }
 }
@@ -304,7 +304,7 @@ void PlayerHandleChooseMove(u32 battlerId)
     
     CreateGimmickTriggerSprite(battlerId);
     
-    gBattlerControllerFuncs[battlerId] = HandleChooseMoveAfterDma3;
+    gBattlerControllersData[battlerId].func = HandleChooseMoveAfterDma3;
 }
 
 static void CompleteWhenChooseItem(u32 battlerId)
@@ -314,7 +314,7 @@ static void CompleteWhenChooseItem(u32 battlerId)
         if ((gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) && !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_HP_RESTORE) && gSpecialVar_ItemId == ITEM_POTION)
         {
             BtlCtrl_OakOldMan_SetState2Flag(FIRST_BATTLE_MSG_FLAG_HP_RESTORE);
-            gBattlerControllerFuncs[battlerId] = PrintOakText_KeepAnEyeOnHP;
+            gBattlerControllersData[battlerId].func = PrintOakText_KeepAnEyeOnHP;
         }
         else
         {
@@ -328,7 +328,7 @@ static void OpenBagAndChooseItem(u32 battlerId)
 {
     if (!gPaletteFade.active)
     {
-        gBattlerControllerFuncs[battlerId] = CompleteWhenChooseItem;
+        gBattlerControllersData[battlerId].func = CompleteWhenChooseItem;
         FreeAllWindowBuffers();
         
         if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
@@ -380,9 +380,9 @@ static void OpenPartyMenuToChooseMon(u32 battlerId)
     {
         u32 caseId;
 
-        gBattlerControllerFuncs[battlerId] = Player_WaitForMonSelection;
-        caseId = gTasks[gBattleControllerData[battlerId]].data[0];
-        DestroyTask(gBattleControllerData[battlerId]);
+        gBattlerControllersData[battlerId].func = Player_WaitForMonSelection;
+        caseId = gTasks[gBattlerControllersData[battlerId].data].data[0];
+        DestroyTask(gBattlerControllersData[battlerId].data);
         FreeAllWindowBuffers();
         OpenPartyMenuInTutorialBattle(caseId);
     }
@@ -449,7 +449,7 @@ static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
             HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[BATTLE_PARTNER(battlerId)]], BATTLE_PARTNER(battlerId));
         
         gBattleSpritesDataPtr->healthBoxesData[battlerId].introEndDelay = 3;
-        gBattlerControllerFuncs[battlerId] = Intro_DelayAndEnd;
+        gBattlerControllersData[battlerId].func = Intro_DelayAndEnd;
     }
 }
 
@@ -468,7 +468,7 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
         
         ShowHealthBox(battlerId);
         gBattleSpritesDataPtr->animationData->healthboxSlideInStarted = FALSE;
-        gBattlerControllerFuncs[battlerId] = Intro_WaitForShinyAnimAndHealthbox;
+        gBattlerControllersData[battlerId].func = Intro_WaitForShinyAnimAndHealthbox;
     }
 }
 
@@ -716,7 +716,7 @@ static void HandleInputChooseAction(u32 battlerId)
             UpdateOamPriorityInAllHealthboxes(0, TRUE);
             ChangeBattlerSpritesInvisibilities(TRUE);
             DisplayInBattleTeamPreview();
-            gBattlerControllerFuncs[battlerId] = HandleInputTeamPreview;
+            gBattlerControllersData[battlerId].func = HandleInputTeamPreview;
         }
     }
 #endif
@@ -824,7 +824,7 @@ static void MoveSelectionDisplayMoveType(u32 battlerId)
     // try change move target in double
     if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
     {
-        if (gBattlerControllerFuncs[battlerId] == HandleInputChooseTarget)
+        if (gBattlerControllersData[battlerId].func == HandleInputChooseTarget)
             target = gMultiUsePlayerCursor;
         else if (!IsBattlerAlive(target))
             target = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
@@ -885,7 +885,7 @@ void InitMoveSelectionsVarsAndStrings(u32 battlerId)
 static void SetPlayerChooseMoveInput(u32 battlerId)
 {
     CreateMoveInfoTriggerSprite();
-    gBattlerControllerFuncs[battlerId] = HandleInputChooseMove;
+    gBattlerControllersData[battlerId].func = HandleInputChooseMove;
 }
 
 void MoveSelectionCreateCursorAt(u32 cursorPosition, u32 arg1)
@@ -1024,7 +1024,7 @@ void HandleInputChooseMove(u32 battlerId)
         switch (canSelectTarget)
         {
             case 1:
-                gBattlerControllerFuncs[battlerId] = HandleInputChooseTarget;
+                gBattlerControllersData[battlerId].func = HandleInputChooseTarget;
                 
                 if (moveTarget == MOVE_TARGET_USER || moveTarget == MOVE_TARGET_ALL_BATTLERS || moveTarget == MOVE_TARGET_USER_OR_ALLY)
                     gMultiUsePlayerCursor = battlerId;
@@ -1036,10 +1036,10 @@ void HandleInputChooseMove(u32 battlerId)
                 gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
                 break;
             case 2:
-                gBattlerControllerFuncs[battlerId] = HandleInputShowTargets;
+                gBattlerControllersData[battlerId].func = HandleInputShowTargets;
                 break;
             case 3:
-                gBattlerControllerFuncs[battlerId] = HandleInputShowEntireFieldTargets;
+                gBattlerControllersData[battlerId].func = HandleInputShowEntireFieldTargets;
                 break;
             default:
                 HideGimmickTriggerSprite();
@@ -1119,7 +1119,7 @@ void HandleInputChooseMove(u32 battlerId)
             gMultiUsePlayerCursor = gBattleStruct->battlers[battlerId].moveSelectionCursor != 0 ? 0 : gBattleStruct->battlers[battlerId].moveSelectionCursor + 1;
             MoveSelectionCreateCursorAt(gMultiUsePlayerCursor, 27);
             BattlePutTextOnWindow(gText_BattleSwitchWhich, B_WIN_SWITCH_PROMPT);
-            gBattlerControllerFuncs[battlerId] = HandleMoveSwitching;
+            gBattlerControllersData[battlerId].func = HandleMoveSwitching;
         }
     }
     else if (JOY_NEW(START_BUTTON))
@@ -1142,7 +1142,7 @@ void HandleInputChooseMove(u32 battlerId)
             gBattleStruct->moveInfo.submenuState = 0; // Always initialize on first submenu
             MoveInfoPrintMoveNameAndDescription(battlerId);
             MoveInfoPrintSubmenuString(battlerId, gBattleStruct->moveInfo.submenuState);
-            gBattlerControllerFuncs[battlerId] = HandleInputMoveInfo;
+            gBattlerControllersData[battlerId].func = HandleInputMoveInfo;
         }
     }
 #endif
@@ -1434,7 +1434,7 @@ static void HandleMoveSwitching(u32 battlerId)
             }
         }
         if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
-            gBattlerControllerFuncs[battlerId] = OakOldManHandleInputChooseMove;
+            gBattlerControllersData[battlerId].func = OakOldManHandleInputChooseMove;
         else
             SetPlayerChooseMoveInput(battlerId);
         
@@ -1449,7 +1449,7 @@ static void HandleMoveSwitching(u32 battlerId)
         MoveSelectionCreateCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor, 0);
         
         if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
-            gBattlerControllerFuncs[battlerId] = OakOldManHandleInputChooseMove;
+            gBattlerControllersData[battlerId].func = OakOldManHandleInputChooseMove;
         else
             SetPlayerChooseMoveInput(battlerId);
         
@@ -1596,7 +1596,7 @@ static void HandleInputMoveInfo(u32 battlerId)
         PlaySE(SE_SELECT);
         // To create a smooth animation when closing the move info, first the arrow pair is removed, and then in the next frame, the moves window is redrawn.
         RemoveScrollIndicatorArrowPair(gBattleStruct->moveInfo.arrowTaskId);
-        gBattlerControllerFuncs[battlerId] = HandleCloseMoveInfo_Step;
+        gBattlerControllersData[battlerId].func = HandleCloseMoveInfo_Step;
     }
     else if (JOY_NEW(DPAD_LEFT) && gBattleStruct->moveInfo.submenuState > 0)
     {
@@ -1637,7 +1637,7 @@ static void HandleInputTeamPreview(u32 battlerId)
         UpdateOamPriorityInAllHealthboxes(1, FALSE);
         ChangeBattlerSpritesInvisibilities(FALSE);
         HideInBattleTeamPreview();
-        gBattlerControllerFuncs[battlerId] = HandleChooseActionAfterDma3;
+        gBattlerControllersData[battlerId].func = HandleChooseActionAfterDma3;
     }
 }
 

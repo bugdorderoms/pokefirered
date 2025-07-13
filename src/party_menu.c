@@ -2098,7 +2098,7 @@ static u32 GetPartyLayoutFromBattleType(void)
         return PARTY_LAYOUT_DOUBLE;
 }
 
-static void SwapPartyPokemon(struct Pokemon *mon1, struct Pokemon *mon2)
+void SwapPartyPokemon(struct Pokemon *mon1, struct Pokemon *mon2)
 {
     struct Pokemon *buffer = Alloc(sizeof(struct Pokemon));
     *buffer = *mon1;
@@ -5502,20 +5502,11 @@ static void SwitchMenuBoxSprites(u8 *spriteIdPtr1, u8 *spriteIdPtr2)
 static void SwitchPartyMon(void)
 {
     struct PartyMenuBox *menuBoxes[2];
-    struct Pokemon *mon1, *mon2;
-    struct Pokemon *monBuffer;
 
     menuBoxes[0] = &sPartyMenuBoxes[gPartyMenu.slotId];
     menuBoxes[1] = &sPartyMenuBoxes[gPartyMenu.slotId2];
     
-    mon1 = &gPlayerParty[gPartyMenu.slotId];
-    mon2 = &gPlayerParty[gPartyMenu.slotId2];
-    
-    monBuffer = Alloc(sizeof(struct Pokemon));
-    *monBuffer = *mon1;
-    *mon1 = *mon2;
-    *mon2 = *monBuffer;
-    Free(monBuffer);
+    SwapPartyPokemon(&gPlayerParty[gPartyMenu.slotId], &gPlayerParty[gPartyMenu.slotId2]);
     
     SwitchMenuBoxSprites(&menuBoxes[0]->pokeballSpriteId, &menuBoxes[1]->pokeballSpriteId);
     SwitchMenuBoxSprites(&menuBoxes[0]->itemSpriteId, &menuBoxes[1]->itemSpriteId);

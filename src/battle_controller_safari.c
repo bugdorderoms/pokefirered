@@ -66,8 +66,8 @@ static void (*const sSafariBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 
 void SetControllerToSafari(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = SafariBufferRunCommand;
-    gBattlerControllerEndFuncs[battlerId] = SafariBufferExecCompleted;
+    gBattlerControllersData[battlerId].func = SafariBufferRunCommand;
+    gBattlerControllersData[battlerId].endFunc = SafariBufferExecCompleted;
 }
 
 static void SafariBufferRunCommand(u32 battlerId)
@@ -83,7 +83,7 @@ static void SafariBufferRunCommand(u32 battlerId)
 
 static void SafariBufferExecCompleted(u32 battlerId)
 {
-    gBattlerControllerFuncs[battlerId] = SafariBufferRunCommand;
+    gBattlerControllersData[battlerId].func = SafariBufferRunCommand;
     
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
@@ -110,7 +110,7 @@ static void HandleChooseActionAfterDma3(u32 battlerId)
     {
         gBattle_BG0_X = 0;
         gBattle_BG0_Y = 160;
-        gBattlerControllerFuncs[battlerId] = HandleInputChooseAction;
+        gBattlerControllersData[battlerId].func = HandleInputChooseAction;
     }
 }
 
@@ -131,7 +131,7 @@ static void CompleteWhenChoosePokeblock(u32 battlerId)
 static void SafariOpenPokeblockCase(u32 battlerId)
 {
     if (!gPaletteFade.active)
-        gBattlerControllerFuncs[battlerId] = CompleteWhenChoosePokeblock;
+        gBattlerControllersData[battlerId].func = CompleteWhenChoosePokeblock;
 }
 
 static void SafariHandleChooseItem(u32 battlerId)
@@ -162,7 +162,7 @@ static void SafariHandleIntroTrainerBallThrow(u32 battlerId)
     UpdateHealthboxAttribute(battlerId, HEALTHBOX_SAFARI_ALL_TEXT);
     StartHealthboxSlideIn(battlerId);
     SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
-    gBattlerControllerFuncs[battlerId] = CompleteOnHealthboxSpriteCallbackDummy;
+    gBattlerControllersData[battlerId].func = CompleteOnHealthboxSpriteCallbackDummy;
 }
 
 ///////////

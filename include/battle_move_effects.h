@@ -203,6 +203,10 @@ enum
     EFFECT_ENTRAINMENT,
     EFFECT_AFTER_YOU,
     EFFECT_ROUND,
+    EFFECT_ECHOED_VOICE,
+    EFFECT_STORED_POWER,
+    EFFECT_QUICK_GUARD,
+    EFFECT_ALLY_SWITCH,
     EFFECTS_COUNT,
 };
 
@@ -223,11 +227,8 @@ enum
 #define EFFECT_SPECIAL_ATTACK_DOWN_2 61
 #define EFFECT_ACCURACY_DOWN_2 63
 #define EFFECT_EVASION_DOWN_HIT 74
-#define EFFECT_FLINCH_MINIMIZE_HIT 150
 #define EFFECT_HEX                          217
 #define EFFECT_ACROBATICS                   220
-#define EFFECT_STORED_POWER                 223
-#define EFFECT_ECHOED_VOICE                 226
 #define EFFECT_RETALIATE                    231
 #define EFFECT_BULLDOZE                     232
 #define EFFECT_STICKY_WEB                   254
@@ -252,7 +253,6 @@ enum
 #define EFFECT_NOBLE_ROAR                   291
 #define EFFECT_VENOM_DRENCH                 292
 #define EFFECT_TOXIC_THREAD                 293
-#define EFFECT_CLEAR_SMOG                   294
 #define EFFECT_HIT_SWITCH_TARGET            295
 #define EFFECT_FINAL_GAMBIT                 296
 #define EFFECT_HIT_ENEMY_HEAL_ALLY          301
@@ -288,7 +288,6 @@ enum
 #define EFFECT_SHORE_UP                     341
 #define EFFECT_GEOMANCY                     342
 #define EFFECT_FAIRY_LOCK                   343
-#define EFFECT_ALLY_SWITCH                  344
 #define EFFECT_RELIC_SONG                   345
 #define EFFECT_ATTACKER_DEFENSE_DOWN_HIT    346
 #define EFFECT_BODY_PRESS                   347
