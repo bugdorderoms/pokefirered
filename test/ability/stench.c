@@ -3,9 +3,7 @@
 
 SINGLE_BATTLE_TEST("Stench has a 10% chance to flinch")
 {
-    KNOWN_FAILING; // RNG untestable
-    
-    PASSES_RANDOMLY(1, 10); // 10% chance
+    PASSES_RANDOMLY(1, 10, RNG_STENCH);
     
     GIVEN {
         PLAYER(SPECIES_GRIMER) { Ability(ABILITY_STENCH); }
@@ -13,33 +11,27 @@ SINGLE_BATTLE_TEST("Stench has a 10% chance to flinch")
     } WHEN {
         TURN { MOVE(player, MOVE_SCRATCH); }
     } SCENE {
-        MESSAGE("Grimer used Scratch!");
         MESSAGE("Foe Wobbuffet flinched!");
     }
 }
 
 SINGLE_BATTLE_TEST("Stench only triggers if target takes damage")
 {
-    PASSES_RANDOMLY(10, 10); // Will pass every time
-    
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SAND_ATTACK].power == 0);
+        ASSUME(gBattleMoves[MOVE_SCARY_FACE].power == 0);
         
-        PLAYER(SPECIES_GRIMER) { Ability(ABILITY_STENCH); }
-        OPPONENT(SPECIES_WOBBUFFET);
+        PLAYER(SPECIES_WOBBUFFET);
+        OPPONENT(SPECIES_GRIMER) { Ability(ABILITY_STENCH); }
     } WHEN {
-        TURN { MOVE(player, MOVE_SAND_ATTACK); }
+        TURN { MOVE(opponent, MOVE_SCARY_FACE, WITH_RNG(RNG_STENCH, TRUE)); }
     } SCENE {
-        MESSAGE("Grimer used Sand Attack!");
-        NOT MESSAGE("Foe Wobbuffet flinched!");
+        NOT MESSAGE("Wynaut flinched!");
     }
 }
 
 SINGLE_BATTLE_TEST("Stench does not stack with King's Rock")
 {
-    KNOWN_FAILING; // RNG untestable
-    
-    PASSES_RANDOMLY(1, 10); // 10% chance, not stacked with King's Rock
+    PASSES_RANDOMLY(1, 10, RNG_STENCH);
     
     GIVEN {
         ASSUME(gItems[ITEM_KINGS_ROCK].holdEffect == HOLD_EFFECT_FLINCH);
@@ -47,31 +39,26 @@ SINGLE_BATTLE_TEST("Stench does not stack with King's Rock")
         PLAYER(SPECIES_GRIMER) { Ability(ABILITY_STENCH); Item(ITEM_KINGS_ROCK); }
         OPPONENT(SPECIES_WOBBUFFET);
     } WHEN {
-        TURN { MOVE(player, MOVE_SCRATCH); }
+        TURN { MOVE(player, MOVE_SCRATCH, WITH_RNG(RNG_HOLD_EFFECT_FLINCH, TRUE)); }
     } SCENE {
-        MESSAGE("Grimer used Scratch!");
         MESSAGE("Foe Wobbuffet flinched!");
     }
 }
 
 SINGLE_BATTLE_TEST("Stench does not stack with moves with flinch chance")
 {
-    KNOWN_FAILING; // RNG untestable
-    
-    PASSES_RANDOMLY(3, 10); // 30% chance of move Bite
+    PASSES_RANDOMLY(3, 10, RNG_SECONDARY_EFFECT);
     
     GIVEN {
-        ASSUME(MoveHasMoveEffect(MOVE_BITE, MOVE_EFFECT_FLINCH, FALSE));
+        ASSUME(MoveHasMoveEffectWithChance(MOVE_BITE, MOVE_EFFECT_FLINCH, 30));
 
         PLAYER(SPECIES_GRIMER) { Ability(ABILITY_STENCH); }
         OPPONENT(SPECIES_WOBBUFFET);
     } WHEN {
-        TURN { MOVE(player, MOVE_BITE); }
+        TURN { MOVE(player, MOVE_BITE, WITH_RNG(RNG_STENCH, TRUE)); }
     } SCENE {
-        MESSAGE("Grimer used Bite!");
         MESSAGE("Foe Wobbuffet flinched!");
     }
 }
 
-// TODO:
-// Stench has a 10% chance to flinch in each multi-strike hit
+TO_DO_BATTLE_TEST("Stench has a 10% chance to flinch in each multi-strike hit");

@@ -42,17 +42,13 @@ enum
 #define ABILITYEFFECT_ENDTURN           1
 #define ABILITYEFFECT_NEUTRALIZING_GAS  2
 #define ABILITYEFFECT_UNNERVE           3
-#define ABILITYEFFECT_MOVES_BLOCK       4
-#define ABILITYEFFECT_WOULD_BLOCK_MOVE  5
-#define ABILITYEFFECT_ABSORBING         6
-#define ABILITYEFFECT_WOULD_ABSORB_MOVE 7
-#define ABILITYEFFECT_MOVE_END_ATTACKER 8
-#define ABILITYEFFECT_MOVE_END_TARGET   9
-#define ABILITYEFFECT_IMMUNITY          10
-#define ABILITYEFFECT_ON_WEATHER        11
-#define ABILITYEFFECT_SYNCHRONIZE       12
-#define ABILITYEFFECT_ON_TERRAIN        13
-#define ABILITYEFFECT_OPPORTUNIST       14
+#define ABILITYEFFECT_MOVE_END_ATTACKER 4
+#define ABILITYEFFECT_MOVE_END_TARGET   5
+#define ABILITYEFFECT_IMMUNITY          6
+#define ABILITYEFFECT_ON_WEATHER        7
+#define ABILITYEFFECT_SYNCHRONIZE       8
+#define ABILITYEFFECT_ON_TERRAIN        9
+#define ABILITYEFFECT_OPPORTUNIST       10
 
 // Cases for CheckAbilityInBattle
 #define CHECK_ABILITY_ON_FIELD                0
@@ -222,6 +218,7 @@ u32 GetNumBeatUpHits(u32 battler);
 s8 GetItemStatChangeStages(u32 item);
 bool32 CanReceiveBadgeBoost(u32 battlerId, u32 flagId);
 bool32 MoveHasMoveEffect(u32 move, u32 moveEffect, bool32 self);
+bool32 MoveHasMoveEffectWithChance(u32 move, u32 moveEffect, u32 chance);
 bool32 MoveHasChargeTurnMoveEffect(u32 move);
 bool32 TryInitSosCall(void);
 const struct SosCall GetSosCallRateTable(void);
@@ -231,7 +228,8 @@ bool32 TryBattleChallengeStartingStatus(void);
 bool32 IsPartnerMonFromSameTrainer(u32 battler);
 bool32 TryPrimalReversion(u32 battler);
 u32 GetBattlerIdFromPartySlot(u32 slot, u32 partyId);
-u32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u32 *statIdToRaise, u32 *statAmount);
+bool32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u32 target, bool32 onlyChecking);
+bool32 CanAbilityBlockMove(u32 move, u32 attacker, u32 target, bool32 onlyChecking);
 
 static inline bool32 CanBattlerSwitch(u32 battlerId)
 {

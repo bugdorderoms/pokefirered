@@ -32,14 +32,14 @@ static u32 TryStartDynamicWeather(void)
                 case SEASON_SPRING:
                     weatherChance += 10; // +10% chance
                     
-                    if (RandomPercent(5)) // 5% chance that becames a heavy rain
+                    if (RandomPercentage(RNG_NONE, 5)) // 5% chance that becames a heavy rain
                         newWeather = WEATHER_RAIN_THUNDERSTORM;
                     break;
                 case SEASON_WINTER:
                     weatherChance = 100; // Set default chance to 100%
                     
                     // Always init a snow or snowstorm
-                    if (RandomPercent(40)) // 40% chance that becames a snowstorm
+                    if (RandomPercentage(RNG_NONE, 40)) // 40% chance that becames a snowstorm
                         newWeather = WEATHER_SNOWSTORM;
                     else
                         newWeather = WEATHER_SNOW;
@@ -47,7 +47,7 @@ static u32 TryStartDynamicWeather(void)
                 case SEASON_AUTUMN:
                     weatherChance = 5; // Set default chance to 5%
                     
-                    if (RandomPercent(2)) // 2% chance that becames a heavy rain
+                    if (RandomPercentage(RNG_NONE, 2)) // 2% chance that becames a heavy rain
                         newWeather = WEATHER_RAIN_THUNDERSTORM;
                     break;
             }
@@ -59,7 +59,7 @@ static u32 TryStartDynamicWeather(void)
                 switch (GetDNSTimeLapse())
                 {
                     case TIME_DAY:
-                        if (RandomPercent(65)) // 65% chance starts a drought
+                        if (RandomPercentage(RNG_NONE, 65)) // 65% chance starts a drought
                         {
                             newWeather = WEATHER_DROUGHT;
                             weatherChance = 50; // Set default chance to 50%
@@ -78,7 +78,7 @@ static u32 TryStartDynamicWeather(void)
             }
             
             // Final calculation
-            if (newWeather != WEATHER_NONE && RandomPercent(weatherChance))
+            if (newWeather != WEATHER_NONE && RandomPercentage(RNG_NONE, weatherChance))
                 gSaveBlock1Ptr->weather = newWeather; // Apply new weather
             else
                 newWeather = gSaveBlock1Ptr->weather; // Failed to apply

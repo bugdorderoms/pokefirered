@@ -699,7 +699,7 @@ void Thunderstorm_Main(void)
         break;
     case 4:
         gWeatherPtr->thunderAllowEnd = TRUE;
-        gWeatherPtr->thunderDelay = RandomRange(360, 719);
+        gWeatherPtr->thunderDelay = RandomUniform(RNG_NONE, 360, 719);
         gWeatherPtr->initStep++;
         // fall through
     case 5:
@@ -712,7 +712,7 @@ void Thunderstorm_Main(void)
         gWeatherPtr->initStep++;
         break;
     case 7:
-        gWeatherPtr->thunderShortRetries = RandomRange(1, 2);
+        gWeatherPtr->thunderShortRetries = RandomUniform(RNG_NONE, 1, 2);
         gWeatherPtr->initStep++;
         // fall through
     case 8:
@@ -720,7 +720,7 @@ void Thunderstorm_Main(void)
         if (!gWeatherPtr->thunderSkipShort && gWeatherPtr->thunderShortRetries == 1)
             SetThunderCounter(20);
 
-        gWeatherPtr->thunderDelay = RandomRange(6, 8);
+        gWeatherPtr->thunderDelay = RandomUniform(RNG_NONE, 6, 8);
         gWeatherPtr->initStep++;
         break;
     case 9:
@@ -731,7 +731,7 @@ void Thunderstorm_Main(void)
             
             if (--gWeatherPtr->thunderShortRetries != 0)
             {
-                gWeatherPtr->thunderDelay = RandomRange(60, 75);
+                gWeatherPtr->thunderDelay = RandomUniform(RNG_NONE, 60, 75);
                 gWeatherPtr->initStep = 10;
             }
             else if (!gWeatherPtr->thunderSkipShort)
@@ -745,7 +745,7 @@ void Thunderstorm_Main(void)
             gWeatherPtr->initStep = 8;
         break;
     case 11:
-        gWeatherPtr->thunderDelay = RandomRange(60, 75);
+        gWeatherPtr->thunderDelay = RandomUniform(RNG_NONE, 60, 75);
         gWeatherPtr->initStep++;
         break;
     case 12:
@@ -753,7 +753,7 @@ void Thunderstorm_Main(void)
         {
             SetThunderCounter(100);
             WeatherShiftGammaIfPalStateIdle(19);
-            gWeatherPtr->thunderDelay = RandomRange(30, 45);
+            gWeatherPtr->thunderDelay = RandomUniform(RNG_NONE, 30, 45);
             gWeatherPtr->initStep++;
         }
         break;
@@ -826,7 +826,7 @@ static void UpdateThunderSound(void)
             if (IsSEPlaying())
                 return;
             
-            PlaySE(RandomPercent(50) ? SE_THUNDER : SE_THUNDER2);
+            PlaySE(RandomPercentage(RNG_NONE, 50) ? SE_THUNDER : SE_THUNDER2);
 
             gWeatherPtr->thunderTriggered = FALSE;
         }

@@ -9,9 +9,6 @@ SINGLE_BATTLE_TEST("Speed Boost boosts speed every end turn")
     } WHEN {
         TURN { }
     } SCENE {
-        MESSAGE("Torchic used Splash!");
-        MESSAGE("Foe Wobbuffet used Splash!");
-        
         ABILITY_POPUP(player, ABILITY_SPEED_BOOST);
         MESSAGE("Torchic's Speed rose!");
     } THEN {

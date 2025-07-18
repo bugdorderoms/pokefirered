@@ -398,7 +398,7 @@ static const u8 sSlotMachineIndices[] = {
 
 u32 GetRandomSlotMachineId(void)
 {
-    return RandomElement(sSlotMachineIndices);
+    return RandomElement(RNG_NONE, sSlotMachineIndices);
 }
 
 bool32 IsThereRoomInAnyBoxForMorePokemon(void)
@@ -676,7 +676,7 @@ static u32 SampleResortGorgeousMon(void)
 
 static u32 SampleResortGorgeousReward(void)
 {
-    return RandomPercent(30) ? RandomElement(sResortGorgeousDeluxeRewards) : ITEM_LUXURY_BALL;
+    return RandomPercentage(RNG_NONE, 30) ? RandomElement(RNG_NONE, sResortGorgeousDeluxeRewards) : ITEM_LUXURY_BALL;
 }
 
 bool32 CheckAddCoins(void)

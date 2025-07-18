@@ -1236,7 +1236,7 @@ static u32 GetPrizeQuantity(void)
 // Choose a random berry
 static inline u32 GetPrizeItemId(void)
 {
-    return RandomRange(FIRST_BERRY_INDEX, BERRY_ITEMS_END);
+    return RandomUniform(RNG_NONE, FIRST_BERRY_INDEX, BERRY_ITEMS_END);
 }
 
 static u16 GetPrizeData(void)

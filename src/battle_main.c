@@ -151,8 +151,7 @@ EWRAM_DATA u16 gBattlerPartyIndexes[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gBattlerPositions[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gBattleCommunication[BATTLE_COMMUNICATION_ENTRIES_COUNT] = {0};
 EWRAM_DATA u16 gPauseCounterBattle = 0;
-static EWRAM_DATA u8 sQuickClawRandomNumber = 0;
-static EWRAM_DATA u8 sQuickDrawRandomNumber = 0;
+EWRAM_DATA struct QuickClawRandom gQuickClawTurnRandom[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gBattlersCount = 0;
 EWRAM_DATA u8 gBattleOutcome = 0;
 EWRAM_DATA u16 gBattleWeather = 0;
@@ -2394,8 +2393,13 @@ static void BattleIntroPlayerSendsOutMonAnimation(void)
 
 static void UpdateQuickClawRandomNumber(void)
 {
-    sQuickClawRandomNumber = RandomMax(100);
-    sQuickDrawRandomNumber = RandomMax(100);
+    u32 i;
+    
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        gQuickClawTurnRandom[i].quickClawActivates = RandomPercentage(RNG_QUICK_CLAW, ItemId_GetHoldEffectParam(i));
+        gQuickClawTurnRandom[i].quickDrawActivates = RandomPercentage(RNG_QUICK_DRAW, 30);
+    }
 }
 
 static bool32 TryStartOverworldWeather(void)
@@ -3136,12 +3140,12 @@ static s32 GetBattlerBracket(u32 battler, u32 action, u32 move)
     gSpecialStatuses[battler].quickClawActivated = FALSE;
     gSpecialStatuses[battler].quickDrawActivated = FALSE;
     
-    if (ability == ABILITY_QUICK_DRAW && sQuickDrawRandomNumber < 30 && action == B_ACTION_USE_MOVE && !IS_MOVE_STATUS(move))
+    if (ability == ABILITY_QUICK_DRAW && gQuickClawTurnRandom[battler].quickDrawActivates && action == B_ACTION_USE_MOVE && !IS_MOVE_STATUS(move))
     {
         gSpecialStatuses[battler].quickDrawActivated = TRUE;
         return 1;
     }
-    else if (holdEffect == HOLD_EFFECT_QUICK_CLAW && sQuickClawRandomNumber < holdEffectParam)
+    else if (holdEffect == HOLD_EFFECT_QUICK_CLAW && gQuickClawTurnRandom[battler].quickClawActivates)
     {
         gSpecialStatuses[battler].quickClawActivated = TRUE;
         return 1;
@@ -3199,7 +3203,7 @@ u32 GetWhoStrikesFirst(u32 battler1, u32 battler2, bool32 ignoreChosenMoves)
     battler2Speed = GetBattlerTotalSpeed(battler2);
     
     if (battler1Speed == battler2Speed) // Same speeds
-        return RandomPercent(50) ? BATTLER1_STRIKES_FIRST : SPEED_TIE;
+        return RandomPercentage(RNG_SPEED_TIE, 50) ? BATTLER1_STRIKES_FIRST : SPEED_TIE;
     else
     {
         if (gFieldStatus & STATUS_FIELD_TRICK_ROOM)
@@ -4252,7 +4256,7 @@ static void HandleAction_ThrowBait(void)
     gBattlerAttacker = gCurrentTurnActionBattlerId;
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
-    gBattleStruct->safariPkblThrowCounter += RandomRange(2, 6);
+    gBattleStruct->safariPkblThrowCounter += RandomUniform(RNG_NONE, 2, 6);
     if (gBattleStruct->safariPkblThrowCounter > 6)
         gBattleStruct->safariPkblThrowCounter = 6;
     gBattleStruct->safariGoNearCounter = 0;
@@ -4268,7 +4272,7 @@ static void HandleAction_ThrowRock(void)
     gBattlerAttacker = gCurrentTurnActionBattlerId;
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
-    gBattleStruct->safariGoNearCounter += RandomRange(2, 6);
+    gBattleStruct->safariGoNearCounter += RandomUniform(RNG_NONE, 2, 6);
     if (gBattleStruct->safariGoNearCounter > 6)
         gBattleStruct->safariGoNearCounter = 6;
     gBattleStruct->safariPkblThrowCounter = 0;

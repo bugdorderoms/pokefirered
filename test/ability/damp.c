@@ -5,6 +5,8 @@ DOUBLE_BATTLE_TEST("Damp prevents self-destruction moves")
 {
     u32 move;
     
+    KNOWN_FAILING; // Mind Blown not implemented yet
+    
     PARAMETRIZE { move = MOVE_EXPLOSION; }
     PARAMETRIZE { move = MOVE_SELF_DESTRUCT; }
     PARAMETRIZE { move = MOVE_MISTY_EXPLOSION; }

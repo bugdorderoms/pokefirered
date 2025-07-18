@@ -1780,7 +1780,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
                                        "boosting the Attack\n"
                                        "and Sp. Atk stats."),
         .animScript = gMoveAnim_GROWTH,
-        .effect = EFFECT_USER_ATTACK_AND_SP_ATTACK_UP_2X_IN_SUNNY,
+        .effect = EFFECT_GROWTH,
         .type = TYPE_NORMAL,
         .pp = 20,
         .target = MOVE_TARGET_USER,
@@ -12115,21 +12115,28 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SCALD] =
     {
-        .name = COMPOUND_STRING("-"),
-        .effect = EFFECT_SCALD,
+        .name = COMPOUND_STRING("Scald"),
+        .description = COMPOUND_STRING("It shoots boiling\n"
+                                       "hot water at the\n"
+                                       "foe. It may leave\n"
+                                       "the foe with a burn."),
+        .animScript = gMoveAnim_SCALD,
+        .effect = EFFECT_HIT,
         .power = 80,
         .type = TYPE_WATER,
         .accuracy = 100,
         .pp = 15,
-        // .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
         {
             .kingsRockAffected = TRUE,
-            // .secondaryEffectMove = TRUE,
             .thawUser = TRUE,
         },
         .split = SPLIT_SPECIAL,
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_BURN,
+            .chance = 30,
+        }),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -13820,21 +13827,23 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_STEAM_ERUPTION] =
     {
         .name = COMPOUND_STRING("-"),
-        .effect = EFFECT_SCALD,
+        .effect = EFFECT_HIT,
         .power = 110,
         .type = TYPE_WATER,
         .accuracy = 95,
         .pp = 5,
-        // .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
         {
             .kingsRockAffected = TRUE,
-            // .secondaryEffectMove = TRUE,
             .thawUser = TRUE,
             .forbiddenMetronome = TRUE,
         },
         .split = SPLIT_SPECIAL,
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_BURN,
+            .chance = 30,
+        }),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -16755,20 +16764,22 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_SCORCHING_SANDS] =
     {
         .name = COMPOUND_STRING("-"),
-        .effect = EFFECT_SCALD,
+        .effect = EFFECT_HIT,
         .power = 70,
         .type = TYPE_GROUND,
         .accuracy = 100,
         .pp = 10,
-        // .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .flags =
         {
             .kingsRockAffected = TRUE,
-            // .secondaryEffectMove = TRUE,
             .thawUser = TRUE,
         },
         .split = SPLIT_SPECIAL,
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_BURN,
+            .chance = 30,
+        }),
         .zMoveEffect = Z_EFFECT_NONE,
     },
 

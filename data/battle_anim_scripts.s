@@ -13938,7 +13938,7 @@ gMoveAnim_PSYSHOCK::
 	monbg ANIM_DEF_SIDE
 	setalpha 12, 8
 	call SetPsychicBackground
-	createvisualtask AnimTask_BlendParticle, 2, ANIM_TAG_ORBS, 0, 10, 10, 0x7C7F @ Pink purple color
+	createvisualtask AnimTask_BlendParticle, 2, ANIM_TAG_ORBS, 0, 10, 10, RGB(31, 3, 31) @ Pink purple color
 	playsewithpan SE_M_SUPERSONIC, SOUND_PAN_TARGET
 	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 1, 0, 28, 1
 	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 4, 2, 0, 8, RGB_WHITE
@@ -14704,3 +14704,36 @@ gMoveAnim_ALLY_SWITCH::
 	createvisualtask AnimTask_AllySwitchDataSwap, 2
 	blendoff
 	end
+
+@ Credits: Skeli
+gMoveAnim_SCALD::
+	loadspritegfx ANIM_TAG_WATER_ORB
+	monbg ANIM_DEF_SIDE
+	splitbgprio ANIM_TARGET
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 0, 5, RGB(29, 1, 1) @ Red color
+	waitforvisualfinish
+	loopsewithpan SE_M_FLAME_WHEEL, SOUND_PAN_ATTACKER, 7, 7
+	call ScaldWaterOrb
+	call ScaldWaterOrb
+	call ScaldWaterOrb
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_TARGET, 1, 0, 9, RGB_RED
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 32, 1
+	call ScaldWaterOrb
+	call ScaldWaterOrb
+	call ScaldWaterOrb
+	call ScaldWaterOrb
+	call ScaldWaterOrb
+	call ScaldWaterOrb
+	call ScaldWaterOrb
+	call ScaldWaterOrb
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_TARGET, 1, 9, 0, RGB_RED
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 5, 0, RGB(29, 1, 1) @ Red color
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	end
+
+ScaldWaterOrb::
+	createsprite gWaterOrbProjectileSpriteTemplate, ANIM_TARGET, 2, 0, 0, 0, 0, 20, 0
+	delay 2
+	return

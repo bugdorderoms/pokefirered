@@ -1478,12 +1478,12 @@ static void InheritAbilitySlot(struct Pokemon *egg, struct BoxPokemon *mon)
     
     if (!hasHidddenAbility)
     {
-        if (RandomPercent(80))
+        if (RandomPercentage(RNG_NONE, 80))
             abilitySlot = GetBoxMonData(mon, MON_DATA_ABILITY_NUM);
     }
     else
     {
-        if (RandomPercent(60))
+        if (RandomPercentage(RNG_NONE, 60))
             abilityHidden = hasHidddenAbility;
     }
     
@@ -1513,7 +1513,7 @@ static void InheritPokeball(struct Pokemon *egg, struct BoxPokemon *father, stru
     u32 motherPokeball = CorrectPokeballForBreeding(GetBoxMonData(mother, MON_DATA_POKEBALL));
     
     if (SpeciesToNationalPokedexNum(GetBoxMonData(father, MON_DATA_SPECIES)) == SpeciesToNationalPokedexNum(GetBoxMonData(mother, MON_DATA_SPECIES)))
-        eggPokeball = RandomPercent(50) ? fatherPokeball : motherPokeball;
+        eggPokeball = RandomPercentage(RNG_NONE, 50) ? fatherPokeball : motherPokeball;
     else
         eggPokeball = motherPokeball;
     

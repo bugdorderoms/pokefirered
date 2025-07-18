@@ -1632,12 +1632,12 @@ static void CalcSlotBias(void)
         if (sSlotMachineState->biasCooldown == 0)
         {
             if ((Random() & 0x3FFF) < biasChances[SLOT_PAYOUT_7])
-                sSlotMachineState->biasCooldown = RandomPercent(50) ? 5 : 60;
+                sSlotMachineState->biasCooldown = RandomPercentage(RNG_NONE, 50) ? 5 : 60;
         }
         if (sSlotMachineState->biasCooldown != 0)
         {
             if (i == 0 && (Random() & 0x3FFF) < 0x2CCC) // 70%
-                sSlotMachineState->biasCooldown = RandomPercent(50) ? 5 : 60;
+                sSlotMachineState->biasCooldown = RandomPercentage(RNG_NONE, 50) ? 5 : 60;
             sSlotMachineState->biasCooldown--;
         }
         sSlotMachineState->machineBias = i;

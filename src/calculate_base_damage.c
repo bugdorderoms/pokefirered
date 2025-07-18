@@ -174,7 +174,7 @@ static s32 CalculateDamage(u32 attacker, u32 defender, struct DamageCalc *damage
     // Random factor modifier
     if (randomFactor)
     {
-        damage *= 100 - RandomMax(16);
+        damage *= 100 - RandomUniform(RNG_DAMAGE_MODIFIER, 0, 15);
         damage /= 100;
     }
     

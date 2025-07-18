@@ -182,9 +182,7 @@ static u32 FindMonThatAbsorbsOpponentsMove(u32 battlerId, u8 *viableMons, u32 av
     predictedMoveType = gBattleMoves[predictedMove].type;
     for (i = 0; i < availableToSwitch; i++)
     {
-        u32 un, used;
-        
-        if (CanAbilityAbsorbMove(GetMonAbility(&gEnemyParty[viableMons[i]]), predictedMove, predictedMoveType, opposingBattler, &un, &used))
+        if (CanAbilityAbsorbMove(GetMonAbility(&gEnemyParty[viableMons[i]]), predictedMove, predictedMoveType, opposingBattler, battlerId, TRUE))
             return viableMons[i];
     }
     return NO_SWITCH;

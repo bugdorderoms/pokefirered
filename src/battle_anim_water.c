@@ -558,6 +558,17 @@ const struct SpriteTemplate gFallingWaterOrbSpriteTemplate =
     .callback = AnimFallingRock,
 };
 
+const struct SpriteTemplate gWaterOrbProjectileSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_WATER_ORB,
+    .paletteTag = ANIM_TAG_WATER_ORB,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimThrowProjectile,
+};
+
 // Creates the Rain Dance's water drop sprites or the ion sprite in Ion Deluge's anim.
 // arg 0: which sprite to create
 // arg 1: creation delay

@@ -334,7 +334,8 @@ struct ALIGNED_NO_PADDING(2) Ability
              u8 cantBeSuppressed:1; // Can't be suppressed by Gastro Acid or Neutralizing Gas.
              u8 cantBeOverwritten:1; // Can't be replaced by Entrainment, Worry Seed or Simple Beam (but can be by Mummy).
              u8 breakable:1; // Can be bypassed by Mold Breaker.
-             u8 unused:2;
+             u8 cantAffectGhost:1; // Can't activate on switch in and affect the Battle Tower's ghost
+             u8 unused:1;
 };
 
 struct TypeInfo

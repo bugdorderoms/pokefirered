@@ -859,7 +859,7 @@ u32 GetDexNavShinyRollsIncrease(u32 rolls)
     else if (chain == 100)
         rolls += 10;
     
-    if (RandomPercent(4))
+    if (RandomPercentage(RNG_NONE, 4))
         rolls += 4;
     
     return min(rolls, 17);
@@ -926,7 +926,7 @@ static u32 DexNavTryGenerateMonLevel(u32 species, u32 environment)
     if (levelBase == MON_LEVEL_NONEXISTENT)
         return levelBase; // species not found in the area
 
-    if (RandomPercent(4))
+    if (RandomPercentage(RNG_NONE, 4))
         levelBonus += 10; // 4% chance of having a +10 level bonus
     
     levelBase += levelBonus;
@@ -1223,7 +1223,7 @@ static u32 GetEncounterLevelFromMapData(u32 species, u32 environment)
     if (!max)
         return MON_LEVEL_NONEXISTENT;
 
-    return RandomRange(min, max);
+    return RandomUniform(RNG_NONE, min, max);
 }
 
 ///////////

@@ -333,9 +333,9 @@ BattleScript_DoLeechSeed::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-@ EFFECT_USER_ATTACK_AND_SP_ATTACK_UP_2X_IN_SUNNY @
+@ EFFECT_GROWTH @
 
-BattleScript_EffectUserAtkAndSpAtkUp2xInSunny::
+BattleScript_EffectGrowth::
     attackcanceler
 	attackstring
 	ppreduce

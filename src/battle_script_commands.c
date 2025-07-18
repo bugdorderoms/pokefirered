@@ -811,7 +811,7 @@ static void atk00_attackcanceler(void)
     }
     
     // Check abilities that blocks the move
-    if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBattlerTarget))
+    if (CanAbilityBlockMove(gCurrentMove, gBattlerAttacker, gBattlerTarget, FALSE))
         return;
     
     // Check no PP for move
@@ -910,6 +910,12 @@ static void atk00_attackcanceler(void)
                 gMultiHitCounter = 0;
             }
         }
+        else
+        {
+            // Check abilities that absorbs the move
+            if (IS_MOVE_STATUS(gCurrentMove) && CanAbilityAbsorbMove(GetBattlerAbility(gBattlerTarget), gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, FALSE))
+                return;
+        }
         gBattlescriptCurrInstr = cmd->nextInstr;
     }
 }
@@ -926,7 +932,8 @@ static void JumpIfMoveFailed(const u8 *nextInstr, const u8 *jumpStr)
     {
         TrySetDestinyBondToHappen();
         
-        if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBattlerTarget))
+        // Check for status moves are done in attackcanceler
+        if (!IS_MOVE_STATUS(gCurrentMove) && CanAbilityAbsorbMove(GetBattlerAbility(gBattlerTarget), gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, FALSE))
             return;
     }
     gBattlescriptCurrInstr = nextInstr;
@@ -1095,7 +1102,8 @@ static void atk01_accuracycheck(void)
         return;
     else
     {
-        if ((RandomMax(100) + 1) > CalcMoveTotalAccuracy(gCurrentMove, gBattlerAttacker, gBattlerTarget)) // final calculation, determines if the move misses
+        // final calculation, determines if the move misses
+        if (!RandomPercentage(RNG_ACCURACY, CalcMoveTotalAccuracy(gCurrentMove, gBattlerAttacker, gBattlerTarget)))
         {
             u16 flags;
             u32 moveTarget = GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove);
@@ -1252,7 +1260,7 @@ bool32 CalcMoveIsCritical(u32 battlerAtk, u32 battlerDef, u32 move)
         if (critStage >= ARRAY_COUNT(sCriticalHitChance))
             critStage = ARRAY_COUNT(sCriticalHitChance) - 1;
         
-        if (!RandomMax(sCriticalHitChance[critStage]))
+        if (RandomWeighted(RNG_CRITICAL_HIT, sCriticalHitChance[critStage] - 1, 1))
             return TRUE;
     }
     return FALSE;
@@ -1298,7 +1306,7 @@ u32 GetHitDamageResult(u32 battlerId, u32 move, bool32 checkSturdy)
         return 1;
     else if (gProtectStructs[battlerId].endured)
         return 2;
-    else if (GetBattlerItemHoldEffect(battlerId, TRUE) == HOLD_EFFECT_FOCUS_BAND && RandomPercent(ItemId_GetHoldEffectParam(gBattleMons[battlerId].item)))
+    else if (GetBattlerItemHoldEffect(battlerId, TRUE) == HOLD_EFFECT_FOCUS_BAND && RandomPercentage(RNG_FOCUS_BAND, ItemId_GetHoldEffectParam(gBattleMons[battlerId].item)))
         return 3;
     else if (checkSturdy && GetBattlerAbility(battlerId) == ABILITY_STURDY && BATTLER_MAX_HP(battlerId))
         return 4;
@@ -1899,7 +1907,7 @@ static void atk15_setadditionaleffects(void)
                 bool32 certain = (percentChance == 0);
                 
                 // Activate effect if it's certain (chance == 0) or if RNGesus says so
-                if (certain || RandomMax(100) <= percentChance)
+                if (certain || RandomPercentage(RNG_SECONDARY_EFFECT + gBattleStruct->moveEffect.additionalEffectsCounter, percentChance))
                 {
                     if (percentChance >= 100)
                         certain = TRUE;
@@ -3174,18 +3182,6 @@ static void SetNextTarget(u32 nextTarget)
     gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
 }
 
-static bool32 CanBurnHitThaw(u32 move)
-{
-    u32 i;
-    
-    for (i = 0; i < gBattleMoves[move].numAdditionalEffects; i++)
-    {
-        if (gBattleMoves[move].additionalEffects[i].moveEffect == MOVE_EFFECT_BURN)
-            return TRUE;
-    }
-    return FALSE;
-}
-
 static void atk49_moveend(void)
 {
     CMD_ARGS(u8 state, u8 lastCase);
@@ -3385,7 +3381,7 @@ static void atk49_moveend(void)
                 break;
             case ATK49_DEFROST:
                 if (BATTLER_TURN_DAMAGED(gBattlerTarget) && IsBattlerAlive(gBattlerTarget) && gBattleMons[gBattlerTarget].status1.id == STATUS1_FREEZE
-                && (gBattleStruct->dynamicMoveType == TYPE_FIRE || CanBurnHitThaw(gCurrentMove)))
+                && (gBattleStruct->dynamicMoveType == TYPE_FIRE || MoveHasMoveEffect(gCurrentMove, MOVE_EFFECT_BURN, FALSE)))
                 {
                     ClearBattlerStatus(gBattlerTarget);
                     PrepareBattlerNickWithPrefixBuffer(gBattleTextBuff1, gBattlerTarget);
@@ -6366,7 +6362,7 @@ static void atk7C_trymirrormove(void)
     if (move && move != MOVE_UNAVAILABLE)
         newMove = move;
     else if (validMovesCount)
-        newMove = movesArray[RandomMax(validMovesCount)];
+        newMove = movesArray[RandomUniform(RNG_MIRROR_MOVE, 0, validMovesCount - 1)];
     else // No valid moves find
     {
         gBattlescriptCurrInstr = cmd->nextInstr;
@@ -6396,7 +6392,7 @@ static void atk7D_tryacupressure(void)
         {
             do
             {
-                statId = RandomRange(STAT_ATK, NUM_BATTLE_STATS - 1);
+                statId = RandomUniform(RNG_RANDOM_STAT_UP, STAT_ATK, NUM_BATTLE_STATS - 1);
             }
             while (!(bits & Bit(statId)));
             
@@ -6728,7 +6724,7 @@ static void atk88_pickup(void)
                     break;
                 default:
 #if SHUCKLE_MAKES_BERRY_JUICE_CHANCE != 0
-                    if (RandomPercent(SHUCKLE_MAKES_BERRY_JUICE_CHANCE) && GetMonData(mon, MON_DATA_SPECIES2) == SPECIES_SHUCKLE
+                    if (RandomPercentage(RNG_NONE, SHUCKLE_MAKES_BERRY_JUICE_CHANCE) && GetMonData(mon, MON_DATA_SPECIES2) == SPECIES_SHUCKLE
                     && ItemId_GetPocket(GetMonData(mon, MON_DATA_HELD_ITEM)) == POCKET_BERRY_POUCH)
                     {
                         u32 item = ITEM_BERRY_JUICE;
@@ -6798,7 +6794,7 @@ static void atk8B_assistattackselect(void)
     }
     if (chooseableMovesNo)
     {
-        gCalledMove = movesArray[RandomMax(chooseableMovesNo)];
+        gCalledMove = movesArray[RandomUniform(RNG_ASSIST, 0, chooseableMovesNo - 1)];
         gBattlescriptCurrInstr = cmd->nextInstr;
     }
     else
@@ -6935,7 +6931,7 @@ static void atk8F_forcerandomswitch(void)
                 gBattlescriptCurrInstr = cmd->failPtr;
             else
             {
-                u32 monToSwitchInto = validMons[RandomMax(validMonsCount)]; // Choose one mon at random
+                u32 monToSwitchInto = validMons[RandomUniform(RNG_FORCE_RANDOM_SWITCH, 0, validMonsCount - 1)]; // Choose one mon at random
                 
                 ForceSwitchOut();
                 gBattleStruct->battlers[gBattlerTarget].monToSwitchIntoId = monToSwitchInto;
@@ -7058,7 +7054,7 @@ bool32 KanOHKOBattler(u32 attacker, u32 target, u32 move, bool32 checkKOAcc)
     if ((gStatuses3[attacker] & STATUS3_ALWAYS_HITS) && gDisableStructs[attacker].battlerWithSureHit == target && gBattleMons[attacker].level >= gBattleMons[target].level)
         return TRUE;
     
-    if (!checkKOAcc || (RandomMax(100) + 1 < GetOHKOChance(attacker, target, move) && gBattleMons[attacker].level >= gBattleMons[target].level))
+    if (!checkKOAcc || (RandomPercentage(RNG_OHKO, GetOHKOChance(attacker, target, move)) && gBattleMons[attacker].level >= gBattleMons[target].level))
         return TRUE;
     
     return FALSE;
@@ -7392,7 +7388,7 @@ static void atkA6_settypetorandomresistance(void) // conversion 2
             
             while (resistTypes != 0)
             {
-                i = RandomMax(NUMBER_OF_MON_TYPES - 1);
+                i = RandomUniform(RNG_CONVERSION_2, 0, NUMBER_OF_MON_TYPES - 1);
                 
                 if (resistTypes & Bit(i))
                 {
@@ -7483,7 +7479,7 @@ static void atkA9_trychoosesleeptalkmove(void)
     else // at least one move can be chosen
     {
         do
-            movePosition = RandomMax(MAX_MON_MOVES);
+            movePosition = RandomUniform(RNG_SLEEP_TALK, 0, MAX_MON_MOVES - 1);
         while (unusableMovesBits & Bit(movePosition));
         
         gCurrMovePos = movePosition;
@@ -9237,7 +9233,7 @@ void BS_Metronome(void)
 
     while (TRUE)
     {
-        u32 move = RandomRange(MOVE_NONE + 1, METRONOME_MOVES_COUNT);
+        u32 move = RandomUniform(RNG_METRONOME_MOVE, MOVE_NONE + 1, METRONOME_MOVES_COUNT);
         
         if (!gBattleMoves[move].flags.forbiddenMetronome)
         {

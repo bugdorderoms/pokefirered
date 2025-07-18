@@ -11,7 +11,7 @@ u32 GetNoOfHitsToKOBattlerHigherDamage(u32 attacker, u32 defender);
 u32 GetNumMovesWithSplitInBattlerMoveset(u32 battlerId, u32 split);
 bool32 HasMoveEffectInMoveset(u16 *moveset, u32 moveEffect);
 bool32 SideHasMoveEffectInMovesetThatAffectsTarget(u32 attacker, u32 target, u32 moveEffect);
-bool32 TargetImuneToMove(u32 attacker, u32 defender, u32 moveSlot);
+bool32 TargetImuneToMove(u32 attacker, u32 defender, u32 move, u32 moveSlot, u32 moveType);
 bool32 AIIsFaster(u32 battler1, u32 battler2);
 bool32 BadIdeaToBurn(u32 attacker, u32 defender);
 u32 GetScoreForInflictBurn(u32 attacker, u32 defender);

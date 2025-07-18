@@ -2,6 +2,7 @@
 #include "global.h"
 #include "characters.h"
 #include "gpu_regs.h"
+#include "random.h"
 #include "main.h"
 #include "malloc.h"
 #include "math_util.h"
@@ -13,6 +14,7 @@
 void CB2_TestRunner(void);
 
 EWRAM_DATA struct TestRunnerState gTestRunnerState;
+EWRAM_DATA struct FunctionTestRunnerState *gFunctionTestRunnerState;
 
 void TestRunner_Battle(const struct Test *);
 
@@ -187,7 +189,21 @@ void CB2_TestRunner(void)
     
                 switch (gTestRunnerState.result)
                 {
-                case TEST_RESULT_FAIL: result = "FAIL"; break;
+                case TEST_RESULT_FAIL:
+                    if (gTestRunnerState.expectedResult == TEST_RESULT_FAIL)
+                    {
+                        result = "KNOWN_FAILING";
+                        color = "\e[33m";
+                    }
+                    else
+                    {
+                        result = "FAIL";
+                    }
+                    break;
+                case TEST_RESULT_TODO:
+                    result = "TO_DO";
+                    color = "\e[33m";
+                    break;
                 case TEST_RESULT_PASS: result = "PASS"; break;
                 case TEST_RESULT_SKIP: result = "SKIP"; break;
                 case TEST_RESULT_INVALID: result = "INVALID"; break;
@@ -211,6 +227,38 @@ void Test_ExpectedResult(enum TestResult result)
 {
     gTestRunnerState.expectedResult = result;
 }
+
+static void FunctionTest_SetUp(void *data)
+{
+    (void)data;
+    gFunctionTestRunnerState = AllocZeroed(sizeof(*gFunctionTestRunnerState));
+    SeedRng(0);
+}
+
+static void FunctionTest_Run(void *data)
+{
+    void (*function)(void) = data;
+    do
+    {
+        if (gFunctionTestRunnerState->parameters)
+            MgbaPrintf_(":N%s %d/%d", gTestRunnerState.test->name, gFunctionTestRunnerState->runParameter + 1, gFunctionTestRunnerState->parameters);
+        gFunctionTestRunnerState->parameters = 0;
+        function();
+    } while (++gFunctionTestRunnerState->runParameter < gFunctionTestRunnerState->parameters);
+}
+
+static void FunctionTest_TearDown(void *data)
+{
+    (void)data;
+    FREE_AND_SET_NULL(gFunctionTestRunnerState);
+}
+
+const struct TestRunner gFunctionTestRunner =
+{
+    .setUp = FunctionTest_SetUp,
+    .run = FunctionTest_Run,
+    .tearDown = FunctionTest_TearDown,
+};
 
 static void Assumptions_Run(void *data)
 {
@@ -269,11 +317,15 @@ static void Intr_Timer2(void)
 
 void Test_ExitWithResult(enum TestResult result, const char *fmt, ...)
 {
+    bool32 handled = FALSE;
+    
     gTestRunnerState.result = result;
     ReinitCallbacks();
     
-    if (gTestRunnerState.test->runner->handleExitWithResult && !gTestRunnerState.test->runner->handleExitWithResult(gTestRunnerState.test->data, result)
-    && gTestRunnerState.result != gTestRunnerState.expectedResult)
+    if (gTestRunnerState.test->runner->handleExitWithResult)
+        handled = gTestRunnerState.test->runner->handleExitWithResult(gTestRunnerState.test->data, result);
+    
+    if (!handled && gTestRunnerState.result != gTestRunnerState.expectedResult)
     {
         va_list va;
         va_start(va, fmt);

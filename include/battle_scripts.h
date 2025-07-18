@@ -22,7 +22,7 @@ extern const u8 BattleScript_EffectCounterAttack[];
 extern const u8 BattleScript_EffectUserLevelToDamage[];
 extern const u8 BattleScript_EffectHitAbsorb[];
 extern const u8 BattleScript_EffectSetSeeded[];
-extern const u8 BattleScript_EffectUserAtkAndSpAtkUp2xInSunny[];
+extern const u8 BattleScript_EffectGrowth[];
 extern const u8 BattleScript_EffectSetPoison[];
 extern const u8 BattleScript_EffectSetParalyze[];
 extern const u8 BattleScript_EffectSpeedDown2[];

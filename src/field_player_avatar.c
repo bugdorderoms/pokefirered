@@ -1904,10 +1904,10 @@ static bool32 DoesFishingBiteOccours(void)
         {
             case ABILITY_SUCTION_CUPS:
             case ABILITY_STICKY_HOLD:
-                return !RandomPercent(15);
+                return !RandomPercentage(RNG_NONE, 15);
         }
     }
-    return RandomPercent(50);
+    return RandomPercentage(RNG_NONE, 50);
 }
 
 static bool32 Fishing6(struct Task *task)

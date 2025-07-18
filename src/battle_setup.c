@@ -266,7 +266,7 @@ static void DoStandardWildBattle(bool32 isDouble)
     if (isDouble)
         gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 #if SOS_WILD_BATTLE_CHANCE != 0
-    else if (RandomPercent(SOS_WILD_BATTLE_CHANCE))
+    else if (RandomPercentage(RNG_NONE, SOS_WILD_BATTLE_CHANCE))
         gBattleTypeFlags |= BATTLE_TYPE_SOS;
 #endif
     

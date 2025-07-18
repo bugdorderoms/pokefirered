@@ -113,9 +113,9 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
         .battleScript = BattleScript_EffectSetSeeded,
     },
     
-    [EFFECT_USER_ATTACK_AND_SP_ATTACK_UP_2X_IN_SUNNY] =
+    [EFFECT_GROWTH] =
     {
-        .battleScript = BattleScript_EffectUserAtkAndSpAtkUp2xInSunny,
+        .battleScript = BattleScript_EffectGrowth,
     },
     
     [EFFECT_SKIP_CHARGING_IN_WEATHER] =

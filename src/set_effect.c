@@ -145,9 +145,9 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             {
                 gBattleMons[gEffectBattler].status1.id = STATUS1_SLEEP;
 #if SLEEP_UPDATE
-                gBattleMons[gEffectBattler].status1.counter = RandomRange(2, 3);
+                gBattleMons[gEffectBattler].status1.counter = RandomUniform(RNG_SLEEP_TURNS, 1, 3) + 1;
 #else
-                gBattleMons[gEffectBattler].status1.counter = RandomRange(2, 5);
+                gBattleMons[gEffectBattler].status1.counter = RandomUniform(RNG_SLEEP_TURNS, 2, 5) + 1;
 #endif
                 CancelMultiTurnMoves(gEffectBattler);
                 effect = 1;
@@ -237,7 +237,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
         case MOVE_EFFECT_CONFUSION:
             if (CanBecameConfused(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
             {
-                gBattleMons[gEffectBattler].status2 |= STATUS2_CONFUSION_TURN(RandomRange(2, 5));
+                gBattleMons[gEffectBattler].status2 |= STATUS2_CONFUSION_TURN(RandomUniform(RNG_CONFUSION_TURNS, 2, 5));
                 effect = 2;
             }
             break;
@@ -258,7 +258,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             }
             break;
         case MOVE_EFFECT_TRI_ATTACK:
-            SetMoveEffect(RandomElement(sTriAttackEffects), FALSE, FALSE);
+            SetMoveEffect(RandomElement(RNG_TRI_ATTACK, sTriAttackEffects), FALSE, FALSE);
             return DoMoveEffect(primary, scriptStr, 0);
         case MOVE_EFFECT_SECRET_POWER:
             SetMoveEffect(gBattleTerrainTable[gBattleTerrain].secretPowerEffect, FALSE, FALSE);
@@ -283,7 +283,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
         case MOVE_EFFECT_WRAP:
             if (gDisableStructs[gEffectBattler].wrapTurns == 0)
             {
-                gDisableStructs[gEffectBattler].wrapTurns = RandomRange(4, 5);
+                gDisableStructs[gEffectBattler].wrapTurns = RandomUniform(RNG_WRAP_TURNS, 4, 5);
                 gDisableStructs[gEffectBattler].wrappedBy = gBattleScripting.battler;
                 gDisableStructs[gEffectBattler].wrappedMove = gCurrentMove;
                 gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument.bindTrapId;
@@ -377,7 +377,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             if (!gBattleStruct->dancer.inProgress && !(gBattleMons[gEffectBattler].status2 & STATUS2_LOCK_CONFUSE))
             {
                 gBattleMons[gEffectBattler].status2 |= STATUS2_MULTIPLETURNS;
-                gBattleMons[gEffectBattler].status2 |= STATUS2_LOCK_CONFUSE_TURN(RandomRange(2, 3));
+                gBattleMons[gEffectBattler].status2 |= STATUS2_LOCK_CONFUSE_TURN(RandomUniform(RNG_RAMPAGE_TURNS, 2, 3));
                 gBattleStruct->battlers[gEffectBattler].lockedMove = gCurrentMove;
                 effect = 3; // No script
             }

@@ -319,7 +319,7 @@ endif
 ifeq ($(TEST),1)
 $(TEST_BUILDDIR)/%.o: $(TEST_SUBDIR)/%.c | $(TEST_BUILDDIR)
 	@mkdir -p $(@D)
-	@$(CPP) $(CPPFLAGS) -I include -I . $< > $(TEST_BUILDDIR)/$*.i
+	@$(CPP) $(CPPFLAGS) -include $(INSERTS) -I include -I . $< > $(TEST_BUILDDIR)/$*.i
 	@$(PREPROC) $(TEST_BUILDDIR)/$*.i charmap.txt > $(TEST_BUILDDIR)/$*.pp.c
 	@$(CC1) $(CFLAGS) $(TEST_BUILDDIR)/$*.pp.c -o $(TEST_BUILDDIR)/$*.s
 	@echo -e ".text\n\t.align\t2, 0" >> $(TEST_BUILDDIR)/$*.s

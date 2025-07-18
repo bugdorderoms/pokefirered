@@ -41,7 +41,7 @@
 // Decrease score if move will fail
 s32 BattleAIFunc_CheckBadMove(u32 attacker, u32 defender, u32 moveSlot, u32 move, s32 score)
 {
-    if (TargetImuneToMove(attacker, defender, moveSlot))
+    if (TargetImuneToMove(attacker, defender, move, moveSlot, gBattleStruct->dynamicMoveType))
         CHANGE_SCORE(-10);
     
     switch (gBattleMoves[move].effect)

@@ -755,6 +755,12 @@ struct BattlerControllerData
     u8 data; // Multiuse
 };
 
+struct QuickClawRandom
+{
+    bool8 quickClawActivates:1;
+    bool8 quickDrawActivates:1;
+};
+
 extern u16 gBattle_BG0_X;
 extern u16 gBattle_BG0_Y;
 extern u16 gBattle_BG1_X;
@@ -839,5 +845,6 @@ extern struct FieldTimer gFieldTimers;
 extern struct QueuedStatBoost gQueuedStatBoosts[MAX_BATTLERS_COUNT];
 extern u16 gBallToDisplay;
 extern u16 gLastThrownBall;
+extern struct QuickClawRandom gQuickClawTurnRandom[MAX_BATTLERS_COUNT];
 
 #endif // GUARD_BATTLE_H

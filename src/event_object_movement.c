@@ -978,12 +978,12 @@ static const u8 gUnknown_83A65A9[][4] = {
 
 #include "data/object_events/movement_action_func_tables.h"
 
-#define RandomDelayShort()         RandomElement(gMovementDelaysShort)
-#define RandomDelayMedium()        RandomElement(gMovementDelaysMedium)
+#define RandomDelayShort()         RandomElement(RNG_NONE, gMovementDelaysShort)
+#define RandomDelayMedium()        RandomElement(RNG_NONE, gMovementDelaysMedium)
 
-#define RandomStandardDirection()  RandomElement(gStandardDirections)
-#define RandomUpDownDirection()    RandomElement(gUpAndDownDirections)
-#define RandomLeftRightDirection() RandomElement(gLeftAndRightDirections)
+#define RandomStandardDirection()  RandomElement(RNG_NONE, gStandardDirections)
+#define RandomUpDownDirection()    RandomElement(RNG_NONE, gUpAndDownDirections)
+#define RandomLeftRightDirection() RandomElement(RNG_NONE, gLeftAndRightDirections)
 
 static void ClearObjectEvent(struct ObjectEvent *objectEvent)
 {
@@ -2810,7 +2810,7 @@ static bool32 MovementType_FaceUpAndLeft_Step4(struct ObjectEvent *objectEvent, 
 {
     u32 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_NORTH_WEST);
     if (direction == DIR_NONE)
-        direction = RandomElement(gUpAndLeftDirections);
+        direction = RandomElement(RNG_NONE, gUpAndLeftDirections);
     
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -2858,7 +2858,7 @@ static bool32 MovementType_FaceUpAndRight_Step4(struct ObjectEvent *objectEvent,
 {
     u32 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_NORTH_EAST);
     if (direction == DIR_NONE)
-        direction = RandomElement(gUpAndRightDirections);
+        direction = RandomElement(RNG_NONE, gUpAndRightDirections);
     
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -2906,7 +2906,7 @@ static bool32 MovementType_FaceDownAndLeft_Step4(struct ObjectEvent *objectEvent
 {
     u32 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_SOUTH_WEST);
     if (direction == DIR_NONE)
-        direction = RandomElement(gDownAndLeftDirections);
+        direction = RandomElement(RNG_NONE, gDownAndLeftDirections);
     
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -2954,7 +2954,7 @@ static bool32 MovementType_FaceDownAndRight_Step4(struct ObjectEvent *objectEven
 {
     u32 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_SOUTH_EAST);
     if (direction == DIR_NONE)
-        direction = RandomElement(gDownAndRightDirections);
+        direction = RandomElement(RNG_NONE, gDownAndRightDirections);
     
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -3002,7 +3002,7 @@ static bool32 MovementType_FaceDownUpAndLeft_Step4(struct ObjectEvent *objectEve
 {
     u32 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_NORTH_SOUTH_WEST);
     if (direction == DIR_NONE)
-        direction = RandomElement(gDownUpAndLeftDirections);
+        direction = RandomElement(RNG_NONE, gDownUpAndLeftDirections);
     
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -3050,7 +3050,7 @@ static bool32 MovementType_FaceDownUpAndRight_Step4(struct ObjectEvent *objectEv
 {
     u32 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_NORTH_SOUTH_EAST);
     if (direction == DIR_NONE)
-        direction = RandomElement(gDownUpAndRightDirections);
+        direction = RandomElement(RNG_NONE, gDownUpAndRightDirections);
     
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -3098,7 +3098,7 @@ static bool32 MovementType_FaceUpLeftAndRight_Step4(struct ObjectEvent *objectEv
 {
     u32 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_NORTH_EAST_WEST);
     if (direction == DIR_NONE)
-        direction = RandomElement(gUpLeftAndRightDirections);
+        direction = RandomElement(RNG_NONE, gUpLeftAndRightDirections);
     
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;
@@ -3146,7 +3146,7 @@ static bool32 MovementType_FaceDownLeftAndRight_Step4(struct ObjectEvent *object
 {
     u32 direction = TryGetTrainerEncounterDirection(objectEvent, RUNFOLLOW_SOUTH_EAST_WEST);
     if (direction == DIR_NONE)
-        direction = RandomElement(gDownLeftAndRightDirections);
+        direction = RandomElement(RNG_NONE, gDownLeftAndRightDirections);
     
     SetObjectEventDirection(objectEvent, direction);
     sprite->data[1] = 1;

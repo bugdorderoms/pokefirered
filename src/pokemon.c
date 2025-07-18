@@ -772,7 +772,7 @@ void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
     // Set ivs
     for (i = 0; i < NUM_STATS; i++)
     {
-        value = RandomRange(0, MAX_PER_STAT_IVS);
+        value = RandomMax(MAX_PER_STAT_IVS + 1);
         SetMonData(mon, MON_DATA_HP_IV + i, &value);
     }
     
@@ -838,7 +838,7 @@ void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
     
     // Set ability hidden
 #if WILD_HIDDEN_ABILITY_CHANCE != 0
-    if (RandomPercent(WILD_HIDDEN_ABILITY_CHANCE))
+    if (RandomMax(100) < WILD_HIDDEN_ABILITY_CHANCE)
     {
         value = TRUE;
         SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &value);
@@ -2398,7 +2398,7 @@ void AdjustFriendship(struct Pokemon *mon, u32 event)
         switch (event)
         {
             case FRIENDSHIP_EVENT_WALKING:
-                if (RandomPercent(50)) // 50% chance every 128 steps
+                if (RandomPercentage(RNG_NONE, 50)) // 50% chance every 128 steps
                     return;
                 break;
             case FRIENDSHIP_EVENT_LEAGUE_BATTLE:

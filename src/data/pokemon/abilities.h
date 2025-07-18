@@ -138,6 +138,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     {
         .name = _("Intimidate"),
         .description = COMPOUND_STRING("The Pokémon intimidates opposing Pokémon upon\nentering battle, lowering their Attack stat."),
+        .cantAffectGhost = TRUE,
     },
     [ABILITY_SHADOW_TAG] =
     {
@@ -217,6 +218,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
         .description = COMPOUND_STRING("When it enters a battle, the Pokémon copies an\nopposing Pokémon's Ability."),
         .cantBeCopied = TRUE,
         .cantBeTraced = TRUE,
+        .cantAffectGhost = TRUE,
     },
     [ABILITY_HUGE_POWER] =
     {
@@ -498,6 +500,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     {
         .name = _("Download"),
         .description = COMPOUND_STRING("Raises the Pokémon's Attack or Sp. Atk stat\nto whichever will be more effective."),
+        .cantAffectGhost = TRUE,
     },
     [ABILITY_IRON_FIST] =
     {
@@ -594,11 +597,13 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     {
         .name = _("Anticipation"),
         .description = COMPOUND_STRING("The Pokémon can sense an opposing Pokémon's\ndangerous moves."),
+        .cantAffectGhost = TRUE,
     },
     [ABILITY_FOREWARN] =
     {
         .name = _("Forewarn"),
         .description = COMPOUND_STRING("When it enters a battle, the Pokémon can tell\none of the moves an opposing Pokémon has."),
+        .cantAffectGhost = TRUE,
     },
     [ABILITY_UNAWARE] =
     {
@@ -658,6 +663,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     {
         .name = _("Frisk"),
         .description = COMPOUND_STRING("When it enters a battle, the Pokémon can\ncheck an opposing Pokémon's held item."),
+        .cantAffectGhost = TRUE,
     },
     [ABILITY_RECKLESS] =
     {
@@ -835,6 +841,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
         .description = COMPOUND_STRING("The Pokémon transforms itself into the Pokémon\nit's facing."),
         .cantBeCopied = TRUE,
         .cantBeTraced = TRUE,
+        .cantAffectGhost = TRUE,
     },
     [ABILITY_INFILTRATOR] =
     {
@@ -1726,6 +1733,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     {
         .name = _("Supersweet Syrup"),
         .description = COMPOUND_STRING("When it enters a battle, a sickly sweet scent\nlowers the evasiveness of opposing Pokémon."),
+        .cantAffectGhost = TRUE,
     },
     [ABILITY_TERA_SHIFT] =
     {

@@ -14,12 +14,34 @@ u16 Random(void)
     return gRngValue >> 16;
 }
 
-u16 RandomRange(u32 min, u32 max)
+__attribute__((weak, alias("RandomUniformDefault")))
+u32 RandomUniform(u32 randomTag, u32 lo, u32 hi);
+
+__attribute__((weak, alias("RandomWeightedArrayDefault")))
+u32 RandomWeightedArray(u32 randomTag, u32 sum, u32 n, const u8 *weights);
+
+__attribute__((weak, alias("RandomElementArrayDefault")))
+const void *RandomElementArray(u32 randomTag, const void *array, u32 size, u32 count);
+
+u32 RandomUniformDefault(u32 randomTag, u32 lo, u32 hi)
 {
-    u32 temp;
-    
-    if (min > max)
-        SWAP(min, max, temp);
-    
-    return RandomMax(max - min + 1) + min;
+    return lo + (((hi - lo + 1) * Random()) >> 16);
+}
+
+u32 RandomWeightedArrayDefault(u32 randomTag, u32 sum, u32 n, const u8 *weights)
+{
+    s32 i, targetSum = (sum * Random()) >> 16;
+
+    for (i = 0; i < n - 1; i++)
+    {
+        targetSum -= weights[i];
+        if (targetSum < 0)
+            return i;
+    }
+    return n - 1;
+}
+
+const void *RandomElementArrayDefault(u32 randomTag, const void *array, u32 size, u32 count)
+{
+    return (const u8 *)array + size * RandomUniformDefault(randomTag, 0, count - 1);
 }

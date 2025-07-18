@@ -243,7 +243,7 @@ bool32 ShouldAIIncreaseCriticalChance(u32 attacker, u32 defender)
         if ((gBattleMons[defender].status2 & STATUS2_FOCUS_ENERGY) && AI_BattlerHasMoveEffectInMoveset(attacker, EFFECT_PSYCH_UP))
             return FALSE;
         
-        return RandomPercent(30);
+        return TRUE;
     }
     return FALSE;
 }
@@ -251,10 +251,10 @@ bool32 ShouldAIIncreaseCriticalChance(u32 attacker, u32 defender)
 ///////////////////////////////////
 // MOVE EFFECTS HELPER FUNCTIONS //
 ///////////////////////////////////
-bool32 TargetImuneToMove(u32 attacker, u32 defender, u32 moveSlot)
+bool32 TargetImuneToMove(u32 attacker, u32 defender, u32 move, u32 moveSlot, u32 moveType)
 {
-    if (AI_THINKING->effectiveness[attacker][defender][moveSlot] == TYPE_MUL_NO_EFFECT || AbilityBattleEffects(ABILITYEFFECT_WOULD_BLOCK_MOVE, defender)
-    || (!IsBattlerAlly(attacker, defender) && AbilityBattleEffects(ABILITYEFFECT_WOULD_ABSORB_MOVE, defender)))
+    if (AI_THINKING->effectiveness[attacker][defender][moveSlot] == TYPE_MUL_NO_EFFECT || CanAbilityBlockMove(move, attacker, defender, TRUE)
+    || (!IsBattlerAlly(attacker, defender) && CanAbilityAbsorbMove(GetBattlerAbility(defender), move, moveType, attacker, defender, TRUE)))
         return TRUE;
     
     return FALSE;
@@ -262,11 +262,13 @@ bool32 TargetImuneToMove(u32 attacker, u32 defender, u32 moveSlot)
 
 static bool32 BattlerHasMoveEffectInMovesetThatAffectsTarget(u32 attacker, u32 target, u32 moveEffect)
 {
-    u32 i;
+    u32 i, move;
 
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
-        if (AI_THINKING->moves[attacker][i] && gBattleMoves[AI_THINKING->moves[attacker][i]].effect == moveEffect && !TargetImuneToMove(attacker, target, i))
+        move = AI_THINKING->moves[attacker][i];
+        
+        if (move && gBattleMoves[move].effect == moveEffect && !TargetImuneToMove(attacker, target, move, i, gBattleMoves[move].type))
             return TRUE;
     }
     return FALSE;

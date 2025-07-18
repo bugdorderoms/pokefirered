@@ -1,9 +1,6 @@
 #include "global.h"
 #include "test/battle.h"
 
-#undef CONFUSION_UPDATE
-#define CONFUSION_UPDATE TRUE
-
 SINGLE_BATTLE_TEST("Sturdy prevents OHKO moves")
 {
     GIVEN {
@@ -14,7 +11,6 @@ SINGLE_BATTLE_TEST("Sturdy prevents OHKO moves")
     } WHEN {
         TURN { MOVE(opponent, MOVE_FISSURE); }
     } SCENE {
-        MESSAGE("Foe Wobbuffet used Fissure!");
         ABILITY_POPUP(player, ABILITY_STURDY);
         MESSAGE("Geodude was protected by Sturdy!");
     } THEN {
@@ -32,8 +28,6 @@ SINGLE_BATTLE_TEST("Sturdy prevents fainting from OHKOs")
     } WHEN {
         TURN { MOVE(opponent, MOVE_SEISMIC_TOSS); }
     } SCENE {
-        MESSAGE("Foe Wobbuffet used Seismic Toss!");
-        ANIMATION(ANIM_TYPE_MOVE, MOVE_SEISMIC_TOSS, opponent);
         HP_BAR(player, hp: 1);
         ABILITY_POPUP(player, ABILITY_STURDY);
         MESSAGE("Geodude endured the hit!");
@@ -42,7 +36,7 @@ SINGLE_BATTLE_TEST("Sturdy prevents fainting from OHKOs")
 
 SINGLE_BATTLE_TEST("Sturdy prevents fainting from confusion damage")
 {
-    PASSES_RANDOMLY(5, 10); // 50% chance confusion activating
+    PASSES_RANDOMLY(CONFUSION_UPDATE ? 33 : 50, 100, RNG_CONFUSION);
     
     GIVEN {
         ASSUME(gBattleMoves[MOVE_CONFUSE_RAY].effect == EFFECT_CONFUSE);
@@ -52,8 +46,6 @@ SINGLE_BATTLE_TEST("Sturdy prevents fainting from confusion damage")
     } WHEN {
         TURN { MOVE(opponent, MOVE_CONFUSE_RAY); }
     } SCENE {
-        MESSAGE("Foe Wobbuffet used Confuse Ray!");
-        
         MESSAGE("Geodude is confused!");
         MESSAGE("It hurt itself in its confusion!");
         ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_MON_HIT, player);
@@ -63,5 +55,4 @@ SINGLE_BATTLE_TEST("Sturdy prevents fainting from confusion damage")
     }
 }
 
-// TODO:
-// Sturdy activates before a held Focus Sash
+TO_DO_BATTLE_TEST("Sturdy activates before a held Focus Sash");

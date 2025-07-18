@@ -24,7 +24,7 @@ enum
     EFFECT_USER_LEVEL_TO_DAMAGE,
     EFFECT_HIT_ABSORB,
     EFFECT_SET_SEEDED,
-    EFFECT_USER_ATTACK_AND_SP_ATTACK_UP_2X_IN_SUNNY,
+    EFFECT_GROWTH,
     EFFECT_SKIP_CHARGING_IN_WEATHER,
     EFFECT_SET_POISON,
     EFFECT_SET_PARALYZE,
@@ -212,21 +212,8 @@ enum
 
 
 
-
-
-#define EFFECT_SPEED_UP 12
-#define EFFECT_SPECIAL_ATTACK_UP 13
-#define EFFECT_SPECIAL_DEFENSE_UP 14
-#define EFFECT_ACCURACY_UP 15
-#define EFFECT_SPEED_DOWN 20
 #define EFFECT_SPECIAL_ATTACK_DOWN 21  // unused
-#define EFFECT_SPECIAL_DEFENSE_DOWN 22  // unused
-#define EFFECT_EVASION_DOWN 24
-#define EFFECT_ACCURACY_UP_2 55
-#define EFFECT_EVASION_UP_2 56
 #define EFFECT_SPECIAL_ATTACK_DOWN_2 61
-#define EFFECT_ACCURACY_DOWN_2 63
-#define EFFECT_EVASION_DOWN_HIT 74
 #define EFFECT_HEX                          217
 #define EFFECT_ACROBATICS                   220
 #define EFFECT_RETALIATE                    231
@@ -245,7 +232,6 @@ enum
 #define EFFECT_HURRICANE                    272
 #define EFFECT_TWO_TYPED_MOVE               273
 #define EFFECT_ELECTRIFY                    278
-#define EFFECT_SCALD                        279
 #define EFFECT_REFLECT_TYPE                 280
 #define EFFECT_SHELL_SMASH                  288
 #define EFFECT_SHIFT_GEAR                   289
