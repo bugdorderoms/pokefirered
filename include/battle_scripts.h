@@ -165,6 +165,8 @@ extern const u8 BattleScript_EffectAfterYou[];
 extern const u8 BattleScript_EffectRound[];
 extern const u8 BattleScript_EffectEchoedVoice[];
 extern const u8 BattleScript_EffectAllySwitch[];
+extern const u8 BattleScript_EffectShellSmash[];
+extern const u8 BattleScript_EffectHealPulse[];
 // Other scripts
 extern const u8 BattleScript_HitFromCritCalc[];
 extern const u8 BattleScript_MoveEnd[];

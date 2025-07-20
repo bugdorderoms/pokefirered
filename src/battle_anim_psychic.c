@@ -555,6 +555,17 @@ const struct SpriteTemplate gPsychoCutBladeWheelSpriteTemplate =
     .callback = AnimSpriteOnMonForDuration,
 };
 
+const struct SpriteTemplate gHealPulseRedRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_GOLD_RING,
+    .paletteTag = ANIM_TAG_RED_HEART,
+    .oam = &gOamData_AffineOff_ObjNormal_16x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = TranslateAnimSpriteToTargetMonLocation,
+};
+
 // For the rectangular wall sprite used by Reflect, Mirror Coat, etc.
 // arg 0: x offset
 // arg 1: y offset

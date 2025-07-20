@@ -1064,6 +1064,22 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
         .battleScript = BattleScript_EffectAllySwitch,
     },
     
+    [EFFECT_SHELL_SMASH] =
+    {
+        .battleScript = BattleScript_EffectShellSmash,
+    },
+    
+    [EFFECT_HEAL_PULSE] =
+    {
+        .battleScript = BattleScript_EffectHealPulse,
+        .healingEffect = TRUE,
+    },
+    
+    [EFFECT_HEX] =
+    {
+        .battleScript = BattleScript_EffectHit,
+    },
+    
     /*
     [EFFECT_TERRAIN_PULSE] =
     {

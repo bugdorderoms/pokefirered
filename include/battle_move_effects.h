@@ -207,6 +207,9 @@ enum
     EFFECT_STORED_POWER,
     EFFECT_QUICK_GUARD,
     EFFECT_ALLY_SWITCH,
+    EFFECT_SHELL_SMASH,
+    EFFECT_HEAL_PULSE,
+    EFFECT_HEX,
     EFFECTS_COUNT,
 };
 
@@ -214,12 +217,10 @@ enum
 
 #define EFFECT_SPECIAL_ATTACK_DOWN 21  // unused
 #define EFFECT_SPECIAL_ATTACK_DOWN_2 61
-#define EFFECT_HEX                          217
 #define EFFECT_ACROBATICS                   220
 #define EFFECT_RETALIATE                    231
 #define EFFECT_BULLDOZE                     232
 #define EFFECT_STICKY_WEB                   254
-#define EFFECT_HEAL_PULSE                   261
 #define EFFECT_QUASH                        262
 #define EFFECT_ION_DELUGE                   263
 #define EFFECT_FREEZE_DRY                   264
@@ -233,7 +234,6 @@ enum
 #define EFFECT_TWO_TYPED_MOVE               273
 #define EFFECT_ELECTRIFY                    278
 #define EFFECT_REFLECT_TYPE                 280
-#define EFFECT_SHELL_SMASH                  288
 #define EFFECT_SHIFT_GEAR                   289
 #define EFFECT_DEFENSE_UP_3                 290
 #define EFFECT_NOBLE_ROAR                   291

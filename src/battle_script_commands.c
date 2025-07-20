@@ -6328,7 +6328,11 @@ static void atk7B_tryhealhalfhealth(void)
         gBattlescriptCurrInstr = cmd->failPtr;
     else
     {
-        gBattleMoveDamage = gBattleMons[battlerId].maxHP / 2;
+        if (gBattleMoves[gCurrentMove].flags.pulseMove && GetBattlerAbility(gBattlerAttacker) == ABILITY_MEGA_LAUNCHER)
+            gBattleMoveDamage = (gBattleMons[battlerId].maxHP * 75) / 100;
+        else
+            gBattleMoveDamage = gBattleMons[battlerId].maxHP / 2;
+        
         if (gBattleMoveDamage == 0)
             gBattleMoveDamage = 1;
         gBattleMoveDamage *= -1;
@@ -6835,18 +6839,6 @@ static void atk8D_trycopyability(void)
         gBattlescriptCurrInstr = cmd->failPtr;
     else
         gBattlescriptCurrInstr = cmd->nextInstr;
-}
-
-static bool32 TargetMovesRightAfterAttacker(void)
-{
-    u32 i;
-    
-    for (i = 1; i < gBattlersCount; i++)
-    {
-        if (gBattlerByTurnOrder[i] == gBattlerTarget && gBattlerByTurnOrder[i - 1] == gBattlerAttacker)
-            return TRUE;
-    }
-    return FALSE;
 }
 
 static void atk8E_tryafteryou(void)

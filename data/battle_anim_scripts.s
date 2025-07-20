@@ -14737,3 +14737,76 @@ ScaldWaterOrb::
 	createsprite gWaterOrbProjectileSpriteTemplate, ANIM_TARGET, 2, 0, 0, 0, 0, 20, 0
 	delay 2
 	return
+
+@ Credits: Skeli and Blackuser
+gMoveAnim_SHELL_SMASH::
+	loadspriteimg ANIM_TAG_ROCKS
+	loadspritegfx ANIM_TAG_SHELL @ Also purple color
+	playsewithpan SE_M_HEADBUTT, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_ShellSmashShrinkAttacker, 2
+	createsprite gLeftRightShellSpriteTemplate, ANIM_ATTACKER, 2, -40, -6, 16, 0
+	createsprite gLeftRightShellSpriteTemplate, ANIM_ATTACKER, 2, 40, 6, 16, 1
+	delay 64
+	createvisualtask AnimTask_FadeOutParticles, 2, 0
+	delay 6
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_ATTACKER
+	createsprite gShellFragmentSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 20, 24, 14, 2
+	createsprite gShellFragmentSpriteTemplate, ANIM_ATTACKER, 2, 5, 0, -20, 24, 14, 1
+	createsprite gShellFragmentSpriteTemplate, ANIM_ATTACKER, 2, 0, 5, 20, -24, 14, 2
+	createsprite gShellFragmentSpriteTemplate, ANIM_ATTACKER, 2, -5, 0, -20, -24, 14, 2
+	createsprite gShellFragmentSpriteTemplate, ANIM_ATTACKER, 2, 0, -5, 30, 18, 8, 2
+	createsprite gShellFragmentSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 30, -18, 8, 2
+	createsprite gShellFragmentSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, -30, 18, 8, 2
+	createsprite gShellFragmentSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, -30, -18, 8, 2
+	end
+
+@ Credits: Skeli
+gMoveAnim_HEAL_PULSE::
+	loadspritegfx ANIM_TAG_BLUE_STAR
+	loadspriteimg ANIM_TAG_GOLD_RING
+	loadspritepal ANIM_TAG_RED_HEART @ Red color
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 0, 4, RGB_BLACK
+	waitforvisualfinish
+	createsoundtask SoundTask_LoopSEAdjustPanning, SE_M_MOONLIGHT, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 3, 4, 0, 15
+	call HealPulseRing
+	call HealPulseRing
+	createvisualtask AnimTask_SwayMon, 5, 0, 6, 2048, 4, ANIM_TARGET, TRUE
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 2, 2, 0, 12, RGB(31, 18, 31) @ Red color
+	call HealPulseRing
+	call HealPulseRing
+	call HealPulseRing
+	call HealPulseRing
+	call HealPulseRing
+	call HealPulseRing
+	call HealPulseRing
+	call HealPulseRing
+	call HealPulseRing
+	waitforvisualfinish
+	call HealingEffectOnTarget
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 1, 4, 0, RGB_BLACK
+	end
+
+HealPulseRing::
+	createsprite gHealPulseRedRingSpriteTemplate, ANIM_TARGET, 2, 16, 0, 0, 0, 13, 0
+	delay 4
+	return
+
+@ Credits: Skeli
+gMoveAnim_HEX::
+	loadspritegfx ANIM_TAG_PURPLE_FLAME
+	loadspritegfx ANIM_TAG_GHOSTLY_SPIRIT
+	monbg ANIM_TARGET
+	monbgprio_29
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 0, 0, 16, RGB(10, 2, 19) @ Purple color
+	waitforvisualfinish
+	createvisualtask AnimTask_GrudgeFlames, 3, ANIM_TARGET
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 2, 0, 37, 1
+	playsewithpan SE_M_NIGHTMARE, SOUND_PAN_TARGET
+	delay 32
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 2, 2, 0, 12, RGB(10, 2, 19) @ Purple color
+	createsprite gCurseGhostSpriteTemplate, ANIM_TARGET, 4
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 0, 16, 0, RGB(10, 2, 19) @ Purple color
+	waitforvisualfinish
+	clearmonbg ANIM_TARGET
+	end

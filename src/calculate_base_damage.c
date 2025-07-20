@@ -594,6 +594,10 @@ static u16 GetMoveBasePower(u32 attacker, u32 defender, struct DamageCalc *damag
         case EFFECT_STORED_POWER:
             basePower += (CountBattlerStatIncreases(attacker, TRUE) * 20);
             break;
+        case EFFECT_HEX:
+            if (gBattleMons[defender].status1.id || damageStruct->defAbility == ABILITY_COMATOSE)
+                basePower *= 2;
+            break;
     }
     
     if (basePower == 0)

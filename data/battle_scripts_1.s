@@ -2409,6 +2409,56 @@ BattleScript_EffectAllySwitch::
 	switchineffectshealingwishonly BS_ATTACKER
 	goto BattleScript_MoveEnd
 
+@ EFFECT_SHELL_SMASH @
+
+BattleScript_EffectShellSmash::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_DEF, MIN_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
+	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_SPDEF, MIN_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPATK, MAX_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPEED, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
+BattleScript_EffectShellSmashTryDefDown::
+	attackanimation
+	waitstate
+	setstatchanger STAT_DEF, -1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring BIT_DEF | BIT_SPDEF, ATK66_STAT_NEGATIVE | ATK66_SET_ANIM_PLAYED
+	setstatchanger STAT_SPDEF, -1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
+	setstatchanger STAT_ATK, +2
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring BIT_ATK | BIT_SPATK | BIT_SPEED, ATK66_SET_ANIM_PLAYED
+	setstatchanger STAT_SPATK, +2
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK66_SET_ANIM_PLAYED
+	setstatchanger STAT_SPEED, +2
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
+	goto BattleScript_MoveEnd
+
+@ EFFECT_HEAL_PULSE @
+
+BattleScript_EffectHealPulse::
+	attackcanceler
+	jumpifsubstituteblocks BattleScript_ButItFailedAtkStringPpReduce
+	attackstring
+	ppreduce
+	jumpifstatus3 BS_TARGET, STATUS3_HEAL_BLOCK, BattleScript_EffectHealPulseBlocked
+	accuracycheck BattleScript_MoveMissedPause
+	tryhealhalfhealth BS_TARGET, BattleScript_ButItFailed
+	goto BattleScript_PresentHealTarget
+
+BattleScript_EffectHealPulseBlocked::
+	pause B_WAIT_TIME_SHORT
+	orhalfword gMoveResultFlags, MOVE_RESULT_FAILED
+	printstring STRINGID_DEFPREVENTEDFROMHEALING
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

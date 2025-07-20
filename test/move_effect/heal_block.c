@@ -22,3 +22,22 @@ SINGLE_BATTLE_TEST("Heal Block prevents Volt Absorb from restore HP")
         MESSAGE("It doesn't affect Foe Jolteon…");
     }
 }
+
+SINGLE_BATTLE_TEST("Heal Block prevents Heal Pulse from heal the target")
+{
+    GIVEN {
+        ASSUME(gBattleMoves[MOVE_HEAL_PULSE].effect == EFFECT_HEAL_PULSE);
+        
+        PLAYER(SPECIES_WOBBUFFET);
+        OPPONENT(SPECIES_WOBBUFFET) { MaxHP(100); HP(1); }
+    } WHEN {
+        TURN { MOVE(player, MOVE_HEAL_BLOCK); }
+        TURN { MOVE(player, MOVE_HEAL_PULSE); }
+    } SCENE {
+        NONE_OF {
+            ANIMATION(ANIM_TYPE_MOVE, MOVE_HEAL_PULSE, player);
+            HP_BAR(opponent, damage: -50);
+            MESSAGE("Foe Wobbuffet regained health!");
+        }
+    }
+}

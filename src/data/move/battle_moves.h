@@ -12142,7 +12142,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SHELL_SMASH] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Shell Smash"),
+        .description = COMPOUND_STRING("Lowers its defenses\n"
+                                       "but raises Attack,\n"
+                                       "Sp. Atk and Speed\n"
+                                       "breaking its shell."),
+        .animScript = gMoveAnim_SHELL_SMASH,
         .effect = EFFECT_SHELL_SMASH,
         .type = TYPE_NORMAL,
         .pp = 15,
@@ -12159,7 +12164,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_HEAL_PULSE] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Heal Pulse"),
+        .description = COMPOUND_STRING("It emits a healing\n"
+                                       "pulse that restores\n"
+                                       "the foe's HP by\n"
+                                       "half its max HP."),
+        .animScript = gMoveAnim_HEAL_PULSE,
         .effect = EFFECT_HEAL_PULSE,
         .type = TYPE_PSYCHIC,
         .pp = 10,
@@ -12169,7 +12179,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .magicCoatAffected = TRUE,
             .pulseMove = TRUE,
             .forbiddenMirrorMove = TRUE,
-            // .healingMove = TRUE,
         },
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RESET_STATS,
@@ -12177,7 +12186,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_HEX] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Hex"),
+        .description = COMPOUND_STRING("This relentless\n"
+                                       "attack does massive\n"
+                                       "damage to a\n"
+                                       "statused target."),
+        .animScript = gMoveAnim_HEX,
         .effect = EFFECT_HEX,
         .power = 65,
         .type = TYPE_GHOST,

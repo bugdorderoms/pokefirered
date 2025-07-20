@@ -372,6 +372,17 @@ const struct SpriteTemplate gSeedFlareGreenWavesSpriteTemplate =
     .callback = AnimDirtParticleAcrossScreen,
 };
 
+const struct SpriteTemplate gShellFragmentSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ROCKS,
+    .paletteTag = ANIM_TAG_SHELL,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_FlyingRock,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimRockFragment,
+};
+
 // Animates a falling rock into the target.
 // arg 0: x pos
 // arg 1: sprite anim num
