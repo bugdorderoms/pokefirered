@@ -440,7 +440,7 @@ static u16 GetMoveBasePower(u32 attacker, u32 defender, struct DamageCalc *damag
             if (forAI)
             {
                 for (i = 0; i < gBattleMoves[move].strikeCount; i++)
-                    basePower += gBattleMoves[move].argument.amount; // Get max possible dmg
+                    basePower += gBattleMoves[move].argument.generic; // Get max possible dmg
             }
             else
                 basePower += gBattleScripting.tripleKickPower;
@@ -500,8 +500,8 @@ static u16 GetMoveBasePower(u32 attacker, u32 defender, struct DamageCalc *damag
             basePower = (gBattleMons[attacker].hp * basePower) / gBattleMons[attacker].maxHP;
             break;
         case EFFECT_CURE_STATUS1_FROM_ARG:
-            if (!SubsBlockMove(attacker, defender, move) && (gBattleMons[defender].status1.id == gBattleMoves[move].argument.status
-            || (gBattleMoves[move].argument.status == STATUS1_SLEEP && damageStruct->defAbility == ABILITY_COMATOSE)))
+            if (!SubsBlockMove(attacker, defender, move) && (gBattleMons[defender].status1.id == gBattleMoves[move].argument.generic
+            || (gBattleMoves[move].argument.generic == STATUS1_SLEEP && damageStruct->defAbility == ABILITY_COMATOSE)))
                 basePower *= 2;
             break;
         case EFFECT_REVENGE:
@@ -950,7 +950,7 @@ static u16 CalcBaseDefenseStat(u32 attacker, u32 defender, struct DamageCalc *da
     if (gFieldStatus & STATUS_FIELD_WONDER_ROOM)
         SWAP(defense, spDefense, statStages);
     
-    if (damageStruct->moveSplit == SPLIT_PHYSICAL || (gBattleMoves[damageStruct->move].effect == EFFECT_PSYSHOCK && gBattleMoves[damageStruct->move].argument.split == SPLIT_PHYSICAL))
+    if (damageStruct->moveSplit == SPLIT_PHYSICAL || (gBattleMoves[damageStruct->move].effect == EFFECT_PSYSHOCK && gBattleMoves[damageStruct->move].argument.generic == SPLIT_PHYSICAL))
     {
         baseDefense = defense;
         statStages = gBattleMons[defender].statStages[STAT_DEF];

@@ -303,7 +303,7 @@ static u32 ShouldSwitchIfNaturalCureOrRegenerator(u32 battlerId, u8 *viableMons,
 static u32 ShouldSwitchWhenYawned(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler)
 {
     if ((gStatuses3[battlerId] & STATUS3_YAWN) && GetBattlerAbility(battlerId) != ABILITY_NATURAL_CURE && gBattleMons[battlerId].hp > gBattleMons[battlerId].maxHP / 4
-    && IsUproarActive() == gBattlersCount && CanBePutToSleep(battlerId, battlerId, 0) == STATUS_CHANGE_WORKED)
+    && CanBePutToSleep(battlerId, battlerId, 0) == STATUS_CHANGE_WORKED)
     {
         // TODO
         return PARTY_SIZE;

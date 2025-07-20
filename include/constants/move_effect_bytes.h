@@ -8,7 +8,7 @@
 #define MOVE_EFFECT_BURN                3
 #define MOVE_EFFECT_FREEZE              4
 #define MOVE_EFFECT_PARALYSIS           5
-#define MOVE_EFFECT_TOXIC               6
+#define MOVE_EFFECT_TOXIC               6 // From here to up are all prevented by Flower Veil
 #define MOVE_EFFECT_CONFUSION           7 // From here to up are all prevented by Safeguard
 #define MOVE_EFFECT_FLINCH              8
 #define MOVE_EFFECT_TRI_ATTACK          9
@@ -56,7 +56,6 @@
 #define MOVE_EFFECT_KNOCK_OFF           51
 #define MOVE_EFFECT_SMACK_DOWN          52
 #define MOVE_EFFECT_CLEAR_SMOG          53
-// TODO
 #define MOVE_EFFECT_UPROAR              54
 
 // Z-Move effect bytes

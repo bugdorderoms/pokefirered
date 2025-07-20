@@ -287,15 +287,7 @@ struct BattleMove
                 struct { u16 weather; u16 debuffWeather; } neverMissInWeather;
                 struct { u16 weatherId; u16 stringId; } setWeather;
                 struct { u8 statusId; u8 status; u16 stringId; } setStatus;
-                u32 status;
-                u16 bindTrapId;
-                u16 amount;
-                u16 stringId;
-                u16 abilityId;
-                u16 split;
-                u16 type;
-                u16 holdEffect;
-                u16 healReplacementCase;
+                u32 generic;
              } argument;
     /*0x18*/ u8 target;
     /*0x19*/ u8 zMoveEffect;

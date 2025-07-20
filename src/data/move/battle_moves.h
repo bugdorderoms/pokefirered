@@ -509,7 +509,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
         },
-        .argument = { .bindTrapId = TRAP_ID_BIND },
+        .argument = { .generic = TRAP_ID_BIND },
         .split = SPLIT_PHYSICAL,
         .additionalEffects = ADDITIONAL_EFFECTS({
             .moveEffect = MOVE_EFFECT_WRAP,
@@ -873,7 +873,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
         },
-        .argument = { .bindTrapId = TRAP_ID_WRAP },
+        .argument = { .generic = TRAP_ID_WRAP },
         .split = SPLIT_PHYSICAL,
         .additionalEffects = ADDITIONAL_EFFECTS({
             .moveEffect = MOVE_EFFECT_WRAP,
@@ -1209,7 +1209,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .kingsRockAffected = TRUE,
         },
         .split = SPLIT_SPECIAL,
-        .argument = { .amount = 20 },
+        .argument = { .generic = 20 },
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -1654,7 +1654,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenCopycat = TRUE,
             .forbiddenMeFirst = TRUE,
         },
-        .argument = { .split = SPLIT_PHYSICAL },
+        .argument = { .generic = SPLIT_PHYSICAL },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1723,7 +1723,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
         },
-        .argument = { .amount = 50 },
+        .argument = { .generic = 50 },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1746,7 +1746,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
         },
-        .argument = { .amount = 50 },
+        .argument = { .generic = 50 },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -1984,7 +1984,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .kingsRockAffected = TRUE,
         },
         .split = SPLIT_SPECIAL,
-        .argument = { .amount = 40 },
+        .argument = { .generic = 40 },
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -2006,7 +2006,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
         },
-        .argument = { .bindTrapId = TRAP_ID_FIRE_SPIN },
+        .argument = { .generic = TRAP_ID_FIRE_SPIN },
         .split = SPLIT_SPECIAL,
         .additionalEffects = ADDITIONAL_EFFECTS({
             .moveEffect = MOVE_EFFECT_WRAP,
@@ -3071,7 +3071,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
         },
-        .argument = { .bindTrapId = TRAP_ID_CLAMP },
+        .argument = { .generic = TRAP_ID_CLAMP },
         .split = SPLIT_PHYSICAL,
         .additionalEffects = ADDITIONAL_EFFECTS({
             .moveEffect = MOVE_EFFECT_WRAP,
@@ -3311,7 +3311,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .accuracy = 100,
         .pp = 15,
         .target = MOVE_TARGET_SELECTED,
-        .argument = { .amount = 50 },
+        .argument = { .generic = 50 },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -3379,7 +3379,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
         },
-        .argument = { .amount = 50 },
+        .argument = { .generic = 50 },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -3999,7 +3999,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .kingsRockAffected = TRUE,
         },
         .split = SPLIT_PHYSICAL,
-        .argument = { .amount = 10 },
+        .argument = { .generic = 10 },
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -4308,7 +4308,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .magicCoatAffected = TRUE,
         },
-        .argument = { .amount = 4 },
+        .argument = { .generic = 4 },
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_RECOVER_HP,
     },
@@ -4829,7 +4829,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .accuracy = 100,
         .pp = 10,
         .target = MOVE_TARGET_SELECTED,
-        .argument = { .amount = 50 },
+        .argument = { .generic = 50 },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -5138,7 +5138,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenMirrorMove = TRUE,
         },
         .split = SPLIT_STATUS,
-        .argument = { .stringId = B_MSG_BELL_CHIMED },
+        .argument = { .generic = B_MSG_BELL_CHIMED },
         .zMoveEffect = Z_EFFECT_RECOVER_HP,
     },
 
@@ -5812,7 +5812,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenCopycat = TRUE,
             .forbiddenMeFirst = TRUE,
         },
-        .argument = { .split = SPLIT_SPECIAL },
+        .argument = { .generic = SPLIT_SPECIAL },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -5985,7 +5985,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .kingsRockAffected = TRUE,
             .hitUnderwater = TRUE,
         },
-        .argument = { .bindTrapId = TRAP_ID_WHIRLPOOL },
+        .argument = { .generic = TRAP_ID_WHIRLPOOL },
         .split = SPLIT_SPECIAL,
         .additionalEffects = ADDITIONAL_EFFECTS({
             .moveEffect = MOVE_EFFECT_WRAP,
@@ -6047,12 +6047,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_UPROAR] =
     {
         .name = COMPOUND_STRING("Uproar"),
-        .description = COMPOUND_STRING("The user attacks in\n"
-                                       "an uproar that\n"
-                                       "prevents sleep for\n"
-                                       "two to five turns."),
+        .description = COMPOUND_STRING("It attacks in an\n"
+                                       "uproar for 3 turns.\n"
+                                       "No pokémon fall\n"
+                                       "asleep during it."),
         .animScript = gMoveAnim_UPROAR,
-        .effect = EFFECT_HIT,
+        .effect = EFFECT_UPROAR,
         .power = 90,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -6365,7 +6365,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .makesContact = TRUE,
         },
-        .argument = { .status = STATUS1_PARALYSIS },
+        .argument = { .generic = STATUS1_PARALYSIS },
         .split = SPLIT_PHYSICAL,
         .additionalEffects = ADDITIONAL_EFFECTS({
             .moveEffect = MOVE_EFFECT_CURE_STATUS1,
@@ -7521,7 +7521,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenMirrorMove = TRUE,
         },
         .split = SPLIT_STATUS,
-        .argument = { .stringId = B_MSG_SOOTHING_AROMA },
+        .argument = { .generic = B_MSG_SOOTHING_AROMA },
         .zMoveEffect = Z_EFFECT_RECOVER_HP,
     },
 
@@ -7893,7 +7893,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
         },
-        .argument = { .bindTrapId = TRAP_ID_SAND_TOMB },
+        .argument = { .generic = TRAP_ID_SAND_TOMB },
         .split = SPLIT_PHYSICAL,
         .additionalEffects = ADDITIONAL_EFFECTS({
             .moveEffect = MOVE_EFFECT_WRAP,
@@ -8634,7 +8634,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
         },
-        .argument = { .status = STATUS1_SLEEP },
+        .argument = { .generic = STATUS1_SLEEP },
         .split = SPLIT_PHYSICAL,
         .additionalEffects = ADDITIONAL_EFFECTS({
             .moveEffect = MOVE_EFFECT_CURE_STATUS1,
@@ -8715,7 +8715,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
         },
-        .argument = { .healReplacementCase = HR_CASE_HEALING_WISH },
+        .argument = { .generic = HR_CASE_HEALING_WISH },
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -8876,7 +8876,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .forbiddenMeFirst = TRUE,
         },
-        .argument = { .split = SPLIT_STATUS }, // Counter both physical and special
+        .argument = { .generic = SPLIT_STATUS }, // Counter both physical and special
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -9317,7 +9317,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .magicCoatAffected = TRUE,
         },
         .split = SPLIT_STATUS,
-        .argument = { .abilityId = ABILITY_INSOMNIA },
+        .argument = { .generic = ABILITY_INSOMNIA },
         .zMoveEffect = Z_EFFECT_SPD_UP_1,
     },
 
@@ -9830,7 +9830,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .kingsRockAffected = TRUE,
             .punchMove = TRUE,
         },
-        .argument = { .amount = 50 },
+        .argument = { .generic = 50 },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -10846,7 +10846,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
         },
-        .argument = { .holdEffect = HOLD_EFFECT_PLATE },
+        .argument = { .generic = HOLD_EFFECT_PLATE },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -11135,7 +11135,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenProtect = TRUE,
             .forbiddenMirrorMove = TRUE,
         },
-        .argument = { .healReplacementCase = HR_CASE_LUNAR_DANCE },
+        .argument = { .generic = HR_CASE_LUNAR_DANCE },
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -11181,7 +11181,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
         },
-        .argument = { .bindTrapId = TRAP_ID_MAGMA_STORM },
+        .argument = { .generic = TRAP_ID_MAGMA_STORM },
         .split = SPLIT_SPECIAL,
         .additionalEffects = ADDITIONAL_EFFECTS({
             .moveEffect = MOVE_EFFECT_WRAP,
@@ -11426,7 +11426,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
         },
-        .argument = { .split = SPLIT_PHYSICAL },
+        .argument = { .generic = SPLIT_PHYSICAL },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -11752,7 +11752,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .magicCoatAffected = TRUE,
         },
-        .argument = { .type = TYPE_WATER },
+        .argument = { .generic = TYPE_WATER },
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_SPATK_UP_1,
     },
@@ -11901,7 +11901,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .magicCoatAffected = TRUE,
         },
-        .argument = { .abilityId = ABILITY_SIMPLE },
+        .argument = { .generic = ABILITY_SIMPLE },
         .split = SPLIT_STATUS,
         .zMoveEffect = Z_EFFECT_SPATK_UP_1,
     },
@@ -12690,7 +12690,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .makesContact = TRUE,
             // .healingMove = TRUE,
         },
-        .argument = { .amount = 50 },
+        .argument = { .generic = 50 },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -13460,7 +13460,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .kingsRockAffected = TRUE,
             // .healingMove = TRUE,
         },
-        .argument = { .amount = 50 },
+        .argument = { .generic = 50 },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -13579,7 +13579,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .kingsRockAffected = TRUE,
             // .healingMove = TRUE,
         },
-        .argument = { .amount = 75 },
+        .argument = { .generic = 75 },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
 
@@ -14257,7 +14257,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .kingsRockAffected = TRUE,
             // .healingMove = TRUE,
         },
-        .argument = { .amount = 75 },
+        .argument = { .generic = 75 },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -14536,7 +14536,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             // .secondaryEffectMove = TRUE,
         },
         .split = SPLIT_SPECIAL,
-        .argument = { .status = STATUS1_BURN },
+        .argument = { .generic = STATUS1_BURN },
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -15564,7 +15564,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenMetronome = TRUE,
             // .healingMove = TRUE,
         },
-        .argument = { .amount = 100 },
+        .argument = { .generic = 100 },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
@@ -16752,7 +16752,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .kingsRockAffected = TRUE,
         },
         .split = SPLIT_PHYSICAL,
-        .argument = { .amount = 20 },
+        .argument = { .generic = 20 },
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
@@ -17016,7 +17016,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             // .secondaryEffectMove = TRUE,
             .soundMove = TRUE,
         },
-        .argument = { .amount = 3 },
+        .argument = { .generic = 3 },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },

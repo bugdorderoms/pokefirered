@@ -141,7 +141,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
     switch (moveEffect)
     {
         case MOVE_EFFECT_SLEEP:
-            if (IsUproarActive() == gBattlersCount && CanBePutToSleep(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
+            if (CanBePutToSleep(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
             {
                 gBattleMons[gEffectBattler].status1.id = STATUS1_SLEEP;
 #if SLEEP_UPDATE
@@ -286,7 +286,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
                 gDisableStructs[gEffectBattler].wrapTurns = RandomUniform(RNG_WRAP_TURNS, 4, 5);
                 gDisableStructs[gEffectBattler].wrappedBy = gBattleScripting.battler;
                 gDisableStructs[gEffectBattler].wrappedMove = gCurrentMove;
-                gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument.bindTrapId;
+                gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument.generic;
                 effect = 2;
             }
             break;
@@ -366,10 +366,10 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             effect = 2;
             break;
         case MOVE_EFFECT_CURE_STATUS1:
-            if (gBattleMons[gEffectBattler].status1.id == gBattleMoves[gCurrentMove].argument.status)
+            if (gBattleMons[gEffectBattler].status1.id == gBattleMoves[gCurrentMove].argument.generic)
             {
                 ClearBattlerStatus(gEffectBattler);
-                gBattleCommunication[MULTISTRING_CHOOSER] = gNonVolatileStatusConditions[gBattleMoves[gCurrentMove].argument.status - 1].statusCuredByMoveMultistringId;
+                gBattleCommunication[MULTISTRING_CHOOSER] = gNonVolatileStatusConditions[gBattleMoves[gCurrentMove].argument.generic - 1].statusCuredByMoveMultistringId;
                 effect = 2;
             }
             break;
@@ -505,7 +505,7 @@ bool32 CheckSecondaryEffectsBlockers(u32 attacker, u32 defender, u32 move, u32 m
             return TRUE;
         
         // Check Flower Veil
-        if (!affectsUser && IsBattlerProtectedByFlowerVeil(defender) && (moveEffect <= MOVE_EFFECT_CONFUSION || IsStatLoweringMoveEffect(moveEffect)))
+        if (!affectsUser && IsBattlerProtectedByFlowerVeil(defender) && (moveEffect <= MOVE_EFFECT_TOXIC || IsStatLoweringMoveEffect(moveEffect)))
             return TRUE;
     }
     

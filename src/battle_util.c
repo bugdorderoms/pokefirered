@@ -211,6 +211,18 @@ static u32 CanBeStatused(u32 attacker, u32 defender, u32 flags)
     return STATUS_CHANGE_WORKED;
 }
 
+static bool32 IsUproarActive(void)
+{
+    u32 i;
+    
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if (gBattleMons[i].status2 & STATUS2_UPROAR)
+            return TRUE;
+    }
+    return FALSE;
+}
+
 // Check if attacker can put defender to sleep
 u32 CanBePutToSleep(u32 attacker, u32 defender, u32 flags)
 {
@@ -225,7 +237,7 @@ u32 CanBePutToSleep(u32 attacker, u32 defender, u32 flags)
         return ret;
     
     // Check Uproar
-    if ((flags & STATUS_CHANGE_FLAG_CHECK_UPROAR) && UproarWakeUpCheck())
+    if (!(flags & STATUS_CHANGE_FLAG_IGNORE_UPROAR) && IsUproarActive())
         return STATUS_CHANGE_FAIL_UPROAR;
     
     // Check defender's abilities
@@ -1564,22 +1576,17 @@ bool32 DoEndTurnEffects(void)
                 {
                     gBattleMons[gBattlerAttacker].status2 -= STATUS2_UPROAR_TURN(1);
                     
-                    if (WasUnableToUseMove(gBattlerAttacker))
+                    if (WasUnableToUseMove(gBattlerAttacker) || !(gBattleMons[gBattlerAttacker].status2 & STATUS2_UPROAR))
                     {
                         CancelMultiTurnMoves(gBattlerAttacker);
-                        gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-                    }
-                    else if (gBattleMons[gBattlerAttacker].status2 & STATUS2_UPROAR)
-                    {
-                        gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-                        gBattleMons[gBattlerAttacker].status2 |= STATUS2_MULTIPLETURNS;
+                        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CALMED_DOWN;
                     }
                     else
                     {
-                        CancelMultiTurnMoves(gBattlerAttacker);
-                        gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+                        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MAKING_UPROAR;
+                        gBattleMons[gBattlerAttacker].status2 |= STATUS2_MULTIPLETURNS;
                     }
-                    BattleScriptExecute(BattleScript_PrintUproarOverTurns);
+                    BattleScriptExecute(BattleScript_EndTurnEffectEnds);
                     effect = TRUE;
                 }
                 IncrementBattlerBasedEndTurnEffects();
@@ -1818,29 +1825,18 @@ u32 AtkCanceller_UnableToUseMove(void)
             case CANCELLER_ASLEEP: // check being asleep
                 if (gBattleMons[gBattlerAttacker].status1.id == STATUS1_SLEEP)
                 {
-                    if (UproarWakeUpCheck())
-                    {
-                        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_UPROAR_WOKEUP;
-                        effect = 1; // Wake up
-                    }
+                    if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE) // Prevent from wake up
+                        effect = 2;
                     else
                     {
-                        if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE) // Prevent from wake up
-                            effect = 2;
+                        u32 toSub = GetBattlerAbility(gBattlerAttacker) == ABILITY_EARLY_BIRD ? 2 : 1;
+                        
+                        if (gBattleMons[gBattlerAttacker].status1.counter <= toSub)
+                            effect = 1; // Wake up
                         else
                         {
-                            u32 toSub = GetBattlerAbility(gBattlerAttacker) == ABILITY_EARLY_BIRD ? 2 : 1;
-                            
-                            if (gBattleMons[gBattlerAttacker].status1.counter <= toSub)
-                            {
-                                gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WOKEUP;
-                                effect = 1; // Wake up
-                            }
-                            else
-                            {
-                                gBattleMons[gBattlerAttacker].status1.counter -= toSub;
-                                effect = 2; // Asleep
-                            }
+                            gBattleMons[gBattlerAttacker].status1.counter -= toSub;
+                            effect = 2; // Asleep
                         }
                     }
                     
@@ -3611,7 +3607,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                                 else if (i < 9 + 10)
                                     goto STATIC;
                                 else if (i < 9 + 10 + 11 && BATTLER_TURN_DAMAGED(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
-                                && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && CanBePutToSleep(battler, gBattlerAttacker, STATUS_CHANGE_FLAG_CHECK_UPROAR) == STATUS_CHANGE_WORKED)
+                                && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && CanBePutToSleep(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED)
                                 {
                                     SetMoveEffect(MOVE_EFFECT_SLEEP, TRUE, FALSE);
                                     BattleScriptCall(BattleScript_ApplySecondaryEffect);
@@ -4741,8 +4737,7 @@ u32 IsMonDisobedient(void)
         levelCapLevel = gBattleMons[gBattlerAttacker].level - levelCapLevel;
         calc = (Random() & 255);
         
-        if (calc < levelCapLevel && CanBePutToSleep(gBattlerAttacker, gBattlerAttacker, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED
-        && IsUproarActive() == gBattlersCount)
+        if (calc < levelCapLevel && CanBePutToSleep(gBattlerAttacker, gBattlerAttacker, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD) == STATUS_CHANGE_WORKED)
         {
             gBattlescriptCurrInstr = BattleScript_IgnoresAndFallsAsleep;
             return 1;
@@ -5252,38 +5247,6 @@ u32 CalcSecondaryEffectChance(u32 battlerId, u32 moveEffect, u32 chance)
     return chance;
 }
 
-u32 IsUproarActive(void)
-{
-    u32 i;
-    
-    for (i = 0; i < gBattlersCount; i++)
-    {
-        if (gBattleMons[i].status2 & STATUS2_UPROAR)
-            break;
-    }
-    return i;
-}
-
-bool32 UproarWakeUpCheck(void)
-{
-    u32 ret = IsUproarActive();
-    
-    if (ret != gBattlersCount)
-    {
-        gBattleScripting.battler = ret;
-        
-        if (gBattlerTarget == 0xFF)
-            gBattlerTarget = ret;
-        else if (gBattlerTarget == ret)
-            gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-        else
-            gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-        
-        return TRUE;
-    }
-    return FALSE;
-}
-
 bool32 TryResetBattlerStatChanges(u32 battlerId)
 {
     u32 i;
@@ -5761,7 +5724,7 @@ u32 GetBattlerMoveType(u32 battlerId, u32 move)
                     type = gNaturalGiftTable[ITEM_TO_BERRY(item)].type;
                 break;
             case EFFECT_CHANGE_TYPE_ON_ITEM:
-                if (GetBattlerItemHoldEffect(battlerId, TRUE) == gBattleMoves[move].argument.holdEffect)
+                if (GetBattlerItemHoldEffect(battlerId, TRUE) == gBattleMoves[move].argument.generic)
                 {
                     u32 itemType = ItemId_GetHoldEffectParam(item);
                     

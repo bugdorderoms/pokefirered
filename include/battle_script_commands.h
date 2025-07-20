@@ -51,8 +51,6 @@ enum
 #define WINDOW_CLEAR            0x1
 #define WINDOW_x80              0x80
 
-bool32 UproarWakeUpCheck(void);
-u32 IsUproarActive(void);
 u32 GetHitDamageResult(u32 battlerId, u32 move, bool32 checkSturdy);
 u16 GetOHKOChance(u32 attacker, u32 target, u32 move);
 bool32 KanOHKOBattler(u32 attacker, u32 target, u32 move, bool32 checkKOAcc);

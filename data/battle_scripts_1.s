@@ -215,7 +215,7 @@ BattleScript_EffectSleep::
 	attackcanceler
 	attackstring
 	ppreduce
-	trysetsleep BS_TARGET, STATUS_CHANGE_FLAG_CHECK_UPROAR
+	trysetsleep BS_TARGET, 0
 	accuracycheck BattleScript_ButItFailed
 	attackanimation
 	waitstate
@@ -698,7 +698,7 @@ BattleScript_EffectRest::
 	attackcanceler
 	attackstring
 	ppreduce
-	trysetsleep BS_TARGET, STATUS_CHANGE_FLAG_ALL
+	trysetsleep BS_TARGET, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS | STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE
 	trysetrest BattleScript_AlreadyAtFullHp
 	pause B_WAIT_TIME_SHORT
 	printfromtable gRestUsedStringIds
@@ -1271,6 +1271,27 @@ BattleScript_EffectFakeOut::
 	jumpifnotfirstturn BattleScript_ButItFailedAtkStringPpReduce
 	goto BattleScript_HitFromAccCheck
 
+@ EFFECT_UPROAR @
+
+BattleScript_EffectUproar::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_HitFromAtkString
+	call BattleScript_EffectHitFromAtkString_Ret
+	prefaintmoveendall
+	tryfaintmon BS_TARGET
+	setbyte sBATTLER, 0
+BattleScript_EffectUproarWakeUpLoop::
+	jumpifnostatus BS_SCRIPTING, STATUS1_SLEEP, BattleScript_EffectUproarWakeUpIncrement
+	cureprimarystatus BS_SCRIPTING, BattleScript_EffectUproarWakeUpIncrement
+	updatestatusicon BS_SCRIPTING
+	printstring STRINGID_PKMNWOKEUPBYUPROAR
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_EffectUproarWakeUpIncrement::
+	addbyte sBATTLER, 1
+	jumpifbytenotequal sBATTLER, gBattlersCount, BattleScript_EffectUproarWakeUpLoop
+	goto BattleScript_MoveEnd
+
 @ EFFECT_STOCKPILE @
 
 BattleScript_EffectStockpile::
@@ -1561,7 +1582,7 @@ BattleScript_EffectYawn::
 	attackcanceler
 	attackstring
 	ppreduce
-	trysetsleep BS_TARGET, 0
+	trysetsleep BS_TARGET, STATUS_CHANGE_FLAG_IGNORE_UPROAR
 	accuracycheck BattleScript_ButItFailed
 	setyawn BattleScript_ButItFailed
 	attackanimation
@@ -2514,6 +2535,11 @@ BattleScript_MoveEffectToxic::
 BattleScript_MoveEffectConfusion::
 	chosenstatusanimation BS_EFFECT_BATTLER, ID_STATUS2, STATUS2_CONFUSION
 	printstring STRINGID_EFFBECAMECONFUSED
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_MoveEffectUproar::
+	printstring STRINGID_EFFCAUSEDANUPROAR
 	waitmessage B_WAIT_TIME_LONG
 	return
 
@@ -3832,7 +3858,7 @@ BattleScript_MoveUsedIsAsleep::
 	goto BattleScript_MoveEnd
 
 BattleScript_MoveUsedWokeUp::
-	printfromtable gWokeUpStringIds
+	printstring STRINGID_ATKWOKEUP
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_ATTACKER
 	return
@@ -4165,11 +4191,6 @@ BattleScript_PerishSongTakesLife::
 	tryfaintmon BS_ATTACKER
 	end2
 
-BattleScript_PrintUproarOverTurns::
-	printfromtable gUproarOverTurnStringIds
-	waitmessage B_WAIT_TIME_LONG
-	end2
-
 BattleScript_ThrashConfuses::
 	chosenstatusanimation BS_ATTACKER, ID_STATUS2, STATUS2_CONFUSION
 	printstring STRINGID_ATKFATIGUECONFUSION
@@ -4310,9 +4331,9 @@ BattleScript_FlushMessageBox::
 	flushmessagebox
 	return
 
-BattleScript_CantMakeAsleep::
+BattleScript_UproarPrevented::
     pause B_WAIT_TIME_SHORT
-	printfromtable gUproarAwakeStringIds
+	printstring STRINGID_UPROARKEPTDEFAWAKE
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
@@ -4972,17 +4993,6 @@ BattleScript_SmokeBallEscape::
 	printstring STRINGID_PKMNFLEDUSINGITS
 	waitmessage 0x40
 	end2
-
-BattleScript_MonWokeUpInUproar::
-	printstring STRINGID_ATKWOKEUPINUPROAR
-	waitmessage 0x40
-	updatestatusicon BS_ATTACKER
-	end2
-
-BattleScript_MoveEffectUproar::
-	printstring STRINGID_PKMNCAUSEDUPROAR
-	waitmessage 0x40
-	return
 
 BattleScript_BerryCurePrlzEnd2::
 	call BattleScript_BerryCureParRet

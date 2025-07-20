@@ -11962,7 +11962,6 @@ gMoveAnim_VACUUM_WAVE::
 	loadspriteimg ANIM_TAG_BLACK_SMOKE
 	loadspritepal ANIM_TAG_ICE_CHUNK @ White color
 	monbg ANIM_DEF_SIDE
-	setalpha 9, 8
 	playsewithpan SE_M_JUMP_KICK, SOUND_PAN_TARGET
 	createsprite gFistFootSpriteTemplate, ANIM_TARGET, 4, 0, 0, 8, ANIM_TARGET, 0
 	createsprite gVacuumWaveWhiteSmokeSpriteTemplate, ANIM_TARGET, 4, 0, -12, 104, 75
@@ -11972,7 +11971,6 @@ gMoveAnim_VACUUM_WAVE::
 	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 3, 0, 6, 1
 	waitforvisualfinish
 	clearmonbg ANIM_DEF_SIDE
-	blendoff
 	end
 
 @ Credits: Skeli and Blackuser
@@ -14593,7 +14591,7 @@ EchoedVoiceWave::
 @ Credits: Skeli
 gMoveAnim_CHIP_AWAY::
 	loadspritegfx ANIM_TAG_IMPACT
-	monbg ANIM_ATK_SIDE
+	monbg ANIM_DEF_SIDE
 	setalpha 12, 8
 	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATTACKER, 2, 0, 9, RGB_WHITE
 	waitforvisualfinish
@@ -14605,7 +14603,7 @@ gMoveAnim_CHIP_AWAY::
 	waitforvisualfinish
 	createvisualtask AnimTask_BlendSelected, 10, F_PAL_ATTACKER, 2, 9, 0, RGB_WHITE
 	waitforvisualfinish
-	clearmonbg ANIM_ATK_SIDE
+	clearmonbg ANIM_DEF_SIDE
 	blendoff
 	end
 

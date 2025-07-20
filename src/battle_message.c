@@ -399,13 +399,6 @@ static const u8 sText_GotAwaySafely[] = _("{PLAY_SE SE_FLEE}Got away safely!\p")
 
 
 
-static const u8 sText_PkmnUproarKeptAwake[] = _("But {B_SCR_ACTIVE_NAME_WITH_PREFIX}'s Uproar\nkept it awake!");
-static const u8 sText_PkmnCausedUproar[] = _("{B_ATK_NAME_WITH_PREFIX} caused\nan Uproar!");
-static const u8 sText_PkmnMakingUproar[] = _("{B_ATK_NAME_WITH_PREFIX} is making\nan Uproar!");
-static const u8 sText_PkmnCalmedDown[] = _("{B_ATK_NAME_WITH_PREFIX} calmed down.");
-static const u8 sText_PkmnCantSleepInUproar[] = _("But {B_DEF_NAME_WITH_PREFIX} can't\nsleep in an Uproar!");
-static const u8 sText_PkmnCantSleepInUproar2[] = _("But {B_DEF_NAME_WITH_PREFIX} can't\nsleep in an Uproar!");
-static const u8 sText_UproarKeptPkmnAwake[] = _("But the Uproar kept\n{B_DEF_NAME_WITH_PREFIX} awake!");
 static const u8 sText_PkmnStayedAwakeUsing[] = _("{B_DEF_NAME_WITH_PREFIX} stayed awake\nusing its {B_DEF_ABILITY}!");
 static const u8 sText_PkmnSwitchedItems[] = _("{B_ATK_NAME_WITH_PREFIX} switched\nitems with its opponent!");
 static const u8 sText_PkmnObtainedX[] = _("{B_ATK_NAME_WITH_PREFIX} obtained\n{B_BUFF1}.");
@@ -428,28 +421,6 @@ static const u8 sText_PkmnsItemRestoredHealth[] = _("{B_SCR_ACTIVE_NAME_WITH_PRE
 static const u8 sText_PkmnsItemRestoredPP[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\nrestored {B_BUFF1}'s PP!");
 static const u8 sText_PkmnsItemRestoredStatus[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\nrestored its status!");
 static const u8 sText_PkmnsItemRestoredHPALittle[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\nrestored its HP a little!");
-
-
-
-
-
-
-const u16 gUproarOverTurnStringIds[] = {
-    STRINGID_PKMNMAKINGUPROAR,
-    STRINGID_PKMNCALMEDDOWN
-};
-
-const u16 gUproarAwakeStringIds[] = {
-    STRINGID_PKMNCANTSLEEPINUPROAR2,
-    STRINGID_UPROARKEPTPKMNAWAKE,
-    STRINGID_PKMNSTAYEDAWAKEUSING,
-    STRINGID_ITDOESNTAFFECT
-};
-
-
-
-
-
 
 
 
@@ -521,12 +492,6 @@ const u16 gLeechSeedStringIds[] =
     [B_MSG_SEEDED]                  = STRINGID_DEFWASSEEDED,
     [B_MSG_EVADED_ATTACK]           = STRINGID_DEFEVADEDATTACK,
     [B_MSG_LEECH_SEED_DOEST_AFFECT] = STRINGID_ITDOESNTAFFECT
-};
-
-const u16 gWokeUpStringIds[] =
-{
-    [B_MSG_WOKEUP]        = STRINGID_ATKWOKEUP,
-    [B_MSG_UPROAR_WOKEUP] = STRINGID_ATKWOKEUPINUPROAR
 };
 
 const u16 gPrimalWeatherBlocksAttackStringIds[] =
@@ -804,7 +769,9 @@ const u16 gEndTurnEffectsEndStringIds[] =
     [B_MSG_TWISTED_DIMENSIONS_NORMALISED] = STRINGID_TWISTEDDIMENSIONSNORMALISED,
     [B_MSG_WONDER_ROOM_WORE_OFF]          = STRINGID_BUFF1OFFNORMALISEDBUFF2BUFF3,
     [B_MSG_FREED_FROM_TELEKINESIS]        = STRINGID_ATKFREEDFROMTELEKINESIS,
-    [B_MSG_MAGIC_ROOM_WORE_OFF]           = STRINGID_BUFF1OFFNORMALISEDITEMEFFECTS
+    [B_MSG_MAGIC_ROOM_WORE_OFF]           = STRINGID_BUFF1OFFNORMALISEDITEMEFFECTS,
+    [B_MSG_MAKING_UPROAR]                 = STRINGID_ATKISMAKINGANUPROAR,
+    [B_MSG_CALMED_DOWN]                   = STRINGID_ATKCALMEDDOWN
 };
 
 // String tables
@@ -917,7 +884,7 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_DEFSAPPEDBYLEECHSEED - BATTLESTRINGS_ID_ADDER]          = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX}'s health is sapped by Leech Seed!"),
     [STRINGID_ATKFASTASLEEP - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is fast asleep."),
     [STRINGID_ATKWOKEUP - BATTLESTRINGS_ID_ADDER]                     = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} woke up!"),
-    [STRINGID_ATKWOKEUPINUPROAR - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} woke up in the uproar!"),
+    [STRINGID_UPROARKEPTDEFAWAKE - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("But the uproar kept {B_DEF_NAME_WITH_PREFIX} awake!"),
     [STRINGID_DEFENDUREDHIT - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} endured the hit!"),
     [STRINGID_ONEHITKO - BATTLESTRINGS_ID_ADDER]                      = COMPOUND_STRING("It's a one-hit KO!"),
     [STRINGID_ATKSTORINGENERGY - BATTLESTRINGS_ID_ADDER]              = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is storing energy!"),
@@ -1257,6 +1224,10 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_DEFTOOKKINDOFFER - BATTLESTRINGS_ID_ADDER]              = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} took the kind offer!"),
     [STRINGID_EFFSTATCHANGESREMOVED - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX}'s stat changes where removed!"),
     [STRINGID_ATKANDPKMNSWITCHEDPLACES - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} and {B_SCR_ACTIVE_NAME_WITH_PREFIX} switched places!"),
+    [STRINGID_PKMNWOKEUPBYUPROAR - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} was woken up by the uproar!"),
+    [STRINGID_EFFCAUSEDANUPROAR - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX} caused an uproar!"),
+    [STRINGID_ATKISMAKINGANUPROAR - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is making an uproar!"),
+    [STRINGID_ATKCALMEDDOWN - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} calmed down."),
     
     /*
     [STRINGID_PKMNFLEDUSINGITS - BATTLESTRINGS_ID_ADDER]              = sText_PkmnFledUsingIts,
@@ -1267,13 +1238,6 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_PKMNOBTAINEDX - BATTLESTRINGS_ID_ADDER]                 = sText_PkmnObtainedX,
     [STRINGID_PKMNOBTAINEDX2 - BATTLESTRINGS_ID_ADDER]                = sText_PkmnObtainedX2,
     [STRINGID_PKMNOBTAINEDXYOBTAINEDZ - BATTLESTRINGS_ID_ADDER]       = sText_PkmnObtainedXYObtainedZ,
-    [STRINGID_PKMNUPROARKEPTAWAKE - BATTLESTRINGS_ID_ADDER]           = sText_PkmnUproarKeptAwake,
-    [STRINGID_PKMNCAUSEDUPROAR - BATTLESTRINGS_ID_ADDER]              = sText_PkmnCausedUproar,
-    [STRINGID_PKMNMAKINGUPROAR - BATTLESTRINGS_ID_ADDER]              = sText_PkmnMakingUproar,
-    [STRINGID_PKMNCALMEDDOWN - BATTLESTRINGS_ID_ADDER]                = sText_PkmnCalmedDown,
-    [STRINGID_PKMNCANTSLEEPINUPROAR - BATTLESTRINGS_ID_ADDER]         = sText_PkmnCantSleepInUproar,
-    [STRINGID_PKMNCANTSLEEPINUPROAR2 - BATTLESTRINGS_ID_ADDER]        = sText_PkmnCantSleepInUproar2,
-    [STRINGID_UPROARKEPTPKMNAWAKE - BATTLESTRINGS_ID_ADDER]           = sText_UproarKeptPkmnAwake,
     [STRINGID_PKMNSTAYEDAWAKEUSING - BATTLESTRINGS_ID_ADDER]          = sText_PkmnStayedAwakeUsing,
     [STRINGID_PKMNSWITCHEDITEMS - BATTLESTRINGS_ID_ADDER]             = sText_PkmnSwitchedItems,
     [STRINGID_PKMNCUTSATTACKWITH - BATTLESTRINGS_ID_ADDER]            = sText_PkmnCutsAttackWith,

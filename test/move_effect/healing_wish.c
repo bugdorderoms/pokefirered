@@ -3,7 +3,7 @@
 
 ASSUMPTIONS {
     ASSUME(gBattleMoves[MOVE_HEALING_WISH].effect == EFFECT_HEALING_WISH);
-    ASSUME(gBattleMoves[MOVE_HEALING_WISH].argument.healReplacementCase == HR_CASE_HEALING_WISH);
+    ASSUME(gBattleMoves[MOVE_HEALING_WISH].argument.generic == HR_CASE_HEALING_WISH);
 }
 
 DOUBLE_BATTLE_TEST("Healing Wish activates when ally switches to it's slot using Ally Switch")

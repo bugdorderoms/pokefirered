@@ -521,6 +521,11 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
         .battleScript = BattleScript_EffectFakeOut,
     },
     
+    [EFFECT_UPROAR] =
+    {
+        .battleScript = BattleScript_EffectUproar,
+    },
+    
     [EFFECT_STOCKPILE] =
     {
         .battleScript = BattleScript_EffectStockpile,

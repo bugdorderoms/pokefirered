@@ -2927,7 +2927,7 @@ static void atk42_trysetsleep(void)
             gBattlescriptCurrInstr = BattleScript_SafeguardProtected;
             break;
         case STATUS_CHANGE_FAIL_UPROAR:
-            gBattlescriptCurrInstr = BattleScript_CantMakeAsleep;
+            gBattlescriptCurrInstr = BattleScript_UproarPrevented;
             break;
         case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
             gBattlescriptCurrInstr = BattleScript_AbilityPreventSleep;
@@ -6154,7 +6154,7 @@ static void atk76_various(void)
             switch (gBattleMons[battlerId].status1.id)
             {
                 case STATUS1_SLEEP:
-                    if (CanBePutToSleep(battlerId, gBattlerTarget, STATUS_CHANGE_FLAG_CHECK_UPROAR) == STATUS_CHANGE_WORKED)
+                    if (CanBePutToSleep(battlerId, gBattlerTarget, 0) == STATUS_CHANGE_WORKED)
                         moveEffect = MOVE_EFFECT_SLEEP;
                     break;
                 case STATUS1_POISON:
@@ -6484,7 +6484,7 @@ static void atk80_manipulatedamage(void)
             gBattleMoveDamage = gBattleMons[gBattlerAttacker].level;
             break;
         case ATK80_DMG_DRAINED:
-            gBattleMoveDamage = (gHpDealt * gBattleMoves[gCurrentMove].argument.amount / 100);
+            gBattleMoveDamage = (gHpDealt * gBattleMoves[gCurrentMove].argument.generic / 100);
             
             if (gBattleMoveDamage == 0)
                 gBattleMoveDamage = 1;
@@ -6817,7 +6817,7 @@ static void atk8C_trysettargettype(void)
         gBattlescriptCurrInstr = cmd->failPtr;
     else
     {
-        typeToSet = gBattleMoves[gCurrentMove].argument.type;
+        typeToSet = gBattleMoves[gCurrentMove].argument.generic;
         
         if (GetBattlerType(gBattlerTarget, 1) == typeToSet && GetBattlerType(gBattlerTarget, 2) == typeToSet)
             gBattlescriptCurrInstr = cmd->failPtr;
@@ -7258,7 +7258,7 @@ static void atkA1_trycounterattack(void)
 {
     CMD_ARGS(const u8 *failPtr);
 
-    switch (gBattleMoves[gCurrentMove].argument.split)
+    switch (gBattleMoves[gCurrentMove].argument.generic)
     {
         case SPLIT_PHYSICAL:
             if (TryCounterAttack(gProtectStructs[gBattlerAttacker].physicalBattlerId, gProtectStructs[gBattlerAttacker].physicalDmg, 2))
@@ -7512,7 +7512,7 @@ static void atkAD_tryspiteppreduce(void)
         
         if (movePos != MAX_MON_MOVES && gBattleMons[gBattlerTarget].pp[movePos])
         {
-            u32 ppToDeduct = gBattleMoves[gCurrentMove].argument.amount;
+            u32 ppToDeduct = gBattleMoves[gCurrentMove].argument.generic;
 
             if (gBattleMons[gBattlerTarget].pp[movePos] < ppToDeduct)
                 ppToDeduct = gBattleMons[gBattlerTarget].pp[movePos];
@@ -7545,7 +7545,7 @@ static void atkAE_healpartystatus(void)
     switch (cmd->caseId)
     {
         case 0: // Choose string
-            gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument.stringId;
+            gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument.generic;
             gBattlescriptCurrInstr = cmd->nextInstr;
             break;
         case 1: // Heal status
@@ -9320,7 +9320,7 @@ void BS_TryRestoreMirrorArmorOriginalAttacker(void)
 void BS_ArgumentToMoveDamage(void)
 {
     NATIVE_ARGS();
-    gBattleMoveDamage = gBattleMoves[gCurrentMove].argument.amount;
+    gBattleMoveDamage = gBattleMoves[gCurrentMove].argument.generic;
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
@@ -9368,7 +9368,7 @@ void BS_SetHealingWish(void)
 {
     NATIVE_ARGS();
 
-    switch (gBattleMoves[gCurrentMove].argument.healReplacementCase)
+    switch (gBattleMoves[gCurrentMove].argument.generic)
     {
         case HR_CASE_HEALING_WISH:
             gBattleStruct->battlers[gBattlerAttacker].storedHealingWish = TRUE;
@@ -9482,7 +9482,7 @@ void BS_TrySetAbility(void)
 {
     NATIVE_ARGS(const u8 *ptr);
 
-    u32 newAbility = gBattleMoves[gCurrentMove].argument.abilityId;
+    u32 newAbility = gBattleMoves[gCurrentMove].argument.generic;
     
     if (gBattleMons[gBattlerTarget].ability == newAbility || gAbilities[gBattleMons[gBattlerTarget].ability].cantBeOverwritten)
         gBattlescriptCurrInstr = cmd->ptr;
@@ -9523,7 +9523,7 @@ void BS_UpdateRecoilEvolutionTracker(void)
 void BS_IncrementTripleKickPower(void)
 {
     NATIVE_ARGS();
-    gBattleScripting.tripleKickPower += gBattleMoves[gCurrentMove].argument.amount;
+    gBattleScripting.tripleKickPower += gBattleMoves[gCurrentMove].argument.generic;
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
