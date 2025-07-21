@@ -706,8 +706,10 @@ void Randomly(u32 sourceLine, u32 passes, u32 trials, struct RandomlyContext ctx
 
 #define RNGSeed(seed) RNGSeed_(__LINE__, seed)
 
-#define PLAYER(species) for (OpenPokemon(__LINE__, B_SIDE_PLAYER, species); gBattleTestRunnerState->data.currentMon; ClosePokemon(__LINE__))
-#define OPPONENT(species) for (OpenPokemon(__LINE__, B_SIDE_OPPONENT, species); gBattleTestRunnerState->data.currentMon; ClosePokemon(__LINE__))
+#define PARTY_POKEMON(species, side, ...) for (OpenPokemon(__LINE__, side, species, DEFAULT(MON_GENDERLESS, __VA_ARGS__)); gBattleTestRunnerState->data.currentMon; ClosePokemon(__LINE__))
+
+#define PLAYER(species, ...) PARTY_POKEMON(species, B_SIDE_PLAYER, __VA_ARGS__)
+#define OPPONENT(species, ...) PARTY_POKEMON(species, B_SIDE_OPPONENT, __VA_ARGS__)
 
 #define Nature(nature) Nature_(__LINE__, nature)
 #define Ability(ability) Ability_(__LINE__, ability)
@@ -724,7 +726,7 @@ void Randomly(u32 sourceLine, u32 passes, u32 trials, struct RandomlyContext ctx
 #define Friendship(friendship) Friendship_(__LINE__, friendship)
 #define Status1(status1) Status1_(__LINE__, status1)
 
-void OpenPokemon(u32 sourceLine, u32 side, u32 species);
+void OpenPokemon(u32 sourceLine, u32 side, u32 species, u32 gender);
 void ClosePokemon(u32 sourceLine);
 
 void RNGSeed_(u32 sourceLine, u32 seed);

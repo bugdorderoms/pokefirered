@@ -951,7 +951,7 @@ const struct TestRunner gBattleTestRunner =
     .handleExitWithResult = BattleTest_HandleExitWithResult,
 };
 
-static void CreateTestMon(u32 species)
+static void CreateTestMon(u32 species, u32 gender)
 {
     u32 i, data;
     
@@ -959,11 +959,11 @@ static void CreateTestMon(u32 species)
     {
         .species = species,
         .level = 100,
-        .forcedGender = MON_MALE,
+        .forcedGender = MON_GENDERLESS,
         .otIdType = OT_ID_PRESET,
         .fixedOtId = 0,
         .hasFixedPersonality = TRUE,
-        .fixedPersonality = 0,
+        .fixedPersonality = gender == MON_MALE ? 0xFFFF : 0,
         .shinyType = GENERATE_SHINY_LOCKED,
         .shinyRollType = SHINY_ROLL_NORMAL,
         .forcedNature = DATA.nature,
@@ -978,7 +978,7 @@ static void CreateTestMon(u32 species)
         SetMonData(DATA.currentMon, MON_DATA_MOVE1 + i, &data);
 }
 
-void OpenPokemon(u32 sourceLine, u32 side, u32 species)
+void OpenPokemon(u32 sourceLine, u32 side, u32 species, u32 gender)
 {
     u8 *partySize;
     struct Pokemon *party;
@@ -1002,7 +1002,7 @@ void OpenPokemon(u32 sourceLine, u32 side, u32 species)
     DATA.nature = NATURE_HARDY;
     (*partySize)++;
     
-    CreateTestMon(species);
+    CreateTestMon(species, gender);
 }
 
 void ClosePokemon(u32 sourceLine)

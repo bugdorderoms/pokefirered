@@ -4940,7 +4940,7 @@ static void atk60_handleabilitypopup(void)
                 animId = B_ANIM_UPDATE_ABILITY_POP_UP;
             else
             {
-                if (gBattleScripting.fixedAbilityPopUp)
+                if (gBattleScripting.fixedAbilityPopUp && isPopupActive)
                     isPopupActive = FALSE; // Don't reactivate
                 else
                 {
