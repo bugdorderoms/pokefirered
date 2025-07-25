@@ -12208,7 +12208,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SKY_DROP] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Sky Drop"),
+        .description = COMPOUND_STRING("It takes the foe\n"
+                                       "into the sky, then\n"
+                                       "drops it during the\n"
+                                       "next turn."),
+        .animScript = gMoveAnim_SKY_DROP,
         .effect = EFFECT_SKY_DROP,
         .power = 60,
         .type = TYPE_FLYING,
@@ -12225,13 +12230,25 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenParentalBond = TRUE,
             .gravityBanned = TRUE,
         },
+        .argument = {
+            .twoTurns = {
+                .stringId = B_MSG_TOOK_INTO_SKY,
+                .statusOrweather = COMPRESS_BITS(STATUS3_SKY_DROP_ATTACKER),
+                .statusToTarget = COMPRESS_BITS(STATUS3_SKY_DROP_TARGET)
+            }
+        },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
     },
 
     [MOVE_SHIFT_GEAR] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Shift Gear"),
+        .description = COMPOUND_STRING("It rotates its\n"
+                                       "gears, raising its\n"
+                                       "Attack and sharply\n"
+                                       "raising its Speed."),
+        .animScript = gMoveAnim_SHIFT_GEAR,
         .effect = EFFECT_SHIFT_GEAR,
         .type = TYPE_STEEL,
         .pp = 10,

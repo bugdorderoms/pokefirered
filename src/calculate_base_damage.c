@@ -211,7 +211,7 @@ static s32 CalculateDamage(u32 attacker, u32 defender, struct DamageCalc *damage
         damage *= 2;
     
     // In air modifier
-    if (gBattleMoves[move].flags.hitInAirDoubleDmg && (gStatuses3[defender] & STATUS3_ON_AIR))
+    if (gBattleMoves[move].flags.hitInAirDoubleDmg && (gStatuses3[defender] & (STATUS3_ON_AIR | STATUS3_SKY_DROPPED)))
         damage *= 2;
     
     // Screens modifier

@@ -127,7 +127,7 @@
 // per-battler statuses
 // These are removed after exiting the battle or switching out
 #define STATUS3_TELEKINESIS           (1 << 0)
-#define STATUS3_SKY_DROPPED           (1 << 1) // The battler that was held
+#define STATUS3_VANISHED              (1 << 1)
 #define STATUS3_LEECHSEED             (1 << 2)
 #define STATUS3_ALWAYS_HITS           ((1 << 3) | (1 << 4))
 #define STATUS3_ALWAYS_HITS_TURN(num) (((num) << 3) & STATUS3_ALWAYS_HITS)
@@ -149,8 +149,10 @@
 #define STATUS3_GASTRO_ACID           (1 << 20)
 #define STATUS3_MAGNET_RISE           (1 << 21)
 #define STATUS3_SMACKED_DOWN          (1 << 22)
-#define STATUS3_VANISHED              (1 << 23)
-#define STATUS3_SEMI_INVULNERABLE     (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER | STATUS3_VANISHED)
+#define STATUS3_SKY_DROP_ATTACKER     (1 << 23)
+#define STATUS3_SKY_DROP_TARGET       (1 << 24)
+#define STATUS3_SEMI_INVULNERABLE     (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER | STATUS3_VANISHED | STATUS3_SKY_DROPPED)
+#define STATUS3_SKY_DROPPED           (STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)
 
 // Not really sure what a "hitmarker" is.
 #define HITMARKER_SKIP_DMG_TRACK       (1 << 0)

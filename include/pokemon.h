@@ -282,7 +282,7 @@ struct BattleMove
              u32 numAdditionalEffects:2; // Max 3 effects.
              u32 unused:3;
     /*0x14*/ union {
-                struct { u16 stringId; u16 statusOrweather; } twoTurns; // Weather for two turns moves, status for semi invulnerable moves
+                struct { u16 stringId; u8 statusOrweather; u8 statusToTarget; } twoTurns; // Weather for two turns moves, status for semi invulnerable moves. Status target applies to the target.
                 struct { u16 stringId; u16 animationId; } futureAttack;
                 struct { u16 weather; u16 debuffWeather; } neverMissInWeather;
                 struct { u16 weatherId; u16 stringId; } setWeather;
@@ -326,7 +326,7 @@ struct ALIGNED_NO_PADDING(2) Ability
              u8 cantBeSuppressed:1; // Can't be suppressed by Gastro Acid or Neutralizing Gas.
              u8 cantBeOverwritten:1; // Can't be replaced by Entrainment, Worry Seed or Simple Beam (but can be by Mummy).
              u8 breakable:1; // Can be bypassed by Mold Breaker.
-             u8 cantAffectGhost:1; // Can't activate on switch in and affect the Battle Tower's ghost
+             u8 cantAffectGhost:1; // Can't activate on switch in and affect the Battle Tower's ghost.
              u8 unused:1;
 };
 
@@ -489,6 +489,7 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
 void DrawSpindaSpots(u32 species, u32 personality, u8 *dest, bool32 isFrontPic);
 void EvolutionRenameMon(struct Pokemon *mon, u32 oldSpecies, u32 newSpecies);
 u32 GetLinkTrainerFlankId(u32 linkPlayerId);
+bool32 IsLinkPlayerFromHoenn(u32 linkPlayerId);
 s32 GetBattlerMultiplayerId(u32 a1);
 void AdjustFriendship(struct Pokemon *mon, u32 event);
 bool32 ModifyMonFriendship(struct Pokemon *mon, s8 friendshipDelta);

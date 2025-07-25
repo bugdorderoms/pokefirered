@@ -79,6 +79,7 @@ u32 GetBattlerForBattleScript(u32 caseId);
 void MarkBattlerForControllerExec(u32 battlerId);
 void MarkBattlerReceivedLinkData(u32 battlerId);
 void CancelMultiTurnMoves(u32 battler);
+void BringDownInAirBattler(u32 battlerId);
 bool32 WasUnableToUseMove(u32 battler);
 void PrepareStringBattle(u32 stringId, u32 battler);
 void ResetSentPokesToOpponentValue(void);

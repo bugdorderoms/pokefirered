@@ -211,6 +211,8 @@ enum
     EFFECT_SHELL_SMASH,
     EFFECT_HEAL_PULSE,
     EFFECT_HEX,
+    EFFECT_SKY_DROP,
+    EFFECT_SHIFT_GEAR,
     EFFECTS_COUNT,
 };
 
@@ -235,7 +237,6 @@ enum
 #define EFFECT_TWO_TYPED_MOVE               273
 #define EFFECT_ELECTRIFY                    278
 #define EFFECT_REFLECT_TYPE                 280
-#define EFFECT_SHIFT_GEAR                   289
 #define EFFECT_DEFENSE_UP_3                 290
 #define EFFECT_NOBLE_ROAR                   291
 #define EFFECT_VENOM_DRENCH                 292
@@ -308,7 +309,6 @@ enum
 #define EFFECT_OCTOLOCK                     376
 #define EFFECT_CLANGOROUS_SOUL              377
 #define EFFECT_BOLT_BEAK                    378
-#define EFFECT_SKY_DROP                     379
 #define EFFECT_EXPANDING_FORCE              380
 #define EFFECT_SCALE_SHOT                   381
 #define EFFECT_METEOR_BEAM                  382

@@ -157,6 +157,17 @@ const struct SpriteTemplate gSwirlingDirtSpriteTemplate =
     .callback = AnimParticleInVortex,
 };
 
+const struct SpriteTemplate gGearSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_GEAR,
+    .paletteTag = ANIM_TAG_GEAR,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_SpinningBone,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
 // Moves a bone projectile towards the target mon, which moves like a boomerang. After hitting the target mon, it comes back to the user.
 // No args.
 static void AnimBonemerangProjectile(struct Sprite *sprite)

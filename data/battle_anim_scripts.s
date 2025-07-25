@@ -1708,8 +1708,6 @@ gMoveAnim_GUILLOTINE::
 
 gMoveAnim_RAZOR_WIND::
 	choosetwoturnanim RazorWindSetUp, RazorWindUnleash
-RazorWindEnd::
-	end
 
 RazorWindSetUp::
 	loadspritegfx ANIM_TAG_GUST
@@ -1719,7 +1717,7 @@ RazorWindSetUp::
 	createsprite gRazorWindTornadoSpriteTemplate, ANIM_ATTACKER, 2, 0, 16, 16, 170, 7, 40
 	waitforvisualfinish
 	playsewithpan SE_M_GUST2, SOUND_PAN_ATTACKER
-	goto RazorWindEnd
+	end
 
 RazorWindUnleash::
 	loadspritegfx ANIM_TAG_AIR_WAVE_2
@@ -1740,7 +1738,7 @@ RazorWindUnleash::
 	waitforvisualfinish
 	clearmonbg ANIM_DEF_SIDE
 	blendoff
-	goto RazorWindEnd
+	end
 
 @ Credits: Blackuser
 gMoveAnim_SWORDS_DANCE::
@@ -1851,14 +1849,11 @@ gMoveAnim_WHIRLWIND::
 gMoveAnim_FLY::
 	loadspritegfx ANIM_TAG_ROUND_SHADOW
 	choosetwoturnanim FlySetUp, FlyUnleash
-FlyEnd::
-	end
 
 FlySetUp::
 	playsewithpan SE_M_FLY, SOUND_PAN_ATTACKER
-	createsprite gFlyBallUpSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 13, 336
-	waitforvisualfinish
-	goto FlyEnd
+	createsprite gFlyBallUpSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 13, 336, ANIM_ATTACKER
+	end
 
 FlyUnleash::
 	loadspritegfx ANIM_TAG_IMPACT
@@ -1873,7 +1868,7 @@ FlyUnleash::
 	waitforvisualfinish
 	clearmonbg ANIM_DEF_SIDE
 	blendoff
-	goto FlyEnd
+	end
 
 gMoveAnim_BIND::
 	createvisualtask AnimTask_SwayMon, 5, 0, 6, 3328, 4, ANIM_ATTACKER, TRUE
@@ -3370,12 +3365,10 @@ gMoveAnim_SOLAR_BEAM::
 	callreteq ENUM_WEATHER_SUN, SolarBeamSetUpAnim
 	callreteq ENUM_WEATHER_SUN_PRIMAL, SolarBeamSetUpAnim
 	choosetwoturnanim SolarBeamSetUp, SolarBeamUnleash
-SolarBeamEnd::
-	end
 
 SolarBeamSetUp:
 	call SolarBeamSetUpAnim
-	goto SolarBeamEnd
+	end
 
 SolarBeamSetUpAnim::
 	monbg ANIM_ATK_SIDE
@@ -3442,7 +3435,7 @@ SolarBeamUnleash::
 	waitforvisualfinish
 	restorebg
 	waitbgfadein
-	goto SolarBeamEnd
+	end
 
 SolarBeamUnleashOrbs::
 	createsprite gSolarbeamBigOrbSpriteTemplate, ANIM_TARGET, 3, 15, 0, 20, 0
@@ -3874,8 +3867,6 @@ FissureDirtPlumeClose::
 gMoveAnim_DIG::
 	loadspritegfx ANIM_TAG_DIRT_MOUND
 	choosetwoturnanim DigSetUp, DigUnleash
-DigEnd::
-	end
 
 DigSetUp::
 	loadspritegfx ANIM_TAG_MUD_SAND
@@ -3894,7 +3885,7 @@ DigSetUp::
 	clearmonbg_23 ANIM_ATK_SIDE
 	delay 1
 	createvisualtask AnimTask_DigDownMovement, 2, TRUE
-	goto DigEnd
+	end
 
 DigThrowDirt::
 	createsprite gDirtPlumeSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 12, 4, -16, 18
@@ -3919,7 +3910,7 @@ DigUnleash::
 	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 5, 0, 6, 1
 	playsewithpan SE_M_MEGA_KICK2, SOUND_PAN_ATTACKER
 	clearmonbg ANIM_ATK_SIDE
-	goto DigEnd
+	end
 
 gMoveAnim_TOXIC::
 	loadspritegfx ANIM_TAG_TOXIC_BUBBLE
@@ -4350,14 +4341,12 @@ EndureEffect::
 
 gMoveAnim_BIDE::
 	choosetwoturnanim BideSetUp, BideRelease
-BideEndAnim::
-	end
 
 BideSetUp::
 	loopsewithpan SE_M_TAKE_DOWN, SOUND_PAN_ATTACKER, 9, 2
 	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 2, 2, 0, 11, RGB_RED
 	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 1, 0, 32, 1
-	goto BideEndAnim
+	end
 
 BideRelease::
 	loadspritegfx ANIM_TAG_IMPACT
@@ -4387,7 +4376,7 @@ BideRelease::
 	waitforvisualfinish
 	clearmonbg ANIM_DEF_SIDE
 	blendoff
-	goto BideEndAnim
+	end
 
 gMoveAnim_METRONOME::
 	loadspritegfx ANIM_TAG_FINGER
@@ -4646,13 +4635,11 @@ gMoveAnim_SWIFT::
 
 gMoveAnim_SKULL_BASH::
 	choosetwoturnanim SkullBashSetUp, SkullBashAttack
-SkullBashEnd::
-	end
 
 SkullBashSetUp::
 	call SkullBashSetUpHeadDown
 	call SkullBashSetUpHeadDown
-	goto SkullBashEnd
+	end
 
 SkullBashSetUpHeadDown::
 	createsprite gSlideMonToOffsetAndBackSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -24, 0, FALSE, 10, FALSE
@@ -4677,7 +4664,7 @@ SkullBashAttack::
 	loopsewithpan SE_M_MEGA_KICK2, SOUND_PAN_TARGET, 8, 3
 	waitforvisualfinish
 	createvisualtask AnimTask_SkullBashPosition, 2, 1
-	goto SkullBashEnd
+	end
 
 gMoveAnim_SPIKE_CANNON::
 	loadspritegfx ANIM_TAG_NEEDLE
@@ -4962,8 +4949,6 @@ gMoveAnim_LOVELY_KISS::
 @ Credits: Blackuser
 gMoveAnim_SKY_ATTACK::
 	choosetwoturnanim SkyAttackSetUp, SkyAttackUnleash
-SkyAttackEnd::
-	end
 
 SkyAttackSetUp::
 	loadspriteimg ANIM_TAG_FOCUS_ENERGY
@@ -4982,7 +4967,7 @@ SkyAttackSetUp::
 	waitforvisualfinish
 	delay 5
 	createvisualtask AnimTask_BlendExcept, 10, F_PAL_EXCEPT_TARGET, 0, 8, 0, RGB_BLACK
-	goto SkyAttackEnd
+	end
 	
 SkyAttackCloakEffect::
 	createsprite gSkyAttackCloakEnergySpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -24, 26, 2
@@ -5017,7 +5002,7 @@ SkyAttackUnleash::
 	waitforvisualfinish
 	clearmonbg ANIM_ATK_SIDE
 	call UnsetScrollingBg
-	goto SkyAttackEnd
+	end
 
 gMoveAnim_TRANSFORM::
 	monbg ANIM_ATK_SIDE
@@ -10176,13 +10161,11 @@ gMoveAnim_BOUNCE::
 	loadspritegfx ANIM_TAG_ROUND_SHADOW
 	loadspritegfx ANIM_TAG_IMPACT
 	choosetwoturnanim BounceSetUp, BounceUnleash
-BounceEnd::
-	end
 
 BounceSetUp::
 	playsewithpan SE_M_TELEPORT, SOUND_PAN_ATTACKER
 	createsprite gBounceBallShrinkSpriteTemplate, ANIM_ATTACKER, 2, 0, 0
-	goto BounceEnd
+	end
 
 BounceUnleash::
 	monbg ANIM_DEF_SIDE
@@ -10196,7 +10179,7 @@ BounceUnleash::
 	waitforvisualfinish
 	clearmonbg ANIM_DEF_SIDE
 	blendoff
-	goto BounceEnd
+	end
 
 @ Credits: Blackuser
 gMoveAnim_MUD_SHOT::
@@ -14213,7 +14196,7 @@ gMoveAnim_HEAVY_SLAM::
 	playsewithpan SE_M_TAKE_DOWN, SOUND_PAN_ATTACKER
 	createsprite gVerticalDipSpriteTemplate, ANIM_ATTACKER, 2, 6, 1, ANIM_ATTACKER
 	delay 7
-	createsprite gHeavySlamMetalBodyUpSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 13, 336
+	createsprite gHeavySlamMetalBodyUpSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 13, 336, ANIM_ATTACKER
 	waitforvisualfinish
 	delay 47
 	loopsewithpan SE_M_STRENGTH, SOUND_PAN_TARGET, 8, 2
@@ -14807,4 +14790,34 @@ gMoveAnim_HEX::
 	createvisualtask AnimTask_BlendSelected, 10, F_PAL_BG, 0, 16, 0, RGB(10, 2, 19) @ Purple color
 	waitforvisualfinish
 	clearmonbg ANIM_TARGET
+	end
+
+@ Credits: ghoulslash
+gMoveAnim_SKY_DROP::
+	loadspritegfx ANIM_TAG_ROUND_SHADOW
+	choosetwoturnanim SkyDropFirstTurn, SkyDropFreed
+
+SkyDropFirstTurn::
+	invisible ANIM_ATTACKER
+	playsewithpan SE_M_STRING_SHOT, SOUND_PAN_ATTACKER
+	createsprite gSkyDropBallSpriteTemplate, ANIM_TARGET, 2, 0, 0, 0, 0, 30, 0
+	waitforvisualfinish
+	playsewithpan SE_M_FLY, SOUND_PAN_TARGET
+	createsprite gFlyBallUpSpriteTemplate, ANIM_TARGET, 2, 0, 0, 13, 336, ANIM_TARGET
+	end
+
+SkyDropFreed::
+	loadspritegfx ANIM_TAG_IMPACT
+	visible ANIM_TARGET
+	goto BounceUnleash
+
+@ Credits: Skeli
+gMoveAnim_SHIFT_GEAR::
+	loadspritegfx ANIM_TAG_GEAR
+	monbg ANIM_ATTACKER
+	playsewithpan SE_ESCALATOR, SOUND_PAN_ATTACKER
+	createsprite gGearSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -13, 8, 101, 10, FALSE, 0
+	createsprite gGearSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 13, -8, 101, 10, FALSE, 0
+	waitforvisualfinish
+	clearmonbg ANIM_ATTACKER
 	end

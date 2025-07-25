@@ -1908,11 +1908,12 @@ static void BattleStartClearSetData(void)
     memset(&gStatuses3, 0, sizeof(gStatuses3));
     memset(&gDisableStructs, 0, sizeof(gDisableStructs));
     memset(&gFieldStatus, 0, sizeof(gFieldStatus));
-    gDisableStructs[i].isFirstTurn = 2;
     
     // Reset datas by battler
     for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
     {
+        gDisableStructs[i].isFirstTurn = 2;
+        
         // Clear Illusion
         ClearIllusionMon(i);
         
@@ -2761,23 +2762,20 @@ u32 IsRunningFromBattleImpossible(u32 battlerId, bool32 checkIngrain)
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CANT_ESCAPE;
         return BATTLE_RUN_FAILURE;
     }
-    if (holdEffect == HOLD_EFFECT_CAN_ALWAYS_RUN || (gBattleTypeFlags & BATTLE_TYPE_LINK) || GetBattlerAbility(battlerId) == ABILITY_RUN_AWAY)
+    else if (holdEffect == HOLD_EFFECT_CAN_ALWAYS_RUN || (gBattleTypeFlags & BATTLE_TYPE_LINK) || GetBattlerAbility(battlerId) == ABILITY_RUN_AWAY)
         return BATTLE_RUN_SUCCESS;
-    
-    ret = IsAbilityPreventingSwitchOut(battlerId);
-    
-    if (ret)
+    else if ((ret = IsAbilityPreventingSwitchOut(battlerId)))
     {
         gBattleScripting.battler = ret - 1;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ABILITY_PREVENT_ESCAPE;
         return BATTLE_RUN_FAILURE;
     }
-    if (!CanBattlerEscape(battlerId, checkIngrain))
+    else if (!CanBattlerEscape(battlerId, checkIngrain))
     {
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_CANT_ESCAPE;
         return BATTLE_RUN_FORBIDDEN;
     }
-    if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
+    else if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
     {
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_DONT_LEAVE_BIRTH;
         return BATTLE_RUN_FORBIDDEN;
@@ -3447,6 +3445,7 @@ static void TurnValuesCleanUp(bool32 var0)
         if (gDisableStructs[battlerId].substituteHP == 0)
             gBattleMons[battlerId].status2 &= ~(STATUS2_SUBSTITUTE);
         
+        gBattleStruct->battlers[battlerId].noMoreMovingThisTurn = FALSE;
         gSpecialStatuses[battlerId].parentalBondState = PARENTAL_BOND_OFF;
     }
     
@@ -3857,10 +3856,10 @@ static void TryChangeTurnOrder(void)
     {
         for (j = i + 1; j < gBattlersCount; j++)
         {
-            if (gActionsByTurnOrder[i] != B_ACTION_USE_ITEM && gActionsByTurnOrder[j] == B_ACTION_USE_ITEM
-            && gActionsByTurnOrder[i] != B_ACTION_SWITCH && gActionsByTurnOrder[j] == B_ACTION_SWITCH
-            && gActionsByTurnOrder[i] != B_ACTION_THROW_BALL && gActionsByTurnOrder[j] == B_ACTION_THROW_BALL
-            && gActionsByTurnOrder[i] != B_ACTION_FINISHED && gActionsByTurnOrder[j] == B_ACTION_FINISHED
+            if (gActionsByTurnOrder[i] != B_ACTION_USE_ITEM && gActionsByTurnOrder[j] != B_ACTION_USE_ITEM
+            && gActionsByTurnOrder[i] != B_ACTION_SWITCH && gActionsByTurnOrder[j] != B_ACTION_SWITCH
+            && gActionsByTurnOrder[i] != B_ACTION_THROW_BALL && gActionsByTurnOrder[j] != B_ACTION_THROW_BALL
+            && gActionsByTurnOrder[i] != B_ACTION_FINISHED && gActionsByTurnOrder[j] != B_ACTION_FINISHED
             && !(gBattleMons[gBattlerByTurnOrder[i]].status2 & STATUS2_TURN_ORDER_LOCKED) && !(gBattleMons[gBattlerByTurnOrder[j]].status2 & STATUS2_TURN_ORDER_LOCKED))
             {
                 if (GetWhoStrikesFirst(gBattlerByTurnOrder[i], gBattlerByTurnOrder[j], FALSE) != BATTLER1_STRIKES_FIRST)

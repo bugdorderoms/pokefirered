@@ -396,7 +396,10 @@ struct BattlerState
     /*0x39*/ u8 moveSelectionCursor;
     /*0x3A*/ u8 focusPunchDone:1;
              u8 gimmickInProgress:1;
-             u8 unused:6;
+             u8 noMoreMovingThisTurn:1;
+             u8 unused:5;
+    /*0x3B*/ u8 skyDropAttacker; // The battler that's holding it on the air
+    /*0x3C*/ u8 skyDropTarget; // The battler that's being hold on the air
              bool8 activatedGimmick[ROUND_BITS_TO_BYTES(GIMMICKS_COUNT)]; // Stores whether a trainer has used gimmick
              struct QueuedEffect queuedEffectsList[B_BATTLER_QUEUED_COUNT + 1];
              struct {

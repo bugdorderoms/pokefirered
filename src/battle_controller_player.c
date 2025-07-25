@@ -200,9 +200,7 @@ u32 GetPlayerTrainerPicId(u32 multiplayerId)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
-        u32 gameVersion = (gLinkPlayers[multiplayerId].version & 0xFF);
-        
-        if (gameVersion == VERSION_RUBY || gameVersion == VERSION_SAPPHIRE || gameVersion == VERSION_EMERALD)
+        if (IsLinkPlayerFromHoenn(multiplayerId))
             return gLinkPlayers[multiplayerId].gender + TRAINER_BACK_PIC_RS_BRENDAN;
         else
             return gLinkPlayers[multiplayerId].gender + TRAINER_BACK_PIC_RED;

@@ -232,6 +232,80 @@ DOUBLE_BATTLE_TEST("Ally Switch swaps Illusion data")
     }
 }
 
+DOUBLE_BATTLE_TEST("Ally switch swaps sky drop targets if being used by partner")
+{
+    u32 j;
+    
+    GIVEN {
+        ASSUME(gBattleMoves[MOVE_SKY_DROP].effect == EFFECT_SKY_DROP);
+        
+        PLAYER(SPECIES_FEAROW) { Speed(100); }
+        PLAYER(SPECIES_XATU)   { Speed(150); }
+        
+        OPPONENT(SPECIES_ARON) { Speed(25); Ability(ABILITY_STURDY); }
+        OPPONENT(SPECIES_WYNAUT) { Speed(30); }
+    } WHEN {
+        TURN { MOVE(playerLeft, MOVE_SKY_DROP, target: opponentLeft); }
+        TURN { MOVE(playerRight, MOVE_ALLY_SWITCH); SKIP_TURN(playerLeft); MOVE(opponentRight, MOVE_MUD_SPORT); MOVE(opponentLeft, MOVE_IRON_DEFENSE); }
+    } SCENE {
+        MESSAGE("Fearow used Sky Drop!");
+        MESSAGE("Fearow took Foe Aron into the sky!");
+        
+        // turn 2
+        MESSAGE("Xatu used Ally Switch!");
+        MESSAGE("Xatu and Fearow switched places!");
+        MESSAGE("Fearow used Sky Drop!");
+        HP_BAR(opponentLeft);
+        
+        MESSAGE("Foe Wynaut used Mud Sport!");
+        ANIMATION(ANIM_TYPE_MOVE, MOVE_MUD_SPORT, opponentRight);
+        
+        MESSAGE("Foe Aron used Iron Defense!");
+        ANIMATION(ANIM_TYPE_MOVE, MOVE_IRON_DEFENSE, opponentLeft);
+    } THEN {
+        // all battlers should be visible
+        for (j = 0; j < MAX_BATTLERS_COUNT; j++)
+            EXPECT_EQ(gBattleSpritesDataPtr->battlerData[j].invisible, FALSE);
+    }
+}
+
+DOUBLE_BATTLE_TEST("Ally switch swaps opposing sky drop targets if partner is being held in the air")
+{
+    u32 j;
+    
+    GIVEN {
+        ASSUME(gBattleMoves[MOVE_SKY_DROP].effect == EFFECT_SKY_DROP);
+        
+        PLAYER(SPECIES_ARON) { Speed(25); Ability(ABILITY_STURDY); }
+        PLAYER(SPECIES_WYNAUT) { Speed(30); }
+        
+        OPPONENT(SPECIES_FEAROW) { Speed(100); }
+        OPPONENT(SPECIES_XATU)   { Speed(150); }
+    } WHEN {
+        TURN { MOVE(opponentLeft, MOVE_SKY_DROP, target: playerLeft); }
+        TURN { MOVE(opponentRight, MOVE_ALLY_SWITCH); SKIP_TURN(opponentLeft); MOVE(playerRight, MOVE_MUD_SPORT); MOVE(playerLeft, MOVE_IRON_DEFENSE); }
+    } SCENE {
+        MESSAGE("Foe Fearow used Sky Drop!");
+        MESSAGE("Foe Fearow took Aron into the sky!");
+        
+        // turn 2
+        MESSAGE("Foe Xatu used Ally Switch!");
+        MESSAGE("Foe Xatu and Foe Fearow switched places!");
+        MESSAGE("Foe Fearow used Sky Drop!");
+        HP_BAR(playerLeft);
+        
+        MESSAGE("Wynaut used Mud Sport!");
+        ANIMATION(ANIM_TYPE_MOVE, MOVE_MUD_SPORT, playerRight);
+        
+        MESSAGE("Aron used Iron Defense!");
+        ANIMATION(ANIM_TYPE_MOVE, MOVE_IRON_DEFENSE, playerLeft);
+    } THEN {
+        // all battlers should be visible
+        for (j = 0; j < MAX_BATTLERS_COUNT; j++)
+            EXPECT_EQ(gBattleSpritesDataPtr->battlerData[j].invisible, FALSE);
+    }
+}
+
 // TODO:
 /*
 DOUBLE_BATTLE_TEST("Ally Switch does not redirect the target of Snipe Shot")
@@ -255,77 +329,4 @@ DOUBLE_BATTLE_TEST("Ally Switch does not redirect the target of Snipe Shot")
         HP_BAR(playerRight);
     }
 }
-
-DOUBLE_BATTLE_TEST("Ally switch swaps sky drop targets if being used by partner")
-{
-    u8 visibility;
-    GIVEN {
-        ASSUME(GetMoveEffect(MOVE_SKY_DROP) == EFFECT_SKY_DROP);
-        PLAYER(SPECIES_FEAROW) { Speed(100); }
-        PLAYER(SPECIES_XATU)   { Speed(150); }
-        OPPONENT(SPECIES_ARON) { Speed(25); Ability(ABILITY_STURDY); }
-        OPPONENT(SPECIES_WYNAUT) { Speed(30); }
-    } WHEN {
-        TURN { MOVE(playerLeft, MOVE_SKY_DROP, target: opponentLeft); }
-        TURN { MOVE(playerRight, MOVE_ALLY_SWITCH); SKIP_TURN(playerLeft); MOVE(opponentRight, MOVE_MUD_SPORT); MOVE(opponentLeft, MOVE_IRON_DEFENSE); }
-    } SCENE {
-        MESSAGE("Fearow used Sky Drop!");
-        MESSAGE("Fearow took the opposing Aron into the sky!");
-        // turn 2
-        MESSAGE("Xatu used Ally Switch!");
-        MESSAGE("Xatu and Fearow switched places!");
-        MESSAGE("Fearow used Sky Drop!");
-        HP_BAR(opponentLeft);
-        MESSAGE("The opposing Wynaut used Mud Sport!");
-        ANIMATION(ANIM_TYPE_MOVE, MOVE_MUD_SPORT, opponentRight);
-        MESSAGE("The opposing Aron used Iron Defense!");
-        ANIMATION(ANIM_TYPE_MOVE, MOVE_IRON_DEFENSE, opponentLeft);
-    } THEN {
-        // all battlers should be visible
-        visibility = gBattleSpritesDataPtr->battlerData[0].invisible;
-        EXPECT_EQ(visibility, 0);
-        visibility = gBattleSpritesDataPtr->battlerData[1].invisible;
-        EXPECT_EQ(visibility, 0);
-        visibility = gBattleSpritesDataPtr->battlerData[2].invisible;
-        EXPECT_EQ(visibility, 0);
-        visibility = gBattleSpritesDataPtr->battlerData[3].invisible;
-        EXPECT_EQ(visibility, 0);
-    }
-}
-
-DOUBLE_BATTLE_TEST("Ally switch swaps opposing sky drop targets if partner is being held in the air")
-{
-    u8 visibility;
-    GIVEN {
-        ASSUME(GetMoveEffect(MOVE_SKY_DROP) == EFFECT_SKY_DROP);
-        PLAYER(SPECIES_ARON) { Speed(25); Ability(ABILITY_STURDY); }
-        PLAYER(SPECIES_WYNAUT) { Speed(30); }
-        OPPONENT(SPECIES_FEAROW) { Speed(100); }
-        OPPONENT(SPECIES_XATU)   { Speed(150); }
-    } WHEN {
-        TURN { MOVE(opponentLeft, MOVE_SKY_DROP, target: playerLeft); }
-        TURN { MOVE(opponentRight, MOVE_ALLY_SWITCH); SKIP_TURN(opponentLeft); MOVE(playerRight, MOVE_MUD_SPORT); MOVE(playerLeft, MOVE_IRON_DEFENSE); }
-    } SCENE {
-        MESSAGE("The opposing Fearow used Sky Drop!");
-        MESSAGE("The opposing Fearow took Aron into the sky!");
-        // turn 2
-        MESSAGE("The opposing Xatu used Ally Switch!");
-        MESSAGE("The opposing Xatu and the opposing Fearow switched places!");
-        MESSAGE("The opposing Fearow used Sky Drop!");
-        HP_BAR(playerLeft);
-        MESSAGE("Wynaut used Mud Sport!");
-        ANIMATION(ANIM_TYPE_MOVE, MOVE_MUD_SPORT, playerRight);
-        MESSAGE("Aron used Iron Defense!");
-        ANIMATION(ANIM_TYPE_MOVE, MOVE_IRON_DEFENSE, playerLeft);
-    } THEN {
-        // all battlers should be visible
-        visibility = gBattleSpritesDataPtr->battlerData[0].invisible;
-        EXPECT_EQ(visibility, 0);
-        visibility = gBattleSpritesDataPtr->battlerData[1].invisible;
-        EXPECT_EQ(visibility, 0);
-        visibility = gBattleSpritesDataPtr->battlerData[2].invisible;
-        EXPECT_EQ(visibility, 0);
-        visibility = gBattleSpritesDataPtr->battlerData[3].invisible;
-        EXPECT_EQ(visibility, 0);
-    }
-}*/
+*/

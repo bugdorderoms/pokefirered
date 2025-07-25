@@ -512,12 +512,13 @@ static void AnimAirWaveCrescent(struct Sprite *sprite)
 // arg 1: initial y pixel offset
 // arg 2: initial delay
 // arg 3: movement speed
+// arg 4: anim battler
 static void AnimFlyBallUp(struct Sprite *sprite)
 {
-    InitSpritePosToAnimAttacker(sprite, TRUE);
+    InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[4], TRUE);
     sprite->data[0] = gBattleAnimArgs[2];
     sprite->data[1] = gBattleAnimArgs[3];
-    ChangeAnimBattlerSpriteVisibility(ANIM_ATTACKER, TRUE);
+    ChangeAnimBattlerSpriteVisibility(gBattleAnimArgs[4], TRUE);
     sprite->callback = AnimFlyBallUp_Step;
 }
 

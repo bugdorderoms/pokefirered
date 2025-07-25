@@ -76,21 +76,22 @@ BattleScript_EffectOHKO::
 @ EFFECT_TWO_TURNS_ATTACK @
 
 BattleScript_EffectTwoTurnMoves::
+	attackcanceler
 	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_TwoTurnMovesSecondTurn
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_NO_ATTACKSTRING, BattleScript_TwoTurnMovesSecondTurn
-	jumpifweathercheckchargeeffects BS_ATTACKER, TRUE, BattleScript_EffectHit
-	attackcanceler
+	jumpifweathercheckchargeeffects BS_ATTACKER, TRUE, BattleScript_HitFromAccCheck
 	call BattleScript_FirstChargingTurn_Ret
 	jumpifweathercheckchargeeffects BS_ATTACKER, FALSE, BattleScript_TwoTurnMovesSecondTurn
 	goto BattleScript_MoveEnd
 
 BattleScript_FirstChargingTurn_Ret::
 	flushmessagebox
+BattleScript_FirstChargingTurnFromPpReduce_Ret::
 	ppreduce
 	attackanimation
 	waitstate
-	setchargingturn
 	setsemiinvulnerablebit
+	setchargingturn
 	gettwotunsmovestring
 	printfromtable gFirstTurnOfTwoStringIds
 	waitmessage B_WAIT_TIME_LONG
@@ -98,12 +99,15 @@ BattleScript_FirstChargingTurn_Ret::
 	return
 
 BattleScript_TwoTurnMovesSecondTurn::
-    attackcanceler
+	call BattleScript_TwoTurnMovesSecondTurn_Ret
+	goto BattleScript_HitFromAccCheck
+
+BattleScript_TwoTurnMovesSecondTurn_Ret::
 	clearchargingturn
 	clearsemiinvulnerablebit
 	orword gHitMarker, HITMARKER_NO_PPDEDUCT
 	setbyte sB_ANIM_TURN, 1
-	goto BattleScript_HitFromAccCheck
+	return
 
 @ EFFECT_USER_ATTACK_UP_2 @
 
@@ -1282,6 +1286,7 @@ BattleScript_EffectUproar::
 	tryfaintmon BS_TARGET
 	setbyte sBATTLER, 0
 BattleScript_EffectUproarWakeUpLoop::
+	jumpifabsent BS_SCRIPTING, BattleScript_EffectUproarWakeUpIncrement
 	jumpifnostatus BS_SCRIPTING, STATUS1_SLEEP, BattleScript_EffectUproarWakeUpIncrement
 	cureprimarystatus BS_SCRIPTING, BattleScript_EffectUproarWakeUpIncrement
 	updatestatusicon BS_SCRIPTING
@@ -2480,6 +2485,45 @@ BattleScript_EffectHealPulseBlocked::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+@ EFFECT_SKY_DROP @
+
+BattleScript_EffectSkyDrop::
+	attackcanceler
+	attackstring
+	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_SkyDropSecondTurn
+	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_NO_ATTACKSTRING, BattleScript_SkyDropSecondTurn
+	jumpifabsent BS_TARGET, BattleScript_ButItFailedPpReduce
+	jumpiftargetally BattleScript_ButItFailedPpReduce
+	jumpifsubstituteblocks BattleScript_ButItFailedPpReduce
+	jumpifskydropfails BS_TARGET, BattleScript_ButItFailedPpReduce
+	accuracycheck BattleScript_MoveMissedPpReduce
+	call BattleScript_FirstChargingTurnFromPpReduce_Ret
+	goto BattleScript_MoveEnd
+
+BattleScript_SkyDropSecondTurn::
+	call BattleScript_TwoTurnMovesSecondTurn_Ret
+	jumpiftype BS_TARGET, TYPE_FLYING, BattleScript_NotAffected
+	goto BattleScript_HitFromCritCalc
+
+@ EFFECT_SHIFT_GEAR @
+
+BattleScript_EffectShiftGear::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPEED, MAX_STAT_STAGES, BattleScript_EffectShiftGearStatsUp
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
+BattleScript_EffectShiftGearStatsUp::
+	attackanimation
+	waitstate
+	setstatchanger STAT_SPEED, +2
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring BIT_ATK | BIT_SPEED, ATK66_SET_ANIM_PLAYED
+	setstatchanger STAT_ATK, +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
+	goto BattleScript_MoveEnd
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ MOVE EFFECTS BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2641,6 +2685,7 @@ BattleScript_MoveEffectKnockOff::
 	return
 
 BattleScript_MoveEffectSmackDown::
+	makevisible BS_EFFECT_BATTLER
 	printstring STRINGID_EFFFELLSTRAIGHTDOWN
 	waitmessage B_WAIT_TIME_LONG
 	return
@@ -4179,7 +4224,6 @@ BattleScript_EndTurnEffectEnds::
 
 BattleScript_YawnMakesAsleep::
     call BattleScript_MoveEffectSleep
-	makevisible BS_EFFECT_BATTLER
 	end2
 
 BattleScript_PerishSongTakesLife::
@@ -4318,6 +4362,7 @@ BattleScript_MakeMoveMissed::
 	orhalfword gMoveResultFlags, MOVE_RESULT_MISSED
 BattleScript_PrintMoveMissed::
 	attackstring
+BattleScript_MoveMissedPpReduce::
 	ppreduce
 BattleScript_MoveMissedPause::
 	pause B_WAIT_TIME_SHORT
@@ -4398,6 +4443,12 @@ BattleScript_PrintPayDayMoneyString::
 BattleScript_SubstituteFade::
 	playanimation BS_TARGET, B_ANIM_SUBSTITUTE_FADE
 	printstring STRINGID_DEFSUBSTITUTEFADED
+	return
+
+BattleScript_SkyDropReleaseTarget::
+	makevisible BS_SCRIPTING
+	printstring STRINGID_PKMNFREEDFROMSKYDROP
+	waitmessage B_WAIT_TIME_LONG
 	return
 
 BattleScript_PrintMonIsRooted::

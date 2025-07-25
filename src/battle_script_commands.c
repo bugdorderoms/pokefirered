@@ -764,11 +764,17 @@ static bool32 IsMoveAffectedByParentalBond(u32 attacker, u32 defender, u32 move)
     return FALSE;
 }
 
+static bool32 AttacksThisTurn(u32 battlerId, u32 move)
+{
+    return (!GET_MOVE_MOVEEFFECT_TABLE(move).twoTurnsEffect || (gBattleMons[battlerId].status2 & STATUS2_MULTIPLETURNS));
+}
+
 static void atk00_attackcanceler(void)
 {
     CMD_ARGS();
     
     u32 i, atkAbility;
+    bool32 attacksThisTurn;
     
     // Finished action
     if (gBattleOutcome)
@@ -778,7 +784,8 @@ static void atk00_attackcanceler(void)
     }
     
     // Attacker fainted
-    if (!IsBattlerAlive(gBattlerAttacker) && !(gHitMarker & HITMARKER_NO_ATTACKSTRING))
+    if ((!IsBattlerAlive(gBattlerAttacker) || (gStatuses3[gBattlerAttacker] & STATUS3_SKY_DROP_TARGET) || gBattleStruct->battlers[gBattlerAttacker].noMoreMovingThisTurn)
+    && !(gHitMarker & HITMARKER_NO_ATTACKSTRING))
     {
         gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
         gBattlescriptCurrInstr = BattleScript_MoveEnd;
@@ -841,12 +848,23 @@ static void atk00_attackcanceler(void)
     }
     gHitMarker |= HITMARKER_OBEYS;
     
-    if ((NoTargetPresent() && (!GET_MOVE_MOVEEFFECT_TABLE(gCurrentMove).twoTurnsEffect || (gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS)))
-        /*|| IsMoveNotAllowedInSkyBattle(gCurrentMove)*/)
+    if ((gStatuses3[gBattlerAttacker] & STATUS3_SKY_DROP_ATTACKER) && !IsBattlerAlive(gBattleStruct->battlers[gBattlerAttacker].skyDropTarget))
+    {
+        gStatuses3[gBattlerAttacker] &= ~(STATUS3_SKY_DROPPED | STATUS3_ON_AIR);
+        gBattleStruct->battlers[gBattlerAttacker].skyDropTarget = 0;
+        gBattleStruct->battlers[gBattlerTarget].skyDropAttacker = 0;
+        gBattlescriptCurrInstr = BattleScript_ButItFailedAtkStringPpReduce;
+        return;
+    }
+    
+    attacksThisTurn = AttacksThisTurn(gBattlerAttacker, gCurrentMove);
+    if ((attacksThisTurn && NoTargetPresent()) /*|| IsMoveNotAllowedInSkyBattle(gCurrentMove)*/)
     {
         gBattlescriptCurrInstr = BattleScript_ButItFailedAtkStringPpReduce;
-        if (!GET_MOVE_MOVEEFFECT_TABLE(gCurrentMove).twoTurnsEffect || (gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS))
+        
+        if (attacksThisTurn)
             CancelMultiTurnMoves(gBattlerAttacker);
+        
         return;
     }
     
@@ -894,8 +912,7 @@ static void atk00_attackcanceler(void)
     }
     else
     {
-        if (IsBattlerProtected(gBattlerAttacker, gBattlerTarget, gCurrentMove) && ((!GET_MOVE_MOVEEFFECT_TABLE(gCurrentMove).twoTurnsEffect
-        || (gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS))))
+        if (IsBattlerProtected(gBattlerAttacker, gBattlerTarget, gCurrentMove) && attacksThisTurn)
         {
             CancelMultiTurnMoves(gBattlerAttacker);
             gMoveResultFlags |= MOVE_RESULT_MISSED;
@@ -964,7 +981,7 @@ static bool32 AccuracyCalcHelper(const u8 *nextInstr, const u8 *jumpStr)
         JumpIfMoveFailed(nextInstr, jumpStr);
     else if (IsBattlerOfType(gBattlerAttacker, TYPE_POISON) && gCurrentMove == MOVE_TOXIC)
         JumpIfMoveFailed(nextInstr, jumpStr);
-    else if ((!gBattleMoves[gCurrentMove].flags.hitInAir && !gBattleMoves[gCurrentMove].flags.hitInAirDoubleDmg && (gStatuses3[gBattlerTarget] & STATUS3_ON_AIR))
+    else if ((!gBattleMoves[gCurrentMove].flags.hitInAir && !gBattleMoves[gCurrentMove].flags.hitInAirDoubleDmg && (gStatuses3[gBattlerTarget] & (STATUS3_ON_AIR | STATUS3_SKY_DROPPED)))
         || (!gBattleMoves[gCurrentMove].flags.hitUnderground && (gStatuses3[gBattlerTarget] & STATUS3_UNDERGROUND))
         || (!gBattleMoves[gCurrentMove].flags.hitUnderwater && (gStatuses3[gBattlerTarget] & STATUS3_UNDERWATER))
         || (gStatuses3[gBattlerTarget] & STATUS3_VANISHED)) // Check if semi-invulnerable
@@ -1969,11 +1986,12 @@ enum
     FAINT_EFFECT_PRINT_STRING,
     FAINT_EFFECT_CLEAR_FLAGS,
     FAINT_EFFECT_RESTORE_COMMANDER_SPRITE,
+    FAINT_EFFECT_ACTIVATE_SOUL_HEART,
+    FAINT_EFFECT_ACTIVATE_RECEIVER,
+    FAINT_EFFECT_FREE_FROM_SKY_DROP,
     FAINT_EFFECT_REVERT_FORM_STEP1,
     FAINT_EFFECT_REVERT_FORM_STEP2,
     FAINT_EFFECT_REVERT_FORM_STEP3,
-    FAINT_EFFECT_ACTIVATE_SOUL_HEART,
-    FAINT_EFFECT_ACTIVATE_RECEIVER,
     FAINT_EFFECT_TRY_FIRST_MON_DOWN_TRAINER_SLIDE,
     FAINT_EFFECT_END,
 };
@@ -2036,35 +2054,6 @@ static void atk18_doeffectsonfaint(void)
                     
                 ++gBattleCommunication[FAINT_EFFECTS_STATE];
                 break;
-            case FAINT_EFFECT_REVERT_FORM_STEP1:
-                if (DoSpecialFormChange(battlerId, gBattlerPartyIndexes[battlerId], FORM_CHANGE_FAINT))
-                    ++gBattleCommunication[FAINT_EFFECTS_STATE];
-                else
-                    gBattleCommunication[FAINT_EFFECTS_STATE] = FAINT_EFFECT_REVERT_FORM_STEP3 + 1; // Skip fainting form change
-                break;
-            case FAINT_EFFECT_REVERT_FORM_STEP2:
-            {
-                struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
-                
-                // Reload all stats
-                CalculateMonStats(mon);
-                BtlController_EmitSetRawMonData(battlerId, BUFFER_A, offsetof(struct Pokemon, attack), sizeof(gBattleMons[battlerId].attack) * (NUM_STATS - 1), &mon->attack);
-                MarkBattlerForControllerExec(battlerId);
-                
-                ++gBattleCommunication[FAINT_EFFECTS_STATE];
-                break;
-            }
-            case FAINT_EFFECT_REVERT_FORM_STEP3:
-            {
-                struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
-                u16 newHP = min(GetMonData(mon, MON_DATA_MAX_HP), GetMonData(mon, MON_DATA_HP));
-                
-                BtlController_EmitSetMonData(battlerId, BUFFER_A, REQUEST_HP_BATTLE, 0, sizeof(newHP), &newHP);
-                MarkBattlerForControllerExec(battlerId);
-                
-                ++gBattleCommunication[FAINT_EFFECTS_STATE];
-                break;
-            }
             case FAINT_EFFECT_ACTIVATE_SOUL_HEART:
                 while (gBattleStruct->soulHeartBattlerId < gBattlersCount)
                 {
@@ -2094,6 +2083,87 @@ static void atk18_doeffectsonfaint(void)
                 }
                 ++gBattleCommunication[FAINT_EFFECTS_STATE];
                 break;
+            case FAINT_EFFECT_FREE_FROM_SKY_DROP:
+            {
+                u32 status = 0, battlerToFree;
+                
+                for (battlerToFree = 0; battlerToFree < gBattlersCount; battlerToFree++)
+                {
+                    if (gStatuses3[battlerToFree] & STATUS3_SKY_DROP_ATTACKER)
+                    {
+                        if (gBattleStruct->battlers[battlerToFree].skyDropTarget == battlerId)
+                        {
+                            status = STATUS3_SKY_DROP_TARGET;
+                            break;
+                        }
+                    }
+                    else if (gStatuses3[battlerToFree] & STATUS3_SKY_DROP_TARGET)
+                    {
+                        if (gBattleStruct->battlers[battlerToFree].skyDropAttacker == battlerId)
+                        {
+                            status = STATUS3_SKY_DROP_ATTACKER;
+                            break;
+                        }
+                    }
+                }
+                
+                if (status & STATUS3_SKY_DROPPED)
+                {
+                    if (status & STATUS3_SKY_DROP_ATTACKER)
+                    {
+                        gBattleStruct->battlers[battlerId].skyDropTarget = 0;
+                        gBattleStruct->battlers[battlerToFree].skyDropAttacker = 0;
+                        
+                        gBattleScripting.battler = battlerToFree;
+                        BattleScriptCall(BattleScript_SkyDropReleaseTarget);
+                    }
+                    else if (status & STATUS3_SKY_DROP_TARGET)
+                    {
+                        CancelMultiTurnMoves(battlerToFree);
+                        
+                        gBattleStruct->battlers[battlerToFree].skyDropTarget = 0;
+                        gBattleStruct->battlers[battlerId].skyDropAttacker = 0;
+                        
+                        gBattleStruct->battlers[battlerToFree].noMoreMovingThisTurn = TRUE;
+                        
+                        BtlController_EmitSpriteInvisibility(battlerToFree, BUFFER_A, FALSE);
+                        MarkBattlerForControllerExec(battlerToFree);
+                    }
+                    gStatuses3[battlerId] &= ~(STATUS3_ON_AIR | STATUS3_SKY_DROPPED);
+                    gStatuses3[battlerToFree] &= ~(STATUS3_ON_AIR | STATUS3_SKY_DROPPED);
+                }
+                ++gBattleCommunication[FAINT_EFFECTS_STATE];
+                break;
+            }
+            case FAINT_EFFECT_REVERT_FORM_STEP1:
+                if (DoSpecialFormChange(battlerId, gBattlerPartyIndexes[battlerId], FORM_CHANGE_FAINT))
+                    ++gBattleCommunication[FAINT_EFFECTS_STATE];
+                else
+                    gBattleCommunication[FAINT_EFFECTS_STATE] = FAINT_EFFECT_REVERT_FORM_STEP3 + 1; // Skip fainting form change
+                break;
+            case FAINT_EFFECT_REVERT_FORM_STEP2:
+            {
+                struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
+                
+                // Reload all stats
+                CalculateMonStats(mon);
+                BtlController_EmitSetRawMonData(battlerId, BUFFER_A, offsetof(struct Pokemon, attack), sizeof(gBattleMons[battlerId].attack) * (NUM_STATS - 1), &mon->attack);
+                MarkBattlerForControllerExec(battlerId);
+                
+                ++gBattleCommunication[FAINT_EFFECTS_STATE];
+                break;
+            }
+            case FAINT_EFFECT_REVERT_FORM_STEP3:
+            {
+                struct Pokemon *mon = GetBattlerPartyIndexPtr(battlerId);
+                u16 newHP = min(GetMonData(mon, MON_DATA_MAX_HP), GetMonData(mon, MON_DATA_HP));
+                
+                BtlController_EmitSetMonData(battlerId, BUFFER_A, REQUEST_HP_BATTLE, 0, sizeof(newHP), &newHP);
+                MarkBattlerForControllerExec(battlerId);
+                
+                ++gBattleCommunication[FAINT_EFFECTS_STATE];
+                break;
+            }
             case FAINT_EFFECT_TRY_FIRST_MON_DOWN_TRAINER_SLIDE:
                 if (ShouldDoTrainerSlide(battlerId, TRAINER_SLIDE_FIRST_MON_DOWN))
                     BattleScriptCall(BattleScript_TrainerSlideMsg);
@@ -2817,7 +2887,7 @@ static void atk3A_jumpifweathercheckchargeeffects(void)
     yet to fire, we can fire the move right away so long as the weather matches
     the argument and the battler is affected by it (not blocked by Cloud Nine etc) */
     if (!GET_MOVE_MOVEEFFECT_TABLE(gCurrentMove).semiInvulnerableEffect && !(cmd->checkChargeTurnEffects && MoveHasChargeTurnMoveEffect(gCurrentMove))
-    && IsBattlerWeatherAffected(cmd->battler, gBattleMoves[gCurrentMove].argument.twoTurns.statusOrweather))
+    && IsBattlerWeatherAffected(GetBattlerForBattleScript(cmd->battler), gBattleMoves[gCurrentMove].argument.twoTurns.statusOrweather))
     {
         gBattleScripting.animTurn = 1;
         gBattlescriptCurrInstr = cmd->jumpInstr;
@@ -3204,6 +3274,20 @@ static void atk49_moveend(void)
         switch (gBattleScripting.atk49_state)
         {
             case ATK49_SKY_DROP:
+                if (gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP && (gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE) && (gStatuses3[gBattlerAttacker] & STATUS3_SKY_DROP_ATTACKER))
+                {
+                    gBattlerTarget = gBattleStruct->battlers[gBattlerAttacker].skyDropTarget;
+                    
+                    gStatuses3[gBattlerAttacker] &= ~(STATUS3_SKY_DROP_ATTACKER);
+                    gStatuses3[gBattlerTarget] &= ~(STATUS3_SKY_DROP_TARGET);
+                    
+                    gBattleStruct->battlers[gBattlerAttacker].skyDropTarget = 0;
+                    gBattleStruct->battlers[gBattlerTarget].skyDropAttacker = 0;
+                    
+                    gBattleScripting.battler = gBattlerTarget;
+                    BattleScriptCall(BattleScript_SkyDropReleaseTarget);
+                    effect = TRUE;
+                }
                 ++gBattleScripting.atk49_state;
                 break;
             case ATK49_ATTACKER_INVISIBLE:
@@ -3213,6 +3297,16 @@ static void atk49_moveend(void)
                 {
                     BtlController_EmitSpriteInvisibility(gBattlerAttacker, BUFFER_A, TRUE);
                     MarkBattlerForControllerExec(gBattlerAttacker);
+                    return;
+                }
+                break;
+            case ATK49_TARGET_INVISIBLE:
+                ++gBattleScripting.atk49_state;
+            
+                if ((gStatuses3[gBattlerTarget] & STATUS3_SEMI_INVULNERABLE) && !IsBattleAnimationsOn())
+                {
+                    BtlController_EmitSpriteInvisibility(gBattlerTarget, BUFFER_A, TRUE);
+                    MarkBattlerForControllerExec(gBattlerTarget);
                     return;
                 }
                 break;
@@ -4944,8 +5038,8 @@ static void atk60_handleabilitypopup(void)
                     isPopupActive = FALSE; // Don't reactivate
                 else
                 {
-                    animId = B_ANIM_LOAD_ABILITY_POP_UP;
                     isPopupActive = TRUE; // First time activating
+                    animId = B_ANIM_LOAD_ABILITY_POP_UP;
                 }
             }
             
@@ -6095,18 +6189,15 @@ static void atk76_various(void)
         case VARIOUS_TRY_BRING_DOWN_IN_AIR:
         {
             VARIOUS_ARGS(const u8 *failPtr);
-
-            if ((gStatuses3[battlerId] & (STATUS3_ON_AIR | STATUS3_MAGNET_RISE | STATUS3_TELEKINESIS)))
+            
+            if ((gStatuses3[battlerId] & (STATUS3_ON_AIR | STATUS3_SKY_DROPPED)) || !IsBattlerGrounded(battlerId))
             {
-                if ((gStatuses3[battlerId] & STATUS3_ON_AIR) && !(gStatuses3[battlerId] & STATUS3_SKY_DROPPED))
-                    CancelMultiTurnMoves(battlerId);
-
-                gStatuses3[battlerId] &= ~(STATUS3_ON_AIR | STATUS3_MAGNET_RISE | STATUS3_TELEKINESIS | STATUS3_SKY_DROPPED);
+                BringDownInAirBattler(battlerId);
                 gBattlescriptCurrInstr = cmd->nextInstr;
             }
             else
                 gBattlescriptCurrInstr = cmd->failPtr;
-            
+
             return;
         }
         case VARIOUS_TRY_ACTIVATE_WIND_ABILITIES:
@@ -6196,6 +6287,17 @@ static void atk76_various(void)
             VARIOUS_ARGS(u8 gimmick, const u8 *jumpPtr);
             
             if (GetActiveGimmick(battlerId) == cmd->gimmick)
+                gBattlescriptCurrInstr = cmd->jumpPtr;
+            else
+                gBattlescriptCurrInstr = cmd->nextInstr;
+            
+            return;
+        }
+        case VARIOUS_JUMP_IF_SKY_DROP_FAILS:
+        {
+            VARIOUS_ARGS(const u8 *jumpPtr);
+            
+            if ((gStatuses3[battlerId] & (STATUS3_SEMI_INVULNERABLE | STATUS3_COMMANDING)) || GetBattlerWeight(battlerId) >= 2000)
                 gBattlescriptCurrInstr = cmd->jumpPtr;
             else
                 gBattlescriptCurrInstr = cmd->nextInstr;
@@ -8051,16 +8153,54 @@ static void atkC5_setsemiinvulnerablebit(void)
 {
     CMD_ARGS(bool8 clear);
     
+    u32 attackerStatus, targetStatus, side;
+    
+    gBattlescriptCurrInstr = cmd->nextInstr;
+    
     if (GET_MOVE_MOVEEFFECT_TABLE(gCurrentMove).semiInvulnerableEffect)
     {
-        u32 semiInvulnerableEffect = UNCOMPRESS_BITS(gBattleMoves[gCurrentMove].argument.twoTurns.statusOrweather);
+        attackerStatus = UNCOMPRESS_BITS(gBattleMoves[gCurrentMove].argument.twoTurns.statusOrweather);
+        if (attackerStatus & STATUS3_SKY_DROP_ATTACKER)
+            attackerStatus |= STATUS3_ON_AIR;
+        
+        targetStatus = UNCOMPRESS_BITS(gBattleMoves[gCurrentMove].argument.twoTurns.statusToTarget);
+        if (targetStatus & STATUS3_SKY_DROP_TARGET)
+            targetStatus |= STATUS3_ON_AIR;
         
         if (cmd->clear)
-            gStatuses3[gBattlerAttacker] &= ~(semiInvulnerableEffect);
+        {
+            gStatuses3[gBattlerAttacker] &= ~(attackerStatus);
+            
+            if (targetStatus)
+            {
+                gStatuses3[gBattlerTarget] &= ~(targetStatus);
+                
+                gBattleStruct->battlers[gBattlerAttacker].skyDropTarget = 0;
+                gBattleStruct->battlers[gBattlerTarget].skyDropAttacker = 0;
+                
+                gBattleScripting.battler = gBattlerTarget;
+                BattleScriptCall(BattleScript_SkyDropReleaseTarget);
+            }
+        }
         else
-            gStatuses3[gBattlerAttacker] |= semiInvulnerableEffect;
+        {
+            gStatuses3[gBattlerAttacker] |= attackerStatus;
+
+            if (targetStatus)
+            {
+                CancelMultiTurnMoves(gBattlerTarget);
+                gStatuses3[gBattlerTarget] |= (targetStatus | STATUS3_ON_AIR);
+                
+                gBattleStruct->battlers[gBattlerAttacker].skyDropTarget = gBattlerTarget;
+                gBattleStruct->battlers[gBattlerTarget].skyDropAttacker = gBattlerAttacker;
+                gBattleStruct->battlers[gBattlerTarget].noMoreMovingThisTurn = TRUE; // Can't move, even if freed this turn
+                
+                side = GetBattlerSide(gBattlerTarget);
+                if (gSideTimers[side].followmeSet && gSideTimers[side].followmeTarget == gBattlerTarget)
+                    gSideTimers[side].followmeSet = FALSE;
+            }
+        }
     }
-    gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
 static void atkC6_nop(void)

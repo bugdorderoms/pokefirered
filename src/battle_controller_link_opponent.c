@@ -166,8 +166,7 @@ void LinkOpponentHandleDrawTrainerPic(u32 battlerId)
             
         playerId = GetBattlerMultiplayerId(battlerId);
         
-        if ((gLinkPlayers[playerId].version & 0xFF) == VERSION_RUBY || (gLinkPlayers[playerId].version & 0xFF) == VERSION_SAPPHIRE
-         || (gLinkPlayers[playerId].version & 0xFF) == VERSION_EMERALD)
+        if (IsLinkPlayerFromHoenn(playerId))
             trainerPicId = gFacilityClassToPicIndex[gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_PKMN_TRAINER_MAY : FACILITY_CLASS_PKMN_TRAINER_BRENDAN];
         else
             trainerPicId = gFacilityClassToPicIndex[gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_LEAF : FACILITY_CLASS_RED];
@@ -182,8 +181,7 @@ void LinkOpponentHandleDrawTrainerPic(u32 battlerId)
         {
             playerId = BATTLE_OPPOSITE(GetMultiplayerId());
             
-            if ((gLinkPlayers[playerId].version & 0xFF) == VERSION_RUBY || (gLinkPlayers[playerId].version & 0xFF) == VERSION_SAPPHIRE
-              || (gLinkPlayers[playerId].version & 0xFF) == VERSION_EMERALD)
+            if (IsLinkPlayerFromHoenn(playerId))
                 trainerPicId = gFacilityClassToPicIndex[gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_PKMN_TRAINER_MAY : FACILITY_CLASS_PKMN_TRAINER_BRENDAN];
             else
                 trainerPicId = gFacilityClassToPicIndex[gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_LEAF : FACILITY_CLASS_RED];

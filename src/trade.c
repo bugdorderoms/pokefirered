@@ -2537,13 +2537,9 @@ s32 Trade_CalcLinkPlayerCompatibilityParam(void)
             val = 0;
         }
         else if (version == VERSION_RUBY || version == VERSION_SAPPHIRE)
-        {
             val = 1;
-        }
         else
-        {
             val = 2;
-        }
 
         if (val > 0)
         {
@@ -2552,19 +2548,13 @@ s32 Trade_CalcLinkPlayerCompatibilityParam(void)
                 if (val == 2)
                 {
                     if (gLinkPlayers[GetMultiplayerId() ^ 1].progressFlagsCopy & 0xF0)
-                    {
                         return 0;
-                    }
                     else
-                    {
                         return 2;
-                    }
                 }
             }
             else
-            {
                 return 1;
-            }
         }
     }
     return 0;

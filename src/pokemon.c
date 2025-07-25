@@ -2356,6 +2356,12 @@ s32 GetBattlerMultiplayerId(u32 a1)
     return id;
 }
 
+bool32 IsLinkPlayerFromHoenn(u32 linkPlayerId)
+{
+    u32 version = (gLinkPlayers[linkPlayerId].version & 0xFF);
+    return (version == VERSION_RUBY || version == VERSION_SAPPHIRE || version == VERSION_EMERALD);
+}
+
 bool32 ModifyMonFriendship(struct Pokemon *mon, s8 friendshipDelta)
 {
     u32 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);

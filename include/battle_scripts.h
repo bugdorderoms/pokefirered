@@ -168,6 +168,8 @@ extern const u8 BattleScript_EffectEchoedVoice[];
 extern const u8 BattleScript_EffectAllySwitch[];
 extern const u8 BattleScript_EffectShellSmash[];
 extern const u8 BattleScript_EffectHealPulse[];
+extern const u8 BattleScript_EffectSkyDrop[];
+extern const u8 BattleScript_EffectShiftGear[];
 // Other scripts
 extern const u8 BattleScript_HitFromCritCalc[];
 extern const u8 BattleScript_MoveEnd[];
@@ -484,6 +486,7 @@ extern const u8 BattleScript_OpportunistActivates[];
 extern const u8 BattleScript_MoveUsedSignatureMove[];
 extern const u8 BattleScript_MoveEffectSmackDown[];
 extern const u8 BattleScript_MoveEffectClearSmog[];
+extern const u8 BattleScript_SkyDropReleaseTarget[];
 
 extern const u8 *const gBattlescriptsForUsingItem[];
 

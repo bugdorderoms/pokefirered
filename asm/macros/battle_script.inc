@@ -1506,6 +1506,11 @@
 	.4byte \ptr
 	.endm
 	
+	.macro jumpifskydropfails battler:req, ptr:req
+	various \battler, VARIOUS_JUMP_IF_SKY_DROP_FAILS
+	.4byte \ptr
+	.endm
+	
 @ callfunction macros
 	.macro setminimize
 	callfunction BS_SetMinimize

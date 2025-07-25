@@ -440,9 +440,19 @@ void MarkBattlerReceivedLinkData(u32 battlerId)
 void CancelMultiTurnMoves(u32 battler)
 {
     gBattleMons[battler].status2 &= ~(STATUS2_MULTIPLETURNS | STATUS2_LOCK_CONFUSE | STATUS2_UPROAR | STATUS2_BIDE);
-    gStatuses3[battler] &= ~(STATUS3_SEMI_INVULNERABLE);
+    gStatuses3[battler] &= (~(STATUS3_SEMI_INVULNERABLE) | STATUS3_SKY_DROPPED); // Sky Drop is removed seperately
     gDisableStructs[battler].rolloutTimer = 0;
     gDisableStructs[battler].furyCutterCounter = 0;
+}
+
+void BringDownInAirBattler(u32 battlerId)
+{
+    if (gStatuses3[battlerId] & (STATUS3_ON_AIR | STATUS3_SKY_DROP_ATTACKER))
+    {
+        gBattleStruct->battlers[battlerId].noMoreMovingThisTurn = TRUE;
+        CancelMultiTurnMoves(battlerId);
+    }
+    gStatuses3[battlerId] &= ~(STATUS3_ON_AIR | STATUS3_TELEKINESIS | STATUS3_MAGNET_RISE | STATUS3_SKY_DROPPED);
 }
 
 bool32 WasUnableToUseMove(u32 battler)
@@ -986,6 +996,8 @@ bool32 DoEndTurnEffects(void)
                         --gDisableStructs[i].destinyBondCounter;
                     
                     gBattleMons[i].status2 &= ~(STATUS2_TURN_ORDER_LOCKED);
+                    
+                    gBattleStruct->battlers[i].noMoreMovingThisTurn = FALSE;
                 }
                 gBattleStruct->roundUsed = FALSE;
                 
@@ -1380,6 +1392,9 @@ bool32 DoEndTurnEffects(void)
                     gStatuses3[gBattlerAttacker] -= STATUS3_YAWN_TURN(1);
                     
                     SetMoveEffect(MOVE_EFFECT_SLEEP, TRUE, TRUE);
+                    
+                    if (gStatuses3[gBattlerAttacker] & STATUS3_SEMI_INVULNERABLE)
+                        gCurrentMove = MOVE_NONE;
                     
                     if (!(gStatuses3[gBattlerAttacker] & STATUS3_YAWN) && DoMoveEffect(TRUE, NULL, 0))
                     {
@@ -1849,6 +1864,9 @@ u32 AtkCanceller_UnableToUseMove(void)
                         case 2: // Asleep
                             if (gBattleMoves[gCurrentMove].effect != EFFECT_SNORE && gBattleMoves[gCurrentMove].effect != EFFECT_SLEEP_TALK)
                             {
+                                if (gStatuses3[gBattlerAttacker] & STATUS3_SEMI_INVULNERABLE)
+                                    CancelMultiTurnMoves(gBattlerAttacker); // Caused by Yawn
+                                
                                 gBattlescriptCurrInstr = BattleScript_MoveUsedIsAsleep;
                                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
                             }
@@ -5144,7 +5162,9 @@ void SortBattlersBySpeed(u8 *battlers, bool32 slowToFast)
 
 bool32 CanBattlerEscape(u32 battlerId, bool32 checkIngrain)
 {
-    if (IsBattlerOfType(battlerId, TYPE_GHOST))
+    if (gStatuses3[battlerId] & STATUS3_SKY_DROP_TARGET)
+        return FALSE;
+    else if (IsBattlerOfType(battlerId, TYPE_GHOST))
         return TRUE;
     else if (gDisableStructs[battlerId].wrapTurns || (gBattleMons[battlerId].status2 & STATUS2_ESCAPE_PREVENTION) || (checkIngrain && (gStatuses3[battlerId] & STATUS3_ROOTED)))
         return FALSE;
@@ -5449,7 +5469,7 @@ bool32 IsBattlerAffectedByFollowMe(u32 battlerId, u32 opposingSide, u32 move)
 {
     u32 atkAbility = GetBattlerAbility(battlerId);
     
-    if (!gSideTimers[opposingSide].followmeSet || !IsBattlerAlive(gSideTimers[opposingSide].followmeTarget) || (gStatuses3[gSideTimers[opposingSide].followmeTarget] & STATUS3_SKY_DROPPED))
+    if (!gSideTimers[opposingSide].followmeSet || !IsBattlerAlive(gSideTimers[opposingSide].followmeTarget) || (gStatuses3[gSideTimers[opposingSide].followmeTarget] & STATUS3_SKY_DROP_TARGET))
         return FALSE;
     else if (atkAbility == ABILITY_PROPELLER_TAIL || atkAbility == ABILITY_STALWART)
         return FALSE;
@@ -6499,6 +6519,8 @@ void SwapBattlersPositions(u32 battler1, u32 battler2)
             SWAP_FIELD_BATTLER_ID(gBattleStruct->battlers[i].futureSightAttacker);
             SWAP_FIELD_BATTLER_ID(gBattleStruct->battlers[i].lastHitBattler);
             SWAP_FIELD_BATTLER_ID(gBattleStruct->battlers[i].bideTakenDamageBattler);
+            SWAP_FIELD_BATTLER_ID(gBattleStruct->battlers[i].skyDropAttacker);
+            SWAP_FIELD_BATTLER_ID(gBattleStruct->battlers[i].skyDropTarget);
             SWAP(gBattleStruct->battlers[i].lastTakenMoveFrom[battler1], gBattleStruct->battlers[i].lastTakenMoveFrom[battler2], temp);
         }
     }

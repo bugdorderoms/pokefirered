@@ -87,7 +87,7 @@
 #define ANIM_TAG_BLUE_FLAMES_2              (ANIM_SPRITES_START + 77) // unused
 #define ANIM_TAG_SHOCK_4                    (ANIM_SPRITES_START + 78) // unused
 #define ANIM_TAG_SHOCK                      (ANIM_SPRITES_START + 79)
-#define ANIM_TAG_BELL_2                     (ANIM_SPRITES_START + 80) // unused
+#define ANIM_TAG_GEAR                       (ANIM_SPRITES_START + 80)
 #define ANIM_TAG_PINK_GLOVE                 (ANIM_SPRITES_START + 81) // unused
 #define ANIM_TAG_ALPHA_STONE                (ANIM_SPRITES_START + 82)
 #define ANIM_TAG_IMPACT_3                   (ANIM_SPRITES_START + 83) // unused

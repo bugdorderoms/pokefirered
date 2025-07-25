@@ -125,34 +125,35 @@
 // Atk49, moveend cases
 #define ATK49_SKY_DROP                  0
 #define ATK49_ATTACKER_INVISIBLE        1
-#define ATK49_ATTACKER_VISIBLE          2
-#define ATK49_TARGET_VISIBLE            3
-#define ATK49_CHOICE_MOVE               4
-#define ATK49_TARGET_ENDTURN_ITEMS      5
-#define ATK49_KINGS_ROCK                6
-#define ATK49_ATTACKER_ENDTURN_ITEMS    7
-#define ATK49_STATUS_IMMUNITY_ABILITIES 8
-#define ATK49_UPDATE_LAST_MOVES         9
-#define ATK49_MIRROR_MOVE               10
-#define ATK49_MULTIHIT_MOVE             11
-#define ATK49_DEFROST                   12
-#define ATK49_SECOND_MOVE_EFFECT        13
-#define ATK49_MAGICIAN                  14
-#define ATK49_ATTACKER_ENDTURN_ITEMS_2  15
-#define ATK49_NEXT_TARGET               16
-#define ATK49_RECOIL                    17
-#define ATK49_ATTACKER_ENDTURN_ITEMS_3  18
-#define ATK49_EJECT_BUTTON              19
-#define ATK49_RED_CARD                  20
-#define ATK49_EJECT_PACK                21
-#define ATK49_SHELL_BELL_LIFE_ORB       22
-#define ATK49_EMERGENCY_EXIT            23
-#define ATK49_PICKPOCKET                24
-#define ATK49_SUBSTITUTE                25
-#define ATK49_OPPORTUNIST               26
-#define ATK49_CLEAR_BITS                27
-#define ATK49_DANCER                    28
-#define ATK49_COUNT                     29
+#define ATK49_TARGET_INVISIBLE          2
+#define ATK49_ATTACKER_VISIBLE          3
+#define ATK49_TARGET_VISIBLE            4
+#define ATK49_CHOICE_MOVE               5
+#define ATK49_TARGET_ENDTURN_ITEMS      6
+#define ATK49_KINGS_ROCK                7
+#define ATK49_ATTACKER_ENDTURN_ITEMS    8
+#define ATK49_STATUS_IMMUNITY_ABILITIES 9
+#define ATK49_UPDATE_LAST_MOVES         10
+#define ATK49_MIRROR_MOVE               11
+#define ATK49_MULTIHIT_MOVE             12
+#define ATK49_DEFROST                   13
+#define ATK49_SECOND_MOVE_EFFECT        14
+#define ATK49_MAGICIAN                  15
+#define ATK49_ATTACKER_ENDTURN_ITEMS_2  16
+#define ATK49_NEXT_TARGET               17
+#define ATK49_RECOIL                    18
+#define ATK49_ATTACKER_ENDTURN_ITEMS_3  19
+#define ATK49_EJECT_BUTTON              20
+#define ATK49_RED_CARD                  21
+#define ATK49_EJECT_PACK                22
+#define ATK49_SHELL_BELL_LIFE_ORB       23
+#define ATK49_EMERGENCY_EXIT            24
+#define ATK49_PICKPOCKET                25
+#define ATK49_SUBSTITUTE                26
+#define ATK49_OPPORTUNIST               27
+#define ATK49_CLEAR_BITS                28
+#define ATK49_DANCER                    29
+#define ATK49_COUNT                     30
 
 // Atk4F, a flag used for the jumpifcantswitch command
 #define ATK4F_DONT_CHECK_STATUSES   0x80
@@ -245,6 +246,7 @@
 #define VARIOUS_TRY_SWAP_ABILITIES                  37
 #define VARIOUS_JUMP_IF_NO_DAMAGE                   38
 #define VARIOUS_JUMP_IF_ACTIVE_GIMMICK              39
+#define VARIOUS_JUMP_IF_SKY_DROP_FAILS              40
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN        0

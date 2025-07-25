@@ -566,6 +566,28 @@ const struct SpriteTemplate gHealPulseRedRingSpriteTemplate =
     .callback = TranslateAnimSpriteToTargetMonLocation,
 };
 
+static const union AffineAnimCmd sAffineAnim_SkyDropBall[] =
+{
+    AFFINEANIMCMD_FRAME(160, 256, 80, 0),
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sAffineAnims_SkyDropBall[] =
+{
+    sAffineAnim_SkyDropBall,
+};
+
+const struct SpriteTemplate gSkyDropBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ROUND_SHADOW,
+    .paletteTag = ANIM_TAG_ROUND_SHADOW,
+    .oam = &gOamData_AffineDouble_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_SkyDropBall,
+    .callback = AnimThrowMistBall,
+};
+
 // For the rectangular wall sprite used by Reflect, Mirror Coat, etc.
 // arg 0: x offset
 // arg 1: y offset

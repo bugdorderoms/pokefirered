@@ -149,7 +149,9 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
 #else
                 gBattleMons[gEffectBattler].status1.counter = RandomUniform(RNG_SLEEP_TURNS, 2, 5) + 1;
 #endif
-                CancelMultiTurnMoves(gEffectBattler);
+                if (gCurrentMove) // Basically for yawn
+                    CancelMultiTurnMoves(gEffectBattler);
+                
                 effect = 1;
             }
             break;
@@ -248,7 +250,6 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
                 {
                     BattleScriptPush(scriptStr);
                     gBattlescriptCurrInstr = BattleScript_FlinchPrevention;
-                    break;
                 }
             }
             else if (!(gBattleMons[gEffectBattler].status2 & STATUS2_FLINCHED) && GetBattlerTurnOrderNum(gEffectBattler) > gCurrentTurnActionNumber)
@@ -444,10 +445,10 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             }
             break;
         case MOVE_EFFECT_SMACK_DOWN:
-            if (!IsBattlerGrounded(gEffectBattler))
+            if ((gStatuses3[gEffectBattler] & STATUS3_ON_AIR) || (!(gStatuses3[gEffectBattler] & STATUS3_SKY_DROPPED) && !IsBattlerGrounded(gEffectBattler)))
             {
                 gStatuses3[gEffectBattler] |= STATUS3_SMACKED_DOWN;
-                gStatuses3[gEffectBattler] &= ~(STATUS3_ON_AIR | STATUS3_MAGNET_RISE | STATUS3_TELEKINESIS);
+                BringDownInAirBattler(gEffectBattler);
                 effect = 2;
             }
             break;
@@ -665,14 +666,14 @@ bool32 ChangeStatBuffs(u32 flags, bool32 onlyChecks)
         {
                if (!onlyChecks) // Stat can be decreased, stop here
                {
-                if (gBattleStruct->statChange.maxOut)
-                    gBattleMons[gEffectBattler].statStages[statId] = MIN_STAT_STAGES;
-                else
-                {
-                    gBattleMons[gEffectBattler].statStages[statId] += buff;
-                    if (gBattleMons[gEffectBattler].statStages[statId] < MIN_STAT_STAGES)
+                    if (gBattleStruct->statChange.maxOut)
                         gBattleMons[gEffectBattler].statStages[statId] = MIN_STAT_STAGES;
-                }
+                    else
+                    {
+                        gBattleMons[gEffectBattler].statStages[statId] += buff;
+                        if (gBattleMons[gEffectBattler].statStages[statId] < MIN_STAT_STAGES)
+                            gBattleMons[gEffectBattler].statStages[statId] = MIN_STAT_STAGES;
+                    }
                }
         }
         else
