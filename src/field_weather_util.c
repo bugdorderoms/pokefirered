@@ -19,8 +19,8 @@ static u32 TryStartDynamicWeather(void)
     {
         gSaveBlock1Ptr->weatherDelay = 0;
         
-        // only start a random weather if map's weather is WEATHER_NONE or WEATHER_SHADE
-        if (!IsMapDNSException() && (newWeather == WEATHER_NONE || newWeather == WEATHER_SHADE))
+        // only start a random weather if map's weather is WEATHER_NONE, WEATHER_SHADE or WEATHER_FLYING_LEAVES
+        if (!IsMapDNSException() && (newWeather == WEATHER_NONE || newWeather == WEATHER_SHADE || newWeather == WEATHER_FLYING_LEAVES))
         {
             newWeather = WEATHER_RAIN; // Default new weather
             weatherChance = 10; // Default chance

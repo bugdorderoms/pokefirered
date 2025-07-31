@@ -47,6 +47,7 @@ struct Weather *const gWeatherPtr = &sWeather;
 const u16 gDefaultWeatherSpritePalette[] = INCBIN_U16("graphics/weather/default.gbapal");
 const u16 gSandstormWeatherPalette[] = INCBIN_U16("graphics/weather/sandstorm.gbapal");
 const u16 gSnowstormWeatherPalette[] = INCBIN_U16("graphics/weather/snowstorm.gbapal");
+const u16 gLeavesWeatherPalette[] = INCBIN_U16("graphics/weather/leaves.gbapal");
 const u8 gWeatherFogDiagonalTiles[] = INCBIN_U8("graphics/weather/fog_diagonal.4bpp");
 const u8 gWeatherFogHorizontalTiles[] = INCBIN_U8("graphics/weather/fog_horizontal.4bpp");
 const u8 gWeatherSnow1Tiles[] = INCBIN_U8("graphics/weather/snow0.4bpp");
@@ -56,6 +57,7 @@ const u8 gWeatherAshTiles[] = INCBIN_U8("graphics/weather/ash.4bpp");
 const u8 gWeatherRainTiles[] = INCBIN_U8("graphics/weather/rain.4bpp");
 const u8 gWeatherSandstormTiles[] = INCBIN_U8("graphics/weather/sandstorm.4bpp");
 const u8 gWeatherCloudTiles[] = INCBIN_U8("graphics/weather/cloud.4bpp");
+const u8 gWeatherLeavesTiles[] = INCBIN_U8("graphics/weather/leaves.4bpp");
 
 static const struct SpritePalette sDefaultWeatherSpritePalette = {gDefaultWeatherSpritePalette, TAG_WEATHER_START};
 
@@ -74,6 +76,7 @@ static const struct WeatherCallbacks sWeatherFuncs[] = {
     [WEATHER_CLOUDS]             = {Clouds_InitVars, Clouds_Main, Clouds_InitAll, Clouds_Finish},
     [WEATHER_SNOWSTORM]          = {Snowstorm_InitVars, Snowstorm_Main, Snowstorm_InitAll, Snowstorm_Finish},
     [WEATHER_DROUGHT]            = {Drought_InitVars, Drought_Main, Drought_InitAll, Drought_Finish},
+    [WEATHER_FLYING_LEAVES]      = {FlyingLeaves_InitVars, FlyingLeaves_Main, FlyingLeaves_InitAll, FlyingLeaves_Finish},
 };
 
 static void (*const sWeatherPalStateFuncs[])(void) = {
@@ -162,6 +165,7 @@ void StartWeather(void)
     if (!FuncIsActiveTask(Task_WeatherMain))
     {
         LoadWeatherDefaultPalette(); // Make the palette slot used even if it not has an weather
+        
         gWeatherPtr->rainSpriteCount = 0;
         gWeatherPtr->curRainSpriteIndex = 0;
         gWeatherPtr->snowflakeSpriteCount = 0;
@@ -174,12 +178,14 @@ void StartWeather(void)
         gWeatherPtr->cloudSpritesCreated = FALSE;
         gWeatherPtr->snowstormSpritesCreated = FALSE;
         gWeatherPtr->snowstormSwirlSpritesCreated = FALSE;
-        Weather_SetBlendCoeffs(16, 0);
+        gWeatherPtr->flyingLeavesSpritesCreated = FALSE;
         gWeatherPtr->currWeather = WEATHER_NONE;
         gWeatherPtr->palProcessingState = WEATHER_PAL_STATE_IDLE;
         gWeatherPtr->readyForInit = FALSE;
         gWeatherPtr->weatherChangeComplete = TRUE;
-        gWeatherPtr->taskId = CreateTask(Task_WeatherInit, 80);
+        Weather_SetBlendCoeffs(16, 0);
+        
+        CreateTask(Task_WeatherInit, 80);
     }
 }
 

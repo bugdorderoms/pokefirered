@@ -6,7 +6,9 @@
 #include "field_weather_effects.h"
 #include "graphics.h"
 #include "random.h"
+#include "dns.h"
 #include "script.h"
+#include "math_util.h"
 #include "constants/weather.h"
 #include "constants/songs.h"
 #include "task.h"
@@ -14,6 +16,7 @@
 
 static const struct SpritePalette sSandstormSpritePalette = {gSandstormWeatherPalette, PALTAG_WEATHER};
 static const struct SpritePalette sSnowstormSpritePalette = {gSnowstormWeatherPalette, PALTAG_WEATHER};
+static const struct SpritePalette sLeavesSpriteTemplate   = {gLeavesWeatherPalette, PALTAG_WEATHER};
 
 //------------------------------------------------------------------------------
 // WEATHER_RAIN
@@ -2441,3 +2444,303 @@ static void DroughtStateRun(void)
             break;
     }
 }
+
+//------------------------------------------------------------------------------
+// WEATHER_FLYING_LEAVES
+//------------------------------------------------------------------------------
+
+static void CreateLeaveSprites(void);
+static void UpdateLeaveSprite(struct Sprite *sprite);
+static bool32 UpdateVisibleLeavesSprites(void);
+static void DestroyLeavesSprites(void);
+
+static const struct OamData sLeavesSpriteOamData = {
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_DOUBLE,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(16x16),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(16x16),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 2,
+    .affineParam = 0,
+};
+
+static const union AnimCmd sFlyingLeaves_Summer[] = {
+    ANIMCMD_FRAME(0, 16),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sFlyingLeaves_Spring[] = {
+    ANIMCMD_FRAME(4, 16),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sFlyingLeaves_Autumn[] = {
+    ANIMCMD_FRAME(8, 16),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd *const sFlyingLeavesAnimTable[] = {
+    [SEASON_SUMMER] = sFlyingLeaves_Summer,
+    [SEASON_AUTUMN] = sFlyingLeaves_Autumn,
+    [SEASON_WINTER] = sFlyingLeaves_Summer, // No leaves in winter
+    [SEASON_SPRING] = sFlyingLeaves_Spring
+};
+
+static const union AffineAnimCmd sFlyingLeavesAffineAnimCmds_Small[] = {
+    AFFINEANIMCMD_FRAME(128, 128, 0, 0),
+    AFFINEANIMCMD_FRAME(0, 0, 2, 4),
+    AFFINEANIMCMD_JUMP(1)
+};
+
+static const union AffineAnimCmd sFlyingLeavesAffineAnimCmds_Medium[] = {
+    AFFINEANIMCMD_FRAME(192, 192, 0, 0),
+    AFFINEANIMCMD_FRAME(0, -12, 1, 12),
+    AFFINEANIMCMD_FRAME(0, 12, 1, 12),
+    AFFINEANIMCMD_JUMP(1)
+};
+
+static const union AffineAnimCmd sFlyingLeavesAffineAnimCmds_Medium_NoFlip[] = {
+    AFFINEANIMCMD_FRAME(192, 192, 0, 0),
+    AFFINEANIMCMD_FRAME(0, 0, 1, 12),
+    AFFINEANIMCMD_JUMP(1)
+};
+
+static const union AffineAnimCmd sFlyingLeavesAffineAnimCmds_Large[] = {
+    AFFINEANIMCMD_FRAME(256, 256, 0, 0),
+    AFFINEANIMCMD_FRAME(0, -14, 1, 24),
+    AFFINEANIMCMD_FRAME(0, 14, 1, 24),
+    AFFINEANIMCMD_JUMP(1)
+};
+
+static const union AffineAnimCmd sFlyingLeavesAffineAnimCmds_Large_NoFlip[] = {
+    AFFINEANIMCMD_FRAME(256, 256, 0, 0),
+    AFFINEANIMCMD_FRAME(0, 0, 1, 24),
+    AFFINEANIMCMD_JUMP(1)
+};
+
+static const union AffineAnimCmd *const sFlyingLeavesAffineAnimTable[] = {
+    sFlyingLeavesAffineAnimCmds_Small,
+    sFlyingLeavesAffineAnimCmds_Small,
+    sFlyingLeavesAffineAnimCmds_Medium,
+    sFlyingLeavesAffineAnimCmds_Medium_NoFlip,
+    sFlyingLeavesAffineAnimCmds_Large,
+    sFlyingLeavesAffineAnimCmds_Large_NoFlip
+};
+
+static const struct SpriteTemplate sLeaveSpriteTemplate = {
+    .tileTag = GFXTAG_LEAVE,
+    .paletteTag = PALTAG_WEATHER,
+    .oam = &sLeavesSpriteOamData,
+    .anims = sFlyingLeavesAnimTable,
+    .images = NULL,
+    .affineAnims = sFlyingLeavesAffineAnimTable,
+    .callback = UpdateLeaveSprite,
+};
+
+static const struct SpriteSheet sLeavesSpriteSheet = {
+    .data = gWeatherLeavesTiles,
+    .size = 0x0180,
+    .tag = GFXTAG_LEAVE,
+};
+
+// Min/max X movement speed for each size
+static const s16 sFlyingLeavesXSpeedRange[][2] =
+{
+    // min speed / max speed
+    { Q_8_8(1.0), Q_8_8(1.5) },
+    { Q_8_8(0.7), Q_8_8(1.0) },
+    { Q_8_8(0.4), Q_8_8(0.6) },
+};
+
+void FlyingLeaves_InitVars(void)
+{
+    gWeatherPtr->initStep = 0;
+    gWeatherPtr->noShadows = FALSE;
+    gWeatherPtr->weatherGfxLoaded = FALSE;
+    gWeatherPtr->gammaTargetIndex = 0;
+    gWeatherPtr->gammaStepDelay = 20;
+    if (!gWeatherPtr->flyingLeavesSpritesCreated)
+        Weather_SetBlendCoeffs(8, BASE_SHADOW_INTENSITY);
+}
+
+void FlyingLeaves_InitAll(void)
+{
+    FlyingLeaves_InitVars();
+    while (!gWeatherPtr->weatherGfxLoaded)
+        FlyingLeaves_Main();
+}
+
+void FlyingLeaves_Main(void)
+{
+    CreateLeaveSprites();
+    gWeatherPtr->weatherGfxLoaded = TRUE;
+}
+
+bool32 FlyingLeaves_Finish(void)
+{
+    if (UpdateVisibleLeavesSprites())
+    {
+        DestroyLeavesSprites();
+        return FALSE;
+    }
+    return TRUE;
+}
+
+#define tDelta     data[0]
+#define tInitialX  data[1]
+#define tInitialY  data[2]
+#define tAmplitude data[3]
+#define tSpeedX    data[4]
+#define tSpeedY    data[5]
+#define tState     data[6]
+#define tSize      data[7]
+
+static void SetLeaveSpriteData(struct Sprite *sprite, u32 delta)
+{
+    s16 x = -64;
+    s16 y = RandomUniform(RNG_NONE, 0, (DISPLAY_HEIGHT / 2) + 16) - 16;
+    
+    sprite->x = x;
+    sprite->y = y;
+    
+    sprite->tInitialX = x;
+    sprite->tInitialY = y;
+    
+    sprite->tSize = RandomUniform(RNG_NONE, 0, 2);
+    sprite->tSpeedX = RandomUniform(RNG_NONE, sFlyingLeavesXSpeedRange[sprite->tSize][0], sFlyingLeavesXSpeedRange[sprite->tSize][1]);
+    sprite->tSpeedY = RandomUniform(RNG_NONE, Q_8_8(0.05), Q_8_8(0.2));
+    
+    sprite->tDelta = delta;
+    sprite->tAmplitude = RandomUniform(RNG_NONE, 2, 6);
+    
+    StartSpriteAffineAnim(sprite, (sprite->tSize * 2) + RandomPercentage(RNG_NONE, 50));
+}
+
+static void UpdateLeaveSprite(struct Sprite *sprite)
+{
+    if (sprite->tState == 0)
+    {
+        if (--sprite->tDelta > 0)
+            return;
+        
+        sprite->tState = 1;
+    }
+    
+    if (!sprite->affineAnimPaused)
+    {
+        if (sprite->tState == 2 && sprite->x < -16)
+            sprite->affineAnimPaused = TRUE;
+        else
+        {
+            // Reset sprite data if offscreen
+            if (sprite->x > DISPLAY_WIDTH + 16 || sprite->y > DISPLAY_HEIGHT + 16)
+            {
+                if (sprite->tState == 2)
+                    sprite->affineAnimPaused = TRUE;
+                else
+                    SetLeaveSpriteData(sprite, 0);
+            }
+            else
+            {
+                s16 moveX, moveY, waveX, waveY;
+                
+                sprite->tDelta++;
+                
+                moveX = Q_8_8_TO_INT(sprite->tDelta * sprite->tSpeedX);
+                moveY = Q_8_8_TO_INT(sprite->tDelta * sprite->tSpeedY);
+                
+                waveX = Sin((sprite->tDelta * (3 - sprite->tSize)) & 0xFF, sprite->tAmplitude / 2);
+                waveY = Cos((sprite->tDelta * 3) & 0xFF, 3);
+                
+                sprite->x = sprite->tInitialX + moveX + waveX;
+                sprite->y = sprite->tInitialY + moveY + waveY;
+            }
+        }
+    }
+}
+
+static void CreateLeaveSprites(void)
+{
+    u32 i, spriteId, season;
+    struct Sprite *sprite;
+    
+    if (!gWeatherPtr->flyingLeavesSpritesCreated)
+    {
+        gWeatherPtr->flyingLeavesSpritesCreated = TRUE;
+        
+        LoadWeatherSpritePalette(&sLeavesSpriteTemplate); // Necessary be loaded for NPC shadows
+        
+        season = DNSGetCurrentSeason();
+        
+        if (season != SEASON_WINTER)
+        {
+            LoadSpriteSheet(&sLeavesSpriteSheet);
+            
+            for (i = 0; i < NUM_LEAVE_SPRITES; i++)
+            {
+                spriteId = CreateSpriteAtEnd(&sLeaveSpriteTemplate, 0, 0, 78);
+                
+                if (spriteId != MAX_SPRITES)
+                {
+                    sprite = &gSprites[spriteId];
+                    
+                    StartSpriteAnim(sprite, season);
+                    SetLeaveSpriteData(sprite, 4 * i);
+                    gWeatherPtr->leaveSprites[i] = sprite;
+                }
+                else
+                    gWeatherPtr->leaveSprites[i] = NULL;
+            }
+        }
+    }
+}
+
+static bool32 UpdateVisibleLeavesSprites(void)
+{
+    u32 i;
+    bool32 ended = TRUE;
+    
+    for (i = 0; i < NUM_LEAVE_SPRITES; i++)
+    {
+        if (gWeatherPtr->leaveSprites[i] != NULL)
+        {
+            gWeatherPtr->leaveSprites[i]->tState = 2;
+            
+            if (!gWeatherPtr->leaveSprites[i]->affineAnimPaused)
+                ended = FALSE;
+        }
+    }
+    return ended;
+}
+
+static void DestroyLeavesSprites(void)
+{
+    u32 i;
+    
+    if (gWeatherPtr->flyingLeavesSpritesCreated)
+    {
+        gWeatherPtr->flyingLeavesSpritesCreated = FALSE;
+        
+        for (i = 0; i < NUM_LEAVE_SPRITES; i++)
+        {
+            if (gWeatherPtr->leaveSprites[i] != NULL)
+                DestroySpriteAndFreeMatrix(gWeatherPtr->leaveSprites[i]);
+        }
+    }
+    FreeSpriteTilesByTag(GFXTAG_LEAVE);
+}
+
+#undef tDelta
+#undef tInitialX
+#undef tInitialY
+#undef tAmplitude
+#undef tSpeedX
+#undef tSpeedY
+#undef tState
+#undef tSize

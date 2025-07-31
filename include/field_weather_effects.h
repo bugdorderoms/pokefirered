@@ -64,4 +64,9 @@ void Drought_InitVars(void);
 void Drought_Main(void);
 bool32 Drought_Finish(void);
 
+void FlyingLeaves_InitAll(void);
+void FlyingLeaves_InitVars(void);
+void FlyingLeaves_Main(void);
+bool32 FlyingLeaves_Finish(void);
+
 #endif //GUARD_FIELD_WEATHER_EFFECTS_H
