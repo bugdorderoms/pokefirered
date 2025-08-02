@@ -14821,3 +14821,46 @@ gMoveAnim_SHIFT_GEAR::
 	waitforvisualfinish
 	clearmonbg ANIM_ATTACKER
 	end
+
+@ Credits: ghoulslash
+gMoveAnim_CIRCLE_THROW::
+	loadspritegfx ANIM_TAG_IMPACT
+	loadspriteimg ANIM_TAG_THIN_RING
+	loadspritepal ANIM_TAG_ICE_CHUNK @ Blue color
+	monbg ANIM_DEF_SIDE
+	setalpha 12, 8
+	playsewithpan SE_M_VITAL_THROW, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 12, 4, 1, 2
+	waitforvisualfinish
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 20, 0, FALSE, 4
+	delay 2
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, 1
+	createsprite gBlueThinRingSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, TRUE
+	playsewithpan SE_M_VITAL_THROW2, SOUND_PAN_TARGET
+	delay 1
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, -24, 0, FALSE, 4
+	createsprite gBlueThinRingSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, TRUE
+	waitforvisualfinish
+	delay 3
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 7
+	delay 11
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, 0, 10
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_SIDE
+	blendoff
+	end
+
+@ Credits: Lixdel
+gMoveAnim_QUASH::
+	loadspritegfx ANIM_TAG_ASSURANCE_HAND
+	fadetobg BG_DARK
+	waitbgfadein
+	playsewithpan SE_M_DOUBLE_SLAP, SOUND_PAN_TARGET
+	createsprite gQuashHandSpriteTemplate, ANIM_TARGET, 3, 0, -32, 15, 0, 0, 0
+	delay 19
+	playsewithpan SE_M_MINIMIZE, SOUND_PAN_TARGET
+	createvisualtask AnimTask_SquishTarget, 2
+	waitforvisualfinish
+	restorebg
+	waitbgfadein
+	end

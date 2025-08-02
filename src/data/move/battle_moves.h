@@ -80,6 +80,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -104,6 +105,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
             .punchMove = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -302,6 +304,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .makesContact = TRUE,
             .forbiddenMirrorMove = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -478,6 +481,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenAssist = TRUE,
             .forbiddenSleepTalk = TRUE,
             .forbiddenInstruct = TRUE,
+            .forbiddenParentalBond = TRUE,
             .gravityBanned = TRUE,
         },
         .argument = {
@@ -776,6 +780,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -799,6 +804,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .makesContact = TRUE,
             .forbiddenMirrorMove = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -1046,6 +1052,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2174,6 +2181,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .forbiddenMirrorMove = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -2200,6 +2208,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenAssist = TRUE,
             .forbiddenSleepTalk = TRUE,
             .forbiddenInstruct = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .argument = {
             .twoTurns = {
@@ -2884,6 +2893,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3155,6 +3165,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3355,6 +3366,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
             .ballisticMove = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3663,6 +3675,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -3686,6 +3699,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -4737,6 +4751,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7003,6 +7018,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenAssist = TRUE,
             .forbiddenSleepTalk = TRUE,
             .forbiddenInstruct = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .argument = {
             .twoTurns = {
@@ -7032,6 +7048,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7919,6 +7936,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .forbiddenMirrorMove = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -7968,6 +7986,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
             .ballisticMove = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8013,6 +8032,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -8177,6 +8197,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenAssist = TRUE,
             .forbiddenSleepTalk = TRUE,
             .forbiddenInstruct = TRUE,
+            .forbiddenParentalBond = TRUE,
             .gravityBanned = TRUE,
         },
         .argument = {
@@ -8436,6 +8457,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
             .ballisticMove = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -11286,6 +11308,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenAssist = TRUE,
             .forbiddenSleepTalk = TRUE,
             .forbiddenInstruct = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .argument = {
             .twoTurns = {
@@ -12265,7 +12288,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CIRCLE_THROW] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Circle Throw"),
+        .description = COMPOUND_STRING("Throws the foe and\n"
+                                       "drags out another.\n"
+                                       "In the wild, the\n"
+                                       "battle ends."),
+        .animScript = gMoveAnim_CIRCLE_THROW,
         .effect = EFFECT_HIT_SWITCH_TARGET,
         .power = 60,
         .type = TYPE_FIGHTING,
@@ -12276,6 +12304,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .makesContact = TRUE,
+            .kingsRockAffected = TRUE,
             .forbiddenAssist = TRUE,
             .forbiddenCopycat = TRUE,
         },
@@ -12303,7 +12332,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_QUASH] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Quash"),
+        .description = COMPOUND_STRING("The user suppresses\n"
+                                       "the target and\n"
+                                       "makes its move go\n"
+                                       "last."),
+        .animScript = gMoveAnim_QUASH,
         .effect = EFFECT_QUASH,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -12311,7 +12345,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .target = MOVE_TARGET_SELECTED,
         .flags =
         {
-            .magicCoatAffected = TRUE,
             .forbiddenMetronome = TRUE,
         },
         .split = SPLIT_STATUS,
@@ -12888,6 +12921,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .makesContact = TRUE,
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -13409,6 +13443,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenAssist = TRUE,
             .forbiddenSleepTalk = TRUE,
             .forbiddenInstruct = TRUE,
+            .forbiddenParentalBond = TRUE,
             // .twoTurnsMove = TRUE,
         },
         .split = SPLIT_PHYSICAL,
@@ -13913,6 +13948,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -15907,6 +15943,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_PHYSICAL,
         .zMoveEffect = Z_EFFECT_NONE,
@@ -16564,6 +16601,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags =
         {
             .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
         },
         .split = SPLIT_SPECIAL,
         .zMoveEffect = Z_EFFECT_NONE,

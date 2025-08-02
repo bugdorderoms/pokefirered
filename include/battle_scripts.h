@@ -170,6 +170,8 @@ extern const u8 BattleScript_EffectShellSmash[];
 extern const u8 BattleScript_EffectHealPulse[];
 extern const u8 BattleScript_EffectSkyDrop[];
 extern const u8 BattleScript_EffectShiftGear[];
+extern const u8 BattleScript_EffectHitSwitchTarget[];
+extern const u8 BattleScript_EffectQuash[];
 // Other scripts
 extern const u8 BattleScript_HitFromCritCalc[];
 extern const u8 BattleScript_MoveEnd[];
@@ -215,7 +217,6 @@ extern const u8 BattleScript_LeechSeedTurnDrain[];
 extern const u8 BattleScript_BideStoringEnergy[];
 extern const u8 BattleScript_BideAttack[];
 extern const u8 BattleScript_BideNoEnergyToAttack[];
-extern const u8 BattleScript_SuccessForceOut[];
 extern const u8 BattleScript_MistProtected[];
 extern const u8 BattleScript_RageIsBuilding[];
 extern const u8 BattleScript_MoveUsedIsDisabled[];

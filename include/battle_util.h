@@ -70,6 +70,7 @@ enum
 
 #define BATTLE_ALIVE_SIDE           0
 #define BATTLE_ALIVE_EXCEPT_BATTLER 1
+#define BATTLE_ALIVE_FIELD          2
 
 #define IS_WHOLE_SIDE_ALIVE(battler) ((CountAliveMonsInBattle(battler, BATTLE_ALIVE_SIDE) >= NUM_BATTLERS_PER_SIDE))
 
@@ -231,6 +232,7 @@ bool32 TryPrimalReversion(u32 battler);
 u32 GetBattlerIdFromPartySlot(u32 slot, u32 partyId);
 bool32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u32 target, bool32 onlyChecking);
 bool32 CanAbilityBlockMove(u32 move, u32 attacker, u32 target, bool32 onlyChecking);
+bool32 BattlerTurnDamaged(u32 battlerId);
 
 static inline bool32 CanBattlerSwitch(u32 battlerId)
 {

@@ -290,6 +290,17 @@ const struct SpriteTemplate gMetalBitsSpriteTemplate =
     .callback = AnimTearDrop,
 };
 
+const struct SpriteTemplate gQuashHandSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ASSURANCE_HAND,
+    .paletteTag = ANIM_TAG_ASSURANCE_HAND,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimStompFoot,
+};
+
 // Fade the attacker's sprite from visible to invisible.
 // arg 0: fade delay
 // arg 1: initial blendA value

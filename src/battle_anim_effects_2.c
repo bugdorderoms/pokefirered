@@ -1104,6 +1104,17 @@ const struct SpriteTemplate gSynchronoiseYellowRingSpriteTemplate =
     .callback = AnimHyperVoiceRing,
 };
 
+const struct SpriteTemplate gBlueThinRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_THIN_RING,
+    .paletteTag = ANIM_TAG_ICE_CHUNK,
+    .oam = &gOamData_AffineDouble_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sThinRingExpandingAffineAnimTable,
+    .callback = AnimSpriteOnMonPos,
+};
+
 // Animates a sword that rises into the air after a brief pause. And then do the given affine anim.
 // arg 0: x pixel offset
 // arg 1: y pixel offset

@@ -138,26 +138,10 @@ BattleScript_EffectRandomSwitch::
 	accuracycheck BattleScript_ButItFailed, TRUE
 	accuracycheck BattleScript_MoveMissedPause
 	forcerandomswitch BattleScript_ButItFailed
-
-BattleScript_SuccessForceOut::
 	attackanimation
 	waitstate
 	moveendall
-	switchoutabilities BS_TARGET
-	returntoball BS_TARGET
-	waitstate
-	jumpifbattletype BATTLE_TYPE_TRAINER, BattleScript_TrainerBattleForceOut
-	setbyte gBattleOutcome, B_OUTCOME_PLAYER_TELEPORTED
-	finishaction
-BattleScript_TrainerBattleForceOut::
-	getswitchedmondata BS_TARGET
-	switchindataupdate BS_TARGET
-	tryremoveprimalweather BS_TARGET
-	switchinanim BS_TARGET, FALSE
-	waitstate
-	printstring STRINGID_DEFWASDRAGGEDOUT
-	switchineffects BS_TARGET
-	end
+	goto BattleScript_SuccessForceOut
 
 @ EFFECT_RECOIL_IF_MISS @
 
@@ -2522,6 +2506,39 @@ BattleScript_EffectShiftGearStatsUp::
 	setstatchanger STAT_ATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
 	statchangeanimandstring 0, ATK66_CLEAR_ANIM_PLAYED
+	goto BattleScript_MoveEnd
+
+@ EFFECT_HIT_SWITCH_TARGET @
+
+BattleScript_EffectHitSwitchTarget::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	jumpifsubstituteblocks BattleScript_HitFromAtkString
+	call BattleScript_EffectHitFromAtkString_Ret
+	jumpifmovehadnoeffect BattleScript_MoveEndFromFaint
+	jumpifabsent BS_TARGET, BattleScript_MoveEndFromFaint
+	jumpifability BS_TARGET, ABILITY_GUARD_DOG, BattleScript_MoveEnd
+	jumpifability BS_TARGET, ABILITY_SUCTION_CUPS, BattleScript_AbilityPreventsPhasingOut
+	jumpifstatus3 BS_TARGET, STATUS3_ROOTED, BattleScript_PrintMonIsRooted
+	moveendall
+	jumpifabsent BS_ATTACKER, BattleScript_ForceOutEnd
+	forcerandomswitch BattleScript_ForceOutEnd
+	playanimation BS_TARGET, B_ANIM_SLIDE_OUT_OFFSCREEN
+	waitstate
+	goto BattleScript_SuccessForceOut
+
+@ EFFECT_QUASH @
+
+BattleScript_EffectQuash::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed
+	attackstring
+	ppreduce
+	tryquash BattleScript_ButItFailed
+	attackanimation
+	waitstate
+	printstring STRINGID_DEFMOVEWASPOSTPONED
+	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4906,6 +4923,24 @@ BattleScript_PrimalReversion::
 	printstring STRINGID_PKMNREVERTEDTOITSPRIMALSTATE
 	waitmessage B_WAIT_TIME_LONG
 	end3
+
+BattleScript_SuccessForceOut::
+	switchoutabilities BS_TARGET
+	returntoball BS_TARGET
+	waitstate
+	jumpifbattletype BATTLE_TYPE_TRAINER, BattleScript_TrainerBattleForceOut
+	setbyte gBattleOutcome, B_OUTCOME_PLAYER_TELEPORTED
+	finishaction
+BattleScript_TrainerBattleForceOut::
+	getswitchedmondata BS_TARGET
+	switchindataupdate BS_TARGET
+	tryremoveprimalweather BS_TARGET
+	switchinanim BS_TARGET, FALSE
+	waitstate
+	printstring STRINGID_DEFWASDRAGGEDOUT
+	switchineffects BS_TARGET
+BattleScript_ForceOutEnd::
+	end
 
 @@@@@@@@@@@@@@@@@@@@@@@@@
 @ ACTION BATTLE SCRIPTS @

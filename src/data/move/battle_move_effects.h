@@ -1097,6 +1097,16 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
         .battleScript = BattleScript_EffectShiftGear,
     },
     
+    [EFFECT_HIT_SWITCH_TARGET] =
+    {
+        .battleScript = BattleScript_EffectHitSwitchTarget,
+    },
+    
+    [EFFECT_QUASH] =
+    {
+        .battleScript = BattleScript_EffectQuash,
+    },
+    
     /*
     [EFFECT_TERRAIN_PULSE] =
     {

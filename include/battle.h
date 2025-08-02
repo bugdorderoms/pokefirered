@@ -583,7 +583,6 @@ extern struct BattleStruct *gBattleStruct;
 #define IS_MOVE_STATUS(move)((GetMoveSplit(move) == SPLIT_STATUS))
 
 #define BATTLER_DAMAGED(battlerId) ((gSpecialStatuses[battlerId].physicalDmg != 0 || gSpecialStatuses[battlerId].specialDmg != 0))
-#define BATTLER_TURN_DAMAGED(battlerId) ((!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && BATTLER_DAMAGED(battlerId) && !gProtectStructs[gBattlerAttacker].confusionSelfDmg))
 
 #define HANDLE_POWER_TRICK_SWAP(battlerId)                                         \
 {                                                                                  \

@@ -213,6 +213,8 @@ enum
     EFFECT_HEX,
     EFFECT_SKY_DROP,
     EFFECT_SHIFT_GEAR,
+    EFFECT_HIT_SWITCH_TARGET,
+    EFFECT_QUASH,
     EFFECTS_COUNT,
 };
 
@@ -224,7 +226,6 @@ enum
 #define EFFECT_RETALIATE                    231
 #define EFFECT_BULLDOZE                     232
 #define EFFECT_STICKY_WEB                   254
-#define EFFECT_QUASH                        262
 #define EFFECT_ION_DELUGE                   263
 #define EFFECT_FREEZE_DRY                   264
 #define EFFECT_TOPSY_TURVY                  265
@@ -241,7 +242,6 @@ enum
 #define EFFECT_NOBLE_ROAR                   291
 #define EFFECT_VENOM_DRENCH                 292
 #define EFFECT_TOXIC_THREAD                 293
-#define EFFECT_HIT_SWITCH_TARGET            295
 #define EFFECT_FINAL_GAMBIT                 296
 #define EFFECT_HIT_ENEMY_HEAL_ALLY          301
 #define EFFECT_BESTOW                       308
