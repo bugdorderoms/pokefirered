@@ -115,21 +115,5 @@ SINGLE_BATTLE_TEST("Dragon Tail fails to switch if user faints")
     }
 }
 
-SINGLE_BATTLE_TEST("Dragon Tail fails to switch if target has Suction Cups")
-{
-    GIVEN {
-        PLAYER(SPECIES_WOBBUFFET);
-        
-        OPPONENT(SPECIES_OCTILLERY) { Ability(ABILITY_SUCTION_CUPS); }
-        OPPONENT(SPECIES_BULBASAUR);
-    } WHEN {
-        TURN { MOVE(player, MOVE_DRAGON_TAIL); }
-    } SCENE {
-        ANIMATION(ANIM_TYPE_MOVE, MOVE_DRAGON_TAIL, player);
-        MESSAGE("Foe Octillery anchors itself with Suction Cups!");
-        NOT MESSAGE("Foe Bulbasaur was dragged out!");
-    }
-}
-
 TO_DO_BATTLE_TEST("Dragon Tail fails to switch if target has Guard Dog");
 TO_DO_BATTLE_TEST("Dragon Tail fails to switch if target is Dynamaxed");

@@ -233,21 +233,6 @@ static void SetDmgHazardsBattleScript(u32 multistringId)
     gHitMarker |= (HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE | HITMARKER_IGNORE_DISGUISE);
 }
 
-static u32 ModifierToUq412(u32 mod)
-{
-    switch (mod)
-    {
-        case TYPE_MUL_NO_EFFECT:
-            return UQ_4_12(0.0);
-        case TYPE_MUL_NOT_EFFECTIVE:
-            return UQ_4_12(0.5);
-        case TYPE_MUL_NORMAL:
-            return UQ_4_12(1.0);
-        case TYPE_MUL_SUPER_EFFECTIVE:
-            return UQ_4_12(2.0);
-    }
-}
-
 static u32 GetDmgBasedOnHazardType(u32 battlerId, u32 hazardType)
 {
     u32 dmg, multiplier = UQ_4_12(1.0);
@@ -256,9 +241,9 @@ static u32 GetDmgBasedOnHazardType(u32 battlerId, u32 hazardType)
     
     GetBattlerTypes(battlerId, types);
     
-    multiplier = uq4_12_mul(multiplier, ModifierToUq412(GetTypeModifier(hazardType, types[0])));
+    multiplier = uq4_12_mul(multiplier, GetTypeModifier(hazardType, types[0]));
     if (types[0] != types[1])
-        multiplier = uq4_12_mul(multiplier, ModifierToUq412(GetTypeModifier(hazardType, types[1])));
+        multiplier = uq4_12_mul(multiplier, GetTypeModifier(hazardType, types[1]));
     
     switch (multiplier)
     {

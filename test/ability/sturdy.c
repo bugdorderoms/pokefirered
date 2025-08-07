@@ -41,7 +41,7 @@ SINGLE_BATTLE_TEST("Sturdy prevents fainting from confusion damage")
     GIVEN {
         ASSUME(gBattleMoves[MOVE_CONFUSE_RAY].effect == EFFECT_CONFUSE);
         
-        PLAYER(SPECIES_GEODUDE) { Ability(ABILITY_STURDY); MaxHP(2); HP(2); Speed(4); }
+        PLAYER(SPECIES_GEODUDE) { Ability(ABILITY_STURDY); MaxHP(1); HP(1); Speed(4); }
         OPPONENT(SPECIES_WOBBUFFET) { Speed(5); }
     } WHEN {
         TURN { MOVE(opponent, MOVE_CONFUSE_RAY); }

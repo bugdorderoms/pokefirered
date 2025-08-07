@@ -142,7 +142,7 @@ static u32 GetMostSuitableMonWithTypeMatchup(u32 battlerId, u32 opposingBattler)
            {
                move = GetMonData(&gEnemyParty[id], MON_DATA_MOVE1 + j);
                
-               if (move && AI_TypeCalc(&gEnemyParty[id], move, opposingBattler) == TYPE_MUL_SUPER_EFFECTIVE)
+               if (move && AI_TypeCalc(&gEnemyParty[id], move, opposingBattler) >= TYPE_MUL_SUPER_EFFECTIVE)
                    return id;
            }
        }
@@ -238,7 +238,7 @@ static u32 ShouldSwitchIfWonderGuard(u32 battlerId, u8 *viableMons, u32 availabl
     {
         move = moves[i];
         
-        if (move && !IS_MOVE_STATUS(move) && TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
+        if (move && !IS_MOVE_STATUS(move) && TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, &flags) >= TYPE_MUL_SUPER_EFFECTIVE)
             return NO_SWITCH;
     }
     
@@ -251,7 +251,7 @@ static u32 ShouldSwitchIfWonderGuard(u32 battlerId, u8 *viableMons, u32 availabl
         {
             move = GetMonData(&gEnemyParty[id], MON_DATA_MOVE1 + j);
             
-            if (move && !IS_MOVE_STATUS(move) && AI_TypeCalc(&gEnemyParty[id], move, opposingBattler) == TYPE_MUL_SUPER_EFFECTIVE)
+            if (move && !IS_MOVE_STATUS(move) && AI_TypeCalc(&gEnemyParty[id], move, opposingBattler) >= TYPE_MUL_SUPER_EFFECTIVE)
                 return id;
         }
     }

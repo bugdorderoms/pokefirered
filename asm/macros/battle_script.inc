@@ -1601,10 +1601,6 @@
 	callfunction BS_Metronome
 	.endm
 	
-	.macro psywavedamageeffect
-	callfunction BS_PsywaveDamageEffect
-	.endm
-	
 	.macro copyfoestats
 	callfunction BS_CopyFoeStats
 	.endm
@@ -1628,10 +1624,6 @@
 	
 	.macro tryrestoremirrorarmororiginalattacker
 	callfunction BS_TryRestoreMirrorArmorOriginalAttacker
-	.endm
-	
-	.macro argumenttomovedamage
-	callfunction BS_ArgumentToMoveDamage
 	.endm
 	
 	.macro setstatchangerfrommultiusestate buff:req
@@ -1983,7 +1975,6 @@
 	.macro damageformula
 	critcalc
 	damagecalc
-	typecalc
 	adjustdamage
 	.endm
 	

@@ -121,11 +121,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
     },
 };
 
-// TYPE_MUL_SUPER_EFFECTIVE = ×2.0
-// TYPE_MUL_NORMAL          = ×1.0
-// TYPE_MUL_NOT_EFFECTIVE   = ×0.5
-// TYPE_MUL_NO_EFFECT       = ×0.0
-const u8 gTypeEffectivenessTable[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES] =
+const u32 gTypeEffectivenessTable[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES] =
 {
                       // TYPE_NORMAL,            TYPE_FIGHTING,            TYPE_FLYING,              TYPE_POISON,              TYPE_GROUND,
                       // TYPE_ROCK,              TYPE_BUG,                 TYPE_GHOST,               TYPE_STEEL,               TYPE_MYSTERY,

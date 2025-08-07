@@ -32,9 +32,8 @@ BattleScript_HitFromAtkString::
 	ppreduce
 BattleScript_HitFromCritCalc::
 	critcalc
+BattleScript_HitFromDamageCalc::
 	damagecalc
-BattleScript_HitFromTypeCalc::
-	typecalc
 BattleScript_HitFromDamageAdjust::
 	adjustdamage
 BattleScript_HitFromAtkAnimation::
@@ -147,12 +146,12 @@ BattleScript_EffectRandomSwitch::
 
 BattleScript_EffectRecoilIfMiss::
 	attackcanceler
-	accuracycheck BattleScript_MoveMissedDoDamage
-	typecalc
-	jumpifhalfword CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_DOESNT_AFFECT_FOE, BattleScript_HitFromAtkString
-BattleScript_MoveMissedDoDamage::
 	attackstring
 	ppreduce
+	accuracycheck BattleScript_MoveMissedDoDamage
+	typecalc
+	jumpifhalfword CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_DOESNT_AFFECT_FOE, BattleScript_HitFromCritCalc
+BattleScript_MoveMissedDoDamage::
 	pause B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
@@ -160,7 +159,6 @@ BattleScript_MoveMissedDoDamage::
 	printstring STRINGID_ATKKEPTANDCRASHED
 	waitmessage B_WAIT_TIME_LONG
 	damagecalc
-	typecalc
 	adjustdamage
 	manipulatedamage ATK80_DMG_HALF_USER_HP
 	bichalfword gMoveResultFlags, MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE
@@ -234,8 +232,7 @@ BattleScript_EffectFixedDamage::
 	accuracycheck BattleScript_PrintMoveMissed
 	attackstring
 	ppreduce
-	argumenttomovedamage
-	goto BattleScript_HitFromTypeCalc
+	goto BattleScript_HitFromDamageCalc
 
 @ EFFECT_DISABLE_MOVE @
 
@@ -274,17 +271,8 @@ BattleScript_EffectCounterAttack::
 	accuracycheck BattleScript_PrintMoveMissed
 	attackstring
 	ppreduce
-	goto BattleScript_HitFromTypeCalc
-
-@ EFFECT_USER_LEVEL_TO_DAMAGE @
-
-BattleScript_EffectUserLevelToDamage::
-	attackcanceler
-	accuracycheck BattleScript_PrintMoveMissed
-	attackstring
-	ppreduce
-	manipulatedamage ATK48_DMG_ATK_LEVEL
-	goto BattleScript_HitFromTypeCalc
+	typecalc
+	goto BattleScript_HitFromDamageAdjust
 
 @ EFFECT_HIT_ABSORB @
 
@@ -657,16 +645,6 @@ BattleScript_EffectTransform::
 	tryendeffectonabilitychange BS_ATTACKER
 	goto BattleScript_MoveEnd
 
-@ EFFECT_PSYWAVE @
-
-BattleScript_EffectPsywave::
-	attackcanceler
-	accuracycheck BattleScript_PrintMoveMissed
-	attackstring
-	ppreduce
-	psywavedamageeffect
-	goto BattleScript_HitFromTypeCalc
-
 @ EFFECT_DO_NOTHING @
 
 BattleScript_EffectDoNothing::
@@ -707,16 +685,6 @@ BattleScript_EffectConversion::
 	printstring STRINGID_PKMNTYPECHANGEDTOBUFF1
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
-
-@ EFFECT_SUPER_FANG @
-
-BattleScript_EffectSuperFang::
-	attackcanceler
-	accuracycheck BattleScript_PrintMoveMissed
-	attackstring
-	ppreduce
-	manipulatedamage ATK48_DMG_HALF_TARGET_HP
-	goto BattleScript_HitFromTypeCalc
 
 @ EFFECT_SUBSTITUTE @
 
@@ -1005,9 +973,9 @@ BattleScript_EffectRollout::
 	ppreduce
 	accuracycheck BattleScript_RolloutHit
 BattleScript_RolloutHit::
-	typecalc
+	damageformula
 	handlerollout
-	goto BattleScript_HitFromCritCalc
+	goto BattleScript_HitFromAtkAnimation
 
 @ EFFECT_SWAGGER @
 
@@ -1039,11 +1007,9 @@ BattleScript_EffectFuryCutter::
 	accuracycheck BattleScript_FuryCutterHit
 BattleScript_FuryCutterHit::
 	handlefurycutter
-	critcalc
-	damagecalc
-	typecalc
+	damageformula
 	jumpifmovehadnoeffect BattleScript_FuryCutterHit
-	goto BattleScript_HitFromDamageAdjust
+	goto BattleScript_HitFromAtkAnimation
 
 @ EFFECT_ATTRACT @
 
@@ -1112,7 +1078,6 @@ BattleScript_EffectPresent::
 	accuracycheck BattleScript_PrintMoveMissed
 	attackstring
 	ppreduce
-	typecalc
 	presentcalc
 
 @ EFFECT_SAFEGUARD @
@@ -1588,8 +1553,7 @@ BattleScript_EffectEndeavor::
 	ppreduce
 	jumpifendeavorfail BattleScript_ButItFailed
 	accuracycheck BattleScript_MoveMissedPause
-	manipulatedamage ATK80_DMG_HEALTH_DIFFERENCE
-	goto BattleScript_HitFromTypeCalc
+	goto BattleScript_HitFromDamageCalc
 
 @ EFFECT_SKILL_SWAP @
 
@@ -2526,6 +2490,10 @@ BattleScript_EffectHitSwitchTarget::
 	playanimation BS_TARGET, B_ANIM_SLIDE_OUT_OFFSCREEN
 	waitstate
 	goto BattleScript_SuccessForceOut
+
+@ EFFECT_INCINERATE @
+
+
 
 @ EFFECT_QUASH @
 

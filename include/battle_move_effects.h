@@ -214,7 +214,9 @@ enum
     EFFECT_SKY_DROP,
     EFFECT_SHIFT_GEAR,
     EFFECT_HIT_SWITCH_TARGET,
+    EFFECT_INCINERATE,
     EFFECT_QUASH,
+    EFFECT_ACROBATICS,
     EFFECTS_COUNT,
 };
 
@@ -222,7 +224,6 @@ enum
 
 #define EFFECT_SPECIAL_ATTACK_DOWN 21  // unused
 #define EFFECT_SPECIAL_ATTACK_DOWN_2 61
-#define EFFECT_ACROBATICS                   220
 #define EFFECT_RETALIATE                    231
 #define EFFECT_BULLDOZE                     232
 #define EFFECT_STICKY_WEB                   254
@@ -268,7 +269,6 @@ enum
 #define EFFECT_LASER_FOCUS                  332
 #define EFFECT_MAGNETIC_FLUX                333
 #define EFFECT_GEAR_UP                      334
-#define EFFECT_INCINERATE                   335
 #define EFFECT_STRENGTH_SAP                 337
 #define EFFECT_MIND_BLOWN                   338
 #define EFFECT_PURIFY                       339

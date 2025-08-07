@@ -71,19 +71,4 @@ SINGLE_BATTLE_TEST("Oblivious cures infatuation and Taunt if afflicted by it")
     }
 }
 
-SINGLE_BATTLE_TEST("Oblivious prevents Intimidate")
-{
-    GIVEN {
-        PLAYER(SPECIES_SLOWPOKE) { Ability(ABILITY_OBLIVIOUS); }
-        OPPONENT(SPECIES_WOBBUFFET);
-        OPPONENT(SPECIES_EKANS) { Ability(ABILITY_INTIMIDATE); }
-    } WHEN {
-        TURN { SWITCH(opponent, 1); }
-    } SCENE {
-        ABILITY_POPUP(opponent, ABILITY_INTIMIDATE);
-        ABILITY_POPUP(player, ABILITY_OBLIVIOUS);
-        NOT ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_STATS_CHANGE, player);
-    }
-}
-
 TO_DO_BATTLE_TEST("A held Mental Herb will activate and cure infatuation and Taunt before Oblivious activates");

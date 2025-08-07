@@ -26,12 +26,6 @@ s32 Q_24_8_mul(s32 x, s32 y)
     return result;
 }
 
-u32 uq4_12_mul(u32 x, u32 y)
-{
-    u32 product = (u32) x * y;
-    return (product + UQ_4_12_ROUND) >> UQ_4_12_SHIFT;
-}
-
 s16 Q_8_8_div(s16 x, s16 y)
 {
     if (y == 0)

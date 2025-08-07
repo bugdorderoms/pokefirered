@@ -1132,10 +1132,7 @@ static void atk01_accuracycheck(void)
                 gBattleCommunication[MISS_TYPE] = B_MSG_MISSED;
             
             if (!IS_MOVE_STATUS(gCurrentMove) && TypeCalc(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, &flags) == TYPE_MUL_NO_EFFECT)
-            {
                 gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
-                gProtectStructs[gBattlerAttacker].targetNotAffected = TRUE;
-            }
         }
         JumpIfMoveFailed(cmd->nextInstr, cmd->jumpStr);
     }
@@ -1292,19 +1289,7 @@ static void atk05_damagecalc(void)
 static void atk06_typecalc(void)
 {
     CMD_ARGS();
-    
-    // Calculate type effectiveness
     TypeCalc(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, &gMoveResultFlags);
-    
-    if (gMoveResultFlags & MOVE_RESULT_MISSED)
-    {
-        gBattleStruct->battlers[gBattlerTarget].lastLandedMove = 0;
-        gBattleStruct->battlers[gBattlerTarget].lastHitMoveType = 0;
-    }
-    
-    if (gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE)
-        gProtectStructs[gBattlerAttacker].targetNotAffected = TRUE;
-    
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
@@ -1701,7 +1686,7 @@ static void atk0E_effectivenesssound(void)
     }
 }
 
-#define DO_EFFECTIVENESS_MESSAGE ((gBattleStruct->pursuitSwitchDmg || !gMultiHitCounter))
+#define DO_EFFECTIVENESS_MESSAGE ((gBattleStruct->pursuitSwitchDmg || gMultiHitCounter == 0))
 
 static void atk0F_resultmessage(void)
 {
@@ -6596,14 +6581,6 @@ static void atk80_manipulatedamage(void)
             if (gBattleMoveDamage == 0)
                 gBattleMoveDamage = 1;
             break;
-        case ATK48_DMG_HALF_TARGET_HP:
-            gBattleMoveDamage = gBattleMons[gBattlerTarget].hp / 2;
-            if (gBattleMoveDamage == 0)
-                gBattleMoveDamage = 1;
-            break;
-        case ATK48_DMG_ATK_LEVEL:
-            gBattleMoveDamage = gBattleMons[gBattlerAttacker].level;
-            break;
         case ATK80_DMG_DRAINED:
             gBattleMoveDamage = (gHpDealt * gBattleMoves[gCurrentMove].argument.generic / 100);
             
@@ -6612,9 +6589,6 @@ static void atk80_manipulatedamage(void)
             // Fallthrough
         case ATK48_DMG_BIG_ROOT:
             gBattleMoveDamage = GetDrainedBigRootHp(gBattlerAttacker, gBattleMoveDamage);
-            break;
-        case ATK80_DMG_HEALTH_DIFFERENCE:
-            gBattleMoveDamage = gBattleMons[gBattlerTarget].hp - gBattleMons[gBattlerAttacker].hp;
             break;
     }
     gBattlescriptCurrInstr = cmd->nextInstr;
@@ -8198,7 +8172,7 @@ static void atkC5_setsemiinvulnerablebit(void)
             if (targetStatus)
             {
                 CancelMultiTurnMoves(gBattlerTarget);
-                gStatuses3[gBattlerTarget] |= (targetStatus | STATUS3_ON_AIR);
+                gStatuses3[gBattlerTarget] |= targetStatus;
                 
                 gBattleStruct->battlers[gBattlerAttacker].skyDropTarget = gBattlerTarget;
                 gBattleStruct->battlers[gBattlerTarget].skyDropAttacker = gBattlerAttacker;
@@ -9384,19 +9358,6 @@ void BS_Metronome(void)
     }
 }
 
-void BS_PsywaveDamageEffect(void)
-{
-    NATIVE_ARGS();
-
-    u32 rand = RandomMax(101) + 50;
-    
-    gBattleMoveDamage = (gBattleMons[gBattlerAttacker].level * rand) / 100;
-    if (gBattleMoveDamage == 0)
-        gBattleMoveDamage = 1;
-    
-    gBattlescriptCurrInstr = cmd->nextInstr;
-}
-
 void BS_CopyFoeStats(void)
 {
     NATIVE_ARGS();
@@ -9463,13 +9424,6 @@ void BS_TryRestoreMirrorArmorOriginalAttacker(void)
     if (gBattleStruct->statChange.mirrorArmorState == 2) // Restore original attacker
         SWAP(gBattlerAttacker, gBattlerTarget, temp);
         
-    gBattlescriptCurrInstr = cmd->nextInstr;
-}
-
-void BS_ArgumentToMoveDamage(void)
-{
-    NATIVE_ARGS();
-    gBattleMoveDamage = gBattleMoves[gCurrentMove].argument.generic;
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 

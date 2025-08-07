@@ -21,7 +21,7 @@ SINGLE_BATTLE_TEST("Limber prevents paralysis")
     }
 }
 
-SINGLE_BATTLE_TEST("Limber cures paralysis if paralysed")
+SINGLE_BATTLE_TEST("Limber cures paralysis if paralyzed")
 {
     GIVEN {
         ASSUME(gBattleMoves[MOVE_THUNDER_WAVE].effect == EFFECT_SET_PARALYZE);

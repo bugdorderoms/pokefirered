@@ -2,7 +2,7 @@
 #define GUARD_EVOLUTION_H
 
 #define EVO_TARGET_SPECIES             0x00 // Determine the target species
-// Determines the type of evolution, (level up, item or trade)
+// Determines the type of evolution, (level up, item, etc)
 #define EVO_REQ_LEVEL                  0x01 // Requires levels up or reach specified level to evolve
 #define EVO_REQ_ITEM                   0x02 // Requires specific item be used on it to evolve
 #define EVO_REQ_TRADE_WITH_SPECIES     0x03 // Requires being traded with specific species to evolve

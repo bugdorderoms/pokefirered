@@ -1916,7 +1916,7 @@ const u8 gEvolutionCmdArgumentsSize[EVOLUTIONS_END] =
     [EVO_REQ_FRIENDSHIP]             = 0, // No args
 };
 
-static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, const u8 *evolutions, u32 *targetSpecies, bool32 *passes, u32 *evoBits, bool32 onlyChecking)
+static void HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, const u8 *evolutions, u32 *targetSpecies, bool32 *passes, u32 *evoBits, bool32 onlyChecking)
 {
     u32 j;
     
@@ -1949,7 +1949,6 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
             }
             *passes = TRUE;
             *evoBits = 0;
-            evolutions += 2;
             break;
         case EVO_REQ_FRIENDSHIP:
             if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) < FRIENDSHIP_EVO_THRESHOLD)
@@ -1967,33 +1966,24 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
                         *passes = FALSE;
                     break;
             }
-            ++evolutions;
             break;
         case EVO_REQ_STAT_X_STAT:
             if (!JumpBasedOnKind(GetMonData(mon, MON_DATA_HP + evolutions[1], NULL), evolutions[2], GetMonData(mon, MON_DATA_HP + evolutions[3], NULL)))
                 *passes = FALSE;
-            
-            evolutions += 3;
             break;
         case EVO_REQ_GENDER:
             if (GetMonGender(mon) != evolutions[1])
                 *passes = FALSE;
-            
-            ++evolutions;
             break;
         case EVO_REQ_ITEM_HOLD:
             if (GetMonData(mon, MON_DATA_HELD_ITEM, NULL) == READ_16(evolutions + 1))
                 *evoBits |= Bit(0); // Signal to remove held item
             else
                 *passes = FALSE;
-            
-            evolutions += 2;
             break;
         case EVO_REQ_MOVE:
             if (FindMoveSlotInMoveset(mon, READ_16(evolutions + 1)) == MAX_MON_MOVES)
                 *passes = FALSE;
-            
-            evolutions += 2;
             break;
         case EVO_REQ_MOVE_WITH_TYPE:
             for (j = 0; j < MAX_MON_MOVES; j++)
@@ -2005,7 +1995,6 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
             if (j == MAX_MON_MOVES)
                 *passes = FALSE;
             
-            ++evolutions;
             break;
         case EVO_REQ_WEATHER:
         {
@@ -2035,8 +2024,7 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
             
             if (!hasWeather)
                 *passes = FALSE;
-            
-            ++evolutions;
+
             break;
         }
         case EVO_REQ_SPECIES_IN_PARTY:
@@ -2048,8 +2036,7 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
             
             if (j == PARTY_SIZE)
                 *passes = FALSE;
-            
-            evolutions += 2;
+
             break;
         case EVO_REQ_SPECIES_WITH_TYPE:
             for (j = 0; j < PARTY_SIZE; j++)
@@ -2062,24 +2049,23 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
             
             if (j == PARTY_SIZE)
                 *passes = FALSE;
-            
-            ++evolutions;
+
             break;
         case EVO_REQ_X_CRITICAL_HITS:
             if (gPartyCriticalHits[partyId] < evolutions[1])
                 *passes = FALSE;
-            
-            ++evolutions;
             break;
         case EVO_REQ_MOON_PHASE:
 #if MOON_PHASE_EVO_REQUIREMENT
             if (DNSGetMoonPhase() != evolutions[1])
                 *passes = FALSE;
 #endif
-            ++evolutions;
             break;
-        case EVO_CREATE_SPECIES: // Mon creation is handled separated
-            evolutions += 2;
+        case EVO_REQ_FOLLOW_STEPS:
+            if (GetMonData(mon, MON_DATA_EVOLUTION_TRACKER, NULL) >= READ_16(evolutions + 1))
+                *evoBits |= Bit(1); // Signal to reset evolution tracker
+            else
+                *passes = FALSE;
             break;
         case EVO_REGIONAL_FORM:
             *evoBits |= Bit(2); // Signal to apply regional forms
@@ -2090,20 +2076,12 @@ static const u8 *HandleEvolutionRequirements(u32 partyId, struct Pokemon *mon, c
         case EVO_PERSONALITY_FORM:
             *evoBits |= Bit(4); // Signal to apply personality forms
             break;
-        case EVO_REQ_FOLLOW_STEPS:
-            if (GetMonData(mon, MON_DATA_EVOLUTION_TRACKER, NULL) >= READ_16(evolutions + 1))
-                *evoBits |= Bit(1); // Signal to reset evolution tracker
-            else
-                *passes = FALSE;
-            
-            evolutions += 2;
+        case EVO_CREATE_SPECIES: // Mon creation is handled separated
             break;
         default:
             *passes = FALSE;
-            evolutions += gEvolutionCmdArgumentsSize[evolutions[0]];
             break;
     }
-    return evolutions;
 }
 
 u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct Pokemon *tradePartner, bool32 onlyChecking)
@@ -2136,14 +2114,12 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
                     case EVO_REQ_LEVEL:
                         if (evolutions[1] != 0 && evolutions[1] > GetMonData(mon, MON_DATA_LEVEL, NULL))
                             passes = FALSE;
-                        
-                        ++evolutions;
                         break;
                     default:
-                        evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
+                        HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
                         break;
                 }
-                ++evolutions;
+                evolutions += gEvolutionCmdArgumentsSize[evolutions[0]] + 1;
             }
             break;
         case EVO_MODE_BATTLE_SPECIAL: // Pokemon can evolve without leveling up
@@ -2157,30 +2133,24 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
                             evoBits |= Bit(1); // Signal to reset evolution tracker
                         else
                             passes = FALSE;
-                        
-                        evolutions += 3;
                         break;
                     case EVO_REQ_RECOIL_DAMAGE:
                         if (GetMonData(mon, MON_DATA_EVOLUTION_TRACKER, NULL) >= READ_16(evolutions + 1))
                             evoBits |= Bit(1); // Signal to reset evolution tracker
                         else
                             passes = FALSE;
-                        
-                        evolutions += 2;
                         break;
                     case EVO_REQ_DAMAGE_HP:
                         hp = GetMonData(mon, MON_DATA_HP, NULL);
                         
                         if (!hp || (GetMonData(mon, MON_DATA_MAX_HP, NULL) - hp < READ_16(evolutions + 1)))
                             passes = FALSE;
-                        
-                        evolutions += 2;
                         break;
                     default:
-                        evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
+                        HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
                         break;
                 }
-                ++evolutions;
+                evolutions += gEvolutionCmdArgumentsSize[evolutions[0]] + 1;
             }
             break;
         case EVO_MODE_TRADE:
@@ -2202,14 +2172,12 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
                     case EVO_REQ_TRADE_WITH_SPECIES:
                         if (!(partnerSpecies == READ_16(evolutions + 1) && partnerHoldEffect != HOLD_EFFECT_PREVENT_EVOLVE))
                             passes = FALSE;
-                        
-                        evolutions += 2;
                         break;
                     default:
-                        evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
+                        HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
                         break;
                 }
-                ++evolutions;
+                evolutions += gEvolutionCmdArgumentsSize[evolutions[0]] + 1;
             }
             break;
         case EVO_MODE_ITEM_USE:
@@ -2220,14 +2188,12 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
                     case EVO_REQ_ITEM:
                         if (evolutionItem != READ_16(evolutions + 1))
                             passes = FALSE;
-                        
-                        evolutions += 2;
                         break;
                     default:
-                        evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
+                        HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
                         break;
                 }
-                ++evolutions;
+                evolutions += gEvolutionCmdArgumentsSize[evolutions[0]] + 1;
             }
             break;
         case EVO_MODE_SPIN:
@@ -2240,14 +2206,12 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
                             passes = FALSE;
                         else if (evolutions[3] && !JumpBasedOnKind(gPlayerSpinData.VBlanksSpinning / 60, evolutions[2], evolutions[3])) // Check duration
                             passes = FALSE;
-
-                        evolutions += 3;
                         break;
                     default:
-                        evolutions = HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
+                        HandleEvolutionRequirements(partyId, mon, evolutions, &targetSpecies, &passes, &evoBits, onlyChecking);
                         break;
                 }
-                ++evolutions;
+                evolutions += gEvolutionCmdArgumentsSize[evolutions[0]] + 1;
             }
             break;
     }

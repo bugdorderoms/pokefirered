@@ -98,7 +98,7 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
     
     [EFFECT_USER_LEVEL_TO_DAMAGE] =
     {
-        .battleScript = BattleScript_EffectUserLevelToDamage,
+        .battleScript = BattleScript_EffectFixedDamage,
         .noEffectiveness = TRUE,
     },
     
@@ -274,7 +274,7 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
     
     [EFFECT_PSYWAVE] =
     {
-        .battleScript = BattleScript_EffectPsywave,
+        .battleScript = BattleScript_EffectFixedDamage,
         .noEffectiveness = TRUE,
     },
     
@@ -296,7 +296,7 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
     
     [EFFECT_SUPER_FANG] =
     {
-        .battleScript = BattleScript_EffectSuperFang,
+        .battleScript = BattleScript_EffectFixedDamage,
         .noEffectiveness = TRUE,
     },
     
@@ -1102,9 +1102,19 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
         .battleScript = BattleScript_EffectHitSwitchTarget,
     },
     
+    [EFFECT_INCINERATE] =
+    {
+        .battleScript = BattleScript_EffectHit,
+    },
+    
     [EFFECT_QUASH] =
     {
         .battleScript = BattleScript_EffectQuash,
+    },
+    
+    [EFFECT_ACROBATICS] =
+    {
+        .battleScript = BattleScript_EffectHit,
     },
     
     /*

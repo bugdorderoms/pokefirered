@@ -12353,7 +12353,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_ACROBATICS] =
     {
-        .name = COMPOUND_STRING("-"),
+        .name = COMPOUND_STRING("Acrobatics"),
+        .description = COMPOUND_STRING("It strikes the foe.\n"
+                                       "Does more damage if\n"
+                                       "the user isn't\n"
+                                       "holding an item."),
+        .animScript = gMoveAnim_ACROBATICS,
         .effect = EFFECT_ACROBATICS,
         .power = 55,
         .type = TYPE_FLYING,

@@ -1,6 +1,7 @@
 #ifndef GUARD_BATTLE_MAIN_H
 #define GUARD_BATTLE_MAIN_H
 
+#include "math_util.h"
 #include "constants/abilities.h"
 #include "constants/pokemon.h"
 
@@ -8,10 +9,10 @@
 #define INTRO_SLIDE_FLAG_SLIDE_IN_STARTED Bit(1)
 
 // defines for the type effectiveness multipliers
-#define TYPE_MUL_NO_EFFECT       0
-#define TYPE_MUL_NOT_EFFECTIVE   5
-#define TYPE_MUL_NORMAL          10
-#define TYPE_MUL_SUPER_EFFECTIVE 20
+#define TYPE_MUL_NO_EFFECT       UQ_4_12(0.0)
+#define TYPE_MUL_NOT_EFFECTIVE   UQ_4_12(0.5)
+#define TYPE_MUL_NORMAL          UQ_4_12(1.0)
+#define TYPE_MUL_SUPER_EFFECTIVE UQ_4_12(2.0)
 
 // defines for the 'DoBounceEffect' function
 #define BOUNCE_MON       0x0
@@ -66,7 +67,7 @@ struct MultiBattlePokemonTx
 extern const struct OamData gOamData_BattlerOpponent;
 extern const struct OamData gOamData_BattlerPlayer;
 extern const u8 gCategoryNames[NUM_MOVE_SPLITS][CATEGORY_NAME_LENGTH + 1];
-extern const u8 gTypeEffectivenessTable[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
+extern const u32 gTypeEffectivenessTable[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
 extern const struct TrainerClass gTrainerClassTable[];
 extern const struct Ability gAbilities[ABILITIES_COUNT];
 extern const struct NaturalGift gNaturalGiftTable[ITEM_TO_BERRY(BERRY_ITEMS_END) + 1];

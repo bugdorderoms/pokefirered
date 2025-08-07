@@ -2010,9 +2010,9 @@ u32 AtkCanceller_UnableToUseMove(void)
                     if (gBattleMons[gBattlerAttacker].status2 & STATUS2_CONFUSION)
                     {
 #if CONFUSION_UPDATE
-                        if (!RandomWeighted(RNG_CONFUSION, 2, 1))
+                        if (!RandomPercentage(RNG_CONFUSION, 33))
 #else
-                        if (!RandomWeighted(RNG_CONFUSION, 1, 1))
+                        if (!RandomPercentage(RNG_CONFUSION, 50))
 #endif
                             BattleScriptCall(BattleScript_MoveUsedIsConfused);
                         else // confusion dmg
@@ -2935,7 +2935,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                                                     else
                                                         type = gBattleMoves[move].type;
                                                     
-                                                    if (TypeCalc(move, type, i, battler, FALSE, &flags) == TYPE_MUL_SUPER_EFFECTIVE)
+                                                    if (TypeCalc(move, type, i, battler, FALSE, &flags) >= TYPE_MUL_SUPER_EFFECTIVE)
                                                         ++effect;
                                                 }
                                             }

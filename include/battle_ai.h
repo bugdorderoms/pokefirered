@@ -43,7 +43,7 @@ struct AiThinking
     u32 totalAccuracy[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // attacker, target, moveIndex
     u16 moves[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
     u8 moveTypes[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
-    u8 effectiveness[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // attacker, target, moveIndex
+    u32 effectiveness[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // attacker, target, moveIndex
     u16 partnerMove;
     s32 higherDamage[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; // Stores the higher damage a pokemon can receive from the battler
     u16 predictedMoves[MAX_BATTLERS_COUNT];
