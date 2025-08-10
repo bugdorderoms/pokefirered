@@ -46,6 +46,7 @@ u16 Random(void); // Returns a 16-bit pseudorandom number
 enum RandomTag
 {
     RNG_NONE,
+    RNG_WILD_IVS,
     RNG_HITS,
     RNG_ACCURACY,
     RNG_CONFUSION,

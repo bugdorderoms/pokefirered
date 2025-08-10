@@ -1096,7 +1096,8 @@ BattleScript_EffectPainSplit::
 	attackstring
 	ppreduce
 	accuracycheck BattleScript_ButItFailed
-	painsplitdmgcalc BattleScript_ButItFailed
+	jumpifsubstituteblocks BattleScript_ButItFailed
+	painsplitdmgcalc
 	attackanimation
 	waitstate
 	orword gHitMarker, HITMARKER_SKIP_DMG_TRACK | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
@@ -1982,9 +1983,11 @@ BattleScript_EffectGastroAcid::
 	attackstring
 	ppreduce
 	tryabilitysuppression BS_TARGET, BattleScript_ButItFailed
+	setstatusfromargument BS_TARGET, BattleScript_EffectGastroAcidDoAnim
+BattleScript_EffectGastroAcidDoAnim::
 	attackanimation
 	waitstate
-	printstring STRINGID_DEFABILITYWASSUPPRESSED
+	printfromtable gSetStatusFromArgumentStringIds
 	waitmessage B_WAIT_TIME_LONG
 	tryendeffectonabilitychange BS_TARGET
 	goto BattleScript_MoveEnd
@@ -2886,7 +2889,7 @@ BattleScript_NeutralizingGasActivatesRet::
 BattleScript_NeutralizingGasActivatesLoop::
 	jumpifabsent BS_TARGET, BattleScript_NeutralizingGasLoopIncrement
 	jumpifbyteequal gBattlerTarget, gBattlerAttacker, BattleScript_NeutralizingGasLoopIncrement
-    tryneutralizinggassuppression BS_TARGET, BattleScript_NeutralizingGasLoopIncrement
+    tryabilitysuppression BS_TARGET, BattleScript_NeutralizingGasLoopIncrement
 	tryendeffectonabilitychange BS_TARGET
 BattleScript_NeutralizingGasLoopIncrement::
     addbyte gBattlerTarget, 1

@@ -772,7 +772,7 @@ void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
     // Set ivs
     for (i = 0; i < NUM_STATS; i++)
     {
-        value = RandomMax(MAX_PER_STAT_IVS + 1);
+        value = RandomUniform(RNG_WILD_IVS, 0, MAX_PER_STAT_IVS);
         SetMonData(mon, MON_DATA_HP_IV + i, &value);
     }
     

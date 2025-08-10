@@ -6002,18 +6002,16 @@ bool32 TryRemoveEntryHazards(u32 battlerId, bool32 clear, bool32 fromBothSides)
     {
         side = GetBattlerSide(battlerId);
         
-        if (gSideStatuses[side] & SIDE_STATUS_HAZARDS_ANY)
+        if (FindQueuedEffectsInSideList(side, gEntryHazardsQueuedEffectIds) != B_SIDE_QUEUED_COUNT)
         {
             if (clear)
             {
-                gSideStatuses[side] &= ~(SIDE_STATUS_HAZARDS_ANY);
-                
-                gSideTimers[side].spikesAmount = 0;
-                gSideTimers[side].toxicSpikesAmount = 0;
-                
                 RemoveBattleEffectFromSideQueueList(side, B_SIDE_QUEUED_SPIKES);
                 RemoveBattleEffectFromSideQueueList(side, B_SIDE_QUEUED_TOXIC_SPIKES);
                 RemoveBattleEffectFromSideQueueList(side, B_SIDE_QUEUED_STEALTH_ROCK);
+                
+                gSideTimers[side].spikesAmount = 0;
+                gSideTimers[side].toxicSpikesAmount = 0;
             }
             removed = TRUE;
         }

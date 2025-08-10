@@ -279,7 +279,7 @@ static u32 ShouldSwitchIfOnlyBadMovesLeft(u32 battlerId, u8 *viableMons, u32 ava
 
 static u32 ShouldSwitchIfNaturalCureOrRegenerator(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u32 opposingBattler)
 {
-    if (!(gSideStatuses[GetBattlerSide(battlerId)] & SIDE_STATUS_HAZARDS_ANY))
+    if (FindQueuedEffectsInSideList(GetBattlerSide(battlerId), gEntryHazardsQueuedEffectIds) == B_SIDE_QUEUED_COUNT)
     {
         switch (GetBattlerAbility(battlerId))
         {

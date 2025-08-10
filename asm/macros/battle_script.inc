@@ -792,14 +792,12 @@
 	.byte 0x88
 	.endm
 
-	.macro trysetsnatch ptr:req
+	.macro nop89
 	.byte 0x89
-	.4byte \ptr
 	.endm
 
-	.macro trysetmagiccoat ptr:req
+	.macro nop8a
 	.byte 0x8a
-	.4byte \ptr
 	.endm
 
 	.macro assistattackselect ptr:req
@@ -834,8 +832,9 @@
 	.byte \caseId
 	.endm
 
-	.macro nop91
+	.macro tryquash failPtr:req
 	.byte 0x91
+	.4byte \failPtr
 	.endm
 
 	.macro trysetlightscreen failPtr:req
@@ -922,9 +921,8 @@
 	.4byte \failPtr
 	.endm
 
-	.macro painsplitdmgcalc failPtr:req
+	.macro nopa5
 	.byte 0xa5
-	.4byte \failPtr
 	.endm
 
 	.macro settypetorandomresistance failPtr:req
@@ -1147,9 +1145,8 @@
 	.byte 0xd6
 	.endm
 
-	.macro setyawn failPtr:req
+	.macro nopd7
 	.byte 0xd7
-	.4byte \failPtr
 	.endm
 
 	.macro nopd8
@@ -1379,7 +1376,11 @@
 	.macro tryendneutralizinggas battler:req
 	various \battler, VARIOUS_TRY_END_NEUTRALIZING_GAS
 	.endm
-
+	
+	.macro tryteleport battler:req
+	various \battler, VARIOUS_TRY_TELEPORT
+	.endm
+	
 	.macro setteleportoutcome battler:req
 	various \battler, VARIOUS_SET_TELEPORT_OUTCOME
 	.endm
@@ -1391,11 +1392,6 @@
 	
 	.macro activateweatherchangeabilities battler:req
 	various \battler, VARIOUS_ACTIVATE_WEATHER_ABILITIES
-	.endm
-	
-	.macro tryneutralizinggassuppression battler:req, ptr:req
-	various \battler, VARIOUS_TRY_NEUTRALIZING_GAS_SUPPRESSION
-	.4byte \ptr
 	.endm
 	
 	.macro jumpifrevived ptr:req
@@ -1581,6 +1577,11 @@
 	callFunction BS_GetTwoTurnsMoveString
 	.endm
 	
+	.macro trysetmagiccoat failPtr:req
+	callfunction BS_TrySetMagicCoat
+	.4byte \failPtr
+	.endm
+	
 	.macro setmagiccoattarget
 	callfunction BS_SetMagicCoatTarget
 	.endm
@@ -1616,6 +1617,11 @@
 	
 	.macro endselectionscript
 	callfunction BS_EndSelectionScript
+	.endm
+	
+	.macro trysetsnatch failPtr:req
+	callfunction BS_TrySetSnatch
+	.4byte \failPtr
 	.endm
 	
 	.macro snatchsetbattlers
@@ -1726,11 +1732,6 @@
 	callfunction BS_TrySetAdrenalineOrbEffect
 	.endm
 	
-	.macro tryteleport battler:req
-	callfunction BS_TryTeleport
-	.byte \battler
-	.endm
-	
 	.macro playcry battler:req
 	callfunction BS_PlayBattlerCry
 	.byte \battler
@@ -1815,8 +1816,12 @@
 	callfunction BS_AllySwitchSwapBattlers
 	.endm
 	
-	.macro tryquash failPtr:req
-	callfunction BS_TryQuash
+	.macro painsplitdmgcalc
+	callfunction BS_PainSplitDmgCalc
+	.endm
+	
+	.macro setyawn failPtr:req
+	callfunction BS_SetYawn
 	.4byte \failPtr
 	.endm
 	

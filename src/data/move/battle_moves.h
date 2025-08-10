@@ -9167,6 +9167,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .magicCoatAffected = TRUE,
         },
         .split = SPLIT_STATUS,
+        .argument = {
+            .setStatus = {
+                .statusId = ID_STATUS3,
+                .status = COMPRESS_BITS(STATUS3_GASTRO_ACID),
+                .stringId = B_MSG_ABILITY_SUPPRESSED
+            }
+        },
         .zMoveEffect = Z_EFFECT_SPD_UP_1,
     },
 

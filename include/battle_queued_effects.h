@@ -31,8 +31,10 @@ extern const u8 gSeaOfFireAndGMaxQueuedEffectIds[];
 extern const u8 gEntryHazardsQueuedEffectIds[];
 
 void ResetAllQueuedEffectsDone(void);
-void AddBattleEffectToBattlerQueueList(u32 battlerId, u32 id);
-void AddBattleEffectToSideQueueList(u32 side, u32 id);
+u32 FindQueuedEffectsInBattlerList(u32 battlerId, const u8 *list);
+u32 FindQueuedEffectsInSideList(u32 side, const u8 *list);
+bool32 AddBattleEffectToBattlerQueueList(u32 battlerId, u32 id);
+bool32 AddBattleEffectToSideQueueList(u32 side, u32 id);
 void RemoveBattleEffectFromBattlerQueueList(u32 battlerId, u32 id);
 void RemoveBattleEffectFromSideQueueList(u32 side, u32 id);
 bool32 TryDoQueuedBattleEffectsInBattlerList(u32 battlerId, const u8 *list, bool32(*func)(u32, u32));

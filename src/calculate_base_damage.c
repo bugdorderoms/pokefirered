@@ -809,8 +809,7 @@ static inline u32 CalcMoveBasePowerModifiers(struct DamageCalc *damageStruct, u3
         modifier = uq4_12_mul(modifier, UQ_4_12(1.5));
     
     // Water/Mud Sport
-    if (((gFieldStatus & STATUS_FIELD_WATERSPORT) && damageStruct->moveType == TYPE_FIRE)
-    || ((gFieldStatus & STATUS_FIELD_MUDSPORT) && damageStruct->moveType == TYPE_ELECTRIC))
+    if (((gFieldStatus & STATUS_FIELD_WATERSPORT) && damageStruct->moveType == TYPE_FIRE) || ((gFieldStatus & STATUS_FIELD_MUDSPORT) && damageStruct->moveType == TYPE_ELECTRIC))
         modifier = uq4_12_mul(modifier, UQ_4_12(0.33));
     
     // Me First
@@ -1239,7 +1238,7 @@ static u32 CalcTypeEffectivenessMultiplierInternal(u32 move, u32 moveType, u32 a
     if (types[2] != TYPE_MYSTERY && types[2] != types[0] && types[2] != types[1])
         MulByTypeEffectiveness(move, moveType, atkAbility, defender, types[2], &multiplier, setAbilityFlags, flags);
 
-    if (!IS_MOVE_STATUS(move) || move == MOVE_THUNDER_WAVE)
+    if (!IS_MOVE_STATUS(move))
     {
         defAbility = GetBattlerAbility(defender);
         
@@ -1271,7 +1270,7 @@ static u32 CalcTypeEffectivenessMultiplierInternal(u32 move, u32 moveType, u32 a
         }
         
         // Check Wonder Guard
-        if (!IS_MOVE_STATUS(move) && defAbility == ABILITY_WONDER_GUARD && multiplier < TYPE_MUL_SUPER_EFFECTIVE)
+        if (defAbility == ABILITY_WONDER_GUARD && multiplier < TYPE_MUL_SUPER_EFFECTIVE)
         {
             multiplier = TYPE_MUL_NO_EFFECT;
             *flags |= MOVE_RESULT_MISSED;

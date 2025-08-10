@@ -843,6 +843,8 @@ static void CB2_BattleTest_NextParameter(void)
 
 static void CB2_BattleTest_NextTrial(void)
 {
+    ZeroPlayerPartyMons();
+    ZeroEnemyPartyMons();
     FreeMonSpritesGfx();
     FreeBattleSpritesData();
     FreeBattleResources();

@@ -147,8 +147,12 @@ void CB2_TestRunner(void)
         
         case STATE_RUN_TEST:
             gTestRunnerState.state = STATE_REPORT_RESULT;
+            
+            SeedRng(0);
+            
             if (gTestRunnerState.test->runner->setUp)
                 gTestRunnerState.test->runner->setUp(gTestRunnerState.test->data);
+            
             gTestRunnerState.test->runner->run(gTestRunnerState.test->data);
             break;
     

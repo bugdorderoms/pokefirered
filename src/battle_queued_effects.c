@@ -39,26 +39,29 @@ const u8 gEntryHazardsQueuedEffectIds[] =
 };
 
 // Functions
-static u32 FindQueuedEffectInList(u32 count, struct QueuedEffect *queuedEffectsList, u32 id, u32 entryNoFound)
+static inline u32 FindQueuedEffectInList(u32 count, struct QueuedEffect *queuedEffectsList, const u8 *list, u32 entryNoFound)
 {
-    u32 i;
+    u32 i, j;
     
-    for (i = 0; i < count; i++)
+    for (i = 0; list[i] != entryNoFound; i++)
     {
-        if (queuedEffectsList[i].id == id)
-            return i;
+        for (j = 0; j < count; j++)
+        {
+            if (queuedEffectsList[j].id == list[i])
+                return j;
+        }
     }
     return entryNoFound;
 }
 
-static inline u32 FindQueuedEffectInBattlerList(u32 battlerId, u32 id)
+u32 FindQueuedEffectsInBattlerList(u32 battlerId, const u8 *list)
 {
-    return FindQueuedEffectInList(gBattleStruct->battlers[battlerId].queuedEffectsCount, gBattleStruct->battlers[battlerId].queuedEffectsList, id, B_BATTLER_QUEUED_COUNT);
+    return FindQueuedEffectInList(gBattleStruct->battlers[battlerId].queuedEffectsCount, gBattleStruct->battlers[battlerId].queuedEffectsList, list, B_BATTLER_QUEUED_COUNT);
 }
 
-static inline u32 FindQueuedEffectInSideList(u32 side, u32 id)
+u32 FindQueuedEffectsInSideList(u32 side, const u8 *list)
 {
-    return FindQueuedEffectInList(gBattleStruct->sides[side].queuedEffectsCount, gBattleStruct->sides[side].queuedEffectsList, id, B_SIDE_QUEUED_COUNT);
+    return FindQueuedEffectInList(gBattleStruct->sides[side].queuedEffectsCount, gBattleStruct->sides[side].queuedEffectsList, list, B_SIDE_QUEUED_COUNT);
 }
 
 bool32 TryDoQueuedBattleEffectsInBattlerList(u32 battlerId, const u8 *list, bool32(*func)(u32, u32))
@@ -101,29 +104,38 @@ bool32 TryDoQueuedBattleEffectsInSideList(u32 battlerId, const u8 *list, bool32(
     return FALSE;
 }
 
-void AddBattleEffectToBattlerQueueList(u32 battlerId, u32 id)
+bool32 AddBattleEffectToBattlerQueueList(u32 battlerId, u32 id)
 {
-    if (FindQueuedEffectInBattlerList(battlerId, id) == B_BATTLER_QUEUED_COUNT)
+    const u8 list[] = {id, B_BATTLER_QUEUED_COUNT};
+    
+    if (FindQueuedEffectsInBattlerList(battlerId, list) == B_BATTLER_QUEUED_COUNT)
     {
         gBattleStruct->battlers[battlerId].queuedEffectsList[gBattleStruct->battlers[battlerId].queuedEffectsCount].id = id;
         gBattleStruct->battlers[battlerId].queuedEffectsList[gBattleStruct->battlers[battlerId].queuedEffectsCount].done = FALSE;
         ++gBattleStruct->battlers[battlerId].queuedEffectsCount;
+        return TRUE;
     }
+    return FALSE;
 }
 
-void AddBattleEffectToSideQueueList(u32 side, u32 id)
+bool32 AddBattleEffectToSideQueueList(u32 side, u32 id)
 {
-    if (FindQueuedEffectInSideList(side, id) == B_SIDE_QUEUED_COUNT)
+    const u8 list[] = {id, B_SIDE_QUEUED_COUNT};
+    
+    if (FindQueuedEffectsInSideList(side, list) == B_SIDE_QUEUED_COUNT)
     {
         gBattleStruct->sides[side].queuedEffectsList[gBattleStruct->sides[side].queuedEffectsCount].id = id;
         gBattleStruct->sides[side].queuedEffectsList[gBattleStruct->sides[side].queuedEffectsCount].done = FALSE;
         ++gBattleStruct->sides[side].queuedEffectsCount;
+        return TRUE;
     }
+    return FALSE;
 }
 
 void RemoveBattleEffectFromBattlerQueueList(u32 battlerId, u32 id)
 {
-    u32 i, temp, pos = FindQueuedEffectInBattlerList(battlerId, id);
+    const u8 list[] = {id, B_BATTLER_QUEUED_COUNT};
+    u32 i, temp, pos = FindQueuedEffectsInBattlerList(battlerId, list);
     bool32 temp2;
     
     if (pos != B_BATTLER_QUEUED_COUNT)
@@ -142,7 +154,8 @@ void RemoveBattleEffectFromBattlerQueueList(u32 battlerId, u32 id)
 
 void RemoveBattleEffectFromSideQueueList(u32 side, u32 id)
 {
-    u32 i, temp, pos = FindQueuedEffectInSideList(side, id);
+    const u8 list[] = {id, B_SIDE_QUEUED_COUNT};
+    u32 i, temp, pos = FindQueuedEffectsInSideList(side, list);
     bool32 temp2;
     
     if (pos != B_SIDE_QUEUED_COUNT)
@@ -282,61 +295,51 @@ bool32 QueuedEffects_DoEntryHazardsEffects(u32 battlerId, u32 side, u32 id)
         switch (id)
         {
             case B_SIDE_QUEUED_SPIKES:
-                if (gSideStatuses[side] & SIDE_STATUS_SPIKES)
-                {
-                    gBattleMoveDamage = gBattleMons[battlerId].maxHP / ((5 - gSideTimers[side].spikesAmount) * 2);
-                    if (gBattleMoveDamage == 0)
-                        gBattleMoveDamage = 1;
-                    
-                    SetDmgHazardsBattleScript(B_MSG_HURT_BY_SPIKES);
-                    effect = TRUE;
-                }
+                gBattleMoveDamage = gBattleMons[battlerId].maxHP / ((5 - gSideTimers[side].spikesAmount) * 2);
+                if (gBattleMoveDamage == 0)
+                    gBattleMoveDamage = 1;
+                
+                SetDmgHazardsBattleScript(B_MSG_HURT_BY_SPIKES);
+                effect = TRUE;
                 break;
             case B_SIDE_QUEUED_TOXIC_SPIKES:
-                if (gSideStatuses[side] & SIDE_STATUS_TOXIC_SPIKES)
+                if (IsBattlerOfType(battlerId, TYPE_POISON)) // Absorb the Toxic Spikes
                 {
-                    if (IsBattlerOfType(battlerId, TYPE_POISON)) // Absorb the Toxic Spikes
+                    RemoveBattleEffectFromSideQueueList(side, B_SIDE_QUEUED_TOXIC_SPIKES);
+                    gSideTimers[side].toxicSpikesAmount = 0;
+                    
+                    gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ABSORBED_TOXIC_SPIKES;
+                    BattleScriptCall(BattleScript_PrintEntryHazardsDmgString);
+                    effect = TRUE;
+                }
+                else
+                {
+                    badPoison = (gSideTimers[side].toxicSpikesAmount != 1);
+                    
+                    currMove = gCurrentMove;
+                    gCurrentMove = MOVE_NONE; // So Corrosion won't activate
+                    
+                    SaveAttackerToStack(battlerId);
+                    SaveTargetToStack(battlerId);
+                    
+                    SetMoveEffect(badPoison ? MOVE_EFFECT_TOXIC : MOVE_EFFECT_POISON, TRUE, FALSE);
+                    
+                    if (DoMoveEffect(FALSE, NULL, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_NO_SYNCHRONISE))
                     {
-                        gSideStatuses[side] &= ~(SIDE_STATUS_TOXIC_SPIKES);
-                        gSideTimers[side].toxicSpikesAmount = 0;
-                        RemoveBattleEffectFromSideQueueList(side, B_SIDE_QUEUED_TOXIC_SPIKES);
-                        
-                        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ABSORBED_TOXIC_SPIKES;
-                        BattleScriptCall(BattleScript_PrintEntryHazardsDmgString);
+                        BattleScriptCall(badPoison ? BattleScript_MoveEffectToxic : BattleScript_MoveEffectPoison);
                         effect = TRUE;
                     }
-                    else
-                    {
-                        badPoison = (gSideTimers[side].toxicSpikesAmount != 1);
-                        
-                        currMove = gCurrentMove;
-                        gCurrentMove = MOVE_NONE; // So Corrosion won't activate
-                        
-                        SaveAttackerToStack(battlerId);
-                        SaveTargetToStack(battlerId);
-                        
-                        SetMoveEffect(badPoison ? MOVE_EFFECT_TOXIC : MOVE_EFFECT_POISON, TRUE, FALSE);
-                        
-                        if (DoMoveEffect(FALSE, NULL, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_NO_SYNCHRONISE))
-                        {
-                            BattleScriptCall(badPoison ? BattleScript_MoveEffectToxic : BattleScript_MoveEffectPoison);
-                            effect = TRUE;
-                        }
-                        RestoreTargetFromStack();
-                        RestoreAttackerFromStack();
-                        gCurrentMove = currMove;
-                    }
+                    RestoreTargetFromStack();
+                    RestoreAttackerFromStack();
+                    gCurrentMove = currMove;
                 }
                 break;
             case B_SIDE_QUEUED_STEALTH_ROCK:
-                if (gSideStatuses[side] & SIDE_STATUS_STEALTH_ROCK)
-                {
-                    gBattleMoveDamage = GetDmgBasedOnHazardType(battlerId, TYPE_ROCK);
-                    if (gBattleMoveDamage)
-                        SetDmgHazardsBattleScript(B_MSG_POINTED_STONES_DUG);
-                    
-                    effect = TRUE;
-                }
+                gBattleMoveDamage = GetDmgBasedOnHazardType(battlerId, TYPE_ROCK);
+                if (gBattleMoveDamage)
+                    SetDmgHazardsBattleScript(B_MSG_POINTED_STONES_DUG);
+                
+                effect = TRUE;
                 break;
             case B_SIDE_QUEUED_STICKY_WEB:
                 break;
