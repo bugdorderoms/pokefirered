@@ -278,7 +278,7 @@ SECTIONS {
 		src/form_change.o(.text);
 		src/form_change_anim.o(.text);
 		src/fldeff_defog.o(.text);
-		src/set_effect.o(.text);
+		src/battle_secondary_effect.o(.text);
 		src/battle_queued_effects.o(.text);
 		src/battle_gimmicks.o(.text);
 		src/rtc.o(.text);
@@ -572,7 +572,7 @@ SECTIONS {
 		src/form_change.o(.rodata);
 		src/form_change_anim.o(.rodata);
 		src/fldeff_defog.o(.rodata);
-		src/set_effect.o(.rodata);
+		src/battle_secondary_effect.o(.rodata);
 		src/battle_queued_effects.o(.rodata);
 		src/battle_controllers.o(.rodata);
 		src/coins.o(.rodata);

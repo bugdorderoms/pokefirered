@@ -105,7 +105,7 @@ void BattleScriptExecute(const u8 *BS_ptr);
 void BattleScriptPushCursorAndCallback(const u8 *BS_ptr);
 u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn);
 void ClearFuryCutterDestinyBondGrudge(u32 battlerId);
-u32 GetMoveSplit(u32 move);
+u32 GetBattleMoveSplit(u32 move);
 u32 GetDefaultMoveTarget(u32 battlerId);
 u32 SetRandomTarget(u32 battlerId);
 u32 GetRandomTarget(u32 battlerId);

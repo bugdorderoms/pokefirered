@@ -578,10 +578,6 @@ extern struct BattleStruct *gBattleStruct;
 
 #define APPLY_MON_STAT_MOD(var, mon, stat, statIndex) APPLY_STAT_MOD((var), (stat), (mon)->statStages[(statIndex)])
 
-#define IS_MOVE_PHYSICAL(move)((GetMoveSplit(move) == SPLIT_PHYSICAL))
-#define IS_MOVE_SPECIAL(move)((GetMoveSplit(move) == SPLIT_SPECIAL))
-#define IS_MOVE_STATUS(move)((GetMoveSplit(move) == SPLIT_STATUS))
-
 #define BATTLER_DAMAGED(battlerId) ((gSpecialStatuses[battlerId].physicalDmg != 0 || gSpecialStatuses[battlerId].specialDmg != 0))
 
 #define HANDLE_POWER_TRICK_SWAP(battlerId)                                         \

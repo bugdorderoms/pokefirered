@@ -4,7 +4,7 @@
 #include "battle_ai_util.h"
 #include "battle_move_effects.h"
 #include "battle_util.h"
-#include "set_effect.h"
+#include "battle_secondary_effect.h"
 #include "constants/hold_effects.h"
 #include "constants/moves.h"
 
@@ -64,7 +64,7 @@ s32 BattleAIFunc_CheckBadMove(u32 attacker, u32 defender, u32 moveSlot, u32 move
                 CHANGE_SCORE(-10);
             break;
         case EFFECT_USER_ATTACK_UP_2:
-            if (!CompareStat(attacker, STAT_ATK, MAX_STAT_STAGES, CMP_LESS_THAN))
+            if (!CompareStat(attacker, STAT_ATK, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                 CHANGE_SCORE(-10);
             break;
         case EFFECT_ROAR:

@@ -3138,7 +3138,7 @@ static s32 GetBattlerBracket(u32 battler, u32 action, u32 move)
     gSpecialStatuses[battler].quickClawActivated = FALSE;
     gSpecialStatuses[battler].quickDrawActivated = FALSE;
     
-    if (ability == ABILITY_QUICK_DRAW && gQuickClawTurnRandom[battler].quickDrawActivates && action == B_ACTION_USE_MOVE && !IS_MOVE_STATUS(move))
+    if (ability == ABILITY_QUICK_DRAW && gQuickClawTurnRandom[battler].quickDrawActivates && action == B_ACTION_USE_MOVE && GetBattleMoveSplit(move) != SPLIT_STATUS)
     {
         gSpecialStatuses[battler].quickDrawActivated = TRUE;
         return 1;
@@ -3148,7 +3148,7 @@ static s32 GetBattlerBracket(u32 battler, u32 action, u32 move)
         gSpecialStatuses[battler].quickClawActivated = TRUE;
         return 1;
     }
-    else if (ability == ABILITY_STALL || (ability == ABILITY_MYCELIUM_MIGHT && action == B_ACTION_USE_MOVE && IS_MOVE_STATUS(move)))
+    else if (ability == ABILITY_STALL || (ability == ABILITY_MYCELIUM_MIGHT && action == B_ACTION_USE_MOVE && GetBattleMoveSplit(move) == SPLIT_STATUS))
         return -1;
     
     return 0;
@@ -3226,7 +3226,7 @@ s8 GetMovePriority(u32 battler, u32 move)
     switch (GetBattlerAbility(battler))
     {
         case ABILITY_PRANKSTER:
-            if (IS_MOVE_STATUS(move))
+            if (GetBattleMoveSplit(move) == SPLIT_STATUS)
                 ++priority;
             break;
         case ABILITY_GALE_WINGS:
@@ -3942,7 +3942,7 @@ static void HandleAction_UseMove(void)
         gBattlerTarget = gSideTimers[opposingSide].followmeTarget;
     }
     // Check Lightning Rod and Storm Drain redirection
-    else if (IsDoubleBattleOnSide(opposingSide) && !gSideTimers[opposingSide].followmeSet && (!IS_MOVE_STATUS(gCurrentMove) || (moveTarget != MOVE_TARGET_USER
+    else if (IsDoubleBattleOnSide(opposingSide) && !gSideTimers[opposingSide].followmeSet && (GetBattleMoveSplit(gCurrentMove) != SPLIT_STATUS || (moveTarget != MOVE_TARGET_USER
     && moveTarget != MOVE_TARGET_ALL_BATTLERS)) && ((GetBattlerAbility(gBattleStruct->battlers[gBattlerAttacker].moveTarget) != ABILITY_LIGHTNING_ROD
     && moveType == TYPE_ELECTRIC) || (GetBattlerAbility(gBattleStruct->battlers[gBattlerAttacker].moveTarget) != ABILITY_STORM_DRAIN && moveType == TYPE_WATER)))
     {

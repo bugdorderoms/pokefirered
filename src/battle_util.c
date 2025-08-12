@@ -30,7 +30,7 @@
 #include "battle_ai_util.h"
 #include "calculate_base_damage.h"
 #include "wild_encounter.h"
-#include "set_effect.h"
+#include "battle_secondary_effect.h"
 #include "constants/battle_string_ids.h"
 #include "constants/battle_anim.h"
 #include "constants/battle.h"
@@ -255,7 +255,7 @@ u32 CanBePutToSleep(u32 attacker, u32 defender, u32 flags)
 
 static bool32 CanPoisonType(u32 attacker, u32 defender)
 {
-    if (GetBattlerAbility(attacker) == ABILITY_CORROSION && IS_MOVE_STATUS(gCurrentMove))
+    if (GetBattlerAbility(attacker) == ABILITY_CORROSION && GetBattleMoveSplit(gCurrentMove) == SPLIT_STATUS)
         return TRUE;
     else if (IsBattlerAnyType(defender, TYPE_POISON, TYPE_STEEL))
         return FALSE;
@@ -498,7 +498,7 @@ static inline bool32 IsMoldBreakerTypeAbility(u32 battlerId)
     u32 attackerAbility = GetBattlerAbility(battlerId);
     
     if (attackerAbility == ABILITY_MOLD_BREAKER || attackerAbility == ABILITY_TERAVOLT || attackerAbility == ABILITY_TURBOBLAZE
-    || (attackerAbility == ABILITY_MYCELIUM_MIGHT && IS_MOVE_STATUS(gCurrentMove)))
+    || (attackerAbility == ABILITY_MYCELIUM_MIGHT && GetBattleMoveSplit(gCurrentMove) == SPLIT_STATUS))
         return TRUE;
         
     return FALSE;
@@ -710,7 +710,7 @@ bool32 TrySetCantSelectMoveBattleScript(u32 battlerId)
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_TORMENTED;
         cantSelect = TRUE;
     }
-    else if (gDisableStructs[battlerId].tauntTimer && IS_MOVE_STATUS(move))
+    else if (gDisableStructs[battlerId].tauntTimer && GetBattleMoveSplit(move) == SPLIT_STATUS)
     {
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_MOVE_TAUNTED;
         cantSelect = TRUE;
@@ -791,7 +791,7 @@ u32 CheckMoveLimitations(u32 battlerId, u32 flags)
         if ((gBattleMons[battlerId].status2 & STATUS2_TORMENT) && move == gBattleStruct->battlers[battlerId].lastMove)
             unusableMoves |= Bit(i);
         
-        if (gDisableStructs[battlerId].tauntTimer && IS_MOVE_STATUS(move))
+        if (gDisableStructs[battlerId].tauntTimer && GetBattleMoveSplit(move) == SPLIT_STATUS)
             unusableMoves |= Bit(i);
         
         if (gDisableStructs[battlerId].encoreTimer && gDisableStructs[battlerId].encoredMove != move)
@@ -1981,7 +1981,7 @@ u32 AtkCanceller_UnableToUseMove(void)
                 ++gBattleStruct->atkCancellerTracker;
                 break;
             case CANCELLER_TAUNTED: // taunt
-                if (gDisableStructs[gBattlerAttacker].tauntTimer && IS_MOVE_STATUS(gCurrentMove))
+                if (gDisableStructs[gBattlerAttacker].tauntTimer && GetBattleMoveSplit(gCurrentMove) == SPLIT_STATUS)
                 {
                     gProtectStructs[gBattlerAttacker].usedTauntedMove = TRUE;
                     gBattlescriptCurrInstr = BattleScript_MoveUsedIsTaunted;
@@ -2157,7 +2157,7 @@ u32 AtkCanceller_UnableToUseMove(void)
                 ++gBattleStruct->atkCancellerTracker;
                 break;
             case CANCELLER_PRIMAL_WEATHER: // primal weather
-                if (!IS_MOVE_STATUS(gCurrentMove))
+                if (GetBattleMoveSplit(gCurrentMove) != SPLIT_STATUS)
                 {
                     switch (gBattleStruct->dynamicMoveType)
                     {
@@ -2188,7 +2188,7 @@ u32 AtkCanceller_UnableToUseMove(void)
                 ++gBattleStruct->atkCancellerTracker;
                 break;
             case CANCELLER_PRANKSTER: // check Prankster
-                if (GetBattlerAbility(gBattlerAttacker) == ABILITY_PRANKSTER && IS_MOVE_STATUS(gCurrentMove) && IsBattlerAlive(gBattlerTarget)
+                if (GetBattlerAbility(gBattlerAttacker) == ABILITY_PRANKSTER && GetBattleMoveSplit(gCurrentMove) == SPLIT_STATUS && IsBattlerAlive(gBattlerTarget)
                 && IsBattlerOfType(gBattlerTarget, TYPE_DARK) && !IsBattlerAlly(gBattlerAttacker, gBattlerTarget))
                 {
                     u32 moveTarget = GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove);
@@ -2401,14 +2401,14 @@ bool32 CanAbilityBlockMove(u32 move, u32 attacker, u32 target, bool32 onlyChecki
                     }
                     break;
                 case ABILITY_TELEPATHY:
-                    if (IsBattlerAlive(BATTLE_PARTNER(target)) && attacker == BATTLE_PARTNER(target) && !IS_MOVE_STATUS(move))
+                    if (IsBattlerAlive(BATTLE_PARTNER(target)) && attacker == BATTLE_PARTNER(target) && GetBattleMoveSplit(move) != SPLIT_STATUS)
                     {
                         gBattleScripting.battler = target;
                         blocked = TRUE;
                     }
                     break;
                 case ABILITY_GOOD_AS_GOLD:
-                    if (IS_MOVE_STATUS(move) && !affectsUser)
+                    if (GetBattleMoveSplit(move) == SPLIT_STATUS && !affectsUser)
                     {
                         gBattleScripting.battler = target;
                         blocked = TRUE;
@@ -2540,7 +2540,7 @@ bool32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u
                     }
                     break;
                 case 2:
-                    if (CompareStat(target, statId, MAX_STAT_STAGES, CMP_LESS_THAN))
+                    if (CompareStat(target, statId, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                     {
                         SetStatChanger(statId, statAmount);
                         
@@ -2928,7 +2928,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                                             {
                                                 if (gBattleMoves[move].effect == EFFECT_OHKO)
                                                     ++effect;
-                                                else if (!IS_MOVE_STATUS(move))
+                                                else if (gBattleMoves[move].split != SPLIT_STATUS)
                                                 {
                                                     if (gBattleMoves[move].effect == EFFECT_HIDDEN_POWER)
                                                         type = GetHiddenPowerType(GetBattlerPartyIndexPtr(i));
@@ -2975,7 +2975,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                                 else
                                     statId = STAT_SPATK;
                                 
-                                if (CompareStat(battler, statId, MAX_STAT_STAGES, CMP_LESS_THAN))
+                                if (CompareStat(battler, statId, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                                 {
                                     SetStatChanger(statId, +1);
                                     SaveAttackerToStack(battler);
@@ -3161,7 +3161,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_INTREPID_SWORD:
-                            if (CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_LESS_THAN)
+                            if (CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_NOT_EQUAL)
                             && !gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].intrepidSwordActivated)
                             {
                                 gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].intrepidSwordActivated = TRUE;
@@ -3172,7 +3172,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_DAUNTLESS_SHIELD:
-                            if (CompareStat(battler, STAT_DEF, MAX_STAT_STAGES, CMP_LESS_THAN)
+                            if (CompareStat(battler, STAT_DEF, MAX_STAT_STAGES, CMP_NOT_EQUAL)
                             && !gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].dauntlessShieldActivated)
                             {
                                 gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].dauntlessShieldActivated = TRUE;
@@ -3272,7 +3272,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                         }
                         break;
                     case ABILITY_SPEED_BOOST:
-                        if (CompareStat(battler, STAT_SPEED, MAX_STAT_STAGES, CMP_LESS_THAN) && gDisableStructs[battler].isFirstTurn != 2
+                        if (CompareStat(battler, STAT_SPEED, MAX_STAT_STAGES, CMP_NOT_EQUAL) && gDisableStructs[battler].isFirstTurn != 2
                         // in gen5 onwards Speed Boost fails to activate if the user failed to run from a wild battle
                         && gActionsByTurnOrder[gBattlerByTurnOrder[battler]] != B_ACTION_RUN) // tried to run. If the game reach in this part is because it failed to do it.
                         {
@@ -3308,10 +3308,10 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             
                             for (i = STAT_ATK; i < NUM_STATS; i++)
                             {
-                                if (CompareStat(battler, i, MIN_STAT_STAGES, CMP_GREATER_THAN))
+                                if (CompareStat(battler, i, MIN_STAT_STAGES, CMP_NOT_EQUAL))
                                     validToLower |= Bit(i);
                                 
-                                if (CompareStat(battler, i, MAX_STAT_STAGES, CMP_LESS_THAN))
+                                if (CompareStat(battler, i, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                                     validToRaise |= Bit(i);
                             }
                             
@@ -3604,7 +3604,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_COLOR_CHANGE:
-                            if (BattlerTurnDamaged(battler) && gCurrentMove != MOVE_STRUGGLE && !IS_MOVE_STATUS(gCurrentMove) && IsBattlerAlive(battler)
+                            if (BattlerTurnDamaged(battler) && gCurrentMove != MOVE_STRUGGLE && GetBattleMoveSplit(gCurrentMove) != SPLIT_STATUS && IsBattlerAlive(battler)
                             && !IsBattlerOfType(battler, moveType) && moveType != TYPE_MYSTERY && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
                             && IS_MULTIHIT_FINAL_STRIKE)
                             {
@@ -3679,7 +3679,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             break;
                         case ABILITY_ANGER_POINT:
                             if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
-                            && gIsCriticalHit && CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_LESS_THAN))
+                            && gIsCriticalHit && CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                             {
                                 SetStatChanger(STAT_ATK, +6); // Max out
                                 BattleScriptCall(BattleScript_AngerPointActivation);
@@ -3695,8 +3695,8 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_WEAK_ARMOR:
-                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && IS_MOVE_PHYSICAL(gCurrentMove)
-                            && (CompareStat(battler, STAT_SPEED, MAX_STAT_STAGES, CMP_LESS_THAN) || CompareStat(battler, STAT_DEF, MIN_STAT_STAGES, CMP_GREATER_THAN)))
+                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && GetBattleMoveSplit(gCurrentMove) == SPLIT_PHYSICAL
+                            && (CompareStat(battler, STAT_SPEED, MAX_STAT_STAGES, CMP_NOT_EQUAL) || CompareStat(battler, STAT_DEF, MIN_STAT_STAGES, CMP_NOT_EQUAL)))
                             {
                                 BattleScriptCall(BattleScript_WeakArmorActivation);
                                 ++effect;
@@ -3718,7 +3718,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             break;
                         case ABILITY_THERMAL_EXCHANGE:
                             if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
-                            && moveType == TYPE_FIRE && CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_LESS_THAN))
+                            && moveType == TYPE_FIRE && CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                             {
                                 SetMoveEffect(MOVE_EFFECT_ATK_PLUS_1, TRUE, FALSE);
                                 BattleScriptCall(BattleScript_TargetAbilityStatRaiseRet);
@@ -3727,7 +3727,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             break;
                         case ABILITY_JUSTIFIED:
                             if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
-                            && moveType == TYPE_DARK && CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_LESS_THAN))
+                            && moveType == TYPE_DARK && CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                             {
                                 SetMoveEffect(MOVE_EFFECT_ATK_PLUS_1, TRUE, FALSE);
                                 BattleScriptCall(BattleScript_TargetAbilityStatRaiseRet);
@@ -3735,7 +3735,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_RATTLED:
-                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && CompareStat(battler, STAT_SPEED, MAX_STAT_STAGES, CMP_LESS_THAN)
+                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && CompareStat(battler, STAT_SPEED, MAX_STAT_STAGES, CMP_NOT_EQUAL)
                             && (moveType == TYPE_BUG || moveType == TYPE_DARK || moveType == TYPE_GHOST))
                             {
                                 SetMoveEffect(MOVE_EFFECT_SPD_PLUS_1, TRUE, FALSE);
@@ -3744,7 +3744,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_STAMINA:
-                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && CompareStat(battler, STAT_DEF, MAX_STAT_STAGES, CMP_LESS_THAN))
+                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && CompareStat(battler, STAT_DEF, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                             {
                                 SetMoveEffect(MOVE_EFFECT_DEF_PLUS_1, TRUE, FALSE);
                                 BattleScriptCall(BattleScript_TargetAbilityStatRaiseRet);
@@ -3752,7 +3752,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_WATER_COMPACTION:
-                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && CompareStat(battler, STAT_DEF, MAX_STAT_STAGES, CMP_LESS_THAN)
+                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && CompareStat(battler, STAT_DEF, MAX_STAT_STAGES, CMP_NOT_EQUAL)
                             && moveType == TYPE_WATER)
                             {
                                 SetMoveEffect(MOVE_EFFECT_DEF_PLUS_2, TRUE, FALSE);
@@ -3762,7 +3762,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             break;
                         case ABILITY_BERSERK:
                             if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && HadMoreThanHalfHpNowDoesnt(battler)
-                            && CompareStat(battler, STAT_SPATK, MAX_STAT_STAGES, CMP_LESS_THAN) && IS_MULTIHIT_FINAL_STRIKE)
+                            && CompareStat(battler, STAT_SPATK, MAX_STAT_STAGES, CMP_NOT_EQUAL) && IS_MULTIHIT_FINAL_STRIKE)
                             {
                                 SetMoveEffect(MOVE_EFFECT_SP_ATK_PLUS_1, TRUE, FALSE);
                                 BattleScriptCall(BattleScript_TargetAbilityStatRaiseRet);
@@ -3772,7 +3772,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                         case ABILITY_GOOEY:
                         case ABILITY_TANGLING_HAIR:
                             if (BattlerTurnDamaged(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
-                            && CompareStat(gBattlerAttacker, STAT_SPEED, MIN_STAT_STAGES, CMP_GREATER_THAN))
+                            && CompareStat(gBattlerAttacker, STAT_SPEED, MIN_STAT_STAGES, CMP_NOT_EQUAL))
                             {
                                 SetStatChanger(STAT_SPEED, -1);
                                 BattleScriptCall(BattleScript_GooeyActivates);
@@ -3861,7 +3861,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_STEAM_ENGINE:
-                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && CompareStat(battler, STAT_SPEED, MAX_STAT_STAGES, CMP_LESS_THAN)
+                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && CompareStat(battler, STAT_SPEED, MAX_STAT_STAGES, CMP_NOT_EQUAL)
                             && (moveType == TYPE_FIRE || moveType == TYPE_WATER))
                             {
                                 SetStatChanger(STAT_SPEED, +6); // Max out
@@ -3870,7 +3870,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_TOXIC_DEBRIS:
-                            if (BattlerTurnDamaged(battler) && IS_MOVE_PHYSICAL(gCurrentMove) && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove))
+                            if (BattlerTurnDamaged(battler) && GetBattleMoveSplit(gCurrentMove) == SPLIT_PHYSICAL && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove))
                             {
                                 BattleScriptCall(BattleScript_ToxicDebrisActivation);
                                 ++effect;
@@ -4044,7 +4044,7 @@ static u8 StatRaiseBerries(u8 battlerId, u8 statId, bool8 moveTurn)
 {
     u8 effect = 0;
 
-    if (CheckPinchBerryActivate(battlerId, gLastUsedItem) && !moveTurn && CompareStat(battlerId, statId, MAX_STAT_STAGES, CMP_LESS_THAN))
+    if (CheckPinchBerryActivate(battlerId, gLastUsedItem) && !moveTurn && CompareStat(battlerId, statId, MAX_STAT_STAGES, CMP_NOT_EQUAL))
     {
         PrepareStatBuffer(gBattleTextBuff1, statId);
         // PrepareStringBuffer(gBattleTextBuff2, STRINGID_STATROSE);
@@ -4202,12 +4202,12 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
             case HOLD_EFFECT_RANDOM_STAT_UP:
                 if (!moveTurn && CheckPinchBerryActivate(battlerId, gLastUsedItem))
                 {
-                    for (i = 0; i < 5 && !CompareStat(battlerId, STAT_ATK + i, MAX_STAT_STAGES, CMP_LESS_THAN); ++i);
+                    for (i = 0; i < 5 && !CompareStat(battlerId, STAT_ATK + i, MAX_STAT_STAGES, CMP_NOT_EQUAL); ++i);
                     if (i != 5)
                     {
                         do
                             i = RandomMax(NUM_STATS - 1);
-                        while (!CompareStat(battlerId, STAT_ATK + i, MAX_STAT_STAGES, CMP_LESS_THAN));
+                        while (!CompareStat(battlerId, STAT_ATK + i, MAX_STAT_STAGES, CMP_NOT_EQUAL));
                         PrepareStatBuffer(gBattleTextBuff1, i + 1);
                         gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
                         gBattleTextBuff2[1] = B_BUFF_STRING;
@@ -4538,7 +4538,7 @@ void ClearFuryCutterDestinyBondGrudge(u32 battlerId)
     gStatuses3[battlerId] &= ~(STATUS3_GRUDGE);
 }
 
-u32 GetMoveSplit(u32 move)
+u32 GetBattleMoveSplit(u32 move)
 {
     u32 split = gBattleMoves[move].split;
     
@@ -5549,7 +5549,7 @@ const u8 *PokemonUseItemEffectsBattle(u32 battlerId, u32 itemId, bool32 *canUse)
     switch (ItemId_GetBattleUsage(itemId))
     {
         case EFFECT_ITEM_INCREASE_STAT:
-            if (CompareStat(battlerId, holdEffectParam, MAX_STAT_STAGES, CMP_LESS_THAN))
+            if (CompareStat(battlerId, holdEffectParam, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                 *canUse = TRUE;
             break;
         case EFFECT_ITEM_SET_FOCUS_ENERGY:
@@ -5590,7 +5590,7 @@ const u8 *PokemonUseItemEffectsBattle(u32 battlerId, u32 itemId, bool32 *canUse)
         case EFFECT_ITEM_INCREASE_ALL_STATS:
             for (i = STAT_ATK; i < NUM_STATS; i++)
             {
-                if (CompareStat(battlerId, i, MAX_STAT_STAGES, CMP_LESS_THAN))
+                if (CompareStat(battlerId, i, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                     *canUse = TRUE;
             }
             break;
@@ -6502,9 +6502,9 @@ void SwapBattlersPositions(u32 battler1, u32 battler2)
     SWAP_FIELD_BATTLER_ID(gSideTimers[side].tailwindBattlerId);
     SWAP_FIELD_BATTLER_ID(gSideTimers[side].followmeTarget);
     
-    // Swap battlers referenced in structs of others battlers on field
     for (i = 0; i < gBattlersCount; i++)
     {
+        // Swap battlers referenced in structs of others battlers on field
         if (!IsBattlerAlly(battler1, i))
         {
             SWAP_FIELD_BATTLER_ID(gDisableStructs[i].infatuatedWith);
@@ -6523,6 +6523,10 @@ void SwapBattlersPositions(u32 battler1, u32 battler2)
             SWAP_FIELD_BATTLER_ID(gBattleStruct->battlers[i].skyDropTarget);
             SWAP(gBattleStruct->battlers[i].lastTakenMoveFrom[battler1], gBattleStruct->battlers[i].lastTakenMoveFrom[battler2], temp);
         }
+        
+        // Swap battler on pickup stack
+        if (gBattleStruct->pickupStack[i] != 0xFF && IsBattlerAlly(battler1, gBattleStruct->pickupStack[i]))
+            SWAP_FIELD_BATTLER_ID(gBattleStruct->pickupStack[i]);
     }
     
     // Swap side specifics data

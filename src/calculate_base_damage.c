@@ -116,7 +116,7 @@ static struct DamageCalc *PopulateDamageStruct(u32 attacker, u32 defender, u32 m
     damageStruct->atkHoldEffParam = ItemId_GetHoldEffectParam(gBattleMons[attacker].item);
     damageStruct->defHoldEffParam = ItemId_GetHoldEffectParam(gBattleMons[defender].item);
     damageStruct->move = move;
-    damageStruct->moveSplit = GetMoveSplit(move);
+    damageStruct->moveSplit = GetBattleMoveSplit(move);
     damageStruct->moveType = moveType;
     damageStruct->effectiveness = effectiveness;
     damageStruct->isCrit = isCrit;
@@ -1144,7 +1144,7 @@ static void UpdateMoveResults(u32 *multiplier, u32 mod, u32 move, u16 *flags)
             *flags &= ~(MOVE_RESULT_NOT_VERY_EFFECTIVE | MOVE_RESULT_SUPER_EFFECTIVE);
             break;
         case TYPE_MUL_NOT_EFFECTIVE:
-            if (!IS_MOVE_STATUS(move) && !(*flags & MOVE_RESULT_NO_EFFECT))
+            if (GetBattleMoveSplit(move) != SPLIT_STATUS && !(*flags & MOVE_RESULT_NO_EFFECT))
             {
                 if (*flags & MOVE_RESULT_SUPER_EFFECTIVE)
                     *flags &= ~(MOVE_RESULT_SUPER_EFFECTIVE);
@@ -1153,7 +1153,7 @@ static void UpdateMoveResults(u32 *multiplier, u32 mod, u32 move, u16 *flags)
             }
             break;
         case TYPE_MUL_SUPER_EFFECTIVE:
-            if (!IS_MOVE_STATUS(move) && !(*flags & MOVE_RESULT_NO_EFFECT))
+            if (GetBattleMoveSplit(move) != SPLIT_STATUS && !(*flags & MOVE_RESULT_NO_EFFECT))
             {
                 if (*flags & MOVE_RESULT_NOT_VERY_EFFECTIVE)
                     *flags &= ~(MOVE_RESULT_NOT_VERY_EFFECTIVE);
@@ -1208,7 +1208,7 @@ static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 d
     {
         mod = TYPE_MUL_NORMAL;
         
-        if (setAbilityFlags && !IS_MOVE_STATUS(move) && gBattleStruct->strongWindsMessageState == 0)
+        if (setAbilityFlags && GetBattleMoveSplit(move) != SPLIT_STATUS && gBattleStruct->strongWindsMessageState == 0)
             ++gBattleStruct->strongWindsMessageState;
     }
     
@@ -1217,7 +1217,7 @@ static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 d
         mod = TYPE_MUL_NORMAL;
     
     // Check status moves, except Thunder Wave
-    if (IS_MOVE_STATUS(move) && move != MOVE_THUNDER_WAVE)
+    if (GetBattleMoveSplit(move) == SPLIT_STATUS && move != MOVE_THUNDER_WAVE)
         mod = TYPE_MUL_NORMAL;
     
     UpdateMoveResults(multiplier, mod, move, flags);
@@ -1238,7 +1238,7 @@ static u32 CalcTypeEffectivenessMultiplierInternal(u32 move, u32 moveType, u32 a
     if (types[2] != TYPE_MYSTERY && types[2] != types[0] && types[2] != types[1])
         MulByTypeEffectiveness(move, moveType, atkAbility, defender, types[2], &multiplier, setAbilityFlags, flags);
 
-    if (!IS_MOVE_STATUS(move))
+    if (GetBattleMoveSplit(move) != SPLIT_STATUS)
     {
         defAbility = GetBattlerAbility(defender);
         

@@ -1,5 +1,5 @@
-#ifndef GUARD_SET_EFFECT_H
-#define GUARD_SET_EFFECT_H
+#ifndef GUARD_BATTLE_SECONDARY_EFFECT_H
+#define GUARD_BATTLE_SECONDARY_EFFECT_H
 
 /////////////////
 // MOVE EFFECT //
@@ -19,4 +19,4 @@ void SetStatChanger(u32 statId, s8 buff);
 bool32 ChangeStatBuffs(u32 flags, bool32 onlyChecks);
 u32 CheckStatDecreaseBlockEffects(u32 attacker, u32 target, u32 statId, u32 flags);
 
-#endif // GUARD_SET_EFFECT_H
+#endif // GUARD_BATTLE_SECONDARY_EFFECT_H

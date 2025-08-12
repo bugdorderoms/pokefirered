@@ -816,7 +816,7 @@ static void MoveSelectionDisplayMoveType(u32 battlerId)
     effect = flags = 0;
     
     // check if move is stab
-    if (!IS_MOVE_STATUS(move) && IsBattlerOfType(battlerId, type))
+    if (GetBattleMoveSplit(move) != SPLIT_STATUS && IsBattlerOfType(battlerId, type))
         effect = 2;
     
     // try change move target in double

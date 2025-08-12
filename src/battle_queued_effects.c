@@ -5,9 +5,9 @@
 #include "battle_message.h"
 #include "battle_queued_effects.h"
 #include "battle_scripts.h"
+#include "battle_secondary_effect.h"
 #include "calculate_base_damage.h"
 #include "math_util.h"
-#include "set_effect.h"
 #include "constants/battle_string_ids.h"
 #include "constants/moves.h"
 

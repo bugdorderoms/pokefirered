@@ -315,7 +315,7 @@ BattleScript_EffectGrowth::
     attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectGrowthTryAttackUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectGrowthTryAttackUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPATK, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectGrowthTryAttackUp::
 	attackanimation
@@ -798,8 +798,8 @@ BattleScript_EffectCurse::
 	attackstring
 	ppreduce
 	jumpiftype BS_ATTACKER, TYPE_GHOST, BattleScript_GhostCurse
-	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_SPEED, MIN_STAT_STAGES, BattleScript_EffectCurseDoSpeedDown
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectCurseDoSpeedDown
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPEED, MIN_STAT_STAGES, BattleScript_EffectCurseDoSpeedDown
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectCurseDoSpeedDown
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_DEF, MAX_STAT_STAGES, BattleScript_ButItFailed
 BattleScript_EffectCurseDoSpeedDown::
     setbyte sB_ANIM_TURN, 1
@@ -1358,7 +1358,7 @@ BattleScript_EffectMemento::
 	ppreduce
 	jumpifmovehadnoeffect BattleScript_MoveMissed
 	jumpifsubstituteblocks BattleScript_ButItFailed
-	jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_ATK, MIN_STAT_STAGES, BattleScript_EffectMementoTryAtkDown
+	jumpifstat BS_TARGET, CMP_NOT_EQUAL, STAT_ATK, MIN_STAT_STAGES, BattleScript_EffectMementoTryAtkDown
 	jumpifstat BS_TARGET, CMP_EQUAL, STAT_SPATK, MIN_STAT_STAGES, BattleScript_EffectMementoFailFaintAttacker
 BattleScript_EffectMementoTryAtkDown::
 	attackanimation
@@ -1651,7 +1651,7 @@ BattleScript_EffectTickle::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_ATK, MIN_STAT_STAGES, BattleScript_EffectTickleTryLowerAtk
+	jumpifstat BS_TARGET, CMP_NOT_EQUAL, STAT_ATK, MIN_STAT_STAGES, BattleScript_EffectTickleTryLowerAtk
 	jumpifstat BS_TARGET, CMP_EQUAL, STAT_DEF, MIN_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectTickleTryLowerAtk::
     jumpifsubstituteblocks BattleScript_ButItFailed
@@ -1672,7 +1672,7 @@ BattleScript_EffectCosmicPower::
     attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_DEF, MAX_STAT_STAGES, BattleScript_EffectCosmicPowerTryDefUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_DEF, MAX_STAT_STAGES, BattleScript_EffectCosmicPowerTryDefUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPDEF, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectCosmicPowerTryDefUp::
 	attackanimation
@@ -1694,7 +1694,7 @@ BattleScript_EffectHowl::
 	setstatchanger STAT_ATK, +1
 	settargetally
 	jumpifabsent BS_TARGET, BattleScript_EffectUserStatUpAfterAttackString
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectHowlTryUserAttackUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectHowlTryUserAttackUp
 	jumpifstat BS_TARGET, CMP_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_ButItFailed
 	jumpifsubstituteblocks BattleScript_ButItFailed
 	jumpifability BS_TARGET, ABILITY_SOUNDPROOF, BattleScript_GuardDogPrevents
@@ -1720,7 +1720,7 @@ BattleScript_EffectBulkUp::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectBulkUpTryAttackUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectBulkUpTryAttackUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_DEF, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectBulkUpTryAttackUp::
 	attackanimation
@@ -1739,7 +1739,7 @@ BattleScript_EffectCalmMind::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPATK, MAX_STAT_STAGES, BattleScript_EffectCalmMindTrySpAtkUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPATK, MAX_STAT_STAGES, BattleScript_EffectCalmMindTrySpAtkUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPDEF, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectCalmMindTrySpAtkUp::
 	attackanimation
@@ -1758,7 +1758,7 @@ BattleScript_EffectDragonDance::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectDragonDanceTryAtkUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectDragonDanceTryAtkUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPEED, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectDragonDanceTryAtkUp::
 	attackanimation
@@ -2096,7 +2096,7 @@ BattleScript_EffectDefog::
 	attackstring
 	ppreduce
 	jumpifsubstituteblocks BattleScript_EffectDefogTryClear
-	jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_EVASION, MIN_STAT_STAGES, BattleScript_EffectDefogTryStatDown
+	jumpifstat BS_TARGET, CMP_NOT_EQUAL, STAT_EVASION, MIN_STAT_STAGES, BattleScript_EffectDefogTryStatDown
 BattleScript_EffectDefogTryClear::
 	trydefogclear BattleScript_ButItFailed @ Fail if do not clear anything
 BattleScript_EffectDefogTryStatDown::
@@ -2154,7 +2154,7 @@ BattleScript_EffectAttackAccuracyUp::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectAtkAccUpTryAtkUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectAtkAccUpTryAtkUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_ACC, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectAtkAccUpTryAtkUp::
 	attackanimation
@@ -2252,8 +2252,8 @@ BattleScript_EffectQuiverDance::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPATK, MAX_STAT_STAGES, BattleScript_EffectQuiverDanceTrySpAtkUp
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPDEF, MAX_STAT_STAGES, BattleScript_EffectQuiverDanceTrySpAtkUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPATK, MAX_STAT_STAGES, BattleScript_EffectQuiverDanceTrySpAtkUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPDEF, MAX_STAT_STAGES, BattleScript_EffectQuiverDanceTrySpAtkUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPEED, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectQuiverDanceTrySpAtkUp::
 	attackanimation
@@ -2300,8 +2300,8 @@ BattleScript_EffectCoil::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectCoilTryAtkUp
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_DEF, MAX_STAT_STAGES, BattleScript_EffectCoilTryAtkUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectCoilTryAtkUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_DEF, MAX_STAT_STAGES, BattleScript_EffectCoilTryAtkUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_ACC, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectCoilTryAtkUp::
 	attackanimation
@@ -2392,10 +2392,10 @@ BattleScript_EffectShellSmash::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_DEF, MIN_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
-	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_SPDEF, MIN_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPATK, MAX_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_DEF, MIN_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPDEF, MIN_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPATK, MAX_STAT_STAGES, BattleScript_EffectShellSmashTryDefDown
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPEED, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectShellSmashTryDefDown::
 	attackanimation
@@ -2462,7 +2462,7 @@ BattleScript_EffectShiftGear::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPEED, MAX_STAT_STAGES, BattleScript_EffectShiftGearStatsUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPEED, MAX_STAT_STAGES, BattleScript_EffectShiftGearStatsUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_CantChangeMultipleStats
 BattleScript_EffectShiftGearStatsUp::
 	attackanimation
@@ -2915,10 +2915,10 @@ BattleScript_NeutralizingGasExitsLoopIncrement::
 
 BattleScript_AngerShellActivates::
     swapattackerwithtarget
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_AngerShellBoost
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPATK, MAX_STAT_STAGES, BattleScript_AngerShellBoost
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPEED, MAX_STAT_STAGES, BattleScript_AngerShellBoost
-	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_DEF, MIN_STAT_STAGES, BattleScript_AngerShellBoost
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_AngerShellBoost
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPATK, MAX_STAT_STAGES, BattleScript_AngerShellBoost
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPEED, MAX_STAT_STAGES, BattleScript_AngerShellBoost
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_DEF, MIN_STAT_STAGES, BattleScript_AngerShellBoost
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPDEF, MIN_STAT_STAGES, BattleScript_AngerShellEnd
 BattleScript_AngerShellBoost::
     loadabilitypopup BS_ATTACKER
@@ -3705,10 +3705,10 @@ BattleScript_CommanderActivates::
 	loadabilitypopup BS_SCRIPTING
 	playanimation BS_ATTACKER, B_ANIM_COMMANDER, sB_ANIM_ARG1
 	waitstate
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_CommanderDoStatsUp
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_DEF, MAX_STAT_STAGES, BattleScript_CommanderDoStatsUp
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPEED, MAX_STAT_STAGES, BattleScript_CommanderDoStatsUp
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPATK, MAX_STAT_STAGES, BattleScript_CommanderDoStatsUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_CommanderDoStatsUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_DEF, MAX_STAT_STAGES, BattleScript_CommanderDoStatsUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPEED, MAX_STAT_STAGES, BattleScript_CommanderDoStatsUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPATK, MAX_STAT_STAGES, BattleScript_CommanderDoStatsUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPDEF, MAX_STAT_STAGES, BattleScript_CommanderEnd
 BattleScript_CommanderDoStatsUp::
     setstatchanger STAT_ATK, +2
@@ -4533,10 +4533,10 @@ BattleScript_HealingWishEnd::
 	return
 
 BattleScript_AllStatsUp::
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_ATK, MAX_STAT_STAGES, BattleScript_AllStatsUpDoStatsUp
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_DEF, MAX_STAT_STAGES, BattleScript_AllStatsUpDoStatsUp
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPEED, MAX_STAT_STAGES, BattleScript_AllStatsUpDoStatsUp
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPATK, MAX_STAT_STAGES, BattleScript_AllStatsUpDoStatsUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_ATK, MAX_STAT_STAGES, BattleScript_AllStatsUpDoStatsUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_DEF, MAX_STAT_STAGES, BattleScript_AllStatsUpDoStatsUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPEED, MAX_STAT_STAGES, BattleScript_AllStatsUpDoStatsUp
+	jumpifstat BS_ATTACKER, CMP_NOT_EQUAL, STAT_SPATK, MAX_STAT_STAGES, BattleScript_AllStatsUpDoStatsUp
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPDEF, MAX_STAT_STAGES, BattleScript_AllStatsUpRet
 BattleScript_AllStatsUpDoStatsUp::
     setstatchanger STAT_ATK, +1

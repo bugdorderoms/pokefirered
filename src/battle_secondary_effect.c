@@ -17,7 +17,7 @@
 #include "battle_script_commands.h"
 #include "link.h"
 #include "m4a.h"
-#include "set_effect.h"
+#include "battle_secondary_effect.h"
 #include "battle_ai.h"
 #include "constants/battle_script_commands.h"
 #include "constants/items.h"

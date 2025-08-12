@@ -182,12 +182,12 @@ static u32 GetSpeciesForm(u32 formChangeType, u32 species, u32 personality, u32 
                     case FORM_CHANGE_MOVE_SPLIT:
                         if (formsTable[i].param2)
                         {
-                            if (param != GetMoveSplit(gCurrentMove))
+                            if (param != GetBattleMoveSplit(gCurrentMove))
                                 targetSpecies = formsTable[i].targetSpecies;
                         }
                         else
                         {
-                            if (param == GetMoveSplit(gCurrentMove))
+                            if (param == GetBattleMoveSplit(gCurrentMove))
                                 targetSpecies = formsTable[i].targetSpecies;
                         }
                         break;

@@ -3,10 +3,10 @@
 #include "battle_ai.h"
 #include "battle_ai_util.h"
 #include "battle_move_effects.h"
+#include "battle_secondary_effect.h"
 #include "battle_util.h"
 #include "item.h"
 #include "random.h"
-#include "set_effect.h"
 #include "util.h"
 #include "constants/abilities.h"
 #include "constants/hold_effects.h"
@@ -117,7 +117,7 @@ u32 GetNumMovesWithSplitInBattlerMoveset(u32 battlerId, u32 split)
 
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
-        if (AI_THINKING->moves[battlerId][i] && GetMoveSplit(AI_THINKING->moves[battlerId][i]) == split)
+        if (AI_THINKING->moves[battlerId][i] && GetBattleMoveSplit(AI_THINKING->moves[battlerId][i]) == split)
             ++count;
     }
     return count;

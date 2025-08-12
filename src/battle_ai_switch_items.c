@@ -176,7 +176,7 @@ static u32 FindMonThatAbsorbsOpponentsMove(u32 battlerId, u8 *viableMons, u32 av
     
     predictedMove = AI_THINKING->predictedMoves[opposingBattler];
     
-    if (!predictedMove || IS_MOVE_STATUS(predictedMove))
+    if (!predictedMove || GetBattleMoveSplit(predictedMove) == SPLIT_STATUS)
         return NO_SWITCH;
     
     predictedMoveType = gBattleMoves[predictedMove].type;
@@ -238,7 +238,7 @@ static u32 ShouldSwitchIfWonderGuard(u32 battlerId, u8 *viableMons, u32 availabl
     {
         move = moves[i];
         
-        if (move && !IS_MOVE_STATUS(move) && TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, &flags) >= TYPE_MUL_SUPER_EFFECTIVE)
+        if (move && GetBattleMoveSplit(move) != SPLIT_STATUS && TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, &flags) >= TYPE_MUL_SUPER_EFFECTIVE)
             return NO_SWITCH;
     }
     
@@ -251,7 +251,7 @@ static u32 ShouldSwitchIfWonderGuard(u32 battlerId, u8 *viableMons, u32 availabl
         {
             move = GetMonData(&gEnemyParty[id], MON_DATA_MOVE1 + j);
             
-            if (move && !IS_MOVE_STATUS(move) && AI_TypeCalc(&gEnemyParty[id], move, opposingBattler) >= TYPE_MUL_SUPER_EFFECTIVE)
+            if (move && GetBattleMoveSplit(move) != SPLIT_STATUS && AI_TypeCalc(&gEnemyParty[id], move, opposingBattler) >= TYPE_MUL_SUPER_EFFECTIVE)
                 return id;
         }
     }
@@ -271,7 +271,7 @@ static u32 ShouldSwitchIfOnlyBadMovesLeft(u32 battlerId, u8 *viableMons, u32 ava
     {
         move = moves[i];
         
-        if (move && !IS_MOVE_STATUS(move) && TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, &flags) != TYPE_MUL_NO_EFFECT)
+        if (move && GetBattleMoveSplit(move) != SPLIT_STATUS && TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, &flags) != TYPE_MUL_NO_EFFECT)
             return NO_SWITCH;
     }
     return PARTY_SIZE;
@@ -367,7 +367,7 @@ bool32 BattleAI_ShouldUseItem(u32 battlerId)
                     case EFFECT_ITEM_CURE_PRIMARY_STATUS:
                         break;
                     case EFFECT_ITEM_INCREASE_STAT:
-                        if (gBattleMons[battlerId].hp >= gBattleMons[battlerId].maxHP / 2 && CompareStat(battlerId, holdEffectParam, MAX_STAT_STAGES, CMP_LESS_THAN))
+                        if (gBattleMons[battlerId].hp >= gBattleMons[battlerId].maxHP / 2 && CompareStat(battlerId, holdEffectParam, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                             itemPriority = GetStatUpScore(battlerId, MAX_BATTLERS_COUNT, holdEffectParam, GetItemStatChangeStages(item), FALSE); // Increase based on the number of stages
                         break;
                     case EFFECT_ITEM_INCREASE_ALL_STATS:
@@ -378,7 +378,7 @@ bool32 BattleAI_ShouldUseItem(u32 battlerId)
                             for (j = STAT_ATK; j < NUM_STATS; j++)
                             {
                                 // Increases how much as has valid stats to increase
-                                if (CompareStat(battlerId, j, MAX_STAT_STAGES, CMP_LESS_THAN))
+                                if (CompareStat(battlerId, j, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                                 {
                                     itemPriority += GetStatUpScore(battlerId, MAX_BATTLERS_COUNT, j, +1, FALSE);
                                     ++count;

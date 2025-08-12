@@ -23,26 +23,25 @@ DOUBLE_BATTLE_TEST("Cloud Nine/Air Lock prevent weather effects, but without the
 {
     u32 species, ability;
     
+    PASSES_RANDOMLY(70, 100, RNG_ACCURACY);
+    
     PARAMETRIZE { species = SPECIES_PSYDUCK; ability = ABILITY_CLOUD_NINE; }
     PARAMETRIZE { species = SPECIES_RAYQUAZA; ability = ABILITY_AIR_LOCK; }
     
     GIVEN {
+        ASSUME(gBattleMoves[MOVE_THUNDER].accuracy == 70);
         ASSUME(gBattleMoves[MOVE_THUNDER].effect == EFFECT_NEVER_MISS_IN_WEATHER);
-        ASSUME(gBattleMoves[MOVE_THUNDER].argument.neverMissInWeather.weather == B_WEATHER_RAIN_ANY);
+        ASSUME(gBattleMoves[MOVE_THUNDER].argument.neverMissInWeather.debuffWeather == B_WEATHER_SUN_ANY);
         
         PLAYER(species) { Ability(ability); }
         PLAYER(SPECIES_WOBBUFFET);
         
         OPPONENT(SPECIES_WOBBUFFET);
-        OPPONENT(SPECIES_POLITOED) { Ability(ABILITY_DRIZZLE); }
+        OPPONENT(SPECIES_NINETALES) { Ability(ABILITY_DROUGHT); }
     } WHEN {
-        TURN { MOVE(opponentLeft, MOVE_THUNDER, WITH_RNG(RNG_ACCURACY, FALSE), target: playerRight); }
+        TURN { MOVE(opponentLeft, MOVE_THUNDER, target: playerRight); }
     } SCENE {
-        NONE_OF {
-            ANIMATION(ANIM_TYPE_MOVE, MOVE_THUNDER, opponentLeft);
-            HP_BAR(playerRight);
-        }
-        MESSAGE("Rain continues to fall.");
-        ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_RAIN_CONTINUES);
+        ANIMATION(ANIM_TYPE_MOVE, MOVE_THUNDER, opponentLeft);
+        HP_BAR(playerRight);
     }
 }
