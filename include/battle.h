@@ -517,7 +517,8 @@ struct BattleStruct
     /*0x077*/ u8 teamPreviewTriggerSpriteId;
     /*0x078*/ u8 echoedVoiceCounter:2;
     /*0x078*/ u8 echoedVoiceDmgScale:4;
-    /*0x078*/ u8 unused:2;
+    /*0x078*/ u8 bypassMoldBreakerChecks:1; // For ABILITYEFFECT_IMMUNITY
+    /*0x078*/ u8 unused:1; // unused
     /*0x079*/ struct {
                   u8 calls:5;
                   u8 usedAdrenalineOrb:1;

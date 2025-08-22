@@ -191,6 +191,7 @@ BattleScript_SuccessBallThrow::
 	getexp BS_TARGET
 	sethword gBattle_BG2_X, 0
 BattleScript_CaughtMonTrySetDexFlag::
+	jumpifbattletype BATTLE_TYPE_RECORDED, BattleScript_CaughtPokemonSkipNickname
 	trysetcaughtmondexflags BattleScript_CaughtPokemonSkipNewDex
 	printstring STRINGID_DEFDATAADDEDTODEX
 	waitstate

@@ -514,7 +514,7 @@ u32 GetBattlerAbility(u32 battler)
     if (ability != ABILITY_NEUTRALIZING_GAS && IsNeutralizingGasOnField(ability, forAI))
         return ABILITY_NONE;
     
-    if (gAbilities[ability].breakable && battler != gCurrentTurnActionBattlerId)
+    if (gAbilities[ability].breakable && battler != gCurrentTurnActionBattlerId && !gBattleStruct->bypassMoldBreakerChecks)
     {
         if ((forAI || (gCurrentTurnActionNumber < gBattlersCount && gBattlerByTurnOrder[gCurrentTurnActionNumber] == gCurrentTurnActionBattlerId
         && gActionsByTurnOrder[gCurrentTurnActionNumber] == B_ACTION_USE_MOVE)) && IsMoldBreakerTypeAbility(gCurrentTurnActionBattlerId))
@@ -2109,8 +2109,8 @@ u32 AtkCanceller_UnableToUseMove(void)
                             gBattlerTarget = gBattleStruct->battlers[gBattlerAttacker].bideTakenDamageBattler;
                             
                             if (!IsBattlerAlive(gBattlerTarget))
-                                gBattlerTarget = gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(gCurrentMove, MOVE_TARGET_SELECTED + 1);
-                            
+                                gBattlerTarget = gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(gCurrentMove, MOVE_TARGET_SELECTED + 1, FALSE);
+
                             gBattlescriptCurrInstr = BattleScript_BideAttack;
                         }
                         else
@@ -2681,30 +2681,16 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                         case ABILITY_TRACE:
                             if (!gSpecialStatuses[battler].switchInAbilityDone)
                             {
-                                u32 tgt2, target = 0xFF, tgt1 = BATTLE_OPPOSITE(battler);
-                                u32 tgt2Ability, tgt1Ability = gBattleMons[tgt1].ability;
+                                u32 target = BATTLE_OPPOSITE(battler);
                                 
-                                if (IsDoubleBattleForBattler(tgt1))
-                                {
-                                    tgt2 = BATTLE_PARTNER(tgt1);
-                                    tgt2Ability = gBattleMons[tgt2].ability;
-                                    
-                                    if (IS_WHOLE_SIDE_ALIVE(tgt1) && !gAbilities[tgt1Ability].cantBeTraced && !gAbilities[tgt2Ability].cantBeTraced)
-                                        target = RandomPercentage(RNG_TRACE_TARGET, 50) ? tgt1 : tgt2;
-                                    else if (IsBattlerAlive(tgt1) && !gAbilities[tgt1Ability].cantBeTraced)
-                                        target = tgt1;
-                                    else if (IsBattlerAlive(tgt2) && !gAbilities[tgt2Ability].cantBeTraced)
-                                        target = tgt2;
-                                }
-                                else if (IsBattlerAlive(tgt1) && !gAbilities[tgt1Ability].cantBeTraced)
-                                    target = tgt1;
+                                if (IsDoubleBattleForBattler(target))
+                                    target = RandomPercentage(RNG_TRACE_TARGET, 50) ? target : BATTLE_PARTNER(target);
                                 
-                                if (target != 0xFF)
+                                if (IsBattlerAlive(target) && !gAbilities[gBattleMons[target].ability].cantBeTraced)
                                 {
                                     SaveAttackerToStack(battler);
                                     SaveTargetToStack(target);
                                     BattleScriptPushCursorAndCallback(BattleScript_TraceActivates);
-                                    gSpecialStatuses[battler].switchInAbilityDone = TRUE;
                                     ++effect;
                                 }
                             }
@@ -3146,6 +3132,10 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             break;
                         case ABILITY_MAGMA_ARMOR:
                             if (!gSpecialStatuses[battler].switchInAbilityDone && gBattleMons[battler].status1.id == STATUS1_FREEZE)
+                                goto LIMBER_ACTIVATES;
+                            break;
+                        case ABILITY_WATER_VEIL:
+                            if (!gSpecialStatuses[battler].switchInAbilityDone && gBattleMons[battler].status1.id == STATUS1_BURN)
                                 goto LIMBER_ACTIVATES;
                             break;
                         case ABILITY_PASTEL_VEIL:
@@ -3880,6 +3870,8 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                 }
                 break;
             case ABILITYEFFECT_IMMUNITY:
+                gBattleStruct->bypassMoldBreakerChecks = TRUE;
+                
                 for (battler = 0; battler < gBattlersCount; battler++)
                 {
                     switch (GetBattlerAbility(battler))
@@ -3940,6 +3932,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                         break;
                     }
                 }
+                gBattleStruct->bypassMoldBreakerChecks = FALSE;
                 break;
             case ABILITYEFFECT_ON_WEATHER: // abilities that activate when the weather changes
                 gBattleScripting.battler = battler;
@@ -4597,14 +4590,19 @@ u32 SetRandomTarget(u32 battlerId)
 }
 
 // Get move target and apply all redirection effects
-u32 GetMoveTarget(u32 move, u32 setTarget)
+u32 GetMoveTarget(u32 move, u32 setTarget, bool32 useBaseType)
 {
-    u32 side, moveTarget, targetBattler = 0;
+    u32 side, moveTarget, moveType, targetBattler;
     
     if (setTarget)
         moveTarget = setTarget - 1;
     else
         moveTarget = GetBattlerMoveTargetType(gBattlerAttacker, move);
+    
+    if (useBaseType)
+        moveType = gBattleMoves[move].type;
+    else
+        moveType = gBattleStruct->dynamicMoveType;
     
     switch (moveTarget)
     {
@@ -4618,17 +4616,27 @@ u32 GetMoveTarget(u32 move, u32 setTarget)
             {
                 targetBattler = SetRandomTarget(gBattlerAttacker);
                 
-                if (gBattleMoves[move].type == TYPE_ELECTRIC && ABILITY_ON_OPPOSING_SIDE(gBattlerAttacker, ABILITY_LIGHTNING_ROD)
-                && GetBattlerAbility(targetBattler) != ABILITY_LIGHTNING_ROD)
+                if (IsMoveAffectedByRedirectionEffects(gBattlerAttacker, move))
                 {
-                    targetBattler = BATTLE_PARTNER(targetBattler);
-                    gSpecialStatuses[targetBattler].abilityRedirected = TRUE;
-                }
-                else if (gBattleMoves[move].type == TYPE_WATER && ABILITY_ON_OPPOSING_SIDE(gBattlerAttacker, ABILITY_STORM_DRAIN)
-                && GetBattlerAbility(targetBattler) != ABILITY_STORM_DRAIN)
-                {
-                    targetBattler = BATTLE_PARTNER(targetBattler);
-                    gSpecialStatuses[targetBattler].abilityRedirected = TRUE;
+                    u32 newTarget;
+                    
+                    switch (moveType)
+                    {
+                        case TYPE_ELECTRIC:
+                            if (GetBattlerAbility(targetBattler) != ABILITY_LIGHTNING_ROD && (newTarget = ABILITY_ON_FIELD_EXCEPT_BATTLER(gBattlerAttacker, ABILITY_LIGHTNING_ROD)))
+                            {
+                                targetBattler = newTarget - 1;
+                                gSpecialStatuses[targetBattler].abilityRedirected = TRUE;
+                            }
+                            break;
+                        case TYPE_WATER:
+                            if (GetBattlerAbility(targetBattler) != ABILITY_STORM_DRAIN && (newTarget = ABILITY_ON_FIELD_EXCEPT_BATTLER(gBattlerAttacker, ABILITY_STORM_DRAIN)))
+                            {
+                                targetBattler = newTarget - 1;
+                                gSpecialStatuses[targetBattler].abilityRedirected = TRUE;
+                            }
+                            break;
+                    }
                 }
             }
             break;
@@ -5465,15 +5473,22 @@ u32 GetBattlerHighestStatId(u32 battlerId, bool32 checkWonderRoom)
 
 bool32 IsBattlerAffectedByFollowMe(u32 battlerId, u32 opposingSide, u32 move)
 {
-    u32 atkAbility = GetBattlerAbility(battlerId);
-    
     if (!gSideTimers[opposingSide].followmeSet || !IsBattlerAlive(gSideTimers[opposingSide].followmeTarget) || (gStatuses3[gSideTimers[opposingSide].followmeTarget] & STATUS3_SKY_DROP_TARGET))
         return FALSE;
-    else if (atkAbility == ABILITY_PROPELLER_TAIL || atkAbility == ABILITY_STALWART)
+    else if (gSideTimers[opposingSide].followmePowder && !IsBattlerAffectedBySpore(battlerId))
+        return FALSE;
+    else
+        return IsMoveAffectedByRedirectionEffects(battlerId, move);
+}
+
+// These protects redirection from Lightning Rod/Follow Me.
+bool32 IsMoveAffectedByRedirectionEffects(u32 battlerId, u32 move)
+{
+    u32 atkAbility = GetBattlerAbility(battlerId);
+    
+    if (atkAbility == ABILITY_PROPELLER_TAIL || atkAbility == ABILITY_STALWART)
         return FALSE;
     else if (gBattleMoves[move].effect == EFFECT_SKY_DROP || gBattleMoves[move].effect == EFFECT_FUTURE_SIGHT)
-        return FALSE;
-    else if (gSideTimers[opposingSide].followmePowder && !IsBattlerAffectedBySpore(battlerId))
         return FALSE;
     else
         return TRUE;
@@ -5712,7 +5727,7 @@ s32 GetDrainedBigRootHp(u32 battlerId, s32 hp)
 
 bool32 IsBattlerWeatherAffected(u32 battlerId, u32 weatherFlags)
 {
-    if (WEATHER_HAS_EFFECT && (gBattleWeather & weatherFlags))
+    if (!ABILITY_ON_FIELD(ABILITY_CLOUD_NINE) && !ABILITY_ON_FIELD(ABILITY_AIR_LOCK) && (gBattleWeather & weatherFlags))
     {
         return TRUE;
     }

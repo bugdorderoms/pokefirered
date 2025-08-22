@@ -726,7 +726,7 @@ static bool32 NoTargetPresent(void)
 {
     if (!IsBattlerAlive(gBattlerTarget))
     {
-        u32 newTarget = GetMoveTarget(gCurrentMove, 0);
+        u32 newTarget = GetMoveTarget(gCurrentMove, 0, FALSE);
         
         if (IsBattlerAlive(newTarget))
             gBattlerTarget = newTarget;
@@ -908,32 +908,30 @@ static void atk00_attackcanceler(void)
     {
         gSpecialStatuses[gBattlerTarget].abilityRedirected = FALSE;
         BattleScriptCall(BattleScript_TookAttack);
+        return;
+    }
+    else if (IsBattlerProtected(gBattlerAttacker, gBattlerTarget, gCurrentMove) && attacksThisTurn)
+    {
+        CancelMultiTurnMoves(gBattlerAttacker);
+        gMoveResultFlags |= MOVE_RESULT_MISSED;
+        gBattleStruct->battlers[gBattlerTarget].lastLandedMove = 0;
+        gBattleStruct->battlers[gBattlerTarget].lastHitMoveType = 0;
+        gBattleCommunication[MISS_TYPE] = B_MSG_PROTECTED;
+        
+        if (gSpecialStatuses[gBattlerAttacker].parentalBondState == PARENTAL_BOND_1ST_HIT)
+        {
+            gSpecialStatuses[gBattlerAttacker].parentalBondState = PARENTAL_BOND_OFF; // No second hit if first hit was blocked
+            gSpecialStatuses[gBattlerAttacker].multiHitOn = FALSE;
+            gMultiHitCounter = 0;
+        }
     }
     else
     {
-        if (IsBattlerProtected(gBattlerAttacker, gBattlerTarget, gCurrentMove) && attacksThisTurn)
-        {
-            CancelMultiTurnMoves(gBattlerAttacker);
-            gMoveResultFlags |= MOVE_RESULT_MISSED;
-            gBattleStruct->battlers[gBattlerTarget].lastLandedMove = 0;
-            gBattleStruct->battlers[gBattlerTarget].lastHitMoveType = 0;
-            gBattleCommunication[MISS_TYPE] = B_MSG_PROTECTED;
-            
-            if (gSpecialStatuses[gBattlerAttacker].parentalBondState == PARENTAL_BOND_1ST_HIT)
-            {
-                gSpecialStatuses[gBattlerAttacker].parentalBondState = PARENTAL_BOND_OFF; // No second hit if first hit was blocked
-                gSpecialStatuses[gBattlerAttacker].multiHitOn = FALSE;
-                gMultiHitCounter = 0;
-            }
-        }
-        else
-        {
-            // Check abilities that absorbs the move
-            if (GetBattleMoveSplit(gCurrentMove) == SPLIT_STATUS && CanAbilityAbsorbMove(GetBattlerAbility(gBattlerTarget), gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, FALSE))
-                return;
-        }
-        gBattlescriptCurrInstr = cmd->nextInstr;
+        // Check abilities that absorbs the move
+        if (GetBattleMoveSplit(gCurrentMove) == SPLIT_STATUS && CanAbilityAbsorbMove(GetBattlerAbility(gBattlerTarget), gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, FALSE))
+            return;
     }
+    gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
 static void JumpIfMoveFailed(const u8 *nextInstr, const u8 *jumpStr)
@@ -994,6 +992,9 @@ static bool32 AccuracyCalcHelper(const u8 *nextInstr, const u8 *jumpStr)
         JumpIfMoveFailed(nextInstr, jumpStr);
     else if ((gStatuses3[gBattlerTarget] & STATUS3_TELEKINESIS) && gBattleMoves[gCurrentMove].effect != EFFECT_OHKO) // Check Telekinesis
         JumpIfMoveFailed(nextInstr, jumpStr);
+    else if ((GetBattlerAbility(gBattlerTarget) == ABILITY_LIGHTNING_ROD && gBattleStruct->dynamicMoveType == TYPE_ELECTRIC)
+        || (GetBattlerAbility(gBattlerTarget) == ABILITY_STORM_DRAIN && gBattleStruct->dynamicMoveType == TYPE_WATER)) // Check ability redirected
+        JumpIfMoveFailed(nextInstr, jumpStr);
     else if (!gBattleMoves[gCurrentMove].accuracy) // Check moves that never misses
         JumpIfMoveFailed(nextInstr, jumpStr);
     else
@@ -1022,8 +1023,9 @@ u32 CalcMoveTotalAccuracy(u32 move, u32 attacker, u32 defender)
     evasionStatStages = min(MAX_STAT_STAGES, evasionStatStages); // Clamp evasion stages to the max
     
     // Check effects that alter the move's accuracy
-    if ((gBattleMoves[move].effect == EFFECT_NEVER_MISS_IN_WEATHER && IsBattlerWeatherAffected(attacker, gBattleMoves[move].argument.neverMissInWeather.debuffWeather))
-    || (defAbility == ABILITY_WONDER_SKIN && GetBattleMoveSplit(move) == SPLIT_STATUS && moveAcc > 50))
+    if ((gBattleMoves[move].effect == EFFECT_NEVER_MISS_IN_WEATHER && gBattleMoves[move].argument.neverMissInWeather.debuffWeather
+    && IsBattlerWeatherAffected(attacker, gBattleMoves[move].argument.neverMissInWeather.debuffWeather)) || (defAbility == ABILITY_WONDER_SKIN
+    && GetBattleMoveSplit(move) == SPLIT_STATUS && moveAcc > 50))
         moveAcc = 50;
     
     // Apply evasion stat stages into the move's accuracy
@@ -1167,7 +1169,8 @@ static void atk03_ppreduce(void)
         ppToDeduct = 1;
         
         // Check Pressure PP usage
-        if (gBattleMoves[gCurrentMove].flags.forcePressure || moveTarget == MOVE_TARGET_BOTH || moveTarget == MOVE_TARGET_FOES_AND_ALLY || moveTarget == MOVE_TARGET_OPPONENTS)
+        if (moveTarget == MOVE_TARGET_BOTH || moveTarget == MOVE_TARGET_FOES_AND_ALLY || moveTarget == MOVE_TARGET_OPPONENTS || moveTarget == MOVE_TARGET_ALL_BATTLERS
+        || gBattleMoves[gCurrentMove].flags.forcePressure)
         {
             for (i = 0; i < gBattlersCount; i++)
             {
@@ -1187,7 +1190,7 @@ static void atk03_ppreduce(void)
             else
                 gBattleMons[gBattlerAttacker].pp[gCurrMovePos] = 0;
             
-            gProtectStructs[gBattlerAttacker].notFirstStrike = 1;
+            gProtectStructs[gBattlerAttacker].notFirstStrike = TRUE;
         
             if (MOVE_IS_PERMANENT(gBattlerAttacker, gCurrMovePos))
             {
@@ -2382,6 +2385,16 @@ static void atk22_jumpifabilityonside(void)
         gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
+static inline bool32 BattleTypeAllowsExp(void)
+{
+    if ((gBattleTypeFlags & BATTLE_TYPE_RECORDED) && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+        return TRUE;
+    else if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI))
+        return FALSE;
+    else
+        return TRUE;
+}
+
 static inline bool32 MonCanReceiveExp(struct Pokemon *mon)
 {
     // Check if mon was sent to battle or is in the level cap
@@ -2419,7 +2432,7 @@ static void atk23_getexp(void)
     switch (gBattleScripting.atk23_state)
     {
         case 0: // Check if should receive exp at all
-            if (GetBattlerSide(gBattlerFainted) != B_SIDE_OPPONENT || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI)))
+            if (GetBattlerSide(gBattlerFainted) != B_SIDE_OPPONENT || !BattleTypeAllowsExp())
                 gBattleScripting.atk23_state = 6; // Goto last case
             else
             {
@@ -3784,11 +3797,13 @@ static void atk49_moveend(void)
                 {
                     gBattlerAttacker = i;
                     
+                    gBattleStruct->dynamicMoveType = GetBattlerMoveType(gBattlerAttacker, gCurrentMove);
+                    
                     if (IsBattlerAlly(gBattlerAttacker, gBattleStruct->dancer.savedAttacker) && GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove) == MOVE_TARGET_SELECTED
                     && IsBattlerAlive(gBattleStruct->dancer.savedTarget))
                         gBattlerTarget = gBattleStruct->dancer.savedTarget; // Target the same as partner's target
                     else
-                        gBattlerTarget = GetMoveTarget(gCurrentMove, 0);
+                        gBattlerTarget = GetMoveTarget(gCurrentMove, 0, FALSE);
                     
                     gCalledMove = gCurrentMove;
                     gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING | HITMARKER_ATTACKSTRING_PRINTED);
@@ -4563,28 +4578,33 @@ static void GiveMoveToBattler(u32 battlerId, u32 move)
 static void atk59_handlelearnnewmove(void)
 {
     CMD_ARGS(const u8 *learnedMovePtr, const u8 *failPtr, bool8 isFirstMove);
-
-    u32 battlerId, ret = MonTryLearningNewMove(&gPlayerParty[gBattleStruct->expGetterMonId], cmd->isFirstMove);
     
-    while (ret == MON_ALREADY_KNOWS_MOVE)
-        ret = MonTryLearningNewMove(&gPlayerParty[gBattleStruct->expGetterMonId], FALSE);
-
-    switch (ret)
+    if ((gBattleTypeFlags & BATTLE_TYPE_RECORDED) && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+        gBattlescriptCurrInstr = cmd->failPtr;
+    else
     {
-        case MON_DONT_FIND_MOVE_TO_LEARN:
-            gBattlescriptCurrInstr = cmd->failPtr;
-            break;
-        case MON_HAS_MAX_MOVES:
-            gBattlescriptCurrInstr = cmd->nextInstr;
-            break;
-        default:
-            battlerId = GetBattlerIdFromPartySlot(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gBattleStruct->expGetterMonId);
-            
-            if (battlerId != MAX_BATTLERS_COUNT && !(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED))
-                GiveMoveToBattler(battlerId, gMoveToLearn);
-            
-            gBattlescriptCurrInstr = cmd->learnedMovePtr;
-            break;
+        u32 battlerId, ret = MonTryLearningNewMove(&gPlayerParty[gBattleStruct->expGetterMonId], cmd->isFirstMove);
+        
+        while (ret == MON_ALREADY_KNOWS_MOVE)
+            ret = MonTryLearningNewMove(&gPlayerParty[gBattleStruct->expGetterMonId], FALSE);
+        
+        switch (ret)
+        {
+            case MON_DONT_FIND_MOVE_TO_LEARN:
+                gBattlescriptCurrInstr = cmd->failPtr;
+                break;
+            case MON_HAS_MAX_MOVES:
+                gBattlescriptCurrInstr = cmd->nextInstr;
+                break;
+            default:
+                battlerId = GetBattlerIdFromPartySlot(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gBattleStruct->expGetterMonId);
+                
+                if (battlerId != MAX_BATTLERS_COUNT && !(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED))
+                    GiveMoveToBattler(battlerId, gMoveToLearn);
+                
+                gBattlescriptCurrInstr = cmd->learnedMovePtr;
+                break;
+        }
     }
 }
 
@@ -4777,7 +4797,7 @@ static void atk5C_drawlvlupbox(void)
             }
             break;
         case 6:
-            if (gMain.newKeys)
+            if (gMain.newKeys || ((gBattleTypeFlags & BATTLE_TYPE_RECORDED) && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER)))
             {
                 PlaySE(SE_SELECT);
                 DrawLevelUpWindow2();
@@ -4786,7 +4806,7 @@ static void atk5C_drawlvlupbox(void)
             }
             break;
         case 8:
-            if (gMain.newKeys)
+            if (gMain.newKeys || ((gBattleTypeFlags & BATTLE_TYPE_RECORDED) && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER)))
             {
                 PlaySE(SE_SELECT);
                 HandleBattleWindow(18, 7, 0x1D, 0x13, WINDOW_x80 | WINDOW_CLEAR);
@@ -5101,11 +5121,11 @@ static void atk62_hidepartystatussummary(void)
 static void CallAnotherMove(u32 move, bool32 updateStartValues)
 {
     gCurrentMove = move;
-    gBattleStruct->dynamicMoveType = GetBattlerMoveType(gBattlerAttacker, move);
     
     if (updateStartValues)
     {
-        gBattlerTarget = GetMoveTarget(move, 0);
+        gBattleStruct->dynamicMoveType = GetBattlerMoveType(gBattlerAttacker, move);
+        gBattlerTarget = GetMoveTarget(move, 0, FALSE);
         
         if (!gBattleStruct->dancer.inProgress)
             gBattleStruct->battlers[gBattlerAttacker].moveTarget = gBattlerTarget;

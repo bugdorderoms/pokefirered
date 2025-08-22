@@ -22,11 +22,11 @@ SINGLE_BATTLE_TEST("Cloud Nine/Air Lock displays a message on switch in")
 DOUBLE_BATTLE_TEST("Cloud Nine/Air Lock prevent weather effects, but without them disappearing")
 {
     u32 species, ability;
-    
-    PASSES_RANDOMLY(70, 100, RNG_ACCURACY);
-    
+
     PARAMETRIZE { species = SPECIES_PSYDUCK; ability = ABILITY_CLOUD_NINE; }
     PARAMETRIZE { species = SPECIES_RAYQUAZA; ability = ABILITY_AIR_LOCK; }
+    
+    PASSES_RANDOMLY(70, 100, RNG_ACCURACY);
     
     GIVEN {
         ASSUME(gBattleMoves[MOVE_THUNDER].accuracy == 70);

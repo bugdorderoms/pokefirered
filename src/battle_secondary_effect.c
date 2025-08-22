@@ -145,9 +145,9 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             {
                 gBattleMons[gEffectBattler].status1.id = STATUS1_SLEEP;
 #if SLEEP_UPDATE
-                gBattleMons[gEffectBattler].status1.counter = RandomUniform(RNG_SLEEP_TURNS, 1, 3) + 1;
+                gBattleMons[gEffectBattler].status1.counter = RandomUniform(RNG_SLEEP_TURNS, 1, 3);
 #else
-                gBattleMons[gEffectBattler].status1.counter = RandomUniform(RNG_SLEEP_TURNS, 2, 5) + 1;
+                gBattleMons[gEffectBattler].status1.counter = RandomUniform(RNG_SLEEP_TURNS, 2, 5);
 #endif
                 if (gCurrentMove) // Basically for yawn
                     CancelMultiTurnMoves(gEffectBattler);
@@ -192,7 +192,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             break;
         case MOVE_EFFECT_BURN:
             ret = CanBeBurned(gBattleScripting.battler, gEffectBattler, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD);
-        
+            
             if (ret == STATUS_CHANGE_WORKED)
             {
                 gBattleMons[gEffectBattler].status1.id = STATUS1_BURN;

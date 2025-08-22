@@ -84,9 +84,11 @@ static void InvokeTestFunction(const struct BattleTest *test)
     switch (test->type)
     {
     case BATTLE_TEST_SINGLES:
+    case BATTLE_TEST_WILD:
         InvokeSingleTestFunctionWithStack(STATE->results, STATE->runParameter, &gBattleMons[B_POSITION_PLAYER_LEFT], &gBattleMons[B_POSITION_OPPONENT_LEFT], test->function.singles, &DATA.stack[BATTLE_TEST_STACK_SIZE]);
         break;
     case BATTLE_TEST_DOUBLES:
+    case BATTLE_TEST_WILD_DOUBLE:
         InvokeDoubleTestFunctionWithStack(STATE->results, STATE->runParameter, &gBattleMons[B_POSITION_PLAYER_LEFT], &gBattleMons[B_POSITION_OPPONENT_LEFT], &gBattleMons[B_POSITION_PLAYER_RIGHT], &gBattleMons[B_POSITION_OPPONENT_RIGHT], test->function.singles, &DATA.stack[BATTLE_TEST_STACK_SIZE]);
         break;
     }
@@ -138,12 +140,15 @@ static void BattleTest_SetUp(void *data)
     STATE->results = AllocZeroed(test->resultsSize * STATE->parameters);
     if (!STATE->results)
         Test_ExitWithResult(TEST_RESULT_ERROR, "OOM: STATE->results = AllocZerod(%d)", sizeof(test->resultsSize * STATE->parameters));
+    
     switch (test->type)
     {
     case BATTLE_TEST_SINGLES:
+    case BATTLE_TEST_WILD:
         STATE->battlersCount = MAX_BATTLERS_COUNT / 2;
         break;
     case BATTLE_TEST_DOUBLES:
+    case BATTLE_TEST_WILD_DOUBLE:
         STATE->battlersCount = MAX_BATTLERS_COUNT;
         break;
     }
@@ -218,11 +223,23 @@ static void BattleTest_Run(void *data)
     memset(&DATA, 0, sizeof(DATA));
 
     DATA.recordedBattle.rngSeed = RNG_SEED_DEFAULT;
-    DATA.recordedBattle.battleFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_IS_MASTER;
     
-    if (test->type == BATTLE_TEST_DOUBLES)
-        DATA.recordedBattle.battleFlags |= BATTLE_TYPE_DOUBLE;
-    
+    switch (test->type)
+    {
+        case BATTLE_TEST_SINGLES:
+            DATA.recordedBattle.battleFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_IS_MASTER;
+            break;
+        case BATTLE_TEST_DOUBLES:
+            DATA.recordedBattle.battleFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_IS_MASTER | BATTLE_TYPE_DOUBLE;
+            break;
+        case BATTLE_TEST_WILD:
+            DATA.recordedBattle.battleFlags = BATTLE_TYPE_IS_MASTER;
+            break;
+        case BATTLE_TEST_WILD_DOUBLE:
+            DATA.recordedBattle.battleFlags = BATTLE_TYPE_IS_MASTER | BATTLE_TYPE_DOUBLE;
+            break;
+    }
+
     for (i = 0; i < STATE->battlersCount; i++)
     {
         DATA.recordedBattle.playersName[i][0] = CHAR_1 + i;
@@ -641,6 +658,96 @@ void TestRunner_Battle_RecordHP(u32 battlerId, u32 oldHP, u32 newHP)
     }
 }
 
+static s32 TryExp(s32 i, s32 n, u32 battlerId, u32 oldExp, u32 newExp)
+{
+    struct QueuedExpEvent *event;
+    s32 iMax = i + n;
+    for (; i < iMax; i++)
+    {
+        if (DATA.queuedEvents[i].type != QUEUED_EXP_EVENT)
+            continue;
+
+        event = &DATA.queuedEvents[i].as.exp;
+
+        if (event->battlerId == battlerId)
+        {
+            if (event->address <= 0xFFFF)
+            {
+                switch (event->type)
+                {
+                case EXP_EVENT_NEW_EXP:
+                    if (event->address == newExp)
+                        return i;
+                    break;
+                case EXP_EVENT_DELTA_EXP:
+                    if (event->address == 0)
+                        return i;
+                    else if ((s16)event->address == oldExp - newExp)
+                        return i;
+                    break;
+                }
+            }
+            else
+            {
+                switch (event->type)
+                {
+                case EXP_EVENT_NEW_EXP:
+                    *(u32 *)event->address = newExp;
+                    break;
+                case EXP_EVENT_DELTA_EXP:
+                    *(s32 *)event->address = oldExp - newExp;
+                    break;
+                }
+                return i;
+            }
+        }
+    }
+    return -1;
+}
+
+void TestRunner_Battle_RecordExp(u32 battlerId, u32 oldExp, u32 newExp)
+{
+    s32 queuedEvent;
+    s32 match;
+    struct QueuedEvent *event;
+
+    if (DATA.queuedEvent == DATA.queuedEventsCount)
+        return;
+
+    event = &DATA.queuedEvents[DATA.queuedEvent];
+    switch (event->groupType)
+    {
+    case QUEUE_GROUP_NONE:
+    case QUEUE_GROUP_ONE_OF:
+        if (TryExp(DATA.queuedEvent, event->groupSize, battlerId, oldExp, newExp) != -1)
+            DATA.queuedEvent += event->groupSize;
+        break;
+    case QUEUE_GROUP_NONE_OF:
+        queuedEvent = DATA.queuedEvent;
+        do
+        {
+            if ((match = TryExp(queuedEvent, event->groupSize, battlerId, oldExp, newExp)) != -1)
+            {
+                const char *filename = gTestRunnerState.test->filename;
+                u32 line = SourceLine(DATA.queuedEvents[match].sourceLineOffset);
+                Test_ExitWithResult(TEST_RESULT_FAIL, "%s:%d: Matched EXPERIENCE_BAR", filename, line);
+            }
+
+            queuedEvent += event->groupSize;
+            if (queuedEvent == DATA.queuedEventsCount)
+                break;
+
+            event = &DATA.queuedEvents[queuedEvent];
+            if (event->groupType == QUEUE_GROUP_NONE_OF)
+                continue;
+
+            if (TryExp(queuedEvent, event->groupSize, battlerId, oldExp, newExp) != -1)
+                DATA.queuedEvent = queuedEvent + event->groupSize;
+        } while (FALSE);
+        break;
+    }
+}
+
 static s32 TryMessage(s32 i, s32 n, const u8 *string)
 {
     s32 j, k;
@@ -799,6 +906,7 @@ static const char *const sEventTypeMacros[] =
     [QUEUED_ABILITY_POPUP_EVENT] = "ABILITY_POPUP",
     [QUEUED_ANIMATION_EVENT] = "ANIMATION",
     [QUEUED_HP_EVENT] = "HP_BAR",
+    [QUEUED_EXP_EVENT] = "EXPERIENCE_BAR",
     [QUEUED_MESSAGE_EVENT] = "MESSAGE",
     [QUEUED_STATUS_EVENT] = "STATUS_ICON",
 };
@@ -1146,6 +1254,23 @@ void Moves_(u32 sourceLine, const u16 moves[MAX_MON_MOVES])
     DATA.explicitMoves[DATA.currentSide] |= 1 << DATA.currentPartyIndex;
 }
 
+void MovesWithPP_(u32 sourceLine, struct moveWithPP moveWithPP[MAX_MON_MOVES])
+{
+    s32 i;
+    
+    INVALID_IF(!DATA.currentMon, "Moves outside of PLAYER/OPPONENT");
+    
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (moveWithPP[i].moveId == MOVE_NONE)
+            break;
+        INVALID_IF(moveWithPP[i].moveId >= MOVES_COUNT, "Illegal move: %d", &moveWithPP[i].moveId);
+        SetMonData(DATA.currentMon, MON_DATA_MOVE1 + i, &moveWithPP[i].moveId);
+        SetMonData(DATA.currentMon, MON_DATA_PP1 + i, &moveWithPP[i].pp);
+    }
+    DATA.explicitMoves[DATA.currentSide] |= 1 << DATA.currentPartyIndex;
+}
+
 void Friendship_(u32 sourceLine, u32 friendship)
 {
     INVALID_IF(!DATA.currentMon, "Friendship outside of PLAYER/OPPONENT");
@@ -1156,6 +1281,12 @@ void Status1_(u32 sourceLine, u32 status1)
 {
     INVALID_IF(!DATA.currentMon, "Status1 outside of PLAYER/OPPONENT");
     SetMonData(DATA.currentMon, MON_DATA_STATUS_ID, &status1);
+}
+
+void OTName_(u32 sourceLine, const u8 *otName)
+{
+    INVALID_IF(!DATA.currentMon, "Traded outside of PLAYER/OPPONENT");
+    SetMonData(DATA.currentMon, MON_DATA_OT_NAME, &otName);
 }
 
 static void PushBattlerAction(u32 sourceLine, s32 battlerId, u32 actionType, u32 byte)
@@ -1351,7 +1482,7 @@ void Move(u32 sourceLine, struct BattlePokemon *battler, struct MoveContext ctx)
         const struct BattleMove *move = &gBattleMoves[moveId];
         
         if (move->target == MOVE_TARGET_RANDOM || move->target == MOVE_TARGET_BOTH || move->target == MOVE_TARGET_FOES_AND_ALLY || move->target == MOVE_TARGET_OPPONENTS_FIELD
-        || move->target == MOVE_TARGET_OPPONENTS)
+        || move->target == MOVE_TARGET_OPPONENTS || move->target == MOVE_TARGET_DEPENDS)
         {
             target = BATTLE_OPPOSITE(battlerId);
         }
@@ -1598,6 +1729,48 @@ void QueueHP(u32 sourceLine, struct BattlePokemon *battler, struct HPEventContex
         .groupType = QUEUE_GROUP_NONE,
         .groupSize = 1,
         .as = { .hp = {
+            .battlerId = battlerId,
+            .type = type,
+            .address = address,
+        }},
+    };
+}
+
+void QueueExp(u32 sourceLine, struct BattlePokemon *battler, struct ExpEventContext ctx)
+{
+    s32 battlerId = battler - gBattleMons;
+    u32 type;
+    uintptr_t address;
+
+    INVALID_IF(!STATE->runScene, "EXPERIENCE_BAR outside of SCENE");
+    
+    if (DATA.queuedEventsCount == MAX_QUEUED_EVENTS)
+        Test_ExitWithResult(TEST_RESULT_ERROR, "%s:%d: EXPERIENCE_BAR exceeds MAX_QUEUED_EVENTS", gTestRunnerState.test->filename, sourceLine);
+
+    if (ctx.explicitExp)
+    {
+        type = EXP_EVENT_NEW_EXP;
+        address = (u32)ctx.exp;
+    }
+    else if (ctx.explicitCaptureGainedExp)
+    {
+        INVALID_IF(ctx.captureGainedExp == NULL, "captureGainedExp is NULL");
+        type = EXP_EVENT_DELTA_EXP;
+        *ctx.captureGainedExp = 0;
+        address = (uintptr_t)ctx.captureGainedExp;
+    }
+    else
+    {
+        type = EXP_EVENT_DELTA_EXP;
+        address = 0;
+    }
+
+    DATA.queuedEvents[DATA.queuedEventsCount++] = (struct QueuedEvent) {
+        .type = QUEUED_EXP_EVENT,
+        .sourceLineOffset = SourceLineOffset(sourceLine),
+        .groupType = QUEUE_GROUP_NONE,
+        .groupSize = 1,
+        .as = { .exp = {
             .battlerId = battlerId,
             .type = type,
             .address = address,

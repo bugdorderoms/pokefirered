@@ -3605,7 +3605,7 @@ static void HandleEndTurn_BattleWon(void)
     
     CalculatePayDayMoney();
     
-    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
+    if ((gBattleTypeFlags & BATTLE_TYPE_LINK) || ((gBattleTypeFlags & BATTLE_TYPE_RECORDED) && (gBattleTypeFlags & BATTLE_TYPE_TRAINER)))
     {
         gBattleTextBuff1[0] = gBattleOutcome;
         gBattlerAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
@@ -3640,7 +3640,7 @@ static void HandleEndTurn_BattleLost(void)
     
     CalculatePayDayMoney();
     
-    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
+    if ((gBattleTypeFlags & BATTLE_TYPE_LINK) || ((gBattleTypeFlags & BATTLE_TYPE_RECORDED) && (gBattleTypeFlags & BATTLE_TYPE_TRAINER)))
     {
         gBattleTextBuff1[0] = gBattleOutcome;
         gBattlerAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
@@ -3649,7 +3649,7 @@ static void HandleEndTurn_BattleLost(void)
     }
     else
     {
-        if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && GetTrainerBattleMode() == TRAINER_BATTLE_EARLY_RIVAL)
+        if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && GetTrainerBattleMode() == TRAINER_BATTLE_EARLY_RIVAL)
         {
             gBattleCommunication[MULTIUSE_STATE] = (GetRivalBattleFlags() & RIVAL_BATTLE_HEAL_AFTER) ? 1 : 2; // Do or not white out text
             gBattlerAttacker = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
@@ -3869,12 +3869,140 @@ static void TryChangeTurnOrder(void)
     }
 }
 
+static inline u32 UseMoveAction_ChooseMove(u32 attacker)
+{
+    u32 move;
+    
+    gCurrMovePos = gChosenMovePos = gBattleStruct->battlers[attacker].chosenMovePosition;
+    
+    if (gProtectStructs[attacker].noValidMoves) // No moves available
+    {
+        gProtectStructs[gBattlerAttacker].noValidMoves = FALSE;
+        gHitMarker |= HITMARKER_NO_PPDEDUCT;
+        gBattleStruct->battlers[attacker].moveTarget = GetMoveTarget(MOVE_STRUGGLE, 0, TRUE);
+        return MOVE_STRUGGLE;
+    }
+    else if ((gBattleMons[attacker].status2 & (STATUS2_MULTIPLETURNS | STATUS2_RECHARGE))) // Move locked
+        return gBattleStruct->battlers[attacker].lockedMove;
+    else if (gDisableStructs[attacker].encoredMove) // Encore forces you to use the same move
+    {
+        gCurrMovePos = gChosenMovePos = gDisableStructs[attacker].encoredMovePos;
+        
+        // Check if the encored move wasn't overwritten
+        if (gDisableStructs[attacker].encoredMove == gBattleMons[attacker].moves[gDisableStructs[attacker].encoredMovePos])
+            move = gDisableStructs[attacker].encoredMove;
+        else
+        {
+            gDisableStructs[attacker].encoredMove = MOVE_NONE;
+            gDisableStructs[attacker].encoreTimer = 0;
+            move = gBattleMons[attacker].moves[gCurrMovePos];
+        }
+        gBattleStruct->battlers[attacker].moveTarget = GetMoveTarget(move, 0, TRUE);
+        return move;
+    }
+    else
+    {
+        move = gBattleMons[attacker].moves[gCurrMovePos];
+        
+        if (move != gBattleStruct->battlers[attacker].chosenMove)
+            gBattleStruct->battlers[attacker].moveTarget = GetMoveTarget(move, 0, TRUE);
+        
+        return move;
+    }
+}
+
+static inline u32 UseMoveAction_ChooseTarget(u32 moveTarget)
+{
+    u32 newTarget, opposingSide = GetBattlerSide(BATTLE_OPPOSITE(gBattlerAttacker));
+    bool32 isDoubleBattle;
+    
+    // Check Follow Me
+    if (IsBattlerAffectedByFollowMe(gBattlerAttacker, opposingSide, gCurrentMove) && (moveTarget == MOVE_TARGET_SELECTED || moveTarget == MOVE_TARGET_SELECTED_OPPONENT
+    || moveTarget == MOVE_TARGET_RANDOM) && !IsBattlerAlly(gBattlerAttacker, gSideTimers[opposingSide].followmeTarget))
+        return gSideTimers[opposingSide].followmeTarget;
+    
+    // Check Lightning Rod and Storm Drain redirection
+    if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && !gSideTimers[opposingSide].followmeSet && IsMoveAffectedByRedirectionEffects(gBattlerAttacker, gCurrentMove)
+    && (GetBattleMoveSplit(gCurrentMove) != SPLIT_STATUS || (moveTarget != MOVE_TARGET_USER && moveTarget != MOVE_TARGET_ALL_BATTLERS))
+    && moveTarget != MOVE_TARGET_FOES_AND_ALLY && moveTarget != MOVE_TARGET_BOTH)
+    {
+        switch (gBattleStruct->dynamicMoveType)
+        {
+            case TYPE_ELECTRIC:
+                if (GetBattlerAbility(gBattleStruct->battlers[gBattlerAttacker].moveTarget) != ABILITY_LIGHTNING_ROD)
+                {
+                    if ((newTarget = ABILITY_ON_FIELD_EXCEPT_BATTLER(gBattlerAttacker, ABILITY_LIGHTNING_ROD)))
+                    {
+                        newTarget--;
+                        gSpecialStatuses[newTarget].abilityRedirected = TRUE;
+                        return newTarget;
+                    }
+                }
+                break;
+            case TYPE_WATER:
+                if (GetBattlerAbility(gBattleStruct->battlers[gBattlerAttacker].moveTarget) != ABILITY_STORM_DRAIN)
+                {
+                    if ((newTarget = ABILITY_ON_FIELD_EXCEPT_BATTLER(gBattlerAttacker, ABILITY_STORM_DRAIN)))
+                    {
+                        newTarget--;
+                        gSpecialStatuses[newTarget].abilityRedirected = TRUE;
+                        return newTarget;
+                    }
+                }
+                break;
+        }
+    }
+    
+    // Specific battler targeting
+    switch (moveTarget)
+    {
+        case MOVE_TARGET_USER:
+            return gBattlerAttacker;
+        case MOVE_TARGET_ALLY:
+            if (IsBattlerAlive(BATTLE_PARTNER(gBattlerAttacker)) && !gProtectStructs[BATTLE_PARTNER(gBattlerAttacker)].usedAllySwitch)
+                return BATTLE_PARTNER(gBattlerAttacker);
+            else
+                return gBattlerAttacker;
+    }
+    
+    // Moves hitting multiples Pokémons in double
+    isDoubleBattle = IsDoubleBattleOnSide(opposingSide);
+    
+    if (isDoubleBattle && moveTarget == MOVE_TARGET_FOES_AND_ALLY)
+    {
+        for (newTarget = 0; newTarget < gBattlersCount; newTarget++)
+        {
+            if (newTarget != gBattlerAttacker && IsBattlerAlive(newTarget))
+                break;
+        }
+        return newTarget;
+    }
+    else if (isDoubleBattle && moveTarget == MOVE_TARGET_RANDOM)
+        newTarget = GetRandomTarget(gBattlerAttacker);
+    else
+        newTarget = gBattleStruct->battlers[gBattlerAttacker].moveTarget;
+        
+    if (!IsBattlerAlive(newTarget))
+    {
+        if (!IsBattlerAlly(gBattlerAttacker, newTarget))
+            newTarget = BATTLE_PARTNER(newTarget);
+        else
+        {
+            newTarget = BATTLE_OPPOSITE(gBattlerAttacker);
+            
+            if (!IsBattlerAlive(newTarget))
+                newTarget = BATTLE_PARTNER(newTarget);
+        }
+    }
+    return newTarget;
+}
+
 static void HandleAction_UseMove(void)
 {
-    u32 i, opposingSide, moveTarget, moveType;
+    u32 moveTarget;
     
+    // Recalc current turn order
     TryChangeTurnOrder();
-    
     gBattlerAttacker = gCurrentTurnActionBattlerId = gBattlerByTurnOrder[gCurrentTurnActionNumber];
     
     if ((gBattleStruct->absentBattlerFlags & Bit(gBattlerAttacker)) || !IsBattlerAlive(gBattlerAttacker))
@@ -3892,161 +4020,17 @@ static void HandleAction_UseMove(void)
     gBattleScripting.savedDmg = 0;
     gBattleCommunication[MISS_TYPE] = B_MSG_MISSED;
     
-    // Choose move
-    gCurrMovePos = gChosenMovePos = gBattleStruct->battlers[gBattlerAttacker].chosenMovePosition;
+    gCurrentMove = gChosenMove = UseMoveAction_ChooseMove(gBattlerAttacker); // Choose move
     
-    if (gProtectStructs[gBattlerAttacker].noValidMoves) // No moves available
-    {
-        gProtectStructs[gBattlerAttacker].noValidMoves = FALSE;
-        gCurrentMove = gChosenMove = MOVE_STRUGGLE;
-        gHitMarker |= HITMARKER_NO_PPDEDUCT;
-        gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(MOVE_STRUGGLE, 0);
-    }
-    else if ((gBattleMons[gBattlerAttacker].status2 & (STATUS2_MULTIPLETURNS | STATUS2_RECHARGE))) // Move locked
-        gCurrentMove = gChosenMove = gBattleStruct->battlers[gBattlerAttacker].lockedMove;
-    else if (gDisableStructs[gBattlerAttacker].encoredMove) // Encore forces you to use the same move
-    {
-        gCurrMovePos = gChosenMovePos = gDisableStructs[gBattlerAttacker].encoredMovePos;
-        
-        // Check if the encored move wasn't overwritten
-        if (gDisableStructs[gBattlerAttacker].encoredMove == gBattleMons[gBattlerAttacker].moves[gDisableStructs[gBattlerAttacker].encoredMovePos])
-            gCurrentMove = gChosenMove = gDisableStructs[gBattlerAttacker].encoredMove;
-        else
-        {
-            gDisableStructs[gBattlerAttacker].encoredMove = MOVE_NONE;
-            gDisableStructs[gBattlerAttacker].encoreTimer = 0;
-            gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
-        }
-        gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(gCurrentMove, 0);
-    }
-    else if (gBattleMons[gBattlerAttacker].moves[gCurrMovePos] != gBattleStruct->battlers[gBattlerAttacker].chosenMove)
-    {
-        gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
-        gBattleStruct->battlers[gBattlerAttacker].moveTarget = GetMoveTarget(gCurrentMove, 0);
-    }
-    else
-        gCurrentMove = gChosenMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
+    gBattleStruct->dynamicMoveType = GetBattlerMoveType(gBattlerAttacker, gCurrentMove); // Set dynamic move type
     
-    // Set dynamic move type
-    moveType = gBattleStruct->dynamicMoveType = GetBattlerMoveType(gBattlerAttacker, gCurrentMove);
-    
-    // Choose target
     moveTarget = GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove);
     
-    opposingSide = GetBattlerSide(BATTLE_OPPOSITE(gBattlerAttacker));
-    
-    // Check Follow Me
-    if (IsBattlerAffectedByFollowMe(gBattlerAttacker, opposingSide, gCurrentMove) && !IsBattlerAlly(gBattlerAttacker, gSideTimers[opposingSide].followmeTarget)
-    && (moveTarget == MOVE_TARGET_SELECTED || moveTarget == MOVE_TARGET_SELECTED_OPPONENT))
-    {
-        gBattlerTarget = gSideTimers[opposingSide].followmeTarget;
-    }
-    // Check Lightning Rod and Storm Drain redirection
-    else if (IsDoubleBattleOnSide(opposingSide) && !gSideTimers[opposingSide].followmeSet && (GetBattleMoveSplit(gCurrentMove) != SPLIT_STATUS || (moveTarget != MOVE_TARGET_USER
-    && moveTarget != MOVE_TARGET_ALL_BATTLERS)) && ((GetBattlerAbility(gBattleStruct->battlers[gBattlerAttacker].moveTarget) != ABILITY_LIGHTNING_ROD
-    && moveType == TYPE_ELECTRIC) || (GetBattlerAbility(gBattleStruct->battlers[gBattlerAttacker].moveTarget) != ABILITY_STORM_DRAIN && moveType == TYPE_WATER)))
-    {
-        u32 var = MAX_BATTLERS_COUNT;
-        u32 attackerAbility = GetBattlerAbility(gBattlerAttacker);
-        
-        if (attackerAbility != ABILITY_PROPELLER_TAIL && attackerAbility != ABILITY_STALWART)
-        {
-            // Check ability redirection on field
-            for (i = 0; i < gBattlersCount; ++i)
-            {
-                u32 turnOrderNum = GetBattlerTurnOrderNum(i);
-                
-                if (turnOrderNum < var && !IsBattlerAlly(gBattlerAttacker, i) && gBattleStruct->battlers[gBattlerAttacker].moveTarget != i)
-                {
-                    u32 ability = GetBattlerAbility(i);
-                    
-                    if ((ability == ABILITY_LIGHTNING_ROD && moveType == TYPE_ELECTRIC) || (ability == ABILITY_STORM_DRAIN && moveType == TYPE_WATER))
-                        var = turnOrderNum;
-                }
-            }
-        }    
-        
-        if (var == MAX_BATTLERS_COUNT)
-        {
-            if (moveTarget == MOVE_TARGET_RANDOM)
-                gBattlerTarget = GetRandomTarget(gBattlerAttacker);
-            else if (moveTarget == MOVE_TARGET_FOES_AND_ALLY)
-            {
-                for (gBattlerTarget = 0; gBattlerTarget < gBattlersCount; gBattlerTarget++)
-                {
-                    if (gBattlerTarget != gBattlerAttacker && IsBattlerAlive(gBattlerTarget))
-                        break;
-                }
-            }
-            else
-                gBattlerTarget = gBattleStruct->battlers[gBattlerAttacker].moveTarget;
-            
-            if (!IsBattlerAlive(gBattlerTarget))
-            {
-                if (!IsBattlerAlly(gBattlerAttacker, gBattlerTarget))
-                    gBattlerTarget = BATTLE_PARTNER(gBattlerTarget);
-                else
-                {
-                    gBattlerTarget = BATTLE_OPPOSITE(gBattlerAttacker);
-                    
-                    if (!IsBattlerAlive(gBattlerTarget))
-                        gBattlerTarget = BATTLE_PARTNER(gBattlerTarget);
-                }
-            }
-        }
-        else
-        {
-            u32 battlerId = gBattlerByTurnOrder[var];
-            
-            if (GetBattlerAbility(battlerId) == ABILITY_LIGHTNING_ROD || GetBattlerAbility(battlerId) == ABILITY_STORM_DRAIN)
-                gSpecialStatuses[battlerId].abilityRedirected = TRUE;
+    gBattlerTarget = UseMoveAction_ChooseTarget(moveTarget); // Choose target
 
-            gBattlerTarget = battlerId;
-        }
-    }
-    else if (moveTarget == MOVE_TARGET_ALLY)
-    {
-        if (IsBattlerAlive(BATTLE_PARTNER(gBattlerAttacker)) && !gProtectStructs[BATTLE_PARTNER(gBattlerAttacker)].usedAllySwitch)
-            gBattlerTarget = BATTLE_PARTNER(gBattlerAttacker);
-        else
-            gBattlerTarget = gBattlerAttacker;
-    }
-    else if (IsDoubleBattleOnSide(opposingSide) && moveTarget == MOVE_TARGET_RANDOM)
-    {
-        gBattlerTarget = GetRandomTarget(gBattlerAttacker);
-        
-        if ((gAbsentBattlerFlags & Bit(gBattlerTarget)) && !IsBattlerAlly(gBattlerAttacker, gBattlerTarget))
-            gBattlerTarget = BATTLE_PARTNER(gBattlerTarget);
-    }
-    else if (IsDoubleBattleOnSide(opposingSide) && moveTarget == MOVE_TARGET_FOES_AND_ALLY)
-    {
-        for (gBattlerTarget = 0; gBattlerTarget < gBattlersCount; gBattlerTarget++)
-        {
-            if (gBattlerTarget != gBattlerAttacker && IsBattlerAlive(gBattlerTarget))
-                break;
-        }
-    }
-    else if (moveTarget == MOVE_TARGET_USER)
-        gBattlerTarget = gBattlerAttacker;
-    else
-    {
-        gBattlerTarget = gBattleStruct->battlers[gBattlerAttacker].moveTarget;
-        
-        if (!IsBattlerAlive(gBattlerTarget))
-        {
-            if (!IsBattlerAlly(gBattlerAttacker, gBattlerTarget))
-                gBattlerTarget = BATTLE_PARTNER(gBattlerTarget);
-            else
-            {
-                gBattlerTarget = BATTLE_OPPOSITE(gBattlerAttacker);
-                
-                if (!IsBattlerAlive(gBattlerTarget))
-                    gBattlerTarget = BATTLE_PARTNER(gBattlerTarget);
-            }
-        }
-    }
     SaveBattlersHps(); // For abilities
     
+    // Choose script to execute
     if (IsBattlerAlly(gBattlerAttacker, gBattlerTarget) && !IsBattlerAlive(gBattlerTarget))
         gBattlescriptCurrInstr = BattleScript_ButItFailedAtkCanceler;
     else if ((moveTarget == MOVE_TARGET_ALLY || moveTarget == MOVE_TARGET_USER_OR_ALLY) && gBattlerAttacker == gBattlerTarget && gProtectStructs[BATTLE_PARTNER(gBattlerAttacker)].usedAllySwitch)
@@ -4162,7 +4146,7 @@ static void HandleAction_Run(void)
     
     gBattlerAttacker = gCurrentTurnActionBattlerId;
 
-    if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
+    if ((gBattleTypeFlags & BATTLE_TYPE_LINK) || ((gBattleTypeFlags & BATTLE_TYPE_RECORDED) && (gBattleTypeFlags & BATTLE_TYPE_TRAINER)))
     {
         gCurrentTurnActionNumber = gBattlersCount;
         

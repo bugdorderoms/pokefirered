@@ -1,5 +1,4 @@
 #include "global.h"
-#include "math_util.h"
 #include "test/battle.h"
 
 SINGLE_BATTLE_TEST("Drizzle summons rain when it enters battle")

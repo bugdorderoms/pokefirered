@@ -84,7 +84,7 @@ SINGLE_BATTLE_TEST("Immunity prevents Toxic Spikes poison")
     }
 }
 
-SINGLE_BATTLE_TEST("Immunity doesn't prevent poison from Toxic Spikes on switch-in if forced in by phazing with Mold Breaker, but it cures it immediately")
+SINGLE_BATTLE_TEST("Immunity doesn't prevent poison from Toxic Spikes on switch-in if forced in by phazing with Mold Breaker")
 {
     GIVEN {
         ASSUME(gBattleMoves[MOVE_DRAGON_TAIL].effect == EFFECT_HIT_SWITCH_TARGET);

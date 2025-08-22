@@ -408,7 +408,7 @@ static void SetBattlerBtlControllerFunc(u32 battler)
     }
     else
     {
-        if (gBattleTypeFlags & BATTLE_TYPE_RECORDED)
+        if ((gBattleTypeFlags & BATTLE_TYPE_RECORDED) && (gBattleTypeFlags & BATTLE_TYPE_TRAINER))
             controllerFunc = SetControllerToRecordedOpponent;
         else
             controllerFunc = SetControllerToOpponent;
@@ -2188,7 +2188,12 @@ static void Task_PrepareToGiveExpWithExpBar(u32 taskId)
 
     exp -= currLvlExp;
     expToNextLvl = gExperienceTables[gSpeciesInfo[species].growthRate][level + 1] - currLvlExp;
+    
     SetBattleBarStruct(gTasks[taskId].tExpTask_battler, expToNextLvl, exp, -gTasks[taskId].tExpTask_gainedExp);
+    
+    if (gTestRunnerEnabled)
+        TestRunner_Battle_RecordExp(gTasks[taskId].tExpTask_battler, exp, -gTasks[taskId].tExpTask_gainedExp);
+    
     PlaySE(SE_EXP);
     gTasks[taskId].func = Task_GiveExpWithExpBar;
 }

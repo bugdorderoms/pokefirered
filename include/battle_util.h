@@ -66,8 +66,6 @@ enum
 #define ITEMEFFECT_MOVE_END                     0x3
 #define ITEMEFFECT_KINGSROCK_SHELLBELL          0x4
 
-#define WEATHER_HAS_EFFECT ((!ABILITY_ON_FIELD(ABILITY_CLOUD_NINE) && !ABILITY_ON_FIELD(ABILITY_AIR_LOCK)))
-
 #define BATTLE_ALIVE_SIDE           0
 #define BATTLE_ALIVE_EXCEPT_BATTLER 1
 #define BATTLE_ALIVE_FIELD          2
@@ -110,7 +108,7 @@ u32 GetDefaultMoveTarget(u32 battlerId);
 u32 SetRandomTarget(u32 battlerId);
 u32 GetRandomTarget(u32 battlerId);
 u32 GetBattlerMoveTargetType(u32 battlerId, u32 move);
-u32 GetMoveTarget(u32 move, u32 setTarget);
+u32 GetMoveTarget(u32 move, u32 setTarget, bool32 useBaseType);
 void CopyMoveTargetName(u32 battlerId, u32 move, u8 *dest);
 u32 IsMonDisobedient(void);
 bool32 SubsBlockMove(u32 attacker, u32 defender, u32 move);
@@ -174,6 +172,7 @@ u32 GetBattlerOnTopOfPickupStack(u32 battlerId);
 bool32 TryRecycleBattlerItem(u32 battlerRecycler, u32 itemBattler);
 u32 GetBattlerHighestStatId(u32 battlerId, bool32 checkWonderRoom);
 bool32 IsBattlerAffectedByFollowMe(u32 battlerId, u32 opposingSide, u32 move);
+bool32 IsMoveAffectedByRedirectionEffects(u32 battlerId, u32 move);
 u32 GetItemUseBattler(u32 battlerId);
 u32 GetBattleMonForItemUse(u32 battlerId, u32 partyIndex);
 bool32 IsItemUseBlockedByBattleEffect(u32 battlerId);
