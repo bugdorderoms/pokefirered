@@ -2792,15 +2792,6 @@ BattleScript_RainDishActivates::
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	end3
-	
-BattleScript_IceFaceFade::
-	loadabilitypopup BS_SCRIPTING
-	playanimation BS_SCRIPTING, B_ANIM_FORM_CHANGE
-	waitstate
-	printstring STRINGID_PKMNTRANSFORMED
-	waitmessage B_WAIT_TIME_LONG
-	removeabilitypopup BS_SCRIPTING
-	return
 
 BattleScript_DisguiseBusted::
     loadabilitypopup BS_TARGET
@@ -3688,10 +3679,10 @@ BattleScript_WeatherChangeAbilitiesLoop::
 	return
 
 BattleScript_CastformChange::
-	call BattleScript_DoCastformChangeAnim
+	call BattleScript_ChangeFormWithAbility
 	end3
 
-BattleScript_DoCastformChangeAnim::
+BattleScript_ChangeFormWithAbility::
 	loadabilitypopup BS_SCRIPTING
 	playanimation BS_SCRIPTING, B_ANIM_FORM_CHANGE
 	waitstate
@@ -4998,25 +4989,25 @@ BattleScript_PrintFailedToRunString::
 
 BattleScript_MegaEvolution::
 	flushmessagebox
-	trydotrainerslide BS_SCRIPTING, TRAINER_SLIDE_MEGA_EVOLUTION
+	trydotrainerslide BS_ATTACKER, TRAINER_SLIDE_MEGA_EVOLUTION
 	printfromtable gMegaEvolutionStringIds
 	waitmessage B_WAIT_TIME_LONG
-	playanimation BS_SCRIPTING, B_ANIM_MEGA_EVOLUTION
+	playanimation BS_ATTACKER, B_ANIM_MEGA_EVOLUTION
 	waitstate
-	updategimmickindicator BS_SCRIPTING
-	printstring STRINGID_PKMNMEGAEVOLVED
+	updategimmickindicator BS_ATTACKER
+	printstring STRINGID_ATKMEGAEVOLVED
 	waitmessage B_WAIT_TIME_LONG
-	switchinabilities BS_SCRIPTING
+	switchinabilities BS_ATTACKER
 	end3
 
 BattleScript_UltraBurst::
 	flushmessagebox
-	printstring STRINGID_BRIGHTLIGHTBURSTOUTOFPKMN
+	printstring STRINGID_BRIGHTLIGHTBURSTOUTOFATK
 	waitmessage B_WAIT_TIME_LONG
-	playanimation BS_SCRIPTING, B_ANIM_ULTRA_BURST
+	playanimation BS_ATTACKER, B_ANIM_ULTRA_BURST
 	waitstate
-	updategimmickindicator BS_SCRIPTING
-	printstring STRINGID_PKMNREGAINPOWERWITHULTRABURST
+	updategimmickindicator BS_ATTACKER
+	printstring STRINGID_ATKREGAINPOWERWITHULTRABURST
 	waitmessage B_WAIT_TIME_LONG
 	end3
 

@@ -415,7 +415,6 @@ extern const u8 BattleScript_NeutralizingGasExits[];
 extern const u8 BattleScript_CottonDownActivates[];
 extern const u8 BattleScript_PastelVeilActivates[];
 extern const u8 BattleScript_BattlerAbilityStatRaiseOnSwitchIn[];
-extern const u8 BattleScript_IceFaceFade[];
 extern const u8 BattleScript_DisguiseBusted[];
 extern const u8 BattleScript_MultiHitPrintStrings[];
 extern const u8 BattleScript_MagicianActivates[];
@@ -485,6 +484,7 @@ extern const u8 BattleScript_MoveUsedSignatureMove[];
 extern const u8 BattleScript_MoveEffectSmackDown[];
 extern const u8 BattleScript_MoveEffectClearSmog[];
 extern const u8 BattleScript_SkyDropReleaseTarget[];
+extern const u8 BattleScript_ChangeFormWithAbility[];
 
 extern const u8 *const gBattlescriptsForUsingItem[];
 

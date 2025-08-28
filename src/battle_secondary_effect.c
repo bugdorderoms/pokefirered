@@ -412,10 +412,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
                         GiveItemToBattler(gBattleScripting.battler, itemId);
                     }
                     RemoveBattlerItem(gEffectBattler);
-                    
-                    if (GetBattlerAbility(gEffectBattler) != ABILITY_GORILLA_TACTICS)
-                        gBattleStruct->battlers[gEffectBattler].choicedMove = MOVE_NONE;
-                    
+
                     gBattleScripting.animArg1 = gBattleScripting.battler;
                     gBattleScripting.animArg2 = gEffectBattler;
                     effect = 2;
@@ -436,10 +433,6 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
                 else
                 {
                     RemoveBattlerItem(gEffectBattler);
-                    
-                    if (GetBattlerAbility(gEffectBattler) != ABILITY_GORILLA_TACTICS)
-                        gBattleStruct->battlers[gEffectBattler].choicedMove = MOVE_NONE;
-                    
                     effect = 2;
                 }
             }

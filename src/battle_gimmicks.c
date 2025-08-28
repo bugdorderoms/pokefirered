@@ -2,11 +2,13 @@
 #include "battle.h"
 #include "battle_gimmicks.h"
 #include "battle_interface.h"
+#include "battle_message.h"
 #include "battle_scripts.h"
 #include "form_change.h"
 #include "item.h"
 #include "palette.h"
 #include "pokemon_icon.h"
+#include "test_runner.h"
 #include "util.h"
 #include "constants/battle_string_ids.h"
 #include "constants/hold_effects.h"
@@ -70,7 +72,14 @@ static bool32 CanActivateGimmick(u32 battler, u32 gimmick)
 // Returns whether the player has a gimmick selected while in the move selection menu.
 bool32 IsGimmickSelected(u32 battler, u32 gimmick)
 {
-    return (gBattleStruct->battlers[battler].usableGimmick == gimmick && gBattleStruct->playerSelectedGimmick);
+    if (gBattleStruct->battlers[battler].usableGimmick != gimmick)
+        return FALSE;
+    
+    // There's no player select in tests, but some gimmicks need to test choice before they are fully activated.
+    if (gTestRunnerEnabled)
+        return gBattleStruct->battlers[battler].toActivateGimmick;
+    else
+        return gBattleStruct->playerSelectedGimmick;
 }
 
 // Sets a battler as having a gimmick active.
@@ -530,10 +539,10 @@ void ActivateMegaEvolution(u32 battler)
     else
     {
         targetSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_MEGA_EVO);
+        gLastUsedItem = gBattleMons[battler].item;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_REACTING_TO_KEY_STONE;
     }
-    gLastUsedItem = gBattleMons[battler].item;
-    
+    PrepareSpeciesBuffer(gBattleTextBuff1, targetSpecies);
     DoBattleFormChange(battler, targetSpecies, TRUE, TRUE, TRUE);
     BattleScriptExecute(BattleScript_MegaEvolution);
 }

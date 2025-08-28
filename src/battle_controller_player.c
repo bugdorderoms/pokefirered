@@ -820,7 +820,7 @@ static void MoveSelectionDisplayMoveType(u32 battlerId)
         effect = 2;
     
     // try change move target in double
-    if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+    if (IsDoubleBattleForBattler(BATTLE_OPPOSITE(battlerId)))
     {
         if (gBattlerControllersData[battlerId].func == HandleInputChooseTarget)
             target = gMultiUsePlayerCursor;
@@ -908,7 +908,7 @@ static u32 PreviewDeterminativeMoveTargets(u32 battlerId, struct ChooseMoveStruc
     u32 move = moveInfo->moves[gBattleStruct->battlers[battlerId].moveSelectionCursor];
     u32 startY, moveTarget = GetBattlerMoveTargetType(battlerId, move);
     
-    if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+    if (IsDoubleBattleForBattler(BATTLE_OPPOSITE(battlerId)))
     {
         bitMask = 0;
         startY = 0;

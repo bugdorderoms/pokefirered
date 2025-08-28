@@ -562,12 +562,6 @@ u32 SuppressBattlerAbility(u32 battlerId)
     return suppressedAbility;
 }
 
-void CheckSetBattlerUnburden(u32 battler)
-{
-    if (GetBattlerAbility(battler) == ABILITY_UNBURDEN)
-        gDisableStructs[battler].unburdenBoost = TRUE;
-}
-
 static bool32 BattlerHeldItemCanBeUsed(u32 battlerId)
 {
     if ((gStatuses3[battlerId] & STATUS3_EMBARGO) || GetBattlerAbility(battlerId) == ABILITY_KLUTZ || (gFieldStatus & STATUS_FIELD_MAGIC_ROOM))
@@ -5108,11 +5102,37 @@ bool32 CanStealItem(u32 battlerAtk, u32 battlerDef, u32 itemId)
     return TRUE;
 }
 
+bool32 TryRecycleBattlerItem(u32 battlerRecycler, u32 itemBattler)
+{
+    u16 *usedHeldItem = GetUsedHeldItemPtr(itemBattler);
+    
+    if (*usedHeldItem && !gBattleMons[battlerRecycler].item)
+    {
+        gLastUsedItem = *usedHeldItem;
+        *usedHeldItem = ITEM_NONE;
+
+        RemoveOrAddBattlerOnPickupStack(itemBattler, FALSE);
+
+        GiveItemToBattler(battlerRecycler, gLastUsedItem);
+        
+        return TRUE;
+    }
+    return FALSE;
+}
+
 void RemoveBattlerItem(u32 battlerId)
 {
+    u32 battlerAbility = GetBattlerAbility(battlerId);
+    
+    if (battlerAbility == ABILITY_UNBURDEN)
+        gDisableStructs[battlerId].unburdenBoost = TRUE;
+    
+    if (battlerAbility != ABILITY_GORILLA_TACTICS)
+        gBattleStruct->battlers[battlerId].choicedMove = MOVE_NONE;
+    
     gLastUsedItem = gBattleMons[battlerId].item;
     gBattleMons[battlerId].item = ITEM_NONE;
-    CheckSetBattlerUnburden(battlerId);
+    
     BtlController_EmitSetMonData(battlerId, BUFFER_A, REQUEST_HELDITEM_BATTLE, 0, sizeof(gBattleMons[battlerId].item), &gBattleMons[battlerId].item);
     MarkBattlerForControllerExec(battlerId);
 }
@@ -5404,31 +5424,6 @@ u32 GetBattlerOnTopOfPickupStack(u32 battlerId)
     return gBattleStruct->pickupStack[i - 1];
 }
 
-bool32 TryRecycleBattlerItem(u32 battlerRecycler, u32 itemBattler)
-{
-    u16 *usedHeldItem = GetUsedHeldItemPtr(itemBattler);
-    
-    if (*usedHeldItem && !gBattleMons[battlerRecycler].item)
-    {
-        gLastUsedItem = *usedHeldItem;
-        *usedHeldItem = ITEM_NONE;
-        
-        gBattleMons[battlerRecycler].item = gLastUsedItem;
-        
-        RemoveOrAddBattlerOnPickupStack(itemBattler, FALSE);
-        
-        gDisableStructs[battlerRecycler].unburdenBoost = FALSE;
-        
-        if (battlerRecycler != itemBattler)
-            CheckSetBattlerUnburden(itemBattler);
-        
-        BtlController_EmitSetMonData(battlerRecycler, BUFFER_A, REQUEST_HELDITEM_BATTLE, 0, sizeof(gBattleMons[battlerRecycler].item), &gBattleMons[battlerRecycler].item);
-        MarkBattlerForControllerExec(battlerRecycler);
-        return TRUE;
-    }
-    return FALSE;
-}
-
 #define GET_STAT_VAL(battlerId, statId) (&gBattleMons[battlerId].attack + ((statId - 1) * 2)) // -1 bc STAT_ATK is 1, and not 0
 
 // Protosynthesis count stat stages, but Beast Boost not. Probably if it be available in SV it will be changed to count too, so just count it...
@@ -5488,7 +5483,7 @@ bool32 IsMoveAffectedByRedirectionEffects(u32 battlerId, u32 move)
     
     if (atkAbility == ABILITY_PROPELLER_TAIL || atkAbility == ABILITY_STALWART)
         return FALSE;
-    else if (gBattleMoves[move].effect == EFFECT_SKY_DROP || gBattleMoves[move].effect == EFFECT_FUTURE_SIGHT)
+    else if (gBattleMoves[move].effect == EFFECT_SKY_DROP || gBattleMoves[move].effect == EFFECT_FUTURE_SIGHT || gBattleMoves[move].effect == EFFECT_SNIPE_SHOT)
         return FALSE;
     else
         return TRUE;
@@ -6173,9 +6168,9 @@ bool32 IsMultiBattle(void)
         return FALSE;
 }
 
-bool32 IsDoubleBattleOnSide(u32 side)
+bool32 IsDoubleBattleForBattler(u32 battler)
 {
-    if ((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && side == B_SIDE_PLAYER)
+    if ((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && GetBattlerSide(battler) == B_SIDE_PLAYER)
         return FALSE;
     else
         return (gBattleTypeFlags & BATTLE_TYPE_DOUBLE);
@@ -6522,9 +6517,9 @@ void SwapBattlersPositions(u32 battler1, u32 battler2)
         // Swap battlers referenced in structs of others battlers on field
         if (!IsBattlerAlly(battler1, i))
         {
+            // Leech Seed is slot based, so can't be swapped
             SWAP_FIELD_BATTLER_ID(gDisableStructs[i].infatuatedWith);
             SWAP_FIELD_BATTLER_ID(gDisableStructs[i].battlerPreventingEscape);
-            SWAP_FIELD_BATTLER_ID(gDisableStructs[i].leechSeedBattler);
             SWAP_FIELD_BATTLER_ID(gDisableStructs[i].wrappedBy);
             SWAP_FIELD_BATTLER_ID(gProtectStructs[i].physicalBattlerId);
             SWAP_FIELD_BATTLER_ID(gProtectStructs[i].specialBattlerId);

@@ -1589,7 +1589,7 @@ void SpriteCB_EnemyMon(struct Sprite *sprite)
 {
     StartSpriteAnimIfDifferent(sprite, 0);
     
-    if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+    if (IsDoubleBattleForBattler(sprite->sBattler))
         BeginNormalPaletteFade((0x10000 << sprite->sBattler) | (0x10000 << BATTLE_PARTNER(sprite->sBattler)), 0, 10, 10, RGB(8, 8, 8));
     else
         BeginNormalPaletteFade((0x10000 << sprite->sBattler), 0, 10, 10, RGB(8, 8, 8));
@@ -1624,7 +1624,7 @@ static void SpriteCB_WildMonShowHealthbox(struct Sprite *sprite)
         SetHealthboxSpriteVisible(gHealthboxSpriteIds[sprite->sBattler]);
         StartSpriteAnimIfDifferent(sprite, 0);
         
-        if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+        if (IsDoubleBattleForBattler(sprite->sBattler))
             BeginNormalPaletteFade((0x10000 << sprite->sBattler) | (0x10000 << BATTLE_PARTNER(sprite->sBattler)), 0, 10, 0, RGB(8, 8, 8));
         else
             BeginNormalPaletteFade((0x10000 << sprite->sBattler), 0, 10, 0, RGB(8, 8, 8));
@@ -3502,10 +3502,10 @@ static bool32 TryActivateGimmick(u32 battler)
 {
     if (!gProtectStructs[battler].noValidMoves && gBattleStruct->battlers[battler].toActivateGimmick)
     {
+        gBattlerAttacker = battler;
         gBattleStruct->battlers[battler].toActivateGimmick = FALSE;
         gBattleStruct->battlers[battler].gimmickInProgress = TRUE;
         ActivateGimmick(battler);
-        gBattleScripting.battler = battler;
         return TRUE; // Script called by the function above
     }
     return FALSE;
@@ -3913,8 +3913,8 @@ static inline u32 UseMoveAction_ChooseMove(u32 attacker)
 
 static inline u32 UseMoveAction_ChooseTarget(u32 moveTarget)
 {
-    u32 newTarget, opposingSide = GetBattlerSide(BATTLE_OPPOSITE(gBattlerAttacker));
-    bool32 isDoubleBattle;
+    u32 opposingBattler = BATTLE_OPPOSITE(gBattlerAttacker);
+    u32 newTarget, opposingSide = GetBattlerSide(opposingBattler);
     
     // Check Follow Me
     if (IsBattlerAffectedByFollowMe(gBattlerAttacker, opposingSide, gCurrentMove) && (moveTarget == MOVE_TARGET_SELECTED || moveTarget == MOVE_TARGET_SELECTED_OPPONENT
@@ -3965,10 +3965,8 @@ static inline u32 UseMoveAction_ChooseTarget(u32 moveTarget)
                 return gBattlerAttacker;
     }
     
-    // Moves hitting multiples Pokémons in double
-    isDoubleBattle = IsDoubleBattleOnSide(opposingSide);
-    
-    if (isDoubleBattle && moveTarget == MOVE_TARGET_FOES_AND_ALLY)
+    // Moves hitting multiples Pokémons in doubles
+    if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && moveTarget == MOVE_TARGET_FOES_AND_ALLY)
     {
         for (newTarget = 0; newTarget < gBattlersCount; newTarget++)
         {
@@ -3977,7 +3975,7 @@ static inline u32 UseMoveAction_ChooseTarget(u32 moveTarget)
         }
         return newTarget;
     }
-    else if (isDoubleBattle && moveTarget == MOVE_TARGET_RANDOM)
+    else if (IsDoubleBattleForBattler(opposingBattler) && moveTarget == MOVE_TARGET_RANDOM)
         newTarget = GetRandomTarget(gBattlerAttacker);
     else
         newTarget = gBattleStruct->battlers[gBattlerAttacker].moveTarget;
@@ -3988,7 +3986,7 @@ static inline u32 UseMoveAction_ChooseTarget(u32 moveTarget)
             newTarget = BATTLE_PARTNER(newTarget);
         else
         {
-            newTarget = BATTLE_OPPOSITE(gBattlerAttacker);
+            newTarget = opposingBattler;
             
             if (!IsBattlerAlive(newTarget))
                 newTarget = BATTLE_PARTNER(newTarget);

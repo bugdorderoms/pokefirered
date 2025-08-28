@@ -751,8 +751,8 @@ const u16 gEndTurnHealStringIds[] =
 
 const u16 gMegaEvolutionStringIds[] =
 {
-    [B_MSG_REACTING_TO_KEY_STONE] = STRINGID_PKMNLASTITEMREACTTOKEYSTONE,
-    [B_MSG_FERVENT_WISH_REACHED]  = STRINGID_TRAINERFERVENTWISHREACHEDPKMN
+    [B_MSG_REACTING_TO_KEY_STONE] = STRINGID_ATKLASTITEMREACTTOKEYSTONE,
+    [B_MSG_FERVENT_WISH_REACHED]  = STRINGID_TRAINERFERVENTWISHREACHEDATK
 };
 
 const u16 gEndTurnEffectsEndStringIds[] =
@@ -1194,15 +1194,15 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_TWISTEDDIMENSIONSNORMALISED - BATTLESTRINGS_ID_ADDER]   = COMPOUND_STRING("The twisted dimensions returned to normal!"),
     [STRINGID_PKMNCANACTFASTER - BATTLESTRINGS_ID_ADDER]              = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} can act faster!"),
     [STRINGID_PKMNCANACTFASTERWITHLASTITEM - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} can act faster, thanks to its {B_LAST_ITEM}!"),
-    [STRINGID_PKMNLASTITEMREACTTOKEYSTONE - BATTLESTRINGS_ID_ADDER]   = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM} is reacting to the Key Stone!"),
-    [STRINGID_PKMNMEGAEVOLVED - BATTLESTRINGS_ID_ADDER]               = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} has Mega Evolved into Mega {B_SCR_ACTIVE_NAME_WITH_PREFIX}!"),
-    [STRINGID_TRAINERFERVENTWISHREACHEDPKMN - BATTLESTRINGS_ID_ADDER] = COMPOUND_STRING("{B_CURRENT_TRAINER_NAME}'s fervent wish has reached {B_SCR_ACTIVE_NAME_WITH_PREFIX}!"),
+    [STRINGID_ATKLASTITEMREACTTOKEYSTONE - BATTLESTRINGS_ID_ADDER]    = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX}'s {B_LAST_ITEM} is reacting to the Key Stone!"),
+    [STRINGID_ATKMEGAEVOLVED - BATTLESTRINGS_ID_ADDER]                = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} has Mega Evolved into Mega {B_BUFF1}!"),
+    [STRINGID_TRAINERFERVENTWISHREACHEDATK - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("{B_CURRENT_TRAINER_NAME}'s fervent wish has reached {B_ATK_NAME_WITH_PREFIX}!"),
     [STRINGID_TRAINERUSEDITEM - BATTLESTRINGS_ID_ADDER]               = COMPOUND_STRING("{B_CURRENT_TRAINER_NAME} used {B_LAST_ITEM}!"),
     [STRINGID_ITEMCATCHYTUNE - BATTLESTRINGS_ID_ADDER]                = COMPOUND_STRING("{B_CURRENT_TRAINER_NAME} played the {B_LAST_ITEM}. Now, that's a catchy tune!"),
     [STRINGID_ITEMPLAYED - BATTLESTRINGS_ID_ADDER]                    = COMPOUND_STRING("{B_CURRENT_TRAINER_NAME} played the {B_LAST_ITEM}."),
     [STRINGID_PKMNREVERTEDTOITSPRIMALSTATE - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s Primal Reversion! It reverted to its primal state!"),
-    [STRINGID_BRIGHTLIGHTBURSTOUTOFPKMN - BATTLESTRINGS_ID_ADDER]     = COMPOUND_STRING("Bright light is about to burst out of {B_SCR_ACTIVE_NAME_WITH_PREFIX}!"),
-    [STRINGID_PKMNREGAINPOWERWITHULTRABURST - BATTLESTRINGS_ID_ADDER] = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} regained its true power through Ultra Burst!"),
+    [STRINGID_BRIGHTLIGHTBURSTOUTOFATK - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("Bright light is about to burst out of {B_ATK_NAME_WITH_PREFIX}!"),
+    [STRINGID_ATKREGAINPOWERWITHULTRABURST - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} regained its true power through Ultra Burst!"),
     [STRINGID_PERMANENTLYTWISTEDDIMENSIONS - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("The dimensions are permanently twisted! Slower Pokémon will always move first!"),
     [STRINGID_POINTEDSTONESFLOAT - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("Pointed stones float in the air around the foe's team!"),
     [STRINGID_POINTEDSTONESDUGINTOPKMN - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("Pointed stones dug into {B_SCR_ACTIVE_NAME_WITH_PREFIX}!"),
@@ -1372,7 +1372,7 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
         {
             if (gBattleTypeFlags & BATTLE_TYPE_GHOST)
                 stringPtr = (gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED) ? COMPOUND_STRING("The Ghost appeared!\p") : COMPOUND_STRING("The Ghost appeared!\pDarn!\nThe Ghost can't be ID'd!\p");
-            else if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+            else if (IsDoubleBattleForBattler(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
                 stringPtr = COMPOUND_STRING("Wild {B_OPPONENT_MON1_NAME} and {B_OPPONENT_MON2_NAME} appeared!\p");
             else if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
                 stringPtr = COMPOUND_STRING("Wild {B_OPPONENT_MON1_NAME} appeared!{PAUSE 127}"); // Same as bellow, but with a pausse
@@ -1383,12 +1383,9 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
         }
         break;
     case STRINGID_INTROSENDOUT:
-    {
-        u32 side = GetBattlerSide(battlerId);
-        
-        if (IsDoubleBattleOnSide(side))
+        if (IsDoubleBattleForBattler(battlerId))
         {
-            if (side == B_SIDE_PLAYER)
+            if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
             {
                 if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
                     stringPtr = COMPOUND_STRING("{B_LINK_PARTNER_NAME} sent out {B_LINK_PLAYER_MON2_NAME}!\nGo! {B_LINK_PLAYER_MON1_NAME}!");
@@ -1407,7 +1404,7 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
         }
         else
         {
-            if (side == B_SIDE_PLAYER)
+            if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
             {
                 GetBattlerNick(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gBattleTextBuff1);
                 stringPtr = sText_GoPkmn;
@@ -1426,7 +1423,6 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
             }
         }
         break;
-    }
     case STRINGID_RETURNMON:
         if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
         {

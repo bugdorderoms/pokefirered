@@ -84,9 +84,9 @@ static u32 GetBattlerYDelta(u32 battlerId, u32 species)
 
 static u32 GetBattlerSpriteFinal_Y(u32 battlerId, bool32 a3)
 {
-    u32 battlerSide = GetBattlerSide(battlerId);
     u32 species = GetBattlerVisualSpecies(battlerId);
-    u32 y = GetBattlerYDelta(battlerId, species) + gBattlerCoords[IsDoubleBattleOnSide(battlerSide)][GetBattlerPosition(battlerId)].y;
+    u32 y = GetBattlerYDelta(battlerId, species) + gBattlerCoords[IsDoubleBattleForBattler(battlerId)][GetBattlerPosition(battlerId)].y;
+    u32 battlerSide = GetBattlerSide(battlerId);
 
     if (battlerSide == B_SIDE_OPPONENT)
         y -= gSpeciesInfo[species].frontPicElevation;

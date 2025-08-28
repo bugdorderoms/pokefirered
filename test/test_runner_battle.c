@@ -2,8 +2,10 @@
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_controllers.h"
+#include "battle_gimmicks.h"
 #include "characters.h"
 #include "battle_gfx_sfx_util.h"
+#include "form_change.h"
 #include "main.h"
 #include "malloc.h"
 #include "random.h"
@@ -1471,9 +1473,26 @@ void Move(u32 sourceLine, struct BattlePokemon *battler, struct MoveContext ctx)
     {
         INVALID("No move or moveSlot");
     }
+    
+    if (ctx.explicitGimmick && ctx.gimmick != GIMMICK_NONE)
+    {
+        u32 species = GetMonData(mon, MON_DATA_SPECIES);
+        u32 holdEffect = ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM));
+        
+        // Check invalid item usage.
+        INVALID_IF(ctx.gimmick == GIMMICK_MEGA && species != SPECIES_RAYQUAZA && GetMonFormChangeSpecies(mon, species, FORM_CHANGE_MEGA_EVO) == SPECIES_NONE, "Cannot Mega Evolve without a Mega Stone");
+        INVALID_IF(ctx.gimmick == GIMMICK_Z_MOVE && holdEffect != HOLD_EFFECT_Z_CRYSTAL, "Cannot use a Z-Move without a Z-Crystal");
+        INVALID_IF(ctx.gimmick != GIMMICK_MEGA && GetMonFormChangeSpecies(mon, species, FORM_CHANGE_MEGA_EVO) != SPECIES_NONE, "Cannot use another gimmick while holding a Mega Stone");
+        INVALID_IF(ctx.gimmick != GIMMICK_Z_MOVE && ctx.gimmick != GIMMICK_ULTRA_BURST && holdEffect == HOLD_EFFECT_Z_CRYSTAL, "Cannot use another gimmick while holding a Z-Crystal");
+        
+        // Check multiple gimmick use.
+        INVALID_IF(DATA.chosenGimmick[(battlerId & BIT_SIDE)][DATA.currentMonIndexes[battlerId]] != GIMMICK_NONE
+                   && !(DATA.chosenGimmick[(battlerId & BIT_SIDE)][DATA.currentMonIndexes[battlerId]] == GIMMICK_ULTRA_BURST
+                   && ctx.gimmick == GIMMICK_Z_MOVE), "Cannot use multiple gimmicks on the same battler");
 
-    if (ctx.explicitMegaEvolve && ctx.megaEvolve)
+        DATA.chosenGimmick[(battlerId & BIT_SIDE)][DATA.currentMonIndexes[battlerId]] = ctx.gimmick;
         moveSlot |= RET_GIMMICK;
+    }
 
     if (ctx.explicitTarget)
         target = ctx.target - gBattleMons;

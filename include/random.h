@@ -95,6 +95,8 @@ enum RandomTag
     RNG_CONVERSION_2,
     RNG_SLEEP_TALK,
     RNG_CURSED_BODY,
+    RNG_PICKUP,
+    RNG_PICKUP_RANDOM_ITEM,
 };
 
 #define RandomWeighted(tag, ...) \

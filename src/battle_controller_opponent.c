@@ -435,7 +435,7 @@ static void OpponentHandleChooseMove(u32 battlerId)
         
         if (moveTarget == MOVE_TARGET_USER || moveTarget == MOVE_TARGET_ALL_BATTLERS)
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, (chosenMoveId) | (battlerId << 8));
-        else if (IsDoubleBattleOnSide(B_SIDE_PLAYER))
+        else if (IsDoubleBattleForBattler(BATTLE_OPPOSITE(battlerId)))
         {
             do
             {
@@ -478,7 +478,7 @@ static void OpponentHandleChoosePokemon(u32 battlerId)
         {
             u32 battler1, battler2;
 
-            if (!IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+            if (!IsDoubleBattleForBattler(BATTLE_OPPOSITE(battlerId)))
                 battler2 = battler1 = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
             else
             {

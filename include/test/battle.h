@@ -297,14 +297,14 @@
  * The inference process is naive, if your test contains anything that
  * modifies the speed of a battler you should specify them explicitly.
  *
- * MOVE(battler, move | moveSlot:, [megaEvolve:], [hit:], [criticalHit:], [target:], [allowed:], [WITH_RNG(tag, value])
+ * MOVE(battler, move | moveSlot:, [gimmick:], [hit:], [criticalHit:], [target:], [allowed:], [WITH_RNG(tag, value])
  * Used when the battler chooses Fight. Either the move ID or move slot
- * must be specified. megaEvolve: TRUE causes the battler to Mega Evolve
- * if able, hit: FALSE causes the move to miss, criticalHit: TRUE causes
- * the move to land a critical hit, target: is used in double battles to
- * choose the target (when necessary), and allowed: FALSE is used to
- * reject an illegal move e.g. a Disabled one. WITH_RNG allows the move
- * to specify an explicit outcome for an RNG tag.
+ * must be specified. gimmick: GIMMICK_MEGA causes the battler to Mega
+ * Evolve if able, hit: FALSE causes the move to miss, criticalHit: TRUE
+ * causes the move to land a critical hit, target: is used in double
+ * battles to choose the target (when necessary), and allowed: FALSE is
+ * used to reject an illegal move e.g. a Disabled one. WITH_RNG allows
+ * the move to specify an explicit outcome for an RNG tag.
  *     MOVE(playerLeft, MOVE_TACKLE, target: opponentRight);
  * If the battler does not have an explicit Moves specified the moveset
  * will be populated based on the MOVEs it uses.
@@ -588,6 +588,7 @@ struct BattleTestData
     u8 currentPartyIndex;
     struct Pokemon *currentMon;
     u8 nature;
+    u8 chosenGimmick[B_SIDE_COUNT][PARTY_SIZE];
 
     u8 currentMonIndexes[MAX_BATTLERS_COUNT];
     u8 turnState;
@@ -815,10 +816,10 @@ struct MoveContext
     u16 explicitCriticalHit:1;
     u16 secondaryEffect:1;
     u16 explicitSecondaryEffect:1;
-    u16 megaEvolve:1;
-    u16 explicitMegaEvolve:1;
-    // TODO: u8 zMove:1;
+    u16 gimmick:4;
+    u16 explicitGimmick:1;
     u16 allowed:1;
+    // End of word
     u16 explicitAllowed:1;
     struct BattlePokemon *target;
     bool8 explicitTarget;

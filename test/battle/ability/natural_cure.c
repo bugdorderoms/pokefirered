@@ -10,6 +10,7 @@ SINGLE_BATTLE_TEST("Natural Cure heals status conditions upon switch out")
         OPPONENT(SPECIES_WOBBUFFET);
     } WHEN {
         TURN { SWITCH(player, 1); }
+        TURN { SWITCH(player, 0); }
     } THEN {
         EXPECT(GetMonData(&gPlayerParty[0], MON_DATA_STATUS_ID) == STATUS1_NONE);
     }

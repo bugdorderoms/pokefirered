@@ -81,12 +81,6 @@ struct StatFractions
     u8 divisor;
 };
 
-struct PickupItem
-{
-    u16 itemId;
-    u8 chance;
-};
-
 static void TrySetDestinyBondToHappen(void);
 static void InitLvlUpBox(void);
 static bool32 SlideInLvlUpBox(void);
@@ -674,24 +668,46 @@ static const u8 sExpBlockLevels[] =
 };
 #endif
 
-static const struct PickupItem sPickupItems[] =
+static const u8 sPickupProbabilities[] =
 {
-    { ITEM_ORAN_BERRY,   15 },
-    { ITEM_CHERI_BERRY,  25 },
-    { ITEM_CHESTO_BERRY, 35 },
-    { ITEM_PECHA_BERRY,  45 },
-    { ITEM_RAWST_BERRY,  55 },
-    { ITEM_ASPEAR_BERRY, 65 },
-    { ITEM_PERSIM_BERRY, 75 },
-    { NUM_TO_TM(10),     80 },
-    { ITEM_PP_UP,        85 },
-    { ITEM_RARE_CANDY,   90 },
-    { ITEM_NUGGET,       95 },
-    { ITEM_SPELON_BERRY, 96 },
-    { ITEM_PAMTRE_BERRY, 97 },
-    { ITEM_WATMEL_BERRY, 98 },
-    { ITEM_DURIN_BERRY,  99 },
-    { ITEM_BELUE_BERRY,  1  },
+    30, 40, 50, 60, 70, 80, 90, 94, 98
+};
+
+static const u16 sPickupItems[] =
+{
+    ITEM_POTION,
+    ITEM_ANTIDOTE,
+    ITEM_SUPER_POTION,
+    ITEM_GREAT_BALL,
+    ITEM_REPEL,
+    ITEM_ESCAPE_ROPE,
+    ITEM_FULL_HEAL,
+    ITEM_HYPER_POTION,
+    ITEM_ULTRA_BALL,
+    ITEM_REVIVE,
+    ITEM_RARE_CANDY,
+    ITEM_SUN_STONE,
+    ITEM_MOON_STONE,
+    ITEM_HEART_SCALE,
+    ITEM_FULL_RESTORE,
+    ITEM_MAX_REVIVE,
+    ITEM_PP_UP,
+    ITEM_MAX_ELIXIR,
+};
+
+static const u16 sRarePickupItems[] =
+{
+    ITEM_HYPER_POTION,
+    ITEM_NUGGET,
+    ITEM_KINGS_ROCK,
+    ITEM_FULL_RESTORE,
+    ITEM_ETHER,
+    ITEM_IRON_BALL,
+    ITEM_DESTINY_KNOT,
+    ITEM_ELIXIR,
+    ITEM_DESTINY_KNOT,
+    ITEM_LEFTOVERS,
+    ITEM_DESTINY_KNOT,
 };
 
 u32 GetCurrentLevelCapLevel(void)
@@ -1569,7 +1585,7 @@ static void atk0C_datahpupdate(void)
                 DoBattleFormChange(battlerId, SPECIES_EISCUE_NOICE_FACE, FALSE, TRUE, FALSE);
 
                 gBattlescriptCurrInstr = cmd->nextInstr;
-                BattleScriptCall(BattleScript_IceFaceFade);
+                BattleScriptCall(BattleScript_ChangeFormWithAbility);
                 return;
             }
             else
@@ -2493,7 +2509,7 @@ static void atk23_getexp(void)
                 {
                     // Music change in wild battle after fainting a poke
                     if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_POKEDUDE)) && (IsBattlerAlive(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))
-                    || (IsDoubleBattleOnSide(B_SIDE_PLAYER) && IsBattlerAlive(GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT))))
+                    || (IsDoubleBattleForBattler(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)) && IsBattlerAlive(GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT))))
                     && !gBattleStruct->wildVictorySong && CountAliveMonsInBattle(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), BATTLE_ALIVE_SIDE) == 0)
                     {
                         BattleStopLowHpSound();
@@ -2528,7 +2544,7 @@ static void atk23_getexp(void)
                             stringId = STRINGID_EMPTYSTRING;
 
                         // Get exp getter battlerId
-                        if (IsDoubleBattleOnSide(B_SIDE_PLAYER))
+                        if (IsDoubleBattleForBattler(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)))
                         {
                             if (!(gBattlerPartyIndexes[2] != gBattleStruct->expGetterMonId) && !(gAbsentBattlerFlags & Bit(2)))
                                 gBattleStruct->expGetterBattlerId = 2;
@@ -3583,7 +3599,7 @@ static void atk49_moveend(void)
                                 if (newSpecies)
                                 {
                                     DoBattleFormChange(gBattlerAttacker, newSpecies, FALSE, TRUE, FALSE);
-                                    PrepareMonNickBuffer(gBattleTextBuff1, gBattlerAttacker, gBattlerPartyIndexes[gBattlerAttacker]);
+                                    PrepareSpeciesBuffer(gBattleTextBuff1, newSpecies);
                                     gBattleStruct->sides[GetBattlerSide(gBattlerAttacker)].party[gBattlerPartyIndexes[gBattlerAttacker]].battleBondActivated = TRUE;
                                     BattleScriptCall(BattleScript_BattleBondTransform);
                                     effect = TRUE;
@@ -3973,7 +3989,7 @@ static void atk50_openpartyscreen(void)
                 }
             }
         }
-        else if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+        else if (IsDoubleBattleForBattler(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
         {
             hitmarkerFaintBits = gHitMarker >> 0x1C;
         
@@ -4104,7 +4120,7 @@ static void atk50_openpartyscreen(void)
     {
         if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
         {
-            if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+            if (IsDoubleBattleForBattler(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
             {
                 hitmarkerFaintBits = gHitMarker >> 0x1C;
             
@@ -6813,15 +6829,19 @@ static void atk87_stockpiletohpheal(void)
     }
 }
 
-static void TryPickupItem(struct Pokemon *mon, u32 itemId)
+static bool32 TryPickupItem(struct Pokemon *mon, u32 itemId)
 {
 #if PICKUP_ITEM_TO_BAG
     if (AddBagItem(itemId, 1))
-        return;
+        return TRUE;
 #endif
 
     if (!GetMonData(mon, MON_DATA_HELD_ITEM))
+    {
         SetMonData(mon, MON_DATA_HELD_ITEM, &itemId);
+        return TRUE;
+    }
+    return FALSE;
 }
 
 static void atk88_pickup(void)
@@ -6839,14 +6859,26 @@ static void atk88_pickup(void)
             switch (GetMonAbility(mon))
             {
                 case ABILITY_PICKUP:
-                    if (!RandomMax(10))
+                    if (RandomPercentage(RNG_PICKUP, 10))
                     {
-                        for (j = 0; j < 15; ++j)
+                        u32 rand = RandomUniform(RNG_PICKUP_RANDOM_ITEM, 0, 99);
+                        u32 lvl = (GetMonData(mon, MON_DATA_LEVEL) - 1) / 10;
+                        if (lvl > 9)
+                            lvl = 9;
+                        
+                        for (j = 0; j < ARRAY_COUNT(sPickupProbabilities); ++j)
                         {
-                            if (sPickupItems[j].chance > RandomMax(100))
-                                break;
+                            if (sPickupProbabilities[j] > rand)
+                            {
+                                if (TryPickupItem(mon, sPickupItems[lvl + j]))
+                                    break;
+                            }
+                            else if (rand == 98 || rand == 99)
+                            {
+                                if (TryPickupItem(mon, sRarePickupItems[lvl + (99 - rand)]))
+                                    break;
+                            }
                         }
-                        TryPickupItem(mon, sPickupItems[j].itemId);
                     }
                     break;
                 case ABILITY_HONEY_GATHER:
@@ -7016,8 +7048,8 @@ static void atk8F_forcerandomswitch(void)
         // Trainer battles
         // One of two opposing Pokémon uses it against one of the two alive player mons
         // One of the player's Pokémon uses it against its partner
-        if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || (atkSide == B_SIDE_OPPONENT && defSide == B_SIDE_PLAYER && IsDoubleBattleOnSide(atkSide)
-        && IS_WHOLE_SIDE_ALIVE(gBattlerTarget)) || (atkSide == B_SIDE_PLAYER && defSide == B_SIDE_PLAYER && IsDoubleBattleOnSide(defSide)))
+        if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || (atkSide == B_SIDE_OPPONENT && defSide == B_SIDE_PLAYER && IsDoubleBattleForBattler(gBattlerAttacker)
+        && IS_WHOLE_SIDE_ALIVE(gBattlerTarget)) || (atkSide == B_SIDE_PLAYER && defSide == B_SIDE_PLAYER && IsDoubleBattleForBattler(gBattlerTarget)))
         {
             u8 validMons[PARTY_SIZE], validMonsCount = CountUsablePartyMons(gBattlerTarget, validMons, NULL);
 
@@ -8338,7 +8370,9 @@ static void atkD2_tryswapitems(void) // trick
             }
             else
             {
-                CheckSetBattlerUnburden(gBattlerAttacker);
+                if (GetBattlerAbility(gBattlerAttacker) == ABILITY_UNBURDEN)
+                    gDisableStructs[gBattlerAttacker].unburdenBoost = TRUE;
+                
                 gBattleCommunication[MULTISTRING_CHOOSER] = 1; // attacker's item -> <- nothing
             }*/
         }

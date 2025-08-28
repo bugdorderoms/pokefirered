@@ -26,6 +26,11 @@ void TestRunner_Battle_RecordHP(u32 battlerId, u32 oldHP, u32 newHP)
 }
 
 __attribute__((weak))
+void TestRunner_Battle_RecordExp(u32 battlerId, u32 oldExp, u32 newExp)
+{
+}
+
+__attribute__((weak))
 void TestRunner_Battle_RecordMessage(const u8 *string)
 {
 }

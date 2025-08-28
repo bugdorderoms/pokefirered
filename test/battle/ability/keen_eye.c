@@ -15,7 +15,7 @@ SINGLE_BATTLE_TEST("Keen Eye ignore target's evasion stat")
         TURN { MOVE(player, MOVE_DOUBLE_TEAM); MOVE(opponent, MOVE_SCRATCH); }
     } SCENE {
         ANIMATION(ANIM_TYPE_MOVE, MOVE_DOUBLE_TEAM, player);
-        MESSAGE("Wobbuffet's evasiveness fell!");
+        MESSAGE("Wobbuffet's evasiveness rose!");
         ANIMATION(ANIM_TYPE_MOVE, MOVE_SCRATCH, opponent);
     }
 }

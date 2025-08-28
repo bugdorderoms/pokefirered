@@ -454,7 +454,7 @@ bool32 BattleLoadAllHealthBoxesGfx(u32 state)
         case 2:
             if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheet_SafariHealthbox);
-            else if (IsDoubleBattleOnSide(B_SIDE_PLAYER))
+            else if (IsDoubleBattleForBattler(0))
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_DoublesPlayerHealthbox[0]);
             else
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheet_SinglesPlayerHealthbox);
@@ -464,13 +464,13 @@ bool32 BattleLoadAllHealthBoxesGfx(u32 state)
                 LoadCompressedSpriteSheet(&sSpriteSheets_DoublesPlayerHealthbox[1]); // In a Two vs One battle this goes unused, it's loaded only for align purpose
             break;
         case 4:
-            if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+            if (IsDoubleBattleForBattler(1))
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_DoublesOpponentHealthbox[0]);
             else
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheet_SinglesOpponentHealthbox);
             break;
         case 5:
-            if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+            if (IsDoubleBattleForBattler(1))
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_DoublesOpponentHealthbox[1]);
             break;
         case 6:
@@ -480,11 +480,11 @@ bool32 BattleLoadAllHealthBoxesGfx(u32 state)
             LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[1]]);
             break;
         case 8:
-            if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+            if (IsDoubleBattleForBattler(1))
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[2]]);
             break;
         case 9:
-            if (IsDoubleBattleOnSide(B_SIDE_OPPONENT))
+            if (IsDoubleBattleForBattler(1))
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[3]]);
             break;
         case 10:

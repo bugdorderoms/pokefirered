@@ -1,7 +1,7 @@
 #include "global.h"
 #include "test/battle.h"
 
-SINGLE_BATTLE_TEST("Early bird halves sleep duration")
+SINGLE_BATTLE_TEST("Early Bird halves sleep duration")
 {
     GIVEN {
         ASSUME(gBattleMoves[MOVE_SLEEP_POWDER].effect == EFFECT_SLEEP);

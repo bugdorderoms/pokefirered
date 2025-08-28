@@ -569,8 +569,6 @@ extern struct BattleStruct *gBattleStruct;
 
 #define IsBattlerAlly(battler1, battler2) ((GetBattlerSide(battler1) == GetBattlerSide(battler2)))
 
-#define IsDoubleBattleForBattler(battlerId) ((IsDoubleBattleOnSide(GetBattlerSide(battlerId))))
-
 #define APPLY_STAT_MOD(var, stat, statStages)             \
 {                                                         \
     (var) = (stat) * (gStatStageRatios)[(statStages)][0]; \
