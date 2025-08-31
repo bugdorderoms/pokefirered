@@ -4061,12 +4061,19 @@ BattleScript_MoveUsedSignatureMove::
 @ ENDTURN BATTLE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_WeatherContinuesOrEnds::
+BattleScript_WeatherContinuesString::
 	printfromtable gWeatherContinuesStringIds
 	waitmessage B_WAIT_TIME_LONG
-	jumpifbyte CMP_EQUAL, sMULTIUSE_STATE, TRUE, BattleScript_WeatherEnds
+	return
+
+BattleScript_WeatherContinues::
+	call BattleScript_WeatherContinuesString
 	playanimation2 BS_BATTLER_0, sB_ANIM_ARG1
+	end2
+
 BattleScript_WeatherEnds::
+	call BattleScript_WeatherContinuesString
+	call BattleScript_ActivateWeatherChangeAbilities
 	end2
 
 BattleScript_WeatherDamage::
@@ -4869,7 +4876,7 @@ BattleScript_DoTotemBoost::
 BattleScript_FogFree::
 	printstring STRINGID_PKMNBLEWAWAYFOGWITHCURRMOVE
 	waitmessage B_WAIT_TIME_LONG
-	call BattleScript_WeatherChangeAbilitiesLoop
+	call BattleScript_ActivateWeatherChangeAbilities
 	return
 
 BattleScript_BarriersFree::

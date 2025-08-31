@@ -2994,7 +2994,7 @@ static void HandleTurnActionSelectionState(void)
                         {
                             gBattleCommunication[battlerId] = STATE_BEFORE_ACTION_CHOSEN;
                         }
-                        else if (TrySetCantSelectMoveBattleScript(battlerId))
+                        else if (TrySetCantSelectMoveBattleScript(battlerId, gBattleBufferB[battlerId][2] & ~(RET_GIMMICK)))
                         {
                             sSelectionScriptBattlerId = battlerId;
                             gBattleCommunication[battlerId] = STATE_SELECTION_SCRIPT;

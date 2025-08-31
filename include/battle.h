@@ -213,22 +213,23 @@ struct SpecialStatus
     /*0x08*/ s32 specialDmg;
     /*0x0C*/ u8 physicalBattlerId;
     /*0x0D*/ u8 specialBattlerId;
-    /*0x0E*/ u8 removedNeutralizingGas:1;
+    /*0x0E*/ u16 removedWeatherChangeAbility;
+    /*0x10*/ u8 changedStatsBattlerId;
+    /*0x11*/ u8 removedNeutralizingGas:1;
              u8 abilityRedirected:1;
              u8 emergencyExited:1;
              u8 restoredBattlerSprite:1;
-             u8 removedWeatherChangeAbility:1;
+             u8 quickDrawActivated:1;
              u8 faintedHasReplacement:1;
              u8 focusBanded:1;
              u8 terrainAbilityDone:1;
-    /*0x0F*/ u8 switchInAbilityDone:1;
+    /*0x12*/ u8 switchInAbilityDone:1;
              u8 weatherAbilityDone:1;
              u8 multiHitOn:1;
              u8 parentalBondState:2;
              u8 hitBySuperEffective:1; // For sos battles
              u8 quickClawActivated:1;
-             u8 quickDrawActivated:1;
-    /*0x10*/ u8 changedStatsBattlerId;
+             u8 unused:1;
 };
 
 extern struct SpecialStatus gSpecialStatuses[MAX_BATTLERS_COUNT];

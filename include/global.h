@@ -70,6 +70,12 @@
 #define THIRD(a, ...) __VA_OPT__(SECOND(__VA_ARGS__))
 #define FOURTH(a, ...) __VA_OPT__(THIRD(__VA_ARGS__))
 
+/* Expands to everything but the first x arguments */
+#define EXCEPT_1(a, ...) __VA_OPT__(__VA_ARGS__)
+#define EXCEPT_2(a, ...) __VA_OPT__(EXCEPT_1(__VA_ARGS__))
+#define EXCEPT_3(a, ...) __VA_OPT__(EXCEPT_2(__VA_ARGS__))
+#define EXCEPT_4(a, ...) __VA_OPT__(EXCEPT_3(__VA_ARGS__))
+
 /* Picks the xth VA_ARG if it exists, otherwise returns a default value */
 #define DEFAULT(_default, ...) FIRST(__VA_OPT__(__VA_ARGS__, ) _default)
 #define DEFAULT_2(_default, ...) DEFAULT(_default __VA_OPT__(, SECOND(__VA_ARGS__)))

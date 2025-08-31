@@ -1,17 +1,22 @@
 #include "global.h"
 #include "test/battle.h"
 
-SINGLE_BATTLE_TEST("Insomnia prevents sleep")
+SINGLE_BATTLE_TEST("Insomnia/Vital Spirit prevents sleep")
 {
+    u32 species, ability;
+    
+    PARAMETRIZE { species = SPECIES_DROWZEE; ability = ABILITY_INSOMNIA; }
+    PARAMETRIZE { species = SPECIES_MANKEY; ability = ABILITY_VITAL_SPIRIT; }
+    
     GIVEN {
         ASSUME(gBattleMoves[MOVE_SPORE].effect == EFFECT_SLEEP);
 
-        PLAYER(SPECIES_DROWZEE) { Ability(ABILITY_INSOMNIA); }
+        PLAYER(species) { Ability(ability); }
         OPPONENT(SPECIES_WOBBUFFET);
     } WHEN {
         TURN { MOVE(opponent, MOVE_SPORE); }
     } SCENE {
-        ABILITY_POPUP(player, ABILITY_INSOMNIA);
+        ABILITY_POPUP(player, ability);
         
         NONE_OF {
             ANIMATION(ANIM_TYPE_MOVE, MOVE_SPORE, opponent);
@@ -20,18 +25,23 @@ SINGLE_BATTLE_TEST("Insomnia prevents sleep")
     }
 }
 
-SINGLE_BATTLE_TEST("Insomnia prevents yawn")
+SINGLE_BATTLE_TEST("Insomnia/Vital Spirit prevents yawn")
 {
+    u32 species, ability;
+    
+    PARAMETRIZE { species = SPECIES_DROWZEE; ability = ABILITY_INSOMNIA; }
+    PARAMETRIZE { species = SPECIES_MANKEY; ability = ABILITY_VITAL_SPIRIT; }
+    
     GIVEN {
         ASSUME(gBattleMoves[MOVE_YAWN].effect == EFFECT_YAWN);
         
-        PLAYER(SPECIES_DROWZEE) { Ability(ABILITY_INSOMNIA); }
+        PLAYER(species) { Ability(ability); }
         OPPONENT(SPECIES_WOBBUFFET);
     } WHEN {
         TURN { MOVE(opponent, MOVE_YAWN); }
         TURN {}
     } SCENE {
-        ABILITY_POPUP(player, ABILITY_INSOMNIA);
+        ABILITY_POPUP(player, ability);
         
         NONE_OF {
             ANIMATION(ANIM_TYPE_MOVE, MOVE_YAWN, opponent);
@@ -40,37 +50,43 @@ SINGLE_BATTLE_TEST("Insomnia prevents yawn")
     }
 }
 
-SINGLE_BATTLE_TEST("Insomnia prevents a drowsy pokemon fall asleep")
+SINGLE_BATTLE_TEST("Insomnia/Vital Spirit prevents a drowsy pokemon fall asleep")
 {
+    u32 species, ability;
+    
+    PARAMETRIZE { species = SPECIES_DROWZEE; ability = ABILITY_INSOMNIA; }
+    PARAMETRIZE { species = SPECIES_MANKEY; ability = ABILITY_VITAL_SPIRIT; }
+    
     GIVEN {
         ASSUME(gBattleMoves[MOVE_YAWN].effect == EFFECT_YAWN);
         
         PLAYER(SPECIES_PINSIR) { Ability(ABILITY_MOLD_BREAKER); }
-        OPPONENT(SPECIES_DROWZEE) { Ability(ABILITY_INSOMNIA); }
+        OPPONENT(species) { Ability(ability); }
     } WHEN {
         TURN { MOVE(player, MOVE_YAWN); }
         TURN { }
     } SCENE {
         ANIMATION(ANIM_TYPE_MOVE, MOVE_YAWN, player);
-        
-        NONE_OF {
-            MESSAGE("Foe Drowzee fell asleep!");
-            STATUS_ICON(opponent, sleep: TRUE);
-        }
+        NOT STATUS_ICON(opponent, sleep: TRUE);
     }
 }
 
-SINGLE_BATTLE_TEST("Insomnia prevents rest")
+SINGLE_BATTLE_TEST("Insomnia/Vital Spirit prevents rest")
 {
+    u32 species, ability;
+    
+    PARAMETRIZE { species = SPECIES_DROWZEE; ability = ABILITY_INSOMNIA; }
+    PARAMETRIZE { species = SPECIES_MANKEY; ability = ABILITY_VITAL_SPIRIT; }
+    
     GIVEN {
         ASSUME(gBattleMoves[MOVE_REST].effect == EFFECT_REST);
         
-        PLAYER(SPECIES_DROWZEE) { Ability(ABILITY_INSOMNIA); HP(1); }
+        PLAYER(species) { Ability(ability); HP(1); }
         OPPONENT(SPECIES_WOBBUFFET);
     } WHEN {
         TURN { MOVE(player, MOVE_REST); }
     } SCENE {
-        ABILITY_POPUP(player, ABILITY_INSOMNIA);
+        ABILITY_POPUP(player, ability);
         
         NONE_OF {
             ANIMATION(ANIM_TYPE_MOVE, MOVE_REST, player);
@@ -80,34 +96,42 @@ SINGLE_BATTLE_TEST("Insomnia prevents rest")
     }
 }
 
-SINGLE_BATTLE_TEST("Insomnia wakes it up if its sleeping")
+SINGLE_BATTLE_TEST("Insomnia/Vital Spirit wakes it up if its sleeping")
 {
+    u32 species, ability;
+    
+    PARAMETRIZE { species = SPECIES_DROWZEE; ability = ABILITY_INSOMNIA; }
+    PARAMETRIZE { species = SPECIES_MANKEY; ability = ABILITY_VITAL_SPIRIT; }
+    
     GIVEN {
         ASSUME(gBattleMoves[MOVE_SPORE].effect == EFFECT_SLEEP);
         
         PLAYER(SPECIES_PINSIR) { Ability(ABILITY_MOLD_BREAKER); }
-        OPPONENT(SPECIES_DROWZEE) { Ability(ABILITY_INSOMNIA); }
+        OPPONENT(species) { Ability(ability); }
     } WHEN {
         TURN { MOVE(player, MOVE_SPORE); }
     } SCENE {
-        ABILITY_POPUP(opponent, ABILITY_INSOMNIA);
-        MESSAGE("Foe Drowzee's Insomnia cured its sleep problem!");
+        ABILITY_POPUP(opponent, ability);
         STATUS_ICON(opponent, none: TRUE);
     }
 }
 
-SINGLE_BATTLE_TEST("Insomnia wakes it up when it enters battle")
+SINGLE_BATTLE_TEST("Insomnia/Vital Spirit wakes it up when it enters battle")
 {
+    u32 species, ability;
+    
+    PARAMETRIZE { species = SPECIES_DROWZEE; ability = ABILITY_INSOMNIA; }
+    PARAMETRIZE { species = SPECIES_MANKEY; ability = ABILITY_VITAL_SPIRIT; }
+    
     GIVEN {
-        PLAYER(SPECIES_DROWZEE) { Ability(ABILITY_INSOMNIA); Status1(STATUS1_SLEEP); }
+        PLAYER(species) { Ability(ability); Status1(STATUS1_SLEEP); }
         OPPONENT(SPECIES_WOBBUFFET);
     } WHEN {
         TURN { }
     } SCENE {
-        ABILITY_POPUP(player, ABILITY_INSOMNIA);
-        MESSAGE("Drowzee was cured of its sleep!");
+        ABILITY_POPUP(player, ability);
         STATUS_ICON(player, none: TRUE);
     }
 }
 
-TO_DO_BATTLE_TEST("A held berry will activate and wake it up before Insomnia activates");
+TO_DO_BATTLE_TEST("A held berry will activate and wake it up before Insomnia/Vital Spirit activates");

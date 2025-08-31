@@ -160,11 +160,13 @@ void ActivateGimmick(u32 battler)
 // Returns whether a trainer has a gimmick key item on its bag.
 static bool32 TrainerHasGimmickKeyItem(u32 battler, u16 itemId)
 {
-    u32 position = GetBattlerPosition(battler);
-    
-    if ((position == B_POSITION_PLAYER_LEFT || (!(gBattleTypeFlags & BATTLE_TYPE_MULTI) && position == B_POSITION_PLAYER_RIGHT)) && !CheckBagHasItem(itemId, 1))
-        return FALSE;
-    
+    if (!gTestRunnerEnabled)
+    {
+        u32 position = GetBattlerPosition(battler);
+        
+        if ((position == B_POSITION_PLAYER_LEFT || (!(gBattleTypeFlags & BATTLE_TYPE_MULTI) && position == B_POSITION_PLAYER_RIGHT)) && !CheckBagHasItem(itemId, 1))
+            return FALSE;
+    }
     return TRUE;
 }
 

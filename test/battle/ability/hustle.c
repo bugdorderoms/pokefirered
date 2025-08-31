@@ -11,7 +11,6 @@ SINGLE_BATTLE_TEST("Hustle boosts the user's Attack by 50%", s16 damage)
     GIVEN {
         ASSUME(gBattleMoves[MOVE_AQUA_JET].type == TYPE_WATER);
         ASSUME(gBattleMoves[MOVE_WATER_GUN].type == TYPE_WATER);
-        ASSUME(gSpeciesInfo[SPECIES_RATTATA].types[0] != TYPE_WATER && gSpeciesInfo[SPECIES_RATTATA].types[1] != TYPE_WATER);
         ASSUME(gBattleMoves[MOVE_AQUA_JET].split == SPLIT_PHYSICAL);
         ASSUME(gBattleMoves[MOVE_WATER_GUN].split == SPLIT_SPECIAL);
         ASSUME(gBattleMoves[MOVE_AQUA_JET].power == gBattleMoves[MOVE_WATER_GUN].power);

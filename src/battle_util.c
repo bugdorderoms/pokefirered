@@ -529,7 +529,7 @@ static void TryEndAbilityEffectOnSuppression(u32 battlerId, u32 oldAbility, u32 
     // Don't revert Forecast and Flower Gift forms if Dynamaxed
     if (GetActiveGimmick(battlerId) != GIMMICK_DYNAMAX && ((oldAbility == ABILITY_FORECAST && newAbility != ABILITY_FORECAST)
     || (oldAbility == ABILITY_FLOWER_GIFT && newAbility != ABILITY_FLOWER_GIFT)))
-        gSpecialStatuses[battlerId].removedWeatherChangeAbility = TRUE; // for transform the mon back
+        gSpecialStatuses[battlerId].removedWeatherChangeAbility = oldAbility; // for transform the mon back
     else if (oldAbility == ABILITY_NEUTRALIZING_GAS && newAbility != ABILITY_NEUTRALIZING_GAS)
         gSpecialStatuses[battlerId].removedNeutralizingGas = TRUE; // for display the message and activate switch in abilities
 }
@@ -687,11 +687,10 @@ static u32 GetImprisonedMovesCount(u32 battlerId, u32 move)
     return imprisonedMoves;
 }
 
-bool32 TrySetCantSelectMoveBattleScript(u32 battlerId)
+bool32 TrySetCantSelectMoveBattleScript(u32 battlerId, u32 movePos)
 {
     bool32 cantSelect = FALSE;
-    u32 holdEffect, movePos = gBattleBufferB[battlerId][2];
-    u32 move = gBattleMons[battlerId].moves[movePos];
+    u32 holdEffect, move = gBattleMons[battlerId].moves[movePos];
 
     if (move && gDisableStructs[battlerId].disabledMove == move)
     {
@@ -1010,15 +1009,14 @@ bool32 DoEndTurnEffects(void)
                     {
                         gBattleWeather = B_WEATHER_NONE;
                         gBattleCommunication[MULTISTRING_CHOOSER] = sBattleWeatherInfo[weatherEnumId].endMessage;
-                        gBattleCommunication[MULTIUSE_STATE] = TRUE;
+                        BattleScriptExecute(BattleScript_WeatherEnds);
                     }
                     else
                     {
                         gBattleScripting.animArg1 = sBattleWeatherInfo[weatherEnumId].animation;
                         gBattleCommunication[MULTISTRING_CHOOSER] = sBattleWeatherInfo[weatherEnumId].continueMessage;
-                        gBattleCommunication[MULTIUSE_STATE] = FALSE;
+                        BattleScriptExecute(BattleScript_WeatherContinues);
                     }
-                    BattleScriptExecute(BattleScript_WeatherContinuesOrEnds);
                     effect = TRUE;
                 }
                 ++gBattleStruct->turnEffectsTracker;
@@ -3693,8 +3691,8 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                         case ABILITY_MUMMY:
                         case ABILITY_LINGERING_AROMA:
                             if (BattlerTurnDamaged(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
-                            && gBattleMons[gBattlerTarget].ability != ABILITY_MUMMY && gBattleMons[gBattlerTarget].ability != ABILITY_LINGERING_AROMA
-                            && !gAbilities[gBattleMons[gBattlerTarget].ability].cantBeSuppressed)
+                            && gBattleMons[gBattlerAttacker].ability != ABILITY_MUMMY && gBattleMons[gBattlerAttacker].ability != ABILITY_LINGERING_AROMA
+                            && !gAbilities[gBattleMons[gBattlerAttacker].ability].cantBeSuppressed)
                             {
                                 BattleScriptCall(BattleScript_MummyActivates);
                                 ++effect;
@@ -3930,9 +3928,34 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                 break;
             case ABILITYEFFECT_ON_WEATHER: // abilities that activate when the weather changes
                 gBattleScripting.battler = battler;
-            
+                
+                if (gSpecialStatuses[battler].removedWeatherChangeAbility)
+                    ability = gSpecialStatuses[battler].removedWeatherChangeAbility;
+                
                 switch (ability)
                 {
+                    case ABILITY_FORECAST:
+                    {
+                        u32 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_WEATHER);
+                        
+                        if (newSpecies)
+                        {
+                            DoBattleFormChange(battler, newSpecies, TRUE, FALSE, FALSE);
+                            BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
+                            ++effect;
+                        }
+                    }
+                    case ABILITY_FLOWER_GIFT:
+                    {
+                        u32 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_WEATHER);
+                        
+                        if (newSpecies)
+                        {
+                            DoBattleFormChange(battler, newSpecies, FALSE, TRUE, FALSE);
+                            BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
+                            ++effect;
+                        }
+                    }
                     case ABILITY_ICE_FACE:
                         if (gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].allowedToChangeFormInWeather)
                         {
@@ -3948,30 +3971,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                         }
                         break;
                 }
-                // Not only related to abilities
-                // Reverts Castform and Cherrim when ability changed or suppressed
-                if (!effect)
-                {
-                    bool32 reloadTypes = FALSE, reloadStats = FALSE;
-                    u32 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_WEATHER);
-                    
-                    if (newSpecies)
-                    {
-                        switch (SpeciesToNationalPokedexNum(newSpecies))
-                        {
-                            case NATIONAL_DEX_CASTFORM:
-                                reloadTypes = TRUE;
-                                break;
-                            case NATIONAL_DEX_CHERRIM:
-                                reloadStats = TRUE;
-                                break;
-                        }
-                        DoBattleFormChange(battler, newSpecies, reloadTypes, reloadStats, FALSE);
-                        BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
-                        ++effect;
-                    }
-                }
-                gSpecialStatuses[battler].removedWeatherChangeAbility = FALSE;
+                gSpecialStatuses[battler].removedWeatherChangeAbility = ABILITY_NONE;
                 break;
             case ABILITYEFFECT_SYNCHRONIZE:
                 if (ability == ABILITY_SYNCHRONIZE && (gHitMarker & HITMARKER_SYNCHRONISE_EFFECT))
