@@ -9,11 +9,12 @@ ASSUMPTIONS {
 SINGLE_BATTLE_TEST("Sand Veil prevents sandstorm damage")
 {
     GIVEN {
+        ASSUME(gSpeciesInfo[SPECIES_CACNEA].types[0] == TYPE_GRASS && gSpeciesInfo[SPECIES_CACNEA].types[1] == TYPE_GRASS);
+        
         PLAYER(SPECIES_CACNEA) { Ability(ABILITY_SAND_VEIL); }
         OPPONENT(SPECIES_WOBBUFFET);
     } WHEN {
         TURN { MOVE(opponent, MOVE_SANDSTORM); }
-        TURN {}
     } SCENE {
         NOT HP_BAR(player);
     }

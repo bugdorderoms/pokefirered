@@ -987,16 +987,13 @@ static inline u32 GetDefenderAbilityDamageModifier(struct DamageCalc *damageStru
                     return UQ_4_12(0.75);
                 break;
             case ABILITY_HEATPROOF:
+            case ABILITY_WATER_BUBBLE:
                 if (damageStruct->moveType == TYPE_FIRE)
                     return UQ_4_12(0.5);
                 break;
             case ABILITY_DRY_SKIN:
                 if (damageStruct->moveType == TYPE_FIRE)
                     return UQ_4_12(1.25);
-                break;
-            case ABILITY_WATER_BUBBLE:
-                if (damageStruct->moveType == TYPE_FIRE)
-                    return UQ_4_12(0.5);
                 break;
         }
     }

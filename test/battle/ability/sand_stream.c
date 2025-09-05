@@ -14,5 +14,3 @@ SINGLE_BATTLE_TEST("Sand Stream summons sandstorm when it enters battle")
         ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_SANDSTORM_CONTINUES);
     }
 }
-
-TO_DO_BATTLE_TEST("Sand Stream will not activate if primal weather is active");

@@ -2932,7 +2932,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             if (!gSpecialStatuses[battler].switchInAbilityDone)
                             {
                                 u32 statId, opposingBattler = BATTLE_OPPOSITE(battler);
-                                u32 def = 0, spDef = 0, var;
+                                u32 count = 0, def = 0, spDef = 0, var;
                                 
                                 for (i = 0; i < NUM_BATTLERS_PER_SIDE; i++, opposingBattler = BATTLE_PARTNER(opposingBattler))
                                 {
@@ -2943,23 +2943,29 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                                         
                                         APPLY_MON_STAT_MOD(var, &gBattleMons[opposingBattler], gBattleMons[opposingBattler].spDefense, STAT_SPDEF);
                                         spDef += var;
+                                        
+                                        count++;
                                     }
                                 }
-                                def /= 2;
-                                spDef /= 2;
                                 
-                                if (def < spDef)
-                                    statId = STAT_ATK;
-                                else
-                                    statId = STAT_SPATK;
-                                
-                                if (CompareStat(battler, statId, MAX_STAT_STAGES, CMP_NOT_EQUAL))
+                                if (count)
                                 {
-                                    SetStatChanger(statId, +1);
-                                    SaveAttackerToStack(battler);
-                                    BattleScriptPushCursorAndCallback(BattleScript_BattlerAbilityStatRaiseOnSwitchIn);
-                                    gSpecialStatuses[battler].switchInAbilityDone = TRUE;
-                                    ++effect;
+                                    def /= count;
+                                    spDef /= count;
+                                    
+                                    if (def < spDef)
+                                        statId = STAT_ATK;
+                                    else
+                                        statId = STAT_SPATK;
+                                    
+                                    if (CompareStat(battler, statId, MAX_STAT_STAGES, CMP_NOT_EQUAL))
+                                    {
+                                        SetStatChanger(statId, +1);
+                                        SaveAttackerToStack(battler);
+                                        BattleScriptPushCursorAndCallback(BattleScript_BattlerAbilityStatRaiseOnSwitchIn);
+                                        gSpecialStatuses[battler].switchInAbilityDone = TRUE;
+                                        ++effect;
+                                    }
                                 }
                             }
                             break;

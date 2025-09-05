@@ -2550,9 +2550,11 @@ static void TryDoEventsBeforeFirstTurn(void)
                 {
                     u32 battler = gBattlerByTurnOrder[gBattleStruct->switchInByTurnOrderCounter];
                     
-                    if (TryPrimalReversion(battler) || AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, battler))
-                        return;
-                    
+                    if (IsBattlerAlive(battler))
+                    {
+                        if (TryPrimalReversion(battler) || AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, battler))
+                            return;
+                    }
                     gBattleStruct->switchInByTurnOrderCounter++;
                 }
                 gBattleStruct->switchInByTurnOrderCounter = 0;
@@ -2566,8 +2568,14 @@ static void TryDoEventsBeforeFirstTurn(void)
             case FIRST_TURN_EVENT_SWITCHIN_ITEMS: // From the fastest mon to slowest
                 while (gBattleStruct->switchInByTurnOrderCounter < gBattlersCount)
                 {
-                    if (ItemBattleEffects(ITEMEFFECT_ON_SWITCH_IN, gBattlerByTurnOrder[gBattleStruct->switchInByTurnOrderCounter++], FALSE))
-                        return;
+                    u32 battler = gBattlerByTurnOrder[gBattleStruct->switchInByTurnOrderCounter];
+                    
+                    if (IsBattlerAlive(battler))
+                    {
+                        if (ItemBattleEffects(ITEMEFFECT_ON_SWITCH_IN, battler, FALSE))
+                            return;
+                    }
+                    gBattleStruct->switchInByTurnOrderCounter++;
                 }
                 gBattleStruct->switchInByTurnOrderCounter = 0;
                 ++gBattleStruct->firstTurnEventsState;

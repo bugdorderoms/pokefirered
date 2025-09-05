@@ -1,35 +1,62 @@
 #include "global.h"
 #include "test/battle.h"
 
-SINGLE_BATTLE_TEST("Water Absorb heals 25% when hit by water type moves")
+SINGLE_BATTLE_TEST("Water Absorb/Dry Skin heals 25% when hit by water type moves")
 {
-    u32 move;
+    u32 j, move;
+    u32 species, ability;
+    static const u32 waterAbsorbData[][2] =
+    {
+        {SPECIES_LAPRAS,   ABILITY_WATER_ABSORB},
+        {SPECIES_PARAS,    ABILITY_DRY_SKIN},
+    };
     
-    PARAMETRIZE { move = MOVE_WATER_GUN; }
-    PARAMETRIZE { move = MOVE_SOAK; }
-    
+    for (j = 0; j < ARRAY_COUNT(waterAbsorbData); j++)
+    {
+        PARAMETRIZE { species = waterAbsorbData[j][0]; ability = waterAbsorbData[j][1]; move = MOVE_WATER_GUN; }
+        PARAMETRIZE { species = waterAbsorbData[j][0]; ability = waterAbsorbData[j][1]; move = MOVE_SOAK; }
+    }
+
     GIVEN {
         ASSUME(gBattleMoves[MOVE_WATER_GUN].type == TYPE_WATER);
         ASSUME(gBattleMoves[MOVE_SOAK].type == TYPE_WATER);
         ASSUME(gBattleMoves[MOVE_SOAK].split == SPLIT_STATUS);
         
         PLAYER(SPECIES_WOBBUFFET);
-        OPPONENT(SPECIES_LAPRAS) { Ability(ABILITY_WATER_ABSORB); MaxHP(100); HP(1); }
+        OPPONENT(species) { Ability(ability); MaxHP(100); HP(1); }
     } WHEN {
         TURN { MOVE(player, move); }
     } SCENE {
-        ABILITY_POPUP(opponent, ABILITY_WATER_ABSORB);
+        ABILITY_POPUP(opponent, ability);
         HP_BAR(opponent, damage: -25);
-        MESSAGE("Foe Lapras had its HP restored.");
+        
+        switch (species)
+        {
+            case SPECIES_LAPRAS:
+                MESSAGE("Foe Lapras had its HP restored.");
+                break;
+            case SPECIES_PARAS:
+                MESSAGE("Foe Paras had its HP restored.");
+                break;
+        }
     }
 }
 
-SINGLE_BATTLE_TEST("Water Absorb does not activate if protected")
+SINGLE_BATTLE_TEST("Water Absorb/Dry Skin does not activate if protected")
 {
-    u32 move;
+    u32 j, move;
+    u32 species, ability;
+    static const u32 waterAbsorbData[][2] =
+    {
+        {SPECIES_LAPRAS,   ABILITY_WATER_ABSORB},
+        {SPECIES_PARAS,    ABILITY_DRY_SKIN},
+    };
     
-    PARAMETRIZE { move = MOVE_WATER_GUN; }
-    PARAMETRIZE { move = MOVE_SOAK; }
+    for (j = 0; j < ARRAY_COUNT(waterAbsorbData); j++)
+    {
+        PARAMETRIZE { species = waterAbsorbData[j][0]; ability = waterAbsorbData[j][1]; move = MOVE_WATER_GUN; }
+        PARAMETRIZE { species = waterAbsorbData[j][0]; ability = waterAbsorbData[j][1]; move = MOVE_SOAK; }
+    }
     
     GIVEN {
         ASSUME(gBattleMoves[MOVE_WATER_GUN].type == TYPE_WATER);
@@ -38,24 +65,42 @@ SINGLE_BATTLE_TEST("Water Absorb does not activate if protected")
         ASSUME(gBattleMoves[MOVE_PROTECT].effect == EFFECT_PROTECT);
         
         PLAYER(SPECIES_WOBBUFFET);
-        OPPONENT(SPECIES_LAPRAS) { Ability(ABILITY_WATER_ABSORB); MaxHP(100); HP(1); }
+        OPPONENT(species) { Ability(ability); MaxHP(100); HP(1); }
     } WHEN {
         TURN { MOVE(player, move); MOVE(opponent, MOVE_PROTECT); }
     } SCENE {
         NONE_OF {
-            ABILITY_POPUP(opponent, ABILITY_WATER_ABSORB);
+            ABILITY_POPUP(opponent, ability);
             HP_BAR(opponent);
-            MESSAGE("Foe Lapras had its HP restored.");
+            
+            switch (species)
+            {
+                case SPECIES_LAPRAS:
+                    MESSAGE("Foe Lapras had its HP restored.");
+                    break;
+                case SPECIES_PARAS:
+                    MESSAGE("Foe Paras had its HP restored.");
+                    break;
+            }
         }
     }
 }
 
-SINGLE_BATTLE_TEST("Water Absorb makes move useless when its HP is full")
+SINGLE_BATTLE_TEST("Water Absorb/Dry Skin makes move useless when its HP is full")
 {
-    u32 move;
+    u32 j, move;
+    u32 species, ability;
+    static const u32 waterAbsorbData[][2] =
+    {
+        {SPECIES_LAPRAS,   ABILITY_WATER_ABSORB},
+        {SPECIES_PARAS,    ABILITY_DRY_SKIN},
+    };
     
-    PARAMETRIZE { move = MOVE_WATER_GUN; }
-    PARAMETRIZE { move = MOVE_SOAK; }
+    for (j = 0; j < ARRAY_COUNT(waterAbsorbData); j++)
+    {
+        PARAMETRIZE { species = waterAbsorbData[j][0]; ability = waterAbsorbData[j][1]; move = MOVE_WATER_GUN; }
+        PARAMETRIZE { species = waterAbsorbData[j][0]; ability = waterAbsorbData[j][1]; move = MOVE_SOAK; }
+    }
     
     GIVEN {
         ASSUME(gBattleMoves[MOVE_WATER_GUN].type == TYPE_WATER);
@@ -63,31 +108,54 @@ SINGLE_BATTLE_TEST("Water Absorb makes move useless when its HP is full")
         ASSUME(gBattleMoves[MOVE_SOAK].split == SPLIT_STATUS);
         
         PLAYER(SPECIES_WOBBUFFET);
-        OPPONENT(SPECIES_LAPRAS) { Ability(ABILITY_WATER_ABSORB); MaxHP(100); HP(100); }
+        OPPONENT(species) { Ability(ability); MaxHP(100); HP(100); }
     } WHEN {
         TURN { MOVE(player, move); }
     } SCENE {
-        ABILITY_POPUP(opponent, ABILITY_WATER_ABSORB);
+        ABILITY_POPUP(opponent, ability);
         NOT HP_BAR(opponent, damage: -25);
-        MESSAGE("It doesn't affect Foe Lapras…");
+        
+        switch (species)
+        {
+            case SPECIES_LAPRAS:
+                MESSAGE("It doesn't affect Foe Lapras…");
+                break;
+            case SPECIES_PARAS:
+                MESSAGE("It doesn't affect Foe Paras…");
+                break;
+        }
     }
 }
 
-SINGLE_BATTLE_TEST("Water Absorb is only triggered once on multi strike moves")
+SINGLE_BATTLE_TEST("Water Absorb/Dry Skin is only triggered once on multi strike moves")
 {
+    u32 species, ability;
+    
+    PARAMETRIZE { species = SPECIES_LAPRAS; ability = ABILITY_WATER_ABSORB; }
+    PARAMETRIZE { species = SPECIES_PARAS; ability = ABILITY_DRY_SKIN; }
+    
     GIVEN {
         ASSUME(gBattleMoves[MOVE_WATER_SHURIKEN].effect == EFFECT_MULTI_HIT);
         ASSUME(gBattleMoves[MOVE_WATER_SHURIKEN].type == TYPE_WATER);
         
         PLAYER(SPECIES_WOBBUFFET);
-        OPPONENT(SPECIES_LAPRAS) { Ability(ABILITY_WATER_ABSORB); MaxHP(100); HP(1); }
+        OPPONENT(species) { Ability(ability); MaxHP(100); HP(1); }
     } WHEN {
         TURN { MOVE(player, MOVE_WATER_SHURIKEN); }
     } SCENE {
-        ABILITY_POPUP(opponent, ABILITY_WATER_ABSORB);
+        ABILITY_POPUP(opponent, ability);
         HP_BAR(opponent, damage: -25);
-        MESSAGE("Foe Lapras had its HP restored.");
+        
+        switch (species)
+        {
+            case SPECIES_LAPRAS:
+                MESSAGE("Foe Lapras had its HP restored.");
+                break;
+            case SPECIES_PARAS:
+                MESSAGE("Foe Paras had its HP restored.");
+                break;
+        }
     }
 }
 
-TO_DO_BATTLE_TEST("Water Absorb activates before a held Absorb Bulb");
+TO_DO_BATTLE_TEST("Water Absorb/Dry Skin activates before a held Absorb Bulb");

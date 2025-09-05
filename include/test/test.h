@@ -162,10 +162,10 @@ s32 MgbaPrintf_(const char *fmt, ...);
     Test_ExpectedResult(TEST_RESULT_FAIL)
 
 #define TO_DO \
-    Test_ExpectedResult(TEST_RESULT_TODO)
-
-#define EXPECT_TO_DO \
-    Test_ExitWithResult(TEST_RESULT_TODO, "%s:%d: EXPECT_TO_DO", gTestRunnerState.test->filename, __LINE__)
+    do { \
+        Test_ExpectedResult(TEST_RESULT_TODO); \
+        Test_ExitWithResult(TEST_RESULT_TODO, "%s:%d: EXPECT_TO_DO", gTestRunnerState.test->filename, __LINE__); \
+    } while (0)
 
 #define PARAMETRIZE if (gFunctionTestRunnerState->parameters++ == gFunctionTestRunnerState->runParameter)
 
