@@ -18,16 +18,7 @@ SINGLE_BATTLE_TEST("Clear Body/White Smoke prevents stat reduction")
     } SCENE {
         NOT ANIMATION(ANIM_TYPE_MOVE, MOVE_SAND_ATTACK, player);
         ABILITY_POPUP(opponent, ability);
-        
-        switch (species)
-        {
-            case SPECIES_METANG:
-                MESSAGE("Foe Metang prevents stat loss!");
-                break;
-            case SPECIES_HEATMOR:
-                MESSAGE("Foe Heatmor prevents stat loss!");
-                break;
-        }
+        MESSAGE("Foe %s prevents stat loss!", species);
     }
 }
 

@@ -752,8 +752,11 @@ void TestRunner_Battle_RecordExp(u32 battlerId, u32 oldExp, u32 newExp)
 
 static s32 TryMessage(s32 i, s32 n, const u8 *string)
 {
-    s32 j, k;
+    s32 j, k, l;
+    u32 arg, argID = 0, refType;
+    const u8 *refString;
     struct QueuedMessageEvent *event;
+    const u16 *args;
     s32 iMax = i + n;
     for (; i < iMax; i++)
     {
@@ -761,6 +764,7 @@ static s32 TryMessage(s32 i, s32 n, const u8 *string)
             continue;
 
         event = &DATA.queuedEvents[i].as.message;
+        args = (const u16 *)event->args;
         for (j = k = 0; ; j++, k++)
         {
             if (event->pattern[k] == CHAR_SPACE)
@@ -781,6 +785,37 @@ static s32 TryMessage(s32 i, s32 n, const u8 *string)
                 // Consume any trailing '\p'.
                 if (string[j] == CHAR_PROMPT_CLEAR)
                     j++;
+            }
+            if (event->pattern[k] == CHAR_PERCENT && event->pattern[k + 1] != EOS && event->pattern[k + 1] != CHAR_SPACE)
+            {
+                refType = event->pattern[k + 1];
+                k += 2;
+                
+                arg = args[argID++];
+                
+                switch (refType)
+                {
+                    case CHAR_s: // S for species
+                        refString = gSpeciesInfo[arg].name;
+                        break;
+                    case CHAR_m: // M for move
+                        refString = gBattleMoves[arg].name;
+                        break;
+                    case CHAR_i: // I for item
+                        refString = ItemId_GetName(arg);
+                        break;
+                    case CHAR_a: // A for ability
+                        refString = gAbilities[arg].name;
+                        break;
+                    default:
+                        return -1;
+                }
+                for (l = 0; refString[l] != EOS; l++)
+                {
+                    if (refString[l] != string[j])
+                        return -1;
+                    j++;
+                }
             }
             if (string[j] != event->pattern[k])
             {
@@ -1797,7 +1832,7 @@ void QueueExp(u32 sourceLine, struct BattlePokemon *battler, struct ExpEventCont
     };
 }
 
-void QueueMessage(u32 sourceLine, const u8 *pattern)
+void QueueMessage(u32 sourceLine, const u8 *pattern, const void *args)
 {
     INVALID_IF(!STATE->runScene, "MESSAGE outside of SCENE");
     
@@ -1811,6 +1846,7 @@ void QueueMessage(u32 sourceLine, const u8 *pattern)
         .groupSize = 1,
         .as = { .message = {
             .pattern = pattern,
+            .args = args,
         }},
     };
 }

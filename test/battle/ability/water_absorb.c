@@ -29,16 +29,7 @@ SINGLE_BATTLE_TEST("Water Absorb/Dry Skin heals 25% when hit by water type moves
     } SCENE {
         ABILITY_POPUP(opponent, ability);
         HP_BAR(opponent, damage: -25);
-        
-        switch (species)
-        {
-            case SPECIES_LAPRAS:
-                MESSAGE("Foe Lapras had its HP restored.");
-                break;
-            case SPECIES_PARAS:
-                MESSAGE("Foe Paras had its HP restored.");
-                break;
-        }
+        MESSAGE("Foe %s had its HP restored.", species);
     }
 }
 
@@ -72,16 +63,7 @@ SINGLE_BATTLE_TEST("Water Absorb/Dry Skin does not activate if protected")
         NONE_OF {
             ABILITY_POPUP(opponent, ability);
             HP_BAR(opponent);
-            
-            switch (species)
-            {
-                case SPECIES_LAPRAS:
-                    MESSAGE("Foe Lapras had its HP restored.");
-                    break;
-                case SPECIES_PARAS:
-                    MESSAGE("Foe Paras had its HP restored.");
-                    break;
-            }
+            MESSAGE("Foe %s had its HP restored.", species);
         }
     }
 }
@@ -114,16 +96,7 @@ SINGLE_BATTLE_TEST("Water Absorb/Dry Skin makes move useless when its HP is full
     } SCENE {
         ABILITY_POPUP(opponent, ability);
         NOT HP_BAR(opponent, damage: -25);
-        
-        switch (species)
-        {
-            case SPECIES_LAPRAS:
-                MESSAGE("It doesn't affect Foe Lapras…");
-                break;
-            case SPECIES_PARAS:
-                MESSAGE("It doesn't affect Foe Paras…");
-                break;
-        }
+        MESSAGE("It doesn't affect Foe %s…", species);
     }
 }
 
@@ -145,16 +118,7 @@ SINGLE_BATTLE_TEST("Water Absorb/Dry Skin is only triggered once on multi strike
     } SCENE {
         ABILITY_POPUP(opponent, ability);
         HP_BAR(opponent, damage: -25);
-        
-        switch (species)
-        {
-            case SPECIES_LAPRAS:
-                MESSAGE("Foe Lapras had its HP restored.");
-                break;
-            case SPECIES_PARAS:
-                MESSAGE("Foe Paras had its HP restored.");
-                break;
-        }
+        MESSAGE("Foe %s had its HP restored.", species);
     }
 }
 

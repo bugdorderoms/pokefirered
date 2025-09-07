@@ -18,15 +18,6 @@ SINGLE_BATTLE_TEST("Illuminate/Keen Eye prevents accuracy stat reduction")
     } SCENE {
         NOT ANIMATION(ANIM_TYPE_MOVE, MOVE_SAND_ATTACK, player);
         ABILITY_POPUP(opponent, ability);
-        
-        switch (species)
-        {
-            case SPECIES_LANTURN:
-                MESSAGE("Foe Lanturn prevents accuracy loss!");
-                break;
-            case SPECIES_HITMONCHAN:
-                MESSAGE("Foe Hitmonchan prevents accuracy loss!");
-                break;
-        }
+        MESSAGE("Foe %s prevents accuracy loss!", species);
     }
 }

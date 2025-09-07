@@ -50,7 +50,7 @@ SINGLE_BATTLE_TEST("Stench does not stack with moves with flinch chance")
     PASSES_RANDOMLY(3, 10, RNG_SECONDARY_EFFECT);
     
     GIVEN {
-        ASSUME(MoveHasMoveEffectWithChance(MOVE_BITE, MOVE_EFFECT_FLINCH, 30));
+        ASSUME(MoveHasMoveEffectWithChance(MOVE_BITE, MOVE_EFFECT_FLINCH, 30) == TRUE);
 
         PLAYER(SPECIES_GRIMER) { Ability(ABILITY_STENCH); }
         OPPONENT(SPECIES_WOBBUFFET);

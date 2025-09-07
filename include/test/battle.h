@@ -372,9 +372,14 @@
  * If none of the above are used, causes the test to fail if the HP
  * changes at all.
  *
- * MESSAGE(pattern)
+ * MESSAGE(pattern, [buffers])
  * Causes the test to fail if the message in pattern is not displayed.
  * Spaces in pattern match newlines (\n, \l, and \p) in the message.
+ * Some buffers can be used to be replaced by values. Those buffers are:
+ * %s - Buffers the given species's name
+ * %m - Buffers the given move's name
+ * %i - Buffers the given item's name
+ * %a - Buffers the given ability's name
  * Often used to check that a battler took its turn but it failed, e.g.:
  *     MESSAGE("Wobbuffet used Dream Eater!");
  *     MESSAGE("Foe Wobbuffet wasn't affected!");
@@ -534,6 +539,7 @@ struct QueuedExpEvent
 struct QueuedMessageEvent
 {
     const u8 *pattern;
+    const void *args;
 };
 
 struct QueuedStatusEvent
@@ -826,8 +832,15 @@ void SendOut(u32 sourceLine, struct BattlePokemon *, u32 partyIndex);
 #define ANIMATION(type, id, ...) QueueAnimation(__LINE__, type, id, (struct AnimationEventContext) { __VA_ARGS__ })
 #define HP_BAR(battler, ...) QueueHP(__LINE__, battler, (struct HPEventContext) { R_APPEND_TRUE(__VA_ARGS__) })
 #define EXPERIENCE_BAR(battler, ...) QueueExp(__LINE__, battler, (struct ExpEventContext) { R_APPEND_TRUE(__VA_ARGS__) })
-#define MESSAGE(pattern) do {static const u8 msg[] = _(pattern); QueueMessage(__LINE__, msg);} while (0)
 #define STATUS_ICON(battler, status) QueueStatus(__LINE__, battler, (struct StatusEventContext) { status })
+
+#define MESSAGE(pattern, ...) \
+    do { \
+        static const u8 msg[] = _(pattern); \
+        struct CAT(Message, __LINE__) { u16 args[NARG_8(__VA_ARGS__)]; }; \
+        struct CAT(Message, __LINE__) CAT(sMessage_, __LINE__) = { { __VA_ARGS__ } }; \
+        QueueMessage(__LINE__, msg, &CAT(sMessage_, __LINE__)); \
+    } while (0)
 
 enum QueueGroupType
 {
@@ -888,7 +901,7 @@ void QueueAbility(u32 sourceLine, struct BattlePokemon *battler, struct AbilityE
 void QueueAnimation(u32 sourceLine, u32 type, u32 id, struct AnimationEventContext);
 void QueueHP(u32 sourceLine, struct BattlePokemon *battler, struct HPEventContext);
 void QueueExp(u32 sourceLine, struct BattlePokemon *battler, struct ExpEventContext);
-void QueueMessage(u32 sourceLine, const u8 *pattern);
+void QueueMessage(u32 sourceLine, const u8 *pattern, const void *args);
 void QueueStatus(u32 sourceLine, struct BattlePokemon *battler, struct StatusEventContext);
 
 /* Then */
