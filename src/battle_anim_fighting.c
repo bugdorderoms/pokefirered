@@ -457,11 +457,11 @@ static const union AffineAnimCmd sAffineAnim_DoubleSlapSwipe[] =
 {
     AFFINEANIMCMD_FRAME(0, 0, 64, 1), // Rotate 90° to left
     AFFINEANIMCMD_FRAME(0, 0, 0, 3), // Pause for 3 frames
-    AFFINEANIMCMD_FRAME(-28, 0, 0, 8), // Flatten vertically (on its side)
+    AFFINEANIMCMD_FRAME(0, -28, 0, 8), // Flatten vertically (on its side)
     AFFINEANIMCMD_FRAME(0, 0, 0, 11), // Pause for 11 frames
-    AFFINEANIMCMD_FRAME(-288, 0, 0, 1), // Unflatten in other direction
+    AFFINEANIMCMD_FRAME(0, -288, 0, 1), // Unflatten in other direction
     AFFINEANIMCMD_FRAME(0, 0, 0, 2), // Pause for 2 frames
-    AFFINEANIMCMD_FRAME(28, 0, 0, 8), // Flatten vertically (on its side)
+    AFFINEANIMCMD_FRAME(0, 28, 0, 8), // Flatten vertically (on its side)
     AFFINEANIMCMD_END,
 };
 
@@ -469,12 +469,12 @@ static const union AffineAnimCmd sAffineAnim_WakeUpSlapSwipe[] =
 {
     AFFINEANIMCMD_FRAME(0, 0, 64, 1), // Rotate 90° to left
     AFFINEANIMCMD_FRAME(0, 0, 0, 3), // Pause for 3 frames
-    AFFINEANIMCMD_FRAME(-32, 0, 0, 7), // Flatten vertically (on its side)
+    AFFINEANIMCMD_FRAME(0, -32, 0, 7), // Flatten vertically (on its side)
     AFFINEANIMCMD_FRAME(0, 0, 0, 8), // Pause for 8 frames
-    AFFINEANIMCMD_FRAME(-288, 0, 0, 1), // Unflatten in other direction
-    AFFINEANIMCMD_FRAME(32, 0, 0, 7), // Flatten vertically (on its side)
+    AFFINEANIMCMD_FRAME(0, -288, 0, 1), // Unflatten in other direction
+    AFFINEANIMCMD_FRAME(0, 32, 0, 7), // Flatten vertically (on its side)
     AFFINEANIMCMD_FRAME(0, 0, 0, 8), // Pause for 8 frames
-    AFFINEANIMCMD_FRAME(288, 0, 0, 1), // Unflatten in other direction
+    AFFINEANIMCMD_FRAME(0, 288, 0, 1), // Unflatten in other direction
     AFFINEANIMCMD_JUMP(1),
 };
 

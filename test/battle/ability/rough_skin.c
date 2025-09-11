@@ -67,5 +67,3 @@ SINGLE_BATTLE_TEST("Rough Skin - If both Pokémon faints, the attacker will fain
         MESSAGE("Foe Sharpedo fainted!");
     }
 }
-
-TO_DO_BATTLE_TEST("Rough Skin damages the user on each multi-strike hit");

@@ -60,5 +60,3 @@ SINGLE_BATTLE_TEST("Stench does not stack with moves with flinch chance")
         MESSAGE("Foe Wobbuffet flinched!");
     }
 }
-
-TO_DO_BATTLE_TEST("Stench has a 10% chance to flinch in each multi-strike hit");

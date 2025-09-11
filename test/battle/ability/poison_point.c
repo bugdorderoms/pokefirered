@@ -45,5 +45,3 @@ SINGLE_BATTLE_TEST("Poison Point only triggers if move makes contact")
         }
     }
 }
-
-TO_DO_BATTLE_TEST("Poison Point has a 30% chance to poison in each multi-strike hit");

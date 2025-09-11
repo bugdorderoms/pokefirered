@@ -3275,7 +3275,7 @@ u32 GetBattlerTotalSpeed(u32 battler)
             break;
         case ABILITY_QUICK_FEET:
             if (gBattleMons[battler].status1.id)
-                monSpeed *= 2;
+                monSpeed = (monSpeed * 15) / 10;
             break;
         case ABILITY_SLOW_START:
             if (gDisableStructs[battler].slowStartTimer)

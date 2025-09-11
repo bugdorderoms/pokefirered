@@ -1109,6 +1109,18 @@ u32 CalcMoveTotalAccuracy(u32 move, u32 attacker, u32 defender)
     return totalAccuracy;
 }
 
+static inline bool32 DoesMultiHitIgnoreAccuracy(void)
+{
+    if (gSpecialStatuses[gBattlerAttacker].parentalBondState == PARENTAL_BOND_2ND_HIT)
+        return TRUE;
+    else if (gSpecialStatuses[gBattlerAttacker].multiHitOn)
+    {
+        if (gBattleMoves[gCurrentMove].effect == EFFECT_TRIPLE_KICK && GetBattlerAbility(gBattlerAttacker) == ABILITY_SKILL_LINK)
+            return TRUE;
+    }
+    return FALSE;
+}
+
 static void atk01_accuracycheck(void)
 {
     CMD_ARGS(const u8 *jumpStr, bool8 noAccCal);
@@ -1129,8 +1141,7 @@ static void atk01_accuracycheck(void)
         else if (!JumpIfMoveAffectedByProtect(cmd->nextInstr, cmd->jumpStr)) // Check Protect
             gBattlescriptCurrInstr = cmd->nextInstr;
     }
-    else if (gSpecialStatuses[gBattlerAttacker].parentalBondState == PARENTAL_BOND_2ND_HIT || (gSpecialStatuses[gBattlerAttacker].multiHitOn
-    && (gBattleMoves[gCurrentMove].effect != EFFECT_TRIPLE_KICK || GetBattlerAbility(gBattlerAttacker) == ABILITY_SKILL_LINK))) // Check Skill Link on multi-hit moves
+    else if (DoesMultiHitIgnoreAccuracy()) // Check multi-hit moves
         gBattlescriptCurrInstr = cmd->nextInstr;
     else if (JumpIfMoveAffectedByProtect(cmd->nextInstr, cmd->jumpStr) || AccuracyCalcHelper(cmd->nextInstr, cmd->jumpStr)) // Check Protect and effects that cause the move to aways hit
         return;

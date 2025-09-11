@@ -45,5 +45,3 @@ SINGLE_BATTLE_TEST("Static only triggers if move makes contact")
         }
     }
 }
-
-TO_DO_BATTLE_TEST("Static has a 30% chance to paralyze in each multi-strike hit");

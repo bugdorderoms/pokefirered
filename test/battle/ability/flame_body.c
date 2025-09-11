@@ -45,5 +45,3 @@ SINGLE_BATTLE_TEST("Flame Body only triggers if move makes contact")
         }
     }
 }
-
-TO_DO_BATTLE_TEST("Flame Body has a 30% chance to burn in each multi-strike hit");

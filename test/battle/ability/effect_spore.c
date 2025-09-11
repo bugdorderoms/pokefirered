@@ -89,7 +89,7 @@ SINGLE_BATTLE_TEST("Effect Spore doesn't activates on Grass-type Pokémons")
 {
     GIVEN {
         ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
-        ASSUME(gSpeciesInfo[SPECIES_TANGELA].types[0] == TYPE_GRASS);
+        ASSUME(gSpeciesInfo[SPECIES_TANGELA].types[0] == TYPE_GRASS || gSpeciesInfo[SPECIES_TANGELA].types[1] == TYPE_GRASS);
         
         PLAYER(SPECIES_TANGELA);
         OPPONENT(SPECIES_BRELOOM) { Ability(ABILITY_EFFECT_SPORE); }
@@ -103,5 +103,3 @@ SINGLE_BATTLE_TEST("Effect Spore doesn't activates on Grass-type Pokémons")
         }
     }
 }
-
-TO_DO_BATTLE_TEST("Effect Spore has a chance to activate in each multi-strike hit");

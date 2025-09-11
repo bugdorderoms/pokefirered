@@ -747,6 +747,12 @@ struct moveWithPP {
 #define Friendship(friendship) Friendship_(__LINE__, friendship)
 #define Status1(status1) Status1_(__LINE__, status1)
 #define OTName(otName) do {static const u8 otName_[] = _(otName); OTName_(__LINE__, otName_);} while (0)
+#define HPIV(iv) HPIV_(__LINE__, iv)
+#define AttackIV(iv) AttackIV_(__LINE__, iv)
+#define DefenseIV(iv) DefenseIV_(__LINE__, iv)
+#define SpAttackIV(iv) SpAttackIV_(__LINE__, iv)
+#define SpDefenseIV(iv) SpDefenseIV_(__LINE__, iv)
+#define SpeedIV(iv) SpeedIV_(__LINE__, iv)
 
 void OpenPokemon(u32 sourceLine, u32 side, u32 species, u32 gender);
 void ClosePokemon(u32 sourceLine);
@@ -768,6 +774,12 @@ void MovesWithPP_(u32 sourceLine, struct moveWithPP moveWithPP[MAX_MON_MOVES]);
 void Friendship_(u32 sourceLine, u32 friendship);
 void Status1_(u32 sourceLine, u32 status1);
 void OTName_(u32 sourceLine, const u8 *otName);
+void HPIV_(u32 sourceLine, u32 hpIV);
+void AttackIV_(u32 sourceLine, u32 attackIV);
+void DefenseIV_(u32 sourceLine, u32 defenseIV);
+void SpAttackIV_(u32 sourceLine, u32 spAttackIV);
+void SpDefenseIV_(u32 sourceLine, u32 spDefenseIV);
+void SpeedIV_(u32 sourceLine, u32 speedIV);
 
 #define PLAYER_PARTY (gBattleTestRunnerState->data.recordedBattle.playerParty)
 #define OPPONENT_PARTY (gBattleTestRunnerState->data.recordedBattle.opponentParty)

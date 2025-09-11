@@ -72,5 +72,4 @@ SINGLE_BATTLE_TEST("Cute Charm only triggers if move makes contact")
     }
 }
 
-TO_DO_BATTLE_TEST("Cute Charm has a 30% chance to inflic infatuation in each multi-strike hit");
 TO_DO_BATTLE_TEST("Cute Charm doesn't affects a tera raid boss");
