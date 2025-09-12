@@ -440,6 +440,7 @@ extern const u8 BattleScript_MagnitudeString[];
 extern const u8 BattleScript_NaturePowerString[];
 extern const u8 BattleScript_AvoidMoveWithAbility[];
 extern const u8 BattleScript_UproarPrevented[];
+extern const u8 BattleScript_SleepClausePrevented[];
 extern const u8 BattleScript_WatchesCarefully[];
 extern const u8 BattleScript_ThrowRock[];
 extern const u8 BattleScript_ThrowBait[];

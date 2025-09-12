@@ -664,7 +664,7 @@ BattleScript_EffectRest::
 	attackcanceler
 	attackstring
 	ppreduce
-	trysetsleep BS_TARGET, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS | STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE
+	trysetsleep BS_TARGET, STATUS_CHANGE_FLAG_IGNORE_SAFEGUARD | STATUS_CHANGE_FLAG_IGNORE_GENERAL_STATUS | STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE | STATUS_CHANGE_FLAG_IGNORE_SLEEP_CLAUSE
 	trysetrest BattleScript_AlreadyAtFullHp
 	pause B_WAIT_TIME_SHORT
 	printfromtable gRestUsedStringIds
@@ -4365,6 +4365,12 @@ BattleScript_FlushMessageBox::
 BattleScript_UproarPrevented::
     pause B_WAIT_TIME_SHORT
 	printstring STRINGID_UPROARKEPTDEFAWAKE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+BattleScript_SleepClausePrevented::
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_SLEEPCLAUSEPREVENTSSLEEP
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 

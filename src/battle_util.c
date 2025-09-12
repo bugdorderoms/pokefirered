@@ -223,6 +223,24 @@ static bool32 IsUproarActive(void)
     return FALSE;
 }
 
+static bool32 DoesSleepClausePrevents(u32 battlerId)
+{
+    u32 i;
+    struct Pokemon *party;
+    
+    if (gBattleStruct->battleChallenge == TRAINER_CHALLENGE_SLEEP_CLAUSE)
+    {
+        party = GetBattlerParty(battlerId);
+        
+        for (i = 0; i < PARTY_SIZE; i++)
+        {
+            if (MonCanBattle(&party[i]) && GetMonData(&party[i], MON_DATA_STATUS_ID) == STATUS1_SLEEP)
+                return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 // Check if attacker can put defender to sleep
 u32 CanBePutToSleep(u32 attacker, u32 defender, u32 flags)
 {
@@ -249,6 +267,10 @@ u32 CanBePutToSleep(u32 attacker, u32 defender, u32 flags)
     }
     // Check side abilities
     CHECK_SIDE_PROTECT_ABILITY(defender, ABILITY_SWEET_VEIL, STATUS_CHANGE_FAIL_SWEET_VEIL_ON_SIDE)
+    
+    // Check sleep clause
+    if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SLEEP_CLAUSE) && DoesSleepClausePrevents(defender))
+        return STATUS_CHANGE_FAIL_SLEEP_CLAUSE;
     
     return STATUS_CHANGE_WORKED;
 }

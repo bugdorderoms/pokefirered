@@ -7,6 +7,7 @@
 #define STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE     (1 << 2)
 #define STATUS_CHANGE_FLAG_NO_SYNCHRONISE        (1 << 3)
 #define STATUS_CHANGE_FLAG_IGNORE_UPROAR         (1 << 4)
+#define STATUS_CHANGE_FLAG_IGNORE_SLEEP_CLAUSE   (1 << 5)
 
 #define STAT_CHANGE_FLAG_SELF_INFLICT    (1 << 0) // The stat change is self inflicted. So, can't be bounced back by Mirror Armor or blocked by any effect
 #define STAT_CHANGE_FLAG_IGNORE_PROTECT  (1 << 1) // Ignore Protect effects

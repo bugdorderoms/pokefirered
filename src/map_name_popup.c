@@ -92,8 +92,11 @@ void ShowMapNamePopup(void)
         if (taskId == 0xFF)
         {
             sMapPopUpTaskId = CreateTask(Task_MapNamePopup, 90);
+            
             gTasks[sMapPopUpTaskId].tState = STATE_PRINT;
             gTasks[sMapPopUpTaskId].tPos = MAP_POPUP_INITIAL_Y;
+            gTasks[sMapPopUpTaskId].tPrimaryWindowId = 0xFF;
+            gTasks[sMapPopUpTaskId].tSecondaryWindowId = 0xFF;
         }
         else
         {
@@ -184,10 +187,10 @@ static void Task_MapNamePopup(u32 taskId)
         case STATE_ERASE:
             DestroyMapNamePopUpWindow(&task->tPrimaryWindowId);
             DestroyMapNamePopUpWindow(&task->tSecondaryWindowId);
+            HideMapNamePopUpWindow();
             task->tState = STATE_END;
             break;
         case STATE_END:
-            HideMapNamePopUpWindow();
             DestroyTask(taskId);
             break;
     }
@@ -195,7 +198,7 @@ static void Task_MapNamePopup(u32 taskId)
 
 static void TryAddMapNamePopUpWindow(s16 *dest, u32 whichWindow)
 {
-    if (*dest != 0xFF)
+    if (*dest == 0xFF)
         *dest = AddWindow(&sMapPopUpWindows[whichWindow]);
 }
 

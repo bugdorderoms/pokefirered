@@ -3024,6 +3024,9 @@ static void atk42_trysetsleep(void)
         case STATUS_CHANGE_FAIL_UPROAR:
             gBattlescriptCurrInstr = BattleScript_UproarPrevented;
             break;
+        case STATUS_CHANGE_FAIL_SLEEP_CLAUSE:
+            gBattlescriptCurrInstr = BattleScript_SleepClausePrevented;
+            break;
         case STATUS_CHANGE_FAIL_ABILITY_PREVENTED:
             gBattlescriptCurrInstr = BattleScript_AbilityPreventSleep;
             break;
