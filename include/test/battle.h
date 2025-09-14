@@ -595,6 +595,7 @@ struct BattleTestData
     struct Pokemon *currentMon;
     u8 nature;
     u8 chosenGimmick[B_SIDE_COUNT][PARTY_SIZE];
+    u8 explicitStats[B_SIDE_COUNT];
 
     u8 currentMonIndexes[MAX_BATTLERS_COUNT];
     u8 turnState;

@@ -17,6 +17,7 @@ SINGLE_BATTLE_TEST("Insomnia/Vital Spirit prevents sleep")
         TURN { MOVE(opponent, MOVE_SPORE); }
     } SCENE {
         ABILITY_POPUP(player, ability);
+        MESSAGE("It doesn't affect %s…", species);
         
         NONE_OF {
             ANIMATION(ANIM_TYPE_MOVE, MOVE_SPORE, opponent);
@@ -39,9 +40,9 @@ SINGLE_BATTLE_TEST("Insomnia/Vital Spirit prevents yawn")
         OPPONENT(SPECIES_WOBBUFFET);
     } WHEN {
         TURN { MOVE(opponent, MOVE_YAWN); }
-        TURN {}
     } SCENE {
         ABILITY_POPUP(player, ability);
+        MESSAGE("It doesn't affect %s…", species);
         
         NONE_OF {
             ANIMATION(ANIM_TYPE_MOVE, MOVE_YAWN, opponent);
@@ -87,6 +88,7 @@ SINGLE_BATTLE_TEST("Insomnia/Vital Spirit prevents rest")
         TURN { MOVE(player, MOVE_REST); }
     } SCENE {
         ABILITY_POPUP(player, ability);
+        MESSAGE("It doesn't affect %s…", species);
         
         NONE_OF {
             ANIMATION(ANIM_TYPE_MOVE, MOVE_REST, player);

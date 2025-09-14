@@ -97,6 +97,7 @@ enum RandomTag
     RNG_CURSED_BODY,
     RNG_PICKUP,
     RNG_PICKUP_RANDOM_ITEM,
+    RNG_SHUCKLE_BERRY_JUICE,
 };
 
 #define RandomWeighted(tag, ...) \

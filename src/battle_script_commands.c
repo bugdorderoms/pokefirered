@@ -24,6 +24,7 @@
 #include "dns.h"
 #include "overworld.h"
 #include "evolution.h"
+#include "test_runner.h"
 #include "form_change.h"
 #include "party_menu.h"
 #include "battle_queued_effects.h"
@@ -713,12 +714,14 @@ static const u16 sRarePickupItems[] =
 u32 GetCurrentLevelCapLevel(void)
 {
 #if EXP_BLOCK
-    u32 numBadges = GetNumOfBadges();
-    
-    if (numBadges != NUM_BADGES)
-        return sExpBlockLevels[numBadges];
+    if (!gTestRunnerEnabled)
+    {
+        u32 numBadges = GetNumOfBadges();
+        
+        if (numBadges != NUM_BADGES)
+            return sExpBlockLevels[numBadges];
+    }
 #endif
-
     return MAX_LEVEL;
 }
 
@@ -6907,7 +6910,7 @@ static void atk88_pickup(void)
                     break;
                 default:
 #if SHUCKLE_MAKES_BERRY_JUICE_CHANCE != 0
-                    if (RandomPercentage(RNG_NONE, SHUCKLE_MAKES_BERRY_JUICE_CHANCE) && GetMonData(mon, MON_DATA_SPECIES2) == SPECIES_SHUCKLE
+                    if (RandomPercentage(RNG_SHUCKLE_BERRY_JUICE, SHUCKLE_MAKES_BERRY_JUICE_CHANCE) && GetMonData(mon, MON_DATA_SPECIES2) == SPECIES_SHUCKLE
                     && ItemId_GetPocket(GetMonData(mon, MON_DATA_HELD_ITEM)) == POCKET_BERRY_POUCH)
                     {
                         u32 item = ITEM_BERRY_JUICE;
