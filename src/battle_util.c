@@ -28,7 +28,7 @@
 #include "battle_gfx_sfx_util.h"
 #include "battle_controllers.h"
 #include "battle_ai_util.h"
-#include "calculate_base_damage.h"
+#include "battle_damage_calc.h"
 #include "wild_encounter.h"
 #include "battle_secondary_effect.h"
 #include "constants/battle_string_ids.h"

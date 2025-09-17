@@ -311,6 +311,14 @@ static void BattleTest_Run(void *data)
     PrintTestName();
 }
 
+static bool32 CanCheckRngTag(void)
+{
+    // Can't check rng tag in AI calcs
+    if (!BattleAI_IsRunning())
+        return TRUE;
+    return FALSE;
+}
+
 u32 RandomUniform(u32 randomTag, u32 lo, u32 hi)
 {
     const struct BattlerTurn *turn = NULL;
@@ -325,7 +333,7 @@ u32 RandomUniform(u32 randomTag, u32 lo, u32 hi)
     if (turn && turn->rng.tag == randomTag)
         default_ = turn->rng.value;
     
-    if (randomTag == STATE->rngTag)
+    if (randomTag == STATE->rngTag && CanCheckRngTag())
     {
         u32 n = hi - lo + 1;
         if (STATE->trials == 1)
@@ -346,46 +354,16 @@ u32 RandomUniform(u32 randomTag, u32 lo, u32 hi)
 u32 RandomWeightedArray(u32 randomTag, u32 sum, u32 n, const u8 *weights)
 {
     const struct BattlerTurn *turn = NULL;
-    u32 default_ = n - 1;
 
     if (gCurrentTurnActionNumber < gBattlersCount)
     {
         u32 battlerId = gBattlerByTurnOrder[gCurrentTurnActionNumber];
         turn = &DATA.battleRecordTurns[gBattleStruct->battleTurnCounter][battlerId];
+        if (turn && turn->rng.tag == randomTag)
+            return turn->rng.value;
     }
 
-    if (turn && turn->rng.tag == randomTag)
-        default_ = turn->rng.value;
-    else
-    {
-        switch (randomTag)
-        {
-        case RNG_ACCURACY:
-            ASSUME(n == 2);
-            if (turn && turn->hit)
-                return turn->hit - 1;
-            default_ = TRUE;
-            break;
-        
-        case RNG_CRITICAL_HIT:
-            ASSUME(n == 2);
-            if (turn && turn->criticalHit)
-                return turn->criticalHit - 1;
-            default_ = FALSE;
-            break;
-        
-        case RNG_SECONDARY_EFFECT:
-        case RNG_SECONDARY_EFFECT_2:
-        case RNG_SECONDARY_EFFECT_3:
-            ASSUME(n == 2);
-            if (turn && turn->secondaryEffect)
-                return turn->secondaryEffect - 1;
-            default_ = TRUE;
-            break;
-        }
-    }
-
-    if (randomTag == STATE->rngTag)
+    if (randomTag == STATE->rngTag && CanCheckRngTag())
     {
         if (STATE->trials == 1)
         {
@@ -400,7 +378,40 @@ u32 RandomWeightedArray(u32 randomTag, u32 sum, u32 n, const u8 *weights)
         STATE->trialRatio = Q_4_12(weights[STATE->runTrial]) / sum;
         return STATE->runTrial;
     }
-    return default_;
+    
+    switch (randomTag)
+    {
+    case RNG_ACCURACY:
+        ASSUME(n == 2);
+        if (turn && turn->hit)
+            return turn->hit - 1;
+        else
+            return TRUE;
+    
+    case RNG_CRITICAL_HIT:
+        ASSUME(n == 2);
+        if (turn && turn->criticalHit)
+            return turn->criticalHit - 1;
+        else
+            return weights[FALSE] > 0 ? FALSE : TRUE;
+    
+    case RNG_SECONDARY_EFFECT:
+    case RNG_SECONDARY_EFFECT_2:
+    case RNG_SECONDARY_EFFECT_3:
+        ASSUME(n == 2);
+        if (turn && turn->secondaryEffect)
+            return turn->secondaryEffect - 1;
+        else
+            return TRUE;
+    default:
+        while (weights[n - 1] == 0)
+        {
+            if (n == 1)
+                Test_ExitWithResult(TEST_RESULT_ERROR, "RandomWeighted called with tag %d has all zero weights", randomTag);
+            n--;
+        }
+        return n - 1;
+    }
 }
 
 const void *RandomElementArray(u32 randomTag, const void *array, u32 size, u32 count)
@@ -431,7 +442,7 @@ const void *RandomElementArray(u32 randomTag, const void *array, u32 size, u32 c
         }
     }
 
-    if (randomTag == STATE->rngTag)
+    if (randomTag == STATE->rngTag && CanCheckRngTag())
     {
         if (STATE->trials == 1)
         {

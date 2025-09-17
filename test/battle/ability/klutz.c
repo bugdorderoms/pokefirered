@@ -65,7 +65,7 @@ WILD_BATTLE_TEST("Klutz doesn't negate effects that affects experience", s32 exp
         ASSUME(gItems[ITEM_LUCKY_EGG].holdEffect == HOLD_EFFECT_LUCKY_EGG);
         
         PLAYER(SPECIES_AUDINO) { Ability(ABILITY_KLUTZ); Item(item); Level(5); }
-        OPPONENT(SPECIES_CATERPIE) { HP(1); Level(1); }
+        OPPONENT(SPECIES_CATERPIE) { Level(1); HP(1); }
     } WHEN {
         TURN { MOVE(player, MOVE_SCRATCH); }
     } SCENE {

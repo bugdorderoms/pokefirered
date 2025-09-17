@@ -1290,6 +1290,7 @@ void ListMenu(void)
     menuList.itemsAbove = itemsAbove;
     menuList.baseBlock = MULTICHOICE_DEFAULT_BASE_BLOCK;
     menuList.palNum = 15;
+    menuList.windowTileNum = 0;
     InitFieldSpecialListMenu(sListMenuLabels[gSpecialVar_0x8000].list, &menuList);
 }
 

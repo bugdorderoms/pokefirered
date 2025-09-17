@@ -3,7 +3,7 @@
 #include "battle_ai.h"
 #include "battle_ai_util.h"
 #include "battle_controllers.h"
-#include "calculate_base_damage.h"
+#include "battle_damage_calc.h"
 #include "form_change.h"
 #include "item.h"
 #include "util.h"

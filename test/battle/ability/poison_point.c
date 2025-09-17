@@ -1,13 +1,15 @@
 #include "global.h"
 #include "test/battle.h"
 
+ASSUMPTIONS {
+    ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
+}
+
 SINGLE_BATTLE_TEST("Poison Point has a 30% chance to poison")
 {
     PASSES_RANDOMLY(3, 10, RNG_POISON_POINT);
     
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
-        
         PLAYER(SPECIES_WOBBUFFET);
         OPPONENT(SPECIES_NIDORINA) { Ability(ABILITY_POISON_POINT); }
     } WHEN {
@@ -26,7 +28,6 @@ SINGLE_BATTLE_TEST("Poison Point only triggers if move makes contact")
     PARAMETRIZE { move = MOVE_GUST; };
     
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
         ASSUME(gBattleMoves[MOVE_GUST].flags.makesContact == FALSE);
         
         PLAYER(SPECIES_WOBBUFFET);

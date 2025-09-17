@@ -21,7 +21,7 @@ static u8 GetTrainerApproachDistanceSouth(struct ObjectEvent * trainerObj, s16 r
 static u8 GetTrainerApproachDistanceNorth(struct ObjectEvent * trainerObj, s16 range, s16 x, s16 y);
 static u8 GetTrainerApproachDistanceWest(struct ObjectEvent * trainerObj, s16 range, s16 x, s16 y);
 static u8 GetTrainerApproachDistanceEast(struct ObjectEvent * trainerObj, s16 range, s16 x, s16 y);
-static bool32 CheckPathBetweenTrainerAndPlayer(struct ObjectEvent * trainerObj, u32 approachDistance, u32 facingDirection);
+static u32 CheckPathBetweenTrainerAndPlayer(struct ObjectEvent * trainerObj, u32 approachDistance, u32 facingDirection);
 static void TrainerApproachPlayer(struct ObjectEvent * trainerObj, u32 approachDistance);
 static void Task_RunTrainerSeeFuncList(u32 taskId);
 static bool32 TrainerSeeFunc_Dummy(u32 taskId, struct Task * task, struct ObjectEvent * trainerObj);
@@ -129,7 +129,7 @@ static u32 GetTrainerApproachDistance(struct ObjectEvent *trainerObj)
     if (trainerObj->trainerType == TRAINER_TYPE_NORMAL) // can only see in one direction
     {
         approachDistance = sDirectionalApproachDistanceFuncs[trainerObj->facingDirection - 1](trainerObj, trainerObj->trainerRange_berryTreeId, x, y);
-        return CheckPathBetweenTrainerAndPlayer(trainerObj, approachDistance, trainerObj->facingDirection) ? 1 : 0;
+        return CheckPathBetweenTrainerAndPlayer(trainerObj, approachDistance, trainerObj->facingDirection);
     }
     else  // TRAINER_TYPE_SEE_ALL_DIRECTIONS, TRAINER_TYPE_BURIED
     {
@@ -185,7 +185,7 @@ static u8 GetTrainerApproachDistanceEast(struct ObjectEvent *trainerObj, s16 ran
 
 #define COLLISION_MASK (~1)
 
-static bool32 CheckPathBetweenTrainerAndPlayer(struct ObjectEvent *trainerObj, u32 approachDistance, u32 direction)
+static u32 CheckPathBetweenTrainerAndPlayer(struct ObjectEvent *trainerObj, u32 approachDistance, u32 direction)
 {
     s16 x, y;
     u8 unk19_temp;

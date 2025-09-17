@@ -1,13 +1,15 @@
 #include "global.h"
 #include "test/battle.h"
 
+ASSUMPTIONS {
+    ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
+}
+
 SINGLE_BATTLE_TEST("Flame Body has a 30% chance to burn")
 {
     PASSES_RANDOMLY(3, 10, RNG_FLAME_BODY);
     
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
-        
         PLAYER(SPECIES_WOBBUFFET);
         OPPONENT(SPECIES_MAGMAR) { Ability(ABILITY_FLAME_BODY); }
     } WHEN {
@@ -26,7 +28,6 @@ SINGLE_BATTLE_TEST("Flame Body only triggers if move makes contact")
     PARAMETRIZE { move = MOVE_GUST; };
     
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
         ASSUME(gBattleMoves[MOVE_GUST].flags.makesContact == FALSE);
         
         PLAYER(SPECIES_WOBBUFFET);

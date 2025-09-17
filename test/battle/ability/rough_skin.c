@@ -1,11 +1,13 @@
 #include "global.h"
 #include "test/battle.h"
 
+ASSUMPTIONS {
+    ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
+}
+
 SINGLE_BATTLE_TEST("Rough Skin damages the attacker by 1/8 its max HP")
 {
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
-        
         PLAYER(SPECIES_WOBBUFFET) { MaxHP(160); HP(160); }
         OPPONENT(SPECIES_SHARPEDO) { Ability(ABILITY_ROUGH_SKIN); }
     } WHEN {
@@ -25,7 +27,6 @@ SINGLE_BATTLE_TEST("Rough Skin only triggers if move makes contact")
     PARAMETRIZE { move = MOVE_GUST; };
     
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
         ASSUME(gBattleMoves[MOVE_GUST].flags.makesContact == FALSE);
         
         PLAYER(SPECIES_WOBBUFFET) { MaxHP(160); HP(160); }
@@ -35,12 +36,12 @@ SINGLE_BATTLE_TEST("Rough Skin only triggers if move makes contact")
     } SCENE {
         if (gBattleMoves[move].flags.makesContact) {
             ABILITY_POPUP(opponent, ABILITY_ROUGH_SKIN);
-            HP_BAR(player, damage: 20);
+            HP_BAR(player);
             MESSAGE("Wobbuffet was hurt!");
         } else {
             NONE_OF {
                 ABILITY_POPUP(opponent, ABILITY_ROUGH_SKIN);
-                HP_BAR(player, damage: 20);
+                HP_BAR(player);
                 MESSAGE("Wobbuffet was hurt!");
             }
         }
@@ -50,8 +51,6 @@ SINGLE_BATTLE_TEST("Rough Skin only triggers if move makes contact")
 SINGLE_BATTLE_TEST("Rough Skin - If both Pokémon faints, the attacker will faint first")
 {
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
-        
         PLAYER(SPECIES_WOBBUFFET) { MaxHP(160); HP(20); }
         PLAYER(SPECIES_WOBBUFFET);
         
@@ -61,7 +60,7 @@ SINGLE_BATTLE_TEST("Rough Skin - If both Pokémon faints, the attacker will fain
         TURN { MOVE(player, MOVE_SCRATCH); SEND_OUT(player, 1); SEND_OUT(opponent, 1); }
     } SCENE {
         ABILITY_POPUP(opponent, ABILITY_ROUGH_SKIN);
-        HP_BAR(player, damage: 20);
+        HP_BAR(player);
         MESSAGE("Wobbuffet was hurt!");
         MESSAGE("Wobbuffet fainted!");
         MESSAGE("Foe Sharpedo fainted!");

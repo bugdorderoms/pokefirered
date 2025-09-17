@@ -35,7 +35,7 @@
 #include "battle_message.h"
 #include "battle_anim.h"
 #include "battle_ai_util.h"
-#include "calculate_base_damage.h"
+#include "battle_damage_calc.h"
 #include "battle_scripts.h"
 #include "trainer_slide.h"
 #include "battle_secondary_effect.h"

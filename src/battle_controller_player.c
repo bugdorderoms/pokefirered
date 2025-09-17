@@ -1,6 +1,6 @@
 #include "global.h"
 #include "gflib.h"
-#include "calculate_base_damage.h"
+#include "battle_damage_calc.h"
 #include "data.h"
 #include "item.h"
 #include "item_menu.h"

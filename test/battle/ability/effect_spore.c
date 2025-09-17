@@ -1,6 +1,10 @@
 #include "global.h"
 #include "test/battle.h"
 
+ASSUMPTIONS {
+    ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
+}
+
 SINGLE_BATTLE_TEST("Effect Spore only inflicts status on contact")
 {
     u32 move;
@@ -9,7 +13,6 @@ SINGLE_BATTLE_TEST("Effect Spore only inflicts status on contact")
     PARAMETRIZE { move = MOVE_SWIFT; }
     
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
         ASSUME(gBattleMoves[MOVE_SWIFT].flags.makesContact == FALSE);
         
         PLAYER(SPECIES_WOBBUFFET);
@@ -36,8 +39,6 @@ SINGLE_BATTLE_TEST("Effect Spore causes poison 9% of the time")
     PASSES_RANDOMLY(9, 100, RNG_EFFECT_SPORE);
     
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
-        
         PLAYER(SPECIES_WOBBUFFET);
         OPPONENT(SPECIES_BRELOOM) { Ability(ABILITY_EFFECT_SPORE); }
     } WHEN {
@@ -54,8 +55,6 @@ SINGLE_BATTLE_TEST("Effect Spore causes paralysis 10% of the time")
     PASSES_RANDOMLY(10, 100, RNG_EFFECT_SPORE);
     
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
-        
         PLAYER(SPECIES_WOBBUFFET);
         OPPONENT(SPECIES_BRELOOM) { Ability(ABILITY_EFFECT_SPORE); }
     } WHEN {
@@ -72,8 +71,6 @@ SINGLE_BATTLE_TEST("Effect Spore causes sleep 11% of the time")
     PASSES_RANDOMLY(11, 100, RNG_EFFECT_SPORE);
     
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
-        
         PLAYER(SPECIES_WOBBUFFET);
         OPPONENT(SPECIES_BRELOOM) { Ability(ABILITY_EFFECT_SPORE); }
     } WHEN {
@@ -88,7 +85,6 @@ SINGLE_BATTLE_TEST("Effect Spore causes sleep 11% of the time")
 SINGLE_BATTLE_TEST("Effect Spore doesn't activates on Grass-type Pokémons")
 {
     GIVEN {
-        ASSUME(gBattleMoves[MOVE_SCRATCH].flags.makesContact == TRUE);
         ASSUME(gSpeciesInfo[SPECIES_TANGELA].types[0] == TYPE_GRASS || gSpeciesInfo[SPECIES_TANGELA].types[1] == TYPE_GRASS);
         
         PLAYER(SPECIES_TANGELA);

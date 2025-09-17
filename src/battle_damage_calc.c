@@ -5,7 +5,7 @@
 #include "battle_interface.h"
 #include "battle_move_effects.h"
 #include "battle_util.h"
-#include "calculate_base_damage.h"
+#include "battle_damage_calc.h"
 #include "event_data.h"
 #include "item.h"
 #include "malloc.h"

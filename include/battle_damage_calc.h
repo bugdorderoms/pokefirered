@@ -1,5 +1,5 @@
-#ifndef GUARD_CALCULATE_BASE_DAMAGE_H
-#define GUARD_CALCULATE_BASE_DAMAGE_H
+#ifndef GUARD_BATTLE_DAMAGE_CALC_H
+#define GUARD_BATTLE_DAMAGE_CALC_H
 
 #include "global.h"
 
@@ -14,4 +14,4 @@ u32 TypeCalc(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 setAbili
 u32 AI_TypeCalc(struct Pokemon *mon, u32 move, u32 defender);
 u32 AI_GetSwitchInTypeMatchup(struct Pokemon *mon, u32 playerBattler);
 
-#endif // GUARD_CALCULATE_BASE_DAMAGE_H
+#endif // GUARD_BATTLE_DAMAGE_CALC_H

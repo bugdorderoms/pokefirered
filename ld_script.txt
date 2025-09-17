@@ -271,7 +271,7 @@ SECTIONS {
         src/dns.o(.text);
         src/trainer_slide.o(.text);
         src/registered_item.o(.text);
-        src/calculate_base_damage.o(.text);
+        src/battle_damage_calc.o(.text);
         src/ev_iv_display.o(.text);
         src/ride_pager.o(.text);
 		src/dexnav.o(.text);
@@ -565,7 +565,7 @@ SECTIONS {
         src/dns.o(.rodata);
         src/trainer_slide.o(.rodata);
         src/registered_item.o(.rodata);
-        src/calculate_base_damage.o(.rodata);
+        src/battle_damage_calc.o(.rodata);
         src/ev_iv_display.o(.rodata);
         src/ride_pager.o(.rodata);
         src/dexnav.o(.rodata);

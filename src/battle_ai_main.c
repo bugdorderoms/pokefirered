@@ -5,7 +5,7 @@
 #include "battle_anim.h"
 #include "battle_controllers.h"
 #include "battle_util.h"
-#include "calculate_base_damage.h"
+#include "battle_damage_calc.h"
 #include "random.h"
 #include "recorded_battle.h"
 #include "util.h"
