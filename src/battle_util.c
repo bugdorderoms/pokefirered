@@ -5524,7 +5524,7 @@ u32 GetBattlerIdFromPartySlot(u32 slot, u32 partyId)
     
     for (i = 0; i < NUM_BATTLERS_PER_SIDE; i++, slot = BATTLE_PARTNER(slot))
     {
-        if (partyId == gBattlerPartyIndexes[slot])
+        if (slot < gBattlersCount && partyId == gBattlerPartyIndexes[slot])
             return slot;
     }
     return MAX_BATTLERS_COUNT;

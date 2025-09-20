@@ -2493,7 +2493,6 @@ static void atk23_getexp(void)
                     gBattleStruct->expValue = 1;
 
                 viaExpShare = gSaveBlock1Ptr->playerPartyCount;
-                
             }
             else
             {
@@ -2560,7 +2559,7 @@ static void atk23_getexp(void)
                         // Get exp getter battlerId
                         if (IsDoubleBattleForBattler(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)))
                         {
-                            if (!(gBattlerPartyIndexes[2] != gBattleStruct->expGetterMonId) && !(gAbsentBattlerFlags & Bit(2)))
+                            if (gBattlerPartyIndexes[2] == gBattleStruct->expGetterMonId && !(gAbsentBattlerFlags & Bit(2)))
                                 gBattleStruct->expGetterBattlerId = 2;
                             else
                             {

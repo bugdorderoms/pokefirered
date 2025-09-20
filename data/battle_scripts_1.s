@@ -973,9 +973,9 @@ BattleScript_EffectRollout::
 	ppreduce
 	accuracycheck BattleScript_RolloutHit
 BattleScript_RolloutHit::
-	damageformula
+	typecalc
 	handlerollout
-	goto BattleScript_HitFromAtkAnimation
+	goto BattleScript_HitFromCritCalc
 
 @ EFFECT_SWAGGER @
 
