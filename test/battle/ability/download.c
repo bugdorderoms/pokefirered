@@ -91,3 +91,5 @@ SINGLE_BATTLE_TEST("Download takes opposing Pokémon's stat stages into account"
         EXPECT_EQ(player->statStages[STAT_SPATK], DEFAULT_STAT_STAGES + 1);
     }
 }
+
+TO_DO_BATTLE_TEST("Download can raise stat based on a non-adjacent Pokémon's defensive stats in triples");

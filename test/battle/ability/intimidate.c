@@ -67,3 +67,5 @@ SINGLE_BATTLE_TEST("Intimidate is blocked by Oblivious, Scrappy, etc")
         NOT ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_STATS_CHANGE, player);
     }
 }
+
+TO_DO_BATTLE_TEST("Intimidate doesn't affect non-adjacent targets in triples");

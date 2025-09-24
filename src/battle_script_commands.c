@@ -1163,7 +1163,8 @@ static void atk01_accuracycheck(void)
             else
                 gBattleCommunication[MISS_TYPE] = B_MSG_MISSED;
             
-            if (GetBattleMoveSplit(gCurrentMove) != SPLIT_STATUS && TypeCalc(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, &flags) == TYPE_MUL_NO_EFFECT)
+            if (GetBattleMoveSplit(gCurrentMove) != SPLIT_STATUS
+            && TypeCalc(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, FALSE, &flags) == TYPE_MUL_NO_EFFECT)
                 gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
         }
         JumpIfMoveFailed(cmd->nextInstr, cmd->jumpStr);
@@ -1322,7 +1323,7 @@ static void atk05_damagecalc(void)
 static void atk06_typecalc(void)
 {
     CMD_ARGS();
-    TypeCalc(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, &gMoveResultFlags);
+    TypeCalc(gCurrentMove, gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget, TRUE, FALSE, &gMoveResultFlags);
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
@@ -6264,7 +6265,7 @@ static void atk76_various(void)
         {
             VARIOUS_ARGS(const u8 *failPtr);
             
-            if ((gStatuses3[battlerId] & (STATUS3_ON_AIR | STATUS3_SKY_DROPPED)) || !IsBattlerGrounded(battlerId))
+            if ((gStatuses3[battlerId] & (STATUS3_ON_AIR | STATUS3_SKY_DROPPED)) || !IsBattlerGrounded(battlerId, FALSE))
             {
                 BringDownInAirBattler(battlerId);
                 gBattlescriptCurrInstr = cmd->nextInstr;

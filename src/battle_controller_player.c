@@ -827,7 +827,7 @@ static void MoveSelectionDisplayMoveType(u32 battlerId)
         else if (!IsBattlerAlive(target))
             target = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
     }
-    TypeCalc(move, type, battlerId, target, FALSE, &flags);
+    TypeCalc(move, type, battlerId, target, FALSE, FALSE, &flags);
     
     // set respective colours
     if (flags & MOVE_RESULT_SUPER_EFFECTIVE)

@@ -2918,27 +2918,27 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                                 
                                 for (i = 0; i < MAX_BATTLERS_COUNT; i++)
                                 {
-                                    if (IsBattlerAlive(i) && !IsBattlerAlly(battler, i))
+                                    if (!IsBattlerAlive(i) || IsBattlerAlly(battler, i))
+                                        continue;
+                                    
+                                    for (j = 0; j < MAX_MON_MOVES; j++)
                                     {
-                                        for (j = 0; j < MAX_MON_MOVES; j++)
+                                        move = gBattleMons[i].moves[j];
+                                        
+                                        if (!move)
+                                            continue;
+                                        
+                                        if (gBattleMoves[move].effect == EFFECT_OHKO)
+                                            ++effect;
+                                        else if (gBattleMoves[move].split != SPLIT_STATUS)
                                         {
-                                            move = gBattleMons[i].moves[j];
+                                            if (gBattleMoves[move].effect == EFFECT_HIDDEN_POWER)
+                                                type = GetHiddenPowerType(GetBattlerPartyIndexPtr(i));
+                                            else
+                                                type = gBattleMoves[move].type;
                                             
-                                            if (move)
-                                            {
-                                                if (gBattleMoves[move].effect == EFFECT_OHKO)
-                                                    ++effect;
-                                                else if (gBattleMoves[move].split != SPLIT_STATUS)
-                                                {
-                                                    if (gBattleMoves[move].effect == EFFECT_HIDDEN_POWER)
-                                                        type = GetHiddenPowerType(GetBattlerPartyIndexPtr(i));
-                                                    else
-                                                        type = gBattleMoves[move].type;
-                                                    
-                                                    if (TypeCalc(move, type, i, battler, FALSE, &flags) >= TYPE_MUL_SUPER_EFFECTIVE)
-                                                        ++effect;
-                                                }
-                                            }
+                                            if (TypeCalc(move, type, i, battler, FALSE, TRUE, &flags) >= TYPE_MUL_SUPER_EFFECTIVE)
+                                                ++effect;
                                         }
                                     }
                                 }
@@ -3007,33 +3007,33 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                                 
                                 for (i = 0, count = 0; i < MAX_BATTLERS_COUNT; i++)
                                 {
-                                    if (IsBattlerAlive(i) && !IsBattlerAlly(battler, i))
+                                    if (!IsBattlerAlive(i) || IsBattlerAlly(battler, i))
+                                        continue;
+                                    
+                                    for (j = 0; j < MAX_MON_MOVES; j++)
                                     {
-                                        for (j = 0; j < MAX_MON_MOVES; j++)
+                                        if (!gBattleMons[i].moves[j])
+                                            continue;
+                                        
+                                        data[count].moveId = gBattleMons[i].moves[j];
+                                        data[count].battlerId = i;
+                                        
+                                        switch (gBattleMoves[data[count].moveId].effect)
                                         {
-                                            if (gBattleMons[i].moves[j])
-                                            {
-                                                data[count].moveId = gBattleMons[i].moves[j];
-                                                data[count].battlerId = i;
-                                                
-                                                switch (gBattleMoves[data[count].moveId].effect)
-                                                {
-                                                    case EFFECT_OHKO:
-                                                        data[count].power = 150;
-                                                        break;
-                                                    case EFFECT_COUNTER_ATTACK:
-                                                        data[count].power = 120;
-                                                        break;
-                                                    default:
-                                                        if (gBattleMoves[data[count].moveId].power == 1)
-                                                            data[count].power = 80;
-                                                        else
-                                                            data[count].power = gBattleMoves[data[count].moveId].power;
-                                                        break;
-                                                }
-                                                ++count;
-                                            }
+                                            case EFFECT_OHKO:
+                                                data[count].power = 150;
+                                                break;
+                                            case EFFECT_COUNTER_ATTACK:
+                                                data[count].power = 120;
+                                                break;
+                                            default:
+                                                if (gBattleMoves[data[count].moveId].power == 1)
+                                                    data[count].power = 80;
+                                                else
+                                                    data[count].power = gBattleMoves[data[count].moveId].power;
+                                                break;
                                         }
+                                        ++count;
                                     }
                                 }
                                 for (i = 1, bestId = 0; i < count; i++)
@@ -5091,11 +5091,15 @@ u32 CountBattlerStatIncreases(u32 battlerId, bool32 countEvasionAccuracy)
     return count;
 }
 
-bool32 IsBattlerGrounded(u32 battlerId)
+bool32 IsBattlerGrounded(u32 battlerId, bool32 ignoreGravity)
 {
-    if ((gStatuses3[battlerId] & (STATUS3_ROOTED | STATUS3_SMACKED_DOWN)) || (gFieldStatus & STATUS_FIELD_GRAVITY))
+    if ((gStatuses3[battlerId] & (STATUS3_ROOTED | STATUS3_SMACKED_DOWN)))
         return TRUE;
-    else if (GetBattlerAbility(battlerId) == ABILITY_LEVITATE || IsBattlerOfType(battlerId, TYPE_FLYING) || (gStatuses3[battlerId] & (STATUS3_TELEKINESIS | STATUS3_MAGNET_RISE)))
+    else if (!ignoreGravity && (gFieldStatus & STATUS_FIELD_GRAVITY))
+        return TRUE;
+    else if (GetBattlerAbility(battlerId) == ABILITY_LEVITATE || IsBattlerOfType(battlerId, TYPE_FLYING))
+        return FALSE;
+    else if ((gStatuses3[battlerId] & (STATUS3_TELEKINESIS | STATUS3_MAGNET_RISE)))
         return FALSE;
     else
         return TRUE;
@@ -5232,7 +5236,7 @@ u32 IsAbilityPreventingSwitchOut(u32 battlerId)
     
     if (!IsBattlerOfType(battlerId, TYPE_GHOST))
     {
-        if (IsBattlerGrounded(battlerId) && (ret = ABILITY_ON_OPPOSING_SIDE(battlerId, ABILITY_ARENA_TRAP)))
+        if (IsBattlerGrounded(battlerId, FALSE) && (ret = ABILITY_ON_OPPOSING_SIDE(battlerId, ABILITY_ARENA_TRAP)))
             return ret;
         else if (GetBattlerAbility(battlerId) != ABILITY_SHADOW_TAG && (ret = ABILITY_ON_OPPOSING_SIDE(battlerId, ABILITY_SHADOW_TAG)))
             return ret;

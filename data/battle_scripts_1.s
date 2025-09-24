@@ -1006,10 +1006,9 @@ BattleScript_EffectFuryCutter::
 	ppreduce
 	accuracycheck BattleScript_FuryCutterHit
 BattleScript_FuryCutterHit::
+	typecalc
 	handlefurycutter
-	damageformula
-	jumpifmovehadnoeffect BattleScript_FuryCutterHit
-	goto BattleScript_HitFromAtkAnimation
+	goto BattleScript_HitFromCritCalc
 
 @ EFFECT_ATTRACT @
 
@@ -1451,6 +1450,8 @@ BattleScript_EffectHelpingHand::
 	attackcanceler
 	attackstring
 	ppreduce
+	settargetally
+	jumpifabsent BS_TARGET, BattleScript_ButItFailed
 	sethelpinghand
 	attackanimation
 	waitstate

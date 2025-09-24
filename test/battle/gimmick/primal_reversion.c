@@ -18,13 +18,12 @@ SINGLE_BATTLE_TEST("Primal: Primal Reversion activates before switch in abilitie
         {
             case ITEM_BLUE_ORB:
                 ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_BLUE_PRIMAL_REVERSION, player);
-                MESSAGE("Kyogre's Primal Reversion! It reverted to its primal state!");
                 break;
             case ITEM_RED_ORB:
                 ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_RED_PRIMAL_REVERSION, player);
-                MESSAGE("Groudon's Primal Reversion! It reverted to its primal state!");
                 break;
         }
+        MESSAGE("%s's Primal Reversion! It reverted to its primal state!", species);
         NOT ABILITY_POPUP(player, ability);
     }
 }

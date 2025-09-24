@@ -77,3 +77,5 @@ SINGLE_BATTLE_TEST("Trace copies opponent's Intimidate and triggers it immediate
         MESSAGE("Foe Masquerain's Attack fell!");
     }
 }
+
+TO_DO_BATTLE_TEST("Trace can't copy a non-adjacent Pokémon's ability in triples");

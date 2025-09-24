@@ -58,3 +58,5 @@ SINGLE_BATTLE_TEST("Magnet Pull doesn't prevents switching out with moves")
         NOT MESSAGE("Foe Magneton's Magnet Pull made it ineffective!");
     }
 }
+
+TO_DO_BATTLE_TEST("Magnet Pull doesn't prevents non-adjacent Steel-type Pokémon from flee");

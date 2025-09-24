@@ -145,4 +145,5 @@ DOUBLE_BATTLE_TEST("Lightning Rod does not activate if protected")
     }
 }
 
+TO_DO_BATTLE_TEST("Lightning Rod can't redirect moves if its out of range in triples");
 TO_DO_BATTLE_TEST("Lightning Rod activates before a held Cell Battery");

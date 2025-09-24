@@ -130,7 +130,7 @@ static void SetBattlerData(u32 attacker)
                     u32 moveType = AI_THINKING->moveTypes[attacker][i] = GetBattlerMoveType(attacker, move);
                     
                     AI_THINKING->totalAccuracy[attacker][defender][i] = CalcMoveTotalAccuracy(move, attacker, defender);
-                    AI_THINKING->effectiveness[attacker][defender][i] = TypeCalc(move, moveType, attacker, defender, FALSE, &flags);
+                    AI_THINKING->effectiveness[attacker][defender][i] = TypeCalc(move, moveType, attacker, defender, FALSE, FALSE, &flags);
                     dmg = AI_CalcMoveDamage(move, attacker, defender, moveType, AI_THINKING->effectiveness[attacker][defender][i]);
                     
                     if (dmg > maxDmg)

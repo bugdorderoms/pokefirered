@@ -69,3 +69,5 @@ SINGLE_BATTLE_TEST("Shadow Tag doesn't prevents switching out with moves")
         NOT MESSAGE("Foe Wobbuffet's Shadow Tag made it ineffective!");
     }
 }
+
+TO_DO_BATTLE_TEST("Shadow Tag doesn't prevents non-adjacent Pokémon from flee");

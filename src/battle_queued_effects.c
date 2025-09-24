@@ -290,7 +290,7 @@ bool32 QueuedEffects_DoEntryHazardsEffects(u32 battlerId, u32 side, u32 id)
     u32 currMove;
     bool32 badPoison, effect = FALSE;
     
-    if (IsBattlerGrounded(battlerId) && GetBattlerAbility(battlerId) != ABILITY_MAGIC_GUARD)
+    if (IsBattlerGrounded(battlerId, FALSE) && GetBattlerAbility(battlerId) != ABILITY_MAGIC_GUARD)
     {
         switch (id)
         {

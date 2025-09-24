@@ -1294,7 +1294,7 @@ void Item_(u32 sourceLine, u32 item)
     SetMonData(DATA.currentMon, MON_DATA_HELD_ITEM, &item);
 }
 
-void Moves_(u32 sourceLine, const u16 moves[MAX_MON_MOVES])
+void Moves_(u32 sourceLine, u16 moves[MAX_MON_MOVES])
 {
     s32 i;
     

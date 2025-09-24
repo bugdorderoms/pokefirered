@@ -148,7 +148,7 @@ bool32 CalcMoveIsCritical(u32 battlerAtk, u32 battlerDef, u32 move);
 bool32 IsMoveMakingContact(u32 battler, u32 move);
 bool32 IsBattlerProtected(u32 attacker, u32 defender, u32 move);
 u32 CountBattlerStatIncreases(u32 battlerId, bool32 countEvasionAccuracy);
-bool32 IsBattlerGrounded(u32 battlerId);
+bool32 IsBattlerGrounded(u32 battlerId, bool32 ignoreGravity);
 bool32 CanBattlerGetOrLoseItem(u32 battlerId, u32 itemId);
 bool32 CanStealItem(u32 battlerAtk, u32 battlerDef, u32 itemId);
 void RemoveBattlerItem(u32 battlerId);

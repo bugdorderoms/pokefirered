@@ -967,11 +967,15 @@ static inline u32 GetDefenderAbilityDamageModifier(struct DamageCalc *damageStru
                     return UQ_4_12(0.5);
                 break;
             case ABILITY_FLUFFY:
-                if (damageStruct->moveType == TYPE_FIRE && !IsMoveMakingContact(damageStruct->attacker, damageStruct->move))
+            {
+                bool32 makesContact = IsMoveMakingContact(damageStruct->attacker, damageStruct->move);
+                
+                if (!makesContact && damageStruct->moveType == TYPE_FIRE)
                     return UQ_4_12(2.0);
-                if (damageStruct->moveType != TYPE_FIRE && IsMoveMakingContact(damageStruct->attacker, damageStruct->move))
+                if (makesContact && damageStruct->moveType != TYPE_FIRE)
                     return UQ_4_12(0.5);
                 break;
+            }
             case ABILITY_PUNK_ROCK:
                 if (gBattleMoves[damageStruct->move].flags.soundMove)
                     return UQ_4_12(0.5);
@@ -1109,7 +1113,7 @@ static s32 CalculateDamage(struct DamageCalc *damageStruct, u32 basePower, bool3
 
 s32 CalculateMoveDamage(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 isCrit)
 {
-    u32 multiplier = TypeCalc(move, moveType, attacker, defender, TRUE, &gMoveResultFlags);
+    u32 multiplier = TypeCalc(move, moveType, attacker, defender, TRUE, FALSE, &gMoveResultFlags);
     return CalculateDamage(PopulateDamageStruct(attacker, defender, move, moveType, multiplier, isCrit, 0), 0, TRUE);
 }
 
@@ -1183,13 +1187,13 @@ u32 GetTypeModifier(u32 atkType, u32 defType)
     return modifier;
 }
 
-static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 defender, u32 defenderType, u32 *multiplier, bool32 setAbilityFlags, u16 *flags)
+static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 defender, u32 defenderType, u32 *multiplier, bool32 setAbilityFlags, bool32 forAnticipation, u16 *flags)
 {
     u32 mod = GetTypeModifier(moveType, defenderType);
     
     // Check Foresight and Scrappy on Ghost types
     if ((moveType == TYPE_FIGHTING || moveType == TYPE_NORMAL) && defenderType == TYPE_GHOST && mod == TYPE_MUL_NO_EFFECT && (move == MOVE_GLARE
-    || (gBattleMons[defender].status2 & STATUS2_FORESIGHT) || atkAbility == ABILITY_SCRAPPY || atkAbility == ABILITY_MINDS_EYE))
+    || (gBattleMons[defender].status2 & STATUS2_FORESIGHT) || (!forAnticipation && (atkAbility == ABILITY_SCRAPPY || atkAbility == ABILITY_MINDS_EYE))))
         mod = TYPE_MUL_NORMAL;
     
     // Check Miracle Eye
@@ -1197,21 +1201,24 @@ static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 d
         mod = TYPE_MUL_NORMAL;
     
     // Check ground immunities
-    if (moveType == TYPE_GROUND && mod == TYPE_MUL_NO_EFFECT && IsBattlerGrounded(defender))
+    if (moveType == TYPE_GROUND && mod == TYPE_MUL_NO_EFFECT && IsBattlerGrounded(defender, forAnticipation))
         mod = TYPE_MUL_NORMAL;
     
-    // Check strong winds
-    if (IsBattlerWeatherAffected(defender, B_WEATHER_STRONG_WINDS) && defenderType == TYPE_FLYING && mod == TYPE_MUL_SUPER_EFFECTIVE)
+    if (!forAnticipation)
     {
-        mod = TYPE_MUL_NORMAL;
+        // Check strong winds
+        if (IsBattlerWeatherAffected(defender, B_WEATHER_STRONG_WINDS) && defenderType == TYPE_FLYING && mod == TYPE_MUL_SUPER_EFFECTIVE)
+        {
+            mod = TYPE_MUL_NORMAL;
+            
+            if (setAbilityFlags && GetBattleMoveSplit(move) != SPLIT_STATUS && gBattleStruct->strongWindsMessageState == 0)
+                ++gBattleStruct->strongWindsMessageState;
+        }
         
-        if (setAbilityFlags && GetBattleMoveSplit(move) != SPLIT_STATUS && gBattleStruct->strongWindsMessageState == 0)
-            ++gBattleStruct->strongWindsMessageState;
+        // Check moves that dont display "super effective" or "not very effective" messages
+        if (GET_MOVE_MOVEEFFECT_TABLE(move).noEffectiveness && (mod == TYPE_MUL_SUPER_EFFECTIVE || mod == TYPE_MUL_NOT_EFFECTIVE))
+            mod = TYPE_MUL_NORMAL;
     }
-    
-    // Check moves that dont display "super effective" or "not very effective" messages
-    if (GET_MOVE_MOVEEFFECT_TABLE(move).noEffectiveness && (mod == TYPE_MUL_SUPER_EFFECTIVE || mod == TYPE_MUL_NOT_EFFECTIVE))
-        mod = TYPE_MUL_NORMAL;
     
     // Check status moves, except Thunder Wave
     if (GetBattleMoveSplit(move) == SPLIT_STATUS && move != MOVE_THUNDER_WAVE)
@@ -1220,27 +1227,27 @@ static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 d
     UpdateMoveResults(multiplier, mod, move, flags);
 }
 
-static u32 CalcTypeEffectivenessMultiplierInternal(u32 move, u32 moveType, u32 atkAbility, u32 defender, u32 multiplier, bool32 setAbilityFlags, u16 *flags)
+static u32 CalcTypeEffectivenessMultiplierInternal(u32 move, u32 moveType, u32 atkAbility, u32 defender, u32 multiplier, bool32 setAbilityFlags, bool32 forAnticipation, u16 *flags)
 {
     u32 defAbility;
     u32 types[3];
     
     GetBattlerTypes(defender, types);
     
-    MulByTypeEffectiveness(move, moveType, atkAbility, defender, types[0], &multiplier, setAbilityFlags, flags);
+    MulByTypeEffectiveness(move, moveType, atkAbility, defender, types[0], &multiplier, setAbilityFlags, forAnticipation, flags);
     
     if (types[0] != types[1])
-        MulByTypeEffectiveness(move, moveType, atkAbility, defender, types[1], &multiplier, setAbilityFlags, flags);
+        MulByTypeEffectiveness(move, moveType, atkAbility, defender, types[1], &multiplier, setAbilityFlags, forAnticipation, flags);
     
     if (types[2] != TYPE_MYSTERY && types[2] != types[0] && types[2] != types[1])
-        MulByTypeEffectiveness(move, moveType, atkAbility, defender, types[2], &multiplier, setAbilityFlags, flags);
+        MulByTypeEffectiveness(move, moveType, atkAbility, defender, types[2], &multiplier, setAbilityFlags, forAnticipation, flags);
 
     if (GetBattleMoveSplit(move) != SPLIT_STATUS)
     {
         defAbility = GetBattlerAbility(defender);
         
         // Check special ground immunities
-        if (moveType == TYPE_GROUND && !IsBattlerGrounded(defender))
+        if (moveType == TYPE_GROUND && !IsBattlerGrounded(defender, forAnticipation))
         {
             bool32 immune = FALSE;
             
@@ -1279,24 +1286,24 @@ static u32 CalcTypeEffectivenessMultiplierInternal(u32 move, u32 moveType, u32 a
     return multiplier;
 }
 
-static u32 CalcTypeEffectivenessMultiplier(u32 move, u32 moveType, u32 atkAbility, u32 defender, bool32 setAbilityFlags, u16 *flags)
+static u32 CalcTypeEffectivenessMultiplier(u32 move, u32 moveType, u32 atkAbility, u32 defender, bool32 setAbilityFlags, bool32 forAnticipation, u16 *flags)
 {
     u32 multiplier = TYPE_MUL_NORMAL;
     
     if (move != MOVE_STRUGGLE && moveType != TYPE_MYSTERY)
     {
-        multiplier = CalcTypeEffectivenessMultiplierInternal(move, moveType, atkAbility, defender, multiplier, setAbilityFlags, flags);
+        multiplier = CalcTypeEffectivenessMultiplierInternal(move, moveType, atkAbility, defender, multiplier, setAbilityFlags, forAnticipation, flags);
     }
     return multiplier;
 }
 
-u32 TypeCalc(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 setAbilityFlags, u16 *flags)
+u32 TypeCalc(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 setAbilityFlags, bool32 forAnticipation, u16 *flags)
 {
     u32 multiplier;
     
     *flags = 0;
     
-    multiplier = CalcTypeEffectivenessMultiplier(move, moveType, GetBattlerAbility(attacker), defender, setAbilityFlags, flags);
+    multiplier = CalcTypeEffectivenessMultiplier(move, moveType, GetBattlerAbility(attacker), defender, setAbilityFlags, forAnticipation, flags);
     
     if (setAbilityFlags)
     {
@@ -1324,7 +1331,7 @@ u32 AI_TypeCalc(struct Pokemon *mon, u32 move, u32 defender)
     CopyPokemonToBattleMon(battler, mon, &gBattleMons[battler], TRUE);
     gStatuses3[battler] = 0;
     
-    effectiveness = TypeCalc(move, GetBattlerMoveType(battler, move), battler, defender, FALSE, &flags);
+    effectiveness = TypeCalc(move, GetBattlerMoveType(battler, move), battler, defender, FALSE, FALSE, &flags);
     
     gBattleMons[battler] = savedCopy;
     gStatuses3[battler] = status3;
@@ -1349,7 +1356,7 @@ u32 AI_GetSwitchInTypeMatchup(struct Pokemon *mon, u32 playerBattler)
 
     multiplier = TYPE_MUL_NORMAL;
     for (i = 0; i < 3; i++)
-        multiplier = CalcTypeEffectivenessMultiplierInternal(MOVE_NONE, types[i], GetBattlerAbility(playerBattler), battler, multiplier, FALSE, &flags);
+        multiplier = CalcTypeEffectivenessMultiplierInternal(MOVE_NONE, types[i], GetBattlerAbility(playerBattler), battler, multiplier, FALSE, FALSE, &flags);
 
     gBattleMons[battler] = savedCopy;
     gStatuses3[battler] = status3;

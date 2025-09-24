@@ -274,8 +274,11 @@
  * - Speed(n)
  * - Item(item)
  * - Moves(moves...)
+ * - MovesWithPP([move, pp]...)
  * - Friendship(friendship)
  * - Status1(status1)
+ * - HPIV(n), AttackIV(n), DefenseIV(n), SpAttackIV(n), SpDefenseIV(n)
+ * - SpeedIV(n)
  * For example to create a Wobbuffet that is poisoned:
  *     PLAYER(SPECIES_WOBBUFFET) { Status1(STATUS1_POISON); }
  * Note if Speed is specified for any Pokémon then it must be specified
@@ -743,11 +746,11 @@ struct moveWithPP {
 #define SpDefense(spDefense) SpDefense_(__LINE__, spDefense)
 #define Speed(speed) Speed_(__LINE__, speed)
 #define Item(item) Item_(__LINE__, item)
-#define Moves(move1, ...) Moves_(__LINE__, (const u16 [MAX_MON_MOVES]) { move1, __VA_ARGS__ })
+#define Moves(move1, ...) do { u16 moves_[MAX_MON_MOVES] = {move1, __VA_ARGS__}; Moves_(__LINE__, moves_); } while(0)
 #define MovesWithPP(movewithpp1, ...) MovesWithPP_(__LINE__, (struct moveWithPP[MAX_MON_MOVES]) { movewithpp1, __VA_ARGS__ })
 #define Friendship(friendship) Friendship_(__LINE__, friendship)
 #define Status1(status1) Status1_(__LINE__, status1)
-#define OTName(otName) do {static const u8 otName_[] = _(otName); OTName_(__LINE__, otName_);} while (0)
+#define OTName(otName) do { static const u8 otName_[] = _(otName); OTName_(__LINE__, otName_); } while (0)
 #define HPIV(iv) HPIV_(__LINE__, iv)
 #define AttackIV(iv) AttackIV_(__LINE__, iv)
 #define DefenseIV(iv) DefenseIV_(__LINE__, iv)
@@ -770,7 +773,7 @@ void SpAttack_(u32 sourceLine, u32 spAttack);
 void SpDefense_(u32 sourceLine, u32 spDefense);
 void Speed_(u32 sourceLine, u32 speed);
 void Item_(u32 sourceLine, u32 item);
-void Moves_(u32 sourceLine, const u16 moves[MAX_MON_MOVES]);
+void Moves_(u32 sourceLine, u16 moves[MAX_MON_MOVES]);
 void MovesWithPP_(u32 sourceLine, struct moveWithPP moveWithPP[MAX_MON_MOVES]);
 void Friendship_(u32 sourceLine, u32 friendship);
 void Status1_(u32 sourceLine, u32 status1);

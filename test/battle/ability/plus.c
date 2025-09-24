@@ -48,3 +48,5 @@ DOUBLE_BATTLE_TEST("Plus boosts the user's Sp. Attack by 50% if ally has Minus",
         EXPECT_MUL_EQ(results[0].damage, UQ_4_12(1.5), results[1].damage);
     }
 }
+
+TO_DO_BATTLE_TEST("Plus activates if an non-adjacent ally has Plus or Minus in triples");

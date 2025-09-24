@@ -54,3 +54,5 @@ SINGLE_BATTLE_TEST("Arena Trap doesn't prevents switching out with moves")
         NOT MESSAGE("Foe Diglett's Arena Trap made it ineffective!");
     }
 }
+
+TO_DO_BATTLE_TEST("Arena Trap doesn't prevents non-adjacent grounded Pokémon from flee");

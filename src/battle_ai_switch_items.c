@@ -238,7 +238,10 @@ static u32 ShouldSwitchIfWonderGuard(u32 battlerId, u8 *viableMons, u32 availabl
     {
         move = moves[i];
         
-        if (move && GetBattleMoveSplit(move) != SPLIT_STATUS && TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, &flags) >= TYPE_MUL_SUPER_EFFECTIVE)
+        if (!move || GetBattleMoveSplit(move) == SPLIT_STATUS)
+            continue;
+        
+        if (TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, FALSE, &flags) >= TYPE_MUL_SUPER_EFFECTIVE)
             return NO_SWITCH;
     }
     
@@ -271,7 +274,10 @@ static u32 ShouldSwitchIfOnlyBadMovesLeft(u32 battlerId, u8 *viableMons, u32 ava
     {
         move = moves[i];
         
-        if (move && GetBattleMoveSplit(move) != SPLIT_STATUS && TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, &flags) != TYPE_MUL_NO_EFFECT)
+        if (!move || GetBattleMoveSplit(move) == SPLIT_STATUS)
+            continue;
+        
+        if (TypeCalc(move, GetBattlerMoveType(battlerId, move), battlerId, opposingBattler, FALSE, FALSE, &flags) != TYPE_MUL_NO_EFFECT)
             return NO_SWITCH;
     }
     return PARTY_SIZE;
