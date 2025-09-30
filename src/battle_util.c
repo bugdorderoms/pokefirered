@@ -5091,18 +5091,26 @@ u32 CountBattlerStatIncreases(u32 battlerId, bool32 countEvasionAccuracy)
     return count;
 }
 
-bool32 IsBattlerGrounded(u32 battlerId, bool32 ignoreGravity)
+// Only called directly when calculating type effectiveness.
+bool32 IsBattlerGroundedInternal(u32 battlerId, bool32 ignoreGravity, bool32 checkInverseBattle)
 {
     if ((gStatuses3[battlerId] & (STATUS3_ROOTED | STATUS3_SMACKED_DOWN)))
         return TRUE;
     else if (!ignoreGravity && (gFieldStatus & STATUS_FIELD_GRAVITY))
         return TRUE;
-    else if (GetBattlerAbility(battlerId) == ABILITY_LEVITATE || IsBattlerOfType(battlerId, TYPE_FLYING))
+    else if (GetBattlerAbility(battlerId) == ABILITY_LEVITATE)
+        return FALSE;
+    else if (IsBattlerOfType(battlerId, TYPE_FLYING) && (!checkInverseBattle || gBattleStruct->battleChallenge != TRAINER_CHALLENGE_INVERSE_BATTLE))
         return FALSE;
     else if ((gStatuses3[battlerId] & (STATUS3_TELEKINESIS | STATUS3_MAGNET_RISE)))
         return FALSE;
     else
         return TRUE;
+}
+
+bool32 IsBattlerGrounded(u32 battlerId)
+{
+    return IsBattlerGroundedInternal(battlerId, FALSE, FALSE);
 }
 
 bool32 CanBattlerGetOrLoseItem(u32 battlerId, u32 itemId)
@@ -5236,7 +5244,7 @@ u32 IsAbilityPreventingSwitchOut(u32 battlerId)
     
     if (!IsBattlerOfType(battlerId, TYPE_GHOST))
     {
-        if (IsBattlerGrounded(battlerId, FALSE) && (ret = ABILITY_ON_OPPOSING_SIDE(battlerId, ABILITY_ARENA_TRAP)))
+        if (IsBattlerGrounded(battlerId) && (ret = ABILITY_ON_OPPOSING_SIDE(battlerId, ABILITY_ARENA_TRAP)))
             return ret;
         else if (GetBattlerAbility(battlerId) != ABILITY_SHADOW_TAG && (ret = ABILITY_ON_OPPOSING_SIDE(battlerId, ABILITY_SHADOW_TAG)))
             return ret;
@@ -5580,7 +5588,7 @@ static u32 GetBallThrowableState(void)
 
 bool32 CanThrowBall(void)
 {
-    return (GetBallThrowableState() == BALL_THROW_SUCCESS);
+    return (!IsPlayerBagDisabled() && GetBallThrowableState() == BALL_THROW_SUCCESS);
 }
 
 const u8 *PokemonUseItemEffectsBattle(u32 battlerId, u32 itemId, bool32 *canUse)

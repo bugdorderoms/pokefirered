@@ -77,7 +77,7 @@ static void LoadPicPaletteByTagOrSlot(u32 species, bool32 isShiny, u32 paletteSl
         else
         {
             sCreatingSpriteTemplate.paletteTag = paletteTag;
-            LoadMonPaletteFromSpecies(species, isShiny);
+            LoadMonPaletteFromSpecies(species, isShiny, paletteTag);
         }
     }
     else

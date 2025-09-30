@@ -24,7 +24,7 @@ Route4_PokemonCenter_1F_EventScript_MagikarpSalesman:: @ 816F75F
 	lock
 	faceplayer
 	goto_if_set FLAG_BOUGHT_MAGIKARP, Route4_PokemonCenter_1F_EventScript_AlreadyBoughtMagikarp
-	showmoneybox 0, 0, 0
+	showmoneybox 0, 0
 	checkplayergender
 	compare VAR_RESULT, MALE
 	goto_if_eq Route4_PokemonCenter_1F_EventScript_AskBuyMagikarpMale
@@ -45,7 +45,7 @@ Route4_PokemonCenter_1F_EventScript_AskBuyMagikarpFemale:: @ 816F794
 Route4_PokemonCenter_1F_EventScript_TryBuyMagikarp:: @ 816F7A2
 	compare VAR_RESULT, NO
 	goto_if_eq Route4_PokemonCenter_1F_EventScript_DeclineMagikarp
-	checkmoney MAGIKARP_PRICE, 0
+	checkmoney MAGIKARP_PRICE
 	compare VAR_RESULT, FALSE
 	goto_if_eq Route4_PokemonCenter_1F_EventScript_NotEnoughMoney
 	textcolor 3
@@ -65,7 +65,7 @@ Route4_PokemonCenter_1F_EventScript_BuyMagikarpParty:: @ 816F7F6
 Route4_PokemonCenter_1F_EventScript_GiveNickToPurchasedMagikarp::
 	call EventScript_GetGiftMonPartySlot
 	fadescreen FADE_TO_BLACK
-	hidemoneybox 0, 0
+	hidemoneybox
 	special ChangePokemonNickname
 	waitstate
 	goto Route4_PokemonCenter_1F_EventScript_BoughtMagikarp
@@ -76,7 +76,7 @@ Route4_PokemonCenter_1F_EventScript_BuyMagikarpPC:: @ 816F822
 	givenickmsg Route4_PokemonCenter_1F_EventScript_GiveNickAndTransferMagikarp, Route4_PokemonCenter_1F_EventScript_TransferMagikarpCloseMoneyBox
 Route4_PokemonCenter_1F_EventScript_GiveNickAndTransferMagikarp::
 	fadescreen FADE_TO_BLACK
-	hidemoneybox 0, 0
+	hidemoneybox
 	special ChangeBoxPokemonNickname
 	waitstate
 	lock
@@ -95,7 +95,7 @@ Route4_PokemonCenter_1F_EventScript_TransferMagikarp:: @ 816F856
 	end
 
 Route4_PokemonCenter_1F_EventScript_EndPurchaseMagikarp:: @ 816F861
-	hidemoneybox 0, 0
+	hidemoneybox
 	goto Route4_PokemonCenter_1F_EventScript_BoughtMagikarp
 	end
 
@@ -105,8 +105,8 @@ Route4_PokemonCenter_1F_EventScript_BoughtMagikarp:: @ 816F86A
 	end
 
 Route4_PokemonCenter_1F_EventScript_PayForMagikarp:: @ 816F86F
-	removemoney MAGIKARP_PRICE, 0
-	updatemoneybox 0, 0, 0
+	removemoney MAGIKARP_PRICE
+	updatemoneybox
 	playfanfare MUS_LEVEL_UP
 	message Route4_PokemonCenter_1F_Text_PaidOutrageouslyForMagikarp
 	waitmessage
@@ -116,13 +116,13 @@ Route4_PokemonCenter_1F_EventScript_PayForMagikarp:: @ 816F86F
 
 Route4_PokemonCenter_1F_EventScript_DeclineMagikarp:: @ 816F888
 	msgbox Route4_PokemonCenter_1F_Text_OnlyDoingThisAsFavorToYou
-	hidemoneybox 0, 0
+	hidemoneybox
 	release
 	end
 
 Route4_PokemonCenter_1F_EventScript_NotEnoughMoney:: @ 816F895
 	msgbox Route4_PokemonCenter_1F_Text_YoullNeedMoreMoney
-	hidemoneybox 0, 0
+	hidemoneybox
 	release
 	end
 
@@ -134,7 +134,7 @@ Route4_PokemonCenter_1F_EventScript_AlreadyBoughtMagikarp:: @ 816F8A2
 Route4_PokemonCenter_1F_EventScript_NoRoomForMagikarp:: @ 816F8AC
 	textcolor 0
 	msgbox Route4_PokemonCenter_1F_Text_NoRoomForMorePokemon
-	hidemoneybox 0, 0
+	hidemoneybox
 	release
 	end
 

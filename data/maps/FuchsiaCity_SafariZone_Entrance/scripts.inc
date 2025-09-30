@@ -103,7 +103,7 @@ FuchsiaCity_SafariZone_Entrance_EventScript_AskEnterSafariZone:: @ 816D391
 	msgbox FuchsiaCity_SafariZone_Entrance_Text_WelcomeToSafariZone
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestRight
 	waitmovement 0
-	showmoneybox 0, 0, 0
+	showmoneybox 0, 0
 	msgbox FuchsiaCity_SafariZone_Entrance_Text_PlaySafariGameFor500, MSGBOX_YESNO
 	compare VAR_RESULT, YES
 	goto_if_eq FuchsiaCity_SafariZone_Entrance_EventScript_TryEnterSafariZone
@@ -113,11 +113,11 @@ FuchsiaCity_SafariZone_Entrance_EventScript_AskEnterSafariZone:: @ 816D391
 
 FuchsiaCity_SafariZone_Entrance_EventScript_TryEnterSafariZone:: @ 816D3CA
 	call FuchsiaCity_SafariZone_Entrance_EventScript_CheckSpaceForMons
-	checkmoney 500, 0
+	checkmoney 500
 	compare VAR_RESULT, FALSE
 	goto_if_eq FuchsiaCity_SafariZone_Entrance_EventScript_NotEnoughMoney
-	removemoney 500, 0
-	updatemoneybox 0, 0, 0
+	removemoney 500
+	updatemoneybox
 	msgbox FuchsiaCity_SafariZone_Entrance_Text_ThatllBe500WeOnlyUseSpecialBalls
 	textcolor 3
 	playfanfare MUS_LEVEL_UP
@@ -126,7 +126,7 @@ FuchsiaCity_SafariZone_Entrance_EventScript_TryEnterSafariZone:: @ 816D3CA
 	call EventScript_RestorePrevTextColor
 	msgbox FuchsiaCity_SafariZone_Entrance_Text_CallYouOnPAWhenYouRunOut
 	closemessage
-	hidemoneybox 0, 0
+	hidemoneybox
 	compare VAR_TEMP_2, 0
 	call_if_eq FuchsiaCity_SafariZone_Entrance_EventScript_EnterSafariZoneMid
 	compare VAR_TEMP_2, 1
@@ -172,7 +172,7 @@ FuchsiaCity_SafariZone_Entrance_EventScript_NotEnoughMoney:: @ 816D48C
 
 FuchsiaCity_SafariZone_Entrance_EventScript_ForcePlayerBack:: @ 816D49A
 	closemessage
-	hidemoneybox 0, 0
+	hidemoneybox
 	applymovement OBJ_EVENT_ID_PLAYER, FuchsiaCity_SafariZone_Entrance_Movement_ForceBack
 	waitmovement 0
 	releaseall

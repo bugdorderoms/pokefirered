@@ -33,7 +33,7 @@ CeladonCity_GameCorner_PrizeRoom_EventScript_ChoosePrizeMon:: @ 816CBB2
 	end
 
 CeladonCity_GameCorner_PrizeRoom_EventScript_EndPrizeExchange:: @ 816CC10
-	hidecoinsbox 0, 0
+	hidecoinsbox
 	release
 	end
 
@@ -186,7 +186,7 @@ CeladonCity_GameCorner_PrizeRoom_EventScript_CheckReceivedMon:: @ 816CD52
 CeladonCity_GameCorner_PrizeRoom_EventScript_PartyFull:: @ 816CD74
 	textcolor 3
 	msgbox Text_NoMoreRoomForPokemon
-	hidecoinsbox 0, 0
+	hidecoinsbox
 	release
 	end
 
@@ -211,7 +211,7 @@ CeladonCity_GameCorner_PrizeRoom_EventScript_NotEnoughCoins:: @ 816CDA5
 
 CeladonCity_GameCorner_PrizeRoom_EventScript_ReceivedMonParty:: @ 816CDB3
 	removecoins VAR_TEMP_2
-	updatecoinsbox 0, 5
+	updatecoinsbox
 	getspeciesname 0, VAR_TEMP_1
 	playfanfare MUS_LEVEL_UP
 	message Text_PlayerObtainedTheMon
@@ -222,7 +222,7 @@ CeladonCity_GameCorner_PrizeRoom_EventScript_ReceivedMonParty:: @ 816CDB3
 
 CeladonCity_GameCorner_PrizeRoom_EventScript_ReceivedMonPC:: @ 816CDE0
 	removecoins VAR_TEMP_2
-	updatecoinsbox 0, 5
+	updatecoinsbox
 	getspeciesname 0, VAR_TEMP_1
 	playfanfare MUS_LEVEL_UP
 	message Text_PlayerObtainedTheMon
@@ -321,7 +321,7 @@ CeladonCity_GameCorner_PrizeRoom_EventScript_TryGivePrize:: @ 816CF3F
 	compare VAR_RESULT, FALSE
 	goto_if_eq CeladonCity_GameCorner_PrizeRoom_EventScript_BagFull
 	removecoins VAR_TEMP_2
-	updatecoinsbox 0, 5
+	updatecoinsbox
 	giveitem VAR_TEMP_1
 	goto CeladonCity_GameCorner_PrizeRoom_EventScript_EndPrizeExchange
 	end
@@ -329,7 +329,7 @@ CeladonCity_GameCorner_PrizeRoom_EventScript_TryGivePrize:: @ 816CF3F
 CeladonCity_GameCorner_PrizeRoom_EventScript_BagFull:: @ 816CF79
 	textcolor 3
 	msgbox Text_TooBadBagFull
-	hidecoinsbox 0, 0
+	hidecoinsbox
 	release
 	end
 

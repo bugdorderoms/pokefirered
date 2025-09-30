@@ -1,7 +1,7 @@
 Route5_PokemonDayCare_EventScript_DaycareMan:: @ 81BF398
 	lock
 	faceplayer
-	showmoneybox 0, 0, 0
+	showmoneybox 0, 0
 	specialvar VAR_RESULT, IsThereMonInRoute5Daycare
 	compare VAR_RESULT, TRUE
 	goto_if_eq Route5_PokemonDayCare_EventScript_CheckOnMon
@@ -18,10 +18,10 @@ Route5_PokemonDayCare_EventScript_TryGiveMon:: @ 81BF3DD
 	goto_if_eq Route5_PokemonDayCare_EventScript_OnlyOneMonInParty
 	msgbox Route5_PokemonDayCare_Text_WhichMonShouldIRaise
 	fadescreen FADE_TO_BLACK
-	hidemoneybox 0, 0
+	hidemoneybox
 	special ChooseSendDaycareMon
 	waitstate
-	showmoneybox 0, 0, 0
+	showmoneybox 0, 0
 	compare VAR_0x8004, PARTY_SIZE
 	goto_if_ge Route5_PokemonDayCare_EventScript_ComeAgain
 	specialvar VAR_RESULT, CountPartyAliveNonEggMons_IgnoreVar0x8004Slot
@@ -90,7 +90,7 @@ Route5_PokemonDayCare_EventScript_RetrieveMon:: @ 81BF4EA
 	setvar VAR_0x8004, 0
 	specialvar VAR_RESULT, TakePokemonFromRoute5Daycare
 	special SubtractMoneyFromVar0x8005
-	updatemoneybox 0, 0, 0
+	updatemoneybox
 	copyvar VAR_0x8008, VAR_RESULT
 	getpartysize
 	subvar VAR_RESULT, 1
@@ -112,7 +112,7 @@ Route5_PokemonDayCare_EventScript_NoRoomInParty:: @ 81BF533
 	end
 
 Route5_PokemonDayCare_EventScript_CloseMoneyBox:: @ 81BF541
-	hidemoneybox 0, 0
+	hidemoneybox
 	release
 	end
 

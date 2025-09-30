@@ -839,8 +839,11 @@ static void SetDataFromTrainerCard(void)
     if (sTrainerCardDataPtr->trainerCard.rse.pokemonTrades != 0)
         sTrainerCardDataPtr->hasTrades++;
 
-    for (i = GetNumOfBadges(); i != 0; i--)
-        sTrainerCardDataPtr->hasBadge[i - 1]++;
+    for (i = 0; i < NUM_BADGES; i++)
+    {
+        if (FlagGet(FLAG_BADGE01_GET + i))
+            sTrainerCardDataPtr->hasBadge[i] = TRUE;
+    }
 }
 
 static void HandleGpuRegs(void)

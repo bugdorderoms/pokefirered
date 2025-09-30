@@ -1135,12 +1135,12 @@ u32 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool32 firstMove)
 
 u32 GetNumOfBadges(void)
 {
-    u32 numOfBadges = 0;
+    u32 i, numOfBadges = 0;
     
-    while (FlagGet(FLAG_BADGE01_GET + numOfBadges))
+    for (i = 0; i < NUM_BADGES; i++)
     {
-        if (++numOfBadges == NUM_BADGES)
-            break;
+        if (FlagGet(FLAG_BADGE01_GET + i))
+            ++numOfBadges;
     }
     return numOfBadges;
 }

@@ -6265,7 +6265,7 @@ static void atk76_various(void)
         {
             VARIOUS_ARGS(const u8 *failPtr);
             
-            if ((gStatuses3[battlerId] & (STATUS3_ON_AIR | STATUS3_SKY_DROPPED)) || !IsBattlerGrounded(battlerId, FALSE))
+            if ((gStatuses3[battlerId] & (STATUS3_ON_AIR | STATUS3_SKY_DROPPED)) || !IsBattlerGrounded(battlerId))
             {
                 BringDownInAirBattler(battlerId);
                 gBattlescriptCurrInstr = cmd->nextInstr;
@@ -6823,16 +6823,14 @@ static void atk87_stockpiletohpheal(void)
 {
     CMD_ARGS(const u8 *failPtr);
 
-    const u8 *jumpPtr = cmd->failPtr;
-
     if (!gDisableStructs[gBattlerAttacker].stockpileCounter)
     {
-        gBattlescriptCurrInstr = jumpPtr;
+        gBattlescriptCurrInstr = cmd->failPtr;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FAILED_TO_SWALLOW;
     }
     else if (BATTLER_MAX_HP(gBattlerAttacker))
     {
-        gBattlescriptCurrInstr = jumpPtr;
+        gBattlescriptCurrInstr = cmd->failPtr;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SWALLOW_FULL_HP;
     }
     else

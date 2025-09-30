@@ -15,6 +15,7 @@
 #include "event_object_movement.h"
 #include "event_object_lock.h"
 #include "field_message_box.h"
+#include "rtc.h"
 #include "new_menu_helpers.h"
 #include "script_menu.h"
 #include "data.h"
@@ -181,8 +182,7 @@ bool32 ScrCmd_waitstate(struct ScriptContext * ctx)
 
 bool32 ScrCmd_goto(struct ScriptContext * ctx)
 {
-    const u8 * scrptr = (const u8 *)ScriptReadWord(ctx);
-    ScriptJump(ctx, scrptr);
+    ScriptJump(ctx, (const u8 *)ScriptReadWord(ctx));
     return FALSE;
 }
 
@@ -194,8 +194,7 @@ bool32 ScrCmd_return(struct ScriptContext * ctx)
 
 bool32 ScrCmd_call(struct ScriptContext * ctx)
 {
-    const u8 * scrptr = (const u8 *)ScriptReadWord(ctx);
-    ScriptCall(ctx, scrptr);
+    ScriptCall(ctx, (const u8 *)ScriptReadWord(ctx));
     return FALSE;
 }
 
@@ -516,8 +515,7 @@ bool32 ScrCmd_subvar(struct ScriptContext * ctx)
 
 bool32 ScrCmd_random(struct ScriptContext * ctx)
 {
-    u32 max = VarGet(ScriptReadHalfword(ctx));
-    gSpecialVar_Result = RandomMax(max);
+    gSpecialVar_Result = RandomMax(VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
@@ -559,9 +557,7 @@ bool32 ScrCmd_checkitem(struct ScriptContext * ctx)
 
 bool32 ScrCmd_checkitemtype(struct ScriptContext * ctx)
 {
-    u32 itemId = VarGet(ScriptReadHalfword(ctx));
-
-    gSpecialVar_Result = ItemId_GetPocket(itemId);
+    gSpecialVar_Result = ItemId_GetPocket(VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
@@ -580,38 +576,6 @@ bool32 ScrCmd_checkpcitem(struct ScriptContext * ctx)
     u32 quantity = VarGet(ScriptReadHalfword(ctx));
 
     gSpecialVar_Result = CheckPCHasItem(itemId, quantity);
-    return FALSE;
-}
-
-bool32 ScrCmd_givedecoration(struct ScriptContext * ctx)
-{
-    u32 decorId = VarGet(ScriptReadHalfword(ctx));
-
-//    gSpecialVar_Result = DecorationAdd(decorId);
-    return FALSE;
-}
-
-bool32 ScrCmd_takedecoration(struct ScriptContext * ctx)
-{
-    u32 decorId = VarGet(ScriptReadHalfword(ctx));
-
-//    gSpecialVar_Result = DecorationRemove(decorId);
-    return FALSE;
-}
-
-bool32 ScrCmd_checkdecorspace(struct ScriptContext * ctx)
-{
-    u32 decorId = VarGet(ScriptReadHalfword(ctx));
-
-//    gSpecialVar_Result = DecorationCheckSpace(decorId);
-    return FALSE;
-}
-
-bool32 ScrCmd_checkdecor(struct ScriptContext * ctx)
-{
-    u32 decorId = VarGet(ScriptReadHalfword(ctx));
-
-//    gSpecialVar_Result = CheckHasDecoration(decorId);
     return FALSE;
 }
 
@@ -670,9 +634,7 @@ bool32 ScrCmd_animateflash(struct ScriptContext * ctx)
 
 bool32 ScrCmd_setflashradius(struct ScriptContext * ctx)
 {
-    u32 flashLevel = VarGet(ScriptReadHalfword(ctx));
-
-    Overworld_SetFlashLevel(flashLevel);
+    Overworld_SetFlashLevel(VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
@@ -693,19 +655,14 @@ bool32 ScrCmd_fadescreen(struct ScriptContext * ctx)
 
 bool32 ScrCmd_fadescreenspeed(struct ScriptContext * ctx)
 {
-    u32 mode = ScriptReadByte(ctx);
-    u32 speed = ScriptReadByte(ctx);
-
-    FadeScreen(mode, speed);
+    FadeScreen(ScriptReadByte(ctx), ScriptReadByte(ctx));
     SetupNativeScript(ctx, IsPaletteNotActive);
     return TRUE;
 }
 
 static bool32 RunPauseTimer(void)
 {
-    sPauseCounter--;
-
-    if (sPauseCounter == 0)
+    if (--sPauseCounter == 0)
         return TRUE;
     else
         return FALSE;
@@ -738,21 +695,15 @@ bool32 ScrCmd_dodailyevents(struct ScriptContext * ctx)
 
 bool32 ScrCmd_gettime(struct ScriptContext * ctx)
 {
-//    RtcCalcLocalTime();
-//    gSpecialVar_0x8000 = gLocalTime.hours;
-//    gSpecialVar_0x8001 = gLocalTime.minutes;
-//    gSpecialVar_0x8002 = gLocalTime.seconds;
-    gSpecialVar_0x8000 = 0;
-    gSpecialVar_0x8001 = 0;
-    gSpecialVar_0x8002 = 0;
+    gSpecialVar_0x8000 = gRtcLocation.hour;
+    gSpecialVar_0x8001 = gRtcLocation.minute;
+    gSpecialVar_0x8002 = gRtcLocation.second;
     return FALSE;
 }
 
 bool32 ScrCmd_setweather(struct ScriptContext * ctx)
 {
-    u32 weather = VarGet(ScriptReadHalfword(ctx));
-
-    SetSav1Weather(weather);
+    SetSav1Weather(VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
@@ -776,21 +727,13 @@ bool32 ScrCmd_setstepcallback(struct ScriptContext * ctx)
 
 bool32 ScrCmd_setmaplayoutindex(struct ScriptContext * ctx)
 {
-    u32 value = VarGet(ScriptReadHalfword(ctx));
-
-    SetCurrentMapLayout(value);
+    SetCurrentMapLayout(VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
 bool32 ScrCmd_warp(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 warpId = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    SetWarpDestination(mapGroup, mapNum, warpId, x, y);
+    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
     DoWarp();
     ResetInitialPlayerAvatarState();
     return TRUE;
@@ -798,13 +741,7 @@ bool32 ScrCmd_warp(struct ScriptContext * ctx)
 
 bool32 ScrCmd_warpsilent(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 warpId = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    SetWarpDestination(mapGroup, mapNum, warpId, x, y);
+    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
     DoDiveWarp();
     ResetInitialPlayerAvatarState();
     return TRUE;
@@ -812,13 +749,7 @@ bool32 ScrCmd_warpsilent(struct ScriptContext * ctx)
 
 bool32 ScrCmd_warpdoor(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 warpId = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    SetWarpDestination(mapGroup, mapNum, warpId, x, y);
+    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
     DoDoorWarp();
     ResetInitialPlayerAvatarState();
     return TRUE;
@@ -844,13 +775,7 @@ bool32 ScrCmd_warphole(struct ScriptContext * ctx)
 
 bool32 ScrCmd_warpteleport(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 warpId = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    SetWarpDestination(mapGroup, mapNum, warpId, x, y);
+    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
     DoTeleportWarp();
     ResetInitialPlayerAvatarState();
     return TRUE;
@@ -858,13 +783,7 @@ bool32 ScrCmd_warpteleport(struct ScriptContext * ctx)
 
 bool32 ScrCmd_warpteleport2(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 warpId = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    SetWarpDestination(mapGroup, mapNum, warpId, x, y);
+    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
     SavePlayerFacingDirectionForTeleport(GetPlayerFacingDirection());
     DoTeleport2Warp();
     ResetInitialPlayerAvatarState();
@@ -873,61 +792,31 @@ bool32 ScrCmd_warpteleport2(struct ScriptContext * ctx)
 
 bool32 ScrCmd_setwarp(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 warpId = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    SetWarpDestination(mapGroup, mapNum, warpId, x, y);
+    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
 bool32 ScrCmd_setdynamicwarp(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 warpId = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    SetDynamicWarpWithCoords(mapGroup, mapNum, warpId, x, y);
+    SetDynamicWarpWithCoords(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
 bool32 ScrCmd_setdivewarp(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 warpId = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    SetFixedDiveWarp(mapGroup, mapNum, warpId, x, y);
+    SetFixedDiveWarp(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
 bool32 ScrCmd_setholewarp(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 warpId = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    SetFixedHoleWarp(mapGroup, mapNum, warpId, x, y);
+    SetFixedHoleWarp(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
 bool32 ScrCmd_setescapewarp(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 warpId = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    SetEscapeWarp(mapGroup, mapNum, warpId, x, y);
+    SetEscapeWarp(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
@@ -1005,8 +894,7 @@ bool32 ScrCmd_fadedefaultbgm(struct ScriptContext * ctx)
 
 bool32 ScrCmd_fadenewbgm(struct ScriptContext * ctx)
 {
-    u32 music = ScriptReadHalfword(ctx);
-    Overworld_ChangeMusicTo(music);
+    Overworld_ChangeMusicTo(ScriptReadHalfword(ctx));
     return FALSE;
 }
 
@@ -1078,25 +966,19 @@ bool32 ScrCmd_waitmovement(struct ScriptContext * ctx)
 bool32 ScrCmd_waitmovement_at(struct ScriptContext * ctx)
 {
     u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 mapBank;
-    u32 mapId;
 
     if (localId != 0)
         sMovingNpcId = localId;
     
-    mapBank = ScriptReadByte(ctx);
-    mapId = ScriptReadByte(ctx);
-    sMovingNpcMapBank = mapBank;
-    sMovingNpcMapId = mapId;
+    sMovingNpcMapBank = ScriptReadByte(ctx);
+    sMovingNpcMapId = ScriptReadByte(ctx);
     SetupNativeScript(ctx, WaitForMovementFinish);
     return TRUE;
 }
 
 bool32 ScrCmd_removeobject(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-
-    RemoveObjectEventByLocalIdAndMap(localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
+    RemoveObjectEventByLocalIdAndMap(VarGet(ScriptReadHalfword(ctx)), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
     return FALSE;
 }
 
@@ -1112,9 +994,7 @@ bool32 ScrCmd_removeobject_at(struct ScriptContext * ctx)
 
 bool32 ScrCmd_addobject(struct ScriptContext * ctx)
 {
-    u32 objectId = VarGet(ScriptReadHalfword(ctx));
-
-    TrySpawnObjectEvent(objectId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
+    TrySpawnObjectEvent(VarGet(ScriptReadHalfword(ctx)), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
     return FALSE;
 }
 
@@ -1150,9 +1030,7 @@ bool32 ScrCmd_setobjectxyperm(struct ScriptContext * ctx)
 
 bool32 ScrCmd_moveobjectoffscreen(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-
-    TryOverrideObjectEventTemplateCoords(localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
+    TryOverrideObjectEventTemplateCoords(VarGet(ScriptReadHalfword(ctx)), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
     return FALSE;
 }
 
@@ -1216,10 +1094,7 @@ bool32 ScrCmd_turnobject(struct ScriptContext * ctx)
 
 bool32 ScrCmd_setobjectmovementtype(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 movementType = ScriptReadByte(ctx);
-
-    Overworld_SetObjEventTemplateMovementType(localId, movementType);
+    Overworld_SetObjEventTemplateMovementType(VarGet(ScriptReadHalfword(ctx)), ScriptReadByte(ctx));
     return FALSE;
 }
 
@@ -1238,10 +1113,7 @@ bool32 ScrCmd_createvobject(struct ScriptContext * ctx)
 
 bool32 ScrCmd_turnvobject(struct ScriptContext * ctx)
 {
-    u32 v1 = ScriptReadByte(ctx);
-    u32 direction = ScriptReadByte(ctx);
-
-    TurnObjectEvent(v1, direction);
+    TurnObjectEvent(ScriptReadByte(ctx), ScriptReadByte(ctx));
     return FALSE;
 }
 
@@ -1381,48 +1253,7 @@ bool32 ScrCmd_multichoice(struct ScriptContext * ctx)
 
 bool32 ScrCmd_showitempic(struct ScriptContext * ctx)
 {
-    u32 itemId = VarGet(ScriptReadHalfword(ctx));
-    u32 x = ScriptReadByte(ctx);
-    u32 y = ScriptReadByte(ctx);
-
-    ScriptMenu_ShowItemPic(itemId, x, y);
-    return FALSE;
-}
-
-bool32 ScrCmd_drawbox(struct ScriptContext * ctx)
-{
-    /*u8 left = ScriptReadByte(ctx);
-    u8 top = ScriptReadByte(ctx);
-    u8 right = ScriptReadByte(ctx);
-    u8 bottom = ScriptReadByte(ctx);
-
-    MenuDrawTextWindow(left, top, right, bottom);*/
-    return FALSE;
-}
-
-bool32 ScrCmd_erasebox(struct ScriptContext * ctx)
-{
-    u32 left = ScriptReadByte(ctx);
-    u32 top = ScriptReadByte(ctx);
-    u32 right = ScriptReadByte(ctx);
-    u32 bottom = ScriptReadByte(ctx);
-
-    // MenuZeroFillWindowRect(left, top, right, bottom);
-    return FALSE;
-}
-
-bool32 ScrCmd_drawboxtext(struct ScriptContext * ctx)
-{
-//    u8 left = ScriptReadByte(ctx);
-//    u8 top = ScriptReadByte(ctx);
-//    u8 multichoiceId = ScriptReadByte(ctx);
-//    u8 ignoreBPress = ScriptReadByte(ctx);
-
-    /*if (Multichoice(left, top, multichoiceId, ignoreBPress) == TRUE)
-    {
-        ScriptContext1_Stop();
-        return TRUE;
-    }*/
+    ScriptMenu_ShowItemPic(VarGet(ScriptReadHalfword(ctx)), ScriptReadByte(ctx), ScriptReadByte(ctx));
     return FALSE;
 }
 
@@ -1445,21 +1276,6 @@ bool32 ScrCmd_hidemonpic(struct ScriptContext * ctx)
         return FALSE;
     SetupNativeScript(ctx, func);
     return TRUE;
-}
-
-bool32 ScrCmd_showcontestwinner(struct ScriptContext * ctx)
-{
-    u32 v1 = ScriptReadByte(ctx);
-
-    /*
-    if (v1)
-        sub_812FDA8(v1);
-    ShowContestWinner();
-    ScriptContext1_Stop();
-    return TRUE;
-     */
-
-    return FALSE;
 }
 
 bool32 ScrCmd_braillemessage(struct ScriptContext * ctx)
@@ -1501,19 +1317,13 @@ u8 *const sScriptStringVars[] =
 
 bool32 ScrCmd_bufferspeciesname(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 species = VarGet(ScriptReadHalfword(ctx));
-
-    StringCopy(sScriptStringVars[stringVarIndex], gSpeciesInfo[species].name);
+    StringCopy(sScriptStringVars[ScriptReadByte(ctx)], gSpeciesInfo[VarGet(ScriptReadHalfword(ctx))].name);
     return FALSE;
 }
 
 bool32 ScrCmd_bufferleadmonspeciesname(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u8 *dest = sScriptStringVars[stringVarIndex];
-    u32 species = GetMonData(&gPlayerParty[GetLeadMonIndex()], MON_DATA_SPECIES, NULL);
-    StringCopy(dest, gSpeciesInfo[species].name);
+    StringCopy(sScriptStringVars[ScriptReadByte(ctx)], gSpeciesInfo[GetMonData(&gPlayerParty[GetLeadMonIndex()], MON_DATA_SPECIES)].name);
     return FALSE;
 }
 
@@ -1547,20 +1357,9 @@ bool32 ScrCmd_bufferitemnameplural(struct ScriptContext * ctx)
     return FALSE;
 }
 
-bool32 ScrCmd_bufferdecorationname(struct ScriptContext * ctx)
-{
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 decorId = VarGet(ScriptReadHalfword(ctx));
-
-    return FALSE;
-}
-
 bool32 ScrCmd_buffermovename(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 moveId = VarGet(ScriptReadHalfword(ctx));
-
-    StringCopy(sScriptStringVars[stringVarIndex], gBattleMoves[moveId].name);
+    StringCopy(sScriptStringVars[ScriptReadByte(ctx)], gBattleMoves[VarGet(ScriptReadHalfword(ctx))].name);
     return FALSE;
 }
 
@@ -1575,23 +1374,9 @@ bool32 ScrCmd_buffernumberstring(struct ScriptContext * ctx)
 
 bool32 ScrCmd_bufferstdstring(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 index = VarGet(ScriptReadHalfword(ctx));
-
-    StringCopy(sScriptStringVars[stringVarIndex], gStdStringPtrs[index]);
+    StringCopy(sScriptStringVars[ScriptReadByte(ctx)], gStdStringPtrs[VarGet(ScriptReadHalfword(ctx))]);
     return FALSE;
 }
-
-/*
-bool32 ScrCmd_buffercontesttype(struct ScriptContext * ctx)
-{
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 index = VarGet(ScriptReadHalfword(ctx));
-
-    sub_818E868(sScriptStringVars[stringVarIndex], index);
-    return FALSE;
-}
-*/
 
 bool32 ScrCmd_bufferstring(struct ScriptContext * ctx)
 {
@@ -1622,10 +1407,7 @@ bool32 ScrCmd_vbufferstring(struct ScriptContext * ctx)
 
 bool32 ScrCmd_bufferboxname(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 boxId = VarGet(ScriptReadHalfword(ctx));
-
-    StringCopy(sScriptStringVars[stringVarIndex], GetBoxNamePtr(boxId));
+    StringCopy(sScriptStringVars[ScriptReadByte(ctx)], GetBoxNamePtr(VarGet(ScriptReadHalfword(ctx))));
     return FALSE;
 }
 
@@ -1717,91 +1499,54 @@ bool32 ScrCmd_checkpartymove(struct ScriptContext * ctx)
 
 bool32 ScrCmd_addmoney(struct ScriptContext * ctx)
 {
-    u32 amount = ScriptReadWord(ctx);
-    u32 ignore = ScriptReadByte(ctx);
-
-    if (!ignore)
-        AddMoney(&gSaveBlock1Ptr->money, amount);
-    
+    AddMoney(&gSaveBlock1Ptr->money, ScriptReadWord(ctx));
     return FALSE;
 }
 
 bool32 ScrCmd_removemoney(struct ScriptContext * ctx)
 {
-    u32 amount = ScriptReadWord(ctx);
-    u32 ignore = ScriptReadByte(ctx);
-
-    if (!ignore)
-        RemoveMoney(&gSaveBlock1Ptr->money, amount);
-    
+    RemoveMoney(&gSaveBlock1Ptr->money, ScriptReadWord(ctx));
     return FALSE;
 }
 
 bool32 ScrCmd_checkmoney(struct ScriptContext * ctx)
 {
-    u32 amount = ScriptReadWord(ctx);
-    u32 ignore = ScriptReadByte(ctx);
-
-    if (!ignore)
-        gSpecialVar_Result = IsEnoughMoney(&gSaveBlock1Ptr->money, amount);
-    
+    gSpecialVar_Result = IsEnoughMoney(&gSaveBlock1Ptr->money, ScriptReadWord(ctx));
     return FALSE;
 }
 
 bool32 ScrCmd_showmoneybox(struct ScriptContext * ctx)
 {
-    u32 x = ScriptReadByte(ctx);
-    u32 y = ScriptReadByte(ctx);
-    u32 ignore = ScriptReadByte(ctx);
-    
-    DrawMoneyBox(GetMoney(&gSaveBlock1Ptr->money), x, y);
+    DrawMoneyBox(GetMoney(&gSaveBlock1Ptr->money), ScriptReadByte(ctx), ScriptReadByte(ctx));
     return FALSE;
 }
 
 bool32 ScrCmd_hidemoneybox(struct ScriptContext * ctx)
 {
-    /*u8 x = ScriptReadByte(ctx);
-    u8 y = ScriptReadByte(ctx);*/
-
     HideMoneyBox();
     return FALSE;
 }
 
 bool32 ScrCmd_updatemoneybox(struct ScriptContext * ctx)
 {
-    u32 x = ScriptReadByte(ctx);
-    u32 y = ScriptReadByte(ctx);
-    u32 ignore = ScriptReadByte(ctx);
-
-    if (!ignore)
-        ChangeAmountInMoneyBox(GetMoney(&gSaveBlock1Ptr->money));
-    
+    ChangeAmountInMoneyBox(GetMoney(&gSaveBlock1Ptr->money));
     return FALSE;
 }
 
 bool32 ScrCmd_showcoinsbox(struct ScriptContext * ctx)
 {
-    u32 x = ScriptReadByte(ctx);
-    u32 y = ScriptReadByte(ctx);
-    
-    ShowCoinsWindow(GetCoins(), x, y);
+    ShowCoinsWindow(GetCoins(), ScriptReadByte(ctx), ScriptReadByte(ctx));
     return FALSE;
 }
 
 bool32 ScrCmd_hidecoinsbox(struct ScriptContext * ctx)
 {
-    u32 x = ScriptReadByte(ctx);
-    u32 y = ScriptReadByte(ctx);
-
     HideCoinsWindow();
     return FALSE;
 }
 
 bool32 ScrCmd_updatecoinsbox(struct ScriptContext * ctx)
 {
-    u32 x = ScriptReadByte(ctx);
-    u32 y = ScriptReadByte(ctx);
-
     PrintCoinsString(GetCoins());
     return FALSE;
 }
@@ -1832,25 +1577,19 @@ bool32 ScrCmd_gotobeatenscript(struct ScriptContext * ctx)
 
 bool32 ScrCmd_checktrainerflag(struct ScriptContext * ctx)
 {
-    u32 index = VarGet(ScriptReadHalfword(ctx));
-
-    ctx->comparisonResult = HasTrainerBeenFought(index);
+    ctx->comparisonResult = HasTrainerBeenFought(VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
 bool32 ScrCmd_settrainerflag(struct ScriptContext * ctx)
 {
-    u32 index = VarGet(ScriptReadHalfword(ctx));
-
-    SetTrainerFlag(index);
+    SetTrainerFlag(VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
 bool32 ScrCmd_cleartrainerflag(struct ScriptContext * ctx)
 {
-    u32 index = VarGet(ScriptReadHalfword(ctx));
-
-    ClearTrainerFlag(index);
+    ClearTrainerFlag(VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
@@ -1903,71 +1642,14 @@ bool32 ScrCmd_pokemartdecoration2(struct ScriptContext * ctx)
 
 bool32 ScrCmd_playslotmachine(struct ScriptContext * ctx)
 {
-    u32 slotMachineIndex = VarGet(ScriptReadHalfword(ctx));
-
-    PlaySlotMachine(slotMachineIndex, CB2_ReturnToFieldContinueScriptPlayMapMusic);
+    PlaySlotMachine(VarGet(ScriptReadHalfword(ctx)), CB2_ReturnToFieldContinueScriptPlayMapMusic);
     ScriptContext1_Stop();
     return TRUE;
-}
-
-bool32 ScrCmd_setberrytree(struct ScriptContext * ctx)
-{
-//    u8 treeId = ScriptReadByte(ctx);
-//    u8 berry = ScriptReadByte(ctx);
-//    u8 growthStage = ScriptReadByte(ctx);
-//
-//    if (berry == 0)
-//        PlantBerryTree(treeId, 0, growthStage, FALSE);
-//    else
-//        PlantBerryTree(treeId, berry, growthStage, FALSE);
-    return FALSE;
-}
-
-bool32 ScrCmd_getpricereduction(struct ScriptContext * ctx)
-{
-//    u16 value = VarGet(ScriptReadHalfword(ctx));
-//
-//    gSpecialVar_Result = GetPriceReduction(value);
-    return FALSE;
-}
-
-bool32 ScrCmd_choosecontestmon(struct ScriptContext * ctx)
-{
-//    sub_81B9404();
-    ScriptContext1_Stop();
-    return TRUE;
-}
-
-
-bool32 ScrCmd_startcontest(struct ScriptContext * ctx)
-{
-//    sub_80F840C();
-//    ScriptContext1_Stop();
-//    return TRUE;
-    return FALSE;
-}
-
-bool32 ScrCmd_showcontestresults(struct ScriptContext * ctx)
-{
-//    sub_80F8484();
-//    ScriptContext1_Stop();
-//    return TRUE;
-    return FALSE;
-}
-
-bool32 ScrCmd_contestlinktransfer(struct ScriptContext * ctx)
-{
-//    sub_80F84C4(gSpecialVar_ContestCategory);
-//    ScriptContext1_Stop();
-//    return TRUE;
-    return FALSE;
 }
 
 bool32 ScrCmd_dofieldeffect(struct ScriptContext * ctx)
 {
-    u32 effectId = VarGet(ScriptReadHalfword(ctx));
-
-    sFieldEffectScriptId = effectId;
+    sFieldEffectScriptId = VarGet(ScriptReadHalfword(ctx));
     FieldEffectStart(sFieldEffectScriptId);
     return FALSE;
 }
@@ -1997,9 +1679,7 @@ bool32 ScrCmd_waitfieldeffect(struct ScriptContext * ctx)
 
 bool32 ScrCmd_setrespawn(struct ScriptContext * ctx)
 {
-    u32 healLocationId = VarGet(ScriptReadHalfword(ctx));
-
-    SetLastHealLocationWarp(healLocationId);
+    SetLastHealLocationWarp(VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
@@ -2011,9 +1691,7 @@ bool32 ScrCmd_checkplayergender(struct ScriptContext * ctx)
 
 bool32 ScrCmd_playmoncry(struct ScriptContext * ctx)
 {
-    u32 species = VarGet(ScriptReadHalfword(ctx));
-    u32 mode = VarGet(ScriptReadHalfword(ctx));
-    PlayCry_ByMode(species, 0, mode);
+    PlayCry_ByMode(VarGet(ScriptReadHalfword(ctx)), 0, VarGet(ScriptReadHalfword(ctx)));
     return FALSE;
 }
 
@@ -2099,25 +1777,6 @@ bool32 ScrCmd_setdoorclosed(struct ScriptContext * ctx)
     x += 7;
     y += 7;
     FieldSetDoorClosed(x, y);
-    return FALSE;
-}
-
-bool32 ScrCmd_addelevmenuitem(struct ScriptContext * ctx)
-{
-//    u8 v3 = ScriptReadByte(ctx);
-//    u16 v5 = VarGet(ScriptReadHalfword(ctx));
-//    u16 v7 = VarGet(ScriptReadHalfword(ctx));
-//    u16 v9 = VarGet(ScriptReadHalfword(ctx));
-
-    //ScriptAddElevatorMenuItem(v3, v5, v7, v9);
-    return FALSE;
-}
-
-bool32 ScrCmd_showelevmenu(struct ScriptContext * ctx)
-{
-    /*ScriptShowElevatorMenu();
-    ScriptContext1_Stop();
-    return TRUE;*/
     return FALSE;
 }
 

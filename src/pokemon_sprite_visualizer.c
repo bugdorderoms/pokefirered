@@ -900,7 +900,7 @@ static void LoadMonSprites(struct PokemonSpriteVisualizer *data, bool32 clearOld
     
     // Palettes
     LoadMonIconPalette(species);
-    LoadMonPaletteFromSpecies(species, data->isShiny);
+    LoadMonPaletteFromSpecies(species, data->isShiny, species);
     
     // Front
     LoadSpecialPokePic(species, 0xFE, TRUE, gMonSpritesGfxPtr->battlers[B_POSITION_OPPONENT_LEFT].sprite);

@@ -4601,7 +4601,7 @@ BattleScript_ItemUnveiledGhost::
 	pause B_WAIT_TIME_SHORT
 	printstring STRINGID_LASTITEMUNVEILEDGHOST
 	waitstate
-	playanimation BS_OPPONENT1, B_ANIM_SILPH_SCOPED
+	playanimation BS_TARGET, B_ANIM_SILPH_SCOPED
 	pause B_WAIT_TIME_SHORT
 	printstring STRINGID_THEGHOSTWASDEF
 	waitmessage B_WAIT_TIME_LONG

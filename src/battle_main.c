@@ -106,6 +106,7 @@ static void BattleIntroPrintTrainerWantsToBattle(void);
 static void BattleIntroPrintWildMonAttacked(void);
 static void BattleIntroPrintOpponentSendsOut(void);
 static void BattleIntroPrintPlayerSendsOut(void);
+static void BattleIntroTryRevealGhost(void);
 static void BattleIntroRecordMonsToDex(void);
 static void BattleIntroOpponentSendsOutMonAnimation(void);
 static void BattleIntroPlayerSendsOutMonAnimation(void);
@@ -2294,13 +2295,21 @@ static void BattleIntroPrintWildMonAttacked(void)
 {
     if (!gBattleControllerExecFlags)
     {
-        gBattleMainFunc = BattleIntroPrintPlayerSendsOut;
+        gBattleMainFunc = BattleIntroTryRevealGhost;
         PrepareStringBattle(STRINGID_INTROMSG, 0);
+    }
+}
+
+static void BattleIntroTryRevealGhost(void)
+{
+    if (!gBattleControllerExecFlags)
+    {
+        gBattleMainFunc = BattleIntroPrintPlayerSendsOut;
         
         if (IS_BATTLE_TYPE_GHOST_WITH_SCOPE)
         {
             gLastUsedItem = ITEM_SILPH_SCOPE;
-            gBattleScripting.battler = gBattleStruct->sos.totemBattlerId;
+            gBattlerTarget = gBattleStruct->sos.totemBattlerId;
             BattleScriptExecute(BattleScript_ItemUnveiledGhost);
         }
     }

@@ -208,7 +208,7 @@ CeladonCity_DepartmentStore_Roof_EventScript_VendingMachine:: @ 816C034
 	lockall
 	message CeladonCity_DepartmentStore_Roof_Text_VendingMachineWhatDoesItHave
 	waitmessage
-	showmoneybox 0, 0, 0
+	showmoneybox 0, 0
 	goto CeladonCity_DepartmentStore_Roof_EventScript_ChooseDrink
 	end
 
@@ -225,32 +225,32 @@ CeladonCity_DepartmentStore_Roof_EventScript_ChooseDrink:: @ 816C045
 
 CeladonCity_DepartmentStore_Roof_EventScript_BuyFreshWater:: @ 816C083
 	setvar VAR_TEMP_0, ITEM_FRESH_WATER
-	checkmoney 200, 0
+	checkmoney 200
 	goto CeladonCity_DepartmentStore_Roof_EventScript_TryBuyDrink
 	end
 
 CeladonCity_DepartmentStore_Roof_EventScript_BuySodaPop:: @ 816C094
 	setvar VAR_TEMP_0, ITEM_SODA_POP
-	checkmoney 300, 0
+	checkmoney 300
 	goto CeladonCity_DepartmentStore_Roof_EventScript_TryBuyDrink
 	end
 
 CeladonCity_DepartmentStore_Roof_EventScript_BuyLemonade:: @ 816C0A5
 	setvar VAR_TEMP_0, ITEM_LEMONADE
-	checkmoney 350, 0
+	checkmoney 350
 	goto CeladonCity_DepartmentStore_Roof_EventScript_TryBuyDrink
 	end
 
 CeladonCity_DepartmentStore_Roof_EventScript_RemoveMoneyFreshWater:: @ 816C0B6
-	removemoney 200, 0
+	removemoney 200
 	return
 
 CeladonCity_DepartmentStore_Roof_EventScript_RemoveMoneySodaPop:: @ 816C0BD
-	removemoney 300, 0
+	removemoney 300
 	return
 
 CeladonCity_DepartmentStore_Roof_EventScript_RemoveMoneyLemonade:: @ 816C0C4
-	removemoney 350, 0
+	removemoney 350
 	return
 
 CeladonCity_DepartmentStore_Roof_EventScript_TryBuyDrink:: @ 816C0CB
@@ -265,7 +265,7 @@ CeladonCity_DepartmentStore_Roof_EventScript_TryBuyDrink:: @ 816C0CB
 	call_if_eq CeladonCity_DepartmentStore_Roof_EventScript_RemoveMoneySodaPop
 	compare VAR_TEMP_1, 2
 	call_if_eq CeladonCity_DepartmentStore_Roof_EventScript_RemoveMoneyLemonade
-	updatemoneybox 0, 0, 0
+	updatemoneybox
 	getitemname 0, VAR_TEMP_0
 	playse SE_VEND
 	msgbox CeladonCity_DepartmentStore_Roof_Text_DrinkCanPoppedOut
@@ -290,6 +290,6 @@ CeladonCity_DepartmentStore_Roof_EventScript_NoRoomForDrink:: @ 816C13F
 	end
 
 CeladonCity_DepartmentStore_Roof_EventScript_ExitVendingMachine:: @ 816C14D
-	hidemoneybox 0, 0
+	hidemoneybox
 	releaseall
 	end

@@ -65,20 +65,20 @@ PewterCity_Museum_1F_EventScript_EntranceTriggerRight:: @ 816A3BB
 
 PewterCity_Museum_1F_EventScript_EntranceTrigger:: @ 816A3D1
 	textcolor 0
-	showmoneybox 0, 0, 0
+	showmoneybox 0, 0
 	msgbox PewterCity_Museum_1F_Text_Its50YForChildsTicket, MSGBOX_YESNO
 	compare VAR_RESULT, YES
 	goto_if_eq PewterCity_Museum_1F_EventScript_TryPayForTicket
 	msgbox PewterCity_Museum_1F_Text_ComeAgain
 	closemessage
-	hidemoneybox 0, 0
+	hidemoneybox
 	applymovement OBJ_EVENT_ID_PLAYER, PewterCity_Museum_1F_Movement_ForcePlayerExit
 	waitmovement 0
 	releaseall
 	end
 
 PewterCity_Museum_1F_EventScript_TryPayForTicket:: @ 816A402
-	checkmoney 50, 0
+	checkmoney 50
 	compare VAR_RESULT, FALSE
 	goto_if_eq PewterCity_Museum_1F_EventScript_NotEnoughMoney
 	closemessage
@@ -89,12 +89,12 @@ PewterCity_Museum_1F_EventScript_TryPayForTicket:: @ 816A402
 	compare VAR_TEMP_1, 2
 	call_if_eq PewterCity_Museum_1F_EventScript_PlayerApproachCounterRight
 	playse SE_SHOP
-	removemoney 50, 0
-	updatemoneybox 0, 0, 0
+	removemoney 50
+	updatemoneybox
 	waitse
 	msgbox PewterCity_Museum_1F_Text_Right50YThankYou
 	setvar VAR_MAP_SCENE_PEWTER_CITY_MUSEUM_1F, 1
-	hidemoneybox 0, 0
+	hidemoneybox
 	releaseall
 	end
 
@@ -116,7 +116,7 @@ PewterCity_Museum_1F_EventScript_PlayerApproachCounterRight:: @ 816A46B
 PewterCity_Museum_1F_EventScript_NotEnoughMoney:: @ 816A476
 	msgbox PewterCity_Museum_1F_Text_DontHaveEnoughMoney
 	closemessage
-	hidemoneybox 0, 0
+	hidemoneybox
 	applymovement OBJ_EVENT_ID_PLAYER, PewterCity_Museum_1F_Movement_ForcePlayerExit
 	waitmovement 0
 	releaseall

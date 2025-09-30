@@ -2,16 +2,16 @@
 
 CeladonCity_GameCorner_EventScript_PhotoPrinter:: @ 81B2867
 	lockall
-	showmoneybox 0, 0, 0
+	showmoneybox 0, 0
 	msgbox CeladonCity_GameCorner_Text_TryPokemonPrinter, MSGBOX_YESNO
 	compare VAR_RESULT, NO
 	goto_if_eq CeladonCity_GameCorner_EventScript_DeclinePhoto
-	checkmoney 50, 0
+	checkmoney 50
 	compare VAR_RESULT, FALSE
 	goto_if_eq CeladonCity_GameCorner_EventScript_NotEnoughMoneyForPhoto
 	playse SE_SHOP
-	removemoney 50, 0
-	updatemoneybox 0, 0, 0
+	removemoney 50
+	updatemoneybox
 	waitse
 	message CeladonCity_GameCorner_Text_ChoosePrintType
 	waitmessage
@@ -51,18 +51,18 @@ CeladonCity_GameCorner_EventScript_PrintPhoto:: @ 81B2907
 	delay 60
 	special UpdateTrainerCardPhotoIcons
 	msgbox CeladonCity_GameCorner_Text_PrintIsReadyCheckTrainerCard
-	hidemoneybox 0, 0
+	hidemoneybox
 	releaseall
 	end
 
 CeladonCity_GameCorner_EventScript_DeclinePhoto:: @ 81B2926
-	hidemoneybox 0, 0
+	hidemoneybox
 	releaseall
 	end
 
 CeladonCity_GameCorner_EventScript_NotEnoughMoneyForPhoto:: @ 81B292B
 	msgbox CeladonCity_GameCorner_Text_DontHaveEnoughMoney
-	hidemoneybox 0, 0
+	hidemoneybox
 	releaseall
 	end
 

@@ -381,7 +381,11 @@ static void PlayerToPokeRideCallback(u32 taskId)
     
     if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER | PLAYER_AVATAR_FLAG_SURFING) && !InUnionRoom() && !FlagGet(FLAG_SYS_ON_CYCLING_ROAD)
     && !MetatileBehavior_IsVerticalRail(behavior) && !MetatileBehavior_IsHorizontalRail(behavior) && !MetatileBehavior_IsIsolatedVerticalRail(behavior)
-    && !MetatileBehavior_IsIsolatedHorizontalRail(behavior) && !MetatileBehavior_IsGroundRocks(behavior) && Overworld_IsBikingAllowed())
+    && !MetatileBehavior_IsIsolatedHorizontalRail(behavior) && !MetatileBehavior_IsGroundRocks(behavior)
+#if RIDE_INDOORS == FALSE
+    && Overworld_IsBikingAllowed()
+#endif
+    )
     {
         gBikeCameraAheadPanback = FALSE;
         

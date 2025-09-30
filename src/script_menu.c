@@ -616,7 +616,7 @@ static const struct OamData sMuseumFossilOamData = {
 };
 
 static const struct SpriteTemplate sMuseumFossilSprTemplate = {
-    .tileTag = 7000,
+    .tileTag = TAG_MUSEUM_FOSSIL_PIC,
     .paletteTag = 0xFFFF,
     .oam = &sMuseumFossilOamData,
     .anims = sMuseumFossilAnimCmdTable,
@@ -630,12 +630,12 @@ static const u16 sMuseumKabutopsSprTiles[] = INCBIN_U16("graphics/script_menu/ka
 static const u16 sMuseumKabutopsSprPalette[] = INCBIN_U16("graphics/script_menu/kabutops_fossil.gbapal");
 
 static const struct SpriteSheet sMuseumKabutopsSprSheets[] = {
-    {sMuseumKabutopsSprTiles, 0x800, 7000},
+    {sMuseumKabutopsSprTiles, 0x800, TAG_MUSEUM_FOSSIL_PIC},
     {}
 };
 
 static const struct SpriteSheet sMuseumAerodactylSprSheets[] = {
-    {sMuseumAerodactylSprTiles, 0x800, 7000},
+    {sMuseumAerodactylSprTiles, 0x800, TAG_MUSEUM_FOSSIL_PIC},
     {}
 };
 
@@ -965,7 +965,7 @@ static void Task_YesNoMenu_HandleInput(u32 taskId)
 
 static u32 CreateMonSprite_PicBox(u32 species, s16 x, s16 y)
 {
-    return CreateMonPicSprite(species, FALSE, 0x8000, TRUE, 8 * x + 40, 8 * y + 40, 0, species);
+    return CreateMonPicSprite(species, FALSE, 0x8000, TRUE, 8 * x + 40, 8 * y + 40, 0, ITEMICON_TAG);
 }
 
 static u32 CreateMenuMonPic(u32 species, u8 x, u8 y)

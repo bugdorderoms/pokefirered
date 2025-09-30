@@ -438,7 +438,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             }
             break;
         case MOVE_EFFECT_SMACK_DOWN:
-            if ((gStatuses3[gEffectBattler] & STATUS3_ON_AIR) || (!(gStatuses3[gEffectBattler] & STATUS3_SKY_DROPPED) && !IsBattlerGrounded(gEffectBattler, FALSE)))
+            if ((gStatuses3[gEffectBattler] & STATUS3_ON_AIR) || (!(gStatuses3[gEffectBattler] & STATUS3_SKY_DROPPED) && !IsBattlerGrounded(gEffectBattler)))
             {
                 gStatuses3[gEffectBattler] |= STATUS3_SMACKED_DOWN;
                 BringDownInAirBattler(gEffectBattler);

@@ -76,10 +76,10 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_checkitemtype
 	.4byte ScrCmd_addpcitem
 	.4byte ScrCmd_checkpcitem
-	.4byte ScrCmd_givedecoration
-	.4byte ScrCmd_takedecoration
-	.4byte ScrCmd_checkdecor
-	.4byte ScrCmd_checkdecorspace
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_applymovement
 	.4byte ScrCmd_applymovement_at
 	.4byte ScrCmd_waitmovement
@@ -115,12 +115,12 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_multichoice
 	.4byte ScrCmd_nop
 	.4byte ScrCmd_showitempic
-	.4byte ScrCmd_drawbox
-	.4byte ScrCmd_erasebox
-	.4byte ScrCmd_drawboxtext
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_showmonpic
 	.4byte ScrCmd_hidemonpic
-	.4byte ScrCmd_showcontestwinner
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_braillemessage
 	.4byte ScrCmd_givemon
 	.4byte ScrCmd_giveegg
@@ -130,7 +130,7 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_bufferleadmonspeciesname
 	.4byte ScrCmd_bufferpartymonnick
 	.4byte ScrCmd_bufferitemname
-	.4byte ScrCmd_bufferdecorationname
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_buffermovename
 	.4byte ScrCmd_buffernumberstring
 	.4byte ScrCmd_bufferstdstring
@@ -139,11 +139,11 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_pokemartdecoration
 	.4byte ScrCmd_pokemartdecoration2
 	.4byte ScrCmd_playslotmachine
-	.4byte ScrCmd_setberrytree
-	.4byte ScrCmd_choosecontestmon
-	.4byte ScrCmd_startcontest
-	.4byte ScrCmd_showcontestresults
-	.4byte ScrCmd_contestlinktransfer
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_random
 	.4byte ScrCmd_addmoney
 	.4byte ScrCmd_removemoney
@@ -151,7 +151,7 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_showmoneybox
 	.4byte ScrCmd_hidemoneybox
 	.4byte ScrCmd_updatemoneybox
-	.4byte ScrCmd_getpricereduction
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_fadescreen
 	.4byte ScrCmd_fadescreenspeed
 	.4byte ScrCmd_setflashradius
@@ -178,8 +178,8 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_waitdooranim
 	.4byte ScrCmd_setdooropen
 	.4byte ScrCmd_setdoorclosed
-	.4byte ScrCmd_addelevmenuitem
-	.4byte ScrCmd_showelevmenu
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_checkcoins
 	.4byte ScrCmd_addcoins
 	.4byte ScrCmd_removecoins

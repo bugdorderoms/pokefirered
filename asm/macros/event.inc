@@ -307,7 +307,7 @@
 	.byte 0x2d
 	.endm
 
-	@ Resets the values of variables VAR_0x8000, VAR_0x8001, and VAR_0x8002.
+	@ Sets the values of variables VAR_0x8000, VAR_0x8001, and VAR_0x8002 to the current hour, minute, and second.
 	.macro gettime
 	.byte 0x2e
 	.endm
@@ -1059,51 +1059,40 @@
 	.2byte \limit
 	.endm
 
-	@ If check is 0x00, this command adds value to the player's money.
-	.macro addmoney value:req, check:req
+	@ This command adds value to the player's money.
+	.macro addmoney value:req
 	.byte 0x90
 	.4byte \value
-	.byte \check
 	.endm
 
-	@ If check is 0x00, this command subtracts value from the player's money.
-	.macro removemoney value:req, check:req
+	@ This command subtracts value from the player's money.
+	.macro removemoney value:req
 	.byte 0x91
 	.4byte \value
-	.byte \check
 	.endm
 
-	@ If check is 0x00, this command will check if the player has money >= value; VAR_RESULT is set to TRUE if the player has enough money,
+	@ This command will check if the player has money >= value; VAR_RESULT is set to TRUE if the player has enough money,
 	@ or FALSE if they do not.
-	.macro checkmoney value:req, check:req
+	.macro checkmoney value:req
 	.byte 0x92
 	.4byte \value
-	.byte \check
 	.endm
 
 	@ Spawns a secondary box showing how much money the player has.
-	.macro showmoneybox x:req, y:req, check:req
+	.macro showmoneybox x:req, y:req
 	.byte 0x93
 	.byte \x
 	.byte \y
-	.byte \check
 	.endm
 
 	@ Hides the secondary box spawned by showmoney.
-	@ The two arguments are unused.
-	@ They are retained here for backwards compatibility with Ruby/Sapphire.
-	.macro hidemoneybox x:req, y:req
+	.macro hidemoneybox
 	.byte 0x94
-	.byte \x
-	.byte \y
 	.endm
 
-	@ Updates the secondary box spawned by showmoney. Consumes but does not use arguments.
-	.macro updatemoneybox x:req, y:req, check:req
+	@ Updates the secondary box spawned by showmoney.
+	.macro updatemoneybox
 	.byte 0x95
-	.byte \x
-	.byte \y
-	.byte \check
 	.endm
 
 	@ In FireRed, this command is a nop.
@@ -1367,18 +1356,14 @@
 	.byte \y
 	.endm
 
-	@ Hides the secondary box spawned by showcoins. It consumes its arguments but doesn't use them.
-	.macro hidecoinsbox x:req, y:req
+	@ Hides the secondary box spawned by showcoins.
+	.macro hidecoinsbox
 	.byte 0xc1
-	.byte \x
-	.byte \y
 	.endm
 
-	@ Updates the secondary box spawned by showcoins. It consumes its arguments but doesn't use them.
-	.macro updatecoinsbox x:req, y:req
+	@ Updates the secondary box spawned by showcoins.
+	.macro updatecoinsbox
 	.byte 0xc2
-	.byte \x
-	.byte \y
 	.endm
 
 	@ Increases the value of the specified game stat by 1. The stat's value will not be allowed to exceed 0x00FFFFFF.

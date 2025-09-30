@@ -15,6 +15,6 @@ bool32 LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette
 void LoadSpecialPokePic(u32 species, u32 personality, bool32 isFrontPic, void *dest);
 
 void LoadMonPalette(struct Pokemon *mon);
-void LoadMonPaletteFromSpecies(u32 species, bool32 isShiny);
+void LoadMonPaletteFromSpecies(u32 species, bool32 isShiny, u32 paletteTag);
 
 #endif // GUARD_DECOMPRESS_H

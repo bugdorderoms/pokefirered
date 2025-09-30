@@ -44,7 +44,7 @@ EventScript_FieldPoison:: @ 81A8DFD
 	end
 
 EventScript_FieldWhiteOut:: @ 81A8E11
-	checkmoney 1, 0
+	checkmoney 1
 	compare VAR_RESULT, FALSE
 	goto_if_eq EventScript_FieldWhiteOutNoMoney
 	compare VAR_RESULT, TRUE

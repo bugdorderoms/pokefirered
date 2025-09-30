@@ -429,7 +429,7 @@ void AnimTask_AcidArmor(u32 taskId)
     task->data[8] = 24;
 
     if (GetBattlerSide(battler) == B_SIDE_OPPONENT)
-        task->data[8] *= -task->data[8];
+        task->data[8] = -task->data[8];
 
     task->data[13] = GetBattlerYCoordWithElevation(battler) - 34;
     if (task->data[13] < 0)

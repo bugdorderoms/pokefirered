@@ -1611,6 +1611,15 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
                     else
                         toCpy = gBattleTextBuff3;
                     break;
+                case B_TXT_COPY_VAR_1:
+                    toCpy = gStringVar1;
+                    break;
+                case B_TXT_COPY_VAR_2:
+                    toCpy = gStringVar2;
+                    break;
+                case B_TXT_COPY_VAR_3:
+                    toCpy = gStringVar3;
+                    break;
                 case B_TXT_PLAYER_MON1_NAME:
                     GetBattlerNick(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), text);
                     toCpy = text;

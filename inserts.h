@@ -176,6 +176,9 @@
 // When it reachs 0 the B button will be unable to be used until it takes the half amount of steps to recharge. If 0 it will can be used forever.
 #define TAUROS_CHARGE_STAMINA 200
 
+// If this setting is enabled, the player will be able to use the ride pager indoors.
+#define RIDE_INDOORS FALSE
+
 // If this setting is enabled, when you uses item steal effects in wild battles the wild pokémon's held item will be added to your bag. Like in Generation IX.
 // If the bag is full then the item will go to be held normaly.
 #define STEAL_WILD_ITEM_TO_BAG TRUE

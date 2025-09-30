@@ -70,10 +70,10 @@ void SubtractMoneyFromVar0x8005(void)
 
 void PrintMoneyAmountInMoneyBox(u32 windowId, u32 amount, u32 speed)
 {
-    PrintMoneyAmount(windowId, 64 - GetStringWidth(0, gStringVar4, 0), 0xC, amount, speed);
+    PrintMoneyAmount(windowId, -1, 0xC, amount, speed);
 }
 
-void PrintMoneyAmount(u32 windowId, u32 x, u32 y, u32 amount, u32 speed)
+void PrintMoneyAmount(u32 windowId, s32 x, u32 y, u32 amount, u32 speed)
 {
     u8 *txtPtr;
     s32 strLength;
@@ -87,7 +87,7 @@ void PrintMoneyAmount(u32 windowId, u32 x, u32 y, u32 amount, u32 speed)
         *(txtPtr++) = 0;
 
     StringExpandPlaceholders(txtPtr, gText_PokedollarVar1);
-    AddTextPrinterParameterized(windowId, 0, gStringVar4, x, y, speed, NULL);
+    AddTextPrinterParameterized(windowId, 0, gStringVar4, x == -1 ? 64 - GetStringWidth(0, gStringVar4, 0) : x, y, speed, NULL);
 }
 
 void PrintMoneyAmountInMoneyBoxWithBorder(u32 windowId, u32 tileStart, u32 pallete, u32 amount)

@@ -3511,7 +3511,8 @@ static void SpriteCB_PokeSum_EggPicShake(struct Sprite * sprite)
 
 static void PokeSum_CreateMonPicSprite(void)
 {
-    u32 spriteId = CreateMonPicSprite(GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPECIES2), GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_IS_SHINY), GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PERSONALITY), TRUE, 60, 65, 12, 0xFFFF);
+    struct Pokemon *mon = &sMonSummaryScreen->currentMon;
+    u32 spriteId = CreateMonPicSprite(GetMonData(mon, MON_DATA_SPECIES2), GetMonData(mon, MON_DATA_IS_SHINY), GetMonData(mon, MON_DATA_PERSONALITY), TRUE, 60, 65, 12, 0xFFFF);
 
     sMonPicBounceState = AllocZeroed(sizeof(struct MonPicBounceState));
 

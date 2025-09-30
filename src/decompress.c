@@ -58,16 +58,17 @@ bool32 LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette
 
 void LoadMonPalette(struct Pokemon *mon)
 {
-    LoadMonPaletteFromSpecies(GetMonData(mon, MON_DATA_SPECIES2), GetMonData(mon, MON_DATA_IS_SHINY));
+    u32 species = GetMonData(mon, MON_DATA_SPECIES2);
+    LoadMonPaletteFromSpecies(species, GetMonData(mon, MON_DATA_IS_SHINY), species);
 }
 
-void LoadMonPaletteFromSpecies(u32 species, bool32 isShiny)
+void LoadMonPaletteFromSpecies(u32 species, bool32 isShiny, u32 paletteTag)
 {
     struct SpritePalette dest;
 
     LZDecompressWram(GetMonSpritePalFromSpecies(species, isShiny), gDecompressionBuffer);
     dest.data = (void*)gDecompressionBuffer;
-    dest.tag = species;
+    dest.tag = paletteTag;
     LoadSpritePalette(&dest);
 }
 

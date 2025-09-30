@@ -23,7 +23,7 @@ CeladonCity_GameCorner_EventScript_InfoClerk:: @ 816C684
 CeladonCity_GameCorner_EventScript_CoinsClerk:: @ 816C68D
 	lock
 	faceplayer
-	showmoneybox 0, 0, 0
+	showmoneybox 0, 0
 	showcoinsbox 0, 5
 	message CeladonCity_GameCorner_Text_WelcomeBuySomeCoins
 	waitmessage
@@ -48,11 +48,11 @@ CeladonCity_GameCorner_EventScript_Buy500Coins:: @ 816C706
 	checkcoins VAR_TEMP_1
 	compare VAR_TEMP_1, (MAX_COINS + 1) - 500
 	goto_if_ge CeladonCity_GameCorner_EventScript_ClerkNoRoomForCoins
-	checkmoney 10000, 0
+	checkmoney 10000
 	compare VAR_RESULT, FALSE
 	goto_if_eq CeladonCity_GameCorner_EventScript_ClerkNotEnoughMoney
 	addcoins 500
-	removemoney 10000, 0
+	removemoney 10000
 	goto CeladonCity_GameCorner_EventScript_BoughtCoins
 	end
 
@@ -60,25 +60,25 @@ CeladonCity_GameCorner_EventScript_Buy50Coins:: @ 816C734
 	checkcoins VAR_TEMP_1
 	compare VAR_TEMP_1, (MAX_COINS + 1) - 50
 	goto_if_ge CeladonCity_GameCorner_EventScript_ClerkNoRoomForCoins
-	checkmoney 1000, 0
+	checkmoney 1000
 	compare VAR_RESULT, FALSE
 	goto_if_eq CeladonCity_GameCorner_EventScript_ClerkNotEnoughMoney
 	addcoins 50
-	removemoney 1000, 0
+	removemoney 1000
 	goto CeladonCity_GameCorner_EventScript_BoughtCoins
 	end
 
 CeladonCity_GameCorner_EventScript_BoughtCoins:: @ 816C762
-	updatemoneybox 0, 0, 0
-	updatecoinsbox 0, 5
+	updatemoneybox
+	updatecoinsbox
 	playse SE_SHOP
 	msgbox CeladonCity_GameCorner_Text_HereAreYourCoins
 	goto CeladonCity_GameCorner_EventScript_ClerkEnd
 	end
 
 CeladonCity_GameCorner_EventScript_ClerkEnd:: @ 816C77A
-	hidemoneybox 0, 0
-	hidecoinsbox 0, 5
+	hidemoneybox
+	hidecoinsbox
 	release
 	end
 

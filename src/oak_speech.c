@@ -18,6 +18,8 @@
 #include "data.h"
 #include "constants/songs.h"
 
+#define OAK_SPEECH_POKEMON SPECIES_NIDORAN_F
+
 struct OakSpeechResources
 {
     void * solidColorsGfx;
@@ -956,7 +958,7 @@ static void Task_OakSpeech13(u32 taskId)
         if (++gTasks[taskId].data[3] == 32)
         {
             OaksSpeechPrintMessage(gOakText_WorldInhabited2, sOakSpeechResources->textSpeed);
-            PlayCry_Normal(SPECIES_NIDORAN_F, 0);
+            PlayCry_Normal(OAK_SPEECH_POKEMON, 0);
         }
     }
 }
@@ -1599,9 +1601,9 @@ static void CreateNidoranFSprite(u32 taskId)
 {
     u32 spriteId;
 
-    LZDecompressWram(gSpeciesInfo[SPECIES_NIDORAN_F].frontPic, OakSpeechNidoranFGetBuffer(0));
-    LoadMonPaletteFromSpecies(SPECIES_NIDORAN_F, FALSE);
-    SetMultiuseSpriteTemplateToPokemon(SPECIES_NIDORAN_F, 0);
+    LZDecompressWram(gSpeciesInfo[OAK_SPEECH_POKEMON].frontPic, OakSpeechNidoranFGetBuffer(0));
+    LoadMonPaletteFromSpecies(OAK_SPEECH_POKEMON, FALSE, OAK_SPEECH_POKEMON);
+    SetMultiuseSpriteTemplateToPokemon(OAK_SPEECH_POKEMON, 0);
     spriteId = CreateSprite(&gMultiuseSpriteTemplate, 0x60, 0x60, 1);
     gSprites[spriteId].callback = SpriteCallbackDummy;
     gSprites[spriteId].oam.priority = 1;

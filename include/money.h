@@ -15,6 +15,6 @@ void PrintMoneyAmountInMoneyBoxWithBorder(u32 windowId, u32 tileStart, u32 palle
 void ChangeAmountInMoneyBox(u32 amount);
 void DrawMoneyBox(u32 amount, u32 x, u32 y);
 void HideMoneyBox(void);
-void PrintMoneyAmount(u32 windowId, u32 x, u32 y, u32 amount, u32 speed);
+void PrintMoneyAmount(u32 windowId, s32 x, u32 y, u32 amount, u32 speed);
 
 #endif // GUARD_MONEY_H

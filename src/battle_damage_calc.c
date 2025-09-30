@@ -1201,7 +1201,7 @@ static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 d
         mod = TYPE_MUL_NORMAL;
     
     // Check ground immunities
-    if (moveType == TYPE_GROUND && mod == TYPE_MUL_NO_EFFECT && IsBattlerGrounded(defender, forAnticipation))
+    if (moveType == TYPE_GROUND && mod == TYPE_MUL_NO_EFFECT && IsBattlerGroundedInternal(defender, forAnticipation, TRUE))
         mod = TYPE_MUL_NORMAL;
     
     if (!forAnticipation)
@@ -1247,7 +1247,7 @@ static u32 CalcTypeEffectivenessMultiplierInternal(u32 move, u32 moveType, u32 a
         defAbility = GetBattlerAbility(defender);
         
         // Check special ground immunities
-        if (moveType == TYPE_GROUND && !IsBattlerGrounded(defender, forAnticipation))
+        if (moveType == TYPE_GROUND && !IsBattlerGroundedInternal(defender, forAnticipation, TRUE))
         {
             bool32 immune = FALSE;
             
