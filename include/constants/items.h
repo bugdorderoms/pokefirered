@@ -761,6 +761,6 @@
 #define FIRST_BERRY_INDEX             ITEM_CHERI_BERRY
 #define ITEM_TO_BERRY(itemId)         (itemId - FIRST_BERRY_INDEX)
 
-#define NUM_TO_TM(num)                (KEY_ITEMS_END + num)
+#define FIRST_TM_INDEX                (KEY_ITEMS_END + 1)
 
 #endif  // GUARD_CONSTANTS_ITEMS_H

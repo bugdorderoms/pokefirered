@@ -50,12 +50,12 @@ CeladonCity_DepartmentStore_2F_EventScript_ClerkTMs:: @ 816BB4E
 
 	.align 2
 CeladonCity_DepartmentStore_2F_TMs:: @ 816BB74
-	.2byte NUM_TO_TM(05)
-	.2byte NUM_TO_TM(15)
-	.2byte NUM_TO_TM(28)
-	.2byte NUM_TO_TM(31)
-	.2byte NUM_TO_TM(43)
-	.2byte NUM_TO_TM(45)
+	.2byte ITEM_TM_ICE_PUNCH
+	.2byte ITEM_TM_THUNDER_WAVE
+	.2byte ITEM_TM_ICY_WIND
+	.2byte ITEM_TM_METAL_CLAW
+	.2byte ITEM_TM_DRAGON_TAIL
+	.2byte ITEM_TM_IMPRISON
 	.2byte ITEM_NONE
 	release
 	end

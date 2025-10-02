@@ -536,7 +536,7 @@ static void GetTMNumberAndMoveString(u8 * dest, u32 itemId)
 {
     StringCopy(gStringVar4, gText_FontSize0);
     StringAppend(gStringVar4, gOtherText_UnkF9_08_Clear_01);
-    ConvertIntToDecimalStringN(gStringVar1, (itemId - NUM_TO_TM(01)) + 1, STR_CONV_MODE_LEADING_ZEROS, 3);
+    ConvertIntToDecimalStringN(gStringVar1, (itemId - FIRST_TM_INDEX) + 1, STR_CONV_MODE_LEADING_ZEROS, 3);
     StringAppend(gStringVar4, gStringVar1);
     StringAppend(gStringVar4, sText_SingleSpace);
     StringAppend(gStringVar4, gText_FontSize2);
@@ -1099,10 +1099,10 @@ void Pokedude_InitTMCase(void)
 
     ResetTMCaseCursorPos();
 
-    AddBagItem(NUM_TO_TM(01), 1);
-    AddBagItem(NUM_TO_TM(03), 1);
-    AddBagItem(NUM_TO_TM(9), 1);
-    AddBagItem(NUM_TO_TM(35), 1);
+    AddBagItem(ITEM_TM_TAKE_DOWN, 1);
+    AddBagItem(ITEM_TM_FAKE_TEARS, 1);
+    AddBagItem(ITEM_TM_HYPER_BEAM, 1);
+    AddBagItem(ITEM_TM_SUNNY_DAY, 1);
 
     InitTMCase(TMCASE_FROMBATTLE, CB2_ReturnToTeachyTV, 0);
 }

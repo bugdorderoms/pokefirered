@@ -6,10 +6,10 @@ SaffronCity_MrPsychicsHouse_EventScript_MrPsychic:: @ 816F05F
 	faceplayer
 	goto_if_set FLAG_GOT_TM29_FROM_MR_PSYCHIC, SaffronCity_MrPsychicsHouse_EventScript_AlreadyGotTM29
 	msgbox SaffronCity_MrPsychicsHouse_Text_YouWantedThis
-	checkitemspace NUM_TO_TM(29), 1
+	checkitemspace ITEM_TM_GIGA_DRAIN, 1
 	compare VAR_RESULT, FALSE
 	goto_if_eq SaffronCity_MrPsychicsHouse_EventScript_NoRoomForTM29
-	giveitem_msg SaffronCity_MrPsychicsHouse_Text_ReceivedTM29FromMrPsychic, NUM_TO_TM(29)
+	giveitem_msg SaffronCity_MrPsychicsHouse_Text_ReceivedTM29FromMrPsychic, ITEM_TM_GIGA_DRAIN
 	msgbox SaffronCity_MrPsychicsHouse_Text_ExplainTM29
 	setflag FLAG_GOT_TM29_FROM_MR_PSYCHIC
 	release

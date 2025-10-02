@@ -5,7 +5,7 @@ const struct Item gTmsInfo_Gen3[] =
 {
 #endif
 
-    [ITEM_TM01_FOCUS_PUNCH] =
+    [ITEM_TM_FOCUS_PUNCH] =
     {
         .name = _("TM01"),
         .holdEffectParam = MOVE_FOCUS_PUNCH,
@@ -17,7 +17,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM02_DRAGON_CLAW] =
+    [ITEM_TM_DRAGON_CLAW] =
     {
         .name = _("TM02"),
         .holdEffectParam = MOVE_DRAGON_CLAW,
@@ -29,7 +29,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM03_WATER_PULSE] =
+    [ITEM_TM_WATER_PULSE] =
     {
         .name = _("TM03"),
         .holdEffectParam = MOVE_WATER_PULSE,
@@ -41,7 +41,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM04_CALM_MIND] =
+    [ITEM_TM_CALM_MIND] =
     {
         .name = _("TM04"),
         .holdEffectParam = MOVE_CALM_MIND,
@@ -53,7 +53,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM05_ROAR] =
+    [ITEM_TM_ROAR] =
     {
         .name = _("TM05"),
         .holdEffectParam = MOVE_ROAR,
@@ -65,7 +65,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM06_TOXIC] =
+    [ITEM_TM_TOXIC] =
     {
         .name = _("TM06"),
         .holdEffectParam = MOVE_TOXIC,
@@ -77,7 +77,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM07_HAIL] =
+    [ITEM_TM_HAIL] =
     {
         .name = _("TM07"),
         .holdEffectParam = MOVE_HAIL,
@@ -89,7 +89,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM08_BULK_UP] =
+    [ITEM_TM_BULK_UP] =
     {
         .name = _("TM08"),
         .holdEffectParam = MOVE_BULK_UP,
@@ -101,7 +101,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM09_BULLET_SEED] =
+    [ITEM_TM_BULLET_SEED] =
     {
         .name = _("TM09"),
         .holdEffectParam = MOVE_BULLET_SEED,
@@ -113,7 +113,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM10_HIDDEN_POWER] =
+    [ITEM_TM_HIDDEN_POWER] =
     {
         .name = _("TM10"),
         .holdEffectParam = MOVE_HIDDEN_POWER,
@@ -125,7 +125,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM11_SUNNY_DAY] =
+    [ITEM_TM_SUNNY_DAY] =
     {
         .name = _("TM11"),
         .holdEffectParam = MOVE_SUNNY_DAY,
@@ -137,7 +137,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM12_TAUNT] =
+    [ITEM_TM_TAUNT] =
     {
         .name = _("TM12"),
         .holdEffectParam = MOVE_TAUNT,
@@ -149,7 +149,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM13_ICE_BEAM] =
+    [ITEM_TM_ICE_BEAM] =
     {
         .name = _("TM13"),
         .holdEffectParam = MOVE_ICE_BEAM,
@@ -161,7 +161,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM14_BLIZZARD] =
+    [ITEM_TM_BLIZZARD] =
     {
         .name = _("TM14"),
         .holdEffectParam = MOVE_BLIZZARD,
@@ -173,7 +173,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM15_HYPER_BEAM] =
+    [ITEM_TM_HYPER_BEAM] =
     {
         .name = _("TM15"),
         .holdEffectParam = MOVE_HYPER_BEAM,
@@ -185,7 +185,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM16_LIGHT_SCREEN] =
+    [ITEM_TM_LIGHT_SCREEN] =
     {
         .name = _("TM16"),
         .holdEffectParam = MOVE_LIGHT_SCREEN,
@@ -197,7 +197,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM17_PROTECT] =
+    [ITEM_TM_PROTECT] =
     {
         .name = _("TM17"),
         .holdEffectParam = MOVE_PROTECT,
@@ -209,7 +209,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM18_RAIN_DANCE] =
+    [ITEM_TM_RAIN_DANCE] =
     {
         .name = _("TM18"),
         .holdEffectParam = MOVE_RAIN_DANCE,
@@ -221,7 +221,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM19_GIGA_DRAIN] =
+    [ITEM_TM_GIGA_DRAIN] =
     {
         .name = _("TM19"),
         .holdEffectParam = MOVE_GIGA_DRAIN,
@@ -233,7 +233,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM20_SAFEGUARD] =
+    [ITEM_TM_SAFEGUARD] =
     {
         .name = _("TM20"),
         .holdEffectParam = MOVE_SAFEGUARD,
@@ -245,7 +245,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM21_FRUSTRATION] =
+    [ITEM_TM_FRUSTRATION] =
     {
         .name = _("TM21"),
         .holdEffectParam = MOVE_FRUSTRATION,
@@ -257,7 +257,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM22_SOLAR_BEAM] =
+    [ITEM_TM_SOLAR_BEAM] =
     {
         .name = _("TM22"),
         .holdEffectParam = MOVE_SOLAR_BEAM,
@@ -269,7 +269,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM23_IRON_TAIL] =
+    [ITEM_TM_IRON_TAIL] =
     {
         .name = _("TM23"),
         .holdEffectParam = MOVE_IRON_TAIL,
@@ -281,7 +281,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM24_THUNDERBOLT] =
+    [ITEM_TM_THUNDERBOLT] =
     {
         .name = _("TM24"),
         .holdEffectParam = MOVE_THUNDERBOLT,
@@ -293,7 +293,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM25_THUNDER] =
+    [ITEM_TM_THUNDER] =
     {
         .name = _("TM25"),
         .holdEffectParam = MOVE_THUNDER,
@@ -305,7 +305,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM26_EARTHQUAKE] =
+    [ITEM_TM_EARTHQUAKE] =
     {
         .name = _("TM26"),
         .holdEffectParam = MOVE_EARTHQUAKE,
@@ -317,7 +317,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM27_RETURN] =
+    [ITEM_TM_RETURN] =
     {
         .name = _("TM27"),
         .holdEffectParam = MOVE_RETURN,
@@ -329,7 +329,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM28_DIG] =
+    [ITEM_TM_DIG] =
     {
         .name = _("TM28"),
         .holdEffectParam = MOVE_DIG,
@@ -341,7 +341,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM29_PSYCHIC] =
+    [ITEM_TM_PSYCHIC] =
     {
         .name = _("TM29"),
         .holdEffectParam = MOVE_PSYCHIC,
@@ -353,7 +353,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM30_SHADOW_BALL] =
+    [ITEM_TM_SHADOW_BALL] =
     {
         .name = _("TM30"),
         .holdEffectParam = MOVE_SHADOW_BALL,
@@ -365,7 +365,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM31_BRICK_BREAK] =
+    [ITEM_TM_BRICK_BREAK] =
     {
         .name = _("TM31"),
         .holdEffectParam = MOVE_BRICK_BREAK,
@@ -377,7 +377,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM32_DOUBLE_TEAM] =
+    [ITEM_TM_DOUBLE_TEAM] =
     {
         .name = _("TM32"),
         .holdEffectParam = MOVE_DOUBLE_TEAM,
@@ -389,7 +389,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM33_REFLECT] =
+    [ITEM_TM_REFLECT] =
     {
         .name = _("TM33"),
         .holdEffectParam = MOVE_REFLECT,
@@ -401,7 +401,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM34_SHOCK_WAVE] =
+    [ITEM_TM_SHOCK_WAVE] =
     {
         .name = _("TM34"),
         .holdEffectParam = MOVE_SHOCK_WAVE,
@@ -413,7 +413,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM35_FLAMETHROWER] =
+    [ITEM_TM_FLAMETHROWER] =
     {
         .name = _("TM35"),
         .holdEffectParam = MOVE_FLAMETHROWER,
@@ -425,7 +425,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM36_SLUDGE_BOMB] =
+    [ITEM_TM_SLUDGE_BOMB] =
     {
         .name = _("TM36"),
         .holdEffectParam = MOVE_SLUDGE_BOMB,
@@ -437,7 +437,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM37_SANDSTORM] =
+    [ITEM_TM_SANDSTORM] =
     {
         .name = _("TM37"),
         .holdEffectParam = MOVE_SANDSTORM,
@@ -449,7 +449,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM38_FIRE_BLAST] =
+    [ITEM_TM_FIRE_BLAST] =
     {
         .name = _("TM38"),
         .holdEffectParam = MOVE_FIRE_BLAST,
@@ -461,7 +461,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM39_ROCK_TOMB] =
+    [ITEM_TM_ROCK_TOMB] =
     {
         .name = _("TM39"),
         .holdEffectParam = MOVE_ROCK_TOMB,
@@ -473,7 +473,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM40_AERIAL_ACE] =
+    [ITEM_TM_AERIAL_ACE] =
     {
         .name = _("TM40"),
         .holdEffectParam = MOVE_AERIAL_ACE,
@@ -485,7 +485,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM41_TORMENT] =
+    [ITEM_TM_TORMENT] =
     {
         .name = _("TM41"),
         .holdEffectParam = MOVE_TORMENT,
@@ -497,7 +497,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM42_FACADE] =
+    [ITEM_TM_FACADE] =
     {
         .name = _("TM42"),
         .holdEffectParam = MOVE_FACADE,
@@ -509,7 +509,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM43_SECRET_POWER] =
+    [ITEM_TM_SECRET_POWER] =
     {
         .name = _("TM43"),
         .holdEffectParam = MOVE_SECRET_POWER,
@@ -521,7 +521,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM44_REST] =
+    [ITEM_TM_REST] =
     {
         .name = _("TM44"),
         .holdEffectParam = MOVE_REST,
@@ -533,7 +533,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM45_ATTRACT] =
+    [ITEM_TM_ATTRACT] =
     {
         .name = _("TM45"),
         .holdEffectParam = MOVE_ATTRACT,
@@ -545,7 +545,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM46_THIEF] =
+    [ITEM_TM_THIEF] =
     {
         .name = _("TM46"),
         .holdEffectParam = MOVE_THIEF,
@@ -557,7 +557,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM47_STEEL_WING] =
+    [ITEM_TM_STEEL_WING] =
     {
         .name = _("TM47"),
         .holdEffectParam = MOVE_STEEL_WING,
@@ -569,7 +569,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM48_SKILL_SWAP] =
+    [ITEM_TM_SKILL_SWAP] =
     {
         .name = _("TM48"),
         .holdEffectParam = MOVE_SKILL_SWAP,
@@ -581,7 +581,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM49_SNATCH] =
+    [ITEM_TM_SNATCH] =
     {
         .name = _("TM49"),
         .holdEffectParam = MOVE_SNATCH,
@@ -593,7 +593,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM50_OVERHEAT] =
+    [ITEM_TM_OVERHEAT] =
     {
         .name = _("TM50"),
         .holdEffectParam = MOVE_OVERHEAT,
@@ -605,7 +605,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM51_CUT] =
+    [ITEM_TM_CUT] =
     {
         .name = _("TM51"),
         .holdEffectParam = MOVE_CUT,
@@ -617,7 +617,7 @@ const struct Item gTmsInfo_Gen3[] =
         .iconPalette = NULL, // Handled by gTypesInfo
     },
 
-    [ITEM_TM52_FLASH] =
+    [ITEM_TM_FLASH] =
     {
         .name = _("TM52"),
         .holdEffectParam = MOVE_FLASH,

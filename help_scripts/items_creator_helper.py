@@ -40,19 +40,21 @@ with open(f'{file_path}/include/constants/tms.h', 'r') as file:
                 CreateGenFile(gen)
 
         elif 'TMS_GEN' in line:
+            num = 1
             gen = line.split(' ')[3]
 
-        elif line.startswith('#define ITEM_'):
+        elif line.startswith('#define ITEM_TM_'):
             tm = line.split(' ')[1].strip()
-            num = tm.split('_')[1]
-            move = tm.removeprefix(f'ITEM_{num}_')
+            move = tm.removeprefix('ITEM_TM_')
+            tm_num = f'TM0{num}' if num <= 9 else f'TM{num}'
             tms.append(f'\n    [{tm}] ='
                         '\n    {\n'
-                       f'        .name = _("{num}"),\n'
+                       f'        .name = _("{tm_num}"),\n'
                        f'        .holdEffectParam = MOVE_{move},\n        .description = NULL, // Handled by gBattleMoves\n'
                        f'        .price = 3000,\n        .pocket = POCKET_TM_CASE,\n        .type = ITEM_TYPE_PARTY_MENU,\n'
                        f'        .iconPic = sItemIcon_Tm,\n        .iconPalette = NULL, // Handled by gTypesInfo'
                         '\n    },\n')
+            num += 1
 
 # Create pokeballs_graphics.h
 

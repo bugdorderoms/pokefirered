@@ -1353,7 +1353,7 @@ static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, stru
     {
         for (j = 0; j < NUM_TECHNICAL_MACHINES; j++)
         {
-            u32 move = ItemId_GetHoldEffectParam(NUM_TO_TM(01) + j);
+            u32 move = ItemId_GetHoldEffectParam(FIRST_TM_INDEX + j);
             
             if (fatherMoves[i] == move && CanMonLearnTM(egg, move))
             {

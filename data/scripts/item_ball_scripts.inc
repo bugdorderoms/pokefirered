@@ -23,7 +23,7 @@ MtMoon_1F_EventScript_ItemParalyzeHeal:: @ 81BE5CF
 	end
 
 MtMoon_1F_EventScript_ItemTM09:: @ 81BE5DC
-	finditem NUM_TO_TM(9)
+	finditem ITEM_TM_HYPER_BEAM
 	end
 
 MtMoon_1F_EventScript_ItemPotion:: @ 81BE5E9
@@ -47,23 +47,23 @@ MtMoon_B2F_EventScript_ItemStarPiece:: @ 81BE61D
 	end
 
 MtMoon_B2F_EventScript_ItemTM46:: @ 81BE62A
-	finditem NUM_TO_TM(46)
+	finditem ITEM_TM_AVALANCHE
 	end
 
 Route4_EventScript_ItemTM05:: @ 81BE637
-	finditem NUM_TO_TM(05)
+	finditem ITEM_TM_ICE_PUNCH
 	end
 
 Route24_EventScript_ItemTM45:: @ 81BE644
-	finditem NUM_TO_TM(45)
+	finditem ITEM_TM_IMPRISON
 	end
 
 Route25_EventScript_ItemTM43:: @ 81BE651
-	finditem NUM_TO_TM(43)
+	finditem ITEM_TM_FLING
 	end
 
 SSAnne_1F_Room2_EventScript_ItemTM31:: @ 81BE65E
-	finditem NUM_TO_TM(31)
+	finditem ITEM_TM_METAL_CLAW
 	end
 
 SSAnne_2F_Room2_EventScript_ItemStardust:: @ 81BE66B
@@ -75,7 +75,7 @@ SSAnne_2F_Room4_EventScript_ItemXAttack:: @ 81BE678
 	end
 
 SSAnne_B1F_Room2_EventScript_ItemTM44:: @ 81BE685
-	finditem NUM_TO_TM(44)
+	finditem ITEM_TM_BRICK_BREAK
 	end
 
 SSAnne_B1F_Room3_EventScript_ItemEther:: @ 81BE692
@@ -91,7 +91,7 @@ SSAnne_Kitchen_EventScript_ItemGreatBall:: @ 81BE6AC
 	end
 
 Route9_EventScript_ItemTM40:: @ 81BE6B9
-	finditem NUM_TO_TM(40)
+	finditem ITEM_TM_FACADE
 	end
 
 RocketHideout_B1F_EventScript_ItemEscapeRope:: @ 81BE6C6
@@ -111,7 +111,7 @@ RocketHideout_B2F_EventScript_ItemMoonStone:: @ 81BE6ED
 	end
 
 RocketHideout_B2F_EventScript_ItemTM12:: @ 81BE6FA
-	finditem NUM_TO_TM(12)
+	finditem ITEM_TM_SOLAR_BEAM
 	end
 
 RocketHideout_B2F_EventScript_ItemSuperPotion:: @ 81BE707
@@ -123,11 +123,11 @@ RocketHideout_B3F_EventScript_ItemRareCandy:: @ 81BE714
 	end
 
 RocketHideout_B3F_EventScript_ItemTM21:: @ 81BE721
-	finditem NUM_TO_TM(21)
+	finditem ITEM_TM_POUNCE
 	end
 
 RocketHideout_B4F_EventScript_ItemTM49:: @ 81BE72E
-	finditem NUM_TO_TM(49)
+	finditem ITEM_TM_ROCK_TOMB
 	end
 
 RocketHideout_B4F_EventScript_ItemMaxEther:: @ 81BE73B
@@ -167,7 +167,7 @@ PokemonTower_6F_EventScript_ItemXAccuracy:: @ 81BE7A3
 	end
 
 Route12_EventScript_ItemTM48:: @ 81BE7B0
-	finditem NUM_TO_TM(48)
+	finditem ITEM_TM_FAKE_TEARS
 	end
 
 Route12_EventScript_ItemIron:: @ 81BE7BD
@@ -175,7 +175,7 @@ Route12_EventScript_ItemIron:: @ 81BE7BD
 	end
 
 Route15_EventScript_ItemTM18:: @ 81BE7CA
-	finditem NUM_TO_TM(18)
+	finditem ITEM_TM_LIGHT_SCREEN
 	end
 
 SafariZone_Center_EventScript_ItemNugget:: @ 81BE7D7
@@ -191,7 +191,7 @@ SafariZone_East_EventScript_ItemFullRestore:: @ 81BE7F1
 	end
 
 SafariZone_East_EventScript_ItemTM11:: @ 81BE7FE
-	finditem NUM_TO_TM(11)
+	finditem ITEM_TM_MAGICAL_LEAF
 	end
 
 SafariZone_East_EventScript_ItemLeafStone:: @ 81BE80B
@@ -203,11 +203,11 @@ SafariZone_North_EventScript_ItemProtein:: @ 81BE818
 	end
 
 SafariZone_North_EventScript_ItemTM47:: @ 81BE825
-	finditem NUM_TO_TM(47)
+	finditem ITEM_TM_WEATHER_BALL
 	end
 
 SafariZone_West_EventScript_ItemTM32:: @ 81BE832
-	finditem NUM_TO_TM(32)
+	finditem ITEM_TM_ELECTRO_BALL
 	end
 
 SafariZone_West_EventScript_ItemGoldTeeth:: @ 81BE83F
@@ -243,7 +243,7 @@ SilphCo_5F_EventScript_ItemProtein:: @ 81BE89A
 	end
 
 SilphCo_5F_EventScript_ItemTM01:: @ 81BE8A7
-	finditem NUM_TO_TM(01)
+	finditem ITEM_TM_TAKE_DOWN
 	end
 
 SilphCo_5F_EventScript_ItemCardKey:: @ 81BE8B4
@@ -263,7 +263,7 @@ SilphCo_7F_EventScript_ItemCalcium:: @ 81BE8DB
 	end
 
 SilphCo_7F_EventScript_ItemTM08:: @ 81BE8E8
-	finditem NUM_TO_TM(8)
+	finditem ITEM_TM_FIRE_FANG
 	end
 
 SilphCo_10F_EventScript_ItemCarbos:: @ 81BE8F5
@@ -283,11 +283,11 @@ PowerPlant_EventScript_ItemMaxPotion:: @ 81BE91C
 	end
 
 PowerPlant_EventScript_ItemTM17:: @ 81BE929
-	finditem NUM_TO_TM(17)
+	finditem ITEM_TM_CONFUSE_RAY
 	end
 
 PowerPlant_EventScript_ItemTM25:: @ 81BE936
-	finditem NUM_TO_TM(25)
+	finditem ITEM_TM_FACADE
 	end
 
 PowerPlant_EventScript_ItemThunderStone:: @ 81BE943
@@ -319,7 +319,7 @@ PokemonMansion_3F_EventScript_ItemIron:: @ 81BE991
 	end
 
 PokemonMansion_B1F_EventScript_ItemTM14:: @ 81BE99E
-	finditem NUM_TO_TM(14)
+	finditem ITEM_TM_FIRE_SPIN
 	end
 
 PokemonMansion_B1F_EventScript_ItemFullRestore:: @ 81BE9AB
@@ -327,7 +327,7 @@ PokemonMansion_B1F_EventScript_ItemFullRestore:: @ 81BE9AB
 	end
 
 PokemonMansion_B1F_EventScript_ItemTM22:: @ 81BE9B8
-	finditem NUM_TO_TM(22)
+	finditem ITEM_TM_REST
 	end
 
 PokemonMansion_B1F_EventScript_ItemSecretKey:: @ 81BE9C5
@@ -339,7 +339,7 @@ VictoryRoad_1F_EventScript_ItemRareCandy:: @ 81BE9D2
 	end
 
 VictoryRoad_1F_EventScript_ItemTM02:: @ 81BE9DF
-	finditem NUM_TO_TM(02)
+	finditem ITEM_TM_CHARM
 	end
 
 VictoryRoad_2F_EventScript_ItemGuardSpec:: @ 81BE9EC
@@ -347,7 +347,7 @@ VictoryRoad_2F_EventScript_ItemGuardSpec:: @ 81BE9EC
 	end
 
 VictoryRoad_2F_EventScript_ItemTM07:: @ 81BE9F9
-	finditem NUM_TO_TM(07)
+	finditem ITEM_TM_FLY
 	end
 
 VictoryRoad_2F_EventScript_ItemFullHeal:: @ 81BEA06
@@ -355,7 +355,7 @@ VictoryRoad_2F_EventScript_ItemFullHeal:: @ 81BEA06
 	end
 
 VictoryRoad_2F_EventScript_ItemTM37:: @ 81BEA13
-	finditem NUM_TO_TM(37)
+	finditem ITEM_TM_WHIRLPOOL
 	end
 
 VictoryRoad_3F_EventScript_ItemMaxRevive:: @ 81BEA20
@@ -363,7 +363,7 @@ VictoryRoad_3F_EventScript_ItemMaxRevive:: @ 81BEA20
 	end
 
 VictoryRoad_3F_EventScript_ItemTM50:: @ 81BEA2D
-	finditem NUM_TO_TM(50)
+	finditem ITEM_TM_SAND_TOMB
 	end
 
 CeruleanCave_1F_EventScript_ItemMaxElixir:: @ 81BEA3A
@@ -615,7 +615,7 @@ FourIsland_IcefallCave_1F_EventScript_ItemUltraBall:: @ 81BED53
 	end
 
 FourIsland_IcefallCave_1F_EventScript_ItemHM07:: @ 81BED60
-	finditem NUM_TO_TM(70)
+	finditem ITEM_TM_WATERFALL
 	end
 
 FourIsland_IcefallCave_B1F_EventScript_ItemFullRestore:: @ 81BED6D
@@ -631,7 +631,7 @@ FiveIsland_RocketWarehouse_EventScript_ItemBigPearl:: @ 81BED87
 	end
 
 FiveIsland_RocketWarehouse_EventScript_ItemTM36:: @ 81BED94
-	finditem NUM_TO_TM(36)
+	finditem ITEM_TM_ROCK_TOMB
 	end
 
 FiveIsland_RocketWarehouse_EventScript_ItemPearl:: @ 81BEDA1
@@ -667,5 +667,5 @@ SevenIsland_SevaultCanyon_House_EventScript_ItemLuckyPunch:: @ 81BEDFC
 	end
 
 SilphCo_4F_EventScript_ItemTM41:: @ 81BEE09
-	finditem NUM_TO_TM(41)
+	finditem ITEM_TM_SWIFT
 	end
