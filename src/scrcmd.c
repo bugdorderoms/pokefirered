@@ -36,6 +36,10 @@
 #include "constants/event_object_movement.h"
 #include "constants/moves.h"
 
+#define CMD_ARGS(...) \
+    const struct __attribute__((packed)) { RECURSIVELY(R_FOR_EACH(APPEND_SEMICOLON, __VA_ARGS__)) const u8 nextInstr[0]; } *const cmd UNUSED = (const void *)ctx->scriptPtr; \
+    const u8 *const __cmd_next UNUSED = (ctx->scriptPtr = cmd->nextInstr)
+
 extern u16 (*const gSpecials[])(void);
 extern u16 (*const gSpecialsEnd[])(void);
 extern const u8 *const gStdScripts[];
@@ -67,6 +71,7 @@ static const u8 sScriptConditionTable[6][3] =
 
 bool32 ScrCmd_nop(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     return FALSE;
 }
 
@@ -83,11 +88,14 @@ static bool32 WaitPlayerForFindItemAnim(void)
     return FALSE;
 }
 
-bool32 ScrCmd_StartPlayerFindItemAnim(struct ScriptContext * ctx)
+bool32 ScrCmd_startplayerfinditemanim(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     ScriptContext2_Enable();
     gPlayerAvatar.preventStep = TRUE;
     SetupNativeScript(ctx, WaitPlayerForFindItemAnim);
+    
     return TRUE;
 }
 
@@ -122,100 +130,110 @@ static bool32 EndPlayerFindItemAnim(void)
     return FALSE;
 }
 
-bool32 ScrCmd_EndPlayerFindItemAnim(struct ScriptContext * ctx)
+bool32 ScrCmd_endplayerfinditemanim(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     gTasks[CreateTask(Task_EndPlayerFindItemAnim, 80)].data[0] = 0;
     SetupNativeScript(ctx, EndPlayerFindItemAnim);
+
     return TRUE;
 }
 
 bool32 ScrCmd_end(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     StopScript(ctx);
     return FALSE;
 }
 
 bool32 ScrCmd_gotonative(struct ScriptContext * ctx)
 {
-    bool32 (*func)(void) = (bool32 (*)(void))ScriptReadWord(ctx);
-    SetupNativeScript(ctx, func);
+    CMD_ARGS(bool32 (*func)(void));
+    SetupNativeScript(ctx, cmd->func);
     return TRUE;
 }
 
 bool32 ScrCmd_special(struct ScriptContext * ctx)
 {
-    u16 (*const *specialPtr)(void) = gSpecials + ScriptReadHalfword(ctx);
+    CMD_ARGS(u16 specialId);
+    
+    u16 (*const *specialPtr)(void) = &gSpecials[cmd->specialId];
     
     if (specialPtr < gSpecialsEnd)
         (*specialPtr)();
     else
         AGB_ASSERT_EX(0, ABSPATH("scrcmd.c"), 241);
-    
+
     return FALSE;
 }
 
 bool32 ScrCmd_specialvar(struct ScriptContext * ctx)
 {
-    u16 * varPtr = GetVarPointer(ScriptReadHalfword(ctx));
-    u16 (*const *specialPtr)(void) = gSpecials + ScriptReadHalfword(ctx);
+    CMD_ARGS(u16 outputVar, u16 specialId);
+    
+    u16 (*const *specialPtr)(void) = &gSpecials[cmd->specialId];
     
     if (specialPtr < gSpecialsEnd)
-        *varPtr = (*specialPtr)();
+        *GetVarPointer(cmd->outputVar) = (*specialPtr)();
     else
         AGB_ASSERT_EX(0, ABSPATH("scrcmd.c"), 263);
-    
+
     return FALSE;
 }
 
 bool32 ScrCmd_callnative(struct ScriptContext * ctx)
 {
-    void (*func )(void) = ((void (*)(void))ScriptReadWord(ctx));
+    CMD_ARGS(void (*func)(void));
+    void (*func)(void) = cmd->func;
     func();
     return FALSE;
 }
 
 bool32 ScrCmd_waitstate(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     ScriptContext1_Stop();
     return TRUE;
 }
 
 bool32 ScrCmd_goto(struct ScriptContext * ctx)
 {
-    ScriptJump(ctx, (const u8 *)ScriptReadWord(ctx));
+    CMD_ARGS(const u8 *ptr);
+    ScriptJump(ctx, cmd->ptr);
     return FALSE;
 }
 
 bool32 ScrCmd_return(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     ScriptReturn(ctx);
     return FALSE;
 }
 
 bool32 ScrCmd_call(struct ScriptContext * ctx)
 {
-    ScriptCall(ctx, (const u8 *)ScriptReadWord(ctx));
+    CMD_ARGS(const u8 *ptr);
+    ScriptCall(ctx, cmd->ptr);
     return FALSE;
 }
 
 bool32 ScrCmd_goto_if(struct ScriptContext * ctx)
 {
-    u32 condition = ScriptReadByte(ctx);
-    const u8 * scrptr = (const u8 *)ScriptReadWord(ctx);
-    
-    if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
-        ScriptJump(ctx, scrptr);
+    CMD_ARGS(u8 condition, const u8 *ptr);
+
+    if (sScriptConditionTable[cmd->condition][ctx->comparisonResult] == 1)
+        ScriptJump(ctx, cmd->ptr);
     
     return FALSE;
 }
 
 bool32 ScrCmd_call_if(struct ScriptContext * ctx)
 {
-    u32 condition = ScriptReadByte(ctx);
-    const u8 * scrptr = (const u8 *)ScriptReadWord(ctx);
-    
-    if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
-        ScriptCall(ctx, scrptr);
+    CMD_ARGS(u8 condition, const u8 *ptr);
+
+    if (sScriptConditionTable[cmd->condition][ctx->comparisonResult] == 1)
+        ScriptCall(ctx, cmd->ptr);
     
     return FALSE;
 }
@@ -223,52 +241,50 @@ bool32 ScrCmd_call_if(struct ScriptContext * ctx)
 bool32 ScrCmd_setvaddress(struct ScriptContext * ctx)
 {
     u32 addr1 = (u32)ctx->scriptPtr - 1;
-    u32 addr2 = ScriptReadWord(ctx);
-
-    gVScriptOffset = addr2 - addr1;
+    CMD_ARGS(u32 address);
+    gVScriptOffset = cmd->address - addr1;
     return FALSE;
 }
 
 bool32 ScrCmd_vgoto(struct ScriptContext * ctx)
 {
-    const u8 * scrptr = (const u8 *)ScriptReadWord(ctx);
-    ScriptJump(ctx, scrptr - gVScriptOffset);
+    CMD_ARGS(const u8 *ptr);
+    ScriptJump(ctx, cmd->ptr - gVScriptOffset);
     return FALSE;
 }
 
 bool32 ScrCmd_vcall(struct ScriptContext * ctx)
 {
-    const u8 * scrptr = (const u8 *)ScriptReadWord(ctx);
-    ScriptCall(ctx, scrptr - gVScriptOffset);
+    CMD_ARGS(const u8 *ptr);
+    ScriptCall(ctx, cmd->ptr - gVScriptOffset);
     return FALSE;
 }
 
 bool32 ScrCmd_vgoto_if(struct ScriptContext * ctx)
 {
-    u32 condition = ScriptReadByte(ctx);
-    const u8 * scrptr = (const u8 *)ScriptReadWord(ctx) - gVScriptOffset;
+    CMD_ARGS(u8 condition, const u8 *ptr);
     
-    if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
-        ScriptJump(ctx, scrptr);
+    if (sScriptConditionTable[cmd->condition][ctx->comparisonResult] == 1)
+        ScriptJump(ctx, cmd->ptr - gVScriptOffset);
     
     return FALSE;
 }
 
 bool32 ScrCmd_vcall_if(struct ScriptContext * ctx)
 {
-    u32 condition = ScriptReadByte(ctx);
-    const u8 * scrptr = (const u8 *)ScriptReadWord(ctx) - gVScriptOffset;
-    
-    if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
-        ScriptCall(ctx, scrptr);
+    CMD_ARGS(u8 condition, const u8 *ptr);
+
+    if (sScriptConditionTable[cmd->condition][ctx->comparisonResult] == 1)
+        ScriptCall(ctx, cmd->ptr - gVScriptOffset);
     
     return FALSE;
 }
 
 bool32 ScrCmd_gotostd(struct ScriptContext * ctx)
 {
-    u32 stdIdx = ScriptReadByte(ctx);
-    const u8 *const * script = gStdScripts + stdIdx;
+    CMD_ARGS(u8 stdFuncId);
+
+    const u8 *const * script = &gStdScripts[cmd->stdFuncId];
     
     if (script < gStdScriptsEnd)
         ScriptJump(ctx, *script);
@@ -278,8 +294,9 @@ bool32 ScrCmd_gotostd(struct ScriptContext * ctx)
 
 bool32 ScrCmd_callstd(struct ScriptContext * ctx)
 {
-    u32 stdIdx = ScriptReadByte(ctx);
-    const u8 *const * script = gStdScripts + stdIdx;
+    CMD_ARGS(u8 stdFuncId);
+    
+    const u8 *const * script = &gStdScripts[cmd->stdFuncId];
     
     if (script < gStdScriptsEnd)
         ScriptCall(ctx, *script);
@@ -289,12 +306,11 @@ bool32 ScrCmd_callstd(struct ScriptContext * ctx)
 
 bool32 ScrCmd_gotostd_if(struct ScriptContext * ctx)
 {
-    u32 condition = ScriptReadByte(ctx);
-    u32 stdIdx = ScriptReadByte(ctx);
+    CMD_ARGS(u8 condition, u8 stdFuncId);
     
-    if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
+    if (sScriptConditionTable[cmd->condition][ctx->comparisonResult] == 1)
     {
-        const u8 *const * script = gStdScripts + stdIdx;
+        const u8 *const * script = &gStdScripts[cmd->stdFuncId];
         if (script < gStdScriptsEnd)
             ScriptJump(ctx, *script);
     }
@@ -303,115 +319,94 @@ bool32 ScrCmd_gotostd_if(struct ScriptContext * ctx)
 
 bool32 ScrCmd_callstd_if(struct ScriptContext * ctx)
 {
-    u32 condition = ScriptReadByte(ctx);
-    u32 stdIdx = ScriptReadByte(ctx);
-    
-    if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
+    CMD_ARGS(u8 condition, u8 stdFuncId);
+
+    if (sScriptConditionTable[cmd->condition][ctx->comparisonResult] == 1)
     {
-        const u8 *const * script = gStdScripts + stdIdx;
+        const u8 *const * script = &gStdScripts[cmd->stdFuncId];
         if (script < gStdScriptsEnd)
             ScriptCall(ctx, *script);
     }
     return FALSE;
 }
 
-bool32 ScrCmd_gotoram(struct ScriptContext * ctx)
-{
-    ScriptJump(ctx, gRAMScriptPtr);
-    return FALSE;
-}
-
-bool32 ScrCmd_killscript(struct ScriptContext * ctx)
-{
-    ClearRamScript();
-    StopScript(ctx);
-    return TRUE;
-}
-
 bool32 ScrCmd_jumpifcantgivenick(struct ScriptContext * ctx)
 {
-    const u8 * scrptr = (const u8 *)ScriptReadWord(ctx);
-    
-    if (gSaveBlock2Ptr->optionsSkipPkmnNickname)
-        ScriptJump(ctx, scrptr);
-    
-    return FALSE;
-}
+    CMD_ARGS(const u8 *ptr);
 
-bool32 ScrCmd_execram(struct ScriptContext * ctx)
-{
+    if (gSaveBlock2Ptr->optionsSkipPkmnNickname)
+        ScriptJump(ctx, cmd->ptr);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_loadword(struct ScriptContext * ctx)
 {
-    u32 which = ScriptReadByte(ctx);
-    ctx->data[which] = ScriptReadWord(ctx);
+    CMD_ARGS(u8 destination, u32 value);
+    ctx->data[cmd->destination] = cmd->value;
     return FALSE;
 }
 
 bool32 ScrCmd_loadbytefromaddr(struct ScriptContext * ctx)
 {
-    u32 which = ScriptReadByte(ctx);
-    ctx->data[which] = *(const u8 *)ScriptReadWord(ctx);
+    CMD_ARGS(u8 destination, const u8 *source);
+    ctx->data[cmd->destination] = *cmd->source;
     return FALSE;
 }
 
 bool32 ScrCmd_writebytetoaddr(struct ScriptContext * ctx)
 {
-    u32 value = ScriptReadByte(ctx);
-    *(u8 *)ScriptReadWord(ctx) = value;
+    CMD_ARGS(u8 value, u8 *offset);
+    *cmd->offset = cmd->value;
     return FALSE;
 }
 
 bool32 ScrCmd_loadbyte(struct ScriptContext * ctx)
 {
-    u32 which = ScriptReadByte(ctx);
-    ctx->data[which] = ScriptReadByte(ctx);
+    CMD_ARGS(u8 destination, u8 value);
+    ctx->data[cmd->destination] = cmd->value;
     return FALSE;
 }
 
 bool32 ScrCmd_setptrbyte(struct ScriptContext * ctx)
 {
-    u32 which = ScriptReadByte(ctx);
-    *(u8 *)ScriptReadWord(ctx) = ctx->data[which];
+    CMD_ARGS(u8 source, u8 *destination);
+    *cmd->destination = ctx->data[cmd->source];
     return FALSE;
 }
 
 bool32 ScrCmd_copylocal(struct ScriptContext * ctx)
 {
-    u32 whichDst = ScriptReadByte(ctx);
-    u32 whichSrc = ScriptReadByte(ctx);
-    ctx->data[whichDst] = ctx->data[whichSrc];
+    CMD_ARGS(u8 destination, u8 source);
+    ctx->data[cmd->destination] = ctx->data[cmd->source];
     return FALSE;
 }
 
 bool32 ScrCmd_copybyte(struct ScriptContext * ctx)
 {
-    u8 * dest = (u8 *)ScriptReadWord(ctx);
-    *dest = *(const u8 *)ScriptReadWord(ctx);
+    CMD_ARGS(u8 *dest, const u8 *source);
+    *cmd->dest = *cmd->source;
     return FALSE;
 }
 
 bool32 ScrCmd_setvar(struct ScriptContext * ctx)
 {
-    u16 * varPtr = GetVarPointer(ScriptReadHalfword(ctx));
-    *varPtr = ScriptReadHalfword(ctx);
+    CMD_ARGS(u16 var, u16 value);
+    *GetVarPointer(cmd->var) = cmd->value;
     return FALSE;
 }
 
 bool32 ScrCmd_copyvar(struct ScriptContext * ctx)
 {
-    u16 * destPtr = GetVarPointer(ScriptReadHalfword(ctx));
-    u16 * srcPtr = GetVarPointer(ScriptReadHalfword(ctx));
-    *destPtr = *srcPtr;
+    CMD_ARGS(u16 destVar, u16 srcVar);
+    *GetVarPointer(cmd->destVar) = *GetVarPointer(cmd->srcVar);
     return FALSE;
 }
 
 bool32 ScrCmd_setorcopyvar(struct ScriptContext * ctx)
 {
-    u16 * destPtr = GetVarPointer(ScriptReadHalfword(ctx));
-    *destPtr = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 destVar, u16 var);
+    *GetVarPointer(cmd->destVar) = VarGet(cmd->var);
     return FALSE;
 }
 
@@ -428,190 +423,200 @@ static u32 compare_012(u16 left, u16 right)
 // comparelocaltolocal
 bool32 ScrCmd_compare_local_to_local(struct ScriptContext * ctx)
 {
-    const u8 value1 = ctx->data[ScriptReadByte(ctx)];
-    const u8 value2 = ctx->data[ScriptReadByte(ctx)];
-
+    CMD_ARGS(u8 byte1, u8 byte2);
+    
+    const u8 value1 = ctx->data[cmd->byte1];
+    const u8 value2 = ctx->data[cmd->byte2];
     ctx->comparisonResult = compare_012(value1, value2);
+    
     return FALSE;
 }
 
 // comparelocaltoimm
 bool32 ScrCmd_compare_local_to_value(struct ScriptContext * ctx)
 {
-    const u8 value1 = ctx->data[ScriptReadByte(ctx)];
-    const u8 value2 = ScriptReadByte(ctx);
-
+    CMD_ARGS(u8 byte, u8 value);
+    
+    const u8 value1 = ctx->data[cmd->byte];
+    const u8 value2 = cmd->value;
     ctx->comparisonResult = compare_012(value1, value2);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_compare_local_to_addr(struct ScriptContext * ctx)
 {
-    const u8 value1 = ctx->data[ScriptReadByte(ctx)];
-    const u8 value2 = *(const u8 *)ScriptReadWord(ctx);
-
+    CMD_ARGS(u8 byte, const u8 *pointer);
+    
+    const u8 value1 = ctx->data[cmd->byte];
+    const u8 value2 = *cmd->pointer;
     ctx->comparisonResult = compare_012(value1, value2);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_compare_addr_to_local(struct ScriptContext * ctx)
 {
-    const u8 value1 = *(const u8 *)ScriptReadWord(ctx);
-    const u8 value2 = ctx->data[ScriptReadByte(ctx)];
-
+    CMD_ARGS(const u8 *pointer, u8 byte);
+    
+    const u8 value1 = *cmd->pointer;
+    const u8 value2 = ctx->data[cmd->byte];
     ctx->comparisonResult = compare_012(value1, value2);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_compare_addr_to_value(struct ScriptContext * ctx)
 {
-    const u8 value1 = *(const u8 *)ScriptReadWord(ctx);
-    const u8 value2 = ScriptReadByte(ctx);
-
+    CMD_ARGS(const u8 *pointer, u8 value);
+    
+    const u8 value1 = *cmd->pointer;
+    const u8 value2 = cmd->value;
     ctx->comparisonResult = compare_012(value1, value2);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_compare_addr_to_addr(struct ScriptContext * ctx)
 {
-    const u8 value1 = *(const u8 *)ScriptReadWord(ctx);
-    const u8 value2 = *(const u8 *)ScriptReadWord(ctx);
-
+    CMD_ARGS(const u8 *pointer1, const u8 *pointer2);
+    
+    const u8 value1 = *cmd->pointer1;
+    const u8 value2 = *cmd->pointer2;
     ctx->comparisonResult = compare_012(value1, value2);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_compare_var_to_value(struct ScriptContext * ctx)
 {
-    const u16 value1 = *GetVarPointer(ScriptReadHalfword(ctx));
-    const u16 value2 = ScriptReadHalfword(ctx);
-
+    CMD_ARGS(u16 var, u16 value);
+    
+    const u16 value1 = *GetVarPointer(cmd->var);
+    const u16 value2 = cmd->value;
     ctx->comparisonResult = compare_012(value1, value2);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_compare_var_to_var(struct ScriptContext * ctx)
 {
-    const u16 *ptr1 = GetVarPointer(ScriptReadHalfword(ctx));
-    const u16 *ptr2 = GetVarPointer(ScriptReadHalfword(ctx));
-
+    CMD_ARGS(u16 var1, u16 var2);
+    
+    const u16 *ptr1 = GetVarPointer(cmd->var1);
+    const u16 *ptr2 = GetVarPointer(cmd->var2);
     ctx->comparisonResult = compare_012(*ptr1, *ptr2);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_addvar(struct ScriptContext * ctx)
 {
-    u16 *ptr = GetVarPointer(ScriptReadHalfword(ctx));
-    *ptr += ScriptReadHalfword(ctx);
+    CMD_ARGS(u16 var, u16 value);
+    *GetVarPointer(cmd->var) += cmd->value;
     return FALSE;
 }
 
 bool32 ScrCmd_subvar(struct ScriptContext * ctx)
 {
-    u16 *ptr = GetVarPointer(ScriptReadHalfword(ctx));
-    *ptr -= VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 var, u16 value);
+    *GetVarPointer(cmd->var) -= VarGet(cmd->value);
     return FALSE;
 }
 
 bool32 ScrCmd_random(struct ScriptContext * ctx)
 {
-    gSpecialVar_Result = RandomMax(VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(u16 max);
+    gSpecialVar_Result = RandomMax(VarGet(cmd->max));
     return FALSE;
 }
 
 bool32 ScrCmd_additem(struct ScriptContext * ctx)
 {
-    u32 itemId = VarGet(ScriptReadHalfword(ctx));
-    u32 quantity = VarGet(ScriptReadHalfword(ctx));
-
-    gSpecialVar_Result = AddBagItem(itemId, (u8)quantity);
+    CMD_ARGS(u16 itemId, u16 quantity);
+    gSpecialVar_Result = AddBagItem(VarGet(cmd->itemId), (u8)VarGet(cmd->quantity));
     return FALSE;
 }
 
 bool32 ScrCmd_removeitem(struct ScriptContext * ctx)
 {
-    u32 itemId = VarGet(ScriptReadHalfword(ctx));
-    u32 quantity = VarGet(ScriptReadHalfword(ctx));
-
-    gSpecialVar_Result = RemoveBagItem(itemId, (u8)quantity);
+    CMD_ARGS(u16 itemId, u16 quantity);
+    gSpecialVar_Result = RemoveBagItem(VarGet(cmd->itemId), (u8)VarGet(cmd->quantity));
     return FALSE;
 }
 
 bool32 ScrCmd_checkitemspace(struct ScriptContext * ctx)
 {
-    u32 itemId = VarGet(ScriptReadHalfword(ctx));
-    u32 quantity = VarGet(ScriptReadHalfword(ctx));
-
-    gSpecialVar_Result = CheckBagHasSpace(itemId, (u8)quantity);
+    CMD_ARGS(u16 itemId, u16 quantity);
+    gSpecialVar_Result = CheckBagHasSpace(VarGet(cmd->itemId), (u8)VarGet(cmd->quantity));
     return FALSE;
 }
 
 bool32 ScrCmd_checkitem(struct ScriptContext * ctx)
 {
-    u32 itemId = VarGet(ScriptReadHalfword(ctx));
-    u32 quantity = VarGet(ScriptReadHalfword(ctx));
-
-    gSpecialVar_Result = CheckBagHasItem(itemId, (u8)quantity);
+    CMD_ARGS(u16 itemId, u16 quantity);
+    gSpecialVar_Result = CheckBagHasItem(VarGet(cmd->itemId), (u8)VarGet(cmd->quantity));
     return FALSE;
 }
 
 bool32 ScrCmd_checkitemtype(struct ScriptContext * ctx)
 {
-    gSpecialVar_Result = ItemId_GetPocket(VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(u16 itemId);
+    gSpecialVar_Result = ItemId_GetPocket(VarGet(cmd->itemId));
     return FALSE;
 }
 
 bool32 ScrCmd_addpcitem(struct ScriptContext * ctx)
 {
-    u32 itemId = VarGet(ScriptReadHalfword(ctx));
-    u32 quantity = VarGet(ScriptReadHalfword(ctx));
-
-    gSpecialVar_Result = AddPCItem(itemId, quantity);
+    CMD_ARGS(u16 itemId, u16 quantity);
+    gSpecialVar_Result = AddPCItem(VarGet(cmd->itemId), VarGet(cmd->quantity));
     return FALSE;
 }
 
 bool32 ScrCmd_checkpcitem(struct ScriptContext * ctx)
 {
-    u32 itemId = VarGet(ScriptReadHalfword(ctx));
-    u32 quantity = VarGet(ScriptReadHalfword(ctx));
-
-    gSpecialVar_Result = CheckPCHasItem(itemId, quantity);
+    CMD_ARGS(u16 itemId, u16 quantity);
+    gSpecialVar_Result = CheckPCHasItem(VarGet(cmd->itemId), VarGet(cmd->quantity));
     return FALSE;
 }
 
 bool32 ScrCmd_setflag(struct ScriptContext * ctx)
 {
-    FlagSet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 id);
+    FlagSet(cmd->id);
     return FALSE;
 }
 
 bool32 ScrCmd_clearflag(struct ScriptContext * ctx)
 {
-    FlagClear(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 id);
+    FlagClear(cmd->id);
     return FALSE;
 }
 
 bool32 ScrCmd_checkflag(struct ScriptContext * ctx)
 {
-    ctx->comparisonResult = FlagGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 id);
+    ctx->comparisonResult = FlagGet(cmd->id);
     return FALSE;
 }
 
 bool32 ScrCmd_incrementgamestat(struct ScriptContext * ctx)
 {
-    IncrementGameStat(ScriptReadByte(ctx));
+    CMD_ARGS(u8 id);
+    IncrementGameStat(cmd->id);
     return FALSE;
 }
 
 bool32 ScrCmd_comparestattoword(struct ScriptContext * ctx)
 {
-    u32 statIdx = ScriptReadByte(ctx);
-    u32 value = ScriptReadWord(ctx);
-    u32 statValue = GetGameStat(statIdx);
+    CMD_ARGS(u8 gameStatId, u32 value);
+    
+    u32 statValue = GetGameStat(cmd->gameStatId);
 
-    if (statValue < value)
+    if (statValue < cmd->value)
         ctx ->comparisonResult = 0;
-    else if (statValue == value)
+    else if (statValue == cmd->value)
         ctx->comparisonResult = 1;
     else
         ctx->comparisonResult = 2;
@@ -621,20 +626,25 @@ bool32 ScrCmd_comparestattoword(struct ScriptContext * ctx)
 
 bool32 ScrCmd_setworldmapflag(struct ScriptContext * ctx)
 {
-    MapPreview_SetFlag(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 flagId);
+    MapPreview_SetFlag(cmd->flagId);
     return FALSE;
 }
 
 bool32 ScrCmd_animateflash(struct ScriptContext * ctx)
 {
-    AnimateFlash(ScriptReadByte(ctx));
+    CMD_ARGS(u8 level);
+    
+    AnimateFlash(cmd->level);
     ScriptContext1_Stop();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_setflashradius(struct ScriptContext * ctx)
 {
-    Overworld_SetFlashLevel(VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(u16 level);
+    Overworld_SetFlashLevel(VarGet(cmd->level));
     return FALSE;
 }
 
@@ -648,15 +658,21 @@ static bool32 IsPaletteNotActive(void)
 
 bool32 ScrCmd_fadescreen(struct ScriptContext * ctx)
 {
-    FadeScreen(ScriptReadByte(ctx), 0);
+    CMD_ARGS(u8 mode);
+    
+    FadeScreen(cmd->mode, 0);
     SetupNativeScript(ctx, IsPaletteNotActive);
+    
     return TRUE;
 }
 
 bool32 ScrCmd_fadescreenspeed(struct ScriptContext * ctx)
 {
-    FadeScreen(ScriptReadByte(ctx), ScriptReadByte(ctx));
+    CMD_ARGS(u8 mode, s8 speed);
+    
+    FadeScreen(cmd->mode, cmd->speed);
     SetupNativeScript(ctx, IsPaletteNotActive);
+    
     return TRUE;
 }
 
@@ -670,175 +686,213 @@ static bool32 RunPauseTimer(void)
 
 bool32 ScrCmd_delay(struct ScriptContext * ctx)
 {
-    sPauseCounter = ScriptReadHalfword(ctx);
+    CMD_ARGS(u16 amount);
+    
+    sPauseCounter = cmd->amount;
     SetupNativeScript(ctx, RunPauseTimer);
+    
     return TRUE;
 }
 
 bool32 ScrCmd_starttotembattle(struct ScriptContext * ctx)
 {
+    CMD_ARGS(s8 buffs[NUM_BATTLE_STATS - 1]);
+    
     u32 i;
     s8 buffs[NUM_BATTLE_STATS];
     
     for (i = STAT_ATK; i < NUM_BATTLE_STATS; i++)
-        buffs[i] = ScriptReadByte(ctx);
+        buffs[i] = cmd->buffs[i - 1];
     
     StartTotemBattle(buffs);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_dodailyevents(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
 //      DoTimeBasedEvents();
     return FALSE;
 }
 
 bool32 ScrCmd_gettime(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     gSpecialVar_0x8000 = gRtcLocation.hour;
     gSpecialVar_0x8001 = gRtcLocation.minute;
     gSpecialVar_0x8002 = gRtcLocation.second;
+    
     return FALSE;
 }
 
 bool32 ScrCmd_setweather(struct ScriptContext * ctx)
 {
-    SetSav1Weather(VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(u16 weatherId);
+    SetSav1Weather(VarGet(cmd->weatherId));
     return FALSE;
 }
 
 bool32 ScrCmd_resetweather(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     SetSav1WeatherFromCurrMapHeader();
     return FALSE;
 }
 
 bool32 ScrCmd_doweather(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     DoCurrentWeather();
     return FALSE;
 }
 
 bool32 ScrCmd_setstepcallback(struct ScriptContext * ctx)
 {
-    ActivatePerStepCallback(ScriptReadByte(ctx));
+    CMD_ARGS(u8 stepCbId);
+    ActivatePerStepCallback(cmd->stepCbId);
     return FALSE;
 }
 
 bool32 ScrCmd_setmaplayoutindex(struct ScriptContext * ctx)
 {
-    SetCurrentMapLayout(VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(u16 index);
+    SetCurrentMapLayout(VarGet(cmd->index));
     return FALSE;
 }
 
 bool32 ScrCmd_warp(struct ScriptContext * ctx)
 {
-    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(s8 mapGroup, s8 mapNum, s8 warpId, u16 x, u16 y);
+    
+    SetWarpDestination(cmd->mapGroup, cmd->mapNum, cmd->warpId, VarGet(cmd->x), VarGet(cmd->y));
     DoWarp();
     ResetInitialPlayerAvatarState();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_warpsilent(struct ScriptContext * ctx)
 {
-    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(s8 mapGroup, s8 mapNum, s8 warpId, u16 x, u16 y);
+    
+    SetWarpDestination(cmd->mapGroup, cmd->mapNum, cmd->warpId, VarGet(cmd->x), VarGet(cmd->y));
     DoDiveWarp();
     ResetInitialPlayerAvatarState();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_warpdoor(struct ScriptContext * ctx)
 {
-    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(s8 mapGroup, s8 mapNum, s8 warpId, u16 x, u16 y);
+    
+    SetWarpDestination(cmd->mapGroup, cmd->mapNum, cmd->warpId, VarGet(cmd->x), VarGet(cmd->y));
     DoDoorWarp();
     ResetInitialPlayerAvatarState();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_warphole(struct ScriptContext * ctx)
 {
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
+    CMD_ARGS(s8 mapGroup, s8 mapNum);
+    
     u16 x, y;
 
     PlayerGetDestCoords(&x, &y);
     
-    if (mapGroup == 0xFF && mapNum == 0xFF)
+    if (cmd->mapGroup == -1 && cmd->mapNum == -1)
         SetWarpDestinationToFixedHoleWarp(x - 7, y - 7);
     else
-        SetWarpDestination(mapGroup, mapNum, -1, x - 7, y - 7);
+        SetWarpDestination(cmd->mapGroup, cmd->mapNum, -1, x - 7, y - 7);
     
     DoFallWarp();
     ResetInitialPlayerAvatarState();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_warpteleport(struct ScriptContext * ctx)
 {
-    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(s8 mapGroup, s8 mapNum, s8 warpId, u16 x, u16 y);
+    
+    SetWarpDestination(cmd->mapGroup, cmd->mapNum, cmd->warpId, VarGet(cmd->x), VarGet(cmd->y));
     DoTeleportWarp();
     ResetInitialPlayerAvatarState();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_warpteleport2(struct ScriptContext * ctx)
 {
-    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(s8 mapGroup, s8 mapNum, s8 warpId, u16 x, u16 y);
+    
+    SetWarpDestination(cmd->mapGroup, cmd->mapNum, cmd->warpId, VarGet(cmd->x), VarGet(cmd->y));
     SavePlayerFacingDirectionForTeleport(GetPlayerFacingDirection());
     DoTeleport2Warp();
     ResetInitialPlayerAvatarState();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_setwarp(struct ScriptContext * ctx)
 {
-    SetWarpDestination(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(s8 mapGroup, s8 mapNum, s8 warpId, u16 x, u16 y);
+    SetWarpDestination(cmd->mapGroup, cmd->mapNum, cmd->warpId, VarGet(cmd->x), VarGet(cmd->y));
     return FALSE;
 }
 
 bool32 ScrCmd_setdynamicwarp(struct ScriptContext * ctx)
 {
-    SetDynamicWarpWithCoords(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(s8 mapGroup, s8 mapNum, s8 warpId, u16 x, u16 y);
+    SetDynamicWarpWithCoords(cmd->mapGroup, cmd->mapNum, cmd->warpId, VarGet(cmd->x), VarGet(cmd->y));
     return FALSE;
 }
 
 bool32 ScrCmd_setdivewarp(struct ScriptContext * ctx)
 {
-    SetFixedDiveWarp(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(s8 mapGroup, s8 mapNum, s8 warpId, u16 x, u16 y);
+    SetFixedDiveWarp(cmd->mapGroup, cmd->mapNum, cmd->warpId, VarGet(cmd->x), VarGet(cmd->y));
     return FALSE;
 }
 
 bool32 ScrCmd_setholewarp(struct ScriptContext * ctx)
 {
-    SetFixedHoleWarp(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(s8 mapGroup, s8 mapNum, s8 warpId, u16 x, u16 y);
+    SetFixedHoleWarp(cmd->mapGroup, cmd->mapNum, cmd->warpId, VarGet(cmd->x), VarGet(cmd->y));
     return FALSE;
 }
 
 bool32 ScrCmd_setescapewarp(struct ScriptContext * ctx)
 {
-    SetEscapeWarp(ScriptReadByte(ctx), ScriptReadByte(ctx), ScriptReadByte(ctx), VarGet(ScriptReadHalfword(ctx)), VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(s8 mapGroup, s8 mapNum, s8 warpId, u16 x, u16 y);
+    SetEscapeWarp(cmd->mapGroup, cmd->mapNum, cmd->warpId, VarGet(cmd->x), VarGet(cmd->y));
     return FALSE;
 }
 
 bool32 ScrCmd_getplayerxy(struct ScriptContext * ctx)
 {
-    u16 *pX = GetVarPointer(ScriptReadHalfword(ctx));
-    u16 *pY = GetVarPointer(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 destXVar, u16 destYVar);
 
-    *pX = gSaveBlock1Ptr->pos.x;
-    *pY = gSaveBlock1Ptr->pos.y;
+    *GetVarPointer(cmd->destXVar) = gSaveBlock1Ptr->pos.x;
+    *GetVarPointer(cmd->destYVar) = gSaveBlock1Ptr->pos.y;
+    
     return FALSE;
 }
 
 bool32 ScrCmd_getpartysize(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     gSpecialVar_Result = CalculatePlayerPartyCount();
     return FALSE;
 }
 
 bool32 ScrCmd_playse(struct ScriptContext * ctx)
 {
-    PlaySE(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 seId);
+    PlaySE(cmd->seId);
     return FALSE;
 }
 
@@ -852,71 +906,78 @@ static bool32 WaitForSoundEffectFinish(void)
 
 bool32 ScrCmd_waitse(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     SetupNativeScript(ctx, WaitForSoundEffectFinish);
     return TRUE;
 }
 
 bool32 ScrCmd_playfanfare(struct ScriptContext * ctx)
 {
-    PlayFanfare(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 fanfare);
+    PlayFanfare(cmd->fanfare);
     return FALSE;
 }
 
 bool32 ScrCmd_waitfanfare(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     SetupNativeScript(ctx, IsFanfareTaskInactive);
     return TRUE;
 }
 
 bool32 ScrCmd_playbgm(struct ScriptContext * ctx)
 {
-    u32 songId = ScriptReadHalfword(ctx);
-    bool32 val = ScriptReadByte(ctx);
+    CMD_ARGS(u16 songNum, u8 unknown);
 
-    if (val == TRUE)
-        Overworld_SetSavedMusic(songId);
+    if (cmd->unknown == TRUE)
+        Overworld_SetSavedMusic(cmd->songNum);
     
-    PlayNewMapMusic(songId);
+    PlayNewMapMusic(cmd->songNum);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_savebgm(struct ScriptContext * ctx)
 {
-    Overworld_SetSavedMusic(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 songNum);
+    Overworld_SetSavedMusic(cmd->songNum);
     return FALSE;
 }
 
 bool32 ScrCmd_fadedefaultbgm(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     Overworld_ChangeMusicToDefault();
     return FALSE;
 }
 
 bool32 ScrCmd_fadenewbgm(struct ScriptContext * ctx)
 {
-    Overworld_ChangeMusicTo(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 songNum);
+    Overworld_ChangeMusicTo(cmd->songNum);
     return FALSE;
 }
 
 bool32 ScrCmd_fadeoutbgm(struct ScriptContext * ctx)
 {
-    u32 speed = ScriptReadByte(ctx);
+    CMD_ARGS(u8 speed);
 
-    if (speed != 0)
-        FadeOutBGMTemporarily(4 * speed);
+    if (cmd->speed != 0)
+        FadeOutBGMTemporarily(4 * cmd->speed);
     else
         FadeOutBGMTemporarily(4);
     
     SetupNativeScript(ctx, IsBGMPausedOrStopped);
+    
     return TRUE;
 }
 
 bool32 ScrCmd_fadeinbgm(struct ScriptContext * ctx)
 {
-    u32 speed = ScriptReadByte(ctx);
+    CMD_ARGS(u8 speed);
 
-    if (speed != 0)
-        FadeInBGM(4 * speed);
+    if (cmd->speed != 0)
+        FadeInBGM(4 * cmd->speed);
     else
         FadeInBGM(4);
     
@@ -925,23 +986,25 @@ bool32 ScrCmd_fadeinbgm(struct ScriptContext * ctx)
 
 bool32 ScrCmd_applymovement(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    const void *movementScript = (const void *)ScriptReadWord(ctx);
-
-    ScriptMovement_StartObjectMovementScript(localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, movementScript);
+    CMD_ARGS(u16 localId, const void *movementScript);
+    
+    u32 localId = VarGet(cmd->localId);
+    
+    ScriptMovement_StartObjectMovementScript(localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, cmd->movementScript);
     sMovingNpcId = localId;
+    
     return FALSE;
 }
 
 bool32 ScrCmd_applymovement_at(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    const void *movementScript = (const void *)ScriptReadWord(ctx);
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
+    CMD_ARGS(u16 localId, const void *movementScript, s8 mapGroup, s8 mapNum);
+    
+    u32 localId = VarGet(cmd->localId);
 
-    ScriptMovement_StartObjectMovementScript(localId, mapNum, mapGroup, movementScript);
+    ScriptMovement_StartObjectMovementScript(localId, cmd->mapNum, cmd->mapGroup, cmd->movementScript);
     sMovingNpcId = localId;
+    
     return FALSE;
 }
 
@@ -952,7 +1015,9 @@ static bool32 WaitForMovementFinish(void)
 
 bool32 ScrCmd_waitmovement(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 localId);
+    
+    u32 localId = VarGet(cmd->localId);
 
     if (localId != 0)
         sMovingNpcId = localId;
@@ -960,123 +1025,107 @@ bool32 ScrCmd_waitmovement(struct ScriptContext * ctx)
     sMovingNpcMapBank = gSaveBlock1Ptr->location.mapGroup;
     sMovingNpcMapId = gSaveBlock1Ptr->location.mapNum;
     SetupNativeScript(ctx, WaitForMovementFinish);
+    
     return TRUE;
 }
 
 bool32 ScrCmd_waitmovement_at(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 localId, s8 mapGroup, s8 mapNum);
+    
+    u32 localId = VarGet(cmd->localId);
 
     if (localId != 0)
         sMovingNpcId = localId;
     
-    sMovingNpcMapBank = ScriptReadByte(ctx);
-    sMovingNpcMapId = ScriptReadByte(ctx);
+    sMovingNpcMapBank = cmd->mapGroup;
+    sMovingNpcMapId = cmd->mapNum;
     SetupNativeScript(ctx, WaitForMovementFinish);
+    
     return TRUE;
 }
 
 bool32 ScrCmd_removeobject(struct ScriptContext * ctx)
 {
-    RemoveObjectEventByLocalIdAndMap(VarGet(ScriptReadHalfword(ctx)), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
+    CMD_ARGS(u16 localId);
+    RemoveObjectEventByLocalIdAndMap(VarGet(cmd->localId), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
     return FALSE;
 }
 
 bool32 ScrCmd_removeobject_at(struct ScriptContext * ctx)
 {
-    u32 objectId = VarGet(ScriptReadHalfword(ctx));
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-
-    RemoveObjectEventByLocalIdAndMap(objectId, mapNum, mapGroup);
+    CMD_ARGS(u16 localId, s8 mapGroup, s8 mapNum);
+    RemoveObjectEventByLocalIdAndMap(VarGet(cmd->localId), cmd->mapNum, cmd->mapGroup);
     return FALSE;
 }
 
 bool32 ScrCmd_addobject(struct ScriptContext * ctx)
 {
-    TrySpawnObjectEvent(VarGet(ScriptReadHalfword(ctx)), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
+    CMD_ARGS(u16 localId);
+    TrySpawnObjectEvent(VarGet(cmd->localId), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
     return FALSE;
 }
 
 bool32 ScrCmd_addobject_at(struct ScriptContext * ctx)
 {
-    u32 objectId = VarGet(ScriptReadHalfword(ctx));
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-
-    TrySpawnObjectEvent(objectId, mapNum, mapGroup);
+    CMD_ARGS(u16 localId, s8 mapGroup, s8 mapNum);
+    TrySpawnObjectEvent(VarGet(cmd->localId), cmd->mapNum, cmd->mapGroup);
     return FALSE;
 }
 
 bool32 ScrCmd_setobjectxy(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    TryMoveObjectEventToMapCoords(localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, x, y);
+    CMD_ARGS(u16 localId, u16 x, u16 y);
+    TryMoveObjectEventToMapCoords(VarGet(cmd->localId), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, VarGet(cmd->x), VarGet(cmd->y));
     return FALSE;
 }
 
 bool32 ScrCmd_setobjectxyperm(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-
-    Overworld_SetMapObjTemplateCoords(localId, x, y);
+    CMD_ARGS(u16 localId, u16 x, u16 y);
+    Overworld_SetMapObjTemplateCoords(VarGet(cmd->localId), VarGet(cmd->x), VarGet(cmd->y));
     return FALSE;
 }
 
 bool32 ScrCmd_moveobjectoffscreen(struct ScriptContext * ctx)
 {
-    TryOverrideObjectEventTemplateCoords(VarGet(ScriptReadHalfword(ctx)), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
+    CMD_ARGS(u16 localId);
+    TryOverrideObjectEventTemplateCoords(VarGet(cmd->localId), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
     return FALSE;
 }
 
 bool32 ScrCmd_showobject_at(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-
-    ShowOrHideObjectByLocalIdAndMap(localId, mapNum, mapGroup, FALSE);
+    CMD_ARGS(u16 localId, s8 mapGroup, s8 mapNum);
+    ShowOrHideObjectByLocalIdAndMap(VarGet(cmd->localId), cmd->mapNum, cmd->mapGroup, FALSE);
     return FALSE;
 }
 
 bool32 ScrCmd_hideobject_at(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-
-    ShowOrHideObjectByLocalIdAndMap(localId, mapNum, mapGroup, TRUE);
+    CMD_ARGS(u16 localId, s8 mapGroup, s8 mapNum);
+    ShowOrHideObjectByLocalIdAndMap(VarGet(cmd->localId), cmd->mapNum, cmd->mapGroup, TRUE);
     return FALSE;
 }
 
 bool32 ScrCmd_setobjectpriority(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-    u32 priority = ScriptReadByte(ctx);
-
-    SetObjectPriorityByLocalIdAndMap(localId, mapNum, mapGroup, priority + 83);
+    CMD_ARGS(u16 localId, s8 mapGroup, s8 mapNum, u8 priority);
+    SetObjectPriorityByLocalIdAndMap(VarGet(cmd->localId), cmd->mapNum, cmd->mapGroup, cmd->priority + 83);
     return FALSE;
 }
 
 bool32 ScrCmd_resetobjectpriority(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 mapGroup = ScriptReadByte(ctx);
-    u32 mapNum = ScriptReadByte(ctx);
-
-    UnfixObjectPriorityByLocalIdAndMap(localId, mapNum, mapGroup);
+    CMD_ARGS(u16 localId, s8 mapGroup, s8 mapNum);
+    UnfixObjectPriorityByLocalIdAndMap(VarGet(cmd->localId), cmd->mapNum, cmd->mapGroup);
     return FALSE;
 }
 
 bool32 ScrCmd_faceplayer(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     if (gObjectEvents[gSelectedObjectEvent].active)
         ObjectEventFaceOppositeDirection(&gObjectEvents[gSelectedObjectEvent], GetPlayerFacingDirection());
 
@@ -1085,40 +1134,36 @@ bool32 ScrCmd_faceplayer(struct ScriptContext * ctx)
 
 bool32 ScrCmd_turnobject(struct ScriptContext * ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 direction = ScriptReadByte(ctx);
-
-    ObjectEventTurnByLocalIdAndMap(localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, direction);
+    CMD_ARGS(u16 localId, u8 direction);
+    ObjectEventTurnByLocalIdAndMap(VarGet(cmd->localId), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, cmd->direction);
     return FALSE;
 }
 
 bool32 ScrCmd_setobjectmovementtype(struct ScriptContext * ctx)
 {
-    Overworld_SetObjEventTemplateMovementType(VarGet(ScriptReadHalfword(ctx)), ScriptReadByte(ctx));
+    CMD_ARGS(u16 localId, u8 movementType);
+    Overworld_SetObjEventTemplateMovementType(VarGet(cmd->localId), cmd->movementType);
     return FALSE;
 }
 
 bool32 ScrCmd_createvobject(struct ScriptContext * ctx)
 {
-    u32 graphicsId = ScriptReadByte(ctx);
-    u32 v2 = ScriptReadByte(ctx);
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-    u32 elevation = ScriptReadByte(ctx);
-    u32 direction = ScriptReadByte(ctx);
-
-    sprite_new(graphicsId, v2, x, y, elevation, direction);
+    CMD_ARGS(u8 graphicsId, u8 unknown, u16 x, u16 y, u8 elevation, u8 direction);
+    sprite_new(cmd->graphicsId, cmd->unknown, VarGet(cmd->x), VarGet(cmd->y), cmd->elevation, cmd->direction);
     return FALSE;
 }
 
 bool32 ScrCmd_turnvobject(struct ScriptContext * ctx)
 {
-    TurnObjectEvent(ScriptReadByte(ctx), ScriptReadByte(ctx));
+    CMD_ARGS(u8 graphicsId, u8 direction);
+    TurnObjectEvent(cmd->graphicsId, cmd->direction);
     return FALSE;
 }
 
 bool32 ScrCmd_lockall(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     if (IsUpdateLinkStateCBActive())
         return FALSE;
     else
@@ -1131,6 +1176,8 @@ bool32 ScrCmd_lockall(struct ScriptContext * ctx)
 
 bool32 ScrCmd_lock(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     if (IsUpdateLinkStateCBActive())
         return FALSE;
     else
@@ -1151,15 +1198,20 @@ bool32 ScrCmd_lock(struct ScriptContext * ctx)
 
 bool32 ScrCmd_releaseall(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     HideFieldMessageBox();
     ObjectEventClearHeldMovementIfFinished(&gObjectEvents[GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0)]);
     ScriptMovement_UnfreezeObjectEvents();
     UnfreezeObjectEvents();
+    
     return FALSE;
 }
 
 bool32 ScrCmd_release(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     HideFieldMessageBox();
     
     if (gObjectEvents[gSelectedObjectEvent].active)
@@ -1168,44 +1220,56 @@ bool32 ScrCmd_release(struct ScriptContext * ctx)
     ObjectEventClearHeldMovementIfFinished(&gObjectEvents[GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0)]);
     ScriptMovement_UnfreezeObjectEvents();
     UnfreezeObjectEvents();
+    
     return FALSE;
 }
 
 bool32 ScrCmd_textcolor(struct ScriptContext * ctx)
 {
+    CMD_ARGS(u8 color);
+    
     gSpecialVar_PrevTextColor = gSpecialVar_TextColor;
-    gSpecialVar_TextColor = ScriptReadByte(ctx);
+    gSpecialVar_TextColor = cmd->color;
+    
     return FALSE;
 }
 
 bool32 ScrCmd_message(struct ScriptContext * ctx)
 {
-    const u8 *msg = (const u8 *)ScriptReadWord(ctx);
-
+    CMD_ARGS(const u8 *msg);
+    
+    const u8 *msg = cmd->msg;
     if (msg == NULL)
         msg = (const u8 *)ctx->data[0];
+    
     ShowFieldMessage(msg);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_messageautoscroll(struct ScriptContext * ctx)
 {
-    const u8 *msg = (const u8 *)ScriptReadWord(ctx);
-
+    CMD_ARGS(const u8 *msg);
+    
+    const u8 *msg = cmd->msg;
     if (msg == NULL)
         msg = (const u8 *)ctx->data[0];
+    
     ShowFieldAutoScrollMessage(msg);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_waitmessage(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     SetupNativeScript(ctx, IsFieldMessageBoxHidden);
     return TRUE;
 }
 
 bool32 ScrCmd_closemessage(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     HideFieldMessageBox();
     return FALSE;
 }
@@ -1219,12 +1283,15 @@ static bool32 WaitForAorBPress(void)
 
 bool32 ScrCmd_waitbuttonpress(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     SetupNativeScript(ctx, WaitForAorBPress);
     return TRUE;
 }
 
 bool32 ScrCmd_yesnobox(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     if (ScriptMenu_YesNo())
     {
         ScriptContext1_Stop();
@@ -1236,14 +1303,9 @@ bool32 ScrCmd_yesnobox(struct ScriptContext * ctx)
 
 bool32 ScrCmd_multichoice(struct ScriptContext * ctx)
 {
-    u32 x = ScriptReadByte(ctx);
-    u32 y = ScriptReadByte(ctx);
-    u32 multichoiceId = ScriptReadByte(ctx);
-    bool32 ignoreBPress = ScriptReadByte(ctx);
-    u32 defaultOpt = ScriptReadByte(ctx);
-    u32 perRowItems = ScriptReadByte(ctx);
+    CMD_ARGS(u8 x, u8 y, u8 multichoiceId, bool8 ignoreBPress, u8 defaultOpt, u8 perRowItems);
 
-    if (ScriptMenu_Multichoice(x, y, multichoiceId, ignoreBPress, defaultOpt, perRowItems))
+    if (ScriptMenu_Multichoice(cmd->x, cmd->y, cmd->multichoiceId, cmd->ignoreBPress, cmd->defaultOpt, cmd->perRowItems))
     {
         ScriptContext1_Stop();
         return TRUE;
@@ -1253,58 +1315,68 @@ bool32 ScrCmd_multichoice(struct ScriptContext * ctx)
 
 bool32 ScrCmd_showitempic(struct ScriptContext * ctx)
 {
-    ScriptMenu_ShowItemPic(VarGet(ScriptReadHalfword(ctx)), ScriptReadByte(ctx), ScriptReadByte(ctx));
+    CMD_ARGS(u16 itemId, u8 x, u8 y);
+    ScriptMenu_ShowItemPic(VarGet(cmd->itemId), cmd->x, cmd->y);
     return FALSE;
 }
 
 bool32 ScrCmd_showmonpic(struct ScriptContext * ctx)
 {
-    u32 species = VarGet(ScriptReadHalfword(ctx));
-    u32 x = ScriptReadByte(ctx);
-    u32 y = ScriptReadByte(ctx);
+    CMD_ARGS(u16 species, u8 x, u8 y);
+    
+    u32 species = VarGet(cmd->species);
 
-    ScriptMenu_ShowPokemonPic(species, x, y);
+    ScriptMenu_ShowPokemonPic(species, cmd->x, cmd->y);
     PlayCry_Normal(species, 0);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_hidemonpic(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     bool32 (*func)(void) = ScriptMenu_GetPicboxWaitFunc();
-
     if (func == NULL)
         return FALSE;
+    
     SetupNativeScript(ctx, func);
+    
     return TRUE;
 }
 
 bool32 ScrCmd_braillemessage(struct ScriptContext * ctx)
 {
-    u8 *ptr = (u8 *)ScriptReadWord(ctx);
+    CMD_ARGS(u8 *ptr);
+    
+    u8 *ptr = cmd->ptr;
     if (ptr == NULL)
         ptr = (u8 *)ctx->data[0];
 
     LoadStdWindowFrameGfx();
     DrawDialogueFrame(0, 1);
     AddTextPrinterParameterized(0, 6, ptr, 0, 1, 0, NULL);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_getbraillestringwidth(struct ScriptContext * ctx)
 {
-    u8 *ptr = (u8 *)ScriptReadWord(ctx);
+    CMD_ARGS(u8 *ptr);
+    
+    u8 *ptr = cmd->ptr;
     if (ptr == NULL)
         ptr = (u8 *)ctx->data[0];
 
     gSpecialVar_0x8004 = GetStringWidth(6, ptr, -1);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_vmessage(struct ScriptContext * ctx)
 {
-    u32 v1 = ScriptReadWord(ctx);
-
-    ShowFieldMessage((u8 *)(v1 - gVScriptOffset));
+    CMD_ARGS(u32 offset);
+    ShowFieldMessage((u8 *)(cmd->offset - gVScriptOffset));
     return FALSE;
 }
 
@@ -1317,167 +1389,141 @@ u8 *const sScriptStringVars[] =
 
 bool32 ScrCmd_bufferspeciesname(struct ScriptContext * ctx)
 {
-    StringCopy(sScriptStringVars[ScriptReadByte(ctx)], gSpeciesInfo[VarGet(ScriptReadHalfword(ctx))].name);
+    CMD_ARGS(u8 outputStringId, u16 species);
+    StringCopy(sScriptStringVars[cmd->outputStringId], gSpeciesInfo[VarGet(cmd->species)].name);
     return FALSE;
 }
 
 bool32 ScrCmd_bufferleadmonspeciesname(struct ScriptContext * ctx)
 {
-    StringCopy(sScriptStringVars[ScriptReadByte(ctx)], gSpeciesInfo[GetMonData(&gPlayerParty[GetLeadMonIndex()], MON_DATA_SPECIES)].name);
+    CMD_ARGS(u8 outputStringId);
+    StringCopy(sScriptStringVars[cmd->outputStringId], gSpeciesInfo[GetMonData(&gPlayerParty[GetLeadMonIndex()], MON_DATA_SPECIES)].name);
     return FALSE;
 }
 
 bool32 ScrCmd_bufferpartymonnick(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 partyIndex = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u8 outputStringId, u16 partyIndex);
 
-    GetMonData(&gPlayerParty[partyIndex], MON_DATA_NICKNAME, sScriptStringVars[stringVarIndex]);
-    StringGet_Nickname(sScriptStringVars[stringVarIndex]);
+    GetMonData(&gPlayerParty[VarGet(cmd->partyIndex)], MON_DATA_NICKNAME, sScriptStringVars[cmd->outputStringId]);
+    StringGet_Nickname(sScriptStringVars[cmd->outputStringId]);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_bufferitemname(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 itemId = VarGet(ScriptReadHalfword(ctx));
-
-    CopyItemName(itemId, sScriptStringVars[stringVarIndex]);
+    CMD_ARGS(u8 outputStringId, u16 itemId);
+    CopyItemName(VarGet(cmd->itemId), sScriptStringVars[cmd->outputStringId]);
     return FALSE;
 }
 
 bool32 ScrCmd_bufferitemnameplural(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 itemId = VarGet(ScriptReadHalfword(ctx));
-    u32 quantity = VarGet(ScriptReadHalfword(ctx));
-
-    CopyItemNameHandlePlural(itemId, quantity, sScriptStringVars[stringVarIndex]);
-    
+    CMD_ARGS(u8 outputStringId, u16 itemId, u16 quantity);
+    CopyItemNameHandlePlural(VarGet(cmd->itemId), VarGet(cmd->quantity), sScriptStringVars[cmd->outputStringId]);
     return FALSE;
 }
 
 bool32 ScrCmd_buffermovename(struct ScriptContext * ctx)
 {
-    StringCopy(sScriptStringVars[ScriptReadByte(ctx)], gBattleMoves[VarGet(ScriptReadHalfword(ctx))].name);
+    CMD_ARGS(u8 outputStringId, u16 move);
+    StringCopy(sScriptStringVars[cmd->outputStringId], gBattleMoves[VarGet(cmd->move)].name);
     return FALSE;
 }
 
 bool32 ScrCmd_buffernumberstring(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 v1 = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u8 outputStringId, u16 number);
 
-    ConvertIntToDecimalStringN(sScriptStringVars[stringVarIndex], v1, 0, CountDigits(v1));
+    u32 val = VarGet(cmd->number);
+    ConvertIntToDecimalStringN(sScriptStringVars[cmd->outputStringId], val, 0, CountDigits(val));
+    
     return FALSE;
 }
 
 bool32 ScrCmd_bufferstdstring(struct ScriptContext * ctx)
 {
-    StringCopy(sScriptStringVars[ScriptReadByte(ctx)], gStdStringPtrs[VarGet(ScriptReadHalfword(ctx))]);
+    CMD_ARGS(u8 outputStringId, u16 index);
+    StringCopy(sScriptStringVars[cmd->outputStringId], gStdStringPtrs[VarGet(cmd->index)]);
     return FALSE;
 }
 
 bool32 ScrCmd_bufferstring(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    const u8 *text = (u8 *)ScriptReadWord(ctx);
-
-    StringCopy(sScriptStringVars[stringVarIndex], text);
+    CMD_ARGS(u8 outputStringId, const u8 *message);
+    StringCopy(sScriptStringVars[cmd->outputStringId], cmd->message);
     return FALSE;
 }
 
 bool32 ScrCmd_vloadword(struct ScriptContext * ctx)
 {
-    const u8 *ptr = (u8 *)(ScriptReadWord(ctx) - gVScriptOffset);
-
+    CMD_ARGS(u32 offset);
+    
+    const u8 *ptr = (u8 *)(cmd->offset - gVScriptOffset);
     StringExpandPlaceholders(gStringVar4, ptr);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_vbufferstring(struct ScriptContext * ctx)
 {
-    u32 stringVarIndex = ScriptReadByte(ctx);
-    u32 addr = ScriptReadWord(ctx);
-    const u8 *src = (u8 *)(addr - gVScriptOffset);
-    u8 *dest = sScriptStringVars[stringVarIndex];
-    StringCopy(dest, src);
+    CMD_ARGS(u8 outputStringId, u32 offset);
+
+    const u8 *src = (u8 *)(cmd->offset - gVScriptOffset);
+    StringCopy(sScriptStringVars[cmd->outputStringId], src);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_bufferboxname(struct ScriptContext * ctx)
 {
-    StringCopy(sScriptStringVars[ScriptReadByte(ctx)], GetBoxNamePtr(VarGet(ScriptReadHalfword(ctx))));
+    CMD_ARGS(u8 outputStringId, u16 boxId);
+    StringCopy(sScriptStringVars[cmd->outputStringId], GetBoxNamePtr(VarGet(cmd->boxId)));
     return FALSE;
 }
 
 bool32 ScrCmd_givemon(struct ScriptContext * ctx)
 {
-    u32 species = VarGet(ScriptReadHalfword(ctx));
-    u32 level = ScriptReadByte(ctx);
-    u32 ball, item = VarGet(ScriptReadHalfword(ctx));
-    u32 i, nature, gender;
-    u8 ivs[NUM_STATS] = {0};
-    bool32 isShiny, hiddenAbility;
-    u16 moves[MAX_MON_MOVES];
+    CMD_ARGS(u16 species, u8 level, u16 item, u8 ivs[NUM_STATS], bool8 isShiny, bool8 hiddenAbility, u16 ballId, u8 nature, u8 gender);
     
-    for (i = 0; i < MAX_MON_MOVES; i++)
-        moves[i] = MOVE_NONE;
+    u16 moves[MAX_MON_MOVES] = {0};
+    u8 ivs[NUM_STATS];
     
-    for (i = 0; i < NUM_STATS; i++)
-        ivs[i] = ScriptReadByte(ctx);
+    memcpy(ivs, cmd->ivs, NUM_STATS);
     
-    isShiny = ScriptReadByte(ctx);
+    gSpecialVar_Result = ScriptGiveMon(VarGet(cmd->species), cmd->level, VarGet(cmd->item), ivs, cmd->ballId, cmd->isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL,
+                                       cmd->hiddenAbility, cmd->nature, cmd->gender, moves);
     
-    hiddenAbility = ScriptReadByte(ctx);
-    
-    ball = ScriptReadHalfword(ctx);
-    
-    nature = ScriptReadByte(ctx);
-    
-    gender = ScriptReadByte(ctx);
-    
-    gSpecialVar_Result = ScriptGiveMon(species, level, item, ivs, ball, isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL, hiddenAbility, nature, gender, moves);
     return FALSE;
 }
 
 bool32 ScrCmd_giveegg(struct ScriptContext * ctx)
 {
-    u32 i, species = VarGet(ScriptReadHalfword(ctx));
-    u8 ivs[NUM_STATS] = {0};
-    bool32 isShiny, hiddenAbility;
-    u32 nature;
-    u16 moves[MAX_MON_MOVES];
+    CMD_ARGS(u16 species, u8 ivs[NUM_STATS], bool8 isShiny, bool8 hiddenAbility, u8 nature);
     
-    for (i = 0; i < MAX_MON_MOVES; i++)
-        moves[i] = MOVE_NONE;
+    u16 moves[MAX_MON_MOVES] = {0};
+    u8 ivs[NUM_STATS];
     
-    for (i = 0; i < NUM_STATS; i++)
-        ivs[i] = ScriptReadByte(ctx);
+    memcpy(ivs, cmd->ivs, NUM_STATS);
     
-    isShiny = ScriptReadByte(ctx);
+    gSpecialVar_Result = ScriptGiveEgg(VarGet(cmd->species), ivs, cmd->isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL, cmd->hiddenAbility, cmd->nature, moves);
     
-    hiddenAbility = ScriptReadByte(ctx);
-    
-    nature = ScriptReadByte(ctx);
-    
-    gSpecialVar_Result = ScriptGiveEgg(species, ivs, isShiny ? GENERATE_SHINY_FORCED : GENERATE_SHINY_NORMAL, hiddenAbility, nature, moves);
     return FALSE;
 }
 
 bool32 ScrCmd_setmonmove(struct ScriptContext * ctx)
 {
-    u32 partyIndex = ScriptReadByte(ctx);
-    u32 slot = ScriptReadByte(ctx);
-    u32 move = ScriptReadHalfword(ctx);
-
-    ScriptSetMonMoveSlot(partyIndex, move, slot);
+    CMD_ARGS(u8 partyIndex, u8 moveSlot, u16 move);
+    ScriptSetMonMoveSlot(cmd->partyIndex, cmd->move, cmd->moveSlot);
     return FALSE;
 }
 
 bool32 ScrCmd_checkpartymove(struct ScriptContext * ctx)
 {
-    u32 i, moveId = ScriptReadHalfword(ctx);
+    CMD_ARGS(u16 move);
+    
+    u32 i;
 
     gSpecialVar_Result = PARTY_SIZE;
     
@@ -1487,7 +1533,7 @@ bool32 ScrCmd_checkpartymove(struct ScriptContext * ctx)
         if (!species)
             break;
         
-        if (!GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG) && FindMoveSlotInMoveset(&gPlayerParty[i], moveId) != MAX_MON_MOVES)
+        if (!GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG) && FindMoveSlotInMoveset(&gPlayerParty[i], cmd->move) != MAX_MON_MOVES)
         {
             gSpecialVar_Result = i;
             gSpecialVar_0x8004 = species;
@@ -1499,166 +1545,187 @@ bool32 ScrCmd_checkpartymove(struct ScriptContext * ctx)
 
 bool32 ScrCmd_addmoney(struct ScriptContext * ctx)
 {
-    AddMoney(&gSaveBlock1Ptr->money, ScriptReadWord(ctx));
+    CMD_ARGS(u32 amount);
+    AddMoney(&gSaveBlock1Ptr->money, cmd->amount);
     return FALSE;
 }
 
 bool32 ScrCmd_removemoney(struct ScriptContext * ctx)
 {
-    RemoveMoney(&gSaveBlock1Ptr->money, ScriptReadWord(ctx));
+    CMD_ARGS(u32 amount);
+    RemoveMoney(&gSaveBlock1Ptr->money, cmd->amount);
     return FALSE;
 }
 
 bool32 ScrCmd_checkmoney(struct ScriptContext * ctx)
 {
-    gSpecialVar_Result = IsEnoughMoney(&gSaveBlock1Ptr->money, ScriptReadWord(ctx));
+    CMD_ARGS(u32 amount);
+    gSpecialVar_Result = IsEnoughMoney(&gSaveBlock1Ptr->money, cmd->amount);
     return FALSE;
 }
 
 bool32 ScrCmd_showmoneybox(struct ScriptContext * ctx)
 {
-    DrawMoneyBox(GetMoney(&gSaveBlock1Ptr->money), ScriptReadByte(ctx), ScriptReadByte(ctx));
+    CMD_ARGS(u8 x, u8 y);
+    DrawMoneyBox(GetMoney(&gSaveBlock1Ptr->money), cmd->x, cmd->y);
     return FALSE;
 }
 
 bool32 ScrCmd_hidemoneybox(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     HideMoneyBox();
     return FALSE;
 }
 
 bool32 ScrCmd_updatemoneybox(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     ChangeAmountInMoneyBox(GetMoney(&gSaveBlock1Ptr->money));
     return FALSE;
 }
 
 bool32 ScrCmd_showcoinsbox(struct ScriptContext * ctx)
 {
-    ShowCoinsWindow(GetCoins(), ScriptReadByte(ctx), ScriptReadByte(ctx));
+    CMD_ARGS(u8 x, u8 y);
+    ShowCoinsWindow(GetCoins(), cmd->x, cmd->y);
     return FALSE;
 }
 
 bool32 ScrCmd_hidecoinsbox(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     HideCoinsWindow();
     return FALSE;
 }
 
 bool32 ScrCmd_updatecoinsbox(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     PrintCoinsString(GetCoins());
     return FALSE;
 }
 
 bool32 ScrCmd_trainerbattle(struct ScriptContext * ctx)
 {
+    // Don't need call CMD_ARGS here
     ctx->scriptPtr = BattleSetup_ConfigureTrainerBattle(ctx->scriptPtr);
     return FALSE;
 }
 
 bool32 ScrCmd_dotrainerbattle(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     StartTrainerBattle();
     return TRUE;
 }
 
 bool32 ScrCmd_gotopostbattlescript(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     ctx->scriptPtr = BattleSetup_GetScriptAddrAfterBattle();
     return FALSE;
 }
 
 bool32 ScrCmd_gotobeatenscript(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     ctx->scriptPtr = BattleSetup_GetTrainerPostBattleScript();
     return FALSE;
 }
 
 bool32 ScrCmd_checktrainerflag(struct ScriptContext * ctx)
 {
-    ctx->comparisonResult = HasTrainerBeenFought(VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(u16 trainerId);
+    ctx->comparisonResult = HasTrainerBeenFought(VarGet(cmd->trainerId));
     return FALSE;
 }
 
 bool32 ScrCmd_settrainerflag(struct ScriptContext * ctx)
 {
-    SetTrainerFlag(VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(u16 trainerId);
+    SetTrainerFlag(VarGet(cmd->trainerId));
     return FALSE;
 }
 
 bool32 ScrCmd_cleartrainerflag(struct ScriptContext * ctx)
 {
-    ClearTrainerFlag(VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(u16 trainerId);
+    ClearTrainerFlag(VarGet(cmd->trainerId));
     return FALSE;
 }
 
 bool32 ScrCmd_setwildbattle(struct ScriptContext * ctx)
 {
-    u32 species = ScriptReadHalfword(ctx);
-    u32 level = ScriptReadByte(ctx);
-    u32 item = ScriptReadHalfword(ctx);
-    u32 species2 = ScriptReadHalfword(ctx);
-    u32 level2 = ScriptReadByte(ctx);
-    u32 item2 = ScriptReadHalfword(ctx);
-
-    CreateScriptedWildMon(species, level, item, species2, level2, item2);
+    CMD_ARGS(u16 species1, u8 level1, u16 item1, u16 species2, u8 level2, u16 item2);
+    CreateScriptedWildMon(cmd->species1, cmd->level1, cmd->item1, cmd->species2, cmd->level2, cmd->item2);
     return FALSE;
 }
 
 bool32 ScrCmd_dowildbattle(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
+    
     StartScriptedWildBattle();
     ScriptContext1_Stop();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_pokemart(struct ScriptContext * ctx)
 {
-    const void *ptr = (void *)ScriptReadWord(ctx);
+    CMD_ARGS(const void *list);
 
-    CreatePokemartMenu(ptr);
+    CreatePokemartMenu(cmd->list);
     ScriptContext1_Stop();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_pokemartdecoration(struct ScriptContext * ctx)
 {
-    const void *ptr = (void *)ScriptReadWord(ctx);
+    CMD_ARGS(const void *list);
 
-    CreateDecorationShop1Menu(ptr);
+    CreateDecorationShop1Menu(cmd->list);
     ScriptContext1_Stop();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_pokemartdecoration2(struct ScriptContext * ctx)
 {
-    const void *ptr = (void *)ScriptReadWord(ctx);
+    CMD_ARGS(const void *list);
 
-    CreateDecorationShop2Menu(ptr);
+    CreateDecorationShop2Menu(cmd->list);
     ScriptContext1_Stop();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_playslotmachine(struct ScriptContext * ctx)
 {
-    PlaySlotMachine(VarGet(ScriptReadHalfword(ctx)), CB2_ReturnToFieldContinueScriptPlayMapMusic);
+    CMD_ARGS(u16 index);
+    
+    PlaySlotMachine(VarGet(cmd->index), CB2_ReturnToFieldContinueScriptPlayMapMusic);
     ScriptContext1_Stop();
+    
     return TRUE;
 }
 
 bool32 ScrCmd_dofieldeffect(struct ScriptContext * ctx)
 {
-    sFieldEffectScriptId = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 fieldEffectId);
+    
+    sFieldEffectScriptId = VarGet(cmd->fieldEffectId);
     FieldEffectStart(sFieldEffectScriptId);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_setfieldeffectarg(struct ScriptContext * ctx)
 {
-    u32 argNum = ScriptReadByte(ctx);
-
-    gFieldEffectArguments[argNum] = (s16)VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u8 argNum, u16 value);
+    gFieldEffectArguments[cmd->argNum] = (s16)VarGet(cmd->value);
     return FALSE;
 }
 
@@ -1672,46 +1739,54 @@ static bool32 WaitForFieldEffectFinish(void)
 
 bool32 ScrCmd_waitfieldeffect(struct ScriptContext * ctx)
 {
-    sFieldEffectScriptId = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 fieldEffectId);
+    
+    sFieldEffectScriptId = VarGet(cmd->fieldEffectId);
     SetupNativeScript(ctx, WaitForFieldEffectFinish);
+    
     return TRUE;
 }
 
 bool32 ScrCmd_setrespawn(struct ScriptContext * ctx)
 {
-    SetLastHealLocationWarp(VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(u16 healLocation);
+    SetLastHealLocationWarp(VarGet(cmd->healLocation));
     return FALSE;
 }
 
 bool32 ScrCmd_checkplayergender(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     gSpecialVar_Result = gSaveBlock2Ptr->playerGender;
     return FALSE;
 }
 
 bool32 ScrCmd_playmoncry(struct ScriptContext * ctx)
 {
-    PlayCry_ByMode(VarGet(ScriptReadHalfword(ctx)), 0, VarGet(ScriptReadHalfword(ctx)));
+    CMD_ARGS(u16 species, u16 mode);
+    PlayCry_ByMode(VarGet(cmd->species), 0, VarGet(cmd->mode));
     return FALSE;
 }
 
 bool32 ScrCmd_waitmoncry(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     SetupNativeScript(ctx, IsCryFinished);
     return TRUE;
 }
 
 bool32 ScrCmd_setmetatile(struct ScriptContext * ctx)
 {
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
-    u32 tileId = VarGet(ScriptReadHalfword(ctx));
-    u32 v8 = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 x, u16 y, u16 tileId, bool16 isImpassable);
+    
+    u16 x = VarGet(cmd->x);
+    u16 y = VarGet(cmd->y);
+    u32 tileId = VarGet(cmd->tileId);
 
     x += 7;
     y += 7;
     
-    if (!v8)
+    if (!cmd->isImpassable)
         MapGridSetMetatileIdAt(x, y, tileId);
     else
         MapGridSetMetatileIdAt(x, y, tileId | METATILE_COLLISION_MASK);
@@ -1721,26 +1796,32 @@ bool32 ScrCmd_setmetatile(struct ScriptContext * ctx)
 
 bool32 ScrCmd_opendoor(struct ScriptContext * ctx)
 {
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 x, u16 y);
+    
+    u16 x = VarGet(cmd->x);
+    u16 y = VarGet(cmd->y);
 
     x += 7;
     y += 7;
     
     PlaySE(GetDoorSoundEffect(x, y));
     FieldAnimateDoorOpen(x, y);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_closedoor(struct ScriptContext * ctx)
 {
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 x, u16 y);
+    
+    u16 x = VarGet(cmd->x);
+    u16 y = VarGet(cmd->y);
 
     x += 7;
     y += 7;
     
     FieldAnimateDoorClose(x, y);
+    
     return FALSE;
 }
 
@@ -1754,69 +1835,72 @@ static bool32 IsDoorAnimationStopped(void)
 
 bool32 ScrCmd_waitdooranim(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     SetupNativeScript(ctx, IsDoorAnimationStopped);
     return TRUE;
 }
 
 bool32 ScrCmd_setdooropen(struct ScriptContext * ctx)
 {
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 x, u16 y);
+    
+    u16 x = VarGet(cmd->x);
+    u16 y = VarGet(cmd->y);
 
     x += 7;
     y += 7;
+    
     FieldSetDoorOpened(x, y);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_setdoorclosed(struct ScriptContext * ctx)
 {
-    u32 x = VarGet(ScriptReadHalfword(ctx));
-    u32 y = VarGet(ScriptReadHalfword(ctx));
+    CMD_ARGS(u16 x, u16 y);
+    
+    u16 x = VarGet(cmd->x);
+    u16 y = VarGet(cmd->y);
 
     x += 7;
     y += 7;
+    
     FieldSetDoorClosed(x, y);
+    
     return FALSE;
 }
 
 bool32 ScrCmd_checkcoins(struct ScriptContext * ctx)
 {
-    u16 *ptr = GetVarPointer(ScriptReadHalfword(ctx));
-    *ptr = GetCoins();
+    CMD_ARGS(u16 outputVar);
+    *GetVarPointer(cmd->outputVar) = GetCoins();
     return FALSE;
 }
 
 bool32 ScrCmd_addcoins(struct ScriptContext * ctx)
 {
-    u32 coins = VarGet(ScriptReadHalfword(ctx));
-
-    if (AddCoins(coins))
-        gSpecialVar_Result = 0;
-    else
-        gSpecialVar_Result = 1;
+    CMD_ARGS(u16 amount);
+    gSpecialVar_Result = !AddCoins(VarGet(cmd->amount));
     return FALSE;
 }
 
 bool32 ScrCmd_removecoins(struct ScriptContext * ctx)
 {
-    u32 coins = VarGet(ScriptReadHalfword(ctx));
-
-    if (RemoveCoins(coins))
-        gSpecialVar_Result = 0;
-    else
-        gSpecialVar_Result = 1;
+    CMD_ARGS(u16 amount);
+    gSpecialVar_Result = !RemoveCoins(VarGet(cmd->amount));
     return FALSE;
 }
 
 bool32 ScrCmd_signmsg(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     MsgSetSignPost();
     return FALSE;
 }
 
 bool32 ScrCmd_normalmsg(struct ScriptContext * ctx)
 {
+    CMD_ARGS();
     MsgSetNotSignPost();
     return FALSE;
 }

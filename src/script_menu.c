@@ -827,6 +827,7 @@ void DrawSeagallopDestinationMenu(void)
     windowId = CreateMultichoiceWindow(0, 17, y, 11, nItems * 2, MULTICHOICE_DEFAULT_BASE_BLOCK, 15);
     SetStdWindowBorderStyle(windowId, FALSE);
     
+    // -2 excludes "Other" and "Exit", appended after the loop
     for (i = 0; i < nItems - 2; i++)
     {
         if (defaultOpt != gSpecialVar_0x8004)
@@ -836,6 +837,7 @@ void DrawSeagallopDestinationMenu(void)
         
         ++defaultOpt;
         
+        // Wrap around
         if (defaultOpt == SEAGALLOP_CINNABAR_ISLAND)
             defaultOpt = SEAGALLOP_VERMILION_CITY;
     }

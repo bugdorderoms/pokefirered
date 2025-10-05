@@ -6,9 +6,6 @@ CableClub_EventScript_HideOrShowMysteryGiftMan:: @ 81BB1BA
 	setflag FLAG_HIDE_MG_DELIVERYMEN
 	return
 
-CableClub_EventScript_MysteryGiftMan:: @ 81BB1D2
-	execram
-
 @ Unused
 EventScript_MysteryGiftThankYou:: @ 81BB1E4
 	msgbox Text_ThankYouForAccessingMysteryGift, MSGBOX_NPC
@@ -85,7 +82,6 @@ CableClub_EventScript_ExitLinkRoom:: @ 81BB2E5
 	call CableClub_EventScript_CloseDirectCornerBarrier
 	special DrawWholeMapView
 	playse SE_CLICK
-	erasebox 0, 0, 29, 19
 	releaseall
 	end
 
@@ -95,7 +91,6 @@ CableClub_EventScript_ExitMinigameRoom:: @ 81BB2FD
 	call CableClub_EventScript_CloseGameCornerBarrier
 	special DrawWholeMapView
 	playse SE_CLICK
-	erasebox 0, 0, 29, 19
 	releaseall
 	end
 
@@ -119,7 +114,6 @@ CableClub_EventScript_ExitTradeCenter:: @ 81BB34F
 	call CableClub_EventScript_CloseDirectCornerBarrier
 	special DrawWholeMapView
 	playse SE_CLICK
-	erasebox 0, 0, 29, 19
 	releaseall
 	end
 
@@ -142,7 +136,6 @@ CableClub_EventScript_ExitUnionRoom:: @ 81BB39C
 	call CableClub_EventScript_CloseUnionRoomBarrier
 	special DrawWholeMapView
 	playse SE_CLICK
-	erasebox 0, 0, 29, 19
 	releaseall
 	end
 
@@ -713,7 +706,6 @@ TradeCenter_ConfirmLeaveRoom:: @ 81BB9D4
 	msgbox Text_TerminateLinkIfYouLeaveRoom, MSGBOX_YESNO
 	compare VAR_RESULT, YES
 	goto_if_eq TradeCenter_TerminateLink
-	erasebox 0, 0, 29, 19
 	releaseall
 	end
 

@@ -36,7 +36,6 @@ extern const u8 gMiscBlank_Gfx[];
 u32 CreateInvisibleSpriteWithCallback(void (*)(struct Sprite *));
 void StoreWordInTwoHalfwords(u16 *, unsigned);
 void LoadWordFromTwoHalfwords(u16 *, unsigned *);
-u16 CalcCRC16WithTable(const u8 *data, u32 length);
 void DoBgAffineSet(struct BgAffineDstData * dest, u32 texX, u32 texY, s16 srcX, s16 srcY, s16 sx, s16 sy, u16 alpha);
 bool32 JumpBasedOnKind(u32 value, u32 cmpKind, u32 cmpTo);
 s8 CompareTextAlphabetically(const u8 *text1, const u8 *text2);

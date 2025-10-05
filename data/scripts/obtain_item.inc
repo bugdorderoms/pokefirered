@@ -93,30 +93,6 @@ EventScript_PlayFanfareObtainedTMHM:: @ 81A6768
 	return
 
 Std_ObtainDecoration:: @ 81A676C
-	adddecor VAR_0x8000
-	copyvar VAR_0x8007, VAR_RESULT
-	call EventScript_ObtainDecorMessage
-	return
-
-EventScript_ObtainDecorMessage:: @ 81A677A
-	getdecorname 1, VAR_0x8000
-	compare VAR_0x8007, TRUE
-	call_if_eq EventScript_ObtainedDecor
-	compare VAR_0x8007, FALSE
-	call_if_eq EventScript_NoRoomForDecor
-	return
-
-EventScript_ObtainedDecor:: @ 81A6795
-	playfanfare MUS_OBTAIN_ITEM
-	message Text_ObtainedTheDecor
-	waitfanfare
-	waitmessage
-	msgbox Text_DecorTransferredToPC
-	setvar VAR_RESULT, TRUE
-	return
-
-EventScript_NoRoomForDecor:: @ 81A67AD
-	setvar VAR_RESULT, FALSE
 	return
 
 Std_FindItem:: @ 81A67B3

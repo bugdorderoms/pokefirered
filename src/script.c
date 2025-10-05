@@ -17,7 +17,6 @@ enum
 };
 
 EWRAM_DATA u8 gWalkAwayFromSignInhibitTimer = 0;
-EWRAM_DATA const u8 *gRAMScriptPtr = NULL;
 
 // iwram bss
 static u8 sScriptContext1Status;
@@ -160,22 +159,6 @@ void ScriptCall(struct ScriptContext *ctx, const u8 *ptr)
 void ScriptReturn(struct ScriptContext *ctx)
 {
     ctx->scriptPtr = ScriptPop(ctx);
-}
-
-u16 ScriptReadHalfword(struct ScriptContext *ctx)
-{
-    u16 value = *(ctx->scriptPtr++);
-    value |= *(ctx->scriptPtr++) << 8;
-    return value;
-}
-
-u32 ScriptReadWord(struct ScriptContext *ctx)
-{
-    u32 value0 = *(ctx->scriptPtr++);
-    u32 value1 = *(ctx->scriptPtr++);
-    u32 value2 = *(ctx->scriptPtr++);
-    u32 value3 = *(ctx->scriptPtr++);
-    return (((((value3 << 8) + value2) << 8) + value1) << 8) + value0;
 }
 
 void ScriptContext2_Enable(void)
@@ -397,59 +380,4 @@ void TryRunOnWarpIntoMapScript(void)
     u8 *ptr = mapheader_get_first_match_from_tagged_ptr_list(4);
     if (ptr)
         ScriptContext2_RunNewScript(ptr);
-}
-
-u32 CalculateRamScriptChecksum(void)
-{
-    return CalcCRC16WithTable((u8*)(&gSaveBlock1Ptr->ramScript.data), sizeof(gSaveBlock1Ptr->ramScript.data));
-}
-
-void ClearRamScript(void)
-{
-    CpuFill32(0, &gSaveBlock1Ptr->ramScript, sizeof(struct RamScript));
-}
-
-bool32 InitRamScript(u8 *script, u32 scriptSize, u32 mapGroup, u32 mapNum, u32 objectId)
-{
-    struct RamScriptData *scriptData = &gSaveBlock1Ptr->ramScript.data;
-
-    ClearRamScript();
-
-    if (scriptSize > sizeof(scriptData->script))
-        return FALSE;
-
-    scriptData->magic = RAM_SCRIPT_MAGIC;
-    scriptData->mapGroup = mapGroup;
-    scriptData->mapNum = mapNum;
-    scriptData->objectId = objectId;
-    memcpy(scriptData->script, script, scriptSize);
-    gSaveBlock1Ptr->ramScript.checksum = CalculateRamScriptChecksum();
-    return TRUE;
-}
-
-const u8 *GetRamScript(u32 objectId, const u8 *script)
-{
-    struct RamScriptData *scriptData = &gSaveBlock1Ptr->ramScript.data;
-    
-    gRAMScriptPtr = NULL;
-    
-    if (scriptData->magic != RAM_SCRIPT_MAGIC)
-        return script;
-    if (scriptData->mapGroup != gSaveBlock1Ptr->location.mapGroup)
-        return script;
-    if (scriptData->mapNum != gSaveBlock1Ptr->location.mapNum)
-        return script;
-    if (scriptData->objectId != objectId)
-        return script;
-    
-    if (CalculateRamScriptChecksum() != gSaveBlock1Ptr->ramScript.checksum)
-    {
-        ClearRamScript();
-        return script;
-    }
-    else
-    {
-        gRAMScriptPtr = script;
-        return scriptData->script;
-    }
 }

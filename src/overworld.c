@@ -3164,10 +3164,3 @@ static void SpriteCB_LinkPlayer(struct Sprite *sprite)
         sprite->data[7]++;
     }
 }
-
-bool32 CurrentMapHasShadows(void)
-{
-    // Add all conditionals here for maps that shouldn't have shadows
-    // By default only cave maps are excluded from having shadows under object events
-    return (gMapHeader.mapType != MAP_TYPE_UNDERGROUND);
-}

@@ -381,7 +381,7 @@ static const u8 *GetInteractedObjectEventScript(struct MapPosition *position, u3
     gSpecialVar_LastTalked = gObjectEvents[objectEventId].localId;
     gSpecialVar_Facing = direction;
 
-    return GetRamScript(gSpecialVar_LastTalked, GetObjectEventScriptPointerByObjectEventId(objectEventId));
+    return GetObjectEventScriptPointerByObjectEventId(objectEventId);
 }
 
 static const u8 *GetInteractedBackgroundEventScript(struct MapPosition *position, u32 metatileBehavior, u32 direction)

@@ -429,21 +429,6 @@ struct Roamer
     /*0x0E*/ bool8 active;
 };
 
-struct RamScriptData
-{
-    u8 magic;
-    u8 mapGroup;
-    u8 mapNum;
-    u8 objectId;
-    u8 script[995];
-};
-
-struct RamScript
-{
-    u32 checksum;
-    struct RamScriptData data;
-};
-
 struct Mail
 {
     /*0x00*/ u16 words[MAIL_WORDS_COUNT];
@@ -541,7 +526,6 @@ struct SaveBlock1
                struct Mail mail[MAIL_COUNT];
                struct DayCare daycare;
                struct Roamer roamer;
-               struct RamScript ramScript;
                struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
                struct TrainerNameRecord trainerNameRecords[20];
                struct DaycareMon route5DayCareMon;

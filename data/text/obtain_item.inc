@@ -35,13 +35,6 @@ Text_FoundXItems:: @ 81A52DD
 	.string "{PLAYER} found\n"
 	.string "{STR_VAR_1} {STR_VAR_2}(s)!$"
 
-Text_ObtainedTheDecor:: @ 81A52F0
-	.string "Obtained the {STR_VAR_2}!$"
-
 Text_NoRoomForAnotherDecor:: @ 81A5301
 	.string "Too bad! There's no room left for\n"
 	.string "another {STR_VAR_2}…$"
-
-Text_DecorTransferredToPC:: @ 81A532F
-	.string "The {STR_VAR_2} was transferred\n"
-	.string "to the PC.$"

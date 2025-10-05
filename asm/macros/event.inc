@@ -70,13 +70,11 @@
 	.byte \function
 	.endm
 
-	@ Executes a script stored in a default RAM location.
-	.macro gotoram
+	.macro nop0c
 	.byte 0x0c
 	.endm
 
-	@ Terminates script execution and "resets the script RAM".
-	.macro killscript
+	.macro nop0d
 	.byte 0x0d
 	.endm
 	
@@ -513,28 +511,20 @@
 	.2byte \quantity
 	.endm
 
-	@ In FireRed, this command is a nop. (The argument is read, but not used for anything.)
-	.macro adddecor decoration:req
+	.macro nop4b
 	.byte 0x4b
-	.2byte \decoration
 	.endm
 
-	@ In FireRed, this command is a nop. (The argument is read, but not used for anything.)
-	.macro removedecor decoration:req
+	.macro nop4c
 	.byte 0x4c
-	.2byte \decoration
 	.endm
 
-	@ In FireRed, this command is a nop. (The argument is read, but not used for anything.)
-	.macro hasdecor decoration:req
+	.macro nop4d
 	.byte 0x4d
-	.2byte \decoration
 	.endm
 
-	@ In FireRed, this command is a nop. (The argument is read, but not used for anything.)
-	.macro checkdecor decoration:req
+	.macro nop4e
 	.byte 0x4e
-	.2byte \decoration
 	.endm
 
 	@ Applies the movement data at movements to the specified (index) Object. Also closes any standard message boxes that are still open.
@@ -842,6 +832,10 @@
 	multichoice \x, \y, \list, \ignoreBPress, 0, \perRowItems
 	.endm
 	
+	.macro nop70
+	.byte 0x70
+	.endm
+	
 	@ Displays a box containing the sprite for the specified item.
 	.macro drawitempic itemId:req, x:req, y:req
 	.byte 0x71
@@ -850,19 +844,15 @@
 	.byte \y
 	.endm
 	
-	.macro drawbox
+	.macro nop72
 	.byte 0x72
 	.endm
 
-	.macro erasebox byte1:req, byte2:req, byte3:req, byte4:req
+	.macro nop73
 	.byte 0x73
-	.byte \byte1
-	.byte \byte2
-	.byte \byte3
-	.byte \byte4
 	.endm
 
-	.macro drawboxtext
+	.macro nop74
 	.byte 0x74
 	.endm
 
@@ -879,10 +869,8 @@
 	.byte 0x76
 	.endm
 
-	@ Draws an image of the winner of the contest. In FireRed, this command is a nop. (The argument is discarded.)
-	.macro drawcontestwinner a:req
+	.macro nop77
 	.byte 0x77
-	.byte \a
 	.endm
 
 	@ Displays the string at pointer as braille text in a standard message box. The string must be formatted to use braille characters.
@@ -968,11 +956,8 @@
 	.2byte \item
 	.endm
 
-	@ Writes the name of the decoration at index decoration to the specified buffer. In FireRed, this command is a nop.
-	.macro getdecorname out:req, decoration:req
+	.macro nop81
 	.byte 0x81
-	.byte \out
-	.2byte \decoration
 	.endm
 
 	@ Writes the name of the move at index move to the specified buffer.
@@ -1028,28 +1013,23 @@
 	.2byte \word
 	.endm
 
-	@ In FireRed, this command is a nop.
-	.macro plantberrytree
+	.macro nop8a
 	.byte 0x8a
 	.endm
 
-	@ In FireRed, this command sets the byte at 0x03000EA8 to 0x01. I do not know what that means.
-	.macro choosecontestpkmn
+	.macro nop8b
 	.byte 0x8b
 	.endm
 
-	@ In FireRed, this command is a nop.
-	.macro startcontest
+	.macro nop8c
 	.byte 0x8c
 	.endm
 
-	@ In FireRed, this command is a nop.
-	.macro showcontestresults
+	.macro nop8d
 	.byte 0x8d
 	.endm
 
-	@ In FireRed, this command is a nop.
-	.macro contestlinktransfer
+	.macro nop8e
 	.byte 0x8e
 	.endm
 
@@ -1095,8 +1075,7 @@
 	.byte 0x95
 	.endm
 
-	@ In FireRed, this command is a nop.
-	.macro getpricereduction
+	.macro nop96
 	.byte 0x96
 	.endm
 
@@ -1264,13 +1243,11 @@
 	.2byte \y
 	.endm
 
-	@ In Emerald, this command consumes its parameters and does nothing. In FireRed, this command is a nop.
-	.macro addelevmenuitem
+	.macro nopb1
 	.byte 0xb1
 	.endm
 
-	@ In FireRed and Emerald, this command is a nop.
-	.macro showelevmenu
+	.macro nopb2
 	.byte 0xb2
 	.endm
 
@@ -1433,9 +1410,7 @@
 	.byte 0xce
 	.endm
 
-	@ Depending on factors I haven't managed to understand yet, this command may cause script execution to jump to the offset specified by
-	@ the pointer at 0x020375C0.
-	.macro execram
+	.macro nopcf
 	.byte 0xcf
 	.endm
 

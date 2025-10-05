@@ -4,7 +4,7 @@ EventScript_ChooseDestFromOneIsland:: @ 81A8EC5
 	goto_if_ge EventScript_SeviiDestinationsPage1
 	compare VAR_MAP_SCENE_CINNABAR_ISLAND, 4
 	goto_if_ge EventScript_ChooseDestFromOneIslandVermilionAllowed
-	multichoice 19, 6, MULTICHOICE_ISLAND_23, FALSE
+	multichoice 18, 6, MULTICHOICE_ISLAND_23, FALSE
 	switch VAR_RESULT
 	case 0, EventScript_SailToTwoIsland2
 	case 1, EventScript_SailToThreeIsland2
@@ -13,7 +13,7 @@ EventScript_ChooseDestFromOneIsland:: @ 81A8EC5
 	end
 
 EventScript_ChooseDestFromOneIslandVermilionAllowed:: @ 81A8F12
-	multichoice 19, 5, MULTICHOICE_SEAGALLOP_V23, FALSE
+	multichoice 18, 5, MULTICHOICE_SEAGALLOP_V23, FALSE
 	switch VAR_RESULT
 	case 0, EventScript_SailToVermilion2
 	case 1, EventScript_SailToTwoIsland2
@@ -27,7 +27,7 @@ EventScript_ChooseDestFromTwoIsland:: @ 81A8F54
 	goto_if_ge EventScript_SeviiDestinationsPage1
 	compare VAR_MAP_SCENE_CINNABAR_ISLAND, 4
 	goto_if_ge EventScript_ChooseDestFromTwoIslandVermilionAllowed
-	multichoice 19, 6, MULTICHOICE_ISLAND_13, FALSE
+	multichoice 18, 6, MULTICHOICE_ISLAND_13, FALSE
 	switch VAR_RESULT
 	case 0, EventScript_SailToOneIsland2
 	case 1, EventScript_SailToThreeIsland2
@@ -36,7 +36,7 @@ EventScript_ChooseDestFromTwoIsland:: @ 81A8F54
 	end
 
 EventScript_ChooseDestFromTwoIslandVermilionAllowed:: @ 81A8FA1
-	multichoice 19, 5, MULTICHOICE_SEAGALLOP_V13, FALSE
+	multichoice 18, 5, MULTICHOICE_SEAGALLOP_V13, FALSE
 	switch VAR_RESULT
 	case 0, EventScript_SailToVermilion2
 	case 1, EventScript_SailToOneIsland2
@@ -70,7 +70,7 @@ EventScript_ChooseDestFromIsland:: @ 81A900F
 	goto_if_ge EventScript_SeviiDestinationsPage1
 	compare VAR_MAP_SCENE_CINNABAR_ISLAND, 4
 	goto_if_ge EventScript_ChooseDestFromIslandVermilionAllowed
-	multichoice 19, 6, MULTICHOICE_ISLAND_12, FALSE
+	multichoice 18, 6, MULTICHOICE_ISLAND_12, FALSE
 	switch VAR_RESULT
 	case 0, EventScript_SailToOneIsland2
 	case 1, EventScript_SailToTwoIsland2
@@ -79,7 +79,7 @@ EventScript_ChooseDestFromIsland:: @ 81A900F
 	end
 
 EventScript_ChooseDestFromIslandVermilionAllowed:: @ 81A905C
-	multichoice 19, 5, MULTICHOICE_SEAGALLOP_V12, FALSE
+	multichoice 18, 5, MULTICHOICE_SEAGALLOP_V12, FALSE
 	switch VAR_RESULT
 	case 0, EventScript_SailToVermilion2
 	case 1, EventScript_SailToOneIsland2

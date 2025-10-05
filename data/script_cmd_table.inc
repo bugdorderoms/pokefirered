@@ -1,8 +1,8 @@
 	.align 2
 
 gScriptCmdTable:: @ 815F9B4
-	.4byte ScrCmd_StartPlayerFindItemAnim
-	.4byte ScrCmd_EndPlayerFindItemAnim
+	.4byte ScrCmd_startplayerfinditemanim
+	.4byte ScrCmd_endplayerfinditemanim
 	.4byte ScrCmd_end
 	.4byte ScrCmd_return
 	.4byte ScrCmd_call
@@ -13,8 +13,8 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_callstd
 	.4byte ScrCmd_gotostd_if
 	.4byte ScrCmd_callstd_if
-	.4byte ScrCmd_gotoram
-	.4byte ScrCmd_killscript
+	.4byte ScrCmd_nop
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_jumpifcantgivenick
 	.4byte ScrCmd_loadword
 	.4byte ScrCmd_loadbyte
@@ -208,7 +208,7 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_comparestattoword
 	.4byte ScrCmd_nop
 	.4byte ScrCmd_nop
-	.4byte ScrCmd_execram
+	.4byte ScrCmd_nop
 	.4byte ScrCmd_setworldmapflag
 	.4byte ScrCmd_warpteleport2
 	.4byte ScrCmd_nop

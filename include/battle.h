@@ -198,10 +198,10 @@ struct ProtectStruct
              u8 flinchImmobility:1;
              u8 usesBouncedMove:1;
              u8 usedGravityBannedMove:1;
-             u8 opportunistState:2; // 2 - to copy stats. 1 - stats copied (do not repeat). 0 - no stats to copy
+             u8 helpingHandUses:3;
              u8 usedAllySwitch:1;
-             u8 unused:1;
-    /*0x0D*/ u8 helpingHandUses;
+    /*0x0D*/ u8 opportunistState:2; // 2 - to copy stats. 1 - stats copied (do not repeat). 0 - no stats to copy
+             u8 unused:6;
 };
 
 extern struct ProtectStruct gProtectStructs[MAX_BATTLERS_COUNT];
