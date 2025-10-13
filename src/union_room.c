@@ -3640,19 +3640,19 @@ static s32 UnionRoomGetPlayerInteractionResponse(struct UnkStruct_Main0 * main0,
         {
         case ACTIVITY_BATTLE:
             // Battling
-            StringExpandPlaceholders(gStringVar4, gUnknown_8458758[playerGender][RandomMax(4)]);
+            StringExpandPlaceholders(gStringVar4, gUnknown_8458758[playerGender][Random() % 4]);
             break;
         case ACTIVITY_TRADE:
             // Trading
-            StringExpandPlaceholders(gStringVar4, gUnknown_8458A78[playerGender][RandomMax(2)]);
+            StringExpandPlaceholders(gStringVar4, gUnknown_8458A78[playerGender][Random() % 2]);
             break;
         case ACTIVITY_CHAT:
             // Chatting
-            StringExpandPlaceholders(gStringVar4, gUnknown_84588BC[playerGender][RandomMax(4)]);
+            StringExpandPlaceholders(gStringVar4, gUnknown_84588BC[playerGender][Random() % 4]);
             break;
         case ACTIVITY_CARD:
             // Sharing cards
-            StringExpandPlaceholders(gStringVar4, gUnknown_84589AC[playerGender][RandomMax(2)]);
+            StringExpandPlaceholders(gStringVar4, gUnknown_84589AC[playerGender][Random() % 2]);
             break;
         default:
             // Unknown
@@ -3677,7 +3677,7 @@ static void TradeBoardPrintItemInfo(u8 windowId, u8 y, struct GFtgtGname * gname
     }
     else
     {
-        BlitMoveInfoIcon(windowId, type + 1, 0x44, y);
+        BlitMoveInfoIcon(windowId, MOVE_INFO_MOVE_TYPE_ICON + type, 0x44, y);
         UR_AddTextPrinterParameterized(windowId, 2, gSpeciesInfo[species].name, 0x76, y, colorIdx);
         ConvertIntToDecimalStringN(level_t, level, STR_CONV_MODE_LEFT_ALIGN, 3);
         UR_AddTextPrinterParameterized(windowId, 2, level_t, GetStringRightAlignXOffset(2, level_t, 218), y, colorIdx);

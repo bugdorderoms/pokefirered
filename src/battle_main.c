@@ -2913,7 +2913,13 @@ static void HandleTurnActionSelectionState(void)
                         {
                             moveInfo.moves[i] = gBattleMons[battlerId].moves[i];
                             moveInfo.currentPp[i] = gBattleMons[battlerId].pp[i];
-                            moveInfo.maxPp[i] = CalculatePPWithBonus(gBattleMons[battlerId].moves[i], gBattleMons[battlerId].ppBonuses, i);
+                            moveInfo.maxPp[i] = CalculatePPWithBonus(moveInfo.moves[i], gBattleMons[battlerId].ppBonuses, i);
+                            
+#if BATTLE_MENU_REAL_MOVE_TYPE
+                            moveInfo.moveTypes[i] = GetBattlerMoveType(battlerId, moveInfo.moves[i]);
+#else
+                            moveInfo.moveTypes[i] = gBattleMoves[moveInfo.moves[i]].type;
+#endif
                         }
                         BtlController_EmitChooseMove(battlerId, BUFFER_A, IsDoubleBattleForBattler(BATTLE_OPPOSITE(battlerId)), FALSE, &moveInfo);
                         MarkBattlerForControllerExec(battlerId);
@@ -4254,7 +4260,7 @@ static void HandleAction_ThrowBait(void)
     gBattlerAttacker = gCurrentTurnActionBattlerId;
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
-    gBattleStruct->safariPkblThrowCounter += RandomUniform(RNG_NONE, 2, 6);
+    gBattleStruct->safariPkblThrowCounter += RandomUniform(RNG_SAFARI_BAIT_THROW, 2, 6);
     if (gBattleStruct->safariPkblThrowCounter > 6)
         gBattleStruct->safariPkblThrowCounter = 6;
     gBattleStruct->safariGoNearCounter = 0;
@@ -4270,7 +4276,7 @@ static void HandleAction_ThrowRock(void)
     gBattlerAttacker = gCurrentTurnActionBattlerId;
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
-    gBattleStruct->safariGoNearCounter += RandomUniform(RNG_NONE, 2, 6);
+    gBattleStruct->safariGoNearCounter += RandomUniform(RNG_SAFARI_ROCK_THROW, 2, 6);
     if (gBattleStruct->safariGoNearCounter > 6)
         gBattleStruct->safariGoNearCounter = 6;
     gBattleStruct->safariPkblThrowCounter = 0;
@@ -4315,7 +4321,7 @@ static void HandleAction_NothingIsFainted(void)
     gCurrentTurnActionBattlerId = gBattlerByTurnOrder[gCurrentTurnActionNumber];
     gCurrentActionFuncId = gActionsByTurnOrder[gCurrentTurnActionNumber];
     gHitMarker &= ~(HITMARKER_DESTINYBOND | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_ATTACKSTRING_PRINTED | HITMARKER_NO_PPDEDUCT | HITMARKER_PASSIVE_DAMAGE
-    | HITMARKER_OBEYS | HITMARKER_SYNCHRONISE_EFFECT | HITMARKER_CHARGING | HITMARKER_IGNORE_DISGUISE);
+                  | HITMARKER_OBEYS | HITMARKER_SYNCHRONISE_EFFECT | HITMARKER_CHARGING | HITMARKER_IGNORE_DISGUISE);
 }
 
 static void HandleAction_ActionFinished(void)

@@ -2066,14 +2066,14 @@ static void AnimWishStar_Step(struct Sprite *sprite)
 void AnimMiniTwinklingStar(struct Sprite *sprite)
 {
     s32 y;
-    u32 rand = RandomMax(4);
+    u32 rand = Random() % 4;
 
     if (rand == 0)
         sprite->oam.tileNum += 4;
     else
         sprite->oam.tileNum += 5;
 
-    y = RandomMax(8);
+    y = Random() % 8;
     if (y > 3)
         y = -y;
 
@@ -2871,7 +2871,7 @@ void AnimFlatterConfetti(struct Sprite *sprite)
     int rand1 = Random() & 0x1FF;
     int rand2 = Random() & 0xFF;
 
-    sprite->oam.tileNum += RandomMax(12);
+    sprite->oam.tileNum += Random() % 12;
 
     if (rand1 & 1)
         sprite->data[0] = 0x5E0 + rand1;

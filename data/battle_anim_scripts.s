@@ -1373,6 +1373,77 @@ gGeneralAnim_WonderRoom::
 	call WonderRoom
 	end
 
+@ Credits: pokeemerald-expansion and Blackuser
+gGeneralAnim_TeraCharge::
+	loadspritegfx ANIM_TAG_FOCUS_ENERGY
+	loadspritepal ANIM_TAG_WHIP_HIT @ Green color
+	loadspritepal ANIM_TAG_SWEAT_BEAD @ Blue color
+	loadspritepal ANIM_TAG_PAW_PRINT @ Yellow color
+	monbg ANIM_ATK_SIDE
+	setalpha 12, 8
+	playsewithpan SE_M_DRAGON_RAGE, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 0, 6, 0, 11, RGB_RED
+	call RainbowBuffEffect
+	call RainbowBuffEffect
+	call RainbowBuffEffect
+	call RainbowBuffEffect
+	call RainbowBuffEffect
+	waitforvisualfinish
+	unloadspritegfx ANIM_TAG_FOCUS_ENERGY
+	unloadspritepal ANIM_TAG_WHIP_HIT
+	unloadspritepal ANIM_TAG_SWEAT_BEAD
+	unloadspritepal ANIM_TAG_PAW_PRINT
+	loadspritegfx ANIM_TAG_TERA_CRYSTAL
+	loadspritegfx ANIM_TAG_TERA_SHATTER
+	loadspritegfx ANIM_TAG_TERA_SYMBOL
+	loadspritegfx ANIM_TAG_SPARKLE_6
+	playsewithpan SE_M_SOLAR_BEAM, SOUND_PAN_ATTACKER
+	createsprite gTeraCrystalSpriteTemplate, ANIM_ATTACKER, 41, 0, 0, ANIM_ATTACKER, TRUE
+	delay 20
+	createvisualtask AnimTask_BlendExcept, 5, F_PAL_NO_EXCEPTIONS, 2, 0, 16, RGB_WHITE
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_TERA_CRYSTAL, 2, 0, 16, RGB_WHITE
+	waitforvisualfinish
+	clearmonbg ANIM_ATK_SIDE
+	createvisualtask AnimTask_MegaEvolutionUpdateAttackerSprite, 5
+	createvisualtask AnimTask_BlendExcept, 5, F_PAL_NO_EXCEPTIONS, 2, 16, 16, RGB_WHITE
+	delay 1
+	monbg ANIM_ATK_SIDE
+	createsprite gTeraCrystalSpreadSpriteTemplate, ANIM_TARGET, 0, 0, -5, 8
+	createsprite gTeraCrystalSpreadSpriteTemplate, ANIM_TARGET, 0, 1, 5, 9
+	createsprite gTeraCrystalSpreadSpriteTemplate, ANIM_TARGET, 0, 2, 5, -8
+	createsprite gTeraCrystalSpreadSpriteTemplate, ANIM_TARGET, 0, 2, -5, -8
+	createsprite gTeraCrystalSpreadSpriteTemplate, ANIM_TARGET, 0, 1, -10, 0
+	createsprite gTeraCrystalSpreadSpriteTemplate, ANIM_TARGET, 0, 0, 10, 0
+	playsewithpan SE_M_BRICK_BREAK, SOUND_PAN_ATTACKER
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendExcept, 5, F_PAL_NO_EXCEPTIONS, 2, 16, 0, RGB_WHITE
+	createvisualtask AnimTask_HorizontalShake, 5, ANIM_ATTACKER, 5, 14
+	createvisualtask SoundTask_PlayCryHighPitch, 1, ANIM_ATTACKER
+	waitforvisualfinish
+	createsprite gTeraSymbolSpriteTemplate, ANIM_ATTACKER, 41, 0, 0, ANIM_ATTACKER, TRUE
+	delay 2
+	call TeraSparkles
+	call TeraSparkles
+	waitforvisualfinish
+	clearmonbg ANIM_ATK_SIDE
+	blendoff
+	end
+
+TeraSparkles::
+	createsprite gSparkleVortexSpriteTemplate, ANIM_ATTACKER, 7, 0, 12, 528, 30, 13, 50, ANIM_ATTACKER
+	delay 2
+	createsprite gSparkleVortexSpriteTemplate, ANIM_ATTACKER, 7, 0, 0, 480, 20, 16, -46, ANIM_ATTACKER
+	delay 2
+	createsprite gSparkleVortexSpriteTemplate, ANIM_ATTACKER, 7, 0, 1, 576, 20, 8, 42, ANIM_ATTACKER
+	delay 2
+	createsprite gSparkleVortexSpriteTemplate, ANIM_ATTACKER, 7, 0, 15, 400, 25, 11, -42, ANIM_ATTACKER
+	delay 2
+	createsprite gSparkleVortexSpriteTemplate, ANIM_ATTACKER, 7, 0, 12, 512, 25, 16, 46, ANIM_ATTACKER
+	delay 2
+	createsprite gSparkleVortexSpriteTemplate, ANIM_ATTACKER, 7, 0, 1, 464, 30, 15, -50, ANIM_ATTACKER
+	delay 2
+	return
+
 @@@@@@@@@@@@@@@@@@@@@@
 @ SPECIAL ANIMATIONS @
 @@@@@@@@@@@@@@@@@@@@@@

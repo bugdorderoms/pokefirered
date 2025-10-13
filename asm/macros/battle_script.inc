@@ -1372,6 +1372,10 @@
 	.macro switchinabilities battler:req
 	various \battler, VARIOUS_SWITCHIN_ABILITIES
 	.endm
+	
+	.macro terastallizationabilities battler:req
+	various \battler, VARIOUS_TERASTALLIZATION_ABILITIES
+	.endm
 
 	.macro tryendneutralizinggas battler:req
 	various \battler, VARIOUS_TRY_END_NEUTRALIZING_GAS
@@ -1505,6 +1509,10 @@
 	.macro jumpifskydropfails battler:req, ptr:req
 	various \battler, VARIOUS_JUMP_IF_SKY_DROP_FAILS
 	.4byte \ptr
+	.endm
+	
+	.macro tryterastallizationformchange battler:req
+	various \battler, VARIOUS_TRY_TERASTALLIZATION_FORM_CHANGE
 	.endm
 	
 @ callfunction macros

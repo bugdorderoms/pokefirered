@@ -757,6 +757,7 @@ struct moveWithPP {
 #define SpAttackIV(iv) SpAttackIV_(__LINE__, iv)
 #define SpDefenseIV(iv) SpDefenseIV_(__LINE__, iv)
 #define SpeedIV(iv) SpeedIV_(__LINE__, iv)
+#define TeraType(type) TeraType_(__LINE__, type)
 
 void OpenPokemon(u32 sourceLine, u32 side, u32 species, u32 gender);
 void ClosePokemon(u32 sourceLine);
@@ -784,6 +785,7 @@ void DefenseIV_(u32 sourceLine, u32 defenseIV);
 void SpAttackIV_(u32 sourceLine, u32 spAttackIV);
 void SpDefenseIV_(u32 sourceLine, u32 spDefenseIV);
 void SpeedIV_(u32 sourceLine, u32 speedIV);
+void TeraType_(u32 sourceLine, u32 type);
 
 #define PLAYER_PARTY (gBattleTestRunnerState->data.recordedBattle.playerParty)
 #define OPPONENT_PARTY (gBattleTestRunnerState->data.recordedBattle.opponentParty)

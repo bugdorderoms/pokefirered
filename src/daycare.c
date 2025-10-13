@@ -1418,7 +1418,7 @@ static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare, u32 fatherI
     // Both parents have a power item hold, choose one to inherit at random
     if (fatherHasPowerItem && motherHasPowerItem)
     {
-        i = RandomMax(DAYCARE_MON_COUNT); // Parent
+        i = RandomUniform(RNG_POWER_ITEM_IV_INHERIT, 0, DAYCARE_MON_COUNT - 1); // Parent
         
         SET_IV_TO_INHERIT(i, i == 0 ? motherItemHoldEffectParam : fatherItemHoldEffectParam);
         selectedIvsCount++;
@@ -1439,11 +1439,11 @@ static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare, u32 fatherI
     {
         do
         {
-            iv = RandomMax(NUM_STATS);
+            iv = RandomUniform(RNG_IV_INHERIT_STAT, 0, NUM_STATS - 1);
 
         } while (unavailableIvs & Bit(iv));
         
-        SET_IV_TO_INHERIT(RandomMax(DAYCARE_MON_COUNT), iv);
+        SET_IV_TO_INHERIT(RandomUniform(RNG_IV_INHERIT_PARENT, 0, DAYCARE_MON_COUNT - 1), iv);
     }
 
     // Set each of inherited IVs on the egg mon
@@ -1461,7 +1461,7 @@ static u32 GetParentSlotToInheritNature(struct DayCare *daycare)
     
     // Both parents holding everstone, chose one at random
     if (motherHasEverstone && fatherHasEverstone)
-        return RandomMax(DAYCARE_MON_COUNT);
+        return RandomUniform(RNG_NATURE_INHERIT, 0, DAYCARE_MON_COUNT - 1);
     else if (motherHasEverstone) // The mother is holding an Everstone
         return 0;
     else if (fatherHasEverstone) // The father is holding an Everstone
@@ -1478,12 +1478,12 @@ static void InheritAbilitySlot(struct Pokemon *egg, struct BoxPokemon *mon)
     
     if (!hasHidddenAbility)
     {
-        if (RandomPercentage(RNG_NONE, 80))
+        if (RandomPercentage(RNG_ABILITY_INHERIT, 80))
             abilitySlot = GetBoxMonData(mon, MON_DATA_ABILITY_NUM);
     }
     else
     {
-        if (RandomPercentage(RNG_NONE, 60))
+        if (RandomPercentage(RNG_HIDDEN_ABILITY_INHERIT, 60))
             abilityHidden = hasHidddenAbility;
     }
     
@@ -1513,7 +1513,7 @@ static void InheritPokeball(struct Pokemon *egg, struct BoxPokemon *father, stru
     u32 motherPokeball = CorrectPokeballForBreeding(GetBoxMonData(mother, MON_DATA_POKEBALL));
     
     if (SpeciesToNationalPokedexNum(GetBoxMonData(father, MON_DATA_SPECIES)) == SpeciesToNationalPokedexNum(GetBoxMonData(mother, MON_DATA_SPECIES)))
-        eggPokeball = RandomPercentage(RNG_NONE, 50) ? fatherPokeball : motherPokeball;
+        eggPokeball = RandomPercentage(RNG_POKEBALL_INHERIT, 50) ? fatherPokeball : motherPokeball;
     else
         eggPokeball = motherPokeball;
     
@@ -1818,7 +1818,7 @@ static void CreateRandomEggShardSprite(void)
     gSprites[spriteId].data[2] = sEggShardVelocities[sEggHatchData->eggShardVelocityID][1];
     gSprites[spriteId].data[3] = 100;
     
-    StartSpriteAnim(&gSprites[spriteId], RandomMax(4));
+    StartSpriteAnim(&gSprites[spriteId], Random() % 4);
     
     sEggHatchData->eggShardVelocityID++;
 }

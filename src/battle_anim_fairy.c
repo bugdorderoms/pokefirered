@@ -221,7 +221,7 @@ static void AnimPinkHeart(struct Sprite *sprite)
             {
                 SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
                 
-                sprite->data[3] = RandomMax(180);
+                sprite->data[3] = Random() % 180;
                 sprite->callback = AnimPinkHeart_Step;
             }
     }

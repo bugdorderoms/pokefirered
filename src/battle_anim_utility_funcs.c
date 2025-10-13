@@ -784,7 +784,7 @@ void AnimTask_SetAnimAttackerAndTargetForEffectTgt(u32 taskId)
 // No args.
 void AnimTask_SetAnimTargetFromArg(u32 taskId)
 {
-    gBattleAnimTarget = gBattleSpritesDataPtr->animationData->animArg >> 8;;
+    gBattleAnimTarget = gBattleSpritesDataPtr->animationData->animArg >> 8;
     DestroyAnimVisualTask(taskId);
 }
 

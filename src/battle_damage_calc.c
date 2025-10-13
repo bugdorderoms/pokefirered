@@ -580,7 +580,7 @@ static inline u32 GetSupremeOverlordModifier(u32 battlerId)
 
 static inline u32 CalcMoveBasePowerModifiers(struct DamageCalc *damageStruct, u32 basePower)
 {
-    u32 i;
+    u32 i, finalBasePower;
     u32 attacker = damageStruct->attacker, defender = damageStruct->defender;
     u32 move = damageStruct->move;
     u32 moveEffect = gBattleMoves[move].effect;
@@ -816,7 +816,18 @@ static inline u32 CalcMoveBasePowerModifiers(struct DamageCalc *damageStruct, u3
     if (gBattleStruct->meFirstBoost)
         modifier = uq4_12_mul(modifier, UQ_4_12(1.5));
     
-    return uq4_12_multiply_by_int_half_down(modifier, basePower);
+    finalBasePower = uq4_12_multiply_by_int_half_down(modifier, basePower);
+    
+    // Terastallization boosts weak, non-priority, non-multi hit moves after modifiers to 60 BP.
+    if (finalBasePower < 60 && GetActiveGimmick(attacker) == GIMMICK_TERA && gBattleMoves[move].power > 1 && !(gBattleMoves[move].strikeCount > 1)
+    && GetMovePriority(attacker, move) == 0 && moveEffect != EFFECT_MULTI_HIT && moveEffect != EFFECT_ERUPTION && moveEffect != EFFECT_WRING_OUT)
+    {
+        u32 teraType = GetBattlerTeraType(attacker);
+        
+        if (damageStruct->moveType == teraType || (teraType == TYPE_STELLAR && IsTypeStellarBoosted(attacker, damageStruct->moveType)))
+            finalBasePower = 60;
+    }
+    return finalBasePower;
 }
 
 ////////////////////////
@@ -881,6 +892,33 @@ static inline u32 GetSameTypeAttackBonusDamageModifier(struct DamageCalc *damage
             return UQ_4_12(2.0);
         else
             return UQ_4_12(1.5);
+    }
+    return UQ_4_12(1.0);
+}
+
+static inline u32 GetTeraTypeDamageModifier(struct DamageCalc *damageStruct)
+{
+    if (!(damageStruct->flags & FLAG_CONFUSION_DAMAGE))
+    {
+        u32 teraType = GetBattlerTeraType(damageStruct->attacker);
+        bool32 isOfBaseType = IsBattlerOfBaseType(damageStruct->attacker, damageStruct->moveType);
+        
+        // Base and Tera type.
+        if (isOfBaseType && damageStruct->moveType == teraType)
+        {
+            if (damageStruct->atkAbility == ABILITY_ADAPTABILITY)
+                return UQ_4_12(2.25);
+            else
+                return UQ_4_12(2.0);
+        }
+        // Base or Tera type only.
+        else if ((!isOfBaseType && damageStruct->moveType == teraType) || (isOfBaseType && damageStruct->moveType != teraType))
+        {
+            if (damageStruct->atkAbility == ABILITY_ADAPTABILITY)
+                return UQ_4_12(2.0);
+            else
+                return UQ_4_12(1.5);
+        }
     }
     return UQ_4_12(1.0);
 }
@@ -1069,7 +1107,12 @@ static inline s32 CalculateDamageInternal(struct DamageCalc *damageStruct, u32 b
         damage *= 100 - RandomUniform(RNG_DAMAGE_MODIFIER, 0, 15);
         damage /= 100;
     }
-    DAMAGE_APPLY_MODIFIER(GetSameTypeAttackBonusDamageModifier(damageStruct));
+    
+    if (GetActiveGimmick(damageStruct->attacker) == GIMMICK_TERA)
+        DAMAGE_APPLY_MODIFIER(GetTeraTypeDamageModifier(damageStruct));
+    else
+        DAMAGE_APPLY_MODIFIER(GetSameTypeAttackBonusDamageModifier(damageStruct));
+    
     DAMAGE_APPLY_MODIFIER(damageStruct->effectiveness);
     DAMAGE_APPLY_MODIFIER(GetBurnDamageModifier(damageStruct));
     DAMAGE_APPLY_MODIFIER(GetOthersDamageModifier(damageStruct));
@@ -1092,7 +1135,7 @@ static s32 CalculateDamage(struct DamageCalc *damageStruct, u32 basePower, bool3
             damage = gBattleMons[damageStruct->attacker].level;
             break;
         case EFFECT_PSYWAVE:
-            damage = (gBattleMons[damageStruct->attacker].level * (RandomMax(101) + 50)) / 100;
+            damage = (gBattleMons[damageStruct->attacker].level * RandomUniform(RNG_PSYWAVE, 50, 150)) / 100;
             break;
         case EFFECT_SUPER_FANG:
             damage = gBattleMons[damageStruct->defender].hp / 2;
@@ -1191,6 +1234,10 @@ static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 d
 {
     u32 mod = GetTypeModifier(moveType, defenderType);
     
+    // Check Stellar type on terastallized target
+    if (moveType == TYPE_STELLAR && GetActiveGimmick(defender) == GIMMICK_TERA)
+        mod = TYPE_MUL_SUPER_EFFECTIVE;
+    
     // Check Foresight and Scrappy on Ghost types
     if ((moveType == TYPE_FIGHTING || moveType == TYPE_NORMAL) && defenderType == TYPE_GHOST && mod == TYPE_MUL_NO_EFFECT && (move == MOVE_GLARE
     || (gBattleMons[defender].status2 & STATUS2_FORESIGHT) || (!forAnticipation && (atkAbility == ABILITY_SCRAPPY || atkAbility == ABILITY_MINDS_EYE))))
@@ -1232,7 +1279,7 @@ static u32 CalcTypeEffectivenessMultiplierInternal(u32 move, u32 moveType, u32 a
     u32 defAbility;
     u32 types[3];
     
-    GetBattlerTypes(defender, types);
+    GetBattlerTypes(defender, FALSE, types);
     
     MulByTypeEffectiveness(move, moveType, atkAbility, defender, types[0], &multiplier, setAbilityFlags, forAnticipation, flags);
     
@@ -1348,7 +1395,7 @@ u32 AI_GetSwitchInTypeMatchup(struct Pokemon *mon, u32 playerBattler)
     u16 flags;
     u32 types[3];
     
-    GetBattlerTypes(playerBattler, types);
+    GetBattlerTypes(playerBattler, FALSE, types);
     
     // Overrrides the opponent's mon data with the ones of its party for the calculation
     CopyPokemonToBattleMon(battler, mon, &gBattleMons[battler], TRUE);

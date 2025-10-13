@@ -450,7 +450,7 @@ static void PrintMonStats(u32 taskId)
 #if HIDDEN_POWER_TYPE
     // Print The Hidden Power Type
     if (!isEgg)
-        BlitMoveInfoIcon(WIN_HIDDEN_POWER_TYPE, GetHiddenPowerType(mon) + 1, HIDDEN_POWER_PRINTER_X_POS, PRINTER_Y_POS);
+        BlitMoveInfoIcon(WIN_HIDDEN_POWER_TYPE, MOVE_INFO_MOVE_TYPE_ICON + GetHiddenPowerType(mon), HIDDEN_POWER_PRINTER_X_POS, PRINTER_Y_POS);
 #endif
     
     // Print The Mon Nickname

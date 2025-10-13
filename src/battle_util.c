@@ -2910,6 +2910,20 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                                 }
                             }
                             break;
+                        case ABILITY_TERA_SHIFT:
+                            {
+                                u32 newSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_SWITCH_IN);
+                                
+                                if (newSpecies)
+                                {
+                                    DoBattleFormChange(battler, newSpecies, FALSE, TRUE, TRUE);
+                                    gBattleScripting.animArg1 = B_ANIM_FORM_CHANGE;
+                                    gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TRANSFORMED;
+                                    BattleScriptPushCursorAndCallback(BattleScript_ZenModeActivatesPause);
+                                    ++effect;
+                                }
+                                break;
+                            }
                         case ABILITY_ANTICIPATION:
                             if (!gSpecialStatuses[battler].switchInAbilityDone)
                             {
@@ -3615,8 +3629,8 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             break;
                         case ABILITY_COLOR_CHANGE:
                             if (BattlerTurnDamaged(battler) && gCurrentMove != MOVE_STRUGGLE && GetBattleMoveSplit(gCurrentMove) != SPLIT_STATUS && IsBattlerAlive(battler)
-                            && !IsBattlerOfType(battler, moveType) && moveType != TYPE_MYSTERY && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
-                            && IS_MULTIHIT_FINAL_STRIKE)
+                            && !IsBattlerOfType(battler, moveType) && moveType != TYPE_MYSTERY && moveType != TYPE_STELLAR && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
+                            && IS_MULTIHIT_FINAL_STRIKE && GetActiveGimmick(battler) != GIMMICK_TERA)
                             {
                                 SetBattlerType(battler, moveType);
                                 BattleScriptCall(BattleScript_ColorChangeActivates);
@@ -3697,9 +3711,12 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_CURSED_BODY:
-                            if (RandomPercentage(RNG_CURSED_BODY, 30) && BattlerTurnDamaged(battler) && IsBattlerAlive(gBattlerAttacker)
-                            && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && TryDisableMove(gBattlerAttacker, gCurrMovePos, gCurrentMove))
+                            if (RandomPercentage(RNG_CURSED_BODY, 30) && BattlerTurnDamaged(battler) && IsBattlerAlive(gBattlerAttacker) && gCurrentMove != MOVE_STRUGGLE
+                            && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && !gDisableStructs[gBattlerAttacker].disabledMove
+                            && !ABILITY_ON_SIDE(gBattlerAttacker, ABILITY_AROMA_VEIL))
                             {
+                                gDisableStructs[gBattlerAttacker].disabledMove = gCurrentMove;
+                                gDisableStructs[gBattlerAttacker].disableTimer = 4;
                                 BattleScriptCall(BattleScript_CursedBodyActivation);
                                 ++effect;
                             }
@@ -3972,6 +3989,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
                             ++effect;
                         }
+                        break;
                     }
                     case ABILITY_FLOWER_GIFT:
                     {
@@ -3983,6 +4001,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
                             ++effect;
                         }
+                        break;
                     }
                     case ABILITY_ICE_FACE:
                         if (gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].allowedToChangeFormInWeather)
@@ -4013,6 +4032,40 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                 break;
             case ABILITYEFFECT_ON_TERRAIN: // abilities that activate when the terrain changes
                 gBattleScripting.battler = battler;
+                break;
+            case ABILITYEFFECT_ON_TERASTALLIZATION:
+                switch (ability)
+                {
+                    case ABILITY_EMBODY_ASPECT:
+                    {
+                        u32 statId = STAT_HP;
+                        
+                        switch (gBattleMons[battler].species)
+                        {
+                            case SPECIES_OGERPON_TEAL_MASK_TERA:
+                                statId = STAT_SPEED;
+                                break;
+                            case SPECIES_OGERPON_WELLSPRING_MASK_TERA:
+                                statId = STAT_SPDEF;
+                                break;
+                            case SPECIES_OGERPON_HEARTHFLAME_MASK_TERA:
+                                statId = STAT_ATK;
+                                break;
+                            case SPECIES_OGERPON_CORNERSTONE_MASK_TERA:
+                                statId = STAT_DEF;
+                                break;
+                        }
+                        
+                        if (statId != STAT_HP && CompareStat(battler, statId, MAX_STAT_STAGES, CMP_NOT_EQUAL))
+                        {
+                            SetStatChanger(statId, +1);
+                            gLastUsedItem = gBattleMons[battler].item;
+                            BattleScriptCall(BattleScript_EmbodyAspectActivates);
+                            ++effect;
+                        }
+                        break;
+                    }
+                }
                 break;
         }
     }
@@ -4221,7 +4274,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battlerId, bool8 moveTurn)
                     if (i != 5)
                     {
                         do
-                            i = RandomMax(NUM_STATS - 1);
+                            i = Random() % (NUM_STATS - 1);
                         while (!CompareStat(battlerId, STAT_ATK + i, MAX_STAT_STAGES, CMP_NOT_EQUAL));
                         PrepareStatBuffer(gBattleTextBuff1, i + 1);
                         gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
@@ -4763,14 +4816,14 @@ u32 IsMonDisobedient(void)
         
         if (calc == MOVE_LIMITATION_ALL_MOVES_MASK) // all moves cannot be used
         {
-            gBattleCommunication[MULTISTRING_CHOOSER] = RandomMax(ARRAY_COUNT(gInobedientStringIds)); // Choose a random string to print
+            gBattleCommunication[MULTISTRING_CHOOSER] = Random() % ARRAY_COUNT(gInobedientStringIds); // Choose a random string to print
             gBattlescriptCurrInstr = BattleScript_MoveUsedLoafingAround;
             return 1;
         }
         else // use a random move
         {
             do
-                gCurrMovePos = gChosenMovePos = RandomMax(MAX_MON_MOVES);
+                gCurrMovePos = gChosenMovePos = Random() % MAX_MON_MOVES;
             while (Bit(gCurrMovePos) & calc);
             
             gCalledMove = gBattleMons[gBattlerAttacker].moves[gCurrMovePos];
@@ -4799,7 +4852,7 @@ u32 IsMonDisobedient(void)
         }
         else
         {
-            gBattleCommunication[MULTISTRING_CHOOSER] = RandomMax(ARRAY_COUNT(gInobedientStringIds)); // Choose a random string to print
+            gBattleCommunication[MULTISTRING_CHOOSER] = Random() % ARRAY_COUNT(gInobedientStringIds); // Choose a random string to print
             gBattlescriptCurrInstr = BattleScript_MoveUsedLoafingAround;
             return 1;
         }
@@ -4854,36 +4907,32 @@ void SetIllusionMon(u32 battler, bool32 canDisguiseAsAlly)
     struct Pokemon *party = GetBattlerParty(battler);
     u32 id;
     
-    gBattleStruct->battlers[battler].illusion.set = TRUE;
+    gBattleStruct->battlers[battler].illusionState = ILLUSION_STATE_OFF;
 
     id = GetPartyMonIdForIllusion(battler, party, GetBattlerSide(battler) == B_SIDE_PLAYER ? gPlayerPartyCount : gEnemyPartyCount, &party[gBattlerPartyIndexes[battler]], canDisguiseAsAlly);
     
     if (id != PARTY_SIZE)
     {
-        gBattleStruct->battlers[battler].illusion.on = TRUE;
-        gBattleStruct->battlers[battler].illusion.broken = FALSE;
-        gBattleStruct->battlers[battler].illusion.partyId = id;
-        gBattleStruct->battlers[battler].illusion.mon = &party[id];
+        gBattleStruct->battlers[battler].illusionState = ILLUSION_STATE_ON;
+        gBattleStruct->battlers[battler].illusionMon = &party[id];
     }
 }
 
 static struct Pokemon *GetIllusionMonPtr(u32 battler)
 {
-    if (gBattleStruct->battlers[battler].illusion.broken)
-        return NULL;
-    
-    if (!gBattleStruct->battlers[battler].illusion.set)
+    if (gBattleStruct->battlers[battler].illusionState == ILLUSION_STATE_NOT_SET)
         SetIllusionMon(battler, FALSE);
     
-    if (!gBattleStruct->battlers[battler].illusion.on)
+    if (gBattleStruct->battlers[battler].illusionState != ILLUSION_STATE_ON)
         return NULL;
     
-    return gBattleStruct->battlers[battler].illusion.mon;
+    return gBattleStruct->battlers[battler].illusionMon;
 }
 
 void ClearIllusionMon(u32 battler)
 {
-    memset(&gBattleStruct->battlers[battler].illusion, 0, sizeof(gBattleStruct->battlers[battler].illusion));
+    gBattleStruct->battlers[battler].illusionState = ILLUSION_STATE_NOT_SET;
+    gBattleStruct->battlers[battler].illusionMon = NULL;
 }
 
 bool32 TryRemoveIllusion(u32 battler)
@@ -5850,7 +5899,8 @@ bool32 TryTransformIntoBattler(u32 battler1, u32 battler2)
     u32 i, oldAbility;
     
     if (!(gBattleMons[battler2].status2 & (STATUS2_TRANSFORMED | STATUS2_SUBSTITUTE)) && !(gStatuses3[battler2] & STATUS3_SEMI_INVULNERABLE)
-    && !gBattleStruct->battlers[battler1].illusion.on && !gBattleStruct->battlers[battler2].illusion.on && !(gBattleMons[battler1].status2 & STATUS2_TRANSFORMED))
+    && gBattleStruct->battlers[battler1].illusionState != ILLUSION_STATE_ON && gBattleStruct->battlers[battler2].illusionState != ILLUSION_STATE_ON
+    && !(gBattleMons[battler1].status2 & STATUS2_TRANSFORMED) && !(GetActiveGimmick(battler1) == GIMMICK_TERA && GetBattlerTeraType(battler1) == TYPE_STELLAR))
     {
         gBattleMons[battler1].status2 |= STATUS2_TRANSFORMED;
         
@@ -5889,17 +5939,6 @@ bool32 TryTransformIntoBattler(u32 battler1, u32 battler2)
     return FALSE;
 }
 
-bool32 TryDisableMove(u32 battlerId, u32 movePos, u32 move)
-{
-    if (move != MOVE_STRUGGLE && !gDisableStructs[battlerId].disabledMove && gBattleMons[battlerId].pp[movePos] && !ABILITY_ON_SIDE(battlerId, ABILITY_AROMA_VEIL))
-    {
-        gDisableStructs[battlerId].disabledMove = move;
-        gDisableStructs[battlerId].disableTimer = 4;
-        return TRUE;
-    }
-    return FALSE;
-}
-
 // Check if target can be protected by Safeguard
 bool32 CanSafeguardProtectBattler(u32 attacker, u32 defender)
 {
@@ -5918,14 +5957,29 @@ bool32 IsBattlerProtectedByFlowerVeil(u32 battlerId)
     return FALSE;
 }
 
-void GetBattlerTypes(u32 battlerId, u32 *types)
+// ignoreTera is only set to TRUE when calculating tera type effectiveness.
+void GetBattlerTypes(u32 battlerId, bool32 ignoreTera, u32 *types)
 {
+    bool32 isTera = (GetActiveGimmick(battlerId) == GIMMICK_TERA);
+    
+    // Handle Terastallization
+    if (!ignoreTera && isTera)
+    {
+        u32 teraType = GetBattlerTeraType(battlerId);
+        
+        if (teraType != TYPE_STELLAR)
+        {
+            types[0] = types[1] = types[2] = teraType;
+            return;
+        }
+    }
+    
     types[0] = gBattleMons[battlerId].type1;
     types[1] = gBattleMons[battlerId].type2;
     types[2] = gBattleMons[battlerId].type3;
     
     // Handle Roost
-    if (gDisableStructs[battlerId].roostActive)
+    if (!isTera && gDisableStructs[battlerId].roostActive)
     {
         if (types[0] == TYPE_FLYING && types[1] == TYPE_FLYING)
             types[0] = types[1] = TYPE_NORMAL;
@@ -5934,13 +5988,6 @@ void GetBattlerTypes(u32 battlerId, u32 *types)
         else if (types[1] == TYPE_FLYING)
             types[1] = TYPE_MYSTERY;
     }
-}
-
-u32 GetBattlerType(u32 battlerId, u32 index)
-{
-    u32 types[3];
-    GetBattlerTypes(battlerId, types);
-    return types[index - 1];
 }
 
 static inline void SetBattlerTypesInternal(u32 battlerId, u32 type1, u32 type2)
@@ -5968,8 +6015,8 @@ bool32 DoBattlersShareType(u32 battler1, u32 battler2)
     u32 i, j;
     u32 battler1Types[3], battler2Types[3];
     
-    GetBattlerTypes(battler1, battler1Types);
-    GetBattlerTypes(battler2, battler2Types);
+    GetBattlerTypes(battler1, FALSE, battler1Types);
+    GetBattlerTypes(battler2, FALSE, battler2Types);
     
     for (i = 0; i < 3; i++)
     {
@@ -6384,10 +6431,17 @@ static u32 GetSosBattleSpeciesToCall(u32 battlerCaller)
     {
         do
         {
-            species = gSpeciesInfo[callerSpecies].sosCallAllies[RandomMax(3)];
+            species = gSpeciesInfo[callerSpecies].sosCallAllies[RandomUniform(RNG_SOS_CALL_SPECIES, 0, 2)];
         } while (!species);
     }
     return species;
+}
+
+static inline u32 GetSosBattleSpeciesLevel(u32 caller)
+{
+    u32 levelToSub = Random() % 5, levelToAdd = Random() % 5;
+    s32 newLevel = gBattleMons[caller].level - levelToSub + levelToAdd;
+    return clamp(newLevel, 1, MAX_LEVEL);
 }
 
 static void CreateSosAlly(u32 species, u32 level, u32 ally, u32 playerBattler)
@@ -6411,7 +6465,7 @@ static void CreateSosAlly(u32 species, u32 level, u32 ally, u32 playerBattler)
     };
     CreateMon(&gEnemyParty[newSlotPartyId], generator);
     
-    if (RandomPercentage(RNG_NONE, sosCallTable.hiddenAbilityChance))
+    if (RandomPercentage(RNG_SOS_HIDDEN_ABILITY, sosCallTable.hiddenAbilityChance))
     {
         bool32 hidden = TRUE;
         SetMonData(&gEnemyParty[newSlotPartyId], MON_DATA_ABILITY_HIDDEN, &hidden);
@@ -6480,7 +6534,7 @@ bool32 TryInitSosCall(void)
                     if (gBattleStruct->sos.calls < 31) // Increment num of calls for help
                         gBattleStruct->sos.calls++;
                     
-                    CreateSosAlly(species, clamp(gBattleMons[caller].level - RandomMax(5) + RandomMax(5), 1, MAX_LEVEL), ally, playerBattler);
+                    CreateSosAlly(species, GetSosBattleSpeciesLevel(caller), ally, playerBattler);
                     gBattleCommunication[MULTISTRING_CHOOSER] = IsBattlerTotemPokemon(caller) ? B_MSG_CALLED_ITS_ALLY : B_MSG_CALLED_FOR_HELP;
                     BattleScriptExecute(BattleScript_SosCallForHelp);
                 }

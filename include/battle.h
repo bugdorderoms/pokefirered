@@ -352,6 +352,13 @@ struct QueuedEffect
     u8 done:1;
 };
 
+enum
+{
+    ILLUSION_STATE_NOT_SET,
+    ILLUSION_STATE_OFF,
+    ILLUSION_STATE_ON
+};
+
 struct BattlerState
 {
     /*0x00*/ u8 moveTarget;
@@ -395,22 +402,17 @@ struct BattlerState
     /*0x36*/ u8 lastHitBattler;
     /*0x37*/ u8 bideTakenDamageBattler;
     /*0x38*/ u8 lastUsedMoveType;
-    /*0x39*/ u8 moveSelectionCursor;
-    /*0x3A*/ u8 focusPunchDone:1;
+    /*0x39*/ u8 skyDropAttacker; // The battler that's holding it on the air
+    /*0x3A*/ u8 skyDropTarget; // The battler that's being hold on the air
+    /*0x3B*/ u8 focusPunchDone:1;
              u8 gimmickInProgress:1;
              u8 noMoreMovingThisTurn:1;
-             u8 unused:5;
-    /*0x3B*/ u8 skyDropAttacker; // The battler that's holding it on the air
-    /*0x3C*/ u8 skyDropTarget; // The battler that's being hold on the air
+             u8 illusionState:2;
+             u8 unused:3;
+    /*0x3C*/ struct Pokemon *illusionMon;
+    /*0x40*/ u8 moveSelectionCursor;
              bool8 activatedGimmick[ROUND_BITS_TO_BYTES(GIMMICKS_COUNT)]; // Stores whether a trainer has used gimmick
              struct QueuedEffect queuedEffectsList[B_BATTLER_QUEUED_COUNT + 1];
-             struct {
-                 u8 partyId;
-                 bool8 on;
-                 bool8 set;
-                 bool8 broken;
-                 struct Pokemon *mon;
-             } illusion;
 };
 
 struct PartyState
@@ -437,6 +439,7 @@ struct SideState
     /*0x02*/ u16 faintCounter:7; // Caps at 100 faints per side
              u16 queuedEffectsCount:7;
              u16 unused:2;
+    /*0x04*/ u32 stellarBoostFlags; // One bit for each type
              struct QueuedEffect queuedEffectsList[B_SIDE_QUEUED_COUNT + 1];
              struct PartyState party[PARTY_SIZE];
 };
@@ -597,19 +600,22 @@ extern struct BattleStruct *gBattleStruct;
  
 #define IS_BATTLER_ANY_TYPE_HELPER(type) (types[0] == type) || (types[1] == type) || (types[2] == type) ||
 
-#define IsBattlerAnyType(battlerId, ...)                                        \
+#define _IS_BATTLER_ANY_TYPE(battlerId, ignoreTera, ...)                        \
     ({                                                                          \
         u32 types[3];                                                           \
-        GetBattlerTypes(battlerId, types);                                      \
+        GetBattlerTypes(battlerId, ignoreTera, types);                          \
         RECURSIVELY(R_FOR_EACH(IS_BATTLER_ANY_TYPE_HELPER, __VA_ARGS__)) FALSE; \
     })
 
 #define IsBattlerOfType IsBattlerAnyType
+#define IsBattlerAnyType(battler, ...) _IS_BATTLER_ANY_TYPE(battler, FALSE, __VA_ARGS__)
+#define IsBattlerOfBaseType IsBattlerAnyBaseType
+#define IsBattlerAnyBaseType(battler, ...) _IS_BATTLER_ANY_TYPE(battler, TRUE, __VA_ARGS__)
 
 #define IsBattlerTypeless(battlerId)                                                      \
     ({                                                                                    \
         u32 types[3];                                                                     \
-        GetBattlerTypes(battlerId, types);                                                \
+        GetBattlerTypes(battlerId, FALSE, types);                                         \
         types[0] == TYPE_MYSTERY && types[1] == TYPE_MYSTERY && types[2] == TYPE_MYSTERY; \
     })
 

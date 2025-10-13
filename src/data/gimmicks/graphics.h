@@ -42,31 +42,43 @@ static const union AnimCmd sIndicator_Ultra[] = {
     ANIMCMD_JUMP(0)
 };
 
+static const union AnimCmd sIndicator_Dynamax[] = {
+    ANIMCMD_FRAME(4, 0),
+    ANIMCMD_JUMP(0)
+};
+
+static const union AnimCmd sIndicator_Tera[] = {
+    ANIMCMD_FRAME(5, 0),
+    ANIMCMD_JUMP(0)
+};
+
 static const union AnimCmd *const sGimmickIndicators[] = {
     [GIMMICK_INDICATOR_NONE] = sIndicator_Mega, // placeholder
     [GIMMICK_INDICATOR_MEGA] = sIndicator_Mega,
     [GIMMICK_INDICATOR_OMEGA] = sIndicator_Omega,
     [GIMMICK_INDICATOR_ALPHA] = sIndicator_Alpha,
     [GIMMICK_INDICATOR_ULTRA_BURST] = sIndicator_Ultra,
+    [GIMMICK_INDICATOR_DYNAMAX] = sIndicator_Dynamax,
+    [GIMMICK_INDICATOR_TERA] = sIndicator_Tera,
 };
 
 static const u8 ALIGNED(4) sMegaTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/mega_trigger.4bpp");
 static const u8 ALIGNED(4) sBurstTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/ultra_burst_trigger.4bpp");
+static const u8 ALIGNED(4) sTeraTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/tera_trigger.4bpp");
 // static const u8 ALIGNED(4) sZMoveTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/z_move_trigger.4bpp");
 // static const u8 ALIGNED(4) sDynamaxTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/dynamax_trigger.4bpp");
-// static const u8 ALIGNED(4) sTeraTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/tera_trigger.4bpp");
 
 static const u16 sMegaTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/mega_trigger.gbapal");
 static const u16 sBurstTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/ultra_burst_trigger.gbapal");
+static const u16 sTeraTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/tera_trigger.gbapal");
 // static const u16 sZMoveTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/z_move_trigger.gbapal");
 // static const u16 sDynamaxTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/dynamax_trigger.gbapal");
-// static const u16 sTeraTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/tera_trigger.gbapal");
 
 static const struct SpriteSheet sSpriteSheet_MegaTrigger = {sMegaTriggerGfx, sizeof(sMegaTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
 static const struct SpriteSheet sSpriteSheet_BurstTrigger = {sBurstTriggerGfx, sizeof(sBurstTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
+static const struct SpriteSheet sSpriteSheet_TeraTrigger = {sTeraTriggerGfx, sizeof(sTeraTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
 // static const struct SpriteSheet sSpriteSheet_ZMoveTrigger = {sZMoveTriggerGfx, sizeof(sZMoveTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
 // static const struct SpriteSheet sSpriteSheet_DynamaxTrigger = {sDynamaxTriggerGfx, sizeof(sDynamaxTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
-// static const struct SpriteSheet sSpriteSheet_TeraTrigger = {sTeraTriggerGfx, sizeof(sTeraTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
 
 static const struct OamData sOamData_GimmickTrigger =
 {

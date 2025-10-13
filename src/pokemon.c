@@ -719,7 +719,7 @@ void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
                         
                         for (i = 0; i < shinyRolls; i++)
                         {
-                            isShiny = (RandomMax(10000) < value);
+                            isShiny = (RandomUniform(RNG_DEXNAV_SHINY_ROLL, 0, 10000 - 1) < value);
                             if (isShiny)
                                 break;
                         }
@@ -793,7 +793,7 @@ void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
         {
             do
             {
-                perfectIvs[i] = RandomMax(NUM_STATS);
+                perfectIvs[i] = RandomUniform(RNG_WILD_PERFECT_IVS, 0, NUM_STATS - 1);
             } while (IsNotUniqueIV(i, perfectIvs));
             
             if (perfectIvs[i] != NUM_STATS)
@@ -834,11 +834,15 @@ void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
     SetMonData(mon, MON_DATA_ABILITY_NUM, &value);
     
     // Set tera type
-    SetMonData(mon, MON_DATA_TERA_TYPE, &gSpeciesInfo[species].types[RandomMax(2)]);
-    
+    value = GetSpeciesFixedTeraType(species);
+    if (value != NUMBER_OF_MON_TYPES)
+        SetMonData(mon, MON_DATA_TERA_TYPE, &value);
+    else
+        SetMonData(mon, MON_DATA_TERA_TYPE, &gSpeciesInfo[species].types[RandomPercentage(RNG_WILD_TERA_TYPE, 50)]);
+
     // Set ability hidden
 #if WILD_HIDDEN_ABILITY_CHANCE != 0
-    if (RandomMax(100) < WILD_HIDDEN_ABILITY_CHANCE)
+    if (RandomPercentage(RNG_WILD_HIDDEN_ABILITY, WILD_HIDDEN_ABILITY_CHANCE))
     {
         value = TRUE;
         SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &value);
@@ -2368,7 +2372,7 @@ void AdjustFriendship(struct Pokemon *mon, u32 event)
         switch (event)
         {
             case FRIENDSHIP_EVENT_WALKING:
-                if (RandomPercentage(RNG_NONE, 50)) // 50% chance every 128 steps
+                if (RandomPercentage(RNG_FRIENDSHIP_WALKING, 50)) // 50% chance every 128 steps
                     return;
                 break;
             case FRIENDSHIP_EVENT_LEAGUE_BATTLE:
@@ -2490,7 +2494,7 @@ void RandomlyGivePartyPokerus(struct Pokemon *party)
         {
             do
             {
-                rnd = RandomMax(PARTY_SIZE);
+                rnd = RandomUniform(RNG_POKERUS, 0, PARTY_SIZE - 1);
                 mon = &party[rnd];
             }
             while (!GetMonData(mon, MON_DATA_SPECIES, NULL));
@@ -2598,7 +2602,7 @@ void PartySpreadPokerus(struct Pokemon *party)
 {
     u32 i, pokerus;
     
-    if (!RandomMax(3))
+    if (RandomUniform(RNG_POKERUS_SPREAD, 0, 2) == 0)
     {
         for (i = 0; i < PARTY_SIZE; i++)
         {
@@ -2888,7 +2892,7 @@ void SetWildMonsHeldItem(void)
                     SetMonData(mon, MON_DATA_HELD_ITEM, &gSpeciesInfo[species].itemCommon);
                 else
                 {
-                    rnd = RandomMax(100);
+                    rnd = RandomUniform(RNG_WILD_HELD_ITEM, 0, 99);
                     
                     if (IsMonValidSpecies(&gPlayerParty[0]) && (GetMonAbility(&gPlayerParty[0]) == ABILITY_COMPOUND_EYES || GetMonAbility(&gPlayerParty[0]) == ABILITY_SUPER_LUCK))
                     {
@@ -3144,4 +3148,26 @@ static bool32 CheckZacianZamazentaKnowsIronHead(struct Pokemon *mon, u32 species
             return TRUE;
     }
     return FALSE;
+}
+
+u32 GetSpeciesFixedTeraType(u32 species)
+{
+    switch (SpeciesToNationalPokedexNum(species))
+    {
+        case NATIONAL_DEX_OGERPON: // Tera type aways equals to its second type
+            return gSpeciesInfo[species].types[1];
+        case NATIONAL_DEX_TERAPAGOS: // Aways Stellar type
+            return TYPE_STELLAR;
+    }
+    return NUMBER_OF_MON_TYPES; // No fixed tera type
+}
+
+u32 GetMonTeraType(struct Pokemon *mon)
+{
+    u32 teraType = GetSpeciesFixedTeraType(GetMonData(mon, MON_DATA_SPECIES, NULL));
+    
+    if (teraType == NUMBER_OF_MON_TYPES)
+        teraType = GetMonData(mon, MON_DATA_TERA_TYPE, NULL);
+    
+    return teraType;
 }

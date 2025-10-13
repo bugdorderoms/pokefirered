@@ -237,10 +237,8 @@ bool32 TryHandleLaunchBattleTableAnimation(u32 battlerId, u32 tableId, u32 argum
     }
     
     if (tableId == B_ANIM_ILLUSION_OFF)
-    {
-        gBattleStruct->battlers[battlerId].illusion.broken = TRUE;
-        gBattleStruct->battlers[battlerId].illusion.on = FALSE;
-    }
+        gBattleStruct->battlers[battlerId].illusionState = ILLUSION_STATE_OFF;
+
     gBattleAnimAttacker = gBattleAnimTarget = battlerId;
     
     gAnimScriptCallback = NULL;
@@ -399,6 +397,13 @@ static void TintBattlerSprite(u32 battlerId, u32 paletteOffset)
     if (IsBattlerTotemPokemon(battlerId))
     {
         BlendPalette(paletteOffset, 16, 6, RGB(29, 16, 1));
+        CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
+    }
+    
+    // Terastallization tint
+    if (GetActiveGimmick(battlerId) == GIMMICK_TERA)
+    {
+        BlendPalette(paletteOffset, 16, 8, gTypesInfo[GetBattlerTeraType(battlerId)].teraBlendColor);
         CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
     }
 }

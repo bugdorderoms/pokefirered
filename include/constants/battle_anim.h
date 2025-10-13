@@ -136,7 +136,7 @@
 #define ANIM_TAG_METAL_BALL                 (ANIM_SPRITES_START + 126) // unused
 #define ANIM_TAG_MONSTER_DOLL               (ANIM_SPRITES_START + 127) // unused
 #define ANIM_TAG_WHIRLWIND                  (ANIM_SPRITES_START + 128) // unused
-#define ANIM_TAG_WHIRLWIND_2                (ANIM_SPRITES_START + 129) // unused
+#define ANIM_TAG_TERA_SYMBOL                (ANIM_SPRITES_START + 129)
 #define ANIM_TAG_EXPLOSION_4                (ANIM_SPRITES_START + 130) // unused
 #define ANIM_TAG_EXPLOSION_5                (ANIM_SPRITES_START + 131) // unused
 #define ANIM_TAG_STEALTH_ROCK               (ANIM_SPRITES_START + 132)
@@ -189,7 +189,7 @@
 #define ANIM_TAG_STRING                     (ANIM_SPRITES_START + 179)
 #define ANIM_TAG_WEB_THREAD                 (ANIM_SPRITES_START + 180)
 #define ANIM_TAG_SPIDER_WEB                 (ANIM_SPRITES_START + 181)
-#define ANIM_TAG_LIGHTBULB                  (ANIM_SPRITES_START + 182) // unused
+#define ANIM_TAG_TERA_CRYSTAL               (ANIM_SPRITES_START + 182)
 #define ANIM_TAG_SLASH                      (ANIM_SPRITES_START + 183)
 #define ANIM_TAG_FOCUS_ENERGY               (ANIM_SPRITES_START + 184)
 #define ANIM_TAG_SPHERE_TO_CUBE             (ANIM_SPRITES_START + 185)
@@ -317,6 +317,7 @@
 #define ANIM_TAG_CHAIN_LINK                 (ANIM_SPRITES_START + 307)
 #define ANIM_TAG_POWER_TRICK                (ANIM_SPRITES_START + 308)
 #define ANIM_TAG_MEGA_EVOLUTION_STONE       (ANIM_SPRITES_START + 309)
+#define ANIM_TAG_TERA_SHATTER               (ANIM_SPRITES_START + 310)
 
 // battlers
 #define ANIM_ATTACKER    0
@@ -391,63 +392,65 @@
 #define BG_MAGIC_ROOM            43
 
 // table ids for general animations
-#define B_ANIM_FORM_CHANGE           0x0
-#define B_ANIM_STATS_CHANGE          0x1
-#define B_ANIM_SUBSTITUTE_FADE       0x2
-#define B_ANIM_SUBSTITUTE_APPEAR     0x3
-#define B_ANIM_BAIT_THROW            0x4
-#define B_ANIM_ITEM_KNOCKOFF         0x5
-#define B_ANIM_TURN_TRAP             0x6
-#define B_ANIM_ITEM_EFFECT           0x7
-#define B_ANIM_SMOKEBALL_ESCAPE      0x8
-#define B_ANIM_HANGED_ON             0x9
-#define B_ANIM_RAIN_CONTINUES        0xA
-#define B_ANIM_SUN_CONTINUES         0xB
-#define B_ANIM_SANDSTORM_CONTINUES   0xC
-#define B_ANIM_HAIL_CONTINUES        0xD
-#define B_ANIM_LEECH_SEED_DRAIN      0xE
-#define B_ANIM_MON_HIT               0xF
-#define B_ANIM_ITEM_STEAL            0x10
-#define B_ANIM_SNATCH_MOVE           0x11
-#define B_ANIM_FUTURE_SIGHT_HIT      0x12
-#define B_ANIM_DOOM_DESIRE_HIT       0x13
-#define B_ANIM_FOCUS_PUNCH_SETUP     0x14
-#define B_ANIM_INGRAIN_HEAL          0x15
-#define B_ANIM_WISH_HEAL             0x16
-#define B_ANIM_MON_SCARED            0x17
-#define B_ANIM_GHOST_GET_OUT         0x18
-#define B_ANIM_SILPH_SCOPED          0x19
-#define B_ANIM_ROCK_THROW            0x1A
-#define B_ANIM_SAFARI_REACTION       0x1B
-#define B_ANIM_LOAD_ABILITY_POP_UP   0x1C
-#define B_ANIM_REMOVE_ABILITY_POP_UP 0x1D
-#define B_ANIM_ILLUSION_OFF          0x1E
-#define B_ANIM_FOG_CONTINUES         0x1F
-#define B_ANIM_SLIDE_OUT_OFFSCREEN   0x20
-#define B_ANIM_ITEM_THROW            0x21
-#define B_ANIM_STRONG_WINDS_CONTINUE 0x22
-#define B_ANIM_COMMANDER             0x23
-#define B_ANIM_UPDATE_ABILITY_POP_UP 0x24
-#define B_ANIM_HEALING_WISH_HEAL     0x25
-#define B_ANIM_SET_TOXIC_SPIKES      0x26
-#define B_ANIM_MEGA_EVOLUTION        0x27
-#define B_ANIM_BATTLE_BOND           0x28
-#define B_ANIM_ZYGARDE_CELL_SWIRL    0x29
-#define B_ANIM_SCHOOLING             0x2A
-#define B_ANIM_SPIT_OUT_PREY         0x2B
-#define B_ANIM_SILENT_FORM_CHANGE    0x2C // Same as B_ANIM_FORM_CHANGE, but with no sound effects
-#define B_ANIM_TOTEM_BOOST           0x2D
-#define B_ANIM_TAILWIND              0x2E
-#define B_ANIM_AQUA_RING_HEAL        0x2F
-#define B_ANIM_RED_PRIMAL_REVERSION  0x30
-#define B_ANIM_BLUE_PRIMAL_REVERSION 0x31
-#define B_ANIM_ULTRA_BURST           0x32
-#define B_ANIM_MIST                  0x33
-#define B_ANIM_SAFEGUARD             0x34
-#define B_ANIM_TRICK_ROOM            0x35
-#define B_ANIM_GRAVITY               0x36
-#define B_ANIM_LUNAR_DANCE_HEAL      0x37
-#define B_ANIM_WONDER_ROOM           0x38
+#define B_ANIM_FORM_CHANGE             0x0
+#define B_ANIM_STATS_CHANGE            0x1
+#define B_ANIM_SUBSTITUTE_FADE         0x2
+#define B_ANIM_SUBSTITUTE_APPEAR       0x3
+#define B_ANIM_BAIT_THROW              0x4
+#define B_ANIM_ITEM_KNOCKOFF           0x5
+#define B_ANIM_TURN_TRAP               0x6
+#define B_ANIM_ITEM_EFFECT             0x7
+#define B_ANIM_SMOKEBALL_ESCAPE        0x8
+#define B_ANIM_HANGED_ON               0x9
+#define B_ANIM_RAIN_CONTINUES          0xA
+#define B_ANIM_SUN_CONTINUES           0xB
+#define B_ANIM_SANDSTORM_CONTINUES     0xC
+#define B_ANIM_HAIL_CONTINUES          0xD
+#define B_ANIM_LEECH_SEED_DRAIN        0xE
+#define B_ANIM_MON_HIT                 0xF
+#define B_ANIM_ITEM_STEAL              0x10
+#define B_ANIM_SNATCH_MOVE             0x11
+#define B_ANIM_FUTURE_SIGHT_HIT        0x12
+#define B_ANIM_DOOM_DESIRE_HIT         0x13
+#define B_ANIM_FOCUS_PUNCH_SETUP       0x14
+#define B_ANIM_INGRAIN_HEAL            0x15
+#define B_ANIM_WISH_HEAL               0x16
+#define B_ANIM_MON_SCARED              0x17
+#define B_ANIM_GHOST_GET_OUT           0x18
+#define B_ANIM_SILPH_SCOPED            0x19
+#define B_ANIM_ROCK_THROW              0x1A
+#define B_ANIM_SAFARI_REACTION         0x1B
+#define B_ANIM_LOAD_ABILITY_POP_UP     0x1C
+#define B_ANIM_REMOVE_ABILITY_POP_UP   0x1D
+#define B_ANIM_ILLUSION_OFF            0x1E
+#define B_ANIM_FOG_CONTINUES           0x1F
+#define B_ANIM_SLIDE_OUT_OFFSCREEN     0x20
+#define B_ANIM_ITEM_THROW              0x21
+#define B_ANIM_STRONG_WINDS_CONTINUE   0x22
+#define B_ANIM_COMMANDER               0x23
+#define B_ANIM_UPDATE_ABILITY_POP_UP   0x24
+#define B_ANIM_HEALING_WISH_HEAL       0x25
+#define B_ANIM_SET_TOXIC_SPIKES        0x26
+#define B_ANIM_MEGA_EVOLUTION          0x27
+#define B_ANIM_BATTLE_BOND             0x28
+#define B_ANIM_ZYGARDE_CELL_SWIRL      0x29
+#define B_ANIM_SCHOOLING               0x2A
+#define B_ANIM_SPIT_OUT_PREY           0x2B
+#define B_ANIM_SILENT_FORM_CHANGE      0x2C // Same as B_ANIM_FORM_CHANGE, but with no sound effects
+#define B_ANIM_TOTEM_BOOST             0x2D
+#define B_ANIM_TAILWIND                0x2E
+#define B_ANIM_AQUA_RING_HEAL          0x2F
+#define B_ANIM_RED_PRIMAL_REVERSION    0x30
+#define B_ANIM_BLUE_PRIMAL_REVERSION   0x31
+#define B_ANIM_ULTRA_BURST             0x32
+#define B_ANIM_MIST                    0x33
+#define B_ANIM_SAFEGUARD               0x34
+#define B_ANIM_TRICK_ROOM              0x35
+#define B_ANIM_GRAVITY                 0x36
+#define B_ANIM_LUNAR_DANCE_HEAL        0x37
+#define B_ANIM_WONDER_ROOM             0x38
+#define B_ANIM_TERA_CHARGE             0x39
+#define B_ANIM_TERA_CHARGE_FORM_CHANGE 0x3A
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0

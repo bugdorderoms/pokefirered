@@ -792,19 +792,19 @@ static void AnimFistOrFootRandomPos(struct Sprite *sprite)
     s16 x, y;
 
     if (gBattleAnimArgs[2] < 0)
-        gBattleAnimArgs[2] = RandomMax(5);
+        gBattleAnimArgs[2] = Random() % 5;
     
     StartSpriteAnim(sprite, gBattleAnimArgs[2]);
     
     sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X);
     sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET);
 
-    x = RandomMax(GetBattlerSpriteCoordAttr(battler, BATTLER_COORD_ATTR_WIDTH) / 2);
-    y = RandomMax(GetBattlerSpriteCoordAttr(battler, BATTLER_COORD_ATTR_HEIGHT) / 4);
+    x = Random() % (GetBattlerSpriteCoordAttr(battler, BATTLER_COORD_ATTR_WIDTH) / 2);
+    y = Random() % (GetBattlerSpriteCoordAttr(battler, BATTLER_COORD_ATTR_HEIGHT) / 4);
     
-    if (RandomMax(2))
+    if (Random() % 2)
         x *= -1;
-    if (RandomMax(2))
+    if (Random() % 2)
         y *= -1;
     
     if (GetBattlerSide(battler) == B_SIDE_PLAYER)

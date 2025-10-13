@@ -99,7 +99,7 @@ static bool32 IsAbilityAllowingEncounter(u32 level)
         {
             case ABILITY_KEEN_EYE:
             case ABILITY_INTIMIDATE:
-                if (RandomPercentage(RNG_NONE, 50) && leadMonLevel > 5 && level <= leadMonLevel - 5)
+                if (RandomPercentage(RNG_INTIMIDATE_WILD_ENCOUNTER_INFLUENCE, 50) && leadMonLevel > 5 && level <= leadMonLevel - 5)
                     return FALSE;
                 break;
         }
@@ -142,7 +142,7 @@ static bool32 DoWildEncounterRateDiceRoll(u16 rate)
 
 static inline bool32 DoGlobalWildEncounterDiceRoll(void)
 {
-    return RandomPercentage(RNG_NONE, 60);
+    return RandomPercentage(RNG_WILD_ENCOUNTER, 60);
 }
 
 static bool32 UnlockedTanobyOrAreNotInTanoby(void)
@@ -223,7 +223,7 @@ static bool32 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon *wild
 {
     u32 type;
     
-    if (RandomPercentage(RNG_NONE, 50) && IsMonValidSpecies(&gPlayerParty[0]))
+    if (RandomPercentage(RNG_ABILITY_WILD_TYPE_INFLUENCE, 50) && IsMonValidSpecies(&gPlayerParty[0]))
     {
         switch (GetMonAbility(&gPlayerParty[0]))
         {
@@ -261,7 +261,7 @@ static bool32 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon *wild
             
             if (numValidMons && numValidMons != count)
             {
-                *slot = validIndexes[RandomMax(numValidMons)];
+                *slot = validIndexes[RandomUniform(RNG_ABILITY_WILD_TYPE_INFLUENCE_INDEX, 0, numValidMons - 1)];
                 return TRUE;
             }
         }
@@ -276,7 +276,7 @@ static u32 ChooseWildMonIndex_Land(const struct WildPokemon *wildPokemon)
     if (wildPokemon != NULL && TryGetAbilityInfluencedWildMonIndex(wildPokemon, LAND_WILD_COUNT, &rand))
         return rand;
     
-    rand = RandomMax(ENCOUNTER_CHANCE_LAND_MONS_TOTAL);
+    rand = RandomUniform(RNG_WILD_ENCOUNTER_LAND_INDEX, 0, ENCOUNTER_CHANCE_LAND_MONS_TOTAL - 1);
     
     if (rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_0)
         return 0;
@@ -311,7 +311,7 @@ static u32 ChooseWildMonIndex_WaterRock(const struct WildPokemon *wildPokemon)
     if (wildPokemon != NULL && TryGetAbilityInfluencedWildMonIndex(wildPokemon, WATER_WILD_COUNT, &rand))
         return rand;
     
-    rand = RandomMax(ENCOUNTER_CHANCE_WATER_MONS_TOTAL);
+    rand = RandomUniform(RNG_WILD_ENCOUNTER_WATER_INDEX, 0, ENCOUNTER_CHANCE_WATER_MONS_TOTAL - 1);
     
     if (rand < ENCOUNTER_CHANCE_WATER_MONS_SLOT_0)
         return 0;
@@ -325,6 +325,8 @@ static u32 ChooseWildMonIndex_WaterRock(const struct WildPokemon *wildPokemon)
         return 4;
 }
 
+#define ENCOUNTER_CHANCE_FISHING_MONS_TOTAL (max(max(ENCOUNTER_CHANCE_FISHING_MONS_OLD_ROD_TOTAL, ENCOUNTER_CHANCE_FISHING_MONS_GOOD_ROD_TOTAL), ENCOUNTER_CHANCE_FISHING_MONS_SUPER_ROD_TOTAL))
+
 // Always have ability influence
 static u32 ChooseWildMonIndex_Fishing(const struct WildPokemon *wildPokemon, u32 rod)
 {
@@ -334,7 +336,7 @@ static u32 ChooseWildMonIndex_Fishing(const struct WildPokemon *wildPokemon, u32
         return wildMonIndex;
     
     wildMonIndex = 0;
-    rand = RandomMax(max(max(ENCOUNTER_CHANCE_FISHING_MONS_OLD_ROD_TOTAL, ENCOUNTER_CHANCE_FISHING_MONS_GOOD_ROD_TOTAL), ENCOUNTER_CHANCE_FISHING_MONS_SUPER_ROD_TOTAL));
+    rand = RandomUniform(RNG_WILD_ENCOUNTER_FISHING_INDEX, 0, ENCOUNTER_CHANCE_FISHING_MONS_TOTAL - 1);
     
     switch (rod)
     {
@@ -382,7 +384,7 @@ static u32 TryGetForcedWildMonGender(u32 species)
         switch (GetMonAbility(&gPlayerParty[0]))
         {
             case ABILITY_CUTE_CHARM:
-                if (RandomMax(3))
+                if (RandomUniform(RNG_CUTE_CHARM_WILD_GENDER_INFLUENCE, 0, 2))
                 {
                     switch (GetMonGender(&gPlayerParty[0]))
                     {
@@ -405,7 +407,7 @@ u32 TryGetForcedWildMonNature(struct Pokemon *mon, u32 ability)
         switch (ability)
         {
             case ABILITY_SYNCHRONIZE:
-                if (RandomPercentage(RNG_NONE, 50))
+                if (RandomPercentage(RNG_SYNCHRONIZE_WILD_NATURE_INFLUENCE, 50))
                     return GetNatureFromPersonality(GetMonData(mon, MON_DATA_PERSONALITY)); // Ignore Mints
                 break;
         }
@@ -473,7 +475,7 @@ static bool32 TryDoDoubleWildBattle(void)
     else
     {
 #if DOUBLE_WILD_BATTLE_CHANCE != 0
-        if (RandomPercentage(RNG_NONE, DOUBLE_WILD_BATTLE_CHANCE))
+        if (RandomPercentage(RNG_DOUBLE_WILD_BATTLE, DOUBLE_WILD_BATTLE_CHANCE))
             return TRUE;
 #endif
         return FALSE;
@@ -698,7 +700,7 @@ u32 GetWildMonForAmbientCry(bool8 *isWaterMon)
     }
     
     // Either land or water Pokemon
-    if (RandomPercentage(RNG_NONE, 80))
+    if (RandomPercentage(RNG_AMBIENT_CRY_FROM_LAND, 80))
         return landMonsInfo->wildPokemon[ChooseWildMonIndex_Land(NULL)].species;
     else
     {
@@ -713,7 +715,7 @@ static u32 ChooseWildMonLevel(const struct WildPokemon * info)
     
     lo = min(info->minLevel, info->maxLevel);
     hi = max(info->minLevel, info->maxLevel);
-    res = RandomUniform(RNG_NONE, lo, hi);
+    res = RandomUniform(RNG_WILD_ENCOUNTER_LEVEL, lo, hi);
     
     if (IsMonValidSpecies(&gPlayerParty[0]))
     {
@@ -722,7 +724,7 @@ static u32 ChooseWildMonLevel(const struct WildPokemon * info)
             case ABILITY_HUSTLE:
             case ABILITY_VITAL_SPIRIT:
             case ABILITY_PRESSURE:
-                if (RandomPercentage(RNG_NONE, 50))
+                if (RandomPercentage(RNG_PRESSURE_WILD_LEVEL_INFLUENCE, 50))
                     res = hi;
                 else if (res > lo)
                     --res;
@@ -731,9 +733,9 @@ static u32 ChooseWildMonLevel(const struct WildPokemon * info)
     }
 
     if (FlagGet(FLAG_SYS_BLACK_FLUTE_ACTIVE))
-        res = min(MAX_LEVEL, res + RandomUniform(RNG_NONE, 1, 4));
+        res = min(MAX_LEVEL, res + RandomUniform(RNG_BLACK_FLUTE, 1, 4));
     else if (FlagGet(FLAG_SYS_WHITE_FLUTE_ACTIVE))
-        res = max(1, res - RandomUniform(RNG_NONE, 1, 4));
+        res = max(1, res - RandomUniform(RNG_WHITE_FLUTE, 1, 4));
     
     if (res == 0)
         res = 1;
@@ -864,7 +866,7 @@ static bool32 HandleWildEncounterCooldown(u32 currMetatileAttrs)
     
     sWildEncounterData.stepsSinceLastEncounter++;
     
-    return RandomPercentage(RNG_NONE, encRate);
+    return RandomPercentage(RNG_WILD_ENCOUNTER_COOLDOWN, encRate);
 }
 
 static bool32 DoWildEncounterRateTest(u32 encounterRate, bool32 ignoreAbility)

@@ -3633,6 +3633,13 @@ BattleScript_AsOneShadowRiderActivation::
 	pause B_WAIT_TIME_SHORT
 	return
 
+BattleScript_EmbodyAspectActivates::
+	loadabilitypopup BS_ATTACKER
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	statchangeanimandstring 0, 0, STRINGID_LASTITEMSHONEANDBUFF1ROSE
+	removeabilitypopup BS_ATTACKER
+	return
+
 BattleScript_RaiseStatOnFaintingTarget::
     loadabilitypopup BS_ATTACKER
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
@@ -5023,6 +5030,20 @@ BattleScript_UltraBurst::
 	updategimmickindicator BS_ATTACKER
 	printstring STRINGID_ATKREGAINPOWERWITHULTRABURST
 	waitmessage B_WAIT_TIME_LONG
+	end3
+
+BattleScript_Terastallization::
+	flushmessagebox
+	printstring STRINGID_ATKSTORINGENERGY
+	waitmessage B_WAIT_TIME_LONG
+	tryterastallizationformchange BS_ATTACKER
+	playanimation2 BS_ATTACKER, sB_ANIM_ARG1 @ Set by the function above
+	waitstate
+	updatehealthboxattribute BS_ATTACKER, HEALTHBOX_ALL
+	updategimmickindicator BS_ATTACKER
+	printstring STRINGID_ATKTERASTALLIZEDINTOBUFF1TYPE
+	waitmessage B_WAIT_TIME_LONG
+	terastallizationabilities BS_ATTACKER
 	end3
 
 @@@@@@@@@@@@@@@@@@@@@@@

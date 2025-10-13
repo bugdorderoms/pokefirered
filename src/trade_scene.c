@@ -2458,7 +2458,7 @@ void CreateInGameTradePokemon(void)
     }
     
     // Set tera type
-    if (inGameTrade->teraType)
+    if (inGameTrade->teraType && GetSpeciesFixedTeraType(GetMonData(tradeMon, MON_DATA_SPECIES)) == NUMBER_OF_MON_TYPES)
     {
         value = inGameTrade->teraType - 1;
         SetMonData(tradeMon, MON_DATA_TERA_TYPE, &value);
@@ -2592,7 +2592,7 @@ static void CB2_HandleTradeEnded(void)
         if (++sTradeData->timer > 50)
         {
             if (GetMultiplayerId() == 0)
-                sTradeData->timer = RandomMax(30);
+                sTradeData->timer = Random() % 30;
             else
                 sTradeData->timer = 0;
 

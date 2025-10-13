@@ -213,9 +213,10 @@
 #define ITEM_DARK_TERA_SHARD          (EXP_CANDY_ITEMS_END + 16)
 #define ITEM_STEEL_TERA_SHARD         (EXP_CANDY_ITEMS_END + 17)
 #define ITEM_FAIRY_TERA_SHARD         (EXP_CANDY_ITEMS_END + 18)
+#define ITEM_STELLAR_TERA_SHARD       (EXP_CANDY_ITEMS_END + 19)
 
 // In case you want to add new types and consequently new tera shards, all the indexes below this will be updated with the corrected index
-#define TERA_SHARD_ITEMS_END          ITEM_FAIRY_TERA_SHARD
+#define TERA_SHARD_ITEMS_END          ITEM_STELLAR_TERA_SHARD
 
 // Berries
 #define ITEM_CHERI_BERRY              (TERA_SHARD_ITEMS_END + 1)

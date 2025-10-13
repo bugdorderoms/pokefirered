@@ -94,10 +94,14 @@
 // param = region (REGIONS_COUNT is used to determine that this form is applied to all other regions that are not listed below)
 #define FORM_CHANGE_REGION        0x0014
 
+// form change when the pokemon switches in into battle.
+// no param is necessary
+#define FORM_CHANGE_SWITCH_IN     0x0015
+
 // battle mechanic forms.
 
 // form change for terastalization in battle.
-// param = type
+// param = tera type
 #define FORM_CHANGE_TERASTAL      0xFFF9
 
 // form change for gigantamax in battle.

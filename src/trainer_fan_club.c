@@ -107,7 +107,7 @@ static void PlayerGainRandomTrainerFan(struct TrainerFanClub *fanClub)
         {
             idx = i;
 
-            if (RandomMax(2))
+            if (RandomPercentage(RNG_GAIN_FAN_CLUBE_MEMBER, 50))
             {
                 SET_TRAINER_FAN_CLUB_FLAG(sFanClubMemberIds[i]);
                 return;
@@ -141,7 +141,7 @@ static void PlayerLoseRandomTrainerFan(struct TrainerFanClub *fanClub)
         {
             idx = i;
 
-            if (RandomMax(2))
+            if (RandomPercentage(RNG_LOSE_FAN_CLUBE_MEMBER, 50))
             {
                 FLIP_TRAINER_FAN_CLUB_FLAG(sFanClubMemberIds[i]);
                 return;

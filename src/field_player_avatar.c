@@ -1784,7 +1784,7 @@ static bool32 Fishing2(struct Task *task)
     const s16 arr2[] = {1, 3, 6};
 
     task->tRoundsPlayed = 0;
-    task->tMinRoundsRequired = arr1[task->tFishingRod] + RandomMax(arr2[task->tFishingRod]);
+    task->tMinRoundsRequired = arr1[task->tFishingRod] + Random() % arr2[task->tFishingRod];
     task->tPlayerGfxId = gObjectEvents[gPlayerAvatar.objectEventId].graphicsId;
     
     playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
@@ -1855,7 +1855,7 @@ static bool32 Fishing4(struct Task *task)
     task->tStep++;
     task->tFrameCounter = 0;
     task->tNumDots = 0;
-    randVal = RandomMax(10);
+    randVal = Random() % 10;
     task->tDotsRequired = randVal + 1;
     
     if (task->tRoundsPlayed == 0)
@@ -1904,10 +1904,10 @@ static bool32 DoesFishingBiteOccours(void)
         {
             case ABILITY_SUCTION_CUPS:
             case ABILITY_STICKY_HOLD:
-                return !RandomPercentage(RNG_NONE, 15);
+                return !RandomPercentage(RNG_ABILITY_FISHING_INFLUENCE, 15);
         }
     }
-    return RandomPercentage(RNG_NONE, 50);
+    return RandomPercentage(RNG_FISHING, 50);
 }
 
 static bool32 Fishing6(struct Task *task)
@@ -1965,9 +1965,7 @@ static bool32 Fishing9(struct Task *task)
     else if (task->tRoundsPlayed < 2)
     {
         // probability of having to play another round
-        s16 probability = RandomMax(100);
-
-        if (arr[task->tFishingRod][task->tRoundsPlayed] > probability)
+        if (arr[task->tFishingRod][task->tRoundsPlayed] > (Random() % 100))
             task->tStep = FISHING_START_ROUND;
     }
     return FALSE;

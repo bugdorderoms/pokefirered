@@ -13,7 +13,6 @@ enum
     GIMMICK_INDICATOR_ULTRA_BURST,
     GIMMICK_INDICATOR_DYNAMAX,
     GIMMICK_INDICATOR_TERA,
-    GIMMICK_INDICATOR_NEXT = GIMMICK_INDICATOR_TERA + NUMBER_OF_MON_TYPES, // One sprite for each type
     GIMMICK_INDICATORS_COUNT,
 };
 
@@ -59,6 +58,10 @@ bool32 IsTypeBasedZMove(u32 move);
 bool32 IsMaxMove(u32 move);
 
 // Tera
+bool32 CanTerastallize(u32 battler);
+void ActivateTera(u32 battler);
 u32 GetBattlerTeraType(u32 battler);
+bool32 IsTypeStellarBoosted(u32 battler, u32 type);
+void TryExpendTypeStellarBoost(u32 battler, u32 type);
 
 #endif // GUARD_BATTLE_GIMMICKS_H

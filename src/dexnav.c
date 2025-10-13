@@ -429,12 +429,12 @@ static bool32 DexNavPickTile(u32 environment, u32 areaX, u32 areaY)
                             break; //occurs at same z coord
 
                         scale = 440 - (GetPlayerDistance(topX, topY) / 2)  - (2 * (topX + topY));
-                        weight = (RandomMax(scale) < 1) && !MapGridIsImpassableAt(topX, topY);
+                        weight = (RandomUniform(RNG_DEXNAV_DISTANCE, 0, scale - 1) < 1) && !MapGridIsImpassableAt(topX, topY);
                     }
                     else
                     { // outdoors: grass
                         scale = 100 - (GetPlayerDistance(topX, topY) * 2);
-                        weight = (RandomMax(scale) <= 5) && !MapGridIsImpassableAt(topX, topY);
+                        weight = (RandomUniform(RNG_DEXNAV_DISTANCE, 0, scale - 1) <= 5) && !MapGridIsImpassableAt(topX, topY);
                     }
                 }
                 break;
@@ -446,7 +446,7 @@ static bool32 DexNavPickTile(u32 environment, u32 areaX, u32 areaY)
                     if (IsZCoordMismatchAt(gObjectEvents[gPlayerAvatar.objectEventId].currentElevation, topX, topY))
                         break;
 
-                    weight = (RandomMax(scale) <= 1) && !MapGridIsImpassableAt(topX, topY);
+                    weight = (RandomUniform(RNG_DEXNAV_DISTANCE, 0, scale - 1) <= 1) && !MapGridIsImpassableAt(topX, topY);
                 }
                 break;
             default:
@@ -859,7 +859,7 @@ u32 GetDexNavShinyRollsIncrease(u32 rolls)
     else if (chain == 100)
         rolls += 10;
     
-    if (RandomPercentage(RNG_NONE, 4))
+    if (RandomPercentage(RNG_DEXNAV_ROLL, 4))
         rolls += 4;
     
     return min(rolls, 17);
@@ -926,7 +926,7 @@ static u32 DexNavTryGenerateMonLevel(u32 species, u32 environment)
     if (levelBase == MON_LEVEL_NONEXISTENT)
         return levelBase; // species not found in the area
 
-    if (RandomPercentage(RNG_NONE, 4))
+    if (RandomPercentage(RNG_DEXNAV_LEVEL_BONUS, 4))
         levelBonus += 10; // 4% chance of having a +10 level bonus
     
     levelBase += levelBonus;
@@ -938,7 +938,7 @@ static u32 DexNavGenerateMoveset(u32 species, u32 encounterLevel, u16* moveDst)
 {
     bool32 genMove = FALSE;
     u16 eggMoveBuffer[EGG_MOVES_ARRAY_COUNT];
-    u32 newSpecies, numEggMoves, randVal = RandomMax(100);
+    u32 newSpecies, numEggMoves, randVal = RandomUniform(RNG_DEXNAV_EGG_MOVE_CHANCE, 0, 99);
     u32 i, searchLevel = sDexNavSearchLevel;
 
     // see if first move slot should be an egg move
@@ -998,14 +998,14 @@ static u32 DexNavGenerateMoveset(u32 species, u32 encounterLevel, u16* moveDst)
         numEggMoves = GetEggMoves(&gEnemyParty[0], eggMoveBuffer);
         
         if (numEggMoves)
-            moveDst[0] = eggMoveBuffer[RandomMax(numEggMoves)];
+            moveDst[0] = eggMoveBuffer[RandomUniform(RNG_DEXNAV_EGG_MOVE_ID, 0, numEggMoves - 1)];
     }
     return newSpecies;
 }
 
 static u32 DexNavGenerateHeldItem(u32 species)
 {
-    u32 randVal = RandomMax(100);
+    u32 randVal = RandomUniform(RNG_DEXNAV_HELD_ITEM, 0, 99);
     u32 searchLevelInfluence = sDexNavSearchLevel >> 1;
     u32 itemCommon = gSpeciesInfo[species].itemCommon;
     u32 itemRare = gSpeciesInfo[species].itemRare;
@@ -1035,7 +1035,7 @@ static bool32 DexNavGetAbilityNum(u32 species)
 {
     u32 searchLevel = sDexNavSearchLevel;
     bool32 genAbility = FALSE, abilityHidden = FALSE;
-    u32 randVal = RandomMax(100);
+    u32 randVal = RandomUniform(RNG_DEXNAV_HIDDEN_ABILITY, 0, 99);
 
     if (searchLevel < 5)
     {
@@ -1084,7 +1084,7 @@ static bool32 DexNavGetAbilityNum(u32 species)
         abilityHidden = TRUE;
         
     //Pick a normal ability of that Pokemon
-    sDexNavSearchDataPtr->abilityNum = RandomMax(2);
+    sDexNavSearchDataPtr->abilityNum = RandomPercentage(RNG_DEXNAV_ABILITY, 50);
     
     return abilityHidden;
 }
@@ -1092,7 +1092,7 @@ static bool32 DexNavGetAbilityNum(u32 species)
 static u32 DexNavGeneratePotential(void)
 {
     u32 genChance = 0, searchLevel = sDexNavSearchLevel;
-    u32 randVal = RandomMax(100);
+    u32 randVal = RandomUniform(RNG_DEXNAV_POTENTIAL, 0, 99);
 
     if (searchLevel < 5)
     {
@@ -1223,7 +1223,7 @@ static u32 GetEncounterLevelFromMapData(u32 species, u32 environment)
     if (!max)
         return MON_LEVEL_NONEXISTENT;
 
-    return RandomUniform(RNG_NONE, min, max);
+    return RandomUniform(RNG_DEXNAV_WILD_LEVEL, min, max);
 }
 
 ///////////

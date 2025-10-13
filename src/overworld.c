@@ -1080,8 +1080,8 @@ static void PlayAmbientCry(void)
     if (gDisableMapMusicChangeOnMapLoad == 2)
         return;
     
-    pan = RandomMax(88) + 212;
-    volume = RandomMax(30) + 50;
+    pan = (Random() % 88) + 212;
+    volume = (Random() % 30) + 50;
     PlayCry_NormalNoDucking(sAmbientCrySpecies, pan, volume, CRY_PRIORITY_AMBIENT);
 }
 
@@ -1095,7 +1095,7 @@ void UpdateAmbientCry(s16 *state, u16 *delayCounter)
         *state = sAmbientCrySpecies == SPECIES_NONE ? 4 : 1;
         break;
     case 1:
-        *delayCounter = RandomMax(2400) + 1200;
+        *delayCounter = (Random() % 2400) + 1200;
         *state = 3;
         break;
     case 2:
@@ -1110,7 +1110,7 @@ void UpdateAmbientCry(s16 *state, u16 *delayCounter)
                 break;
             }
         }
-        *delayCounter = ((RandomMax(1200) + 1200) / divBy);
+        *delayCounter = (((Random() % 1200) + 1200) / divBy);
         *state = 3;
         break;
     case 3:

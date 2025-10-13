@@ -1866,7 +1866,7 @@ static void GetDefaultName(bool32 hasPlayerBeenNamed, u32 rivalNameChoice)
 
     if (!hasPlayerBeenNamed)
     {
-        src = gSaveBlock2Ptr->playerGender == MALE ? RandomElement(RNG_NONE, sMaleNameChoices) : RandomElement(RNG_NONE, sFemaleNameChoices);
+        src = gSaveBlock2Ptr->playerGender == MALE ? RandomElement(RNG_PLAYER_NAME, sMaleNameChoices) : RandomElement(RNG_PLAYER_NAME, sFemaleNameChoices);
         dest = gSaveBlock2Ptr->playerName;
     }
     else

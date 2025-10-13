@@ -232,8 +232,8 @@ static void CreatePostEvoSparkleSet2(void)
     
     if (spriteId != MAX_SPRITES)
     {
-        gSprites[spriteId].data[3] = 3 - RandomMax(7);
-        gSprites[spriteId].data[5] = 48 + RandomMax(64);
+        gSprites[spriteId].data[3] = 3 - (Random() % 7);
+        gSprites[spriteId].data[5] = 48 + (Random() % 64);
         gSprites[spriteId].data[7] = 0;
         gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
         gSprites[spriteId].oam.matrixNum = 31;

@@ -1029,8 +1029,8 @@ static void AnimBulletSeed_Step1(struct Sprite *sprite)
     for (i = 0; i < 8; i++)
         ptr[i - 7] = 0;
 
-    sprite->data[6] = 0xFFF4 - RandomMax(8);
-    sprite->data[7] = RandomMax(0xA0) + 0xA0;
+    sprite->data[6] = 0xFFF4 - (Random() % 8);
+    sprite->data[7] = (Random() % 0xA0) + 0xA0;
     sprite->affineAnimPaused = FALSE;
     sprite->callback = AnimBulletSeed_Step2;
 }

@@ -4,120 +4,140 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
     {
         .name = _("Normal"),
         .tmPalette = sItemIconPalette_TmNormal,
+        .teraBlendColor = RGB_WHITE,
     },
     
     [TYPE_FIGHTING] =
     {
         .name = _("Fighting"),
         .tmPalette = sItemIconPalette_TmFighting,
+        .teraBlendColor = RGB(26, 8, 14),
     },
     
     [TYPE_FLYING] =
     {
         .name = _("Flying"),
         .tmPalette = sItemIconPalette_TmFlying,
+        .teraBlendColor = RGB(31, 26, 7),
     },
     
     [TYPE_POISON] =
     {
         .name = _("Poison"),
         .tmPalette = sItemIconPalette_TmPoison,
+        .teraBlendColor = RGB(26, 10, 25),
     },
     
     [TYPE_GROUND] =
     {
         .name = _("Ground"),
         .tmPalette = sItemIconPalette_TmGround,
+        .teraBlendColor = RGB(25, 23, 18),
     },
     
     [TYPE_ROCK] =
     {
         .name = _("Rock"),
         .tmPalette = sItemIconPalette_TmRock,
+        .teraBlendColor = RGB(18, 16, 8),
     },
     
     [TYPE_BUG] =
     {
         .name = _("Bug"),
         .tmPalette = sItemIconPalette_TmBug,
+        .teraBlendColor = RGB(18, 24, 6),
     },
     
     [TYPE_GHOST] =
     {
         .name = _("Ghost"),
         .tmPalette = sItemIconPalette_TmGhost,
+        .teraBlendColor = RGB(12, 10, 16),
     },
     
     [TYPE_STEEL] =
     {
         .name = _("Steel"),
         .tmPalette = sItemIconPalette_TmSteel,
+        .teraBlendColor = RGB(19, 19, 20),
     },
 
     [TYPE_MYSTERY] =
     {
         .name = _("???"),
         .tmPalette = NULL,
+        .teraBlendColor = RGB_WHITE,
     },
     
     [TYPE_FIRE] =
     {
         .name = _("Fire"),
         .tmPalette = sItemIconPalette_TmFire,
+        .teraBlendColor = RGB(31, 20, 11),
     },
     
     [TYPE_WATER] =
     {
         .name = _("Water"),
         .tmPalette = sItemIconPalette_TmWater,
+        .teraBlendColor = RGB(10, 18, 27),
     },
     
     [TYPE_GRASS] =
     {
         .name = _("Grass"),
         .tmPalette = sItemIconPalette_TmGrass,
+        .teraBlendColor = RGB(12, 24, 11),
     },
     
     [TYPE_ELECTRIC] =
     {
         .name = _("Electric"),
         .tmPalette = sItemIconPalette_TmElectric,
+        .teraBlendColor = RGB(30, 26, 7),
     },
     
     [TYPE_PSYCHIC] =
     {
         .name = _("Psychic"),
         .tmPalette = sItemIconPalette_TmPsychic,
+        .teraBlendColor = RGB(31, 14, 15),
     },
     
     [TYPE_ICE] =
     {
         .name = _("Ice"),
         .tmPalette = sItemIconPalette_TmIce,
+        .teraBlendColor = RGB(14, 26, 25),
     },
     
     [TYPE_DRAGON] =
     {
         .name = _("Dragon"),
         .tmPalette = sItemIconPalette_TmDragon,
+        .teraBlendColor = RGB(10, 18, 27),
     },
 
     [TYPE_DARK] =
     {
         .name = _("Dark"),
         .tmPalette = sItemIconPalette_TmDark,
+        .teraBlendColor = RGB(6, 5, 8),
     },
     
     [TYPE_FAIRY] =
     {
         .name = _("Fairy"),
         .tmPalette = sItemIconPalette_TmFairy,
+        .teraBlendColor = RGB(31, 15, 21),
     },
 
     [TYPE_STELLAR] =
     {
         .name = _("Stellar"),
         .tmPalette = NULL, // No one move has this type
+        .teraBlendColor = RGB(10, 18, 27),
     },
 };
 

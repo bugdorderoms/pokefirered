@@ -671,7 +671,7 @@ static u32 GetVsSeekerResponseInArea(const VsSeekerData * vsSeekerData)
             }
             else
             {
-                rval = RandomMax(100); // Even if it's overwritten below, it progresses the RNG.
+                rval = Random() % 100; // Even if it's overwritten below, it progresses the RNG.
                 response = GetCurVsSeekerResponse(vsSeekerIdx, trainerIdx);
                 
                 if (response == VSSEEKER_SINGLE_RESP_YES)
@@ -891,7 +891,7 @@ static bool32 ObjectEventIdIsSane(u32 objectEventId)
 
 static u32 GetRandomFaceDirectionMovementType(void)
 {
-    switch (RandomMax(4))
+    switch (Random() % 4)
     {
         case 0:
             return MOVEMENT_TYPE_FACE_UP;

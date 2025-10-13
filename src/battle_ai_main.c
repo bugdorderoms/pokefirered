@@ -267,7 +267,7 @@ static u32 BattleAI_ChooseMoveOrAction_Singles(u32 battlerId)
             ++numOfBestMoves;
         }
     }
-    return consideredMoveArray[RandomMax(numOfBestMoves)];
+    return consideredMoveArray[RandomUniform(RNG_AI_CHOSEN_MOVE, 0, numOfBestMoves - 1)];
 }
 
 static u32 BattleAI_ChooseMoveOrAction_Doubles(u32 battlerId)
@@ -340,7 +340,7 @@ static u32 BattleAI_ChooseMoveOrAction_Doubles(u32 battlerId)
                         ++mostViableMovesNo;
                     }
                 }
-                actionOrMoveIndex[i] = mostViableMovesIndices[RandomMax(mostViableMovesNo)];
+                actionOrMoveIndex[i] = mostViableMovesIndices[RandomUniform(RNG_AI_CHOSEN_MOVE, 0, mostViableMovesNo - 1)];
                 bestMovePointsForTarget[i] = mostViableMovesScores[0];
                 
                 if (i == BATTLE_PARTNER(battlerId) && bestMovePointsForTarget[i] < 100)
@@ -371,7 +371,7 @@ static u32 BattleAI_ChooseMoveOrAction_Doubles(u32 battlerId)
             ++mostViableTargetsNo;
         }
     }
-    gBattleStruct->battlers[battlerId].aiChosenTarget = gBattlerTarget = mostViableTargetsArray[RandomMax(mostViableTargetsNo)];
+    gBattleStruct->battlers[battlerId].aiChosenTarget = gBattlerTarget = mostViableTargetsArray[RandomUniform(RNG_AI_CHOSEN_TARGET, 0, mostViableTargetsNo - 1)];
     
     return actionOrMoveIndex[gBattlerTarget];
 }

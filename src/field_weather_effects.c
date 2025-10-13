@@ -561,7 +561,7 @@ static bool32 DestroySnowflakeSprite(void)
 
 static void InitSnowflakeSpriteMovement(struct Sprite *sprite)
 {
-    u16 rand, x = ((sprite->tSnowflakeId * 5) & 7) * 30 + RandomMax(30);
+    u16 rand, x = ((sprite->tSnowflakeId * 5) & 7) * 30 + (Random() % 30);
 
     sprite->y = -3 - (gSpriteCoordOffsetY + sprite->centerToCornerVecY);
     sprite->x = x - (gSpriteCoordOffsetX + sprite->centerToCornerVecX);
@@ -702,7 +702,7 @@ void Thunderstorm_Main(void)
         break;
     case 4:
         gWeatherPtr->thunderAllowEnd = TRUE;
-        gWeatherPtr->thunderDelay = RandomUniform(RNG_NONE, 360, 719);
+        gWeatherPtr->thunderDelay = RandomUniform(RNG_THUNDERSTORM_DELAY, 360, 719);
         gWeatherPtr->initStep++;
         // fall through
     case 5:
@@ -711,11 +711,11 @@ void Thunderstorm_Main(void)
         break;
     case 6:
         gWeatherPtr->thunderAllowEnd = TRUE;
-        gWeatherPtr->thunderSkipShort = RandomMax(2);
+        gWeatherPtr->thunderSkipShort = Random() % 2;
         gWeatherPtr->initStep++;
         break;
     case 7:
-        gWeatherPtr->thunderShortRetries = RandomUniform(RNG_NONE, 1, 2);
+        gWeatherPtr->thunderShortRetries = RandomUniform(RNG_THUNDERSTORM_RETRY, 1, 2);
         gWeatherPtr->initStep++;
         // fall through
     case 8:
@@ -723,7 +723,7 @@ void Thunderstorm_Main(void)
         if (!gWeatherPtr->thunderSkipShort && gWeatherPtr->thunderShortRetries == 1)
             SetThunderCounter(20);
 
-        gWeatherPtr->thunderDelay = RandomUniform(RNG_NONE, 6, 8);
+        gWeatherPtr->thunderDelay = RandomUniform(RNG_THUNDERSTORM_DELAY, 6, 8);
         gWeatherPtr->initStep++;
         break;
     case 9:
@@ -734,7 +734,7 @@ void Thunderstorm_Main(void)
             
             if (--gWeatherPtr->thunderShortRetries != 0)
             {
-                gWeatherPtr->thunderDelay = RandomUniform(RNG_NONE, 60, 75);
+                gWeatherPtr->thunderDelay = RandomUniform(RNG_THUNDERSTORM_DELAY, 60, 75);
                 gWeatherPtr->initStep = 10;
             }
             else if (!gWeatherPtr->thunderSkipShort)
@@ -748,7 +748,7 @@ void Thunderstorm_Main(void)
             gWeatherPtr->initStep = 8;
         break;
     case 11:
-        gWeatherPtr->thunderDelay = RandomUniform(RNG_NONE, 60, 75);
+        gWeatherPtr->thunderDelay = RandomUniform(RNG_THUNDERSTORM_DELAY, 60, 75);
         gWeatherPtr->initStep++;
         break;
     case 12:
@@ -756,7 +756,7 @@ void Thunderstorm_Main(void)
         {
             SetThunderCounter(100);
             WeatherShiftGammaIfPalStateIdle(19);
-            gWeatherPtr->thunderDelay = RandomUniform(RNG_NONE, 30, 45);
+            gWeatherPtr->thunderDelay = RandomUniform(RNG_THUNDERSTORM_DELAY, 30, 45);
             gWeatherPtr->initStep++;
         }
         break;
@@ -815,7 +815,7 @@ static void SetThunderCounter(u32 max)
 {
     if (!gWeatherPtr->thunderTriggered)
     {
-        gWeatherPtr->thunderCounter = RandomMax(max);
+        gWeatherPtr->thunderCounter = Random() % max;
         gWeatherPtr->thunderTriggered = TRUE;
     }
 }
@@ -829,7 +829,7 @@ static void UpdateThunderSound(void)
             if (IsSEPlaying())
                 return;
             
-            PlaySE(RandomPercentage(RNG_NONE, 50) ? SE_THUNDER : SE_THUNDER2);
+            PlaySE(Random() & 1 ? SE_THUNDER : SE_THUNDER2);
 
             gWeatherPtr->thunderTriggered = FALSE;
         }
@@ -2604,7 +2604,7 @@ bool32 FlyingLeaves_Finish(void)
 static void SetLeaveSpriteData(struct Sprite *sprite, u32 delta)
 {
     s16 x = -64;
-    s16 y = RandomUniform(RNG_NONE, 0, (DISPLAY_HEIGHT / 2) + 16) - 16;
+    s16 y = RandomUniform(RNG_FLYING_LEAVE_Y, 0, (DISPLAY_HEIGHT / 2) + 16) - 16;
     
     sprite->x = x;
     sprite->y = y;
@@ -2612,14 +2612,14 @@ static void SetLeaveSpriteData(struct Sprite *sprite, u32 delta)
     sprite->tInitialX = x;
     sprite->tInitialY = y;
     
-    sprite->tSize = RandomUniform(RNG_NONE, 0, 2);
-    sprite->tSpeedX = RandomUniform(RNG_NONE, sFlyingLeavesXSpeedRange[sprite->tSize][0], sFlyingLeavesXSpeedRange[sprite->tSize][1]);
-    sprite->tSpeedY = RandomUniform(RNG_NONE, Q_8_8(0.05), Q_8_8(0.2));
+    sprite->tSize = Random() % 3;
+    sprite->tSpeedX = RandomUniform(RNG_FLYING_LEAVE_SPEED_X, sFlyingLeavesXSpeedRange[sprite->tSize][0], sFlyingLeavesXSpeedRange[sprite->tSize][1]);
+    sprite->tSpeedY = RandomUniform(RNG_FLYING_LEAVE_SPEED_Y, Q_8_8(0.05), Q_8_8(0.2));
     
     sprite->tDelta = delta;
-    sprite->tAmplitude = RandomUniform(RNG_NONE, 2, 6);
+    sprite->tAmplitude = RandomUniform(RNG_FLYING_LEAVE_AMPLITUDE, 2, 6);
     
-    StartSpriteAffineAnim(sprite, (sprite->tSize * 2) + RandomPercentage(RNG_NONE, 50));
+    StartSpriteAffineAnim(sprite, (sprite->tSize * 2) + (Random() & 1));
 }
 
 static void UpdateLeaveSprite(struct Sprite *sprite)

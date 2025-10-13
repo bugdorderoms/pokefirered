@@ -63,6 +63,8 @@ static void AnimFollowMeFingerStep1(struct Sprite *);
 static void AnimFollowMeFingerStep2(struct Sprite *);
 static void AnimHorizontalSlice(struct Sprite *);
 static void AnimHorizontalSliceStep(struct Sprite *);
+static void AnimTeraCrystalShard(struct Sprite *);
+static void AnimTeraCrystalShard_Step(struct Sprite *);
 
 static const union AnimCmd sPowderParticlesAnimCmds[] =
 {
@@ -1655,6 +1657,50 @@ const struct SpriteTemplate gSeedFlareGreenOrbsSpriteTemplate =
     .callback = AnimPowerAbsorptionOrb,
 };
 
+const struct SpriteTemplate gTeraCrystalSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_TERA_CRYSTAL,
+    .paletteTag = ANIM_TAG_TERA_CRYSTAL,
+    .oam = &gOamData_AffineDouble_ObjBlend_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_LusterPurgeCircle,
+    .callback = AnimSpriteOnMonPos,
+};
+
+const struct SpriteTemplate gTeraCrystalSpreadSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_TERA_SHATTER,
+    .paletteTag = ANIM_TAG_TERA_SHATTER,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimTeraCrystalShard,
+};
+
+const struct SpriteTemplate gTeraSymbolSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_TERA_SYMBOL,
+    .paletteTag = ANIM_TAG_TERA_SYMBOL,
+    .oam = &gOamData_AffineDouble_ObjBlend_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sMegaEvolutionSymbolAffineAnimTable,
+    .callback = AnimSpriteOnMonPos,
+};
+
+const struct SpriteTemplate gSparkleVortexSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SPARKLE_6,
+    .paletteTag = ANIM_TAG_SPARKLE_6,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimParticleInVortex,
+};
+
 // Animates the falling particles that horizontally wave back and forth. Used by Sleep Powder, Stun Spore, and Poison Powder.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset
@@ -1800,7 +1846,7 @@ void AnimAbsorptionOrb(struct Sprite* sprite)
 // No args.
 void AnimHyperBeamOrb(struct Sprite* sprite)
 {
-    StartSpriteAnim(sprite, RandomMax(8));
+    StartSpriteAnim(sprite, Random() % 8);
     
     sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
     sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
@@ -4093,5 +4139,28 @@ static void AnimHorizontalSliceStep(struct Sprite *sprite)
     sprite->data[3] += sprite->data[1];
     
     if (sprite->data[3] >= sprite->data[0])
+        DestroyAnimSprite(sprite);
+}
+
+// Animates the crystal shards in terastallization anim.
+// arg 0: which sprite
+// arg 1: x movement speed
+// arg 2: y movement speed
+static void AnimTeraCrystalShard(struct Sprite *sprite)
+{
+    sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
+    sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y);
+    sprite->oam.tileNum += gBattleAnimArgs[0] * 4;
+    sprite->data[0] = gBattleAnimArgs[1];
+    sprite->data[1] = gBattleAnimArgs[2];
+    sprite->callback = AnimTeraCrystalShard_Step;
+}
+
+static void AnimTeraCrystalShard_Step(struct Sprite *sprite)
+{
+    sprite->x += sprite->data[0];
+    sprite->y += sprite->data[1];
+    
+    if (++sprite->data[2] > 15)
         DestroyAnimSprite(sprite);
 }

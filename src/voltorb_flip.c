@@ -1109,7 +1109,7 @@ static u32 GetNumCardsFlippedAt(u32 pos, bool32 countRow)
                                                                       \
     do                                                                \
     {                                                                 \
-        u32 idx = RandomMax(TOTAL_CARD_COUNT);                        \
+        u32 idx = Random() % TOTAL_CARD_COUNT;                        \
                                                                       \
         if (sVoltorbFlipState->cardStates[idx].value == CARD_VALUE_1) \
         {                                                             \
@@ -1122,7 +1122,7 @@ static void ResetVoltorbFlipCards(void)
 {
     u32 i;
     u32 level = sVoltorbFlipState->level;
-    u32 variant = RandomMax(MAX_VOLTORB_LEVEL_VARIANTS);
+    u32 variant = Random() % MAX_VOLTORB_LEVEL_VARIANTS;
     
     // Reset cards
     for (i = 0; i < TOTAL_CARD_COUNT; ++i)

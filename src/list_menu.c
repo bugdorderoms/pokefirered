@@ -39,9 +39,9 @@ static void ListMenuDrawCursor(struct ListMenu *list);
 static void ListMenuCallSelectionChangedCallback(struct ListMenu *list, bool32 onInit);
 static u32 ListMenuAddCursorObject(struct ListMenu *list, u32 cursorKind);
 
-const struct MoveMenuInfoIcon gMoveMenuInfoIcons[] =
+static const struct MoveMenuInfoIcon sMoveMenuInfoIcons[] =
 {
-    { 12, 12, 0x00 },       // Unused
+    { 12, 12, 0x00 },       // Poke ball icon
     { 32, 12, 0x20 },       // Normal icon
     { 32, 12, 0x64 },       // Fight icon
     { 32, 12, 0x60 },       // Flying icon
@@ -61,6 +61,7 @@ const struct MoveMenuInfoIcon gMoveMenuInfoIcons[] =
     { 32, 12, 0xA0 },       // Dragon icon
     { 32, 12, 0x8C },       // Dark icon
     { 32, 12, 0xA8 },       // Fairy icon
+    { 32, 12, 0xAC },       // Stellar icon
     { 40, 12, 0xC0 },       // -Power- icon
     { 40, 12, 0xC8 },       // -Accuracy- icon
     { 40, 12, 0xE0 },       // -PP- icon
@@ -596,5 +597,5 @@ void ListMenuLoadStdPalAt(u32 palOffset, u32 palId)
 
 void BlitMoveInfoIcon(u32 windowId, u32 iconId, u32 x, u32 y)
 {
-    BlitBitmapRectToWindow(windowId, gFireRedMenuElements_Gfx + gMoveMenuInfoIcons[iconId].offset * 32, 0, 0, 128, 128, x, y, gMoveMenuInfoIcons[iconId].width, gMoveMenuInfoIcons[iconId].height);
+    BlitBitmapRectToWindow(windowId, gFireRedMenuElements_Gfx + sMoveMenuInfoIcons[iconId].offset * 32, 0, 0, 128, 128, x, y, sMoveMenuInfoIcons[iconId].width, sMoveMenuInfoIcons[iconId].height);
 }

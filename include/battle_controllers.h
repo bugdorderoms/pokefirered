@@ -149,6 +149,7 @@ struct ChooseMoveStruct
     u16 moves[MAX_MON_MOVES];
     u8 currentPp[MAX_MON_MOVES];
     u8 maxPp[MAX_MON_MOVES];
+    u8 moveTypes[MAX_MON_MOVES];
 };
 
 #define FIRST_BATTLE_MSG_FLAG_INFLICT_DMG Bit(0) // Inflicting damage is key

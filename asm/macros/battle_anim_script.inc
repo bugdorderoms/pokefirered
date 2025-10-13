@@ -134,8 +134,9 @@
 	.byte 0x17
 	.endm
 
-	.macro nop18
+	.macro unloadspriteimg tag:req
 	.byte 0x18
+	.2byte \tag
 	.endm
 
 	.macro playsewithpan se:req, pan:req
@@ -214,8 +215,9 @@
 	.4byte \ptr
 	.endm
 
-	.macro nop25
+	.macro unloadspritepal tag:req
 	.byte 0x25
+	.2byte \tag
 	.endm
 
 	.macro panse_26 se:req, param1:req, param2:req, param3:req, param4:req

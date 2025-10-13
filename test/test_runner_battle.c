@@ -1388,6 +1388,21 @@ void SpeedIV_(u32 sourceLine, u32 speedIV)
     SetMonData(DATA.currentMon, MON_DATA_SPEED_IV, &speedIV);
 }
 
+void TeraType_(u32 sourceLine, u32 type)
+{
+    u32 species, fixedTeraType;
+    
+    INVALID_IF(!DATA.currentMon, "TeraType outside of PLAYER/OPPONENT");
+    INVALID_IF(type >= NUMBER_OF_MON_TYPES, "Illegal tera type: %d", type);
+    
+    species = GetMonData(DATA.currentMon, MON_DATA_SPECIES);
+    fixedTeraType = GetSpeciesFixedTeraType(species);
+    
+    INVALID_IF(fixedTeraType != NUMBER_OF_MON_TYPES && fixedTeraType != type, "%S tera type cannot be changed to %S", gSpeciesInfo[species].name, gTypesInfo[type].name);
+    
+    SetMonData(DATA.currentMon, MON_DATA_TERA_TYPE, &type);
+}
+
 static void PushBattlerAction(u32 sourceLine, s32 battlerId, u32 actionType, u32 byte)
 {
     u32 recordIndex = DATA.recordIndexes[battlerId]++;

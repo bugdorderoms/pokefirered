@@ -827,7 +827,8 @@ static void atk00_attackcanceler(void)
     
     // Try Activate Protean
     if (gCurrentMove != MOVE_STRUGGLE && !IsBattlerOfType(gBattlerAttacker, gBattleStruct->dynamicMoveType) && gDisableStructs[gBattlerAttacker].canProteanActivate
-    && (atkAbility == ABILITY_PROTEAN || atkAbility == ABILITY_LIBERO) && !GET_MOVE_MOVEEFFECT_TABLE(gCurrentMove).callOtherMove) // Wait the move call the other move to change the type based on it instead
+    && (atkAbility == ABILITY_PROTEAN || atkAbility == ABILITY_LIBERO) && gBattleStruct->dynamicMoveType != TYPE_MYSTERY && gBattleStruct->dynamicMoveType != TYPE_STELLAR
+    && GetActiveGimmick(gBattlerAttacker) != GIMMICK_TERA && !GET_MOVE_MOVEEFFECT_TABLE(gCurrentMove).callOtherMove) // Wait the move call the other move to change the type based on it instead
     {
         gDisableStructs[gBattlerAttacker].canProteanActivate = FALSE;
         SetBattlerType(gBattlerAttacker, gBattleStruct->dynamicMoveType);
@@ -3779,6 +3780,11 @@ static void atk49_moveend(void)
                 if (gBattleStruct->dynamicMoveType == TYPE_ELECTRIC)
                     gStatuses3[gBattlerAttacker] &= ~(STATUS3_CHARGED_UP);
                 
+                // Check if Stellar type boost should be used up
+                if (GetActiveGimmick(gBattlerAttacker) == GIMMICK_TERA && GetBattlerTeraType(gBattlerAttacker) == TYPE_STELLAR && GetBattleMoveSplit(gCurrentMove) != SPLIT_STATUS
+                && IsTypeStellarBoosted(gBattlerAttacker, gBattleStruct->dynamicMoveType))
+                    TryExpendTypeStellarBoost(gBattlerAttacker, gBattleStruct->dynamicMoveType);
+                
                 // Update evo tracks
                 if (originallyUsedMove)
                     TryUpdateEvolutionTracker(EVO_REQ_USE_MOVE_X_TIMES, 1, originallyUsedMove);
@@ -4504,9 +4510,7 @@ static void atk53_switchoutabilities(void)
             BattleScriptCall(BattleScript_NeutralizingGasExits);
             return;
     }
-    
-    if (GetActiveGimmick(battlerId) != GIMMICK_MEGA) // Megas can't revert form when switched out
-        DoSpecialFormChange(battlerId, gBattlerPartyIndexes[battlerId], FORM_CHANGE_SWITCH_OUT);
+    DoSpecialFormChange(battlerId, gBattlerPartyIndexes[battlerId], FORM_CHANGE_SWITCH_OUT);
     
     SWAP(gBattlerPartyIndexes[battlerId], gBattleStruct->battlers[battlerId].partyIndex, temp);
     
@@ -5967,6 +5971,13 @@ static void atk76_various(void)
             }
             return;
         }
+        case VARIOUS_TERASTALLIZATION_ABILITIES:
+        {
+            VARIOUS_ARGS();
+            gBattlescriptCurrInstr = cmd->nextInstr;
+            AbilityBattleEffects(ABILITYEFFECT_ON_TERASTALLIZATION, battlerId);
+            return;
+        }
         case VARIOUS_TRY_END_NEUTRALIZING_GAS: // Try remove it when ability changed or suppresed
         {
             VARIOUS_ARGS();
@@ -6135,7 +6146,7 @@ static void atk76_various(void)
 
             u32 moveType = gBattleMoves[gBattleMons[battlerId].moves[0]].type; // Always first slot move's type
             
-            if (IsBattlerOfType(battlerId, moveType))
+            if (IsBattlerOfType(battlerId, moveType) || GetActiveGimmick(battlerId) == GIMMICK_TERA)
                 gBattlescriptCurrInstr = cmd->failPtr;
             else
             {
@@ -6378,6 +6389,22 @@ static void atk76_various(void)
                 gBattlescriptCurrInstr = cmd->nextInstr;
             
             return;
+        }
+        case VARIOUS_TRY_TERASTALLIZATION_FORM_CHANGE:
+        {
+            VARIOUS_ARGS();
+            
+            u32 targetSpecies = TryDoBattleFormChange(battlerId, FORM_CHANGE_TERASTAL);
+            
+            if (targetSpecies)
+            {
+                DoBattleFormChange(battlerId, targetSpecies, FALSE, TRUE, TRUE);
+                gBattleScripting.animArg1 = B_ANIM_TERA_CHARGE_FORM_CHANGE;
+            }
+            else
+                gBattleScripting.animArg1 = B_ANIM_TERA_CHARGE;
+
+            break;
         }
     }
     gBattlescriptCurrInstr = cmd->nextInstr;
@@ -6696,7 +6723,7 @@ static void atk82_settypetoterrain(void)
 
     u32 type = gBattleTerrainTable[gBattleTerrain].camouflageType;
     
-    if (!IsBattlerOfType(gBattlerAttacker, type))
+    if (!IsBattlerOfType(gBattlerAttacker, type) && GetActiveGimmick(gBattlerAttacker) != GIMMICK_TERA)
     {
         SetBattlerType(gBattlerAttacker, type);
         gBattlescriptCurrInstr = cmd->nextInstr;
@@ -6902,7 +6929,7 @@ static void atk88_pickup(void)
                         if (chance > 9)
                             chance = 9;
                         
-                        if ((chance + 1) * 5 > RandomMax(100))
+                        if ((chance + 1) * 5 > (Random() % 100))
                             TryPickupItem(mon, ITEM_HONEY);
                     }
                     break;
@@ -6975,15 +7002,18 @@ static void atk8C_trysettargettype(void)
 {
     CMD_ARGS(const u8 *failPtr);
     
-    u32 typeToSet, targetAbility = GetBattlerAbility(gBattlerTarget);
+    u32 targetAbility = GetBattlerAbility(gBattlerTarget);
     
     if (targetAbility == ABILITY_MULTITYPE || targetAbility == ABILITY_RKS_SYSTEM || GetActiveGimmick(gBattlerTarget) == GIMMICK_TERA)
         gBattlescriptCurrInstr = cmd->failPtr;
     else
     {
-        typeToSet = gBattleMoves[gCurrentMove].argument.generic;
+        u32 typeToSet = gBattleMoves[gCurrentMove].argument.generic;
+        u32 types[3];
         
-        if (GetBattlerType(gBattlerTarget, 1) == typeToSet && GetBattlerType(gBattlerTarget, 2) == typeToSet)
+        GetBattlerTypes(gBattlerTarget, FALSE, types);
+        
+        if (types[0] == typeToSet && types[1] == typeToSet)
             gBattlescriptCurrInstr = cmd->failPtr;
         else
         {
@@ -7477,16 +7507,25 @@ static void atkA2_nop(void)
 static void atkA3_disablelastusedattack(void)
 {
     CMD_ARGS(u8 battler, const u8 *failPtr);
-
+    
     u32 battlerId = GetBattlerForBattleScript(cmd->battler), movePos = FindMoveSlotInBattlerMoveset(battlerId, gBattleStruct->battlers[battlerId].lastMove);
-
-    if (movePos != MAX_MON_MOVES && TryDisableMove(battlerId, movePos, gBattleMons[battlerId].moves[movePos]))
-    {
-        PrepareMoveBuffer(gBattleTextBuff1, gBattleMons[battlerId].moves[movePos]);
-        gBattlescriptCurrInstr = cmd->nextInstr;
-    }
-    else
+    
+    if (gDisableStructs[battlerId].disabledMove || movePos == MAX_MON_MOVES || gBattleMons[battlerId].pp[movePos] == 0)
         gBattlescriptCurrInstr = cmd->failPtr;
+    else
+    {
+        u32 move = gBattleMons[battlerId].moves[movePos];
+        
+        if (move == MOVE_STRUGGLE)
+            gBattlescriptCurrInstr = cmd->failPtr;
+        else
+        {
+            gDisableStructs[battlerId].disabledMove = move;
+            gDisableStructs[battlerId].disableTimer = 4;
+            PrepareMoveBuffer(gBattleTextBuff1, move);
+            gBattlescriptCurrInstr = cmd->nextInstr;
+        }
+    }
 }
 
 static void atkA4_trysetencore(void)
@@ -7525,7 +7564,7 @@ static void atkA6_settypetorandomresistance(void) // conversion 2
     u32 i, lastUsedMoveType, resistTypes;
     u32 lastMove = gBattleStruct->battlers[gBattlerTarget].lastMove;
     
-    if (!lastMove || lastMove == MOVE_UNAVAILABLE || lastMove == MOVE_STRUGGLE)
+    if (!lastMove || lastMove == MOVE_UNAVAILABLE || lastMove == MOVE_STRUGGLE || GetActiveGimmick(gBattlerAttacker) == GIMMICK_TERA)
         gBattlescriptCurrInstr = cmd->failPtr;
     else
     {
@@ -7945,7 +7984,7 @@ static void atkB9_magnitudedamagecalculation(void)
 
     if (!gBattleStruct->magnitudeBasePower) // Check power has't been calculated
     {
-        u32 power, magnitude = RandomMax(100);
+        u32 power, magnitude = RandomUniform(RNG_MAGNITUDE, 0, 99);
         
         if (magnitude < 5)
         {
@@ -8666,7 +8705,7 @@ static bool32 CalcCriticalCaptureChance(u32 odds)
 
     odds /= 6;
     
-    return (RandomMax(255) < odds);
+    return ((Random() % 255) < odds);
 }
 
 static void atkEF_handleballthrow(void)

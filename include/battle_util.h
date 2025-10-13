@@ -39,17 +39,18 @@ enum
 #define MOVE_LIMITATION_ALL_MOVES_MASK  (Bit(MAX_MON_MOVES) - 1) // Mask when all moves are unusable
 
 // Cases for AbilityBattleEffects
-#define ABILITYEFFECT_ON_SWITCHIN       0
-#define ABILITYEFFECT_ENDTURN           1
-#define ABILITYEFFECT_NEUTRALIZING_GAS  2
-#define ABILITYEFFECT_UNNERVE           3
-#define ABILITYEFFECT_MOVE_END_ATTACKER 4
-#define ABILITYEFFECT_MOVE_END_TARGET   5
-#define ABILITYEFFECT_IMMUNITY          6
-#define ABILITYEFFECT_ON_WEATHER        7
-#define ABILITYEFFECT_SYNCHRONIZE       8
-#define ABILITYEFFECT_ON_TERRAIN        9
-#define ABILITYEFFECT_OPPORTUNIST       10
+#define ABILITYEFFECT_ON_SWITCHIN         0
+#define ABILITYEFFECT_ENDTURN             1
+#define ABILITYEFFECT_NEUTRALIZING_GAS    2
+#define ABILITYEFFECT_UNNERVE             3
+#define ABILITYEFFECT_MOVE_END_ATTACKER   4
+#define ABILITYEFFECT_MOVE_END_TARGET     5
+#define ABILITYEFFECT_IMMUNITY            6
+#define ABILITYEFFECT_ON_WEATHER          7
+#define ABILITYEFFECT_SYNCHRONIZE         8
+#define ABILITYEFFECT_ON_TERRAIN          9
+#define ABILITYEFFECT_OPPORTUNIST         10
+#define ABILITYEFFECT_ON_TERASTALLIZATION 11
 
 // Cases for CheckAbilityInBattle
 #define CHECK_ABILITY_ON_FIELD                0
@@ -188,12 +189,10 @@ void CalculatePayDayMoney(void);
 s32 GetDrainedBigRootHp(u32 battlerId, s32 hp);
 u32 GetBattlerMoveType(u32 battlerId, u32 move);
 bool32 TryTransformIntoBattler(u32 battler1, u32 battler2);
-bool32 TryDisableMove(u32 battlerId, u32 movePos, u32 move);
 bool32 CanSafeguardProtectBattler(u32 attacker, u32 defender);
 bool32 IsBattlerProtectedByFlowerVeil(u32 battlerId);
 void SaveBattlersHps(void);
-void GetBattlerTypes(u32 battlerId, u32 *types);
-u32 GetBattlerType(u32 battlerId, u32 index);
+void GetBattlerTypes(u32 battlerId, bool32 ignoreTera, u32 *types);
 void SetBattlerType(u32 battlerId, u32 type);
 void SetBattlerInitialTypes(u32 battlerId);
 bool32 DoBattlersShareType(u32 battler1, u32 battler2);

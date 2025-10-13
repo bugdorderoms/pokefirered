@@ -2998,6 +2998,20 @@ const struct Item gItems[ITEMS_COUNT] =
         // .iconPic = sItemIcon_TeraShard,
         // .iconPalette = sItemIconPalette_FairyTeraShard,
     },
+    [ITEM_STELLAR_TERA_SHARD] =
+    {
+        .name = _("Stellar Tera"),
+        .itemEffect = ITEM_EFFECT(SET_TERA_TYPE(TYPE_STELLAR)),
+        .description = sItemDesc_TeraShards,
+        .price = 1000,
+        .pocket = POCKET_ITEMS,
+        .type = ITEM_TYPE_PARTY_MENU,
+        .fieldUseFunc = FieldUseFunc_Medicine,
+        .usageType = ITEM_TYPE_TERA_SHARD,
+        .flingPower = 30,
+        // .iconPic = sItemIcon_TeraShard,
+        // .iconPalette = sItemIconPalette_StellarTeraShard,
+    },
     [ITEM_CHERI_BERRY] =
     {
         .name = _("Cheri Berry"),

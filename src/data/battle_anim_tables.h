@@ -347,4 +347,19 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .ignoreSemiInvulnerability = TRUE,
         .ignoreSubstitute = TRUE,
     },
+    [B_ANIM_TERA_CHARGE] =
+    {
+        .script = gGeneralAnim_TeraCharge,
+        .hideHpBoxes = TRUE,
+        .shouldBePlayed = TRUE,
+        .substituteRecede = TRUE,
+    },
+    [B_ANIM_TERA_CHARGE_FORM_CHANGE] =
+    {
+        .script = gGeneralAnim_TeraCharge,
+        .hideHpBoxes = TRUE,
+        .shouldBePlayed = TRUE,
+        .substituteRecede = TRUE,
+        .changeForm = TRUE,
+    },
 };

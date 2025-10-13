@@ -4,15 +4,18 @@
 #include "battle_interface.h"
 #include "battle_message.h"
 #include "battle_scripts.h"
+#include "event_data.h"
 #include "form_change.h"
 #include "item.h"
 #include "palette.h"
+#include "pokedex.h"
 #include "pokemon_icon.h"
 #include "test_runner.h"
 #include "util.h"
 #include "constants/battle_string_ids.h"
 #include "constants/hold_effects.h"
 #include "constants/moves.h"
+#include "constants/pokedex.h"
 
 /////////////////////
 // GIMMICKS SYSTEM //
@@ -88,7 +91,7 @@ void SetActiveGimmick(u32 battler, u32 gimmick)
     gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].activeGimmick = gimmick;
 }
 
-// Removes a battler's active gimmick, either by switching or fainting.
+// Removes a battler's active gimmick on fainting.
 void RemoveActiveGimmick(u32 battler, u32 gimmick)
 {
     if (gimmick != GIMMICK_NONE)
@@ -433,7 +436,7 @@ u32 CreateGimmickIndicatorSprite(u32 battler)
 // Update sLevelXDelta depending if the battler's level has 1, 2 or 3 chars.
 void UpdateIndicatorLevelData(u32 indicatorSpriteId, u32 level)
 {
-    s32 xDelta;
+    s16 xDelta;
     
     if (level >= 100)
         xDelta = -4;
@@ -466,14 +469,7 @@ u32 GetGimmickIndicatorId(u32 battler)
     // So, its possible to have a Dynamax icon over the Primal icon when active.
     // And return to the Primal icon when the Dynamax ends.
     if (gimmickIndicatorId != GIMMICK_INDICATOR_NONE)
-    {
-        switch (gimmickIndicatorId)
-        {
-            case GIMMICK_INDICATOR_TERA:
-                return gimmickIndicatorId + GetBattlerTeraType(battler);
-        }
         return gimmickIndicatorId;
-    }
     else
         return gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].specialGimmickIndicatorId;
 }
@@ -596,7 +592,46 @@ bool32 IsMaxMove(u32 move)
 // TERASTALLIZATION //
 //////////////////////
 
+bool32 CanTerastallize(u32 battler)
+{
+    if (TryDoBattleFormChange(battler, FORM_CHANGE_MEGA_EVO) || TryDoBattleFormChange(battler, FORM_CHANGE_MOVE_MEGA_EVO))
+        return FALSE;
+    else if (GetBattlerItemHoldEffect(battler, FALSE) == HOLD_EFFECT_Z_CRYSTAL)
+        return FALSE;
+    else if ((gBattleMons[battler].status2 & STATUS2_TRANSFORMED) && SpeciesToNationalPokedexNum(gBattleMons[battler].species) == NATIONAL_DEX_TERAPAGOS)
+        return FALSE;
+    else if (!TrainerHasGimmickKeyItem(battler, ITEM_TERA_ORB))
+        return FALSE;
+    else if (!gTestRunnerEnabled && GetBattlerSide(battler) == B_SIDE_PLAYER && !FlagGet(FLAG_TERA_ORB_NO_COST) && !FlagGet(FLAG_TERA_ORB_CHARGED))
+        return FALSE;
+    else
+        return TRUE;
+}
+
+void ActivateTera(u32 battler)
+{
+    // Remove Tera Orb charge
+    if (!gTestRunnerEnabled && !FlagGet(FLAG_TERA_ORB_NO_COST) && GetBattlerSide(battler) == B_SIDE_PLAYER
+    && !(IsDoubleBattleForBattler(battler) && !IsPartnerMonFromSameTrainer(battler)))
+        FlagClear(FLAG_TERA_ORB_CHARGED);
+    
+    PrepareTypeBuffer(gBattleTextBuff1, GetBattlerTeraType(battler));
+    BattleScriptExecute(BattleScript_Terastallization);
+}
+
 u32 GetBattlerTeraType(u32 battler)
 {
-    return GetMonData(GetBattlerPartyIndexPtr(battler), MON_DATA_TERA_TYPE);
+    return GetMonTeraType(GetBattlerPartyIndexPtr(battler));
+}
+
+bool32 IsTypeStellarBoosted(u32 battler, u32 type)
+{
+    return !(gBattleStruct->sides[GetBattlerSide(battler)].stellarBoostFlags & Bit(type));
+}
+
+void TryExpendTypeStellarBoost(u32 battler, u32 type)
+{
+    // The boost isn't used up by Terapagos tera Stellar
+    if (gBattleMons[battler].species != SPECIES_TERAPAGOS_STELLAR)
+        gBattleStruct->sides[GetBattlerSide(battler)].stellarBoostFlags |= Bit(type);
 }

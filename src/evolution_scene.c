@@ -431,7 +431,7 @@ void TradeEvolutionScene(struct Pokemon* mon, u32 speciesToEvolve, u32 preEvoSpr
     sEvoStructPtr = AllocZeroed(sizeof(struct EvoInfo));
     sEvoStructPtr->preEvoSpriteId = preEvoSpriteId;
 
-    LZDecompressWram(gSpeciesInfo[speciesToEvolve].frontPic, gMonSpritesGfxPtr->battlers[3].sprite);
+    LZDecompressWram(gSpeciesInfo[speciesToEvolve].frontPic, gMonSpritesGfxPtr->battlers[1].sprite);
 
     LoadCompressedPalette(GetMonSpritePalFromSpecies(speciesToEvolve, GetMonData(mon, MON_DATA_IS_SHINY)), 0x120, 0x20);
 

@@ -40,7 +40,7 @@ EWRAM_DATA u8 gAnimCustomPanning = 0;
 
 // Function Declarations
 static void AddSpriteIndex(u32 index, u32 which);
-static void ClearSpriteIndex(u32 index);
+static void ClearSpriteIndex(u32 index, u32 which);
 static void WaitAnimFrameCount(void);
 static void RunAnimScriptCommand(void);
 static void sub_8073558(u32 taskId);
@@ -74,7 +74,7 @@ static void ScriptCmd_fadetobg(void);
 static void ScriptCmd_restorebg(void);
 static void ScriptCmd_waitbgfadeout(void);
 static void ScriptCmd_waitbgfadein(void);
-static void ScriptCmd_nop(void);
+static void ScriptCmd_unloadspriteimg(void);
 static void ScriptCmd_playsewithpan(void);
 static void ScriptCmd_setpan(void);
 static void ScriptCmd_panse_1B(void);
@@ -87,6 +87,7 @@ static void ScriptCmd_jumpargeq(void);
 static void ScriptCmd_monbg_22(void);
 static void ScriptCmd_clearmonbg_23(void);
 static void ScriptCmd_callreteq(void);
+static void ScriptCmd_unloadspritepal(void);
 static void ScriptCmd_panse_26(void);
 static void ScriptCmd_panse_27(void);
 static void ScriptCmd_splitbgprio(void);
@@ -1240,7 +1241,7 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_MetalBall, 0x0080, ANIM_TAG_METAL_BALL},
     {gBattleAnimSpriteGfx_MonsterDoll, 0x0200, ANIM_TAG_MONSTER_DOLL},
     {gBattleAnimSpriteGfx_Whirlwind, 0x0800, ANIM_TAG_WHIRLWIND},
-    {gBattleAnimSpriteGfx_Whirlwind2, 0x0080, ANIM_TAG_WHIRLWIND_2},
+    {gBattleAnimSpriteGfx_TeraSymbol, 0x0200, ANIM_TAG_TERA_SYMBOL},
     {gBattleAnimSpriteGfx_Explosion4, 0x0a00, ANIM_TAG_EXPLOSION_4},
     {gBattleAnimSpriteGfx_Explosion5, 0x0280, ANIM_TAG_EXPLOSION_5},
     {gBattleAnimSpriteGfx_StealthRock, 0x0080, ANIM_TAG_STEALTH_ROCK},
@@ -1293,7 +1294,7 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_String, 0x0400, ANIM_TAG_STRING},
     {gBattleAnimSpriteGfx_WebThread, 0x0020, ANIM_TAG_WEB_THREAD},
     {gBattleAnimSpriteGfx_SpiderWeb, 0x0800, ANIM_TAG_SPIDER_WEB},
-    {gBattleAnimSpriteGfx_Lightbulb, 0x0100, ANIM_TAG_LIGHTBULB},
+    {gBattleAnimSpriteGfx_TeraCrystal, 0x0800, ANIM_TAG_TERA_CRYSTAL},
     {gBattleAnimSpriteGfx_Slash, 0x0800, ANIM_TAG_SLASH},
     {gBattleAnimSpriteGfx_FocusEnergy, 0x0400, ANIM_TAG_FOCUS_ENERGY},
     {gBattleAnimSpriteGfx_SphereToCube, 0x0a00, ANIM_TAG_SPHERE_TO_CUBE},
@@ -1421,6 +1422,7 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_ChainLink, 0x0400, ANIM_TAG_CHAIN_LINK},
     {gBattleAnimSpriteGfx_PowerTrick, 0x0800, ANIM_TAG_POWER_TRICK},
     {gBattleAnimSpriteGfx_MegaEvoStone, 0x0800, ANIM_TAG_MEGA_EVOLUTION_STONE},
+    {gBattleAnimSpriteGfx_TeraShatter, 0x0180, ANIM_TAG_TERA_SHATTER},
 };
 
 const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
@@ -1554,7 +1556,7 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_MetalBall, ANIM_TAG_METAL_BALL},
     {gBattleAnimSpritePal_MonsterDoll, ANIM_TAG_MONSTER_DOLL},
     {gBattleAnimSpritePal_Whirlwind, ANIM_TAG_WHIRLWIND},
-    {gBattleAnimSpritePal_Whirlwind, ANIM_TAG_WHIRLWIND_2},
+    {gBattleAnimSpritePal_TeraSymbol, ANIM_TAG_TERA_SYMBOL},
     {gBattleAnimSpritePal_Explosion4, ANIM_TAG_EXPLOSION_4},
     {gBattleAnimSpritePal_Explosion4, ANIM_TAG_EXPLOSION_5},
     {gBattleAnimSpritePal_StealthRock, ANIM_TAG_STEALTH_ROCK},
@@ -1607,7 +1609,7 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_String, ANIM_TAG_STRING},
     {gBattleAnimSpritePal_String, ANIM_TAG_WEB_THREAD},
     {gBattleAnimSpritePal_String, ANIM_TAG_SPIDER_WEB},
-    {gBattleAnimSpritePal_Lightbulb, ANIM_TAG_LIGHTBULB},
+    {gBattleAnimSpritePal_TeraCrystal, ANIM_TAG_TERA_CRYSTAL},
     {gBattleAnimSpritePal_Slash, ANIM_TAG_SLASH},
     {gBattleAnimSpritePal_FocusEnergy, ANIM_TAG_FOCUS_ENERGY},
     {gBattleAnimSpritePal_SphereToCube, ANIM_TAG_SPHERE_TO_CUBE},
@@ -1735,6 +1737,7 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_ChainLink, ANIM_TAG_CHAIN_LINK},
     {gBattleAnimSpritePal_PowerTrick, ANIM_TAG_POWER_TRICK},
     {gBattleAnimSpritePal_MegaEvoStone, ANIM_TAG_MEGA_EVOLUTION_STONE},
+    {gBattleAnimSpritePal_TeraShatter, ANIM_TAG_TERA_SHATTER},
 };
 
 static const struct BattleAnimBackground sBattleAnimBackgroundTable[] =
@@ -1811,7 +1814,7 @@ static void (*const sScriptCmdTable[])(void) =
     ScriptCmd_restorebg,
     ScriptCmd_waitbgfadeout,
     ScriptCmd_waitbgfadein,
-    ScriptCmd_nop,
+    ScriptCmd_unloadspriteimg,
     ScriptCmd_playsewithpan,
     ScriptCmd_setpan,
     ScriptCmd_panse_1B,
@@ -1824,7 +1827,7 @@ static void (*const sScriptCmdTable[])(void) =
     ScriptCmd_monbg_22,
     ScriptCmd_clearmonbg_23,
     ScriptCmd_callreteq,
-    ScriptCmd_nop,
+    ScriptCmd_unloadspritepal,
     ScriptCmd_panse_26,
     ScriptCmd_panse_27,
     ScriptCmd_splitbgprio,
@@ -2023,17 +2026,26 @@ static void AddSpriteIndex(u32 index, u32 which)
     }
 }
 
-static void ClearSpriteIndex(u32 index)
+// 0 - both sprite and palette
+// 1 - only sprite
+// 2 - only palette
+static void ClearSpriteIndex(u32 index, u32 which)
 {
     u32 i;
 
     for (i = 0; i < ANIM_SPRITE_INDEX_COUNT; i++)
     {
-        if (sAnimSpriteGfxIndexArray[i] == index)
-            sAnimSpriteGfxIndexArray[i] = 0xFFFF;
+        if (which == 0 || which == 1)
+        {
+            if (sAnimSpriteGfxIndexArray[i] == index)
+                sAnimSpriteGfxIndexArray[i] = 0xFFFF;
+        }
         
-        if (sAnimSpritePalIndexArray[i] == index)
-            sAnimSpritePalIndexArray[i] = 0xFFFF;
+        if (which == 0 || which == 2)
+        {
+            if (sAnimSpritePalIndexArray[i] == index)
+                sAnimSpritePalIndexArray[i] = 0xFFFF;
+        }
     }
 }
 
@@ -2085,7 +2097,7 @@ static void ScriptCmd_unloadspritegfx(void)
     FreeSpriteTilesByTag(gBattleAnimPicTable[index].tag);
     FreeSpritePaletteByTag(gBattleAnimPicTable[index].tag);
     
-    ClearSpriteIndex(index);
+    ClearSpriteIndex(index, 0);
     
     sBattleAnimScriptPtr += 2;
 }
@@ -2627,6 +2639,21 @@ static void ScriptCmd_callreteq(void)
         sBattleAnimScriptPtr += 7;
 }
 
+static void ScriptCmd_unloadspritepal(void)
+{
+    u32 index;
+
+    sBattleAnimScriptPtr++;
+    
+    index = GET_TRUE_SPRITE_INDEX(READ_16(sBattleAnimScriptPtr));
+    
+    FreeSpritePaletteByTag(gBattleAnimPicTable[index].tag);
+    
+    ClearSpriteIndex(index, 2);
+    
+    sBattleAnimScriptPtr += 2;
+}
+
 static void sub_8073558(u32 taskId)
 {
     if (++gTasks[taskId].data[1] != 1)
@@ -2834,7 +2861,20 @@ static void ScriptCmd_waitbgfadein(void)
         sAnimFramesToWait = 1;
 }
 
-static void ScriptCmd_nop(void) {}
+static void ScriptCmd_unloadspriteimg(void)
+{
+    u32 index;
+
+    sBattleAnimScriptPtr++;
+    
+    index = GET_TRUE_SPRITE_INDEX(READ_16(sBattleAnimScriptPtr));
+    
+    FreeSpriteTilesByTag(gBattleAnimPicTable[index].tag);
+    
+    ClearSpriteIndex(index, 1);
+    
+    sBattleAnimScriptPtr += 2;
+}
 
 s8 BattleAnimAdjustPanning(s8 pan)
 {

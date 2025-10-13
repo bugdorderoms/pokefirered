@@ -248,6 +248,8 @@
 #define VARIOUS_JUMP_IF_NO_DAMAGE                   38
 #define VARIOUS_JUMP_IF_ACTIVE_GIMMICK              39
 #define VARIOUS_JUMP_IF_SKY_DROP_FAILS              40
+#define VARIOUS_TRY_TERASTALLIZATION_FORM_CHANGE    41
+#define VARIOUS_TERASTALLIZATION_ABILITIES          42
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN        0

@@ -4,6 +4,7 @@
 #include "event_data.h"
 #include "load_save.h"
 #include "overworld.h"
+#include "item.h"
 #include "form_change.h"
 #include "party_menu.h"
 #include "pokedex.h"
@@ -27,6 +28,10 @@ void HealPlayerParty(void)
         MonRestorePP(&gPlayerParty[i]);
         SetMonData(&gPlayerParty[i], MON_DATA_STATUS_ID, &status);
     }
+    
+    // Recharge Tera Orb, if possible.
+    if (CheckBagHasItem(ITEM_TERA_ORB, 1))
+        FlagSet(FLAG_TERA_ORB_CHARGED);
 }
 
 u32 ScriptGiveMon(u32 species, u32 level, u32 item, u8 *ivs, u32 pokeBall, u32 shinyType, bool32 hiddenAbility, u32 nature, u32 gender, u16 *moves)

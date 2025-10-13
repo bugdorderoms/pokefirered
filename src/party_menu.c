@@ -6143,7 +6143,7 @@ bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 
                 {
                     u32 type = GET_ARG(1);
                     
-                    if (GetMonData(mon, MON_DATA_TERA_TYPE) != type)
+                    if (GetSpeciesFixedTeraType(GetMonData(mon, MON_DATA_SPECIES)) == NUMBER_OF_MON_TYPES && GetMonData(mon, MON_DATA_TERA_TYPE) != type)
                     {
                         SetMonData(mon, MON_DATA_TERA_TYPE, &type);
                         SET_STRING_TO_PRINT(ITEMUSE_STRING_CHANGED_TERA_TYPE)

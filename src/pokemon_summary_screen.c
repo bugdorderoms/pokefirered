@@ -2534,7 +2534,7 @@ static void PokeSum_PrintMonIvs(void)
     struct Pokemon *mon = &sMonSummaryScreen->currentMon;
         
     for (i = 0; i < NUM_STATS; i++)
-        BlitMoveInfoIcon(3, (GetMonData(mon, MON_DATA_HP_IV + i) / 2) + 29, 6, sStatsPosY[i] + 1);
+        BlitMoveInfoIcon(3, MOVE_INFO_IV_RANKING_ICON + (GetMonData(mon, MON_DATA_HP_IV + i) / 2), 6, sStatsPosY[i] + 1);
 }
 #endif
 
@@ -2576,14 +2576,14 @@ static void PokeSum_DrawMoveTypeIcons(void)
         if (sMonSummaryScreen->moveIds[i] == MOVE_NONE)
             continue;
 
-        BlitMoveInfoIcon(sMonSummaryScreen->windowIds[5], sMonSummaryScreen->moveTypes[i] + 1, 3, GetMoveNamePrinterYpos(i) - 1);
-        BlitMoveInfoIcon(sMonSummaryScreen->windowIds[5], gBattleMoves[sMonSummaryScreen->moveIds[i]].split + 26, 3, GetMoveNamePrinterYpos(i) + 11);
+        BlitMoveInfoIcon(sMonSummaryScreen->windowIds[5], MOVE_INFO_MOVE_TYPE_ICON + sMonSummaryScreen->moveTypes[i], 3, GetMoveNamePrinterYpos(i) - 1);
+        BlitMoveInfoIcon(sMonSummaryScreen->windowIds[5], MOVE_INFO_MOVE_SPLIT_ICON + gBattleMoves[sMonSummaryScreen->moveIds[i]].split, 3, GetMoveNamePrinterYpos(i) + 11);
     }
     
     if (sMonSummaryScreen->mode == PSS_MODE_SELECT_MOVE)
     {
-        BlitMoveInfoIcon(sMonSummaryScreen->windowIds[5], sMonSummaryScreen->moveTypes[MAX_MON_MOVES] + 1, 3, GetMoveNamePrinterYpos(MAX_MON_MOVES) - 1);
-        BlitMoveInfoIcon(sMonSummaryScreen->windowIds[5], gBattleMoves[sMonSummaryScreen->moveIds[MAX_MON_MOVES]].split + 26, 3, GetMoveNamePrinterYpos(MAX_MON_MOVES) + 11);
+        BlitMoveInfoIcon(sMonSummaryScreen->windowIds[5], MOVE_INFO_MOVE_TYPE_ICON + sMonSummaryScreen->moveTypes[MAX_MON_MOVES], 3, GetMoveNamePrinterYpos(MAX_MON_MOVES) - 1);
+        BlitMoveInfoIcon(sMonSummaryScreen->windowIds[5], MOVE_INFO_MOVE_SPLIT_ICON + gBattleMoves[sMonSummaryScreen->moveIds[MAX_MON_MOVES]].split, 3, GetMoveNamePrinterYpos(MAX_MON_MOVES) + 11);
     }
 }
 
@@ -2989,10 +2989,10 @@ static void PokeSum_PrintMonTypeIcons(void)
     case PSS_PAGE_INFO:
         if (!sMonSummaryScreen->isEgg)
         {
-            BlitMoveInfoIcon(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], sMonSummaryScreen->monTypes[0] + 1, 47, 35);
+            BlitMoveInfoIcon(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], MOVE_INFO_MOVE_TYPE_ICON + sMonSummaryScreen->monTypes[0], 47, 35);
 
             if (sMonSummaryScreen->monTypes[0] != sMonSummaryScreen->monTypes[1])
-                BlitMoveInfoIcon(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], sMonSummaryScreen->monTypes[1] + 1, 83, 35);
+                BlitMoveInfoIcon(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], MOVE_INFO_MOVE_TYPE_ICON + sMonSummaryScreen->monTypes[1], 83, 35);
         }
         break;
     case PSS_PAGE_SKILLS:
@@ -3001,10 +3001,10 @@ static void PokeSum_PrintMonTypeIcons(void)
         break;
     case PSS_PAGE_MOVES_INFO:
         FillWindowPixelBuffer(sMonSummaryScreen->windowIds[6], 0);
-        BlitMoveInfoIcon(sMonSummaryScreen->windowIds[6], sMonSummaryScreen->monTypes[0] + 1, 0, 3);
+        BlitMoveInfoIcon(sMonSummaryScreen->windowIds[6], MOVE_INFO_MOVE_TYPE_ICON + sMonSummaryScreen->monTypes[0], 0, 3);
 
         if (sMonSummaryScreen->monTypes[0] != sMonSummaryScreen->monTypes[1])
-            BlitMoveInfoIcon(sMonSummaryScreen->windowIds[6], sMonSummaryScreen->monTypes[1] + 1, 36, 3);
+            BlitMoveInfoIcon(sMonSummaryScreen->windowIds[6], MOVE_INFO_MOVE_TYPE_ICON + sMonSummaryScreen->monTypes[1], 36, 3);
 
         PutWindowTilemap(sMonSummaryScreen->windowIds[6]);
         break;

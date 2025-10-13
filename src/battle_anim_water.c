@@ -586,8 +586,8 @@ void AnimTask_CreateRaindrops(u32 taskId)
 
     if (++gTasks[taskId].data[0] % gTasks[taskId].data[2] == 1)
     {
-        x = RandomMax(240);
-        y = RandomMax(80);
+        x = Random() % 240;
+        y = Random() % 80;
         
         switch (gTasks[taskId].data[1])
         {
@@ -1071,8 +1071,8 @@ static void AnimSmallDriftingBubbles(struct Sprite *sprite)
     
     InitSpritePosToAnimTarget(sprite, TRUE);
     
-    randData = RandomMax(256) | 256;
-    randData2 = RandomMax(0x200);
+    randData = (Random() % 256) | 256;
+    randData2 = Random() % 512;
     
     if (randData2 > 255)
         randData2 = 256 - randData2;
@@ -1536,9 +1536,9 @@ static void AnimWaterSportDroplet(struct Sprite *sprite)
         sprite->y += sprite->y2;
         
         sprite->data[0] = 6;
-        sprite->data[2] = RandomMax(32) - 16 + sprite->x;
-        sprite->data[4] = RandomMax(32) - 16 + sprite->y;
-        sprite->data[5] = ~(RandomMax(8));
+        sprite->data[2] = (Random() % 32) - 16 + sprite->x;
+        sprite->data[4] = (Random() % 32) - 16 + sprite->y;
+        sprite->data[5] = ~(Random() % 8);
         InitAnimArcTranslation(sprite);
         sprite->callback = AnimWaterSportDroplet_Step;
     }
@@ -1652,8 +1652,8 @@ static void CreateWaterPulseRingBubbles(struct Sprite *sprite, s32 xDiff, s32 yD
     combinedX = sprite->x + sprite->x2;
     combinedY = sprite->y + sprite->y2;
     
-    somethingRandomY = yDiff + (RandomMax(10)) - 5;
-    somethingRandomX = -xDiff + (RandomMax(10)) - 5;
+    somethingRandomY = yDiff + (Random() % 10) - 5;
+    somethingRandomX = -xDiff + (Random() % 10) - 5;
 
     for (i = 0; i < 1; i++)
     {

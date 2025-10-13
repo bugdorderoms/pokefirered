@@ -17,6 +17,14 @@ static const struct GimmickInfo sGimmicksInfo[GIMMICKS_COUNT] =
         .activateGimmick = ActivateUltraBurst,
         .indicatorId = GIMMICK_INDICATOR_ULTRA_BURST,
     },
+    [GIMMICK_TERA] =
+    {
+        .triggerSheet = &sSpriteSheet_TeraTrigger,
+        .triggerPal = sTeraTriggerPal,
+        .canActivate = CanTerastallize,
+        .activateGimmick = ActivateTera,
+        .indicatorId = GIMMICK_INDICATOR_TERA,
+    }
     /*[GIMMICK_Z_MOVE] =
     {
         .triggerSheet = &sSpriteSheet_ZMoveTrigger,
@@ -31,13 +39,5 @@ static const struct GimmickInfo sGimmicksInfo[GIMMICKS_COUNT] =
         .canActivate = CanDynamax,
         .activateGimmick = ActivateDynamax,
         .indicatorId = GIMMICK_INDICATOR_DYNAMAX,
-    },
-    [GIMMICK_TERA] =
-    {
-        .triggerSheet = &sSpriteSheet_TeraTrigger,
-        .triggerPal = sTeraTriggerPal,
-        .canActivate = CanTerastallize,
-        .activateGimmick = ActivateTera,
-        .indicatorId = GIMMICK_INDICATOR_TERA,
-    }*/
+    },*/
 };

@@ -37,7 +37,7 @@
 #define FLAG_TEMP_1F             0x01F
 #define TEMP_FLAGS_END           FLAG_TEMP_1F
 
-#define FLAG_0x020                 0x020
+#define FLAG_0x020               0x020
 #define FLAG_SYS_RIDE_PAGER_GET  0x021
 #define FLAG_TAUROS_RIDE_GET     0x022
 #define FLAG_STOUTLAND_RIDE_GET  0x023
@@ -198,8 +198,8 @@
 #define FLAG_0x0B9               0x0B9
 #define FLAG_0x0BA               0x0BA
 #define FLAG_0x0BB               0x0BB
-#define FLAG_0x0BC               0x0BC
-#define FLAG_0x0BD               0x0BD
+#define FLAG_TERA_ORB_NO_COST    0x0BC // If set, tera orb will aways be charged
+#define FLAG_TERA_ORB_CHARGED    0x0BD
 #define FLAG_0x0BE               0x0BE
 #define FLAG_0x0BF               0x0BF
 #define FLAG_0x0C0               0x0C0

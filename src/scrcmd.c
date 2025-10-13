@@ -527,7 +527,7 @@ bool32 ScrCmd_subvar(struct ScriptContext * ctx)
 bool32 ScrCmd_random(struct ScriptContext * ctx)
 {
     CMD_ARGS(u16 max);
-    gSpecialVar_Result = RandomMax(VarGet(cmd->max));
+    gSpecialVar_Result = Random() % VarGet(cmd->max);
     return FALSE;
 }
 

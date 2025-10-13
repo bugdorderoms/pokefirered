@@ -99,6 +99,7 @@ static u32 GetSpeciesForm(u32 formChangeType, u32 species, u32 personality, u32 
                     case FORM_CHANGE_START_BATTLE:
                     case FORM_CHANGE_FAINT_TARGET:
                     case FORM_CHANGE_COUNTDOWN:
+                    case FORM_CHANGE_SWITCH_IN:
                         targetSpecies = formsTable[i].targetSpecies;
                         break;
                     case FORM_CHANGE_NATURE:
@@ -193,6 +194,10 @@ static u32 GetSpeciesForm(u32 formChangeType, u32 species, u32 personality, u32 
                         break;
                     case FORM_CHANGE_REGION:
                         if (param == REGIONS_COUNT || param == gMapSectionsInfo[GetCurrentRegionMapSectionId()].region)
+                            targetSpecies = formsTable[i].targetSpecies;
+                        break;
+                    case FORM_CHANGE_TERASTAL:
+                        if (param == GetBattlerTeraType(battlerId))
                             targetSpecies = formsTable[i].targetSpecies;
                         break;
                 }
@@ -304,7 +309,7 @@ u32 TryDoBattleFormChange(u32 battlerId, u32 formChangeType)
         
         if (personalitySpecies) // handle minior forms
             targetSpecies = personalitySpecies;
-            
+        
         if (targetSpecies == species)
             targetSpecies = SPECIES_NONE;
     }

@@ -333,6 +333,7 @@ struct ALIGNED_NO_PADDING(2) Ability
 struct TypeInfo
 {
     const u32 *tmPalette;
+    u16 teraBlendColor;
     u8 name[TYPE_NAME_LENGTH + 1];
 };
 
@@ -537,6 +538,8 @@ void UpdatePartyFormChangeCountdown(u32 daysSince);
 void CopyPokemonToBattleMon(u32 battlerId, struct Pokemon *mon, struct BattlePokemon *dst, bool32 setAllData);
 void TryTransformZacianAndZamazentaIronHead(struct Pokemon *mon, bool32 transformBack);
 void TriggerSpecialOverworldEvo(void);
+u32 GetSpeciesFixedTeraType(u32 species);
+u32 GetMonTeraType(struct Pokemon *mon);
 
 static inline u32 GetNatureFromPersonality(u32 personality)
 {

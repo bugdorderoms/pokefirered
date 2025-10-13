@@ -114,7 +114,7 @@ static void CreateInitialRoamerMon(void)
     ROAMER->hp = GetMonData(mon, MON_DATA_MAX_HP);
     
     sRoamerLocation[MAP_GRP] = ROAMER_MAP_GROUP;
-    sRoamerLocation[MAP_NUM] = sRoamerLocations[RandomMax(NUM_LOCATION_SETS)][0];
+    sRoamerLocation[MAP_NUM] = sRoamerLocations[RandomUniform(RNG_ROAMER_MAP_NUM, 0, NUM_LOCATION_SETS - 1)][0];
 }
 
 void InitRoamer(void)
@@ -148,7 +148,7 @@ void RoamerMoveToOtherLocationSet(void)
     // different from the roamer's current map
     while (TRUE)
     {
-        mapNum = sRoamerLocations[RandomMax(NUM_LOCATION_SETS)][0];
+        mapNum = sRoamerLocations[RandomUniform(RNG_ROAMER_MAP_NUM, 0, NUM_LOCATION_SETS - 1)][0];
         
         if (sRoamerLocation[MAP_NUM] != mapNum)
         {
@@ -162,7 +162,7 @@ void RoamerMove(void)
 {
     u32 locSet = 0;
 
-    if (!RandomMax(16))
+    if (RandomUniform(RNG_ROAMER_MAP_CHANGE, 0, 15) == 0)
         RoamerMoveToOtherLocationSet();
     else
     {
@@ -180,7 +180,7 @@ void RoamerMove(void)
                 {
                     // Choose a new map (excluding the first) within this set
                     // Also exclude a map if the roamer was there 2 moves ago
-                    mapNum = sRoamerLocations[locSet][RandomMax(NUM_LOCATIONS_PER_SET - 1) + 1];
+                    mapNum = sRoamerLocations[locSet][RandomUniform(RNG_ROAMER_MAP_NUM, 0, NUM_LOCATIONS_PER_SET - 2) + 1];
                     
                     if (!(sLocationHistory[2][MAP_GRP] == ROAMER_MAP_GROUP && sLocationHistory[2][MAP_NUM] == mapNum) && mapNum != MAP_NUM(UNDEFINED))
                         break;
@@ -234,7 +234,7 @@ static bool32 IsRoamerAt(u32 mapGroup, u32 mapNum)
 
 bool32 TryStartRoamerEncounter(void)
 {
-    if (IsRoamerAt(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum) && !RandomMax(4))
+    if (IsRoamerAt(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum) && RandomPercentage(RNG_ROAMER_WILD_ENCOUNTER, 25))
     {
         CreateRoamerMonInstance();
         return TRUE;

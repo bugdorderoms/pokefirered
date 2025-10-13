@@ -773,25 +773,35 @@ static void MoveSelectionDisplayMoveNames(u32 battlerId)
     }
 }
 
-static void MoveSelectionDisplayPpString(void)
+static void MoveSelectionDisplayPpString(u32 battlerId)
 {
-    StringCopy(gDisplayedStringBattle, gText_MoveInterfacePP);
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
+    u32 moveSlot = gBattleStruct->battlers[battlerId].moveSelectionCursor;
+    u8 *txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfacePP);
+    
+    // Stellar boost indicator
+    if (GetActiveGimmick(battlerId) == GIMMICK_TERA && GetBattlerTeraType(battlerId) == TYPE_STELLAR && GetBattleMoveSplit(moveInfo->moves[moveSlot]) != SPLIT_STATUS
+    && IsTypeStellarBoosted(battlerId, moveInfo->moveTypes[moveSlot]))
+        StringCopy(txtPtr, COMPOUND_STRING("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}{UP_ARROW}"));
+    
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP);
 }
 
 static void MoveSelectionDisplayPpNumber(u32 battlerId)
 {
     u8 *txtPtr;
+    u32 moveSlot;
     struct ChooseMoveStruct *moveInfo;
     
     if (!gBattleBufferA[battlerId][2]) // check if we didn't want to display pp number
     {
         moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
+        moveSlot = gBattleStruct->battlers[battlerId].moveSelectionCursor;
         
         SetPpNumbersPaletteInMoveSelection(battlerId);
-        txtPtr = ConvertIntToDecimalStringN(gDisplayedStringBattle, moveInfo->currentPp[gBattleStruct->battlers[battlerId].moveSelectionCursor], STR_CONV_MODE_RIGHT_ALIGN, 2);
+        txtPtr = ConvertIntToDecimalStringN(gDisplayedStringBattle, moveInfo->currentPp[moveSlot], STR_CONV_MODE_RIGHT_ALIGN, 2);
         *txtPtr = CHAR_SLASH;
-        ConvertIntToDecimalStringN(++txtPtr, moveInfo->maxPp[gBattleStruct->battlers[battlerId].moveSelectionCursor], STR_CONV_MODE_RIGHT_ALIGN, 2);
+        ConvertIntToDecimalStringN(++txtPtr, moveInfo->maxPp[moveSlot], STR_CONV_MODE_RIGHT_ALIGN, 2);
         BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP_REMAINING);
     }
 }
@@ -800,14 +810,10 @@ static void MoveSelectionDisplayMoveType(u32 battlerId)
 {
     u8 *txtPtr;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
-    u32 target, effect, type, move = moveInfo->moves[gBattleStruct->battlers[battlerId].moveSelectionCursor];
+    u32 moveSlot = gBattleStruct->battlers[battlerId].moveSelectionCursor;
+    u32 target, effect, move = moveInfo->moves[moveSlot];
+    u32 type = moveInfo->moveTypes[moveSlot];
     u16 flags;
-    
-#if BATTLE_MENU_REAL_MOVE_TYPE
-    type = GetBattlerMoveType(battlerId, move);
-#else
-    type = gBattleMoves[move].type;
-#endif
     
     txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfaceType);
     
@@ -863,7 +869,7 @@ static void MoveSelectionDisplayMoveType(u32 battlerId)
 
 static void MoveSelectionDisplayMoveMenu(u32 battlerId)
 {
-    MoveSelectionDisplayPpString();
+    MoveSelectionDisplayPpString(battlerId);
     MoveSelectionDisplayPpNumber(battlerId);
     MoveSelectionDisplayMoveType(battlerId);
 }
@@ -1064,8 +1070,7 @@ void HandleInputChooseMove(u32 battlerId)
             MoveSelectionDestroyCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor);
             gBattleStruct->battlers[battlerId].moveSelectionCursor ^= 1;
             MoveSelectionCreateCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor, 0);
-            MoveSelectionDisplayPpNumber(battlerId);
-            MoveSelectionDisplayMoveType(battlerId);
+            MoveSelectionDisplayMoveMenu(battlerId);
             BeginNormalPaletteFade(0xF0000, 0, 0, 0, RGB_WHITE);
         }
     }
@@ -1077,8 +1082,7 @@ void HandleInputChooseMove(u32 battlerId)
             MoveSelectionDestroyCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor);
             gBattleStruct->battlers[battlerId].moveSelectionCursor ^= 1;
             MoveSelectionCreateCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor, 0);
-            MoveSelectionDisplayPpNumber(battlerId);
-            MoveSelectionDisplayMoveType(battlerId);
+            MoveSelectionDisplayMoveMenu(battlerId);
             BeginNormalPaletteFade(0xF0000, 0, 0, 0, RGB_WHITE);
         }
     }
@@ -1090,8 +1094,7 @@ void HandleInputChooseMove(u32 battlerId)
             MoveSelectionDestroyCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor);
             gBattleStruct->battlers[battlerId].moveSelectionCursor ^= 2;
             MoveSelectionCreateCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor, 0);
-            MoveSelectionDisplayPpNumber(battlerId);
-            MoveSelectionDisplayMoveType(battlerId);
+            MoveSelectionDisplayMoveMenu(battlerId);
             BeginNormalPaletteFade(0xF0000, 0, 0, 0, RGB_WHITE);
         }
     }
@@ -1103,8 +1106,7 @@ void HandleInputChooseMove(u32 battlerId)
             MoveSelectionDestroyCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor);
             gBattleStruct->battlers[battlerId].moveSelectionCursor ^= 2;
             MoveSelectionCreateCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor, 0);
-            MoveSelectionDisplayPpNumber(battlerId);
-            MoveSelectionDisplayMoveType(battlerId);
+            MoveSelectionDisplayMoveMenu(battlerId);
             BeginNormalPaletteFade(0xF0000, 0, 0, 0, RGB_WHITE);
         }
     }

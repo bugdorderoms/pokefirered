@@ -4605,7 +4605,7 @@ static void SetRandomPrize(void)
             prizeSet = 2;
             break;
     }
-    prizeIdx = RandomMax(10);
+    prizeIdx = Random() % 10;
     
     for (i = 0; i < MAX_RFU_PLAYERS; i++)
         sGame->berryResults[i][BERRY_PRIZE] = sPrizeBerryIds[prizeSet][prizeIdx];

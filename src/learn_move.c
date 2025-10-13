@@ -795,8 +795,8 @@ static void PrintMoveInfo(u32 move)
 {
     u8 buffer[50];
     
-    BlitMoveInfoIcon(2, gBattleMoves[move].type + 1, 1, 4);
-    BlitMoveInfoIcon(2, gBattleMoves[move].split + 26, 1, 19);
+    BlitMoveInfoIcon(2, MOVE_INFO_MOVE_TYPE_ICON + gBattleMoves[move].type, 1, 4);
+    BlitMoveInfoIcon(2, MOVE_INFO_MOVE_SPLIT_ICON + gBattleMoves[move].split, 1, 19);
 
     if (gBattleMoves[move].power < 2)
         PrintTextOnWindow(3, gText_ThreeHyphens, 1, 4, 0, 0);
@@ -820,12 +820,12 @@ static void PrintMoveInfo(u32 move)
 
 static void LoadMoveInfoUI(void)
 {
-    BlitMoveInfoIcon(0, 24, 1, 4);
-    BlitMoveInfoIcon(1, 20, 0, 4);
-    BlitMoveInfoIcon(1, 21, 0, 19);
-    BlitMoveInfoIcon(0, 25, 1, 19);
-    BlitMoveInfoIcon(1, 22, 0, 34);
-    BlitMoveInfoIcon(0, 23, 1, 34);
+    BlitMoveInfoIcon(0, MOVE_INFO_TYPE_TEXT_ICON, 1, 4);
+    BlitMoveInfoIcon(1, MOVE_INFO_POWER_TEXT_ICON, 0, 4);
+    BlitMoveInfoIcon(1, MOVE_INFO_ACCURACY_TEXT_ICON, 0, 19);
+    BlitMoveInfoIcon(0, MOVE_INFO_CATEGORY_TEXT_INFO, 1, 19);
+    BlitMoveInfoIcon(1, MOVE_INFO_PP_TEXT_ICON, 0, 34);
+    BlitMoveInfoIcon(0, MOVE_INFO_EFFECT_TEXT_ICON, 1, 34);
     PutWindowTilemap(0);
     PutWindowTilemap(1);
     PutWindowTilemap(4);

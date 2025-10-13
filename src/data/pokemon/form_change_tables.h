@@ -40,6 +40,19 @@ static const struct FormChange sVenusaurFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sVenusaurMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_VENUSAUR_MEGA, ITEM_VENUSAURITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sVenusaurGigaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_VENUSAUR_GIGA),
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sCharizardFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_CHARIZARD_MEGA_X, ITEM_CHARIZARDITE_X),
@@ -48,9 +61,36 @@ static const struct FormChange sCharizardFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sCharizardMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_CHARIZARD_MEGA_X, ITEM_CHARIZARDITE_X),
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_CHARIZARD_MEGA_Y, ITEM_CHARIZARDITE_Y),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sCharizardGigaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_CHARIZARD_GIGA),
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sBlastoiseFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_BLASTOISE_MEGA, ITEM_BLASTOISINITE),
+    FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_BLASTOISE_GIGA),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sBlastoiseMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_BLASTOISE_MEGA, ITEM_BLASTOISINITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sBlastoiseGigaFormChangeTable[] =
+{
     FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_BLASTOISE_GIGA),
     FORM_CHANGE_END,
 };
@@ -67,9 +107,23 @@ static const struct FormChange sBeedrillFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sBeedrillMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_BEEDRILL_MEGA, ITEM_BEEDRILLITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sPidgeotFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_PIDGEOT_MEGA, ITEM_PIDGEOTITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sPidgeotMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_PIDGEOT_MEGA, ITEM_PIDGEOTITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -155,6 +209,12 @@ static const struct FormChange sMeowthFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sMeowthGigaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_MEOWTH_GIGA),
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sMeowthRegionalFormsFormChangeTable[] =
 {
     MEOWTH_REGIONAL_FORMS,
@@ -185,6 +245,13 @@ static const struct FormChange sArcanineFormChangeTable[] =
 static const struct FormChange sAlakazamFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_ALAKAZAM_MEGA, ITEM_ALAKAZITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sAlakazamMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_ALAKAZAM_MEGA, ITEM_ALAKAZITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -243,6 +310,13 @@ static const struct FormChange sSlowbroFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sSlowbroMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_SLOWBRO_MEGA, ITEM_SLOWBRONITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sSlowbroRegionalFormsFormChangeTable[] =
 {
     SLOWBRO_REGIONAL_FORMS,
@@ -273,6 +347,19 @@ static const struct FormChange sMukFormChangeTable[] =
 static const struct FormChange sGengarFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_GENGAR_MEGA, ITEM_GENGARITE),
+    FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_GENGAR_GIGA),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sGengarMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_GENGAR_MEGA, ITEM_GENGARITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sGengarGigaFormChangeTable[] =
+{
     FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_GENGAR_GIGA),
     FORM_CHANGE_END,
 };
@@ -324,6 +411,13 @@ static const struct FormChange sKangaskhanFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sKangaskhanMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_KANGASKHAN_MEGA, ITEM_KANGASKHANITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sMrMimeFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_REGION, SPECIES_MR_MIME, REGIONS_COUNT),
@@ -334,6 +428,13 @@ static const struct FormChange sMrMimeFormChangeTable[] =
 static const struct FormChange sPinsirFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_PINSIR_MEGA, ITEM_PINSIRITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sPinsirMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_PINSIR_MEGA, ITEM_PINSIRITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -358,6 +459,13 @@ static const struct FormChange sGyaradosFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sGyaradosMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_GYARADOS_MEGA, ITEM_GYARADOSITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sLaprasFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_LAPRAS_GIGA),
@@ -373,6 +481,13 @@ static const struct FormChange sEeveeFormChangeTable[] =
 static const struct FormChange sAerodactylFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_AERODACTYL_MEGA, ITEM_AERODACTYLITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sAerodactylMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_AERODACTYL_MEGA, ITEM_AERODACTYLITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -410,6 +525,14 @@ static const struct FormChange sMewtwoFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sMewtwoMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_MEWTWO_MEGA_X, ITEM_MEWTWONITE_X),
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_MEWTWO_MEGA_Y, ITEM_MEWTWONITE_Y),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sTyphlosionFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_REGION, SPECIES_TYPHLOSION, REGIONS_COUNT),
@@ -420,6 +543,13 @@ static const struct FormChange sTyphlosionFormChangeTable[] =
 static const struct FormChange sAmpharosFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_AMPHAROS_MEGA, ITEM_AMPHAROSITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sAmpharosMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_AMPHAROS_MEGA, ITEM_AMPHAROSITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -476,6 +606,13 @@ static const struct FormChange sSteelixFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sSteelixMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_STEELIX_MEGA, ITEM_STEELIXITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sQwilfishFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_REGION, SPECIES_QWILFISH, REGIONS_COUNT),
@@ -489,9 +626,23 @@ static const struct FormChange sScizorFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sScizorMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_SCIZOR_MEGA, ITEM_SCIZORITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sHeracrossFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_HERACROSS_MEGA, ITEM_HERACRONITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sHeracrossMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_HERACROSS_MEGA, ITEM_HERACRONITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -515,9 +666,23 @@ static const struct FormChange sHoundoomFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sHoundoomMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_HOUNDOOM_MEGA, ITEM_HOUNDOOMINITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sTyranitarFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_TYRANITAR_MEGA, ITEM_TYRANITARITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sTyranitarMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_TYRANITAR_MEGA, ITEM_TYRANITARITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -527,15 +692,36 @@ static const struct FormChange sSceptileFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sSceptileMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_SCEPTILE_MEGA, ITEM_SCEPTILITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sBlazikenFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_BLAZIKEN_MEGA, ITEM_BLAZIKENITE),
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sBlazikenMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_BLAZIKEN_MEGA, ITEM_BLAZIKENITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sSwampertFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_SWAMPERT_MEGA, ITEM_SWAMPERTITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sSwampertMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_SWAMPERT_MEGA, ITEM_SWAMPERTITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -566,9 +752,23 @@ static const struct FormChange sGardevoirFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sGardevoirMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_GARDEVOIR_MEGA, ITEM_GARDEVOIRITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sSableyeFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_SABLEYE_MEGA, ITEM_SABLENITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sSableyeMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_SABLEYE_MEGA, ITEM_SABLENITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -578,9 +778,23 @@ static const struct FormChange sMawileFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sMawileMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_MAWILE_MEGA, ITEM_MAWILITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sAggronFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_AGGRON_MEGA, ITEM_AGGRONITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sAggronMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_AGGRON_MEGA, ITEM_AGGRONITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -590,9 +804,23 @@ static const struct FormChange sMedichamFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sMedichamMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_MEDICHAM_MEGA, ITEM_MEDICHAMITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sManectricFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_MANECTRIC_MEGA, ITEM_MANECTITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sManectricMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_MANECTRIC_MEGA, ITEM_MANECTITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -602,15 +830,36 @@ static const struct FormChange sSharpedoFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sSharpedoMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_SHARPEDO_MEGA, ITEM_SHARPEDONITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sCameruptFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_CAMERUPT_MEGA, ITEM_CAMERUPTITE),
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sCameruptMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_CAMERUPT_MEGA, ITEM_CAMERUPTITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sAltariaFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_ALTARIA_MEGA, ITEM_ALTARIANITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sAltariaMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_ALTARIA_MEGA, ITEM_ALTARIANITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -630,9 +879,23 @@ static const struct FormChange sBanetteFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sBanetteMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_BANETTE_MEGA, ITEM_BANETTITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sAbsolFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_ABSOL_MEGA, ITEM_ABSOLITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sAbsolMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_ABSOL_MEGA, ITEM_ABSOLITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -642,9 +905,23 @@ static const struct FormChange sGlalieFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sGlalieMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_GLALIE_MEGA, ITEM_GLALITITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sSalamenceFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_SALAMENCE_MEGA, ITEM_SALAMENCITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sSalamenceMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_SALAMENCE_MEGA, ITEM_SALAMENCITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -654,9 +931,23 @@ static const struct FormChange sMetagrossFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sMetagrossMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_METAGROSS_MEGA, ITEM_METAGROSSITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sLatiasFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_LATIAS_MEGA, ITEM_LATIASITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sLatiasMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_LATIAS_MEGA, ITEM_LATIASITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -666,7 +957,20 @@ static const struct FormChange sLatiosFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sLatiosMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_LATIOS_MEGA, ITEM_LATIOSITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sKyogreFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_PRIMAL, SPECIES_KYOGRE_PRIMAL, ITEM_BLUE_ORB),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sKyogrePrimalFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_PRIMAL, SPECIES_KYOGRE_PRIMAL, ITEM_BLUE_ORB),
     FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
@@ -677,6 +981,12 @@ static const struct FormChange sKyogreFormChangeTable[] =
 static const struct FormChange sGroudonFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_PRIMAL, SPECIES_GROUDON_PRIMAL, ITEM_RED_ORB),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sGroudonPrimalFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_PRIMAL, SPECIES_GROUDON_PRIMAL, ITEM_RED_ORB),
     FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE(FORM_CHANGE_FAINT), // don't revert form when fainted
     FORM_CHANGE_END,
@@ -685,6 +995,13 @@ static const struct FormChange sGroudonFormChangeTable[] =
 static const struct FormChange sRayquazaFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MOVE_MEGA_EVO, SPECIES_RAYQUAZA_MEGA, MOVE_DRAGON_ASCENT),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sRayquazaMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MOVE_MEGA_EVO, SPECIES_RAYQUAZA_MEGA, MOVE_DRAGON_ASCENT),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -745,9 +1062,23 @@ static const struct FormChange sLopunnyFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sLopunnyMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_LOPUNNY_MEGA, ITEM_LOPUNNITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sGarchompFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_GARCHOMP_MEGA, ITEM_GARCHOMPITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sGarchompMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_GARCHOMP_MEGA, ITEM_GARCHOMPITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -757,15 +1088,36 @@ static const struct FormChange sLucarioFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sLucarioMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_LUCARIO_MEGA, ITEM_LUCARIONITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sAbomasnowFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_ABOMASNOW_MEGA, ITEM_ABOMASITE),
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sAbomasnowMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_ABOMASNOW_MEGA, ITEM_ABOMASITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sGalladeFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_GALLADE_MEGA, ITEM_GALLADITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sGalladeMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_GALLADE_MEGA, ITEM_GALLADITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -860,6 +1212,13 @@ static const struct FormChange sUnfezantFormChangeTable[] =
 static const struct FormChange sAudinoFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_AUDINO_MEGA, ITEM_AUDINITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sAudinoMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_AUDINO_MEGA, ITEM_AUDINITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -1012,6 +1371,11 @@ static const struct FormChange sGenesectFormChangeTable[] =
 static const struct FormChange sGreninjaFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_FAINT_TARGET, SPECIES_GRENINJA_ASH),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sGreninjaAshFormChangeTable[] =
+{
     FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
@@ -1123,6 +1487,11 @@ static const struct FormChange sAvaluggFormChangeTable[] =
 static const struct FormChange sXerneasFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_START_BATTLE, SPECIES_XERNEAS_ACTIVE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sXerneasActiveFormChangeTable[] =
+{
     FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE(FORM_CHANGE_FAINT), // don't revert form when fainted
     FORM_CHANGE_END,
@@ -1131,6 +1500,11 @@ static const struct FormChange sXerneasFormChangeTable[] =
 static const struct FormChange sZygardeFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_HP, SPECIES_ZYGARDE_COMPLETE, 2, HP_FORM_LS),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sZygardeCompleteFormChangeTable[] =
+{
     FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE(FORM_CHANGE_FAINT), // don't revert form when fainted
     FORM_CHANGE_END,
@@ -1139,6 +1513,13 @@ static const struct FormChange sZygardeFormChangeTable[] =
 static const struct FormChange sDiancieFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_DIANCIE_MEGA, ITEM_DIANCITE),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sDiancieMegaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_MEGA_EVO, SPECIES_DIANCIE_MEGA, ITEM_DIANCITE),
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
@@ -1218,13 +1599,19 @@ static const struct FormChange sMiniorCoreFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
-static const struct FormChange sMimikyuFormChangeTable[] =
+static const struct FormChange sMimikyuBustedFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
 static const struct FormChange sNecrozmaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_ULTRA_BURST, SPECIES_NECROZMA_ULTRA, ITEM_ULTRANECROZIUM_Z),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sNecrozmaUltraFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_ULTRA_BURST, SPECIES_NECROZMA_ULTRA, ITEM_ULTRANECROZIUM_Z),
     FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
@@ -1311,9 +1698,21 @@ static const struct FormChange sToxtricityAmpedFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
+static const struct FormChange sToxtricityAmpedGigaFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_TOXTRICITY_GIGA),
+    FORM_CHANGE_END,
+};
+
 static const struct FormChange sToxtricityLowKeyFormChangeTable[] =
 {
     TOXTRICITY_NATURE_FORMS,
+    FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_TOXTRICITY_LOW_KEY_GIGA),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sToxtricityLowKeyGigaFormChangeTable[] =
+{
     FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_TOXTRICITY_LOW_KEY_GIGA),
     FORM_CHANGE_END,
 };
@@ -1342,7 +1741,7 @@ static const struct FormChange sAlcremieFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
-static const struct FormChange sEiscueFormChangeTable[] =
+static const struct FormChange sEiscueNoiceFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_WEATHER, SPECIES_EISCUE, B_WEATHER_HAIL),
     FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
@@ -1446,6 +1845,11 @@ static const struct FormChange sSquawkabillyFormChangeTable[] =
 static const struct FormChange sPalafinFormChangeTable[] =
 {
     FORM_CHANGE(FORM_CHANGE_SWITCH_OUT, SPECIES_PALAFIN_HERO),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sPalafinHeroFormChangeTable[] =
+{
     FORM_CHANGE(FORM_CHANGE_FAINT), // don't revert form when fainted
     FORM_CHANGE_END,
 };
@@ -1472,37 +1876,36 @@ static const struct FormChange sOgerponUnmaskedFormChangeTable[] =
     FORM_CHANGE_END,
 };
 
-static const struct FormChange sOgerponTealMaskFormChangeTable[] =
+static const struct FormChange sOgerponMaskedFormChangeTable[] =
 {
     OGERPON_ITEM_HOLD_FORMS,
-    FORM_CHANGE(FORM_CHANGE_TERASTAL, SPECIES_OGERPON_TEAL_MASK_TERA, NUMBER_OF_MON_TYPES), // Any type
+    FORM_CHANGE(FORM_CHANGE_TERASTAL, SPECIES_OGERPON_TEAL_MASK_TERA, TYPE_GRASS),
+    FORM_CHANGE(FORM_CHANGE_TERASTAL, SPECIES_OGERPON_WELLSPRING_MASK_TERA, TYPE_WATER),
+    FORM_CHANGE(FORM_CHANGE_TERASTAL, SPECIES_OGERPON_HEARTHFLAME_MASK_TERA, TYPE_FIRE),
+    FORM_CHANGE(FORM_CHANGE_TERASTAL, SPECIES_OGERPON_CORNERSTONE_MASK_TERA, TYPE_ROCK),
     FORM_CHANGE_END,
 };
 
-static const struct FormChange sOgerponWellspringMaskFormChangeTable[] =
+static const struct FormChange sOgerponTeraFormChangeTable[] =
 {
-    OGERPON_ITEM_HOLD_FORMS,
-    FORM_CHANGE(FORM_CHANGE_TERASTAL, SPECIES_OGERPON_WELLSPRING_MASK_TERA, NUMBER_OF_MON_TYPES), // Any type
-    FORM_CHANGE_END,
-};
-
-static const struct FormChange sOgerponHearthflameMaskFormChangeTable[] =
-{
-    OGERPON_ITEM_HOLD_FORMS,
-    FORM_CHANGE(FORM_CHANGE_TERASTAL, SPECIES_OGERPON_HEARTHFLAME_MASK_TERA, NUMBER_OF_MON_TYPES), // Any type
-    FORM_CHANGE_END,
-};
-
-static const struct FormChange sOgerponCornerstoneMaskFormChangeTable[] =
-{
-    OGERPON_ITEM_HOLD_FORMS,
-    FORM_CHANGE(FORM_CHANGE_TERASTAL, SPECIES_OGERPON_CORNERSTONE_MASK_TERA, NUMBER_OF_MON_TYPES), // Any type
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
 
 static const struct FormChange sTerapagosFormChangeTable[] =
 {
-    FORM_CHANGE(FORM_CHANGE_TERASTAL, SPECIES_TERAPAGOS_TERA, NUMBER_OF_MON_TYPES), // Any type
+    FORM_CHANGE(FORM_CHANGE_SWITCH_IN, SPECIES_TERAPAGOS_TERA),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sTerapagosTeraFormChangeTable[] =
+{
     FORM_CHANGE(FORM_CHANGE_TERASTAL, SPECIES_TERAPAGOS_STELLAR, TYPE_STELLAR),
+    FORM_CHANGE_END,
+};
+
+static const struct FormChange sTerapagosStellarFormChangeTable[] =
+{
+    FORM_CHANGE(FORM_CHANGE_SWITCH_OUT), // don't revert form when switched out
     FORM_CHANGE_END,
 };
