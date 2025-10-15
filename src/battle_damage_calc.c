@@ -903,6 +903,24 @@ static inline u32 GetTeraTypeDamageModifier(struct DamageCalc *damageStruct)
         u32 teraType = GetBattlerTeraType(damageStruct->attacker);
         bool32 isOfBaseType = IsBattlerOfBaseType(damageStruct->attacker, damageStruct->moveType);
         
+        // Stellar type.
+        if (teraType == TYPE_STELLAR)
+        {
+            bool32 shouldBoost = IsTypeStellarBoosted(damageStruct->attacker, damageStruct->moveType);
+            
+            if (isOfBaseType)
+            {
+                if (shouldBoost)
+                    return UQ_4_12(2.0);
+                else
+                    return UQ_4_12(1.5);
+            }
+            else if (shouldBoost)
+                return UQ_4_12(1.2);
+            else
+                return UQ_4_12(1.0);
+        }
+        
         // Base and Tera type.
         if (isOfBaseType && damageStruct->moveType == teraType)
         {

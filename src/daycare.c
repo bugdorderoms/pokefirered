@@ -1439,11 +1439,11 @@ static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare, u32 fatherI
     {
         do
         {
-            iv = RandomUniform(RNG_IV_INHERIT_STAT, 0, NUM_STATS - 1);
+            iv = Random() % NUM_STATS;
 
         } while (unavailableIvs & Bit(iv));
         
-        SET_IV_TO_INHERIT(RandomUniform(RNG_IV_INHERIT_PARENT, 0, DAYCARE_MON_COUNT - 1), iv);
+        SET_IV_TO_INHERIT(Random() % DAYCARE_MON_COUNT, iv);
     }
 
     // Set each of inherited IVs on the egg mon

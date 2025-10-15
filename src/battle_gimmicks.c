@@ -454,12 +454,6 @@ void SetGimmickIndicatorSpriteVisibility(u32 indicatorSpriteId, bool32 invisible
     gSprites[indicatorSpriteId].sInvisible = invisible;
 }
 
-// Sets the battler having a gimmick indicator, without having a currently active gimmick.
-void SetSpecialGimmickIndicatorId(u32 battler, u32 indicatorId)
-{
-    gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].specialGimmickIndicatorId = indicatorId;
-}
-
 // Returns the battler's gimmick indicator id.
 u32 GetGimmickIndicatorId(u32 battler)
 {
@@ -471,7 +465,13 @@ u32 GetGimmickIndicatorId(u32 battler)
     if (gimmickIndicatorId != GIMMICK_INDICATOR_NONE)
         return gimmickIndicatorId;
     else
-        return gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].specialGimmickIndicatorId;
+    {
+        if (gSpeciesInfo[gBattleMons[battler].species].flags & SPECIES_FLAG_PRIMAL)
+            return ItemId_GetHoldEffectParam(gBattleMons[battler].item);
+        else if (IsBattlerTotemPokemon(battler))
+            return GIMMICK_INDICATOR_TOTEM;
+    }
+    return GIMMICK_INDICATOR_NONE;
 }
 
 static void SpriteCB_GimmickIndicator(struct Sprite *sprite)

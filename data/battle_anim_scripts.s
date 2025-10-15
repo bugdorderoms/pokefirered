@@ -1393,6 +1393,7 @@ gGeneralAnim_TeraCharge::
 	unloadspritepal ANIM_TAG_WHIP_HIT
 	unloadspritepal ANIM_TAG_SWEAT_BEAD
 	unloadspritepal ANIM_TAG_PAW_PRINT
+	delay 1
 	loadspritegfx ANIM_TAG_TERA_CRYSTAL
 	loadspritegfx ANIM_TAG_TERA_SHATTER
 	loadspritegfx ANIM_TAG_TERA_SYMBOL

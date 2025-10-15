@@ -171,6 +171,7 @@
 #define SPECIES_FLAG_PARADOX        Bit(5)
 #define SPECIES_FLAG_TERASTAL       Bit(6)
 #define SPECIES_FLAG_CANT_TRADE     Bit(7)
+#define SPECIES_FLAG_PRIMAL         Bit(8)
 // Those species flags cause the pokemon to be created with 3 perfect ivs
 #define SPECIES_PERFECT_IVS_FLAGS (SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_MYTHICAL | SPECIES_FLAG_ULTRA_BEAST | SPECIES_FLAG_PARADOX)
 

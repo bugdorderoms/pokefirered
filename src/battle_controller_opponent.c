@@ -426,7 +426,7 @@ static void OpponentHandleChooseMove(u32 battlerId)
 
         do
         {
-            chosenMoveId = RandomUniform(RNG_WILD_CHOSEN_MOVE_INDEX, 0, MAX_MON_MOVES - 1);
+            chosenMoveId = Random() % MAX_MON_MOVES;
             move = moveInfo->moves[chosenMoveId];
         }
         while (!move);

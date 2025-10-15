@@ -2062,6 +2062,9 @@ void FaintClearSetData(u32 battlerId)
     
     // Set battler initial types
     SetBattlerInitialTypes(battlerId);
+    
+    if (IsBattlerTotemPokemon(battlerId))
+        gBattleStruct->sos.totemBattlerId = MAX_BATTLERS_COUNT;
 }
 
 static void BattleIntroGetMonsData(void)
@@ -2095,7 +2098,6 @@ static void BattleIntroPrepareBackgroundSlide(void)
         u32 battlerId = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
         BtlController_EmitIntroSlide(battlerId, BUFFER_A, gBattleTerrain);
         MarkBattlerForControllerExec(battlerId);
-        gBattleStruct->sos.totemBattlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
         gBattleMainFunc = BattleIntroDrawTrainersOrMonsSprites;
         gBattleCommunication[MULTIUSE_STATE] = 0;
         gBattleCommunication[SPRITES_INIT_STATE1] = 0;

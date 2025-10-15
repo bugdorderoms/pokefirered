@@ -149,4 +149,25 @@ SINGLE_BATTLE_TEST("Color Change activates only on the final hit of a multi-stri
     }
 }
 
+SINGLE_BATTLE_TEST("Color Change doesn't activate while terastallized")
+{
+    GIVEN {
+        ASSUME(gBattleMoves[MOVE_EMBER].type == TYPE_FIRE);
+        
+        PLAYER(SPECIES_WOBBUFFET);
+        OPPONENT(SPECIES_KECLEON) { Ability(ABILITY_COLOR_CHANGE); TeraType(TYPE_WATER); }
+    } WHEN {
+        TURN { MOVE(opponent, MOVE_SPLASH, gimmick: GIMMICK_TERA); MOVE(player, MOVE_EMBER); }
+    } SCENE {
+        ANIMATION(ANIM_TYPE_MOVE, MOVE_SPLASH, opponent);
+        ANIMATION(ANIM_TYPE_MOVE, MOVE_EMBER, player);
+        
+        NONE_OF {
+            ABILITY_POPUP(opponent, ABILITY_COLOR_CHANGE);
+            MESSAGE("Foe Kecleon's type changed to Fire!");
+        }
+    }
+}
+
+TO_DO_BATTLE_TEST("Color Change is not activated when hit by a Stellar-type move");
 TO_DO_BATTLE_TEST("Color Change is not activated when hit by a typeless Revelation Dance");

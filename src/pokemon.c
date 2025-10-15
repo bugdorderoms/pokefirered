@@ -33,6 +33,7 @@
 #include "item_use.h"
 #include "pokedex.h"
 #include "strings.h"
+#include "test_runner.h"
 #include "recorded_battle.h"
 #include "decompress.h"
 #include "overworld.h"
@@ -777,7 +778,7 @@ void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
     }
     
     // Set n perfect ivs
-    if (FlagGet(FLAG_THREE_PERFECT_IVS) || (gSpeciesInfo[species].flags & SPECIES_PERFECT_IVS_FLAGS))
+    if (!gTestRunnerEnabled && (FlagGet(FLAG_THREE_PERFECT_IVS) || (gSpeciesInfo[species].flags & SPECIES_PERFECT_IVS_FLAGS)))
     {
         FlagClear(FLAG_THREE_PERFECT_IVS);
         nPerfectIvs = 3;
@@ -793,7 +794,7 @@ void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
         {
             do
             {
-                perfectIvs[i] = RandomUniform(RNG_WILD_PERFECT_IVS, 0, NUM_STATS - 1);
+                perfectIvs[i] = Random() % NUM_STATS;
             } while (IsNotUniqueIV(i, perfectIvs));
             
             if (perfectIvs[i] != NUM_STATS)
@@ -838,7 +839,7 @@ void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
     if (value != NUMBER_OF_MON_TYPES)
         SetMonData(mon, MON_DATA_TERA_TYPE, &value);
     else
-        SetMonData(mon, MON_DATA_TERA_TYPE, &gSpeciesInfo[species].types[RandomPercentage(RNG_WILD_TERA_TYPE, 50)]);
+        SetMonData(mon, MON_DATA_TERA_TYPE, &gSpeciesInfo[species].types[RandomUniform(RNG_WILD_TERA_TYPE, 0, 1)]);
 
     // Set ability hidden
 #if WILD_HIDDEN_ABILITY_CHANCE != 0

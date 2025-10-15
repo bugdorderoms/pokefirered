@@ -316,6 +316,7 @@ void InitBtlControllers(void)
         for (i = 0; i < gBattlersCount; ++i)
             BufferBattlePartyCurrentOrderBySide(i, 0);
     }
+    gBattleStruct->sos.totemBattlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 }
 
 static void SetLinkBattleEndCallbacks(u32 battlerId)

@@ -6431,7 +6431,7 @@ static u32 GetSosBattleSpeciesToCall(u32 battlerCaller)
     {
         do
         {
-            species = gSpeciesInfo[callerSpecies].sosCallAllies[RandomUniform(RNG_SOS_CALL_SPECIES, 0, 2)];
+            species = gSpeciesInfo[callerSpecies].sosCallAllies[Random() % 3];
         } while (!species);
     }
     return species;
@@ -6769,7 +6769,7 @@ bool32 IsPartnerMonFromSameTrainer(u32 battler)
 
 bool32 TryPrimalReversion(u32 battler)
 {
-    u32 whichPrimal, targetSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_PRIMAL);
+    u32 targetSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_PRIMAL);
     
     if (targetSpecies)
     {
@@ -6777,9 +6777,8 @@ bool32 TryPrimalReversion(u32 battler)
         
         gBattleStruct->battlers[battler].gimmickInProgress = TRUE;
         gLastUsedItem = gBattleMons[battler].item;
-        whichPrimal = ItemId_GetHoldEffectParam(gLastUsedItem);
-        
-        switch (whichPrimal)
+
+        switch (ItemId_GetHoldEffectParam(gLastUsedItem))
         {
             case GIMMICK_INDICATOR_OMEGA:
                 gBattleScripting.animArg1 = B_ANIM_RED_PRIMAL_REVERSION;
@@ -6788,8 +6787,6 @@ bool32 TryPrimalReversion(u32 battler)
                 gBattleScripting.animArg1 = B_ANIM_BLUE_PRIMAL_REVERSION;
                 break;
         }
-        SetSpecialGimmickIndicatorId(battler, whichPrimal);
-        
         gBattleScripting.battler = battler;
         BattleScriptPushCursorAndCallback(BattleScript_PrimalReversion);
         return TRUE;

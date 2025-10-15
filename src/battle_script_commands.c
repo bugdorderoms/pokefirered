@@ -9769,12 +9769,7 @@ void BS_JumpIfSosOpponentFainted(void)
 {
     NATIVE_ARGS(u8 battler, const u8 *ptr);
     
-    u32 battlerId = GetBattlerForBattleScript(cmd->battler);
-    
-    if (IsBattlerTotemPokemon(battlerId))
-        gBattleStruct->sos.totemBattlerId = MAX_BATTLERS_COUNT;
-    
-    if ((gBattleTypeFlags & BATTLE_TYPE_SOS) && GetBattlerSide(battlerId) == B_SIDE_OPPONENT)
+    if ((gBattleTypeFlags & BATTLE_TYPE_SOS) && GetBattlerSide(GetBattlerForBattleScript(cmd->battler)) == B_SIDE_OPPONENT)
         gBattlescriptCurrInstr = cmd->ptr;
     else
         gBattlescriptCurrInstr = cmd->nextInstr;

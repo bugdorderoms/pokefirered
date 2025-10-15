@@ -52,6 +52,11 @@ static const union AnimCmd sIndicator_Tera[] = {
     ANIMCMD_JUMP(0)
 };
 
+static const union AnimCmd sIndicator_totem[] = {
+    ANIMCMD_FRAME(6, 0),
+    ANIMCMD_JUMP(0)
+};
+
 static const union AnimCmd *const sGimmickIndicators[] = {
     [GIMMICK_INDICATOR_NONE] = sIndicator_Mega, // placeholder
     [GIMMICK_INDICATOR_MEGA] = sIndicator_Mega,
@@ -60,6 +65,7 @@ static const union AnimCmd *const sGimmickIndicators[] = {
     [GIMMICK_INDICATOR_ULTRA_BURST] = sIndicator_Ultra,
     [GIMMICK_INDICATOR_DYNAMAX] = sIndicator_Dynamax,
     [GIMMICK_INDICATOR_TERA] = sIndicator_Tera,
+    [GIMMICK_INDICATOR_TOTEM] = sIndicator_totem,
 };
 
 static const u8 ALIGNED(4) sMegaTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/mega_trigger.4bpp");

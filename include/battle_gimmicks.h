@@ -13,6 +13,7 @@ enum
     GIMMICK_INDICATOR_ULTRA_BURST,
     GIMMICK_INDICATOR_DYNAMAX,
     GIMMICK_INDICATOR_TERA,
+    GIMMICK_INDICATOR_TOTEM,
     GIMMICK_INDICATORS_COUNT,
 };
 
@@ -37,7 +38,6 @@ void ChangeGimmickTriggerSprite(u32 triggerSpriteId, bool32 lightUp);
 u32 CreateGimmickIndicatorSprite(u32 battler);
 void SetGimmickIndicatorSpriteVisibility(u32 indicatorSpriteId, bool32 invisible);
 void UpdateIndicatorLevelData(u32 indicatorSpriteId, u32 level);
-void SetSpecialGimmickIndicatorId(u32 battler, u32 indicatorId);
 u32 GetGimmickIndicatorId(u32 battler);
 
 extern const struct SpritePalette gSpritePalette_GimmickIndicator;

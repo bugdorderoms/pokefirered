@@ -425,9 +425,7 @@ struct PartyState
              u8 allowedToChangeFormInWeather:1; // For Ice Face
              u8 unused:2;
     /*0x01*/ u8 activeGimmick; // Stores the active gimmick for this party member
-    /*0x02*/ u8 specialGimmickIndicatorId;
-    /*0x03*/ u8 unused2;
-    /*0x04*/ struct {
+    /*0x02*/ struct {
                  u16 savedItem; // Item of this party member, it is restored at the end of trainer battles
                  u16 usedHeldItem;
              } itemEffects;
