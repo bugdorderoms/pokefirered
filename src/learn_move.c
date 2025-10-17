@@ -787,7 +787,7 @@ static void MoveRelearnerMenuHandleInput(void)
 
 static void MoveLearnerInitListMenu(void)
 {
-    sMoveRelearner->listMenuTaskId = ListMenuInit(&gMultiuseListMenuTemplate, sMoveRelearner->listMenuScrollPos, sMoveRelearner->listMenuScrollRow);
+    sMoveRelearner->listMenuTaskId = ListMenuInit(&gMultiuseListMenuTemplate, &sMoveRelearner->listMenuScrollPos, &sMoveRelearner->listMenuScrollRow);
     CopyWindowToVram(6, COPYWIN_MAP);
 }
 

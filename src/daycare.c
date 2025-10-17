@@ -500,7 +500,7 @@ void ShowDaycareLevelMenu(void)
     DrawStdWindowFrame(windowId, FALSE);
 
     menuTemplate.windowId = windowId;
-    listMenuTaskId = ListMenuInit(&menuTemplate, 0, 0);
+    listMenuTaskId = ListMenuInit(&menuTemplate, NULL, NULL);
 
     CopyWindowToVram(windowId, COPYWIN_BOTH);
 

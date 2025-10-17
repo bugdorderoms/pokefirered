@@ -1256,7 +1256,7 @@ static u32 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const str
     sFieldSpecialsListMenuTemplate.maxShowed = task->data[0];
     sFieldSpecialsListMenuTemplate.windowId = task->data[13];
     Task_CreateMenuRemoveScrollIndicatorArrowPair(taskId);
-    task->data[14] = ListMenuInit(&sFieldSpecialsListMenuTemplate, task->data[7], task->data[8]);
+    task->data[14] = ListMenuInit(&sFieldSpecialsListMenuTemplate, &task->data[7], &task->data[8]);
     PutWindowTilemap(task->data[13]);
     CopyWindowToVram(task->data[13], COPYWIN_BOTH);
     

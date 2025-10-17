@@ -343,7 +343,7 @@ static bool32 ItemPc_DoGfxSetup(void)
         gMain.state++;
         break;
     case 15:
-        gTasks[CreateTask(Task_ItemPcMain, 0)].data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sListMenuState.scroll, sListMenuState.row);
+        gTasks[CreateTask(Task_ItemPcMain, 0)].data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sListMenuState.scroll, &sListMenuState.row);
         gMain.state++;
         break;
     case 16:
@@ -799,7 +799,7 @@ static void ItemPc_InsertItemIntoNewSlot(u32 taskId, u32 pos)
             sListMenuState.row--;
         
         ItemPc_BuildListMenuTemplate();
-        data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sListMenuState.scroll, sListMenuState.row);
+        data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sListMenuState.scroll, &sListMenuState.row);
         ItemMenuIcons_ToggleInsertIndicatorBarVisibility(TRUE);
         gTasks[taskId].func = Task_ItemPcMain;
     }
@@ -815,7 +815,7 @@ static void ItemPc_MoveItemModeCancel(u32 taskId, u32 pos)
         sListMenuState.row--;
     
     ItemPc_BuildListMenuTemplate();
-    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sListMenuState.scroll, sListMenuState.row);
+    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sListMenuState.scroll, &sListMenuState.row);
     ItemMenuIcons_ToggleInsertIndicatorBarVisibility(TRUE);
     gTasks[taskId].func = Task_ItemPcMain;
 }
@@ -930,7 +930,7 @@ static void Task_ItemPcCleanUpWithdraw(u32 taskId)
     ItemPc_CountPcItems();
     ItemPc_SetCursorPosition();
     ItemPc_BuildListMenuTemplate();
-    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sListMenuState.scroll, sListMenuState.row);
+    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sListMenuState.scroll, &sListMenuState.row);
     ScheduleBgCopyTilemapToVram(0);
     ItemPc_ReturnFromSubmenu(taskId);
 }

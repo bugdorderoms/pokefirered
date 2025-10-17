@@ -1325,7 +1325,7 @@ static void FC_CreateListMenu(void)
 {
     InitListMenuTemplate();
     sFameCheckerData->numUnlockedPersons = FC_PopulateListMenu();
-    sFameCheckerData->listMenuTaskId = ListMenuInit(&gFameChecker_ListMenuTemplate, 0, 0);
+    sFameCheckerData->listMenuTaskId = ListMenuInit(&gFameChecker_ListMenuTemplate, NULL, NULL);
     PutWindowTilemap(FCWINDOWID_LIST);
     CopyWindowToVram(FCWINDOWID_LIST, COPYWIN_BOTH);
 }

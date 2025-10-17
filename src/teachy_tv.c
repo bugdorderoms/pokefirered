@@ -555,7 +555,7 @@ static u32 TeachyTvSetupWindow(void)
         gMultiuseListMenuTemplate.maxShowed = 5;
         gMultiuseListMenuTemplate.upText_Y = (gMultiuseListMenuTemplate.upText_Y + 8) & 0xF;
     }
-    return ListMenuInit(&gMultiuseListMenuTemplate, sStaticResources.scrollOffset, sStaticResources.selectedRow);
+    return ListMenuInit(&gMultiuseListMenuTemplate, &sStaticResources.scrollOffset, &sStaticResources.selectedRow);
 }
 
 static void TeachyTvSetupScrollIndicatorArrowPair(void)

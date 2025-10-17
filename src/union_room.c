@@ -767,7 +767,7 @@ static void Task_TryBecomeLinkLeader(u32 taskId)
         DrawStdWindowFrame(data->listWindowId, FALSE);
         gMultiuseListMenuTemplate = sListMenuTemplate_PossibleGroupMembers;
         gMultiuseListMenuTemplate.windowId = data->listWindowId;
-        data->listTaskId = ListMenuInit(&gMultiuseListMenuTemplate, 0, 0);
+        data->listTaskId = ListMenuInit(&gMultiuseListMenuTemplate, NULL, NULL);
 
         DrawStdWindowFrame(data->nPlayerModeWindowId, FALSE);
         PutWindowTilemap(data->nPlayerModeWindowId);
@@ -1310,7 +1310,7 @@ static void Task_TryJoinLinkGroup(u32 taskId)
         DrawStdWindowFrame(data->listWindowId, FALSE);
         gMultiuseListMenuTemplate = sListMenuTemplate_UnionRoomGroups;
         gMultiuseListMenuTemplate.windowId = data->listWindowId;
-        data->listTaskId = ListMenuInit(&gMultiuseListMenuTemplate, 0, 0);
+        data->listTaskId = ListMenuInit(&gMultiuseListMenuTemplate, NULL, NULL);
 
         DrawStdWindowFrame(data->playerNameAndIdWindowId, FALSE);
         PutWindowTilemap(data->playerNameAndIdWindowId);
@@ -3237,7 +3237,7 @@ static s32 ListMenuHandler_AllItemsAvailable(u8 *state_p, u8 *win_id_p, u8 *list
         DrawStdWindowFrame(*win_id_p, FALSE);
         gMultiuseListMenuTemplate = *menuTemplate;
         gMultiuseListMenuTemplate.windowId = *win_id_p;
-        *list_menu_id_p = ListMenuInit(&gMultiuseListMenuTemplate, 0, 0);
+        *list_menu_id_p = ListMenuInit(&gMultiuseListMenuTemplate, NULL, NULL);
         CopyWindowToVram(*win_id_p, TRUE);
         (*state_p)++;
         break;
@@ -3269,6 +3269,7 @@ static s32 TradeBoardMenuHandler(u8 *state_p, u8 *win_id_p, u8 *list_menu_id_p, 
 {
     s32 input;
     s32 r4;
+    u16 cursorPos, itemsAbove;
 
     switch (*state_p)
     {
@@ -3278,7 +3279,10 @@ static s32 TradeBoardMenuHandler(u8 *state_p, u8 *win_id_p, u8 *list_menu_id_p, 
         DrawStdWindowFrame(*win_id_p, FALSE);
         gMultiuseListMenuTemplate = *menuTemplate;
         gMultiuseListMenuTemplate.windowId = *win_id_p;
-        *list_menu_id_p = ListMenuInit(&gMultiuseListMenuTemplate, 0, 1);
+        
+        cursorPos = 0;
+        itemsAbove = 1;
+        *list_menu_id_p = ListMenuInit(&gMultiuseListMenuTemplate, &cursorPos, &itemsAbove);
         CopyWindowToVram(*win_id_p, TRUE);
         (*state_p)++;
         break;

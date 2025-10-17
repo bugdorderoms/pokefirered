@@ -32,7 +32,7 @@ struct MoveMenuInfoIcon
 struct ListMenuOverride gListMenuOverride;
 struct ListMenuTemplate gMultiuseListMenuTemplate;
 
-static u32 ListMenuInitInternal(const struct ListMenuTemplate *listMenuTemplate, u16 cursorPos, u16 itemsAbove);
+static u32 ListMenuInitInternal(const struct ListMenuTemplate *listMenuTemplate, u16 *cursorPos, u16 *itemsAbove);
 static void ListMenuChangeSelection(struct ListMenu *list, bool32 updateCursorAndCallCallback, u32 count, bool32 movingDown);
 static void ListMenuPrintEntries(struct ListMenu *list, u16 startIndex, u16 yOffset, u16 count);
 static void ListMenuDrawCursor(struct ListMenu *list);
@@ -93,7 +93,7 @@ static void ListMenuDummyTask(u32 taskId)
 {
 }
 
-u32 ListMenuInit(const struct ListMenuTemplate *listMenuTemplate, u16 cursorPos, u16 itemsAbove)
+u32 ListMenuInit(const struct ListMenuTemplate *listMenuTemplate, u16 *cursorPos, u16 *itemsAbove)
 {
     u32 taskId = ListMenuInitInternal(listMenuTemplate, cursorPos, itemsAbove);
     PutWindowTilemap(listMenuTemplate->windowId);
@@ -101,7 +101,7 @@ u32 ListMenuInit(const struct ListMenuTemplate *listMenuTemplate, u16 cursorPos,
     return taskId;
 }
 
-u32 ListMenuInitInRect(const struct ListMenuTemplate *listMenuTemplate, const struct ListMenuWindowRect *rect, u16 cursorPos, u16 itemsAbove)
+u32 ListMenuInitInRect(const struct ListMenuTemplate *listMenuTemplate, const struct ListMenuWindowRect *rect, u16 *cursorPos, u16 *itemsAbove)
 {
     u32 i, taskId = ListMenuInitInternal(listMenuTemplate, cursorPos, itemsAbove);
     
@@ -217,15 +217,27 @@ u16 ListMenuGetYCoordForPrintingArrowCursor(u32 listTaskId)
     return list->itemsAbove * yMultiplier + list->template.upText_Y;
 }
 
-static u32 ListMenuInitInternal(const struct ListMenuTemplate *listMenuTemplate, u16 cursorPos, u16 itemsAbove)
+static u32 ListMenuInitInternal(const struct ListMenuTemplate *listMenuTemplate, u16 *cursorPos, u16 *itemsAbove)
 {
     u32 listTaskId = CreateTask(ListMenuDummyTask, 0);
     struct ListMenu *list = (struct ListMenu *)gTasks[listTaskId].data;
-
+    
     list->template = *listMenuTemplate;
-    list->cursorPos = cursorPos;
-    list->itemsAbove = itemsAbove;
     list->taskId = TAIL_SENTINEL;
+    
+    if (cursorPos == NULL || itemsAbove == NULL)
+        list->cursorPos = list->itemsAbove = 0;
+    else
+    {
+        if (*cursorPos + *itemsAbove >= list->template.totalItems)
+            *cursorPos = *itemsAbove = 0;
+        
+        list->cursorPos = *cursorPos;
+        list->itemsAbove = *itemsAbove;
+    }
+    
+    if (list->template.totalItems < list->template.maxShowed)
+        list->template.maxShowed = list->template.totalItems;
     
     gListMenuOverride.cursorPal = list->template.cursorPal;
     gListMenuOverride.fillValue = list->template.fillValue;
@@ -233,10 +245,7 @@ static u32 ListMenuInitInternal(const struct ListMenuTemplate *listMenuTemplate,
     gListMenuOverride.lettersSpacing = list->template.lettersSpacing;
     gListMenuOverride.fontId = list->template.fontId;
     gListMenuOverride.enabled = FALSE;
-    
-    if (list->template.totalItems < list->template.maxShowed)
-        list->template.maxShowed = list->template.totalItems;
-    
+
     FillWindowPixelBuffer(list->template.windowId, PIXEL_FILL(list->template.fillValue));
     ListMenuPrintEntries(list, list->cursorPos, 0, list->template.maxShowed);
     ListMenuDrawCursor(list);

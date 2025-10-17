@@ -92,8 +92,8 @@ struct ListMenuWindowRect
 
 extern struct ListMenuTemplate gMultiuseListMenuTemplate;
 
-u32 ListMenuInit(const struct ListMenuTemplate *listMenuTemplate, u16 cursorPos, u16 itemsAbove);
-u32 ListMenuInitInRect(const struct ListMenuTemplate *listMenuTemplate, const struct ListMenuWindowRect *rect, u16 cursorPos, u16 itemsAbove);
+u32 ListMenuInit(const struct ListMenuTemplate *listMenuTemplate, u16 *cursorPos, u16 *itemsAbove);
+u32 ListMenuInitInRect(const struct ListMenuTemplate *listMenuTemplate, const struct ListMenuWindowRect *rect, u16 *cursorPos, u16 *itemsAbove);
 s32 ListMenu_ProcessInput(u32 listTaskId);
 void DestroyListMenuTask(u32 listTaskId, u16 *cursorPos, u16 *itemsAbove);
 void RedrawListMenu(u32 listTaskId);

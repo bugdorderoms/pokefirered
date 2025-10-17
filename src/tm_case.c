@@ -395,7 +395,7 @@ static bool32 DoSetUpTMCaseUI(void)
         else
             taskId = CreateTask(Task_TMCaseMain, 0);
 
-        gTasks[taskId].data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sTMCaseStaticResources.scrollOffset, sTMCaseStaticResources.selectedRow);
+        gTasks[taskId].data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sTMCaseStaticResources.scrollOffset, &sTMCaseStaticResources.selectedRow);
         gMain.state++;
         break;
     case 15:
@@ -880,7 +880,7 @@ static void Subtask_CloseContextMenuAndReturnToMain(u32 taskId)
     s16 * data = gTasks[taskId].data;
 
     DestroyListMenuTask(data[0], &sTMCaseStaticResources.scrollOffset, &sTMCaseStaticResources.selectedRow);
-    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sTMCaseStaticResources.scrollOffset, sTMCaseStaticResources.selectedRow);
+    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sTMCaseStaticResources.scrollOffset, &sTMCaseStaticResources.selectedRow);
     PrintListMenuCursorByID_WithColorIdx(data[0], 1);
     ClearDialogWindowAndFrameToTransparent(6, 0);
     ClearWindowTilemap(6);
@@ -1063,7 +1063,7 @@ static void Task_DoSaleOfTMs(u32 taskId)
     TMCaseSetup_GetTMCount();
     TMCaseSetup_InitListMenuPositions();
     InitTMCaseListMenuItems();
-    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sTMCaseStaticResources.scrollOffset, sTMCaseStaticResources.selectedRow);
+    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sTMCaseStaticResources.scrollOffset, &sTMCaseStaticResources.selectedRow);
     PrintListMenuCursorByID_WithColorIdx(data[0], 2);
     PrintMoneyAmountInMoneyBox(8, GetMoney(&gSaveBlock1Ptr->money), 0);
     gTasks[taskId].func = Task_AfterSale_ReturnToList;

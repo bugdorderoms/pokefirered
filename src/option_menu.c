@@ -397,7 +397,7 @@ static u32 CreateOptionsListMenu(void)
     gMultiuseListMenuTemplate.scrollMultiple = 0;
     gMultiuseListMenuTemplate.cursorKind = 1;
     
-    return ListMenuInit(&gMultiuseListMenuTemplate, sOptionMenuPtr->cursorPos, sOptionMenuPtr->itemsAbove);
+    return ListMenuInit(&gMultiuseListMenuTemplate, &sOptionMenuPtr->cursorPos, &sOptionMenuPtr->itemsAbove);
 }
 
 static void Task_OptionMenu(u32 taskId)

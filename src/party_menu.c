@@ -212,7 +212,7 @@ static void PartyPaletteBufferCopy(u32 offset);
 static u16 *GetPartyMenuPalBufferPtr(u32 paletteId);
 static void DisplayPartyPokemonDataForMultiBattle(u32 slot);
 static void DisplayPartyPokemonDataForChooseHalf(u32 slot);
-static void DisplayPartyPokemonDataForMoveTutor(u32 slot);
+static bool32 IsCapeBrinkTutorMove(u32 move);
 static bool32 DisplayPartyPokemonDataForTeachMoveOrEvolutionItem(u32 slot);
 static void DisplayPartyPokemonData(u32 slot);
 static void DisplayPartyPokemonDataForWirelessMinigame(u32 slot);
@@ -658,7 +658,13 @@ void ChooseMonForTradingBoard(u32 menuType, MainCallback callback)
 
 void ChooseMonForMoveTutor(void)
 {
-    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_MOVE_TUTOR, FALSE, PARTY_MSG_TEACH_WHICH_MON, Task_HandleChooseMonInput, CB2_ReturnToFieldContinueScriptPlayMapMusic);
+    if (!IsCapeBrinkTutorMove(gSpecialVar_0x8005))
+        InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_MOVE_TUTOR, FALSE, PARTY_MSG_TEACH_WHICH_MON, Task_HandleChooseMonInput, CB2_ReturnToFieldContinueScriptPlayMapMusic);
+    else
+    {
+        InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_MOVE_TUTOR, FALSE, PARTY_MSG_NONE, TryTutorSelectedMon, CB2_ReturnToFieldContinueScriptPlayMapMusic);
+        gPartyMenu.slotId = gSpecialVar_0x8007;
+    }
 }
 
 void ChooseMonForWirelessMinigame(void)
@@ -1108,9 +1114,6 @@ static void RenderPartyMenuBox(u32 slot)
                 case PARTY_MENU_TYPE_MINIGAME:
                     DisplayPartyPokemonDataForWirelessMinigame(slot);
                     break;
-                case PARTY_ACTION_MOVE_TUTOR:
-                    DisplayPartyPokemonDataForMoveTutor(slot);
-                    break;
                 default:
                     if (!DisplayPartyPokemonDataForTeachMoveOrEvolutionItem(slot))
                         DisplayPartyPokemonData(slot);
@@ -1555,33 +1558,39 @@ static void DisplayPartyPokemonDataForWirelessMinigame(u32 slot)
     DisplayPartyPokemonDescriptionData(slot, IsMonAllowedInMinigame(slot) ? PARTYBOX_DESC_ABLE : PARTYBOX_DESC_NOT_ABLE);
 }
 
-static void DisplayPartyPokemonDataForMoveTutor(u32 slot)
-{
-    gSpecialVar_Result = FALSE;
-    DisplayPartyPokemonDataToTeachMove(slot, gSpecialVar_0x8005, FALSE);
-}
-
 // Returns TRUE if teaching move or cant evolve with item (i.e. description data is shown), FALSE otherwise
 static bool32 DisplayPartyPokemonDataForTeachMoveOrEvolutionItem(u32 slot)
 {
-    if (gPartyMenu.action == PARTY_ACTION_USE_ITEM)
+    switch (gPartyMenu.action)
     {
-        u32 item = gSpecialVar_ItemId;
+        case PARTY_ACTION_MOVE_TUTOR:
+            gSpecialVar_Result = FALSE;
         
-        switch (GetItemUseAnimFollowUpCBIdByItemType(item))
+            if (!IsCapeBrinkTutorMove(gSpecialVar_0x8005))
+            {
+                DisplayPartyPokemonDataToTeachMove(slot, gSpecialVar_0x8005, FALSE);
+                return TRUE;
+            }
+            break;
+        case PARTY_ACTION_USE_ITEM:
         {
-            case ITEMUSE_FOLLOWUP_TM:
-                DisplayPartyPokemonDataToTeachMove(slot, ItemId_GetHoldEffectParam(item), TRUE);
-                break;
-            case ITEMUSE_FOLLOWUP_EVOLUTION_ITEM:
-                if (!GetMonData(&gPlayerParty[slot], MON_DATA_IS_EGG) && GetEvolutionTargetSpecies(slot, EVO_MODE_ITEM_USE, item, NULL, TRUE))
-                    return FALSE;
-                DisplayPartyPokemonDescriptionData(slot, PARTYBOX_DESC_NO_USE);
-                break;
-            default:
-                return FALSE;
+            u32 item = gSpecialVar_ItemId;
+            
+            switch (GetItemUseAnimFollowUpCBIdByItemType(item))
+            {
+                case ITEMUSE_FOLLOWUP_TM:
+                    DisplayPartyPokemonDataToTeachMove(slot, ItemId_GetHoldEffectParam(item), TRUE);
+                    return TRUE;
+                case ITEMUSE_FOLLOWUP_EVOLUTION_ITEM:
+                    if (GetMonData(&gPlayerParty[slot], MON_DATA_IS_EGG) || !GetEvolutionTargetSpecies(slot, EVO_MODE_ITEM_USE, item, NULL, TRUE))
+                    {
+                        DisplayPartyPokemonDescriptionData(slot, PARTYBOX_DESC_NO_USE);
+                        return TRUE;
+                    }
+                    break;
+            }
+            break;
         }
-        return TRUE;
     }
     return FALSE;
 }
@@ -1626,6 +1635,18 @@ static void DisplayPartyPokemonDataForMultiBattle(u32 slot)
         DisplayPartyPokemonMaxHP(gMultiPartnerParty[actualSlot].maxhp, menuBox);
         DisplayPartyPokemonHPBar(gMultiPartnerParty[actualSlot].hp, gMultiPartnerParty[actualSlot].maxhp, menuBox);
     }
+}
+
+static bool32 IsCapeBrinkTutorMove(u32 move)
+{
+    u32 i;
+    
+    for (i = 0; i < ARRAY_COUNT(gCapeBrinkCompatibleSpecies); i++)
+    {
+        if (move == gCapeBrinkCompatibleSpecies[i].move)
+            return TRUE;
+    }
+    return FALSE;
 }
 
 static bool32 CanMonLearnTutorMove(struct Pokemon *mon, u32 move)

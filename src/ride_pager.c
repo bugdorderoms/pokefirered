@@ -71,6 +71,8 @@ static void Task_SummonMonWaitPlayerAnim(u32 taskId);
 static void Task_SummonMonAndSetPlayerAvatarFlag(u32 taskId);
 
 static EWRAM_DATA struct ListMenuItem *sRidesList = NULL;
+static EWRAM_DATA u16 sCursorPos = 0;
+static EWRAM_DATA u16 sItemsAbove = 0;
 EWRAM_DATA u8 gUsingRideMon = 0;
 
 // Extra args are player avatar flag and encounter rate mod
@@ -173,9 +175,8 @@ u32 ApplyRideEncounterRateMod(u32 encounterRate)
 #define tWindowId    data[1]
 #define tListTaskId  data[2]
 #define tScrollId    data[3]
-#define tCursorPos   data[4]
-#define tCursorMoved data[5]
-#define tSelectedId  data[6]
+#define tCursorMoved data[4]
+#define tSelectedId  data[5]
 
 void InitRidePager(void)
 {
@@ -242,9 +243,7 @@ static void CreateRidePagerMultichoiceWindow(u32 taskId)
     
     for (i = RIDE_NONE; i < count; i++)
         sRidesList[i] = rides[i];
-    
-    tSelectedId = rides[0].index;
-    
+
     maxShowed = count > 6 ? 6 : count;
     
     // Create window
@@ -273,10 +272,11 @@ static void CreateRidePagerMultichoiceWindow(u32 taskId)
     gMultiuseListMenuTemplate.scrollMultiple = 0;
     gMultiuseListMenuTemplate.cursorKind = 0;
     
-    tListTaskId = ListMenuInit(&gMultiuseListMenuTemplate, 0, 0);
+    tListTaskId = ListMenuInit(&gMultiuseListMenuTemplate, &sCursorPos, &sItemsAbove);
+    tSelectedId = rides[sCursorPos + sItemsAbove].index;
     
     // Create scroll arrow
-    tScrollId = AddScrollIndicatorArrowPairParameterized(SCROLL_ARROW_UP, 60, 5, 108, count - maxShowed, 110, 110, &tCursorPos);
+    tScrollId = AddScrollIndicatorArrowPairParameterized(SCROLL_ARROW_UP, 60, 5, 108, count - maxShowed, 110, 110, &sCursorPos);
 }
 
 static void PrintRideDescInMessageWindow(u32 ride)
@@ -307,11 +307,8 @@ static void Task_RidePagerHandlePicboxUpdate(u32 taskId)
 static void Task_RidePagerHandleInput(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
-    s32 input = ListMenu_ProcessInput(tListTaskId);
-    
-    ListMenuGetScrollAndRow(tListTaskId, &tCursorPos, NULL);
-    
-    switch (input)
+
+    switch (ListMenu_ProcessInput(tListTaskId))
     {
         case LIST_CANCEL:
             DestroyRidePagerWindow(taskId, FALSE);
@@ -351,7 +348,7 @@ static void DestroyRidePagerWindow(u32 taskId, bool32 useRide)
     
     ClearStdWindowAndFrame(tWindowId, TRUE);
     RemoveWindow(tWindowId);
-    DestroyListMenuTask(tListTaskId, NULL, NULL);
+    DestroyListMenuTask(tListTaskId, &sCursorPos, &sItemsAbove);
     RemoveScrollIndicatorArrowPair(tScrollId);
     FREE_AND_SET_NULL(sRidesList);
     PicboxCancel();

@@ -256,7 +256,7 @@ static void CreateStartMenuWindowAndList(void)
     gMultiuseListMenuTemplate.scrollMultiple = 0;
     gMultiuseListMenuTemplate.cursorKind = 0;
     
-    sStartMenu.listMenuTaskId = ListMenuInit(&gMultiuseListMenuTemplate, sStartMenu.cursorPos, sStartMenu.itemsAbove);
+    sStartMenu.listMenuTaskId = ListMenuInit(&gMultiuseListMenuTemplate, &sStartMenu.cursorPos, &sStartMenu.itemsAbove);
     
     // Create scroll arrow
     sStartMenu.scrollArrowTaskId = AddScrollIndicatorArrowPairParameterized(SCROLL_ARROW_UP, 205, 5, 155, numItems - maxShowed, 110, 110, &sStartMenu.cursorPos);

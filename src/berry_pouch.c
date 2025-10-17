@@ -521,7 +521,7 @@ static bool32 RunBerryPouchInit(void)
         break;
     case 14:
         taskId = CreateTask(Task_BerryPouchMain, 0);
-        gTasks[taskId].data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sStaticCnt.listMenuScrollOffset, sStaticCnt.listMenuSelectedRow);
+        gTasks[taskId].data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sStaticCnt.listMenuScrollOffset, &sStaticCnt.listMenuSelectedRow);
         gTasks[taskId].data[8] = 0;
         gMain.state++;
         break;
@@ -1100,7 +1100,7 @@ static void Task_WaitButtonThenTossBerries(u32 taskId)
         SortAndCountBerries();
         SanitizeListMenuSelectionParams();
         SetUpListMenuTemplate();
-        data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sStaticCnt.listMenuScrollOffset, sStaticCnt.listMenuSelectedRow);
+        data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sStaticCnt.listMenuScrollOffset, &sStaticCnt.listMenuSelectedRow);
         PutWindowTilemap(1);
         ScheduleBgCopyTilemapToVram(0);
         BerryPouchSetArrowCursorFromListMenu(data[0], 1);
@@ -1147,7 +1147,7 @@ void Task_BerryPouch_DestroyDialogueWindowAndRefreshListMenu(u32 taskId)
     SortAndCountBerries();
     SanitizeListMenuSelectionParams();
     SetUpListMenuTemplate();
-    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sStaticCnt.listMenuScrollOffset, sStaticCnt.listMenuSelectedRow);
+    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sStaticCnt.listMenuScrollOffset, &sStaticCnt.listMenuSelectedRow);
     ScheduleBgCopyTilemapToVram(0);
     BerryPouchSetArrowCursorFromListMenu(data[0], 1);
     Task_CleanUpAndReturnToMain(taskId);
@@ -1302,7 +1302,7 @@ static void Task_SellBerries_PlaySfxAndRemoveBerries(u32 taskId)
     SortAndCountBerries();
     SanitizeListMenuSelectionParams();
     SetUpListMenuTemplate();
-    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sStaticCnt.listMenuScrollOffset, sStaticCnt.listMenuSelectedRow);
+    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, &sStaticCnt.listMenuScrollOffset, &sStaticCnt.listMenuSelectedRow);
     BerryPouchSetArrowCursorFromListMenu(data[0], 2);
     PrintMoneyAmountInMoneyBox(sVariableWindowIds[2], GetMoney(&gSaveBlock1Ptr->money), 0);
     gTasks[taskId].func = Task_SellBerries_WaitButton;
