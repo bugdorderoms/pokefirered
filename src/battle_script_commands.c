@@ -2996,9 +2996,8 @@ static void atk40_goto(void)
 static void atk41_call(void)
 {
     CMD_ARGS(const u8 *ptr);
-    const u8 *ptr = cmd->ptr;
     gBattlescriptCurrInstr = cmd->nextInstr;
-    BattleScriptCall(ptr);
+    BattleScriptCall(cmd->ptr);
 }
 
 static void atk42_trysetsleep(void)
@@ -6929,7 +6928,7 @@ static void atk88_pickup(void)
                         if (chance > 9)
                             chance = 9;
                         
-                        if ((chance + 1) * 5 > (Random() % 100))
+                        if (RandomPercentage(RNG_HONEY_GATHER, (chance + 1) * 5))
                             TryPickupItem(mon, ITEM_HONEY);
                     }
                     break;
@@ -7803,9 +7802,9 @@ static void atkAE_healpartystatus(void)
 
 static void atkAF_trysettoxicspikes(void)
 {
-    CMD_ARGS(const u8 *failPtr);
+    CMD_ARGS(u8 battler, const u8 *failPtr);
 
-    u32 targetSide = GetBattlerSide(BATTLE_OPPOSITE(gBattlerAttacker));
+    u32 targetSide = GetBattlerSide(BATTLE_OPPOSITE(GetBattlerForBattleScript(cmd->battler)));
 
     if (gSideTimers[targetSide].toxicSpikesAmount == 2)
         gBattlescriptCurrInstr = cmd->failPtr;

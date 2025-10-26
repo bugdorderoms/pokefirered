@@ -1257,10 +1257,12 @@ static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 d
         mod = TYPE_MUL_SUPER_EFFECTIVE;
     
     // Check Foresight and Scrappy on Ghost types
-    if ((moveType == TYPE_FIGHTING || moveType == TYPE_NORMAL) && defenderType == TYPE_GHOST && mod == TYPE_MUL_NO_EFFECT && (move == MOVE_GLARE
-    || (gBattleMons[defender].status2 & STATUS2_FORESIGHT) || (!forAnticipation && (atkAbility == ABILITY_SCRAPPY || atkAbility == ABILITY_MINDS_EYE))))
-        mod = TYPE_MUL_NORMAL;
-    
+    if ((moveType == TYPE_FIGHTING || moveType == TYPE_NORMAL) && defenderType == TYPE_GHOST && mod == TYPE_MUL_NO_EFFECT)
+    {
+        if (move == MOVE_GLARE || (gBattleMons[defender].status2 & STATUS2_FORESIGHT) || (!forAnticipation && (atkAbility == ABILITY_SCRAPPY || atkAbility == ABILITY_MINDS_EYE)))
+            mod = TYPE_MUL_NORMAL;
+    }
+
     // Check Miracle Eye
     if (moveType == TYPE_PSYCHIC && defenderType == TYPE_DARK && mod == TYPE_MUL_NO_EFFECT && (gBattleMons[defender].status2 & STATUS2_MIRACLE_EYE))
         mod = TYPE_MUL_NORMAL;

@@ -658,7 +658,7 @@ static u32 SampleResortGorgeousMon(void)
     
     for (i = 0; i < 100; i++)
     {
-        species = RandomUniform(RNG_SAMPLE_RESORT_SPECIES, 0, NUM_SPECIES - 2) + 1;
+        species = RandomUniform(RNG_SAMPLE_RESORT_SPECIES, SPECIES_BULBASAUR, NUM_SPECIES - 1);
         
         if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
             return species;

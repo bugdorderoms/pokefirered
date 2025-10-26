@@ -23,7 +23,7 @@ SINGLE_BATTLE_TEST("Lightning Rod absorbs the move even if its immune to it")
 {
     GIVEN {
         ASSUME(gBattleMoves[MOVE_THUNDER].type == TYPE_ELECTRIC);
-        ASSUME(gSpeciesInfo[SPECIES_CUBONE].types[0] == TYPE_GROUND);
+        ASSUME(gSpeciesInfo[SPECIES_CUBONE].types[0] == TYPE_GROUND || gSpeciesInfo[SPECIES_CUBONE].types[1] == TYPE_GROUND);
         
         PLAYER(SPECIES_WOBBUFFET);
         OPPONENT(SPECIES_CUBONE) { Ability(ABILITY_LIGHTNING_ROD); }

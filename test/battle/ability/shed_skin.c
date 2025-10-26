@@ -1,9 +1,9 @@
 #include "global.h"
 #include "test/battle.h"
 
-SINGLE_BATTLE_TEST("Shed Skin cures status 33% of the time at end turn")
+SINGLE_BATTLE_TEST("Shed Skin cures status 1/3 of the time at end turn")
 {
-    PASSES_RANDOMLY(33, 100, RNG_SHED_SKIN);
+    PASSES_RANDOMLY(1, 3, RNG_SHED_SKIN);
     
     GIVEN {
         PLAYER(SPECIES_WOBBUFFET);

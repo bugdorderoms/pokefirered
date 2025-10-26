@@ -967,8 +967,9 @@
 	.byte \caseId
 	.endm
 
-	.macro trysettoxicspikes ptr:req
+	.macro trysettoxicspikes battler:req, ptr:req
 	.byte 0xaf
+	.byte \battler
 	.4byte \ptr
 	.endm
 

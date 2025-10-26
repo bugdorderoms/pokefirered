@@ -2500,6 +2500,13 @@ bool32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u
                     effect = 2;
                 }
                 break;
+            case ABILITY_STORM_DRAIN:
+                if (moveType == TYPE_WATER)
+                {
+                    statId = STAT_SPATK;
+                    effect = 2;
+                }
+                break;
             case ABILITY_SAP_SIPPER:
                 if (moveType == TYPE_GRASS)
                 {
@@ -3309,7 +3316,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             gDisableStructs[battler].truantCounter ^= TRUE;
                         else
                             gDisableStructs[battler].truantCounter = 0; // being asleep resets the Truant counter
-                        break; // don't record ability
+                        break;
                     case ABILITY_SLOW_START:
                         if (gDisableStructs[battler].slowStartTimer && --gDisableStructs[battler].slowStartTimer == 0)
                         {
@@ -3899,6 +3906,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                         case ABILITY_TOXIC_DEBRIS:
                             if (BattlerTurnDamaged(battler) && GetBattleMoveSplit(gCurrentMove) == SPLIT_PHYSICAL && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove))
                             {
+                                SaveAttackerToStack(BATTLE_OPPOSITE(battler));
                                 BattleScriptCall(BattleScript_ToxicDebrisActivation);
                                 ++effect;
                             }

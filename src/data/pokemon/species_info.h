@@ -42005,9 +42005,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Steelix"),
         .categoryName = _("Iron Snake"),
-        .description = COMPOUND_STRING("It chews its way through boulders with\n"
-                                       "its sturdy jaws. Its eyes can see in the\n"
-                                       "darkness underground."),
+        .description = COMPOUND_STRING("To protect itself from attacks, it uses\n"
+                                       "magnetism to control pieces of its hard\n"
+                                       "outer shell that have flaked off."),
         MON_STATS(75, 125, 230, 30, 55, 95),
         MON_TYPES(TYPE_STEEL, TYPE_GROUND),
         MON_ABILITIES(ABILITY_SAND_FORCE),
@@ -42297,9 +42297,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Gardevoir"),
         .categoryName = _("Embrace"),
-        .description = COMPOUND_STRING("It unleashes psychokinetic energy at full\n"
-                                       "power when protecting a Trainer it has\n"
-                                       "bonded closely with."),
+        .description = COMPOUND_STRING("When it opens the red plate on its chest\n"
+                                       "and unleashes its heart, its strongest\n"
+                                       "psychic power is released."),
         MON_STATS(68, 85, 65, 100, 165, 135),
         MON_TYPES(TYPE_PSYCHIC, TYPE_FAIRY),
         MON_ABILITIES(ABILITY_PIXILATE),
@@ -42415,9 +42415,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Aggron"),
         .categoryName = _("Iron Armor"),
-        .description = COMPOUND_STRING("While seeking iron for food, it digs\n"
-                                       "tunnels by breaking through bedrock with\n"
-                                       "its steel horns."),
+        .description = COMPOUND_STRING("Energy from Mega Evolution has turned the\n"
+                                       "iron inside this Pokémon into steel\n"
+                                       "armor that covers its whole body."),
         MON_STATS(70, 140, 230, 50, 60, 80),
         MON_TYPES(TYPE_STEEL),
         MON_ABILITIES(ABILITY_FILTER),
@@ -42456,9 +42456,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Medicham"),
         .categoryName = _("Meditate"),
-        .description = COMPOUND_STRING("It elegantly avoids attacks with\n"
-                                       "dance-like steps, then launches a\n"
-                                       "devastating blow in the same motion."),
+        .description = COMPOUND_STRING("Thanks to Mega Evolution, its mental\n"
+                                       "power is limitless. It conjures up arms\n"
+                                       "imbued with malice to defeat its enemies."),
         MON_STATS(60, 100, 85, 100, 80, 85),
         MON_TYPES(TYPE_FIGHTING, TYPE_PSYCHIC),
         MON_ABILITIES(ABILITY_PURE_POWER),
@@ -42571,9 +42571,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Camerupt"),
         .categoryName = _("Eruption"),
-        .description = COMPOUND_STRING("It lives in the crater of a volcano. It\n"
-                                       "is well known that the humps on its back\n"
-                                       "erupt every 10 years."),
+        .description = COMPOUND_STRING("When its rage reaches a boiling point,\n"
+                                       "the huge volcano in the hump on its back\n"
+                                       "erupts violently, spewing molten lava."),
         MON_STATS(70, 120, 100, 20, 145, 105),
         MON_TYPES(TYPE_FIRE, TYPE_GROUND),
         MON_ABILITIES(ABILITY_SHEER_FORCE),
@@ -42613,9 +42613,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Altaria"),
         .categoryName = _("Humming"),
-        .description = COMPOUND_STRING("On sunny days, it flies freely through\n"
-                                       "the sky and blends into the clouds. It\n"
-                                       "sings in a beautiful soprano."),
+        .description = COMPOUND_STRING("Its down is so soft, it seems as if a\n"
+                                       "touch could melt it. But it's strong\n"
+                                       "enough that can hoist a dump truck."),
         MON_STATS(75, 110, 110, 80, 110, 105),
         MON_TYPES(TYPE_DRAGON, TYPE_FAIRY),
         MON_ABILITIES(ABILITY_PIXILATE),
@@ -43057,9 +43057,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Abomasnow"),
         .categoryName = _("Frost Tree"),
-        .description = COMPOUND_STRING("They appear when the snow flowers bloom.\n"
-                                       "When the petals fall, they retreat to\n"
-                                       "places unknown again."),
+        .description = COMPOUND_STRING("The buds on its back have sprouted into\n"
+                                       "icicles that can whip up blizzards of\n"
+                                       "-22 degrees Fahrenheit."),
         MON_STATS(90, 132, 105, 30, 132, 105),
         MON_TYPES(TYPE_GRASS, TYPE_ICE),
         MON_ABILITIES(ABILITY_SNOW_WARNING),
@@ -43099,9 +43099,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Gallade"),
         .categoryName = _("Blade"),
-        .description = COMPOUND_STRING("When trying to protect someone, it\n"
-                                       "extends its elbows as if they were swords\n"
-                                       "and fights savagely."),
+        .description = COMPOUND_STRING("Mega Evolution has given it plates to\n"
+                                       "slice its enemies and a cape to protect\n"
+                                       "its body."),
         MON_STATS(68, 165, 95, 110, 65, 115),
         MON_TYPES(TYPE_PSYCHIC, TYPE_FIGHTING),
         MON_ABILITIES(ABILITY_INNER_FOCUS),
@@ -43140,9 +43140,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Audino"),
         .categoryName = _("Hearing"),
-        .description = COMPOUND_STRING("Audino's sense of hearing is superb. Not\n"
-                                       "even a pebble rolling along over a mile\n"
-                                       "away will escape Audino's ears."),
+        .description = COMPOUND_STRING("Anyone who touches the secondary feelers\n"
+                                       "that have sprouted from the base of its\n"
+                                       "throat will fall into a deep sleep."),
         MON_STATS(103, 60, 126, 50, 80, 126),
         MON_TYPES(TYPE_NORMAL, TYPE_FAIRY),
         MON_ABILITIES(ABILITY_HEALER),
@@ -43181,9 +43181,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Diancie"),
         .categoryName = _("Jewel"),
-        .description = COMPOUND_STRING("A sudden transformation of Carbink, its\n"
-                                       "pink, glimmering body is said to be the\n"
-                                       "loveliest sight in the whole world."),
+        .description = COMPOUND_STRING("Also known as the Royal Pink Princess.\n"
+                                       "The dazzling, sparkling diamond on its\n"
+                                       "forehead is a whopping 2,000 carats."),
         MON_STATS(50, 160, 110, 110, 160, 110),
         MON_TYPES(TYPE_ROCK, TYPE_FAIRY),
         MON_ABILITIES(ABILITY_MAGIC_BOUNCE),
@@ -43222,9 +43222,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Rayquaza"),
         .categoryName = _("Sky High"),
-        .description = COMPOUND_STRING("It flies in the ozone layer, way up high\n"
-                                       "in the sky. Until recently, no one had\n"
-                                       "ever seen it."),
+        .description = COMPOUND_STRING("It flies through the ozone layer,\n"
+                                       "consuming meteoroids. Those meteoroids\n"
+                                       "provide the energy to Mega Evolve."),
         MON_STATS(105, 180, 100, 115, 180, 100),
         MON_TYPES(TYPE_DRAGON, TYPE_FLYING),
         MON_ABILITIES(ABILITY_DELTA_STREAM),
@@ -43263,9 +43263,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Kyogre"),
         .categoryName = _("Sea Basin"),
-        .description = COMPOUND_STRING("It is said to have widened the seas by\n"
-                                       "causing downpours. It had been asleep in\n"
-                                       "a marine trench."),
+        .description = COMPOUND_STRING("Through Primal Reversion it will take\n"
+                                       "back its true form. It can summon storms\n"
+                                       "that cause the sea levels to rise."),
         MON_STATS(100, 150, 90, 90, 180, 160),
         MON_TYPES(TYPE_WATER),
         MON_ABILITIES(ABILITY_PRIMORDIAL_SEA),
@@ -43304,9 +43304,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     {
         .name = _("Groudon"),
         .categoryName = _("Continent"),
-        .description = COMPOUND_STRING("Said to have expanded the lands by\n"
-                                       "evaporating water with raging heat. It\n"
-                                       "battled titanically with Kyogre."),
+        .description = COMPOUND_STRING("Through Primal Reversion it will take\n"
+                                       "back its true form. It can cause magma to\n"
+                                       "erupt and expand the world's landmass."),
         MON_STATS(100, 180, 160, 90, 150, 90),
         MON_TYPES(TYPE_GROUND, TYPE_FIRE),
         MON_ABILITIES(ABILITY_DESOLATE_LAND),

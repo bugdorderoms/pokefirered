@@ -2062,7 +2062,7 @@ BattleScript_EffectSuckerPunch::
 
 BattleScript_EffectToxicSpikes::
     attackcanceler
-	trysettoxicspikes BattleScript_ButItFailedAtkStringPpReduce
+	trysettoxicspikes BS_ATTACKER, BattleScript_ButItFailedAtkStringPpReduce
 	attackstring
 	ppreduce
 	attackanimation
@@ -3758,16 +3758,15 @@ BattleScript_BattleBondBoost::
 	return
 
 BattleScript_ToxicDebrisActivation::
-	swapattackerwithtarget
-	trysettoxicspikes BattleScript_ToxicDebrisActivationRet
-	playanimation BS_TARGET, B_ANIM_SET_TOXIC_SPIKES
+	trysettoxicspikes BS_TARGET, BattleScript_ToxicDebrisActivationRet
+	playanimation BS_ATTACKER, B_ANIM_SET_TOXIC_SPIKES
 	waitstate
-    loadabilitypopup BS_ATTACKER
+    loadabilitypopup BS_TARGET
 	printstring STRINGID_POISONSPIKESSCATTERED
 	waitmessage B_WAIT_TIME_LONG
-	removeabilitypopup BS_ATTACKER
+	removeabilitypopup BS_TARGET
 BattleScript_ToxicDebrisActivationRet::
-	swapattackerwithtarget
+	restoreattacker
 	return
 	
 BattleScript_Hospitality::

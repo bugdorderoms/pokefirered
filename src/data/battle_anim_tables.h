@@ -218,6 +218,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
     [B_ANIM_SET_TOXIC_SPIKES] =
     {
         .script = gMoveAnim_TOXIC_SPIKES,
+        .ignoreSemiInvulnerability = TRUE,
     },
     [B_ANIM_MEGA_EVOLUTION] =
     {

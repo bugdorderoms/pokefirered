@@ -126,3 +126,5 @@ SINGLE_BATTLE_TEST("Forecast transforms Castform back when its suppressed")
         EXPECT_EQ(player->species, SPECIES_CASTFORM);
     }
 }
+
+TO_DO_BATTLE_TEST("Forecast doesn't transforms Castform back if dynamaxed");
