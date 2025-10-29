@@ -38,7 +38,7 @@ static s32 (*const sBattleAiFuncsTable[])(u32, u32, u32, u32, s32) =
     [10 ... 31] = NULL,
 };
 
-void BattleAI_SetupAILogicData(void)
+static void BattleAI_SetupAILogicDataInternal(bool32 forPlayerPartner)
 {
     u32 i, count, averageLevel;
     
@@ -78,7 +78,11 @@ void BattleAI_SetupAILogicData(void)
             else // Trainer
             {
                 AI_DATA->aiFlags = AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_TRY_TO_FAINT | AI_FLAG_CHECK_VIABILITY;
-                AI_DATA->aiFlags |= gTrainers[gTrainerBattleOpponent_A].aiFlags;
+                
+                if (forPlayerPartner)
+                    AI_DATA->aiFlags |= gBattlePartners[gPartnerTrainerId].aiFlags;
+                else
+                    AI_DATA->aiFlags |= gTrainers[gTrainerBattleOpponent_A].aiFlags;
                 
                 // Set trainer knowing all player's data if AI_FLAG_OMNISCIENT is set
                 if (AI_DATA->aiFlags & AI_FLAG_OMNISCIENT)
@@ -94,6 +98,14 @@ void BattleAI_SetupAILogicData(void)
         }
     }
     BattleAI_SetAILogicDataForTurn();
+}
+
+void BattleAI_SetupAILogicData(void)
+{
+    BattleAI_SetupAILogicDataInternal(FALSE);
+    
+    if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+        BattleAI_SetupAILogicDataInternal(TRUE);
 }
 
 static void SetBattlerData(u32 attacker)
@@ -166,7 +178,7 @@ void BattleAI_ChooseAction(u32 battlerId)
     {
         if (BattleAI_ShouldSwitch(battlerId))
         {
-            if (gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] == PARTY_SIZE)
+            if (gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId == PARTY_SIZE)
             {
                 u32 id = GetMostSuitableMonToSwitchInto(battlerId);
                 
@@ -176,9 +188,9 @@ void BattleAI_ChooseAction(u32 battlerId)
                     GetViableMonsToSwitchInto(battlerId, viableMons);
                     id = viableMons[0];
                 }
-                gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = id;
+                gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = id;
             }
-            gBattleStruct->battlers[battlerId].monToSwitchIntoId = gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1];
+            gBattleStruct->battlers[battlerId].monToSwitchIntoId = gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId;
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_SWITCH, 0);
             return;
         }

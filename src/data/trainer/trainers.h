@@ -1,7 +1,3 @@
-#define TRAINER_PARTY(tParty)        \
-    .party = tParty,                 \
-    .partySize = ARRAY_COUNT(tParty)
-
 const struct Trainer gTrainers[NUM_TRAINERS] =
 {
     [TRAINER_NONE] =

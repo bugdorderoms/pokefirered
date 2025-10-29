@@ -101,6 +101,7 @@ static bool32 CheckZacianZamazentaKnowsIronHead(struct Pokemon *mon, u32 species
 #include "data/trainer/trainer_class_lookups.h"
 #include "data/trainer/encounter_musics.h"
 #include "data/trainer/trainer_slides.h"
+#include "data/trainer/partner_parties.h"
 
 struct SpindaSpot
 {
@@ -2916,7 +2917,10 @@ void SetWildMonsHeldItem(void)
 
 u8 *GetTrainerPartnerName(void)
 {
-    return gLinkPlayers[GetBattlerMultiplayerId(gLinkPlayers[GetMultiplayerId()].id ^ 2)].name;
+    if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+        return (u8*)(gBattlePartners[gPartnerTrainerId].trainerName);
+    else
+        return gLinkPlayers[GetBattlerMultiplayerId(gLinkPlayers[GetMultiplayerId()].id ^ 2)].name;
 }
 
 u32 GetPlayerPartyHighestLevel(void)

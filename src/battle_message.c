@@ -1390,7 +1390,9 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
         {
             if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
             {
-                if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
+                if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+                    stringPtr = COMPOUND_STRING("{B_PARTNER_CLASS} {B_PARTNER_NAME} sent\nout {B_PLAYER_MON2_NAME}!\lGo, {B_PLAYER_MON1_NAME}!");
+                else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
                     stringPtr = COMPOUND_STRING("{B_LINK_PARTNER_NAME} sent out {B_LINK_PLAYER_MON2_NAME}!\nGo! {B_LINK_PLAYER_MON1_NAME}!");
                 else
                     stringPtr = COMPOUND_STRING("Go! {B_PLAYER_MON1_NAME} and {B_PLAYER_MON2_NAME}!");
@@ -1768,6 +1770,12 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
                         copyTrainer1Name = TRUE;
                         goto COPY_TRAINER1_CLASS;
                     }
+                    break;
+                case B_TXT_PARTNER_CLASS:
+                    toCpy = gTrainerClassTable[gBattlePartners[gPartnerTrainerId].trainerClass].name;
+                    break;
+                case B_TXT_PARTNER_NAME:
+                    toCpy = gBattlePartners[gPartnerTrainerId].trainerName;
                     break;
             }
             

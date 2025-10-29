@@ -25,7 +25,7 @@ void BattleLoadSubstituteOrMonSpriteGfx(u32 battlerId, bool32 loadMonSprite);
 void LoadBattleMonGfxAndAnimate(u32 battlerId, bool32 loadMonSprite, u32 spriteId);
 void TrySetBehindSubstituteSpriteBit(u32 battlerId, u32 move);
 void ClearBehindSubstituteBit(u32 battlerId);
-void HandleLowHpMusicChange(struct Pokemon *mon, u32 battlerId);
+void HandleLowHpMusicChange(u32 battlerId, struct Pokemon *mon);
 void BattleStopLowHpSound(void);
 void HandleBattleLowHpMusicChange(void);
 void SetBattlerSpriteAffineMode(u32 affineMode);

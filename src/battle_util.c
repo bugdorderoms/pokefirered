@@ -1719,7 +1719,8 @@ bool32 HandleFaintedMonActions(void)
             
             for (i = 0; i < gBattlersCount; ++i)
             {
-                if ((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && GetBattlerPosition(i) == B_POSITION_PLAYER_RIGHT)
+                if (((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && GetBattlerPosition(i) == B_POSITION_PLAYER_RIGHT)
+                || ((gBattleTypeFlags & BATTLE_TYPE_ONE_VS_TWO) && GetBattlerPosition(i) == B_POSITION_OPPONENT_RIGHT))
                     continue;
                 
                 if ((gAbsentBattlerFlags & Bit(i)) && !HasNoMonsToSwitch(i, PARTY_SIZE, PARTY_SIZE))
@@ -2303,7 +2304,18 @@ bool32 HasNoMonsToSwitch(u32 battler, u32 partyIdBattlerOn1, u32 partyIdBattlerO
     {
         party = GetBattlerParty(battler);
         
-        if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
+        if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+        {
+            playerId = ((battler & BIT_FLANK) / 2);
+            
+            for (i = playerId * MULTI_PARTY_SIZE; i < playerId * MULTI_PARTY_SIZE + MULTI_PARTY_SIZE; i++)
+            {
+                if (MonCanBattle(&party[i]))
+                    break;
+            }
+            return (i == playerId * MULTI_PARTY_SIZE + MULTI_PARTY_SIZE);
+        }
+        else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
         {
             playerId = GetBattlerMultiplayerId(battler);
             flankId = GetLinkTrainerFlankId(playerId);
@@ -4800,7 +4812,7 @@ u32 IsMonDisobedient(void)
 
     if (levelCapLevel == MAX_LEVEL || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_RECORDED)) || GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT
     || !IsOtherTrainer(gBattleMons[gBattlerAttacker].otId, gBattleMons[gBattlerAttacker].otName) || gBattleMons[gBattlerAttacker].level <= levelCapLevel
-    || gBattleStruct->dancer.inProgress)
+    || gBattleStruct->dancer.inProgress || ((gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) && GetBattlerPosition(gBattlerAttacker) == B_POSITION_PLAYER_RIGHT))
         return 0;
 
     calc = (gBattleMons[gBattlerAttacker].level + levelCapLevel) * (Random() & 255) >> 8;
@@ -6223,7 +6235,7 @@ void TryUpdateEvolutionTracker(u32 evoMode, u32 upAmount, u32 data)
     struct Pokemon *mon = GetBattlerPartyIndexPtr(gBattlerAttacker);
     const u8 *evolutions = gSpeciesInfo[gBattleMons[gBattlerAttacker].species].evolutions;
     
-    if (evolutions != NULL && !(gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LINK | BATTLE_TYPE_OLD_MAN_TUTORIAL | BATTLE_TYPE_MULTI))
+    if (evolutions != NULL && !(gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LINK | BATTLE_TYPE_OLD_MAN_TUTORIAL))
     && GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER && GetMonData(mon, MON_DATA_EVOLUTION_TRACKER) < 1023)
     {
         value = min(1023, GetMonData(mon, MON_DATA_EVOLUTION_TRACKER) + upAmount);
@@ -6265,7 +6277,11 @@ bool32 IsMultiBattle(void)
 
 bool32 IsDoubleBattleForBattler(u32 battler)
 {
-    if ((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && GetBattlerSide(battler) == B_SIDE_PLAYER)
+    u32 battlerSide = GetBattlerSide(battler);
+    
+    if ((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && battlerSide == B_SIDE_PLAYER)
+        return FALSE;
+    else if ((gBattleTypeFlags & BATTLE_TYPE_ONE_VS_TWO) && battlerSide == B_SIDE_OPPONENT)
         return FALSE;
     else
         return (gBattleTypeFlags & BATTLE_TYPE_DOUBLE);
@@ -6770,6 +6786,8 @@ bool32 TryBattleChallengeStartingStatus(void)
 bool32 IsPartnerMonFromSameTrainer(u32 battler)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
+        return FALSE;
+    else if ((gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) && GetBattlerSide(battler) == B_SIDE_PLAYER)
         return FALSE;
     else
         return TRUE;

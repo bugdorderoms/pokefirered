@@ -28,7 +28,6 @@ static void OakOldManHandleChooseItem(u32 battlerId);
 static void OakOldManHandleIntroTrainerBallThrow(u32 battlerId);
 static void PrintOakText_LoweringStats(u32 battlerId);
 static void PrintOakText_WinEarnsPrizeMoney(u32 battlerId);
-static void PrintOakText_ForPetesSake(u32 battlerId);
 
 static void (*const sOakOldManBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
@@ -123,12 +122,12 @@ static u32 GetOakOldManTrainerPicId(void)
 
 static void OakOldManHandleDrawTrainerPic(u32 battlerId)
 {
-    BtlController_HandleDrawTrainerPic(battlerId, GetOakOldManTrainerPicId(), 80, 30);
+    BtlController_HandleDrawTrainerPic(battlerId, GetOakOldManTrainerPicId());
 }
 
 static void OakOldManHandleTrainerSlide(u32 battlerId)
 {
-    BtlController_HandleTrainerSlide(battlerId, GetOakOldManTrainerPicId(), 80);
+    BtlController_HandleTrainerSlide(battlerId, GetOakOldManTrainerPicId());
 }
 
 static void OakOldManHandlePrintStringInternal(u32 battlerId, bool32 isSelection)
@@ -221,44 +220,6 @@ void OakOldManHandlePlaySE(u32 battlerId)
     BattleControllerComplete(battlerId);
 }
 
-static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
-{
-    if (gSprites[gHealthboxSpriteIds[battlerId]].callback == SpriteCallbackDummy && gBattleSpritesDataPtr->healthBoxesData[battlerId].finishedShinyMonAnim
-    && gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].finishedShinyMonAnim)
-    {
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim = FALSE;
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].finishedShinyMonAnim = FALSE;
-        gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].triedShinyMonAnim = FALSE;
-        gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].finishedShinyMonAnim = FALSE;
-        
-        FreeSpriteTilesByTag(ANIM_TAG_GOLD_STARS);
-        FreeSpritePaletteByTag(ANIM_TAG_GOLD_STARS);
-        
-        CreateTask(Task_BltController_RestoreBgmAfterCry, 10);
-        HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[battlerId]], battlerId);
-        gBattlerControllersData[battlerId].func = PrintOakText_ForPetesSake;
-    }
-}
-
-static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
-{
-    if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive && !gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].ballAnimActive)
-    {
-        if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim)
-            TryShinyAnimation(battlerId);
-        
-        if (!gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].triedShinyMonAnim)
-            TryShinyAnimation(BATTLE_PARTNER(battlerId));
-        
-        if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
-            ShowHealthBox(BATTLE_PARTNER(battlerId));
-        
-        ShowHealthBox(battlerId);
-        gBattleSpritesDataPtr->animationData->healthboxSlideInStarted = FALSE;
-        gBattlerControllersData[battlerId].func = Intro_WaitForShinyAnimAndHealthbox;
-    }
-}
-
 static void OakOldManHandleIntroTrainerBallThrow(u32 battlerId)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
@@ -294,7 +255,7 @@ static void OakOldManSetBattleEndCallbacks(u32 battlerId)
 
 void OakOldManHandleEndLinkBattle(u32 battlerId)
 {
-    BtlController_HandleEndLinkBattle(battlerId, gBattleBufferA[battlerId][1], (!(gBattleTypeFlags & BATTLE_TYPE_IS_MASTER) && gBattleTypeFlags & BATTLE_TYPE_LINK) ? OakOldManSetBattleEndCallbacks : NULL);
+    BtlController_HandleEndLinkBattle(battlerId, gBattleBufferA[battlerId][1], (!(gBattleTypeFlags & BATTLE_TYPE_IS_MASTER) && (gBattleTypeFlags & BATTLE_TYPE_LINK)) ? OakOldManSetBattleEndCallbacks : NULL);
 }
 
 ///////////
@@ -443,7 +404,7 @@ void PrintOakText_KeepAnEyeOnHP(u32 battlerId)
     }
 }
 
-static void PrintOakText_ForPetesSake(u32 battlerId)
+void PrintOakText_ForPetesSake(u32 battlerId)
 {
     switch (gBattleStruct->simulatedInputState[0])
     {

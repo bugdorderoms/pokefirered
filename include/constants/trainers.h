@@ -2,6 +2,7 @@
 #define GUARD_CONSTANTS_TRAINERS_H
 
 #include "constants/opponents.h"
+#include "constants/battle_partners.h"
 
 // Trainer encounter music ids
 #define TRAINER_ENCOUNTER_MUSIC_MALE        0 // Standard male encounter music

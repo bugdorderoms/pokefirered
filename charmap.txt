@@ -400,6 +400,8 @@ B_ATK_TEAM_PREFIX = FD 24
 B_DEF_TEAM_PREFIX = FD 25
 B_CURRENT_TRAINER_NAME = FD 26
 B_BUFF3 = FD 27
+B_PARTNER_CLASS = FD 28
+B_PARTNER_NAME = FD 29
 
 @ indicates the end of a town/city name (before " TOWN" or " CITY")
 NAME_END = FC 00

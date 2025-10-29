@@ -119,6 +119,11 @@ struct TrainerSlide
 
 extern const struct Trainer gTrainers[];
 extern const struct TrainerSlide gTrainerSlides[];
+extern const struct Trainer gBattlePartners[];
+
+#define TRAINER_PARTY(tParty)        \
+    .party = tParty,                 \
+    .partySize = ARRAY_COUNT(tParty)
 
 // Cleared each time a mon leaves the field, either by switching out or fainting.
 struct DisableStruct
@@ -366,7 +371,7 @@ struct BattlerState
     /*0x02*/ u8 partyIndex;
     /*0x03*/ u8 chosenMovePosition;
     /*0x04*/ u8 monToSwitchIntoId;
-    /*0x05*/ u8 itemPartyIndex; // For item use
+    /*0x05*/ u8 AI_monToSwitchIntoId;
     /*0x06*/ u8 targetsDone; // For moves hiting multiples pokemon, bit flags
     /*0x07*/ u8 payDayLevel; // To store player mon's levels when using pay day, this is unused for opponents
     /*0x08*/ u8 aiMoveOrAction;
@@ -411,6 +416,7 @@ struct BattlerState
              u8 unused:3;
     /*0x3C*/ struct Pokemon *illusionMon;
     /*0x40*/ u8 moveSelectionCursor;
+    /*0x41*/ u8 itemPartyIndex; // For item use
              bool8 activatedGimmick[ROUND_BITS_TO_BYTES(GIMMICKS_COUNT)]; // Stores whether a trainer has used gimmick
              struct QueuedEffect queuedEffectsList[B_BATTLER_QUEUED_COUNT + 1];
 };
@@ -507,7 +513,8 @@ struct BattleStruct
     /*0x054*/ u8 savedTargetStack[10];
     /*0x064*/ u8 weatherIconSpriteId;
     /*0x065*/ u8 quickClawBattlerId;
-    /*0x066*/ u8 AI_monToSwitchIntoId[NUM_BATTLERS_PER_SIDE]; // AI related
+    /*0x066*/ u8 battleChallenge;
+    /*0x067*/ u8 teamPreviewTriggerSpriteId;
     /*0x068*/ void (*savedCallback)(void);
     /*0x06C*/ const u8 *trainerSlideMsg;
     /*0x070*/ u8 turnEffectsTracker;
@@ -516,13 +523,11 @@ struct BattleStruct
     /*0x073*/ u8 absentBattlerFlags;
     /*0x074*/ u8 linkBattleVsSpriteId_V;
     /*0x075*/ u8 linkBattleVsSpriteId_S;
-    /*0x076*/ u8 battleChallenge;
-    /*0x077*/ u8 teamPreviewTriggerSpriteId;
-    /*0x078*/ u8 echoedVoiceCounter:2;
-    /*0x078*/ u8 echoedVoiceDmgScale:4;
-    /*0x078*/ u8 bypassMoldBreakerChecks:1; // For ABILITYEFFECT_IMMUNITY
-    /*0x078*/ u8 unused:1; // unused
-    /*0x079*/ struct {
+    /*0x076*/ u8 echoedVoiceCounter:2;
+    /*0x076*/ u8 echoedVoiceDmgScale:4;
+    /*0x076*/ u8 bypassMoldBreakerChecks:1; // For ABILITYEFFECT_IMMUNITY
+    /*0x076*/ u8 unused:1; // unused
+    /*0x077*/ struct {
                   u8 calls:5;
                   u8 usedAdrenalineOrb:1;
                   u8 lastCallFailed:1;
@@ -562,7 +567,7 @@ struct BattleStruct
               struct StatChange statChange;
     union {
         struct LinkPartnerHeader linkPartnerHeader;
-        struct MultiBattlePokemonTx multiBattleMons[PARTY_SIZE / 2];
+        struct MultiBattlePokemonTx multiBattleMons[MULTI_PARTY_SIZE];
     } multiBuffer;
 };
 
@@ -782,6 +787,7 @@ extern u16 gLastUsedItem;
 extern u32 gBattleTypeFlags;
 extern struct MonSpritesGfx *gMonSpritesGfxPtr;
 extern u16 gTrainerBattleOpponent_A;
+extern u16 gPartnerTrainerId;
 extern u16 gMoveToLearn;
 extern u16 gBattleMovePower;
 extern u16 gCurrentMove;

@@ -59,6 +59,8 @@ struct BattleMsgData
 #define B_TXT_DEF_TEAM_PREFIX             0x25
 #define B_TXT_CURRENT_TRAINER_NAME        0x26
 #define B_TXT_BUFF3                       0x27
+#define B_TXT_PARTNER_CLASS               0x28
+#define B_TXT_PARTNER_NAME                0x29
 
 // for B_TXT_BUFF1, B_TXT_BUFF2 and B_TXT_BUFF3
 

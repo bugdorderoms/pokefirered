@@ -167,7 +167,7 @@ static bool32 TrainerHasGimmickKeyItem(u32 battler, u16 itemId)
     {
         u32 position = GetBattlerPosition(battler);
         
-        if ((position == B_POSITION_PLAYER_LEFT || (!(gBattleTypeFlags & BATTLE_TYPE_MULTI) && position == B_POSITION_PLAYER_RIGHT)) && !CheckBagHasItem(itemId, 1))
+        if ((position == B_POSITION_PLAYER_LEFT || (position == B_POSITION_PLAYER_RIGHT && IsPartnerMonFromSameTrainer(battler))) && !CheckBagHasItem(itemId, 1))
             return FALSE;
     }
     return TRUE;

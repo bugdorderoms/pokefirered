@@ -677,26 +677,29 @@ void ClearBehindSubstituteBit(u32 battlerId)
     gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute = FALSE;
 }
 
-void HandleLowHpMusicChange(struct Pokemon *mon, u32 battlerId)
+void HandleLowHpMusicChange(u32 battlerId, struct Pokemon *mon)
 {
-    if (GetHPBarLevel(GetMonData(mon, MON_DATA_HP), GetMonData(mon, MON_DATA_MAX_HP)) == HP_BAR_RED)
+    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
     {
-        if (!gBattleSpritesDataPtr->battlerData[battlerId].lowHpSong)
+        if (GetHPBarLevel(GetMonData(mon, MON_DATA_HP), GetMonData(mon, MON_DATA_MAX_HP)) == HP_BAR_RED)
         {
-            if (!gBattleSpritesDataPtr->battlerData[BATTLE_PARTNER(battlerId)].lowHpSong)
-                PlaySE(SE_LOW_HEALTH);
-            
-            gBattleSpritesDataPtr->battlerData[battlerId].lowHpSong = TRUE;
+            if (!gBattleSpritesDataPtr->battlerData[battlerId].lowHpSong)
+            {
+                if (!gBattleSpritesDataPtr->battlerData[BATTLE_PARTNER(battlerId)].lowHpSong)
+                    PlaySE(SE_LOW_HEALTH);
+                
+                gBattleSpritesDataPtr->battlerData[battlerId].lowHpSong = TRUE;
+            }
         }
-    }
-    else
-    {
-        gBattleSpritesDataPtr->battlerData[battlerId].lowHpSong = FALSE;
-        
-        m4aSongNumStop(SE_LOW_HEALTH);
-        
-        if (IsDoubleBattleForBattler(battlerId) && !gBattleSpritesDataPtr->battlerData[BATTLE_PARTNER(battlerId)].lowHpSong)
+        else
+        {
+            gBattleSpritesDataPtr->battlerData[battlerId].lowHpSong = FALSE;
+            
             m4aSongNumStop(SE_LOW_HEALTH);
+            
+            if (IsDoubleBattleForBattler(battlerId) && !gBattleSpritesDataPtr->battlerData[BATTLE_PARTNER(battlerId)].lowHpSong)
+                m4aSongNumStop(SE_LOW_HEALTH);
+        }
     }
 }
 
@@ -718,14 +721,14 @@ void HandleBattleLowHpMusicChange(void)
     {
         u32 playerBattler1 = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
         u32 playerBattler2 = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
-        u32 battler1PartyId = GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[playerBattler1]);
-        u32 battler2PartyId = GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[playerBattler2]);
+        struct Pokemon *playerMon1 = &GetBattlerParty(playerBattler1)[GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[playerBattler1])];
+        struct Pokemon *playerMon2 = &GetBattlerParty(playerBattler2)[GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[playerBattler2])];
 
-        if (GetMonData(&gPlayerParty[battler1PartyId], MON_DATA_HP))
-            HandleLowHpMusicChange(&gPlayerParty[battler1PartyId], playerBattler1);
+        if (GetMonData(playerMon1, MON_DATA_HP))
+            HandleLowHpMusicChange(playerBattler1, playerMon1);
         
-        if (IsDoubleBattleForBattler(playerBattler1) && GetMonData(&gPlayerParty[battler2PartyId], MON_DATA_HP))
-            HandleLowHpMusicChange(&gPlayerParty[battler2PartyId], playerBattler2);
+        if (IsDoubleBattleForBattler(playerBattler1) && GetMonData(playerMon2, MON_DATA_HP))
+            HandleLowHpMusicChange(playerBattler2, playerMon2);
     }
 }
 

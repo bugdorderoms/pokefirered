@@ -2393,6 +2393,8 @@ bool32 IsBattlerSpriteVisible(u32 battlerId)
         return FALSE;
     else if ((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && GetBattlerPosition(battlerId) == B_POSITION_PLAYER_RIGHT)
         return FALSE;
+    else if ((gBattleTypeFlags & BATTLE_TYPE_ONE_VS_TWO) && GetBattlerPosition(battlerId) == B_POSITION_OPPONENT_RIGHT)
+        return FALSE;
     else if (!gBattleSpritesDataPtr->battlerData[battlerId].invisible || !gSprites[gBattlerSpriteIds[battlerId]].invisible)
         return TRUE;
     else

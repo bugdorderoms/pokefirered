@@ -5022,6 +5022,7 @@ BattleScript_MegaEvolution::
 
 BattleScript_UltraBurst::
 	flushmessagebox
+	trydotrainerslide BS_ATTACKER, TRAINER_SLIDE_MEGA_EVOLUTION
 	printstring STRINGID_BRIGHTLIGHTBURSTOUTOFATK
 	waitmessage B_WAIT_TIME_LONG
 	playanimation BS_ATTACKER, B_ANIM_ULTRA_BURST
@@ -5033,6 +5034,7 @@ BattleScript_UltraBurst::
 
 BattleScript_Terastallization::
 	flushmessagebox
+	trydotrainerslide BS_ATTACKER, TRAINER_SLIDE_TERASTALIZATION
 	printstring STRINGID_ATKSTORINGENERGY
 	waitmessage B_WAIT_TIME_LONG
 	tryterastallizationformchange BS_ATTACKER

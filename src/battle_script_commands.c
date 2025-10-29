@@ -1248,7 +1248,7 @@ static void atk04_critcalc(void)
         if (gIsCriticalHit)
         {
             // counter for EVO_CRITICAL_HITS
-            if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER && !(gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_LINK | BATTLE_TYPE_MULTI))
+            if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER && !(gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_LINK))
             && gPartyCriticalHits[gBattlerPartyIndexes[gBattlerAttacker]] < 255)
                 ++gPartyCriticalHits[gBattlerPartyIndexes[gBattlerAttacker]];
             
@@ -2614,7 +2614,7 @@ static void atk23_getexp(void)
                 if (gBattleBufferB[battler][0] == CONTROLLER_TWORETURNVALUES && gBattleBufferB[battler][1] == RET_VALUE_LEVELED_UP)
                 {
                     if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && gBattlerPartyIndexes[battler] == gBattleStruct->expGetterMonId)
-                        HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[battler]], battler);
+                        HandleLowHpMusicChange(battler, GetBattlerPartyIndexPtr(battler));
                     
                     PrepareMonNickWithPrefixBuffer(gBattleTextBuff1, battler, gBattleStruct->expGetterMonId);
                     PrepareByteNumberBuffer(gBattleTextBuff2, 3, GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_LEVEL));
@@ -9997,7 +9997,7 @@ void BS_TryAllySwitch(void)
 {
     NATIVE_ARGS();
     
-    if (!IsBattlerAlive(BATTLE_PARTNER(gBattlerAttacker)))
+    if (!IsPartnerMonFromSameTrainer(gBattlerAttacker) || !IsBattlerAlive(BATTLE_PARTNER(gBattlerAttacker)))
         gBattlescriptCurrInstr = BattleScript_ButItFailed;
     else if ((0xFFFF / GetProtectLikeFailDivisor()) >= Random())
     {

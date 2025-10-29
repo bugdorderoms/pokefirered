@@ -166,12 +166,12 @@ void SetBattleEndCallbacks(u32 battlerId);
 void TryReceiveLinkBattleData(void);
 void PrepareBufferDataTransferLink(u32 battlerId, u32 bufferId, u16 size, u8 *data);
 void CompleteOnBattlerSpritePosX_0(u32 battlerId);
-void TryShinyAnimAfterMonAnim(u32 battlerId);
-void WaitForMonAnimAfterLoad(u32 battlerId);
-void Task_BltController_RestoreBgmAfterCry(u32 taskId);
 void ShowHealthBox(u32 battlerId);
+void Intro_TryShinyAnimShowHealthbox(u32 battlerId);
 void Intro_DelayAndEnd(u32 battlerId);
 void WaitForMonSelection(u32 battlerId);
+void SwitchIn_TryShinyAnim(u32 battlerId);
+void SwitchIn_TryShinyAnimShowHealthbox(u32 battlerId);
 
 // emitters
 void BtlController_EmitGetMonData(u32 battlerId, u32 bufferId, u32 requestId, u32 monToCheck);
@@ -220,11 +220,11 @@ void BattleControllerComplete(u32 battlerId);
 void BtlController_HandleGetMonData(u32 battlerId);
 void BtlController_HandleSetMonData(u32 battlerId);
 void BtlController_HandleSetRawMonData(u32 battlerId);
-void BtlController_HandleLoadMonSprite(u32 battlerId, bool32 setSpecies, void(*controllerFunc)(u32));
-void BtlController_HandleSwitchInAnim(u32 battlerId, bool32 loadSprite, void(*controllerFunc)(u32));
+void BtlController_HandleLoadMonSprite(u32 battlerId);
+void BtlController_HandleSwitchInAnim(u32 battlerId, void(*controllerFunc)(u32));
 void BtlController_HandleReturnMonToBall(u32 battlerId);
-void BtlController_HandleDrawTrainerPic(u32 battlerId, u32 trainerPicId, s16 xPos, u32 subpriority);
-void BtlController_HandleTrainerSlide(u32 battlerId, u32 trainerPicId, s16 xPos);
+void BtlController_HandleDrawTrainerPic(u32 battlerId, u32 trainerPicId);
+void BtlController_HandleTrainerSlide(u32 battlerId, u32 trainerPicId);
 void BtlController_HandleTrainerSlideBack(u32 battlerId, s16 data0, bool32 animateSprite);
 void BtlController_HandleFaintAnimation(u32 battlerId);
 void BtlController_HandleBallThrowAnim(u32 battlerId, u32 animId, bool32 allowCriticalCapture);
@@ -254,6 +254,7 @@ void BtlController_HandleEndLinkBattle(u32 battlerId, u32 battleOutcome, void(*c
 
 // player controller
 void SetControllerToPlayer(u32 battlerId);
+void PlayerHandleSwitchInAnim(u32 battlerId);
 u32 GetPlayerTrainerPicId(u32 multiplayerId);
 void PlayerHandleDrawTrainerPic(u32 battlerId);
 void PlayerHandleBallThrowAnim(u32 battlerId);
@@ -273,6 +274,9 @@ void MoveSelectionDestroyCursorAt(u32 cursorPos);
 // opponent controller
 void SetControllerToOpponent(u32 battlerId);
 void OpponentHandleTrainerSlideBack(u32 battlerId);
+void OpponentHandleChooseAction(u32 battlerId);
+void OpponentHandleChooseMove(u32 battlerId);
+void OpponentHandleChoosePokemon(u32 battlerId);
 
 // safari controller
 void SetControllerToSafari(u32 battlerId);
@@ -297,17 +301,15 @@ void PrintOakText_OakNoRunningFromATrainer(u32 battlerId);
 void PrintOakText_HowDisappointing(u32 battlerId);
 void PrintOakText_KeepAnEyeOnHP(u32 battlerId);
 void PrintOakText_InflictingDamageIsKey(u32 battlerId);
+void PrintOakText_ForPetesSake(u32 battlerId);
 void BtlCtrl_DrawVoiceoverMessageFrame(void);
 void BtlCtrl_RemoveVoiceoverMessageFrame(void);
 
 // link partner controller
 void SetControllerToLinkPartner(u32 battlerId);
-void LinkPartnerHandleLoadMonSprite(u32 battlerId);
-void LinkPartnerHandleSwitchInAnim(u32 battlerId);
 
 // link opponent controller
 void SetControllerToLinkOpponent(u32 battlerId);
-void LinkOpponentHandleLoadMonSprite(u32 battlerId);
 void LinkOpponentHandleSwitchInAnim(u32 battlerId);
 void LinkOpponentHandleDrawTrainerPic(u32 battlerId);
 void LinkOpponentHandleIntroTrainerBallThrow(u32 battlerId);
@@ -321,5 +323,10 @@ void RecordedPlayerHandleChoosePokemon(u32 battlerId);
 
 // recorded opponent controller
 void SetControllerToRecordedOpponent(u32 battlerId);
+
+// player partner controller
+void SetControllerToPlayerPartner(u32 battlerId);
+void PlayerPartnerHandleDrawTrainerPic(u32 battlerId);
+void PlayerPartnerHandleIntroTrainerBallThrow(u32 battlerId);
 
 #endif // GUARD_BATTLE_CONTROLLERS_H

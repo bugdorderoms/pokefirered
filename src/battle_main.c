@@ -81,7 +81,9 @@ static void ClearActionsAndMovesForNextTurn(void);
 static void TryCallSosAlly(void);
 static void CB2_InitBattleInternal(void);
 static void CB2_PreInitMultiBattle(void);
+static void CB2_PreInitIngamePlayerPartnerBattle(void);
 static void CB2_HandleStartMultiBattle(void);
+static void CB2_HandleStartMultiPartnerBattle(void);
 static u32 CreateNPCTrainerParty(u32 trainerNum);
 static void CB2_HandleStartBattle(void);
 static void BattleMainCB1(void);
@@ -205,7 +207,7 @@ EWRAM_DATA u8 gBattlerTarget = 0;
 EWRAM_DATA u8 gBattlerFainted = 0;
 EWRAM_DATA u8 gEffectBattler = 0;
 // Structs and timers
-EWRAM_DATA struct MultiBattlePokemonTx gMultiPartnerParty[PARTY_SIZE / 2] = {0};
+EWRAM_DATA struct MultiBattlePokemonTx gMultiPartnerParty[MULTI_PARTY_SIZE] = {0};
 EWRAM_DATA struct BattleSpriteData *gBattleSpritesDataPtr = NULL;
 EWRAM_DATA struct MonSpritesGfx *gMonSpritesGfxPtr = NULL;
 EWRAM_DATA struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT] = {0};
@@ -488,8 +490,14 @@ void CB2_InitBattle(void)
     
     if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
     {
-        HandleLinkBattleSetup();
-        SetMainCallback2(CB2_PreInitMultiBattle);
+        if (!(gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))
+        {
+            HandleLinkBattleSetup();
+            SetMainCallback2(CB2_PreInitMultiBattle);
+        }
+        else
+            SetMainCallback2(CB2_PreInitIngamePlayerPartnerBattle);
+        
         gBattleCommunication[MULTIUSE_STATE] = 0;
     }
     else
@@ -550,8 +558,17 @@ static void CB2_InitBattleInternal(void)
     gReservedSpritePaletteCount = MAX_BATTLERS_COUNT;
     SetVBlankCallback(VBlankCB_Battle);
     SetUpBattleVars();
-    SetMainCallback2((gBattleTypeFlags & BATTLE_TYPE_MULTI) ? CB2_HandleStartMultiBattle : CB2_HandleStartBattle);
     
+    if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
+    {
+        if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+            SetMainCallback2(CB2_HandleStartMultiPartnerBattle);
+        else
+            SetMainCallback2(CB2_HandleStartMultiBattle);
+    }
+    else
+        SetMainCallback2(CB2_HandleStartBattle);
+        
     if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
     {
         CreateNPCTrainerParty(gTrainerBattleOpponent_A);
@@ -802,26 +819,26 @@ static void CB2_HandleStartBattle(void)
     }
 }
 
-static void PrepareOwnMultiPartnerBuffer(void)
+static void PrepareOwnMultiPartnerBuffer(u32 offset)
 {
     s32 i, j;
     u8 *nick, *cur;
 
     for (i = 0; i < (PARTY_SIZE / 2); ++i)
     {
-        gMultiPartnerParty[i].species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES);
-        gMultiPartnerParty[i].heldItem = GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM);
+        gMultiPartnerParty[i].species = GetMonData(&gPlayerParty[offset + i], MON_DATA_SPECIES);
+        gMultiPartnerParty[i].heldItem = GetMonData(&gPlayerParty[offset + i], MON_DATA_HELD_ITEM);
         nick = gMultiPartnerParty[i].nickname;
-        GetMonData(&gPlayerParty[i], MON_DATA_NICKNAME, nick);
-        gMultiPartnerParty[i].level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL);
-        gMultiPartnerParty[i].hp = GetMonData(&gPlayerParty[i], MON_DATA_HP);
-        gMultiPartnerParty[i].maxhp = GetMonData(&gPlayerParty[i], MON_DATA_MAX_HP);
-        gMultiPartnerParty[i].status.id = GetMonData(&gPlayerParty[i], MON_DATA_STATUS_ID);
-        gMultiPartnerParty[i].status.counter = GetMonData(&gPlayerParty[i], MON_DATA_STATUS_COUNTER);
-        gMultiPartnerParty[i].personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY);
-        gMultiPartnerParty[i].gender = GetMonGender(&gPlayerParty[i]);
+        GetMonData(&gPlayerParty[offset + i], MON_DATA_NICKNAME, nick);
+        gMultiPartnerParty[i].level = GetMonData(&gPlayerParty[offset + i], MON_DATA_LEVEL);
+        gMultiPartnerParty[i].hp = GetMonData(&gPlayerParty[offset + i], MON_DATA_HP);
+        gMultiPartnerParty[i].maxhp = GetMonData(&gPlayerParty[offset + i], MON_DATA_MAX_HP);
+        gMultiPartnerParty[i].status.id = GetMonData(&gPlayerParty[offset + i], MON_DATA_STATUS_ID);
+        gMultiPartnerParty[i].status.counter = GetMonData(&gPlayerParty[offset + i], MON_DATA_STATUS_COUNTER);
+        gMultiPartnerParty[i].personality = GetMonData(&gPlayerParty[offset + i], MON_DATA_PERSONALITY);
+        gMultiPartnerParty[i].gender = GetMonGender(&gPlayerParty[offset + i]);
         StripExtCtrlCodes(nick);
-        if (GetMonData(&gPlayerParty[i], MON_DATA_LANGUAGE) != LANGUAGE_JAPANESE)
+        if (GetMonData(&gPlayerParty[offset + i], MON_DATA_LANGUAGE) != LANGUAGE_JAPANESE)
         {
             for (cur = nick, j = 0; cur[j] != EOS; ++j)
                 ;
@@ -854,7 +871,7 @@ static void CB2_PreInitMultiBattle(void)
     case 0:
         if (gReceivedRemoteLinkPlayers && IsLinkTaskFinished())
         {
-            PrepareOwnMultiPartnerBuffer();
+            PrepareOwnMultiPartnerBuffer(0);
             SendBlock(bitmask_all_link_players_but_self(), gBattleStruct->multiBuffer.multiBattleMons, sizeof(gBattleStruct->multiBuffer.multiBattleMons));
             ++gBattleCommunication[MULTIUSE_STATE];
         }
@@ -902,6 +919,40 @@ static void CB2_PreInitMultiBattle(void)
         }
         else if (!gReceivedRemoteLinkPlayers)
         {
+            gBattleTypeFlags = *savedBattleTypeFlags;
+            gMain.savedCallback = *savedCallback;
+            SetMainCallback2(CB2_InitBattleInternal);
+        }
+        break;
+    }
+}
+
+static void CB2_PreInitIngamePlayerPartnerBattle(void)
+{
+    u16 *savedBattleTypeFlags;
+    void (**savedCallback)(void);
+
+    savedCallback = &gBattleStruct->savedCallback;
+    savedBattleTypeFlags = &gBattleStruct->savedBattleTypeFlags;
+
+    RunTasks();
+    AnimateSprites();
+    BuildOamBuffer();
+    
+    switch (gBattleCommunication[MULTIUSE_STATE])
+    {
+    case 0:
+        PrepareOwnMultiPartnerBuffer(MULTI_PARTY_SIZE);
+        gBattleCommunication[MULTIUSE_STATE]++;
+        *savedCallback = gMain.savedCallback;
+        *savedBattleTypeFlags = gBattleTypeFlags;
+        gMain.savedCallback = CB2_PreInitIngamePlayerPartnerBattle;
+        ShowPartyMenuToShowcaseMultiBattleParty();
+        break;
+    case 1:
+        if (!gPaletteFade.active)
+        {
+            gBattleCommunication[MULTIUSE_STATE] = 2;
             gBattleTypeFlags = *savedBattleTypeFlags;
             gMain.savedCallback = *savedCallback;
             SetMainCallback2(CB2_InitBattleInternal);
@@ -1145,6 +1196,53 @@ static void CB2_HandleStartMultiBattle(void)
     case 10:
         if (--gBattleCommunication[SPRITES_INIT_STATE1] == 0)
             ++gBattleCommunication[MULTIUSE_STATE];
+        break;
+    }
+}
+
+static void CB2_HandleStartMultiPartnerBattle(void)
+{
+    u32 playerMultiplayerId, partnerMultiplayerId;
+
+    RunTasks();
+    AnimateSprites();
+    BuildOamBuffer();
+
+    playerMultiplayerId = GetMultiplayerId();
+    gBattleStruct->multiplayerId = playerMultiplayerId;
+    partnerMultiplayerId = playerMultiplayerId ^ BIT_SIDE;
+
+    switch (gBattleCommunication[MULTIUSE_STATE])
+    {
+    case 0:
+        if (!IsDma3ManagerBusyWithBgCopy())
+        {
+            ShowBg(0);
+            ShowBg(1);
+            ShowBg(2);
+            ShowBg(3);
+            BattleInterfaceSetWindowPals();
+            
+            if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
+                gBattleTypeFlags |= BATTLE_TYPE_IS_MASTER;
+            
+            gBattleCommunication[MULTIUSE_STATE] = 1;
+        }
+        // fallthrough
+    case 1:
+        InitBtlControllers();
+        gBattleCommunication[SPRITES_INIT_STATE1] = 0;
+        gBattleCommunication[SPRITES_INIT_STATE2] = 0;
+        gBattleCommunication[MULTIUSE_STATE] = 2;
+        break;
+    case 2:
+        // Finish, start battle
+        if (BattleInitAllSprites(&gBattleCommunication[SPRITES_INIT_STATE1], &gBattleCommunication[SPRITES_INIT_STATE2]))
+        {
+            gPreBattleCallback1 = gMain.callback1;
+            gMain.callback1 = BattleMainCB1;
+            SetMainCallback2(BattleMainCB2);
+        }
         break;
     }
 }
@@ -1922,11 +2020,8 @@ static void BattleStartClearSetData(void)
         ClearBattlerEffectsOnFaintOrSwitch(i);
         
         gBattleStruct->pickupStack[i] = 0xFF;
+        gBattleStruct->battlers[i].AI_monToSwitchIntoId = PARTY_SIZE;
     }
-    
-    for (i = 0; i < NUM_BATTLERS_PER_SIDE; i++)
-        gBattleStruct->AI_monToSwitchIntoId[i] = PARTY_SIZE;
-    
     gBattlerAttacker = 0;
     gBattlerTarget = 0;
     gBattleWeather = 0;
@@ -2826,6 +2921,22 @@ void UpdatePartyOwnerOnSwitch_NonMulti(u32 battler)
     }
 }
 
+static void SwitchPartyOrderInGameMulti(u32 battler, u32 monToSwitchIntoId)
+{
+    if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+    {
+        u32 i;
+        
+        for (i = 0; i < ARRAY_COUNT(gBattlePartyCurrentOrder); i++)
+            gBattlePartyCurrentOrder[i] = *(i + (u8 *)(gBattleStruct->battlerPartyOrders));
+
+        SwitchPartyMonSlots(GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[battler]), GetPartyIdFromBattlePartyId(monToSwitchIntoId));
+
+        for (i = 0; i < ARRAY_COUNT(gBattlePartyCurrentOrder); i++)
+            *(i + (u8 *)(gBattleStruct->battlerPartyOrders)) = gBattlePartyCurrentOrder[i];
+    }
+}
+
 enum
 {
     STATE_BEFORE_ACTION_CHOSEN,
@@ -3138,11 +3249,20 @@ static void HandleTurnActionSelectionState(void)
     // Check if everyone chose actions.
     if (gBattleCommunication[ACTIONS_CONFIRMED_COUNT] == gBattlersCount)
     {
+        gBattleMainFunc = SetActionsAndBattlersTurnOrder;
+        
+        if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+        {
+            for (i = 0; i < gBattlersCount; i++)
+            {
+                if (gBattleStruct->battlers[i].chosenAction == B_ACTION_SWITCH)
+                    SwitchPartyOrderInGameMulti(i, gBattleStruct->battlers[i].monToSwitchIntoId);
+            }
+        }
+        
         if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && gBattleStruct->battlers[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)].chosenAction != B_ACTION_NOTHING_FAINTED
         && gBattleStruct->throwingPokeBall && IsDoubleBattleForBattler(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)))
             gBattleStruct->battlers[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)].chosenAction = B_ACTION_NOTHING_FAINTED;
-        
-        gBattleMainFunc = SetActionsAndBattlersTurnOrder;
     }
 }
 

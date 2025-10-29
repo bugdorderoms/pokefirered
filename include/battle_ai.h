@@ -9,7 +9,7 @@
 #define AI_CHOICE_WATCH  (MAX_MON_MOVES + 1)
 #define AI_CHOICE_SWITCH (MAX_MON_MOVES + 2)
 
-// Basic ai basic flags, they are always set for all trainers
+// Basic ai flags, they are always set for all trainers
 #define AI_FLAG_CHECK_BAD_MOVE        Bit(0) // Decrease score based if move will fail
 #define AI_FLAG_CHECK_VIABILITY       Bit(1) // Increase score based on how much the move will be effective
 #define AI_FLAG_TRY_TO_FAINT          Bit(2)

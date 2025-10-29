@@ -40,7 +40,7 @@ static bool32 ShouldSwitchIfNoOneMoveIsEffective(u32 battlerId)
                         if (k != gBattlerPartyIndexes[battlerIn1] && k != gBattlerPartyIndexes[battlerIn2] && MonCanBattle(&gEnemyParty[k])
                         && AI_TypeCalc(&gEnemyParty[k], AI_THINKING->moves[battlerId][j], i) != TYPE_MUL_NO_EFFECT)
                         {
-                            gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = k;
+                            gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = k;
                             return TRUE;
                         }
                     }
@@ -106,7 +106,7 @@ bool32 BattleAI_ShouldSwitch(u32 battlerId)
                 
                 if (id != NO_SWITCH)
                 {
-                    gBattleStruct->AI_monToSwitchIntoId[GetBattlerPosition(battlerId) >> 1] = id;
+                    gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = id;
                     return TRUE;
                 }
             }
@@ -333,18 +333,25 @@ bool32 BattleAI_ShouldUseItem(u32 battlerId)
 {
     u32 i, j, partyId, itemPriority, chosenItemIndex, numUsableItems, itemPriorities[MAX_TRAINER_ITEMS];
     u32 holdEffectParam, item, usableItems[MAX_TRAINER_ITEMS];
+    bool32 forPlayerPartner;
     
     // Item effects are'nt blocked
     if (!IsItemUseBlockedByBattleEffect(battlerId) && !(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
     {
         gBattleStruct->battlers[battlerId].itemPartyIndex = PARTY_SIZE;
         
+        forPlayerPartner = (GetBattlerSide(battlerId) == B_SIDE_PLAYER);
         itemPriority = 0;
         numUsableItems = 0;
         
         for (i = 0; i < MAX_TRAINER_ITEMS; i++, itemPriority = 0)
         {
-            usableItems[numUsableItems] = item = gTrainers[gTrainerBattleOpponent_A].items[i];
+            if (forPlayerPartner)
+                item = gBattlePartners[gPartnerTrainerId].items[i];
+            else
+                item = gTrainers[gTrainerBattleOpponent_A].items[i];
+            
+            usableItems[numUsableItems] = item;
             
             // Ignore items that was already used or that dont exist
             if (item && item < ITEMS_COUNT && !(AI_DATA->usedItemsIndices & Bit(i)))
@@ -450,7 +457,7 @@ static bool8 ShouldSwitchIfPerishSong(u8 battlerId)
     if (gStatuses3[battlerId] & STATUS3_PERISH_SONG
      && gDisableStructs[battlerId].perishSongTimer == 0)
     {
-        *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) = PARTY_SIZE;
+        gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = PARTY_SIZE;
         BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_SWITCH, 0);
         return TRUE;
     }
@@ -496,7 +503,7 @@ static bool8 ShouldSwitchIfWonderGuard(u8 battlerId)
                 if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE && Random() % 3 < 2)
                 {
                     // We found a mon.
-                    *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) = i;
+                    gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = i;
                     BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_SWITCH, 0);
                     return TRUE;
                 }
@@ -552,7 +559,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(u8 battlerId)
         if (absorbingTypeAbility == monAbility && Random() & 1)
         {
             // we found a mon
-            *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) = i;
+            gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = i;
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_SWITCH, 0);
             return TRUE;
         }
@@ -568,13 +575,13 @@ static bool8 ShouldSwitchIfNaturalCure(u8 battlerId)
         return FALSE;
     if ((gLastLandedMoves[battlerId] == MOVE_NONE || gLastLandedMoves[battlerId] == 0xFFFF) && Random() & 1)
     {
-        *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) = PARTY_SIZE;
+        gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = PARTY_SIZE;
         BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_SWITCH, 0);
         return TRUE;
     }
     else if (gBattleMoves[gLastLandedMoves[battlerId]].power == 0 && Random() & 1)
     {
-        *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) = PARTY_SIZE;
+        gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = PARTY_SIZE;
         BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_SWITCH, 0);
         return TRUE;
     }
@@ -583,7 +590,7 @@ static bool8 ShouldSwitchIfNaturalCure(u8 battlerId)
         return TRUE;
     if (Random() & 1)
     {
-        *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) = PARTY_SIZE;
+        gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = PARTY_SIZE;
         BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_SWITCH, 0);
         return TRUE;
     }
@@ -694,7 +701,7 @@ static bool8 FindMonWithFlagsAndSuperEffective(u8 battlerId, u8 flags, u8 modulo
                 moveFlags = AI_TypeCalc(move, gBattleMons[battlerIn1].species, GetBattlerAbility(battlerIn1));
                 if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE && Random() % moduloPercent == 0)
                 {
-                    *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) = i;
+                    gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = i;
                     BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_SWITCH, 0);
                     return TRUE;
                 }
@@ -763,7 +770,7 @@ void AI_TrySwitchOrUseItem(u8 battlerId)
     {
         if (ShouldSwitch(battlerId))
         {
-            if (*(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) == 6)
+            if (gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId == 6)
             {
                 s32 monToSwitchId = GetMostSuitableMonToSwitchInto(battlerId);
                 if (monToSwitchId == 6)
@@ -788,9 +795,9 @@ void AI_TrySwitchOrUseItem(u8 battlerId)
                             break;
                     }
                 }
-                *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1)) = monToSwitchId;
+                gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId = monToSwitchId;
             }
-            gBattleStruct->monToSwitchIntoId[battlerId] = *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(battlerId) >> 1));
+            gBattleStruct->monToSwitchIntoId[battlerId] = gBattleStruct->battlers[battlerId].AI_monToSwitchIntoId;
             return;
         }
         else if (ShouldUseItem(battlerId))

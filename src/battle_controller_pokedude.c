@@ -56,7 +56,6 @@ struct PokedudeInputScript
 static void PokedudeBufferRunCommand(u32 battlerId);
 static void PokedudeBufferExecCompleted(u32 battlerId);
 static void PokedudeHandleLoadMonSprite(u32 battlerId);
-static void PokedudeHandleSwitchInAnim(u32 battlerId);
 static void PokedudeHandleDrawTrainerPic(u32 battlerId);
 static void PokedudeHandleTrainerSlide(u32 battlerId);
 static void PokedudeHandleChooseAction(u32 battlerId);
@@ -78,7 +77,7 @@ static void (*const sPokedudeBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
     [CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
     [CONTROLLER_LOADMONSPRITE]            = PokedudeHandleLoadMonSprite,
-    [CONTROLLER_SWITCHINANIM]             = PokedudeHandleSwitchInAnim,
+    [CONTROLLER_SWITCHINANIM]             = PlayerHandleSwitchInAnim,
     [CONTROLLER_RETURNMONTOBALL]          = BtlController_HandleReturnMonToBall,
     [CONTROLLER_DRAWTRAINERPIC]           = PokedudeHandleDrawTrainerPic,
     [CONTROLLER_TRAINERSLIDE]             = PokedudeHandleTrainerSlide,
@@ -158,82 +157,23 @@ static void PokedudeBufferExecCompleted(u32 battlerId)
 
 static void PokedudeHandleLoadMonSprite(u32 battlerId)
 {
-    BtlController_HandleLoadMonSprite(battlerId, TRUE, CompleteOnBattlerSpritePosX_0);
+    BtlController_HandleLoadMonSprite(battlerId);
     BattleControllerComplete(battlerId);
 }
 
-static void SwitchIn_HandleSoundAndEnd(u32 battlerId)
+static u32 GetPokedudeTrainerPicId(u32 battlerId)
 {
-    if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].specialAnimActive)
-    {
-        CreateTask(Task_BltController_RestoreBgmAfterCry, 10);
-        HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[battlerId]], battlerId);
-        BattleControllerComplete(battlerId);
-    }
-}
-
-static void SwitchIn_CleanShinyAnimShowSubstitute(u32 battlerId)
-{
-    if (gSprites[gHealthboxSpriteIds[battlerId]].callback == SpriteCallbackDummy && gBattleSpritesDataPtr->healthBoxesData[battlerId].finishedShinyMonAnim)
-    {
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim = 0;
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].finishedShinyMonAnim = 0;
-        FreeSpriteTilesByTag(ANIM_TAG_GOLD_STARS);
-        FreeSpritePaletteByTag(ANIM_TAG_GOLD_STARS);
-        
-        if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute)
-            InitAndLaunchSpecialAnimation(battlerId, battlerId, B_ANIM_MON_TO_SUBSTITUTE);
-        
-        gBattlerControllersData[battlerId].func = SwitchIn_HandleSoundAndEnd;
-    }
-}
-
-static void SwitchIn_TryShinyAnimShowHealthbox(u32 battlerId)
-{
-    if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
-        TryShinyAnimation(battlerId);
-        
-    if (gSprites[gBattlerControllersData[battlerId].data].callback == SpriteCallbackDummy && !gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive)
-    {
-        DestroySprite(&gSprites[gBattlerControllersData[battlerId].data]);
-        UpdateHealthboxAttribute(battlerId, HEALTHBOX_ALL);
-        StartHealthboxSlideIn(battlerId);
-        SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
-        CopyBattleSpriteInvisibility(battlerId);
-        gBattlerControllersData[battlerId].func = SwitchIn_CleanShinyAnimShowSubstitute;
-    }
-}
-
-static void PokedudeHandleSwitchInAnim(u32 battlerId)
-{
-    BtlController_HandleSwitchInAnim(battlerId, TRUE, SwitchIn_TryShinyAnimShowHealthbox);
-    gActionSelectionCursor[battlerId] = 0;
-    gBattleStruct->battlers[battlerId].moveSelectionCursor = 0;
+    return GetBattlerSide(battlerId) == B_SIDE_PLAYER ? TRAINER_BACK_PIC_POKEDUDE : TRAINER_PIC_PROFESSOR_OAK;
 }
 
 static void PokedudeHandleDrawTrainerPic(u32 battlerId)
 {
-    u32 subpriority, trainerPicId;
-    s16 xPos;
-    
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-    {
-        trainerPicId = TRAINER_BACK_PIC_POKEDUDE;
-        xPos = 80;
-        subpriority = 30;
-    }
-    else
-    {
-        trainerPicId = TRAINER_PIC_PROFESSOR_OAK;
-        xPos = 176;
-        subpriority = GetBattlerSpriteSubpriority(battlerId);
-    }
-    BtlController_HandleDrawTrainerPic(battlerId, trainerPicId, xPos, subpriority);
+    BtlController_HandleDrawTrainerPic(battlerId, GetPokedudeTrainerPicId(battlerId));
 }
 
 static void PokedudeHandleTrainerSlide(u32 battlerId)
 {
-    BtlController_HandleTrainerSlide(battlerId, TRAINER_BACK_PIC_POKEDUDE, 80);
+    BtlController_HandleTrainerSlide(battlerId, GetPokedudeTrainerPicId(battlerId));
 }
 
 static void PokedudeHandleChooseAction(u32 battlerId)
@@ -332,47 +272,9 @@ static void PokedudeHandleHealthbarUpdate(u32 battlerId)
         BtlController_HandleHealthbarUpdateNoHpText(battlerId);
 }
 
-static void Intro_WaitForShinyAnimAndHealthbox(u32 battlerId)
-{
-    if (gSprites[gHealthboxSpriteIds[battlerId]].callback == SpriteCallbackDummy && gBattleSpritesDataPtr->healthBoxesData[battlerId].finishedShinyMonAnim
-    && gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].finishedShinyMonAnim)
-    {
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim = FALSE;
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].finishedShinyMonAnim = FALSE;
-        gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].triedShinyMonAnim = FALSE;
-        gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].finishedShinyMonAnim = FALSE;
-        
-        FreeSpriteTilesByTag(ANIM_TAG_GOLD_STARS);
-        FreeSpritePaletteByTag(ANIM_TAG_GOLD_STARS);
-        
-        CreateTask(Task_BltController_RestoreBgmAfterCry, 10);
-        HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[battlerId]], battlerId);
-        gBattlerControllersData[battlerId].func = Intro_DelayAndEnd;
-    }
-}
-
-static void Intro_TryShinyAnimShowHealthbox(u32 battlerId)
-{
-    if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].ballAnimActive && !gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].ballAnimActive)
-    {
-        if (!gBattleSpritesDataPtr->healthBoxesData[battlerId].triedShinyMonAnim)
-            TryShinyAnimation(battlerId);
-        
-        if (!gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battlerId)].triedShinyMonAnim)
-            TryShinyAnimation(BATTLE_PARTNER(battlerId));
-        
-        if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
-            ShowHealthBox(BATTLE_PARTNER(battlerId));
-        
-        ShowHealthBox(battlerId);
-        gBattleSpritesDataPtr->animationData->healthboxSlideInStarted = FALSE;
-        gBattlerControllersData[battlerId].func = Intro_WaitForShinyAnimAndHealthbox;
-    }
-}
-
 static void PokedudeHandleIntroTrainerBallThrow(u32 battlerId)
 {
-    BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F8, TRAINER_BACK_PIC_POKEDUDE, StartAnimLinearTranslation, 31, Intro_TryShinyAnimShowHealthbox);
+    BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F8, GetPokedudeTrainerPicId(battlerId), StartAnimLinearTranslation, 31, Intro_TryShinyAnimShowHealthbox);
 }
 
 /////////////////////
