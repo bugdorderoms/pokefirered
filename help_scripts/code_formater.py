@@ -1,5 +1,5 @@
 from pathlib import Path
-import re
+import re, itertools
 
 NUM_SPACES_TO_TAB = 4
 dir_path = Path(__file__).parent
@@ -12,7 +12,8 @@ EXCLUDE_PATHS = {
     # Files
     dir_path / 'asm' / 'macros' / 'map.inc',
     dir_path / 'constants' / 'gba_constants.inc',
-    dir_path / 'src' / 'data' / 'wild_encounters.h'
+    dir_path / 'src' / 'data' / 'wild_encounters.h',
+    dir_path / 'src' / 'm4a_1.s'
 }
 
 def should_skip(file):
@@ -41,12 +42,12 @@ def format_file(file_path, from_tabs_to_spaces):
     return False
 
 # (tabs → spaces)
-for file in dir_path.rglob('*.[hc]'):
+for file in itertools.chain(dir_path.rglob('*.h'), dir_path.rglob('*.c')):
     if format_file(file, from_tabs_to_spaces=True):
         print(f"Formatted: {file}")
 
 # (spaces → tabs)
-for file in dir_path.rglob('*.[is][nc]*'):
+for file in itertools.chain(dir_path.rglob('*.s'), dir_path.rglob('*.inc')):
     if format_file(file, from_tabs_to_spaces=False):
         print(f"Formatted: {file}")
 

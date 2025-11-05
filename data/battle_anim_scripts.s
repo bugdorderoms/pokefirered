@@ -889,7 +889,7 @@ SafariReaction_Eating::
 @ Credits: pokeemerald-expansion
 gGeneralAnim_LoadAbilityPopUp::
 	monbg ANIM_ATK_SIDE
-    createvisualtask AnimTask_CreateAbilityPopUp, 5
+	createvisualtask AnimTask_CreateAbilityPopUp, 5
 	waitforvisualfinish
 	delay 32
 	clearmonbg ANIM_ATK_SIDE
@@ -897,22 +897,22 @@ gGeneralAnim_LoadAbilityPopUp::
 
 @ Credits: pokeemerald-expansion and Blackuser
 gGeneralAnim_RemoveAbilityPopUp::
-    createvisualtask AnimTask_HideAbilityPopUp, 5, TRUE
+	createvisualtask AnimTask_HideAbilityPopUp, 5, TRUE
 	delay 32
 	end
 
 @ Credits: pokeemerald-expansion and Blackuser
 gGeneralAnim_SlideOutOffscreen::
 	createvisualtask AnimTask_SlideOffScreen, 2, ANIM_ATTACKER, 3
-    waitforvisualfinish
+	waitforvisualfinish
 	invisible ANIM_ATTACKER
 	end
 
 @ Credits: Blackuser
 gGeneralAnim_ItemThrow::
-    loadspritegfx ANIM_TAG_THIN_RING
+	loadspritegfx ANIM_TAG_THIN_RING
 	playsewithpan SE_M_JUMP_KICK, SOUND_PAN_ATTACKER
-    createvisualtask AnimTask_ItemThrow, 2
+	createvisualtask AnimTask_ItemThrow, 2
 	waitforvisualfinish
 	delay 20
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_ATTACKER, 3, 7, 0, RGB(17, 31, 25) @ Some fade color

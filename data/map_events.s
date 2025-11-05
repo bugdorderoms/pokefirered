@@ -9,9 +9,9 @@
 #include "constants/trainer_types.h"
 #include "constants/vars.h"
 #include "constants/weather.h"
-    .include "asm/macros.inc"
-    .include "constants/constants.inc"
+	.include "asm/macros.inc"
+	.include "constants/constants.inc"
 
-    .section .rodata
+	.section .rodata
 
-    .include "data/maps/events.inc"
+	.include "data/maps/events.inc"

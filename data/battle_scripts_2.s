@@ -16,15 +16,15 @@
 
 gBattlescriptsForUsingItem::
 	.4byte BattleScript_ItemRestoreHP                @ EFFECT_ITEM_RESTORE_HP
-    .4byte BattleScript_ItemCurePrimaryStatus        @ EFFECT_ITEM_CURE_PRIMARY_STATUS
+	.4byte BattleScript_ItemCurePrimaryStatus        @ EFFECT_ITEM_CURE_PRIMARY_STATUS
 	.4byte BattleScript_ItemCureSecondaryStatus      @ EFFECT_ITEM_CURE_SECONDARY_STATUS
-    .4byte BattleScript_ItemIncreaseStat             @ EFFECT_ITEM_INCREASE_STAT
-    .4byte BattleScript_ItemSetMist                  @ EFFECT_ITEM_SET_MIST
-    .4byte BattleScript_ItemSetFocusEnergy           @ EFFECT_ITEM_SET_FOCUS_ENERGY
-    .4byte BattleScript_RunByUsingItem               @ EFFECT_ITEM_ESCAPE
-    .4byte BattleScript_ThrowBall                    @ EFFECT_ITEM_THROW_BALL
-    .4byte BattleScript_ItemRestorePP                @ EFFECT_ITEM_RESTORE_PP
-    .4byte BattleScript_ItemIncreaseAllStats         @ EFFECT_ITEM_INCREASE_ALL_STATS
+	.4byte BattleScript_ItemIncreaseStat             @ EFFECT_ITEM_INCREASE_STAT
+	.4byte BattleScript_ItemSetMist                  @ EFFECT_ITEM_SET_MIST
+	.4byte BattleScript_ItemSetFocusEnergy           @ EFFECT_ITEM_SET_FOCUS_ENERGY
+	.4byte BattleScript_RunByUsingItem               @ EFFECT_ITEM_ESCAPE
+	.4byte BattleScript_ThrowBall                    @ EFFECT_ITEM_THROW_BALL
+	.4byte BattleScript_ItemRestorePP                @ EFFECT_ITEM_RESTORE_PP
+	.4byte BattleScript_ItemIncreaseAllStats         @ EFFECT_ITEM_INCREASE_ALL_STATS
 	.4byte BattleScript_UsePokeFlute                 @ EFFECT_ITEM_POKE_FLUTE
 	.4byte BattleScript_ItemRestoreHP                @ EFFECT_ITEM_REVIVE
 	.4byte BattleScript_ItemDoubleSosCallRate        @ EFFECT_ITEM_ADRENALINE_ORB
@@ -34,15 +34,15 @@ gBattlescriptsForUsingItem::
 @@@@@@@@@@@@@@@@@@@@
 
 BattleScript_ItemUseMessageEnd::
-    call BattleScript_UseItemMessage
+	call BattleScript_UseItemMessage
 BattleScript_ItemEnd::
-    end
+	end
 
 UsedItemString::
 	printstring STRINGID_EMPTYSTRING
-    pause B_WAIT_TIME_MED
+	pause B_WAIT_TIME_MED
 	printstring STRINGID_TRAINERUSEDITEM
-    waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_LONG
 	return
 
 BattleScript_UseItemMessage::
@@ -51,33 +51,33 @@ BattleScript_UseItemMessage::
 	playanimation BS_SCRIPTING, B_ANIM_ITEM_THROW
 	waitstate
 BattleScript_UseItemMessageReturn::
-    playse SE_USE_ITEM
-    return
+	playse SE_USE_ITEM
+	return
 
 @ EFFECT_ITEM_RESTORE_HP @
 
 BattleScript_ItemRestoreHP::
-    call BattleScript_UseItemMessage
+	call BattleScript_UseItemMessage
 	jumpifrevived BattleScript_ItemRestoreHP_SendOutRevivedBattler @ used revive
-    bichalfword gMoveResultFlags, MOVE_RESULT_NO_EFFECT
-    orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
-    healthbarupdate BS_SCRIPTING
-    datahpupdate BS_SCRIPTING
-    updatestatusicon BS_SCRIPTING
+	bichalfword gMoveResultFlags, MOVE_RESULT_NO_EFFECT
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
+	healthbarupdate BS_SCRIPTING
+	datahpupdate BS_SCRIPTING
+	updatestatusicon BS_SCRIPTING
 	printstring STRINGID_ITEMPKMNHADHPRESTORED
-    waitmessage B_WAIT_TIME_LONG
-    end
+	waitmessage B_WAIT_TIME_LONG
+	end
 
 BattleScript_ItemRestoreHP_SendOutRevivedBattler::
-    switchinanim BS_SCRIPTING, FALSE
-    waitstate
-    switchineffects BS_SCRIPTING
-    end
+	switchinanim BS_SCRIPTING, FALSE
+	waitstate
+	switchineffects BS_SCRIPTING
+	end
 
 @ EFFECT_ITEM_CURE_PRIMARY_STATUS @
 
 BattleScript_ItemCurePrimaryStatus::
-    call BattleScript_UseItemMessage
+	call BattleScript_UseItemMessage
 	cureprimarystatus BS_SCRIPTING, BattleScript_ItemCureSecondaryStatus_PrintString
 	updatestatusicon BS_SCRIPTING
 	goto BattleScript_ItemCureSecondaryStatus_PrintString
@@ -87,40 +87,40 @@ BattleScript_ItemCurePrimaryStatus::
 BattleScript_ItemCureSecondaryStatus::
 	call BattleScript_UseItemMessage
 BattleScript_ItemCureSecondaryStatus_PrintString::
-    printstring STRINGID_ITEMPKMNHADSTATUSHEALED
-    waitmessage B_WAIT_TIME_LONG
-    end
+	printstring STRINGID_ITEMPKMNHADSTATUSHEALED
+	waitmessage B_WAIT_TIME_LONG
+	end
 
 @ EFFECT_ITEM_INCREASE_STAT @
 
 BattleScript_ItemIncreaseStat::
-    call BattleScript_UseItemMessage
+	call BattleScript_UseItemMessage
 	itemincreasestat
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
 	statchangeanimandstring
-    end
+	end
 
 @ EFFECT_ITEM_SET_MIST @
 
 BattleScript_ItemSetMist::
-    call BattleScript_UseItemMessage
-    setmist
-    playmoveanimation BS_ATTACKER, MOVE_MIST
+	call BattleScript_UseItemMessage
+	setmist
+	playmoveanimation BS_ATTACKER, MOVE_MIST
 	waitstate
-    printstring STRINGID_ATKTEAMSHROUDEDINMIST
-    waitmessage B_WAIT_TIME_LONG
-    end
+	printstring STRINGID_ATKTEAMSHROUDEDINMIST
+	waitmessage B_WAIT_TIME_LONG
+	end
 
 @ EFFECT_ITEM_SET_FOCUS_ENERGY @
 
 BattleScript_ItemSetFocusEnergy::
-    call BattleScript_UseItemMessage
+	call BattleScript_UseItemMessage
 	setfocusenergy
-    playmoveanimation BS_ATTACKER, MOVE_FOCUS_ENERGY
+	playmoveanimation BS_ATTACKER, MOVE_FOCUS_ENERGY
 	waitstate
-    printstring STRINGID_ATKGETTINGPUMPED
-    waitmessage B_WAIT_TIME_LONG
-    end
+	printstring STRINGID_ATKGETTINGPUMPED
+	waitmessage B_WAIT_TIME_LONG
+	end
 
 @ EFFECT_ITEM_ESCAPE @
 
@@ -141,17 +141,17 @@ BattleScript_DoBallThrow::
 @ EFFECT_ITEM_RESTORE_PP @
 
 BattleScript_ItemRestorePP::
-    call BattleScript_UseItemMessage
-    printstring STRINGID_ITEMPKMNHADPPRESTORED
-    waitmessage B_WAIT_TIME_LONG
-    end
+	call BattleScript_UseItemMessage
+	printstring STRINGID_ITEMPKMNHADPPRESTORED
+	waitmessage B_WAIT_TIME_LONG
+	end
 
 @ EFFECT_ITEM_INCREASE_ALL_STATS @
 
 BattleScript_ItemIncreaseAllStats::
-    call BattleScript_UseItemMessage
-    call BattleScript_AllStatsUp
-    end
+	call BattleScript_UseItemMessage
+	call BattleScript_AllStatsUp
+	end
 
 @ EFFECT_ITEM_POKE_FLUTE @
 
@@ -199,7 +199,7 @@ BattleScript_CaughtMonTrySetDexFlag::
 	setbyte sMULTIUSE_STATE, 0
 	displaydexinfo
 BattleScript_CaughtPokemonSkipNewDex::
-    jumpifcantgivenickname BattleScript_TryGiveCaughtNickPokemon @ Skip the string
+	jumpifcantgivenickname BattleScript_TryGiveCaughtNickPokemon @ Skip the string
 	printstring STRINGID_GIVENICKNAMECAPTURED
 	waitstate
 	setbyte sMULTIUSE_STATE, 0
