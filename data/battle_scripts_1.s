@@ -155,7 +155,7 @@ BattleScript_MoveMissedDoDamage::
 	pause B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
-	jumpifability BS_ATTACKER, ABILITY_MAGIC_GUARD, BattleScript_MoveEnd, TRUE
+	jumpifability BS_ATTACKER, ABILITY_MAGIC_GUARD, BattleScript_MoveEnd
 	printstring STRINGID_ATKKEPTANDCRASHED
 	waitmessage B_WAIT_TIME_LONG
 	damagecalc
@@ -623,7 +623,7 @@ BattleScript_EffectSpecialDefenseUp2::
 BattleScript_EffectDreamEater::
 	attackcanceler
 	jumpifstatus BS_TARGET, STATUS1_SLEEP, BattleScript_AbsorbDoDmgDrainHp
-	jumpifability BS_TARGET, ABILITY_COMATOSE, BattleScript_AbsorbDoDmgDrainHp, TRUE
+	jumpifability BS_TARGET, ABILITY_COMATOSE, BattleScript_AbsorbDoDmgDrainHp
 	attackstring
 	ppreduce
 	pause B_WAIT_TIME_SHORT
@@ -767,7 +767,7 @@ BattleScript_EffectNightmare::
 	jumpifsubstituteblocks BattleScript_ButItFailed
 	jumpifstatus2 BS_TARGET, STATUS2_NIGHTMARE, BattleScript_ButItFailed
 	jumpifstatus BS_TARGET, STATUS1_SLEEP, BattleScript_NightmareWorked
-	jumpifability BS_TARGET, ABILITY_COMATOSE, BattleScript_NightmareWorked, TRUE
+	jumpifability BS_TARGET, ABILITY_COMATOSE, BattleScript_NightmareWorked
 	goto BattleScript_ButItFailed
 BattleScript_NightmareWorked::
 	attackanimation
@@ -780,7 +780,7 @@ BattleScript_NightmareWorked::
 BattleScript_EffectSnore::
 	attackcanceler
 	jumpifstatus BS_ATTACKER, STATUS1_SLEEP, BattleScript_SnoreIsAsleep
-	jumpifability BS_ATTACKER, ABILITY_COMATOSE, BattleScript_SnoreIsAsleep, TRUE
+	jumpifability BS_ATTACKER, ABILITY_COMATOSE, BattleScript_SnoreIsAsleep
 	goto BattleScript_ButItFailedAtkStringPpReduce
 BattleScript_SnoreIsAsleep::
     jumpifhalfword CMP_EQUAL, gChosenMove, MOVE_SLEEP_TALK, BattleScript_DoSnore @ skip this anim if Snore is called through Sleep Talk
@@ -1029,7 +1029,7 @@ BattleScript_EffectAttract::
 BattleScript_EffectSleepTalk::
 	attackcanceler
 	jumpifstatus BS_ATTACKER, STATUS1_SLEEP, BattleScript_SleepTalkIsAsleep
-	jumpifability BS_ATTACKER, ABILITY_COMATOSE, BattleScript_SleepTalkIsAsleep, TRUE
+	jumpifability BS_ATTACKER, ABILITY_COMATOSE, BattleScript_SleepTalkIsAsleep
 	goto BattleScript_ButItFailedAtkStringPpReduce
 BattleScript_SleepTalkIsAsleep::
 	call BattleScript_SleepAnim
@@ -1706,8 +1706,8 @@ BattleScript_EffectHowlTryUserAttackUp::
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
 	statchangeanimandstring
 	jumpifsubstituteblocks BattleScript_MoveEnd
-	jumpifability BS_TARGET, ABILITY_SOUNDPROOF, BattleScript_MoveEnd, TRUE
-	jumpifability BS_TARGET, ABILITY_GOOD_AS_GOLD, BattleScript_MoveEnd, TRUE
+	jumpifability BS_TARGET, ABILITY_SOUNDPROOF, BattleScript_MoveEnd
+	jumpifability BS_TARGET, ABILITY_GOOD_AS_GOLD, BattleScript_MoveEnd
 	swapattackerwithtarget
 	setstatchanger STAT_ATK, +1
 	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
@@ -2235,7 +2235,7 @@ BattleScript_EffectFlameBurst::
 	tryfaintmon BS_TARGET
 	savetarget
 	tryflameburst BattleScript_EffectFlameBurstEnd
-	jumpifability BS_TARGET, ABILITY_MAGIC_GUARD, BattleScript_EffectFlameBurstEnd, TRUE
+	jumpifability BS_TARGET, ABILITY_MAGIC_GUARD, BattleScript_EffectFlameBurstEnd
 	manipulatedamage ATK80_DMG_1_16_TARGET_MAX_HP
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE | HITMARKER_PASSIVE_DAMAGE
 	healthbarupdate BS_TARGET
@@ -3152,9 +3152,9 @@ BattleScript_BadDreamsActivates::
 BattleScript_BadDreamsLoop::
     jumpifabsent BS_TARGET, BattleScript_BadDreamsNextTarget
     jumpiftargetally BattleScript_BadDreamsNextTarget
-    jumpifability BS_TARGET, ABILITY_MAGIC_GUARD, BattleScript_BadDreamsNextTarget, TRUE
+    jumpifability BS_TARGET, ABILITY_MAGIC_GUARD, BattleScript_BadDreamsNextTarget
 	jumpifstatus BS_TARGET, STATUS1_SLEEP, BattleScript_BadDreamsDmg
-	jumpifability BS_TARGET, ABILITY_COMATOSE, BattleScript_BadDreamsDmg, TRUE
+	jumpifability BS_TARGET, ABILITY_COMATOSE, BattleScript_BadDreamsDmg
 	goto BattleScript_BadDreamsNextTarget
 BattleScript_BadDreamsDmg::
     loadabilitypopup BS_ATTACKER
@@ -3339,7 +3339,7 @@ BattleScript_GulpMissileSpitUpPrey::
     playanimation BS_TARGET, B_ANIM_SPIT_OUT_PREY, sB_ANIM_ARG1 @ Passing arg1 bc it reads as a halfword
 	waitstate
 	setbyte sBYPASS_ABILITY_POP_UP, TRUE
-	jumpifability BS_ATTACKER, ABILITY_MAGIC_GUARD, BattleScript_ApplySecondaryEffect, TRUE
+	jumpifability BS_ATTACKER, ABILITY_MAGIC_GUARD, BattleScript_ApplySecondaryEffect
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_DAMAGE
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER

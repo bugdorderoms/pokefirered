@@ -1,6 +1,7 @@
 #include "global.h"
 #include "bg.h"
 #include "battle.h"
+#include "battle_ai.h"
 #include "battle_anim.h"
 #include "pokemon.h"
 #include "malloc.h"
@@ -19,8 +20,7 @@ void AllocateBattleResources(void)
     gBattleResources->battleScriptsStack = AllocZeroed(sizeof(*gBattleResources->battleScriptsStack));
     gBattleResources->battleCallbackStack = AllocZeroed(sizeof(*gBattleResources->battleCallbackStack));
     gBattleResources->beforeLvlUp = AllocZeroed(sizeof(*gBattleResources->beforeLvlUp));
-    gBattleResources->aiData = AllocZeroed(sizeof(*gBattleResources->aiData));
-    gBattleResources->aiThinking = AllocZeroed(sizeof(*gBattleResources->aiThinking));
+    gAIData = AllocZeroed(sizeof(*gAIData));
     gLinkBattleSendBuffer = AllocZeroed(BATTLE_BUFFER_LINK_SIZE);
     gLinkBattleRecvBuffer = AllocZeroed(BATTLE_BUFFER_LINK_SIZE);
     gBattleAnimMons_BgTilesBuffer = AllocZeroed(0x2000);
@@ -44,9 +44,8 @@ void FreeBattleResources(void)
         FREE_AND_SET_NULL(gBattleResources->battleScriptsStack);
         FREE_AND_SET_NULL(gBattleResources->battleCallbackStack);
         FREE_AND_SET_NULL(gBattleResources->beforeLvlUp);
-        FREE_AND_SET_NULL(gBattleResources->aiData);
-        FREE_AND_SET_NULL(gBattleResources->aiThinking);
         FREE_AND_SET_NULL(gBattleResources);
+        FREE_AND_SET_NULL(gAIData);
         FREE_AND_SET_NULL(gLinkBattleSendBuffer);
         FREE_AND_SET_NULL(gLinkBattleRecvBuffer);
         FREE_AND_SET_NULL(gBattleAnimMons_BgTilesBuffer);

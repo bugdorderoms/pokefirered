@@ -514,7 +514,7 @@ static u32 GetMoveBasePower(struct DamageCalc *damageStruct)
                 basePower = 150;
             break;
         case EFFECT_NATURAL_GIFT:
-            basePower = gNaturalGiftTable[ITEM_TO_BERRY(GetBattlerItem(attacker))].power;
+            basePower = gNaturalGiftTable[ITEM_TO_BERRY(gBattleMons[attacker].item)].power;
             break;
         case EFFECT_TRUMP_CARD:
         {
@@ -1389,7 +1389,7 @@ u32 TypeCalc(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 setAbili
 // Calc effectiveness betwen a party mon's move and the defender
 u32 AI_TypeCalc(struct Pokemon *mon, u32 move, u32 defender)
 {
-    u32 effectiveness, battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+    u32 effectiveness, battler = GetBattlerAtPosition(GetBattlerSide(defender) == B_SIDE_PLAYER ? B_POSITION_OPPONENT_LEFT : B_POSITION_PLAYER_LEFT);
     struct BattlePokemon savedCopy = gBattleMons[battler];
     u32 status3 = gStatuses3[battler];
     u16 flags;
@@ -1407,15 +1407,15 @@ u32 AI_TypeCalc(struct Pokemon *mon, u32 move, u32 defender)
 }
 
 // Calc resitance betwhen the mon's types and the battler's types
-u32 AI_GetSwitchInTypeMatchup(struct Pokemon *mon, u32 playerBattler)
+u32 AI_GetSwitchInTypeMatchup(struct Pokemon *mon, u32 opposingBattler)
 {
-    u32 i, multiplier, battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+    u32 i, multiplier, battler = GetBattlerAtPosition(GetBattlerSide(opposingBattler) == B_SIDE_PLAYER ? B_POSITION_OPPONENT_LEFT : B_POSITION_PLAYER_LEFT);
     struct BattlePokemon savedCopy = gBattleMons[battler];
     u32 status3 = gStatuses3[battler];
     u16 flags;
     u32 types[3];
     
-    GetBattlerTypes(playerBattler, FALSE, types);
+    GetBattlerTypes(opposingBattler, FALSE, types);
     
     // Overrrides the opponent's mon data with the ones of its party for the calculation
     CopyPokemonToBattleMon(battler, mon, &gBattleMons[battler], TRUE);
@@ -1423,7 +1423,7 @@ u32 AI_GetSwitchInTypeMatchup(struct Pokemon *mon, u32 playerBattler)
 
     multiplier = TYPE_MUL_NORMAL;
     for (i = 0; i < 3; i++)
-        multiplier = CalcTypeEffectivenessMultiplierInternal(MOVE_NONE, types[i], GetBattlerAbility(playerBattler), battler, multiplier, FALSE, FALSE, &flags);
+        multiplier = CalcTypeEffectivenessMultiplierInternal(MOVE_NONE, types[i], GetBattlerAbility(opposingBattler), battler, multiplier, FALSE, FALSE, &flags);
 
     gBattleMons[battler] = savedCopy;
     gStatuses3[battler] = status3;

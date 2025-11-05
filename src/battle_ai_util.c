@@ -1,6 +1,5 @@
 #include "global.h"
 #include "battle.h"
-#include "battle_ai.h"
 #include "battle_ai_util.h"
 #include "battle_move_effects.h"
 #include "battle_secondary_effect.h"
@@ -12,98 +11,19 @@
 #include "constants/hold_effects.h"
 #include "constants/moves.h"
 
-u32 GetAllyChosenMove(u32 battlerId)
+bool32 AI_IsTargetFullyImmuneToMove(struct AIScript *data)
 {
-    u32 ally = BATTLE_PARTNER(battlerId);
-    
-    if (!IsBattlerAlive(ally))
-        return MOVE_NONE;
-    else if (ally > battlerId)
-        return gBattleStruct->battlers[ally].lastMove;
+    if (gAIData->thinking[data->attacker].targets[data->target].effectiveness[data->moveSlot] == TYPE_MUL_NO_EFFECT)
+        return TRUE;
+    else if (CanAbilityBlockMove(data->move, data->attacker, data->target, TRUE))
+        return TRUE;
+    else if (!data->targetingPartner && CanAbilityAbsorbMove(data->defAbility, data->move, data->moveType, data->attacker, data->target, TRUE))
+        return TRUE;
     else
-        return gBattleMons[ally].moves[gBattleStruct->battlers[ally].chosenMovePosition];
-}
-
-bool32 AIShouldConsiderMoveForBattler(u32 attacker, u32 defender, u32 move)
-{
-    if (attacker == BATTLE_PARTNER(defender))
-    {
-        u32 moveTarget = GetBattlerMoveTargetType(attacker, move);
-        
-        if (moveTarget == MOVE_TARGET_BOTH || moveTarget == MOVE_TARGET_OPPONENTS_FIELD)
-            return FALSE;
-    }
-    return TRUE;
-}
-
-/////////////////////////
-// AI RECORD FUNCTIONS //
-/////////////////////////
-bool32 BattleAI_KnowsBattlerItem(u32 battlerId)
-{
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPlayerItems & Bit(gBattlerPartyIndexes[battlerId])))
         return FALSE;
-    return TRUE;
 }
 
-void BattleAI_RecordHoldEffect(u32 battlerId)
-{
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-        AI_DATA->knownPlayerItems |= Bit(gBattlerPartyIndexes[battlerId]);
-}
-
-bool32 BattleAI_KnowsBattlerMoveIndex(u32 battlerId, u32 moveIndex)
-{
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPlayerMoves[gBattlerPartyIndexes[battlerId]] & Bit(moveIndex)))
-        return FALSE;
-    return TRUE;
-}
-
-void BattleAI_RecordMoveUsed(u32 battlerId, u32 moveSlot)
-{
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && moveSlot != MAX_MON_MOVES)
-        AI_DATA->knownPlayerMoves[gBattlerPartyIndexes[battlerId]] |= Bit(moveSlot);
-}
-
-bool32 BattleAI_KnowsBattlerPartyIndex(u32 battlerId)
-{
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPartyIndices & Bit(gBattlerPartyIndexes[battlerId])))
-        return FALSE;
-    return TRUE;
-}
-
-void BattleAI_RecordPartyIndex(u32 battlerId)
-{
-    AI_DATA->knownPartyIndices |= Bit(gBattlerPartyIndexes[battlerId]);
-}
-
-bool32 BattleAI_KnowsBattlerAbility(u32 battlerId)
-{
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !(AI_DATA->knownPlayerAbilities & Bit(gBattlerPartyIndexes[battlerId])))
-        return FALSE;
-    return TRUE;
-}
-
-void BattleAI_RecordAbility(u32 battlerId)
-{
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-        AI_DATA->knownPlayerAbilities |= Bit(gBattlerPartyIndexes[battlerId]);
-}
-
-////////////////////////////////////////
-// DAMAGE AND STATS UTILITY FUNCTIONS //
-////////////////////////////////////////
-u32 GetNoOfHitsToKOBattler(u32 attacker, u32 defender, u32 moveIndex)
-{
-    return GetNoOfHitsToKOBattlerDmg(AI_THINKING->simulatedDmg[attacker][defender][moveIndex], defender);
-}
-
-u32 GetNoOfHitsToKOBattlerHigherDamage(u32 attacker, u32 defender)
-{
-    return GetNoOfHitsToKOBattlerDmg(AI_THINKING->higherDamage[attacker][defender], defender);
-}
-
-u32 GetNoOfHitsToKOBattlerDmg(s32 dmg, u32 battler)
+static u32 AI_GetNoOfHitsToKOBattlerDmg(s32 dmg, u32 battler)
 {
     if (!dmg)
         return 0xFFFFFFFF;
@@ -111,21 +31,53 @@ u32 GetNoOfHitsToKOBattlerDmg(s32 dmg, u32 battler)
     return gBattleMons[battler].hp / (dmg + 1) + 1;
 }
 
-u32 GetNumMovesWithSplitInBattlerMoveset(u32 battlerId, u32 split)
+u32 AI_GetNoOfHitsToKOBattler(struct AIScript *data)
+{
+    return AI_GetNoOfHitsToKOBattlerDmg(gAIData->thinking[data->attacker].targets[data->target].simulatedDmg[data->moveSlot], data->target);
+}
+
+u32 AI_GetNoOfHitsToKOBattlerHigherDamage(u32 attacker, u32 defender)
+{
+    return AI_GetNoOfHitsToKOBattlerDmg(gAIData->thinking[attacker].targets[defender].higherDamage, defender);
+}
+
+u32 AI_GetNumMovesWithSplitInBattlerMoveset(u32 battlerId, u32 split)
 {
     u32 i, count = 0;
 
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
-        if (AI_THINKING->moves[battlerId][i] && GetBattleMoveSplit(AI_THINKING->moves[battlerId][i]) == split)
+        if (gAIData->thinking[battlerId].moves[i] && GetBattleMoveSplit(gAIData->thinking[battlerId].moves[i]) == split)
             ++count;
     }
     return count;
 }
 
+bool32 AI_IsFaster(u32 battler1, u32 battler2)
+{
+    return (gAIData->thinking[battler1].totalSpeed > gAIData->thinking[battler2].totalSpeed);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+////////////////////////////////////////
+// DAMAGE AND STATS UTILITY FUNCTIONS //
+////////////////////////////////////////
+
 static bool32 IsBattlerPhysicalAttacker(u32 battlerId)
 {
-    if (gBattleMons[battlerId].attack >= gBattleMons[battlerId].spAttack || GetNumMovesWithSplitInBattlerMoveset(battlerId, SPLIT_PHYSICAL) >= (MAX_MON_MOVES / 2))
+    if (gBattleMons[battlerId].attack >= gBattleMons[battlerId].spAttack || AI_GetNumMovesWithSplitInBattlerMoveset(battlerId, SPLIT_PHYSICAL) >= (MAX_MON_MOVES / 2))
         return TRUE;
     
     return FALSE;
@@ -133,7 +85,7 @@ static bool32 IsBattlerPhysicalAttacker(u32 battlerId)
 
 static bool32 IsBattlerSpecialAttacker(u32 battlerId)
 {
-    if (gBattleMons[battlerId].spAttack >= gBattleMons[battlerId].attack || GetNumMovesWithSplitInBattlerMoveset(battlerId, SPLIT_SPECIAL) >= (MAX_MON_MOVES / 2))
+    if (gBattleMons[battlerId].spAttack >= gBattleMons[battlerId].attack || AI_GetNumMovesWithSplitInBattlerMoveset(battlerId, SPLIT_SPECIAL) >= (MAX_MON_MOVES / 2))
         return TRUE;
     
     return FALSE;
@@ -169,7 +121,7 @@ u32 AI_GetStatChangeScore(u32 attacker, u32 defender, u32 statId, s32 stages, bo
                     getScore = TRUE;
                 break;
             case STAT_SPEED: // Increase Speed if is lower than the target, except in Trick Room
-                if ((defender == MAX_BATTLERS_COUNT || !AIIsFaster(attacker, defender)) && !(gFieldStatus & STATUS_FIELD_TRICK_ROOM))
+                if ((defender == MAX_BATTLERS_COUNT || !AI_IsFaster(attacker, defender)) && !(gFieldStatus & STATUS_FIELD_TRICK_ROOM))
                     getScore = TRUE;
                 break;
             case STAT_DEF: // Increase Defense if is a physical defender
@@ -229,12 +181,6 @@ u32 AI_GetStatChangeScore(u32 attacker, u32 defender, u32 statId, s32 stages, bo
     return 0;
 }
 
-// Battler1 is the ai battler
-bool32 AIIsFaster(u32 battler1, u32 battler2)
-{
-    return (AI_THINKING->totalSpeeds[battler1] > AI_THINKING->totalSpeeds[battler2]);
-}
-
 bool32 ShouldAIIncreaseCriticalChance(u32 attacker, u32 defender)
 {
     if (!(gBattleMons[attacker].status2 & STATUS2_FOCUS_ENERGY))
@@ -251,14 +197,6 @@ bool32 ShouldAIIncreaseCriticalChance(u32 attacker, u32 defender)
 ///////////////////////////////////
 // MOVE EFFECTS HELPER FUNCTIONS //
 ///////////////////////////////////
-bool32 TargetImuneToMove(u32 attacker, u32 defender, u32 move, u32 moveSlot, u32 moveType)
-{
-    if (AI_THINKING->effectiveness[attacker][defender][moveSlot] == TYPE_MUL_NO_EFFECT || CanAbilityBlockMove(move, attacker, defender, TRUE)
-    || (!IsBattlerAlly(attacker, defender) && CanAbilityAbsorbMove(GetBattlerAbility(defender), move, moveType, attacker, defender, TRUE)))
-        return TRUE;
-    
-    return FALSE;
-}
 
 static bool32 BattlerHasMoveEffectInMovesetThatAffectsTarget(u32 attacker, u32 target, u32 moveEffect)
 {
@@ -268,7 +206,7 @@ static bool32 BattlerHasMoveEffectInMovesetThatAffectsTarget(u32 attacker, u32 t
     {
         move = AI_THINKING->moves[attacker][i];
         
-        if (move && gBattleMoves[move].effect == moveEffect && !TargetImuneToMove(attacker, target, move, i, gBattleMoves[move].type))
+        if (move && gBattleMoves[move].effect == moveEffect && !AI_IsTargetFullyImmuneToMove(attacker, target, move, i, gBattleMoves[move].type))
             return TRUE;
     }
     return FALSE;
@@ -316,10 +254,10 @@ bool32 BadIdeaToBurn(u32 attacker, u32 defender)
     || ability == ABILITY_MAGIC_GUARD
     || ability == ABILITY_QUICK_FEET
     || (ability == ABILITY_SYNCHRONIZE && CanBeBurned(defender, attacker, 0) != STATUS_CHANGE_WORKED)
-    || (ability == ABILITY_MARVEL_SCALE && BattlerHasPhysicalMove(attacker))
+    || (ability == ABILITY_MARVEL_SCALE && AI_BattlerHasPhysicalMove(attacker))
     || (ability == ABILITY_NATURAL_CURE && CanBattlerSwitchOut(defender, TRUE))
-    || (ability == ABILITY_FLARE_BOOST && BattlerHasSpecialMove(defender))
-    || (ability == ABILITY_GUTS && BattlerHasPhysicalMove(defender))
+    || (ability == ABILITY_FLARE_BOOST && AI_BattlerHasSpecialMove(defender))
+    || (ability == ABILITY_GUTS && AI_BattlerHasPhysicalMove(defender))
     || (ability == ABILITY_HYDRATION && IsBattlerWeatherAffected(defender, B_WEATHER_RAIN_ANY) && gBattleStruct->weatherDuration > 1)
     || (IsBattlerAlive(BATTLE_PARTNER(defender)) && GetBattlerAbility(BATTLE_PARTNER(defender)) == ABILITY_HEALER)
     || AI_BattlerHasMoveEffectInMoveset(defender, EFFECT_FACADE)
@@ -332,7 +270,7 @@ bool32 BadIdeaToBurn(u32 attacker, u32 defender)
 u32 GetScoreForInflictBurn(u32 attacker, u32 defender)
 {
     // Higher score
-    if (BattlerHasPhysicalMove(defender)
+    if (AI_BattlerHasPhysicalMove(defender)
     || SideHasMoveEffectInMovesetThatAffectsTarget(attacker, defender, EFFECT_HEX)
     || SideHasMoveEffectInMovesetThatAffectsTarget(attacker, defender, EFFECT_INFERNAL_PARADE))
         return +11;
@@ -363,7 +301,7 @@ bool32 BadIdeaToFreeze(u32 attacker, u32 defender)
     || (ability == ABILITY_NATURAL_CURE && CanBattlerSwitchOut(defender, TRUE)))
         return TRUE;
     
-    BattlerHasMoveWithFlagInMoveset(var, defender, thawUser)
+    AI_BattlerHasMoveWithFlagInMoveset(var, defender, thawUser)
 
     return var;
 }
@@ -390,7 +328,7 @@ bool32 BadIdeaToParalyze(u32 attacker, u32 defender)
     if (holdEffect == HOLD_EFFECT_CURE_PAR || holdEffect == HOLD_EFFECT_CURE_STATUS)
         return TRUE;
     
-    if (!AIIsFaster(attacker, defender) && (gFieldStatus & STATUS_FIELD_TRICK_ROOM))
+    if (!AI_IsFaster(attacker, defender) && (gFieldStatus & STATUS_FIELD_TRICK_ROOM))
         return TRUE;
     
     ability = GetBattlerAbility(defender);
@@ -398,9 +336,9 @@ bool32 BadIdeaToParalyze(u32 attacker, u32 defender)
     if (ability == ABILITY_SHED_SKIN
     || ability == ABILITY_QUICK_FEET
     || (ability == ABILITY_SYNCHRONIZE && CanBeParalyzed(defender, attacker, 0) != STATUS_CHANGE_WORKED)
-    || (ability == ABILITY_MARVEL_SCALE && BattlerHasPhysicalMove(attacker))
+    || (ability == ABILITY_MARVEL_SCALE && AI_BattlerHasPhysicalMove(attacker))
     || (ability == ABILITY_NATURAL_CURE && CanBattlerSwitchOut(defender, TRUE))
-    || (ability == ABILITY_GUTS && BattlerHasPhysicalMove(defender))
+    || (ability == ABILITY_GUTS && AI_BattlerHasPhysicalMove(defender))
     || (ability == ABILITY_HYDRATION && IsBattlerWeatherAffected(defender, B_WEATHER_RAIN_ANY) && gBattleStruct->weatherDuration > 1)
     || (IsBattlerAlive(BATTLE_PARTNER(defender)) && GetBattlerAbility(BATTLE_PARTNER(defender)) == ABILITY_HEALER)
     || AI_BattlerHasMoveEffectInMoveset(defender, EFFECT_FACADE)
@@ -414,14 +352,14 @@ bool32 BadIdeaToParalyze(u32 attacker, u32 defender)
 u32 GetScoreForInflictParalyze(u32 attacker, u32 defender)
 {
     // Higher score
-    if (!AIIsFaster(attacker, defender)
+    if (!AI_IsFaster(attacker, defender)
     || SideHasMoveEffectInMovesetThatAffectsTarget(attacker, defender, EFFECT_HEX))
         return +11;
     
-    /*// Medium score
+    // Medium score
     if (SideHasMoveEffectInMovesetThatAffectsTarget(attacker, defender, EFFECT_SMELLING_SALT))
-        return +8;*/
+        return +8;
     
     // Low score
     return +5;
-}
+}*/

@@ -32,7 +32,7 @@ void RecordedBattle_Init(u32 mode)
             for (j = 0; j < BATTLER_RECORD_SIZE; j++)
                 sBattleRecords[i][j] = 0xFF;
             
-            sAI_Scripts = AI_DATA->aiFlags;
+            sAI_Scripts = gAIData->logic[B_SIDE_OPPONENT].aiFlags;
         }
     }
 }

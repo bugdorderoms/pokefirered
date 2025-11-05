@@ -1480,9 +1480,7 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u32 battler, u32 sprite, u32 sp
     
     AbilityPopUpPrinter((const u8*)pokemonName, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP),
                         (void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP), 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_WHITE);
-    
-    BattleAI_RecordAbility(battler);
-    
+
     if (gBattleStruct->battlers[battler].abilityOverride)
     {
         ability = gBattleStruct->battlers[battler].abilityOverride;

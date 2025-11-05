@@ -258,18 +258,6 @@ void OakOldManHandleEndLinkBattle(u32 battlerId)
     BtlController_HandleEndLinkBattle(battlerId, gBattleBufferA[battlerId][1], (!(gBattleTypeFlags & BATTLE_TYPE_IS_MASTER) && (gBattleTypeFlags & BATTLE_TYPE_LINK)) ? OakOldManSetBattleEndCallbacks : NULL);
 }
 
-///////////
-// INPUT //
-///////////
-
-void OakOldManHandleInputChooseMove(u32 battlerId)
-{
-    HandleInputChooseMove(battlerId); // Player input
-    
-    if (!(gBattleControllerExecFlags & Bit(battlerId)))
-        BattleControllerComplete(battlerId);
-}
-
 /////////////////////
 // SIMULATED INPUT //
 /////////////////////

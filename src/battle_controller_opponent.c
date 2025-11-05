@@ -24,6 +24,7 @@ static void OpponentHandleSwitchInAnim(u32 battlerId);
 static void OpponentHandleDrawTrainerPic(u32 battlerId);
 static void OpponentHandleTrainerSlide(u32 battlerId);
 static void OpponentHandlePrintString(u32 battlerId);
+static void OpponentHandleChooseAction(u32 battlerId);
 static void OpponentHandleChooseItem(u32 battlerId);
 static void OpponentHandleIntroTrainerBallThrow(u32 battlerId);
 static void OpponentHandleEndLinkBattle(u32 battlerId);
@@ -145,9 +146,13 @@ static void OpponentHandlePrintString(u32 battlerId)
     }
 }
 
-void OpponentHandleChooseAction(u32 battlerId)
+static void OpponentHandleChooseAction(u32 battlerId)
 {
-    BattleAI_ChooseAction(battlerId);
+    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+        BattleAI_ChooseAction(battlerId);
+    else
+        BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_USE_MOVE, (BATTLE_OPPOSITE(battlerId) << 8));
+    
     BattleControllerComplete(battlerId);
 }
 
@@ -328,7 +333,8 @@ void OpponentHandleChooseMove(u32 battlerId)
     u32 moveTarget;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
     
-    if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER))) // Trainer
+    if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER))
+    || ((gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) && GetBattlerSide(battlerId) == B_SIDE_PLAYER)) // Trainer
     {
         BattleAI_ComputeMovesScore(battlerId);
         
@@ -339,9 +345,6 @@ void OpponentHandleChooseMove(u32 battlerId)
             break;
         case AI_CHOICE_FLEE:
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_RUN, 0);
-            break;
-        case AI_CHOICE_SWITCH:
-            BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_SWITCH, 0);
             break;
         default:
             gBattlerTarget = gBattleStruct->battlers[battlerId].aiChosenTarget;

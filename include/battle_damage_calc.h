@@ -12,6 +12,6 @@ s32 AI_CalcMoveDamage(u32 move, u32 attacker, u32 defender, u32 moveType, u32 ef
 u32 GetTypeModifier(u32 atkType, u32 defType);
 u32 TypeCalc(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 setAbilityFlags, bool32 forAnticipation, u16 *flags);
 u32 AI_TypeCalc(struct Pokemon *mon, u32 move, u32 defender);
-u32 AI_GetSwitchInTypeMatchup(struct Pokemon *mon, u32 playerBattler);
+u32 AI_GetSwitchInTypeMatchup(struct Pokemon *mon, u32 opposingBattler);
 
 #endif // GUARD_BATTLE_DAMAGE_CALC_H

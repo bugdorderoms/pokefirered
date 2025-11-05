@@ -67,8 +67,7 @@
 #define BATTLE_TYPE_INGAME_PARTNER     (1 << 19)
 
 #define IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE ((gBattleTypeFlags & BATTLE_TYPE_GHOST) && !(gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
-#define IS_BATTLE_TYPE_GHOST_WITH_SCOPE ((gBattleTypeFlags & BATTLE_TYPE_GHOST) && (gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
-#define BATTLE_TYPE_HAS_AI ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER)) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
+#define IS_BATTLE_TYPE_GHOST_WITH_SCOPE    ((gBattleTypeFlags & BATTLE_TYPE_GHOST) && (gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
 
 #define RIVAL_BATTLE_HEAL_AFTER 1
 #define RIVAL_BATTLE_TUTORIAL   3
@@ -304,7 +303,7 @@
 #define B_WIN_MOVE_TYPE           8
 #define B_WIN_PP_REMAINING        9
 #define B_WIN_DUMMY              10
-#define B_WIN_SWITCH_PROMPT      11 // "Switch which?"
+#define B_WIN_MOVE_INFO          11
 #define B_WIN_LEVEL_UP_BOX       12
 #define B_WIN_LEVEL_UP_BANNER    13
 #define B_WIN_YESNO              14

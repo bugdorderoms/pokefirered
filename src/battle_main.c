@@ -2703,14 +2703,8 @@ static void TryDoEventsBeforeFirstTurn(void)
                     gBattleStruct->battlers[i].chosenAction = B_ACTION_NONE;
                     
                     if (IsBattlerAlive(i))
-                    {
-                        u32 side = GetBattlerSide(i);
-                        
-                        gBattleStruct->sides[side].party[gBattlerPartyIndexes[i]].appearedInBattle = TRUE;
-                        
-                        if (side == B_SIDE_PLAYER)
-                            BattleAI_RecordPartyIndex(i);
-                    }
+                        gBattleStruct->sides[GetBattlerSide(i)].party[gBattlerPartyIndexes[i]].appearedInBattle = TRUE;
+
                     gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
                 }
                 TurnValuesCleanUp(FALSE);
@@ -2811,7 +2805,9 @@ void BattleTurnPassed(void)
         return;
     }
     ClearActionsAndMovesForNextTurn();
-    BattleAI_SetAILogicDataForTurn();
+    
+    if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
+        BattleAI_SetAILogicDataForTurn();
     
     if (ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), TRAINER_SLIDE_LAST_MON_LOW_HP))
         BattleScriptExecute(BattleScript_TrainerSlideMsgEnd2);
@@ -2965,7 +2961,7 @@ static void HandleTurnActionSelectionState(void)
         case STATE_BEFORE_ACTION_CHOSEN: // Choose an action.
             gBattleStruct->battlers[battlerId].monToSwitchIntoId = PARTY_SIZE;
             
-            if (gBattleTypeFlags & BATTLE_TYPE_MULTI || (position & BIT_FLANK) == B_FLANK_LEFT
+            if ((gBattleTypeFlags & BATTLE_TYPE_MULTI) || (position & BIT_FLANK) == B_FLANK_LEFT
              || gBattleStruct->absentBattlerFlags & Bit(GetBattlerAtPosition(BATTLE_PARTNER(position)))
              || gBattleCommunication[GetBattlerAtPosition(BATTLE_PARTNER(position))] == STATE_WAIT_ACTION_CONFIRMED)
             {
@@ -3067,10 +3063,8 @@ static void HandleTurnActionSelectionState(void)
                         
                         if (i)
                             BtlController_EmitChoosePokemon(battlerId, BUFFER_A, ((i - 1) << 4) | PARTY_ACTION_ABILITY_PREVENTS, PARTY_SIZE, gBattleStruct->battlerPartyOrders[battlerId]);
-                        else if (battlerId == 2 && gBattleStruct->battlers[0].chosenAction == B_ACTION_SWITCH)
-                            BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, gBattleStruct->battlers[0].monToSwitchIntoId, gBattleStruct->battlerPartyOrders[battlerId]);
-                        else if (battlerId == 3 && gBattleStruct->battlers[1].chosenAction == B_ACTION_SWITCH)
-                            BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, gBattleStruct->battlers[1].monToSwitchIntoId, gBattleStruct->battlerPartyOrders[battlerId]);
+                        else if ((position & BIT_FLANK) != B_FLANK_LEFT && gBattleStruct->battlers[BATTLE_PARTNER(battlerId)].chosenAction == B_ACTION_SWITCH)
+                            BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, gBattleStruct->battlers[BATTLE_PARTNER(battlerId)].monToSwitchIntoId, gBattleStruct->battlerPartyOrders[battlerId]);
                         else
                             BtlController_EmitChoosePokemon(battlerId, BUFFER_A, PARTY_ACTION_CHOOSE_MON, PARTY_SIZE, gBattleStruct->battlerPartyOrders[battlerId]);
                     }
@@ -3095,23 +3089,25 @@ static void HandleTurnActionSelectionState(void)
                     BtlController_EmitEndBounceEffect(battlerId, BUFFER_A);
                     MarkBattlerForControllerExec(battlerId);
                     return;
+                case B_ACTION_RUN:
+                    if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)))
+                    {
+                        BattleScriptExecute(BattleScript_PrintCantRunFromTrainer);
+                        gBattleCommunication[battlerId] = STATE_BEFORE_ACTION_CHOSEN;
+                        return;
+                    }
+                    else if (IsRunningFromBattleImpossible(battlerId, TRUE) != BATTLE_RUN_SUCCESS)
+                    {
+                        sSelectionScriptBattlerId = battlerId;
+                        gBattlerControllersData[battlerId].selectionScript = BattleScript_PrintCantEscapeFromBattle;
+                        gBattleCommunication[battlerId] = STATE_SELECTION_SCRIPT;
+                        gBattleStruct->battlers[battlerId].selectionScriptFinished = FALSE;
+                        gBattleStruct->battlers[battlerId].stateIdAfterSelScript = STATE_BEFORE_ACTION_CHOSEN;
+                        return;
+                    }
+                    break;
                 }
-                if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED)) && gBattleBufferB[battlerId][1] == B_ACTION_RUN)
-                {
-                    BattleScriptExecute(BattleScript_PrintCantRunFromTrainer);
-                    gBattleCommunication[battlerId] = STATE_BEFORE_ACTION_CHOSEN;
-                }
-                else if (IsRunningFromBattleImpossible(battlerId, TRUE) != BATTLE_RUN_SUCCESS && gBattleBufferB[battlerId][1] == B_ACTION_RUN)
-                {
-                    sSelectionScriptBattlerId = battlerId;
-                    gBattlerControllersData[battlerId].selectionScript = BattleScript_PrintCantEscapeFromBattle;
-                    gBattleCommunication[battlerId] = STATE_SELECTION_SCRIPT;
-                    gBattleStruct->battlers[battlerId].selectionScriptFinished = FALSE;
-                    gBattleStruct->battlers[battlerId].stateIdAfterSelScript = STATE_BEFORE_ACTION_CHOSEN;
-                    return;
-                }
-                else
-                    ++gBattleCommunication[battlerId];
+                ++gBattleCommunication[battlerId];
             }
             break;
         case STATE_WAIT_ACTION_CASE_CHOSEN:
@@ -3893,6 +3889,7 @@ static void FreeResetData_ReturnToOvOrDoEvolutions(void)
     {
         gIsFishingEncounter = FALSE;
         gIsSurfingEncounter = FALSE;
+        gPartnerTrainerId = PARTNER_NONE;
         
         ResetSpriteData();
         FreeAllWindowBuffers();
@@ -3953,6 +3950,7 @@ static void ReturnFromBattleToOverworld(void)
         RandomlyGivePartyPokerus(gPlayerParty);
         PartySpreadPokerus(gPlayerParty);
     }
+    
     if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) || !gReceivedRemoteLinkPlayers)
     {
         gSpecialVar_Result = gBattleOutcome;

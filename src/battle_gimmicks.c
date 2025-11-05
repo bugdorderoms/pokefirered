@@ -583,6 +583,11 @@ bool32 IsTypeBasedZMove(u32 move)
 // DYNAMAX //
 /////////////
 
+bool32 HasRaidShields(u32 battler)
+{
+    return FALSE;
+}
+
 bool32 IsMaxMove(u32 move)
 {
     return (move >= FIRST_GMAX_MOVE && move <= LAST_GMAX_MOVE);

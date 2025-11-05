@@ -182,12 +182,11 @@
 	.4byte \ptr
 	.endm
 	
-	.macro jumpifability battler:req, ability:req, ptr:req, record=FALSE
+	.macro jumpifability battler:req, ability:req, ptr:req
 	.byte 0x21
 	.byte \battler
 	.2byte \ability
 	.4byte \ptr
-	.byte \record
 	.endm
 
 	.macro jumpifabilityonside battler:req, abilityId:req, ptr:req
@@ -1832,6 +1831,10 @@
 	.macro setyawn failPtr:req
 	callfunction BS_SetYawn
 	.4byte \failPtr
+	.endm
+	
+	.macro setfocusenergy
+	callfunction BS_SetFocusEnergy
 	.endm
 	
 @ helpful macros

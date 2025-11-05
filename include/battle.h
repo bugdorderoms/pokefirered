@@ -9,7 +9,6 @@
 #include "battle_queued_effects.h"
 #include "battle_script_commands.h"
 #include "battle_main.h"
-#include "battle_ai.h"
 #include "battle_util2.h"
 #include "battle_bg.h"
 #include "constants/battle_script_commands.h"
@@ -299,8 +298,6 @@ struct BattleResources
     struct BattleScriptsStack *battleScriptsStack;
     struct BattleCallbacksStack *battleCallbackStack;
     struct StatsArray *beforeLvlUp;
-    struct AiData *aiData;
-    struct AiThinking *aiThinking;
 };
 
 extern struct BattleResources *gBattleResources;

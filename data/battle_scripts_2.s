@@ -115,6 +115,7 @@ BattleScript_ItemSetMist::
 
 BattleScript_ItemSetFocusEnergy::
     call BattleScript_UseItemMessage
+	setfocusenergy
     playmoveanimation BS_ATTACKER, MOVE_FOCUS_ENERGY
 	waitstate
     printstring STRINGID_ATKGETTINGPUMPED

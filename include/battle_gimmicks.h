@@ -55,6 +55,7 @@ bool32 IsZMove(u32 move);
 bool32 IsTypeBasedZMove(u32 move);
 
 // Dynamax
+bool32 HasRaidShields(u32 battler);
 bool32 IsMaxMove(u32 move);
 
 // Tera

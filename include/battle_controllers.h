@@ -266,7 +266,6 @@ void PlayerHandleLinkStandbyMsg(u32 battlerId);
 void PlayerHandleEndLinkBattle(u32 battlerId);
 void ActionSelectionCreateCursorAt(u32 cursorPos);
 void ActionSelectionDestroyCursorAt(u32 cursorPos);
-void HandleInputChooseMove(u32 battlerId);
 void InitMoveSelectionsVarsAndStrings(u32 battlerId);
 void MoveSelectionCreateCursorAt(u32 cursorPos, u32 arg1);
 void MoveSelectionDestroyCursorAt(u32 cursorPos);
@@ -274,7 +273,6 @@ void MoveSelectionDestroyCursorAt(u32 cursorPos);
 // opponent controller
 void SetControllerToOpponent(u32 battlerId);
 void OpponentHandleTrainerSlideBack(u32 battlerId);
-void OpponentHandleChooseAction(u32 battlerId);
 void OpponentHandleChooseMove(u32 battlerId);
 void OpponentHandleChoosePokemon(u32 battlerId);
 
@@ -294,7 +292,6 @@ void OakOldManHandlePlaySE(u32 battlerId);
 void OakOldMan_SimulateInputChooseAction(u32 battlerId);
 void OakOldManHandleDrawPartyStatusSummary(u32 battlerId);
 void OakOldManHandleEndLinkBattle(u32 battlerId);
-void OakOldManHandleInputChooseMove(u32 battlerId);
 bool32 BtlCtrl_OakOldMan_TestState2Flag(u32 mask);
 void BtlCtrl_OakOldMan_SetState2Flag(u32 mask);
 void PrintOakText_OakNoRunningFromATrainer(u32 battlerId);

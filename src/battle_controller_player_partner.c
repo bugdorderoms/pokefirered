@@ -1,4 +1,5 @@
 #include "global.h"
+#include "battle_ai.h"
 #include "battle_anim.h"
 #include "battle_controllers.h"
 #include "link.h"
@@ -6,6 +7,7 @@
 
 static void PlayerPartnerBufferRunCommand(u32 battlerId);
 static void PlayerPartnerBufferExecCompleted(u32 battlerId);
+static void PlayerPartnerHandleChooseAction(u32 battlerId);
 
 static void (*const sPlayerPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
@@ -23,7 +25,7 @@ static void (*const sPlayerPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_MOVEANIMATION]            = BtlController_HandleMoveAnimation,
     [CONTROLLER_PRINTSTRING]              = BtlController_HandlePrintString,
     [CONTROLLER_PRINTSELECTIONSTRING]     = BattleControllerComplete,
-    [CONTROLLER_CHOOSEACTION]             = OpponentHandleChooseAction,
+    [CONTROLLER_CHOOSEACTION]             = PlayerPartnerHandleChooseAction,
     [CONTROLLER_CHOOSEMOVE]               = OpponentHandleChooseMove,
     [CONTROLLER_OPENBAG]                  = BattleControllerComplete,
     [CONTROLLER_CHOOSEPOKEMON]            = OpponentHandleChoosePokemon,
@@ -97,6 +99,12 @@ static u32 GetPlayerPartnerTrainerPicId(u32 battlerId)
 void PlayerPartnerHandleDrawTrainerPic(u32 battlerId)
 {
     BtlController_HandleDrawTrainerPic(battlerId, GetPlayerPartnerTrainerPicId(battlerId));
+}
+
+static void PlayerPartnerHandleChooseAction(u32 battlerId)
+{
+    BattleAI_ChooseAction(battlerId);
+    BattleControllerComplete(battlerId);
 }
 
 static void Intro_WaitForHealthbox(u32 battlerId)

@@ -462,137 +462,141 @@ void InitSinglePlayerBtlControllers(bool32 fromBattleStart)
         gBattleMainFunc = BeginBattleIntro;
 }
 
-static void InitLinkBtlControllers(void)
+static void SetLinkBattlerBtlControllerFunc(u32 battler, bool32 isMaster)
 {
-    u32 i, multiplayerId;
-
-    if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+    bool32 isPlayer;
+    void (*controllerFunc)(u32);
+    
+    if (isMaster)
     {
-        if (gBattleTypeFlags & BATTLE_TYPE_IS_MASTER)
-        {
-            gBattleMainFunc = BeginBattleIntro;
-            gBattlerControllersData[0].func = SetControllerToPlayer;
-            gBattlerPositions[0] = B_POSITION_PLAYER_LEFT;
-            gBattlerControllersData[1].func = SetControllerToLinkOpponent;
-            gBattlerPositions[1] = B_POSITION_OPPONENT_LEFT;
-        }
-        else
-        {
-            gBattlerControllersData[1].func = SetControllerToPlayer;
-            gBattlerPositions[1] = B_POSITION_PLAYER_LEFT;
-            gBattlerControllersData[0].func = SetControllerToLinkOpponent;
-            gBattlerPositions[0] = B_POSITION_OPPONENT_LEFT;
-        }
-        gBattlersCount = MAX_BATTLERS_COUNT / 2;
-    }
-    else if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI) && (gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
-    {
-        if (gBattleTypeFlags & BATTLE_TYPE_IS_MASTER)
-        {
-            gBattleMainFunc = BeginBattleIntro;
-            gBattlerControllersData[0].func = SetControllerToPlayer;
-            gBattlerPositions[0] = B_POSITION_PLAYER_LEFT;
-            gBattlerControllersData[1].func = SetControllerToLinkOpponent;
-            gBattlerPositions[1] = B_POSITION_OPPONENT_LEFT;
-            gBattlerControllersData[2].func = SetControllerToPlayer;
-            gBattlerPositions[2] = B_POSITION_PLAYER_RIGHT;
-            gBattlerControllersData[3].func = SetControllerToLinkOpponent;
-            gBattlerPositions[3] = B_POSITION_OPPONENT_RIGHT;
-        }
-        else
-        {
-            gBattlerControllersData[1].func = SetControllerToPlayer;
-            gBattlerPositions[1] = B_POSITION_PLAYER_LEFT;
-            gBattlerControllersData[0].func = SetControllerToLinkOpponent;
-            gBattlerPositions[0] = B_POSITION_OPPONENT_LEFT;
-            gBattlerControllersData[3].func = SetControllerToPlayer;
-            gBattlerPositions[3] = B_POSITION_PLAYER_RIGHT;
-            gBattlerControllersData[2].func = SetControllerToLinkOpponent;
-            gBattlerPositions[2] = B_POSITION_OPPONENT_RIGHT;
-        }
-        gBattlersCount = MAX_BATTLERS_COUNT;
+        gBattlerPositions[battler] = battler;
+        isPlayer = (GetBattlerSide(battler) == B_SIDE_PLAYER);
     }
     else
     {
-        multiplayerId = GetMultiplayerId();
+        u32 oppositeBattler = BATTLE_OPPOSITE(battler);
         
-        if (gBattleTypeFlags & BATTLE_TYPE_IS_MASTER)
-            gBattleMainFunc = BeginBattleIntro;
-        
-        for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
+        gBattlerPositions[oppositeBattler] = battler;
+        isPlayer = (BATTLE_OPPOSITE(GetBattlerSide(oppositeBattler)) == B_SIDE_PLAYER);
+        battler = oppositeBattler;
+    }
+    
+    if (isPlayer)
+        controllerFunc = SetControllerToPlayer;
+    else
+        controllerFunc = SetControllerToLinkOpponent;
+
+    gBattlerControllersData[battler].func = controllerFunc;
+}
+
+static void SetMultiLinkBattlerBtlControllerFunc(u32 battler, u32 multiplayerId)
+{
+    void (*controllerFunc)(u32);
+    u32 id = gLinkPlayers[battler].id;
+    
+    // Multi link master
+    if (battler == multiplayerId)
+    {
+        switch (id)
         {
-            switch (gLinkPlayers[i].id)
-            {
             case 0:
             case 3:
-                BufferBattlePartyCurrentOrderBySide(gLinkPlayers[i].id, 0);
+                gBattlerPositions[id] = B_POSITION_PLAYER_LEFT;
+                gBattlerPartyIndexes[id] = B_POSITION_PLAYER_LEFT;
                 break;
             case 1:
             case 2:
-                BufferBattlePartyCurrentOrderBySide(gLinkPlayers[i].id, 1);
+                gBattlerPositions[id] = B_POSITION_PLAYER_RIGHT;
+                gBattlerPartyIndexes[id] = B_POSITION_PLAYER_LEFT + MULTI_PARTY_SIZE;
                 break;
-            }
+        }
+        controllerFunc = SetControllerToPlayer;
+    }
+    // Multi link partner
+    else if ((!(id & 1) && !(gLinkPlayers[multiplayerId].id & 1)) || ((id & 1) && (gLinkPlayers[multiplayerId].id & 1)))
+    {
+        switch (id)
+        {
+            case 0:
+            case 3:
+                gBattlerPositions[id] = B_POSITION_PLAYER_LEFT;
+                gBattlerPartyIndexes[id] = B_POSITION_PLAYER_LEFT;
+                break;
+            case 1:
+            case 2:
+                gBattlerPositions[id] = B_POSITION_PLAYER_RIGHT;
+                gBattlerPartyIndexes[id] = B_POSITION_OPPONENT_RIGHT;
+                break;
+        }
+        controllerFunc = SetControllerToLinkPartner;
+    }
+    else
+    {
+        switch (id)
+        {
+            case 0:
+            case 3:
+                gBattlerPositions[id] = B_POSITION_OPPONENT_LEFT;
+                gBattlerPartyIndexes[id] = B_POSITION_PLAYER_LEFT;
+                break;
+            case 1:
+            case 2:
+                gBattlerPositions[id] = B_POSITION_OPPONENT_RIGHT;
+                gBattlerPartyIndexes[id] = B_POSITION_OPPONENT_RIGHT;
+                break;
+        }
+        controllerFunc = SetControllerToLinkOpponent;
+    }
+    gBattlerControllersData[id].func = controllerFunc;
+}
+
+static void InitLinkBtlControllers(void)
+{
+    u32 i;
+    bool32 doubles = FALSE, isMaster = (gBattleTypeFlags & BATTLE_TYPE_IS_MASTER);
+    
+    if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
+    {
+        for (i = 0; i < MAX_BATTLERS_COUNT / 2; i++)
+        {
+            SetLinkBattlerBtlControllerFunc(i, isMaster);
             
-            if (i == multiplayerId)
+            if (IsDoubleBattleForBattler(i))
             {
-                gBattlerControllersData[gLinkPlayers[i].id].func = SetControllerToPlayer;
-                
-                switch (gLinkPlayers[i].id)
-                {
+                SetLinkBattlerBtlControllerFunc(i + 2, isMaster);
+                doubles = TRUE;
+            }
+        }
+    }
+    else
+    {
+        u32 multiplayerId = GetMultiplayerId();
+
+        for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+        {
+            switch (gLinkPlayers[i].id)
+            {
                 case 0:
                 case 3:
-                    gBattlerPositions[gLinkPlayers[i].id] = B_POSITION_PLAYER_LEFT;
-                    gBattlerPartyIndexes[gLinkPlayers[i].id] = B_POSITION_PLAYER_LEFT;
+                    BufferBattlePartyCurrentOrderBySide(gLinkPlayers[i].id, 0);
                     break;
                 case 1:
                 case 2:
-                    gBattlerPositions[gLinkPlayers[i].id] = B_POSITION_PLAYER_RIGHT;
-                    gBattlerPartyIndexes[gLinkPlayers[i].id] = 3;
+                    BufferBattlePartyCurrentOrderBySide(gLinkPlayers[i].id, 1);
                     break;
-                }
             }
-            else
-            {
-                if ((!(gLinkPlayers[i].id & 1) && !(gLinkPlayers[multiplayerId].id & 1)) || ((gLinkPlayers[i].id & 1) && (gLinkPlayers[multiplayerId].id & 1)))
-                {
-                    gBattlerControllersData[gLinkPlayers[i].id].func = SetControllerToLinkPartner;
-                    
-                    switch (gLinkPlayers[i].id)
-                    {
-                    case 0:
-                    case 3:
-                        gBattlerPositions[gLinkPlayers[i].id] = B_POSITION_PLAYER_LEFT;
-                        gBattlerPartyIndexes[gLinkPlayers[i].id] = B_POSITION_PLAYER_LEFT;
-                        break;
-                    case 1:
-                    case 2:
-                        gBattlerPositions[gLinkPlayers[i].id] = B_POSITION_PLAYER_RIGHT;
-                        gBattlerPartyIndexes[gLinkPlayers[i].id] = B_POSITION_OPPONENT_RIGHT;
-                        break;
-                    }
-                }
-                else
-                {
-                    gBattlerControllersData[gLinkPlayers[i].id].func = SetControllerToLinkOpponent;
-                    
-                    switch (gLinkPlayers[i].id)
-                    {
-                    case 0:
-                    case 3:
-                        gBattlerPositions[gLinkPlayers[i].id] = B_POSITION_OPPONENT_LEFT;
-                        gBattlerPartyIndexes[gLinkPlayers[i].id] = B_POSITION_PLAYER_LEFT;
-                        break;
-                    case 1:
-                    case 2:
-                        gBattlerPositions[gLinkPlayers[i].id] = B_POSITION_OPPONENT_RIGHT;
-                        gBattlerPartyIndexes[gLinkPlayers[i].id] = B_POSITION_OPPONENT_RIGHT;
-                        break;
-                    }
-                }
-            }
+            SetMultiLinkBattlerBtlControllerFunc(i, multiplayerId);
         }
-        gBattlersCount = MAX_BATTLERS_COUNT;
+        doubles = TRUE;
     }
+    
+    if (!doubles)
+        gBattlersCount = MAX_BATTLERS_COUNT / 2;
+    else
+        gBattlersCount = MAX_BATTLERS_COUNT;
+    
+    if (isMaster)
+        gBattleMainFunc = BeginBattleIntro;
 }
 
 /////////////////////////

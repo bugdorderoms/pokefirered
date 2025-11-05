@@ -1182,7 +1182,6 @@ static void atk02_attackstring(void)
         {
             gHitMarker |= HITMARKER_ATTACKSTRING_PRINTED;
             PrepareStringBattle(STRINGID_USEDMOVE, gBattlerAttacker);
-            BattleAI_RecordMoveUsed(gBattlerAttacker, gCurrMovePos);
         }
         gBattleCommunication[MSG_DISPLAY] = FALSE;
         gBattlescriptCurrInstr = cmd->nextInstr;
@@ -2387,17 +2386,10 @@ static void atk20_jumpifstat(void)
 
 static void atk21_jumpifability(void)
 {
-    CMD_ARGS(u8 battler, u16 ability, const u8 *ptr, bool8 record);
+    CMD_ARGS(u8 battler, u16 ability, const u8 *ptr);
 
-    u32 battlerId = GetBattlerForBattleScript(cmd->battler);
-
-    if (GetBattlerAbility(battlerId) == cmd->ability)
-    {
-        if (cmd->record)
-            BattleAI_RecordAbility(battlerId);
-        
+    if (GetBattlerAbility(GetBattlerForBattleScript(cmd->battler)) == cmd->ability)
         gBattlescriptCurrInstr = cmd->ptr;
-    }
     else
         gBattlescriptCurrInstr = cmd->nextInstr;
 }
@@ -4341,9 +4333,6 @@ static void atk52_switchineffects(void)
             gHitMarker &= ~(HITMARKER_FAINTED(battlerId));
             gSpecialStatuses[battlerId].faintedHasReplacement = FALSE;
             gBattleStruct->sides[GetBattlerSide(battlerId)].party[gBattlerPartyIndexes[battlerId]].appearedInBattle = TRUE;
-            
-            if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
-                BattleAI_RecordPartyIndex(battlerId);
 
             ResetAllQueuedEffectsDone();
             SaveBattlersHps(); // For Emergency Exit
@@ -4476,8 +4465,6 @@ static void atk53_switchoutabilities(void)
             
             BtlController_EmitSetMonData(battlerId, BUFFER_A, REQUEST_STATUS_BATTLE, Bit(gBattlerPartyIndexes[battlerId]), sizeof(gBattleMons[battlerId].status1), &gBattleMons[battlerId].status1);
             MarkBattlerForControllerExec(battlerId);
-            
-            BattleAI_RecordAbility(battlerId);
             break;
         case ABILITY_REGENERATOR:
             gBattleMoveDamage = (gBattleMons[battlerId].maxHP / 3) + gBattleMons[battlerId].hp;
@@ -4486,8 +4473,6 @@ static void atk53_switchoutabilities(void)
             
             BtlController_EmitSetMonData(battlerId, BUFFER_A, REQUEST_HP_BATTLE, Bit(gBattlerPartyIndexes[battlerId]), sizeof(gBattleMons[battlerId].hp), &gBattleMoveDamage);
             MarkBattlerForControllerExec(battlerId);
-            
-            BattleAI_RecordAbility(battlerId);
             break;
         case ABILITY_ZERO_TO_HERO:
         {
@@ -5948,7 +5933,6 @@ static void atk76_various(void)
             if (gBattleMons[battlerId].item)
             {
                 gLastUsedItem = gBattleMons[battlerId].item;
-                BattleAI_RecordHoldEffect(battlerId);
                 gBattlescriptCurrInstr = cmd->nextInstr;
             }
             else
@@ -7681,7 +7665,6 @@ static void atkA9_trychoosesleeptalkmove(void)
         gCurrMovePos = movePosition;
         gCalledMove = gBattleMons[gBattlerAttacker].moves[movePosition];
         gDisableStructs[gBattlerAttacker].usedMoveIndices |= Bit(gCurrMovePos);
-        BattleAI_RecordMoveUsed(gBattlerAttacker, movePosition);
         gBattlescriptCurrInstr = cmd->nextInstr;
     }
 }
@@ -10044,4 +10027,11 @@ void BS_SetYawn(void)
         gStatuses3[gBattlerTarget] |= STATUS3_YAWN_TURN(2);
         gBattlescriptCurrInstr = cmd->nextInstr;
     }
+}
+
+void BS_SetFocusEnergy(void)
+{
+    NATIVE_ARGS();
+    gBattleMons[gBattlerAttacker].status2 |= STATUS2_FOCUS_ENERGY;
+    gBattlescriptCurrInstr = cmd->nextInstr;
 }

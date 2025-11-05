@@ -290,9 +290,7 @@ void TrySetMonFormChangeCountdown(struct Pokemon *mon)
 
 u32 GetBattlerFormChangeSpecies(u32 battlerId, u32 species, u32 itemId, u32 formChangeType)
 {
-    u16 moves[MAX_MON_MOVES];
-    GetBattlerMovesArray(battlerId, moves);
-    return GetSpeciesForm(formChangeType, species, gBattleMons[battlerId].personality, GetBattlerAbility(battlerId), itemId, moves, battlerId);
+    return GetSpeciesForm(formChangeType, species, gBattleMons[battlerId].personality, GetBattlerAbility(battlerId), itemId, gBattleMons[battlerId].moves, battlerId);
 }
 
 u32 TryDoBattleFormChange(u32 battlerId, u32 formChangeType)
@@ -301,7 +299,7 @@ u32 TryDoBattleFormChange(u32 battlerId, u32 formChangeType)
     
     if (!(gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED)) // no change form if transformed
     {
-        itemId = GetBattlerItem(battlerId); // form change items are not affected by Kluts, etc.
+        itemId = gBattleMons[battlerId].item; // form change items are not affected by Kluts, etc.
         species = gBattleMons[battlerId].species;
         
         targetSpecies = GetBattlerFormChangeSpecies(battlerId, species, itemId, formChangeType);

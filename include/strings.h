@@ -186,7 +186,6 @@ extern const u8 gText_SafariMenu[];
 extern const u8 gText_WhatWillPlayerThrow[];
 
 // battle_controller_player
-extern const u8 gText_BattleSwitchWhich[];
 extern const u8 gText_MoveInterfaceMoveNamesColor[];
 extern const u8 gText_MoveInterfaceEffectiveness[];
 extern const u8 gText_MoveInterfacePP[];
