@@ -3626,7 +3626,7 @@ static bool32 CopyablePlayerMovement_GoSpeed0(struct ObjectEvent *objectEvent, s
     ObjectEventMoveDestCoords(objectEvent, direction, &x, &y);
     ObjectEventSetSingleMovement(objectEvent, sprite, GetWalkNormalMovementAction(direction));
     
-    if (GetCollisionAtCoords(objectEvent, x, y, direction) || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
+    if (GetCollisionAtCoords(objectEvent, x, y, direction) != COLLISION_NONE || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
         ObjectEventSetSingleMovement(objectEvent, sprite, GetFaceDirectionMovementAction(direction));
 
     objectEvent->singleMovementActive = TRUE;
@@ -3642,7 +3642,7 @@ static bool32 CopyablePlayerMovement_GoSpeed1(struct ObjectEvent *objectEvent, s
     ObjectEventMoveDestCoords(objectEvent, direction, &x, &y);
     ObjectEventSetSingleMovement(objectEvent, sprite, GetWalkFastMovementAction(direction));
     
-    if (GetCollisionAtCoords(objectEvent, x, y, direction) || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
+    if (GetCollisionAtCoords(objectEvent, x, y, direction) != COLLISION_NONE || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
         ObjectEventSetSingleMovement(objectEvent, sprite, GetFaceDirectionMovementAction(direction));
 
     objectEvent->singleMovementActive = TRUE;
@@ -3658,7 +3658,7 @@ static bool32 CopyablePlayerMovement_GoSpeed2(struct ObjectEvent *objectEvent, s
     ObjectEventMoveDestCoords(objectEvent, direction, &x, &y);
     ObjectEventSetSingleMovement(objectEvent, sprite, GetWalkFastestMovementAction(direction));
     
-    if (GetCollisionAtCoords(objectEvent, x, y, direction) || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
+    if (GetCollisionAtCoords(objectEvent, x, y, direction) != COLLISION_NONE || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
         ObjectEventSetSingleMovement(objectEvent, sprite, GetFaceDirectionMovementAction(direction));
 
     objectEvent->singleMovementActive = TRUE;
@@ -3674,7 +3674,7 @@ static bool32 CopyablePlayerMovement_Slide(struct ObjectEvent *objectEvent, stru
     ObjectEventMoveDestCoords(objectEvent, direction, &x, &y);
     ObjectEventSetSingleMovement(objectEvent, sprite, GetSlideMovementAction(direction));
     
-    if (GetCollisionAtCoords(objectEvent, x, y, direction) || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
+    if (GetCollisionAtCoords(objectEvent, x, y, direction) != COLLISION_NONE || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
         ObjectEventSetSingleMovement(objectEvent, sprite, GetFaceDirectionMovementAction(direction));
 
     objectEvent->singleMovementActive = TRUE;
@@ -3700,7 +3700,7 @@ static bool32 CopyablePlayerMovement_GoSpeed4(struct ObjectEvent *objectEvent, s
     ObjectEventMoveDestCoords(objectEvent, direction, &x, &y);
     ObjectEventSetSingleMovement(objectEvent, sprite, GetJumpMovementAction(direction));
     
-    if (GetCollisionAtCoords(objectEvent, x, y, direction) || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
+    if (GetCollisionAtCoords(objectEvent, x, y, direction) != COLLISION_NONE || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
         ObjectEventSetSingleMovement(objectEvent, sprite, GetFaceDirectionMovementAction(direction));
 
     objectEvent->singleMovementActive = TRUE;
@@ -3717,7 +3717,7 @@ static bool32 CopyablePlayerMovement_Jump(struct ObjectEvent *objectEvent, struc
     MoveCoordsInDirection(direction, &x, &y, 2, 2);
     ObjectEventSetSingleMovement(objectEvent, sprite, GetJump2MovementAction(direction));
     
-    if (GetCollisionAtCoords(objectEvent, x, y, direction) || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
+    if (GetCollisionAtCoords(objectEvent, x, y, direction) != COLLISION_NONE || (tileCallback != NULL && !tileCallback(MapGridGetMetatileBehaviorAt(x, y))))
         ObjectEventSetSingleMovement(objectEvent, sprite, GetFaceDirectionMovementAction(direction));
 
     objectEvent->singleMovementActive = TRUE;
@@ -4116,18 +4116,14 @@ static u32 GetCollisionInDirection(struct ObjectEvent *objectEvent, u32 directio
 
 u32 GetCollisionAtCoords(struct ObjectEvent *objectEvent, s16 x, s16 y, u32 dir)
 {
-    if (IsCoordOutsideObjectEventMovementRange(objectEvent, x, y))
-        return COLLISION_OUTSIDE_RANGE;
-    else if (MapGridIsImpassableAt(x, y) || GetMapBorderIdAt(x, y) == CONNECTION_INVALID || IsMetatileDirectionallyImpassable(objectEvent, x, y, dir))
-        return COLLISION_IMPASSABLE;
-    else if (objectEvent->trackedByCamera && !CanCameraMoveInDirection(dir))
-        return COLLISION_IMPASSABLE;
-    else if (IsZCoordMismatchAt(objectEvent->currentElevation, x, y))
-        return COLLISION_ELEVATION_MISMATCH;
-    else if (DoesObjectCollideWithObjectAt(objectEvent, x, y))
-        return COLLISION_OBJECT_EVENT;
-    else
-        return COLLISION_NONE;
+    u32 i, collisionFlags = GetCollisionFlagsAtCoords(objectEvent, x, y, dir);
+    
+    for (i = COLLISION_OUTSIDE_RANGE; i <= COLLISION_OBJECT_EVENT; i++)
+    {
+        if (collisionFlags & Bit(i - 1))
+            return i;
+    }
+    return COLLISION_NONE;
 }
 
 u32 GetCollisionFlagsAtCoords(struct ObjectEvent *objectEvent, s16 x, s16 y, u32 direction)
@@ -4135,13 +4131,17 @@ u32 GetCollisionFlagsAtCoords(struct ObjectEvent *objectEvent, s16 x, s16 y, u32
     u32 flags = 0;
 
     if (IsCoordOutsideObjectEventMovementRange(objectEvent, x, y))
-        flags |= 1;
-    if (MapGridIsImpassableAt(x, y) || GetMapBorderIdAt(x, y) == CONNECTION_INVALID || IsMetatileDirectionallyImpassable(objectEvent, x, y, direction) || (objectEvent->trackedByCamera && !CanCameraMoveInDirection(direction)))
-        flags |= 2;
+        flags |= COLLISION_FLAG_OUTSIDE_RANGE;
+    
+    if (MapGridIsImpassableAt(x, y) || GetMapBorderIdAt(x, y) == CONNECTION_INVALID || IsMetatileDirectionallyImpassable(objectEvent, x, y, direction)
+    || (objectEvent->trackedByCamera && !CanCameraMoveInDirection(direction)))
+        flags |= COLLISION_FLAG_IMPASSABLE;
+    
     if (IsZCoordMismatchAt(objectEvent->currentElevation, x, y))
-        flags |= 4;
+        flags |= COLLISION_FLAG_ELEVATION_MISMATCH;
+    
     if (DoesObjectCollideWithObjectAt(objectEvent, x, y))
-        flags |= 8;
+        flags |= COLLISION_FLAG_OBJECT_EVENT;
     
     return flags;
 }

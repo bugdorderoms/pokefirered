@@ -215,7 +215,7 @@ static u32 CheckPathBetweenTrainerAndPlayer(struct ObjectEvent *trainerObj, u32 
 
     trainerObj->rangeX = unk19_temp;
     trainerObj->rangeY = unk19b_temp;
-    if (collision == 4)
+    if (collision == COLLISION_OBJECT_EVENT)
         return approachDistance;
 
     return 0;

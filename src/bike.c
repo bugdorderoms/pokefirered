@@ -21,6 +21,7 @@ static void BikeTransition_Uphill(u32);
 static u32 BikeInputHandler_Normal(u32 *, u16, u16);
 static u32 BikeInputHandler_Turning(u32 *, u16, u16);
 static u32 BikeInputHandler_Slope(u32 *, u16, u16);
+static void PlayerOnBikeNoCollision(u32 direction);
 
 static void (*const sBikeTransitions[])(u32) =
 {
@@ -36,6 +37,25 @@ static u32 (*const sBikeInputHandlers[])(u32 *, u16, u16) =
     [BIKE_STATE_NORMAL]  = BikeInputHandler_Normal,
     [BIKE_STATE_TURNING] = BikeInputHandler_Turning,
     [BIKE_STATE_SLOPE]   = BikeInputHandler_Slope,
+};
+
+static void (*const sBikeCollisionFuncs[COLLISION_COUNT + 1])(u32) = {
+    [COLLISION_NONE]                     = PlayerOnBikeNoCollision,
+    [COLLISION_OUTSIDE_RANGE]            = PlayerOnBikeCollide,
+    [COLLISION_IMPASSABLE]               = PlayerOnBikeCollide,
+    [COLLISION_ELEVATION_MISMATCH]       = PlayerOnBikeCollide,
+    [COLLISION_OBJECT_EVENT]             = PlayerOnBikeCollide,
+    [COLLISION_STOP_SURFING]             = NULL,
+    [COLLISION_LEDGE_JUMP]               = PlayerJumpLedge,
+    [COLLISION_PUSHED_BOULDER]           = NULL,
+    [COLLISION_ROTATING_GATE]            = NULL,
+    [COLLISION_WHEELIE_HOP]              = PlayerOnBikeCollide,
+    [COLLISION_ISOLATED_VERTICAL_RAIL]   = PlayerOnBikeCollide,
+    [COLLISION_ISOLATED_HORIZONTAL_RAIL] = PlayerOnBikeCollide,
+    [COLLISION_VERTICAL_RAIL]            = PlayerOnBikeNoCollision,
+    [COLLISION_HORIZONTAL_RAIL]          = PlayerOnBikeNoCollision,
+    [COLLISION_GROUND_ROCKS]             = PlayerOnBikeCollide,
+    [COLLISION_COUNT]                    = PlayerGoSpeed2
 };
 
 void MovePlayerOnBike(u32 direction, u16 newKeys, u16 heldKeys)
@@ -150,39 +170,31 @@ static void BikeTransition_TurnDirection(u32 direction)
 
     if (!CanBikeFaceDirectionOnRail(direction, playerObjEvent->currentMetatileBehavior))
         direction = playerObjEvent->movementDirection;
+    
     PlayerFaceDirection(direction);
 }
 
 static void BikeTransition_MoveDirection(u32 direction)
 {
-    struct ObjectEvent *playerObjEvent;
-    
-    playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+
     if (!CanBikeFaceDirectionOnRail(direction, playerObjEvent->currentMetatileBehavior))
-    {
         PlayerFaceDirection(playerObjEvent->movementDirection);
-    }
     else
     {
         u32 collision = GetBikeCollision(direction);
-
-        if (collision > COLLISION_NONE && collision <= COLLISION_ISOLATED_HORIZONTAL_RAIL)
-        {
-            if (collision == COLLISION_LEDGE_JUMP)
-                PlayerJumpLedge(direction);
-            else if (collision != COLLISION_STOP_SURFING && collision != COLLISION_LEDGE_JUMP && collision != COLLISION_PUSHED_BOULDER && collision != COLLISION_ROTATING_GATE)
-                PlayerOnBikeCollide(direction);
-        }
-        else
-        {
-            if (collision == COLLISION_GROUND_ROCKS)
-                PlayerOnBikeCollide(direction);
-            else if (collision == COLLISION_COUNT || PlayerIsMovingOnRockStairs(direction))
-                PlayerGoSpeed2(direction);
-            else
-                PlayerRideWaterCurrent(direction);
-        }
+        
+        if (sBikeCollisionFuncs[collision] != NULL)
+            sBikeCollisionFuncs[collision](direction);
     }
+}
+
+static void PlayerOnBikeNoCollision(u32 direction)
+{
+    if (PlayerIsMovingOnRockStairs(direction))
+        PlayerGoSpeed2(direction);
+    else
+        PlayerRideWaterCurrent(direction);
 }
 
 static void BikeTransition_Downhill(UNUSED u32 v)
@@ -219,6 +231,7 @@ static u32 GetBikeCollisionAt(struct ObjectEvent *playerObjEvent, s16 x, s16 y, 
     {
         if (MetatileBehavior_IsCrackedIce(metatileBehavior))
             retVal = COLLISION_COUNT;
+        
         if (retVal == COLLISION_NONE && MetatileBehaviorForbidsBiking(metatileBehavior))
             retVal = COLLISION_IMPASSABLE;
     }
@@ -227,9 +240,14 @@ static u32 GetBikeCollisionAt(struct ObjectEvent *playerObjEvent, s16 x, s16 y, 
 
 bool32 MetatileBehaviorForbidsBiking(u32 metatileBehavior)
 {
-    if (!MetatileBehavior_IsRunningDisallowed(metatileBehavior) && !MetatileBehavior_IsFortreeBridge(metatileBehavior) && (PlayerGetZCoord() & 1))
+    if (MetatileBehavior_IsRunningDisallowed(metatileBehavior))
+        return TRUE;
+    else if (!MetatileBehavior_IsFortreeBridge(metatileBehavior))
         return FALSE;
-    return TRUE;
+    else if (PlayerGetZCoord() & 1)
+        return FALSE;
+    else
+        return TRUE;
 }
 
 static bool32 CanBikeFaceDirectionOnRail(u32 direction, u32 metatileBehavior)

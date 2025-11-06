@@ -80,10 +80,7 @@ static inline bool32 AreCoordsWithinMapGridBounds(s32 x, s32 y)
     return (x >= 0 && x < VMap.Xsize && y >= 0 && y < VMap.Ysize);
 }
 
-static u16 MapGridGetTileAt(s32 x, s32 y)
-{
-    return AreCoordsWithinMapGridBounds(x, y) ? VMap.map[x + VMap.Xsize * y] : MapGridGetBorderTileAt(x, y);
-}
+#define MapGridGetTileAt(x, y) (AreCoordsWithinMapGridBounds(x, y) ? VMap.map[x + VMap.Xsize * y] : MapGridGetBorderTileAt(x, y))
 
 const struct MapHeader * GetMapHeaderFromConnection(struct MapConnection * connection)
 {

@@ -508,6 +508,11 @@ static u32 RideInputHandler_Turning(u32 *newDirection);
 static void RideTransition_FaceDirection(u32 direction, u16 heldKeys);
 static void RideTransition_MoveDirection(u32 direction, u16 heldKeys);
 static void UpdateStoutlandSearchAndTaurosCharge(u16 heldKeys);
+static void PlayerOnRideNoCollision(u32 direction, u16 heldKeys);
+static void PlayerOnRideCollide(u32 direction, u16 heldKeys);
+static void PlayerOnRideJumpLedge(u32 direction, u16 heldKeys);
+static void PlayerOnRideGroundRocksCollision(u32 direction, u16 heldKeys);
+static void PlayerOnRideCollisionCount(u32 direction, u16 heldKeys);
 
 static void (*const sRideTransitions[])(u32, u16) =
 {
@@ -520,6 +525,25 @@ static u32 (*const sRideInputHandlers[])(u32 *) =
 {
     [BIKE_STATE_NORMAL]  = RideInputHandler_Normal,
     [BIKE_STATE_TURNING] = RideInputHandler_Turning,
+};
+
+static void (*const sRideCollisionFuncs[COLLISION_COUNT + 1])(u32, u16) = {
+    [COLLISION_NONE]                     = PlayerOnRideNoCollision,
+    [COLLISION_OUTSIDE_RANGE]            = PlayerOnRideCollide,
+    [COLLISION_IMPASSABLE]               = PlayerOnRideCollide,
+    [COLLISION_ELEVATION_MISMATCH]       = PlayerOnRideCollide,
+    [COLLISION_OBJECT_EVENT]             = PlayerOnRideCollide,
+    [COLLISION_STOP_SURFING]             = NULL,
+    [COLLISION_LEDGE_JUMP]               = PlayerOnRideJumpLedge,
+    [COLLISION_PUSHED_BOULDER]           = NULL,
+    [COLLISION_ROTATING_GATE]            = NULL,
+    [COLLISION_WHEELIE_HOP]              = PlayerOnRideCollide,
+    [COLLISION_ISOLATED_VERTICAL_RAIL]   = PlayerOnRideCollide,
+    [COLLISION_ISOLATED_HORIZONTAL_RAIL] = PlayerOnRideCollide,
+    [COLLISION_VERTICAL_RAIL]            = PlayerOnRideCollide,
+    [COLLISION_HORIZONTAL_RAIL]          = PlayerOnRideCollide,
+    [COLLISION_GROUND_ROCKS]             = PlayerOnRideGroundRocksCollision,
+    [COLLISION_COUNT]                    = PlayerOnRideCollisionCount
 };
 
 void MovePlayerOnRide(u32 newDirection, u16 heldKeys)
@@ -584,29 +608,49 @@ static void RideTransition_MoveDirection(u32 direction, u16 heldKeys)
 {
     u32 collision = GetBikeCollision(direction);
     
-    if (collision > COLLISION_NONE && collision <= COLLISION_WHEELIE_HOP)
-    {
-        if (collision == COLLISION_LEDGE_JUMP)
-            PlayerJumpLedge(direction);
-        else if (collision != COLLISION_STOP_SURFING && collision != COLLISION_LEDGE_JUMP && collision != COLLISION_PUSHED_BOULDER && collision != COLLISION_ROTATING_GATE)
-            PlayerOnBikeCollide(direction);
-    }
+    if (sRideCollisionFuncs[collision] != NULL)
+        sRideCollisionFuncs[collision](direction, heldKeys);
+}
+
+static bool32 IsPlayerUsingTaurosCharge(u16 heldKeys)
+{
+    return (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE) && !gSaveBlock2Ptr->waitingTaurosChargeStamina && (heldKeys & B_BUTTON));
+}
+
+static void PlayerOnRideNoCollision(u32 direction, u16 heldKeys)
+{
+    if (IsPlayerUsingTaurosCharge(heldKeys))
+        PlayerGoSpeed4(direction);
+    else if (PlayerIsMovingOnRockStairs(direction) || (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE) && (heldKeys & B_BUTTON)))
+        PlayerGoSpeed2(direction);
     else
-    {
-        if (collision == COLLISION_GROUND_ROCKS)
-        {
-            if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MUDSDALE_RIDE))
-                PlayerGoSpeed2(direction);
-            else
-                PlayerOnBikeCollide(direction);
-        }
-        else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_TAUROS_RIDE) && !gSaveBlock2Ptr->waitingTaurosChargeStamina && (heldKeys & B_BUTTON))
-            PlayerGoSpeed4(direction);
-        else if (collision == COLLISION_COUNT || PlayerIsMovingOnRockStairs(direction) || (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_STOUTLAND_RIDE) && heldKeys & B_BUTTON))
-            PlayerGoSpeed2(direction);
-        else
-            PlayerRideWaterCurrent(direction);
-    }
+        PlayerRideWaterCurrent(direction);
+}
+
+static void PlayerOnRideCollide(u32 direction, u16 heldKeys)
+{
+    PlayerOnBikeCollide(direction);
+}
+
+static void PlayerOnRideJumpLedge(u32 direction, u16 heldKeys)
+{
+    PlayerJumpLedge(direction);
+}
+
+static void PlayerOnRideGroundRocksCollision(u32 direction, u16 heldKeys)
+{
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MUDSDALE_RIDE))
+        PlayerGoSpeed2(direction);
+    else
+        PlayerOnRideCollide(direction, heldKeys);
+}
+
+static void PlayerOnRideCollisionCount(u32 direction, u16 heldKeys)
+{
+    if (IsPlayerUsingTaurosCharge(heldKeys))
+        PlayerGoSpeed4(direction);
+    else
+        PlayerGoSpeed2(direction);
 }
 
 static void UpdateStoutlandSearchAndTaurosCharge(u16 heldKeys)

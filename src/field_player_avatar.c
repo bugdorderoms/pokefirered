@@ -307,7 +307,7 @@ static bool32 DoForcedMovement(u32 direction, MovementAction movementAction)
 
     playerAvatar->flags |= PLAYER_AVATAR_FLAG_FORCED;
     
-    if (collision)
+    if (collision != COLLISION_NONE)
     {
         ForcedMovement_None();
         
@@ -554,9 +554,28 @@ bool32 CanTriggerSpinEvolution(void)
 ///////////////////////////
 
 static void (*const sPlayerInputHandlers[])(u32, u16) = {
-    PlayerNotOnBikeNotMoving,
-    PlayerNotOnBikeTurningInPlace,
-    PlayerNotOnBikeMoving
+    [BIKE_STATE_NORMAL]  = PlayerNotOnBikeNotMoving,
+    [BIKE_STATE_TURNING] = PlayerNotOnBikeTurningInPlace,
+    [BIKE_STATE_SLOPE]   = PlayerNotOnBikeMoving
+};
+
+static void (*const sPlayerNotOnBikeCollisionFuncs[COLLISION_COUNT + 1])(u32) = {
+    [COLLISION_NONE]                     = NULL,
+    [COLLISION_OUTSIDE_RANGE]            = PlayerNotOnBikeCollide,
+    [COLLISION_IMPASSABLE]               = PlayerNotOnBikeCollide,
+    [COLLISION_ELEVATION_MISMATCH]       = PlayerNotOnBikeCollide,
+    [COLLISION_OBJECT_EVENT]             = PlayerNotOnBikeCollide,
+    [COLLISION_STOP_SURFING]             = NULL,
+    [COLLISION_LEDGE_JUMP]               = PlayerJumpLedge,
+    [COLLISION_PUSHED_BOULDER]           = NULL,
+    [COLLISION_ROTATING_GATE]            = PlayerFaceDirection,
+    [COLLISION_WHEELIE_HOP]              = PlayerNotOnBikeCollide,
+    [COLLISION_ISOLATED_VERTICAL_RAIL]   = PlayerNotOnBikeCollide,
+    [COLLISION_ISOLATED_HORIZONTAL_RAIL] = PlayerNotOnBikeCollide,
+    [COLLISION_VERTICAL_RAIL]            = PlayerNotOnBikeCollide,
+    [COLLISION_HORIZONTAL_RAIL]          = PlayerNotOnBikeCollide,
+    [COLLISION_GROUND_ROCKS]             = PlayerNotOnBikeCollide,
+    [COLLISION_COUNT]                    = PlayerNotOnBikeCollide
 };
 
 static u32 CheckMovementInputNotOnBike(u32 direction)
@@ -600,12 +619,8 @@ static void PlayerNotOnBikeMoving(u32 direction, u16 heldKeys)
 
     if (collision != COLLISION_NONE)
     {
-        if (collision == COLLISION_LEDGE_JUMP)
-            PlayerJumpLedge(direction);
-        else if (collision == COLLISION_ROTATING_GATE)
-            PlayerFaceDirection(direction);
-        else if (collision != COLLISION_STOP_SURFING && collision != COLLISION_LEDGE_JUMP && collision != COLLISION_PUSHED_BOULDER && collision != COLLISION_ROTATING_GATE)
-            PlayerNotOnBikeCollide(direction);
+        if (sPlayerNotOnBikeCollisionFuncs[collision] != NULL)
+            sPlayerNotOnBikeCollisionFuncs[collision](direction);
 
         return;
     }
@@ -764,20 +779,16 @@ static bool32 TryPushBoulder(s16 x, s16 y, u32 direction)
 // PLAYER COLLISION //
 //////////////////////
 
-static const MetatileFunc sAcroBikeTrickMetatiles[] = {
-    MetatileBehavior_IsBumpySlope,
-    MetatileBehavior_IsIsolatedVerticalRail,
-    MetatileBehavior_IsIsolatedHorizontalRail,
-    MetatileBehavior_IsVerticalRail,
-    MetatileBehavior_IsHorizontalRail
-};
-
-static const u8 sAcroBikeTrickCollisionTypes[] = {
-    COLLISION_WHEELIE_HOP,
-    COLLISION_ISOLATED_VERTICAL_RAIL,
-    COLLISION_ISOLATED_HORIZONTAL_RAIL,
-    COLLISION_VERTICAL_RAIL,
-    COLLISION_HORIZONTAL_RAIL,
+struct
+{
+    MetatileFunc func;
+    u8 collision;
+} static const sAcroBikeTrickMetatiles[] = {
+    {MetatileBehavior_IsBumpySlope, COLLISION_WHEELIE_HOP},
+    {MetatileBehavior_IsIsolatedVerticalRail, COLLISION_ISOLATED_VERTICAL_RAIL},
+    {MetatileBehavior_IsIsolatedHorizontalRail, COLLISION_VERTICAL_RAIL},
+    {MetatileBehavior_IsVerticalRail, COLLISION_ISOLATED_HORIZONTAL_RAIL},
+    {MetatileBehavior_IsHorizontalRail, COLLISION_HORIZONTAL_RAIL},
 };
 
 static void CheckAcroBikeCollision(s16 x, s16 y, u32 metatileBehavior, u32 *collision)
@@ -786,9 +797,9 @@ static void CheckAcroBikeCollision(s16 x, s16 y, u32 metatileBehavior, u32 *coll
 
     for (i = 0; i < ARRAY_COUNT(sAcroBikeTrickMetatiles); i++)
     {
-        if (sAcroBikeTrickMetatiles[i](metatileBehavior))
+        if (sAcroBikeTrickMetatiles[i].func(metatileBehavior))
         {
-            *collision = sAcroBikeTrickCollisionTypes[i];
+            *collision = sAcroBikeTrickMetatiles[i].collision;
             return;
         }
     }
