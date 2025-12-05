@@ -75,16 +75,18 @@ BattleScript_EffectOHKO::
 @ EFFECT_TWO_TURNS_ATTACK @
 
 BattleScript_EffectTwoTurnMoves::
-	attackcanceler
 	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_TwoTurnMovesSecondTurn
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_NO_ATTACKSTRING, BattleScript_TwoTurnMovesSecondTurn
-	jumpifweathercheckchargeeffects BS_ATTACKER, TRUE, BattleScript_HitFromAccCheck
+	tryfiretwoturnmovewithoutcharging BS_ATTACKER, BattleScript_EffectHit
+	attackcanceler
 	call BattleScript_FirstChargingTurn_Ret
-	jumpifweathercheckchargeeffects BS_ATTACKER, FALSE, BattleScript_TwoTurnMovesSecondTurn
+	tryfiretwoturnmoveaftercharging BS_ATTACKER, BattleScript_TwoTurnMovesSecondTurn
 	goto BattleScript_MoveEnd
 
 BattleScript_FirstChargingTurn_Ret::
 	flushmessagebox
+	attackstring
+	waitmessage B_WAIT_TIME_LONG
 BattleScript_FirstChargingTurnFromPpReduce_Ret::
 	ppreduce
 	attackanimation
@@ -98,6 +100,7 @@ BattleScript_FirstChargingTurnFromPpReduce_Ret::
 	return
 
 BattleScript_TwoTurnMovesSecondTurn::
+	attackcanceler
 	call BattleScript_TwoTurnMovesSecondTurn_Ret
 	goto BattleScript_HitFromAccCheck
 
@@ -1214,7 +1217,7 @@ BattleScript_EffectFutureSight::
 BattleScript_EffectBeatUp::
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed
-	addbyte sMULTIUSE_STATE, 1
+	addbyte sBEATUP_COUNTER, 1
 	goto BattleScript_HitFromAtkString
 
 @ EFFECT_FAKE_OUT @

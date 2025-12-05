@@ -21,7 +21,7 @@ DOUBLE_BATTLE_TEST("Intimidate lowers opposing Pokemon's Attack")
     }
 }
 
-DOUBLE_BATTLE_TEST("Intimidate doesn't affect a target behid Substitute")
+DOUBLE_BATTLE_TEST("Intimidate doesn't affect a target behind Substitute")
 {
     GIVEN {
         ASSUME(gBattleMoves[MOVE_SUBSTITUTE].effect == EFFECT_SUBSTITUTE);

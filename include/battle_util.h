@@ -228,9 +228,10 @@ bool32 TryBattleChallengeStartingStatus(void);
 bool32 IsPartnerMonFromSameTrainer(u32 battler);
 bool32 TryPrimalReversion(u32 battler);
 u32 GetBattlerIdFromPartySlot(u32 slot, u32 partyId);
-bool32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u32 target, bool32 onlyChecking);
+u32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u32 target, bool32 onlyChecking);
 bool32 CanAbilityBlockMove(u32 move, u32 attacker, u32 target, bool32 onlyChecking);
 bool32 BattlerTurnDamaged(u32 battlerId);
+bool32 IsRaidBoss(u32 battlerId);
 
 static inline bool32 CanBattlerSwitch(u32 battlerId)
 {

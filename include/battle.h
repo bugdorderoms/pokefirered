@@ -649,6 +649,7 @@ struct BattleScripting
     /*0x24*/ u8 field_23; // does something with hp calc
     /*0x25*/ u8 switchinEffectState;
     /*0x26*/ bool8 expOnCatch;
+    /*0x27*/ u8 beatUpHitCounter;
 };
 
 struct BattleSpriteInfo

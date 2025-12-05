@@ -6,7 +6,7 @@
 // Damage calc
 s32 CalculateConfusionDamage(void);
 s32 CalculateMoveDamage(u32 move, u32 moveType, u32 attacker, u32 defender, bool32 isCrit);
-s32 AI_CalcMoveDamage(u32 move, u32 attacker, u32 defender, u32 moveType, u32 effectiveness);
+s32 AI_CalcMoveDamage(u32 move, u32 moveSlot, u32 attacker, u32 defender, u32 moveType, u32 effectiveness);
 
 // Type calc
 u32 GetTypeModifier(u32 atkType, u32 defType);

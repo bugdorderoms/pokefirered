@@ -133,7 +133,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
     }
     
     // Check effects that can prevents the effect to be applyed
-    // Any effect other than sleep in't applyed on the Poke Dude battle
+    // Any effect other than sleep isn't applyed on the Poke Dude battle
     if (((gBattleTypeFlags & BATTLE_TYPE_POKEDUDE) && GetBattlerSide(gEffectBattler) == B_SIDE_OPPONENT && moveEffect != MOVE_EFFECT_SLEEP)
     || CheckSecondaryEffectsBlockers(gBattleScripting.battler, gEffectBattler, gCurrentMove, moveEffect, affectsUser, primary, flags))
         return FALSE;
@@ -503,7 +503,7 @@ bool32 CheckSecondaryEffectsBlockers(u32 attacker, u32 defender, u32 move, u32 m
             return TRUE;
     }
     
-    // Check if target is't alive
+    // Check if target isn't alive
     if (!IsBattlerAlive(defender) && moveEffect != MOVE_EFFECT_PAYDAY && moveEffect != MOVE_EFFECT_STEAL_ITEM && moveEffect != MOVE_EFFECT_KNOCK_OFF
     && moveEffect != MOVE_EFFECT_FEINT && moveEffect != MOVE_EFFECT_CLEAR_HAZARDS)
         return TRUE;
@@ -657,17 +657,17 @@ bool32 ChangeStatBuffs(u32 flags, bool32 onlyChecks)
     {
         if (gBattleMons[gEffectBattler].statStages[statId] > MIN_STAT_STAGES)
         {
-               if (!onlyChecks) // Stat can be decreased, stop here
-               {
-                    if (gBattleStruct->statChange.maxOut)
+            if (!onlyChecks) // Stat can be decreased, stop here
+            {
+                if (gBattleStruct->statChange.maxOut)
+                    gBattleMons[gEffectBattler].statStages[statId] = MIN_STAT_STAGES;
+                else
+                {
+                    gBattleMons[gEffectBattler].statStages[statId] += buff;
+                    if (gBattleMons[gEffectBattler].statStages[statId] < MIN_STAT_STAGES)
                         gBattleMons[gEffectBattler].statStages[statId] = MIN_STAT_STAGES;
-                    else
-                    {
-                        gBattleMons[gEffectBattler].statStages[statId] += buff;
-                        if (gBattleMons[gEffectBattler].statStages[statId] < MIN_STAT_STAGES)
-                            gBattleMons[gEffectBattler].statStages[statId] = MIN_STAT_STAGES;
-                    }
-               }
+                }
+            }
         }
         else
             result = STAT_CHANGE_FAIL_WONT_CHANGE;

@@ -36,30 +36,37 @@ static void BattleAI_SetupAILogicDataForSide(u32 side)
     
     // Basic AI flags
     if (gBattleTypeFlags & BATTLE_TYPE_RECORDED)
-        gAIData->logic[side].aiFlags |= GetAiScriptsInRecordedBattle();
+        gAIData->logic[side].aiFlags = GetAiScriptsInRecordedBattle();
     else if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
-        gAIData->logic[side].aiFlags |= AI_FLAG_SAFARI;
+    {
+        gAIData->logic[side].aiFlags = AI_FLAG_SAFARI;
+        return;
+    }
     else if (gBattleTypeFlags & BATTLE_TYPE_ROAMER)
-        gAIData->logic[side].aiFlags |= AI_FLAG_ROAMER;
+    {
+        gAIData->logic[side].aiFlags = AI_FLAG_ROAMER;
+        return;
+    }
     else if (side == B_SIDE_PLAYER)
     {
-        gAIData->logic[side].aiFlags |= gBattlePartners[gPartnerTrainerId].aiFlags;
+        gAIData->logic[side].aiFlags = gBattlePartners[gPartnerTrainerId].aiFlags;
         
         for (i = 0; i < MAX_TRAINER_ITEMS; i++)
             gAIData->logic[side].items[i] = gBattlePartners[gPartnerTrainerId].items[i];
     }
     else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
     {
-        gAIData->logic[side].aiFlags |= gTrainers[gTrainerBattleOpponent_A].aiFlags;
+        gAIData->logic[side].aiFlags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
         
         for (i = 0; i < MAX_TRAINER_ITEMS; i++)
             gAIData->logic[side].items[i] = gTrainers[gTrainerBattleOpponent_A].items[i];
     }
     else // Wild
+    {
         gAIData->logic[side].aiFlags = 0;
-    
-    if (gAIData->logic[side].aiFlags != 0)
-        gAIData->logic[side].aiFlags |= (AI_FLAG_CHECK_GOOD_MOVE | AI_FLAG_CHECK_BAD_MOVE);
+        return;
+    }
+    gAIData->logic[side].aiFlags |= (AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_CHECK_GOOD_MOVE);
 }
 
 void BattleAI_SetupAILogicData(void)
@@ -95,6 +102,7 @@ static void SetBattlerData(u32 attacker)
     for (defender = 0; defender < gBattlersCount; defender++)
     {
         s32 maxDmg = 0;
+        u32 maxDmgMove = MOVE_NONE;
         
         if (attacker != defender && IsBattlerAlive(defender))
         {
@@ -110,14 +118,18 @@ static void SetBattlerData(u32 attacker)
                     
                     gAIData->thinking[attacker].targets[defender].totalAccuracy[i] = CalcMoveTotalAccuracy(move, attacker, defender);
                     gAIData->thinking[attacker].targets[defender].effectiveness[i] = TypeCalc(move, moveType, attacker, defender, FALSE, FALSE, &flags);
-                    dmg = AI_CalcMoveDamage(move, attacker, defender, moveType, gAIData->thinking[attacker].targets[defender].effectiveness[i]);
+                    dmg = AI_CalcMoveDamage(move, i, attacker, defender, moveType, gAIData->thinking[attacker].targets[defender].effectiveness[i]);
                     
                     if (dmg > maxDmg)
+                    {
                         maxDmg = dmg;
+                        maxDmgMove = move;
+                    }
                 }
                 gAIData->thinking[attacker].targets[defender].simulatedDmg[i] = dmg;
             }
         }
+        gAIData->thinking[attacker].targets[defender].higherDamageMove = maxDmgMove;
         gAIData->thinking[attacker].targets[defender].higherDamage = maxDmg;
     }
 }
@@ -189,13 +201,11 @@ void BattleAI_ComputeMovesScore(u32 battlerId)
 
 static void BattleAI_InitMovesScore(u32 battlerId)
 {
-    u32 i, j;
+    u32 i;
     
     for (i = 0; i < MAX_MON_MOVES; i++)
-    {
         gAIData->thinking[battlerId].score[i] = (gAIData->thinking[battlerId].moveLimitations & Bit(i)) ? 0 : DEFAULT_MOVE_SCORE;
-        gAIData->thinking[battlerId].simulatedRNG[i] = 100 - (Random() % 16);
-    }
+
     gAIData->thinking[battlerId].action = 0;
     gBattleStruct->battlers[battlerId].aiChosenTarget = gBattlerTarget = SetRandomTarget(battlerId);
 }

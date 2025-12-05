@@ -13831,7 +13831,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_KINGS_SHIELD] =
     {
         .name = COMPOUND_STRING("-"),
-        .effect = EFFECT_PROTECT,
+        .effect = EFFECT_KINGS_SHIELD,
         .type = TYPE_STEEL,
         .pp = 10,
         .target = MOVE_TARGET_USER,
@@ -17401,7 +17401,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_INFERNAL_PARADE] =
     {
         .name = COMPOUND_STRING("-"),
-        .effect = EFFECT_PLACEHOLDER, // EFFECT_INFERNAL_PARADE,
+        .effect = EFFECT_INFERNAL_PARADE,
         .power = 60,
         .type = TYPE_GHOST,
         .accuracy = 100,

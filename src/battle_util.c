@@ -1794,11 +1794,6 @@ void TryClearRageStatuses(void)
     }
 }
 
-static inline void SetRandomMultiHitCounter(void)
-{
-    gMultiHitCounter = RandomWeighted(RNG_HITS, 0, 0, 7, 7, 3, 3); // 35%: 2 hits, 35%: 3 hits, 15% 4 hits, 15% 5 hits.
-}
-
 u32 GetNumBeatUpHits(u32 battler)
 {
     u32 i, numHits;
@@ -2233,14 +2228,14 @@ u32 AtkCanceller_UnableToUseMove(void)
                         else if (GetBattlerAbility(gBattlerAttacker) == ABILITY_SKILL_LINK)
                             gMultiHitCounter = 5;
                         else
-                            SetRandomMultiHitCounter();
+                            gMultiHitCounter = RandomWeighted(RNG_HITS, 0, 0, 7, 7, 3, 3); // 35%: 2 hits, 35%: 3 hits, 15% 4 hits, 15% 5 hits.
                         
                         PrepareByteNumberBuffer(gBattleScripting.multihitString, 1, 0);
                     }
                     else if (gBattleMoves[gCurrentMove].effect == EFFECT_BEAT_UP)
                     {
+                        gBattleScripting.beatUpHitCounter = 0;
                         gMultiHitCounter = GetNumBeatUpHits(gBattlerAttacker);
-                        gBattleCommunication[MULTIUSE_STATE] = 0; // For later
                         PrepareByteNumberBuffer(gBattleScripting.multihitString, 1, 0);
                     }
                     else if (gBattleMoves[gCurrentMove].strikeCount > 1)
@@ -2444,7 +2439,7 @@ bool32 CanAbilityBlockMove(u32 move, u32 attacker, u32 target, bool32 onlyChecki
     return blocked;
 }
 
-bool32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u32 target, bool32 onlyChecking)
+u32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u32 target, bool32 onlyChecking)
 {
     u32 statId, statAmount, effect = 0;
     
@@ -2576,8 +2571,14 @@ bool32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u
                     break;
             }
         }
+        else
+        {
+            // Basically for AI raising partner's stats
+            if (effect == 2 && IsBattlerAlly(attacker, target) && !CompareStat(target, statId, MAX_STAT_STAGES, CMP_NOT_EQUAL))
+                effect = 0;
+        }
     }
-    return (effect != 0);
+    return effect;
 }
 
 u32 AbilityBattleEffects(u32 caseId, u32 battler)
@@ -6155,7 +6156,7 @@ u32 FindMoveSlotInBattlerMoveset(u32 battlerId, u32 move)
 
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
-        if (gBattleMons[battlerId].moves[i] == move)
+        if (gBattleMons[battlerId].moves[i] && gBattleMons[battlerId].moves[i] == move)
             break;
     }
     return i;
@@ -6228,14 +6229,17 @@ bool32 IsMultiBattle(void)
 
 bool32 IsDoubleBattleForBattler(u32 battler)
 {
-    u32 battlerSide = GetBattlerSide(battler);
-    
-    if ((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && battlerSide == B_SIDE_PLAYER)
-        return FALSE;
-    else if ((gBattleTypeFlags & BATTLE_TYPE_ONE_VS_TWO) && battlerSide == B_SIDE_OPPONENT)
-        return FALSE;
+    if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+    {
+        if (gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE)
+            return FALSE;
+    }
     else
-        return (gBattleTypeFlags & BATTLE_TYPE_DOUBLE);
+    {
+        if (gBattleTypeFlags & BATTLE_TYPE_ONE_VS_TWO)
+            return FALSE;
+    }
+    return (gBattleTypeFlags & BATTLE_TYPE_DOUBLE);
 }
 
 bool32 IsPlayerBagDisabled(void)
@@ -6247,14 +6251,14 @@ bool32 IsPlayerBagDisabled(void)
 
 bool32 CanTargetBattler(u32 attacker, u32 defender, u32 move, u32 moveTarget)
 {
-    bool32 isTargetAlly = IsBattlerAlly(attacker, defender);
-    
-    if (moveTarget == MOVE_TARGET_SELECTED_OPPONENT && isTargetAlly)
-        return FALSE; // Can only target opponents, not allies
-    else if (gBattleMoves[move].effect == EFFECT_HIT_ENEMY_HEAL_ALLY && isTargetAlly && (gStatuses3[defender] & STATUS3_HEAL_BLOCK))
-        return FALSE; // Pokémon affected by Heal Block cannot target allies with Pollen Puff
-    else
-        return TRUE;
+    if (IsBattlerAlly(attacker, defender))
+    {
+        if (moveTarget == MOVE_TARGET_SELECTED_OPPONENT)
+            return FALSE; // Can only target opponents, not allies
+        else if (gBattleMoves[move].effect == EFFECT_HIT_ENEMY_HEAL_ALLY && (gStatuses3[defender] & STATUS3_HEAL_BLOCK))
+            return FALSE; // Pokémon affected by Heal Block cannot target allies with Pollen Puff
+    }
+    return TRUE;
 }
 
 bool32 CanReceiveBadgeBoost(u32 battlerId, u32 flagId)
@@ -6777,4 +6781,9 @@ bool32 TryPrimalReversion(u32 battler)
 bool32 BattlerTurnDamaged(u32 battlerId)
 {
     return (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && BATTLER_DAMAGED(battlerId) && !gProtectStructs[gBattlerAttacker].confusionSelfDmg);
+}
+
+bool32 IsRaidBoss(u32 battlerId)
+{
+    return FALSE;
 }

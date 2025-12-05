@@ -322,6 +322,7 @@ enum
 #define EFFECT_FUSION_COMBO                 393
 #define EFFECT_FELL_STINGER 400
 #define EFFECT_INFERNAL_PARADE 401
+#define EFFECT_KINGS_SHIELD 402
 #define EFFECT_PLACEHOLDER 0
 
 #include "constants/move_effect_bytes.h"

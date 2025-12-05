@@ -25,10 +25,10 @@ SINGLE_BATTLE_TEST("Sky Drop fails if target is behind a substitute")
 DOUBLE_BATTLE_TEST("Sky Drop fails if used on ally")
 {
     GIVEN {
-        ASSUME(gSpeciesInfo[SPECIES_WOBBUFFET].weight < 2000);
+        ASSUME(gSpeciesInfo[SPECIES_BULBASAUR].weight < 2000);
         
         PLAYER(SPECIES_WOBBUFFET);
-        PLAYER(SPECIES_WOBBUFFET);
+        PLAYER(SPECIES_BULBASAUR);
         
         OPPONENT(SPECIES_WOBBUFFET);
         OPPONENT(SPECIES_WOBBUFFET);

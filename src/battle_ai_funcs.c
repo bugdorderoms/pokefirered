@@ -5,19 +5,25 @@
 #include "battle_move_effects.h"
 #include "battle_util.h"
 #include "battle_secondary_effect.h"
+#include "item.h"
 #include "random.h"
 #include "constants/hold_effects.h"
 #include "constants/moves.h"
 
+static s8 BattleAI_CheckTargetContactAbility(struct AIScript *data, s8 score);
 static s8 BattleAIFunc_Partner(struct AIScript *data, s8 score);
-static s8 DamageMoveScoreIncrease(struct AIScript *data, s8 score);
+static s8 BattleAI_DamageMoveScoreIncrease(struct AIScript *data, s8 score);
 
 ////////////////////////////
 // SCORE CHANGE FUNCTIONS //
 ////////////////////////////
 
-static inline s8 ChangeScore(s8 score, s8 val)
+static s8 ChangeScore(s8 score, s8 val)
 {
+    // Double decreases in doubles
+    if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && val < 0)
+        val *= 2;
+    
     return clamp(score + val, 0, 127);
 }
 
@@ -27,28 +33,6 @@ static inline s8 ChangeScore(s8 score, s8 val)
 ////////////////////////////
 // AI_FLAG_CHECK_BAD_MOVE //
 ////////////////////////////
-
-// Extra args are primary, affectsUser and flags, see DoMoveEffect for more info
-#define CHECK_EFFECT_BLOCK(moveEffect, ...) \
-    ((CheckSecondaryEffectsBlockers(data->attacker, data->target, data->move, moveEffect, DEFAULT_2(FALSE, __VA_ARGS__), DEFAULT(FALSE, __VA_ARGS__), DEFAULT_3(0, __VA_ARGS__))))
-
-// set burn:
-//  + if def has physical move
-//  + if user has a protection move
-//  + if user has a move effect that benefit from that, like Hex
-// 
-// set freeze:
-//  + if user has a move effect that benefit from that, like Hex
-// 
-// set paralyze:
-//  + if user is lower than the def
-//  + if user has a protection move
-//  + if user has a move effect that benefit from that, like Hex
-
-// Increase score based on power, speed, effectiveness, accuracy, crit stages and maybe num of hits to ko the target
-// Check substitute
-// Make ai recognize Protean and Libero, maybe on the damage calc
-// Make ai try predict an protection move
 
 s8 BattleAIFunc_CheckBadMove(struct AIScript *data, s8 score)
 {
@@ -61,53 +45,24 @@ s8 BattleAIFunc_CheckBadMove(struct AIScript *data, s8 score)
         if (AI_IsTargetFullyImmuneToMove(data))
             RETURN_SCORE(-10);
         
-        // Target ability check
-        switch (data->defAbility)
-        {
-            case ABILITY_MAGIC_BOUNCE:
-                if (gBattleMoves[data->move].flags.magicCoatAffected)
-                    CHANGE_SCORE(-20);
-                break;
-            case ABILITY_DEFIANT:
-                if (data->moveSplit != SPLIT_STATUS && !data->targetingPartner && data->moveType == TYPE_DARK && CompareStat(data->target, STAT_ATK, MAX_STAT_STAGES, CMP_NOT_EQUAL)
-                && AI_GetNoOfHitsToKOBattler(data) > 2 && AI_BattlerHasPhysicalMove(data->target))
-                    CHANGE_SCORE(-4);
-                break;
-            case ABILITY_RATTLED:
-                if (data->moveSplit != SPLIT_STATUS && !data->targetingPartner && (data->moveType == TYPE_DARK || data->moveType == TYPE_GHOST || data->moveType == TYPE_BUG)
-                && CompareStat(data->target, STAT_SPEED, MAX_STAT_STAGES, CMP_NOT_EQUAL) && AI_GetNoOfHitsToKOBattler(data) > 1 && AI_IsFaster(data->attacker, data->target))
-                {
-                    if (AI_GetNoOfHitsToKOBattler(data) <= 2)
-                        CHANGE_SCORE(-1); // Risk it, but not best choice because foe might outspeed and strike back harder
-                    else
-                        CHANGE_SCORE(-9); // Don't risk raising enemy stats
-                }
-                break;
-            case ABILITY_STEAM_ENGINE:
-                if (data->moveSplit != SPLIT_STATUS && !data->targetingPartner && (data->moveType == TYPE_WATER || data->moveType == TYPE_FIRE)
-                && CompareStat(data->target, STAT_SPEED, MAX_STAT_STAGES, CMP_NOT_EQUAL) && AI_GetNoOfHitsToKOBattler(data) > 1 && AI_IsFaster(data->attacker, data->target))
-                {
-                    if (AI_GetNoOfHitsToKOBattler(data) <= 2)
-                        CHANGE_SCORE(-5); // Not best choice because foe might outspeed and strike back harder
-                    else
-                        CHANGE_SCORE(-9); // Don't risk raising enemy stats
-                }
-                break;
-            case ABILITY_ANGER_SHELL:
-                if (data->moveSplit != SPLIT_STATUS && !data->targetingPartner && AI_GetNoOfHitsToKOBattler(data) <= 2)
-                    CHANGE_SCORE(-11); // Don't risk raising enemy stats
-                break;
-        }
+        // Target ability checks
+        if (data->defAbility == ABILITY_MAGIC_BOUNCE && gBattleMoves[data->move].flags.magicCoatAffected)
+            CHANGE_SCORE(-20);
         
-        // Make sure partner isn't going to steal move
-        if (!data->targetingPartner && data->moveTarget != MOVE_TARGET_ALL_BATTLERS && data->moveTarget != MOVE_TARGET_FOES_AND_ALLY && data->moveTarget != MOVE_TARGET_BOTH
-        && IsMoveAffectedByRedirectionEffects(data->attacker, data->move) && CanAbilityAbsorbMove(data->defAbility, data->move, data->moveType, data->attacker, data->target, TRUE))
-            RETURN_SCORE(-10); // Only 10 because wouldn't be so bad to hit partner
+        if (!data->targetingPartner)
+        {
+            score = BattleAI_CheckTargetContactAbility(data, score);
+            
+            // Make sure partner isn't going to steal move
+            if (data->moveTarget != MOVE_TARGET_ALL_BATTLERS && data->moveTarget != MOVE_TARGET_FOES_AND_ALLY && data->moveTarget != MOVE_TARGET_BOTH
+            && IsMoveAffectedByRedirectionEffects(data->attacker, data->move) && CanAbilityAbsorbMove(data->defAbility, data->move, data->moveType, data->attacker, data->target, TRUE))
+                RETURN_SCORE(-10); // Only 10 because wouldn't be so bad to hit partner
+        }
     }
     
-    // Primal weather check
     if (data->moveSplit != SPLIT_STATUS)
     {
+        // Primal weather check
         switch (data->moveType)
         {
             case TYPE_FIRE:
@@ -120,20 +75,124 @@ s8 BattleAIFunc_CheckBadMove(struct AIScript *data, s8 score)
                 break;
         }
     }
-    
+    else
+    {
+        if (gBattleMoves[gAIData->thinking[data->attacker].partnerMove].effect == EFFECT_HELPING_HAND)
+            CHANGE_SCORE(-10); // Don't use a status move if partner wants to help
+    }
+
     // Check move effects
     switch (gBattleMoves[data->move].effect)
     {
         case EFFECT_OHKO:
-            if ((GetActiveGimmick(data->target) == GIMMICK_DYNAMAX && !HasRaidShields(data->target)) || data->defAbility == ABILITY_STURDY
-            || !KanOHKOBattler(data->attacker, data->target, data->move, FALSE))
+            if (data->defAbility == ABILITY_STURDY || !CanOHKOBattler(data->attacker, data->target, data->move))
                 CHANGE_SCORE(-10);
             break;
+        case EFFECT_TWO_TURNS_ATTACK:
+            if (data->atkHoldEffect != HOLD_EFFECT_POWER_HERB && !CheckIfCanFireTwoTurnMoveNow(data->attacker, data->move, TRUE)) // Will not attack immediately
+            {
+                if (gBattleMons[data->attacker].hp <= (gBattleMons[data->attacker].maxHP / 8))
+                    CHANGE_SCORE(-10); // Can faint from secondary damage while charging, so don't risk it
+                
+                if (gBattleMons[data->target].status1.id != STATUS1_PARALYSIS && gBattleMons[data->target].status1.id != STATUS1_FREEZE // Target won't randomly not be able to attack
+                && !(gBattleMons[data->target].status1.id == STATUS1_SLEEP && gBattleMons[data->target].status1.counter > 1) // Target is awake (not that they could wake up and protect for the second turn but that's fair and not AI abuse)
+                && (gBattleMons[data->target].status2 & STATUS2_CONFUSION) < STATUS2_CONFUSION_TURN(3) // Target wouldn't be confused when the attack would hit
+                && !(gBattleMons[data->target].status2 & STATUS2_INFATUATION)) // Target wouldn't miss the attack since they'll never be immobilized by love
+                {
+                    // Target could protect before the attack hits and the protecting is reasonable
+                    if (AI_BattlerHasProtectionMoveInMoveset(data->target) && !(gBattleMons[data->target].hp <= (gBattleMons[data->target].maxHP / 8)))
+                        CHANGE_SCORE(-8); // Better not to use this attack, but still can if need be
+                    else if (gAIData->thinking[data->attacker].predictedMove)
+                    {
+                        // Check if attacker can be knocked out before it can attack
+                        if (AI_IsFaster(data->attacker, data->target)) // Charge -> Target Attack -> Charge Release
+                        {
+                            if (AI_GetNoOfHitsToKOBattlerHigherDamage(data->attacker, data->target) < 2)
+                                CHANGE_SCORE(-4);
+                        }
+                        else // Target Attack -> Charge -> Target Attack -> Charge Release
+                        {
+                            if (AI_GetNoOfHitsToKOBattlerHigherDamage(data->attacker, data->target) <= 2)
+                                CHANGE_SCORE(-8); // You're slower so probably not a good idea
+                        }
+                    }
+                }
+            }
+            break;
+        case EFFECT_USER_ATTACK_UP_2:
+            if (AI_WillMoveBeLockedWhenUsed(data))
+                CHANGE_SCORE(-10); // Don't set up when potential to be choice locked
+            else if (data->atkAbility == ABILITY_CONTRARY || CompareStat(data->attacker, STAT_ATK, MAX_STAT_STAGES, CMP_EQUAL) || !AI_BattlerHasPhysicalMove(data->attacker))
+                CHANGE_SCORE(-10);
+            break;
+        /*case EFFECT_RANDOM_SWITCH:
+            if (AI_PartnerMoveEffectIsSame(data))
+                CHANGE_SCORE(-10); // Don't blow out the same Pokemon twice
+            else if (gBattleMons[data->target].hp <= (gBattleMons[data->target].maxHP / 8) || (gBattleMons[data->target].status2 & (STATUS2_NIGHTMARE | STATUS2_CURSED))
+                || (gStatuses3[data->target] & (STATUS3_LEECHSEED | STATUS3_ROOTED)) || gBattleMons[data->target].status1.id == STATUS1_TOXIC_POISON
+                || gBattleMons[data->target].status1.id == STATUS1_POISON || gDisableStructs[data->target].wrapTurns > 0)
+                CHANGE_SCORE(-10); // Don't blow out a Pokemon that HP is low, or is taking bad secondary damage
+            else if (data->defAbility == ABILITY_SUCTION_CUPS || data->defAbility == ABILITY_GUARD_DOG || !CanBattlerSwitch(data->target))
+                CHANGE_SCORE(-10);
+            break;*/
     }
-    
-    if (gBattleMoves[gAIData->thinking[data->attacker].partnerMove].effect == EFFECT_HELPING_HAND && data->moveSplit != SPLIT_STATUS)
-        CHANGE_SCORE(-10); // Don't use a status move if partner wants to help
-    
+    return score;
+}
+
+static s8 BattleAI_CheckTargetContactAbility(struct AIScript *data, s8 score)
+{
+    switch (data->defAbility)
+    {
+        case ABILITY_DEFIANT:
+            if (data->moveSplit != SPLIT_STATUS && data->moveType == TYPE_DARK && CompareStat(data->target, STAT_ATK, MAX_STAT_STAGES, CMP_NOT_EQUAL)
+            && AI_GetNoOfHitsToKOTarget(data) > 2 && AI_BattlerHasPhysicalMove(data->target))
+            {
+                if (data->targetingPartner)
+                    CHANGE_SCORE(6);
+                else
+                    CHANGE_SCORE(-4);
+            }
+            break;
+        case ABILITY_RATTLED:
+            if (data->moveSplit != SPLIT_STATUS && (data->moveType == TYPE_DARK || data->moveType == TYPE_GHOST || data->moveType == TYPE_BUG)
+            && CompareStat(data->target, STAT_SPEED, MAX_STAT_STAGES, CMP_NOT_EQUAL) && AI_GetNoOfHitsToKOTarget(data) > 1 && AI_IsFaster(data->attacker, data->target))
+            {
+                if (data->targetingPartner)
+                    CHANGE_SCORE(6);
+                else
+                {
+                    if (AI_GetNoOfHitsToKOTarget(data) <= 2)
+                        CHANGE_SCORE(-1); // Risk it, but not best choice because foe might outspeed and strike back harder
+                    else
+                        CHANGE_SCORE(-9); // Don't risk raising enemy stats
+                }
+            }
+            break;
+        case ABILITY_STEAM_ENGINE:
+            if (data->moveSplit != SPLIT_STATUS && (data->moveType == TYPE_WATER || data->moveType == TYPE_FIRE)
+            && CompareStat(data->target, STAT_SPEED, MAX_STAT_STAGES, CMP_NOT_EQUAL) && AI_GetNoOfHitsToKOTarget(data) > 1 && AI_IsFaster(data->attacker, data->target))
+            {
+                if (data->targetingPartner)
+                    CHANGE_SCORE(6);
+                else
+                {
+                    if (AI_GetNoOfHitsToKOTarget(data) <= 2)
+                        CHANGE_SCORE(-5); // Not best choice because foe might outspeed and strike back harder
+                    else
+                        CHANGE_SCORE(-9); // Don't risk raising enemy stats
+                }
+            }
+            break;
+        case ABILITY_ANGER_SHELL:
+            if (data->moveSplit != SPLIT_STATUS && AI_GetNoOfHitsToKOTarget(data) <= 2)
+            {
+                if (data->targetingPartner)
+                    CHANGE_SCORE(8);
+                else
+                    CHANGE_SCORE(-11); // Don't risk raising enemy stats
+            }
+            break;
+    }
     return score;
 }
 
@@ -141,19 +200,56 @@ s8 BattleAIFunc_CheckBadMove(struct AIScript *data, s8 score)
 // AI_FLAG_CHECK_GOOD_MOVE //
 /////////////////////////////
 
+// Extra args are primary, affectsUser and flags, see DoMoveEffect for more info
+#define CHECK_EFFECT_BLOCK(moveEffect, ...) \
+    ((CheckSecondaryEffectsBlockers(data->attacker, data->target, data->move, moveEffect, DEFAULT_2(FALSE, __VA_ARGS__), DEFAULT(FALSE, __VA_ARGS__), DEFAULT_3(0, __VA_ARGS__))))
+
 s8 BattleAIFunc_CheckGoodMove(struct AIScript *data, s8 score)
 {
     if (IsDoubleBattleForBattler(data->attacker) && data->targetingPartner)
-        return BattleAIFunc_Partner(data, score);
+        return BattleAIFunc_Partner(data, score); // Check good move on partner
     
+    // Check move effects
     switch (gBattleMoves[data->move].effect)
     {
-        case EFFECT_HIT:
+        case EFFECT_USER_ATTACK_UP_2:
+            if (data->atkAbility != ABILITY_CONTRARY && AI_GoodIdeaToRaiseAttackAgainstTarget(data, 2))
+                CHANGE_SCORE(5);
             break;
+        /*case EFFECT_RANDOM_SWITCH:
+            if (!SubsBlockMove(data->attacker, data->target, data->move) && AI_ShouldPhaze())*/
+    }
+    
+    // Check move secondary effects
+    if (!ReceiveSheerForceBoost(data->attacker, data->move))
+    {
+        u32 i;
+        
+        for (i = 0; i < gBattleMoves[data->move].numAdditionalEffects; i++)
+        {
+            const struct AdditionalEffect *additionalEffect = &gBattleMoves[data->move].additionalEffects[i];
+            u32 effectChance = additionalEffect->chance == 0 ? 100 : CalcSecondaryEffectChance(data->attacker, additionalEffect->moveEffect, additionalEffect->chance);
+            
+            switch (additionalEffect->moveEffect)
+            {
+                case MOVE_EFFECT_BURN:
+                    if (effectChance >= 75 && !CHECK_EFFECT_BLOCK(additionalEffect->moveEffect, FALSE, additionalEffect->self) && !AI_BadIdeaToBurn(data))
+                        CHANGE_SCORE(AI_GetScoreForInflictBurn(data));
+                    break;
+                case MOVE_EFFECT_FREEZE:
+                    if (effectChance >= 75 && !CHECK_EFFECT_BLOCK(additionalEffect->moveEffect, FALSE, additionalEffect->self) && !AI_BadIdeaToFreeze(data))
+                        CHANGE_SCORE(AI_GetScoreForInflictFreeze(data));
+                    break;
+                case MOVE_EFFECT_PARALYSIS:
+                    if (effectChance >= 75 && !CHECK_EFFECT_BLOCK(additionalEffect->moveEffect, FALSE, additionalEffect->self) && !AI_BadIdeaToParalyze(data))
+                        CHANGE_SCORE(AI_GetScoreForInflictParalysis(data));
+                    break;
+            }
+        }
     }
     
     if (data->moveSplit != SPLIT_STATUS)
-        score = DamageMoveScoreIncrease(data, score);
+        score = BattleAI_DamageMoveScoreIncrease(data, score);
     
     if (gBattleMons[data->attacker].status1.id == STATUS1_FREEZE && gBattleMoves[data->move].flags.thawUser)
     {
@@ -165,13 +261,50 @@ s8 BattleAIFunc_CheckGoodMove(struct AIScript *data, s8 score)
     return score;
 }
 
-static s8 DamageMoveScoreIncrease(struct AIScript *data, s8 score)
+static s8 BattleAI_DamageMoveScoreIncrease(struct AIScript *data, s8 score)
 {
     return score;
 }
 
 static s8 BattleAIFunc_Partner(struct AIScript *data, s8 score)
 {
+    if ((!gBattleMoves[gAIData->thinking[data->attacker].partnerMove].flags.usesProtectCounter || gBattleMoves[data->move].flags.forbiddenProtect)
+    && data->moveTarget != MOVE_TARGET_BOTH && data->moveTarget != MOVE_TARGET_SELECTED_OPPONENT)
+    {
+        // Check target ability absorbs move
+        switch (CanAbilityAbsorbMove(data->defAbility, data->move, data->moveType, data->attacker, data->target, TRUE))
+        {
+            case 1:
+                if (gBattleMons[data->target].hp <= ((gBattleMons[data->target].maxHP * 2) / 3)) // Only try heal if 2/3 or less HP
+                {
+                    if (gBattleStruct->battlers[data->target].chosenAction == B_ACTION_USE_ITEM)
+                    {
+                        u32 item = gBattleBufferB[data->target][1] | (gBattleBufferB[data->target][2] << 8);
+                        
+                        // Don't heal with move when item is already being used to heal
+                        if (ItemId_GetBattleUsage(item) == EFFECT_ITEM_RESTORE_HP)
+                            break;
+                    }
+                    CHANGE_SCORE(15);
+                }
+                break;
+            case 2:
+                CHANGE_SCORE(6);
+                break;
+            case 3:
+                if (!gDisableStructs[data->target].flashFireBoost && !AI_HasDamagingMoveWithTypeInMoveset(data->target, data->moveType))
+                    CHANGE_SCORE(6);
+                break;
+        }
+        score = BattleAI_CheckTargetContactAbility(data, score);
+        
+        // Check move effects
+        switch (gBattleMoves[data->move].effect)
+        {
+            case EFFECT_HOWL:
+                break;
+        }
+    }
     return score;
 }
 

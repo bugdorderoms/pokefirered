@@ -1993,6 +1993,8 @@ static void ClearBattlerEffectsOnFaintOrSwitch(u32 battlerId)
     gBattleStruct->battlers[battlerId].choicedMove = MOVE_NONE;
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         gBattleStruct->battlers[battlerId].lastTakenMoveFrom[i] = MOVE_NONE;
+    
+    AI_ClearRecordedMovesByBattler(battlerId);
 }
 
 static void BattleStartClearSetData(void)

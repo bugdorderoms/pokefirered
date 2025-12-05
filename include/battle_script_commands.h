@@ -3,6 +3,14 @@
 
 #include "global.h"
 
+// For AccuracyCalcHelper
+enum
+{
+    ACCURACY_STATE_NORMAL,
+    ACCURACY_STATE_MISSES,
+    ACCURACY_STATE_HITS
+};
+
 enum
 {
     CANCELLER_FLAGS,
@@ -51,9 +59,8 @@ enum
 #define WINDOW_CLEAR            0x1
 #define WINDOW_x80              0x80
 
-u32 GetHitDamageResult(u32 battlerId, u32 move, bool32 checkSturdy);
-u16 GetOHKOChance(u32 attacker, u32 target, u32 move);
-bool32 KanOHKOBattler(u32 attacker, u32 target, u32 move, bool32 checkKOAcc);
+bool32 CanOHKOBattler(u32 attacker, u32 target, u32 move);
+bool32 CheckIfCanFireTwoTurnMoveNow(u32 battlerId, u32 move, bool32 checkChargeTurnEffects);
 bool32 JumpIfMoveAffectedByProtect(const u8 *nextInstr, const u8 *jumpStr);
 bool32 IsMonGettingExpSentOut(void);
 void BattleCreateYesNoCursorAt(void);
@@ -61,6 +68,7 @@ void BattleDestroyYesNoCursorAt(void);
 void HandleBattleWindow(u32 xStart, u32 yStart, u32 xEnd, u32 yEnd, u32 flags);
 void BufferMoveToLearnIntoBattleTextBuff2(void);
 u32 GetCurrentLevelCapLevel(void);
+u32 AccuracyCalcHelper(u32 battlerIdAtk, u32 battlerIdDef, u32 move, const u8 *nextInstr, const u8 *jumpStr);
 u32 CalcMoveTotalAccuracy(u32 move, u32 attacker, u32 defender);
 
 extern void (* const gBattleScriptingCommandsTable[])(void);

@@ -335,7 +335,7 @@
 	.4byte \value
 	.endm
 
-	.macro jumpifweathercheckchargeeffects battler:req, checkChargeTurnEffects:req, jumpInstr:req
+	.macro jumpifcanfiretwoturnmovenow battler:req, checkChargeTurnEffects:req, jumpInstr:req
 	.byte 0x3a
 	.byte \battler
 	.byte \checkChargeTurnEffects
@@ -2024,4 +2024,12 @@
 	.macro updategimmickindicator battler:req
 	resetgimmickinprogress \battler
 	updatehealthboxattribute \battler, HEALTHBOX_ALL
+	.endm
+	
+	.macro tryfiretwoturnmovewithoutcharging battler:req, jumpPtr:req
+	jumpifcanfiretwoturnmovenow \battler, TRUE, \jumpPtr
+	.endm
+	
+	.macro tryfiretwoturnmoveaftercharging battler:req, jumpPtr:req
+	jumpifcanfiretwoturnmovenow \battler, FALSE, \jumpPtr
 	.endm

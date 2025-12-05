@@ -157,13 +157,7 @@ static u32 TryPassOnWish(u32 battlerId, u8 *viableMons, u32 availableToSwitch, u
         
         if (gBattleMons[battlerId].hp < gBattleMons[battlerId].maxHP / 2)
         {
-            bool32 dontSwitch;
-            
-            if (AI_GetNoOfHitsToKOBattlerHigherDamage(opposingBattler, battlerId) > 1)
-                return NO_SWITCH;
-            
-            AI_BattlerHasMoveWithFlagInMoveset(dontSwitch, battlerId, usesProtectCounter)
-            if (dontSwitch)
+            if (AI_GetNoOfHitsToKOBattlerHigherDamage(opposingBattler, battlerId) > 1 || AI_BattlerHasProtectionMoveInMoveset(battlerId))
                 return NO_SWITCH;
         }
         

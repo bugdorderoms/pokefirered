@@ -152,7 +152,7 @@ static void atk36_orword(void);
 static void atk37_bicbyte(void);
 static void atk38_bichalfword(void);
 static void atk39_bicword(void);
-static void atk3A_jumpifweathercheckchargeeffects(void);
+static void atk3A_jumpifcanfiretwoturnmovenow(void);
 static void atk3B_setstatusfromargument(void);
 static void atk3C_return(void);
 static void atk3D_end(void);
@@ -411,7 +411,7 @@ void (* const gBattleScriptingCommandsTable[])(void) =
     atk37_bicbyte,
     atk38_bichalfword,
     atk39_bicword,
-    atk3A_jumpifweathercheckchargeeffects,
+    atk3A_jumpifcanfiretwoturnmovenow,
     atk3B_setstatusfromargument,
     atk3C_return,
     atk3D_end,
@@ -985,42 +985,48 @@ bool32 JumpIfMoveAffectedByProtect(const u8 *nextInstr, const u8 *jumpStr)
     return FALSE;
 }
 
-static bool32 AccuracyCalcHelper(const u8 *nextInstr, const u8 *jumpStr)
+u32 AccuracyCalcHelper(u32 battlerIdAtk, u32 battlerIdDef, u32 move, const u8 *nextInstr, const u8 *jumpStr)
 {
-    if (gStatuses3[gBattlerTarget] & STATUS3_COMMANDING)
-    {
-        gMoveResultFlags |= MOVE_RESULT_MISSED;
-        JumpIfMoveFailed(nextInstr, jumpStr);
-    }
-    else if ((gStatuses3[gBattlerAttacker] & STATUS3_ALWAYS_HITS) && gDisableStructs[gBattlerAttacker].battlerWithSureHit == gBattlerTarget) // Check Lock On
-        JumpIfMoveFailed(nextInstr, jumpStr);
-    else if (GetBattlerAbility(gBattlerAttacker) == ABILITY_NO_GUARD || GetBattlerAbility(gBattlerTarget) == ABILITY_NO_GUARD) // Check No Guard
-        JumpIfMoveFailed(nextInstr, jumpStr);
-    else if (IsBattlerOfType(gBattlerAttacker, TYPE_POISON) && gCurrentMove == MOVE_TOXIC)
-        JumpIfMoveFailed(nextInstr, jumpStr);
-    else if ((!gBattleMoves[gCurrentMove].flags.hitInAir && !gBattleMoves[gCurrentMove].flags.hitInAirDoubleDmg && (gStatuses3[gBattlerTarget] & (STATUS3_ON_AIR | STATUS3_SKY_DROPPED)))
-        || (!gBattleMoves[gCurrentMove].flags.hitUnderground && (gStatuses3[gBattlerTarget] & STATUS3_UNDERGROUND))
-        || (!gBattleMoves[gCurrentMove].flags.hitUnderwater && (gStatuses3[gBattlerTarget] & STATUS3_UNDERWATER))
-        || (gStatuses3[gBattlerTarget] & STATUS3_VANISHED)) // Check if semi-invulnerable
-    {
-        gMoveResultFlags |= MOVE_RESULT_MISSED;
-        JumpIfMoveFailed(nextInstr, jumpStr);
-    }
-    else if (gBattleMoves[gCurrentMove].effect == EFFECT_NEVER_MISS_IN_WEATHER && IsBattlerWeatherAffected(gBattlerAttacker, gBattleMoves[gCurrentMove].argument.neverMissInWeather.weather)) // Check never misses on weather
-        JumpIfMoveFailed(nextInstr, jumpStr);
-    else if ((gStatuses3[gBattlerTarget] & STATUS3_MINIMIZED) && gBattleMoves[gCurrentMove].flags.dmgMinimize) // Check never misses on minimize 
-        JumpIfMoveFailed(nextInstr, jumpStr);
-    else if ((gStatuses3[gBattlerTarget] & STATUS3_TELEKINESIS) && gBattleMoves[gCurrentMove].effect != EFFECT_OHKO) // Check Telekinesis
-        JumpIfMoveFailed(nextInstr, jumpStr);
-    else if ((GetBattlerAbility(gBattlerTarget) == ABILITY_LIGHTNING_ROD && gBattleStruct->dynamicMoveType == TYPE_ELECTRIC)
-        || (GetBattlerAbility(gBattlerTarget) == ABILITY_STORM_DRAIN && gBattleStruct->dynamicMoveType == TYPE_WATER)) // Check ability redirected
-        JumpIfMoveFailed(nextInstr, jumpStr);
-    else if (!gBattleMoves[gCurrentMove].accuracy) // Check moves that never misses
-        JumpIfMoveFailed(nextInstr, jumpStr);
-    else
-        return FALSE;
+    u32 state = ACCURACY_STATE_NORMAL;
     
-    return TRUE;
+    if (gStatuses3[battlerIdDef] & STATUS3_COMMANDING)
+        state = ACCURACY_STATE_MISSES;
+    else if ((gStatuses3[battlerIdAtk] & STATUS3_ALWAYS_HITS) && gDisableStructs[battlerIdAtk].battlerWithSureHit == battlerIdDef)
+        state = ACCURACY_STATE_HITS;
+    else if (GetBattlerAbility(battlerIdAtk) == ABILITY_NO_GUARD || GetBattlerAbility(battlerIdDef) == ABILITY_NO_GUARD)
+        state = ACCURACY_STATE_HITS;
+    else if (IsBattlerOfType(battlerIdAtk, TYPE_POISON) && move == MOVE_TOXIC)
+        state = ACCURACY_STATE_HITS;
+    else if ((!gBattleMoves[move].flags.hitInAir && !gBattleMoves[move].flags.hitInAirDoubleDmg && (gStatuses3[battlerIdDef] & (STATUS3_ON_AIR | STATUS3_SKY_DROPPED)))
+        || (!gBattleMoves[move].flags.hitUnderground && (gStatuses3[battlerIdDef] & STATUS3_UNDERGROUND))
+        || (!gBattleMoves[move].flags.hitUnderwater && (gStatuses3[battlerIdDef] & STATUS3_UNDERWATER))
+        || (gStatuses3[battlerIdDef] & STATUS3_VANISHED))
+        state = ACCURACY_STATE_MISSES;
+    else if (gBattleMoves[move].effect == EFFECT_NEVER_MISS_IN_WEATHER && IsBattlerWeatherAffected(battlerIdAtk, gBattleMoves[move].argument.neverMissInWeather.weather))
+        state = ACCURACY_STATE_HITS;
+    else if ((gStatuses3[battlerIdDef] & STATUS3_MINIMIZED) && gBattleMoves[move].flags.dmgMinimize)
+        state = ACCURACY_STATE_HITS;
+    else if ((gStatuses3[battlerIdDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_OHKO)
+        state = ACCURACY_STATE_HITS;
+    else if ((GetBattlerAbility(battlerIdDef) == ABILITY_LIGHTNING_ROD && gBattleStruct->dynamicMoveType == TYPE_ELECTRIC)
+        || (GetBattlerAbility(battlerIdDef) == ABILITY_STORM_DRAIN && gBattleStruct->dynamicMoveType == TYPE_WATER))
+        state = ACCURACY_STATE_HITS;
+    else if (gBattleMoves[move].accuracy == 0)
+        state = ACCURACY_STATE_HITS;
+    
+    if (nextInstr == NULL || jumpStr == NULL)
+        return state;
+    
+    if (state != ACCURACY_STATE_NORMAL)
+    {
+        if (state == ACCURACY_STATE_MISSES)
+            gMoveResultFlags |= MOVE_RESULT_MISSED;
+        
+        JumpIfMoveFailed(nextInstr, jumpStr);
+        
+        return TRUE;
+    }
+    return FALSE;
 }
 
 u32 CalcMoveTotalAccuracy(u32 move, u32 attacker, u32 defender)
@@ -1136,18 +1142,15 @@ static void atk01_accuracycheck(void)
         JumpIfMoveFailed(cmd->nextInstr, cmd->jumpStr);
     else if (cmd->noAccCal)
     {
-        if (gStatuses3[gBattlerTarget] & STATUS3_COMMANDING)
+        if (AccuracyCalcHelper(gBattlerAttacker, gBattlerTarget, gCurrentMove, NULL, NULL) == ACCURACY_STATE_MISSES)
             gBattlescriptCurrInstr = cmd->jumpStr;
-        else if ((gStatuses3[gBattlerAttacker] & STATUS3_ALWAYS_HITS) && gDisableStructs[gBattlerAttacker].battlerWithSureHit == gBattlerTarget)
-            gBattlescriptCurrInstr = cmd->nextInstr; // Only checks for Lock On, no acc calc
-        else if (gStatuses3[gBattlerTarget] & STATUS3_SEMI_INVULNERABLE) // Check semi-invulnerable
-            gBattlescriptCurrInstr = cmd->jumpStr;
-        else if (!JumpIfMoveAffectedByProtect(cmd->nextInstr, cmd->jumpStr)) // Check Protect
+        else if (!JumpIfMoveAffectedByProtect(cmd->nextInstr, cmd->jumpStr))
             gBattlescriptCurrInstr = cmd->nextInstr;
     }
     else if (DoesMultiHitIgnoreAccuracy()) // Check multi-hit moves
         gBattlescriptCurrInstr = cmd->nextInstr;
-    else if (JumpIfMoveAffectedByProtect(cmd->nextInstr, cmd->jumpStr) || AccuracyCalcHelper(cmd->nextInstr, cmd->jumpStr)) // Check Protect and effects that cause the move to aways hit
+    // Check Protect and effects that cause the move to aways hit
+    else if (JumpIfMoveAffectedByProtect(cmd->nextInstr, cmd->jumpStr) || AccuracyCalcHelper(gBattlerAttacker, gBattlerTarget, gCurrentMove, cmd->nextInstr, cmd->jumpStr))
         return;
     else
     {
@@ -1335,7 +1338,7 @@ bool32 SubsBlockMove(u32 attacker, u32 defender, u32 move) // Check if substitut
     return TRUE;
 }
 
-u32 GetHitDamageResult(u32 battlerId, u32 move, bool32 checkSturdy)
+static u32 GetHitDamageResult(u32 battlerId, u32 move, bool32 checkSturdy)
 {
     if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE)
         return 1;
@@ -2005,8 +2008,8 @@ enum
     FAINT_EFFECT_PRINT_STRING,
     FAINT_EFFECT_CLEAR_FLAGS,
     FAINT_EFFECT_RESTORE_COMMANDER_SPRITE,
-    FAINT_EFFECT_ACTIVATE_SOUL_HEART,
     FAINT_EFFECT_ACTIVATE_RECEIVER,
+    FAINT_EFFECT_ACTIVATE_SOUL_HEART,
     FAINT_EFFECT_FREE_FROM_SKY_DROP,
     FAINT_EFFECT_REVERT_FORM_STEP1,
     FAINT_EFFECT_REVERT_FORM_STEP2,
@@ -2073,6 +2076,19 @@ static void atk18_doeffectsonfaint(void)
                     
                 ++gBattleCommunication[FAINT_EFFECTS_STATE];
                 break;
+            case FAINT_EFFECT_ACTIVATE_RECEIVER:
+                if (!gAbilities[gBattleMons[battlerId].ability].cantBeCopied && IsBattlerAlive(BATTLE_PARTNER(battlerId)))
+                {
+                    u32 ability = GetBattlerAbility(BATTLE_PARTNER(battlerId));
+                    
+                    if (ability == ABILITY_RECEIVER || ability == ABILITY_POWER_OF_ALCHEMY)
+                    {
+                        gBattleScripting.battler = battlerId;
+                        BattleScriptCall(BattleScript_ReceiverActivates);
+                    }
+                }
+                ++gBattleCommunication[FAINT_EFFECTS_STATE];
+                break;
             case FAINT_EFFECT_ACTIVATE_SOUL_HEART:
                 while (gBattleStruct->soulHeartBattlerId < gBattlersCount)
                 {
@@ -2087,19 +2103,6 @@ static void atk18_doeffectsonfaint(void)
                     }
                 }
                 gBattleStruct->soulHeartBattlerId = 0;
-                ++gBattleCommunication[FAINT_EFFECTS_STATE];
-                break;
-            case FAINT_EFFECT_ACTIVATE_RECEIVER:
-                if (!gAbilities[gBattleMons[battlerId].ability].cantBeCopied && IsBattlerAlive(BATTLE_PARTNER(battlerId)))
-                {
-                    u32 ability = GetBattlerAbility(BATTLE_PARTNER(battlerId));
-                    
-                    if (ability == ABILITY_RECEIVER || ability == ABILITY_POWER_OF_ALCHEMY)
-                    {
-                        gBattleScripting.battler = battlerId;
-                        BattleScriptCall(BattleScript_ReceiverActivates);
-                    }
-                }
                 ++gBattleCommunication[FAINT_EFFECTS_STATE];
                 break;
             case FAINT_EFFECT_FREE_FROM_SKY_DROP:
@@ -2259,12 +2262,11 @@ static void atk1A_clearbattlerstatus(void)
     CMD_ARGS(u8 battler, u8 statusId, u32 status);
 
     u32 battlerId = GetBattlerForBattleScript(cmd->battler);
-    u32 statusToClear = cmd->status;
     
     switch (cmd->statusId)
     {
         case ID_STATUS2:
-            gBattleMons[battlerId].status2 &= ~(statusToClear);
+            gBattleMons[battlerId].status2 &= ~(cmd->status);
             break;
     }
     gBattlescriptCurrInstr = cmd->nextInstr;
@@ -2900,15 +2902,28 @@ static void atk39_bicword(void)
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
-static void atk3A_jumpifweathercheckchargeeffects(void)
+bool32 CheckIfCanFireTwoTurnMoveNow(u32 battlerId, u32 move, bool32 checkChargeTurnEffects)
+{
+    // Semi-invulnerable moves cannot skip their charge turn (except with Power Herb)
+    if (GET_MOVE_MOVEEFFECT_TABLE(move).semiInvulnerableEffect)
+        return FALSE;
+    
+    // If this move has charge turn effects, it must charge, activate them, then try to fire
+    if (checkChargeTurnEffects && MoveHasChargeTurnMoveEffect(move))
+        return FALSE;
+    
+    // Certain two-turn moves may fire on the first turn in the right weather (Solar Beam, Electro Shot)
+    if (gBattleMoves[move].effect == EFFECT_SKIP_CHARGING_IN_WEATHER && IsBattlerWeatherAffected(battlerId, gBattleMoves[move].argument.twoTurns.statusOrweather))
+        return TRUE;
+    
+    return FALSE;
+}
+
+static void atk3A_jumpifcanfiretwoturnmovenow(void)
 {
     CMD_ARGS(u8 battler, bool8 checkChargeTurnEffects, const u8 *jumpInstr);
     
-    /* If this is NOT semi-invulnerable move and we don't have charge turn effects
-    yet to fire, we can fire the move right away so long as the weather matches
-    the argument and the battler is affected by it (not blocked by Cloud Nine etc) */
-    if (!GET_MOVE_MOVEEFFECT_TABLE(gCurrentMove).semiInvulnerableEffect && !(cmd->checkChargeTurnEffects && MoveHasChargeTurnMoveEffect(gCurrentMove))
-    && IsBattlerWeatherAffected(GetBattlerForBattleScript(cmd->battler), gBattleMoves[gCurrentMove].argument.twoTurns.statusOrweather))
+    if (CheckIfCanFireTwoTurnMoveNow(GetBattlerForBattleScript(cmd->battler), gCurrentMove, cmd->checkChargeTurnEffects))
     {
         gBattleScripting.animTurn = 1;
         gBattlescriptCurrInstr = cmd->jumpInstr;
@@ -3438,6 +3453,7 @@ static void atk49_moveend(void)
                         {
                             gBattleStruct->battlers[gBattlerAttacker].lastMove = gChosenMove;
                             gBattleStruct->battlers[gBattlerAttacker].lastResultingMove = gCurrentMove;
+                            AI_RecordLastUsedMoveByBattler(gBattlerAttacker, gCurrentMove);
                         }
                         else
                         {
@@ -3448,7 +3464,10 @@ static void atk49_moveend(void)
                         if ((gHitMarker & HITMARKER_OBEYS) && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
                         {
                             if (gChosenMove == MOVE_UNAVAILABLE)
+                            {
                                 gBattleStruct->battlers[gBattlerTarget].lastLandedMove = gChosenMove;
+                                AI_RecordLastUsedMoveByBattler(gBattlerAttacker, gChosenMove);
+                            }
                             else
                             {
                                 gBattleStruct->battlers[gBattlerTarget].lastLandedMove = gCurrentMove;
@@ -5197,12 +5216,12 @@ static void atk66_playstatchangeanimation(void)
 {
     CMD_ARGS(u32 bits, u8 flags);
 
-    struct StatChange savedStatChange;
-    u32 temp, flags, changeableStatsCount, currStat;
-    u32 animId, bits;
+    u32 flags, bits;
     
     if (gBattleStruct->statChange.mirrorArmorState == 1)
     {
+        u32 temp;
+        
         SWAP(gBattlerAttacker, gBattlerTarget, temp);
         ++gBattleStruct->statChange.mirrorArmorState; // pop-up showed
         BattleScriptCall(BattleScript_MirrorArmorBounceBack);
@@ -5212,6 +5231,9 @@ static void atk66_playstatchangeanimation(void)
     
     if (!gBattleStruct->statChange.statAnimPlayed || (flags & ATK66_IGNORE_ANIM_PLAYED))
     {
+        u32 animId, changeableStatsCount, currStat;
+        struct StatChange savedStatChange;
+        
         if (gBattleStruct->statChange.result == STAT_CHANGE_WORKED)
         {
             animId = gBattleStruct->statChange.statId;
@@ -7221,7 +7243,32 @@ static void atk92_trysetlightscreen(void)
     }
 }
 
-u16 GetOHKOChance(u32 attacker, u32 target, u32 move)
+bool32 CanOHKOBattler(u32 attacker, u32 target, u32 move)
+{
+    // User's level is lower than the target's level
+    if (gBattleMons[attacker].level < gBattleMons[target].level)
+        return FALSE;
+    
+    // Ice type mons aren't affected by Sheer Cold
+    if (move == MOVE_SHEER_COLD && IsBattlerOfType(target, TYPE_ICE))
+        return FALSE;
+    
+    // Check raid boss
+    switch (GetActiveGimmick(target))
+    {
+        case GIMMICK_DYNAMAX: // Fails if target isn't a raid boss or if it has no shields
+            if (!IsRaidBoss(target) || !HasRaidShields(target))
+                return FALSE;
+            break;
+        case GIMMICK_TERA: // Fails if target is a tera raid boss
+            if (IsRaidBoss(target))
+                return FALSE;
+            break;
+    }
+    return TRUE;
+}
+
+static u32 GetOHKOChance(u32 attacker, u32 target, u32 move)
 {
     u32 acc = gBattleMoves[move].accuracy;
     
@@ -7229,22 +7276,6 @@ u16 GetOHKOChance(u32 attacker, u32 target, u32 move)
         acc = 20;
     
     return acc + (gBattleMons[attacker].level - gBattleMons[target].level);
-}
-
-bool32 KanOHKOBattler(u32 attacker, u32 target, u32 move, bool32 checkKOAcc)
-{
-    // Ice type mons are'nt affected by Sheer Cold
-    if (move == MOVE_SHEER_COLD && IsBattlerOfType(target, TYPE_ICE))
-        return FALSE;
-    
-    // Target is with always hit flag set
-    if ((gStatuses3[attacker] & STATUS3_ALWAYS_HITS) && gDisableStructs[attacker].battlerWithSureHit == target && gBattleMons[attacker].level >= gBattleMons[target].level)
-        return TRUE;
-    
-    if (!checkKOAcc || (RandomPercentage(RNG_OHKO, GetOHKOChance(attacker, target, move)) && gBattleMons[attacker].level >= gBattleMons[target].level))
-        return TRUE;
-    
-    return FALSE;
 }
 
 static void atk93_tryKO(void)
@@ -7258,7 +7289,11 @@ static void atk93_tryKO(void)
     }
     else
     {
-        if (KanOHKOBattler(gBattlerAttacker, gBattlerTarget, gCurrentMove, TRUE))
+        bool32 canKO = CanOHKOBattler(gBattlerAttacker, gBattlerTarget, gCurrentMove);
+        
+        // Check effects that makes move aways hits or roll accuracy
+        if (canKO && (AccuracyCalcHelper(gBattlerAttacker, gBattlerTarget, gCurrentMove, NULL, NULL) == ACCURACY_STATE_HITS
+        || RandomPercentage(RNG_OHKO, GetOHKOChance(gBattlerAttacker, gBattlerTarget, gCurrentMove))))
         {
             if (SetHitDamageResult(gBattlerTarget, gCurrentMove, FALSE))
                 gBattleMoveDamage = gBattleMons[gBattlerTarget].hp - 1;
@@ -7274,8 +7309,8 @@ static void atk93_tryKO(void)
         else
         {
             gMoveResultFlags |= MOVE_RESULT_MISSED;
-        
-            if (gBattleMons[gBattlerAttacker].level >= gBattleMons[gBattlerTarget].level)
+            
+            if (canKO)
                 gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_KO_MISSED;
             else
                 gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_UNAFFECTED;

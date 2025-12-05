@@ -26,6 +26,7 @@ struct AITarget
     u32 effectiveness[MAX_MON_MOVES];
     s32 simulatedDmg[MAX_MON_MOVES];
     s32 higherDamage; // Stores the higher damage a pokemon can receive from the battler
+    u16 higherDamageMove; // The move that deals the higher damage
 };
 
 struct AIThinking
@@ -35,12 +36,12 @@ struct AIThinking
     /*0x02*/ u16 predictedMove;
     /*0x04*/ u32 totalSpeed;
     /*0x08*/ u16 moves[MAX_MON_MOVES];
-    /*0x10*/ u16 partnerMove;
-    /*0x12*/ u8 action;
-    /*0x13*/ s8 score[MAX_MON_MOVES];
-    /*0x17*/ u8 moveTypes[MAX_MON_MOVES];
-    /*0x1B*/ u8 simulatedRNG[MAX_MON_MOVES]; // TODO
-             struct AITarget targets[MAX_BATTLERS_COUNT];
+    /*0x10*/ u16 usedMoves[MAX_MON_MOVES];
+    /*0x18*/ u16 partnerMove;
+    /*0x1A*/ u8 action;
+    /*0x1B*/ s8 score[MAX_MON_MOVES];
+    /*0x1F*/ u8 moveTypes[MAX_MON_MOVES];
+    /*0x23*/ struct AITarget targets[MAX_BATTLERS_COUNT];
 };
 
 struct AIData
