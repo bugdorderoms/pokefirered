@@ -11,7 +11,17 @@ struct MonCoords
     u8 y_offset;
 };
 
-struct TrainerPic
+struct TrainerFrontPic
+{
+    const struct CompressedSpriteSheet pic;
+    const struct CompressedSpritePalette palette;
+    struct MonCoords coords;
+    const union AnimCmd *const *anims;
+    const struct Coords16 mugshotCoords;
+    s16 mugshotRotation;
+};
+
+struct TrainerBackPic
 {
     const struct CompressedSpriteSheet pic;
     const struct CompressedSpritePalette palette;
@@ -24,8 +34,8 @@ struct TrainerPic
 #define GET_MON_COORDS_HEIGHT(size)((size & 0xF) * 8)
 
 extern const u16 gTrainerEncounterMusicIdsTable[];
-extern const struct TrainerPic gTrainerFrontPicTable[];
-extern const struct TrainerPic gTrainerBackPicTable[];
+extern const struct TrainerFrontPic gTrainerFrontPicTable[];
+extern const struct TrainerBackPic gTrainerBackPicTable[];
 
 extern const struct CompressedSpriteSheet gSpriteSheet_EnemyShadowsSized;
 extern const struct SpriteTemplate gSpriteTemplate_EnemyShadow;

@@ -18,6 +18,7 @@
 #include "fldeff.h"
 #include "fieldmap.h"
 #include "util.h"
+#include "pokedex.h"
 #include "field_control_avatar.h"
 #include "field_player_avatar.h"
 #include "field_screen_effect.h"
@@ -33,6 +34,7 @@
 #include "constants/items.h"
 #include "constants/maps.h"
 #include "constants/songs.h"
+#include "constants/pokedex.h"
 #include "constants/pokemon.h"
 #include "constants/trainers.h"
 #include "constants/moves.h"
@@ -53,6 +55,16 @@ struct TrainerBattleParameter
     void *varPtr;
     u8 ptrType;
 };
+
+enum
+{
+    TRANSITION_TYPE_NORMAL,
+    TRANSITION_TYPE_UNDERGROUND,
+    TRANSITION_TYPE_DARK_CAVE, // Flash active
+    TRANSITION_TYPE_SURFING // Also underwater
+};
+
+#define MAX_RANDOM_BATTLE_TRANSITIONS 2
 
 static void DoSafariBattle(void);
 static void DoGhostBattle(void);
@@ -77,20 +89,20 @@ static EWRAM_DATA u8 *sTrainerBattleEndScript = NULL;
 static EWRAM_DATA u8 *sTrainerABattleScriptRetAddr = NULL;
 static EWRAM_DATA u16 sRivalBattleFlags = 0;
 
-static const u8 sBattleTransitionTable_Wild[][2] =
+static const u8 sBattleTransitionTable_Wild[][MAX_RANDOM_BATTLE_TRANSITIONS] =
 {
-    { B_TRANSITION_SLICED_SCREEN,        B_TRANSITION_WHITEFADE_IN_STRIPES },
-    { B_TRANSITION_CLOCKWISE_BLACKFADE,  B_TRANSITION_GRID_SQUARES         },
-    { B_TRANSITION_BLUR,                 B_TRANSITION_GRID_SQUARES         },
-    { B_TRANSITION_BLACK_WAVE_TO_RIGHT,  B_TRANSITION_FULLSCREEN_WAVE      },
+    [TRANSITION_TYPE_NORMAL]      = { B_TRANSITION_SLICED_SCREEN,        B_TRANSITION_WHITEFADE_IN_STRIPES },
+    [TRANSITION_TYPE_UNDERGROUND] = { B_TRANSITION_CLOCKWISE_BLACKFADE,  B_TRANSITION_GRID_SQUARES         },
+    [TRANSITION_TYPE_DARK_CAVE]   = { B_TRANSITION_BLUR,                 B_TRANSITION_GRID_SQUARES         },
+    [TRANSITION_TYPE_SURFING]     = { B_TRANSITION_BLACK_WAVE_TO_RIGHT,  B_TRANSITION_FULLSCREEN_WAVE      },
 };
 
-static const u8 sBattleTransitionTable_Trainer[][2] =
+static const u8 sBattleTransitionTable_Trainer[][MAX_RANDOM_BATTLE_TRANSITIONS] =
 {
-    { B_TRANSITION_SLIDING_POKEBALLS,    B_TRANSITION_BLACK_DOODLES        },
-    { B_TRANSITION_HORIZONTAL_CORRUGATE, B_TRANSITION_BIG_POKEBALL         },
-    { B_TRANSITION_BLUR,                 B_TRANSITION_GRID_SQUARES         },
-    { B_TRANSITION_DISTORTED_WAVE,       B_TRANSITION_FULLSCREEN_WAVE      },
+    [TRANSITION_TYPE_NORMAL]      = { B_TRANSITION_SLIDING_POKEBALLS,    B_TRANSITION_BLACK_DOODLES        },
+    [TRANSITION_TYPE_UNDERGROUND] = { B_TRANSITION_HORIZONTAL_CORRUGATE, B_TRANSITION_BIG_POKEBALL         },
+    [TRANSITION_TYPE_DARK_CAVE]   = { B_TRANSITION_BLUR,                 B_TRANSITION_GRID_SQUARES         },
+    [TRANSITION_TYPE_SURFING]     = { B_TRANSITION_DISTORTED_WAVE,       B_TRANSITION_FULLSCREEN_WAVE      },
 };
 
 static const struct TrainerBattleParameter sOrdinaryBattleParams[] =
@@ -171,8 +183,7 @@ static const struct TrainerBattleParameter sContinueScriptDoubleBattleParams[] =
     {&sTrainerBattleEndScript,      TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
-
-#define tState data[0]
+#define tState      data[0]
 #define tTransition data[1]
 
 static void Task_BattleStart(u32 taskId)
@@ -398,22 +409,22 @@ void StartLegendaryBattle(void)
     gMain.savedCallback = CB2_EndScriptedWildBattle;
     gBattleTypeFlags = BATTLE_TYPE_WILD_SCRIPTED;
     
-    switch (GetMonData(&gEnemyParty[0], MON_DATA_SPECIES))
+    switch (SpeciesToNationalPokedexNum(GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)))
     {
-        case SPECIES_MEWTWO:
+        case NATIONAL_DEX_MEWTWO:
             mus = MUS_VS_MEWTWO;
             break;
-        case SPECIES_DEOXYS:
+        case NATIONAL_DEX_DEOXYS:
             mus = MUS_VS_DEOXYS;
             break;
-        case SPECIES_MOLTRES:
-        case SPECIES_ARTICUNO:
-        case SPECIES_ZAPDOS:
-        case SPECIES_HO_OH:
-        case SPECIES_LUGIA:
+        case NATIONAL_DEX_MOLTRES:
+        case NATIONAL_DEX_ARTICUNO:
+        case NATIONAL_DEX_ZAPDOS:
+        case NATIONAL_DEX_HO_OH:
+        case NATIONAL_DEX_LUGIA:
             mus = MUS_VS_LEGEND;
             break;
-        case SPECIES_GROUDON:
+        case NATIONAL_DEX_GROUDON:
             transition = B_TRANSITION_BLACK_DOODLES;
             mus = MUS_RS_VS_TRAINER;
             break;
@@ -527,83 +538,44 @@ u32 BattleSetup_GetTerrainId(void)
 
 static u32 GetBattleTransitionTypeByMap(void)
 {
-    u32 tileBehavior;
     s16 x, y;
     
-    if (Overworld_GetFlashLevel())
-        return B_TRANSITION_HORIZONTAL_CORRUGATE;
+    if (Overworld_GetFlashLevel() > 0)
+        return TRANSITION_TYPE_DARK_CAVE;
     
     PlayerGetDestCoords(&x, &y);
-    tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
-    
-    if (!MetatileBehavior_IsSurfable(tileBehavior) && !gIsFishingEncounter)
+
+    if (!MetatileBehavior_IsSurfable(MapGridGetMetatileBehaviorAt(x, y)) && !gIsFishingEncounter)
     {
         switch (gMapHeader.mapType)
         {
         case MAP_TYPE_UNDERGROUND:
-            return B_TRANSITION_DISTORTED_WAVE;
+            return TRANSITION_TYPE_UNDERGROUND;
         case MAP_TYPE_UNDERWATER:
-            return B_TRANSITION_BIG_POKEBALL;
+            return TRANSITION_TYPE_SURFING;
         default:
-            return B_TRANSITION_BLUR;
+            return TRANSITION_TYPE_NORMAL;
         }
     }
-    return B_TRANSITION_BIG_POKEBALL;
+    return TRANSITION_TYPE_SURFING;
 }
 
-u32 GetSumOfPlayerPartyLevel(u32 *nMons)
+static inline u32 GetRandomBattleTransitionIndex(void)
 {
-    u32 i, sum = 0, count = 0;
-
-    for (i = 0; i < PARTY_SIZE; ++i)
-    {
-        if (MonCanBattle(&gPlayerParty[i]))
-        {
-            sum += GetMonData(&gPlayerParty[i], MON_DATA_LEVEL);
-            count++;
-        }
-    }
-    *nMons = count;
-    return sum;
-}
-
-static u32 GetSumOfEnemyPartyLevel(u32 opponentId)
-{
-    const struct TrainerMon *party = gTrainers[opponentId].party;
-    u32 i, sum, numMons = gTrainers[opponentId].partySize;
-    
-    for (i = 0, sum = 0; i < numMons; i++)
-        sum += GetTrainerPartyMonLevel(party[i]);
-
-    return sum;
+    return RandomUniform(RNG_BATTLE_TRANSITION, 0, MAX_RANDOM_BATTLE_TRANSITIONS - 1);
 }
 
 static u32 GetWildBattleTransition(void)
 {
-    u32 nMons;
-    return sBattleTransitionTable_Wild[GetBattleTransitionTypeByMap()][(GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) < GetSumOfPlayerPartyLevel(&nMons)) ? 0 : 1];
+    return sBattleTransitionTable_Wild[GetBattleTransitionTypeByMap()][GetRandomBattleTransitionIndex()];
 }
 
 static u32 GetTrainerBattleTransition(void)
 {
-    u32 nMons;
+    if (gTrainers[gTrainerBattleOpponent_A].mugshotColor)
+        return B_TRANSITION_MUGSHOT;
     
-    if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_ELITE_FOUR)
-    {
-        if (gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_LORELEI || gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_LORELEI_2)
-            return B_TRANSITION_LORELEI;
-        if (gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_BRUNO || gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_BRUNO_2)
-            return B_TRANSITION_BRUNO;
-        if (gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_AGATHA || gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_AGATHA_2)
-            return B_TRANSITION_AGATHA;
-        if (gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_LANCE || gTrainerBattleOpponent_A == TRAINER_ELITE_FOUR_LANCE_2)
-            return B_TRANSITION_LANCE;
-        return B_TRANSITION_BLUE;
-    }
-    if (gTrainers[gTrainerBattleOpponent_A].trainerClass == TRAINER_CLASS_CHAMPION)
-        return B_TRANSITION_BLUE;
-    
-    return sBattleTransitionTable_Trainer[GetBattleTransitionTypeByMap()][(GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A) < GetSumOfPlayerPartyLevel(&nMons)) ? 0 : 1];
+    return sBattleTransitionTable_Trainer[GetBattleTransitionTypeByMap()][GetRandomBattleTransitionIndex()];
 }
 
 static u32 GetTrainerAFlag(void)
@@ -805,7 +777,7 @@ void StartTrainerBattle(void)
 {
     gBattleTypeFlags = BATTLE_TYPE_TRAINER;
     
-    if (GetTrainerBattleMode() == TRAINER_BATTLE_EARLY_RIVAL && GetRivalBattleFlags() & RIVAL_BATTLE_TUTORIAL)
+    if (GetTrainerBattleMode() == TRAINER_BATTLE_EARLY_RIVAL && (GetRivalBattleFlags() & RIVAL_BATTLE_TUTORIAL))
         gBattleTypeFlags |= BATTLE_TYPE_FIRST_BATTLE;
     
     gMain.savedCallback = CB2_EndTrainerBattle;

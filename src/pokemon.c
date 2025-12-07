@@ -15,6 +15,7 @@
 #include "battle_move_effects.h"
 #include "rtc.h"
 #include "graphics.h"
+#include "battle_transition.h"
 #include "dexnav.h"
 #include "wild_encounter.h"
 #include "field_weather.h"
@@ -2937,6 +2938,22 @@ u32 GetPlayerPartyHighestLevel(void)
         }
     }
     return level;
+}
+
+u32 GetSumOfPlayerPartyLevel(u32 *nMons)
+{
+    u32 i, sum = 0, count = 0;
+
+    for (i = 0; i < PARTY_SIZE; ++i)
+    {
+        if (MonCanBattle(&gPlayerParty[i]))
+        {
+            sum += GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
+            count++;
+        }
+    }
+    *nMons = count;
+    return sum;
 }
 
 static u32 GetLinkPlayerArrId(void)

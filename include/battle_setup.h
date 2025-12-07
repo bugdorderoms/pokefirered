@@ -32,7 +32,6 @@ void ShowTrainerCantBattleSpeech(void);
 void PlayTrainerEncounterMusic(void);
 const u8 *GetTrainerALoseText(void);
 const u8 *GetTrainerWonSpeech(void);
-u32 GetSumOfPlayerPartyLevel(u32 *nMons);
 
 static inline u32 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx)
 {

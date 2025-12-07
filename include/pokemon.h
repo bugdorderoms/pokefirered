@@ -522,6 +522,7 @@ void SetMonPreventsSwitchingString(void);
 void SetWildMonsHeldItem(void);
 u8 *GetTrainerPartnerName(void);
 u32 GetPlayerPartyHighestLevel(void);
+u32 GetSumOfPlayerPartyLevel(u32 *nMons);
 u32 GetUnionRoomTrainerPic(void);
 u32 GetUnionRoomTrainerClass(void);
 u32 GetNumOfBadges(void);

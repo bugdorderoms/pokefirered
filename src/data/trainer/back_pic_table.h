@@ -8,7 +8,7 @@
         .anims = sBackAnims_##imgPalName,                                                          \
     }
 
-const struct TrainerPic gTrainerBackPicTable[] =
+const struct TrainerBackPic gTrainerBackPicTable[] =
 {
     TRAINER_BACK_PIC(RED, Red, 0x2800, 5),
     TRAINER_BACK_PIC(LEAF, Leaf, 0x2800, 5),

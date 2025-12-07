@@ -99,7 +99,8 @@ struct Trainer
     /*0x10*/ u16 items[MAX_TRAINER_ITEMS];
     /*0x18*/ u32 aiFlags;
     /*0x1C*/ const struct TrainerMon *party;
-    /*0x20*/ u8 partySize;
+    /*0x20*/ u8 partySize:3;
+             u8 mugshotColor:5;
 };
 
 struct TrainerSlide

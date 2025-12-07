@@ -3461,6 +3461,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_EliteFourLorelei),
+        .mugshotColor = MUGSHOT_COLOR_PURPLE,
     },
     [TRAINER_ELITE_FOUR_BRUNO] =
     {
@@ -3472,6 +3473,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_EliteFourBruno),
+        .mugshotColor = MUGSHOT_COLOR_GREEN,
     },
     [TRAINER_ELITE_FOUR_AGATHA] =
     {
@@ -3483,6 +3485,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_EliteFourAgatha),
+        .mugshotColor = MUGSHOT_COLOR_PINK,
     },
     [TRAINER_ELITE_FOUR_LANCE] =
     {
@@ -3494,6 +3497,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_EliteFourLance),
+        .mugshotColor = MUGSHOT_COLOR_BUE,
     },
     [TRAINER_LEADER_BROCK] =
     {
@@ -3769,6 +3773,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_ChampionFirstSquirtle),
+        .mugshotColor = MUGSHOT_COLOR_YELLOW,
     },
     [TRAINER_CHAMPION_FIRST_BULBASAUR] =
     {
@@ -3780,6 +3785,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_ChampionFirstBulbasaur),
+        .mugshotColor = MUGSHOT_COLOR_YELLOW,
     },
     [TRAINER_CHAMPION_FIRST_CHARMANDER] =
     {
@@ -3791,6 +3797,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_ChampionFirstCharmander),
+        .mugshotColor = MUGSHOT_COLOR_YELLOW,
     },
     [TRAINER_CHANNELER_PATRICIA] =
     {
@@ -6896,6 +6903,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_EliteFourLorelei2),
+        .mugshotColor = MUGSHOT_COLOR_PURPLE,
     },
     [TRAINER_ELITE_FOUR_BRUNO_2] =
     {
@@ -6907,6 +6915,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_EliteFourBruno2),
+        .mugshotColor = MUGSHOT_COLOR_GREEN,
     },
     [TRAINER_ELITE_FOUR_AGATHA_2] =
     {
@@ -6918,6 +6927,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_EliteFourAgatha2),
+        .mugshotColor = MUGSHOT_COLOR_PINK,
     },
     [TRAINER_ELITE_FOUR_LANCE_2] =
     {
@@ -6929,6 +6939,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_EliteFourLance2),
+        .mugshotColor = MUGSHOT_COLOR_BUE,
     },
     [TRAINER_CHAMPION_REMATCH_SQUIRTLE] =
     {
@@ -6940,6 +6951,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_ChampionRematchSquirtle),
+        .mugshotColor = MUGSHOT_COLOR_YELLOW,
     },
     [TRAINER_CHAMPION_REMATCH_BULBASAUR] =
     {
@@ -6951,6 +6963,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_ChampionRematchBulbasaur),
+        .mugshotColor = MUGSHOT_COLOR_YELLOW,
     },
     [TRAINER_CHAMPION_REMATCH_CHARMANDER] =
     {
@@ -6962,6 +6975,7 @@ const struct Trainer gTrainers[NUM_TRAINERS] =
         .battleType = TRAINER_BATTLE_TYPE_SINGLE,
         .aiFlags = 0,
         TRAINER_PARTY(sParty_ChampionRematchCharmander),
+        .mugshotColor = MUGSHOT_COLOR_YELLOW,
     },
     [TRAINER_CUE_BALL_PAXTON] =
     {

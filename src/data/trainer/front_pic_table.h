@@ -1,14 +1,16 @@
-// Extra arg are the y_offset of the image
-#define TRAINER_PIC(trainer, imgPalName, ...)                                           \
-    [TRAINER_PIC_##trainer] =                                                           \
-    {                                                                                   \
-        .pic = { sTrainerFrontPic_##imgPalName, (64 * 64) / 2, TRAINER_PIC_##trainer }, \
-        .palette = { sTrainerPalette_##imgPalName, TRAINER_PIC_##trainer },             \
-        .coords = { .size = 8, .y_offset = DEFAULT(1, __VA_ARGS__) },                   \
-        .anims = gDummySpriteAnimTable,                                                 \
+// Extra args are the y_offset of the image, mugshot coords and rotation
+#define TRAINER_PIC(trainer, imgPalName, ...)                                            \
+    [TRAINER_PIC_##trainer] =                                                            \
+    {                                                                                    \
+        .pic = { sTrainerFrontPic_##imgPalName, (64 * 64) / 2, TRAINER_PIC_##trainer },  \
+        .palette = { sTrainerPalette_##imgPalName, TRAINER_PIC_##trainer },              \
+        .coords = { .size = 8, .y_offset = DEFAULT(1, __VA_ARGS__) },                    \
+        .anims = gDummySpriteAnimTable,                                                  \
+        .mugshotCoords = { .x = DEFAULT(0, __VA_ARGS__), .y = DEFAULT(0, __VA_ARGS__) }, \
+        .mugshotRotation = DEFAULT(0x200, __VA_ARGS__),                                  \
     }
 
-const struct TrainerPic gTrainerFrontPicTable[] =
+const struct TrainerFrontPic gTrainerFrontPicTable[] =
 {
     TRAINER_PIC(AQUA_LEADER_ARCHIE, AquaLeaderArchie),
     TRAINER_PIC(AQUA_GRUNT_M, AquaGruntM),
@@ -121,10 +123,10 @@ const struct TrainerPic gTrainerFrontPicTable[] =
     TRAINER_PIC(ROCKET_GRUNT_M, RocketGruntM),
     TRAINER_PIC(COOLTRAINER_M, CooltrainerM),
     TRAINER_PIC(COOLTRAINER_F, CooltrainerF),
-    TRAINER_PIC(ELITE_FOUR_LORELEI, EliteFourLorelei),
-    TRAINER_PIC(ELITE_FOUR_BRUNO, EliteFourBruno),
-    TRAINER_PIC(ELITE_FOUR_AGATHA, EliteFourAgatha),
-    TRAINER_PIC(ELITE_FOUR_LANCE, EliteFourLance),
+    TRAINER_PIC(ELITE_FOUR_LORELEI, EliteFourLorelei, 1, -8, 0, 0x200),
+    TRAINER_PIC(ELITE_FOUR_BRUNO, EliteFourBruno, 1, -10, 0, 0x200),
+    TRAINER_PIC(ELITE_FOUR_AGATHA, EliteFourAgatha, 1, 0, 0, 0x200),
+    TRAINER_PIC(ELITE_FOUR_LANCE, EliteFourLance, 1, -32, 0, 0x200),
     TRAINER_PIC(LEADER_BROCK, LeaderBrock),
     TRAINER_PIC(LEADER_MISTY, LeaderMisty),
     TRAINER_PIC(LEADER_LT_SURGE, LeaderLtSurge),
@@ -134,7 +136,7 @@ const struct TrainerPic gTrainerFrontPicTable[] =
     TRAINER_PIC(LEADER_SABRINA, LeaderSabrina),
     TRAINER_PIC(GENTLEMAN, Gentleman),
     TRAINER_PIC(RIVAL_LATE, Rival2),
-    TRAINER_PIC(CHAMPION_RIVAL, ChampionRival),
+    TRAINER_PIC(CHAMPION_RIVAL, ChampionRival, 1, 0, 0, 0x200),
     TRAINER_PIC(CHANNELER, Channeler),
     TRAINER_PIC(TWINS, Twins),
     TRAINER_PIC(COOL_COUPLE, CoolCouple),
